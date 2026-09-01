@@ -1226,6 +1226,18 @@ def csi_contrast_map(stack, remove_bias=True):
       3. **Focus.** It is the interferometric analogue of a focus measure, and it
          peaks where :func:`csi_height_map` says the surface is.
 
+    Why use 1 rather than trust the height map everywhere: measured on a flat
+    surface at 6.0 um with a **50x reflectance step** across the field (0.02 on
+    one half, 1.0 on the other) and 1 % noise, the ``"gaussian"`` height error is
+    0.146 um RMS on the bright half and **3.03 um RMS** on the dark half, and 30 %
+    of the dark pixels are refused outright. The bias barely moves (+0.14 um);
+    what explodes is the scatter, because the three-point fit is reading three
+    samples out of a noise floor. ``"centroid"`` degrades far more gracefully on
+    the same data (0.022 -> 0.157 um, 7x rather than 20x), which is the second
+    place in this module where the estimator ranking depends on the data rather
+    than on the algebra. This map is what separates the two populations: it reads
+    0.035 +- 0.004 on the dark half and 0.412 +- 0.007 on the bright one.
+
     It is deliberately **not** normalised by the pedestal. The classical fringe
     *visibility* is ``b/a``, and computing it would need the pedestal, which
     ``remove_bias`` has just thrown away; returning ``b`` and saying so is honest,
