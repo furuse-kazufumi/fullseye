@@ -445,6 +445,8 @@ def text_box(img, text, xy, color="neutral", text_color=None, box_color=None,
         板の内側余白[px]。
     max_width : int or None
         文字の折り返し幅。None なら 1 行のまま。
+    wrap : bool
+        False なら折り返さず 1 行のまま縮めて ``max_width`` に収める。
     min_contrast : float
         文字と「実際にその下に出る色」のコントラスト比の下限。下回れば
         **ValueError**(背景と同化した文字は誰も気づけないので通さない)。
