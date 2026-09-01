@@ -1221,18 +1221,16 @@ def particle_render(state, height, width, mode="add", fade=True):
     inside = (rr >= 0) & (rr < h) & (cc >= 0) & (cc < w) & (weight > 0.0)
 
     if mode == "add":
-        acc = np.zeros((h, w, 4), dtype=np.float64)
+        # Additive light accumulates in *premultiplied* space: that is the space
+        # in which "two lights on one pixel" is a sum at all.
         flat = (np.clip(rr, 0, h - 1) * w + np.clip(cc, 0, w - 1)).ravel()
-        wgt = (weight * inside).ravel()
-        for ch in range(4):
-            src = (col[:, ch][:, None, None] * np.ones_like(weight)).ravel()
-            contrib = src * wgt if ch < 3 else wgt * col[:, 3][:, None, None].ravel()
-            if ch < 3:
-                contrib = contrib * np.repeat(col[:, 3], span * span)
-            np.add.at(acc[..., ch].reshape(-1), flat, contrib)
-        acc = np.clip(acc, 0.0, 1.0)
-        return unpremultiply(np.clip(acc, 0.0, np.maximum(acc[..., 3:4], 0.0) + 0.0)
-                             if False else _clamp_premul(acc))
+        cov = weight * inside                       # (n, span, span)
+        a_contrib = cov * col[:, 3][:, None, None]  # coverage x the particle's own alpha
+        acc = np.zeros((h * w, 4), dtype=np.float64)
+        np.add.at(acc[:, 3], flat, a_contrib.ravel())
+        for ch in range(3):
+            np.add.at(acc[:, ch], flat, (a_contrib * col[:, ch][:, None, None]).ravel())
+        return _clamp_premul(acc.reshape(h, w, 4))
     # "over": composite one at a time, in array order
     for i in range(n):
         r0, r1 = max(0, ri[i] - k), min(h, ri[i] + k + 1)
