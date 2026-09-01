@@ -261,8 +261,8 @@ def ex_flicker(log):
     rgbvol = VC.vol_colorize_labels(labels, seed=SEED)
     measured = VC.vol_label_color_flicker(binary, axis="z", seed=SEED)
     D, H, W = labels.shape
-    k = 5
-    pw, gap = W * k, 16
+    k = 6
+    pw, gap = W * k, 20
     struct = ndimage.generate_binary_structure(2, 2)
 
     # 各断面での「その粒子の色」を左右それぞれで求め、初出の色と違ったら 1 件と数える
