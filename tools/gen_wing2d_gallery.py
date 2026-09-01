@@ -583,11 +583,20 @@ def subject_freq_sweep(log=print) -> dict:
                  + np.fft.fftshift(np.fft.fftfreq(W))[None, :] ** 2)
     psnr_lo, keep_e = [], []
     lows, highs, bands = [], [], []
+    rng_hi, rng_bp = [], []
     for i, a in enumerate(A):
         lo = np.asarray(fs.apply(src, "lowpass", float(a), 0.5), np.float64)
         hi = np.asarray(fs.apply(src, "highpass", float(a), 0.5), np.float64)
         bp = np.asarray(fs.apply(src, "bandpass_image", float(a), 0.5), np.float64)
         lows.append(lo); highs.append(hi); bands.append(bp)
+        # ★2026-09-02: highpass / bandpass_image は「0 を 0.5 に写した [0,1]」を
+        #   返す規約になった。以前は符号つき配列を image と称して返しており、
+        #   保存・段間 clip で負の半分 (画素の約 50%) が無言で 0 に潰れていた。
+        #   直ったことを**推測でなく実測で**残す: 最小値と負画素の割合。
+        rng_hi.append((float(hi.min()), float(hi.max()),
+                       100.0 * float(np.mean(hi < 0.0))))
+        rng_bp.append((float(bp.min()), float(bp.max()),
+                       100.0 * float(np.mean(bp < 0.0))))
         psnr_lo.append(_psnr(src, lo))
         keep_e.append(100.0 * float(np.sum(np.abs(F[rr <= lo_cut[i]]) ** 2)) / Etot)
     frames = []
