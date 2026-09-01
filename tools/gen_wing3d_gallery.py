@@ -1824,13 +1824,15 @@ def ex_obb(log) -> dict:
                   "inner_box_size": [float(x) for x in ib["size"]],
                   "inner_box_volume": ib_vol},
         "caption": (f"z 軸まわりに 30° 傾けた合成直方体({int(box.sum()):,} voxel)に 3 つの箱を"
-                    f"同時に描いた。軸平行の AABB は **{aabb_vol / int(box.sum()):.2f} 倍**まで"
-                    f"膨らむが、`obb`(PCA で向きを合わせた外接箱)は "
-                    f"**{obb_vol / int(box.sum()):.2f} 倍**、半幅は "
+                    f"同時に描いてターンテーブルで 1 周させた。軸平行の AABB は voxel 数の "
+                    f"**{aabb_vol / int(box.sum()):.2f} 倍**まで膨らむのに、`obb`(PCA で向きを"
+                    f"合わせた外接箱)は **{obb_vol / int(box.sum()):.2f} 倍**まで縮み、半幅は "
                     f"{o['extents'][0]:.2f} / {o['extents'][1]:.2f} / {o['extents'][2]:.2f} voxel "
-                    f"(真値 {half[0]:.0f} / {half[1]:.0f} / {half[2]:.0f})。逆に `inner_box3` の"
-                    f"最大内接箱は **{ib_vol / int(box.sum()):.2f} 倍**まで痩せる。掴み幅なら "
-                    "OBB、部品が通るかなら内接箱。"),
+                    f"(真値 {half[0]:.0f} / {half[1]:.0f} / {half[2]:.0f})とほぼ真値。"
+                    "1 倍を切るのは、点群が voxel の「中心」の集まりでその外接を測っているから"
+                    "(縁の半 voxel が入らない)。逆に `inner_box3` の最大内接箱は "
+                    f"**{ib_vol / int(box.sum()):.2f} 倍**まで痩せる。掴み幅を決めるなら OBB、"
+                    "中を部品が通るかを見るなら内接箱。"),
         **info}
 
 
