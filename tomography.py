@@ -357,10 +357,10 @@ def _project(img: np.ndarray, angles_rad: np.ndarray, n_det: int,
     Ray sampling with bilinear interpolation and a trapezoidal sum, at
     *oversample* samples per pixel along the ray. Measured against the closed-form
     Radon transform of a disc (``tests/test_tomography.py``), the interior RMS
-    error is 0.07 % of the peak line integral at ``oversample=1`` and 0.07 % at
-    ``oversample=4`` — i.e. the residual is the bilinear resampling of the
-    phantom's own anti-aliased edge, not the quadrature, which is why the default
-    is 1 and not something slower.
+    error is **0.073 %** of the peak line integral at ``oversample=1`` and
+    **0.070 %** at ``oversample=4`` — the residual is the bilinear resampling of
+    the phantom's own anti-aliased edge, not the quadrature, which is why the
+    default is 1 and not something four times slower for nothing.
     """
     h, w = img.shape
     cx = (w - 1) / 2.0
