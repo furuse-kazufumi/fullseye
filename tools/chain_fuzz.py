@@ -588,7 +588,8 @@ def _step_rng(chain_seed, name, occurrence, fallback):
     return np.random.default_rng((int(chain_seed) & 0xFFFFFFFF, key, occurrence))
 
 
-def run_chain(ops, gens, rng, length, log, chain_seed=None, script=None):
+def run_chain(ops, gens, rng, length, log, chain_seed=None, script=None,
+              explore=0.0):
     """1 連鎖 = 型付き pool を育てながら op を実行。発見は log に積む。
 
     *script* に op 名の列を渡すと**その順で強制実行**する(--minimize の再走)。
@@ -615,6 +616,17 @@ def run_chain(ops, gens, rng, length, log, chain_seed=None, script=None):
                      if all((t in pool and pool[t]) or t == "any" for t in o[2])]
             if not cands:
                 break
+            # 型空間の探索バイアス。一様に引くと、**深い前置きが要る型**
+            # (mesh / primitive / surface など、他の op が作らないとプールに
+            # 現れない型)へ辿り着く確率が低いままになる。実測では 1500 連鎖 ×
+            # 長さ 6 で 112 op が「構造的には到達可能なのに一度も引かれない」
+            # 状態だった。そこで一定確率で「**まだプールに無い型を産む op**」に
+            # 絞る。判断材料はその連鎖のプールだけなので、chain_seed から
+            # 決定的に再現でき、--minimize / --replay の前提を壊さない。
+            if explore > 0.0 and rng.random() < explore:
+                fresh = [o for o in cands if o[3] not in pool]
+                if fresh:
+                    cands = fresh
             name, dim, ins, out, fn = cands[rng.integers(len(cands))]
         occ[name] = occ.get(name, 0) + 1
         arng = _step_rng(chain_seed, name, occ[name], rng)
@@ -773,6 +785,9 @@ def main():
     ap.add_argument("--replay", type=int, metavar="SEED",
                     help="--script を指定 seed で強制実行(最小再現の確認)")
     ap.add_argument("--script", help="--replay で実行する op 名のカンマ区切り")
+    ap.add_argument("--explore", type=float, default=0.5,
+                    help="型空間の探索バイアス [0,1]。まだプールに無い型を"
+                         "産む op を優先する確率。0 で一様(旧挙動)")
     ap.add_argument("--coverage-out", metavar="JSON",
                     help="どの op が走り、どの op が一度も走らなかったかを書き出す。"
                          "「304/417」という数だけでは、残る 113 が頑健なのか"
@@ -804,7 +819,8 @@ def main():
         # 連鎖固有 seed: 後から i 番目だけを正確に再走できる(--minimize の前提)
         chain_seed = args.seed * 1_000_003 + i
         trace = run_chain(ops, gens, np.random.default_rng(chain_seed),
-                          args.length, log, chain_seed=chain_seed)
+                          args.length, log, chain_seed=chain_seed,
+                          explore=args.explore)
         used.update(trace)
         if (i + 1) % 50 == 0:
             print(f"  {i + 1}/{args.chains} chains, findings {len(log)}, "
