@@ -1136,15 +1136,19 @@ def _captions(meta):
         "宇宙線は光学系を通っていないので**星より尖る**。ラプラシアンを 2 倍"
         "標本化して微細構造と比べると、植えた %d 画素に対し %d 画素を検出して"
         "適合率 **%.3f** / 再現率 **%.3f** ―― 星の中心を 1 つも拾わないことが"
-        "要点。合成なので「宇宙線だけ無い同じ観測」を作れて、正解との最大差が "
-        "%.0f -> %.0f e- に落ちることまで言える(**フレームの最大値では言えない**"
-        " —— それは一番明るい星の値であって、除去の前後でほとんど動かない)。"
+        "要点。合成なので「宇宙線だけ無い同じ観測」を作れて、**正解からのずれ"
+        "そのもの**を測れる: %.0f e- 以上ずれた画素は %d -> %d、ずれの総量は "
+        "**%.0f %% 除去**される。ここで**フレームの最大値を指標にしてはいけない**"
+        " —— それは一番明るい星の値で、除去の前後で %.0f -> %.0f e- と動かない"
+        "(再現率が 1 未満である限り、見逃した 1 画素が最大値を押さえ続ける)。"
         "枚数がある場合はもっと簡単で、%d 枚を素直に平均しても宇宙線は 1/%d に"
         "薄まって残り正解から %.0f e- ずれるのに対し、κ-σ 合成は検出も置換も"
         "せずに %.0f e-、フレーム間比較で先に除去すれば %.0f e- になる。"
         % (c["truth_px"], c["detected_px"], c["precision"], c["recall"],
-           c["residual_raw"], c["residual_cleaned"], c["n_frames"],
-           c["n_frames"], c["err_naive"], c["err_clipped"], c["err_fixed"]),
+           c["bad_threshold"], c["n_bad_raw"], c["n_bad_cleaned"],
+           c["removed_pct"], c["residual_raw"], c["residual_cleaned"],
+           c["n_frames"], c["n_frames"], c["err_naive"], c["err_clipped"],
+           c["err_fixed"]),
         "A cosmic ray never went through the optics, so **it is sharper than a "
         "star**. Comparing a 2x-subsampled Laplacian against the fine-structure "
         "image finds %d pixels against the %d planted — precision **%.3f**, "
