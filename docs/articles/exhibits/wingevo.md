@@ -60,7 +60,7 @@
 
 ![世代ごとの champion](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingevo_generations.gif)
 
-*↑ **世代が進むとパイプラインが伸びる/縮む** ―― `photon_denoise` を seed 0 / pop 16 で 24 世代、実際に走らせた軌跡。train は 0.6926 → 0.7881、op 数は 5 → 4 → 5 → 4 → 5 → 4 と伸び縮みし、第 13 世代で `tb_spad_deadtime_correct` が `tb_spad_deadtime_apply` に入れ替わった。観測用 holdout は上下する(選択に使っていないので単調ではない)。使用 op: `evolve.run`, `ops.decode_by_names`。*
+*↑ **世代が進むとパイプラインが伸びる/縮む** ―― `photon_denoise` を seed 0 / pop 16 で 24 世代、実際に走らせた軌跡。train は 0.6926 → 0.7881、op 数は 5 → 4 → 5 → 4 → 5 → 4 と伸び縮みし、第 13 世代で `tb_spad_deadtime_correct` が抜けて `tb_spad_deadtime_apply`・`tb_tcspc_coates_correct` が入った。観測用 holdout は上下する(選択に使っていないので単調ではない)。使用 op: `evolve.run`, `ops.decode_by_names`。*
 
 
 ### 6. champion のパイプライン図(各段の中間値)

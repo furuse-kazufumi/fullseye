@@ -1698,12 +1698,12 @@ def ex_visual_hull(log) -> dict:
         sub = c[py:py + ph, px:px + pw]
         scale = 5.2
         cen = np.zeros(3)
-        if gt_world.size:
-            u, v, d = _project(gt_world, R, scale, pw / 2, ph / 2, cen)
-            _splat(sub, u, v, d, (0.22, 0.24, 0.28), radius=2, shade=0.3)
-        if world.size:
+        if world.size:                                     # 彫り残し(過大な分)
             u, v, d = _project(world, R, scale, pw / 2, ph / 2, cen)
             _splat(sub, u, v, d, C_B, radius=1, shade=0.55)
+        if gt_world.size:                                  # 真の形(上に重ねる)
+            u, v, d = _project(gt_world, R, scale, pw / 2, ph / 2, cen)
+            _splat(sub, u, v, d, (0.62, 0.66, 0.72), radius=2, shade=0.35)
         c = imagedraw.draw_polyline(
             c, [(px, py), (px + pw - 1, py), (px + pw - 1, py + ph - 1), (px, py + ph - 1)],
             color=C_RULE, width=1, closed=True)
