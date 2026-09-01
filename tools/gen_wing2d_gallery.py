@@ -23,7 +23,7 @@ Generate the "classic 2-D operator wing" exhibits for the Qiita museum section.
   docs/articles/assets/wing2d_<name>_thumb.jpg      -- 幅 720px サムネ (JPEG q85)
   docs/articles/assets/media/wing2d_<name>.gif      -- アニメ展示
   docs/articles/assets/thumbs/wing2d_<name>_720.jpg -- GIF の代表フレームサムネ
-  docs/articles/exhibits/wing2d.md                  -- キャプション原稿 (記事 md 本体は編集しない)
+  docs/articles/exhibits/wing2d.ja.md               -- キャプション原稿 (記事 md 本体は編集しない)
   docs/articles/assets/_wing2d_meta.json            -- 使用 op / 実測値 / 来歴のメタ
 
 Run:
