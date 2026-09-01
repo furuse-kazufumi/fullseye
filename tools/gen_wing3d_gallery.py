@@ -771,7 +771,7 @@ def ex_boundary(log) -> dict:
 
     W, H = 1120, 640
     pw, ph = 350, 380
-    nf = 48
+    nf = 36                       # 点群 3 面 x 高フレーム数は GIF が太る。36 で 1 周。
     frames = []
     cen_world = truth_center_mm[[2, 1, 0]]                  # (x, y, z)
     for k in range(nf):
