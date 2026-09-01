@@ -497,6 +497,9 @@ TYPE_CHECKS = {
     "cscalar": lambda v: isinstance(v, complex) and not isinstance(v, np.ndarray),
     # lightfield = 4-D (V, U, H, W)。角度 2 軸 × 空間 2 軸
     "lightfield": lambda v: isinstance(v, np.ndarray) and v.ndim == 4,
+    # score = ピークを持つ相関 volume。voxel と同じ 3-D だが、意味は「マッチの
+    # 良さ」でありサブボクセル精緻化の入力になる
+    "score": lambda v: isinstance(v, np.ndarray) and v.ndim == 3,
     # counts = 時間 bin で添字づけられた**非負**の光子カウント列。既存 signal と
     # 構造は同じだが、signal プール(正弦波 = 負値あり)を渡すと必ず CONTRACT に
     # なり photon 族が一度も実行されない(実測 7/17 未到達)。jones/stokes と同じ判断
