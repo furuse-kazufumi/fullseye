@@ -435,6 +435,7 @@ def cad_pixel_to_surface(mesh, pixels, K=None, R=None, t=None,
       * ``point``    (N,3) — 世界座標の交点。miss は ``NaN``。
       * ``depth``    (N,) — カメラ座標の Z(視線距離ではない)。miss は ``NaN``。
       * ``normal``   (N,3) — 当たった面の単位法線(世界座標、巻き方どおり)。
+        miss は ``NaN``(``bary``/``point``/``depth`` と同じ規約)。
       * ``hit``      (N,) bool。
       * ``camera``   実際に使われた ``K``/``R``/``t``/``width``/``height``。
         既定に落ちた場合もここを見れば分かる。
