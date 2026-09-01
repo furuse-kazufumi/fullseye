@@ -367,6 +367,18 @@ def _bind_args(op_name, fn, data_args, rng):
               if p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD)]
     for p in params[len(args):]:
         if p.default is not inspect.Parameter.empty:
+            # 既定値つきの引数は原則そのまま使う。ただし **op 固有ヒントがあれば
+            # 上書きする**。既定値がプールの固定サイズと噛み合わない op は、
+            # 上書きできないと毎回 ValueError になって「一度も実行されない」まま
+            # 発見ゼロに見える(実測: lf_from_mla の既定 angular=(5,5) は 32x32 を
+            # 割り切れず、1200 連鎖で覆われた 16/17 の残り 1 がこれだった)。
+            # 名前レベルの PARAM_HINTS は既存 op の挙動を一斉に変えてしまうので
+            # ここでは効かせない — 上書きは op 名で狙い撃ちしたものに限る。
+            hint = OP_PARAM_HINTS.get((op_name, p.name))
+            if hint is not None:
+                val = hint(rng)
+                if val is not None:
+                    kwargs[p.name] = val
             continue
         hint = OP_PARAM_HINTS.get((op_name, p.name)) or PARAM_HINTS.get(p.name)
         if hint is None:
