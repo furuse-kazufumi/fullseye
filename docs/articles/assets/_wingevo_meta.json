@@ -201,11 +201,11 @@
       1100,
       640
      ],
-     "gif_bytes": 280228,
-     "gif_sha256": "e68f1d56315e4bc93c8dc304de13167ca4e578a05101a79a224774bf6e749695",
+     "gif_bytes": 281061,
+     "gif_sha256": "1f1a59845764d68516d76ee8a215884555ec97b4316d72634d12fe399cd5c96d",
      "colors": null,
      "fps": 2,
-     "thumb_bytes": 42815
+     "thumb_bytes": 43125
     },
     "numbers": {
      "photon_denoise": [

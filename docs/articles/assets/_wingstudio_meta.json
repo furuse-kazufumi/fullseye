@@ -1,0 +1,717 @@
+{
+  "generator": "tools/gen_wingstudio_gallery.py",
+  "seed": 20260902,
+  "exhibits": [
+    {
+      "kind": "gif",
+      "name": "volume_turntable",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_volume_turntable.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_volume_turntable_thumb.jpg",
+      "frames": 36,
+      "size": [
+        996,
+        431
+      ],
+      "fps": 12,
+      "bytes": 1118926,
+      "thumb_bytes": 34909,
+      "thumb_frame": 6,
+      "mean_abs_delta": 4.045,
+      "sha256": "c5277f4189bf59f1f374ad1470c0e2b875e60e6dd9e724796ca9ff1912bd208c",
+      "thumb_sha256": "682fac7823514e07c56b90ce8c019460120276f6d85ce77cf898fa2c72516bfe",
+      "facts": {
+        "volume_shape": [
+          20,
+          97,
+          28
+        ],
+        "iso_level": 0.510815,
+        "n_faces": 9710,
+        "n_vertices": 4866,
+        "n_shell_points": 2759,
+        "frames": 36,
+        "iou_mean": 0.767,
+        "iou_min": 0.585,
+        "iou_max": 0.837
+      },
+      "seconds": 12.58
+    },
+    {
+      "kind": "gif",
+      "name": "zslices",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_zslices.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_zslices_thumb.jpg",
+      "frames": 20,
+      "size": [
+        896,
+        726
+      ],
+      "fps": 5,
+      "bytes": 1295048,
+      "thumb_bytes": 69167,
+      "thumb_frame": 10,
+      "mean_abs_delta": 3.06,
+      "sha256": "d89832df12dd0ae31c2e239d59e696afe58b973a5c5a7087149d66e7d5e8df9c",
+      "thumb_sha256": "b02698a38336ea5c99073aa639c69bc46351ee5ebd11eaa1217608683f0a1a7a",
+      "facts": {
+        "volume_shape": [
+          20,
+          97,
+          28
+        ],
+        "frames": 20,
+        "upscale": 6,
+        "value_range": [
+          0.0,
+          1.22636
+        ],
+        "threshold": 0.510815
+      },
+      "seconds": 2.04
+    },
+    {
+      "kind": "gif",
+      "name": "registration",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_registration.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_registration_thumb.jpg",
+      "frames": 48,
+      "size": [
+        972,
+        500
+      ],
+      "fps": 6,
+      "bytes": 524094,
+      "thumb_bytes": 53184,
+      "thumb_frame": 47,
+      "mean_abs_delta": 1.655,
+      "sha256": "25a7ea2cfd2e6b4c6e27eed34ba94afdcbc1ceb45e6505f3f500738946455528",
+      "thumb_sha256": "a5c054a3d1045cf3121a841eed565b6c857506c7f2470394a6fe36940d93e7af",
+      "facts": {
+        "n_points": 3000,
+        "n_iter": 48,
+        "rotation_deg": 22.0,
+        "translation": 42.45109,
+        "noise_sigma": 1.21599,
+        "rmse_first": 22.76986,
+        "rmse_last": 1.75378,
+        "rmse_raw_before": 74.76265,
+        "improve_x": 12.98
+      },
+      "seconds": 5.06
+    },
+    {
+      "kind": "png",
+      "name": "normals",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingstudio_normals.png",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingstudio_normals_thumb.jpg",
+      "size": [
+        1840,
+        600
+      ],
+      "bytes": 336638,
+      "thumb_bytes": 27057,
+      "std": 51.31,
+      "sha256": "f94a57b604090a347d6ab017c6d022da301ca046c4db8e81270ae233e87d87d8",
+      "thumb_sha256": "5186eac2dec4376bbe0429547179066758b8d1f46442ce0fac4ed0292a0ea755",
+      "facts": {
+        "source": "itokawa_f0049152.stl (JAXA はやぶさ Gaskell 形状モデル)",
+        "n_faces": 49152,
+        "n_vertices": 24578,
+        "outward_fraction": 0.98956,
+        "outward_faces": 48639,
+        "surface_area": 0.39936,
+        "coverage_front_px": 38540,
+        "coverage_back_px": 39686
+      },
+      "seconds": 2.63
+    },
+    {
+      "kind": "gif",
+      "name": "lightfield",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_lightfield.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_lightfield_thumb.jpg",
+      "frames": 24,
+      "size": [
+        864,
+        484
+      ],
+      "fps": 8,
+      "bytes": 2332589,
+      "thumb_bytes": 74543,
+      "thumb_frame": 3,
+      "mean_abs_delta": 4.906,
+      "sha256": "96b9cf0e8fe3b147712b12e371cd4188ab3a08964e17c09a321dc85870e4968b",
+      "thumb_sha256": "2cd504afdbbdd505b378634c6c21bb7b67c2591d4614cf9bc28d6a4ef9c08a48",
+      "facts": {
+        "angular": [
+          7,
+          7
+        ],
+        "spatial": [
+          128,
+          128
+        ],
+        "n_views": 49,
+        "max_slope_px": 21.3333,
+        "frames": 24,
+        "epi_row": 64,
+        "refocus_var_slope0": 0.006824,
+        "refocus_var_slope3": 0.014866
+      },
+      "seconds": 1.86
+    },
+    {
+      "kind": "gif",
+      "name": "depth3d",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_depth3d.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_depth3d_thumb.jpg",
+      "frames": 30,
+      "size": [
+        812,
+        620
+      ],
+      "fps": 10,
+      "bytes": 677068,
+      "thumb_bytes": 51503,
+      "thumb_frame": 29,
+      "mean_abs_delta": 0.943,
+      "sha256": "9979afba20ff75e6a39e2fee71691c3bcb322517275fd51c0dba9195f043ed83",
+      "thumb_sha256": "80ab0fa98f2d58fd36a048027b6488205dd638b38c81c2d6ea2070bd6a789391",
+      "facts": {
+        "source": "itokawa_f0049152.stl",
+        "resolution": 200,
+        "n_points": 9715,
+        "valid_fraction": 0.24288,
+        "depth_min": 0.736283,
+        "depth_max": 0.882694,
+        "frames": 30,
+        "half_pixel_shift_world": 0.00228791,
+        "fx": 241.4214
+      },
+      "seconds": 3.57
+    },
+    {
+      "kind": "gif",
+      "name": "cadmap",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_cadmap.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_cadmap_thumb.jpg",
+      "frames": 24,
+      "size": [
+        1440,
+        572
+      ],
+      "fps": 10,
+      "bytes": 468694,
+      "thumb_bytes": 43524,
+      "thumb_frame": 5,
+      "mean_abs_delta": 2.003,
+      "sha256": "6b3436dea6cc6eacf919c922321d139e38abf37f9f8b3d624377655ee564f8c0",
+      "thumb_sha256": "779922cc5af58af6e8234b1e539f150f66a5dbd5fd8482fa6e858913a1ec98df",
+      "facts": {
+        "n_faces": 1400,
+        "n_vertices": 702,
+        "surface_area": 8856.601,
+        "image": [
+          240,
+          240
+        ],
+        "hit_pixels": 15980,
+        "hit_fraction": 0.27743,
+        "faces_seen": 608,
+        "coverage_faces": 0.43429,
+        "coverage_area": 0.46839,
+        "front_facing_area_fraction": 0.48256,
+        "signed_volume": 37290.417,
+        "sample_points": 26000,
+        "point_visible_fraction": 0.41292,
+        "point_occluded_fraction": 0.58708,
+        "defects": [
+          {
+            "label": 1,
+            "n_pixels": 377,
+            "n_hit": 377,
+            "hit_fraction": 1.0,
+            "n_faces": 12,
+            "area": 59.4492,
+            "area_naive": 37.1821,
+            "depth_mean": 101.7415
+          },
+          {
+            "label": 2,
+            "n_pixels": 197,
+            "n_hit": 197,
+            "hit_fraction": 1.0,
+            "n_faces": 9,
+            "area": 38.069,
+            "area_naive": 25.8956,
+            "depth_mean": 117.4575
+          },
+          {
+            "label": 3,
+            "n_pixels": 253,
+            "n_hit": 0,
+            "hit_fraction": 0.0,
+            "n_faces": 0,
+            "area": 0.0,
+            "area_naive": 0.0,
+            "depth_mean": NaN
+          },
+          {
+            "label": 4,
+            "n_pixels": 149,
+            "n_hit": 0,
+            "hit_fraction": 0.0,
+            "n_faces": 0,
+            "area": 0.0,
+            "area_naive": 0.0,
+            "depth_mean": NaN
+          }
+        ],
+        "frames": 24
+      },
+      "seconds": 43.69
+    },
+    {
+      "kind": "gif",
+      "name": "crop3d",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_crop3d.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_crop3d_thumb.jpg",
+      "frames": 36,
+      "size": [
+        976,
+        491
+      ],
+      "fps": 8,
+      "bytes": 455816,
+      "thumb_bytes": 42381,
+      "thumb_frame": 31,
+      "mean_abs_delta": 3.336,
+      "sha256": "862ef4b4faa3d367f9cd8faeafac2fd16b5b357b77d25ca19852dd0d86ac4c2d",
+      "thumb_sha256": "80b5fc437aa4d8e80ba34fb3b9a1b13ef1b43bd6aedc04c9e3c376c0879abe92",
+      "facts": {
+        "volume_shape": [
+          20,
+          97,
+          28
+        ],
+        "crop_shape": [
+          20,
+          40,
+          28
+        ],
+        "offset": [
+          0,
+          18,
+          0
+        ],
+        "domain": "y in [20, 56)",
+        "uncrop_shape_matches": true,
+        "outside_box_max_after_uncrop": 0.0,
+        "roundtrip_max_abs_error": 0.0,
+        "n_points": {
+          "all": 2759,
+          "crop": 1332,
+          "processed": 3262,
+          "pasted": 3262
+        },
+        "frames": 36
+      },
+      "seconds": 2.46
+    },
+    {
+      "kind": "gif",
+      "name": "studio_walk",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_studio_walk.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_studio_walk_thumb.jpg",
+      "frames": 24,
+      "size": [
+        1280,
+        800
+      ],
+      "fps": 4,
+      "bytes": 1594324,
+      "thumb_bytes": 48556,
+      "thumb_frame": 6,
+      "mean_abs_delta": 3.043,
+      "sha256": "8debe840b41910090bcce038fcfdeef1940d4da287adce050cbdf27b8eaa9138",
+      "thumb_sha256": "908485f14d47110fd6bc277131db3e0777bb47d54d376bcc819b59cf08b7df9e",
+      "facts": {
+        "n_vertices": 24578,
+        "n_faces": 49152,
+        "splat_points": 73730,
+        "radius": 0.296137,
+        "fov_default": 70.0,
+        "fov_range": [
+          40.0,
+          100.0
+        ],
+        "window": [
+          1280,
+          800
+        ],
+        "frames": 24,
+        "step_per_tap": 0.005923
+      },
+      "seconds": 4.83
+    },
+    {
+      "kind": "gif",
+      "name": "studio_turntable",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_studio_turntable.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_studio_turntable_thumb.jpg",
+      "frames": 30,
+      "size": [
+        1280,
+        800
+      ],
+      "fps": 10,
+      "bytes": 922400,
+      "thumb_bytes": 39268,
+      "thumb_frame": 8,
+      "mean_abs_delta": 2.173,
+      "sha256": "1ee6c8952c0409fe3459fbc8b59511d3bb842a227f927974c1e45bbb6cc20854",
+      "thumb_sha256": "5ed9b8a427f9c9b7b43b65525c18bb610bac23f74ef15f1f94b1288cfe4ee0db",
+      "facts": {
+        "volume_shape": [
+          20,
+          97,
+          28
+        ],
+        "n_points": 2733,
+        "otsu_threshold": 0.538929,
+        "downsampled_by": 1,
+        "yaw_per_drag_deg": 12.0,
+        "frames": 30,
+        "yaw_final": 35.0,
+        "window": [
+          1280,
+          800
+        ]
+      },
+      "seconds": 4.97
+    },
+    {
+      "kind": "gif",
+      "name": "studio_help",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_studio_help.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_studio_help_thumb.jpg",
+      "frames": 24,
+      "size": [
+        1000,
+        720
+      ],
+      "fps": 3,
+      "bytes": 533709,
+      "thumb_bytes": 50014,
+      "thumb_frame": 1,
+      "mean_abs_delta": 0.727,
+      "sha256": "01b8bd80f77113db0b8224dca1618918676d9bb88390ee463a50eb6d0da22675",
+      "thumb_sha256": "c3901ee2fe3af20ee67c344cd7e93db22d1812562a647e3a504c9ee83381186f",
+      "facts": {
+        "pages": [
+          {
+            "dim": "2d",
+            "name": "tb_lf_refocus",
+            "authored": true,
+            "chars": 925
+          },
+          {
+            "dim": "2d",
+            "name": "tb_range_doppler_map",
+            "authored": true,
+            "chars": 935
+          },
+          {
+            "dim": "2d",
+            "name": "tb_monogenic_phase",
+            "authored": true,
+            "chars": 927
+          },
+          {
+            "dim": "2d",
+            "name": "tb_spad_deadtime_apply",
+            "authored": true,
+            "chars": 983
+          },
+          {
+            "dim": "2d",
+            "name": "tb_beamform_delay_sum",
+            "authored": true,
+            "chars": 1035
+          },
+          {
+            "dim": "2d",
+            "name": "tb_angular_spectrum_propagate",
+            "authored": true,
+            "chars": 998
+          },
+          {
+            "dim": "3d",
+            "name": "icp_point2plane",
+            "authored": true,
+            "chars": 993
+          },
+          {
+            "dim": "3d",
+            "name": "principal_curvatures",
+            "authored": true,
+            "chars": 866
+          }
+        ],
+        "help_files_2d": 879,
+        "help_files_3d": 310,
+        "family_help": {
+          "acoustics": {
+            "help_pages": 19,
+            "reachable_via_tb": 3,
+            "unreachable": 16
+          },
+          "interferometry": {
+            "help_pages": 9,
+            "reachable_via_tb": 0,
+            "unreachable": 9
+          },
+          "lightfield": {
+            "help_pages": 17,
+            "reachable_via_tb": 8,
+            "unreachable": 9
+          },
+          "math": {
+            "help_pages": 26,
+            "reachable_via_tb": 6,
+            "unreachable": 20
+          },
+          "motionmag": {
+            "help_pages": 9,
+            "reachable_via_tb": 2,
+            "unreachable": 7
+          },
+          "optics": {
+            "help_pages": 18,
+            "reachable_via_tb": 1,
+            "unreachable": 17
+          },
+          "photon": {
+            "help_pages": 17,
+            "reachable_via_tb": 6,
+            "unreachable": 11
+          },
+          "quat": {
+            "help_pages": 19,
+            "reachable_via_tb": 12,
+            "unreachable": 7
+          },
+          "rangedoppler": {
+            "help_pages": 8,
+            "reachable_via_tb": 4,
+            "unreachable": 4
+          },
+          "specular": {
+            "help_pages": 13,
+            "reachable_via_tb": 3,
+            "unreachable": 10
+          }
+        },
+        "family_help_total": 155,
+        "family_reachable_total": 45,
+        "family_unreachable_total": 110,
+        "typed_tb_ops_in_registry": 105,
+        "frames": 24,
+        "dialog": [
+          1000,
+          720
+        ]
+      },
+      "seconds": 2.7
+    },
+    {
+      "kind": "gif",
+      "name": "studio_editor",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_studio_editor.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_studio_editor_thumb.jpg",
+      "frames": 24,
+      "size": [
+        1060,
+        740
+      ],
+      "fps": 6,
+      "bytes": 360200,
+      "thumb_bytes": 49464,
+      "thumb_frame": 23,
+      "mean_abs_delta": 0.141,
+      "sha256": "3591cb882ee4ca11f223672ba41eed12292f28cb57b00d608a55acfcd9afa441",
+      "thumb_sha256": "17ba9905a7ea85cecbcfceca578ea2a9a4b2c1a0486b5ad43890109d246cf885",
+      "facts": {
+        "code_lines": 18,
+        "frames": 24,
+        "status": "PASS ✓ (exit 0)",
+        "output_lines": 6,
+        "output_tail": [
+          "foreground fraction = 0.2995",
+          "objects = 21",
+          "area  min/median/max = 1118 / 1494 / 3084"
+        ],
+        "dialog": [
+          1060,
+          740
+        ]
+      },
+      "seconds": 4.25
+    },
+    {
+      "kind": "gif",
+      "name": "studio_opsearch",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_studio_opsearch.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_studio_opsearch_thumb.jpg",
+      "frames": 17,
+      "size": [
+        1280,
+        800
+      ],
+      "fps": 4,
+      "bytes": 542663,
+      "thumb_bytes": 41211,
+      "thumb_frame": 6,
+      "mean_abs_delta": 0.403,
+      "sha256": "334714d58ef28bd538b6cc05b941e3f1cd5a4f5b1b78bb0839f4880721f836a1",
+      "thumb_sha256": "c09c964f69906fea76b6b29a454ec6fc046e48f22a8b6753600000378380e847",
+      "facts": {
+        "total_ops": 903,
+        "query": "watershed",
+        "steps": [
+          {
+            "text": "",
+            "matches": 903
+          },
+          {
+            "text": "w",
+            "matches": 77
+          },
+          {
+            "text": "wa",
+            "matches": 11
+          },
+          {
+            "text": "wat",
+            "matches": 4
+          },
+          {
+            "text": "wate",
+            "matches": 4
+          },
+          {
+            "text": "water",
+            "matches": 4
+          },
+          {
+            "text": "waters",
+            "matches": 4
+          },
+          {
+            "text": "watersh",
+            "matches": 4
+          },
+          {
+            "text": "watershe",
+            "matches": 4
+          },
+          {
+            "text": "watershed",
+            "matches": 4
+          },
+          {
+            "text": "cad",
+            "matches": 0
+          }
+        ],
+        "final_matches": 4,
+        "selected_found": true,
+        "frames": 17,
+        "window": [
+          1280,
+          800
+        ]
+      },
+      "seconds": 3.25
+    },
+    {
+      "kind": "gif",
+      "name": "studio_pipeline",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_studio_pipeline.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_studio_pipeline_thumb.jpg",
+      "frames": 24,
+      "size": [
+        1280,
+        800
+      ],
+      "fps": 4,
+      "bytes": 491072,
+      "thumb_bytes": 41321,
+      "thumb_frame": 19,
+      "mean_abs_delta": 2.273,
+      "sha256": "c7d90678baa3e80c38098797e8c24cdafdf354fb2056b2d8001ee7f180f2f37d",
+      "thumb_sha256": "53877485cd449b5fd84e59ebe0e8f469726325f6fa169d8827df0781657f3af6",
+      "facts": {
+        "steps": [
+          {
+            "note": "① 平滑化だけ",
+            "stages": 1,
+            "problems": [],
+            "problem_rows": [
+              "no problems"
+            ]
+          },
+          {
+            "note": "② Otsu で 2 値化",
+            "stages": 2,
+            "problems": [],
+            "problem_rows": [
+              "no problems"
+            ]
+          },
+          {
+            "note": "③ 円形オープニングで粒を分ける",
+            "stages": 3,
+            "problems": [],
+            "problem_rows": [
+              "no problems"
+            ]
+          },
+          {
+            "note": "④ 枠に触れた領域を捨てる",
+            "stages": 4,
+            "problems": [],
+            "problem_rows": [
+              "no problems"
+            ]
+          },
+          {
+            "note": "⑤ わざと型の合わない op(region → contour)を足す",
+            "stages": 5,
+            "problems": [
+              "stage 3 (sk_clear_border) outputs 'region' but circularity_xld expects 'contour'"
+            ],
+            "problem_rows": [
+              "! stage 5 (circularity_xld): stage 3 (sk_clear_border) outputs 'region' but circularity_xld expects 'contour'"
+            ]
+          },
+          {
+            "note": "⑥ 外して元に戻す",
+            "stages": 4,
+            "problems": [],
+            "problem_rows": [
+              "no problems"
+            ]
+          }
+        ],
+        "frames": 24,
+        "window": [
+          1280,
+          800
+        ],
+        "mismatch_detected": true
+      },
+      "seconds": 3.86
+    }
+  ]
+}

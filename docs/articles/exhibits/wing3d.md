@@ -9,9 +9,25 @@
 
 ### 3D 計測ウィング ―― ボクセルと点群を「測る」ための op
 
+![境界だけ持つと 6 % に痩せる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_boundary_shell.gif)
+
+*↑ **境界だけ持つと 6 % に痩せる** ―― 中実の球(267,731 voxel)を `vol_boundary` で内側 1 層の殻にすると **6.1 %**(16,418 voxel)まで痩せる。その殻を `vol_boundary_points` で mm 座標の点群にして `fit_sphere3` に渡すと、**中心誤差 0.000 mm**(真値 (25.6, 25.6, 25.6) mm)。半径だけは -0.175 mm ずれる — 殻が「内側 1 層」だからで、これは消さずに図に書いてある。 使用 op: `vol_boundary`, `vol_boundary_points`, `fit_sphere3`。*
+
 [![run-length で 1/71](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_rle_compression_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_rle_compression.png)
 
 *↑ **run-length で 1/71** ―― 256³ の合成部品を run-length で持つと **1/71**(16.78 MB → 0.237 MB、19,764 run)。しかも展開せずに体積 1,610,948 voxel を **241 倍速**、BBox を **24 倍速**で返し、集合演算(球 ∪ 軸 = 1,508,456 voxel)も run のまま解ける。decode の往復は bit 一致。 使用 op: `vol_rle_encode`, `vol_rle_decode`, `vol_rle_volume`, `vol_rle_bbox`, `vol_rle_centroid`, `vol_rle_union`, `vol_rle_intersect`, `vol_rle_difference`。*
+
+[![Frangi 対 Sato ―― 否定対照(粒状度)を並べて初めて分かる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_vesselness_control_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_vesselness_control.png)
+
+*↑ **Frangi 対 Sato ―― 否定対照(粒状度)を並べて初めて分かる** ―― 管 1 本と球 2 個だけの合成 CT に、管状度 2 種と粒状度 1 種を掛けた。`vol_frangi` は管を球より **1.26 倍**強く出すが、`vol_sato` は **0.97 倍**でほとんど区別しない。否定対照の `vol_hessian_blobness` は **0.32 倍** = 管より球を選び、向きがきれいに逆転する。「血管が光った」だけでは管状度の証明にならない、という当たり前を図にした。 使用 op: `vol_frangi`, `vol_sato`, `vol_hessian_blobness`。*
+
+![3-D スケルトンをグラフにする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_skeleton_graph.gif)
+
+*↑ **3-D スケルトンをグラフにする** ―― 合成した枝分かれ構造(8,690 voxel)を `skeletonize_vol` に通すと 192 voxel の 1 voxel 幅の針金になる(**2.21 %**)。そこから枝 **4 本**・分岐 **1 か所**・端点 **4 点**をグラフとして取り出した。白が分岐、ローズが端点、枝は連結成分ごとに色分け。ターンテーブルで1 周するとつながり方が読める。 使用 op: `skeletonize_vol`, `skeleton_branches3d`, `skeleton_junctions3d`, `skeleton_endpoints3d`。*
+
+[![virtual probe で壁厚 2.000 mm(真値 2.000 mm)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_wall_thickness_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_wall_thickness.png)
+
+*↑ **virtual probe で壁厚 2.000 mm(真値 2.000 mm)** ―― 外径 10.000 mm / 内径 8.000 mm の合成パイプにプローブを 1 本だけ刺す。`vol_edge_probe` が 4 つのエッジをサブサンプル精度で拾い、`vol_wall_thickness` が立ち上がり→立ち下がりの対から壁厚 **2.0000 mm / 2.0000 mm**(真値 2.000 mm)を返す。平滑化 sigma を 3.0 まで上げると 2.1252 mm (**+6.3 %**)に太る — ノイズ対策がそのまま寸法の偏りになる、という測定の基本も一緒に。 使用 op: `vol_profile_line`, `vol_edge_probe`, `vol_wall_thickness`。*
 
 ![断層を送る ―― `z = 48 / 95` は 38.40 mm のこと](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_slice_zsweep.gif)
 
@@ -43,7 +59,11 @@
 
 | 展示 | 形式 | ファイル | 実測 |
 |---|---|---|---|
+| boundary | GIF+mp4 | `media/wing3d_boundary_shell.gif` | 36 フレーム, 1120x640, 2.75 MB, 128 色, mp4 1.59 MB |
 | rle | PNG | `wing3d_rle_compression.png` | 1120x720, 52 kB |
+| vesselness | PNG | `wing3d_vesselness_control.png` | 1120x700, 72 kB |
+| skeleton | GIF+mp4 | `media/wing3d_skeleton_graph.gif` | 48 フレーム, 1120x660, 1.40 MB, 256 色, mp4 0.26 MB |
+| wall | PNG | `wing3d_wall_thickness.png` | 1120x680, 99 kB |
 | zsweep | GIF+mp4 | `media/wing3d_slice_zsweep.gif` | 96 フレーム, 1120x748, 1.16 MB, 256 色, mp4 0.16 MB |
 | mpr | GIF+mp4 | `media/wing3d_mpr_crosshair.gif` | 60 フレーム, 1120x620, 1.18 MB, 256 色, mp4 0.22 MB |
 | oblique | GIF+mp4 | `media/wing3d_oblique_slice.gif` | 36 フレーム, 1120x640, 0.90 MB, 256 色, mp4 0.11 MB |

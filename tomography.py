@@ -518,11 +518,17 @@ def _choice(v, allowed: tuple, name: str, op: str) -> str:
 
 
 def _default_detectors(h: int, w: int) -> int:
-    """Enough bins to cover the image diagonal, forced odd so bin ``(n-1)/2`` is
-    exactly the axis of rotation. An even count puts the axis *between* two bins,
-    which is a half-pixel centre-of-rotation error that reconstructs as a faint
-    double edge — the very artefact :func:`sinogram_center_of_rotation` exists to
-    find, manufactured by the geometry itself."""
+    """Enough bins to cover the image diagonal, forced odd so that a real detector
+    bin — index ``(n-1)/2`` — sits on the axis of rotation rather than the axis
+    falling between two of them.
+
+    This module's own geometry is self-consistent either way (everything places
+    the axis at ``(n_det-1)/2``, and an even count is measured to shift the
+    centre-of-rotation estimate by only 0.015 px, not the half pixel one might
+    expect), so this is a default and not a requirement. It matters when the
+    sinogram comes from a real detector, where an even bin count means the axis
+    genuinely is between two bins and the half-pixel offset is real — which is
+    what :func:`sinogram_center_of_rotation` measures."""
     n = int(np.ceil(np.hypot(h, w)))
     return n + 1 if n % 2 == 0 else n
 

@@ -3,6 +3,64 @@
   "seed": 20260902,
   "exhibits": [
     {
+      "name": "wing3d_boundary_shell",
+      "title": "境界だけ持つと 6 % に痩せる",
+      "ops": [
+        "vol_boundary",
+        "vol_boundary_points",
+        "fit_sphere3"
+      ],
+      "facts": {
+        "solid_voxels": 267731,
+        "shell_voxels": 16418,
+        "shell_pct": 6.1322745591657295,
+        "boundary_points": 16418,
+        "center_mm": [
+          25.600000000010603,
+          25.599999999994687,
+          25.599999999994715
+        ],
+        "center_truth_mm": [
+          25.6,
+          25.6,
+          25.6
+        ],
+        "center_err_mm": 1.2983900440942024e-11,
+        "radius_mm": 15.82483664966016,
+        "radius_truth_mm": 16.0,
+        "radius_err_mm": -0.1751633503398402,
+        "fit_rms_mm": 0.10073213848590992,
+        "solid_bool_MB": 2.097152,
+        "points_MB": 0.394032
+      },
+      "caption": "中実の球(267,731 voxel)を `vol_boundary` で内側 1 層の殻にすると **6.1 %**(16,418 voxel)まで痩せる。その殻を `vol_boundary_points` で mm 座標の点群にして `fit_sphere3` に渡すと、**中心誤差 0.000 mm**(真値 (25.6, 25.6, 25.6) mm)。半径だけは -0.175 mm ずれる — 殻が「内側 1 層」だからで、これは消さずに図に書いてある。",
+      "kind": "gif",
+      "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_boundary_shell.gif",
+      "mp4": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_boundary_shell.mp4",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wing3d_boundary_shell_thumb.jpg",
+      "frames": 36,
+      "fps": 14,
+      "gif_shape": [
+        640,
+        1120,
+        3
+      ],
+      "mp4_shape": [
+        640,
+        1120,
+        3
+      ],
+      "gif_colors": 128,
+      "gif_bytes": 2749505,
+      "mp4_bytes": 1591555,
+      "thumb_bytes": 63804,
+      "thumb_frame": 6,
+      "gif_sha256": "717c35735180a1a7f4234b463abee4c2d8b6d3195b38b9efdc2fdd8f5927ef25",
+      "mp4_sha256": "c732ad605c8a78cb76a186db34e1dc6de17fceb117df6f1774997ae259364fa9",
+      "exhibit": "boundary",
+      "seconds": 22.68264600005932
+    },
+    {
       "name": "wing3d_rle_compression",
       "title": "run-length で 1/71",
       "ops": [
@@ -54,6 +112,176 @@
       "thumb_bytes": 44754,
       "exhibit": "rle",
       "seconds": 3.000526199815795
+    },
+    {
+      "name": "wing3d_vesselness_control",
+      "title": "Frangi 対 Sato ―― 否定対照(粒状度)を並べて初めて分かる",
+      "ops": [
+        "vol_frangi",
+        "vol_sato",
+        "vol_hessian_blobness"
+      ],
+      "facts": {
+        "vol_frangi": {
+          "tube_mean": 0.48596288113391967,
+          "blob_mean": 0.38622819318882196,
+          "ratio": 1.2582273632632994,
+          "max": 1.0
+        },
+        "vol_sato": {
+          "tube_mean": 0.6187191812529258,
+          "blob_mean": 0.6360559809229693,
+          "ratio": 0.9727432801671224,
+          "max": 1.0
+        },
+        "vol_hessian_blobness": {
+          "tube_mean": 0.16508505239610083,
+          "blob_mean": 0.5188592737217373,
+          "ratio": 0.31816922382818474,
+          "max": 1.0
+        }
+      },
+      "caption": "管 1 本と球 2 個だけの合成 CT に、管状度 2 種と粒状度 1 種を掛けた。`vol_frangi` は管を球より **1.26 倍**強く出すが、`vol_sato` は **0.97 倍**でほとんど区別しない。否定対照の `vol_hessian_blobness` は **0.32 倍** = 管より球を選び、向きがきれいに逆転する。「血管が光った」だけでは管状度の証明にならない、という当たり前を図にした。",
+      "kind": "png",
+      "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_vesselness_control.png",
+      "png_bytes": 72097,
+      "png_size": [
+        1120,
+        700
+      ],
+      "png_sha256": "cc38dce5f5e7553be77acf186a8c7d47c20941c8633c4ba95acb04323046ebd5",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_vesselness_control_thumb.jpg",
+      "thumb_bytes": 44817,
+      "exhibit": "vesselness",
+      "seconds": 3.027009000070393
+    },
+    {
+      "name": "wing3d_skeleton_graph",
+      "title": "3-D スケルトンをグラフにする",
+      "ops": [
+        "skeletonize_vol",
+        "skeleton_branches3d",
+        "skeleton_junctions3d",
+        "skeleton_endpoints3d"
+      ],
+      "facts": {
+        "solid_voxels": 8690,
+        "skeleton_voxels": 192,
+        "skeleton_pct": 2.2094361334867663,
+        "branches": 4,
+        "junction_clusters": 1,
+        "junction_voxels": 3,
+        "endpoints": 4,
+        "input_segments": 6
+      },
+      "caption": "合成した枝分かれ構造(8,690 voxel)を `skeletonize_vol` に通すと 192 voxel の 1 voxel 幅の針金になる(**2.21 %**)。そこから枝 **4 本**・分岐 **1 か所**・端点 **4 点**をグラフとして取り出した。白が分岐、ローズが端点、枝は連結成分ごとに色分け。ターンテーブルで1 周するとつながり方が読める。",
+      "kind": "gif",
+      "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_skeleton_graph.gif",
+      "mp4": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_skeleton_graph.mp4",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wing3d_skeleton_graph_thumb.jpg",
+      "frames": 48,
+      "fps": 14,
+      "gif_shape": [
+        660,
+        1120,
+        3
+      ],
+      "mp4_shape": [
+        660,
+        1120,
+        3
+      ],
+      "gif_colors": 256,
+      "gif_bytes": 1395438,
+      "mp4_bytes": 256388,
+      "thumb_bytes": 37284,
+      "thumb_frame": 8,
+      "gif_sha256": "dfe101561c4000ec6372f401f004950d359aef12e9b53e65f74e5ddeac7f0205",
+      "mp4_sha256": "360adee6e4b7043d7bb6144cfea58b06caaf56ff23295c08ae0e7dca08e15783",
+      "exhibit": "skeleton",
+      "seconds": 28.27977199992165
+    },
+    {
+      "name": "wing3d_wall_thickness",
+      "title": "virtual probe で壁厚 2.000 mm(真値 2.000 mm)",
+      "ops": [
+        "vol_profile_line",
+        "vol_edge_probe",
+        "vol_wall_thickness"
+      ],
+      "facts": {
+        "thicknesses_mm": [
+          2.0,
+          2.0
+        ],
+        "truth_mm": 2.0,
+        "edges": [
+          {
+            "t_mm": 2.0,
+            "polarity": 1,
+            "amplitude": 1.2818298300253963,
+            "x_voxel": 8.0
+          },
+          {
+            "t_mm": 4.0,
+            "polarity": -1,
+            "amplitude": 1.281829830025397,
+            "x_voxel": 16.0
+          },
+          {
+            "t_mm": 20.0,
+            "polarity": 1,
+            "amplitude": 1.281829830025397,
+            "x_voxel": 80.0
+          },
+          {
+            "t_mm": 22.0,
+            "polarity": -1,
+            "amplitude": 1.281829830025397,
+            "x_voxel": 88.0
+          }
+        ],
+        "sigma_sweep": {
+          "0.5": [
+            2.0,
+            2.0
+          ],
+          "1.0": [
+            2.0,
+            2.0
+          ],
+          "2.0": [
+            2.0048546620962258,
+            2.0048546620962284
+          ],
+          "3.0": [
+            2.125213656471992,
+            2.125213656471992
+          ],
+          "4.0": [
+            2.43788336430954,
+            2.437883364309535
+          ]
+        },
+        "spacing_mm": [
+          0.25,
+          0.25,
+          0.25
+        ]
+      },
+      "caption": "外径 10.000 mm / 内径 8.000 mm の合成パイプにプローブを 1 本だけ刺す。`vol_edge_probe` が 4 つのエッジをサブサンプル精度で拾い、`vol_wall_thickness` が立ち上がり→立ち下がりの対から壁厚 **2.0000 mm / 2.0000 mm**(真値 2.000 mm)を返す。平滑化 sigma を 3.0 まで上げると 2.1252 mm (**+6.3 %**)に太る — ノイズ対策がそのまま寸法の偏りになる、という測定の基本も一緒に。",
+      "kind": "png",
+      "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_wall_thickness.png",
+      "png_bytes": 98825,
+      "png_size": [
+        1120,
+        680
+      ],
+      "png_sha256": "681f7798e38d082447aeffdbd7691c0e78320b0f84fda7d70a3c9b7af030652f",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_wall_thickness_thumb.jpg",
+      "thumb_bytes": 61576,
+      "exhibit": "wall",
+      "seconds": 2.6651202999055386
     },
     {
       "name": "wing3d_slice_zsweep",
