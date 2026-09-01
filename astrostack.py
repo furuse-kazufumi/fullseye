@@ -505,7 +505,7 @@ def synth_starfield(shape=(128, 128), n_stars=30, flux_min=400.0, flux_max=9000.
         "cosmic_mask": cosmic_mask, "n_cosmic": int(ncr),
         "cosmic_flux": float(cflux),
         "noiseless": np.ascontiguousarray(noiseless),
-        "shape": (h, w), "seed": int(s),
+        "shape": (h, w), "seed": int(s), "field_seed": int(fs),
     }
     return np.ascontiguousarray(frame), truth
 
