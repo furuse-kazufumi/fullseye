@@ -77,6 +77,22 @@ def _score_volume(rng):
                     + ((x - c[2]) / s[2]) ** 2) / 2.0)
 
 
+def _motion_clip(rng):
+    """既知の振幅・周波数でサブピクセル並進させた格子のクリップ。
+
+    乱数フレームを積んでも「振動している」ことにはならず、帯域通過も位相増幅も
+    意味を持たない。合成の前方モデルを種にすると、増幅後の変位が alpha*d に
+    なるという**閉形式の真値**がプールの中に入る。
+    """
+    import motionmag                                     # noqa: PLC0415
+    return motionmag.synthesize_translation(
+        (32, 32), 32, amplitude_px=float(rng.uniform(0.05, 0.5)),
+        frequency_hz=4.0, fps=32.0,
+        direction_deg=float(rng.uniform(0.0, 180.0)),
+        noise_sigma=float(rng.uniform(0.0, 0.02)),
+        seed=int(rng.integers(0, 1 << 31)))
+
+
 def _photon_counts(rng):
     """光子カウントヒストグラム(非負・時間 bin 添字)。
 
@@ -163,6 +179,10 @@ def make_generators():
                                + (np.arange(32)[None, :] - 16.0) ** 2) / 200.0)),
             (0.80, 0.55, 0.35), (0.30, 0.20, 1.0),
             specular=0.5, shininess=48.0),
+        # video = (T,H,W) のフレーム列。**先頭が時間軸**という約束が voxel との
+        # 違いで、種は「既知の振幅・周波数でサブピクセル並進させた格子」=
+        # 増幅と変位推定の真値が閉形式で分かるクリップにする
+        "video": _motion_clip,
         # score = ピークを持つ 3-D 相関/スコア volume。**カタログのどの op も
         # score を出力しない**ので、種を置かないと `refine_peak_newton` が
         # 構造的に到達不能なまま「発見ゼロ」に数えられる(型到達可能性の
@@ -247,6 +267,9 @@ PARAM_HINTS = {
     "y": lambda rng: np.linspace(0.0, 1.0, 64),
     "z": lambda rng: np.linspace(0.0, 1.0, 64),
     "a": lambda rng: 1.0,
+    # 時間軸の単位。T=32 / fps=32 なので 4 Hz はちょうど bin に乗り、
+    # 3-5 Hz の通過帯域が空にならない
+    "fps": lambda rng: 32.0, "f_lo": lambda rng: 3.0, "f_hi": lambda rng: 5.0,
 }
 
 #: シグネチャが「型リスト=先頭位置引数」の素直な形でない op の専用ビルダー。
@@ -372,6 +395,10 @@ OP_PARAM_HINTS = {
     # 区別がつかなくなる。まず正しい形を渡してから判定する
     ("render_point_depth", "size"): lambda rng: (32, 32),
     ("synthesize_silhouette", "size"): lambda rng: (32, 32),
+    # PARAM_HINTS["alpha"] は 1.0(= 恒等利得)なので、そのままだと
+    # motion_magnify は毎回実行されるのに**一度も増幅しない**。狙いは
+    # 増幅経路を通すことなので op 名で上書きする
+    ("motion_magnify", "alpha"): lambda rng: 2.0,
     ("vol_richardson_lucy", "psf"): lambda rng: __import__("volrestore").vol_gaussian_psf(1.0),
     ("cx_wiener_deconvolve", "psf"): lambda rng: (lambda k: k / k.sum())(
         np.outer(*(np.exp(-np.linspace(-2, 2, 5) ** 2),) * 2)),
@@ -408,6 +435,8 @@ def _registry_adapters():
     d.update(opsphoton.RESULT_ADAPTERS)     # 現状は空(全 op が宣言型を素で返す)
     import opsspecular
     d.update(opsspecular.RESULT_ADAPTERS)
+    import opsmotionmag
+    d.update(opsmotionmag.RESULT_ADAPTERS)  # 意図的に空(下の理由を参照)
     d["vol_rle_components"] = lambda r: r[0] if r else None
     d["label_components"] = lambda r: r[0] if isinstance(r, tuple) else r
     return d
@@ -478,6 +507,14 @@ def catalog():
     for n, m in opsspecular.OPSSPECULAR.items():
         if m["func"] is not None:
             ops.append((n, "specular", list(m["in"]), m["out"], m["func"]))
+    # 位相ベースのモーション増幅(opsmotionmag 台帳)。新語彙 `video` は (T,H,W)。
+    # voxel と ndim は同じだが**先頭が時間軸**で、voxel を渡しても例外も NaN も
+    # 出ないまま z を時間として読む(実測確認済み)= histcube を voxel から
+    # 分けたのと同じ判断
+    import opsmotionmag
+    for n, m in opsmotionmag.OPSMOTIONMAG.items():
+        if m["func"] is not None:
+            ops.append((n, "motionmag", list(m["in"]), m["out"], m["func"]))
     return ops
 
 
@@ -558,6 +595,11 @@ TYPE_CHECKS = {
     "cscalar": lambda v: isinstance(v, complex) and not isinstance(v, np.ndarray),
     # lightfield = 4-D (V, U, H, W)。角度 2 軸 × 空間 2 軸
     "lightfield": lambda v: isinstance(v, np.ndarray) and v.ndim == 4,
+    # video = (T,H,W)。voxel と ndim は同じだが先頭が時間軸。共有すると例外も
+    # NaN も無しに z を時間として読むので型を分ける(実測確認済み)
+    "video": lambda v: isinstance(v, np.ndarray) and v.ndim == 3
+    and v.dtype.kind == "f" and v.shape[0] >= 2
+    and v.shape[1] >= 4 and v.shape[2] >= 4,
     # rgbimage = (H,W,3) の色画像。pointmap / normalmap と**構造は同じ**なので
     # 型を分けないと、法線マップを鏡面分離に渡しても例外なく「分離結果」が
     # 返る(実測確認済み)。型は入れ物の形でなく意味の約束
