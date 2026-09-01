@@ -109,6 +109,19 @@ def categories():
 RESULT_ADAPTERS = {
     "mat_svd": lambda r: {"U": r[0], "s": r[1], "Vt": r[2]},
     "mat_eigh": lambda r: {"w": r[0], "V": r[1]},
+    # stat_histogram は np.histogram 規約の ``(counts (b,), edges (b+1,))`` を返す。
+    # **長さが違うので「対」ではない**(実測 10 と 11)。`pairs` の正典は (N,2) か
+    # 「**同じ長さ**の 1-D 2 本」で、消費側 6 op はこの不揃いを名指しで拒否する
+    # ("pairs: 2-tuple must hold two 1-D arrays of equal length; got (10,) and
+    # (11,)" — 実測)。2026-09-02 まで pairs の述語が ``lambda v: True`` だった
+    # ため型の嘘として現れなかった。
+    # bin 幅は edges から一意に決まるので、**bin 中心 × 度数**の対 (b,2) に組み直す
+    # (funct_1d_to_pairs が x 列を作るのと同じ読み方)。素の (counts, edges) は
+    # ``opsmath.get("stat_histogram")`` でそのまま取れる。
+    "stat_histogram": lambda r: np.stack(
+        [(np.asarray(r[1][:-1], np.float64) + np.asarray(r[1][1:], np.float64)) / 2.0,
+         np.asarray(r[0], np.float64)], axis=1)
+    if isinstance(r, tuple) and len(r) == 2 else r,
 }
 
 
