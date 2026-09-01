@@ -1438,9 +1438,9 @@ def ex_type_fixpoint(data, log=print):
                         f"{rc['enabled_from_image2d']}/{rc['n_ops']} op に届く。",
                       C_DIM, 13, False))
         frames.append(text(to_u8(c), items))
-    frames = [frames[0]] * 3 + \
-        [f for fr in frames[1:] for f in (fr, fr, fr)] + [frames[-1]] * 6
-    info = save_gif(frames, "wingevo_type_fixpoint", fps=2)
+    # 段が 5 コマしかないので 1 コマを長く見せる(複製で伸ばすと PIL の GIF 最適化が
+    # 連続同一フレームを畳んでしまい、書いた枚数と読み戻した枚数が食い違う)。
+    info = save_gif(frames, "wingevo_type_fixpoint", fps=0.6, hold_last_ms=2600)
     cap = ("**型到達可能性の不動点** ―― 「初期プールの型から、入力が揃う op の出力型を"
            "足していく」を収束まで回す。初期プールを `image2d` 1 種だけにすると "
            f"{len(rounds) - 1} 段で {rc['enabled_from_image2d']}/{rc['n_ops']} op に届き、"
