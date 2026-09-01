@@ -718,8 +718,12 @@ def fmcw_beat_simulate(ranges_m=(10.0,), velocities_ms=(0.0,), angles_deg=None,
     Ground truth: a target placed at an exact bin centre — ``R = j*dR`` and
     ``v = i*dv`` from :func:`fmcw_design` — puts the whole of its energy in bin
     ``(i, j)`` of :func:`range_doppler_map`, whose peak magnitude is then exactly
-    ``a * N_s * N_c`` (measured relative error 2.4e-16 for the default
-    configuration; see ``tests/test_rangedoppler.py``).
+    ``a * N_s * N_c``. Measured on the default configuration: the peak magnitude
+    is bit-exactly 2048.0 (``N_s*N_c``, relative error 0.0), the largest other
+    cell in the map is 2.6e-16 of it, and with three targets at different bins
+    and different amplitudes the recovered ranges and velocities are exact to
+    0.0 metres and 0.0 m/s with amplitudes within 5.6e-17. See
+    ``tests/test_rangedoppler.py``.
 
     **Raises** ``ValueError``: a range at or beyond ``c*f_s/(2S)``, a speed at or
     beyond ``lambda/(4*T_c)``, an angle at or beyond ``asin(lambda/(2d))`` — the
