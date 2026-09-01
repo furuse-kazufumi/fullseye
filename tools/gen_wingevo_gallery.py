@@ -762,6 +762,16 @@ TITLES = {
     "points_denoise": "点群デノイズ(points)",
     "signal_denoise": "1-D 信号デノイズ(signal)",
 }
+#: 図の中で使う短い呼び名。``TITLES`` を "(" で切ると全角/半角の括弧違いで
+#: 「鏡面」のように**意味が消える**ところまで削れてしまうので、表を分けて持つ。
+SHORT = {
+    "photon_denoise": "光子計数ヒストグラムのデノイズ",
+    "vibration_map": "振動している場所の地図",
+    "lf_slope": "ライトフィールドの視差スロープ",
+    "specular_removal": "鏡面(テカり)の除去",
+    "points_denoise": "点群デノイズ",
+    "signal_denoise": "1-D 信号デノイズ",
+}
 
 
 def ex_champions(data, log=print):
