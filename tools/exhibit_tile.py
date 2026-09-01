@@ -137,15 +137,26 @@ def contact_sheet(panels: list, labels: list | None = None, *, ncols: int = 3,
     cw = max(im.width for im in imgs)
     row_h = [max(im.height for im in imgs[r * ncols:(r + 1) * ncols]) for r in range(nrows)]
     lh = label_h if labels else 0
-    th = title_h if title else 0
-
     width = ncols * cw + (ncols + 1) * pad
+
+    # 表題は折り返して**必ず全部載せる**。以前はここで中央に 1 行描くだけだったので、
+    # 幅を超えた表題が左右で黙って切れていた ―― 図の意味を説明する文字が消えるのは、
+    # 絵が壊れているのと同じくらい悪い。
+    tfont = _font(title_font_size)
+    title_lines: list[str] = []
+    if title:
+        probe = ImageDraw.Draw(Image.new("RGB", (1, 1)))
+        title_lines = _wrap(probe, title, tfont, width - 2 * pad)
+    line_h = round(title_font_size * 1.35)
+    th = (max(title_h, len(title_lines) * line_h + pad) if title_lines else 0)
+
     height = th + sum(h + lh + pad for h in row_h) + pad
     canvas = Image.new("RGB", (width, height), BG)
     draw = ImageDraw.Draw(canvas)
 
-    if title:
-        draw.text((width // 2, th // 2), title, fill=FG, font=_font(title_font_size), anchor="mm")
+    for i, line in enumerate(title_lines):
+        y = (th - len(title_lines) * line_h) // 2 + i * line_h + line_h // 2
+        draw.text((width // 2, y), line, fill=FG, font=tfont, anchor="mm")
 
     font = _font(font_size)
     for i, im in enumerate(imgs):
