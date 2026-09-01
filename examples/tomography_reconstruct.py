@@ -85,10 +85,20 @@ def slice_ellipses(z_mm):
 
 
 def build_phantom():
-    """(Z, H, W) の真のボリューム。空洞は減弱を打ち消す負の楕円で作る。"""
+    """(Z, H, W) の真のボリューム。空洞は減弱を打ち消す負の楕円で作る。
+
+    端の 4 スライスは楕円体の外(= 空気だけ)になる。`ellipse_phantom` は
+    空の楕円リストを **fail-closed で拒否する**(何も描かない指示は入力ミス)
+    ので、空スライスはここで明示的にゼロ画像として作る ―― 「部品がスキャン
+    範囲を埋めていない」は普通に起きることで、黙って握り潰す話ではない。
+    """
     z = (np.arange(N_SLICES) - (N_SLICES - 1) / 2.0) * SLICE_MM
-    return np.stack([T.ellipse_phantom(SIZE, slice_ellipses(zz), supersample=4)
-                     for zz in z]), z
+    planes = []
+    for zz in z:
+        ell = slice_ellipses(zz)
+        planes.append(T.ellipse_phantom(SIZE, ell, supersample=4) if ell
+                      else np.zeros((SIZE, SIZE)))
+    return np.stack(planes), z
 
 
 def measure_volume(vol, threshold, spacing=(SLICE_MM, PIX_MM, PIX_MM)):

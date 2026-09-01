@@ -672,6 +672,25 @@ class TestAdversarial:
         t = rc.curvature_to_table(np.array([0.1, 0.2, 0.3]))
         assert t["kind"] == "scalar"
 
+    def test_float_to_index_cast_cannot_corrupt_silently(self):
+        """★実バグの回帰テスト(敵対的な型スイープで見つけた)。
+
+        ``np.asarray(nan, dtype=int64)`` は例外を出さず INT_MIN を返し、
+        キャスト**後**は ``dtype.kind == 'i'`` なので非有限検査を素通りする。
+        3.7 のような非整数も黙って 3 に切り詰まり、**添字が 1 ずれた結果が
+        例外もなく返る**。いまはキャストの前に生の値を見る。
+        """
+        for bad in (np.array([1.0, np.nan]), np.array([1.0, np.inf])):
+            with pytest.raises(ValueError, match="non-finite"):
+                rc.indices_to_labels(bad)
+        with pytest.raises(ValueError, match="whole numbers"):
+            rc.indices_to_labels(np.array([1.0, 3.7]))
+        with pytest.raises(ValueError, match="whole numbers"):
+            rc.select_points(np.zeros((8, 3)), np.array([0.0, 2.5]))
+        # 整数値の float はそのまま通す(3.0 は 3 として正しい)
+        assert np.array_equal(rc.indices_to_labels(np.array([1.0, 3.0])),
+                              np.array([0, 1, 0, 1]))
+
     def test_matrix_to_descriptor_asymmetry_is_deliberate(self):
         """(1,n) だけ 1-D へ戻す非対称が無いと往復が静かに形を変える。"""
         assert rc.matrix_to_descriptor(np.zeros((1, 5))).shape == (5,)
