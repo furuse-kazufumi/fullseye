@@ -78,13 +78,42 @@ def test_kL_kC_kH_must_be_positive():
 # =========================================================================
 
 def test_white_maps_to_lightness_100_and_black_to_zero():
-    """D65 白色点の定義から、sRGB の白は L*=100・a*=b*=0。"""
+    """D65 白色点の定義から、sRGB の白は L*=100・a*=b*=0。
+
+    ただし **厳密には 100 にならない**(実測 100.0000038667)。公表されている
+    2 つの定数が 7 桁目で食い違っているため ―― IEC 61966-2-1 の sRGB→XYZ 行列の
+    Y 行の和は **1.0000001** で、D65 白色点の Y=1 より **1e-7** 大きい。
+    これは丸め方の違いであって実装の誤りではない(:func:`test_the_published_
+    srgb_matrix_and_white_point_disagree_in_the_seventh_digit` が出所を特定する)。
+    """
     white = M.rgb_to_lab(np.array([1.0, 1.0, 1.0]))
-    assert white[0] == pytest.approx(100.0, abs=1e-6)
+    assert white[0] == pytest.approx(100.0, abs=1e-5)
     assert white[1] == pytest.approx(0.0, abs=1e-3)
     assert white[2] == pytest.approx(0.0, abs=1e-3)
     black = M.rgb_to_lab(np.array([0.0, 0.0, 0.0]))
     assert np.allclose(black, [0.0, 0.0, 0.0], atol=1e-12)
+
+
+def test_the_published_srgb_matrix_and_white_point_disagree_in_the_seventh_digit():
+    """白が L*=100 ちょうどにならない理由を、増幅率まで含めて特定しておく。
+
+    * 行列の Y 行の和 = 1.0000001、D65 の Yn = 1 ―― 差は **1e-7**。
+    * L* は Y の立方根を通るので、Y=1 の近傍では ``dL*/dY = 116/3 = 38.667``。
+    * よって L* のずれは ``1e-7 * 38.667 = 3.867e-6`` と予測でき、
+      **実測 3.8667e-6 と一致する**。
+
+    どちらの定数を丸め直せば消せるが、公表値をそのまま持つ方を選んだ ――
+    片方を書き換えると「どこの数字を自分で変えたか」が後から分からなくなる。
+    """
+    row_sums = M._M_RGB2XYZ.sum(axis=1)
+    assert row_sums[1] == pytest.approx(1.0000001, abs=1e-12)
+    excess_y = row_sums[1] - M.D65_WHITE[1]
+    assert excess_y == pytest.approx(1e-7, abs=1e-12)
+
+    predicted = excess_y * (116.0 / 3.0)
+    measured = float(M.rgb_to_lab(np.array([1.0, 1.0, 1.0]))[0]) - 100.0
+    assert measured == pytest.approx(predicted, rel=1e-3), (measured, predicted)
+    assert measured == pytest.approx(3.8667e-6, abs=1e-9)
 
 
 def test_lab_roundtrip_is_exact_inside_the_gamut():
