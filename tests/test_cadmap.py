@@ -540,8 +540,13 @@ def test_open_mesh_is_passed_through_without_a_winding_verdict():
     assert not cadmap.cad_pixel_to_surface((V, Fin), uv, K=K, R=R, t=t,
                                            image_size=(64, 64),
                                            strict=True)["hit"][0]
-    assert cadmap.cad_visible_faces((V, Fin), K=K, R=R, t=t,
-                                    width=64, height=64).size == 0
+    # 素通しの結果そのもの: カメラ側の -z 面(0,1)は裏面になって消え、代わりに
+    # 側壁の**内側**が見える(= 直していない)。例外にも空にもならない。
+    vis_in = cadmap.cad_visible_faces((V, Fin), K=K, R=R, t=t,
+                                      width=64, height=64)
+    assert vis_in.size > 0 and set(vis_in.tolist()).isdisjoint({0, 1})
+    assert {0, 1} <= set(cadmap.cad_visible_faces((V, F), K=K, R=R, t=t,
+                                                  width=64, height=64).tolist())
     # 平らな板(符号つき体積がちょうど 0)も素通し
     Vp, Fp, _ = _quad_patch(0.0, z=6.0, half=(2.0, 2.0))
     assert not cadmap._is_closed_surface(Fp, len(Vp))
