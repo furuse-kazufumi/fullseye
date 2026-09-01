@@ -138,7 +138,7 @@ def _save_gif(frames, name: str, fps: float = 6.0, hold_last: int = 0) -> dict:
     path = os.path.join(MEDIA_DIR, name + ".gif")
     used, scale = 256, 1.0
     # 色数 -> 解像度 の順に落として 3 MB に収める(横幅は 900px を下回らせない)。
-    for scale in (1.0, 0.92, 0.86, 0.80):
+    for scale in (1.0, 0.94, 0.90, 0.87):
         cur = arrs
         if scale < 1.0:
             w = int(round(arrs[0].shape[1] * scale))
@@ -562,7 +562,7 @@ def _stretch(x, lo_pct=1.0, hi_pct=99.0) -> np.ndarray:
 def subject_freq_sweep(log=print) -> dict:
     """ローパス/ハイパス/バンドパスの遮断周波数を掃引し、残る情報量を実測."""
     src = _load_gray("camera.png")
-    n = 11
+    n = 9
     A = np.linspace(0.0, 1.0, n)
     lo_cut = 0.05 + 0.40 * A                        # lowpass の遮断 (正規化周波数)
     hi_cut = 0.02 + 0.30 * A                        # highpass の遮断
@@ -643,7 +643,7 @@ def subject_freq_sweep(log=print) -> dict:
 def subject_denoise_compare(log=print) -> dict:
     """median / bilateral / non-local means を同じノイズ画像に当て PSNR を実測."""
     src = _load_gray("camera.png")
-    n = 11
+    n = 9
     B = np.linspace(0.0, 1.0, n)
     sigma = 0.02 + 0.20 * B                          # add_noise_white の b -> σ
     cols = {"median": (255, 140, 120), "bilateral": (120, 190, 255),
@@ -669,8 +669,9 @@ def subject_denoise_compare(log=print) -> dict:
              R["img"]["bilateral"], R["img"]["sk_nlm"],
              _cmap(np.abs(src - R["img"][best]), "magma", vmin=0.0, vmax=0.25)],
             ["元の写真 (ノイズ無し)\n基準",
-             "add_noise_white σ=%.3f\nPSNR %.2f dB (op の推定 σ %.3f)"
-             % (sigma[i], R["psnr"]["noisy"], R["sigma_est"]),
+             "add_noise_white σ=%.3f\nPSNR %.2f dB / estimate_noise %.3f%s"
+             % (sigma[i], R["psnr"]["noisy"], R["sigma_est"],
+                "（上限に張り付き）" if R["sigma_est"] >= 0.999 else ""),
              "median\nPSNR %.2f dB (%+.2f)"
              % (R["psnr"]["median"], R["psnr"]["median"] - R["psnr"]["noisy"]),
              "bilateral\nPSNR %.2f dB (%+.2f)"
@@ -678,7 +679,7 @@ def subject_denoise_compare(log=print) -> dict:
              "sk_nlm (non-local means)\nPSNR %.2f dB (%+.2f)"
              % (R["psnr"]["sk_nlm"], R["psnr"]["sk_nlm"] - R["psnr"]["noisy"]),
              "勝者 %s の残差 |元 − 出力|\n明るいほど復元できていない" % best],
-            3, tile=(330, 330), label_h=56,
+            3, tile=(300, 300), label_h=56,
             title="ノイズ除去の比較 —— 同じノイズに 3 つの流儀",
             sub="ノイズ σ = %.3f (add_noise_white b=%.2f)" % (sigma[i], b))
         plot = _plot(
@@ -686,7 +687,7 @@ def subject_denoise_compare(log=print) -> dict:
               "color": cols[k], "label": lab}
              for k, lab in (("noisy", "ノイズ画像そのもの"), ("median", "median"),
                             ("bilateral", "bilateral"), ("sk_nlm", "sk_nlm"))],
-            grid.shape[1], 320, xlim=(0.02, 0.22), ylim=(12, 42),
+            grid.shape[1], 300, xlim=(0.02, 0.22), ylim=(12, 42),
             title="ノイズを強くしていくと 3 つの順位はどうなるか",
             xlabel="加えたノイズ σ", legend_pos="tr")
         frames.append(_stack_v([grid, plot], pad=6))
@@ -710,14 +711,13 @@ def subject_denoise_compare(log=print) -> dict:
         },
         "caption": (
             "同じ写真に σ=%.3f→%.3f の白色ノイズを乗せ、median・bilateral・"
-            "non-local means を当てて PSNR を実測した 6 パネル。σ=%.3f では %.2f dB の"
-            "ノイズ画像が median %.2f / bilateral %.2f / NLM %.2f dB になり、掃引した "
-            "%d 点すべてで %s が勝つ。ノイズが強くなるほど 3 つの差は開く。"
-            % (sigma[0], sigma[-1], sigma[-1], rows[-1]["psnr"]["noisy"],
-               rows[-1]["psnr"]["median"], rows[-1]["psnr"]["bilateral"],
-               rows[-1]["psnr"]["sk_nlm"], n,
-               "sk_nlm" if all(w == "sk_nlm" for w in win)
-               else "/".join(sorted(set(win))))),
+            "non-local means を固定パラメータで当てて PSNR を実測した 6 パネル。"
+            "弱いノイズ (σ=%.3f) では %s が %.2f dB で最良だが、強いノイズ (σ=%.3f) では "
+            "%s が %.2f dB で逆転する —— 「どれが一番強いか」はノイズ量と設定次第で、"
+            "掃引の途中で順位が 2 度入れ替わった。ノイズ画像そのものは %.2f→%.2f dB。"
+            % (sigma[0], sigma[-1], sigma[0], win[0], rows[0]["psnr"][win[0]],
+               sigma[-1], win[-1], rows[-1]["psnr"][win[-1]],
+               rows[0]["psnr"]["noisy"], rows[-1]["psnr"]["noisy"])),
     }
 
 
