@@ -27,7 +27,11 @@ _MOD = {"funct1d": funct1d, "dsp": dsp}
 _CATALOG = {
     "function": [  # HALCON funct_1d 対応の関数処理(プロファイル計測の後段)
         ("create_funct_1d_array", "funct1d", ["signal"], "signal"),
-        ("create_funct_1d_pairs", "funct1d", ["signal", "signal"], "pairs"),
+        # 名前は「pairs から作る」の意味で、**返りは等間隔格子へ再標本化した
+        # funct_1d(1-D の y 列)**(実測 ndarray (n,)、docstring も
+        # "resampled to an equidistant grid")。pairs を名乗っていたのは型の嘘で、
+        # 2026-09-02 に pairs の述語(それまで lambda v: True)を入れて顕在化した
+        ("create_funct_1d_pairs", "funct1d", ["signal", "signal"], "signal"),
         ("smooth_funct_1d_gauss", "funct1d", ["signal"], "signal"),
         ("smooth_funct_1d_mean", "funct1d", ["signal"], "signal"),
         ("derivate_funct_1d", "funct1d", ["signal"], "signal"),
@@ -94,7 +98,31 @@ OPS1D = _build()
 RESULT_ADAPTERS = {
     "resample": lambda r: r[0],       # (signal, new_rate)
     "spectrogram": lambda r: r[2],    # (freqs, times, S) — S が本体
-    "spectrum": lambda r: np.stack(r) if isinstance(r, tuple) else r,  # pairs
+    # --- pairs の正典 = **(N,2)**(2026-09-02)---------------------------------- #
+    # それまで tools/chain_fuzz.TYPE_CHECKS["pairs"] は ``lambda v: True`` で、
+    # 何を返しても TYPEMISS にならなかった。正典は消費側 6 op を実行して確定:
+    # (N,2) か「同じ長さの 1-D 2 本のタプル」だけを受け、**(2,N) は名指しで拒否**
+    # される("pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays")。
+    "spectrum": lambda r: np.stack(r, axis=1) if isinstance(r, tuple) else r,
+    # invert_funct_1d は {"x": ..., "y": ...}(逆関数の (y, x) 対)を dict で返す。
+    # 中身は正直な対なので関数側は変えず、宣言型を名乗る call() 側で (N,2) に組む
+    "invert_funct_1d": lambda r: np.stack([r["x"], r["y"]], axis=1)
+    if isinstance(r, dict) else r,
+    # x_range / y_range は (lo, hi) の 2 スカラ、get_pair は (x, y) の 1 対。
+    # どれも「対が 1 つ」なので (1,2) にする — reprconv.polar_to_cscalar が
+    # 「1 つの複素スカラの極形式は (1,2)」と要求しており、この repo で
+    # 「対 1 つ」を表す形は (1,2) だと消費側が実行時に言っている(実測)
+    "x_range_funct_1d": lambda r: np.asarray(r, np.float64).reshape(1, 2),
+    "y_range_funct_1d": lambda r: np.asarray(r, np.float64).reshape(1, 2),
+    "get_pair_funct_1d": lambda r: np.asarray(r, np.float64).reshape(1, 2),
+    # stat_histogram は np.histogram 規約の (counts (b,), edges (b+1,)) を返す。
+    # **長さが違うので「対」ではない**(実測 10 と 11)。捨てずに、bin 中心と度数の
+    # 対 (b,2) へ組み直す = funct_1d_to_pairs が x 列を作るのと同じ読み方。
+    # 素の (counts, edges) は ops1d.get() 側でそのまま取れる
+    "stat_histogram": lambda r: np.stack(
+        [(np.asarray(r[1][:-1]) + np.asarray(r[1][1:])) / 2.0,
+         np.asarray(r[0], np.float64)], axis=1)
+    if isinstance(r, tuple) and len(r) == 2 else r,
 }
 
 
