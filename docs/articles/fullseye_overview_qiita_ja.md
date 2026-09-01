@@ -1241,25 +1241,13 @@ h = fs.csi_height_map(stack, z_step_um=0.05, wavelength_um=0.6, mode="gaussian")
 | 包絡線スペクトル | **0.499677**(ピーク位置 **107.000000 Hz**) |
 
 ```python
-import fullseye as fs
-
-# 共振 3 kHz を 107 Hz で振幅変調した軸受(答えを知っている入力を作る)
-x = fs.synthesize_bearing_signal(25600.0, 1.0, carrier_hz=3000.0,
-                                 defect_hz=107.0, modulation=0.5)
-
-# 復調帯域を機械に選ばせて、欠陥率を出す
-sk = fs.spectral_kurtosis(x, 25600.0)
-env = fs.envelope_spectrum(x, 25600.0,
-                           max(1.0, sk["max_freq"] - sk["bin_hz"]),
-                           sk["max_freq"] + sk["bin_hz"])
-print(env["peak_freq"], env["band_fraction"])    # 107.0 と ~1.0 = 本物
-
-# 幾何から出した特徴周波数と突き合わせる(1 % 程度のすべりは呼び出し側の裁量)
-b = fs.bearing_defect_frequencies(1800.0, 9, 8.0, 40.0)
-print(b["bpfo_hz"], b["bpfi_hz"])                # 108.0, 162.0 [Hz]
+sk  = fs.spectral_kurtosis(x, 25600.0)                      # 復調帯域を機械に選ばせる
+env = fs.envelope_spectrum(x, 25600.0, sk["max_freq"] - sk["bin_hz"],
+                                        sk["max_freq"] + sk["bin_hz"])
+print(env["peak_freq"], env["band_fraction"])               # 107.0 と ~1.0 = 本物
 ```
 
-回転速度が変わる信号では、素朴なスペクトルは 7 % に潰れて 66.5 Hz に広がります。角度領域へ移す `order_spectrum` なら **0.999371 / 幅 0 bin** です。
+幾何から出した特徴周波数(`bearing_defect_frequencies(1800.0, 9, 8.0, 40.0)` → 外輪 108.0 Hz / 内輪 162.0 Hz)と突き合わせれば、どの部位かまで決まります。回転速度が変わる信号では、素朴なスペクトルは 7 % に潰れて 66.5 Hz に広がります。角度領域へ移す `order_spectrum` なら **0.999371 / 幅 0 bin** です。
 
 **この族で一番危ないのは配列ではなくスカラです。** 同じ録音を `rate=48000` として読むと、欠陥は 107 Hz ではなく **200.625 Hz** と報告されます。やはり例外は出ません。だから防御は `rate` の側に置いてあります ―― 任意の実 1 次元配列は本当に妥当な音響信号なので、**型を分けても守るものが無い**からです。
 
