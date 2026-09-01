@@ -969,6 +969,21 @@ def csi_peak_position(signal, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6,
                        envelope peaking on an *interior* plane so that no
                        first-or-last-plane check fires. Pass 1.0 to disable the
                        check and accept that reading.
+    carrier_tolerance: refuse a scan whose fringe carrier is more than this
+                       factor away from the ``2/wavelength_um`` the stated
+                       wavelength implies. This is the **unit guard**, and it is
+                       the only thing standing between a nanometre/micrometre
+                       swap and a wrong answer: *wavelength_um* is otherwise used
+                       only for the Nyquist ceiling, so writing 600 instead of
+                       0.6 silently disables that ceiling while changing nothing
+                       in the returned height (measured: the same 6.025 um either
+                       way). The default factor of 2 is deliberately loose — the
+                       measured ratio on real scans is 0.996 and stays there
+                       under 10 % noise, a truncated envelope and a 0.3 um
+                       envelope — because it exists to catch a factor of 1000,
+                       not to re-derive the wavelength. Scans shorter than 16
+                       planes skip it (the FFT cannot resolve the carrier: the
+                       ratio is 0.667 at 9 planes). Pass 0 to disable.
 
     Returns the height as a float, in the same units as *z_start_um* /
     *z_step_um*.

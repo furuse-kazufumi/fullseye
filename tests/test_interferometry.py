@@ -467,8 +467,9 @@ class TestFailClosed:
                 itf.csi_signal_simulate(6.0, 0.0, step, NP, LAM,
                                         envelope_sigma_um=SIGMA,
                                         envelope_fwhm_um=None)
-        # ... and it scales with the wavelength rather than being a constant
-        itf.csi_peak_position(scan(6.0, lam=0.8), 0.16, 0.0, 0.8)
+        # ... and it scales with the wavelength rather than being a constant:
+        # the same 0.16 um step that is refused at lambda=0.6 is fine at 0.8
+        itf.csi_peak_position(scan(6.0, lam=0.8, step=0.16, n=76), 0.16, 0.0, 0.8)
 
     def test_undersampling_really_does_lie(self):
         """The justification for the refusal above, measured: past Nyquist the
@@ -510,12 +511,14 @@ class TestFailClosed:
         what actually catches them.
         """
         for s in (np.linspace(0.0, 1.0, 64),
-                  np.concatenate([[10.0], np.zeros(63)])):
+                  np.concatenate([[10.0], np.zeros(63)]),
+                  np.cos(np.linspace(0, np.pi / 2, 64))):
+            # carrier_tolerance=0 so that the *boundary* branch is what is being
+            # exercised: none of these has a fringe carrier, so the unit guard
+            # would otherwise refuse them first (which is also correct)
             with pytest.raises(ValueError, match="first or last plane"):
-                itf.csi_peak_position(s, DZ, 0.0, LAM, max_edge_envelope=1.0)
-        with pytest.raises(ValueError, match="first or last plane"):
-            itf.csi_peak_position(np.cos(np.linspace(0, np.pi / 2, 64)), DZ,
-                                  0.0, LAM, max_edge_envelope=1.0)
+                itf.csi_peak_position(s, DZ, 0.0, LAM, max_edge_envelope=1.0,
+                                      carrier_tolerance=0.0)
 
         z = DZ * np.arange(NP)
         for z0 in (-3.0, 0.0, 15.0):
@@ -537,12 +540,18 @@ class TestFailClosed:
         assert abs(got - 0.5) > 0.3                         # ... and it is wrong
 
     def test_flat_and_constant_signals_are_refused(self):
-        with pytest.raises(ValueError, match="prominence"):
-            itf.csi_peak_position(np.full(64, 3.0), DZ, 0.0, LAM)
         rng = np.random.default_rng(0)
-        carrier = np.sin(np.linspace(0, 8 * np.pi, 256)) + 0.1 * rng.standard_normal(256)
-        with pytest.raises(ValueError, match="prominence"):
-            itf.csi_peak_position(carrier, DZ, 0.0, LAM)
+        sine = np.sin(np.linspace(0, 8 * np.pi, 256)) + 0.1 * rng.standard_normal(256)
+        # both are refused; *which* guard fires depends on the input, and both
+        # messages are correct, so the test accepts either
+        for bad in (np.full(64, 3.0), sine):
+            with pytest.raises(ValueError, match="prominence|fringe carrier"):
+                itf.csi_peak_position(bad, DZ, 0.0, LAM)
+        # with the unit guard off, the prominence guard is the one that catches
+        # them — this is the branch the docstring's 0.241 / 0.000 numbers describe
+        for bad in (np.full(64, 3.0), sine):
+            with pytest.raises(ValueError, match="prominence"):
+                itf.csi_peak_position(bad, DZ, 0.0, LAM, carrier_tolerance=0.0)
 
     def test_degenerate_scalars(self):
         s = scan(6.0)
@@ -743,7 +752,7 @@ class TestTypeVocabulary:
         returning a height."""
         rng = np.random.default_rng(7)
         sig = np.sin(np.linspace(0, 8 * np.pi, 256)) + 0.1 * rng.standard_normal(256)
-        with pytest.raises(ValueError, match="prominence"):
+        with pytest.raises(ValueError, match="prominence|fringe carrier"):
             itf.csi_peak_position(sig, DZ, 0.0, LAM)
         with pytest.raises(ValueError, match="negative"):
             itf.chromatic_confocal_height(sig, 500.0, 0.5, 0.20, 600.0)
