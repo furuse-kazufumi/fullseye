@@ -36,6 +36,7 @@ exception at the time; every one returned a confident wrong number.
 """
 import os
 import sys
+import warnings
 
 import numpy as np
 import pytest
