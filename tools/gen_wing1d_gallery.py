@@ -2606,7 +2606,7 @@ def ex_envelope_flow(log):
         f"帯域通過 — band_fraction {es['band_fraction']:.4f}",
         f"包絡線 — {1000.0 / fd:.3f} ms ごとの衝撃が見える",
         f"包絡線スペクトル — ピーク {es['peak_freq']:.4f} Hz、突出度 "
-        f"{es['peak_prominence']:.0f}",
+        f"{es['peak_prominence']:.0f}(白色雑音の対照は {es_ctrl['peak_prominence']:.0f})",
         f"幾何と照合 — {best_name} {lines[best_name]:.4f} Hz と {rel:.4f} % 一致",
     ]
     info = save_flipbook(steps, "envelope_flow", step_labels, ms=1500, hold_ms=3000,
