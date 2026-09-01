@@ -1434,24 +1434,31 @@ def _vote_translation(src, dst, max_shift, bin_px=1.0):
     ic = np.clip(((d[:, 1] + max_shift) / bin_px).astype(int), 0, nb - 1)
     hist = np.zeros((nb, nb), dtype=np.int64)
     np.add.at(hist, (ir, ic), 1)
-    # 隣接ビンにまたがった票を拾う(境目に真値が乗ると 2 分される)
+    # 隣接ビンにまたがった票を拾う(境目に真値が乗ると 2 分される)。
+    # ★ 同点のときは**生の票が多いビン**を選ぶ。3x3 の平滑は真の山の左右
+    # どちらから見ても同じ和になるので、平滑値だけで argmax を取ると
+    # 「山の隣の空ビン」が選ばれうる —— 実測でまさにそれが起き、真のずれ
+    # (-0.087, +0.996) の票 7 + 4 が bin 境界で 2 分されたうえ、中心が 1 ビン
+    # ずれて**票 0** になった(frame_align が「重なっていない」と誤って
+    # fail-closed した)。1e-6 の重みは平滑値の刻み(1/9)よりはるかに小さい
+    # ので、本当に差があるときの順位は動かさない。
     smooth = ndimage.uniform_filter(hist.astype(np.float64), size=3,
                                     mode="constant")
-    p = np.unravel_index(int(np.argmax(smooth)), hist.shape)
+    p = np.unravel_index(int(np.argmax(smooth + 1e-6 * hist)), hist.shape)
     centre = np.array([p[0] * bin_px - max_shift, p[1] * bin_px - max_shift])
-    # 2 段の絞り込み: ビンの格子は真値と一般にずれるので、最頻ビンの中心から
-    # 一度平均を取り直し、その平均のまわりでもう一度選び直す。1 段だけだと
-    # 真値がビン境界に乗ったときに票が 2 分され、実測で 26 対応あるフレーム対の
-    # 票が 3 まで落ちた(推定値そのものは NN 照合が救っていたが、票数を
-    # 信頼度として読むと嘘になる)。
-    near = np.abs(d - centre).max(axis=1) <= 1.5 * bin_px
-    if near.sum() == 0:
-        return centre, 0
-    centre = d[near].mean(axis=0)
-    near = np.abs(d - centre).max(axis=1) <= 1.5 * bin_px
-    if near.sum() == 0:
-        return centre, 0
-    return d[near].mean(axis=0), int(near.sum())
+    # 3 段の絞り込み。1 段目の窓が広い(2.5 ビン)のは、平滑が ±1 ビンを
+    # 混ぜている以上、山はビン中心から最大 1 ビン + 半ビン離れうるから ——
+    # 窓を平滑の台と揃えないと、拾えるはずの票を自分で捨てることになる。
+    # 2 段目以降は真値のまわりで締め直す(1.5 ビン)。
+    votes = 0
+    for half in (2.5, 1.5, 1.5):
+        near = np.abs(d - centre).max(axis=1) <= half * bin_px
+        n = int(near.sum())
+        if n == 0:
+            break                       # 締めすぎたら**直前の結果を保つ**
+        centre = d[near].mean(axis=0)
+        votes = n
+    return centre, votes
 
 
 def frame_align(reference, frame, model="similarity", threshold_sigma=5.0,
