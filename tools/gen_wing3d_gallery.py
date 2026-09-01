@@ -3161,6 +3161,17 @@ def ex_isosurface(log) -> dict:
     return {
         "name": "wing3d_isosurface_sweep",
         "title": "等値面のしきい値で面が育ち、くびれ、割れる",
+        "title_en": "An isosurface grows, necks and breaks as the threshold moves",
+        "caption_en": (
+            "Two blurred, overlapping balls run through `voxel_to_mesh` (marching cubes) with "
+            f"the level stepped from {levels[0]:.2f} to {levels[-1]:.2f} in {len(levels)} "
+            f"stages. The surface area shrinks from {rows[0]['area']:.0f} to "
+            f"{rows[-1]['area']:.0f} voxel², and "
+            + (f"past level {split:.3f} the one surface **breaks into two**. "
+               if split is not None else "it never breaks in this range. ")
+            + "Each frame carries the level, vertex and triangle counts, surface area and "
+              "number of connected components. Which is also to say: a 3-D measurement that "
+              "does not state its threshold cannot be reproduced."),
         "ops": ["voxel_to_mesh", "mesh_area"],
         "facts": {"levels": levels, "rows": rows, "split_level": split},
         "caption": ("2 つの球をぼかして重ねた合成ボリュームに `voxel_to_mesh`"
