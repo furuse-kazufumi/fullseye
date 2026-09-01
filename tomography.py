@@ -1446,21 +1446,27 @@ def beam_hardening_correct(sinogram, high_energy_fraction=0.5,
             "only defined for non-negative line integrals and extrapolating it "
             "would return finite nonsense" % (op, bad))
     hi = float(sino.max())
-    # The forward curve saturates: p_meas -> -ln(w) - ... , so the domain of the
-    # inverse is bounded. Refuse rather than extrapolate off the end of the table.
-    p_max = 1.0
-    while -np.log((1.0 - w) * np.exp(-p_max) + w * np.exp(-k * p_max)) < hi:
-        p_max *= 2.0
-        if p_max > 1e6:
-            raise ValueError(
-                "%s: the largest measured line integral (%g) is above everything "
-                "this (w=%g, k=%g) beam can produce — its hardened output "
-                "saturates at %g. Either the parameters are not the ones that "
-                "hardened this sinogram, or the data is not in line-integral "
-                "units. Extrapolating would invent an attenuation."
-                % (op, hi, w, k, -np.log(w) if w > 0 else np.inf))
+    # Invert by table, over a domain wide enough to contain every measured value.
+    # The forward curve does not saturate — for large p it is asymptotically
+    # ``k*p - ln(w)`` — so the domain is found from that asymptote rather than by
+    # doubling until the curve exceeds ``hi``. The doubling loop was the first
+    # implementation and it was **wrong in the silent direction**: past p ~ 745
+    # both exponentials underflow to zero, ``-log(0)`` returns ``+inf``, the
+    # comparison ``inf < hi`` is False, and the loop exited satisfied with a table
+    # whose upper half was all ``inf``. np.interp then returned the table's last
+    # finite node for every large input, i.e. a finite, constant, wrong answer.
+    p_max = (hi - np.log(w)) / k + 1.0
+    if p_max > _MAX_HARDENING_DOMAIN:
+        raise ValueError(
+            "%s: the largest measured line integral is %g, which for this beam "
+            "(w=%g, k=%g) needs the inverse table to span 0..%g — past the %g "
+            "limit. Either these are not the parameters that hardened this "
+            "sinogram, or the data is not in line-integral units (a line integral "
+            "is a count of e-foldings: 1-5 for a real object, and this module's "
+            "own phantom peaks at 1.18). Extrapolating would invent an attenuation."
+            % (op, hi, w, k, p_max, _MAX_HARDENING_DOMAIN))
     grid = np.linspace(0.0, p_max, n_tab)
-    meas = -np.log((1.0 - w) * np.exp(-grid) + w * np.exp(-k * grid))
+    meas = _hardened(grid, w, k)
     return np.interp(sino, meas, grid)
 
 
