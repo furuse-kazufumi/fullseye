@@ -13,12 +13,12 @@
         646
       ],
       "fps": 12,
-      "bytes": 1114911,
-      "thumb_bytes": 38559,
+      "bytes": 1137161,
+      "thumb_bytes": 38862,
       "thumb_frame": 6,
-      "mean_abs_delta": 2.448,
-      "sha256": "def04e934450659983b5ed83e95db8acee3c082d28fb6fa85dac26cda30d7292",
-      "thumb_sha256": "9f6ed895d1eb374ff58448bab93aa0e617892e3f5396d46cde16ff669bbe7b85",
+      "mean_abs_delta": 2.698,
+      "sha256": "a11d9f901a525f0e1faf27dafb6ea0a202d4edd23f2e0a025295a5ef16b9c779",
+      "thumb_sha256": "50774810a9ea18cd5d158fec2914cfd9b06b9aad9eaca140364d1fe05809e405",
       "facts": {
         "volume_shape": [
           20,
@@ -30,11 +30,11 @@
         "n_vertices": 4866,
         "n_shell_points": 2759,
         "frames": 36,
-        "iou_mean": 0.564,
-        "iou_min": 0.381,
-        "iou_max": 0.649
+        "iou_mean": 0.767,
+        "iou_min": 0.585,
+        "iou_max": 0.837
       },
-      "seconds": 12.86
+      "seconds": 12.32
     },
     {
       "kind": "gif",

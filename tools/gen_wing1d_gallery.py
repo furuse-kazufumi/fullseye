@@ -1197,8 +1197,11 @@ def ex_weighting_ac(log):
 
     W, H = GIF_W, GIF_H
     i1k = int(np.argmin(np.abs(tones - 1000.0)))
-    frames = []
+    frames, labels = [], []
     for k, r in enumerate(rows):
+        labels.append(f"純音 {r['f']:.1f} Hz  /  A(f) {r['wa']:+.4f} dB  "
+                      f"C(f) {r['wc']:+.4f} dB  /  実測 L_A−L_Z との差 "
+                      f"{r['da']:+.2e} dB")
         fig = Fig(W, H)
         _header(fig, "A and C weighting: 1 kHz is exactly 0 dB by construction",
                 "computed from the four defining pole frequencies - no published "
