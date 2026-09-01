@@ -1712,7 +1712,7 @@ CAPTIONS = {
             "撮り、陰影と **world 法線をそのまま RGB にした絵**を並べました。"
             "world 法線は「色 = 向き」なので、面が滑らかに繋がっていれば色も滑らかに"
             "繋がります。ごま塩状にまだらなら巻き方向(向き付け)が壊れている合図。"
-            "実測では外向き面 {4:,} / {1:,} = {5:.1f} %(残り 1 % は非凸の小惑星に"
+            "実測では外向き面 {4:,} / {1:,} = {5:.2f} %(残り 1 % は非凸の小惑星に"
             "「重心から外向きか」という判定を当てたことによる取りこぼし)。"
             "被覆画素は表 {6:,} px / 裏 {7:,} px。"
         ).format(f["source"], f["n_faces"], f["n_vertices"], f["surface_area"],
@@ -1911,7 +1911,7 @@ CAPTIONS_EN = {
             "world normals taken straight to RGB**. A world normal is \"colour = "
             "direction\", so a surface that joins smoothly joins smoothly in colour too; "
             "a salt-and-pepper mottle is the sign of broken winding. Measured: {4:,} / "
-            "{1:,} = {5:.1f} % of the faces point outward (the remaining 1 % is what an "
+            "{1:,} = {5:.2f} % of the faces point outward (the remaining 1 % is what an "
             "\"outward from the centroid?\" test misses on a non-convex asteroid). "
             "Coverage is {6:,} px from the front and {7:,} px from the back."
         ).format(f["source"], f["n_faces"], f["n_vertices"], f["surface_area"],

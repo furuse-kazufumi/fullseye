@@ -1,10 +1,10 @@
-# Studio 画面 / 3D 表示ウィング —— 展示キャプション原稿
+# Studio 画面 / 3D 表示ウィング —— 展示キャプション原稿(日本語)
 
 生成元: `tools/gen_wingstudio_gallery.py`(再実行で全点を再生成)。
 Studio 画面はすべて `studio.build_window()` が組み立てた**実 UI** の `widget.grab()`(オフスクリーン)で、モックアップはありません。
 3D 展示は fullseye の op と numpy 合成だけで描いています(matplotlib 不使用、文字のみ Pillow)。**数字はすべて実測値**です。
 
-**このファイルは納品原稿です。記事 md への転記は手動で行ってください**(記事本体は意図的に編集していません)。
+**このファイルは納品原稿です。記事 md への転記は手動で行ってください**(記事本体は意図的に編集していません)。英語版は `wingstudio.en.md`。
 
 ---
 
@@ -42,7 +42,7 @@ Studio 画面はすべて `studio.build_window()` が組み立てた**実 UI** �
 
 [![法線の色 —— 3D デバッグで最初に見る絵](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingstudio_normals_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingstudio_normals.png)
 
-*↑ **法線の色 —— 3D デバッグで最初に見る絵** —— itokawa_f0049152.stl (JAXA はやぶさ Gaskell 形状モデル)(三角形 49,152 枚 / 頂点 24,578、表面積 0.399)を表と裏 180 度から撮り、陰影と **world 法線をそのまま RGB にした絵**を並べました。world 法線は「色 = 向き」なので、面が滑らかに繋がっていれば色も滑らかに繋がります。ごま塩状にまだらなら巻き方向(向き付け)が壊れている合図。実測では外向き面 48,639 / 49,152 = 99.0 %(残り 1 % は非凸の小惑星に「重心から外向きか」という判定を当てたことによる取りこぼし)。被覆画素は表 38,540 px / 裏 39,686 px。 使用 op / 機能: `render_mesh`, `phong_shade`, world 法線の RGB 化。*
+*↑ **法線の色 —— 3D デバッグで最初に見る絵** —— itokawa_f0049152.stl (JAXA はやぶさ Gaskell 形状モデル)(三角形 49,152 枚 / 頂点 24,578、表面積 0.399)を表と裏 180 度から撮り、陰影と **world 法線をそのまま RGB にした絵**を並べました。world 法線は「色 = 向き」なので、面が滑らかに繋がっていれば色も滑らかに繋がります。ごま塩状にまだらなら巻き方向(向き付け)が壊れている合図。実測では外向き面 48,639 / 49,152 = 98.96 %(残り 1 % は非凸の小惑星に「重心から外向きか」という判定を当てたことによる取りこぼし)。被覆画素は表 38,540 px / 裏 39,686 px。 使用 op / 機能: `render_mesh`, `phong_shade`, world 法線の RGB 化。*
 
 <sub>`wingstudio_normals.png` — 1840×600 px / 339 kB / SHA-256 `155b586afb9f5615`</sub>
 
@@ -94,7 +94,7 @@ Studio 画面はすべて `studio.build_window()` が組み立てた**実 UI** �
 
 *↑ **F キーで 3D データの中を歩く(実 Studio 画面)** —— 本物の Fullseye Studio(1280×800 px、オフスクリーン)にイトカワの実形状モデル(頂点 24,578 / 三角形 49,152、スプラット 73,730 点)を開き、**実際の QKeyEvent** で F → W で前進 → ドラッグで見回し → +/- で視野角 → A で左へ → R で入口 → F で軌道カメラへ、と操作した 24 フレームです。透視投影なので近づくほど手前が大きくなり、視野角を変えると遠近感そのものが変わります。1 タップ = 半径/50 = 0.00592 の 1 歩(既定 FOV 70 度、可変域 40〜100 度)。下端の細い帯はこの GIF の進行バーで、UI ではありません。 使用 op / 機能: Studio 3D ビューアの一人称モード(`render_points_frame_fp`)、`viewer3d_project_persp`。*
 
-<sub>`wingstudio_studio_walk.gif` — 24 フレーム / 4 fps / 1280×800 px / 1.59 MB / SHA-256 `31b9821596fb05f5`</sub>
+<sub>`wingstudio_studio_walk.gif` — 24 フレーム / 4 fps / 1280×800 px / 2.93 MB / SHA-256 `bec27bc1ab57984b`</sub>
 
 ---
 
@@ -124,7 +124,7 @@ Studio 画面はすべて `studio.build_window()` が組み立てた**実 UI** �
 
 *↑ **書いて、F5 で走らせて、結果が出るまで** —— タブエディタに 18 行のコードを打ち込み、F5 で実行して出力コンソールを読み下すまでの 24 フレームです(1060×740 px のダイアログ)。実行はモックではなく本物の子プロセスで、ステータスは「PASS ✓ (exit 0)」。出力 6 行の末尾は `foreground fraction = 0.2995` / `objects = 21` / `area  min/median/max = 1118 / 1494 / 3084` —— コインの分割結果です。 使用 op / 機能: Studio の Python エディタ(タブ + F5 実行)、`fullseye.apply`, `fullseye.segment_objects`。*
 
-<sub>`wingstudio_studio_editor.gif` — 24 フレーム / 6 fps / 1060×740 px / 0.36 MB / SHA-256 `d3138c3e6439f2ba`</sub>
+<sub>`wingstudio_studio_editor.gif` — 24 フレーム / 6 fps / 1060×740 px / 0.36 MB / SHA-256 `fc35f56ab0340f6f`</sub>
 
 ---
 
@@ -134,7 +134,7 @@ Studio 画面はすべて `studio.build_window()` が組み立てた**実 UI** �
 
 *↑ **900 超の op から目的の 1 個へ** —— 検索欄に 1 文字ずつ「watershed」と打つと、903 個の一覧が 4 件まで絞れます(実測の内訳: (空):903 → w:79 → wa:11 → wat:4 → wate:4 → water:4 → waters:4 → watersh:4 → watershe:4 → watershed:4)。選ぶと `in_sort → out_sort` のシグネチャが右下に出る —— 型が見えるので、次に何を繋げるかがその場で分かります。最後に「cad」で引くと 0 件。 使用 op / 機能: Studio の演算子検索(名前 / HALCON 別名 / 分類 / docstring を横断)。*
 
-<sub>`wingstudio_studio_opsearch.gif` — 17 フレーム / 4 fps / 1280×800 px / 0.54 MB / SHA-256 `c4405f6433fbc317`</sub>
+<sub>`wingstudio_studio_opsearch.gif` — 17 フレーム / 4 fps / 1280×800 px / 0.54 MB / SHA-256 `8270e44188b4b2a6`</sub>
 
 ---
 
@@ -144,86 +144,126 @@ Studio 画面はすべて `studio.build_window()` が組み立てた**実 UI** �
 
 *↑ **パイプラインを組む —— 型が合わないと Problems に出る** —— coins サンプルに `gaussian → otsu → opening_circle → sk_clear_border` を1 段ずつ足していき、⑤でわざと **region を受け取れない** `circularity_xld`(contour 入力)を足します。すると Problems に 「stage 4 (sk_clear_border) outputs 'region' but circularity_xld expects 'contour'」と出る —— Fullseye は繋いだ後に落ちるのではなく、繋いだ瞬間に型の不一致を言います。⑥で外すと「no problems」に戻ります(全 24 フレーム)。 使用 op / 機能: Studio の Program パネル(HDevelop 風)+ Problems、`engine.diagnose_stages`。*
 
-<sub>`wingstudio_studio_pipeline.gif` — 24 フレーム / 4 fps / 1280×800 px / 0.49 MB / SHA-256 `7272fab7111d1e2b`</sub>
+<sub>`wingstudio_studio_pipeline.gif` — 24 フレーム / 4 fps / 1280×800 px / 0.54 MB / SHA-256 `0fdcb11fdc1bceca`</sub>
 
 ---
 
-## 付録: この展示を作る過程で見つかった「見た目の異常」
+## 付録: この展示を作る過程で見つかった「見た目の異常」と、その後
 
-可視化はバグ発見の道具でもある、という前提で作りました。以下はすべて**実測**で、
-op のコードは 1 行も変更していません(判断は著者に委ねます)。
+可視化はバグ発見の道具でもある、という前提で作りました。ここに出す数字はすべて
+**実測**です。報告した 8 件のうち **5 件は本体側で修正済み**、**2 件は未解決**、
+1 件は仕様どおりでした。修正済みは「こうだった → こう直った」の形で残します
+(消してしまうと、なぜ今の形なのかが分からなくなるため)。
 
-### 1. `(z,y,x) -> (x,y,z)` の `V[:, ::-1]` は軸の入れ替えではなく**鏡映**
+### 修正済み(5 件)
 
-`render3d.marching_cubes` はボクセル添字 `(z,y,x)` の頂点を返す。world `(x,y,z)` に
-直すために座標だけ反転すると、行列式が -1 なので**全三角形の巻き方向が裏返る**。
+#### 1. GIF の書き出しが「連続する同一フレーム」を 1 枚に畳んでいた
 
-```python
-Vz, F = render3d.marching_cubes(vol, 0.0)
-sv = lambda V, F: float(np.einsum("ij,ij->i", V[F][:,0], np.cross(V[F][:,1], V[F][:,2])).sum()/6)
-sv(Vz, F)                       # 期待 +体積 : 実測 +37294.7  (占有ボクセル 35746)
-sv(Vz[:, ::-1], F)              # 期待 +体積 : 実測 -37294.7  ← 内向きになった
-sv(Vz[:, ::-1], F[:, ::-1])     # 面の巻きも反転して打ち消す : +37294.7
-```
+**こうだった** —— `video.write_video` の GIF 経路(Pillow)は完全に同一の連続フレームを
+結合するので、静止の「間」を作るために同じ grab を並べると **18 枚書いて 6 枚しか
+戻らない**。書き出し後に読み戻して枚数を突き合わせない限り気づけませんでした。
 
-### 2. `cadmap` は「内向きに巻かれた閉メッシュ」を黙って受け取り、可視率を過大に返す
-
-上の内向きメッシュに `cull_backfaces=True`(既定)で問い合わせると、本来の遮蔽面が
-カリングされて光線が突き抜ける。**閉じているのに符号つき体積が負**という条件は
-安価に検出できるので、fail-closed 方針なら弾くか警告してよい箇所だと思います。
-
-| メッシュ | `cad_surface_to_pixel` の可視率 | 面法線がカメラを向く面積 | `cad_visible_faces` の面積比 |
-|---|---|---|---|
-| 内向き(バグ状態) | **0.857** | 0.517 | 0.508 |
-| 外向き(修正後) | 0.415 | 0.483 | 0.468 |
-
-可視率が「カメラを向いている面積」を上回った時点で物理的におかしい、というのが
-気づきの糸口でした(遮蔽は減らすことしかできない)。
-
-### 3. 画素中心の規約が 2 つあり、繋ぐと半画素ずれる
-
-`render3d.render_mesh` は `arange + 0.5` を画素中心としてレイを飛ばし
-(`render3d.py:318-319`)、主点も `w * 0.5`。一方 `camera.depth_to_points` は
-`np.mgrid[0:H, 0:W]` の**整数**添字を画素中心として逆投影する。
+**こう直った** —— GIF は `video._write_gif_all_frames` が Pillow を直接駆動し、
+重複フレームも 1 枚ずつ保存します(代償はファイルサイズ)。同じ再現で実測:
 
 ```python
-pose, K = render3d.auto_view(V, width=200, height=200)      # K[0,2] = 100.0
-buf = render3d.render_mesh(V, F, pose=pose, intrinsics=K, width=200, height=200)
-P_int  = camera.backproject(pix,       buf["depth"][valid], K)   # 添字
-P_half = camera.backproject(pix + 0.5, buf["depth"][valid], K)   # 添字 + 0.5
-# 実測: 平均 |P_half - P_int| = 0.0022879 world 単位 = ちょうど 0.5 px 相当
+seq = [base] * 6 + [other] * 6 + [base] * 6      # 18 枚(連続同一の塊が 3 つ)
+video.write_video(path, seq, fps=6)
+# 実測: wrote 18 frames -> read back 18
 ```
-絵としては見えませんが、寸法計測に使うと系統誤差になります。
 
-### 4. Problems の 1 行の中で stage 番号が 0 起点と 1 起点で混ざる
+本スクリプトの `save_gif` は、直ったあとも毎回読み戻して枚数を照合します
+(検算を外す理由が無いため)。
 
-`engine.diagnose_stages` のメッセージは 0 起点、Studio の Problems リストの見出しは
-1 起点なので、同じ 1 行に別の番号体系が並びます。
+#### 2. ボリュームを 3D ビューアで開くと「横倒し」になっていた
 
-```
-! stage 5 (circularity_xld): stage 3 (sk_clear_border) outputs 'region' but circularity_xld expects 'contour'
-```
-`sk_clear_border` は Program パネルの行番号でも Problems の見出しでも **4** 段目です。
-期待: `stage 4 (sk_clear_border)`。実際: `stage 3 (sk_clear_border)`。
+**こうだった** —— `studio.volume_to_shell_points` が `(z, y, x)` 順の点を返す一方、
+消費側(`render_points_frame` / `viewer3d_project`)は **3 番目の成分を world の
+上方向**として扱うため、スライス方向が画面の左右に寝ていました。既定の viridis
+高さランプも同じ理由で x 添字を色にしていました。
 
-### 5. ボリュームを 3D ビューアで開くと「横倒し」になる
-
-`studio.volume_to_shell_points` は docstring どおり `(z, y, x)` 順の点を返しますが、
-消費側(`render_points_frame` / `viewer3d_project`)は **3 番目の成分を world の上方向**
-として扱います。つまりボリュームの z 軸(スライス方向)が画面の左右に、x 軸が上下に写る。
+**こう直った** —— この関数が「voxel の並び順 → ビューアの world」の境界になり、
+world `(x, y, z)` を返します。`spacing`(`(sz, sy, sx)`)も添字と一緒に反転されます。
 
 ```python
-v = np.zeros((40, 8, 8)); v[:, 3:5, 3:5] = 1.0     # z 方向に伸びた棒
+v = np.zeros((40, 8, 8)); v[:, 3:5, 3:5] = 1.0      # z 方向に伸びた棒
 P, C, info = studio.volume_to_shell_points(v)
-P.max(0) - P.min(0)      # 期待(上が z): [1, 1, 39] / 実測: [39, 1, 1]
+P.max(0) - P.min(0)      # 実測 [1.0, 1.0, 39.0](3 番目 = 上 が長い)
+info["axis_order"]       # 実測 "xyz"(規約を表明する印)
+studio.volume_to_shell_points(v, spacing=(2.0, 1.0, 1.0))   # 実測 [1.0, 1.0, 78.0]
 ```
-既定の viridis 高さランプ(`colors=None` のとき)も同じ理由で x 添字を色にします。
 
-### 6. 新しい族の生成済みヘルプ 155 枚のうち 110 枚は画面から辿れない
+展示「軌道カメラで回す」はこの経路そのものなので、図の向きも直っています。
+
+#### 3. 画素中心の規約が 2 つあり、繋ぐと半画素ずれていた
+
+**こうだった** —— `render3d.render_mesh` は「添字 + 0.5」を画素中心としてレイを
+飛ばし、`camera.depth_to_points` は整数添字を中心として逆投影していたので、
+素直に繋ぐと雲全体が半画素ぶん、しかも**全点が同じ側へ**ずれました。
+
+**こう直った** —— `render3d` / `camera` / `cadmap` が **整数添字**という 1 つの規約に
+揃い(主点も `(w - 1) * 0.5`)、逆投影 → 再投影が閉じます。この展示での実測:
+
+| 測ったもの | 実測 |
+|---|---|
+| 逆投影 → 再投影の残差 rms | **1.31e-14 px**(= 丸め誤差) |
+| うっかり +0.5 を足したときの雲のずれ | 0.00229 world 単位(= 半画素、fx = 241.42) |
+
+#### 4. `cadmap` が「内向きに巻かれた閉メッシュ」を黙って受けていた
+
+**こうだった** —— `cull_backfaces=True`(既定)だと本来の遮蔽面がカリングされて
+光線が突き抜け、可視率が **0.857** と過大に出ました。「カメラを向いている面積」
+0.517 を上回った時点で物理的にありえません(遮蔽は減らすことしかできない)—— それが
+気づきの糸口でした。
+
+**こう直った** —— 巻き方向を検める箇所が 1 つにまとまり、閉じているのに符号つき体積が
+負なら **直したうえで `winding_fixed` で申告**します。`cad_visible_faces` は既定で拒否、
+`strict=True` なら 3 つとも `ValueError`。段付き部品(1,400 面、符号つき体積 ±37290.4)
+で実測:
+
+| 呼び方 | 内向きメッシュ | 外向きメッシュ |
+|---|---|---|
+| `cad_surface_to_pixel` の可視率 | **0.4129**(`winding_fixed=True`) | 0.4129(`winding_fixed=False`) |
+| `cad_surface_to_pixel(strict=True)` | `ValueError` | 0.4129 |
+| `cad_visible_faces`(既定) | `ValueError` | 608 面 |
+
+ただし **呼ぶ側の注意は消えていません**。`(z,y,x) -> (x,y,z)` の `V[:, ::-1]` は軸の
+入れ替えではなく**鏡映**(行列式 -1)なので、座標だけ反転すると全三角形の巻きが
+裏返ります。本スクリプトの `voxel_mesh_to_world` は面の巻きも同時に反転して
+打ち消しています。
+
+```python
+Vz, F = render3d.marching_cubes(vol, 0.0)         # 内側ボクセル 35,746
+signed_volume(Vz, F)                     # 実測 +37294.7
+signed_volume(Vz[:, ::-1], F)            # 実測 -37294.7  ← 内向きになった
+signed_volume(Vz[:, ::-1], F[:, ::-1])   # 実測 +37294.7  ← 打ち消した
+```
+
+#### 5. Problems の 1 行の中で stage 番号が 0 起点と 1 起点で混ざっていた
+
+**こうだった** —— `engine.diagnose_stages` のメッセージは 0 起点、Studio の Problems の
+見出しは 1 起点。同じ 1 行に別の番号体系が並び、読者を違う段へ案内していました。
+
+```
+! stage 5 (circularity_xld): stage 3 (sk_clear_border) outputs 'region' but ...
+```
+(`sk_clear_border` は Program パネルでも Problems の見出しでも **4** 段目)
+
+**こう直った** —— `message` は人が読む散文として **1 起点に統一**され、機械が使う
+`index` / `prev_index`(0 起点、行の選択にそのまま使える)と `prev_op` が別に載ります。
+展示⑤の実測はこうなります:
+
+```
+! stage 5 (circularity_xld): stage 4 (sk_clear_border) outputs 'region' but circularity_xld expects 'contour'
+```
+
+### 未解決(2 件)
+
+#### 6. 新しい族の生成済みヘルプ 155 枚のうち 110 枚が画面から辿れない
 
 `studio_assets/op_help/<族>/` に `tools/opdocs.py` が生成した HTML が 155 枚あるのに、
 Studio のヘルプ検索は 2D 名 + 3D 名しか引かないため、`tb_*` 型付き op として
-登録された 45 枚しか開けません。
+登録された 45 枚しか開けません(今回の再生成でも同じ内訳です)。
 
 | 族 | 生成済み | `tb_*` 経由で開ける | 開けない |
 |---|---|---|---|
@@ -239,25 +279,41 @@ Studio のヘルプ検索は 2D 名 + 3D 名しか引かないため、`tb_*` �
 | specular | 13 | 3 | 10 |
 | **合計** | **155** | **45** | **110** |
 
-あわせて、開ける 45 枚も「実行できる例」が空で、「同カテゴリ」欄は typed 105 個が
-1 カテゴリに同居しているため無関係な op が並びます。
+あわせて、開ける 45 枚も「実行できる例」が空で、「同カテゴリ」欄は typed op が
+1 カテゴリに同居しているため無関係な op が並びます —— 展示の図でそのまま見えます。
 
-### 7. `vol_mip` は正規化して返す(生の最大値投影ではない)
+#### 7. `vol_mip` の正規化が `ops.py` 本体には書かれていない
 
-`ops.RT["vol_mip"]` は表示向けに `[0,1]` へ正規化した像を返します。累積 MIP の
-到達率を測るのに使うと分母が変わり、**121.5 %** という値が出ました(実測)。
-比率を測る側は `vol.max(axis=0)` を使うべき、という住み分けです。
+`ops.RT["vol_mip"]` は表示向けに `[0,1]` へ正規化した像を返すので、累積 MIP の
+到達率の**分母**に使うと 100 % を超えます。同梱の骨格 CT(20×97×28、生の値域は
+最大 1.2264)で実測:
 
-### 8. GIF の書き出しは「連続する同一フレーム」を 1 枚に畳む
+| 分母に使ったもの | 完全な累積 MIP の到達率 |
+|---|---|
+| `ops.RT["vol_mip"](vol, 0.0, 0.0)` | **122.64 %** |
+| `vol.max(axis=0)`(生の投影) | 100.00 % |
 
-`video.write_video` の GIF 経路(Pillow)は完全同一の連続フレームを結合するので、
-静止の「間」を作るために同じ grab を並べると、**18 枚書いて 6 枚しか戻らない**。
-書き出し後に読み戻して枚数を突き合わせない限り気づけません(本スクリプトは
-毎回突き合わせています)。
+`volops.py` と `volio.py` の module docstring には注記が入りましたが、
+`ops.py` の `_vol_mip` 本体と登録表には何も書かれていないので、`ops.py` だけを
+読む人には見えません。op の挙動自体は「表示用なら正規化が正しい」ので、
+これはバグではなく**使い分けの明記漏れ**です。
 
-### 9. 再現性: 14 点中 12 点は SHA-256 まで一致、2 点は一致しない
+### 仕様どおりだったもの(1 件)
 
-`studio_opsearch` は検索欄のクリアボタン(✕)の描画タイミングが揺れ、
-`studio_editor` は Studio が実行に使う一時ファイル名(`scratch_<pid>.py`)が
-出力コンソールに出るため、生成のたびにバイト列が変わります。**絵の内容は同一**
-ですが、bit 単位の再現は保証できません(隠さず書きます)。
+* **演算子ブラウザに「ツリー」は無い** —— 実装は 1 枚のリスト + 検索欄 + 分類コンボで、
+  ツリー表示はもともとありません。展示のキャプションも「一覧」と書いています。
+
+### 再現性(今回、全点を 2 回生成して実測)
+
+14 点中 **11 点は SHA-256 まで一致**し、3 点は一致しません。内訳:
+
+| 展示 | 何が揺れるか | 実測 |
+|---|---|---|
+| `studio_editor` | Studio が実行に使う一時ファイル名 `scratch_<pid>.py` が出力コンソールに出る | 1 フレームの 8×27 px 領域だけが最大 191 階調ぶん変わる |
+| `studio_pipeline` | Pipeline パネルの**段ごとの実測 ms**(壁時計)が写り込む | 一覧の枠内 444 px が変わる |
+| `studio_opsearch` | 描画タイミングのゆらぎ(局所的な文字の差は無し) | 1,741 万画素中 13,317 px、最大 29 階調 |
+
+残りの差は GIF のパレット再量子化(中央値 1〜2 階調)で、**絵の内容は同一**です。
+`studio_pipeline` は今回 Problems パネルを前面に出したので、以前は写っていなかった
+実測 ms が入り、bit 再現しなくなりました —— 主役(型不一致の 1 行)が見えることを
+優先しています。
