@@ -408,8 +408,13 @@ def ex_lucky_sheet():
 
 def ex_lucky_sweep():
     """上位何 % を採るか、を振る(GIF)。鋭さと雑音の取引がそのまま見える。"""
+    # ★ 雑音は :func:`astrostack.noise_sigma`(背景の頑健 σ)で測る。
+    # 「真値との残差 RMS」を使うと**PSF のずれまで残差に入る** —— この実験は
+    # わざとフレームごとに FWHM を変えているので、選び方を変えると合成後の
+    # PSF が変わり、残差が増えたのが雑音のせいなのか像が変わったせいなのか
+    # 区別できなくなる(実測でその値は 25.2 -> 61.3 と動いたが、その大半は
+    # 雑音ではなかった)。背景 σ は星の形に依らない。
     frames, truth = _lucky_series()
-    ideal = truth["noiseless"]
     fracs = [1.0, 0.75, 0.5, 0.25, 0.125]
     shots, labels, rows = [], [], []
     scores = A.lucky_select(frames, keep_fraction=1.0)[1]
