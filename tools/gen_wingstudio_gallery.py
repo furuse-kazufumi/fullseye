@@ -1141,6 +1141,14 @@ def ex_crop3d():
     part, off = volops.vol_crop_domain(vol, domain=domain, margin=2)
     grad = volops.vol_gradient_magnitude(part)
     full = volops.vol_uncrop(grad, off, vol.shape, fill=0.0)
+    # 往復の不変量を実測する: 元を切り出して貼り戻したら、切り出し箱の中は
+    # 元と**ビット一致**し、外は厳密に 0 でなければならない。
+    box = np.zeros_like(vol)
+    box[off[0]:off[0] + part.shape[0], off[1]:off[1] + part.shape[1],
+        off[2]:off[2] + part.shape[2]] = 1.0
+    roundtrip = volops.vol_uncrop(part, off, vol.shape, fill=0.0)
+    roundtrip_err = float(np.abs(roundtrip - vol * box).max())
+    outside_max = float(full[box < 0.5].max())
 
     def shell_pts(v, thresh, origin=(0, 0, 0)):
         m = (v > thresh).astype(np.float64)
