@@ -1293,7 +1293,7 @@ def csi_design(wavelength_um=0.6, bandwidth_um=0.1, z_range_um=12.0,
     if dlam >= lam:
         raise ValueError(
             "%s: bandwidth_um = %g um is not below wavelength_um = %g um. The "
-            "coherence length l_c = (2 ln2/pi) lambda^2/delta_lambda is a "
+            "coherence length l_c = (4 ln2/pi) lambda^2/delta_lambda is a "
             "quasi-monochromatic result; a source whose spectrum is as wide as "
             "its centre reaches zero frequency and the formula does not describe "
             "it." % (op, dlam, lam))
