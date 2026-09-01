@@ -130,10 +130,18 @@ def pnp_ransac(points_3d, points_2d, K, thresh=2.0, iters=300, seed=0):
     """外れ値に頑健な PnP(RANSAC + 最終 DLT リフィット)。→ (R, t, inlier_mask, info)。
 
     6 点の最小サンプルで DLT → 再投影誤差 < thresh の inlier 最大化 → inlier 全体でリフィット。
+
+    Raises ValueError: points_2d が (N,2) でない / points_3d が (N,3) でない /
+        点数不一致 / 6 点未満 / 非有限。
     """
     X = np.asarray(points_3d, float)
-    x = np.asarray(points_2d, float)
+    x = _as_image_points(points_2d)
     n = len(X)
+    if X.ndim != 2 or X.shape[1] != 3:
+        raise ValueError(f"points_3d must be (N, 3), got shape {X.shape}")
+    if len(x) != n:
+        raise ValueError(
+            f"3D and 2D point counts do not match ({n} vs {len(x)})")
     if n < 6:
         raise ValueError("PnP requires at least 6 points")
     rng = np.random.default_rng(seed)
