@@ -123,7 +123,8 @@ def _text(frame_u8: np.ndarray, labels) -> np.ndarray:
     d = ImageDraw.Draw(im)
     for x, y, txt, col, size, bold in labels:
         c = tuple(int(round(v * 255)) for v in col)
-        d.text((int(x), int(y)), txt, fill=c, font=_font(size, bold))
+        cjk = any(ord(ch) > 0x2000 for ch in txt)
+        d.text((int(x), int(y)), txt, fill=c, font=_font(size, bold, cjk))
     return np.asarray(im)
 
 
