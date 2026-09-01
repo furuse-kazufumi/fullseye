@@ -367,8 +367,9 @@ def _as_beat_cube(a, name: str, op: str) -> np.ndarray:
          cap bites before ``complex128`` doubles a complex64 input (or widens an
          int8 one by 16x);
       2. only then is the dtype kind inspected — a real cube is refused, because
-         a real-sampled beat spectrum is conjugate-symmetric and the sign of the
-         Doppler shift is not merely noisy in it, it is *absent*;
+         its spectrum is conjugate-symmetric and would put a mirror ghost of
+         every target at a fabricated range (see the module docstring for the
+         measured pair);
       3. only then is the array materialised and checked for NaN/Inf.
     """
     if np.ma.is_masked(a):
