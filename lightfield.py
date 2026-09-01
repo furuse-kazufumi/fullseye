@@ -1163,7 +1163,19 @@ def lf_disparity_to_depth(slope, focal_px=1000.0, baseline=1.0, *,
         fd = 0.0
     safe = np.where(small, 1.0, mag)
     depth = f * b / safe
-    return np.where(small, fd, depth)
+    out = np.where(small, fd, depth)
+    # float64 overflow: focal_px * baseline can be finite while the quotient is
+    # not (2026-09-01 adversarial pass: focal_px = baseline = 1e300 with
+    # min_slope = 1e-300 returned a whole array of silent +inf). Non-finite
+    # output is never a contract in this module, so it is refused here.
+    if out.size and not np.isfinite(out).all():
+        raise ValueError("%s: focal_px * baseline / |slope| overflowed float64 "
+                         "for %d value(s) (focal_px=%g, baseline=%g, "
+                         "|s| min=%g) — the units are inconsistent by many "
+                         "orders of magnitude; refusing to return a silent inf"
+                         % (op, int((~np.isfinite(out)).sum()), f, b,
+                            float(mag.min())))
+    return out
 
 
 def lf_all_in_focus(lf, slope_map, levels=None, *, interp="linear",
