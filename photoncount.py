@@ -1063,9 +1063,13 @@ def tcspc_stats(hist, bin_ps=100.0):
     "this histogram has no width in the FWHM sense", not "the measurement
     failed".
 
-    Ground truth: for a noiseless Gaussian pulse of FWHM 500 ps at 100 ps bins
-    the measured ``fwhm_ps`` is 500.0 and ``centroid_ps`` matches the analytic
-    ``2d/c`` to 3.9e-11 ps (pinned in the tests).
+    Ground truth: for a noiseless Gaussian return of FWHM 500 ps, ``centroid_ps``
+    matches the analytic ``2d/c`` to 1.8e-12 ps. ``fwhm_ps`` comes back as 508.41
+    at 100 ps bins and 503.07 at 50 ps bins — the linear interpolation between
+    two bins on either flank systematically **overestimates** a Gaussian's width,
+    by 1.7% and 0.6% respectively, and the error shrinks with the bin width.
+    That bias is a property of the estimator; it is reported here rather than
+    hidden behind a "500" that only holds in the continuum limit.
 
     **Raises** ``ValueError``: negative, non-finite or non-1-D *hist*, a
     non-positive *bin_ps*, and an all-zero histogram (no photon arrived, so
