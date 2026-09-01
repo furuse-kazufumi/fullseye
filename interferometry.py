@@ -1228,12 +1228,20 @@ def csi_design(wavelength_um=0.6, bandwidth_um=0.1, z_range_um=12.0,
 
     Returned dict:
 
-      * ``coherence_length_um`` — ``(2 ln2 / pi) * lambda^2 / delta_lambda``, the
-        FWHM of the coherence envelope of a Gaussian source (Born & Wolf 7.5.8).
-        Verified numerically in the tests: the envelope obtained by Fourier
-        transforming a Gaussian spectrum of this bandwidth has this FWHM to
-        within 1.1e-04 relative.
-      * ``envelope_sigma_um`` — the same width as a Gaussian sigma.
+      * ``coherence_length_um`` — ``(4 ln2 / pi) * lambda^2 / delta_lambda``, the
+        FWHM of ``|gamma(OPD)|`` for a Gaussian source (Born & Wolf 7.5.8). This
+        is a property of the **optical path difference**. Verified in the tests
+        against a direct numerical Fourier transform of the Gaussian source
+        spectrum, at three (lambda, delta_lambda) settings, agreeing to 6
+        significant figures.
+      * ``envelope_fwhm_um`` — **half** of that: the width of the envelope along
+        the **scan axis**, because the double pass makes ``OPD = 2z``. This is the
+        one to hand to :func:`csi_signal_simulate` /
+        :func:`csi_stack_simulate`, and the two are reported separately precisely
+        because collapsing them into one name called "coherence length" is a clean
+        factor-of-two error in every height the module produces. (It was one
+        during development, and the numerical check above is what caught it.)
+      * ``envelope_sigma_um`` — ``envelope_fwhm_um`` as a Gaussian sigma.
       * ``fringe_period_um`` — ``lambda/2``. The double pass halves it, and this
         is the number that makes phase-shifting ambiguous above ``lambda/4``.
       * ``max_z_step_um`` — ``lambda/4``. The Nyquist ceiling on the scan step;
