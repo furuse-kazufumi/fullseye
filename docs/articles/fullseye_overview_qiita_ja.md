@@ -1338,20 +1338,10 @@ print(r["motion_snr_change_db"], r["band_power_ratio"])                # -2.18 d
 512³ の CT を全部 RAM に載せるのは、たいていの場合ただの無駄です。**「どこを計算するか」「何を保持するか」「一度に載せる量」の 3 つを別々の道具で削ります。**
 
 ```python
-import fullseye as fs
-
-# 1) 処理領域: 前景のタイトな直方体へ切り出し、戻すための offset ごと受け取る
-part, offset = fs.vol_crop_domain(vol, mask)
-result = heavy_3d_op(part)                       # ここが本題
-back = fs.vol_uncrop(result, offset, vol.shape)  # 元の座標系へ厳密に貼り戻す
-
-# 2) 境界: 中身を捨てて殻だけ持つ。そのまま物理 mm 座標の点群にもできる
-shell = fs.vol_boundary(mask, connectivity=6, side="inner")
-pts = fs.vol_boundary_points(mask, spacing=(0.5, 0.2, 0.2))   # (z,y,x) の mm/voxel
-
-# 3) run-length: 復号せずに体積・バウンディングボックス・集合演算を答える
-rle = fs.vol_rle_encode(mask)
-print(fs.vol_rle_volume(rle))                    # dense を作らずに voxel 数
+part, offset = fs.vol_crop_domain(vol, mask)     # ① どこを計算するか
+back = fs.vol_uncrop(heavy_3d_op(part), offset, vol.shape)    # 元の座標系へ厳密に戻す
+pts  = fs.vol_boundary_points(mask, spacing=(0.5, 0.2, 0.2))  # ② 殻だけ、(z,y,x) mm/voxel
+print(fs.vol_rle_volume(fs.vol_rle_encode(mask)))             # ③ dense を作らず voxel 数
 ```
 
 実測は、96³ の合成 CT から球だけ切り出して**メモリ 1/34**、中実の球を殻だけにして **19 %**、384³ の部品マスクを RLE にして dense の **1/145**。RLE のまま体積とバウンディングボックスを出すと **300〜1000 倍速**、和・積・差の集合演算は 192³ 同士で **3.1 ms** です。
