@@ -504,47 +504,58 @@ def ex_zslices():
     D, Hs, Ws = vol.shape
     vmin, vmax = float(vol.min()), float(vol.max())
     mip = ops.RT["vol_mip"](vol, 0.0, 0.0)               # z 方向の最大値投影
-    k = 5                                                # 最近傍整数拡大(補間しない)
+    k = 6                                                # 最近傍整数拡大(補間しない)
     pw, ph = Ws * k, Hs * k
-    W = 24 * 3 + pw * 2 + 260
-    H = 52 + ph + 96
-    bar_y, bar_h = 52 + ph + 22, 22
+    SIDE = 296                                           # 右の実測値カラム
+    W = 24 * 4 + pw * 3 + SIDE
+    H = 52 + ph + 92
+    bar_x0, bar_x1 = 24 * 4 + pw * 3, W - 24
     frames = []
     thr = float(vol.mean() + vol.std())
+    run = np.zeros_like(vol[0])
+    sx = 24 * 4 + pw * 3 + 12                            # 右カラムの左端
     for z in range(D):
         sl = (vol[z] - vmin) / (vmax - vmin)
+        run = np.maximum(run, vol[z])                    # z=0..z の累積 MIP
         canvas = _canvas(W, H)
         _fill(canvas, 0, 34, 0, W, (0.088, 0.098, 0.118))
         lab = []
         lab += _panel(canvas, 52, 24, ph, pw, _gray3(_upscale(sl, k)),
-                      "z = %2d / %d" % (z, D - 1))
-        lab += _panel(canvas, 52, 24 + pw + 24, ph, pw,
-                      _upscale(imgio.apply_cmap(mip, name="inferno"), k),
-                      "参照: z 方向 MIP")
-        _fill(canvas, bar_y, bar_y + bar_h, 24, W - 24, (0.14, 0.15, 0.18))
-        cw = (W - 48) / D
+                      "z = %2d の 1 枚" % z)
+        lab += _panel(canvas, 52, 24 * 2 + pw, ph, pw,
+                      _upscale(imgio.apply_cmap((run - vmin) / (vmax - vmin),
+                                                name="inferno", vmin=0.0, vmax=1.0), k),
+                      "z = 0..%d の累積 MIP" % z)
+        lab += _panel(canvas, 52, 24 * 3 + pw * 2, ph, pw,
+                      _upscale(imgio.apply_cmap((mip - vmin) / (vmax - vmin),
+                                                name="inferno", vmin=0.0, vmax=1.0), k),
+                      "全 z の MIP(到達点)")
+        # 縦の位置インジケータ: D 個のセルのうち今どこか
+        cy0, cell = 66, (ph - 40) / D
+        _fill(canvas, cy0 - 6, cy0 + ph - 34, bar_x0 + 6, bar_x0 + 34, (0.14, 0.15, 0.18))
         for j in range(D):
             col = C_ACCENT if j == z else (0.26, 0.29, 0.34)
-            _fill(canvas, bar_y + 4, bar_y + bar_h - 4,
-                  24 + j * cw + 1, 24 + (j + 1) * cw - 1, col)
-        canvas = imagedraw.draw_line(canvas, (24, bar_y + bar_h + 4),
-                                     (W - 24, bar_y + bar_h + 4), color=C_DIM, width=1)
+            _fill(canvas, cy0 + j * cell + 1, cy0 + (j + 1) * cell - 1,
+                  bar_x0 + 10, bar_x0 + 30, col)
+        canvas = imagedraw.draw_line(canvas, (bar_x0 + 38, cy0 + (z + 0.5) * cell),
+                                     (bar_x1 - 6, cy0 + (z + 0.5) * cell),
+                                     color=C_ACCENT, width=1)
         occ = float((vol[z] > thr).mean())
         f = _to_u8(canvas)
         lab += [
             (24, 9, "skeleton_ct.npy  (D,H,W) = (%d, %d, %d)   最近傍 x%d 拡大(補間なし)"
                     "   値域 [%.3f, %.3f]" % (D, Hs, Ws, k, vmin, vmax), C_TEXT, 13, False),
-            (24 + pw * 2 + 60, 60, "この 1 枚", (0.96, 0.96, 0.93), 14, True),
-            (24 + pw * 2 + 60, 84, "骨占有率  %5.1f %%" % (occ * 100.0), C_AMBER, 14, True),
-            (24 + pw * 2 + 60, 108, "最小値    %6.3f" % float(vol[z].min()), C_TEXT, 13, False),
-            (24 + pw * 2 + 60, 130, "最大値    %6.3f" % float(vol[z].max()), C_TEXT, 13, False),
-            (24 + pw * 2 + 60, 152, "平均      %6.3f" % float(vol[z].mean()), C_TEXT, 13, False),
-            (24 + pw * 2 + 60, 186, "閾値 mean+std", C_DIM, 12, False),
-            (24 + pw * 2 + 60, 206, "  = %6.4f" % thr, C_DIM, 12, False),
-            (24, bar_y + bar_h + 10, "z = 0", C_DIM, 11, False),
-            (W - 84, bar_y + bar_h + 10, "z = %d" % (D - 1), C_DIM, 11, False),
-            (24, H - 22, "MIP は全 z を潰した 1 枚。1 枚ずつ送ると「どの層に何があるか」"
-                         "が分かる —— 端の 1 枚が欠けていればここで気づく",
+            (sx + 34, 58, "z = %2d / %d" % (z, D - 1), (0.96, 0.96, 0.93), 15, True),
+            (sx + 34, 84, "骨占有率 %5.1f %%" % (occ * 100.0), C_AMBER, 14, True),
+            (sx + 34, 108, "min %6.3f" % float(vol[z].min()), C_TEXT, 13, False),
+            (sx + 34, 128, "max %6.3f" % float(vol[z].max()), C_TEXT, 13, False),
+            (sx + 34, 148, "avg %6.3f" % float(vol[z].mean()), C_TEXT, 13, False),
+            (sx + 34, 176, "閾値 mean+std = %.4f" % thr, C_DIM, 12, False),
+            (sx + 34, 200, "累積 MIP のカバー率", C_DIM, 12, False),
+            (sx + 34, 220, "  %5.1f %% (最終値 = 100 %%)"
+             % (100.0 * float(run.sum()) / float(mip.sum())), C_BLUE, 13, True),
+            (24, H - 24, "左=1 枚、中=そこまでの累積、右=到達点。累積が右に一致した瞬間に"
+                         "「もう新しい層は無い」と分かる —— 端の 1 枚落ちもここで露見します",
              C_DIM, 12, False),
         ]
         frames.append(_text(f, lab))
