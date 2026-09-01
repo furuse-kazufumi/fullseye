@@ -1047,6 +1047,11 @@ def tcspc_background_subtract(hist, method="median", leading_bins=None,
         fluorescence decays where the tail is background.
       * ``"quantile"`` — the given *quantile* of all bins, for tuning by hand.
 
+    *leading_bins* defaults to ``None`` = ``min(8, len(hist))``, so the default
+    call works on a short histogram instead of raising over a constant nobody
+    chose (a fixed default of 8 made ``method="leading"`` fail on any histogram
+    with fewer than 8 bins).
+
     *scale* multiplies the estimated level before subtraction (``scale=1.2`` for
     a deliberately aggressive removal). Clipping at 0 means the result is a valid
     non-negative histogram that the rest of this module will accept.
