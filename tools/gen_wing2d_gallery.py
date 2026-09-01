@@ -805,9 +805,6 @@ def subject_hist_shaping(log=print) -> dict:
     n = 12
     K = np.linspace(1.0, 0.16, n)                   # コントラスト圧縮率
     BS = [0.0, 0.5, 1.0]                            # 振る clip limit (b)
-    B_LAB = {0.0: "b=0.00 (×1 = 強調ゼロ)",
-             0.5: "b=0.50 (×16)",
-             1.0: "b=1.00 (×256 = 切り取り無し)"}
     mid = float(np.mean(src))
 
     def _std(v):
