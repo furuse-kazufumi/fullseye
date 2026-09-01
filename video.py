@@ -8,11 +8,12 @@ pose capture, a stereo-pair sequence — into the frame arrays the :mod:`flow`,
 Frames are float64 in ``[0, 1]``: grayscale ``(H, W)`` by default (what
 :func:`flow.optical_flow_lk` expects) or RGB ``(H, W, 3)`` with ``gray=False``.
 
-Reading and writing go through ``imageio`` (mp4 via the bundled
-``imageio-ffmpeg`` plugin, GIF natively); if ``imageio`` is unavailable an
-OpenCV (``cv2``) fallback covers mp4 reading. Both are optional — a clear
-``RuntimeError`` is raised if neither is importable, so the numpy-only core of
-the library never hard-depends on a video backend.
+Reading goes through ``imageio`` (mp4 via the bundled ``imageio-ffmpeg`` plugin,
+GIF natively); if ``imageio`` is unavailable an OpenCV (``cv2``) fallback covers
+mp4 reading. Writing uses ``imageio`` for mp4 and drives Pillow directly for GIF
+(so duplicate frames are not merged away — see :func:`write_video`). Both are
+optional — a clear ``RuntimeError`` is raised if neither is importable, so the
+numpy-only core of the library never hard-depends on a video backend.
 
     import fullseye as fs
     frames = fs.read_frames("clip.mp4", max_frames=60, step=2)   # (T, H, W) gray [0,1]
