@@ -1650,7 +1650,8 @@ def ex_smoothing_tradeoff(log):
         fig.text(96, 602, msg, C_B, 12, True)
         frames.append(fig.u8())
 
-    info = save_gif(frames, "smoothing_tradeoff", fps=6, thumb_index=best, log=log)
+    info = save_flipbook(frames, "smoothing_tradeoff", labels, ms=220, hold_ms=1600,
+                         log=log)
     facts = {
         "true_maxima": true_max, "true_peak": true_peak,
         "raw_rmse": rows[0]["rmse"], "raw_maxima": rows[0]["nmax"],
