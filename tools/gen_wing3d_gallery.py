@@ -1844,16 +1844,16 @@ def ex_obb(log) -> dict:
                        (aabb[5] - aabb[2]) / 2])
     aabb_corners = _box_corners(aabb_c[[2, 1, 0]], aabb_h[[2, 1, 0]])
 
-    # OBB の corners が本当に 8 隅の順番で並んでいるか(辺の長さ)を実測
-    def _wire_edges(cs8):
-        d = np.linalg.norm(cs8[:, None, :] - cs8[None, :, :], axis=-1)
-        # 各頂点から近い 3 本を辺とみなす
-        e = set()
-        for i in range(8):
-            for j in np.argsort(d[i])[1:4]:
-                e.add((min(i, int(j)), max(i, int(j))))
-        return sorted(e)
-    obb_edges = _wire_edges(obb_corners)
+    obb_edges = _BOX_EDGES
+    # 組んだ 8 隅が op の返す corners と同じ点集合か検算(順序は問わない)
+    ref = np.asarray(o["corners"], np.float64)[:, [2, 1, 0]]
+    d = np.linalg.norm(obb_corners[:, None, :] - ref[None, :, :], axis=-1)
+    corner_match = float(d.min(axis=1).max())
+    log(f"    OBB corners rebuilt from center/axes/extents; max distance to "
+        f"op corners = {corner_match:.3e} voxel")
+    if corner_match > 1e-6:
+        raise RuntimeError("rebuilt OBB corners disagree with obb()['corners'] by "
+                           "%.3e voxel" % corner_match)
 
     W, H = 1120, 700
     pw, ph = 700, 440
