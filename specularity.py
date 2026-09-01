@@ -1269,6 +1269,15 @@ def photometric_stereo_robust(images, lights, method="ransac", threshold=0.05,
     Iv = I.reshape(N, P)
     peak = np.abs(Iv).max(axis=0)
     tol = threshold * np.maximum(peak, np.finfo(np.float64).tiny)
+    # Which measurements carry an equation at all. Woodham's model is
+    # I = a * max(n.L, 0): a measurement of zero says ``n.L <= 0``, an
+    # *inequality*, while the linear solve reads it as ``n.L = 0``, a different
+    # and wrong constraint. Worse, g = 0 reproduces every zero measurement
+    # exactly, so a set of shadowed lights is a perfectly self-consistent "black
+    # surface" hypothesis that outscores the truth. A measurement within the
+    # method's own tolerance of zero is therefore not evidence and is not
+    # counted — neither in the consensus nor in the reported inlier mask.
+    lit = Iv > tol[None, :]
     best_g = np.zeros((3, P))
     best_score = np.full(P, np.inf) if method == "median" else np.full(P, -1.0)
     best_tie = np.full(P, np.inf)
