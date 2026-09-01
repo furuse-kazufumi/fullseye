@@ -126,8 +126,12 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         return np.clip(_np(_m()["KF"].unsharp_mask(_t(v), (5, 5), (s, s))), 0, 1)
 
     def _motion(v, a, b):
+        # kornia は float32 の畳み込みなので重み和の丸めで 1 をわずかに超えることが
+        # ある(実測 max=1+2e-7)。`image` は [0,1] 契約なので出口で clip する
+        # (`ops._apply` が段間で掛けている clip と同じ = パイプライン結果は不変)。
         ks = 2 * int(2 + a * 6) + 1
-        return _np(_m()["KF"].motion_blur(_t(v), ks, float(360 * a), float(2 * b - 1)))
+        return np.clip(_np(_m()["KF"].motion_blur(_t(v), ks, float(360 * a),
+                                                  float(2 * b - 1))), 0, 1)
 
     def _canny(v, a, b):
         low = 0.1 + 0.3 * a
