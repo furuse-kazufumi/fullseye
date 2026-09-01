@@ -1140,7 +1140,8 @@ def beam_hardening_correct(sinogram, high_energy_fraction=0.5,
     * **Model inverse** (default). :func:`beam_hardening_apply` is a monotone
       scalar function of the line integral, so it has an exact inverse; this
       builds it by interpolating the forward curve on *n_table* nodes. Round-trip
-      error on the disc phantom: **2.3e-08** peak, i.e. the table resolution.
+      error on the disc phantom: **1.6e-08** absolute and **8.0e-09** relative to
+      the peak line integral — the table resolution and nothing else.
       This is a *simulation* tool — it needs the same ``w`` and ``k`` the
       hardening used, which on real data nobody has.
     * **Polynomial** (*poly_coeffs*). ``p_corr = c1 p + c2 p^2 + ...``, the
