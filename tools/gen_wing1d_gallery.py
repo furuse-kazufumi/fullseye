@@ -567,10 +567,13 @@ def ex_kurtosis_band(log):
     times = tr["times"][inner]
     plane = np.log10(z + 1e-6)
     lo, hi = float(np.percentile(plane, 5.0)), float(plane.max())
-    plane_rgb = _colormap((plane - lo) / max(1e-12, hi - lo))[::-1]   # 低周波を下に
+    # 表示用に 20 段へ量子化する(GIF のパレットは 256 色なので、連続階調のまま
+    # 敷くとフレームごとに別のパレットが選ばれてファイルが膨らむ)。値は変えない。
+    tone = np.round(np.clip((plane - lo) / max(1e-12, hi - lo), 0.0, 1.0) * 19.0) / 19.0
+    plane_rgb = _colormap(tone)[::-1]                                 # 低周波を下に
 
     width_hz = 800.0
-    centres = np.linspace(600.0, 11800.0, 32)
+    centres = np.linspace(600.0, 11800.0, 24)
     log(f"  SK win=64: max {sk['max_kurtosis']:.4f} at {sk['max_freq']:g} Hz "
         f"(bin {sk['bin_hz']:g} Hz, {sk['n_frames']} interior frames, "
         f"estimator sigma {sk['noise_sigma']:.4f})")
