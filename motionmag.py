@@ -168,6 +168,22 @@ _ORIENTED = "band"
 _AMP_FLOOR = 1e-12
 _AMP_LIVE = 1e-6
 
+# ---------------------------------------------------------------------------
+# Why there is no temporal phase unwrapping in this module
+# ---------------------------------------------------------------------------
+# The obvious way to reach beyond a half-wavelength of motion is to unwrap the
+# per-pixel phase along time before band-passing it. It was implemented that way
+# first, and it is wrong in a way that does not raise: in a sub-band that holds
+# mostly sensor noise, the frame-to-frame phase is uniform on (-pi, pi], so
+# unwrapping it is a random walk. Measured on a 64x64x64 clip carrying 0.05 px of
+# real motion under sigma = 0.02 noise, the largest phase increment the
+# magnifier applied was 12.27 rad at alpha = 2 — against an intended 0.039 rad.
+# Nothing failed; the output was simply the wrong video, and the reported SNR
+# stopped being monotone in alpha. The wrapped deviation angle(z * conj(z_mean))
+# is bounded by pi by construction, so a noise band can contribute at most pi
+# before the gain, and the method's honest reach (|k*d| < pi, i.e. half a band
+# wavelength) is stated once and reported as ``wrap_limit_px``.
+
 # Filter banks are pure functions of (H, W, scales, orientations) and cost a
 # handful of FFT-sized allocations to build, so a small cache pays for itself
 # across the frames of one clip.
