@@ -1217,16 +1217,21 @@ def ex_stage_photon(data, log=print):
     problem = "photon_denoise"
     row = data["champions"]["rows"][problem]
     prob, specs, states, scores, tgt, src = _stage_states(problem)
-    frames = [_photon_frame(states[0], tgt, C_IDENT)]
+
+    def _norm_max(v):
+        a = np.asarray(v, np.float64).ravel()
+        s = a.sum() if a.sum() > 0 else 1.0
+        return float(np.max(a / s))
+    vmax = max(_norm_max(v) for v in states + [tgt])
+    frames = [_photon_frame(states[0], tgt, C_IDENT, vmax)]
     labels = [f"入力(この時点のスコア {row['locked_trivial']:.4f})"]
     for i, s in enumerate(specs):
-        frames.append(_photon_frame(states[i + 1], tgt, C_EVO))
+        frames.append(_photon_frame(states[i + 1], tgt, C_EVO, vmax))
         labels.append(f"{s['op']}  →  {scores[i]:.4f}")
-    frames.append(_photon_frame(tgt, tgt, C_TRUE))
+    frames.append(_photon_frame(tgt, tgt, C_TRUE, vmax))
     labels.append(f"正解(手の基準線は {row['locked_hand']:.4f})")
-    book = flipbook(frames, labels, title=(
-        f"champion のパイプライン(各段の出力)— {problem} "
-        f"[{row['unit']}]"))
+    book = flipbook(frames, labels,
+                    title=f"champion の各段 — {problem}")
     info = save_gif(book, "wingevo_stage_photon", fps=1.2)
     chain = " → ".join(f"`{s['op']}`" for s in specs)
     cap = ("**champion のパイプライン図(各段の中間値)** ―― " + chain +
