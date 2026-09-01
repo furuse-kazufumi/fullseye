@@ -1507,10 +1507,13 @@ def roundtrip_report(seed=0):
                                 indexing="ij"), -1).reshape(-1, 2)
     kp_sep = grid + rng.uniform(-0.5, 0.5, size=grid.shape)     # 4 px 間隔 = 融合しない
     back_sep = keypoints_from_image2d(keypoints_to_image2d(kp_sep, shape=(64, 64)))
-    d_sep, _ = cKDTree(back_sep).query(kp_sep, k=1)
+    d_sep, j_sep = cKDTree(back_sep).query(kp_sep, k=1)
+    axis_rms = float(np.sqrt(np.mean((back_sep[j_sep] - kp_sep) ** 2)))
     rows.append({"pair": "keypoints -> image2d -> keypoints (離した点)", "kind": "lossy",
-                 "lost": f"画素格子への量子化のみ RMS {float(np.sqrt(np.mean(d_sep ** 2))):.4f} px "
+                 "lost": f"画素格子への量子化のみ: 軸あたり RMS {axis_rms:.4f} px "
                          f"(一様量子化の理論値 1/sqrt(12) = 0.2887)、"
+                         f"2-D 距離 RMS {float(np.sqrt(np.mean(d_sep ** 2))):.4f} px "
+                         f"(理論 sqrt(2/12) = 0.4082)、"
                          f"点数 {kp_sep.shape[0]} -> {back_sep.shape[0]}(融合なし)"})
     kp_in = rng.random((60, 2)) * 50.0 + 5.0
     back = keypoints_from_image2d(keypoints_to_image2d(kp_in, shape=(64, 64)))
