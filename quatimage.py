@@ -930,20 +930,24 @@ def qft2(qimage, side, mu=None) -> np.ndarray:
     * ``side="left"``  — ``F[u,v] = sum_{x,y} E(x,y,u,v) * f[x,y]``
     * ``side="right"`` — ``F[u,v] = sum_{x,y} f[x,y] * E(x,y,u,v)``
 
-    **The argument is required.** Left and right are not a sign convention; on
-    the fuzzer's ``(32, 32)`` colour image they differ by
-    ``max|F_L - F_R| = 1.6e+02`` against a peak modulus of ``5.1e+02`` (32 % of
-    full scale), with no exception and no NaN to mark the difference. Mixing them
-    across a round trip is worse: ``iqft2(qft2(q, "left"), "right")`` returns an
-    image whose error reaches ``1.1e+00`` on data of unit range, i.e. a
-    completely different picture that still looks like a picture.
+    **The argument is required.** Left and right are not a sign convention. On
+    the fuzzer's ``(32, 32)`` dichromatic render they differ by
+    ``max|F_L - F_R| = 19.11`` against a peak modulus of ``1045`` (1.8 % of full
+    scale) and on a random colour field by ``33.35`` against ``892.9`` (3.7 %) —
+    with no exception and no NaN to mark the difference. **Mixing them across a
+    round trip is much worse**, because there the disagreement is not attenuated
+    by the spectrum's dynamic range: ``iqft2(qft2(q, "left"), "right")`` returns
+    an image whose error reaches ``1.113`` on data whose own range is ``0.9994``
+    — a completely different picture that still looks like a picture. (On the
+    grey-axis-dominated dichromatic render the same mistake costs only ``0.054``
+    against a range of ``1.076``, which is the dangerous case: a 5 % error is
+    exactly the size that survives a visual check.)
 
     The spectrum is returned **centred** (DC at the array centre, via
     ``fftshift``), matching the convention ``complexops.cx_fft`` established for
     the ``cimage`` sort. :func:`iqft2` un-centres before inverting, and the round
-    trip is exact: measured ``max|iqft2(qft2(q, s), s) - q| = 8.9e-16`` for
-    ``s = "left"`` and ``6.7e-16`` for ``s = "right"`` on a random
-    ``(32, 32, 4)`` field.
+    trip is exact: measured ``max|iqft2(qft2(q, s), s) - q| = 2.22e-15`` for both
+    sides on a standard-normal ``(32, 32, 4)`` field.
 
     How it is computed, and why that is not a shortcut
     --------------------------------------------------
