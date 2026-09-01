@@ -711,7 +711,8 @@ def ex_domain(log) -> dict:
                       f"{'YES' if exact else 'NO'}", C_TEXT, 14, True),
             (18, 614, f"bounding box (z,y,x) = ({z0},{y0},{x0}) .. ({z1},{y1},{x1})  "
                       f"margin=2  前景 {int(dom.sum()):,} voxel "
-                      f"= 全体の {100 * dom.mean():.2f} %", C_DIM, 13, False),
+                      f"= 全体の {100 * dom.mean():.2f} %  /  vol_reduce_domain 後の非零 "
+                      f"{int((red != 0).sum()):,} voxel", C_DIM, 13, False),
         ])
         c = _footer(c, "使用 op: vol_bounding_box / vol_crop_domain / vol_reduce_domain / "
                        "vol_uncrop / vol_gradient_magnitude  — 合成データ, seed 固定")
