@@ -419,7 +419,8 @@ def _wavelet_denoise(x: np.ndarray, sigma: float, wavelet: str = "db4",
     coeffs = pywt.wavedec2(x, wavelet, level=lv, mode="symmetric")
     out = [coeffs[0]]
     for det in coeffs[1:]:
-        out.append(tuple(_wiener_denoise(np.asarray(c, np.float64), sigma) for c in det))
+        out.append(tuple(_wiener_denoise(np.asarray(c, np.float64), sigma,
+                                         zero_mean_input=True) for c in det))
     rec = pywt.waverec2(out, wavelet, mode="symmetric")
     return np.asarray(rec, np.float64)[:x.shape[0], :x.shape[1]]
 
