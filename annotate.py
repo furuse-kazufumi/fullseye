@@ -1200,9 +1200,10 @@ def grid_lines(img, axes, xticks=None, yticks=None, color="neutral", width=1,
     # 線の無いところも ``base*0.65 + base*0.35`` を通って 1 ulp 動き、格子を
     # 重ねるたびに絵がじりじり変わる(重ねても等しいことを test が確かめている)。
     touched = np.any(over != base, axis=-1) if base.ndim == 3 else (over != base)
-    return _blend(base, touched.astype(np.float64), 0.0, 0.0) if not touched.any() else \
-        np.where(touched[..., None] if base.ndim == 3 else touched,
-                 base * (1.0 - alpha) + over * alpha, base)
+    if not touched.any():
+        return base.copy()
+    sel = touched[..., None] if base.ndim == 3 else touched
+    return np.where(sel, base * (1.0 - alpha) + over * alpha, base)
 
 
 def ticks(img, axes, xticks=None, yticks=None, color="neutral", width=1,
