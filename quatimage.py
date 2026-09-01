@@ -1478,7 +1478,8 @@ def riesz_motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4) -> dict
         if gain == 0.0:
             out += I
             continue
-        nx, ny, zbar, z, live, amp, amp_max = _band_reference(I, R1, R2)
+        nx, ny, zbar, z, live, amp, amp_max, _Ib, _R1b, _R2b, _rm = \
+            _band_reference(I, R1, R2)
         if amp_max <= _AMP_FLOOR * max(float(np.abs(vid).max()), 1.0):
             out += I                       # contrast-free band: nothing to shift
             continue
