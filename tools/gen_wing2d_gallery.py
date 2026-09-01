@@ -603,16 +603,16 @@ def subject_freq_sweep(log=print) -> dict:
     for i, a in enumerate(A):
         grid = _panel_grid(
             [src, _spectrum_rgb(src, cutoff=lo_cut[i], band=(bp_lo[i], bp_hi)),
-             lows[i], _stretch(highs[i]), _stretch(_signed_to_01(bands[i])),
+             lows[i], _stretch(highs[i]), _stretch(bands[i]),
              _cmap(np.abs(src - lows[i]), "magma", vmin=0.0, vmax=0.35)],
             ["元の写真 (camera.png)",
              "スペクトル + 遮断円\n緑=lowpass 橙=bandpass",
              "lowpass (遮断 %.3f)\nPSNR %.2f dB / エネルギー %.1f%%"
              % (lo_cut[i], psnr_lo[i], keep_e[i]),
-             "highpass (遮断 %.3f)\n実測 std %.3f — 表示は 1〜99%%tile 伸長"
-             % (hi_cut[i], float(np.std(highs[i]))),
-             "bandpass_image (%.3f〜%.3f)\n符号つき出力を 0.5 中心 + 伸長で表示"
-             % (bp_lo[i], bp_hi),
+             "highpass (遮断 %.3f)\n[%.4f, %.4f] / 負 %.1f%% — 表示は 1〜99%%tile 伸長"
+             % (hi_cut[i], rng_hi[i][0], rng_hi[i][1], rng_hi[i][2]),
+             "bandpass_image (%.3f〜%.3f)\n0 が 0.5 の [%.4f, %.4f] / 負 %.1f%%"
+             % (bp_lo[i], bp_hi, rng_bp[i][0], rng_bp[i][1], rng_bp[i][2]),
              "元 − lowpass の差\n捨てられた高周波"],
             3, tile=(330, 330), label_h=56,
             title="周波数フィルタの効き —— どこで切ると何が消えるか",
