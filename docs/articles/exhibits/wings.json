@@ -22,6 +22,14 @@
       }
     },
     {
+      "id": "wing2d",
+      "order": 30,
+      "title": {
+        "ja": "2D 古典オペレータ・ウィング ―― 教科書の op を、数字で確かめる",
+        "en": "The Classic 2-D Operator Wing — Checking the Textbook Ops Against Numbers"
+      }
+    },
+    {
       "id": "wing3d",
       "order": 40,
       "title": {
