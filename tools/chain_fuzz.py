@@ -1379,7 +1379,17 @@ TYPE_CHECKS = {
     # 消費側が無い出力専用の型で producer も 1 つなので、その 1 つの契約
     # (docstring「返り値 (centroid(3,), axes(3,3) 列=主軸, eigvals(3,))」)を
     # そのまま固定する。3x3 が真ん中に来ることが姿勢正準化の本体
-    "axes": lambda v: _is_seq(v, 3) and _shape(v[0]) == (3,)
+    # axes は **2 つの別物**が同じ名前で同居している(2026-09-02 に annotate を
+    # 登録して判明)。3-D の主軸 = 長さ 3 のベクトル列(``moment_axes``)、
+    # 作図の軸変換 = ``rect``/``xlim``/``ylim`` を持つ辞書(``axes_transform``)。
+    #
+    # **分けなかった**。この repo の基準は「混ぜると例外でなく、もっともらしく
+    # 間違った結果が出るか」で、実測はそうならない —— 3-D の主軸を
+    # ``axes_frame`` / ``grid_lines`` / ``ticks`` に渡すと 3 つとも即座に
+    # ``TypeError: tuple indices must be integers or slices, not str`` で落ちる
+    # (絵は 1 画素も変わらない)。よって型ではなく述語で両方を受ける。
+    "axes": lambda v: (isinstance(v, dict) and {"rect", "xlim", "ylim"} <= set(v))
+                      or (_is_seq(v, 3) and _shape(v[0]) == (3,))
     and _shape(v[1]) == (3, 3) and _shape(v[2]) == (3,),
 
     # bspline_curve = FITPACK の **tck = (t, c, k)**。消費側 eval_bspline_curve の
