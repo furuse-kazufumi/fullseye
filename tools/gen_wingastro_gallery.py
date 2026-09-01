@@ -462,8 +462,16 @@ def ex_cosmic():
     tp = int((mask & hit).sum())
     precision = tp / max(1, int(mask.sum()))
     recall = tp / max(1, int(hit.sum()))
+    # ★ 「最大差」は単一フレームでは動かない —— 再現率が 1 未満である限り、
+    # 見逃した 1 画素が最大値をそのまま押さえてしまうから。**何画素が正解から
+    # 大きく外れたままか**と**外れの総量**なら、除去の効き目がそのまま出る。
+    bad = 100.0                          # 「大きく外れた」の閾値(e-)
     res_raw = float(np.abs(frame - ideal_frame).max())
     res_cleaned = float(np.abs(cleaned - ideal_frame).max())
+    n_bad_raw = int((np.abs(frame - ideal_frame) > bad).sum())
+    n_bad_cleaned = int((np.abs(cleaned - ideal_frame) > bad).sum())
+    sum_raw = float(np.abs(frame - ideal_frame).sum())
+    sum_cleaned = float(np.abs(cleaned - ideal_frame).sum())
 
     skw = dict(shape=(150, 150), n_frames=8, dither_px=0.0, n_stars=30,
                flux_min=1500.0, flux_max=30000.0, fwhm_px=3.2, sky=90.0,
