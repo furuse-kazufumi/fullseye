@@ -672,11 +672,15 @@ def anscombe_inverse(values, gain=1.0, read_sigma=0.0, offset=0.0,
     unbiased inverse, so it is not bias-free — those +0.017 are the honest
     residual, not round-off.
 
-    The formula dips slightly below 0 just above its root: measured minimum
-    -3.97e-05 over ``D`` in ``[1.2247, 3]``, where ``1.2247 = A(0)`` is the
-    smallest value the transform can produce. The result is clipped at 0 —
-    stated here rather than done quietly — because a negative photon count is
-    not a number this module hands out.
+    The result is clipped at 0 — stated here rather than done quietly — but the
+    clip essentially never fires: the closed form's positive root is
+    **exactly** ``A(0) = 2*sqrt(3/8) = 1.2247448714`` (measured: the root and
+    ``A(0)`` agree to 0.0), which is also the smallest value
+    :func:`anscombe_transform` can produce, so over the whole valid domain the
+    formula is non-negative to round-off (measured minimum -1.11e-16 over
+    ``D`` in ``[A(0), 6]`` on 500001 samples). Below ``A(0)`` it does go
+    genuinely negative (-0.0217 at ``D = 1.20``), which is why values there are
+    refused outright rather than clipped.
 
     Returns a float64 array of the same shape as *values*.
 
