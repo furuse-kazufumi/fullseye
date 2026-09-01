@@ -1278,21 +1278,12 @@ z = fs.lf_disparity_to_depth(slope, focal_px=..., baseline=...)   # mm へ
 光子計数は、光が連続した明るさではなく**数えられる粒**になる領域です。ここでは Poisson 分布が「分散 = 平均」なので、**誤差棒が校正なしで出ます**。既存の `aug_read_noise`(加法ガウスの読み出し雑音)とは雑音モデルが違い、両者が出会うのは Anscombe の一般化形だけです。
 
 ```python
-import fullseye as fs
-
-# 3 m 先の対象。256 bin × 100 ps = 一意測距範囲 3.84 m、1 bin = 1.50 cm
-hist = fs.tcspc_simulate(distance_m=3.0, bins=256, bin_ps=100.0,
-                         signal_photons=300.0, ambient_photons=1500.0, seed=0)
 clean = fs.tcspc_background_subtract(hist, "median")        # 屋外の日射を引く
 print(fs.dtof_depth(clean, bin_ps=100.0, mode="gaussian"))  # ≈ 3.0 m
-
-# 光子計数画像の誤差棒は校正不要 ―― Poisson は分散 = 平均
-counts = fs.photon_sample(scene, photons_per_unit=100.0, seed=0)
-print(fs.photon_statistics(counts)["fano_factor"])          # ≈ 1.0 なら本当に Poisson
-sigma = fs.photon_uncertainty(counts)                       # sqrt(N)
+sigma = fs.photon_uncertainty(counts)                       # sqrt(N) ― 校正不要の誤差棒
 ```
 
-SPAD のデッドタイム補正は教科書式 `m = n/(1+nτ)` と**ビット単位で一致**し、逆変換の往復誤差は 1.7e-16。dToF の距離推定は 1.5 m を注文して **1.5000003 m** が返ります。
+`photon_statistics(counts)["fano_factor"]` が 1.0 付近なら、本当に Poisson です。SPAD のデッドタイム補正は教科書式 `m = n/(1+nτ)` と**ビット単位で一致**し、逆変換の往復誤差は 1.7e-16。dToF の距離推定は 1.5 m を注文して **1.5000003 m** が返ります。
 
 **壊れ方が 1 つあります。** デッドタイムは検出器の**レート流**(Hz)に効くもので、時間 bin ヒストグラム(カウント)に bin ごとに掛かるものではありません。ヒストグラムを `spad_deadtime_correct` に渡すと、**例外も出ず、恒等写像に限りなく近い値**が返ります(相対変化 1.1e-4)。本物の計数レート(1e3〜1e7 Hz)なら 33.3 % 変わるところです。**飽和も fail-closed も一度も踏まれない。** だから型を分けました ―― 分けないと、この「もっともらしい通過」は永久に検出されません。
 
