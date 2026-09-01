@@ -352,25 +352,22 @@ def _sha256(path: str) -> str:
 
 
 def _save_png(frame_u8: np.ndarray, stem: str, log) -> dict:
+    """静止展示は共通部品 ``exhibit_tile.save_exhibit`` に一本化する。
+
+    サムネイル方針(幅 720 の JPEG + クリックで原寸)を 2 か所に持たないため。
+    書いたあと**読み戻して**形を実測し、期待と照合する。
+    """
     from PIL import Image
-    os.makedirs(ASSETS, exist_ok=True)
-    path = os.path.join(ASSETS, f"{PREFIX}{stem}.png")
-    Image.fromarray(frame_u8, "RGB").save(path, optimize=True)
-    thumb = os.path.join(ASSETS, f"{PREFIX}{stem}_thumb.jpg")
-    im = Image.fromarray(frame_u8, "RGB")
-    if im.width > THUMB_WIDTH:
-        im = im.resize((THUMB_WIDTH, max(2, round(im.height * THUMB_WIDTH / im.width))),
-                       Image.LANCZOS)
-    im.save(thumb, format="JPEG", quality=88, optimize=True)
-    # 読み戻して形を実測する(でっち上げ禁止 — 報告する数字は読み返した値)
+    res = save_exhibit(frame_u8, f"{PREFIX}{stem}")
+    path, thumb = res["png"], res["thumb"]
     with Image.open(path) as back:
         shape = (back.height, back.width)
     if shape != frame_u8.shape[:2]:
         raise RuntimeError(f"{path}: read back {shape}, expected {frame_u8.shape[:2]}")
     info = {"kind": "png", "path": path, "thumb": thumb,
-            "bytes": os.path.getsize(path), "thumb_bytes": os.path.getsize(thumb),
+            "bytes": res["png_bytes"], "thumb_bytes": res["thumb_bytes"],
             "size": (shape[1], shape[0]), "frames": 1,
-            "sha256": _sha256(path)}
+            "sha256": res["png_sha256"]}
     log(f"    png  {os.path.basename(path)}  {shape[1]}x{shape[0]}  "
         f"{info['bytes'] / 1e3:.0f} kB   thumb {info['thumb_bytes'] / 1e3:.0f} kB")
     return info
