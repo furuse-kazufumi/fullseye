@@ -1447,8 +1447,27 @@ def dtof_cube_depth(cube, bin_ps=100.0, mode="peak", offset_ps=0.0,
     if not isinstance(subtract_background, (bool, np.bool_)):
         raise ValueError("dtof_cube_depth: subtract_background must be a bool, "
                          "got %r" % (type(subtract_background).__name__,))
-    ev = float(empty_value)
-    if not np.isfinite(ev) and not np.isnan(ev):
+    # NOT _finite_scalar: NaN is a legitimate (opt-in) empty marker here. The
+    # string/bool/complex traps still apply — the 2026-09-01 adversarial pass
+    # found dtof_cube_depth(cube, empty_value="3") silently succeeding, because
+    # float("3") parses and an unparsed config value became a depth.
+    if isinstance(empty_value, (str, bytes, np.str_, np.bytes_)):
+        raise ValueError("dtof_cube_depth: empty_value is a string (%r) — it "
+                         "must be a number; float('3') would silently succeed "
+                         "and hide an unparsed configuration value"
+                         % (empty_value,))
+    if isinstance(empty_value, (bool, np.bool_)):
+        raise ValueError("dtof_cube_depth: empty_value is a bool — refusing the "
+                         "silent True==1.0 metre promotion")
+    if isinstance(empty_value, (complex, np.complexfloating)):
+        raise ValueError("dtof_cube_depth: empty_value is complex — a depth is a "
+                         "real quantity")
+    try:
+        ev = float(empty_value)
+    except (TypeError, ValueError):
+        raise ValueError("dtof_cube_depth: empty_value must be a real scalar or "
+                         "NaN, got %r" % (type(empty_value).__name__,)) from None
+    if np.isinf(ev):
         raise ValueError("dtof_cube_depth: empty_value must be finite or NaN, "
                          "got %r (an infinite depth would poison every "
                          "downstream reduction)" % (empty_value,))
