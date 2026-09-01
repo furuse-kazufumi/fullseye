@@ -818,12 +818,21 @@ def band_snr(video, f_lo, f_hi, fps) -> dict:
 
     **The two SNRs answer different questions and magnification moves only one
     of them.** Scaling the in-band phase by ``alpha`` scales the in-band motion
-    *and* the in-band noise by the same factor, so ``motion_snr_db`` is
-    invariant: magnification cannot make a measurement more certain than the
-    recording was. What it does change is ``image_snr_db``, because the temporal
+    *and* the in-band noise by the same factor, so the true motion SNR cannot
+    improve: magnification never makes a measurement more certain than the
+    recording was. What does change is ``image_snr_db``, because the temporal
     fluctuation of the output frames grows like ``alpha^2`` while the static
-    scene does not. :func:`motion_magnify` reports this measured on its own
-    output, so the cost is visible in the same return value as the benefit.
+    scene does not.
+
+    **A caveat that matters when this is run on an already-magnified clip.**
+    ``motion_snr_db`` here divides the in-band signal by a noise floor estimated
+    from the *out-of-band* bins, and magnification does not touch those. Applied
+    to a magnified video it therefore credits ``alpha^2`` more in-band power
+    against an unchanged noise estimate and reports an improvement that did not
+    occur — measured, ``+6.86 dB`` at ``alpha = 2`` on a clip whose true motion
+    SNR cannot have moved. :func:`motion_magnify` knows the gain and returns the
+    corrected figure as ``motion_snr_out_db``; use that one, not
+    ``result["snr_out"]["motion_snr_db"]``.
 
     ``snr_clamped`` is True when a reported dB hit the ``[-100, +100]`` window
     (a noiseless synthetic has zero out-of-band power, which is a division by
