@@ -3326,6 +3326,13 @@ _EXHIBITS = [
     ("distance", ex_distance),
     ("connectivity", ex_connectivity),
     ("pipeline", ex_pipeline),
+    # 断層(断面を段階的に動かす)シリーズ — このウィングの中核
+    ("zsweep", ex_slice_zsweep),
+    ("mpr", ex_mpr),
+    ("oblique", ex_oblique),
+    ("windowsweep", ex_window_sweep),
+    ("isosurface", ex_isosurface),
+    ("vessel", ex_vessel_reslice),
 ]
 
 
