@@ -261,8 +261,13 @@ OP_ARG_BUILDERS = {
     if pool.get("points") else None,
 }
 
-#: op 固有の必須引数(名前が汎用ヒントと衝突する/型が op ごとに違うもの)
+#: op 固有の引数(名前が汎用ヒントと衝突する/型が op ごとに違うもの)。
+#: **既定値つきの引数もここに書けば上書きできる**(名前レベルの PARAM_HINTS は
+#: 必須引数にしか効かない — 詳細は `_bind_args`)。
 OP_PARAM_HINTS = {
+    # 既定 (5,5) はプールの 32x32 を割り切れず毎回 ValueError になり、この op が
+    # 一度も実行されないまま「発見ゼロ」に見えていた。32 を割り切る (4,4) にする
+    ("lf_from_mla", "angular"): lambda rng: (4, 4),
     ("vol_richardson_lucy", "psf"): lambda rng: __import__("volrestore").vol_gaussian_psf(1.0),
     ("cx_wiener_deconvolve", "psf"): lambda rng: (lambda k: k / k.sum())(
         np.outer(*(np.exp(-np.linspace(-2, 2, 5) ** 2),) * 2)),
