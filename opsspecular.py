@@ -113,6 +113,19 @@ _MOD = {"specularity": specularity}
 #         specular_diffuse_split (rgbimage -> rgbimage)。
 #   出口: specular_coefficient_map (rgbimage -> image2d = 最大のプールへ戻る)、
 #         illuminant_from_dichromatic_planes (rgbimage + labels -> vector)。
+#
+# polsweep も同じ検査を通してある(**分ける前に産む側があることを確認済み**):
+#   入口: polarization_render (image2d x2 -> polsweep)。既に到達実績がある op
+#         (親の 1200 連鎖で polarization_render だけは到達していた)。分離後は
+#         これと専用生成器の 2 つが polsweep プールを埋める。
+#   出口: polarization_separate / polarization_dolp_map (-> image2d)、
+#         polarization_stokes (-> stokes)。しかも stokes は既存の狭い語彙で、
+#         これまで optics の代数(stokes_from_jones / mueller_apply)からしか
+#         産まれていなかった。**測定から stokes を産む入口は本族が初めて**で、
+#         分離によって「polsweep -> stokes -> stokes_analyze」という
+#         測定 → 解析の鎖が連鎖ファザーの中に生まれる。
+#   内部辺は無し(掃引を掃引へ写す op は無い)。入口 2・出口 3 あるので
+#   死んだ語彙にはならない。
 _CATALOG = {
     "dichromatic": [
         ("specular_diffuse_split", "specularity", ["rgbimage"], "rgbimage"),
