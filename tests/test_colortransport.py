@@ -573,7 +573,8 @@ def test_transport_plan_now_has_consumers():
     v = np.array([10.0, 11.0, 12.0, 13.0])
     plan = CT.transport_plan_1d(u, v)
 
-    assert np.allclose(CT.apply_transport(plan, v), v + 10.0 - 10.0 + np.array([10., 11., 12., 13.]) - np.array([10., 11., 12., 13.]) + v)
+    # 同じ長さ・同じ順序なので計画は対角。重心写像は行き先をそのまま返す
+    assert np.allclose(CT.apply_transport(plan, v), v)
     assert CT.transport_cost(plan, np.abs(u[:, None] - v[None, :])) == pytest.approx(10.0, abs=1e-12)
     assert CT.transport_cost(plan, np.abs(u[:, None] - v[None, :])) == pytest.approx(
         CT.wasserstein_1d(u, v), abs=1e-12)
