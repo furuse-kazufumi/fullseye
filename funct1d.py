@@ -701,13 +701,13 @@ def match_funct_1d_trans(y1, y2):
     window of a sigma-9 Gaussian peak against an 81-sample template of the same
     peak, noise sigma 0.20:
 
-    ==========  ==============  ==========  ==============  ==========
-    true shift  old mean shift  old exact   new mean shift  new exact
-    ==========  ==============  ==========  ==============  ==========
-    0                    -0.00      0.865            +0.01      0.547
-    -5                   -4.21      0.295            -4.99      0.547
-    +12                 +11.22      0.307           +12.01      0.547
-    ==========  ==============  ==========  ==============  ==========
+    ========== ============== ========= ============== =========
+    true shift old mean shift old exact new mean shift new exact
+    ========== ============== ========= ============== =========
+    0                   -0.00     0.865          +0.01     0.547
+    -5                  -4.21     0.295          -4.99     0.547
+    +12                +11.22     0.307         +12.01     0.547
+    ========== ============== ========= ============== =========
 
     The new estimator is unbiased and equally accurate at every true shift; the
     old one is biased by about 0.8 samples toward zero and its exact-hit rate
