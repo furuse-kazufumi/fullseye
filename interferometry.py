@@ -1253,8 +1253,8 @@ def chromatic_confocal_height(spectrum, wavelength_start_nm=500.0,
                 "%s: the spectral peak spans %d bin(s) above half maximum, below "
                 "min_peak_bins=%g — the peak is undersampled by the "
                 "spectrometer. The noiseless algebra still inverts it exactly, "
-                "which is the trap: measured with 1 %% noise a 1-bin peak is "
-                "located 21x worse than an 8-bin one (0.216 nm vs 0.010 nm) with "
+                "which is the trap: measured with 1 %% noise a half-bin peak is "
+                "located 25x worse than a two-bin one (0.256 nm vs 0.010 nm) with "
                 "nothing in the spectrum to show for it. Use a finer "
                 "wavelength_step_nm, or pass min_peak_bins=0 if the data is "
                 "known to be clean." % (op, above, bins_min))
