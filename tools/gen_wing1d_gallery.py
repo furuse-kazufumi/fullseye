@@ -46,8 +46,11 @@ import time
 
 import numpy as np
 
-# スクリプト直実行でも動くよう repo ルートを sys.path に足す。
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# スクリプト直実行でも動くよう repo ルートと tools/ を sys.path に足す。
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_ROOT = os.path.dirname(_HERE)
+sys.path.insert(0, _ROOT)
+sys.path.insert(0, _HERE)
 
 import acoustics as A            # noqa: E402  音響状態監視 op
 import dsp                       # noqa: E402  基本 DSP
