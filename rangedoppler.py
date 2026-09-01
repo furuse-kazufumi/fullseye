@@ -1226,7 +1226,6 @@ def beamform_doa(cube, wavelength_m=3.8934e-3, element_spacing_m=None,
     idx = np.flatnonzero(loc)
     idx = idx[np.argsort(-power[idx], kind="stable")][:nt]
 
-    zero = arr.shape[1] // 2
     rng_m = None if range_bin_m is None else rj * _positive(range_bin_m,
                                                             "range_bin_m")
     vel = None if velocity_bin_ms is None else (di - zero) * _positive(
