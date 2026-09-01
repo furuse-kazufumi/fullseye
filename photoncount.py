@@ -359,13 +359,37 @@ def _check_mode(mode, allowed, name: str, op: str) -> str:
     return m
 
 
+def _pulse_sigma(fwhm_ps, op: str) -> float:
+    """FWHM -> Gaussian sigma, refusing an underflow to exactly 0.
+
+    Found by the 2026-09-01 adversarial pass: ``irf_fwhm_ps=5e-324`` (the
+    smallest positive double) passes a ``> 0`` check but ``5e-324 / 2.3548``
+    underflows to **0.0**, and the erf argument ``(edge - t0)/0`` is then ``inf``
+    everywhere except at a bin edge that coincides exactly with the pulse
+    centre, where it is ``0/0 = NaN``. Minimal reproduction:
+    ``tcspc_simulate(0.0149896229, bins=8, bin_ps=100.0, irf_fwhm_ps=5e-324,
+    noise=False)`` returned ``[nan, nan, 0, 0, 0, 0, 0, 0]`` — a silent NaN out
+    of an op documented to return finite counts.
+    """
+    sigma = float(fwhm_ps) / FWHM_PER_SIGMA
+    if not sigma > 0.0:
+        raise ValueError(
+            "%s: irf_fwhm_ps=%r is positive but sigma = fwhm/%.6f underflows to "
+            "0.0, so the Gaussian is a division by zero (NaN wherever a bin edge "
+            "falls exactly on the pulse centre). Use an IRF width that is "
+            "representable — anything above ~1e-323 ps, which is far below any "
+            "physical detector." % (op, fwhm_ps, FWHM_PER_SIGMA))
+    return sigma
+
+
 def _gauss_bin_probs(edges_ps, t0_ps, sigma_ps):
     """Exact probability mass of a Gaussian pulse in each time bin.
 
     ``edges_ps`` is ``(..., T+1)`` (broadcastable), ``t0_ps`` the pulse centre.
     Uses the erf difference, so this is the *analytic* bin integral — no
     midpoint approximation, which is what makes the noiseless simulation an
-    exact ground truth rather than an approximation of one.
+    exact ground truth rather than an approximation of one. *sigma_ps* must be
+    strictly positive (see :func:`_pulse_sigma`).
     """
     z = (edges_ps - t0_ps) / (sigma_ps * np.sqrt(2.0))
     cdf = 0.5 * (1.0 + erf(z))
