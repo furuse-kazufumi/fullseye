@@ -160,6 +160,14 @@ MAX_SNR_DB = 100.0
 #: therefore the only ones whose phase may be scaled.
 _ORIENTED = "band"
 
+#: A sub-band whose peak amplitude is below ``_AMP_FLOOR`` times the clip's own
+#: scale holds rounding noise, not signal; its phase is meaningless and is left
+#: alone. Inside a kept band, pixels below ``_AMP_LIVE`` times that band's peak
+#: are muted for the same reason. Both thresholds are relative, so they do not
+#: encode an assumption about the clip's units.
+_AMP_FLOOR = 1e-12
+_AMP_LIVE = 1e-6
+
 # Filter banks are pure functions of (H, W, scales, orientations) and cost a
 # handful of FFT-sized allocations to build, so a small cache pays for itself
 # across the frames of one clip.
