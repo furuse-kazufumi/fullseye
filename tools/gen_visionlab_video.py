@@ -620,12 +620,18 @@ def main(argv=None) -> int:
     def log(m):
         print(m, flush=True)
 
+    def _hold(seq):
+        """最後の状態を数枚ぶん持続させる(ループが一瞬で巻き戻ると読めないため)。"""
+        n = max(0, int(args.hold))
+        return list(seq) + [seq[-1]] * n if seq else list(seq)
+
     t0 = time.time()
     results = {}
     if "sweep" in clips:
         log("[build] visionlab_sweep (defect size sweep)")
         frames, facts = build_sweep_frames(frames=args.sweep_frames,
                                            seeds=args.seeds, log=log)
+        frames = _hold(frames)
         info = _write_clip(frames, "visionlab_sweep", fps=args.fps,
                            thumb_index=facts["thumb_index"], out_dir=args.out, log=log)
         results["sweep"] = {"info": info, "facts": facts}
