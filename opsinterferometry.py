@@ -108,22 +108,22 @@ _MOD = {"interferometry": interferometry}
 #     実績のある構成である。
 _CATALOG = {
     "simulate": [
-        ("csi_signal_simulate", "interferometry", [], "signal"),
+        ("csi_signal_simulate", "interferometry", [], "sweep"),
         ("csi_stack_simulate", "interferometry", ["depth"], "zscan"),
-        ("chromatic_confocal_simulate", "interferometry", [], "signal"),
+        ("chromatic_confocal_simulate", "interferometry", [], "sweep"),
     ],
     "envelope": [
-        ("csi_envelope", "interferometry", ["signal"], "signal"),
+        ("csi_envelope", "interferometry", ["sweep"], "signal"),
     ],
     "locate": [
-        ("csi_peak_position", "interferometry", ["signal"], "measurement"),
+        ("csi_peak_position", "interferometry", ["sweep"], "measurement"),
     ],
     "surface": [
         ("csi_height_map", "interferometry", ["zscan"], "depth"),
         ("csi_contrast_map", "interferometry", ["zscan"], "image2d"),
     ],
     "chromatic": [
-        ("chromatic_confocal_height", "interferometry", ["signal"], "measurement"),
+        ("chromatic_confocal_height", "interferometry", ["sweep"], "measurement"),
     ],
     "design": [
         ("csi_design", "interferometry", [], "table"),

@@ -295,7 +295,8 @@ def test_angular_resample_at_constant_speed_is_a_pure_rescale():
     fs, rpm = 4000.0, 120.0                            # 2 rev/s
     x = _tone(20.0, fs, 8000)                          # order 10
     ang = A.angular_resample(x, fs, rpm, samples_per_rev=64)
-    assert abs(ang["revolutions"] - 4.0) < 1e-6
+    # 8000 samples span 7999 intervals, so the record is 4 - 1/2000 revolutions
+    assert abs(ang["revolutions"] - (8000 - 1) / fs * (rpm / 60.0)) < 1e-9
     assert ang["mean_rpm"] == rpm
     assert ang["max_order"] == 32.0
     o = A.order_spectrum(x, fs, rpm, samples_per_rev=64, revolutions=4)
