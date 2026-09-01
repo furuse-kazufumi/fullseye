@@ -1231,9 +1231,10 @@ def subject_blob_select(log=print) -> dict:
         "threshold で二値化 — 前景 %d px" % int(np.sum(reg)),
         "fill_up で穴埋め — blob_count = %d 個" % n_blobs,
         "ラベル付け + colorize_labels — %d 個に色を配る" % n,
-        "circularity ≥ %.2f を採用 — 緑 %d 個 / 赤 %d 個。十字は area_center が"
-        "返した中心 (独立に計算した重心との差は最大 %.3f px)"
-        % (circ_thr, len(keep), n - len(keep), ctr_err),
+        # flipbook のラベルは折り返さず、はみ出すと黙って両端が切れる。1 行に
+        # 収まる長さに抑え、中心と重心の差の実測値はキャプション側に出す。
+        "circularity ≥ %.2f を採用 — 緑 %d / 赤 %d、十字は area_center の中心"
+        % (circ_thr, len(keep), n - len(keep)),
         "特徴空間で見ると 2 つの群にきれいに割れている"]
     book = E.flipbook([_to_u8(s) for s in steps], labels,
                       title="ブロブ解析 —— 数える・測る・選り分ける")

@@ -5,7 +5,7 @@
     "file": "docs/articles/assets/media/wing2d_blob_select.gif",
     "thumb": "docs/articles/assets/thumbs/wing2d_blob_select_thumb.jpg",
     "frames": 6,
-    "bytes": 95419,
+    "bytes": 93384,
     "size": [
       960,
       812
@@ -209,7 +209,7 @@
     },
     "caption": "円 8 個・楕円 1・四角 1・板 2・三角 1 を混ぜた合成シーンを二値化 → 穴埋め → ラベル付けし、blob_count が 13 個と数えた。真円度 (circularity) 0.85 をしきい値にすると採用 8 個 (真円度 0.912〜0.916)、不採用 5 個 (0.416〜0.797) にきれいに割れる —— 特徴空間の散布図でも 2 つの群がしきい値をまたいで重なっていない。5 コマ目の十字は `area_center` が返した中心で、この op は (面積比, 行, 列) の 3 成分を [0,1] 正規化して返す —— 画素に戻して独立に計算した重心と比べると差は最大 0.000 px、13 個すべてが自分の粒の上に乗った。",
     "sha256": {
-      "wing2d_blob_select.gif": "f01c2e7892c1949e48f9e345f8d2e8ae1ef7bdbadcc656429291966671e2f13c",
+      "wing2d_blob_select.gif": "93185b3f2cbe7060dc0f05b4415e6cd4640405f281d139946f3b6b97421d3f0f",
       "wing2d_blob_select_thumb.jpg": "8d9c46db6ed7b0fa41f3eb6ba52449d0a61d57653152759d402ed27f9a447329"
     }
   },
