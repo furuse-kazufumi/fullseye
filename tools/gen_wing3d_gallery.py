@@ -3015,8 +3015,10 @@ def ex_vessel_reslice(log) -> dict:
         f"直交断面で {rows[i_min]['ortho_minor_mm']:.4f} mm  "
         f"素朴断面で {rows[i_min]['naive_major_mm']:.4f} mm")
 
-    W, H = 1120, 660
-    ps = 270
+    W, H = 1120, 664
+    ps = 258
+    PX0, PX1, PX2, TX = 18, 292, 566, 848
+    PY = 90
     frames = []
     for i, r in enumerate(rows):
         zc = r["z"]
@@ -3026,75 +3028,76 @@ def ex_vessel_reslice(log) -> dict:
                     f"spacing {sp} mm/voxel)。断面を軸に沿って送る。")
         # 側面図(管の走行と、いま切っている場所)
         side = tube[:, :, int(round(ctr))]
-        c, s_side = _slice_panel(c, side, 18, 92, 330, "gray", border=C_C)
+        c, s_side = _slice_panel(c, side, PX0, PY, ps, "gray", border=C_C)
         # 素朴な z 断面(水平線)と、軸に直交する断面(軸に垂直な線)を重ねる
-        c = imagedraw.draw_line(c, (18, 92 + zc * s_side), (18 + 329, 92 + zc * s_side),
-                                color=C_E, width=1)
+        c = imagedraw.draw_line(c, (PX0, PY + zc * s_side),
+                                (PX0 + ps - 1, PY + zc * s_side), color=C_E, width=1)
         y_ax = ctr + (zc - ctr) * math.tan(th)      # その z における軸の y 座標
         L = 46.0
         c = imagedraw.draw_line(
-            c, (18 + (y_ax - L * math.cos(th)) * s_side,
-                92 + (zc + L * math.sin(th)) * s_side),
-            (18 + (y_ax + L * math.cos(th)) * s_side,
-             92 + (zc - L * math.sin(th)) * s_side),
+            c, (PX0 + (y_ax - L * math.cos(th)) * s_side,
+                PY + (zc + L * math.sin(th)) * s_side),
+            (PX0 + (y_ax + L * math.cos(th)) * s_side,
+             PY + (zc - L * math.sin(th)) * s_side),
             color=C_D, width=2)
-        c = imagedraw.draw_markers(c, [(18 + y_ax * s_side, 92 + zc * s_side)],
+        c = imagedraw.draw_markers(c, [(PX0 + y_ax * s_side, PY + zc * s_side)],
                                    color=(1, 1, 1), size=4, shape="cross", width=1)
-        c = _text(c, [(18, 92 + 330 + 6,
-                       "側面図 vol[:, :, x=%d]  横 = y ->  縦 = z (下向き)"
-                       % int(round(ctr)), C_C, 12, True),
-                      (18, 92 + 330 + 26,
-                       "ローズ = 素朴な z 断面 / ミント = 軸に直交する断面", C_DIM, 12, False)])
-        c, s2 = _slice_panel(c, tube[zc], 370, 92, ps, "gray", border=C_E)
-        c, _ = _slice_panel(c, rot[zc], 370 + ps + 16, 92, ps, "gray", border=C_D)
+        c, s2 = _slice_panel(c, tube[zc], PX1, PY, ps, "gray", border=C_E)
+        c, _ = _slice_panel(c, rot[zc], PX2, PY, ps, "gray", border=C_D)
+        cy = PY + ps + 6
         c = _text(c, [
-            (370, 92 + ps + 6, "素朴な軸方向断面 vol[z=%d]" % zc, C_E, 13, True),
-            (370, 92 + ps + 26, "長径 %.3f mm / 短径 %.3f mm"
+            (PX0, cy, "側面図 vol[:, :, x=%d]" % int(round(ctr)), C_C, 13, True),
+            (PX0, cy + 20, "横 = y ->   縦 = z (下向き)", C_DIM, 11, False),
+            (PX0, cy + 37, "ローズ = 素朴な z 断面 / ミント = 直交断面", C_DIM, 11, False),
+            (PX1, cy, "素朴な軸方向断面 vol[z=%d]" % zc, C_E, 13, True),
+            (PX1, cy + 20, "長径 %.3f / 短径 %.3f mm"
              % (r["naive_major_mm"], r["naive_minor_mm"]), C_E, 12, True),
-            (370 + ps + 16, 92 + ps + 6, "管の軸に直交する断面", C_D, 13, True),
-            (370 + ps + 16, 92 + ps + 26, "長径 %.3f mm / 短径 %.3f mm"
+            (PX1, cy + 37, "楕円の理論値 2r/cos = %.3f mm" % r["truth_naive_major_mm"],
+             C_DIM, 11, False),
+            (PX2, cy, "管の軸に直交する断面", C_D, 13, True),
+            (PX2, cy + 20, "長径 %.3f / 短径 %.3f mm"
              % (r["ortho_major_mm"], r["ortho_minor_mm"]), C_D, 12, True),
+            (PX2, cy + 37, "真の内径 %.3f mm" % r["truth_diameter_mm"], C_DIM, 11, False),
         ])
-        p = Plot(c, 80, 460, W - 120, 150, (rows[0]["z"], rows[-1]["z"]), (1.0, 5.6),
+        c = _text(c, [
+            (TX, PY + 4, "いまの断面", C_DIM, 12, False),
+            (TX, PY + 22, "z = %3d" % zc, C_TEXT, 22, True),
+            (TX, PY + 56, "真の内径", C_DIM, 12, False),
+            (TX, PY + 74, "%.3f mm" % r["truth_diameter_mm"], C_TEXT, 20, True),
+            (TX, PY + 106, "直交断面 短径", C_D, 12, True),
+            (TX, PY + 124, "%.3f mm (差 %+.3f)"
+             % (r["ortho_minor_mm"], r["ortho_minor_mm"] - r["truth_diameter_mm"]),
+             C_D, 15, True),
+            (TX, PY + 152, "素朴断面 長径", C_E, 12, True),
+            (TX, PY + 170, "%.3f mm (差 %+.3f)"
+             % (r["naive_major_mm"], r["naive_major_mm"] - r["truth_diameter_mm"]),
+             C_E, 15, True),
+            (TX, PY + 202, "素朴断面は 1/cos(%.0f deg)" % tilt, C_DIM, 12, False),
+            (TX, PY + 219, "= %.3f 倍に伸びる。" % (1 / math.cos(th)), C_DIM, 12, False),
+            (TX, PY + 236, "狭窄が浅く見える。", C_DIM, 12, False),
+            (TX, PY + 264, "全 %d 断面の平均誤差" % len(rows), C_DIM, 12, False),
+            (TX, PY + 282, "直交 %.4f mm" % float(np.mean(ortho_err)), C_D, 13, True),
+            (TX, PY + 300, "素朴 %.4f mm" % float(np.mean(naive_err)), C_E, 13, True),
+        ])
+        p = Plot(c, 76, 452, W - 116, 152, (rows[0]["z"], rows[-1]["z"]), (1.0, 5.8),
                  xlabel="断面の位置 z(voxel)->", ylabel="測った内径 [mm]",
                  xticks=[40, 60, 80, 100, 120, 136],
                  yticks=[1.5, 2.5, 3.5, 4.5, 5.5], xfmt="%d", yfmt="%.1f")
         p.series([x["z"] for x in rows], [x["truth_diameter_mm"] for x in rows],
-                 (0.60, 0.62, 0.66), width=3)
+                 (0.72, 0.74, 0.78), width=5)
         p.series([x["z"] for x in rows], [x["ortho_minor_mm"] for x in rows], C_D, width=2)
         p.series([x["z"] for x in rows], [x["naive_major_mm"] for x in rows], C_E, width=2)
         p.marker(zc, r["ortho_minor_mm"], C_D, size=6)
         p.marker(zc, r["naive_major_mm"], C_E, size=6)
-        p.items.append((86, 464, "灰 = 真の内径", C_DIM, 11, True))
-        p.items.append((200, 464, "ミント = 軸に直交する断面(短径)", C_D, 11, True))
-        p.items.append((430, 464, "ローズ = 素朴な軸方向断面(長径)", C_E, 11, True))
+        p.items.append((82, 436, "灰(太)= 真の内径", C_DIM, 11, True))
+        p.items.append((240, 436, "ミント = 軸に直交する断面(短径)", C_D, 11, True))
+        p.items.append((500, 436, "ローズ = 素朴な軸方向断面(長径)", C_E, 11, True))
+        p.items.append((790, 436, "狭窄の最小内径 真値 %.3f -> 直交 %.3f / 素朴 %.3f mm"
+                        % (rows[i_min]["truth_diameter_mm"],
+                           rows[i_min]["ortho_minor_mm"],
+                           rows[i_min]["naive_major_mm"]), C_TEXT, 11, True))
         c = p.done()
-        c = _text(c, [
-            (760, 100, "いまの断面", C_DIM, 12, False),
-            (760, 118, "z = %3d" % zc, C_TEXT, 22, True),
-            (760, 150, "真の内径", C_DIM, 12, False),
-            (760, 168, "%.3f mm" % r["truth_diameter_mm"], C_TEXT, 20, True),
-            (760, 198, "直交断面 短径", C_D, 12, True),
-            (760, 216, "%.3f mm (差 %+.3f)"
-             % (r["ortho_minor_mm"], r["ortho_minor_mm"] - r["truth_diameter_mm"]),
-             C_D, 15, True),
-            (760, 244, "素朴断面 長径", C_E, 12, True),
-            (760, 262, "%.3f mm (差 %+.3f)"
-             % (r["naive_major_mm"], r["naive_major_mm"] - r["truth_diameter_mm"]),
-             C_E, 15, True),
-            (760, 296, "素朴断面は 1/cos(%.0f deg) = %.3f 倍に" % (tilt, 1 / math.cos(th)),
-             C_DIM, 12, False),
-            (760, 314, "伸びる。狭窄が浅く見える。", C_DIM, 12, False),
-            (760, 344, "全 %d 断面での誤差(平均)" % len(rows), C_DIM, 12, False),
-            (760, 362, "直交 %.4f mm / 素朴 %.4f mm"
-             % (float(np.mean(ortho_err)), float(np.mean(naive_err))), C_TEXT, 13, True),
-            (760, 386, "最小内径 真値 %.3f mm ->" % rows[i_min]["truth_diameter_mm"],
-             C_DIM, 12, False),
-            (760, 404, "直交 %.3f / 素朴 %.3f mm"
-             % (rows[i_min]["ortho_minor_mm"], rows[i_min]["naive_major_mm"]),
-             C_TEXT, 13, True),
-        ])
-        c = _footer(c, "使用 op: vol_rotate  — 合成データ(反エイリアス管)", y_off=14)
+        c = _footer(c, "使用 op: vol_rotate  — 合成データ(反エイリアス管)", y_off=20)
         frames.append(c)
 
     info = _save_clip(frames, "wing3d_vessel_reslice", fps=10, thumb_index=i_min, log=log)
