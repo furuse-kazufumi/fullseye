@@ -5,6 +5,8 @@
     {
       "name": "wing3d_domain_memory",
       "title": "処理領域(domain)でメモリが 1/84 になる",
+      "title_en": "A processing domain cuts memory to 1/84",
+      "caption_en": "A synthetic part floating in a 192³ field, stepped through slice by slice, with the full volume, the domain mask, the cropped sub-volume and the pasted-back result side by side. Only 0.42 % of the field is foreground, so `vol_crop_domain` takes memory from 56.62 MB to 0.678 MB (**1/83.5**) and the very same `vol_gradient_magnitude` goes from 400 ms to 2 ms (**200x faster**, both rounded to one significant figure so the figure stays byte-reproducible). `vol_uncrop` puts it back bit-identically.",
       "ops": [
         "vol_bounding_box",
         "vol_crop_domain",
@@ -26,14 +28,17 @@
         "full_MB": 56.623104,
         "part_MB": 0.677976,
         "memory_ratio": 83.51785903925803,
-        "t_full_ms": 375.6252999883145,
-        "t_part_ms": 2.1260001230984926,
-        "speedup": 176.68169249250445,
+        "t_full_ms_raw": 382.4091001879424,
+        "t_part_ms_raw": 1.7482000403106213,
+        "speedup_raw": 218.7444751002269,
+        "t_full_ms_shown": 400.0,
+        "t_part_ms_shown": 2.0,
+        "speedup_shown": 200.0,
         "uncrop_exact": true,
         "foreground_voxels": 29474,
         "foreground_pct": 0.4164236563223379
       },
-      "caption": "192³ の視野に浮かぶ合成部品を輪切りで送りながら、元ボリューム・domain マスク・切り出し後・貼り戻しを並べた。前景は全体の 0.42 % しかないので `vol_crop_domain` で メモリは 56.62 MB → 0.678 MB(**1/83.5**)、同じ `vol_gradient_magnitude` が 375.6 ms → 2.1 ms(**176.7 倍速**)になる。`vol_uncrop` の貼り戻しは元と bit 一致。",
+      "caption": "192³ の視野に浮かぶ合成部品を輪切りで送りながら、元ボリューム・domain マスク・切り出し後・貼り戻しを並べた。前景は全体の 0.42 % しかないので `vol_crop_domain` で メモリは 56.62 MB → 0.678 MB(**1/83.5**)、同じ `vol_gradient_magnitude` が 400 ms → 2 ms(**200 倍速**、図が再生成でバイト一致するよう有効数字 1 桁に丸めた実測値)になる。`vol_uncrop` の貼り戻しは元と bit 一致。",
       "kind": "gif",
       "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_domain_memory.gif",
       "mp4": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_domain_memory.mp4",
@@ -51,18 +56,20 @@
         3
       ],
       "gif_colors": 256,
-      "gif_bytes": 459208,
-      "mp4_bytes": 67665,
-      "thumb_bytes": 37080,
+      "gif_bytes": 466118,
+      "mp4_bytes": 71177,
+      "thumb_bytes": 39331,
       "thumb_frame": 20,
-      "gif_sha256": "a3c0c5df102299cacd95e0fdef83ee36dbc2b1d6cce12acabc32eda5b2bec2c0",
-      "mp4_sha256": "6cd0631df6140f608f7f39b18b05d19ff82a2405d033246eb1faa7ad9c0a43ee",
+      "gif_sha256": "f8879f156ca5205b1844873cb4f1503bdf120ce624279e44b910e9222eff7558",
+      "mp4_sha256": "0de58e4ef86a77ea46f4e379c9704a3350a9f7e7b9bd0b0f862a04fe2498c8dd",
       "exhibit": "domain",
-      "seconds": 16.726249699946493
+      "seconds": 17.74605350010097
     },
     {
       "name": "wing3d_boundary_shell",
       "title": "境界だけ持つと 6 % に痩せる",
+      "title_en": "Keep only the boundary and the shape drops to 6 %",
+      "caption_en": "A solid ball (267,731 voxels) reduced by `vol_boundary` to its inner one-voxel shell keeps only **6.1 %** (16,418 voxels). Feeding that shell through `vol_boundary_points` (mm coordinates) into `fit_sphere3` recovers the centre with an error of **0.000 mm** (truth (25.6, 25.6, 25.6) mm). The radius is off by -0.175 mm — because the shell sits one layer inside — and that bias is written on the figure rather than hidden.",
       "ops": [
         "vol_boundary",
         "vol_boundary_points",
@@ -109,18 +116,20 @@
         3
       ],
       "gif_colors": 128,
-      "gif_bytes": 2749505,
-      "mp4_bytes": 1591555,
-      "thumb_bytes": 63804,
+      "gif_bytes": 2737314,
+      "mp4_bytes": 1591539,
+      "thumb_bytes": 63784,
       "thumb_frame": 6,
-      "gif_sha256": "717c35735180a1a7f4234b463abee4c2d8b6d3195b38b9efdc2fdd8f5927ef25",
-      "mp4_sha256": "c732ad605c8a78cb76a186db34e1dc6de17fceb117df6f1774997ae259364fa9",
+      "gif_sha256": "d56e8ff18bc8163e81758923d8aed5bf1ddb51991c9f7c37dc230ec14946ebe5",
+      "mp4_sha256": "4b49e848b10a34c8296b9ddb2a6b80b6ee87419c7e8fb6cfc802b86acf0940fe",
       "exhibit": "boundary",
-      "seconds": 21.63905639993027
+      "seconds": 22.65939059993252
     },
     {
       "name": "wing3d_rle_compression",
       "title": "run-length で 1/71",
+      "title_en": "Run-length regions: 1/71 the memory",
+      "caption_en": "Holding a 256³ synthetic part as run-lengths costs **1/71** of the dense mask (16.78 MB to 0.237 MB, 19,764 runs). And nothing has to be decoded: the volume of 1,610,948 voxels comes back **233x faster**, the bounding box **25x faster** (measured, rounded to one significant figure so the figure stays byte-reproducible), and set operations (ball ∪ axle = 1,508,456 voxels) are solved on the runs themselves. The decode round-trip is bit-identical.",
       "ops": [
         "vol_rle_encode",
         "vol_rle_decode",
@@ -151,29 +160,37 @@
           128.0,
           128.0
         ],
-        "volume_speedup": 238.3984488608822,
-        "bbox_speedup": 30.33490286569584,
+        "volume_speedup_raw": 240.06099180695128,
+        "bbox_speedup_raw": 26.04024655170622,
+        "t_rle_volume_us_raw": 29.10010516643524,
+        "t_dense_volume_us_raw": 6985.8001079410315,
+        "t_rle_bbox_us_raw": 44.79987546801567,
+        "t_dense_bbox_us_raw": 1166.599802672863,
+        "volume_speedup_shown": 233.33333333333334,
+        "bbox_speedup_shown": 25.0,
         "union_voxels": 1508456,
         "intersect_voxels": 84857,
         "difference_voxels": 1351528
       },
-      "caption": "256³ の合成部品を run-length で持つと **1/71**(16.78 MB → 0.237 MB、19,764 run)。しかも展開せずに体積 1,610,948 voxel を **238 倍速**、BBox を **30 倍速**で返し、集合演算(球 ∪ 軸 = 1,508,456 voxel)も run のまま解ける。decode の往復は bit 一致。",
+      "caption": "256³ の合成部品を run-length で持つと **1/71**(16.78 MB → 0.237 MB、19,764 run)。しかも展開せずに体積 1,610,948 voxel を **233 倍速**、BBox を **25 倍速**で返し(時間は実測を有効数字 1 桁に丸めた値)、集合演算(球 ∪ 軸 = 1,508,456 voxel)も run のまま解ける。decode の往復は bit 一致。",
       "kind": "png",
       "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_rle_compression.png",
-      "png_bytes": 94766,
+      "png_bytes": 101477,
       "png_size": [
         1120,
         720
       ],
-      "png_sha256": "541447f1bb957bdaf45f7ea08ecb146473cdd0308610ffe5ab9c1f388054712a",
+      "png_sha256": "3fc50b9a6e3d81ca39c50a21a6cddf10db583d769f6f54a84b5841b6c5f00f98",
       "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_rle_compression_thumb.jpg",
-      "thumb_bytes": 53032,
+      "thumb_bytes": 54070,
       "exhibit": "rle",
-      "seconds": 3.0645430001895875
+      "seconds": 3.1974714000243694
     },
     {
       "name": "wing3d_ct_windowing",
       "title": "CT の「窓」で同じ体が 3 通りに見える",
+      "title_en": "One CT volume, three windows, three different bodies",
+      "caption_en": "The same synthetic HU volume seen through three `vol_window_level` windows while the slice steps back and forth. In the soft-tissue window 67.1 % of the volume collapses to black and the ribs blow out to white; the bone window brings the blow-out down to 0.0 % so the bone reads; the lung window has only 0.0 % crushed to black and shows what is inside the lungs. The polyline underneath is the window itself — a linear HU → [0,1] map plus a clip.",
       "ops": [
         "vol_window_level"
       ],
@@ -218,14 +235,14 @@
         3
       ],
       "gif_colors": 256,
-      "gif_bytes": 489729,
-      "mp4_bytes": 73982,
-      "thumb_bytes": 60347,
+      "gif_bytes": 498087,
+      "mp4_bytes": 75409,
+      "thumb_bytes": 61757,
       "thumb_frame": 13,
-      "gif_sha256": "a22ff93c1022176cf776f0270831aa7c2152027518277f601fd37836eade270a",
-      "mp4_sha256": "272ba6d75fac2da992364186e4ec157a503a423ae6a4395f024a28837534fa91",
+      "gif_sha256": "5e745b230bbe437aa60f17fc05cfd581986430a3a25aa1450ee467b8483417f5",
+      "mp4_sha256": "0885d4fec4727ef498f84b3da50a4c56658ac7a823d478d85f76b0612e96c5ed",
       "exhibit": "windowing",
-      "seconds": 24.696243500104174
+      "seconds": 25.169420400168747
     },
     {
       "name": "wing3d_vesselness_control",
@@ -483,6 +500,8 @@
     {
       "name": "wing3d_visual_hull",
       "title": "visual hull ―― 影を重ねて形を削り出す",
+      "title_en": "Visual hull — carving a shape out of stacked shadows",
+      "caption_en": "An L-shaped synthetic object carved by `visual_hull` from silhouettes taken in 16 directions. One view gives a column-like blob at **5.12x** the true volume; adding views shrinks it to **1.24x** (IoU 0.755) at 16 views. The concave notch of the L, though, never fills in no matter how many views are stacked — that is not implementation slop but the principled limit of a visual hull, and the figure shows the convergence target is not the truth.",
       "ops": [
         "look_at",
         "synthesize_silhouette",
@@ -609,18 +628,20 @@
         3
       ],
       "gif_colors": 256,
-      "gif_bytes": 732767,
-      "mp4_bytes": 266687,
-      "thumb_bytes": 47996,
+      "gif_bytes": 674930,
+      "mp4_bytes": 220840,
+      "thumb_bytes": 47665,
       "thumb_frame": 15,
-      "gif_sha256": "da09880f49b8cf90a93d0d91ef39add53b487a87e2a35b85ee0f6b1f769d2108",
-      "mp4_sha256": "08d18565f55e8261e400e00cb14b758199259be890ccaeda7a888bcb4ce57ec2",
+      "gif_sha256": "e923601ba882562691ad1d6f89f12830d9abe1a2476a4a1f1743161dac48cb27",
+      "mp4_sha256": "3c561080174108be4c932020d32ca0013f92122ec41e042ffa06f877ede9b689",
       "exhibit": "visualhull",
-      "seconds": 43.99312880006619
+      "seconds": 44.341136400122195
     },
     {
       "name": "wing3d_obb_innerbox",
       "title": "外から抱く箱(OBB)と中に入る箱(inner_box3)",
+      "title_en": "The box that holds it (OBB) and the box that fits inside (inner_box3)",
+      "caption_en": "A synthetic cuboid tilted 30° about z (13,617 voxels) with three boxes drawn on it at once, turned through a full revolution. The axis-aligned AABB swells to **1.99x** the voxel count, while `obb` (a PCA-oriented bounding box) shrinks to **0.94x** with half-extents 19.99 / 10.00 / 8.00 voxels (truth 20 / 10 / 8). It reads below 1.0 because the point set is voxel *centres* and the box bounds those (the half-voxel rim is outside). The largest inscribed box from `inner_box3` goes the other way, down to **0.32x**. Grip width: OBB. Will the part pass through: inner box.",
       "ops": [
         "obb",
         "inner_box3",
@@ -696,14 +717,14 @@
         3
       ],
       "gif_colors": 256,
-      "gif_bytes": 2261136,
-      "mp4_bytes": 396128,
-      "thumb_bytes": 43260,
+      "gif_bytes": 2222810,
+      "mp4_bytes": 395589,
+      "thumb_bytes": 45175,
       "thumb_frame": 10,
-      "gif_sha256": "192394dbf8ed453084c2c5ea922ad7a20a9c688cf1cafe1c17a6249a8eb31fb6",
-      "mp4_sha256": "ef2809c8b4509ccb34b3a907155aa4ffe63dd86d69e3e5645912d1ad8032141a",
+      "gif_sha256": "9bc2e61ebd31808bfa635e7750d79e781d1588c143b71fb9df06e134b0cf8ae7",
+      "mp4_sha256": "15d4846f3d78baa9c13351834f66ce7760ba25ac2ecac9648d848b77a2f79211",
       "exhibit": "obb",
-      "seconds": 43.51220600004308
+      "seconds": 46.00613969983533
     },
     {
       "name": "wing3d_icp_registration",
@@ -844,6 +865,8 @@
     {
       "name": "wing3d_mip_turntable",
       "title": "MIP と X 線投影のターンテーブル",
+      "title_en": "A turntable of MIP and X-ray projection",
+      "caption_en": "A synthetic CT volume (96³) turned through a full revolution by `render_volume_projection`. On the left, maximum-intensity projection (MIP, bone window) keeps only the brightest sample along each ray, so bone floats out; on the right, attenuation summing (X-ray) accumulates along the ray, so thickness shows. 72 projections at **30 ms each** (measured, rounded to one significant figure so the figure stays byte-reproducible). The normalisation ceiling is shared across all frames on purpose — normalise per frame and the brightness flickers as it turns, which is indistinguishable from the shape changing.",
       "ops": [
         "vol_window_level",
         "render_volume_projection"
@@ -856,12 +879,13 @@
         ],
         "frames": 36,
         "elevation_deg": 12.0,
-        "render_seconds_total": 1.2438060999847949,
-        "ms_per_projection": 17.27508472201104,
+        "render_seconds_total_raw": 2.322713900124654,
+        "ms_per_projection_raw": 32.25991527950909,
+        "ms_per_projection_shown": 30.0,
         "mip_max": 0.8000001907348633,
         "xray_max": 87.39982604980469
       },
-      "caption": "合成 CT ボリューム(96³)を `render_volume_projection` で 1 周させた。左は最大値投影(MIP、骨窓)で光線上の最大値だけを拾うので骨が浮き、右は減衰積算(X 線)で厚みが出る。投影 72 枚を 1.2 秒(**17 ms/枚**)。正規化の上限は全フレーム共通にしてある ―― 1 枚ごとに正規化すると回転中に明るさがちらついて、形の変化と見分けがつかなくなる。",
+      "caption": "合成 CT ボリューム(96³)を `render_volume_projection` で 1 周させた。左は最大値投影(MIP、骨窓)で光線上の最大値だけを拾うので骨が浮き、右は減衰積算(X 線)で厚みが出る。投影 72 枚を **1 枚 30 ms**(実測を有効数字 1 桁に丸めた値)。正規化の上限は全フレーム共通にしてある ―― 1 枚ごとに正規化すると回転中に明るさがちらついて、形の変化と見分けがつかなくなる。",
       "kind": "gif",
       "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_mip_turntable.gif",
       "mp4": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_mip_turntable.mp4",
@@ -879,14 +903,14 @@
         3
       ],
       "gif_colors": 64,
-      "gif_bytes": 2613722,
-      "mp4_bytes": 409537,
-      "thumb_bytes": 53345,
+      "gif_bytes": 2644028,
+      "mp4_bytes": 409604,
+      "thumb_bytes": 53551,
       "thumb_frame": 5,
-      "gif_sha256": "e8000f61a3c74010cc639ca2f7f81da8ea9bb1d3e1ef19c3e142b5b5fea092dd",
-      "mp4_sha256": "b67a33c234c5070ca6a71d01287ccdf12fada12b46056f0a5f2d764f9d99f213",
+      "gif_sha256": "2f2a5b11bb90020296ac85596495d92002c91461ee140ea8779af4903ac962da",
+      "mp4_sha256": "7ea0e25059ced3c71516aee486137086870c558333b30d30b9e78d99c933aebe",
       "exhibit": "mip",
-      "seconds": 19.69969409983605
+      "seconds": 21.1813264999073
     },
     {
       "name": "wing3d_distance_transform",

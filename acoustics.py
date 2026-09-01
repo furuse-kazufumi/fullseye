@@ -1804,7 +1804,20 @@ def octave_spectrum(x, rate, fraction=3, f_min=22.0, f_max=None, ref=1.0,
     ``clamped`` (bool mask of bands floored at ``floor_db``), ``ref``,
     ``weighting``, ``fraction``, ``resolution_hz``, ``narrow_bands`` (how many
     FFT bins landed in each band — a band with 0 or 1 is under-resolved and the
-    level is not trustworthy).
+    level is not trustworthy), and ``truncated``.
+
+    ``truncated`` is a bool mask of bands whose **upper edge is above Nyquist**,
+    which means only the part of the band below Nyquist was measured and the
+    level is the level of that part, not of the band. This is not an exotic
+    case: ``f_max`` bounds band *centres*, so the top band's edge always
+    overhangs it by half a band width, and the **default ``f_max = 22050``
+    against the canonical rate of 44100** puts the top third-octave band at
+    17782.79-22387.21 Hz over a Nyquist of 22050. Measured on 1 s of white
+    noise at 44100: that band collects **4268** of the **4604** bins it spans
+    (7.3 % missing) and reported a level with nothing in the old return value
+    saying it was partial. Nothing raises — the missing bins simply do not
+    exist. Drop the flagged bands, or lower ``f_max`` until
+    ``upper[-1] <= rate/2``.
 
     Measured exactness: a 1 kHz sine of amplitude 0.7 at 16 kHz over exactly
     1000 periods, ``ref=1.0``, gives the 1 kHz band level
