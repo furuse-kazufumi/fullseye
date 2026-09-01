@@ -3027,19 +3027,24 @@ def ex_vessel_reslice(log) -> dict:
         # 側面図(管の走行と、いま切っている場所)
         side = tube[:, :, int(round(ctr))]
         c, s_side = _slice_panel(c, side, 18, 92, 330, "gray", border=C_C)
+        # 素朴な z 断面(水平線)と、軸に直交する断面(軸に垂直な線)を重ねる
         c = imagedraw.draw_line(c, (18, 92 + zc * s_side), (18 + 329, 92 + zc * s_side),
-                                color=C_A, width=1)
-        # 軸に直交する断面の線(傾き -tilt)
-        L = 150.0
+                                color=C_E, width=1)
+        y_ax = ctr + (zc - ctr) * math.tan(th)      # その z における軸の y 座標
+        L = 46.0
         c = imagedraw.draw_line(
-            c, (18 + (ctr - L * math.sin(th)) * s_side,
-                92 + (zc + L * math.cos(th)) * s_side),
-            (18 + (ctr + L * math.sin(th)) * s_side,
-             92 + (zc - L * math.cos(th)) * s_side),
-            color=C_A, width=1)
-        c = _text(c, [(18, 92 + 330 + 6, "側面図 vol[:, :, x=88]  横 = y ->  縦 = z (下向き)",
-                       C_C, 12, True),
-                      (18, 92 + 330 + 26, "シアンの線がいま切っている z", C_A, 12, False)])
+            c, (18 + (y_ax - L * math.cos(th)) * s_side,
+                92 + (zc + L * math.sin(th)) * s_side),
+            (18 + (y_ax + L * math.cos(th)) * s_side,
+             92 + (zc - L * math.sin(th)) * s_side),
+            color=C_D, width=2)
+        c = imagedraw.draw_markers(c, [(18 + y_ax * s_side, 92 + zc * s_side)],
+                                   color=(1, 1, 1), size=4, shape="cross", width=1)
+        c = _text(c, [(18, 92 + 330 + 6,
+                       "側面図 vol[:, :, x=%d]  横 = y ->  縦 = z (下向き)"
+                       % int(round(ctr)), C_C, 12, True),
+                      (18, 92 + 330 + 26,
+                       "ローズ = 素朴な z 断面 / ミント = 軸に直交する断面", C_DIM, 12, False)])
         c, s2 = _slice_panel(c, tube[zc], 370, 92, ps, "gray", border=C_E)
         c, _ = _slice_panel(c, rot[zc], 370 + ps + 16, 92, ps, "gray", border=C_D)
         c = _text(c, [
