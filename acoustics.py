@@ -2051,7 +2051,8 @@ def apply_weighting(x, rate, kind="A"):
     return np.ascontiguousarray(np.fft.irfft(np.fft.rfft(arr) * gain, n=arr.size))
 
 
-def equivalent_level(x, rate, weighting="A", ref=1.0, floor_db=FLOOR_DB):
+def equivalent_level(x, rate, weighting="A", ref=1.0, floor_db=FLOOR_DB,
+                     window="none"):
     """The energy-equivalent level of a record, in dB relative to ``ref``.
 
     ``L_eq = 10 log10(mean(x_w**2) / ref**2)`` where ``x_w`` is the signal after
