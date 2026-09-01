@@ -1677,11 +1677,21 @@ def ex_silent_bug(data, log=print):
     # (1) 連結性
     y = 102
     fill(c, y, y + 202, 24, W - 24, C_PANEL)
+    # 同じ 2 画素を「1 個」と読んだ場合と「2 個」と読んだ場合で塗り分ける。
+    # 入力を 2 枚並べても違いは見えない — 違うのはラベルの付き方なので、
+    # そこを色にする。
     m = np.asarray(s["diag_mask"], np.float64)
-    pan = upscale(to_rgb(m), 18)
-    ph, pw = pan.shape[:2]
-    c[y + 24:y + 24 + ph, 60:60 + pw] = pan
-    c[y + 24:y + 24 + ph, 60 + pw + 40:60 + 2 * pw + 40] = pan
+    lab8 = np.zeros(m.shape + (3,), np.float64)
+    lab4 = np.zeros(m.shape + (3,), np.float64)
+    ys, xs = np.nonzero(m > 0.5)
+    for k, (yy, xx) in enumerate(zip(ys, xs)):
+        lab8[yy, xx] = C_TRUE                       # 8 連結: 同じ物体 = 同じ色
+        lab4[yy, xx] = (C_WARN if k else C_LOCK)    # 4 連結: 別の物体 = 別の色
+    pan8 = upscale(lab8, 18)
+    pan4 = upscale(lab4, 18)
+    ph, pw = pan8.shape[:2]
+    c[y + 24:y + 24 + ph, 60:60 + pw] = pan8
+    c[y + 24:y + 24 + ph, 60 + pw + 40:60 + 2 * pw + 40] = pan4
     items += [
         (40, y + 8, "1. 同じ絵・同じ op・違う連結性 — 例外は出ず、数だけ変わる",
          C_TEXT, 16, True),

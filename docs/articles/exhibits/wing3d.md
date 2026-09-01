@@ -25,6 +25,18 @@
 
 *↑ **斜めに切ると円が楕円になる(長径は 1/cos で伸びる)** ―― 半径 5.00 mm の合成円柱を、切断面を 0° から 80° まで倒しながら切る(`vol_rotate` の逆回し)。短径は角度によらず 10.000 mm のままなのに、長径は **2r / cos θ** に沿って伸び、80° では 29.238 mm = 2.92 倍になる。36 角度(0°〜70°)すべてで理論値との差は最大 0.0000 mm(0.00 画素)。「斜めの断面で測った直径」をそのまま寸法にしてはいけない、という一本。 使用 op: `vol_rotate`。*
 
+![CT の窓を掃引する ―― 見えるものは窓が決めている](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_window_sweep.gif)
+
+*↑ **CT の窓を掃引する ―― 見えるものは窓が決めている** ―― 同じ 1 枚の断面に `vol_window_level` の窓だけを 70 通り当てる。center を動かすと明るさの基準が、width を動かすと捨てる範囲が変わる。各コマに center / width の実数値と、黒潰れ・白飛びの割合、6 つの組織が「いま何色に見えるか」を焼いた。軟部窓では骨が 1.00 で飽和し、骨窓では軟部と肺が 0 付近に沈む ―― どちらも情報を捨てている、というのが 1 本で見える。 使用 op: `vol_window_level`。*
+
+![等値面のしきい値で面が育ち、くびれ、割れる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_isosurface_sweep.gif)
+
+*↑ **等値面のしきい値で面が育ち、くびれ、割れる** ―― 2 つの球をぼかして重ねた合成ボリュームに `voxel_to_mesh`(marching cubes)を掛け、level を 0.08 から 0.86 まで 40 段階で動かした。表面積は 6810 → 2446 voxel² へ縮み、この範囲では割れなかった。各コマに level・頂点数・三角形数・表面積・連結成分数を焼いてある。しきい値を書かない 3D 計測は再現できない、ということでもある。 使用 op: `voxel_to_mesh`, `mesh_area`。*
+
+![管に沿って切る ―― 軸に直交しないと内径が 1.13 倍に太る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_vessel_reslice.gif)
+
+*↑ **管に沿って切る ―― 軸に直交しないと内径が 1.13 倍に太る** ―― 28° 傾いた合成管(中央に狭窄)を 49 断面ぶん送る。軸に直交する断面で測った短径は真の内径をほぼそのまま返す(平均誤差 **0.0851 mm**)のに、素朴に z 方向へ切った断面の長径は 1/cos θ = **1.133 倍**に伸びて平均 0.5053 mm ずれる。狭窄部では真値 2.800 mm が素朴断面では 3.237 mm ―― 狭窄が浅く見えてしまう。 使用 op: `vol_rotate`。*
+
 ---
 
 ## 生成物の実測(読み戻して確認した値)
@@ -35,3 +47,6 @@
 | zsweep | GIF+mp4 | `media/wing3d_slice_zsweep.gif` | 96 フレーム, 1120x748, 1.16 MB, 256 色, mp4 0.16 MB |
 | mpr | GIF+mp4 | `media/wing3d_mpr_crosshair.gif` | 60 フレーム, 1120x620, 1.18 MB, 256 色, mp4 0.22 MB |
 | oblique | GIF+mp4 | `media/wing3d_oblique_slice.gif` | 36 フレーム, 1120x640, 0.90 MB, 256 色, mp4 0.11 MB |
+| windowsweep | GIF+mp4 | `media/wing3d_window_sweep.gif` | 70 フレーム, 1120x660, 1.47 MB, 256 色, mp4 0.20 MB |
+| isosurface | GIF+mp4 | `media/wing3d_isosurface_sweep.gif` | 40 フレーム, 1120x640, 1.12 MB, 256 色, mp4 0.29 MB |
+| vessel | GIF+mp4 | `media/wing3d_vessel_reslice.gif` | 49 フレーム, 1120x660, 1.08 MB, 256 色, mp4 0.13 MB |

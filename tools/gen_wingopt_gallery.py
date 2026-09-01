@@ -1462,7 +1462,7 @@ def ex_polarizer(log):
                          (xx0 + disp, pan_y + disp), (xx0 - 1, pan_y + disp)],
                 color=C_GRID, width=1, closed=True)
         # 検光子の向きを円と線で示す(角度の読み違えを防ぐ)
-        cxx, cyy, rr = plot_box[0] + 60, pan_y + 274, 34
+        cxx, cyy, rr = plot_box[0] + 150, pan_y + 300, 34
         canvas = imagedraw.draw_circle(canvas, (cxx, cyy), rr, color=C_DIM, width=1)
         th = np.radians(r["angle"])
         canvas = imagedraw.draw_line(
@@ -1493,11 +1493,11 @@ def ex_polarizer(log):
         labels += [
             (x1 + 4, pan_y - 18, "what the camera sees", (0.95, 0.95, 0.92), 12, True),
             (x2 + 4, pan_y - 18, "detector vs ground truth", (0.95, 0.95, 0.92), 12, True),
-            (cxx - 34, cyy + rr + 6, "analyser", C_DIM, 11, False),
+            (cxx - 30, cyy + rr + 8, "analyser", C_DIM, 11, False),
             (plot_box[0] + 6, plot_box[1] + 4, "transmitted intensity S0", C_DIM, 11, False),
             (plot_box[0] + 6, plot_box[1] + 20, "specular (Malus, cos^2)", C_MISS, 11, True),
             (plot_box[0] + 6, plot_box[1] + 36, "diffuse (unpolarised, flat 0.5)", C_OPT, 11, True),
-            (plot_box[2] - 156, plot_box[3] - 16, "analyser angle [deg] ->", C_DIM, 11, False),
+            (plot_box[0] + 4, plot_box[3] + 24, "analyser angle [deg] ->", C_DIM, 11, False),
             (x2 + 4, pan_y + disp - 54, "hit", C_HIT, 12, True),
             (x2 + 4, pan_y + disp - 38, "missed", C_MISS, 12, True),
             (x2 + 4, pan_y + disp - 22, "false alarm", C_FALSE, 12, True),
