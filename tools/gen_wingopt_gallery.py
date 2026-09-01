@@ -2048,7 +2048,9 @@ def ex_pixel_pitch(log):
                 canvas, [(xx0 - 1, pan_y - 1), (xx0 + disp, pan_y - 1),
                          (xx0 + disp, pan_y + disp), (xx0 - 1, pan_y + disp)],
                 color=C_GRID, width=1, closed=True)
-        p = Plot(canvas, plot_box, (1.4, 18.0), (0.0, 22.0))
+        # ★上下 2 段に分ける。1 枚に重ねると、単位の違う 2 本(画素数と検出率)が
+        # 同じ縦軸に乗っているように読めてしまう(実際そう見えていた)。
+        p = Plot(canvas, box_top, (1.4, 18.0), (0.0, 22.0))
         p.bg()
         p.band_x(pitch_nyq, 18.0, (0.17, 0.14, 0.13))
         p.grid_y([2, 5, 10, 15, 20])
@@ -2057,17 +2059,29 @@ def ex_pixel_pitch(log):
         p.hline(2.0, C_MISS, 1, dashed=True, dash=7, gap=6)
         p.vline(pitch_nyq, C_MISS, 1, dashed=True, dash=7, gap=6)
         p.marker(r["pitch"], r["px"], (1.0, 1.0, 1.0), 5, "cross", 2)
-        p.ticks_y([2, 5, 10, 15, 20])
-        # 検出率(0..1 を同じ枠に載せ替えて重ねる)。**p.c から続ける**。
-        p2 = Plot(p.c, plot_box, (1.4, 18.0), (0.0, 1.06))
+        p.ticks_y([2, 10, 20])
+        p.ticks_x([2, 6, 10, 14, 18])
+        # 下段 = 検出率。**p.c から続ける**(imagedraw は新配列を返す)。
+        p2 = Plot(p.c, box_bot, (1.4, 18.0), (0.0, 1.06))
+        p2.bg()
+        p2.band_x(pitch_nyq, 18.0, (0.17, 0.14, 0.13))
+        p2.grid_y([0.5, 1.0])
+        p2.frame()
         p2.curve([q["pitch"] for q in rows if q["rate"] is not None],
                  [q["rate"] for q in rows if q["rate"] is not None], C_CURVE, 2)
+        p2.hline(0.5, C_DIM, 1, dashed=True, dash=6, gap=6)
+        p2.vline(pitch_nyq, C_MISS, 1, dashed=True, dash=7, gap=6)
+        if r["rate"] is not None:
+            p2.marker(r["pitch"], r["rate"], (1.0, 1.0, 1.0), 5, "cross", 2)
+        p2.ticks_y([0.5, 1.0])
         p2.ticks_x([2, 6, 10, 14, 18])
         canvas = p2.c
         for t in (2, 6, 10, 14, 18):
-            labels.append((int(p.px(t)) - 5, plot_box[3] + 6, f"{t}", C_DIM, 11, False))
-        for t in (2, 5, 10, 15, 20):
-            labels.append((plot_box[0] - 24, int(p.py(t)) - 7, f"{t}", C_OPT, 11, False))
+            labels.append((int(p.px(t)) - 5, box_bot[3] + 6, f"{t}", C_DIM, 11, False))
+        for t in (2, 10, 20):
+            labels.append((box_top[0] - 24, int(p.py(t)) - 7, f"{t}", C_OPT, 11, False))
+        for t in (0.5, 1.0):
+            labels.append((box_bot[0] - 30, int(p2.py(t)) - 7, f"{t:.1f}", C_CURVE, 11, False))
         yi = pan_y + disp + 10
         det_txt = ("no image (below one pixel)" if r["img"] is None
                    else ("DETECTED" if r["det"] else "not detected"))

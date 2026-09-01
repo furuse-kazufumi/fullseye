@@ -914,12 +914,18 @@ def ex_depth3d():
     dmin, dmax = float(depth[valid].min()), float(depth[valid].max())
     # 背景 (inf) は持ち上げない: 有効画素だけを 3D にする
     d_fill = np.where(valid, depth, dmax)
-    P_full = camera.depth_to_points(d_fill, K, organized=True)     # (H, W, 3)
-    P_valid = P_full[valid]
+    vv, uu = np.mgrid[0:RES, 0:RES]
+    pix_int = np.stack([uu[valid], vv[valid]], 1).astype(np.float64)
+    # ★ 画素中心の規約が 2 つある。render3d は「添字 + 0.5」を画素中心として
+    # レイを飛ばす(render3d.py:318-319)が、camera.depth_to_points は添字その
+    # ものを中心として逆投影する。素直に繋ぐと雲全体が **半画素ずれる**。
+    P_int = camera.backproject(pix_int, d_fill[valid], K)
+    P_valid = camera.backproject(pix_int + 0.5, d_fill[valid], K)
+    half_px_shift = float(np.linalg.norm(P_valid - P_int, axis=1).mean())
     n_pts = int(P_valid.shape[0])
     # 「平らな板」から「本当の奥行き」へ補間する(0 -> 1)
-    P_flat = camera.depth_to_points(np.full_like(d_fill, 0.5 * (dmin + dmax)),
-                                    K, organized=True)[valid]
+    P_flat = camera.backproject(pix_int + 0.5,
+                                np.full(n_pts, 0.5 * (dmin + dmax)), K)
     gray = (d_fill - dmin) / max(dmax - dmin, 1e-12)
     colors = imgio.apply_cmap(1.0 - gray, name="viridis")[valid]
 
@@ -933,7 +939,7 @@ def ex_depth3d():
         tt = i / (n - 1)
         s = 0.5 - 0.5 * np.cos(np.pi * min(1.0, tt * 1.25))     # ease-in-out
         Q = P_flat * (1.0 - s) + P_valid * s
-        yaw = 30.0 + 60.0 * tt
+        yaw = 12.0 + 58.0 * tt
         canvas = _canvas(W, H)
         _fill(canvas, 0, 34, 0, W, (0.088, 0.098, 0.118))
         lab = []
@@ -954,9 +960,10 @@ def ex_depth3d():
              C_ACCENT, 13, True),
             (30, 52 + 300 + 36, "深度 %.4f .. %.4f" % (dmin, dmax), C_TEXT, 12, False),
             (30, 52 + 300 + 56, "背景 (inf) は持ち上げない", C_DIM, 12, False),
-            (30, 52 + 300 + 84, "lift = 0 %% は全画素を同じ深さに", C_DIM, 12, False),
-            (30, 52 + 300 + 104, "置いた「板」。1 枚の絵が", C_DIM, 12, False),
-            (30, 52 + 300 + 124, "立体になる瞬間が見える。", C_DIM, 12, False),
+            (30, 52 + 300 + 78, "画素中心の規約差(添字 vs 添字+0.5)で", C_DIM, 12, False),
+            (30, 52 + 300 + 96, "雲全体が %.5f world 単位ずれる" % half_px_shift,
+             C_VIOLET, 12, True),
+            (30, 52 + 300 + 114, "= 半画素ぶん。ここでは +0.5 側を採用", C_DIM, 12, False),
             (24, H - 26, "深度マップは「画素ごとの距離」でしかない。逆投影して回すと、"
                          "焦点距離や主点がずれていれば形が歪んで即座に分かります",
              C_DIM, 12, False),
@@ -964,7 +971,9 @@ def ex_depth3d():
         frames.append(_text(f, lab))
     facts = {"source": src, "resolution": RES, "n_points": n_pts,
              "valid_fraction": round(n_pts / (RES * RES), 5),
-             "depth_min": round(dmin, 6), "depth_max": round(dmax, 6), "frames": n}
+             "depth_min": round(dmin, 6), "depth_max": round(dmax, 6), "frames": n,
+             "half_pixel_shift_world": round(half_px_shift, 8),
+             "fx": round(float(K[0, 0]), 4)}
     return save_gif("depth3d", frames, facts, fps=10, thumb_index=n - 1)
 
 
