@@ -197,8 +197,12 @@ class TestClosedFormGroundTruth:
         and metres per second must not."""
         R, v = 20.0, 5.0
         out = []
-        for kw in (dict(), dict(n_samples=128, slope_hz_per_s=1.0e13,
-                         n_chirps=64, chirp_period_s=2.5e-5)):
+        # The second waveform is chosen so that BOTH bin widths really differ —
+        # halving the slope while doubling n_samples leaves dR identical, which
+        # is how the first draft of this test passed without testing anything.
+        for kw in (dict(), dict(n_samples=128, sample_rate_hz=2.0e7,
+                         slope_hz_per_s=1.5e13, n_chirps=48,
+                         chirp_period_s=4.0e-5)):
             cfg, d = _cfg(**kw)
             # snap to this configuration's grid so the comparison is exact
             rb = round(R / d["range_bin_m"])
