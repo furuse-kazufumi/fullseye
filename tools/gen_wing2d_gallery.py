@@ -802,7 +802,10 @@ def subject_hist_shaping(log=print) -> dict:
     b≈0.665 相当)。
     """
     src = _load_gray("page.png")                    # 照明ムラのある文書画像
-    n = 12
+    # clip limit を 3 本並べた結果 1 コマが 5 パネルに増えたので、コマ数は 12→9 に
+    # 減らす。3 MB の上限に当たると `_save_gif` が色数を落として再エンコードし、
+    # 折れ線グラフの凡例が色で見分けられなくなる (実測: 12 コマ = 63 色)。
+    n = 9
     K = np.linspace(1.0, 0.16, n)                   # コントラスト圧縮率
     BS = [0.0, 0.5, 1.0]                            # 振る clip limit (b)
     mid = float(np.mean(src))

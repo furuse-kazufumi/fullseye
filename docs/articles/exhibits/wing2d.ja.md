@@ -50,7 +50,7 @@
 
 ![ヒストグラム整形 —— clahe の clip limit を振る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing2d_hist_shaping.gif)
 
-*↑ **ヒストグラム整形 —— clahe の clip limit を振る** ―― 文書画像のコントラストを 1.00→0.16 倍まで潰していき、`equalize` と `clahe` で戻せるかを追った。見どころは clahe の第 2 引数 `b` = **clip limit**(ビン平均カウントに対する倍率 256^b。b=0 → ×1 = 強調ゼロ、b=1 → ×256 = 切り取りが一度も効かない素の AHE、OpenCV 既定の clipLimit=40 は b≈0.665 相当)。入力の標準偏差が 0.2228→0.0356 まで落ちるとき、b=0.00 は 0.2169→0.0537、b=0.50 は 0.2403→0.1709、b=1.00 は 0.2379→0.2510。同じ 1 枚に対する b=0 と b=1 の画素差は最大 0.7372 まで開く —— つまみ 1 本で「入力の潰れをどこまで無視して持ち上げるか」が決まる。`equalize` は画像全体を 1 枚の写像で平坦化するので 0.2931→0.2994 と最後まで幅を保つが、その代わり照明ムラは残ったままだ。使用 op: `equalize`, `clahe`, `gray_histo_abs`, `entropy_gray`。*
+*↑ **ヒストグラム整形 —— clahe の clip limit を振る** ―― 文書画像のコントラストを 1.00→0.16 倍まで潰していき、`equalize` と `clahe` で戻せるかを追った。見どころは clahe の第 2 引数 `b` = **clip limit**(ビン平均カウントに対する倍率 256^b。b=0 → ×1 = 強調ゼロ、b=1 → ×256 = 切り取りが一度も効かない素の AHE、OpenCV 既定の clipLimit=40 は b≈0.665 相当)。入力の標準偏差が 0.2228→0.0356 まで落ちるとき、b=0.00 は 0.2169→0.0537、b=0.50 は 0.2403→0.1709、b=1.00 は 0.2379→0.2510。同じ 1 枚に対する b=0 と b=1 の画素差は最大 0.7169 まで開く —— つまみ 1 本で「入力の潰れをどこまで無視して持ち上げるか」が決まる。`equalize` は画像全体を 1 枚の写像で平坦化するので 0.2931→0.2994 と最後まで幅を保つが、その代わり照明ムラは残ったままだ。使用 op: `equalize`, `clahe`, `gray_histo_abs`, `entropy_gray`。*
 
 <!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing2d_hist_shaping_720.jpg -->
 

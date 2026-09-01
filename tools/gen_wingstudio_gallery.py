@@ -1951,13 +1951,13 @@ CAPTIONS_EN = {
         lambda f, r: (
             "A stepped part built from an SDF ({0:,} triangles, surface area {1:.1f}) "
             "imaged by a {2}×{2} px inspection camera, in four panels: ① what the camera "
-            "sees ② pixel → CAD face ID ③ the inverse mapping of four defect labels "
+            "sees ② pixel → CAD face ID ③ the inverse mapping of the 4 defect labels "
             "drawn on the image ④ faces seen (green) versus faces never seen (red). "
             "{3:,} pixels hit ({4:.1f} %). {5:.1f} % of the area faces the camera, but "
             "the tower hides its own base, so **only {6:.1f} % was actually seen** "
             "({7:,} / {0:,} = {8:.1f} % by face count). {9:,} surface points agree: "
             "{10:.1f} % visible / {11:.1f} % occluded. Defects #3 and #4 fall outside the "
-            "CAD (zero hits) and stay at zero real area — the point being that they do "
+            "CAD (0 hits) and stay at 0 real area — the point being that they do "
             "not quietly disappear."
         ).format(f["n_faces"], f["surface_area"], f["image"][0], f["hit_pixels"],
                  f["hit_fraction"] * 100.0, f["front_facing_area_fraction"] * 100.0,
