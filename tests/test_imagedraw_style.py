@@ -458,6 +458,20 @@ def test_new_canvas_rejects_bad_shapes(bad):
         D.new_canvas(bad)
 
 
+def test_exported_from_both_facades():
+    """新しい描画層は api / fullseye の両ファサードから引ける(palette と同じ扱い)。"""
+    import api
+    import fullseye
+    names = ["drawstyle", "DrawStyle", "draw_style", "current_style", "set_color",
+             "set_line_width", "set_line_style", "set_draw", "resolve_pattern",
+             "resolve_color", "LINE_STYLES", "DRAW_MODES", "imagedraw", "draw_line",
+             "draw_polyline", "draw_circle", "draw_markers", "draw_contour", "new_canvas"]
+    for mod in (api, fullseye):
+        missing = [n for n in names if not hasattr(mod, n) or n not in mod.__all__]
+        assert not missing, f"{mod.__name__} is missing {missing}"
+    assert fullseye.DrawStyle is DrawStyle
+
+
 def test_new_canvas_rejects_bad_colour():
     with pytest.raises(ValueError):
         D.new_canvas((5, 5), "chartreuse")
