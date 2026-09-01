@@ -2498,9 +2498,12 @@ def ex_envelope_flow(log):
     ax.curve(ink, t[keep] * 1e3, band[keep], width=1)
     fig.stamp(ink, C_B)
     _legend(fig, PW - 230, 64, [("raw", C_DIM), ("band-passed", C_B)])
-    fig.text(82, PH - 40, f"band_fraction {es['band_fraction']:.6f} - the share of the "
-                          f"record's RMS that lives in this band. That number is how "
-                          f"you tell a real find from noise.", C_DIM, 12)
+    fig.text(82, PH - 58, f"band_fraction {es['band_fraction']:.6f} in this band - and "
+                          f"white noise put through the SAME band reads "
+                          f"{es_ctrl['band_fraction']:.6f}.", C_DIM, 12)
+    fig.text(82, PH - 40, f"So band_fraction alone does NOT separate them here. "
+                          f"Across the true resonance ({res_lo:.0f}-{res_hi:.0f} Hz) it "
+                          f"would read {es_res['band_fraction']:.6f}.", C_WARN, 12)
     steps.append(fig.u8())
 
     # 5. 包絡線
