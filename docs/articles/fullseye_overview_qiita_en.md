@@ -3713,9 +3713,23 @@ irf_convolve → background_subtract → deadtime_correct
 
 That is the first case where a new family delivered value **as a chained procedure** rather than as an individually useful op.
 
-**The most useful row is the loss.** For specular removal, evolution found a champion that **crosses families through the quaternion ops** (colour image → quaternion → colour-space rotation → colour image). On the observed split it read 0.776, close to the hand baseline of 0.84 — **on the untouched split it fell to 0.628**, with a seed-to-seed standard deviation of 0.190. The winning vibration map, by contrast, had a standard deviation of 0.001 on the untouched split.
+**The most useful row is the loss.** For specular removal, evolution found a champion that **crosses families through the quaternion ops** (colour image → quaternion → colour-space rotation → colour image). On the observed split it read 0.7761, close to the hand baseline of 0.8730 — **on the untouched split it fell to 0.6277**, with a seed-to-seed standard deviation of 0.190 and **not one of the three seeds beating the hand baseline**. The winning vibration map, by contrast, had a standard deviation of 0.0006 and beat the hand baseline 3 times out of 3.
 
 > **Rule**: looking only at the observed split, this reads as "so close". **Until you report the locked holdout and the spread together, nothing has been won.**
+
+### This table was itself built by breaking that rule once
+
+A correction. **The first published version of the table above took its baseline and its champion from different draws, within a single row.**
+
+After publication the table turned out not to reproduce against the current code. An exhaustive search found where the old numbers came from: the baselines `0.2664 / 0.5371` match the locked split at **cfg seed 2**, while `0.6973`, `0.5794` and `0.4115 / 0.8406` match the locked split at **cfg seed 1** — and the champions were run at **cfg seed 0**. So the baseline and the evolved value came from different draws, **with a different cfg seed per problem**. The evolved column itself (`0.7760 / 0.8868 / 0.5907 / 0.6039`) reproduces at no cfg seed and appears in none of the saved artifacts. What *was* saved (`0.7845 / 0.8941 / 0.5465 / 0.6277`) matches today's re-measurement to four digits.
+
+**An article that tells you to compare on the same split had broken that rule in its headline table.**
+
+The hole is identifiable. If the baseline file was missing, `robust.py` carried on with **an empty dict and wrote the baselines out as `null`**. No exception. And in fact no baseline file existed in any of those run directories — **nobody had measured them**. The numbers in the table were not read from the artifacts; they were computed separately, which is exactly why they could not be checked afterwards.
+
+Three things changed. `robust.py` now **measures the baselines itself before evolution starts** (resolving the split by the same rule `evolve.run` uses); a leftover `null` **aborts** (fail-closed); and if a baseline file on disk disagrees, **both values are kept** rather than one silently winning.
+
+One more trap surfaced. **If a baseline JSON is present in the workdir, `evolve.run` replaces individual 0 of the initial population with a randomly-sampled best genome — so the evolution result itself changes.** That is why the command above names an empty directory.
 
 ## Building "Honesty" Into the System (continued)
 
