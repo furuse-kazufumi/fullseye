@@ -288,14 +288,30 @@ def _selftest() -> int:
         same = a["png_sha256"] == b["png_sha256"]
         print(f"size={a['size']} png={a['png_bytes']}B thumb={a['thumb_bytes']}B "
               f"deterministic={same}")
-    try:
-        contact_sheet([np.full((8, 8), np.nan)])
-    except ValueError as exc:
-        print(f"fail-closed on NaN: {exc}")
-    else:
-        print("FAIL: NaN panel was rendered instead of raising")
-        return 1
-    return 0 if same else 1
+    steps = [np.clip(np.linspace(0, 1, 160)[None, :].repeat(120, 0) + k * 0.1, 0, 1)
+             for k in range(4)]
+    book = flipbook(steps, ["読み込み", "二値化", "細線化", "計測"], title="工程")
+    with tempfile.TemporaryDirectory() as td:
+        a = save_animation(book, "selftest", assets=Path(td))
+        b = save_animation(flipbook(steps, ["読み込み", "二値化", "細線化", "計測"], title="工程"),
+                           "selftest", assets=Path(td))
+        anim_same = a["gif_sha256"] == b["gif_sha256"]
+        print(f"gif frames={a['frames']} size={a['size']} bytes={a['gif_bytes']} "
+              f"deterministic={anim_same}")
+
+    for label, call in (
+        ("NaN panel", lambda: contact_sheet([np.full((8, 8), np.nan)])),
+        ("mixed sizes", lambda: flipbook([np.zeros((4, 4)), np.zeros((4, 5))])),
+        ("single frame", lambda: flipbook([np.zeros((4, 4))])),
+    ):
+        try:
+            call()
+        except ValueError as exc:
+            print(f"fail-closed on {label}: {exc}")
+        else:
+            print(f"FAIL: {label} was accepted instead of raising")
+            return 1
+    return 0 if (same and anim_same) else 1
 
 
 if __name__ == "__main__":
