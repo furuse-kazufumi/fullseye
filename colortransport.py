@@ -453,21 +453,23 @@ def poisson_blend(src, dst, mask, offset=(0, 0)):
     out = d.copy()
     planes = [(s, d, out)] if s.ndim == 2 else [
         (s[..., c], d[..., c], out[..., c]) for c in range(s.shape[2])]
+    residual = 0.0
     for sp, dp, op in planes:
         lap = 4.0 * sp[ys, xs] - sum(sp[ny, nx] for ny, nx, _ in neighbours)
         rhs = lap.copy()
         for (ny, nx, inside) in neighbours:                 # 境界は dst の値を右辺へ
             outside = ~inside
             rhs[outside] += dp[r0 + ny[outside], c0 + nx[outside]]
-        op[r0 + ys, c0 + xs] = lu.solve(rhs)
+        x = lu.solve(rhs)
+        # 解いた線形系の残差を実際に測る(解けたつもりの値を返さないため)
+        residual = max(residual, float(np.max(np.abs(A @ x - rhs))))
+        op[r0 + ys, c0 + xs] = x
 
     before = d[r0:r0 + h, c0:c0 + w]
     after = out[r0:r0 + h, c0:c0 + w]
     diff = np.abs(after - before)
-    changed = int(np.count_nonzero(diff > 1e-12))
-    residual = float(np.max(np.abs(A @ lu.solve(np.zeros(n)) )) if n == 0 else 0.0)
     return out, {
-        "changed_pixels": changed,
+        "changed_pixels": int(np.count_nonzero(diff > 1e-12)),
         "max_shift": float(diff.max()),
         "solved_pixels": n,
         "residual": residual,
