@@ -628,9 +628,16 @@ def fmcw_design(n_samples=64, n_chirps=32, sample_rate_hz=1.0e7,
         "velocity_resolution_ms": vel_bin,
         "max_unambiguous_velocity_ms": v_max,
         "doppler_rad_per_chirp_per_ms": 4.0 * np.pi * tc / lam,
-        # angle axis
+        # angle axis. angular_resolution_deg is **None**, not a number, when the
+        # array cannot resolve a direction at all (one element, or an aperture
+        # under ~0.28 wavelengths): the formula still evaluates there — it
+        # returned 2.5e10 degrees for an 8-element array at 1e-12 m spacing —
+        # and a number that large is a plausible-wrong answer, not a limit.
         "max_unambiguous_angle_deg": float(np.degrees(np.arcsin(sin_max))),
-        "angular_resolution_deg": float(np.degrees(0.886 * lam / (na * d))),
+        "angular_resolution_deg": (
+            None if na < 2 or not _beamwidth_rad(na, d, lam) < np.pi
+            else float(np.degrees(_beamwidth_rad(na, d, lam)))),
+        "aperture_wavelengths": na * d / lam,
         "grating_lobe_free": bool(d <= 0.5 * lam),
         # memory
         "cube_elements": int(elements),
