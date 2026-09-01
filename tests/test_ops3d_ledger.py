@@ -221,6 +221,10 @@ EXTRA_PARAM_HINTS = {
 EXTRA_OP_HINTS = {
     ("sphere_sdf", "center"): np.array([5.0, 5.0, 5.0]),
     ("box_sdf", "center"): np.array([5.0, 5.0, 5.0]),
+    # grid_coords / occupancy_grid の bounds は ((min,max) x3)。ファザーの
+    # PARAM_HINTS["bounds"] は平坦 6-tuple なので、そちらでは毎回 ValueError
+    ("grid_coords", "bounds"): ((0.0, 10.0), (0.0, 10.0), (0.0, 10.0)),
+    ("grid_coords", "res"): 12,
     ("occupancy_grid", "bounds"): ((0.0, 10.0), (0.0, 10.0), (0.0, 10.0)),
     ("extract_surface_points", "bounds"): (0.0, 0.0, 0.0, 10.0, 10.0, 10.0),
     ("gaussians_to_voxel", "size"): 16,
