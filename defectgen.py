@@ -125,12 +125,12 @@ def defect_scratch(shape=(256, 256), length_px=120.0, width_px=3.0,
     h, w = _shape(shape)
     length = _num(length_px, "length_px")
     width = _num(width_px, "width_px")
-    _num(wander, "wander", allow_zero=True)
-    c = _num(contrast, "contrast", lo=-1.0, hi=1.0, allow_zero=True)
+    _num(wander, "wander", sign="non_negative")
+    c = _num(contrast, "contrast", lo=-1.0, hi=1.0, sign="any")
     if isinstance(seed, bool) or int(seed) != seed:
         raise ValueError("seed must be an integer, got %r" % (seed,))
     rng = np.random.default_rng(int(seed))
-    theta = np.radians(_num(angle_deg, "angle_deg", allow_zero=True))
+    theta = np.radians(_num(angle_deg, "angle_deg", sign="any"))
     if start is None:
         y, x = h / 2.0, w / 2.0
         y -= 0.5 * length * np.sin(theta)
@@ -168,9 +168,9 @@ def defect_pits(shape=(256, 256), count=25, radius_px=4.0, radius_sigma=0.4,
     if isinstance(count, bool) or int(count) != count or int(count) < 0:
         raise ValueError("count must be a non-negative integer, got %r" % (count,))
     r_mean = _num(radius_px, "radius_px")
-    r_sigma = _num(radius_sigma, "radius_sigma", allow_zero=True)
-    clus = _num(clustering, "clustering", lo=0.0, hi=1.0, allow_zero=True)
-    c = _num(contrast, "contrast", lo=-1.0, hi=1.0, allow_zero=True)
+    r_sigma = _num(radius_sigma, "radius_sigma", sign="non_negative")
+    clus = _num(clustering, "clustering", lo=0.0, hi=1.0, sign="non_negative")
+    c = _num(contrast, "contrast", lo=-1.0, hi=1.0, sign="any")
     rng = np.random.default_rng(int(seed))
 
     mask = np.zeros((h, w), bool)
@@ -209,16 +209,16 @@ def defect_crack(shape=(256, 256), length_px=90.0, width_px=2.0, angle_deg=90.0,
     h, w = _shape(shape)
     length = _num(length_px, "length_px")
     width = _num(width_px, "width_px")
-    bp = _num(branch_prob, "branch_prob", lo=0.0, hi=1.0, allow_zero=True)
-    wan = _num(wander, "wander", allow_zero=True)
-    c = _num(contrast, "contrast", lo=-1.0, hi=1.0, allow_zero=True)
+    bp = _num(branch_prob, "branch_prob", lo=0.0, hi=1.0, sign="non_negative")
+    wan = _num(wander, "wander", sign="non_negative")
+    c = _num(contrast, "contrast", lo=-1.0, hi=1.0, sign="any")
     if isinstance(max_branches, bool) or int(max_branches) != max_branches \
             or int(max_branches) < 0:
         raise ValueError("max_branches must be a non-negative integer, got %r"
                          % (max_branches,))
     rng = np.random.default_rng(int(seed))
     mask = np.zeros((h, w), bool)
-    theta0 = np.radians(_num(angle_deg, "angle_deg", allow_zero=True))
+    theta0 = np.radians(_num(angle_deg, "angle_deg", sign="any"))
     # (y, x, theta, 残り長さ, 幅)
     todo = [(h / 2.0 - 0.5 * length * np.sin(theta0),
              w / 2.0 - 0.5 * length * np.cos(theta0), theta0, length, width)]
@@ -258,8 +258,8 @@ def defect_blob(shape=(256, 256), radius_px=20.0, roughness=0.35, contrast=0.25,
     """
     h, w = _shape(shape)
     r0 = _num(radius_px, "radius_px")
-    rough = _num(roughness, "roughness", allow_zero=True)
-    c = _num(contrast, "contrast", lo=-1.0, hi=1.0, allow_zero=True)
+    rough = _num(roughness, "roughness", sign="non_negative")
+    c = _num(contrast, "contrast", lo=-1.0, hi=1.0, sign="any")
     if isinstance(harmonics, bool) or int(harmonics) != harmonics or int(harmonics) < 1:
         raise ValueError("harmonics must be a positive integer, got %r" % (harmonics,))
     rng = np.random.default_rng(int(seed))
@@ -295,7 +295,7 @@ def surface_texture(shape=(256, 256), kind="orange_peel", strength=0.05,
     ``scale_px`` が非正の場合。
     """
     h, w = _shape(shape)
-    s = _num(strength, "strength", lo=0.0, hi=1.0, allow_zero=True)
+    s = _num(strength, "strength", lo=0.0, hi=1.0, sign="non_negative")
     scale = _num(scale_px, "scale_px")
     if kind not in ("orange_peel", "brushed", "grain"):
         raise ValueError("kind must be one of 'orange_peel', 'brushed', 'grain', "
