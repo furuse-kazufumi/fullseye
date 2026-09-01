@@ -794,23 +794,24 @@ def ex_clip_breakdown():
                       % (round(100 * r["contam"]), r["clip_err"]))
 
     # 最後に、折れ線で「どこで折れたか」を 1 枚
-    p = Plot(w=2 * panel_px + 10, h=panel_px, xlim=(0.0, 0.62),
-             ylim=(-40.0, 1000.0), margin=(78, 22, 44, 18))
-    p.grid_x([0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6], "%.0f%%")
+    c_med = fs.role_rgb8("baseline")
+    p = Plot(w=2 * panel_px + 10, h=panel_px, xlim=(0.0, 62.0),
+             ylim=(-40.0, 1010.0), margin=(78, 22, 44, 44))
+    p.grid_x([0, 10, 20, 30, 40, 50, 60], "%.0f%%")
     p.grid_y([0, 225, 450, 675, 900], "%.0f")
-    xs = [r["contam"] for r in rows]
+    xs = [100 * r["contam"] for r in rows]
     p.line(xs, [r["mean_err"] for r in rows], C_NEUTRAL, width=2, dashed=True)
-    p.line(xs, [r["median_err"] for r in rows], C_REF, width=2)
-    p.line(xs, [r["clip_err"] for r in rows], C_RIGHT, width=3)
+    p.line(xs, [r["median_err"] for r in rows], c_med, width=5)
+    p.line(xs, [r["clip_err"] for r in rows], C_RIGHT, width=2)
     p.markers(xs, [r["clip_err"] for r in rows], C_RIGHT)
-    p.vline(0.5, C_WRONG, width=2)
-    p.text(p.w // 2, 6, "汚染率と合成誤差 —— 折れ目は 50 %", size=17,
-           anchor="ma")
-    p.text(96, 36, "%s κ-σ(中央値 + MAD)" % M["right"], C_RIGHT, 14)
-    p.text(96, 56, "%s 中央値" % M["reference"], C_REF, 14)
-    p.text(96, 76, "%s 単純平均" % M["neutral"], C_NEUTRAL, 14)
-    p.text(96, 100, "%s 中央値の破綻点 50 %%" % M["wrong"], C_WRONG, 14)
-    p.text(14, p.h - 22, "汚染フレームの割合 / 縦 = 誤差 (e-)", et.MUTED, 13)
+    p.vline(50.0, C_WRONG, width=2)
+    p.text(p.w // 2, 6, "縦 = 真値からの誤差 (e-) / 横 = 汚染フレームの割合",
+           et.MUTED, 14, anchor="ma")
+    p.text(96, 40, "%s κ-σ(中央値 + MAD、細線)" % M["right"], C_RIGHT, 14)
+    p.text(96, 60, "%s 中央値(太線・55 %% 以降で分かれる)" % M["baseline"],
+           c_med, 14)
+    p.text(96, 80, "%s 単純平均(破線)" % M["neutral"], C_NEUTRAL, 14)
+    p.text(96, 104, "%s 中央値の破綻点 50 %%" % M["wrong"], C_WRONG, 14)
     fig = p.done()
     shots.append(fig[:panel_px, :2 * panel_px + 10])
     labels.append("汚染率と誤差(折れ目は 50 %)")

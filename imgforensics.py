@@ -108,6 +108,7 @@ import fit_transform
 import mosaic
 
 __all__ = [
+    "null_distribution", "evidence_quantile",
     "perceptual_hash", "hash_distance",
     "sensor_fingerprint", "fingerprint_correlate", "fingerprint_strength_map",
     "error_level_map", "jpeg_quality_estimate", "jpeg_ghost_map",
@@ -1490,6 +1491,118 @@ def watermark_capacity(image, bits, strengths=(0.02, 0.05, 0.1, 0.2, 0.4),
             "BER 0 は『この処理では消えない』であって『どんな処理でも消えない』ではない",
             "回転・切り出し・リサイズには一切耐えない(ブロックの位置がずれるため)",
         ],
+    }
+
+
+# =========================================================================
+# 証拠を「解釈できる形」にする —— しきい値は同梱せず、手元の清浄データから測る
+# =========================================================================
+
+def null_distribution(values):
+    """**改竄が無い**と分かっている標本から、証拠量の帰無分布をまとめる。
+
+    この族は一貫して判定を返さない。それは正しいが、そのままだと利用者は
+    ``PCE 1832`` のような数値を渡されて**解釈する手段が無い**。かといって
+    しきい値を同梱すると嘘になる ―― 分離点は枚数・解像度・圧縮率・被写体で
+    動くので、出荷時に決められる値ではない。
+
+    そこで**利用者自身の清浄データから分布を測る**。同梱するのは「しきい値」
+    ではなく「しきい値の測り方」で、それなら条件が変わっても正しいままでいる。
+
+    Parameters
+    ----------
+    values : array_like
+        改竄が無いと分かっている組で測った証拠量(``hash_distance`` や
+        ``fingerprint_correlate()["pce"]`` など)。**同じ条件**で集めること。
+
+    Returns
+    -------
+    dict
+        ``n`` / ``mean`` / ``std`` / ``min`` / ``max`` / ``quantiles``
+        (5, 25, 50, 75, 95, 99 パーセンタイル)。標本が少ないと裾は測れない
+        ので ``n < 20`` は ``caveats`` に出す(黙って外挿しない)。
+    """
+    v = np.asarray(values, dtype=np.float64).ravel()
+    if v.size == 0:
+        raise ValueError("null_distribution needs at least one clean measurement")
+    if not np.all(np.isfinite(v)):
+        raise ValueError("clean measurements must be finite")
+    qs = [5, 25, 50, 75, 95, 99]
+    caveats = [
+        "これは『この条件での清浄な組』の分布であって、普遍的なしきい値ではない",
+        "改竄の有無が本当に分かっている組だけを入れること(混ざると裾が伸びる)",
+    ]
+    if v.size < 20:
+        caveats.append(
+            f"標本が {int(v.size)} 件しかないので、95/99 パーセンタイルは測れていない"
+            "(順序統計量として裾に届かない)。裾を使うなら 100 件以上を薦める"
+        )
+    if v.size and float(np.std(v)) == 0.0:
+        caveats.append("清浄な組の値がすべて同じ。ばらつきが 0 なので偏差では語れない")
+    return {
+        "n": int(v.size),
+        "mean": float(np.mean(v)),
+        "std": float(np.std(v, ddof=1)) if v.size > 1 else 0.0,
+        "min": float(np.min(v)),
+        "max": float(np.max(v)),
+        "quantiles": {q: float(np.percentile(v, q)) for q in qs},
+        "caveats": caveats,
+    }
+
+
+def evidence_quantile(measurement, null, higher_is_stronger=True):
+    """証拠量が、清浄な分布の**どのあたりに座るか**を返す。判定は返さない。
+
+    ``null_distribution`` の出力を消費する側。返すのは「清浄な組の何 % より
+    外側か」であって、「改竄されている」ではない ―― 外側に座ることは、
+    その条件で**珍しい**ことしか意味しない(珍しい清浄画像は存在する)。
+
+    Parameters
+    ----------
+    measurement : float
+        測った証拠量(``hash_distance`` の返り値など)。
+    null : dict
+        :func:`null_distribution` の返り値。
+    higher_is_stronger : bool
+        PCE や相関のように**大きいほど強い証拠**なら ``True``。
+        ハミング距離のように**小さいほど強い証拠**なら ``False``。
+        **既定に頼らず必ず考えること** —— ここを間違えると、いちばん証拠の
+        強い組が「まったく珍しくない」と出る(例外は出ない)。
+
+    Returns
+    -------
+    dict
+        ``beyond_fraction``(清浄分布のうち、この値より内側にある割合)/
+        ``z``(標準偏差の何倍か。ばらつき 0 なら ``None``)/ ``caveats``。
+    """
+    m = float(measurement)
+    if not np.isfinite(m):
+        raise ValueError("measurement must be finite")
+    for key in ("n", "mean", "std", "quantiles"):
+        if not isinstance(null, dict) or key not in null:
+            raise ValueError(
+                "null must be a null_distribution() result; "
+                f"got {type(null).__name__} without a {key!r} key"
+            )
+    qs = null["quantiles"]
+    pts = sorted(qs.items())
+    if higher_is_stronger:
+        inside = sum(1 for q, val in pts if m > val) / len(pts)
+    else:
+        inside = sum(1 for q, val in pts if m < val) / len(pts)
+    z = None if null["std"] == 0.0 else (m - null["mean"]) / null["std"]
+    caveats = list(null.get("caveats", []))
+    caveats.append(
+        "外側に座ることは『その条件で珍しい』としか言っていない。珍しい清浄画像は存在する"
+    )
+    if null["n"] < 20:
+        caveats.append(f"帰無分布の標本が {null['n']} 件なので、この位置は粗い")
+    return {
+        "beyond_fraction": float(inside),
+        "z": None if z is None else float(z),
+        "direction": "higher_is_stronger" if higher_is_stronger else "lower_is_stronger",
+        "null_n": int(null["n"]),
+        "caveats": caveats,
     }
 
 
