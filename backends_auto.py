@@ -536,12 +536,34 @@ def _sh_geom(p):
         if kind == "transpose":
             return x.T
         if kind == "rotate":
+            # ★キャンバスを変えない(reshape=False)+ 枠外は鏡映(mode="reflect")。
+            #   角度は -45°..+45°(a=0.5 で 0°)。四隅には元画像が **折り返して**
+            #   写り込むので、帳票の傾き補正 (deskew) のように「枠外は背景色で
+            #   埋めたい」用途にはそのままでは向かない(既知の設計判断であって
+            #   バグではない — 詳細と使い分けは `ops._rotate_img` の docstring)。
             return np.clip(ndimage.rotate(x, -45 + 90 * a, reshape=False, mode="reflect"), 0, 1)
-        if kind == "zoom":
+        if kind == "zoom":                            # 等方ズーム(zoom_region など)
             s = 0.7 + 0.6 * a
             off = (x.shape[0] * (1 - 1 / s) / 2, x.shape[1] * (1 - 1 / s) / 2)
             return np.clip(ndimage.affine_transform(x, np.diag([1 / s, 1 / s]),
                                                     offset=off, mode="reflect"), 0, 1)
+        if kind == "zoom_factor":                     # HALCON zoom_image_factor
+            # ScaleHeight = a, ScaleWidth = b の **2 つの倍率**(HALCON と同じ)。
+            # キャンバスは保つ(内容だけを中心基準で拡大縮小)。
+            sr, sc = 0.7 + 0.6 * a, 0.7 + 0.6 * b
+            off = (x.shape[0] * (1 - 1 / sr) / 2, x.shape[1] * (1 - 1 / sc) / 2)
+            return np.clip(ndimage.affine_transform(x, np.diag([1 / sr, 1 / sc]),
+                                                    offset=off, mode="reflect"), 0, 1)
+        if kind == "zoom_size":                       # HALCON zoom_image_size
+            # **目標サイズ**指定。出力は要求した (Ht, Wt) 画素ちょうどの配列で、
+            # 入力画像全体がそこへ写る(倍率指定の zoom_image_factor と違い、
+            # 決まるのは倍率ではなくサイズ)。2 つのつまみしか無い op 界面なので
+            # 目標サイズは入力寸法から作る: Ht = H*(0.5+a), Wt = W*(0.5+b)。
+            H, W = x.shape[:2]
+            ht = max(8, int(round(H * (0.5 + a))))
+            wt = max(8, int(round(W * (0.5 + b))))
+            out = ndimage.zoom(x, (ht / H, wt / W), order=1, mode="reflect")
+            return np.clip(out[:ht, :wt], 0, 1)
         if kind == "affine":
             ang = np.deg2rad(-20 + 40 * a)
             M = np.array([[np.cos(ang), -np.sin(ang) + (b - 0.5) * 0.4],
