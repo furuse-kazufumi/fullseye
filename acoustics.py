@@ -1328,7 +1328,8 @@ def angular_resample(x, rate, rpm, samples_per_rev=64):
     }
 
 
-def order_spectrum(x, rate, rpm, samples_per_rev=64, max_order=None, n_peaks=5):
+def order_spectrum(x, rate, rpm, samples_per_rev=64, revolutions=None,
+                   max_order=None, n_peaks=5):
     """Amplitude against shaft order — the spectrum a run-up should be read in.
 
     :func:`angular_resample` followed by an rFFT over a **whole number of
