@@ -2049,6 +2049,18 @@ def equivalent_level(x, rate, weighting="A", ref=1.0, floor_db=FLOOR_DB):
     Silence returns ``floor_db`` (default -200) rather than ``-inf``; an ``-inf``
     in a list of levels destroys every average taken over it afterwards.
 
+    **A weighted level is only as good as the weighting, and the weighting has a
+    leakage limit this operator inherits in full.** A pure tone that is not a
+    whole number of periods in the record comes back **too loud** — measured
+    **+7.7986 dB** at 31.5 Hz (a nominal one-third-octave centre) over 0.5 s at
+    48 kHz, and up to **+17.2116 dB** at 20.5 Hz — with no exception, no NaN and
+    no warning. ``weighting="Z"`` is exempt (it does no filtering) and ``"C"`` is
+    nearly so (+0.0493 dB on the same tone); it is ``"A"``, whose curve spans
+    about 40 dB across the audio band, that is exposed. The full measurement,
+    the two cures that were tried and failed, and what to do instead are in
+    :func:`apply_weighting`. Read that before quoting a low-frequency
+    A-weighted level.
+
     **Raises** ``ValueError``: everything :func:`_as_signal` refuses, an unknown
     ``weighting``, ``ref <= 0`` (a decibel needs a positive reference; a zero
     reference makes every level ``+inf`` and a negative one makes the ratio
