@@ -2315,8 +2315,8 @@ def ex_envelope_truncation(log):
                  C_DIM, 12)
         frames.append(fig.u8())
 
-    thumb = int(np.argmax([abs(r["rel"]) for r in rows]))
-    info = save_gif(frames, "envelope_truncation", fps=6, thumb_index=thumb, log=log)
+    info = save_flipbook(frames, "envelope_truncation", labels, ms=240, hold_ms=2000,
+                         log=log)
     facts = {
         "scan_planes": n_planes, "z_step_um": z_step, "z_range_um": z_max,
         "wavelength_um": lam, "n_frames": len(rows),
