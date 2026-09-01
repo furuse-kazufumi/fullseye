@@ -332,6 +332,16 @@ def make_generators():
             1.0 + rng.random((16, 16)), bins=128, bin_ps=200.0,
             signal_photons=60.0, ambient_photons=10.0,
             seed=int(rng.integers(0, 1 << 31))),
+        # mesh = (V (nv,3) float, F (nf,3) int)。**種が無いと cadmap の 4 op は
+        # 「同じ連鎖の中で先に convex_hull / voxel_to_mesh が引かれた場合だけ」
+        # 到達する** = keypoints で実測した未到達パターンそのもの。_mesh は
+        # 閉凸包 / 直方体 / 開いた平面パッチの 3 種を混ぜる(理由は _mesh の
+        # docstring)
+        "mesh": _mesh,
+        # labels の 2-D 画像。既存 7 producers は 3-D (D,H,W) か 1-D (N,) しか
+        # 産まず、**2-D のラベル画像を産む op が 1 つも無い**(実測)ので、
+        # 種を置かないと画像ラベルを食う op が永久に fail-closed になる
+        "labels": _labels_2d,
     }
 
 
