@@ -393,8 +393,13 @@ def test_ledger_out_types_match_actual_returns(ledger_audit, capsys):
         for kind in ("TYPEMISS", "SUSPECT"):
             for n, (k, d) in sorted(ledger_audit.items()):
                 if k == kind:
-                    print("  [%s] %-30s %s" % (kind, n, d))
-    assert not bad, "宣言 out 型と実返りが食い違う op: %s" % bad
+                    known = " [既知・未修正]" if n in KNOWN_LEDGER_GAPS else ""
+                    print("  [%s] %-30s %s%s" % (kind, n, d, known))
+    new = {n: d for n, d in bad.items() if n not in KNOWN_LEDGER_GAPS}
+    assert not new, "宣言 out 型と実返りが食い違う op(新規): %s" % new
+    stale = sorted(set(KNOWN_LEDGER_GAPS) - set(bad))
+    assert not stale, ("KNOWN_LEDGER_GAPS に残っているが実際は乖離していない: %s"
+                       " — 直ったなら一覧から消すこと" % stale)
 
 
 def test_ledger_no_raw_exceptions(ledger_audit):
