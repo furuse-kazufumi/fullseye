@@ -3,23 +3,23 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-02 01:12:03
+- **最終更新**: 2026-09-02 01:47:47
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-6cc1a714 docs: 記事の書き方を「感想文」から「使える技術」へ ― 指摘を規則に落とす
-72dfb615 auto: cadmap.py 編集前 (2026-09-02 01:11)
-808ff701 auto: cadmap.py 編集前 (2026-09-02 01:11)
-6fdd4cae auto: cadmap.py 編集前 (2026-09-02 01:07)
-a1711f44 auto: cadmap.py 編集前 (2026-09-02 01:06)
-782d0f52 auto: cadmap.py 編集前 (2026-09-02 01:06)
-66307071 auto: cadmap.py 編集前 (2026-09-02 01:06)
-772eada8 docs: 記事の章構成 組み替え計画(未実施)+ 「読者の ROI」を削る基準に
-72006104 docs: Qiita 記事 ja/en に追記7 — 5 分野の実装と「発見ゼロ」が嘘をつく話
-b67ee407 docs: 3 族のファミリガイド + 音響の未実測コメントを実測表へ差し替え
+32e47171 docs: 記事の追記1〜7 を機能別の5章へ組み替え、書き方を「使える技術」へ
+57a057c5 auto: fullseye_overview_qiita_en.md 編集前 (2026-09-02 01:47)
+f2e0347c auto: fullseye_overview_qiita_en.md 編集前 (2026-09-02 01:47)
+0f5f1e77 auto: fullseye_overview_qiita_ja.md 編集前 (2026-09-02 01:47)
+861bfacb auto: fullseye_overview_qiita_ja.md 編集前 (2026-09-02 01:46)
+4ee39583 auto: chain_fuzz.py 編集前 (2026-09-02 01:45)
+d9abeed6 auto: fullseye_overview_qiita_ja.md 編集前 (2026-09-02 01:44)
+6388c172 auto: fullseye_overview_qiita_ja.md 編集前 (2026-09-02 01:44)
+4e5f3b18 auto: fullseye_overview_qiita_ja.md 編集前 (2026-09-02 01:44)
+84e8e36a auto: fullseye_overview_qiita_ja.md 編集前 (2026-09-02 01:44)
 ```
 
 ## 現在の git status
@@ -31,15 +31,21 @@ b67ee407 docs: 3 族のファミリガイド + 音響の未実測コメントを
 ## 直近 2 時間に変更されたファイル
 
 ```
-01:11 docs/ARTICLE_RESTRUCTURE_PLAN.md
-01:11 .pytest_cache/v/cache/lastfailed
-01:11 .pytest_cache/v/cache/nodeids
-01:11 cadmap.py
-01:10 tests/test_cadmap.py
-01:10 opscadmap.py
-01:06 docs/SESSION_SUMMARY.md
-00:59 docs/articles/fullseye_overview_qiita_en.md
-00:58 docs/articles/fullseye_overview_qiita_ja.md
+01:47 docs/articles/fullseye_overview_qiita_en.md
+01:47 docs/articles/fullseye_overview_qiita_ja.md
+01:45 tools/chain_fuzz.py
+01:44 .pytest_cache/v/cache/lastfailed
+01:44 .pytest_cache/v/cache/nodeids
+01:44 studio_assets/op_help/guide_specular_photometric.html
+01:44 studio_assets/op_help/guide_quaternion_monogenic.html
+01:44 studio_assets/op_help/guide_photon_timeresolved.html
+01:44 studio_assets/op_help/guide_motion_magnification.html
+01:44 studio_assets/op_help/guide_fmcw_range_doppler.html
+01:44 studio_assets/op_help/guide_coherence_scanning.html
+01:44 studio_assets/op_help/guide_acoustic_condition_monitoring.html
+01:44 studio_assets/op_help/guide_optics_imaging.html
+01:44 studio_assets/op_help/guide_math_metrology.html
+01:44 studio_assets/op_help/guide_lightfield_depth.html
 ```
 
 ---
