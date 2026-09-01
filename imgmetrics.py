@@ -76,9 +76,9 @@ import lzma
 import zlib
 
 import numpy as np
+from scipy import ndimage
 
 from metriccontract import MetricContractError
-from scipy import ndimage
 
 __all__ = [
     # 色空間

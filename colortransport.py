@@ -53,12 +53,11 @@
 from __future__ import annotations
 
 import numpy as np
-
-from metriccontract import MetricContractError
 from scipy import sparse
 from scipy.sparse import linalg as sparse_linalg
 
 import imgmetrics as _M
+from metriccontract import MetricContractError
 
 __all__ = [
     "wasserstein_1d", "transport_plan_1d",
@@ -390,7 +389,7 @@ def sinkhorn(a, b, cost, reg=0.05, n_iter=2000, tol=1e-9):
         if np.max(np.abs(u - u_prev)) < tol:
             break
     else:
-        raise RuntimeError(
+        raise MetricContractError(
             f"sinkhorn did not converge in {n_iter} iterations at reg={reg!r} "
             f"(last change {float(np.max(np.abs(u - u_prev))):.3e} > tol={tol!r}); "
             "returning the last iterate would hand on a plan whose marginals do not match"
@@ -405,7 +404,7 @@ def sinkhorn(a, b, cost, reg=0.05, n_iter=2000, tol=1e-9):
     err = max(float(np.max(np.abs(plan.sum(axis=1) - a))),
               float(np.max(np.abs(plan.sum(axis=0) - b))))
     if err > max(1e-6, 1e3 * tol):
-        raise RuntimeError(
+        raise MetricContractError(
             f"sinkhorn converged at reg={reg!r} but to a plan whose marginals are off by "
             f"{err:.3e}: exp(-cost/reg) has underflowed for most of the matrix, so the mass "
             "cannot be routed as requested. Use a larger reg, or wasserstein_1d for an exact "

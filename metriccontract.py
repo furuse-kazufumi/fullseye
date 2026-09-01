@@ -74,15 +74,26 @@ __all__ = [
 ]
 
 
-class MetricContractError(ValueError):
+class MetricContractError(ValueError, RuntimeError):
     """**契約による拒否**。「測れない」の意思表示であって、バグではない。
 
-    ``ValueError`` の部分型にしてあるのは、既存の呼び手とテストを 1 行も
-    変えずに済ませるため。この層だけがこの型を見分け、寛容な契約へ翻訳する。
+    ``ValueError`` **と** ``RuntimeError`` の両方の部分型にしてある。理由は
+    2 つとも実務的:
 
-    numpy や scipy が投げる素の ``ValueError`` は**この型ではない**ので、
-    :func:`attempt` は握り潰さずそのまま送出する —— そうしないと実バグが
-    「測れなかった候補」に化けて、進化ループの中で静かに消える。
+    * 拒否の実態が両方にまたがる。「``data_range`` が曖昧」は入力の話
+      (``ValueError``)だが、「Sinkhorn が収束しなかった」は手続きの話
+      (``RuntimeError``)で、**どちらも呼び手にとっては同じ「測れなかった」**。
+      1 つの型で拾えないと、寛容な契約側が両方を列挙する羽目になる。
+    * 既存の呼び手とテストを **1 行も変えずに済む**。
+      ``pytest.raises(ValueError, ...)`` も ``pytest.raises(RuntimeError, ...)``
+      も、これまでどおり通る。
+
+    numpy や scipy が投げる**素の** ``ValueError`` / ``RuntimeError`` は
+    この型ではないので、:func:`attempt` は握り潰さずそのまま送出する ——
+    そうしないと実バグが「測れなかった候補」に化けて、進化ループの中で
+    静かに消える。今回のセッションで見つけた実バグ(空間 Wiener が画像を
+    縮小していた件、Sinkhorn が間違った答えに収束していた件)は、
+    まさにその形で消えうるものだった。
     """
 
 
