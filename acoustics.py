@@ -2105,9 +2105,20 @@ def equivalent_level(x, rate, weighting="A", ref=1.0, floor_db=FLOOR_DB,
     arr = _as_signal(x, "x", op, min_len=1)
     r = _positive(ref, "ref")
     kind = _check_choice(weighting, ("a", "c", "z"), "weighting", op).upper()
+    win = _check_choice(window, ("none", "hann"), "window", op)
     fd = _finite_scalar(floor_db, "floor_db")
-    y = arr if kind == "Z" else apply_weighting(arr, fs, kind)
-    lvl, _ = _db_power(float(np.mean(y * y)), r * r, fd)
+    if win == "none":
+        y = arr if kind == "Z" else apply_weighting(arr, fs, kind)
+        ms = float(np.mean(y * y))
+    else:
+        # Hann-weighted mean square, divided by the window's own mean square so
+        # a stationary signal keeps its level. Leakage-suppressing, and *only*
+        # correct for stationary content — see the docstring's burst table.
+        w = 0.5 - 0.5 * np.cos(2.0 * np.pi * np.arange(arr.size) / arr.size)
+        xw = arr * w
+        y = xw if kind == "Z" else apply_weighting(xw, fs, kind)
+        ms = float(np.mean(y * y) / np.mean(w * w))
+    lvl, _ = _db_power(ms, r * r, fd)
     return float(lvl)
 
 
