@@ -2917,7 +2917,9 @@ def ex_isosurface(log) -> dict:
         if split is not None:
             p.c = imagedraw.draw_line(p.c, (p.px(split), p.y0),
                                       (p.px(split), p.y0 + p.h - 1), color=C_E, width=1)
-            p.items.append((p.px(split) + 4, p.y0 + 6, "ここで 2 つに割れる", C_E, 10, True))
+            lab = "ここで 2 つに割れる"
+            p.items.append((min(p.px(split) + 4, p.x0 + p.w - _text_w(lab, 10, True) - 2),
+                            p.y0 + 6, lab, C_E, 10, True))
         c = p.done()
         c = _text(c, [
             (770, 356, "level", C_DIM, 12, False),
