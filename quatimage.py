@@ -71,11 +71,14 @@ applied. **Every operator here that is side-dependent takes a required ``side``
 argument with no default** (:func:`qft2`, :func:`iqft2`,
 :func:`quat_image_multiply`). A default would be a silent choice: the wrong side
 raises nothing, produces no NaN, and returns a different — plausible — answer.
-Measured on the fuzzer's colour image, the left and right QFTs differ by
-``max|F_L - F_R| = 1.6e+02`` against a spectrum of peak modulus 5.1e+02, i.e.
-32 % of full scale; on the *inverse* the mismatch is not a small perturbation
-either: round-tripping ``iqft2(qft2(q, "left"), "right")`` returns an image with
-``max|err| = 1.1e+00`` on data whose own range is 1.0. See :func:`qft2`.
+Measured on a random colour image, the left and right QFTs differ by
+``max|F_L - F_R| = 33.35`` against a spectrum of peak modulus 892.9, and
+round-tripping through the *wrong* side — ``iqft2(qft2(q, "left"), "right")`` —
+returns an image with ``max|err| = 1.113`` on data whose own range is 0.9994:
+a different picture entirely, finite and plausible throughout. Multiplying a
+field by a rotor from the wrong side differs by as much as the data itself
+(``max|left - right| = 3.143`` on data whose extreme is 3.372). See
+:func:`qft2` and :func:`quat_image_multiply`.
 
 Conventions
 -----------

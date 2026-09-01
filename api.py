@@ -315,6 +315,21 @@ import specularity  # noqa: E402  (dichromatic split / BRDF / robust photometric
 # 位相ベースのモーション増幅: 目に見えない微小振動を可視化・定量化する層。
 # 既存の optical_flow_* は「どこがどれだけ動いたか」を返すが、こちらは
 # サブピクセルの周期運動を帯域で選んで増幅する(別の問題を解いている)。
+# 四元数・双対四元数による 3-D 姿勢代数。**実装は前からあったが、どちらの
+# facade からも 1 つも引けなかった**(module-only)。3-D 姿勢の合成・逆・補間は
+# 回転行列より数値的に素直で、ねじ運動(screw)表現も持つ。
+import pose_quat  # noqa: E402  (quaternion / dual-quaternion 3-D pose algebra)
+from pose_quat import (  # noqa: E402,F401
+    axis_angle_to_quat, convert_point_3d_cart_to_spher,
+    convert_point_3d_spher_to_cart, convert_pose_type, create_pose,
+    dual_quat_compose, dual_quat_conjugate, dual_quat_interpolate,
+    dual_quat_normalize, dual_quat_to_pose, dual_quat_to_screw,
+    dual_quat_trans_point_3d, get_pose_type, hom_mat3d_to_pose_local,
+    pose_average, pose_compose, pose_invert, pose_to_dual_quat,
+    pose_to_hom_mat3d_local, pose_to_quat, quat_compose, quat_conjugate,
+    quat_interpolate, quat_normalize, quat_rotate_point_3d,
+    quat_to_hom_mat3d, quat_to_pose, screw_to_dual_quat,
+)
 import motionmag  # noqa: E402  (phase-based motion magnification / vibration measurement)
 from motionmag import (  # noqa: E402,F401
     band_snr, complex_steerable_decompose, complex_steerable_reconstruct,
@@ -462,7 +477,17 @@ __all__ = [
     "tcspc_simulate", "tcspc_irf_convolve", "tcspc_background_subtract",
     "tcspc_stats", "dtof_depth", "dtof_cube_simulate", "dtof_cube_depth",
     "lifetime_fit", "lifetime_phasor",
-    "specularity", "motionmag",
+    "specularity", "motionmag", "pose_quat",
+    "axis_angle_to_quat", "convert_point_3d_cart_to_spher",
+    "convert_point_3d_spher_to_cart", "convert_pose_type", "create_pose",
+    "dual_quat_compose", "dual_quat_conjugate", "dual_quat_interpolate",
+    "dual_quat_normalize", "dual_quat_to_pose", "dual_quat_to_screw",
+    "dual_quat_trans_point_3d", "get_pose_type",
+    "hom_mat3d_to_pose_local", "pose_average", "pose_compose",
+    "pose_invert", "pose_to_dual_quat", "pose_to_hom_mat3d_local",
+    "pose_to_quat", "quat_compose", "quat_conjugate", "quat_interpolate",
+    "quat_normalize", "quat_rotate_point_3d", "quat_to_hom_mat3d",
+    "quat_to_pose", "screw_to_dual_quat",
     "band_snr", "complex_steerable_decompose",
     "complex_steerable_reconstruct", "displacement_series",
     "motion_magnify", "phase_displacement", "synthesize_translation",
