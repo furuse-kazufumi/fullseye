@@ -700,10 +700,10 @@ def subject_denoise_compare(log=print) -> dict:
             [src, R["img"]["noisy"], R["img"]["median"],
              R["img"]["bilateral"], R["img"]["sk_nlm"],
              _cmap(np.abs(src - R["img"][best]), "magma", vmin=0.0, vmax=0.25)],
+            # ラベルは折り返さないので tile 幅 (272px) に収まる長さに保つ
             ["元の写真 (ノイズ無し)\n基準",
-             "add_noise_white σ=%.3f\nPSNR %.2f dB / estimate_noise %.4f (真値の %.0f%%)"
-             % (sigma[i], R["psnr"]["noisy"], R["sigma_est"],
-                100.0 * R["sigma_est"] / sigma[i]),
+             "add_noise_white σ=%.3f\nPSNR %.2f dB / σ推定 %.4f"
+             % (sigma[i], R["psnr"]["noisy"], R["sigma_est"]),
              "median\nPSNR %.2f dB (%+.2f)"
              % (R["psnr"]["median"], R["psnr"]["median"] - R["psnr"]["noisy"]),
              "bilateral\nPSNR %.2f dB (%+.2f)"
