@@ -455,7 +455,7 @@ def _polarizer_design(angles_deg: np.ndarray, op: str) -> np.ndarray:
 # --------------------------------------------------------------------------- #
 # dichromatic reflection model                                                 #
 # --------------------------------------------------------------------------- #
-def _split_uniform_body(I, gamma, max_rank_ratio, op):
+def _split_uniform_body(I, gamma, max_rank_ratio, max_negative_frac, op):
     """Uniform-body separation: rank-1 fit + the minimum-specular constraint.
 
     ``I(x) = m_d(x) * L + m_s(x) * G`` with ``L`` (body colour) constant and
