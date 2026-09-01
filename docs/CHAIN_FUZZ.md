@@ -22,6 +22,12 @@ py -3.11 tools/chain_fuzz.py --minimize out/chain_fuzz.jsonl --only compute_fpfh
 
 # 再走: 最小再現をそのまま実行(デバッガを当てる入口)
 py -3.11 tools/chain_fuzz.py --replay 5000312 --script random_dropout,compute_fpfh
+
+# カバレッジ内訳: どの op が走り、どの op が一度も走らなかったかを書き出す
+py -3.11 tools/chain_fuzz.py --chains 1500 --coverage-out out/coverage.json
+
+# 狙い撃ち拡散の強さ(0=一様、既定 0.5)
+py -3.11 tools/chain_fuzz.py --chains 1500 --explore 0.7
 ```
 
 ## 分類(署名の種別)
