@@ -1449,9 +1449,12 @@ def polarization_dolp_map(images, angles_deg=_DEFAULT_ANGLES,
     fully linearly polarised and a crossed analyser extinguishes it completely,
     **0** means the polariser will only cost you a stop of exposure.
 
-    Being a ratio, it is invariant to exposure exactly — scaling every frame by
-    any positive constant returns bit-identical values — which is what makes it
-    comparable across a production line where the lamps age.
+    Being a ratio, it is invariant to exposure: scaling every frame by 1e-4,
+    1e4 or 1e8 moves it by at most 3.9e-16 (measured), which is what makes it
+    comparable across a production line where the lamps age. Not *bit*-
+    identical — the least-squares fit rounds differently at a different scale —
+    and the difference between "invariant" and "bit-identical" is the kind of
+    claim this library measures rather than asserts.
 
     Pixels with zero total radiance have no degree of polarisation (every ratio
     would be 0/0) and are returned as 0.0 rather than as NaN; that is a
