@@ -3,50 +3,51 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-02 04:18:02
+- **最終更新**: 2026-09-02 04:38:18
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-5649790b0 auto: baseline.py 編集前 (2026-09-02 04:17)
-dd2ba056e auto: baseline.py 編集前 (2026-09-02 04:17)
-5e09f32f2 auto: baseline.py 編集前 (2026-09-02 04:17)
-abd5510bb auto: gen_wingstudio_gallery.py 編集前 (2026-09-02 04:15)
-30ade46b3 auto: gen_wingstudio_gallery.py 編集前 (2026-09-02 04:15)
-adf4ffab8 auto: gen_wingstudio_gallery.py 編集前 (2026-09-02 04:15)
-65c8f860d auto: gen_wingstudio_gallery.py 編集前 (2026-09-02 04:14)
-03d397815 auto: gen_wingstudio_gallery.py 編集前 (2026-09-02 04:14)
-88943791d auto: gen_wingstudio_gallery.py 編集前 (2026-09-02 04:14)
-0f21fcf28 auto: opsreprconv.py 編集前 (2026-09-02 04:09)
+b7af96351 auto: gen_wing2d_gallery.py 編集前 (2026-09-02 04:37)
+d50acab1a auto: wings.json 編集前 (2026-09-02 04:37)
+a8f27593e auto: wings.json 編集前 (2026-09-02 04:37)
+24e0d41fc auto: gen_wing2d_gallery.py 編集前 (2026-09-02 04:36)
+9a6b9d6bb auto: gen_wing2d_gallery.py 編集前 (2026-09-02 04:36)
+e8ce1e9ff auto: gen_wing2d_gallery.py 編集前 (2026-09-02 04:36)
+dc6d8ab99 auto: gen_wing2d_gallery.py 編集前 (2026-09-02 04:35)
+83b2b2a14 auto: gen_wing2d_gallery.py 編集前 (2026-09-02 04:35)
+cbabfc89b auto: EVOLUTION_ENVIRONMENT.md 編集前 (2026-09-02 04:34)
+aba482760 auto: EVOLUTION_ENVIRONMENT.md 編集前 (2026-09-02 04:34)
 ```
 
 ## 現在の git status
 
 ```
-M baseline.py
- M docs/articles/assets/media/wingopt_abcd_rays.gif
+M docs/articles/assets/_wing2d_meta.json
+ M docs/articles/assets/media/wing2d_fit_residual.gif
+ M tools/gen_wing2d_gallery.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-04:18 docs/articles/assets/thumbs/wingopt_abcd_rays_thumb.jpg
-04:18 docs/articles/assets/media/wingopt_abcd_rays.gif
-04:17 docs/articles/assets/thumbs/wingopt_polarizer_thumb.jpg
-04:17 docs/articles/assets/media/wingopt_polarizer.gif
-04:17 docs/articles/assets/thumbs/wingopt_airy_rayleigh_thumb.jpg
-04:17 docs/articles/assets/media/wingopt_airy_rayleigh.gif
-04:17 docs/articles/assets/thumbs/wing2d_shape_match_thumb.jpg
-04:17 docs/articles/assets/media/wing2d_shape_match.gif
-04:17 docs/articles/assets/thumbs/wingopt_res_vs_dof_thumb.jpg
-04:17 docs/articles/assets/media/wingopt_res_vs_dof.gif
-04:17 baseline.py
-04:17 docs/articles/assets/thumbs/wingopt_dof_coc_thumb.jpg
-04:17 docs/articles/assets/media/wingopt_dof_coc.gif
-04:17 docs/articles/exhibits/wingstudio.md
-04:17 docs/articles/assets/_wingstudio_meta.json
+04:38 docs/articles/assets/thumbs/wing2d_fit_residual_thumb.jpg
+04:38 docs/articles/assets/media/wing2d_fit_residual.gif
+04:38 docs/articles/exhibits/wing2d.ja.md
+04:38 docs/articles/assets/_wing2d_meta.json
+04:37 tools/gen_wing2d_gallery.py
+04:37 .pytest_cache/v/cache/nodeids
+04:37 docs/articles/fullseye_overview_qiita_ja.md
+04:37 docs/articles/fullseye_overview_qiita_en.md
+04:37 docs/articles/exhibits/wings.json
+04:36 docs/articles/assets/thumbs/wing2d_denoise_compare_720.jpg
+04:36 docs/articles/assets/media/wing2d_denoise_compare.gif
+04:36 docs/articles/exhibits/wingopt.ja.md
+04:36 docs/articles/assets/_wingopt_meta.json
+04:36 docs/articles/assets/thumbs/wingopt_pixel_pitch_thumb.jpg
+04:36 docs/articles/assets/media/wingopt_pixel_pitch.gif
 ```
 
 ---

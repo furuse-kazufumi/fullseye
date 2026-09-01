@@ -556,7 +556,7 @@
     "file": "docs/articles/assets/media/wing2d_fit_residual.gif",
     "thumb": "docs/articles/assets/thumbs/wing2d_fit_residual_thumb.jpg",
     "frames": 6,
-    "bytes": 2330178,
+    "bytes": 2329065,
     "size": [
       960,
       792
@@ -602,7 +602,7 @@
     },
     "caption": "縁が 72 px 欠けた円と直線に、輪郭からの当てはめを掛けた 6 コマ。輪郭の全点で当てると半径は真値 210.0 px に対し 206.95 px (誤差 -3.05 px、残差 RMS 12.96 px) —— 欠けの縁が当てはめを引っ張っており、残差 3σ を超える 91 点を落として当て直すと 209.19 px (誤差 -0.81 px、RMS 6.21 px) まで戻る。直線は真値 73.20° に対し 73.21°(誤差 +0.006°)で、「当てはまった値」より「合わなかった場所」の方が情報が多い。",
     "sha256": {
-      "wing2d_fit_residual.gif": "856d6352285dd8b87e0a0f6d9101f73d6ab63c09ae9cc469d16372ec2a0f1e1d",
+      "wing2d_fit_residual.gif": "97ab969374d792c5fd6e0dbc8650ed6157b110d3f9f102ef8a4d4b564c8d3419",
       "wing2d_fit_residual_thumb.jpg": "59ea3d92cc1c010a331225c45cececa13db6fbcd9984e6df9a77f50befcdbf9d"
     }
   },

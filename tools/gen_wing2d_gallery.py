@@ -1731,8 +1731,8 @@ def subject_fit_residual(log=print) -> dict:
         "sobel_amp でエッジ強度",
         "threshold → opening → gen_contour_region_xld で輪郭 %d 点 / %d 点"
         % (len(circ_pts), len(line_pts)),
-        "橙 = 全点で fit_circle 半径 %.2f px (誤差 %+.2f) / "
-        "緑 = 外れ値 %d 点を落として再当てはめ 半径 %.2f px (誤差 %+.2f)"
+        # 1 行に収まる長さに (flipbook は折り返さず両端が黙って切れる)
+        "橙 = 全点 fit_circle %.2f px (%+.2f) / 緑 = 外れ %d 点除去 %.2f px (%+.2f)"
         % (cf["r"], cf["r"] - R0, int((~inlier).sum()), cf2["r"], cf2["r"] - R0),
         "残差を色で（上限 %.2f px = 内点の 3σ で飽和）— 欠けの縁だけが赤"
         % vmax,
