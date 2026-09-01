@@ -817,6 +817,19 @@ def test_allocation_caps_are_enforced_before_the_allocation():
         g.particle_render(st, 64, 64)
     with pytest.raises(ValueError, match=r"outside \[2, 64\]"):
         g.color_grade(np.zeros((4, 4, 3)), np.zeros((1, 1, 1, 3)))
+    with pytest.raises(ValueError, match="MAX_QUANT_ELEMENTS"):
+        g.palette_quantize(np.zeros((4000, 4000, 3)), np.zeros((512, 3)))
+
+
+def test_a_0_255_integer_image_is_named_not_silently_reinterpreted():
+    """uint8 is the other everyday representation swap, and it must not slide by."""
+    u8 = (np.random.default_rng(1).random((8, 8, 3)) * 255).astype(np.uint8)
+    with pytest.raises(ValueError, match="imgio.to_float01"):
+        g.vignette(u8)
+    # a 0/1 integer mask is legitimate and still works (shadow_cast_2d takes one)
+    mask = np.zeros((8, 8), dtype=np.uint8)
+    mask[4, 4] = 1
+    assert g.shadow_cast_2d(mask, 0, 0).min() == 0.0
 
 
 # =========================================================================== #

@@ -166,8 +166,8 @@ __all__ = [
     "srgb_to_linear",
     "tilemap_render",
     "unpremultiply",
-    "vignette",
     "viewport",
+    "vignette",
 ]
 
 # --------------------------------------------------------------------------- #
@@ -691,15 +691,15 @@ def sprite_synthesize(kind="disc", size=32, color="emphasis", thickness=0.25,
     r = n / 2.0
 
     if kind == "disc":
-        fn = lambda x, y: (x - c) ** 2 + (y - c) ** 2 <= r * r  # noqa: E731
+        fn = lambda x, y: (x - c) ** 2 + (y - c) ** 2 <= r * r
     elif kind == "ring":
         r_in = r * (1.0 - th)
-        fn = lambda x, y: (((x - c) ** 2 + (y - c) ** 2 <= r * r)  # noqa: E731
+        fn = lambda x, y: (((x - c) ** 2 + (y - c) ** 2 <= r * r)
                            & ((x - c) ** 2 + (y - c) ** 2 >= r_in * r_in))
     elif kind == "box":
-        fn = lambda x, y: (np.abs(x - c) <= r * 0.9) & (np.abs(y - c) <= r * 0.9)  # noqa: E731
+        fn = lambda x, y: (np.abs(x - c) <= r * 0.9) & (np.abs(y - c) <= r * 0.9)
     elif kind == "diamond":
-        fn = lambda x, y: np.abs(x - c) + np.abs(y - c) <= r  # noqa: E731
+        fn = lambda x, y: np.abs(x - c) + np.abs(y - c) <= r
     else:  # star: five-point, inner radius 0.42 of outer
         def fn(x, y):
             ang = np.arctan2(y - c, x - c)
@@ -1720,7 +1720,7 @@ def dither(img, levels=2, method="ordered", matrix_size=4):
 
     flat = arr.reshape(arr.shape[0], arr.shape[1], -1) if arr.ndim == 3 else arr[..., None]
     work = flat.astype(np.float64).copy()
-    h, w, c = work.shape
+    h, w = work.shape[:2]
     out = np.empty_like(work)
     for r in range(h):
         for col in range(w):

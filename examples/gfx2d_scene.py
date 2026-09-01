@@ -47,9 +47,9 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-import gfx2d as G  # noqa: E402
-import opsgfx2d  # noqa: E402
-import palette  # noqa: E402
+import gfx2d as G
+import opsgfx2d
+import palette
 
 H, W = 96, 160
 
@@ -94,19 +94,19 @@ def part2_alpha_convention():
     wrong_pm = np.clip(spr[..., :3] + dst[..., :3] * (1 - a), 0, 1)
     e1 = np.abs(wrong_pm - correct)[edge]
     ok1 = np.abs(e1 - (1.0 - spr[..., 3])[edge][:, None]).max() < 1e-15
-    print(f"   ストレートを乗算済みとして食わせた場合(乗算を飛ばす):")
+    print("   ストレートを乗算済みとして食わせた場合(乗算を飛ばす):")
     print(f"     誤差の閉形式 (1-a)·C と一致: {ok1}   最大 {e1.max():.4f} / 平均 {e1.mean():.4f}")
-    print(f"     → **被覆が小さいほど誤差が大きい**(いちばん薄いところがいちばん明るく光る)")
+    print("     → **被覆が小さいほど誤差が大きい**(いちばん薄いところがいちばん明るく光る)")
 
     pm = G.premultiply(spr)
     wrong_st = np.clip(pm[..., :3] * a + dst[..., :3] * (1 - a), 0, 1)
     e2 = np.abs(wrong_st - correct)[edge]
     ok2 = np.abs(e2 - (spr[..., 3] * (1 - spr[..., 3]))[edge][:, None]).max() < 1e-15
-    print(f"   乗算済みをストレートとして食わせた場合(被覆を二度掛ける):")
+    print("   乗算済みをストレートとして食わせた場合(被覆を二度掛ける):")
     print(f"     誤差の閉形式 a(1-a)·C と一致: {ok2}   最大 {e2.max():.4f}"
           f"(a=0.5 でちょうど 1/4)/ 平均 {e2.mean():.4f}")
-    print(f"     → 縁が暗く落ちる(dark halo)")
-    print(f"   どちらも例外は出ず、値域も [0,1] に収まり、有限で、**もっともらしい**。")
+    print("     → 縁が暗く落ちる(dark halo)")
+    print("   どちらも例外は出ず、値域も [0,1] に収まり、有限で、**もっともらしい**。")
     print(f"     絵が返ってくる: 非有限は {not np.all(np.isfinite(wrong_pm))} / "
           f"{not np.all(np.isfinite(wrong_st))}(= どちらも異常なし)")
 
