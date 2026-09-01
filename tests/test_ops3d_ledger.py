@@ -447,7 +447,7 @@ def audit_ledger(rounds: int = 4):
     for _round in range(rounds):
         progressed = False
         for name, meta in sorted(ops3d.OPS3D.items()):
-            if verdict.get(name, ("", ""))[0] in ("OK", "NOCHECK", "TYPEMISS"):
+            if verdict.get(name, ("", ""))[0] in ("OK", "NOCHECK", "TYPEMISS", "NONE"):
                 continue
             fn = meta["func"]
             out, ins = meta["out"], meta["in"]
