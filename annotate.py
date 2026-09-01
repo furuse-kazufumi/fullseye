@@ -421,7 +421,7 @@ def text_box(img, text, xy, color="neutral", text_color=None, box_color=None,
              box_alpha=0.72, anchor="lt", pad=5, font_size=14, min_font_size=9,
              max_width=None, font_path=None, line_spacing=1.15, scheme="okabe_ito",
              min_contrast=DEFAULT_MIN_CONTRAST, border=0, border_color=None,
-             style=None):
+             style=None, wrap=True):
     """下敷き(半透明の板)つきの文字。**はみ出しは黙って切らず例外**。
 
     Parameters
