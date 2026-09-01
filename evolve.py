@@ -32,7 +32,8 @@ def _refine(genome, fit_fn, rng, steps=15, sigma=0.05):
     return g, best
 
 
-def run(problem, workdir="out/worklog/imgevolve", gens=50, pop=24, seed=0, out=None, verbose=True):
+def run(problem, workdir="out/worklog/imgevolve", gens=50, pop=24, seed=0, out=None,
+        verbose=True, seed_baselines=False):
     """Evolve one problem for one seed; write champion/pareto; return the champion dict.
 
     Selection is on TRAIN only; HOLDOUT is tracked but never selected on (honest
@@ -41,6 +42,18 @@ def run(problem, workdir="out/worklog/imgevolve", gens=50, pop=24, seed=0, out=N
     ``problem`` may be a registered problem NAME (str) or a Problem instance
     (e.g. one built by ``Problem.from_pairs`` from real frames) — the latter lets
     real-data problems drive evolution without registering them globally.
+
+    ``seed_baselines`` (default **off**, so existing runs are byte-identical) seeds
+    two individuals of the initial population with the trivial (all-identity) and
+    hand pipelines. It exists because on a **narrow** start sort the chance that
+    random initialisation even *finds* the trivial pipeline is
+    ``(1/candidates)**N_SLOTS`` — measured 2026-09-01 on the new ``points`` sort:
+    25 candidates, 6 slots, 4e-9. A 3200-evaluation search there returned a locked
+    score of 0.436 against 0.675 for doing nothing, i.e. evolution could not reach
+    the baseline it is supposed to be judged against, which makes the comparison
+    vacuous rather than merely disappointing. Seeding does NOT weaken the honesty
+    guard: selection is still train-only and the locked split is still untouched;
+    it only starts the search from a known point instead of from noise.
     """
     if isinstance(problem, problems.Problem):
         prob = problem
