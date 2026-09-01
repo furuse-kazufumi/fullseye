@@ -664,6 +664,16 @@ def specular_diffuse_split(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0),
       map wrong by 1.03 in absolute radiance on an image whose maximum is 0.99,
       with no exception and no NaN. ``None`` disables it.
 
+    **Both guards bound gross violations only, and that is not fixable by a
+    better threshold.** A texture whose chromaticity drifts *along* the body
+    direction rather than away from it measured a rank ratio of 0.0641 — under
+    the default — with every body coefficient positive, so neither guard fires,
+    and the returned diffuse map was wrong by 0.198. It cannot be separated from
+    noise by any threshold, because it is the same measurement: 1% Gaussian
+    noise on that scene gives 0.0348 and 2% gives 0.0694, and the texture sits
+    between them. The answer for a surface that might be textured is
+    ``body_rgb``, not a cleverer number here.
+
     **Honest limits.** (1) *Without ``body_rgb``, one lit pixel must be
     specular-free.* The rendered-lobe measurement shows exactly what it costs
     when none is: for a Blinn-Phong highlight on a Gaussian bump the maximum
