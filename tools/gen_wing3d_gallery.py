@@ -3453,17 +3453,22 @@ _EXHIBITS = [
 ]
 
 
-def _md_line(m: dict) -> str:
+def _md_line(m: dict, lang: str = "ja") -> str:
     """記事と同じ書式の展示 1 点(画像 Markdown + 斜体キャプション)。
 
     版面は ``exhibit_tile`` に任せる — 静止画は「サムネイル + クリックで原寸」、
     GIF は動いてこそなので直接埋め込み。
     """
     ops = ", ".join("`%s`" % o for o in m["ops"])
-    cap = f"**{m['title']}** ―― {m['caption']} 使用 op: {ops}。"
+    if lang == "en":
+        title = m.get("title_en") or m["title"]
+        cap = f"**{title}** — {m.get('caption_en') or m['caption']} Ops used: {ops}."
+    else:
+        title = m["title"]
+        cap = f"**{title}** ―― {m['caption']} 使用 op: {ops}。"
     if m["kind"] == "gif":
-        return et.markdown_animation(m["name"], m["title"], cap).rstrip("\n")
-    return et.markdown(m["name"], m["title"], cap).rstrip("\n")
+        return et.markdown_animation(m["name"], title, cap).rstrip("\n")
+    return et.markdown(m["name"], title, cap).rstrip("\n")
 
 
 def main(argv=None) -> int:
