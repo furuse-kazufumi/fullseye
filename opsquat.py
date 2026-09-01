@@ -89,8 +89,8 @@ _MOD = {"quatimage": quatimage}
 #     (voxel を qimage 欄へ)は shape[2]==4 で弾かれる。
 #     **死んだ語彙にはならない**: 入口が 2 つ(``monogenic_signal`` /
 #     ``riesz_transform`` が image2d から、``rgb_to_quaternion`` が rgbimage
-#     から)、自己ループが 7 つ(共役・正規化・積・色回転・色フィルタ・QFT・
-#     逆 QFT)、出口が 2 系統(``quaternion_to_rgb`` で rgbimage へ、
+#     から)、自己ループが 8 つ(共役・正規化・積・色回転・色フィルタ・QFT・
+#     逆 QFT・四元数相関)、出口が 2 系統(``quaternion_to_rgb`` で rgbimage へ、
 #     ``quat_norm`` / ``monogenic_*`` で image2d へ)。既存の最大プール
 #     (image2d)から必ず埋まり、産物は必ず下流へ戻る。
 #
