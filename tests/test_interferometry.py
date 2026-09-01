@@ -691,7 +691,7 @@ class TestTypeVocabulary:
             with pytest.raises(ValueError, match="no usable coherence peak"):
                 itf.csi_height_map(v, DZ, 0.0, LAM)
 
-    def test_the_generic_signal_pool_is_refused_not_mis-read(self):
+    def test_the_generic_signal_pool_is_refused_not_misread(self):
         """The chain fuzzer's ``signal`` seed (a sinusoid plus noise) has no
         coherence envelope, and both signal-consuming ops say so rather than
         returning a height."""
