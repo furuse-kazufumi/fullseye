@@ -1420,7 +1420,7 @@ def ex_type_fixpoint(data, log=print):
             ang = np.arctan2(y - cy, x - cx)
             # 円周の上下では隣り合うラベルが重なるので、半径を 1 つおきにずらす。
             # ずらさないと 12 時/6 時付近の型名が読めない(見た目の破綻)。
-            rr = R + (22 if i % 2 == 0 else 62)
+            rr = R + (20 if i % 2 == 0 else 54)
             lx, ly = cx + rr * np.cos(ang), cy + rr * np.sin(ang)
             col = C_EVO if t in newt else (C_TEXT if t in reach else C_DIM)
             anchor = "lm" if np.cos(ang) >= 0 else "rm"
