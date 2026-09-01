@@ -475,6 +475,17 @@ from motionmag import (  # noqa: E402,F401
     displacement_series, motion_magnify, phase_displacement,
     synthesize_translation, temporal_band_power, temporal_bandpass,
 )
+import gfx2d  # noqa: E402  (real-time 2-D graphics: compositing / sprites / tiles / particles / lighting / post)
+from gfx2d import (  # noqa: E402,F401
+    alpha_composite, alpha_composite_premul, blend_mode, bloom,
+    chromatic_aberration, color_grade, color_lut, dither, film_grain,
+    layer_stack, light_mask, linear_to_srgb, nine_slice, normal_map_decode,
+    normal_map_shade, palette_quantize, parallax_layers, particle_emit,
+    particle_render, particle_step, premultiply, radial_light, shadow_cast_2d,
+    sprite_blit, sprite_sheet_slice, sprite_synthesize, sprite_transform,
+    srgb_to_linear, tilemap_render, unpremultiply, vignette, viewport,
+    BLEND_MODES,
+)
 from specularity import (  # noqa: E402,F401
     specular_diffuse_split, specular_free_transform,
     specular_coefficient_map, illuminant_from_dichromatic_planes,
