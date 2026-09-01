@@ -1099,6 +1099,18 @@ def ex_windowing(log) -> dict:
     info = _save_clip(frames, "wing3d_ct_windowing", fps=12, thumb_index=nf // 3, log=log)
     return {
         "name": "wing3d_ct_windowing", "title": "CT の「窓」で同じ体が 3 通りに見える",
+        "title_en": "One CT volume, three windows, three different bodies",
+        "caption_en": (
+            "The same synthetic HU volume seen through three `vol_window_level` windows "
+            "while the slice steps back and forth. In the soft-tissue window "
+            f"{100 * float((outs['軟部組織窓 soft'] <= 0).mean()):.1f} % of the volume "
+            "collapses to black and the ribs blow out to white; the bone window brings "
+            f"the blow-out down to "
+            f"{100 * float((outs['骨窓 bone'] >= 1).mean()):.1f} % so the bone reads; the "
+            f"lung window has only "
+            f"{100 * float((outs['肺野窓 lung'] <= 0).mean()):.1f} % crushed to black and "
+            "shows what is inside the lungs. The polyline underneath is the window "
+            "itself — a linear HU → [0,1] map plus a clip."),
         "ops": ["vol_window_level"],
         "facts": {w[0]: {"center": w[1], "width": w[2],
                          "saturate_low_pct": 100 * float((outs[w[0]] <= 0).mean()),
