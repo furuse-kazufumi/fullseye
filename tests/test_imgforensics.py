@@ -703,12 +703,18 @@ def test_copy_move_degrades_under_recompression_but_stays_correct():
 
 
 def test_copy_move_block_count_cap_is_fail_closed():
-    """ブロック数の上限は **例外**で知らせる(黙って間引かない)。"""
-    img = textured(256, 4)
+    """ブロック数の上限は **例外**で知らせる(黙って間引かない / 黙って遅くならない)。
+
+    ``step=1`` は既定なので、大きい画像では簡単に数十万ブロックになる。ここで
+    黙って間引くと「実行はされたが実質何も見ていない」= 発見ゼロの偽装になる。
+    """
+    small = np.zeros((256, 256))                          # 249*249 = 62001 ブロック
+    assert F.copy_move_regions(small, method="block") == []
+    big = np.zeros((560, 560))                            # 553*553 = 305809 ブロック
     with pytest.raises(ValueError, match="上限"):
-        F.copy_move_regions(img, method="block", block=8, step=1,
-                            min_variance=0.0, max_feature_dist=0.0)  # noqa: E501
-    # ↑ は上限に掛からないので、上限そのものを直接確認する
+        F.copy_move_regions(big, method="block", block=8, step=1)
+    # step を上げれば通る(何を失うかは test_copy_move_block_only_finds_multiples_of_step)
+    assert F.copy_move_regions(big, method="block", block=8, step=2) == []
     assert F.MAX_BLOCKS == 300_000
 
 
