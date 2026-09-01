@@ -100,12 +100,7 @@
           64,
           66,
           68,
-          70,
-          72,
-          74,
-          76,
-          78,
-          80
+          70
         ],
         "rows": [
           {
@@ -119,8 +114,8 @@
           },
           {
             "angle_deg": 2,
-            "minor_mm": 10.006095442988222,
-            "major_mm": 9.99955681187415,
+            "minor_mm": 9.99955681187415,
+            "major_mm": 10.006095442988219,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 10.006095442988217,
             "area_mm2": 78.125,
@@ -128,8 +123,8 @@
           },
           {
             "angle_deg": 4,
-            "minor_mm": 10.024418980811722,
-            "major_mm": 9.999099781715158,
+            "minor_mm": 9.99909978171516,
+            "major_mm": 10.02441898081172,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 10.024418980811722,
             "area_mm2": 78.4375,
@@ -137,8 +132,8 @@
           },
           {
             "angle_deg": 6,
-            "minor_mm": 10.055082795635164,
-            "major_mm": 9.998629542884382,
+            "minor_mm": 9.99862954288438,
+            "major_mm": 10.055082795635165,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 10.055082795635165,
             "area_mm2": 78.6875,
@@ -146,8 +141,8 @@
           },
           {
             "angle_deg": 8,
-            "minor_mm": 10.098275725186182,
-            "major_mm": 9.998146743639422,
+            "minor_mm": 9.998146743639424,
+            "major_mm": 10.09827572518618,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 10.09827572518618,
             "area_mm2": 78.9375,
@@ -155,8 +150,8 @@
           },
           {
             "angle_deg": 10,
-            "minor_mm": 10.15426611885745,
-            "major_mm": 9.997652045963001,
+            "minor_mm": 9.997652045963001,
+            "major_mm": 10.15426611885745,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 10.15426611885745,
             "area_mm2": 79.4375,
@@ -164,8 +159,8 @@
           },
           {
             "angle_deg": 12,
-            "minor_mm": 10.223405948650292,
-            "major_mm": 9.997146124386147,
+            "minor_mm": 9.997146124386148,
+            "major_mm": 10.223405948650292,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 10.223405948650292,
             "area_mm2": 79.9375,
@@ -173,8 +168,8 @@
           },
           {
             "angle_deg": 14,
-            "minor_mm": 10.30613629349898,
-            "major_mm": 9.996629664808985,
+            "minor_mm": 9.996629664808985,
+            "major_mm": 10.306136293498984,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 10.30613629349898,
             "area_mm2": 80.6875,
@@ -182,8 +177,8 @@
           },
           {
             "angle_deg": 16,
-            "minor_mm": 10.40299435861602,
-            "major_mm": 9.996103363322385,
+            "minor_mm": 9.996103363322383,
+            "major_mm": 10.40299435861602,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 10.40299435861602,
             "area_mm2": 81.3125,
@@ -191,8 +186,8 @@
           },
           {
             "angle_deg": 18,
-            "minor_mm": 10.514622242382673,
-            "major_mm": 9.995567925033583,
+            "minor_mm": 9.995567925033583,
+            "major_mm": 10.514622242382668,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 10.514622242382673,
             "area_mm2": 82.125,
@@ -200,8 +195,8 @@
           },
           {
             "angle_deg": 20,
-            "minor_mm": 10.641777724759123,
-            "major_mm": 9.995024062898798,
+            "minor_mm": 9.9950240628988,
+            "major_mm": 10.64177772475912,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 10.641777724759121,
             "area_mm2": 83.0625,
@@ -209,8 +204,8 @@
           },
           {
             "angle_deg": 22,
-            "minor_mm": 10.785347426775832,
-            "major_mm": 9.994472496565685,
+            "minor_mm": 9.994472496565685,
+            "major_mm": 10.785347426775836,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 10.785347426775834,
             "area_mm2": 84.3125,
@@ -218,8 +213,8 @@
           },
           {
             "angle_deg": 24,
-            "minor_mm": 10.946362785060463,
-            "major_mm": 9.993913951228379,
+            "minor_mm": 9.993913951228379,
+            "major_mm": 10.946362785060469,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 10.946362785060467,
             "area_mm2": 85.375,
@@ -227,8 +222,8 @@
           },
           {
             "angle_deg": 26,
-            "minor_mm": 11.126019404751888,
-            "major_mm": 9.993349156497642,
+            "minor_mm": 9.993349156497644,
+            "major_mm": 11.12601940475189,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 11.126019404751888,
             "area_mm2": 87.25,
@@ -236,8 +231,8 @@
           },
           {
             "angle_deg": 28,
-            "minor_mm": 11.325700506890389,
-            "major_mm": 9.992778845288584,
+            "minor_mm": 9.992778845288584,
+            "major_mm": 11.325700506890392,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 11.32570050689039,
             "area_mm2": 88.1875,
@@ -245,8 +240,8 @@
           },
           {
             "angle_deg": 30,
-            "minor_mm": 11.547005383792513,
-            "major_mm": 9.992203752728145,
+            "minor_mm": 9.992203752728145,
+            "major_mm": 11.547005383792516,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 11.547005383792515,
             "area_mm2": 90.0,
@@ -254,8 +249,8 @@
           },
           {
             "angle_deg": 32,
-            "minor_mm": 11.791784033620964,
-            "major_mm": 9.991624615084447,
+            "minor_mm": 9.991624615084447,
+            "major_mm": 11.791784033620964,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 11.791784033620964,
             "area_mm2": 92.1875,
@@ -263,8 +258,8 @@
           },
           {
             "angle_deg": 34,
-            "minor_mm": 12.062179485039053,
-            "major_mm": 9.991042168719884,
+            "minor_mm": 9.991042168719886,
+            "major_mm": 12.062179485039053,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 12.062179485039053,
             "area_mm2": 94.125,
@@ -272,8 +267,8 @@
           },
           {
             "angle_deg": 36,
-            "minor_mm": 12.360679774997894,
-            "major_mm": 9.9904571490697,
+            "minor_mm": 9.990457149069702,
+            "major_mm": 12.360679774997894,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 12.360679774997896,
             "area_mm2": 97.0,
@@ -281,8 +276,8 @@
           },
           {
             "angle_deg": 38,
-            "minor_mm": 12.690182150725793,
-            "major_mm": 9.99082279613499,
+            "minor_mm": 9.990822796134992,
+            "major_mm": 12.69018215072579,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 12.69018215072579,
             "area_mm2": 98.875,
@@ -290,8 +285,8 @@
           },
           {
             "angle_deg": 40,
-            "minor_mm": 13.054072893322784,
-            "major_mm": 9.991945176970894,
+            "minor_mm": 9.991945176970894,
+            "major_mm": 13.054072893322783,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 13.054072893322786,
             "area_mm2": 102.125,
@@ -299,8 +294,8 @@
           },
           {
             "angle_deg": 42,
-            "minor_mm": 13.456327296063762,
-            "major_mm": 9.993097204750391,
+            "minor_mm": 9.993097204750391,
+            "major_mm": 13.456327296063762,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 13.45632729606376,
             "area_mm2": 105.25,
@@ -308,8 +303,8 @@
           },
           {
             "angle_deg": 44,
-            "minor_mm": 13.901635910166785,
-            "major_mm": 9.994277846801438,
+            "minor_mm": 9.994277846801438,
+            "major_mm": 13.901635910166789,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 13.901635910166787,
             "area_mm2": 108.625,
@@ -317,8 +312,8 @@
           },
           {
             "angle_deg": 46,
-            "minor_mm": 14.39556539625726,
-            "major_mm": 9.995486026933447,
+            "minor_mm": 9.995486026933449,
+            "major_mm": 14.395565396257261,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 14.395565396257265,
             "area_mm2": 112.5,
@@ -326,8 +321,8 @@
           },
           {
             "angle_deg": 48,
-            "minor_mm": 14.944765498646086,
-            "major_mm": 9.996720625034344,
+            "minor_mm": 9.996720625034342,
+            "major_mm": 14.944765498646088,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 14.944765498646086,
             "area_mm2": 116.875,
@@ -335,8 +330,8 @@
           },
           {
             "angle_deg": 50,
-            "minor_mm": 15.557238268604129,
-            "major_mm": 9.997980476733815,
+            "minor_mm": 9.997980476733815,
+            "major_mm": 15.557238268604124,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 15.557238268604122,
             "area_mm2": 121.375,
@@ -344,8 +339,8 @@
           },
           {
             "angle_deg": 52,
-            "minor_mm": 16.24269245482744,
-            "major_mm": 9.999264373140598,
+            "minor_mm": 9.999264373140598,
+            "major_mm": 16.24269245482744,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 16.24269245482744,
             "area_mm2": 127.4375,
@@ -353,8 +348,8 @@
           },
           {
             "angle_deg": 54,
-            "minor_mm": 17.013016167040803,
-            "major_mm": 9.99943024080624,
+            "minor_mm": 9.999430240806241,
+            "major_mm": 17.013016167040803,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 17.0130161670408,
             "area_mm2": 132.75,
@@ -362,8 +357,8 @@
           },
           {
             "angle_deg": 56,
-            "minor_mm": 17.882916499714007,
-            "major_mm": 9.99811507876425,
+            "minor_mm": 9.99811507876425,
+            "major_mm": 17.882916499714,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 17.882916499714007,
             "area_mm2": 139.5625,
@@ -371,8 +366,8 @@
           },
           {
             "angle_deg": 58,
-            "minor_mm": 18.870799147998582,
-            "major_mm": 9.996794075141686,
+            "minor_mm": 9.996794075141686,
+            "major_mm": 18.87079914799859,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 18.870799147998586,
             "area_mm2": 147.1875,
@@ -380,8 +375,8 @@
           },
           {
             "angle_deg": 60,
-            "minor_mm": 20.0,
-            "major_mm": 9.995468974338444,
+            "minor_mm": 9.995468974338444,
+            "major_mm": 20.000000000000007,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 19.999999999999996,
             "area_mm2": 156.375,
@@ -389,8 +384,8 @@
           },
           {
             "angle_deg": 62,
-            "minor_mm": 21.300544681895122,
-            "major_mm": 9.994265038715943,
+            "minor_mm": 9.994265038715945,
+            "major_mm": 21.300544681895126,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 21.300544681895122,
             "area_mm2": 166.375,
@@ -398,8 +393,8 @@
           },
           {
             "angle_deg": 64,
-            "minor_mm": 22.811720327048597,
-            "major_mm": 9.996365626361838,
+            "minor_mm": 9.996365626361836,
+            "major_mm": 22.811720327048597,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 22.81172032704859,
             "area_mm2": 178.0625,
@@ -407,8 +402,8 @@
           },
           {
             "angle_deg": 66,
-            "minor_mm": 24.585933355742377,
-            "major_mm": 9.998503706661038,
+            "minor_mm": 9.99850370666104,
+            "major_mm": 24.585933355742377,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 24.58593335574238,
             "area_mm2": 192.1875,
@@ -416,8 +411,8 @@
           },
           {
             "angle_deg": 68,
-            "minor_mm": 26.69467162554014,
-            "major_mm": 9.999324450401609,
+            "minor_mm": 9.999324450401609,
+            "major_mm": 26.694671625540145,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 26.69467162554015,
             "area_mm2": 208.8125,
@@ -425,68 +420,23 @@
           },
           {
             "angle_deg": 70,
-            "minor_mm": 29.238044001630875,
-            "major_mm": 9.99714825089135,
+            "minor_mm": 9.99714825089135,
+            "major_mm": 29.238044001630875,
             "truth_minor_mm": 10.0,
             "truth_major_mm": 29.238044001630865,
             "area_mm2": 228.9375,
             "truth_area_mm2": 229.6350606021466
-          },
-          {
-            "angle_deg": 72,
-            "minor_mm": 32.360679774997905,
-            "major_mm": 9.997364835878997,
-            "truth_minor_mm": 10.0,
-            "truth_major_mm": 32.36067977499789,
-            "area_mm2": 252.875,
-            "truth_area_mm2": 254.16018461576297
-          },
-          {
-            "angle_deg": 74,
-            "minor_mm": 36.27955278543301,
-            "major_mm": 9.999603060935407,
-            "truth_minor_mm": 10.0,
-            "truth_major_mm": 36.279552785433005,
-            "area_mm2": 283.5625,
-            "truth_area_mm2": 284.9389412655986
-          },
-          {
-            "angle_deg": 76,
-            "minor_mm": 39.64978416869692,
-            "major_mm": 9.997427403465524,
-            "truth_minor_mm": 10.0,
-            "truth_major_mm": 41.3356549443875,
-            "area_mm2": 319.0625,
-            "truth_area_mm2": 324.649474761526
-          },
-          {
-            "angle_deg": 78,
-            "minor_mm": 40.0,
-            "major_mm": 9.99866761464051,
-            "truth_minor_mm": 10.0,
-            "truth_major_mm": 48.09734344744128,
-            "area_mm2": 344.625,
-            "truth_area_mm2": 377.75565207916674
-          },
-          {
-            "angle_deg": 80,
-            "minor_mm": 40.0,
-            "major_mm": 9.999068847533975,
-            "truth_minor_mm": 10.0,
-            "truth_major_mm": 57.58770483143631,
-            "area_mm2": 362.25,
-            "truth_area_mm2": 452.2927760888444
           }
         ],
-        "max_major_err_mm": 47.588635983902336,
-        "max_minor_err_mm": 30.0
+        "max_major_err_mm": 1.0658141036401503e-14,
+        "max_minor_err_mm": 0.009542850930298385
       },
-      "caption": "半径 5.00 mm の合成円柱を、切断面を 0° から 80° まで倒しながら切る(`vol_rotate` の逆回し)。短径は角度によらず 10.000 mm のままなのに、長径は **2r / cos θ** に沿って伸び、80° では 9.999 mm = 1.00 倍になる。41 角度すべてで理論値との差は最大 47.5886 mm(190.35 画素)。「斜めの断面で測った直径」をそのまま寸法にしてはいけない、という一本。",
+      "caption": "半径 5.00 mm の合成円柱を、切断面を 0° から 80° まで倒しながら切る(`vol_rotate` の逆回し)。短径は角度によらず 10.000 mm のままなのに、長径は **2r / cos θ** に沿って伸び、80° では 29.238 mm = 2.92 倍になる。36 角度すべてで理論値との差は最大 0.0000 mm(0.00 画素)。「斜めの断面で測った直径」をそのまま寸法にしてはいけない、という一本。",
       "kind": "gif",
       "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_oblique_slice.gif",
       "mp4": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_oblique_slice.mp4",
       "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wing3d_oblique_slice_thumb.jpg",
-      "frames": 41,
+      "frames": 36,
       "fps": 10,
       "gif_shape": [
         640,
@@ -499,14 +449,14 @@
         3
       ],
       "gif_colors": 256,
-      "gif_bytes": 622272,
-      "mp4_bytes": 117834,
-      "thumb_bytes": 35868,
-      "thumb_frame": 30,
-      "gif_sha256": "d41412343ddf21aa77fab860a5f113a7f846b72d925e8bb753edb0d67a949874",
-      "mp4_sha256": "cf0dfe551e89024c393cac7b47058c1fe68f763e98770c6aa4fd8b1399b92f03",
+      "gif_bytes": 495954,
+      "mp4_bytes": 92300,
+      "thumb_bytes": 34275,
+      "thumb_frame": 27,
+      "gif_sha256": "794a389d201c7c8034ea5b19ab9301bb12ac4e8cf966b2e34320de0c66971720",
+      "mp4_sha256": "2cd336373830cd5be74b835219ce684afb5a5202c9be8abb919200631832c718",
       "exhibit": "oblique",
-      "seconds": 26.824145199963823
+      "seconds": 30.337762499926612
     }
   ]
 }

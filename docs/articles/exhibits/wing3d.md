@@ -15,7 +15,7 @@
 
 ![斜めに切ると円が楕円になる(長径は 1/cos で伸びる)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_oblique_slice.gif)
 
-*↑ **斜めに切ると円が楕円になる(長径は 1/cos で伸びる)** ―― 半径 5.00 mm の合成円柱を、切断面を 0° から 80° まで倒しながら切る(`vol_rotate` の逆回し)。短径は角度によらず 10.000 mm のままなのに、長径は **2r / cos θ** に沿って伸び、80° では 9.999 mm = 1.00 倍になる。41 角度すべてで理論値との差は最大 47.5886 mm(190.35 画素)。「斜めの断面で測った直径」をそのまま寸法にしてはいけない、という一本。 使用 op: `vol_rotate`。*
+*↑ **斜めに切ると円が楕円になる(長径は 1/cos で伸びる)** ―― 半径 5.00 mm の合成円柱を、切断面を 0° から 80° まで倒しながら切る(`vol_rotate` の逆回し)。短径は角度によらず 10.000 mm のままなのに、長径は **2r / cos θ** に沿って伸び、80° では 29.238 mm = 2.92 倍になる。36 角度すべてで理論値との差は最大 0.0000 mm(0.00 画素)。「斜めの断面で測った直径」をそのまま寸法にしてはいけない、という一本。 使用 op: `vol_rotate`。*
 
 ---
 
@@ -24,4 +24,4 @@
 | 展示 | 形式 | ファイル | 実測 |
 |---|---|---|---|
 | rle | PNG | `wing3d_rle_compression.png` | 1120x720, 52 kB |
-| oblique | GIF+mp4 | `media/wing3d_oblique_slice.gif` | 41 フレーム, 1120x640, 0.62 MB, 256 色, mp4 0.12 MB |
+| oblique | GIF+mp4 | `media/wing3d_oblique_slice.gif` | 36 フレーム, 1120x640, 0.50 MB, 256 色, mp4 0.09 MB |

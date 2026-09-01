@@ -2525,27 +2525,40 @@ def ex_mpr(log) -> dict:
 # --------------------------------------------------------------------------- #
 def ex_oblique(log) -> dict:
     """切断面を 0 -> 80 度まで倒し、切り口が円から楕円へ伸びるのを測る。"""
-    n = 160
+    n = 192
     sp = 0.25                                  # mm / voxel(等方)
     r_vox = 20.0
     r_mm = r_vox * sp
+    ctr = n // 2
     zz, yy, xx = np.mgrid[0:n, 0:n, 0:n].astype(np.float64)
-    rr = np.sqrt((yy - 80.) ** 2 + (xx - 80.) ** 2)
+    rr = np.sqrt((yy - float(ctr)) ** 2 + (xx - float(ctr)) ** 2)
     cyl = np.clip(r_vox - rr + 0.5, 0.0, 1.0)         # 軸 = z、反エイリアス
-    angles = list(range(0, 81, 2))
+    # 70 deg で長径は 2r/cos70 = 117 voxel。枠(192)に収まる範囲までしか回さない
+    # — reshape=False の vol_rotate は枠から出た部分を**黙って捨てる**ので、
+    #   収まらない角度まで回すと「測った長径が枠幅で頭打ち」になってしまう。
+    angles = list(range(0, 71, 2))
     rows = []
     slices = {}
     for ang in angles:
         v = np.asarray(G("vol_rotate")(cyl, float(ang), axes=(0, 1), order=1,
                                        reshape=False, mode="constant", cval=0.0))
-        sl = v[n // 2]
+        sl = v[ctr]
         slices[ang] = sl
+        # sl は (y, x)。切断面を z-y 面内で倒したので、伸びるのは y 方向 = axis 0。
         minor = _extent_50(sl, 1, sp)          # x 方向(倒しても変わらない)
         major = _extent_50(sl, 0, sp)          # y 方向(1/cos で伸びる)
         truth_major = 2 * r_mm / math.cos(math.radians(ang))
+        m = sl >= 0.5
+        clipped = bool(m[0, :].any() or m[-1, :].any() or m[:, 0].any() or m[:, -1].any())
+        if clipped:                            # fail-closed: 頭打ちの数字を出さない
+            raise RuntimeError(
+                "oblique slice at %d deg touches the frame border — vol_rotate("
+                "reshape=False) has clipped the cut and the measured extent would "
+                "saturate at the frame width. Enlarge the volume or reduce the angle."
+                % ang)
         rows.append({"angle_deg": ang, "minor_mm": minor, "major_mm": major,
                      "truth_minor_mm": 2 * r_mm, "truth_major_mm": truth_major,
-                     "area_mm2": float((sl >= 0.5).sum()) * sp * sp,
+                     "area_mm2": float(m.sum()) * sp * sp,
                      "truth_area_mm2": math.pi * r_mm ** 2 / math.cos(math.radians(ang))})
     for r in rows[::8]:
         log(f"    ang {r['angle_deg']:2d} deg  minor {r['minor_mm']:.3f} "
