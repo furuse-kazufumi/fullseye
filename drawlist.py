@@ -141,41 +141,51 @@ class CommandSpec:
     points: tuple[str, ...] = ()
     lengths: tuple[str, ...] = ()
     paths: tuple[str, ...] = ()
+    inverse: tuple[str, ...] = ()
 
 
 def _specs() -> dict[str, CommandSpec]:
+    """委譲表。**画素になる引数だけ**を持つコマンドをここに置く。
+
+    画像そのものを引数に取る合成系(タイル生成・パーティクルの状態・光源マップの
+    生成など、``fn(img, ...) -> img`` ではなく **画像を作って返す** 種類)は、
+    JSON で差分を取るという要件と噛み合わないので表には入れない。使いたければ
+    :class:`DrawList` の ``handlers=`` で束ねる。
+    """
     raw = [
         # --- プリミティブ(imagedraw + drawstyle) ---
-        ("line", "imagedraw", ("draw_line",), ("p0", "p1"), ("width",), ()),
-        ("polyline", "imagedraw", ("draw_polyline",), ("points",), ("width",), ()),
-        ("circle", "imagedraw", ("draw_circle",), ("center",), ("radius", "width"), ()),
-        ("markers", "imagedraw", ("draw_markers",), ("points",), ("size", "width"), ()),
-        ("contour", "imagedraw", ("draw_contour",), (), ("width",), ("contour",)),
+        ("line", "imagedraw", ("draw_line",), ("p0", "p1"), ("width",), (), ()),
+        ("polyline", "imagedraw", ("draw_polyline",), ("points",), ("width",), (), ()),
+        ("circle", "imagedraw", ("draw_circle",), ("center",), ("radius", "width"), (), ()),
+        ("markers", "imagedraw", ("draw_markers",), ("points",), ("size", "width"), (), ()),
+        ("contour", "imagedraw", ("draw_contour",), (), ("width",), ("contour",), ()),
         # --- 図注(annotate 層) ---
-        ("text_box", "annotate",
-         ("text_box", "draw_text_box", "annotate_text_box", "text_backdrop", "draw_text"),
-         ("pos",), ("size", "pad"), ()),
+        ("text_box", "annotate", ("text_box", "draw_text_box", "annotate_text_box"),
+         ("xy",), ("font_size", "pad", "border", "min_font_size", "max_width"), (), ()),
         ("arrow", "annotate", ("arrow", "draw_arrow", "annotate_arrow"),
-         ("p0", "p1"), ("width", "head"), ()),
-        ("legend", "annotate", ("legend", "draw_legend", "annotate_legend"),
-         ("pos",), ("size", "pad"), ()),
-        ("colorbar", "annotate", ("colorbar", "draw_colorbar", "annotate_colorbar"),
-         ("pos",), ("size", "length", "thickness"), ()),
-        ("scalebar", "annotate", ("scalebar", "draw_scalebar", "annotate_scalebar"),
-         ("pos",), ("size", "length", "thickness"), ()),
-        ("axes", "annotate", ("axes", "draw_axes", "annotate_axes"),
-         ("origin",), ("size", "length"), ()),
-        ("inset", "annotate", ("inset", "draw_inset", "annotate_inset"),
-         ("pos", "source"), ("size",), ()),
+         ("p0", "p1"), ("width", "head_len", "head_width"), (), ()),
+        ("legend", "annotate", ("legend_box", "legend", "draw_legend"),
+         ("xy",), ("swatch", "row_gap", "pad", "font_size", "border"), (), ()),
+        ("colorbar", "annotate", ("color_bar", "colorbar", "draw_colorbar"),
+         (), ("font_size", "border"), ("rect",), ()),
+        # scale_bar の ``length`` は **物理量**(µm など)なので倍率を掛けない。
+        # 代わりに ``units_per_pixel`` を **割る** ―― 画素が細かくなれば 1 画素あたりの
+        # 物理長は縮む。ここを間違えると図のスケールが静かに嘘になる。
+        ("scalebar", "annotate", ("scale_bar", "scalebar", "draw_scalebar"),
+         ("xy",), ("thickness", "margin", "font_size"), (), ("units_per_pixel",)),
+        # ``axes`` は「画素の枠 + データ範囲」の複合記述なので、数値を一律に倍すると
+        # データ範囲まで倍になる。よって scale では触らない(組み直して渡すこと)。
+        ("axes", "annotate", ("axes_frame", "axes", "draw_axes"), (), ("width",), (), ()),
+        ("inset", "annotate", ("zoom_inset", "inset", "draw_inset"),
+         ("dst_xy",), ("width",), ("src_rect",), ()),
         # --- 2-D グラフィックス(gfx2d 層) ---
-        ("sprite", "gfx2d", ("blit_sprite", "draw_sprite", "sprite"), ("pos",), ("size",), ()),
-        ("tile", "gfx2d", ("tile", "tile_pattern", "draw_tile"), (), ("size",), ()),
-        ("particles", "gfx2d", ("particles", "draw_particles", "render_particles"),
-         ("points",), ("size",), ()),
-        ("lighting", "gfx2d", ("apply_lighting", "lighting", "light2d"), ("pos",), ("radius",), ()),
-        ("post", "gfx2d", ("post_process", "postprocess", "post"), (), ("radius",), ()),
+        ("sprite", "gfx2d", ("sprite_blit", "blit_sprite", "draw_sprite"),
+         (), ("x", "y"), (), ()),
+        ("vignette", "gfx2d", ("vignette",), (), (), (), ()),
+        ("bloom", "gfx2d", ("bloom",), (), ("sigma",), (), ()),
+        ("color_grade", "gfx2d", ("color_grade",), (), (), (), ()),
     ]
-    return {r[0]: CommandSpec(r[0], r[1], r[2], r[3], r[4], r[5]) for r in raw}
+    return {r[0]: CommandSpec(*r) for r in raw}
 
 
 #: 種別 → :class:`CommandSpec`。**読み取り専用として扱うこと**(実行中に書き換えると
