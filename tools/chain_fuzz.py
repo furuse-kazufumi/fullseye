@@ -582,6 +582,40 @@ def _b_steerable(pool, rng):
 #: 必須引数にしか効かない — 詳細は `_bind_args`)。
 
 
+def _b_mesh_split(*extra):
+    """``mesh`` を **(V, F) の 2 位置引数**へ割る op 用 builder を作る。
+
+    ファザーは 1 入力種別につき 1 位置引数しか割り当てないので、
+    ``mesh_to_voxel(vertices, faces, size, ...)`` のように (V, F) を 2 つに割る
+    op は **2 番目の ``faces`` が「束縛できない必須引数」として残り、丸ごと
+    スキップされる**。記録も残らないので、外からは「頑健だから発見が無い」の
+    と区別できない ―― 引数を束縛できず 70 op が黙って飛ばされていた 2026-09-01
+    の件と同じ形である。実測(2026-09-02、mesh の種を入れた直後の 1500 連鎖):
+    mesh を食う 19 op のうち **この形の 8 op が全部未到達**だった
+    (mesh_to_voxel / mesh_to_points / ambient_occlusion / cast_shadow /
+    supersample_mesh / render_beauty / geodesic_mesh / decimate_qem)。
+
+    *extra* は V, F の後に続く**型プール由来**の引数(cast_shadow の光源
+    ``vector`` など)。残るスカラ必須引数(``size`` / ``target_faces`` …)は
+    **list を返して通常経路の :func:`_bind_args` に任せる** — ここで自前に
+    値を作ると PARAM_HINTS と二重管理になる。
+    """
+    def build(pool, rng):
+        meshes = [m for m in (pool.get("mesh") or [])
+                  if isinstance(m, (tuple, list)) and len(m) >= 2]
+        if not meshes:
+            return None
+        m = meshes[int(rng.integers(len(meshes)))]
+        args = [m[0], m[1]]
+        for t in extra:
+            vals = pool.get(t) or []
+            if not vals:
+                return None
+            args.append(vals[int(rng.integers(len(vals)))])
+        return args                      # list = 「data 引数だけ」の合図
+    return build
+
+
 OP_ARG_BUILDERS = {
     "abcd_matrix": _b_abcd,
     "wavefront_stats": _b_wavefront,
