@@ -1139,8 +1139,8 @@ def ex_bearing_geometry(log):
                           "the caller, so the operator does not apply one.", C_DIM, 12)
         frames.append(fig.u8())
 
-    info = save_gif(frames, "bearing_geometry", fps=7, thumb_index=len(rows) // 3,
-                    log=log)
+    info = save_flipbook(frames, "bearing_geometry", labels, ms=200, hold_ms=1400,
+                         log=log)
     facts = {
         "rpm": rpm, "pitch_diameter_mm": D, "frames": n_frames,
         "first": {k: rows[0][k] for k in ("n_elements", "element_diameter",
