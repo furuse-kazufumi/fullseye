@@ -381,6 +381,7 @@ def _require_rgb(a, name: str, op: str) -> np.ndarray:
 
 def _require_map(a, name: str, op: str) -> np.ndarray:
     """A strictly 2-D finite float image, size-capped."""
+    _precheck_size(a, name, op, MAX_PIXELS, "MAX_PIXELS")
     arr = _as_float_array(a, name)
     if arr.ndim != 2:
         raise ValueError("%s: %s must be a 2-D array, got a %d-D array of shape "
