@@ -360,6 +360,17 @@ from interferometry import (  # noqa: E402,F401
     csi_contrast_map, csi_design, csi_envelope, csi_height_map,
     csi_peak_position, csi_signal_simulate, csi_stack_simulate,
 )
+# 画像 → CAD 面の**逆写像**: 既存の align_cad_to_scan / ICP / ppf は「姿勢は出す」
+# が、2-D 画像上で見つけた欠陥が CAD 面のどの座標かに落とす経路が空だった。
+# 姿勢は**既知として受け取る**側で、一度も推定しない(推定は pipeline3d /
+# registration / ppf の仕事)。render3d.render_mesh がラスタライザ(全画素の
+# depth 画像)なのに対し、こちらは**任意の画素だけを問い合わせる**逆向きで、
+# face_id と重心座標を返す。
+import cadmap  # noqa: E402  (defect pixel -> CAD surface inverse mapping)
+from cadmap import (  # noqa: E402,F401
+    cad_pixel_to_surface, cad_surface_to_pixel, cad_defect_to_cad,
+    cad_visible_faces,
+)
 import acoustics  # noqa: E402  (STFT / bearing envelope / order tracking / sound level)
 from acoustics import (  # noqa: E402,F401
     angular_resample, apply_weighting, bearing_defect_frequencies,
