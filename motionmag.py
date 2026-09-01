@@ -963,6 +963,8 @@ def motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4,
                          "this is a bug in the filter bank, not in the input "
                          "(the input was validated finite)" % (op,))
 
+    rms_shift = float(np.sqrt(w_shift2 / w_total)) if w_total > 0.0 else 0.0
+    coherence = float(coh_num / coh_den) if coh_den > 0.0 else 1.0
     snr_in = band_snr(vid, lo, hi, fs)
     snr_out = band_snr(out, lo, hi, fs)
     return {
@@ -972,7 +974,9 @@ def motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4,
         "image_snr_change_db": snr_out["image_snr_db"] - snr_in["image_snr_db"],
         "motion_snr_change_db": snr_out["motion_snr_db"] - snr_in["motion_snr_db"],
         "phase_shift_max_rad": max_shift,
-        "linear_regime": bool(max_shift < np.pi),
+        "phase_shift_rms_rad": rms_shift,
+        "linear_regime": bool(rms_shift < np.pi),
+        "reference_coherence": coherence,
     }
 
 
