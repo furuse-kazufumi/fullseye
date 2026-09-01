@@ -483,6 +483,15 @@ def stft(x, rate, win=256, hop=None, window="hann", nfft=None, scaling="none"):
     if n_fft < w_len:
         raise ValueError("%s: nfft=%d is below win=%d — the window would be "
                          "truncated, not zero-padded" % (op, n_fft, w_len))
+    if n_fft > MAX_NFFT_RATIO * w_len:
+        raise ValueError("%s: nfft=%d is %.0fx win=%d, over the %dx cap "
+                         "(acoustics.MAX_NFFT_RATIO). Zero-padding interpolates "
+                         "the spectrum and adds no information, but the "
+                         "allocation grows linearly in nfft — measured, "
+                         "win=256 nfft=2**20 on a 1000-sample input passes the "
+                         "coefficient cap and still asks for 92 MB"
+                         % (op, n_fft, n_fft / float(w_len), w_len,
+                            MAX_NFFT_RATIO))
     mode = _check_choice(scaling, ("none", "amplitude", "density"), "scaling", op)
     w = _window_values(window, w_len, op)
 
