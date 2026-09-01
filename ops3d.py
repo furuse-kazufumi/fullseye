@@ -129,7 +129,9 @@ _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
 _CATALOG = {
     "transform": [  # データ形式の変換(構造 → 別構造/共通表現)
         ("points_to_voxel", "match3d", ["points"], "voxel", True),
-        ("gaussians_to_voxel", "match3d", ["gaussians"], "voxel", True),
+        # 第 1 引数は gaussians の入れ物ではなく **means (N,3)**(scales/opacities は
+        # 別引数)。旧宣言 ["gaussians"] は dict を means の位置へ渡させていた
+        ("gaussians_to_voxel", "match3d", ["points"], "voxel", True),
         ("mesh_to_voxel", "match3d", ["mesh"], "voxel", True),
         ("mesh_to_points", "match3d", ["mesh"], "points", False),
         ("depth_to_points", "match3d", ["depth"], "points", False),
