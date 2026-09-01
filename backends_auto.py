@@ -1266,8 +1266,12 @@ SEED: list[tuple] = [
     ("mirror_image", "geometry", IMG, IMG, "geom", {"kind": "mirror"}),
     ("transpose_region", "geometry", REG, REG, "geom", {"kind": "transpose"}),
     ("rotate_image", "geometry", IMG, IMG, "geom", {"kind": "rotate"}),
-    ("zoom_image_factor", "geometry", IMG, IMG, "geom", {"kind": "zoom"}),
-    ("zoom_image_size", "geometry", IMG, IMG, "geom", {"kind": "zoom"}),
+    # ★2026-09-02: この 2 つは `{"kind": "zoom"}` を共有していたため **完全に同一
+    #   の実装**で、しかも 2 つとも b を使っていなかった(実測: 同一入力に対する
+    #   最大差 0.0、b=0 と b=1 の差 0.0)。HALCON では factor 版が 2 つの倍率、
+    #   size 版が目標サイズを取る **別物** なので、kind を分けて実態を名前に合わせた。
+    ("zoom_image_factor", "geometry", IMG, IMG, "geom", {"kind": "zoom_factor"}),
+    ("zoom_image_size", "geometry", IMG, IMG, "geom", {"kind": "zoom_size"}),
     ("affine_trans_image", "geometry", IMG, IMG, "geom", {"kind": "affine"}),
     ("polar_trans_image", "geometry", IMG, IMG, "geom", {"kind": "polar"}),
     # ---- Segmentation: thresholding --------------------------------------
