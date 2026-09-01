@@ -1298,12 +1298,13 @@ def ex_stage_photon(data, log=print):
     info = save_gif(book, "wingevo_stage_photon", fps=1.2)
     chain = " → ".join(f"`{s['op']}`" for s in specs)
     cap = ("**champion のパイプライン図(各段の中間値)** ―― " + chain +
-           " の 4 段。各段を最終出力とみなしたスコアは "
+           f" の {len(specs)} 段。各段を最終出力とみなしたときのスコアは "
            + " → ".join(f"{v:.4f}" for v in scores) +
-           f"(恒等 {row['locked_trivial']:.4f} / 手 {row['locked_hand']:.4f} / "
-           f"鎖ぜんぶで {row['locked_champion']:.4f})。"
-           "光子族だけで閉じた合成 = 新しい族が「単体で使える op」ではなく"
-           "「op を繋いだ手順」として価値を出した最初の例。")
+           "(**locked holdout の 1 枚目に対する値**。図に映るのがこの 1 枚なので、"
+           f"8 枚の平均である恒等 {row['locked_trivial']:.4f} / 手 "
+           f"{row['locked_hand']:.4f} / champion {row['locked_champion']:.4f} とは"
+           "直接は比べられない)。光子族だけで閉じた合成 = 新しい族が"
+           "「単体で使える op」ではなく「op を繋いだ手順」として価値を出した最初の例。")
     log(f"    wingevo_stage_photon: {info['frames']} frames "
         f"{info['gif_bytes'] / 1e6:.2f} MB")
     return [{"stem": "wingevo_stage_photon", "kind": "gif", "info": info,

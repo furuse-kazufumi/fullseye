@@ -244,8 +244,8 @@ def intrinsics_from_fov(fov_deg: float, width: int, height: int) -> np.ndarray:
     if not np.isfinite(fov) or fov <= 0.0 or fov >= 180.0:
         raise ValueError("fov_deg must be in (0, 180), got %r" % (fov_deg,))
     f = (h * 0.5) / np.tan(np.deg2rad(fov) * 0.5)
-    K = np.array([[f, 0.0, (w - 1) * 0.5],
-                  [0.0, f, (h - 1) * 0.5],
+    K = np.array([[f, 0.0, w * 0.5],
+                  [0.0, f, h * 0.5],
                   [0.0, 0.0, 1.0]], np.float64)
     return K
 
@@ -371,8 +371,8 @@ def render_mesh(V, F, pose=None, intrinsics=None, width: int = 256,
         # integer, matching :func:`camera.depth_to_points`'s ``np.mgrid[0:H, 0:W]``.
         # Do NOT add 0.5 here: that is the OpenGL "pixel corners are integers"
         # convention and mixing the two silently shifts depth by half a pixel.
-        cols = np.arange(cmin, cmax + 1).astype(np.float64)   # pixel centres (u = c)
-        rows = np.arange(rmin, rmax + 1).astype(np.float64)   # pixel centres (v = r)
+        cols = np.arange(cmin, cmax + 1) + 0.5
+        rows = np.arange(rmin, rmax + 1) + 0.5
         px, py = np.meshgrid(cols, rows)            # (bh, bw)
         inv = 1.0 / denom
         l0 = ((v1 - v2) * (px - u2) + (u2 - u1) * (py - v2)) * inv
