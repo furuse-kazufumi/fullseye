@@ -1064,38 +1064,60 @@ def phase_displacement(video, f_lo, f_hi, fps, scales: int = 4,
     with weights ``|z|^2`` (a band with no contrast gets no vote).
 
     Returns ``{"dx": (T, H, W), "dy": (T, H, W), "weight": (H, W),
-    "valid": (H, W) bool, "fps": ..., "band_hz": ..., "wrap_limit_px": ...}``.
-    ``dx``/``dy`` follow :mod:`flow`: ``dx`` is column motion, ``dy`` row motion,
-    positive towards increasing index, and both are zero-mean along time because
-    the band-pass removed DC. Pixels where the normal equations are singular —
-    a flat region, or one where every contributing band happens to share an
-    orientation — are ``False`` in ``valid`` and exactly 0 in ``dx``/``dy``
-    rather than filled with a plausible guess.
+    "valid": (H, W) bool, "rank": (H, W) int8, "fps": ..., "band_hz": ...,
+    "wrap_limit_px": ..., "reference_coherence": ...}``. ``dx``/``dy`` follow
+    :mod:`flow`: ``dx`` is column motion, ``dy`` row motion, positive towards
+    increasing index, and both are zero-mean along time because the band-pass
+    removed DC.
 
-    **Accuracy and where it stops** (measured, 64x64x64 clip, 8 px grating,
-    4 Hz bin-centred, noiseless, defaults; error is on the peak displacement):
+    ``rank`` says how much of the 2-D displacement the data could constrain at
+    each pixel: 2 = both components, 1 = **the aperture problem** (every band
+    with contrast there shares one orientation, so only the component along it
+    is observable — that component is returned and the unobservable direction is
+    exactly 0), 0 = no contrast at all, both zero. Measured on a purely
+    horizontal grating moving 0.3 px horizontally, every pixel is rank 1 and the
+    answer is ``dx = 0.3000000000000001``, ``dy = 0.0`` exactly.
 
-    ======================  ===================  =================
-    true amplitude d (px)   measured (px)        relative error
-    ======================  ===================  =================
-    0.001                   0.00100000           4.9e-11
-    0.010                   0.01000000           4.9e-09
-    0.100                   0.10000000           4.9e-07
-    0.500                   0.50000615           1.2e-05
-    1.000                   1.00009843           9.8e-05
-    2.000                   2.00157540           7.9e-04
-    3.000                   3.00797837           2.7e-03
-    3.900                   3.92223401           5.7e-03
-    4.100                   3.90855911           4.7e-02   <- folded
-    6.000                   1.29857320           7.8e-01   <- folded
-    ======================  ===================  =================
+    **Accuracy and where it stops** (measured, 64x64x64 clip at 32 fps, 8 px
+    horizontal grating, 4 Hz bin-centred, noiseless, defaults; the error is on
+    the peak of the recovered waveform):
 
-    The breakdown at ``d = 4`` px is not a tuning failure: the grating has an
-    8 px wavelength, ``k = 2*pi/8``, and ``|k*d| = pi`` exactly at ``d = 4``.
-    Past that the phase has wrapped and no phase-based method can recover the
-    displacement from a single band. ``wrap_limit_px`` in the return is that
-    bound computed from the measured local frequencies (``pi / max|k|``), so a
-    caller can check their motion against it instead of guessing."""
+    ==============  ==============  ==============  ===================
+    true d (px)     k*d (rad)       measured (px)   relative error
+    ==============  ==============  ==============  ===================
+    0.001           0.0008          0.00100000      8.7e-15
+    0.010           0.0079          0.01000000      3.1e-15
+    0.100           0.0785          0.10000000      1.8e-15
+    0.500           0.3927          0.50000000      6.7e-16
+    1.000           0.7854          1.00000000      4.4e-16
+    2.000           1.5708          2.00000000      6.7e-16
+    3.000           2.3562          3.00000000      5.9e-16
+    3.050           2.3954          3.05000000      2.9e-16
+    3.100           2.4347          1.72842712      4.4e-01   <- broken
+    4.000           3.1416          2.10461396      4.7e-01   <- broken
+    6.000           4.7124          2.35441757      6.1e-01   <- broken
+    ==============  ==============  ==============  ===================
+
+    Exact to rounding — and then it stops, abruptly, between 3.05 and 3.10 px.
+    That boundary is closed-form, and it is *not* the naive phase-wrap bound.
+    The temporal phase reference is the band's temporal mean ``z_mean``, and for
+    a sinusoidal displacement of amplitude ``A`` that mean equals
+    ``c * J0(k*A)`` — a Bessel function. At ``k*A = 2.4048``, the first zero of
+    ``J0``, the reference amplitude passes through zero and its phase flips by
+    ``pi``; every deviation measured against it is then wrong by ``pi``. For the
+    8 px grating that is ``A = 2.4048/(2*pi/8) = 3.0619`` px, which is exactly
+    where the table breaks. ``reference_coherence`` in the return is
+    ``|z_mean| / mean_t|z|``, i.e. ``|J0(k*A)|`` blended over the bands, and it
+    falls monotonically from 1.00000 at 0.001 px to 0.50252 at the 3.05 px edge
+    — a runtime warning that the reference is going degenerate.
+
+    Beyond that sits the harder bound ``|k*d| < pi`` (half a band wavelength,
+    reported as ``wrap_limit_px`` from the measured local frequencies), which no
+    phase-based method can pass with a single band.
+
+    Under noise the accuracy is set by the noise, not by the method: on the same
+    clip with ``A = 0.5`` px, additive sigma = 0.001 / 0.01 / 0.05 gives
+    relative errors 2.2e-04 / 1.8e-03 / 1.9e-03."""
     op = "phase_displacement"
     vid = _require_video(video, "video", op, MAX_PYRAMID_ELEMENTS)
     t, h, w = vid.shape
