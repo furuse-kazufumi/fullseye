@@ -532,7 +532,8 @@ _CATALOG = {
         # 第 1 引数は primitive(dict)ではなく半径 (a1,a2,a3) の 3-ベクトル。
         # eps・姿勢は別引数なので、既存語彙で正しいのは vector
         ("sample_surface", "superquadric", ["vector"], "points", False),
-        ("inside_outside", "superquadric", ["points"], "measurement", False),
+        # 点ごとの内外関数値 (N,) を返す(スカラではない)→ signal
+        ("inside_outside", "superquadric", ["points"], "signal", False),
         ("superquadric_residual", "superquadric", ["points"], "measurement", False),
     ],
     "bundle_adjust": [  # N視点バンドル調整(全カメラ姿勢+3D構造を再投影誤差最小で同時最適化)
