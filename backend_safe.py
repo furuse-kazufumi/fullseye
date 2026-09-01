@@ -32,6 +32,56 @@ def signed01(x):
     return np.clip(x / (2 * m) + 0.5, 0, 1) if m > 1e-8 else np.full_like(x, 0.5)
 
 
+def subpixel_refine_edges(pts, mag, ny, nx):
+    """Move edge points onto the gradient-magnitude ridge with sub-pixel accuracy.
+
+    勾配の**法線方向**に 1 px 離れた 3 点 (p-n, p, p+n) の勾配強度に放物線を当て、
+    その頂点まで点をずらす(古典的なサブピクセル・エッジ位置決め。Devernay 1995 /
+    HALCON ``edges_sub_pix`` と同じ考え方)。オフセットは ±1 px に制限する
+    (3 点補間の外挿は当てにならない)。
+
+    引数はすべて (row, col) 規約: ``pts`` (N,2)、``mag`` 勾配強度画像、
+    ``ny``/``nx`` 単位勾配ベクトルの行/列成分(``mag`` と同 shape)。
+
+    ★``ops._edges_sub_pix`` と ``backends_auto._sh_xld(kind="edges_sub_pix")`` の
+    **両方**がこれを使う。以前は 2 つが別々に「``np.where`` の整数座標をそのまま
+    返す」実装を持っており(レジストリは同名の **後勝ち** なので実際に走るのは
+    backends_auto 側)、``sub_pix`` を名乗りながら画素精度しか無かった。
+    """
+    from scipy import ndimage as _nd
+
+    pts = np.asarray(pts, np.float64)
+    if pts.size == 0:
+        return pts
+    r, c = pts[:, 0], pts[:, 1]
+    ri = np.clip(r.astype(int), 0, mag.shape[0] - 1)
+    ci = np.clip(c.astype(int), 0, mag.shape[1] - 1)
+    nyv, nxv = ny[ri, ci], nx[ri, ci]
+
+    def _s(rr, cc):
+        return _nd.map_coordinates(mag, [rr, cc], order=1, mode="nearest")
+
+    m0, mm, mp = _s(r, c), _s(r - nyv, c - nxv), _s(r + nyv, c + nxv)
+    den = mm - 2.0 * m0 + mp
+    ok = np.abs(den) > 1e-12
+    t = np.zeros_like(m0)
+    t[ok] = 0.5 * (mm[ok] - mp[ok]) / den[ok]
+    t = np.clip(np.nan_to_num(t), -1.0, 1.0)
+    out = np.stack([r + t * nyv, c + t * nxv], 1)
+    return np.where(np.isfinite(out), out, pts)
+
+
+def gradient_normals(x):
+    """Sobel gradient magnitude and the UNIT gradient (= edge normal), (mag, ny, nx)."""
+    from scipy import ndimage as _nd
+
+    x = np.asarray(x, np.float64)
+    gy, gx = _nd.sobel(x, 0), _nd.sobel(x, 1)
+    g = np.hypot(gx, gy)
+    gs = np.where(g < 1e-12, 1e-12, g)
+    return g, gy / gs, gx / gs
+
+
 def _as_arr(v):
     return v if isinstance(v, np.ndarray) else None
 
