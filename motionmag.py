@@ -923,6 +923,10 @@ def motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4,
     spec = np.fft.fft2(vid, axes=(1, 2))
     acc = np.zeros((t, h, w), np.complex128)
     max_shift = 0.0
+    w_shift2 = 0.0          # contrast-weighted sum of squared applied shifts
+    w_total = 0.0
+    coh_num = 0.0           # contrast-weighted reference coherence |z_mean|/mean|z|
+    coh_den = 0.0
     for j, filt in enumerate(bank["filters"]):
         sub = np.fft.ifft2(spec * filt[None], axes=(1, 2))
         if bank["kinds"][j] == _ORIENTED and gain != 0.0:
