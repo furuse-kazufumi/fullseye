@@ -1079,12 +1079,22 @@ def _span_weight(ang: np.ndarray, span_deg, op: str) -> float:
     """The ``d(theta)`` weight of the back-projection sum, in radians.
 
     ``span / n_angles``, because the inversion integrates over ``[0, pi)`` and the
-    views are its quadrature nodes. Taking ``pi / n_angles`` unconditionally — the
-    form printed in every textbook, which assumes exactly a half-turn — is one of
-    the two silent errors this helper exists to prevent: a 90-degree
-    limited-angle scan would come back at twice its true density, and a
-    limited-angle reconstruction is *expected* to look wrong, so nobody would
-    question the number.
+    views are its quadrature nodes — each view stands for the angular share it
+    actually occupies, and no more.
+
+    That choice is visible in the numbers and worth stating, because the other
+    one looks better. A 90-degree scan reconstructs at **0.489** of the true mean
+    density under this weighting (measured), because half the integral was never
+    measured. Using ``pi / n_angles`` unconditionally — the form printed in every
+    textbook, which quietly assumes exactly a half-turn — would return **0.978**
+    instead, and a limited-angle reconstruction whose density looks right is a
+    worse object than one whose density is visibly half. The Fourier-domain check
+    settles which is correct rather than merely nicer: under ``span/n_angles`` the
+    *measured* 30-degree sectors come back at 0.91-0.96 of their true amplitude
+    (see the module docstring's limited-angle table), i.e. exactly right, and the
+    low image mean is the missing wedge contributing nothing. Under ``pi/n`` the
+    measured sectors would be amplified by ``180/span`` to compensate for data
+    that does not exist.
 
     The other is redundancy, and it bites the common case rather than the exotic
     one. Parallel-beam projections at ``theta`` and ``theta+180`` are mirror
