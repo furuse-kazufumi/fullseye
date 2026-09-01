@@ -717,7 +717,6 @@ RESULT_ADAPTERS = {
     "label_components": lambda r: r[0],             # (labels, n) → labels
     "fscore": lambda r: r[0],                       # (f, precision, recall) → F 値
     "rmse_inliers": lambda r: r[0],                 # (rmse, n_inliers) → rmse
-    "grid_coords": lambda r: r[0],                  # (coords, extent) → coords
 }
 
 
