@@ -1081,8 +1081,8 @@ def ex_windowing(log) -> dict:
                  xlabel="HU (Hounsfield 値) ->",
                  xticks=[-1000, -600, -200, 0, 200, 600, 1000, 1400],
                  yticks=[0, 0.5, 1.0], xfmt="%d", yfmt="%.1f")
-        p.items.append((18, 546, "縦 = 窓の出力 [0,1](3 本の折れ線が 3 つの窓そのもの)",
-                        C_DIM, 12, False))
+        p.items.append((18, 498, "下の折れ線が 3 つの窓そのもの(横 = HU、縦 = 窓の出力 "
+                                 "[0,1])。縦線は各組織の HU 位置。", C_DIM, 12, False))
         for name, cw, ww, col in windows:
             lo, hi = cw - ww / 2, cw + ww / 2
             xs = [-1200, lo, hi, 1400]
