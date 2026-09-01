@@ -1912,3 +1912,166 @@ def subject_resample_loss(log=print) -> dict:
             % (psnr_core, 100 * hp_core[36] / hp_core[0], psnr_full,
                max(zoom_maxdiff, zoom_maxdiff2))),
     }
+
+
+# --------------------------------------------------------------------------- #
+# 展示の一覧 / registry                                                         #
+# --------------------------------------------------------------------------- #
+SUBJECTS = {
+    "morph_quartet": subject_morph_quartet,
+    "freq_sweep": subject_freq_sweep,
+    "denoise_compare": subject_denoise_compare,
+    "hist_shaping": subject_hist_shaping,
+    "fourier_desc": subject_fourier_desc,
+    "face_morph": subject_face_morph,
+    "blob_select": subject_blob_select,
+    "subpixel_edge": subject_subpixel_edge,
+    "shape_match": subject_shape_match,
+    "doc_deskew": subject_doc_deskew,
+    "fit_residual": subject_fit_residual,
+    "colour_tour": subject_colour_tour,
+    "texture_zoo": subject_texture_zoo,
+    "resample_loss": subject_resample_loss,
+}
+
+
+# --------------------------------------------------------------------------- #
+# メタ + キャプション原稿                                                        #
+# --------------------------------------------------------------------------- #
+def _artefacts(meta: dict) -> list:
+    """1 展示が書き出したファイル (本体 + サムネ) の絶対パス一覧."""
+    out = [meta["file"]]
+    if meta.get("thumb"):
+        out.append(meta["thumb"])
+    return out
+
+
+def _merge_meta(items: list) -> list:
+    old = []
+    if os.path.exists(META_PATH):
+        with open(META_PATH, encoding="utf-8") as f:
+            old = json.load(f)
+    by_name = {m["name"]: m for m in old}
+    for m in items:
+        rec = dict(m)
+        rec["sha256"] = {os.path.basename(p): _sha256(p)
+                         for p in _artefacts(m) if os.path.exists(p)}
+        rec["file"] = os.path.relpath(m["file"], REPO).replace("\\", "/")
+        if m.get("thumb"):
+            rec["thumb"] = os.path.relpath(m["thumb"], REPO).replace("\\", "/")
+        by_name[m["name"]] = rec
+    merged = [by_name[k] for k in sorted(by_name)]
+    os.makedirs(os.path.dirname(META_PATH), exist_ok=True)
+    with open(META_PATH, "w", encoding="utf-8") as f:
+        json.dump(merged, f, ensure_ascii=False, indent=2)
+    return merged
+
+
+_HEADER = """<!-- tools/gen_wing2d_gallery.py が自動生成。記事本体 (docs/articles/*.md)
+     には手を入れていません。ここは「紙面の科学館」2D 古典オペレータ・ウィングの
+     キャプション原稿です。数値はすべて生成時の実測で、`_wing2d_meta.json` に
+     同じ値が入っています。 -->
+
+# 紙面の科学館 —— 2D 古典オペレータ・ウィング（{n} の展示）
+
+既存の「科学館ウィング(11 点)」「博物館ウィング(30 点)」と題材が重ならないよう、
+**古典的な 2-D オペレータ**だけで組んだ一角です。すべて Fullseye の登録 op の実出力で、
+素材は合成か skimage.data(BSD / public domain)。キャプションの数字は**生成時の実測値**で、
+`docs/articles/assets/_wing2d_meta.json` に生の配列が入っています。
+
+並べ方は 3 通り: **タイル**(並べて比べるもの)、**フリップブック GIF**(同じ寸法で工程が
+進むもの)、**掃引 GIF**(軸ラベルつきのグラフが主役のもの)。1 枚・1 本を 1 展示と数えています。
+
+再生成: `py -3.11 tools/gen_wing2d_gallery.py`(展示名を指定するなら `--subjects <name,...>`)。
+
+"""
+
+
+def _write_captions(meta: list) -> None:
+    E = _tile_mod()
+    os.makedirs(EXHIBITS_DIR, exist_ok=True)
+    order = [k for k in SUBJECTS if any(m["name"] == k for m in meta)]
+    lines = [_HEADER.format(n=len(order))]
+    for i, name in enumerate(order, 1):
+        m = next(x for x in meta if x["name"] == name)
+        ops = "、".join("`%s`" % o for o in m["ops"])
+        cap = ("**%s** ―― %s 使用 op: %s。"
+               % (m["title"], m["caption"].rstrip("。") + "。", ops))
+        stem = "wing2d_" + name
+        lines.append("## %d. %s\n" % (i, m["title"]))
+        if m["kind"] == "gif":
+            lines.append(E.markdown_animation(stem, m["title"], cap))
+            lines.append("<!-- 静止サムネ: %s%s -->\n"
+                         % (RAW_BASE.replace("assets/", "assets/thumbs/"),
+                            os.path.basename(m["thumb"])))
+        else:
+            lines.append(E.markdown(stem, m["title"], cap))
+        lines.append("<!-- 生成: tools/gen_wing2d_gallery.py::subject_%s() / "
+                     "%s / %d パネル / %s -->\n"
+                     % (name, m["kind"].upper(), m.get("panels", 1), m["data"]))
+    with open(CAPTIONS_PATH, "w", encoding="utf-8", newline="\n") as f:
+        f.write("\n".join(lines))
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--subjects", default="",
+                    help="comma-separated exhibit names (default: all)")
+    ap.add_argument("--list", action="store_true", help="show exhibit names")
+    ap.add_argument("--verify", action="store_true",
+                    help="生成物をもう一度作って SHA-256 の一致を確かめる")
+    args = ap.parse_args()
+    if args.list:
+        for k in SUBJECTS:
+            print(k)
+        return 0
+    os.makedirs(ASSETS_DIR, exist_ok=True)
+    wanted = ([s.strip() for s in args.subjects.split(",") if s.strip()]
+              or list(SUBJECTS))
+    results, failures = [], []
+    for name in wanted:
+        fn = SUBJECTS.get(name)
+        if fn is None:
+            print("[skip] unknown subject: %s" % name)
+            continue
+        print("[run ] %s" % name)
+        try:
+            meta = fn()
+            results.append(meta)
+            print("[done] %s -> %s (%.2f MB, %d frames, %dx%d)"
+                  % (name, os.path.basename(meta["file"]),
+                     meta["bytes"] / 1e6, meta["frames"],
+                     meta["size"][0], meta["size"][1]))
+        except Exception as exc:                     # honest: 失敗は隠さない
+            import traceback
+            traceback.print_exc()
+            failures.append((name, str(exc)))
+            print("[FAIL] %s: %s" % (name, exc))
+    if results:
+        merged = _merge_meta(results)
+        _write_captions(merged)
+        print("meta:     %s" % META_PATH)
+        print("captions: %s" % CAPTIONS_PATH)
+    if args.verify and results:
+        print("\n--- determinism check (regenerate & compare SHA-256) ---")
+        bad = 0
+        for m in results:
+            before = {p: _sha256(p) for p in _artefacts(m) if os.path.exists(p)}
+            SUBJECTS[m["name"]]()
+            for p, h in before.items():
+                same = _sha256(p) == h
+                bad += 0 if same else 1
+                print("%-16s %-46s %s" % (m["name"], os.path.basename(p),
+                                          "OK" if same else "DIFFERS"))
+        print("determinism: %s" % ("all identical" if bad == 0
+                                   else "%d file(s) differ" % bad))
+        if bad:
+            return 1
+    if failures:
+        print("failures: %s" % failures)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

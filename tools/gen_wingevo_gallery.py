@@ -930,7 +930,7 @@ def ex_observed_vs_locked(data, log=print):
         (lx + 14, 158, "■ 観測用 holdout", C_EVO, 13, True),
         (lx + 14, 182, "■ locked holdout", C_LOCK, 13, True),
         (lx + 14, 206, "│ seed 間の min–max", C_TEXT, 13, True),
-        (lx + 14, 230, "-- 手の基準線", C_HAND, 13, True),
+        (lx + 14, 230, "-- 手の基準線(hand)", C_HAND, 13, True),
         (lx + 14, 258, f"seeds = {rb[names[0]]['seeds']} / "
                        f"gens = {rb[names[0]]['gens']}", C_DIM, 12, False),
     ]
@@ -1502,13 +1502,14 @@ def ex_coverage_families(data, log=print):
     rowh = 34
     H = top + rowh * len(fams) + 190
     c = canvas(W, H)
-    items = [(28, 24, "「304/417」では、残りが頑健なのか到達不能なのか分からない",
+    items = [(28, 24, f"「{tot_now[0]}/{tot_now[1]}」という 1 つの数では、"
+                      "残りが頑健なのか到達不能なのか分からない",
               C_TEXT, 22, True),
              (28, 56, "同じ数を族ごとに割ると、その場で読める形になる。"
                       "左 = 本スクリプトの実走、右 = 記録に残る過去の走行。",
               C_DIM, 13, False)]
     lx0, lx1 = 190, 560
-    rx0, rx1 = 700, 1070
+    rx0, rx1 = 700, 1024
     tot_now = sum(v[0] for v in now.values()), sum(sum(v) for v in now.values())
     items += [
         (lx0, top - 40, f"今回の実走  {tot_now[0]}/{tot_now[1]}", C_TRUE, 16, True),
