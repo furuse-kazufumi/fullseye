@@ -3681,17 +3681,29 @@ rejected  2  problem does not accept this input type (counts)
 ### Scoring on a locked holdout — two wins, one loss
 
 ```bash
-py -3.11 robust.py --problem photon_denoise --seeds 3 --gens 12 --pop 12
+py -3.11 robust.py --problem photon_denoise --seeds 3 --gens 12 --pop 12 --isolate \
+    --workdir out/rb_2026_09_02_A      # the workdir must be empty (see below)
 ```
 
 `robust.py` runs N independent seeds, **selects strictly on TRAIN**, and reports the **locked holdout** — the genuinely untouched split, scored exactly once against the final champion — together with the seed-to-seed spread.
 
-| Problem | Identity | Hand (best single existing op) | Evolved | vs hand |
+| Problem | Identity | Hand (best single existing op) | Evolved | vs hand | seed std | beat hand |
+|---|---|---|---|---|---|---|
+| Photon histogram denoising | 0.4174 | 0.5536 | **0.7845** | **+41.7 %** | 0.0608 | 3/3 |
+| Map of where things vibrate | 0.0000 | 0.7163 | **0.8941** | **+24.8 %** | 0.0006 | 3/3 |
+| Light-field disparity map | 0.0000 | 0.5219 | 0.5465 | +4.7 % | 0.0224 | 1/3 |
+| Specular removal | 0.4905 | 0.8343 | 0.6277 | **−24.8 %** | 0.1900 | 0/3 |
+
+**The same table on the observed split reads differently.**
+
+| Problem | Identity | Hand | Evolved | vs hand |
 |---|---|---|---|---|
-| Photon histogram denoising | 0.2664 | 0.5371 | **0.7760** | **+44.5 %** |
-| Map of where things vibrate | 0.0000 | 0.6973 | **0.8868** | **+27.2 %** |
-| Light-field disparity map | 0.0000 | 0.5794 | 0.5907 | +2.0 % |
-| Specular removal | 0.4115 | 0.8406 | 0.6039 | **−28.2 %** |
+| Photon histogram denoising | 0.3265 | 0.4433 | 0.7944 | **+79.2 %** |
+| Map of where things vibrate | 0.0000 | 0.6791 | 0.8783 | +29.3 % |
+| Light-field disparity map | 0.0000 | 0.4882 | 0.5075 | +4.0 % |
+| Specular removal | 0.4422 | 0.8730 | 0.7761 | −11.1 % |
+
+**The photon result splits into +41.7 % and +79.2 %.** And **even the identity score moves — 0.4174 vs 0.3265**. Nothing is applied at all in that row, so that movement is not performance: it is **the draw itself** (8 items per split). Publishing one side alone means **reporting the luck of the draw as capability**.
 
 The photon champion is **a composition closed entirely within the photon family**:
 
