@@ -277,6 +277,28 @@ locked +41.7% / 観測 +79.2% と大きく違う。**どちらか一方だけを
   一致する。**表だけが別の計算から来ていた**(記事本文が別途 0.628 と書いていて
   表が 0.6039 になっている食い違いも同じ原因)。
 
+**基準線がどこから来たかは特定できた。** 4 課題とも生成器は `size` を使わない
+(形は 32×32 / 256 bin に固定)ので、動かせるのは件数 `n` と split seed だけ。
+`n` 1–16 × cfg seed 0–5 × 3 split を総当たりすると、旧表の基準線は**いま
+のコードで 1 通りだけ**再現する:
+
+| 旧表の値 | 再現できる条件 |
+|---|---|
+| `photon_denoise` 恒等 0.2664 / 手 0.5371 | n=8・**cfg seed 2** の locked (=`prob.make(8,64,20002)`) |
+| `vibration_map` 手 0.6973 | n=8・**cfg seed 1** の locked |
+| `lf_slope` 手 0.5794 | n=8・**cfg seed 1** の locked |
+| `specular_removal` 恒等 0.4115 / 手 0.8406 | n=8・**cfg seed 1** の locked |
+
+一方、保存されている champion は **cfg seed 0** の走行(`out/rb_*/`)。つまり
+**1 行の中で基準線と champion が別の抽出**で、しかも課題ごとに cfg seed が
+違っていた。実測で裏を取ってある: `py -3.11 baseline.py --problem photon_denoise
+--seed 2` → `robust.py` で恒等 0.2664 / 手 0.5371 がそのまま出る
+(`out/rb_probe_cs2/`)。`lf_slope --seed 1` も手 0.5794 を再現する
+(`out/rb_probe_cs1/`)。**進化列だけはどの cfg seed でも再現しない** ―― cfg
+seed 1 の `lf_slope` は 0.557、cfg seed 0 は 0.5465 で、旧表の 0.5907 はどちらでも
+ない。成果物が無いので、この列がどう作られたかはもう追えない。**それが
+「基準線を成果物に書かない」ことの代償**で、今回の修正が塞いだ穴そのもの。
+
 いまは `robust.py` が**進化を始める前に自分で基準線を測って JSON に書く**。
 `null` の基準線は書き出さずに abort する。ディスク上の `baseline_<課題>.json` は
 突き合わせ用で、食い違えば `baseline_file_mismatch` に両方の値を残す(どちらかが

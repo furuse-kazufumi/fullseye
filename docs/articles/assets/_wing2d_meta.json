@@ -721,7 +721,7 @@
     "file": "docs/articles/assets/media/wing2d_freq_sweep.gif",
     "thumb": "docs/articles/assets/thumbs/wing2d_freq_sweep_720.jpg",
     "frames": 12,
-    "bytes": 2847186,
+    "bytes": 2830119,
     "size": [
       1038,
       1154
@@ -839,8 +839,8 @@
     },
     "caption": "同じ写真にローパス・ハイパス・バンドパスを当て、遮断周波数を 0.05→0.45 (正規化) で掃引した。ローパスの遮断を 0.05 から 0.45 へ上げると 元画像との PSNR は 22.33→36.13 dB。一方その通過帯に入っているスペクトルエネルギーは遮断 0.05 の時点ですでに 98.27% —— 「エネルギーのほとんどは低周波にあるのに、見た目は高周波が決めている」という画像の癖がそのまま数字に出る。帯域を落とせば応答は必ず符号を持つが、`highpass` と `bandpass_image` はその 0 を 0.5 に写した [0,1] を返す —— この掃引の全 9 点で最小値は 0.0201 / 0.0205、負の画素は 0.0% だった (画素の約半分が無言で黒に潰れる実装ではもう無い)。",
     "sha256": {
-      "wing2d_freq_sweep.gif": "ee114bceb58072b22241f184807c4478856789536e7d0208ccd9fab11f7c49c7",
-      "wing2d_freq_sweep_720.jpg": "a661a5695dbb247b859816e3388cb6b402dcfcc1528ccb241a3ca082559403aa"
+      "wing2d_freq_sweep.gif": "691460aab6cee5dda327272569d4722a57a09ff8fc1d9d1b94556710301503f0",
+      "wing2d_freq_sweep_720.jpg": "c9b60b1a30a23f635120c690368375cd115f926f30fc51f2ad5ded6ceb6cfd51"
     }
   },
   {
