@@ -864,6 +864,7 @@ def compare_images(a, b, data_range=None, bins=64, channel_axis=None, ms=False):
         "ssim_sigma": 1.5,
         "ssim_crop_border": True,
         "ncd_compressor": "lzma",
+        "ncd_levels": 256 if np.issubdtype(np.asarray(a).dtype, np.floating) else None,
     }
     return out
 
