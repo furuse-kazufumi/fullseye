@@ -615,7 +615,8 @@ def cad_pixel_to_surface(mesh, pixels, K=None, R=None, t=None,
         normal[hit] = unit[face_id[hit]]
     return {"face_id": face_id, "bary": bary, "point": point, "depth": depth,
             "normal": normal, "hit": hit,
-            "camera": _cam_dict(K, R, t, width, height)}
+            "camera": _cam_dict(K, R, t, width, height),
+            "winding_fixed": bool(winding_fixed)}
 
 
 # --------------------------------------------------------------------------- #
