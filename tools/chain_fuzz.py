@@ -355,6 +355,14 @@ def catalog():
     for n, m in opslightfield.OPSLIGHTFIELD.items():
         if m["func"] is not None:
             ops.append((n, "lightfield", list(m["in"]), m["out"], m["func"]))
+    # 光子計数・時間分解(opsphoton 台帳)。新語彙 `histcube` は (H,W,T) で
+    # **時間軸が最後**。voxel と ndim==3 の構造は同じだが軸の意味が違い、
+    # (D,H,W) を渡すと例外ではなく「もっともらしく間違った深度」が出るため
+    # 型を分ける(pointmap / normalmap を分けたのと同じ判断)
+    import opsphoton
+    for n, m in opsphoton.OPSPHOTON.items():
+        if m["func"] is not None:
+            ops.append((n, "photon", list(m["in"]), m["out"], m["func"]))
     return ops
 
 
