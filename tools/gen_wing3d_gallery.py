@@ -3032,8 +3032,10 @@ def ex_vessel_reslice(log) -> dict:
         # 軸に直交する断面の線(傾き -tilt)
         L = 150.0
         c = imagedraw.draw_line(
-            c, (18 + (88 - L * math.sin(th)) * s_side, 92 + (zc + L * math.cos(th) * 0) * s_side),
-            (18 + (88 + L * math.sin(th)) * s_side, 92 + zc * s_side),
+            c, (18 + (ctr - L * math.sin(th)) * s_side,
+                92 + (zc + L * math.cos(th)) * s_side),
+            (18 + (ctr + L * math.sin(th)) * s_side,
+             92 + (zc - L * math.cos(th)) * s_side),
             color=C_A, width=1)
         c = _text(c, [(18, 92 + 330 + 6, "側面図 vol[:, :, x=88]  横 = y ->  縦 = z (下向き)",
                        C_C, 12, True),
