@@ -1348,6 +1348,18 @@ def chromatic_confocal_height(spectrum, wavelength_start_nm=500.0,
                           false here and this operator does not claim it. Set to
                           0 to disable the check if you know your data is
                           clean.
+    max_carrier_fraction: refuse a spectrum whose dominant alternating component
+                          sits above this fraction of the Nyquist frequency. A
+                          confocal response is one smooth peak and all of its AC
+                          content is at low frequency (measured: dominant bin at
+                          0.010 of Nyquist for a 4 nm peak, 0.010 for a 1 nm peak,
+                          0.015 with 5 % noise). A **z-scan interferogram** put in
+                          here instead sits at 0.333 — its fringe carrier — and
+                          without this check its carrier's argmax would come back
+                          as a focused wavelength and therefore as a plausible,
+                          finite, wrong height. This is the guard that lets the
+                          two 1-D families share one type pool safely. Pass 0 to
+                          disable.
 
     Returns the height as a float, in micrometres. It may be negative — a height
     is signed, unlike a time-of-flight distance.
