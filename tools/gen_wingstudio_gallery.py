@@ -350,11 +350,29 @@ def _gray3(a: np.ndarray) -> np.ndarray:
     return a if a.ndim == 3 else np.stack([a] * 3, axis=-1)
 
 
-def _shade_mesh(V, F, yaw_deg, pitch_deg=18.0, size=420, dist=2.4):
+#: ``render3d`` のカメラ (方位角 yaw / 仰角 pitch, +Z up, -Z を見る) を Studio の
+#: ``viewer3d_camera`` の (yaw, pitch) に写す変換。両者は別々の慣習で書かれている
+#: ので、素直に同じ数値を渡すと**同じ物が別の向きに回る**。この対応は
+#: 骨格 CT の等値面シルエットと点群シルエットの IoU を offset/符号の総当たりで
+#: 最大化して実測で決めた(平均 IoU 0.845 — 点群は粒なので 1.0 にはならない)。
+STUDIO_YAW_OFFSET, STUDIO_YAW_SIGN, STUDIO_PITCH_SIGN = 270.0, -1.0, -1.0
+
+
+def studio_view_from_render3d(yaw_deg, pitch_deg):
+    """render3d の (yaw, pitch) -> Studio ビューアの (yaw, pitch)。"""
+    return (STUDIO_YAW_OFFSET + STUDIO_YAW_SIGN * float(yaw_deg),
+            STUDIO_PITCH_SIGN * float(pitch_deg))
+
+
+def _shade_mesh(V, F, yaw_deg, pitch_deg=18.0, size=420, fill=0.9, dist_r=30.0):
     """render3d + phong で三角メッシュを 1 枚描く(matplotlib 不使用)。
 
     V は **world (x, y, z)** で渡すこと(``render3d.marching_cubes`` は
     ボクセル添字 (z, y, x) を返すので、呼び出し側で並べ替える)。
+
+    カメラは *ほぼ正射影* にしてある(距離 = 外接球半径の ``dist_r`` 倍、視野角は
+    その距離で外接球が画面の ``fill`` を占めるよう逆算)。Studio のビューアが
+    正射影なので、透視のままだと並べたとき**同じ物が別の形に見えてしまう**。
     戻り値 ``(rgb01 (size, size, 3), 被覆画素数)``。
     """
     import render3d
@@ -363,9 +381,11 @@ def _shade_mesh(V, F, yaw_deg, pitch_deg=18.0, size=420, dist=2.4):
     c = 0.5 * (V.min(0) + V.max(0))
     r = float(np.linalg.norm(V - c, axis=1).max()) or 1.0
     a, e = np.radians(yaw_deg), np.radians(pitch_deg)
-    eye = c + r * dist * np.array([np.cos(e) * np.cos(a), np.cos(e) * np.sin(a), np.sin(e)])
+    eye = c + r * dist_r * np.array([np.cos(e) * np.cos(a),
+                                     np.cos(e) * np.sin(a), np.sin(e)])
     pose = render3d.look_at(eye, c, up=(0.0, 0.0, 1.0))
-    K = render3d.intrinsics_from_fov(38.0, size, size)
+    fov = 2.0 * np.degrees(np.arctan(1.0 / (fill * dist_r)))
+    K = render3d.intrinsics_from_fov(fov, size, size)
     buf = render3d.render_mesh(V, F, pose=pose, intrinsics=K, width=size, height=size)
     sil = buf["silhouette"] > 0
     inten = render_shade.phong_shade(buf["normals"], view=(0, 0, 1), light=(0.35, 0.45, 1.0),
