@@ -446,7 +446,7 @@ def ex_defect_not_in_raw(log):
     log(f"  envelope peak {env['peak_freq']:.6f} Hz amp {env['peak_amplitude']:.6f} "
         f"band_fraction {env['band_fraction']:.6f} prominence {env['peak_prominence']:.1f}")
 
-    W, H = 1120, 780
+    W, H = 1120, 800
     fig = Fig(W, H)
     _header(fig, "The defect frequency is not in the raw spectrum",
             f"AM bearing signal: carrier {fc:g} Hz, defect {fd:g} Hz, m = {m:g}, "
@@ -484,7 +484,7 @@ def ex_defect_not_in_raw(log):
     fig.text(W - 176, 112, "carrier +- defect,", C_DIM, 11, False)
     fig.text(W - 176, 128, "never at the defect", C_DIM, 11, False)
     fig.text(W - 176, 144, "rate itself.", C_DIM, 11, False)
-    fig.text(98, 82, "amplitude", C_DIM, 11, False)
+    fig.text(98, 282, "amplitude", C_DIM, 11, False)
     fig.text(W - 372, 322, "frequency [Hz] ->", C_DIM, 11, False)
 
     # -- 下: 包絡線スペクトル ----------------------------------------------- #
@@ -492,7 +492,7 @@ def ex_defect_not_in_raw(log):
     ax2.panel()
     ink = fig.ink()
     ax2.frame(ink)
-    ax2.xticks(ink, [0, 107, 200, 214, 300, 321, 400, 500], "%.0f")
+    ax2.xticks(ink, [0, 107, 214, 321, 428, 500], "%.0f")
     ax2.yticks(ink, [0.0, 0.1, 0.2, 0.3, 0.4, 0.5], "%.2f")
     fig.stamp(ink, C_AXIS)
     ink = fig.ink()
@@ -1399,7 +1399,7 @@ def ex_funct1d_truth(log):
         f"(true {1 / (2 * f0):.6f}), tau {tau_est:.6f} s (true {tau:g}), "
         f"match shift {m['shift']} (true {delay})")
 
-    W, H = 1160, 820
+    W, H = 1160, 786
     fig = Fig(W, H)
     _header(fig, "funct1d against closed-form truth",
             "every number below is compared with an answer known before the "
@@ -1494,9 +1494,9 @@ def ex_funct1d_truth(log):
     _legend(fig, 96, 410, [("raw", C_DIM), ("gauss sigma 3", C_A),
                            ("true envelope", C_C), ("local maxima", C_B),
                            ("zero crossings", C_E)], 11)
-    fig.text(ax3.X(0.9) + 8, 490, "analysis window ends here", C_WARN, 11, True)
-    fig.text(ax3.X(0.9) + 8, 506, "(below 0.1 amplitude the", C_WARN, 11)
-    fig.text(ax3.X(0.9) + 8, 522, " noise forges extrema)", C_WARN, 11)
+    fig.text(ax3.X(0.9) + 8, 414, "analysis window ends here", C_WARN, 11, True)
+    fig.text(ax3.X(0.9) + 8, 430, "(below 0.1 amplitude the", C_WARN, 11)
+    fig.text(ax3.X(0.9) + 8, 446, " noise forges extrema)", C_WARN, 11)
     fig.text(96, 592, "time [s] ->", C_DIM, 11)
 
     fig.box(86, 614, W - 40, H - 16, C_PANEL2)

@@ -2830,11 +2830,13 @@ def ex_isosurface(log) -> dict:
     """marching cubes の level を動かし、面が育つ/くびれて割れるのを測る。"""
     n = 96
     import scipy.ndimage as ndi
-    a = _aa_ball((n, n, n), (48., 40., 40.), 15.0)
-    b = _aa_ball((n, n, n), (48., 58., 58.), 13.0)
-    vol = ndi.gaussian_filter(np.maximum(a, b), 3.2)
+    # 2 つの球を細い橋でつなぐ。level を上げると橋が先に消えて面が「割れる」。
+    a = _aa_ball((n, n, n), (48., 34., 34.), 14.0)
+    b = _aa_ball((n, n, n), (48., 62., 62.), 12.0)
+    bridge = _capsule((n, n, n), (48, 34, 34), (48, 62, 62), 3.6).astype(np.float64)
+    vol = ndi.gaussian_filter(np.maximum(np.maximum(a, b), bridge), 2.2)
     vol = _norm01(vol)
-    levels = [round(x, 3) for x in np.linspace(0.08, 0.86, 40)]
+    levels = [round(x, 3) for x in np.linspace(0.06, 0.82, 40)]
     rows, meshes = [], {}
     st = np.ones((3, 3, 3), int)
     for lv in levels:
