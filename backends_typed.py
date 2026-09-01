@@ -75,9 +75,27 @@ TYPE_TO_SORT = {
     "indices": "signal",
     "matrix": "matrix",
     "cimage": "cimage",
+    # 光子計数・ライトフィールド族(2026-09-01)。counts と countrate は
+    # 進化側では 1 つの sort に畳む — voxel/sdf/labels を volume に、
+    # points/normals/keypoints を points に畳んでいるのと同じ粒度の判断で、
+    # 「非負の 1-D」であることが進化にとって意味のある区別のすべてだから。
+    # カタログ側で 2 語に分けてあるのは、型の嘘(ヒストグラムをレート op に
+    # 渡す)をファザーに検出させるためで、そちらは別の目的。
+    "lightfield": "lightfield",
+    "counts": "counts",
+    "countrate": "counts",
+    "histcube": "histcube",
 }
 
-#: 既定で登録する入力 sort(すべて新設 = 既存の候補リストに触れない)
+#: 既定で登録する入力 sort(すべて新設 = 既存の候補リストに触れない)。
+#:
+#: lightfield / counts / histcube を**ここには入れない**のは、その族の入口 op
+#: (``lf_from_mla``: image2d → lightfield、``dtof_cube_simulate``: depth →
+#: histcube)が **既存の image sort を入力に取る**ためである。入口を既定に
+#: 入れれば image の候補リストが動き、ゲノム → op の写像が変わってしまう
+#: (docs/WAVE0_STABLE_SLOTS.md)。かといって入口抜きで消費側だけ既定に足すと、
+#: **誰もその sort を産まないので死んだ語彙**が増えるだけになる。よって
+#: 入口と消費側を**一緒に** wide 語彙(IMGEVOLVE_WIDE_VOCAB=1)へ置く。
 _NEW_SORTS = frozenset({"points", "signal", "matrix", "cimage"})
 
 
