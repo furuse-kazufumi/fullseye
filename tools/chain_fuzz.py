@@ -616,6 +616,46 @@ def _b_mesh_split(*extra):
     return build
 
 
+def _b_vectors(n):
+    """先頭 *n* 個の位置引数を **長さ 3 のベクトル**で埋める builder を作る。
+
+    解析幾何の 11 op(``line_from_2points`` / ``intersect_planes`` /
+    ``angle_between_lines`` / ``distance_point_line`` …)は引数が全部
+    「点 or 方向 or 法線」の 3-ベクトルなのに、台帳の ``in`` は
+    ``points`` / ``primitive`` と宣言されている。ファザーは 1 入力種別につき
+    1 位置引数しか割り当てないので、**2 つ目以降が「束縛できない必須引数」として
+    残り丸ごとスキップ**され、実測(2026-09-02, 1500 連鎖)で 11 op すべてが
+    未到達だった ― ``mesh`` を (V,F) の 2 引数へ割る 8 op と同じ形の穴である。
+    しかも 1 つ目には ``points`` プールの (160,3) や ``primitive`` プールの dict が
+    渡るので、仮に束縛できても毎回 fail-closed するだけで実経路は通らない。
+
+    台帳の ``in`` 宣言そのものを直すのが本筋だが、sort の候補リスト長が変わると
+    既存 champion を黙って書き換えてしまう(docs/WAVE0_STABLE_SLOTS.md、
+    tests/test_ops3d_ledger.py の KNOWN_LEDGER_GAPS["sphere_sdf"] が同じ理由で
+    見送っている)。よってここでは **ファザー側だけ**で正しい形を組む。
+
+    ``_b_shaped`` と同じ「半分は妥当・半分は敵対」方針: 半分は独立な単位ベクトル
+    (退化しない実経路 = 交線も二面角も定義される)、半分は ``vector`` プールの
+    一様抽選(同じベクトルが 2 度引かれれば平行・退化の分岐を踏む)。
+    """
+    def build(pool, rng):
+        if rng.random() < 0.5:
+            out = []
+            for _ in range(n):
+                v = rng.standard_normal(3)
+                nv = float(np.linalg.norm(v))
+                out.append(v / nv if nv > 0 else np.array([0.0, 0.0, 1.0]))
+            return out
+        vs = [v for v in (pool.get("vector") or [])
+              if tuple(getattr(v, "shape", ())) == (3,)]
+        if not vs:
+            return None
+        idx = (list(rng.permutation(len(vs))[:n]) if len(vs) >= n
+               else [int(i) for i in rng.integers(len(vs), size=n)])
+        return [vs[int(i)] for i in idx]
+    return build
+
+
 OP_ARG_BUILDERS = {
     "abcd_matrix": _b_abcd,
     "wavefront_stats": _b_wavefront,
