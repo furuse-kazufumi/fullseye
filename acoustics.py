@@ -1136,7 +1136,7 @@ def spectral_kurtosis(x, rate, win=None, hop=None, window="hann"):
     arr = _as_signal(x, "x", op, min_len=32)
     if win is None:
         w_len = 16
-        while w_len * 2 <= 256 and arr.size >= 16 * w_len:
+        while w_len * 2 <= 64 and arr.size >= 16 * w_len:
             w_len *= 2
     else:
         w_len = _count(win, "win", 4, MAX_WINDOW)
