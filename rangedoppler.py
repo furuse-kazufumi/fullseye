@@ -978,11 +978,18 @@ def range_doppler_peaks(rdmap, range_bin_m=1.0, velocity_bin_ms=1.0, n_peaks=1,
                         min_fraction=0.1, doppler_shifted=True):
     """Detections from a range-Doppler map: bin indices back to metres and m/s.
 
-    Finds strict local maxima of the 2-D magnitude map (greater than all eight
-    neighbours; the border is excluded along the range axis because a target at
-    range bin 0 has no meaning, and treated cyclically along the Doppler axis
-    because velocity *is* periodic), keeps those at least *min_fraction* of the
-    global maximum, and returns the strongest *n_peaks* of them.
+    Finds strict local maxima of the 2-D magnitude map — greater than all eight
+    neighbours, **cyclically** along the Doppler axis (velocity really is
+    periodic in the FFT: the fastest receding bin is adjacent to the fastest
+    approaching one) and **openly** along the range axis (a cell in the first or
+    last range bin competes only against the neighbours that exist, so a target
+    in the last bin is a detection, not a discard) — keeps those at least
+    *min_fraction* of the global maximum, and returns the strongest *n_peaks*.
+
+    Range bin 0 is reported like any other. In a real receiver it is the
+    transmitter-leakage / DC bin rather than a target, but suppressing it here
+    would be a silent policy applied to somebody else's data; threshold it
+    yourself if you want it gone.
 
     Index -> physical value, closed form and the exact inverse of
     :func:`fmcw_beat_simulate`:
