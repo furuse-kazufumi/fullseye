@@ -411,6 +411,86 @@ def sinkhorn(a, b, cost, reg=0.05, n_iter=2000, tol=1e-9):
     return plan
 
 
+def sinkhorn_divergence(a, b, cost, cost_aa=None, cost_bb=None, reg=0.05, **kw):
+    """**偏りを打ち消した** Sinkhorn 距離(Genevay, Peyré & Cuturi, AISTATS 2018)。
+
+    ``S(a,b) - (S(a,a) + S(b,b)) / 2``。:func:`sinkhorn_distance` は正則化のぶん
+    系統的に上振れし、**自分自身との「距離」が 0 にならない**(実測 reg=0.2 で
+    0.05 超)。同じ偏りを自分自身との距離から引くと相殺され、**自分自身との値が
+    0 に戻る** ―― TRIZ でいう釣り合い(反作用で打ち消す)そのもの。
+
+    ``cost_aa`` / ``cost_bb`` は ``a`` 同士・``b`` 同士の費用行列。1 点集合を
+    自分自身と比べる意味なので、**省略すると ``cost`` が正方のときだけ**
+    それを流用する(非正方で省略したら例外 ―― 適当な行列で埋めると、
+    引き算する量が別物になり、打ち消したつもりで別の偏りが載る)。
+    """
+    cost = np.asarray(cost, dtype=np.float64)
+    if cost_aa is None or cost_bb is None:
+        if cost.shape[0] != cost.shape[1]:
+            raise ValueError(
+                f"cost is {cost.shape}, so cost_aa/cost_bb cannot be inferred from it; "
+                "pass them explicitly (reusing a rectangular cost would subtract a quantity "
+                "that is not the self-transport bias)"
+            )
+        cost_aa = cost if cost_aa is None else cost_aa
+        cost_bb = cost if cost_bb is None else cost_bb
+    sab = sinkhorn_distance(a, b, cost, reg=reg, **kw)
+    saa = sinkhorn_distance(a, a, cost_aa, reg=reg, **kw)
+    sbb = sinkhorn_distance(b, b, cost_bb, reg=reg, **kw)
+    return float(sab - 0.5 * (saa + sbb))
+
+
+def transport_cost(plan, cost):
+    """輸送計画の総費用 ``<plan, cost>``。**計画を消費する**側の op。
+
+    計画は「行和・列和が周辺分布に一致する」という意味を持つ行列で、普通の
+    ``matrix`` として扱うと質量保存が黙って壊れる。ここは計画としての検査
+    (非負・和が 1 前後)を通してから費用を出す。
+    """
+    p = np.asarray(plan, dtype=np.float64)
+    c = np.asarray(cost, dtype=np.float64)
+    if p.shape != c.shape:
+        raise ValueError(f"plan {p.shape} and cost {c.shape} must have the same shape")
+    if np.any(p < -1e-12):
+        raise ValueError("a transport plan cannot carry negative mass")
+    if not np.isfinite(p).all() or not np.isfinite(c).all():
+        raise ValueError("plan and cost must be finite")
+    return float(np.sum(p * c))
+
+
+def apply_transport(plan, target_values):
+    """輸送計画で ``target_values`` を元の点へ引き戻す(重心写像)。
+
+    各行(送り元)について、運んだ質量で重み付けした行き先の値の平均を返す。
+    これが「計画を**使って絵を直す**」入口 ―― 計画を作るだけで使い道が無いと、
+    :func:`sinkhorn` の出力は台帳の袋小路になる(この repo が繰り返し踏んできた
+    「入口はあるが消費 op が無い型」の形)。
+
+    質量ゼロの行は行き先が無い ―― 0 で埋めると「黒い画素」が黙って混ざるので
+    ``ValueError``。
+    """
+    p = np.asarray(plan, dtype=np.float64)
+    t = np.asarray(target_values, dtype=np.float64)
+    if p.ndim != 2:
+        raise ValueError(f"plan must be 2-D, got {p.shape}")
+    if t.shape[0] != p.shape[1]:
+        raise ValueError(
+            f"target_values must have {p.shape[1]} rows to match the plan's columns, got {t.shape}"
+        )
+    if np.any(p < -1e-12):
+        raise ValueError("a transport plan cannot carry negative mass")
+    row = p.sum(axis=1)
+    dead = int(np.count_nonzero(row <= 1e-15))
+    if dead:
+        raise ValueError(
+            f"{dead} row(s) of the plan carry no mass, so those sources have nowhere to map from; "
+            "filling them with zeros would quietly blend black into the result"
+        )
+    weighted = p @ (t if t.ndim > 1 else t[:, None])
+    out = weighted / row[:, None]
+    return out if t.ndim > 1 else out[:, 0]
+
+
 def sinkhorn_distance(a, b, cost, reg=0.05, **kw):
     """正則化つき輸送費 ``<plan, cost>``。**厳密な距離ではない**。
 

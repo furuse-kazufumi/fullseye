@@ -857,7 +857,7 @@ def ex_align():
                 "記述子は使わない —— 星は互いに",
                 "見分けがつかないので比検定が全部捨てる"]),
         _label(_fit(_gray(before)),
-               ["9 枚を位置合わせ**せず**平均",
+               ["9 枚を位置合わせ「せず」平均",
                 "%s FWHM %.3f px" % (M["wrong"], f_before),
                 "最大 6.0 px のディザがそのまま滲む"]),
         _label(_fit(_gray(after, frame_for_scale=before)),
