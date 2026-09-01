@@ -1838,32 +1838,56 @@ def ex_detect_map(log):
 # 11. 照明を変えると何が見えるか(GIF)                                           #
 # =========================================================================== #
 def ex_illumination(log):
-    """明視野風(暗い傷)と暗視野風(光る傷)。**符号と露光**の appearance モデル。"""
+    """明視野風(暗い傷)と暗視野風(光る傷)を同じ幾何で並べる。
+
+    **honest な作り**: 光輸送は解かない。2 つの条件の違いは ``defectgen`` の
+    appearance モデルで表せる 2 点だけに絞ってある。
+
+      * **符号** — 明視野は ``contrast < 0``(明るい面に暗い傷)、暗視野は
+        ``contrast > 0``(暗い場に光る傷)。
+      * **背景の明るさと質感の量** — 暗視野では正常面が照明をレンズの外へ
+        逃がすので、背景は暗く(0.50 → 0.10)、**表面の質感も同じ比率で減る**
+        (質感もレンズに戻ってこないため)。これが暗視野が小さい欠陥を拾える
+        物理的な理由で、ここではその 1 点だけをモデル化している。
+
+    最初の版は「同じ画像を露光 0.24 倍」で暗視野を作っていたが、それだと**傷まで
+    一緒に暗くなり**、暗視野の利点が図から消えていた(絵がほぼ真っ黒になった)。
+    """
     system = _system()
     geo, res = _limits()
     tile = 160
-    mags = np.linspace(0.02, 0.34, 33)
-    size_um = 120.0
+    mags = np.linspace(0.010, 0.130, 33)
+    size_um = 60.0
     seeds = 5
+    dark_level = 0.10                    # 暗視野の背景(正常面から戻る光)
+    dark_texture = 0.5                   # 質感も同じだけレンズに戻らない
+    size_px = system.px_for_um(size_um)
+    length_px = min(size_px * 4.0, tile * 0.8)
+    width_px = max(1.0, size_px)
 
-    def run(cst_signed, exposure):
+    def run(cst_signed, dark):
         shown, hits, ious, ev = None, 0, [], 0
         for s in range(seeds):
-            img, mask, meta = vl.render_part(system, size_um, kind="scratch",
-                                             contrast=float(cst_signed),
-                                             texture_strength=0.06,
-                                             tile_px=tile, seed=s)
-            if exposure != 1.0:
-                img = np.clip(img * exposure, 0.0, 1.0)
+            tex = defectgen.surface_texture((tile, tile), "orange_peel",
+                                            strength=0.06, seed=s + 1000)
+            bg = (dark_level + dark_texture * (tex - 0.5)) if dark else tex
+            ideal, mask = defectgen.defect_scratch(
+                (tile, tile), length_px=length_px, width_px=width_px,
+                angle_deg=30.0, wander=0.15, contrast=float(cst_signed), seed=s)
+            # composite_defect は mask の内側に (defect - 0.5) を足す。暗い背景の
+            # 上なら「背景 0.10 + contrast」= まさに暗視野の見え方になる。
+            scene = defectgen.composite_defect(bg, ideal, mask)
+            img = system.capture(scene, vignetting=False)
             pred, iou, det = _detect(img, mask)
             ious.append(iou)
             hits += int(det)
             ev += 1
             if s == 0:
-                shown = (img, mask, pred, iou, det, meta)
+                shown = (img, mask, pred, iou, det)
         return {"img": shown[0], "mask": shown[1], "pred": shown[2],
-                "iou": shown[3], "det": shown[4], "meta": shown[5],
-                "rate": hits / ev, "mean_iou": float(np.mean(ious))}
+                "iou": shown[3], "det": shown[4],
+                "rate": hits / ev, "mean_iou": float(np.mean(ious)),
+                "level": float(np.median(shown[0]))}
 
     rows = []
     for m in mags:
