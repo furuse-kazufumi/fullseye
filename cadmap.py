@@ -275,7 +275,7 @@ def _is_closed_surface(F: np.ndarray, n_vertices: int) -> bool:
     安い(``_mesh`` が ``render3d._mesh_arrays`` を再利用しているのは、あちらが
     既に numpy だけの依存にあるから)。
 
-    辺は ``(lo, hi)`` を 1 つの int64 键へ畳んでから ``np.unique`` する。
+    辺は ``(lo, hi)`` を 1 つの int64 キーへ畳んでから ``np.unique`` する。
     ``np.unique(..., axis=0)`` は行ごとの比較になって面数が大きいと極端に遅く、
     ここは ``cull_backfaces=True`` の呼び出し全部で必ず通る経路だから。"""
     if F.shape[0] == 0:
