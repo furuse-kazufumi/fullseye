@@ -3100,10 +3100,11 @@ def ex_vessel_reslice(log) -> dict:
         p.series([x["z"] for x in rows], [x["naive_major_mm"] for x in rows], C_E, width=2)
         p.marker(zc, r["ortho_minor_mm"], C_D, size=6)
         p.marker(zc, r["naive_major_mm"], C_E, size=6)
-        p.items.append((82, 436, "灰(太)= 真の内径", C_DIM, 11, True))
-        p.items.append((240, 436, "ミント = 軸に直交する断面(短径)", C_D, 11, True))
-        p.items.append((500, 436, "ローズ = 素朴な軸方向断面(長径)", C_E, 11, True))
-        p.items.append((790, 436, "狭窄の最小内径 真値 %.3f -> 直交 %.3f / 素朴 %.3f mm"
+        p.items.append((30, 436, "縦 = 測った内径 [mm]", C_DIM, 11, False))
+        p.items.append((200, 436, "灰(太)= 真の内径", C_DIM, 11, True))
+        p.items.append((330, 436, "ミント = 軸に直交する断面(短径)", C_D, 11, True))
+        p.items.append((560, 436, "ローズ = 素朴な軸方向断面(長径)", C_E, 11, True))
+        p.items.append((800, 436, "狭窄の最小内径 真値 %.3f -> 直交 %.3f / 素朴 %.3f mm"
                         % (rows[i_min]["truth_diameter_mm"],
                            rows[i_min]["ortho_minor_mm"],
                            rows[i_min]["naive_major_mm"]), C_TEXT, 11, True))
