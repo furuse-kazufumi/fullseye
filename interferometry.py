@@ -313,6 +313,19 @@ def _as_float_array(a, name: str, cap: int, op: str) -> np.ndarray:
                          "discard the imaginary part; an interferogram is a "
                          "measured intensity, take .real explicitly if that is "
                          "what you mean" % (op, name))
+    kind = getattr(getattr(a, "dtype", None), "kind", None)
+    if kind is None and not isinstance(a, (int, float, np.number)):
+        # a list / tuple: look at what numpy would make of it, without promoting
+        kind = np.asarray(a).dtype.kind if not isinstance(a, np.ndarray) else None
+    if kind in ("U", "S", "O", "V", "b"):
+        raise ValueError(
+            "%s: %s has dtype '%s' — numpy would happily parse it into float64 "
+            "(np.asarray(['1.0'], dtype=float) succeeds, and so does an object "
+            "array of Decimals or a bool array of True/False), which is exactly "
+            "how an unparsed configuration value or a mis-wired mask becomes a "
+            "measurement. Convert it yourself and state what you meant."
+            % (op, name, np.dtype(kind if kind != "b" else "bool").name
+               if kind != "V" else "void"))
     arr = np.ascontiguousarray(a, dtype=np.float64)
     if not np.isfinite(arr).all():
         bad = int((~np.isfinite(arr)).sum())
