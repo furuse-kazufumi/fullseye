@@ -2063,84 +2063,125 @@ CAPTIONS_EN = {
 
 
 #: 可視化を作る過程で「見た目がおかしい」から辿り着いた実測ベースの気づき。
-#: 5 件は本体側で修正済み(「こうだった → こう直った」)、2 件は未解決として残す。
-_FINDINGS_JA_OLD = r"""
-## 付録: この展示を作る過程で見つかった「見た目の異常」
+#: 報告した 8 件のうち 5 件は本体側で修正済み、2 件が未解決、1 件は仕様どおりだった。
+#: 修正済みは「こうだった → こう直った」で残す(消すと、なぜ今の形なのかが失われる)。
+_FINDINGS_JA = r"""
+## 付録: この展示を作る過程で見つかった「見た目の異常」と、その後
 
-可視化はバグ発見の道具でもある、という前提で作りました。以下はすべて**実測**で、
-op のコードは 1 行も変更していません(判断は著者に委ねます)。
+可視化はバグ発見の道具でもある、という前提で作りました。ここに出す数字はすべて
+**実測**です。報告した 8 件のうち **5 件は本体側で修正済み**、**2 件は未解決**、
+1 件は仕様どおりでした。修正済みは「こうだった → こう直った」の形で残します
+(消してしまうと、なぜ今の形なのかが分からなくなるため)。
 
-### 1. `(z,y,x) -> (x,y,z)` の `V[:, ::-1]` は軸の入れ替えではなく**鏡映**
+### 修正済み(5 件)
 
-`render3d.marching_cubes` はボクセル添字 `(z,y,x)` の頂点を返す。world `(x,y,z)` に
-直すために座標だけ反転すると、行列式が -1 なので**全三角形の巻き方向が裏返る**。
+#### 1. GIF の書き出しが「連続する同一フレーム」を 1 枚に畳んでいた
 
-```python
-Vz, F = render3d.marching_cubes(vol, 0.0)
-sv = lambda V, F: float(np.einsum("ij,ij->i", V[F][:,0], np.cross(V[F][:,1], V[F][:,2])).sum()/6)
-sv(Vz, F)                       # 期待 +体積 : 実測 +37294.7  (占有ボクセル 35746)
-sv(Vz[:, ::-1], F)              # 期待 +体積 : 実測 -37294.7  ← 内向きになった
-sv(Vz[:, ::-1], F[:, ::-1])     # 面の巻きも反転して打ち消す : +37294.7
-```
+**こうだった** —— `video.write_video` の GIF 経路(Pillow)は完全に同一の連続フレームを
+結合するので、静止の「間」を作るために同じ grab を並べると **18 枚書いて 6 枚しか
+戻らない**。書き出し後に読み戻して枚数を突き合わせない限り気づけませんでした。
 
-### 2. `cadmap` は「内向きに巻かれた閉メッシュ」を黙って受け取り、可視率を過大に返す
-
-上の内向きメッシュに `cull_backfaces=True`(既定)で問い合わせると、本来の遮蔽面が
-カリングされて光線が突き抜ける。**閉じているのに符号つき体積が負**という条件は
-安価に検出できるので、fail-closed 方針なら弾くか警告してよい箇所だと思います。
-
-| メッシュ | `cad_surface_to_pixel` の可視率 | 面法線がカメラを向く面積 | `cad_visible_faces` の面積比 |
-|---|---|---|---|
-| 内向き(バグ状態) | **0.857** | 0.517 | 0.508 |
-| 外向き(修正後) | 0.415 | 0.483 | 0.468 |
-
-可視率が「カメラを向いている面積」を上回った時点で物理的におかしい、というのが
-気づきの糸口でした(遮蔽は減らすことしかできない)。
-
-### 3. 画素中心の規約が 2 つあり、繋ぐと半画素ずれる
-
-`render3d.render_mesh` は `arange + 0.5` を画素中心としてレイを飛ばし
-(`render3d.py:318-319`)、主点も `w * 0.5`。一方 `camera.depth_to_points` は
-`np.mgrid[0:H, 0:W]` の**整数**添字を画素中心として逆投影する。
+**こう直った** —— GIF は `video._write_gif_all_frames` が Pillow を直接駆動し、
+重複フレームも 1 枚ずつ保存します(代償はファイルサイズ)。同じ再現で実測:
 
 ```python
-pose, K = render3d.auto_view(V, width=200, height=200)      # K[0,2] = 100.0
-buf = render3d.render_mesh(V, F, pose=pose, intrinsics=K, width=200, height=200)
-P_int  = camera.backproject(pix,       buf["depth"][valid], K)   # 添字
-P_half = camera.backproject(pix + 0.5, buf["depth"][valid], K)   # 添字 + 0.5
-# 実測: 平均 |P_half - P_int| = 0.0022879 world 単位 = ちょうど 0.5 px 相当
+seq = [base] * 6 + [other] * 6 + [base] * 6      # 18 枚(連続同一の塊が 3 つ)
+video.write_video(path, seq, fps=6)
+# 実測: wrote 18 frames -> read back 18
 ```
-絵としては見えませんが、寸法計測に使うと系統誤差になります。
 
-### 4. Problems の 1 行の中で stage 番号が 0 起点と 1 起点で混ざる
+本スクリプトの `save_gif` は、直ったあとも毎回読み戻して枚数を照合します
+(検算を外す理由が無いため)。
 
-`engine.diagnose_stages` のメッセージは 0 起点、Studio の Problems リストの見出しは
-1 起点なので、同じ 1 行に別の番号体系が並びます。
+#### 2. ボリュームを 3D ビューアで開くと「横倒し」になっていた
 
-```
-! stage 5 (circularity_xld): stage 3 (sk_clear_border) outputs 'region' but circularity_xld expects 'contour'
-```
-`sk_clear_border` は Program パネルの行番号でも Problems の見出しでも **4** 段目です。
-期待: `stage 4 (sk_clear_border)`。実際: `stage 3 (sk_clear_border)`。
+**こうだった** —— `studio.volume_to_shell_points` が `(z, y, x)` 順の点を返す一方、
+消費側(`render_points_frame` / `viewer3d_project`)は **3 番目の成分を world の
+上方向**として扱うため、スライス方向が画面の左右に寝ていました。既定の viridis
+高さランプも同じ理由で x 添字を色にしていました。
 
-### 5. ボリュームを 3D ビューアで開くと「横倒し」になる
-
-`studio.volume_to_shell_points` は docstring どおり `(z, y, x)` 順の点を返しますが、
-消費側(`render_points_frame` / `viewer3d_project`)は **3 番目の成分を world の上方向**
-として扱います。つまりボリュームの z 軸(スライス方向)が画面の左右に、x 軸が上下に写る。
+**こう直った** —— この関数が「voxel の並び順 → ビューアの world」の境界になり、
+world `(x, y, z)` を返します。`spacing`(`(sz, sy, sx)`)も添字と一緒に反転されます。
 
 ```python
-v = np.zeros((40, 8, 8)); v[:, 3:5, 3:5] = 1.0     # z 方向に伸びた棒
+v = np.zeros((40, 8, 8)); v[:, 3:5, 3:5] = 1.0      # z 方向に伸びた棒
 P, C, info = studio.volume_to_shell_points(v)
-P.max(0) - P.min(0)      # 期待(上が z): [1, 1, 39] / 実測: [39, 1, 1]
+P.max(0) - P.min(0)      # 実測 [1.0, 1.0, 39.0](3 番目 = 上 が長い)
+info["axis_order"]       # 実測 "xyz"(規約を表明する印)
+studio.volume_to_shell_points(v, spacing=(2.0, 1.0, 1.0))   # 実測 [1.0, 1.0, 78.0]
 ```
-既定の viridis 高さランプ(`colors=None` のとき)も同じ理由で x 添字を色にします。
 
-### 6. 新しい族の生成済みヘルプ 155 枚のうち 110 枚は画面から辿れない
+展示「軌道カメラで回す」はこの経路そのものなので、図の向きも直っています。
+
+#### 3. 画素中心の規約が 2 つあり、繋ぐと半画素ずれていた
+
+**こうだった** —— `render3d.render_mesh` は「添字 + 0.5」を画素中心としてレイを
+飛ばし、`camera.depth_to_points` は整数添字を中心として逆投影していたので、
+素直に繋ぐと雲全体が半画素ぶん、しかも**全点が同じ側へ**ずれました。
+
+**こう直った** —— `render3d` / `camera` / `cadmap` が **整数添字**という 1 つの規約に
+揃い(主点も `(w - 1) * 0.5`)、逆投影 → 再投影が閉じます。この展示での実測:
+
+| 測ったもの | 実測 |
+|---|---|
+| 逆投影 → 再投影の残差 rms | **1.31e-14 px**(= 丸め誤差) |
+| うっかり +0.5 を足したときの雲のずれ | 0.00229 world 単位(= 半画素、fx = 241.42) |
+
+#### 4. `cadmap` が「内向きに巻かれた閉メッシュ」を黙って受けていた
+
+**こうだった** —— `cull_backfaces=True`(既定)だと本来の遮蔽面がカリングされて
+光線が突き抜け、可視率が **0.857** と過大に出ました。「カメラを向いている面積」
+0.517 を上回った時点で物理的にありえません(遮蔽は減らすことしかできない)—— それが
+気づきの糸口でした。
+
+**こう直った** —— 巻き方向を検める箇所が 1 つにまとまり、閉じているのに符号つき体積が
+負なら **直したうえで `winding_fixed` で申告**します。`cad_visible_faces` は既定で拒否、
+`strict=True` なら 3 つとも `ValueError`。段付き部品(1,400 面、符号つき体積 ±37290.4)
+で実測:
+
+| 呼び方 | 内向きメッシュ | 外向きメッシュ |
+|---|---|---|
+| `cad_surface_to_pixel` の可視率 | **0.4129**(`winding_fixed=True`) | 0.4129(`winding_fixed=False`) |
+| `cad_surface_to_pixel(strict=True)` | `ValueError` | 0.4129 |
+| `cad_visible_faces`(既定) | `ValueError` | 608 面 |
+
+ただし **呼ぶ側の注意は消えていません**。`(z,y,x) -> (x,y,z)` の `V[:, ::-1]` は軸の
+入れ替えではなく**鏡映**(行列式 -1)なので、座標だけ反転すると全三角形の巻きが
+裏返ります。本スクリプトの `voxel_mesh_to_world` は面の巻きも同時に反転して
+打ち消しています。
+
+```python
+Vz, F = render3d.marching_cubes(vol, 0.0)         # 内側ボクセル 35,746
+signed_volume(Vz, F)                     # 実測 +37294.7
+signed_volume(Vz[:, ::-1], F)            # 実測 -37294.7  ← 内向きになった
+signed_volume(Vz[:, ::-1], F[:, ::-1])   # 実測 +37294.7  ← 打ち消した
+```
+
+#### 5. Problems の 1 行の中で stage 番号が 0 起点と 1 起点で混ざっていた
+
+**こうだった** —— `engine.diagnose_stages` のメッセージは 0 起点、Studio の Problems の
+見出しは 1 起点。同じ 1 行に別の番号体系が並び、読者を違う段へ案内していました。
+
+```
+! stage 5 (circularity_xld): stage 3 (sk_clear_border) outputs 'region' but ...
+```
+(`sk_clear_border` は Program パネルでも Problems の見出しでも **4** 段目)
+
+**こう直った** —— `message` は人が読む散文として **1 起点に統一**され、機械が使う
+`index` / `prev_index`(0 起点、行の選択にそのまま使える)と `prev_op` が別に載ります。
+展示⑤の実測はこうなります:
+
+```
+! stage 5 (circularity_xld): stage 4 (sk_clear_border) outputs 'region' but circularity_xld expects 'contour'
+```
+
+### 未解決(2 件)
+
+#### 6. 新しい族の生成済みヘルプ 155 枚のうち 110 枚が画面から辿れない
 
 `studio_assets/op_help/<族>/` に `tools/opdocs.py` が生成した HTML が 155 枚あるのに、
 Studio のヘルプ検索は 2D 名 + 3D 名しか引かないため、`tb_*` 型付き op として
-登録された 45 枚しか開けません。
+登録された 45 枚しか開けません(今回の再生成でも同じ内訳です)。
 
 | 族 | 生成済み | `tb_*` 経由で開ける | 開けない |
 |---|---|---|---|
@@ -2156,102 +2197,353 @@ Studio のヘルプ検索は 2D 名 + 3D 名しか引かないため、`tb_*` �
 | specular | 13 | 3 | 10 |
 | **合計** | **155** | **45** | **110** |
 
-あわせて、開ける 45 枚も「実行できる例」が空で、「同カテゴリ」欄は typed 105 個が
-1 カテゴリに同居しているため無関係な op が並びます。
+あわせて、開ける 45 枚も「実行できる例」が空で、「同カテゴリ」欄は typed op が
+1 カテゴリに同居しているため無関係な op が並びます —— 展示の図でそのまま見えます。
 
-### 7. `vol_mip` は正規化して返す(生の最大値投影ではない)
+#### 7. `vol_mip` の正規化が `ops.py` 本体には書かれていない
 
-`ops.RT["vol_mip"]` は表示向けに `[0,1]` へ正規化した像を返します。累積 MIP の
-到達率を測るのに使うと分母が変わり、**121.5 %** という値が出ました(実測)。
-比率を測る側は `vol.max(axis=0)` を使うべき、という住み分けです。
+`ops.RT["vol_mip"]` は表示向けに `[0,1]` へ正規化した像を返すので、累積 MIP の
+到達率の**分母**に使うと 100 % を超えます。同梱の骨格 CT(20×97×28、生の値域は
+最大 1.2264)で実測:
 
-### 8. GIF の書き出しは「連続する同一フレーム」を 1 枚に畳む
+| 分母に使ったもの | 完全な累積 MIP の到達率 |
+|---|---|
+| `ops.RT["vol_mip"](vol, 0.0, 0.0)` | **122.64 %** |
+| `vol.max(axis=0)`(生の投影) | 100.00 % |
 
-`video.write_video` の GIF 経路(Pillow)は完全同一の連続フレームを結合するので、
-静止の「間」を作るために同じ grab を並べると、**18 枚書いて 6 枚しか戻らない**。
-書き出し後に読み戻して枚数を突き合わせない限り気づけません(本スクリプトは
-毎回突き合わせています)。
+`volops.py` と `volio.py` の module docstring には注記が入りましたが、
+`ops.py` の `_vol_mip` 本体と登録表には何も書かれていないので、`ops.py` だけを
+読む人には見えません。op の挙動自体は「表示用なら正規化が正しい」ので、
+これはバグではなく**使い分けの明記漏れ**です。
 
-### 9. 再現性: 14 点中 12 点は SHA-256 まで一致、2 点は一致しない
+### 仕様どおりだったもの(1 件)
 
-`studio_opsearch` は検索欄のクリアボタン(✕)の描画タイミングが揺れ、
-`studio_editor` は Studio が実行に使う一時ファイル名(`scratch_<pid>.py`)が
-出力コンソールに出るため、生成のたびにバイト列が変わります。**絵の内容は同一**
-ですが、bit 単位の再現は保証できません(隠さず書きます)。
+* **演算子ブラウザに「ツリー」は無い** —— 実装は 1 枚のリスト + 検索欄 + 分類コンボで、
+  ツリー表示はもともとありません。展示のキャプションも「一覧」と書いています。
+
+### 再現性(今回、全点を 2 回生成して実測)
+
+14 点中 **11 点は SHA-256 まで一致**し、3 点は一致しません。内訳:
+
+| 展示 | 何が揺れるか | 実測 |
+|---|---|---|
+| `studio_editor` | Studio が実行に使う一時ファイル名 `scratch_<pid>.py` が出力コンソールに出る | 1 フレームの 8×27 px 領域だけが最大 191 階調ぶん変わる |
+| `studio_pipeline` | Pipeline パネルの**段ごとの実測 ms**(壁時計)が写り込む | 一覧の枠内 444 px が変わる |
+| `studio_opsearch` | 描画タイミングのゆらぎ(局所的な文字の差は無し) | 1,741 万画素中 13,317 px、最大 29 階調 |
+
+残りの差は GIF のパレット再量子化(中央値 1〜2 階調)で、**絵の内容は同一**です。
+`studio_pipeline` は今回 Problems パネルを前面に出したので、以前は写っていなかった
+実測 ms が入り、bit 再現しなくなりました —— 主役(型不一致の 1 行)が見えることを
+優先しています。
 """
 
 
-def _md_image(rec: dict) -> str:
-    """記事に貼る Markdown 行(raw.githubusercontent の絶対 URL)。"""
-    name = rec["name"]
-    if rec["kind"] == "gif":
-        return "![%s](%smedia/%s%s.gif)" % (CAPTIONS[name][0], RAW_BASE, PREFIX, name)
-    return "[![%s](%sthumbs_placeholder)](x)" % (CAPTIONS[name][0], RAW_BASE)
+#: 英語版の付録。ja と同じ事実・同じ実測値を、同じ順序で。
+_FINDINGS_EN = r"""
+## Appendix: the "visual anomalies" found while building these exhibits — and what happened next
+
+These exhibits were built on the assumption that a visualisation is also a debugging
+tool. Every number below is **measured**. Of the eight items reported, **five have
+been fixed** in the library, **two are still open**, and one turned out to be
+intended behaviour. The fixed ones are kept in a "it was like this → it was fixed
+like this" form, because deleting them would erase the reason the code looks the way
+it does now.
+
+### Fixed (5)
+
+#### 1. The GIF writer folded runs of identical frames into one
+
+**It was like this** — the GIF path of `video.write_video` (Pillow) merges a frame
+that is pixel-identical to its predecessor, so lining up the same grab to create a
+pause meant **writing 18 frames and reading back 6**. Nothing catches that unless
+you read the file back and compare the count.
+
+**It was fixed like this** — GIFs are now written by `video._write_gif_all_frames`,
+which drives Pillow directly and stores duplicates one by one (the cost is file
+size). Same reproduction, measured:
+
+```python
+seq = [base] * 6 + [other] * 6 + [base] * 6      # 18 frames, three identical runs
+video.write_video(path, seq, fps=6)
+# measured: wrote 18 frames -> read back 18
+```
+
+`save_gif` in this script still reads every GIF back and checks the count — there is
+no reason to drop a check that costs nothing.
+
+#### 2. A volume opened in the 3-D viewer lay on its side
+
+**It was like this** — `studio.volume_to_shell_points` returned points in `(z, y, x)`
+order while every consumer (`render_points_frame` / `viewer3d_project`) treats the
+**third** component as world up, so the slice axis lay across the screen. The default
+viridis height ramp coloured by the x index for the same reason.
+
+**It was fixed like this** — the function is now the boundary between voxel order and
+viewer world, and returns world `(x, y, z)`. `spacing` (`(sz, sy, sx)`) is reversed
+together with the indices.
+
+```python
+v = np.zeros((40, 8, 8)); v[:, 3:5, 3:5] = 1.0      # a bar extending along z
+P, C, info = studio.volume_to_shell_points(v)
+P.max(0) - P.min(0)      # measured [1.0, 1.0, 39.0] — the third (up) axis is the long one
+info["axis_order"]       # measured "xyz" — an assertable marker of the convention
+studio.volume_to_shell_points(v, spacing=(2.0, 1.0, 1.0))   # measured [1.0, 1.0, 78.0]
+```
+
+The "orbit camera" exhibit goes through exactly this path, so its orientation is
+fixed too.
+
+#### 3. Two pixel-centre conventions met, and cost half a pixel
+
+**It was like this** — `render3d.render_mesh` shot its rays through "index + 0.5"
+while `camera.depth_to_points` back-projected from the integer index, so connecting
+them naively moved the whole cloud by half a pixel — and moved **every point to the
+same side**, which reads as a bias rather than as noise.
+
+**It was fixed like this** — `render3d`, `camera` and `cadmap` now share one
+convention, **integer indices** (the principal point too, at `(w - 1) * 0.5`), so
+back-projection and re-projection close. Measured on this exhibit:
+
+| Quantity | Measured |
+|---|---|
+| residual of back-projection → re-projection | **1.31e-14 px** (rounding error) |
+| shift if 0.5 is added by mistake | 0.00229 world units (half a pixel, fx = 241.42) |
+
+#### 4. `cadmap` quietly accepted a closed mesh wound inward
+
+**It was like this** — with `cull_backfaces=True` (the default) the faces that should
+have occluded were culled instead, rays went straight through, and the visible
+fraction came out at **0.857**. That is above the 0.517 of "area facing the camera",
+which is physically impossible — occlusion can only ever remove visibility. That
+inequality is what gave the bug away.
+
+**It was fixed like this** — winding is checked in exactly one place, and a mesh that
+is closed yet has a negative signed volume is **repaired and reported through
+`winding_fixed`**. `cad_visible_faces` refuses it by default, and `strict=True` makes
+all three raise. Measured on the stepped part (1,400 faces, signed volume ±37290.4):
+
+| Call | Inward mesh | Outward mesh |
+|---|---|---|
+| visible fraction from `cad_surface_to_pixel` | **0.4129** (`winding_fixed=True`) | 0.4129 (`winding_fixed=False`) |
+| `cad_surface_to_pixel(strict=True)` | `ValueError` | 0.4129 |
+| `cad_visible_faces` (default) | `ValueError` | 608 faces |
+
+The **caller still has to be careful**, though. `V[:, ::-1]` for `(z,y,x) -> (x,y,z)`
+is not an axis swap but a **mirror** (determinant -1), so flipping the coordinates
+alone flips the winding of every triangle. `voxel_mesh_to_world` in this script
+flips the face winding at the same time to cancel it out.
+
+```python
+Vz, F = render3d.marching_cubes(vol, 0.0)         # 35,746 interior voxels
+signed_volume(Vz, F)                     # measured +37294.7
+signed_volume(Vz[:, ::-1], F)            # measured -37294.7  <- now wound inward
+signed_volume(Vz[:, ::-1], F[:, ::-1])   # measured +37294.7  <- cancelled out
+```
+
+#### 5. Stage numbers mixed 0-based and 1-based inside one Problems line
+
+**It was like this** — the message from `engine.diagnose_stages` was 0-based while
+the heading of Studio's Problems list was 1-based, so a single line carried two
+numbering systems and sent the reader to the wrong stage.
+
+```
+! stage 5 (circularity_xld): stage 3 (sk_clear_border) outputs 'region' but ...
+```
+(`sk_clear_border` is the **4th** stage, both in the Program panel and in the
+Problems heading.)
+
+**It was fixed like this** — `message` is prose for a human and is **uniformly
+1-based**; the machine-readable `index` / `prev_index` (0-based, usable directly to
+select a row) and `prev_op` are carried separately. Exhibit ⑤ now measures:
+
+```
+! stage 5 (circularity_xld): stage 4 (sk_clear_border) outputs 'region' but circularity_xld expects 'contour'
+```
+
+### Still open (2)
+
+#### 6. 110 of the 155 generated help pages cannot be reached from the screen
+
+`studio_assets/op_help/<family>/` holds 155 HTML pages generated by
+`tools/opdocs.py`, but Studio's help search only looks up 2-D and 3-D op names, so
+only the 45 registered as `tb_*` typed ops can be opened (this regeneration measures
+the same breakdown).
+
+| Family | Generated | Reachable via `tb_*` | Unreachable |
+|---|---|---|---|
+| acoustics | 19 | 3 | 16 |
+| interferometry | 9 | 0 | **9** |
+| lightfield | 17 | 8 | 9 |
+| math | 26 | 6 | 20 |
+| motionmag | 9 | 2 | 7 |
+| optics | 18 | 1 | **17** |
+| photon | 17 | 6 | 11 |
+| quat | 19 | 12 | 7 |
+| rangedoppler | 8 | 4 | 4 |
+| specular | 13 | 3 | 10 |
+| **total** | **155** | **45** | **110** |
+
+On top of that, the 45 that do open have an empty "runnable examples" section, and
+their "same category" row lists unrelated ops because the typed ops all share one
+category — both visible in the exhibit itself.
+
+#### 7. The normalisation in `vol_mip` is not documented in `ops.py` itself
+
+`ops.RT["vol_mip"]` returns the projection rescaled into `[0, 1]` for display, so
+using it as the **denominator** of a cumulative-MIP reach ratio pushes the result
+above 100 %. Measured on the bundled skeleton CT (20×97×28, raw values up to 1.2264):
+
+| Denominator | Reach of the complete cumulative MIP |
+|---|---|
+| `ops.RT["vol_mip"](vol, 0.0, 0.0)` | **122.64 %** |
+| `vol.max(axis=0)` (the raw projection) | 100.00 % |
+
+The module docstrings of `volops.py` and `volio.py` now carry the note, but neither
+the body of `_vol_mip` nor the registry table in `ops.py` says anything, so a reader
+who only opens `ops.py` will not see it. The op itself is not wrong — normalising is
+what a display projection should do — this is a **missing note about which one to
+use when**.
+
+### Intended behaviour (1)
+
+* **There is no "tree" in the operator browser** — the implementation is a single
+  list plus a search box and a category combo; a tree view never existed. The
+  exhibit caption calls it a list, too.
+
+### Reproducibility (everything generated twice, and measured)
+
+**11 of the 14 exhibits match down to the SHA-256**; three do not:
+
+| Exhibit | What moves | Measured |
+|---|---|---|
+| `studio_editor` | the temporary file name `scratch_<pid>.py` Studio runs, printed to the output console | one 8×27 px region of one frame, up to 191 levels |
+| `studio_pipeline` | the per-stage **wall-clock ms** shown in the Pipeline panel | 444 px inside the list box |
+| `studio_opsearch` | paint-timing jitter (no localised text difference) | 13,317 of 17.41 M pixels, at most 29 levels |
+
+The remaining differences are GIF palette re-quantisation (median 1–2 levels): **the
+picture itself is identical**. `studio_pipeline` lost its bit-reproducibility in this
+pass because the Problems panel was brought to the front, which also brings the
+measured milliseconds into shot — showing the point of the exhibit (that one
+type-mismatch line) wins over reproducing bytes.
+"""
 
 
-def write_captions() -> str:
-    """``docs/articles/exhibits/wingstudio.md`` を meta から組み立てる。
+#: 言語ごとの (見出し, 前書き, キャプション表, 付録, 出力先ファイル名)。
+_LANGS = {
+    "ja": {
+        "header": [
+            "# Studio 画面 / 3D 表示ウィング —— 展示キャプション原稿(日本語)",
+            "",
+            "生成元: `tools/gen_wingstudio_gallery.py`(再実行で全点を再生成)。",
+            "Studio 画面はすべて `studio.build_window()` が組み立てた**実 UI** の "
+            "`widget.grab()`(オフスクリーン)で、モックアップはありません。",
+            "3D 展示は fullseye の op と numpy 合成だけで描いています"
+            "(matplotlib 不使用、文字のみ Pillow)。**数字はすべて実測値**です。",
+            "",
+            "**このファイルは納品原稿です。記事 md への転記は手動で行ってください**"
+            "(記事本体は意図的に編集していません)。英語版は `wingstudio.en.md`。",
+            "",
+            "---",
+            "",
+        ],
+        "captions": CAPTIONS,
+        "findings": _FINDINGS_JA,
+        "filename": "wingstudio.ja.md",
+    },
+    "en": {
+        "header": [
+            "# The Studio-Screen / 3-D-Display Wing — exhibit captions (English)",
+            "",
+            "Generated by `tools/gen_wingstudio_gallery.py` (re-running rebuilds every "
+            "exhibit).",
+            "Every Studio screenshot is a `widget.grab()` (offscreen) of the **real UI** "
+            "assembled by `studio.build_window()` — there are no mock-ups.",
+            "The 3-D exhibits are drawn with fullseye ops and numpy compositing alone "
+            "(no matplotlib; Pillow only for text). **Every number is measured.**",
+            "",
+            "**This file is delivery copy: transcribe it into the article markdown by "
+            "hand** (the articles themselves were deliberately left untouched). "
+            "The Japanese version is `wingstudio.ja.md`.",
+            "",
+            "---",
+            "",
+        ],
+        "captions": CAPTIONS_EN,
+        "findings": _FINDINGS_EN,
+        "filename": "wingstudio.en.md",
+    },
+}
 
-    記事本体 (``docs/articles/*.md``) は**触らない**。ここは新規ファイルなので可。
+
+def write_captions() -> dict:
+    """``wingstudio.ja.md`` と ``wingstudio.en.md`` を meta から組み立てる。
+
+    画像 Markdown 行は **2 言語で同じ URL・同じ順序**(記事の展示章は言語ごとに
+    別ファイルでも、指しているアセットは 1 つだから)。数値は同じ ``facts`` を
+    同じ書式で流すので、片方だけ古くなることが起きない。
+
+    記事本体 (``docs/articles/*.md``) は**触らない**。ここは納品原稿。
     """
     if not os.path.exists(META_PATH):
         raise RuntimeError("meta が無い: %s" % META_PATH)
     with open(META_PATH, encoding="utf-8") as f:
         meta = json.load(f)
     os.makedirs(EXHIBITS_DIR, exist_ok=True)
-    lines = [
-        "# Studio 画面 / 3D 表示ウィング —— 展示キャプション原稿",
-        "",
-        "生成元: `tools/gen_wingstudio_gallery.py`(再実行で全点を再生成)。",
-        "Studio 画面はすべて `studio.build_window()` が組み立てた**実 UI** の "
-        "`widget.grab()`(オフスクリーン)で、モックアップはありません。",
-        "3D 展示は fullseye の op と numpy 合成だけで描いています"
-        "(matplotlib 不使用、文字のみ Pillow)。**数字はすべて実測値**です。",
-        "",
-        "**このファイルは納品原稿です。記事 md への転記は手動で行ってください**"
-        "(記事本体は意図的に編集していません)。",
-        "",
-        "---",
-        "",
-    ]
-    for rec in meta.get("exhibits", []):
-        name = rec["name"]
-        if name not in CAPTIONS:
-            continue
-        title, ops, body = CAPTIONS[name]
-        if rec["kind"] == "gif":
-            url = "%smedia/%s%s.gif" % (RAW_BASE, PREFIX, name)
-            thumb = "%sthumbs/%s%s_thumb.jpg" % (RAW_BASE, PREFIX, name)
-            img = "![%s](%s)" % (title, url)
-            extra = ("%d フレーム / %d fps / %d×%d px / %.2f MB"
-                     % (rec["frames"], rec["fps"], rec["size"][0], rec["size"][1],
-                        rec["bytes"] / 1e6))
-        else:
-            url = "%s%s%s.png" % (RAW_BASE, PREFIX, name)
-            thumb = "%s%s%s_thumb.jpg" % (RAW_BASE, PREFIX, name)
-            img = "[![%s](%s)](%s)" % (title, thumb, url)
-            extra = "%d×%d px / %.0f kB" % (rec["size"][0], rec["size"][1],
-                                            rec["bytes"] / 1e3)
-        lines += [
-            "## %s" % title,
-            "",
-            img,
-            "",
-            "*↑ **%s** —— %s 使用 op / 機能: %s。*" % (title, body(rec["facts"], rec), ops),
-            "",
-            "<sub>`%s%s.%s` — %s / SHA-256 `%s`</sub>"
-            % (PREFIX, name, "gif" if rec["kind"] == "gif" else "png",
-               extra, rec["sha256"][:16]),
-            "",
-            "---",
-            "",
-        ]
-    lines += _FINDINGS.strip().splitlines()
-    lines.append("")
-    with open(CAPTION_PATH, "w", encoding="utf-8") as f:
-        f.write("\n".join(lines))
-    print("captions ->", CAPTION_PATH)
-    return CAPTION_PATH
+
+    written = {}
+    for lang, spec in _LANGS.items():
+        captions = spec["captions"]
+        lines = list(spec["header"])
+        for rec in meta.get("exhibits", []):
+            name = rec["name"]
+            if name not in captions:
+                continue
+            title, ops, body = captions[name]
+            if rec["kind"] == "gif":
+                url = "%smedia/%s%s.gif" % (RAW_BASE, PREFIX, name)
+                img = "![%s](%s)" % (title, url)
+                extra = ("%d フレーム / %d fps / %d×%d px / %.2f MB"
+                         % (rec["frames"], rec["fps"], rec["size"][0], rec["size"][1],
+                            rec["bytes"] / 1e6)) if lang == "ja" else \
+                        ("%d frames / %d fps / %d×%d px / %.2f MB"
+                         % (rec["frames"], rec["fps"], rec["size"][0], rec["size"][1],
+                            rec["bytes"] / 1e6))
+            else:
+                url = "%s%s%s.png" % (RAW_BASE, PREFIX, name)
+                thumb = "%s%s%s_thumb.jpg" % (RAW_BASE, PREFIX, name)
+                img = "[![%s](%s)](%s)" % (title, thumb, url)
+                extra = "%d×%d px / %.0f kB" % (rec["size"][0], rec["size"][1],
+                                                rec["bytes"] / 1e3)
+            tail = ("使用 op / 機能: %s。" if lang == "ja" else "Ops / features: %s.") % ops
+            lines += [
+                "## %s" % title,
+                "",
+                img,
+                "",
+                "*↑ **%s** —— %s %s*" % (title, body(rec["facts"], rec), tail),
+                "",
+                "<sub>`%s%s.%s` — %s / SHA-256 `%s`</sub>"
+                % (PREFIX, name, "gif" if rec["kind"] == "gif" else "png",
+                   extra, rec["sha256"][:16]),
+                "",
+                "---",
+                "",
+            ]
+        lines += spec["findings"].strip().splitlines()
+        lines.append("")
+        path = os.path.join(EXHIBITS_DIR, spec["filename"])
+        with open(path, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines))
+        written[lang] = path
+        print("captions (%s) -> %s" % (lang, path))
+
+    # 言語サフィックス無しの旧原稿が残っていると ``build_exhibits.wing_source`` が
+    # ja のフォールバックとして拾ってしまう(= 古い本文が復活する)ので、消す。
+    legacy = os.path.join(EXHIBITS_DIR, "wingstudio.md")
+    if os.path.exists(legacy):
+        os.remove(legacy)
+        print("removed stale %s (superseded by wingstudio.ja.md)" % legacy)
+    return written
 
 
 # --------------------------------------------------------------------------- #
