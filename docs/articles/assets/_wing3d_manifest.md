@@ -4,9 +4,9 @@
 
 | 展示 | 形式 | ファイル | 実測 | SHA-256 (先頭 16) |
 |---|---|---|---|---|
-| domain | GIF+mp4 | `media/wing3d_domain_memory.gif` | 40 フレーム, 1120x690, 0.47 MB, 256 色, mp4 0.07 MB | `f8879f156ca5205b` |
+| domain | GIF+mp4 | `media/wing3d_domain_memory.gif` | 40 フレーム, 1120x690, 0.48 MB, 256 色, mp4 0.07 MB | `8a3b89df7c282535` |
 | boundary | GIF+mp4 | `media/wing3d_boundary_shell.gif` | 36 フレーム, 1120x640, 2.74 MB, 128 色, mp4 1.59 MB | `d56e8ff18bc8163e` |
-| rle | PNG | `wing3d_rle_compression.png` | 1120x720, 101 kB | `3fc50b9a6e3d81ca` |
+| rle | PNG | `wing3d_rle_compression.png` | 1120x720, 107 kB | `5c87eb6953fa5df3` |
 | windowing | GIF+mp4 | `media/wing3d_ct_windowing.gif` | 40 フレーム, 1120x726, 0.50 MB, 256 色, mp4 0.08 MB | `5e745b230bbe437a` |
 | vesselness | PNG | `wing3d_vesselness_control.png` | 1120x700, 72 kB | `cc38dce5f5e7553b` |
 | skeleton | GIF+mp4 | `media/wing3d_skeleton_graph.gif` | 48 フレーム, 1120x660, 1.41 MB, 256 色, mp4 0.26 MB | `0c27c243f2169388` |
@@ -16,7 +16,7 @@
 | obb | GIF+mp4 | `media/wing3d_obb_innerbox.gif` | 48 フレーム, 1120x700, 2.22 MB, 256 色, mp4 0.40 MB | `9bc2e61ebd31808b` |
 | icp | GIF+mp4 | `media/wing3d_icp_registration.gif` | 18 フレーム, 1120x660, 0.58 MB, 256 色, mp4 0.43 MB | `7fa6f0a6cec5647f` |
 | anisotropic | PNG | `wing3d_anisotropic_voxel.png` | 1120x700, 92 kB | `f44819cdeb1d8304` |
-| mip | GIF+mp4 | `media/wing3d_mip_turntable.gif` | 36 フレーム, 1120x640, 2.64 MB, 64 色, mp4 0.41 MB | `2f2a5b11bb900202` |
+| mip | GIF+mp4 | `media/wing3d_mip_turntable.gif` | 36 フレーム, 1120x640, 2.65 MB, 64 色, mp4 0.41 MB | `19d183d9e10214a4` |
 | distance | GIF+mp4 | `media/wing3d_distance_transform.gif` | 46 フレーム, 1120x660, 0.61 MB, 256 色, mp4 0.09 MB | `548d5d82d1a75960` |
 | connectivity | PNG | `wing3d_boundary_connectivity.png` | 948x770, 222 kB | `e4bcdcd8c825a181` |
 | pipeline | GIF | `media/wing3d_pipeline_flow.gif` | 7 フレーム, 900x588, 0.33 MB | `79f70ee88eb6cbcf` |

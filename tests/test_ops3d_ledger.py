@@ -305,18 +305,28 @@ def test_pairs_predicate_is_not_a_no_op():
     for bad in (None, 42, "s", {"a": 1}, (), np.zeros(3), np.zeros((2, 16)),
                 (np.zeros(10), np.zeros(11)), (0.0, 1.0)):
         assert not ok(bad), bad
-    # 産む側は adapter 適用後にこの正典へ収まる(素の返りは収まらない = 型の嘘だった)
+    import ops1d
     import opsmath
     sig = np.sin(np.linspace(0.0, 8 * np.pi, 256))
+    # (a) 素の返りが正典から外れていた op — adapter で正典へ入れた
     assert not ok(opsmath.get("stat_histogram")(sig))      # (counts(10,), edges(11,))
+    for name in ("invert_funct_1d", "x_range_funct_1d", "y_range_funct_1d",
+                 "get_pair_funct_1d"):
+        assert not ok(ops1d.get(name)(sig)), name          # dict / 2 スカラ / (2,)
+    # (b) 素の返り(同長 1-D 2 本)は元々正典だったのに、**adapter が (2,N) へ
+    #     潰していた** 3 op。述語が lambda v: True だったので誰も気づけなかった。
+    #     axis=1 に直した今、素も adapter 後もどちらも正典
+    for raw in (ops1d.get("spectrum")(sig),
+                ops3d.get("curvature_torsion")(_pts())):
+        assert ok(raw)
+        assert not ok(np.stack(raw))                       # 旧 adapter の (2,N)
     assert ok(opsmath.call("stat_histogram", sig))
-    import ops1d
     for name in ("spectrum", "invert_funct_1d", "x_range_funct_1d",
                  "y_range_funct_1d", "get_pair_funct_1d"):
-        assert not ok(ops1d.get(name)(sig)), name
-        assert ok(ops1d.call(name, sig)), name
-    assert not ok(ops3d.get("curvature_torsion")(_pts()))
+        got = ops1d.call(name, sig)
+        assert ok(got) and got.shape[1] == 2, name
     assert ok(ops3d.call("curvature_torsion", _pts()))
+    assert ops3d.call("curvature_torsion", _pts()).shape[1] == 2
     # create_funct_1d_pairs は名前に反して funct_1d(1-D)を返す = out は signal
     assert ops1d.info("create_funct_1d_pairs")["out"] == "signal"
     made = ops1d.call("create_funct_1d_pairs", np.arange(20.0),

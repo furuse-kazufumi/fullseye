@@ -8,7 +8,7 @@
 
 ![処理領域(domain)でメモリが 1/84 になる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_domain_memory.gif)
 
-*↑ **処理領域(domain)でメモリが 1/84 になる** ―― 192³ の視野に浮かぶ合成部品を輪切りで送りながら、元ボリューム・domain マスク・切り出し後・貼り戻しを並べた。前景は全体の 0.42 % しかないので `vol_crop_domain` で メモリは 56.62 MB → 0.678 MB(**1/83.5**)、同じ `vol_gradient_magnitude` が 400 ms → 2 ms(**200 倍速**、図が再生成でバイト一致するよう有効数字 1 桁に丸めた実測値)になる。`vol_uncrop` の貼り戻しは元と bit 一致。 使用 op: `vol_bounding_box`, `vol_crop_domain`, `vol_reduce_domain`, `vol_uncrop`, `vol_gradient_magnitude`。*
+*↑ **処理領域(domain)でメモリが 1/84 になる** ―― 192³ の視野に浮かぶ合成部品を輪切りで送りながら、元ボリューム・domain マスク・切り出し後・貼り戻しを並べた。前景は全体の 0.42 % しかないので `vol_crop_domain` で メモリは 56.62 MB → 0.678 MB(**1/83.5**)、同じ `vol_gradient_magnitude` が触る voxel も 7,077,888 → 84,747(同じく **1/83.5**)。壁時計の実行時間も実測しているが、再生成のたびに変わるので図には焼かず `_wing3d_meta.json` に置いた。`vol_uncrop` の貼り戻しは元と bit 一致。 使用 op: `vol_bounding_box`, `vol_crop_domain`, `vol_reduce_domain`, `vol_uncrop`, `vol_gradient_magnitude`。*
 
 ![境界だけ持つと 6 % に痩せる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_boundary_shell.gif)
 
@@ -16,7 +16,7 @@
 
 [![run-length で 1/71](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_rle_compression_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_rle_compression.png)
 
-*↑ **run-length で 1/71** ―― 256³ の合成部品を run-length で持つと **1/71**(16.78 MB → 0.237 MB、19,764 run)。しかも展開せずに体積 1,610,948 voxel を **233 倍速**、BBox を **25 倍速**で返し(時間は実測を有効数字 1 桁に丸めた値)、集合演算(球 ∪ 軸 = 1,508,456 voxel)も run のまま解ける。decode の往復は bit 一致。 使用 op: `vol_rle_encode`, `vol_rle_decode`, `vol_rle_volume`, `vol_rle_bbox`, `vol_rle_centroid`, `vol_rle_union`, `vol_rle_intersect`, `vol_rle_difference`。*
+*↑ **run-length で 1/71** ―― 256³ の合成部品を run-length で持つと **1/71**(16.78 MB → 0.237 MB、19,764 run)。しかも展開せずに体積 1,610,948 voxel を **dense を一度も作らずに**返し、集合演算(球 ∪ 軸 = 1,508,456 voxel)も run のまま解ける。decode の往復は bit 一致。所要時間も実測してあるが、壁時計は再生成のたびに変わるので図には焼かず `_wing3d_meta.json` に置いた。 使用 op: `vol_rle_encode`, `vol_rle_decode`, `vol_rle_volume`, `vol_rle_bbox`, `vol_rle_centroid`, `vol_rle_union`, `vol_rle_intersect`, `vol_rle_difference`。*
 
 ![CT の「窓」で同じ体が 3 通りに見える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_ct_windowing.gif)
 
@@ -56,7 +56,7 @@
 
 ![MIP と X 線投影のターンテーブル](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_mip_turntable.gif)
 
-*↑ **MIP と X 線投影のターンテーブル** ―― 合成 CT ボリューム(96³)を `render_volume_projection` で 1 周させた。左は最大値投影(MIP、骨窓)で光線上の最大値だけを拾うので骨が浮き、右は減衰積算(X 線)で厚みが出る。投影 72 枚を **1 枚 30 ms**(実測を有効数字 1 桁に丸めた値)。正規化の上限は全フレーム共通にしてある ―― 1 枚ごとに正規化すると回転中に明るさがちらついて、形の変化と見分けがつかなくなる。 使用 op: `vol_window_level`, `render_volume_projection`。*
+*↑ **MIP と X 線投影のターンテーブル** ―― 合成 CT ボリューム(96³)を `render_volume_projection` で 1 周させた。左は最大値投影(MIP、骨窓)で光線上の最大値だけを拾うので骨が浮き、右は減衰積算(X 線)で厚みが出る。投影 投影は 72 枚(所要時間の実測は `_wing3d_meta.json`)。正規化の上限は全フレーム共通にしてある ―― 1 枚ごとに正規化すると回転中に明るさがちらついて、形の変化と見分けがつかなくなる。 使用 op: `vol_window_level`, `render_volume_projection`。*
 
 ![距離変換で局所の太さを測る(最大内接半径 4.528 mm)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_distance_transform.gif)
 
