@@ -345,6 +345,13 @@ def _panel(canvas, y0, x0, h, w, img01, title=None, border=(0.20, 0.23, 0.28)):
     return [(x0 + 6, y0 + 5, title, (0.96, 0.96, 0.93), 13, True)] if title else []
 
 
+def _plot_axes(canvas, x0, x1, y0, y1):
+    """左と下だけの座標軸(imagedraw の実 op で引く)。"""
+    import imagedraw
+    canvas = imagedraw.draw_line(canvas, (x0, y1), (x1, y1), color=C_DIM, width=1)
+    return imagedraw.draw_line(canvas, (x0, y0), (x0, y1), color=C_DIM, width=1)
+
+
 def _gray3(a: np.ndarray) -> np.ndarray:
     a = np.asarray(a, np.float64)
     return a if a.ndim == 3 else np.stack([a] * 3, axis=-1)

@@ -878,8 +878,14 @@ def ex_mtf(log):
     fnums = np.exp(np.linspace(np.log(1.4), np.log(22.0), 34))
     probes = (40.0, 100.0, 200.0)                # cyc/mm で見る 3 本のバー
     bar_w, bar_h = 208, 92
-    upp_mm = 1.0                                 # バーは像面 [mm] の実寸で描く
-    xs_mm = (np.arange(bar_w) + 0.5) / bar_w * upp_mm    # 幅 1 mm ぶん
+    # ★バーが張る像面の実寸。1.0 mm にしていたとき 208 標本 / mm = Nyquist
+    # 104 cyc/mm となり、200 cyc/mm のバーが **8 cyc/mm の太縞に化けていた**
+    # (図が自分でエイリアスしていた)。0.25 mm なら 832 標本/mm、最高周波数
+    # 200 cyc/mm でも 1 周期 4.16 画素で足りる。
+    strip_mm = 0.25
+    xs_mm = (np.arange(bar_w) + 0.5) / bar_w * strip_mm
+    samples_per_mm = bar_w / strip_mm
+    nyq_cyc_per_mm = samples_per_mm / 2.0
 
     rows = []
     for n in fnums:
@@ -899,7 +905,7 @@ def ex_mtf(log):
     w, hdr = 1000, 34
     bars_x, bars_y = 20, hdr + 30
     plot_box = (bars_x + bar_w + 84, bars_y - 4, w - 24, bars_y + 3 * (bar_h + 26) + 6)
-    h = int(plot_box[3]) + 96
+    h = int(plot_box[3]) + 112
     frames = []
     for r in rows:
         canvas = _canvas(h, w)
@@ -920,7 +926,7 @@ def ex_mtf(log):
                 color=C_GRID, width=1, closed=True)
             labels += [
                 (bars_x, y + bar_h + 3, f"{pf:.0f} cyc/mm", C_TEXT, 12, True),
-                (bars_x + 108, y + bar_h + 3,
+                (bars_x + 104, y + bar_h + 3,
                  f"contrast {m:.3f}" + ("   (gone)" if m <= 1e-6 else ""),
                  (C_BAD if m <= 1e-6 else C_HIT if m > 0.3 else C_MISS), 12, True),
             ]
@@ -945,7 +951,7 @@ def ex_mtf(log):
         yi = int(plot_box[3]) + 26
         labels += [
             (plot_box[0] + 6, plot_box[1] + 4, "MTF (contrast transfer)", C_DIM, 11, False),
-            (plot_box[2] - 214, plot_box[3] - 16,
+            (plot_box[2] - 214, plot_box[1] + 4,
              "spatial frequency [cycles/mm] ->", C_DIM, 11, False),
             (min(int(p.px(r["cutoff"])) + 6, plot_box[2] - 190), plot_box[1] + 22,
              f"cutoff {r['cutoff']:.1f} cyc/mm", C_BAD, 12, True),
@@ -959,11 +965,16 @@ def ex_mtf(log):
              "the bars on the left are drawn with exactly the modulation the curve "
              "on the right reports -- nothing is stylised",
              C_DIM, 11, False),
+            (18, yi + 58,
+             f"(each strip shows {strip_mm:g} mm of the image plane at "
+             f"{samples_per_mm:.0f} samples/mm, so the display itself is good to "
+             f"{nyq_cyc_per_mm:.0f} cyc/mm and does not alias)", C_DIM, 11, False),
         ]
         frames.append(_text(_to_u8(canvas), labels))
 
     thumb = int(np.argmin([abs(r["n"] - 8.0) for r in rows]))
     facts = {"wavelength_um": lam, "probe_freqs_cyc_per_mm": list(probes),
+             "strip_mm": strip_mm, "strip_nyquist_cyc_per_mm": nyq_cyc_per_mm,
              "half_cutoff_freq_at_first": half,
              "rows": [{"f_number": r["n"], "cutoff_cyc_per_mm": r["cutoff"],
                        "mtf_at_probes": r["mtf"]} for r in rows]}
@@ -998,7 +1009,7 @@ def ex_dof_coc(log):
     ruler_y, ruler_h = hdr + 46, 88
     ruler_box = (86, ruler_y, w - 30, ruler_y + ruler_h)
     plot_box = (86, ruler_y + ruler_h + 76, w - 30, ruler_y + ruler_h + 76 + 200)
-    h = int(plot_box[3]) + 72
+    h = int(plot_box[3]) + 52
     span_lo, span_hi = wd - 5.0, wd + 5.0
     frames = []
     for r in rows:
@@ -1012,9 +1023,12 @@ def ex_dof_coc(log):
         # 上段: 距離軸の上に近点〜遠点のブラケット
         rp = Plot(canvas, ruler_box, (span_lo, span_hi), (0.0, 1.0))
         rp.bg()
-        rp.band_x(wd - tol / 2.0, wd + tol / 2.0, (0.17, 0.15, 0.12))
         rp.band_x(r["near"], r["far"], (0.10, 0.22, 0.24))
         rp.frame()
+        # 公差帯は**塗らずに線で**引く。塗りで重ねると被写界深度の帯に
+        # 上書きされて消える(実際に消えていた)。
+        rp.vline(wd - tol / 2.0, C_MISS, 1, dashed=True, dash=5, gap=4)
+        rp.vline(wd + tol / 2.0, C_MISS, 1, dashed=True, dash=5, gap=4)
         rp.vline(wd, (0.95, 0.95, 0.92), 1, dashed=True, dash=6, gap=5)
         rp.vline(r["near"], C_HIT, 2)
         rp.vline(r["far"], C_HIT, 2)
@@ -1066,15 +1080,15 @@ def ex_dof_coc(log):
         for t in (2, 4, 6, 8):
             labels.append((plot_box[0] - 24, int(p.py(t)) - 7, f"{t}", C_DIM, 11, False))
         labels += [
-            (plot_box[0] + 6, plot_box[1] + 4, "depth of field [mm]", C_DIM, 11, False),
-            (plot_box[2] - 250, plot_box[3] - 16,
+            (plot_box[0] + 26, plot_box[1] + 4, "depth of field [mm]", C_DIM, 11, False),
+            (plot_box[2] - 250, plot_box[1] + 4,
              "acceptable circle of confusion [pixel pitches] ->", C_DIM, 11, False),
             (int(p.px(k_tol)) + 6, plot_box[1] + 20,
              f"tolerance met from {k_tol:.3f} px", C_MISS, 11, True),
-            (plot_box[0] + 8, plot_box[3] - 34,
+            (14, plot_box[3] + 26,
              "the light-field refocus gain in the article is exactly this line read "
              "twice -- a 6x6 angular grid buys a 6x CoC, hence a 6x depth",
-             C_DIM, 11, False),
+             C_DIM, 12, False),
         ]
         frames.append(_text(_to_u8(canvas), labels))
 
