@@ -316,14 +316,22 @@ def image_formation(scene, f_number=8.0, pixel_pitch_um=3.45,
     # 2) デフォーカス(こちらも端値で延長 = 同じ理由)
     if blur > 0.0:
         out = ndimage.gaussian_filter(out, sigma=blur, mode="nearest")
-    # 3) 周辺光量落ち(視野の中心からの正規化半径に cos^4 を掛ける)
+    # 3) 周辺光量落ち。角度は**物理量**から出す ―― 画素の光軸からの距離 [mm] と
+    #    像距離 [mm] で決まる。配列を正規化した半径では、どんな系でも角が 45 度に
+    #    なってしまい(cos^4 45 = 0.2500)、レンズにも画素ピッチにも切り出しにも
+    #    反応しない数字が、例外も出さずに返る。
     if vignetting:
+        if image_distance_mm is None:
+            raise ValueError(
+                "vignetting=True needs image_distance_mm: the cos^4 falloff is set "
+                "by the field angle, which cannot be recovered from the array alone. "
+                "Pass system_geometry(...)['image_distance_mm'], or vignetting=False")
+        img_dist = _pos(image_distance_mm, "image_distance_mm")
         h, w = out.shape
         yy, xx = np.mgrid[0:h, 0:w].astype(np.float64)
         cy, cx = (h - 1) / 2.0, (w - 1) / 2.0
-        r = np.hypot((yy - cy) / max(cy, 1e-12), (xx - cx) / max(cx, 1e-12))
-        r = np.clip(r / np.sqrt(2.0), 0.0, 1.0)         # 角で 1
-        out = out * np.cos(np.arctan(r)) ** 4
+        r_mm = np.hypot(yy - cy, xx - cx) * (pitch * 1e-3)      # 画素 → mm
+        out = out * np.cos(np.arctan2(r_mm, img_dist)) ** 4
     # 4) 露光
     return np.clip(out * gain, 0.0, 1.0)
 
