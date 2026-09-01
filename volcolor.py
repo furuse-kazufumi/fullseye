@@ -807,12 +807,17 @@ def vol_label_legend(labels, props=None, seed: int = 0, spacing=None,
         t = int(top)
         if t != top or t <= 0:
             raise ValueError("top must be a positive integer or None, got %r" % (top,))
-    pal = vol_label_palette(n, seed=seed, background=background)
+    pal = vol_label_palette(n, seed=seed)
 
     rows = []
     for i, c in zip(ids, counts):
         i = int(i)
         rec = by_id[i]
+        if "volume" not in rec:
+            raise ValueError("props entry for label %d has no 'volume' key (keys: "
+                             "%r) — falling back to the voxel count would report a "
+                             "voxel figure in a column labelled mm**3"
+                             % (i, sorted(rec)))
         val = float(rec[measure])
         if not np.isfinite(val):
             raise ValueError("measure %r is %r for label %d — a non-finite sort key "
