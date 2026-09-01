@@ -2711,6 +2711,16 @@ def ex_mpr(log) -> dict:
     return {
         "name": "wing3d_mpr_crosshair",
         "title": "3 直交断面(MPR)とクロスヘア",
+        "title_en": "Three orthogonal planes (MPR) and a crosshair",
+        "caption_en": (
+            "One point seen from three directions. Axial (`vol[z]`), coronal "
+            "(`vol[:, y, :]`) and sagittal (`vol[:, :, x]`) side by side, with three "
+            "crosshairs moving together as they track a helical marker. Each panel states "
+            "**which axis is horizontal and which is vertical**, and the volume carries "
+            "deliberately asymmetric landmarks — a ball at `+x`, a bar at `-y`, a ring at "
+            "`+z` — so a swapped axis or a mirrored view would immediately show up as those "
+            "three landing in the wrong place. (The three planes are plain array slices; the "
+            "contrast comes from `vol_window_level` and the lines from `imagedraw` ops.)"),
         "ops": ["vol_window_level", "imagedraw.draw_line"],
         "facts": {"shape": [n, n, n], "spacing_mm": list(sp), "frames": nf,
                   "landmarks": {"+x": "球", "-y": "横棒", "+z": "リング"}},
