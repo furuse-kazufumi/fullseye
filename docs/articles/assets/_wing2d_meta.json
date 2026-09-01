@@ -165,15 +165,15 @@
     "file": "docs/articles/assets/wing2d_colour_tour.png",
     "thumb": "docs/articles/assets/wing2d_colour_tour_thumb.jpg",
     "frames": 1,
-    "bytes": 155259,
+    "bytes": 149631,
     "size": [
       1038,
       992
     ],
     "panels": 9,
     "sha256": {
-      "wing2d_colour_tour.png": "e2f8c518947a016f3b8cc0a2cf49a7634c407d3b077751d806155d79b85a802b",
-      "wing2d_colour_tour_thumb.jpg": "7cc740d6150cb43fd6ed33b50747353bf7743287477433119fe8456c5baf1fb8"
+      "wing2d_colour_tour.png": "3722b4493f2ef7642b0b64c9c53eb0367e1d8d8c2431d42953356846b5c60277",
+      "wing2d_colour_tour_thumb.jpg": "53c111c50e6736671f5ea6b38efbfc548d8093cc9fbff5aa2218bba87cd47fd5"
     },
     "title": "色空間ツアー —— どの空間なら分けられるか",
     "ops": [
@@ -201,10 +201,14 @@
         "Lab の a (赤-緑)": 0.62
       },
       "winner": "HSV の H (色相)",
+      "channels_reaching_best_iou": [
+        "HSV の H (色相)",
+        "Lab の a (赤-緑)"
+      ],
       "loser": "Lab の L (明るさ)",
       "hue_unit_note": "HSV の H は cv2 の 0..179 を 255 で割った値 = 度/510。純緑 120° が 0.2353 として返る (実測)"
     },
-    "caption": "同じ赤で塗った 2 つの円を、左は 0.35 倍・右は 1.0 倍の明るさで照らした合成シーンを 6 チャンネルで見た 9 パネル。1 本のしきい値で赤い 2 円を取り切れるかを IoU で測ると HSV の H (色相) が 1.000 で最良、Lab の L (明るさ) は最良でも 0.250 —— 明るさを含むチャンネルでは、同じ色が照明で 2 つに割れてしまう。なお HSV の H は cv2 由来で 0..179 を 255 で割った値、つまり度÷510 で返る(純緑 120° が 0.2353 —— 実測して確かめた単位)。"
+    "caption": "同じ赤で塗った 2 つの円を、左は 0.35 倍・右は 1.0 倍の明るさで照らした合成シーンを 6 チャンネルで見た 9 パネル。1 本のしきい値で赤い 2 円を取り切れるかを IoU で測ると HSV の H (色相)・Lab の a (赤-緑) が 1.000 に届き、Lab の L (明るさ) は最良でも 0.250 —— 明るさを含むチャンネルでは、同じ色が照明で 2 つに割れてしまう。なお HSV の H は cv2 由来で 0..179 を 255 で割った値、つまり度÷510 で返る(純緑 120° が 0.2353 —— 実測して確かめた単位)。"
   },
   {
     "name": "denoise_compare",
@@ -948,15 +952,15 @@
     "file": "docs/articles/assets/wing2d_resample_loss.png",
     "thumb": "docs/articles/assets/wing2d_resample_loss_thumb.jpg",
     "frames": 1,
-    "bytes": 580720,
+    "bytes": 567204,
     "size": [
       1148,
       720
     ],
     "panels": 8,
     "sha256": {
-      "wing2d_resample_loss.png": "f1678993176d427b622cbcdd94f01d1aa031c18ac02e0dc683d68e93ea448d85",
-      "wing2d_resample_loss_thumb.jpg": "674ec7dacd52fffff35715a4d1bae8c25ea35daaf16029223ecd31bfaa061368"
+      "wing2d_resample_loss.png": "473a850ebc150ee1e3b1b0e1c9a22d8d9a73b0d46cf43fa414be3e1534fbd1b4",
+      "wing2d_resample_loss_thumb.jpg": "b06598bba30ea7536bf66c3225531cb9863b0a3594c48f3fc2c28c3fd91379bc"
     },
     "title": "回し続けると何が失われるか (リサンプリング損失)",
     "ops": [
@@ -1320,15 +1324,15 @@
     "file": "docs/articles/assets/wing2d_texture_zoo.png",
     "thumb": "docs/articles/assets/wing2d_texture_zoo_thumb.jpg",
     "frames": 1,
-    "bytes": 1078666,
+    "bytes": 1072601,
     "size": [
       1084,
       1022
     ],
     "panels": 12,
     "sha256": {
-      "wing2d_texture_zoo.png": "d2ffca874025c6fabed05dbc05400122673fd864a48f59405408505a6d549796",
-      "wing2d_texture_zoo_thumb.jpg": "52bfc087d5623266137c92539b91e91f5f2b28c492a6b0b3313f46291d58fb2b"
+      "wing2d_texture_zoo.png": "80f9cb8c7787c1e7c32cc47a14df7c041415eec51f83e6ed6cb0264117da6e18",
+      "wing2d_texture_zoo_thumb.jpg": "e8de1c0c2df491b439881c77c0fddd86fb09acc0cad03d0ec497ed99553c2909"
     },
     "title": "テクスチャの見分け —— 特徴量で模様を分ける",
     "ops": [
@@ -1356,14 +1360,14 @@
       "loo_nearest_centroid_accuracy": 0.9792,
       "correct": 47,
       "per_texture_glcm_energy": {
-        "レンガ (image quilting 合成)": 0.2364,
-        "布の織り目 (スペクトル合成)": 0.1485,
-        "1/f 粒状 (スペクトル合成)": 0.212
+        "レンガ（合成）": 0.2364,
+        "布の織り目（合成）": 0.1485,
+        "1/f 粒状（合成）": 0.212
       },
       "per_texture_entropy": {
-        "レンガ (image quilting 合成)": 0.8473,
-        "布の織り目 (スペクトル合成)": 0.8879,
-        "1/f 粒状 (スペクトル合成)": 0.8113
+        "レンガ（合成）": 0.8473,
+        "布の織り目（合成）": 0.8879,
+        "1/f 粒状（合成）": 0.8113
       }
     },
     "caption": "3 種類の模様を 64×64 px の小片 48 枚に切り分け、GLCM energy・entropy・標準偏差・ノイズ推定・4 方向の Gabor 応答の 8 個を特徴量にして leave-one-out の最近傍重心で分類したところ 47/48 = 97.9% が正解だった。見た目が似ていても、GLCM energy は 0.236 / 0.148 / 0.212 と離れている —— 「模様」は数字にできる。"

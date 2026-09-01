@@ -130,7 +130,7 @@
 
 [![色空間ツアー —— どの空間なら分けられるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing2d_colour_tour_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing2d_colour_tour.png)
 
-*↑ **色空間ツアー —— どの空間なら分けられるか** ―― 同じ赤で塗った 2 つの円を、左は 0.35 倍・右は 1.0 倍の明るさで照らした合成シーンを 6 チャンネルで見た 9 パネル。1 本のしきい値で赤い 2 円を取り切れるかを IoU で測ると HSV の H (色相) が 1.000 で最良、Lab の L (明るさ) は最良でも 0.250 —— 明るさを含むチャンネルでは、同じ色が照明で 2 つに割れてしまう。なお HSV の H は cv2 由来で 0..179 を 255 で割った値、つまり度÷510 で返る(純緑 120° が 0.2353 —— 実測して確かめた単位)。使用 op: `trans_from_rgb`, `access_channel`, `rgb1_to_gray`。*
+*↑ **色空間ツアー —— どの空間なら分けられるか** ―― 同じ赤で塗った 2 つの円を、左は 0.35 倍・右は 1.0 倍の明るさで照らした合成シーンを 6 チャンネルで見た 9 パネル。1 本のしきい値で赤い 2 円を取り切れるかを IoU で測ると HSV の H (色相)・Lab の a (赤-緑) が 1.000 に届き、Lab の L (明るさ) は最良でも 0.250 —— 明るさを含むチャンネルでは、同じ色が照明で 2 つに割れてしまう。なお HSV の H は cv2 由来で 0..179 を 255 で割った値、つまり度÷510 で返る(純緑 120° が 0.2353 —— 実測して確かめた単位)。使用 op: `trans_from_rgb`, `access_channel`, `rgb1_to_gray`。*
 
 <!-- 生成: tools/gen_wing2d_gallery.py::subject_colour_tour() / PNG / 9 パネル / numpy で合成した色つきシーン (左→右に照明勾配) -->
 

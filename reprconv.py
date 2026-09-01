@@ -225,7 +225,7 @@ def normals_to_angles(normals):
     配列がどちらの流儀かに依存して意味が変わってしまう。
 
     可逆: :func:`angles_to_normals` と往復して **方向は厳密に戻る**(実測
-    max|Δ| = 2.2e-16、``selftest`` が毎回測る)。**戻らないのは長さだけ** ——
+    max|Δ| = 6.1e-16、``selftest`` が毎回測る)。**戻らないのは長さだけ** ——
     法線は向きなので、非単位ベクトルを渡すと往復で単位ベクトルになる。
 
     Args:
@@ -277,7 +277,7 @@ def normals_to_egi(normals, n_az=36, n_el=18):
     1984)。「どの向きの面がどれだけあるか」の地図で、平面が支配的な物体では
     1 つの bin に山が立つ。**不可逆** —— bin 幅ぶんの方向解像度を捨てる。
     捨てた量は測れる: 最頻 bin の中心方向と入力の平均方向の角度差が量子化誤差で、
-    既定 (36, 18) では bin 幅 10 度に対し実測 3 度前後(``selftest`` が出す)。
+    既定 (36, 18) では bin 幅 10 度に対し実測 3.7 度(``selftest`` が出す)。
 
     仰角の bin は ``sin(el)`` で等分する(等立体角)。度で等分すると極が過剰に
     細かくなり、「北極に面が集中している」という嘘の山が立つ。
@@ -330,7 +330,7 @@ def curvature_to_shape_index(curvature):
 
     **除算でなく atan2 で書いてある**のが要点で、球状臍点 (k1 == k2) でも
     平面 (k1 == k2 == 0) でもゼロ除算にならず、:func:`shape_index_to_curvature`
-    との往復が**全域で厳密**になる(実測 max|Δ| = 8.9e-16)。教科書の
+    との往復が**全域で厳密**になる(実測 max|Δ| = 4.6e-16)。教科書の
     ``atan((k1+k2)/(k1-k2))`` をそのまま実装すると臍点で NaN が出て、
     その NaN が下流で「暗い画素」に化ける。
 
@@ -1249,7 +1249,7 @@ def rot_scale_to_matrix(rot_scale):
     """``(角度[度], 倍率)`` → 2-D 相似変換 ``matrix (2,2)``。``rot_scale`` の出口。
 
     ``match_logpolar_z`` が返す 2-tuple をそのまま行列にする。
-    :func:`matrix_to_rot_scale` と往復して **max|Δ| = 0**(実測)。
+    :func:`matrix_to_rot_scale` と往復して実測 max|Δ| = 2.8e-14(角度は度、倍率は無次元)。
 
     Args:
         rot_scale: 長さ 2 の列 ``(angle_deg, scale)``。scale > 0。
@@ -1337,7 +1337,7 @@ def cscalar_to_polar(cscalar):
     ``measurement``(実スカラのみ)へ混ぜると下流が生 TypeError で落ちるので
     型が分かれている。極形式の対にすると 1-D 語彙へ渡せる。
 
-    **角度は度**。:func:`polar_to_cscalar` と往復して実測 max|Δ| = 2.5e-16。
+    **角度は度**。:func:`polar_to_cscalar` と往復して実測 max|Δ| = 8.9e-16。
 
     Args:
         cscalar: complex(または複素 0-d 配列)。
@@ -1384,8 +1384,9 @@ def countrate_to_counts(countrate, gate_s=1.0e-3):
     そのまま counts と名乗らせると**桁が 7 つずれたまま黙って通る**
     (``TYPE_CHECKS`` はどちらも「非負の 1-D」としか見ていない)。
 
-    :func:`counts_to_countrate` と往復して実測 max|Δ| = 0.0(同じ gate なら
-    乗除が厳密に打ち消す値域)。
+    :func:`counts_to_countrate` と往復して実測 max|Δ| = 9.3e-10(値域が 1e3-1e7 Hz なので
+    **相対** 1e-16 = 倍精度の丸め 1 単位ぶん。絶対値だけ見ると大きく見えるので、
+    レートのように桁が広い量は相対で言う)。
 
     Args:
         countrate: (N,) の非負レート [Hz]。

@@ -1662,6 +1662,8 @@ def subject_colour_tour(log=print) -> dict:
     scores = {k: _best_iou(v, target) for k, v in chans.items()}
     winner = max(scores, key=lambda k: scores[k][0])
     loser = min(scores, key=lambda k: scores[k][0])
+    # 同点で最良に届いたチャンネルを隠さない (1 つだけが勝ったように読ませない)。
+    top = [k for k in scores if scores[k][0] >= scores[winner][0] - 1e-9]
 
     def seg_panel(name):
         iou, t, inv = scores[name]
@@ -1673,11 +1675,11 @@ def subject_colour_tour(log=print) -> dict:
 
     panels = [rgb] + [_cmap(chans[k], "gray") for k in chans] + \
              [seg_panel(winner), seg_panel(loser)]
-    labels = ["元のシーン (合成)\n左→右で照明 0.35→1.00 倍"] + \
-             ["%s\n単独しきい値の最良 IoU %.3f" % (k, scores[k][0]) for k in chans] + \
-             ["%s で最良のしきい値 %.2f\n赤い 2 円の IoU %.3f"
+    labels = ["元のシーン（合成）\n左→右で照明 0.35→1.00 倍"] + \
+             ["%s\n最良 IoU %.3f" % (k, scores[k][0]) for k in chans] + \
+             ["%s・しきい値 %.2f\n赤い 2 円の IoU %.3f"
               % (winner, scores[winner][1], scores[winner][0]),
-              "%s だと最良でも IoU %.3f\n照明差で同じ赤が割れる"
+              "%s は最良でも IoU %.3f\n照明差で同じ赤が割れる"
               % (loser, scores[loser][0])]
     sheet = E.contact_sheet(panels, labels, ncols=3, panel_px=330,
                             title="色空間ツアー —— 照明が変わっても「赤」を拾えるか",
@@ -1695,18 +1697,18 @@ def subject_colour_tour(log=print) -> dict:
             "target": "同じ赤で塗った 2 つの円 (片方は 0.35 倍の照明、片方は 1.0 倍)",
             "best_iou_by_channel": {k: round(v[0], 4) for k, v in scores.items()},
             "best_threshold_by_channel": {k: round(v[1], 3) for k, v in scores.items()},
-            "winner": winner, "loser": loser,
+            "winner": winner, "channels_reaching_best_iou": top, "loser": loser,
             "hue_unit_note": ("HSV の H は cv2 の 0..179 を 255 で割った値 = 度/510。"
                               "純緑 120° が 0.2353 として返る (実測)"),
         },
         "caption": (
             "同じ赤で塗った 2 つの円を、左は 0.35 倍・右は 1.0 倍の明るさで照らした"
             "合成シーンを 6 チャンネルで見た 9 パネル。1 本のしきい値で赤い 2 円を"
-            "取り切れるかを IoU で測ると %s が %.3f で最良、%s は最良でも %.3f "
+            "取り切れるかを IoU で測ると %s が %.3f に届き、%s は最良でも %.3f "
             "—— 明るさを含むチャンネルでは、同じ色が照明で 2 つに割れてしまう。"
             "なお HSV の H は cv2 由来で 0..179 を 255 で割った値、つまり度÷510 で返る"
             "(純緑 120° が 0.2353 —— 実測して確かめた単位)。"
-            % (winner, scores[winner][0], loser, scores[loser][0])),
+            % ("・".join(top), scores[winner][0], loser, scores[loser][0])),
     }
 
 
@@ -1716,9 +1718,9 @@ def subject_colour_tour(log=print) -> dict:
 def subject_texture_zoo(log=print) -> dict:
     """3 種類の模様を特徴量で見分けられるかを、最近傍重心分類の正解率で実測."""
     E = _tile_mod()
-    names = {"brick_quilt.png": "レンガ (image quilting 合成)",
-             "weave_synth.png": "布の織り目 (スペクトル合成)",
-             "grain_synth.png": "1/f 粒状 (スペクトル合成)"}
+    names = {"brick_quilt.png": "レンガ（合成）",
+             "weave_synth.png": "布の織り目（合成）",
+             "grain_synth.png": "1/f 粒状（合成）"}
     texs = {k: _load_gray(k)[:256, :256] for k in names}
     feat_ops = [("cooc_feature_matrix", 0.3, 0.5, "GLCM energy"),
                 ("entropy_gray", 0.5, 0.5, "entropy"),
@@ -1755,18 +1757,21 @@ def subject_texture_zoo(log=print) -> dict:
         g9 = np.asarray(fs.apply(texs[k], "gabor", 0.5, 0.5))
         lbp = np.asarray(fs.apply(texs[k], "sk_lbp", 0.34, 0.5))
         panels += [texs[k], g0, g9, lbp]
+        # 向きの取り違えに注意: gabor の a=0 (θ=0°) は列方向に振動する核なので
+        # **縦縞**に、a=0.5 (θ=90°) は行方向に振動するので **横縞**に反応する
+        # (生の畳み込みで実測: 横縞画像で |応答| の平均が 0.0193 vs 1.1105)。
         labels += [
             "%s\nGLCM energy %.3f / entropy %.3f"
             % (names[k], float(fs.apply(texs[k], "cooc_feature_matrix", 0.3, 0.5)),
                float(fs.apply(texs[k], "entropy_gray", 0.5, 0.5))),
-            "gabor θ=0° (横縞に反応)\n平均応答 %.4f" % float(np.mean(g0)),
-            "gabor θ=90° (縦縞に反応)\n平均応答 %.4f" % float(np.mean(g9)),
-            "sk_lbp (局所二値パターン)\nstd %.4f"
+            "gabor θ=0°（縦縞に反応）\n平均応答 %.4f" % float(np.mean(g0)),
+            "gabor θ=90°（横縞に反応）\n平均応答 %.4f" % float(np.mean(g9)),
+            "sk_lbp（局所二値パターン）\nstd %.4f"
             % float(fs.apply(lbp, "gray_histo_abs", 0.5, 0.5))]
     sheet = E.contact_sheet(
         panels, labels, ncols=4, panel_px=272, label_h=54, font_size=16,
-        title=("テクスチャの見分け —— 8 個の特徴量で %d 枚中 %d 枚を正しく分類 "
-               "(leave-one-out 最近傍重心 %.1f%%)" % (len(Xn), correct, 100 * acc)))
+        title=("テクスチャの見分け —— 8 特徴量で %d/%d 枚を正しく分類 (%.1f%%)"
+               % (correct, len(Xn), 100 * acc)))
     info = E.save_exhibit(sheet, "wing2d_texture_zoo")
     return {
         "name": "texture_zoo", "kind": "png", "file": info["png"],
@@ -1845,17 +1850,13 @@ def subject_resample_loss(log=print) -> dict:
         h = hist[k]
         panels.append(h["img"])
         tail = ("元画像" if k == 0 else
-                ("累計 %.0f° = 一周して元の向きに戻った\n中央だけの PSNR %.2f dB"
-                 % (k * step_deg, psnr_core) if k == 36 else
-                 "累計 %.0f°" % (k * step_deg)))
-        labels.append("%d 回目 (%s)\n中央の細かさ %.4f (元の %.1f%%)"
-                      % (k, tail.replace("\n", " / "), hp_core[k],
-                         100 * hp_core[k] / hp_core[0]))
+                ("一周して元の向き" if k == 36 else "累計 %.0f°" % (k * step_deg)))
+        labels.append("%d 回目（%s）\n細かさ %.4f = 元の %.1f%%"
+                      % (k, tail, hp_core[k], 100 * hp_core[k] / hp_core[0]))
     panels.append(_cmap(np.abs(src - hist[36]["img"]), "magma",
                         vmin=0.0, vmax=0.25))
-    labels.append("36 回転後と元画像の差 —— 明るいのは端\n"
-                  "全体 PSNR %.2f dB / 中央だけなら %.2f dB"
-                  % (psnr_full, psnr_core))
+    labels.append("元画像との差（明るいのは端）\n"
+                  "全体 %.2f dB / 中央 %.2f dB" % (psnr_full, psnr_core))
     curve = _plot(
         [{"x": [h["n"] for h in hist],
           "y": [100 * v / hp_core[0] for v in hp_core],
@@ -1865,12 +1866,11 @@ def subject_resample_loss(log=print) -> dict:
         title="回すたびに細かい模様が減っていく",
         xlabel="10° 回転を掛けた回数", legend_pos="tr")
     panels.append(curve.astype(np.float64) / 255.0)
-    labels.append("失われる量は回すほど積み上がる\n36 回で中央の細かさは %.1f%% に"
+    labels.append("損失は回すほど積み上がる\n36 回で細かさ %.1f%%"
                   % (100 * hp_core[36] / hp_core[0]))
     sheet = E.contact_sheet(
         panels, labels, ncols=4, panel_px=272, label_h=56, font_size=16,
-        title=("回し続けると何が失われるか —— rotate_image を 10° ずつ 36 回 "
-               "(合計 360° = 元の向き)"))
+        title="回し続けると何が失われるか —— 10° の回転を 36 回（合計 360°）")
     info = E.save_exhibit(sheet, "wing2d_resample_loss")
     return {
         "name": "resample_loss", "kind": "png", "file": info["png"],

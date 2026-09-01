@@ -1667,6 +1667,167 @@ CAPTIONS = {
             "/ 重複している**といった off-by-one はここで必ず露見します。"
             "拡大は最近傍 ×{2}(補間しない —— 画素の粗さ自体が情報)。"
         ).format(f["volume_shape"][0] - 1, r["frames"], f["upscale"])),
+    "registration": (
+        "点群を合わせる —— 初期ずれから収束まで",
+        "`registration.icp`(trimmed), `render_points_frame`, `imagedraw.draw_polyline`",
+        lambda f, r: (
+            "実データ(イトカワ表面 {0:,} 点)に既知の剛体ずれ {1:g} 度 + 並進 {2:.3f} と"
+            "等方ノイズ σ = {3:.4f} を入れ、trimmed ICP を **1 反復ずつ** {4} 回実行した"
+            "実測の収束です。対応づけ前の素の点間距離平均 {5:.3f} → 1 反復目 {6:.3f} → "
+            "最終 {7:.3f}({8:.1f} 倍改善)で、注入ノイズの σ にほぼ張り付いて止まります。"
+            "曲線が下がりきっても橙が青に乗っていなければ「収束したのに合っていない」—— "
+            "数字だけでは見えない失敗が、絵にすると一目で分かります。"
+        ).format(f["n_points"], f["rotation_deg"], f["translation"], f["noise_sigma"],
+                 f["n_iter"], f["rmse_raw_before"], f["rmse_first"], f["rmse_last"],
+                 f["improve_x"])),
+    "normals": (
+        "法線の色 —— 3D デバッグで最初に見る絵",
+        "`render_mesh`, `phong_shade`, world 法線の RGB 化",
+        lambda f, r: (
+            "{0}(三角形 {1:,} 枚 / 頂点 {2:,}、表面積 {3:.3f})を表と裏 180 度から"
+            "撮り、陰影と **world 法線をそのまま RGB にした絵**を並べました。"
+            "world 法線は「同じ色 = 同じ向き」なので、裏に回っても地面向きの面は"
+            "同じ色のまま残ります。ここがまだらなら向き付け(巻き方向)が壊れています。"
+            "実測では外向き面 {4:,} / {1:,} = {5:.1f} %。被覆画素は表 {6:,} px / 裏 {7:,} px。"
+        ).format(f["source"], f["n_faces"], f["n_vertices"], f["surface_area"],
+                 f["outward_faces"], f["outward_fraction"] * 100.0,
+                 f["coverage_front_px"], f["coverage_back_px"])),
+    "lightfield": (
+        "ライトフィールドの視点移動 —— 49 個のカメラで撮る",
+        "`lf_synthesize`, `lf_subaperture`, `lf_epi`, `lf_refocus`, `lf_stats`",
+        lambda f, r: (
+            "{0}×{1} = {2} 視点 × {3}×{4} 画素の合成ライトフィールドで、アパーチャの周を"
+            "1 周(全 {5} フレーム)します。近いものほど大きく動く —— 中央視点との差が"
+            "そのまま「どこが手前か」の絵になります。実測の最大視差は {6:.2f} px、"
+            "EPI(行 y = {7})の線の傾きがそれに対応します。再合焦の分散は "
+            "slope = 0 で {8:.5f}、slope = 3 で {9:.5f}。"
+        ).format(f["angular"][0], f["angular"][1], f["n_views"], f["spatial"][0],
+                 f["spatial"][1], r["frames"], f["max_slope_px"], f["epi_row"],
+                 f["refocus_var_slope0"], f["refocus_var_slope3"])),
+    "depth3d": (
+        "深度マップを持ち上げて 3D にする",
+        "`render_mesh`, `camera.backproject`, `render_points_frame`",
+        lambda f, r: (
+            "{0} を {1}×{1} px の深度画像にし、有効画素 {2:,}({3:.1f} %)だけを"
+            "逆投影して立体に起こす過程です。深度は {4:.4f}〜{5:.4f}。"
+            "ここで **画素中心の規約が 2 つある** ことが効きます —— `render3d` は"
+            "「添字 + 0.5」を画素中心としてレイを飛ばし、`camera.depth_to_points` は"
+            "添字そのものを中心とみなすので、素直に繋ぐと雲全体が {6:.5f} world 単位"
+            "(ちょうど半画素)ずれます。この展示は +0.5 側を採用しています。"
+        ).format(f["source"], f["resolution"], f["n_points"],
+                 f["valid_fraction"] * 100.0, f["depth_min"], f["depth_max"],
+                 f["half_pixel_shift_world"])),
+    "cadmap": (
+        "欠陥を CAD 面へ逆写像し、見えていない面を数える",
+        "`cad_pixel_to_surface`, `cad_defect_to_cad`, `cad_visible_faces`, "
+        "`cad_surface_to_pixel`",
+        lambda f, r: (
+            "SDF から作った段付き部品(三角形 {0:,} 枚、表面積 {1:.1f})を "
+            "{2}×{2} px の検査カメラで撮り、①見え方 ②画素 → CAD 面 ID ③画像上の"
+            "欠陥ラベル 4 件の逆写像 ④見えた面(緑)/ 見えない面(赤)を並べました。"
+            "命中画素 {3:,}({4:.1f} %)。カメラを向いている面積は {5:.1f} % ですが、"
+            "塔が自分の台座を隠すため **実際に見えたのは {6:.1f} %**(面数では "
+            "{7:,} / {0:,} = {8:.1f} %)。表面点 {9:,} でも可視 {10:.1f} % / 遮蔽 {11:.1f} % と"
+            "一致します。欠陥 #3 #4 は CAD の外(命中 0)なので実面積 0 のまま残る —— "
+            "黙って消えないのが大事なところです。"
+        ).format(f["n_faces"], f["surface_area"], f["image"][0], f["hit_pixels"],
+                 f["hit_fraction"] * 100.0, f["front_facing_area_fraction"] * 100.0,
+                 f["coverage_area"] * 100.0, f["faces_seen"],
+                 f["coverage_faces"] * 100.0, f["sample_points"],
+                 f["point_visible_fraction"] * 100.0,
+                 f["point_occluded_fraction"] * 100.0)),
+    "crop3d": (
+        "3D の処理領域 —— 切り出して、処理して、貼り戻す",
+        "`vol_crop_domain`, `vol_gradient_magnitude`, `vol_uncrop`, `vol_boundary`",
+        lambda f, r: (
+            "{0}×{1}×{2} の CT から y ∈ [20, 56) を margin 2 で切り出すと "
+            "{3}(offset (z,y,x) = {4})になります。その中だけ勾配を計算し、"
+            "元の座標系へ貼り戻すまでを 4 段で 3D 表示しました(右は元の全体を灰色で"
+            "重ねたもの)。往復の実測は **箱の外の最大値 {5:g}(厳密に 0)/ 箱の中の"
+            "元との最大差 {6:g}(ビット一致)**。貼り戻しで 1 voxel ずれても 2D の表では"
+            "気づけませんが、重ねて回せば一発です。"
+        ).format(f["volume_shape"][0], f["volume_shape"][1], f["volume_shape"][2],
+                 "×".join(str(s) for s in f["crop_shape"]),
+                 "(%d, %d, %d)" % tuple(f["offset"]),
+                 f["outside_box_max_after_uncrop"], f["roundtrip_max_abs_error"])),
+    "studio_walk": (
+        "F キーで 3D データの中を歩く(実 Studio 画面)",
+        "Studio 3D ビューアの一人称モード(`render_points_frame_fp`)、"
+        "`viewer3d_project_persp`",
+        lambda f, r: (
+            "本物の Fullseye Studio({0}×{1} px、オフスクリーン)にイトカワの実形状"
+            "モデル(頂点 {2:,} / 三角形 {3:,}、スプラット {4:,} 点)を開き、"
+            "**実際の QKeyEvent** で F → W で前進 → ドラッグで見回し → +/- で視野角 → "
+            "A で左へ → R で入口 → F で軌道カメラへ、と操作した {5} フレームです。"
+            "透視投影なので近づくほど手前が大きくなり、視野角を変えると遠近感そのものが"
+            "変わります。1 タップ = 半径/50 = {6:.5f} の 1 歩(既定 FOV {7:.0f} 度、"
+            "可変域 {8:.0f}〜{9:.0f} 度)。下端の細い帯はこの GIF の進行バーで、UI では"
+            "ありません。"
+        ).format(f["window"][0], f["window"][1], f["n_vertices"], f["n_faces"],
+                 f["splat_points"], r["frames"], f["step_per_tap"],
+                 f["fov_default"], f["fov_range"][0], f["fov_range"][1])),
+    "studio_turntable": (
+        "軌道カメラで回す —— ボリュームをそのまま 3D ビューアで開く",
+        "`volume_to_shell_points`(Otsu → 境界シェル)、Studio 3D ビューアの軌道カメラ",
+        lambda f, r: (
+            "同梱の骨格 CT({0}×{1}×{2})を Studio が「ボリュームファイル」として開く"
+            "経路そのままです。Otsu 閾値 {3:.4f} で前景を取り、その **境界シェルだけ** を "
+            "{4:,} 点の物理座標に落として(間引き 1/{5})表示しています。"
+            "回しているのは合成ではなく、**実際の左ドラッグ**(1 回 = yaw +{6:.0f} 度)"
+            "を {7} 回送った結果で、最終 yaw は {8:.0f} 度。"
+        ).format(f["volume_shape"][0], f["volume_shape"][1], f["volume_shape"][2],
+                 f["otsu_threshold"], f["n_points"], f["downsampled_by"],
+                 f["yaw_per_drag_deg"], r["frames"], f["yaw_final"])),
+    "studio_help": (
+        "新しい族の op ヘルプを Studio の中で開く",
+        "Studio のヘルプダイアログ(`op_help_html` / `op_help_html_3d`)、"
+        "`tools/opdocs.py` 生成の HTML",
+        lambda f, r: (
+            "ライトフィールド → FMCW レンジドップラ → 四元数モノジェニック → 光子計数"
+            "(SPAD)→ 音響ビームフォーミング → 干渉(角スペクトル伝搬)→ 3D の ICP・"
+            "主曲率、と {0} ページを実際に開き、各ページを上から下までスクロールした "
+            "{1} フレームです。ヘルプ本文は `docs/ops/**/*.md` から自動生成された"
+            "実ファイル(2D {2} 枚 / 3D {3} 枚)。族別ディレクトリには合計 {4} 枚が"
+            "生成済みで、そのうち Studio から開けるのは `tb_*` 型付き op 経由の {5} 枚、"
+            "残り {6} 枚はまだ画面から辿れません(干渉は 9 枚中 0 枚)。"
+        ).format(len(f["pages"]), r["frames"], f["help_files_2d"], f["help_files_3d"],
+                 f["family_help_total"], f["family_reachable_total"],
+                 f["family_unreachable_total"])),
+    "studio_editor": (
+        "書いて、F5 で走らせて、結果が出るまで",
+        "Studio の Python エディタ(タブ + F5 実行)、`fullseye.apply`, "
+        "`fullseye.segment_objects`",
+        lambda f, r: (
+            "タブエディタに {0} 行のコードを打ち込み、F5 で実行して出力コンソールを"
+            "読み下すまでの {1} フレームです({2}×{3} px のダイアログ)。"
+            "実行はモックではなく本物の子プロセスで、ステータスは「{4}」。"
+            "出力 {5} 行の末尾は {6} —— コインの分割結果です。"
+        ).format(f["code_lines"], r["frames"], f["dialog"][0], f["dialog"][1],
+                 f["status"], f["output_lines"],
+                 " / ".join("`%s`" % x for x in f["output_tail"]))),
+    "studio_opsearch": (
+        "900 超の op から目的の 1 個へ",
+        "Studio の演算子検索(名前 / HALCON 別名 / 分類 / docstring を横断)",
+        lambda f, r: (
+            "検索欄に 1 文字ずつ「{0}」と打つと、{1:,} 個の一覧が {2} 件まで絞れます"
+            "(実測の内訳: {3})。選ぶと `in_sort → out_sort` のシグネチャが右下に出る —— "
+            "型が見えるので、次に何を繋げるかがその場で分かります。最後に「cad」で"
+            "引くと {4} 件。"
+        ).format(f["query"], f["total_ops"], f["final_matches"],
+                 " → ".join("%s:%d" % (s["text"] or "(空)", s["matches"])
+                            for s in f["steps"][:len(f["query"]) + 1]),
+                 f["steps"][-1]["matches"])),
+    "studio_pipeline": (
+        "パイプラインを組む —— 型が合わないと Problems に出る",
+        "Studio の Program パネル(HDevelop 風)+ Problems、`engine.diagnose_stages`",
+        lambda f, r: (
+            "coins サンプルに `gaussian → otsu → opening_circle → sk_clear_border` を"
+            "1 段ずつ足していき、⑤でわざと **region を受け取れない** "
+            "`circularity_xld`(contour 入力)を足します。すると Problems に "
+            "「{0}」と出る —— Fullseye は繋いだ後に落ちるのではなく、繋いだ瞬間に"
+            "型の不一致を言います。⑥で外すと「no problems」に戻ります(全 {1} フレーム)。"
+        ).format(next((p for s in f["steps"] for p in s["problems"]), "—"),
+                 r["frames"])),
 }
 
 
