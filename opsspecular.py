@@ -208,7 +208,6 @@ RESULT_ADAPTERS = {
     "specular_diffuse_split": lambda r: r[0],
     "photometric_stereo_robust": lambda r: r[0],
     "polarization_separate": lambda r: r[0],
-    "polarization_render": lambda r: [r[i] for i in range(r.shape[0])],
 }
 
 
