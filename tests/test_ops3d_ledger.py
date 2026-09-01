@@ -291,6 +291,82 @@ def test_dict_shape_descriptors_declare_table_not_descriptor():
         assert cf.TYPE_CHECKS["descriptor"](ops3d.call(name, _pts()))
 
 
+def test_pairs_predicate_is_not_a_no_op():
+    """``pairs`` の述語は **(N,2) か「同じ長さの 1-D 2 本」だけ**を通す。
+
+    2026-09-02 まで ``lambda v: True`` で、None も 42 も文字列も dict も通していた
+    (= 述語が「有る」と数えられるぶん無いより悪い)。正典は消費側 6 op を実行して
+    決めた: どれも (2,N) を "must be (N, 2) or a 2-tuple of equal-length 1-D
+    arrays" で拒否し、histogram の (counts, edges) を長さ違いとして拒否する。
+    """
+    ok = cf.TYPE_CHECKS["pairs"]
+    assert ok(np.zeros((16, 2)))
+    assert ok((np.zeros(16), np.ones(16)))
+    for bad in (None, 42, "s", {"a": 1}, (), np.zeros(3), np.zeros((2, 16)),
+                (np.zeros(10), np.zeros(11)), (0.0, 1.0)):
+        assert not ok(bad), bad
+    # 産む側は adapter 適用後にこの正典へ収まる(素の返りは収まらない = 型の嘘だった)
+    import opsmath
+    sig = np.sin(np.linspace(0.0, 8 * np.pi, 256))
+    assert not ok(opsmath.get("stat_histogram")(sig))      # (counts(10,), edges(11,))
+    assert ok(opsmath.call("stat_histogram", sig))
+    import ops1d
+    for name in ("spectrum", "invert_funct_1d", "x_range_funct_1d",
+                 "y_range_funct_1d", "get_pair_funct_1d"):
+        assert not ok(ops1d.get(name)(sig)), name
+        assert ok(ops1d.call(name, sig)), name
+    assert not ok(ops3d.get("curvature_torsion")(_pts()))
+    assert ok(ops3d.call("curvature_torsion", _pts()))
+    # create_funct_1d_pairs は名前に反して funct_1d(1-D)を返す = out は signal
+    assert ops1d.info("create_funct_1d_pairs")["out"] == "signal"
+    made = ops1d.call("create_funct_1d_pairs", np.arange(20.0),
+                      np.linspace(0.0, 1.0, 20))
+    assert cf.TYPE_CHECKS["signal"](made) and not ok(made)
+
+
+def test_flow_is_two_types_because_its_consumers_are_exclusive():
+    """dense (3,D,H,W) と scattered (N,3) は **1 型 1 述語では書けない**。
+
+    根拠は消費側の実行: reprconv の flow_magnitude / flow_to_rgbimage は DENSE を、
+    flow_speed / flow_apply は SCATTERED を名指しで要求し、互いの形を拒否する。
+    どの 1 つの値も両方を満たせないので型を分けた。
+    """
+    assert ops3d.info("scene_flow_lk")["out"] == "flow_dense"
+    for name in ("estimate_flow", "nearest_neighbor_flow", "smooth_flow"):
+        assert ops3d.info(name)["out"] == "flow_scattered", name
+    vol = _vol(0)
+    dense = ops3d.call("scene_flow_lk", vol, _vol(1))
+    scat = ops3d.call("estimate_flow", _pts(), _pts(seed=1))
+    assert cf.TYPE_CHECKS["flow_dense"](dense) and not cf.TYPE_CHECKS["flow_scattered"](dense)
+    assert cf.TYPE_CHECKS["flow_scattered"](scat) and not cf.TYPE_CHECKS["flow_dense"](scat)
+    reprconv = pytest.importorskip("reprconv")
+    for fn_name, good, bad in (("flow_magnitude", dense, scat),
+                               ("flow_speed", scat, dense)):
+        getattr(reprconv, fn_name)(good)                   # 実経路は通る
+        with pytest.raises(ValueError, match="flow"):
+            getattr(reprconv, fn_name)(bad)                # 相手の形は fail-closed
+
+
+def test_labels_seed_covers_2d_and_3d_consumers():
+    """``labels`` の種は 2-D 画像と 3-D volume の**両方**を出す。
+
+    3-D の種が無いあいだ ``vol_region_props``(3-D 要求)は 2-D を documented
+    ValueError で拒否され、「同じ連鎖で先に vol_label が引かれた場合だけ」到達する
+    未実行 op だった(実測: 1500 連鎖の未到達 75 件に入っていた)。
+    """
+    gen = cf.make_generators()["labels"]
+    dims = {np.asarray(gen(np.random.default_rng(s))).ndim for s in range(40)}
+    assert dims == {2, 3}, dims
+    lab3 = ops3d.call("vol_label", _vol(0) > 0.5, 26)
+    assert cf.TYPE_CHECKS["labels"](lab3) and lab3.ndim == 3
+    assert ops3d.get("vol_region_props")(lab3)             # 3-D 消費側が実際に走る
+    lab2 = next(g for g in (gen(np.random.default_rng(s)) for s in range(40))
+                if np.asarray(g).ndim == 2)
+    assert cf.TYPE_CHECKS["labels"](lab2)
+    # float の「ラベル」は弾く(下流が黙って丸めるため)
+    assert not cf.TYPE_CHECKS["labels"](lab3.astype(np.float64))
+
+
 def test_every_catalog_out_type_has_a_predicate():
     """**宣言 out 型はすべて TYPE_CHECKS に述語を持つ**(穴を再び開けない不変条件)。
 
