@@ -1178,8 +1178,8 @@ def ticks(img, axes, xticks=None, yticks=None, color="neutral", width=1,
     if tick_len < 0:
         raise ValueError(f"tick_len must be >= 0 (got: {tick_len})")
     x, y, w, h = axes["rect"]
-    xt = nice_ticks(*axes["xlim"]) if xticks is None else np.asarray(xticks, dtype=np.float64)
-    yt = nice_ticks(*axes["ylim"]) if yticks is None else np.asarray(yticks, dtype=np.float64)
+    xt = _auto_ticks(axes, "x") if xticks is None else np.asarray(xticks, dtype=np.float64)
+    yt = _auto_ticks(axes, "y") if yticks is None else np.asarray(yticks, dtype=np.float64)
     col = _channel_color(a, color, scheme)
     kw = _style(style, width)
     for v in np.atleast_1d(xt):
