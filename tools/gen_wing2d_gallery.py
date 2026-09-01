@@ -136,14 +136,28 @@ def _save_gif(frames, name: str, fps: float = 6.0, hold_last: int = 0) -> dict:
     if hold_last > 0:
         arrs = arrs + [arrs[-1]] * hold_last
     path = os.path.join(MEDIA_DIR, name + ".gif")
-    used = 256
-    for colors in (192, 128, 96, 64, 48):
-        pil = [Image.fromarray(a, "RGB").convert(
-            "P", palette=Image.ADAPTIVE, colors=colors) for a in arrs]
-        pil[0].save(path, save_all=True, append_images=pil[1:],
-                    duration=int(round(1000.0 / fps)), loop=0, optimize=True)
-        used = colors
-        if os.path.getsize(path) <= GIF_MAX_BYTES:
+    used, scale = 256, 1.0
+    # 色数 -> 解像度 の順に落として 3 MB に収める(横幅は 900px を下回らせない)。
+    for scale in (1.0, 0.92, 0.86, 0.80):
+        cur = arrs
+        if scale < 1.0:
+            w = int(round(arrs[0].shape[1] * scale))
+            if w < 900:
+                break
+            h = int(round(arrs[0].shape[0] * scale))
+            cur = [_fit(a, w, h) for a in arrs]
+        done = False
+        for colors in (192, 128, 96, 64, 48):
+            pil = [Image.fromarray(a, "RGB").convert(
+                "P", palette=Image.ADAPTIVE, colors=colors) for a in cur]
+            pil[0].save(path, save_all=True, append_images=pil[1:],
+                        duration=int(round(1000.0 / fps)), loop=0, optimize=True)
+            used = colors
+            if os.path.getsize(path) <= GIF_MAX_BYTES:
+                done = True
+                break
+        if done:
+            arrs = cur
             break
     # 代表フレーム (掃引の中ほど) をサムネに
     rep = arrs[len(arrs) // 2]
@@ -534,10 +548,21 @@ def _signed_to_01(x) -> np.ndarray:
     return 0.5 + 0.5 * (a / m if m > 1e-12 else a)
 
 
+def _stretch(x, lo_pct=1.0, hi_pct=99.0) -> np.ndarray:
+    """パーセンタイルでコントラストを伸ばす **表示専用** の写像.
+
+    highpass の出力は平均 0.5・標準偏差 0.04 程度に収まるため、そのまま貼ると
+    一様な灰色にしか見えない。処理の結果を変えるものではなく、見せるための拡大。
+    """
+    a = np.asarray(x, np.float64)
+    lo, hi = np.percentile(a, lo_pct), np.percentile(a, hi_pct)
+    return np.clip((a - lo) / (hi - lo), 0, 1) if hi > lo else np.zeros_like(a)
+
+
 def subject_freq_sweep(log=print) -> dict:
     """ローパス/ハイパス/バンドパスの遮断周波数を掃引し、残る情報量を実測."""
     src = _load_gray("camera.png")
-    n = 13
+    n = 11
     A = np.linspace(0.0, 1.0, n)
     lo_cut = 0.05 + 0.40 * A                        # lowpass の遮断 (正規化周波数)
     hi_cut = 0.02 + 0.30 * A                        # highpass の遮断
@@ -560,7 +585,7 @@ def subject_freq_sweep(log=print) -> dict:
     for i, a in enumerate(A):
         grid = _panel_grid(
             [src, _spectrum_rgb(src, cutoff=lo_cut[i], band=(bp_lo[i], bp_hi)),
-             lows[i], highs[i], _signed_to_01(bands[i]),
+             lows[i], _stretch(highs[i]), _stretch(_signed_to_01(bands[i])),
              _cmap(np.abs(src - lows[i]), "magma", vmin=0.0, vmax=0.35)],
             ["元の写真 (camera.png)",
              "スペクトル + 遮断円\n緑=lowpass 橙=bandpass",

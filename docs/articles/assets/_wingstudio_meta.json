@@ -1,0 +1,70 @@
+{
+  "generator": "tools/gen_wingstudio_gallery.py",
+  "seed": 20260902,
+  "exhibits": [
+    {
+      "kind": "gif",
+      "name": "volume_turntable",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_volume_turntable.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_volume_turntable_thumb.jpg",
+      "frames": 36,
+      "size": [
+        996,
+        640
+      ],
+      "fps": 12,
+      "bytes": 1052843,
+      "thumb_bytes": 31417,
+      "thumb_frame": 6,
+      "mean_abs_delta": 3.359,
+      "sha256": "b6386d706b8b91e20b8e6b007a4aa52648520513c38f550db7beeebdfce8a133",
+      "thumb_sha256": "a483f7470348f1ebc825e67b840bf41213ba5963270608bfb63a2958eb040455",
+      "facts": {
+        "volume_shape": [
+          20,
+          97,
+          28
+        ],
+        "iso_level": 0.510815,
+        "n_faces": 9710,
+        "n_vertices": 4866,
+        "n_shell_points": 2759,
+        "frames": 36
+      },
+      "seconds": 12.45
+    },
+    {
+      "kind": "gif",
+      "name": "zslices",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_zslices.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_zslices_thumb.jpg",
+      "frames": 20,
+      "size": [
+        612,
+        633
+      ],
+      "fps": 5,
+      "bytes": 709776,
+      "thumb_bytes": 56957,
+      "thumb_frame": 10,
+      "mean_abs_delta": 2.486,
+      "sha256": "46eddbd8fd732f1636282f8ba0f540700752ce3710f1d44a79fe7097da138490",
+      "thumb_sha256": "0bb82ce2a5822f50911b8e508bc2d8b06b2f57a8e51d9a2657994ab7c0ec21ef",
+      "facts": {
+        "volume_shape": [
+          20,
+          97,
+          28
+        ],
+        "frames": 20,
+        "upscale": 5,
+        "value_range": [
+          0.0,
+          1.22636
+        ],
+        "threshold": 0.510815
+      },
+      "seconds": 1.17
+    }
+  ]
+}
