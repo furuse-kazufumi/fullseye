@@ -1042,22 +1042,42 @@ def quat_correlate(qimage, template) -> np.ndarray:
     it computes. The *vector* part is ``-sum (a x b)``, the accumulated colour
     cross-product, and it is zero exactly when the two colour fields are
     parallel. So the same call answers "how well does it match?" (scalar part)
-    **and** "by what colour rotation does it fail to match?" (vector part:
-    direction = the rotation axis, magnitude = the misalignment).
+    **and** "in what way does the colour fail to line up?" (vector part).
 
-    Measured on a 32x32 patch matched against a copy of itself rotated 30 degrees
-    about the blue axis: the scalar peak falls from 233.4 to 202.2 (the cosine
-    factor, ``cos(30 deg) = 0.866``, recovered as 0.8663), while the vector part
-    at the peak points along ``(0.000, 0.000, 1.000)`` — the rotation axis — with
-    magnitude 116.7, and ``atan2(|vector|, scalar)`` recovers the rotation angle
-    as 30.0000 degrees. A channelwise pipeline has no term that can produce that:
-    the cross-products are *cross*-channel products, and three independent
-    channel correlations never form them.
+    Measured on a 32x32 patch whose colours lie in the red-green plane, matched
+    against a copy of itself rotated about the blue axis. The scalar part is
+    ``cos(angle)`` times the self-correlation, exactly, and
+    ``atan2(|vector|, scalar)`` returns the rotation angle:
 
-    Both inputs must be pure quaternion images for the reading above to hold; a
-    non-zero scalar part is not refused (it is algebraically fine) but it does
-    contribute to both parts and the colour interpretation stops applying, which
-    is stated here rather than checked.
+    ===========  ==================  =================  ==================
+    rotation     scalar/self ratio   ``cos(angle)``     angle recovered
+    ===========  ==================  =================  ==================
+    0 deg        1.000000            1.000000           0.000000 deg
+    30 deg       0.866025            0.866025           30.000000 deg
+    90 deg       0.000000            0.000000           90.000000 deg
+    ===========  ==================  =================  ==================
+
+    with the vector direction at ``(0.000, 0.000, -1.000)`` — the **negative** of
+    the rotation axis, because the conjugate sits on the left of the product. A
+    channelwise pipeline has no term that can produce any of that: the
+    cross-products are *cross*-channel products, and three independent channel
+    correlations never form them. (Verified in the same test: the scalar part
+    equals the summed per-channel correlation to 0.0 exactly, so the channelwise
+    baseline recovers the scalar part and nothing else.)
+
+    **The exact reading needs the colours to lie in the plane orthogonal to the
+    rotation axis, and the docstring says so because the general case is
+    biased.** For a colour field with a component along the axis, the vector part
+    picks up terms in ``a_z`` and the recovered angle is wrong: measured on a
+    uniform-random colour patch rotated 30 degrees about blue, the same formula
+    returns **22.524 degrees** on an axis of ``(0.247, 0.419, -0.874)`` instead
+    of ``(0, 0, -1)``. That is a quiet wrong number, it is inherent to summing
+    per-pixel cross products, and it is not detectable from the result — so the
+    precondition is part of the contract.
+
+    Both inputs must be pure quaternion images for any of the above to hold; a
+    non-zero scalar part is not refused (it is algebraically fine) but it
+    contributes to both parts and the colour interpretation stops applying.
 
     **The correlation is circular** (computed with FFTs, like
     ``filters_freq``'s family): a template near the border wraps around. Pad the
