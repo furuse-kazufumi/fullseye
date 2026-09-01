@@ -1046,6 +1046,14 @@ def _gaussians(g):
                          f"({mu.shape[0]},) to match mu")
     if np.any(sigma <= 0.0):
         raise ValueError(f"gaussians: sigma must be > 0; got min {float(sigma.min())}")
+    # sigma が小さすぎると正規化係数 1/sigma**3 がアンダーフロー/オーバーフローし、
+    # **例外を出さずに** 0 除算 -> NaN、あるいは inf の密度になる。有限性を先に見る。
+    norm = (2.0 * np.pi) ** 1.5 * sigma.astype(np.float64) ** 3
+    if not np.all(np.isfinite(norm)) or np.any(norm <= 0.0):
+        raise ValueError(
+            f"gaussians: sigma min {float(sigma.min()):.3e} is too small — the density "
+            f"normaliser 1/((2*pi)^1.5 * sigma^3) is not representable and would "
+            f"silently produce NaN/Inf voxels")
     return mu, sigma, w
 
 
