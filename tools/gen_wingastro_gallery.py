@@ -1095,8 +1095,9 @@ def _captions(meta):
         "be measured as the residual itself**. One frame has a residual RMS of "
         "%.3f e- (against %.3f predicted from %.0f e- of sky plus %.0f e- of "
         "read noise), and stacking up to 64 frames tracks sqrt(N) to within "
-        "**%.1f %%**. The difference panel at the bottom right shows nothing "
-        "left at the star positions and only the noise gone."
+        "**%.1f %%**. The last two panels paint the residual itself on the "
+        "**same scale**: what filled the frame at N = 1 is gone at N = 64, with "
+        "nothing left at the star positions."
         % (s["base_rms"], s["predicted_single"], s["sky"], s["read_sigma"],
            s["max_dev_pct"]))
 

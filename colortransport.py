@@ -53,6 +53,8 @@
 from __future__ import annotations
 
 import numpy as np
+
+from metriccontract import MetricContractError
 from scipy import sparse
 from scipy.sparse import linalg as sparse_linalg
 
@@ -80,7 +82,7 @@ def _weighted_quantile_grid(values, weights):
         w = np.asarray(weights, dtype=np.float64)[order]
         total = w.sum()
         if total <= 0:
-            raise ValueError("weights must sum to a positive number")
+            raise MetricContractError("weights must sum to a positive number")
         w = w / total
     return v, np.cumsum(w)
 
@@ -109,11 +111,11 @@ def wasserstein_1d(u_values, v_values, p=1, u_weights=None, v_weights=None):
     u = np.asarray(u_values, dtype=np.float64).ravel()
     v = np.asarray(v_values, dtype=np.float64).ravel()
     if u.size == 0 or v.size == 0:
-        raise ValueError("both samples must be non-empty")
+        raise MetricContractError("both samples must be non-empty")
     if not (np.all(np.isfinite(u)) and np.all(np.isfinite(v))):
-        raise ValueError("samples must be finite")
+        raise MetricContractError("samples must be finite")
     if not np.isfinite(p) or p < 1:
-        raise ValueError(f"p must be a finite number >= 1, got {p!r}")
+        raise MetricContractError(f"p must be a finite number >= 1, got {p!r}")
 
     us, ucdf = _weighted_quantile_grid(u, u_weights)
     vs, vcdf = _weighted_quantile_grid(v, v_weights)
@@ -138,7 +140,7 @@ def transport_plan_1d(u_values, v_values):
     u = np.asarray(u_values, dtype=np.float64).ravel()
     v = np.asarray(v_values, dtype=np.float64).ravel()
     if u.size == 0 or v.size == 0:
-        raise ValueError("both samples must be non-empty")
+        raise MetricContractError("both samples must be non-empty")
     n, m = u.size, v.size
     ui = np.argsort(u, kind="mergesort")
     vi = np.argsort(v, kind="mergesort")
@@ -192,13 +194,13 @@ def histogram_match(src, ref, bins=None, ties="average"):
     相関ごと運びたいときは :func:`color_transfer` の ``method="gaussian"``。
     """
     if ties not in ("average", "break"):
-        raise ValueError(f"ties must be 'average' or 'break', got {ties!r}")
+        raise MetricContractError(f"ties must be 'average' or 'break', got {ties!r}")
     s = np.asarray(src, dtype=np.float64)
     r = np.asarray(ref, dtype=np.float64).ravel()
     if s.size == 0 or r.size == 0:
-        raise ValueError("both images must be non-empty")
+        raise MetricContractError("both images must be non-empty")
     if not (np.all(np.isfinite(s)) and np.all(np.isfinite(r))):
-        raise ValueError("images must be finite")
+        raise MetricContractError("images must be finite")
 
     flat = s.ravel()
     order = np.argsort(flat, kind="mergesort")
@@ -211,7 +213,7 @@ def histogram_match(src, ref, bins=None, ties="average"):
         out = rs[idx]
     else:
         if not isinstance(bins, (int, np.integer)) or bins < 2:
-            raise ValueError(f"bins must be None (exact) or an integer >= 2, got {bins!r}")
+            raise MetricContractError(f"bins must be None (exact) or an integer >= 2, got {bins!r}")
         hist, edges = np.histogram(r, bins=int(bins))
         cdf = np.cumsum(hist).astype(np.float64)
         cdf /= cdf[-1]
@@ -248,9 +250,9 @@ def gaussian_transport_map(src_samples, ref_samples):
     a = np.asarray(src_samples, dtype=np.float64)
     b = np.asarray(ref_samples, dtype=np.float64)
     if a.ndim != 2 or b.ndim != 2 or a.shape[1] != b.shape[1]:
-        raise ValueError(f"samples must be (N, D) with matching D, got {a.shape} and {b.shape}")
+        raise MetricContractError(f"samples must be (N, D) with matching D, got {a.shape} and {b.shape}")
     if a.shape[0] < a.shape[1] + 1 or b.shape[0] < b.shape[1] + 1:
-        raise ValueError("need more samples than dimensions to estimate a covariance")
+        raise MetricContractError("need more samples than dimensions to estimate a covariance")
 
     m1, m2 = a.mean(axis=0), b.mean(axis=0)
     s1 = np.cov(a, rowvar=False)
@@ -261,12 +263,12 @@ def gaussian_transport_map(src_samples, ref_samples):
     def _sqrtm_psd(m, name):
         w, v = np.linalg.eigh(0.5 * (m + m.T))
         if np.min(w) < -1e-9 * max(1.0, float(np.max(np.abs(w)))):
-            raise ValueError(f"{name} is not positive semi-definite (min eigenvalue {np.min(w):.3e})")
+            raise MetricContractError(f"{name} is not positive semi-definite (min eigenvalue {np.min(w):.3e})")
         return v @ np.diag(np.sqrt(np.clip(w, 0.0, None))) @ v.T, w
 
     r1, w1 = _sqrtm_psd(s1, "source covariance")
     if np.min(w1) <= 1e-12 * max(1.0, float(np.max(w1))):
-        raise ValueError(
+        raise MetricContractError(
             f"source covariance is singular (min eigenvalue {np.min(w1):.3e}); the Monge map is "
             "undefined. A pseudo-inverse here would return a map that moves nothing along the "
             "degenerate direction while looking like a valid transport"
@@ -303,15 +305,15 @@ def color_transfer(src, ref, method="reinhard", space="lab"):
         ``src`` と同じ形の sRGB ``[0, 1]``(色域外は切り詰められる)。
     """
     if method not in COLOR_TRANSFER_METHODS:
-        raise ValueError(f"method must be one of {COLOR_TRANSFER_METHODS}, got {method!r}")
+        raise MetricContractError(f"method must be one of {COLOR_TRANSFER_METHODS}, got {method!r}")
     if space not in ("lab", "rgb"):
-        raise ValueError(f"space must be 'lab' or 'rgb', got {space!r}")
+        raise MetricContractError(f"space must be 'lab' or 'rgb', got {space!r}")
 
     s = _M._to_unit_float(src)
     r = _M._to_unit_float(ref)
     for arr, nm in ((s, "src"), (r, "ref")):
         if arr.ndim < 2 or arr.shape[-1] != 3:
-            raise ValueError(f"{nm} must be an RGB image with 3 channels last, got {arr.shape}")
+            raise MetricContractError(f"{nm} must be an RGB image with 3 channels last, got {arr.shape}")
 
     sv = (_M.rgb_to_lab(s) if space == "lab" else s).reshape(-1, 3)
     rv = (_M.rgb_to_lab(r) if space == "lab" else r).reshape(-1, 3)
@@ -319,7 +321,7 @@ def color_transfer(src, ref, method="reinhard", space="lab"):
     if method == "reinhard":
         ss, rs = sv.std(axis=0), rv.std(axis=0)
         if np.any(ss <= 1e-12):
-            raise ValueError(
+            raise MetricContractError(
                 "a source channel is constant, so it has no spread to rescale; "
                 "Reinhard transfer is undefined here (scaling by 0 would silently flatten it)"
             )
@@ -356,13 +358,13 @@ def sinkhorn(a, b, cost, reg=0.05, n_iter=2000, tol=1e-9):
     b = np.asarray(b, dtype=np.float64).ravel()
     cost = np.asarray(cost, dtype=np.float64)
     if cost.shape != (a.size, b.size):
-        raise ValueError(f"cost must be ({a.size}, {b.size}), got {cost.shape}")
+        raise MetricContractError(f"cost must be ({a.size}, {b.size}), got {cost.shape}")
     if np.any(a < 0) or np.any(b < 0):
-        raise ValueError("marginals must be non-negative")
+        raise MetricContractError("marginals must be non-negative")
     if not np.isclose(a.sum(), b.sum(), rtol=1e-9, atol=1e-12):
-        raise ValueError(f"marginals must have equal mass, got {a.sum()!r} and {b.sum()!r}")
+        raise MetricContractError(f"marginals must have equal mass, got {a.sum()!r} and {b.sum()!r}")
     if not np.isfinite(reg) or reg <= 0:
-        raise ValueError(f"reg must be a positive finite number, got {reg!r}")
+        raise MetricContractError(f"reg must be a positive finite number, got {reg!r}")
 
     K = np.exp(-cost / reg)
     # 「全体が 0」だけを見るのは弱い。質量のある行/列が 1 つでも全滅すると、
@@ -372,7 +374,7 @@ def sinkhorn(a, b, cost, reg=0.05, n_iter=2000, tol=1e-9):
     live_cols = (K > 0).any(axis=0) | (b <= 0)
     if not (live_rows.all() and live_cols.all()):
         dead = int((~live_rows).sum()) + int((~live_cols).sum())
-        raise ValueError(
+        raise MetricContractError(
             f"reg={reg!r} is too small for this cost matrix: exp(-cost/reg) underflowed to zero "
             f"for {dead} row(s)/column(s) that still carry mass "
             f"(cost range [{cost.min():.3g}, {cost.max():.3g}]). Their mass has nowhere to go, "
@@ -428,7 +430,7 @@ def sinkhorn_divergence(a, b, cost, cost_aa=None, cost_bb=None, reg=0.05, **kw):
     cost = np.asarray(cost, dtype=np.float64)
     if cost_aa is None or cost_bb is None:
         if cost.shape[0] != cost.shape[1]:
-            raise ValueError(
+            raise MetricContractError(
                 f"cost is {cost.shape}, so cost_aa/cost_bb cannot be inferred from it; "
                 "pass them explicitly (reusing a rectangular cost would subtract a quantity "
                 "that is not the self-transport bias)"
@@ -451,11 +453,11 @@ def transport_cost(plan, cost):
     p = np.asarray(plan, dtype=np.float64)
     c = np.asarray(cost, dtype=np.float64)
     if p.shape != c.shape:
-        raise ValueError(f"plan {p.shape} and cost {c.shape} must have the same shape")
+        raise MetricContractError(f"plan {p.shape} and cost {c.shape} must have the same shape")
     if np.any(p < -1e-12):
-        raise ValueError("a transport plan cannot carry negative mass")
+        raise MetricContractError("a transport plan cannot carry negative mass")
     if not np.isfinite(p).all() or not np.isfinite(c).all():
-        raise ValueError("plan and cost must be finite")
+        raise MetricContractError("plan and cost must be finite")
     return float(np.sum(p * c))
 
 
@@ -473,17 +475,17 @@ def apply_transport(plan, target_values):
     p = np.asarray(plan, dtype=np.float64)
     t = np.asarray(target_values, dtype=np.float64)
     if p.ndim != 2:
-        raise ValueError(f"plan must be 2-D, got {p.shape}")
+        raise MetricContractError(f"plan must be 2-D, got {p.shape}")
     if t.shape[0] != p.shape[1]:
-        raise ValueError(
+        raise MetricContractError(
             f"target_values must have {p.shape[1]} rows to match the plan's columns, got {t.shape}"
         )
     if np.any(p < -1e-12):
-        raise ValueError("a transport plan cannot carry negative mass")
+        raise MetricContractError("a transport plan cannot carry negative mass")
     row = p.sum(axis=1)
     dead = int(np.count_nonzero(row <= 1e-15))
     if dead:
-        raise ValueError(
+        raise MetricContractError(
             f"{dead} row(s) of the plan carry no mass, so those sources have nowhere to map from; "
             "filling them with zeros would quietly blend black into the result"
         )
@@ -543,13 +545,13 @@ def poisson_blend(src, dst, mask, offset=(0, 0)):
     if m.dtype != bool:
         m = m > 0.5
     if s.ndim not in (2, 3) or d.ndim != s.ndim:
-        raise ValueError(f"src and dst must both be 2-D or both 3-D, got {s.shape} and {d.shape}")
+        raise MetricContractError(f"src and dst must both be 2-D or both 3-D, got {s.shape} and {d.shape}")
     if m.shape != s.shape[:2]:
-        raise ValueError(f"mask must be {s.shape[:2]}, got {m.shape}")
+        raise MetricContractError(f"mask must be {s.shape[:2]}, got {m.shape}")
     if not m.any():
-        raise ValueError("mask selects no pixels; there is nothing to blend")
+        raise MetricContractError("mask selects no pixels; there is nothing to blend")
     if m[0, :].any() or m[-1, :].any() or m[:, 0].any() or m[:, -1].any():
-        raise ValueError(
+        raise MetricContractError(
             "mask touches the edge of src, so the Dirichlet boundary has no ring of dst pixels "
             "to sit on; erode the mask or pad src (silently clamping would solve a different "
             "problem than the one asked for)"
@@ -557,11 +559,11 @@ def poisson_blend(src, dst, mask, offset=(0, 0)):
     r0, c0 = (int(offset[0]), int(offset[1]))
     h, w = s.shape[:2]
     if r0 < 0 or c0 < 0 or r0 + h > d.shape[0] or c0 + w > d.shape[1]:
-        raise ValueError(
+        raise MetricContractError(
             f"src at offset {(r0, c0)} with shape {(h, w)} does not fit inside dst {d.shape[:2]}"
         )
     if not (np.all(np.isfinite(s)) and np.all(np.isfinite(d))):
-        raise ValueError("src and dst must be finite")
+        raise MetricContractError("src and dst must be finite")
 
     idx = -np.ones((h, w), dtype=np.int64)
     ys, xs = np.nonzero(m)

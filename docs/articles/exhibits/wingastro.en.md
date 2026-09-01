@@ -2,7 +2,7 @@
 
 [![Stacking divides the noise by the square root of N](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_stack_sqrtn_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_stack_sqrtn.png)
 
-*↑ **Stacking divides the noise by the square root of N** — The star field is synthetic, so **the truth is known and the noise can be measured as the residual itself**. One frame has a residual RMS of 16.507 e- (against 16.248 predicted from 200 e- of sky plus 8 e- of read noise), and stacking up to 64 frames tracks sqrt(N) to within **1.1 %**. The difference panel at the bottom right shows nothing left at the star positions and only the noise gone. Ops used: `synth_frame_series`, `sigma_clip_stack`, `noise_sigma`.*
+*↑ **Stacking divides the noise by the square root of N** — The star field is synthetic, so **the truth is known and the noise can be measured as the residual itself**. One frame has a residual RMS of 16.507 e- (against 16.248 predicted from 200 e- of sky plus 8 e- of read noise), and stacking up to 64 frames tracks sqrt(N) to within **1.1 %**. The last two panels paint the residual itself on the **same scale**: what filled the frame at N = 1 is gone at N = 64, with nothing left at the star positions. Ops used: `synth_frame_series`, `sigma_clip_stack`, `noise_sigma`.*
 
 [![Lucky imaging — sorting the frames by quality](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_lucky_sheet_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_lucky_sheet.png)
 

@@ -76,6 +76,8 @@ import lzma
 import zlib
 
 import numpy as np
+
+from metriccontract import MetricContractError
 from scipy import ndimage
 
 __all__ = [
@@ -132,13 +134,13 @@ def data_range_of(*arrays, data_range=None):
     if data_range is not None:
         dr = float(data_range)
         if not np.isfinite(dr) or dr <= 0.0:
-            raise ValueError(f"data_range must be a positive finite number, got {data_range!r}")
+            raise MetricContractError(f"data_range must be a positive finite number, got {data_range!r}")
         return dr
 
     arrays = [np.asarray(a) for a in arrays]
     dts = {a.dtype for a in arrays}
     if len(dts) > 1:
-        raise ValueError(
+        raise MetricContractError(
             "data_range cannot be inferred from mixed dtypes "
             f"{sorted(str(d) for d in dts)}; pass data_range= explicitly"
         )
@@ -149,20 +151,20 @@ def data_range_of(*arrays, data_range=None):
     if dt == np.dtype(bool):
         return 1.0
     if not np.issubdtype(dt, np.floating):
-        raise ValueError(f"data_range cannot be inferred from dtype {dt}; pass data_range= explicitly")
+        raise MetricContractError(f"data_range cannot be inferred from dtype {dt}; pass data_range= explicitly")
 
     lo = min(float(np.min(a)) for a in arrays)
     hi = max(float(np.max(a)) for a in arrays)
     if not (np.isfinite(lo) and np.isfinite(hi)):
-        raise ValueError("array contains non-finite values; data_range cannot be inferred")
+        raise MetricContractError("array contains non-finite values; data_range cannot be inferred")
     if lo < 0.0:
-        raise ValueError(
+        raise MetricContractError(
             f"float array holds negative values (min={lo:.6g}), so its range is not [0, 1]; "
             "pass data_range= explicitly (a signed difference image is usually not what "
             "PSNR/SSIM should be measured on)"
         )
     if hi > 1.0:
-        raise ValueError(
+        raise MetricContractError(
             f"float array reaches {hi:.6g} > 1, so it is not the [0, 1] convention; "
             "pass data_range= explicitly (guessing 255 here would shift PSNR by "
             "20*log10(255) = 48.13 dB without raising)"
@@ -174,13 +176,13 @@ def _as_float_pair(a, b, name_a="a", name_b="b"):
     a = np.asarray(a)
     b = np.asarray(b)
     if a.shape != b.shape:
-        raise ValueError(f"{name_a} and {name_b} must have the same shape, got {a.shape} and {b.shape}")
+        raise MetricContractError(f"{name_a} and {name_b} must have the same shape, got {a.shape} and {b.shape}")
     if a.size == 0:
-        raise ValueError("empty arrays have no measurable difference")
+        raise MetricContractError("empty arrays have no measurable difference")
     fa = a.astype(np.float64, copy=False)
     fb = b.astype(np.float64, copy=False)
     if not (np.all(np.isfinite(fa)) and np.all(np.isfinite(fb))):
-        raise ValueError("arrays must be finite; NaN/Inf would propagate into the metric silently")
+        raise MetricContractError("arrays must be finite; NaN/Inf would propagate into the metric silently")
     return fa, fb
 
 
@@ -207,7 +209,7 @@ def _to_unit_float(rgb):
         return x.astype(np.float64) / _INT_RANGES[x.dtype]
     x = x.astype(np.float64, copy=False)
     if x.size and (np.nanmin(x) < -1e-6 or np.nanmax(x) > 1.0 + 1e-6):
-        raise ValueError(
+        raise MetricContractError(
             f"sRGB values must lie in [0, 1] (or be an integer dtype), got "
             f"[{float(np.nanmin(x)):.6g}, {float(np.nanmax(x)):.6g}]"
         )
@@ -257,7 +259,7 @@ def rgb_to_xyz(rgb):
     """sRGB(``(..., 3)``)→ CIE XYZ。伝達関数を外してから行列を掛ける。"""
     lin = srgb_to_linear(rgb)
     if lin.shape[-1] != 3:
-        raise ValueError(f"rgb must have 3 channels in the last axis, got shape {lin.shape}")
+        raise MetricContractError(f"rgb must have 3 channels in the last axis, got shape {lin.shape}")
     return lin @ _M_RGB2XYZ.T
 
 
@@ -265,10 +267,10 @@ def xyz_to_lab(xyz, white=D65_WHITE):
     """CIE XYZ → CIE 1976 L\\*a\\*b\\*。既定の白色点は D65 2°。"""
     xyz = np.asarray(xyz, dtype=np.float64)
     if xyz.shape[-1] != 3:
-        raise ValueError(f"xyz must have 3 channels in the last axis, got shape {xyz.shape}")
+        raise MetricContractError(f"xyz must have 3 channels in the last axis, got shape {xyz.shape}")
     wn = np.asarray(white, dtype=np.float64)
     if wn.shape != (3,) or np.any(wn <= 0):
-        raise ValueError(f"white point must be 3 positive numbers, got {white!r}")
+        raise MetricContractError(f"white point must be 3 positive numbers, got {white!r}")
     t = xyz / wn
     delta = 6.0 / 29.0
     f = np.where(t > delta ** 3, np.cbrt(t), t / (3.0 * delta ** 2) + 4.0 / 29.0)
@@ -288,7 +290,7 @@ def lab_to_rgb(lab, white=D65_WHITE):
     ``rgb_to_lab`` との往復は色域内でしか一致しない(テストで固定)。"""
     lab = np.asarray(lab, dtype=np.float64)
     if lab.shape[-1] != 3:
-        raise ValueError(f"lab must have 3 channels in the last axis, got shape {lab.shape}")
+        raise MetricContractError(f"lab must have 3 channels in the last axis, got shape {lab.shape}")
     L, a, b = lab[..., 0], lab[..., 1], lab[..., 2]
     fy = (L + 16.0) / 116.0
     fx = fy + a / 500.0
@@ -312,7 +314,7 @@ def delta_e_76(lab1, lab2):
     l1 = np.asarray(lab1, dtype=np.float64)
     l2 = np.asarray(lab2, dtype=np.float64)
     if l1.shape[-1] != 3 or l2.shape[-1] != 3:
-        raise ValueError("lab inputs must have 3 channels in the last axis")
+        raise MetricContractError("lab inputs must have 3 channels in the last axis")
     return np.sqrt(np.sum((l1 - l2) ** 2, axis=-1))
 
 
@@ -339,10 +341,10 @@ def delta_e_2000(lab1, lab2, kL=1.0, kC=1.0, kH=1.0):
     l1 = np.asarray(lab1, dtype=np.float64)
     l2 = np.asarray(lab2, dtype=np.float64)
     if l1.shape[-1] != 3 or l2.shape[-1] != 3:
-        raise ValueError("lab inputs must have 3 channels in the last axis")
+        raise MetricContractError("lab inputs must have 3 channels in the last axis")
     for k, nm in ((kL, "kL"), (kC, "kC"), (kH, "kH")):
         if not np.isfinite(k) or k <= 0:
-            raise ValueError(f"{nm} must be a positive finite number, got {k!r}")
+            raise MetricContractError(f"{nm} must be a positive finite number, got {k!r}")
 
     L1, a1, b1 = l1[..., 0], l1[..., 1], l1[..., 2]
     L2, a2, b2 = l2[..., 0], l2[..., 1], l2[..., 2]
@@ -414,13 +416,13 @@ def delta_e_map(rgb1, rgb2, kind="2000", white=D65_WHITE):
     ``kind`` は ``"2000"``(既定)または ``"76"``。
     """
     if kind not in ("2000", "76"):
-        raise ValueError(f"kind must be '2000' or '76', got {kind!r}")
+        raise MetricContractError(f"kind must be '2000' or '76', got {kind!r}")
     a = np.asarray(rgb1)
     b = np.asarray(rgb2)
     if a.shape != b.shape:
-        raise ValueError(f"images must have the same shape, got {a.shape} and {b.shape}")
+        raise MetricContractError(f"images must have the same shape, got {a.shape} and {b.shape}")
     if a.ndim < 3 or a.shape[-1] != 3:
-        raise ValueError(f"delta_e_map needs RGB images with 3 channels last, got shape {a.shape}")
+        raise MetricContractError(f"delta_e_map needs RGB images with 3 channels last, got shape {a.shape}")
     la = rgb_to_lab(a, white=white)
     lb = rgb_to_lab(b, white=white)
     return delta_e_2000(la, lb) if kind == "2000" else delta_e_76(la, lb)
@@ -520,7 +522,7 @@ def _ssim_channel(fa, fb, dr, win_size, sigma, K1, K2, crop_border):
     if crop_border:
         pad = (win_size - 1) // 2
         if any(d <= 2 * pad for d in smap.shape):
-            raise ValueError(
+            raise MetricContractError(
                 f"image {smap.shape} is too small for an {win_size}x{win_size} window once the "
                 f"border is cropped; pass a larger image, a smaller win_size, or crop_border=False"
             )
@@ -533,9 +535,9 @@ def _prep_ssim(a, b, data_range, win_size, sigma, channel_axis):
     fa, fb = _as_float_pair(a, b)
     dr = data_range_of(a, b, data_range=data_range)
     if win_size % 2 == 0 or win_size < 3:
-        raise ValueError(f"win_size must be an odd integer >= 3, got {win_size}")
+        raise MetricContractError(f"win_size must be an odd integer >= 3, got {win_size}")
     if not np.isfinite(sigma) or sigma <= 0:
-        raise ValueError(f"sigma must be a positive finite number, got {sigma!r}")
+        raise MetricContractError(f"sigma must be a positive finite number, got {sigma!r}")
     if channel_axis is None:
         planes = [(fa, fb)]
         spatial = fa.shape
@@ -545,7 +547,7 @@ def _prep_ssim(a, b, data_range, win_size, sigma, channel_axis):
         planes = list(zip(fa2, fb2))
         spatial = fa2.shape[1:]
     if any(d < win_size for d in spatial):
-        raise ValueError(
+        raise MetricContractError(
             f"each spatial axis must be at least win_size={win_size}, got {spatial}"
         )
     return planes, dr, spatial
@@ -612,13 +614,13 @@ def ms_ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03,
     """
     fa, fb = _as_float_pair(a, b)
     if fa.ndim != 2:
-        raise ValueError(f"ms_ssim takes 2-D grayscale images, got shape {fa.shape}")
+        raise MetricContractError(f"ms_ssim takes 2-D grayscale images, got shape {fa.shape}")
     dr = data_range_of(a, b, data_range=data_range)
     w = np.asarray(weights, dtype=np.float64)
     # 許容が 1e-3 なのは、原論文の公表値そのものが 1.0001 に和が立つため
     # (:data:`MS_SSIM_WEIGHTS` の注記)。正規化して黙って直したりはしない。
     if w.ndim != 1 or w.size < 2 or np.any(w < 0) or not np.isclose(w.sum(), 1.0, atol=1e-3):
-        raise ValueError(
+        raise MetricContractError(
             "weights must be a 1-D non-negative array summing to 1 (within 1e-3; the published "
             f"MS-SSIM weights sum to {sum(MS_SSIM_WEIGHTS)!r}, which is why the tolerance is "
             f"not tighter), got sum={float(w.sum())!r}"
@@ -626,7 +628,7 @@ def ms_ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03,
     n = w.size
     need = (win_size - 1) * (2 ** (n - 1)) + 2 ** (n - 1)
     if min(fa.shape) < need:
-        raise ValueError(
+        raise MetricContractError(
             f"ms_ssim with {n} scales and win_size={win_size} needs every axis to be at least "
             f"{need} px, got {fa.shape}; use fewer scales (weights=) or a bigger image "
             "(silently dropping a scale would produce a number that is not comparable)"
@@ -667,7 +669,7 @@ def ms_ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03,
 def _binned(a, b, bins, data_range):
     fa, fb = _as_float_pair(a, b)
     if not isinstance(bins, (int, np.integer)) or bins < 2:
-        raise ValueError(f"bins must be an integer >= 2, got {bins!r}")
+        raise MetricContractError(f"bins must be an integer >= 2, got {bins!r}")
     dr = data_range_of(a, b, data_range=data_range)
     lo = min(float(fa.min()), float(fb.min()))
     return fa.ravel(), fb.ravel(), int(bins), (lo, lo + dr)
@@ -683,7 +685,7 @@ def joint_histogram(a, b, bins=64, data_range=None):
     h, _, _ = np.histogram2d(x, y, bins=nb, range=[rng, rng])
     total = h.sum()
     if total == 0:
-        raise ValueError("no samples fell inside the data range; check data_range")
+        raise MetricContractError("no samples fell inside the data range; check data_range")
     return h / total
 
 
@@ -729,7 +731,7 @@ def normalized_mutual_information(a, b, bins=64, data_range=None):
     ha = _entropy(pab.sum(axis=1))
     hb = _entropy(pab.sum(axis=0))
     if ha + hb == 0.0:
-        raise ValueError(
+        raise MetricContractError(
             "both images are constant, so H(A) = H(B) = 0 and the normalising bound is 0; "
             "normalized mutual information is undefined here (returning 0 or 1 would be a guess)"
         )
@@ -751,7 +753,7 @@ def compressed_size(a, compressor="lzma"):
     ので、比べる 2 枚は同じ dtype・同じ shape であること。
     """
     if compressor not in _COMPRESSORS:
-        raise ValueError(f"compressor must be one of {sorted(_COMPRESSORS)}, got {compressor!r}")
+        raise MetricContractError(f"compressor must be one of {sorted(_COMPRESSORS)}, got {compressor!r}")
     return len(_COMPRESSORS[compressor](np.ascontiguousarray(np.asarray(a)).tobytes()))
 
 
@@ -786,12 +788,12 @@ def ncd(a, b, compressor="lzma", levels=None, data_range=None, symmetric=True):
     a = np.asarray(a)
     b = np.asarray(b)
     if a.dtype != b.dtype or a.shape != b.shape:
-        raise ValueError(
+        raise MetricContractError(
             f"ncd compares like with like: dtypes {a.dtype}/{b.dtype}, shapes {a.shape}/{b.shape}"
         )
     if np.issubdtype(a.dtype, np.floating):
         if levels is None:
-            raise ValueError(
+            raise MetricContractError(
                 "ncd on raw float arrays is meaningless: a tiny value change replaces the whole "
                 "mantissa, so two very similar images share almost no byte patterns (measured: "
                 "0.02 % of 8-byte words shared, NCD 1.0959 for a pair that is 34.0 dB apart, "
@@ -799,7 +801,7 @@ def ncd(a, b, compressor="lzma", levels=None, data_range=None, symmetric=True):
                 "Pass levels= (e.g. levels=256) to quantise first, or hand in an integer dtype"
             )
         if not isinstance(levels, (int, np.integer)) or levels < 2 or levels > 65536:
-            raise ValueError(f"levels must be an integer in [2, 65536], got {levels!r}")
+            raise MetricContractError(f"levels must be an integer in [2, 65536], got {levels!r}")
         dr = data_range_of(a, b, data_range=data_range)
         lo = min(float(a.min()), float(b.min()))
         scale = (int(levels) - 1) / dr
@@ -807,7 +809,7 @@ def ncd(a, b, compressor="lzma", levels=None, data_range=None, symmetric=True):
         a = np.clip(np.round((a.astype(np.float64) - lo) * scale), 0, levels - 1).astype(dt)
         b = np.clip(np.round((b.astype(np.float64) - lo) * scale), 0, levels - 1).astype(dt)
     elif levels is not None:
-        raise ValueError(
+        raise MetricContractError(
             f"levels= only applies to float input; {a.dtype} is already quantised"
         )
     ca = compressed_size(a, compressor)
@@ -916,7 +918,7 @@ def measure_with(report, a, b, ms=False):
     """
     contract = report.get("contract", report) if isinstance(report, dict) else None
     if not isinstance(contract, dict) or "data_range" not in contract:
-        raise ValueError(
+        raise MetricContractError(
             "report must be a compare_images() result (or its 'contract' dict); "
             f"got {type(report).__name__} without a 'data_range' key"
         )
@@ -925,7 +927,7 @@ def measure_with(report, a, b, ms=False):
     want_levels = contract.get("ncd_levels")
     is_float = np.issubdtype(np.asarray(a).dtype, np.floating)
     if bool(want_levels) != bool(is_float):
-        raise ValueError(
+        raise MetricContractError(
             f"the recorded contract quantised NCD to {want_levels!r} levels, but this pair is "
             f"{'float' if is_float else 'integer'}; the two NCD numbers would not be comparable"
         )
@@ -942,7 +944,7 @@ def metrics_table(report, order=None):
     各項目が ``条件: <名前>`` として同じ表に入る。
     """
     if not isinstance(report, dict) or "contract" not in report:
-        raise ValueError("report must be a compare_images() result (it must carry 'contract')")
+        raise MetricContractError("report must be a compare_images() result (it must carry 'contract')")
     keys = [k for k in (order or sorted(report)) if k != "contract" and k in report]
     rows = [(k, report[k]) for k in keys]
     rows += [(f"条件: {k}", v) for k, v in sorted(report["contract"].items())]

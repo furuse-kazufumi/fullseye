@@ -2,7 +2,7 @@
 
 [![重ねると雑音は sqrt(N) で減る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_stack_sqrtn_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_stack_sqrtn.png)
 
-*↑ **重ねると雑音は sqrt(N) で減る** ―― 合成星野なので**真値が分かっており、雑音は残差そのもので測れる**。1 枚の残差 RMS は 16.507 e-(空 200 + 読み出し 8 e- から予測される 16.248)で、64 枚まで倍々に重ねると改善は sqrt(N) から**最大 1.1 % しか外れない**。右下の差分図は、星の位置に何も残らず雑音だけが消えたことを示す(発散配色。赤緑の対は使っていない)。使用 op: `synth_frame_series`, `sigma_clip_stack`, `noise_sigma`。*
+*↑ **重ねると雑音は sqrt(N) で減る** ―― 合成星野なので**真値が分かっており、雑音は残差そのもので測れる**。1 枚の残差 RMS は 16.507 e-(空 200 + 読み出し 8 e- から予測される 16.248)で、64 枚まで倍々に重ねると改善は sqrt(N) から**最大 1.1 % しか外れない**。下段の右 2 枚は残差そのものを**同じ尺度**で塗ったもので、1 枚では画面いっぱいに散っていたものが 64 枚では見えなくなる ―― 星の位置には何も残っていない(発散配色。赤緑の対は使っていない)。使用 op: `synth_frame_series`, `sigma_clip_stack`, `noise_sigma`。*
 
 [![lucky imaging —— 品質点で並べ替える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_lucky_sheet_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_lucky_sheet.png)
 
