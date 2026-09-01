@@ -268,8 +268,8 @@ def flipbook(frames: list, labels: list | None = None, *, title: str | None = No
             draw.text((w // 2, th // 2), title, fill=FG, font=tfont, anchor="mm")
         canvas.paste(Image.fromarray(panel, "RGB"), (0, th))
         if labels:
-            draw.text((w // 2, th + h + lh // 2), f"{i + 1}/{n}  {labels[i]}",
-                      fill=FG, font=font, anchor="mm")
+            text, lfont = _fit_label(draw, f"{i + 1}/{n}  {labels[i]}", font_size, w - 8)
+            draw.text((w // 2, th + h + lh // 2), text, fill=FG, font=lfont, anchor="mm")
         y = total_h - bar_h
         draw.rectangle([0, y, w - 1, total_h - 1], fill=(38, 38, 52))
         draw.rectangle([0, y, max(0, round(w * (i + 1) / n) - 1), total_h - 1], fill=(96, 168, 255))
