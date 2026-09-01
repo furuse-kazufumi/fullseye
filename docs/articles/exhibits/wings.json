@@ -54,6 +54,22 @@
       }
     },
     {
+      "id": "wingopt",
+      "order": 70,
+      "title": {
+        "ja": "光学設計・検査ウィング ―― 買う前に「見えるか」を決める",
+        "en": "The Optical Design and Inspection Wing — Deciding Visibility Before You Buy"
+      }
+    },
+    {
+      "id": "wing1d",
+      "order": 80,
+      "title": {
+        "ja": "信号・音響・1D ウィング ―― 波形から異常を聞き取る",
+        "en": "The Signal, Acoustics and 1-D Wing — Hearing the Fault in a Waveform"
+      }
+    },
+    {
       "id": "wingvox",
       "order": 90,
       "title": {
