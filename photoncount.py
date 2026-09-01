@@ -1258,11 +1258,12 @@ def dtof_depth(hist, bin_ps=100.0, mode="peak", offset_ps=0.0,
     distance in metres as a float.
 
     **Raises** ``ValueError``: negative, non-finite, non-1-D or all-zero *hist*,
-    a non-positive *bin_ps*, an unknown *mode*, a non-finite *offset_ps*, a peak
-    in the first or last bin with a sub-bin *mode* (there is no neighbour to fit
-    to — use ``"peak"``), a degenerate three-sample fit, and — instead of
-    returning a negative distance — an *offset_ps* larger than the measured
-    arrival time.
+    a non-positive *bin_ps*, an unknown *mode*, a non-finite *offset_ps*, a
+    **flat** histogram in a peak-based mode (``argmax`` would silently pick bin 0
+    and report the first bin's depth), a peak in the first or last bin with a
+    sub-bin *mode* (there is no neighbour to fit to — use ``"peak"``), a
+    degenerate three-sample fit, and — instead of returning a negative distance —
+    an *offset_ps* larger than the measured arrival time.
     """
     h = _require_hist(hist, "hist", "dtof_depth")
     dt = _positive(bin_ps, "bin_ps")
