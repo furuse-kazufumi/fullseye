@@ -2912,7 +2912,21 @@ EXHIBIT_ORDER = [
     ("profile_sources", ex_profile_sources),
     ("peak_match", ex_peak_match),
     ("envelope_truncation", ex_envelope_truncation),
+    ("envelope_flow", ex_envelope_flow),
+    ("octave_family", ex_octave_family),
 ]
+
+# 束ね方の宣言(記事の縦を伸ばさないための判断を、コードに残しておく)。
+#   still  = 原寸 1 枚(主張そのもの / 軸と数値が読めないと意味が無い)
+#   gif    = コマ送り GIF(掃引・工程。flipbook がラベルと進捗バーを焼く)
+#   sheet  = タイル(同じ軸にパラメータ違いを当てた小さなプロットを 3 枚以上束ねる)
+BUNDLING = {
+    "defect_not_in_raw": "still",   # 主張そのもの(生 vs 包絡線)
+    "funct1d_truth": "still",       # 数値表が主役
+    "profile_sources": "still",     # 3 つの出所と合流を 1 枚で見せる図
+    "octave_family": "sheet",       # fraction 違い 6 枚 = 並べて比べる
+    "envelope_flow": "gif",         # 同寸で工程が進む = フリップブック
+}
 
 
 def _write_exhibit_md(results: dict, log) -> str:
