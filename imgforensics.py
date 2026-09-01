@@ -160,14 +160,19 @@ _WM_COEFF_B = (1, 3)
 # --------------------------------------------------------------------------- #
 # fail-closed 入力ヘルパ                                                        #
 # --------------------------------------------------------------------------- #
+#: import 名 → PyPI の配布名(``PIL`` を ``pip install PIL`` と案内しないため)。
+_PIP_NAME = {"PIL": "Pillow", "pywt": "PyWavelets", "cv2": "opencv-python"}
+
+
 def _require(module: str, op: str):
     """optional 依存を遅延 import。不在なら **何が要るかを言う** ImportError。"""
     try:
         return __import__(module)
-    except ImportError as exc:                          # pragma: no cover - 環境依存
+    except ImportError as exc:
         raise ImportError(
             f"{op} は {module} を必要とする(近似には落ちない)。"
-            f"`py -3.11 -m pip install {module}` で入れること。元の例外: {exc}"
+            f"`py -3.11 -m pip install {_PIP_NAME.get(module, module)}` で入れること。"
+            f"元の例外: {exc}"
         ) from exc
 
 
