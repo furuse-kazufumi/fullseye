@@ -1087,7 +1087,9 @@ def particle_emit(count, seed, origin=(0.0, 0.0), spread=0.0, speed=(10.0, 40.0)
     """
     n = _integer(count, "count", 0, MAX_PARTICLES)
     rng = np.random.default_rng(_seed(seed))
-    ox = _scalar(origin[0] if len(origin) == 2 else None, "origin[0]", -1e6, 1e6)
+    if not isinstance(origin, (tuple, list, np.ndarray)) or len(origin) != 2:
+        raise ValueError(f"origin: expected (x, y), got {origin!r}")
+    ox = _scalar(origin[0], "origin[0]", -1e6, 1e6)
     oy = _scalar(origin[1], "origin[1]", -1e6, 1e6)
     sp = _scalar(spread, "spread", 0.0, 1e5)
     rgba = _resolve_color(color, "color", 4, scheme)
