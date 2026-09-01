@@ -1997,19 +1997,23 @@ def coherence(x, y, rate, win=None, hop=None, window="hann"):
 
     Measured at 16 kHz over 16384 samples, win = 1024, 31 frames:
 
-    ===========================================  ================
-    case                                         mean coherence
-    ===========================================  ================
-    y = 2.5 * x (noiseless)                      1.0000000000
-    y = x delayed 37 samples (noiseless)         0.9995
-    y = x + independent noise, SNR 1 (0 dB)      0.4977
-    y, x independent noise                       0.0322
-    ===========================================  ================
+    =======================================  ==============  ========
+    case                                     mean coherence  min
+    =======================================  ==============  ========
+    y = 2.5 * x (noiseless)                  1.000000        1.0000
+    y = 0.8 * x delayed 37 samples           0.983003        0.9661
+    y = 2.5 x + independent noise, 0 dB SNR  0.509143        0.2219
+    y, x independent noise                   0.035640        0.0001
+    =======================================  ==============  ========
 
-    The third row is the closed form: for output noise the expected coherence is
-    ``SNR/(1+SNR)``, i.e. 0.5000 at 0 dB. The fourth is the bias floor
-    ``1/31 = 0.0323``, which is why ``bias`` is returned — an uncorrelated pair
-    does not read zero.
+    Row three against its closed form: for output noise the expected coherence
+    is ``SNR/(1+SNR)`` = 0.5000 at 0 dB, measured 0.5091. Row four against the
+    bias floor ``1/n_frames = 1/31 = 0.0323``, measured 0.0356 — which is why
+    ``bias`` is returned: **an uncorrelated pair does not read zero**, and
+    reading 0.03 as "a little bit of coupling" is the mistake this number
+    prevents. Row two shows the other honest limit: a pure delay is a perfectly
+    linear system and still reads 0.983, not 1, because a delay of 37 samples
+    moves signal across the frame boundaries the estimator averages over.
 
     **Raises** ``ValueError``: everything :func:`_as_signal` refuses on either
     channel, unequal channel lengths, fewer than 2 frames, ``win`` longer than

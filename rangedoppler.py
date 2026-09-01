@@ -55,30 +55,30 @@ Sign and axis conventions — the traps, stated once:
     has ``v < 0``. Getting this backwards does not raise and does not change the
     picture — the map looks identical, mirrored — so it is checked explicitly in
     the tests rather than assumed.
-  * **Positive angle means the wave reaches the higher-index elements later** in
-     range but *earlier* in phase: element ``a`` sits at ``x = a*d`` along the
-     array axis and carries phase ``+2*pi*d*a*sin(theta)/lambda``. The mirror
-     convention is equally common in the literature and equally invisible in a
-     plot, so it too is pinned by test.
+  * **Positive angle advances the phase along the array.** Element ``a`` sits at
+    ``x = a*d`` and carries phase ``+2*pi*d*a*sin(theta)/lambda``, so a wave
+    arriving from ``theta > 0`` reaches the higher-index elements *first*. The
+    mirror convention is equally common in the literature and equally invisible
+    in a plot, so it too is pinned by test.
   * **Cube axis order is ``(antenna, chirp, sample)``** — slow time in the
-     middle, **fast time last**. A transposed cube is still a valid 3-D complex
-     array and would produce a plausible-wrong map, so the ops check what they
-     can (see :func:`fmcw_window_apply`, which names the axis by role rather
-     than by number).
+    middle, **fast time last**. A transposed cube is still a valid 3-D complex
+    array and would produce a plausible-wrong map, so the ops check what they
+    can (see :func:`fmcw_window_apply`, which names the axis by role rather
+    than by number).
   * **The input must be complex (I/Q).** A real-sampled beat stream has a
-     conjugate-symmetric spectrum, so **every target appears twice**: once where
-     it is, and once as an equal-amplitude ghost at the fabricated range
-     ``(N_s - k)*dR`` carrying the *opposite* velocity. Measured: a target in
-     range bin 10 at velocity bin +4 gives peaks at ``(10, +4)`` **and**
-     ``(54, -4)``, both of amplitude exactly 0.5, and nothing in the map says
-     which is real. (An earlier draft of this module claimed the velocity
-     *sign* was lost in a real cube. That is true of a range-only real signal
-     and **false** here — the two Fourier axes together do keep the sign. What
-     is actually lost is which of the pair is the target, plus half the
-     amplitude and half the unambiguous range.) A real cube therefore raises,
-     and the message names the fix.
+    conjugate-symmetric spectrum, so **every target appears twice**: once where
+    it is, and once as an equal-amplitude ghost at the fabricated range
+    ``(N_s - k)*dR`` carrying the *opposite* velocity. Measured: a target in
+    range bin 10 at velocity bin +4 gives peaks at ``(10, +4)`` **and**
+    ``(54, -4)``, both of amplitude exactly 0.5, and nothing in the map says
+    which is real. (An earlier draft of this module claimed the velocity
+    *sign* was lost in a real cube. That is true of a range-only real signal
+    and **false** here — the two Fourier axes together do keep the sign. What
+    is actually lost is which of the pair is the target, plus half the
+    amplitude and half the unambiguous range.) A real cube therefore raises,
+    and the message names the fix.
   * **Units are in every parameter name** — ``_m``, ``_ms`` (metres per second),
-     ``_s``, ``_hz``, ``_deg``. A wavelength/frequency swap or a km/h/(m/s) swap
+    ``_s``, ``_hz``, ``_deg``. A wavelength/frequency swap or a km/h/(m/s) swap
      is a plausible-wrong answer, not a crash; see the honest-limits section.
 
 Deliberately **not** here (owned elsewhere, imported or composed, never
