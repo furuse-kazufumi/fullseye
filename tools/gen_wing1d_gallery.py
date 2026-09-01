@@ -2876,8 +2876,9 @@ CAPTIONS = {
             f"1000.000 Hz ちょうどを中心とする帯域があるが、偶数 "
             f"{f['fractions_without_exact_1k']} では指数のオフセットにより 1000 Hz が"
             f"帯域**端**になり、同じエネルギーが "
-            f"{', '.join(f'{r['max_center']:.2f} Hz' for r in f['table'] if not r['exact_1k'])} "
-            f"を中心とする半端な帯域から報告される。定義であって不具合ではないが、"
+            + ", ".join("%.2f Hz" % r["max_center"]
+                        for r in f["table"] if not r["exact_1k"])
+            + f" を中心とする半端な帯域から報告される。定義であって不具合ではないが、"
             f"「1 kHz でのレベル」を引用するときに知っていないと嘘になる。"
             f"空の帯域は −inf ではなく床(−200 dB)に落ちる。"),
     },
