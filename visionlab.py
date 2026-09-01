@@ -314,7 +314,7 @@ def detection_report(sweep):
         else:
             lines.append("  -> detection is close to the optical limit; to do "
                          "better, change the optics (magnification or aperture).")
-    elif opt and not det:
+    elif lat and not det:
         lines.append("  -> resolvable in principle but never detected: look at "
                      "contrast, illumination and the detector, not the lens.")
     for r in sweep["table"]:
