@@ -760,7 +760,7 @@ def vol_label_overlay(vol, labels, seed: int = 0, alpha: float = 0.5,
     grey = np.clip((V - lo) / (hi - lo), 0.0, 1.0)
     out = np.repeat(grey[..., None], 3, axis=3)
 
-    pal = vol_label_palette(int(L.max()), seed=seed, background=background)
+    pal = vol_label_palette(int(L.max()), seed=seed)
     mask = (L > 0) if mode == "fill" else _label_boundary_mask(L)
     if mask.any():
         out[mask] = (1.0 - a) * out[mask] + a * pal[L[mask]]

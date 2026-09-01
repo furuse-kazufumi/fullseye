@@ -2088,14 +2088,14 @@
         3
       ],
       "gif_colors": 256,
-      "gif_bytes": 1148982,
-      "mp4_bytes": 308214,
-      "thumb_bytes": 38656,
+      "gif_bytes": 1180414,
+      "mp4_bytes": 306934,
+      "thumb_bytes": 38932,
       "thumb_frame": 20,
-      "gif_sha256": "8ca517a6abc35998412d4424601c7b5e364d89358ffcc67e5b1d39cab554364e",
-      "mp4_sha256": "172d5e6da4ca31d413edf21824f5da05cabb0b3c5d6b52295055fe7211a7fc9a",
+      "gif_sha256": "9858bde5a3a5d786974ce7f678b24e766502c970adaa392d277b7cfc4bea31f1",
+      "mp4_sha256": "f1517a934eb3786128e6e572ecd8223597687433b88298eb272854e04c5c5d66",
       "exhibit": "isosurface",
-      "seconds": 21.832656299928203
+      "seconds": 19.34071659995243
     },
     {
       "name": "wing3d_vessel_reslice",
