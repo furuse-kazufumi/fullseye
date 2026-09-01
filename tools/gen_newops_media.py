@@ -202,6 +202,9 @@ def _to_u8(canvas: np.ndarray) -> np.ndarray:
     return np.clip(canvas * 255.0 + 0.5, 0, 255).astype(np.uint8)
 
 
+_OVERFLOW_SEEN: set = set()
+
+
 def _text(frame_u8: np.ndarray, items) -> np.ndarray:
     """``(x, y, text, color_rgb01, size, bold)`` の列をまとめて焼き込む。
 
@@ -213,7 +216,13 @@ def _text(frame_u8: np.ndarray, items) -> np.ndarray:
     d = ImageDraw.Draw(im)
     for x, y, s, col, size, bold in items:
         rgb = tuple(int(round(255 * c)) for c in col)
-        d.text((int(x), int(y)), s, fill=rgb, font=_font(size, bold))
+        font = _font(size, bold)
+        end = int(x) + int(d.textlength(s, font=font))
+        if end > im.width and s[:40] not in _OVERFLOW_SEEN:
+            _OVERFLOW_SEEN.add(s[:40])
+            _flag("label overflow", f"{end - im.width} px past the right edge: "
+                                    f"{s[:64]!r}")
+        d.text((int(x), int(y)), s, fill=rgb, font=font)
     return np.asarray(im)
 
 
@@ -681,7 +690,7 @@ def build_bearing(log):
         found = hit[i]
         labels = [
             (14, 6, f"bearing: a {FC:.0f} Hz resonance amplitude-modulated at the "
-                    f"{FD:.0f} Hz defect rate (m = {M}), {FS / 1000:.1f} kHz x 1.0 s   "
+                    f"{FD:.0f} Hz defect rate (m = {M}), {FS / 1000:.1f} kHz x 1.0 s "
                     f"-- sweeping the demodulation band", C_TEXT, 12, False),
             (92, 42, "1  raw spectrum (dsp.spectrum), log amplitude -- shaded = the "
                      "band being demodulated", C_TEXT, 13, True),
@@ -712,10 +721,9 @@ def build_bearing(log):
               f"{e['band_fraction']:.1e} of the record. The band IS the analysis."),
              (C_TEAL if found else C_ROSE), 12, True),
             (14, H - 20,
-             f"choosing it without knowing the resonance: spectral_kurtosis on the "
-             f"impulsive record of the same bearing picks {k_lo:.0f}-{k_hi:.0f} Hz "
-             f"(max {sk['max_kurtosis']:.3f} @ {sk['max_freq']:.0f} Hz) -> envelope peak "
-             f"{env_auto['peak_freq']:.4f} Hz", C_DIM, 11, False),
+             f"choosing the band without knowing the resonance: spectral_kurtosis on "
+             f"the impulsive record of the same bearing picks {k_lo:.0f}-{k_hi:.0f} Hz "
+             f"-> envelope peak {env_auto['peak_freq']:.4f} Hz", C_DIM, 11, False),
         ]
         labels += tR + tRy + tE + tEy + tP + tPy
         out.append(_text(frame, labels))
@@ -1072,7 +1080,9 @@ def build_photon(log, frames: int = 24):
     for n in ns:
         c = P.photon_sample(scene, photons_per_unit=float(n), seed=0)
         counts.append(c)
-        stats.append(P.photon_statistics(c))
+        # 統計は**一様な**パッチで測る。画像全体で測ると Fano は場面の構造を
+        # 拾って 1 から大きく外れ、Poisson 統計が壊れているように見えてしまう。
+        stats.append(P.photon_statistics(c[wedge[1.00]]))
         sig = P.photon_uncertainty(c)
         if not np.allclose(sig, np.sqrt(c)):
             _flag("photon", "photon_uncertainty is not sqrt(counts)")
@@ -1156,19 +1166,18 @@ def build_photon(log, frames: int = 24):
              "relative uncertainty of the brightest patch vs photon count",
              C_TEXT, 12, True),
             (MARGIN + 4, PANY + PAN + 6,
-             f"{counts[i].sum():9.0f} photons in the frame   empty pixels "
-             f"{st['zero_fraction']:5.1%}   mean {st['mean']:8.3f}   variance "
-             f"{st['variance']:9.3f}   Fano {st['fano_factor']:.4f} (Poisson = 1)",
-             C_TEXT, 13, True),
+             f"{counts[i].sum():9.0f} photons in the frame.  On the uniform 1.00 "
+             f"patch: mean {st['mean']:8.3f}, variance {st['variance']:9.3f}, "
+             f"Fano {st['fano_factor']:.4f} (Poisson = 1)", C_TEXT, 13, True),
             (MARGIN + 4, PANY + PAN + 26,
-             f"SNR measured {st['snr_measured']:7.3f}   sqrt(N) {st['snr_poisson']:7.3f}"
-             f"   error bar {rel[i] * 100:6.2f} %  (1/sqrt(N) = {theory[i] * 100:6.2f} %)",
+             f"SNR measured {st['snr_measured']:7.3f}, sqrt(N) {st['snr_poisson']:7.3f}"
+             f", error bar {rel[i] * 100:5.2f} % (1/sqrt(N) = {theory[i] * 100:5.2f} %)",
              C_AMBR, 13, True),
             (MARGIN + 4, PANY + PAN + 44,
-             f"the noise is not a setting here, it is sqrt(N): from 10 photons up the "
-             f"measured bar tracks 1/sqrt(N) to {dev_high:.1%}; below that the rule "
-             f"itself weakens ({dev:.1%} at {ns[0]:.0f} photon/px)", C_DIM, 12, False),
-            (bx1 - 120, axU.y1 + 22, "photons per unit ->", C_DIM, 11, False),
+             f"the noise is not a setting, it is sqrt(N): from 10 photons up the bar "
+             f"tracks 1/sqrt(N) to {dev_high:.1%}; below that the rule itself weakens "
+             f"({dev:.0%} at {ns[0]:.0f} photon/px)", C_DIM, 12, False),
+            (bx1 - 130, axU.y1 - 18, "photons per unit ->", C_DIM, 11, False),
         ]
         labels += _legend(bx0 + 10, axB.y0 + 4,
                           [(C_TEAL, "true radiance"), (C_AMBR, "measurement +/- 1 sigma")])
@@ -1560,7 +1569,7 @@ def build_specular(log, frames: int = 24):
     H = PANY + PAN + 74
     px0 = MARGIN + 3 * (PAN + GAP) + 54
     head = ("dichromatic separation: one glossy image -> diffuse + specular "
-            "(specular_diffuse_split); the highlight moves and changes strength")
+            "(specular_diffuse_split), highlight moving")
 
     out = []
     for i, r in enumerate(rows):
@@ -1606,8 +1615,8 @@ def build_specular(log, frames: int = 24):
              f"{r['closure']:.2e}", C_TEAL, 12, True),
             (MARGIN, PANY + PAN + 46,
              f"a projection onto the illuminant colour, not an optimisation -- which "
-             f"is why it holds at machine precision as the highlight moves "
-             f"(worst {worst['e_d']:.2e})", C_DIM, 12, False),
+             f"is why it holds at machine precision (worst {worst['e_d']:.2e})",
+             C_DIM, 12, False),
             (ax.x0 + 6, ax.y1 + 22, "frame ->", C_DIM, 11, False),
         ]
         labels += _legend(ax.x0 + 6, ax.y0 + 4,
