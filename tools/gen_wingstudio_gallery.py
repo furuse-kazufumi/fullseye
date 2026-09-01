@@ -463,8 +463,8 @@ def ex_volume_turntable():
     import volops
     vol = _load_ct()
     level = float(vol.mean() + vol.std())
-    Vz, F = render3d.marching_cubes(vol, level)           # 頂点は (z, y, x) 添字空間
-    Vw = np.ascontiguousarray(Vz[:, ::-1])                # -> world (x, y, z)
+    Vz, Fz = render3d.marching_cubes(vol, level)          # 頂点は (z, y, x) 添字空間
+    Vw, F = voxel_mesh_to_world(Vz, Fz)                   # -> world (x, y, z)
     mask = (vol > level).astype(np.float64)
     shell = volops.vol_boundary(mask, connectivity=6)
     P = np.ascontiguousarray(np.argwhere(shell > 0.5).astype(np.float64)[:, ::-1])
@@ -711,8 +711,8 @@ def ex_normals():
     else:                                            # キャッシュが無い環境では CT から
         vol = _load_ct()
         lvl = float(vol.mean() + vol.std())
-        Vz, F = render3d.marching_cubes(vol, lvl)
-        V = np.ascontiguousarray(Vz[:, ::-1])
+        Vz, Fz = render3d.marching_cubes(vol, lvl)
+        V, F = voxel_mesh_to_world(Vz, Fz)
         src = "skeleton_ct.npy の等値面"
     V = np.asarray(V, np.float64)
     c = 0.5 * (V.min(0) + V.max(0))
@@ -904,8 +904,8 @@ def ex_depth3d():
         src = "itokawa_f0049152.stl"
     else:
         vol = _load_ct()
-        Vz, F = render3d.marching_cubes(vol, float(vol.mean() + vol.std()))
-        V = np.ascontiguousarray(Vz[:, ::-1]); src = "skeleton_ct.npy 等値面"
+        Vz, Fz = render3d.marching_cubes(vol, float(vol.mean() + vol.std()))
+        V, F = voxel_mesh_to_world(Vz, Fz); src = "skeleton_ct.npy 等値面"
     RES = 200
     pose, K = render3d.auto_view(V, width=RES, height=RES)
     buf = render3d.render_mesh(V, F, pose=pose, intrinsics=K, width=RES, height=RES)
@@ -984,10 +984,13 @@ def _cad_part(res=64):
     part = sdf_ops.sdf_subtract(sdf_ops.sdf_union(sdf_ops.sdf_smooth_union(base, tower, 3.0),
                                                   boss), hole)
     vol = np.transpose(part, (2, 1, 0))               # (nx,ny,nz) -> (D,H,W)=(z,y,x)
-    Vz, F = render3d.marching_cubes(vol, 0.0)
-    V = np.ascontiguousarray(Vz[:, ::-1])             # -> world (x, y, z) 添字空間
+    Vz, Fz = render3d.marching_cubes(vol, 0.0)
+    V, F = voxel_mesh_to_world(Vz, Fz)                # -> world (x, y, z) 添字空間
     V, F = meshrepair.decimate_qem(V, F, 1400)        # レイキャストが現実的な面数へ
-    return np.asarray(V, np.float64), np.asarray(F, int)
+    V, F = np.asarray(V, np.float64), np.asarray(F, int)
+    if signed_volume(V, F) < 0.0:                     # fail-closed: 内向きなら止める
+        raise RuntimeError("CAD メッシュの巻き方向が内向き(符号つき体積 < 0)")
+    return V, F
 
 
 def ex_cadmap():

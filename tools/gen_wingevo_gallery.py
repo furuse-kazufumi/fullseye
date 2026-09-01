@@ -1410,10 +1410,13 @@ def ex_type_fixpoint(data, log=print):
                  (28, 54, "節点 = 型、辺 = 「その型を入力に取り、この型を出す op がある」。"
                           "初期プールを image2d 1 種だけにして不動点を回した実測。",
                   C_DIM, 13, False)]
-        for t in types:
+        for i, t in enumerate(types):
             x, y = pos[t]
             ang = np.arctan2(y - cy, x - cx)
-            lx, ly = cx + (R + 22) * np.cos(ang), cy + (R + 22) * np.sin(ang)
+            # 円周の上下では隣り合うラベルが重なるので、半径を 1 つおきにずらす。
+            # ずらさないと 12 時/6 時付近の型名が読めない(見た目の破綻)。
+            rr = R + (22 if i % 2 == 0 else 62)
+            lx, ly = cx + rr * np.cos(ang), cy + rr * np.sin(ang)
             col = C_EVO if t in newt else (C_TEXT if t in reach else C_DIM)
             anchor = "lm" if np.cos(ang) >= 0 else "rm"
             items.append((lx, ly, t, col, 11, t in newt, anchor, True))

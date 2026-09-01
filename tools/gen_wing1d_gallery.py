@@ -1908,7 +1908,7 @@ def ex_profile_sources(log):
         f"crest {feats['crest_factor']:.4f} centroid {feats['spectral_centroid']:.3f} Hz "
         f"peak_freq {feats['peak_freq']:.3f} Hz bandwidth {feats['bandwidth']:.3f} Hz")
 
-    W, H = 1200, 900
+    W, H = 1200, 980
     fig = Fig(W, H)
     _header(fig, "Where a 1-D profile comes from",
             "three different instruments, one representation - plain 1-D float64")
@@ -1949,7 +1949,7 @@ def ex_profile_sources(log):
                        + " voxel units", C_DIM, 11)
 
     # (3) センサー波形
-    axs = Ax(fig, 800, 74, W - 30, 274, (0.0, 0.25),
+    axs = Ax(fig, 800, 74, W - 30, 250, (0.0, 0.25),
              (-float(np.abs(sensor).max()) * 1.1, float(np.abs(sensor).max()) * 1.1))
     axs.panel(C_PANEL2)
     ink = fig.ink()
@@ -1970,7 +1970,7 @@ def ex_profile_sources(log):
                       "sample. funct1d takes all three without an adapter.",
              C_TEXT, 13, True)
     for i, cinfo in enumerate(common):
-        y0 = 372 + i * 158
+        y0 = 384 + i * 180
         ax = Ax(fig, 92, y0, W - 300, y0 + 120, (0.0, float(cinfo["n"] - 1)),
                 (cinfo["yr"][0] - 0.06 * (cinfo["yr"][1] - cinfo["yr"][0]),
                  cinfo["yr"][1] + 0.06 * (cinfo["yr"][1] - cinfo["yr"][0])))
@@ -1993,10 +1993,13 @@ def ex_profile_sources(log):
                  C_DIM, 12)
         fig.text(W - 288, y0 + 66, f"zero_crossings  {cinfo['nzc']}", C_DIM, 12)
         fig.text(W - 288, y0 + 86, f"local maxima    {cinfo['nmax']}", C_DIM, 12)
-    fig.text(30, H - 26, "The 1-D wing has no source type of its own on purpose: an "
+    fig.text(30, H - 44, "The 1-D wing has no source type of its own on purpose: an "
                          "arbitrary real 1-D array is a genuine profile from any of "
-                         "these instruments, so a dedicated type would only cut the "
-                         "connection.", C_DIM, 12)
+                         "these instruments,", C_DIM, 12)
+    fig.text(30, H - 26, "so a dedicated type would only cut the connection. Note the "
+                         "3D probe reports 0 local maxima: local_min_max_funct_1d uses "
+                         "STRICT inequalities, and a plateau top is not a maximum.",
+             C_DIM, 12)
 
     frame = fig.u8()
     info = save_png(frame, "profile_sources", log)
