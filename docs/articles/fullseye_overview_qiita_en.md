@@ -1432,6 +1432,172 @@ The old rule said such names must never appear *anywhere* — and **the reposito
 
 Real bugs found by adversarial testing and fixed: three in the light-field family (a silent Inf, a raw numpy error leaking out, a missing size cap), five in photon counting (a silent NaN from denormal underflow, a type lie, implicit string parsing, `argmax` picking bin 0 on a flat histogram, a landmine default), and three in the virtual lab. On top of that, **the authors corrected three of their own docstring numbers by re-measuring**: "including the rise makes the lifetime come out short" is measurably **the opposite — it comes out long**, and "going through Anscombe denoises better" **loses** under linear smoothing. Not keeping only the flattering results applies here too.
 
+## Addendum 7 (2026-09-02): Filling the five fields we had not a single word for — and learning that "zero findings" can lie
+
+> **Status: Measured / Verified** — 8 new families, 111 operators, **zero suspect signatures** across 1,500 fuzz chains, **8,169 tests** green. Evolution gained **+44.5%** with a new family — and **lost by 28.2%** on another.
+
+Addendum 6 introduced a written procedure for turning industry awards into a standing input for operator ideas. It recorded **four fields where fullseye returned zero across all three inventory surfaces**. This addendum is the few days that **filled all four**. Along the way the author asked two more questions — *"if 1-D works, then acoustic data works too, right?"* and *"HALCON has complex images; would quaternion images make something interesting possible?"* — and those went in as well.
+
+### What landed
+
+| family | ops | the measurement that justifies adding it |
+|---|---|---|
+| light field | 17 | refocus gain equals angular resolution (6.0016 / 8.0038 / 10.0075) |
+| photon counting | 17 | dead-time law matches the textbook **bit for bit**; dToF returns 1.5000003 m for 1.5 m |
+| specular separation | 13 | plain least squares collapses under blocked lights while median/RANSAC hold the noise floor; **k=4 is the shared breakdown point** |
+| motion magnification | 9 | **the cliff is explained in closed form** — the first zero of J₀, 2.4048/k = 3.0619 px |
+| quaternion images | 19 | a 3-D colour rotation is the only genuine capability difference (honest verdict below) |
+| FMCW range-Doppler | 8 | a weak target buried under −24.57 dB of rectangular-window leakage reappears at −43.56 dB with a Hann window |
+| acoustic diagnostics | 19 | **envelope spectrum peaks at 107.000000 Hz; the raw spectrum at that same frequency is 4.3e-16** |
+| coherence-scanning interferometry | 9 | **phase shifting breaks at exactly λ/4**, and its error is always an integer multiple of λ/2 |
+
+The typed catalogue is now **511 operators**; the evolution registry is **847**.
+
+### The best thing learned this stretch — "zero findings" was not robustness
+
+Addendum 5 called the chain fuzzer a third layer of quality assurance. What this stretch showed is that **the layer itself can lie**.
+
+Digging into why the 3-D family had executed only 204 of 310 operators across 1,500 chains, the cause turned out not to be robust operators but a **fuzzer that was silently skipping them**. The breakdown of the 100 unreached:
+
+```
+required argument could not be bound — skipped with no record   70
+input type not in the pool (must be produced mid-chain)         21
+bindable, simply never drawn                                     9
+```
+
+**Seventy were skipped without leaving a record.** What was missing were ordinary arguments: camera intrinsics, pose, a RANSAC threshold, voxelisation bounds and resolution. The moment those hints opened the path, **five genuine type mismatches surfaced from code that had never executed once**:
+
+```
+project_points        declared image2d out → actually a (uv(160,2), depth(160,)) tuple
+alpha_shape_boundary  declared points  out → actually indices, (38,) int64
+segment_rigid_motions declared labels  out → actually dict{labels, motions}
+pnp_ransac            declared image2d in  → second argument is really 2-D points → raw IndexError
+the `surface` type    folded a polynomial model and a B-spline model under one name
+```
+
+Writing a health check over the whole ledger then found **seven more of the same class**. Three that could not be fixed are listed with their reasons, and the test asserts **exactly that set** — it fails if a listed one gets fixed *or* if a new divergence appears.
+
+**The same shape was walked into four times this stretch.**
+
+1. **Arguments with defaults could never be overridden.** An operator whose default does not fit the pool's fixed sizes is rejected every single time and counted under "zero findings" **without ever having run**.
+2. **Coverage was only a number.** "304/417" cannot distinguish robust from unreachable. Breaking it down per family immediately showed the photon family at 10/17 — **fail-closed validation working so well that 7 operators never executed**.
+3. **Signatures were splitting on numbers.** The better the error message, the more run-specific numbers it carries ("127 negative bins, minimum −1.176"), so one problem produced a fresh signature every run.
+4. **The 70 above.**
+
+Type reachability can be solved as a fixpoint (start from the initial pool's types, add the output type of every operator whose inputs are all present, repeat). Measured across 434 operators, **exactly one was structurally unreachable**. Everything else had simply never been drawn.
+
+### Splitting a type, six times, each decided by measurement
+
+"Same shape, so one type will do" builds a system that goes quietly wrong. The criterion is single: **when you mix them, does it raise, or does it return a plausible wrong number?** If the latter, split.
+
+Polarisation was the sharpest case. **A polariser sweep and a multi-light stack are both non-negative `(N,H,W)` arrays and are structurally indistinguishable.** Mixing them goes wrong **in both directions**:
+
+- Feed a genuine light stack to the polarisation separator and it **fabricates a degree of polarisation of 5.4%** on a scene containing neither a polariser nor polarised light — 50 of 50 randomly oriented stacks accepted.
+- Feed a genuine sweep to the photometric solver and, on a flat surface whose true normal is exactly `(0,0,1)`, it returns normals averaging **34 degrees off** with a residual of only 21%. The same operator on genuine photometric data gives 0.000115 degrees. **A factor of 296,000.**
+
+I reproduced it independently: **35.15 degrees versus 0.000000 degrees**. No exception, no NaN — a confident lie.
+
+The same call was made for time-first video `(T,H,W)` against spatial voxels, arrival-time cubes `(H,W,T)`, colour quaternions against monogenic signals, complex beat cubes against real photon histograms, and z-scan stacks. **In the opposite direction, acoustic signals were allowed to ride on the existing 1-D type** — any real 1-D array genuinely *is* a valid acoustic signal, so declaring a type would not be a lie, but it would guard nothing. The danger lives in the `rate` scalar instead: read the same recording at 48000 Hz instead of 25600 and the defect is reported at 200.625 Hz rather than 107, again with nothing raised. So the defence went on the scalar.
+
+### The honest answer to "would quaternion images make something interesting possible?"
+
+**Yes — but for exactly one reason.**
+
+A complex pixel is a 2-D value with one axis of rotation. The quaternion's pure part `(0,R,G,B)` is a 3-vector, and `q·x·q*` is a genuine **3-D rotation in colour space**. Turning pure red into green by rotating 90° about the blue axis **cannot be done by any per-channel gain** — the best diagonal approximation is off by `‖P−diag(P)‖₂ = 0.6667`. That is the one real capability difference.
+
+**Everything else failed to sell.**
+
+- The same rotation works with a 3×3 matrix (agreement 2.22e-16). The only quaternion-specific gain is representational closure.
+- **The quaternion Fourier transform buys nothing.** Rebuilt from per-channel FFTs it agrees to 1.14e-13, and it is **2.4× slower**. The genuinely quaternionic part is only that left ≠ right.
+- **The Riesz/monogenic route lost to the complex steerable pyramid built the same day.** With two orientations in one octave the error is **1.30e-01 against 4.4e-16**. Two octaves apart both reach machine precision, which pins the cause on the single-plane-wave model being false in a radial band. A quarter of the pixels come back rank 0, and the theoretical win on oblique gratings did not materialise either. **Two genuine wins remain** — roughly 2× better under noise, and 2.21× faster at magnification.
+
+Leading with the losses is not a stylistic choice; it is what makes the next step decidable. The loss has a located cause, so it says what to fix.
+
+### Showing where the existing method breaks
+
+"It is new" does not justify a family. What justifies one is **showing where the existing approach breaks, on the same ground**. Coherence-scanning interferometry was the cleanest example.
+
+| true step | phase shifting (existing) | coherence method (new) |
+|---|---|---|
+| 0.15 µm | error 0.0000 | error 0.0000 |
+| 0.20 µm | **returns −0.1000** (−λ/2) | error 0.0000 |
+| 0.30 µm | **returns −0.0000** (−λ/2) | error 0.0000 |
+| 1.00 µm | **returns +0.1000** (−3λ/2) | error 0.0000 |
+
+It starts failing at **exactly λ/4 = 0.15 µm**, and the error is always an integer multiple of λ/2 — a fringe-order jump, which makes it a **structured** lie. Nothing raises, nothing is NaN, nothing warns. Changing λ to 0.8 µm moves the breakdown to 0.20 µm, which is also verified.
+
+Acoustics got the same treatment. A bearing defect's **envelope spectrum peaks at 107.000000 Hz**, while **the raw spectrum at that same frequency reads 4.3e-16** — the defect is not there. Order tracking likewise: on a signal whose shaft speed varies, the ordinary spectrum smears the component to 7% of its amplitude over 66.5 Hz, while resampling into the angle domain gives 0.999371 in a peak **0 bins** wide.
+
+### Evolution actually used the new families
+
+This was the real objective. **Widening the vocabulary to 511 operators achieves nothing if there is no work that uses it.**
+
+Running the evolution loop, the top rejection reason was exactly that:
+
+```
+rejected  5  problem does not accept this input type (histcube)
+rejected  4  problem does not accept this input type (lightfield)
+rejected  2  problem does not accept this input type (counts)
+```
+
+**All twelve problems were in old types.** So four problems in the new types were added, each with ground truth built exactly from a forward model (synthesise the input knowing the answer). Results are on the **locked holdout** — the split scored exactly once, against the champion, and never touched otherwise.
+
+| problem | identity | hand (best single existing op) | evolved | vs hand |
+|---|---|---|---|---|
+| photon-histogram denoise | 0.2664 | 0.5371 | **0.7760** | **+44.5%** |
+| map of what is vibrating | 0.0000 | 0.6973 | **0.8868** | **+27.2%** |
+| light-field disparity map | 0.0000 | 0.5794 | 0.5907 | +2.0% |
+| specular removal | 0.4115 | 0.8406 | 0.6039 | **−28.2%** |
+
+The photon champion is a composition **closed entirely within the photon family**:
+
+```
+irf_convolve → background_subtract → deadtime_correct
+```
+
+That is the first case of a new family paying off not as a usable operator but as **a sequence of operators joined together**.
+
+**And the one that lost is the most instructive.** For specular removal the evolution found a champion that goes **across families, through the quaternion route** (colour image → quaternion → colour-space rotation → colour image). On the observed split it read 0.776, closing on the hand's 0.84 — but on the untouched split it fell to **0.628**, with a seed-to-seed standard deviation of 0.190. **Looking only at the observed split, it would have read as "nearly there."** The winning vibration problem, by contrast, had a standard deviation of 0.001 on the untouched split. Disclosing the spread is what made the difference legible.
+
+### Five of my own and my agents' errors, kept on the record
+
+This is the section I most want to keep.
+
+**1. I nearly wrote the evolution gain as +38%.** I was comparing a hand baseline of 0.3945 against an evolved 0.546 — **two numbers measured on different draws**. Re-measured on the same split, the hand is 0.5794 and the real difference is **+2.0%**. Comparing across draws inflates by nearly 20×.
+
+**2. I had put the weaker operator in as the hand baseline.** The promotion gate searched all existing operators for the best single-op baseline and showed one **more than twice as strong** as the one I had chosen. A weak baseline makes the problem look easier than it is. The baseline should be "the best that already exists", not "the first thing I thought of".
+
+**3. When I wrote the type predicate, my predicate was the thing that was wrong.** Adding a check for the `pose` type flagged six operators — but four of them were flagged **because I had written `isinstance(np.ndarray)`**. GPU-backed operators return torch tensors by this repository's own convention, so the check had to be **on shape, not on type**. Fixed, exactly three remained, and those were genuine (one declared `pose` while carrying neither R nor t).
+
+**4. An agent corrected a number that flattered its own work.** The quaternion agent had reported "100k composed rotations drift 0.0 for quaternions versus 4.4e-10 for matrices" as a quaternion advantage. That 4.4e-10 turned out to come from a *different* bug in the `pose_quat` module I had just published (its normalisation added 1e-12 to the divisor), feeding slightly non-orthogonal matrices through all 100,000 steps. The honest figure is **4.33e-14** — four orders smaller, and merely rounding. **The number that flatters what you are building is the one to re-measure first.**
+
+**5. An agent caught a figure it had written in a code comment and never measured.** Writing the family guide forced the check; the measured effect scales with how much of each frame is zero padding, coming out **worse than written at high padding** (pure white noise reporting a strong repetitive transient of +4.09 that does not exist) and **milder at low padding**. A single fabricated pair could not have conveyed that.
+
+### A by-product — a bug in an API minutes after publishing it
+
+While checking the inventory for the quaternion question, it turned out that 28 quaternion and dual-quaternion functions **existed but could not be reached from either facade**. Minutes after wiring them, an agent reported three silent errors:
+
+- `quat_normalize([0,0,0,0])` returns `[0,0,0,0]`, and converting that to a rotation matrix yields the **identity** — "no rotation can be defined" turning into "no rotation".
+- A rotation requested about a zero axis becomes a non-unit quaternion of norm 0.878.
+- `|RᵀR − I| = 4.0e-12` — not rounding but a **one-directional shrink** that accumulates through composition.
+
+The cause was dividing by `norm + 1e-12`. Zero length is now fail-closed and the division is exact; **the orthogonality error is 4.4e-16**. One thing the diagnosis taught: the 4.0e-12 figure arose because `quat_to_hom_mat3d` calls `quat_normalize` internally, so **the epsilon applied twice** — reproducing only the outer expression does not reproduce the number against the current code.
+
+Sweeping the same class through sibling code is house discipline here. Two modules also had their size caps applied **after** the float64 promotion, so they were not preventing the allocation they exist to prevent; both now reject in 0.0000 s with nothing allocated (verified with a zero-byte broadcast view).
+
+### The numbers for this stretch
+
+| item | before | after |
+|---|---|---|
+| typed catalogue | 400 ops | **511 ops** |
+| evolution registry | 801 ops | **847 ops** |
+| evolution problems | 12 | **16** (4 of them in new types) |
+| per-operator documentation | 1,155 notes | **1,264 notes** |
+| family guides | 16 | **24** |
+| tests | 6,630 | **8,169** (all green) |
+
+Adversarial testing found and fixed **more than 30 real bugs** across the eight families. Every one of them was of the "**returns a plausible wrong number**" kind rather than the "raises" kind: an angle silently folded by the sine so that 95° and 85° produce a **bit-identical** cube; an array with no aperture **confidently returning −90°**; frames straddling zero padding looking like the most impulsive thing present and **reporting a transient that does not exist**; a truncated envelope returning a height that is **76% wrong**; a nm/µm mix-up in the wavelength that is **completely asymptomatic**. None of them are visible without running and measuring.
+
 ## Summary
 
 **Fullseye** carries roughly **1,000 explainable classical-vision algorithms as "skills,"** and lets you choose, behind one typed interface, whether to
