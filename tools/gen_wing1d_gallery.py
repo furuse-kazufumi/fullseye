@@ -588,8 +588,11 @@ def ex_kurtosis_band(log):
         f"(frame {sk_pick}, band_fraction {rows[sk_pick]['band_fraction']:.4f})")
 
     W, H = GIF_W, GIF_H
-    frames = []
+    frames, labels = [], []
     for k, r in enumerate(rows):
+        labels.append(f"復調帯域 {r['low']:.0f}–{r['high']:.0f} Hz  /  包絡線ピーク "
+                      f"{r['peak_freq']:.1f} Hz  /  band_fraction {r['band_fraction']:.4f}"
+                      + ("  ← SK が選んだ帯域" if k == sk_pick else ""))
         fig = Fig(W, H)
         _header(fig, "Spectral kurtosis picks the demodulation band",
                 f"impulse bearing signal, resonance {fc:g} Hz, defect {fd:g} Hz, "
