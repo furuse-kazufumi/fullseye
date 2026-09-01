@@ -644,6 +644,14 @@ def subject_freq_sweep(log=print) -> dict:
             "cutoff_normalised": [round(float(x), 4) for x in lo_cut],
             "lowpass_psnr_db": [round(float(x), 2) for x in psnr_lo],
             "energy_kept_pct": [round(float(x), 3) for x in keep_e],
+            "highpass_min": [round(v[0], 4) for v in rng_hi],
+            "highpass_max": [round(v[1], 4) for v in rng_hi],
+            "highpass_negative_pct": [round(v[2], 3) for v in rng_hi],
+            "bandpass_min": [round(v[0], 4) for v in rng_bp],
+            "bandpass_max": [round(v[1], 4) for v in rng_bp],
+            "bandpass_negative_pct": [round(v[2], 3) for v in rng_bp],
+            "sign_convention": ("0 が 0.5 に写る signed01。負の画素は 0 個 "
+                                "(2026-09-02 以前は約 50% が負だった)"),
         },
         "caption": (
             "同じ写真にローパス・ハイパス・バンドパスを当て、遮断周波数を "
@@ -651,7 +659,12 @@ def subject_freq_sweep(log=print) -> dict:
             "元画像との PSNR は %.2f→%.2f dB。一方その通過帯に入っているスペクトル"
             "エネルギーは遮断 0.05 の時点ですでに %.2f%% —— 「エネルギーのほとんどは低周波"
             "にあるのに、見た目は高周波が決めている」という画像の癖がそのまま数字に出る。"
-            % (psnr_lo[0], psnr_lo[-1], keep_e[0])),
+            "帯域を落とせば応答は必ず符号を持つが、`highpass` と `bandpass_image` は"
+            "その 0 を 0.5 に写した [0,1] を返す —— この掃引の全 %d 点で最小値は "
+            "%.4f / %.4f、負の画素は 0.0%% だった (画素の約半分が無言で黒に潰れる"
+            "実装ではもう無い)。"
+            % (psnr_lo[0], psnr_lo[-1], keep_e[0], n,
+               min(v[0] for v in rng_hi), min(v[0] for v in rng_bp))),
     }
 
 
