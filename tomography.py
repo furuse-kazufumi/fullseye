@@ -1106,9 +1106,7 @@ def _span_weight(ang: np.ndarray, span_deg, op: str) -> float:
                 "angles?) — pass span_deg explicitly to say what range these views "
                 "cover" % (op,))
         total = np.deg2rad(step) * ang.size
-    if total > np.pi:
-        total = np.pi if total >= 2.0 * np.pi - 1e-9 else np.pi
-    return total / ang.size
+    return min(total, np.pi) / ang.size
 
 
 def filtered_backprojection(sinogram, angles_deg=None, size=None,
@@ -1659,7 +1657,7 @@ def metal_trace_interpolate(sinogram, angles_deg=None, image_threshold=None,
 # --------------------------------------------------------------------------- #
 # 5. the axis of rotation                                                      #
 # --------------------------------------------------------------------------- #
-def sinogram_center_of_rotation(sinogram, angles_deg=None, min_condition=1e-6):
+def sinogram_center_of_rotation(sinogram, angles_deg=None, min_condition=0.02):
     """Where the axis of rotation actually is, in detector bins from the centre.
 
     The centre-of-mass identity, which is exact and needs no reconstruction: the

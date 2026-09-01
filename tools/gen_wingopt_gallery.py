@@ -1090,8 +1090,8 @@ def ex_dof_coc(log):
             labels.append((plot_box[0] - 24, int(p.py(t)) - 7, f"{t}", C_DIM, 11, False))
         labels += [
             (plot_box[0] + 26, plot_box[1] + 4, "depth of field [mm]", C_DIM, 11, False),
-            (plot_box[2] - 250, plot_box[1] + 4,
-             "acceptable circle of confusion [pixel pitches] ->", C_DIM, 11, False),
+            (plot_box[2] - 236, plot_box[1] + 4,
+             "circle of confusion [pixel pitches] ->", C_DIM, 11, False),
             (int(p.px(k_tol)) + 6, plot_box[1] + 20,
              f"tolerance met from {k_tol:.3f} px", C_MISS, 11, True),
             (14, plot_box[3] + 26,
