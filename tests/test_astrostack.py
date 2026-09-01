@@ -1003,6 +1003,26 @@ class TestBugsFoundByMeasurement:
         _, info = A.frame_align(frames[0], frames[1])
         assert info["votes"] >= 20               # 修正前は 3
 
+    def test_a_tie_in_the_smoothed_vote_no_longer_picks_an_empty_bin(self):
+        """BUG: 3x3 平滑した票の argmax が**同点**になると、山の隣の空ビンが
+        選ばれた。真のずれ ``(-0.087, +0.996)`` がビン境界に乗って票 7 + 4 に
+        割れた実測の再現で、中心が 1 行ずれて票 0 になり、
+        :func:`frame_align` が「重なっていない」と**誤って fail-closed** した。
+        正しく止まる op ほど、誤って止まったことに気づきにくい。"""
+        frames, _ = A.synth_frame_series(shape=(64, 64), n_frames=3,
+                                         dither_px=1.0, n_stars=12,
+                                         flux_min=20000.0, flux_max=40000.0,
+                                         sky=60.0, read_sigma=5.0, seed=71,
+                                         margin_px=12.0)
+        centre, votes = A._vote_translation(A.star_detect(frames[2]),
+                                            A.star_detect(frames[0]), 16.0)
+        assert votes >= 7                        # 修正前は 0
+        assert centre[0] == pytest.approx(-0.087, abs=0.15)
+        assert centre[1] == pytest.approx(+0.996, abs=0.15)
+        # そして align_frames が例外ではなく答えを返す
+        aligned, mats = A.align_frames(frames)
+        assert len(aligned) == 3
+
     def test_the_cosmic_ray_laplacian_no_longer_calls_star_cores_hits(self):
         """BUG: 素の格子でラプラシアンを取っていたので、星の中心が必ず尖って
         見え、128x128 のフレームで 227 画素を宇宙線と呼んで適合率 0.185 だった

@@ -376,7 +376,6 @@ def test_fingerprint_gate_is_only_half_safe():
     ゲートが完全であるかのような改変が入ったら落ちるようにしておく。
     """
     K = sensor_pattern(N_PRNU, 101)
-    fp = F.sensor_fingerprint(prnu_bank(K, 8))
     test = shoot(natural(N_PRNU, 900), K, seed=5000)
     fake = natural(N_PRNU, 42)
     fake = (fake - fake.mean()) / fake.std()
@@ -905,5 +904,5 @@ def test_no_op_returns_a_verdict():
         if not t:
             continue
         assert not (banned & set(t)), sorted(banned & set(t))
-        assert "caveats" in t and t["caveats"]
+        assert t.get("caveats")
         assert all(isinstance(c, str) for c in t["caveats"])
