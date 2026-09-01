@@ -162,18 +162,36 @@ def transport_plan_1d(u_values, v_values):
 # ヒストグラム整合
 # =========================================================================
 
-def histogram_match(src, ref, bins=None):
+def histogram_match(src, ref, bins=None, ties="average"):
     """``src`` の値分布を ``ref`` に合わせる(1 次元の厳密な最適輸送)。
 
-    連続な入力なら**出力の分布は参照と厳密に一致する**(順位を保ったまま
-    参照の分位点に置き換えるだけなので)。``bins`` を指定すると、その段数の
+    順位を保ったまま参照の分位点に置き換える。``bins`` を指定すると、その段数の
     累積分布で近似する ―― 速いが**厳密ではなくなる**ので、既定は ``None``
     (厳密)にしてある。
+
+    **同じ値の画素をどう扱うかで、絵の意味が変わる。** 単調写像なら「等しい入力
+    は等しい出力に写る」はずだが、素朴に順位で置き換えると**同値が引き裂かれる**。
+    実測(値 2 が 4 画素ある整数画像):出力は ``0.2222 / 0.3333 / 0.4444 /
+    0.5556`` の 4 つに分かれた。つまり**平坦だった領域に、元の絵に無い濃淡が
+    生える**。整数画像は同値だらけなので、これは例外ではなく常態。
+
+    * ``ties="average"``(既定)—— 同値の画素には、そこに割り当たった参照値の
+      **平均**を与える。等しい入力は等しい出力に写り、単調性が保たれる。
+      その代わり**出力の分布は参照と厳密には一致しなくなる**(同値の塊のぶん、
+      分布が階段状に丸まる)。連続な入力(同値が無い)なら厳密一致のまま。
+    * ``ties="break"`` —— 順位そのままで引き裂く。**出力の分布は参照と厳密に
+      一致する**が、平坦部に偽の濃淡が出る。分布を厳密に合わせることが目的で、
+      絵として見ないと分かっているときだけ。
+
+    どちらを選んでも失うものがある(分布の厳密さ か 平坦部の平坦さ)ので、
+    **黙って片方に決めず引数にした**。
 
     多チャネルの絵に**そのまま掛けるとチャネル間の相関を壊す**。
     各軸の周辺分布は合うのに、色の組合せが元に無かったものになりうる。
     相関ごと運びたいときは :func:`color_transfer` の ``method="gaussian"``。
     """
+    if ties not in ("average", "break"):
+        raise ValueError(f"ties must be 'average' or 'break', got {ties!r}")
     s = np.asarray(src, dtype=np.float64)
     r = np.asarray(ref, dtype=np.float64).ravel()
     if s.size == 0 or r.size == 0:
@@ -198,6 +216,14 @@ def histogram_match(src, ref, bins=None):
         cdf /= cdf[-1]
         centres = 0.5 * (edges[:-1] + edges[1:])
         out = np.interp(ranks, cdf, centres)
+
+    if ties == "average":
+        # 同値の塊ごとに、割り当たった参照値の平均へ潰す(単調性の回復)
+        uniq, inv = np.unique(flat, return_inverse=True)
+        if uniq.size < flat.size:                       # 同値があるときだけ働く
+            sums = np.bincount(inv, weights=out, minlength=uniq.size)
+            counts = np.bincount(inv, minlength=uniq.size)
+            out = (sums / counts)[inv]
     return out.reshape(s.shape)
 
 
