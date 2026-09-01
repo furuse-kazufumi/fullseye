@@ -497,7 +497,7 @@ def _synthesise(acc_spec: np.ndarray, bank: dict) -> np.ndarray:
 # --------------------------------------------------------------------------- #
 def synthesize_translation(shape=(64, 64), frames: int = 32, amplitude_px=0.5,
                            frequency_hz=4.0, fps=32.0, direction_deg=0.0,
-                           wavelength_px=8.0, contrast=0.4, offset=0.5,
+                           wavelength_px=(8.0, 16.0), contrast=0.4, offset=0.5,
                            noise_sigma=0.0, seed: int = 0) -> np.ndarray:
     """A clip whose displacement is known in closed form -> ``(T, H, W)`` video.
 
@@ -512,11 +512,24 @@ def synthesize_translation(shape=(64, 64), frames: int = 32, amplitude_px=0.5,
     kernel, no resampling error, so ``d(t)`` is ground truth to machine
     precision and sub-pixel amplitudes are meaningful.
 
-    ``wavelength_px`` is snapped so that a whole number of cycles fits the frame
+    ``wavelength_px`` is either one number (both axes) or ``(lambda_x,
+    lambda_y)``. **The default deliberately makes the two axes different
+    octaves**, and that is not cosmetic: if the horizontal and vertical gratings
+    share a radial frequency they land in the *same* sub-band, whose local phase
+    is then the phase of a sum of two moving components rather than of one. The
+    phase of a sum is not linear in the displacement, so scaling it does not
+    scale the motion — measured, a 64x64 clip built with a single wavelength on
+    both axes magnified at ``alpha = 2`` came out at ``0.939 * (2 d)`` instead of
+    ``2 d``, a 6.1 % error that does *not* shrink as ``d`` shrinks. Separating
+    the octaves puts one component in each band and the relation becomes exact.
+    This is the standard narrow-band condition of phase-based processing, made
+    visible in the synthetic instead of hidden.
+
+    Each wavelength is snapped so that a whole number of cycles fits the frame
     (``cycles = max(1, round(W / wavelength_px))``, effective wavelength
     ``W / cycles``); without that the pattern is not periodic on the grid and the
     Fourier shift would wrap a discontinuity across the border. With the default
-    64x64 frame and ``wavelength_px = 8`` the snap is exact.
+    64x64 frame and ``(8, 16)`` the snap is exact (8 and 4 cycles).
 
     Values are **not clipped** into ``[0, 1]``: clipping is a nonlinearity that
     would break the exact translation this function exists to provide. With the
