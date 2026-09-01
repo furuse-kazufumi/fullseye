@@ -533,49 +533,77 @@ def test_a_weighting_leakage_is_dynamic_range_not_arithmetic():
         assert abs(_a_weight_error_db(f0, fs, dur)) < 1e-9
 
 
-def test_a_weighting_leakage_is_not_cured_by_windowing_or_padding():
-    """The negative result, pinned so the "obvious fix" is not attempted again.
-
-    Measured at 31.5 Hz / 0.5 s / 48 kHz: as implemented +7.7986 dB, zero-padded
-    x4 (linear convolution) +8.6055 — *worse*, because padding puts a broadband
-    edge into the record — and Hann-windowed with its power gain divided out
-    +3.0879, which also breaks the bin-centred cases that are exact today
-    (22 Hz goes from +0.0000 to +5.5586 dB). A real cure is a time-domain
-    biquad cascade, which would give up the exact 0 dB at 1 kHz this module is
-    built on.
+def test_a_weighting_hann_option_suppresses_the_leakage():
+    """The opt-in remedy, measured. Errors against the closed form, 0.5 s at
+    48 kHz, rectangular -> Hann:
+        31.5 Hz  +7.7986 -> +0.0534
+        20.5 Hz +17.2116 -> +0.1841
+        22.0 Hz  +0.0000 -> +0.1505   (the cost: exact cases stop being exact)
     """
-    fs, f0, n = 48000.0, 31.5, int(0.5 * 48000.0)
+    fs, dur = 48000.0, 0.5
+    n = int(dur * fs)
+    want = {31.5: 0.0534, 20.5: 0.1841, 22.0: 0.1505}
+    for f0, expect in want.items():
+        x = _tone(f0, fs, n, 1.0)
+        exact = float(A.weighting_response(np.array([f0]), "A")[0])
+        got = (A.equivalent_level(x, fs, "A", window="hann")
+               - A.equivalent_level(x, fs, "Z", window="hann") - exact)
+        assert got == pytest.approx(expect, abs=5e-3), (f0, got)
+    # the default is untouched — this is opt-in, not a behaviour change
+    x = _tone(31.5, fs, n, 1.0)
+    assert A.equivalent_level(x, fs, "A") == A.equivalent_level(
+        x, fs, "A", window="none")
+    assert _a_weight_error_db(31.5) == pytest.approx(7.7986, abs=1e-3)
+    with pytest.raises(ValueError):
+        A.equivalent_level(x, fs, "A", window="hamming")
+
+
+def test_a_weighting_hann_option_is_wrong_for_transients():
+    """Why the Hann estimate is opt-in and not the default: a window makes the
+    level depend on *where in the record the sound happened*. A 50 ms 1 kHz
+    burst in a 0.5 s record is -13.0103 dB unwindowed wherever it sits; Hann
+    reads -36.0587 at either edge and -8.8218 in the middle — a 27 dB spread
+    produced by position alone."""
+    fs, dur = 48000.0, 0.5
+    n, m = int(dur * fs), int(dur * fs) // 10
+    burst = _tone(1000.0, fs, m, 1.0)
+    plain, hann = [], []
+    for pos in (0, n // 2 - m // 2, n - m):
+        x = np.zeros(n)
+        x[pos:pos + m] = burst
+        plain.append(A.equivalent_level(x, fs, "Z"))
+        hann.append(A.equivalent_level(x, fs, "Z", window="hann"))
+    assert max(plain) - min(plain) < 1e-9           # energy does not care where
+    assert plain[0] == pytest.approx(-13.0103, abs=1e-3)
+    assert hann[0] == pytest.approx(-36.0587, abs=1e-2)
+    assert hann[1] == pytest.approx(-8.8218, abs=1e-2)
+    assert max(hann) - min(hann) > 20.0             # measured 27.24 dB
+
+
+def test_a_weighting_leakage_is_not_cured_by_zero_padding():
+    """The negative result, pinned so the other "obvious fix" is not attempted.
+    Zero-padding to a linear convolution is barely better than doing nothing
+    (+7.7986 -> +5.5620 at 31.5 Hz, +17.2116 -> +14.3352 at 20.5 Hz) and it
+    *breaks* a case that is exact today (22 Hz, +0.0000 -> +0.7969), because
+    padding a tone puts a broadband edge into the record."""
+    fs, n = 48000.0, int(0.5 * 48000.0)
 
     def gain(m):
         f = np.fft.rfftfreq(m, d=1.0 / fs)
         r = A._weighting_ratio(f, "A")
         return r / float(A._weighting_ratio(np.array([A.F_REF_HZ]), "A")[0])
 
-    def leq_padded(x, pad=4):
+    def padded_err(f0, pad=4):
+        x = _tone(f0, fs, n, 1.0)
         m = pad * x.size
         y = np.fft.irfft(np.fft.rfft(x, n=m) * gain(m), n=m)[:x.size]
-        return 10.0 * np.log10(np.mean(y * y))
+        return (10.0 * np.log10(np.mean(y * y) / np.mean(x * x))
+                - float(A.weighting_response(np.array([f0]), "A")[0]))
 
-    def leq_hann(x):
-        w = 0.5 - 0.5 * np.cos(2 * np.pi * np.arange(x.size) / x.size)
-        y = np.fft.irfft(np.fft.rfft(x * w) * gain(x.size), n=x.size)
-        return 10.0 * np.log10(np.mean(y * y) / np.mean(w * w))
-
-    def z_padded(x, pad=4):
-        return 10.0 * np.log10(np.mean(x * x))
-
-    x = _tone(f0, fs, n, 1.0)
-    exact = float(A.weighting_response(np.array([f0]), "A")[0])
-    assert (leq_padded(x) - z_padded(x) - exact) == pytest.approx(8.6055, abs=2e-2)
-    hann_err = leq_hann(x) - 10.0 * np.log10(np.mean(x * x)) - exact
-    assert hann_err == pytest.approx(3.0879, abs=2e-2)
-    assert hann_err > 1.0, "Hann must not be mistaken for a cure"
-    # ...and it breaks a case that is exact today
-    x22 = _tone(22.0, fs, n, 1.0)
-    e22 = float(A.weighting_response(np.array([22.0]), "A")[0])
-    assert abs(_a_weight_error_db(22.0)) < 1e-9                 # exact now
-    assert (leq_hann(x22) - 10.0 * np.log10(np.mean(x22 * x22))
-            - e22) == pytest.approx(5.5586, abs=2e-2)           # broken by Hann
+    assert padded_err(31.5) == pytest.approx(5.5620, abs=5e-3)
+    assert padded_err(20.5) == pytest.approx(14.3352, abs=5e-3)
+    assert padded_err(22.0) == pytest.approx(0.7969, abs=5e-3)
+    assert padded_err(31.5) > 5.0, "padding must not be mistaken for a cure"
 
 
 def test_equivalent_level_reference_scales_the_answer():
