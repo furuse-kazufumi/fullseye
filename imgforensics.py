@@ -568,13 +568,26 @@ def fingerprint_correlate(image, fingerprint, denoiser: str = "wiener",
     **黙って間違う経路(実測)**: ``fingerprint`` に指紋ではなく普通の画像を渡すと、
     shape は合っているので例外は出ず、PCE も有限値が返る。指紋は ``(H, W)`` の
     float64 なので既存の ``image2d`` 述語を完全に満たし、**実行時には区別できない**。
-    そこで入口で「ゼロ平均でない / 標準偏差に比べて平均が大きい」ものを
-    :class:`ValueError` で弾く(``|mean| > 0.05 * std``)。実測では
-    :func:`sensor_fingerprint` の返りの ``|mean|/std`` は 1e-17 桁、
-    自然画像は 0.4〜6 桁で、**暗い画像(平均 0.02)でも 0.36** と分離する
-    (``tests/test_imgforensics.py::test_fingerprint_gate_rejects_plain_images``)。
-    それでも完全ではないので、``image2d`` に相乗りさせず語彙を分ける判断は
-    ``opsimgforensics`` の docstring に書いてある。
+    そこで入口で「ゼロ平均でない」ものを :class:`ValueError` で弾く
+    (``|mean| > 0.05 * std``)。実測
+    (``tests/test_imgforensics.py::test_fingerprint_gate_rejects_plain_images``):
+
+    ============================== ==============
+    渡したもの                     ``|mean|/std``
+    ============================== ==============
+    :func:`sensor_fingerprint` の返り 4.8e-18
+    普通の自然画像                 4.626
+    暗い画像(平均 0.015)         4.626
+    高コントラスト画像             1.801
+    ============================== ==============
+
+    比は**スケール不変**なので、暗い画像でも明るい画像でも同じように弾ける
+    (0.05 のしきい値から 1.5 桁以上離れている)。
+
+    **それでも完全ではない**: 自分でゼロ平均化した画像を渡すとゲートは通り、
+    PCE = -5.97 という有限値が返る(実測)。つまり実行時チェックは
+    **片側しか守れない**。これが「指紋を ``image2d`` に相乗りさせず語彙を分ける」
+    判断の根拠で、詳細は ``opsimgforensics`` の docstring にある。
     """
     x = _as_image(image)
     k = _as_image(fingerprint, "fingerprint")
