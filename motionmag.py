@@ -950,6 +950,11 @@ def motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4,
             m = float(np.abs(shift).max()) if shift.size else 0.0
             if m > max_shift:
                 max_shift = m
+            wgt = (amp * amp) * live
+            w_shift2 += float((wgt[None] * shift * shift).sum())
+            w_total += float(wgt.sum()) * t
+            coh_num += float((wgt * amp).sum())
+            coh_den += float((wgt * np.abs(sub).mean(axis=0)).sum())
             sub = sub * np.exp(1j * shift)
         acc += filt[None] * np.fft.fft2(sub, axes=(1, 2))
     out = _synthesise(acc, bank)
