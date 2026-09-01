@@ -187,6 +187,123 @@ def test_label_components_adapter_unwraps_labels():
 
 
 # --------------------------------------------------------------------------- #
+# 1b. wave-7(2026-09-02): 述語の無かった 17 型に述語を入れて顕在化した乖離       #
+#                                                                              #
+# tools/conversion_matrix.py の点検で「出力型に述語が無い」型が 17 / それを     #
+# 宣言する op が 76 あった = **何を返しても TYPEMISS にならない**穴。以下は     #
+# 述語を入れて初めて出てきた本物の乖離で、正典はどれも**消費側を実行して**      #
+# 決めている(推測で述語を書くと述語の側が間違う — TYPE_CHECKS["pose"] の教訓)。#
+# --------------------------------------------------------------------------- #
+def _vol(seed=0, n=16):
+    z, y, x = np.mgrid[0:n, 0:n, 0:n].astype(np.float64)
+    c = n / 2.0
+    v = ((z - c) ** 2 + (y - c) ** 2 + (x - c) ** 2 <= (n * 0.3) ** 2).astype(float)
+    return np.clip(v + 0.05 * np.random.default_rng(seed).standard_normal(v.shape),
+                   0.0, 1.0)
+
+
+def test_position_canon_is_three_components():
+    """position の正典は [z, y, x] の **3 成分**(消費側が実行時にそう言う)。
+
+    修正前: match_* / refine_peak_newton は docstring どおり [score, d, h, w] の
+    4 成分を返すのに out 宣言が "position" のままで、後段の精緻化 op へ流すと
+    全滅していた(述語が無いあいだ TYPEMISS にならなかった)。
+    """
+    import match3d
+    scene, tpl = _vol(0), _vol(1)[4:12, 4:12, 4:12].copy()
+    # 消費側 2 つが「3 成分ちょうど」を名指しで要求する = これが正典の根拠
+    for name in ("refine_translation_lk", "refine_lm"):
+        with pytest.raises(ValueError, match=r"exactly 3 components"):
+            ops3d.get(name)(scene, tpl, np.array([0.9, 8.0, 8.0, 8.0]))
+    raw = ops3d.get("match_shape_3d")(scene, tpl)
+    assert raw.shape == (4,)                       # 素の返りは [score, d, h, w]
+    for name in ("match_shape_3d", "match_chamfer_3d", "match_curvature_3d"):
+        pos = ops3d.call(name, scene, tpl)
+        assert pos.shape == (3,), name
+        assert cf.TYPE_CHECKS["position"](pos), name
+        assert not cf.TYPE_CHECKS["position"](ops3d.get(name)(scene, tpl)), name
+    # match_hough_3d は (topk, 4) の投票表 → 最上位票の座標
+    assert ops3d.get("match_hough_3d")(scene, tpl).ndim == 2
+    assert cf.TYPE_CHECKS["position"](ops3d.call("match_hough_3d", scene, tpl))
+    # 正典どおりの 3 成分は消費側が実際に受け取る(型が繋がっていることの実証)
+    assert ops3d.get("refine_translation_lk")(
+        scene, tpl, ops3d.call("match_shape_3d", scene, tpl)).shape == (3,)
+
+
+def test_refine_rotation_z_adapter_yields_scalar_angle():
+    """angle の正典はスカラ角。**op 自身の fail-closed がそう書いている**。"""
+    scene, tpl = _vol(0), _vol(2)
+    raw = ops3d.get("refine_rotation_z")(scene, tpl, 0.0)
+    assert isinstance(raw, tuple) and len(raw) == 2          # (angle_deg, n_iters)
+    assert not cf.TYPE_CHECKS["angle"](raw)                  # 旧宣言では型の嘘
+    with pytest.raises(ValueError, match=r"pass result\[0\] when chaining"):
+        ops3d.get("refine_rotation_z")(scene, tpl, raw)
+    ang = ops3d.call("refine_rotation_z", scene, tpl, 0.0)
+    assert cf.TYPE_CHECKS["angle"](ang)
+    ops3d.get("refine_rotation_z")(scene, tpl, ang)          # 鎖が閉じる
+
+
+def test_sobel3d_adapter_drops_conv_batch_axes():
+    """gradient の正典は「空間 3 軸が先頭に来る場」(兄弟 2 op がそう返す)。
+
+    sobel3d だけ conv3d の出力を squeeze せず (1,1,D,H,W) を返していた。
+    """
+    vol = _vol(0)
+    raw = ops3d.get("sobel3d")(vol)
+    assert all(tuple(g.shape) == (1, 1) + vol.shape for g in raw)
+    assert not cf.TYPE_CHECKS["gradient"](raw)               # 述語で顕在化した乖離
+    grads = ops3d.call("sobel3d", vol)
+    assert all(tuple(g.shape) == vol.shape for g in grads)
+    assert cf.TYPE_CHECKS["gradient"](grads)
+    # 兄弟 op も同じ正典(空間 3 軸が先頭)であることを併せて固定する
+    assert cf.TYPE_CHECKS["gradient"](ops3d.call("gradient3d", vol))
+    assert cf.TYPE_CHECKS["hessian"](ops3d.call("hessian3d", vol))
+
+
+def test_dict_shape_descriptors_declare_table_not_descriptor():
+    """dict を返す 3 op は descriptor ではなく table(消費側を実行して確定)。
+
+    descriptor の唯一の消費側 shape_distance は dict を fail-closed し、
+    fit_zernike の実際の消費側 wavefront_stats は in を 'table' と宣言している。
+    """
+    import match3d
+    import medial
+    import moments3d
+    import optics
+    for name in ("fit_zernike", "central_moments", "topology_signature"):
+        assert ops3d.info(name)["out"] == "table", name
+    rho = np.hypot(*np.mgrid[-1:1:32j, -1:1:32j])
+    coeffs = match3d.fit_zernike(0.1 * (2.0 * rho ** 2 - 1.0), n_max=4)
+    moments = moments3d.central_moments(_pts(), max_order=2)
+    skel = np.zeros((9, 9, 9), bool)
+    skel[4, 4, 1:8] = True
+    topo = medial.topology_signature(skel)
+    for d in (coeffs, moments, topo):
+        assert isinstance(d, dict)
+        assert cf.TYPE_CHECKS["table"](d)
+        assert not cf.TYPE_CHECKS["descriptor"](d)           # 旧宣言では型の嘘
+        with pytest.raises(ValueError, match="numeric vectors"):
+            match3d.shape_distance(d, d)
+    # table を名乗った先に本物の消費側がいる(型が繋がっていることの実証)
+    assert set(optics.wavefront_stats(coeffs)) >= {"rms", "pv"}
+    # 配列を返す descriptor は 1-D でも per-point の 2-D でも通る(実測)
+    for name in ("d2_distribution", "moment_invariants", "estimate_covariances"):
+        assert cf.TYPE_CHECKS["descriptor"](ops3d.call(name, _pts()))
+
+
+def test_every_catalog_out_type_has_a_predicate():
+    """**宣言 out 型はすべて TYPE_CHECKS に述語を持つ**(穴を再び開けない不変条件)。
+
+    2026-09-02 の点検では 17 型 / 76 op が述語を持たず、「何を返しても
+    TYPEMISS にならない」= 発見ゼロが未実行の偽装になる状態だった。
+    """
+    outs = {o[3] for o in cf.catalog()}
+    assert not sorted(outs - set(cf.TYPE_CHECKS)), (
+        "述語の無い out 型がある(そこは何を返しても TYPEMISS にならない): %s"
+        % sorted(outs - set(cf.TYPE_CHECKS)))
+
+
+# --------------------------------------------------------------------------- #
 # 2. 台帳全体の健全性検査                                                       #
 # --------------------------------------------------------------------------- #
 #: このテスト固有の追加引数ヒント。``chain_fuzz.PARAM_HINTS`` に無いために

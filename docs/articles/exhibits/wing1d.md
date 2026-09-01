@@ -57,7 +57,7 @@
 - GIF: `docs/articles/assets/media/wing1d_kurtosis_band.gif` (24 コマ, 1000x668 px, 1.94 MB, 220 ms/コマ・最終コマ 1400 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_kurtosis_band_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `a4515390fdf48ba68d5cb98fa79e5e37b5efb3c8c50beb875bc4f1ad9df04b9e`
+- SHA-256: `73dc182bbdb910f47fda70ff5e0df78d021194225569e154ac7d7edf1c023a62`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -93,7 +93,7 @@
 - GIF: `docs/articles/assets/media/wing1d_window_sweep.gif` (22 コマ, 1000x668 px, 0.69 MB, 380 ms/コマ・最終コマ 1800 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_window_sweep_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `4b96a00432b8f4dbe8c1711942a41c15f5dfd735fba4db3f93ac34573c6827ff`
+- SHA-256: `507eb1647e166c69a178c59880d785e0ef0baca7523f32ed8c8d7b5b1f0815c2`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -222,10 +222,10 @@
 
 *↑ **次数比分析 — 角度領域で立場が逆転する** ―― 600 → 1800 rpm の走行記録(4 s、5000 Hz、次数 1.0 と 3.5、固定共振 400 Hz、計 79.9940 回転)を 1.2 s の窓で滑らせる。素朴なスペクトルでは次数 3.5 が 0.070203(真値 1.0 の 7 %)まで潰れ、−3 dB 幅は 66.50 Hz に広がる。角度領域に置き直すと同じ成分が 0.999371、幅 0 bin (0.00000 次数)。逆に 400 Hz の固定共振は次数軸では平均回転数で次数 20.00 へ散る(振幅 0.025386)。この逆転が診断そのもの。 使用 op: `synthesize_speed_ramp`, `spectrum`, `angular_resample`, `order_spectrum`。*
 
-- GIF: `docs/articles/assets/media/wing1d_order_tracking.gif` (30 コマ, 1000x668 px, 1.07 MB, 220 ms/コマ・最終コマ 1400 ms)
+- GIF: `docs/articles/assets/media/wing1d_order_tracking.gif` (30 コマ, 1000x668 px, 1.08 MB, 220 ms/コマ・最終コマ 1400 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_order_tracking_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `79d7f6109868894c27f38a4d5d2099ce62ed38cbb55354762c88f4c96afde036`
+- SHA-256: `db0ab726f8e966c9517713b93d9f90a4d4bc6031dede54761c5e31fa685b1780`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -262,7 +262,7 @@
 - GIF: `docs/articles/assets/media/wing1d_bearing_geometry.gif` (36 コマ, 1000x668 px, 1.40 MB, 200 ms/コマ・最終コマ 1400 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_bearing_geometry_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `0c390c422878a4f7bd24b3fe175cc2883707c0cb0ed0ef56113e2f7f3959df87`
+- SHA-256: `d103e560a0874ab32633502199f072429b0e212941bcfd62da99b5403ed4e8c3`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -317,7 +317,7 @@
 - GIF: `docs/articles/assets/media/wing1d_weighting_ac.gif` (34 コマ, 1000x668 px, 1.42 MB, 220 ms/コマ・最終コマ 1400 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_weighting_ac_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `2b7e9c1954ddc926653871d445091b9b4f73703187ab40c708873ab5c80dfb9c`
+- SHA-256: `4a0d21838a07ff9682b8a19d68bc658780b48ef1cc35a660f07b7d1a5ad96872`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -652,7 +652,7 @@
 - GIF: `docs/articles/assets/media/wing1d_peak_match.gif` (30 コマ, 1000x668 px, 1.46 MB, 240 ms/コマ・最終コマ 1600 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_peak_match_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `b522dcee8c7acf1aa0c6729d25dd8ad4079efb0e1f85fe32a48daee40abc5db7`
+- SHA-256: `b24d86338c9f4456e81143890a556311a0fb1ab270f4eae18c5942ebba57b5f3`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -852,7 +852,7 @@
 - PNG(タイル): `docs/articles/assets/wing1d_octave_family.png` (1458x868 px, 54 kB, 6 パネル / 3 列)
 - サムネ(記事はこちらを表示): `docs/articles/assets/wing1d_octave_family_thumb.jpg` (47 kB)
 - 束ね方: sheet
-- SHA-256: `a329a35eb0ab2cf54decbdc5529d8264d00d3a18de15476818661578c46fb569`
+- SHA-256: `986bd447a3a01fe7fb0ead8a50aea99bec869fb81a57752a74916f0ae4c83c72`
 
 <details><summary>この図に焼いた実測値</summary>
 
