@@ -1903,6 +1903,8 @@ def write_captions() -> str:
             "---",
             "",
         ]
+    lines += _FINDINGS.strip().splitlines()
+    lines.append("")
     with open(CAPTION_PATH, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
     print("captions ->", CAPTION_PATH)
