@@ -726,9 +726,10 @@ def problem_panels(name, row):
     out_evo = ops.run_stages(ops.decode_by_names(ch["pipeline_stages"]), inp)
 
     if name == "photon_denoise":
-        return [_photon_panel(v, tgt, col) for v, col in
-                ((inp, C_IDENT), (out_hand, C_HAND), (out_evo, C_EVO),
-                 (tgt, C_TRUE))]
+        vs = [inp, out_hand, out_evo, tgt]
+        vmax = max(float(_photon_norm(v).max()) for v in vs)
+        return [_photon_panel(v, tgt, col, vmax, px=PANEL_PX, h=PANEL_PX)
+                for v, col in zip(vs, (C_IDENT, C_HAND, C_EVO, C_TRUE))]
     if name == "signal_denoise":
         x = np.arange(len(tgt))
 

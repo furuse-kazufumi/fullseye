@@ -692,7 +692,7 @@ def ex_kurtosis_band(log):
         fig.stamp(ink, C_TRUE)
         fig.text(80, 378, "envelope spectrum of the current band", C_TEXT, 12, True)
         fig.text(axe.X(fd) + 6, 400, f"defect truth {fd:g} Hz", C_WARN, 11, True)
-        fig.text(24, 460, "amp", C_DIM, 11)
+        fig.text(axe.x0 + 6, axe.y0 + 4, "amp", C_DIM, 11)
         fig.text(W - 250, 572, "envelope frequency [Hz] ->", C_DIM, 11)
         fig.text(14, H - 26,
                  "the peak stays at the defect rate everywhere; what moves is "
@@ -807,8 +807,8 @@ def ex_window_sweep(log):
         fig.stamp(ink, C_E if r["max"] < 0 else C_B)
         fig.text(80, 262, "spectral kurtosis vs frequency", C_TEXT, 12, True)
         fig.text(axk.X(fc) + 6, 286, f"true resonance {fc:g} Hz", C_TRUE, 11, True)
-        fig.text(30, 370, "SK", C_DIM, 11)
-        fig.text(W - 220, 492, "frequency [Hz] ->", C_DIM, 11)
+        fig.text(axk.x0 + 6, axk.y0 + 4, "SK", C_DIM, 11)
+        fig.text(W - 160, 492, "frequency [Hz] ->", C_DIM, 11)
 
         # 下: 読み取り + 判定
         fig.box(76, 516, W - 30, H - 16, C_PANEL2)
@@ -930,8 +930,8 @@ def ex_order_tracking(log):
                       f"Hz 軸の次数3.5 = {3.5 * r['shaft_hz']:.1f} Hz(動く)  /  "
                       f"次数軸の振幅 {r['amp_o35']:.4f}(動かない)")
         fig = Fig(W, H)
-        _header(fig, "Order tracking: which spectrum is sharp tells you what it is",
-                f"run-up 600 -> 1800 rpm, orders 1.0 and 3.5, fixed 400 Hz resonance")
+        _header(fig, "Order tracking: which spectrum is sharp tells you what",
+                "600 -> 1800 rpm, orders 1.0 and 3.5, fixed 400 Hz resonance")
         # 上: 回転数プロファイルと窓
         axr = Ax(fig, 76, 62, W - 30, 146, (0.0, dur), (500.0, 1900.0))
         axr.panel(C_PANEL2)
@@ -950,8 +950,8 @@ def ex_order_tracking(log):
         fig.stamp(ink, C_B)
         fig.text(80, 44, f"shaft speed [rpm] and the {win_s:g} s analysis window",
                  C_TEXT, 12, True)
-        fig.text(W - 320, 66, f"window {r['t0']:.2f} - {r['t0'] + win_s:.2f} s   "
-                              f"mean {r['rpm']:7.1f} rpm = {r['shaft_hz']:6.3f} Hz",
+        fig.text(84, 152, f"window {r['t0']:.2f} - {r['t0'] + win_s:.2f} s   "
+                          f"mean {r['rpm']:7.1f} rpm = {r['shaft_hz']:6.3f} Hz",
                  C_B, 12, True)
 
         # 中: 通常のスペクトル(Hz)
@@ -979,7 +979,7 @@ def ex_order_tracking(log):
                  f"order 1.0 = {1.0 * r['shaft_hz']:.2f} Hz", C_B, 11, True)
         fig.text(axf.X(3.5 * r["shaft_hz"]) + 4, 248,
                  f"order 3.5 = {3.5 * r['shaft_hz']:.2f} Hz", C_B, 11, True)
-        fig.text(30, 270, "amp", C_DIM, 11)
+        fig.text(axf.x0 + 6, axf.y0 + 4, "amp", C_DIM, 11)
 
         # 下: 次数スペクトル
         axo = Ax(fig, 76, 410, W - 30, 552, (0.0, 25.0), (0.0, m_hi * 1.12))
@@ -1004,8 +1004,8 @@ def ex_order_tracking(log):
         fig.text(axo.X(r["o400"]) + 6, 414,
                  f"400 Hz = order {r['o400']:.2f} (moves)", C_TRUE, 11, True)
         fig.text(axo.X(3.5) + 4, 436, "order 3.5 (fixed)", C_B, 11, True)
-        fig.text(30, 470, "amp", C_DIM, 11)
-        fig.text(W - 250, 558, "shaft order ->", C_DIM, 11)
+        fig.text(axo.x0 + 6, axo.y0 + 4, "amp", C_DIM, 11)
+        fig.text(W - 158, 558, "shaft order ->", C_DIM, 11)
 
         fig.box(76, 574, W - 30, H - 12, C_PANEL2)
         fig.text(88, 580, f"cropped to {r['rev']} whole revolutions (even, so order 3.5 "
@@ -1133,7 +1133,7 @@ def ex_bearing_geometry(log):
             fig.text(524, yy - 26, label, col, 11, True)
             fig.text(axb.X(val) + 8, yy - 7, f"{val:9.4f} Hz", C_TEXT, 12, True)
         fig.text(524, 80, "characteristic frequencies", C_TEXT, 12, True)
-        fig.text(W - 210, 436, "frequency [Hz] ->", C_DIM, 11)
+        fig.text(W - 168, 436, "frequency [Hz] ->", C_DIM, 11)
 
         fig.box(520, 462, W - 40, 560, C_PANEL2)
         fig.text(532, 468, f"sweeping: {r['phase']}", C_B, 12, True)
@@ -1618,7 +1618,7 @@ def ex_smoothing_tradeoff(log):
                                    ("smoothed", C_B), ("local maxima", C_E)])
         fig.text(W - 230, 148, f"sigma = {r['sigma']:6.3f} samples", C_B, 13, True)
         fig.text(W - 230, 168, f"     = {r['sigma'] * dt * 1e3:6.2f} ms", C_DIM, 12)
-        fig.text(30, 170, "amp", C_DIM, 11)
+        fig.text(axw.x0 + 6, axw.y0 + 4, "amp", C_DIM, 11)
 
         # 下段左: RMSE
         axr = Ax(fig, 84, 372, 520, 552, (0.5, 45.0), (0.0, rmse_hi), logx=True)
@@ -1819,8 +1819,8 @@ def ex_aliasing(log):
                  f"Nyquist {r['nyq']:.0f} Hz", C_WARN, 12, True)
         fig.text(axf.X(r["nyq"]) + 6, 412, "nothing above this line", C_WARN, 11)
         fig.text(axf.X(r["nyq"]) + 6, 428, "can exist in this record", C_WARN, 11)
-        fig.text(30, 450, "amp", C_DIM, 11)
-        fig.text(W - 230, 552, "frequency [Hz] ->", C_DIM, 11)
+        fig.text(axf.x0 + 6, axf.y0 + 4, "amp", C_DIM, 11)
+        fig.text(W - 160, 552, "frequency [Hz] ->", C_DIM, 11)
 
         fig.box(84, 568, W - 30, H - 12, C_PANEL2)
         fig.text(96, 574, f"fs {r['fs']:7.0f} Hz   Nyquist {r['nyq']:6.1f} Hz   "
@@ -2290,7 +2290,7 @@ def ex_envelope_truncation(log):
         fig.text(88, 300, "the two squares are the envelope at the scan ends - "
                           "when they lift off the floor, part of the peak is outside "
                           "the scan", C_WARN, 11)
-        fig.text(30, 190, "I(z)", C_DIM, 11)
+        fig.text(axz.x0 + 6, axz.y0 + 4, "I(z)", C_DIM, 11)
         fig.text(W - 430, 326, "scan position z [um] ->", C_DIM, 11)
 
         fig.box(W - 252, 70, W - 24, 320, C_PANEL2)
