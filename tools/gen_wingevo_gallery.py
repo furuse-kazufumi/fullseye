@@ -1006,8 +1006,7 @@ def ex_seed_spread(data, log=print):
                               f"恒等を下回った seed {below}/{len(runs)}", C_WARN, 13, True))
         frames.append(text(to_u8(c), items))
     frames = frames + [frames[-1]] * 6
-    info = save_gif(frames, "wingevo_seed_spread", fps=2,
-                    thumb_index=len(frames) - 1)
+    info = save_gif(frames, "wingevo_seed_spread", fps=2)
     lines = []
     for n in names:
         arr = np.array([r["locked"] for r in sw[n]["runs"]], float)
@@ -1018,9 +1017,9 @@ def ex_seed_spread(data, log=print):
            "1 本だけ走らせて報告すると、この幅がまるごと消える。"
            "使用 op: `evolve.run`, `decode_by_names`。")
     log(f"    wingevo_seed_spread: {info['frames']} frames "
-        f"{info['bytes'] / 1e6:.2f} MB")
+        f"{info['gif_bytes'] / 1e6:.2f} MB")
     return [{"stem": "wingevo_seed_spread", "kind": "gif", "info": info,
-             "md": gif_markdown("wingevo_seed_spread", "seed ばらつきの開示", cap),
+             "md": markdown_animation("wingevo_seed_spread", "seed ばらつきの開示", cap),
              "numbers": {n: [r["locked"] for r in sw[n]["runs"]] for n in names},
              "provenance": "本スクリプトで実走(evolve.run, seed 0..N-1)"}]
 
@@ -1116,8 +1115,7 @@ def ex_generations(data, log=print):
         ]
         frames.append(text(to_u8(c), items))
     frames = frames + [frames[-1]] * 8
-    info = save_gif(frames, "wingevo_generations", fps=3,
-                    thumb_index=len(frames) - 1)
+    info = save_gif(frames, "wingevo_generations", fps=3)
     cap = (f"**世代が進むとパイプラインが伸びる/縮む** ―― `{tj['problem']}` を "
            f"seed {tj['seed']} / pop {tj['pop']} で {tj['gens']} 世代、実際に走らせた軌跡。"
            f"train は {trains[0]:.4f} → {trains[-1]:.4f}、op 数は {lens[0]} → "
@@ -1125,9 +1123,9 @@ def ex_generations(data, log=print):
            f"`tb_spad_deadtime_correct` が `tb_tcspc_coates_correct` に入れ替わった。"
            "使用 op: `evolve.run`, `ops.decode_by_names`。")
     log(f"    wingevo_generations: {info['frames']} frames "
-        f"{info['bytes'] / 1e6:.2f} MB")
+        f"{info['gif_bytes'] / 1e6:.2f} MB")
     return [{"stem": "wingevo_generations", "kind": "gif", "info": info,
-             "md": gif_markdown("wingevo_generations", "世代ごとの champion", cap),
+             "md": markdown_animation("wingevo_generations", "世代ごとの champion", cap),
              "numbers": {"train": trains, "holdout": holds, "len": lens},
              "provenance": "本スクリプトで実走(evolve.run gens=1..24)"}]
 
@@ -1244,8 +1242,7 @@ def ex_pipeline_walk(data, log=print):
         ]
         frames.append(text(to_u8(c), items))
     frames = [frames[0]] * 2 + frames + [frames[-1]] * 6
-    info = save_gif(frames, "wingevo_pipeline_walk", fps=1,
-                    thumb_index=len(frames) - 1)
+    info = save_gif(frames, "wingevo_pipeline_walk", fps=1)
     cap = ("**champion の鎖を 1 段ずつ歩く** ―― "
            + " → ".join(f"`{s['op']}`" for s in specs) +
            "。各段を最終出力とみなしたスコアは "
@@ -1253,9 +1250,9 @@ def ex_pipeline_walk(data, log=print):
            f"(恒等 {row['locked_trivial']:.4f} / 手 {row['locked_hand']:.4f})。"
            "**途中で下がってから最後に取り返す**のが読み取れる。")
     log(f"    wingevo_pipeline_walk: {info['frames']} frames "
-        f"{info['bytes'] / 1e6:.2f} MB")
+        f"{info['gif_bytes'] / 1e6:.2f} MB")
     return [{"stem": "wingevo_pipeline_walk", "kind": "gif", "info": info,
-             "md": gif_markdown("wingevo_pipeline_walk", "パイプラインを 1 段ずつ", cap),
+             "md": markdown_animation("wingevo_pipeline_walk", "パイプラインを 1 段ずつ", cap),
              "numbers": {"per_stage": scores},
              "provenance": f"champion={src} / 中間値は本スクリプトで実測"}]
 
@@ -1322,8 +1319,7 @@ def ex_signature_collapse(data, log=print):
                           C_DIM, 12, False))
         frames.append(text(to_u8(c), items))
     frames = frames + [frames[-1]] * 8
-    info = save_gif(frames, "wingevo_signature_collapse", fps=6,
-                    thumb_index=len(frames) - 1)
+    info = save_gif(frames, "wingevo_signature_collapse", fps=6)
     last = rows[-1]
     cap = ("**署名の収束** ―― 良いエラーメッセージほど実行固有の数を含むので、"
            "素の文字列で同一視すると同じ 1 件が毎回別署名になる。実走 "
@@ -1332,9 +1328,9 @@ def ex_signature_collapse(data, log=print):
            f"({100 * (1 - last['sig_masked'] / max(1, last['sig_raw'])):.0f}% 減)。"
            "使用 op: `chain_fuzz.run_chain`, `chain_fuzz.signature`。")
     log(f"    wingevo_signature_collapse: {info['frames']} frames "
-        f"{info['bytes'] / 1e6:.2f} MB")
+        f"{info['gif_bytes'] / 1e6:.2f} MB")
     return [{"stem": "wingevo_signature_collapse", "kind": "gif", "info": info,
-             "md": gif_markdown("wingevo_signature_collapse", "署名の収束", cap),
+             "md": markdown_animation("wingevo_signature_collapse", "署名の収束", cap),
              "numbers": {"findings": last["findings"], "sig_raw": last["sig_raw"],
                          "sig_masked": last["sig_masked"]},
              "provenance": "本スクリプトで実走(chain_fuzz.run_chain を in-process)"}]
@@ -1433,8 +1429,7 @@ def ex_type_fixpoint(data, log=print):
         frames.append(text(to_u8(c), items))
     frames = [frames[0]] * 3 + \
         [f for fr in frames[1:] for f in (fr, fr, fr)] + [frames[-1]] * 6
-    info = save_gif(frames, "wingevo_type_fixpoint", fps=2,
-                    thumb_index=len(frames) - 1)
+    info = save_gif(frames, "wingevo_type_fixpoint", fps=2)
     cap = ("**型到達可能性の不動点** ―― 「初期プールの型から、入力が揃う op の出力型を"
            "足していく」を収束まで回す。初期プールを `image2d` 1 種だけにすると "
            f"{len(rounds) - 1} 段で {rc['enabled_from_image2d']}/{rc['n_ops']} op に届き、"
@@ -1444,9 +1439,9 @@ def ex_type_fixpoint(data, log=print):
            f"({', '.join('`' + u + '`' for u in rc['unreachable'])})で、"
            "どちらも入力型が `any` = 型では絞れないので専用の引数 builder が要る。")
     log(f"    wingevo_type_fixpoint: {info['frames']} frames "
-        f"{info['bytes'] / 1e6:.2f} MB")
+        f"{info['gif_bytes'] / 1e6:.2f} MB")
     return [{"stem": "wingevo_type_fixpoint", "kind": "gif", "info": info,
-             "md": gif_markdown("wingevo_type_fixpoint", "型到達可能性の不動点", cap),
+             "md": markdown_animation("wingevo_type_fixpoint", "型到達可能性の不動点", cap),
              "numbers": {"rounds": [r["n_ops"] for r in rounds],
                          "unreachable": rc["unreachable"]},
              "provenance": "本スクリプトで計算(chain_fuzz.catalog / make_generators)"}]
@@ -1610,8 +1605,7 @@ def ex_diffusion(data, log=print):
         ]
         frames.append(text(to_u8(c), items))
     frames = frames + [frames[-1]] * 8
-    info = save_gif(frames, "wingevo_diffusion", fps=6,
-                    thumb_index=len(frames) - 1)
+    info = save_gif(frames, "wingevo_diffusion", fps=6)
     last = rows[-1]
     cap = ("**拡散と収束** ―― ランダム連鎖を "
            f"{fz['chains']} 本張ると到達 op は {rows[min(49, len(rows) - 1)]['covered']}"
@@ -1620,9 +1614,9 @@ def ex_diffusion(data, log=print):
            + ", ".join(f"{k} {v}" for k, v in sorted(fz["kinds"].items())) +
            "。使用 op: `chain_fuzz.run_chain`。")
     log(f"    wingevo_diffusion: {info['frames']} frames "
-        f"{info['bytes'] / 1e6:.2f} MB")
+        f"{info['gif_bytes'] / 1e6:.2f} MB")
     return [{"stem": "wingevo_diffusion", "kind": "gif", "info": info,
-             "md": gif_markdown("wingevo_diffusion", "拡散と収束", cap),
+             "md": markdown_animation("wingevo_diffusion", "拡散と収束", cap),
              "numbers": {"covered": last["covered"], "kinds": fz["kinds"]},
              "provenance": "本スクリプトで実走(chain_fuzz.run_chain を in-process)"}]
 
@@ -1998,8 +1992,8 @@ def main(argv=None) -> int:
         for item in results.get(key, []):
             i = item["info"]
             if item["kind"] == "gif":
-                log(f"  {item['stem']:32s} gif {i['bytes'] / 1e6:5.2f} MB  "
-                    f"{i['frames']:3d} frames  {i['shape']}  colors={i['colors']}")
+                log(f"  {item['stem']:32s} gif {i['gif_bytes'] / 1e6:5.2f} MB  "
+                    f"{i['frames']:3d} frames  {i['size']}  colors={i['colors']}")
             else:
                 log(f"  {item['stem']:32s} png {i['png_bytes'] / 1e3:6.0f} kB  "
                     f"{i['size']}  sha {i['png_sha256'][:12]}")

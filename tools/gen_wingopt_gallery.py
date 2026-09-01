@@ -2201,6 +2201,9 @@ def ex_pipeline_flow(log):
         (f"RMS change from the ideal scene {d_rms:.4f}", C_OPT, True),
         (f"contrast of the tile  {captured.min():.3f} .. "
          f"{captured.max():.3f}", C_OPT, True),
+        ("barely a change -- this system is sampling-", C_MISS, True),
+        ("limited, so the pixels throw away more than", C_MISS, True),
+        ("the diffraction ever did", C_MISS, True),
         ("", C_DIM, False),
         (f"this {tile} px crop spans {crop_half_deg:.3f} deg of field,", C_DIM, False),
         (f"where cos^4 = {crop_cos4:.5f} -- so vignetting is off", C_DIM, False),
