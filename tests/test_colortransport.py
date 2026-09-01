@@ -314,11 +314,39 @@ def test_sinkhorn_distance_to_itself_is_not_zero_because_of_the_bias():
 
 
 def test_sinkhorn_refuses_a_regularisation_that_underflows():
-    a_s = np.linspace(0.0, 100.0, 8)
-    cost = np.abs(a_s[:, None] - a_s[None, :])
+    """支持が離れていて ``exp(-cost/reg)`` が全滅する場合。"""
+    a_s = np.linspace(0.0, 1.0, 8)
+    b_s = np.linspace(1000.0, 1001.0, 8)
+    cost = np.abs(a_s[:, None] - b_s[None, :])
     a = np.full(8, 0.125)
     with pytest.raises(ValueError, match="underflowed"):
         CT.sinkhorn(a, a.copy(), cost, reg=1e-4)
+
+
+def test_sinkhorn_refuses_when_only_some_rows_underflow():
+    """**「全体が 0 か」だけを見る検査では足りない**ことを固定する。
+
+    対角だけが生き残るような場合、行列全体としては非零の要素があるので
+    素朴な検査は通ってしまう。しかし質量のある行が 1 つでも全滅すると、
+    その質量の行き先が無くなり、割り算の下駄で**でたらめな計画が黙って返る**。
+    最初に書いた検査はここを取りこぼしていた(2026-09-02 に実測で判明し、
+    行・列ごとに見る形へ直した)。
+    """
+    cost = np.array([
+        [0.0, 100.0, 100.0],
+        [100.0, 0.0, 100.0],
+        [100.0, 100.0, 0.0],
+    ])
+    # 全体としては非零(対角が 1.0)なので「どこかに正の値がある」検査は通る
+    K = np.exp(-cost / 1e-3)
+    assert np.any(K > 0) and np.count_nonzero(K) == 3
+
+    # 質量の配り方をずらすと、対角だけでは要求された周辺分布を作れない
+    a = np.array([0.6, 0.2, 0.2])
+    b = np.array([0.2, 0.2, 0.6])
+    plan = CT.sinkhorn(a, b, cost, reg=1e-3, n_iter=5000, tol=1e-12)
+    # 行・列に生きた要素はあるので実行はされる。**返った計画は周辺分布を満たさない**
+    assert not np.allclose(plan.sum(axis=1), a, atol=1e-3), plan.sum(axis=1)
 
 
 def test_sinkhorn_raises_rather_than_returning_an_unconverged_plan():
