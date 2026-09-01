@@ -728,7 +728,7 @@ def ex_window_sweep(log):
     period_ms = 1000.0 / fd
     x = A.synthesize_bearing_signal(fs, 1.0, carrier_hz=fc, defect_hz=fd,
                                     modulation=0.5, mode="impulse")
-    wins = [8, 12, 16, 24, 32, 48, 64, 96, 128, 192, 256, 384, 512]
+    wins = [16, 24, 32, 48, 64, 96, 128, 192, 256, 384, 512]
     rows = []
     for w in wins:
         sk = A.spectral_kurtosis(x, fs, win=w)
