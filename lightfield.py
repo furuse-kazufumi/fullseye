@@ -163,6 +163,7 @@ __all__ = [
     "lf_all_in_focus", "lf_plenoptic_design",
     "LIGHTFIELD", "MAX_LF_ELEMENTS", "MAX_ANGULAR", "MAX_SPATIAL",
     "MAX_STACK_SLICES", "MAX_STACK_ELEMENTS", "MAX_LAYERS", "MAX_ABS_SLOPE",
+    "MIN_TEXTURE_RANGE",
     "INTERP_ORDERS", "EDGE_MODES", "APERTURE_SHAPES", "FOCUS_MEASURES",
     "REDUCERS",
 ]
@@ -446,7 +447,8 @@ def lf_synthesize(slopes=(0.0,), angular=(5, 5), shape=(64, 64), *,
     (:data:`MAX_ABS_SLOPE`), an angular or spatial shape outside
     ``[1, MAX_ANGULAR]`` / ``[1, MAX_SPATIAL]``, a total size over
     :data:`MAX_LF_ELEMENTS`, *coverage* outside ``(0, 1]``, a *texture_sigma*
-    so large the texture comes out constant, and an unknown *interp* / *edge*.
+    so large the smoothed texture's dynamic range falls below
+    :data:`MIN_TEXTURE_RANGE`, and an unknown *interp* / *edge*.
     """
     op = "lf_synthesize"
     if isinstance(slopes, (str, bytes)) or np.isscalar(slopes):

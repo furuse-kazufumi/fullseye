@@ -1490,6 +1490,10 @@ def dtof_cube_depth(cube, bin_ps=100.0, mode="peak", offset_ps=0.0,
     valid = c.sum(axis=-1) >= mc
     if bool(subtract_background):
         valid = valid & (work.sum(axis=-1) > 0.0)
+    if m != "centroid":
+        # A pixel whose histogram is exactly flat has no peak; argmax would pick
+        # bin 0 and report the first bin's depth for it. Mark it empty instead.
+        valid = valid & (work.max(axis=-1) > work.min(axis=-1))
     idx, ok = _fractional_peak(work, m, "dtof_cube_depth")
     if m != "peak":
         # documented per-pixel fallback to the bin-centre estimate
