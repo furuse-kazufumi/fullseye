@@ -3108,6 +3108,8 @@ def ex_vessel_reslice(log) -> dict:
                   "ortho_max_err_mm": float(max(ortho_err)),
                   "naive_mean_err_mm": float(np.mean(naive_err)),
                   "naive_max_err_mm": float(max(naive_err)),
+                  "naive_vs_ellipse_model_mean_err_mm": float(np.mean(naive_model_err)),
+                  "naive_vs_ellipse_model_max_err_mm": float(max(naive_model_err)),
                   "stenosis_truth_mm": rows[i_min]["truth_diameter_mm"],
                   "stenosis_ortho_mm": rows[i_min]["ortho_minor_mm"],
                   "stenosis_naive_mm": rows[i_min]["naive_major_mm"]},
