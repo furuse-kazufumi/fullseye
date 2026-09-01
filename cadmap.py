@@ -720,10 +720,20 @@ def cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True,
       * ``face_areas``   ``face_ids`` と同じ並びの面ごとの面積。
       * ``centroid``     面積重みの 3-D 重心(世界座標)。当たり 0 なら ``NaN``。
       * ``depth_mean``   当たった画素の平均 Z。当たり 0 なら ``NaN``。
+      * ``winding_fixed`` bool — 内向きに巻かれた閉メッシュを検出して直したか。
+        **全レコードに同じ値**が入る(mesh 単位の性質なので)。
 
     ``min_pixels`` 未満の領域は落とす。当たり 0 の領域は**消さずに** ``area =
     0.0``, ``hit_fraction = 0.0`` で残す — 消すと「CAD の外にあった欠陥」が
-    表から静かに消えるため。"""
+    表から静かに消えるため。
+
+    巻き方向の扱いは他の op と同じ(``cull_backfaces=True`` で閉じた内向き
+    メッシュを検出 → 既定は自動修正 + ``winding_fixed``、``strict=True`` で
+    ``ValueError``)。**正直な限界**: 返るのがレコードの list なので、``labels``
+    が全部背景だったり全領域が ``min_pixels`` 未満だったりして **list が空**に
+    なると、修正の事実を載せる先が無い。その場合はそもそも 1 つも欠陥を写して
+    いない(誤った数を返しようがない)。載せる先が要るなら ``strict=True`` に
+    するか、同じ mesh で :func:`cad_pixel_to_surface` を 1 画素だけ引くこと。"""
     V, F = _mesh(mesh)
     lab = _int_array(labels, "labels", allow_bool=True)
     if lab.ndim != 2:
