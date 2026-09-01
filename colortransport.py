@@ -61,7 +61,8 @@ import imgmetrics as _M
 __all__ = [
     "wasserstein_1d", "transport_plan_1d",
     "histogram_match", "color_transfer", "COLOR_TRANSFER_METHODS",
-    "sinkhorn", "sinkhorn_distance",
+    "sinkhorn", "sinkhorn_distance", "sinkhorn_divergence",
+    "transport_cost", "apply_transport",
     "gaussian_transport_map", "poisson_blend",
 ]
 
