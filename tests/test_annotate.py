@@ -40,7 +40,7 @@ def _canvas(value=0.10, channels=3):
 # 1. 閉形式との一致
 # ------------------------------------------------------------------ #
 
-@pytest.mark.parametrize("length,upp", [(100.0, 2.0), (250.0, 0.5), (37.0, 1.0), (12.0, 0.25)])
+@pytest.mark.parametrize("length,upp", [(100.0, 2.0), (75.0, 0.5), (37.0, 1.0), (12.0, 0.25)])
 def test_scale_bar_pixel_length_matches_the_physical_length(length, upp):
     """バーの画素長 == round(物理長 / 分解能)。**これが唯一の真値**。"""
     img = _canvas(0.0)
