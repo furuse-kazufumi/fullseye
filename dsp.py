@@ -100,7 +100,46 @@ def read_audio(path):
 # spectral
 # --------------------------------------------------------------------------- #
 def spectrum(x, rate=1.0):
-    """Single-sided magnitude spectrum -> ``(freqs, magnitude)`` (real FFT)."""
+    """Raw one-sided magnitude spectrum -> ``(freqs, magnitude)`` (``np.fft.rfft``).
+
+    **Scaling convention — read this before comparing any number.** *One-sided*
+    describes the frequency axis, not the amplitude axis. ``rfft`` keeps only the
+    non-negative frequencies, so ``freqs`` runs from 0 to ``rate/2`` in
+    ``len(x)//2 + 1`` bins — but ``magnitude`` is the **unnormalised**
+    ``|rfft(x)|``. It is *not* an amplitude and it grows with ``len(x)``: the same
+    tone recorded twice as long comes back twice as tall. Nothing here divides by
+    ``N``; the caller does, and the exact factor depends on the bin::
+
+        freqs, mag = spectrum(x, rate)
+        amp = mag * (2.0 / len(x))       # one-sided amplitude, bins 1 .. N/2-1
+        amp[0] /= 2.0                    # DC has no mirror twin -> no factor 2
+        if len(x) % 2 == 0:
+            amp[-1] /= 2.0               # nor does the Nyquist bin of an even N
+
+    The factor is ``2/N`` and not ``1/N`` because a real sinusoid of amplitude
+    ``A`` splits its energy over a positive and a negative frequency; ``rfft``
+    discards the negative half, so the surviving bin holds ``A*N/2``. DC and (for
+    even ``N``) Nyquist are their own mirror image and are *not* doubled —
+    applying ``2/N`` to them reports twice the true level.
+
+    Measured, so the convention can be checked rather than assumed. A unit sine
+    at a bin centre (``rate = 25600`` Hz, ``N = 25600``, 3000 Hz, amplitude
+    exactly 1.0): the returned ``mag`` at 3000 Hz is ``12799.999999999998``
+    (= ``N/2``), and ``mag * 2/N`` is ``0.9999999999999999``. A constant signal
+    of value 1.0 with ``N = 1024``: ``mag[0] = 1024.0``, so ``mag[0] * 1/N`` is
+    exactly ``1.0`` while ``mag[0] * 2/N`` would claim ``2.0``. Likewise
+    ``cos(pi n)`` (amplitude 1.0 at Nyquist, ``N = 1024``): ``mag[-1] = 1024.0``,
+    ``* 1/N`` = ``1.0``, ``* 2/N`` = ``2.0``.
+
+    Everything scale-*invariant* — where the peak is, the spectral centroid, the
+    bandwidth, a ratio between two bins — is unaffected by the convention, which
+    is why :func:`signal_features` can build on this directly. Everything
+    absolute (an amplitude in the signal's own units, a dB level) needs the
+    division above. :func:`acoustics.envelope_spectrum` and
+    :func:`acoustics.order_spectrum` already return calibrated one-sided
+    amplitudes (they apply their own ``2/N`` internally) — do **not** apply the
+    factor twice when comparing their output with this one.
+    """
     x = _require_finite(x)
     mag = np.abs(np.fft.rfft(x))
     freqs = np.fft.rfftfreq(len(x), d=1.0 / float(rate))
