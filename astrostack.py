@@ -1270,7 +1270,8 @@ def cosmic_ray_reject(frame, sigma=5.0, f_lim=2.0, replace_box=5, iters=1):
     return np.ascontiguousarray(work), mask
 
 
-def cosmic_ray_reject_stack(frames, kappa=5.0, min_frames=3):
+def cosmic_ray_reject_stack(frames, kappa=5.0, min_frames=3, read_sigma=None,
+                            gain=1.0):
     """フレーム間比較による宇宙線除去 —— **同じ場所に二度は当たらない**。
 
     宇宙線が単一フレームの検出で難しいのは「星も尖っている」からだが、
