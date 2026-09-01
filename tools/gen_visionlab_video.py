@@ -523,8 +523,8 @@ def build_design_frames(*, focal_mm=35.0, pixel_pitch_um=3.45, f_number=4.0,
         for t in np.linspace(wd_lo, wd_hi, 5):
             labels.append((int(x_of(t)) - 12, PLOT_Y + PLOT_H - 2, f"{t:.0f}", C_DIM, 11, False))
         if opt_cross is not None:
-            labels.append((int(x_of(opt_cross)) + 4, y0 + 2,
-                           "not resolvable beyond here", C_OPTICAL, 11, True))
+            labels.append((int(x_of(opt_cross)) + 4, y0 + 18,
+                           "not resolvable beyond here", (0.86, 0.58, 0.54), 10, True))
         out.append(_text(frame, labels))
 
     thumb_index = 0
