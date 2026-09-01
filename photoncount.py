@@ -1080,7 +1080,8 @@ def tcspc_background_subtract(hist, method="median", leading_bins=None,
                              "[0, 1], got %g" % (q,))
         level = float(np.quantile(h, q))
     else:
-        nb = _count(leading_bins, "leading_bins", 1, h.size)
+        want = min(8, int(h.size)) if leading_bins is None else leading_bins
+        nb = _count(want, "leading_bins", 1, h.size)
         level = float(h[:nb].mean() if m == "leading" else h[-nb:].mean())
     return np.ascontiguousarray(np.maximum(h - sc * level, 0.0))
 
