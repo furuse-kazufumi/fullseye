@@ -1763,6 +1763,10 @@ def palette_quantize(rgb, colors=None, scheme=DEFAULT_PALETTE):
         raise ValueError("colors: empty palette")
     if table.shape[0] > MAX_PALETTE:
         raise ValueError(f"colors: {table.shape[0]} exceeds MAX_PALETTE={MAX_PALETTE}")
+    need = img.shape[0] * img.shape[1] * table.shape[0]
+    if need > MAX_QUANT_ELEMENTS:
+        raise ValueError(f"H*W*K = {need} exceeds MAX_QUANT_ELEMENTS={MAX_QUANT_ELEMENTS}; "
+                         "the search is exhaustive, so the distance table is that large")
     d2 = ((img[..., None, :] - table[None, None, :, :]) ** 2).sum(axis=3)
     return table[np.argmin(d2, axis=2)]
 
