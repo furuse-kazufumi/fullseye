@@ -690,7 +690,8 @@ def ex_kurtosis_band(log):
                  C_DIM, 12)
         frames.append(fig.u8())
 
-    info = save_gif(frames, "kurtosis_band", fps=5, thumb_index=sk_pick, log=log)
+    info = save_flipbook(frames, "kurtosis_band", labels, ms=220, hold_ms=1400,
+                         log=log)
     facts = {
         "sk_max_kurtosis": sk["max_kurtosis"], "sk_max_freq": sk["max_freq"],
         "sk_win": sk["win"], "sk_window_ms": sk["window_seconds"] * 1e3,
