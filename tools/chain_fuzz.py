@@ -723,6 +723,24 @@ def main():
     print(f"\n== 拡散 {args.chains} 連鎖 x len {args.length}(seed {args.seed}, "
           f"{wall:.0f}s)")
     print(f"== op カバレッジ: {len(used)}/{len(ops)}")
+    # 未到達を族ごとに出す。到達 0 の族は「頑健だから発見が無い」のではなく
+    # 「そもそも連鎖が入ってこない」= 狭い sort の症状で、意味がまるで違う
+    by_family = {}
+    for name, fam, _ins, _out, _fn in ops:
+        hit, miss = by_family.setdefault(fam, ([], []))
+        (hit if name in used else miss).append(name)
+    print("== 族ごとの到達: " + "  ".join(
+        f"{fam} {len(h)}/{len(h) + len(m)}"
+        for fam, (h, m) in sorted(by_family.items())))
+    if args.coverage_out:
+        os.makedirs(os.path.dirname(os.path.abspath(args.coverage_out)), exist_ok=True)
+        with open(args.coverage_out, "w", encoding="utf-8") as fh:
+            json.dump({"total": len(ops), "covered": sorted(used),
+                       "uncovered": sorted(n for n, *_ in ops if n not in used),
+                       "by_family": {f: {"covered": sorted(h), "uncovered": sorted(m)}
+                                     for f, (h, m) in sorted(by_family.items())}},
+                      fh, ensure_ascii=False, indent=1)
+        print(f"== カバレッジ内訳 -> {args.coverage_out}")
     print(f"== 発見(生): {kinds} / 署名数 {len(sig)}")
     print(f"== 署名一覧 -> {args.out}")
     order = {"SUSPECT": 0, "NONFINITE": 1, "SLOW": 2, "CONTRACT": 3}
