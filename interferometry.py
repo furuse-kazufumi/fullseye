@@ -1150,10 +1150,18 @@ def csi_height_map(stack, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6,
             "mean/min/max/percentile of the map all come back infinite or "
             "clipped, and a height map that reads +inf at a dropout is a worse "
             "lie than one that reads NaN." % (op, fill))
+    tol = _nonneg(carrier_tolerance, "carrier_tolerance")
     _check_scan_step(dz, lam, op)
 
-    _, env = _stack_envelope(stack, op, remove_bias)
+    moved, env = _stack_envelope(stack, op, remove_bias)
     n = env.shape[-1]
+    if n >= 16:
+        # the carrier magnitude survives a sum over pixels: a per-pixel height
+        # shifts the phase, not the magnitude
+        spec = np.abs(np.fft.rfft(moved - moved.mean(axis=-1, keepdims=True),
+                                  axis=-1))
+        _check_carrier(spec.reshape(-1, spec.shape[-1]).sum(axis=0), n, dz, lam,
+                       tol, op)
     idx = _peak_index(env)
     bad_vis = _visibility(env) < vis_min
     bad_edge = (idx == 0) | (idx == n - 1)
