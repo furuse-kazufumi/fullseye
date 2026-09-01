@@ -219,6 +219,16 @@ def histogram_match(src, ref, bins=None, ties="average"):
         centres = 0.5 * (edges[:-1] + edges[1:])
         out = np.interp(ranks, cdf, centres)
 
+    if ties == "break":
+        import fssystem
+        uniq_n = np.unique(flat).size
+        if uniq_n < flat.size and fssystem.get_system("extra_checks") == "on":
+            raise MetricContractError(
+                f"ties='break' splits {flat.size - uniq_n} tied pixel(s) into different output "
+                "values, so flat regions gain shading that was never in the source "
+                "(measured: one value held by 4 pixels came out as 4 distinct levels). "
+                "extra_checks='on' refuses it; use ties='average' or drop that system setting"
+            )
     if ties == "average":
         # 同値の塊ごとに、割り当たった参照値の平均へ潰す(単調性の回復)
         uniq, inv = np.unique(flat, return_inverse=True)

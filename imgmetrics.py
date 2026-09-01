@@ -80,6 +80,12 @@ from scipy import ndimage
 
 from metriccontract import MetricContractError
 
+
+def _fssystem():
+    """``fssystem`` を遅延解決する(import 時の循環と起動コストを避ける)。"""
+    import fssystem
+    return fssystem
+
 __all__ = [
     # 色空間
     "srgb_to_linear", "linear_to_srgb", "rgb_to_xyz", "xyz_to_lab",
@@ -817,6 +823,12 @@ def ncd(a, b, compressor="lzma", levels=None, data_range=None, symmetric=True):
     ba = np.ascontiguousarray(a).tobytes()
     bb = np.ascontiguousarray(b).tobytes()
     comp = _COMPRESSORS[compressor]
+    if not symmetric and _fssystem().get_system("extra_checks") == "on":
+        raise MetricContractError(
+            "symmetric=False makes ncd depend on the argument order, so it is not a distance "
+            "(measured: 0.571429 vs 0.595238 on a pair of orthogonal gratings). "
+            "extra_checks='on' refuses it; drop that system setting to opt back in"
+        )
     cab = len(comp(ba + bb))
     if symmetric:
         # **NCD は「距離」を名乗るが、実装するとそうならない。** 圧縮器は前から

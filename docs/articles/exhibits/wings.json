@@ -38,6 +38,14 @@
       }
     },
     {
+      "id": "wingastro",
+      "order": 45,
+      "title": {
+        "ja": "天体スタッキング・ウィング ―― 理論の限界を、絵で見る",
+        "en": "The Astro-Stacking Wing — Watching a Theoretical Limit Break"
+      }
+    },
+    {
       "id": "wingct",
       "order": 50,
       "title": {

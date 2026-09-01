@@ -431,6 +431,32 @@ from imgforensics import (  # noqa: E402,F401
     copy_move_regions, watermark_embed, watermark_extract, watermark_capacity,
     null_distribution, evidence_quantile,
 )
+# 天体写真スタッキング層。カタログ全文の実測(2026-09-02)で lucky / drizzle /
+# sigma_clip / cosmic_ray / astrometr が **一件も無かった**。photoncount(ショット
+# ノイズ)・optics(PSF/MTF)・mosaic(RANSAC)・fit_transform(当てはめ)を
+# import して合成し、Poisson 標本化も RANSAC も Umeyama も再実装していない。
+# この族は検算できるのが取り柄 —— drizzle の総フラックス保存は倍精度の丸め
+# (最大 6.3e-15)、開口測光は半径 8σ で誤差 0.0000 %、そして κ-σ 合成は
+# **ちょうど 50 % の汚染で壊れる**(理論どおり。壊れる側もテストに残してある)。
+import astrostack  # noqa: E402  (lucky imaging, sigma-clip stacking, drizzle, photometry)
+import opsastrostack  # noqa: E402  (the astro-stacking op ledger)
+from astrostack import (  # noqa: E402,F401
+    synth_starfield, synth_frame_series, frame_quality, lucky_select, noise_sigma,
+    sigma_clip_stack, drizzle_resample, cosmic_ray_reject, cosmic_ray_reject_stack,
+    star_detect, psf_fit, aperture_photometry, frame_align, align_frames,
+    STACK_MODES, PSF_MODELS, ALIGN_MODELS, NOISE_METHODS,
+)
+# 契約層 —— 人が呼ぶ経路(fail-closed)と自動で回す経路(Attempt)を分ける。
+# システムパラメータは contextvars 実装で、**厳しくする方向にしか動かせない**。
+import metriccontract  # noqa: E402  (strict vs tolerant measurement contracts)
+import fssystem  # noqa: E402  (set_system / get_system, contextvar-scoped)
+from metriccontract import (  # noqa: E402,F401
+    MetricContractError, Attempt, attempt, attempt_all,
+    DIRECTIONS, worst_case, value_or_worst, best_of, rank_attempts,
+)
+from fssystem import (  # noqa: E402,F401
+    set_system, get_system, query_system, system, reset_system, system_snapshot,
+)
 import annotate  # noqa: E402  (text plates, arrows, legends, colour bars, axes)
 import opsannotate  # noqa: E402  (the annotate op ledger)
 from annotate import (  # noqa: E402,F401
@@ -713,6 +739,17 @@ __all__ = [
     "jpeg_ghost_map", "jpeg_ghost_quality", "noise_inconsistency_map",
     "copy_move_regions", "watermark_embed", "watermark_extract", "watermark_capacity",
     "null_distribution", "evidence_quantile",
+    "astrostack", "opsastrostack",
+    "synth_starfield", "synth_frame_series", "frame_quality", "lucky_select",
+    "noise_sigma", "sigma_clip_stack", "drizzle_resample", "cosmic_ray_reject",
+    "cosmic_ray_reject_stack", "star_detect", "psf_fit", "aperture_photometry",
+    "frame_align", "align_frames",
+    "STACK_MODES", "PSF_MODELS", "ALIGN_MODELS", "NOISE_METHODS",
+    # 契約層(人が呼ぶ経路 / 自動で回す経路)とシステムパラメータ
+    "metriccontract", "MetricContractError", "Attempt", "attempt", "attempt_all",
+    "DIRECTIONS", "worst_case", "value_or_worst", "best_of", "rank_attempts",
+    "fssystem", "set_system", "get_system", "query_system", "system",
+    "reset_system", "system_snapshot",
     "annotate", "opsannotate", "measure_text", "text_box", "arrow", "leader_line",
     "label_points", "crosshair", "legend_box", "color_bar", "scale_bar",
     "axes_transform", "data_to_pixel", "nice_ticks", "axes_frame", "grid_lines",

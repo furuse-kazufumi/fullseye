@@ -153,6 +153,30 @@ def test_every_scalar_metric_in_the_ledgers_declares_its_direction():
     assert not undeclared, f"向きが宣言されていない指標: {undeclared}"
 
 
+def test_no_direction_is_declared_for_something_that_does_not_exist():
+    """逆向きの検査 —— **死んだ宣言**が溜まらないようにする。
+
+    op を消したときに宣言だけ残ると、表を見た人が「その指標がある」と誤解する。
+    台帳の op でないものは、``compare_images`` の報告に**実際に現れる鍵**で
+    なければならない(実測で確かめる。名前を並べるだけにしない)。
+    """
+    import opscolortransport
+    import opsimgmetrics
+
+    ledger = set(opsimgmetrics.OPSIMGMETRICS) | set(opscolortransport.OPSCOLORTRANSPORT)
+
+    rng = np.random.default_rng(9)
+    rgb = rng.random((16, 16, 3))
+    report_keys = set(M.compare_images(rgb, np.clip(rgb + 0.02, 0, 1), channel_axis=-1))
+
+    orphan = sorted(set(MC.DIRECTIONS) - ledger - report_keys)
+    assert not orphan, f"実在しない指標の向きが宣言されている: {orphan}"
+
+    # 台帳外の宣言が「報告の鍵」であることを名指しで固定(偶然通らないように)
+    assert "delta_e_2000_mean" in report_keys
+    assert "delta_e_2000_mean" not in ledger
+
+
 def test_direction_refuses_to_guess():
     with pytest.raises(MC.MetricContractError, match="no direction declared"):
         MC.direction("some_new_metric")
