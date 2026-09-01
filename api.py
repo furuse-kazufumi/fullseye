@@ -395,6 +395,13 @@ from annotate import (  # noqa: E402,F401
     plot_series, overlay_labels, zoom_inset, compare_frame, panel_grid,
     rounded_rect, filled_polygon, arc, ellipse,
 )
+# ★ ``annotate.overlay_mask`` は **意図的にトップレベルへ出していない**。同名の
+# ``imgio.overlay_mask`` が既に ``fs.overlay_mask`` として公開されており、引数も
+# 意味も違う(imgio = 生 RGB・mask>0.5・fill/margin / annotate = 役割名の色・
+# 重み [0,1] も可・形の不一致を拒否)。同じ名前に別の約束を載せると、呼び手は
+# 例外ではなく**もっともらしく違う絵**を受け取る。公開 API の破壊的変更は
+# 独断でしないので、役割つきの方は ``fs.annotate.overlay_mask`` で引く。
+
 # 描画を **ためてから一度に流す** 層。即時描画は呼んだ瞬間に絵になるので、そこから先は
 # 検査できない ― 文字がはみ出したかどうかは、ラスタ化後の画素からは判定できない。
 # コマンドの列で持てば、描く前に箱を測れて、列は JSON になるので図の差分が
