@@ -1005,11 +1005,15 @@ def envelope_spectrum(x, rate, low, high, order=4, n_peaks=5):
     body[0] = 0.0                                # DC removed already; never a peak
     idx = np.argsort(body)[::-1][:k]
     idx = idx[body[idx] > 0.0]
+    med = float(np.median(body[1:])) if body.size > 1 else 0.0
+    peak = float(body.max())
     return {
         "freqs": freqs,
         "magnitude": mag,
         "peak_freq": float(freqs[int(np.argmax(body))]),
-        "peak_amplitude": float(body.max()),
+        "peak_amplitude": peak,
+        "peak_prominence": (peak / med) if med > 0.0 else float("inf"),
+        "noise_floor": med,
         "peak_freqs": freqs[idx].copy(),
         "peak_amplitudes": body[idx].copy(),
         "band": (lo, hi),
