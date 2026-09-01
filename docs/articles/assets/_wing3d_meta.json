@@ -431,7 +431,7 @@
         "max_major_err_mm": 1.0658141036401503e-14,
         "max_minor_err_mm": 0.009542850930298385
       },
-      "caption": "半径 5.00 mm の合成円柱を、切断面を 0° から 80° まで倒しながら切る(`vol_rotate` の逆回し)。短径は角度によらず 10.000 mm のままなのに、長径は **2r / cos θ** に沿って伸び、80° では 29.238 mm = 2.92 倍になる。36 角度すべてで理論値との差は最大 0.0000 mm(0.00 画素)。「斜めの断面で測った直径」をそのまま寸法にしてはいけない、という一本。",
+      "caption": "半径 5.00 mm の合成円柱を、切断面を 0° から 80° まで倒しながら切る(`vol_rotate` の逆回し)。短径は角度によらず 10.000 mm のままなのに、長径は **2r / cos θ** に沿って伸び、80° では 29.238 mm = 2.92 倍になる。36 角度(0°〜70°)すべてで理論値との差は最大 0.0000 mm(0.00 画素)。「斜めの断面で測った直径」をそのまま寸法にしてはいけない、という一本。",
       "kind": "gif",
       "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_oblique_slice.gif",
       "mp4": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_oblique_slice.mp4",
@@ -449,14 +449,14 @@
         3
       ],
       "gif_colors": 256,
-      "gif_bytes": 495954,
-      "mp4_bytes": 92300,
-      "thumb_bytes": 34275,
+      "gif_bytes": 904037,
+      "mp4_bytes": 112140,
+      "thumb_bytes": 42833,
       "thumb_frame": 27,
-      "gif_sha256": "794a389d201c7c8034ea5b19ab9301bb12ac4e8cf966b2e34320de0c66971720",
-      "mp4_sha256": "2cd336373830cd5be74b835219ce684afb5a5202c9be8abb919200631832c718",
+      "gif_sha256": "73a7c8065846a16470b38e51bb056305bd6fd9e8665d74335d512caaa7c83481",
+      "mp4_sha256": "83dccb9abf251695d4f5392637e52ef2af9867180a4eba06afa740f0f05a275e",
       "exhibit": "oblique",
-      "seconds": 30.337762499926612
+      "seconds": 33.59017560002394
     }
   ]
 }

@@ -1117,3 +1117,464 @@ def subject_blob_select(log=print) -> dict:
             % (n_blobs, len(keep), circ_keep[0], circ_keep[-1], n - len(keep),
                circ_rej[0], circ_rej[-1])),
     }
+
+
+# --------------------------------------------------------------------------- #
+# 展示 8: サブピクセル計測 / sub-pixel edge location                             #
+# --------------------------------------------------------------------------- #
+def _erf_edge(width: int, height: int, x0: float, blur: float = 1.2,
+              lo: float = 0.14, hi: float = 0.86) -> np.ndarray:
+    """真のエッジ位置 x0 (小数可) をもつガウスぼけステップ画像を解析式で作る.
+
+    誤差の議論をするので、真値は「作図した位置」ではなく**式で与えた x0** そのもの。
+    """
+    from scipy.special import erf
+    x = np.arange(width, dtype=np.float64)
+    prof = lo + (hi - lo) * 0.5 * (1.0 + erf((x - x0) / (np.sqrt(2.0) * blur)))
+    return np.tile(prof, (height, 1))
+
+
+def subject_subpixel_edge(log=print) -> dict:
+    """真のエッジ位置を 0.05 px 刻みで動かし、サブピクセル計測の誤差を実測する."""
+    import measuring1d as m1
+    W, H = 220, 200
+    x_base = 109.0
+    offsets = np.round(np.arange(0.0, 1.0001, 0.05), 3)
+    rows = []
+    for off in offsets:
+        x0 = x_base + float(off)
+        img = _erf_edge(W, H, x0)
+        meas = m1.gen_measure_rectangle2(H / 2.0, W / 2.0, 0.0, 70.0, 15, img.shape)
+        edges = m1.measure_pos(img, meas, sigma=1.0, threshold=0.004)
+        sub = (W / 2.0 - 70.0 + edges[0]["pos"]) if edges else float("nan")
+        prof = img[H // 2]
+        pix = float(np.argmax(np.abs(np.gradient(prof))))   # 画素単位の素朴な推定
+        rows.append({"x0": x0, "sub": sub, "pix": pix,
+                     "err_sub": sub - x0, "err_pix": pix - x0})
+    e_sub = np.array([r["err_sub"] for r in rows])
+    e_pix = np.array([r["err_pix"] for r in rows])
+    frames = []
+    for i, r in enumerate(rows):
+        img = _erf_edge(W, H, r["x0"])
+        zoom = img[H // 2 - 40:H // 2 + 40, int(x_base) - 8:int(x_base) + 9]
+        vis = _to_u8(_fit(np.stack([zoom] * 3, -1), 460, 460, resample=0))
+        from PIL import Image, ImageDraw
+        im = Image.fromarray(vis, "RGB")
+        d = ImageDraw.Draw(im)
+        px_w = 460.0 / zoom.shape[1]
+        for name, val, col in (("真値 x0", r["x0"], (255, 230, 90)),
+                               ("サブピクセル", r["sub"], (120, 235, 160)),
+                               ("画素単位", r["pix"], (255, 120, 120))):
+            xx = (val - (int(x_base) - 8)) * px_w
+            d.line([xx, 0, xx, 459], fill=col, width=3)
+        _text(d, (8, 8), "1 画素 = %.0f px に拡大表示" % px_w, size=17, fill=INK_DIM)
+        plot = _plot(
+            [{"x": offsets[:i + 1], "y": e_sub[:i + 1], "color": (120, 235, 160),
+              "label": "measure_pos（サブピクセル）の誤差"},
+             {"x": offsets[:i + 1], "y": e_pix[:i + 1], "color": (255, 120, 120),
+              "label": "勾配の最大画素（画素単位）の誤差"}],
+            460, 460, xlim=(0, 1), ylim=(-0.6, 0.6),
+            hlines=((0.0, (140, 142, 160)),),
+            title="真のエッジ位置をずらしたときの誤差 [px]",
+            xlabel="真値の小数部 [px]", legend_pos="tl")
+        frames.append(_side_by_side(np.asarray(im, np.uint8), plot))
+    E = _tile_mod()
+    labels = ["真値 %.2f px — サブピクセル %.3f (誤差 %+.3f) / 画素単位 %.0f (誤差 %+.2f)"
+              % (r["x0"], r["sub"], r["err_sub"], r["pix"], r["err_pix"])
+              for r in rows]
+    book = E.flipbook(frames, labels,
+                      title="サブピクセル計測 —— 画素より細かくエッジを測る")
+    info = E.save_animation(book, "wing2d_subpixel_edge",
+                            duration_ms=320, hold_last_ms=1600)
+    return {
+        "name": "subpixel_edge", "kind": "gif", "file": info["gif"],
+        "thumb": info["thumb"], "frames": info["frames"],
+        "bytes": info["gif_bytes"], "size": list(info["size"]), "panels": 2,
+        "title": "サブピクセル計測 —— 画素より細かく測る",
+        "ops": ["gen_measure_rectangle2", "measure_pos (m1_measure_pos)"],
+        "data": "解析式で作った合成のガウスぼけステップ (真値は式で与えた x0 そのもの)",
+        "measured": {
+            "true_x0": [round(r["x0"], 3) for r in rows],
+            "subpixel_measured": [round(r["sub"], 4) for r in rows],
+            "subpixel_error_px": [round(r["err_sub"], 4) for r in rows],
+            "pixel_level_error_px": [round(r["err_pix"], 3) for r in rows],
+            "subpixel_rms_px": round(float(np.sqrt(np.mean(e_sub ** 2))), 4),
+            "subpixel_max_abs_px": round(float(np.max(np.abs(e_sub))), 4),
+            "pixel_level_rms_px": round(float(np.sqrt(np.mean(e_pix ** 2))), 4),
+            "pixel_level_max_abs_px": round(float(np.max(np.abs(e_pix))), 4),
+        },
+        "caption": (
+            "ガウスぼけしたエッジの真の位置を 0.05 px 刻みで 1 画素ぶん動かし、"
+            "`measure_pos` の推定と「勾配が最大の画素」を比べた。サブピクセル推定の"
+            "誤差は RMS %.4f px・最大 %.4f px、画素単位の推定は RMS %.3f px・最大 %.2f px。"
+            "同じ画像・同じエッジで **%.0f 倍**の差が出る —— 画素の格子は、測れる細かさの"
+            "限界ではない。"
+            % (float(np.sqrt(np.mean(e_sub ** 2))), float(np.max(np.abs(e_sub))),
+               float(np.sqrt(np.mean(e_pix ** 2))), float(np.max(np.abs(e_pix))),
+               float(np.sqrt(np.mean(e_pix ** 2)) / max(1e-9, np.sqrt(np.mean(e_sub ** 2)))))),
+    }
+
+
+# --------------------------------------------------------------------------- #
+# 展示 9: 形状マッチング / shape-based matching                                  #
+# --------------------------------------------------------------------------- #
+def _machine_part(size: int = 96) -> np.ndarray:
+    """六角ナット風の合成部品 (回転対称を壊すタブつき)."""
+    from PIL import Image, ImageDraw
+    im = Image.new("L", (size, size), 18)
+    d = ImageDraw.Draw(im)
+    d.regular_polygon((size // 2, size // 2, 36), 6, fill=228)
+    d.ellipse([size // 2 - 13, size // 2 - 13, size // 2 + 13, size // 2 + 13],
+              fill=18)
+    d.rectangle([size // 2 - 5, 3, size // 2 + 5, 20], fill=228)   # タブ
+    return np.asarray(im, np.float64) / 255.0
+
+
+def subject_shape_match(log=print) -> dict:
+    """回した部品をテンプレートで探し当て、位置と角度の誤差を実測する."""
+    import time
+    import shapematch as SM
+    from scipy import ndimage
+    E = _tile_mod()
+    tmpl = _machine_part()
+    model = SM.create_shape_model(tmpl, min_grad=0.1)
+    rng = np.random.default_rng(SEED)
+    H, W = 380, 480
+    bg = 0.10 + 0.06 * rng.random((H, W))            # 決定的な背景ノイズ
+    angles = np.arange(0.0, 360.0, 20.0)
+    search = list(range(0, 360, 5))
+    r0, c0 = 190, 240
+    rows, t0 = [], time.perf_counter()
+    for ang in angles:
+        rot = ndimage.rotate(tmpl, float(ang), reshape=False, order=1,
+                             mode="constant", cval=0.10)
+        scene = bg.copy()
+        h, w = rot.shape
+        sl = (slice(r0 - h // 2, r0 - h // 2 + h), slice(c0 - w // 2, c0 - w // 2 + w))
+        scene[sl] = np.maximum(scene[sl], rot)
+        t1 = time.perf_counter()
+        res = SM.find_shape_model(model, scene, min_score=0.3, step=2,
+                                  angles=search)
+        dt = time.perf_counter() - t1
+        d_ang = (res["angle"] - ang + 180.0) % 360.0 - 180.0
+        rows.append({"true": float(ang), "found": float(res["angle"]),
+                     "score": float(res["score"]), "d_ang": float(d_ang),
+                     "d_row": int(res["row"]) - r0, "d_col": int(res["col"]) - c0,
+                     "sec": dt, "scene": scene})
+    total = time.perf_counter() - t0
+    frames, labels = [], []
+    for i, R in enumerate(rows):
+        from PIL import Image, ImageDraw
+        vis = _to_u8(np.stack([R["scene"]] * 3, -1))
+        im = Image.fromarray(vis, "RGB")
+        d = ImageDraw.Draw(im)
+        fr, fc = r0 + R["d_row"], c0 + R["d_col"]
+        d.ellipse([fc - 52, fr - 52, fc + 52, fr + 52], outline=(120, 235, 160),
+                  width=3)
+        th = np.deg2rad(R["found"])
+        d.line([fc, fr, fc + 52 * np.sin(th), fr - 52 * np.cos(th)],
+               fill=(255, 200, 80), width=3)
+        d.line([fc - 12, fr, fc + 12, fr], fill=(255, 255, 255), width=1)
+        d.line([fc, fr - 12, fc, fr + 12], fill=(255, 255, 255), width=1)
+        left = np.asarray(im, np.uint8)
+        plot = _plot(
+            [{"x": [r["true"] for r in rows[:i + 1]],
+              "y": [r["d_ang"] for r in rows[:i + 1]],
+              "color": (255, 200, 80), "style": "dots", "label": "角度の誤差 [°]"},
+             {"x": [r["true"] for r in rows[:i + 1]],
+              "y": [10.0 * r["score"] for r in rows[:i + 1]],
+              "color": (120, 235, 160), "label": "スコア ×10"}],
+            360, left.shape[0], xlim=(0, 340), ylim=(-6, 11),
+            hlines=((0.0, (140, 142, 160)),),
+            title="真の角度 vs 推定の誤差 / スコア", xlabel="部品を回した角度 [°]",
+            legend_pos="tl")
+        tmp_panel = _fit(_to_u8(np.stack([tmpl] * 3, -1)), 150, 150, resample=0)
+        from PIL import Image as I2
+        side = I2.new("RGB", (150, left.shape[0]), BG)
+        side.paste(I2.fromarray(tmp_panel, "RGB"), (0, 16))
+        sd = ImageDraw.Draw(side)
+        _text(sd, (75, 176), "テンプレート", size=16, fill=INK_DIM, anchor="ma")
+        _text(sd, (75, 200), "96×96 px", size=15, fill=INK_DIM, anchor="ma")
+        _text(sd, (75, 236), "%d 角度を探索" % len(search), size=15,
+              fill=ACCENT, anchor="ma")
+        _text(sd, (75, 258), "1 回 %.2f 秒" % R["sec"], size=15, fill=ACCENT,
+              anchor="ma")
+        frames.append(_side_by_side(_side_by_side(np.asarray(side, np.uint8),
+                                                  left), plot))
+        labels.append("真の角度 %.0f° → 推定 %.0f° (誤差 %+.1f°) / 位置ずれ (%+d, %+d) px / スコア %.3f"
+                      % (R["true"], R["found"], R["d_ang"], R["d_row"],
+                         R["d_col"], R["score"]))
+    book = E.flipbook(frames, labels,
+                      title="形状マッチング —— 回っていても見つけられるか")
+    info = E.save_animation(book, "wing2d_shape_match",
+                            duration_ms=420, hold_last_ms=1600)
+    d_ang = np.array([r["d_ang"] for r in rows])
+    pos = np.array([[r["d_row"], r["d_col"]] for r in rows])
+    return {
+        "name": "shape_match", "kind": "gif", "file": info["gif"],
+        "thumb": info["thumb"], "frames": info["frames"],
+        "bytes": info["gif_bytes"], "size": list(info["size"]), "panels": 3,
+        "title": "形状マッチング —— 回っていても見つける",
+        "ops": ["create_shape_model", "find_shape_model (角度探索つき)"],
+        "data": "Pillow で描いた合成の六角ナット + 決定的な背景ノイズ",
+        "measured": {
+            "true_angle_deg": [r["true"] for r in rows],
+            "found_angle_deg": [r["found"] for r in rows],
+            "angle_error_deg": [round(r["d_ang"], 2) for r in rows],
+            "position_error_px": pos.tolist(),
+            "score": [round(r["score"], 4) for r in rows],
+            "angle_search_step_deg": 5,
+            "max_abs_angle_error_deg": round(float(np.max(np.abs(d_ang))), 2),
+            "max_abs_position_error_px": int(np.max(np.abs(pos))),
+            "min_score": round(float(min(r["score"] for r in rows)), 4),
+            "seconds_per_search": round(total / len(rows), 3),
+            "device": "cpu",
+        },
+        "caption": (
+            "96×96 px のテンプレートから作った形状モデルで、20° ずつ回した部品を "
+            "%d 枚のシーンから探した。5° 刻みで角度も探索させると、角度の誤差は最大 "
+            "%.1f°(探索格子 5° の半分 = 2.5° がそもそもの下限)、位置の誤差は最大 %d px、"
+            "スコアは最低でも %.3f。1 シーンあたり %.2f 秒(CPU、%d 角度ぶんの探索を含む)。"
+            % (len(rows), float(np.max(np.abs(d_ang))), int(np.max(np.abs(pos))),
+               float(min(r["score"] for r in rows)), total / len(rows), len(search))),
+    }
+
+
+# --------------------------------------------------------------------------- #
+# 展示 10: 文書の傾き補正とバーコード / deskew + barcode                          #
+# --------------------------------------------------------------------------- #
+def _doc_with_barcode() -> tuple:
+    """文字行 + バーコードを持つ合成の帳票と、バーの真の本数を返す."""
+    from PIL import Image, ImageDraw
+    W, H = 640, 420
+    im = Image.new("L", (W, H), 245)
+    d = ImageDraw.Draw(im)
+    f = _font(22)
+    for i, txt in enumerate(["FULLSEYE INSPECTION LOG",
+                             "LOT 2026-09-02   LINE 3",
+                             "OPERATOR   K. FURUSE"]):
+        d.text((60, 40 + i * 36), txt, font=f, fill=25)
+    x, n = 60, 0
+    for i, w in enumerate([6, 10, 6, 16, 6, 10, 20, 6, 10, 6, 16, 10, 6, 14, 6, 10]):
+        if i % 2 == 0:
+            d.rectangle([x, 200, x + w, 340], fill=0)
+            n += 1
+        x += w + 8
+    return np.asarray(im, np.float64) / 255.0, n
+
+
+def _rot_deg(img, deg: float) -> np.ndarray:
+    """rotate_image op で任意角度回す (op の a は -45..+45 度に線形対応)."""
+    return np.asarray(fs.apply(np.asarray(img, np.float64), "rotate_image",
+                               (float(deg) + 45.0) / 90.0, 0.5), np.float64)
+
+
+def subject_doc_deskew(log=print) -> dict:
+    """傾いた帳票の角度を射影プロファイルで推定し、補正してバーを数える工程."""
+    E = _tile_mod()
+    doc, n_true = _doc_with_barcode()
+    skew = 11.0
+    grid = np.round(np.arange(-44.0, 44.01, 0.5), 2)
+    tilted = _rot_deg(doc, -skew)
+    var = [float(np.var(np.diff(_rot_deg(tilted, float(g)).mean(axis=1))))
+           for g in grid]
+    est = float(grid[int(np.argmax(var))])
+    fixed = _rot_deg(tilted, est)
+    binar = np.asarray(fs.apply(fixed, "otsu", 0.5), np.float64)
+    count_raw = float(fs.apply(tilted, "decode_barcode", 0.5, 0.5))
+    count_fix = float(fs.apply(fixed, "decode_barcode", 0.5, 0.5))
+    # 「何度まで耐えるか」を掃引して実測 (推測しない)
+    sweep = np.arange(0.0, 43.0, 3.0)
+    raw_counts, est_err, fix_counts = [], [], []
+    for s in sweep:
+        t = _rot_deg(doc, -float(s))
+        raw_counts.append(float(fs.apply(t, "decode_barcode", 0.5, 0.5)))
+        v = [float(np.var(np.diff(_rot_deg(t, float(g)).mean(axis=1))))
+             for g in grid]
+        e = float(grid[int(np.argmax(v))])
+        est_err.append(e - float(s))
+        fix_counts.append(float(fs.apply(_rot_deg(t, e), "decode_barcode",
+                                         0.5, 0.5)))
+    broke = [float(s) for s, c in zip(sweep, raw_counts) if c != n_true]
+    prof_panel = _plot(
+        [{"x": grid, "y": var, "color": (255, 196, 80),
+          "label": "行方向プロファイルの分散"}],
+        doc.shape[1], doc.shape[0], xlim=(-44, 44),
+        title="回転角ごとの「行の際立ち具合」— 山が傾き",
+        xlabel="試した回転角 [°]", legend_pos="tl",
+        marks=[{"x": est, "y": max(var), "color": (255, 255, 255), "r": 7}])
+    sweep_panel = _plot(
+        [{"x": sweep, "y": raw_counts, "color": (255, 120, 120),
+          "label": "補正しないバー本数"},
+         {"x": sweep, "y": fix_counts, "color": (120, 235, 160),
+          "label": "補正後のバー本数"}],
+        doc.shape[1], doc.shape[0], xlim=(0, 42), ylim=(3, 9),
+        hlines=((float(n_true), (140, 142, 160)),),
+        title="傾きを 0→42° と強くしていくと (点線 = 真の %d 本)" % n_true,
+        xlabel="与えた傾き [°]", legend_pos="tl")
+    steps = [np.stack([doc] * 3, -1), np.stack([tilted] * 3, -1),
+             prof_panel.astype(np.float64) / 255.0,
+             np.stack([fixed] * 3, -1), np.stack([binar] * 3, -1),
+             sweep_panel.astype(np.float64) / 255.0]
+    labels = [
+        "元の帳票 (合成) — バーは %d 本" % n_true,
+        "%.0f° 傾ける — decode_barcode は %d 本と答える" % (skew, count_raw),
+        "回転角を 0.5° 刻みで振り、行方向プロファイルの分散が最大の角を探す",
+        "推定 %.1f° で逆回転 (真値 %.1f°・誤差 %+.1f°)" % (est, skew, est - skew),
+        "otsu で二値化 — decode_barcode は %d 本 (真値 %d 本)"
+        % (count_fix, n_true),
+        "傾き %.0f° を超えると補正なしでは本数が狂う。補正すれば 0〜42° 全域で %d 本"
+        % (min(broke) if broke else 42.0, n_true)]
+    book = E.flipbook([_to_u8(s) for s in steps], labels,
+                      title="帳票の傾き補正 —— バーを数えられる形に戻す")
+    info = E.save_animation(book, "wing2d_doc_deskew",
+                            duration_ms=1500, hold_last_ms=2400)
+    return {
+        "name": "doc_deskew", "kind": "gif", "file": info["gif"],
+        "thumb": info["thumb"], "frames": info["frames"],
+        "bytes": info["gif_bytes"], "size": list(info["size"]), "panels": 6,
+        "title": "帳票の傾き補正 → 二値化 → バーを数える",
+        "ops": ["rotate_image", "otsu", "decode_barcode"],
+        "data": "Pillow で描いた合成の帳票 (バーコードは本数だけが意味を持つ模擬)",
+        "measured": {
+            "true_bars": n_true, "applied_skew_deg": skew,
+            "estimated_skew_deg": est, "estimate_error_deg": round(est - skew, 3),
+            "search_step_deg": 0.5,
+            "count_before_deskew": count_raw, "count_after_deskew": count_fix,
+            "sweep_deg": [float(s) for s in sweep],
+            "count_raw_by_skew": raw_counts,
+            "count_fixed_by_skew": fix_counts,
+            "estimate_error_by_skew_deg": [round(e, 3) for e in est_err],
+            "first_skew_where_raw_count_wrong_deg": (min(broke) if broke else None),
+        },
+        "caption": (
+            "合成の帳票を %.0f° 傾け、回転角を 0.5° 刻みで振りながら「行方向プロファイル"
+            "の分散が最大になる角」を探した。推定 %.1f°(真値 %.1f°・誤差 %+.1f°)。"
+            "0→42° の掃引でも推定誤差は最大 %.1f° に収まり、補正後の `decode_barcode` は"
+            "全域で真値どおり %d 本。補正しない場合は %.0f° を超えたところで %d 本まで"
+            "取りこぼす —— 前処理を 1 段挟むかどうかで、同じ op の答えが変わる。"
+            % (skew, est, skew, est - skew,
+               float(np.max(np.abs(est_err))), n_true,
+               (min(broke) if broke else 42.0), int(min(raw_counts)))),
+    }
+
+
+# --------------------------------------------------------------------------- #
+# 展示 11: 輪郭の当てはめと残差 / contour fitting                                #
+# --------------------------------------------------------------------------- #
+def subject_fit_residual(log=print) -> dict:
+    """円と直線を輪郭に当てはめ、真値との差と残差を実測して色で示す工程."""
+    import measure as M
+    E = _tile_mod()
+    H, W = 420, 520
+    cy, cx, R0 = 210.0, 180.0, 118.0
+    rng = np.random.default_rng(SEED)
+    from PIL import Image, ImageDraw
+    im = Image.new("L", (W, H), 18)
+    d = ImageDraw.Draw(im)
+    d.ellipse([cx - R0, cy - R0, cx + R0, cy + R0], fill=226)
+    d.rectangle([cx - 20, cy - R0 - 10, cx + 20, cy - R0 + 34], fill=18)  # 欠け
+    ly0, ly1 = 60.0, 380.0
+    lx0, lx1 = 380.0, 470.0
+    d.line([lx0, ly0, lx1, ly1], fill=226, width=9)
+    scene = np.asarray(im, np.float64) / 255.0
+    scene = np.clip(scene + 0.035 * rng.standard_normal(scene.shape), 0, 1)
+
+    reg = fs.apply(scene, "threshold", 0.5)
+    reg = fs.apply(reg, "opening_circle", 0.34)
+    xld = fs.apply(reg, "gen_contour_region_xld", 0.5)
+    cs = sorted(xld["cs"], key=lambda c: -len(c))
+    circ_pts, line_pts = cs[0], cs[1]
+    if float(np.ptp(line_pts[:, 1])) > float(np.ptp(circ_pts[:, 1])):
+        circ_pts, line_pts = line_pts, circ_pts
+    cf = M.fit_circle(circ_pts)
+    lf = M.fit_line(line_pts)
+    true_line_deg = float(np.degrees(np.arctan2(ly1 - ly0, lx1 - lx0)))
+    d_r = np.linalg.norm(circ_pts - np.array([cf["cy"], cf["cx"]]), axis=1) - cf["r"]
+    resid = np.abs(d_r)
+
+    edge_img = np.asarray(fs.apply(scene, "sobel_amp", 0.5, 0.5), np.float64)
+    cont_vis = _to_u8(np.stack([scene * 0.4] * 3, -1))
+    cont_vis = _draw_poly(cont_vis, circ_pts, (120, 235, 160), 2)
+    cont_vis = _draw_poly(cont_vis, line_pts, (130, 200, 255), 2)
+    fit_vis = _to_u8(np.stack([scene * 0.35] * 3, -1))
+    tt = np.linspace(0, 2 * np.pi, 400)
+    fit_vis = _draw_poly(fit_vis,
+                         np.stack([cf["cy"] + cf["r"] * np.sin(tt),
+                                   cf["cx"] + cf["r"] * np.cos(tt)], 1),
+                         (255, 196, 80), 3)
+    tl = np.linspace(-260, 260, 2)
+    fit_vis = _draw_poly(fit_vis,
+                         np.stack([lf["cy"] + lf["dy"] * tl,
+                                   lf["cx"] + lf["dx"] * tl], 1),
+                         (255, 120, 200), 3, closed=False)
+    res_vis = np.stack([scene * 0.25] * 3, -1)
+    from PIL import Image as I3, ImageDraw as D3
+    rv = I3.fromarray(_to_u8(res_vis), "RGB")
+    rd = D3.Draw(rv)
+    vmax = float(np.percentile(resid, 98))
+    for (rr, ccv), e in zip(circ_pts, resid):
+        t = min(1.0, e / max(vmax, 1e-9))
+        col = tuple(int(v) for v in (_cmap(np.array([[t]]), "turbo")[0, 0] * 255))
+        rd.ellipse([ccv - 2, rr - 2, ccv + 2, rr + 2], fill=col)
+    hist = _hist_panel([resid / max(resid.max(), 1e-9)], ["残差 (最大で正規化)"],
+                       [(255, 196, 80)], W, H,
+                       title="円からの残差の分布 — RMS %.3f px / 最大 %.3f px"
+                             % (cf["rms"], float(resid.max())))
+    steps = [np.stack([scene] * 3, -1), np.stack([edge_img] * 3, -1),
+             cont_vis.astype(np.float64) / 255.0,
+             fit_vis.astype(np.float64) / 255.0,
+             np.asarray(rv, np.float64) / 255.0,
+             hist.astype(np.float64) / 255.0]
+    labels = [
+        "合成シーン (真の半径 %.1f px・直線 %.2f°・σ=0.035 のノイズつき)"
+        % (R0, true_line_deg),
+        "sobel_amp でエッジ強度",
+        "threshold → opening → gen_contour_region_xld で輪郭 %d 点 / %d 点"
+        % (len(circ_pts), len(line_pts)),
+        "fit_circle: 半径 %.3f px (真値 %.1f・誤差 %+.3f) / 中心ずれ %.3f px"
+        % (cf["r"], R0, cf["r"] - R0,
+           float(np.hypot(cf["cy"] - cy, cf["cx"] - cx))),
+        "残差を色で — RMS %.3f px、欠けの縁だけが赤く浮く" % cf["rms"],
+        "fit_line: %.2f° (真値 %.2f°・誤差 %+.3f°) / 残差 RMS %.3f px"
+        % (lf["angle_deg"], true_line_deg, lf["angle_deg"] - true_line_deg,
+           lf["rms"])]
+    book = E.flipbook([_to_u8(s) for s in steps], labels,
+                      title="輪郭の当てはめ —— 測った値と、合わなかった分")
+    info = E.save_animation(book, "wing2d_fit_residual",
+                            duration_ms=1500, hold_last_ms=2400)
+    return {
+        "name": "fit_residual", "kind": "gif", "file": info["gif"],
+        "thumb": info["thumb"], "frames": info["frames"],
+        "bytes": info["gif_bytes"], "size": list(info["size"]), "panels": 6,
+        "title": "輪郭の当てはめと残差",
+        "ops": ["threshold", "opening_circle", "gen_contour_region_xld",
+                "sobel_amp", "fit_circle", "fit_line"],
+        "data": "Pillow で描いた合成の円 (欠けあり) と直線 + 決定的なガウスノイズ",
+        "measured": {
+            "true_radius_px": R0, "fitted_radius_px": round(cf["r"], 4),
+            "radius_error_px": round(cf["r"] - R0, 4),
+            "true_center": [cy, cx],
+            "fitted_center": [round(cf["cy"], 3), round(cf["cx"], 3)],
+            "center_error_px": round(float(np.hypot(cf["cy"] - cy,
+                                                    cf["cx"] - cx)), 4),
+            "circle_rms_px": round(cf["rms"], 4),
+            "circle_max_residual_px": round(float(resid.max()), 4),
+            "true_line_angle_deg": round(true_line_deg, 4),
+            "fitted_line_angle_deg": round(lf["angle_deg"], 4),
+            "line_angle_error_deg": round(lf["angle_deg"] - true_line_deg, 4),
+            "line_rms_px": round(lf["rms"], 4),
+            "contour_points_circle": int(len(circ_pts)),
+            "contour_points_line": int(len(line_pts)),
+        },
+        "caption": (
+            "縁が %d px ぶん欠けた円と 1 本の直線に、輪郭からの当てはめを掛けた 6 コマ。"
+            "円は真値 %.1f px に対して %.3f px と当たり (誤差 %+.3f px・中心ずれ %.3f px)、"
+            "直線は真値 %.2f° に対して %.2f° (誤差 %+.3f°)。残差を色で塗ると、欠けの縁"
+            "だけが最大 %.2f px に跳ね、それ以外は RMS %.3f px に収まっている —— "
+            "「当てはまった値」より「合わなかった場所」の方が、たいてい情報が多い。"
+            % (40, R0, cf["r"], cf["r"] - R0,
+               float(np.hypot(cf["cy"] - cy, cf["cx"] - cx)),
+               true_line_deg, lf["angle_deg"], lf["angle_deg"] - true_line_deg,
+               float(resid.max()), cf["rms"])),
+    }

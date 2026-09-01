@@ -4,17 +4,17 @@
    "kind": "gif",
    "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingopt_cos4_falloff.gif",
    "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingopt_cos4_falloff_thumb.jpg",
-   "bytes": 1641402,
-   "thumb_bytes": 39159,
+   "bytes": 1661082,
+   "thumb_bytes": 39371,
    "size": [
     1000,
-    468
+    494
    ],
    "frames": 36,
    "fps": 10,
    "colors": 256,
    "thumb_frame": 35,
-   "sha256": "9fb7255a6f624b3f5730f50eda209885b69a20e3afc4518c8f823eee2ca120ff"
+   "sha256": "50142cb5931e55a0d11d668ccbdb55439fc9f35a965d4ba93d3a9634931cac10"
   },
   "title": "cos⁴ 則の周辺光量落ち",
   "ops": [
@@ -371,17 +371,17 @@
    "kind": "gif",
    "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingopt_mtf.gif",
    "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingopt_mtf_thumb.jpg",
-   "bytes": 772944,
-   "thumb_bytes": 40785,
+   "bytes": 991320,
+   "thumb_bytes": 44140,
    "size": [
     1000,
-    520
+    536
    ],
    "frames": 34,
    "fps": 10,
    "colors": 256,
    "thumb_frame": 21,
-   "sha256": "42b1aaa19184dbd0761599cf89a1e43c32ecfcf89e81c49ce6c75671e325df08"
+   "sha256": "b52ec1dd5cf66bd8e03e6c96699de452eba3d115ef4a5faa1c090ca06f1dd3c2"
   },
   "title": "回折限界の MTF",
   "ops": [
@@ -396,6 +396,8 @@
     100.0,
     200.0
    ],
+   "strip_mm": 0.25,
+   "strip_nyquist_cyc_per_mm": 416.0,
    "half_cutoff_freq_at_first": 524.6400017432376,
    "rows": [
     {
@@ -712,17 +714,17 @@
    "kind": "gif",
    "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingopt_dof_coc.gif",
    "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingopt_dof_coc_thumb.jpg",
-   "bytes": 427589,
-   "thumb_bytes": 42439,
+   "bytes": 456051,
+   "thumb_bytes": 46494,
    "size": [
     1000,
-    516
+    496
    ],
    "frames": 37,
    "fps": 10,
    "colors": 256,
    "thumb_frame": 20,
-   "sha256": "e2c935899e737d3c84fb0de49fa223d149d4356851dfcbf8d649cece529b3308"
+   "sha256": "c5504d05f65daf7250f17553ded7f90edc75de9722bc8df843e6aaef50f53f4a"
   },
   "title": "被写界深度と錯乱円",
   "ops": [
@@ -1046,8 +1048,8 @@
    "kind": "gif",
    "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingopt_res_vs_dof.gif",
    "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingopt_res_vs_dof_thumb.jpg",
-   "bytes": 327687,
-   "thumb_bytes": 41007,
+   "bytes": 306086,
+   "thumb_bytes": 49319,
    "size": [
     1000,
     498
@@ -1056,7 +1058,7 @@
    "fps": 10,
    "colors": 256,
    "thumb_frame": 14,
-   "sha256": "4c230e35bf63a22faae021bf0f48f9750dbd1957ad89e695d9285ccebaf89733"
+   "sha256": "16bd923e06cf19a024d16d624f7bc834c4abac629d4b5e3cada6a8f4f081c622"
   },
   "title": "横分解能 対 被写界深度",
   "ops": [

@@ -653,7 +653,8 @@ def ex_registration():
             (px0 - 4, py1 + 30, "RMSE  %8.4f   (初期 %.4f -> 最終 %.4f、%.1f 倍改善)"
              % (rmse, rmses[0], rmses[-1], rmses[0] / max(rmses[-1], 1e-12)),
              C_AMBER, 13, True),
-            (px0 - 4, py1 + 52, "最大 %.4f / 最小 %.4f" % (hi, lo), C_DIM, 12, False),
+            (px0 - 4, py1 + 52, "注入ノイズ sigma = %.4f(RMSE の下限)"
+             % float(0.004 * scale), C_DIM, 12, False),
             (30, 52 + PH + 10, "対応づけ前の素の点間距離平均 = %.4f" % rmse0,
              C_BLUE, 13, True),
             (24, H - 26, "橙が青に吸い付いていく。曲線が下がりきっても橙が青に乗って"

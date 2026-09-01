@@ -74,30 +74,30 @@
       "name": "registration",
       "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_registration.gif",
       "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_registration_thumb.jpg",
-      "frames": 26,
+      "frames": 48,
       "size": [
-        962,
-        598
+        972,
+        500
       ],
       "fps": 6,
-      "bytes": 376816,
-      "thumb_bytes": 55309,
-      "thumb_frame": 25,
-      "mean_abs_delta": 2.214,
-      "sha256": "75a6eddedda73f852f2f850fc2aeb077782c9d6364dc06a116c5e90f5d7e2c71",
-      "thumb_sha256": "e7112cd40cd033db5909da050b5933480f961c606fa3a3e8f8d604deafe52241",
+      "bytes": 591851,
+      "thumb_bytes": 53009,
+      "thumb_frame": 47,
+      "mean_abs_delta": 1.655,
+      "sha256": "e762afe2d8e9648a6f2655338a8f3f60d7af8d6992502c9e5c43043a7e31cf8a",
+      "thumb_sha256": "4ee0f807683459d6f6992cb9851a1811185d7ef9fd91658a19507a2327a12b40",
       "facts": {
         "n_points": 3000,
-        "n_iter": 26,
+        "n_iter": 48,
         "rotation_deg": 22.0,
         "translation": 42.45109,
         "noise_sigma": 1.21599,
         "rmse_first": 22.76986,
-        "rmse_last": 5.44414,
+        "rmse_last": 1.75378,
         "rmse_raw_before": 74.76265,
-        "improve_x": 4.18
+        "improve_x": 12.98
       },
-      "seconds": 3.47
+      "seconds": 5.53
     },
     {
       "kind": "png",
