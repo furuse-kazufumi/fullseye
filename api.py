@@ -374,6 +374,14 @@ from cadmap import (  # noqa: E402,F401
 # 断層撮影。CT ボリュームを**扱う** op は多数あったのに、**投影から作る**側が
 # 完全に空だった(radon / サイノグラム / FBP / 反復再構成がゼロ)。閉形式の真値
 # (円板の弦長 2√(r²−s²)、楕円の解析 Radon 変換)で検証してある。
+# 図の配色を「役割」で決める層。図ごとに作者が色を選ぶと同じ意味に違う色が付く
+# (実際この repo でも「赤=誤り/緑=正しい」と青-黒-橙が同居していた)。既定の
+# Okabe-Ito は**赤と緑を対にしない** ― 赤緑の対は色覚特性によっては情報量ゼロ。
+import palette  # noqa: E402  (semantic colour roles for figures)
+from palette import (  # noqa: E402,F401
+    semantic_palette, role_color, role_rgb8, diverging_lut,
+    assert_not_red_green_pair, ROLES, ROLE_MARKERS, SCHEMES,
+)
 import tomography  # noqa: E402  (radon / FBP / SART / artifacts / CT-to-voxel)
 from tomography import (  # noqa: E402,F401
     projection_angles, sinogram_design, ellipse_phantom, ellipse_sinogram,
@@ -572,6 +580,7 @@ __all__ = [
     "acoustics", "interferometry",
     "cadmap", "cad_pixel_to_surface", "cad_surface_to_pixel",
     "cad_defect_to_cad", "cad_visible_faces",
+    "palette", "semantic_palette", "role_color", "role_rgb8", "diverging_lut", "assert_not_red_green_pair", "ROLES", "ROLE_MARKERS", "SCHEMES",
     "tomography", "projection_angles", "sinogram_design", "ellipse_phantom",
     "ellipse_sinogram", "radon_transform", "backproject_sinogram",
     "filtered_backprojection", "sart_reconstruct", "beam_hardening_apply",
