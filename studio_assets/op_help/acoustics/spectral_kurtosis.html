@@ -44,10 +44,44 @@
 <p>and its top six bins differ by 0.03, which is itself worth knowing), the six</p>
 <p>highest bins at `<code style="color:#22d3bf">win=64</code>` are 2000, 2400, 1600, 4000, 3600 and 1200 Hz —</p>
 <p>bracketing the true 3000 Hz resonance without any of them being it. And that</p>
-<p>is enough: feeding the band `<code style="color:#22d3bf">max_freq +- one bin</code>` straight into</p>
+<p>is enough: feeding the band this operator returns straight into</p>
 <p>:func:<code style="color:#22d3bf">envelope_spectrum</code> recovers the defect rate exactly — measured</p>
 <p><b>107.0000 Hz</b> from the 1600-2400 Hz band the operator chose by itself,</p>
 <p>with no knowledge of the resonance.</p>
+<p><b>The band is returned, not left to the caller to assemble.</b> `<code style="color:#22d3bf">band_lo</code>` /</p>
+<p>`<code style="color:#22d3bf">band_hi</code><code style="color:#22d3bf"> are </code><code style="color:#22d3bf">max_freq -+ bin_hz</code>` *clamped into the open interval*</p>
+<p>`<code style="color:#22d3bf">(0, rate/2)</code><code style="color:#22d3bf"> that :func:</code>envelope_spectrum` accepts, so</p>
+<p>`<code style="color:#22d3bf">envelope_spectrum(x, rate, sk[&quot;band_lo&quot;], sk[&quot;band_hi&quot;])</code>` is always a</p>
+<p>legal call. Assembling the band by hand is not: `<code style="color:#22d3bf">freqs</code>` runs up to and</p>
+<p>including Nyquist, so whenever the winning bin is the topmost interior one,</p>
+<p>`<code style="color:#22d3bf">max_freq + bin_hz</code><code style="color:#22d3bf"> lands exactly *on* Nyquist and </code><code style="color:#22d3bf">envelope_spectrum</code>`</p>
+<p>refuses it — correctly, since no such band exists in the recording. Measured</p>
+<p>on the `<code style="color:#22d3bf">mode=&quot;am&quot;</code>` bearing signal (25600 Hz, 1 s, 3 kHz carrier, 107 Hz</p>
+<p>defect, `<code style="color:#22d3bf">m = 0.5</code>`), whose kurtosis maximum lands on the top interior bin</p>
+<p>(12400 Hz, `<code style="color:#22d3bf">bin_hz</code>` 400):</p>
+<p>===========================  =====================  ==============================</p>
+<p>band handed to the consumer  value                  `<code style="color:#22d3bf">envelope_spectrum</code>`</p>
+<p>===========================  =====================  ==============================</p>
+<p>`<code style="color:#22d3bf">max_freq -+ bin_hz</code><code style="color:#22d3bf">       12000.0 - 12800.0 Hz   </code><code style="color:#22d3bf">ValueError</code>` (12800 = Nyquist)</p>
+<p>`<code style="color:#22d3bf">band_lo</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">band_hi</code>`    12000.0 - 12600.0 Hz   returns</p>
+<p>===========================  =====================  ==============================</p>
+<p>Returning is not the same as finding something, and this row is the honest</p>
+<p>case: `<code style="color:#22d3bf">max_kurtosis</code><code style="color:#22d3bf"> is **-0.2725** against </code><code style="color:#22d3bf">noise_sigma</code>` <b>0.1001</b>, so</p>
+<p>there was never a band to find — an amplitude-modulated tone is stationary in</p>
+<p>every bin, which is exactly what a negative SK says. Demodulating the band</p>
+<p>anyway gives `<code style="color:#22d3bf">peak_freq</code><code style="color:#22d3bf"> **1.0000** Hz at </code><code style="color:#22d3bf">band_fraction</code>`</p>
+<p><b>5.080e-05</b>: nothing lives up there, and the returned diagnostics say so.</p>
+<p>(The same signal over the known resonance, 2000-4000 Hz, gives `<code style="color:#22d3bf">peak_freq</code>`</p>
+<p><b>107.0000</b> at `<code style="color:#22d3bf">band_fraction</code>` <b>0.9999</b>.) The contract this repair adds</p>
+<p>is only that the handoff is *legal* — refusing to answer a well-posed call is</p>
+<p>the caller&#x27;s bug to hit, whereas judging the answer stays with</p>
+<p>`<code style="color:#22d3bf">max_kurtosis</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">noise_sigma</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">band_fraction</code>`.</p>
+<p>The clamp margin is <b>half a bin</b>: an edge cannot be placed more finely than</p>
+<p>`<code style="color:#22d3bf">bin_hz</code>` in the first place, and half a bin is the smallest offset that is</p>
+<p>still a resolvable distance from the boundary — no epsilon, no rate-dependent</p>
+<p>fudge. `<code style="color:#22d3bf">band_lo &lt; band_hi</code><code style="color:#22d3bf"> always holds, because </code><code style="color:#22d3bf">max_freq</code>` is by</p>
+<p>construction an interior bin and therefore at least one full bin away from</p>
+<p>both 0 and Nyquist.</p>
 <p>`<code style="color:#22d3bf">win</code>` defaults to the largest power of two that leaves at least 8 interior</p>
 <p>frames, clamped to [16, 64] — short, for the reason in the table — and the</p>
 <p>value used is returned. Fewer than 8 interior frames makes the fourth moment</p>
@@ -57,9 +91,10 @@
 <p>the wrong one there and they read about -1 for noise. They are still present</p>
 <p>in `<code style="color:#22d3bf">kurtosis</code><code style="color:#22d3bf"> with the same formula, and </code><code style="color:#22d3bf">real_bins</code>` names them.</p>
 <p>Returns a dict: `<code style="color:#22d3bf">freqs</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">kurtosis</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">max_kurtosis</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">max_freq</code>`,</p>
-<p>`<code style="color:#22d3bf">n_frames</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">win</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">hop</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">real_bins</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">window_seconds</code>`,</p>
-<p>`<code style="color:#22d3bf">bin_hz</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">noise_sigma</code>` (the estimator&#x27;s own standard deviation,</p>
-<p>`<code style="color:#22d3bf">4/sqrt(n_frames)</code>` — a peak below this is not a finding).</p>
+<p>`<code style="color:#22d3bf">band_lo</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">band_hi</code>` (the demodulation band, ready for</p>
+<p>:func:<code style="color:#22d3bf">envelope_spectrum</code>), `<code style="color:#22d3bf">n_frames</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">win</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">hop</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">real_bins</code>`,</p>
+<p>`<code style="color:#22d3bf">window_seconds</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">bin_hz</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">noise_sigma</code>` (the estimator&#x27;s own standard</p>
+<p>deviation, `<code style="color:#22d3bf">4/sqrt(n_frames)</code>` — a peak below this is not a finding).</p>
 <p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: everything :func:</code>stft` refuses, plus a signal too</p>
 <p>short for 8 frames at the chosen window.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>

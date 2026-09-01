@@ -315,8 +315,13 @@ def render_mesh(V, F, pose=None, intrinsics=None, width: int = 256,
         denom = (v1 - v2) * (u0 - u2) + (u2 - u1) * (v0 - v2)
         if abs(denom) < _DET_EPS:
             continue                                # degenerate (zero screen area)
-        cols = np.arange(cmin, cmax + 1) + 0.5      # pixel centres
-        rows = np.arange(rmin, rmax + 1) + 0.5
+        # Pixel-centre convention (see the module docstring): the centre of pixel
+        # ``(row=r, col=c)`` IS the continuous coordinate ``(u, v) = (c, r)`` —
+        # integer, matching :func:`camera.depth_to_points`'s ``np.mgrid[0:H, 0:W]``.
+        # Do NOT add 0.5 here: that is the OpenGL "pixel corners are integers"
+        # convention and mixing the two silently shifts depth by half a pixel.
+        cols = np.arange(cmin, cmax + 1).astype(np.float64)   # pixel centres (u = c)
+        rows = np.arange(rmin, rmax + 1).astype(np.float64)   # pixel centres (v = r)
         px, py = np.meshgrid(cols, rows)            # (bh, bw)
         inv = 1.0 / denom
         l0 = ((v1 - v2) * (px - u2) + (u2 - u1) * (py - v2)) * inv
