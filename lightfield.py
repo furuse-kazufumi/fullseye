@@ -414,7 +414,10 @@ def lf_synthesize(slopes=(0.0,), angular=(5, 5), shape=(64, 64), *,
 
     Returns ``(light_field, slope_map)``: the ``(V, U, H, W)`` array and the
     ``(H, W)`` map of the front-most layer's slope at each pixel — the ground
-    truth for :func:`lf_depth_from_focus` and :func:`lf_epi_slope`. With
+    truth for :func:`lf_depth_from_focus` and :func:`lf_epi_slope`. The map is
+    in **centre-view** coordinates (the masks are stated unshifted, and the
+    centre view is the one view whose shift is zero), which is also the frame a
+    refocused image lands in. With
     ``occlusion=False`` the light field also contains the *other* layers at
     every pixel, so a depth estimator will legitimately disagree with the map
     wherever layers overlap; the single-layer case is unambiguous and is what
