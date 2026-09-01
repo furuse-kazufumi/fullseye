@@ -1183,11 +1183,12 @@ def test_a_polariser_sweep_is_confidently_wrong_in_a_photometric_solver():
 
     A sweep handed to photometric stereo is a valid-looking light stack, so
     nothing raises. On a surface whose true normal is exactly ``(0, 0, 1)``
-    everywhere, the solver returns normals averaging **34 degrees** off, with a
-    plausible albedo and a residual of only about 8% of the peak radiance —
-    the fit looks good because four frames over three unknowns always do. The
-    same operator on genuine photometric data of the same flat surface measures
-    0.00011 degrees, so 34 degrees is not a failure, it is a confident lie.
+    everywhere, the solver returns normals averaging **33.99 degrees** off,
+    with a plausible albedo (0.555) and a residual of only 21% of the peak
+    radiance — the fit looks fittable because four frames over three unknowns
+    always do. The same operator, the same lights, genuine photometric data of
+    the same flat surface: **0.000115 degrees**. A ratio of 296,000, so 34
+    degrees is not a failure, it is a confident lie.
     """
     h = w = 32
     rng = np.random.default_rng(0)
