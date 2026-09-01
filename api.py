@@ -312,6 +312,15 @@ from photoncount import (  # noqa: E402,F401
 # 破れる領域。二色性反射モデル(色の方向で分ける)・BRDF・影に強い
 # フォトメトリックステレオ・偏光による分離。
 import specularity  # noqa: E402  (dichromatic split / BRDF / robust photometric stereo)
+# 位相ベースのモーション増幅: 目に見えない微小振動を可視化・定量化する層。
+# 既存の optical_flow_* は「どこがどれだけ動いたか」を返すが、こちらは
+# サブピクセルの周期運動を帯域で選んで増幅する(別の問題を解いている)。
+import motionmag  # noqa: E402  (phase-based motion magnification / vibration measurement)
+from motionmag import (  # noqa: E402,F401
+    band_snr, complex_steerable_decompose, complex_steerable_reconstruct,
+    displacement_series, motion_magnify, phase_displacement,
+    synthesize_translation, temporal_band_power, temporal_bandpass,
+)
 from specularity import (  # noqa: E402,F401
     specular_diffuse_split, specular_free_transform,
     specular_coefficient_map, illuminant_from_dichromatic_planes,
@@ -453,7 +462,11 @@ __all__ = [
     "tcspc_simulate", "tcspc_irf_convolve", "tcspc_background_subtract",
     "tcspc_stats", "dtof_depth", "dtof_cube_simulate", "dtof_cube_depth",
     "lifetime_fit", "lifetime_phasor",
-    "specularity",
+    "specularity", "motionmag",
+    "band_snr", "complex_steerable_decompose",
+    "complex_steerable_reconstruct", "displacement_series",
+    "motion_magnify", "phase_displacement", "synthesize_translation",
+    "temporal_band_power", "temporal_bandpass",
     "specular_diffuse_split", "specular_free_transform",
     "specular_coefficient_map", "illuminant_from_dichromatic_planes",
     "brdf_blinn_phong", "brdf_microfacet", "dichromatic_render",
