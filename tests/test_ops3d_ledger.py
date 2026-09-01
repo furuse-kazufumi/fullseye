@@ -283,7 +283,7 @@ def test_dict_shape_descriptors_declare_table_not_descriptor():
         assert cf.TYPE_CHECKS["table"](d)
         assert not cf.TYPE_CHECKS["descriptor"](d)           # 旧宣言では型の嘘
         with pytest.raises(ValueError, match="numeric vectors"):
-            match3d.shape_distance(d, d)
+            ops3d.get("shape_distance")(d, d)
     # table を名乗った先に本物の消費側がいる(型が繋がっていることの実証)
     assert set(optics.wavefront_stats(coeffs)) >= {"rms", "pv"}
     # 配列を返す descriptor は 1-D でも per-point の 2-D でも通る(実測)
