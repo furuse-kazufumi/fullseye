@@ -64,6 +64,29 @@ def _font(size: int):
     return ImageFont.load_default()
 
 
+def _wrap(draw, text: str, font, max_w: int) -> list[str]:
+    """幅に収まるよう折り返す。**黙って切らない**のが要点。
+
+    日本語には空白が無いので、単語境界ではなく 1 文字ずつ詰めて測る。
+    1 文字すら入らない極端な幅のときだけ、そのまま 1 行として返す
+    (無限ループにしない)。
+    """
+    if not text:
+        return []
+    lines: list[str] = []
+    cur = ""
+    for ch in text:
+        trial = cur + ch
+        if draw.textlength(trial, font=font) <= max_w or not cur:
+            cur = trial
+        else:
+            lines.append(cur)
+            cur = ch
+    if cur:
+        lines.append(cur)
+    return lines
+
+
 def _to_u8(a: np.ndarray) -> np.ndarray:
     """float [0,1] でも uint8 でも受け、RGB uint8 にそろえる。
 
