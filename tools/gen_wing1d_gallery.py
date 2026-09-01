@@ -1793,7 +1793,7 @@ def ex_aliasing(log):
                               f"(Nyquist is above the tone).", C_C, 12, True)
         frames.append(fig.u8())
 
-    info = save_gif(frames, "aliasing", fps=5, thumb_index=len(rows) - 4, log=log)
+    info = save_flipbook(frames, "aliasing", labels, ms=260, hold_ms=1800, log=log)
     facts = {
         "true_tone_hz": f_true, "duration_s": dur,
         "rate_first": float(rates[0]), "rate_last": float(rates[-1]),
