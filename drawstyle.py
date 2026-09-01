@@ -139,8 +139,12 @@ def resolve_color(color, scheme: str = "okabe_ito"):
             raise ValueError(
                 f"unknown colour role {color!r} ({exc}); roles: {', '.join(palette.ROLES)}"
             ) from exc
-    if np.isscalar(color):
-        v = float(color)
+    if np.ndim(color) == 0:                            # float / numpy スカラ / 0-d 配列
+        try:
+            v = float(color)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"colour must be a number, a role name or a sequence, "
+                             f"got {color!r}") from exc
         if not np.isfinite(v):
             raise ValueError(f"colour must be finite, got {color!r}")
         return v

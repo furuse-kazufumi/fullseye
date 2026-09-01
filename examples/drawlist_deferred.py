@@ -86,8 +86,8 @@ def main() -> int:
     # 文字の下敷きを描く層(annotate)はまだ無くてよい ―― 検査は列の上で行われるので、
     # ラスタ化に到達する前に落ちる。
     bad = build(DrawList((H, W, 3)))
-    bad.text_box((12, 160), "この注記は画像の幅にはどうやっても収まらない長さの文字列です",
-                 size=14, z=4.0)
+    bad.text_box((12, 158), "この注記は画像の幅にはどうやっても収まらない長さの文字列です",
+                 font_size=14, z=4.0)
     caught = None
     try:
         bad.flush()
@@ -96,17 +96,16 @@ def main() -> int:
     ok &= caught is not None and caught.code == "text_does_not_fit"
     print(f"2. はみ出す注記を描く前に捕捉: {caught}")
 
-    fits = build(DrawList((H, W, 3), handlers={"text_box": lambda img, **kw: img}))
-    fits.text_box((12, 160), "ok", size=12, z=4.0)
+    fits = build(DrawList((H, W, 3)))
+    fits.text_box((12, 158), "ok", font_size=12, z=4.0)
     issues = fits.inspect()
     ok &= issues == []
     print(f"   収まる注記は素通し: 指摘 {len(issues)} 件")
 
     # --- 3. 図の差分を「なぜ違うか」で取る ---------------------------------- #
-    before = build(DrawList((H, W, 3), handlers={"text_box": lambda img, **kw: img}))
-    before.text_box((12, 160), "before", size=12, z=4.0)
-    after = DrawList.from_json(before.to_json(),
-                              handlers={"text_box": lambda img, **kw: img})
+    before = build(DrawList((H, W, 3)))
+    before.text_box((12, 158), "before", font_size=12, z=4.0)
+    after = DrawList.from_json(before.to_json())
     round_trip_exact = after.commands == before.commands
     ok &= round_trip_exact
     after._cmds[4]["args"]["text"] = "after"
