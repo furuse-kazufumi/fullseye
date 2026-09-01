@@ -905,7 +905,7 @@ def vol_labels_to_meshes(labels, ids=None, spacing=None, seed: int = 0,
         raise ValueError("%d components exceed the %d cap (volcolor.MAX_MESHES) — "
                          "select components first (vol_select_labels) or pass ids"
                          % (want.size, MAX_MESHES))
-    pal = vol_label_palette(n, seed=seed, background=background)
+    pal = vol_label_palette(n, seed=seed)               # 行 0 は一度も引かない
     slices = ndimage.find_objects(L)
 
     out = []
