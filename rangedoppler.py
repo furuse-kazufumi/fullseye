@@ -494,6 +494,47 @@ def _spacing(element_spacing_m, wavelength_m: float, op: str) -> float:
     return _positive(element_spacing_m, "element_spacing_m")
 
 
+def _beamwidth_rad(n_antennas: int, spacing_m: float, wavelength_m: float) -> float:
+    """Boresight 3 dB beamwidth of a uniform linear array (Van Trees 2002, §2.4)."""
+    return 0.886 * wavelength_m / (n_antennas * spacing_m)
+
+
+def _require_aperture(na: int, d: float, lam: float, op: str, first_angle: float):
+    """Refuse an array that cannot resolve a direction at all.
+
+    Two separate ways to have no aperture, and both end in the same fabricated
+    answer — a spectrum that is flat (or wider than the visible region), whose
+    ``argmax`` returns the *first grid point* as a confident direction:
+
+      * one element (no baseline at all);
+      * many elements packed into much less than a wavelength. Measured: 8
+        elements at 1e-12 m spacing give an angle spectrum whose peak-to-trough
+        spread is exactly 0.0, and the reported direction was -90 deg — the
+        first grid angle. The nominal beamwidth there is 2.5e10 degrees, a
+        number the design op used to return without comment.
+
+    The condition is ``0.886*lambda/(N*d) < pi``, i.e. an aperture longer than
+    about 0.28 wavelengths.
+    """
+    if na < 2:
+        raise ValueError(
+            "%s: the cube has %d antenna element(s). Direction of arrival needs "
+            "an aperture: with one element the steering sum is |x_0| for every "
+            "angle, the spectrum is exactly flat, and argmax would report "
+            "%g degrees — the first grid point — as a confident direction. "
+            "Refusing instead of fabricating one." % (op, na, first_angle))
+    bw = _beamwidth_rad(na, d, lam)
+    if not bw < np.pi:
+        raise ValueError(
+            "%s: %d elements at %g m spacing span an aperture of %g wavelengths, "
+            "whose boresight beamwidth is %g degrees — wider than the entire "
+            "visible hemisphere. The angle spectrum is then flat to within "
+            "float noise and argmax would report %g degrees (the first grid "
+            "point) as a direction. An array shorter than ~0.28 wavelengths has "
+            "no directivity; refusing instead of fabricating one."
+            % (op, na, d, na * d / lam, float(np.degrees(bw)), first_angle))
+
+
 def _angle_grid(angles_deg, op: str) -> np.ndarray:
     """The steering grid, defaulting to 1-degree steps over the full hemisphere."""
     if angles_deg is None:
