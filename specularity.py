@@ -1131,7 +1131,11 @@ def photometric_stereo_robust(images, lights, method="ransac", threshold=0.05,
     ok = enough & (np.abs(det) > 1e-12 * np.maximum(
         np.abs(A).max(axis=(1, 2)) ** 3, np.finfo(np.float64).tiny))
     if ok.any():
-        g_ref = np.linalg.solve(A[ok], b[ok])               # (K, 3)
+        # (K, 3, 3) against (K, 3, 1): the trailing singleton is not decoration.
+        # numpy reads a (K, 3) right-hand side as a *matrix* per system and
+        # raises on the core-dimension mismatch, which is the friendly failure;
+        # for a 3-pixel image it would instead be a silent wrong solve.
+        g_ref = np.linalg.solve(A[ok], b[ok][..., None])[..., 0]    # (K, 3)
         best_g[:, ok] = g_ref.T
 
     albedo = np.linalg.norm(best_g, axis=0)
