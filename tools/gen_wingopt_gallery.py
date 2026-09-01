@@ -2054,6 +2054,12 @@ def ex_pipeline_flow(log):
     scene = defectgen.composite_defect(bg, ideal, mask)
     # --- 工程 4: 撮像 ------------------------------------------------------ #
     captured = system.capture(scene, vignetting=False)
+    # 切り出しタイルが実際に張る半画角(= 周辺光量落ちを切ってよい根拠)
+    _si = float(optics.thin_lens(focal_mm=SYS["focal_mm"],
+                                 object_mm=SYS["working_distance_mm"])["image_mm"])
+    _half_diag_mm = float(np.hypot(tile, tile) * SYS["pixel_pitch_um"] * 1e-3 / 2.0)
+    crop_half_deg = float(np.degrees(np.arctan2(_half_diag_mm, _si)))
+    crop_cos4 = float(np.cos(np.radians(crop_half_deg)) ** 4)
     # --- 工程 5/6: 検査と判定 ---------------------------------------------- #
     pred, iou, detected = _detect(captured, mask)
     stats = defectgen.defect_stats(mask, um_per_pixel=upp)
