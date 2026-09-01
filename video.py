@@ -22,6 +22,7 @@ the library never hard-depends on a video backend.
 from __future__ import annotations
 
 import os
+import threading
 
 import numpy as np
 
