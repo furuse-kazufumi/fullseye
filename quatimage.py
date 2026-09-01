@@ -829,9 +829,15 @@ def quat_color_filter(qimage, direction_rgb, mode) -> np.ndarray:
     ---------------------------------------------------
     A per-channel filter applies a diagonal matrix, and ``I - g g^T`` is diagonal
     only when ``g`` is a coordinate axis. For ``g = (1,1,1)/sqrt(3)`` — remove
-    the grey axis, i.e. keep only chromatic content — the measured error of the
-    *best possible* diagonal approximation is 0.4714 per unit vector, against
-    0.0 for this operator. The impossibility is structural, not a tuning gap.
+    the grey axis, i.e. keep only chromatic content — the *best possible*
+    diagonal approximation is off by ``||P - diag(P)||_2 = 0.666667`` in operator
+    norm. Concretely, a pure red pixel ``(1, 0, 0)`` must become
+    ``(0.666667, -0.333333, -0.333333)``; the best diagonal filter can only reach
+    ``(0.666667, 0, 0)``, an error of ``0.471405`` — it cannot put anything into
+    the green and blue channels, because it multiplies each channel by a number
+    and both start at zero. The impossibility is structural, not a tuning gap.
+    (A full 3x3 colour matrix, of course, does it exactly; see
+    :func:`quat_color_rotate` for that half of the accounting.)
 
     **Raises** ``ValueError``: *qimage* is not a valid ``(H, W, 4)`` field;
     *direction_rgb* is not a finite non-zero 3-vector; *mode* is not
