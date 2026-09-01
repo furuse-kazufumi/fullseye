@@ -50,15 +50,28 @@ class VisionSystem:
     def __init__(self, focal_mm=50.0, working_distance_mm=300.0,
                  pixel_pitch_um=3.45, width_px=1024, height_px=1024,
                  f_number=5.6, wavelength_um=0.55, depth_tolerance_mm=1.0):
-        self.focal_mm = float(focal_mm)
-        self.working_distance_mm = float(working_distance_mm)
-        self.pixel_pitch_um = float(pixel_pitch_um)
+        # ★``float("50")`` は成功するので、``float()`` を通すだけでは文字列が
+        # ミリメートルとして通り抜ける。``visiondesign`` 側は弾くが、ここで先に
+        # float 化してしまうと **その検証に届く前に数値になってしまう**
+        # (敵対的検証で実測: VisionSystem(focal_mm="50") が通った)。
+        # 器の側でも同じ規律を持つ。
+        def _n(value, name):
+            if isinstance(value, (str, bytes, bool)):
+                raise ValueError("%s must be a number, got %r" % (name, value))
+            return float(value)
+
+        self.focal_mm = _n(focal_mm, "focal_mm")
+        self.working_distance_mm = _n(working_distance_mm, "working_distance_mm")
+        self.pixel_pitch_um = _n(pixel_pitch_um, "pixel_pitch_um")
+        for nm, v in (("width_px", width_px), ("height_px", height_px)):
+            if isinstance(v, (str, bytes, bool)) or int(v) != v:
+                raise ValueError("%s must be an integer, got %r" % (nm, v))
         self.width_px = int(width_px)
         self.height_px = int(height_px)
-        self.f_number = float(f_number)
-        self.wavelength_um = float(wavelength_um)
-        self.depth_tolerance_mm = float(depth_tolerance_mm)
-        # 引数の妥当性は visiondesign 側の検証に一本化する(二重実装しない)
+        self.f_number = _n(f_number, "f_number")
+        self.wavelength_um = _n(wavelength_um, "wavelength_um")
+        self.depth_tolerance_mm = _n(depth_tolerance_mm, "depth_tolerance_mm")
+        # 残る妥当性(正値・焦点距離との関係)は visiondesign の検証に一本化する
         self._geo = visiondesign.system_geometry(
             self.focal_mm, self.working_distance_mm, self.pixel_pitch_um,
             self.width_px, self.height_px)
