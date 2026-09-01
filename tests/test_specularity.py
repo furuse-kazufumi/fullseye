@@ -861,18 +861,29 @@ class TestFailClosed:
             S.photometric_stereo_robust(
                 [np.zeros((4, 4)), np.zeros((5, 5)), np.zeros((4, 4))], L)
 
+    @staticmethod
+    def _huge(shape):
+        """A correctly shaped array that costs nothing to make.
+
+        Materialising the input would defeat the point of the test: these are
+        the shapes the caps exist to refuse, and allocating them here would be
+        the very allocation being guarded against (an 8192x8192x3 float32 image
+        is 0.8 GB). ``broadcast_to`` gives the shape with no storage, and the
+        caps read the shape, not the data."""
+        return np.broadcast_to(np.float32(0.0), shape)
+
     @pytest.mark.parametrize("call,match", [
         (lambda: S.photometric_stereo_robust(
-            np.zeros((64, 1024, 1024), np.float32),
+            TestFailClosed._huge((64, 1024, 1024)),
             np.tile([[0.3, 0.3, 1.0]], (64, 1))), "MAX_ROBUST_WORK"),
         (lambda: S.photometric_stereo_robust(
-            np.zeros((3, 2048, 2048), np.float32),
+            TestFailClosed._huge((3, 2048, 2048)),
             np.array([[.3, .3, 1.], [-.3, .3, 1.], [.3, -.3, 1.]])),
          "MAX_ROBUST_PIXELS"),
-        (lambda: S.specular_diffuse_split(np.zeros((8192, 8192, 3), np.float32)),
+        (lambda: S.specular_diffuse_split(TestFailClosed._huge((8192, 8192, 3))),
          "MAX_PIXELS"),
-        (lambda: S.polarization_render(np.zeros((4096, 4096), np.float32),
-                                       np.zeros((4096, 4096), np.float32),
+        (lambda: S.polarization_render(TestFailClosed._huge((4096, 4096)),
+                                       TestFailClosed._huge((4096, 4096)),
                                        angles_deg=np.linspace(0, 179, 64)),
          "MAX_STACK_ELEMENTS"),
         (lambda: S.photometric_stereo_robust(
@@ -883,6 +894,17 @@ class TestFailClosed:
     def test_a_small_argument_cannot_request_a_huge_allocation(self, call, match):
         with pytest.raises(ValueError, match=match):
             call()
+
+    def test_the_size_cap_fires_before_the_float64_copy_is_made(self):
+        """A cap checked after coercion does not prevent the allocation it
+        exists to prevent. This runs in milliseconds on an array whose float64
+        copy would be 1.6 GB, which is the whole proof."""
+        with pytest.raises(ValueError, match="before conversion"):
+            S.specular_diffuse_split(self._huge((8192, 8192, 3)))
+        with pytest.raises(ValueError, match="before conversion"):
+            S.photometric_stereo_robust(
+                self._huge((64, 4096, 4096)),
+                np.tile([[0.3, 0.3, 1.0]], (64, 1)))
 
 
 # --------------------------------------------------------------------------- #
