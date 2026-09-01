@@ -438,11 +438,12 @@ def _edge_level(env: np.ndarray) -> np.ndarray:
     (-3.3e-02 and -3.7e-02 against -2.7e-02 plain, at edge level 0.183), so there
     is nothing to fix and the input is refused instead.
     """
-    top = env.max(axis=-1)
-    ends = np.maximum(env[..., 0], env[..., -1])
+    base = np.median(env, axis=-1)
+    top = env.max(axis=-1) - base
+    ends = np.maximum(env[..., 0], env[..., -1]) - base
     with np.errstate(divide="ignore", invalid="ignore"):
         lvl = np.where(top > 0.0, ends / np.where(top > 0.0, top, 1.0), 1.0)
-    return np.asarray(lvl, dtype=np.float64)
+    return np.asarray(np.clip(lvl, 0.0, 1.0), dtype=np.float64)
 
 
 def _refine(env: np.ndarray, idx: np.ndarray, mode: str) -> np.ndarray:
