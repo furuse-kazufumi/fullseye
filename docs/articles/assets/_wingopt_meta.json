@@ -4,14 +4,14 @@
    "kind": "png",
    "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingopt_defect_atlas.png",
    "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingopt_defect_atlas_thumb.jpg",
-   "bytes": 142082,
-   "thumb_bytes": 80032,
+   "bytes": 88396,
+   "thumb_bytes": 42312,
    "size": [
-    554,
-    1562
+    998,
+    884
    ],
    "frames": 1,
-   "sha256": "139bdb29647d2a1362604e7d5eb3818c371af2420725e3fa12b84f455eb7be23"
+   "sha256": "57fecc928dd0d2b4b692f971551c3a2cc2b5634087a145ec827a0d23e076bf3f"
   },
   "title": "欠陥ジェネレータの見本帳",
   "ops": [
@@ -29,7 +29,7 @@
    "um_per_pixel": 16.264285714285716,
    "optical_limit_um": 32.52857142857143,
    "limited_by": "sampling",
-   "tile_px": 256,
+   "tile_px": 232,
    "rows": [
     {
      "kind": "scratch",
@@ -47,7 +47,7 @@
       "minor_axis_um": 532.1781422945855,
       "area_um2": 230932.0620918368
      },
-     "iou": 0.41514041514041516,
+     "iou": 0.4386292834890966,
      "detected": true
     },
     {
@@ -55,18 +55,18 @@
      "size_um": 90.0,
      "defect_px": 5.533596837944663,
      "stats": {
-      "area_px": 217,
+      "area_px": 209,
       "empty": false,
-      "bbox_h_px": 254,
-      "bbox_w_px": 232,
-      "major_axis_px": 336.0373922853899,
-      "minor_axis_px": 243.84177292829247,
-      "fill_ratio": 0.0036824599511267988,
-      "major_axis_um": 5465.408158813092,
-      "minor_axis_um": 3965.9122639837287,
-      "area_um2": 57402.3567857143
+      "bbox_h_px": 231,
+      "bbox_w_px": 210,
+      "major_axis_px": 306.47243169652506,
+      "minor_axis_px": 222.9278641994279,
+      "fill_ratio": 0.004308390022675737,
+      "major_axis_um": 4984.555192664197,
+      "minor_axis_um": 3625.762477014981,
+      "area_um2": 55286.14086734695
      },
-     "iou": 0.5011547344110855,
+     "iou": 0.5870786516853933,
      "detected": true
     },
     {
@@ -85,7 +85,7 @@
       "minor_axis_um": 326.51835934522853,
       "area_um2": 183052.67693877555
      },
-     "iou": 0.4389705882352941,
+     "iou": 0.4506503442999235,
      "detected": true
     },
     {
@@ -104,7 +104,7 @@
       "minor_axis_um": 327.28232442162374,
       "area_um2": 91790.8654591837
      },
-     "iou": 0.37092731829573933,
+     "iou": 0.38838709677419353,
      "detected": true
     },
     {
@@ -112,18 +112,18 @@
      "size_um": null,
      "defect_px": null,
      "stats": {
-      "area_px": 2243,
+      "area_px": 2172,
       "empty": false,
-      "bbox_h_px": 216,
-      "bbox_w_px": 208,
-      "major_axis_px": 217.3877568325365,
-      "minor_axis_px": 158.04988032795274,
-      "fill_ratio": 0.04992432336182336,
-      "major_axis_um": 3535.6565879120403,
-      "minor_axis_um": 2570.568410762489,
-      "area_um2": 593334.038112245
+      "bbox_h_px": 196,
+      "bbox_w_px": 188,
+      "major_axis_px": 212.7588361280985,
+      "minor_axis_px": 144.8917416571391,
+      "fill_ratio": 0.0589448545375597,
+      "major_axis_um": 3460.370499026288,
+      "minor_axis_um": 2356.5606839521843,
+      "area_um2": 574552.6218367348
      },
-     "iou": 0.46574044837385536,
+     "iou": 0.45197168857431747,
      "detected": true
     }
    ]

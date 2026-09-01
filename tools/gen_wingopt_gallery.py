@@ -555,24 +555,16 @@ def ex_defect_atlas(log):
         mask_rgb[:, :] = (0.07, 0.08, 0.10)
         mask_rgb[r["mask"]] = C_HIT
         panels += [_gray_to_rgb(r["img"]), mask_rgb]
-        if r["size_um"] is None:
-            left = (f"composite (scratch+pits+blob) — 撮像 / "
-                    f"IoU {iou:.3f} {'検出' if det else '未検出'}")
-        else:
-            left = (f"{r['kind']} {r['size_um']:.0f} µm = {r['defect_px']:.2f} px — "
-                    f"撮像 / IoU {iou:.3f} {'検出' if det else '未検出'}")
-        labels += [
-            left,
-            (f"正解マスク {st['area_px']} px  "
-             f"長軸 {st['major_axis_um']:.0f} × 短軸 {st['minor_axis_um']:.0f} µm"),
-        ]
+        left = ("composite 撮像" if r["size_um"] is None
+                else f"{r['kind']} {r['size_um']:.0f}µm = {r['defect_px']:.2f}px")
+        labels += [left, f"正解マスク {st['area_px']}px / IoU {iou:.3f}"]
 
-    title = (f"欠陥ジェネレータ 5 種 —— 左=撮像 / 右=画素完全な正解マスク  "
+    title = (f"欠陥ジェネレータ 5 種 —— 対で「撮像 → 画素完全な正解マスク」  "
              f"({upp:.3f} µm/画素, 光学限界 {res['resolution_object_um']:.2f} µm "
              f"{res['limited_by']} 律速, seed 固定)")
-    sheet = contact_sheet(panels, labels, ncols=2, panel_px=300, pad=14,
-                          label_h=30, title=title, title_h=48,
-                          font_size=15, title_font_size=20)
+    sheet = contact_sheet(panels, labels, ncols=4, panel_px=tile, pad=14,
+                          label_h=28, title=title, title_h=48,
+                          font_size=13, title_font_size=19)
     frame = _to_u8(sheet)
     facts = {
         "system": repr(system), "um_per_pixel": upp,

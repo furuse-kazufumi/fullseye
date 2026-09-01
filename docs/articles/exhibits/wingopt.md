@@ -9,9 +9,9 @@
 
 [![欠陥ジェネレータの見本帳](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingopt_defect_atlas_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingopt_defect_atlas.png)
 
-*↑ **欠陥ジェネレータの見本帳** ―― 欠陥 5 種(scratch / pits / crack / blob / composite)を同じ系(**16.264 µm/画素**)で撮り、左列が撮れる画像、右列が**画素完全な正解マスク**です。マスクは撮像前の幾何から作るので、撮像でぼけても正解は動かず、**注釈作業が存在しません** —— 各行のマスク面積は実測で 873 / 217 / 692 / 347 / 2243 画素、光学限界は 32.53 µm(sampling 律速)です。 使用 op: `defect_scratch`, `defect_pits`, `defect_crack`, `defect_blob`, `surface_texture`, `composite_defect`, `defect_stats`, `image_formation`。*
+*↑ **欠陥ジェネレータの見本帳** ―― 欠陥 5 種(scratch / pits / crack / blob / composite)を同じ系(**16.264 µm/画素**)で撮り、左列が撮れる画像、右列が**画素完全な正解マスク**です。マスクは撮像前の幾何から作るので、撮像でぼけても正解は動かず、**注釈作業が存在しません** —— 各行のマスク面積は実測で 873 / 209 / 692 / 347 / 2172 画素、光学限界は 32.53 µm(sampling 律速)です。 使用 op: `defect_scratch`, `defect_pits`, `defect_crack`, `defect_blob`, `surface_texture`, `composite_defect`, `defect_stats`, `image_formation`。*
 
-<small>クリックで原寸 (554×1562 px / 142 kB)。</small>
+<small>クリックで原寸 (998×884 px / 88 kB)。</small>
 
 ---
 
@@ -19,4 +19,4 @@
 
 | 展示 | 形式 | 画素 | フレーム | サイズ | SHA-256(先頭 16) |
 |---|---|---|---|---|---|
-| 欠陥ジェネレータの見本帳 | PNG | 554×1562 | 1 | 142 kB | `139bdb29647d2a13` |
+| 欠陥ジェネレータの見本帳 | PNG | 998×884 | 1 | 88 kB | `57fecc928dd0d2b4` |
