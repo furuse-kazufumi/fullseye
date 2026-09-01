@@ -371,6 +371,17 @@ from cadmap import (  # noqa: E402,F401
     cad_pixel_to_surface, cad_surface_to_pixel, cad_defect_to_cad,
     cad_visible_faces,
 )
+# 3-D ラベルの色分け。2-D の colorize_labels しか無かったので、ボリュームを
+# 断面ごとに着色すると**同じ部品の色が断面ごとに変わる**(断面ごとにラベル番号が
+# 振り直されるため。実測: 13 成分中 11 が 32 か所で色が変わる)。ボリュームで
+# 着色してから切れば 0 ―― 色は「見た目」ではなく部品の同一性を運ぶので分けた。
+import volcolor  # noqa: E402  (3-D label colouring, selection, legend)
+from volcolor import (  # noqa: E402,F401
+    vol_colorize_labels, vol_label_color_flicker, vol_label_legend,
+    vol_label_mpr_rgb, vol_label_overlay, vol_label_palette,
+    vol_label_shape_stats, vol_label_slice_rgb, vol_label_volume_render,
+    vol_labels_to_meshes, vol_select_labels,
+)
 import acoustics  # noqa: E402  (STFT / bearing envelope / order tracking / sound level)
 from acoustics import (  # noqa: E402,F401
     angular_resample, apply_weighting, bearing_defect_frequencies,
