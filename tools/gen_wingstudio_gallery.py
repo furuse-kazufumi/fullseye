@@ -799,11 +799,10 @@ def ex_lightfield():
     for v in range(AV - 2, 0, -1):
         ring.append((v, 0))
 
-    S = 300
     k = 2
     pw = 128 * k
     W = 24 * 4 + pw * 3
-    H = 52 + pw + 250
+    H = 52 + pw + 176
     frames = []
     for (v, u) in ring:
         view = lf.lf_subaperture(field, v=v, u=u)

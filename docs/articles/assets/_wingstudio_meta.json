@@ -133,15 +133,15 @@
       "frames": 24,
       "size": [
         864,
-        558
+        484
       ],
       "fps": 8,
-      "bytes": 2743185,
-      "thumb_bytes": 100364,
+      "bytes": 2332589,
+      "thumb_bytes": 74543,
       "thumb_frame": 3,
-      "mean_abs_delta": 6.902,
-      "sha256": "e40cf2a71631fade41cd05914c8c78ec828893959eab63d5dc7ece2d70e2f017",
-      "thumb_sha256": "4541c3e11834bb0af979cd3c24d19356d8845ac1d7de558a9e22f45aafd7db19",
+      "mean_abs_delta": 4.906,
+      "sha256": "96b9cf0e8fe3b147712b12e371cd4188ab3a08964e17c09a321dc85870e4968b",
+      "thumb_sha256": "2cd504afdbbdd505b378634c6c21bb7b67c2591d4614cf9bc28d6a4ef9c08a48",
       "facts": {
         "angular": [
           7,
@@ -155,10 +155,10 @@
         "max_slope_px": 21.3333,
         "frames": 24,
         "epi_row": 64,
-        "refocus_var_slope0": 0.002011,
-        "refocus_var_slope3": 0.010101
+        "refocus_var_slope0": 0.006824,
+        "refocus_var_slope3": 0.014866
       },
-      "seconds": 1.79
+      "seconds": 2.06
     },
     {
       "kind": "gif",
