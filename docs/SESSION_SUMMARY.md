@@ -3,49 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-02 06:17:36
+- **最終更新**: 2026-09-02 06:50:15
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-1299b8850 auto: imagedraw.py 編集前 (2026-09-02 06:15)
-aabbfb4e3 auto: drawstyle.py 編集前 (2026-09-02 06:14)
-5d0536c5d auto: drawstyle.py 編集前 (2026-09-02 06:14)
-a4bde3784 auto: drawstyle.py 編集前 (2026-09-02 06:14)
-0cfd1201a feat: 図の配色を「役割」で決める palette op(赤緑の対を既定から外す)
-7e0e83e56 auto: README.md 編集前 (2026-09-02 06:06)
-bbdaefb04 docs: 訂正を節から引用ブロック 1 つへ圧縮(読者 ROI 優先)
-f7005b8f6 docs: 2D ウィングを登録し展示 141 点へ。ラベルの無言の切り捨てを fail-closed に
-cfe41fd7e auto: ARTICLE_INTEGRATION_TODO.md 編集前 (2026-09-02 04:52)
-8337144a8 auto: exhibit_tile.py 編集前 (2026-09-02 04:51)
+0ca9dfa3a auto: drawlist.py 編集前 (2026-09-02 06:47)
+e106f8fff auto: drawlist.py 編集前 (2026-09-02 06:46)
+3ab4fe82f auto: annotate.py 編集前 (2026-09-02 06:46)
+0b77d9e74 auto: test_annotate.py 編集前 (2026-09-02 06:45)
+c202e4f96 auto: annotate.py 編集前 (2026-09-02 06:45)
+b80bddddc auto: annotate.py 編集前 (2026-09-02 06:45)
+207396a64 auto: test_drawlist.py 編集前 (2026-09-02 06:45)
+33ed9faef auto: drawlist.py 編集前 (2026-09-02 06:44)
+974ef8783 auto: annotate.py 編集前 (2026-09-02 06:43)
+fb144ca1c auto: annotate.py 編集前 (2026-09-02 06:43)
 ```
 
 ## 現在の git status
 
 ```
-M imagedraw.py
+M drawlist.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-06:15 imagedraw.py
-06:14 drawstyle.py
-06:12 docs/SESSION_SUMMARY.md
-06:06 .pytest_cache/v/cache/nodeids
-06:06 docs/articles/exhibits/README.md
-06:06 pyproject.toml
-06:06 fullseye/__init__.py
-06:06 api.py
-06:05 tests/test_palette.py
-06:05 palette.py
-06:02 docs/articles/fullseye_overview_qiita_en.md
-06:01 docs/articles/fullseye_overview_qiita_ja.md
-05:04 .pytest_cache/v/cache/lastfailed
-04:52 docs/ARTICLE_INTEGRATION_TODO.md
-04:51 tools/exhibit_tile.py
+06:49 .pytest_cache/v/cache/nodeids
+06:49 .pytest_cache/v/cache/lastfailed
+06:47 drawlist.py
+06:46 annotate.py
+06:45 .ruff_cache/0.16.0/17846151871280026767
+06:45 .ruff_cache/0.16.0/16993216033604220659
+06:45 tests/test_annotate.py
+06:45 fullseye/__init__.py
+06:45 api.py
+06:45 tests/test_drawlist.py
+06:44 .ruff_cache/0.16.0/2128910586982079947
+06:44 .ruff_cache/0.16.0/8687138234577503176
+06:44 .ruff_cache/0.16.0/7363606932562918290
+06:41 .ruff_cache/0.16.0/9832988547328341597
+06:37 pyproject.toml
 ```
 
 ---

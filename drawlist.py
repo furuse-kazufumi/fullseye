@@ -636,7 +636,7 @@ class DrawList:
             "point_not_finite": "座標が NaN/inf。error",
             "out_of_bounds": "指し先が画像の外。ラスタ層は黙ってクランプする。error",
             "text_does_not_fit": "文字の箱が画像に入らない/端からはみ出す。error",
-            "text_unmeasurable": "pos か text が無く、描く前に測れない。error",
+            "text_unmeasurable": "xy か text が無く、描く前に測れない。error",
             "unknown_role": "色の役割名か scheme が引けない。error",
             "extent_clipped": "図形の広がりが端で切れる。warning",
             "label_collision": "ラベルの箱どうしが重なる。warning",
