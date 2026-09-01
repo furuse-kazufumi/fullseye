@@ -1174,6 +1174,11 @@ def photometric_stereo_robust(images, lights, method="ransac", threshold=0.05,
     threshold = _positive(threshold, "threshold")
     max_subsets = _count(max_subsets, "max_subsets", 1, MAX_SUBSETS)
     min_inliers = _count(min_inliers, "min_inliers", 3, MAX_LIGHTS)
+    if min_inliers > N:
+        raise ValueError("%s: min_inliers=%d can never be met with %d light(s), "
+                         "so the consensus refit would be silently disabled and "
+                         "every pixel would keep its 3-light subset solution"
+                         % (op, min_inliers, N))
     P = H * W
     if P > MAX_ROBUST_PIXELS:
         raise ValueError("%s: %d pixels (shape %r), over the %d cap "
