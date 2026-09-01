@@ -750,26 +750,43 @@ def ex_clip_breakdown():
             "rejected": float(1.0 - clip[1].mean()),
             "image": clip[0], "ref": mean})
 
-    ref_frame = rows[0]["image"]
+    # 表示尺度は**全コマ共通**で、汚染で持ち上がるぶんまで含めて切る。
+    # 最初の版は汚染 0 % のコマの分位で切っていたので、50 % を超えたコマが
+    # 真っ白に飽和して**何も読めなかった**(点検スクリプトの「ほぼ単色」に
+    # 引っかかる寸前でもある)。右側の誤差図は固定の ±limit なので、
+    # 「どこがどれだけずれたか」がコマ間で直接比べられる。
+    lo, hi = np.percentile(rows[0]["image"], [25.0, 99.7])
+    hi = hi + boost
+    lim = boost * 1.15
+    panel_px = 330
     shots, labels = [], []
     for r in rows:
-        broken = abs(r["clip_err"]) > 0.5 * boost * 0.5
+        broken = abs(r["clip_err"]) > 1.0
         col = C_WRONG if broken else C_RIGHT
         mark = M["wrong"] if broken else M["right"]
-        shots.append(_label(
-            _fit(_gray(r["image"], frame_for_scale=ref_frame), 520),
+        left = _label(
+            _fit(np.repeat(_norm(r["image"], lo, hi)[..., None] ** 0.7, 3,
+                           axis=2), panel_px),
             ["汚染 %d %%(%d / %d 枚に +%.0f e-)"
              % (round(100 * r["contam"]), r["k"], n, boost),
+             "全コマ共通の表示尺度"], size=14)
+        right = _label(
+            _fit(_signed(r["image"] - ideal, lim), panel_px),
+            ["真値との差(%s 減 / %s 増、±%.0f e-)"
+             % (M["wrong"], M["right"], lim),
              "%s κ-σ 合成の誤差 %+.2f e-" % (mark, r["clip_err"]),
              "棄却率 %.1f %%" % (100 * r["rejected"]),
-             "(参考)単純平均の誤差 %+.1f e-" % r["mean_err"]],
-            color=col))
+             "(参考)単純平均 %+.1f e-" % r["mean_err"]],
+            size=14, color=col)
+        gap = np.zeros((panel_px, 10, 3))
+        gap[:] = np.asarray(et.BG, np.float64) / 255.0
+        shots.append(np.concatenate([left, gap, right], axis=1))
         labels.append("汚染 %d %% — 誤差 %+.2f e-"
                       % (round(100 * r["contam"]), r["clip_err"]))
 
     # 最後に、折れ線で「どこで折れたか」を 1 枚
-    p = Plot(w=520, h=520, xlim=(0.0, 0.62), ylim=(-40.0, 1000.0),
-             margin=(78, 22, 50, 20))
+    p = Plot(w=2 * panel_px + 10, h=panel_px, xlim=(0.0, 0.62),
+             ylim=(-40.0, 1000.0), margin=(78, 22, 44, 18))
     p.grid_x([0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6], "%.0f%%")
     p.grid_y([0, 225, 450, 675, 900], "%.0f")
     xs = [r["contam"] for r in rows]
