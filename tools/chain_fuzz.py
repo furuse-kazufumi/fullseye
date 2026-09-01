@@ -780,6 +780,18 @@ NONFINITE_BY_CONTRACT_OPTICS = {"depth_of_field", "gaussian_beam"}
 #: — 入れると本物の非有限が黙って見逃される。
 NONFINITE_BY_CONTRACT_CADMAP = {"cad_pixel_to_surface", "cad_defect_to_cad"}
 
+#: 文書化済みの非有限を返す op(鏡面/測光)。docstring の
+#: 「**Unsolvable pixels are ``NaN``.**」節が契約として明記している: 信じられた光源が
+#: *min_inliers*(既定・最小 3)未満、または信じられた方向が同一平面上で 3x3 正規方程式が
+#: 特異な画素は、normals と albedo の両方が NaN になる。以前は勝った 3 光源部分集合の解を
+#: 残していて「劣決定の画素が自信ありげな 1.3 度の答え」で返ってきたのを、**わざと**
+#: NaN にした経緯まで書かれている(cadmap の「当たらなかった = NaN」と同じ思想)。
+#: 一様乱数の 4 枚組は Lambertian 面ではないので、多くの画素で信じられる光源が 3 本未満に
+#: なる ― これは op が仕事をしている。
+#: 非ロバストな ``photometric_stereo``(全光源を使う baseline)は同じ入力で有限を返す
+#: (実測)ので**入れない** — 入れると本物の非有限が黙って見逃される。
+NONFINITE_BY_CONTRACT_SPECULAR = {"photometric_stereo_robust"}
+
 #: 出力を pool 型へ合わせる梱包アダプタ。基本はレジストリの RESULT_ADAPTERS
 #: (型忠実の一級メタデータ)に委譲し、ファザー固有の追加だけここに置く
 def _registry_adapters():
