@@ -1354,7 +1354,7 @@ This period also added CT windowing to the 3-D side (machine-verified: bone satu
 
 ### Reading a skeleton as a graph, and one catalogue for 1-D
 
-**Skeletons**: `em_skeleton` thins (a clean-room implementation of the Eckhardt–Maderlechner method, 1993), `junctions_skeleton` / `r2_endpoints_skeleton` give junctions and endpoints, and on the 3-D side `skeleton_junctions3d` / `skeleton_endpoints3d` / `skeleton_prune3d` / `skeleton_branches3d` return nodes, branches and endpoints — a thick volume is thinned by the Lee method (1994) first. **Graphing a voxel skeleton is for vessel, porous-media and root-system network analysis**, and 2-D and 3-D now share one vocabulary.
+**Skeletons**: `fs.apply(mask, "em_skeleton")` thins (a clean-room implementation of the Eckhardt–Maderlechner method, 1993), `junctions_skeleton` / `r2_endpoints_skeleton` give junctions and endpoints, and on the 3-D side `skeleton_junctions3d` / `skeleton_endpoints3d` / `skeleton_prune3d` / `skeleton_branches3d` return nodes, branches and endpoints — a thick volume is thinned by the Lee method (1994) first. **Graphing a voxel skeleton is for vessel, porous-media and root-system network analysis**, and 2-D and 3-D now share one vocabulary.
 
 Verification was a pixel-by-pixel comparison against the published EM93 results (test shape 1: 724/724 pixels, zero difference; the other two match the published pixel counts 2434/3895). That comparison is burned into the regression tests. **The one thing not done is a direct comparison against a HALCON installation** (no licence here).
 
