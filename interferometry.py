@@ -1254,9 +1254,9 @@ def csi_design(wavelength_um=0.6, bandwidth_um=0.1, z_range_um=12.0,
         stays above *min_visibility* of its peak,
         ``2*sigma*sqrt(2 ln(1/min_visibility))``. Outside it a surface produces
         fringes too faint to locate, whatever the scan range is.
-      * ``planes_per_envelope`` — how many scan planes fall inside the coherence
-        FWHM at the recommended step. Below ~4 the three-point estimators have
-        nothing to fit.
+      * ``planes_per_envelope`` — how many scan planes fall inside
+        ``envelope_fwhm_um`` at the recommended step. Below ~4 the three-point
+        estimators have nothing to fit.
       * ``n_planes`` / ``stack_elements`` / ``stack_megabytes`` — the scan you are
         about to run and the float64 stack it produces, plus
         ``stack_within_cap`` against :data:`MAX_STACK_ELEMENTS`. This is the
