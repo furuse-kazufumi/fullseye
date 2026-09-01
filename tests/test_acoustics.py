@@ -317,10 +317,19 @@ def test_octave_band_geometric_identities(fraction, base):
     assert b["ratio"] == pytest.approx(step)
 
 
-def test_octave_band_passes_through_1_khz():
-    for fraction in (1, 3, 12):
-        b = A.octave_bands(fraction=fraction, f_min=22.0, f_max=20000.0)
+@pytest.mark.parametrize("fraction", [1, 2, 3, 6, 12, 24])
+def test_where_1_khz_sits_depends_on_the_parity_of_the_fraction(fraction):
+    """Odd b centres a band on 1 kHz; even b puts a band *edge* there and has
+    no 1 kHz band at all. That is the construction, and it is surprising enough
+    to be worth pinning."""
+    b = A.octave_bands(fraction=fraction, f_min=22.0, f_max=20000.0)
+    if fraction % 2 == 1:
         assert np.isclose(b["centers"], 1000.0, rtol=1e-12).any()
+        assert not np.isclose(b["lower"], 1000.0, rtol=1e-12).any()
+    else:
+        assert not np.isclose(b["centers"], 1000.0, rtol=1e-12).any()
+        assert np.isclose(b["lower"], 1000.0, rtol=1e-12).any()
+        assert np.isclose(b["upper"], 1000.0, rtol=1e-12).any()
 
 
 def test_base_two_octave_centers_are_the_exact_powers():
