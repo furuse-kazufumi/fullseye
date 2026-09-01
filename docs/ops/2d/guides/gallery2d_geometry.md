@@ -57,7 +57,8 @@ flowchart LR
 - **rotate_image** — 画像中心まわりに回転(角度 `= -45° + 90°·a`、反射境界)。 — `fullseye.apply(img, "rotate_image", 0.5, 0.5)`(`a=0.5` で 0°)
 - **rotate_img** — `rotate_image` と同型の回転(コア registry 版、HALCON `rotate_image` 相当)。 — `fullseye.apply(img, "rotate_img", 0.7, 0.5)`
 - **zoom_image_factor** — 中心固定で拡大縮小。HALCON と同じく **2 つの倍率**を取る: `a` = 縦倍率 `0.7+0.6a`、`b` = 横倍率 `0.7+0.6b`(キャンバスは保つ)。 — `fullseye.apply(img, "zoom_image_factor", 0.8, 0.5)`
-- **zoom_image_size** — **目標サイズ**指定。出力は `(round(H·(0.5+a)), round(W·(0.5+b)))` 画素ちょうどの配列で、入力画像全体がそこへ写る(この族で唯一 **出力 shape が変わる**)。 — `fullseye.apply(img, "zoom_image_size", 0.3, 0.5)`
+- **zoom_image_size** — **目標サイズ**指定。入力画像 *全体* を `(round(H·(0.5+a)), round(W·(0.5+b)))` 画素へリサンプルし、元のキャンバスの左上に置く(余白は 0、はみ出す分は切る)。決まるのは倍率ではなく **サイズ**で、縦横が独立。 — `fullseye.apply(img, "zoom_image_size", 0.3, 0.5)`  
+  <br>戻り値の shape を入力と同じに保つのは、この registry の image が「段間で無条件に繋がる」契約だから。目標サイズそのものを返す実装にすると評価器が目標画像と突き合わせられず落ちる(実測: `test_evolve_is_reproducible_given_seed` が `operands could not be broadcast together with shapes (70,50) (64,64)` で失敗)。
 - **rescale_img** — コア版の等方再スケール(倍率 `s = 0.7+0.6a`、Wolberg の画像ワープ)。`b` は **補間の次数** `(0,1,3,3)[min(3,int(4b))]`(0=最近傍 / 1=双一次 / 3=三次)。 — `fullseye.apply(img, "rescale_img", 0.6, 0.5)`
 
 > ★2026-09-02 まで `zoom_image_factor` / `zoom_image_size` / `rescale_img` は **3 つとも同一実装**で(実測: 相互の最大絶対差 0.0 と 4.9e-14)、しかも 3 つとも `b` を使っていなかった。上記のとおり役割を分け、`rescale_img` の HALCON 名も実態に合わせて `zoom_image_size` → `zoom_image_factor` に付け替えてある。

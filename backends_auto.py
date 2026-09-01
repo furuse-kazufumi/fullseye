@@ -561,15 +561,26 @@ def _sh_geom(p):
             return np.clip(ndimage.affine_transform(x, np.diag([1 / sr, 1 / sc]),
                                                     offset=off, mode="reflect"), 0, 1)
         if kind == "zoom_size":                       # HALCON zoom_image_size
-            # **目標サイズ**指定。出力は要求した (Ht, Wt) 画素ちょうどの配列で、
-            # 入力画像全体がそこへ写る(倍率指定の zoom_image_factor と違い、
-            # 決まるのは倍率ではなくサイズ)。2 つのつまみしか無い op 界面なので
-            # 目標サイズは入力寸法から作る: Ht = H*(0.5+a), Wt = W*(0.5+b)。
+            # **目標サイズ**指定: 入力画像 *全体* を (Ht, Wt) = (H(0.5+a), W(0.5+b))
+            # 画素ちょうどへリサンプルする。決まるのは倍率ではなく **サイズ**で、
+            # 縦横が独立なので zoom_image_factor(倍率 2 つ・中心固定)とは別物。
+            #
+            # ★ただし戻り値の shape は **入力と同じキャンバス**に保つ。この registry の
+            #   image は「段間で無条件に繋がる」契約で、shape を変えると評価器が
+            #   目標画像と突き合わせられずに落ちる(実測: 目標サイズ版が (70,50) を
+            #   返した瞬間 `test_evolve_is_reproducible_given_seed` が
+            #   "operands could not be broadcast together with shapes (70,50) (64,64)"
+            #   で失敗した)。そこで Ht x Wt にリサンプルした像をキャンバス左上に置き、
+            #   余白は 0、はみ出す分は切る —— 「画像が今 Ht x Wt 画素である」ことは
+            #   そのまま見える。
             H, W = x.shape[:2]
             ht = max(1, int(round(H * (0.5 + a))))
             wt = max(1, int(round(W * (0.5 + b))))
-            out = ndimage.affine_transform(x, np.diag([H / ht, W / wt]),
-                                           output_shape=(ht, wt), order=1, mode="reflect")
+            small = ndimage.affine_transform(x, np.diag([H / ht, W / wt]),
+                                             output_shape=(ht, wt), order=1, mode="reflect")
+            out = np.zeros((H, W), np.float64)
+            hh, ww = min(H, ht), min(W, wt)
+            out[:hh, :ww] = small[:hh, :ww]
             return np.clip(out, 0, 1)
         if kind == "affine":
             ang = np.deg2rad(-20 + 40 * a)

@@ -115,10 +115,14 @@ CLAHE の "C" は contrast **limited** の C であり、clip limit こそが AH
 **4.9e-14**。3 つとも geom `"zoom"` の `s = 0.7 + 0.6a` に相乗りで、3 つとも `b` が未使用。
 **別名 op が別物のふりをしていた**。
 **✅ 修正**: 役割を分けた —— `zoom_image_factor` は HALCON と同じ **2 つの倍率**
-(a=縦、b=横)、`zoom_image_size` は **目標サイズ**指定(出力 shape が
-`(round(H(0.5+a)), round(W(0.5+b)))` に変わる、この族で唯一)、`rescale_img` は等方倍率 +
+(a=縦、b=横、中心固定)、`zoom_image_size` は **目標サイズ**指定(画像全体を
+`(round(H(0.5+a)), round(W(0.5+b)))` 画素へリサンプルしてキャンバス左上に配置)、`rescale_img` は等方倍率 +
 **補間次数**(`b` → `(0,1,3,3)[min(3,int(4b))]`、`b=0.5` は旧既定の 3 次と **ビット一致**)。
 `rescale_img` の HALCON 名も実態に合わせて `zoom_image_size` → `zoom_image_factor` に訂正。
+
+**副産物の発見**: 最初は目標サイズそのものを返す実装にしたところ、`test_evolution_honesty.py::test_evolve_is_reproducible_given_seed` が
+`operands could not be broadcast together with shapes (70,50) (64,64)` で落ちた。「image/region op は **キャンバス shape を変えない**」というこの registry の
+不変量が、どこにも書かれておらずテストも無いまま効いていたことが分かった(非正方入力で全 op を掃いた例外は `transpose_region` と `it_change_format` の 2 つだけ)。恒久ガードとして `test_image_and_region_ops_keep_the_canvas_shape` を追加した。
 
 ## A5. ✅ `area_center` が中心を返さず、面積でなく面積比を返す(★名前が嘘)
 中身は `np.mean(mask)`。実測: 420×420 の中の 60×60 ブロック(3600 px)に対し

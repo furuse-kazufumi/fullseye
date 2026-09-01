@@ -203,8 +203,8 @@ def test_zoom_siblings_are_not_the_same_implementation():
     v = _photo(96)
     outs = {n: np.asarray(RT[n](v.copy(), 0.9, 0.5), np.float64) for n in ZOOMS}
     zf, zs, ri = outs["zoom_image_factor"], outs["zoom_image_size"], outs["rescale_img"]
-    assert zs.shape != zf.shape, "zoom_image_size は目標サイズ指定なので shape が変わる"
-    assert zf.shape == ri.shape
+    assert zf.shape == zs.shape == ri.shape == v.shape, "image op はキャンバスを変えない"
+    assert float(np.max(np.abs(zf - zs))) > 1e-6, "factor 版と size 版がまだ同一"
     assert float(np.max(np.abs(zf - ri))) > 1e-6, "factor 版と rescale_img がまだ同一"
 
 
@@ -214,18 +214,28 @@ def test_zoom_ops_actually_use_b(name):
     v = _photo(96)
     y0 = np.asarray(RT[name](v.copy(), 0.9, 0.0), np.float64)
     y1 = np.asarray(RT[name](v.copy(), 0.9, 1.0), np.float64)
-    if y0.shape != y1.shape:
-        return                                    # 目標サイズ版は shape 自体が動く = b は生きている
     assert float(np.max(np.abs(y0 - y1))) > 1e-6, f"{name}: b がまた効いていない"
 
 
-def test_zoom_image_size_returns_the_requested_size():
-    """名前どおり **サイズ** で駆動する: 出力 shape が (H*(0.5+a), W*(0.5+b))。"""
-    v = _photo(80)
+def test_zoom_image_size_is_driven_by_a_target_size():
+    """名前どおり **サイズ**で駆動する: 画像全体が (H(0.5+a), W(0.5+b)) 画素へ収まる。
+
+    キャンバス(戻り値の shape)は入力のまま —— この registry の image は段間で
+    無条件に繋がる契約で、shape を変えると評価器が目標画像と突き合わせられずに
+    落ちる(実測: 目標サイズそのものを返した版で
+    `test_evolve_is_reproducible_given_seed` が
+    "operands could not be broadcast together with shapes (70,50) (64,64)" で失敗)。
+    リサンプルした像は左上に置き、残りは 0。したがって **非ゼロ領域の大きさ**が
+    要求サイズになる。
+    """
+    v = np.full((80, 80), 0.7)                       # 全面が非ゼロ
     H, W = v.shape
-    for a, b in ((0.0, 0.0), (0.25, 0.75), (1.0, 1.0)):
+    for a, b in ((0.0, 0.0), (0.25, 0.75)):
         out = np.asarray(RT["zoom_image_size"](v.copy(), a, b), np.float64)
-        assert out.shape == (round(H * (0.5 + a)), round(W * (0.5 + b))), (a, b, out.shape)
+        assert out.shape == v.shape
+        ys, xs = np.nonzero(out > 1e-9)
+        assert int(ys.max()) + 1 == min(H, round(H * (0.5 + a))), (a, b, ys.max())
+        assert int(xs.max()) + 1 == min(W, round(W * (0.5 + b))), (a, b, xs.max())
 
 
 def test_zoom_image_factor_uses_two_independent_scales():
@@ -381,3 +391,30 @@ def test_candidate_lists_are_unchanged_by_this_audit():
     assert [o.name for o in ops._candidates(ops.MATCH)] == ["identity"]
     # area_center は region 入力のまま = region の候補リストに居続ける
     assert "area_center" in [o.name for o in ops._candidates(ops.REGION)]
+
+
+def test_image_and_region_ops_keep_the_canvas_shape():
+    """★この registry の image/region は **shape を変えない**(暗黙だった不変量)。
+
+    段間で無条件に繋がる契約なので、途中で shape が変わると評価器が目標画像と
+    突き合わせられずに落ちる —— 実測: `zoom_image_size` を「目標サイズそのものを
+    返す」実装にした瞬間、`test_evolution_honesty.py::test_evolve_is_reproducible_given_seed`
+    が `operands could not be broadcast together with shapes (70,50) (64,64)` で
+    失敗した。非正方入力で全 op を掃いた結果、例外は **転置系の 2 つだけ**。
+    """
+    exceptions = {"transpose_region",      # 転置(名前どおり)
+                  "it_change_format"}      # HALCON change_format(名前どおり形式を変える)
+    v = np.clip(np.random.default_rng(0).random((40, 56)), 0, 1)
+    bad = []
+    for op in ops.REGISTRY:
+        if op.in_sort not in ("image", "region", "any") or op.out_sort not in ("image", "region"):
+            continue
+        if op.name in exceptions:
+            continue
+        try:
+            out = op.fn(v.copy(), 0.5, 0.5)
+        except Exception:
+            continue
+        if isinstance(out, np.ndarray) and out.ndim == 2 and out.shape != v.shape:
+            bad.append((op.name, out.shape))
+    assert not bad, f"canvas shape changed: {bad}"
