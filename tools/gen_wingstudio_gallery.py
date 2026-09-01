@@ -503,7 +503,11 @@ def ex_zslices():
     vol = _load_ct()
     D, Hs, Ws = vol.shape
     vmin, vmax = float(vol.min()), float(vol.max())
-    mip = ops.RT["vol_mip"](vol, 0.0, 0.0)               # z 方向の最大値投影
+    # NOTE: 登録 op ``vol_mip`` は結果を [0,1] に**正規化して**返す(見せる用)。
+    # 「累積がどこまで届いたか」を比率で測るには生の最大値投影が要るので、
+    # 表示は op、比率は生値、と使い分ける(最初の試作でここを混ぜて 121.5% を出した)。
+    mip_op = ops.RT["vol_mip"](vol, 0.0, 0.0)            # 正規化済み(表示用)
+    mip = vol.max(axis=0)                                # 生の z 方向 MIP(計算用)
     k = 6                                                # 最近傍整数拡大(補間しない)
     pw, ph = Ws * k, Hs * k
     SIDE = 296                                           # 右の実測値カラム
