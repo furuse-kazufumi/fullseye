@@ -609,10 +609,11 @@ def subject_freq_sweep(log=print) -> dict:
              "スペクトル + 遮断円\n緑=lowpass 橙=bandpass",
              "lowpass (遮断 %.3f)\nPSNR %.2f dB / エネルギー %.1f%%"
              % (lo_cut[i], psnr_lo[i], keep_e[i]),
-             "highpass (遮断 %.3f)\n[%.4f, %.4f] / 負 %.1f%% — 表示は 1〜99%%tile 伸長"
-             % (hi_cut[i], rng_hi[i][0], rng_hi[i][1], rng_hi[i][2]),
-             "bandpass_image (%.3f〜%.3f)\n0 が 0.5 の [%.4f, %.4f] / 負 %.1f%%"
-             % (bp_lo[i], bp_hi, rng_bp[i][0], rng_bp[i][1], rng_bp[i][2]),
+             # ラベル 2 行目は tile 330px に収まる長さに (超えると隣とぶつかる)
+             "highpass (遮断 %.3f)\n最小 %.4f / 負 %.1f%% / 伸長表示"
+             % (hi_cut[i], rng_hi[i][0], rng_hi[i][2]),
+             "bandpass_image (%.3f〜%.3f)\n最小 %.4f / 負 %.1f%% / 0 が 0.5"
+             % (bp_lo[i], bp_hi, rng_bp[i][0], rng_bp[i][2]),
              "元 − lowpass の差\n捨てられた高周波"],
             3, tile=(330, 330), label_h=56,
             title="周波数フィルタの効き —— どこで切ると何が消えるか",

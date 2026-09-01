@@ -2526,7 +2526,8 @@ def write_captions() -> dict:
                 "",
                 img,
                 "",
-                "*↑ **%s** —— %s %s*" % (title, body(rec["facts"], rec), tail),
+                "*↑ **%s** %s %s %s*" % (title, "——" if lang == "ja" else "—",
+                                          body(rec["facts"], rec), tail),
                 "",
                 "<sub>`%s%s.%s` — %s / SHA-256 `%s`</sub>"
                 % (PREFIX, name, "gif" if rec["kind"] == "gif" else "png",

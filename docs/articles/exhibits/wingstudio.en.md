@@ -12,7 +12,7 @@ The 3-D exhibits are drawn with fullseye ops and numpy compositing alone (no mat
 
 ![Spinning a CT — surface and grain, at the same angle](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingstudio_volume_turntable.gif)
 
-*↑ **Spinning a CT — surface and grain, at the same angle** —— The bundled skeleton CT (20×97×28 voxels) meshed at the iso-level mean+std = 0.5108 into 9,710 triangles / 4,866 vertices, shown beside the boundary shell of that same threshold — 2,759 shell voxels — **spun at the same yaw and the same elevation**. Surface on the left, grains on the right. The same shape turning the same way is the best evidence there is that no axis got swapped (36 frames). Ops / features: `marching_cubes`, `phong_shade`, `vol_boundary`, `render_points_frame`.*
+*↑ **Spinning a CT — surface and grain, at the same angle** — The bundled skeleton CT (20×97×28 voxels) meshed at the iso-level mean+std = 0.5108 into 9,710 triangles / 4,866 vertices, shown beside the boundary shell of that same threshold — 2,759 shell voxels — **spun at the same yaw and the same elevation**. Surface on the left, grains on the right. The same shape turning the same way is the best evidence there is that no axis got swapped (36 frames). Ops / features: `marching_cubes`, `phong_shade`, `vol_boundary`, `render_points_frame`.*
 
 <sub>`wingstudio_volume_turntable.gif` — 36 frames / 12 fps / 996×431 px / 1.12 MB / SHA-256 `1cb0def25c830444`</sub>
 
@@ -22,7 +22,7 @@ The 3-D exhibits are drawn with fullseye ops and numpy compositing alone (no mat
 
 ![One z slice at a time](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingstudio_zslices.gif)
 
-*↑ **One z slice at a time** —— The same CT, one slice at a time from z = 0 to 19 (all 20 frames; the bar shows the current position). On the right is the MIP over every z. The single slice on the left carries a per-frame measurement of the bone fraction and the min / max / mean, so an off-by-one — **a missing or a duplicated end slice** — cannot hide here. The magnification is nearest-neighbour ×6 (no interpolation — the coarseness of the pixels is itself information). Ops / features: `vol_mip`, `apply_cmap`, nearest-neighbour integer upscaling.*
+*↑ **One z slice at a time** — The same CT, one slice at a time from z = 0 to 19 (all 20 frames; the bar shows the current position). On the right is the MIP over every z. The single slice on the left carries a per-frame measurement of the bone fraction and the min / max / mean, so an off-by-one — **a missing or a duplicated end slice** — cannot hide here. The magnification is nearest-neighbour ×6 (no interpolation — the coarseness of the pixels is itself information). Ops / features: `vol_mip`, `apply_cmap`, nearest-neighbour integer upscaling.*
 
 <sub>`wingstudio_zslices.gif` — 20 frames / 5 fps / 896×726 px / 1.30 MB / SHA-256 `1241579b9480c167`</sub>
 
@@ -32,7 +32,7 @@ The 3-D exhibits are drawn with fullseye ops and numpy compositing alone (no mat
 
 ![Registering point clouds — from initial offset to convergence](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingstudio_registration.gif)
 
-*↑ **Registering point clouds — from initial offset to convergence** —— Real data (the Itokawa surface, 3,000 points) displaced by a known rigid transform of 22 degrees plus a translation of 42.451, with isotropic noise σ = 1.2160; trimmed ICP then runs **one iteration at a time**, 48 times. The raw mean point-to-point distance before any correspondence is 74.763, the first iteration gives 22.770 and the last 1.754 (13.0× better) — it settles almost exactly on the σ that was injected. If the curve bottoms out but the orange has not landed on the blue, you have converged without aligning — a failure the numbers alone will not show you, and the picture will. Ops / features: `registration.icp` (trimmed), `render_points_frame`, `imagedraw.draw_polyline`.*
+*↑ **Registering point clouds — from initial offset to convergence** — Real data (the Itokawa surface, 3,000 points) displaced by a known rigid transform of 22 degrees plus a translation of 42.451, with isotropic noise σ = 1.2160; trimmed ICP then runs **one iteration at a time**, 48 times. The raw mean point-to-point distance before any correspondence is 74.763, the first iteration gives 22.770 and the last 1.754 (13.0× better) — it settles almost exactly on the σ that was injected. If the curve bottoms out but the orange has not landed on the blue, you have converged without aligning — a failure the numbers alone will not show you, and the picture will. Ops / features: `registration.icp` (trimmed), `render_points_frame`, `imagedraw.draw_polyline`.*
 
 <sub>`wingstudio_registration.gif` — 48 frames / 6 fps / 972×500 px / 0.52 MB / SHA-256 `995ef59ea259ded0`</sub>
 
@@ -42,7 +42,7 @@ The 3-D exhibits are drawn with fullseye ops and numpy compositing alone (no mat
 
 [![The colour of normals — the first picture to look at when debugging 3-D](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingstudio_normals_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingstudio_normals.png)
 
-*↑ **The colour of normals — the first picture to look at when debugging 3-D** —— itokawa_f0049152.stl (JAXA はやぶさ Gaskell 形状モデル) (49,152 triangles / 24,578 vertices, surface area 0.399) shot from the front and from 180 degrees behind, with the shading placed beside **the world normals taken straight to RGB**. A world normal is "colour = direction", so a surface that joins smoothly joins smoothly in colour too; a salt-and-pepper mottle is the sign of broken winding. Measured: 48,639 / 49,152 = 98.96 % of the faces point outward (the remaining 1 % is what an "outward from the centroid?" test misses on a non-convex asteroid). Coverage is 38,540 px from the front and 39,686 px from the back. Ops / features: `render_mesh`, `phong_shade`, world normals as RGB.*
+*↑ **The colour of normals — the first picture to look at when debugging 3-D** — itokawa_f0049152.stl (JAXA はやぶさ Gaskell 形状モデル) (49,152 triangles / 24,578 vertices, surface area 0.399) shot from the front and from 180 degrees behind, with the shading placed beside **the world normals taken straight to RGB**. A world normal is "colour = direction", so a surface that joins smoothly joins smoothly in colour too; a salt-and-pepper mottle is the sign of broken winding. Measured: 48,639 / 49,152 = 98.96 % of the faces point outward (the remaining 1 % is what an "outward from the centroid?" test misses on a non-convex asteroid). Coverage is 38,540 px from the front and 39,686 px from the back. Ops / features: `render_mesh`, `phong_shade`, world normals as RGB.*
 
 <sub>`wingstudio_normals.png` — 1840×600 px / 339 kB / SHA-256 `155b586afb9f5615`</sub>
 
@@ -52,7 +52,7 @@ The 3-D exhibits are drawn with fullseye ops and numpy compositing alone (no mat
 
 ![Moving the viewpoint in a light field — shooting with 49 cameras](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingstudio_lightfield.gif)
 
-*↑ **Moving the viewpoint in a light field — shooting with 49 cameras** —— A synthetic light field of 7×7 = 49 views × 128×128 pixels; the clip walks once around the rim of the aperture (all 24 frames). Nearer things move further — the difference against the centre view *is* the picture of what lies in front. The measured maximum disparity is 21.33 px, and the slope of the lines in the EPI (row y = 64) corresponds to it. The refocused variance is 0.00682 at slope = 0 and 0.01487 at slope = 3. Ops / features: `lf_synthesize`, `lf_subaperture`, `lf_epi`, `lf_refocus`, `lf_stats`.*
+*↑ **Moving the viewpoint in a light field — shooting with 49 cameras** — A synthetic light field of 7×7 = 49 views × 128×128 pixels; the clip walks once around the rim of the aperture (all 24 frames). Nearer things move further — the difference against the centre view *is* the picture of what lies in front. The measured maximum disparity is 21.33 px, and the slope of the lines in the EPI (row y = 64) corresponds to it. The refocused variance is 0.00682 at slope = 0 and 0.01487 at slope = 3. Ops / features: `lf_synthesize`, `lf_subaperture`, `lf_epi`, `lf_refocus`, `lf_stats`.*
 
 <sub>`wingstudio_lightfield.gif` — 24 frames / 8 fps / 864×484 px / 2.33 MB / SHA-256 `bcca4f45d63d9d65`</sub>
 
@@ -62,7 +62,7 @@ The 3-D exhibits are drawn with fullseye ops and numpy compositing alone (no mat
 
 ![Lifting a depth map into 3-D](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingstudio_depth3d.gif)
 
-*↑ **Lifting a depth map into 3-D** —— itokawa_f0049152.stl rendered to a 200×200 px depth image, of which the 9,715 valid pixels (24.3 %) — and only those — are back-projected into a solid. Depth runs 0.7363 to 0.8827. What matters here is the **pixel-centre convention**: `render3d`, `camera.depth_to_points` and `cadmap` all put pixel centres on **integer indices**, so projecting the back-projected points again leaves a residual of 1.31e-14 px rms — rounding error. Add 0.5 by mistake and the whole cloud shifts 0.00229 world units, every point to the same side. Ops / features: `render_mesh`, `camera.backproject`, `render_points_frame`.*
+*↑ **Lifting a depth map into 3-D** — itokawa_f0049152.stl rendered to a 200×200 px depth image, of which the 9,715 valid pixels (24.3 %) — and only those — are back-projected into a solid. Depth runs 0.7363 to 0.8827. What matters here is the **pixel-centre convention**: `render3d`, `camera.depth_to_points` and `cadmap` all put pixel centres on **integer indices**, so projecting the back-projected points again leaves a residual of 1.31e-14 px rms — rounding error. Add 0.5 by mistake and the whole cloud shifts 0.00229 world units, every point to the same side. Ops / features: `render_mesh`, `camera.backproject`, `render_points_frame`.*
 
 <sub>`wingstudio_depth3d.gif` — 30 frames / 10 fps / 812×620 px / 0.68 MB / SHA-256 `6ed4d91ac7009986`</sub>
 
@@ -72,7 +72,7 @@ The 3-D exhibits are drawn with fullseye ops and numpy compositing alone (no mat
 
 ![Mapping defects back onto CAD faces, and counting the faces never seen](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingstudio_cadmap.gif)
 
-*↑ **Mapping defects back onto CAD faces, and counting the faces never seen** —— A stepped part built from an SDF (1,400 triangles, surface area 8856.6) imaged by a 240×240 px inspection camera, in four panels: ① what the camera sees ② pixel → CAD face ID ③ the inverse mapping of the 4 defect labels drawn on the image ④ faces seen (green) versus faces never seen (red). 15,980 pixels hit (27.7 %). 48.3 % of the area faces the camera, but the tower hides its own base, so **only 46.8 % was actually seen** (608 / 1,400 = 43.4 % by face count). 26,000 surface points agree: 41.3 % visible / 58.7 % occluded. Defects #3 and #4 fall outside the CAD (0 hits) and stay at 0 real area — the point being that they do not quietly disappear. Ops / features: `cad_pixel_to_surface`, `cad_defect_to_cad`, `cad_visible_faces`, `cad_surface_to_pixel`.*
+*↑ **Mapping defects back onto CAD faces, and counting the faces never seen** — A stepped part built from an SDF (1,400 triangles, surface area 8856.6) imaged by a 240×240 px inspection camera, in four panels: ① what the camera sees ② pixel → CAD face ID ③ the inverse mapping of the 4 defect labels drawn on the image ④ faces seen (green) versus faces never seen (red). 15,980 pixels hit (27.7 %). 48.3 % of the area faces the camera, but the tower hides its own base, so **only 46.8 % was actually seen** (608 / 1,400 = 43.4 % by face count). 26,000 surface points agree: 41.3 % visible / 58.7 % occluded. Defects #3 and #4 fall outside the CAD (0 hits) and stay at 0 real area — the point being that they do not quietly disappear. Ops / features: `cad_pixel_to_surface`, `cad_defect_to_cad`, `cad_visible_faces`, `cad_surface_to_pixel`.*
 
 <sub>`wingstudio_cadmap.gif` — 24 frames / 10 fps / 1200×518 px / 0.50 MB / SHA-256 `eda5aa159d5dd0c4`</sub>
 
@@ -82,7 +82,7 @@ The 3-D exhibits are drawn with fullseye ops and numpy compositing alone (no mat
 
 ![A 3-D processing domain — crop it, process it, paste it back](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingstudio_crop3d.gif)
 
-*↑ **A 3-D processing domain — crop it, process it, paste it back** —— Cropping y ∈ [20, 56) with margin 2 out of the 20×97×28 CT gives 20×40×28 (offset (z,y,x) = (0, 18, 0)). The gradient is computed inside that box alone and pasted back into the original coordinate frame; the four stages are shown in 3-D (on the right the original whole is overlaid in grey). The round trip measures **max 0 outside the box (exactly zero) / a maximum difference of 0 against the original inside it (bit-identical)**. A one-voxel slip on the paste-back is invisible in a 2-D table, and obvious the moment you overlay and spin. Ops / features: `vol_crop_domain`, `vol_gradient_magnitude`, `vol_uncrop`, `vol_boundary`.*
+*↑ **A 3-D processing domain — crop it, process it, paste it back** — Cropping y ∈ [20, 56) with margin 2 out of the 20×97×28 CT gives 20×40×28 (offset (z,y,x) = (0, 18, 0)). The gradient is computed inside that box alone and pasted back into the original coordinate frame; the four stages are shown in 3-D (on the right the original whole is overlaid in grey). The round trip measures **max 0 outside the box (exactly zero) / a maximum difference of 0 against the original inside it (bit-identical)**. A one-voxel slip on the paste-back is invisible in a 2-D table, and obvious the moment you overlay and spin. Ops / features: `vol_crop_domain`, `vol_gradient_magnitude`, `vol_uncrop`, `vol_boundary`.*
 
 <sub>`wingstudio_crop3d.gif` — 36 frames / 8 fps / 976×491 px / 0.46 MB / SHA-256 `3902cbec3f013592`</sub>
 
@@ -92,7 +92,7 @@ The 3-D exhibits are drawn with fullseye ops and numpy compositing alone (no mat
 
 ![Walking inside 3-D data with the F key (the real Studio screen)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingstudio_studio_walk.gif)
 
-*↑ **Walking inside 3-D data with the F key (the real Studio screen)** —— The real Fullseye Studio (1280×800 px, offscreen) with Itokawa's actual shape model open (vertices 24,578 / triangles 49,152, 73,730 splat points), driven by **genuine QKeyEvents**: F, then W to walk forward, drag to look around, +/- for the field of view, A to strafe left, R for the entrance, F back to the orbit camera — 24 frames. The projection is perspective, so what is near grows as you approach, and changing the field of view changes the sense of depth itself. One tap = radius/50 = 0.00592 of a step (default FOV 70 degrees, adjustable 40–100). The thin band along the bottom is this GIF's progress bar, not part of the UI. Ops / features: the first-person mode of Studio's 3-D viewer (`render_points_frame_fp`), `viewer3d_project_persp`.*
+*↑ **Walking inside 3-D data with the F key (the real Studio screen)** — The real Fullseye Studio (1280×800 px, offscreen) with Itokawa's actual shape model open (vertices 24,578 / triangles 49,152, 73,730 splat points), driven by **genuine QKeyEvents**: F, then W to walk forward, drag to look around, +/- for the field of view, A to strafe left, R for the entrance, F back to the orbit camera — 24 frames. The projection is perspective, so what is near grows as you approach, and changing the field of view changes the sense of depth itself. One tap = radius/50 = 0.00592 of a step (default FOV 70 degrees, adjustable 40–100). The thin band along the bottom is this GIF's progress bar, not part of the UI. Ops / features: the first-person mode of Studio's 3-D viewer (`render_points_frame_fp`), `viewer3d_project_persp`.*
 
 <sub>`wingstudio_studio_walk.gif` — 24 frames / 4 fps / 1280×800 px / 2.93 MB / SHA-256 `bec27bc1ab57984b`</sub>
 
@@ -102,7 +102,7 @@ The 3-D exhibits are drawn with fullseye ops and numpy compositing alone (no mat
 
 ![Spinning with the orbit camera — opening a volume straight in the 3-D viewer](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingstudio_studio_turntable.gif)
 
-*↑ **Spinning with the orbit camera — opening a volume straight in the 3-D viewer** —— The bundled skeleton CT (20×97×28) through exactly the path Studio takes when it opens a "volume file". Otsu's threshold 0.5389 picks the foreground, and **only its boundary shell** is dropped into 2,733 physical-coordinate points (decimation 1/1) for display. The rotation is not synthesised: it is 30 **real left-drags** (one = yaw +12 degrees), ending at yaw 35 degrees. Ops / features: `volume_to_shell_points` (Otsu → boundary shell), the orbit camera of Studio's 3-D viewer.*
+*↑ **Spinning with the orbit camera — opening a volume straight in the 3-D viewer** — The bundled skeleton CT (20×97×28) through exactly the path Studio takes when it opens a "volume file". Otsu's threshold 0.5389 picks the foreground, and **only its boundary shell** is dropped into 2,733 physical-coordinate points (decimation 1/1) for display. The rotation is not synthesised: it is 30 **real left-drags** (one = yaw +12 degrees), ending at yaw 35 degrees. Ops / features: `volume_to_shell_points` (Otsu → boundary shell), the orbit camera of Studio's 3-D viewer.*
 
 <sub>`wingstudio_studio_turntable.gif` — 30 frames / 10 fps / 1280×800 px / 0.92 MB / SHA-256 `02c1ff44094868fe`</sub>
 
@@ -112,7 +112,7 @@ The 3-D exhibits are drawn with fullseye ops and numpy compositing alone (no mat
 
 ![Opening the new families' op help inside Studio](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingstudio_studio_help.gif)
 
-*↑ **Opening the new families' op help inside Studio** —— Light field → FMCW range-Doppler → quaternion monogenic → photon counting (SPAD) → acoustic beamforming → interferometry (angular-spectrum propagation) → 3-D ICP and principal curvatures: 8 pages actually opened and scrolled from top to bottom, 24 frames. The help text is generated from `docs/ops/**/*.md` into real files (2D 879 / 3D 310). The per-family directories hold 155 pages in all, of which only the 45 reachable through `tb_*` typed ops can be opened from Studio; the other 110 still cannot be reached from the screen (interferometry: 0 of 9). Ops / features: Studio's help dialog (`op_help_html` / `op_help_html_3d`), HTML generated by `tools/opdocs.py`.*
+*↑ **Opening the new families' op help inside Studio** — Light field → FMCW range-Doppler → quaternion monogenic → photon counting (SPAD) → acoustic beamforming → interferometry (angular-spectrum propagation) → 3-D ICP and principal curvatures: 8 pages actually opened and scrolled from top to bottom, 24 frames. The help text is generated from `docs/ops/**/*.md` into real files (2D 879 / 3D 310). The per-family directories hold 155 pages in all, of which only the 45 reachable through `tb_*` typed ops can be opened from Studio; the other 110 still cannot be reached from the screen (interferometry: 0 of 9). Ops / features: Studio's help dialog (`op_help_html` / `op_help_html_3d`), HTML generated by `tools/opdocs.py`.*
 
 <sub>`wingstudio_studio_help.gif` — 24 frames / 3 fps / 1000×720 px / 0.53 MB / SHA-256 `c61185a31e5cbf8d`</sub>
 
@@ -122,7 +122,7 @@ The 3-D exhibits are drawn with fullseye ops and numpy compositing alone (no mat
 
 ![Write it, run it with F5, watch the result arrive](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingstudio_studio_editor.gif)
 
-*↑ **Write it, run it with F5, watch the result arrive** —— 18 lines typed into the tabbed editor, run with F5, and the output console read down to the end — 24 frames (a 1060×740 px dialog). The run is a real child process, not a mock, and the status reads "PASS ✓ (exit 0)". The last of the 6 output lines are `foreground fraction = 0.2995` / `objects = 21` / `area  min/median/max = 1118 / 1494 / 3084` — the result of segmenting the coins. Ops / features: Studio's Python editor (tabs + F5), `fullseye.apply`, `fullseye.segment_objects`.*
+*↑ **Write it, run it with F5, watch the result arrive** — 18 lines typed into the tabbed editor, run with F5, and the output console read down to the end — 24 frames (a 1060×740 px dialog). The run is a real child process, not a mock, and the status reads "PASS ✓ (exit 0)". The last of the 6 output lines are `foreground fraction = 0.2995` / `objects = 21` / `area  min/median/max = 1118 / 1494 / 3084` — the result of segmenting the coins. Ops / features: Studio's Python editor (tabs + F5), `fullseye.apply`, `fullseye.segment_objects`.*
 
 <sub>`wingstudio_studio_editor.gif` — 24 frames / 6 fps / 1060×740 px / 0.36 MB / SHA-256 `fc35f56ab0340f6f`</sub>
 
@@ -132,7 +132,7 @@ The 3-D exhibits are drawn with fullseye ops and numpy compositing alone (no mat
 
 ![From 900-plus ops to the one you want](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingstudio_studio_opsearch.gif)
 
-*↑ **From 900-plus ops to the one you want** —— Typing "watershed" one character at a time into the search box narrows a list of 903 ops down to 4 (measured: (empty):903 → w:79 → wa:11 → wat:4 → wate:4 → water:4 → waters:4 → watersh:4 → watershe:4 → watershed:4). Selecting one puts its `in_sort → out_sort` signature in the bottom right — the types are visible, so what can be attached next is answered on the spot. A final search for "cad" returns 0. Ops / features: Studio's operator search (across name / HALCON alias / category / docstring).*
+*↑ **From 900-plus ops to the one you want** — Typing "watershed" one character at a time into the search box narrows a list of 903 ops down to 4 (measured: (empty):903 → w:79 → wa:11 → wat:4 → wate:4 → water:4 → waters:4 → watersh:4 → watershe:4 → watershed:4). Selecting one puts its `in_sort → out_sort` signature in the bottom right — the types are visible, so what can be attached next is answered on the spot. A final search for "cad" returns 0. Ops / features: Studio's operator search (across name / HALCON alias / category / docstring).*
 
 <sub>`wingstudio_studio_opsearch.gif` — 17 frames / 4 fps / 1280×800 px / 0.54 MB / SHA-256 `8270e44188b4b2a6`</sub>
 
@@ -142,7 +142,7 @@ The 3-D exhibits are drawn with fullseye ops and numpy compositing alone (no mat
 
 ![Building a pipeline — a type mismatch shows up in Problems](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingstudio_studio_pipeline.gif)
 
-*↑ **Building a pipeline — a type mismatch shows up in Problems** —— `gaussian → otsu → opening_circle → sk_clear_border` is added to the coins sample one stage at a time; at ⑤ `circularity_xld` (which takes a contour) is added on purpose, and it **cannot accept a region**. Problems then says "stage 4 (sk_clear_border) outputs 'region' but circularity_xld expects 'contour'" — Fullseye does not fall over after you connect things, it tells you about the type mismatch the moment you connect them. Removing it at ⑥ returns to "no problems" (all 24 frames). Ops / features: Studio's Program panel (HDevelop-style) + Problems, `engine.diagnose_stages`.*
+*↑ **Building a pipeline — a type mismatch shows up in Problems** — `gaussian → otsu → opening_circle → sk_clear_border` is added to the coins sample one stage at a time; at ⑤ `circularity_xld` (which takes a contour) is added on purpose, and it **cannot accept a region**. Problems then says "stage 4 (sk_clear_border) outputs 'region' but circularity_xld expects 'contour'" — Fullseye does not fall over after you connect things, it tells you about the type mismatch the moment you connect them. Removing it at ⑥ returns to "no problems" (all 24 frames). Ops / features: Studio's Program panel (HDevelop-style) + Problems, `engine.diagnose_stages`.*
 
 <sub>`wingstudio_studio_pipeline.gif` — 24 frames / 4 fps / 1280×800 px / 0.54 MB / SHA-256 `0fdcb11fdc1bceca`</sub>
 
