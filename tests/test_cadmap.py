@@ -527,3 +527,49 @@ def test_ledger_declared_types_match_actual_returns():
         out = opscadmap.call(name, *args, **kw)
         declared = opscadmap.info(name)["out"]
         assert TYPE_CHECKS[declared](out), (name, declared, type(out))
+
+
+# --------------------------------------------------------------------------- #
+# 8. 単位非依存(実バグの回帰試験)                                             #
+# --------------------------------------------------------------------------- #
+@pytest.mark.parametrize("scale", [1e-6, 1e-3, 1.0, 1e3, 1e6])
+def test_result_is_scale_invariant(scale):
+    """mesh を um でも km でも表しても**同じ結果**になる。
+
+    回帰試験。行列式のしきい値を絶対値 1e-12 で持っていたとき、1 辺 1 um の
+    mesh(``|e1||e2| ~ 1e-12``)で**例外も出さずに全画素 miss**になり、
+    「欠陥は CAD の外にある」という嘘の表を返していた。m 単位の試験では
+    見えないので、単位を振る試験でしか捕まらない。"""
+    V, F = _box(size=(2.0 * scale, 1.5 * scale, 1.2 * scale))
+    K = _K()
+    R, t = np.eye(3), np.array([0.0, 0.0, 7.0 * scale])
+    vis = cadmap.cad_visible_faces((V, F), K=K, R=R, t=t, width=128, height=128)
+    assert vis.size >= 2, scale
+
+    rng = np.random.default_rng(11)
+    w = rng.dirichlet(np.ones(3), size=vis.size)
+    pts = np.einsum("mkj,mk->mj", V[F[vis]], w)
+    fwd = cadmap.cad_surface_to_pixel((V, F), pts, K=K, R=R, t=t,
+                                      image_size=(256, 256))
+    keep = fwd["visible"]
+    assert keep.any(), scale
+    back = cadmap.cad_pixel_to_surface((V, F), fwd["uv"][keep], K=K, R=R, t=t,
+                                       image_size=(256, 256))
+    assert np.array_equal(back["face_id"], vis[keep])
+    assert np.abs(back["bary"] - w[keep]).max() < 1e-9
+    rel = np.abs(back["point"] - pts[keep]).max() / max(np.abs(pts[keep]).max(), 1e-300)
+    assert rel < 1e-12, (scale, rel)
+
+
+def test_coplanar_duplicate_faces_pick_the_lowest_index_deterministically():
+    """厳密に重なった 2 面(z-fighting)でも、返る face は決定論的に最小 index。"""
+    V, F, _ = _quad_patch(0.0, z=6.0, half=(2.0, 2.0))
+    V2 = np.vstack([V, V])
+    F2 = np.vstack([F, F + len(V)])                    # 完全に同一の面を複製
+    uv = np.array([[100.0, 130.0], [150.0, 120.0]])
+    a = cadmap.cad_pixel_to_surface((V2, F2), uv, K=_K(), R=np.eye(3),
+                                    t=np.zeros(3), image_size=(256, 256))
+    b = cadmap.cad_pixel_to_surface((V2, F2), uv, K=_K(), R=np.eye(3),
+                                    t=np.zeros(3), image_size=(256, 256))
+    assert np.array_equal(a["face_id"], b["face_id"])
+    assert (a["face_id"] < 2).all()                    # 複製ではなく元の面

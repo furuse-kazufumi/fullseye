@@ -103,11 +103,16 @@ DEFAULT_IMAGE_SIZE = (256, 256)       # (width, height)
 #: 重心座標は無次元 [0, 1] なので絶対値で持ってよい。``render3d._BARY_EPS`` と
 #: 同じ値にしてある(両者で同じ点の内外判定が割れないように)。
 _BARY_EPS = 1e-9
-#: 行列式がこれ以下なら「光線と平行 / 面積 0 の三角形」として当たりにしない。
-_DET_EPS = 1e-12
+#: 「光線と平行 / 面積 0 の三角形」を弾く行列式のしきい値。**相対**で持つ:
+#: ``det = e1 . (d x e2)`` は ``|e1| |e2| |d| sin(...)`` の次元なので、絶対値で
+#: 持つと mesh の単位に依存する。実測で見つけた実バグ ―― 1e-12 の絶対値だと
+#: **1 辺 1 um の mesh(``|e1||e2| ~ 1e-12``)で全画素が例外なく miss** になり、
+#: 「CAD の外に欠陥がある」という嘘の表を返していた(m 単位では正しく動くので
+#: 単体試験では見えない)。相対にすれば 1e-6 倍でも 1e+6 倍でも同じ結果になる。
+_DET_EPS_REL = 1e-12
 #: 光線パラメータ(= カメラ座標 Z)の下限を作る**相対**係数。絶対値で持つと
 #: mesh の単位(m か mm か um か)に依存して、小さな部品で全画素が miss する。
-#: 実効しきい値は ``_T_EPS_REL * max(bbox 対角, 1.0)``。
+#: 実効しきい値は ``_T_EPS_REL * bbox 対角``(1.0 で下限を切らない — 切ると 1um の部品で全画素が miss する)。
 _T_EPS_REL = 1e-12
 
 
@@ -336,16 +341,19 @@ def _intersect(origin: np.ndarray, dirs: np.ndarray, A: np.ndarray,
     tvec = origin[None, :] - A                                # (M,3) 光線に依らない
     qvec = np.cross(tvec, e1)                                 # (M,3) 同上
     tnum = np.einsum("mk,mk->m", e2, qvec)[None, :]           # 同上
+    # det のしきい値は |e1||e2||d| に比例させる(絶対値で持つと単位依存になる)
+    face_scale = (np.linalg.norm(e1, axis=1) * np.linalg.norm(e2, axis=1))[None, :]
     step = max(1, int(RAY_CHUNK_TESTS // max(n_faces, 1)))
     for s in range(0, n_rays, step):
         d = dirs[s:s + step]                                  # (n,3)
         pvec = np.cross(d[:, None, :], e2[None, :, :])        # (n,M,3)
         det = np.einsum("mk,nmk->nm", e1, pvec)               # (n,M)
+        eps = _DET_EPS_REL * face_scale * np.linalg.norm(d, axis=1)[:, None]
         if cull:
             # det > 0  <=>  d . ((B-A)x(C-A)) < 0  <=>  外向き法線がカメラを向く
-            ok = det > _DET_EPS
+            ok = det > eps
         else:
-            ok = np.abs(det) > _DET_EPS
+            ok = np.abs(det) > eps
         inv = np.where(ok, 1.0 / np.where(ok, det, 1.0), 0.0)
         u = np.einsum("mk,nmk->nm", tvec, pvec) * inv
         ok &= (u >= -_BARY_EPS) & (u <= 1.0 + _BARY_EPS)
@@ -370,7 +378,7 @@ def _intersect(origin: np.ndarray, dirs: np.ndarray, A: np.ndarray,
 def _t_eps(V: np.ndarray) -> float:
     """光線パラメータの下限(mesh のスケールに比例)。単位非依存にするため。"""
     diag = float(np.linalg.norm(V.max(axis=0) - V.min(axis=0))) if V.size else 1.0
-    return _T_EPS_REL * max(diag, 1.0)
+    return _T_EPS_REL * max(diag, 1e-300)
 
 
 def _face_geometry(V: np.ndarray, F: np.ndarray):
