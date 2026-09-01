@@ -256,6 +256,43 @@ def test_the_named_layers_resolve_to_the_real_functions():
         assert fn.__module__ in (spec.module, "fullseye", "api"), (kind, fn.__module__)
 
 
+def test_deferred_matches_immediate_across_all_three_layers():
+    """3 つの層(プリミティブ・図注・2-D グラフィックス)を跨いでも画素が完全一致する。
+
+    ここまで一致するなら、蓄積方式は既存の図の作り方を **置き換えず足している**
+    と言い切れる。
+    """
+    import annotate as A
+    import gfx2d as G
+
+    now = ID.new_canvas((H, W, 3), color=0.3)
+    now = ID.draw_circle(now, (80, 60), 24, color="reference", fill=True)
+    now = A.arrow(now, (10, 10), (100, 100))
+    now = A.text_box(now, "hi there", (10, 10), font_size=12)
+    now = G.vignette(now, strength=0.5)
+
+    dl = DrawList((H, W, 3), background=0.3)
+    dl.circle((80, 60), 24, color="reference", fill=True, z=0.0)
+    dl.arrow((10, 10), (100, 100), z=1.0)
+    dl.text_box((10, 10), "hi there", font_size=12, z=2.0)
+    dl.vignette(z=3.0, strength=0.5)
+    later = dl.flush()
+
+    assert np.array_equal(now, later), f"max|diff| = {np.abs(now - later).max()}"
+    assert _sha(now) == _sha(later)
+
+
+def test_the_default_text_metric_uses_the_real_measurer_when_available():
+    """文字の当たり判定は、実測が使えるなら見積りではなく **実測**を使う。"""
+    import annotate as A
+
+    modelled = DL.default_text_metrics("hello world", 14.0)
+    measured = DL.measured_text_metrics("hello world", 14.0)
+    real = A.measure_text("hello world", font_size=14)
+    assert measured == (float(real["width"]), float(real["height"]))
+    assert measured != modelled                            # 実測と見積りは別物
+
+
 def test_handlers_take_priority_over_the_named_layers():
     calls = []
 
