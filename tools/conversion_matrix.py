@@ -87,16 +87,31 @@ def analyse() -> dict:
                         and any(i != op_out[name] for i in op_in[name])})
     unchecked_sorts = sorted({op_out[n] for n in unchecked})
 
-    # 到達可能性の不動点: 生成器の型から始め、入力が全て揃う op の出力型を足す
+    # 到達可能性の不動点: 生成器の型から始め、入力が全て揃う op の出力型を足す。
+    #
+    # ★ここは 2 度間違えられる。ファザーの ``run_chain`` は
+    #   (1) 入力型 ``any`` を「常に揃っている」として扱い(プールから任意に引く)、
+    #   (2) ``OP_ARG_BUILDERS`` に登録された op は引数を自前で組み立てる。
+    # この 2 つを数えないと、実際には毎回走っている op を「構造的に到達不能」と
+    # 報告してしまう(実際に ``fuse_to_voxel`` / ``register_cross`` で誤報した)。
+    # 到達可能性は「型だけ」では決まらない ―― 到達経路の一部はコードの側にある。
+    def _satisfied(t: str, reached: set[str]) -> bool:
+        return t == "any" or t in reached
+
     reach = set(gens)
     changed = True
     while changed:
         changed = False
         for name, ins in op_in.items():
-            if op_out[name] not in reach and all(i in reach for i in ins):
+            if op_out[name] in reach:
+                continue
+            if name in builders or all(_satisfied(i, reach) for i in ins):
                 reach.add(op_out[name])
                 changed = True
     unreachable = sorted(s for s in sorts if s not in reach)
+    by_builder = sorted(n for n in op_in
+                        if n in builders
+                        and not all(_satisfied(i, reach - {op_out[n]}) for i in op_in[n]))
 
     return {
         "ops": ops, "sorts": sorted(sorts), "edges": edges,
