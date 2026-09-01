@@ -2279,6 +2279,7 @@ BUILDERS = {
 }
 
 TITLES = {
+    "pipeline_flow": "設計から判定までの一本道",
     "defect_atlas": "欠陥ジェネレータの見本帳",
     "limit_crossover": "律速の入れ替わり",
     "cos4_falloff": "cos⁴ 則の周辺光量落ち",
