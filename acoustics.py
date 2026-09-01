@@ -1212,14 +1212,27 @@ def spectral_kurtosis(x, rate, win=None, hop=None, window="hann"):
     ``max_freq + bin_hz`` lands exactly *on* Nyquist and ``envelope_spectrum``
     refuses it — correctly, since no such band exists in the recording. Measured
     on the ``mode="am"`` bearing signal (25600 Hz, 1 s, 3 kHz carrier, 107 Hz
-    defect, ``m = 0.5``), whose kurtosis maximum is the top interior bin:
+    defect, ``m = 0.5``), whose kurtosis maximum lands on the top interior bin
+    (12400 Hz, ``bin_hz`` 400):
 
     ===========================  =====================  ==============================
     band handed to the consumer  value                  ``envelope_spectrum``
     ===========================  =====================  ==============================
     ``max_freq -+ bin_hz``       12000.0 - 12800.0 Hz   ``ValueError`` (12800 = Nyquist)
-    ``band_lo`` / ``band_hi``    12000.0 - 12600.0 Hz   returns, ``peak_freq`` 107.0000
+    ``band_lo`` / ``band_hi``    12000.0 - 12600.0 Hz   returns
     ===========================  =====================  ==============================
+
+    Returning is not the same as finding something, and this row is the honest
+    case: ``max_kurtosis`` is **-0.2725** against ``noise_sigma`` **0.1001**, so
+    there was never a band to find — an amplitude-modulated tone is stationary in
+    every bin, which is exactly what a negative SK says. Demodulating the band
+    anyway gives ``peak_freq`` **1.0000** Hz at ``band_fraction``
+    **5.080e-05**: nothing lives up there, and the returned diagnostics say so.
+    (The same signal over the known resonance, 2000-4000 Hz, gives ``peak_freq``
+    **107.0000** at ``band_fraction`` **0.9999**.) The contract this repair adds
+    is only that the handoff is *legal* — refusing to answer a well-posed call is
+    the caller's bug to hit, whereas judging the answer stays with
+    ``max_kurtosis`` / ``noise_sigma`` / ``band_fraction``.
 
     The clamp margin is **half a bin**: an edge cannot be placed more finely than
     ``bin_hz`` in the first place, and half a bin is the smallest offset that is
