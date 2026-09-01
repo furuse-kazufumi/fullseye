@@ -341,8 +341,6 @@ def _scalar(value, name, lo=None, hi=None):
         raise ValueError(f"{name}: must be >= {lo}, got {out}")
     if hi is not None and out > hi:
         raise ValueError(f"{name}: must be <= {hi}, got {out}")
-    if not allow_int:
-        pass
     return out
 
 
