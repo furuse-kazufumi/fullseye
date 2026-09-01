@@ -1869,11 +1869,15 @@ def percentile_level(x, rate, percentiles=(10.0, 50.0, 90.0), weighting="A",
     they are different numbers whenever the signal is not stationary, and the
     gap between them is itself the usual measure of how fluctuating a record is.
 
-    Measured on a two-level test signal (half at amplitude 1.0, half at 0.1,
-    Z-weighted, 0.125 s blocks): ``L10 = -3.010300`` dB and ``L90 = -23.010300``
-    dB — exactly the two constituent levels, 20.000000 dB apart, as they must be
-    for a 50/50 split. On a constant-amplitude signal all three percentiles and
-    ``leq`` agree to 3.6e-15 dB.
+    Measured on a two-level test signal (1 s at 16 kHz, first half a 1 kHz sine
+    of amplitude 1.0, second half the same at 0.1, Z-weighted, 0.125 s blocks,
+    8 blocks): ``L10 = -3.010300`` and ``L90 = -23.010300`` dB — exactly the two
+    constituent levels, **20.000000** dB apart, as they must be for a 50/50
+    split. ``L50 = -13.010300`` is the interpolated midpoint of the two clusters
+    and ``leq = -5.977386``, which is 17 dB above ``L90``: the energy level sits
+    near the loud half while the median sits between them. On a
+    constant-amplitude signal all three percentiles and ``leq`` agree to
+    3.6e-15 dB.
 
     **Raises** ``ValueError``: everything :func:`_as_signal` refuses, a
     percentile outside ``[0, 100]``, a non-positive ``window_s``, a ``window_s``
