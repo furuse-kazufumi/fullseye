@@ -1013,6 +1013,7 @@ def phase_displacement(video, f_lo, f_hi, fps, scales: int = 4,
     bank = _filter_bank(h, w, ns, no)
     fu, fv = bank["fu"], bank["fv"]
 
+    scale = float(np.abs(vid).max())
     spec = np.fft.fft2(vid, axes=(1, 2))
     a00 = np.zeros((h, w))
     a01 = np.zeros((h, w))
@@ -1026,9 +1027,14 @@ def phase_displacement(video, f_lo, f_hi, fps, scales: int = 4,
             continue
         sub = np.fft.ifft2(spec * filt[None], axes=(1, 2))
         ref = sub.mean(axis=0)
-        amp2 = np.abs(ref) ** 2
-        if not amp2.any():
+        amp = np.abs(ref)
+        amp_max = float(amp.max())
+        # A contrast-free band votes with a weight of zero anyway; skipping it
+        # keeps its rounding-noise phase (and the multi-radian jumps that
+        # unwrapping such noise invents) out of the normal equations entirely.
+        if amp_max <= _AMP_FLOOR * max(scale, 1.0):
             continue
+        amp2 = np.where(amp > _AMP_LIVE * amp_max, amp * amp, 0.0)
         rspec = np.fft.fft2(ref)
         dzdx = np.fft.ifft2(rspec * (2j * np.pi * fu))
         dzdy = np.fft.ifft2(rspec * (2j * np.pi * fv))
