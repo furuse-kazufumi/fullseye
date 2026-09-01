@@ -147,3 +147,117 @@ Studio 画面はすべて `studio.build_window()` が組み立てた**実 UI** �
 <sub>`wingstudio_studio_pipeline.gif` — 24 フレーム / 4 fps / 1280×800 px / 0.49 MB / SHA-256 `c7d90678baa3e80c`</sub>
 
 ---
+
+## 付録: この展示を作る過程で見つかった「見た目の異常」
+
+可視化はバグ発見の道具でもある、という前提で作りました。以下はすべて**実測**で、
+op のコードは 1 行も変更していません(判断は著者に委ねます)。
+
+### 1. `(z,y,x) -> (x,y,z)` の `V[:, ::-1]` は軸の入れ替えではなく**鏡映**
+
+`render3d.marching_cubes` はボクセル添字 `(z,y,x)` の頂点を返す。world `(x,y,z)` に
+直すために座標だけ反転すると、行列式が -1 なので**全三角形の巻き方向が裏返る**。
+
+```python
+Vz, F = render3d.marching_cubes(vol, 0.0)
+sv = lambda V, F: float(np.einsum("ij,ij->i", V[F][:,0], np.cross(V[F][:,1], V[F][:,2])).sum()/6)
+sv(Vz, F)                       # 期待 +体積 : 実測 +37294.7  (占有ボクセル 35746)
+sv(Vz[:, ::-1], F)              # 期待 +体積 : 実測 -37294.7  ← 内向きになった
+sv(Vz[:, ::-1], F[:, ::-1])     # 面の巻きも反転して打ち消す : +37294.7
+```
+
+### 2. `cadmap` は「内向きに巻かれた閉メッシュ」を黙って受け取り、可視率を過大に返す
+
+上の内向きメッシュに `cull_backfaces=True`(既定)で問い合わせると、本来の遮蔽面が
+カリングされて光線が突き抜ける。**閉じているのに符号つき体積が負**という条件は
+安価に検出できるので、fail-closed 方針なら弾くか警告してよい箇所だと思います。
+
+| メッシュ | `cad_surface_to_pixel` の可視率 | 面法線がカメラを向く面積 | `cad_visible_faces` の面積比 |
+|---|---|---|---|
+| 内向き(バグ状態) | **0.857** | 0.517 | 0.508 |
+| 外向き(修正後) | 0.415 | 0.483 | 0.468 |
+
+可視率が「カメラを向いている面積」を上回った時点で物理的におかしい、というのが
+気づきの糸口でした(遮蔽は減らすことしかできない)。
+
+### 3. 画素中心の規約が 2 つあり、繋ぐと半画素ずれる
+
+`render3d.render_mesh` は `arange + 0.5` を画素中心としてレイを飛ばし
+(`render3d.py:318-319`)、主点も `w * 0.5`。一方 `camera.depth_to_points` は
+`np.mgrid[0:H, 0:W]` の**整数**添字を画素中心として逆投影する。
+
+```python
+pose, K = render3d.auto_view(V, width=200, height=200)      # K[0,2] = 100.0
+buf = render3d.render_mesh(V, F, pose=pose, intrinsics=K, width=200, height=200)
+P_int  = camera.backproject(pix,       buf["depth"][valid], K)   # 添字
+P_half = camera.backproject(pix + 0.5, buf["depth"][valid], K)   # 添字 + 0.5
+# 実測: 平均 |P_half - P_int| = 0.00238 world 単位 = ちょうど 0.5 px 相当
+```
+絵としては見えませんが、寸法計測に使うと系統誤差になります。
+
+### 4. Problems の 1 行の中で stage 番号が 0 起点と 1 起点で混ざる
+
+`engine.diagnose_stages` のメッセージは 0 起点、Studio の Problems リストの見出しは
+1 起点なので、同じ 1 行に別の番号体系が並びます。
+
+```
+! stage 5 (circularity_xld): stage 3 (sk_clear_border) outputs 'region' but circularity_xld expects 'contour'
+```
+`sk_clear_border` は Program パネルの行番号でも Problems の見出しでも **4** 段目です。
+期待: `stage 4 (sk_clear_border)`。実際: `stage 3 (sk_clear_border)`。
+
+### 5. ボリュームを 3D ビューアで開くと「横倒し」になる
+
+`studio.volume_to_shell_points` は docstring どおり `(z, y, x)` 順の点を返しますが、
+消費側(`render_points_frame` / `viewer3d_project`)は **3 番目の成分を world の上方向**
+として扱います。つまりボリュームの z 軸(スライス方向)が画面の左右に、x 軸が上下に写る。
+
+```python
+v = np.zeros((40, 8, 8)); v[:, 3:5, 3:5] = 1.0     # z 方向に伸びた棒
+P, C, info = studio.volume_to_shell_points(v)
+P.max(0) - P.min(0)      # 期待(上が z): [1, 1, 39] / 実測: [39, 1, 1]
+```
+既定の viridis 高さランプ(`colors=None` のとき)も同じ理由で x 添字を色にします。
+
+### 6. 新しい族の生成済みヘルプ 155 枚のうち 110 枚は画面から辿れない
+
+`studio_assets/op_help/<族>/` に `tools/opdocs.py` が生成した HTML が 155 枚あるのに、
+Studio のヘルプ検索は 2D 名 + 3D 名しか引かないため、`tb_*` 型付き op として
+登録された 45 枚しか開けません。
+
+| 族 | 生成済み | `tb_*` 経由で開ける | 開けない |
+|---|---|---|---|
+| acoustics | 19 | 3 | 16 |
+| interferometry | 9 | 0 | **9** |
+| lightfield | 17 | 8 | 9 |
+| math | 26 | 6 | 20 |
+| motionmag | 9 | 2 | 7 |
+| optics | 18 | 1 | **17** |
+| photon | 17 | 6 | 11 |
+| quat | 19 | 12 | 7 |
+| rangedoppler | 8 | 4 | 4 |
+| specular | 13 | 3 | 10 |
+| **合計** | **155** | **45** | **110** |
+
+あわせて、開ける 45 枚も「実行できる例」が空で、「同カテゴリ」欄は typed 105 個が
+1 カテゴリに同居しているため無関係な op が並びます。
+
+### 7. `vol_mip` は正規化して返す(生の最大値投影ではない)
+
+`ops.RT["vol_mip"]` は表示向けに `[0,1]` へ正規化した像を返します。累積 MIP の
+到達率を測るのに使うと分母が変わり、**121.5 %** という値が出ました(実測)。
+比率を測る側は `vol.max(axis=0)` を使うべき、という住み分けです。
+
+### 8. GIF の書き出しは「連続する同一フレーム」を 1 枚に畳む
+
+`video.write_video` の GIF 経路(Pillow)は完全同一の連続フレームを結合するので、
+静止の「間」を作るために同じ grab を並べると、**18 枚書いて 6 枚しか戻らない**。
+書き出し後に読み戻して枚数を突き合わせない限り気づけません(本スクリプトは
+毎回突き合わせています)。
+
+### 9. 再現性: 14 点中 12 点は SHA-256 まで一致、2 点は一致しない
+
+`studio_opsearch` は検索欄のクリアボタン(✕)の描画タイミングが揺れ、
+`studio_editor` は Studio が実行に使う一時ファイル名(`scratch_<pid>.py`)が
+出力コンソールに出るため、生成のたびにバイト列が変わります。**絵の内容は同一**
+ですが、bit 単位の再現は保証できません(隠さず書きます)。
