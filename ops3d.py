@@ -511,8 +511,10 @@ _CATALOG = {
         ("inertia_tensor", "moments3d", ["points"], "matrix", False),
     ],
     "geodesic": [  # 曲面上の測地距離(TRIZ 線→面: EDT の曲面版)
-        ("geodesic_distances", "geodesic3d", ["points"], "measurement", False),
-        ("geodesic_mesh", "geodesic3d", ["mesh"], "measurement", False),
+        # 返るのは点ごと/頂点ごとの距離列 (N,) であってスカラではない。
+        # mean_curvature / vol_wall_thickness と同じ signal 語彙が正しい
+        ("geodesic_distances", "geodesic3d", ["points"], "signal", False),
+        ("geodesic_mesh", "geodesic3d", ["mesh"], "signal", False),
         ("farthest_point_sampling", "geodesic3d", ["points"], "indices", False),
         ("knn_graph", "geodesic3d", ["points"], "graph", False),
     ],
