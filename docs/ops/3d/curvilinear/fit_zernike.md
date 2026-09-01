@@ -3,7 +3,7 @@ op: fit_zernike
 dim: 3d
 category: curvilinear
 in: image2d
-out: descriptor
+out: table
 gpu: true
 examples: [curvilinear_proj]
 author: Kazufumi Furuse
@@ -13,7 +13,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # fit_zernike — 3D `curvilinear` op
 
-- **データ種**: `image2d` → `descriptor`
+- **データ種**: `image2d` → `table`
 - **呼び出し**: `import match3d; match3d.fit_zernike(disk_image, n_max=6, device='cpu', nr=48, nt=72)` (または `ops3d.get("fit_zernike")`)
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 
@@ -30,9 +30,9 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 - [curvilinear_proj](../../../../examples_3d/curvilinear_proj.py) — `py -3.11 examples_3d/curvilinear_proj.py`
 
-## 型が繋がる次の op(`descriptor` を入力に取れる)
+## 型が繋がる次の op(`table` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [shape_distance](../shape_descriptor/shape_distance.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md)
 
 ## 同カテゴリ(`curvilinear`)
 

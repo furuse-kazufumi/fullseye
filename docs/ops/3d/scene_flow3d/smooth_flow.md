@@ -3,7 +3,7 @@ op: smooth_flow
 dim: 3d
 category: scene_flow3d
 in: points × points
-out: flow
+out: flow_scattered
 examples: [scene_flow_rigid]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # smooth_flow — 3D `scene_flow3d` op
 
-- **データ種**: `points × points` → `flow`
+- **データ種**: `points × points` → `flow_scattered`
 - **呼び出し**: `import scene_flow3d; scene_flow3d.smooth_flow(pts0, pts1, k: 'int' = 10, n_iter: 'int' = 5) -> 'np.ndarray'` (または `ops3d.get("smooth_flow")`)
 
 ## 使い方
@@ -28,7 +28,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 - [scene_flow_rigid](../../../../examples_3d/scene_flow_rigid.py) — `py -3.11 examples_3d/scene_flow_rigid.py`
 
-## 型が繋がる次の op(`flow` を入力に取れる)
+## 型が繋がる次の op(`flow_scattered` を入力に取れる)
 
 [fuse_to_voxel](../fusion/fuse_to_voxel.md)
 

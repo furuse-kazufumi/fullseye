@@ -482,6 +482,40 @@ def test_equivalent_level_matches_the_closed_form():
                - 20.0 * np.log10(2.0)) < 1e-9
 
 
+def test_octave_spectrum_flags_a_band_cut_off_by_nyquist():
+    """`f_max` bounds band *centres*, so the top band's edge overhangs it by
+    half a band width. At the canonical 44100 Hz rate the default band set's
+    top third-octave runs 17782.79-22387.21 Hz over a Nyquist of 22050 and
+    collects 4268 of the 4604 bins it spans — a level for 92.7 % of a band,
+    reported with nothing saying so until `truncated` was added."""
+    fs = 44100.0
+    x = _noise(int(fs), seed=3)
+    s = A.octave_spectrum(x, fs)
+    assert s["upper"][-1] > 0.5 * fs, "the probe must actually overhang"
+    assert s["truncated"][-1]
+    assert not s["truncated"][:-1].any()
+    assert s["narrow_bands"][-1] == 4268
+    full = round((s["upper"][-1] - s["lower"][-1]) / s["resolution_hz"])
+    assert full == 4604 and s["narrow_bands"][-1] < full
+    # at 48 kHz the same band set fits entirely below Nyquist
+    assert not A.octave_spectrum(_noise(48000, seed=3),
+                                 48000.0)["truncated"].any()
+
+
+def test_stft_times_start_before_the_record_and_interior_starts_at_zero():
+    """A documented consequence that is easy to plot wrongly: times[0] is
+    negative because the first frames begin inside the leading pad. Measured at
+    1.0 s / 16 kHz / win=256 / hop=128: times[0] = -0.016000, times[-1] =
+    1.000000 — a span 1.6 % wider than the record."""
+    fs, n = 16000.0, 16000
+    tr = A.stft(_tone(440.0, fs, n), fs, win=256, hop=128)
+    t = tr["times"]
+    assert t[0] == pytest.approx(-0.016, abs=1e-12)
+    assert t[-1] == pytest.approx(1.0, abs=1e-12)
+    assert (t[-1] - t[0]) > n / fs                  # wider than the recording
+    assert t[tr["interior"]][0] == pytest.approx(0.0, abs=1e-12)
+
+
 def _a_weight_error_db(f0, fs=48000.0, duration=0.5):
     """How far the measured A-weighted level of a pure tone sits from A(f0)."""
     x = _tone(f0, fs, int(duration * fs), 1.0)

@@ -3,7 +3,7 @@ op: topology_signature
 dim: 3d
 category: medial
 in: voxel
-out: descriptor
+out: table
 examples: [medial_topology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # topology_signature — 3D `medial` op
 
-- **データ種**: `voxel` → `descriptor`
+- **データ種**: `voxel` → `table`
 - **呼び出し**: `import medial; medial.topology_signature(skeleton)` (または `ops3d.get("topology_signature")`)
 
 ## 使い方
@@ -28,9 +28,9 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 - [medial_topology](../../../../examples_3d/medial_topology.py) — `py -3.11 examples_3d/medial_topology.py`
 
-## 型が繋がる次の op(`descriptor` を入力に取れる)
+## 型が繋がる次の op(`table` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [shape_distance](../shape_descriptor/shape_distance.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md)
 
 ## 同カテゴリ(`medial`)
 

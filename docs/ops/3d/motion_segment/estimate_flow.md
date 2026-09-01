@@ -3,7 +3,7 @@ op: estimate_flow
 dim: 3d
 category: motion_segment
 in: points × points
-out: flow
+out: flow_scattered
 examples: [motion_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # estimate_flow — 3D `motion_segment` op
 
-- **データ種**: `points × points` → `flow`
+- **データ種**: `points × points` → `flow_scattered`
 - **呼び出し**: `import motion_seg3d; motion_seg3d.estimate_flow(pts0, pts1) -> 'np.ndarray'` (または `ops3d.get("estimate_flow")`)
 
 ## 使い方
@@ -28,7 +28,7 @@ pts0 の各点から pts1 の最近傍への 3-D 変位ベクトル場 (N, 3) �
 
 - [motion_scene](../../../../examples_3d/motion_scene.py) — `py -3.11 examples_3d/motion_scene.py`
 
-## 型が繋がる次の op(`flow` を入力に取れる)
+## 型が繋がる次の op(`flow_scattered` を入力に取れる)
 
 [fuse_to_voxel](../fusion/fuse_to_voxel.md)
 

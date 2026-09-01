@@ -3,7 +3,7 @@ op: scene_flow_lk
 dim: 3d
 category: motion
 in: voxel × voxel
-out: flow
+out: flow_dense
 gpu: true
 examples: [motion_scene]
 author: Kazufumi Furuse
@@ -13,7 +13,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # scene_flow_lk — 3D `motion` op
 
-- **データ種**: `voxel × voxel` → `flow`
+- **データ種**: `voxel × voxel` → `flow_dense`
 - **呼び出し**: `import match3d; match3d.scene_flow_lk(vol0, vol1, device='cpu', win=3, levels=3, iters=3, reg=0.001)` (または `ops3d.get("scene_flow_lk")`)
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 
@@ -30,7 +30,7 @@ Lucas-Kanade scene flow(2D optical flow の 3D 版)。voxel ごとの運動場 d
 
 - [motion_scene](../../../../examples_3d/motion_scene.py) — `py -3.11 examples_3d/motion_scene.py`
 
-## 型が繋がる次の op(`flow` を入力に取れる)
+## 型が繋がる次の op(`flow_dense` を入力に取れる)
 
 [fuse_to_voxel](../fusion/fuse_to_voxel.md)
 
