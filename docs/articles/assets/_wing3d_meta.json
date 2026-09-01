@@ -3,6 +3,64 @@
   "seed": 20260902,
   "exhibits": [
     {
+      "name": "wing3d_domain_memory",
+      "title": "処理領域(domain)でメモリが 1/84 になる",
+      "ops": [
+        "vol_bounding_box",
+        "vol_crop_domain",
+        "vol_reduce_domain",
+        "vol_uncrop",
+        "vol_gradient_magnitude"
+      ],
+      "facts": {
+        "full_shape": [
+          192,
+          192,
+          192
+        ],
+        "part_shape": [
+          41,
+          53,
+          39
+        ],
+        "full_MB": 56.623104,
+        "part_MB": 0.677976,
+        "memory_ratio": 83.51785903925803,
+        "t_full_ms": 415.5260999687016,
+        "t_part_ms": 1.8052998930215836,
+        "speedup": 230.1701238530643,
+        "uncrop_exact": true,
+        "foreground_voxels": 29474,
+        "foreground_pct": 0.4164236563223379
+      },
+      "caption": "192³ の視野に浮かぶ合成部品を輪切りで送りながら、元ボリューム・domain マスク・切り出し後・貼り戻しを並べた。前景は全体の 0.42 % しかないので `vol_crop_domain` で メモリは 56.62 MB → 0.678 MB(**1/83.5**)、同じ `vol_gradient_magnitude` が 415.5 ms → 1.8 ms(**230.2 倍速**)になる。`vol_uncrop` の貼り戻しは元と bit 一致。",
+      "kind": "gif",
+      "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_domain_memory.gif",
+      "mp4": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_domain_memory.mp4",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wing3d_domain_memory_thumb.jpg",
+      "frames": 40,
+      "fps": 12,
+      "gif_shape": [
+        690,
+        1120,
+        3
+      ],
+      "mp4_shape": [
+        690,
+        1120,
+        3
+      ],
+      "gif_colors": 256,
+      "gif_bytes": 423847,
+      "mp4_bytes": 67715,
+      "thumb_bytes": 37060,
+      "thumb_frame": 20,
+      "gif_sha256": "dc4415fb1d633828736fafb2d3e7aa991592a7a94c7caffbd09d9d45b04d9fa9",
+      "mp4_sha256": "6b763ae651f75fcccbd7d0ecc80d8aa18b6cc0239cfd4dcc2d5228ce90ea3d33",
+      "exhibit": "domain",
+      "seconds": 19.107708800118417
+    },
+    {
       "name": "wing3d_boundary_shell",
       "title": "境界だけ持つと 6 % に痩せる",
       "ops": [
@@ -822,6 +880,135 @@
       "mp4_sha256": "9f78658e1ab68f638dc01531cdf459a342fd31aadf58e563ad24b55693b76e4f",
       "exhibit": "distance",
       "seconds": 78.63467260007747
+    },
+    {
+      "name": "wing3d_boundary_connectivity",
+      "title": "連結性の定義だけで殻の厚みが 1.9 倍変わる",
+      "ops": [
+        "vol_boundary"
+      ],
+      "facts": {
+        "solid_voxels": 112931,
+        "radius_voxel": 30.0,
+        "variants": [
+          {
+            "side": "inner",
+            "connectivity": 6,
+            "voxels": 9170,
+            "pct_of_solid": 8.12000247939007
+          },
+          {
+            "side": "inner",
+            "connectivity": 18,
+            "voxels": 13970,
+            "pct_of_solid": 12.370385456606247
+          },
+          {
+            "side": "inner",
+            "connectivity": 26,
+            "voxels": 16154,
+            "pct_of_solid": 14.304309711239606
+          },
+          {
+            "side": "outer",
+            "connectivity": 6,
+            "voxels": 9582,
+            "pct_of_solid": 8.484827018267792
+          },
+          {
+            "side": "outer",
+            "connectivity": 18,
+            "voxels": 15090,
+            "pct_of_solid": 13.362141484623354
+          },
+          {
+            "side": "outer",
+            "connectivity": 26,
+            "voxels": 17570,
+            "pct_of_solid": 15.55817268951838
+          }
+        ]
+      },
+      "caption": "半径 30 voxel の合成球(112,931 voxel)の殻を、`vol_boundary` の `connectivity`(6 / 18 / 26)と `side`(inner / outer)だけ変えて 6 通り取った。面だけ触れる 6 近傍の内側殻は 9,170 voxel(8.12 %)、斜めの接触も数える 26 近傍の外側殻は 17,570 voxel(15.56 %)で、**同じ形なのに 1.92 倍**違う。「表面のボクセル数」という言い方が定義抜きでは意味を持たない、という 6 枚。手前半分を切って厚みが見えるようにしてある。",
+      "kind": "png",
+      "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_boundary_connectivity.png",
+      "png_bytes": 218782,
+      "png_size": [
+        948,
+        748
+      ],
+      "png_sha256": "de02f0b45844452a1403b2006aafaf343145b621d2dc60f325bebe5f4eb91732",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_boundary_connectivity_thumb.jpg",
+      "thumb_bytes": 119610,
+      "exhibit": "connectivity",
+      "seconds": 0.28598050004802644
+    },
+    {
+      "name": "wing3d_pipeline_flow",
+      "title": "CT のかたまりが寸法になるまで(7 工程)",
+      "ops": [
+        "vol_window_level",
+        "vol_label",
+        "vol_region_props",
+        "vol_crop_domain",
+        "vol_uncrop",
+        "skeletonize_vol",
+        "skeleton_branches3d",
+        "skeleton_endpoints3d",
+        "skeleton_junctions3d",
+        "vol_distance_transform"
+      ],
+      "facts": {
+        "shape": [
+          112,
+          112,
+          112
+        ],
+        "spacing_mm": [
+          0.6,
+          0.6,
+          0.6
+        ],
+        "labels": 3,
+        "largest_voxels": 18657,
+        "largest_volume_mm3": 4029.912,
+        "largest_surface_mm2": 1975.2422581763922,
+        "sphericity": 0.6200034859682224,
+        "crop_shape": [
+          105,
+          21,
+          21
+        ],
+        "crop_memory_ratio": 30.340740740740742,
+        "skeleton_voxels": 83,
+        "branches": 1,
+        "endpoints": 2,
+        "junctions": 0,
+        "max_inscribed_radius_mm": 4.8373546489791295,
+        "truth_radius_mm": 4.8
+      },
+      "caption": "ノイズ付きの合成 CT(112³、spacing 0.6 mm)が寸法になるまでの 7 工程をコマ送りに束ねた。窓 → 二値化 → ラベリング(連結成分 3 個)→ 最大成分(4029.9 mm³、球形度 0.6200)→ `vol_crop_domain` でメモリ **1/30.3** → 細線化(枝 1 / 分岐 0 / 端点 2)→ 距離変換で最大内接半径 **4.8374 mm**(真値 4.800 mm)。各コマに工程名と進捗が焼いてあるので、止めた 1 コマでも読める。",
+      "kind": "gif",
+      "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_pipeline_flow.gif",
+      "mp4": null,
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wing3d_pipeline_flow_thumb.jpg",
+      "frames": 7,
+      "fps": null,
+      "gif_shape": [
+        522,
+        900,
+        3
+      ],
+      "mp4_shape": null,
+      "gif_colors": null,
+      "gif_bytes": 268816,
+      "mp4_bytes": 0,
+      "thumb_bytes": 40325,
+      "thumb_frame": 0,
+      "gif_sha256": "f1126d49660ab13986d4b89e8414dd680b282ae4e89aec7e2f0b6248babc0728",
+      "mp4_sha256": null,
+      "exhibit": "pipeline",
+      "seconds": 1.5421285999473184
     },
     {
       "name": "wing3d_slice_zsweep",

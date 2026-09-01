@@ -9,6 +9,10 @@
 
 ### 3D 計測ウィング ―― ボクセルと点群を「測る」ための op
 
+![処理領域(domain)でメモリが 1/84 になる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_domain_memory.gif)
+
+*↑ **処理領域(domain)でメモリが 1/84 になる** ―― 192³ の視野に浮かぶ合成部品を輪切りで送りながら、元ボリューム・domain マスク・切り出し後・貼り戻しを並べた。前景は全体の 0.42 % しかないので `vol_crop_domain` で メモリは 56.62 MB → 0.678 MB(**1/83.5**)、同じ `vol_gradient_magnitude` が 415.5 ms → 1.8 ms(**230.2 倍速**)になる。`vol_uncrop` の貼り戻しは元と bit 一致。 使用 op: `vol_bounding_box`, `vol_crop_domain`, `vol_reduce_domain`, `vol_uncrop`, `vol_gradient_magnitude`。*
+
 ![境界だけ持つと 6 % に痩せる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_boundary_shell.gif)
 
 *↑ **境界だけ持つと 6 % に痩せる** ―― 中実の球(267,731 voxel)を `vol_boundary` で内側 1 層の殻にすると **6.1 %**(16,418 voxel)まで痩せる。その殻を `vol_boundary_points` で mm 座標の点群にして `fit_sphere3` に渡すと、**中心誤差 0.000 mm**(真値 (25.6, 25.6, 25.6) mm)。半径だけは -0.175 mm ずれる — 殻が「内側 1 層」だからで、これは消さずに図に書いてある。 使用 op: `vol_boundary`, `vol_boundary_points`, `fit_sphere3`。*
@@ -57,6 +61,14 @@
 
 *↑ **距離変換で局所の太さを測る(最大内接半径 4.528 mm)** ―― 合成した 3 本の管に `vol_distance_transform` を掛けると、各ボクセルが「ふちから何 mm 離れているか」になる。その最大値が最大内接球の半径 = 局所の太さで、実測 **4.5277 mm**(真値 4.500 mm、差 +0.0277 mm — 離散格子でふちが半 voxel 内側に来るぶん)。虹の等高線は 0.5 mm ごと。 使用 op: `vol_distance_transform`。*
 
+[![連結性の定義だけで殻の厚みが 1.9 倍変わる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_boundary_connectivity_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_boundary_connectivity.png)
+
+*↑ **連結性の定義だけで殻の厚みが 1.9 倍変わる** ―― 半径 30 voxel の合成球(112,931 voxel)の殻を、`vol_boundary` の `connectivity`(6 / 18 / 26)と `side`(inner / outer)だけ変えて 6 通り取った。面だけ触れる 6 近傍の内側殻は 9,170 voxel(8.12 %)、斜めの接触も数える 26 近傍の外側殻は 17,570 voxel(15.56 %)で、**同じ形なのに 1.92 倍**違う。「表面のボクセル数」という言い方が定義抜きでは意味を持たない、という 6 枚。手前半分を切って厚みが見えるようにしてある。 使用 op: `vol_boundary`。*
+
+![CT のかたまりが寸法になるまで(7 工程)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_pipeline_flow.gif)
+
+*↑ **CT のかたまりが寸法になるまで(7 工程)** ―― ノイズ付きの合成 CT(112³、spacing 0.6 mm)が寸法になるまでの 7 工程をコマ送りに束ねた。窓 → 二値化 → ラベリング(連結成分 3 個)→ 最大成分(4029.9 mm³、球形度 0.6200)→ `vol_crop_domain` でメモリ **1/30.3** → 細線化(枝 1 / 分岐 0 / 端点 2)→ 距離変換で最大内接半径 **4.8374 mm**(真値 4.800 mm)。各コマに工程名と進捗が焼いてあるので、止めた 1 コマでも読める。 使用 op: `vol_window_level`, `vol_label`, `vol_region_props`, `vol_crop_domain`, `vol_uncrop`, `skeletonize_vol`, `skeleton_branches3d`, `skeleton_endpoints3d`, `skeleton_junctions3d`, `vol_distance_transform`。*
+
 ![断層を送る ―― `z = 48 / 95` は 38.40 mm のこと](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_slice_zsweep.gif)
 
 *↑ **断層を送る ―― `z = 48 / 95` は 38.40 mm のこと** ―― 合成 CT(96×128×128、spacing (0.8, 0.3, 0.3) mm)を 1 スライスずつ 96 コマ送る。各コマに**添字と物理位置の両方**(`z = 48 / 95` = 38.40 mm)と位置バーを焼いた。1 スライス送りは 0.80 mm、面内 1 画素は 0.30 mm = **0.37 倍**なので、下の折れ線のとおり「添字を 1 つ動かす」は軸ごとに違う距離を意味する ―― 異方性 CT でいちばん踏みやすい段差。 使用 op: `vol_window_level`。*
@@ -87,6 +99,7 @@
 
 | 展示 | 形式 | ファイル | 実測 |
 |---|---|---|---|
+| domain | GIF+mp4 | `media/wing3d_domain_memory.gif` | 40 フレーム, 1120x690, 0.42 MB, 256 色, mp4 0.07 MB |
 | boundary | GIF+mp4 | `media/wing3d_boundary_shell.gif` | 36 フレーム, 1120x640, 2.75 MB, 128 色, mp4 1.59 MB |
 | rle | PNG | `wing3d_rle_compression.png` | 1120x720, 52 kB |
 | vesselness | PNG | `wing3d_vesselness_control.png` | 1120x700, 72 kB |
@@ -99,6 +112,8 @@
 | anisotropic | PNG | `wing3d_anisotropic_voxel.png` | 1120x700, 92 kB |
 | mip | GIF+mp4 | `media/wing3d_mip_turntable.gif` | 36 フレーム, 1120x640, 2.61 MB, 64 色, mp4 0.41 MB |
 | distance | GIF+mp4 | `media/wing3d_distance_transform.gif` | 46 フレーム, 1120x660, 0.67 MB, 256 色, mp4 0.10 MB |
+| connectivity | PNG | `wing3d_boundary_connectivity.png` | 948x748, 219 kB |
+| pipeline | GIF | `media/wing3d_pipeline_flow.gif` | 7 フレーム, 900x522, 0.27 MB |
 | zsweep | GIF+mp4 | `media/wing3d_slice_zsweep.gif` | 96 フレーム, 1120x748, 1.16 MB, 256 色, mp4 0.16 MB |
 | mpr | GIF+mp4 | `media/wing3d_mpr_crosshair.gif` | 60 フレーム, 1120x620, 1.18 MB, 256 色, mp4 0.22 MB |
 | oblique | GIF+mp4 | `media/wing3d_oblique_slice.gif` | 36 フレーム, 1120x640, 0.90 MB, 256 色, mp4 0.11 MB |

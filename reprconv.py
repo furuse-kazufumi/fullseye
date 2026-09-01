@@ -459,6 +459,15 @@ def matrix_to_descriptor(matrix):
     ``descriptor -> matrix -> descriptor`` の往復が (n,) から (1,n) へ
     静かに形を変える = 型の嘘そのものになる。
 
+    ★**測って残す非可逆点**: そのぶん、元から **(1, n) の 2-D だった記述子**は
+    往復で (n,) の 1-D になる —— (1,n) の行列は「1-D 記述子を包んだもの」と
+    「行が 1 本しかない記述子束」の区別を持たないので、**この 1 ケースだけは
+    原理的に戻せない**。値は全て保存されるので損失は「行が 1 本だった」という
+    メタ情報のみ。どちらを非可逆にするか選ばされる状況で、
+    ``descriptor`` の圧倒的多数(実測 14 producers 中 12 が 1-D)を厳密側に
+    倒した。``tests/test_reprconv.py::test_one_row_descriptor_ambiguity_is_documented``
+    がこの穴を**塞がずに固定**している(隠すと、いつか黙って形が変わる)。
+
     Args:
         matrix: (m, n) の実配列。
     Returns:
