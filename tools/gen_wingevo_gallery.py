@@ -877,9 +877,9 @@ def ex_observed_vs_locked(data, log=print):
     rows = data["champions"]["rows"]
     names = [n for n in ("vibration_map", "photon_denoise", "lf_slope",
                          "specular_removal") if n in rb]
-    W, H = 1120, 620
+    W, H = 1120, 660
     c = canvas(W, H)
-    box = (110, 120, W - 260, H - 150)
+    box = (118, 120, W - 260, H - 180)
     p = Plot(c, box, (-0.5, len(names) - 0.5), (0.0, 1.0))
     p.grid(yticks=np.arange(0, 1.01, 0.2)).frame()
     items = [(28, 26, "同じ champion を「観測用 holdout」と「locked holdout」で測る",
