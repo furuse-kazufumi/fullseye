@@ -763,7 +763,10 @@ def volume_to_shell_points(vol, spacing=(1.0, 1.0, 1.0), max_points=2_000_000):
     idx = np.argwhere(shell > 0.5)
     if not len(idx):
         raise ValueError("no boundary voxels above the Otsu threshold %.4g" % thr)
-    P = idx.astype(np.float64) * sp
+    # (z, y, x) voxel indices * (sz, sy, sx) -> physical, then reversed to the
+    # viewer's world (x, y, z). Index and spacing are reversed TOGETHER, so an
+    # anisotropic volume keeps sz on the world-up axis.
+    P = np.ascontiguousarray((idx.astype(np.float64) * sp)[:, ::-1])
     vals = v[idx[:, 0], idx[:, 1], idx[:, 2]]
     lo, hi = float(vals.min()), float(vals.max())
     g = (vals - lo) / (hi - lo) if hi > lo else np.full(len(vals), 0.7)
