@@ -112,6 +112,27 @@ version: 0.1.0
 | 79(既定) | 0.012658 | 0.999967 | **0.636961** |
 | 78(偶数) | 0.012821 | 1.000009 | 0.999371 |
 
+### 6. 兄弟 op が推奨した帯域を、もう一方が fail-closed で拒否する
+
+`spectral_kurtosis` は「どこで復調すべきか」を答え、`envelope_spectrum` はその帯域を受け取る ―― **この 2 つは組で使うように書かれています**。ところが帯域の組み立てを呼び出し側に任せていたため、ガイドも例も次の式を書いていました:
+
+```python
+A.envelope_spectrum(x, rate, sk["max_freq"] - sk["bin_hz"], sk["max_freq"] + sk["bin_hz"])
+```
+
+`spectral_kurtosis` の `freqs` は **Nyquist を含みます**。`max_freq` は内部 bin から選ばれるので最大でも「最上位の内部 bin」= `Nyquist − bin_hz` であり、そこが勝った瞬間に上端は `Nyquist` ちょうどに乗ります。`envelope_spectrum` は「その帯域はこの記録に存在しない」と正しく拒否します。実測(25600 Hz、1 s、搬送波 3 kHz、欠陥 107 Hz、m = 0.5 の AM 信号 ―― **ガイドの最小例そのもの**):
+
+| 呼び出し側が組んだ帯域 | 値 | 結果 |
+|---|---|---|
+| `max_freq ± bin_hz` | 12000.0 – **12800.0** Hz | `ValueError: high=12800 Hz is at or above Nyquist 12800 Hz` |
+| `band_lo` / `band_hi`(修正後) | 12000.0 – **12600.0** Hz | 返る |
+
+**どちらの op も単体では正しい**のが、この形の質の悪いところです。`envelope_spectrum` の拒否は妥当(Nyquist の帯域は本当に無い)、`spectral_kurtosis` の `max_freq` も妥当。壊れているのは**受け渡しの契約**で、ガイドと例が通っていたのは「勝つ bin がたまたま上端でなかったから」に過ぎません。
+
+対策は `envelope_spectrum` の fail-closed を**緩めない**こと ―― かわりに `spectral_kurtosis` が **そのまま渡せる帯域** `band_lo` / `band_hi` を返します。`(0, rate/2)` の内側へ**半 bin**だけクランプしてあります(端は元々 `bin_hz` より細かく置けないので、半 bin が「境界から識別できる最小の距離」。ε も rate 依存のごまかしも要りません)。`max_freq` は構成上どちらの境界からも 1 bin 以上離れているので、`band_lo < band_hi` は常に成り立ちます。
+
+なお **返ることと、見つかったことは別**です。上表の AM 信号は `max_kurtosis` **−0.2725** に対して `noise_sigma` **0.1001** ―― 振幅変調された純音はどの bin でも定常なので、そもそも探すべき帯域がありません。その帯域で復調すれば `peak_freq` **1.0000** Hz、`band_fraction` **5.08e-05**(同じ信号を既知の共振 2000–4000 Hz で復調すると `peak_freq` **107.0000**、`band_fraction` **0.9999**)。この修正が保証するのは**受け渡しが合法であること**だけで、答えの良し悪しは今までどおり `max_kurtosis` / `noise_sigma` / `band_fraction` が語ります。
+
 ### 塞いである罠(上記以外)
 
 - **サンプリング周波数の型** — `float("16000")` は成功してしまうので、`rate` の**文字列は `ValueError`**(未パースの設定値がサンプリング周波数として通り抜けるのを止める)。**bool も拒否**(`True == 1` は 1 Hz のタイムベースという別物)。**complex も拒否**(虚部の無言切り捨て)。配列側は complex / masked / NaN / Inf をすべて `ValueError`。
