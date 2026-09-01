@@ -2960,14 +2960,19 @@ def ex_vessel_reslice(log) -> dict:
     tilt = 28.0                                 # 管を z-y 面内で傾ける [deg]
     th = math.radians(tilt)
     zz, yy, xx = np.mgrid[0:n, 0:n, 0:n].astype(np.float64)
-    # 管の軸: 中心 (88,88,88) を通り、z-y 面内で tilt だけ傾いた直線
+    # 軸は **配列の中心** を通す。scipy の回転中心は (shape-1)/2 なので、そこを外すと
+    # 回した後で軸が z からずれ、直交断面と真値の対応が半 voxel 単位で狂う。
+    ctr = (n - 1) / 2.0
     az = math.cos(th); ay = math.sin(th)
-    s = (zz - 88.) * az + (yy - 88.) * ay        # 軸に沿った座標 [voxel]
-    d2 = ((zz - 88.) - s * az) ** 2 + ((yy - 88.) - s * ay) ** 2 + (xx - 88.) ** 2
+    s = (zz - ctr) * az + (yy - ctr) * ay        # 軸に沿った座標 [voxel]
+    d2 = ((zz - ctr) - s * az) ** 2 + ((yy - ctr) - s * ay) ** 2 + (xx - ctr) ** 2
     dist = np.sqrt(d2)
-    # 半径が軸に沿って変わる(狭窄をひとつ作る)
-    r_of_s = 11.0 - 4.0 * np.exp(-((s / 22.0) ** 2))
-    tube = np.clip(r_of_s - dist + 0.5, 0.0, 1.0)
+
+    def radius_at(sv):
+        """軸座標 sv [voxel] における管の半径 [voxel](中央に狭窄を 1 つ)。"""
+        return 11.0 - 4.0 * np.exp(-((np.asarray(sv, np.float64) / 22.0) ** 2))
+
+    tube = np.clip(radius_at(s) - dist + 0.5, 0.0, 1.0)
 
     # 軸に直交する断面 = 体積を -tilt だけ回してから z スライスを取る
     rot = np.asarray(G("vol_rotate")(tube, -tilt, axes=(0, 1), order=1, reshape=False,
@@ -2977,23 +2982,32 @@ def ex_vessel_reslice(log) -> dict:
     for zc in stations:
         naive = tube[zc]                                     # 素朴な軸方向(z)断面
         ortho = rot[zc]                                      # 軸に直交する断面
-        s_here = (zc - 88.0) / az                            # 直交断面が対応する軸座標
-        truth_d = 2.0 * (11.0 - 4.0 * math.exp(-((s_here / 22.0) ** 2))) * sp
+        # 直交断面の添字は、回転後は軸に沿った座標そのもの
+        s_ortho = zc - ctr
+        # 素朴な z 断面が軸と交わるのは s = (zc - ctr) / cos(tilt)
+        s_naive = (zc - ctr) / az
+        truth_d = 2.0 * float(radius_at(s_ortho)) * sp
+        truth_naive_major = 2.0 * float(radius_at(s_naive)) * sp / az
         rows.append({
             "z": zc,
-            "s_voxel": s_here,
+            "s_ortho_voxel": s_ortho, "s_naive_voxel": s_naive,
             "naive_major_mm": _extent_50(naive, 0, sp),
             "naive_minor_mm": _extent_50(naive, 1, sp),
             "ortho_major_mm": _extent_50(ortho, 0, sp),
             "ortho_minor_mm": _extent_50(ortho, 1, sp),
             "truth_diameter_mm": truth_d,
+            "truth_naive_major_mm": truth_naive_major,
         })
     for r in rows[::8]:
         log(f"    z {r['z']:3d}  直交断面 {r['ortho_major_mm']:.3f} x "
-            f"{r['ortho_minor_mm']:.3f} mm   素朴断面 {r['naive_major_mm']:.3f} mm   "
-            f"真値 {r['truth_diameter_mm']:.3f} mm")
+            f"{r['ortho_minor_mm']:.3f} mm (真値 {r['truth_diameter_mm']:.3f})  "
+            f"素朴断面 長径 {r['naive_major_mm']:.3f} mm "
+            f"(楕円の理論値 {r['truth_naive_major_mm']:.3f})")
     ortho_err = [abs(r["ortho_minor_mm"] - r["truth_diameter_mm"]) for r in rows]
     naive_err = [abs(r["naive_major_mm"] - r["truth_diameter_mm"]) for r in rows]
+    naive_model_err = [abs(r["naive_major_mm"] - r["truth_naive_major_mm"]) for r in rows]
+    log(f"    素朴断面の長径 vs 楕円モデル 2r/cos: 平均 "
+        f"{np.mean(naive_model_err):.4f} mm 最大 {max(naive_model_err):.4f} mm")
     log(f"    直交断面の短径 誤差 平均 {np.mean(ortho_err):.4f} mm 最大 {max(ortho_err):.4f} mm")
     log(f"    素朴断面の長径 誤差 平均 {np.mean(naive_err):.4f} mm 最大 {max(naive_err):.4f} mm")
     i_min = int(np.argmin([r["truth_diameter_mm"] for r in rows]))
