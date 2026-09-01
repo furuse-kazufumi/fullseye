@@ -907,3 +907,90 @@ def test_no_op_returns_a_verdict():
         assert not (banned & set(t)), sorted(banned & set(t))
         assert t.get("caveats")
         assert all(isinstance(c, str) for c in t["caveats"])
+
+
+# =========================================================================
+# TRIZ による点検で見つかった穴(2026-09-02)—— 証拠を解釈できる形にする
+# =========================================================================
+
+def test_null_distribution_is_measured_not_shipped():
+    """しきい値は同梱しない。**利用者の清浄データから測る**。
+
+    分離点は枚数・解像度・圧縮率・被写体で動くので、出荷時に決められる値では
+    ない(各 op の caveats がそう言っている)。同梱するのは「しきい値の測り方」。
+    """
+    import numpy as np
+    import imgforensics as F
+
+    rng = np.random.default_rng(0)
+    base = [(rng.random((64, 64)) * 255).astype(np.uint8) for _ in range(40)]
+    clean = [F.hash_distance(F.perceptual_hash(x), F.perceptual_hash(y))
+             for x in base[:20] for y in base[20:]]
+    nd = F.null_distribution(clean)
+
+    assert nd["n"] == 400
+    assert 5 in nd["quantiles"] and 99 in nd["quantiles"]
+    assert nd["quantiles"][5] <= nd["quantiles"][50] <= nd["quantiles"][99]
+    assert any("普遍的なしきい値ではない" in c for c in nd["caveats"])
+
+
+def test_a_small_sample_says_so_instead_of_extrapolating():
+    import imgforensics as F
+    nd = F.null_distribution([1.0, 2.0, 3.0, 4.0, 5.0])
+    assert nd["n"] == 5
+    assert any("裾に届かない" in c for c in nd["caveats"])
+
+
+def test_evidence_quantile_places_the_value_without_judging_it():
+    """関連する組は分布の外に、無関係な組は真ん中に座る。判定は返さない。
+
+    実測: ずらした同一画像は距離 2 で **z = -7.05**(清浄分布の完全に外)、
+    無関係な組の平均は **z = 0.00**。
+    """
+    import numpy as np
+    import imgforensics as F
+
+    rng = np.random.default_rng(0)
+    base = [(rng.random((64, 64)) * 255).astype(np.uint8) for _ in range(40)]
+    clean = [F.hash_distance(F.perceptual_hash(x), F.perceptual_hash(y))
+             for x in base[:20] for y in base[20:]]
+    nd = F.null_distribution(clean)
+
+    a = base[0]
+    d = F.hash_distance(F.perceptual_hash(a), F.perceptual_hash(np.roll(a, 1, axis=0)))
+    q = F.evidence_quantile(d, nd, higher_is_stronger=False)
+    assert q["beyond_fraction"] == 1.0
+    assert q["z"] < -5.0
+    assert "改竄" not in str(q.get("verdict", ""))            # 判定は返らない
+    assert "verdict" not in q and "tampered" not in q
+
+    typical = F.evidence_quantile(nd["mean"], nd, higher_is_stronger=False)
+    assert abs(typical["z"]) < 1e-9
+
+
+def test_the_direction_argument_matters_and_is_not_guessable():
+    """向きを間違えると、いちばん強い証拠が「珍しくない」と出る(例外は出ない)。"""
+    import numpy as np
+    import imgforensics as F
+
+    nd = F.null_distribution(np.arange(100.0))
+    strong_low = F.evidence_quantile(1.0, nd, higher_is_stronger=False)
+    wrong_way = F.evidence_quantile(1.0, nd, higher_is_stronger=True)
+    assert strong_low["beyond_fraction"] == 1.0
+    assert wrong_way["beyond_fraction"] == 0.0
+    assert strong_low["direction"] != wrong_way["direction"]
+
+
+def test_calibration_ops_fail_closed():
+    import numpy as np
+    import pytest as _pytest
+    import imgforensics as F
+
+    with _pytest.raises(ValueError, match="at least one"):
+        F.null_distribution([])
+    with _pytest.raises(ValueError, match="finite"):
+        F.null_distribution([1.0, np.nan])
+    with _pytest.raises(ValueError, match="null_distribution"):
+        F.evidence_quantile(1.0, {"mean": 0.0})
+    with _pytest.raises(ValueError, match="measurement must be finite"):
+        F.evidence_quantile(np.inf, F.null_distribution([1.0, 2.0]))

@@ -30,7 +30,7 @@
 
 ![σ クリップの破綻 —— 折れ目はちょうど 50 %](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingastro_clip_breakdown.gif)
 
-*↑ **σ クリップの破綻 —— 折れ目はちょうど 50 %** ―― 20 枚のうち先頭 k 枚に +900 e- の汚染を入れ、割合を 0 から 60 % まで上げていく。**45 % までは誤差 -0.08 e-** と、汚染ゼロのときと変わらない答えを返す。ところが **ちょうど 50 % で誤差は +450.0 e-**(汚染量の半分)、**55 % で +900.0 e-**(汚染量そのもの)に跳ぶ。これは実装の不具合ではなく**中央値の破綻点そのもの**で、半数を超えた時点で中央値が汚染側の母集団に乗り、クリップは**正しいフレームの方を捨てる**。直せない限界は、直せるふりをせずそのまま展示する。使用 op: `synth_frame_series`, `sigma_clip_stack`。*
+*↑ **σ クリップの破綻 —— 折れ目はちょうど 50 %** ―― 20 枚のうち先頭 k 枚に +900 e- の汚染を入れ、割合を 0 から 60 % まで上げていく。**45 % までは誤差 -0.080 e-** と、汚染ゼロのとき(-0.034 e-)と変わらない答えを返す。ところが **ちょうど 50 % で誤差は +450.0 e-**(汚染量のちょうど半分)、**55 % で +900.0 e-**(汚染量そのもの)に跳ぶ。これは実装の不具合ではなく**中央値の破綻点そのもの**で、半数を超えた時点で中央値が汚染側の母集団に乗り、クリップは**正しいフレームの方を捨てる**(棄却率は 47.4 % のまま働いているのに、捨てる側が入れ替わっている)。最後のコマの折れ線がその証拠で、**中央値そのものも同じ 50 % で折れる**(55 % で +883.6 e-)一方、単純平均は最初から汚染に比例してずれ続ける(+495.0 e-)。直せない限界は、直せるふりをせずそのまま展示する。使用 op: `synth_frame_series`, `sigma_clip_stack`。*
 
 [![位置合わせ —— 星は互いに見分けがつかない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_align_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_align.png)
 

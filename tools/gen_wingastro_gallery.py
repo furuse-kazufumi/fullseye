@@ -1179,24 +1179,37 @@ def _captions(meta):
         "σ クリップの破綻 —— 折れ目はちょうど 50 %",
         "Where sigma clipping breaks — exactly at 50 %",
         "20 枚のうち先頭 k 枚に +%.0f e- の汚染を入れ、割合を 0 から 60 %% まで"
-        "上げていく。**45 %% までは誤差 %+.2f e-** と、汚染ゼロのときと変わら"
-        "ない答えを返す。ところが **ちょうど 50 %% で誤差は %+.1f e-**(汚染量の"
-        "半分)、**55 %% で %+.1f e-**(汚染量そのもの)に跳ぶ。これは実装の"
-        "不具合ではなく**中央値の破綻点そのもの**で、半数を超えた時点で中央値が"
-        "汚染側の母集団に乗り、クリップは**正しいフレームの方を捨てる**。"
+        "上げていく。**45 %% までは誤差 %+.3f e-** と、汚染ゼロのとき"
+        "(%+.3f e-)と変わらない答えを返す。ところが **ちょうど 50 %% で誤差は "
+        "%+.1f e-**(汚染量のちょうど半分)、**55 %% で %+.1f e-**(汚染量その"
+        "もの)に跳ぶ。これは実装の不具合ではなく**中央値の破綻点そのもの**で、"
+        "半数を超えた時点で中央値が汚染側の母集団に乗り、クリップは**正しい"
+        "フレームの方を捨てる**(棄却率は %.1f %% のまま働いているのに、"
+        "捨てる側が入れ替わっている)。最後のコマの折れ線がその証拠で、"
+        "**中央値そのものも同じ 50 %% で折れる**(55 %% で %+.1f e-)一方、"
+        "単純平均は最初から汚染に比例してずれ続ける(%+.1f e-)。"
         "直せない限界は、直せるふりをせずそのまま展示する。"
-        % (b["boost"], rw[0.45]["clip_err"], rw[0.50]["clip_err"],
-           rw[0.55]["clip_err"]),
+        % (b["boost"], rw[0.45]["clip_err"], rw[0.0]["clip_err"],
+           rw[0.50]["clip_err"], rw[0.55]["clip_err"],
+           100 * rw[0.55]["rejected"], rw[0.55]["median_err"],
+           rw[0.55]["mean_err"]),
         "The first k of 20 frames get +%.0f e- of contamination, and k sweeps "
-        "from 0 to 60 %%. **Up to 45 %% the error is %+.2f e-** — the same "
-        "answer as with no contamination at all. Then **at exactly 50 %% it "
-        "jumps to %+.1f e-** (half the contamination) and **at 55 %% to "
-        "%+.1f e-** (all of it). This is not an implementation fault but the "
-        "breakdown point of the median: once the contaminated frames are the "
-        "majority the median sits among them, and the clipping throws away the "
-        "*good* frames. A limit that cannot be fixed is shown as it is."
-        % (b["boost"], rw[0.45]["clip_err"], rw[0.50]["clip_err"],
-           rw[0.55]["clip_err"]))
+        "from 0 to 60 %%. **Up to 45 %% the error is %+.3f e-** — the same "
+        "answer as with no contamination at all (%+.3f e-). Then **at exactly "
+        "50 %% it jumps to %+.1f e-**, precisely half the contamination, and "
+        "**at 55 %% to %+.1f e-**, all of it. This is not an implementation "
+        "fault but the breakdown point of the median: once the contaminated "
+        "frames are the majority the median sits among them and the clipping "
+        "throws away the *good* frames — it is still rejecting %.1f %% of the "
+        "pixels, it has simply swapped which half. The plot in the last frame "
+        "is the proof: **the plain median folds at the same 50 %%** (%+.1f e- "
+        "at 55 %%), while the plain mean drifts in proportion to the "
+        "contamination from the very start (%+.1f e-). A limit that cannot be "
+        "fixed is shown as it is."
+        % (b["boost"], rw[0.45]["clip_err"], rw[0.0]["clip_err"],
+           rw[0.50]["clip_err"], rw[0.55]["clip_err"],
+           100 * rw[0.55]["rejected"], rw[0.55]["median_err"],
+           rw[0.55]["mean_err"]))
 
     a = d["align"]
     add("align",

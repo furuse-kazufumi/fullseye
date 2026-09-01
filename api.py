@@ -429,6 +429,7 @@ from imgforensics import (  # noqa: E402,F401
     fingerprint_strength_map, error_level_map, jpeg_quality_estimate,
     jpeg_ghost_map, jpeg_ghost_quality, noise_inconsistency_map,
     copy_move_regions, watermark_embed, watermark_extract, watermark_capacity,
+    null_distribution, evidence_quantile,
 )
 import annotate  # noqa: E402  (text plates, arrows, legends, colour bars, axes)
 import opsannotate  # noqa: E402  (the annotate op ledger)
@@ -711,6 +712,7 @@ __all__ = [
     "fingerprint_strength_map", "error_level_map", "jpeg_quality_estimate",
     "jpeg_ghost_map", "jpeg_ghost_quality", "noise_inconsistency_map",
     "copy_move_regions", "watermark_embed", "watermark_extract", "watermark_capacity",
+    "null_distribution", "evidence_quantile",
     "annotate", "opsannotate", "measure_text", "text_box", "arrow", "leader_line",
     "label_points", "crosshair", "legend_box", "color_bar", "scale_bar",
     "axes_transform", "data_to_pixel", "nice_ticks", "axes_frame", "grid_lines",
