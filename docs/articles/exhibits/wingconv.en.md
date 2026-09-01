@@ -16,45 +16,45 @@ lead exhibits are `A → B → A'` flipbooks whose last frame carries the residu
 
 *↑ **Reversible — normals ⇄ (azimuth, elevation) in degrees** — The dead-end type `normals` now has an exit. Converting to azimuth and elevation (**both in degrees**) and back returns 9216 normals to **max|Δ| = 2.289e-12** (1.207e-06 deg of angular error). The residual panel is black because it is drawn on a **fixed 0..1 scale**; auto-scaling would turn double-precision rounding into a visible pattern and make a reversible conversion look broken.*
 
-- GIF: `docs/articles/assets/media/wingconv_roundtrip_normals.gif` (4 frame(s), 792x508 px, 0.13 MB)
+- GIF: `docs/articles/assets/media/wingconv_roundtrip_normals.gif` (4 frame(s), 792x532 px, 0.14 MB)
 - Thumbnail: `docs/articles/assets/thumbs/wingconv_roundtrip_normals_thumb.jpg`
-- SHA-256: `3a28c8b7b7fd14f381c0524838ac035c1e71f55dab5536eea57b6d6a3e946e61`
+- SHA-256: `596e13795efe1cb08b5cd3ece7a414e76b261dc2d94ad62cf28f79ffac4580f4`
 
 ## 2. Reversible — principal curvatures ⇄ shape index (exact at umbilics)
 ![Reversible — principal curvatures ⇄ shape index (exact at umbilics)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingconv_roundtrip_curvature.gif)
 
 *↑ **Reversible — principal curvatures ⇄ shape index (exact at umbilics)** — Four patches (sphere, saddle, cylinder, plane; 9216 points of which 4608 are umbilic or flat) map to shape index S and curvedness C and back to **max|Δ| = 2.220e-16**. The textbook form `atan((k1+k2)/(k1-k2))` divides by zero at umbilics; the `atan2` form keeps sphere S=+1, saddle S=0 and cylinder S=+0.5 exact everywhere.*
 
-- GIF: `docs/articles/assets/media/wingconv_roundtrip_curvature.gif` (4 frame(s), 792x508 px, 0.25 MB)
+- GIF: `docs/articles/assets/media/wingconv_roundtrip_curvature.gif` (4 frame(s), 792x532 px, 0.26 MB)
 - Thumbnail: `docs/articles/assets/thumbs/wingconv_roundtrip_curvature_thumb.jpg`
-- SHA-256: `f7189c7973b5134dd1e325d710a89b2d660ecdccc70cae648d1766bb5ce29250`
+- SHA-256: `49783cc6f12b4829dcf731f0e771082a3629a2b7564c9fa1c97afbdb55d0d7c7`
 
 ## 3. Lossy — keypoints ⇄ pixel raster (measure what is lost)
 ![Lossy — keypoints ⇄ pixel raster (measure what is lost)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingconv_roundtrip_keypoints.gif)
 
 *↑ **Lossy — keypoints ⇄ pixel raster (measure what is lost)** — 900 keypoints on a 4 px lattice, rasterised and picked back up, land **0.2925 px** RMS per axis (uniform-quantisation theory 1/√12 = 0.2887) and 0.4136 px in 2-D distance (theory √(2/12) = 0.4082). Random placement merges 120 → 111 points — **quantisation (displacement) and merging (disappearance) are different losses** and collapsing them into one RMS hides which one dominates.*
 
-- GIF: `docs/articles/assets/media/wingconv_roundtrip_keypoints.gif` (5 frame(s), 792x508 px, 0.13 MB)
+- GIF: `docs/articles/assets/media/wingconv_roundtrip_keypoints.gif` (5 frame(s), 792x532 px, 0.14 MB)
 - Thumbnail: `docs/articles/assets/thumbs/wingconv_roundtrip_keypoints_thumb.jpg`
-- SHA-256: `45e2b0385c468e290d8ffda909e303fbc57b8ba8f7bfd309ac2ba80450b372bf`
+- SHA-256: `945237fc3c62ab0cf43d0830dc6992ac56ed353dd6fa0ca6b5b12a17bbc589ff`
 
 ## 4. Lossy — points → gaussians → volume (measured by mass)
 ![Lossy — points → gaussians → volume (measured by mass)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingconv_roundtrip_gaussians.gif)
 
 *↑ **Lossy — points → gaussians → volume (measured by mass)** — `gaussians` had **no producing op at all**; this adds the entrance. Centres round-trip bit-identically (max|Δ| = 0.000e+00); sigma and w are information *added*, not lost. Splatting to a volume keeps **0.99192** of the mass under a 3σ **box** truncation — first written as the 3σ **ball** value 0.9707, then refuted by refining the grid from 1.0 to 0.125, which converges to the box.*
 
-- GIF: `docs/articles/assets/media/wingconv_roundtrip_gaussians.gif` (4 frame(s), 792x508 px, 0.09 MB)
+- GIF: `docs/articles/assets/media/wingconv_roundtrip_gaussians.gif` (4 frame(s), 792x532 px, 0.10 MB)
 - Thumbnail: `docs/articles/assets/thumbs/wingconv_roundtrip_gaussians_thumb.jpg`
-- SHA-256: `cd1c64237e981484c031abe3d6dae187916cbf01e2117d181889f070f930892e`
+- SHA-256: `9e19ef2fa00ecb2688237735f958c2ba8e22c477ebb4334c81e81fc97d79319d`
 
 ## 5. Around the representations — what survives and what does not
 ![Around the representations — what survives and what does not](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingconv_cross_loop.gif)
 
-*↑ **Around the representations — what survives and what does not** — voxel → mesh → points → gaussians → voxel. A solid of 5768 voxels loses its interior at the mesh stage (3120 vertices / 6236 faces, area 2396.4), loses connectivity and orientation at the points stage, and comes back as a 5608-voxel shell rather than a solid. Yet the centroid moves only 0.0000 voxel. **Reporting both an agreeing and a disagreeing metric** is what keeps 'it came back' from being a lie.*
+*↑ **Around the representations — what survives and what does not** — voxel → mesh → points → gaussians → voxel. A solid of 5444 voxels loses its interior at the mesh stage (3268 vertices / 6584 faces, area 2461.8), loses connectivity and orientation at the points stage, and comes back as a shell: interior fill goes **100.0% → 38.2%**. Yet the centroid moves only 1.2925 voxel. **Reporting both an agreeing and a disagreeing metric** is what keeps 'it came back' from being a lie. This claim cannot be made from a maximum-intensity projection — a thin shell still looks solid in MIP — so it is shown on a central slice.*
 
-- GIF: `docs/articles/assets/media/wingconv_cross_loop.gif` (5 frame(s), 792x508 px, 0.11 MB)
+- GIF: `docs/articles/assets/media/wingconv_cross_loop.gif` (5 frame(s), 792x532 px, 0.12 MB)
 - Thumbnail: `docs/articles/assets/thumbs/wingconv_cross_loop_thumb.jpg`
-- SHA-256: `ff54f6a7012e049a3caea0d143716bb992d0456f9a3ba75eda23ea47a94055f2`
+- SHA-256: `fdefdaff55bb3f304a665ed94a74476b979ec3d54d64af23cdf7623273fd7d8a`
 
 ## 6. The dead type `flow` becomes visible
 [![The dead type `flow` becomes visible](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_flow_colorwheel_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_flow_colorwheel.png)

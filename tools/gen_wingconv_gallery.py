@@ -71,7 +71,7 @@ C_ACC = (0.72, 0.55, 0.98)     # 補助(紫)
 TILE = 240          # 1 タイルの一辺 [px]
 PAD = 18
 HEAD = 58           # 表題の帯
-FOOT = 92           # 数値の帯
+FOOT = 116          # 数値の帯
 
 _FONT_CACHE: dict = {}
 
@@ -193,8 +193,8 @@ def _frame(title, tiles, captions, footer_lines, foot_colors=None):
         canvas[HEAD:HEAD + TILE, x:x + TILE] = _fit(t)
     im = Image.fromarray(np.clip(canvas * 255 + 0.5, 0, 255).astype(np.uint8), "RGB")
     d = ImageDraw.Draw(im)
-    d.text((w // 2, HEAD // 2), title, fill=tuple(int(c * 255) for c in C_TEXT),
-           font=_jp_font(17, True), anchor="mm")
+    d.text((w // 2, HEAD // 2), title.replace("**", ""),
+           fill=tuple(int(c * 255) for c in C_TEXT), font=_jp_font(17, True), anchor="mm")
     for i, cap in enumerate(captions):
         x = PAD + i * (TILE + PAD) + TILE // 2
         d.text((x, HEAD + TILE + 13), cap, fill=tuple(int(c * 255) for c in C_DIM),
@@ -205,7 +205,8 @@ def _frame(title, tiles, captions, footer_lines, foot_colors=None):
         # 等幅 (consola) は日本語グリフを持たず、混ぜると豆腐が出る。**行ごとに**
         # 選ぶ: ASCII だけの行は等幅(数値が桁で揃う)、日本語を含む行は日本語フォント。
         f = _font(13) if line.isascii() else _jp_font(13)
-        d.text((PAD, y), line, fill=tuple(int(c * 255) for c in col), font=f)
+        d.text((PAD, y), line.replace("**", ""),
+               fill=tuple(int(c * 255) for c in col), font=f)
         y += 18
     return np.asarray(im, np.float64) / 255.0
 
@@ -309,11 +310,14 @@ def build_roundtrip_normals(log):
                [C_TEXT, C_TEXT, C_TEXT]),
         _frame("④ 残差 ―― 可逆なら真っ黒になる(0 を黒、1 を白の固定スケール)",
                [t_in, t_out, t_err], ["入力", "復元", "|入力 - 復元|(0..1 固定)"],
-               [f"max|Δ| = {max_abs:.3e}          "
-                f"最大の角度差 = {facts['max_angle_error_deg']:.3e} deg",
-                "残差の絵は自動スケールにしていない ―― 自動にすると倍精度の丸めが",
-                "「模様」に見えてしまい、可逆なのに壊れているように読める"],
-               [C_OK, C_DIM, C_DIM]),
+               [f"max|Δ| = {max_abs:.3e}   最大の角度差 = "
+                f"{facts['max_angle_error_deg']:.3e} deg   "
+                f"平坦部(仰角 ~90 度)を含む",
+                "★成分の誤差より角度の誤差のほうが小さい ―― 極付近(仰角 ±90 度)では",
+                "方位が不定になるので、成分は動くが向きは動かない。**同じ「誤差」でも",
+                "測る量で桁が変わる**ので、どちらを言っているかを明記する必要がある",
+                "残差の絵は自動スケールにしていない(丸めが模様に見えて壊れて読める)"],
+               [C_OK, C_WARN, C_DIM, C_DIM, C_DIM]),
     ]
     info = _gif(frames, ["入力(袋小路の型)", "方位・仰角へ", "組み直す", "残差 = 真っ黒"],
                 "roundtrip_normals",
@@ -574,10 +578,11 @@ def build_cross_loop(log):
     n = 40
     zz, yy, xx = np.mgrid[0:n, 0:n, 0:n].astype(float)
     c, r = (n - 1) / 2.0, n * 0.30
-    # 球からトーラス状の窪みを削った形(対称すぎると「戻った」が自明になる)
+    # 球から円柱の穴を 1 本抜いた形。**わざと非対称**にしてある —— 対称な形だと
+    # 重心が偶然一致してしまい、「一周して戻った」の根拠として何も言えなくなる。
     ball = ((zz - c) ** 2 + (yy - c) ** 2 + (xx - c) ** 2 <= r ** 2)
-    notch = ((np.abs(zz - c) < 2.5) & ((yy - c) ** 2 + (xx - c) ** 2 > (r * 0.45) ** 2))
-    vox = (ball & ~notch).astype(float)
+    hole = ((yy - c - 3.0) ** 2 + (xx - c) ** 2 <= (r * 0.42) ** 2)
+    vox = (ball & ~hole).astype(float)
     v_true = float(vox.sum())
 
     verts, faces = ops3d.OPS3D["voxel_to_mesh"]["func"](vox, 0.5)[:2]
@@ -591,38 +596,46 @@ def build_cross_loop(log):
     cen_vox = R.points_to_position(np.argwhere(vox > 0.5).astype(float))
     cen_back = R.points_to_position(np.argwhere(shell).astype(float))
 
-    def mip(v):
-        return cmap_gray(v.max(axis=0), 0.0, float(v.max()))
+    # ★「殻であって立体ではない」を **最大値投影で言ってはいけない** ——
+    # MIP は奥行き方向の最大値なので、薄い殻でも中が詰まって見える(実際に一度
+    # そう描いて「体積 5768 -> 殻 5608」というほとんど差の無い数字を出しかけた)。
+    # 中身が残っているかは **中心断面** と **内部の充填率** で言う。
+    mid = n // 2
+    inner = (((zz - c) ** 2 + (yy - c) ** 2 + (xx - c) ** 2) <= (r * 0.55) ** 2) & ~hole
+    fill_in = float(np.count_nonzero(vox[inner] > 0.5)) / float(np.count_nonzero(inner))
+    fill_out = float(np.count_nonzero(shell[inner])) / float(np.count_nonzero(inner))
 
     ext = (0.0, float(n), 0.0, float(n))
-    t_vox = mip(vox)
+    t_vox = cmap_gray(vox[mid], 0.0, 1.0)
     t_mesh = _scatter(np.asarray(verts)[:, [2, 1]], ext, color=C_ACC, size=2)
     t_pts = _scatter(pts[:, [2, 1]], ext, color=C_OK, size=2)
     t_g = _scatter(g["mu"][:, [2, 1]], ext, color=C_ACC, size=3)
-    t_back = mip(back)
-    t_shell = cmap_gray(shell.max(axis=0).astype(float), 0.0, 1.0)
+    t_back = cmap_gray(back[mid], 0.0, float(back[mid].max()))
+    t_shell = cmap_gray(shell[mid].astype(float), 0.0, 1.0)
 
     facts = {"start_volume_voxel": v_true, "mesh_vertices": int(len(verts)),
              "mesh_faces": int(len(faces)), "mesh_area": area,
              "points": int(pts.shape[0]), "sigma_median": float(np.median(g["sigma"])),
              "shell_voxel": int(shell.sum()), "mass": float(back.sum()),
+             "interior_fill_start": fill_in, "interior_fill_end": fill_out,
              "centroid_start": list(cen_vox), "centroid_points": list(cen_pts),
              "centroid_end": list(cen_back),
              "centroid_shift": float(np.linalg.norm(
                  np.asarray(cen_back) - np.asarray(cen_vox)))}
 
-    head = "voxel -> mesh -> points -> gaussians -> voxel(4 つの表現を一周する)"
+    head = "voxel -> mesh -> points -> gaussians -> voxel (4 representations, one lap)"
     frames = [
-        _frame("① voxel ―― 出発(中身の詰まった立体)",
+        _frame("① voxel ―― 出発(中身の詰まった立体。図は中心断面)",
                [t_vox, np.full((8, 8, 3), C_PANEL), np.full((8, 8, 3), C_PANEL)],
-               ["MIP(軸 0)", "", ""],
+               [f"中心断面 z={mid}", "", ""],
                [head, f"体積 = {v_true:.0f} voxel   "
+                      f"内部の充填率 = {fill_in * 100:.1f} %   "
                       f"重心 = ({cen_vox[0]:.3f}, {cen_vox[1]:.3f}, {cen_vox[2]:.3f})"],
                [C_TEXT, C_TEXT]),
-        _frame("② mesh ―― **ここで中身が消える**(表面だけになる)",
+        _frame("② mesh ―― ここで中身が消える(表面だけになる)",
                [t_vox, t_mesh, np.full((8, 8, 3), C_PANEL)],
-               ["voxel", f"頂点 {len(verts)} / 面 {len(faces)}", ""],
-               [head, f"表面積 = {area:.1f}。体積は持たなくなった —— "
+               ["voxel(中心断面)", f"頂点 {len(verts)} / 面 {len(faces)}", ""],
+               [head, f"表面積 = {area:.1f}。体積は持たなくなった ―― "
                       "以後「体積」を語ったらそれは嘘"],
                [C_TEXT, C_WARN]),
         _frame("③ points ―― 面の接続と法線が消える(頂点の集合になる)",
@@ -630,20 +643,22 @@ def build_cross_loop(log):
                ["mesh", f"{pts.shape[0]} 点 (z,y,x)", ""],
                [head, f"重心 = ({cen_pts[0]:.3f}, {cen_pts[1]:.3f}, {cen_pts[2]:.3f})"],
                [C_TEXT, C_TEXT]),
-        _frame("④ gaussians ―― 局所間隔から広がりが**足される**(損失ではない)",
+        _frame("④ gaussians ―― 局所間隔から広がりが足される(損失ではない)",
                [t_pts, t_g, np.full((8, 8, 3), C_PANEL)],
                ["points", f"sigma 中央 {np.median(g['sigma']):.3f}", ""],
                [head, f"重み和 = {g['w'].sum():.6f}(単位は「重み」であって「体積」ではない)"],
                [C_TEXT, C_ACC]),
-        _frame("⑤ voxel ―― 一周した。だが戻ったのは**殻**であって立体ではない",
+        _frame("⑤ voxel ―― 一周した。だが戻ったのは殻であって立体ではない",
                [t_vox, t_back, t_shell],
-               ["出発 (MIP)", "一周後の密度 (MIP)", "しきい値後の殻"],
+               ["出発(中心断面)", "一周後の密度(中心断面)", "しきい値後(中心断面)"],
                [head,
-                f"体積 {v_true:.0f} voxel -> 殻 {int(shell.sum())} voxel"
-                f"   質量 = {back.sum():.4f}",
+                f"内部の充填率 {fill_in * 100:.1f} % -> {fill_out * 100:.1f} % "
+                f"(中身は戻らない)   質量 = {back.sum():.4f}",
                 f"重心のずれ = {facts['centroid_shift']:.4f} voxel "
-                f"(**一致する指標**と**しない指標**を両方出す)"],
-               [C_TEXT, C_WARN, C_OK]),
+                f"(一致する指標と一致しない指標を両方出す)",
+                "★この主張を最大値投影で言ってはいけない ―― MIP は薄い殻でも",
+                "中が詰まって見えるので、中心断面と内部の充填率で言う"],
+               [C_TEXT, C_WARN, C_OK, C_DIM, C_DIM]),
     ]
     info = _gif(frames, ["voxel", "mesh(中身が消える)", "points(接続が消える)",
                          "gaussians(広がりが足される)", "voxel(殻が戻る)"],
@@ -906,10 +921,13 @@ CAPTION_JA = {
         "表現をまたいで一周 ―― 何が残り、何が消えるか",
         "voxel → mesh → points → gaussians → voxel。体積 {start_volume_voxel:.0f} voxel の"
         "立体は mesh の段で**中身を失い**({mesh_vertices} 頂点 / {mesh_faces} 面、"
-        "表面積 {mesh_area:.1f})、points で接続と法線を失い、最後に戻るのは"
-        "立体ではなく殻 {shell_voxel} voxel。一方で重心は {centroid_shift:.4f} voxel しか"
-        "動かない。**一致する指標と一致しない指標を両方出す**のが正直な報告で、"
-        "重心だけ見せると「一周して戻った」という嘘になる。"),
+        "表面積 {mesh_area:.1f})、points で接続と法線を失う。内部の充填率は"
+        "**{interior_fill_start:.1%} → {interior_fill_end:.1%}** で、戻ってきたのは"
+        "立体ではなく殻。一方で重心は {centroid_shift:.4f} voxel しか動かない ―― "
+        "**一致する指標と一致しない指標を両方出す**のが正直な報告で、重心だけ見せると"
+        "「一周して戻った」という嘘になる。★この主張は最大値投影では言えない"
+        "(MIP は薄い殻でも中が詰まって見える。実際に一度そう描きかけた)ので、"
+        "中心断面と内部の充填率で示している。"),
     "flow_colorwheel": (
         "死んだ型 `flow` が「見える」ようになった",
         "`flow` は単入力で産む op も食う op も無い完全な孤島だった。"
@@ -972,10 +990,12 @@ CAPTION_EN = {
         "voxel → mesh → points → gaussians → voxel. A solid of "
         "{start_volume_voxel:.0f} voxels loses its interior at the mesh stage "
         "({mesh_vertices} vertices / {mesh_faces} faces, area {mesh_area:.1f}), loses "
-        "connectivity and orientation at the points stage, and comes back as a "
-        "{shell_voxel}-voxel shell rather than a solid. Yet the centroid moves only "
-        "{centroid_shift:.4f} voxel. **Reporting both an agreeing and a disagreeing "
-        "metric** is what keeps 'it came back' from being a lie."),
+        "connectivity and orientation at the points stage, and comes back as a shell: "
+        "interior fill goes **{interior_fill_start:.1%} → {interior_fill_end:.1%}**. "
+        "Yet the centroid moves only {centroid_shift:.4f} voxel. **Reporting both an "
+        "agreeing and a disagreeing metric** is what keeps 'it came back' from being "
+        "a lie. This claim cannot be made from a maximum-intensity projection — a thin "
+        "shell still looks solid in MIP — so it is shown on a central slice."),
     "flow_colorwheel": (
         "The dead type `flow` becomes visible",
         "`flow` was a complete island: no single-input op produced or consumed it. Dense "

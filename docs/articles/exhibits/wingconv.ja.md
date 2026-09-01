@@ -16,45 +16,45 @@
 
 *↑ **可逆な変換 ―― 法線 ⇄ 方位・仰角[度]** ―— 袋小路だった `normals` に出口を作った。方位 az と仰角 el(**どちらも度**)へ変換し、そこから組み直すと 9216 本の法線が **max|Δ| = 2.289e-12**(角度差 1.207e-06 度)で戻る。最後のコマの残差が真っ黒なのは「絵が暗い」のではなく **0..1 の固定スケールで 0** だからで、自動スケールにすると倍精度の丸めが模様に見えて可逆なのに壊れて見える。*
 
-- GIF: `docs/articles/assets/media/wingconv_roundtrip_normals.gif` (4 frame(s), 792x508 px, 0.13 MB)
+- GIF: `docs/articles/assets/media/wingconv_roundtrip_normals.gif` (4 frame(s), 792x532 px, 0.14 MB)
 - サムネ: `docs/articles/assets/thumbs/wingconv_roundtrip_normals_thumb.jpg`
-- SHA-256: `3a28c8b7b7fd14f381c0524838ac035c1e71f55dab5536eea57b6d6a3e946e61`
+- SHA-256: `596e13795efe1cb08b5cd3ece7a414e76b261dc2d94ad62cf28f79ffac4580f4`
 
 ## 2. 可逆な変換 ―― 主曲率 ⇄ 形状指数(臍点を含めて厳密)
 ![可逆な変換 ―― 主曲率 ⇄ 形状指数(臍点を含めて厳密)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingconv_roundtrip_curvature.gif)
 
 *↑ **可逆な変換 ―― 主曲率 ⇄ 形状指数(臍点を含めて厳密)** ―— 球・鞍・円柱・平面の 4 パッチ(9216 点。うち臍点・平面 4608 点)を形状指数 S と曲がり C へ移し、戻して **max|Δ| = 2.220e-16**。教科書の `atan((k1+k2)/(k1-k2))` は臍点で 0 除算になるが、`atan2` 形で書けば球 S=+1・鞍 S=0・円柱 S=+0.5 が閉形式のまま全域で厳密に往復する。*
 
-- GIF: `docs/articles/assets/media/wingconv_roundtrip_curvature.gif` (4 frame(s), 792x508 px, 0.25 MB)
+- GIF: `docs/articles/assets/media/wingconv_roundtrip_curvature.gif` (4 frame(s), 792x532 px, 0.26 MB)
 - サムネ: `docs/articles/assets/thumbs/wingconv_roundtrip_curvature_thumb.jpg`
-- SHA-256: `f7189c7973b5134dd1e325d710a89b2d660ecdccc70cae648d1766bb5ce29250`
+- SHA-256: `49783cc6f12b4829dcf731f0e771082a3629a2b7564c9fa1c97afbdb55d0d7c7`
 
 ## 3. 不可逆な変換 ―― keypoints ⇄ 画素格子(落ちる量を測る)
 ![不可逆な変換 ―― keypoints ⇄ 画素格子(落ちる量を測る)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingconv_roundtrip_keypoints.gif)
 
 *↑ **不可逆な変換 ―― keypoints ⇄ 画素格子(落ちる量を測る)** ―— 4 px 間隔に置いた 900 点を計数画像へ焼いて拾い直すと、軸あたり RMS **0.2925 px**(一様量子化の理論 1/√12 = 0.2887)、2-D 距離 RMS 0.4136 px(理論 √(2/12) = 0.4082)。ランダム配置なら 120 → 111 点に融合する ―― **量子化(ずれる)と融合(消える)は別の損失**で、混ぜて 1 つの RMS にするとどちらがどれだけ効いたか言えなくなる。*
 
-- GIF: `docs/articles/assets/media/wingconv_roundtrip_keypoints.gif` (5 frame(s), 792x508 px, 0.13 MB)
+- GIF: `docs/articles/assets/media/wingconv_roundtrip_keypoints.gif` (5 frame(s), 792x532 px, 0.14 MB)
 - サムネ: `docs/articles/assets/thumbs/wingconv_roundtrip_keypoints_thumb.jpg`
-- SHA-256: `45e2b0385c468e290d8ffda909e303fbc57b8ba8f7bfd309ac2ba80450b372bf`
+- SHA-256: `945237fc3c62ab0cf43d0830dc6992ac56ed353dd6fa0ca6b5b12a17bbc589ff`
 
 ## 4. 不可逆な変換 ―― 点群 → ガウシアン → 体積(質量で測る)
 ![不可逆な変換 ―― 点群 → ガウシアン → 体積(質量で測る)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingconv_roundtrip_gaussians.gif)
 
 *↑ **不可逆な変換 ―― 点群 → ガウシアン → 体積(質量で測る)** ―— **産む op が 1 つも無かった** `gaussians` に入口を作った。中心 mu は往復 max|Δ| = 0.000e+00 で bit 一致し、sigma と w は往復で消える「追加された情報」。体積へ焼くと 3σ の**箱**打ち切りで**0.99192** が理論値 —— 最初これを 3σ の**球** 0.9707 と書いたが、刻みを 1.0 → 0.125 と細かくすると箱の値へ収束して球へは近づかず、反証できた。*
 
-- GIF: `docs/articles/assets/media/wingconv_roundtrip_gaussians.gif` (4 frame(s), 792x508 px, 0.09 MB)
+- GIF: `docs/articles/assets/media/wingconv_roundtrip_gaussians.gif` (4 frame(s), 792x532 px, 0.10 MB)
 - サムネ: `docs/articles/assets/thumbs/wingconv_roundtrip_gaussians_thumb.jpg`
-- SHA-256: `cd1c64237e981484c031abe3d6dae187916cbf01e2117d181889f070f930892e`
+- SHA-256: `9e19ef2fa00ecb2688237735f958c2ba8e22c477ebb4334c81e81fc97d79319d`
 
 ## 5. 表現をまたいで一周 ―― 何が残り、何が消えるか
 ![表現をまたいで一周 ―― 何が残り、何が消えるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingconv_cross_loop.gif)
 
-*↑ **表現をまたいで一周 ―― 何が残り、何が消えるか** ―— voxel → mesh → points → gaussians → voxel。体積 5768 voxel の立体は mesh の段で**中身を失い**(3120 頂点 / 6236 面、表面積 2396.4)、points で接続と法線を失い、最後に戻るのは立体ではなく殻 5608 voxel。一方で重心は 0.0000 voxel しか動かない。**一致する指標と一致しない指標を両方出す**のが正直な報告で、重心だけ見せると「一周して戻った」という嘘になる。*
+*↑ **表現をまたいで一周 ―― 何が残り、何が消えるか** ―— voxel → mesh → points → gaussians → voxel。体積 5444 voxel の立体は mesh の段で**中身を失い**(3268 頂点 / 6584 面、表面積 2461.8)、points で接続と法線を失う。内部の充填率は**100.0% → 38.2%** で、戻ってきたのは立体ではなく殻。一方で重心は 1.2925 voxel しか動かない ―― **一致する指標と一致しない指標を両方出す**のが正直な報告で、重心だけ見せると「一周して戻った」という嘘になる。★この主張は最大値投影では言えない(MIP は薄い殻でも中が詰まって見える。実際に一度そう描きかけた)ので、中心断面と内部の充填率で示している。*
 
-- GIF: `docs/articles/assets/media/wingconv_cross_loop.gif` (5 frame(s), 792x508 px, 0.11 MB)
+- GIF: `docs/articles/assets/media/wingconv_cross_loop.gif` (5 frame(s), 792x532 px, 0.12 MB)
 - サムネ: `docs/articles/assets/thumbs/wingconv_cross_loop_thumb.jpg`
-- SHA-256: `ff54f6a7012e049a3caea0d143716bb992d0456f9a3ba75eda23ea47a94055f2`
+- SHA-256: `fdefdaff55bb3f304a665ed94a74476b979ec3d54d64af23cdf7623273fd7d8a`
 
 ## 6. 死んだ型 `flow` が「見える」ようになった
 [![死んだ型 `flow` が「見える」ようになった](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_flow_colorwheel_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_flow_colorwheel.png)

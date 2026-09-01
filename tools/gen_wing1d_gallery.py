@@ -686,8 +686,8 @@ def ex_kurtosis_band(log):
         fig.text(828, 212, f"{r['band_fraction']:.5f}", C_TEXT, 12, True)
         fig.text(828, 236, "prominence", C_DIM, 11)
         fig.text(828, 252, f"{r['prominence']:.1f}", C_TEXT, 12, True)
-        fig.text(828, 276, ("peak IS the defect rate" if r["hit"] else
-                            "peak is NOT the defect rate"),
+        fig.text(828, 276, ("IS the defect rate" if r["hit"] else
+                            "NOT the defect rate"),
                  C_C if r["hit"] else C_WARN, 12, True)
         if k == sk_pick:
             fig.text(828, 296, "<- the band SK chose", C_E, 11, True)
@@ -715,27 +715,25 @@ def ex_kurtosis_band(log):
         fig.text(80, 378, "envelope spectrum of the current band", C_TEXT, 12, True)
         fig.text(axe.X(fd) + 6, 400, f"defect truth {fd:g} Hz", C_WARN, 11, True)
         fig.text(axe.x0 + 6, axe.y0 + 4, "amp", C_DIM, 11)
-        fig.text(W - 250, 572, "envelope frequency [Hz] ->", C_DIM, 11)
+        _xunit(fig, axe, "envelope frequency [Hz] ->")
         # 掃引した全帯域の当たり外れを 1 本の帯にして常時見せる
-        strip_y = H - 44
-        fig.box(76, strip_y, W - 30, strip_y + 12, (0.10, 0.11, 0.13))
+        fig.text(76, H - 50, f"{len(rows)} swept bands: {len(hits)} return {fd:g} Hz "
+                             f"(teal), {len(miss)} return something else (dark) - "
+                             f"band_fraction "
+                             f"{min(r['band_fraction'] for r in hits):.4f}-"
+                             f"{max(r['band_fraction'] for r in hits):.4f} vs "
+                             f"{min(r['band_fraction'] for r in miss):.4f}-"
+                             f"{max(r['band_fraction'] for r in miss):.4f}", C_DIM, 12)
+        strip_y = H - 30
+        fig.box(76, strip_y, W - 30, strip_y + 14, (0.10, 0.11, 0.13))
         for j, rr in enumerate(rows):
             x0s = 76 + int(round((W - 106) * j / len(rows)))
             x1s = 76 + int(round((W - 106) * (j + 1) / len(rows))) - 2
-            fig.box(x0s, strip_y, x1s, strip_y + 12,
-                    C_C if rr["hit"] else (0.32, 0.20, 0.20))
+            fig.box(x0s, strip_y, x1s, strip_y + 14,
+                    C_C if rr["hit"] else (0.34, 0.21, 0.21))
         fig.box(76 + int(round((W - 106) * k / len(rows))), strip_y - 4,
-                76 + int(round((W - 106) * (k + 1) / len(rows))) - 2, strip_y + 16,
+                76 + int(round((W - 106) * (k + 1) / len(rows))) - 2, strip_y + 18,
                 C_TRUE)
-        fig.text(76, H - 62, f"across the {len(rows)} swept bands: {len(hits)} return "
-                             f"{fd:g} Hz (teal), {len(miss)} return something else "
-                             f"(dark). The peak frequency alone cannot tell them apart;",
-                 C_DIM, 12)
-        fig.text(76, H - 26, f"band_fraction can: {min(r['band_fraction'] for r in hits):.4f}"
-                             f"-{max(r['band_fraction'] for r in hits):.4f} on the hits "
-                             f"against {min(r['band_fraction'] for r in miss):.4f}"
-                             f"-{max(r['band_fraction'] for r in miss):.4f} on the misses.",
-                 C_DIM, 12)
         frames.append(fig.u8())
 
     info = save_flipbook(frames, "kurtosis_band", labels, ms=220, hold_ms=1400,
@@ -2247,6 +2245,9 @@ def ex_envelope_truncation(log):
     z = np.arange(n_planes) * z_step
     z_max = float(z[-1])
     surfaces = np.round(np.linspace(6.0, 0.30, 32), 6)
+    # 文献値(0.500 um -> 0.1189 um = 76 % 誤り)をそのまま再現できるよう、
+    # 0.5 に最も近い格子点を厳密な 0.5 に置き換える(単調性は保たれる)。
+    surfaces[int(np.argmin(np.abs(surfaces - 0.5)))] = 0.5
     rows = []
     for s in surfaces:
         sig = I.csi_signal_simulate(surface_um=float(s), z_start_um=0.0,
@@ -2274,6 +2275,7 @@ def ex_envelope_truncation(log):
                      "argmax": int(np.argmax(env))})
     first_refusal = next((i for i, r in enumerate(rows) if r["refused"]), None)
     worst = max(rows, key=lambda r: abs(r["rel"]))
+    doc = next(r for r in rows if abs(r["surface"] - 0.5) < 1e-12)
     log(f"  scan {n_planes} planes x {z_step} um = {z_max:g} um, lambda {lam} um")
     for r in rows[::5]:
         log(f"  surface {r['surface']:6.3f} um  edge {r['edge']:.4f}  "
@@ -2288,6 +2290,9 @@ def ex_envelope_truncation(log):
     log(f"  worst: surface {worst['surface']:.3f} um -> {worst['forced']:.4f} um "
         f"= {worst['rel']:+.2f} % wrong, and its argmax is plane {worst['argmax']} "
         f"of {n_planes} (interior, so an end-of-scan check does not fire)")
+    log(f"  documented case, surface 0.500 um -> {doc['forced']:.4f} um "
+        f"= {doc['rel']:+.2f} % wrong, edge level {doc['edge']:.4f}, argmax plane "
+        f"{doc['argmax']} of {n_planes}")
 
     W, H = GIF_W, GIF_H
     frames, labels = [], []
@@ -2428,6 +2433,9 @@ def ex_envelope_truncation(log):
                                else rows[first_refusal]["edge"]),
         "worst_surface": worst["surface"], "worst_returned": worst["forced"],
         "worst_rel_pct": worst["rel"], "worst_argmax_plane": worst["argmax"],
+        "documented_surface": doc["surface"], "documented_returned": doc["forced"],
+        "documented_rel_pct": doc["rel"], "documented_edge": doc["edge"],
+        "documented_argmax_plane": doc["argmax"],
         "centred_error_um": rows[0]["err"], "centred_edge": rows[0]["edge"],
         "table": [{"surface": r["surface"], "edge": r["edge"], "returned": r["forced"],
                    "rel_pct": r["rel"], "argmax": r["argmax"], "refused": r["refused"]}
@@ -3044,11 +3052,15 @@ CAPTIONS = {
             f"{f['z_range_um']:.0f} µm の走査({f['scan_planes']} plane × "
             f"{f['z_step_um']} µm)の中で、表面を中央 {f['surface_first']:.1f} µm から端の "
             f"{f['surface_last']:.2f} µm まで {f['n_frames']} 段歩かせた。中央では誤差 "
-            f"{abs(f['centred_error_um']):.1e} µm。表面が {f['worst_surface']:.2f} µm まで"
-            f"寄ると `csi_peak_position` は {f['worst_returned']:.4f} µm を返す ―― 有限で、"
-            f"もっともらしく、{abs(f['worst_rel_pct']):.0f} % 間違っている。しかも包絡線の "
-            f"argmax は {f['scan_planes']} plane 中の {f['worst_argmax_plane']} 番目、つまり"
-            f"**内部**なので「端に張り付いたら拒否」という素直な検査は発動しない。"
+            f"{abs(f['centred_error_um']):.1e} µm。表面が "
+            f"{f['documented_surface']:.3f} µm にあると `csi_peak_position` は "
+            f"{f['documented_returned']:.4f} µm を返す ―― 有限で、もっともらしく、"
+            f"{abs(f['documented_rel_pct']):.0f} % 間違っている。しかも包絡線の argmax は "
+            f"{f['scan_planes']} plane 中の {f['documented_argmax_plane']} 番目、つまり"
+            f"**内部**なので「端に張り付いたら拒否」という素直な検査は発動しない"
+            f"(掃引の最悪点は {f['worst_surface']:.2f} µm の "
+            f"{abs(f['worst_rel_pct']):.0f} % で、そこでも argmax は plane "
+            f"{f['worst_argmax_plane']})。"
             f"中央値基準の端レベルが {f['first_refusal_edge']:.4f} を超えた表面 "
             f"{f['first_refusal_surface']:.2f} µm から op は拒否に転じる"
             f"(図の値は `max_edge_envelope=1.0` で強制的に取り出したもの)。"),
