@@ -1275,11 +1275,23 @@ def photometric_stereo_robust(images, lights, method="ransac", threshold=0.05,
     Returns ``(normals, albedo, inliers)``: ``normals`` ``(H, W, 3)`` float32
     unit vectors in :mod:`photometric`'s convention (``(0, 0, 1)`` where the
     albedo is degenerate), ``albedo`` ``(H, W)`` float32, and ``inliers``
-    ``(N, H, W)`` bool — **which lights were believed at which pixel**. Pixels
-    with fewer than *min_inliers* believed lights keep the winning subset's
-    solution and are visible as a thin inlier count in that mask; that is the
-    honest signal that the normal there rests on the minimum three
-    measurements.
+    ``(N, H, W)`` bool — **which lights were believed at which pixel**, after
+    the zero test above, so a blocked light is never named as believed.
+
+    **Unsolvable pixels are ``NaN``.** Three unknowns need three independent
+    equations; a pixel whose believed lights number fewer than *min_inliers*
+    (default and minimum 3), or whose believed directions are coplanar so the
+    3x3 normal matrix is singular, gets ``NaN`` in both *normals* and *albedo*.
+    It used to keep the winning 3-light subset's solution instead, which is how
+    an underdetermined pixel came back as a confident 1.3-degree answer: the
+    minimum-norm solution of 3 unknowns in 2 equations is near the truth only
+    when the surface happens to be nearly flat. The two arrays therefore agree
+    with the mask by construction — ``numpy.isnan(albedo)`` is exactly
+    ``inliers.sum(axis=0) < min_inliers`` plus the singular pixels — and a
+    caller that never checks will get ``NaN`` propagating rather than a
+    plausible number. ``method="lstsq"`` is exempt: it is the deliberately
+    non-robust baseline, it uses every light at every pixel, and its all-true
+    mask says exactly that.
 
     **Raises** ``ValueError``: *images* is not an ``(N, H, W)`` stack or exceeds
     :data:`MAX_LIGHTS` / :data:`MAX_STACK_ELEMENTS` / :data:`MAX_ROBUST_PIXELS`;
