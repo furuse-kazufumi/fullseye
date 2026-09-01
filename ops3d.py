@@ -602,8 +602,13 @@ _CATALOG = {
         ("warp_by_plane", "plane_sweep", ["image2d"], "image2d", False),
     ],
     "sdf_csg": [  # 符号付き距離場の CSG 合成(陰関数ソリッドモデリング、marching cubes へ橋渡し)
-        ("sphere_sdf", "sdf_ops", ["points"], "sdf", False),
-        ("box_sdf", "sdf_ops", ["points"], "sdf", False),
+        # プリミティブが取るのは **ボクセル中心の座標場 (nx,ny,nz,3)** であって
+        # (N,3) の点群ではない。旧宣言 ["points"] → "sdf" は二重に嘘で、点群を
+        # 渡すと返りは (N,) の 1-D になり、"sdf"(3-D 場)にならない。座標場を
+        # 産む grid_coords は実在するのに未登録で、そのため嘘が露見しなかった
+        ("grid_coords", "sdf_ops", [], "coordgrid", False),
+        ("sphere_sdf", "sdf_ops", ["coordgrid"], "sdf", False),
+        ("box_sdf", "sdf_ops", ["coordgrid"], "sdf", False),
         ("sdf_union", "sdf_ops", ["sdf", "sdf"], "sdf", False),
         ("sdf_intersect", "sdf_ops", ["sdf", "sdf"], "sdf", False),
         ("sdf_subtract", "sdf_ops", ["sdf", "sdf"], "sdf", False),
