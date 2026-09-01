@@ -1059,10 +1059,12 @@ def test_ledger_input_types_match_what_the_operators_accept():
     family cannot declare a pool nobody can fill."""
     sys.path.insert(0, os.path.join(ROOT, "tools"))
     from chain_fuzz import TYPE_CHECKS
-    known = set(TYPE_CHECKS) | {"rgbimage"}
+    known = set(TYPE_CHECKS) | set(NEW_SORTS)
     for name, meta in opsspecular.OPSSPECULAR.items():
         for t in meta["in"]:
             assert t in known, f"{name} declares unknown input sort {t!r}"
+        assert meta["out"] in known, \
+            f"{name} declares unknown output sort {meta['out']!r}"
 
 
 def test_result_adapters_only_ever_narrow_the_raw_return():
