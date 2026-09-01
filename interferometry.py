@@ -407,8 +407,15 @@ def _peak_index(env: np.ndarray) -> np.ndarray:
 
 
 def _edge_level(env: np.ndarray) -> np.ndarray:
-    """``max(env[0], env[-1]) / max(env)`` along the last axis — how much of the
-    coherence envelope is still outside the scan.
+    """How much of the coherence envelope is still outside the scan, in ``[0, 1]``.
+
+    ``(max(env[0], env[-1]) - median(env)) / (max(env) - median(env))``, along the
+    last axis. The median baseline is not decoration: without it the measure reads
+    the *noise floor* as if it were a truncated envelope. On a perfectly centred
+    scan with 1 % additive noise the raw ratio ``max(ends)/max`` is 0.0586 — above
+    any threshold that would catch real truncation — while the baseline-referenced
+    form is 0.0069, because the noise floor lifts the ends and the median by the
+    same amount and it cancels.
 
     This is the diagnostic that catches the module's nastiest silent failure, and
     the threshold on it is measured rather than chosen. With a 2.83 um envelope
