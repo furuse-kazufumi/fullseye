@@ -230,6 +230,16 @@ def _check_K(K) -> np.ndarray:
     if abs(float(np.linalg.det(K))) < 1e-12:
         raise ValueError("K is singular (det = %.3g); pixels cannot be "
                          "back-projected to rays" % float(np.linalg.det(K)))
+    # camera.project_points は uv = (X K^T)[:2] / **Z** と書いてあり、最終行が
+    # [0,0,1] であることを暗黙に前提にしている。ここで検査しないと、最終行の
+    # 違う K を渡したときに「順方向の投影」と「逆方向の光線」が別のカメラ
+    # モデルになり、往復が黙ってずれる(例外は出ない)。
+    if not np.allclose(K[2], [0.0, 0.0, 1.0], atol=1e-12):
+        raise ValueError(
+            "K's last row must be [0, 0, 1] (got %r); camera.project_points "
+            "divides by the camera-frame Z, so any other last row makes the "
+            "forward projection and this back-projection different cameras"
+            % (K[2].tolist(),))
     return K
 
 
