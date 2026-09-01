@@ -405,6 +405,23 @@ def make_generators():
 
 #: 必須スカラ引数の名前 → 値サンプラ(署名 introspection で束縛)
 PARAM_HINTS = {
+    # --- 2026-09-02: annotate / gfx2d / colortransport の必須引数 ------------
+    # これが無いと束縛に失敗して op が**永久にスキップ**される。実測で
+    # text_box / legend_box / scale_bar / crosshair がその状態だった
+    # (annotate 25 op のうち 3 op しか到達していなかった原因)。
+    # 値は「絵の中に確実に収まる」側へ寄せる —— 外に出ると fail-closed して
+    # CONTRACT になり、結局その先の経路が走らない。
+    "xy": lambda rng: (12.0, 12.0),
+    "length": lambda rng: 20.0,
+    "units_per_pixel": lambda rng: 0.5,
+    "rect": lambda rng: (4, 4, 60, 40),
+    "xlim": lambda rng: (0.0, 10.0), "ylim": lambda rng: (0.0, 5.0),
+    "font_size": lambda rng: 12,
+    "radius": lambda rng: 6.0,
+    "offset": lambda rng: (2, 2),
+    "reg": lambda rng: 0.1,
+    "levels": lambda rng: 256,
+    "data_range": lambda rng: 1.0,
     "center": lambda rng: 0.5, "width": lambda rng: 0.5,
     "gamma": lambda rng: float(rng.uniform(0.5, 2.0)),
     "cutoff": lambda rng: 0.1, "low": lambda rng: 0.05, "high": lambda rng: 0.2,
