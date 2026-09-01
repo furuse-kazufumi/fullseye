@@ -138,6 +138,38 @@ re-implemented):
     :mod:`optics` and :mod:`visiondesign`. :func:`csi_design` is the *axial*
     counterpart and does not duplicate any of it.
 
+Honest disclosure — what these operators cannot do, measured rather than assumed:
+
+  * **One surface per pixel.** The envelope peak is *a* peak, and a scan that
+    crosses two reflectors returns one number that is neither of them: two equal
+    surfaces 1.5 um apart come back as 5.75 um when they are at 5.00 and 6.50.
+    The same is true of the chromatic path, which picks one of two spectral peaks
+    (-5.0 um out of a -5.0/+5.0 pair) and cannot report that there were two.
+    Transparent films and multi-layer stacks are exactly this case, and nothing
+    here detects it.
+  * **Accuracy is set by the scan layout, not by the estimator.** Centre the
+    surface in the scan and ``"gaussian"`` is exact to 3e-14 um; leave 2 um of
+    margin instead of 6 and the same estimator gives 2.7e-02 um. Both numbers are
+    from the same code on the same surface.
+  * **Low reflectance costs the local fits 20x.** On a field with a 50x
+    reflectance step and 1 % noise the ``"gaussian"`` height error is 0.146 um RMS
+    on the bright half and 3.03 um RMS on the dark half (``"centroid"``: 0.022 ->
+    0.157 um, so 7x rather than 20x). :func:`csi_contrast_map` is what separates
+    the two populations.
+  * **One unit error remains undetectable, and it is named here rather than
+    hidden.** ``chromatic_confocal_height``'s *dispersion_um_per_nm* is a property
+    of the objective, not of the data, so nothing in the spectrum can contradict
+    it: pass it per micrometre instead of per nanometre and the height comes back
+    1000x too large (3000.0 um for a true 3.0 um) with no way for the operator to
+    know. The wavelength/step confusion *is* catchable, because the interferogram
+    carries its own carrier frequency, and it is caught (see
+    ``carrier_tolerance``). The dispersion is not.
+  * **No dispersion compensation, no phase-gap resolution.** Real coherence
+    scanning combines the envelope (unambiguous, coarse) with the fringe phase
+    (ambiguous, fine) to get both; that combination needs a calibrated
+    phase-envelope offset and is not implemented. What is here is the envelope
+    half, which is the half :mod:`fringe` does not have.
+
 Fail-closed, like every Fullseye module. A scan step past the carrier Nyquist
 limit, a coherence peak sitting on the first or last plane of the scan, a signal
 with no coherence peak at all, a zero step, a zero coherence length, a spectral
