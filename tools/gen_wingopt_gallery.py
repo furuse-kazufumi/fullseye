@@ -2582,7 +2582,7 @@ def _caption(name: str, facts: dict, info: dict) -> str:
     if name == "detect_map":
         # 「境界は限界の右に寝ている」と決め打ちにしない ―― 周辺光量落ちの cos^4 が
         # 画角で決まるようになって(2026-09)タイルの角が暗くならなくなり、高コント
-        # ラスト側では 50 % 等高線が**限界より左**に出るようになった。左右は измеり
+        # ラスト側では 50 % 等高線が**限界より左**に出るようになった。左右は測り
         # 直すたびに変わりうるので、何段が左かを数えてそのまま書く。
         cont = [(c, s) for c, s in zip(f["contrasts"], f["contour_50pct_um"])
                 if s is not None]
