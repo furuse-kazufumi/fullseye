@@ -433,16 +433,15 @@ def ex_overlay_alpha(log):
         sweep.append({"alpha": a, "fg_mean_abs_diff": round(d_fg, 4),
                       "bg_mean_abs_diff": round(d_bg, 4)})
         sl = VC.vol_label_slice_rgb(ov, z0, "z")
-        canvas = _canvas(pw + 78, pw)
+        canvas = _canvas(pw + 92, pw)
         _paste(canvas, _frame_border(_up(sl, k)), 0, 0)
         canvas = _text(canvas, [
-            (6, pw + 8, "alpha = %.2f" % a, FG, "la"),
-            (pw - 6, pw + 8, "前景の変化 %.4f / 背景の変化 %.4f" % (d_fg, d_bg),
-             MUTED, "ra"),
-            (6, pw + 34, "下の CT が見えるところと、色が勝つところ", ACCENT, "la"),
-            (6, pw + 56, "背景は alpha に依らず 0.0000 ―― 色はラベルの上にしか乗らない",
-             MUTED + (13,), "la"),
-        ], size=15)
+            (8, pw + 8, "alpha = %.2f   前景の変化 %.4f   背景の変化 %.4f"
+             % (a, d_fg, d_bg), FG + (16,), "la"),
+            (8, pw + 36, "下の CT が見えるところと、色が勝つところ", ACCENT + (15,), "la"),
+            (8, pw + 62, "背景は alpha に依らず 0.0000 ―― 色はラベルの上にしか乗らない",
+             MUTED + (14,), "la"),
+        ], size=16, where="overlay_alpha")
         frames.append(canvas)
 
     shell = VC.vol_label_overlay(grey, labels, seed=SEED, alpha=1.0, mode="boundary")
