@@ -85,16 +85,27 @@ C_BLUE = (0.35, 0.72, 1.00)
 _FONT_CACHE: dict = {}
 
 
-def _font(size: int = 13, bold: bool = False):
-    """等幅フォント(数値が桁で揃う)。無ければ既定へ退避。"""
-    key = (size, bold)
+def _font(size: int = 13, bold: bool = False, cjk: bool = False):
+    """ASCII は等幅(数値が桁で揃う)、日本語は Meiryo。無ければ既定へ退避。
+
+    consola.ttf は CJK グリフを持たないので、日本語をそのまま流すと**全部豆腐**に
+    なる(最初の試作で実際にそうなった)。文字列の中身で自動的に切り替える。
+    """
+    key = (size, bold, cjk)
     if key not in _FONT_CACHE:
         from PIL import ImageFont
-        path = r"C:\Windows\Fonts\consolab.ttf" if bold else r"C:\Windows\Fonts\consola.ttf"
+        if cjk:
+            path, idx = r"C:\Windows\Fonts\meiryob.ttc" if bold else r"C:\Windows\Fonts\meiryo.ttc", 0
+        else:
+            path, idx = (r"C:\Windows\Fonts\consolab.ttf" if bold
+                         else r"C:\Windows\Fonts\consola.ttf"), 0
         try:
-            _FONT_CACHE[key] = ImageFont.truetype(path, size)
+            _FONT_CACHE[key] = ImageFont.truetype(path, size, index=idx)
         except OSError:
-            _FONT_CACHE[key] = ImageFont.load_default()
+            try:
+                _FONT_CACHE[key] = ImageFont.truetype(r"C:\Windows\Fonts\meiryo.ttc", size)
+            except OSError:
+                _FONT_CACHE[key] = ImageFont.load_default()
     return _FONT_CACHE[key]
 
 
