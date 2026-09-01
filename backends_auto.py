@@ -560,10 +560,11 @@ def _sh_geom(p):
             # 決まるのは倍率ではなくサイズ)。2 つのつまみしか無い op 界面なので
             # 目標サイズは入力寸法から作る: Ht = H*(0.5+a), Wt = W*(0.5+b)。
             H, W = x.shape[:2]
-            ht = max(8, int(round(H * (0.5 + a))))
-            wt = max(8, int(round(W * (0.5 + b))))
-            out = ndimage.zoom(x, (ht / H, wt / W), order=1, mode="reflect")
-            return np.clip(out[:ht, :wt], 0, 1)
+            ht = max(1, int(round(H * (0.5 + a))))
+            wt = max(1, int(round(W * (0.5 + b))))
+            out = ndimage.affine_transform(x, np.diag([H / ht, W / wt]),
+                                           output_shape=(ht, wt), order=1, mode="reflect")
+            return np.clip(out, 0, 1)
         if kind == "affine":
             ang = np.deg2rad(-20 + 40 * a)
             M = np.array([[np.cos(ang), -np.sin(ang) + (b - 0.5) * 0.4],
