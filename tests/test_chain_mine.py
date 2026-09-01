@@ -238,13 +238,16 @@ def test_oversize_input_is_skipped_and_counted(env):
     ops, gens = env
     tally = {}
     t0 = time.perf_counter()
-    for i in range(400):                       # 有界(見つからなければ失敗させる)
+    # 走査幅は広めに取る。op を足すたびに候補リストが変わり、上限に触れる連鎖が
+    # 前後するため(実測: 台帳の out 型を 1 つ直しただけで発火が i=669 へずれた)。
+    # 守りたいのは「どの連鎖か」ではなく「上限が実際の連鎖で発火すること」。
+    for i in range(1500):                      # 有界(見つからなければ失敗させる)
         cm.mine_chain(ops, gens, 7 * 1_000_003 + i, 4, tally)
         if tally.get("oversize_input", 0) > 0:
             break
     elapsed = time.perf_counter() - t0
     assert tally.get("oversize_input", 0) > 0, (
-        "400 連鎖のどれでも巨大入力の上限が発火しなかった — 上限が緩すぎるか、"
+        "1500 連鎖のどれでも巨大入力の上限が発火しなかった — 上限が緩すぎるか、"
         "検査が実行前でなく実行後に移っている")
     assert elapsed < 120.0, f"ストール連鎖が {elapsed:.0f}s かかっている"
 
