@@ -1467,12 +1467,21 @@ def lifetime_fit(decay, bin_ps=100.0, background=None, min_counts=1.0,
     ``start_bin`` · ``n_bins_used`` · ``r_squared`` (of the weighted log fit).
 
     Ground truth: on a **noiseless** exponential the recovery is exact —
-    ``lifetime_ps`` matches the input to a measured 1.1e-12 relative error at
-    ``tau = 2000 ps``, and *that stays true when the histogram is built by
-    integrating the exponential over each bin* rather than sampling it, because
-    bin integration multiplies every bin by the same constant and so cannot
-    change the slope. With Poisson noise at 20000 total photons the recovered
-    lifetime is 2001.6 ps (0.08% error, seed 0).
+    ``lifetime_ps`` came back as 2000.000000000 ps for ``tau = 2000 ps`` (256
+    bins x 100 ps), a measured relative error of 0.0, with ``r_squared`` 1.0.
+    *That stays true when the histogram is built by integrating the exponential
+    over each bin* rather than sampling it, because bin integration multiplies
+    every bin by the same constant and so cannot change the slope.
+
+    With Poisson noise the log-linear estimator is **biased high**, and the size
+    of the bias is worth knowing: at 20000 total photons, seed 0,
+    ``min_counts=1`` gives 2058.8 ps (+2.9%) from 133 bins, and raising
+    ``min_counts`` to 10 gives 2047.3 ps (+2.4%) from 94 bins. Averaged over
+    seeds 0-19 at ``min_counts=10`` the mean is 2014.3 ps (**+0.72% systematic
+    bias**) with a 18.2 ps (0.9%) seed-to-seed spread — so seed 0 is a
+    2-sigma-high draw, and the bias, not the scatter, is the thing to remember.
+    It comes from ``E[ln N] < ln E[N]`` in the sparse tail; a full Poisson MLE
+    would remove it and is not what this op does.
 
     **Raises** ``ValueError``: negative, non-finite or non-1-D *decay*, a
     non-positive *bin_ps*, a negative *background* / *min_counts*, a *start_bin*
