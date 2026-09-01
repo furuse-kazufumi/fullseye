@@ -1201,7 +1201,7 @@ def ring_artifact_apply(sinogram, gain_sigma=0.02, seed=0, offsets=None):
     return sino + off[None, :]
 
 
-def ring_artifact_remove(sinogram, window=31, mode="median"):
+def ring_artifact_remove(sinogram, window=5, mode="median"):
     """Remove per-detector-bin offsets by flattening the angle-averaged profile.
 
     The mean of a sinogram column over all angles is a smooth function of the
