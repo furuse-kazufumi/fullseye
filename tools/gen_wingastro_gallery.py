@@ -677,9 +677,11 @@ def ex_drizzle_pair():
         shifts.append((dr, dc))
     shifts = np.asarray(shifts)
     naive = A.sigma_clip_stack(frames, mode="mean")[0]
-    sci, _ = A.drizzle_resample(frames, shifts=shifts, scale=3.0, pixfrac=0.4)
+    sci, wht = A.drizzle_resample(frames, shifts=shifts, scale=3.0, pixfrac=0.4)
+    view = _science(sci, wht)
     n_naive = len(A.star_detect(naive, threshold_sigma=5.0, min_separation=1))
-    n_driz = len(A.star_detect(sci, threshold_sigma=5.0, min_separation=2))
+    n_driz = len(A.star_detect(view, threshold_sigma=5.0, min_separation=2))
+    n_raw = len(A.star_detect(sci, threshold_sigma=5.0, min_separation=2))
 
     panels = [
         _label(_fit(_gray(frames[0]), 420),
@@ -688,18 +690,23 @@ def ex_drizzle_pair():
         _label(_fit(_gray(naive), 420),
                ["24 枚を平均",
                 "%s 検出できた星 %d 個" % (M["wrong"], n_naive)]),
-        _label(_fit(_gray(sci), 420),
-               ["drizzle x3 pixfrac 0.4",
+        _label(_fit(_gray(view), 420),
+               ["drizzle x3 pixfrac 0.4(sci/wht)",
                 "%s 検出できた星 %d 個" % (M["right"], n_driz)]),
+        _label(_fit(_gray(sci), 420),
+               ["同じ drizzle の生の sci(割らない)",
+                "%s 検出 %d 個 = 被覆の格子" % (M["wrong"], n_raw),
+                "保存則の像と見る像は別物"]),
     ]
     labels = ["1 枚", "平均合成 — %d 個" % n_naive,
-              "drizzle x3 — %d 個" % n_driz]
-    sheet = et.contact_sheet(panels, labels, ncols=3, panel_px=420,
+              "drizzle x3 (sci/wht) — %d 個" % n_driz,
+              "割らないと格子が星に化ける — %d 個" % n_raw]
+    sheet = et.contact_sheet(panels, labels, ncols=4, panel_px=420,
                              title="間隔 %.1f 画素の二重星 —— 平均では 1 つ、"
                                    "drizzle では 2 つ" % sep)
     info = et.save_exhibit(sheet, "wingastro_drizzle_pair")
     data = {"separation_px": sep, "n_naive": n_naive, "n_drizzle": n_driz,
-            "n_frames": n_frames}
+            "n_raw_sci": n_raw, "n_frames": n_frames}
     return info, data
 
 
