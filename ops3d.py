@@ -706,6 +706,9 @@ RESULT_ADAPTERS = {
     "segment_rigid_motions": lambda r: r["labels"],  # {"labels", "motions"} → labels
     "surface_residual": lambda r: r["pv"],          # {"rms","max","pv"} → pv float
     "label_components": lambda r: r[0],             # (labels, n) → labels
+    "fscore": lambda r: r[0],                       # (f, precision, recall) → F 値
+    "rmse_inliers": lambda r: r[0],                 # (rmse, n_inliers) → rmse
+    "grid_coords": lambda r: r[0],                  # (coords, extent) → coords
 }
 
 
