@@ -1256,27 +1256,12 @@ print(env["peak_freq"], env["band_fraction"])               # 107.0 と ~1.0 = �
 ライトフィールドは 4 次元 (視点 V, 視点 U, 高さ H, 幅 W) を扱います。既存のステレオ(2 眼)やフォーカススタック(実カメラの合焦)とは**入力が違う**ので、型で分けてあります。
 
 ```python
-import numpy as np, fullseye as fs
-
-# 0) カメラを設計する
-d = fs.lf_plenoptic_design(focal_mm=50.0, f_number=8.0, object_mm=300.0,
-                           pixel_um=3.45, mla_pitch_um=27.6, sensor_px=(2048, 2448))
-print(d["angular_u"], d["refocus_gain"])        # 8, 8.0038 = 角度分解能
-
-# 1) 既知スロープ 2.0 px/視点 の場を合成 → MLA 生画像 → 復号(往復はビット一致)
-lf, truth = fs.lf_synthesize((2.0,), angular=(9, 9), shape=(64, 64),
-                             occlusion=False, texture_sigma=3.0, edge="wrap", seed=0)
-assert np.array_equal(fs.lf_from_mla(fs.lf_to_mla(lf), (9, 9)), lf)
-
-# 2) 掃引して鮮鋭度ピークから深度を出す
-slope, conf = fs.lf_depth_from_focus(lf, np.linspace(-4.0, 4.0, 81),
-                                     edge="wrap", subpixel=False)
-print(float(np.median(slope)))                  # 2.0
-
-# 3) metric 深度へ。視差ゼロ(無限遠)は無言の inf ではなく ValueError
-z = fs.lf_disparity_to_depth(slope, focal_px=50.0 / 27.6e-3, baseline=d["baseline_mm"])
-print(float(np.median(z)))                      # 808.747 mm
+sharp = fs.lf_refocus(lf, slope=2.0)                        # 後からピント面を選ぶ
+slope, conf = fs.lf_depth_from_focus(lf, np.linspace(-4.0, 4.0, 81))
+z = fs.lf_disparity_to_depth(slope, focal_px=..., baseline=...)   # mm へ
 ```
+
+生の MLA 画像からの復号(`lf_from_mla` / `lf_to_mla`)は**往復がビット一致**、視差ゼロ(無限遠)は無言の inf ではなく ValueError、カメラの設計は `lf_plenoptic_design` です。
 
 **得るものと失うものが同じ計算から出ます。** リフォーカスによる被写界深度の利得は、角度分解能にぴたりと一致します。
 
