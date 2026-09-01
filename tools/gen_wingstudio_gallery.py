@@ -464,8 +464,9 @@ def ex_volume_turntable():
         iou = float((a & b).sum()) / float(max(1, (a | b).sum()))
         ious.append(iou)
         lab = []
-        lab += _panel(canvas, 52, 24, S, S, surf, "等値面  marching_cubes + phong_shade")
-        lab += _panel(canvas, 52, 24 + S + 24, S, S, pts,
+        lab += _panel(canvas, 52, 24, PH, S, surf[CY0:CY1],
+                      "等値面  marching_cubes + phong_shade")
+        lab += _panel(canvas, 52, 24 + S + 24, PH, S, pts[CY0:CY1],
                       "境界シェル点群  vol_boundary + Studio のレンダラ")
         f = _to_u8(canvas)
         lab += [
@@ -473,9 +474,9 @@ def ex_volume_turntable():
                     "   yaw %5.1f deg / pitch %.0f deg   (どちらもほぼ正射影)"
                     % (vol.shape[0], vol.shape[1], vol.shape[2], level, yaw, PITCH),
              C_TEXT, 13, False),
-            (30, 52 + S + 10, "三角形 %s 枚 / 頂点 %s   シルエット %s px"
+            (30, 52 + PH + 10, "三角形 %s 枚 / 頂点 %s   シルエット %s px"
              % (f"{F.shape[0]:,}", f"{Vw.shape[0]:,}", f"{cov:,}"), C_ACCENT, 13, True),
-            (30 + S + 24, 52 + S + 10, "シェル voxel %s 点   シルエット IoU = %.3f"
+            (30 + S + 24, 52 + PH + 10, "シェル voxel %s 点   シルエット IoU = %.3f"
              % (f"{n_shell:,}", iou), C_BLUE, 13, True),
             (24, H - 26, "左は render3d、右は Studio のビューアで、カメラ慣習が違う"
                          "(yaw_studio = 270 - yaw, pitch_studio = -pitch)。"
