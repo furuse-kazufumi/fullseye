@@ -270,7 +270,7 @@
     "file": "docs/articles/assets/media/wing2d_denoise_compare.gif",
     "thumb": "docs/articles/assets/thumbs/wing2d_denoise_compare_720.jpg",
     "frames": 12,
-    "bytes": 3027790,
+    "bytes": 3003184,
     "size": [
       864,
       1038
@@ -382,8 +382,8 @@
     },
     "caption": "同じ写真に σ=0.020→0.220 の白色ノイズを乗せ、median・bilateral・non-local means を固定パラメータで当てて PSNR を実測した 6 パネル。弱いノイズ (σ=0.020) では bilateral が 30.00 dB で最良だが、強いノイズ (σ=0.220) では median が 23.09 dB で逆転する —— 「どれが一番強いか」はノイズ量と設定次第で、掃引の途中で順位が 2 度入れ替わった。ノイズ画像そのものは 34.04→14.34 dB。同じ画像を `estimate_noise` に渡すと 0.0263→0.1920 が返り、真値の 131%→87% にあたる —— 上端に張り付く点は 0/9 で、σ が 3 倍違えば返り値も違う (この op は σ そのものを返す契約になった)。",
     "sha256": {
-      "wing2d_denoise_compare.gif": "5ef99151057aeb445b17dc64493092f5af72d246328d2204dc0f7f43bbd0bffe",
-      "wing2d_denoise_compare_720.jpg": "5fe358cfc8f4dd7a6d4f4784690a988faae2531e90a0c2b4d162deda292fb501"
+      "wing2d_denoise_compare.gif": "8c8a5e53b65d978f12d41ba5c4a8573d7bd4a51016ddf0c4bf3ea9fa0ab8b746",
+      "wing2d_denoise_compare_720.jpg": "478ee8b5b20977945566557186040e16cbafd367d69894702234d9bd20e213cd"
     }
   },
   {

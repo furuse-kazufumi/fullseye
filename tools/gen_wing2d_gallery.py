@@ -722,7 +722,7 @@ def subject_denoise_compare(log=print) -> dict:
              for k, lab in (("noisy", "ノイズ画像そのもの"), ("median", "median"),
                             ("bilateral", "bilateral"), ("sk_nlm", "sk_nlm"))],
             grid.shape[1] // 2 - 4, 300, xlim=(0.02, 0.22), ylim=(12, 42),
-            title="ノイズを強くしていくと 3 つの順位はどうなるか",
+            title="ノイズを強くすると順位はどうなるか",
             xlabel="加えたノイズ σ", legend_pos="tr")
         # ★2026-09-02: estimate_noise は σ の単位で返るようになった (以前は
         #   σ>=0.08 で 1.0 に張り付き、3 倍違う σ に同じ値を返していた)。
