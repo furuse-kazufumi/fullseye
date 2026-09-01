@@ -796,7 +796,7 @@ def ex_cos4_falloff(log):
     w, hdr = 1000, 34
     map_x, map_y = 18, hdr + 26
     plot_box = (map_x + map_w + 78, map_y + 8, w - 24, map_y + map_h - 44)
-    h = map_y + map_h + 96
+    h = map_y + map_h + 122
     frames = []
     for i, r in enumerate(rows):
         canvas = _canvas(h, w)
@@ -840,13 +840,13 @@ def ex_cos4_falloff(log):
             labels.append((int(p.px(t)) - 6, plot_box[3] + 6, f"{t}", C_DIM, 11, False))
         for t in (0.25, 0.5, 0.75, 1.0):
             labels.append((plot_box[0] - 36, int(p.py(t)) - 7, f"{t:.2f}", C_DIM, 11, False))
-        yi = map_y + map_h + 10
+        yi = map_y + map_h + 38
         labels += [
             (map_x + 4, map_y - 18, "relative illuminance across the sensor",
              (0.95, 0.95, 0.92), 12, True),
             (map_x + map_w + 82, map_y - 18, "cos^4 vs field angle (relative_illumination)",
              (0.95, 0.95, 0.92), 12, True),
-            (plot_box[2] - 140, plot_box[3] - 16, "field angle [deg] ->", C_DIM, 11, False),
+            (plot_box[2] - 140, plot_box[1] + 4, "field angle [deg] ->", C_DIM, 11, False),
             (18, yi,
              f"f = {r['f']:5.1f} mm   image distance {r['image_mm']:6.2f} mm   "
              f"half field angle {r['half_deg']:5.2f} deg",

@@ -2691,8 +2691,9 @@ def ex_oblique(log) -> dict:
                     f"{rows[0]['minor_mm']:.3f} mm のままなのに、長径は "
                     f"**2r / cos θ** に沿って伸び、80° では {rows[-1]['major_mm']:.3f} mm "
                     f"= {rows[-1]['major_mm'] / rows[0]['minor_mm']:.2f} 倍になる。"
-                    f"{len(rows)} 角度すべてで理論値との差は最大 {max_major_err:.4f} mm"
-                    f"({max_major_err / sp:.2f} 画素)。「斜めの断面で測った直径」を"
+                    f"{len(rows)} 角度({angles[0]}°〜{angles[-1]}°)すべてで理論値との差は"
+                    f"最大 {max_major_err:.4f} mm({max_major_err / sp:.2f} 画素)。"
+                    "「斜めの断面で測った直径」を"
                     "そのまま寸法にしてはいけない、という一本。"),
         **info}
 
