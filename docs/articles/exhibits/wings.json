@@ -22,6 +22,38 @@
       }
     },
     {
+      "id": "wing3d",
+      "order": 40,
+      "title": {
+        "ja": "3D 計測ウィング ―― ボクセルと点群を「測る」",
+        "en": "The 3-D Metrology Wing — Measuring Voxels and Point Clouds"
+      }
+    },
+    {
+      "id": "wingct",
+      "order": 50,
+      "title": {
+        "ja": "断層撮影ウィング ―― 投影から作る側",
+        "en": "The Tomography Wing — Making the Slice From Projections"
+      }
+    },
+    {
+      "id": "wingconv",
+      "order": 55,
+      "title": {
+        "ja": "表現変換ウィング ―― 往復させて嘘を露見させる",
+        "en": "The Representation-Conversion Wing — Round-Tripping to Expose the Lie"
+      }
+    },
+    {
+      "id": "wingstudio",
+      "order": 60,
+      "title": {
+        "ja": "Studio と 3D 表示ウィング ―― 見て気づく",
+        "en": "The Studio and 3-D Display Wing — Noticing by Looking"
+      }
+    },
+    {
       "id": "wingvox",
       "order": 90,
       "title": {
