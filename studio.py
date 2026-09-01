@@ -683,8 +683,8 @@ def volume_to_shell_points(vol, spacing=(1.0, 1.0, 1.0), max_points=2_000_000):
     The bridge that lets the 3-D viewer (and the first-person walkthrough) open
     a CT/MRI volume directly: Otsu-threshold the volume, keep only the
     *boundary shell* of the foreground (volops.vol_boundary — the memory-frugal
-    surface representation), and return the shell voxels as physical
-    ``(z, y, x)`` points plus per-point grayscale colors from the original
+    surface representation), and return the shell voxels as physical **world
+    ``(x, y, z)``** points plus per-point grayscale colors from the original
     intensities. An over-large volume is mean-pooled down (factor-of-2 steps)
     until the shell fits *max_points* — decimation is reported in the returned
     info dict, never silent. Downsampling stops once the smallest axis reaches
@@ -692,10 +692,30 @@ def volume_to_shell_points(vol, spacing=(1.0, 1.0, 1.0), max_points=2_000_000):
     *max_points* the returned cloud can still exceed the budget — check
     ``info["n_points"]``.
 
+    **Axis order (2026-09-02).** The points come out in the *viewer's* world
+    order ``(x, y, z)``, not the volume's array order ``(z, y, x)``: every
+    consumer of this cloud — :func:`viewer3d_project`,
+    :func:`viewer3d_project_persp`, :func:`render_points_frame` (whose default
+    height ramp reads ``P[:, 2]``), :func:`viewer3d_fp_axes` (world up is
+    ``+z``) and the point files ``mesh.read_points`` loads alongside it — treat
+    the **third** component as world up. Returning ``(z, y, x)`` therefore laid
+    the volume's slice axis across the screen and a tall CT stack displayed on
+    its side; the height ramp coloured by the x index. The array-order
+    primitive is still available as :func:`volops.vol_boundary_points`, which
+    stays ``(z, y, x)`` on purpose (it feeds the ``(depth, row, col)``
+    measurement stack). This function is the voxel-world → viewer-world
+    boundary, so the flip happens exactly here.
+
+    *spacing* is unchanged: ``(sz, sy, sx)``, matching the ``(D, H, W)`` array
+    axes and :class:`volio.VolumeMeta.spacing_mm`, so ``meta.spacing_mm`` can
+    still be passed straight through. It is reversed together with the indices.
+
     Returns ``(P, C, info)``: points (N, 3) float64 in physical units, colors
     (N, 3) in [0, 1], and ``info = {"shape", "downsampled_by", "threshold",
-    "n_points"}``. Raises ``ValueError`` on a non-3-D or constant volume (no
-    surface exists to walk around)."""
+    "n_points", "axis_order"}`` (``axis_order`` is the literal ``"xyz"`` — an
+    assertable marker of the convention above). Raises ``ValueError`` on a
+    non-3-D or constant volume (no surface exists to walk around), or on a
+    *spacing* that is not three finite positive numbers."""
     import volops                                 # lazy: keep studio import light
     v = np.ascontiguousarray(vol, dtype=np.float64)
     if v.ndim != 3:
