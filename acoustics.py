@@ -1370,6 +1370,14 @@ def order_spectrum(x, rate, rpm, samples_per_rev=64, revolutions=None,
     k = _count(n_peaks, "n_peaks", 1, 4096)
     spr = ang["samples_per_rev"]
     whole = ang["whole_revolutions"]
+    if revolutions is not None:
+        want = _count(revolutions, "revolutions", 1, 1 << 30)
+        if want > whole:
+            raise ValueError("%s: revolutions=%d requested but the record covers "
+                             "only %g (%d whole). Padding to reach it would "
+                             "invent shaft rotations that were never recorded"
+                             % (op, want, ang["revolutions"], whole))
+        whole = want
     n = whole * spr
     if n < 4:
         raise ValueError("%s: %d whole revolution(s) at %d samples/rev is %d "
