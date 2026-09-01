@@ -818,11 +818,16 @@ def ex_window_sweep(log):
         else:
             fig.text(400, 572, f"|reported - true| = {abs(r['at'] - fc):.0f} Hz "
                                f"(one bin is {r['bin']:.0f} Hz)", C_DIM, 12, False)
+        lab = (f"窓 {r['win']} = {r['ms']:.2f} ms(衝撃間隔 {period_ms:.2f} ms)  /  "
+               f"最大 SK {r['max']:+.4f} @ {r['at']:.0f} Hz"
+               + ("  ← 負。共振と無関係な周波数" if r["max"] < 0 else ""))
+        u8 = fig.u8()
         for _ in range(hold):
-            frames.append(fig.u8())
+            frames.append(u8)
+            labels.append(lab)
 
-    thumb = wins.index(256) * hold if 256 in wins else 0
-    info = save_gif(frames, "window_sweep", fps=5, thumb_index=thumb, log=log)
+    info = save_flipbook(frames, "window_sweep", labels, ms=380, hold_ms=1800,
+                         log=log)
     facts = {
         "impact_period_ms": period_ms, "true_resonance_hz": fc,
         "table": [{k: r[k] for k in ("win", "ms", "max", "at", "bin", "frames")}
