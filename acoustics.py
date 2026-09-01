@@ -1822,11 +1822,11 @@ def equivalent_level(x, rate, weighting="A", ref=1.0, floor_db=FLOOR_DB):
     relative to one unit of the signal's own units; it is not dB SPL, because
     this library never sees your calibration. Pass ``ref=20e-6`` for pascals.
 
-    Measured: a 1 kHz sine of amplitude 1.0 at 16 kHz over an integer number of
-    periods gives ``L_eq = -3.010300`` dB with Z weighting, against the closed
-    form ``10*log10(1/2) = -3.010300`` (equal to 1.3e-14 dB), and the **same**
-    value under A weighting (difference 2.5e-14 dB), because A is 0 dB at 1 kHz.
-    Doubling the amplitude adds exactly 6.020600 dB.
+    Measured: a 1 kHz sine of amplitude 1.0 at 16 kHz over exactly 1000 periods
+    gives ``L_eq = -3.010300`` dB with Z weighting, against the closed form
+    ``10*log10(1/2) = -3.010300`` (difference 2.2e-15 dB), and the **same** value
+    under A weighting (difference 8.9e-16 dB), because A is 0 dB at 1 kHz.
+    Doubling the amplitude adds 6.020600 dB. Silence returns -200.0.
 
     Silence returns ``floor_db`` (default -200) rather than ``-inf``; an ``-inf``
     in a list of levels destroys every average taken over it afterwards.
