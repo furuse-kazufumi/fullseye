@@ -562,7 +562,15 @@ def synthesize_translation(shape=(64, 64), frames: int = 32, amplitude_px=0.5,
                          "show an aliased motion at a different frequency than "
                          "the one requested" % (freq, 0.5 * fs, fs))
     ang = np.deg2rad(_finite_scalar(direction_deg, "direction_deg"))
-    lam = _positive(wavelength_px, "wavelength_px")
+    if isinstance(wavelength_px, (tuple, list, np.ndarray)):
+        if len(wavelength_px) != 2:
+            raise ValueError("synthesize_translation: wavelength_px must be a "
+                             "number or a 2-tuple (lambda_x, lambda_y), got %r"
+                             % (wavelength_px,))
+        lam_x = _positive(wavelength_px[0], "wavelength_px[0]")
+        lam_y = _positive(wavelength_px[1], "wavelength_px[1]")
+    else:
+        lam_x = lam_y = _positive(wavelength_px, "wavelength_px")
     con = _finite_scalar(contrast, "contrast")
     off = _finite_scalar(offset, "offset")
     sigma = _finite_scalar(noise_sigma, "noise_sigma")
