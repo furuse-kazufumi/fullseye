@@ -171,6 +171,34 @@ def _frame_border(rgb, colour=(0.22, 0.24, 0.30)):
     return rgb
 
 
+def _text_width(txt: str, size: int) -> int:
+    """PIL に実際に測らせる。目分量で決めると端が切れた図が黙って出る。"""
+    from PIL import Image, ImageDraw
+
+    dr = ImageDraw.Draw(Image.new("RGB", (4, 4)))
+    box = dr.textbbox((0, 0), txt, font=_font(size))
+    return int(box[2] - box[0])
+
+
+def _fit_size(txt: str, width: int, start: int, floor: int = 11) -> int:
+    """*width* に収まる最大の字数(はみ出した図を作らないための機械的な保険)。"""
+    s = int(start)
+    while s > floor and _text_width(txt, s) > width - 8:
+        s -= 1
+    return s
+
+
+def _assert_fits(items, width: int, default_size: int, where: str) -> None:
+    """焼き込む文字が枠に収まっているかを**生成時に**検査する(fail-closed)。"""
+    for x, _y, txt, col, anchor in items:
+        size = default_size if len(col) == 3 else int(col[3])
+        w = _text_width(txt, size)
+        left = x if anchor[0] == "l" else (x - w // 2 if anchor[0] == "m" else x - w)
+        if left < 0 or left + w > width:
+            raise ValueError("%s: %r (%d px @ size %d) does not fit in %d px "
+                             "(left=%d)" % (where, txt[:40], w, size, width, left))
+
+
 # --------------------------------------------------------------------------- #
 # 1) 色分けしたボクセルのスライス送り(主役)                                     #
 # --------------------------------------------------------------------------- #
