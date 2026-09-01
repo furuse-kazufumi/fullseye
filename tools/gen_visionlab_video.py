@@ -508,8 +508,8 @@ def build_design_frames(*, focal_mm=35.0, pixel_pitch_um=3.45, f_number=4.0,
              f"defect = {defect_um / geo['um_per_pixel']:5.2f} px",
              C_TEXT, 14, True),
             (MARGIN + 8, INFO_Y + 25,
-             f"optical limit {r['optical_um']:6.1f} um ({r['res']['limited_by']}-limited)"
-             f"   optics: {r['verdict']}   " +
+             f"optical limit {r['optical_um']:6.1f} um ({r['res']['limited_by']})"
+             f"  optics: {r['verdict']}  " +
              ("no image (below one pixel)" if m is None else
               f"IoU {m['iou']:.3f}  rate {m['detection_rate']:.0%}  -> " +
               ("DETECTED" if detected else "not detected")),
