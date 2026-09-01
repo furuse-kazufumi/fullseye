@@ -1154,9 +1154,10 @@ def monogenic_signal(image, wavelength_px=8.0, bandwidth_octaves=1.0) -> np.ndar
     A grating exactly at the band centre passes with gain 1, so for
     ``contrast * cos(2*pi*(u0*x+v0*y) + p)`` the amplitude is ``contrast``
     everywhere, the phase is the grating's own phase, and the orientation is
-    ``atan2(v0, u0) mod pi``. Measured on a 64x64 frame with an 8 px grating and
-    unit contrast: amplitude ``1.0`` with a spread of ``2.2e-16``, phase error
-    ``2.5e-16`` rad, orientation error ``0.0`` rad.
+    ``atan2(v0, u0) mod pi``. Measured on a 64x64 frame with an 8 px grating of
+    unit contrast and phase 0.7: amplitude mean exactly ``1.0`` with a spread of
+    ``8.9e-16`` across the frame, phase error ``5.3e-15`` rad, orientation error
+    ``0.0`` rad.
 
     **Honest limit.** The phase is well defined only where the amplitude is; in a
     flat region the amplitude is at the rounding floor and the phase is the angle
