@@ -58,20 +58,27 @@ def _shape(shape):
     return h, w
 
 
-def _num(value, name, *, lo=None, hi=None, allow_zero=False):
+def _num(value, name, *, lo=None, hi=None, sign="positive"):
     """数値引数の検証。文字列・bool を明示的に弾く。
 
     ``float("30")`` は成功するので、未解析の設定値が µm として通り抜ける
     (光学系で実際に踏んだ罠。``thin_lens("50","200")`` が 66.667 mm を返した)。
+
+    ``sign`` は 3 つの意図を**分けて**書くためにある — ここを兼用にしていて
+    「0 を許す」と「負を許す」を混同し、暗い傷(contrast<0)を弾いてしまった:
+
+      * ``"positive"``     0 も負も不可(長さ・半径)
+      * ``"non_negative"`` 0 は可・負は不可(ゆらぎ・確率)
+      * ``"any"``          符号を問わない(コントラスト・角度)。範囲は lo/hi で
     """
     if isinstance(value, (str, bytes, bool)):
         raise ValueError("%s must be a number, got %r" % (name, value))
     v = float(value)
     if not np.isfinite(v):
         raise ValueError("%s must be finite, got %r" % (name, value))
-    if not allow_zero and v <= 0.0:
+    if sign == "positive" and v <= 0.0:
         raise ValueError("%s must be positive, got %r" % (name, value))
-    if allow_zero and v < 0.0:
+    if sign == "non_negative" and v < 0.0:
         raise ValueError("%s must be >= 0, got %r" % (name, value))
     if lo is not None and v < lo:
         raise ValueError("%s must be >= %g, got %r" % (name, lo, value))
