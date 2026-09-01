@@ -4,8 +4,8 @@
    "kind": "gif",
    "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingopt_pixel_pitch.gif",
    "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingopt_pixel_pitch_thumb.jpg",
-   "bytes": 494986,
-   "thumb_bytes": 42797,
+   "bytes": 701655,
+   "thumb_bytes": 43907,
    "size": [
     1000,
     502
@@ -14,7 +14,7 @@
    "fps": 10,
    "colors": 256,
    "thumb_frame": 29,
-   "sha256": "8cd5fa2d8bb4de22c53fc6ad3fa5407eb7c1c0d04288b76faf420a7fc618d258"
+   "sha256": "3e2f3fc929289acccd75bc39aa5b1bcb563a85399324043ffb711a4c535c0dbb"
   },
   "title": "画素ピッチとサンプリング",
   "ops": [

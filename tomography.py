@@ -444,8 +444,9 @@ def _filter_projections(sino: np.ndarray, kind: str, cutoff: float) -> np.ndarra
     Zero-padded to at least twice the detector count before the FFT. Without the
     pad the circular convolution wraps the ramp's long negative tails around the
     detector axis, which puts a smooth cup across the reconstruction that looks
-    exactly like beam hardening — measured in the tests as a 1.3 % interior tilt
-    that the pad removes.
+    exactly like beam hardening — measured on a uniform disc as a **4.05 %**
+    depression of the interior mean (0.9551 unpadded against 0.9954 padded, on a
+    true density of 1.0) that the pad removes.
     """
     n_det = sino.shape[1]
     n_pad = 1
@@ -624,8 +625,8 @@ def ellipse_phantom(size=256, ellipses=None, supersample=4):
     *supersample* is the anti-aliasing factor: each pixel is the mean of
     ``supersample^2`` sub-samples, so an edge pixel carries its true area
     fraction. This is not cosmetic — a hard 0/1 rasterisation projects to a
-    sinogram that disagrees with the closed form by 1.9 % RMS of the peak, against
-    0.07 % anti-aliased (measured, ``tests/test_tomography.py``), and the
+    sinogram that disagrees with the closed form by **0.276 % interior RMS** of
+    the peak, against **0.073 %** anti-aliased (measured), and the
     difference is entirely the partial-volume edge.
 
     :param size: side of the square grid, ``2 .. 16384``.
@@ -759,7 +760,7 @@ def radon_transform(image, angles_deg=None, n_detectors=None, oversample=1):
 
     Accuracy against the closed form (a disc of radius 60 px in a 256-px grid,
     180 views), measured in ``tests/test_tomography.py``: interior RMS error
-    **0.073 %** of the peak line integral, whole-sinogram RMS **0.40 %** — the
+    **0.073 %** of the peak line integral, whole-sinogram RMS **0.402 %** — the
     difference between the two being the partial-volume edge, where the phantom's
     own anti-aliased boundary is what is being sampled.
 
@@ -768,7 +769,7 @@ def radon_transform(image, angles_deg=None, n_detectors=None, oversample=1):
         ``linspace(0, 180, 180, endpoint=False)``.
     :param n_detectors: bins; ``None`` -> odd count covering the diagonal.
     :param oversample: ray samples per pixel, ``1 .. 8``. The default is 1
-        because 4 measures no better (0.073 % either way).
+        because 4 measures no better (0.073 % against 0.070 %).
     :returns: ``(n_angles, n_detectors)`` float64 sinogram.
     :raises ValueError: on non-finite input, an empty angle list, a detector count
         under 4, or a sinogram over :data:`MAX_SINOGRAM_ELEMENTS`.
@@ -1366,7 +1367,7 @@ def metal_trace_interpolate(sinogram, angles_deg=None, image_threshold=None,
             "%s: %d projection(s) are entirely flagged as metal. Those views carry "
             "no usable data at all, and filling them from their own (empty) "
             "neighbours would fabricate a projection. Drop those angles from the "
-            "scan instead, or raise the threshold" % (op, full_rows))
+            "scan instead, or raise image_threshold" % (op, full_rows))
     out = sino.copy()
     idx = np.arange(sino.shape[1], dtype=np.float64)
     for i in range(sino.shape[0]):

@@ -626,7 +626,7 @@ def ex_kurtosis_band(log):
         fig.text(80, 44, "STFT magnitude (log), interior frames only", C_TEXT, 12, True)
         fig.text(24, 180, "Hz", C_DIM, 11)
         fig.text(axp.x1 - 116, axp.y1 + 22, "time [s] ->", C_DIM, 11)
-        fig.text(axp.x1 - 148, axp.Y(fc) + 6, f"true resonance {fc:g} Hz",
+        fig.text(axp.x1 - 148, axp.Y(fc) + 26, f"true resonance {fc:g} Hz",
                  C_TRUE, 11, True)
 
         # 右: SK 曲線(周波数を縦に取り、平面と軸を揃える)
@@ -653,7 +653,7 @@ def ex_kurtosis_band(log):
         fig.text(604, 360, f"win {sk['win']} = {sk['window_seconds'] * 1e3:.2f} ms, "
                            f"bin {sk['bin_hz']:.0f} Hz", C_DIM, 11)
         fig.text(604, 376, f"estimator sigma {sk['noise_sigma']:.4f}", C_DIM, 11)
-        fig.text(760, 344, "SK ->", C_DIM, 11)
+        fig.text(770, 316, "SK ->", C_DIM, 11)
 
         # 右端: 読み取り値
         fig.box(818, 62, W - 14, 332, C_PANEL2)
@@ -1210,7 +1210,8 @@ def ex_weighting_ac(log):
                      "wa": wa, "wc": wc, "da": float(la - lz) - wa,
                      "dc": float(lc - lz) - wc,
                      "f_off": f_off, "da_off": float(lao - lzo) - wao,
-                     "wave": x[:int(round(0.006 * fs))]})
+                     "wave_s": min(0.05, 3.0 / float(f0)),
+                     "wave": x[:max(8, int(round(min(0.05, 3.0 / float(f0)) * fs)))]})
     worst_a = max(abs(r["da"]) for r in rows)
     worst_c = max(abs(r["dc"]) for r in rows)
     worst_off = max(abs(r["da_off"]) for r in rows)
@@ -1315,17 +1316,18 @@ def ex_weighting_ac(log):
         fig.text(88, 586, f"off-bin worst so far  {max(abs(rr['da_off']) for rr in rows[:k+1]):7.4f} dB"
                           f"  <- rectangular-window leakage", C_WARN, 12, True)
 
-        axs = Ax(fig, 596, 450, W - 24, 542, (0.0, 6.0), (-1.25, 1.25))
+        axs = Ax(fig, 596, 450, W - 24, 542, (0.0, r["wave_s"] * 1e3), (-1.25, 1.25))
         axs.panel(C_PANEL2)
         ink = fig.ink()
         axs.frame(ink)
-        axs.xticks(ink, [0, 2, 4, 6], "%.0f")
+        axs.xticks(ink, np.linspace(0.0, r["wave_s"] * 1e3, 4), "%.1f")
         fig.stamp(ink, C_AXIS)
         ink = fig.ink()
         tw = np.arange(r["wave"].size) / fs * 1e3
         axs.curve(ink, tw, r["wave"], width=2)
         fig.stamp(ink, C_B)
-        fig.text(600, 434, "the tone itself (first 6 ms)", C_TEXT, 12, True)
+        fig.text(600, 434, f"the tone itself (3 periods = "
+                           f"{r['wave_s'] * 1e3:.2f} ms)", C_TEXT, 12, True)
         fig.text(W - 128, 548, "time [ms] ->", C_DIM, 11)
         fig.text(600, 566, f"L_eq(Z) closed form 10log10(A^2/2) = "
                            f"{leq_z_closed:.6f} dB", C_DIM, 12)

@@ -11,7 +11,7 @@
 
 *↑ **画素ピッチとサンプリング** ―― 130 µm の傷を固定して画素ピッチだけを粗くすると、欠陥が **2 画素を割るのはピッチ 13.79 µm** (Nyquist の境界)で、実測の 50 % 検出が保つのはピッチ **13.32 µm** までです。拡大は最近傍なので**見えている四角は本物の画素**で、滑らかに見せるための補間は入れていません。 使用 op: `render_part`, `system_geometry`, `resolving_power`, `draw_polyline`。*
 
-<small>静止フレームでも読めます(静止サムネ: `https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingopt_pixel_pitch_thumb.jpg`)。40 フレーム / 10 fps / 1000×502 px / 0.49 MB。</small>
+<small>静止フレームでも読めます(静止サムネ: `https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingopt_pixel_pitch_thumb.jpg`)。40 フレーム / 10 fps / 1000×502 px / 0.70 MB。</small>
 
 ---
 
@@ -19,4 +19,4 @@
 
 | 展示 | 形式 | 画素 | フレーム | サイズ | SHA-256(先頭 16) |
 |---|---|---|---|---|---|
-| 画素ピッチとサンプリング | GIF | 1000×502 | 40 | 495 kB | `8cd5fa2d8bb4de22` |
+| 画素ピッチとサンプリング | GIF | 1000×502 | 40 | 702 kB | `3e2f3fc929289acc` |
