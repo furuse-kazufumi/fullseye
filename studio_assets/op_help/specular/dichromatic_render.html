@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dichromatic_render — SPECULAR <code style="color:#22d3bf">reflectance</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">rgbimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import specularity; specularity.dichromatic_render(normals, albedo_rgb=(0.8, 0.55, 0.35), light=(0.3, 0.2, 1.0), illuminant_rgb=(1.0, 1.0, 1.0), view=(0.0, 0.0, 1.0), specular=0.25, model=&#x27;blinn_phong&#x27;, shininess=32.0, roughness=0.3, f0=0.04, ambient=0.0)</code> (または <code style="color:#22d3bf">opsspecular.get(&quot;dichromatic_render&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Forward dichromatic model: render a known highlight so a separation can be checked against it. → (H, W, 3).</p>
+<p>`<code style="color:#22d3bf">I = albedo_rgb * max(n.l, 0) + specular * lobe(n) * illuminant_unit</code>`, the</p>
+<p>body term coming straight from :func:<code style="color:#22d3bf">photometric.render_lambertian</code> (called,</p>
+<p>not re-implemented, so the two modules cannot drift apart in convention) and</p>
+<p>the interface term carrying the <b>illuminant</b> colour, which is what makes</p>
+<p>the image obey the dichromatic model exactly.</p>
+<p>*albedo_rgb* may be a single `<code style="color:#22d3bf">(3,)</code>` colour — the single-material case that</p>
+<p>:func:<code style="color:#22d3bf">specular_diffuse_split</code> handles without help — or an `<code style="color:#22d3bf">(H, W, 3)</code>`</p>
+<p>map, which is the textured case that needs `<code style="color:#22d3bf">body_rgb</code>` passed to the split.</p>
+<p>*model* selects the lobe: `<code style="color:#22d3bf">&quot;blinn_phong&quot;</code>` (*shininess*) or</p>
+<p>`<code style="color:#22d3bf">&quot;microfacet&quot;</code>` (*roughness*, *f0*). Both are available on purpose: the</p>
+<p>separation operators must be blind to the lobe shape, and swapping the model</p>
+<p>is how that is tested rather than asserted.</p>
+<p><b>This is a shading model, not light transport.</b> No interreflection, no</p>
+<p>cast shadow, no subsurface term, no occlusion between pixels — the same</p>
+<p>boundary :mod:<code style="color:#22d3bf">visiondesign</code> draws. Its purpose is a synthetic image whose</p>
+<p>decomposition is known exactly.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: geometry problems as in</p>
+<p>:func:<code style="color:#22d3bf">brdf_blinn_phong</code>; *albedo_rgb* is neither `<code style="color:#22d3bf">(3,)</code>` nor</p>
+<p>`<code style="color:#22d3bf">(H, W, 3)</code>`; *specular* or *ambient* is negative, non-finite, a string or</p>
+<p>a bool; *model* is not in :data:<code style="color:#22d3bf">BRDF_MODELS</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:specular_photometric">specular_photometric</a> — <code style="color:#22d3bf">py -3.11 examples/specular_photometric.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">rgbimage</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opspecular:specular_diffuse_split">specular_diffuse_split</a> · <a style="color:#22d3bf" href="opspecular:specular_coefficient_map">specular_coefficient_map</a> · <a style="color:#22d3bf" href="opspecular:specular_free_transform">specular_free_transform</a> · <a style="color:#22d3bf" href="opspecular:illuminant_from_dichromatic_planes">illuminant_from_dichromatic_planes</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">reflectance</code>)</h3>
+<p><a style="color:#22d3bf" href="opspecular:brdf_blinn_phong">brdf_blinn_phong</a> · <a style="color:#22d3bf" href="opspecular:brdf_microfacet">brdf_microfacet</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: specularity.py — SPECULAR operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,53 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">polarization_separate — SPECULAR <code style="color:#22d3bf">polarization</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">polsweep</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import specularity; specularity.polarization_separate(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)</code> (または <code style="color:#22d3bf">opsspecular.get(&quot;polarization_separate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Split a polariser sweep into its unpolarised and linearly polarised radiance. → (diffuse, specular), both (H, W).</p>
+<p>Fitting `<code style="color:#22d3bf">I(t) = 0.5 (S0 + S1 cos 2t + S2 sin 2t)</code>` per pixel gives</p>
+<p>`<code style="color:#22d3bf">I_min</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">I_max</code>` in closed form, and the classical separation</p>
+<p>(Wolff &amp; Boult 1991; Nayar, Fang &amp; Boult 1997) reads</p>
+<p>`<code style="color:#22d3bf">diffuse  = 2 * I_min</code>`   (the unpolarised radiance)</p>
+<p>`<code style="color:#22d3bf">specular = I_max - I_min</code>` (the linearly polarised radiance)</p>
+<p>with `<code style="color:#22d3bf">diffuse + specular = I_min + I_max</code>` = the total scene radiance, so</p>
+<p>nothing is lost or invented. Round-tripping</p>
+<p>:func:<code style="color:#22d3bf">polarization_render</code> through this operator returns the inputs with a</p>
+<p>maximum absolute error of 3.9e-16 for the four angles of a</p>
+<p>division-of-focal-plane sensor and 4.4e-16 for a bare three-angle sweep</p>
+<p>(measured in `<code style="color:#22d3bf">tests/test_specularity.py</code>`).</p>
+<p><b>Read the names as shorthand.</b> What is recovered exactly is the</p>
+<p>unpolarised and polarised parts. Calling them diffuse and specular assumes</p>
+<p>diffuse reflection is unpolarised and specular reflection is fully linearly</p>
+<p>polarised — true near Brewster&#x27;s angle for a dielectric, **false at normal</p>
+<p>incidence**, where the specular reflection is unpolarised and this operator</p>
+<p>returns all of it as &quot;diffuse&quot;, and unreliable for metals. The polarisation</p>
+<p>route is complementary to the colour route</p>
+<p>(:func:<code style="color:#22d3bf">specular_diffuse_split</code>), not a replacement: it needs no illuminant</p>
+<p>colour and works on textured, multi-material surfaces, but it needs a</p>
+<p>favourable geometry.</p>
+<p>*max_violation_frac* is the fraction of pixels allowed to fit a negative</p>
+<p>minimum radiance before the call fails. The default 0 is fail-closed: a</p>
+<p>negative fitted minimum means the modulation exceeded the mean, which no</p>
+<p>analyser can produce, and it usually means the frames and *angles_deg* are</p>
+<p>out of order. Raise it to clamp sensor-noise-level violations to zero as a</p>
+<p>deliberate, recorded choice.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *images* is not an </code><code style="color:#22d3bf">(N, H, W)</code>` stack of at</p>
+<p>least 3 frames, or exceeds :data:<code style="color:#22d3bf">MAX_LIGHTS</code> / :data:<code style="color:#22d3bf">MAX_STACK_ELEMENTS</code>;</p>
+<p>*angles_deg* does not match the frame count or leaves the fit</p>
+<p>rank-deficient (two angles equal modulo 180); more than</p>
+<p>*max_violation_frac* of the pixels fit a negative minimum.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:specular_photometric">specular_photometric</a> — <code style="color:#22d3bf">py -3.11 examples/specular_photometric.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opspecular:polarization_render">polarization_render</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">polarization</code>)</h3>
+<p><a style="color:#22d3bf" href="opspecular:polarization_render">polarization_render</a> · <a style="color:#22d3bf" href="opspecular:polarization_dolp_map">polarization_dolp_map</a> · <a style="color:#22d3bf" href="opspecular:polarization_stokes">polarization_stokes</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: specularity.py — SPECULAR operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

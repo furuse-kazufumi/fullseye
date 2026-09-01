@@ -1,0 +1,81 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">motion_magnify — MOTIONMAG <code style="color:#22d3bf">magnify</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import motionmag; motionmag.motion_magnify(video, alpha, f_lo, f_hi, fps, scales: &#x27;int&#x27; = 4, orientations: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code> (または <code style="color:#22d3bf">opsmotionmag.get(&quot;motion_magnify&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Scale the in-band motion of a clip by *alpha* -&gt; `<code style="color:#22d3bf">dict</code>`.</p>
+<p>For every oriented sub-band of every frame the local phase is taken relative</p>
+<p>to that band&#x27;s temporal mean, unwrapped along time, band-passed to</p>
+<p>`<code style="color:#22d3bf">[f_lo, f_hi]</code><code style="color:#22d3bf">, multiplied by </code><code style="color:#22d3bf">alpha - 1</code>` and added back. Because a</p>
+<p>translation by `<code style="color:#22d3bf">d</code><code style="color:#22d3bf"> shifts a band&#x27;s phase by </code><code style="color:#22d3bf">-k·d</code>`, the phase of the</p>
+<p>result is `<code style="color:#22d3bf">-alpha * k·d</code><code style="color:#22d3bf"> for *any* </code><code style="color:#22d3bf">k</code>` — the output displacement is</p>
+<p>`<code style="color:#22d3bf">alpha * d</code>` without the local spatial frequency ever being estimated.</p>
+<p>Low-pass, high-pass and completion residuals are reconstructed untouched</p>
+<p>(they have no single `<code style="color:#22d3bf">k</code>` to be consistent about).</p>
+<p>`<code style="color:#22d3bf">alpha</code>` is the <b>displacement gain</b>: 1 is the identity, 0 removes the</p>
+<p>in-band motion, 2 doubles it, -1 reverses it. (The literature writes the</p>
+<p>magnified motion as `<code style="color:#22d3bf">(1 + alpha_paper) d</code><code style="color:#22d3bf">; this </code><code style="color:#22d3bf">alpha</code>` is</p>
+<p>`<code style="color:#22d3bf">1 + alpha_paper</code>`.)</p>
+<p>Returns a dict::</p>
+<p>{&quot;video&quot;: (T, H, W) magnified frames,</p>
+<p>&quot;alpha&quot;: ..., &quot;band_hz&quot;: (f_lo, f_hi), &quot;fps&quot;: ...,</p>
+<p>&quot;snr_in&quot;: {...}, &quot;snr_out&quot;: {...},        # raw band_snr of in / out</p>
+<p>&quot;image_snr_change_db&quot;: ...,               # &lt;= 0 once |alpha| &gt; 1</p>
+<p>&quot;motion_snr_out_db&quot;: ...,                 # gain-corrected; never rises</p>
+<p>&quot;motion_snr_change_db&quot;: ...,</p>
+<p>&quot;band_power_ratio&quot;: ...,                  # 1.0 = perfectly linear</p>
+<p>&quot;phase_shift_max_rad&quot;: ..., &quot;phase_shift_rms_rad&quot;: ...,</p>
+<p>&quot;linear_regime&quot;: bool, &quot;reference_coherence&quot;: ...}</p>
+<p><b>The SNR block is part of the contract, not decoration.</b> Amplifying the</p>
+<p>in-band phase amplifies the in-band noise by exactly the same factor, so</p>
+<p>the *motion* SNR cannot rise — magnification reveals motion, it never</p>
+<p>measures it better than the recording allowed. What degrades is the image:</p>
+<p>the output&#x27;s temporal fluctuation grows like `<code style="color:#22d3bf">alpha^2</code>` against an</p>
+<p>unchanged static scene. Measured on a 64x64, 64-frame, 32 fps clip carrying</p>
+<p>0.2 px of 4 Hz motion under sigma = 0.01 sensor noise, band 3-5 Hz:</p>
+<p>======  ===============  ==================  ==============  =============</p>
+<p>alpha   image_snr (dB)   image change (dB)   motion_snr_out  band_power</p>
+<p>(dB)            ratio</p>
+<p>======  ===============  ==================  ==============  =============</p>
+<p>1       29.2574          -0.0000             11.9404         1.000000</p>
+<p>2       24.4304          -4.8270             11.6285         0.934861</p>
+<p>4       18.9039          -10.3535            11.2270         0.857626</p>
+<p>8       13.7428          -15.5146             9.7565         0.628551</p>
+<p>======  ===============  ==================  ==============  =============</p>
+<p>Roughly 5 dB of image SNR per doubling (the algebra&#x27;s asymptote is</p>
+<p>`<code style="color:#22d3bf">20*log10(2) = 6.02</code>` once the amplified band dominates the noise budget),</p>
+<p>while the motion SNR only ever falls. `<code style="color:#22d3bf">band_power_ratio</code>` is the measured</p>
+<p>`<code style="color:#22d3bf">band_power_out / (alpha^2 * band_power_in)</code>`: 1.0 means the magnification</p>
+<p>stayed linear, and the shortfall is the energy the phase modulation threw</p>
+<p>into harmonics.</p>
+<p>`<code style="color:#22d3bf">phase_shift_max_rad</code>` is the largest increment applied anywhere, including</p>
+<p>in contrast-free bands that hold only noise, so it is routinely large and is</p>
+<p>reported for completeness rather than as a verdict. `<code style="color:#22d3bf">phase_shift_rms_rad</code>`</p>
+<p>is the contrast-weighted RMS — the number that describes the structure a</p>
+<p>viewer actually sees — and `<code style="color:#22d3bf">linear_regime</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">phase_shift_rms_rad &lt; pi</code>`.</p>
+<p>`<code style="color:#22d3bf">reference_coherence</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">|mean_t z| / mean_t |z|</code>`, weighted by band</p>
+<p>energy: it is 1 for small motion and collapses towards 0 when the motion is</p>
+<p>large enough that the temporal-mean phase reference stops being meaningful</p>
+<p>(see :func:<code style="color:#22d3bf">phase_displacement</code> for the closed form).</p>
+<p><b>Narrow-band condition, measured.</b> The relation is exact when each</p>
+<p>sub-band carries a single moving component. On broadband texture (isotropic</p>
+<p>noise smoothed by a Gaussian, 0.2 px of motion, `<code style="color:#22d3bf">alpha = 3</code>`) the recovered</p>
+<p>magnified amplitude is 4.8 % low at sigma = 1.0, 5.5 % at 1.5 and 9.1 % at</p>
+<p>3.0 px of smoothing — the more spatial frequencies share a band, the more</p>
+<p>the phase of their sum departs from linearity in the displacement. That is</p>
+<p>inherent to phase-based processing, not a tuning fault.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemotionmag:motion_magnification">motion_magnification ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:motion_magnification">motion_magnification</a> — <code style="color:#22d3bf">py -3.11 examples/motion_magnification.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opmotionmag:complex_steerable_reconstruct">complex_steerable_reconstruct</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">magnify</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: motionmag.py — MOTIONMAG operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

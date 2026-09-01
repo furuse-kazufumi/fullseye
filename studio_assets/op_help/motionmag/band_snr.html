@@ -1,0 +1,55 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">band_snr — MOTIONMAG <code style="color:#22d3bf">temporal</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import motionmag; motionmag.band_snr(video, f_lo, f_hi, fps) -&gt; &#x27;dict&#x27;</code> (または <code style="color:#22d3bf">opsmotionmag.get(&quot;band_snr&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Measure what a clip&#x27;s temporal band contains, and what it costs -&gt; `<code style="color:#22d3bf">dict</code>`.</p>
+<p>Every quantity is a measured mean-square power obtained from the per-pixel</p>
+<p>temporal DFT (Parseval-normalised so that the bins of one pixel sum to that</p>
+<p>pixel&#x27;s mean square), averaged over pixels:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">static_power</code>` — the DC bin. The scene that is simply *there*.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">band_power</code><code style="color:#22d3bf"> — the bins inside </code><code style="color:#22d3bf">[f_lo, f_hi]</code>`. Coherent motion <b>plus</b></p>
+<p>whatever noise happens to fall in the band.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">out_of_band_power</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">out_of_band_bins</code>` — everything else except DC.</p>
+<p>With broadband sensor noise this is the noise floor, and</p>
+<p>`<code style="color:#22d3bf">noise_power_per_bin</code>` is its per-bin density.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">noise_in_band</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">noise_power_per_bin * band_bins</code>` — how much of</p>
+<p>`<code style="color:#22d3bf">band_power</code>` is expected to be noise.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">motion_power</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">max(band_power - noise_in_band, 0)</code>` and</p>
+<p>`<code style="color:#22d3bf">motion_snr_db</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">10*log10(motion_power / noise_in_band)</code>`.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">image_snr_db</code><code style="color:#22d3bf"> = </code>`10*log10(static_power / (band_power +</p>
+<p>out_of_band_power))`` — the static scene against everything that flickers.</p>
+<p>**The two SNRs answer different questions and magnification moves only one</p>
+<p>of them.** Scaling the in-band phase by `<code style="color:#22d3bf">alpha</code>` scales the in-band motion</p>
+<p>*and* the in-band noise by the same factor, so the true motion SNR cannot</p>
+<p>improve: magnification never makes a measurement more certain than the</p>
+<p>recording was. What does change is `<code style="color:#22d3bf">image_snr_db</code>`, because the temporal</p>
+<p>fluctuation of the output frames grows like `<code style="color:#22d3bf">alpha^2</code>` while the static</p>
+<p>scene does not.</p>
+<p><b>A caveat that matters when this is run on an already-magnified clip.</b></p>
+<p>`<code style="color:#22d3bf">motion_snr_db</code>` here divides the in-band signal by a noise floor estimated</p>
+<p>from the *out-of-band* bins, and magnification does not touch those. Applied</p>
+<p>to a magnified video it therefore credits `<code style="color:#22d3bf">alpha^2</code>` more in-band power</p>
+<p>against an unchanged noise estimate and reports an improvement that did not</p>
+<p>occur — measured, `<code style="color:#22d3bf">+6.86 dB</code><code style="color:#22d3bf"> at </code><code style="color:#22d3bf">alpha = 2</code>` on a clip whose true motion</p>
+<p>SNR cannot have moved. :func:<code style="color:#22d3bf">motion_magnify</code> knows the gain and returns the</p>
+<p>corrected figure as `<code style="color:#22d3bf">motion_snr_out_db</code>`; use that one, not</p>
+<p>`<code style="color:#22d3bf">result[&quot;snr_out&quot;][&quot;motion_snr_db&quot;]</code>`.</p>
+<p>`<code style="color:#22d3bf">snr_clamped</code><code style="color:#22d3bf"> is True when a reported dB hit the </code><code style="color:#22d3bf">[-100, +100]</code>` window</p>
+<p>(a noiseless synthetic has zero out-of-band power, which is a division by</p>
+<p>zero rather than an infinite SNR).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemotionmag:motion_magnification">motion_magnification ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:motion_magnification">motion_magnification</a> — <code style="color:#22d3bf">py -3.11 examples/motion_magnification.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opmotionmag:complex_steerable_reconstruct">complex_steerable_reconstruct</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">temporal</code>)</h3>
+<p><a style="color:#22d3bf" href="opmotionmag:temporal_bandpass">temporal_bandpass</a> · <a style="color:#22d3bf" href="opmotionmag:temporal_band_power">temporal_band_power</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: motionmag.py — MOTIONMAG operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

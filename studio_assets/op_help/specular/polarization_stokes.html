@@ -1,0 +1,38 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">polarization_stokes — SPECULAR <code style="color:#22d3bf">polarization</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">polsweep</code> → <code style="color:#22d3bf">stokes</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import specularity; specularity.polarization_stokes(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)</code> (または <code style="color:#22d3bf">opsspecular.get(&quot;polarization_stokes&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>The scene-integrated Stokes vector of a polariser sweep. → (4,), ready for :func:<code style="color:#22d3bf">optics.stokes_analyze</code>.</p>
+<p>Stokes parameters are linear in radiance, so the spatial mean of the frames</p>
+<p>has a Stokes vector that is the mean of the per-pixel ones — the vector a</p>
+<p>non-imaging polarimeter looking at the whole field would report. Fitting</p>
+<p>`<code style="color:#22d3bf">I(t) = 0.5 (S0 + S1 cos 2t + S2 sin 2t)</code><code style="color:#22d3bf"> gives </code><code style="color:#22d3bf">(S0, S1, S2)</code>` directly.</p>
+<p><b>S3 is always exactly 0, and that is a limitation, not a measurement.</b> A</p>
+<p>set of linear analysers cannot see circular polarisation; a quarter-wave</p>
+<p>plate is needed. The returned vector is therefore the linear part of the</p>
+<p>truth, and :func:<code style="color:#22d3bf">optics.stokes_analyze</code> will report `<code style="color:#22d3bf">handedness=&quot;linear&quot;</code>`</p>
+<p>for it no matter what the scene actually did. Returning an invented `<code style="color:#22d3bf">S3</code>`</p>
+<p>would be worse, and returning a 3-vector would break the Stokes contract the</p>
+<p>optics family is built on.</p>
+<p>The result satisfies that contract by construction — ``S0 &gt;= sqrt(S1^2 +</p>
+<p>S2^2 + S3^2)``, i.e. degree of polarisation at most 1 — because the same</p>
+<p>non-negativity check that guards :func:<code style="color:#22d3bf">polarization_separate</code> is exactly</p>
+<p>the condition for it. That is why `<code style="color:#22d3bf">optics.stokes_analyze</code>` accepts the</p>
+<p>output without a further test.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: as :func:</code>polarization_separate`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:specular_photometric">specular_photometric</a> — <code style="color:#22d3bf">py -3.11 examples/specular_photometric.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">stokes</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">polarization</code>)</h3>
+<p><a style="color:#22d3bf" href="opspecular:polarization_render">polarization_render</a> · <a style="color:#22d3bf" href="opspecular:polarization_separate">polarization_separate</a> · <a style="color:#22d3bf" href="opspecular:polarization_dolp_map">polarization_dolp_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: specularity.py — SPECULAR operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

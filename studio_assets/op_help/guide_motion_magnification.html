@@ -1,0 +1,150 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">モーション増幅・位相変位計測(微小振動を見せる/測る) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p><b>動いているのに見えない</b>層です。カメラの前で機械の枠が共振で 0.1 画素だけ呼吸している、配管の壁が脈打っている、ボルト継手が 1 ミクロンずつ緩んでいる — どれも記録には入っているのに、人間の目にも普通の運動解析にも掛かりません。そこから欲しいものは 2 つあって、<b>別の問題</b>です。</p>
+<p style="margin:2px 0 2px 12px">• <b>見せてほしい。</b> 小さい変位を拡大して再合成し、人が見て分かる動画にする。= <b>増幅</b>。</p>
+<p style="margin:2px 0 2px 12px">• <b>何画素か教えてほしい。</b> 変位そのものを数値で返す。= <b>計測</b>。</p>
+<p>どちらも同じ量から出ます。<b>向きつき帯域成分の局所位相</b>です。帯域制限された画像成分が <code style="color:#22d3bf">d</code> だけ平行移動すると、その成分の局所位相は <code style="color:#22d3bf">-k·d</code> だけずれます(<code style="color:#22d3bf">k</code> は成分の局所空間周波数、単位 rad/px)。位相はサブピクセル変位の<b>線形な符号化</b>なので、<b>位相を α 倍すれば変位が α 倍になります</b> — 運動場を一度も推定せずに、厳密に。9 op / 5 カテゴリ(numpy + scipy のみ、台帳は <code style="color:#22d3bf">opsmotionmag.py</code>、実体は <code style="color:#22d3bf">motionmag.py</code>):</p>
+<p style="margin:2px 0 2px 12px">• <b>synthesis(1)</b> — <code style="color:#22d3bf">synthesize_translation</code>: 既知振幅・既知周波数のサブピクセル平行移動クリップ。フーリエ位相ランプで動かすので<b>補間誤差がゼロ</b>で、真値が閉形式。この族の全主張はこの合成に対して測ってあります。</p>
+<p style="margin:2px 0 2px 12px">• <b>decompose(2)</b> — <code style="color:#22d3bf">complex_steerable_decompose</code> / <code style="color:#22d3bf">complex_steerable_reconstruct</code>: 1 枚を向きつきの<b>解析信号</b>(複素サブ帯域)に割り、戻す。tight frame として組んであるので往復が機械精度で厳密です。ここが厳密でないと「増幅のせいか再合成のせいか」が永久に切り分けられません。</p>
+<p style="margin:2px 0 2px 12px">• <b>temporal(3)</b> — <code style="color:#22d3bf">temporal_bandpass</code> / <code style="color:#22d3bf">temporal_band_power</code> / <code style="color:#22d3bf">band_snr</code>: 画素ごとの時間軸を帯域で切る、その帯域のパワー地図を返す(= どこが何 Hz で振動しているか)、そしてクリップの帯域内容と雑音床を分解して測る。</p>
+<p style="margin:2px 0 2px 12px">• <b>magnify(1)</b> — <code style="color:#22d3bf">motion_magnify</code>: 帯域内の位相を <code style="color:#22d3bf">alpha - 1</code> 倍して足し戻し、再合成する。返り値は動画<b>と</b> SNR 一式。</p>
+<p style="margin:2px 0 2px 12px">• <b>measure(2)</b> — <code style="color:#22d3bf">phase_displacement</code> / <code style="color:#22d3bf">displacement_series</code>: 画素ごとの変位場 <code style="color:#22d3bf">dx</code> / <code style="color:#22d3bf">dy</code>(と観測可能性の rank)、および全画面の変位波形 <code style="color:#22d3bf">(T, 2)</code>。後者はそのまま <code style="color:#22d3bf">dsp.spectrum</code> に流せば共振周波数が読めます。</p>
+<p><code style="color:#22d3bf">alpha</code> は<b>変位利得</b>として定義してあります: 出力の変位が <code style="color:#22d3bf">alpha * d</code>。<code style="color:#22d3bf">alpha = 1</code> が恒等、<code style="color:#22d3bf">0</code> が運動の除去、<code style="color:#22d3bf">-1</code> が反転です。公開文献は増幅後を <code style="color:#22d3bf">1 + alpha_paper</code> 倍と書きますが、本族の <code style="color:#22d3bf">alpha</code> は <code style="color:#22d3bf">1 + alpha_paper</code> に当たります。理由は検証可能性で、<b>呼び出し側が書いた数と測定値を、足し引きなしにそのまま比較できる</b>ようにするためです。</p>
+<p>データ種は既存語彙の再利用が基本です: <b>image2d</b>(帯域パワー地図)、<b>table</b>(分解結果 dict・SNR 計測 dict・増幅結果 dict・変位場 dict)、<b>pairs</b>((n,2) 配列 = 変位波形。MTF 曲線や <code style="color:#22d3bf">funct1d</code> と同じ規約)。新語は <b>video</b> の 1 つだけで、<code style="color:#22d3bf">(T, H, W)</code> の float64 フレーム列です。これは <code style="color:#22d3bf">videops</code> が使っている規約をそのまま踏襲しています。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">既存 op との棲み分け(重複させていないもの)</h3>
+<p><b>「どこがどれだけ動いたか」と「サブピクセルの周期運動を帯域で選んで増幅する」は別の問題です。</b> 前者はオプティカルフローの守備範囲で、後者がこの族です。混同すると、動かない答えを何時間も追うことになります。</p>
+<p>| やりたいこと | 使う op | 置き場所 |</p>
+<p>|---|---|---|</p>
+<p>| <b>1 画素以上</b>の運動、独立に動く物体、遮蔽をまたぐ追跡 | <code style="color:#22d3bf">optical_flow_lk</code> / <code style="color:#22d3bf">optical_flow_hs</code> / <code style="color:#22d3bf">warp_by_flow</code> / <code style="color:#22d3bf">track_points</code> | <code style="color:#22d3bf">flow</code>(輝度不変を空間窓で解く。この族は一切呼ばないし再実装もしない — レジームが違う) |</p>
+<p>| 推定済みフロー場の<b>解釈</b>(全体運動モデル・残差・運動分割) | <code style="color:#22d3bf">dominant_motion</code> / <code style="color:#22d3bf">residual_motion</code> / <code style="color:#22d3bf">motion_segments</code> | <code style="color:#22d3bf">motion</code>(無関係・不変) |</p>
+<p>| 時間方向の<b>低域</b>平滑、背景モデル、運動エネルギー地図 | <code style="color:#22d3bf">moving_average</code> / <code style="color:#22d3bf">spatiotemporal_gaussian</code> / <code style="color:#22d3bf">background_subtraction</code> / <code style="color:#22d3bf">motion_energy</code> | <code style="color:#22d3bf">videops</code>(<code style="color:#22d3bf">temporal_bandpass</code> は同じ族の<b>帯域選択</b>メンバであって、これらの重複ではない) |</p>
+<p>| 方向づきエッジ応答(実数) | <code style="color:#22d3bf">tf_steerable_filter</code> | <code style="color:#22d3bf">backends_transform2</code>(直交対でなく<b>位相を持たず</b>可逆でもないので増幅には使えない。別物としてそのまま残す) |</p>
+<p>| FFT・複素画像・2-D 位相アンラップ・Wiener 復元 | <code style="color:#22d3bf">cx_fft</code> 系 / <code style="color:#22d3bf">phase_unwrap</code> / <code style="color:#22d3bf">cx_wiener_deconvolve</code> | <code style="color:#22d3bf">complexops</code>(FFT 畳み込み・相関は <code style="color:#22d3bf">filters_freq</code>) |</p>
+<p>| 変位波形の周波数解析 | <code style="color:#22d3bf">spectrum</code> / <code style="color:#22d3bf">signal_features</code> | <code style="color:#22d3bf">dsp</code>(<code style="color:#22d3bf">displacement_series</code> の <code style="color:#22d3bf">(T, 2)</code> をそのまま食える。ラップし直さない) |</p>
+<p>ステアラブル束だけは <code style="color:#22d3bf">numpy.fft</code> の上に自前で組んであります。<b>tight frame でないと再合成が厳密にならない</b>ためで、厳密さがこのモジュールの契約そのものだからです。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
+<p>全 op が入力を検証してから計算します。以下は 2026-09-01 の敵対監査で<b>実際に見つかったバグ</b>か、それを塞ぐために書いた罠です。この族が探したのは「例外が出る」ことではなく「<b>黙って間違った数字を返す</b>」ことでした。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">見つかった実バグ 5 件</h3>
+<p>1. <b>同じサブ帯域に 2 つの格子が落ちると、増幅が静かに間違う。</b> 最初の合成は縦横で同じ波長を使っていたため、両方の格子が同じ帯域に入りました。帯域の局所位相は「和の位相」になり、和の位相は変位の線形関数では<b>ない</b>。結果、<code style="color:#22d3bf">alpha = 2</code> が <code style="color:#22d3bf">2d</code> ではなく **<code style="color:#22d3bf">0.939 * (2d)</code>** を返し、<code style="color:#22d3bf">alpha = 0</code> は運動の <b>7.9 %</b> を消し残しました。恐ろしいのは**誤差が <code style="color:#22d3bf">d</code> に依存しない**ことです — 微小変位で消えないので「線形性の限界」では説明がつかず、非線形の言い訳が通りません。もっともらしく間違った数字の教科書例で、対策は <code style="color:#22d3bf">synthesize_translation</code> の既定波長を <code style="color:#22d3bf">(8.0, 16.0)</code> と<b>オクターブを分ける</b>ことにして、狭帯域条件を合成の側で可視化しました。</p>
+<p>2. **時間方向の <code style="color:#22d3bf">np.unwrap</code> が雑音帯を乱歩に変える。<b> 大きな運動に届かせようと位相を時間方向にアンラップすると、</b>信号を持たないサブ帯域**ではフレーム間位相が <code style="color:#22d3bf">-pi</code> 〜 <code style="color:#22d3bf">pi</code> の一様乱数になり、アンラップはランダムウォークになります。実測: 0.05 px の運動に sigma = 0.02 の雑音を載せたクリップで、増幅器が実際に適用した最大位相増分は <b>12.27 rad</b> — 意図は <b>0.039 rad</b> でした。例外も NaN も出ず、単に違う動画が出ます。対策はアンラップの撤去で、<code style="color:#22d3bf">angle(z * conj(z_mean))</code> は構成上 <code style="color:#22d3bf">pi</code> で有界なので、雑音帯の寄与は利得前で最大 <code style="color:#22d3bf">pi</code> に抑えられます。届く範囲は代わりに正直に開示しました(後述)。</p>
+<p>3. **<code style="color:#22d3bf">band_snr</code> を増幅後クリップにそのまま当てると、起きていない改善を報告する。** <code style="color:#22d3bf">band_snr</code> は帯域内の雑音床を<b>帯域外</b>のビンから推定しますが、増幅は帯域外に触りません。増幅後の動画に当てると「帯域内パワーだけが <code style="color:#22d3bf">alpha^2</code> 倍、雑音推定は据え置き」となり、実測 <code style="color:#22d3bf">alpha = 2</code> で <b>+6.86 dB</b> の運動 SNR 改善を報告しました。<b>録画に無かった確からしさが計算で生えることはない</b>ので、これは嘘です。「評価指標を出力に当てると嘘になる」典型で、対策として <code style="color:#22d3bf">motion_magnify</code> は利得を知っているので<b>入力側の雑音床</b>を基準に補正した <code style="color:#22d3bf">motion_snr_out_db</code> を返します。素の <code style="color:#22d3bf">result[&quot;snr_out&quot;][&quot;motion_snr_db&quot;]</code> は使わないでください。</p>
+<p>4. **<code style="color:#22d3bf">linear_regime</code> が間違ったものを測っていた。<b> 適用位相増分の</b>最大値<b>で判定していたため、コントラストを持たない雑音帯に引きずられて常に False になっていました。現在は</b>コントラスト加重 RMS**(<code style="color:#22d3bf">phase_shift_rms_rad</code>)で判定し、最大値は「どこかで起きた最悪」として別に返します。RMS が利得に厳密比例することはテストで固定してあります。</p>
+<p>5. <b>開口問題でゼロを返していた。</b> 一方向の縞しか無い場面では正規方程式が rank 1 になり、観測できるのはその向きの成分だけです。素の逆行列は観測不能な方向に巨大な嘘を返し、画素を捨てると<b>測れた成分まで捨てる</b>ことになります。現在は最小ノルム擬似逆で、観測できた成分を返し、観測できない方向を厳密に 0 にし、<code style="color:#22d3bf">rank</code> を画素ごとに返します。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">塞いである罠</h3>
+<p style="margin:2px 0 2px 12px">• <b>単位と型の取り違え</b> — <code style="color:#22d3bf">float(&quot;30&quot;)</code> は成功してしまうので、<code style="color:#22d3bf">fps</code> / <code style="color:#22d3bf">f_lo</code> / <code style="color:#22d3bf">f_hi</code> / <code style="color:#22d3bf">alpha</code> の**文字列は <code style="color:#22d3bf">ValueError</code><b>(未パースの設定値が周波数として通り抜けるのを止める)。</b>bool も拒否**(<code style="color:#22d3bf">True == 1</code> の暗黙昇格は、fps なら 1 Hz のタイムベース、利得なら恒等という別物になる)。<b>complex も拒否</b>(虚部の無言切り捨て)。配列側は complex / masked / NaN / Inf をすべて <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>エイリアシングは折り返さず拒否</b> — <code style="color:#22d3bf">f_hi &gt; fps/2</code> はそのクリップに存在しない時間周波数なので、黙って低い周波数に畳まずに拒否します。<code style="color:#22d3bf">fps</code> と帯域の取り違え(<code style="color:#22d3bf">fps=4</code> に <code style="color:#22d3bf">3-5 Hz</code> を要求)もこの検査で捕まります。<code style="color:#22d3bf">synthesize_translation</code> も Nyquist を超える運動周波数を拒否します。</p>
+<p style="margin:2px 0 2px 12px">• <b>0 除算とその親戚</b> — <code style="color:#22d3bf">fps &lt;= 0</code>、<code style="color:#22d3bf">f_lo &gt;= f_hi</code>、そして <b>DC に触れる通過帯域</b>(<code style="color:#22d3bf">f_lo &lt;= 0</code>)。最後のものは静止位相 = 「シーンがどこに在るか」を増幅してしまい、巨大で完全に架空の変位を作ります。</p>
+<p style="margin:2px 0 2px 12px">• <b>空の通過帯域</b> — 帯域がクリップの周波数分解能 <code style="color:#22d3bf">fps/T</code> より狭いと DFT ビンを 1 本も含まず、フィルタは<b>黙ってゼロを返します</b>。ビン数 0 は <code style="color:#22d3bf">ValueError</code> で、メッセージに分解能を書きます。<code style="color:#22d3bf">band_snr</code> は帯域外ビンが 1 本も残らない場合も拒否します(雑音床を推定する材料が無いため)。</p>
+<p style="margin:2px 0 2px 12px">• <b>退化入力</b> — 静止クリップ、定数画像、全ゼロクリップ、<code style="color:#22d3bf">T = 1</code>、2x2 フレーム、ぼろぼろのフレーム列。どれも数字を作らず、静止なら入力をそのまま返します。</p>
+<p style="margin:2px 0 2px 12px">• <b>無言の NaN / Inf を出さない</b> — SNR は測定パワーの比なので、合成データでは分母も分子も厳密に 0 になり得ます(無雑音クリップに帯域外パワーは無い)。<code style="color:#22d3bf">+-100 dB</code> の窓に**クランプし、クランプしたこと自体を <code style="color:#22d3bf">snr_clamped</code> で返します**。「float64 が溢れた」と「答えが無限大」は別の主張だからです。</p>
+<p style="margin:2px 0 2px 12px">• <b>小さい引数から巨大な内部確保</b> — ピラミッドは 段数 x 向き数 x フレーム数で爆発します。<code style="color:#22d3bf">MAX_FRAMES</code>(4096)、<code style="color:#22d3bf">MAX_FRAME_PIXELS</code>(2²²)、<code style="color:#22d3bf">MAX_VIDEO_ELEMENTS</code>(2²⁴、軽い時間 op 用)、<code style="color:#22d3bf">MAX_PYRAMID_ELEMENTS</code>(2²²、複素コピーを同時に数本持つ op 用 ≈ 400 MB)、<code style="color:#22d3bf">MAX_SCALES</code>(8)、<code style="color:#22d3bf">MAX_ORIENTATIONS</code>(16)、<code style="color:#22d3bf">MAX_FILTER_ELEMENTS</code>(2²⁴)、<code style="color:#22d3bf">MAX_ALPHA</code>(200)。上限が無ければ「300 フレームの 1024x1024」という無害に見える指定が 30 GB を要求します。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">α と SNR の取引(この族に固有の正直さ)</h3>
+<p><b>SNR を同時に報告しない増幅は嘘です。</b> 増幅は帯域内の位相を <code style="color:#22d3bf">alpha</code> 倍しますが、それは帯域内の<b>運動</b>と帯域内の<b>雑音</b>を同じ係数で倍にします。したがって:</p>
+<p style="margin:2px 0 2px 12px">• <b>運動 SNR は決して上がりません。</b> 増幅は運動を<b>見せる</b>装置であって、録画になかった確からしさを作る装置ではありません。</p>
+<p style="margin:2px 0 2px 12px">• <b>画像 SNR は必ず下がります。</b> 出力フレームの時間変動が <code style="color:#22d3bf">alpha^2</code> で増える一方、静止シーンは増えないからです。</p>
+<p>実測(64x64 / 64 frame / 32 fps、0.2 px の 4 Hz 運動、sigma = 0.01 のセンサ雑音、帯域 3-5 Hz):</p>
+<p>| alpha | image SNR [dB] | image 変化 [dB] | motion_snr_out [dB] | motion 変化 [dB] | band_power_ratio |</p>
+<p>|---|---|---|---|---|---|</p>
+<p>| 1 | 29.2574 | -0.0000 | 11.9404 | +0.0000 | 1.000000 |</p>
+<p>| 2 | 24.4304 | -4.8270 | 11.6285 | -0.3119 | 0.934861 |</p>
+<p>| 4 | 18.9039 | -10.3535 | 11.2270 | -0.7134 | 0.857626 |</p>
+<p>| 8 | 13.7428 | -15.5146 | 9.7565 | -2.1839 | 0.628551 |</p>
+<p>倍ごとにおよそ 5 dB の画像 SNR を払っています。増幅した帯域が雑音収支を支配しきると、代数の漸近値である **<code style="color:#22d3bf">20*log10(2) = 6.02 dB</code> / 倍**に近づきます。単調減少は sigma = 0.002 / 0.005 / 0.01 / 0.02 / 0.05 のすべてで実測・テスト固定済みです(雑音が大きいほど最初の一段の損失は小さくなります。帯域がもともと雑音床より下だと、倍にしても全変動のごく一部しか倍にならないためで、これは欠陥ではありません)。</p>
+<p><code style="color:#22d3bf">band_power_ratio</code> は測定値 <code style="color:#22d3bf">band_power_out / (alpha^2 * band_power_in)</code> です。<b>1.0 なら増幅は線形に効いており、不足分は位相変調が高調波に投げ捨てたエネルギー</b>です。仮定ではなく毎回測っているので、線形領域を出たことが返り値から分かります。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン(op の繋がり)</h3>
+<p>「見せる」と「測る」が同じ分解を共有し、<code style="color:#22d3bf">band_snr</code> が<b>両方に代償を貼り付ける</b>構図です。データ種は <code style="color:#22d3bf">video → table → video / pairs / image2d</code> で繋がります。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    A[カメラのクリップ または synthesize_translation] --&gt;|video| B[temporal_band_power どこが何Hzで揺れているか]
+    A --&gt;|video| C[band_snr 静止・帯域内・帯域外パワーの分解]
+    A --&gt;|video| D[motion_magnify 帯域内位相を alpha 倍]
+    A --&gt;|video| E[phase_displacement 画素ごとの dx dy と rank]
+    D --&gt;|table| F[増幅動画 と image_snr_change_db]
+    D --&gt;|table| G[motion_snr_out_db 利得補正済み・決して上がらない]
+    E --&gt;|table| H[displacement_series 全画面の変位波形]
+    H --&gt;|pairs| I[dsp.spectrum 共振周波数を読む]
+    C --&gt; F
+    C --&gt; G</pre>
+<p>増幅の内側は分解 → 位相編集 → 再合成の一本道で、**<code style="color:#22d3bf">alpha = 1</code> が厳密な恒等であること**が全体の検算になります(実測 7.77e-16)。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    P[1 フレーム image2d] --&gt; Q[complex_steerable_decompose 向きつき解析信号]
+    Q --&gt;|table| R[帯域ごとの局所位相]
+    R --&gt; S[temporal_bandpass 時間帯域で選ぶ]
+    S --&gt; T[位相に alpha-1 を掛けて足し戻す]
+    T --&gt; U[complex_steerable_reconstruct tight frame で厳密復元]
+    Q -.alpha=1 なら往復は機械精度.- U</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方(最小の 1 本)</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import motionmag as M
+
+# 見えない振動: 0.2 px を 4 Hz で、64 frame / 32 fps のクリップに入れる
+clip = M.synthesize_translation((64, 64), 64, amplitude_px=0.2,
+                                frequency_hz=4.0, fps=32.0, noise_sigma=0.01)
+
+# (a) 測る — 何画素動いたか
+series = M.displacement_series(clip, 3.0, 5.0, 32.0)   # (T, 2) の dx, dy
+print(abs(series[:, 0]).max())          # 0.2003278... px  真値 0.2
+
+# (b) 見せる — 8 倍に増幅し、その代償を同じ返り値で受け取る
+r = M.motion_magnify(clip, alpha=8.0, f_lo=3.0, f_hi=5.0, fps=32.0)
+print(r[&quot;snr_in&quot;][&quot;image_snr_db&quot;], r[&quot;snr_out&quot;][&quot;image_snr_db&quot;])   # 29.25 -&gt; 13.74 dB
+print(r[&quot;motion_snr_change_db&quot;])        # -2.18 dB  上がることは無い
+print(r[&quot;band_power_ratio&quot;])            # 0.629    線形からの外れ具合
+print(abs(M.displacement_series(r[&quot;video&quot;], 3.0, 5.0, 32.0)[:, 0]).max())
+                                        # 1.6029... px = 8 * 0.2</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">アルゴリズムの正典(著者・年)</h3>
+<p style="margin:2px 0 2px 12px">• <b>ステアラブルフィルタ</b>: Freeman &amp; Adelson, *The Design and Use of Steerable Filters*, IEEE PAMI 13(9), 1991。</p>
+<p style="margin:2px 0 2px 12px">• <b>ステアラブルピラミッド</b>: Simoncelli &amp; Freeman, *The Steerable Pyramid: A Flexible Architecture for Multi-Scale Derivative Computation*, ICIP 1995 / Portilla &amp; Simoncelli, IJCV 40(1), 2000。角度マスクの正規化に使う恒等式 <code style="color:#22d3bf">sum_k cos^(2K-2)(theta - pi k/K) = K*C(2K-2, K-1)/2^(2K-2)</code>(theta に依らず一定)はここから。</p>
+<p style="margin:2px 0 2px 12px">• <b>時間帯域通過による Eulerian 増幅</b>: Wu, Rubinstein, Shih, Guttag, Durand &amp; Freeman, *Eulerian Video Magnification for Revealing Subtle Changes in the World*, ACM TOG 31(4), 2012。</p>
+<p style="margin:2px 0 2px 12px">• <b>振幅でなく位相を増幅する</b>: Wadhwa, Rubinstein, Durand &amp; Freeman, *Phase-Based Video Motion Processing*, ACM TOG 32(4), 2013。</p>
+<p style="margin:2px 0 2px 12px">• <b>Bessel 関数 J₀ の第 1 零点 2.4048255577</b>: 標準表(例 Abramowitz &amp; Stegun, §9.5)。後述の崖の位置はこの定数だけで決まります。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実測値(この族が主張していること)</h3>
+<p>| 主張 | 実測 |</p>
+<p>|---|---|</p>
+<p>| 分解 → 再合成の往復 | 6.66e-16(64x64 既定)/ 7.22e-16(31x37、奇数・非正方)/ 最悪 7.77e-16(段数 1-8 x 向き 1-16 の全 128 通り) |</p>
+<p>| **増幅後の変位 = alpha * d<b> | 最悪絶対誤差 </b>1.58e-14<b>、最悪相対誤差 </b>3.26e-13**(alpha は 0, ±0.5, ±1, ±2, ±4, 8, 20 / d は 0.01 から 0.5 px) |</p>
+<p>| alpha = 1 は雑音クリップでも厳密な恒等 | 7.77e-16 |</p>
+<p>| 符号が反転していない | <code style="color:#22d3bf">d(+3) + d(-3)</code> の最大絶対値 5.34e-15 |</p>
+<p>| <b>帯域外の運動は増幅されない</b> | 増幅率 <b>1.000000000000</b>(alpha = 1, 4, 16, <b>100</b>。alpha = 100 でも波形のずれは 8.53e-14) |</p>
+<p>| 時間帯域通過が単一成分を復元 | 4.36e-15(DC 0.5 + 4 Hz 1.0 + 12 Hz 0.3 の混合から 4 Hz だけ) |</p>
+<p>| 帯域パワー = 振幅²/2(Parseval) | 相対誤差 3.08e-16 |</p>
+<p>| 開口問題 | 全画素 rank 1、<code style="color:#22d3bf">dx = 0.3000000000000001</code>、<code style="color:#22d3bf">dy = 0.0</code>(厳密) |</p>
+<p>| テスト | <code style="color:#22d3bf">tests/test_motionmag.py</code> 124 passed / 1 skipped(skip は構成上わざと線形領域の外に置いた 1 件) |</p>
+<p>変位計測の精度と、それが止まる場所(64x64x64 / 32 fps / 8 px 格子 / 4 Hz / 無雑音):</p>
+<p>| 真値 d [px] | k*d [rad] | 実測 [px] | 相対誤差 | reference_coherence |</p>
+<p>|---|---|---|---|---|</p>
+<p>| 0.001 | 0.0008 | 0.00100000 | 8.7e-15 | 1.00000 |</p>
+<p>| 0.010 | 0.0079 | 0.01000000 | 3.1e-15 | 0.99999 |</p>
+<p>| 0.100 | 0.0785 | 0.10000000 | 1.8e-15 | 0.99923 |</p>
+<p>| 0.500 | 0.3927 | 0.50000000 | 6.7e-16 | 0.98091 |</p>
+<p>| 1.000 | 0.7854 | 1.00000000 | 4.4e-16 | 0.92582 |</p>
+<p>| 2.000 | 1.5708 | 2.00000000 | 6.7e-16 | 0.73600 |</p>
+<p>| 3.000 | 2.3562 | 3.00000000 | 5.9e-16 | 0.51283 |</p>
+<p>| 3.050 | 2.3954 | 3.05000000 | 2.9e-16 | 0.50252 |</p>
+<p>| 3.100 | 2.4347 | 1.72842712 | 4.4e-01 | 0.50761 |</p>
+<p>| 4.000 | 3.1416 | 2.10461396 | 4.7e-01 | 0.65142 |</p>
+<p>| 6.000 | 4.7124 | 2.35441757 | 6.1e-01 | 0.62047 |</p>
+<p>雑音下では精度は方法ではなく雑音で決まります: <code style="color:#22d3bf">d = 0.5 px</code> で sigma = 0.001 / 0.01 / 0.05 のとき相対誤差 2.2e-04 / 1.8e-03 / 1.9e-03。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族でできないこと</h3>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">崖の位置は経験則ではなく J₀ の第 1 零点で決まる</h3>
+<p>上の表は <code style="color:#22d3bf">d = 3.05 px</code> まで丸め誤差の精度で、<code style="color:#22d3bf">d = 3.10 px</code> で<b>突然</b>壊れます。これは調整の失敗ではなく、閉形式で位置が言えます。</p>
+<p>時間方向の位相基準に使っているのは、その帯域の<b>時間平均</b> <code style="color:#22d3bf">z_mean</code> です。振幅 <code style="color:#22d3bf">A</code>、角周波数 <code style="color:#22d3bf">w</code> の正弦的変位に対して、帯域の複素応答は <code style="color:#22d3bf">z(t) = c * exp(i*phi0 - i*k*A*sin(w t))</code> なので、時間平均は Bessel 関数の積分表示そのものになり</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">z_mean = c * exp(i*phi0) * (1/T) ∫ exp(-i*k*A*sin(w t)) dt = c * exp(i*phi0) * J0(k*A)</pre>
+<p>です。<code style="color:#22d3bf">J0</code> は <code style="color:#22d3bf">k*A = 2.4048255577</code>(第 1 零点)で<b>符号を変えます</b>。そこを越えた瞬間に基準の振幅がゼロを通過し、位相が <code style="color:#22d3bf">pi</code> 跳ぶので、その基準に対して測った偏差はすべて <code style="color:#22d3bf">pi</code> ずれます。波長 8 px の格子では <code style="color:#22d3bf">k = 2*pi/8</code> なので</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">A_限界 = 2.4048255577 / (2*pi/8) = 3.061919 px</pre>
+<p>となり、<b>通った 3.05 と壊れた 3.10 のちょうど間</b>に落ちます。返り値の <code style="color:#22d3bf">reference_coherence</code> は <code style="color:#22d3bf">|z_mean| / mean_t|z|</code>、すなわちこの <code style="color:#22d3bf">|J0(k*A)|</code> を帯域で混ぜたもので、実測 1.00000(0.001 px)から 0.50252(3.05 px、限界の直前)まで<b>単調に落ちます</b> — 基準が退化しつつあることの実行時警告です。</p>
+<p>その先にはもっと硬い上限があります。変位は <code style="color:#22d3bf">-k*d</code> から復元するので、<code style="color:#22d3bf">|k*d|</code> が <code style="color:#22d3bf">pi</code> に達すると答えが折り返します。波長 <code style="color:#22d3bf">L</code> の帯域では <code style="color:#22d3bf">|d| &lt; L/2</code>(上の例で 4.0 px)で、返り値の <code style="color:#22d3bf">wrap_limit_px</code> が<b>実測した局所周波数から</b>この値を返します。単一帯域の位相からこれを越える手段は、どの位相ベース手法にもありません。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">狭帯域条件 — 各サブ帯域が単一の運動成分を運ばないと厳密でない</h3>
+<p><code style="color:#22d3bf">alpha * d</code> が厳密なのは、1 つのサブ帯域に動く成分が 1 つだけ入っているときです。広帯域テクスチャは 1 つの帯域に複数の空間周波数を入れ、<b>和の位相は変位の線形関数ではありません</b>。実測(等方性雑音を Gaussian で平滑したテクスチャ、0.2 px の運動、<code style="color:#22d3bf">alpha = 3</code>):</p>
+<p>| 平滑 sigma [px] | 計測の相対誤差 | 増幅後の不足 |</p>
+<p>|---|---|---|</p>
+<p>| 1.0 | 1.6e-03 | 4.8 % |</p>
+<p>| 1.5 | 5.7e-04 | 5.5 % |</p>
+<p>| 3.0 | 1.0e-03 | 9.1 % |</p>
+<p><b>帯域を共有する空間周波数が多いほど不足が増えます。</b> 計測側は局所周波数を画素ごとに推定するので影響が小さく、増幅側が受け止める形です。これは位相ベース処理に内在するもので、調整で消える種類の誤差ではありません。<code style="color:#22d3bf">synthesize_translation</code> の既定波長がオクターブを分けてあるのは、この条件を合成の側で<b>目に見えるように</b>しておくためです。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">その他</h3>
+<p style="margin:2px 0 2px 12px">• <b>残差帯域は増幅しません。</b> 低域残差・高域残差・補完残差は局所空間周波数が一意に定まらないので、そのまま再合成されます。エネルギーがまるごと残差に居る内容は増幅されません(だから合成の格子は帯域中心に置いてあります)。</p>
+<p style="margin:2px 0 2px 12px">• <b>振幅加重の空間位相平滑を入れていません。</b> 2013 年の論文はこれを足して位相雑音を抑えますが、本族では意図的に外してあります。測定可能な厳密関係(<code style="color:#22d3bf">alpha * d</code>)を、定量化していないバイアスと引き換えにしないためです。</p>
+<p style="margin:2px 0 2px 12px">• <b>これはオプティカルフローではありません。</b> 大きな運動、遮蔽、独立に動く物体は守備範囲外で、そこは <code style="color:#22d3bf">flow</code> と <code style="color:#22d3bf">motion</code> の仕事です。</p>
+<p style="margin:2px 0 2px 12px">• <b>増幅は運動 SNR を改善しません。</b> 上の節のとおりで、そう見える指標があればそれは指標の当て方が間違っています。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

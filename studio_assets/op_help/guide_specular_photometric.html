@@ -1,0 +1,104 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">鏡面反射の分離と頑健フォトメトリックステレオ — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p><b>Lambertian 前提が壊れる場所</b>の道具箱です。<code style="color:#22d3bf">photometric</code> は自分の docstring でこう書いています — 線形最小二乗が厳密なのは「Lambertian + 既知光源 + 影なし」のときだけで、<b>影とスペキュラは線形性を破る</b>から頑健版が別途要る、と。本族はその「別途」であり、加えて<b>形状復元にかける前にハイライトそのものを取り除く</b> 2 つの経路(色・偏光)を第一級の op にしたものです。金属・塗装・樹脂といった光る面の外観検査は、ここが無いと最初の一歩で崩れます。13 op / 4 カテゴリ(numpy のみ、台帳は <code style="color:#22d3bf">opsspecular.py</code>、実体は <code style="color:#22d3bf">specularity.py</code>):</p>
+<p style="margin:2px 0 2px 12px">• <b>dichromatic(4)</b> — <code style="color:#22d3bf">specular_diffuse_split</code> / <code style="color:#22d3bf">specular_coefficient_map</code> / <code style="color:#22d3bf">specular_free_transform</code> / <code style="color:#22d3bf">illuminant_from_dichromatic_planes</code>: 二色性反射モデル(誘電体の放射輝度は「面の色を持つ body 項」と「光源の色を持つ interface 項」の和)。鏡面成分は光源色方向の<b>1 次元部分空間</b>に載るので、除去は最適化ではなく<b>射影</b>です。分離した拡散像、閾値にかけるスカラの鏡面係数、ローブ形状を知らずに済ませる鏡面不変部分空間、そして光源色そのものを画像から求める null 空間計算。</p>
+<p style="margin:2px 0 2px 12px">• <b>reflectance(3)</b> — <code style="color:#22d3bf">brdf_blinn_phong</code> / <code style="color:#22d3bf">brdf_microfacet</code> / <code style="color:#22d3bf">dichromatic_render</code>: 順方向モデル。既知のハイライトを描いて、分離して、入れた値と突き合わせる — ループが閉じます。ローブ形状を <b>2 種類</b>用意したのは意図的で、分離器がローブの形に依存していないことは片方だけでは示せません。</p>
+<p style="margin:2px 0 2px 12px">• <b>photometric(2)</b> — <code style="color:#22d3bf">photometric_stereo_robust</code> / <code style="color:#22d3bf">photometric_residual</code>: Woodham の 3 灯解を、Fischler-Bolles の最大合意と Rousseeuw の最小メディアン二乗で包んだもの。3 灯部分集合の列挙は<b>網羅的かつ決定的</b>なので、2 回走らせればビット単位で同じ答えが返ります。残差マップは「頑健版に手を出す前に、そもそも必要かどうか」を答える診断です。</p>
+<p style="margin:2px 0 2px 12px">• <b>polarization(4)</b> — <code style="color:#22d3bf">polarization_render</code> / <code style="color:#22d3bf">polarization_separate</code> / <code style="color:#22d3bf">polarization_dolp_map</code> / <code style="color:#22d3bf">polarization_stokes</code>: 検光子を回した掃引は、無偏光成分と直線偏光成分へ閉形式で割れます。最後の 1 つは Stokes ベクトルを <code style="color:#22d3bf">optics.stokes_analyze</code> へそのまま手渡します。</p>
+<p>データ種は既存語彙の再利用が基本です: <b>image2d</b>(鏡面係数・残差・偏光度などのスカラ地図。閾値処理や形態素へそのまま流せる)、<b>images</b>(光源を切り替えた N 枚)、<b>normalmap</b>(<code style="color:#22d3bf">photometric</code> と同じ規約の法線場。+z がカメラ向き)、<b>vector</b>((3,) の光源色)、<b>labels</b>((H,W) の材質地図 — 既存のセグメンテーション出力がそのまま入口になる)、<b>stokes</b>(既存の偏光語彙)。新語は 2 つだけで、どちらも<b>既存語では型レベルの嘘になる</b>ものです。<b>rgbimage</b>((H,W,3) の線形 RGB)は <code style="color:#22d3bf">pointmap</code> / <code style="color:#22d3bf">normalmap</code> と構造が完全に同じですが、そこへ計量 XYZ や単位法線を渡しても例外は出ず「もっともらしく間違った分離結果」が出ます。<b>polsweep</b>((N,H,W) の検光子掃引)は <code style="color:#22d3bf">images</code> と構造が同じで、これを分けた理由は §「入力契約」の最後に実測つきで書いてあります。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">既存 op との棲み分け(重複させていないもの)</h3>
+<p>本族は既存資産を<b>再実装せず import して合成</b>します。下表の右列は「そちらを呼びなさい」という意味です。</p>
+<p>| やりたいこと | 使う op | 置き場所 |</p>
+<p>|---|---|---|</p>
+<p>| Lambertian の<b>順方向レンダ</b> | <code style="color:#22d3bf">render_lambertian</code> / <code style="color:#22d3bf">synthesize_ps_images</code> | <code style="color:#22d3bf">photometric</code>。<code style="color:#22d3bf">dichromatic_render</code> は body 項をこれで<b>計算させて</b>おり、ビット単位で一致することをテストで固定しています(光源の正規化規約とクリップが 2 モジュールで食い違わない唯一の担保) |</p>
+<p>| 影もスペキュラも無い場合の<b>素の</b>フォトメトリックステレオ | <code style="color:#22d3bf">photometric_stereo</code> | <code style="color:#22d3bf">photometric</code>。<code style="color:#22d3bf">photometric_stereo_robust(method=&quot;lstsq&quot;)</code> はこれを<b>呼ぶだけ</b>で、だから「素の版がここで壊れる」が主張ではなく測定になります |</p>
+<p>| 法線場 → 高さ場の積分(Frankot-Chellappa) | <code style="color:#22d3bf">integrate_normals</code> / <code style="color:#22d3bf">integrate_gradients</code> | <code style="color:#22d3bf">photometric</code>。本族は法線までを出し、積分はそちらへ渡します |</p>
+<p>| 偏光度・方位角・楕円率・利き手の<b>解釈</b> | <code style="color:#22d3bf">stokes_analyze</code> | <code style="color:#22d3bf">optics</code>。<code style="color:#22d3bf">polarization_stokes</code> はその入力になる Stokes ベクトルを作るだけで、解釈は一切しません |</p>
+<p>| Jones / Mueller の<b>代数</b>(偏光子・波長板・回転子) | <code style="color:#22d3bf">jones_element</code> / <code style="color:#22d3bf">mueller_element</code> ほか | <code style="color:#22d3bf">optics</code>。本族は実測から Stokes を作る側で、素子のモデルは持ちません |</p>
+<p>| 面で曲がる<b>実際の光線</b>と<b>厳密な</b> Fresnel 反射率 | <code style="color:#22d3bf">reflect</code> / <code style="color:#22d3bf">refract</code> / <code style="color:#22d3bf">fresnel_reflectance</code> / <code style="color:#22d3bf">normal_from_reflection</code>(デフレクトメトリ) | <code style="color:#22d3bf">match3d</code>。<code style="color:#22d3bf">brdf_microfacet</code> は Schlick <b>近似</b>を名指しで使います(それが microfacet 文献の指定)。厳密な曲線が要るならそちら |</p>
+<p>| 色空間変換・ホワイトバランス・デモザイク | color backends | 本族は<b>線形 RGB を受け取る前提</b>で、各 docstring にそう書いてあります |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
+<p>全 op が入力を検証してから計算します。以下は敵対監査で<b>実際に見つかったバグ</b>か、それを塞ぐために書いた罠です。この族が探したのは「例外が出る」ことではなく「<b>黙って間違った数字を返す</b>」ことでした。</p>
+<p style="margin:2px 0 2px 12px">• <b>rank ガードだけでは足りない — この族で一番重い教訓。</b> 単一材質なら、画像の光源色に直交する成分は<b>厳密に rank 1</b> です。だから第 2 特異値と第 1 特異値の比を見れば 2 材質は弾ける、と考えて最初はそれだけを実装しました。<b>破れます。</b> 逆平行に近い色度を持つ 2 つのアルベドは、射影後もやはり 1 本の直線に乗るので rank は 1 のままです。実測した比は <b>0.0815</b> で、既定閾値 0.1 を<b>下回って素通り</b>しました。そのとき返るのは、最大値 0.99 の画像に対して<b>1.03 ずれた</b>拡散像です — 例外も NaN も警告も無く、100% を超える誤差の配列が正常な顔で返ってきます。本 repo が最も嫌う「もっともらしく間違った数字」の教科書例でした。塞いだのは<b>別の物理量</b>です: body 係数は定義上<b>非負</b>で、1 材質なら決して負になりません。この画像では<b>画素の 50%</b> が負になっていました。よって現在は rank 比と負値割合の<b>2 つ</b>でガードします。片方だけでは不十分だということが、この族で最も高くついた発見です。</p>
+<p style="margin:2px 0 2px 12px">• <b>単位と型の取り違えは crash ではなく「もっともらしい答え」になる。</b> <code style="color:#22d3bf">float(&quot;50&quot;)</code> は成功するので、未パースの設定値が長さや指数として通り抜けます。文字列・bool(<code style="color:#22d3bf">True == 1</code> の暗黙昇格)・complex(虚部の無言切り捨て)・masked array(マスク剥がし)は全て <code style="color:#22d3bf">ValueError</code> です。配列は<b>変換前に生の dtype を見ます</b> — <code style="color:#22d3bf">np.asarray([&quot;1&quot;,&quot;2&quot;], dtype=float)</code> は成功してしまうので、後から見たのでは手遅れだからです。</p>
+<p style="margin:2px 0 2px 12px">• <b>サイズ上限が「後で」効いていて、防ぐはずの確保を防げていなかった。</b> 上限を float64 昇格の<b>後</b>に検査していたため、float32 の 8192x8192x3 画像(0.8 GB)は <b>1.6 GB の複製を要求してから</b>例外になっていました。ndarray の形は読むのが只なので、変換前に検査するよう直しました。テストスイート全体の実行時間が <b>74 秒から 1.3 秒</b>へ落ちたのが、確保が本当に起きていた証拠です。上限は <code style="color:#22d3bf">MAX_PIXELS</code> / <code style="color:#22d3bf">MAX_STACK_ELEMENTS</code> / <code style="color:#22d3bf">MAX_LIGHTS</code> / <code style="color:#22d3bf">MAX_ROBUST_PIXELS</code> / <code style="color:#22d3bf">MAX_ROBUST_WORK</code> / <code style="color:#22d3bf">MAX_SUBSETS</code> / <code style="color:#22d3bf">MAX_MATERIALS</code>。頑健版は 3 灯部分集合を網羅するので、コストが<b>ユーザー制御の 3 つの数の積</b>になり、どれか 1 つの打ち間違いで破綻します。</p>
+<p style="margin:2px 0 2px 12px">• <b>法線が単位ベクトルでないことを黙って信じない。</b> モデルは <code style="color:#22d3bf">albedo * normal</code> なので、法線場を 2 倍すればモデルが 2 倍になります。<code style="color:#22d3bf">photometric_residual</code> に 2 倍した法線を渡すと、<b>厳密に Lambertian な場面</b>に対して残差 <b>0.552</b> を返していました(真値 0)。呼んだ人は「うちの面は Lambertian ではない」と結論します。黙って正規化するのも駄目で、それは「normals と称して <code style="color:#22d3bf">albedo * normal</code> を渡している呼び手」を隠します。よって名指しで拒否します。</p>
+<p style="margin:2px 0 2px 12px">• <b>満たせない要求は黙って無効化しない。</b> <code style="color:#22d3bf">min_inliers</code> に光源数より大きい値を渡すと、合意集合による再当てはめが静かに無効化され、全画素がこっそり 3 灯最小解に落ちていました。現在は「その光源数では決して満たせない」と言って止まります。</p>
+<p style="margin:2px 0 2px 12px">• **1 画素の画像で生の <code style="color:#22d3bf">IndexError</code> を出さない。** (1,3) 行列の SVD は特異値を 1 つしか返さないので第 2 特異値の読み出しで落ちていました。正直な失敗は「添字が範囲外」ではなく「1 画素では body 方向が決まらない」です。既知 body 色の経路は画素ごとなので、そちらは 1 画素でも動きます。</p>
+<p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">polsweep</code> を <code style="color:#22d3bf">images</code> から分けたのも同じ規律です。** 汎用の <code style="color:#22d3bf">images</code> プールが偏光 op で毎回 fail-closed になり、消費側 3 op が 1200 連鎖で一度も実行されなかった、という症状が発端でした。しかし<b>分けるべき本当の理由は両方向とも黙って間違うから</b>です。(A) 本物のライトスタックを <code style="color:#22d3bf">polarization_separate</code> に渡すと<b>例外は出ません</b>。無偏光の場面なのに偏光度 5.4% を平然と返し、無作為な光源方向で試して <b>50 回中 50 回すべてが受理</b>されました。fail-closed 検査が捕まえるのは乱数であって、もっともらしいが種類の違うスタックではありません。(B) 逆はもっと悪く、本物の偏光掃引を <code style="color:#22d3bf">photometric_stereo_robust</code> に渡すと、真の法線が厳密に (0,0,1) の完全な平面に対して平均 <b>33.99 度</b>ずれた法線を、もっともらしいアルベドと <b>21%</b> の残差つきで返します。同じ op が同じ光源配置の本物の測光データでは <b>0.000115 度</b>なので、比は <b>296,000 倍</b> — これは失敗ではなく自信のある嘘です。<b>なお型が守れるのは容器・形・フレーム数 3 以上・有限・非負までで、「これは本当に掃引か」も「フレーム順が角度列と対応しているか」も守れません。</b>構造検査は掃引・ライトスタック・乱数を 5 項目すべて通します。分離しているのは<b>プール名</b>であって述語ではない、と台帳に書き分けてあります。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン(op の繋がり)</h3>
+<p>光沢面の検査は「ハイライトを<b>消す</b>」か「ハイライトに<b>耐える</b>」かの二択で、本族は 3 本の道を用意します。色を使う道・偏光を使う道・多灯で押し切る道です。検証済み <code style="color:#22d3bf">examples/specular_photometric.py</code> がこの筋そのものです。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    A[線形RGB rgbimage] --&gt; B[illuminant_from_dichromatic_planes&lt;br/&gt;2材質以上 → 光源色 vector]
+    B --&gt; C[specular_diffuse_split&lt;br/&gt;拡散 + 鏡面]
+    A --&gt; C
+    C --&gt;|rgbimage| D[以降の検査は拡散像で]
+    A --&gt; E[specular_coefficient_map&lt;br/&gt;スカラ m_s → image2d]
+    E --&gt; F{閾値でテカり領域}
+    A --&gt; G[specular_free_transform&lt;br/&gt;ローブ形状を仮定しない射影]
+    G --&gt; H[特徴照合・エッジ検出]
+    I[normalmap] --&gt; J[dichromatic_render&lt;br/&gt;brdf_blinn_phong / brdf_microfacet]
+    J --&gt;|既知の答えを持つ画像| C</pre>
+<p>多灯の道は<b>判断が先</b>です。残差マップが静かなら素の最小二乗で十分で、頑健版は要りません。偏光の道は独立していて、色を一切使わないので多材質のテクスチャ面でも効きます。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    K[images N灯] --&gt; L[photometric_residual&lt;br/&gt;モデル違反の地図]
+    L --&gt; M{残差は大きいか}
+    M --&gt;|小さい| N[photometric_stereo_robust method=lstsq]
+    M --&gt;|大きい| O[method=median / ransac&lt;br/&gt;+ inliers でどの灯を信じたか]
+    N --&gt; P[normalmap]
+    O --&gt; P
+    P --&gt; Q[photometric.integrate_normals で高さ場へ]
+    R[image2d 拡散 + image2d 鏡面] --&gt; S[polarization_render → polsweep]
+    S --&gt; T[polarization_separate]
+    S --&gt; U[polarization_dolp_map&lt;br/&gt;偏光板が効くかを先に測る]
+    S --&gt; V[polarization_stokes]
+    V --&gt;|stokes| W[optics.stokes_analyze]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方(最小の 1 本)</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import specularity as SP
+
+# 塗装面のテカりを色で落とす(1 材質・白色光源)
+diffuse, specular = SP.specular_diffuse_split(image_rgb)
+glare = SP.specular_coefficient_map(image_rgb) &gt; 0.2      # 閾値でテカり領域
+
+# 8 灯のうち何灯かが遮蔽されている前提で形状を復元する
+normals, albedo, inliers = SP.photometric_stereo_robust(images, lights,
+                                                        method=&quot;ransac&quot;)
+print(inliers.mean(axis=(1, 2)))        # どの灯を、どれだけ信じたか
+
+# 偏光板を回した 4 枚から分離し、Stokes を光学族へ渡す
+import optics as O
+d, s = SP.polarization_separate(frames)                   # 既定 0/45/90/135 度
+print(O.stokes_analyze(SP.polarization_stokes(frames))[&quot;dop&quot;])</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実測値(すべて実行して得た数字)</h3>
+<p>分離の厳密性 — 既知の鏡面成分を足した合成画像からの最大絶対誤差:</p>
+<p>| 経路 | 拡散の誤差 | 分割の閉じ |</p>
+<p>|---|---|---|</p>
+<p>| 単一材質(body 色を推定) | 5.0e-16 | 1.1e-16 |</p>
+<p>| body 色を与える | 4.0e-15 | 2.1e-15 |</p>
+<p>| body 色を画素ごとに与える(テクスチャ面) | 2.9e-15 | — |</p>
+<p>| 有色光源 | 1.1e-15 | — |</p>
+<p>光源色の推定は 3 材質から最大成分誤差 4.4e-14(角度誤差は 0.0 度に丸まる)。鏡面不変部分空間は、任意の強さ・任意の形のハイライトを足しても出力の変化が 2.2e-16。</p>
+<p>反射ローブ — <code style="color:#22d3bf">brdf_blinn_phong</code> の相反性は<b>厳密に 0 差</b>、<code style="color:#22d3bf">brdf_microfacet</code> は 1.7e-16。microfacet の法線入射値は閉形式 <code style="color:#22d3bf">f0 / (4 pi roughness^4)</code> を粗さ 0.3 / 0.5 / 1.0 で<b>ビット単位</b>に再現し、粗さ 0.1 でも 3.3e-16(GGX の分母を教科書どおり書くと桁落ちして 2.2e-13 ずれるので、代数的に等価な形に書き換えてあります)。GGX の分布は半球上で 1 に積分され、20000 点の中点則で相対誤差 3.2e-07 / 6.3e-08 / 4.0e-09(粗さ 0.2 / 0.3 / 0.6)、200000 点にすると<b>ちょうど 100 分の 1</b> — 残差が求積であってモデルではないことがこれで分かります。</p>
+<p>頑健フォトメトリックステレオ — 8 灯のうち k 灯が投影影で潰れたときの平均角度誤差:</p>
+<p>| k | <code style="color:#22d3bf">lstsq</code> | <code style="color:#22d3bf">median</code> | <code style="color:#22d3bf">ransac</code> |</p>
+<p>|---|---|---|---|</p>
+<p>| 1 | 31.70 度 | 0.00011 度 | 0.00011 度 |</p>
+<p>| 2 | 53.11 度 | 0.00011 度 | 0.00011 度 |</p>
+<p>| 3 | 64.40 度 | 0.00011 度 | 0.00011 度 |</p>
+<p>| 4 | 70.52 度 | 70.52 度 | 70.20 度 |</p>
+<p>0.00011 度は「ほぼ正しい」ではなく<b>下限</b>です — 返る法線は float32(<code style="color:#22d3bf">photometric</code> と同じ規約)で、真の法線を float32 に丸めて戻すだけで同じ 0.000115 度が出ます。露出を 1e-3 倍・1e3 倍・1e6 倍しても inlier マスクは<b>ビット単位で同一</b>(閾値が画素ごとの最大測定値に対する相対値だから)、法線の差はやはり 0.000115 度。光源の並び替えに対する不変性は 2.0e-16。ハイライトで 1 灯が汚れた場合も同じで、<code style="color:#22d3bf">lstsq</code> が 58.54 度のところ頑健版は 0.0001 度です。残差は真値を float64 で与えれば 1.4e-16、内部で解かせると float32 精度の 4.5e-08、3 灯遮蔽で 0.50。</p>
+<p>偏光 — <code style="color:#22d3bf">polarization_render</code> との往復は 4 角度で 3.9e-16、最小構成の 3 角度で 4.4e-16。偏光度は閉形式と 2.8e-16 で一致し、露出を 1e-4 倍から 1e8 倍まで振っても 3.9e-16 しか動きません。<code style="color:#22d3bf">polarization_stokes</code> の S0 は場面の平均全放射輝度と一致し、<code style="color:#22d3bf">optics.stokes_analyze</code> は入れた方位角 30 度をそのまま返します。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族でできないこと(正直な限界)</h3>
+<p><b>ここが一番読む価値のある節です。</b> 上の数字はすべて「仮定が成り立っていれば」の話で、成り立たないときに何が起きるかを測ってあります。</p>
+<p style="margin:2px 0 2px 12px">• <b>2 つのガードは「粗い違反」しか縛れません。閾値を賢くしても直りません。</b> 色度が body 方向から<b>離れていく</b>テクスチャは rank 比 0.633 で捕まりますが、body 方向に<b>沿って漂う</b>テクスチャは rank 比 <b>0.0641</b>(既定閾値を下回る)で、しかも body 係数は全部正なので第 2 のガードも黙ったままです。返る拡散像は <b>0.198</b> ずれます。そしてこれは雑音と<b>区別できません</b> — 同じ場面に 1% のガウス雑音を足すと 0.0348、2% で 0.0694 で、このテクスチャはその間に座っています。テクスチャがありうる面に対する答えは、ここの数字を弄ることではなく <code style="color:#22d3bf">body_rgb</code> を渡すことです。</p>
+<p style="margin:2px 0 2px 12px">• <b>鏡面成分が厳密にゼロの画素が 1 つも無いと、分離できない定数が残ります。</b> 光源色が既知でも body 色は<b>光源色方向の成分だけ決まりません</b>。body 色に <code style="color:#22d3bf">eps * 光源色</code> を足し、鏡面係数から同じだけ引くと、<b>画素単位で同一の画像</b>ができるからです。これはモデルの真の曖昧性で、解法の弱さではありません。標準的な逃げ道(鏡面係数は非負で、その最小値が 0)を使っていますが、面の全部が光っていると<b>画像だけからは検出できない</b>ずれが定数分残ります。実測すると、そのずれは<b>フレーム中で一番暗いハイライトそのもの</b>です: 鋭さ 8 のローブで裾 0.243・ずれ 0.175、鋭さ 48 で 0.00264・0.00190、鋭さ 200 で 9.1e-11・6.5e-11。</p>
+<p style="margin:2px 0 2px 12px">• <b>既知 body 色の経路は、面の色が光源色に近づくほど悪条件になります。</b> 誤差は body 色と光源色のなす角の余弦 b に対して 1/(1-b^2) で増幅されます。白色光源のもとでほぼ無彩色のグレー(b が 0.99999、増幅率 6.4e+04)まで行くテクスチャで 5.9e-12、同じテクスチャを b が 0.965 以下に留めれば 2.9e-15 でした。<b>無彩色に近い面は色による分離が最も苦手とする場所</b>で、計算をどう丁寧にやっても変わりません。</p>
+<p style="margin:2px 0 2px 12px">• <b>フレーム列と角度列・光源列の対応は、配列からは検証できません。</b> 順番を入れ替えた掃引は「別の場面の正しい掃引」であって、配列の中に矛盾は生じません。実測では、真値が拡散 0.5・鏡面 0.2 の掃引を 4 枚並べ替えると <b>0.559 と 0.141</b> を、例外も無く綺麗に返しました。<code style="color:#22d3bf">images</code> と <code style="color:#22d3bf">lights</code> の対応も同じです。これはメタデータであって配列の外にあり、型でも検査でも守れません。だから隠さず書いてあります。</p>
+<p style="margin:2px 0 2px 12px">• <b>線形放射輝度とガンマ符号化は区別できません。</b> 8 bit の表示用画像は受理され、float に変換され、分離され、そして<b>答えは間違っています</b> — 二色性モデルの加法性は線形放射輝度でしか成り立たないからです。配列を見て見分ける方法はありません。</p>
+<p style="margin:2px 0 2px 12px">• <b>偏光分離の「拡散」は正確には「無偏光成分」です。</b> 掃引から厳密に取り出せるのは無偏光の放射輝度 <code style="color:#22d3bf">2 * I_min</code> と直線偏光の放射輝度 <code style="color:#22d3bf">I_max - I_min</code> で、前者を拡散・後者を鏡面と呼ぶのは<b>追加の物理的仮定</b>です。誘電体の Brewster 角近傍では正しく、<b>法線入射では偽</b>(そこでは鏡面反射も無偏光なので、この op は鏡面成分を全部「拡散」として返します)、金属でも当てになりません。また直線検光子だけでは円偏光は測れないので <b>S3 は常に厳密に 0</b> で、これは測定値ではなく限界です。</p>
+<p style="margin:2px 0 2px 12px">• <b>頑健版の破綻点は 8 灯中 4 灯です。</b> 半分が遮蔽されると、潰れた 4 枚は「真っ黒な面」という<b>それ自体完全に無矛盾なモデル</b>でもあるので、どんな多数決規則も真の側を選べません(実測 70.52 度 / 70.20 度)。上の表に k=4 の行を残してあるのはそのためで、都合の良いところで切った抜粋ではありません。また頑健推定は attached shadow を外れ値として捨てるので、<b>実効的な光源数は N より少なくなります</b>。生き残りが 3 灯を切ると法線は決まらず、それは返り値の inlier マスクに現れます — 隠しません。</p>
+<p style="margin:2px 0 2px 12px">• <b>BRDF ローブは陰影モデルであって光輸送ではありません。</b> 相互反射も投影影も表面下散乱もありません。既知のハイライトを持つ画像を作って分離を検証するために存在しており、<code style="color:#22d3bf">visiondesign</code> が「画像ではなく限界を返す」と引いた線と同じ場所に立っています。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

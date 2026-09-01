@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">polarization_dolp_map — SPECULAR <code style="color:#22d3bf">polarization</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">polsweep</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import specularity; specularity.polarization_dolp_map(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)</code> (または <code style="color:#22d3bf">opsspecular.get(&quot;polarization_dolp_map&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Degree of linear polarisation, per pixel. → (H, W) in [0, 1].</p>
+<p>`<code style="color:#22d3bf">sqrt(S1^2 + S2^2) / S0</code>`, from the same sinusoid fit as</p>
+<p>:func:<code style="color:#22d3bf">polarization_separate</code>. It answers the question that decides whether</p>
+<p>a polariser is worth mounting at all: <b>1</b> means the light at that pixel is</p>
+<p>fully linearly polarised and a crossed analyser extinguishes it completely,</p>
+<p><b>0</b> means the polariser will only cost you a stop of exposure.</p>
+<p>Being a ratio, it is invariant to exposure: scaling every frame by 1e-4,</p>
+<p>1e4 or 1e8 moves it by at most 3.9e-16 (measured), which is what makes it</p>
+<p>comparable across a production line where the lamps age. Not *bit*-</p>
+<p>identical — the least-squares fit rounds differently at a different scale —</p>
+<p>and the difference between &quot;invariant&quot; and &quot;bit-identical&quot; is the kind of</p>
+<p>claim this library measures rather than asserts.</p>
+<p>Pixels with zero total radiance have no degree of polarisation (every ratio</p>
+<p>would be 0/0) and are returned as 0.0 rather than as NaN; that is a</p>
+<p>convention, and it is stated here because a NaN spreading into a</p>
+<p>thresholding routine is exactly the silent failure this library refuses.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: as :func:</code>polarization_separate`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:specular_photometric">specular_photometric</a> — <code style="color:#22d3bf">py -3.11 examples/specular_photometric.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opspecular:polarization_render">polarization_render</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">polarization</code>)</h3>
+<p><a style="color:#22d3bf" href="opspecular:polarization_render">polarization_render</a> · <a style="color:#22d3bf" href="opspecular:polarization_separate">polarization_separate</a> · <a style="color:#22d3bf" href="opspecular:polarization_stokes">polarization_stokes</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: specularity.py — SPECULAR operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

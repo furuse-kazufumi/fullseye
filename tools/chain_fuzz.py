@@ -169,6 +169,12 @@ def make_generators():
         "lightfield": lambda rng: __import__("lightfield").lf_synthesize(
             (0.0, 1.0), angular=(3, 3), shape=(32, 32),
             seed=int(rng.integers(0, 1000)))[0],
+        # 偏光子掃引。既定の 0/45/90/135 度は面偏光センサの実配置で、
+        # polarization_render の逆が polarization_separate なので鎖が閉じる
+        "polsweep": lambda rng: __import__("specularity").polarization_render(
+            0.40 + 0.30 * rng.random((32, 32)), 0.50 * rng.random((32, 32)),
+            angles_deg=(0.0, 45.0, 90.0, 135.0),
+            azimuth_deg=float(rng.uniform(0.0, 180.0))),
         # keypoints = 画像平面上の (N,2) 点。3-D 台帳の PnP 系はこれを食う。
         # 種が無いと「project_points が同じ連鎖の中で先に引かれた場合だけ」
         # 到達する状態になり、実測で pnp_ransac / dlt_pose / reprojection_error
@@ -376,6 +382,65 @@ def _mk_mueller(rng):
                                   float(rng.uniform(0.0, 360.0)))
 
 
+def _b_dichromatic_planes(pool, rng):
+    """(rgbimage, labels) for illuminant_from_dichromatic_planes。
+
+    半分は本物の多材質シーンを組んで実経路を通し、半分は pool の生の labels を
+    渡して fail-closed を叩く(_b_shaped と同じ「半分は妥当・半分は敵対」方針)。
+    単一材質の rgbimage 生成器をそのまま渡すと二色性平面が 1 枚しか立たず、
+    この op は毎回 CONTRACT になって一度も実行されない。
+    """
+    imgs = pool.get("rgbimage") or []
+    if not imgs:
+        return None
+    img = imgs[int(rng.integers(len(imgs)))]
+    h, w = img.shape[:2]
+    if h < 6 or w < 6 or rng.random() < 0.5:
+        labs = pool.get("labels") or []
+        if not labs:
+            return None
+        return (img, labs[int(rng.integers(len(labs)))]), {}
+    gamma = np.ones(3) / np.sqrt(3.0)
+    m_s = img @ gamma
+    m_s = np.clip(m_s - np.percentile(m_s, 70.0), 0.0, None)
+    shade = np.linalg.norm(img - m_s[..., None] * gamma, axis=-1)
+    labels = np.zeros((h, w), dtype=np.int32)
+    labels[:, w // 3:2 * w // 3] = 1
+    labels[:, 2 * w // 3:] = 2
+    multi = np.zeros((h, w, 3))
+    for k, c in enumerate(((0.80, 0.55, 0.35), (0.25, 0.60, 0.75),
+                           (0.55, 0.30, 0.70))):
+        im = np.asarray(c) * shade[..., None] + m_s[..., None] * gamma
+        multi[labels == k] = im[labels == k]
+    return (multi, labels), {}
+
+
+def _b_steerable(pool, rng):
+    """complex_steerable_reconstruct の入力を pool の table 一様抽選に任せると、
+    他族の dict/list が来て毎回 CONTRACT になり実経路を一度も通らない。
+    半分は image2d プールから作った**本物の分解**、半分は pool の table を素で
+    渡す(敵対入力 → fail-closed)。
+    """
+    import motionmag                                     # noqa: PLC0415
+    if rng.random() < 0.5:
+        imgs = pool.get("image2d") or []
+        if not imgs:
+            return None
+        img = imgs[int(rng.integers(len(imgs)))]
+        return (motionmag.complex_steerable_decompose(
+            img, scales=int(rng.integers(1, 5)),
+            orientations=int(rng.integers(1, 5))),), {}
+    tabs = pool.get("table") or []
+    if not tabs:
+        return None
+    return (tabs[int(rng.integers(len(tabs)))],), {}
+
+
+#: op 固有の引数(名前が汎用ヒントと衝突する/型が op ごとに違うもの)。
+#: **既定値つきの引数もここに書けば上書きできる**(名前レベルの PARAM_HINTS は
+#: 必須引数にしか効かない — 詳細は `_bind_args`)。
+
+
 OP_ARG_BUILDERS = {
     "abcd_matrix": _b_abcd,
     "wavefront_stats": _b_wavefront,
@@ -386,11 +451,10 @@ OP_ARG_BUILDERS = {
     "register_cross": _b_register_cross,
     "to_points": lambda pool, rng: ((pool["points"][0], "points"), {})
     if pool.get("points") else None,
+    "illuminant_from_dichromatic_planes": _b_dichromatic_planes,
+    "complex_steerable_reconstruct": _b_steerable,
 }
 
-#: op 固有の引数(名前が汎用ヒントと衝突する/型が op ごとに違うもの)。
-#: **既定値つきの引数もここに書けば上書きできる**(名前レベルの PARAM_HINTS は
-#: 必須引数にしか効かない — 詳細は `_bind_args`)。
 OP_PARAM_HINTS = {
     # 既定 (5,5) はプールの 32x32 を割り切れず毎回 ValueError になり、この op が
     # 一度も実行されないまま「発見ゼロ」に見えていた。32 を割り切る (4,4) にする
@@ -608,6 +672,17 @@ TYPE_CHECKS = {
     "cscalar": lambda v: isinstance(v, complex) and not isinstance(v, np.ndarray),
     # lightfield = 4-D (V, U, H, W)。角度 2 軸 × 空間 2 軸
     "lightfield": lambda v: isinstance(v, np.ndarray) and v.ndim == 4,
+    # polsweep = 検光子を既知角度で回して撮った (N,H,W)。images と構造は同じだが
+    # 意味が違い、**両方向とも黙って間違う**: 本物のライトスタックを
+    # polarization_separate へ渡すと例外を出さず偏光度 5.4% を捏造し、逆に
+    # 本物の掃引を photometric_stereo_robust へ渡すと真の法線が (0,0,1) の
+    # 平面に対して平均 34 度ずれた法線を返す(親の独立検算で 35.15 度 vs
+    # 本物の測光データ 0.000000 度)。N>=3 はモデルの未知数が 3 つだから、
+    # 非負は検光子を通った放射輝度だから。**フレーム順と角度列の対応は
+    # 型では守れない** — 並べ替えた掃引は「別のシーンの正当な掃引」になる
+    "polsweep": lambda v: isinstance(v, np.ndarray) and v.ndim == 3
+    and v.shape[0] >= 3 and v.dtype.kind == "f"
+    and np.isfinite(v).all() and (v >= 0.0).all(),
     # video = (T,H,W)。voxel と ndim は同じだが先頭が時間軸。共有すると例外も
     # NaN も無しに z を時間として読むので型を分ける(実測確認済み)
     "video": lambda v: isinstance(v, np.ndarray) and v.ndim == 3

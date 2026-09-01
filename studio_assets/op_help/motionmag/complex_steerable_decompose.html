@@ -1,0 +1,44 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">complex_steerable_decompose — MOTIONMAG <code style="color:#22d3bf">decompose</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import motionmag; motionmag.complex_steerable_decompose(image, scales: &#x27;int&#x27; = 4, orientations: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code> (または <code style="color:#22d3bf">opsmotionmag.get(&quot;complex_steerable_decompose&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Complex oriented sub-band decomposition of one frame -&gt; `<code style="color:#22d3bf">dict</code>`.</p>
+<p>Splits the image into `<code style="color:#22d3bf">scales * orientations</code>` <b>analytic</b> sub-bands plus</p>
+<p>three residuals (low-pass, high-pass and a small symmetric completion band).</p>
+<p>Each sub-band is a full-resolution `<code style="color:#22d3bf">(H, W)</code>` complex array whose modulus is</p>
+<p>the local contrast of that scale/orientation and whose argument is the local</p>
+<p><b>phase</b> — the quantity a translation shifts linearly, which is what the</p>
+<p>rest of this module is built on. There is no spatial decimation: keeping</p>
+<p>every band at full resolution costs memory but makes the frame exactly</p>
+<p>invertible, and exactness is the point.</p>
+<p>Returns ``{&quot;bands&quot;: [complex (H, W), ...], &quot;kinds&quot;: [...],</p>
+<p>&quot;centre_cycles_per_px&quot;: [...], &quot;orientation_rad&quot;: [...], &quot;shape&quot;: (H, W),</p>
+<p>&quot;scales&quot;: s, &quot;orientations&quot;: k}`<code style="color:#22d3bf">. </code><code style="color:#22d3bf">kinds[j]</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">&quot;band&quot;</code>` for an oriented</p>
+<p>sub-band and `<code style="color:#22d3bf">&quot;lowpass&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;highpass&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;residual&quot;</code>` otherwise;</p>
+<p>`<code style="color:#22d3bf">centre_cycles_per_px</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">orientation_rad</code><code style="color:#22d3bf"> are </code><code style="color:#22d3bf">None</code>` for residuals,</p>
+<p>which have no orientation and no single centre frequency.</p>
+<p>Feed the whole dict back to :func:<code style="color:#22d3bf">complex_steerable_reconstruct</code>. Round trip</p>
+<p>error, measured on a 64x64 random frame with the defaults, is</p>
+<p>`<code style="color:#22d3bf">max|out - in| = 6.66e-16</code>`; on a 31x37 (odd, non-square) frame 7.22e-16;</p>
+<p>and the worst over every `<code style="color:#22d3bf">scales</code>` in 1..8 crossed with every</p>
+<p>`<code style="color:#22d3bf">orientations</code>` in 1..16 on 32x32 is 7.77e-16 — the tight-frame construction</p>
+<p>is exact, not approximate (see the notes on the self-conjugate grid points</p>
+<p>in :func:<code style="color:#22d3bf">_filter_bank</code>).</p>
+<p>References: Freeman &amp; Adelson, IEEE PAMI 1991; Simoncelli &amp; Freeman,</p>
+<p>ICIP 1995; Portilla &amp; Simoncelli, IJCV 2000.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemotionmag:motion_magnification">motion_magnification ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:motion_magnification">motion_magnification</a> — <code style="color:#22d3bf">py -3.11 examples/motion_magnification.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opmotionmag:complex_steerable_reconstruct">complex_steerable_reconstruct</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">decompose</code>)</h3>
+<p><a style="color:#22d3bf" href="opmotionmag:complex_steerable_reconstruct">complex_steerable_reconstruct</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: motionmag.py — MOTIONMAG operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,97 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">specular_diffuse_split — SPECULAR <code style="color:#22d3bf">dichromatic</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import specularity; specularity.specular_diffuse_split(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0), body_rgb=None, max_rank_ratio=0.1, max_negative_frac=0.02)</code> (または <code style="color:#22d3bf">opsspecular.get(&quot;specular_diffuse_split&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Split a linear-RGB image into its diffuse (body) and specular (interface) parts. → (diffuse, specular), both (H, W, 3).</p>
+<p>Shafer&#x27;s dichromatic reflection model writes the radiance of a dielectric as</p>
+<p>`<code style="color:#22d3bf">I(x) = m_d(x) * L(x) + m_s(x) * G</code>`: a body term carrying the surface</p>
+<p>colour `<code style="color:#22d3bf">L</code><code style="color:#22d3bf"> and an interface term carrying the **illuminant** colour </code><code style="color:#22d3bf">G</code>`.</p>
+<p>The specular part therefore occupies a single direction in RGB, and</p>
+<p>separating it is a projection with a closed form — no iteration, no</p>
+<p>optimisation, no learned prior.</p>
+<p>Two regimes, chosen by *body_rgb*:</p>
+<p style="margin:2px 0 2px 12px">• **`<code style="color:#22d3bf">body_rgb</code><code style="color:#22d3bf"> given** — a </code><code style="color:#22d3bf">(3,)</code><code style="color:#22d3bf"> colour or an </code><code style="color:#22d3bf">(H, W, 3)</code>` map. Each</p>
+<p>pixel solves the 3-equation, 2-unknown least-squares system exactly. This</p>
+<p>is the textured-surface path: on a synthetic image built from a known</p>
+<p>`<code style="color:#22d3bf">(m_d, m_s)</code>` it returns them with a maximum absolute error of 4.0e-15</p>
+<p>for a uniform body colour and 2.9e-15 for a per-pixel colour map</p>
+<p>(measured in `<code style="color:#22d3bf">tests/test_specularity.py</code>`).</p>
+<p style="margin:2px 0 2px 12px">• **`<code style="color:#22d3bf">body_rgb</code>` omitted** — one material is assumed. The</p>
+<p>illuminant-orthogonal part of the image is then exactly rank one, so the</p>
+<p>body direction is its leading singular vector; the unobservable component</p>
+<p>of `<code style="color:#22d3bf">L</code><code style="color:#22d3bf"> along </code><code style="color:#22d3bf">G</code><code style="color:#22d3bf"> is fixed by requiring </code><code style="color:#22d3bf">m_s &gt;= 0</code>` with the minimum</p>
+<p>over the image equal to zero. Maximum absolute error 5.0e-16 on the same</p>
+<p>synthetic image. <b>At least one lit pixel must be specular-free</b> — see</p>
+<p>below, this is the assumption that actually bites.</p>
+<p>*illuminant_rgb* is a <b>direction</b>; only its orientation matters and it is</p>
+<p>unit-normalised internally. `<code style="color:#22d3bf">(1, 1, 1)</code>` is the white-balanced case. Get it</p>
+<p>from :func:<code style="color:#22d3bf">illuminant_from_dichromatic_planes</code> when you have two or more</p>
+<p>materials in frame.</p>
+<p>Two guards protect the uniform-body path, and <b>both are needed</b> — the</p>
+<p>adversarial pass found the first one alone lets a two-material image</p>
+<p>through:</p>
+<p style="margin:2px 0 2px 12px">• *max_rank_ratio* — the second singular value of the illuminant-orthogonal</p>
+<p>part over the first. Measured on the synthetic bump: 4.6e-16 noiseless,</p>
+<p>0.0175 at 0.5% Gaussian noise, 0.0348 at 1%, 0.0694 at 2%, 0.173 at 5%;</p>
+<p>a two-material image with cyclically permuted albedos gives 0.574. The</p>
+<p>default 0.1 sits between the 2% and 5% noise measurements. `<code style="color:#22d3bf">None</code>`</p>
+<p>disables it.</p>
+<p style="margin:2px 0 2px 12px">• *max_negative_frac* — the fraction of pixels whose fitted body</p>
+<p>coefficient comes out negative, which cannot happen for one material.</p>
+<p>This is what catches the case the rank test misses: two albedos whose</p>
+<p>illuminant-orthogonal chromaticities are nearly anti-parallel still span</p>
+<p>one line, and that image measured 0.0815 on the rank test — under the</p>
+<p>default threshold, i.e. accepted — while 50% of its pixels fit a negative</p>
+<p>body coefficient. With both guards disabled that image returns a diffuse</p>
+<p>map wrong by 1.03 in absolute radiance on an image whose maximum is 0.99,</p>
+<p>with no exception and no NaN. `<code style="color:#22d3bf">None</code>` disables it.</p>
+<p>**Both guards bound gross violations only, and that is not fixable by a</p>
+<p>better threshold.** A texture whose chromaticity drifts *along* the body</p>
+<p>direction rather than away from it measured a rank ratio of 0.0641 — under</p>
+<p>the default — with every body coefficient positive, so neither guard fires,</p>
+<p>and the returned diffuse map was wrong by 0.198. It cannot be separated from</p>
+<p>noise by any threshold, because it is the same measurement: 1% Gaussian</p>
+<p>noise on that scene gives 0.0348 and 2% gives 0.0694, and the texture sits</p>
+<p>between them. The answer for a surface that might be textured is</p>
+<p>`<code style="color:#22d3bf">body_rgb</code>`, not a cleverer number here.</p>
+<p><b>Honest limits.</b> (1) *Without `<code style="color:#22d3bf">body_rgb</code>`, one lit pixel must be</p>
+<p>specular-free.* The rendered-lobe measurement shows exactly what it costs</p>
+<p>when none is: for a Blinn-Phong highlight on a Gaussian bump the maximum</p>
+<p>diffuse error is 6.5e-11 at shininess 200 (where the lobe tail underflows to</p>
+<p>9.1e-11), 0.0019 at shininess 48 (tail 0.0026) and 0.175 at shininess 8</p>
+<p>(tail 0.243) — the error *is* the darkest highlight in the frame, because</p>
+<p>that is the constant the constraint cannot see. (2) *The known-body path is</p>
+<p>conditioned by `<code style="color:#22d3bf">1/(1 - b^2)</code><code style="color:#22d3bf"> where </code><code style="color:#22d3bf">b</code>` is the cosine between the body</p>
+<p>and illuminant colours.* A texture reaching `<code style="color:#22d3bf">|b| = 0.99999</code>` (an almost</p>
+<p>neutral grey under a white lamp, amplification 6.4e+04) measured 5.9e-12</p>
+<p>against 2.9e-15 for the same texture kept at `<code style="color:#22d3bf">|b| &lt;= 0.965</code>`. Near-grey</p>
+<p>surfaces are where colour-based separation is weakest, and no amount of</p>
+<p>arithmetic care changes that.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *image_rgb* is not </code><code style="color:#22d3bf">(H, W, 3)</code>`, is complex /</p>
+<p>masked / non-finite / string-typed, or exceeds :data:<code style="color:#22d3bf">MAX_PIXELS</code>;</p>
+<p>*illuminant_rgb* is not a non-zero 3-vector; the image is identically zero;</p>
+<p>the image has no component orthogonal to the illuminant (body colour</p>
+<p>parallel to it, so no split exists); either guard above fires; *body_rgb*</p>
+<p>has the wrong shape, a zero-length colour, or is parallel to the</p>
+<p>illuminant.</p>
+<p>Returns `<code style="color:#22d3bf">(diffuse, specular)</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">diffuse + specular == image_rgb</code>` to</p>
+<p>machine precision in both regimes: measured 1.1e-16 on the uniform-body</p>
+<p>route, which forms the diffuse as `<code style="color:#22d3bf">image - specular</code>`, and 2.1e-15 on the</p>
+<p>known-body route, which forms both parts from the solved coefficients and</p>
+<p>so accumulates a little more.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:specular_photometric">specular_photometric</a> — <code style="color:#22d3bf">py -3.11 examples/specular_photometric.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">rgbimage</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opspecular:specular_coefficient_map">specular_coefficient_map</a> · <a style="color:#22d3bf" href="opspecular:specular_free_transform">specular_free_transform</a> · <a style="color:#22d3bf" href="opspecular:illuminant_from_dichromatic_planes">illuminant_from_dichromatic_planes</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">dichromatic</code>)</h3>
+<p><a style="color:#22d3bf" href="opspecular:specular_coefficient_map">specular_coefficient_map</a> · <a style="color:#22d3bf" href="opspecular:specular_free_transform">specular_free_transform</a> · <a style="color:#22d3bf" href="opspecular:illuminant_from_dichromatic_planes">illuminant_from_dichromatic_planes</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: specularity.py — SPECULAR operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

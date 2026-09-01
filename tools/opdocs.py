@@ -61,6 +61,10 @@ LEDGER_DIMS = {
                    "module": "lightfield", "family": "lightfield_depth"},
     "photon": {"registry": "opsphoton", "table": "OPSPHOTON",
                "module": "photoncount", "family": "photon_timeresolved"},
+    "specular": {"registry": "opsspecular", "table": "OPSSPECULAR",
+                 "module": "specularity", "family": "specular_photometric"},
+    "motionmag": {"registry": "opsmotionmag", "table": "OPSMOTIONMAG",
+                  "module": "motionmag", "family": "motion_magnification"},
 }
 
 _AUTHOR = "Kazufumi Furuse"

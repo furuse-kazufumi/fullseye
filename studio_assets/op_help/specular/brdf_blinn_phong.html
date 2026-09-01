@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">brdf_blinn_phong — SPECULAR <code style="color:#22d3bf">reflectance</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import specularity; specularity.brdf_blinn_phong(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), shininess=32.0)</code> (または <code style="color:#22d3bf">opsspecular.get(&quot;brdf_blinn_phong&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Blinn&#x27;s half-vector specular lobe. → (H, W) in [0, 1].</p>
+<p>`<code style="color:#22d3bf">max(n.h, 0) ** shininess</code><code style="color:#22d3bf"> where </code><code style="color:#22d3bf">h</code>` is the unit bisector of the light</p>
+<p>and view directions (Blinn 1977), zeroed wherever the surface faces away</p>
+<p>from either. Exactly 1 where the normal *is* the half-vector — the mirror</p>
+<p>condition — and it falls monotonically from there.</p>
+<p><b>Unnormalised on purpose.</b> The classical Blinn-Phong lobe does not</p>
+<p>integrate to a fixed value; its peak is 1 and its energy grows as the</p>
+<p>exponent shrinks. It is a shading model, useful because its peak location is</p>
+<p>exact and because it is a *different* lobe shape from</p>
+<p>:func:<code style="color:#22d3bf">brdf_microfacet</code> — a separation routine that only works on one of the</p>
+<p>two is fitting the lobe, not the model. For an energy-consistent lobe use</p>
+<p>:func:<code style="color:#22d3bf">brdf_microfacet</code>.</p>
+<p>Reciprocal in light and view to machine precision (measured exactly 0.0</p>
+<p>maximum difference in `<code style="color:#22d3bf">tests/test_specularity.py</code>`), because the</p>
+<p>half-vector is symmetric and the visibility test covers both sides.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *normals* is not an </code><code style="color:#22d3bf">(H, W, 3)</code>` field or</p>
+<p>contains a zero-length normal; *light* / *view* are not non-zero 3-vectors;</p>
+<p>*shininess* is negative, non-finite, a string or a bool; light and view are</p>
+<p>exactly opposite.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:specular_photometric">specular_photometric</a> — <code style="color:#22d3bf">py -3.11 examples/specular_photometric.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opspecular:polarization_render">polarization_render</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">reflectance</code>)</h3>
+<p><a style="color:#22d3bf" href="opspecular:brdf_microfacet">brdf_microfacet</a> · <a style="color:#22d3bf" href="opspecular:dichromatic_render">dichromatic_render</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: specularity.py — SPECULAR operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

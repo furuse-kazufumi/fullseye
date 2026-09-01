@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">temporal_bandpass — MOTIONMAG <code style="color:#22d3bf">temporal</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import motionmag; motionmag.temporal_bandpass(video, f_lo, f_hi, fps) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">opsmotionmag.get(&quot;temporal_bandpass&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Ideal temporal band-pass of every pixel&#x27;s time series -&gt; `<code style="color:#22d3bf">(T, H, W)</code>`.</p>
+<p>Each pixel is transformed along time, every DFT bin whose frequency lies</p>
+<p>outside `<code style="color:#22d3bf">[f_lo, f_hi]</code>` (in Hz, magnitude, DC always excluded) is zeroed,</p>
+<p>and the result is transformed back. Frequency-selective where</p>
+<p>`<code style="color:#22d3bf">videops.moving_average</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">videops.spatiotemporal_gaussian</code>` are</p>
+<p>low-pass; this is the filter isolating &quot;what is happening at 4 Hz&quot;.</p>
+<p>Exact for a component sitting on a bin: with `<code style="color:#22d3bf">T</code><code style="color:#22d3bf"> frames at </code><code style="color:#22d3bf">fps</code>`, a</p>
+<p>sinusoid at `<code style="color:#22d3bf">k*fps/T</code>` Hz passes with gain 1 and everything else in the band</p>
+<p>passes untouched. Measured on a bin-centred 4 Hz unit sinusoid in a 64-frame</p>
+<p>32 fps clip that also carries a DC offset of 0.5 and a 12 Hz component of</p>
+<p>amplitude 0.3, the recovered waveform matches the 4 Hz term alone to</p>
+<p>`<code style="color:#22d3bf">max|err| = 4.36e-15</code>`.</p>
+<p>A brick-wall filter rings in time; that is the price of an exact pass-band</p>
+<p>and it is the same choice the 2012 Eulerian magnification paper makes. The</p>
+<p>output is zero-mean along time by construction.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemotionmag:motion_magnification">motion_magnification ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:motion_magnification">motion_magnification</a> — <code style="color:#22d3bf">py -3.11 examples/motion_magnification.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">video</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opmotionmag:temporal_band_power">temporal_band_power</a> · <a style="color:#22d3bf" href="opmotionmag:band_snr">band_snr</a> · <a style="color:#22d3bf" href="opmotionmag:motion_magnify">motion_magnify</a> · <a style="color:#22d3bf" href="opmotionmag:phase_displacement">phase_displacement</a> · <a style="color:#22d3bf" href="opmotionmag:displacement_series">displacement_series</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">temporal</code>)</h3>
+<p><a style="color:#22d3bf" href="opmotionmag:temporal_band_power">temporal_band_power</a> · <a style="color:#22d3bf" href="opmotionmag:band_snr">band_snr</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: motionmag.py — MOTIONMAG operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

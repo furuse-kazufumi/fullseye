@@ -527,6 +527,24 @@ def _require_band(f_lo, f_hi, fps, t: int, op: str):
     return lo, hi, fs, mask
 
 
+#: Reported dB values are clamped to the same window ``motionmag`` uses, for the
+#: same reason: a noiseless synthetic has exactly zero out-of-band power, which
+#: is a division by zero rather than an infinite SNR, and ``inf``/``nan`` would
+#: poison every downstream arithmetic.
+_MIN_SNR_DB = -100.0
+_MAX_SNR_DB = 100.0
+
+
+def _db(num: float, den: float) -> float:
+    """``10*log10(num/den)`` clamped into the reported dB window."""
+    if den <= 0.0:
+        return _MAX_SNR_DB if num > 0.0 else _MIN_SNR_DB
+    if num <= 0.0:
+        return _MIN_SNR_DB
+    v = 10.0 * np.log10(num / den)
+    return float(min(max(v, _MIN_SNR_DB), _MAX_SNR_DB))
+
+
 # --------------------------------------------------------------------------- #
 # vectorised quaternion algebra (per pixel)                                    #
 # --------------------------------------------------------------------------- #

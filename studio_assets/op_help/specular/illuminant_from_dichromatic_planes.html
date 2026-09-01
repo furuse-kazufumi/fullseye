@@ -1,0 +1,49 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">illuminant_from_dichromatic_planes — SPECULAR <code style="color:#22d3bf">dichromatic</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgbimage × labels</code> → <code style="color:#22d3bf">vector</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import specularity; specularity.illuminant_from_dichromatic_planes(image_rgb, labels, min_pixels=16, min_plane_ratio=1e-06, min_intersection_ratio=1e-06)</code> (または <code style="color:#22d3bf">opsspecular.get(&quot;illuminant_from_dichromatic_planes&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Recover the illuminant colour from two or more materials. → unit 3-vector.</p>
+<p>Lee&#x27;s construction (1986). Under the dichromatic model every pixel of one</p>
+<p>material lies in the plane spanned by that material&#x27;s body colour and the</p>
+<p>illuminant colour, so each material contributes a plane through the origin</p>
+<p>of RGB, and <b>all of those planes contain the illuminant direction</b>. Two</p>
+<p>materials with different body colours therefore intersect in exactly one</p>
+<p>line, and that line is the answer — a null-space computation, closed form.</p>
+<p>*labels* is an `<code style="color:#22d3bf">(H, W)</code>` integer map naming the material at each pixel;</p>
+<p>negative labels are ignored (background). Each material needs *min_pixels*</p>
+<p>pixels <b>and genuine highlight variation</b>: a material seen with no specular</p>
+<p>reflection at all has colours along a single ray, which defines no plane.</p>
+<p>That is measured by the second-to-first singular ratio of its colour matrix</p>
+<p>and rejected below *min_plane_ratio* rather than contributing an arbitrary</p>
+<p>normal.</p>
+<p>The returned direction is unit length with a positive component sum</p>
+<p>(illuminant colours are positive; the null space fixes the line, not the</p>
+<p>sign). On synthetic data with three known materials it reproduces the true</p>
+<p>illuminant with a maximum component error of 4.4e-14 and an angular error</p>
+<p>that rounds to 0.0 degrees (measured in `<code style="color:#22d3bf">tests/test_specularity.py</code>`).</p>
+<p>*min_intersection_ratio* guards the answer itself: if the plane normals are</p>
+<p>nearly parallel — two materials whose body colours differ only in</p>
+<p>brightness, which is the same material twice — the intersection is</p>
+<p>ill-conditioned and the call raises instead of returning a direction picked</p>
+<p>by rounding error.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: shape or dtype problems as in</p>
+<p>:func:<code style="color:#22d3bf">specular_diffuse_split</code>; *labels* is not an `<code style="color:#22d3bf">(H, W)</code>` integer map</p>
+<p>matching the image; more than :data:<code style="color:#22d3bf">MAX_MATERIALS</code> distinct labels; fewer</p>
+<p>than two materials survive the *min_pixels* and *min_plane_ratio* tests; the</p>
+<p>surviving planes do not intersect in a well-determined line.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:specular_photometric">specular_photometric</a> — <code style="color:#22d3bf">py -3.11 examples/specular_photometric.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">vector</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">dichromatic</code>)</h3>
+<p><a style="color:#22d3bf" href="opspecular:specular_diffuse_split">specular_diffuse_split</a> · <a style="color:#22d3bf" href="opspecular:specular_coefficient_map">specular_coefficient_map</a> · <a style="color:#22d3bf" href="opspecular:specular_free_transform">specular_free_transform</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: specularity.py — SPECULAR operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

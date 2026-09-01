@@ -1,0 +1,86 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">photometric_stereo_robust — SPECULAR <code style="color:#22d3bf">photometric</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">normalmap</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import specularity; specularity.photometric_stereo_robust(images, lights, method=&#x27;ransac&#x27;, threshold=0.05, max_subsets=512, normalize=True, seed=0, min_inliers=3)</code> (または <code style="color:#22d3bf">opsspecular.get(&quot;photometric_stereo_robust&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Photometric stereo that survives shadows and highlights. → (normals, albedo, inliers).</p>
+<p>Woodham&#x27;s (1980) linear model `<code style="color:#22d3bf">I_n = albedo * max(n.L_n, 0)</code>` is exact only</p>
+<p>where every light reaches the pixel and the surface is Lambertian. A cast</p>
+<p>shadow zeroes one measurement, a highlight inflates another, and least</p>
+<p>squares spreads the error over the whole normal — the estimate does not</p>
+<p>fail, it <b>tilts</b>, which is worse. This operator solves the three-light</p>
+<p>system exactly on subsets and keeps the subset the data agrees with.</p>
+<p>*method*:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;lstsq&quot;</code>` — the plain least-squares solution, delegated to</p>
+<p>:func:<code style="color:#22d3bf">photometric.photometric_stereo</code>. Present so the non-robust baseline</p>
+<p>is available through the same call and its failure is a measurement rather</p>
+<p>than a claim. On a Gaussian bump lit by 8 lights, with `<code style="color:#22d3bf">k</code>` of them</p>
+<p>blocked by a cast shadow, the mean angular error is (all measured in</p>
+<p>`<code style="color:#22d3bf">tests/test_specularity.py</code>`):</p>
+<p>==== ========== ============ ============</p>
+<p>k    `<code style="color:#22d3bf">lstsq</code><code style="color:#22d3bf">  </code><code style="color:#22d3bf">median</code><code style="color:#22d3bf">   </code><code style="color:#22d3bf">ransac</code>`</p>
+<p>==== ========== ============ ============</p>
+<p>1    31.70 deg  0.00011 deg  0.00011 deg</p>
+<p>2    53.11 deg  0.00011 deg  0.00011 deg</p>
+<p>3    64.40 deg  0.00011 deg  0.00011 deg</p>
+<p>4    70.52 deg  70.52 deg    70.20 deg</p>
+<p>==== ========== ============ ============</p>
+<p>0.00011 degrees is not &quot;almost right&quot;, it is <b>the floor</b>: the returned</p>
+<p>normals are float32 (:mod:<code style="color:#22d3bf">photometric</code>&#x27;s convention), and casting the</p>
+<p>exact normals to float32 and back measures the same 0.000115 degrees.</p>
+<p>The `<code style="color:#22d3bf">k = 4</code>` row is the breakdown point and it is in the table rather</p>
+<p>than omitted — with half the lights blocked, the four zeroed measurements</p>
+<p>are themselves a perfectly consistent &quot;black surface&quot; model, so no</p>
+<p>consensus rule can prefer the true one.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;ransac&quot;</code>` — Fischler-Bolles maximum consensus. Every 3-light subset is</p>
+<p>solved exactly, residuals are counted against *threshold*, and the subset</p>
+<p>with the largest consensus wins per pixel; the normal is then refitted by</p>
+<p>least squares on that consensus set. Tolerates up to `<code style="color:#22d3bf">N - 3</code>` bad lights</p>
+<p>if the good ones agree.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;median&quot;</code>` — Rousseeuw&#x27;s least median of squares. The subset minimising</p>
+<p>the median residual wins. Needs <b>more than half</b> the lights to be good,</p>
+<p>and needs no threshold at all — use it when the outlier magnitude is</p>
+<p>unknown.</p>
+<p>*threshold* is <b>relative to the brightest measurement at that pixel</b>, so</p>
+<p>the decision is invariant to exposure: scaling every image by 1e-3, 1e3 or</p>
+<p>1e6 returns a <b>bit-identical inlier mask</b> and normals that differ by at</p>
+<p>most 0.000115 degrees — the float32 output floor again, not an exposure</p>
+<p>effect. The word &quot;bit-identical&quot; applies to the mask and not to the normals,</p>
+<p>because the arithmetic downstream of the identical decision still rounds</p>
+<p>differently at a different scale.</p>
+<p>Enumeration is exhaustive and therefore deterministic whenever</p>
+<p>`<code style="color:#22d3bf">C(N, 3) &lt;= max_subsets</code>`; *seed* only matters past that point, and the</p>
+<p>regime is not hidden — a subset count above :data:<code style="color:#22d3bf">MAX_SUBSETS</code>, a pixel</p>
+<p>count above :data:<code style="color:#22d3bf">MAX_ROBUST_PIXELS</code> or a total work product above</p>
+<p>:data:<code style="color:#22d3bf">MAX_ROBUST_WORK</code> all raise instead of running for an hour.</p>
+<p>Returns `<code style="color:#22d3bf">(normals, albedo, inliers)</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">normals</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(H, W, 3)</code>` float32</p>
+<p>unit vectors in :mod:<code style="color:#22d3bf">photometric</code>&#x27;s convention (`<code style="color:#22d3bf">(0, 0, 1)</code>` where the</p>
+<p>albedo is degenerate), `<code style="color:#22d3bf">albedo</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> float32, and </code><code style="color:#22d3bf">inliers</code>`</p>
+<p>`<code style="color:#22d3bf">(N, H, W)</code>` bool — <b>which lights were believed at which pixel</b>. Pixels</p>
+<p>with fewer than *min_inliers* believed lights keep the winning subset&#x27;s</p>
+<p>solution and are visible as a thin inlier count in that mask; that is the</p>
+<p>honest signal that the normal there rests on the minimum three</p>
+<p>measurements.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *images* is not an </code><code style="color:#22d3bf">(N, H, W)</code>` stack or exceeds</p>
+<p>:data:<code style="color:#22d3bf">MAX_LIGHTS</code> / :data:<code style="color:#22d3bf">MAX_STACK_ELEMENTS</code> / :data:<code style="color:#22d3bf">MAX_ROBUST_PIXELS</code>;</p>
+<p>*lights* is not `<code style="color:#22d3bf">(N, 3)</code>` matching the frames or contains a zero-length</p>
+<p>direction; fewer than 3 lights; *method* not in :data:<code style="color:#22d3bf">ROBUST_METHODS</code>;</p>
+<p>*threshold* not positive; the work product exceeds</p>
+<p>:data:<code style="color:#22d3bf">MAX_ROBUST_WORK</code>; every 3-light subset is singular (all light</p>
+<p>directions coplanar through the origin, which no amount of robustness can</p>
+<p>repair).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:specular_photometric">specular_photometric</a> — <code style="color:#22d3bf">py -3.11 examples/specular_photometric.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">normalmap</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opspecular:brdf_blinn_phong">brdf_blinn_phong</a> · <a style="color:#22d3bf" href="opspecular:brdf_microfacet">brdf_microfacet</a> · <a style="color:#22d3bf" href="opspecular:dichromatic_render">dichromatic_render</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">photometric</code>)</h3>
+<p><a style="color:#22d3bf" href="opspecular:photometric_residual">photometric_residual</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: specularity.py — SPECULAR operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,54 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">synthesize_translation — MOTIONMAG <code style="color:#22d3bf">synthesis</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>video`</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import motionmag; motionmag.synthesize_translation(shape=(64, 64), frames: &#x27;int&#x27; = 32, amplitude_px=0.5, frequency_hz=4.0, fps=32.0, direction_deg=0.0, wavelength_px=(8.0, 16.0), contrast=0.4, offset=0.5, noise_sigma=0.0, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">opsmotionmag.get(&quot;synthesize_translation&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>A clip whose displacement is known in closed form -&gt; `<code style="color:#22d3bf">(T, H, W)</code>` video.</p>
+<p>The scene is a stationary two-axis sinusoidal grating that is translated,</p>
+<p>frame by frame, by</p>
+<p>`<code style="color:#22d3bf">d(t) = amplitude_px * sin(2*pi * frequency_hz * t / fps)</code>`</p>
+<p>along *direction_deg* (0 deg = towards +x / increasing column). The</p>
+<p>translation is applied as a Fourier phase ramp, which for a pattern that is</p>
+<p>periodic on the grid is the *exact* band-limited shift — no interpolation</p>
+<p>kernel, no resampling error, so `<code style="color:#22d3bf">d(t)</code>` is ground truth to machine</p>
+<p>precision and sub-pixel amplitudes are meaningful.</p>
+<p>`<code style="color:#22d3bf">wavelength_px</code><code style="color:#22d3bf"> is either one number (both axes) or </code>`(lambda_x,</p>
+<p>lambda_y)``. **The default deliberately makes the two axes different</p>
+<p>octaves**, and that is not cosmetic: if the horizontal and vertical gratings</p>
+<p>share a radial frequency they land in the *same* sub-band, whose local phase</p>
+<p>is then the phase of a sum of two moving components rather than of one. The</p>
+<p>phase of a sum is not linear in the displacement, so scaling it does not</p>
+<p>scale the motion — measured, a 64x64 clip built with a single wavelength on</p>
+<p>both axes magnified at `<code style="color:#22d3bf">alpha = 2</code><code style="color:#22d3bf"> came out at </code><code style="color:#22d3bf">0.939 * (2 d)</code>` instead of</p>
+<p>`<code style="color:#22d3bf">2 d</code><code style="color:#22d3bf">, a 6.1 % error that does *not* shrink as </code><code style="color:#22d3bf">d</code>` shrinks. Separating</p>
+<p>the octaves puts one component in each band and the relation becomes exact.</p>
+<p>This is the standard narrow-band condition of phase-based processing, made</p>
+<p>visible in the synthetic instead of hidden.</p>
+<p>Each wavelength is snapped so that a whole number of cycles fits the frame</p>
+<p>(`<code style="color:#22d3bf">cycles = max(1, round(W / wavelength_px))</code>`, effective wavelength</p>
+<p>`<code style="color:#22d3bf">W / cycles</code>`); without that the pattern is not periodic on the grid and the</p>
+<p>Fourier shift would wrap a discontinuity across the border. With the default</p>
+<p>64x64 frame and `<code style="color:#22d3bf">(8, 16)</code>` the snap is exact (8 and 4 cycles).</p>
+<p>Values are <b>not clipped</b> into `<code style="color:#22d3bf">[0, 1]</code>`: clipping is a nonlinearity that</p>
+<p>would break the exact translation this function exists to provide. With the</p>
+<p>defaults the samples lie in `<code style="color:#22d3bf">[offset - contrast, offset + contrast]</code>`.</p>
+<p>*noise_sigma* adds zero-mean Gaussian sensor noise (after translation, drawn</p>
+<p>from `<code style="color:#22d3bf">numpy.random.default_rng(seed)</code>`) — the term that makes an SNR</p>
+<p>measurable at all.</p>
+<p>This is the counterpart of `<code style="color:#22d3bf">photoncount.tcspc_simulate</code>`: a forward model</p>
+<p>good enough to close the loop on the analysis operators in this module.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemotionmag:motion_magnification">motion_magnification ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:motion_magnification">motion_magnification</a> — <code style="color:#22d3bf">py -3.11 examples/motion_magnification.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">video</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opmotionmag:temporal_bandpass">temporal_bandpass</a> · <a style="color:#22d3bf" href="opmotionmag:temporal_band_power">temporal_band_power</a> · <a style="color:#22d3bf" href="opmotionmag:band_snr">band_snr</a> · <a style="color:#22d3bf" href="opmotionmag:motion_magnify">motion_magnify</a> · <a style="color:#22d3bf" href="opmotionmag:phase_displacement">phase_displacement</a> · <a style="color:#22d3bf" href="opmotionmag:displacement_series">displacement_series</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">synthesis</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: motionmag.py — MOTIONMAG operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

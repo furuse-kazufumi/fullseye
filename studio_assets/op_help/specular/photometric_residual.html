@@ -1,0 +1,48 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">photometric_residual — SPECULAR <code style="color:#22d3bf">photometric</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import specularity; specularity.photometric_residual(images, lights, normals=None, albedo=None, normalize=True)</code> (または <code style="color:#22d3bf">opsspecular.get(&quot;photometric_residual&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>How badly the Lambertian model fails, per pixel. → (H, W) RMS residual.</p>
+<p>`<code style="color:#22d3bf">sqrt(mean_n (albedo * (n.L_n) - I_n)^2)</code>` — the root-mean-square</p>
+<p>disagreement between the linear model and the measurements, in the units of</p>
+<p>the input radiance. On a synthetic Lambertian surface with the true</p>
+<p>float64 normals and albedo supplied it measures 1.4e-16 at worst; with them</p>
+<p>omitted the floor rises to 4.5e-08, because</p>
+<p>:func:<code style="color:#22d3bf">photometric.photometric_stereo</code> returns float32 and that is its</p>
+<p>precision, not a modelling error (supplying the *same* truth cast to</p>
+<p>float32 reproduces 4.5e-08 exactly). It is large where the assumption</p>
+<p>actually broke: 0.50 at worst on the same scene with 3 of 8 lights blocked</p>
+<p>by a cast shadow — fifteen orders of magnitude above the clean floor. All</p>
+<p>four numbers measured in `<code style="color:#22d3bf">tests/test_specularity.py</code>`.</p>
+<p>This is the diagnostic that tells you *whether* you need</p>
+<p>:func:<code style="color:#22d3bf">photometric_stereo_robust</code> before you reach for it, and it is the</p>
+<p>map an inspection routine thresholds to find glossy defects.</p>
+<p>With *normals* and *albedo* omitted it solves them first with</p>
+<p>:func:<code style="color:#22d3bf">photometric.photometric_stereo</code> and reports the residual of that fit</p>
+<p>— the honest self-assessment of the plain estimator. Pass them to score an</p>
+<p>estimate that came from somewhere else (a robust fit, a CAD model, a</p>
+<p>previous frame).</p>
+<p>Note the residual uses `<code style="color:#22d3bf">n.L</code><code style="color:#22d3bf"> **without** the </code><code style="color:#22d3bf">max(., 0)</code>` clamp, because</p>
+<p>that is the linear system the solver actually inverted; a pixel in attached</p>
+<p>shadow therefore shows a residual, which is the intended signal rather than</p>
+<p>an artefact.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *images* / *lights* problems as in</p>
+<p>:func:<code style="color:#22d3bf">photometric_stereo_robust</code>; *normals* is not `<code style="color:#22d3bf">(H, W, 3)</code>` matching</p>
+<p>the images; *albedo* is not `<code style="color:#22d3bf">(H, W)</code>`; exactly one of *normals* / *albedo*</p>
+<p>is given (the pair is meaningless apart — the model is `<code style="color:#22d3bf">albedo * n</code>`).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:specular_photometric">specular_photometric</a> — <code style="color:#22d3bf">py -3.11 examples/specular_photometric.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opspecular:polarization_render">polarization_render</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">photometric</code>)</h3>
+<p><a style="color:#22d3bf" href="opspecular:photometric_stereo_robust">photometric_stereo_robust</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: specularity.py — SPECULAR operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
