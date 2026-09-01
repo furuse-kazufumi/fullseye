@@ -1,13 +1,21 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """opsphoton — fullseye 光子計数・時間分解 op の統一レジストリ。
 
-きっかけ(2026-09-01)は VISION Award 2026 のファイナリスト
-**Singular Photonics "Litavis"**(ソフトウェア設定可能な SPAD イメージセンサ、
-光子計数撮像 + 時間分解センシングをオンチップのデジタル光子処理で行う)。
-fullseye は 1194 op を持ちながら `photon` / `spad` / `tcspc` / `arrival` /
-`dtof` / `time_of_flight` のいずれにも 1 件もヒットしなかった(実測)。
-つまり「画素値になる **前** の、光子を 1 個ずつ数える世界」がまるごと空白だった。
+動機(2026-09-01)は fullseye 自身の空白の実測。**光子計数(photon counting)
+と時間分解センシング(time-resolved sensing)** — 単一光子検出器で光子を 1 個ずつ
+数え、その到達時刻から距離(dToF)や蛍光寿命(FLIM)を出す分野 — は
+教科書がある成熟領域だが、fullseye は 1194 op を持ちながら
+`photon` / `spad` / `tcspc` / `arrival` / `dtof` / `time_of_flight` の
+いずれにも 1 件もヒットしなかった。つまり「画素値になる **前** の、
+光子を 1 個ずつ数える世界」がまるごと空白だった。
 本レジストリはその台帳(photoncount.py、17 op / 6 カテゴリ)。
+
+来歴は公開文献のみ(docs/PROVENANCE.md の naming rule に従い、特定の製品・
+企業を動機にも名前にも使わない):Anscombe 1948(分散安定化変換)/
+Makitalo & Foi, IEEE TIP 2011(厳密不偏逆変換の閉形式)/ Coates,
+J. Phys. E 1968(TCSPC パイルアップ補正)/ Knoll, *Radiation Detection and
+Measurement*(デッドタイム 2 法則)/ Digman et al., Biophys. J. 2008
+(phasor 表現と universal semicircle)。
 
 既存資産との棲み分け(**再実装せず import して合成**):
   * ガウス読み出しノイズ = ``backends_aug.aug_read_noise``(加法・信号非依存)。
