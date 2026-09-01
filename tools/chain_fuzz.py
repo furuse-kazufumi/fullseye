@@ -138,6 +138,12 @@ def make_generators():
         "lightfield": lambda rng: __import__("lightfield").lf_synthesize(
             (0.0, 1.0), angular=(3, 3), shape=(32, 32),
             seed=int(rng.integers(0, 1000)))[0],
+        # score = ピークを持つ 3-D 相関/スコア volume。**カタログのどの op も
+        # score を出力しない**ので、種を置かないと `refine_peak_newton` が
+        # 構造的に到達不能なまま「発見ゼロ」に数えられる(型到達可能性の
+        # 不動点計算で実測: 434 op 中これ 1 件だけが blocked だった)。
+        # 一様乱数ではピーク精緻化が意味を持たないので、異方性ガウス山にする
+        "score": _score_volume,
         # 光子カウント列。既知距離の dToF 復路 + 背景光を Poisson 標本化した
         # もの = 実データと同じ形と統計(実測 shape (256,)、値域 [0, 303])
         "counts": _photon_counts,
