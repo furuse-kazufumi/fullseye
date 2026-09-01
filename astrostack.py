@@ -560,10 +560,11 @@ def synth_frame_series(shape=(128, 128), n_frames=8, dither_px=1.5,
         # シーイングの揺らぎ: 決定的な三角波(乱数でないので図が再現する)
         f_i = fwhm * (1.0 + jitter * abs(((i * 2.0 / max(1, nf - 1)) % 2.0) - 1.0)) \
             if nf > 1 else fwhm
+        # ★ field_seed は固定(同じ空)、seed だけ振る(別の観測)。
         frame, t = synth_starfield(shape=shape, fwhm_px=f_i, shift_row=drow,
                                    shift_col=dcol, n_cosmic=ncr,
-                                   seed=(s + 1000 * i) % (1 << 31),
-                                   **starfield_kw)
+                                   seed=(s + 1000 * i + 1) % (1 << 31),
+                                   field_seed=s, **starfield_kw)
         frames.append(frame)
         shifts[i] = (drow, dcol)
         fwhms[i] = f_i
