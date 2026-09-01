@@ -1013,11 +1013,12 @@ def ex_windowing(log) -> dict:
     W, H = 1120, 700
     pw = 330
     frames = []
-    z_lo, z_hi = 12, n - 12
-    nf = 44
-    for k in range(nf):
-        t = k / (nf - 1)
-        z = int(round(z_lo + (z_hi - z_lo) * (0.5 - 0.5 * math.cos(2 * math.pi * t))))
+    # 往復する送り。**同じ z を 2 コマ続けて出さない**(折り返しの端も 1 回だけ)
+    z_lo, z_hi = 14, n - 14
+    up = list(range(z_lo, z_hi + 1, 5))
+    zs = up + up[-2:0:-1]
+    nf = len(zs)
+    for z in zs:
         c = _canvas(W, H)
         c = _header(c, "CT の「窓」— 同じ 1 つのボリュームが 3 通りに見える",
                     f"合成 HU ボリューム(空気 -1000 / 肺 -820 / 軟部 40 / 血管 120 / "
