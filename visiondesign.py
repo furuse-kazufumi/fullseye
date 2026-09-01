@@ -344,21 +344,28 @@ def detectability_limit(defect_um_grid, focal_mm=50.0, working_distance_mm=500.0
                          "sizes in micrometres")
     if not np.isfinite(grid).all() or (grid <= 0).any():
         raise ValueError("defect_um_grid must be positive and finite")
-    rows, limited_by = [], None
+    rows, limited_by, last = [], None, None
     for d in np.sort(grid):
         r = system_feasibility(float(d), focal_mm, working_distance_mm,
                                pixel_pitch_um, f_number, width_px, height_px,
                                wavelength_um, depth_tolerance_mm)
         limited_by = r["limited_by"]      # 欠陥サイズに依らないので上書きでよい
+        last = r
         rows.append({"defect_um": float(d), "verdict": r["verdict"],
                      "pixels_across": r["pixels_across"]})
     ok = [r["defect_um"] for r in rows if r["verdict"] == "resolvable"]
+    # 横分解能で見た限界。これは閉形式なので grid に依らず必ず数値になる。
+    # 「resolvable が 1 つも無い」ときに limit_um が None になるのは、横分解能が
+    # 足りないときも被写界深度が足りないときも同じなので、両者を必ず分けて返す。
+    lateral = [r["defect_um"] for r in rows
+               if r["defect_um"] >= last["resolution_object_um"]] if last else []
     return {
         "limit_um": (min(ok) if ok else None),
         "limited_by": limited_by,
-        "resolution_object_um": rows and system_feasibility(
-            rows[0]["defect_um"], focal_mm, working_distance_mm, pixel_pitch_um,
-            f_number, width_px, height_px, wavelength_um,
-            depth_tolerance_mm)["resolution_object_um"],
+        "resolution_object_um": last["resolution_object_um"] if last else None,
+        "lateral_limit_um": (min(lateral) if lateral else None),
+        "depth_of_field_ok": bool(last["depth_of_field_ok"]) if last else None,
+        "depth_of_field_mm": last["depth_of_field_mm"] if last else None,
+        "depth_tolerance_mm": last["depth_tolerance_mm"] if last else None,
         "table": rows,
     }
