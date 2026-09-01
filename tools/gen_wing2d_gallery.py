@@ -1939,6 +1939,7 @@ def subject_resample_loss(log=print) -> dict:
             "zoom_ops_max_abs_difference": {
                 "zoom_image_factor vs zoom_image_size": zoom_maxdiff,
                 "zoom_image_factor vs rescale_img": zoom_maxdiff2},
+            "zoom_ops_output_shapes": zoom_shapes,
         },
         "caption": (
             "同じ画像に 10° の回転を 36 回かけると、幾何としては一周して元の向きに戻る"
