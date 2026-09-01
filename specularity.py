@@ -503,6 +503,25 @@ def _split_uniform_body(I, gamma, max_rank_ratio, max_negative_frac, op):
     m = D @ u                                            # (P,) diffuse strength
     if float(m.sum()) < 0.0:
         u, m = -u, -m
+    # The rank test above is necessary but *not sufficient*, which the adversarial
+    # pass measured rather than guessed: two materials whose illuminant-orthogonal
+    # chromaticities are nearly anti-parallel leave the projected image rank one
+    # (measured s2/s1 = 0.0815 for a half-and-half image the check therefore
+    # waved through), and the only trace they leave is a body coefficient that
+    # comes out negative on one of the two. A body coefficient is non-negative by
+    # definition, so that is a sound second test and it costs nothing.
+    if max_negative_frac is not None:
+        big = 1e-9 * float(np.abs(m).max())
+        neg = float((m < -big).mean())
+        if neg > max_negative_frac:
+            raise ValueError(
+                "%s: the body (diffuse) coefficient is negative at %.4g of the "
+                "pixels, and a body coefficient cannot be negative. That means "
+                "more than one material is present with opposing chromaticity — "
+                "a case the rank test above cannot see, because two opposed "
+                "colours still span one line. Pass body_rgb to separate a "
+                "textured surface, or raise max_negative_frac if you know the "
+                "negatives are noise around zero" % (op, neg))
     # min-specular constraint: m_s(x) = s_along(x) - c * m(x) >= 0 with equality
     # somewhere. c is the ratio of the body colour's G-component to its
     # G-orthogonal length; the minimum ratio over lit pixels is exactly it.
