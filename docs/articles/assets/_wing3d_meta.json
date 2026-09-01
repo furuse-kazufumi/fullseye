@@ -678,7 +678,7 @@
         ],
         "inner_box_volume": 4420.0
       },
-      "caption": "z 軸まわりに 30° 傾けた合成直方体(13,617 voxel)に 3 つの箱を同時に描いた。軸平行の AABB は **1.99 倍**まで膨らむが、`obb`(PCA で向きを合わせた外接箱)は **0.94 倍**、半幅は 19.99 / 10.00 / 8.00 voxel (真値 20 / 10 / 8)。逆に `inner_box3` の最大内接箱は **0.32 倍**まで痩せる。掴み幅なら OBB、部品が通るかなら内接箱。",
+      "caption": "z 軸まわりに 30° 傾けた合成直方体(13,617 voxel)に 3 つの箱を同時に描いてターンテーブルで 1 周させた。軸平行の AABB は voxel 数の **1.99 倍**まで膨らむのに、`obb`(PCA で向きを合わせた外接箱)は **0.94 倍**まで縮み、半幅は 19.99 / 10.00 / 8.00 voxel (真値 20 / 10 / 8)とほぼ真値。1 倍を切るのは、点群が voxel の「中心」の集まりでその外接を測っているから(縁の半 voxel が入らない)。逆に `inner_box3` の最大内接箱は **0.32 倍**まで痩せる。掴み幅を決めるなら OBB、中を部品が通るかを見るなら内接箱。",
       "kind": "gif",
       "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_obb_innerbox.gif",
       "mp4": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_obb_innerbox.mp4",
@@ -703,7 +703,7 @@
       "gif_sha256": "192394dbf8ed453084c2c5ea922ad7a20a9c688cf1cafe1c17a6249a8eb31fb6",
       "mp4_sha256": "ef2809c8b4509ccb34b3a907155aa4ffe63dd86d69e3e5645912d1ad8032141a",
       "exhibit": "obb",
-      "seconds": 45.732583600096405
+      "seconds": 40.90244339988567
     },
     {
       "name": "wing3d_icp_registration",
@@ -1120,7 +1120,8 @@
       "name": "wing3d_mpr_crosshair",
       "title": "3 直交断面(MPR)とクロスヘア",
       "ops": [
-        "(numpy スライス + imagedraw)"
+        "vol_window_level",
+        "imagedraw.draw_line"
       ],
       "facts": {
         "shape": [
@@ -1140,7 +1141,7 @@
           "+z": "リング"
         }
       },
-      "caption": "同じ 1 点を 3 方向から見る MPR。axial(`vol[z]`)・coronal(`vol[:, y, :]`)・sagittal(`vol[:, :, x]`)を横に並べ、らせん状の目印を追いながら 3 本のクロスヘアを同時に動かした。各パネルに**どの軸が横でどの軸が縦か**を書き、`+x` に球・`-y` に横棒・`+z` にリングという非対称なランドマークを入れてある ―― 軸の入れ替わりや左右反転が起きたら、この 3 つの位置がずれて必ず露見する。",
+      "caption": "同じ 1 点を 3 方向から見る MPR。axial(`vol[z]`)・coronal(`vol[:, y, :]`)・sagittal(`vol[:, :, x]`)を横に並べ、らせん状の目印を追いながら 3 本のクロスヘアを同時に動かした。各パネルに**どの軸が横でどの軸が縦か**を書き、`+x` に球・`-y` に横棒・`+z` にリングという非対称なランドマークを入れてある ―― 軸の入れ替わりや左右反転が起きたら、この 3 つの位置がずれて必ず露見する(3 直交断面そのものは配列の基本スライス、コントラストは `vol_window_level`、線は `imagedraw` の op)。",
       "kind": "gif",
       "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_mpr_crosshair.gif",
       "mp4": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_mpr_crosshair.mp4",
@@ -1165,7 +1166,7 @@
       "gif_sha256": "7480c3d1fd5b2c4c0df21fb2e77d67aa087164741e6d8c127a3d64462cc685a0",
       "mp4_sha256": "3b9556290ab1c8282152ae822e9c84cda8359820921ff4de0ca73596ba9782f1",
       "exhibit": "mpr",
-      "seconds": 136.67518080002628
+      "seconds": 131.39738880004734
     },
     {
       "name": "wing3d_oblique_slice",
@@ -1543,7 +1544,7 @@
         "max_major_err_mm": 1.0658141036401503e-14,
         "max_minor_err_mm": 0.009542850930298385
       },
-      "caption": "半径 5.00 mm の合成円柱を、切断面を 0° から 80° まで倒しながら切る(`vol_rotate` の逆回し)。短径は角度によらず 10.000 mm のままなのに、長径は **2r / cos θ** に沿って伸び、80° では 29.238 mm = 2.92 倍になる。36 角度(0°〜70°)すべてで理論値との差は最大 0.0000 mm(0.00 画素)。「斜めの断面で測った直径」をそのまま寸法にしてはいけない、という一本。",
+      "caption": "半径 5.00 mm の合成円柱を、切断面を 0° から 70° まで倒しながら切る(`vol_rotate` の逆回し)。短径は角度によらず 10.000 mm のままなのに、長径は **2r / cos θ** に沿って伸び、70° では 29.238 mm = 2.92 倍になる。36 角度(0°〜70°)すべてで理論値との差は最大 0.0000 mm(0.00 画素)。「斜めの断面で測った直径」をそのまま寸法にしてはいけない、という一本。",
       "kind": "gif",
       "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_oblique_slice.gif",
       "mp4": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_oblique_slice.mp4",
@@ -1568,7 +1569,7 @@
       "gif_sha256": "19fb9c8851196342904a1b42b5ec07e3c76c087282820d1f97150b8eb31370c0",
       "mp4_sha256": "99dd4d9ebd08f0b7137ee39c81c4787a659025646b27ca9f74db95e829b66902",
       "exhibit": "oblique",
-      "seconds": 38.92520900000818
+      "seconds": 34.22131610009819
     },
     {
       "name": "wing3d_window_sweep",

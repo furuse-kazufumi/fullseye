@@ -47,7 +47,7 @@
 
 ![外から抱く箱(OBB)と中に入る箱(inner_box3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_obb_innerbox.gif)
 
-*↑ **外から抱く箱(OBB)と中に入る箱(inner_box3)** ―― z 軸まわりに 30° 傾けた合成直方体(13,617 voxel)に 3 つの箱を同時に描いた。軸平行の AABB は **1.99 倍**まで膨らむが、`obb`(PCA で向きを合わせた外接箱)は **0.94 倍**、半幅は 19.99 / 10.00 / 8.00 voxel (真値 20 / 10 / 8)。逆に `inner_box3` の最大内接箱は **0.32 倍**まで痩せる。掴み幅なら OBB、部品が通るかなら内接箱。 使用 op: `obb`, `inner_box3`, `vol_bounding_box`。*
+*↑ **外から抱く箱(OBB)と中に入る箱(inner_box3)** ―― z 軸まわりに 30° 傾けた合成直方体(13,617 voxel)に 3 つの箱を同時に描いてターンテーブルで 1 周させた。軸平行の AABB は voxel 数の **1.99 倍**まで膨らむのに、`obb`(PCA で向きを合わせた外接箱)は **0.94 倍**まで縮み、半幅は 19.99 / 10.00 / 8.00 voxel (真値 20 / 10 / 8)とほぼ真値。1 倍を切るのは、点群が voxel の「中心」の集まりでその外接を測っているから(縁の半 voxel が入らない)。逆に `inner_box3` の最大内接箱は **0.32 倍**まで痩せる。掴み幅を決めるなら OBB、中を部品が通るかを見るなら内接箱。 使用 op: `obb`, `inner_box3`, `vol_bounding_box`。*
 
 ![点群レジストレーション ―― ICP 29 回 / GICP 5 回](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_icp_registration.gif)
 
@@ -79,11 +79,11 @@
 
 ![3 直交断面(MPR)とクロスヘア](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_mpr_crosshair.gif)
 
-*↑ **3 直交断面(MPR)とクロスヘア** ―― 同じ 1 点を 3 方向から見る MPR。axial(`vol[z]`)・coronal(`vol[:, y, :]`)・sagittal(`vol[:, :, x]`)を横に並べ、らせん状の目印を追いながら 3 本のクロスヘアを同時に動かした。各パネルに**どの軸が横でどの軸が縦か**を書き、`+x` に球・`-y` に横棒・`+z` にリングという非対称なランドマークを入れてある ―― 軸の入れ替わりや左右反転が起きたら、この 3 つの位置がずれて必ず露見する。 使用 op: `(numpy スライス + imagedraw)`。*
+*↑ **3 直交断面(MPR)とクロスヘア** ―― 同じ 1 点を 3 方向から見る MPR。axial(`vol[z]`)・coronal(`vol[:, y, :]`)・sagittal(`vol[:, :, x]`)を横に並べ、らせん状の目印を追いながら 3 本のクロスヘアを同時に動かした。各パネルに**どの軸が横でどの軸が縦か**を書き、`+x` に球・`-y` に横棒・`+z` にリングという非対称なランドマークを入れてある ―― 軸の入れ替わりや左右反転が起きたら、この 3 つの位置がずれて必ず露見する(3 直交断面そのものは配列の基本スライス、コントラストは `vol_window_level`、線は `imagedraw` の op)。 使用 op: `vol_window_level`, `imagedraw.draw_line`。*
 
 ![斜めに切ると円が楕円になる(長径は 1/cos で伸びる)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_oblique_slice.gif)
 
-*↑ **斜めに切ると円が楕円になる(長径は 1/cos で伸びる)** ―― 半径 5.00 mm の合成円柱を、切断面を 0° から 80° まで倒しながら切る(`vol_rotate` の逆回し)。短径は角度によらず 10.000 mm のままなのに、長径は **2r / cos θ** に沿って伸び、80° では 29.238 mm = 2.92 倍になる。36 角度(0°〜70°)すべてで理論値との差は最大 0.0000 mm(0.00 画素)。「斜めの断面で測った直径」をそのまま寸法にしてはいけない、という一本。 使用 op: `vol_rotate`。*
+*↑ **斜めに切ると円が楕円になる(長径は 1/cos で伸びる)** ―― 半径 5.00 mm の合成円柱を、切断面を 0° から 70° まで倒しながら切る(`vol_rotate` の逆回し)。短径は角度によらず 10.000 mm のままなのに、長径は **2r / cos θ** に沿って伸び、70° では 29.238 mm = 2.92 倍になる。36 角度(0°〜70°)すべてで理論値との差は最大 0.0000 mm(0.00 画素)。「斜めの断面で測った直径」をそのまま寸法にしてはいけない、という一本。 使用 op: `vol_rotate`。*
 
 ![CT の窓を掃引する ―― 見えるものは窓が決めている](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_window_sweep.gif)
 

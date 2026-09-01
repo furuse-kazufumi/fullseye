@@ -3,50 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-02 03:03:39
+- **最終更新**: 2026-09-02 03:06:09
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+ecdd9c923 auto: volops.py 編集前 (2026-09-02 03:06)
+3ac606d52 auto: video.py 編集前 (2026-09-02 03:05)
+4020ba3c0 auto: test_engine.py 編集前 (2026-09-02 03:05)
+d1b2d3646 auto: engine.py 編集前 (2026-09-02 03:04)
+4bb8db3a3 auto: render3d.py 編集前 (2026-09-02 03:04)
+2f0069346 auto: test_studio.py 編集前 (2026-09-02 03:04)
+462405d62 auto: tomography_reconstruct.py 編集前 (2026-09-02 03:03)
+d4371aa69 auto: test_studio.py 編集前 (2026-09-02 03:03)
 4f1572ac1 auto: studio.py 編集前 (2026-09-02 03:03)
 c0db151a7 auto: studio.py 編集前 (2026-09-02 03:03)
-9d7cb1828 auto: studio.py 編集前 (2026-09-02 03:03)
-67ccc0432 auto: studio.py 編集前 (2026-09-02 03:03)
-b548a984b auto: test_acoustics.py 編集前 (2026-09-02 03:03)
-4a68af5ff auto: tomography_reconstruct.py 編集前 (2026-09-02 03:02)
-c38d4cc6e auto: test_acoustics.py 編集前 (2026-09-02 03:02)
-32076b6e1 auto: gen_wing3d_gallery.py 編集前 (2026-09-02 03:02)
-939625f2d auto: reprconv.py 編集前 (2026-09-02 03:02)
-76a4859aa auto: gen_wing3d_gallery.py 編集前 (2026-09-02 03:02)
 ```
 
 ## 現在の git status
 
 ```
-M examples/tomography_reconstruct.py
- M studio.py
+M volops.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-03:03 examples/tomography_reconstruct.py
-03:03 studio.py
-03:03 docs/articles/assets/thumbs/wing3d_obb_innerbox_thumb.jpg
-03:03 docs/articles/assets/media/wing3d_obb_innerbox.mp4
-03:03 docs/articles/assets/media/wing3d_obb_innerbox.gif
-03:03 docs/articles/assets/wing1d_octave_family_thumb.jpg
-03:03 docs/articles/assets/wing1d_octave_family.png
-03:03 docs/articles/assets/thumbs/wing1d_envelope_flow_thumb.jpg
-03:03 docs/articles/assets/media/wing1d_envelope_flow.gif
-03:03 docs/articles/assets/thumbs/wing1d_envelope_truncation_thumb.jpg
-03:03 docs/articles/assets/media/wing1d_envelope_truncation.gif
-03:03 .pytest_cache/v/cache/nodeids
-03:03 .pytest_cache/v/cache/lastfailed
-03:03 docs/articles/assets/wingconv_dead_vocabulary_thumb.jpg
-03:03 docs/articles/assets/wingconv_dead_vocabulary.png
+03:06 docs/articles/assets/wingevo_silent_bug_thumb.jpg
+03:06 docs/articles/assets/wingevo_silent_bug.png
+03:06 docs/articles/assets/thumbs/wingevo_diffusion_thumb.jpg
+03:06 docs/articles/assets/media/wingevo_diffusion.gif
+03:06 volops.py
+03:05 docs/articles/assets/wingevo_coverage_families_thumb.jpg
+03:05 docs/articles/assets/wingevo_coverage_families.png
+03:05 docs/articles/assets/thumbs/wingevo_type_fixpoint_thumb.jpg
+03:05 docs/articles/assets/media/wingevo_type_fixpoint.gif
+03:05 docs/articles/assets/thumbs/wing3d_mpr_crosshair_thumb.jpg
+03:05 docs/articles/assets/media/wing3d_mpr_crosshair.mp4
+03:05 docs/articles/assets/media/wing3d_mpr_crosshair.gif
+03:05 video.py
+03:05 docs/articles/assets/thumbs/wingevo_signature_collapse_thumb.jpg
+03:05 docs/articles/assets/media/wingevo_signature_collapse.gif
 ```
 
 ---

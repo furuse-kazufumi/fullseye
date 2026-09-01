@@ -239,14 +239,119 @@ def _to_uint8_frame(f) -> np.ndarray:
     return np.round(a01 * 255.0).astype(np.uint8)
 
 
-def write_video(path: str, frames, fps: float = 30.0) -> None:
+# Pillow's GIF encoder is patched in-process for the duration of one save (see
+# _write_gif_all_frames); serialise those saves so concurrent writers cannot see
+# a half-installed patch.
+_GIF_PATCH_LOCK = threading.Lock()
+
+
+def _write_gif_all_frames(path: str, seq, duration_ms: float, loop: int = 0) -> None:
+    """Write an animated GIF that keeps **every** frame, duplicates included.
+
+    Pillow's animated-GIF writer merges a frame that is pixel-identical to its
+    predecessor into that predecessor (adding the delays together) — see
+    ``PIL.GifImagePlugin._write_multiple_frames``: "This frame is identical to the
+    previous frame". The merge keeps the *timing* but destroys the *frame count*,
+    so a clip that holds a still for 18 frames comes back as one frame. There is
+    no Pillow or imageio keyword that switches it off (``optimize=False``,
+    ``subrectangles=False``, ``disposal=`` and the legacy ``GIF-PIL`` plugin were
+    all measured to be inert or broken), so the merge is defeated at its source:
+    ``_getbbox`` reports the changed region between consecutive frames, and an
+    empty region is what triggers the merge. Reporting the *full frame* instead
+    makes Pillow encode a normal full-frame image — everything else (palette
+    normalisation, delta cropping for frames that do differ) is untouched.
+
+    The patch is installed only around the one ``save()`` call and is always
+    restored. If a future Pillow drops ``_getbbox`` the save still runs unpatched
+    and :func:`write_video`'s read-back check turns the frame loss into an error
+    instead of silent truncation.
+    """
+    from PIL import Image
+    from PIL import GifImagePlugin
+
+    ims = [Image.fromarray(a) for a in seq]
+    original = getattr(GifImagePlugin, "_getbbox", None)
+
+    def _full_frame_bbox(base_im, im_frame):
+        delta, bbox = original(base_im, im_frame)
+        if not bbox:                       # identical to the previous frame
+            bbox = (0, 0) + im_frame.size  # encode it in full instead of merging
+        return delta, bbox
+
+    with _GIF_PATCH_LOCK:
+        if original is not None:
+            GifImagePlugin._getbbox = _full_frame_bbox
+        try:
+            ims[0].save(path, format="GIF", save_all=True, append_images=ims[1:],
+                        duration=duration_ms, loop=int(loop))
+        finally:
+            if original is not None:
+                GifImagePlugin._getbbox = original
+
+
+def _count_stored_frames(path: str):
+    """How many frames the file at *path* actually holds, or ``None`` if unknown.
+
+    Deliberately cheap: it counts frames without converting pixels (Pillow's
+    ``n_frames`` for GIF, the backend's own frame count for video, and only then
+    a bare iteration of the reader)."""
+    if not path.lower().endswith(_VIDEO_EXTS):
+        try:
+            from PIL import Image
+            with Image.open(path) as im:
+                return int(getattr(im, "n_frames", 1))
+        except Exception:
+            pass                                    # fall through to the backend
+    imageio = _imageio()
+    if imageio is None:
+        return None
+    try:
+        reader = imageio.get_reader(path)
+    except Exception:
+        return None
+    try:
+        try:
+            n = reader.count_frames()
+            if isinstance(n, int) and n > 0:
+                return n
+        except Exception:
+            pass
+        return sum(1 for _ in reader)
+    except Exception:
+        return None
+    finally:
+        reader.close()
+
+
+def write_video(path: str, frames, fps: float = 30.0, verify: bool = True) -> None:
     """Encode a sequence of frames to *path* (``.mp4`` or ``.gif``).
 
     *frames* is any iterable of gray ``(H, W)`` or RGB ``(H, W, 3)`` arrays, each
     float ``[0, 1]`` or already uint8. mp4 needs even width/height (H.264): odd
     dimensions are padded by one pixel (edge-replicated) so encoding never fails
-    silently. Raises ``RuntimeError`` if imageio is unavailable and ``ValueError``
-    for an empty sequence.
+    silently.
+
+    **Every frame is kept.** Pillow's GIF writer normally merges a frame that is
+    pixel-identical to its predecessor into it, which silently collapses a held
+    still — the leading/trailing "beats" of an exhibit animation — down to a
+    single frame. That merging is disabled here (see
+    :func:`_write_gif_all_frames`), so ``read_frames`` returns as many frames as
+    were written, duplicates and all. The cost is a larger file: a repeated frame
+    is stored again rather than folded into one longer delay. GIFs are written
+    with ``loop=0`` (loop forever).
+
+    With ``verify=True`` (the default) the file is read back and its frame count
+    is compared against the number of frames written; a mismatch raises
+    ``RuntimeError`` rather than being dropped silently. The comparison is
+    **exact for both GIF and mp4** — the mp4 path (libx264 via imageio-ffmpeg,
+    ``macro_block_size=1``) was measured to round-trip the frame count exactly for
+    1–61 identical and varying frames at 10 and 30 fps, so no tolerance is
+    allowed. ``RuntimeError`` is also raised if the file cannot be read back at
+    all, since that leaves the guarantee unchecked. Pass ``verify=False`` to skip
+    the read-back on very large clips where the extra decode is too expensive.
+
+    Raises ``RuntimeError`` if imageio is unavailable and ``ValueError`` for an
+    empty sequence.
     """
     path = os.fspath(path)
     imageio = _imageio()
@@ -255,6 +360,7 @@ def write_video(path: str, frames, fps: float = 30.0) -> None:
     seq = [_to_uint8_frame(f) for f in frames]
     if not seq:
         raise ValueError("no frames to write")
+    n_written = len(seq)
     if path.lower().endswith(_VIDEO_EXTS):
         padded = []
         for a in seq:
@@ -270,10 +376,28 @@ def write_video(path: str, frames, fps: float = 30.0) -> None:
         # even-padding above already satisfies libx264's yuv420p ÷2 requirement.
         imageio.mimsave(path, seq, fps=float(fps), macro_block_size=1)
     else:
-        # GIF (Pillow plugin): the per-frame delay is `duration` in MILLISECONDS.
-        # Passing duration=1/fps (seconds) truncates to a 0 ms delay (fps inert);
-        # `fps=` works but is deprecated in imageio 2.28+. Convert explicitly.
-        imageio.mimsave(path, seq, duration=1000.0 / float(fps))
+        # GIF: the per-frame delay is `duration` in MILLISECONDS. Passing
+        # duration=1/fps (seconds) truncates to a 0 ms delay (fps inert); `fps=`
+        # works but is deprecated in imageio 2.28+. Convert explicitly. Pillow is
+        # driven directly (not via imageio.mimsave) so the duplicate-frame merge
+        # can be switched off — imageio forwards no keyword that does it.
+        duration_ms = 1000.0 / float(fps)
+        try:
+            _write_gif_all_frames(path, seq, duration_ms)
+        except ImportError:                          # no Pillow: imageio's own path
+            imageio.mimsave(path, seq, duration=duration_ms)
+
+    if not verify:
+        return
+    n_stored = _count_stored_frames(path)
+    if n_stored is None:
+        raise RuntimeError(
+            "wrote %d frame(s) to %s but could not read the file back to verify the "
+            "frame count (pass verify=False to skip this check)" % (n_written, path))
+    if n_stored != n_written:
+        raise RuntimeError(
+            "frame count not preserved: wrote %d frame(s) to %s but the file holds "
+            "%d" % (n_written, path, n_stored))
 
 
 def probe(path: str) -> dict:
