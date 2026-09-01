@@ -1107,8 +1107,12 @@ def photometric_stereo_robust(images, lights, method="ransac", threshold=0.05,
       unknown.
 
     *threshold* is **relative to the brightest measurement at that pixel**, so
-    the result is invariant to overall exposure: scaling every image by any
-    positive constant returns bit-identical normals (verified in the tests).
+    the decision is invariant to exposure: scaling every image by 1e-3, 1e3 or
+    1e6 returns a **bit-identical inlier mask** and normals that differ by at
+    most 0.000115 degrees — the float32 output floor again, not an exposure
+    effect. The word "bit-identical" applies to the mask and not to the normals,
+    because the arithmetic downstream of the identical decision still rounds
+    differently at a different scale.
 
     Enumeration is exhaustive and therefore deterministic whenever
     ``C(N, 3) <= max_subsets``; *seed* only matters past that point, and the
