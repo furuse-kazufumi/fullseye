@@ -1043,9 +1043,21 @@ def range_doppler_peaks(rdmap, range_bin_m=1.0, velocity_bin_ms=1.0, n_peaks=1,
 # beamform: the angle axis from a uniform linear array                          #
 # --------------------------------------------------------------------------- #
 def _cell_snapshot(arr, op, range_bin, doppler_bin):
-    """The per-antenna complex value at one range-Doppler cell, + the indices."""
+    """The per-antenna complex value at one range-Doppler cell, + the indices.
+
+    *range_bin* and *doppler_bin* are all-or-nothing. Supplying only one used to
+    fall through to "pick the strongest cell", so a caller who asked to beamform
+    range bin 20 silently got the angle of the target in bin 3 instead, with the
+    returned ``range_bin`` field quietly saying 3 (found by the adversarial pass).
+    """
     na, nc, ns = arr.shape
-    spec = np.fft.fftshift(np.fft.fft(np.fft.fft(arr, axis=2), axis=1), axes=1)
+    if (range_bin is None) != (doppler_bin is None):
+        raise ValueError(
+            "%s: range_bin=%r and doppler_bin=%r — give both to select a cell, "
+            "or neither to use the strongest one. Half a cell address cannot be "
+            "honoured, and defaulting the other half to the strongest cell would "
+            "silently beamform a different target than the one you asked for."
+            % (op, range_bin, doppler_bin))
     if range_bin is None or doppler_bin is None:
         power = np.abs(spec).mean(axis=0)
         if float(power.max()) <= 0.0:
