@@ -634,10 +634,11 @@ def specular_diffuse_split(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0),
     op = "specular_diffuse_split"
     I = _require_rgb(image_rgb, "image_rgb", op)
     gamma = _require_direction(illuminant_rgb, "illuminant_rgb", op)
-    if max_rank_ratio is not None:
-        max_rank_ratio = _positive(max_rank_ratio, "max_rank_ratio")
+    max_rank_ratio, max_negative_frac = _split_guards(max_rank_ratio,
+                                                      max_negative_frac)
     if body_rgb is None:
-        diffuse, specular, _ = _split_uniform_body(I, gamma, max_rank_ratio, op)
+        diffuse, specular, _ = _split_uniform_body(I, gamma, max_rank_ratio,
+                                                   max_negative_frac, op)
     else:
         diffuse, specular, _ = _split_known_body(I, gamma, body_rgb, op)
     return diffuse, specular
