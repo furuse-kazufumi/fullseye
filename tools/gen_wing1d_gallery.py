@@ -406,6 +406,13 @@ def _header(fig: Fig, title: str, sub: str = "") -> None:
         fig.text(14 + 9.0 * len(title) + 18, 10, sub, C_DIM, 12, False)
 
 
+def _xunit(fig: Fig, ax: "Ax", text: str, size: int = 11) -> None:
+    """x 軸の単位ラベル。**目盛りラベルと同じ行に置かない** — 枠の内側の右下に
+    入れる(目盛り行に置くと桁数によって重なる。実際に重なったので直した)。"""
+    fig.text(ax.x1 - 10 - int(round(0.62 * size * len(text))), ax.y1 - 18,
+             text, C_DIM, size, False)
+
+
 def _legend(fig: Fig, x: int, y: int, items, size: int = 11,
             backing: bool = True) -> None:
     """凡例。曲線の上に重なっても読めるよう、既定で下敷きの箱を敷く。"""
@@ -807,7 +814,7 @@ def ex_window_sweep(log):
         fig.text(80, 262, "spectral kurtosis vs frequency", C_TEXT, 12, True)
         fig.text(axk.X(fc) + 6, 286, f"true resonance {fc:g} Hz", C_TRUE, 11, True)
         fig.text(axk.x0 + 6, axk.y0 + 4, "SK", C_DIM, 11)
-        fig.text(W - 160, 492, "frequency [Hz] ->", C_DIM, 11)
+        _xunit(fig, axk, "frequency [Hz] ->")
 
         # 下: 読み取り + 判定
         fig.box(76, 516, W - 30, H - 16, C_PANEL2)
@@ -932,7 +939,7 @@ def ex_order_tracking(log):
         _header(fig, "Order tracking: which spectrum is sharp tells you what",
                 "600 -> 1800 rpm, orders 1.0 and 3.5, fixed 400 Hz resonance")
         # 上: 回転数プロファイルと窓
-        axr = Ax(fig, 76, 62, W - 30, 146, (0.0, dur), (500.0, 1900.0))
+        axr = Ax(fig, 76, 62, W - 30, 138, (0.0, dur), (500.0, 1900.0))
         axr.panel(C_PANEL2)
         ink = fig.ink()
         axr.frame(ink)
@@ -949,9 +956,9 @@ def ex_order_tracking(log):
         fig.stamp(ink, C_B)
         fig.text(80, 44, f"shaft speed [rpm] and the {win_s:g} s analysis window",
                  C_TEXT, 12, True)
-        fig.text(axr.x0 + 8, axr.y0 + 5,
-                 f"window {r['t0']:.2f} - {r['t0'] + win_s:.2f} s   "
-                 f"mean {r['rpm']:7.1f} rpm = {r['shaft_hz']:6.3f} Hz", C_B, 12, True)
+        fig.text(84, 162, f"window {r['t0']:.2f} - {r['t0'] + win_s:.2f} s   "
+                          f"mean {r['rpm']:7.1f} rpm = {r['shaft_hz']:6.3f} Hz",
+                 C_B, 12, True)
 
         # 中: 通常のスペクトル(Hz)
         axf = Ax(fig, 76, 200, W - 30, 356, (0.0, 600.0), (0.0, a_hi * 1.12))
@@ -1004,7 +1011,7 @@ def ex_order_tracking(log):
                  f"400 Hz = order {r['o400']:.2f} (moves)", C_TRUE, 11, True)
         fig.text(axo.X(3.5) + 4, 436, "order 3.5 (fixed)", C_B, 11, True)
         fig.text(axo.x0 + 6, axo.y0 + 4, "amp", C_DIM, 11)
-        fig.text(W - 158, 558, "shaft order ->", C_DIM, 11)
+        _xunit(fig, axo, "shaft order ->")
 
         fig.box(76, 574, W - 30, H - 12, C_PANEL2)
         fig.text(88, 580, f"cropped to {r['rev']} whole revolutions (even, so order 3.5 "
@@ -1132,7 +1139,7 @@ def ex_bearing_geometry(log):
             fig.text(524, yy - 26, label, col, 11, True)
             fig.text(axb.X(val) + 8, yy - 7, f"{val:9.4f} Hz", C_TEXT, 12, True)
         fig.text(524, 80, "characteristic frequencies", C_TEXT, 12, True)
-        fig.text(W - 168, 436, "frequency [Hz] ->", C_DIM, 11)
+        _xunit(fig, axb, "frequency [Hz] ->")
 
         fig.box(520, 462, W - 40, 560, C_PANEL2)
         fig.text(532, 468, f"sweeping: {r['phase']}", C_B, 12, True)
@@ -1615,6 +1622,7 @@ def ex_smoothing_tradeoff(log):
         fig.text(88, 52, "waveform", C_TEXT, 12, True)
         _legend(fig, W - 230, 78, [("noisy input", C_DIM), ("clean truth", C_C),
                                    ("smoothed", C_B), ("local maxima", C_E)])
+        fig.box(W - 236, 144, W - 24, 186, (0.06, 0.07, 0.085))
         fig.text(W - 230, 148, f"sigma = {r['sigma']:6.3f} samples", C_B, 13, True)
         fig.text(W - 230, 168, f"     = {r['sigma'] * dt * 1e3:6.2f} ms", C_DIM, 12)
         fig.text(axw.x0 + 6, axw.y0 + 4, "amp", C_DIM, 11)
@@ -1651,7 +1659,7 @@ def ex_smoothing_tradeoff(log):
                  f"at sigma {rows[best]['sigma']:.3f}", C_C, 11, True)
         fig.text(90, axr.Y(rows[0]["rmse"]) - 16,
                  f"raw {rows[0]['rmse']:.6f}", C_DIM, 11, True)
-        fig.text(392, 558, "sigma [samples] ->", C_DIM, 11)
+        _xunit(fig, axr, "sigma [samples] ->")
 
         # 下段右: 極値の数とピークの高さ
         axn = Ax(fig, 596, 372, W - 30, 552, (0.5, 45.0),
@@ -1678,7 +1686,7 @@ def ex_smoothing_tradeoff(log):
             fig.stamp(ink, C_TRUE)
         fig.text(600, 354, "number of strict local maxima", C_TEXT, 12, True)
         fig.text(604, axn.Y(true_max) - 18, f"clean truth = {true_max}", C_C, 11, True)
-        fig.text(852, 558, "sigma [samples] ->", C_DIM, 11)
+        _xunit(fig, axn, "sigma [samples] ->")
 
         fig.box(84, 574, W - 30, H - 12, C_PANEL2)
         fig.text(96, 580, f"sigma {r['sigma']:6.3f}   rmse {r['rmse']:.6f} "
@@ -1781,9 +1789,9 @@ def ex_aliasing(log):
                          f"it, and what the samples join up to", C_TEXT, 12, True)
         _legend(fig, W - 250, 78, [(f"true {f_true:g} Hz tone", C_DIM),
                                    ("samples", C_A),
-                                   ("what the samples say", C_B)])
-        fig.text(W - 250, 134, f"{int(keep.sum())} samples in 30 ms", C_DIM, 11)
-        fig.text(W - 190, 306, "time [ms] ->", C_DIM, 11)
+                                   ("what the samples say", C_B),
+                                   (f"{int(keep.sum())} samples in 30 ms", C_DIM)])
+        _xunit(fig, axt, "time [ms] ->")
 
         # 下: スペクトル
         axf = Ax(fig, 84, 372, W - 30, 546, (0.0, 700.0), (0.0, 1.18))
@@ -1819,22 +1827,22 @@ def ex_aliasing(log):
         fig.text(axf.X(r["nyq"]) + 6, 412, "nothing above this line", C_WARN, 11)
         fig.text(axf.X(r["nyq"]) + 6, 428, "can exist in this record", C_WARN, 11)
         fig.text(axf.x0 + 6, axf.y0 + 4, "amp", C_DIM, 11)
-        fig.text(W - 160, 552, "frequency [Hz] ->", C_DIM, 11)
+        _xunit(fig, axf, "frequency [Hz] ->")
 
-        fig.box(84, 568, W - 30, H - 12, C_PANEL2)
-        fig.text(96, 574, f"fs {r['fs']:7.0f} Hz   Nyquist {r['nyq']:6.1f} Hz   "
+        fig.box(84, 566, W - 30, H - 8, C_PANEL2)
+        fig.text(96, 570, f"fs {r['fs']:7.0f} Hz   Nyquist {r['nyq']:6.1f} Hz   "
                           f"{r['n']:4d} samples   bin {r['res']:.3f} Hz", C_TEXT, 13, True)
         if r["aliased"]:
-            fig.text(96, 594, f"peak reads {r['peak_hz']:7.2f} Hz, amplitude "
+            fig.text(96, 588, f"peak reads {r['peak_hz']:7.2f} Hz, amplitude "
                               f"{r['peak_amp']:.6f}   folding predicts "
                               f"|{f_true:g} - {r['fs']:.0f} k| = {r['expected']:.2f} Hz",
                      C_E, 12, True)
-            fig.text(96, 612, "a full-height line at the wrong frequency - nothing "
+            fig.text(96, 606, "a full-height line at the wrong frequency - nothing "
                               "raised, nothing is NaN", C_E, 12, True)
         else:
-            fig.text(96, 594, f"peak reads {r['peak_hz']:7.2f} Hz, amplitude "
+            fig.text(96, 588, f"peak reads {r['peak_hz']:7.2f} Hz, amplitude "
                               f"{r['peak_amp']:.6f}   correct", C_C, 12, True)
-            fig.text(96, 612, "Nyquist is still above the tone", C_C, 12, True)
+            fig.text(96, 606, "Nyquist is still above the tone", C_C, 12, True)
         frames.append(fig.u8())
 
     info = save_flipbook(frames, "aliasing", labels, ms=260, hold_ms=1800, log=log)
@@ -2156,7 +2164,7 @@ def ex_peak_match(log):
             fig.text(x0, 516, f"shift {r['shifts'][j]:+d}  (truth 0)",
                      C_C if ok else C_E, 12, True)
             fig.text(x0, 534, f"score {r['scores'][j]:8.4f}", C_DIM, 11)
-        _legend(fig, W - 186, 340, [("window", C_DIM), ("template", C_D)])
+        _legend(fig, W - 186, 322, [("window", C_DIM), ("template", C_D)])
 
         fig.box(84, 552, W - 30, H - 12, C_PANEL2)
         fig.text(96, 558, "local_min_max_funct_1d uses STRICT inequalities and has "
@@ -2638,10 +2646,10 @@ def ex_envelope_flow(log):
     fig.stamp(ink, C_TRUE)
     fig.text(ax.X(es["peak_freq"]) + 8, 62,
              f"measured {es['peak_freq']:.4f} Hz", C_TRUE, 12, True)
-    fig.text(82, PH - 40, f"closest kinematic rate: {best_name} at "
-                          f"{lines[best_name]:.4f} Hz, {rel:.4f} % away. A real bearing "
-                          f"slips ~1 %, so this is a match - and an exact one would be "
-                          f"a coincidence.", C_DIM, 12)
+    fig.text(82, PH - 58, f"closest kinematic rate: {best_name} at "
+                          f"{lines[best_name]:.4f} Hz, {rel:.4f} % away.", C_DIM, 12)
+    fig.text(82, PH - 40, "A real bearing slips about a percent, so a line within ~1 % "
+                          "is a match - and an exact one is a coincidence.", C_DIM, 12)
     steps.append(fig.u8())
 
     step_labels = [

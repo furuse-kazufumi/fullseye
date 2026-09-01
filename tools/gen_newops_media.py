@@ -1457,7 +1457,7 @@ def build_fmcw(log, frames: int = 25):
         labels = [
             (14, 6, f"FMCW range-Doppler: a strong target at range bin {strong_rb} "
                     f"and a weak one at bin {weak_rb}, both at Doppler +{dop}  --  "
-                    f"sweeping how weak the weak one is", C_TEXT, 12, False),
+                    f"sweeping how weak", C_TEXT, 12, False),
             (100, axP.y0 - 22,
              f"range profile through Doppler bin +{dop}  [dB relative to the peak]",
              C_TEXT, 13, True),
@@ -1480,10 +1480,10 @@ def build_fmcw(log, frames: int = 25):
              f"the leakage skirt (about {rect_floor:.1f} dB) -- and nothing warns you.",
              C_ROSE, 12, True),
             (14, H - 20,
-             f"the cost of the window: peak height {r['peak']:.4f} -> {hn['peak']:.4f} "
+             f"the window costs peak height {r['peak']:.4f} -> {hn['peak']:.4f} "
              f"({r['peak'] / hn['peak']:.2f}x) and a wider main lobe; the rect peak is "
-             f"the half-bin scalloping loss 2/pi = {2 / np.pi:.4f}.  "
-             f"bin {dr:.4f} m / {dv:.4f} m/s.", C_DIM, 11, False),
+             f"the scalloping loss 2/pi = {2 / np.pi:.4f}. bin {dr:.4f} m / {dv:.4f} m/s",
+             C_DIM, 11, False),
             (x1p + 2, MAPY + MAP_H + 6,
              f"colour = dB ({DB_LO:.0f}..{DB_HI:.0f}), rows = Doppler bin -16..+15, "
              f"columns = range bin 0..63;  white circle = strong, amber = weak",

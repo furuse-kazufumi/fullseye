@@ -1545,6 +1545,10 @@ def ex_studio_editor():
         if tick % 10 == 0 and run_frames < 12:
             frames.append(_grab(dlg)); run_frames += 1
     _pump(8)
+    # 実行の所要時間はマシン任せなので、ポーリング中に撮れた枚数も揺れる。
+    # 枚数だけは固定して、クリップの長さが実行時間で変わらないようにする。
+    while run_frames < 12:
+        frames.append(_grab(dlg)); run_frames += 1
     out = pe["output"].toPlainText()
     status = pe["status"].text()
     # 出力コンソールを実際にスクロールして読ませる(同一フレームの水増しはしない)
@@ -1571,10 +1575,13 @@ def ex_studio_opsearch():
     total = win._op_list.count()
     frames, steps = [], []
     query = "watershed"
-    search.setText(""); _pump(4)
+    # NOTE: 検索欄は setClearButtonEnabled(True) なので、文字が入ると ✕ ボタンが
+    # 遅延して現れる。pump が足りないと「✕ が描かれた/描かれていない」で grab が
+    # 揺れて GIF が非決定的になった(実測: 2 回の生成で SHA-256 が不一致)。
+    search.setText(""); _pump(10)
     frames.append(_grab(win)); steps.append(("", total))
     for i in range(1, len(query) + 1):
-        search.setText(query[:i]); _pump(3)
+        search.setText(query[:i]); _pump(10)
         n = win._op_list.count()
         frames.append(_grab(win)); steps.append((query[:i], n))
     # 見つけた op を選ぶ(シグネチャ欄に in_sort -> out_sort が出る)
@@ -1583,7 +1590,7 @@ def ex_studio_opsearch():
     frames += [_grab(win)] * 4
     n_final = win._op_list.count()
     # 2 例目: 分類コンボで絞る
-    search.setText("cad"); _pump(4)
+    search.setText("cad"); _pump(10)
     frames += [_grab(win)] * 3
     steps.append(("cad", win._op_list.count()))
     facts = {"total_ops": int(total), "query": query,

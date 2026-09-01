@@ -57,7 +57,7 @@
 - GIF: `docs/articles/assets/media/wing1d_kurtosis_band.gif` (24 コマ, 1000x668 px, 1.94 MB, 220 ms/コマ・最終コマ 1400 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_kurtosis_band_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `2b6307424380c31317a830d146baf05271f2744b7565ef2a94405670fa17a663`
+- SHA-256: `a4515390fdf48ba68d5cb98fa79e5e37b5efb3c8c50beb875bc4f1ad9df04b9e`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -90,10 +90,10 @@
 
 *↑ **窓長を間違えると負の尖度が出る** ―― 衝撃が 9.346 ms ごとに来る軸受信号(真の共振 3000 Hz)で窓長を 16 から 512 まで掃引した。窓が衝撃の間隔より長くなるとどのフレームにも衝撃が 1 個ずつ入り、その帯域は構成上「定常」に見える。窓 256(10.00 ms)で最大 SK は -0.1269 ―― 負の値を、共振から 9200 Hz 離れた 12200 Hz で報告する。例外は出ない。窓を掃引することはこの op の使い方の一部であって最適化ではない。 使用 op: `synthesize_bearing_signal`, `spectral_kurtosis`。*
 
-- GIF: `docs/articles/assets/media/wing1d_window_sweep.gif` (22 コマ, 1000x668 px, 0.69 MB, 380 ms/コマ・最終コマ 1800 ms)
+- GIF: `docs/articles/assets/media/wing1d_window_sweep.gif` (22 コマ, 1000x668 px, 0.68 MB, 380 ms/コマ・最終コマ 1800 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_window_sweep_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `8d7201f4502383ffa4e15a9b5ceaa81d76d14e7848247ed2731ecc0f78fe6aac`
+- SHA-256: `4ed982b67bb6a13fc76c2ff779a732d96cba2e9483d4bef28198a08fb2255ba4`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -225,7 +225,7 @@
 - GIF: `docs/articles/assets/media/wing1d_order_tracking.gif` (30 コマ, 1000x668 px, 1.07 MB, 220 ms/コマ・最終コマ 1400 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_order_tracking_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `911cdeed3ec8167c62c7de536f5f6c5c6ee13ee37a4ef4d455d84cd555ecb766`
+- SHA-256: `30fe2f66e04ac66b20d3d0c8795ae2746582c43498478d1a7c3af623d136b09f`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -262,7 +262,7 @@
 - GIF: `docs/articles/assets/media/wing1d_bearing_geometry.gif` (36 コマ, 1000x668 px, 1.40 MB, 200 ms/コマ・最終コマ 1400 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_bearing_geometry_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `2aa0609dd7b4b8e38d3b7ea7eb73ddc6a07ac532a79a7738a9231bd93406653f`
+- SHA-256: `0b62fa0683a450fa898dbd92cb4f413f3dc7f0e3f85301875a5c032999ae182f`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -426,7 +426,7 @@
 - GIF: `docs/articles/assets/media/wing1d_smoothing_tradeoff.gif` (32 コマ, 1000x668 px, 1.07 MB, 220 ms/コマ・最終コマ 1600 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_smoothing_tradeoff_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `d60ad0b7be32adf086ecf6e848ed182a25097eb8bbb1d1e99ad0fe2ac0ad6e8f`
+- SHA-256: `11925ead92d9a0349ddaa503498da3096b21e7c94a2ca4b61d70f93cb045b651`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -462,7 +462,7 @@
 - GIF: `docs/articles/assets/media/wing1d_aliasing.gif` (31 コマ, 1000x668 px, 1.13 MB, 260 ms/コマ・最終コマ 1800 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_aliasing_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `3447eb05de4f62210038f690c0fa9f95cf263b271b5a548aa5daf32f0fa295b1`
+- SHA-256: `17745b7f5cecec5930e800bce7c73dbd45ac9808fb5bf82174d3582a47a23ebe`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -649,10 +649,10 @@
 
 *↑ **極値検出と照合** ―― 既知の 4 点(60, 150, 245, 330)に立てたガウスピークへ雑音を σ = 0 から 0.42 まで 30 段加えた。`local_min_max_funct_1d` は狭義不等式なので、生の波形では極大が 4 個から 132 個へ暴発する。σ = 3 のガウス平滑と高さ 0.45 の門を通すと最後まで 6 個([58, 149, 243, 254, 329, 337])に落ち着く。`match_funct_1d_trans` は同じ長さの窓とテンプレートを突き合わせるかぎり、30 段のうち 25 段(σ 0.348 まで)で 4 点すべて lag = 0 を厳密に返す。 使用 op: `smooth_funct_1d_gauss`, `local_min_max_funct_1d`, `match_funct_1d_trans`。*
 
-- GIF: `docs/articles/assets/media/wing1d_peak_match.gif` (30 コマ, 1000x668 px, 1.48 MB, 240 ms/コマ・最終コマ 1600 ms)
+- GIF: `docs/articles/assets/media/wing1d_peak_match.gif` (30 コマ, 1000x668 px, 1.46 MB, 240 ms/コマ・最終コマ 1600 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_peak_match_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `f0bfd4e954b3ae65009d8d4bb7f92ca02a2bf02510e0de0655dbb9a24eb089d5`
+- SHA-256: `cc73ed4008cb9f65c0fd2d4ebda3e0cdbeaff703683318b94ca9419eacbd5aa3`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -694,10 +694,10 @@
 
 *↑ **包絡線の端が切れると 76 % 間違う** ―― 12 µm の走査(241 plane × 0.05 µm)の中で、表面を中央 6.0 µm から端の 0.30 µm まで 32 段歩かせた。中央では誤差 2.2e-14 µm。表面が 0.30 µm まで寄ると `csi_peak_position` は 0.0477 µm を返す ―― 有限で、もっともらしく、84 % 間違っている。しかも包絡線の argmax は 241 plane 中の 1 番目、つまり**内部**なので「端に張り付いたら拒否」という素直な検査は発動しない。中央値基準の端レベルが 0.0539 を超えた表面 2.69 µm から op は拒否に転じる(図の値は `max_edge_envelope=1.0` で強制的に取り出したもの)。 使用 op: `csi_signal_simulate`, `csi_envelope`, `csi_peak_position`。*
 
-- GIF: `docs/articles/assets/media/wing1d_envelope_truncation.gif` (32 コマ, 1000x668 px, 1.39 MB, 240 ms/コマ・最終コマ 2000 ms)
+- GIF: `docs/articles/assets/media/wing1d_envelope_truncation.gif` (32 コマ, 1000x668 px, 1.43 MB, 240 ms/コマ・最終コマ 2000 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_envelope_truncation_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `ca1dfd6760acd7cb1f804a2545852328d34d237a7b0bcbf8d0837b2456fbd686`
+- SHA-256: `43ba7e01b758afc3be89e9e7d0edf1ff3836dae3cf4d475a6d72603e8b0ec6f8`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -790,7 +790,7 @@
 - GIF: `docs/articles/assets/media/wing1d_envelope_flow.gif` (7 コマ, 940x522 px, 0.18 MB, 1500 ms/コマ・最終コマ 3000 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_envelope_flow_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `ac969b7922832bcd3bdcf317bacdff5580f8983bb7331748e4201a40c02f94d0`
+- SHA-256: `4bf1d58036affa859817326d975c6502b7d4ddc2100f5b0177559e69be081092`
 
 <details><summary>この図に焼いた実測値</summary>
 

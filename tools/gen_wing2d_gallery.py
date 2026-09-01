@@ -755,8 +755,8 @@ def subject_hist_shaping(log=print) -> dict:
              "clahe (タイル 4×4 で平坦化)\nstd %.4f / entropy %.3f"
              % (R["std"]["cl"], R["ent"]["cl"])],
             4, tile=(262, 262), label_h=56,
-            title="ヒストグラム整形 —— 潰れた画像はどこまで戻せるか",
-            sub="入力コントラスト %.2f 倍 (元の平均 %.3f を中心に圧縮)" % (k, mid))
+            title="ヒストグラム整形 —— どこまで戻せるか",
+            sub="入力コントラスト %.2f 倍" % k)
         hist = _hist_panel(
             [R["low"], R["eq"], R["cl"]],
             ["圧縮した入力", "equalize", "clahe"], [C_LOW, C_EQ, C_CL],
@@ -770,7 +770,7 @@ def subject_hist_shaping(log=print) -> dict:
                                ("cl", C_CL, "clahe 後の std"))],
             grid.shape[1] // 2 - 4, 300, xlim=(0.16, 1.0), ylim=(0, 0.32),
             title="gray_histo_abs (標準偏差) で見た復元度",
-            xlabel="入力コントラスト倍率", legend_pos="tl")
+            xlabel="入力コントラスト倍率", legend_pos="bl")
         from PIL import Image
         row = Image.new("RGB", (grid.shape[1], 300), BG)
         row.paste(Image.fromarray(hist, "RGB"), (0, 0))
@@ -932,26 +932,38 @@ def subject_fourier_desc(log=print) -> dict:
 # 展示 6: 対応点で顔をモーフする / landmark-driven image morphing                #
 # --------------------------------------------------------------------------- #
 def _synthetic_face(kind: int, size: int = 320) -> tuple:
-    """合成の顔 (実在しない) と対応点 7 個を返す. 戻り (image, points[row,col])."""
+    """合成の顔 (実在しない) と対応点 11 個を返す. 戻り (image, points[row,col]).
+
+    対応点は輪郭の楕円上 8 点 + 両目 + 口。7 点 (輪郭 4 点) では楕円の弧の途中が
+    対応せず、モーフの途中に二重像が残っていた —— 実際に見て分かった不足。
+    """
     from PIL import Image, ImageDraw
     im = Image.new("L", (size, size), 36)
     d = ImageDraw.Draw(im)
     if kind == 0:
-        d.ellipse([70, 46, 250, 286], fill=205)
-        d.ellipse([108, 118, 142, 148], fill=28)
-        d.ellipse([178, 118, 212, 148], fill=28)
-        d.polygon([(160, 150), (146, 196), (174, 196)], fill=150)
-        d.arc([118, 176, 202, 244], 20, 160, fill=18, width=7)
-        pts = [(133, 125), (133, 195), (196, 160), (60, 160),
-               (160, 84), (160, 236), (280, 160)]
+        head = (70, 46, 250, 286)                     # (x0, y0, x1, y1)
+        eyes = [(108, 118, 142, 148), (178, 118, 212, 148)]
+        nose = [(160, 150), (146, 196), (174, 196)]
+        mouth = (118, 176, 202, 244, 20, 160)
+        fill, ink = 205, 28
     else:
-        d.ellipse([48, 74, 272, 258], fill=168)
-        d.ellipse([96, 142, 140, 174], fill=22)
-        d.ellipse([180, 142, 224, 174], fill=22)
-        d.polygon([(160, 176), (142, 214), (178, 214)], fill=120)
-        d.arc([112, 186, 208, 252], 200, 340, fill=14, width=8)
-        pts = [(158, 118), (158, 202), (214, 160), (78, 160),
-               (160, 62), (160, 258), (252, 160)]
+        head = (48, 74, 272, 258)
+        eyes = [(96, 142, 140, 174), (180, 142, 224, 174)]
+        nose = [(160, 176), (142, 214), (178, 214)]
+        mouth = (112, 186, 208, 252, 200, 340)
+        fill, ink = 168, 22
+    d.ellipse(list(head), fill=fill)
+    for e in eyes:
+        d.ellipse(list(e), fill=ink)
+    d.polygon(nose, fill=int(0.72 * fill))
+    d.arc(list(mouth[:4]), mouth[4], mouth[5], fill=max(0, ink - 8), width=7)
+    cx, cy = (head[0] + head[2]) / 2.0, (head[1] + head[3]) / 2.0
+    ax, ay = (head[2] - head[0]) / 2.0, (head[3] - head[1]) / 2.0
+    pts = [(cy + ay * np.sin(t), cx + ax * np.cos(t))          # 楕円上 8 点
+           for t in np.arange(8) * (np.pi / 4.0)]
+    for e in eyes:                                             # 両目の中心
+        pts.append(((e[1] + e[3]) / 2.0, (e[0] + e[2]) / 2.0))
+    pts.append(((mouth[1] + mouth[3]) / 2.0, (mouth[0] + mouth[2]) / 2.0))
     return np.asarray(im, np.float64) / 255.0, np.asarray(pts, np.float64)
 
 
@@ -985,7 +997,7 @@ def subject_face_morph(log=print) -> dict:
         frames.append(panel)
         labels.append("α = %.2f — affine と TPS の平均差 %.5f" % (a, diff[i]))
     book = E.flipbook(frames, labels,
-                      title="対応点モーフ —— 7 個の点だけで顔が別人になる")
+                      title="対応点モーフ —— 少ない点だけで顔が別人になる")
     info = E.save_animation(book, "wing2d_face_morph",
                             duration_ms=340, hold_last_ms=1400)
     return {
@@ -1004,12 +1016,12 @@ def subject_face_morph(log=print) -> dict:
             "psnr_alpha1_vs_B_db": round(end_psnr[1], 2),
         },
         "caption": (
-            "対応点 7 個だけを与えて顔 A から顔 B へモーフさせた 6 パネル。"
-            "対応点を使わない単純合成は途中で二重像になるが、piecewise affine と TPS は"
-            "目や口の位置を対応させたまま連続的に動く。両端は入力を厳密に再現し "
-            "(α=0 で A と PSNR %.1f dB、α=1 で B と %.1f dB = 完全一致の上限値)、"
-            "2 つのワープ方式の差は α=0.5 で平均 %.5f にとどまる。"
-            % (end_psnr[0], end_psnr[1], diff[n // 2])),
+            "対応点 %d 個 (輪郭の楕円上 8 点 + 両目 + 口) だけを与えて顔 A から顔 B へ"
+            "モーフさせた 6 パネル。対応点を使わない単純合成は途中で二重像になるが、"
+            "piecewise affine と TPS は輪郭も目も口も対応させたまま連続的に動く。"
+            "両端は入力を厳密に再現し (α=0 で A と PSNR %.1f dB、α=1 で B と %.1f dB "
+            "= 完全一致の上限値)、2 つのワープ方式の差は α=0.5 で平均 %.5f にとどまる。"
+            % (len(ptsA), end_psnr[0], end_psnr[1], diff[n // 2])),
     }
 
 
@@ -1278,8 +1290,11 @@ def subject_shape_match(log=print) -> dict:
         fr, fc = r0 + R["d_row"], c0 + R["d_col"]
         d.ellipse([fc - 52, fr - 52, fc + 52, fr + 52], outline=(120, 235, 160),
                   width=3)
+        # 向きの実測: ndimage.rotate(img, +A) は画面上で反時計回りに動く
+        # (タブの重心が A=116° で画面角 -115° に来ることを確認)。指し棒も同じ
+        # 向きで描かないと鏡像になる。
         th = np.deg2rad(R["found"])
-        d.line([fc, fr, fc + 52 * np.sin(th), fr - 52 * np.cos(th)],
+        d.line([fc, fr, fc - 52 * np.sin(th), fr - 52 * np.cos(th)],
                fill=(255, 200, 80), width=3)
         d.line([fc - 12, fr, fc + 12, fr], fill=(255, 255, 255), width=1)
         d.line([fc, fr - 12, fc, fr + 12], fill=(255, 255, 255), width=1)
@@ -1294,7 +1309,7 @@ def subject_shape_match(log=print) -> dict:
             360, left.shape[0], xlim=(0, 340), ylim=(-6, 11),
             hlines=((0.0, (140, 142, 160)),),
             title="真の角度 vs 推定の誤差 / スコア", xlabel="部品を回した角度 [°]",
-            legend_pos="tl")
+            legend_pos="bl")
         tmp_panel = _fit(_to_u8(np.stack([tmpl] * 3, -1)), 150, 150, resample=0)
         from PIL import Image as I2
         side = I2.new("RGB", (150, left.shape[0]), BG)
@@ -1304,6 +1319,9 @@ def subject_shape_match(log=print) -> dict:
         _text(sd, (75, 200), "96×96 px", size=15, fill=INK_DIM, anchor="ma")
         _text(sd, (75, 236), "%d 角度を探索" % len(search), size=15,
               fill=ACCENT, anchor="ma")
+        _text(sd, (75, 282), "指し棒 = 推定角", size=14, fill=INK_DIM, anchor="ma")
+        _text(sd, (75, 302), "(上を 0°・反時計回り)", size=14, fill=INK_DIM,
+              anchor="ma")
         _text(sd, (75, 258), "1 回 %.2f 秒" % R["sec"], size=15, fill=ACCENT,
               anchor="ma")
         frames.append(_side_by_side(_side_by_side(np.asarray(side, np.uint8),
@@ -1425,7 +1443,8 @@ def subject_doc_deskew(log=print) -> dict:
              sweep_panel.astype(np.float64) / 255.0]
     labels = [
         "元の帳票 (合成) — バーは %d 本" % n_true,
-        "%.0f° 傾ける — decode_barcode は %d 本と答える" % (skew, count_raw),
+        "%.0f° 傾ける — decode_barcode は %d 本。隅の鏡文字は rotate_image の "
+        "mode='reflect' が折り返したもの (消していない)" % (skew, count_raw),
         "回転角を 0.5° 刻みで振り、行方向プロファイルの分散が最大の角を探す",
         "推定 %.1f° で逆回転 (真値 %.1f°・誤差 %+.1f°)" % (est, skew, est - skew),
         "otsu で二値化 — decode_barcode は %d 本 (真値 %d 本)"
@@ -1529,11 +1548,13 @@ def subject_fit_residual(log=print) -> dict:
     from PIL import Image as I3, ImageDraw as D3
     rv = I3.fromarray(_to_u8(res_vis), "RGB")
     rd = D3.Draw(rv)
-    vmax = float(np.percentile(resid, 98))
+    # 上限を全点の 98%tile にすると、欠けの縁 (数十 px) が上限を押し上げて
+    # 内点が全部いちばん低い色に潰れる。内点の 3σ を上限にして飽和させる。
+    vmax = max(3.0 * float(np.std(d0[inlier])), 1e-6)
     for (rr, ccv), e in zip(circ_pts, resid):
-        t = min(1.0, e / max(vmax, 1e-9))
+        t = min(1.0, e / vmax)
         col = tuple(int(v) for v in (_cmap(np.array([[t]]), "turbo")[0, 0] * 255))
-        rd.ellipse([ccv - 2, rr - 2, ccv + 2, rr + 2], fill=col)
+        rd.ellipse([ccv - 3, rr - 3, ccv + 3, rr + 3], fill=col)
     hist = _hist_panel([resid / max(resid.max(), 1e-9)], ["残差 (最大で正規化)"],
                        [(255, 196, 80)], W, H,
                        title="円からの残差の分布 — RMS %.3f px / 最大 %.3f px"
@@ -1552,7 +1573,8 @@ def subject_fit_residual(log=print) -> dict:
         "橙 = 全点で fit_circle 半径 %.2f px (誤差 %+.2f) / "
         "緑 = 外れ値 %d 点を落として再当てはめ 半径 %.2f px (誤差 %+.2f)"
         % (cf["r"], cf["r"] - R0, int((~inlier).sum()), cf2["r"], cf2["r"] - R0),
-        "残差を色で — RMS %.3f px、欠けの縁だけが赤く浮く" % cf["rms"],
+        "残差を色で（上限 %.2f px = 内点の 3σ で飽和）— 欠けの縁だけが赤"
+        % vmax,
         "fit_line: %.2f° (真値 %.2f°・誤差 %+.3f°) / 残差 RMS %.3f px"
         % (lf["angle_deg"], true_line_deg, lf["angle_deg"] - true_line_deg,
            lf["rms"])]

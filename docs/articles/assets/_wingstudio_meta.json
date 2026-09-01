@@ -34,7 +34,7 @@
         "iou_min": 0.585,
         "iou_max": 0.837
       },
-      "seconds": 12.58
+      "seconds": 13.42
     },
     {
       "kind": "gif",
@@ -67,7 +67,7 @@
         ],
         "threshold": 0.510815
       },
-      "seconds": 2.04
+      "seconds": 2.34
     },
     {
       "kind": "gif",
@@ -97,7 +97,7 @@
         "rmse_raw_before": 74.76265,
         "improve_x": 12.98
       },
-      "seconds": 5.06
+      "seconds": 6.16
     },
     {
       "kind": "png",
@@ -123,7 +123,7 @@
         "coverage_front_px": 38540,
         "coverage_back_px": 39686
       },
-      "seconds": 2.63
+      "seconds": 2.92
     },
     {
       "kind": "gif",
@@ -158,7 +158,7 @@
         "refocus_var_slope0": 0.006824,
         "refocus_var_slope3": 0.014866
       },
-      "seconds": 1.86
+      "seconds": 2.33
     },
     {
       "kind": "gif",
@@ -188,7 +188,7 @@
         "half_pixel_shift_world": 0.00228791,
         "fx": 241.4214
       },
-      "seconds": 3.57
+      "seconds": 4.39
     },
     {
       "kind": "gif",
@@ -269,7 +269,7 @@
         ],
         "frames": 24
       },
-      "seconds": 43.69
+      "seconds": 48.68
     },
     {
       "kind": "gif",
@@ -316,7 +316,7 @@
         },
         "frames": 36
       },
-      "seconds": 2.46
+      "seconds": 3.06
     },
     {
       "kind": "gif",
@@ -352,7 +352,7 @@
         "frames": 24,
         "step_per_tap": 0.005923
       },
-      "seconds": 4.83
+      "seconds": 6.21
     },
     {
       "kind": "gif",
@@ -388,7 +388,7 @@
           800
         ]
       },
-      "seconds": 4.97
+      "seconds": 5.7
     },
     {
       "kind": "gif",
@@ -522,7 +522,7 @@
           720
         ]
       },
-      "seconds": 2.7
+      "seconds": 3.05
     },
     {
       "kind": "gif",
@@ -535,12 +535,12 @@
         740
       ],
       "fps": 6,
-      "bytes": 360200,
-      "thumb_bytes": 49464,
+      "bytes": 357717,
+      "thumb_bytes": 49469,
       "thumb_frame": 23,
       "mean_abs_delta": 0.141,
-      "sha256": "3591cb882ee4ca11f223672ba41eed12292f28cb57b00d608a55acfcd9afa441",
-      "thumb_sha256": "17ba9905a7ea85cecbcfceca578ea2a9a4b2c1a0486b5ad43890109d246cf885",
+      "sha256": "dd532c8972ff5baa0dd4823858871d67a01c8987c29fdc42d8d4829e30500d7f",
+      "thumb_sha256": "17c6512623aa1f7b9ea0d9a2f894f09e15df94a3b1992c44291aeba098daf3ed",
       "facts": {
         "code_lines": 18,
         "frames": 24,
@@ -556,7 +556,7 @@
           740
         ]
       },
-      "seconds": 4.25
+      "seconds": 3.47
     },
     {
       "kind": "gif",
@@ -569,12 +569,12 @@
         800
       ],
       "fps": 4,
-      "bytes": 542663,
-      "thumb_bytes": 41211,
+      "bytes": 538301,
+      "thumb_bytes": 41223,
       "thumb_frame": 6,
-      "mean_abs_delta": 0.403,
-      "sha256": "334714d58ef28bd538b6cc05b941e3f1cd5a4f5b1b78bb0839f4880721f836a1",
-      "thumb_sha256": "c09c964f69906fea76b6b29a454ec6fc046e48f22a8b6753600000378380e847",
+      "mean_abs_delta": 0.402,
+      "sha256": "72fe0c0b4389df1ef65df87139d4cdde1957b655d071c4ecd03d4fefe25ae377",
+      "thumb_sha256": "5fa25da2e6baa9224b4423e955dfd6522699c51c7dd60383f01721ca291d67a0",
       "facts": {
         "total_ops": 903,
         "query": "watershed",
@@ -632,7 +632,7 @@
           800
         ]
       },
-      "seconds": 3.25
+      "seconds": 2.44
     },
     {
       "kind": "gif",
@@ -711,7 +711,7 @@
         ],
         "mismatch_detected": true
       },
-      "seconds": 3.86
+      "seconds": 4.1
     }
   ]
 }

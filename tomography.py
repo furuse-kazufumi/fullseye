@@ -103,7 +103,19 @@ retained, per 30-degree sector, against the truth:
 The measured sectors go to 5-17 % **exactly** where the views stop, and the
 covered ones stay above 0.90 — the loss is not a general blur, it is specific
 directions being deleted. A limited-angle reconstruction is sharp in the
-directions it kept, which is precisely why it is convincing and dangerous.
+directions it kept, which is precisely why it is convincing and dangerous. Note
+also the *density*: a 90-degree scan reconstructs at 0.489 of the true mean, not
+at 1.0, because half the inversion integral was never measured. Making that come
+out at 1.0 is a one-character change and is deliberately not made — see
+:func:`_span_weight`.
+
+A fourth number belongs with those three even though it is not a break table.
+Parallel-beam projections at ``theta`` and ``theta+180`` are mirror images, so a
+**360-degree scan measures every line twice**. Summed naively it reconstructs at
+**2.12x** the true density — finite, sharp, and wrong by a factor of two on the
+most ordinary protocol there is. The weighting here renormalises the covered
+range to ``pi``, and a 360-degree scan now returns 0.974 where the 180-degree
+scan of the same phantom returns 0.974.
 
 Fail-closed, like every Fullseye module. Zero projections, a non-finite value, a
 detector too narrow to cover the phantom's diagonal, a sinogram whose row count

@@ -29,6 +29,18 @@
 
 *↑ **virtual probe で壁厚 2.000 mm(真値 2.000 mm)** ―― 外径 10.000 mm / 内径 8.000 mm の合成パイプにプローブを 1 本だけ刺す。`vol_edge_probe` が 4 つのエッジをサブサンプル精度で拾い、`vol_wall_thickness` が立ち上がり→立ち下がりの対から壁厚 **2.0000 mm / 2.0000 mm**(真値 2.000 mm)を返す。平滑化 sigma を 3.0 まで上げると 2.1252 mm (**+6.3 %**)に太る — ノイズ対策がそのまま寸法の偏りになる、という測定の基本も一緒に。 使用 op: `vol_profile_line`, `vol_edge_probe`, `vol_wall_thickness`。*
 
+![Richardson-Lucy ―― 前方一貫性 0.033x に対し真値 RMSE は 0.689x](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_richardson_lucy.gif)
+
+*↑ **Richardson-Lucy ―― 前方一貫性 0.033x に対し真値 RMSE は 0.689x** ―― sigma 2.0 のガウス PSF でぼかした合成ボリュームを `vol_richardson_lucy` で反復復元する。復元をもう一度ぼかして観測と比べる**前方一貫性は 0.033 倍**まで一気に落ちるのに、**真値との RMSE は 0.689 倍**までしか下がらない。残っているのは球のふちの階段で、「観測をよく説明できた」ことは「真値に近い」ことではない ―― という反例をそのまま展示にした。 使用 op: `vol_gaussian_psf`, `vol_richardson_lucy`。*
+
+![visual hull ―― 影を重ねて形を削り出す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_visual_hull.gif)
+
+*↑ **visual hull ―― 影を重ねて形を削り出す** ―― L 字の合成物体を 16 方向から撮ったシルエットで `visual_hull` を彫る。1 枚では真の体積の **5.12 倍**という柱状の塊だが、枚数を足すと 16 枚で **1.24 倍**(IoU 0.755)まで縮む。ただし L 字の凹みは何枚重ねても埋まらない ―― これは実装の粗さではなく visual hull の原理的な限界で、収束先が真値でないことが図から読める。 使用 op: `look_at`, `synthesize_silhouette`, `visual_hull`。*
+
+![外から抱く箱(OBB)と中に入る箱(inner_box3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_obb_innerbox.gif)
+
+*↑ **外から抱く箱(OBB)と中に入る箱(inner_box3)** ―― z 軸まわりに 30° 傾けた合成直方体(13,617 voxel)に 3 つの箱を同時に描いた。軸平行の AABB は **1.99 倍**まで膨らむが、`obb`(PCA で向きを合わせた外接箱)は **0.94 倍**、半幅は 19.99 / 10.00 / 8.00 voxel (真値 20 / 10 / 8)。逆に `inner_box3` の最大内接箱は **0.32 倍**まで痩せる。掴み幅なら OBB、部品が通るかなら内接箱。 使用 op: `obb`, `inner_box3`, `vol_bounding_box`。*
+
 ![断層を送る ―― `z = 48 / 95` は 38.40 mm のこと](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_slice_zsweep.gif)
 
 *↑ **断層を送る ―― `z = 48 / 95` は 38.40 mm のこと** ―― 合成 CT(96×128×128、spacing (0.8, 0.3, 0.3) mm)を 1 スライスずつ 96 コマ送る。各コマに**添字と物理位置の両方**(`z = 48 / 95` = 38.40 mm)と位置バーを焼いた。1 スライス送りは 0.80 mm、面内 1 画素は 0.30 mm = **0.37 倍**なので、下の折れ線のとおり「添字を 1 つ動かす」は軸ごとに違う距離を意味する ―― 異方性 CT でいちばん踏みやすい段差。 使用 op: `vol_window_level`。*
@@ -64,6 +76,9 @@
 | vesselness | PNG | `wing3d_vesselness_control.png` | 1120x700, 72 kB |
 | skeleton | GIF+mp4 | `media/wing3d_skeleton_graph.gif` | 48 フレーム, 1120x660, 1.40 MB, 256 色, mp4 0.26 MB |
 | wall | PNG | `wing3d_wall_thickness.png` | 1120x680, 99 kB |
+| rl | GIF+mp4 | `media/wing3d_richardson_lucy.gif` | 18 フレーム, 1120x660, 0.63 MB, 256 色, mp4 0.09 MB |
+| visualhull | GIF+mp4 | `media/wing3d_visual_hull.gif` | 16 フレーム, 1120x690, 0.73 MB, 256 色, mp4 0.27 MB |
+| obb | GIF+mp4 | `media/wing3d_obb_innerbox.gif` | 48 フレーム, 1120x700, 2.26 MB, 256 色, mp4 0.40 MB |
 | zsweep | GIF+mp4 | `media/wing3d_slice_zsweep.gif` | 96 フレーム, 1120x748, 1.16 MB, 256 色, mp4 0.16 MB |
 | mpr | GIF+mp4 | `media/wing3d_mpr_crosshair.gif` | 60 フレーム, 1120x620, 1.18 MB, 256 色, mp4 0.22 MB |
 | oblique | GIF+mp4 | `media/wing3d_oblique_slice.gif` | 36 フレーム, 1120x640, 0.90 MB, 256 色, mp4 0.11 MB |
