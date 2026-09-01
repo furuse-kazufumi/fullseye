@@ -2295,12 +2295,17 @@ def _ruler(c, x, y, w, h, frac, color, label_lo, label_hi, cur_label):
 def _extent_50(sl, axis, spacing_mm):
     """50 % 等値面の幅を mm で測る(voxel 数ではなく交差位置で測る)。
 
-    二値マスクの voxel 数を「直径」と呼ぶと必ず 1 voxel ぶん狂う。行/列ごとに
-    0.5 を跨ぐ位置を線形補間して、いちばん広い断面の幅を返す。
+    二値マスクの voxel 数を「直径」と呼ぶと必ず 1 voxel ぶん狂う。0.5 を跨ぐ位置を
+    線形補間して、いちばん広いところの幅を返す。
+
+    *axis* は **測る方向**(0 = 軸 0 に沿った幅、1 = 軸 1 に沿った幅)。2-D 断面
+    ``sl`` が ``(row, col)`` なら ``axis=0`` は縦(row 方向)の幅、``axis=1`` は
+    横(col 方向)の幅。方向を取り違えると長径と短径が入れ替わるので、呼ぶ側で
+    必ず理論値と突き合わせること。
     """
     a = np.asarray(sl, np.float64)
     best = 0.0
-    lines = a if axis == 0 else a.T
+    lines = a.T if axis == 0 else a          # axis=0 の幅は「列ごとに縦を走査」
     for line in lines:
         idx = np.nonzero(line >= 0.5)[0]
         if idx.size < 1:

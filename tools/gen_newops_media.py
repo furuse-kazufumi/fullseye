@@ -746,7 +746,7 @@ def _lightfield():
         import lightfield as L
         ANG, SIZE, NEAR, FAR = 9, 112, 3.0, 0.0
         lf, truth = L.lf_synthesize((NEAR, FAR), (ANG, ANG), (SIZE, SIZE),
-                                    occlusion=True, coverage=0.40, texture_sigma=3.0,
+                                    occlusion=True, coverage=0.40, texture_sigma=2.0,
                                     edge="wrap", seed=5)
         _LF_CACHE["lf"] = (lf, truth, ANG, SIZE, NEAR, FAR)
     return _LF_CACHE["lf"]
@@ -790,6 +790,7 @@ def build_lightfield(log, frames: int = 26):
     near_mask = truth > (NEAR + FAR) / 2.0
     far_mask = ~near_mask
     st = L.lf_stats(lf)
+    LO, HI = float(lf.min()), float(lf.max())
     slopes = np.round(np.linspace(3.6, -0.6, int(frames)), 6)
 
     def _sharp(img, mask):
@@ -837,8 +838,8 @@ def build_lightfield(log, frames: int = 26):
     for i, s in enumerate(slopes):
         canvas = _canvas(H, W)
         _fill(canvas, 0, HUD, 0, W, C_PANEL)
-        shown = _check_display("lightfield refocus", imgs[i], 0.15, 0.85)
-        _place(canvas, _upscale(_gray_to_rgb(_norm01(shown, 0.15, 0.85)), SC), PANY, MARGIN)
+        shown = _check_display("lightfield refocus", imgs[i], LO, HI)
+        _place(canvas, _upscale(_gray_to_rgb(_norm01(shown, LO, HI)), SC), PANY, MARGIN)
         canvas = _frame_box(canvas, PANY, PANY + PAN, MARGIN, MARGIN + PAN)
 
         ax = Axes(px0, PANY, px1, PANY + PAN - 26, -0.6, 3.6, 0.0, smax * 1.12)
@@ -900,6 +901,7 @@ def build_parallax(log):
     lf, truth, ANG, SIZE, NEAR, FAR = _lightfield()
     near_mask = truth > (NEAR + FAR) / 2.0
     ok = _shift_selftest()
+    LO, HI = float(lf.min()), float(lf.max())
     c = (ANG - 1) // 2
 
     # 9x9 の外周を 1 周(重複フレームが出ない道順)
@@ -941,8 +943,8 @@ def build_parallax(log):
         v, u = r["v"], r["u"]
         canvas = _canvas(H, W)
         _fill(canvas, 0, HUD, 0, W, C_PANEL)
-        view = _check_display("lightfield view", lf[v, u], 0.15, 0.85)
-        _place(canvas, _upscale(_gray_to_rgb(_norm01(view, 0.15, 0.85)), SC), PANY, MARGIN)
+        view = _check_display("lightfield view", lf[v, u], LO, HI)
+        _place(canvas, _upscale(_gray_to_rgb(_norm01(view, LO, HI)), SC), PANY, MARGIN)
         # 固定の十字 — これが無いと「視点が動いた」ことが 1 コマでは分からない
         canvas = imagedraw.draw_line(canvas, (MARGIN + PAN // 2, PANY),
                                      (MARGIN + PAN // 2, PANY + PAN), color=C_AMBR, width=1)
@@ -1959,7 +1961,7 @@ def build_lightfield_flow(log, out_dir: str, thumb_dir: str) -> dict:
 
     slices = [_sharp(s) for s in L.lf_focal_stack(lf, levels, edge="wrap")]
     agree = float((np.abs(slope_map - truth) < 1e-9).mean())
-    lo, hi = 0.15, 0.85
+    lo, hi = float(lf.min()), float(lf.max())
     panels = [
         _gray_to_rgb(_norm01(raw[:P, :P], lo, hi)),                       # 生 MLA(等倍)
         _upscale(_gray_to_rgb(_norm01(centre, lo, hi)), 3),
