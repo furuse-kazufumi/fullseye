@@ -1,7 +1,197 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""Parallel-beam tomographic reconstruction — projections in, slice out (numpy only).
+"""Parallel-beam tomography — projections in, slice out (numpy + scipy only).
 
-PLACEHOLDER-DOCSTRING (filled in after the measurements are taken).
+The half of computed tomography that Fullseye did not have. There are many
+operators here for *handling* a CT volume — windowing, labelling, boundary
+extraction, marching cubes, region properties — and, before this module, none at
+all for **making one from projections**: no Radon transform, no sinogram, no
+filtered back-projection, no algebraic reconstruction. (``backproject`` is a
+different thing that shares a word: it lifts pixels into 3-D with a depth map and
+a camera model. That is projective geometry; this is an integral transform.)
+
+The one convention, stated once and never negotiated again::
+
+    sinogram[i, j]   row i = projection ANGLE,  column j = DETECTOR bin
+    ray (i, j)       the line  x cos(theta_i) + y sin(theta_i) = j - (n_det-1)/2
+    x = col - (W-1)/2,  y = row - (H-1)/2      (so +y runs DOWN the array)
+
+Six families of operator:
+
+  * **layout** — :func:`projection_angles` / :func:`sinogram_design`: the scan
+    before the scanner. Which angles, and what the geometry has already decided
+    about what can be resolved. The counterpart of :func:`visiondesign` for the
+    axial problem, and of :func:`interferometry.csi_design`.
+  * **forward** — :func:`ellipse_phantom` / :func:`ellipse_sinogram` /
+    :func:`radon_transform`: a known object, its **closed-form** Radon transform,
+    and the discrete projector. Two forward models rather than one, because the
+    closed form is what the discrete one is *tested against*.
+  * **reconstruct** — :func:`backproject_sinogram` /
+    :func:`filtered_backprojection` / :func:`sart_reconstruct`: the blurred
+    baseline, the standard inversion, and the iterative solver that beats it when
+    the data runs out.
+  * **artefacts** — :func:`beam_hardening_apply` / :func:`beam_hardening_correct`,
+    :func:`ring_artifact_apply` / :func:`ring_artifact_remove`,
+    :func:`metal_trace_interpolate`. Always the forward model *and* the
+    correction, so that every claim about a correction is checkable against an
+    artefact whose true size is known.
+  * **geometry** — :func:`sinogram_center_of_rotation` /
+    :func:`sinogram_center_shift`: where the axis actually is, and how to move it.
+  * **volume** — :func:`radon_volume` / :func:`fbp_volume`: the same thing slice
+    by slice, so that the output is an ordinary volume and every existing 3-D
+    operator applies to it unchanged.
+
+Ground truth is closed-form, not golden files. The Radon transform of a uniform
+ellipse is elementary — for a disc it is the chord length ``2 sqrt(r^2 - s^2)`` —
+and densities add, so the Shepp-Logan phantom has an **exact** sinogram. Every
+accuracy claim below is the discrete code measured against that, and every table
+is reproduced by ``tests/test_tomography.py``.
+
+The projector against the closed form (disc of radius 60 px in a 256-px grid,
+180 views, as a fraction of the peak line integral):
+
+    interior RMS   0.073 %      (the part where the phantom is smooth)
+    whole sinogram 0.402 %      (the difference is the partial-volume edge)
+    hard-edged phantom, interior RMS 0.276 %  -> anti-aliasing is worth 3.8x
+
+**Three break tables**, because "it works" is not a measurement.
+
+**1. How few views before it falls apart** (Shepp-Logan, analytic sinogram,
+normalised RMS error against the truth):
+
+    views    FBP ramp   FBP hann   SART x10   |  noisy: FBP ramp / hann / SART
+      180     0.0250     0.0257     0.0175    |   0.0360 / 0.0371 / 0.0291
+       90     0.0454        -       0.0195    |        -
+       45     0.1039     0.0715     0.0353    |   0.1159 / 0.0766 / 0.0385
+       32     0.1362        -       0.0497    |        -
+       16     0.2341        -       0.0859    |   0.2481 / 0.1921 / 0.0864
+        8     0.3635        -       0.1257    |   0.3813 / 0.3093 / 0.1259
+
+FBP degrades **14.5x** from 180 to 8 views; SART **7.2x**. There is no threshold
+where FBP "breaks" — it degrades smoothly — and, contrary to the usual story,
+there is **no crossing point either**: SART leads at every count tested, from
+1.43x at 180 views to 2.9x at 8. What the view count changes is the price. At 180
+views SART costs 312x the wall clock (37.7 s against 0.12 s, 256 px) for that
+1.43x; at 8 views the 2.9x is nearly free. Under noise the apodisation windows
+earn their keep at the sparse end and lose at the dense end, which is the same
+statement in a different currency.
+
+**2. What half a pixel of centre-of-rotation error costs** (180 views):
+
+    shift    estimated by this module   FBP nRMS   after correction
+    0.00 px         +0.0029 px           0.0250        0.0249
+    0.50 px         +0.5029 px           0.0537        0.0358
+    1.00 px         +1.0029 px           0.1016        0.0249
+    2.00 px         +2.0029 px           0.1630        0.0249
+
+Half a pixel doubles the error while still looking like a slightly soft picture.
+Two pixels is a 6.5x error and an obvious double image. The estimator's bias is a
+constant 0.0029 px, and note the half-pixel row: an integer miscentring is fully
+repairable, a fractional one is not, because undoing it means resampling.
+
+**3. Which structures a limited-angle scan loses.** By the central-slice theorem
+a projection at ``theta`` fills the line through the origin at ``theta`` in the
+2-D Fourier plane, so a scan over ``[0, span)`` leaves a *wedge* empty and the
+structures that vanish are exactly those whose edges face into it. Fourier energy
+retained, per 30-degree sector, against the truth:
+
+    span      0-30   30-60   60-90   90-120  120-150  150-180   nRMS
+    180 deg   0.97    0.95    0.94    0.94    0.95     0.97     0.0250
+    120 deg   0.93    0.94    0.95    0.91    0.08     0.12     0.1302
+     90 deg   0.93    0.94    0.96    0.17    0.07     0.13     0.1591
+     60 deg   0.93    0.92    0.10    0.07    0.05     0.12     0.1811
+
+The measured sectors go to 5-17 % **exactly** where the views stop, and the
+covered ones stay above 0.90 — the loss is not a general blur, it is specific
+directions being deleted. A limited-angle reconstruction is sharp in the
+directions it kept, which is precisely why it is convincing and dangerous.
+
+Fail-closed, like every Fullseye module. Zero projections, a non-finite value, a
+detector too narrow to cover the phantom's diagonal, a sinogram whose row count
+disagrees with the angle list, a relaxation past the divergence bound, an even
+smoothing window, a metal mask that eats an entire view, a rotation-centre shift
+that pushes the object off the detector, an angular span too narrow for the
+centre-of-rotation fit to be identifiable — all raise a ``ValueError`` that names
+the problem. The size caps are read off the **requested output** and not the
+input, because in this module the small argument is the dangerous one: a 64x64
+image with ``n_angles=100000`` is a 25 MB input asking for a 3 GB sinogram, and
+``ellipse_phantom(size=10000, supersample=16)`` is two small ints asking for a
+25 G-element intermediate.
+
+Honest disclosure — what this cannot do, measured rather than assumed:
+
+  * **Parallel beam only.** Real medical and industrial scanners are fan or cone
+    beam, where the slices are *not* independent and an FDK-style weighting is
+    required. Saying so costs less than a wrong ``fdk``.
+  * **The obvious way to find a metal trace is worse than doing nothing.**
+    Thresholding the sinogram — the first thing anyone tries — scores 1.3-1.4x
+    *worse* than no correction at every implant density tested, because it flags
+    the densest legitimate structure. Thresholding the reconstruction and
+    forward-projecting that mask recovers essentially all of the damage
+    (0.5214 -> 0.0257 at the highest density, against a clean 0.0250). The
+    shortcut is not offered, and the numbers are in
+    :func:`metal_trace_interpolate`.
+  * **Ring removal is a compromise with a measured price.** The default window
+    undoes 72 % of a 2 % detector gain error and costs +0.0002 nRMS on a sinogram
+    that had no rings; wider windows undo barely more and cost up to 50x that.
+    And a gain error only matters relative to the line integrals: the identical
+    2 % error on the same phantom in raw pixel units (peak 70.9 rather than 1.18)
+    moves the reconstruction by 2.1e-05 and there is nothing to remove.
+  * **Beam-hardening correction by model inverse is a simulation tool.** It is
+    exact (round trip 8.0e-09 relative) because it is handed the same ``w`` and
+    ``k`` that did the hardening — which on real data nobody has. The polynomial
+    route is the one that applies to real data, and it is only as good as the
+    assumption that everything in the field of view attenuates like water.
+  * **An un-filtered back-projection has no absolute scale at all.** Its raw
+    values run 0.768-2.493 where the truth runs 0-0.0167. Auto-windowed for
+    display it looks approximately right; the numbers underneath are off by a
+    factor of 100.
+  * **Nothing here detects a transposed sinogram**, and no structural check can:
+    the transpose is a valid sinogram of a different scan. Measured, FBP on a
+    square sinogram and on its transpose both return finite, plausible pictures
+    that differ by 0.175 nRMS, and neither raises. That is why ``sinogram`` is
+    its own sort in :mod:`opstomography` rather than riding on ``image2d``.
+
+Provenance — textbook and cited public literature only (see
+``docs/PROVENANCE.md``):
+
+  * J. Radon, "Uber die Bestimmung von Funktionen durch ihre Integralwerte langs
+    gewisser Mannigfaltigkeiten", *Berichte Sachsische Akademie der
+    Wissenschaften* 69:262-277, 1917 — the transform and its inversion.
+  * A. C. Kak & M. Slaney, *Principles of Computerized Tomographic Imaging*,
+    IEEE Press 1988 (and SIAM 2001) — the filtered back-projection algorithm,
+    the ramp/Shepp-Logan/Hamming filters, the view-count sampling rule of
+    Section 3.5, and the beam-hardening and ring artefact mechanisms.
+  * L. A. Shepp & B. F. Logan, "The Fourier reconstruction of a head section",
+    *IEEE Transactions on Nuclear Science* NS-21(3):21-43, 1974 — the phantom and
+    the apodised ramp.
+  * A. H. Andersen & A. C. Kak, "Simultaneous algebraic reconstruction technique
+    (SART): a superior implementation of the ART algorithm", *Ultrasonic Imaging*
+    6(1):81-94, 1984 — the row-action update and its normalisers.
+  * W. A. Kalender, R. Hebel & J. Ebersberger, "Reduction of CT artifacts caused
+    by metallic implants", *Radiology* 164(2):576-577, 1987 — LI-MAR.
+  * T. Donath, F. Beckmann & A. Schreyer, "Automated determination of the center
+    of rotation in tomography data", *JOSA A* 23(5):1048-1057, 2006 — the
+    centre-of-mass identity used here.
+  * S. Winkelmann et al., "An optimal radial profile order based on the golden
+    ratio for time-resolved MRI", *IEEE Trans. Med. Imaging* 26(1):68-76, 2007 —
+    the golden-angle sequence.
+
+Deliberately **not** here (owned elsewhere — composed with, never re-implemented):
+
+  * **Everything downstream of the reconstruction** is the existing 3-D library:
+    ``vol_window_level``, ``vol_label``, ``vol_region_props``, ``marching_cubes``,
+    ``vol_boundary_points``, ``voxelize``. :func:`fbp_volume` returns a plain
+    volume for exactly that reason, and
+    ``examples/tomography_reconstruct.py`` runs the whole chain to a measured
+    volume in mm^3.
+  * **Generic 1-D filtering and FFTs** are :mod:`dsp` and :mod:`filters_freq`; the
+    ramp filter here is not a general-purpose filter and is not exported as one.
+  * **The evolutionary registry's ``tm_`` cluster** (``backends_tomo``) is a
+    different thing with a similar name: those are ``fn(v, a, b)`` image-to-image
+    ops for the genetic pipeline search, they fit their output back to the input
+    shape, they are fail-*soft* by contract, and they use scikit-image when it is
+    present. This module is the typed, fail-closed, dependency-light library that
+    the ``fullseye`` facade exposes, and it shares no code with them.
 """
 from __future__ import annotations
 
