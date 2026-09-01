@@ -484,8 +484,8 @@ def ex_defect_not_in_raw(log):
     fig.text(W - 176, 112, "carrier +- defect,", C_DIM, 11, False)
     fig.text(W - 176, 128, "never at the defect", C_DIM, 11, False)
     fig.text(W - 176, 144, "rate itself.", C_DIM, 11, False)
-    fig.text(30, 176, "amplitude", C_DIM, 11, False)
-    fig.text(W - 300, 306, "frequency [Hz] ->", C_DIM, 11, False)
+    fig.text(98, 82, "amplitude", C_DIM, 11, False)
+    fig.text(W - 372, 322, "frequency [Hz] ->", C_DIM, 11, False)
 
     # -- 下: 包絡線スペクトル ----------------------------------------------- #
     ax2 = Ax(fig, 92, 400, W - 190, 640, (0.0, 500.0), (0.0, 0.58))
@@ -510,15 +510,15 @@ def ex_defect_not_in_raw(log):
     fig.text(ax2.X(fd) + 10, 412, f"peak {env['peak_freq']:.6f} Hz", C_TRUE, 12, True)
     fig.text(ax2.X(fd) + 10, 430, f"amplitude {env['peak_amplitude']:.6f}", C_TRUE, 12, True)
     fig.text(ax2.X(fd) + 10, 448, f"= the modulation depth m = {m:g}", C_C, 11, True)
-    fig.text(30, 500, "amplitude", C_DIM, 11, False)
-    fig.text(W - 300, 646, "envelope frequency [Hz] ->", C_DIM, 11, False)
+    fig.text(98, 640 - 18, "amplitude", C_DIM, 11, False)
+    fig.text(W - 372, 662, "envelope frequency [Hz] ->", C_DIM, 11, False)
     fig.text(W - 176, 418, "same record,", C_DIM, 11, False)
     fig.text(W - 176, 434, "demodulated.", C_DIM, 11, False)
     fig.text(W - 176, 450, "the line is there", C_C, 11, True)
     fig.text(W - 176, 466, "and it is exact.", C_C, 11, True)
 
     # -- 数表 ---------------------------------------------------------------- #
-    fig.box(30, 676, W - 30, H - 14, C_PANEL2)
+    fig.box(30, 686, W - 30, H - 14, C_PANEL2)
     rows = [
         ("resolution", f"{res_hz:.6f} Hz/bin ({x.size} samples)",
          f"envelope resolution {env['resolution_hz']:.6f} Hz/bin"),
@@ -529,7 +529,7 @@ def ex_defect_not_in_raw(log):
          "how much of the record lives in the demodulation band"),
     ]
     for i, (k, v, note) in enumerate(rows):
-        y = 682 + i * 21
+        y = 692 + i * 21
         fig.text(40, y, k, C_DIM, 12, False)
         fig.text(300, y, v, C_TEXT, 12, True)
         fig.text(560, y, note, C_DIM, 12, False)
@@ -1399,7 +1399,7 @@ def ex_funct1d_truth(log):
         f"(true {1 / (2 * f0):.6f}), tau {tau_est:.6f} s (true {tau:g}), "
         f"match shift {m['shift']} (true {delay})")
 
-    W, H = 1160, 860
+    W, H = 1160, 820
     fig = Fig(W, H)
     _header(fig, "funct1d against closed-form truth",
             "every number below is compared with an answer known before the "
@@ -1425,9 +1425,10 @@ def ex_funct1d_truth(log):
     fig.text(90, 60, "derivate_funct_1d(sin) / dx  vs  cos", C_TEXT, 13, True)
     _legend(fig, 380, 86, [("sin", C_A), ("cos (truth)", C_DIM),
                            ("derivative", C_B)], 11)
-    fig.text(90, 240, f"max |derivative - cos| = {err_d:.4e}   "
-                      f"(dx = {dx:.6f}; central differences are second order, "
-                      f"so the residual scales as dx^2)", C_TEXT, 12, True)
+    fig.text(90, 258, f"max |derivative - cos| = {err_d:.4e}", C_TEXT, 12, True)
+    fig.text(90, 276, f"dx = {dx:.6f}; central differences are second order,",
+             C_DIM, 12, False)
+    fig.text(90, 292, "so the residual scales as dx^2", C_DIM, 12, False)
 
     # (b) ゼロ交差
     ax2 = Ax(fig, 640, 78, W - 40, 232, (0.0, 4.0 * np.pi), (-1.25, 1.25))
@@ -1447,20 +1448,20 @@ def ex_funct1d_truth(log):
     fig.stamp(ink, C_E)
     fig.text(644, 60, "zero_crossings_funct_1d", C_TEXT, 13, True)
     for i, (idx, xr) in enumerate(zip(zc, refined)):
-        fig.text(644, 246 + i * 18,
+        fig.text(644, 258 + i * 18,
                  f"index {int(idx):3d}  ->  x = {xr:.8f} pi", C_E, 12, True)
-    fig.text(644, 246 + len(zc) * 18,
+    fig.text(644, 258 + len(zc) * 18,
              f"max deviation from an integer multiple of pi: {err_zc:.3e}",
              C_TEXT, 12, True)
-    fig.text(644, 264 + len(zc) * 18,
+    fig.text(644, 278 + len(zc) * 18,
              "(the op reports the sample BEFORE the crossing; the sub-sample",
              C_DIM, 11)
-    fig.text(644, 280 + len(zc) * 18,
+    fig.text(644, 294 + len(zc) * 18,
              " position above is linear interpolation between the two samples)",
              C_DIM, 11)
 
     # (c)(d) 減衰振動
-    ax3 = Ax(fig, 86, 400, W - 40, 596, (0.0, 1.2), (-1.15, 1.15))
+    ax3 = Ax(fig, 86, 404, W - 40, 570, (0.0, 1.2), (-1.15, 1.15))
     ax3.panel()
     ink = fig.ink()
     ax3.frame(ink)
@@ -1488,21 +1489,21 @@ def ex_funct1d_truth(log):
     ink = fig.ink()
     ax3.vline(ink, 0.9, width=1, dashed=True)
     fig.stamp(ink, C_WARN)
-    fig.text(90, 382, "damped oscillation  exp(-t/0.4) sin(2 pi 5 t) + N(0, 0.02)",
+    fig.text(90, 386, "damped oscillation  exp(-t/0.4) sin(2 pi 5 t) + N(0, 0.02)",
              C_TEXT, 13, True)
-    _legend(fig, W - 250, 408, [("raw", C_DIM), ("gauss sigma 3", C_A),
-                                ("true envelope", C_C), ("local maxima", C_B),
-                                ("zero crossings", C_E)], 11)
-    fig.text(ax3.X(0.9) + 6, 410, "analysis window ends here", C_WARN, 11, True)
-    fig.text(ax3.X(0.9) + 6, 426, "(below 0.1 amplitude the noise", C_WARN, 11)
-    fig.text(ax3.X(0.9) + 6, 442, " forges extrema)", C_WARN, 11)
-    fig.text(W - 300, 602, "time [s] ->", C_DIM, 11)
+    _legend(fig, 96, 410, [("raw", C_DIM), ("gauss sigma 3", C_A),
+                           ("true envelope", C_C), ("local maxima", C_B),
+                           ("zero crossings", C_E)], 11)
+    fig.text(ax3.X(0.9) + 8, 490, "analysis window ends here", C_WARN, 11, True)
+    fig.text(ax3.X(0.9) + 8, 506, "(below 0.1 amplitude the", C_WARN, 11)
+    fig.text(ax3.X(0.9) + 8, 522, " noise forges extrema)", C_WARN, 11)
+    fig.text(96, 592, "time [s] ->", C_DIM, 11)
 
-    fig.box(86, 630, W - 40, H - 16, C_PANEL2)
-    fig.text(96, 638, "quantity", C_DIM, 12, True)
-    fig.text(420, 638, "recovered", C_DIM, 12, True)
-    fig.text(620, 638, "closed-form truth", C_DIM, 12, True)
-    fig.text(830, 638, "note", C_DIM, 12, True)
+    fig.box(86, 614, W - 40, H - 16, C_PANEL2)
+    fig.text(96, 620, "quantity", C_DIM, 12, True)
+    fig.text(420, 620, "recovered", C_DIM, 12, True)
+    fig.text(620, 620, "closed-form truth", C_DIM, 12, True)
+    fig.text(830, 620, "note", C_DIM, 12, True)
     table = [
         ("period from local maxima", f"{period:.6f} s", f"{1 / f0:.6f} s",
          f"{len(peaks)} maxima, mean spacing"),
@@ -1512,11 +1513,11 @@ def ex_funct1d_truth(log):
          "slope of log peak envelope"),
         ("delay by cross-correlation", f"{m['shift']} samples", f"{delay} samples",
          f"score {m['score']:.4f}, matched on derivatives"),
-        ("integrate(derivate(y)) round trip", f"{err_round:.3e}", "0",
-         "max error, amplitude ~1"),
+        ("integrate(derivate(y)) round trip", f"{err_round:.3e}", "0 (continuum)",
+         "trapezoid + central diff, both 2nd order"),
     ]
     for i, (k, v, tv, note) in enumerate(table):
-        yy = 662 + i * 22
+        yy = 646 + i * 22
         fig.text(96, yy, k, C_TEXT, 12, False)
         fig.text(420, yy, v, C_C, 12, True)
         fig.text(620, yy, tv, C_TRUE, 12, True)

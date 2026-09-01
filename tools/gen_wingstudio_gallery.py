@@ -1064,6 +1064,13 @@ def ex_cadmap():
     seen_mask[seen] = True
     cov_faces = float(seen_mask.mean())
     cov_area = float(face_area[seen_mask].sum() / total_area)
+    # 「カメラを向いている面積」= 遮蔽を考えない上限。実測の可視面積がこれを
+    # 超えたら裏面カリングか巻き方向が壊れている(実際に一度そうなった)。
+    fn = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0])
+    fnu = fn / np.where(np.linalg.norm(fn, axis=1)[:, None] > 1e-15,
+                        np.linalg.norm(fn, axis=1)[:, None], 1.0)
+    front_face = ((eye - tri.mean(1)) * fnu).sum(1) > 0.0
+    front_area_frac = float(face_area[front_face].sum() / total_area)
 
     # 表面点を撒いて「検査カメラから見えたか」を点ごとに判定(遮蔽つき)
     SP = 26000
@@ -1102,25 +1109,30 @@ def ex_cadmap():
                     "検査カメラ %dx%d px, fx = fy = %.0f"
              % (f"{len(F):,}", f"{len(V):,}", total_area, RES, RES, fx),
              C_TEXT, 12, False),
-            (30, y0, "命中画素 %s / %s (%.1f %%)"
+            (30, y0, "① 命中画素 %s / %s (%.1f %%)"
              % (f"{n_hit:,}", f"{RES * RES:,}", 100.0 * n_hit / (RES * RES)),
              C_ACCENT, 12, True),
-            (24 * 2 + S, y0, "到達した面 %s 種"
-             % f"{len(np.unique(fid[mask])):,}", C_ACCENT, 12, True),
-            (24 * 3 + S * 2, y0, "欠陥の逆写像(cad_defect_to_cad)",
+            (24 * 2 + S, y0, "② 到達した面 %s 種 / 全 %s 枚"
+             % (f"{len(np.unique(fid[mask])):,}", f"{len(F):,}"), C_ACCENT, 12, True),
+            (24 * 3 + S * 2, y0, "③ 欠陥の逆写像  cad_defect_to_cad",
              (0.96, 0.96, 0.93), 12, True),
-            (24 * 4 + S * 3, y0, "可視面カバレッジ", (0.96, 0.96, 0.93), 12, True),
-            (24 * 4 + S * 3, y0 + 22, "面数 %d / %d = %.1f %%"
-             % (int(seen_mask.sum()), len(F), cov_faces * 100.0), C_AMBER, 13, True),
-            (24 * 4 + S * 3, y0 + 44, "面積比 %.1f %%" % (cov_area * 100.0),
-             C_AMBER, 13, True),
-            (24 * 4 + S * 3, y0 + 66, "表面点 %s のうち可視 %.1f %%(うち遮蔽 %.1f %%)"
+            (24 * 4 + S * 3, y0, "④ 可視面カバレッジ", (0.96, 0.96, 0.93), 12, True),
+            (24 * 4 + S * 3, y0 + 24, "カメラを向いた面積  %.1f %%"
+             % (front_area_frac * 100.0), C_TEXT, 12, False),
+            (24 * 4 + S * 3, y0 + 44, "実際に見えた面積    %.1f %%"
+             % (cov_area * 100.0), C_AMBER, 13, True),
+            (24 * 4 + S * 3, y0 + 64, "見えた面数 %d / %d = %.1f %%"
+             % (int(seen_mask.sum()), len(F), cov_faces * 100.0), C_AMBER, 12, True),
+            (24 * 4 + S * 3, y0 + 84, "表面点 %s 中 可視 %.1f %% / 遮蔽 %.1f %%"
              % (f"{SP:,}", pt_vis_frac * 100.0, 100.0 * float(occl.mean())),
              C_TEXT, 12, False),
+            (24 * 4 + S * 3, y0 + 104, "= 塔が自分の台座を隠した分だけ減る",
+             C_DIM, 11, False),
         ]
         for j, rec in enumerate(table[:4]):
-            lab.append((24 * 3 + S * 2, y0 + 22 + j * 20,
-                        "#%d  画素 %3d  命中 %3d (%3.0f%%)  面 %2d 枚  実面積 %7.2f  深さ %6.2f"
+            lab.append((30, y0 + 26 + j * 20,
+                        "欠陥#%d  画素 %3d  命中 %3d (%3.0f%%)  面 %2d 枚  "
+                        "CAD 面上の実面積 %7.2f  平均深さ %6.2f"
                         % (rec["label"], rec["n_pixels"], rec["n_hit"],
                            100.0 * rec["hit_fraction"], len(rec["face_ids"]),
                            rec["area"], rec["depth_mean"]),
@@ -1136,6 +1148,8 @@ def ex_cadmap():
              "faces_seen": int(seen_mask.sum()),
              "coverage_faces": round(cov_faces, 5),
              "coverage_area": round(cov_area, 5),
+             "front_facing_area_fraction": round(front_area_frac, 5),
+             "signed_volume": round(signed_volume(V, F), 3),
              "sample_points": SP, "point_visible_fraction": round(pt_vis_frac, 5),
              "point_occluded_fraction": round(float(occl.mean()), 5),
              "defects": [{"label": int(t["label"]), "n_pixels": int(t["n_pixels"]),

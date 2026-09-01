@@ -1338,8 +1338,8 @@ def subject_shape_match(log=print) -> dict:
             "device": "cpu",
         },
         "caption": (
-            "96×96 px のテンプレートから作った形状モデルで、20° ずつ回した部品を "
-            "%d 枚のシーンから探した。5° 刻みで角度も探索させると、角度の誤差は最大 "
+            "96×96 px のテンプレートから作った形状モデルで、23° ずつ回した部品 "
+            "(探索格子 5° の倍数を避けた角度) を %d 枚のシーンから探した。5° 刻みで角度も探索させると、角度の誤差は最大 "
             "%.1f°(探索格子 5° の半分 = 2.5° がそもそもの下限)、位置の誤差は最大 %d px、"
             "スコアは最低でも %.3f。1 シーンあたり %.2f 秒(CPU、%d 角度ぶんの探索を含む)。"
             % (len(rows), float(np.max(np.abs(d_ang))), int(np.max(np.abs(pos))),
@@ -1750,31 +1750,23 @@ def subject_texture_zoo(log=print) -> dict:
                           for c in range(len(keys))])
         correct += int(np.argmin(np.linalg.norm(cents - Xn[i], axis=1)) == y[i])
     acc = correct / len(Xn)
+    # 4 列 = 「模様 / gabor 0° / gabor 90° / LBP」が 1 行にそろう並び。
     panels, labels = [], []
     for k in keys:
-        panels.append(texs[k])
-        labels.append("%s\nGLCM energy %.3f / entropy %.3f"
-                      % (names[k], float(fs.apply(texs[k], "cooc_feature_matrix",
-                                                  0.3, 0.5)),
-                         float(fs.apply(texs[k], "entropy_gray", 0.5, 0.5))))
-    for k in keys:
-        panels.append(np.asarray(fs.apply(texs[k], "gabor", 0.0, 0.5)))
-        labels.append("gabor θ=0° (横縞に反応)\n平均応答 %.4f"
-                      % float(np.mean(np.asarray(fs.apply(texs[k], "gabor",
-                                                          0.0, 0.5)))))
-    for k in keys:
-        panels.append(np.asarray(fs.apply(texs[k], "gabor", 0.5, 0.5)))
-        labels.append("gabor θ=90° (縦縞に反応)\n平均応答 %.4f"
-                      % float(np.mean(np.asarray(fs.apply(texs[k], "gabor",
-                                                          0.5, 0.5)))))
-    for k in keys:
-        panels.append(np.asarray(fs.apply(texs[k], "sk_lbp", 0.34, 0.5)))
-        labels.append("sk_lbp (局所二値パターン)\nstd %.4f"
-                      % float(fs.apply(np.asarray(fs.apply(texs[k], "sk_lbp",
-                                                           0.34, 0.5)),
-                                       "gray_histo_abs", 0.5, 0.5)))
+        g0 = np.asarray(fs.apply(texs[k], "gabor", 0.0, 0.5))
+        g9 = np.asarray(fs.apply(texs[k], "gabor", 0.5, 0.5))
+        lbp = np.asarray(fs.apply(texs[k], "sk_lbp", 0.34, 0.5))
+        panels += [texs[k], g0, g9, lbp]
+        labels += [
+            "%s\nGLCM energy %.3f / entropy %.3f"
+            % (names[k], float(fs.apply(texs[k], "cooc_feature_matrix", 0.3, 0.5)),
+               float(fs.apply(texs[k], "entropy_gray", 0.5, 0.5))),
+            "gabor θ=0° (横縞に反応)\n平均応答 %.4f" % float(np.mean(g0)),
+            "gabor θ=90° (縦縞に反応)\n平均応答 %.4f" % float(np.mean(g9)),
+            "sk_lbp (局所二値パターン)\nstd %.4f"
+            % float(fs.apply(lbp, "gray_histo_abs", 0.5, 0.5))]
     sheet = E.contact_sheet(
-        panels, labels, ncols=3, panel_px=320, label_h=54, font_size=17,
+        panels, labels, ncols=4, panel_px=272, label_h=54, font_size=16,
         title=("テクスチャの見分け —— 8 個の特徴量で %d 枚中 %d 枚を正しく分類 "
                "(leave-one-out 最近傍重心 %.1f%%)" % (len(Xn), correct, 100 * acc)))
     info = E.save_exhibit(sheet, "wing2d_texture_zoo")
@@ -1833,6 +1825,14 @@ def subject_resample_loss(log=print) -> dict:
             "std": float(fs.apply(cur, "gray_histo_abs", 0.5, 0.5)),
             "hp": float(np.std(np.asarray(fs.apply(cur, "highpass", 0.4, 0.5))))})
     picks = [0, 1, 6, 12, 24, 36]
+    # rotate_image は reshape=False + mode="reflect" なので、回すたびに四隅が
+    # 反射で汚れる。それを「補間で失われた分」と混ぜると誤読するので、
+    # 端 20% を落とした中央だけでも測る。
+    m = src.shape[0] // 5
+    psnr_full = _psnr(src, hist[36]["img"])
+    psnr_core = _psnr(src[m:-m, m:-m], hist[36]["img"][m:-m, m:-m])
+    hp_core = [float(np.std(np.asarray(
+        fs.apply(h["img"][m:-m, m:-m], "highpass", 0.4, 0.5)))) for h in hist]
     # 3 つの zoom 系 op が同じ出力かどうかを実測 (推測しない)
     z = {op: np.asarray(fs.apply(src, op, 0.9, 0.5), np.float64)
          for op in ("zoom_image_factor", "zoom_image_size", "rescale_img")}
@@ -1843,29 +1843,29 @@ def subject_resample_loss(log=print) -> dict:
         h = hist[k]
         panels.append(h["img"])
         tail = ("元画像" if k == 0 else
-                ("累計 %.0f° = 一周して元の向きに戻った\nPSNR %.2f dB"
-                 % (k * step_deg, h["psnr"]) if k == 36 else
+                ("累計 %.0f° = 一周して元の向きに戻った\n中央だけの PSNR %.2f dB"
+                 % (k * step_deg, psnr_core) if k == 36 else
                  "累計 %.0f°" % (k * step_deg)))
-        labels.append("%d 回目 (%s)\n高周波の std %.4f (元の %.1f%%)"
-                      % (k, tail.replace("\n", " / "), h["hp"],
-                         100 * h["hp"] / hist[0]["hp"]))
+        labels.append("%d 回目 (%s)\n中央の高周波 std %.4f (元の %.1f%%)"
+                      % (k, tail.replace("\n", " / "), hp_core[k],
+                         100 * hp_core[k] / hp_core[0]))
     panels.append(_cmap(np.abs(src - hist[36]["img"]), "magma",
                         vmin=0.0, vmax=0.25))
-    labels.append("36 回転後と元画像の差\n最大 %.3f / 平均 %.4f"
-                  % (float(np.max(np.abs(src - hist[36]["img"]))),
-                     float(np.mean(np.abs(src - hist[36]["img"])))))
+    labels.append("36 回転後と元画像の差 —— 明るいのは端\n"
+                  "全体 PSNR %.2f dB / 中央だけなら %.2f dB"
+                  % (psnr_full, psnr_core))
     curve = _plot(
         [{"x": [h["n"] for h in hist],
-          "y": [100 * h["hp"] / hist[0]["hp"] for h in hist],
-          "color": (255, 196, 80), "label": "高周波の std (元を 100% とする)"}],
+          "y": [100 * v / hp_core[0] for v in hp_core],
+          "color": (255, 196, 80), "label": "中央の高周波 std (元を 100% とする)"}],
         520, 520, xlim=(0, 36), ylim=(0, 105),
         title="回すたびに細かい模様が減っていく",
         xlabel="10° 回転を掛けた回数", legend_pos="tr")
     panels.append(curve.astype(np.float64) / 255.0)
-    labels.append("失われる量は回すほど積み上がる\n36 回で高周波 std は %.1f%% に"
-                  % (100 * hist[36]["hp"] / hist[0]["hp"]))
+    labels.append("失われる量は回すほど積み上がる\n36 回で中央の高周波 std は %.1f%% に"
+                  % (100 * hp_core[36] / hp_core[0]))
     sheet = E.contact_sheet(
-        panels, labels, ncols=4, panel_px=300, label_h=54, font_size=17,
+        panels, labels, ncols=4, panel_px=272, label_h=56, font_size=16,
         title=("回し続けると何が失われるか —— rotate_image を 10° ずつ 36 回 "
                "(合計 360° = 元の向き)"))
     info = E.save_exhibit(sheet, "wing2d_resample_loss")
@@ -1880,9 +1880,12 @@ def subject_resample_loss(log=print) -> dict:
         "data": "skimage.data camera (BSD / public domain) を 1/2 に間引いたもの",
         "measured": {
             "step_deg": step_deg, "rotations": 36,
-            "psnr_after_full_turn_db": round(hist[36]["psnr"], 3),
-            "highpass_std_ratio_pct": [round(100 * h["hp"] / hist[0]["hp"], 2)
-                                       for h in hist],
+            "psnr_after_full_turn_db": round(psnr_full, 3),
+            "psnr_after_full_turn_centre_only_db": round(psnr_core, 3),
+            "border_note": ("rotate_image は reshape=False + mode='reflect' なので"
+                            "四隅が反射で汚れる。端 20% を落とした中央のみの値も併記"),
+            "highpass_std_ratio_pct_centre": [round(100 * v / hp_core[0], 2)
+                                              for v in hp_core],
             "max_abs_diff_after_full_turn": round(
                 float(np.max(np.abs(src - hist[36]["img"]))), 4),
             "mean_abs_diff_after_full_turn": round(
@@ -1893,13 +1896,13 @@ def subject_resample_loss(log=print) -> dict:
         },
         "caption": (
             "同じ画像に 10° の回転を 36 回かけると、幾何としては一周して元の向きに"
-            "戻る。だが画素は戻らない —— 元画像との PSNR は %.2f dB、差の最大は %.3f、"
-            "高周波成分の標準偏差は元の %.1f%% まで落ちる。1 回ごとの補間はごく小さい"
-            "のに、掛け合わせると積み上がる。"
+            "戻る。だが画素は戻らない —— 中央部だけで測っても元画像との PSNR は "
+            "%.2f dB、中央の高周波成分の標準偏差は元の %.1f%% まで落ちる。"
+            "画像全体では %.2f dB とさらに悪いが、その差の大半は端の処理 "
+            "(rotate_image は reshape=False + mode='reflect') によるもので、"
+            "補間そのものの損失ではない —— なので両方の数字を出している。"
             "(ついでの実測: `zoom_image_factor` / `zoom_image_size` / `rescale_img` の "
-            "3 op は同じ入力に対して最大差 %.1g —— 現状は同じ実装に相乗りしています。)"
-            % (hist[36]["psnr"],
-               float(np.max(np.abs(src - hist[36]["img"]))),
-               100 * hist[36]["hp"] / hist[0]["hp"],
+            "3 op は同じ入力に対して最大差 %.1g。現状は同じ実装に相乗りしています。)"
+            % (psnr_core, 100 * hp_core[36] / hp_core[0], psnr_full,
                max(zoom_maxdiff, zoom_maxdiff2))),
     }
