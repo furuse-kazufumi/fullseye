@@ -1122,12 +1122,15 @@ def spectral_kurtosis(x, rate, win=None, hop=None, window="hann"):
     against the repetition period you expect, and sweeping ``win`` is part of
     using this operator rather than an optimisation.
 
-    What survives the sweep is the *band*, not the bin: at ``win=64`` the six
-    highest bins are 2000, 2400, 1600, 4000, 3600 and 1200 Hz, which brackets
-    the true 3000 Hz resonance without any of them being it. And that is enough
-    — feeding the band ``max_freq +- one bin`` straight into
-    :func:`envelope_spectrum` recovers the defect rate exactly: measured
-    107.0000 Hz from the 1600-2400 Hz band the operator chose by itself.
+    What survives the sweep is the *band*, not the bin. On the same signal with
+    ``noise_sigma=0.05`` (the noiseless one is impulsive in every bin at once
+    and its top six bins differ by 0.03, which is itself worth knowing), the six
+    highest bins at ``win=64`` are 2000, 2400, 1600, 4000, 3600 and 1200 Hz —
+    bracketing the true 3000 Hz resonance without any of them being it. And that
+    is enough: feeding the band ``max_freq +- one bin`` straight into
+    :func:`envelope_spectrum` recovers the defect rate exactly — measured
+    **107.0000 Hz** from the 1600-2400 Hz band the operator chose by itself,
+    with no knowledge of the resonance.
 
     ``win`` defaults to the largest power of two that leaves at least 8 interior
     frames, clamped to [16, 64] — short, for the reason in the table — and the
