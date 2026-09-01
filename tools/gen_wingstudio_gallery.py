@@ -936,17 +936,19 @@ def ex_depth3d():
     # 背景 (inf) は持ち上げない: 有効画素だけを 3D にする
     d_fill = np.where(valid, depth, dmax)
     vv, uu = np.mgrid[0:RES, 0:RES]
-    pix_int = np.stack([uu[valid], vv[valid]], 1).astype(np.float64)
-    # ★ 画素中心の規約が 2 つある。render3d は「添字 + 0.5」を画素中心として
-    # レイを飛ばす(render3d.py:318-319)が、camera.depth_to_points は添字その
-    # ものを中心として逆投影する。素直に繋ぐと雲全体が **半画素ずれる**。
-    P_int = camera.backproject(pix_int, d_fill[valid], K)
-    P_valid = camera.backproject(pix_int + 0.5, d_fill[valid], K)
-    half_px_shift = float(np.linalg.norm(P_valid - P_int, axis=1).mean())
+    pix = np.stack([uu[valid], vv[valid]], 1).astype(np.float64)
+    # 画素中心は **整数添字**。render3d / camera / cadmap は同じ規約なので、
+    # ここで 0.5 を足してはいけない(足すと雲全体が半画素ぶん系統的にずれる)。
+    P_valid = camera.backproject(pix, d_fill[valid], K)
     n_pts = int(P_valid.shape[0])
+    # 検算: 逆投影した点を投影し直して、元の画素へ戻るか(残差 rms を実測)
+    uv_back, _z_back = camera.project_points(P_valid, K)
+    reproj_rms = float(np.sqrt(((uv_back - pix) ** 2).sum(1).mean()))
+    # 対照: わざと +0.5 したときに雲がどれだけ動くか(= 半画素ぶんの系統誤差)
+    off_half = float(np.linalg.norm(
+        camera.backproject(pix + 0.5, d_fill[valid], K) - P_valid, axis=1).mean())
     # 「平らな板」から「本当の奥行き」へ補間する(0 -> 1)
-    P_flat = camera.backproject(pix_int + 0.5,
-                                np.full(n_pts, 0.5 * (dmin + dmax)), K)
+    P_flat = camera.backproject(pix, np.full(n_pts, 0.5 * (dmin + dmax)), K)
     gray = (d_fill - dmin) / max(dmax - dmin, 1e-12)
     colors = imgio.apply_cmap(1.0 - gray, name="viridis")[valid]
 
