@@ -599,7 +599,8 @@ def ex_volume_chart():
                   "nrms_by_views": [round(v, 4) for v in nrmses],
                   "threshold_fracs": list(thr_fracs),
                   "volume_by_threshold": [round(v, 1) for v in thr_vols],
-                  "span_views_mm3": round(span_v, 1),
+                  "span_views_mm3": round(span_v_all, 1),
+                  "span_views16_mm3": round(span_v16, 1),
                   "span_threshold_mm3": round(span_t, 1),
                   "ops": ["radon_volume", "fbp_volume", "vol_label",
                           "vol_region_props"]}

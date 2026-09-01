@@ -746,8 +746,8 @@ def ex_domain(log) -> dict:
             "pasted-back result side by side. Only "
             f"{100 * float(dom.mean()):.2f} % of the field is foreground, so "
             f"`vol_crop_domain` takes memory from {full_mb:.2f} MB to {part_mb:.3f} MB "
-            f"(**1/{ratio:.1f}**) and the very same `vol_gradient_magnitude` goes from "
-            f"{vol.size:,} voxels to {np.asarray(part).size:,} — the same "
+            f"(**1/{ratio:.1f}**), and the very same `vol_gradient_magnitude` now touches "
+            f"{np.asarray(part).size:,} voxels instead of {vol.size:,} — the same "
             f"**1/{vol.size / np.asarray(part).size:.1f}**. (The measured wall-clock times "
             "live in `_wing3d_meta.json` instead of being burned into the picture, so the "
             "image stays byte-reproducible.) `vol_uncrop` puts it back bit-identically."),
@@ -1033,12 +1033,11 @@ def ex_rle(log) -> dict:
             f"Holding a 256³ synthetic part as run-lengths costs **1/{ratio:.0f}** of the "
             f"dense mask ({dense_bytes / 1e6:.2f} MB to {rle.nbytes / 1e6:.3f} MB, "
             f"{len(rle):,} runs). And nothing has to be decoded: the volume of "
-            f"{vox:,} voxels, the bounding box and the set operations are all answered on "
-            "the runs themselves, with no bitmap ever materialised (the measured speed-ups "
-            "are in `_wing3d_meta.json`; wall-clock numbers stay out of the picture so it "
-            "remains byte-reproducible), and set operations "
-            f"(ball ∪ axle = {v_un:,} voxels) are solved on the runs themselves. The "
-            "decode round-trip is bit-identical."),
+            f"{vox:,} voxels, the bounding box, the centroid and the set operations "
+            f"(ball ∪ axle = {v_un:,} voxels) are all answered on the runs themselves, "
+            "with no bitmap ever materialised. The decode round-trip is bit-identical. "
+            "(The measured speed-ups are in `_wing3d_meta.json` — wall-clock numbers are "
+            "kept out of the picture so it stays byte-reproducible.)"),
         "ops": ["vol_rle_encode", "vol_rle_decode", "vol_rle_volume", "vol_rle_bbox",
                 "vol_rle_centroid", "vol_rle_union", "vol_rle_intersect",
                 "vol_rle_difference"],

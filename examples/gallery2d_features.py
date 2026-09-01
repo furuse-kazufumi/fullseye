@@ -207,8 +207,15 @@ def main() -> int:
     assert e_flat < 1e-6 and e_noisy > e_flat + 0.3, f"entropy flat {e_flat} vs noisy {e_noisy}"
     gt += 1
 
-    # (e) estimate_noise: robust noise sigma rises with added noise (beat-the-null)
-    assert _feat("estimate_noise", noisy) > _feat("estimate_noise", const) + 0.3, "noise estimate must rise"
+    # (e) estimate_noise: 返すのは **ノイズ σ そのもの**([0,1] 階調)。
+    #     2026-09-02 以前は σ の 3*1.4826*MAD 版で σ>=0.08 から 1.0 に張り付いていた
+    #     ので閾値 0.3 で通っていた。いまは真値に追随する: σ=0.15 のガウス雑音を
+    #     足した画像で 0.1486、平坦画像で 0.0(実測)。真値 ±20% を要求する。
+    s_true = 0.15
+    e_flat_n, e_noisy_n = _feat("estimate_noise", const), _feat("estimate_noise", noisy)
+    assert e_flat_n < 1e-6, f"flat image must read ~0 noise, got {e_flat_n}"
+    assert abs(e_noisy_n - s_true) < 0.2 * s_true, (
+        f"estimate_noise must track the true sigma {s_true}: got {e_noisy_n:.4f}")
     gt += 1
 
     # (f) count_channels: an HxWx3 color image has exactly 3 channels
