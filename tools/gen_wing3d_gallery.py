@@ -1749,9 +1749,8 @@ def ex_visual_hull(log) -> dict:
         p.hline(1.0, C_DIM)
         p.marker(m, stats[m]["over"], C_B, size=6)
         p.marker(m, 0.8 + 4.2 * stats[m]["iou"], C_D, size=6)
-        p.items.append((506, 354, "体積の倍率(1.0 = 真値)", C_B, 12, True))
-        p.items.append((506, 372, "IoU(右目盛り 0 - 1 を 0.8-5.0 に伸ばして重ねた)",
-                        C_D, 12, True))
+        p.items.append((506, 372, "体積の倍率(1.0 = 真値)", C_B, 12, True))
+        p.items.append((506, 390, "IoU(0 - 1 を 0.8-5.0 に伸ばして重ねた)", C_D, 12, True))
         c = p.done()
         c = _text(c, [
             (500, 566, "使用 %2d 枚 :  占有 %6d voxel = 真値の %.2f 倍"
