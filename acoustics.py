@@ -519,10 +519,12 @@ def stft(x, rate, win=256, hop=None, window="hann", nfft=None, scaling="none"):
 
     freqs = np.fft.rfftfreq(n_fft, d=1.0 / fs)
     times = (starts.astype(np.float64) - pad_left) / fs
+    interior = (starts >= pad_left) & (starts + w_len <= pad_left + n)
     return {
         "spectra": np.ascontiguousarray(spec),
         "freqs": freqs,
         "times": times,
+        "interior": interior,
         "rate": fs, "win": w_len, "hop": h, "nfft": n_fft,
         "length": int(n), "pad_left": int(pad_left), "padded": int(padded),
         "scale": float(scale), "scaling": mode,
