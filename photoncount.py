@@ -747,8 +747,9 @@ def spad_deadtime_correct(measured_hz, dead_time_ns):
         n = m / (1 - m*tau)
 
     A round trip ``apply -> correct`` is exact to machine precision (measured max
-    relative error 2.3e-16 over rates from 1e3 to 5e7 Hz at ``tau = 50 ns``,
-    i.e. up to 71% of the saturation rate).
+    elementwise relative error 6.0e-16 over 2000 rates spanning 1e3 to 5e7 Hz at
+    ``tau = 50 ns``, where the measured rate reaches 71.4% of the 20 MHz
+    saturation rate).
 
     **There is deliberately no paralysable inverse.** ``m = n*exp(-n*tau)`` is not
     injective — every measured rate below the maximum ``1/(e*tau)`` corresponds to
