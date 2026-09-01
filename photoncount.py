@@ -395,10 +395,10 @@ def photon_sample(image, photons_per_unit=100.0, dark_rate=0.0, seed=0):
     ``numpy.random.default_rng(seed)`` — same seed, same frame, on any machine.
 
     Ground truth it reproduces (pinned in ``tests/test_photoncount.py``): the
-    sample mean and sample variance both converge to ``lambda`` (Fano factor
-    1.0009 measured over 512x512 pixels at ``lambda = 100``, seed 0), so the
-    photon-limited SNR is ``sqrt(lambda)`` — 10.0 predicted, 9.996 measured on
-    that frame.
+    sample mean and sample variance both converge to ``lambda``. Measured on a
+    flat ``lambda = 100`` field of 512x512 pixels at seed 0 — mean 99.9796,
+    Fano factor 1.001089, so the photon-limited SNR is ``sqrt(lambda)``: 9.9990
+    predicted from the mean, 9.9935 actually achieved.
 
     **Raises** ``ValueError``: negative or non-finite *image*, negative
     *photons_per_unit* / *dark_rate*, a non-integer or negative *seed*, an image
