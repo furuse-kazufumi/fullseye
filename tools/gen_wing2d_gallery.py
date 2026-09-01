@@ -545,7 +545,13 @@ def _spectrum_rgb(img, cutoff=None, band=None) -> np.ndarray:
 
 
 def _signed_to_01(x) -> np.ndarray:
-    """符号つき出力を 0.5 中心に写像して表示する (負が黒に潰れるのを防ぐ)."""
+    """符号つき出力を 0.5 中心に写像して表示する (負が黒に潰れるのを防ぐ).
+
+    ★2026-09-02 以降、`highpass` / `highpass_image` / `bandpass_image` は op 側で
+    同じ写像 (`ops._signed01`) を通して [0,1] を返すようになったので、この関数を
+    重ねて呼ぶ必要は無くなった (重ねてもアフィン写像なので `_stretch` 後の絵は
+    変わらないが、「op が符号つきを返す」という前提の方が嘘になる)。
+    """
     a = np.asarray(x, np.float64)
     m = float(np.max(np.abs(a)))
     return 0.5 + 0.5 * (a / m if m > 1e-12 else a)
