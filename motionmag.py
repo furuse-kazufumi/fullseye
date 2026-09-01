@@ -1085,6 +1085,8 @@ def phase_displacement(video, f_lo, f_hi, fps, scales: int = 4,
         b0 -= (wgt * kx)[None] * dphi
         b1 -= (wgt * ky)[None] * dphi
         weight += wgt
+        coh_num += float((wgt * amp).sum())
+        coh_den += float((wgt * np.abs(sub).mean(axis=0)).sum())
         km = float(np.sqrt(kx * kx + ky * ky).max())
         if km > kmax:
             kmax = km
