@@ -197,7 +197,8 @@ EXTRA_PARAM_HINTS = {
     "tol": 1.5, "tau": 0.5, "min_inliers": 3, "min_voxels": 1,
     "voxel_size": 1.0, "min_distance": 2, "max_radius": 3, "r": 0.5,
     "ss": 2, "spatial_sigma": 2.0, "range_sigma": 0.2,
-    "source": 0, "weight": 0.5, "trunc": 1.0, "eps": 1.0,
+    "source": 0, "weight": 0.5, "trunc": 1.0,
+    "eps": (1.0, 1.0),                       # スーパー2次曲面の形状指数 (eps1, eps2)
     "half_extents": np.array([2.0, 2.0, 2.0]),
     "plane_point": np.zeros(3), "plane_normal": np.array([0.0, 0.0, 1.0]),
     "albedo": 0.8, "light": np.array([0.0, 0.0, 1.0]),
