@@ -450,6 +450,12 @@ def text_box(img, text, xy, color="neutral", text_color=None, box_color=None,
     min_contrast : float
         文字と「実際にその下に出る色」のコントラスト比の下限。下回れば
         **ValueError**(背景と同化した文字は誰も気づけないので通さない)。
+        **限界(正直に)**: 比べる相手は板の下の**平均色**なので、
+        白と黒が半々に混じった写真の上に ``box_alpha=0`` で置くと、平均は
+        中間灰になり検査を通ってしまう(白い部分の上の文字は読めない)。
+        地が荒れている場所では ``box_alpha`` を上げて板を効かせること ――
+        この検査は「板を忘れた」を捕まえるためのもので、
+        「板があっても読めない」まで保証はしない。
     border : int
         板の枠線の太さ(0 で枠なし)。色は ``border_color`` か ``color``。
     style : dict or None
