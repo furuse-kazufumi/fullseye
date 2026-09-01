@@ -615,8 +615,14 @@ def ms_ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03,
         raise ValueError(f"ms_ssim takes 2-D grayscale images, got shape {fa.shape}")
     dr = data_range_of(a, b, data_range=data_range)
     w = np.asarray(weights, dtype=np.float64)
-    if w.ndim != 1 or w.size < 2 or np.any(w < 0) or not np.isclose(w.sum(), 1.0, atol=1e-6):
-        raise ValueError("weights must be a 1-D non-negative array summing to 1")
+    # 許容が 1e-3 なのは、原論文の公表値そのものが 1.0001 に和が立つため
+    # (:data:`MS_SSIM_WEIGHTS` の注記)。正規化して黙って直したりはしない。
+    if w.ndim != 1 or w.size < 2 or np.any(w < 0) or not np.isclose(w.sum(), 1.0, atol=1e-3):
+        raise ValueError(
+            "weights must be a 1-D non-negative array summing to 1 (within 1e-3; the published "
+            f"MS-SSIM weights sum to {sum(MS_SSIM_WEIGHTS)!r}, which is why the tolerance is "
+            f"not tighter), got sum={float(w.sum())!r}"
+        )
     n = w.size
     need = (win_size - 1) * (2 ** (n - 1)) + 2 ** (n - 1)
     if min(fa.shape) < need:
