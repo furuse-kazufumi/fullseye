@@ -766,3 +766,102 @@ class TestTypeVocabulary:
                                                                         abs=1e-9)
         sp = itf.chromatic_confocal_simulate()
         assert itf.chromatic_confocal_height(sp) == pytest.approx(0.0, abs=1e-9)
+
+
+# --------------------------------------------------------------------------- #
+# 9. bugs the 2026-09-01 adversarial pass found, each with its reproduction    #
+# --------------------------------------------------------------------------- #
+class TestAdversarialFindings:
+    """Every one of these returned a number, or a non-finite array, before the
+    fix. None of them raised, which is why they were worth hunting."""
+
+    def test_a_list_of_strings_is_not_a_signal(self):
+        """``np.ascontiguousarray(['1.0'], dtype=float64)`` *succeeds*. Before the
+        fix this returned an envelope array; the scalar guard against
+        ``float('0.55')`` did not extend to arrays."""
+        with pytest.raises(ValueError, match="dtype 'str'"):
+            itf.csi_envelope(["1.0"] * 8)
+        with pytest.raises(ValueError, match="dtype 'object'"):
+            itf.csi_envelope(np.array([1.0] * 8, dtype=object))
+        with pytest.raises(ValueError, match="dtype 'bool'"):
+            itf.csi_envelope(np.zeros(8, dtype=bool))
+        # ... while ordinary numeric containers still work
+        assert itf.csi_envelope([1.0, 2.0, 1.0, 0.0]).shape == (4,)
+        assert itf.csi_envelope(np.arange(8, dtype=np.uint8)).shape == (8,)
+
+    def test_infinite_fill_value_is_not_a_marker(self):
+        """Before the fix, ``fill_value=inf`` produced a height map full of
+        infinities that every downstream reduction treats as a number."""
+        st = stack_of(np.full((4, 4), 0.2))
+        with pytest.raises(ValueError, match="NaN is the supported marker"):
+            itf.csi_height_map(st, DZ, 0.0, LAM, on_invalid="fill",
+                               fill_value=np.inf)
+        filled = itf.csi_height_map(st, DZ, 0.0, LAM, on_invalid="fill")
+        assert np.isnan(filled).all()
+
+    def test_a_nanometre_wavelength_is_caught_by_the_data(self):
+        """``wavelength_um`` is used only for the Nyquist ceiling, so writing 600
+        for 0.6 silently disables it and returns the *same* height. Before the
+        carrier cross-check there was nothing to notice it."""
+        s = scan(6.025)
+        with pytest.raises(ValueError, match="fringe carrier"):
+            itf.csi_peak_position(s, DZ, 0.0, 600.0)
+        # ... and with the check off, the old behaviour: identical answer, no
+        # Nyquist protection at all
+        loose = itf.csi_peak_position(s, DZ, 0.0, 600.0, carrier_tolerance=0.0)
+        assert loose == pytest.approx(itf.csi_peak_position(s, DZ, 0.0, LAM),
+                                      abs=1e-12)
+        # the check does not fire on real data at any of the conditions measured
+        for kw in ({}, {"noise": 0.01, "seed": 0}, {"noise": 0.10, "seed": 1}):
+            itf.csi_peak_position(scan(6.0, **kw), DZ, 0.0, LAM)
+        itf.csi_peak_position(scan(2.0), DZ, 0.0, LAM, max_edge_envelope=1.0)
+        itf.csi_height_map(stack_of(tilted()), DZ, 0.0, LAM)
+
+    def test_a_saturated_spectrum_is_refused(self):
+        """A clipped confocal peak reads 2.55 um where the truth is 3.00 um, with
+        nothing else in the spectrum to show for it."""
+        sp = itf.chromatic_confocal_simulate(3.0, 500.0, 0.5, 401, 0.20, 600.0)
+        with pytest.raises(ValueError, match="flat top"):
+            itf.chromatic_confocal_height(np.minimum(sp, 300.0), 500.0, 0.5,
+                                          0.20, 600.0, min_peak_bins=0.0)
+        # a *symmetric* peak landing exactly between two bins ties two of them
+        # legitimately, and must still be accepted
+        clean = itf.chromatic_confocal_simulate(0.10, 500.0, 1.0, 301, 0.20,
+                                                600.0, peak_fwhm_nm=4.0)
+        assert itf.chromatic_confocal_height(clean, 500.0, 1.0, 0.20,
+                                             600.0) == pytest.approx(0.10, abs=1e-9)
+
+    def test_low_reflectance_costs_the_local_fits_20x(self):
+        """A 50x reflectance step across the field, 1 % noise. The measured
+        answer to "does a varying reflectance bias the estimators": barely — what
+        it does is blow up their *scatter*, and unevenly by estimator."""
+        h = np.full((32, 32), 6.0)
+        refl = np.where(np.mgrid[0:32, 0:32][1] < 16, 0.02, 1.0)
+        st = stack_of(h, reflectivity=refl, noise=0.01, seed=0)
+        out = {}
+        for mode in ("gaussian", "centroid"):
+            m = itf.csi_height_map(st, DZ, 0.0, LAM, mode=mode, on_invalid="fill")
+            out[mode] = (float(np.sqrt(np.nanmean((m[:, :16] - 6.0) ** 2))),
+                         float(np.sqrt(np.nanmean((m[:, 16:] - 6.0) ** 2))))
+        dark_g, bright_g = out["gaussian"]
+        dark_c, bright_c = out["centroid"]
+        assert dark_g / bright_g > 10.0                    # measured 20x
+        assert dark_c / bright_c < 10.0                    # measured 7x
+        assert dark_c < dark_g / 10.0                      # centroid survives
+        # ... and the contrast map is what tells the two populations apart
+        cm = itf.csi_contrast_map(st)
+        assert cm[:, :16].mean() < 0.1 < cm[:, 16:].mean()
+        assert cm[:, :16].max() < cm[:, 16:].min()
+
+    def test_two_surfaces_report_one_and_cannot_say_so(self):
+        """A documented limitation, not a bug — pinned so it stays documented.
+        Two equal reflectors 1.5 um apart return 5.75 um, which is neither."""
+        z = DZ * np.arange(NP)
+        two = (0.5
+               + 0.4 * np.exp(-0.5 * ((z - 5.0) / SIGMA) ** 2)
+               * np.cos(4 * np.pi * (z - 5.0) / LAM)
+               + 0.4 * np.exp(-0.5 * ((z - 6.5) / SIGMA) ** 2)
+               * np.cos(4 * np.pi * (z - 6.5) / LAM))
+        got = itf.csi_peak_position(two, DZ, 0.0, LAM)
+        assert np.isfinite(got)
+        assert abs(got - 5.0) > 0.2 and abs(got - 6.5) > 0.2

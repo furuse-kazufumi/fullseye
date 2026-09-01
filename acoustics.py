@@ -1543,10 +1543,14 @@ def order_spectrum(x, rate, rpm, samples_per_rev=64, revolutions=None,
         body[0] = 0.0
     idx = np.argsort(body)[::-1][:k]
     idx = idx[body[idx] > 0.0]
+    med = float(np.median(body[1:])) if body.size > 1 else 0.0
+    peak = float(body.max()) if body.size else 0.0
     return {
         "orders": orders, "magnitude": mag,
         "peak_order": float(orders[int(np.argmax(body))]) if body.size else 0.0,
-        "peak_amplitude": float(body.max()) if body.size else 0.0,
+        "peak_amplitude": peak,
+        "peak_prominence": (peak / med) if med > 0.0 else float("inf"),
+        "noise_floor": med,
         "peak_orders": orders[idx].copy(), "peak_amplitudes": body[idx].copy(),
         "resolution_order": 1.0 / float(whole),
         "whole_revolutions": whole, "samples_per_rev": spr,
