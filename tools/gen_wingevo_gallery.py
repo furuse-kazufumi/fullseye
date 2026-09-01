@@ -2044,7 +2044,24 @@ def main(argv=None) -> int:
     ap.add_argument("--refresh", action="store_true", help="測定キャッシュを捨てる")
     ap.add_argument("--chains", type=int, default=600)
     ap.add_argument("--gens", type=int, default=24)
+    # 連鎖ファザーを別プロセスで回すための内部フラグ(直接使う必要は無い)
+    ap.add_argument("--fuzz-worker", action="store_true",
+                    help=argparse.SUPPRESS)
+    ap.add_argument("--fuzz-seed", type=int, default=4242, help=argparse.SUPPRESS)
+    ap.add_argument("--fuzz-length", type=int, default=6, help=argparse.SUPPRESS)
+    ap.add_argument("--fuzz-explore", type=float, default=0.5,
+                    help=argparse.SUPPRESS)
+    ap.add_argument("--fuzz-out", default="", help=argparse.SUPPRESS)
     args = ap.parse_args(argv)
+
+    if args.fuzz_worker:
+        data = measure_fuzz(chains=args.chains, seed=args.fuzz_seed,
+                            length=args.fuzz_length, explore=args.fuzz_explore,
+                            log=lambda *_a: None)
+        os.makedirs(os.path.dirname(os.path.abspath(args.fuzz_out)), exist_ok=True)
+        with open(args.fuzz_out, "w", encoding="utf-8") as fh:
+            json.dump(data, fh, ensure_ascii=False)
+        return 0
 
     if args.list:
         for key, title, _fn in EXHIBIT_ORDER:
