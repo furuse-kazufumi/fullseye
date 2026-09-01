@@ -2611,9 +2611,14 @@ def _caption(name: str, facts: dict, info: dict) -> str:
 
 
 def _write_captions(results, log):
-    """`docs/articles/exhibits/wingopt.md` を書く(記事本体には触れない)。"""
+    """`docs/articles/exhibits/wingopt.ja.md` を書く(記事本体には触れない)。
+
+    器(`tools/build_exhibits.py`)は `<id>.ja.md` と `<id>.en.md` の 2 枚を要求
+    するので、生成側は ja を明示的な言語サフィックス付きで書く。en は同じ実測値を
+    人手で英語にしたもの(数字・単位・op 名は ja と厳密に一致させる)。
+    """
     os.makedirs(EXHIBITS, exist_ok=True)
-    path = os.path.join(EXHIBITS, "wingopt.md")
+    path = os.path.join(EXHIBITS, "wingopt.ja.md")
     lines = [
         "<!-- tools/gen_wingopt_gallery.py が自動生成。記事本体 "
         "(docs/articles/*.md) には手を触れていません。 -->",
