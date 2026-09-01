@@ -358,6 +358,15 @@ EXTRA_OP_HINTS = {
     ("superquadric_residual", "a"): np.array([2.0, 2.0, 2.0]),
 }
 
+#: **None が docstring 上の契約**である op(「そんな原始形状は存在しない」)。
+#: 型の嘘(宣言と違うものを返す)ではなく「解が無い」の表明なので TYPEMISS に
+#: 数えない。連鎖ファザー(``run_chain``)も None は pool に入れず黙って次へ進む。
+#: 黙って許すのではなく、**ちょうどこの集合だけ**であることを検査する。
+NONE_BY_CONTRACT = {
+    "intersect_planes": "平行な 2 平面には交線が無い(docstring「平行なら None」)",
+    "intersect_line_plane": "平面と平行な直線には交点が無い(docstring「平行なら None」)",
+}
+
 #: 実行に時間がかかりすぎる/この検査では意味の無い op(理由つきで飛ばす)。
 SLOW_OR_UNSUITABLE = {
     "vol_tiled_map": "呼び手が渡すコールバックの挙動に依存(台帳の型契約とは別軸)",
