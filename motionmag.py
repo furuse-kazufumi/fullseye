@@ -1043,7 +1043,6 @@ def phase_displacement(video, f_lo, f_hi, fps, scales: int = 4,
         kx = np.where(amp2 > 0.0, kx, 0.0)
         ky = np.where(amp2 > 0.0, ky, 0.0)
         dphi = np.angle(sub * np.conj(ref)[None])
-        dphi = np.unwrap(dphi, axis=0)
         tspec = np.fft.fft(dphi, axis=0)
         tspec[~mask] = 0.0
         dphi = np.real(np.fft.ifft(tspec, axis=0))
