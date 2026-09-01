@@ -660,6 +660,9 @@ class DrawList:
                 for name in spec.lengths:
                     if name in args and isinstance(args[name], float):
                         args[name] = args[name] * f
+                for name in spec.inverse:                 # 1 画素あたりの物理量は縮む
+                    if name in args and isinstance(args[name], float):
+                        args[name] = args[name] / f
             out._cmds.append({"kind": cmd["kind"], "z": cmd["z"], "args": args})
         return out
 
