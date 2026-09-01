@@ -880,7 +880,8 @@ def test_missing_optional_dependency_raises_a_useful_error(monkeypatch):
         return real_import(name, *a, **kw)
 
     monkeypatch.setattr("builtins.__import__", fake_import)
-    with pytest.raises(ImportError, match="pip install PIL"):
+    # PyPI の配布名で案内する(`pip install PIL` は存在しない)
+    with pytest.raises(ImportError, match="pip install Pillow"):
         F.error_level_map(natural(64, 1), 90)
     # 依存の要らない op は同じ状況でも普通に動く
     assert F.perceptual_hash(natural(64, 1)).size == 64
