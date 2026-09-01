@@ -1814,8 +1814,9 @@ def ex_promotion_gate(data, log=print):
             p.vbar(i, pr["relative_gain"], 12, col, base=0.0)
         c = p.c
         for i, pr in enumerate(finite):
-            items.append((p.X(i), y0 + 296, pr["problem"][:13], C_DIM, 10, False,
-                          "ma"))
+            # 課題名は横に並べると必ず重なるので 2 段に振り分ける
+            items.append((p.X(i), y0 + 296 + (0 if i % 2 == 0 else 14),
+                          pr["problem"][:14], C_DIM, 10, False, "ma", True))
         items += [
             (40, y0 + 14, f"候補 `{name}`  ({r['in_sort']} → {r['out_sort']})",
              C_TEXT, 17, True),

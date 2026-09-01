@@ -1,11 +1,565 @@
 {
+ "airy_rayleigh": {
+  "info": {
+   "kind": "gif",
+   "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingopt_airy_rayleigh.gif",
+   "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingopt_airy_rayleigh_thumb.jpg",
+   "bytes": 2316625,
+   "thumb_bytes": 40580,
+   "size": [
+    1000,
+    516
+   ],
+   "frames": 33,
+   "fps": 10,
+   "colors": 256,
+   "thumb_frame": 12,
+   "sha256": "49232739c0f5f9b690277b466e7fa6281ce073e5ea39ef88b3867d8005faea43"
+  },
+  "title": "Airy パターンと Rayleigh 基準",
+  "ops": [
+   "airy_pattern",
+   "draw_polyline",
+   "draw_line"
+  ],
+  "facts": {
+   "wavelength_um": 0.55,
+   "f_number": 5.6,
+   "airy_first_zero_um_measured": 3.7600000000000002,
+   "airy_first_zero_um_theory": 3.756676,
+   "rayleigh_um": 3.7576,
+   "dip_at_rayleigh": 0.7335601446552867,
+   "first_dip_separation_um": 3.0,
+   "rows": [
+    {
+     "k": 0.4,
+     "sep_um": 1.52,
+     "dip_over_peak": 1.0,
+     "peak": 1.7176975076775143
+    },
+    {
+     "k": 0.45,
+     "sep_um": 1.68,
+     "dip_over_peak": 1.0,
+     "peak": 1.6598471775305224
+    },
+    {
+     "k": 0.5,
+     "sep_um": 1.8800000000000001,
+     "dip_over_peak": 1.0,
+     "peak": 1.582088136743183
+    },
+    {
+     "k": 0.55,
+     "sep_um": 2.08,
+     "dip_over_peak": 1.0,
+     "peak": 1.499154619351003
+    },
+    {
+     "k": 0.6000000000000001,
+     "sep_um": 2.24,
+     "dip_over_peak": 1.0,
+     "peak": 1.4297392837950507
+    },
+    {
+     "k": 0.65,
+     "sep_um": 2.44,
+     "dip_over_peak": 1.0,
+     "peak": 1.339977726277385
+    },
+    {
+     "k": 0.7000000000000001,
+     "sep_um": 2.64,
+     "dip_over_peak": 1.0,
+     "peak": 1.2478383204846992
+    },
+    {
+     "k": 0.75,
+     "sep_um": 2.8000000000000003,
+     "dip_over_peak": 1.0,
+     "peak": 1.1730942361172836
+    },
+    {
+     "k": 0.8,
+     "sep_um": 3.0,
+     "dip_over_peak": 0.9952078022678,
+     "peak": 1.0844044857332327
+    },
+    {
+     "k": 0.8500000000000001,
+     "sep_um": 3.2,
+     "dip_over_peak": 0.9529159608489488,
+     "peak": 1.0344161167519499
+    },
+    {
+     "k": 0.9,
+     "sep_um": 3.4,
+     "dip_over_peak": 0.883879206693261,
+     "peak": 1.0109096182577195
+    },
+    {
+     "k": 0.9500000000000001,
+     "sep_um": 3.56,
+     "dip_over_peak": 0.8190553312365871,
+     "peak": 1.002726735225883
+    },
+    {
+     "k": 1.0,
+     "sep_um": 3.7600000000000002,
+     "dip_over_peak": 0.7335601446552867,
+     "peak": 1.0000005353055375
+    },
+    {
+     "k": 1.05,
+     "sep_um": 3.96,
+     "dip_over_peak": 0.6481840318313615,
+     "peak": 1.0017967666836334
+    },
+    {
+     "k": 1.1,
+     "sep_um": 4.12,
+     "dip_over_peak": 0.5821418468324928,
+     "peak": 1.0048038246568112
+    },
+    {
+     "k": 1.15,
+     "sep_um": 4.32,
+     "dip_over_peak": 0.5040169372547065,
+     "peak": 1.009060242244867
+    },
+    {
+     "k": 1.2000000000000002,
+     "sep_um": 4.5200000000000005,
+     "dip_over_peak": 0.43169764584982034,
+     "peak": 1.012910122429489
+    },
+    {
+     "k": 1.25,
+     "sep_um": 4.68,
+     "dip_over_peak": 0.37830904634243523,
+     "peak": 1.015292178110087
+    },
+    {
+     "k": 1.3,
+     "sep_um": 4.88,
+     "dip_over_peak": 0.3172758505511072,
+     "peak": 1.0170553661553121
+    },
+    {
+     "k": 1.35,
+     "sep_um": 5.08,
+     "dip_over_peak": 0.26248038937759666,
+     "peak": 1.0174612455436967
+    },
+    {
+     "k": 1.4,
+     "sep_um": 5.28,
+     "dip_over_peak": 0.21376631306959848,
+     "peak": 1.0165256051521705
+    },
+    {
+     "k": 1.4500000000000002,
+     "sep_um": 5.44,
+     "dip_over_peak": 0.17901043731593752,
+     "peak": 1.0150023564055968
+    },
+    {
+     "k": 1.5,
+     "sep_um": 5.64,
+     "dip_over_peak": 0.1406305870777722,
+     "peak": 1.0123774077458922
+    },
+    {
+     "k": 1.5500000000000003,
+     "sep_um": 5.84,
+     "dip_over_peak": 0.10763049563693736,
+     "peak": 1.0093572203799706
+    },
+    {
+     "k": 1.6,
+     "sep_um": 6.0,
+     "dip_over_peak": 0.08492542128667195,
+     "peak": 1.0069394647050949
+    },
+    {
+     "k": 1.65,
+     "sep_um": 6.2,
+     "dip_over_peak": 0.06093100234968151,
+     "peak": 1.0042163030904434
+    },
+    {
+     "k": 1.7000000000000002,
+     "sep_um": 6.4,
+     "dip_over_peak": 0.041530616517980436,
+     "peak": 1.0020692226060923
+    },
+    {
+     "k": 1.75,
+     "sep_um": 6.5600000000000005,
+     "dip_over_peak": 0.02909373462934207,
+     "peak": 1.0008694054989433
+    },
+    {
+     "k": 1.8000000000000003,
+     "sep_um": 6.76,
+     "dip_over_peak": 0.017086608122876094,
+     "peak": 1.000111242326138
+    },
+    {
+     "k": 1.85,
+     "sep_um": 6.96,
+     "dip_over_peak": 0.008628851132064345,
+     "peak": 1.0000492559025436
+    },
+    {
+     "k": 1.9,
+     "sep_um": 7.12,
+     "dip_over_peak": 0.004122893476182682,
+     "peak": 1.0000036363029698
+    },
+    {
+     "k": 1.9500000000000002,
+     "sep_um": 7.32,
+     "dip_over_peak": 0.0009244660694966596,
+     "peak": 1.0002583564844179
+    },
+    {
+     "k": 2.0,
+     "sep_um": 7.5200000000000005,
+     "dip_over_peak": 1.0692610997097684e-06,
+     "peak": 1.0012625309040297
+    }
+   ]
+  }
+ },
+ "polarizer": {
+  "info": {
+   "kind": "gif",
+   "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingopt_polarizer.gif",
+   "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingopt_polarizer_thumb.jpg",
+   "bytes": 2636689,
+   "thumb_bytes": 45030,
+   "size": [
+    1000,
+    492
+   ],
+   "frames": 31,
+   "fps": 10,
+   "colors": 256,
+   "thumb_frame": 15,
+   "sha256": "41ed9e9497a54164a50650674bc51949df09afe3b2c6707a6f10f12b36cfc2e9"
+  },
+  "title": "偏光で金属のテカりを消す",
+  "ops": [
+   "jones_element",
+   "jones_apply",
+   "stokes_from_jones",
+   "mueller_element",
+   "mueller_apply",
+   "defect_scratch",
+   "surface_texture",
+   "image_formation",
+   "draw_circle"
+  ],
+  "facts": {
+   "specular_at_0": 1.0,
+   "specular_at_90": 3.749399456654644e-33,
+   "iou_at_0": 0.14039125431530494,
+   "iou_at_90": 0.7865168539325843,
+   "clipped_at_0": 0.1814453125,
+   "clipped_at_90": 0.0,
+   "detected_at_0": true,
+   "detected_at_90": true,
+   "rows": [
+    {
+     "angle": 0.0,
+     "spec": 1.0,
+     "diff": 0.5,
+     "iou": 0.14039125431530494,
+     "det": true,
+     "sat_frac": 0.1814453125,
+     "lobe_max": 1.0
+    },
+    {
+     "angle": 6.0,
+     "spec": 0.9890738003669026,
+     "diff": 0.5,
+     "iou": 0.1413673232908459,
+     "det": true,
+     "sat_frac": 0.179375,
+     "lobe_max": 1.0
+    },
+    {
+     "angle": 12.0,
+     "spec": 0.9567727288213007,
+     "diff": 0.5,
+     "iou": 0.15058823529411763,
+     "det": true,
+     "sat_frac": 0.17265625,
+     "lobe_max": 1.0
+    },
+    {
+     "angle": 18.0,
+     "spec": 0.9045084971874735,
+     "diff": 0.5,
+     "iou": 0.1638755980861244,
+     "det": true,
+     "sat_frac": 0.1603515625,
+     "lobe_max": 1.0
+    },
+    {
+     "angle": 24.0,
+     "spec": 0.834565303179429,
+     "diff": 0.5,
+     "iou": 0.20654911838790932,
+     "det": true,
+     "sat_frac": 0.143359375,
+     "lobe_max": 1.0
+    },
+    {
+     "angle": 30.0,
+     "spec": 0.7500000000000002,
+     "diff": 0.5,
+     "iou": 0.27522935779816515,
+     "det": true,
+     "sat_frac": 0.1228515625,
+     "lobe_max": 1.0
+    },
+    {
+     "angle": 36.0,
+     "spec": 0.6545084971874737,
+     "diff": 0.5,
+     "iou": 0.35014409221902015,
+     "det": true,
+     "sat_frac": 0.0963671875,
+     "lobe_max": 1.0
+    },
+    {
+     "angle": 42.0,
+     "spec": 0.5522642316338268,
+     "diff": 0.5,
+     "iou": 0.4918300653594771,
+     "det": true,
+     "sat_frac": 0.063515625,
+     "lobe_max": 1.0
+    },
+    {
+     "angle": 48.0,
+     "spec": 0.44773576836617335,
+     "diff": 0.5,
+     "iou": 0.7740112994350282,
+     "det": true,
+     "sat_frac": 0.0223046875,
+     "lobe_max": 1.0
+    },
+    {
+     "angle": 54.0,
+     "spec": 0.34549150281252633,
+     "diff": 0.5,
+     "iou": 0.7712177121771218,
+     "det": true,
+     "sat_frac": 0.000234375,
+     "lobe_max": 0.9991476392079915
+    },
+    {
+     "angle": 60.0,
+     "spec": 0.2500000000000001,
+     "diff": 0.5,
+     "iou": 0.7783985102420856,
+     "det": true,
+     "sat_frac": 0.0,
+     "lobe_max": 0.8772965644103957
+    },
+    {
+     "angle": 66.0,
+     "spec": 0.16543469682057088,
+     "diff": 0.5,
+     "iou": 0.7798507462686567,
+     "det": true,
+     "sat_frac": 0.0,
+     "lobe_max": 0.778738280038685
+    },
+    {
+     "angle": 72.0,
+     "spec": 0.09549150281252629,
+     "diff": 0.5,
+     "iou": 0.7802607076350093,
+     "det": true,
+     "sat_frac": 0.0,
+     "lobe_max": 0.7088604580795173
+    },
+    {
+     "angle": 78.0,
+     "spec": 0.0432272711786996,
+     "diff": 0.5,
+     "iou": 0.7850467289719626,
+     "det": true,
+     "sat_frac": 0.0,
+     "lobe_max": 0.6598806978521532
+    },
+    {
+     "angle": 84.0,
+     "spec": 0.010926199633097176,
+     "diff": 0.5,
+     "iou": 0.7865168539325843,
+     "det": true,
+     "sat_frac": 0.0,
+     "lobe_max": 0.6326558033602243
+    },
+    {
+     "angle": 90.0,
+     "spec": 3.749399456654644e-33,
+     "diff": 0.5,
+     "iou": 0.7865168539325843,
+     "det": true,
+     "sat_frac": 0.0,
+     "lobe_max": 0.624309122601462
+    },
+    {
+     "angle": 96.0,
+     "spec": 0.010926199633097197,
+     "diff": 0.5,
+     "iou": 0.7865168539325843,
+     "det": true,
+     "sat_frac": 0.0,
+     "lobe_max": 0.6326558033602244
+    },
+    {
+     "angle": 102.0,
+     "spec": 0.04322727117869957,
+     "diff": 0.5,
+     "iou": 0.7850467289719626,
+     "det": true,
+     "sat_frac": 0.0,
+     "lobe_max": 0.659880697852153
+    },
+    {
+     "angle": 108.0,
+     "spec": 0.09549150281252625,
+     "diff": 0.5,
+     "iou": 0.7802607076350093,
+     "det": true,
+     "sat_frac": 0.0,
+     "lobe_max": 0.7088604580795169
+    },
+    {
+     "angle": 114.0,
+     "spec": 0.16543469682057094,
+     "diff": 0.5,
+     "iou": 0.7798507462686567,
+     "det": true,
+     "sat_frac": 0.0,
+     "lobe_max": 0.7787382800386847
+    },
+    {
+     "angle": 120.0,
+     "spec": 0.24999999999999978,
+     "diff": 0.5,
+     "iou": 0.7783985102420856,
+     "det": true,
+     "sat_frac": 0.0,
+     "lobe_max": 0.8772965644103952
+    },
+    {
+     "angle": 126.0,
+     "spec": 0.3454915028125261,
+     "diff": 0.5,
+     "iou": 0.7712177121771218,
+     "det": true,
+     "sat_frac": 0.000234375,
+     "lobe_max": 0.9991476392079911
+    },
+    {
+     "angle": 132.0,
+     "spec": 0.44773576836617335,
+     "diff": 0.5,
+     "iou": 0.7740112994350282,
+     "det": true,
+     "sat_frac": 0.0223046875,
+     "lobe_max": 1.0
+    },
+    {
+     "angle": 138.0,
+     "spec": 0.5522642316338265,
+     "diff": 0.5,
+     "iou": 0.4918300653594771,
+     "det": true,
+     "sat_frac": 0.063515625,
+     "lobe_max": 1.0
+    },
+    {
+     "angle": 144.0,
+     "spec": 0.6545084971874736,
+     "diff": 0.5,
+     "iou": 0.35014409221902015,
+     "det": true,
+     "sat_frac": 0.0963671875,
+     "lobe_max": 1.0
+    },
+    {
+     "angle": 150.0,
+     "spec": 0.7500000000000002,
+     "diff": 0.5,
+     "iou": 0.27522935779816515,
+     "det": true,
+     "sat_frac": 0.1228515625,
+     "lobe_max": 1.0
+    },
+    {
+     "angle": 156.0,
+     "spec": 0.8345653031794289,
+     "diff": 0.5,
+     "iou": 0.20654911838790932,
+     "det": true,
+     "sat_frac": 0.143359375,
+     "lobe_max": 1.0
+    },
+    {
+     "angle": 162.0,
+     "spec": 0.9045084971874735,
+     "diff": 0.5,
+     "iou": 0.1638755980861244,
+     "det": true,
+     "sat_frac": 0.1603515625,
+     "lobe_max": 1.0
+    },
+    {
+     "angle": 168.0,
+     "spec": 0.9567727288213007,
+     "diff": 0.5,
+     "iou": 0.15058823529411763,
+     "det": true,
+     "sat_frac": 0.17265625,
+     "lobe_max": 1.0
+    },
+    {
+     "angle": 174.0,
+     "spec": 0.9890738003669027,
+     "diff": 0.5,
+     "iou": 0.1413673232908459,
+     "det": true,
+     "sat_frac": 0.179375,
+     "lobe_max": 1.0
+    },
+    {
+     "angle": 180.0,
+     "spec": 1.0,
+     "diff": 0.5,
+     "iou": 0.14039125431530494,
+     "det": true,
+     "sat_frac": 0.1814453125,
+     "lobe_max": 1.0
+    }
+   ]
+  }
+ },
  "abcd_rays": {
   "info": {
    "kind": "gif",
    "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingopt_abcd_rays.gif",
    "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingopt_abcd_rays_thumb.jpg",
-   "bytes": 485383,
-   "thumb_bytes": 42109,
+   "bytes": 496979,
+   "thumb_bytes": 42126,
    "size": [
     1000,
     474
@@ -14,7 +568,7 @@
    "fps": 10,
    "colors": 256,
    "thumb_frame": 13,
-   "sha256": "86cff589a6287a47bede39d9ff50342be708187df952adb056f09dd457ccaaa0"
+   "sha256": "115f238b92b7b0629c481e93cfa7f3e02246b8867351062aaac24baddb29e0c1"
   },
   "title": "thin lens / ABCD 行列",
   "ops": [
@@ -469,327 +1023,6 @@
      "det": 1.0,
      "blur_mm": 0.618686868686868,
      "blur_px": 179.32952715561387
-    }
-   ]
-  }
- },
- "polarizer": {
-  "info": {
-   "kind": "gif",
-   "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingopt_polarizer.gif",
-   "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingopt_polarizer_thumb.jpg",
-   "bytes": 2928918,
-   "thumb_bytes": 43039,
-   "size": [
-    1000,
-    564
-   ],
-   "frames": 31,
-   "fps": 10,
-   "colors": 64,
-   "thumb_frame": 15,
-   "sha256": "eb6282f072fcb819139fa68eedf3025152043afdaa478b77e6298b2f22392ccb"
-  },
-  "title": "偏光で金属のテカりを消す",
-  "ops": [
-   "jones_element",
-   "jones_apply",
-   "stokes_from_jones",
-   "mueller_element",
-   "mueller_apply",
-   "defect_scratch",
-   "surface_texture",
-   "image_formation",
-   "draw_circle"
-  ],
-  "facts": {
-   "specular_at_0": 1.0,
-   "specular_at_90": 3.749399456654644e-33,
-   "iou_at_0": 0.16630669546436286,
-   "iou_at_90": 0.7290322580645161,
-   "clipped_at_0": 0.18466264056643064,
-   "clipped_at_90": 0.0,
-   "detected_at_0": true,
-   "detected_at_90": true,
-   "rows": [
-    {
-     "angle": 0.0,
-     "spec": 1.0,
-     "diff": 0.5,
-     "iou": 0.16630669546436286,
-     "det": true,
-     "sat_frac": 0.18466264056643064,
-     "lobe_max": 1.0
-    },
-    {
-     "angle": 6.0,
-     "spec": 0.9890738003669026,
-     "diff": 0.5,
-     "iou": 0.1717062634989201,
-     "det": true,
-     "sat_frac": 0.1824500208246564,
-     "lobe_max": 1.0
-    },
-    {
-     "angle": 12.0,
-     "spec": 0.9567727288213007,
-     "diff": 0.5,
-     "iou": 0.1875681570338059,
-     "det": true,
-     "sat_frac": 0.17562994585589337,
-     "lobe_max": 1.0
-    },
-    {
-     "angle": 18.0,
-     "spec": 0.9045084971874735,
-     "diff": 0.5,
-     "iou": 0.20507166482910694,
-     "det": true,
-     "sat_frac": 0.16438463140358184,
-     "lobe_max": 1.0
-    },
-    {
-     "angle": 24.0,
-     "spec": 0.834565303179429,
-     "diff": 0.5,
-     "iou": 0.23102310231023102,
-     "det": true,
-     "sat_frac": 0.14689192003331944,
-     "lobe_max": 1.0
-    },
-    {
-     "angle": 30.0,
-     "spec": 0.7500000000000002,
-     "diff": 0.5,
-     "iou": 0.2753128555176337,
-     "det": true,
-     "sat_frac": 0.12484381507705122,
-     "lobe_max": 1.0
-    },
-    {
-     "angle": 36.0,
-     "spec": 0.6545084971874737,
-     "diff": 0.5,
-     "iou": 0.40613931523022434,
-     "det": true,
-     "sat_frac": 0.10011453561016244,
-     "lobe_max": 1.0
-    },
-    {
-     "angle": 42.0,
-     "spec": 0.5522642316338268,
-     "diff": 0.5,
-     "iou": 0.5160523186682521,
-     "det": true,
-     "sat_frac": 0.06726364014993752,
-     "lobe_max": 1.0
-    },
-    {
-     "angle": 48.0,
-     "spec": 0.44773576836617335,
-     "diff": 0.5,
-     "iou": 0.670440251572327,
-     "det": true,
-     "sat_frac": 0.02478134110787172,
-     "lobe_max": 1.0
-    },
-    {
-     "angle": 54.0,
-     "spec": 0.34549150281252633,
-     "diff": 0.5,
-     "iou": 0.7094339622641509,
-     "det": true,
-     "sat_frac": 0.002212619741774261,
-     "lobe_max": 1.0
-    },
-    {
-     "angle": 60.0,
-     "spec": 0.2500000000000001,
-     "diff": 0.5,
-     "iou": 0.7115869017632241,
-     "det": true,
-     "sat_frac": 0.0,
-     "lobe_max": 0.8995220623924656
-    },
-    {
-     "angle": 66.0,
-     "spec": 0.16543469682057088,
-     "diff": 0.5,
-     "iou": 0.7206632653061225,
-     "det": true,
-     "sat_frac": 0.0,
-     "lobe_max": 0.7860560211024716
-    },
-    {
-     "angle": 72.0,
-     "spec": 0.09549150281252629,
-     "diff": 0.5,
-     "iou": 0.7252888318356868,
-     "det": true,
-     "sat_frac": 0.0,
-     "lobe_max": 0.6922256573456327
-    },
-    {
-     "angle": 78.0,
-     "spec": 0.0432272711786996,
-     "diff": 0.5,
-     "iou": 0.7262210796915167,
-     "det": true,
-     "sat_frac": 0.0,
-     "lobe_max": 0.6321830990578253
-    },
-    {
-     "angle": 84.0,
-     "spec": 0.010926199633097176,
-     "diff": 0.5,
-     "iou": 0.7280927835051546,
-     "det": true,
-     "sat_frac": 0.0,
-     "lobe_max": 0.6057444999133987
-    },
-    {
-     "angle": 90.0,
-     "spec": 3.749399456654644e-33,
-     "diff": 0.5,
-     "iou": 0.7290322580645161,
-     "det": true,
-     "sat_frac": 0.0,
-     "lobe_max": 0.5969853650523802
-    },
-    {
-     "angle": 96.0,
-     "spec": 0.010926199633097197,
-     "diff": 0.5,
-     "iou": 0.7280927835051546,
-     "det": true,
-     "sat_frac": 0.0,
-     "lobe_max": 0.6057444999133986
-    },
-    {
-     "angle": 102.0,
-     "spec": 0.04322727117869957,
-     "diff": 0.5,
-     "iou": 0.7262210796915167,
-     "det": true,
-     "sat_frac": 0.0,
-     "lobe_max": 0.6321830990578253
-    },
-    {
-     "angle": 108.0,
-     "spec": 0.09549150281252625,
-     "diff": 0.5,
-     "iou": 0.7252888318356868,
-     "det": true,
-     "sat_frac": 0.0,
-     "lobe_max": 0.6922256573456328
-    },
-    {
-     "angle": 114.0,
-     "spec": 0.16543469682057094,
-     "diff": 0.5,
-     "iou": 0.7206632653061225,
-     "det": true,
-     "sat_frac": 0.0,
-     "lobe_max": 0.7860560211024716
-    },
-    {
-     "angle": 120.0,
-     "spec": 0.24999999999999978,
-     "diff": 0.5,
-     "iou": 0.7115869017632241,
-     "det": true,
-     "sat_frac": 0.0,
-     "lobe_max": 0.8995220623924648
-    },
-    {
-     "angle": 126.0,
-     "spec": 0.3454915028125261,
-     "diff": 0.5,
-     "iou": 0.7094339622641509,
-     "det": true,
-     "sat_frac": 0.002212619741774261,
-     "lobe_max": 1.0
-    },
-    {
-     "angle": 132.0,
-     "spec": 0.44773576836617335,
-     "diff": 0.5,
-     "iou": 0.670440251572327,
-     "det": true,
-     "sat_frac": 0.02478134110787172,
-     "lobe_max": 1.0
-    },
-    {
-     "angle": 138.0,
-     "spec": 0.5522642316338265,
-     "diff": 0.5,
-     "iou": 0.5160523186682521,
-     "det": true,
-     "sat_frac": 0.06726364014993752,
-     "lobe_max": 1.0
-    },
-    {
-     "angle": 144.0,
-     "spec": 0.6545084971874736,
-     "diff": 0.5,
-     "iou": 0.40613931523022434,
-     "det": true,
-     "sat_frac": 0.10011453561016244,
-     "lobe_max": 1.0
-    },
-    {
-     "angle": 150.0,
-     "spec": 0.7500000000000002,
-     "diff": 0.5,
-     "iou": 0.2753128555176337,
-     "det": true,
-     "sat_frac": 0.12484381507705122,
-     "lobe_max": 1.0
-    },
-    {
-     "angle": 156.0,
-     "spec": 0.8345653031794289,
-     "diff": 0.5,
-     "iou": 0.23102310231023102,
-     "det": true,
-     "sat_frac": 0.14689192003331944,
-     "lobe_max": 1.0
-    },
-    {
-     "angle": 162.0,
-     "spec": 0.9045084971874735,
-     "diff": 0.5,
-     "iou": 0.20507166482910694,
-     "det": true,
-     "sat_frac": 0.16438463140358184,
-     "lobe_max": 1.0
-    },
-    {
-     "angle": 168.0,
-     "spec": 0.9567727288213007,
-     "diff": 0.5,
-     "iou": 0.1875681570338059,
-     "det": true,
-     "sat_frac": 0.17562994585589337,
-     "lobe_max": 1.0
-    },
-    {
-     "angle": 174.0,
-     "spec": 0.9890738003669027,
-     "diff": 0.5,
-     "iou": 0.1717062634989201,
-     "det": true,
-     "sat_frac": 0.1824500208246564,
-     "lobe_max": 1.0
-    },
-    {
-     "angle": 180.0,
-     "spec": 1.0,
-     "diff": 0.5,
-     "iou": 0.16630669546436286,
-     "det": true,
-     "sat_frac": 0.18466264056643064,
-     "lobe_max": 1.0
     }
    ]
   }
