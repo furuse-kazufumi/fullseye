@@ -1220,14 +1220,21 @@ TYPE_CHECKS = {
     "descriptor": lambda v: not isinstance(v, (tuple, list, dict))
     and len(_shape(v)) >= 1,
 
-    # flow = **3 次元変位の場**。消費側は無いので producer 4 つを実行(実測):
-    #   estimate_flow / nearest_neighbor_flow / smooth_flow -> (N,3) 散布
-    #   scene_flow_lk                                       -> (3,D,H,W) 組織化
-    # points と pointmap を分けているのと同じ「散布 / 組織化」の 2 形で、どちらも
-    # 3 成分が要。成分軸の位置が違う(末尾 / 先頭)ので両方を明示的に許す
-    "flow": lambda v: not _is_seq(v) and (
-        (len(_shape(v)) == 2 and _shape(v)[1] == 3)
-        or (len(_shape(v)) == 4 and _shape(v)[0] == 3)),
+    # flow は **1 つの型名の下に別物が 2 つ**同居していたので分けた。
+    #   flow_scattered (N,3)     — estimate_flow / nearest_neighbor_flow / smooth_flow
+    #   flow_dense     (3,D,H,W) — scene_flow_lk
+    # 分けた根拠は実測: 消費側 4 op(reprconv)の要求が**互いに排他**で、
+    # flow_magnitude / flow_to_rgbimage は "this op takes DENSE scene flow
+    # (3, D, H, W) …; got (160, 3)" と言い、flow_speed / flow_apply は
+    # "this op takes SCATTERED flow (N, 3) …; got (3, 12, 12, 12)" と言う。
+    # **どの 1 つの値も両方を満たせない**ので 1 型 1 述語では書けず、共有したままだと
+    # 片側 2 op が毎回 fail-closed して「頑健だから発見ゼロ」に化ける
+    # (counts / countrate、jones / stokes を分けたのと同じ判断)。
+    # points と pointmap の「散布 / 組織化」の対比もそのまま当てはまる。
+    "flow_scattered": lambda v: not _is_seq(v) and len(_shape(v)) == 2 \
+    and _shape(v)[1] == 3,
+    "flow_dense": lambda v: not _is_seq(v) and len(_shape(v)) == 4 \
+    and _shape(v)[0] == 3,
 
     # frame = frenet_frame の **(T, N, B) 各 (Npts,3) 単位ベクトル**。
     # 3 本が同じ点数で揃っていることが標構の意味そのもの(1 本でも欠けたら
