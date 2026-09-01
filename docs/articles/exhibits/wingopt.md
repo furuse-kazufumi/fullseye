@@ -5,13 +5,13 @@
 再生成: `py -3.11 tools/gen_wingopt_gallery.py`(展示単位なら `--exhibits <name,...>`)。
 図に焼かれた数字はすべて `optics` / `visiondesign` / `defectgen` / `visionlab` を実際に呼んだ実測値で、決定的です(`--verify` で SHA-256 一致を確認できます)。
 
-## 画素ピッチとサンプリング
+## 照明を変えると何が見えるか
 
-![画素ピッチとサンプリング](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingopt_pixel_pitch.gif)
+![照明を変えると何が見えるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingopt_illumination.gif)
 
-*↑ **画素ピッチとサンプリング** ―― 130 µm の傷を固定して画素ピッチだけを粗くすると、欠陥が **2 画素を割るのはピッチ 13.79 µm** (Nyquist の境界)で、実測の 50 % 検出が保つのはピッチ **13.32 µm** までです。拡大は最近傍なので**見えている四角は本物の画素**で、滑らかに見せるための補間は入れていません。 使用 op: `render_part`, `system_geometry`, `resolving_power`, `draw_polyline`。*
+*↑ **照明を変えると何が見えるか** ―― 同じ幾何の 60 µm の傷を、明視野風(明るい面に暗い傷)と暗視野風(暗い場に光る傷)で並べ、コントラストを掃きます。50 % 検出に届くのは明視野風が |contrast| **0.021**、暗視野風が **0.018** で、光学限界 32.53 µm は両方とも余裕で超えています —— **差はレンズではなく見せ方**です(これは `defectgen` の appearance モデル = 符号と露光であって、リング照明の光輸送計算ではありません)。 使用 op: `render_part`, `defect_scratch`, `image_formation`, `draw_polyline`。*
 
-<small>静止フレームでも読めます(静止サムネ: `https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingopt_pixel_pitch_thumb.jpg`)。40 フレーム / 10 fps / 1000×502 px / 0.70 MB。</small>
+<small>静止フレームでも読めます(静止サムネ: `https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingopt_illumination_thumb.jpg`)。33 フレーム / 10 fps / 1000×502 px / 0.33 MB。</small>
 
 ---
 
@@ -19,4 +19,4 @@
 
 | 展示 | 形式 | 画素 | フレーム | サイズ | SHA-256(先頭 16) |
 |---|---|---|---|---|---|
-| 画素ピッチとサンプリング | GIF | 1000×502 | 40 | 702 kB | `3e2f3fc929289acc` |
+| 照明を変えると何が見えるか | GIF | 1000×502 | 33 | 325 kB | `773d0b14fd804357` |

@@ -357,7 +357,7 @@ class Plot:
                                          color=C_RULE, width=1)
             s = xfmt % t
             self.items.append((px - _text_w(s, 11) / 2, y0 + h + 2, s, C_DIM, 11, False))
-        for t in (yticks or []):
+        for t in yticks:
             py = self.py(t)
             self.c = imagedraw.draw_line(self.c, (x0 + 1, py), (x0 + w - 2, py),
                                          color=(0.16, 0.18, 0.21), width=1)

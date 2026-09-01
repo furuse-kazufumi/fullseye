@@ -1286,8 +1286,17 @@ def _studio_main(win, size=(WIN_W, WIN_H)):
     return win
 
 
-def _maximize_mdi(win, sub):
-    """MDI サブウィンドウを最大化して「3D ビューアだけの画面」にする。"""
+def _maximize_mdi(win, sub, hide=("program", "variables", "pipeline", "display")):
+    """MDI サブウィンドウを最大化して「3D ビューアだけの画面」にする。
+
+    下の Program パネルを畳むと、ビューアの一辺が 400 px から 700 px 級になる
+    (``frame_rgb`` はウィジェットの短辺で正方形を描くため、パネルの高さが
+    そのまま 3D の解像度に効く)。"""
+    for k in hide:
+        d = win._docks.get(k)
+        if d is not None:
+            d.hide()
+    _pump(4)
     sub.showMaximized()
     _pump(8)
 
