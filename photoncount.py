@@ -813,8 +813,8 @@ def tcspc_coates_correct(hist, cycles):
     This is an **exact** inverse, not a linearisation: build a histogram from a
     known ``lambda`` through the forward model ``N_k = C * exp(-sum_{j<k}
     lambda_j) * (1 - exp(-lambda_k))`` and Coates returns ``lambda`` to machine
-    precision (measured max relative error 8.9e-16 in the tests, on a pile-up so
-    severe that the last bin was suppressed to 6.8% of its true counts).
+    precision (measured max relative error 1.6e-15 in the tests, on a pile-up so
+    severe that the last bin was suppressed to 14.8% of its true counts).
 
     *hist* is the 1-D measured histogram (counts per bin); *cycles* the number of
     excitation cycles (laser pulses) that produced it.
