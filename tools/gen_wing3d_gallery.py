@@ -2402,22 +2402,23 @@ def ex_slice_zsweep(log) -> dict:
             (924, 340, "「1 つ動かす」が軸で", C_TEXT, 12, True),
             (924, 358, "違う距離を意味する。", C_TEXT, 12, True),
         ])
-        c = _ruler(c, 18, 566, W - 200, 14, z / (n_z - 1), C_D,
+        c = _ruler(c, 18, 588, W - 200, 14, z / (n_z - 1), C_D,
                    "0.0 mm (z=0)", "%.1f mm (z=%d)" % (thick_mm, n_z - 1),
                    "z=%d  %.2f mm" % (z, z * sp[0]))
         # 添字 -> mm の対応(軸ごとに傾きが違う)
-        p = Plot(c, 60, 606, 640, 44, (0, 127), (0, 105),
+        p = Plot(c, 60, 652, 620, 58, (0, 127), (0, 105),
                  xlabel="添字(voxel)->", xticks=[0, 32, 64, 96, 127],
                  yticks=[0, 50, 100], xfmt="%d", yfmt="%d")
         p.series([0, n_z - 1], [0, (n_z - 1) * sp[0]], C_D, width=2)
         p.series([0, n_y - 1], [0, (n_y - 1) * sp[1]], C_E, width=2)
         p.marker(z, z * sp[0], C_D, size=5)
-        p.items.append((66, 592, "z 軸 %.2f mm/voxel" % sp[0], C_D, 11, True))
-        p.items.append((210, 592, "y / x 軸 %.2f mm/voxel" % sp[1], C_E, 11, True))
-        p.items.append((380, 592, "縦は mm", C_DIM, 11, False))
+        p.items.append((66, 634, "z 軸 %.2f mm/voxel" % sp[0], C_D, 11, True))
+        p.items.append((210, 634, "y / x 軸 %.2f mm/voxel" % sp[1], C_E, 11, True))
+        p.items.append((380, 634, "縦は mm(同じ添字でも進む距離が違う)", C_DIM, 11, False))
         c = p.done()
-        c = _footer(c, "使用 op: vol_window_level  — 合成 HU データ(実在の患者・"
-                       "スキャンではありません)", y_off=12)
+        c = _text(c, [(724, 660, "使用 op: vol_window_level", C_DIM, 12, False),
+                      (724, 680, "合成 HU データ(実在の患者・スキャン", C_DIM, 12, False),
+                      (724, 698, "ではありません)。seed 固定。", C_DIM, 12, False)])
         frames.append(c)
 
     info = _save_clip(frames, "wing3d_slice_zsweep", fps=15, thumb_index=n_z // 2, log=log)
