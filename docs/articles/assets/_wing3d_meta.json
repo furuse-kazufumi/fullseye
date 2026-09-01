@@ -28,9 +28,9 @@
         "full_MB": 56.623104,
         "part_MB": 0.677976,
         "memory_ratio": 83.51785903925803,
-        "t_full_ms_raw": 422.9015000164509,
-        "t_part_ms_raw": 1.8221000209450722,
-        "speedup_raw": 232.09565619625192,
+        "t_full_ms_raw": 418.1357999332249,
+        "t_part_ms_raw": 1.9038999453186989,
+        "speedup_raw": 219.62067962727528,
         "voxels_full": 7077888,
         "voxels_cropped": 84747,
         "voxel_ratio": 83.51785903925803,
@@ -63,7 +63,7 @@
       "gif_sha256": "8a3b89df7c2825356a60ae6656b732348c79a3e37b3a47bfb431a657281669a6",
       "mp4_sha256": "e24b848e36feb754e036a1348a904baa6f99e208c13c31cbe2b1141bf7713984",
       "exhibit": "domain",
-      "seconds": 17.60828229994513
+      "seconds": 17.328664799919352
     },
     {
       "name": "wing3d_boundary_shell",
@@ -160,12 +160,12 @@
           128.0,
           128.0
         ],
-        "volume_speedup_raw": 236.2892978455356,
-        "bbox_speedup_raw": 24.459578400050116,
-        "t_rle_volume_us_raw": 29.200222343206406,
-        "t_dense_volume_us_raw": 6899.700034409761,
-        "t_rle_bbox_us_raw": 44.60010677576065,
-        "t_dense_bbox_us_raw": 1090.899808332324,
+        "volume_speedup_raw": 239.92201339382157,
+        "bbox_speedup_raw": 45.3061977902117,
+        "t_rle_volume_us_raw": 29.099872335791588,
+        "t_dense_volume_us_raw": 6981.699960306287,
+        "t_rle_bbox_us_raw": 44.40010525286198,
+        "t_dense_bbox_us_raw": 2011.599950492382,
         "dense_elements": 16777216,
         "rle_elements": 59292,
         "union_voxels": 1508456,
@@ -184,7 +184,7 @@
       "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_rle_compression_thumb.jpg",
       "thumb_bytes": 53440,
       "exhibit": "rle",
-      "seconds": 3.075450100004673
+      "seconds": 3.2084957000333816
     },
     {
       "name": "wing3d_ct_windowing",
@@ -879,8 +879,8 @@
         ],
         "frames": 36,
         "elevation_deg": 12.0,
-        "render_seconds_total_raw": 2.3106609999667853,
-        "ms_per_projection_raw": 32.092513888427575,
+        "render_seconds_total_raw": 2.229206999996677,
+        "ms_per_projection_raw": 30.961208333287182,
         "mip_max": 0.8000001907348633,
         "xray_max": 87.39982604980469
       },
@@ -909,7 +909,7 @@
       "gif_sha256": "19d183d9e10214a4fdae707b654d8935832062065558f934d405d09c74868c6d",
       "mp4_sha256": "c44ae4d381a4236ab5fed93007a78a7c07312ac6d594b32d1aa5c33de8b12a59",
       "exhibit": "mip",
-      "seconds": 19.57273399992846
+      "seconds": 20.64056189986877
     },
     {
       "name": "wing3d_distance_transform",
