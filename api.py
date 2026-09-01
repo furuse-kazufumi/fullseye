@@ -382,6 +382,19 @@ from palette import (  # noqa: E402,F401
     semantic_palette, role_color, role_rgb8, diverging_lut,
     assert_not_red_green_pair, ROLES, ROLE_MARKERS, SCHEMES,
 )
+# 図注(figure annotation)の層。描画は imagedraw の 5 op(線・円・マーカー)
+# しか無く、**図に意味を載せる側**が空だった ― その穴を、図の生成器 6 本が各自の
+# 私的ヘルパーで埋めていた(実測の重複: _font 16 / _text 7 / _fill 5 / _legend 2)。
+# 文字は必ず幅を測ってから描き、収まらなければ黙って切らずに例外にする。
+import annotate  # noqa: E402  (text plates, arrows, legends, colour bars, axes)
+import opsannotate  # noqa: E402  (the annotate op ledger)
+from annotate import (  # noqa: E402,F401
+    measure_text, text_box, arrow, leader_line, label_points, crosshair,
+    legend_box, color_bar, scale_bar,
+    axes_transform, data_to_pixel, nice_ticks, axes_frame, grid_lines, ticks,
+    plot_series, overlay_labels, zoom_inset, compare_frame, panel_grid,
+    rounded_rect, filled_polygon, arc, ellipse,
+)
 # 描画を **ためてから一度に流す** 層。即時描画は呼んだ瞬間に絵になるので、そこから先は
 # 検査できない ― 文字がはみ出したかどうかは、ラスタ化後の画素からは判定できない。
 # コマンドの列で持てば、描く前に箱を測れて、列は JSON になるので図の差分が
