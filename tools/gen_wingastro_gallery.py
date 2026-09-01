@@ -795,18 +795,19 @@ def ex_clip_breakdown():
     p.line(xs, [r["clip_err"] for r in rows], C_RIGHT, width=3)
     p.markers(xs, [r["clip_err"] for r in rows], C_RIGHT)
     p.vline(0.5, C_WRONG, width=2)
-    p.text(260, 8, "汚染率と合成誤差 —— 折れ目は 50 %", size=17, anchor="ma")
-    p.text(96, 44, "%s κ-σ(中央値 + MAD)" % M["right"], C_RIGHT, 14)
-    p.text(96, 64, "%s 中央値" % M["reference"], C_REF, 14)
-    p.text(96, 84, "%s 単純平均" % M["neutral"], C_NEUTRAL, 14)
-    p.text(96, 108, "%s 中央値の破綻点 50 %%" % M["wrong"], C_WRONG, 14)
-    p.text(14, 496, "汚染フレームの割合", et.MUTED, 14)
-    shots.append(_fit(p.done(), 520))
+    p.text(p.w // 2, 6, "汚染率と合成誤差 —— 折れ目は 50 %", size=17,
+           anchor="ma")
+    p.text(96, 36, "%s κ-σ(中央値 + MAD)" % M["right"], C_RIGHT, 14)
+    p.text(96, 56, "%s 中央値" % M["reference"], C_REF, 14)
+    p.text(96, 76, "%s 単純平均" % M["neutral"], C_NEUTRAL, 14)
+    p.text(96, 100, "%s 中央値の破綻点 50 %%" % M["wrong"], C_WRONG, 14)
+    p.text(14, p.h - 22, "汚染フレームの割合 / 縦 = 誤差 (e-)", et.MUTED, 13)
+    fig = p.done()
+    shots.append(fig[:panel_px, :2 * panel_px + 10])
     labels.append("汚染率と誤差(折れ目は 50 %)")
 
     book = et.flipbook(shots, labels,
-                       title="σ クリップの破綻 —— 半数を超えると、"
-                             "クリップは正しい方を捨てる")
+                       title="σ クリップの破綻 —— 折れ目は 50 %")
     info = et.save_animation(book, "wingastro_clip_breakdown",
                              duration_ms=1000, hold_last_ms=3000)
     data = {"boost": boost, "n_frames": n,
