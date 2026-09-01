@@ -579,13 +579,14 @@ def synthesize_translation(shape=(64, 64), frames: int = 32, amplitude_px=0.5,
                          % (sigma,))
     seed_i = _count(seed, "seed", 0, (1 << 31) - 1)
 
-    cx = max(1, int(round(w / lam)))
-    cy = max(1, int(round(h / lam)))
+    cx = max(1, int(round(w / lam_x)))
+    cy = max(1, int(round(h / lam_y)))
     if 2 * cx >= w or 2 * cy >= h:
-        raise ValueError("synthesize_translation: wavelength_px=%g needs %d x %d "
-                         "cycles in a %dx%d frame, which is at or past Nyquist "
-                         "(the grating would not be resolved). Use a longer "
-                         "wavelength or a larger frame" % (lam, cx, cy, h, w))
+        raise ValueError("synthesize_translation: wavelength_px=(%g, %g) needs "
+                         "%d x %d cycles in a %dx%d frame, which is at or past "
+                         "Nyquist (the grating would not be resolved). Use a "
+                         "longer wavelength or a larger frame"
+                         % (lam_x, lam_y, cx, cy, h, w))
     yy, xx = np.mgrid[0:h, 0:w].astype(np.float64)
     base = off + 0.5 * con * (np.cos(2.0 * np.pi * cx * xx / w)
                               + np.cos(2.0 * np.pi * cy * yy / h))
