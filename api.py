@@ -382,6 +382,15 @@ from palette import (  # noqa: E402,F401
     semantic_palette, role_color, role_rgb8, diverging_lut,
     assert_not_red_green_pair, ROLES, ROLE_MARKERS, SCHEMES,
 )
+# 描画を **ためてから一度に流す** 層。即時描画は呼んだ瞬間に絵になるので、そこから先は
+# 検査できない ― 文字がはみ出したかどうかは、ラスタ化後の画素からは判定できない。
+# コマンドの列で持てば、描く前に箱を測れて、列は JSON になるので図の差分が
+# 「3 番目の text_box の文字列が変わった」まで言え、同じ列を別解像度へも流せる。
+import drawlist  # noqa: E402  (deferred draw-command list: inspect / diff / rescale)
+from drawlist import (  # noqa: E402,F401
+    DrawList, DrawListError, diff_command_lists, format_diff, flush_buffer,
+    default_text_metrics, COMMAND_SPECS, TEXT_ADVANCE_RATIO,
+)
 # 描画状態(色・線幅・線種・塗り)と、ラスタ描画。HALCON は装置に状態を持たせる
 # (set_color / set_draw / set_line_width / set_line_style)が、ここは**不変値**の
 # DrawStyle を正典にした ― 展示画像は再生成で SHA-256 が一致することが要件で、
