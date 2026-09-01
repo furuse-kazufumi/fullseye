@@ -446,11 +446,12 @@ def synth_starfield(shape=(128, 128), n_stars=30, flux_min=400.0, flux_max=9000.
     cflux = _num(cosmic_flux, "cosmic_flux", sign="non_negative")
     margin = _num(margin_px, "margin_px", sign="non_negative")
     s = _seed(seed)
+    fs = s if field_seed is None else _count(field_seed, "field_seed", 0)
     if 2.0 * margin >= min(h, w) - 1.0:
         raise ValueError("%s: margin_px=%g leaves no room in a %dx%d image"
                          % (op, margin, h, w))
 
-    rng = np.random.default_rng(s)
+    rng = np.random.default_rng(fs)
     sigma = fwhm / FWHM_PER_SIGMA
     alpha = fwhm / (2.0 * np.sqrt(2.0 ** (1.0 / beta) - 1.0))
 
