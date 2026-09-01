@@ -966,7 +966,37 @@ def envelope_spectrum(x, rate, low, high, order=4, n_peaks=5):
 
     Returns a dict: ``freqs``, ``magnitude``, ``peak_freq``, ``peak_amplitude``,
     ``peak_freqs`` / ``peak_amplitudes`` (the ``n_peaks`` largest, descending),
-    ``band``, ``envelope_mean``, ``resolution_hz``.
+    ``band``, ``envelope_mean``, ``resolution_hz``, plus two numbers that exist
+    because **this operator always returns a peak frequency, including when
+    there is nothing there**:
+
+    ``peak_prominence``
+        the peak divided by the median of the magnitude spectrum.
+    ``band_fraction``
+        the RMS of the band-passed signal divided by the RMS of the input — how
+        much of the record actually lives in the demodulation band.
+
+    Found by adversarial audit and not repaired by an exception, because there
+    is nothing invalid to refuse: a **constant** signal band-passed over
+    100-2000 Hz has an envelope made of rounding error, and this operator dutifully
+    reported ``peak_freq = 8.0000 Hz``. Nothing raised, nothing was NaN, and
+    ``8 Hz`` is a perfectly plausible number to write down. Measured, the four
+    cases separate on the returned numbers rather than on any invented
+    threshold:
+
+    ================  ========  =========  ===========  =============
+    input             peak Hz   peak amp   prominence   band_fraction
+    ================  ========  =========  ===========  =============
+    AM, defect 107    107.0000  4.997e-01     10018.6      9.999e-01
+    impulse + noise   107.0000  1.968e-01      9384.7      9.201e-01
+    white noise       128.0000  2.785e-02        365.2     3.745e-01
+    constant signal     8.0000  1.691e-12        173.0     1.995e-12
+    ================  ========  =========  ===========  =============
+
+    No cut-off is imposed here: a defect that is genuinely 20 dB into the noise
+    is a real finding and refusing it would be worse than reporting it. The
+    numbers are returned so the caller can see the difference between row 1 and
+    row 4, which ``peak_freq`` alone does not show.
 
     Measured on :func:`synthesize_bearing_signal` (25600 Hz, 1 s, 3 kHz carrier,
     107 Hz defect, ``m = 0.5``) demodulated over 2000-4000 Hz: ``peak_freq =
