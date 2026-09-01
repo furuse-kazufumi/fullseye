@@ -808,9 +808,10 @@ def ex_clip_breakdown():
     p.text(p.w // 2, 6, "縦 = 真値からの誤差 (e-) / 横 = 汚染フレームの割合",
            et.MUTED, 14, anchor="ma")
     p.text(96, 40, "%s κ-σ(中央値 + MAD、細線)" % M["right"], C_RIGHT, 14)
-    p.text(96, 60, "%s 中央値(太線・55 %% 以降で分かれる)" % M["baseline"],
+    p.text(96, 60, "%s 中央値(太線)—— **同じ場所で折れる**" % M["baseline"],
            c_med, 14)
-    p.text(96, 80, "%s 単純平均(破線)" % M["neutral"], C_NEUTRAL, 14)
+    p.text(96, 80, "%s 単純平均(破線)—— 汚染に比例して外れる" % M["neutral"],
+           C_NEUTRAL, 14)
     p.text(96, 104, "%s 中央値の破綻点 50 %%" % M["wrong"], C_WRONG, 14)
     fig = p.done()
     shots.append(fig[:panel_px, :2 * panel_px + 10])
