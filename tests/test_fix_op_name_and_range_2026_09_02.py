@@ -418,3 +418,115 @@ def test_image_and_region_ops_keep_the_canvas_shape():
         if isinstance(out, np.ndarray) and out.ndim == 2 and out.shape != v.shape:
             bad.append((op.name, out.shape))
     assert not bad, f"canvas shape changed: {bad}"
+
+
+# --------------------------------------------------------------------------- #
+# A8: (x,y) と (row,col) の取り違えは例外にならない — 規約をテストで固定する    #
+# --------------------------------------------------------------------------- #
+def test_imagemorph_takes_xy_and_xld_gives_rowcol():
+    """`imagemorph` は (x,y)、XLD / `fourierdesc.from_xld` は (row,col)。
+
+    取り違えても **例外は出ない**(どちらも (N,2) float)。ここでは
+    「(x,y) で渡したときだけモーフが正しい中間形状になる」ことを、
+    非対称な配置の円盤で位置を実測して固定する。
+    """
+    import imagemorph, fourierdesc
+
+    n = 96
+    yy, xx = np.mgrid[0:n, 0:n].astype(np.float64)
+    A = np.clip(0.2 + 0.7 * (((yy - 30) ** 2 + (xx - 30) ** 2) < 18 ** 2), 0, 1)
+    B = np.clip(0.2 + 0.7 * (((yy - 62) ** 2 + (xx - 66) ** 2) < 18 ** 2), 0, 1)
+    t = np.linspace(0, 2 * np.pi, 12, endpoint=False)
+    rcA = np.column_stack([30 + 18 * np.sin(t), 30 + 18 * np.cos(t)])   # (row,col)
+    rcB = np.column_stack([62 + 18 * np.sin(t), 66 + 18 * np.cos(t)])
+
+    # from_xld は (row,col) のまま返す(規約)
+    xld = {"shape": (n, n), "cs": [rcA]}
+    assert np.allclose(fourierdesc.from_xld(xld), rcA)
+
+    def _centroid(img):
+        w = np.clip(img - 0.2, 0, None)
+        r, c = np.nonzero(w > 1e-9)
+        ww = w[r, c]
+        return float((r * ww).sum() / ww.sum()), float((c * ww).sum() / ww.sum())
+
+    right = imagemorph.morph(A, B, rcA[:, ::-1], rcB[:, ::-1], 0.5, method="affine")
+    wrong = imagemorph.morph(A, B, rcA, rcB, 0.5, method="affine")     # 例外は出ない
+    assert wrong.shape == right.shape
+
+    r_ok, c_ok = _centroid(right)
+    # 正しい (x,y) なら中間形状の重心は A(30,30) と B(62,66) のほぼ中点 (46,48)
+    assert abs(r_ok - 46.0) < 4.0 and abs(c_ok - 48.0) < 4.0, (r_ok, c_ok)
+    # 取り違えた側は別の絵になる(= 黙って間違う)
+    assert float(np.mean(np.abs(right - wrong))) > 1e-3
+
+
+# --------------------------------------------------------------------------- #
+# A7 / A9 / A10: 実装は正しく、暗黙だった呼び出し規約をテストで固定する         #
+# --------------------------------------------------------------------------- #
+@pytest.mark.parametrize("name", ["rotate_img", "rotate_image"])
+def test_rotate_keeps_the_canvas_and_reflects_the_border(name):
+    """A7: reshape=False(shape 不変)+ mode="reflect"(枠外は鏡映)。
+
+    deskew 用途では隅に鏡文字が写り込むので向かない —— 実装ではなく **規約**を
+    固定する(docstring と一致していることの確認)。四隅が背景定数で埋まって
+    いない = 鏡映であることを、暗い帯を入れた画像で測る。
+    """
+    n = 64
+    v = np.full((n, n), 0.85)
+    v[:, :6] = 0.05                                   # 左端に暗い帯
+    out = np.asarray(RT[name](v, 0.9, 0.5), np.float64)   # a=0.9 -> +36 度
+    assert out.shape == v.shape, "回転でキャンバスが変わっている(reshape=True?)"
+    corners = np.array([out[0, 0], out[0, -1], out[-1, 0], out[-1, -1]])
+    assert np.all(corners > 0.0), "四隅が定数 0 で埋まっている(mode='constant'?)"
+    # 鏡映なら四隅にも元画像の値域(暗い帯 or 明るい地)しか出てこない
+    assert out.min() >= -1e-9 and out.max() <= 1 + 1e-9
+
+
+def test_find_shape_model_angle_is_the_ndimage_rotate_angle():
+    """A9: 返る `angle` は `ndimage.rotate(template, angle)` に渡す角度そのもの。
+
+    画面座標(row 下向き / col 右向き)では **反時計回りが正**。「上が 0°・時計回りが
+    正」の作図規約でそのまま描くと鏡像になる —— その符号の向きをここで固定する。
+    """
+    import shapematch as SM
+
+    T = np.zeros((41, 41))
+    T[8:33, 18:23] = 1.0
+    T[28:33, 18:34] = 1.0                              # 非対称な L 字
+    model = SM.create_shape_model(T, 0.1)
+    for true_ang in (-30, -15, 0, 15, 30):
+        scene = np.zeros((101, 101))
+        scene[30:71, 30:71] = ndimage.rotate(T, true_ang, reshape=False)
+        got = SM.find_shape_model(model, scene, min_score=0.2, angles=range(-40, 41, 5))
+        assert got["angle"] == pytest.approx(float(true_ang)), (true_ang, got["angle"])
+        assert got["score"] > 0.9
+
+    # 画素座標での向き: 中心の真上 (dr,dc)=(-40,0) は +30 度で左上へ動く(反時計回り)
+    m = np.zeros((101, 101))
+    m[10, 50] = 1.0
+    q = ndimage.rotate(m, 30, reshape=False, order=1)
+    ys, xs = np.nonzero(q > 1e-6)
+    w = q[ys, xs]
+    dr = float((ys * w).sum() / w.sum()) - 50.0
+    dc = float((xs * w).sum() / w.sum()) - 50.0
+    th = np.deg2rad(30.0)
+    assert dr == pytest.approx(-40 * np.cos(th), abs=0.5)
+    assert dc == pytest.approx(-40 * np.sin(th), abs=0.5)   # 列が **減る** = 反時計回り
+
+
+def test_apply_cmap_normalises_inside_the_array_it_is_given():
+    """A10: `vmin`/`vmax` を省くと **渡した配列の中で**正規化する。
+
+    1 点ずつ呼ぶと min==max になり、**値によらず同じ色**が返る(警告も例外も無い)。
+    バグではなく規約なので、そう書いて固定する + 逃げ道(vmin/vmax 明示)も固定する。
+    """
+    import imgio
+
+    colours = [tuple(np.round(imgio.apply_cmap(np.array([[v]]), "viridis").ravel(), 6))
+               for v in (0.0, 0.3, 0.9)]
+    assert len(set(colours)) == 1, f"1 点ずつでも色が変わった: {colours}"
+
+    fixed = [tuple(imgio.apply_cmap(np.array([[v]]), "viridis", vmin=0.0, vmax=1.0).ravel())
+             for v in (0.0, 0.3, 0.9)]
+    assert len(set(fixed)) == 3, "vmin/vmax を明示しても色が固定されている"
