@@ -1623,9 +1623,12 @@ def octave_spectrum(x, rate, fraction=3, f_min=22.0, f_max=None, ref=1.0,
     Energy is accumulated from the single-sided periodogram into the bands
     :func:`octave_bands` defines, so the band powers sum to the signal's
     mean-square exactly (up to the bins outside the requested range). That
-    identity is the test: measured on white noise at 16 kHz over 22 Hz - 8 kHz
-    at 1/3 octave, the band powers sum to 0.9967 of ``mean(x**2)``, the shortfall
-    being entirely the bins below 20 Hz and above the last band edge.
+    identity is the test: measured on 16384 samples of white noise at 16 kHz
+    over 22 Hz - 8 kHz at 1/3 octave, the band powers sum to **0.996367** of
+    ``mean(x**2)`` while ``total_power`` (which counts every FFT bin) comes to
+    **1.000000** of it. The 0.36 % difference is exactly the bins outside the
+    requested range, and returning both numbers is what makes that visible
+    instead of leaving a reader to wonder where the energy went.
 
     **The reference is explicit and there is no implicit 20 uPa.** ``ref`` is an
     amplitude in the same units as the signal, and the default 1.0 means "dB
