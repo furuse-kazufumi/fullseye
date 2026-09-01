@@ -788,6 +788,19 @@ def catalog():
     for n, m in opsinterferometry.OPSINTERFEROMETRY.items():
         if m["func"] is not None:
             ops.append((n, "interferometry", list(m["in"]), m["out"], m["func"]))
+    # 欠陥 → CAD 面の逆写像(opscadmap 台帳)。**新しい型語彙を 1 つも作らない**
+    # 判断: 4 op の入出力は既存の mesh / keypoints / points / labels / table /
+    # indices にそのまま収まる。代わりにこの族が持ち込んだのは
+    # **`mesh` 型の述語と種**で、2026-09-02 まで mesh は TYPE_CHECKS に述語が
+    # 無く(宣言 out=mesh の op が何を返しても TYPEMISS にならない穴)、
+    # make_generators にも種が無かった(実測。dead な _mesh ヘルパだけがあった)。
+    # mesh を 1 引数で受ける形にしてあるので、`mesh_to_voxel(vertices, faces)`
+    # のように (V,F) を 2 位置引数へ割る既存 op が「2 つ目が束縛できず永久に
+    # スキップ」になる罠は踏まない。
+    import opscadmap
+    for n, m in opscadmap.OPSCADMAP.items():
+        if m["func"] is not None:
+            ops.append((n, "cadmap", list(m["in"]), m["out"], m["func"]))
     return ops
 
 
