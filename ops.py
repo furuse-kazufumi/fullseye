@@ -44,6 +44,14 @@ POINTS = "points"                     # (N,3) point cloud
 SIGNAL = "signal"                     # 1-D array (profiles, spectra, sensor series)
 MATRIX = "matrix"                     # general 2-D numeric matrix (linear algebra)
 CIMAGE = "cimage"                     # 2-D complex image (HALCON complex format)
+# 以下 3 つは 2026-09-01 の光子計数 / ライトフィールド族と一緒に入った。
+# **新設の sort なので既存 sort の候補リストは 1 つも動かない**(= ゲノム →
+# op の写像は不変。docs/WAVE0_STABLE_SLOTS.md の安全規約)。入口 op は
+# image を入力に取るため既存 sort の候補を変えてしまう — したがって
+# この 3 sort は入口ごと wide 語彙(IMGEVOLVE_WIDE_VOCAB=1)側に置く。
+LIGHTFIELD = "lightfield"             # 4-D (V,U,H,W) light field
+COUNTS = "counts"                     # 非負の 1-D 光子カウント/レート
+HISTCUBE = "histcube"                 # (H,W,T) 到達時刻ヒストグラム立方体
 
 
 # Matching context: the locate problem sets a reference template here before scoring
