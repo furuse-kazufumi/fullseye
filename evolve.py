@@ -85,6 +85,15 @@ def run(problem, workdir="out/worklog/imgevolve", gens=50, pop=24, seed=0, out=N
     rg = base.get("random", {}).get("genome")
     if rg and len(rg) == ops.GENOME_LEN:
         popm[0] = np.asarray(rg, np.float64)
+    if seed_baselines and pop >= 3:
+        # 既知の baseline を初期集団に置く(狭い sort では乱数では届かないため)。
+        # 表現できない baseline は None が返るので黙って飛ばす — 近い op で
+        # 代用したら種が別物になり、実験の意味が変わる。
+        for slot, spec in ((1, []), (2, prob.hand_stages())):
+            g = ops.genome_for_names(
+                [{"op": s.op, "a": s.a, "b": s.b} for s in spec], prob.in_sort)
+            if g is not None:
+                popm[slot] = g
 
     champ, champ_tr = popm[0].copy(), train_fit(popm[0])
     history = []
