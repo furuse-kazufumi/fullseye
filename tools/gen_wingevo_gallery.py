@@ -1015,6 +1015,11 @@ def ex_seed_spread(data, log=print):
                 (W - 286, y0 + 186,
                  f"恒等 {sw[n]['trivial_locked']:.4f}", C_IDENT, 13, True),
             ]
+            for v in np.linspace(0, hi, 5):          # 縦軸の目盛りを実数で書く
+                items.append((114, p.Y(v), f"{v:.2f}", C_DIM, 11, False, "rm", True))
+            for r in runs:                            # 横軸 = seed 番号
+                items.append((p.X(r["seed"]), y0 + 214, str(r["seed"]),
+                              C_DIM, 11, False, "ma", True))
             below = int(np.sum(arr < sw[n]["trivial_locked"]))
             if below:
                 items.append((W - 286, y0 + 210,
