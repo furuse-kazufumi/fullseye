@@ -424,7 +424,9 @@ _CATALOG = {
     "reconstruct": [  # 点群 → 表面再構成(voxel を介さず直接メッシュ/境界)
         ("poisson_lite", "recon3d", ["points"], "mesh", False),
         ("alpha_shape_mesh", "recon3d", ["points"], "mesh", False),
-        ("alpha_shape_boundary", "recon3d", ["points"], "points", False),
+        # 返るのは点ではなく **入力点への添字**(docstring どおり (K,) int64)。
+        # points((N,3))と宣言していたのは型の嘘 — indices が正しい語彙
+        ("alpha_shape_boundary", "recon3d", ["points"], "indices", False),
         ("estimate_alpha", "recon3d", ["points"], "measurement", False),
     ],
     "curve": [  # 空間曲線の微分幾何(曲率・捩率・Frenet・弧長・スプライン平滑)
