@@ -1623,6 +1623,17 @@ def octave_bands(fraction=3, f_min=22.0, f_max=22050.0, base=10):
     computed, which is why ``centers`` reads 1000.0, 1258.925, 1584.893 rather
     than the 1000, 1250, 1600 a published series would give.
 
+    **The parity of ``fraction`` changes where 1 kHz sits, and this surprises
+    people.** With an odd ``b`` (1/1, 1/3) there is a band *centred* on exactly
+    1000.0 Hz. With an even ``b`` (1/2, 1/6, 1/12, 1/24) the offset in the
+    exponent means there is **no 1 kHz band at all** — instead 1000.0 Hz is
+    exactly a band *edge*, shared by two bands. Measured across
+    ``fraction`` = 1, 2, 3, 6, 12, 24: a centre lands on 1000.0 for 1 and 3, and
+    a lower edge lands on it for 2, 6, 12 and 24, in every case to within
+    ``rtol=1e-12``. That is the defining construction, not an artefact, and it
+    matters when a level is quoted "at 1 kHz": in an even system that number
+    comes from one of two adjacent half-bands, not from a band on the tone.
+
     ``nominal`` is the exact centre rounded to three significant figures, for
     labelling only. It is a rounding, **not** the published nominal series, and
     it differs from it: measured, the 1/1-octave centres round to 31.6, 63.1,
