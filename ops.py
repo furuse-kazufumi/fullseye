@@ -955,6 +955,49 @@ def pipeline_stages(genome, start: str = IMAGE) -> list[dict]:
             for s in decode(genome, start) if s.op != "identity"]
 
 
+def genome_for_names(stage_specs, start: str = IMAGE):
+    """名前で書いたパイプライン → それを decode するゲノム(不可能なら ``None``)。
+
+    :func:`decode` の逆写像。``decode`` は各スロットで
+    ``cands[int(t*len(cands))]`` を引くので、目的の op が候補リストの何番目かが
+    分かれば ``t`` を作れる(区間の中央を取る)。埋まらないスロットは
+    ``identity`` で詰める。
+
+    **何のためか**: 進化を **既知の baseline から始められる**ようにするため。
+    候補が狭い sort では、ランダム初期化で「何もしない」パイプラインに当たる
+    確率が ``(1/候補数)**スロット数`` になり事実上ゼロで、進化が trivial にすら
+    到達できない(実測 2026-09-01: 点群 25 候補 × 6 スロットで 4e-9。3200 評価の
+    探索でも locked 0.436 と、何もしない 0.675 を下回った)。そのままでは
+    「進化は baseline を超えたか」の比較が空虚になる。
+
+    ``None`` を返すのは、その op がそのスロットの sort の候補に居ないとき
+    (= そのパイプラインはこの encoding では表現できない)。**近い op で
+    代用しない** — 別物を種にしたら実験の意味が変わる。
+    """
+    slots = list(stage_specs)
+    if len(slots) > N_SLOTS:
+        return None
+    g = np.zeros(GENOME_LEN, np.float64)
+    sort = start
+    for i in range(N_SLOTS):
+        if i < len(slots):
+            spec = slots[i]
+            name = spec[0] if isinstance(spec, tuple) else spec["op"]
+            a = float(spec[1] if isinstance(spec, tuple) else spec.get("a", 0.5))
+            b = float(spec[2] if isinstance(spec, tuple) else spec.get("b", 0.5))
+        else:
+            name, a, b = "identity", 0.5, 0.5
+        cands = _candidates(sort)
+        idx = next((j for j, o in enumerate(cands) if o.name == name), None)
+        if idx is None:
+            return None                       # この encoding では表現できない
+        g[3 * i] = (idx + 0.5) / len(cands)   # その区間の中央 = 端の丸めに強い
+        g[3 * i + 1], g[3 * i + 2] = a, b
+        if name != "identity":
+            sort = _BY_NAME[name].out_sort
+    return g
+
+
 def decode_by_names(stage_specs) -> list[Stage]:
     """Reconstruct a pipeline from op NAMES (independent of registry index order).
 
