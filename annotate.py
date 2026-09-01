@@ -1105,6 +1105,13 @@ def nice_ticks(lo, hi, n=5, scale="linear"):
     return vals[(vals >= lo - eps) & (vals <= hi + eps)]
 
 
+def _auto_ticks(axes, which):
+    """軸の scale に合った既定の目盛り(``ticks``/``grid_lines`` が使う)。"""
+    lim = axes["xlim"] if which == "x" else axes["ylim"]
+    scale = axes.get("xscale" if which == "x" else "yscale", "linear")
+    return nice_ticks(lim[0], lim[1], scale=scale)
+
+
 def axes_frame(img, axes, color="neutral", width=1, box=True, scheme="okabe_ito",
                style=None):
     """軸の枠(``box=True`` で四辺、False で左と下の 2 辺だけ)。
