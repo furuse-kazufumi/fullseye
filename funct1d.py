@@ -566,39 +566,151 @@ def create_funct_1d_pairs(x, y):
 # matching
 # --------------------------------------------------------------------------- #
 
+#: Two lags whose scores differ by no more than this are treated as one answer
+#: by :func:`match_funct_1d_trans` (see its docstring for the measured band the
+#: value sits in). The score is a correlation coefficient, so this is an
+#: absolute tolerance on a quantity that lives in ``[-1, 1]``.
+_MATCH_TIE_ATOL = 1e-6
+
+
+def _match_scores(ac, bc):
+    """Correlation coefficient of *ac* against *bc* placed at every integer lag.
+
+    *ac* and *bc* must already be mean-subtracted (Pearson is invariant to that,
+    and centring keeps the sum-of-squares accumulation below well conditioned).
+    Returns ``(lags, r)`` where ``lags[k]`` is the shift and ``r[k]`` is the
+    coefficient over the fixed reference window ``0 .. len(ac) - 1``, with *bc*
+    end-held (``bc[0]`` to the left, ``bc[-1]`` to the right) outside its domain.
+
+    Every lag is scored on the *same* ``len(ac)`` samples, so ``r`` is comparable
+    across lags by construction; there is no shrinking overlap to normalise and
+    no short-overlap degeneracy to guard against. Vectorised via prefix sums —
+    ``tests/test_funct1d.py`` pins it against the direct per-lag definition.
+    """
+    n1, n2 = ac.size, bc.size
+    lags = np.arange(-(n2 - 1), n1)
+    # Layout of the end-held y2 on the reference window, per lag:
+    #   [0, head)      -> bc[0]      (window is left of y2's domain)
+    #   [head, tail0)  -> bc[i-lag]  (the genuine overlap)
+    #   [tail0, n1)    -> bc[-1]     (window is right of y2's domain)
+    head = np.clip(lags, 0, n1)
+    tail0 = np.clip(lags + n2, 0, n1)
+    n_tail = n1 - tail0
+    j0 = np.clip(head - lags, 0, n2)
+    j1 = np.clip(tail0 - lags, 0, n2)
+
+    sa = np.concatenate(([0.0], np.cumsum(ac)))
+    sa2 = np.concatenate(([0.0], np.cumsum(ac * ac)))
+    sb = np.concatenate(([0.0], np.cumsum(bc)))
+    sb2 = np.concatenate(([0.0], np.cumsum(bc * bc)))
+
+    s_v = head * bc[0] + (sb[j1] - sb[j0]) + n_tail * bc[-1]
+    s_vv = head * bc[0] ** 2 + (sb2[j1] - sb2[j0]) + n_tail * bc[-1] ** 2
+    # The middle term is exactly the plain full cross-correlation at that lag.
+    s_av = bc[0] * sa[head] + np.correlate(ac, bc, mode="full") \
+        + bc[-1] * (sa[n1] - sa[tail0])
+
+    var_a = float(sa2[n1] - sa[n1] ** 2 / n1)
+    var_v = s_vv - s_v ** 2 / n1
+    num = s_av - sa[n1] * s_v / n1
+    # A window that is entirely end-held is constant: no shape, hence no answer.
+    # Its variance is 0 up to rounding, so reject it on a relative floor.
+    live = (var_a > 0.0) & (var_v > 1e-12 * np.abs(s_vv))
+    r = np.zeros(lags.size)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        r[live] = num[live] / np.sqrt(var_a * var_v[live])
+    return lags, np.clip(r, -1.0, 1.0)
+
+
 def match_funct_1d_trans(y1, y2):
-    """Best integer translation between two functions by cross-correlation
+    """Best integer translation between two functions by correlation
     (HALCON ``match_funct_1d_trans``, translation only).
 
-    Both signals are mean-subtracted, then the full cross-correlation is taken;
-    the returned ``shift`` is the lag of its peak, with the convention
+    The returned ``shift`` uses the convention
 
         ``y1[i] ~= y2[i - shift]``
 
     i.e. if *y2* is *y1* delayed (rolled right) by ``s`` samples, ``shift`` is
-    ``-s``. ``score`` is the raw (unnormalised) correlation value at the peak —
-    it is invariant in *position* under positive y-scaling of either input, but
-    its magnitude scales with amplitude and overlap length; compare scores only
-    between candidates of the same length.
+    ``-s``.
+
+    **Scoring convention.** ``score`` is the Pearson correlation coefficient
+    between *y1* and the shifted *y2* over the fixed reference window
+    ``i = 0 .. len(y1) - 1`` — **the same window for every candidate lag**.
+    Where the shifted *y2* falls outside its own domain it is *end-held* at
+    ``y2[0]`` / ``y2[-1]``, which is this module's out-of-domain convention
+    already (:func:`compose_funct_1d`, :func:`get_y_value_funct_1d`,
+    :func:`get_pair_funct_1d` all clamp). So ``score`` is in ``[-1, 1]``,
+    ``1.0`` means the two agree up to a positive scale and offset, it is
+    comparable between lags *and* between calls, and it does not grow with
+    amplitude or with the length of the inputs. A lag that pushes *y2* entirely
+    off the window leaves a constant there and scores ``0.0``.
+
+    When several lags score within ``1e-6`` of the best, the **smallest**
+    ``|shift|`` among them is returned: if the data cannot tell the translations
+    apart, this operator does not invent a large one.
+
+    **The bug this convention fixes.** Until 2026-09 the score was
+    ``np.correlate(y1 - mean, y2 - mean, "full").max()`` — an unnormalised sum
+    over whatever happened to overlap at that lag. A shorter overlap simply
+    stops accumulating the mismatch, so edge lags win *without any exception,
+    NaN or warning*, and the caveat that used to sit here ("compare scores only
+    between candidates of the same length") does not save you: the inputs below
+    are the **same length**. A 400-sample record with Gaussian peaks (sigma 9)
+    at 60, 150, 245, 330 matched against a 400-sample template holding one such
+    peak at 60 — already aligned, so ``shift`` must be 0 — measured:
+
+    ======  =======  ===========  ============  ==========
+    lag     overlap  old (sum)    old / overlap  new (r)
+    ======  =======  ===========  ============  ==========
+    0           400     10.862705      0.027157    0.430110
+    90          310     10.989277      0.035449    0.430110
+    185         215     11.053477      0.051412    0.430110
+    270         130     11.240300      0.086464    0.430110
+    ======  =======  ===========  ============  ==========
+
+    The old code returned ``shift 270, score 11.2403``; it now returns
+    ``shift 0, score 0.430110``. The four lags are the four ways the single
+    template peak can sit on a record peak, and under the new convention they
+    are *exactly* as equivalent as they look — the four scores agree to
+    ``2.804e-10``, the next-best lag (269) is ``0.428164``, and the tie is
+    broken by the smallest ``|shift|``. The score also stops flattering the
+    answer: ``0.43``, not ``11.24``, is what one template peak explains of a
+    four-peak record.
+
+    **The obvious cures were tried and measured, and they do not work** —
+    recorded so the next person does not spend the afternoon on them. Dividing
+    the overlap sum by the overlap length makes it *worse* (column 3 above: lag
+    270 now wins by 3.2x instead of 1.03x, and on a clean roll-by-7 the argmax
+    moves to lag -8). Renormalising to a coefficient over the overlap alone
+    (local means and local norms) rates lag 270 at ``0.999964`` against
+    ``0.430110`` at lag 0 — the fit really is near perfect once you throw away
+    two thirds of the data — and it detonates on the degenerate end, scoring a
+    2-sample overlap at exactly ``1.0`` (on ``y1`` vs ``y1`` it picks lag -398
+    over lag 0). Multiplying that coefficient by the overlap fraction does fix
+    this case, but it biases every honest answer toward zero: on the damped sine
+    of ``test_match_funct_1d_trans_recovers_known_shift_and_is_scale_invariant``
+    it returns -6 for a true shift of -7. A fixed window and an explicit border
+    are what make the lags comparable; nothing weaker did.
 
     Honest limitations: integer lag only (no sub-sample refinement), no x-scale
-    or y-offset model beyond the mean subtraction, and a length-1 input
-    degenerates to ``shift 0, score 0`` (mean subtraction leaves nothing).
-    Because the correlation is **unnormalised**, a strong amplitude envelope
-    (e.g. an exponentially decaying oscillation) can bias the peak by a few
-    samples toward the high-amplitude overlap; whiten first (e.g. match the
-    :func:`derivate_funct_1d` of both signals) when the envelope is not flat —
-    ``examples/signal_funct1d.py`` demonstrates exact recovery this way.
+    model, and no y-offset model beyond the mean subtraction that Pearson
+    implies. The window is *y1*'s domain, so the operator is asymmetric when the
+    lengths differ — it answers "where does *y2* sit inside *y1*", and
+    ``match(y1, y2)["shift"]`` is not in general ``-match(y2, y1)["shift"]``.
+    A length-1 input has no variance and degenerates to ``shift 0, score 0.0``.
+    End-holding assumes the functions stay flat outside their domain; for a
+    signal with a strong trend or envelope, whiten first (match the
+    :func:`derivate_funct_1d` of both) — ``examples/signal_funct1d.py``
+    recovers a 25-sample delay exactly this way.
 
-    :param y1: 1-D function, at least 1 sample.
+    :param y1: 1-D function, at least 1 sample. Defines the reference window.
     :param y2: 1-D function, at least 1 sample (lengths may differ).
-    :returns: dict ``{"shift": int, "score": float}``.
+    :returns: dict ``{"shift": int, "score": float}``, ``score`` in ``[-1, 1]``.
     :raises ValueError: non-1-D / NaN / Inf input, or empty input.
     """
     a = _f1d(y1, "y1", min_len=1)
     b = _f1d(y2, "y2", min_len=1)
-    a = a - a.mean()
-    b = b - b.mean()
-    corr = np.correlate(a, b, mode="full")
-    shift = int(corr.argmax() - (len(b) - 1))
-    return {"shift": shift, "score": float(corr.max())}
+    lags, r = _match_scores(a - a.mean(), b - b.mean())
+    tied = np.flatnonzero(r >= r.max() - _MATCH_TIE_ATOL)
+    pick = tied[np.lexsort((lags[tied], np.abs(lags[tied])))[0]]
+    return {"shift": int(lags[pick]), "score": float(r[pick])}
