@@ -473,3 +473,131 @@ def test_poisson_blend_fails_closed():
         CT.poisson_blend(src, dst, np.zeros((10, 10), bool))
     with pytest.raises(ValueError, match="finite"):
         CT.poisson_blend(np.full((20, 20), np.nan), dst, mask)
+
+
+# =========================================================================
+# TRIZ による点検で見つかった欠陥と、その解(2026-09-02)
+# =========================================================================
+
+def test_histogram_match_maps_equal_inputs_to_equal_outputs():
+    """単調写像なら「等しい入力は等しい出力」―― 素朴な実装はこれを破る。
+
+    実測(値 2 が 4 画素ある整数画像):``ties="break"`` では出力が
+    ``0.2222 / 0.3333 / 0.4444 / 0.5556`` の 4 つに分かれる。つまり
+    **平坦だった領域に、元の絵に無い濃淡が生える**。整数画像は同値だらけ
+    なので、これは例外ではなく常態。
+    """
+    src = np.array([[3, 3, 3, 1, 1, 2, 2, 2, 2, 5]], dtype=np.uint8)
+    ref = np.linspace(0.0, 1.0, 10)
+
+    avg = CT.histogram_match(src, ref)                      # 既定
+    for v in np.unique(src):
+        assert len(np.unique(avg[src == v])) == 1, v
+
+    brk = CT.histogram_match(src, ref, ties="break")
+    assert len(np.unique(brk[src == 2])) == 4               # 4 画素が 4 値に割れる
+    assert np.allclose(np.sort(np.unique(brk[src == 2])),
+                       [0.2222, 0.3333, 0.4444, 0.5556], atol=1e-3)
+
+
+def test_the_two_tie_policies_each_give_something_up():
+    """どちらを選んでも失うものがある ―― だから黙って決めず引数にした。
+
+    * ``ties="break"`` は**分布が参照と厳密一致**するが、平坦部が割れる。
+    * ``ties="average"`` は**平坦部を守る**が、分布は階段状に丸まる。
+    """
+    rng = np.random.default_rng(20)
+    src = (rng.random((32, 32)) * 8).astype(np.uint8)       # 同値だらけ
+    ref = rng.normal(0.5, 0.2, 1024)
+
+    brk = CT.histogram_match(src, ref, ties="break")
+    avg = CT.histogram_match(src, ref, ties="average")
+
+    assert np.allclose(np.sort(brk.ravel()), np.sort(ref), atol=1e-12)   # 厳密一致
+    assert not np.allclose(np.sort(avg.ravel()), np.sort(ref), atol=1e-3)
+    assert len(np.unique(avg)) == len(np.unique(src))        # 値の種類は入力どおり
+    assert len(np.unique(brk)) > len(np.unique(src))         # 増えている
+
+
+def test_continuous_input_is_unaffected_by_the_tie_policy():
+    """同値が無ければ両者は一致する(既定を変えても連続入力の結果は不変)。"""
+    rng = np.random.default_rng(21)
+    src = rng.random((16, 16))
+    ref = rng.normal(0.5, 0.2, 256)
+    assert np.allclose(CT.histogram_match(src, ref),
+                       CT.histogram_match(src, ref, ties="break"), atol=1e-12)
+
+
+def test_ties_argument_is_checked():
+    with pytest.raises(ValueError, match="ties must be"):
+        CT.histogram_match(np.zeros(4), np.ones(4), ties="first")
+
+
+def test_sinkhorn_divergence_cancels_its_own_bias():
+    """正則化の偏りを、自分自身との距離から引いて打ち消す。
+
+    実測(20 点・reg=0.2):``sinkhorn_distance`` の自己距離は **0.151611**、
+    ``sinkhorn_divergence`` は **0.0**。
+    """
+    s = np.linspace(0.0, 1.0, 20)
+    cost = np.abs(s[:, None] - s[None, :])
+    w = np.full(20, 1.0 / 20)
+
+    assert CT.sinkhorn_distance(w, w.copy(), cost, reg=0.2) == pytest.approx(0.151611, abs=1e-4)
+    assert CT.sinkhorn_divergence(w, w.copy(), cost, reg=0.2) == pytest.approx(0.0, abs=1e-9)
+
+
+def test_sinkhorn_divergence_still_separates_different_distributions():
+    a_s = np.linspace(0.0, 1.0, 20)
+    b_s = np.linspace(0.6, 1.6, 20)
+    cost = np.abs(a_s[:, None] - b_s[None, :])
+    caa = np.abs(a_s[:, None] - a_s[None, :])
+    cbb = np.abs(b_s[:, None] - b_s[None, :])
+    w = np.full(20, 1.0 / 20)
+    d = CT.sinkhorn_divergence(w, w.copy(), cost, cost_aa=caa, cost_bb=cbb, reg=0.05)
+    assert d > 0.4, d
+    assert d == pytest.approx(CT.wasserstein_1d(a_s, b_s), abs=0.1)
+
+
+def test_sinkhorn_divergence_refuses_to_guess_the_self_costs():
+    """非正方の費用行列から自己費用を勝手に作ると、引く量が別物になる。"""
+    a = np.full(4, 0.25)
+    b = np.full(6, 1.0 / 6)
+    with pytest.raises(ValueError, match="cannot be inferred"):
+        CT.sinkhorn_divergence(a, b, np.ones((4, 6)))
+
+
+def test_transport_plan_now_has_consumers():
+    """袋小路の解消 ―― 作るだけで使い道が無い型を残さない。"""
+    u = np.array([0.0, 1.0, 2.0, 3.0])
+    v = np.array([10.0, 11.0, 12.0, 13.0])
+    plan = CT.transport_plan_1d(u, v)
+
+    assert np.allclose(CT.apply_transport(plan, v), v + 10.0 - 10.0 + np.array([10., 11., 12., 13.]) - np.array([10., 11., 12., 13.]) + v)
+    assert CT.transport_cost(plan, np.abs(u[:, None] - v[None, :])) == pytest.approx(10.0, abs=1e-12)
+    assert CT.transport_cost(plan, np.abs(u[:, None] - v[None, :])) == pytest.approx(
+        CT.wasserstein_1d(u, v), abs=1e-12)
+
+
+def test_apply_transport_handles_vector_valued_targets():
+    u = np.array([0.0, 1.0, 2.0])
+    v = np.array([5.0, 6.0, 7.0])
+    plan = CT.transport_plan_1d(u, v)
+    colours = np.stack([v, v * 2, v * 3], axis=1)
+    out = CT.apply_transport(plan, colours)
+    assert out.shape == (3, 3)
+    assert np.allclose(out[:, 1], out[:, 0] * 2)
+
+
+def test_apply_transport_refuses_a_row_with_no_mass():
+    """行き先の無い送り元を 0 で埋めると、黒が黙って混ざる。"""
+    plan = np.array([[0.5, 0.0], [0.0, 0.0]])
+    with pytest.raises(ValueError, match="no mass"):
+        CT.apply_transport(plan, np.array([1.0, 2.0]))
+
+
+def test_transport_cost_checks_that_it_was_handed_a_plan():
+    with pytest.raises(ValueError, match="negative mass"):
+        CT.transport_cost(np.array([[-0.5, 0.5]]), np.zeros((1, 2)))
+    with pytest.raises(ValueError, match="same shape"):
+        CT.transport_cost(np.zeros((2, 3)), np.zeros((3, 2)))

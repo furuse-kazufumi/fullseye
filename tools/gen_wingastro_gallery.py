@@ -1148,14 +1148,21 @@ def _captions(meta):
         "平均合成では **%d 個**しか立たないのに、同じ生データを drizzle x3 "
         "(pixfrac 0.4)に通すと **%d 個**に分かれる。解像度は「上げた」のでは"
         "なく、**ディザという形で既に撮れていた情報を捨てずに拾った**だけ。"
-        % (dp["separation_px"], dp["n_frames"], dp["n_naive"], dp["n_drizzle"]),
+        "4 枚目は同じ drizzle の生の ``sci``(被覆で割っていない像)で、"
+        "そこに検出をかけると被覆の格子が **%d 個の偽の星**になる ―― "
+        "総フラックスを保存する像と、目で見る像は別の量である。"
+        % (dp["separation_px"], dp["n_frames"], dp["n_naive"],
+           dp["n_drizzle"], dp["n_raw_sci"]),
         "Two stars of sigma 0.55 px, %.1f px apart, shot %d times with dither. "
         "A mean stack yields **%d star**, while the same raw frames through "
         "drizzle x3 (pixfrac 0.4) separate into **%d**. Nothing was added: the "
         "information was already in the dither, and drizzle simply does not "
-        "throw it away."
+        "throw it away. The fourth panel is the same drizzle without dividing "
+        "by the weight map, and detecting on it turns the coverage lattice into "
+        "**%d spurious stars** — the flux-conserving image and the image you "
+        "look at are different quantities."
         % (dp["separation_px"], dp["n_frames"], dp["n_naive"],
-           dp["n_drizzle"]))
+           dp["n_drizzle"], dp["n_raw_sci"]))
 
     b = d["clip_breakdown"]
     rw = {r["contam"]: r for r in b["rows"]}

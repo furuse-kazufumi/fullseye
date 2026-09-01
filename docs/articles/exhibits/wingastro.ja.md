@@ -14,7 +14,7 @@
 
 [![宇宙線の消え方 —— 尖りで見分ける / 枚数で見分ける](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_cosmic_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_cosmic.png)
 
-*↑ **宇宙線の消え方 —— 尖りで見分ける / 枚数で見分ける** ―― 宇宙線は光学系を通っていないので**星より尖る**。ラプラシアンを 2 倍標本化して微細構造と比べると、植えた 44 画素に対し 39 画素を検出して適合率 **0.949** / 再現率 **0.841** ―― 星の中心を 1 つも拾わないことが要点で、フレーム最大値は 7120 -> 7119 e- に落ちる。枚数がある場合はもっと簡単で、素直な平均だと宇宙線は 1/8 に薄まって残る(最大 2098 e-)のに対し、κ-σ 合成は検出も置換もせずに 2098 e- まで落とす。使用 op: `synth_starfield`, `cosmic_ray_reject`, `cosmic_ray_reject_stack`, `sigma_clip_stack`, `star_detect`。*
+*↑ **宇宙線の消え方 —— 尖りで見分ける / 枚数で見分ける** ―― 宇宙線は光学系を通っていないので**星より尖る**。ラプラシアンを 2 倍標本化して微細構造と比べると、植えた 44 画素に対し 39 画素を検出して適合率 **0.949** / 再現率 **0.841** ―― 星の中心を 1 つも拾わないことが要点。合成なので「宇宙線だけ無い同じ観測」を作れて、正解との最大差が 7000 -> 7000 e- に落ちることまで言える(**フレームの最大値では言えない** —— それは一番明るい星の値であって、除去の前後でほとんど動かない)。枚数がある場合はもっと簡単で、8 枚を素直に平均しても宇宙線は 1/8 に薄まって残り正解から 1750 e- ずれるのに対し、κ-σ 合成は検出も置換もせずに 45 e-、フレーム間比較で先に除去すれば 7 e- になる。使用 op: `synth_starfield`, `cosmic_ray_reject`, `cosmic_ray_reject_stack`, `sigma_clip_stack`, `star_detect`。*
 
 [![drizzle は面積を保存する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_drizzle_flux_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_drizzle_flux.png)
 
@@ -22,11 +22,11 @@
 
 ![drizzle —— しずくを小さくすると像が立ち上がる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingastro_drizzle.gif)
 
-*↑ **drizzle —— しずくを小さくすると像が立ち上がる** ―― 真の FWHM 1.15 画素、つまり**ナイキストを破った**星野を 24 枚、1.5 画素のディザで撮る。1 枚では FWHM 1.357 画素にしか見えず、そのまま平均すると **1.991 画素とかえって鈍る**(ずれを平均するから)。同じずれを drizzle に渡すと pixfrac 1.0 / 0.6 / 0.3 で 1.574 / 1.450 / 1.395 入力画素まで立ち上がり、そのあいだ総フラックスは縁から出た 0.76 % 以外**一切動かない**。しずくを小さくするほど鋭くなる代わりに覆われない出力画素が出る(被覆 wht の最小が 0.041 まで下がる)—— これが drizzle の唯一の調整点。使用 op: `synth_frame_series`, `drizzle_resample`, `sigma_clip_stack`, `frame_quality`。*
+*↑ **drizzle —— しずくを小さくすると像が立ち上がる** ―― 真の FWHM 1.15 画素、つまり**ナイキストを破った**星野を 24 枚、1.5 画素のディザで撮る。1 枚では FWHM 1.357 画素にしか見えず、そのまま平均すると **1.991 画素とかえって鈍る**(ずれを平均するから)。同じずれを drizzle に渡すと pixfrac 1.0 / 0.6 / 0.3 で 1.574 / 1.450 / 1.399 入力画素まで立ち上がり、そのあいだ総フラックスは縁から出た 0.76 % 以外**一切動かない**。しずくを小さくするほど鋭くなる代わりに覆われない出力画素が出る(被覆 wht の最小が 0.041 まで下がる)—— これが drizzle の唯一の調整点。使用 op: `synth_frame_series`, `drizzle_resample`, `sigma_clip_stack`, `frame_quality`。*
 
 [![間隔 1.6 画素の二重星](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_drizzle_pair_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_drizzle_pair.png)
 
-*↑ **間隔 1.6 画素の二重星** ―― sigma 0.55 画素の星を 2 つ、1.6 画素だけ離して 24 枚ディザ撮影する。平均合成では **1 個**しか立たないのに、同じ生データを drizzle x3 (pixfrac 0.4)に通すと **200 個**に分かれる。解像度は「上げた」のではなく、**ディザという形で既に撮れていた情報を捨てずに拾った**だけ。使用 op: `drizzle_resample`, `sigma_clip_stack`, `star_detect`。*
+*↑ **間隔 1.6 画素の二重星** ―― sigma 0.55 画素の星を 2 つ、1.6 画素だけ離して 24 枚ディザ撮影する。平均合成では **1 個**しか立たないのに、同じ生データを drizzle x3 (pixfrac 0.4)に通すと **2 個**に分かれる。解像度は「上げた」のではなく、**ディザという形で既に撮れていた情報を捨てずに拾った**だけ。4 枚目は同じ drizzle の生の ``sci``(被覆で割っていない像)で、そこに検出をかけると被覆の格子が **200 個の偽の星**になる ―― 総フラックスを保存する像と、目で見る像は別の量である。使用 op: `drizzle_resample`, `sigma_clip_stack`, `star_detect`。*
 
 ![σ クリップの破綻 —— 折れ目はちょうど 50 %](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingastro_clip_breakdown.gif)
 
