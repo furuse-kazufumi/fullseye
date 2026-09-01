@@ -392,7 +392,9 @@ def _gray3(a: np.ndarray) -> np.ndarray:
 #: ``viewer3d_camera`` の (yaw, pitch) に写す変換。両者は別々の慣習で書かれている
 #: ので、素直に同じ数値を渡すと**同じ物が別の向きに回る**。この対応は
 #: 骨格 CT の等値面シルエットと点群シルエットの IoU を offset/符号の総当たりで
-#: 最大化して実測で決めた(平均 IoU 0.845 — 点群は粒なので 1.0 にはならない)。
+#: 最大化して実測で決めた。今回の生成での実測は 36 フレーム平均 0.767
+#: (最小 0.585 / 最大 0.837)—— 点群は粒なので 1.0 にはならない。数値は
+#: ``_wingstudio_meta.json`` の ``volume_turntable.facts`` に毎回書き出される。
 STUDIO_YAW_OFFSET, STUDIO_YAW_SIGN, STUDIO_PITCH_SIGN = 270.0, -1.0, -1.0
 
 

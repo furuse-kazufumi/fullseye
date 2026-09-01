@@ -849,7 +849,7 @@
     "file": "docs/articles/assets/media/wing2d_hist_shaping.gif",
     "thumb": "docs/articles/assets/thumbs/wing2d_hist_shaping_720.jpg",
     "frames": 15,
-    "bytes": 3029985,
+    "bytes": 2993935,
     "size": [
       1382,
       688
@@ -1045,8 +1045,8 @@
     },
     "caption": "文書画像のコントラストを 1.00→0.16 倍まで潰していき、`equalize` と `clahe` で戻せるかを追った。見どころは clahe の第 2 引数 `b` = **clip limit**(ビン平均カウントに対する倍率 256^b。b=0 → ×1 = 強調ゼロ、b=1 → ×256 = 切り取りが一度も効かない素の AHE、OpenCV 既定の clipLimit=40 は b≈0.665 相当)。入力の標準偏差が 0.2228→0.0356 まで落ちるとき、b=0.00 は 0.2169→0.0537、b=0.50 は 0.2403→0.1709、b=1.00 は 0.2379→0.2510。同じ 1 枚に対する b=0 と b=1 の画素差は最大 0.7372 まで開く —— つまみ 1 本で「入力の潰れをどこまで無視して持ち上げるか」が決まる。`equalize` は画像全体を 1 枚の写像で平坦化するので 0.2931→0.2994 と最後まで幅を保つが、その代わり照明ムラは残ったままだ。",
     "sha256": {
-      "wing2d_hist_shaping.gif": "9b75a8401d01912135d2865321406da5b346efdfbd295d0112d5273f8a4be00d",
-      "wing2d_hist_shaping_720.jpg": "9f25ea6d6c8452e8d0817910c60925c65b01ff60545a30821506a442f181951c"
+      "wing2d_hist_shaping.gif": "370e01fef2e5ab5713846fcc3a587e3296eada5f16d2fdd477f943d8ba8d0e3f",
+      "wing2d_hist_shaping_720.jpg": "a4030e3ba35e51a24c7d79d527fbb4761ec88a04dcfd93f2f6d4f155e3ad49b7"
     }
   },
   {
