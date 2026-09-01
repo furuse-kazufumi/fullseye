@@ -1014,10 +1014,10 @@ def tcspc_background_subtract(hist, method="median", leading_bins=8,
     a deliberately aggressive removal). Clipping at 0 means the result is a valid
     non-negative histogram that the rest of this module will accept.
 
-    Ground truth: on a synthetic histogram with a known flat pedestal of 20
-    counts/bin under a pulse covering 3% of the window, the median estimate
-    recovers 20.0 exactly and the recovered pulse area is within 0.6% of the
-    truth (pinned in the tests).
+    Ground truth: on a noiseless histogram with a known flat pedestal of 20
+    counts/bin under a 5000-photon pulse covering 5.1% of the window, the median
+    estimate recovers 20.000000 and the returned histogram equals the pedestal-
+    free pulse **exactly** (measured area error 0.0, pinned in the tests).
 
     Returns a float64 1-D histogram of the same length as *hist*.
 
