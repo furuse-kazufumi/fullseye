@@ -2328,6 +2328,17 @@ OPS = {
 def _caption(name: str, facts: dict, info: dict) -> str:
     """記事と同じ書式の 1〜3 文。**数字は facts から引く**(手打ちしない)。"""
     f = facts
+    if name == "pipeline_flow":
+        fe = f["feasibility"]
+        return (f"「設計 → 限界 → 仮想の部品 → 撮像 → 検査 → 判定」の 6 工程を、"
+                f"1 コマずつ止めて読めるコマ送りにしました。系が決まると "
+                f"**{f['um_per_pixel']:.3f} µm/画素**が確定し、そこから光学限界 "
+                f"**{f['optical_limit_um']:.2f} µm**({f['limited_by']} 律速)が出て、"
+                f"{f['defect_um']:.0f} µm の傷は {f['defect_px']:.2f} 画素になり、"
+                f"最後に IoU **{f['iou']:.4f}** で "
+                f"{'検出' if f['detected'] else '未検出'}と判定される —— "
+                f"**正解マスクは撮像でぼけても動かない**ので、この採点が成立します"
+                f"(判定は `{fe['verdict']}`)。")
     if name == "defect_atlas":
         rows = f["rows"]
         kinds = " / ".join(r["kind"] for r in rows)
