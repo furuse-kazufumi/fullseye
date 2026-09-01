@@ -602,6 +602,12 @@ def run_chain(ops, gens, rng, length, log, chain_seed=None, script=None,
     trace = []
     occ = {}
     by_name = {o[0]: o for o in ops} if script is not None else None
+    # この連鎖が狙う op(決定的: 連鎖固有 seed から引く)。script 再走のときは
+    # 狙いを持たない — 再現は与えられた op 列がすべてだから。
+    target = None
+    if script is None and explore > 0.0 and ops:
+        target = ops[int(np.random.default_rng(
+            zlib.crc32(b"target|%d" % (chain_seed or 0))).integers(len(ops)))]
     for i in range(len(script) if script is not None else length):
         if script is not None:
             op = by_name.get(script[i])
