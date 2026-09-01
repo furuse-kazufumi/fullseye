@@ -702,7 +702,7 @@ def complex_steerable_reconstruct(decomposition) -> np.ndarray:
 
     Exact: the analysis bank is a tight frame after the divisor correction, so
     the round trip is the identity up to floating-point rounding (measured
-    ``6.7e-16`` maximum absolute error on a 64x64 random frame with the default
+    ``6.66e-16`` maximum absolute error on a 64x64 random frame with the default
     4 scales x 4 orientations). Editing a band before calling this — scaling its
     phase, zeroing it — is how every other operator in this module works.
 
