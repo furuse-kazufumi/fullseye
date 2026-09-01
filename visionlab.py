@@ -286,11 +286,22 @@ def detection_report(sweep):
     """
     lines = [sweep["system"]]
     opt, det = sweep["optical_limit_um"], sweep["detection_limit_um"]
+    lat = sweep.get("lateral_limit_um")
+    # 横分解能は閉形式なので必ず数値。ここを「未到達」と書くと、実際にはレンズが
+    # 解像できているのに「レンズが足りない」と読ませてしまう
     lines.append("optical limit  : %s (%s-limited)"
-                 % ("%.1f um" % opt if opt else "not reached on this grid",
-                    sweep["limited_by"]))
+                 % ("%.1f um" % lat if lat else "n/a", sweep["limited_by"]))
     lines.append("detection limit: %s"
                  % ("%.1f um" % det if det else "not reached on this grid"))
+    # 被写界深度は横分解能とは別の軸。買うものが変わる(レンズ vs 絞り・公差・
+    # フォーカス機構)ので、1 つの判定に畳まずに独立した行として出す
+    if sweep.get("depth_of_field_ok") is False:
+        lines.append("depth of field : %.2f mm < %.2f mm required — resolvable "
+                     "laterally, but the part drifts out of focus"
+                     % (sweep["depth_of_field_mm"], sweep["depth_tolerance_mm"]))
+        if opt is None:
+            lines.append("  -> nothing is rated \"resolvable\" for that reason "
+                         "alone; the lens is not the thing to change.")
     if opt and det:
         ratio = det / opt
         lines.append("gap            : detection needs %.1fx the optical limit"
