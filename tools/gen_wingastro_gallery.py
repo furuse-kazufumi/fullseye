@@ -1214,12 +1214,16 @@ def _captions(meta):
         "A mean stack yields **%d star**, while the same raw frames through "
         "drizzle x3 (pixfrac 0.4) separate into **%d**. Nothing was added: the "
         "information was already in the dither, and drizzle simply does not "
-        "throw it away. The fourth panel is the same drizzle without dividing "
-        "by the weight map, and detecting on it turns the coverage lattice into "
-        "**%d spurious stars** — the flux-conserving image and the image you "
-        "look at are different quantities."
+        "throw it away. \"Separated\" is measured rather than asserted — the "
+        "dip between the two peaks along the central row is %.1f %% for the "
+        "mean stack (no dip at all) against **%.1f %%** for drizzle. The fourth "
+        "panel is the same drizzle without dividing by the weight map, and "
+        "detecting on it turns the coverage lattice into **%d spurious stars** "
+        "— the flux-conserving image and the image you look at are different "
+        "quantities."
         % (dp["separation_px"], dp["n_frames"], dp["n_naive"],
-           dp["n_drizzle"], dp["n_raw_sci"]))
+           dp["n_drizzle"], dp["dip_naive_pct"], dp["dip_drizzle_pct"],
+           dp["n_raw_sci"]))
 
     b = d["clip_breakdown"]
     rw = {r["contam"]: r for r in b["rows"]}

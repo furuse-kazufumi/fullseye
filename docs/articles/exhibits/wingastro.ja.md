@@ -26,7 +26,7 @@
 
 [![間隔 1.6 画素の二重星](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_drizzle_pair_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_drizzle_pair.png)
 
-*↑ **間隔 1.6 画素の二重星** ―― sigma 0.55 画素の星を 2 つ、1.6 画素だけ離して 24 枚ディザ撮影する。平均合成では **1 個**しか立たないのに、同じ生データを drizzle x3 (pixfrac 0.4)に通すと **2 個**に分かれる。解像度は「上げた」のではなく、**ディザという形で既に撮れていた情報を捨てずに拾った**だけ。4 枚目は同じ drizzle の生の ``sci``(被覆で割っていない像)で、そこに検出をかけると被覆の格子が **200 個の偽の星**になる ―― 総フラックスを保存する像と、目で見る像は別の量である。使用 op: `drizzle_resample`, `sigma_clip_stack`, `star_detect`。*
+*↑ **間隔 1.6 画素の二重星** ―― sigma 0.55 画素の星を 2 つ、1.6 画素だけ離して 24 枚ディザ撮影する。平均合成では **1 個**しか立たないのに、同じ生データを drizzle x3 (pixfrac 0.4)に通すと **2 個**に分かれる。解像度は「上げた」のではなく、**ディザという形で既に撮れていた情報を捨てずに拾った**だけ。「分かれた」を主観にしないため、対を横切る行の**谷の深さ**も測ってある: 平均合成 0.0 %(谷が無い)に対し drizzle は **5.9 %**。4 枚目は同じ drizzle の生の ``sci``(被覆で割っていない像)で、そこに検出をかけると被覆の格子が **200 個の偽の星**になる ―― 総フラックスを保存する像と、目で見る像は別の量である。使用 op: `drizzle_resample`, `sigma_clip_stack`, `star_detect`。*
 
 ![σ クリップの破綻 —— 折れ目はちょうど 50 %](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingastro_clip_breakdown.gif)
 
