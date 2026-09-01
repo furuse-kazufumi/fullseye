@@ -3091,7 +3091,7 @@ def ex_vessel_reslice(log) -> dict:
             (TX, PY + 300, "素朴 %.4f mm" % float(np.mean(naive_err)), C_E, 13, True),
         ])
         p = Plot(c, 76, 452, W - 116, 152, (rows[0]["z"], rows[-1]["z"]), (1.0, 5.8),
-                 xlabel="断面の位置 z(voxel)->", ylabel="測った内径 [mm]",
+                 xlabel="断面の位置 z(voxel)->",
                  xticks=[40, 60, 80, 100, 120, 136],
                  yticks=[1.5, 2.5, 3.5, 4.5, 5.5], xfmt="%d", yfmt="%.1f")
         p.series([x["z"] for x in rows], [x["truth_diameter_mm"] for x in rows],
