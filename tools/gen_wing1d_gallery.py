@@ -1335,6 +1335,10 @@ def ex_weighting_ac(log):
         "leq_z_closed_form_db": leq_z_closed,
         "leq_z_measured_range": (min(r["lz"] for r in rows), max(r["lz"] for r in rows)),
         "max_abs_a_mismatch_db": worst_a, "max_abs_c_mismatch_db": worst_c,
+        "bin_hz": bin_hz,
+        "off_bin_offset_hz": 0.5 * bin_hz,
+        "off_bin_max_abs_a_mismatch_db": worst_off,
+        "off_bin_worst_freq_hz": rows[k_off]["f_off"],
         "n_tones": len(rows), "rate_hz": fs, "duration_s": dur,
         "sample_points": {f"{r['f']:.1f}": {"A": r["wa"], "C": r["wc"]}
                           for r in rows[::6]},
