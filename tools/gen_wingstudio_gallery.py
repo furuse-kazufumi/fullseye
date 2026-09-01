@@ -418,37 +418,48 @@ def ex_volume_turntable():
     P = np.ascontiguousarray(np.argwhere(shell > 0.5).astype(np.float64)[:, ::-1])
     n_shell = int(P.shape[0])
 
-    S = 462
-    W, H = 24 * 3 + S * 2, 640
-    frames, n = [], 36
+    S, PITCH = 462, 18.0
+    W, H = 24 * 3 + S * 2, 646
+    frames, n, ious = [], 36, []
     for i in range(n):
         yaw = 360.0 * i / n
+        syaw, spitch = studio_view_from_render3d(yaw, PITCH)
         canvas = _canvas(W, H)
         _fill(canvas, 0, 34, 0, W, (0.088, 0.098, 0.118))
-        surf, cov = _shade_mesh(Vw, F, yaw, pitch_deg=16.0, size=S)
-        pts = studio.render_points_frame(P, yaw=yaw - 90.0, pitch=16.0, zoom=1.0,
+        surf, cov = _shade_mesh(Vw, F, yaw, pitch_deg=PITCH, size=S)
+        pts = studio.render_points_frame(P, yaw=syaw, pitch=spitch, zoom=1.0,
                                          size=S, point_px=2, background=C_PANEL)
+        # 目視だけに頼らない: 2 つのシルエットの IoU を毎フレーム実測して焼き込む
+        a = (np.abs(surf - np.asarray(C_PANEL)).sum(2) > 0.02)
+        b = (np.abs(pts - np.asarray(C_PANEL)).sum(2) > 0.02)
+        iou = float((a & b).sum()) / float(max(1, (a | b).sum()))
+        ious.append(iou)
         lab = []
-        lab += _panel(canvas, 52, 24, S, S, surf, "等値面 marching_cubes + phong_shade")
+        lab += _panel(canvas, 52, 24, S, S, surf, "等値面  marching_cubes + phong_shade")
         lab += _panel(canvas, 52, 24 + S + 24, S, S, pts,
-                      "境界シェル点群 vol_boundary + Studio のレンダラ")
+                      "境界シェル点群  vol_boundary + Studio のレンダラ")
         f = _to_u8(canvas)
         lab += [
-            (24, 9, "skeleton_ct.npy  (D,H,W) = (%d, %d, %d)   iso level = mean+std = %.4f"
-                    "   yaw = %5.1f deg" % (vol.shape[0], vol.shape[1], vol.shape[2],
-                                            level, yaw), C_TEXT, 13, False),
+            (24, 9, "skeleton_ct.npy  (D,H,W) = (%d, %d, %d)   iso = mean+std = %.4f"
+                    "   yaw %5.1f deg / pitch %.0f deg   (どちらもほぼ正射影)"
+                    % (vol.shape[0], vol.shape[1], vol.shape[2], level, yaw, PITCH),
+             C_TEXT, 13, False),
             (30, 52 + S + 10, "三角形 %s 枚 / 頂点 %s   シルエット %s px"
              % (f"{F.shape[0]:,}", f"{Vw.shape[0]:,}", f"{cov:,}"), C_ACCENT, 13, True),
-            (30 + S + 24, 52 + S + 10, "シェル voxel %s 点(同じ yaw・同じ仰角)"
-             % f"{n_shell:,}", C_BLUE, 13, True),
-            (24, H - 24, "左右は同じ角度で回している。面と粒で同じ形が同じ向きに回れば、"
-                         "軸の取り違えは起きていない —— これが目視の検算です",
+            (30 + S + 24, 52 + S + 10, "シェル voxel %s 点   シルエット IoU = %.3f"
+             % (f"{n_shell:,}", iou), C_BLUE, 13, True),
+            (24, H - 26, "左は render3d、右は Studio のビューアで、カメラ慣習が違う"
+                         "(yaw_studio = 270 - yaw, pitch_studio = -pitch)。"
+                         "変換を入れて初めて同じ向きに回る —— IoU がその検算です",
              C_DIM, 12, False),
         ]
         frames.append(_text(f, lab))
     facts = {"volume_shape": list(map(int, vol.shape)), "iso_level": round(level, 6),
              "n_faces": int(F.shape[0]), "n_vertices": int(Vw.shape[0]),
-             "n_shell_points": n_shell, "frames": n}
+             "n_shell_points": n_shell, "frames": n,
+             "iou_mean": round(float(np.mean(ious)), 3),
+             "iou_min": round(float(np.min(ious)), 3),
+             "iou_max": round(float(np.max(ious)), 3)}
     return save_gif("volume_turntable", frames, facts, thumb_index=6)
 
 
