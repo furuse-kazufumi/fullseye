@@ -139,10 +139,15 @@ def _paste(dst, src, top: int, left: int):
     return dst
 
 
-def _text(rgb, items, *, size: int = 16):
-    """``items`` = [(x, y, text, colour, anchor)] を焼き込む(PIL の text のみ)。"""
+def _text(rgb, items, *, size: int = 16, where: str = "panel"):
+    """``items`` = [(x, y, text, colour, anchor)] を焼き込む(PIL の text のみ)。
+
+    枠からはみ出す文字は**書く前に例外**にする。端が切れた図は「壊れている」と
+    機械にも見えない形で通ってしまい、記事に出るまで誰も気づかない。
+    """
     from PIL import Image, ImageDraw
 
+    _assert_fits(items, rgb.shape[1], size, where)
     im = Image.fromarray(np.round(np.clip(rgb, 0, 1) * 255).astype(np.uint8), "RGB")
     dr = ImageDraw.Draw(im)
     cache = {}
