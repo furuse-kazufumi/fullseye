@@ -205,7 +205,8 @@ def main():                                             # noqa: C901 - 一本道
     _out, round_only = VC.vol_select_labels(RL, rs, max_elongation=2.0)
     print("   形状でも分けられる: elongation = "
           + " / ".join("label %d: %.2f" % (r["label"], r["elongation"]) for r in rs)
-          + f" → max_elongation=2.0 で残るのは {list(round_only)}(球のほう)")
+          + f" → max_elongation=2.0 で残るのは label "
+          + ", ".join(str(int(i)) for i in round_only) + "(球のほう)")
     assert len(round_only) == 1
 
     try:
