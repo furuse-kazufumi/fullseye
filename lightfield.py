@@ -221,6 +221,12 @@ APERTURE_SHAPES = ("circle", "square", "gaussian", "annulus")
 #: Focus measures understood by :func:`lf_depth_from_focus`.
 FOCUS_MEASURES = ("laplacian", "variance", "gradient")
 
+#: Smallest dynamic range :func:`lf_synthesize` accepts from its generated
+#: texture before rescaling it to ``[0, 1]``. Below this the smoothing has
+#: driven the noise to its mean and the residual is float dust (measured
+#: 2026-09-01: ``texture_sigma = 400`` on an 8x8 frame leaves 6.2e-7).
+MIN_TEXTURE_RANGE = 1e-6
+
 #: Reductions across the angular grid understood by
 #: :func:`lf_synthetic_aperture`. ``median`` is the occlusion-robust one.
 REDUCERS = ("mean", "median", "max", "min")
