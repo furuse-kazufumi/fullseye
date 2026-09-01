@@ -452,7 +452,7 @@ def ex_volume_turntable():
         canvas = _canvas(W, H)
         _fill(canvas, 0, 34, 0, W, (0.088, 0.098, 0.118))
         surf, cov = _shade_mesh(Vw, F, yaw, pitch_deg=PITCH, size=S,
-                                fill=0.94 * 2.0, center=ctr, radius=rad)
+                                fill=0.94, center=ctr, radius=rad)
         pts = studio.render_points_frame(P, yaw=syaw, pitch=spitch, zoom=zoom,
                                          size=S, point_px=3, center=ctr, radius=rad,
                                          background=C_PANEL)
