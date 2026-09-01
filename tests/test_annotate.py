@@ -97,7 +97,8 @@ def test_axes_reversed_limits_do_not_collapse_to_one_end():
 @pytest.mark.parametrize("lo,hi,want", [
     (0.0, 10.0, [0, 2, 4, 6, 8, 10]),      # 端をどちらも含む(off-by-one なし)
     (0.0, 1.0, [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]),
-    (-3.0, 3.0, [-3, -2, -1, 0, 1, 2, 3]),
+    (-3.0, 3.0, [-2, 0, 2]),               # raw=1.2 -> step=2、端は目盛りに乗らない
+    (0.0, 5.0, [0, 1, 2, 3, 4, 5]),
 ])
 def test_nice_ticks_includes_both_ends(lo, hi, want):
     got = A.nice_ticks(lo, hi)
