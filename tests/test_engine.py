@@ -72,6 +72,44 @@ def test_sort_mismatch_is_a_warning():
     assert diagnose_stages([("gaussian", .5, .5), ("otsu", .5, .5)]) == []
 
 
+def test_sort_mismatch_message_numbers_stages_1_based():
+    """Regression (2026-09-02): a single rendered Problems line mixed two
+    numbering conventions. ``diagnose_stages`` embedded the upstream stage
+    0-based (``i - 1``) while the panel renders the line's own index 1-based
+    (``index + 1``), so the reported line read
+
+        ! stage 5 (circularity_xld): stage 3 (sk_clear_border) ...
+
+    for a pipeline where sk_clear_border is the **4th** stage on screen. The
+    prose is now 1-based throughout; the machine-readable indices stay 0-based
+    and the upstream stage is exposed as prev_index / prev_op.
+    """
+    stages = [("gaussian", .5, .5), ("gaussian", .5, .5), ("otsu", .5, .5),
+              ("sk_clear_border", .5, .5), ("circularity_xld", .5, .5)]
+    probs = [p for p in diagnose_stages(stages) if p["severity"] == "warning"]
+    assert len(probs) == 1
+    p = probs[0]
+    assert p["index"] == 4 and p["op"] == "circularity_xld"      # 0-based, unchanged
+    assert p["prev_index"] == 3 and p["prev_op"] == "sk_clear_border"
+    # the prose names the upstream stage the way the UI numbers it: 3 + 1 = 4
+    assert p["message"].startswith("stage 4 (sk_clear_border)")
+    assert "stage 3 (" not in p["message"]
+    # the whole rendered line is now internally consistent
+    line = "! stage %d (%s): %s" % (p["index"] + 1, p["op"], p["message"])
+    assert line.startswith("! stage 5 (circularity_xld): stage 4 (sk_clear_border)")
+
+
+def test_sort_mismatch_prev_index_survives_an_unknown_op():
+    """An unknown op resets the sort chain but still counts as a stage, so the
+    NEXT mismatch must point at it by its own index (not at i-1 by accident)."""
+    stages = [("otsu", .5, .5), ("nope_op", .5, .5), ("gaussian", .5, .5)]
+    probs = diagnose_stages(stages)
+    errs = [p for p in probs if p["severity"] == "error"]
+    assert len(errs) == 1 and errs[0]["index"] == 1
+    # 'nope_op' sets prev_out to "any", which pairs with everything -> no warning
+    assert [p for p in probs if p["severity"] == "warning"] == []
+
+
 def test_set_knobs_and_chaining():
     eng = FullseyeEngine.from_ops("gaussian")
     assert eng.set_knobs(0, a=0.9, b=0.1) is eng                # chainable
