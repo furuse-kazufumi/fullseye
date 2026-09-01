@@ -497,12 +497,23 @@ class TestFailClosed:
                                    envelope_sigma_um=SIGMA, envelope_fwhm_um=None)
 
     def test_peak_on_the_first_or_last_plane_is_refused(self):
-        s = scan(12.0, n=NP)                       # exactly the last plane
-        with pytest.raises(ValueError, match="first or last plane"):
-            itf.csi_peak_position(s, DZ, 0.0, LAM, max_edge_envelope=1.0)
-        s0 = scan(0.0, n=NP)                       # ... and the first
-        with pytest.raises(ValueError, match="first or last plane"):
-            itf.csi_peak_position(s0, DZ, 0.0, LAM, max_edge_envelope=1.0)
+        # A surface *outside* the scan; the forward model refuses to synthesise
+        # it (that check is tested elsewhere), so the signal is built by hand —
+        # which is also what a real instrument would hand you.
+        z = DZ * np.arange(NP)
+        for z0 in (-3.0, 15.0):
+            s = 0.5 + 0.4 * np.exp(-0.5 * ((z - z0) / SIGMA) ** 2) * np.cos(
+                4.0 * np.pi * (z - z0) / LAM)
+            with pytest.raises(ValueError, match="first or last plane"):
+                itf.csi_peak_position(s, DZ, 0.0, LAM, max_edge_envelope=1.0)
+        # Honest scope: at a surface exactly *on* the boundary plane the Hilbert
+        # envelope peaks one plane inside (measured argmax 1 of 241 for z0 = 0),
+        # so this check alone does not catch it — max_edge_envelope does, and
+        # that is why both exist.
+        s = scan(0.0, n=NP)
+        assert int(np.argmax(itf.csi_envelope(s))) == 1
+        with pytest.raises(ValueError, match="max_edge_envelope"):
+            itf.csi_peak_position(s, DZ, 0.0, LAM)
 
     def test_truncated_envelope_is_refused_because_it_lies(self):
         """The nastiest one: an *interior* argmax, no NaN, no warning, 76 % wrong."""
