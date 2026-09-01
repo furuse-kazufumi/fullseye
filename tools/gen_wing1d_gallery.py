@@ -2635,17 +2635,19 @@ def ex_octave_family(log):
             f"diff from 10log10(A^2/2) {L[k] - closed:+.3e} dB  "
             f"floored bands {n_clamped}")
 
-        PW, PH = 470, 340
+        PW, PH = 470, 360
         fig = Fig(PW, PH)
-        fig.box(0, 0, PW, 28, (0.085, 0.095, 0.115))
-        fig.text(10, 5, f"1/{fr} octave  ({c.size} bands)", C_TEXT, 13, True)
-        ax = Ax(fig, 60, 46, PW - 16, PH - 52, (22.0, 20000.0), (-72.0, 4.0),
+        fig.box(0, 0, PW, 30, (0.085, 0.095, 0.115))
+        fig.text(10, 6, f"1/{fr} octave", C_TEXT, 14, True)
+        fig.text(110, 8, f"{c.size} bands   band level [dB] vs frequency [Hz], log",
+                 C_DIM, 11)
+        ax = Ax(fig, 62, 52, PW - 18, PH - 80, (22.0, 20000.0), (-72.0, 4.0),
                 logx=True)
         ax.panel()
         ink = fig.ink()
         ax.frame(ink)
-        ax.xticks(ink, [31.5, 125, 500, 2000, 8000], "%g", size=9)
-        ax.yticks(ink, [0, -20, -40, -60], "%.0f", size=9)
+        ax.xticks(ink, [31.5, 125, 500, 2000, 8000], "%g", size=10)
+        ax.yticks(ink, [0, -20, -40, -60], "%.0f", size=10)
         fig.stamp(ink, C_AXIS)
         ink = fig.ink()
         ax.hline(ink, closed, width=1, dashed=True)
@@ -2663,21 +2665,18 @@ def ex_octave_family(log):
         ax.vline(ink, 1000.0, width=1, dashed=True)
         fig.stamp(ink, C_B)
         ink = fig.ink()
-        ink.marks([(ax.X(c[k]), ax.Y(L[k]))], size=7, shape="cross", width=2)
+        ink.marks([(ax.X(c[k]), ax.Y(L[k]))], size=8, shape="cross", width=2)
         fig.stamp(ink, C_E)
-        fig.text(ax.X(1000.0) - 52, 50, "1 kHz", C_B, 10, True)
-        fig.text(24, 150, "dB", C_DIM, 10)
-        fig.text(PW - 130, PH - 44, "frequency [Hz]", C_DIM, 10)
-        fig.text(12, PH - 42,
-                 f"max {L[k]:.6f} dB at {c[k]:.3f} Hz",
-                 C_E, 11, True)
+        fig.text(ax.X(1000.0) - 66, 56, "1 kHz", C_B, 11, True)
+        fig.text(26, 150, "dB", C_DIM, 10)
+        fig.text(12, PH - 44, f"max {L[k]:.6f} dB at {c[k]:.3f} Hz", C_E, 12, True)
         fig.text(12, PH - 26,
-                 ("a band is centred at 1000.000 Hz" if exact else
+                 ("a band IS centred at 1000.000 Hz" if exact else
                   "NO band is centred at 1000 Hz (even fraction)"),
-                 C_C if exact else C_WARN, 11, True)
+                 C_C if exact else C_WARN, 12, True)
         panels.append(fig.u8())
-        labels.append(f"1/{fr} oct — {c.size} 帯域 / 最大 {L[k]:.6f} dB @ "
-                      f"{c[k]:.2f} Hz / 1 kHz 中心 {'あり' if exact else 'なし'}")
+        labels.append(f"1/{fr} oct  {c.size} 帯域  1 kHz 中心"
+                      + ("あり" if exact else "なし"))
 
     odd = [r for r in rows if r["exact_1k"]]
     even = [r for r in rows if not r["exact_1k"]]
