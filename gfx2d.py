@@ -323,7 +323,7 @@ def _same_shape(a, b, name_a, name_b):
                          "silently wrong picture) — resize or blit explicitly")
 
 
-def _scalar(value, name, lo=None, hi=None, allow_int=True):
+def _scalar(value, name, lo=None, hi=None):
     """Finite real scalar with named bounds. Rejects bool and str."""
     if isinstance(value, (bool, np.bool_)):
         raise ValueError(f"{name}: a bool is not a number")
