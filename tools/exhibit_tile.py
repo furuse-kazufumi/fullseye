@@ -359,10 +359,18 @@ def _selftest() -> int:
         print(f"gif frames={a['frames']} size={a['size']} bytes={a['gif_bytes']} "
               f"deterministic={anim_same}")
 
+    multi = contact_sheet(panels[:2], ncols=2, title="改行を\n含む表題")
+    print(f"multiline title: {multi.shape[1]}x{multi.shape[0]} (落ちずに 2 行で組めている)")
+    wide = contact_sheet(panels[:2], ncols=2,
+                         labels=["とても長いラベルを入れても切られない" * 2, "短い"])
+    print(f"long label: {wide.shape[1]}x{wide.shape[0]} (縮小して収めた)")
+
     for label, call in (
         ("NaN panel", lambda: contact_sheet([np.full((8, 8), np.nan)])),
         ("mixed sizes", lambda: flipbook([np.zeros((4, 4)), np.zeros((4, 5))])),
         ("single frame", lambda: flipbook([np.zeros((4, 4))])),
+        ("unfittable label", lambda: contact_sheet(
+            [np.zeros((40, 40))], labels=["切られるくらいなら例外にする" * 8])),
     ):
         try:
             call()
