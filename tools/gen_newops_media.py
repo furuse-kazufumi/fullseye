@@ -911,7 +911,9 @@ def build_parallax(log):
     rows = []
     for v, u in ring:
         view = lf[v, u]
-        dy, dx = _shift_of(centre * near_mask, view * near_mask, 14)
+        # 参照側だけを手前の層で切り出す(両側に同じ静止マスクを掛けると、
+        # マスクどうしの相関が必ず (0,0) で勝ってしまい視差が消える)。
+        dy, dx = _shift_of(centre * near_mask, view, 14)
         rows.append({"v": v, "u": u, "expect": (NEAR * (v - c), NEAR * (u - c)),
                      "measured": (dy, dx)})
     err = max(max(abs(r["measured"][0] - r["expect"][0]),
