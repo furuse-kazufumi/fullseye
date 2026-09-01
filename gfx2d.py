@@ -207,6 +207,11 @@ MAX_LEVELS = 256
 #: Largest palette in :func:`palette_quantize`.
 MAX_PALETTE = 4096
 
+#: Largest ``H * W * K`` in :func:`palette_quantize`. The nearest-colour search
+#: is exhaustive (that is what makes it optimal), so it materialises a distance
+#: table of exactly that many float64 — 2^26 is 537 MB.
+MAX_QUANT_ELEMENTS = 1 << 26
+
 #: Absolute tolerance applied when checking that a value lies in ``[0, 1]``.
 #: Values inside the tolerance are clipped; values outside are rejected. The
 #: window exists because a legitimate float64 pipeline lands on ``1 + 2e-16``,
