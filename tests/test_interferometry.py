@@ -904,7 +904,10 @@ class TestSweepPoolIsSafeToShare:
                 itf.chromatic_confocal_height(sp, 500.0, 1.0, 0.20, 600.0,
                                               min_peak_bins=0.0)
         for nz in (0.0, 0.05, 0.20):
-            s = scan(6.0, noise=nz, seed=3)
+            # np.maximum: heavy noise can push an interferogram negative, and the
+            # negativity guard would then fire first; clip so the *carrier* guard
+            # is what is being tested
+            s = np.maximum(scan(6.0, noise=nz, seed=3), 0.0)
             with pytest.raises(ValueError, match="max_carrier_fraction"):
                 itf.chromatic_confocal_height(s, 500.0, 0.5, 0.20, 600.0,
                                               min_peak_bins=0.0)
