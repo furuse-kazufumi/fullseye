@@ -848,7 +848,7 @@ class TestFailClosed:
             S.dichromatic_render(_flat(), model="phong")
 
     def test_zero_length_directions(self):
-        with pytest.raises(ValueError, match="zero length"):
+        with pytest.raises(ValueError, match="zero-length normal"):
             S.brdf_blinn_phong(np.zeros((4, 4, 3)))
         with pytest.raises(ValueError, match="zero length"):
             S.brdf_blinn_phong(_flat(), light=(0.0, 0.0, 0.0))
