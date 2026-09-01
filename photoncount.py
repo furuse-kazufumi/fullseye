@@ -63,8 +63,13 @@ never re-implemented):
     :func:`tcspc_irf_convolve` is the *temporal* analogue of a PSF blur and says
     so; the spatial one is not duplicated here.
   * **1-D signal processing** (filtering, spectra, resampling) is :mod:`dsp` and
-    :mod:`funct1d`. An arrival-time histogram *is* a 1-D ``signal``, so those
-    ops apply to it directly and are not re-wrapped here.
+    :mod:`funct1d`. An arrival-time histogram is a plain 1-D float64 array, so
+    those ops apply to it directly and are not re-wrapped here. Note the
+    asymmetry, which is deliberate: a histogram can always be handed to a
+    signal op, but an arbitrary signal is **not** a histogram (photon counts are
+    non-negative), so the ledger declares a separate ``counts`` type — see the
+    vocabulary notes in :mod:`opsphoton` for why that separation had to be made
+    at the type level rather than left to the runtime check.
 
 Provenance — every method here is textbook or cited public literature, and
 nothing is derived from any commercial product (see ``docs/PROVENANCE.md``):
