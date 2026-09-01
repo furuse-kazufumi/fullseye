@@ -147,7 +147,8 @@ def main():
     bad = A.spectral_kurtosis(imp, fs_b, win=256)
     print(f"win=256 ({bad['window_seconds'] * 1e3:.1f} ms) は "
           f"最大尖度 {bad['max_kurtosis']:+.3f} @ {bad['max_freq']:.0f} Hz "
-          f"= 衝撃を一切検出しない")
+          f"= 共振と無関係な帯域を指す(全フレームが衝撃を 1 個ずつ含むので、"
+          f"帯域が定常に見えてしまう)")
     assert abs(auto["peak_freq"] - f_defect) < 1e-9
 
     # ------------------------------------------------------------------ #
