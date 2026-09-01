@@ -1539,12 +1539,26 @@ def roundtrip_report(seed=0):
     # 8. gaussians <-> points
     g = points_to_gaussians(cloud)
     exact("points -> gaussians -> points", cloud, gaussians_to_points(g))
-    gg = points_to_gaussians(np.stack(np.meshgrid(*[np.arange(4.0, 12.0, 2.0)] * 3,
-                                                  indexing="ij"), -1).reshape(-1, 3))
-    vol = gaussians_to_voxel(gg, shape=(16, 16, 16))
+    # 中央に 1 つだけ置いて境界の切り落としを排除する(混ぜると打ち切りの
+    # 理論値と比較できない)。刻みを細かくすると中点則の上振れが減っていく
+    import math                                             # noqa: PLC0415
+    box = math.erf(3.0 / math.sqrt(2.0)) ** 3
+    one = {"mu": np.array([[8.0, 8.0, 8.0]]), "sigma": np.array([1.5]), "w": np.array([1.0])}
+    masses = []
+    for sp in (1.0, 0.5, 0.25, 0.125):
+        n = int(round(16.0 / sp))
+        masses.append(float(gaussians_to_voxel(one, shape=(n, n, n),
+                                               spacing=(sp, sp, sp)).sum()))
     rows.append({"pair": "gaussians -> voxel (質量保存)", "kind": "lossy",
-                 "lost": f"3σ 打ち切り + 格子化で質量 {float(vol.sum()) / float(gg['w'].sum()) * 100:.2f}% "
-                         f"(球ガウシアン 3σ の理論値 97.07%)"})
+                 "lost": "3σ の**箱**打ち切り理論 "
+                         f"erf(3/√2)³ = {box * 100:.3f}%。実測は刻み 1.0/0.5/0.25/0.125 で "
+                         + " / ".join(f"{m * 100:.2f}%" for m in masses)
+                         + " と単調に収束(中点則の上振れが縮む)"})
+    edge = {"mu": np.array([[1.0, 8.0, 8.0]]), "sigma": np.array([1.5]), "w": np.array([1.0])}
+    rows.append({"pair": "gaussians -> voxel (境界の切り落とし)", "kind": "lossy",
+                 "lost": f"中心を縁から 1 voxel に置くと質量 "
+                         f"{float(gaussians_to_voxel(edge, shape=(16, 16, 16)).sum()) * 100:.2f}% "
+                         f"(打ち切りより遥かに大きい損失)"})
 
     # 9. angle <-> matrix / rot_scale <-> matrix / shift <-> vector
     angs = rng.uniform(-179.9, 179.9, size=64)

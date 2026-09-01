@@ -1032,7 +1032,7 @@ def ex_seed_spread(data, log=print):
             items += [
                 (34, y0 + 12, SHORT[n], C_TEXT, 16, True),
                 (34, y0 + 214, "seed", C_DIM, 12, False),
-                (34, y0 + 40, f"[{sw[n]['unit']}]", C_DIM, 12, False),
+                (280, y0 + 12, f"[{sw[n]['unit']}]", C_DIM, 12, False),
                 (W - 286, y0 + 46,
                  f"seeds so far  {len(runs)}", C_TEXT, 13, True),
                 (W - 286, y0 + 70,
