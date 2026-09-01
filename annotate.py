@@ -1079,6 +1079,11 @@ def data_to_pixel(axes, x, y):
     -------
     (ndarray, ndarray)
         ``px``, ``py``(float、丸めない ―― 丸めは描画側の仕事)。
+
+    Raises
+    ------
+    ValueError
+        log 軸に 0 以下の値を渡したとき(-inf を「端」として描く図は嘘になる)。
     """
     rx, ry, rw, rh = axes["rect"]
     fx = _axis_fraction(x, axes["xlim"], axes.get("xscale", "linear"))
