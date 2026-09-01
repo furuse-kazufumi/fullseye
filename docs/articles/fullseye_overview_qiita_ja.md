@@ -1354,7 +1354,7 @@ print(fs.vol_rle_volume(fs.vol_rle_encode(mask)))             # ③ dense を作
 
 ### 骨格をグラフとして読む、1D をひとつの目録に
 
-**骨格(スケルトン)**は `em_skeleton`(Eckhardt–Maderlechner 法 1993 のクリーンルーム実装)で細線化し、`junctions_skeleton` / `r2_endpoints_skeleton` で分岐点と端点を、3D 側は `skeleton_junctions3d` / `skeleton_endpoints3d` / `skeleton_prune3d` / `skeleton_branches3d` でノード・枝・端点を返します。太いボリュームを渡すと Lee 法(1994)で細線化してから読みます。**voxel 骨格のグラフ化は血管・多孔質・根系のネットワーク解析向け**で、2D と 3D が同じ語彙になっています。
+**骨格(スケルトン)**は `fs.apply(mask, "em_skeleton")`(Eckhardt–Maderlechner 法 1993 のクリーンルーム実装)で細線化し、`junctions_skeleton` / `r2_endpoints_skeleton` で分岐点と端点を、3D 側は `skeleton_junctions3d` / `skeleton_endpoints3d` / `skeleton_prune3d` / `skeleton_branches3d` でノード・枝・端点を返します。太いボリュームを渡すと Lee 法(1994)で細線化してから読みます。**voxel 骨格のグラフ化は血管・多孔質・根系のネットワーク解析向け**で、2D と 3D が同じ語彙になっています。
 
 実装の検証は、文献が公表している EM93 の実行結果との画素単位の突き合わせです(検定形状 1 = 724/724 画素で差分ゼロ、残る 2 形状も公表画素数 2434/3895 と一致)。この突き合わせはそのまま回帰テストに焼き込んであります。**HALCON 実機との直接照合だけは未実施です**(手元にライセンスがないため)。
 
