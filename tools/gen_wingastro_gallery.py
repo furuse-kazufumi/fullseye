@@ -445,38 +445,51 @@ def ex_lucky_sweep():
 # 展示 3: 宇宙線の消え方(タイル)                                             #
 # --------------------------------------------------------------------------- #
 def ex_cosmic():
-    frame, truth = A.synth_starfield(
-        shape=(150, 150), n_stars=30, flux_min=1500.0, flux_max=30000.0,
-        fwhm_px=3.2, sky=90.0, read_sigma=6.0, n_cosmic=18,
-        cosmic_flux=7000.0, seed=SEED + 21, margin_px=10.0)
+    """**「最大値」では語れない。** 宇宙線の無い同じ観測を作って差を測る。
+
+    最初の版はフレームの最大値を並べていたが、それは**一番明るい星**の値で
+    あって宇宙線とは関係が無く、除去の前後でほとんど動かなかった
+    (実測 7120 -> 7119 e-)。``n_cosmic=0`` の同じ seed で「宇宙線だけ無い
+    観測」を作れば、正解との差を直接測れる —— 合成データを使う利点はここ。
+    """
+    kw = dict(shape=(150, 150), n_stars=30, flux_min=1500.0, flux_max=30000.0,
+              fwhm_px=3.2, sky=90.0, read_sigma=6.0, seed=SEED + 21,
+              margin_px=10.0)
+    frame, truth = A.synth_starfield(n_cosmic=18, cosmic_flux=7000.0, **kw)
+    ideal_frame, _ = A.synth_starfield(n_cosmic=0, **kw)
     cleaned, mask = A.cosmic_ray_reject(frame, sigma=5.0, f_lim=2.0)
     hit = truth["cosmic_mask"]
     tp = int((mask & hit).sum())
     precision = tp / max(1, int(mask.sum()))
     recall = tp / max(1, int(hit.sum()))
+    res_raw = float(np.abs(frame - ideal_frame).max())
+    res_cleaned = float(np.abs(cleaned - ideal_frame).max())
 
-    # 位置合わせ済みの 8 枚からのフレーム間比較
-    series, _ = A.synth_frame_series(
-        shape=(150, 150), n_frames=8, dither_px=0.0, n_stars=30,
-        flux_min=1500.0, flux_max=30000.0, fwhm_px=3.2, sky=90.0,
-        read_sigma=6.0, n_cosmic=12, cosmic_flux=7000.0, seed=SEED + 21,
-        margin_px=10.0)
+    skw = dict(shape=(150, 150), n_frames=8, dither_px=0.0, n_stars=30,
+               flux_min=1500.0, flux_max=30000.0, fwhm_px=3.2, sky=90.0,
+               read_sigma=6.0, seed=SEED + 21, margin_px=10.0)
+    series, _ = A.synth_frame_series(n_cosmic=12, cosmic_flux=7000.0, **skw)
+    clean_series, _ = A.synth_frame_series(n_cosmic=0, **skw)
+    ideal = A.sigma_clip_stack(clean_series, mode="mean")[0]
     cleaned_series, masks = A.cosmic_ray_reject_stack(series, kappa=5.0,
                                                       read_sigma=6.0)
     naive = A.sigma_clip_stack(series, mode="mean")[0]
     fixed = A.sigma_clip_stack(cleaned_series, mode="mean")[0]
     clipped = A.sigma_clip_stack(series, mode="sigma_clip", kappa=3.0)[0]
-    max_naive = float(naive.max())
-    max_fixed = float(fixed.max())
+    e_naive = float(np.abs(naive - ideal).max())
+    e_clip = float(np.abs(clipped - ideal).max())
+    e_fixed = float(np.abs(fixed - ideal).max())
+    n_before, n_after = len(A.star_detect(frame)), len(A.star_detect(cleaned))
 
     panels, labels = [], []
     panels.append(_label(_fit(_gray(frame)),
-                         ["元のフレーム 150x150",
+                         ["元のフレーム 150x150(合成)",
                           "植えた宇宙線 %d 画素" % int(hit.sum()),
-                          "星 %d 個" % truth["n_stars"]]))
+                          "星 %d 個 / 空 %.0f e-" % (truth["n_stars"],
+                                                     truth["sky"])]))
     labels.append("元(合成・宇宙線 %d 画素)" % int(hit.sum()))
 
-    panels.append(_label(_fit(_tint(mask.astype(float) * 1.0, C_EMPH,
+    panels.append(_label(_fit(_tint(mask.astype(float), C_EMPH,
                                     frame_for_scale=np.array([[0.0, 1.0]]))),
                          ["検出マスク %d 画素" % int(mask.sum()),
                           "%s 適合率 %.3f" % (M["right"], precision),
@@ -485,30 +498,30 @@ def ex_cosmic():
     labels.append("検出マスク(適合率 %.3f)" % precision)
 
     panels.append(_label(_fit(_gray(cleaned, frame_for_scale=frame)),
-                         ["除去後(同じ尺度で表示)",
-                          "最大値 %.0f -> %.0f e-" % (frame.max(), cleaned.max()),
-                          "星の数は %d -> %d"
-                          % (len(A.star_detect(frame)),
-                             len(A.star_detect(cleaned)))]))
-    labels.append("単一フレーム除去のあと")
+                         ["除去後(同じ尺度)",
+                          "正解との最大差 %.0f -> %.0f e-"
+                          % (res_raw, res_cleaned),
+                          "「星」の検出数 %d -> %d" % (n_before, n_after),
+                          "減ったぶんは宇宙線が星に化けていた分"]))
+    labels.append("単一フレーム除去のあと(最大差 %.0f e-)" % res_cleaned)
 
     panels.append(_label(_fit(_gray(naive)),
                          ["8 枚を素直に平均",
-                          "%s 宇宙線が薄く全部残る" % M["wrong"],
-                          "最大値 %.0f e-" % max_naive]))
-    labels.append("素直な平均 — 宇宙線は 1/8 になるだけ")
+                          "%s 正解との最大差 %.0f e-" % (M["wrong"], e_naive),
+                          "宇宙線は 1/8 に薄まって全部残る"]))
+    labels.append("素直な平均 — 最大差 %.0f e-" % e_naive)
 
     panels.append(_label(_fit(_gray(clipped, frame_for_scale=naive)),
                          ["8 枚を κ-σ 合成(κ=3)",
-                          "%s 最大値 %.0f e-" % (M["right"], clipped.max()),
-                          "検出も置換も要らない"]))
-    labels.append("κ-σ 合成 — 除去せずとも消える")
+                          "%s 正解との最大差 %.0f e-" % (M["right"], e_clip),
+                          "検出も置換もしていない"]))
+    labels.append("κ-σ 合成 — 最大差 %.0f e-" % e_clip)
 
     panels.append(_label(_fit(_gray(fixed, frame_for_scale=naive)),
                          ["フレーム間除去 -> 平均",
-                          "%s 最大値 %.0f e-" % (M["right"], max_fixed),
+                          "%s 正解との最大差 %.0f e-" % (M["right"], e_fixed),
                           "同じ場所に二度は当たらない"]))
-    labels.append("フレーム間比較で除去してから平均")
+    labels.append("フレーム間比較で除去してから平均 — 最大差 %.0f e-" % e_fixed)
 
     sheet = et.contact_sheet(panels, labels, ncols=3, panel_px=PANEL,
                              title="宇宙線の消え方 —— 尖りで見分ける / "
@@ -516,13 +529,11 @@ def ex_cosmic():
     info = et.save_exhibit(sheet, "wingastro_cosmic")
     data = {"truth_px": int(hit.sum()), "detected_px": int(mask.sum()),
             "precision": precision, "recall": recall,
-            "max_raw": float(frame.max()), "max_cleaned": float(cleaned.max()),
-            "max_naive": max_naive, "max_clipped": float(clipped.max()),
-            "max_fixed": max_fixed,
-            "stack_truth_px": int(np.stack([hit]).sum()),
+            "residual_raw": res_raw, "residual_cleaned": res_cleaned,
+            "err_naive": e_naive, "err_clipped": e_clip, "err_fixed": e_fixed,
             "stack_detected_px": int(masks.sum()),
-            "n_stars_before": len(A.star_detect(frame)),
-            "n_stars_after": len(A.star_detect(cleaned))}
+            "n_stars_before": n_before, "n_stars_after": n_after,
+            "n_frames": 8}
     return info, data
 
 
