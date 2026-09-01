@@ -3800,7 +3800,7 @@ GPU 加速は「**CPU の正解と数値一致した op だけ載せる**」と�
 | 光子レベルの計測と誤差棒 | `tcspc_simulate` / `dtof_depth` / `photon_uncertainty` | Poisson は分散 = 平均(校正不要) |
 | 色空間の 3 次元回転 | `rgb_to_quaternion` / `quat_color_rotate` | 四元数固有の利得は**これだけ** |
 | 距離・速度・到来角 | `fmcw_beat_simulate` / `range_doppler_map` | bin 幅を渡さないと単位はビン番号 |
-| テカり除去・多灯の法線復元 | `specular_diffuse_split` / `photometric_stereo_robust` | 破綻点は **k=4** 灯の遮蔽 |
+| テカり除去・多灯の法線復元 | `specular_diffuse_split` / `photometric_stereo_robust` | 遮蔽は解ける。破綻点は**ハイライト汚染 4/8 灯** |
 | 見えない振動を測る・見せる | `displacement_series` / `motion_magnify` | 崖は **3.0619 画素**(J₀ 第一零点) |
 | 大きい 3D を持ち歩かない | `vol_crop_domain` / `vol_boundary` / `vol_rle_encode` | 1/34・19 %・1/145 |
 | 骨格をグラフとして読む | `apply(mask, "em_skeleton")` / `junctions_skeleton` / `skeleton_branches3d` | EM93 と画素単位で一致 |
