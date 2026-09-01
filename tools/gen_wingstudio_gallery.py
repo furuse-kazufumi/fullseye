@@ -427,6 +427,27 @@ def _shade_mesh(V, F, yaw_deg, pitch_deg=18.0, size=420, fill=0.9, dist_r=30.0,
     return rgb, int(sil.sum())
 
 
+def voxel_mesh_to_world(Vz, F):
+    """marching cubes の (z, y, x) 添字メッシュを world (x, y, z) に直す。
+
+    ★ここが罠。``V[:, ::-1]`` は軸の**入れ替え**ではなく**鏡映**(行列式 -1)なので、
+    座標だけ直すと三角形の巻き方向が全部裏返る = 閉じたメッシュが「内向き」になる。
+    実測: 段付き部品の符号つき体積は marching cubes 直後 +37294.7(占有ボクセル
+    35746 とほぼ一致)、``[:, ::-1]`` 後は **-37294.7**。この状態で
+    ``cadmap`` の裏面カリングを効かせると、本来の遮蔽面が捨てられて
+    可視率が 85.7 % と過大に出る(正しくは面積比で約 51 %)。
+    面の巻き方向も同時に裏返して打ち消す。
+    """
+    return (np.ascontiguousarray(np.asarray(Vz, np.float64)[:, ::-1]),
+            np.ascontiguousarray(np.asarray(F, int)[:, ::-1]))
+
+
+def signed_volume(V, F):
+    """閉メッシュの符号つき体積(発散定理)。負なら巻き方向が内向き。"""
+    t = np.asarray(V, np.float64)[np.asarray(F, int)]
+    return float(np.einsum("ij,ij->i", t[:, 0], np.cross(t[:, 1], t[:, 2])).sum() / 6.0)
+
+
 def _load_ct():
     """同梱の骨格 CT ボリューム (D, H, W) = (z, y, x) を float64 で読む。"""
     return np.load(os.path.join(_ROOT, "studio_assets", "sample_3d",

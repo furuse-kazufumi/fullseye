@@ -3,54 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-02 02:20:25
+- **最終更新**: 2026-09-02 02:26:41
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-d44748557 auto: gen_wing1d_gallery.py 編集前 (2026-09-02 02:20)
-b27df6878 auto: gen_wingstudio_gallery.py 編集前 (2026-09-02 02:20)
-21c3eb850 auto: gen_wingstudio_gallery.py 編集前 (2026-09-02 02:20)
-a258fc841 auto: gen_wing3d_gallery.py 編集前 (2026-09-02 02:20)
-13aa3e53b auto: gen_wing1d_gallery.py 編集前 (2026-09-02 02:20)
-a63ca7a55 auto: gen_wingstudio_gallery.py 編集前 (2026-09-02 02:19)
-0c144923d auto: gen_wing1d_gallery.py 編集前 (2026-09-02 02:19)
-be6e3f8d2 auto: gen_wingstudio_gallery.py 編集前 (2026-09-02 02:19)
-7a09e014f auto: gen_wingstudio_gallery.py 編集前 (2026-09-02 02:19)
-06f7866ce auto: gen_wingstudio_gallery.py 編集前 (2026-09-02 02:19)
+9b2264357 auto: gen_wingstudio_gallery.py 編集前 (2026-09-02 02:26)
+e4b213b22 auto: gen_wingevo_gallery.py 編集前 (2026-09-02 02:26)
+8f6a9278b auto: gen_wingevo_gallery.py 編集前 (2026-09-02 02:26)
+a9ab99f14 auto: gen_wingevo_gallery.py 編集前 (2026-09-02 02:26)
+3accc3556 auto: gen_wingevo_gallery.py 編集前 (2026-09-02 02:26)
+96dfae171 auto: gen_wingopt_gallery.py 編集前 (2026-09-02 02:26)
+ce63eabeb auto: gen_wingopt_gallery.py 編集前 (2026-09-02 02:25)
+213f8aac1 auto: volcolor.py 編集前 (2026-09-02 02:25)
+20cd8e9d9 auto: volcolor.py 編集前 (2026-09-02 02:25)
+d0f420de2 auto: gen_wingevo_gallery.py 編集前 (2026-09-02 02:25)
 ```
 
 ## 現在の git status
 
 ```
-M tools/gen_wing1d_gallery.py
-?? docs/articles/assets/media/wingevo_generations.gif
-?? docs/articles/assets/media/wingevo_stage_photon.gif
-?? docs/articles/assets/media/wingevo_stage_specular.gif
-?? docs/articles/assets/thumbs/wingevo_stage_photon_thumb.jpg
-?? docs/articles/assets/thumbs/wingevo_stage_specular_thumb.jpg
+M tools/gen_wingstudio_gallery.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-02:20 tools/gen_wing1d_gallery.py
-02:20 docs/articles/assets/thumbs/wingevo_stage_specular_thumb.jpg
-02:20 docs/articles/assets/media/wingevo_stage_specular.gif
-02:20 docs/articles/assets/thumbs/wingevo_stage_photon_thumb.jpg
-02:20 docs/articles/assets/media/wingevo_stage_photon.gif
-02:20 docs/articles/assets/media/wingevo_generations.gif
-02:20 docs/articles/assets/_wingstudio_meta.json
-02:20 docs/articles/assets/thumbs/wingstudio_lightfield_thumb.jpg
-02:20 docs/articles/assets/media/wingstudio_lightfield.gif
-02:20 docs/articles/assets/thumbs/newops_csi_step_sweep_720.jpg
-02:20 docs/articles/assets/media/newops_csi_step_sweep.gif
-02:20 docs/articles/assets/media/newops_csi_step_sweep.mp4
-02:20 docs/articles/assets/media/wingevo_seed_spread.gif
-02:20 tools/gen_wingstudio_gallery.py
-02:20 tools/gen_wing3d_gallery.py
+02:26 tools/gen_wingstudio_gallery.py
+02:26 tools/gen_wingevo_gallery.py
+02:26 docs/articles/assets/wing1d_profile_sources_thumb.jpg
+02:26 docs/articles/assets/wing1d_profile_sources.png
+02:26 tools/gen_wingopt_gallery.py
+02:26 tools/gen_wing1d_gallery.py
+02:26 docs/articles/assets/thumbs/wing1d_weighting_ac_thumb.jpg
+02:26 docs/articles/assets/media/wing1d_weighting_ac.gif
+02:26 docs/articles/assets/thumbs/newops_quaternion_rotate_720.jpg
+02:26 docs/articles/assets/media/newops_quaternion_rotate.gif
+02:26 docs/articles/assets/media/newops_quaternion_rotate.mp4
+02:26 docs/articles/assets/thumbs/newops_photon_buildup_720.jpg
+02:26 docs/articles/assets/media/newops_photon_buildup.gif
+02:26 docs/articles/assets/media/newops_photon_buildup.mp4
+02:25 volcolor.py
 ```
 
 ---
