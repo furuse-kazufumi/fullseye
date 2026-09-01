@@ -665,6 +665,10 @@ def main():
     ap.add_argument("--replay", type=int, metavar="SEED",
                     help="--script を指定 seed で強制実行(最小再現の確認)")
     ap.add_argument("--script", help="--replay で実行する op 名のカンマ区切り")
+    ap.add_argument("--coverage-out", metavar="JSON",
+                    help="どの op が走り、どの op が一度も走らなかったかを書き出す。"
+                         "「304/417」という数だけでは、残る 113 が頑健なのか"
+                         "そもそも到達不能なのかが区別できない")
     args = ap.parse_args()
     if args.minimize:
         minimize_file(args.minimize, catalog(), make_generators(), only=args.only)

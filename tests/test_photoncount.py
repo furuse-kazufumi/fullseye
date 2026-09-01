@@ -1072,7 +1072,7 @@ class TestAdversarial20260901:
     def test_empty_value_string_is_no_longer_silently_parsed(self):
         """BUG: dtof_cube_depth(cube, empty_value="3") succeeded, because
         float("3") parses — an unparsed config value became a depth in metres."""
-        cube = PC.dtof_cube_simulate(_tilted_plane(2, 2), bins=32, bin_ps=400.0,
+        cube = PC.dtof_cube_simulate(_tilted_plane(2, 2), bins=64, bin_ps=400.0,
                                      noise=False)
         with pytest.raises(ValueError, match="string"):
             PC.dtof_cube_depth(cube, 400.0, empty_value="3")
