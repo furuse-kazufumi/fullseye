@@ -249,6 +249,11 @@ honesty guard が捕まえるために存在する現象です。仮に train �
 foreach ($p in 'photon_denoise','vibration_map','lf_slope','specular_removal') { py -3.11 robust.py --problem $p --seeds 3 --gens 12 --pop 12 --isolate --workdir out/rb_2026_09_02_A }
 ```
 
+**workdir に `baseline_<課題>.json` を置かないこと**(空のディレクトリで走らせる)。
+`evolve.run` はそのファイルがあると ① split config をそこから読み ② 初期集団の
+個体 0 をファイル中の乱択最良ゲノムで置き換える。つまり `baseline.py` を先に
+走らせるかどうかで**進化の結果が変わる**。上の表は「置かない」側の数字。
+
 成果物 `out/rb_2026_09_02_A/robust_<課題>.json`。**恒等と手の基準線もその JSON に
 入っている**(`baseline_trivial*` / `baseline_hand*`)ので、上の表は成果物から
 そのまま読める。各行は測定時の `commit` / `measured_at` / `split_config` を持つ。
