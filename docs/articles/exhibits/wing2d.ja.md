@@ -110,7 +110,7 @@
 
 ![帳票の傾き補正 → 二値化 → バーを数える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing2d_doc_deskew.gif)
 
-*↑ **帳票の傾き補正 → 二値化 → バーを数える** ―― 合成の帳票を 0→42° と傾けながら、回転角を 0.5° 刻みで振って「行方向プロファイルの分散が最大になる角」を探した。推定誤差は全域で最大 0.0°(11° のときは真値どおり 11.0°)で、補正後の `decode_barcode` はどの傾きでも真値の 8 本を返す。補正しないと 30° を超えたところで 5 本まで取りこぼす —— 前処理を 1 段挟むかどうかで、同じ op の答えが変わる。使用 op: `rotate_image`, `otsu`, `decode_barcode`。*
+*↑ **帳票の傾き補正 → 二値化 → バーを数える** ―― 合成の帳票を 0→42° と傾けながら、回転角を 0.5° 刻みで振って「行方向プロファイルの分散が最大になる角」を探した。推定誤差は全域で最大 0.0°(11° のときは真値どおり 11.0°)で、補正後の `decode_barcode` はどの傾きでも真値の 8 本を返す。補正しないと 30° で 7 本に落ち、42° では 5 本まで取りこぼす —— 前処理を 1 段挟むかどうかで、同じ op の答えが変わる。なお `rotate_image` は reshape=False + mode='reflect' なので、回すと四隅に元の文字が鏡映で折り返して写り込む(この展示では消していない)。使用 op: `rotate_image`, `otsu`, `decode_barcode`。*
 
 <!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing2d_doc_deskew_thumb.jpg -->
 

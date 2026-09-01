@@ -1623,10 +1623,15 @@ def subject_doc_deskew(log=print) -> dict:
             "合成の帳票を 0→42° と傾けながら、回転角を 0.5° 刻みで振って"
             "「行方向プロファイルの分散が最大になる角」を探した。推定誤差は全域で"
             "最大 %.1f°(%.0f° のときは真値どおり %.1f°)で、補正後の `decode_barcode` は"
-            "どの傾きでも真値の %d 本を返す。補正しないと %.0f° を超えたところで "
+            "どの傾きでも真値の %d 本を返す。補正しないと %.0f° で %d 本に落ち、42° では "
             "%d 本まで取りこぼす —— 前処理を 1 段挟むかどうかで、同じ op の答えが変わる。"
+            "なお `rotate_image` は reshape=False + mode='reflect' なので、回すと"
+            "四隅に元の文字が鏡映で折り返して写り込む(この展示では消していない)。"
             % (float(np.max(np.abs(est_err))), skew, est, n_true,
-               (min(broke) if broke else 42.0), int(min(raw_counts)))),
+               (min(broke) if broke else 42.0),
+               int(raw_counts[list(sweep).index(min(broke))]) if broke
+               else n_true,
+               int(min(raw_counts)))),
     }
 
 
