@@ -814,6 +814,7 @@ def cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True,
             rec["centroid"] = np.full(3, np.nan)
             rec["depth_mean"] = float("nan")
         rec["camera"] = _cam_dict(K, R, t, W, H)
+        rec["winding_fixed"] = bool(winding_fixed)
         out.append(rec)
     return out
 
