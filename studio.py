@@ -724,7 +724,17 @@ def volume_to_shell_points(vol, spacing=(1.0, 1.0, 1.0), max_points=2_000_000):
         raise ValueError("volume has non-finite voxels (NaN/Inf) — refusing")
     if float(v.max()) == float(v.min()):
         raise ValueError("volume is constant — no surface to display")
-    sp = np.asarray([float(s) for s in spacing], dtype=np.float64)
+    try:
+        sp = np.asarray([float(s) for s in spacing], dtype=np.float64)
+    except (TypeError, ValueError):
+        raise ValueError("spacing must be a length-3 (sz, sy, sx) sequence of "
+                         "numbers, got %r" % (spacing,)) from None
+    # the (z,y,x) -> (x,y,z) flip below multiplies index by spacing axis-for-axis,
+    # so a wrong-length or non-positive spacing must not broadcast silently.
+    if sp.shape != (3,):
+        raise ValueError("spacing must have length 3 (sz, sy, sx), got %r" % (spacing,))
+    if not np.isfinite(sp).all() or np.any(sp <= 0.0):
+        raise ValueError("spacing must be finite and positive, got %r" % (spacing,))
     orig_shape = v.shape                          # BEFORE any downsampling
     factor = 1
     while True:
