@@ -6,7 +6,7 @@
       "name": "wing3d_domain_memory",
       "title": "処理領域(domain)でメモリが 1/84 になる",
       "title_en": "A processing domain cuts memory to 1/84",
-      "caption_en": "A synthetic part floating in a 192³ field, stepped through slice by slice, with the full volume, the domain mask, the cropped sub-volume and the pasted-back result side by side. Only 0.42 % of the field is foreground, so `vol_crop_domain` takes memory from 56.62 MB to 0.678 MB (**1/83.5**) and the very same `vol_gradient_magnitude` goes from 7,077,888 voxels to 84,747 — the same **1/83.5**. (The measured wall-clock times live in `_wing3d_meta.json` instead of being burned into the picture, so the image stays byte-reproducible.) `vol_uncrop` puts it back bit-identically.",
+      "caption_en": "A synthetic part floating in a 192³ field, stepped through slice by slice, with the full volume, the domain mask, the cropped sub-volume and the pasted-back result side by side. Only 0.42 % of the field is foreground, so `vol_crop_domain` takes memory from 56.62 MB to 0.678 MB (**1/83.5**), and the very same `vol_gradient_magnitude` now touches 84,747 voxels instead of 7,077,888 — the same **1/83.5**. (The measured wall-clock times live in `_wing3d_meta.json` instead of being burned into the picture, so the image stays byte-reproducible.) `vol_uncrop` puts it back bit-identically.",
       "ops": [
         "vol_bounding_box",
         "vol_crop_domain",
@@ -28,9 +28,9 @@
         "full_MB": 56.623104,
         "part_MB": 0.677976,
         "memory_ratio": 83.51785903925803,
-        "t_full_ms_raw": 418.1357999332249,
-        "t_part_ms_raw": 1.9038999453186989,
-        "speedup_raw": 219.62067962727528,
+        "t_full_ms_raw": 373.6777000594884,
+        "t_part_ms_raw": 1.4810999855399132,
+        "speedup_raw": 252.2974165874897,
         "voxels_full": 7077888,
         "voxels_cropped": 84747,
         "voxel_ratio": 83.51785903925803,
@@ -38,7 +38,7 @@
         "foreground_voxels": 29474,
         "foreground_pct": 0.4164236563223379
       },
-      "caption": "192³ の視野に浮かぶ合成部品を輪切りで送りながら、元ボリューム・domain マスク・切り出し後・貼り戻しを並べた。前景は全体の 0.42 % しかないので `vol_crop_domain` で メモリは 56.62 MB → 0.678 MB(**1/83.5**)、同じ `vol_gradient_magnitude` が触る voxel も 7,077,888 → 84,747(同じく **1/83.5**)。壁時計の実行時間も実測しているが、再生成のたびに変わるので図には焼かず `_wing3d_meta.json` に置いた。`vol_uncrop` の貼り戻しは元と bit 一致。",
+      "caption": "192³ の視野に浮かぶ合成部品を輪切りで送りながら、元ボリューム・domain マスク・切り出し後・貼り戻しを並べた。前景は全体の 0.42 % しかないので、`vol_crop_domain` でメモリは 56.62 MB → 0.678 MB(**1/83.5**)、同じ `vol_gradient_magnitude` が触る voxel も 7,077,888 → 84,747(同じく **1/83.5**)。壁時計の実行時間も実測しているが、再生成のたびに変わるので図には焼かず `_wing3d_meta.json` に置いた。`vol_uncrop` の貼り戻しは元と bit 一致。",
       "kind": "gif",
       "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_domain_memory.gif",
       "mp4": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_domain_memory.mp4",
@@ -63,7 +63,7 @@
       "gif_sha256": "8a3b89df7c2825356a60ae6656b732348c79a3e37b3a47bfb431a657281669a6",
       "mp4_sha256": "e24b848e36feb754e036a1348a904baa6f99e208c13c31cbe2b1141bf7713984",
       "exhibit": "domain",
-      "seconds": 17.328664799919352
+      "seconds": 17.089509499957785
     },
     {
       "name": "wing3d_boundary_shell",
@@ -123,13 +123,13 @@
       "gif_sha256": "d56e8ff18bc8163e81758923d8aed5bf1ddb51991c9f7c37dc230ec14946ebe5",
       "mp4_sha256": "4b49e848b10a34c8296b9ddb2a6b80b6ee87419c7e8fb6cfc802b86acf0940fe",
       "exhibit": "boundary",
-      "seconds": 22.65939059993252
+      "seconds": 22.767444599885494
     },
     {
       "name": "wing3d_rle_compression",
       "title": "run-length で 1/71",
       "title_en": "Run-length regions: 1/71 the memory",
-      "caption_en": "Holding a 256³ synthetic part as run-lengths costs **1/71** of the dense mask (16.78 MB to 0.237 MB, 19,764 runs). And nothing has to be decoded: the volume of 1,610,948 voxels, the bounding box and the set operations are all answered on the runs themselves, with no bitmap ever materialised (the measured speed-ups are in `_wing3d_meta.json`; wall-clock numbers stay out of the picture so it remains byte-reproducible), and set operations (ball ∪ axle = 1,508,456 voxels) are solved on the runs themselves. The decode round-trip is bit-identical.",
+      "caption_en": "Holding a 256³ synthetic part as run-lengths costs **1/71** of the dense mask (16.78 MB to 0.237 MB, 19,764 runs). And nothing has to be decoded: the volume of 1,610,948 voxels, the bounding box, the centroid and the set operations (ball ∪ axle = 1,508,456 voxels) are all answered on the runs themselves, with no bitmap ever materialised. The decode round-trip is bit-identical. (The measured speed-ups are in `_wing3d_meta.json` — wall-clock numbers are kept out of the picture so it stays byte-reproducible.)",
       "ops": [
         "vol_rle_encode",
         "vol_rle_decode",
@@ -160,12 +160,12 @@
           128.0,
           128.0
         ],
-        "volume_speedup_raw": 238.76720914099815,
-        "bbox_speedup_raw": 35.0203727398582,
-        "t_rle_volume_us_raw": 29.19998951256275,
-        "t_dense_volume_us_raw": 6972.000002861023,
-        "t_rle_bbox_us_raw": 44.39987242221832,
-        "t_dense_bbox_us_raw": 1554.9000818282366,
+        "volume_speedup_raw": 239.5076643118807,
+        "bbox_speedup_raw": 26.51346575613001,
+        "t_rle_volume_us_raw": 29.300106689333916,
+        "t_dense_volume_us_raw": 7017.600117251277,
+        "t_rle_bbox_us_raw": 44.79987546801567,
+        "t_dense_bbox_us_raw": 1187.7999641001225,
         "dense_elements": 16777216,
         "rle_elements": 59292,
         "union_voxels": 1508456,
@@ -184,7 +184,7 @@
       "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_rle_compression_thumb.jpg",
       "thumb_bytes": 57181,
       "exhibit": "rle",
-      "seconds": 3.2087077000178397
+      "seconds": 3.2026190001051873
     },
     {
       "name": "wing3d_ct_windowing",
@@ -242,7 +242,7 @@
       "gif_sha256": "5e745b230bbe437aa60f17fc05cfd581986430a3a25aa1450ee467b8483417f5",
       "mp4_sha256": "0885d4fec4727ef498f84b3da50a4c56658ac7a823d478d85f76b0612e96c5ed",
       "exhibit": "windowing",
-      "seconds": 25.169420400168747
+      "seconds": 25.343698000069708
     },
     {
       "name": "wing3d_vesselness_control",
@@ -286,11 +286,13 @@
       "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_vesselness_control_thumb.jpg",
       "thumb_bytes": 54273,
       "exhibit": "vesselness",
-      "seconds": 3.0416413999628276
+      "seconds": 2.6893763998523355
     },
     {
       "name": "wing3d_skeleton_graph",
       "title": "3-D スケルトンをグラフにする",
+      "title_en": "Turning a 3-D skeleton into a graph",
+      "caption_en": "A synthetic branching structure (8,690 voxels) put through `skeletonize_vol` becomes a one-voxel-wide wire of 192 voxels (**2.21 %**), from which **4 branches**, **1 junction** and **4 endpoints** are extracted as a graph. White marks junctions, rose marks endpoints, and branches are coloured per connected component. One turn of the turntable is enough to read how it is wired.",
       "ops": [
         "skeletonize_vol",
         "skeleton_branches3d",
@@ -332,7 +334,7 @@
       "gif_sha256": "0c27c243f2169388931a05be0441393ce40e3910a3778147beed26daf08c2fb0",
       "mp4_sha256": "49b95987241c94b7d49398ccf9aaa4d570fcfd0a8e44added9d8f4c32415824f",
       "exhibit": "skeleton",
-      "seconds": 25.34715300006792
+      "seconds": 25.211545799858868
     },
     {
       "name": "wing3d_wall_thickness",
@@ -416,11 +418,13 @@
       "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_wall_thickness_thumb.jpg",
       "thumb_bytes": 63947,
       "exhibit": "wall",
-      "seconds": 2.563382300082594
+      "seconds": 2.4227632998954505
     },
     {
       "name": "wing3d_richardson_lucy",
       "title": "Richardson-Lucy ―― 前方一貫性 0.033x に対し真値 RMSE は 0.689x",
+      "title_en": "Richardson-Lucy — forward consistency 0.033x, but RMSE to truth only 0.689x",
+      "caption_en": "A synthetic volume blurred by a sigma-2.0 Gaussian PSF and deconvolved iteratively with `vol_richardson_lucy`. Re-blurring the estimate and comparing it with the observation — the **forward consistency — drops to 0.033x** almost immediately, while the **RMSE against the ground truth only reaches 0.689x**. What is left is the staircase at the balls' rims: \"it explains the observation well\" is not \"it is close to the truth\", and the counter-example is the exhibit.",
       "ops": [
         "vol_gaussian_psf",
         "vol_richardson_lucy"
@@ -499,7 +503,7 @@
       "gif_sha256": "8e09464195d23fa5f37268f30b5257633721fae95a1ad8dfd9c7ae4ae4bbf779",
       "mp4_sha256": "85cc5fc330f3a3528efde4c68a7323ad2008ec104cf894866535a7c96ef7cd6f",
       "exhibit": "rl",
-      "seconds": 61.433568600099534
+      "seconds": 56.961872099898756
     },
     {
       "name": "wing3d_visual_hull",
@@ -639,7 +643,7 @@
       "gif_sha256": "e923601ba882562691ad1d6f89f12830d9abe1a2476a4a1f1743161dac48cb27",
       "mp4_sha256": "3c561080174108be4c932020d32ca0013f92122ec41e042ffa06f877ede9b689",
       "exhibit": "visualhull",
-      "seconds": 47.091176899848506
+      "seconds": 41.30491119995713
     },
     {
       "name": "wing3d_obb_innerbox",
@@ -728,11 +732,13 @@
       "gif_sha256": "de353b6f6102dc53e67b7a5f077781cc21147ce1229b2976ef3fd22507ff8fc6",
       "mp4_sha256": "796908f7a39a5a34b525b043c3f26820282ee8ce663b52b252b503b7e6e3adc2",
       "exhibit": "obb",
-      "seconds": 44.52869120007381
+      "seconds": 43.516478799981996
     },
     {
       "name": "wing3d_icp_registration",
       "title": "点群レジストレーション ―― ICP 29 回 / GICP 5 回",
+      "title_en": "Point-cloud registration — ICP in 29 iterations, GICP in 5",
+      "caption_en": "A synthetic surface cloud of 3100 points, rotated by 22° and translated, put back by `icp_point2point_3d`. The initial RMSE of 3.804 falls to 1.8e-14 in **29 iterations**, and the recovered pose is off by 1.7e-06 degrees and 5.6e-15 in translation. `gicp`, which uses the local surface covariances, reaches the same answer in **5 iterations**.",
       "ops": [
         "icp_point2point_3d",
         "gicp"
@@ -810,11 +816,13 @@
       "gif_sha256": "7fa6f0a6cec5647fd2b0db61eb833e9565fb02448d50962bef81eefae32dbaea",
       "mp4_sha256": "6f1d5e1d8af308252ba339de7c3386fb975b93b61835b33552587da941400f99",
       "exhibit": "icp",
-      "seconds": 10.856678599957377
+      "seconds": 10.916430299868807
     },
     {
       "name": "wing3d_anisotropic_voxel",
       "title": "異方性ボクセル ―― spacing を忘れると体積が 4.17 倍",
+      "title_en": "Anisotropic voxels — forget the spacing and the volume is 4.17x off",
+      "caption_en": "A synthetic ellipsoid sampled at (1.5, 0.4, 0.4) mm/voxel — coarse in z only — with a true volume of 19301.9 mm³. Hand `vol_region_props` the spacing and it answers 19273.2 mm³ (**-0.15 %**); forget to and it answers 80305 (**+316 %**, 4.17x). No exception is raised. A plausible number is returned quietly — which is the whole point of this exhibit.",
       "ops": [
         "vol_label",
         "vol_region_props",
@@ -864,7 +872,7 @@
       "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_anisotropic_voxel_thumb.jpg",
       "thumb_bytes": 44521,
       "exhibit": "anisotropic",
-      "seconds": 0.4520348000805825
+      "seconds": 0.3713298998773098
     },
     {
       "name": "wing3d_mip_turntable",
@@ -883,8 +891,8 @@
         ],
         "frames": 36,
         "elevation_deg": 12.0,
-        "render_seconds_total_raw": 2.229206999996677,
-        "ms_per_projection_raw": 30.961208333287182,
+        "render_seconds_total_raw": 1.2358772999141365,
+        "ms_per_projection_raw": 17.16496249880745,
         "mip_max": 0.8000001907348633,
         "xray_max": 87.39982604980469
       },
@@ -913,11 +921,13 @@
       "gif_sha256": "19d183d9e10214a4fdae707b654d8935832062065558f934d405d09c74868c6d",
       "mp4_sha256": "c44ae4d381a4236ab5fed93007a78a7c07312ac6d594b32d1aa5c33de8b12a59",
       "exhibit": "mip",
-      "seconds": 20.64056189986877
+      "seconds": 19.239143599988893
     },
     {
       "name": "wing3d_distance_transform",
       "title": "距離変換で局所の太さを測る(最大内接半径 4.528 mm)",
+      "title_en": "Local thickness from a distance transform (max inscribed radius 4.528 mm)",
+      "caption_en": "Run `vol_distance_transform` over three synthetic tubes and every voxel becomes \"how many mm am I from the edge\". Its maximum is the radius of the largest inscribed ball — the local thickness — measured at **4.5277 mm** (truth 4.500 mm, off by +0.0277 mm because the edge lands half a voxel inside on a discrete grid). The rainbow contours step every 0.5 mm.",
       "ops": [
         "vol_distance_transform"
       ],
@@ -962,7 +972,7 @@
       "gif_sha256": "548d5d82d1a75960aec4d228e5acb2e1890b4be627e36afdebff4102b8f507a1",
       "mp4_sha256": "dc20765f83693b1d7c8c59fe5287197ad84d7d6e4967751708391ac7406688e2",
       "exhibit": "distance",
-      "seconds": 72.71672219992615
+      "seconds": 73.24860919988714
     },
     {
       "name": "wing3d_boundary_connectivity",
@@ -1026,11 +1036,13 @@
       "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_boundary_connectivity_thumb.jpg",
       "thumb_bytes": 66342,
       "exhibit": "connectivity",
-      "seconds": 0.25721820001490414
+      "seconds": 0.1955870999954641
     },
     {
       "name": "wing3d_pipeline_flow",
       "title": "CT のかたまりが寸法になるまで(7 工程)",
+      "title_en": "From a lump of CT to a dimension, in 7 steps",
+      "caption_en": "The seven steps that turn a noisy synthetic CT (176³, 0.6 mm spacing) into a dimension, bundled as a flip-book. Window → threshold → labelling (1 connected component) → largest component (5816.9 mm³, sphericity 0.4702) → `vol_crop_domain` for **1/7.7** the memory → thinning (5 branches / 2 junctions / 4 endpoints) → distance transform giving a maximum inscribed radius of **4.8374 mm** (truth 4.800 mm). Every frame carries its step name and progress, so a paused frame still reads.",
       "ops": [
         "vol_window_level",
         "vol_label",
@@ -1093,11 +1105,13 @@
       "gif_sha256": "79f70ee88eb6cbcf507a30a2ebcdad85de289d852b45ec3a06a2b9440bd7cdbd",
       "mp4_sha256": null,
       "exhibit": "pipeline",
-      "seconds": 3.6035551000386477
+      "seconds": 3.4553787000477314
     },
     {
       "name": "wing3d_slice_zsweep",
       "title": "断層を送る ―― `z = 48 / 95` は 38.40 mm のこと",
+      "title_en": "Stepping through slices — `z = 48 / 95` means 38.40 mm",
+      "caption_en": "A synthetic CT (96×128×128, spacing (0.8, 0.3, 0.3) mm) stepped one slice at a time for 96 frames. Every frame carries **both the index and the physical position** (`z = 48 / 95` = 38.40 mm) plus a position bar. One slice step is 0.80 mm while one in-plane pixel is 0.30 mm — **0.37x** — so, as the plot below shows, \"move the index by one\" means a different distance on every axis. The easiest step to trip over in an anisotropic CT.",
       "ops": [
         "vol_window_level"
       ],
@@ -1143,11 +1157,13 @@
       "gif_sha256": "59e378261b580ace622e33e1cc67a9e087d27e48568fa60c1fcc017e4154ff4d",
       "mp4_sha256": "e9bcadbcbc5ba036537320167d378d6d05a4dfe2b49db1ac75eed0130a389e60",
       "exhibit": "zsweep",
-      "seconds": 49.60399249987677
+      "seconds": 47.00721499999054
     },
     {
       "name": "wing3d_mpr_crosshair",
       "title": "3 直交断面(MPR)とクロスヘア",
+      "title_en": "Three orthogonal planes (MPR) and a crosshair",
+      "caption_en": "One point seen from three directions. Axial (`vol[z]`), coronal (`vol[:, y, :]`) and sagittal (`vol[:, :, x]`) side by side, with three crosshairs moving together as they track a helical marker. Each panel states **which axis is horizontal and which is vertical**, and the volume carries deliberately asymmetric landmarks — a ball at `+x`, a bar at `-y`, a ring at `+z` — so a swapped axis or a mirrored view would immediately show up as those three landing in the wrong place. (The three planes are plain array slices; the contrast comes from `vol_window_level` and the lines from `imagedraw` ops.)",
       "ops": [
         "vol_window_level",
         "imagedraw.draw_line"
@@ -1195,11 +1211,13 @@
       "gif_sha256": "7480c3d1fd5b2c4c0df21fb2e77d67aa087164741e6d8c127a3d64462cc685a0",
       "mp4_sha256": "3b9556290ab1c8282152ae822e9c84cda8359820921ff4de0ca73596ba9782f1",
       "exhibit": "mpr",
-      "seconds": 140.47599970013835
+      "seconds": 126.50343229994178
     },
     {
       "name": "wing3d_oblique_slice",
       "title": "斜めに切ると円が楕円になる(長径は 1/cos で伸びる)",
+      "title_en": "Cut it obliquely and the circle becomes an ellipse (major axis grows as 1/cos)",
+      "caption_en": "A synthetic cylinder of radius 5.00 mm, cut by a plane tilted from 0° to 70° (done by counter-rotating with `vol_rotate`). The minor axis stays at 10.000 mm whatever the angle, while the major axis follows **2r / cos θ** and reaches 29.238 mm at 70° — 2.92x. Across all 36 angles the measurement is within 0.0000 mm (0.00 pixels) of theory. A reminder never to take \"the diameter I measured on an oblique slice\" as a dimension.",
       "ops": [
         "vol_rotate"
       ],
@@ -1598,11 +1616,13 @@
       "gif_sha256": "19fb9c8851196342904a1b42b5ec07e3c76c087282820d1f97150b8eb31370c0",
       "mp4_sha256": "99dd4d9ebd08f0b7137ee39c81c4787a659025646b27ca9f74db95e829b66902",
       "exhibit": "oblique",
-      "seconds": 35.55783300008625
+      "seconds": 33.46136710001156
     },
     {
       "name": "wing3d_window_sweep",
       "title": "CT の窓を掃引する ―― 見えるものは窓が決めている",
+      "title_en": "Sweeping the CT window — what you can see is decided by the window",
+      "caption_en": "The same single slice with nothing but the `vol_window_level` window changed, 70 ways. Moving the centre shifts the brightness reference; moving the width changes how much is thrown away. Every frame carries the real centre / width values, the fraction crushed to black and blown to white, and what colour each of six tissues currently reads as. In the soft-tissue window bone saturates at 1.00; in the bone window soft tissue and lung sink towards 0 — both are discarding information, and one clip shows it.",
       "ops": [
         "vol_window_level"
       ],
@@ -2695,11 +2715,13 @@
       "gif_sha256": "2bb491b5e7634356f8b896f9e3a11ae862a5f8b39466a1830aba0423373a5298",
       "mp4_sha256": "329902f35f5e07a73ab57f95d89e9077f466876d0ef1cd321e11adfc8ce15e01",
       "exhibit": "windowsweep",
-      "seconds": 66.30448039993644
+      "seconds": 62.9297672000248
     },
     {
       "name": "wing3d_isosurface_sweep",
       "title": "等値面のしきい値で面が育ち、くびれ、割れる",
+      "title_en": "An isosurface grows, necks and breaks as the threshold moves",
+      "caption_en": "Two blurred, overlapping balls run through `voxel_to_mesh` (marching cubes) with the level stepped from 0.06 to 0.82 in 40 stages. The surface area shrinks from 6679 to 2842 voxel², and past level 0.742 the one surface **breaks into two**. Each frame carries the level, vertex and triangle counts, surface area and number of connected components. Which is also to say: a 3-D measurement that does not state its threshold cannot be reproduced.",
       "ops": [
         "voxel_to_mesh",
         "mesh_area"
@@ -3136,11 +3158,13 @@
       "gif_sha256": "9858bde5a3a5d786974ce7f678b24e766502c970adaa392d277b7cfc4bea31f1",
       "mp4_sha256": "f1517a934eb3786128e6e572ecd8223597687433b88298eb272854e04c5c5d66",
       "exhibit": "isosurface",
-      "seconds": 20.20695860008709
+      "seconds": 20.608507399912924
     },
     {
       "name": "wing3d_vessel_reslice",
       "title": "管に沿って切る ―― 軸に直交しないと内径が 1.13 倍に太る",
+      "title_en": "Reslicing along a vessel — cut off-axis and the bore reads 1.13x too wide",
+      "caption_en": "A synthetic tube tilted 28° with a stenosis in the middle, stepped through 49 cross-sections. The minor axis measured on planes orthogonal to the tube axis returns the true bore almost exactly (mean error **0.0206 mm**), while the major axis of a naive z-slice stretches by 1/cos θ = **1.133x** and is off by 0.5776 mm on average. At the stenosis a true 2.801 mm reads as 3.217 mm — the narrowing looks milder than it is.",
       "ops": [
         "vol_rotate"
       ],
@@ -3724,7 +3748,7 @@
       "gif_sha256": "78648d300d2e25c296955a166b08d7d76c0a614c51351f146db2d62cf5182e48",
       "mp4_sha256": "2af27e2e5289d7cf8ee27fad1ed7801807493abf37d9dee8e6a55d1d40a8e801",
       "exhibit": "vessel",
-      "seconds": 27.661075699841604
+      "seconds": 26.884493599878624
     }
   ]
 }

@@ -8,7 +8,7 @@
 
 ![処理領域(domain)でメモリが 1/84 になる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_domain_memory.gif)
 
-*↑ **処理領域(domain)でメモリが 1/84 になる** ―― 192³ の視野に浮かぶ合成部品を輪切りで送りながら、元ボリューム・domain マスク・切り出し後・貼り戻しを並べた。前景は全体の 0.42 % しかないので `vol_crop_domain` で メモリは 56.62 MB → 0.678 MB(**1/83.5**)、同じ `vol_gradient_magnitude` が触る voxel も 7,077,888 → 84,747(同じく **1/83.5**)。壁時計の実行時間も実測しているが、再生成のたびに変わるので図には焼かず `_wing3d_meta.json` に置いた。`vol_uncrop` の貼り戻しは元と bit 一致。 使用 op: `vol_bounding_box`, `vol_crop_domain`, `vol_reduce_domain`, `vol_uncrop`, `vol_gradient_magnitude`。*
+*↑ **処理領域(domain)でメモリが 1/84 になる** ―― 192³ の視野に浮かぶ合成部品を輪切りで送りながら、元ボリューム・domain マスク・切り出し後・貼り戻しを並べた。前景は全体の 0.42 % しかないので、`vol_crop_domain` でメモリは 56.62 MB → 0.678 MB(**1/83.5**)、同じ `vol_gradient_magnitude` が触る voxel も 7,077,888 → 84,747(同じく **1/83.5**)。壁時計の実行時間も実測しているが、再生成のたびに変わるので図には焼かず `_wing3d_meta.json` に置いた。`vol_uncrop` の貼り戻しは元と bit 一致。 使用 op: `vol_bounding_box`, `vol_crop_domain`, `vol_reduce_domain`, `vol_uncrop`, `vol_gradient_magnitude`。*
 
 ![境界だけ持つと 6 % に痩せる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_boundary_shell.gif)
 

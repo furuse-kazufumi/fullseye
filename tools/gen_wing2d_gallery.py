@@ -1872,10 +1872,10 @@ def subject_resample_loss(log=print) -> dict:
     psnr_core = _psnr(src[m:-m, m:-m], hist[36]["img"][m:-m, m:-m])
     hp_core = [_detail(h["img"][m:-m, m:-m]) for h in hist]
     # 3 つの zoom 系 op が同じ出力かどうかを実測 (推測しない)
-    # ★2026-09-02: 3 op は別実装になった(以前は geom "zoom" に相乗りで同一)。
-    #   `zoom_image_size` は目標サイズ指定なので **出力 shape が変わる** ため、
-    #   引き算の前に shape 一致を確かめる(shape が違えば「別物」= NaN ではなく
-    #   その事実を文字列で残す)。
+    # ★2026-09-02: 3 op は別実装になった。以前は 3 つとも geom "zoom" に相乗りで
+    #   相互の最大差が 0.0 / 4.9e-14(= 同一)、しかも 3 つとも b が死んでいた。
+    #   いまは zoom_image_factor=縦横 2 倍率 / zoom_image_size=目標サイズ /
+    #   rescale_img=等方倍率 + 補間次数。キャンバス shape はどれも入力のまま。
     z = {op: np.asarray(fs.apply(src, op, 0.9, 0.5), np.float64)
          for op in ("zoom_image_factor", "zoom_image_size", "rescale_img")}
 
