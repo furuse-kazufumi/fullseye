@@ -331,3 +331,107 @@ def _psnr(ref, test) -> float:
     mse = float(np.mean((np.asarray(ref, np.float64)
                          - np.asarray(test, np.float64)) ** 2))
     return 99.0 if mse <= 1e-12 else float(10.0 * np.log10(1.0 / mse))
+
+
+# --------------------------------------------------------------------------- #
+# 展示 1: 形態学の 4 兄弟 / morphology quartet                                   #
+# --------------------------------------------------------------------------- #
+C_ERO, C_DIL, C_OPEN, C_CLOSE = ((255, 122, 122), (120, 190, 255),
+                                 (150, 230, 160), (238, 180, 255))
+
+
+def subject_morph_quartet(log=print) -> dict:
+    """収縮/膨張/開/閉を同じ図形に当て、面積 [px] と元図形との IoU を実測する."""
+    clean = fs.apply(_load_gray("shapes.png"), "otsu")
+    rng = np.random.default_rng(SEED)
+    flip = rng.random(clean.shape) < 0.025          # 2.5% を反転 (塩胡椒ノイズ)
+    noisy = np.where(flip, 1.0 - clean, clean)
+    a_of = {1: 0.0, 2: 0.34, 3: 0.67, 4: 1.0}       # _rad(a)=1+int(a*3)
+
+    def iou(x):
+        inter = float(np.sum(np.minimum(x, clean)))
+        union = float(np.sum(np.maximum(x, clean)))
+        return inter / union if union else 0.0
+
+    rows, area_clean = {}, float(np.sum(clean))
+    for r, a in a_of.items():
+        e = fs.apply(noisy, "erosion_circle", a)
+        d = fs.apply(noisy, "dilation_circle", a)
+        o = fs.apply(noisy, "opening_circle", a)
+        c = fs.apply(noisy, "closing_circle", a)
+        oc = fs.apply(o, "closing_circle", a)
+        rows[r] = {"ero": e, "dil": d, "open": o, "close": c, "openclose": oc,
+                   "area": {k: float(np.sum(v)) for k, v in
+                            (("ero", e), ("dil", d), ("open", o),
+                             ("close", c), ("openclose", oc))},
+                   "iou": {k: iou(v) for k, v in
+                           (("open", o), ("close", c), ("openclose", oc))}}
+    radii = sorted(rows)
+    frames = []
+    order = radii + radii[-2:0:-1]                  # 1..4 → 3,2 (ピンポン)
+    for r in order:
+        R = rows[r]
+        cur = radii.index(r) + 1
+        plot = _plot(
+            [{"x": radii[:cur], "y": [rows[k]["area"]["ero"] for k in radii[:cur]],
+              "color": C_ERO, "label": "erosion"},
+             {"x": radii[:cur], "y": [rows[k]["area"]["dil"] for k in radii[:cur]],
+              "color": C_DIL, "label": "dilation"},
+             {"x": radii[:cur], "y": [rows[k]["area"]["open"] for k in radii[:cur]],
+              "color": C_OPEN, "label": "opening"},
+             {"x": radii[:cur], "y": [rows[k]["area"]["close"] for k in radii[:cur]],
+              "color": C_CLOSE, "label": "closing"}],
+            520, 520, xlim=(1, 4), ylim=(0, 55000),
+            hlines=((area_clean, (120, 122, 140)),),
+            title="前景の面積 [px] (点線 = 元図形 %d px)" % round(area_clean),
+            xlabel="構造要素の半径 [px]", legend_pos="tl")
+        panels = [clean, noisy, R["ero"], R["dil"],
+                  R["open"], R["close"], R["openclose"], plot]
+        labels = [
+            "元の図形\n%d px" % round(area_clean),
+            "2.5%% 反転ノイズ入り\n%d px" % round(float(np.sum(noisy))),
+            "erosion_circle (r=%d)\n%d px" % (r, round(R["area"]["ero"])),
+            "dilation_circle (r=%d)\n%d px" % (r, round(R["area"]["dil"])),
+            "opening_circle (r=%d)\n%d px / IoU %.3f" % (
+                r, round(R["area"]["open"]), R["iou"]["open"]),
+            "closing_circle (r=%d)\n%d px / IoU %.3f" % (
+                r, round(R["area"]["close"]), R["iou"]["close"]),
+            "opening→closing (r=%d)\n%d px / IoU %.3f" % (
+                r, round(R["area"]["openclose"]), R["iou"]["openclose"]),
+            "面積は半径でどう動くか",
+        ]
+        frames.append(_panel_grid(
+            panels, labels, 4, tile=(260, 260), label_h=56,
+            title="形態学の 4 兄弟 —— 収縮・膨張・開・閉",
+            sub="構造要素 = 半径 %d px の円 (a=%.2f)" % (r, a_of[r]),
+            resample=None))
+    info = _save_gif(frames, "wing2d_morph_quartet", fps=1.6, hold_last=1)
+    best_r = max(radii, key=lambda k: rows[k]["iou"]["openclose"])
+    return {
+        "name": "morph_quartet", "kind": "gif", "file": info["path"],
+        "thumb": info["thumb"], "frames": info["frames"],
+        "bytes": info["bytes"], "size": info["size"],
+        "title": "形態学の 4 兄弟",
+        "ops": ["otsu", "erosion_circle", "dilation_circle",
+                "opening_circle", "closing_circle"],
+        "data": "skimage 系 synthetic shapes.png (合成) + 決定的な 2.5% 反転ノイズ",
+        "measured": {
+            "area_clean_px": round(area_clean),
+            "area_noisy_px": round(float(np.sum(noisy))),
+            "area_by_radius": {str(r): {k: round(v) for k, v in
+                                        rows[r]["area"].items()} for r in radii},
+            "iou_by_radius": {str(r): {k: round(v, 4) for k, v in
+                                       rows[r]["iou"].items()} for r in radii},
+            "best_openclose_radius": best_r,
+            "best_openclose_iou": round(rows[best_r]["iou"]["openclose"], 4),
+        },
+        "caption": (
+            "同じ図形に 4 つの形態学 op を当て、前景の面積 [px] を実測しながら "
+            "構造要素の半径を 1→4 px と往復させた。膨張は面積を %d→%d px へ増やし、"
+            "収縮は %d→%d px へ減らす。開と閉は面積をほぼ保ったまま、"
+            "開が白い粒を、閉が黒い穴を消す —— 半径 %d px の開→閉でノイズ前の図形との "
+            "IoU が %.3f まで戻る。"
+            % (round(rows[1]["area"]["dil"]), round(rows[4]["area"]["dil"]),
+               round(rows[1]["area"]["ero"]), round(rows[4]["area"]["ero"]),
+               best_r, rows[best_r]["iou"]["openclose"])),
+    }
