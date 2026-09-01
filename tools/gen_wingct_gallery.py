@@ -56,7 +56,7 @@ META_PATH = os.path.join(ROOT, "docs", "articles", "assets", "_wingct_meta.json"
 EXHIBITS_DIR = os.path.join(ROOT, "docs", "articles", "exhibits")
 
 SEED = 20260902
-PANEL = 320                      # 各パネルの一辺(画素)
+PANEL = 440                      # 各パネルの一辺(画素)
 SIZE = 256                       # 再構成格子
 PIX_MM = 0.35                    # 面内画素ピッチ(mm)
 SLICE_MM = 1.40                  # スライス間隔(mm) -> 異方性 4:1
@@ -552,6 +552,11 @@ def ex_volume_chart():
             pts.append((px, py))
             dr.text((px, y0 + h + 15), xlabels[i], fill=et.MUTED, font=f_s,
                     anchor="mm")
+            # 値ラベルは基準線と重なるので、必ず背景を敷いてから書く
+            # (敷かないと真値の破線の上に載って読めなくなる)
+            tw = dr.textlength(f"{yv:.0f}", font=f_s)
+            dr.rectangle([px - tw / 2 - 4, py - 27, px + tw / 2 + 4, py - 6],
+                         fill=et.BG)
             dr.text((px, py - 16), f"{yv:.0f}", fill=et.FG, font=f_s, anchor="mm")
         dr.line(pts, fill=(150, 210, 255), width=2)
         for px, py in pts:

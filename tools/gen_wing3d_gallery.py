@@ -765,7 +765,7 @@ def ex_domain(log) -> dict:
                   "foreground_pct": 100 * float(dom.mean())},
         "caption": ("192³ の視野に浮かぶ合成部品を輪切りで送りながら、元ボリューム・"
                     "domain マスク・切り出し後・貼り戻しを並べた。前景は全体の "
-                    f"{100 * float(dom.mean()):.2f} % しかないので `vol_crop_domain` で "
+                    f"{100 * float(dom.mean()):.2f} % しかないので、`vol_crop_domain` で"
                     f"メモリは {full_mb:.2f} MB → {part_mb:.3f} MB(**1/{ratio:.1f}**)、"
                     f"同じ `vol_gradient_magnitude` が触る voxel も {vol.size:,} → "
                     f"{np.asarray(part).size:,}(同じく **1/"
