@@ -331,7 +331,10 @@ _CATALOG = {
         ("snell_angle", "match3d", ["measurement"], "measurement", False),
     ],
     "render": [  # 射影/レンダリング(3D → 2D 合成、ループを閉じる)
-        ("project_points", "match3d", ["points"], "image2d", False),
+        # (uv (N,2), depth (N,)) を返す。画像は返していないので keypoints
+        # (画像平面の点列)+ adapter で depth を剥がす。旧宣言 "image2d" は
+        # 型の嘘で、pnp3d 側の "image2d" 宣言と噛み合って PnP を壊していた
+        ("project_points", "match3d", ["points"], "keypoints", False),
         ("render_point_depth", "match3d", ["points"], "depth", False),
         ("render_volume_projection", "match3d", ["voxel"], "image2d", True),
         ("render_shaded", "match3d", ["normalmap"], "image2d", False),
