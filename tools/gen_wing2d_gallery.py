@@ -489,3 +489,123 @@ def subject_morph_quartet(log=print) -> dict:
                "/".join(map(str, res[1]["slit_fill"])) or "なし",
                "/".join(map(str, res[4]["slit_fill"])) or "なし")),
     }
+
+
+def _hist_panel(images, labels, colors, w, h, title="", bins=64,
+                ylim=None) -> np.ndarray:
+    """複数画像の輝度ヒストグラムを重ねて描く (Pillow のみ)."""
+    series = []
+    edges = np.linspace(0.0, 1.0, bins + 1)
+    mid = (edges[:-1] + edges[1:]) / 2.0
+    for img, lab, col in zip(images, labels, colors):
+        hh, _ = np.histogram(np.clip(np.asarray(img, np.float64), 0, 1),
+                             bins, (0.0, 1.0))
+        series.append({"x": mid, "y": hh.astype(np.float64) / max(1, hh.sum()),
+                       "color": col, "label": lab})
+    return _plot(series, w, h, xlim=(0, 1), ylim=ylim, title=title,
+                 xlabel="輝度 [0,1]", legend_pos="tr")
+
+
+# --------------------------------------------------------------------------- #
+# 展示 2: 周波数フィルタの効き / frequency filters                               #
+# --------------------------------------------------------------------------- #
+def _spectrum_rgb(img, cutoff=None, band=None) -> np.ndarray:
+    """fft_image のスペクトルを着色し、遮断周波数の円を焼き込む (可視化)."""
+    from PIL import Image, ImageDraw
+    spec = np.asarray(fs.apply(np.asarray(img, np.float64), "fft_image"), np.float64)
+    rgb = _to_u8(_cmap(spec, "inferno"))
+    im = Image.fromarray(rgb, "RGB")
+    d = ImageDraw.Draw(im)
+    H, W = spec.shape
+    cy, cx = H / 2.0, W / 2.0                       # fftshift 後の DC 位置
+    for rad, col in [(cutoff, (120, 255, 180)), (band, (255, 200, 90))]:
+        if rad is None:
+            continue
+        for rr in (rad if isinstance(rad, (tuple, list)) else (rad,)):
+            px = rr * min(H, W)                      # 正規化周波数 -> 画素半径
+            d.ellipse([cx - px, cy - px, cx + px, cy + px], outline=col, width=2)
+    return np.asarray(im, np.uint8)
+
+
+def _signed_to_01(x) -> np.ndarray:
+    """符号つき出力を 0.5 中心に写像して表示する (負が黒に潰れるのを防ぐ)."""
+    a = np.asarray(x, np.float64)
+    m = float(np.max(np.abs(a)))
+    return 0.5 + 0.5 * (a / m if m > 1e-12 else a)
+
+
+def subject_freq_sweep(log=print) -> dict:
+    """ローパス/ハイパス/バンドパスの遮断周波数を掃引し、残る情報量を実測."""
+    src = _load_gray("camera.png")
+    n = 13
+    A = np.linspace(0.0, 1.0, n)
+    lo_cut = 0.05 + 0.40 * A                        # lowpass の遮断 (正規化周波数)
+    hi_cut = 0.02 + 0.30 * A                        # highpass の遮断
+    bp_lo, bp_hi = 0.02 + 0.15 * A, 0.2 + 0.3 * 0.5
+    F = np.fft.fftshift(np.fft.fft2(src))
+    Etot = float(np.sum(np.abs(F) ** 2))
+    H, W = src.shape
+    rr = np.sqrt(np.fft.fftshift(np.fft.fftfreq(H))[:, None] ** 2
+                 + np.fft.fftshift(np.fft.fftfreq(W))[None, :] ** 2)
+    psnr_lo, keep_e = [], []
+    lows, highs, bands = [], [], []
+    for i, a in enumerate(A):
+        lo = np.asarray(fs.apply(src, "lowpass", float(a), 0.5), np.float64)
+        hi = np.asarray(fs.apply(src, "highpass", float(a), 0.5), np.float64)
+        bp = np.asarray(fs.apply(src, "bandpass_image", float(a), 0.5), np.float64)
+        lows.append(lo); highs.append(hi); bands.append(bp)
+        psnr_lo.append(_psnr(src, lo))
+        keep_e.append(100.0 * float(np.sum(np.abs(F[rr <= lo_cut[i]]) ** 2)) / Etot)
+    frames = []
+    for i, a in enumerate(A):
+        grid = _panel_grid(
+            [src, _spectrum_rgb(src, cutoff=lo_cut[i], band=(bp_lo[i], bp_hi)),
+             lows[i], highs[i], _signed_to_01(bands[i]),
+             _cmap(np.abs(src - lows[i]), "magma", vmin=0.0, vmax=0.35)],
+            ["元の写真 (camera.png)",
+             "スペクトル + 遮断円\n緑=lowpass 橙=bandpass",
+             "lowpass (遮断 %.3f)\nPSNR %.2f dB / エネルギー %.1f%%"
+             % (lo_cut[i], psnr_lo[i], keep_e[i]),
+             "highpass (遮断 %.3f)\n細かい模様だけ残る" % hi_cut[i],
+             "bandpass_image (%.3f〜%.3f)\n符号つき出力を 0.5 中心で表示"
+             % (bp_lo[i], bp_hi),
+             "元 − lowpass の差\n捨てられた高周波"],
+            3, tile=(330, 330), label_h=56,
+            title="周波数フィルタの効き —— どこで切ると何が消えるか",
+            sub="遮断周波数を 0.05 → 0.45 (正規化) で掃引")
+        plot = _plot(
+            [{"x": lo_cut[:i + 1], "y": psnr_lo[:i + 1], "color": (150, 230, 160),
+              "label": "lowpass 後の PSNR [dB]"}],
+            grid.shape[1] // 2 - 4, 300, xlim=(0.05, 0.45), ylim=(10, 40),
+            title="遮断を上げるほど元に近づく", xlabel="遮断周波数 (正規化)")
+        plot2 = _plot(
+            [{"x": lo_cut[:i + 1], "y": keep_e[:i + 1], "color": (255, 196, 80),
+              "label": "通過帯に残るエネルギー [%]"}],
+            grid.shape[1] // 2 - 4, 300, xlim=(0.05, 0.45), ylim=(95, 100.05),
+            title="エネルギーはほぼ低周波にある", xlabel="遮断周波数 (正規化)")
+        from PIL import Image
+        row = Image.new("RGB", (grid.shape[1], 300), BG)
+        row.paste(Image.fromarray(plot, "RGB"), (0, 0))
+        row.paste(Image.fromarray(plot2, "RGB"), (grid.shape[1] - plot2.shape[1], 0))
+        frames.append(_stack_v([grid, np.asarray(row, np.uint8)], pad=6))
+    info = _save_gif(frames, "wing2d_freq_sweep", fps=3.0, hold_last=3)
+    return {
+        "name": "freq_sweep", "kind": "gif", "file": info["path"],
+        "thumb": info["thumb"], "frames": info["frames"],
+        "bytes": info["bytes"], "size": info["size"],
+        "title": "周波数フィルタの効き",
+        "ops": ["fft_image", "lowpass", "highpass", "bandpass_image"],
+        "data": "skimage.data camera (BSD / public domain)",
+        "measured": {
+            "cutoff_normalised": [round(float(x), 4) for x in lo_cut],
+            "lowpass_psnr_db": [round(float(x), 2) for x in psnr_lo],
+            "energy_kept_pct": [round(float(x), 3) for x in keep_e],
+        },
+        "caption": (
+            "同じ写真にローパス・ハイパス・バンドパスを当て、遮断周波数を "
+            "0.05→0.45 (正規化) で掃引した。ローパスの遮断を 0.05 から 0.45 へ上げると "
+            "元画像との PSNR は %.2f→%.2f dB。一方その通過帯に入っているスペクトル"
+            "エネルギーは遮断 0.05 の時点ですでに %.2f%% —— 「エネルギーのほとんどは低周波"
+            "にあるのに、見た目は高周波が決めている」という画像の癖がそのまま数字に出る。"
+            % (psnr_lo[0], psnr_lo[-1], keep_e[0])),
+    }

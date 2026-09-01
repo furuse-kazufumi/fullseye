@@ -314,3 +314,167 @@ def _drag(widget, x0, y0, x1, y1, steps=1, button=None, mods=None) -> None:
         QtWidgets.QApplication.sendEvent(widget, _ev(QtCore.QEvent.MouseMove, x, y, btn))
     QtWidgets.QApplication.sendEvent(
         widget, _ev(QtCore.QEvent.MouseButtonRelease, x1, y1, QtCore.Qt.NoButton))
+
+
+# --------------------------------------------------------------------------- #
+# 3D 展示のための共通描画(fullseye op + numpy 合成のみ / matplotlib 不使用)     #
+# --------------------------------------------------------------------------- #
+def _canvas(w: int, h: int, color=C_BG) -> np.ndarray:
+    c = np.empty((int(h), int(w), 3), np.float64)
+    c[:] = np.asarray(color, np.float64)
+    return c
+
+
+def _panel(canvas, y0, x0, h, w, img01, title=None, border=(0.20, 0.23, 0.28)):
+    """枠 + 画像を貼り、タイトル用のラベル指示を返す。"""
+    _fill(canvas, y0 - 1, y0 + h + 1, x0 - 1, x0 + w + 1, border)
+    _fill(canvas, y0, y0 + h, x0, x0 + w, C_PANEL)
+    _paste(canvas, _fit_box(np.asarray(img01, np.float64), w, h), y0, x0)
+    return [(x0 + 6, y0 + 5, title, (0.96, 0.96, 0.93), 13, True)] if title else []
+
+
+def _gray3(a: np.ndarray) -> np.ndarray:
+    a = np.asarray(a, np.float64)
+    return a if a.ndim == 3 else np.stack([a] * 3, axis=-1)
+
+
+def _shade_mesh(V, F, yaw_deg, pitch_deg=18.0, size=420, dist=2.4):
+    """render3d + phong で三角メッシュを 1 枚描く(matplotlib 不使用)。
+
+    V は **world (x, y, z)** で渡すこと(``render3d.marching_cubes`` は
+    ボクセル添字 (z, y, x) を返すので、呼び出し側で並べ替える)。
+    戻り値 ``(rgb01 (size, size, 3), 被覆画素数)``。
+    """
+    import render3d
+    import render_shade
+    V = np.asarray(V, np.float64)
+    c = 0.5 * (V.min(0) + V.max(0))
+    r = float(np.linalg.norm(V - c, axis=1).max()) or 1.0
+    a, e = np.radians(yaw_deg), np.radians(pitch_deg)
+    eye = c + r * dist * np.array([np.cos(e) * np.cos(a), np.cos(e) * np.sin(a), np.sin(e)])
+    pose = render3d.look_at(eye, c, up=(0.0, 0.0, 1.0))
+    K = render3d.intrinsics_from_fov(38.0, size, size)
+    buf = render3d.render_mesh(V, F, pose=pose, intrinsics=K, width=size, height=size)
+    sil = buf["silhouette"] > 0
+    inten = render_shade.phong_shade(buf["normals"], view=(0, 0, 1), light=(0.35, 0.45, 1.0),
+                                     ambient=0.13, diffuse=0.78, specular=0.35, shininess=26.0)
+    rgb = _canvas(size, size, C_PANEL)
+    tint = np.array([0.80, 0.86, 0.94])
+    rgb[sil] = np.clip(inten[sil][:, None] * tint, 0, 1)
+    return rgb, int(sil.sum())
+
+
+def _load_ct():
+    """同梱の骨格 CT ボリューム (D, H, W) = (z, y, x) を float64 で読む。"""
+    return np.load(os.path.join(_ROOT, "studio_assets", "sample_3d",
+                                "skeleton_ct.npy")).astype(np.float64)
+
+
+# --------------------------------------------------------------------------- #
+# 展示: CT ボリュームのターンテーブル(等値面 <-> 境界シェル点群)               #
+# --------------------------------------------------------------------------- #
+def ex_volume_turntable():
+    import render3d
+    import studio
+    import volops
+    vol = _load_ct()
+    level = float(vol.mean() + vol.std())
+    Vz, F = render3d.marching_cubes(vol, level)           # 頂点は (z, y, x) 添字空間
+    Vw = np.ascontiguousarray(Vz[:, ::-1])                # -> world (x, y, z)
+    mask = (vol > level).astype(np.float64)
+    shell = volops.vol_boundary(mask, connectivity=6)
+    P = np.ascontiguousarray(np.argwhere(shell > 0.5).astype(np.float64)[:, ::-1])
+    n_shell = int(P.shape[0])
+
+    S = 462
+    W, H = 24 * 3 + S * 2, 640
+    frames, n = [], 36
+    for i in range(n):
+        yaw = 360.0 * i / n
+        canvas = _canvas(W, H)
+        _fill(canvas, 0, 34, 0, W, (0.088, 0.098, 0.118))
+        surf, cov = _shade_mesh(Vw, F, yaw, pitch_deg=16.0, size=S)
+        pts = studio.render_points_frame(P, yaw=yaw - 90.0, pitch=16.0, zoom=1.0,
+                                         size=S, point_px=2, background=C_PANEL)
+        lab = []
+        lab += _panel(canvas, 52, 24, S, S, surf, "等値面 marching_cubes + phong_shade")
+        lab += _panel(canvas, 52, 24 + S + 24, S, S, pts,
+                      "境界シェル点群 vol_boundary + Studio のレンダラ")
+        f = _to_u8(canvas)
+        lab += [
+            (24, 9, "skeleton_ct.npy  (D,H,W) = (%d, %d, %d)   iso level = mean+std = %.4f"
+                    "   yaw = %5.1f deg" % (vol.shape[0], vol.shape[1], vol.shape[2],
+                                            level, yaw), C_TEXT, 13, False),
+            (30, 52 + S + 10, "三角形 %s 枚 / 頂点 %s   シルエット %s px"
+             % (f"{F.shape[0]:,}", f"{Vw.shape[0]:,}", f"{cov:,}"), C_ACCENT, 13, True),
+            (30 + S + 24, 52 + S + 10, "シェル voxel %s 点(同じ yaw・同じ仰角)"
+             % f"{n_shell:,}", C_BLUE, 13, True),
+            (24, H - 24, "左右は同じ角度で回している。面と粒で同じ形が同じ向きに回れば、"
+                         "軸の取り違えは起きていない —— これが目視の検算です",
+             C_DIM, 12, False),
+        ]
+        frames.append(_text(f, lab))
+    facts = {"volume_shape": list(map(int, vol.shape)), "iso_level": round(level, 6),
+             "n_faces": int(F.shape[0]), "n_vertices": int(Vw.shape[0]),
+             "n_shell_points": n_shell, "frames": n}
+    return save_gif("volume_turntable", frames, facts, thumb_index=6)
+
+
+# --------------------------------------------------------------------------- #
+# 展示: z スライス送り(現在位置インジケータつき)                              #
+# --------------------------------------------------------------------------- #
+def ex_zslices():
+    import imagedraw
+    import imgio
+    import ops
+    vol = _load_ct()
+    D, Hs, Ws = vol.shape
+    vmin, vmax = float(vol.min()), float(vol.max())
+    mip = ops.RT["vol_mip"](vol, 0.0, 0.0)               # z 方向の最大値投影
+    k = 5                                                # 最近傍整数拡大(補間しない)
+    pw, ph = Ws * k, Hs * k
+    W = 24 * 3 + pw * 2 + 260
+    H = 52 + ph + 96
+    bar_y, bar_h = 52 + ph + 22, 22
+    frames = []
+    thr = float(vol.mean() + vol.std())
+    for z in range(D):
+        sl = (vol[z] - vmin) / (vmax - vmin)
+        canvas = _canvas(W, H)
+        _fill(canvas, 0, 34, 0, W, (0.088, 0.098, 0.118))
+        lab = []
+        lab += _panel(canvas, 52, 24, ph, pw, _gray3(_upscale(sl, k)),
+                      "z = %2d / %d" % (z, D - 1))
+        lab += _panel(canvas, 52, 24 + pw + 24, ph, pw,
+                      _upscale(imgio.apply_cmap(mip, name="inferno"), k),
+                      "参照: z 方向 MIP")
+        _fill(canvas, bar_y, bar_y + bar_h, 24, W - 24, (0.14, 0.15, 0.18))
+        cw = (W - 48) / D
+        for j in range(D):
+            col = C_ACCENT if j == z else (0.26, 0.29, 0.34)
+            _fill(canvas, bar_y + 4, bar_y + bar_h - 4,
+                  24 + j * cw + 1, 24 + (j + 1) * cw - 1, col)
+        canvas = imagedraw.draw_line(canvas, (24, bar_y + bar_h + 4),
+                                     (W - 24, bar_y + bar_h + 4), color=C_DIM, width=1)
+        occ = float((vol[z] > thr).mean())
+        f = _to_u8(canvas)
+        lab += [
+            (24, 9, "skeleton_ct.npy  (D,H,W) = (%d, %d, %d)   最近傍 x%d 拡大(補間なし)"
+                    "   値域 [%.3f, %.3f]" % (D, Hs, Ws, k, vmin, vmax), C_TEXT, 13, False),
+            (24 + pw * 2 + 60, 60, "この 1 枚", (0.96, 0.96, 0.93), 14, True),
+            (24 + pw * 2 + 60, 84, "骨占有率  %5.1f %%" % (occ * 100.0), C_AMBER, 14, True),
+            (24 + pw * 2 + 60, 108, "最小値    %6.3f" % float(vol[z].min()), C_TEXT, 13, False),
+            (24 + pw * 2 + 60, 130, "最大値    %6.3f" % float(vol[z].max()), C_TEXT, 13, False),
+            (24 + pw * 2 + 60, 152, "平均      %6.3f" % float(vol[z].mean()), C_TEXT, 13, False),
+            (24 + pw * 2 + 60, 186, "閾値 mean+std", C_DIM, 12, False),
+            (24 + pw * 2 + 60, 206, "  = %6.4f" % thr, C_DIM, 12, False),
+            (24, bar_y + bar_h + 10, "z = 0", C_DIM, 11, False),
+            (W - 84, bar_y + bar_h + 10, "z = %d" % (D - 1), C_DIM, 11, False),
+            (24, H - 22, "MIP は全 z を潰した 1 枚。1 枚ずつ送ると「どの層に何があるか」"
+                         "が分かる —— 端の 1 枚が欠けていればここで気づく",
+             C_DIM, 12, False),
+        ]
+        frames.append(_text(f, lab))
+    facts = {"volume_shape": [D, Hs, Ws], "frames": D, "upscale": k,
+             "value_range": [round(vmin, 5), round(vmax, 5)], "threshold": round(thr, 6)}
+    return save_gif("zslices", frames, facts, fps=5, thumb_index=D // 2)
