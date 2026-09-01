@@ -1,0 +1,191 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">音響状態監視・音響指標(機械の音から欠陥と騒音を出す) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族が答えている問い</h3>
+<p>きっかけはユーザーの一言でした ――「<b>1D が扱えるなら音響データも扱えるよね</b>」。</p>
+<p>答えは「扱えるが、道具になっていなかった」です。素材は前からありました。<code style="color:#22d3bf">dsp</code> が音声 I/O(<code style="color:#22d3bf">read_wav</code> / <code style="color:#22d3bf">read_audio</code> / <code style="color:#22d3bf">write_wav</code>)と基本 DSP(<code style="color:#22d3bf">spectrum</code> / <code style="color:#22d3bf">spectrogram</code> / <code style="color:#22d3bf">lowpass</code> / <code style="color:#22d3bf">highpass</code> / <code style="color:#22d3bf">bandpass</code> / <code style="color:#22d3bf">envelope</code> / <code style="color:#22d3bf">rms</code> / <code style="color:#22d3bf">find_peaks</code> / <code style="color:#22d3bf">signal_features</code> / <code style="color:#22d3bf">resample</code> / <code style="color:#22d3bf">zero_crossing_rate</code>)を持っていて、440 Hz の正弦を入れればスペクトルにピークが立ちます。ですが登録名 1661 個に対して <code style="color:#22d3bf">stft</code> / <code style="color:#22d3bf">mel</code> / <code style="color:#22d3bf">mfcc</code> / <code style="color:#22d3bf">octave</code> / <code style="color:#22d3bf">acoust</code> / <code style="color:#22d3bf">beamform</code> は<b>どの表面にも 1 件もヒットしませんでした</b>。つまり「波形を読んで周波数を見る」まではできて、<b>現場が音に対して実際に投げる問いには 1 つも答えられない</b>状態でした。</p>
+<p>その問いは、生スペクトルより狭くて難しいものです。</p>
+<p style="margin:2px 0 2px 12px">• <b>どの欠陥か。</b> 転がり軸受の外輪剥離は欠陥周波数で鳴りません。数 kHz の構造共振が、200 Hz 以下の欠陥周波数で<b>振幅変調</b>されて届きます。欠陥周波数は生スペクトルに<b>成分として存在しません</b>(実測: 生の単側振幅 4.3e-16)。</p>
+<p style="margin:2px 0 2px 12px">• <b>そのピークは次数か共振か。</b> 回転数が動けば、軸に同期した成分は滲み、固定共振はその場に残ります。同じ信号を角度領域に置き直すと立場が厳密に逆転します。</p>
+<p style="margin:2px 0 2px 12px">• <b>何 dB か、誰の定義で。</b> 基準値と周波数重み付けを言わない dB は数ではありません。</p>
+<p style="margin:2px 0 2px 12px">• <b>その振動はこの加振から来たのか。</b> 2 チャネル、伝達関数、そして<b>その答えをどこまで信じてよいか</b>を言うコヒーレンス。</p>
+<p>この族はその 4 つに答える道具箱です。19 op / 6 カテゴリ(numpy + scipy のみ、台帳は <code style="color:#22d3bf">opsacoustics.py</code>、実体は <code style="color:#22d3bf">acoustics.py</code>):</p>
+<p style="margin:2px 0 2px 12px">• <b>transform(3)</b> — <code style="color:#22d3bf">stft</code> / <code style="color:#22d3bf">istft</code> / <code style="color:#22d3bf">stft_cola_check</code>: 位相を保つ短時間フーリエ変換と、<b>厳密に戻る</b>逆変換。<code style="color:#22d3bf">dsp.spectrogram</code> は強度だけなので、時間周波数平面で信号を加工して戻る経路がライブラリ内に 1 本も無かった、その 1 本です。</p>
+<p style="margin:2px 0 2px 12px">• <b>synthesis(2)</b> — <code style="color:#22d3bf">synthesize_bearing_signal</code> / <code style="color:#22d3bf">synthesize_speed_ramp</code>: 前方モデル。<b>測る前に答えが分かっている</b>入力を作るためのもので、この族の全主張はこの 2 つに対して測ってあります。</p>
+<p style="margin:2px 0 2px 12px">• <b>bearing(4)</b> — <code style="color:#22d3bf">envelope_spectrum</code> / <code style="color:#22d3bf">bearing_defect_frequencies</code> / <code style="color:#22d3bf">spectral_kurtosis</code> / <code style="color:#22d3bf">cepstrum</code>: 復調して欠陥率を出す、幾何から特徴周波数を出す、<b>復調帯域を機械に選ばせる</b>、周波数軸の周期構造(反射遅延・側帯波間隔)を quefrency 軸で拾う。</p>
+<p style="margin:2px 0 2px 12px">• <b>order(2)</b> — <code style="color:#22d3bf">angular_resample</code> / <code style="color:#22d3bf">order_spectrum</code>: 時間軸を<b>軸回転角</b>の軸に置き直す計算次数追跡。</p>
+<p style="margin:2px 0 2px 12px">• <b>level(6)</b> — <code style="color:#22d3bf">octave_bands</code> / <code style="color:#22d3bf">octave_spectrum</code> / <code style="color:#22d3bf">weighting_response</code> / <code style="color:#22d3bf">apply_weighting</code> / <code style="color:#22d3bf">equivalent_level</code> / <code style="color:#22d3bf">percentile_level</code>: 分数オクターブ帯域の定義と帯域レベル、A/C/Z 周波数重み付け、等価騒音レベル、統計レベル。</p>
+<p style="margin:2px 0 2px 12px">• <b>dual(2)</b> — <code style="color:#22d3bf">coherence</code> / <code style="color:#22d3bf">transfer_function</code>: Welch 平均の H1/H2 推定と、それを読んでよいかを言う序数コヒーレンス。</p>
+<p>データ種は<b>既存語彙の再利用だけ</b>で、新語は 1 つも作っていません: <b>signal</b>(波形・重み付け後の波形・重み付け曲線)、<b>table</b>(STFT 一式・スペクトル系の束・運動学の 4 レート・角度領域記録・2 チャネル推定)、<b>measurement</b>(<code style="color:#22d3bf">equivalent_level</code> の dB 実スカラ)。その判断の根拠は「正直な限界」節に書きます。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">既存 op との棲み分け(重複させていないもの)</h3>
+<p>| やりたいこと | 使う op | 置き場所 |</p>
+<p>|---|---|---|</p>
+<p>| 音声の読み書き、Butterworth 帯域通過、生スペクトル、Hilbert 包絡線、RMS、リサンプル、ピーク検出 | <code style="color:#22d3bf">read_wav</code> / <code style="color:#22d3bf">bandpass</code> / <code style="color:#22d3bf">spectrum</code> / <code style="color:#22d3bf">envelope</code> / <code style="color:#22d3bf">rms</code> / <code style="color:#22d3bf">resample</code> / <code style="color:#22d3bf">find_peaks</code> | <code style="color:#22d3bf">dsp</code>(<b>1 つも作り直していない</b>。<code style="color:#22d3bf">envelope_spectrum</code> は <code style="color:#22d3bf">dsp.bandpass</code> と <code style="color:#22d3bf">dsp.envelope</code> を呼び出しており、テストが <code style="color:#22d3bf">dsp</code> の素材から結果を再計算して 1e-12 で一致することを確かめる) |</p>
+<p>| 汎用 1-D 関数代数(平滑・微分・積分・零交差・マッチング) | <code style="color:#22d3bf">smooth_funct_1d_gauss</code> / <code style="color:#22d3bf">derivate_funct_1d</code> / <code style="color:#22d3bf">zero_crossings_funct_1d</code> | <code style="color:#22d3bf">funct1d</code>(この族の返す配列は素の 1-D float64 なので、そのまま食える。ラップし直さない) |</p>
+<p>| <b>映像</b>から微小振動を見せる/測る | <code style="color:#22d3bf">motion_magnify</code> / <code style="color:#22d3bf">phase_displacement</code> / <code style="color:#22d3bf">displacement_series</code> | <code style="color:#22d3bf">motionmag</code>(<b>同じ物理量を別の計器で測る</b>。後述の専用節を参照) |</p>
+<p>| コヒーレント<b>狭帯域 RF</b> のアレイ処理、遅延和ビームフォーミング、到来方向 | <code style="color:#22d3bf">beamform_delay_sum</code> / <code style="color:#22d3bf">beamform_doa</code> / <code style="color:#22d3bf">range_doppler_map</code> | <code style="color:#22d3bf">rangedoppler</code>(<b>所有権を渡した</b>。理由は下記) |</p>
+<p>**<code style="color:#22d3bf">dsp</code> から再利用できなかったもの**は、できなかった理由のほうが情報量があります。</p>
+<p>| 使えなかった <code style="color:#22d3bf">dsp</code> op | 理由 |</p>
+<p>|---|---|</p>
+<p>| <code style="color:#22d3bf">spectrogram</code> | 強度だけを返すので<b>原理的に逆変換できない</b>。加えて窓が <code style="color:#22d3bf">np.hanning</code> = <b>対称形</b>で、これは hop=win/2 で COLA を満たしません(周期形なら満たす)。表示には十分で、可逆変換には使えない。だから <code style="color:#22d3bf">stft</code> を書いた |</p>
+<p>| <code style="color:#22d3bf">resample</code> | 新しい<b>一様</b>サンプリング周波数への Fourier リサンプル。次数追跡が要るのは<b>非一様な角度格子</b>への内挿なので別物 |</p>
+<p>| <code style="color:#22d3bf">find_peaks</code> | 両方のピーク報告 op が使っていない。単側振幅正規化と DC 除外を先に適用する必要があり、返すのは自前の雑音床に対する突出度だから |</p>
+<p>| <code style="color:#22d3bf">rms</code> | <code style="color:#22d3bf">percentile_level</code> は**厳密に <code style="color:#22d3bf">window_s</code> 幅の非重複ブロック**が要る。<code style="color:#22d3bf">dsp.rms</code> のフレーム版は既定が 50 % 重複で、そのまま使うと相関した標本上のパーセンタイルになってしまう |</p>
+<p><b>音響ビームフォーマは意図的に置いていません。</b> <code style="color:#22d3bf">rangedoppler</code> が複素ベースバンドのビートキューブと単一搬送波長の位相ランプで組んだ遅延和を既に持っています。広帯域の実信号を扱うマイクアレイは別レジームで(操舵遅延が素子ごとの位相 1 個ではなく<b>非整数サンプル遅延</b>になる)、互換性のない 2 つ目のビームフォーマを repo に足すのは 0 個より悪い。将来やるなら<b>既存の隣に置いて操舵行列のコードを共有する</b>のが筋です。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)— 見つけた実バグ 5 件</h3>
+<p>全 op が入力を検証してから計算します。探したのは「例外が出る」ことではなく「<b>黙って間違った数字を返す</b>」ことでした。以下は敵対監査で<b>実際に見つかったバグ</b>と、それを塞ぐために仕掛けた罠です。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">1. パッドを跨ぐフレームが「最も衝撃的」に見えて、白色雑音から過渡を捏造する</h3>
+<p><code style="color:#22d3bf">stft</code> は逆変換を厳密にするために信号の両端を窓 1 つ分ゼロで埋めます。その結果、先頭と末尾のフレームは<b>半分が空</b>になります。半分が空のフレームというのは、この世でいちばん衝撃的な信号です。<code style="color:#22d3bf">spectral_kurtosis</code> が全フレームを平均していたので、<b>中身が何もない白色雑音から強い過渡が生えました</b>。嘘の大きさはパッドがフレームに占める割合で決まります(内側だけの平均、パッド込みの平均、パッド込みの最大値):</p>
+<p>| n | win | hop | フレーム | パッド割合 | 内側のみ | パッド込み | パッド込み最大 |</p>
+<p>|---:|---:|---:|---:|---:|---:|---:|---:|</p>
+<p>| 8192 | 64 | 16 | 517 | 1.5 % | −0.0444 | −0.0264 | +0.1915 |</p>
+<p>| 2048 | 256 | 64 | 37 | 21.6 % | −0.0814 | +0.1996 | +1.7865 |</p>
+<p>| 1024 | 256 | 128 | 11 | 36.4 % | −0.2176 | +0.2816 | <b>+4.0856</b> |</p>
+<p>| 512 | 256 | 128 | 7 | 57.1 % | −0.4913 | +0.4324 | +2.7730 |</p>
+<p>3 行目を見てください。純粋な白色雑音、中に何も無い信号に対して、マスク無しだと <b>SK = +4.09</b> の帯域を報告します。強い反復過渡があるという主張です。例外は出ません。対策は <code style="color:#22d3bf">stft</code> が <code style="color:#22d3bf">interior</code> 真偽マスクを返すようにして <code style="color:#22d3bf">spectral_kurtosis</code> がそれを使うこと。同じ罠はスペクトル密度にも出ます: 16384 点の白色雑音(win 1024 / hop 512)で <code style="color:#22d3bf">&quot;density&quot;</code> を積分すると、全 35 フレームでは 0.9073、内側 31 フレームでは 0.9933(記録自身の分散は 0.9923)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">2. 窓が長すぎると、スペクトル尖度が真実の逆を報告する</h3>
+<p>衝撃の<b>間隔より短い</b>フレームでないと、どのフレームにも衝撃が 1 個ずつ入り、その帯域は構成上「定常」に見えます。9.35 ms ごとに衝撃が来る軸受信号(真の共振 3000 Hz)で:</p>
+<p>| win | フレーム長 | 最大 SK | その周波数 | bin 幅 |</p>
+<p>|---:|---:|---:|---:|---:|</p>
+<p>| 16 | 0.62 ms | 29.58 | 6400 Hz | 1600 Hz |</p>
+<p>| 32 | 1.25 ms | 12.86 | 1600 Hz | 800 Hz |</p>
+<p>| 64 | 2.50 ms | 5.38 | 2000 Hz | 400 Hz |</p>
+<p>| 128 | 5.00 ms | 1.66 | 1600 Hz | 200 Hz |</p>
+<p>| <b>256</b> | <b>10.00 ms</b> | <b>−0.13</b> | <b>12200 Hz</b> | 100 Hz |</p>
+<p>最後の行が失敗の形です。10 ms のフレームを 9.35 ms 間隔の衝撃に当てると、<b>負の</b>尖度を、共振とまったく関係ない 12200 Hz で報告します。<b>ここでも例外は出ません。</b> 対策は既定窓を短く(上限 256 → 64)し、<code style="color:#22d3bf">window_seconds</code> を返して「期待する反復周期と比べてください」と言えるようにしたこと。窓を掃引することはこの op の<b>使い方の一部</b>であって最適化ではない、と明記しました。掃引を超えて残るのは 1 本の bin ではなく<b>帯域</b>です(雑音入り信号の win=64 での上位 6 bin は 2000 / 2400 / 1600 / 4000 / 3600 / 1200 Hz で、真の 3000 Hz を挟むがどれも 3000 ではない)。それで十分で、<code style="color:#22d3bf">max_freq ± 1 bin</code> をそのまま <code style="color:#22d3bf">envelope_spectrum</code> に渡すと <b>107.0000 Hz</b> が出ます。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">3. 何もないところからピーク周波数を返す</h3>
+<p><code style="color:#22d3bf">envelope_spectrum</code> は<b>必ず</b>ピーク周波数を返します。中身が無いときも返します。<b>定数</b>信号を 100–2000 Hz で帯域通過すると、包絡線は丸め誤差でできていて、この op は <code style="color:#22d3bf">peak_freq = 8.0000 Hz</code> を報告しました。例外も NaN も出ず、8 Hz は書き留めるのに何の違和感もない数字です。</p>
+<p>ここで<b>閾値を発明しなかった</b>のが設計上の判断です。雑音に 20 dB 埋もれた欠陥は本物の発見であり、それを拒否するのは報告するより悪い。かわりに<b>区別できる数を返す</b>ことにしました ―― 突出度(ピーク / スペクトル中央値)と <code style="color:#22d3bf">band_fraction</code>(帯域通過後の RMS / 入力の RMS = 記録のうちどれだけがその復調帯域に居るか)。実測、4 つの入力は返り値の上で分かれます:</p>
+<p>| 入力 | peak Hz | peak amp | 突出度 | band_fraction |</p>
+<p>|---|---:|---:|---:|---:|</p>
+<p>| AM、欠陥 107 Hz | 107.0000 | 4.997e-01 | 10018.6 | 9.999e-01 |</p>
+<p>| 衝撃 + 雑音 | 107.0000 | 1.968e-01 | 9384.7 | 9.201e-01 |</p>
+<p>| 白色雑音 | 128.0000 | 2.785e-02 | 365.2 | 3.745e-01 |</p>
+<p>| <b>定数信号</b> | <b>8.0000</b> | <b>1.691e-12</b> | 173.0 | <b>1.995e-12</b> |</p>
+<p><code style="color:#22d3bf">peak_freq</code> だけを見ると 1 行目と 4 行目は区別できません。<code style="color:#22d3bf">band_fraction</code> は 9 桁離れています。カットオフを置く代わりに数を返す、が答えでした。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">4. 小さい入力が 92 MB を確保する</h3>
+<p><code style="color:#22d3bf">stft(x[1000], win=256, nfft=2**20)</code> は係数の上限(11 フレーム × 524289 bin = 577 万 &lt; 1677 万)を<b>通過し</b>、8 kB の入力から <b>92.3 MB</b> を確保しました。11500 倍の増幅です。対策は <code style="color:#22d3bf">MAX_NFFT_RATIO = 16</code>。ゼロ埋めはスペクトルを内挿するだけで情報を増やさないのに、確保量は <code style="color:#22d3bf">nfft</code> に比例して増えるからです(2〜8 倍のゼロ埋めは通常の使い方なので通します)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">5. 半整数の次数が黙って 36 % 失われる</h3>
+<p><code style="color:#22d3bf">order_spectrum</code> は最初、記録に収まる最大の整数回転数(この例では 79 回転)で切っていました。次数 <code style="color:#22d3bf">o</code> が bin にちょうど乗るのは <code style="color:#22d3bf">o × 回転数</code> が整数のときだけで、3.5 × 79 = 276.5 は乗りません。結果、次数 3.5 の振幅は真値 1.0 に対して <b>0.636961</b>、しかもすぐ隣の bin にほぼ同じ高さのピーク(次数 3.4937 で 0.6370、3.5063 で 0.6353)が並びます。ピーク位置は正しく、大きさだけが 36 % 小さい。例外は出ません。対策は <code style="color:#22d3bf">revolutions</code> 引数を足して<b>偶数回転で切れる</b>ようにしたこと:</p>
+<p>| revolutions | 分解能 | 次数 1.0 の振幅 | 次数 3.5 の振幅 |</p>
+<p>|---:|---:|---:|---:|</p>
+<p>| 79(既定) | 0.012658 | 0.999967 | <b>0.636961</b> |</p>
+<p>| 78(偶数) | 0.012821 | 1.000009 | 0.999371 |</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">塞いである罠(上記以外)</h3>
+<p style="margin:2px 0 2px 12px">• <b>サンプリング周波数の型</b> — <code style="color:#22d3bf">float(&quot;16000&quot;)</code> は成功してしまうので、<code style="color:#22d3bf">rate</code> の**文字列は <code style="color:#22d3bf">ValueError</code><b>(未パースの設定値がサンプリング周波数として通り抜けるのを止める)。</b>bool も拒否**(<code style="color:#22d3bf">True == 1</code> は 1 Hz のタイムベースという別物)。<b>complex も拒否</b>(虚部の無言切り捨て)。配列側は complex / masked / NaN / Inf をすべて <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>エイリアシングは折り返さず拒否</b> — Nyquist 以上の搬送波、**上側変調側帯波 <code style="color:#22d3bf">f_c + f_d</code><b>(搬送波単体は収まるのに変調が収まらない場合)、ランプの</b>最速点**での次数、Nyquist を超える帯域端・<code style="color:#22d3bf">f_max</code>、そして記録の Nyquist が支えられない <code style="color:#22d3bf">samples_per_rev</code>。<code style="color:#22d3bf">photoncount.dtof_cube_simulate</code> が一意測距範囲を超えた距離を拒否するのと同じ規律です。</p>
+<p style="margin:2px 0 2px 12px">• <b>窓と正規化を明示させる</b> — 窓を変えると生スペクトルの振幅が変わります。実測、振幅 0.7 の 1 kHz 正弦の生の <code style="color:#22d3bf">|Z|</code> は窓によって 19.3159(flattop)から 89.6000(boxcar)まで <b>4.6 倍</b>ばらつきます。<code style="color:#22d3bf">scaling=&quot;amplitude&quot;</code> を指定すれば 5 種類の窓すべてで 0.700000(最大差 1.11e-16)。正規化を明示しない dB は、もっともらしく間違います。</p>
+<p style="margin:2px 0 2px 12px">• <b>dB の基準を明示させる</b> — <code style="color:#22d3bf">ref</code> は信号と同じ単位の振幅で、既定 1.0 は「渡した単位の 1 に対する dB」です。<b>dB SPL ではありません</b>(このライブラリはマイクの校正を見たことがないので、dB SPL と書けば捏造になります)。パスカルなら <code style="color:#22d3bf">ref=20e-6</code> を渡してください。<code style="color:#22d3bf">ref &lt;= 0</code> は拒否。</p>
+<p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">log(0)</code> は <code style="color:#22d3bf">-inf</code> でなく床** — 無音・ゼロ平均の帯域・空のオクターブ帯域は現実に起きるケースであってエラーではありません。<code style="color:#22d3bf">-inf</code> はその後に取る平均を全部壊すので <code style="color:#22d3bf">FLOOR_DB</code>(既定 −200 dB)に落とし、落としたことを <code style="color:#22d3bf">clamped</code> で返します。</p>
+<p style="margin:2px 0 2px 12px">• <b>1 フレームのコヒーレンスは返さず拒否</b> — 平均を取らないコヒーレンスは Cauchy–Schwarz により<b>恒等的に 1.0</b> です。何も入っていない満点で、拒否しないと「完璧に相関しています」と報告し続けます。</p>
+<p style="margin:2px 0 2px 12px">• <b>退化した幾何を拒否</b> — <code style="color:#22d3bf">element_diameter &gt;= pitch_diameter</code>(引数の取り違えが原因で、放置すると負の保持器速度ともっともらしい内輪速度が返る)、<code style="color:#22d3bf">|contact_angle_deg| &gt;= 90</code>、回転数プロファイルが 0 に触れる場合(角度は速度の積分なので軸が非単調になり、内挿が逆走する)、<code style="color:#22d3bf">modulation &gt;= 1</code> の AM(包絡線が <code style="color:#22d3bf">|1 + m cos|</code> に整流されて <code style="color:#22d3bf">2 f_d</code> に線が立ち、欠陥率を 2 倍で報告する)。</p>
+<p style="margin:2px 0 2px 12px">• <b>サイズ上限は float64 昇格の前に</b> — <code style="color:#22d3bf">MAX_SAMPLES</code>(2²⁴)/ <code style="color:#22d3bf">MAX_WINDOW</code>(2²⁰)/ <code style="color:#22d3bf">MAX_STFT_ELEMENTS</code>(2²⁴)/ <code style="color:#22d3bf">MAX_NFFT_RATIO</code>(16)/ <code style="color:#22d3bf">MAX_BANDS</code>(4096)/ <code style="color:#22d3bf">MAX_ANGULAR_SAMPLES</code>(2²⁴)。上限超の int8 記録は 8 倍のコピーを<b>作る前に</b>拒否します(メッセージがその事実を名指しし、テストがメッセージで固定しています)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">零点との比較 — この族を足す理由が測定に出ている</h3>
+<p>新しい op を足す理由は、既存のやり方が壊れる場所が測定に現れることです。この族には 2 つあります。</p>
+<p><b>その 1: 欠陥はそこに無い。</b> 3000 Hz の共振を 107 Hz で変調度 0.5 の振幅変調にした軸受信号で:</p>
+<p>| 見方 | 107 Hz での単側振幅 |</p>
+<p>|---|---:|</p>
+<p>| 生スペクトル(<code style="color:#22d3bf">dsp.spectrum</code>) | <b>4.3e-16</b> ← 成分として存在しない |</p>
+<p>| 包絡線スペクトル(<code style="color:#22d3bf">envelope_spectrum</code>) | <b>0.499677</b>(ピーク位置 107.000000 Hz) |</p>
+<p>生スペクトルのエネルギーは搬送波 3000 Hz(振幅 1.000000)と側帯波 2893 / 3107 Hz(各 0.250000 = ちょうど m/2)に居ます。包絡線が返す 0.499677 は<b>変調度 m そのもの</b>で、これはこの信号の解析包絡線が厳密に <code style="color:#22d3bf">1 + 0.5 cos(2π·107 t)</code> だからです。</p>
+<p><b>その 2: 回転数が動くと、素朴なスペクトルが壊れる。</b> 600 → 1800 rpm、4 秒、5 kHz、次数 1.0 と 3.5(どちらも振幅 1.0)、固定共振 400 Hz(振幅 1.0)の走行記録で:</p>
+<p>| 量 | 通常のスペクトル | 次数スペクトル |</p>
+<p>|---|---|---|</p>
+<p>| 次数 3.5 のピーク振幅 | <b>0.070203</b>(真値 1.0 の 7 %) | <b>0.999371</b>(99.94 %) |</p>
+<p>| その −3 dB 幅 | 66.50 Hz(= 3.33 次数) | <b>0.00000 次数</b>(1 bin) |</p>
+<p>| 400 Hz 共振の振幅 | 1.0000、鋭い 1 本 | 0.0517、26.7 次数に散る |</p>
+<p><b>逆転</b>が診断そのものです。角度領域で鋭いものは軸と一緒に回り、時間領域で鋭いものは回らない。だから 2 つのスペクトルを両方計算する価値があります。</p>
+<p>その他、閉形式の真値と一致することを確かめてある主張(すべて <code style="color:#22d3bf">tests/test_acoustics.py</code> と <code style="color:#22d3bf">examples/acoustic_condition_monitoring.py</code> で再現):</p>
+<p>| 主張 | 実測 |</p>
+<p>|---|---|</p>
+<p>| STFT 往復(窓・ホップ・nfft 8 通り) | 8.88e-16 〜 1.33e-15 |</p>
+<p>| 軸受運動学 <code style="color:#22d3bf">BPFO + BPFI − N·f_r</code> / <code style="color:#22d3bf">BPFO − N·FTF</code> | どちらも <b>0.000e+00</b>(厳密) |</p>
+<p>| ケプストラム、200 サンプルの反射 | quefrency 0.025000 s = 添字ちょうど <b>200</b> |</p>
+<p>| ケプストラム、50 Hz 間隔の線スペクトル | 0.020000 s = <b>50.00 Hz</b> |</p>
+<p>| A / C 特性の 1 kHz | 厳密に <code style="color:#22d3bf">0.0</code>(構成上。規格の数表は 1 つも転記していない) |</p>
+<p>| A / C の低域漸近 | <b>79.999998</b> / <b>39.999998</b> dB/decade(理論 80 / 40) |</p>
+<p>| 1/3 オクターブ帯域レベル vs <code style="color:#22d3bf">10log10(0.7²/2)</code> | 差 <b>2.665e-15</b> dB |</p>
+<p>| オクターブ帯域の <code style="color:#22d3bf">upper/lower</code> vs <code style="color:#22d3bf">G^(1/b)</code> | 差 <b>2.2e-16</b> |</p>
+<p>| 正弦の <code style="color:#22d3bf">L_eq</code> vs <code style="color:#22d3bf">10log10(A²/2)</code> | 差 2.2e-15 dB、振幅 2 倍で <b>+6.020600</b> dB |</p>
+<p>| 50:50 の 2 値信号の <code style="color:#22d3bf">L10 − L90</code> | <b>20.000000</b> dB(構成レベルそのもの) |</p>
+<p>| <code style="color:#22d3bf">y = 2.5x</code> の <code style="color:#22d3bf">\|H\|</code> | 最大偏差 <b>1.776e-15</b>、コヒーレンス 1.0000000000 |</p>
+<p>| 既知遅延 37 サンプルの群遅延 | <b>37.000004</b> サンプル |</p>
+<p>| <code style="color:#22d3bf">\|H1/H2\|</code> とコヒーレンスの一致 | <b>5.6e-16</b>(厳密な恒等式) |</p>
+<p>| スペクトル尖度の基準ケース | 白色雑音 −0.0444(推定器の標準偏差 0.1773)、純音 <b>−1.0000</b> |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン(op の繋がり)</h3>
+<p>軸受を 1 個、音だけで診断する筋(検証済み <code style="color:#22d3bf">examples/acoustic_condition_monitoring.py</code> そのもの)。共振の位置を人が知らなくても閉じます。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    A[dsp.read_wav 波形 + rate] --&gt; B[spectral_kurtosis どこが衝撃的か]
+    B --&gt;|max_freq ± 1 bin| C[envelope_spectrum 帯域通過→包絡線→変換]
+    A --&gt;|窓を掃引| B
+    C --&gt;|peak_freq| D{どの特徴周波数と一致するか}
+    E[bearing_defect_frequencies 幾何 + rpm] --&gt;|FTF/BPFO/BPFI/BSF| D
+    C --&gt;|band_fraction / 突出度| F[本物の発見か雑音か]
+    A --&gt; G[cepstrum 側帯波間隔・反射遅延]
+    G --&gt; D</pre>
+<p>回転数が動く記録は角度領域へ回します。<b>時間領域と角度領域を両方見て、どちらで鋭いかを比べる</b>のが読み方です。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    A[波形 + 回転数プロファイル] --&gt; B[angular_resample 角度軸へ内挿 table]
+    B --&gt;|偶数回転で切る| C[order_spectrum 次数スペクトル]
+    A --&gt; D[dsp.spectrum 通常のスペクトル]
+    C --&gt; E{角度領域で鋭い = 軸と回る}
+    D --&gt; F{時間領域で鋭い = 回らない共振}
+    E --&gt; G[次数 → 部品の同定]
+    F --&gt; H[共振 → 構造の問題]</pre>
+<p>騒音側と 2 チャネル側は独立した 2 本です。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    A[波形 + rate] --&gt; B[apply_weighting A/C/Z]
+    B --&gt; C[equivalent_level Leq measurement]
+    B --&gt; D[percentile_level L10/L50/L90 table]
+    A --&gt; E[octave_spectrum 帯域レベル]
+    F[octave_bands 帯域の定義] --&gt; E
+    G[加振 x] --&gt; H[transfer_function H1/H2 + coherence]
+    I[応答 y] --&gt; H
+    H --&gt; J{coherence が低い帯域の H は読まない}</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方(最小の 1 本)</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import acoustics as A
+
+# 共振 3 kHz を 107 Hz で振幅変調した軸受(答えを知っている入力を作る)
+x = A.synthesize_bearing_signal(25600.0, 1.0, carrier_hz=3000.0,
+                                defect_hz=107.0, modulation=0.5)
+
+# 復調帯域を機械に選ばせて、欠陥率を出す
+sk = A.spectral_kurtosis(x, 25600.0)
+env = A.envelope_spectrum(x, 25600.0,
+                          max(1.0, sk[&quot;max_freq&quot;] - sk[&quot;bin_hz&quot;]),
+                          sk[&quot;max_freq&quot;] + sk[&quot;bin_hz&quot;])
+print(env[&quot;peak_freq&quot;], env[&quot;band_fraction&quot;])    # 107.0 と ~1.0 = 本物
+
+# 幾何から出した特徴周波数と突き合わせる(1 % 程度のすべりは呼び出し側の裁量)
+b = A.bearing_defect_frequencies(1800.0, 9, 8.0, 40.0)
+print(b[&quot;bpfo_hz&quot;], b[&quot;bpfi_hz&quot;])                # 108.0, 162.0 [Hz]
+
+# 騒音側: 基準値は明示する(1.0 = 渡した単位の 1 に対する dB。dB SPL ではない)
+print(A.equivalent_level(x, 25600.0, weighting=&quot;A&quot;, ref=1.0))</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0"><code style="color:#22d3bf">motionmag</code> との関係 — 同じ振動を、別の計器で測る</h3>
+<p><code style="color:#22d3bf">motionmag</code> と <code style="color:#22d3bf">acoustics</code> は<b>同じ物理量(微小振動)を別の経路で測っています</b>。あちらの観測量は向きつきサブ帯域の局所位相で、答えは画素単位の変位。こちらの観測量は音圧で、答えは Hz 単位の変調率。補完関係であって重複ではありません。</p>
+<p><b>橋は実在して、テストで示してあります。</b> <code style="color:#22d3bf">motionmag.displacement_series</code> の返り <code style="color:#22d3bf">(T, 2)</code> は普通の 1-D 信号です。<code style="color:#22d3bf">tests/test_acoustics.py::test_a_motionmag_displacement_waveform_is_an_ordinary_acoustic_signal</code> が、その <code style="color:#22d3bf">dx</code> 列を取って合成した 8 Hz を取り戻し、<code style="color:#22d3bf">stft</code> → <code style="color:#22d3bf">istft</code> で 1e-12 の往復を確かめ、<code style="color:#22d3bf">equivalent_level</code> を通します。つまり<b>カメラが見た振動を、この族の道具でそのまま解析できます</b>。</p>
+<p>帯域の分かれ目は好みではなく物理です。240 fps のカメラは 120 Hz まで、48 kHz のマイクは 24 kHz まで。軸受が実際に鳴る構造共振は数 kHz にあるので、<b>軸受診断は音響の問題</b>であり、モード形状の可視化(どこがどう揺れているかの空間分布)は<b>光学の問題</b>です。</p>
+<p><b>相互検証の提案</b>(実装するかは未定): 同じ構造を加振して、同時に撮影と録音を行う。<code style="color:#22d3bf">displacement_series → cepstrum</code> あるいは <code style="color:#22d3bf">→ envelope_spectrum</code> で出した変調率と、マイク側の <code style="color:#22d3bf">envelope_spectrum</code> が出した変調率が<b>一致しなければならない</b>。この 2 経路はコードを 1 行も共有していないので、一致は絶対的な検算になります。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">アルゴリズムの正典(著者・年)</h3>
+<p style="margin:2px 0 2px 12px">• <b>STFT と重み付き重畳加算による厳密な逆変換</b>: Allen &amp; Rabiner, *A Unified Approach to Short-Time Fourier Analysis and Synthesis*, Proc. IEEE 65(11), 1977; Griffin &amp; Lim, IEEE TASSP 32(2), 1984。厳密な再構成に必要なのは <b>NOLA</b>(窓の二乗和がどこでも正)であって COLA ではありません。COLA は「割り算をしない素の重畳加算」が成り立つ条件で、<code style="color:#22d3bf">stft_cola_check</code> が別に報告します。</p>
+<p style="margin:2px 0 2px 12px">• <b>高周波共振法(包絡線解析)</b>: Darlow, Badgley &amp; Hogg, *Applications of High-Frequency Resonance Techniques for Bearing Diagnostics*, 1974; Randall &amp; Antoni, *Rolling element bearing diagnostics — a tutorial*, MSSP 25(2), 2011。</p>
+<p style="margin:2px 0 2px 12px">• <b>軸受欠陥の運動学</b>: 標準的な遊星無すべり導出(例 Harris, *Rolling Bearing Analysis*)。<b>数表からではなく幾何から</b>再導出しています。保持器が両輪面速度の平均で進むことから、<code style="color:#22d3bf">r = d/D·cos α</code> を使って FTF / BPFO / BPFI / BSF が出ます。</p>
+<p style="margin:2px 0 2px 12px">• <b>角度リサンプルによる計算次数追跡</b>: Fyfe &amp; Munck, *Analysis of Computed Order Tracking*, MSSP 11(2), 1997。</p>
+<p style="margin:2px 0 2px 12px">• <b>ケプストラム</b>: Bogert, Healy &amp; Tukey, *The Quefrency Alanysis of Time Series for Echoes*, 1963; Randall, *A history of cepstrum analysis*, MSSP 97, 2017。</p>
+<p style="margin:2px 0 2px 12px">• <b>スペクトル尖度</b>: Antoni, *The spectral kurtosis: a useful tool for characterising non-stationary signals*, MSSP 20(2), 2006。正規化は複素循環ガウス雑音で 0、純音で −1 になるように取ってあります。</p>
+<p style="margin:2px 0 2px 12px">• <b>分数オクターブ帯域</b>: 幾何構成 <code style="color:#22d3bf">f_c = f_ref · G^(x/b)</code>(b が奇数)/ <code style="color:#22d3bf">f_ref · G^((2x+1)/(2b))</code>(b が偶数)、帯域端は <code style="color:#22d3bf">f_c · G^(∓1/(2b))</code>。<code style="color:#22d3bf">G = 10^(3/10)</code>(base 10)または <code style="color:#22d3bf">G = 2</code>(base 2)。<b>定義式から計算</b>しており、公表された帯域表は 1 つも転記していません。</p>
+<p style="margin:2px 0 2px 12px">• <b>A / C 周波数重み付け</b>: 古典的な重み付け回路の極周波数(20.598997 / 107.65265 / 737.86223 / 12194.217 Hz)から計算し、<b>公表オフセット定数を足すのではなく自身の 1 kHz 値で割る</b>ことで 1 kHz が構成上ちょうど 0 dB になるようにしてあります。だからテストが許容誤差ではなく <code style="color:#22d3bf">== 0.0</code> を主張できます。</p>
+<p style="margin:2px 0 2px 12px">• <b>Welch 平均、H1 / H2 推定、序数コヒーレンス</b>: Welch, IEEE TAE 15(2), 1967; Bendat &amp; Piersol, *Random Data: Analysis and Measurement Procedures*。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">正直な限界(この族でできないこと)</h3>
+<p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">rate</code> の取り違えは型では守れません。<b> サンプリング周波数は配列の中に入っておらず、別のスカラです。実測、</b>同じ正しい録音<b>を 25600 Hz でなく 48000 Hz だと言って渡すと、欠陥周波数の報告が </b>107.0000 Hz から 200.6250 Hz** に動き、A 特性の <code style="color:#22d3bf">L_eq</code> が −1.2708 から −2.2506 dB に動き、最大 1/3 オクターブ帯域が 3162.3 から 6309.6 Hz に動きます。<b>例外も NaN も警告も出ません。全部もっともらしい数字です。</b> 守れるのは「文字列 / bool / complex の <code style="color:#22d3bf">rate</code>」という<b>無言で誤りが入り込む経路</b>だけで、そこは fail-closed にしてあります。</p>
+<p style="margin:2px 0 2px 12px">• <b>専用の型語彙を作りませんでした。</b> 判定基準は本 repo 共通の「既存語彙で宣言すると型レベルの嘘になるか」です。<code style="color:#22d3bf">counts</code>(負の光子数はあり得ないので、<code style="color:#22d3bf">signal</code> を渡すと必ず拒否される)と違い、<b>任意の実数 1-D は本当に正当な音響信号</b>です ―― 実測、ファザーの <code style="color:#22d3bf">signal</code>(正弦 + 雑音、負値あり)を <code style="color:#22d3bf">signal</code> を取る 18 op 全部に流して、<b>型に起因する拒否も非有限漏れも 1 件も出ませんでした</b>。嘘にならない代わりに守るものも無く、専用型は <code style="color:#22d3bf">dsp</code> / <code style="color:#22d3bf">funct1d</code> との接続を切る損だけが残ります。危険は型ではなく <code style="color:#22d3bf">rate</code> にあり、そちらで守っています。</p>
+<p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">angular_resample</code> の返りを <code style="color:#22d3bf">signal</code> プールに出していません。<b> その配列は</b>角度**で添字づけられているので、<code style="color:#22d3bf">rate</code> を取る op に渡すと「回転数で測った軸から Hz が出る」= 例外も NaN も無く間違った数字が返ります。新語を 1 つ増やして狭い sort を作る代わりに、<b>危険な産物を dict に包んでプールに出さない</b>手を採りました(先例 = <code style="color:#22d3bf">motionmag.motion_magnify</code> が video アダプタを意図的に置かないこと)。<code style="color:#22d3bf">[&quot;signal&quot;]</code> を取り出すのは呼び出し側の明示的な行為になり、そのとき <code style="color:#22d3bf">samples_per_rev</code> が同じ dict にあります。</p>
+<p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">transfer_function</code> にアダプタを付けていません。<b> 応答だけを剥がして受け取れる経路は、この族の中心的な正直さを迂回する道になります。実測、出力雑音 0 dB のもとで真値 2.5 に対し H1 は 2.523390(誤差 0.94 %)、</b>H2 は 5.043020<b> ―― 理論どおりちょうど 2 倍のずれですが、</b>5.04 という数字を単体で見て変だと思う理由はどこにもありません**。コヒーレンス(この条件で平均 0.509143)と一緒に読むしかないので、一緒に返します。</p>
+<p style="margin:2px 0 2px 12px">• <b>無相関な 2 本はコヒーレンス 0 を返しません。</b> 有限のフレーム数には偏りがあり、実測 31 フレームで平均 0.035640(偏り <code style="color:#22d3bf">1/31 = 0.0323</code>)。<code style="color:#22d3bf">bias</code> を返すのはそのためで、0.03 を「少し結合がある」と読むのがこの数字で防ぎたい誤りです。</p>
+<p style="margin:2px 0 2px 12px">• <b>NOLA が薄いホップでは精度が落ちます。</b> <code style="color:#22d3bf">hop = win − 1</code> は NOLA を満たしますが、窓の二乗和の最小値が 2.27e-08 まで落ち、再構成はそれで割ります。往復誤差は他の設定の 1.33e-15 に対して <b>2.73e-12</b> ―― 4 桁悪い。だから <code style="color:#22d3bf">nola_min</code> を検査するだけでなく<b>返して</b>います。小さいが正の NOLA 最小値は条件数の警告であって、それが警告でなくなる閾値は無いので、閾値を発明していません。</p>
+<p style="margin:2px 0 2px 12px">• <b>偶数分数のオクターブ系に 1 kHz 帯域はありません。</b> <code style="color:#22d3bf">fraction</code> が奇数(1/1, 1/3)なら 1000.0 Hz ちょうどを<b>中心</b>とする帯域がありますが、偶数(1/2, 1/6, 1/12, 1/24)では指数のオフセットにより 1000.0 Hz は<b>帯域端</b>になり、1 kHz 帯域は存在しません(<code style="color:#22d3bf">fraction</code> = 1, 2, 3, 6, 12, 24 で実測、いずれも <code style="color:#22d3bf">rtol=1e-12</code>)。これは定義であって不具合ではありませんが、「1 kHz でのレベル」を引用するときは、偶数系ではその数が隣り合う 2 つの半端な帯域のどちらかから来ていることになります。</p>
+<p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">nominal</code> は公表された呼称系列ではありません。<b> 厳密な中心を有効数字 3 桁に丸めただけのラベルで、実測、オクターブ中心は 31.6 / 63.1 / </b>126.0<b> / </b>251.0** / 501.0 / 1000.0 / 2000.0 / 3980.0 / 7940.0 / 15800.0 になります(公表系列は 126 / 251 のところが 125 / 250)。計算には <code style="color:#22d3bf">centers</code> を使い、報告書の表記を合わせる必要があるならラベルは自前で用意してください。</p>
+<p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">spectral_kurtosis</code> が返すのは帯域であって線ではありません。** 上の表のとおり最大値の位置は窓とともに動きます。復調帯域の候補を出す道具として使い、共振周波数の測定器として使わないでください。</p>
+<p style="margin:2px 0 2px 12px">• <b>ケプストラムは広帯域信号を要求します。</b> AM の純音は線が 3 本しか無く、他の bin は全部床打ちするので、<code style="color:#22d3bf">1/50 s</code> のラーモニックは<b>そもそも存在しません</b>。また最大値が基本周期とは限りません ―― 1/107 s で繰り返す衝撃列で、2 ms 以上の最大ラーモニックは 0.037383 s = <b>4/107</b>(第 4 次)でした。ケプストラムは<b>族</b>を報告するので、最大値だけを読むと整数倍ちょうど外した、まったくもっともらしい答えが出ます。低 quefrency 側はスペクトル包絡が支配するため、<code style="color:#22d3bf">min_quefrency</code> による除外(リフタリング)は呼び出し側の判断として明示引数にしてあります。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

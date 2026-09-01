@@ -1,0 +1,88 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">chromatic_confocal_height — INTERFEROMETRY <code style="color:#22d3bf">chromatic</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">sweep</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import interferometry; interferometry.chromatic_confocal_height(spectrum, wavelength_start_nm=500.0, wavelength_step_nm=0.5, dispersion_um_per_nm=0.2, reference_wavelength_nm=600.0, mode=&#x27;gaussian&#x27;, subtract_background=True, min_visibility=0.3, min_peak_bins=2.0, max_carrier_fraction=0.1)</code> (または <code style="color:#22d3bf">opsinterferometry.get(&quot;chromatic_confocal_height&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Surface height from one confocal return spectrum — the wavelength *is* the height.</p>
+<p>The inverse of :func:<code style="color:#22d3bf">chromatic_confocal_simulate</code>. Find the peak wavelength</p>
+<p>of the spectrum, then::</p>
+<p>height = (lambda_peak - reference_wavelength_nm) * dispersion_um_per_nm</p>
+<p>No scan, no moving parts, one spectrum per point — which is why this family</p>
+<p>reaches sampling rates a z scan cannot, and why it is limited to the axial</p>
+<p>range the objective&#x27;s chromatic spread covers.</p>
+<p>The four *mode* estimators are :data:<code style="color:#22d3bf">ESTIMATORS</code>, identical to</p>
+<p>:func:<code style="color:#22d3bf">csi_peak_position</code>&#x27;s and sharing its implementation. `<code style="color:#22d3bf">&quot;gaussian&quot;</code>` is</p>
+<p>exact for a Gaussian confocal response (measured 0.0e+00 to 3.6e-15 um),</p>
+<p>*including when the peak is narrower than one bin and when it sits two bins</p>
+<p>from the band edge* — the logarithm of a sampled Gaussian is a parabola</p>
+<p>whatever its width, and the fit is local. That exactness is a property of</p>
+<p>noiseless data only, which is what *min_peak_bins* is about.</p>
+<p>spectrum:             1-D non-negative intensities across the spectrometer.</p>
+<p>wavelength_start_nm / wavelength_step_nm: the spectrometer axis.</p>
+<p>dispersion_um_per_nm: the axial chromatic calibration constant.</p>
+<p>reference_wavelength_nm: the wavelength that focuses at height 0.</p>
+<p>subtract_background:  subtract the spectrum&#x27;s median before locating the peak.</p>
+<p>On by default because a pedestal drags the `<code style="color:#22d3bf">centroid</code>`</p>
+<p>estimator toward the middle of the band exactly as it</p>
+<p>drags the CSI centroid toward the middle of the scan.</p>
+<p>min_visibility:       refuse a spectrum whose peak prominence</p>
+<p>`<code style="color:#22d3bf">(max-median)/max</code>` is below this — a flat spectrum has</p>
+<p>no focused wavelength and its argmax is noise.</p>
+<p>min_peak_bins:        refuse a peak whose full width at half maximum spans</p>
+<p>fewer than this many bins. Undersampling does not break</p>
+<p>the noiseless algebra, but it destroys its noise</p>
+<p>rejection. Measured at 1 % noise (1000 peak counts,</p>
+<p>sigma_n = 10, 100 trials), RMS error in locating the</p>
+<p>peak against the number of bins across its FWHM:</p>
+<p>0.5 bins -&gt; 0.256 nm</p>
+<p>1.0 bins -&gt; 0.137 nm</p>
+<p>2.0 bins -&gt; 0.010 nm</p>
+<p>4.0 bins -&gt; 0.030 nm</p>
+<p>8.0 bins -&gt; 0.118 nm</p>
+<p>Two bins is the optimum and a half-bin peak is <b>25x</b></p>
+<p>worse, from a spectrum that looks perfectly healthy —</p>
+<p>hence the default of 2. Note the curve turns around</p>
+<p>again: a very *broad* peak is also bad, because the</p>
+<p>three-point fit then sits where the curvature is tiny</p>
+<p>and noise dominates it. &quot;More samples is better&quot; is</p>
+<p>false here and this operator does not claim it. Set to</p>
+<p>0 to disable the check if you know your data is</p>
+<p>clean.</p>
+<p>max_carrier_fraction: refuse a spectrum whose dominant alternating component</p>
+<p>sits above this fraction of the Nyquist frequency. A</p>
+<p>confocal response is one smooth peak and all of its AC</p>
+<p>content is at low frequency (measured: dominant bin at</p>
+<p>0.010 of Nyquist for a 4 nm peak, 0.010 for a 1 nm peak,</p>
+<p>0.015 with 5 % noise). A <b>z-scan interferogram</b> put in</p>
+<p>here instead sits at 0.333 — its fringe carrier — and</p>
+<p>without this check its carrier&#x27;s argmax would come back</p>
+<p>as a focused wavelength and therefore as a plausible,</p>
+<p>finite, wrong height. This is the guard that lets the</p>
+<p>two 1-D families share one type pool safely. Pass 0 to</p>
+<p>disable.</p>
+<p>Returns the height as a float, in micrometres. It may be negative — a height</p>
+<p>is signed, unlike a time-of-flight distance.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-1-D / empty / too-short (&lt; 3) / non-finite /</p>
+<p>complex / masked *spectrum*, a *spectrum* over :data:<code style="color:#22d3bf">MAX_SCAN_POINTS</code></p>
+<p>elements (checked before the float64 promotion), any <b>negative</b> intensity</p>
+<p>(a spectrometer cannot read negative light; clip explicitly if this is a</p>
+<p>pre-subtracted spectrum), a non-positive step / dispersion / reference</p>
+<p>wavelength, an unknown *mode*, a peak prominence below *min_visibility*, a</p>
+<p>peak narrower than *min_peak_bins*, and a peak on the <b>first or last bin</b></p>
+<p>(the surface is outside the calibrated axial range, which is</p>
+<p>`<code style="color:#22d3bf">+-(band_nm/2) * dispersion_um_per_nm</code>` about the reference).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideinterferometry:coherence_scanning">coherence_scanning ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:coherence_scanning">coherence_scanning</a> — <code style="color:#22d3bf">py -3.11 examples/coherence_scanning.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">measurement</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">chromatic</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: interferometry.py — INTERFEROMETRY operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

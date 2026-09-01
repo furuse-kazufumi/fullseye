@@ -1,0 +1,53 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">csi_stack_simulate — INTERFEROMETRY <code style="color:#22d3bf">simulate</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">zscan</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import interferometry; interferometry.csi_stack_simulate(height_um, z_start_um=0.0, z_step_um=0.05, n_planes=241, wavelength_um=0.6, envelope_fwhm_um=2.8, envelope_sigma_um=None, bias=0.5, amplitude=0.4, reflectivity=None, noise=0.0, seed=0)</code> (または <code style="color:#22d3bf">opsinterferometry.get(&quot;csi_stack_simulate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Synthesise the `<code style="color:#22d3bf">(Z, H, W)</code>` scan stack an interference microscope records.</p>
+<p>The per-pixel version of :func:<code style="color:#22d3bf">csi_signal_simulate</code>: every pixel of the</p>
+<p>*height_um* map gets its own coherence envelope centred on its own height, on</p>
+<p>a shared scan grid. <b>The scan axis is FIRST</b> — a stack is what a camera</p>
+<p>streams while the objective moves, one frame per plane — which is the same</p>
+<p>layout as a `<code style="color:#22d3bf">video</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> and *not* the </code><code style="color:#22d3bf">(H, W, T)</code>` of a</p>
+<p>:func:<code style="color:#22d3bf">photoncount.dtof_cube_simulate</code> histogram cube.</p>
+<p>That resemblance to `<code style="color:#22d3bf">video</code>` is not cosmetic and it is measured, not assumed:</p>
+<p>handing a translating-grating clip to :func:<code style="color:#22d3bf">csi_height_map</code> does <b>not</b></p>
+<p>raise, it returns a height map (see the type note in :mod:<code style="color:#22d3bf">opsinterferometry</code></p>
+<p>for the numbers). The registry therefore declares a separate `<code style="color:#22d3bf">zscan</code>` type.</p>
+<p>height_um:     2-D `<code style="color:#22d3bf">(H, W)</code>` map of true surface heights, in the scan&#x27;s own</p>
+<p>coordinate. Every height must lie inside the scan range.</p>
+<p>reflectivity:  optional `<code style="color:#22d3bf">(H, W)</code>` map of per-pixel fringe-amplitude scale</p>
+<p>(&gt;= 0). `<code style="color:#22d3bf">None</code>` = uniform 1. A pixel with reflectivity 0 has</p>
+<p>no fringes at all and :func:<code style="color:#22d3bf">csi_height_map</code> will refuse it</p>
+<p>rather than report the first plane.</p>
+<p>(the remaining parameters are :func:<code style="color:#22d3bf">csi_signal_simulate</code>&#x27;s, applied to every</p>
+<p>pixel; `<code style="color:#22d3bf">noise</code>` is sampled once for the whole stack from *seed*.)</p>
+<p>Returns a float64 `<code style="color:#22d3bf">(n_planes, H, W)</code>` stack.</p>
+<p>Ground truth: with `<code style="color:#22d3bf">noise=0</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">csi_height_map(stack, ..., mode=&quot;gaussian&quot;)</code>`</p>
+<p>returns *height_um* with an RMS error of <b>2.08e-06 um</b> over a tilted plane</p>
+<p>spanning 5.0-7.0 um of a 0-12 um scan, and the per-pixel result is bit-for-bit</p>
+<p>identical to running :func:<code style="color:#22d3bf">csi_peak_position</code> on each column separately</p>
+<p>(both pinned in the tests). Widening the same plane to 2.0-10.0 um degrades</p>
+<p>that to 7.06e-03 um — envelope truncation at the scan ends, not the</p>
+<p>estimator.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: everything :func:</code>csi_signal_simulate` raises, plus</p>
+<p>a non-2-D / empty *height_um*, a *reflectivity* that is negative or a</p>
+<p>different shape, any height outside the scan range, and a stack over</p>
+<p>:data:<code style="color:#22d3bf">MAX_STACK_ELEMENTS</code> (`<code style="color:#22d3bf">n_planes*H*W</code>` grows fast — 241 planes of</p>
+<p>256x256 is 1.9x the cap). The element cap is applied <b>before</b> the float64</p>
+<p>promotion of *height_um*, not after.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideinterferometry:coherence_scanning">coherence_scanning ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:coherence_scanning">coherence_scanning</a> — <code style="color:#22d3bf">py -3.11 examples/coherence_scanning.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">zscan</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opinterferometry:csi_height_map">csi_height_map</a> · <a style="color:#22d3bf" href="opinterferometry:csi_contrast_map">csi_contrast_map</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">simulate</code>)</h3>
+<p><a style="color:#22d3bf" href="opinterferometry:csi_signal_simulate">csi_signal_simulate</a> · <a style="color:#22d3bf" href="opinterferometry:chromatic_confocal_simulate">chromatic_confocal_simulate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: interferometry.py — INTERFEROMETRY operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

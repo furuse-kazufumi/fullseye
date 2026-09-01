@@ -1,0 +1,58 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">csi_contrast_map — INTERFEROMETRY <code style="color:#22d3bf">surface</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">zscan</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import interferometry; interferometry.csi_contrast_map(stack, remove_bias=True)</code> (または <code style="color:#22d3bf">opsinterferometry.get(&quot;csi_contrast_map&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Peak fringe modulation per pixel — the contrast (and validity) map.</p>
+<p>The maximum of each pixel&#x27;s coherence envelope. Three uses, in order of how</p>
+<p>often they matter:</p>
+<p>1. <b>Validity.</b> A pixel that never produced fringes — a hole, a steeply</p>
+<p>tilted facet that threw the light out of the aperture, a saturated or</p>
+<p>dark pixel — has near-zero modulation. This is the map you threshold to</p>
+<p>decide which heights from :func:<code style="color:#22d3bf">csi_height_map</code> to trust.</p>
+<p>2. <b>Reflectance.</b> In the forward model the envelope peak is exactly</p>
+<p>`<code style="color:#22d3bf">amplitude * reflectivity</code>`, so with a known *amplitude* this map *is*</p>
+<p>the reflectivity. Verified in the tests: a known reflectivity map over a</p>
+<p>5.0-7.0 um surface is recovered with a maximum error of 7.32e-05 (the</p>
+<p>residual is envelope truncation again — the same surface spread over</p>
+<p>2.0-10.0 um gives 4.03e-04). It is a contrast map, not a photometric</p>
+<p>measurement, and it is accurate to about four decimal places, not to</p>
+<p>machine precision.</p>
+<p>3. <b>Focus.</b> It is the interferometric analogue of a focus measure, and it</p>
+<p>peaks where :func:<code style="color:#22d3bf">csi_height_map</code> says the surface is.</p>
+<p>Why use 1 rather than trust the height map everywhere: measured on a flat</p>
+<p>surface at 6.0 um with a <b>50x reflectance step</b> across the field (0.02 on</p>
+<p>one half, 1.0 on the other) and 1 % noise, the `<code style="color:#22d3bf">&quot;gaussian&quot;</code>` height error is</p>
+<p>0.146 um RMS on the bright half and <b>3.03 um RMS</b> on the dark half, and 30 %</p>
+<p>of the dark pixels are refused outright. The bias barely moves (+0.14 um);</p>
+<p>what explodes is the scatter, because the three-point fit is reading three</p>
+<p>samples out of a noise floor. `<code style="color:#22d3bf">&quot;centroid&quot;</code>` degrades far more gracefully on</p>
+<p>the same data (0.022 -&gt; 0.157 um, 7x rather than 20x), which is the second</p>
+<p>place in this module where the estimator ranking depends on the data rather</p>
+<p>than on the algebra. This map is what separates the two populations: it reads</p>
+<p>0.035 +- 0.004 on the dark half and 0.412 +- 0.007 on the bright one.</p>
+<p>It is deliberately <b>not</b> normalised by the pedestal. The classical fringe</p>
+<p>*visibility* is `<code style="color:#22d3bf">b/a</code>`, and computing it would need the pedestal, which</p>
+<p>`<code style="color:#22d3bf">remove_bias</code><code style="color:#22d3bf"> has just thrown away; returning </code><code style="color:#22d3bf">b</code>` and saying so is honest,</p>
+<p>whereas returning `<code style="color:#22d3bf">b</code>` and calling it visibility would not be. Divide by</p>
+<p>:func:<code style="color:#22d3bf">numpy.mean</code> of the stack along axis 0 if you want the ratio.</p>
+<p>Returns a float64 `<code style="color:#22d3bf">(H, W)</code>` map. Same shape and validation as</p>
+<p>:func:<code style="color:#22d3bf">csi_height_map</code>.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-3-D stack, fewer than 3 planes, an empty</p>
+<p>spatial extent, a stack over :data:<code style="color:#22d3bf">MAX_STACK_ELEMENTS</code>, a non-finite /</p>
+<p>complex / masked stack, or a non-bool *remove_bias*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideinterferometry:coherence_scanning">coherence_scanning ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:coherence_scanning">coherence_scanning</a> — <code style="color:#22d3bf">py -3.11 examples/coherence_scanning.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">surface</code>)</h3>
+<p><a style="color:#22d3bf" href="opinterferometry:csi_height_map">csi_height_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: interferometry.py — INTERFEROMETRY operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

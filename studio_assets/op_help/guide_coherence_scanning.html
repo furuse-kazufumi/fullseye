@@ -1,0 +1,142 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">コヒーレンス走査干渉・クロマティック共焦点 — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p><b>位相ではなく、コヒーレンス包絡線のピークで高さを出す</b>道具箱です。</p>
+<p>高さを光で測る方法は 2 つあります。fullseye には既に片方 — <code style="color:#22d3bf">fringe</code> の<b>位相シフト法</b> — があり、縞の<b>位相</b>から高さを読みます。極めて精密ですが、位相は 2π の周期を持つので原理的に不定性を抱えます。この族はもう片方で、対物レンズを縦に振りながら撮った干渉縞の<b>コントラストが最大になる位置</b>を高さとします。包絡線には周期が無いので、縞次数を数え違えることも、アンラップすることもありません。<b>その差が測定に出ていることが、この族を足した理由そのもの</b>です(次節)。</p>
+<p>9 op / 6 カテゴリ(numpy + scipy のみ、台帳は <code style="color:#22d3bf">opsinterferometry.py</code>、実体は <code style="color:#22d3bf">interferometry.py</code>):</p>
+<p style="margin:2px 0 2px 12px">• <b>simulate(3)</b> — <code style="color:#22d3bf">csi_signal_simulate</code> / <code style="color:#22d3bf">csi_stack_simulate</code> / <code style="color:#22d3bf">chromatic_confocal_simulate</code>: 前方モデル、つまり<b>真値の供給源</b>。z 走査信号は <code style="color:#22d3bf">a + b·V(z−z₀)·cos(4π(z−z₀)/λ)</code> の形で、この <b>4π</b>(2π ではない)は光が表面まで往復するぶんです。1 縞は波長ではなく <b>λ/2 の高さ</b>に対応し、この係数を間違えると全高さがきれいに 2 倍ずれます。<code style="color:#22d3bf">csi_stack_simulate</code> は <code style="color:#22d3bf">depth</code> マップから <code style="color:#22d3bf">(Z, H, W)</code> の走査スタックを作り、<code style="color:#22d3bf">chromatic_confocal_simulate</code> は既知高さの共焦点戻りスペクトルを作ります。</p>
+<p style="margin:2px 0 2px 12px">• <b>envelope(1)</b> — <code style="color:#22d3bf">csi_envelope</code>: 直流台座を抜いてから解析信号(Hilbert)の絶対値を取ります。台座を抜くのは飾りではなく、抜かないと<b>返るのは台座そのもの</b>です(実測: 抜いて 1.83e-07、抜かずに 0.500 = 台座の高さちょうど)。</p>
+<p style="margin:2px 0 2px 12px">• <b>locate(1)</b> — <code style="color:#22d3bf">csi_peak_position</code>: 包絡線ピークの位置 = 高さ。推定量 4 種(<code style="color:#22d3bf">peak</code> / <code style="color:#22d3bf">centroid</code> / <code style="color:#22d3bf">parabolic</code> / <code style="color:#22d3bf">gaussian</code>)を持ち、その順位が雑音で逆転します(後述)。</p>
+<p style="margin:2px 0 2px 12px">• <b>surface(2)</b> — <code style="color:#22d3bf">csi_height_map</code> / <code style="color:#22d3bf">csi_contrast_map</code>: 走査スタック全体に対する同じ反転。前者が高さマップ、後者が画素ごとのフリンジ変調度で、これは<b>有効画素マスク兼反射率マップ</b>として使います。</p>
+<p style="margin:2px 0 2px 12px">• <b>chromatic(1)</b> — <code style="color:#22d3bf">chromatic_confocal_height</code>: 走査しない従兄弟。色収差を意図的に持たせた対物では波長ごとに合焦高さが違うので、ピンホールを通って戻った<b>波長がそのまま高さ</b>になります(<code style="color:#22d3bf">z = z_ref + (λ − λ_ref)·分散</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <b>design(1)</b> — <code style="color:#22d3bf">csi_design</code>: 買う前に決まってしまう限界。光源のスペクトル幅からコヒーレンス長・走査軸上の包絡線幅・縞周期・走査ステップの Nyquist 上限・捕捉範囲・スタックの容量を返します。<code style="color:#22d3bf">visiondesign</code> が横方向にやっていることの<b>縦方向版</b>です。</p>
+<p>データ種は既存語彙の再利用が基本です: <b>depth</b>(高さマップ)、<b>image2d</b>(変調度マップ)、<b>signal</b>(包絡線 = 1-D の実関数)、<b>measurement</b>(単一画素の高さ)、<b>table</b>(設計値の dict)。新語は 2 つ、<b>zscan</b>(<code style="color:#22d3bf">(Z,H,W)</code>、走査軸が先頭)と <b>sweep</b>(掃引軸に沿った非負 1-D 強度で局在ピークを 1 つ持つもの — 干渉信号とスペクトルの 2 種を同じ語彙に入れています)。どちらを足すかは推測ではなく実測で決めました(後述)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">零点との比較 — この族を足す理由が測定に出ている</h3>
+<p><b>同じ合成表面</b>を位相シフト法(既存 <code style="color:#22d3bf">fringe</code>、<code style="color:#22d3bf">synthesize_fringes</code> → <code style="color:#22d3bf">decode_fringe</code> を <code style="color:#22d3bf">phase_gain = 4π/λ</code> で干渉計として駆動)とコヒーレンス法の両方に食わせた結果です。λ = 0.60 µm、したがって λ/4 = 0.15 µm、λ/2 = 0.30 µm。</p>
+<p>| 真の段差 | 位相シフト法(既存 <code style="color:#22d3bf">fringe</code>) | コヒーレンス法(この族) |</p>
+<p>|---|---|---|</p>
+<p>| 0.050 µm | +0.0500(誤差 +0.0000) | +0.0500(誤差 −0.0000) |</p>
+<p>| 0.100 µm | +0.1000(誤差 +0.0000) | +0.1000(誤差 +0.0000) |</p>
+<p>| 0.150 µm | +0.1500(誤差 −0.0000) | +0.1500(誤差 +0.0000) |</p>
+<p>| 0.200 µm | <b>−0.1000(誤差 −0.3000 = −λ/2 × 1)</b> | +0.2000(誤差 +0.0000) |</p>
+<p>| 0.300 µm | <b>−0.0000(誤差 −0.3000 = −λ/2 × 1)</b> | +0.3000(誤差 +0.0000) |</p>
+<p>| 0.500 µm | <b>−0.1000(誤差 −0.6000 = −λ/2 × 2)</b> | +0.5000(誤差 +0.0000) |</p>
+<p>| 1.000 µm | <b>+0.1000(誤差 −0.9000 = −λ/2 × 3)</b> | +1.0000(誤差 +0.0000) |</p>
+<p>読み方が 3 つあります。</p>
+<p>1. <b>壊れ始めは λ/4 = 0.15 µm ちょうど</b>です。0.15 µm は厳密に正しく、0.20 µm で破綻します。0.05〜0.40 µm を 0.01 µm 刻みで掃いて境界を実測した結果で、丸めではありません。</p>
+<p>2. <b>誤差は常に λ/2 の整数倍</b>です。−1 倍、−1 倍、−2 倍、−3 倍。これは縞次数(fringe order)の飛びで、ランダムな誤差ではなく<b>構造を持った嘘</b>です。</p>
+<p>3. <b>例外も NaN も警告も出ません</b>。<code style="color:#22d3bf">decode_fringe</code> は 0.200 µm の段差に対して −0.1000 µm という有限で、もっともらしく、λ/4 の範囲に収まった数を返します。出力だけを見て間違いに気づく方法はありません。</p>
+<p>さらに、この境界が<b>波長に紐づいている</b>ことも確かめてあります。λ = 0.8 µm に変えると破綻点も 0.20 µm(= 0.8/4)へ移動しました。定数を 1 つ当てたのではなく、物理の比が出ています。</p>
+<p>この 3 点が「なぜ既存の族の隣にもう 1 つ置くのか」の答えです。<b>「既存版が壊れる」ことを測定に出さないと、新しい族を足す理由が測定に現れません。</b> 突き合わせは主張ではなくテスト(<code style="color:#22d3bf">tests/test_interferometry.py::TestAgainstPhaseShifting</code>)として置いてあり、同一の合成表面から両方を駆動しています。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">既存 op との棲み分け(重複させていないもの)</h3>
+<p>| やりたいこと | 使う op | 置き場所 |</p>
+<p>|---|---|---|</p>
+<p>| 位相シフト法・縞投影で高さを出す(N-step、Gray code) | <code style="color:#22d3bf">wrapped_phase</code> / <code style="color:#22d3bf">unwrap_phase_2d</code> / <code style="color:#22d3bf">phase_to_height</code> / <code style="color:#22d3bf">decode_fringe</code> / <code style="color:#22d3bf">synthesize_fringes</code> | <code style="color:#22d3bf">fringe</code>(この族は wrapped phase を一度も計算しません) |</p>
+<p>| 2-D 位相アンラップ | <code style="color:#22d3bf">phase_unwrap</code> / <code style="color:#22d3bf">unwrap_phase_2d</code> | <code style="color:#22d3bf">complexops</code> / <code style="color:#22d3bf">fringe</code>(<b>アンラップしなくて済むのがこの族の存在理由</b>なので、ここには置きません) |</p>
+<p>| 任意 1-D 信号の包絡線 | <code style="color:#22d3bf">envelope</code>(登録名は 2-D 版の <code style="color:#22d3bf">xsp_hilbert_env</code>) | <code style="color:#22d3bf">dsp</code>(<code style="color:#22d3bf">csi_envelope</code> は<b>これをそのまま呼び</b>、干渉縞に固有の台座除去だけを足しています) |</p>
+<p>| 走査信号の帯域通過・スペクトル・リサンプル | <code style="color:#22d3bf">bandpass</code> / <code style="color:#22d3bf">spectrum</code> / <code style="color:#22d3bf">resample</code> ほか | <code style="color:#22d3bf">dsp</code> / <code style="color:#22d3bf">funct1d</code>(走査信号は素の 1-D float64 なので直接使えます。ラップし直しません) |</p>
+<p>| 到達時刻ヒストグラムから距離を出す(dToF) | <code style="color:#22d3bf">dtof_depth</code> / <code style="color:#22d3bf">dtof_cube_depth</code> | <code style="color:#22d3bf">photoncount</code>(あちらは <code style="color:#22d3bf">(H,W,T)</code> で<b>時間軸が最後</b>、こちらは <code style="color:#22d3bf">(Z,H,W)</code> で<b>走査軸が先頭</b>) |</p>
+<p>| ビート信号から距離と速度を同時に出す | <code style="color:#22d3bf">range_doppler_map</code> ほか | <code style="color:#22d3bf">rangedoppler</code>(FMCW のコヒーレント測距。同じ「干渉」でも掃引するのは周波数であって位置ではありません) |</p>
+<p>| 時系列の微小変位を増幅・計測する | <code style="color:#22d3bf">motion_magnify</code> / <code style="color:#22d3bf">phase_displacement</code> | <code style="color:#22d3bf">motionmag</code>(<code style="color:#22d3bf">(T,H,W)</code> の先頭軸は<b>時間</b>です) |</p>
+<p>| 光学設計(焦点距離・被写界深度・回折・MTF) | <code style="color:#22d3bf">thin_lens</code> / <code style="color:#22d3bf">depth_of_field</code> / <code style="color:#22d3bf">mtf_diffraction</code> ほか | <code style="color:#22d3bf">optics</code> / <code style="color:#22d3bf">visiondesign</code>(<code style="color:#22d3bf">csi_design</code> はその軸方向版で、横方向は複製しません) |</p>
+<p>**入口は共有できませんが、出口の <code style="color:#22d3bf">depth</code> は意図的に共有しています。**</p>
+<p style="margin:2px 0 2px 12px">• 入口を分ける理由: <code style="color:#22d3bf">fringe</code> が食う <code style="color:#22d3bf">(N,H,W)</code> は<b>位相が既知の等間隔シフト</b>で、順序そのものが答えです(δₙ = 2πn/N)。<code style="color:#22d3bf">zscan</code> の <code style="color:#22d3bf">(Z,H,W)</code> は<b>位置が既知の等間隔走査</b>で、間隔 <code style="color:#22d3bf">z_step_um</code> は Nyquist 判定に使われます。前者に後者を渡せば「241-step 位相シフト」として解釈され、後者に前者を渡せば 4 plane の走査になります。決定的なのは、<b>段差 0.20 µm で片方が −0.1000 µm、もう片方が +0.2000 µm を返す</b>ことです。同じ型を名乗る 2 つが同じ物理量について整数倍ずれた答えを返すなら、その型は嘘です。</p>
+<p style="margin:2px 0 2px 12px">• 出口を共有する理由: <code style="color:#22d3bf">csi_height_map</code> が返すのは <code style="color:#22d3bf">(H,W)</code> の高さマップで、これは <code style="color:#22d3bf">stereo</code> / <code style="color:#22d3bf">range_image</code> / <code style="color:#22d3bf">photoncount</code> が扱う <code style="color:#22d3bf">depth</code> と<b>同じ量</b>です。下流の depth op へそのまま流せることに実利があり、型レベルの嘘もありません。<code style="color:#22d3bf">csi_stack_simulate</code> が <code style="color:#22d3bf">depth → zscan</code> の入口になっているので、既存 depth プールが在るだけで新語彙に到達できます。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">fail-closed の入力契約 — なぜその罠を仕掛けたか</h3>
+<p>全 op が入力を検証してから計算します。以下は 2026-09-01 の敵対監査で<b>実際に見つかった 5 件のバグ</b>と、それを塞いだ設計です。探したのは「例外が出る」ではなく「<b>黙って間違った数字を返す</b>」ケースです。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">1. 端で切れた包絡線が 76% 間違った高さを黙って返す(最悪の 1 件)</h3>
+<p>12 µm の走査(241 plane × 0.05 µm)の中で、表面が 0.500 µm にある場合。包絡線の一部が走査の外に出ているので、Hilbert 変換(有限区間の<b>大域</b>変換です)が返す包絡線は本物とは別のものになります。返る値は <b>0.1189 µm</b> ―― 有限で、もっともらしく、76% 間違っています。</p>
+<p><b>厄介なのは「先頭/末尾 plane に張り付いたら拒否する」という素直な検査が発動しないこと</b>です。実測すると argmax は <b>plane 2 of 241</b>、つまり内部にあります。有限区間の解析信号は自分の端点で振幅が抑えられるので、走査の完全に外(−3.0 µm)にある表面ですら argmax は plane 1 に来ます。端検査は<b>バックストップであって主力ではない</b>、というのが実測から出た結論です。</p>
+<p>そこで <code style="color:#22d3bf">max_edge_envelope</code>(既定 0.05)を置きました。中央値を基準にした端レベル <code style="color:#22d3bf">(max(env[0], env[−1]) − median) / (max − median)</code> で、しきい値は表から決めています:</p>
+<p>| 端レベル | 表面の位置 | <code style="color:#22d3bf">gaussian</code> の誤差 |</p>
+<p>|---|---|---|</p>
+<p>| 0.0000 | 6.00 µm(走査中央) | 3e-14 µm |</p>
+<p>| 0.0000 | 4.32 µm | 1.9e-06 µm |</p>
+<p>| 0.0107 | 2.77 µm | 7.8e-03 µm |</p>
+<p>| 0.1746 | 2.00 µm | 2.7e-02 µm |</p>
+<p>| 0.6364 | 0.50 µm | <b>−0.38 µm(0.1189 を返す)</b> |</p>
+<p>中央値を基準にしたのも実測の結果です。素の <code style="color:#22d3bf">max(ends)/max</code> は<b>雑音床を切断と読み違え</b>ます — 完全に中央に置いた 1% 雑音つき走査で 0.0586 を示し、どんなしきい値も誤爆します。中央値基準なら同じデータで 0.0000、5% 雑音でも 0.0000 です(雑音は端と中央値を同じだけ持ち上げるので相殺します)。</p>
+<p>なお<b>直すのではなく拒否した</b>のも測定に基づきます。ゼロ詰めと鏡像詰めをどちらも試しましたが、端レベル 0.1746 の行で <b>−3.3e-02 / −3.7e-02</b> と、素の <b>−2.7e-02</b> より悪化しました。切断は FFT のアーティファクトではなく物理的な情報欠落なので、直しようがありません。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">2. λ の nm/µm 取り違えが完全に無症状だった</h3>
+<p><code style="color:#22d3bf">wavelength_um</code> は Nyquist 上限にしか使われません。したがって 600 nm を <code style="color:#22d3bf">600.0</code> と書いても、<b>返る高さは 0.6 と書いたときと同じ 6.025 µm</b> です。変わるのは「Nyquist 検査が事実上無効になる」ことだけで、出力には一切現れません。名前に単位を埋め込む規約(<code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_nm</code>)は必要ですが、この一件は<b>名前だけでは防げませんでした</b>。</p>
+<p>解いた方法は、<b>データ自身に波長を聞く</b>ことです。干渉信号の搬送波は往復のぶん <code style="color:#22d3bf">2/λ</code> に立つので、DC を抜いた信号の rFFT ピークと突き合わせます(<code style="color:#22d3bf">carrier_tolerance</code>、既定 2 倍)。実測した比は基準走査で 0.996 で、雑音 1%・雑音 10%・端が切れた包絡線・0.3 µm の短い包絡線でも 0.996 のまま動きません。1000 倍の単位誤りを捕まえるには十分すぎる余裕があります。16 plane 未満の走査は FFT が搬送波を分解できない(9 plane で比 0.667)ので、検査を通すのではなく<b>スキップ</b>します。</p>
+<p>同じ検査が副産物として、掃引スペクトルを誤って <code style="color:#22d3bf">csi_peak_position</code> に渡した場合も捕まえます(共焦点ピークの主成分は Nyquist の 0.010、干渉信号は 0.333)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">3. Nyquist 割れを「折り返す」のではなく拒否する理由</h3>
+<p>搬送波の周期は λ/2 なので、走査ステップの上限は <b>λ/4</b> です。上限を超えたときに拒否する理由は「原理的に間違うから」ではなく、<b>間違い方が間欠的だから</b>です。実測(λ = 0.60 µm、上限 0.15 µm):</p>
+<p style="margin:2px 0 2px 12px">• ステップ 0.16 µm → 高さが <b>0.107 µm</b> ずれる</p>
+<p style="margin:2px 0 2px 12px">• ステップ 0.20 µm → <b>厳密に正しい</b></p>
+<p>出力からこの 2 つを区別する方法はありません。運が良かったのか正しかったのか分からない答えは返さない、という判断です。<code style="color:#22d3bf">photoncount.dtof_cube_simulate</code> が一意測距範囲の外を拒否するのと同じ扱いにしてあります。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">4. 文字列・object・bool の配列が黙って float に化ける</h3>
+<p><code style="color:#22d3bf">float(&quot;0.55&quot;)</code> が成功するのでスカラは弾いていましたが、<b>配列側に同じ穴が空いていました</b>。<code style="color:#22d3bf">np.ascontiguousarray([&quot;1.0&quot;] * 8, dtype=np.float64)</code> は成功します。結果、未パースの設定値の列がそのまま包絡線になっていました。object 配列(Decimal でも通ります)と bool 配列(マスクの配線ミス)も同類なので、dtype kind が <code style="color:#22d3bf">U</code>/<code style="color:#22d3bf">S</code>/<code style="color:#22d3bf">O</code>/<code style="color:#22d3bf">V</code>/<code style="color:#22d3bf">b</code> のものを拒否します。ただの数値コンテナ(Python の float リスト、uint8 配列)は今までどおり通ります。</p>
+<p>同じ検査の並びで、<b>サイズ上限を float64 昇格の前に効かせて</b>います。要素数を <code style="color:#22d3bf">shape</code> から読んでから昇格するので、2²¹ 要素の 0 バイト broadcast view でも確保せずに拒否できます。上限を昇格の後に置くと、拒否した時点で既に確保が済んでいて意味がありません。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">5. その他 2 件</h3>
+<p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">fill_value=inf</code>** が無限大だらけの高さマップを返していました。NaN と違って <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> / <code style="color:#22d3bf">percentile</code> が「数」として通してしまいます。欠測の印は NaN だけ、Inf は拒否です。</p>
+<p style="margin:2px 0 2px 12px">• <b>飽和したスペクトル</b>が <b>2.5500 µm</b> を返していました(真値 3.0000)。ピークの頭が失われて 3 点当てはめが平坦部を食っている状態です。最大値を共有する bin が <b>3 個以上</b>なら拒否します(対称なピークが 2 bin にまたがって並ぶのは正当なので、2 は許します)。</p>
+<p>この他に、退化した入力 — 定数信号、包絡線を持たない正弦波、ステップ 0、σ = 0、コントラスト 0、走査範囲の外にある表面、NaN/Inf、masked array、complex ―― はすべて名前つきの <code style="color:#22d3bf">ValueError</code> です。<b>無言の NaN を返す経路はありません</b>(<code style="color:#22d3bf">on_invalid=&quot;fill&quot;</code> は既定 <code style="color:#22d3bf">raise</code> に対する明示の opt-in です)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">推定量の選び方 — 順位が雑音で逆転する</h3>
+<p><code style="color:#22d3bf">csi_peak_position</code> / <code style="color:#22d3bf">csi_height_map</code> の <code style="color:#22d3bf">mode</code> は 4 種あります。基準走査(λ 0.60 µm、包絡線 FWHM 2.83 µm、ステップ 0.05 µm、表面を走査中央に、サブステップ位相 4 通り)と、同じ条件に 1% の加法雑音を入れた 200 試行:</p>
+<p>| 推定量 | 雑音なし max\|誤差\| | 雑音 1% の RMS |</p>
+<p>|---|---|---|</p>
+<p>| <code style="color:#22d3bf">peak</code> | 2.500e-02 µm(= ステップ/2 ちょうど) | 0.1395 µm |</p>
+<p>| <code style="color:#22d3bf">centroid</code> | 4.55e-07 µm | <b>0.0219 µm(最良)</b> |</p>
+<p>| <code style="color:#22d3bf">parabolic</code> | 4.21e-06 µm | 0.1403 µm |</p>
+<p>| <code style="color:#22d3bf">gaussian</code> | <b>1.43e-07 µm(最良)</b> | 0.1403 µm |</p>
+<p><b>順位が逆転します。</b> 雑音が無ければ <code style="color:#22d3bf">gaussian</code> が <code style="color:#22d3bf">parabolic</code> の 29 倍精密です(標本化されたガウシアンの対数は厳密に放物線なので、3 点の対数当てはめは代数的に厳密 ―― 解析包絡線を渡すと 2.9e-14 まで出ます。上の 1.43e-07 という床は当てはめではなく <b>Hilbert 包絡線自身の誤差</b> 1.83e-07 です)。雑音が入ると <code style="color:#22d3bf">centroid</code> が 6.4 倍良くなります。局所当てはめは、雑音が動かす argmax の周りの 3 点しか見ないのに対し、重心は 241 plane 全部を平均するからです。</p>
+<p>既定は <code style="color:#22d3bf">gaussian</code> です — データが良いときに厳密である推定量だから、というだけの理由で、<b>最良の推定量は 1 つに決まりません</b>。<code style="color:#22d3bf">centroid</code> にも固有の弱点があり、走査窓の中で表面がどこにあるかで偏ります: 12 µm 走査で表面が 2 µm にあると <b>+0.189 µm</b>(雑音なし)、2% の雑音床があると <b>+0.873 µm</b>。10 µm 側では符号が反転して −0.189 / −0.851 です。局所推定量にはこの偏りがありません。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">そして、精度は推定量でなく走査設計で決まる</h3>
+<p>上の表より大事な数字がこれです。**同じ <code style="color:#22d3bf">gaussian</code>** で、同じコードで、同じ表面を測って:</p>
+<p>| 走査の置き方 | RMS 誤差 |</p>
+<p>|---|---|</p>
+<p>| 表面を走査中央に置く | <b>3e-14 µm</b> |</p>
+<p>| 傾斜面 5.0–7.0 µm(0–12 µm 走査の内側) | 2.08e-06 µm |</p>
+<p>| 同じ面を 2.0–10.0 µm に広げる | <b>7.06e-03 µm(3403 倍悪化)</b> |</p>
+<p>差はすべて走査端での包絡線の切断です。推定量を選び直しても取り返せません(同じ条件で <code style="color:#22d3bf">centroid</code> は 3.81e-05 → 5.98e-02 と 4 桁落ちます)。そして前述のとおり<b>ゼロ詰めも鏡像詰めも悪化させました</b>(−3.3e-02 / −3.7e-02 対 −2.7e-02)。</p>
+<p>実務上の結論は 1 行です: **<code style="color:#22d3bf">csi_design</code> の <code style="color:#22d3bf">capture_range_um</code> のぶんだけ、表面の上下に走査の余白を取ること。** 変調度が低い画素で局所当てはめがどれだけ苦しくなるかも測ってあります — 50 倍の反射率段差と 1% 雑音で、<code style="color:#22d3bf">gaussian</code> の誤差は明るい側 0.146 µm に対し暗い側 <b>3.03 µm</b>(20 倍)、暗い側の 30% の画素は拒否されます。<code style="color:#22d3bf">centroid</code> は同条件で 0.022 → 0.157 µm(7 倍)と、こちらでも粘ります。2 つの母集団を分けるのが <code style="color:#22d3bf">csi_contrast_map</code> で、実測 0.035 ± 0.004 と 0.412 ± 0.007 にきれいに分かれます。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン</h3>
+<p>段差のある表面を 1 台の干渉顕微鏡で測りきる筋(検証済み <code style="color:#22d3bf">examples/coherence_scanning.py</code> そのもの)。設計 → 前方モデル → 包絡線 → 高さ、とデータ種が <code style="color:#22d3bf">table → depth → zscan → depth</code> で繋がります。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    A[光源 λ・スペクトル幅 Δλ] --&gt; B[csi_design コヒーレンス長・Nyquist 上限・捕捉範囲]
+    B --&gt;|走査ステップと面数| C[csi_stack_simulate depth から zscan]
+    C --&gt;|zscan| D[csi_height_map 高さマップ depth]
+    C --&gt;|zscan| E[csi_contrast_map 変調度 image2d]
+    E --&gt;|閾値で有効画素| D
+    D --&gt; F[既存の depth op へ stereo / range_image]</pre>
+<p>1 画素だけを詳しく見る筋と、走査しないクロマティック共焦点の筋。前者の出口 <code style="color:#22d3bf">csi_envelope</code> は既存の <code style="color:#22d3bf">signal</code> 語彙へ<b>戻る</b>ので、<code style="color:#22d3bf">dsp</code> / <code style="color:#22d3bf">funct1d</code> の 1-D op がそのまま続けられます。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    G[csi_signal_simulate 既知 z0 の走査信号 sweep] --&gt; H[csi_envelope 台座除去 + Hilbert]
+    H --&gt;|signal| I[dsp / funct1d の 1-D op]
+    G --&gt;|sweep| J[csi_peak_position 高さ measurement]
+    K[chromatic_confocal_simulate スペクトル sweep] --&gt; L[chromatic_confocal_height 波長 = 高さ]
+    J -.同じ表面で突き合わせ.- L</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方(最小の 1 本)</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import interferometry as I
+
+# 1) 買う前に決まる限界
+d = I.csi_design(wavelength_um=0.6, bandwidth_um=0.10, z_range_um=12.0)
+print(d[&quot;max_z_step_um&quot;], d[&quot;envelope_fwhm_um&quot;], d[&quot;capture_range_um&quot;])
+
+# 2) 既知の傾斜面から走査スタックを合成し、高さを戻す
+import numpy as np
+height = 5.0 + 2.0 * np.mgrid[0:32, 0:32][1] / 31.0
+stack = I.csi_stack_simulate(height, 0.0, 0.05, 241, 0.6, envelope_fwhm_um=2.8258)
+h = I.csi_height_map(stack, z_step_um=0.05, wavelength_um=0.6, mode=&quot;gaussian&quot;)
+print(float(np.sqrt(np.mean((h - height) ** 2))))     # 2.08e-06 um
+
+# 3) 走査せず、スペクトルのピーク波長だけで高さを出す
+sp = I.chromatic_confocal_simulate(4.25, 500.0, 0.5, 401, 0.20, 600.0)
+print(I.chromatic_confocal_height(sp, 500.0, 0.5, 0.20, 600.0))   # 4.25</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">アルゴリズムの正典(著者・年)</h3>
+<p style="margin:2px 0 2px 12px">• <b>コヒーレンス走査の信号モデルと包絡線/位相の二重性</b>: P. de Groot, *Principles of interference microscopy for the measurement of surface topography*, Adv. Opt. Photon. 7(1):1-65, 2015。</p>
+<p style="margin:2px 0 2px 12px">• <b>粗面に対する包絡線検出</b>(縞次数の不定性への正攻法): P. Caber, *Interferometric profiler for rough surfaces*, Appl. Opt. 32(19):3438-3441, 1993。</p>
+<p style="margin:2px 0 2px 12px">• <b>包絡線検出アルゴリズム</b>: K. G. Larkin, *Efficient nonlinear algorithm for envelope detection in white light interferometry*, JOSA A 13(4):832-843, 1996(本族の Hilbert 経路はその一般形)。</p>
+<p style="margin:2px 0 2px 12px">• <b>ガウス光源のコヒーレンス長</b>: Born &amp; Wolf, *Principles of Optics*, 7th ed., §7.5.8。<code style="color:#22d3bf">l_c = (4 ln2/π)·λ²/Δλ</code> は<b>光路差(OPD)基準</b>で、往復により OPD = 2z なので走査軸上の包絡線幅はその半分です。この係数 2 はガウス光源スペクトルの数値フーリエ変換と 3 条件で 6 桁一致することを確かめてあります(<code style="color:#22d3bf">csi_design</code> が両方を別の名前で返すのは、1 つの名前にまとめると全高さが 2 倍ずれるからです)。</p>
+<p style="margin:2px 0 2px 12px">• <b>波長 → 高さの写像</b>: H. J. Tiziani &amp; H.-M. Uhde, *Three-dimensional image sensing by chromatic confocal microscopy*, Appl. Opt. 33(10):1838-1843, 1994。</p>
+<p style="margin:2px 0 2px 12px">• <b>用語</b>: ISO 25178-604(コヒーレンス走査干渉法)、ISO 25178-602(クロマティック共焦点プローブ)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族でできないこと</h3>
+<p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">dispersion_um_per_nm</code> の nm/µm 取り違えは検出できません。<b> 分散は対物レンズの性質で、スペクトルの中にそれと矛盾する情報が存在しません。µm 当たりで書くと </b>3000.0 µm<b>(真値 3.0 µm)が返り、</b>1000 倍間違った高さを止める手段がありません**。λ 側の取り違えは干渉信号が自分の搬送波を持っているので解けましたが(前述)、こちらは解けません。名前に単位を埋め込むことと、較正値を人が確認することだけが防御です。</p>
+<p style="margin:2px 0 2px 12px">• <b>1 画素につき 1 面しか返しません。</b> 包絡線ピークは「あるピーク」であって、2 つの反射面を横切った走査は<b>どちらでもない 1 つの数</b>を返します — 5.0 µm と 6.5 µm の 2 面で <b>5.75 µm</b>。クロマティック側も同じで、−5.0 / +5.0 µm の 2 ピークから片方(−5.0)を選び、2 つあったことを報告できません。透明膜や多層構造がまさにこの状況で、検出する手段はありません。</p>
+<p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">centroid</code> は走査窓の端で偏ります** ―― 12 µm 走査、表面 2 µm で +0.189 µm(雑音なし)/ +0.873 µm(2% 雑音床)。表面を走査中央に置くか、局所推定量を使ってください。</p>
+<p style="margin:2px 0 2px 12px">• <b>低反射率の画素で局所当てはめの散らばりが 20 倍になります</b>(50 倍の反射率段差 + 1% 雑音で 0.146 → 3.03 µm)。偏りはほとんど動かず、増えるのは散らばりのほうです。<code style="color:#22d3bf">csi_contrast_map</code> で母集団を分けてから判断してください。</p>
+<p style="margin:2px 0 2px 12px">• <b>分散補償も位相ギャップ解決もありません。</b> 実機のコヒーレンス走査は、包絡線(不定性なし・粗い)と縞位相(不定性あり・細かい)を組み合わせて両方を取ります。その合成には較正済みの位相–包絡線オフセットが要るので実装していません。ここに在るのは包絡線側だけで、それは <code style="color:#22d3bf">fringe</code> が持っていない側です。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">csi_envelope — INTERFEROMETRY <code style="color:#22d3bf">envelope</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">sweep</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import interferometry; interferometry.csi_envelope(signal, remove_bias=True)</code> (または <code style="color:#22d3bf">opsinterferometry.get(&quot;csi_envelope&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Coherence envelope of a z-scan interferogram (analytic-signal magnitude).</p>
+<p>`<code style="color:#22d3bf">dsp.envelope</code><code style="color:#22d3bf"> computes </code><code style="color:#22d3bf">|hilbert(x)|</code>` for any 1-D signal and is called</p>
+<p>here verbatim, so the two can never drift apart. The one thing added is the</p>
+<p>one thing an interferogram needs and a generic signal does not: **removal of</p>
+<p>the intensity pedestal**. An interferogram is `<code style="color:#22d3bf">a + b*V(z)*cos(...)</code>` with</p>
+<p>`<code style="color:#22d3bf">a &gt; 0</code><code style="color:#22d3bf">, and the analytic-signal magnitude of that is not </code><code style="color:#22d3bf">b*V</code>` — the DC</p>
+<p>term passes through the Hilbert transform untouched and dominates.</p>
+<p>Measured on the module&#x27;s reference scan (`<code style="color:#22d3bf">a = 0.5</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b = 0.4</code>`, envelope</p>
+<p>sigma 1.2 um, surface centred): with the bias removed the envelope matches the</p>
+<p>analytic `<code style="color:#22d3bf">b*V(z)</code>` to <b>1.83e-07</b>; without it, the error is <b>0.5</b> — the</p>
+<p>entire pedestal — and the recovered &quot;envelope&quot; never goes near zero.</p>
+<p>`<code style="color:#22d3bf">dsp.envelope</code>` called directly on the same raw interferogram gives that</p>
+<p>identical 0.5, which is the honest statement of what this operator adds. That</p>
+<p>is why `<code style="color:#22d3bf">remove_bias</code><code style="color:#22d3bf"> defaults to </code><code style="color:#22d3bf">True</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">False</code>` is available for a scan</p>
+<p>whose pedestal you have already removed some other way, and it is your</p>
+<p>statement that you did.</p>
+<p>signal:      1-D scan intensities (`<code style="color:#22d3bf">(n,)</code>`, n &gt;= 3).</p>
+<p>remove_bias: subtract the scan mean before the transform.</p>
+<p>Returns a 1-D float64 envelope of the same length.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-1-D, empty, too-short (&lt; 3), non-finite,</p>
+<p>complex or masked *signal*, a *signal* over :data:<code style="color:#22d3bf">MAX_SCAN_POINTS</code> elements</p>
+<p>(checked before the float64 promotion), or a non-bool *remove_bias*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideinterferometry:coherence_scanning">coherence_scanning ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:coherence_scanning">coherence_scanning</a> — <code style="color:#22d3bf">py -3.11 examples/coherence_scanning.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">signal</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">envelope</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: interferometry.py — INTERFEROMETRY operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

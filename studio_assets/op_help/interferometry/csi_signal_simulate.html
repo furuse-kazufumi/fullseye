@@ -1,0 +1,66 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">csi_signal_simulate — INTERFEROMETRY <code style="color:#22d3bf">simulate</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>sweep`</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import interferometry; interferometry.csi_signal_simulate(surface_um=6.0, z_start_um=0.0, z_step_um=0.05, n_planes=241, wavelength_um=0.6, envelope_fwhm_um=2.8, envelope_sigma_um=None, bias=0.5, amplitude=0.4, reflectivity=1.0, noise=0.0, seed=0)</code> (または <code style="color:#22d3bf">opsinterferometry.get(&quot;csi_signal_simulate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Synthesise the z-scan interferogram of one pixel over a known surface height.</p>
+<p>The coherence-scanning forward model, and the reason every other operator here</p>
+<p>has an exact answer to be checked against::</p>
+<p>I(z) = bias + amplitude*reflectivity * exp(-(z-z0)^2 / 2 sigma^2)</p>
+<p style="margin:2px 0 2px 12px">• cos(4*pi*(z-z0)/wavelength)</p>
+<p>with `<code style="color:#22d3bf">z0 = surface_um</code>`. The <b>4</b> is the double pass — light goes down to the</p>
+<p>surface and back, so one fringe is `<code style="color:#22d3bf">wavelength/2</code>` of *height*, not a whole</p>
+<p>wavelength. Getting that factor wrong is a clean 2x in every height this</p>
+<p>module produces, which is why it is written out here rather than hidden in a</p>
+<p>constant.</p>
+<p>surface_um:           the true surface height `<code style="color:#22d3bf">z0</code>`, in the scan&#x27;s own</p>
+<p>coordinate. Need not land on a scan plane — the</p>
+<p>sub-step case is the interesting one and the tests use</p>
+<p>it deliberately.</p>
+<p>z_start_um/z_step_um/n_planes: the scan grid,</p>
+<p>`<code style="color:#22d3bf">z_k = z_start_um + k*z_step_um</code>`.</p>
+<p>wavelength_um:        mean wavelength of the source.</p>
+<p>envelope_fwhm_um:     the FWHM of the envelope <b>along the scan axis</b>. Give</p>
+<p>this *or* `<code style="color:#22d3bf">envelope_sigma_um</code>`, never both. It is</p>
+<p><b>half</b> the source coherence length, because the</p>
+<p>double pass makes OPD = 2z;</p>
+<p>:func:<code style="color:#22d3bf">csi_design</code> returns both under separate names</p>
+<p>for exactly that reason.</p>
+<p>bias/amplitude:       the intensity pedestal `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and fringe amplitude </code><code style="color:#22d3bf">b</code>`.</p>
+<p>reflectivity:         per-pixel scale on the fringe amplitude (&gt;= 0). It</p>
+<p>scales the envelope and therefore</p>
+<p>:func:<code style="color:#22d3bf">csi_contrast_map</code>, and — this is the honest part</p>
+<p>— it does <b>not</b> move the envelope peak, so it does not</p>
+<p>bias :func:<code style="color:#22d3bf">csi_peak_position</code>. A *spatially varying*</p>
+<p>reflectivity biases nothing either; what does bias the</p>
+<p>centroid is where the peak sits in the window, and that</p>
+<p>is documented on :func:<code style="color:#22d3bf">csi_peak_position</code>.</p>
+<p>noise:                additive Gaussian sigma (0 = the exact model).</p>
+<p>seed:                 integer seed for that noise (no `<code style="color:#22d3bf">None</code>`).</p>
+<p>Returns a 1-D float64 array of `<code style="color:#22d3bf">n_planes</code>` intensities.</p>
+<p>Ground truth: with `<code style="color:#22d3bf">noise=0</code>` and the surface centred in the scan, the</p>
+<p>`<code style="color:#22d3bf">&quot;gaussian&quot;</code><code style="color:#22d3bf"> estimator of :func:</code>csi_peak_position` returns *surface_um* to</p>
+<p>1.43e-07 um over sub-step offsets, and to 2.9e-14 um when the envelope is</p>
+<p>given analytically instead of through the Hilbert transform (both pinned in</p>
+<p>the tests).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-real / non-finite / string / bool parameter,</p>
+<p>a non-positive `<code style="color:#22d3bf">z_step_um</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">wavelength_um</code>` / envelope width, a negative</p>
+<p>`<code style="color:#22d3bf">bias</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">amplitude</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">reflectivity</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">noise</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">n_planes</code>` outside</p>
+<p>`<code style="color:#22d3bf">[3, MAX_SCAN_POINTS]</code><code style="color:#22d3bf">, a </code><code style="color:#22d3bf">z_step_um</code><code style="color:#22d3bf"> at or past the </code><code style="color:#22d3bf">wavelength_um/4</code>`</p>
+<p>Nyquist ceiling, and a *surface_um* outside the scan range (which is the case</p>
+<p>a real instrument reports as &quot;no surface found&quot;, not as a height).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideinterferometry:coherence_scanning">coherence_scanning ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:coherence_scanning">coherence_scanning</a> — <code style="color:#22d3bf">py -3.11 examples/coherence_scanning.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">sweep</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opinterferometry:csi_envelope">csi_envelope</a> · <a style="color:#22d3bf" href="opinterferometry:csi_peak_position">csi_peak_position</a> · <a style="color:#22d3bf" href="opinterferometry:chromatic_confocal_height">chromatic_confocal_height</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">simulate</code>)</h3>
+<p><a style="color:#22d3bf" href="opinterferometry:csi_stack_simulate">csi_stack_simulate</a> · <a style="color:#22d3bf" href="opinterferometry:chromatic_confocal_simulate">chromatic_confocal_simulate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: interferometry.py — INTERFEROMETRY operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

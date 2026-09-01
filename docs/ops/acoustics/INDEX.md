@@ -2,6 +2,10 @@
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/acoustics/<category>/<op>.md` を走査。
 
+## ファミリ使い方ガイド(用途→op の教材)
+
+- [acoustic_condition_monitoring](guides/acoustic_condition_monitoring.md) — 音響状態監視・音響指標(機械の音から欠陥と騒音を出す) — 使い方ガイド
+
 ## カテゴリ
 
 ### bearing (4)

@@ -1,0 +1,70 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">csi_height_map — INTERFEROMETRY <code style="color:#22d3bf">surface</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">zscan</code> → <code style="color:#22d3bf">depth</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import interferometry; interferometry.csi_height_map(stack, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6, mode=&#x27;gaussian&#x27;, remove_bias=True, min_visibility=0.3, max_edge_envelope=0.05, carrier_tolerance=2.0, on_invalid=&#x27;raise&#x27;, fill_value=nan)</code> (または <code style="color:#22d3bf">opsinterferometry.get(&quot;csi_height_map&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Height map from a `<code style="color:#22d3bf">(Z, H, W)</code>` coherence-scanning stack — the CSI inversion.</p>
+<p>The per-pixel :func:<code style="color:#22d3bf">csi_peak_position</code>, vectorised. **The scan axis is</p>
+<p>first**; see :func:<code style="color:#22d3bf">csi_stack_simulate</code> for why that is checked rather than</p>
+<p>inferred.</p>
+<p>A pixel is *invalid* when any of three things is true, and all three are the</p>
+<p>same trap in different shapes — each would otherwise yield a finite, plausible,</p>
+<p>wrong height:</p>
+<p>1. its envelope prominence is below *min_visibility* — no fringes ever</p>
+<p>formed there (a hole, a dark or specular-dropout pixel, a facet tilted</p>
+<p>out of the aperture);</p>
+<p>2. its envelope peaks on the first or last plane — the surface is at or past</p>
+<p>the end of the scan;</p>
+<p>3. its envelope is still above *max_edge_envelope* of its peak at the ends</p>
+<p>of the scan — most of the coherence peak is outside the scan even though</p>
+<p>the argmax is on an interior plane. This is the one that has no natural</p>
+<p>alarm: measured, a surface at 0.500 um with an edge level of 0.639 reads</p>
+<p><b>0.119 um</b> and nothing else about the result looks wrong. See</p>
+<p>:func:<code style="color:#22d3bf">_edge_level</code>.</p>
+<p>What happens then is a decision, not a default:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">on_invalid=&quot;raise&quot;</code>` (<b>the default</b>) — raise, naming how many pixels</p>
+<p>failed which of the three checks. Fail-closed: a height map with silently</p>
+<p>wrong pixels in it is worse than no height map.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">on_invalid=&quot;fill&quot;</code>` — write *fill_value* (default NaN) at those pixels</p>
+<p>and return. Opt in to this when you intend to mask afterwards; a NaN</p>
+<p>height poisons every downstream reduction, which is precisely why it is</p>
+<p>not the default.</p>
+<p>There is deliberately no third option that quietly reports the boundary plane.</p>
+<p>Returns a float64 `<code style="color:#22d3bf">(H, W)</code>` height map, in the units of *z_start_um* /</p>
+<p>*z_step_um*.</p>
+<p>Ground truth (measured, 32x32 pixels, 241 planes x 0.05 um, 0.60 um</p>
+<p>wavelength, 2.83 um envelope FWHM). On a tilted plane spanning <b>5.0-7.0 um</b>,</p>
+<p>i.e. comfortably inside a 0-12 um scan, the RMS height error is 1.42e-02 um</p>
+<p>for `<code style="color:#22d3bf">&quot;peak&quot;</code><code style="color:#22d3bf">, 3.81e-05 um for </code><code style="color:#22d3bf">&quot;centroid&quot;</code>`, 4.02e-06 um for</p>
+<p>`<code style="color:#22d3bf">&quot;parabolic&quot;</code><code style="color:#22d3bf"> and 2.08e-06 um for </code><code style="color:#22d3bf">&quot;gaussian&quot;</code>`. Widen the same plane to</p>
+<p><b>2.0-10.0 um</b> — pixels now within 2 um of the ends of the scan — and the</p>
+<p>errors become 1.91e-02 / 5.98e-02 / 7.06e-03 / 7.06e-03 um: the local fits</p>
+<p>lose three decades and the centroid loses four, entirely to envelope</p>
+<p>truncation at the scan ends. Accuracy here is a property of the *scan layout*,</p>
+<p>not of the estimator, and this is the number to look at when a real</p>
+<p>measurement disappoints.</p>
+<p>On that same surface, phase-shifting interferometry via :mod:<code style="color:#22d3bf">fringe</code> is exact</p>
+<p>below a lambda/4 = 0.15 um step and wrong by exact multiples of</p>
+<p>lambda/2 = 0.30 um above it.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-3-D stack, fewer than 3 planes, an empty</p>
+<p>spatial extent, a stack over :data:<code style="color:#22d3bf">MAX_STACK_ELEMENTS</code> (checked before the</p>
+<p>float64 promotion), a non-finite / complex / masked stack, an unknown *mode*</p>
+<p>or *on_invalid*, a *min_visibility* / *max_edge_envelope* outside `<code style="color:#22d3bf">[0, 1]</code>`,</p>
+<p>a *z_step_um* at or past the `<code style="color:#22d3bf">wavelength_um/4</code>` Nyquist ceiling, a</p>
+<p>non-numeric *fill_value*, and — under the default `<code style="color:#22d3bf">on_invalid=&quot;raise&quot;</code>` —</p>
+<p>any invalid pixel.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideinterferometry:coherence_scanning">coherence_scanning ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:coherence_scanning">coherence_scanning</a> — <code style="color:#22d3bf">py -3.11 examples/coherence_scanning.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">depth</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opinterferometry:csi_stack_simulate">csi_stack_simulate</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">surface</code>)</h3>
+<p><a style="color:#22d3bf" href="opinterferometry:csi_contrast_map">csi_contrast_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: interferometry.py — INTERFEROMETRY operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
