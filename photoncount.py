@@ -285,6 +285,26 @@ def _seed(v, name: str = "seed") -> int:
     return n
 
 
+def _precheck_elements(a, name: str, op: str, cap: int) -> None:
+    """要素数の上限を **float64 へ昇格する前**に当てる。
+
+    昇格の後に見ていると、防ぐはずの確保が先に起きる。実測 2026-09-01:
+    2^25 要素の uint8 を渡すと **256 MB を確保してから**拒否していた
+    (同じクラスを specularity でも踏んでおり、そちらはテスト時間が
+    74 秒 → 1.3 秒になった)。shape から要素数を読めば 0 バイトで済む。
+    """
+    try:
+        n = 1
+        for d in np.shape(a):
+            n *= int(d)
+    except (TypeError, ValueError):
+        return                                   # 形が読めない入力は下流に任せる
+    if n > cap:
+        raise ValueError("%s: %s has %d elements, over the %d cap "
+                         "(refused before coercion, so nothing was allocated)"
+                         % (op, name, n, cap))
+
+
 def _as_float_array(a, name: str) -> np.ndarray:
     """Coerce to float64, refusing the two silent-truncation traps."""
     if np.ma.is_masked(a):
@@ -305,6 +325,7 @@ def _as_float_array(a, name: str) -> np.ndarray:
 
 def _require_counts(a, name: str, op: str) -> np.ndarray:
     """A finite, non-negative, size-capped 2-D count image."""
+    _precheck_elements(a, name, op, MAX_IMAGE_ELEMENTS)
     arr = _as_float_array(a, name)
     if arr.ndim != 2:
         raise ValueError("%s: %s must be a 2-D (H, W) image, got a %d-D array of "

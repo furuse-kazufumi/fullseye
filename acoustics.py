@@ -1235,9 +1235,19 @@ def spectral_kurtosis(x, rate, win=None, hop=None, window="hann"):
     # Only the frames wholly inside the original record. A frame straddling the
     # transform's zero pad is half empty, and a half-empty frame is the most
     # impulsive thing there is — including them puts a spurious positive
-    # kurtosis in every bin. Measured on white noise, win 64 hop 16 over 8192
-    # samples: mean SK over the interior bins is -0.0242 using this mask and
-    # +0.4835 without it, i.e. the pad alone would report a strong transient.
+    # kurtosis in every bin. The size of the lie scales with the pad's share of
+    # the frames; measured on pure white Gaussian noise (mean over interior
+    # bins, then the largest single bin, with and without this mask):
+    #
+    #   n     win  hop  frames  pad     interior  with pad  max with pad
+    #   8192   64   16    517   1.5 %    -0.0444   -0.0264       +0.1915
+    #   2048  256   64     37  21.6 %    -0.0814   +0.1996       +1.7865
+    #   1024  256  128     11  36.4 %    -0.2176   +0.2816       +4.0856
+    #    512  256  128      7  57.1 %    -0.4913   +0.4324       +2.7730
+    #
+    # Row three is the one to look at: white noise, nothing in it at all, and
+    # without the mask the operator reports a bin at SK = +4.09 — a strong
+    # repetitive transient that does not exist. Nothing raises.
     z = tr["spectra"][:, tr["interior"]]
     n_frames = z.shape[1]
     if n_frames < 8:

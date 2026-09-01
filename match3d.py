@@ -1028,7 +1028,18 @@ def refine_translation_lk(scene, template, init_pos, device="cpu", iters=30, tol
                       gy.reshape(-1) / grad_scale,
                       gx.reshape(-1) / grad_scale], dim=0)     # (3,N)
     hess = sd @ sd.t()                                         # (3,3)
-    hess = hess + 1e-3 * torch.eye(3, device=device) * hess.diagonal().mean()
+    # 正則化の大きさを Hessian 自身の対角平均から取っているので、**勾配が
+    # まったく無いテンプレート**(定数ボリューム)では正則化項も 0 になり、
+    # 全ゼロ行列の逆行列で生の LinAlgError が漏れていた(2026-09-01、連鎖
+    # ファザーが SUSPECT として検出)。位置合わせは勾配に沿ってしか進めない
+    # ので、これは数値の失敗ではなく**入力に情報が無い**という事実である。
+    scale = float(hess.diagonal().mean())
+    if not np.isfinite(scale) or scale <= 0.0:
+        raise ValueError(
+            "refine_translation_lk: the template has no usable gradient "
+            "(Hessian diagonal mean %r), so there is no direction to refine "
+            "along — a constant or empty template cannot be aligned" % scale)
+    hess = hess + 1e-3 * torch.eye(3, device=device) * scale
     hinv = torch.linalg.inv(hess)
 
     p = torch.tensor([float(init_pos[0]), float(init_pos[1]), float(init_pos[2])],

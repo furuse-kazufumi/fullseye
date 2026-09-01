@@ -351,6 +351,15 @@ from dsp import (  # noqa: E402,F401
 # 音響・振動診断: 「1-D が扱えるなら音響も扱える」を道具にした層。反転可能な
 # 短時間フーリエ変換、軸受欠陥の包絡線スペクトル、次数比分析、オクターブ帯域と
 # 周波数重み付け。motionmag が「映像から測る振動」、こちらが「音から測る振動」。
+# コヒーレンス走査干渉 / クロマティック共焦点: 既存の fringe(位相シフト法)が
+# 2π 不定性に負ける段差を、包絡線のピークで解く経路。実測で fringe は
+# 段差 λ/4 = 0.15 µm ちょうどから λ/2 の整数倍ずれた答えを**無言で**返す。
+import interferometry  # noqa: E402  (coherence-scanning interferometry / chromatic confocal)
+from interferometry import (  # noqa: E402,F401
+    chromatic_confocal_height, chromatic_confocal_simulate,
+    csi_contrast_map, csi_design, csi_envelope, csi_height_map,
+    csi_peak_position, csi_signal_simulate, csi_stack_simulate,
+)
 import acoustics  # noqa: E402  (STFT / bearing envelope / order tracking / sound level)
 from acoustics import (  # noqa: E402,F401
     angular_resample, apply_weighting, bearing_defect_frequencies,
@@ -526,7 +535,10 @@ __all__ = [
     "lowpass", "highpass", "bandpass", "envelope", "rms", "find_peaks",
     "signal_features", "resample", "zero_crossing_rate",
     "specularity", "motionmag", "pose_quat", "quatimage", "rangedoppler",
-    "acoustics",
+    "acoustics", "interferometry",
+    "chromatic_confocal_height", "chromatic_confocal_simulate",
+    "csi_contrast_map", "csi_design", "csi_envelope", "csi_height_map",
+    "csi_peak_position", "csi_signal_simulate", "csi_stack_simulate",
     "angular_resample", "apply_weighting", "bearing_defect_frequencies",
     "cepstrum", "coherence", "envelope_spectrum", "equivalent_level",
     "istft", "octave_bands", "octave_spectrum", "order_spectrum",
