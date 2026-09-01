@@ -62,6 +62,21 @@ def _mesh(rng):
     return meshrepair.convex_hull(_points(rng, 60))
 
 
+def _score_volume(rng):
+    """ピークを 1 つ持つ異方性ガウスの相関 volume(サブボクセル精緻化の入力)。
+
+    軸ごとに幅を変えてあるので、軸別の放物線当てはめと全 Hessian 法の差が
+    実際に現れる。中心は格子からわざと外して置く(整数ピークにすると
+    サブボクセル精緻化が「何もしない」経路しか通らない)。
+    """
+    n = 16
+    z, y, x = np.mgrid[0:n, 0:n, 0:n].astype(np.float64)
+    c = 7.5 + rng.uniform(-1.5, 1.5, size=3)
+    s = rng.uniform(1.5, 3.0, size=3)
+    return np.exp(-(((z - c[0]) / s[0]) ** 2 + ((y - c[1]) / s[1]) ** 2
+                    + ((x - c[2]) / s[2]) ** 2) / 2.0)
+
+
 def _photon_counts(rng):
     """光子カウントヒストグラム(非負・時間 bin 添字)。
 
