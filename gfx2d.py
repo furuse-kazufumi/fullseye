@@ -74,9 +74,10 @@ here and they want different encodings:
 Neither group converts for you, because a silent conversion is the same class of
 bug as the alpha one. :func:`srgb_to_linear` and :func:`linear_to_srgb` are
 provided so the choice is written in the caller's code. Measured cost of getting
-it wrong: adding two 0.5 sRGB lights in the encoded domain gives 1.000, while
-the physically correct answer is 0.735 sRGB — a 36 % overshoot that reads as
-"the highlight blew out" rather than as a bug.
+it wrong: adding two 0.5 sRGB lights in the encoded domain gives 1.000 (a blown
+highlight), while doubling the radiance and re-encoding gives **0.6858** — the
+encoded-domain answer overshoots by **45.8 %** and reads as "the light is too
+strong" rather than as a bug.
 
 Conventions
 -----------
