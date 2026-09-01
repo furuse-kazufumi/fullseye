@@ -1139,12 +1139,20 @@ def beamform_delay_sum(cube, wavelength_m=3.8934e-3, element_spacing_m=None,
     so :mod:`dsp`'s ``find_peaks`` and :mod:`funct1d`'s smoothing apply to it.
     Use :func:`beamform_doa` if you want the angles themselves.
 
-    **Raises** ``ValueError``: a single-element array (``n_antennas < 2``) — one
-    element has no aperture, the spectrum would be **flat**, and ``argmax`` of a
-    flat spectrum returns the first grid angle, i.e. a confident report of -90
-    degrees that is pure tie-breaking; an all-zero cube or an all-zero selected
-    cell (same reason); an out-of-bounds bin index; an angle grid outside
-    ``[-90, 90]``; plus the usual cube and scalar refusals.
+    *range_bin* is a plain ``0..N_s-1`` index; *doppler_bin* is the **signed**
+    velocity bin, the same convention :func:`range_doppler_peaks` reports, so a
+    detection can be handed straight back in. Both or neither — half a cell
+    address raises rather than quietly beamforming the strongest cell instead.
+
+    **Raises** ``ValueError``: **no aperture** — either a single element, or many
+    elements packed into under ~0.28 wavelengths. In both cases the spectrum is
+    flat to within float noise and ``argmax`` returns the first grid angle, i.e.
+    a confident report of -90 degrees that is pure tie-breaking (measured: 8
+    elements at 1e-12 m spacing gave a peak-to-trough spread of exactly 0.0 and
+    reported -90.0). Also: an all-zero cube or an all-zero selected cell; only
+    one of *range_bin* / *doppler_bin*; an out-of-bounds bin index; an angle grid
+    outside ``[-90, 90]``; an FFT that overflows to NaN; plus the usual cube and
+    scalar refusals.
     """
     op = "beamform_delay_sum"
     arr = _as_beat_cube(cube, "cube", op)
@@ -1153,14 +1161,7 @@ def beamform_delay_sum(cube, wavelength_m=3.8934e-3, element_spacing_m=None,
     grid = _angle_grid(angles_deg, op)
     norm = _bool(normalize, "normalize")
     na, nc, ns = arr.shape
-    if na < 2:
-        raise ValueError(
-            "%s: the cube has %d antenna element(s). Direction of arrival needs "
-            "an aperture: with one element the steering sum is |x_0| for every "
-            "angle, the spectrum is exactly flat, and argmax would report "
-            "%g degrees — the first grid point — as a confident direction. "
-            "Refusing instead of fabricating one."
-            % (op, na, float(grid[0])))
+    _require_aperture(na, d, lam, op, float(grid[0]))
     snap, _, _ = _cell_snapshot(arr, op, range_bin, doppler_bin)
     k = np.arange(na, dtype=np.float64)
     steer = np.exp(-1j * 2.0 * np.pi * d / lam
