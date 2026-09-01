@@ -1344,6 +1344,15 @@ def ex_skeleton(log) -> dict:
     info = _save_clip(frames, "wing3d_skeleton_graph", fps=14, thumb_index=8, log=log)
     return {
         "name": "wing3d_skeleton_graph", "title": "3-D スケルトンをグラフにする",
+        "title_en": "Turning a 3-D skeleton into a graph",
+        "caption_en": (
+            f"A synthetic branching structure ({int(solid.sum()):,} voxels) put through "
+            f"`skeletonize_vol` becomes a one-voxel-wide wire of {int(sk.sum()):,} voxels "
+            f"(**{100 * float(sk.sum() / solid.sum()):.2f} %**), from which **{n_b} "
+            f"branches**, **{n_j} junction** and **{n_e} endpoints** are extracted as a "
+            "graph. White marks junctions, rose marks endpoints, and branches are "
+            "coloured per connected component. One turn of the turntable is enough to "
+            "read how it is wired."),
         "ops": ["skeletonize_vol", "skeleton_branches3d", "skeleton_junctions3d",
                 "skeleton_endpoints3d"],
         "facts": {"solid_voxels": int(solid.sum()), "skeleton_voxels": int(sk.sum()),
