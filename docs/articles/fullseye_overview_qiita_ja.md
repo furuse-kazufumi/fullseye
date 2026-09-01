@@ -1661,7 +1661,7 @@ GPU 加速は「**CPU の正解と数値一致した op だけ載せる**」と�
 | テカり除去・多灯の法線復元 | `specular_diffuse_split` / `photometric_stereo_robust` | 破綻点は **k=4** 灯の遮蔽 |
 | 見えない振動を測る・見せる | `displacement_series` / `motion_magnify` | 崖は **3.0619 画素**(J₀ 第一零点) |
 | 大きい 3D を持ち歩かない | `vol_crop_domain` / `vol_boundary` / `vol_rle_encode` | 1/34・19 %・1/145 |
-| 骨格をグラフとして読む | `em_skeleton` / `junctions_skeleton` / `skeleton_branches3d` | EM93 と画素単位で一致 |
+| 骨格をグラフとして読む | `apply(mask, "em_skeleton")` / `junctions_skeleton` / `skeleton_branches3d` | EM93 と画素単位で一致 |
 | 1D プロファイルの解析 | `derivate_funct_1d` / `zero_crossings_funct_1d` ほか 37 op | 2D measure1d・3D probe と合流 |
 | 連鎖バグを掘る | `tools/chain_fuzz.py --coverage-out` | カバレッジの**内訳**を必ず見る |
 | パイプラインを進化で作る | `robust.py --problem <name>` | locked holdout とばらつきを同時に |
