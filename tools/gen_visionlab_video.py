@@ -605,6 +605,8 @@ def main(argv=None) -> int:
     ap.add_argument("--sweep-frames", type=int, default=48)
     ap.add_argument("--design-frames", type=int, default=44)
     ap.add_argument("--fps", type=int, default=12)
+    ap.add_argument("--hold", type=int, default=6,
+                    help="最終フレームを何枚ぶん持続させるか(ループの区切り)")
     ap.add_argument("--seeds", type=int, default=SEEDS)
     ap.add_argument("--out", default=_MEDIA_DIR)
     args = ap.parse_args(argv)
