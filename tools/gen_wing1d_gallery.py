@@ -2856,7 +2856,13 @@ CAPTIONS = {
             f"`L_A − L_Z` を曲線値 `A(f)` と突き合わせると、最大差は "
             f"{f['max_abs_a_mismatch_db']:.2e} dB(C 特性は {f['max_abs_c_mismatch_db']:.2e} dB)。"
             f"振幅 1 の正弦の `L_eq(Z)` は閉形式 10log10(A²/2) = "
-            f"{f['leq_z_closed_form_db']:.6f} dB で、実測もその値。"),
+            f"{f['leq_z_closed_form_db']:.6f} dB で、実測もその値。**ただしこれは音が "
+            f"bin 中心(記録に整数周期入る)にある場合の話**で、同じ音を "
+            f"{f['off_bin_offset_hz']:g} Hz ずらすと同じ差が "
+            f"{f['off_bin_worst_freq_hz']:.1f} Hz で {f['off_bin_max_abs_a_mismatch_db']:.2f} dB "
+            f"まで開く(図の下段、赤い曲線)。矩形窓の漏れ込みが 1 kHz 付近では 0 dB "
+            f"で重み付けされるため、A 特性が急峻な低域ほど**実際より大きい値が返る**。"
+            f"例外も NaN も出ない。"),
     },
     "funct1d_truth": {
         "title": "funct1d の解析真値",
