@@ -58,8 +58,61 @@ def _points(rng, n=160):
 
 
 def _mesh(rng):
-    import meshrepair
-    return meshrepair.convex_hull(_points(rng, 60))
+    """三角形メッシュ ``(V (nv,3) float, F (nf,3) int)``。**3 種を必ず混ぜる**。
+
+    2026-09-02 まで、この関数は定義だけあって ``make_generators()`` から
+    **一度も参照されていなかった**(実測)。mesh は convex_hull / poisson_lite /
+    alpha_shape_mesh / voxel_to_mesh が産むので型到達可能性としては到達側に
+    入るが、種が無いと「同じ連鎖の中で先に生成 op が引かれた場合だけ」到達する
+    = keypoints で実測した未到達パターンそのものになる。
+
+    3 種を混ぜるのは分岐を全部踏ませるため:
+      * 凸包 — 頂点数の多い一般の閉曲面(いちばん現実の走査に近い)。
+      * 直方体 — 巻きが厳密に外向きの閉多面体。``cull_backfaces=True`` で
+        「裏面だから当たらない」経路が確実に立つ。
+      * 平面パッチ(2 三角形の開いた面)— 大半の視線が **miss** する。miss の
+        NaN 経路と「当たり 0 の欠陥領域」を踏むのはこれだけ。
+    片方だけだと cadmap の backface / miss 分岐が一度も走らない。
+    """
+    r = rng.random()
+    if r < 0.5:
+        import meshrepair                                # noqa: PLC0415
+        return meshrepair.convex_hull(_points(rng, 60))
+    if r < 0.8:
+        h = 1.0 + rng.random(3) * 3.0
+        V = np.array([[-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1],
+                      [-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1]], float) * h
+        F = np.array([[0, 2, 1], [0, 3, 2], [4, 5, 6], [4, 6, 7],
+                      [0, 1, 5], [0, 5, 4], [3, 7, 6], [3, 6, 2],
+                      [0, 4, 7], [0, 7, 3], [1, 2, 6], [1, 6, 5]], np.int64)
+        return V, F
+    a, b = 1.0 + 3.0 * rng.random(2)
+    V = np.array([[-a, -b, 0.0], [a, -b, 0.0], [a, b, 0.0], [-a, b, 0.0]])
+    return V, np.array([[0, 2, 1], [0, 3, 2]], np.int64)
+
+
+def _labels_2d(rng):
+    """2-D の整数ラベル画像 (H,W)(背景 0 + 矩形領域 2-3 個)。
+
+    **これが無いと 2-D ラベルを食う op は永久に実行されない**(実測):
+    ``labels`` を出す既存 op は 7 つあるが、``label_components`` / ``vol_label``
+    / ``vol_watershed`` は **(D,H,W) の 3-D**、``region_growing`` /
+    ``euclidean_cluster`` / ``plane_segmentation`` / ``segment_rigid_motions``
+    は **(N,) の 1-D** で、**2-D のラベル画像を産む op が 1 つも無い**。
+    実測 (2026-09-02, 1500 連鎖): 種を置かないと ``cad_defect_to_cad`` は
+    引かれても毎回 ``labels must be a 2-D (H, W) label image, got (160,)`` で
+    fail-closed し、**一度も実行されないまま「発見ゼロ」に見えた**。
+    (同じ穴を ``illuminant_from_dichromatic_planes`` は専用 arg builder で
+    自前のラベルを作って回避している。)
+    """
+    h = int(rng.integers(24, 49))
+    w = int(rng.integers(24, 49))
+    lab = np.zeros((h, w), np.int32)
+    for k in range(1, int(rng.integers(2, 4))):
+        r0 = int(rng.integers(0, h - 6))
+        c0 = int(rng.integers(0, w - 6))
+        lab[r0:r0 + int(rng.integers(3, 7)), c0:c0 + int(rng.integers(3, 7))] = k
+    return lab
 
 
 def _score_volume(rng):
