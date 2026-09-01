@@ -1042,20 +1042,22 @@ def ex_windowing(log) -> dict:
             ])
 
         # 下段: HU 軸に 3 つの窓を並べ、組織の位置を打つ
-        p = Plot(c, 90, 540, W - 130, 92, (-1200, 1400), (0, 1),
-                 xlabel="HU (Hounsfield 値) ->", ylabel="窓の出力 [0,1]",
+        p = Plot(c, 90, 566, W - 130, 92, (-1200, 1400), (0, 1),
+                 xlabel="HU (Hounsfield 値) ->",
                  xticks=[-1000, -600, -200, 0, 200, 600, 1000, 1400],
                  yticks=[0, 0.5, 1.0], xfmt="%d", yfmt="%.1f")
+        p.items.append((18, 546, "縦 = 窓の出力 [0,1](3 本の折れ線が 3 つの窓そのもの)",
+                        C_DIM, 12, False))
         for name, cw, ww, col in windows:
             lo, hi = cw - ww / 2, cw + ww / 2
             xs = [-1200, lo, hi, 1400]
             ys = [0.0, 0.0, 1.0, 1.0]
             p.series(xs, ys, col, width=2)
-        for tname, huv in tissue.items():
+        for j, (tname, huv) in enumerate(tissue.items()):
             p.c = imagedraw.draw_line(p.c, (p.px(huv), p.y0), (p.px(huv), p.y0 + p.h - 1),
                                       color=(0.30, 0.32, 0.36), width=1)
-            p.items.append((p.px(huv) - _text_w(tname, 10) / 2, p.y0 - 15, tname,
-                            C_DIM, 10, False))
+            p.items.append((p.px(huv) - _text_w(tname, 10, True) / 2,
+                            p.y0 - 34 + 16 * (j % 2), tname, C_DIM, 10, True))
         c = p.done()
         c = _footer(c, "使用 op: vol_window_level  — 合成 HU データ(実在の患者・"
                        "スキャンではありません)")
