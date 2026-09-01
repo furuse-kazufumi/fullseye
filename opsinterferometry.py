@@ -42,70 +42,78 @@ import interferometry
 _MOD = {"interferometry": interferometry}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
-#   既存語彙の再利用: signal / depth / image2d / measurement(実スカラのみ)/ table
-#   新語彙: zscan
+#   既存語彙の再利用: depth / image2d / signal / measurement(実スカラのみ)/ table
+#   新語彙: zscan / sweep
 #
 # --------------------------------------------------------------------------
 # 既存語彙をそのまま使った判断(新語を作らなかったもの)
 # --------------------------------------------------------------------------
-#   * signal — z 走査 1 画素の干渉信号、およびクロマティック共焦点の
-#     スペクトル。**新語を作らなかったのは実測に基づく判断**で、根拠は 3 つ:
-#       (a) 構造上の嘘が無い。counts(非負)や stokes(長さ 4 + 偏光度制約)は
-#           既存 signal では**型レベルで嘘**になったが、走査干渉信号は
-#           「1-D の標本化された実関数」そのもので、追加の構造制約が無い。
-#           制約は「コヒーレンス包絡線を持つこと」という**意味**の側にあり、
-#           それは実行時に fail-closed で見る(min_visibility)。
-#       (b) 相乗りが実際に有益。dsp の bandpass / detrend / resample と
-#           funct1d は干渉信号の正しい前処理そのもので、プールを分けると
-#           その接続を切るだけになる。
-#       (c) 逆向きの相乗りは**安全に落ちる**ことを実測した。連鎖ファザーの
-#           signal 種(正弦波 + 10% 雑音)を csi_peak_position に渡すと
-#           包絡線 prominence が 0.241 で、既定 min_visibility=0.30 を
-#           下回り CONTRACT になる(= もっともらしい嘘を返さない)。
-#     ★ ただし (c) は「族が一度も実行されない」= opsphoton が counts で
-#       踏んだ罠と表裏である。そこを塞ぐのが **`csi_signal_simulate`
-#       ([] -> signal)** と **`chromatic_confocal_simulate` ([] -> signal)**
-#       で、この 2 op が**本物の干渉信号を既存 signal プールへ注ぎ込む**。
-#       counts のときと違って新プールを作らずに到達性を確保できるのは、
-#       入口 op が既存プールへ直接産めるからである(実測は報告を参照)。
 #   * depth   — csi_height_map の返りは (H, W) の高さマップ = 既存 depth 語彙。
-#     stereo / range_image / photoncount の depth op へ直結する。
+#     stereo / range_image / photoncount の depth op へ直結する。同時に
+#     **zscan の入口でもある**(csi_stack_simulate: depth -> zscan)ので、
+#     depth プールが在るだけで新語彙が到達可能になる。
 #   * image2d — csi_contrast_map の返りは (H, W) のフリンジ変調度。既存の
-#     2-D op(閾値・morphology・blob)が意味を持ったまま使える — 実際
-#     「変調度を閾値して有効画素マスクを作る」は現場の標準手順そのもの。
+#     2-D op(閾値・morphology・blob)が意味を持ったまま使える — 「変調度を
+#     閾値して有効画素マスクを作る」は現場の標準手順そのもの。
+#   * signal  — csi_envelope の**出力**。包絡線は 1-D の実関数であって非負性
+#     以外の約束を持たないので、ここは既存の広い sort へ**戻す**のが正しい。
+#     これが sweep 語彙の出口になっている(袋小路にしない)。
 #   * measurement — csi_peak_position / chromatic_confocal_height は単一画素の
 #     高さ(実スカラ)。
 #   * table   — csi_design の返りは dict。
 #
 # --------------------------------------------------------------------------
-# 新語彙 1 つと、その理由
+# 新語彙 2 つと、その理由(どちらも実測に基づく)
 # --------------------------------------------------------------------------
-# 追加の基準は既存 3 台帳と同じ「**既存語彙で宣言すると型レベルの嘘になるか**」。
+# 追加の基準は既存台帳と同じ「**既存語彙で宣言すると型レベルの嘘になるか**」、
+# および「**相乗りさせると一度も実行されないまま発見ゼロに見えないか**」。
 #
 #   * zscan — z 走査スタック **(Z, H, W)、走査軸が最初**。既存 `video` は
 #     (T, H, W) で TYPE_CHECKS も「ndim==3 / float / shape[0]>=2 /
-#     shape[1],[2]>=4」なので、**構造チェックは完全に一致する**。分けた理由は
-#     実測:
-#       (a) video を渡しても**例外にならず、もっともらしい高さマップが返る**
-#           場合がある。連鎖ファザーの video 種(motionmag.synthesize_translation、
-#           サブピクセル並進する格子)を csi_height_map に渡した実測結果は
-#           報告に載せる。搬送波を持つ画素は包絡線 prominence を満たしうるので
-#           fail-closed に頼りきれない。
-#       (b) 軸の意味が違う。video の先頭軸は**時間**で、frame 間隔は fps。
-#           zscan の先頭軸は**距離**で、plane 間隔は z_step_um。z_step_um は
-#           Nyquist 判定(λ/4)に使われるので、fps を z_step として渡すと
-#           判定そのものが無意味になる。
-#       (c) 逆向きも危ない。zscan を motion_magnify に渡せば「z を時間と読んだ」
-#           増幅が例外なく返る。pointmap / normalmap を分けたのと同じ判断で、
-#           **型は入れ物の形でなく意味の約束**。
-#     zscan は 3 op(産む 1 + 食う 2)の**狭くない sort** である:
-#       入口 = `csi_stack_simulate` (depth -> zscan)。既存 depth プールから
-#              直接産めるので、種を置かなくても連鎖の中で到達できる。
-#       出口 = `csi_height_map` (zscan -> depth) と
-#              `csi_contrast_map` (zscan -> image2d)。どちらも**既存の広い
-#              sort へ戻る**ので、袋小路にならない。
-#     これは dtof(depth -> histcube -> depth)と同じ形で、あちらが機能した
-#     実績のある構成である。
+#     shape[1],[2]>=4」なので**構造チェックは完全に一致する**。分けた理由は
+#     危険な向きが実測で確認できたこと:
+#       (a) zscan -> video 側は**黙って通る**。csi_stack_simulate が作った
+#           スタックを motionmag.motion_magnify / temporal_band_power /
+#           phase_displacement / band_snr に渡すと、4 op すべてが例外も NaN も
+#           出さず「増幅結果」「帯域パワー」「変位場」を返す(実測)。
+#           z を時間として読んだ、意味の無い有限値である。
+#       (b) zscan -> histcube 側も**黙って通る**。photoncount.dtof_cube_depth
+#           に渡すと 0.0075-0.47 m の有限な深度マップが返る(実測)。
+#       (c) 逆向き(video -> csi_height_map)は 8 seed すべてで fail-closed
+#           (1023-1024 / 1024 画素が無効)。安全なのは片側だけなので、
+#           実行時チェックには頼れない。
+#     zscan は 3 op(産む 1 + 食う 2)で、入口 = `csi_stack_simulate`
+#     (depth -> zscan、既存 depth プールから直接産める)、出口 =
+#     `csi_height_map` (-> depth) と `csi_contrast_map` (-> image2d)。
+#     dtof(depth -> histcube -> depth)と同じ形で、袋小路にならない。
+#
+#   * sweep — **掃引軸に沿って標本化した非負の 1-D 強度で、局在したピークを
+#     1 つ持つもの**。z 走査干渉信号(走査位置軸)とクロマティック共焦点の
+#     スペクトル(波長軸)の 2 種を**同じ語彙に入れている** — 実配列の形と
+#     統計が同じで、軸の較正は常に**明示引数**(z_step_um / wavelength_step_nm)
+#     だからである。2 種を混ぜる生成器は `qimage` の先例に倣う(色四元数と
+#     モノジェニック信号を必ず両方出す)。
+#     ★ 既存 `signal` に相乗りさせなかったのは**実測の結果**である。最初は
+#       「csi_signal_simulate ([] -> signal) が本物の干渉信号をプールへ注ぐから
+#       到達できる」と判断したが、その配線で連鎖ファザーを回すと
+#       **600 連鎖(300x長さ6 + 300x長さ8)で csi_peak_position と
+#       chromatic_confocal_height が 1 度も実行されなかった**(記録は
+#       CONTRACT が 7 件のみ)。原因は signal 種が負値を持つ正弦波で、
+#       入口 op が同じ連鎖で先に引かれる確率が低いこと。opsphoton が counts で
+#       踏んだ罠とまったく同じで、**fail-closed が完璧に効いた結果として
+#       「発見ゼロ」が頑健さに見える**。sweep を専用プールにした同条件の
+#       再測定では 9 op すべてが実行された。
+#     2 種を混ぜても取り違えが黙って通らないことは、**それぞれ専用の判別で
+#     担保**してある(どちらも閉形式で測った閾値):
+#       - スペクトルを csi_peak_position に渡す → `carrier_tolerance`。
+#         干渉信号は搬送波が 2/λ(Nyquist の 0.333)に立つが、共焦点ピークは
+#         0.010。実測で 1000 倍の単位誤りも同じ検査が捕まえる。
+#       - 干渉信号を chromatic_confocal_height に渡す →
+#         `max_carrier_fraction`。共焦点応答の AC 成分は低周波だけ(実測
+#         0.010 / 0.010 / 0.015)、干渉信号は 0.333。
+#     入口 = `csi_signal_simulate` / `chromatic_confocal_simulate`(どちらも
+#     引数なしで産む)、出口 = `csi_envelope` (-> signal) と 2 つの
+#     measurement op。
 _CATALOG = {
     "simulate": [
         ("csi_signal_simulate", "interferometry", [], "sweep"),

@@ -40,6 +40,17 @@ def _seed(sort, seed=0):
         # 頼むと(正しく)拒否されるので、範囲内に収める
         "histcube": lambda: __import__("photoncount").dtof_cube_simulate(
             0.5 + rng.random((8, 8)) * 0.5, bins=64, bin_ps=200.0, seed=seed),
+        "rgbimage": lambda: __import__("specularity").dichromatic_render(
+            __import__("photometric").surface_normals(
+                6.0 * np.exp(-((np.arange(32)[:, None] - 16.0) ** 2
+                               + (np.arange(32)[None, :] - 16.0) ** 2) / 200.0))),
+        "video": lambda: __import__("motionmag").synthesize_translation(
+            (32, 32), 32, amplitude_px=0.3, frequency_hz=4.0, fps=32.0, seed=seed),
+        "qimage": lambda: __import__("quatimage").monogenic_signal(
+            rng.random((32, 32)), wavelength_px=8.0),
+        "beatcube": lambda: __import__("rangedoppler").fmcw_beat_simulate(
+            ranges_m=[5.0], velocities_ms=[0.0], angles_deg=[10.0],
+            n_samples=32, n_chirps=16, n_antennas=4),
     }
     if sort not in banks:
         raise AssertionError(

@@ -516,6 +516,114 @@ def _score_lf_slope(final, truth):
     return max(0.0, float((a * b).sum() / (da * db)))
 
 
+
+def _make_specular_removal(n, size, seed):
+    """光沢のある色画像 → **鏡面成分を除いた拡散のみの画像**。
+
+    同じ法線・同じアルベド・同じ光源で ``specular=0`` を描けば、それが
+    「ハイライトが無かったら見えていたはずの絵」= 厳密な真値になる。
+    光沢面の検査で「テカりを消してから測る」という現場の手順そのもの。
+
+    **アルベドを場所で変える**のが要点。一様な材質なら二色性分離は機械精度で
+    厳密に戻るので(実測 5.0e-16)、課題として頭打ちになり進化の余地が無い
+    (最初にそう作って手が 0.9997 になった)。実際の部品はテクスチャを持ち、
+    そこが分離の仮定が崩れる場所でもある ―― 難しさの出どころを本物に合わせる。
+    """
+    import photometric
+    import specularity
+    rng = np.random.default_rng(seed)
+    inp, tgt = [], []
+    for i in range(n):
+        r = np.arange(32)
+        zz = 6.0 * np.exp(-((r[:, None] - 16.0) ** 2 + (r[None, :] - 16.0) ** 2)
+                          / float(rng.uniform(120.0, 320.0)))
+        nrm = photometric.surface_normals(zz)
+        # 場所で色が変わるアルベド(縞と斑)。一様色だと分離が厳密すぎる
+        base = rng.uniform(0.25, 0.9, size=3)
+        stripe = 0.5 + 0.5 * np.sin(r[None, :] * float(rng.uniform(0.3, 0.9)))
+        blob = np.exp(-((r[:, None] - float(rng.uniform(8, 24))) ** 2
+                        + (r[None, :] - float(rng.uniform(8, 24))) ** 2) / 60.0)
+        tex = np.clip(0.55 + 0.45 * stripe - 0.3 * blob, 0.15, 1.0)
+        alb = np.clip(base[None, None, :] * tex[:, :, None], 0.05, 1.0)
+        lit = (float(rng.uniform(-0.4, 0.4)), float(rng.uniform(-0.4, 0.4)), 1.0)
+        sh = float(rng.uniform(16.0, 64.0))
+        kw = dict(albedo_rgb=alb, light=lit, shininess=sh)
+        # 入力にだけセンサ雑音を載せる(目標は雑音なしの拡散画像)。実写には
+        # 必ずあるものであり、かつ二色性分離の rank ガードが敏感な条件でもある
+        # (実測: 雑音 1% で rank 比 0.0348 / 2% で 0.0694)。雑音が無いと手の
+        # 基準線が 0.983 まで行って余地が無く、逆に 2% では手が恒等を
+        # 下回った(0.5008 対 0.5103)。0.4% が「効くが壊れない」帯。
+        img = specularity.dichromatic_render(
+            nrm, specular=float(rng.uniform(0.3, 0.7)), **kw)
+        img = np.clip(img + rng.normal(0.0, 0.004, img.shape), 0.0, None)
+        inp.append(img)
+        tgt.append(specularity.dichromatic_render(nrm, specular=0.0, **kw))
+    return {"input": inp, "items": tgt}
+
+
+def _score_diffuse(final, truth):
+    """拡散画像との一致。色 (H,W,3) でも輝度 (H,W) でも比べられるようにする。
+
+    経路によって色を保つ op と輝度へ落とす op があるので、輝度に揃えてから
+    測る(色のまま返す方が情報は多いが、**輝度で合っていないものは色でも
+    合っていない**ので下限としては正しい)。形が違えば 0。
+    """
+    a = np.asarray(final, np.float64) if isinstance(final, np.ndarray) else None
+    if a is None or not np.isfinite(a).all():
+        return 0.0
+    b = np.asarray(truth, np.float64)
+    if a.ndim == 3 and a.shape[2] == 3:
+        a = a.mean(axis=2)
+    if b.ndim == 3 and b.shape[2] == 3:
+        b = b.mean(axis=2)
+    if a.ndim != 2 or a.shape != b.shape:
+        return 0.0
+    return 1.0 / (1.0 + float(np.mean((a - b) ** 2)) * 100.0)
+
+
+def _make_vibration_map(n, size, seed):
+    """振動している場所の地図。**帯域内で揺れている領域**を当てる課題。
+
+    振幅の違う 2 本のクリップを空間マスクで混ぜるので、真値のマスクが
+    そのまま答えになる。回転機械の「どこが振れているか」に対応する。
+    """
+    import motionmag
+    rng = np.random.default_rng(seed)
+    inp, tgt = [], []
+    for i in range(n):
+        r0 = int(rng.integers(6, 14))
+        c0 = int(rng.integers(6, 14))
+        mask = np.zeros((32, 32))
+        mask[r0:r0 + 14, c0:c0 + 14] = 1.0
+        kw = dict(shape=(32, 32), frames=32, frequency_hz=4.0, fps=32.0,
+                  direction_deg=float(rng.uniform(0, 180)), seed=seed + i)
+        hot = motionmag.synthesize_translation(amplitude_px=0.45, **kw)
+        cold = motionmag.synthesize_translation(amplitude_px=0.02, **kw)
+        inp.append(hot * mask[None, :, :] + cold * (1.0 - mask[None, :, :]))
+        tgt.append(mask)
+    return {"input": inp, "items": tgt}
+
+
+def _score_vibration_map(final, mask):
+    """揺れている領域の当て具合。**尺度は問わず形だけ**を相関で測る。
+
+    帯域パワーは単位が経路依存(振幅の 2 乗だったり dB だったり)なので、
+    絶対値を要求すると正しい形を出しても 0 点になる。定数を返したら 0。
+    """
+    a = np.asarray(final, np.float64) if isinstance(final, np.ndarray) else None
+    if a is None or a.ndim != 2 or not np.isfinite(a).all():
+        return 0.0
+    b = np.asarray(mask, np.float64)
+    if a.shape != b.shape:
+        return 0.0
+    a = a - a.mean()
+    b = b - b.mean()
+    da, db = float(np.sqrt((a * a).sum())), float(np.sqrt((b * b).sum()))
+    if da <= 1e-12 or db <= 1e-12:
+        return 0.0
+    return max(0.0, float((a * b).sum() / (da * db)))
+
+
 PROBLEMS: dict[str, Problem] = {
     "denoise": Problem("denoise", "dB PSNR", _make_denoise,
                        lambda f, tgt: ops.psnr(_as_image(f, tgt.shape), tgt),
@@ -579,6 +687,17 @@ PROBLEMS: dict[str, Problem] = {
         "lf_slope", "corr", _make_lf_slope, _score_lf_slope,
         lambda: [ops.stage("tb_lf_epi_slope", 0.5, 0.5)],
         in_sort="lightfield"),
+    # 鏡面分離: 光沢のある色画像 → 拡散のみの画像(ハイライトが無ければ
+    # 見えていたはずの絵)。手の基準線は二色性分離 1 段。
+    "specular_removal": Problem(
+        "specular_removal", "1/(1+100*mse)", _make_specular_removal, _score_diffuse,
+        lambda: [ops.stage("tb_specular_diffuse_split", 0.5, 0.5)],
+        in_sort="rgbimage"),
+    # 振動地図: 帯域内で揺れている領域を当てる。手の基準線は帯域パワー 1 段。
+    "vibration_map": Problem(
+        "vibration_map", "corr", _make_vibration_map, _score_vibration_map,
+        lambda: [ops.stage("tb_temporal_band_power", 0.5, 0.5)],
+        in_sort="video"),
 }
 
 

@@ -674,8 +674,9 @@ class TestTypeVocabulary:
         for name in names:
             meta = opsinterferometry.info(name)
             assert meta["doc"]
-            assert meta["out"] in ("signal", "zscan", "depth", "image2d",
-                                   "measurement", "table")
+            assert meta["out"] in ("sweep", "signal", "zscan", "depth",
+                                   "image2d", "measurement", "table")
+            assert all(t in ("sweep", "zscan", "depth") for t in meta["in"])
 
     def test_declared_output_types_are_what_the_ops_actually_return(self):
         """No RESULT_ADAPTERS, so this is the strictest possible check."""
@@ -698,6 +699,9 @@ class TestTypeVocabulary:
         }
         check = {
             "signal": lambda v: isinstance(v, np.ndarray) and v.ndim == 1,
+            "sweep": lambda v: (isinstance(v, np.ndarray) and v.ndim == 1
+                                and v.dtype.kind == "f" and v.size >= 16
+                                and (v >= 0.0).all()),
             "zscan": lambda v: (isinstance(v, np.ndarray) and v.ndim == 3
                                 and v.dtype.kind == "f" and v.shape[0] >= 3),
             "depth": lambda v: isinstance(v, np.ndarray) and v.ndim == 2,
