@@ -775,16 +775,20 @@ def sprite_transform(sprite, angle_deg=0.0, scale=1.0, interp="bilinear", out_sh
 
     The resampling happens in **premultiplied** space and the result is
     converted back. Interpolating straight colour instead mixes in the colour of
-    fully transparent pixels, which is invisible in the alpha channel and shows
-    up as a dark fringe: measured on a white disc over black, resampling
-    straight gives a maximum edge error of 0.121 against the premultiplied
-    result, at every rotation angle that is not a multiple of 90 degrees.
+    fully transparent pixels — usually black, and invisible in the alpha channel
+    — which shows up as a dark fringe. Measured on a white disc whose
+    transparent region is black, composited over mid-grey: the straight-space
+    result differs from this one by up to **0.203** and by **0.048** on average
+    over the pixels it changes (rotations of 13, 37 and 45 degrees; the maximum
+    was 0.197, 0.203, 0.156).
 
     Exact where it can be: ``angle_deg=0, scale=1`` returns the input bit for
-    bit, and a multiple of 90 degrees with ``interp="nearest"`` is an exact
-    permutation of the pixels. Everything else costs interpolation: measured
-    round-trip error for ``+37`` then ``-37`` degrees, bilinear, on the test
-    sprite is a mean of 0.0159 and a maximum of 0.166 in alpha.
+    bit, and a multiple of 90 degrees with ``interp="nearest"`` permutes the
+    alpha channel exactly (colour matches to 1.2e-16, the cost of the
+    premultiply round trip). Everything else costs interpolation: the measured
+    round trip of ``+37`` then ``-37`` degrees, bilinear, is a mean alpha error
+    of **0.0150** with a maximum of **0.8125** at the one pixel where the edge
+    crosses a sample.
 
     ``out_shape`` is ``(height, width)``; the default is the bounding box of the
     transformed sprite, rounded up.
