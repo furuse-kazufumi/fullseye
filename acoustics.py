@@ -722,18 +722,22 @@ def synthesize_bearing_signal(rate=25600.0, duration=1.0, carrier_hz=3000.0,
     exactly ``1 + m cos(2 pi f_d t)`` for ``m < 1``, so the single-sided envelope
     spectrum has a line of amplitude **exactly m** at ``f_d`` and nothing else.
     Measured with ``m = 0.5``: :func:`envelope_spectrum` returns a peak at
-    107.000000 Hz of amplitude 0.499999.
+    107.000000 Hz of amplitude 0.499677 (the 0.06 % shortfall is the band-pass
+    filter rolling off across the two sidebands, not the demodulation).
 
     ``mode="impulse"`` gives the physically shaped case: an impulse train at
     ``f_d``, each impulse ringing down as ``exp(-2 pi zeta f_c t) sin(2 pi f_c
     t)``. The envelope spectrum then shows ``f_d`` **and its harmonics**, which
     is what a real record looks like. Measured with ``f_d = 107`` Hz: the
-    envelope-spectrum peak is at 107.000000 Hz and harmonics at 214 and 321 Hz
-    carry 0.62 and 0.42 of the fundamental's amplitude.
+    envelope-spectrum peak is at 107.000000 Hz and the harmonics at 214 and
+    321 Hz carry 0.6542 and 0.4748 of the fundamental's amplitude.
 
-    In both modes the raw spectrum has nothing at ``f_d``: measured, the raw
-    single-sided amplitude at 107 Hz is 3.1e-17 (am) — the energy sits at
-    ``f_c`` and at the sidebands ``f_c +- f_d``.
+    In am mode the raw spectrum has **nothing** at ``f_d``: measured, the raw
+    single-sided amplitude at 107 Hz is 4.3e-16, while the carrier reads
+    1.000000 and each sideband at 2893 and 3107 Hz reads 0.250000 — exactly
+    ``m/2``, as amplitude modulation requires. In impulse mode the raw amplitude
+    at 107 Hz is 0.01165, not zero (an impulse train is not a pure product), but
+    still 18x below what the envelope spectrum recovers from the same record.
 
     **Raises** ``ValueError``: any non-real / non-finite / string / bool scalar,
     ``rate <= 0``, ``duration <= 0``, ``modulation`` outside ``[0, 1)`` in am
