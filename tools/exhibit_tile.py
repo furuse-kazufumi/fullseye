@@ -161,7 +161,7 @@ def contact_sheet(panels: list, labels: list | None = None, *, ncols: int = 3,
     font = _font(font_size)
     for i, im in enumerate(imgs):
         r, c = divmod(i, ncols)
-        top = th + pad + sum(h + lh + pad for h in row_h[:r])
+        top = th + pad + sum(hh + lh + pad for hh in row_h[:r])
         x = pad + c * (cw + pad) + (cw - im.width) // 2
         y = top + (row_h[r] - im.height) // 2
         canvas.paste(im, (x, y))

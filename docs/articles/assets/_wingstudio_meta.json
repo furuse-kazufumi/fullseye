@@ -108,11 +108,11 @@
         1840,
         600
       ],
-      "bytes": 336638,
-      "thumb_bytes": 27057,
-      "std": 51.31,
-      "sha256": "f94a57b604090a347d6ab017c6d022da301ca046c4db8e81270ae233e87d87d8",
-      "thumb_sha256": "5186eac2dec4376bbe0429547179066758b8d1f46442ce0fac4ed0292a0ea755",
+      "bytes": 338692,
+      "thumb_bytes": 27736,
+      "std": 51.42,
+      "sha256": "155b586afb9f561553b2ad27da1f6a0d691cf74edfc465ba88577afa2a202ac0",
+      "thumb_sha256": "193adad65e471a6188933561712d55c565cf0c572cf46066efceae512b7c8e86",
       "facts": {
         "source": "itokawa_f0049152.stl (JAXA はやぶさ Gaskell 形状モデル)",
         "n_faces": 49152,
@@ -123,7 +123,7 @@
         "coverage_front_px": 38540,
         "coverage_back_px": 39686
       },
-      "seconds": 2.92
+      "seconds": 2.77
     },
     {
       "kind": "gif",

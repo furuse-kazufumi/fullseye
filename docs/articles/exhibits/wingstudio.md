@@ -42,9 +42,9 @@ Studio 画面はすべて `studio.build_window()` が組み立てた**実 UI** �
 
 [![法線の色 —— 3D デバッグで最初に見る絵](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingstudio_normals_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingstudio_normals.png)
 
-*↑ **法線の色 —— 3D デバッグで最初に見る絵** —— itokawa_f0049152.stl (JAXA はやぶさ Gaskell 形状モデル)(三角形 49,152 枚 / 頂点 24,578、表面積 0.399)を表と裏 180 度から撮り、陰影と **world 法線をそのまま RGB にした絵**を並べました。world 法線は「同じ色 = 同じ向き」なので、裏に回っても地面向きの面は同じ色のまま残ります。ここがまだらなら向き付け(巻き方向)が壊れています。実測では外向き面 48,639 / 49,152 = 99.0 %。被覆画素は表 38,540 px / 裏 39,686 px。 使用 op / 機能: `render_mesh`, `phong_shade`, world 法線の RGB 化。*
+*↑ **法線の色 —— 3D デバッグで最初に見る絵** —— itokawa_f0049152.stl (JAXA はやぶさ Gaskell 形状モデル)(三角形 49,152 枚 / 頂点 24,578、表面積 0.399)を表と裏 180 度から撮り、陰影と **world 法線をそのまま RGB にした絵**を並べました。world 法線は「色 = 向き」なので、面が滑らかに繋がっていれば色も滑らかに繋がります。ごま塩状にまだらなら巻き方向(向き付け)が壊れている合図。実測では外向き面 48,639 / 49,152 = 99.0 %(残り 1 % は非凸の小惑星に「重心から外向きか」という判定を当てたことによる取りこぼし)。被覆画素は表 38,540 px / 裏 39,686 px。 使用 op / 機能: `render_mesh`, `phong_shade`, world 法線の RGB 化。*
 
-<sub>`wingstudio_normals.png` — 1840×600 px / 337 kB / SHA-256 `f94a57b604090a34`</sub>
+<sub>`wingstudio_normals.png` — 1840×600 px / 339 kB / SHA-256 `155b586afb9f5615`</sub>
 
 ---
 
