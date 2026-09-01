@@ -54,6 +54,32 @@ def test_only_new_sorts_by_default():
         assert not [o for o in ops._candidates(sort) if o.category == "typed"]
 
 
+def test_a_new_sort_never_arrives_without_something_that_produces_it():
+    """語彙に sort を足すなら、**その sort を産む op も一緒に入れる**こと。
+
+    2026-09-01 に光子計数 / ライトフィールド 34 op をカタログへ足したとき、
+    進化側の語彙は **1 つも増えていなかった**(tb_ 橋 0 件、実測)。理由は
+    `lightfield` / `counts` / `histcube` に対応する進化 sort が無かったこと。
+
+    ところが sort を足すだけでは足りない。それらの族の**入口**
+    (``lf_from_mla``: image → lightfield、``dtof_cube_simulate``: depth →
+    histcube)は既存の image sort を入力に取るので、既定語彙に入れると
+    既存 sort の候補リストが動いてしまう(不変量 1 に違反)。かといって
+    入口抜きで消費側だけ足せば、**誰もその sort を産まないので永久に
+    到達不能な死んだ語彙**が増える — 「発見ゼロ」が頑健さに見える、
+    連鎖ファザーで実際に踏んだのと同じ罠である。
+
+    よって入口と消費側は必ず同じモードに置く。ここではそれを検査する。
+    """
+    produced = {o.out_sort for o in TYPED}
+    consumed = {o.in_sort for o in TYPED}
+    orphans = sorted(s for s in consumed - produced
+                     if s in ("lightfield", "counts", "histcube"))
+    assert not orphans, (
+        "この sort を消費する op はあるが、産む op が語彙に無い: %s "
+        "— 入口 op を同じモードへ入れるか、消費側を外すこと" % orphans)
+
+
 def test_every_bridge_op_runs_and_returns_its_sort():
     """全 op が実行でき、宣言 out_sort に合う値を返す(fail-soft 込み)。"""
     for o in TYPED:
