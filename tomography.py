@@ -1789,14 +1789,24 @@ def sinogram_center_of_rotation(sinogram, angles_deg=None, min_condition=0.02):
     n_det = sino.shape[1]
     s = np.arange(n_det, dtype=np.float64) - (n_det - 1) / 2.0
     mass = sino.sum(axis=1)
-    if not (mass > 0.0).all():
-        bad = int((mass <= 0.0).sum())
+    scale = np.abs(sino).sum(axis=1)
+    # The test is not ``mass > 0`` but ``mass is most of |mass|``. A ramp-filtered
+    # sinogram has almost exactly zero DC, so every row sums to something like
+    # 1e-13 out of a total absolute mass of 1e+02 — **positive**, so a bare
+    # ``> 0`` check passes it, and the resulting centroid is the ratio of two
+    # numbers that are both rounding error. Measured: the bare check let a
+    # ramp-filtered sinogram straight through.
+    bad = ~(mass > 0.5 * np.maximum(scale, 1e-300))
+    if bad.any():
+        worst = int(np.argmax(bad))
         raise ValueError(
-            "%s: %d projection(s) have zero or negative total mass, so their centre "
-            "of mass is undefined (or, worse, defined and meaningless — a mass of "
-            "-1e-16 flips the sign of the whole moment). This is a filtered or "
-            "background-subtracted sinogram; the identity this operator uses holds "
-            "for raw line integrals" % (op, bad))
+            "%s: %d projection(s) have zero or negative total mass, or a mass that "
+            "is mostly cancellation (row %d: signed sum %g against absolute sum "
+            "%g). The centre-of-mass identity this operator uses holds for **raw "
+            "line integrals**, which are non-negative; this is a filtered, "
+            "background-subtracted or differenced sinogram, and its centroid is "
+            "the ratio of two rounding errors — finite, and meaningless"
+            % (op, int(bad.sum()), worst, mass[worst], scale[worst]))
     s_cm = (sino * s[None, :]).sum(axis=1) / mass
     t = np.deg2rad(ang)
     design = np.column_stack([np.cos(t), np.sin(t), np.ones_like(t)])

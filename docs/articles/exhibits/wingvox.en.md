@@ -371,7 +371,7 @@ as **a thumbnail linking to the full-size PNG**.
 
 ![A turntable of colour-coded meshes](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingvox_mesh_turntable.gif)
 
-*↑ **A turntable of colour-coded meshes** ―― Marching cubes runs on each component's padded bounding box, giving 16 meshes and 7088 triangles for the 16 components. Vertices are in physical coordinates (spacing (0.50, 0.20, 0.20) mm) and the frames are composited through ``render3d.render_mesh``'s z-buffer. **The colours are the same palette rows as the slice views**, so the same particle can be followed between the cut and the rotation. Ops used: `vol_label`, `vol_labels_to_meshes`, `look_at`, `intrinsics_from_fov`, `render_mesh`.*
+*↑ **A turntable of colour-coded meshes** ―― Marching cubes runs on each component's padded bounding box, giving 16 meshes and 7088 triangles for the 16 components. Vertices are in physical coordinates (spacing (0.50, 0.20, 0.20) mm) and the frames are composited through ``render3d.render_mesh``'s z-buffer. The grains look stretched along z because they **are** — the slice pitch is 2.5x the in-plane pitch, the same point exhibit 4 makes. **The colours are the same palette rows as the slice views**, so the same particle can be followed between the cut and the rotation. Ops used: `vol_label`, `vol_labels_to_meshes`, `look_at`, `intrinsics_from_fov`, `render_mesh`.*
 
 - GIF: `docs/articles/assets/media/wingvox_mesh_turntable.gif` (24 frames, 380x538 px, 0.45 MB)
 - Thumbnail: `docs/articles/assets/thumbs/wingvox_mesh_turntable_thumb.jpg`

@@ -1032,7 +1032,7 @@
     "file": "docs/articles/assets/media/wing2d_shape_match.gif",
     "thumb": "docs/articles/assets/thumbs/wing2d_shape_match_thumb.jpg",
     "frames": 16,
-    "bytes": 2344427,
+    "bytes": 2344706,
     "size": [
       1006,
       472
@@ -1187,13 +1187,13 @@
       "max_abs_angle_error_deg": 2.0,
       "max_abs_position_error_px": 0,
       "min_score": 0.8639,
-      "seconds_per_search": 2.487,
+      "seconds_per_search": 2.677,
       "device": "cpu"
     },
-    "caption": "96×96 px のテンプレートから作った形状モデルで、23° ずつ回した部品 (探索格子 5° の倍数を避けた角度) を 16 枚のシーンから探した。5° 刻みで角度も探索させると、角度の誤差は最大 2.0°(探索格子 5° の半分 = 2.5° がそもそもの下限)、位置の誤差は最大 0 px、スコアは最低でも 0.864。1 シーンあたり 2.49 秒(CPU、72 角度ぶんの探索を含む)。",
+    "caption": "96×96 px のテンプレートから作った形状モデルで、23° ずつ回した部品 (探索格子 5° の倍数を避けた角度) を 16 枚のシーンから探した。5° 刻みで角度も探索させると、角度の誤差は最大 2.0°(探索格子 5° の半分 = 2.5° がそもそもの下限)、位置の誤差は最大 0 px、スコアは最低でも 0.864。1 シーンあたり 2.68 秒(CPU、72 角度ぶんの探索を含む)。",
     "sha256": {
-      "wing2d_shape_match.gif": "b6809d2595f183d8755c53809abff912c64dea5f804c89f6966c1997e24cdbe0",
-      "wing2d_shape_match_thumb.jpg": "c0ba625bae641e2ba66034cdfcc2b76ccaf7a41d3e3bbeaa90237973d648c840"
+      "wing2d_shape_match.gif": "9f96e20aeba1b687fc021decbe7a71269d84af61bda58a2eef2adbf0c679b0a1",
+      "wing2d_shape_match_thumb.jpg": "c0ce9192d3740a409e6790336606a75c05f8dfc7f4fc8d4bc382085f049e94ee"
     }
   },
   {

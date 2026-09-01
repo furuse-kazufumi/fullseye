@@ -1028,8 +1028,6 @@ def ex_cadmap():
     import camera
     import imgio
     import mesh as meshmod
-    import render3d
-    import render_shade
     import studio
     V, F = _cad_part()
     c = 0.5 * (V.min(0) + V.max(0))
@@ -1424,9 +1422,7 @@ def ex_studio_turntable():
 
 def ex_studio_help():
     """op ヘルプ —— 実 Studio のヘルプダイアログを実際に開いて渡り歩く。"""
-    from PySide6 import QtCore
     import ops3d
-    import studio
     app, win, model = _studio_app()
     _studio_main(win, (900, 300))
     dlg = win._help["dialog"]
@@ -1603,7 +1599,6 @@ def ex_studio_opsearch():
 
 def ex_studio_pipeline():
     """パイプラインの組み立て —— 型が合わない op を挟むと Problems に出る。"""
-    from PySide6 import QtCore
     import engine
     app, win, model = _studio_app()
     _studio_main(win)

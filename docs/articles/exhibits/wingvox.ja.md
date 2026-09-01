@@ -371,7 +371,7 @@
 
 ![色付きメッシュのターンテーブル](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingvox_mesh_turntable.gif)
 
-*↑ **色付きメッシュのターンテーブル** ―― 16 個の成分それぞれの bbox 部分体に marching cubes をかけ、三角形 7088 枚のメッシュ 16 個にした。頂点は spacing (0.50, 0.20, 0.20) mm を掛けた物理座標で、``render3d.render_mesh`` の z バッファで合成している。**色は断面図とまったく同じパレットの同じ行**なので、切った絵と回した絵で同じ粒子を目で追える。 使用 op: `vol_label`, `vol_labels_to_meshes`, `look_at`, `intrinsics_from_fov`, `render_mesh`。*
+*↑ **色付きメッシュのターンテーブル** ―― 16 個の成分それぞれの bbox 部分体に marching cubes をかけ、三角形 7088 枚のメッシュ 16 個にした。頂点は spacing (0.50, 0.20, 0.20) mm を掛けた物理座標で、``render3d.render_mesh`` の z バッファで合成している。粒が縦に伸びて見えるのは**そのほうが正しい**からで、z の刻みが面内の 2.5 倍あるためである(展示 4 と同じ話)。**色は断面図とまったく同じパレットの同じ行**なので、切った絵と回した絵で同じ粒子を目で追える。 使用 op: `vol_label`, `vol_labels_to_meshes`, `look_at`, `intrinsics_from_fov`, `render_mesh`。*
 
 - GIF: `docs/articles/assets/media/wingvox_mesh_turntable.gif` (24 コマ, 380x538 px, 0.45 MB)
 - サムネ: `docs/articles/assets/thumbs/wingvox_mesh_turntable_thumb.jpg`
