@@ -436,8 +436,9 @@ def photon_statistics(counts):
     On a structured scene the scene's own spatial variance dominates and the
     ratio is large and meaningless — this op computes the number, it cannot tell
     you which situation you are in. Measured on the test scenes: a flat
-    ``lambda = 100`` field gives 1.0009; the same field multiplied by a smooth
-    ramp gives 34.7. Both are "correct" and only one means anything.
+    ``lambda = 100`` field (512x512, seed 0) gives 1.001089; the same detector
+    looking at a linear ramp from 20 to 180 photons gives 22.4102. Both are
+    "correct" and only one of them means anything.
 
     **Raises** ``ValueError``: negative, non-finite or non-2-D *counts*, fewer
     than 2 pixels (no variance), an all-zero frame (``fano_factor`` would be
