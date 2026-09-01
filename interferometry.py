@@ -1310,8 +1310,9 @@ def csi_design(wavelength_um=0.6, bandwidth_um=0.1, z_range_um=12.0,
         raise ValueError("%s: step_divisor must be >= 4 (lambda/4 is the Nyquist "
                          "ceiling itself); got %g" % (op, div))
 
-    lc = (2.0 * np.log(2.0) / np.pi) * lam * lam / dlam
-    sigma = lc / FWHM_PER_SIGMA
+    lc = (4.0 * np.log(2.0) / np.pi) * lam * lam / dlam   # FWHM in OPD
+    env_fwhm = 0.5 * lc                                   # ... and along z
+    sigma = env_fwhm / FWHM_PER_SIGMA
     period = 0.5 * lam
     max_step = 0.25 * lam
     rec_step = lam / div
