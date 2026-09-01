@@ -866,14 +866,27 @@ def fmcw_window_apply(cube, window="hann", axis="range"):
     (Harris 1978, Table 1) and the levels **measured** in this repository on a
     single bin-centred target are:
 
-    ==========  =================  =================  ===============
-    window      peak sidelobe      measured here      -3 dB main lobe
-    ==========  =================  =================  ===============
-    rect        -13.3 dB           -13.26 dB          1.00 bin
-    hann        -31.5 dB           -31.47 dB          1.50 bin
-    hamming     -42.7 dB           -42.68 dB          1.36 bin
-    blackman    -58.1 dB           -58.11 dB          1.73 bin
-    ==========  =================  =================  ===============
+    ==========  ==============  ==============  ==================
+    window      published PSL   measured PSL    measured -3 dB lobe
+    ==========  ==============  ==============  ==================
+    rect        -13.3 dB        -13.25 dB       0.885 bin
+    hann        -31.5 dB        -31.47 dB       1.438 bin
+    hamming     -42.7 dB        -42.45 dB       1.301 bin
+    blackman    -58.1 dB        -58.11 dB       1.641 bin
+    ==========  ==============  ==============  ==================
+
+    Measured by transforming each window on its own with 2^18-point zero padding
+    and taking the highest lobe past the first null — that *is* the definition of
+    peak sidelobe level, so these are the module's own numbers, not copied ones.
+    Hamming lands 0.25 dB off the published figure because the published one is
+    for the optimal 0.53836/0.46164 pair; the 0.54/0.46 coefficients written here
+    are the textbook ones and this is what they actually give.
+
+    What it buys, measured end to end: a target 45 dB below a strong one, seven
+    range bins away, is **undetectable** unwindowed (its cell sits 24.6 dB down
+    in the leakage skirt and is not even a local maximum) and becomes a clean
+    local maximum at -43.6 dB with ``hann``. That comparison is step 4 of
+    ``examples/fmcw_range_doppler.py``.
 
     *axis* is named by **role** — ``"range"`` (fast time, the last axis),
     ``"doppler"`` (slow time, the middle axis) or ``"both"`` — never by number,
