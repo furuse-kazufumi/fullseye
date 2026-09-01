@@ -507,11 +507,18 @@ def ex_cosmic():
 
     panels.append(_label(_fit(_gray(cleaned, frame_for_scale=frame)),
                          ["除去後(同じ尺度)",
-                          "正解との最大差 %.0f -> %.0f e-"
-                          % (res_raw, res_cleaned),
-                          "「星」の検出数 %d -> %d" % (n_before, n_after),
-                          "減ったぶんは宇宙線が星に化けていた分"]))
-    labels.append("単一フレーム除去のあと(最大差 %.0f e-)" % res_cleaned)
+                          "%s 正解から %.0f e- 超ずれた画素 %d -> %d"
+                          % (M["right"], bad, n_bad_raw, n_bad_cleaned),
+                          "ずれの総量 %.0f -> %.0f e-(%.0f %% 除去)"
+                          % (sum_raw, sum_cleaned,
+                             100 * (1 - sum_cleaned / sum_raw)),
+                          "「星」の検出数 %d -> %d(偽の星が消えた)"
+                          % (n_before, n_after),
+                          "%s 最大差は %.0f -> %.0f e- で動かない"
+                          % (M["neutral"], res_raw, res_cleaned),
+                          "  = 見逃した 1 画素が最大値を押さえている"]))
+    labels.append("単一フレーム除去のあと(ずれの総量 %.0f %% 除去)"
+                  % (100 * (1 - sum_cleaned / sum_raw)))
 
     panels.append(_label(_fit(_gray(naive)),
                          ["8 枚を素直に平均",
