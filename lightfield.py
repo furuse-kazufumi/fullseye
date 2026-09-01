@@ -1077,9 +1077,10 @@ def lf_epi_slope(lf, *, window=9, min_energy=1e-10):
     threshold on ``energy`` instead of being handed a plausible-looking number
     divided by ~0.
 
-    **Raises** ``ValueError``: *lf* not a valid light field, an angular grid
-    with a single view in *both* directions (nothing moves, so no slope exists),
-    an even or non-positive *window*, a non-positive *min_energy*.
+    **Raises** ``ValueError``: *lf* not a valid light field, an angular/spatial
+    shape where *neither* EPI direction carries information (the horizontal EPI
+    needs ``U >= 2`` **and** ``W >= 2``, the vertical needs ``V >= 2`` and
+    ``H >= 2``), an even or non-positive *window*, a non-positive *min_energy*.
     """
     op = "lf_epi_slope"
     arr = _require_lf(lf, op)
