@@ -323,19 +323,21 @@ def detectability_limit(defect_um_grid, focal_mm=50.0, working_distance_mm=500.0
                          "sizes in micrometres")
     if not np.isfinite(grid).all() or (grid <= 0).any():
         raise ValueError("defect_um_grid must be positive and finite")
-    rows = []
+    rows, limited_by = [], None
     for d in np.sort(grid):
         r = system_feasibility(float(d), focal_mm, working_distance_mm,
                                pixel_pitch_um, f_number, width_px, height_px,
                                wavelength_um, depth_tolerance_mm)
+        limited_by = r["limited_by"]      # 欠陥サイズに依らないので上書きでよい
         rows.append({"defect_um": float(d), "verdict": r["verdict"],
                      "pixels_across": r["pixels_across"]})
     ok = [r["defect_um"] for r in rows if r["verdict"] == "resolvable"]
     return {
         "limit_um": (min(ok) if ok else None),
-        "limited_by": rows and system_feasibility(
-            float(grid[0]), focal_mm, working_distance_mm, pixel_pitch_um,
+        "limited_by": limited_by,
+        "resolution_object_um": rows and system_feasibility(
+            rows[0]["defect_um"], focal_mm, working_distance_mm, pixel_pitch_um,
             f_number, width_px, height_px, wavelength_um,
-            depth_tolerance_mm)["limited_by"],
+            depth_tolerance_mm)["resolution_object_um"],
         "table": rows,
     }
