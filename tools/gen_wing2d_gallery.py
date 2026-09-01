@@ -1952,8 +1952,8 @@ def subject_texture_zoo(log=print) -> dict:
             % float(fs.apply(lbp, "gray_histo_abs", 0.5, 0.5))]
     sheet = E.contact_sheet(
         panels, labels, ncols=4, panel_px=272, label_h=54, font_size=15,
-        title=("テクスチャの見分け —— 8 特徴量で %d/%d 枚を正しく分類 (%.1f%%)\n"
-               "gabor は固定スケール(カーネル L1)なので値が小さい —— "
+        title=("テクスチャの見分け —— 8 特徴量で %d/%d 枚を正しく分類 (%.1f%%)"
+               " ／ gabor は固定スケール(カーネル L1)なので値が小さい —— "
                "絵は 1〜99%%tile 伸長、ラベルの平均応答は伸長前の実測値"
                % (correct, len(Xn), 100 * acc)))
     info = E.save_exhibit(sheet, "wing2d_texture_zoo")
