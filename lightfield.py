@@ -1012,11 +1012,13 @@ def lf_depth_from_focus(lf, slopes=(-2.0, -1.0, 0.0, 1.0, 2.0), *,
     **uniformly** spaced sweep — on a non-uniform sweep the refinement is
     skipped rather than applied with the wrong spacing.
 
-    Unbiased where :func:`lf_epi_slope` is not: measured 2026-09-01, the argmax
-    landed **exactly** on the true slope in all 18 texture/slope combinations
-    listed in the module docstring (true slopes 0.0, ±0.5, ±1.0, 1.5, 2.0 over
-    texture sigma 1.5 / 3.0 / 5.0 px). Its resolution, though, is whatever you
-    put in *slopes* — it cannot see a plane you never refocused on.
+    Unbiased where :func:`lf_epi_slope` is not: measured 2026-09-01 on a
+    5x5x64x64 synthetic field over a 121-point sweep from -3 to +3, the argmax
+    landed **exactly** on the true slope in 18 of 18 combinations (true slopes
+    0.0, +0.5, +1.0, +1.5, +2.0, -1.0 crossed with texture sigma 1.5 / 3.0 /
+    5.0 px), and the sub-pixel refinement left every one of them unmoved. Its
+    resolution, though, is whatever you put in *slopes* — it cannot see a plane
+    you never refocused on.
 
     Returns ``(slope_map, sharpness)``: the ``(H, W)`` map of estimated slopes
     (in px per angular step) and the ``(H, W)`` peak focus-measure value, which
