@@ -374,6 +374,32 @@ def _save_png(frame_u8: np.ndarray, stem: str, log) -> dict:
     return info
 
 
+def _save_flipbook(frames_u8, stem: str, log) -> dict:
+    """工程のコマ送りは共通部品 ``exhibit_tile.save_animation`` で書く。
+
+    こちらは 1 コマを長く見せる(既定 700 ms、最後だけ 1400 ms)ので、掃引の
+    GIF(``_save_gif``、10 fps で連続的に動く)とは別の道具として使い分ける。
+    """
+    res = save_animation(frames_u8, f"{PREFIX}{stem}")
+    path = res["gif"]
+    if res["frames"] != len(frames_u8):
+        raise RuntimeError(f"{path}: read back {res['frames']} frame(s), expected "
+                           f"{len(frames_u8)}")
+    if os.path.getsize(path) > GIF_BUDGET:
+        log(f"    WARNING {os.path.basename(path)} is "
+            f"{os.path.getsize(path) / 1e6:.2f} MB, above the "
+            f"{GIF_BUDGET / 1e6:.0f} MB budget")
+    info = {"kind": "gif", "path": path, "thumb": res["thumb"],
+            "bytes": res["gif_bytes"], "thumb_bytes": os.path.getsize(res["thumb"]),
+            "size": res["size"], "frames": res["frames"], "fps": None,
+            "step_ms": 700, "colors": None, "thumb_frame": 0,
+            "sha256": res["gif_sha256"]}
+    log(f"    gif  {os.path.basename(path)}  {res['size'][0]}x{res['size'][1]}  "
+        f"{res['frames']} steps  700 ms/step  {info['bytes'] / 1e6:.2f} MB   "
+        f"thumb {info['thumb_bytes'] / 1e3:.0f} kB")
+    return info
+
+
 def _save_gif(frames_u8, stem: str, fps: int, thumb_index: int, log) -> dict:
     """GIF を書き、**読み戻して**フレーム数と形を実測してから返す。
 
