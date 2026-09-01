@@ -751,7 +751,8 @@ def ex_drizzle_pair():
                                    "drizzle では 2 つ" % sep)
     info = et.save_exhibit(sheet, "wingastro_drizzle_pair")
     data = {"separation_px": sep, "n_naive": n_naive, "n_drizzle": n_driz,
-            "n_raw_sci": n_raw, "n_frames": n_frames}
+            "n_raw_sci": n_raw, "n_frames": n_frames,
+            "dip_naive_pct": dip_naive, "dip_drizzle_pct": dip_view}
     return info, data
 
 
