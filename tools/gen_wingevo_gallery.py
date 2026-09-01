@@ -482,12 +482,34 @@ def measure_seed_sweep(problems_seeds=(("photon_denoise", 8), ("specular_removal
 
 
 def measure_fuzz(chains=600, seed=4242, length=6, explore=0.5, log=print):
-    """連鎖ファザーを **in-process** で回し、連鎖ごとの到達 op / 発見 / 署名を残す。
+    """連鎖ファザーを**まっさらな子プロセスで**回し、途中経過つきで記録する。
 
     CLI(``tools/chain_fuzz.py``)は最終値しか出さないので、収束の様子を描くには
     途中経過が要る。``run_chain`` をそのまま呼ぶだけで、ファザー側は 1 行も
     変えていない(連鎖固有 seed も CLI と同じ ``seed*1_000_003 + i``)。
+
+    **なぜ子プロセスなのか(実測)**: 同じ引数でも、同じプロセスで先に進化
+    (``evolve.run`` を 20 回以上)を走らせてから呼ぶと結果が変わる ―― 実測で
+    到達 op 445 → 433、発見 174 → 220。原因は、一部の op が入力次第で巨大な
+    内部確保を試み、**そのときの空きメモリで成功したり例外になったりする**ため
+    (docs/CHAIN_FUZZ.md の「小さい入力→巨大な内部割当」の家系)。子プロセスに
+    分けると CLI 単独実行と同じ数字になり、繰り返しても揃う。
     """
+    if os.environ.get("WINGEVO_FUZZ_WORKER") != "1":
+        import subprocess
+        out = os.path.join(WORK, "_fuzz_worker.json")
+        env = dict(os.environ, WINGEVO_FUZZ_WORKER="1", PYTHONUTF8="1",
+                   PYTHONHASHSEED="0")
+        cmd = [sys.executable, os.path.abspath(__file__), "--fuzz-worker",
+               "--chains", str(chains), "--fuzz-seed", str(seed),
+               "--fuzz-length", str(length), "--fuzz-explore", str(explore),
+               "--fuzz-out", out]
+        r = subprocess.run(cmd, env=env, capture_output=True, text=True)
+        if r.returncode != 0 or not os.path.exists(out):
+            raise RuntimeError(f"fuzz worker failed ({r.returncode}):\n"
+                               f"{r.stderr[-2000:]}")
+        with open(out, encoding="utf-8") as fh:
+            return json.load(fh)
     import chain_fuzz as cf
     ops_ = cf.catalog()
     gens = cf.make_generators()
