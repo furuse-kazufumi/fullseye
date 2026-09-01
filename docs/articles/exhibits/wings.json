@@ -20,6 +20,14 @@
         "ja": "博物館ウィング ―― 学問分野を横断する 30 の展示",
         "en": "The Museum Wing — 30 Exhibits Across the Academic Disciplines"
       }
+    },
+    {
+      "id": "wingvox",
+      "order": 90,
+      "title": {
+        "ja": "ボクセルの色分けウィング ―― 3D のラベルは、切る前に色を付ける",
+        "en": "The Voxel-Colouring Wing — Colour a 3-D Labelling Before You Cut It"
+      }
     }
   ]
 }
