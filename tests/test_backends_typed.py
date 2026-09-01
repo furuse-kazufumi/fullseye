@@ -36,8 +36,10 @@ def _seed(sort, seed=0):
             (0.0, 1.0), angular=(3, 3), shape=(32, 32), seed=seed)[0],
         # 非負であることが契約(負のカウントは物理的に存在しない)
         "counts": lambda: np.abs(rng.standard_normal(256)) * 40.0,
+        # 64 bin x 200 ps の一意測距範囲は 1.919 m。それを超える距離を
+        # 頼むと(正しく)拒否されるので、範囲内に収める
         "histcube": lambda: __import__("photoncount").dtof_cube_simulate(
-            1.0 + rng.random((8, 8)), bins=64, bin_ps=200.0, seed=seed),
+            0.5 + rng.random((8, 8)) * 0.5, bins=64, bin_ps=200.0, seed=seed),
     }
     if sort not in banks:
         raise AssertionError(
