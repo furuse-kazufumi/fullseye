@@ -66,10 +66,17 @@ Sign and axis conventions — the traps, stated once:
      can (see :func:`fmcw_window_apply`, which names the axis by role rather
      than by number).
   * **The input must be complex (I/Q).** A real-sampled beat stream has a
-     conjugate-symmetric spectrum, in which ``+v`` and ``-v`` are the *same* bin:
-     the sign of the velocity is not attenuated, it is **absent**. Accepting a
-     real array here would silently return half of the answer, so it raises and
-     names the fix (take the analytic signal explicitly).
+     conjugate-symmetric spectrum, so **every target appears twice**: once where
+     it is, and once as an equal-amplitude ghost at the fabricated range
+     ``(N_s - k)*dR`` carrying the *opposite* velocity. Measured: a target in
+     range bin 10 at velocity bin +4 gives peaks at ``(10, +4)`` **and**
+     ``(54, -4)``, both of amplitude exactly 0.5, and nothing in the map says
+     which is real. (An earlier draft of this module claimed the velocity
+     *sign* was lost in a real cube. That is true of a range-only real signal
+     and **false** here — the two Fourier axes together do keep the sign. What
+     is actually lost is which of the pair is the target, plus half the
+     amplitude and half the unambiguous range.) A real cube therefore raises,
+     and the message names the fix.
   * **Units are in every parameter name** — ``_m``, ``_ms`` (metres per second),
      ``_s``, ``_hz``, ``_deg``. A wavelength/frequency swap or a km/h/(m/s) swap
      is a plausible-wrong answer, not a crash; see the honest-limits section.
