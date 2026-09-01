@@ -8,6 +8,7 @@ against render3d's own helpers.
 import numpy as np
 import pytest
 
+import camera
 import mesh
 import render3d
 
