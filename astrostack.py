@@ -370,7 +370,7 @@ def synth_starfield(shape=(128, 128), n_stars=30, flux_min=400.0, flux_max=9000.
                     fwhm_px=3.2, psf="gaussian", moffat_beta=2.5, sky=60.0,
                     read_sigma=6.0, shift_row=0.0, shift_col=0.0,
                     n_cosmic=0, cosmic_flux=4000.0, margin_px=6.0,
-                    seed=0, noise=True):
+                    seed=0, field_seed=None, noise=True):
     """既知の星野を 1 枚合成する —— **この族の正解の供給源**。
 
     星は ``flux_min``〜``flux_max`` の対数一様分布から総フラックス(電子)を引き、
