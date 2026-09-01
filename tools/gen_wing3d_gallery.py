@@ -3025,7 +3025,7 @@ def ex_vessel_reslice(log) -> dict:
                     f"z-y 面内で {tilt:.0f}° 傾いた合成管(中央に狭窄あり、"
                     f"spacing {sp} mm/voxel)。断面を軸に沿って送る。")
         # 側面図(管の走行と、いま切っている場所)
-        side = tube[:, :, 88]
+        side = tube[:, :, int(round(ctr))]
         c, s_side = _slice_panel(c, side, 18, 92, 330, "gray", border=C_C)
         c = imagedraw.draw_line(c, (18, 92 + zc * s_side), (18 + 329, 92 + zc * s_side),
                                 color=C_A, width=1)
