@@ -3640,12 +3640,13 @@ def test_volume_to_shell_points_ball_geometry():
     P, C, info = studio.volume_to_shell_points(vol, spacing=(2.0, 1.0, 1.0))
     assert P.shape[1] == 3 and C.shape == (len(P), 3)
     assert info["downsampled_by"] == 1 and info["n_points"] == len(P)
-    # shell radii in PHYSICAL units cluster near 14 voxels (x/y) but the
-    # z-radius doubles under spacing sz=2 — check the physical extents
+    # points come back in WORLD (x, y, z) order, so the sz=2 spacing stretches
+    # the THIRD component (world up), not the first.
     center = P.mean(axis=0)
-    assert np.allclose(center, [24 * 2.0, 24.0, 24.0], atol=0.5)
-    assert abs(float(P[:, 0].max() - P[:, 0].min()) - 2.0 * 28.0) < 4.5
+    assert np.allclose(center, [24.0, 24.0, 24 * 2.0], atol=0.5)
+    assert abs(float(P[:, 2].max() - P[:, 2].min()) - 2.0 * 28.0) < 4.5
     assert abs(float(P[:, 1].max() - P[:, 1].min()) - 28.0) < 2.5
+    assert abs(float(P[:, 0].max() - P[:, 0].min()) - 28.0) < 2.5
     assert np.all((C >= 0.0) & (C <= 1.0))
 
 
