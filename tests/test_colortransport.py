@@ -211,27 +211,32 @@ def test_histogram_transfer_matches_the_marginals_but_breaks_the_correlation():
     assert out_rg > 0.9, out_rg                         # 出力は元の相関を引きずる
 
 
-def test_reinhard_fits_the_moments_even_when_the_shape_is_wrong():
-    """二峰の絵に単峰の仮定を当てると、統計は合うのに峰が合わない。
+def test_reinhard_fits_the_moments_but_not_the_distribution():
+    """二峰の絵に単峰の仮定を当てると、**統計は合うのに分布は合わない**。
 
-    平均と分散は参照に寄るが、**元の 2 つの峰が保たれたまま**なので、
-    「参照のような絵になった」わけではない。例外は出ない。
+    平均と標準偏差は参照にぴたりと寄る。にもかかわらず分布そのものは遠い
+    ―― 距離は自前の厳密な :func:`wasserstein_1d` で測る。同じ 2 枚に
+    ヒストグラム整合を掛ければ距離はほぼ 0 になるので、**差は手法の仮定に
+    由来する**と言い切れる。例外は一切出ない。
     """
     src = _two_tone_image(seed=6)
     rng = np.random.default_rng(7)
     ref = np.clip(0.5 + 0.05 * rng.standard_normal((48, 48, 3)), 0, 1)   # 単峰
 
-    out = CT.color_transfer(src, ref, method="reinhard", space="rgb")
-    a = out.reshape(-1, 3)
+    rein = CT.color_transfer(src, ref, method="reinhard", space="rgb").reshape(-1, 3)
+    hist = CT.color_transfer(src, ref, method="histogram", space="rgb").reshape(-1, 3)
     b = ref.reshape(-1, 3)
-    assert np.allclose(a.mean(axis=0), b.mean(axis=0), atol=2e-2)        # 平均は合う
 
-    # しかし出力はいまだに二峰(参照は単峰)
-    hist_out, _ = np.histogram(a[:, 0], bins=32, range=(0, 1))
-    peaks_out = int(np.count_nonzero(hist_out > 0.15 * hist_out.max()))
-    hist_ref, _ = np.histogram(b[:, 0], bins=32, range=(0, 1))
-    peaks_ref = int(np.count_nonzero(hist_ref > 0.15 * hist_ref.max()))
-    assert peaks_out > peaks_ref, (peaks_out, peaks_ref)
+    # 統計は合う(これが「うまくいった」ように見える理由)
+    assert np.allclose(rein.mean(axis=0), b.mean(axis=0), atol=2e-2)
+    assert np.allclose(rein.std(axis=0), b.std(axis=0), atol=2e-2)
+
+    # しかし分布は遠い。ヒストグラム整合なら同じ 2 枚でほぼ 0 まで詰まる。
+    d_rein = CT.wasserstein_1d(rein[:, 0], b[:, 0])
+    d_hist = CT.wasserstein_1d(hist[:, 0], b[:, 0])
+    assert d_hist < 1e-6, d_hist
+    assert d_rein > 20 * max(d_hist, 1e-9), (d_rein, d_hist)
+    assert d_rein > 0.02, d_rein
 
 
 def test_reinhard_refuses_a_constant_channel():
