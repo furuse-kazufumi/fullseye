@@ -1282,15 +1282,20 @@ def ex_airy_rayleigh(log):
         f"(theory 1.2197*lambda*N = {1.2197 * lam * fn:.4f} um); "
         f"Rayleigh separation 1.22*lambda*N = {rayleigh_um:.4f} um")
 
-    seps_k = np.linspace(0.40, 2.20, 37)
-    view = 401                                   # 表示に切り出す幅 [画素]
+    seps_k = np.linspace(0.40, 2.00, 33)
+    view = 451                                   # 表示に切り出す幅 [画素]
     v0 = c - view // 2
     rows = []
     for k in seps_k:
         s = 2 * int(round(k * rayleigh_um / fine / 2.0))   # 偶数 = 中点が画素に乗る
         tot2 = np.roll(psf, -s // 2, axis=1) + np.roll(psf, s // 2, axis=1)
         line = tot2[c]
-        peak = float(line[c - max(s, 4):c + max(s, 4) + 1].max())
+        # ★ピークは**行全体**から取る。以前は ``line[c - s : c + s + 1]`` と
+        # 書いていて、s が c を超えると **開始が負のインデックスになり**、
+        # Python が末尾 56 画素だけを切り出して 0.6167 を「ピーク」として返して
+        # いた(実際の最大は 0.9834)。正規化が崩れて曲線が 1.0 で頭打ちになり、
+        # dip/peak も 1.9x Rayleigh で 0.0067 と誤って出ていた。
+        peak = float(line.max())
         dip = float(line[c])
         rows.append({"k": float(k), "sep_um": s * fine, "dip_over_peak": dip / peak,
                      "img": tot2[c - view // 2:c + view // 2 + 1,
