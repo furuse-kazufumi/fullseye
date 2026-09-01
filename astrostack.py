@@ -1009,7 +1009,7 @@ def lucky_select(frames, keep_fraction=0.3, min_keep=1, **quality_kw):
 # stack —— κ-σ 合成と drizzle
 # ---------------------------------------------------------------------------
 def sigma_clip_stack(frames, mode="sigma_clip", kappa=3.0, iters=5,
-                     center="median", scale="std"):
+                     center="median", scale="mad"):
     """フレーム列を合成する(平均 / 中央値 / κ-σ クリップ)。採否マスクつき。
 
     *mode*:
