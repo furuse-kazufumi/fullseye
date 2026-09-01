@@ -413,6 +413,8 @@ TYPE_CHECKS = {
     # cscalar = 複素スカラ(∮f dz / f(w) / 留数)。measurement(実スカラのみ)へ
     # 混ぜると下流の実数 op が生 TypeError で落ちるため型を分ける
     "cscalar": lambda v: isinstance(v, complex) and not isinstance(v, np.ndarray),
+    # lightfield = 4-D (V, U, H, W)。角度 2 軸 × 空間 2 軸
+    "lightfield": lambda v: isinstance(v, np.ndarray) and v.ndim == 4,
     # jones = Jones ベクトル(長さ 2 固定の complex)。cpoints(輪郭)と形は
     # 同じでも意味が違い、長さが違えば必ず ValueError なので別プール
     "jones": lambda v: isinstance(v, np.ndarray) and v.shape == (2,)
