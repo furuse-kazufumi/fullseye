@@ -313,11 +313,20 @@ def audit_ledger(rounds: int = 4):
                 verdict[name] = ("SKIP", "この型を産む op がまだ無い: " + ", ".join(lack))
                 continue
             rng = np.random.default_rng(20260901)
-            bound, why = _bind(name, fn, [pool[t] for t in want], rng)
-            if bound is None:
-                verdict[name] = ("SKIP", why)
-                continue
-            args, kwargs = bound
+            if name in cf.OP_ARG_BUILDERS:
+                # in 宣言が「素直な先頭位置引数の並び」でない op(to_points の
+                # any-of 列挙など)はファザーの専用ビルダーが正本
+                built = cf.OP_ARG_BUILDERS[name]({t: [v] for t, v in pool.items()}, rng)
+                if built is None:
+                    verdict[name] = ("SKIP", "OP_ARG_BUILDERS が組み立てを断念")
+                    continue
+                args, kwargs = list(built[0]), dict(built[1])
+            else:
+                bound, why = _bind(name, fn, [pool[t] for t in want], rng)
+                if bound is None:
+                    verdict[name] = ("SKIP", why)
+                    continue
+                args, kwargs = bound
             try:
                 res = fn(*args, **kwargs)
             except (ImportError, NotImplementedError) as exc:
