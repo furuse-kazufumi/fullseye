@@ -677,10 +677,11 @@ def specular_coefficient_map(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0),
     op = "specular_coefficient_map"
     I = _require_rgb(image_rgb, "image_rgb", op)
     gamma = _require_direction(illuminant_rgb, "illuminant_rgb", op)
-    if max_rank_ratio is not None:
-        max_rank_ratio = _positive(max_rank_ratio, "max_rank_ratio")
+    max_rank_ratio, max_negative_frac = _split_guards(max_rank_ratio,
+                                                      max_negative_frac)
     if body_rgb is None:
-        _, _, m_s = _split_uniform_body(I, gamma, max_rank_ratio, op)
+        _, _, m_s = _split_uniform_body(I, gamma, max_rank_ratio,
+                                        max_negative_frac, op)
     else:
         _, _, m_s = _split_known_body(I, gamma, body_rgb, op)
     return m_s
