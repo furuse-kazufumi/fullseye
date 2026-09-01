@@ -505,6 +505,12 @@ def audit_ledger(rounds: int = 4):
                 except Exception as exc:  # noqa: BLE001
                     verdict[name] = ("SUSPECT", f"RESULT_ADAPTERS が失敗: {exc}")
                     continue
+            if res is None:
+                # 「解が無い」の表明。型の嘘ではないので TYPEMISS に数えない
+                # (連鎖ファザーも None は pool に入れず次へ進む)
+                verdict[name] = ("NONE", NONE_BY_CONTRACT.get(
+                    name, "None を返した(docstring に契約が無い)"))
+                continue
             check = cf.TYPE_CHECKS.get(out)
             if check is None:
                 verdict[name] = ("NOCHECK", f"型 {out!r} に正本の述語が無い "
