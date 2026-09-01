@@ -497,23 +497,35 @@ class TestFailClosed:
                                    envelope_sigma_um=SIGMA, envelope_fwhm_um=None)
 
     def test_peak_on_the_first_or_last_plane_is_refused(self):
-        # A surface *outside* the scan; the forward model refuses to synthesise
-        # it (that check is tested elsewhere), so the signal is built by hand —
-        # which is also what a real instrument would hand you.
-        z = DZ * np.arange(NP)
-        for z0 in (-3.0, 15.0):
-            s = 0.5 + 0.4 * np.exp(-0.5 * ((z - z0) / SIGMA) ** 2) * np.cos(
-                4.0 * np.pi * (z - z0) / LAM)
+        """The boundary check fires — but it is a backstop, not the workhorse,
+        and this test says which is which because the difference was measured.
+
+        A monotone input (a ramp, an impulse on the first sample) really does put
+        the envelope maximum on plane 0 and is refused by name. A *truncated
+        interferogram*, however, does **not**: the analytic-signal magnitude of a
+        finite record is suppressed at its own endpoints, so a surface at z = 0.0,
+        or at -3.0 um entirely outside the scan, comes back with its argmax on
+        plane **1**, one inside the boundary. If the boundary check were the only
+        guard, every one of those would sail through. ``max_edge_envelope`` is
+        what actually catches them.
+        """
+        for s in (np.linspace(0.0, 1.0, 64),
+                  np.concatenate([[10.0], np.zeros(63)])):
             with pytest.raises(ValueError, match="first or last plane"):
                 itf.csi_peak_position(s, DZ, 0.0, LAM, max_edge_envelope=1.0)
-        # Honest scope: at a surface exactly *on* the boundary plane the Hilbert
-        # envelope peaks one plane inside (measured argmax 1 of 241 for z0 = 0),
-        # so this check alone does not catch it — max_edge_envelope does, and
-        # that is why both exist.
-        s = scan(0.0, n=NP)
-        assert int(np.argmax(itf.csi_envelope(s))) == 1
-        with pytest.raises(ValueError, match="max_edge_envelope"):
-            itf.csi_peak_position(s, DZ, 0.0, LAM)
+        with pytest.raises(ValueError, match="first or last plane"):
+            itf.csi_peak_position(np.cos(np.linspace(0, np.pi / 2, 64)), DZ,
+                                  0.0, LAM, max_edge_envelope=1.0)
+
+        z = DZ * np.arange(NP)
+        for z0 in (-3.0, 0.0, 15.0):
+            s = 0.5 + 0.4 * np.exp(-0.5 * ((z - z0) / SIGMA) ** 2) * np.cos(
+                4.0 * np.pi * (z - z0) / LAM)
+            env = itf.csi_envelope(s)
+            k = int(np.argmax(env))
+            assert k not in (0, env.size - 1), (z0, k)      # the backstop misses
+            with pytest.raises(ValueError, match="max_edge_envelope"):
+                itf.csi_peak_position(s, DZ, 0.0, LAM)      # ... this one does not
 
     def test_truncated_envelope_is_refused_because_it_lies(self):
         """The nastiest one: an *interior* argmax, no NaN, no warning, 76 % wrong."""
