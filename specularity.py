@@ -1308,6 +1308,23 @@ def photometric_residual(images, lights, normals=None, albedo=None,
     if n.shape[:2] != (H, W):
         raise ValueError("%s: normals has shape %r but the images are %r"
                          % (op, tuple(n.shape), (H, W)))
+    # Found by the adversarial pass: the model is albedo * normal, so a normal
+    # field scaled by 2 scales the model by 2 and the residual comes back large
+    # (measured 0.552 instead of 0.0 on an exactly Lambertian scene) with no
+    # complaint — the caller then concludes their surface is not Lambertian.
+    # Silently renormalising would be worse: it would hide a caller whose
+    # "normals" are really albedo * normal. So it is refused by name.
+    nn = np.linalg.norm(n, axis=-1)
+    off = float(np.abs(nn - 1.0).max())
+    if off > 1e-4:
+        raise ValueError("%s: normals are not unit vectors (worst length %.6g, "
+                         "off by %.3g). The Lambertian model here is "
+                         "albedo * normal, so a scaled normal field scales the "
+                         "model and returns a large residual for a perfectly "
+                         "Lambertian surface. Normalise the field and put its "
+                         "magnitude in albedo"
+                         % (op, float(nn.flat[int(np.argmax(np.abs(nn - 1.0)))]),
+                            off))
     a = _require_map(albedo, "albedo", op)
     if a.shape != (H, W):
         raise ValueError("%s: albedo has shape %r but the images are %r"
