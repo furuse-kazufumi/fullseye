@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">parallax_layers — GFX2D <code style="color:#22d3bf">tile</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">sprites</code> → <code style="color:#22d3bf">rgba</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.parallax_layers(layers, camera_x, factors, camera_y=0.0, factors_y=None)</code> (または <code style="color:#22d3bf">opsgfx2d.get(&quot;parallax_layers&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Scroll a set of `<code style="color:#22d3bf">rgba</code>` layers at different rates and composite them.</p>
+<p>`<code style="color:#22d3bf">layers[0]</code>` is the farthest layer and is drawn first. Each layer is</p>
+<p>shifted by `<code style="color:#22d3bf">-round(camera_x * factors[i])</code>` columns (and rows, if</p>
+<p>`<code style="color:#22d3bf">factors_y</code>` is given) and <b>wraps</b> — a parallax backdrop is a loop, and</p>
+<p>wrapping is what makes it one.</p>
+<p>Shifts are rounded to whole pixels, so the scroll is a pure permutation: a</p>
+<p>single layer shifted by exactly its own width comes back with its alpha</p>
+<p>channel bit-identical and its colour identical wherever `<code style="color:#22d3bf">alpha &gt; 0</code>`. (The</p>
+<p>colour of *fully transparent* pixels is not preserved — compositing goes</p>
+<p>through :func:<code style="color:#22d3bf">premultiply</code>, which zeroes it by definition. That is the</p>
+<p>documented cost of the premultiplied round trip, not a bug in the scroll.)</p>
+<p>Sub-pixel scrolling would resample every frame and accumulate blur, which is</p>
+<p>why it is not offered here — put the fractional part in</p>
+<p>:func:<code style="color:#22d3bf">sprite_transform</code> if you need it.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gfx2d_scene">gfx2d_scene</a> — <code style="color:#22d3bf">py -3.11 examples/gfx2d_scene.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">rgba</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:premultiply">premultiply</a> · <a style="color:#22d3bf" href="opgfx2d:alpha_composite">alpha_composite</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_blit">sprite_blit</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_transform">sprite_transform</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_sheet_slice">sprite_sheet_slice</a> · <a style="color:#22d3bf" href="opgfx2d:nine_slice">nine_slice</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">tile</code>)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:tilemap_render">tilemap_render</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gfx2d.py — GFX2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

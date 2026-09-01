@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">particle_emit — GFX2D <code style="color:#22d3bf">particle</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>table`</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.particle_emit(count, seed, origin=(0.0, 0.0), spread=0.0, speed=(10.0, 40.0), direction=(0.0, 360.0), life=(0.5, 1.5), size=(1.0, 3.0), color=&#x27;emphasis&#x27;, scheme=&#x27;okabe_ito&#x27;)</code> (または <code style="color:#22d3bf">opsgfx2d.get(&quot;particle_emit&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Emit `<code style="color:#22d3bf">count</code><code style="color:#22d3bf"> particles from </code><code style="color:#22d3bf">origin</code><code style="color:#22d3bf">, deterministically from </code><code style="color:#22d3bf">seed</code>`.</p>
+<p>Returns the particle state as a dict of arrays::</p>
+<p>{&quot;pos&quot;: (N,2) as (x, y), &quot;vel&quot;: (N,2) px/s, &quot;age&quot;: (N,), &quot;life&quot;: (N,),</p>
+<p>&quot;size&quot;: (N,) radius in px, &quot;color&quot;: (N,4) straight rgba}</p>
+<p>Ranges are `<code style="color:#22d3bf">(low, high)</code><code style="color:#22d3bf"> pairs sampled uniformly; </code><code style="color:#22d3bf">direction</code>` is in</p>
+<p>degrees measured clockwise from the +x axis (again because the row axis</p>
+<p>points down). `<code style="color:#22d3bf">spread</code>` is the radius of the uniform disc the start</p>
+<p>positions are jittered over.</p>
+<p>All randomness comes from `<code style="color:#22d3bf">numpy.random.default_rng(seed)</code>` — the same seed</p>
+<p>gives the same bytes, which the test suite pins with a SHA-256.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gfx2d_scene">gfx2d_scene</a> — <code style="color:#22d3bf">py -3.11 examples/gfx2d_scene.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:layer_stack">layer_stack</a> · <a style="color:#22d3bf" href="opgfx2d:particle_step">particle_step</a> · <a style="color:#22d3bf" href="opgfx2d:particle_render">particle_render</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">particle</code>)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:particle_step">particle_step</a> · <a style="color:#22d3bf" href="opgfx2d:particle_render">particle_render</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gfx2d.py — GFX2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">pairs_to_image2d — REPRCONV <code style="color:#22d3bf">pairs</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import reprconv; reprconv.pairs_to_image2d(pairs, shape=(64, 64))</code> (または <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_image2d&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>対 `<code style="color:#22d3bf">(N,2)</code><code style="color:#22d3bf"> → 散布密度画像 </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">pairs</code>` の 3 つ目の出口。</p>
+<p>列 0 を行方向、列 1 を列方向に、それぞれの最小-最大で正規化して bin へ落とす</p>
+<p>(2-D ヒストグラム)。位相図・相関図として見るためのもので、<b>不可逆</b></p>
+<p>(bin 幅ぶんの量子化 + 正規化で絶対値のスケールを捨てる)。</p>
+<p>捨てたスケールは戻せるように `<code style="color:#22d3bf">extent</code><code style="color:#22d3bf"> を…返さない —— 返すと </code><code style="color:#22d3bf">image2d</code>`</p>
+<p>でなくなる。必要なら :func:<code style="color:#22d3bf">pairs_to_table</code> の `<code style="color:#22d3bf">x_min</code>` などを使う。</p>
+<p>定数列(最小 == 最大)は 0.5 の位置へ集める(0 除算を避けるが、</p>
+<p>それを「密度が中央に集中している」と読まれないよう、bin は 1 本だけ立つ)。</p>
+<p>Args:</p>
+<p>pairs: (N, 2)。</p>
+<p>shape: (H, W)。</p>
+<p>Returns:</p>
+<p>(H, W) float64、最大値 1.0 に正規化した密度。</p>
+<p>Raises:</p>
+<p>ValueError: 形状不正 / 非有限 / shape が上限超。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:keypoints_from_image2d">keypoints_from_image2d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">pairs</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:pairs_to_signal">pairs_to_signal</a> · <a style="color:#22d3bf" href="opreprconv:pairs_to_table">pairs_to_table</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

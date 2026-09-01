@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">points_to_position — REPRCONV <code style="color:#22d3bf">keypoint</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">position</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import reprconv; reprconv.points_to_position(points)</code> (または <code style="color:#22d3bf">opsreprconv.get(&quot;points_to_position&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>点群 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> → 重心 </code><code style="color:#22d3bf">(z, y, x)</code>`。<b>不可逆</b>(分布を捨てる)。</p>
+<p>捨てた量は測れる: 重心まわりの RMS 距離が「1 点に潰したときに失った広がり」</p>
+<p>そのもので、`<code style="color:#22d3bf">selftest</code>` はこれを数字で出す。N = 1 のときだけ</p>
+<p>:func:<code style="color:#22d3bf">position_to_points</code> との往復が bit 一致する。</p>
+<p>Args:</p>
+<p>points: (N, 3) の (z, y, x)。</p>
+<p>Returns:</p>
+<p>3-tuple の float (z, y, x)。</p>
+<p>Raises:</p>
+<p>ValueError: 形状不正 / 非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_roundtrip">representation_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/representation_roundtrip.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">position</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:position_to_points">position_to_points</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">keypoint</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:keypoints_uv_to_points">keypoints_uv_to_points</a> · <a style="color:#22d3bf" href="opreprconv:points_zyx_to_keypoints_uv">points_zyx_to_keypoints_uv</a> · <a style="color:#22d3bf" href="opreprconv:keypoints_to_image2d">keypoints_to_image2d</a> · <a style="color:#22d3bf" href="opreprconv:keypoints_from_image2d">keypoints_from_image2d</a> · <a style="color:#22d3bf" href="opreprconv:position_to_points">position_to_points</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

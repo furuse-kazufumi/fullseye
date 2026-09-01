@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">descriptor_to_table — REPRCONV <code style="color:#22d3bf">descriptor</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">descriptor</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import reprconv; reprconv.descriptor_to_table(descriptor)</code> (または <code style="color:#22d3bf">opsreprconv.get(&quot;descriptor_to_table&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>記述子 → 要約 `<code style="color:#22d3bf">table</code>`。<b>一方向</b>。</p>
+<p>次元・ノルム・エネルギー集中(正規化した二乗和の上位 10% が占める割合)を</p>
+<p>出す。記述子が「実質何次元使っているか」を見るためのもので、次元だけ多くて</p>
+<p>ほぼ全部 0 という失敗を可視化する。</p>
+<p>Args:</p>
+<p>descriptor: (n,) または (m, n)。</p>
+<p>Returns:</p>
+<p>dict(`<code style="color:#22d3bf">shape</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">l2</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">std</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">min</code>` /</p>
+<p>`<code style="color:#22d3bf">max</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">top10pct_energy</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">nonzero_fraction</code>`)。</p>
+<p>Raises:</p>
+<p>ValueError: 形状不正 / 非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">descriptor</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:descriptor_to_matrix">descriptor_to_matrix</a> · <a style="color:#22d3bf" href="opreprconv:matrix_to_descriptor">matrix_to_descriptor</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

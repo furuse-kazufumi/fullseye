@@ -1,0 +1,43 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cad_surface_to_pixel — CADMAP <code style="color:#22d3bf">project</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">mesh × points</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import cadmap; cadmap.cad_surface_to_pixel(mesh, points, K=None, R=None, t=None, image_size=None, cull_backfaces=True, depth_tol=1e-06, strict=False)</code> (または <code style="color:#22d3bf">opscadmap.get(&quot;cad_surface_to_pixel&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>3-D 点 (N,3) → 画素 + <b>可視性</b>(遮蔽・背面・画枠外を区別して返す)。</p>
+<p>`<code style="color:#22d3bf">camera.project_points</code>` で投影したうえで、<b>同じ画素へ光線を撃ち直して</b></p>
+<p>手前に別の面が無いかを確かめる。これをやらないと、隠れている点の画素座標を</p>
+<p>「そこに見えている」かのように返してしまう。返りは dict:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">uv</code><code style="color:#22d3bf">            (N,2) — 画素 </code><code style="color:#22d3bf">(u=列, v=行)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">depth &lt;= 0</code>` の点でも</p>
+<p>投影値は返るが `<code style="color:#22d3bf">in_front = False</code>` が立つ。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">depth</code>`         (N,) — カメラ座標 Z。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">in_front</code><code style="color:#22d3bf">      (N,) bool — </code><code style="color:#22d3bf">depth &gt; 0</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">in_image</code><code style="color:#22d3bf">      (N,) bool — 画枠内(</code><code style="color:#22d3bf">0 &lt;= u &lt;= width-1</code>` かつ</p>
+<p>`<code style="color:#22d3bf">0 &lt;= v &lt;= height-1</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">occluded</code>`      (N,) bool — 同じ視線上で、その点より手前に面がある。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">occluder_face</code><code style="color:#22d3bf"> (N,) int64 — 遮っている面。無ければ </code><code style="color:#22d3bf">-1</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">visible</code><code style="color:#22d3bf">       (N,) bool — </code><code style="color:#22d3bf">in_front &amp; in_image &amp; ~occluded</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">camera</code>`        実際に使われたカメラ。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">winding_fixed</code>` bool — 内向きに巻かれた閉メッシュを検出して直したか。</p>
+<p>`<code style="color:#22d3bf">depth_tol</code>` は「自分自身の面に遮られた」と誤判定しないための相対許容で、</p>
+<p>遮蔽と判定するのは `<code style="color:#22d3bf">z_hit &lt; depth * (1 - depth_tol) - depth_tol</code>` のとき。</p>
+<p>閉じた mesh の<b>裏側</b>にある点は、手前の壁に遮られて `<code style="color:#22d3bf">occluded = True</code>` に</p>
+<p>なる — これは仕様であって取りこぼしではない。</p>
+<p><b>遮蔽判定は巻き方向に依存する</b>(手前の壁が裏面としてカリングされると、</p>
+<p>裏側の点まで `<code style="color:#22d3bf">visible</code><code style="color:#22d3bf"> になる)。そのため </code><code style="color:#22d3bf">cull_backfaces=True</code>` では</p>
+<p>内向きに巻かれた閉メッシュを検出し、既定では巻きを直して</p>
+<p>`<code style="color:#22d3bf">winding_fixed=True</code><code style="color:#22d3bf"> を返す。</code><code style="color:#22d3bf">strict=True</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">ValueError</code>`、</p>
+<p>`<code style="color:#22d3bf">cull_backfaces=False</code>` では検査そのものをしない</p>
+<p>(詳細は :func:<code style="color:#22d3bf">_orient_for_culling</code>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:defect_to_cad">defect_to_cad</a> — <code style="color:#22d3bf">py -3.11 examples/defect_to_cad.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">project</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cadmap.py — CADMAP operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

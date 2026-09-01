@@ -1182,7 +1182,7 @@ def correlation_score(voxel_a, voxel_b):
         voxel_a: (D, H, W)。
         voxel_b: (D, H, W)、``voxel_a`` と同形。
     Returns:
-        (D, H, W) float64、値域は概ね [-1, 1](完全一致で 1.0)。
+        (D, H, W) float64、値域は概ね [-1, 1] (完全一致で 1.0)。
     Raises:
         ValueError: 3-D でない / 形が違う / 定数体積(標準偏差 0)/ 非有限。
     """

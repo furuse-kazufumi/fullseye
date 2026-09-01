@@ -1,0 +1,46 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">backproject_sinogram — TOMOGRAPHY <code style="color:#22d3bf">reconstruct</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import tomography; tomography.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None)</code> (または <code style="color:#22d3bf">opstomography.get(&quot;backproject_sinogram&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Plain, <b>un-filtered</b> back-projection — the blurred baseline.</p>
+<p>Smear each projection back along the rays it came from and sum. The result is</p>
+<p>the true slice convolved with `<code style="color:#22d3bf">1/|r|</code>`, so it is correct in the large and</p>
+<p>wrong everywhere in detail.</p>
+<p>Two numbers, because only one of them is the interesting one. Raw, on the</p>
+<p>Shepp-Logan phantom with 180 views, this operator&#x27;s values run 0.768 to 2.493</p>
+<p>where the truth runs 0.0 to 0.0167 — the `<code style="color:#22d3bf">1/|r|</code>` kernel has no finite</p>
+<p>integral, so an un-filtered back-projection has **no meaningful absolute</p>
+<p>scale at all** and its normalised RMS error against the truth is 104. After</p>
+<p>the best least-squares rescaling onto the truth — which is what any display</p>
+<p>with an auto window does for you, silently — the error is <b>0.168</b> against</p>
+<p><b>0.0246</b> for :func:<code style="color:#22d3bf">filtered_backprojection</code>, a factor of <b>6.8</b>. That</p>
+<p>second number is the ramp filter&#x27;s real contribution; the first is a warning</p>
+<p>that a picture which looks approximately right after auto-windowing can be</p>
+<p>off by a factor of 100 in the numbers underneath it.</p>
+<p>It is a registered operator and not a private helper because the blur *is* the</p>
+<p>lesson, and because it is the correct starting point for iterative methods.</p>
+<p>Not to be confused with :func:<code style="color:#22d3bf">fullseye.backproject</code>, which lifts pixels into</p>
+<p>3-D using a depth map and a camera model; that one is projective geometry, this</p>
+<p>one is an integral transform, and the only thing they share is a word.</p>
+<p>:param sinogram: `<code style="color:#22d3bf">(n_angles, n_detectors)</code>`, rows = angles.</p>
+<p>:param angles_deg: view angles; `<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> -&gt; uniform </code><code style="color:#22d3bf">[0, 180)</code>`.</p>
+<p>:param size: output side; `<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> -&gt; the inscribed square, </code><code style="color:#22d3bf">n_det/sqrt2</code>`</p>
+<p>rounded down to an odd number.</p>
+<p>:param span_deg: angular range used for the `<code style="color:#22d3bf">d(theta)</code><code style="color:#22d3bf"> weight; </code><code style="color:#22d3bf">None</code>` -&gt;</p>
+<p>inferred from *angles_deg* (or 180 for the default scan).</p>
+<p>:returns: `<code style="color:#22d3bf">(size, size)</code>` float64 image.</p>
+<p>:raises ValueError: as :func:<code style="color:#22d3bf">filtered_backprojection</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="optomography:radon_transform">radon_transform</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">reconstruct</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:filtered_backprojection">filtered_backprojection</a> · <a style="color:#22d3bf" href="optomography:sart_reconstruct">sart_reconstruct</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tomography.py — TOMOGRAPHY operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

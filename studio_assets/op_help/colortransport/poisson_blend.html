@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">poisson_blend — COLORTRANSPORT <code style="color:#22d3bf">blend</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d × mask</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import colortransport; colortransport.poisson_blend(src, dst, mask, offset=(0, 0))</code> (または <code style="color:#22d3bf">opscolortransport.get(&quot;poisson_blend&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>勾配場を運ぶ継ぎ目なし合成(Pérez, Gangnet &amp; Blake, SIGGRAPH 2003)。</p>
+<p>`<code style="color:#22d3bf">mask</code><code style="color:#22d3bf"> の内部で **</code><code style="color:#22d3bf">src</code><code style="color:#22d3bf"> の勾配**を保ちつつ、**境界で </code><code style="color:#22d3bf">dst</code>` の値**に</p>
+<p>一致する像を解く。よって出力は次の 2 つを<b>構成上</b>満たし、</p>
+<p>それが正しさの検算になる:</p>
+<p style="margin:2px 0 2px 12px">• 内部のラプラシアンが `<code style="color:#22d3bf">src</code>` のラプラシアンと一致(解の残差ぶんまで)</p>
+<p style="margin:2px 0 2px 12px">• マスクの外は `<code style="color:#22d3bf">dst</code>` と<b>厳密に一致</b>(1 画素も触らない)</p>
+<p><b>貼った物の色は変わる。</b> それが目的の処理だが、「貼った物体の色を測る」</p>
+<p>用途にそのまま流すと<b>測っているのは貼り先の色</b>になる。返り値は</p>
+<p>`<code style="color:#22d3bf">(blended, info)</code><code style="color:#22d3bf"> で、</code><code style="color:#22d3bf">info[&quot;changed_pixels&quot;]</code>` と</p>
+<p>`<code style="color:#22d3bf">info[&quot;max_shift&quot;]</code>` が実際にどれだけ動いたかを言う。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>src : array_like</p>
+<p>貼る絵。`<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> または </code><code style="color:#22d3bf">(H, W, C)</code>`。</p>
+<p>dst : array_like</p>
+<p>貼り先。`<code style="color:#22d3bf">src</code>` 以上の大きさ。</p>
+<p>mask : array_like</p>
+<p>`<code style="color:#22d3bf">src</code><code style="color:#22d3bf"> と同じ </code><code style="color:#22d3bf">(H, W)</code>` の真偽値。<b>縁に接していてはいけない</b></p>
+<p>(境界条件が取れないため明示的に拒否する)。</p>
+<p>offset : (int, int)</p>
+<p>`<code style="color:#22d3bf">dst</code><code style="color:#22d3bf"> の中で </code><code style="color:#22d3bf">src</code><code style="color:#22d3bf"> の左上を置く </code><code style="color:#22d3bf">(row, col)</code>`。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>(ndarray, dict)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opcolortransport:histogram_match">histogram_match</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">blend</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: colortransport.py — COLORTRANSPORT operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

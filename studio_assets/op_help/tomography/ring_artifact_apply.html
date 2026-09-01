@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ring_artifact_apply — TOMOGRAPHY <code style="color:#22d3bf">artifact</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">sinogram</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import tomography; tomography.ring_artifact_apply(sinogram, gain_sigma=0.02, seed=0, offsets=None)</code> (または <code style="color:#22d3bf">opstomography.get(&quot;ring_artifact_apply&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Give the detector a per-bin gain error — the source of ring artefacts.</p>
+<p>A detector bin whose gain is `<code style="color:#22d3bf">g</code><code style="color:#22d3bf"> reports </code><code style="color:#22d3bf">I = g I_true</code>`, so after the</p>
+<p>logarithm the line integral picks up a <b>constant offset</b> `<code style="color:#22d3bf">-ln g</code>` at that</p>
+<p>bin, the same at every angle. Back-projecting a constant column smears it</p>
+<p>around the rotation axis, and the reconstruction grows a ring at the radius</p>
+<p>that bin&#x27;s rays are tangent to. One bad pixel, one perfect circle.</p>
+<p>The offsets are drawn once from `<code style="color:#22d3bf">N(0, gain_sigma)</code>` with a fixed *seed* and</p>
+<p>applied to every row, because the whole point is that the error does <b>not</b></p>
+<p>vary with angle — that is what distinguishes a ring from noise, and what makes</p>
+<p>:func:<code style="color:#22d3bf">ring_artifact_remove</code> possible.</p>
+<p>:param sinogram: `<code style="color:#22d3bf">(n_angles, n_detectors)</code>`.</p>
+<p>:param gain_sigma: standard deviation of the per-bin offset, `<code style="color:#22d3bf">&gt;= 0</code>`.</p>
+<p>:param seed: RNG seed; there is no `<code style="color:#22d3bf">None</code>` (determinism is a contract here).</p>
+<p>:param offsets: explicit `<code style="color:#22d3bf">(n_detectors,)</code>` offsets; overrides the random draw.</p>
+<p>:returns: `<code style="color:#22d3bf">(n_angles, n_detectors)</code>` float64 sinogram.</p>
+<p>:raises ValueError: on a negative sigma, a non-int seed, or an *offsets* whose</p>
+<p>length is not the detector count.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">sinogram</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="optomography:backproject_sinogram">backproject_sinogram</a> · <a style="color:#22d3bf" href="optomography:filtered_backprojection">filtered_backprojection</a> · <a style="color:#22d3bf" href="optomography:sart_reconstruct">sart_reconstruct</a> · <a style="color:#22d3bf" href="optomography:beam_hardening_apply">beam_hardening_apply</a> · <a style="color:#22d3bf" href="optomography:beam_hardening_correct">beam_hardening_correct</a> · <a style="color:#22d3bf" href="optomography:ring_artifact_remove">ring_artifact_remove</a> · <a style="color:#22d3bf" href="optomography:metal_trace_interpolate">metal_trace_interpolate</a> · <a style="color:#22d3bf" href="optomography:sinogram_center_of_rotation">sinogram_center_of_rotation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">artifact</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:beam_hardening_apply">beam_hardening_apply</a> · <a style="color:#22d3bf" href="optomography:beam_hardening_correct">beam_hardening_correct</a> · <a style="color:#22d3bf" href="optomography:ring_artifact_remove">ring_artifact_remove</a> · <a style="color:#22d3bf" href="optomography:metal_trace_interpolate">metal_trace_interpolate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tomography.py — TOMOGRAPHY operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

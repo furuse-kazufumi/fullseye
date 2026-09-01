@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vol_colorize_labels — VOLCOLOR <code style="color:#22d3bf">colorize</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">rgbvolume</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import volcolor; volcolor.vol_colorize_labels(labels, seed: &#x27;int&#x27; = 0, background=(0.0, 0.0, 0.0))</code> (または <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_colorize_labels&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>3-D ラベルボリューム -&gt; `<code style="color:#22d3bf">(D, H, W, 3)</code>` float64 の RGB ボリューム。</p>
+<p>「切ってから色を付ける」のではなく「<b>色を付けてから切る</b>」ための入口。</p>
+<p>ラベル `<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> の色は :func:</code>vol_label_palette<code style="color:#22d3bf"> の行 </code><code style="color:#22d3bf">k</code>` そのもので、</p>
+<p>`<code style="color:#22d3bf">imgio.colorize_labels(labels, seed)</code>` を同じ配列に対して呼んだ結果と</p>
+<p><b>バイト単位で一致する</b>(`<code style="color:#22d3bf">tests/test_volcolor.py</code>` が固定)。</p>
+<p>切る順序が効くこと自体は :func:<code style="color:#22d3bf">vol_label_color_flicker</code> が数える。実測</p>
+<p>(16 球・`<code style="color:#22d3bf">(24, 48, 48)</code><code style="color:#22d3bf"> の参照ファントム、</code><code style="color:#22d3bf">connectivity=26</code>`、seed=0):</p>
+<p>スライスごとに色を付け直すと <b>24 スライス中 20 スライス</b>で少なくとも</p>
+<p>1 成分の色が変わり、(成分, スライス) の変化は 108 組中 <b>62 件</b>、</p>
+<p><b>16 成分すべて</b>が一度は色を変える。ボリュームで色を付けてから切ると</p>
+<p>3 つとも 0。</p>
+<p>Raises `<code style="color:#22d3bf">ValueError</code>` on a non-3-D, float, or negative label volume, on a label</p>
+<p>over :data:<code style="color:#22d3bf">MAX_LABELS</code>, or on more than :data:<code style="color:#22d3bf">MAX_COLOR_VOXELS</code> voxels.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:voxel_labels_color">voxel_labels_color</a> — <code style="color:#22d3bf">py -3.11 examples/voxel_labels_color.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">rgbvolume</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opvolcolor:vol_label_slice_rgb">vol_label_slice_rgb</a> · <a style="color:#22d3bf" href="opvolcolor:vol_label_mpr_rgb">vol_label_mpr_rgb</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">colorize</code>)</h3>
+<p><a style="color:#22d3bf" href="opvolcolor:vol_label_overlay">vol_label_overlay</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: volcolor.py — VOLCOLOR operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

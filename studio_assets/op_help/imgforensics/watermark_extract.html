@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">watermark_extract — IMGFORENSICS <code style="color:#22d3bf">watermark</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">phash</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import imgforensics; imgforensics.watermark_extract(image, n_bits: &#x27;int&#x27;, wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">opsimgforensics.get(&quot;watermark_extract&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>透かしの <b>ブラインド抽出</b>。bool の 1-D(`<code style="color:#22d3bf">phash</code>` 語彙)を返す。</p>
+<p>同じ DWT / ブロック分割で中帯域係数の対の大小を読むだけ。原画像も鍵も要らない</p>
+<p>—— これは <b>秘匿ではなく完全性の印</b>であり、鍵が無いので **誰でも消せるし</p>
+<p>誰でも書ける**。所有権の主張には使えない。</p>
+<p>返りが `<code style="color:#22d3bf">phash</code><code style="color:#22d3bf"> 語彙なので、埋めたビット列との一致は :func:</code>hash_distance` で</p>
+<p>そのまま数えられる(BER = `<code style="color:#22d3bf">hash_distance(sent, got) / n_bits</code>`)。</p>
+<p>語彙を合わせてあるのはそのため。</p>
+<p><b>PyWavelets 必須</b>(:class:<code style="color:#22d3bf">ImportError</code>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">phash</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:hash_distance">hash_distance</a> · <a style="color:#22d3bf" href="opimgforensics:watermark_embed">watermark_embed</a> · <a style="color:#22d3bf" href="opimgforensics:watermark_capacity">watermark_capacity</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">watermark</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:watermark_embed">watermark_embed</a> · <a style="color:#22d3bf" href="opimgforensics:watermark_capacity">watermark_capacity</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgforensics.py — IMGFORENSICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

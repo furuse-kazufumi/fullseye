@@ -1,0 +1,38 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">keypoints_to_image2d — REPRCONV <code style="color:#22d3bf">keypoint</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import reprconv; reprconv.keypoints_to_image2d(keypoints, shape=(64, 64))</code> (または <code style="color:#22d3bf">opsreprconv.get(&quot;keypoints_to_image2d&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>画像座標 `<code style="color:#22d3bf">(N,2) = (u, v)</code><code style="color:#22d3bf"> → 計数画像 </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">keypoints</code>` の 2 つ目の出口。</p>
+<p>`<code style="color:#22d3bf">round(v)</code><code style="color:#22d3bf"> を行、</code><code style="color:#22d3bf">round(u)</code>` を列として 1 ずつ加算する。**画素格子への</p>
+<p>量子化が損失**で、:func:<code style="color:#22d3bf">keypoints_from_image2d</code> と往復すると位置が</p>
+<p>最大 0.5 画素ずれる(よく離れた 225 点での実測: <b>軸あたり</b> RMS 0.2835 px =</p>
+<p>一様量子化の理論値 1/sqrt(12) = 0.2887 と一致。2-D 距離では sqrt(2) 倍の</p>
+<p>0.4009 px で、理論 sqrt(2/12) = 0.4082)。</p>
+<p>★ここも一度間違えた: 2-D 距離の実測を 1-D の理論値と並べて「0.29 のはずが</p>
+<p>0.40 だ」と読みかけた —— 軸ごとの量と距離の量を混ぜると、正しい実装が</p>
+<p>誤っているように見える。</p>
+<p>近接した点は連結成分として融合するので、往復で点数も減りうる</p>
+<p>(実測: 60 点をランダムに置くと 54 点)。</p>
+<p>範囲外の点は<b>黙って捨てない</b> —— 捨てると「検出が減った」のか</p>
+<p>「画像が小さすぎた」のかが区別できなくなる。</p>
+<p>Args:</p>
+<p>keypoints: (N, 2) の (u, v)。</p>
+<p>shape: (H, W)。</p>
+<p>Returns:</p>
+<p>(H, W) float64 の計数画像。</p>
+<p>Raises:</p>
+<p>ValueError: 形状不正 / 非有限 / 範囲外の点がある / shape が上限超。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_roundtrip">representation_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/representation_roundtrip.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:keypoints_from_image2d">keypoints_from_image2d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">keypoint</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:keypoints_uv_to_points">keypoints_uv_to_points</a> · <a style="color:#22d3bf" href="opreprconv:points_zyx_to_keypoints_uv">points_zyx_to_keypoints_uv</a> · <a style="color:#22d3bf" href="opreprconv:keypoints_from_image2d">keypoints_from_image2d</a> · <a style="color:#22d3bf" href="opreprconv:position_to_points">position_to_points</a> · <a style="color:#22d3bf" href="opreprconv:points_to_position">points_to_position</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

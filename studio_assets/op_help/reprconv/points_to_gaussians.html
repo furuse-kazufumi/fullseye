@@ -1,0 +1,34 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">points_to_gaussians — REPRCONV <code style="color:#22d3bf">gaussians</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">gaussians</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import reprconv; reprconv.points_to_gaussians(points, k=6, scale=1.0)</code> (または <code style="color:#22d3bf">opsreprconv.get(&quot;points_to_gaussians&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>点群 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> → 等方ガウシアン </code><code style="color:#22d3bf">gaussians</code>`。<b>この型の唯一の入口</b>。</p>
+<p>`<code style="color:#22d3bf">gaussians</code><code style="color:#22d3bf"> は台帳で </code><code style="color:#22d3bf">fuse3d.to_points</code>` が食う型だが、**産む op が</p>
+<p>1 つも無かった**(実測)—— 消費側だけがある型は、生成器を種として置かない限り</p>
+<p>一度も実行されない。ここでは 3D Gaussian Splatting の初期化と同じやり方で</p>
+<p>作る: 各点の k 近傍までの<b>平均距離</b>を sigma、重みを 1/N の等分にする。</p>
+<p>`<code style="color:#22d3bf">mu</code><code style="color:#22d3bf"> は入力点そのものなので :func:</code>gaussians_to_points` と往復して</p>
+<p><b>bit 一致</b>(実測 max|Δ| = 0.0)。sigma と w は往復で戻らない —— 点群には</p>
+<p>もともと無かった量だからで、これは損失ではなく<b>追加</b>である。</p>
+<p>Args:</p>
+<p>points: (N, 3)。N &gt;= 2。</p>
+<p>k: sigma を決める近傍数(既定 6)。N-1 を超えると N-1 に丸める。</p>
+<p>scale: sigma に掛ける係数(既定 1.0)。</p>
+<p>Returns:</p>
+<p>dict(`<code style="color:#22d3bf">mu</code><code style="color:#22d3bf"> (N,3) / </code><code style="color:#22d3bf">sigma</code><code style="color:#22d3bf"> (N,) / </code><code style="color:#22d3bf">w</code>` (N,))。</p>
+<p>Raises:</p>
+<p>ValueError: N &lt; 2 / k &lt; 1 / scale &lt;= 0 / 形状不正 / 非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_roundtrip">representation_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/representation_roundtrip.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">gaussians</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:gaussians_to_points">gaussians_to_points</a> · <a style="color:#22d3bf" href="opreprconv:gaussians_to_voxel">gaussians_to_voxel</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">gaussians</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:gaussians_to_points">gaussians_to_points</a> · <a style="color:#22d3bf" href="opreprconv:gaussians_to_voxel">gaussians_to_voxel</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

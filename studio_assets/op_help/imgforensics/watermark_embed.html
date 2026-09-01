@@ -1,0 +1,44 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">watermark_embed — IMGFORENSICS <code style="color:#22d3bf">watermark</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × phash</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import imgforensics; imgforensics.watermark_embed(image, bits, strength: &#x27;float&#x27; = 0.1, wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">opsimgforensics.get(&quot;watermark_embed&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>DWT-DCT <b>電子透かし</b>の埋め込み。透かし入り画像 `<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> を返す。</code><code style="color:#22d3bf">image2d</code>`。</p>
+<p>1 段 DWT(既定 haar)の LL 副帯域を 8x8 に切り、各ブロックの直交 DCT-II の</p>
+<p><b>中帯域係数の対</b> `<code style="color:#22d3bf">(3,1)</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">(1,3)</code>` の大小関係で 1 ビットを表す</p>
+<p>(Hsu &amp; Wu 1999 の中帯域係数対法)。差が `<code style="color:#22d3bf">strength</code>` 未満なら差が</p>
+<p>`<code style="color:#22d3bf">strength</code>` になるまで <b>対称に</b>動かす(片方だけ動かすとブロックの</p>
+<p>エネルギーが偏る)。抽出に原画像は要らない(ブラインド)。</p>
+<p>容量は `<code style="color:#22d3bf">(LL の高さ // 8) * (LL の幅 // 8)</code><code style="color:#22d3bf"> ビット。</code><code style="color:#22d3bf">bits</code>` がそれより短ければ</p>
+<p>先頭から埋め、残りのブロックは触らない。長ければ :class:<code style="color:#22d3bf">ValueError</code>。</p>
+<p>`<code style="color:#22d3bf">bits</code><code style="color:#22d3bf"> は bool の 1-D(</code><code style="color:#22d3bf">phash</code>` 語彙)。0/1 の int 配列も受けるが、</p>
+<p><b>float は受けない</b>(丸めの向きを黙って決めない)。</p>
+<p>強度と画質のトレードオフは :func:<code style="color:#22d3bf">watermark_capacity</code> が掃引して表で返す。</p>
+<p>実測(256x256 のテクスチャ画像・128 ビット、LL は 128x128 = 容量 256 ビット。</p>
+<p>`<code style="color:#22d3bf">tests/test_imgforensics.py::test_watermark_strength_psnr_tradeoff</code>`):</p>
+<p>========= ========== ====== ================= =================</p>
+<p>strength  PSNR (dB)  BER    BER(JPEG 品質 90) BER(JPEG 品質 75)</p>
+<p>========= ========== ====== ================= =================</p>
+<p>0.02      45.48      0.000  0.008             0.195</p>
+<p>0.05      44.48      0.000  0.000             0.008</p>
+<p>0.10      42.95      0.000  0.000             0.000</p>
+<p>0.20      40.32      0.000  0.000             0.000</p>
+<p>0.40      36.37      0.000  0.000             0.000</p>
+<p>========= ========== ====== ================= =================</p>
+<p><b>これがトレードオフの実体</b>である。無加工なら最弱の 0.02 でも誤り 0 だが、</p>
+<p>JPEG 品質 75 を通すと 19.5% が化ける。既定の 0.1 は「品質 75 まで誤り 0、</p>
+<p>PSNR 42.95 dB」の点として選んである(`<code style="color:#22d3bf">clipped</code>` はどの強度でも 0)。</p>
+<p><b>PyWavelets 必須</b>(:class:<code style="color:#22d3bf">ImportError</code>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:perceptual_hash">perceptual_hash</a> · <a style="color:#22d3bf" href="opimgforensics:fingerprint_correlate">fingerprint_correlate</a> · <a style="color:#22d3bf" href="opimgforensics:error_level_map">error_level_map</a> · <a style="color:#22d3bf" href="opimgforensics:jpeg_quality_estimate">jpeg_quality_estimate</a> · <a style="color:#22d3bf" href="opimgforensics:jpeg_ghost_map">jpeg_ghost_map</a> · <a style="color:#22d3bf" href="opimgforensics:noise_inconsistency_map">noise_inconsistency_map</a> · <a style="color:#22d3bf" href="opimgforensics:copy_move_regions">copy_move_regions</a> · <a style="color:#22d3bf" href="opimgforensics:watermark_extract">watermark_extract</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">watermark</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:watermark_extract">watermark_extract</a> · <a style="color:#22d3bf" href="opimgforensics:watermark_capacity">watermark_capacity</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgforensics.py — IMGFORENSICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

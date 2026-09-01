@@ -1,0 +1,45 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vol_label_color_flicker — VOLCOLOR <code style="color:#22d3bf">diagnose</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import volcolor; volcolor.vol_label_color_flicker(vol_binary, axis=&#x27;z&#x27;, seed: &#x27;int&#x27; = 0, connectivity: &#x27;int&#x27; = 26, connectivity_2d: &#x27;int&#x27; = 8)</code> (または <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_color_flicker&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>「切ってから色を付ける」と「色を付けてから切る」の差を<b>数える</b>。</p>
+<p>同じ 2 値ボリュームに対して 2 通りの手順を踏む:</p>
+<p>A. <b>スライスごと</b> ―― 各断面を 2-D で連結成分ラベリングし、</p>
+<p>:func:<code style="color:#22d3bf">imgio.colorize_labels</code> と同じパレットで色を付ける。</p>
+<p>断面ごとに番号が振り直されるので、同じ部品でも層が変われば色が変わりうる。</p>
+<p>B. <b>ボリュームで</b> ―― :func:<code style="color:#22d3bf">volops.vol_label</code> でラベリングしてから</p>
+<p>:func:<code style="color:#22d3bf">vol_colorize_labels</code> で色を付け、あとで切る。</p>
+<p>返りは dict:</p>
+<p>`<code style="color:#22d3bf">n_components</code><code style="color:#22d3bf"> 3-D 成分数 · </code><code style="color:#22d3bf">n_slices</code>` 断面の数 ·</p>
+<p>`<code style="color:#22d3bf">slices_with_change</code>` <b>A で 1 つ以上の成分の色が変わった断面の本数</b> ·</p>
+<p>`<code style="color:#22d3bf">changed_pairs</code>` A で色が変わった (成分, 断面) の組の数 ·</p>
+<p>`<code style="color:#22d3bf">changed_components</code>` A で一度でも色が変わった成分の数 ·</p>
+<p>`<code style="color:#22d3bf">volume_slices_with_change</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">volume_changed_pairs</code>` /</p>
+<p>`<code style="color:#22d3bf">volume_changed_components</code>` B の同じ量(<b>構造上 0</b>) ·</p>
+<p>`<code style="color:#22d3bf">pairs_checked</code>` 比較した (成分, 断面) の総数 ·</p>
+<p>`<code style="color:#22d3bf">flicker_rate</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">changed_pairs / pairs_checked</code>`。</p>
+<p>比較の定義:各 3-D 成分 `<code style="color:#22d3bf">c</code><code style="color:#22d3bf"> について、</code><code style="color:#22d3bf">c</code>` が現れる最初の断面での色を</p>
+<p>基準とし、以降の断面で `<code style="color:#22d3bf">c</code>` の画素の<b>最頻色</b>が基準と違えば 1 件と数える</p>
+<p>(1 つの 3-D 成分が 1 断面で複数の 2-D 片に割れることがあるため、代表は</p>
+<p>最頻色。同数の場合は RGB の辞書順で小さい方 = 決定的)。</p>
+<p>実測(`<code style="color:#22d3bf">(24, 48, 48)</code>`・16 球の参照ファントム、seed=0、axis=&quot;z&quot;、</p>
+<p>`<code style="color:#22d3bf">connectivity=26</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">connectivity_2d=8</code><code style="color:#22d3bf">):</code><code style="color:#22d3bf">pairs_checked=108</code>`、</p>
+<p>`<code style="color:#22d3bf">slices_with_change=20 / 24</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">changed_pairs=62</code>`(57.4 %)、</p>
+<p>`<code style="color:#22d3bf">changed_components=16 / 16</code>`。B 側は 3 つとも 0 ―― **構造上 0 であって、</p>
+<p>たまたま 0 なのではない**(ラベル番号がボリューム全体で一意だから)。</p>
+<p>Raises `<code style="color:#22d3bf">ValueError</code>` for a bad volume, an unknown *axis*, or a *connectivity*</p>
+<p>that is not 6 / 18 / 26 (2-D: 4 / 8).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:voxel_labels_color">voxel_labels_color</a> — <code style="color:#22d3bf">py -3.11 examples/voxel_labels_color.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">diagnose</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: volcolor.py — VOLCOLOR operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

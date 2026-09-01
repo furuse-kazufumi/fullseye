@@ -1,0 +1,38 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fbp_volume — TOMOGRAPHY <code style="color:#22d3bf">volume</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">sinostack</code> → <code style="color:#22d3bf">voxel</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import tomography; tomography.fbp_volume(stack, angles_deg=None, size=None, filter_name=&#x27;ramp&#x27;, cutoff=1.0, span_deg=None)</code> (または <code style="color:#22d3bf">opstomography.get(&quot;fbp_volume&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Reconstruct every sinogram of a `<code style="color:#22d3bf">(Z, A, D)</code><code style="color:#22d3bf"> stack -&gt; a </code><code style="color:#22d3bf">(Z, S, S)</code>` volume.</p>
+<p>The inverse of :func:<code style="color:#22d3bf">radon_volume</code>, slice by slice. The result is a plain</p>
+<p>volume and every existing 3-D operator applies to it directly — windowing,</p>
+<p>labelling, boundary extraction, marching cubes — which is the point of</p>
+<p>returning `<code style="color:#22d3bf">voxel</code>` rather than something tomography-specific.</p>
+<p>One number worth carrying into that pipeline: the reconstructed slice grid is</p>
+<p>isotropic <b>in-plane only</b>. The slice spacing is whatever the scan used, and</p>
+<p>it is usually coarser; the volume itself does not carry it. Passing this</p>
+<p>volume to a measurement without its spacing is the most common way a</p>
+<p>tomographic volume becomes a wrong number — see</p>
+<p>`<code style="color:#22d3bf">examples/tomography_reconstruct.py</code>`, which measures the size of the error.</p>
+<p>:param stack: `<code style="color:#22d3bf">(Z, n_angles, n_detectors)</code>`.</p>
+<p>:param angles_deg: view angles; `<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> -&gt; uniform </code><code style="color:#22d3bf">[0, 180)</code>`.</p>
+<p>:param size: output side per slice; `<code style="color:#22d3bf">None</code>` -&gt; the inscribed square.</p>
+<p>:param filter_name: one of :data:<code style="color:#22d3bf">FILTERS</code>.</p>
+<p>:param cutoff: fraction of Nyquist to keep.</p>
+<p>:param span_deg: angular range for the `<code style="color:#22d3bf">d(theta)</code>` weight.</p>
+<p>:returns: `<code style="color:#22d3bf">(Z, size, size)</code>` float64 volume.</p>
+<p>:raises ValueError: on a non-3-D stack, or an output over</p>
+<p>:data:<code style="color:#22d3bf">MAX_STACK_ELEMENTS</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:tomography_reconstruct">tomography_reconstruct</a> — <code style="color:#22d3bf">py -3.11 examples/tomography_reconstruct.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">voxel</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="optomography:radon_volume">radon_volume</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">volume</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:radon_volume">radon_volume</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tomography.py — TOMOGRAPHY operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

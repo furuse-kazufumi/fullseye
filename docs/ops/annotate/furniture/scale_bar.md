@@ -1,0 +1,69 @@
+---
+op: scale_bar
+dim: annotate
+category: furniture
+in: image2d
+out: image2d
+examples: [annotate_gallery]
+author: Kazufumi Furuse
+license: Apache-2.0
+version: 0.1.0  # fullseye lib version this note was generated for
+---
+
+# scale_bar — ANNOTATE `furniture` op
+
+- **データ種**: `image2d` → `image2d`
+- **呼び出し**: `import annotate; annotate.scale_bar(img, length, units_per_pixel, unit='µm', xy=None, anchor='rb', color='neutral', thickness=5, margin=14, font_size=13, label=True, label_fmt='{:g}', font_path=None, scheme='okabe_ito', text_color=None)` (または `opsannotate.get("scale_bar")`)
+
+## 使い方
+
+物理長のスケールバー。**画素↔物理の換算は引数で受ける**(勝手に決めない)。
+
+バーの画素長は ``round(length / units_per_pixel)`` ―― これが構成的な真値で、
+:mod:`tests.test_annotate` はこの一致を数字で確かめている。
+
+Parameters
+----------
+length : float
+    バーが表す物理長(``unit`` の単位で)。
+units_per_pixel : float
+    1 画素が何 ``unit`` に相当するか。倍率ではなく**分解能**を渡す。
+unit : str
+    単位の表記(``'µm'``, ``'mm'``, ``'px'`` など)。
+xy : (x,y) or None
+    バーの基準点。None なら ``anchor`` 側の隅から ``margin`` 内側。
+label : bool
+    ``"200 µm"`` のラベルを併記するか。
+
+Returns
+-------
+ndarray
+
+Raises
+------
+ValueError
+    length / units_per_pixel が非正・非有限、画素長が 1 未満、
+    バー(とラベル)が画像に収まらない。
+
+## 参考(サンプルデータ・文献)
+
+- [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
+- [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
+- アルゴリズムの正典(著者・年)と用途は上記**ファミリ使い方ガイド**に記載。
+
+## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
+
+- [annotate_gallery](../../../../examples/annotate_gallery.py) — `py -3.11 examples/annotate_gallery.py`
+
+## 型が繋がる次の op(`image2d` を入力に取れる)
+
+[text_box](../text/text_box.md) · [arrow](../pointer/arrow.md) · [leader_line](../pointer/leader_line.md) · [label_points](../pointer/label_points.md) · [crosshair](../pointer/crosshair.md) · [legend_box](legend_box.md) · [color_bar](color_bar.md) · [axes_frame](../plot/axes_frame.md)
+
+## 同カテゴリ(`furniture`)
+
+[legend_box](legend_box.md) · [color_bar](color_bar.md)
+
+---
+*Provenance: annotate.py — ANNOTATE operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
+
+© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

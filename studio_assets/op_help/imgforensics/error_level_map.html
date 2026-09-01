@@ -1,0 +1,45 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">error_level_map — IMGFORENSICS <code style="color:#22d3bf">compression</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import imgforensics; imgforensics.error_level_map(image, quality: &#x27;int&#x27; = 90, normalize: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">opsimgforensics.get(&quot;error_level_map&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>ELA(誤差レベル解析)。指定品質で <b>再圧縮した差分</b>の地図を返す。`<code style="color:#22d3bf">image2d</code>`。</p>
+<p>Krawetz 2007。JPEG は 8x8 ブロックごとに量子化するので、<b>一度圧縮された領域</b>は</p>
+<p>同じ品質で再圧縮しても誤差が小さく、<b>後から貼られた / 描かれた領域</b>は誤差が</p>
+<p>大きく残る、という考え方に基づく。</p>
+<p>`<code style="color:#22d3bf">normalize=True</code>`(既定)なら最大値で割って [0, 1] にする(見るため)。</p>
+<p>`<code style="color:#22d3bf">False</code>` なら 8 bit 階調そのままの絶対誤差(数えるため)。</p>
+<p>**Pillow が無ければ :class:<code style="color:#22d3bf">ImportError</code>。近似には落ちない。** DCT の量子化だけを</p>
+<p>numpy で真似ると、符号化器の丸め・色空間変換・チャネル間引きが消えた *別物* に</p>
+<p>なる。それを ELA と名乗ると、この族が潰そうとしている「もっともらしく間違う」を</p>
+<p>自分でやることになる。</p>
+<p><b>この地図が言えないこと</b>(`<code style="color:#22d3bf">tests/test_imgforensics.py</code>` が数で固定。</p>
+<p>256x256 の 1/f^1.6 画像の中央 64x64 に別画像を貼ったもの):</p>
+<p>==================================== =============== =============== =========</p>
+<p>元の画像                             貼付部の ELA    背景の ELA      比</p>
+<p>==================================== =============== =============== =========</p>
+<p><b>無圧縮</b>(一度も JPEG を通らない)  0.1966          0.1793          <b>1.096</b></p>
+<p>一度 JPEG 品質 75 を通した           0.1966          0.0401          <b>4.898</b></p>
+<p>==================================== =============== =============== =========</p>
+<p style="margin:2px 0 2px 12px">• <b>無圧縮 PNG では何も言えない</b>。上の 1.096 倍は「貼った所と貼っていない所が</p>
+<p>区別できない」という意味である。**ELA が意味を持つのは「元が JPEG」のとき</p>
+<p>だけ**で、そのとき初めて 4.898 倍という差になる。</p>
+<p style="margin:2px 0 2px 12px">• よく言われる「ELA は高周波を追っているだけ」も、この画像では成り立たない ——</p>
+<p>ELA と Sobel 勾配強度の相関は <b>0.003</b>(無圧縮)/ <b>0.057</b>(JPEG 済み)。</p>
+<p>ELA は 8x8 ブロックの量子化残差を見ているので、勾配とは別のものを測っている。</p>
+<p>それでも上の表のとおり <b>無圧縮では改竄を分離しない</b>。「勾配の言い換えだから</p>
+<p>駄目」なのではなく、<b>比べる基準になる量子化履歴が無いから駄目</b>である。</p>
+<p style="margin:2px 0 2px 12px">• 平坦な領域は圧縮しても誤差が出ないので、<b>改竄されていても暗いまま</b>になる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:perceptual_hash">perceptual_hash</a> · <a style="color:#22d3bf" href="opimgforensics:fingerprint_correlate">fingerprint_correlate</a> · <a style="color:#22d3bf" href="opimgforensics:jpeg_quality_estimate">jpeg_quality_estimate</a> · <a style="color:#22d3bf" href="opimgforensics:jpeg_ghost_map">jpeg_ghost_map</a> · <a style="color:#22d3bf" href="opimgforensics:noise_inconsistency_map">noise_inconsistency_map</a> · <a style="color:#22d3bf" href="opimgforensics:copy_move_regions">copy_move_regions</a> · <a style="color:#22d3bf" href="opimgforensics:watermark_embed">watermark_embed</a> · <a style="color:#22d3bf" href="opimgforensics:watermark_extract">watermark_extract</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">compression</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:jpeg_quality_estimate">jpeg_quality_estimate</a> · <a style="color:#22d3bf" href="opimgforensics:jpeg_ghost_map">jpeg_ghost_map</a> · <a style="color:#22d3bf" href="opimgforensics:jpeg_ghost_quality">jpeg_ghost_quality</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgforensics.py — IMGFORENSICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

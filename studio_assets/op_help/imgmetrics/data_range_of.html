@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">data_range_of — IMGMETRICS <code style="color:#22d3bf">report</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import imgmetrics; imgmetrics.data_range_of(*arrays, data_range=None)</code> (または <code style="color:#22d3bf">opsimgmetrics.get(&quot;data_range_of&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>画素値が取りうる幅を決める。<b>推測はしない</b>。</p>
+<p>整数 dtype は dtype から一意に決まる。float は `<code style="color:#22d3bf">[0, 1]</code>` に収まっている</p>
+<p>ときだけ 1.0 とみなし、それ以外は `<code style="color:#22d3bf">data_range</code>` の明示を要求する。</p>
+<p>`<code style="color:#22d3bf">[0, 1]</code>` の float を 255 だと思って PSNR を測ると <b>48.13 dB</b> ずれるが</p>
+<p>例外は出ない ―― それらしい数値が出るだけなので、ここで止める。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>*arrays : ndarray</p>
+<p>同じ画素値の約束を共有するはずの配列(通常 2 枚)。</p>
+<p>data_range : float, optional</p>
+<p>明示する場合の幅。正の有限値でなければ `<code style="color:#22d3bf">ValueError</code>`。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>float</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">scalar</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">report</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:compare_images">compare_images</a> · <a style="color:#22d3bf" href="opimgmetrics:measure_with">measure_with</a> · <a style="color:#22d3bf" href="opimgmetrics:metrics_table">metrics_table</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgmetrics.py — IMGMETRICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vector_to_shift — REPRCONV <code style="color:#22d3bf">algebra</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">vector</code> → <code style="color:#22d3bf">shift</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import reprconv; reprconv.vector_to_shift(vector)</code> (または <code style="color:#22d3bf">opsreprconv.get(&quot;vector_to_shift&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>`<code style="color:#22d3bf">vector (3,)</code><code style="color:#22d3bf"> → 整数シフト </code><code style="color:#22d3bf">(dz, dy, dx)</code><code style="color:#22d3bf">。:func:</code>shift_to_vector` の逆向き。</p>
+<p><b>不可逆</b>(最近接整数へ丸める)。落ちる量は丸め残差そのもので、</p>
+<p>`<code style="color:#22d3bf">|v - round(v)| &lt;= 0.5</code>` が各軸の上界。整数を渡した往復だけが bit 一致する。</p>
+<p>Args:</p>
+<p>vector: (3,)。</p>
+<p>Returns:</p>
+<p>3-tuple の int。</p>
+<p>Raises:</p>
+<p>ValueError: (3,) でない / 非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">shift</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:shift_to_vector">shift_to_vector</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">algebra</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:angle_to_matrix">angle_to_matrix</a> · <a style="color:#22d3bf" href="opreprconv:matrix_to_angle">matrix_to_angle</a> · <a style="color:#22d3bf" href="opreprconv:rot_scale_to_matrix">rot_scale_to_matrix</a> · <a style="color:#22d3bf" href="opreprconv:matrix_to_rot_scale">matrix_to_rot_scale</a> · <a style="color:#22d3bf" href="opreprconv:shift_to_vector">shift_to_vector</a> · <a style="color:#22d3bf" href="opreprconv:cscalar_to_polar">cscalar_to_polar</a> · <a style="color:#22d3bf" href="opreprconv:polar_to_cscalar">polar_to_cscalar</a> · <a style="color:#22d3bf" href="opreprconv:countrate_to_counts">countrate_to_counts</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

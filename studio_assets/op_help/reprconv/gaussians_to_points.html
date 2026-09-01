@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gaussians_to_points — REPRCONV <code style="color:#22d3bf">gaussians</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">gaussians</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import reprconv; reprconv.gaussians_to_points(gaussians)</code> (または <code style="color:#22d3bf">opsreprconv.get(&quot;gaussians_to_points&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>`<code style="color:#22d3bf">gaussians</code><code style="color:#22d3bf"> → 中心の点群 </code><code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">gaussians</code>` の出口(<b>中心は可逆</b>)。</p>
+<p>Args:</p>
+<p>gaussians: `<code style="color:#22d3bf">mu</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">sigma</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">w</code>` を持つ dict。</p>
+<p>Returns:</p>
+<p>(N, 3) float64(`<code style="color:#22d3bf">mu</code>` のコピー)。</p>
+<p>Raises:</p>
+<p>ValueError: キー欠落 / 形状不整合 / sigma &lt;= 0 / 非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_roundtrip">representation_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/representation_roundtrip.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">points</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:points_zyx_to_keypoints_uv">points_zyx_to_keypoints_uv</a> · <a style="color:#22d3bf" href="opreprconv:points_to_position">points_to_position</a> · <a style="color:#22d3bf" href="opreprconv:select_points">select_points</a> · <a style="color:#22d3bf" href="opreprconv:flow_apply">flow_apply</a> · <a style="color:#22d3bf" href="opreprconv:points_to_gaussians">points_to_gaussians</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">gaussians</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:points_to_gaussians">points_to_gaussians</a> · <a style="color:#22d3bf" href="opreprconv:gaussians_to_voxel">gaussians_to_voxel</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

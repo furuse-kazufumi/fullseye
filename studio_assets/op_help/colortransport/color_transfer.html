@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">color_transfer — COLORTRANSPORT <code style="color:#22d3bf">matching</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgbimage × rgbimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import colortransport; colortransport.color_transfer(src, ref, method=&#x27;reinhard&#x27;, space=&#x27;lab&#x27;)</code> (または <code style="color:#22d3bf">opscolortransport.get(&quot;color_transfer&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>`<code style="color:#22d3bf">src</code><code style="color:#22d3bf"> の色味を </code><code style="color:#22d3bf">ref</code>` に寄せる。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>src, ref : array_like</p>
+<p>`<code style="color:#22d3bf">(..., 3)</code><code style="color:#22d3bf"> の sRGB(</code><code style="color:#22d3bf">[0, 1]</code>` の float、または整数 dtype)。</p>
+<p>大きさは違ってよい(統計だけを使う)。</p>
+<p>method : {&quot;reinhard&quot;, &quot;gaussian&quot;, &quot;histogram&quot;}</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;reinhard&quot;</code>` —— 各チャネルの平均と標準偏差だけ合わせる</p>
+<p>(Reinhard, Ashikhmin, Gooch &amp; Shirley, IEEE CG&amp;A 21(5), 2001)。</p>
+<p><b>各チャネルが単峰の正規分布</b>という仮定が効いている。</p>
+<p>前景と背景がはっきり分かれた 二峰の絵では、平均と分散は合うのに</p>
+<p><b>どちらの峰にも当たらない色</b>になる(例外は出ない)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;gaussian&quot;</code>` —— 共分散ごと運ぶ Monge 写像。<b>相関が保たれる</b>。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;histogram&quot;</code>` —— チャネルごとに厳密なヒストグラム整合。</p>
+<p>周辺分布は完全に一致するが、<b>チャネル間の相関は壊れる</b>。</p>
+<p>space : {&quot;lab&quot;, &quot;rgb&quot;}</p>
+<p>統計を取る空間。既定の `<code style="color:#22d3bf">lab</code><code style="color:#22d3bf"> は :mod:</code>imgmetrics` の実体を使う。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>ndarray</p>
+<p>`<code style="color:#22d3bf">src</code><code style="color:#22d3bf"> と同じ形の sRGB </code><code style="color:#22d3bf">[0, 1]</code>`(色域外は切り詰められる)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">rgbimage</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">matching</code>)</h3>
+<p><a style="color:#22d3bf" href="opcolortransport:histogram_match">histogram_match</a> · <a style="color:#22d3bf" href="opcolortransport:gaussian_transport_map">gaussian_transport_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: colortransport.py — COLORTRANSPORT operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

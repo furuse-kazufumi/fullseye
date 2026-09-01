@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">indices_to_labels — REPRCONV <code style="color:#22d3bf">index</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">indices</code> → <code style="color:#22d3bf">labels</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import reprconv; reprconv.indices_to_labels(indices)</code> (または <code style="color:#22d3bf">opsreprconv.get(&quot;indices_to_labels&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>添字 `<code style="color:#22d3bf">(N,)</code><code style="color:#22d3bf"> → 選択マスク </code><code style="color:#22d3bf">labels</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">indices</code>` の出口(<b>可逆</b>)。</p>
+<p>`<code style="color:#22d3bf">max(indices) + 1</code>` 長の 1-D ラベル配列を作り、選ばれた位置に 1 を置く。</p>
+<p>`<code style="color:#22d3bf">indices -&gt; labels -&gt; indices</code>` は <b>bit 一致</b>(重複と順序を除く)。</p>
+<p>逆向き `<code style="color:#22d3bf">labels -&gt; indices -&gt; labels</code>` は<b>末尾の背景を落とす</b></p>
+<p>(長さが `<code style="color:#22d3bf">max_index + 1</code>` に切り詰まる)—— これは情報の損失であって</p>
+<p>バグではないので、:func:<code style="color:#22d3bf">labels_to_indices</code> の docstring に量を書いてある。</p>
+<p>Args:</p>
+<p>indices: (N,) の非負整数配列。</p>
+<p>Returns:</p>
+<p>(max + 1,) の int64 ラベル配列(選択 = 1、背景 = 0)。</p>
+<p>Raises:</p>
+<p>ValueError: 1-D でない / 負 / 空 / 上限超。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">labels</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:labels_to_indices">labels_to_indices</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">index</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:labels_to_indices">labels_to_indices</a> · <a style="color:#22d3bf" href="opreprconv:select_points">select_points</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

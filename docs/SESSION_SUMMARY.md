@@ -3,49 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-02 07:59:34
+- **最終更新**: 2026-09-02 08:16:16
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-7c35f958e auto: gen_wingastro_gallery.py 編集前 (2026-09-02 07:59)
-0345d358b auto: gen_wingastro_gallery.py 編集前 (2026-09-02 07:58)
-5313e77bc auto: gen_wingastro_gallery.py 編集前 (2026-09-02 07:58)
-a6ae80247 auto: gen_wingastro_gallery.py 編集前 (2026-09-02 07:57)
-2af79adb4 auto: gen_wingastro_gallery.py 編集前 (2026-09-02 07:57)
-5846203b7 auto: gen_wingastro_gallery.py 編集前 (2026-09-02 07:57)
-c3ce52fa2 auto: test_imgforensics.py 編集前 (2026-09-02 07:57)
-b91fde21d auto: imgforensics.py 編集前 (2026-09-02 07:56)
-f1a68f032 auto: gen_wingastro_gallery.py 編集前 (2026-09-02 07:56)
-bbc7c319c auto: gen_wingastro_gallery.py 編集前 (2026-09-02 07:55)
+0a1242c36 auto: opdocs.py 編集前 (2026-09-02 08:12)
+20ad8f528 auto: test_metriccontract.py 編集前 (2026-09-02 08:07)
+0a4e9d576 auto: astrostack.py 編集前 (2026-09-02 08:06)
+859b85e69 auto: metriccontract.py 編集前 (2026-09-02 08:05)
+b041cd66d auto: gen_wingastro_gallery.py 編集前 (2026-09-02 08:02)
+2941f840d auto: gen_wingastro_gallery.py 編集前 (2026-09-02 08:02)
+aa73baedd auto: gen_wingastro_gallery.py 編集前 (2026-09-02 08:01)
+cf4616481 auto: gen_wingastro_gallery.py 編集前 (2026-09-02 08:01)
+eb137ae00 auto: gen_wingastro_gallery.py 編集前 (2026-09-02 08:01)
+812af8d95 auto: gen_wingastro_gallery.py 編集前 (2026-09-02 08:01)
 ```
 
 ## 現在の git status
 
 ```
-M tools/gen_wingastro_gallery.py
+M tools/opdocs.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-07:59 tools/gen_wingastro_gallery.py
-07:59 docs/articles/exhibits/wingastro.ja.md
-07:59 docs/articles/exhibits/wingastro.en.md
-07:59 docs/articles/assets/wingastro_photometry_thumb.jpg
-07:59 docs/articles/assets/_wingastro_meta.json
-07:59 docs/articles/assets/wingastro_photometry.png
-07:59 docs/articles/assets/wingastro_align_thumb.jpg
-07:59 docs/articles/assets/wingastro_align.png
-07:59 docs/articles/assets/thumbs/wingastro_clip_breakdown_thumb.jpg
-07:59 docs/articles/assets/media/wingastro_clip_breakdown.gif
-07:59 docs/articles/assets/wingastro_drizzle_pair_thumb.jpg
-07:59 docs/articles/assets/wingastro_drizzle_pair.png
-07:59 docs/articles/assets/wingastro_drizzle_flux_thumb.jpg
-07:59 docs/articles/assets/wingastro_drizzle_flux.png
-07:59 docs/articles/assets/thumbs/wingastro_drizzle_thumb.jpg
+08:13 tools/opdocs.py
+08:10 .pytest_cache/v/cache/nodeids
+08:10 docs/articles/fullseye_overview_qiita_en.md
+08:10 docs/articles/fullseye_overview_qiita_ja.md
+08:10 fullseye/__init__.py
+08:10 pyproject.toml
+08:10 api.py
+08:10 docs/articles/exhibits/wings.json
+08:10 tests/test_fssystem.py
+08:09 imgmetrics.py
+08:09 colortransport.py
+08:09 fssystem.py
+08:07 tests/test_metriccontract.py
+08:06 astrostack.py
+08:06 docs/articles/exhibits/wingastro.ja.md
 ```
 
 ---

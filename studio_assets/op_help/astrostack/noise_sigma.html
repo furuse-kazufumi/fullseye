@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">noise_sigma — ASTROSTACK <code style="color:#22d3bf">quality</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import astrostack; astrostack.noise_sigma(image, method=&#x27;mad&#x27;, kappa=3.0, iters=5)</code> (または <code style="color:#22d3bf">opsastrostack.get(&quot;noise_sigma&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>背景の雑音 sigma を頑健に推定する(星に汚されない一つの実数)。</p>
+<p>*method* `<code style="color:#22d3bf">&quot;mad&quot;</code><code style="color:#22d3bf"> は中央絶対偏差の </code><code style="color:#22d3bf">1.4826</code>` 倍(正規分布のときに標準偏差と</p>
+<p>一致する定数)。`<code style="color:#22d3bf">&quot;clip&quot;</code><code style="color:#22d3bf"> は対称な κ-σ クリップを </code><code style="color:#22d3bf">iters</code>` 回。星は上側だけの</p>
+<p>外れ値なので、素の `<code style="color:#22d3bf">std</code>` を使うと<b>星が明るいほど「雑音」が大きく</b>なる</p>
+<p>—— 128x128 に 40 星(フラックス 3e3〜4e4 e-)、真の背景 σ が</p>
+<p>`<code style="color:#22d3bf">sqrt(100 + 36) = 11.662</code><code style="color:#22d3bf"> のフレームでの実測: 素の </code><code style="color:#22d3bf">np.std</code>` は</p>
+<p><b>175.43(真値の 15.0 倍)</b>、`<code style="color:#22d3bf">method=&quot;mad&quot;</code>` は 13.804(+18.4 %)、</p>
+<p>`<code style="color:#22d3bf">method=&quot;clip&quot;</code>` は 12.349(+5.9 %)。MAD が 1 % で当たるのは星がまばらな</p>
+<p>ときだけで、<b>混み合った視野では星の裾が背景に効く</b> —— そこまで要求する</p>
+<p>なら `<code style="color:#22d3bf">&quot;clip&quot;</code><code style="color:#22d3bf"> を選ぶこと。桁が違うのは </code><code style="color:#22d3bf">std</code>` だけで、そこが要点。</p>
+<p>`<code style="color:#22d3bf">sqrt(N)</code>` 則を絵にするとき図に載せる数値は、すべてこの op の返り。</p>
+<p>Returns `<code style="color:#22d3bf">float</code>`(*image* と同じ単位)。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 2-D でない / 非有限を含む / *method* が</p>
+<p>:data:<code style="color:#22d3bf">NOISE_METHODS</code> にない場合。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:acoustic_condition_monitoring">acoustic_condition_monitoring</a> — <code style="color:#22d3bf">py -3.11 examples/acoustic_condition_monitoring.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">measurement</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">quality</code>)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:frame_quality">frame_quality</a> · <a style="color:#22d3bf" href="opastrostack:lucky_select">lucky_select</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: astrostack.py — ASTROSTACK operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

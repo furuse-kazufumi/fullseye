@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">keypoints_from_image2d — REPRCONV <code style="color:#22d3bf">keypoint</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">keypoints</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import reprconv; reprconv.keypoints_from_image2d(image2d, threshold=0.0)</code> (または <code style="color:#22d3bf">opsreprconv.get(&quot;keypoints_from_image2d&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>計数/応答画像 `<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> → 画像座標 </code><code style="color:#22d3bf">(N,2) = (u, v)</code>`。往復の戻り路。</p>
+<p>`<code style="color:#22d3bf">&gt; threshold</code>` の画素を 8 近傍で連結成分に分け、各成分の**強度重み付き</p>
+<p>重心**を返す。重み付きにするのは、副画素の情報が残っている応答画像</p>
+<p>(相関ピーク等)で往復誤差を量子化以下へ落とせるようにするため。</p>
+<p><b>8 近傍の連結が損失の主犯</b>である点に注意: 隣り合う画素に落ちた 2 点は</p>
+<p>1 つの成分に融合し、重心が 2 点の中間へ動く。`<code style="color:#22d3bf">selftest</code>` は</p>
+<p>「よく離れた点だけの量子化誤差」と「融合を含む全体」を<b>別々に</b>測る</p>
+<p>(混ぜると量子化の理論値 0.2887 px と比較できなくなる)。</p>
+<p>Args:</p>
+<p>image2d: (H, W) の実画像。</p>
+<p>threshold: この値を超えた画素だけを拾う。</p>
+<p>Returns:</p>
+<p>(N, 2) float64 の (u, v)。行順は `<code style="color:#22d3bf">scipy.ndimage.label</code>` のラベル順。</p>
+<p>Raises:</p>
+<p>ValueError: 2-D でない / 非有限 / 閾値を超える画素が 1 つも無い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_roundtrip">representation_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/representation_roundtrip.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">keypoints</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:keypoints_uv_to_points">keypoints_uv_to_points</a> · <a style="color:#22d3bf" href="opreprconv:keypoints_to_image2d">keypoints_to_image2d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">keypoint</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:keypoints_uv_to_points">keypoints_uv_to_points</a> · <a style="color:#22d3bf" href="opreprconv:points_zyx_to_keypoints_uv">points_zyx_to_keypoints_uv</a> · <a style="color:#22d3bf" href="opreprconv:keypoints_to_image2d">keypoints_to_image2d</a> · <a style="color:#22d3bf" href="opreprconv:position_to_points">position_to_points</a> · <a style="color:#22d3bf" href="opreprconv:points_to_position">points_to_position</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

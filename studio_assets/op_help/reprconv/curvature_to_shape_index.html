@@ -1,0 +1,38 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">curvature_to_shape_index — REPRCONV <code style="color:#22d3bf">curvature</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">curvature</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import reprconv; reprconv.curvature_to_shape_index(curvature)</code> (または <code style="color:#22d3bf">opsreprconv.get(&quot;curvature_to_shape_index&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>主曲率 `<code style="color:#22d3bf">(N,2)</code><code style="color:#22d3bf"> → 形状指数と曲がり </code><code style="color:#22d3bf">(N,2)</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">pairs</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">curvature</code>` の出口。</p>
+<p>Koenderink &amp; van Doorn, *Surface shape and curvature scales*, Image and</p>
+<p>Vision Computing 10(8) 1992 の (S, C):</p>
+<p>S = (2/pi) * atan2(k1 + k2, k1 - k2)      (k1 &gt;= k2, S in [-1, 1])</p>
+<p>C = sqrt((k1^2 + k2^2) / 2)               (曲がりの大きさ)</p>
+<p><b>除算でなく atan2 で書いてある</b>のが要点で、球状臍点 (k1 == k2) でも</p>
+<p>平面 (k1 == k2 == 0) でもゼロ除算にならず、:func:<code style="color:#22d3bf">shape_index_to_curvature</code></p>
+<p>との往復が<b>全域で厳密</b>になる(実測 max|Δ| = 4.6e-16)。教科書の</p>
+<p>`<code style="color:#22d3bf">atan((k1+k2)/(k1-k2))</code>` をそのまま実装すると臍点で NaN が出て、</p>
+<p>その NaN が下流で「暗い画素」に化ける。</p>
+<p>S = -1 は杯、0 は鞍、+1 は帽子。C は形と独立な「どれだけ曲がっているか」。</p>
+<p><b>入力順の情報だけは戻らない</b>: (k2, k1) の順で渡しても内部で k1 &gt;= k2 へ</p>
+<p>並べ替えるので、往復すると必ず降順で返る(向きの規約であり、値の損失ではない)。</p>
+<p>Args:</p>
+<p>curvature: (N, 2) の `<code style="color:#22d3bf">[k1, k2]</code>`、または 2 本の等長 1-D のタプル</p>
+<p>(`<code style="color:#22d3bf">principal_curvatures</code>` の素の返りがこれ)。</p>
+<p>Returns:</p>
+<p>(N, 2) float64。列 0 = S in [-1, 1]、列 1 = C &gt;= 0。</p>
+<p>Raises:</p>
+<p>ValueError: 形状不正 / 非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_roundtrip">representation_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/representation_roundtrip.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">pairs</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:angles_to_normals">angles_to_normals</a> · <a style="color:#22d3bf" href="opreprconv:shape_index_to_curvature">shape_index_to_curvature</a> · <a style="color:#22d3bf" href="opreprconv:pairs_to_signal">pairs_to_signal</a> · <a style="color:#22d3bf" href="opreprconv:pairs_to_image2d">pairs_to_image2d</a> · <a style="color:#22d3bf" href="opreprconv:pairs_to_table">pairs_to_table</a> · <a style="color:#22d3bf" href="opreprconv:polar_to_cscalar">polar_to_cscalar</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">curvature</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:shape_index_to_curvature">shape_index_to_curvature</a> · <a style="color:#22d3bf" href="opreprconv:curvature_to_table">curvature_to_table</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

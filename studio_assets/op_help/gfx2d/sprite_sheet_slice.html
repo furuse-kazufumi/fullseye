@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sprite_sheet_slice — GFX2D <code style="color:#22d3bf">sprite</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgba</code> → <code style="color:#22d3bf">sprites</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.sprite_sheet_slice(sheet, tile_height, tile_width, margin=0, spacing=0, count=None)</code> (または <code style="color:#22d3bf">opsgfx2d.get(&quot;sprite_sheet_slice&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Cut a sprite atlas into a list of equal `<code style="color:#22d3bf">rgba</code>` frames, row-major.</p>
+<p>`<code style="color:#22d3bf">margin</code><code style="color:#22d3bf"> is the border around the whole sheet, </code><code style="color:#22d3bf">spacing</code>` the gap between</p>
+<p>neighbouring cells — the two numbers that every atlas exporter writes and</p>
+<p>that every hand-rolled slicer gets wrong by one.</p>
+<p>Returns a `<code style="color:#22d3bf">list</code><code style="color:#22d3bf"> of </code><code style="color:#22d3bf">(tile_height, tile_width, 4)</code>` arrays. With</p>
+<p>`<code style="color:#22d3bf">margin=spacing=0</code><code style="color:#22d3bf"> it is the exact inverse of :func:</code>tilemap_render`.</p>
+<p>Raises ValueError: a sheet that does not contain a whole number of cells</p>
+<p>(a partial cell means the margin/spacing are wrong, and silently dropping it</p>
+<p>hides that), a `<code style="color:#22d3bf">count</code>` larger than the grid, more than</p>
+<p>:data:<code style="color:#22d3bf">MAX_SPRITES</code> cells.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gfx2d_scene">gfx2d_scene</a> — <code style="color:#22d3bf">py -3.11 examples/gfx2d_scene.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">sprites</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:tilemap_render">tilemap_render</a> · <a style="color:#22d3bf" href="opgfx2d:parallax_layers">parallax_layers</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">sprite</code>)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:sprite_synthesize">sprite_synthesize</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_blit">sprite_blit</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_transform">sprite_transform</a> · <a style="color:#22d3bf" href="opgfx2d:nine_slice">nine_slice</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gfx2d.py — GFX2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

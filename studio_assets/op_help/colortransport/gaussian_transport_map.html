@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gaussian_transport_map — COLORTRANSPORT <code style="color:#22d3bf">matching</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import colortransport; colortransport.gaussian_transport_map(src_samples, ref_samples)</code> (または <code style="color:#22d3bf">opscolortransport.get(&quot;gaussian_transport_map&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>2 つの点群を正規分布とみなしたときの Monge 写像 `<code style="color:#22d3bf">(A, b)</code>`。</p>
+<p>`<code style="color:#22d3bf">x -&gt; A (x - m1) + m2</code><code style="color:#22d3bf"> で、</code><code style="color:#22d3bf">A</code>` は</p>
+<p>`<code style="color:#22d3bf">S1^-1/2 (S1^1/2 S2 S1^1/2)^1/2 S1^-1/2</code>`(Bures 幾何の閉じた形)。</p>
+<p><b>共分散ごと運ぶ</b>ので、チャネル間の相関が保たれる。</p>
+<p>退化(片方の共分散が特異)では逆平方根が作れない ―― 疑似逆で誤魔化すと</p>
+<p>「運べていないのに運んだ顔をした」写像になるので `<code style="color:#22d3bf">ValueError</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">matrix</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opcolortransport:sinkhorn">sinkhorn</a> · <a style="color:#22d3bf" href="opcolortransport:sinkhorn_distance">sinkhorn_distance</a> · <a style="color:#22d3bf" href="opcolortransport:sinkhorn_divergence">sinkhorn_divergence</a> · <a style="color:#22d3bf" href="opcolortransport:transport_cost">transport_cost</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">matching</code>)</h3>
+<p><a style="color:#22d3bf" href="opcolortransport:histogram_match">histogram_match</a> · <a style="color:#22d3bf" href="opcolortransport:color_transfer">color_transfer</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: colortransport.py — COLORTRANSPORT operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

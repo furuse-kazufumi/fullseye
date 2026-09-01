@@ -1,0 +1,38 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">evidence_quantile — IMGFORENSICS <code style="color:#22d3bf">calibration</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">measurement × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import imgforensics; imgforensics.evidence_quantile(measurement, null, higher_is_stronger=True)</code> (または <code style="color:#22d3bf">opsimgforensics.get(&quot;evidence_quantile&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>証拠量が、清浄な分布の<b>どのあたりに座るか</b>を返す。判定は返さない。</p>
+<p>`<code style="color:#22d3bf">null_distribution</code>` の出力を消費する側。返すのは「清浄な組の何 % より</p>
+<p>外側か」であって、「改竄されている」ではない ―― 外側に座ることは、</p>
+<p>その条件で<b>珍しい</b>ことしか意味しない(珍しい清浄画像は存在する)。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>measurement : float</p>
+<p>測った証拠量(`<code style="color:#22d3bf">hash_distance</code>` の返り値など)。</p>
+<p>null : dict</p>
+<p>:func:<code style="color:#22d3bf">null_distribution</code> の返り値。</p>
+<p>higher_is_stronger : bool</p>
+<p>PCE や相関のように<b>大きいほど強い証拠</b>なら `<code style="color:#22d3bf">True</code>`。</p>
+<p>ハミング距離のように<b>小さいほど強い証拠</b>なら `<code style="color:#22d3bf">False</code>`。</p>
+<p><b>既定に頼らず必ず考えること</b> —— ここを間違えると、いちばん証拠の</p>
+<p>強い組が「まったく珍しくない」と出る(例外は出ない)。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>dict</p>
+<p>`<code style="color:#22d3bf">beyond_fraction</code>`(清浄分布のうち、この値より内側にある割合)/</p>
+<p>`<code style="color:#22d3bf">z</code><code style="color:#22d3bf">(標準偏差の何倍か。ばらつき 0 なら </code><code style="color:#22d3bf">None</code><code style="color:#22d3bf">)/ </code><code style="color:#22d3bf">caveats</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">calibration</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:null_distribution">null_distribution</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgforensics.py — IMGFORENSICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

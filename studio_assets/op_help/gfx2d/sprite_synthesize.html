@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sprite_synthesize — GFX2D <code style="color:#22d3bf">sprite</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>rgba`</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.sprite_synthesize(kind=&#x27;disc&#x27;, size=32, color=&#x27;emphasis&#x27;, thickness=0.25, scheme=&#x27;okabe_ito&#x27;)</code> (または <code style="color:#22d3bf">opsgfx2d.get(&quot;sprite_synthesize&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>A deterministic anti-aliased test sprite, `<code style="color:#22d3bf">rgba</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(size, size, 4)</code>`.</p>
+<p>The entry point of the sprite sort: it needs no asset on disk, and because</p>
+<p>the silhouette comes from an implicit equation the alpha channel *is* the</p>
+<p>ground-truth coverage mask — which is the whole reason this family belongs</p>
+<p>in a vision library.</p>
+<p>`<code style="color:#22d3bf">kind</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">&quot;disc&quot;</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">&quot;ring&quot;</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">&quot;box&quot;</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">&quot;diamond&quot;</code><code style="color:#22d3bf"> or </code><code style="color:#22d3bf">&quot;star&quot;</code>`.</p>
+<p>`<code style="color:#22d3bf">color</code><code style="color:#22d3bf"> is a :mod:</code>palette` role name (default) or an explicit 3/4-tuple.</p>
+<p>`<code style="color:#22d3bf">thickness</code>` is the ring&#x27;s wall as a fraction of the radius.</p>
+<p>Coverage is computed by 4x4 regular supersampling, so alpha takes values on</p>
+<p>the exact lattice `<code style="color:#22d3bf">k/16</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gfx2d_scene">gfx2d_scene</a> — <code style="color:#22d3bf">py -3.11 examples/gfx2d_scene.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">rgba</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:premultiply">premultiply</a> · <a style="color:#22d3bf" href="opgfx2d:alpha_composite">alpha_composite</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_blit">sprite_blit</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_transform">sprite_transform</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_sheet_slice">sprite_sheet_slice</a> · <a style="color:#22d3bf" href="opgfx2d:nine_slice">nine_slice</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">sprite</code>)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:sprite_blit">sprite_blit</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_transform">sprite_transform</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_sheet_slice">sprite_sheet_slice</a> · <a style="color:#22d3bf" href="opgfx2d:nine_slice">nine_slice</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gfx2d.py — GFX2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

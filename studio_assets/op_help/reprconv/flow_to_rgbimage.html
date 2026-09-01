@@ -1,0 +1,34 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">flow_to_rgbimage — REPRCONV <code style="color:#22d3bf">flow</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">flow_dense</code> → <code style="color:#22d3bf">rgbimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import reprconv; reprconv.flow_to_rgbimage(flow, index=None, scale=None)</code> (または <code style="color:#22d3bf">opsreprconv.get(&quot;flow_to_rgbimage&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>密なシーンフローの 1 スライス → 色相=向き・明度=速さの `<code style="color:#22d3bf">rgbimage</code>`。</p>
+<p>光学フローの標準的な可視化(色相環)を 3-D フローの z スライスに当てる:</p>
+<p>`<code style="color:#22d3bf">hue = atan2(dy, dx)</code><code style="color:#22d3bf">(度で 0-360)、</code><code style="color:#22d3bf">value = |(dy, dx)| / scale</code>`、</p>
+<p>彩度は 1。<b>dz は捨てる</b> —— 面内成分だけの図であることを明示する</p>
+<p>(捨てた成分を色に混ぜると「見えている色が何の量か」が誰にも言えなくなる)。</p>
+<p><b>一方向</b>。色相環の凡例は図の側で必ず一緒に焼くこと(色の意味が書いていない</p>
+<p>フロー図は、綺麗なだけで読めない)。</p>
+<p>Args:</p>
+<p>flow: (3, D, H, W)。</p>
+<p>index: 取り出す z スライス(既定 = 中央)。</p>
+<p>scale: 明度 1.0 に対応する面内速さ(既定 = そのスライスの最大値。</p>
+<p>0 なら全面黒を返す)。</p>
+<p>Returns:</p>
+<p>(H, W, 3) float64、値域 [0, 1]。</p>
+<p>Raises:</p>
+<p>ValueError: 密フローでない / index が範囲外 / scale &lt;= 0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">rgbimage</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">flow</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:flow_magnitude">flow_magnitude</a> · <a style="color:#22d3bf" href="opreprconv:flow_speed">flow_speed</a> · <a style="color:#22d3bf" href="opreprconv:flow_apply">flow_apply</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

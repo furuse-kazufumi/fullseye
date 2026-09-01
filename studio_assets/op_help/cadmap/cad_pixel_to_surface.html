@@ -1,0 +1,49 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cad_pixel_to_surface — CADMAP <code style="color:#22d3bf">raycast</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">mesh × keypoints</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import cadmap; cadmap.cad_pixel_to_surface(mesh, pixels, K=None, R=None, t=None, cull_backfaces=True, image_size=None, strict=False)</code> (または <code style="color:#22d3bf">opscadmap.get(&quot;cad_pixel_to_surface&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>画素 (N,2) → CAD 面上の `<code style="color:#22d3bf">(face_id, 重心座標, 3-D 点)</code>`(閉形式)。</p>
+<p>画素ごとに視線を作り(`<code style="color:#22d3bf">camera.py</code><code style="color:#22d3bf"> 規約: 中心は整数座標、</code><code style="color:#22d3bf">u</code>` = 列、</p>
+<p>`<code style="color:#22d3bf">v</code>` = 行)、Möller-Trumbore で全三角形と交差させ、<b>最も手前の当たり</b>を</p>
+<p>採る。当たらない画素には `<code style="color:#22d3bf">face_id = -1</code>` を返し、**最寄りの面へは絶対に</p>
+<p>丸めない**(検査で「欠陥が背景に載っていた」を「面 17 の欠陥」に化けさせない</p>
+<p>ため)。`<code style="color:#22d3bf">cull_backfaces=True</code>`(既定)では法線がカメラを向いていない面は</p>
+<p>当たりにしない。</p>
+<p>返りは dict:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">face_id</code><code style="color:#22d3bf">  (N,) int64 — 当たった三角形の行番号。miss は </code><code style="color:#22d3bf">-1</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">bary</code><code style="color:#22d3bf">     (N,3) — 重心座標 </code><code style="color:#22d3bf">(w0, w1, w2)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">F[face_id]</code>` の 3 頂点の</p>
+<p>順。`<code style="color:#22d3bf">point = w0*V[i0] + w1*V[i1] + w2*V[i2]</code>` が厳密に成り立つ。</p>
+<p>miss は `<code style="color:#22d3bf">NaN</code><code style="color:#22d3bf">。辺・頂点上では 1 成分が </code><code style="color:#22d3bf">0</code><code style="color:#22d3bf">(許容 </code><code style="color:#22d3bf">1e-9</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">point</code><code style="color:#22d3bf">    (N,3) — 世界座標の交点。miss は </code><code style="color:#22d3bf">NaN</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">depth</code><code style="color:#22d3bf">    (N,) — カメラ座標の Z(視線距離ではない)。miss は </code><code style="color:#22d3bf">NaN</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">normal</code>`   (N,3) — 当たった面の単位法線(世界座標、巻き方どおり)。</p>
+<p>miss は `<code style="color:#22d3bf">NaN</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">bary</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">point</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">depth</code>` と同じ規約)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">hit</code>`      (N,) bool。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">camera</code><code style="color:#22d3bf">   実際に使われた </code><code style="color:#22d3bf">K</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">R</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">t</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">width</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">height</code>`。</p>
+<p>既定に落ちた場合もここを見れば分かる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">winding_fixed</code>` bool — 内向きに巻かれた閉メッシュを検出して**この</p>
+<p>呼び出しの中で巻きを直した**かどうか。常に入る(`<code style="color:#22d3bf">False</code>` でも入る)。</p>
+<p>`<code style="color:#22d3bf">cull_backfaces=True</code>`(既定)で mesh が閉じていて符号つき体積が負なら、</p>
+<p>既定では巻きを直して `<code style="color:#22d3bf">winding_fixed=True</code><code style="color:#22d3bf"> を返す。</code><code style="color:#22d3bf">strict=True</code>` にすると</p>
+<p>直さず `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf"> で拒否する。</code><code style="color:#22d3bf">cull_backfaces=False</code>` のときは裏面判定を</p>
+<p>しないので巻き方向は結果に効かず、検査もせず `<code style="color:#22d3bf">winding_fixed</code>` は常に</p>
+<p>`<code style="color:#22d3bf">False</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">normal</code>` は入力の巻きどおりの符号で返る)。詳細は</p>
+<p>:func:<code style="color:#22d3bf">_orient_for_culling</code>。</p>
+<p>`<code style="color:#22d3bf">K</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">R</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">t</code>` を省くと mesh を画像に収める既定カメラを作る</p>
+<p>(`<code style="color:#22d3bf">R = I</code><code style="color:#22d3bf">、カメラは重心の -Z 側)。</code><code style="color:#22d3bf">image_size</code>` を省くと**与えた画素の</p>
+<p>外接箱**から画像サイズを決める — 既定カメラが画素のある場所を見るように</p>
+<p>するためで、`<code style="color:#22d3bf">K</code><code style="color:#22d3bf"> を明示したときは </code><code style="color:#22d3bf">in_image</code>` 判定にしか効かない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:defect_to_cad">defect_to_cad</a> — <code style="color:#22d3bf">py -3.11 examples/defect_to_cad.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">raycast</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cadmap.py — CADMAP operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

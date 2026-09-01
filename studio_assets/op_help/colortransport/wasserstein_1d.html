@@ -1,0 +1,34 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">wasserstein_1d — COLORTRANSPORT <code style="color:#22d3bf">transport</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import colortransport; colortransport.wasserstein_1d(u_values, v_values, p=1, u_weights=None, v_weights=None)</code> (または <code style="color:#22d3bf">opscolortransport.get(&quot;wasserstein_1d&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>1 次元の p-Wasserstein 距離。<b>厳密解</b>。</p>
+<p>1 次元では最適輸送に閉じた形があり、累積分布の逆関数どうしの</p>
+<p>`<code style="color:#22d3bf">L^p</code>` 距離になる ―― 反復も近似も要らない。総当たりの割当問題</p>
+<p>(`<code style="color:#22d3bf">scipy.optimize.linear_sum_assignment</code>`)と厳密に一致することを</p>
+<p>テストで固定してある。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>u_values, v_values : array_like</p>
+<p>標本(1 次元に潰される)。長さは違ってよい。</p>
+<p>p : float</p>
+<p>次数。`<code style="color:#22d3bf">p=1</code><code style="color:#22d3bf"> が Earth Mover 距離、</code><code style="color:#22d3bf">p=2</code>` が 2-Wasserstein。</p>
+<p>u_weights, v_weights : array_like, optional</p>
+<p>標本ごとの重み(和は内部で 1 に正規化する)。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>float</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">scalar</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">transport</code>)</h3>
+<p><a style="color:#22d3bf" href="opcolortransport:transport_plan_1d">transport_plan_1d</a> · <a style="color:#22d3bf" href="opcolortransport:sinkhorn">sinkhorn</a> · <a style="color:#22d3bf" href="opcolortransport:sinkhorn_distance">sinkhorn_distance</a> · <a style="color:#22d3bf" href="opcolortransport:sinkhorn_divergence">sinkhorn_divergence</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: colortransport.py — COLORTRANSPORT operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

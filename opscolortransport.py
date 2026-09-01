@@ -85,6 +85,18 @@ _CATALOG = {
 }
 
 
+#: 素の返りと台帳の宣言型のズレを吸収する表(連鎖ファザーが使う)。
+#:
+#: ``gaussian_transport_map`` は ``(A, m1, m2)`` の 3 つ組を返すのに、台帳は
+#: ``matrix`` を宣言していた —— **2026-09-02 に台帳をファザーへ登録した瞬間に
+#: TYPEMISS で露見**した(それまでこの族はファザーが一度も実行していなかった)。
+#: 写像を当てるには 3 つとも要るので返り自体は変えず、宣言型の ``matrix`` を
+#: 取り出す adapter を置く。**全部が欲しいときはモジュールを直接呼ぶ**。
+RESULT_ADAPTERS = {
+    "gaussian_transport_map": lambda r: r[0] if isinstance(r, tuple) else r,
+}
+
+
 def _build():
     reg = {}
     for cat, entries in _CATALOG.items():

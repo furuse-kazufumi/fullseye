@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">descriptor_to_matrix — REPRCONV <code style="color:#22d3bf">descriptor</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">descriptor</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import reprconv; reprconv.descriptor_to_matrix(descriptor)</code> (または <code style="color:#22d3bf">opsreprconv.get(&quot;descriptor_to_matrix&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>記述子 → `<code style="color:#22d3bf">matrix</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">descriptor</code>` の出口(<b>可逆</b>)。</p>
+<p>1-D の記述子 (n,) は <b>(1, n)</b> の 1 行行列にする。2-D の記述子束</p>
+<p>(`<code style="color:#22d3bf">sh_descriptor</code>` の (12, 9) のような「点 x 次元」)はそのまま通す。</p>
+<p>こうしておくと記述子バンクに `<code style="color:#22d3bf">mat_svd</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mat_pinv</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mat_cond</code>`</p>
+<p>がそのまま掛かる —— 記述子は本質的にベクトルなので、行列語彙へ渡すのは</p>
+<p>梱包の付け替えであって変形ではない。</p>
+<p>:func:<code style="color:#22d3bf">matrix_to_descriptor</code> と往復して <b>bit 一致</b>(実測 max|Δ| = 0.0)。</p>
+<p>Args:</p>
+<p>descriptor: (n,) または (m, n) の実配列。</p>
+<p>Returns:</p>
+<p>(1, n) または (m, n) float64。</p>
+<p>Raises:</p>
+<p>ValueError: 3-D 以上 / 非有限 / dict(`<code style="color:#22d3bf">fit_zernike</code>` は dict を返すので</p>
+<p>ここで拒否される —— 詳細は本モジュール docstring)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_roundtrip">representation_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/representation_roundtrip.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">matrix</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:matrix_to_descriptor">matrix_to_descriptor</a> · <a style="color:#22d3bf" href="opreprconv:matrix_to_angle">matrix_to_angle</a> · <a style="color:#22d3bf" href="opreprconv:matrix_to_rot_scale">matrix_to_rot_scale</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">descriptor</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:matrix_to_descriptor">matrix_to_descriptor</a> · <a style="color:#22d3bf" href="opreprconv:descriptor_to_table">descriptor_to_table</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

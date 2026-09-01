@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">curvature_to_table — REPRCONV <code style="color:#22d3bf">curvature</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">curvature</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import reprconv; reprconv.curvature_to_table(curvature)</code> (または <code style="color:#22d3bf">opsreprconv.get(&quot;curvature_to_table&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>曲率 → 分布の要約 `<code style="color:#22d3bf">table</code>`。<b>一方向</b>(統計は情報を捨てるのが仕事)。</p>
+<p>(N,) の単独曲率も (N,2) の主曲率対も受ける —— 統計を出すだけなら対で</p>
+<p>ある必要が無いため。`<code style="color:#22d3bf">kind</code>` に受けた形を書き戻すので、下流は「対だったのか」</p>
+<p>を後から判別できる。</p>
+<p>Args:</p>
+<p>curvature: (N,) / (N, 2) / 2 本の等長 1-D のタプル。</p>
+<p>Returns:</p>
+<p>dict。`<code style="color:#22d3bf">kind</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">min</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">max</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">rms</code>` /</p>
+<p>`<code style="color:#22d3bf">p05</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">p50</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">p95</code><code style="color:#22d3bf">、対なら </code><code style="color:#22d3bf">gauss_mean</code>`(K = k1*k2 の平均)と</p>
+<p>`<code style="color:#22d3bf">mean_curvature_mean</code>`((k1+k2)/2 の平均)。</p>
+<p>Raises:</p>
+<p>ValueError: 形状不正 / 非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">curvature</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:curvature_to_shape_index">curvature_to_shape_index</a> · <a style="color:#22d3bf" href="opreprconv:shape_index_to_curvature">shape_index_to_curvature</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -73,7 +73,49 @@ LEDGER_DIMS = {
                   "module": "acoustics", "family": "acoustic_condition_monitoring"},
     "interferometry": {"registry": "opsinterferometry", "table": "OPSINTERFEROMETRY",
                        "module": "interferometry", "family": "coherence_scanning"},
+    # --- 2026-09-02 に登録した族。ここに載っていなかったあいだ、これらの op は
+    #     docs/ops に 1 枚もノートを持っていなかった(RAG コーパスから丸ごと
+    #     欠けていた)。ガイドは未執筆で、リンクは実在するときだけ張られる。
+    "tomography": {"registry": "opstomography", "table": "OPSTOMOGRAPHY",
+                   "module": "tomography", "family": "computed_tomography"},
+    "volcolor": {"registry": "opsvolcolor", "table": "OPSVOLCOLOR",
+                 "module": "volcolor", "family": "volume_labelling"},
+    "reprconv": {"registry": "opsreprconv", "table": "OPSREPRCONV",
+                 "module": "reprconv", "family": "representation_conversion"},
+    "cadmap": {"registry": "opscadmap", "table": "OPSCADMAP",
+               "module": "cadmap", "family": "cad_surface_mapping"},
+    "annotate": {"registry": "opsannotate", "table": "OPSANNOTATE",
+                 "module": "annotate", "family": "figure_annotation"},
+    "gfx2d": {"registry": "opsgfx2d", "table": "OPSGFX2D",
+              "module": "gfx2d", "family": "game_graphics_2d"},
+    "imgmetrics": {"registry": "opsimgmetrics", "table": "OPSIMGMETRICS",
+                   "module": "imgmetrics", "family": "image_difference_metrics"},
+    "colortransport": {"registry": "opscolortransport", "table": "OPSCOLORTRANSPORT",
+                       "module": "colortransport", "family": "optimal_transport"},
+    "imgforensics": {"registry": "opsimgforensics", "table": "OPSIMGFORENSICS",
+                     "module": "imgforensics", "family": "image_forensics"},
+    "astrostack": {"registry": "opsastrostack", "table": "OPSASTROSTACK",
+                   "module": "astrostack", "family": "astro_stacking"},
 }
+
+
+def families_without_a_guide(recs):
+    """ガイドが未執筆の族を数える —— **黙って消えないように**生成時に報告する。
+
+    ノートのガイド節は実在するときだけ張るので、未執筆でもリンク切れは出ない。
+    その代わり「書かれていない」ことが見えなくなるので、ここで数えて出す。
+    """
+    missing = {}
+    for r in recs:
+        fam = r.get("family")
+        if not fam:
+            continue
+        dim = r["dim"]
+        gp = os.path.join(DOCS, dim if dim in LEDGER_DIMS else "2d", "guides", fam + ".md")
+        if not os.path.exists(gp):
+            missing.setdefault(fam, 0)
+            missing[fam] += 1
+    return dict(sorted(missing.items()))
 
 _AUTHOR = "Kazufumi Furuse"
 _LICENSE = "Apache-2.0"
@@ -336,14 +378,22 @@ def _op_md(rec, path, by_name):
         lines.append("- **サイズ上限**: 行列を取る op と `stat_histogram` の bins は "
                      "`mathops.MAX_ELEMENTS`(2^26 ≈ 6700 万要素)超で `ValueError`。")
         lines.append("")
-    # family guide
+    # family guide —— **実在するときだけリンクする**。
+    #
+    # 以前は無条件に出していた。族が 10 増えた時点(2026-09-02)で、ガイドを
+    # 書いていない族のノート 196 枚が**存在しないファイルへのリンク**を持つ
+    # ことになると分かったので、条件つきにした。リンク切れは「あるはずの物が
+    # 見つからない」で、無い節より悪い。書かれていない族は
+    # :func:`families_without_a_guide` が数えて生成時に報告する(黙って
+    # 消えないように)。
     if rec.get("family"):
         gp = os.path.join(DOCS, dim if dim in LEDGER_DIMS else "2d",
                           "guides", rec["family"] + ".md")
-        lines.append("## 詳しい使い方ガイド")
-        lines.append("")
-        lines.append(f"- [{rec['family']} ファミリ ガイド]({_rel(path, gp)})")
-        lines.append("")
+        if os.path.exists(gp):
+            lines.append("## 詳しい使い方ガイド")
+            lines.append("")
+            lines.append(f"- [{rec['family']} ファミリ ガイド]({_rel(path, gp)})")
+            lines.append("")
     # sample data + references (honest pointers to the curated catalogs)
     sp = os.path.join(DOCS, "SAMPLES.md")
     rp = os.path.join(_ROOT, "docs", "REFERENCES.md")

@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ms_ssim — IMGMETRICS <code style="color:#22d3bf">fidelity</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import imgmetrics; imgmetrics.ms_ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03, weights=(0.0448, 0.2856, 0.3001, 0.2363, 0.1333), crop_border=True)</code> (または <code style="color:#22d3bf">opsimgmetrics.get(&quot;ms_ssim&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>多尺度 SSIM(Wang, Simoncelli &amp; Bovik, Asilomar Conf. 2003)。</p>
+<p>5 段の縮小を経るので、最終段で 11 画素の窓が成立するには<b>各辺 176 画素</b>が</p>
+<p>要る。足りないときに<b>段数を黙って減らさない</b> ―― 段数の違う MS-SSIM は</p>
+<p>別の指標であり、比べると嘘になる。足りなければ `<code style="color:#22d3bf">ValueError</code>`。</p>
+<p>2 次元のグレー画像専用(色は `<code style="color:#22d3bf">channel_axis</code>` ではなくチャネルごとに呼ぶ)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">scalar</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">fidelity</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:mse">mse</a> · <a style="color:#22d3bf" href="opimgmetrics:rmse">rmse</a> · <a style="color:#22d3bf" href="opimgmetrics:psnr">psnr</a> · <a style="color:#22d3bf" href="opimgmetrics:ssim">ssim</a> · <a style="color:#22d3bf" href="opimgmetrics:ssim_map">ssim_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgmetrics.py — IMGMETRICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

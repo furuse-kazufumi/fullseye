@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">compare_images — IMGMETRICS <code style="color:#22d3bf">report</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">metrics</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import imgmetrics; imgmetrics.compare_images(a, b, data_range=None, bins=64, channel_axis=None, ms=False)</code> (または <code style="color:#22d3bf">opsimgmetrics.get(&quot;compare_images&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>一括で測り、<b>何をどう測ったかを一緒に返す</b>。</p>
+<p>返り値の `<code style="color:#22d3bf">contract</code><code style="color:#22d3bf"> に </code><code style="color:#22d3bf">data_range</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">bins</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">crop_border</code>` /</p>
+<p>SSIM の窓を入れてあるのは、数値だけを図注に写して<b>条件が消える</b>のを</p>
+<p>防ぐため(この repo で実際に起きた事故の型)。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>dict</p>
+<p>``{&quot;mse&quot;, &quot;rmse&quot;, &quot;psnr&quot;, &quot;ssim&quot;, &quot;mutual_information&quot;,</p>
+<p>&quot;normalized_mutual_information&quot;, &quot;ncd&quot;, &quot;contract&quot;: {...}}``。</p>
+<p>`<code style="color:#22d3bf">ms=True</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">ms_ssim</code><code style="color:#22d3bf"> も(成立しない大きさなら </code><code style="color:#22d3bf">ValueError</code>`)。</p>
+<p>カラー画像で `<code style="color:#22d3bf">channel_axis</code><code style="color:#22d3bf"> を渡すと </code><code style="color:#22d3bf">delta_e_2000_mean</code>` も入る。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">metrics</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:measure_with">measure_with</a> · <a style="color:#22d3bf" href="opimgmetrics:metrics_table">metrics_table</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">report</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:measure_with">measure_with</a> · <a style="color:#22d3bf" href="opimgmetrics:metrics_table">metrics_table</a> · <a style="color:#22d3bf" href="opimgmetrics:data_range_of">data_range_of</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgmetrics.py — IMGMETRICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

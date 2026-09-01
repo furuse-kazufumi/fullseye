@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">delta_e_2000 — IMGMETRICS <code style="color:#22d3bf">colordiff</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">lab × lab</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import imgmetrics; imgmetrics.delta_e_2000(lab1, lab2, kL=1.0, kC=1.0, kH=1.0)</code> (または <code style="color:#22d3bf">opsimgmetrics.get(&quot;delta_e_2000&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>CIEDE2000 色差(CIE 142-2001)。</p>
+<p>実装が踏み外しやすい 3 か所 ―― <b>色相角の平均</b>(0/360 をまたぐ扱い)、</p>
+<p><b>275° の回転項</b>、<b>彩度ゼロ近傍</b>(`<code style="color:#22d3bf">atan2(0, 0)</code>` の扱い)―― は</p>
+<p>Sharma, Wu &amp; Dalal (2005) の 34 組の検証対で固定してある</p>
+<p>(`<code style="color:#22d3bf">CIEDE2000_TEST_PAIRS</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">tests/test_imgmetrics.py</code>`)。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>lab1, lab2 : array_like</p>
+<p>最後の軸が `<code style="color:#22d3bf">(L*, a*, b*)</code>` の配列。ブロードキャストされる。</p>
+<p>kL, kC, kH : float</p>
+<p>観察条件のパラメトリック係数。既定は基準条件の 1。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>ndarray</p>
+<p>ΔE00(最後の軸が落ちた形)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:mse">mse</a> · <a style="color:#22d3bf" href="opimgmetrics:rmse">rmse</a> · <a style="color:#22d3bf" href="opimgmetrics:psnr">psnr</a> · <a style="color:#22d3bf" href="opimgmetrics:ssim">ssim</a> · <a style="color:#22d3bf" href="opimgmetrics:ms_ssim">ms_ssim</a> · <a style="color:#22d3bf" href="opimgmetrics:ssim_map">ssim_map</a> · <a style="color:#22d3bf" href="opimgmetrics:image_entropy">image_entropy</a> · <a style="color:#22d3bf" href="opimgmetrics:joint_entropy">joint_entropy</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">colordiff</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:delta_e_76">delta_e_76</a> · <a style="color:#22d3bf" href="opimgmetrics:delta_e_map">delta_e_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgmetrics.py — IMGMETRICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

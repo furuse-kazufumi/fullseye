@@ -741,7 +741,7 @@ def crosshair(img, xy, color="emphasis", width=1, gap=6, extent=None,
     xy : (x, y)
         交点。
     gap : int
-        中心を空ける半径[px](0 で全通し)。
+        中心を空ける半径 [px] (0 で全通し)。
     extent : int or None
         中心からの腕の長さ[px]。None なら画像の端まで。
 
@@ -1504,7 +1504,7 @@ def compare_frame(left, right, layout="h", labels=None, divider=3, gap=0,
     labels : (str, str) or None
         それぞれの見出し。
     divider : int
-        仕切りの太さ[px](0 で無し)。
+        仕切りの太さ [px] (0 で無し)。
     gap : int
         仕切りの両側に空ける余白[px]。
 

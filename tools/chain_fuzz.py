@@ -792,6 +792,13 @@ NONFINITE_BY_CONTRACT_CADMAP = {"cad_pixel_to_surface", "cad_defect_to_cad"}
 #: (実測)ので**入れない** — 入れると本物の非有限が黙って見逃される。
 NONFINITE_BY_CONTRACT_SPECULAR = {"photometric_stereo_robust"}
 
+#: 文書化済みの非有限を返す op(imgmetrics)。**完全一致の PSNR は inf** で、
+#: そこに小さな値を足して有限に丸めると「非常に良い一致」が有限値に化け、
+#: 平均を取ったときに嘘になる ―― 丸めない判断そのものが契約
+#: (:func:`imgmetrics.psnr` の docstring と ``tests/test_imgmetrics.py``)。
+#: ``compare_images`` は psnr を内に含むので同じ理由で載る。
+NONFINITE_BY_CONTRACT_METRICS = {"psnr", "compare_images"}
+
 #: 出力を pool 型へ合わせる梱包アダプタ。基本はレジストリの RESULT_ADAPTERS
 #: (型忠実の一級メタデータ)に委譲し、ファザー固有の追加だけここに置く
 def _registry_adapters():
@@ -821,6 +828,12 @@ def _registry_adapters():
     d.update(opsinterferometry.RESULT_ADAPTERS)  # 空(意図的)
     import opscadmap
     d.update(opscadmap.RESULT_ADAPTERS)          # 空(意図的): 素の返りが宣言型
+    for _mod in ("opstomography", "opsvolcolor", "opsreprconv", "opsannotate",
+                 "opsgfx2d", "opsimgforensics", "opsastrostack"):
+        try:
+            d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
+        except Exception as _e:                       # 台帳が無い環境でも動く
+            print(f"  ({_mod} adapters unavailable: {_e})")
     d["vol_rle_components"] = lambda r: r[0] if r else None
     d["label_components"] = lambda r: r[0] if isinstance(r, tuple) else r
     return d
@@ -949,6 +962,28 @@ def catalog():
     for n, m in opscadmap.OPSCADMAP.items():
         if m["func"] is not None:
             ops.append((n, "cadmap", list(m["in"]), m["out"], m["func"]))
+
+    # --- 2026-09-02 に登録した 9 台帳 ---------------------------------------
+    # ここに載っていなかったあいだ、これらの **192 op はファザーが一度も
+    # 実行していなかった**。「発見ゼロ」が頑健さの証拠ではなく、単に走って
+    # いなかっただけ、という状態(この repo が何度も踏んできた形)。
+    # 台帳が種や述語を提案しているもの(opsreprconv / opsimgforensics)は
+    # 下の TYPE_CHECKS / make_generators へ合流させる。
+    for _mod, _tbl, _dim in (
+        ("opstomography", "OPSTOMOGRAPHY", "tomography"),
+        ("opsvolcolor", "OPSVOLCOLOR", "volcolor"),
+        ("opsreprconv", "OPSREPRCONV", "reprconv"),
+        ("opsannotate", "OPSANNOTATE", "annotate"),
+        ("opsgfx2d", "OPSGFX2D", "gfx2d"),
+        ("opsimgmetrics", "OPSIMGMETRICS", "imgmetrics"),
+        ("opscolortransport", "OPSCOLORTRANSPORT", "colortransport"),
+        ("opsimgforensics", "OPSIMGFORENSICS", "imgforensics"),
+        ("opsastrostack", "OPSASTROSTACK", "astrostack"),
+    ):
+        _m = __import__(_mod)
+        for n, m in getattr(_m, _tbl).items():
+            if m["func"] is not None:
+                ops.append((n, _dim, list(m["in"]), m["out"], m["func"]))
     return ops
 
 
@@ -1021,7 +1056,68 @@ def _is_seq(v, *lengths):
     return isinstance(v, (tuple, list)) and (not lengths or len(v) in lengths)
 
 
+def _is_lab(v):
+    """CIE L*a*b* か。**rgbimage と形も dtype も同じ**なので値域で見るしかない。
+
+    L* は 0-100、sRGB は 0-1。sRGB を ΔE に渡しても例外は出ず、2 桁小さい
+    色差が静かに出る ―― その取り違えをここで捕まえる。無彩色に近い暗い絵は
+    L* も小さいので、`a*`/`b*` が負値を取りうることも併せて見る。
+
+    **原理的な限界(実測 2026-09-02)**: 真っ黒な絵は Lab でも sRGB でも
+    ``(0, 0, 0)`` なので**区別できない**。この述語は False を返す = TYPEMISS の
+    偽陽性になる。**見逃しではなく誤報**の側なので安全な向きだが、
+    「黒い lab を返す op」を足したらここが鳴ることは知っておくこと。
+    """
+    if not (isinstance(v, np.ndarray) and v.ndim >= 2 and v.shape[-1] == 3 and v.size):
+        return False
+    if not np.issubdtype(v.dtype, np.floating):
+        return False
+    L = v[..., 0]
+    ab = v[..., 1:]
+    # L* が 1 を超える(sRGB では起きない)か、a*/b* が負(sRGB では起きない)
+    return bool(np.nanmax(L) > 1.5 or np.nanmin(ab) < -1e-9)
+
+
 TYPE_CHECKS = {
+    # --- 2026-09-02 に登録した 9 台帳が持ち込んだ型の述語 ------------------
+    # 述語が無いと「宣言 out=X の op が何を返しても TYPEMISS にならない」ので、
+    # 検査面を増やしたつもりで増えていない状態になる。台帳が提案を持つもの
+    # (opsreprconv / opsimgforensics)はその定義をそのまま採る。
+    #
+    # `scalar` と `any` だけは意図的に緩い: 前者は「数 1 個」、後者は既存の
+    # ワイルドカードで、run_chain が常に満たされたものとして扱う。
+    "scalar": lambda v: isinstance(v, (int, float, np.integer, np.floating))
+                        and not isinstance(v, bool),
+    "any": lambda v: True,
+    # 色: lab は rgbimage と**形も dtype も同じ**なので、L* が 0-100 かどうかで見る
+    # (sRGB を ΔE に渡しても例外は出ず、2 桁小さい色差が静かに出る)
+    "lab": _is_lab,
+    "rgb": lambda v: isinstance(v, np.ndarray) and v.ndim == 3 and v.shape[-1] == 3,
+    "rgba": lambda v: isinstance(v, np.ndarray) and v.ndim == 3 and v.shape[-1] == 4,
+    "rgba_premul": lambda v: isinstance(v, np.ndarray) and v.ndim == 3 and v.shape[-1] == 4,
+    "rgbvolume": lambda v: isinstance(v, np.ndarray) and v.ndim == 4 and v.shape[-1] == 3,
+    "lut": lambda v: isinstance(v, np.ndarray) and v.ndim in (2, 4),
+    "sprites": lambda v: isinstance(v, (list, tuple)) and len(v) > 0
+                         and all(isinstance(s, np.ndarray) and s.ndim == 3 for s in v),
+    # 断層: sinogram = (角度, 検出器)、sinostack = その積み重ね
+    "sinogram": lambda v: isinstance(v, np.ndarray) and v.ndim == 2,
+    "sinostack": lambda v: isinstance(v, np.ndarray) and v.ndim == 3,
+    # 図注: text は文字列、entries は (ラベル, 色) の並び、axes は変換の辞書
+    "text": lambda v: isinstance(v, str),
+    "entries": lambda v: isinstance(v, (list, tuple)) and len(v) > 0,
+    # 測る/運ぶ: metrics は contract を必ず持つ(数値だけの辞書と区別する)
+    "metrics": lambda v: isinstance(v, dict) and "contract" in v,
+    "transport_plan": lambda v: isinstance(v, np.ndarray) and v.ndim == 2
+                                and v.size > 0 and float(np.nanmin(v)) >= -1e-12,
+    # フォレンジック: 台帳の提案どおり
+    "phash": lambda v: isinstance(v, np.ndarray) and v.ndim == 1 and v.dtype == bool,
+    "fingerprint": lambda v: isinstance(v, np.ndarray) and v.ndim == 2
+                             and np.issubdtype(v.dtype, np.floating),
+    "mask": lambda v: isinstance(v, np.ndarray) and v.ndim == 2
+                      and (v.dtype == bool or np.issubdtype(v.dtype, np.integer)),
+    # 実測でキーは mu / sigma / w(最初 "mean" と推測して書いたら
+    # points_to_gaussians が TYPEMISS になった —— op ではなく述語が誤り)
+    "gaussians": lambda v: isinstance(v, dict) and {"mu", "sigma", "w"} <= set(v),
     "points": _is_pts,
     "normals": _is_pts,
     "keypoints": lambda v: _is_pts(v) or (isinstance(v, np.ndarray) and v.ndim == 2),
@@ -1343,7 +1439,7 @@ TYPE_CHECKS = {
 NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          "sdf_union", "sdf_intersect", "sdf_subtract",
                          "sdf_smooth_union", "sdf_offset", "mat_cond"
-                         } | NONFINITE_BY_CONTRACT_OPTICS \
+                         } | NONFINITE_BY_CONTRACT_METRICS \n                         | NONFINITE_BY_CONTRACT_OPTICS \
     | NONFINITE_BY_CONTRACT_CADMAP | NONFINITE_BY_CONTRACT_SPECULAR
 
 #: pool へ入れる 1 産物の上限バイト数。拡大系 op(upsample/uncrop/resize)の連鎖で
