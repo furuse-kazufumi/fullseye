@@ -5,7 +5,8 @@
 「軸が入れ替わっている」「端が 1 画素欠けている」は絶対に見つからないが、
 回転させれば 1 秒で分かる。だからこのスクリプトは記事の挿絵生成器であると同時に
 デバッグ道具でもある(実際に本ファイルの作成中に見つかった不具合は
-``docs/articles/exhibits/wingstudio.md`` 末尾に列挙してある)。
+``docs/articles/exhibits/wingstudio.ja.md`` / ``wingstudio.en.md`` 末尾の付録に
+「こうだった → こう直った」「未解決」の形で列挙してある)。
 
 規律(honest disclosure):
 
