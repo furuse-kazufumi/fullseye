@@ -318,6 +318,16 @@ def test_ms_ssim_refuses_to_silently_drop_a_scale():
     assert M.ms_ssim(a, a.copy(), weights=(0.5, 0.5)) == pytest.approx(1.0, abs=1e-9)
 
 
+def test_the_published_ms_ssim_weights_do_not_sum_to_one():
+    """原論文の公表値の和は **1.0001**。黙って正規化していないことを固定する。
+
+    正規化する実装としない実装で 1e-4 の差が出る ―― 微差の出所が分からなく
+    なるより、和がずれていることを表に出しておく方が良い。
+    """
+    assert sum(M.MS_SSIM_WEIGHTS) == 1.0001
+    assert len(M.MS_SSIM_WEIGHTS) == 5
+
+
 def test_ms_ssim_weights_must_be_a_normalised_distribution():
     rng = np.random.default_rng(9)
     a = rng.random((256, 256))
