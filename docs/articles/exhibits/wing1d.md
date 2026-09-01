@@ -396,7 +396,7 @@
 - PNG(原寸 1 枚): `docs/articles/assets/wing1d_funct1d_truth.png` (1160x786 px, 78 kB)
 - サムネ(記事はこちらを表示): `docs/articles/assets/wing1d_funct1d_truth_thumb.jpg` (60 kB)
 - 束ね方: still
-- SHA-256: `4451b641104888a00ae4b9eaa0bf8a667b1fe51348cfda0e4d89e44e2df31e3d`
+- SHA-256: `99ae8b3fff2af82965dbdb1341b2b9673d1f5a40917c214da746e2f2d26d0a27`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -424,7 +424,7 @@
   "tau_true_s": 0.4,
   "match_shift": 25,
   "match_shift_true": 25,
-  "match_score": 0.21768066952977047,
+  "match_score": 0.7996386353789152,
   "n_peaks": 5,
   "n_zero_crossings": 8
 }
@@ -662,12 +662,12 @@
 
 ![極値検出と照合](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_peak_match.gif)
 
-*↑ **極値検出と照合** ―― 既知の 4 点(60, 150, 245, 330)に立てたガウスピークへ雑音を σ = 0 から 0.42 まで 30 段加えた。`local_min_max_funct_1d` は狭義不等式なので、生の波形では極大が 4 個から 132 個へ暴発する。σ = 3 のガウス平滑と高さ 0.45 の門を通すと最後まで 6 個([58, 149, 243, 254, 329, 337])に落ち着く。`match_funct_1d_trans` は同じ長さの窓とテンプレートを突き合わせるかぎり、30 段のうち 25 段(σ 0.348 まで)で 4 点すべて lag = 0 を厳密に返す。 使用 op: `smooth_funct_1d_gauss`, `local_min_max_funct_1d`, `match_funct_1d_trans`。*
+*↑ **極値検出と照合** ―― 既知の 4 点(60, 150, 245, 330)に立てたガウスピークへ雑音を σ = 0 から 0.42 まで 30 段加えた。`local_min_max_funct_1d` は狭義不等式なので、生の波形では極大が 4 個から 132 個へ暴発する。σ = 3 のガウス平滑と高さ 0.45 の門を通すと最後まで 6 個([58, 149, 243, 254, 329, 337])に落ち着く。`match_funct_1d_trans` は同じ長さの窓とテンプレートを突き合わせるかぎり、30 段のうち 12 段(σ 0.159 まで)で 4 点すべて lag = 0 を厳密に返す。 使用 op: `smooth_funct_1d_gauss`, `local_min_max_funct_1d`, `match_funct_1d_trans`。*
 
-- GIF: `docs/articles/assets/media/wing1d_peak_match.gif` (30 コマ, 1000x668 px, 1.46 MB, 240 ms/コマ・最終コマ 1600 ms)
+- GIF: `docs/articles/assets/media/wing1d_peak_match.gif` (30 コマ, 1000x668 px, 1.45 MB, 240 ms/コマ・最終コマ 1600 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_peak_match_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `b24d86338c9f4456e81143890a556311a0fb1ab270f4eae18c5942ebba57b5f3`
+- SHA-256: `d14889843693fa5a0da90e3affd43d08409e16fb91c4990499b22e06b9238139`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -695,9 +695,9 @@
     329,
     337
   ],
-  "exact_lag_levels": 25,
+  "exact_lag_levels": 12,
   "total_levels": 30,
-  "exact_lag_up_to_sigma": 0.34758620689655173
+  "exact_lag_up_to_sigma": 0.1593103448275862
 }
 ```
 

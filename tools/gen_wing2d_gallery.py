@@ -742,6 +742,7 @@ def subject_denoise_compare(log=print) -> dict:
     info = _save_gif(frames, "wing2d_denoise_compare", fps=2.2, hold_last=3)
     win = [max(("median", "bilateral", "sk_nlm"), key=lambda k: r["psnr"][k])
            for r in rows]
+    n_swap = sum(1 for i in range(len(win) - 1) if win[i] != win[i + 1])
     return {
         "name": "denoise_compare", "kind": "gif", "file": info["path"],
         "thumb": info["thumb"], "frames": info["frames"],
