@@ -23,6 +23,21 @@
     画像は (H, W) か (H, W, C)、値域 [0, 1] の float。ワープは**逆写像**
     (out[p] = img[f(p)])で穴が空かない(Wolberg, *Digital Image Warping*, 1990,
     Sec. 3.5)。点は (N, 2) の (x, y) ピクセル座標。
+
+★★ 座標順の落とし穴(2026-09-02 に明文化)★★
+    このモジュール(``morph`` / ``morph_sequence`` / ``warp_piecewise_affine`` /
+    ``warp_tps_image`` / ``add_frame_corners``)の点は **(x, y) = (列, 行)**。
+    いっぽう **XLD 輪郭 (``contour["cs"][i]``) と ``fourierdesc.from_xld`` は
+    (row, col) = (行, 列)** で、順序が **逆** である。
+
+    両者とも (N,2) の float 配列なので、(row, col) をそのまま渡しても
+    **例外は出ない**。出るのは「それらしく見えるが間違った」モーフ
+    (実測: 中間コマに二重像が残り、affine と TPS の平均差が 0.01018 —— 正しく
+    (x, y) に直すと 0.00802 まで下がる)。**黙って間違う**型の事故なので、
+    XLD 側から点を持ってくるときは必ず列を入れ替えること::
+
+        pts_xy = np.asarray(fourierdesc.from_xld(contour))[:, ::-1]   # (row,col) -> (x,y)
+        out    = imagemorph.morph(A, B, ptsA_xy, pts_xy, 0.5)
 """
 from __future__ import annotations
 
