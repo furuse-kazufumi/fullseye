@@ -1007,6 +1007,8 @@ def envelope_spectrum(x, rate, low, high, order=4, n_peaks=5):
     idx = idx[body[idx] > 0.0]
     med = float(np.median(body[1:])) if body.size > 1 else 0.0
     peak = float(body.max())
+    sig_rms = float(np.sqrt(np.mean(arr * arr)))
+    band_rms = float(np.sqrt(np.mean(band * band)))
     return {
         "freqs": freqs,
         "magnitude": mag,
@@ -1014,6 +1016,9 @@ def envelope_spectrum(x, rate, low, high, order=4, n_peaks=5):
         "peak_amplitude": peak,
         "peak_prominence": (peak / med) if med > 0.0 else float("inf"),
         "noise_floor": med,
+        "band_rms": band_rms,
+        "signal_rms": sig_rms,
+        "band_fraction": (band_rms / sig_rms) if sig_rms > 0.0 else 0.0,
         "peak_freqs": freqs[idx].copy(),
         "peak_amplitudes": body[idx].copy(),
         "band": (lo, hi),
