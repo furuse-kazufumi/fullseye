@@ -1145,8 +1145,8 @@ def grid_lines(img, axes, xticks=None, yticks=None, color="neutral", width=1,
         raise ValueError(f"alpha must be within [0,1] (got: {alpha})")
     x, y, w, h = axes["rect"]
     _check_inside(a, (x, y, w, h), name="axes rect", what="grid")
-    xt = nice_ticks(*axes["xlim"]) if xticks is None else np.asarray(xticks, dtype=np.float64)
-    yt = nice_ticks(*axes["ylim"]) if yticks is None else np.asarray(yticks, dtype=np.float64)
+    xt = _auto_ticks(axes, "x") if xticks is None else np.asarray(xticks, dtype=np.float64)
+    yt = _auto_ticks(axes, "y") if yticks is None else np.asarray(yticks, dtype=np.float64)
     col = _channel_color(a, color, scheme)
     kw = _style(style, width)
     base = a
