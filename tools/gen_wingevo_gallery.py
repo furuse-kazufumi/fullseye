@@ -1222,7 +1222,9 @@ def ex_generations(data, log=print):
     # save_animation の検証に落ちる。溜めは hold_last_ms が担当する。
     info = save_gif(frames, "wingevo_generations", fps=3)
     swap_gen, gone, came = _first_op_swap(hist)
-    swap = (f"、第 {swap_gen} 世代で `{gone}` が `{came}` に入れ替わった"
+    swap = (f"、第 {swap_gen} 世代で "
+            + "・".join(f"`{o}`" for o in gone) + " が抜けて "
+            + "・".join(f"`{o}`" for o in came) + " が入った"
             if swap_gen else "")
     cap = (f"**世代が進むとパイプラインが伸びる/縮む** ―― `{tj['problem']}` を "
            f"seed {tj['seed']} / pop {tj['pop']} で {tj['gens']} 世代、実際に走らせた軌跡。"
