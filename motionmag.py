@@ -783,7 +783,7 @@ def temporal_band_power(video, f_lo, f_hi, fps) -> np.ndarray:
     "Where in the frame is something moving at this frequency?" — a resonance
     map. The value at a pixel is the mean over time of the squared band-passed
     signal, so a pure sinusoid of amplitude ``a`` inside the band reads exactly
-    ``a^2/2`` (Parseval; measured relative error ``2.2e-16`` for ``a = 0.3``).
+    ``a^2/2`` (Parseval; measured relative error ``3.08e-16`` for ``a = 0.3``).
 
     This is an *analysis map*, not a displayable image: it is a power and is not
     bounded by 1. Pixels with no in-band content read 0."""
