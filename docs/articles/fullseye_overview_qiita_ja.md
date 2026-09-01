@@ -1315,15 +1315,8 @@ spec = fs.qft2(q, "left"); back = fs.iqft2(spec, "left")     # side は必須・
 **FMCW レンジ-ドップラー(8 op)** は距離・速度・到来角を 1 つのビート立方体から出します。窓関数の効果が実測に出ます ―― **−45 dB の標的は矩形窓では −24.57 dB の漏れに埋没**し、hann で **−43.56 dB** に復活します。
 
 ```python
-import fullseye as fs
-d = fs.fmcw_design(n_samples=64, n_chirps=32, n_antennas=8)
-dr, dv = d["range_bin_m"], d["velocity_bin_ms"]              # 1.1711 m, 1.2167 m/s
-cube = fs.fmcw_beat_simulate([3*dr, 20*dr], [4*dv, -2*dv],
-                             angles_deg=[10.0, -40.0], amplitudes=[1.0, 0.4],
-                             n_samples=64, n_chirps=32, n_antennas=8)
 rdmap = fs.range_doppler_map(fs.fmcw_window_apply(cube, "hann"), normalize=True)
-for p in fs.range_doppler_peaks(rdmap, dr, dv, n_peaks=2)["peaks"]:
-    print(round(p["range_m"], 4), round(p["velocity_ms"], 4))
+peaks = fs.range_doppler_peaks(rdmap, dr, dv, n_peaks=2)["peaks"]   # dr, dv = bin 幅
 ```
 
 **`dr, dv` を渡さないと、返り値の `range_m` は「メートル」ではなく「ビン番号」です**(3.0 と 3.5131928671875)。単位の落とし穴はここ 1 箇所に集約してあります。
