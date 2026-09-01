@@ -1170,12 +1170,24 @@ def subject_blob_select(log=print) -> dict:
     n_blobs = int(fs.apply(filled, "blob_count", 0.5))
     lab, n = ndimage.label(filled > 0.5,
                            structure=ndimage.generate_binary_structure(2, 2))
+    H, W = scene.shape[:2]
     feats = []
     for i in range(1, n + 1):
         m = (lab == i).astype(np.float64)
+        # ★2026-09-02: `area_center` は名前どおり (面積比, 行, 列) の 3 成分を返す
+        #   ようになった (それまでは面積比 1 スカラだけで、**中心を返していなかった**)。
+        #   3 成分とも解像度に依らないよう [0,1] 正規化されているので、画素に戻すには
+        #   行 ×(H-1) / 列 ×(W-1)。ここでは戻した中心を絵に打って、返り値が本当に
+        #   中心であることを見て分かる形にする。
+        ac = np.asarray(fs.apply(m, "area_center", 0.5), np.float64)
+        ys, xs = np.nonzero(m > 0.5)
         feats.append({
             "id": i, "px": int(m.sum()),
-            "area_frac": float(fs.apply(m, "area_center", 0.5)),
+            "area_frac": float(ac[0]),
+            "row": float(ac[1]) * (H - 1), "col": float(ac[2]) * (W - 1),
+            # 独立に計算した重心と突き合わせる (op の返り値を鵜呑みにしない)
+            "row_err_px": float(ac[1]) * (H - 1) - float(ys.mean()),
+            "col_err_px": float(ac[2]) * (W - 1) - float(xs.mean()),
             "circ": float(fs.apply(m, "circularity", 0.5)),
             "ecc": float(fs.apply(m, "eccentricity", 0.5)),
             "rect": float(fs.apply(m, "rectangularity", 0.5))})
