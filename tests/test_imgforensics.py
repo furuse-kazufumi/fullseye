@@ -37,7 +37,8 @@ import imgforensics as F                                 # noqa: E402
 import opsimgforensics                                   # noqa: E402
 from scipy import ndimage                                # noqa: E402
 
-PIL = pytest.importorskip if False else None
+# optional 依存は「無ければ skip」ではなく「無ければ **その op のテストだけ** skip」。
+# import 自体が通ることは test_registry_declares_optional_dependencies が別に見る。
 try:
     from PIL import Image                                # noqa: E402
     HAVE_PIL = True
