@@ -295,6 +295,26 @@ def _grab(widget) -> np.ndarray:
     return _qimage_to_rgb_u8(widget.grab())
 
 
+def _with_progress(frames, height=5):
+    """各フレームの最下段に進行バーを **後付けで** 描く(UI の一部ではない)。
+
+    2 つ理由がある。(1) 読者がクリップのどこを見ているか分かる。(2) GIF の
+    Pillow 経路は **連続する完全に同一のフレームを 1 枚に畳む**ため、静止の
+    「間」を作るために同じ grab を並べると書き出し枚数と読み戻し枚数が食い違う
+    (実際に 18 枚書いて 6 枚しか戻らなかった)。1 px でも違えば畳まれない。
+    """
+    out = []
+    n = len(frames)
+    for i, f in enumerate(frames):
+        a = np.array(f, np.uint8, copy=True)
+        h, w = a.shape[:2]
+        a[h - height:h, :, :] = np.array([24, 27, 33], np.uint8)
+        k = max(1, int(round(w * (i + 1) / n)))
+        a[h - height:h, :k, :] = np.array([33, 217, 204], np.uint8)
+        out.append(a)
+    return out
+
+
 def _tap(widget, key, mods=None) -> None:
     """本物の QKeyEvent を press+release で 1 回送る。
 
@@ -1364,7 +1384,7 @@ def ex_studio_walk():
              "fov_range": [studio.FP_FOV_MIN, studio.FP_FOV_MAX],
              "window": [WIN_W, WIN_H], "frames": len(frames),
              "step_per_tap": round(float(v3._radius) / 50.0, 6)}
-    return save_gif("studio_walk", frames, facts, fps=4, thumb_index=6)
+    return save_gif("studio_walk", _with_progress(frames), facts, fps=4, thumb_index=6)
 
 
 def ex_studio_turntable():
@@ -1398,7 +1418,7 @@ def ex_studio_turntable():
              "downsampled_by": int(info["downsampled_by"]),
              "yaw_per_drag_deg": 12.0, "frames": n,
              "yaw_final": round(float(v3._yaw), 2), "window": [WIN_W, WIN_H]}
-    return save_gif("studio_turntable", frames, facts, fps=10, thumb_index=8)
+    return save_gif("studio_turntable", _with_progress(frames), facts, fps=10, thumb_index=8)
 
 
 def ex_studio_help():
@@ -1434,11 +1454,15 @@ def ex_studio_help():
             *(("3d", name + ".html") if dim == "3d" else (name + ".html",))))
         shown.append({"dim": dim, "name": name, "authored": authored,
                       "chars": len(html)})
-        frames.append(_grab(dlg))
-    if len(frames) < 4:
+        # 同じ grab を並べる代わりに、実際にページをスクロールして 3 枚撮る
+        bar = win._help["browser"].verticalScrollBar()
+        for frac in (0.0, 0.45, 0.9):
+            bar.setValue(int(round(bar.maximum() * frac)))
+            _pump(4)
+            frames.append(_grab(dlg))
+    if len(frames) < 12:
         raise RuntimeError("ヘルプページが 4 枚も開けなかった: %r" % shown)
-    # 各ページ 3 フレーム保持(GIF はフレーム複製でしか「間」を作れない)
-    held = [f for f in frames for _ in range(3)]
+    held = frames
     n_2d = len(os.listdir(os.path.join(_ROOT, "studio_assets", "op_help")))
     n_3d = len(os.listdir(os.path.join(_ROOT, "studio_assets", "op_help", "3d")))
     # Studio が到達できない族(op_help/<族>/ に生成済みだが 2d/3d のどちらでもない)
@@ -1452,7 +1476,7 @@ def ex_studio_help():
              "orphan_family_help_dirs": orphan,
              "orphan_total": int(sum(orphan.values())),
              "frames": len(held), "dialog": [1000, 720]}
-    return save_gif("studio_help", held, facts, fps=3, thumb_index=1)
+    return save_gif("studio_help", _with_progress(held), facts, fps=3, thumb_index=1)
 
 
 _EDITOR_CODE = '''"""Studio の Python エディタで実行するデモ(F5 で走る)。"""
@@ -1514,7 +1538,7 @@ def ex_studio_editor():
              "status": status, "output_lines": len(out.strip().splitlines()),
              "output_tail": out.strip().splitlines()[-3:],
              "dialog": [1060, 740]}
-    return save_gif("studio_editor", frames, facts, fps=6,
+    return save_gif("studio_editor", _with_progress(frames), facts, fps=6,
                     thumb_index=len(frames) - 1)
 
 
@@ -1545,7 +1569,7 @@ def ex_studio_opsearch():
              "steps": [{"text": t, "matches": int(n)} for t, n in steps],
              "final_matches": int(n_final), "selected_found": bool(hit),
              "frames": len(frames), "window": [WIN_W, WIN_H]}
-    return save_gif("studio_opsearch", frames, facts, fps=4, thumb_index=6)
+    return save_gif("studio_opsearch", _with_progress(frames), facts, fps=4, thumb_index=6)
 
 
 def ex_studio_pipeline():
@@ -1587,7 +1611,7 @@ def ex_studio_pipeline():
     for cb in win.findChildren(type(win._problems_list).__mro__[0]):
         break
     facts = {"steps": records, "frames": len(frames), "window": [WIN_W, WIN_H]}
-    return save_gif("studio_pipeline", frames, facts, fps=4,
+    return save_gif("studio_pipeline", _with_progress(frames), facts, fps=4,
                     thumb_index=len(frames) - 5)
 
 

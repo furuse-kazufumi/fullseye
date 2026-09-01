@@ -1950,7 +1950,7 @@ def ex_illumination(log):
             (plot_box[0] + 6, plot_box[1] + 4, "detection rate over 5 seeds", C_DIM, 11, False),
             (plot_box[0] + 6, plot_box[1] + 20, "bright field", C_CURVE, 11, True),
             (plot_box[0] + 6, plot_box[1] + 36, "dark field", C_OPT, 11, True),
-            (plot_box[2] - 122, plot_box[3] - 16, "|contrast| ->", C_DIM, 11, False),
+            (plot_box[2] - 96, plot_box[3] + 22, "|contrast| ->", C_DIM, 11, False),
             (18, yi,
              f"|contrast| {r['mag']:.3f}    bright field (median level "
              f"{r['bright']['level']:.2f}): IoU {r['bright']['iou']:.3f}, rate "
@@ -1966,13 +1966,15 @@ def ex_illumination(log):
              C_HIT, 14, True),
             (18, yi + 44,
              f"honest limit: only two things differ -- the SIGN of the contrast, and "
-             f"the fact that a dark-field surround returns less light "
-             f"({dark_level:g}) AND less surface texture (x{dark_texture:g}) to the "
-             f"lens; no light transport is solved", C_DIM, 11, False),
-            (18, yi + 60,
-             f"optical limit is {res['resolution_object_um']:.2f} um and the defect "
-             f"is {size_um:g} um -- the optics carry it in both panels; only the "
-             f"contrast is moving", C_DIM, 11, False),
+             f"a dark-field surround returning less light ({dark_level:g})",
+             C_DIM, 11, False),
+            (18, yi + 58,
+             f"and less surface texture (x{dark_texture:g}) to the lens. No light "
+             f"transport is solved here.", C_DIM, 11, False),
+            (18, yi + 74,
+             f"the optical limit ({res['resolution_object_um']:.2f} um) is below the "
+             f"defect ({size_um:g} um) in both panels -- the optics are not what "
+             f"changes", C_DIM, 11, False),
         ]
         frames.append(_text(_to_u8(canvas), labels))
 
@@ -2134,9 +2136,9 @@ def ex_pixel_pitch(log):
              C_TEXT, 14, True),
             (18, yi + 20,
              f"Nyquist limit {r['nyq']:6.2f} um   diffraction {r['dif']:6.2f} um   "
-             f"binding: {r['by']}   detection rate "
+             f"binding: {r['by']}   rate over {seeds} seeds "
              + ("n/a" if r["rate"] is None else f"{r['rate']:.0%}")
-             + f"  ->  {det_txt}",
+             + f"   (the seed shown: {det_txt})",
              (C_HIT if (r["det"] and r["rate"]) else C_BAD), 14, True),
             (18, yi + 44,
              "the zoom is nearest-neighbour, so the blocks you see are real "

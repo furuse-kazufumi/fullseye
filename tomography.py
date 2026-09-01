@@ -478,8 +478,7 @@ def projection_angles(n_angles=180, span_deg=180.0, scheme="uniform",
       views is 5.63 degrees for golden against 175.00 degrees for uniform.
     * ``"bit-reversed"`` — the uniform grid, visited in bit-reversed order. Same
       guarantee as golden for power-of-two prefixes and exactly uniform at the
-      end, which golden is not (its 180-view set has a 0.29-degree worst gap
-      against the uniform grid's 1.00-degree uniform one).
+      end, which golden is not.
 
     *span_deg* is the total angular range. 180 degrees is the complete data set
     for parallel beam — projections at ``theta`` and ``theta+180`` are mirror
@@ -1517,12 +1516,21 @@ def sinogram_center_shift(sinogram, shift_px=None, angles_deg=None):
     interpolation. With ``shift_px=None`` the shift is measured first by
     :func:`sinogram_center_of_rotation`, which makes this the one-call fix.
 
-    Round-trip on the Shepp-Logan phantom: shifting by +1.0 px and back recovers
-    the original sinogram to **2.4e-03** peak error, the residual being the linear
-    interpolation's own smoothing (a shift is not an information-preserving
-    operation on a sampled signal, and pretending otherwise by using a Fourier
-    shift would trade this visible blur for invisible ringing at the detector
-    edges).
+    Round-trip on the Shepp-Logan phantom, shifting by *d* and back:
+
+        d        max |error|    relative to the peak line integral
+        1.00 px   0.0e+00        0.0e+00     (an integer shift is exact)
+        0.50 px   1.4e-01        1.2e-01
+        0.25 px   1.1e-01        9.2e-02
+
+    A *fractional* shift is **not** a small operation and this is the operator's
+    honest limitation: 12 % of the peak, on a phantom with sharp edges, from one
+    round trip. Interpolation is a low-pass filter and the sinogram of an edge is
+    not band-limited, so there is nothing to recover on the way back. Using a
+    Fourier shift instead would trade this visible blur for invisible ringing at
+    the detector edges, which is worse in the way that matters here. The
+    consequence is in :func:`sinogram_center_of_rotation`'s table: an integer
+    centre error is fully repairable, a half-pixel one is not.
 
     :param sinogram: ``(n_angles, n_detectors)``.
     :param shift_px: axis offset in detector bins; ``None`` -> measure it.
