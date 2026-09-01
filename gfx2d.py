@@ -1552,8 +1552,8 @@ def film_grain(rgb, sigma=0.03, seed=0, monochrome=True):
 
     ``sigma=0`` returns the input bit for bit. The clip at ``[0, 1]`` biases the
     mean wherever the image is already near an end of the range; the suite
-    measures the shift (0.0009 on the mid-grey test image, 0.012 on a
-    black-and-white one) rather than claiming it is zero.
+    measures the shift (2.4e-4 on a mid-grey image at sigma=0.03, 1.0e-4 on a
+    half-black half-white one) rather than claiming it is zero.
     """
     img = _require_rgb(rgb, "rgb")
     sig = _scalar(sigma, "sigma", 0.0, 10.0)

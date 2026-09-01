@@ -484,7 +484,7 @@ def text_box(img, text, xy, color="neutral", text_color=None, box_color=None,
         raise ValueError(f"max_width {max_width} leaves no room for text after pad={pad}")
     m = measure_text(text, font_size=font_size, font_path=font_path,
                      max_width=inner_max, min_font_size=min_font_size,
-                     line_spacing=line_spacing)
+                     line_spacing=line_spacing, wrap=wrap)
     bw, bh = m["width"] + 2 * pad, m["height"] + 2 * pad
     x0, y0 = _anchor_origin(anchor, int(round(xy[0])), int(round(xy[1])), bw, bh)
     _check_inside(a, (x0, y0, bw, bh), name="text box", what="text plate")
