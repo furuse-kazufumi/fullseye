@@ -1399,12 +1399,12 @@ def ex_airy_rayleigh(log):
 # =========================================================================== #
 def ex_polarizer(log):
     """直交偏光子で鏡面反射が 0.0 まで落ち、その下の傷が出てくる。"""
-    tile = 196
+    tile = 160
     rng = np.random.default_rng(4242)
     bg = defectgen.surface_texture((tile, tile), "brushed", strength=0.05,
                                    scale_px=6.0, seed=11)
-    ideal, mask = defectgen.defect_scratch((tile, tile), length_px=124.0,
-                                           width_px=4.5, angle_deg=24.0,
+    ideal, mask = defectgen.defect_scratch((tile, tile), length_px=104.0,
+                                           width_px=4.0, angle_deg=24.0,
                                            wander=0.10, contrast=-0.30, seed=3)
     part = defectgen.composite_defect(bg, ideal, mask)
     # 鏡面反射のローブ(傷の上に重なる位置に置く。形は明示的なガウス)
@@ -1442,8 +1442,8 @@ def ex_polarizer(log):
     disp = tile * 2
     w, hdr = 1000, 34
     pan_y = hdr + 30
-    x1, x2 = 20, 20 + disp + 14
-    plot_box = (x2 + disp + 84, pan_y + 4, w - 26, pan_y + 190)
+    x1, x2 = 18, 18 + disp + 12
+    plot_box = (x2 + disp + 60, pan_y + 6, w - 26, pan_y + 198)
     h = pan_y + disp + 108
     frames = []
     for r in rows:
@@ -1462,7 +1462,7 @@ def ex_polarizer(log):
                          (xx0 + disp, pan_y + disp), (xx0 - 1, pan_y + disp)],
                 color=C_GRID, width=1, closed=True)
         # 検光子の向きを円と線で示す(角度の読み違えを防ぐ)
-        cxx, cyy, rr = plot_box[0] - 46, pan_y + 40, 30
+        cxx, cyy, rr = plot_box[0] + 60, pan_y + 274, 34
         canvas = imagedraw.draw_circle(canvas, (cxx, cyy), rr, color=C_DIM, width=1)
         th = np.radians(r["angle"])
         canvas = imagedraw.draw_line(
@@ -1839,7 +1839,7 @@ def ex_illumination(log):
     """明視野風(暗い傷)と暗視野風(光る傷)。**符号と露光**の appearance モデル。"""
     system = _system()
     geo, res = _limits()
-    tile = 200
+    tile = 160
     mags = np.linspace(0.02, 0.34, 33)
     size_um = 120.0
     seeds = 5
@@ -1878,8 +1878,8 @@ def ex_illumination(log):
     disp = tile * 2
     w, hdr = 1000, 34
     pan_y = hdr + 32
-    x1, x2 = 20, 20 + disp + 14
-    plot_box = (x2 + disp + 84, pan_y + 4, w - 26, pan_y + 178)
+    x1, x2 = 18, 18 + disp + 12
+    plot_box = (x2 + disp + 60, pan_y + 6, w - 26, pan_y + 210)
     h = pan_y + disp + 116
     frames = []
     for r in rows:
@@ -1967,7 +1967,7 @@ def ex_pixel_pitch(log):
     """同じ欠陥をピッチ違いで撮り、Nyquist を割った瞬間に消える様子。"""
     size_um = 130.0
     pitches = np.linspace(1.4, 13.5, 38)
-    tile = 176
+    tile = 160
     seeds = 5
 
     rows = []
@@ -2016,8 +2016,8 @@ def ex_pixel_pitch(log):
     disp = tile * 2
     w, hdr = 1000, 34
     pan_y = hdr + 32
-    x1, x2 = 20, 20 + disp + 14
-    plot_box = (x2 + disp + 78, pan_y + 4, w - 26, pan_y + 190)
+    x1, x2 = 18, 18 + disp + 12
+    plot_box = (x2 + disp + 60, pan_y + 6, w - 26, pan_y + 210)
     h = pan_y + disp + 116
     frames = []
     for r in rows:

@@ -1611,8 +1611,6 @@ def ex_diffusion(data, log=print):
         p2 = Plot(c, (640, 120, W - 46, 430), (1, len(rows)), (0, mmax * 1.15))
         p2.grid(yticks=np.linspace(0, mmax, 5),
                 xticks=np.arange(0, len(rows) + 1, 150)).frame()
-        for r in sub[::5]:
-            p2.vbar(r["chain"], marg[r["chain"] - 1], 2, C_WARN)
         p2.line([r["chain"] for r in sub], [marg[r["chain"] - 1] for r in sub],
                 C_EVO, 2)
         c = p2.c
