@@ -895,6 +895,25 @@ def test_bool_labels_are_accepted_as_a_single_component():
 # --------------------------------------------------------------------------- #
 # (14) 台帳                                                                     #
 # --------------------------------------------------------------------------- #
+def test_docstrings_only_cite_tests_that_exist():
+    """docstring が名指しするテストが実在することを機械で確かめる。
+
+    「テストで固定してある」と書いてある docstring は、その名前のテストが消えた
+    瞬間から**嘘になる**。しかも読む側からは検証できない(名前があるだけで
+    通ったように見える)ので、参照の実在をここで強制する。
+    """
+    import re
+
+    here = os.path.dirname(os.path.abspath(__file__))
+    src = open(os.path.join(os.path.dirname(here), "volcolor.py"),
+               encoding="utf-8").read()
+    mine = open(os.path.join(here, "test_volcolor.py"), encoding="utf-8").read()
+    have = set(re.findall(r"^def (test_\w+)", mine, re.M))
+    cited = set(re.findall(r"test_volcolor\.py::(\w+)", src))
+    assert cited, "volcolor.py should cite the tests that fix its claims"
+    assert not (cited - have), sorted(cited - have)
+
+
 def test_ledger_is_complete_and_consistent():
     import opsvolcolor
 
