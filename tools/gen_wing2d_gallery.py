@@ -700,9 +700,9 @@ def subject_denoise_compare(log=print) -> dict:
              R["img"]["bilateral"], R["img"]["sk_nlm"],
              _cmap(np.abs(src - R["img"][best]), "magma", vmin=0.0, vmax=0.25)],
             ["元の写真 (ノイズ無し)\n基準",
-             "add_noise_white σ=%.3f\nPSNR %.2f dB / estimate_noise %.3f%s"
+             "add_noise_white σ=%.3f\nPSNR %.2f dB / estimate_noise %.4f (真値の %.0f%%)"
              % (sigma[i], R["psnr"]["noisy"], R["sigma_est"],
-                "（上限に張り付き）" if R["sigma_est"] >= 0.999 else ""),
+                100.0 * R["sigma_est"] / sigma[i]),
              "median\nPSNR %.2f dB (%+.2f)"
              % (R["psnr"]["median"], R["psnr"]["median"] - R["psnr"]["noisy"]),
              "bilateral\nPSNR %.2f dB (%+.2f)"
