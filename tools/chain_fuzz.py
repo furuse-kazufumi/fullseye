@@ -1160,6 +1160,11 @@ def run_chain(ops, gens, rng, length, log, chain_seed=None, script=None,
         arng = _step_rng(chain_seed, name, occ[name], rng)
         if name in OP_ARG_BUILDERS:
             bound = OP_ARG_BUILDERS[name](pool, arng)
+            # builder が **list** を返したら「data 引数だけを組んだ」の意で、
+            # 残る必須引数の束縛は通常経路(op 固有 → 名前ヒント)に任せる。
+            # tuple を返す builder(従来のもの)は (args, kwargs) 完成形。
+            if isinstance(bound, list):
+                bound = _bind_args(name, fn, bound, arng)
         else:
             data_args = []
             for t in ins:
