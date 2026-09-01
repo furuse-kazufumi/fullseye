@@ -615,6 +615,7 @@ _CATALOG = {
     ],
     "registration_metrics": [  # 登録品質の定量評価(inlier/RMSE/recall/回転並進誤差、GT 比較)
         ("inlier_ratio", "registration_eval", ["points", "points"], "measurement", False),
+        # (rmse, n_inliers) を返す → adapter で rmse を剥がして measurement
         ("rmse_inliers", "registration_eval", ["points", "points"], "measurement", False),
         ("registration_recall", "registration_eval", ["points", "points"], "measurement", False),
         ("rotation_translation_error", "registration_eval", ["pose", "pose"], "measurement", False),
