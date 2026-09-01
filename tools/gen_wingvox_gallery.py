@@ -333,23 +333,25 @@ def ex_flicker(log):
 # --------------------------------------------------------------------------- #
 def ex_connectivity(log):
     panels, labels_txt, counts = [], [], {}
-    k = 10
-    for kind, jp in (("corner", "頂点 1 点で接する"), ("edge", "稜線で接する")):
+    k = 22
+    for kind, jp in (("corner", "頂点接触"), ("edge", "稜線接触")):
         v = touching_pair(kind)
         counts[kind] = {}
         for c in (6, 18, 26):
             lab, nn = volops.vol_label(v, connectivity=c)
             counts[kind][c] = int(nn)
-            # 2 つの塊がいちばん見える斜投影 = 前面から見た front 合成
+            # 2 つの塊がいちばん見える向き = 前面(y 軸)からの front 合成
             img = VC.vol_label_volume_render(lab, axis="y", mode="front", seed=SEED)
-            panel = _frame_border(_up(img, k))
-            panel = _text(panel, [(panel.shape[1] // 2, 6,
+            panel = _canvas(v.shape[0] * k + 30, v.shape[2] * k)
+            _paste(panel, _frame_border(_up(img, k)), 30, 0)
+            panel = _text(panel, [(panel.shape[1] // 2, 5,
                                    "%d 連結 → %d 成分 / %d 色" % (c, nn, nn),
-                                   FG, "ma")], size=15)
+                                   FG + (17,), "ma")], size=17, where="connectivity")
             panels.append(panel)
-            labels_txt.append("%s・%d 連結:%d 成分" % (jp, c, nn))
-    sheet = contact_sheet(panels, labels_txt, ncols=3, panel_px=260,
-                          title="斜めに接する 2 塊は、近傍の定義で 1 つにも 2 つにもなる")
+            labels_txt.append("%s・%d 連結 = %d 成分" % (jp, c, nn))
+    title = "斜めに接する 2 塊は、近傍の定義で 1 つにも 2 つにもなる"
+    sheet = contact_sheet(panels, labels_txt, ncols=3, panel_px=280,
+                          title=title, title_font_size=_fit_size(title, 3 * 280, 24))
     info = save_exhibit(sheet, "wingvox_connectivity")
     facts = {"corner": counts["corner"], "edge": counts["edge"],
              "note": "角接触は 26 だけが繋ぎ、稜線接触は 18 から繋がる",
