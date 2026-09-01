@@ -82,7 +82,7 @@ def main():
     m_s_true[m_s_true < 1e-3] = 0.0
     image = diffuse_true + m_s_true[..., None] * WHITE
     free_frac = float((m_s_true == 0.0).mean())
-    print(f"1) 合成: {h}x{w} 塗装面 albedo={tuple(albedo)}  "
+    print(f"1) 合成: {h}x{w} 塗装面 albedo={np.round(albedo, 3).tolist()}  "
           f"ハイライト最大 m_s={m_s_true.max():.3f}  "
           f"鏡面成分ゼロの画素={free_frac:.1%}")
 
