@@ -57,10 +57,12 @@ def test_overlaid_optical_limit_comes_from_the_optics_function():
 
 def test_detection_onset_is_a_measurement_not_a_constant():
     """検出開始サイズは掃引の実測から出る(定数ではない)ので、系を変えれば動く。"""
+    # lo_um は遠い系でも 1 画素を切らない値にする(切ると render_part が
+    # 「描けない」で正しく落ちる — それはこのテストの主題ではない)
     _, near = gvv.build_sweep_frames(frames=10, seeds=3, working_distance_mm=200.0,
-                                     log=_quiet)
+                                     lo_um=60.0, log=_quiet)
     _, far = gvv.build_sweep_frames(frames=10, seeds=3, working_distance_mm=320.0,
-                                    log=_quiet)
+                                    lo_um=60.0, log=_quiet)
     # 離れれば µm/画素が粗くなり、光学限界も検出も大きい欠陥側へ動く
     assert far["optical_limit_um"] > near["optical_limit_um"]
     if near["detection_start_um"] is not None and far["detection_start_um"] is not None:
