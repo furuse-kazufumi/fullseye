@@ -120,6 +120,7 @@ def analyse() -> dict:
         "never_consumed": never_consumed, "one_way": one_way,
         "unchecked_ops": unchecked, "unchecked_sorts": unchecked_sorts,
         "unreachable": unreachable, "checks": sorted(checks),
+        "builders": sorted(builders), "reached_via_builder": by_builder,
     }
 
 
