@@ -762,11 +762,11 @@ def ex_boundary(log) -> dict:
 
     # 表示用に間引いた点(描画のためだけ。測定は全点で行っている)
     rng = np.random.default_rng(SEED)
-    idx = rng.choice(pts_mm.shape[0], size=min(9000, pts_mm.shape[0]), replace=False)
+    idx = rng.choice(pts_mm.shape[0], size=min(6000, pts_mm.shape[0]), replace=False)
     idx = np.sort(idx)
     show = pts_mm[idx]
     solid_idx = np.argwhere(ball > 0.5).astype(np.float64) * np.asarray(sp)
-    sidx = rng.choice(solid_idx.shape[0], size=9000, replace=False)
+    sidx = rng.choice(solid_idx.shape[0], size=6000, replace=False)
     solid_show = solid_idx[np.sort(sidx)]
 
     W, H = 1120, 640
