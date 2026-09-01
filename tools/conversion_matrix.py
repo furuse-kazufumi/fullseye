@@ -52,7 +52,7 @@ def load():
 
 
 def analyse() -> dict:
-    ops, checks, gens = load()
+    ops, checks, gens, builders = load()
 
     sorts: set[str] = set()
     # edges[(a, b)] = [op 名] ― a を入力に取り b を返す op(多入力は入力ごとに 1 本)

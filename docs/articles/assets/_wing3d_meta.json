@@ -28,9 +28,9 @@
         "full_MB": 56.623104,
         "part_MB": 0.677976,
         "memory_ratio": 83.51785903925803,
-        "t_full_ms_raw": 373.6777000594884,
-        "t_part_ms_raw": 1.4810999855399132,
-        "speedup_raw": 252.2974165874897,
+        "t_full_ms_raw": 366.19989993050694,
+        "t_part_ms_raw": 1.8539000302553177,
+        "speedup_raw": 197.5294751357624,
         "voxels_full": 7077888,
         "voxels_cropped": 84747,
         "voxel_ratio": 83.51785903925803,
@@ -63,7 +63,7 @@
       "gif_sha256": "8a3b89df7c2825356a60ae6656b732348c79a3e37b3a47bfb431a657281669a6",
       "mp4_sha256": "e24b848e36feb754e036a1348a904baa6f99e208c13c31cbe2b1141bf7713984",
       "exhibit": "domain",
-      "seconds": 17.089509499957785
+      "seconds": 16.92489239992574
     },
     {
       "name": "wing3d_boundary_shell",
@@ -123,7 +123,7 @@
       "gif_sha256": "d56e8ff18bc8163e81758923d8aed5bf1ddb51991c9f7c37dc230ec14946ebe5",
       "mp4_sha256": "4b49e848b10a34c8296b9ddb2a6b80b6ee87419c7e8fb6cfc802b86acf0940fe",
       "exhibit": "boundary",
-      "seconds": 22.767444599885494
+      "seconds": 22.531618099892512
     },
     {
       "name": "wing3d_rle_compression",
@@ -160,12 +160,12 @@
           128.0,
           128.0
         ],
-        "volume_speedup_raw": 239.5076643118807,
-        "bbox_speedup_raw": 26.51346575613001,
-        "t_rle_volume_us_raw": 29.300106689333916,
-        "t_dense_volume_us_raw": 7017.600117251277,
-        "t_rle_bbox_us_raw": 44.79987546801567,
-        "t_dense_bbox_us_raw": 1187.7999641001225,
+        "volume_speedup_raw": 238.31173004393483,
+        "bbox_speedup_raw": 28.237143526838036,
+        "t_rle_volume_us_raw": 29.19998951256275,
+        "t_dense_volume_us_raw": 6958.700018003583,
+        "t_rle_bbox_us_raw": 44.69999112188816,
+        "t_dense_bbox_us_raw": 1262.2000649571419,
         "dense_elements": 16777216,
         "rle_elements": 59292,
         "union_voxels": 1508456,
@@ -184,7 +184,7 @@
       "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_rle_compression_thumb.jpg",
       "thumb_bytes": 57181,
       "exhibit": "rle",
-      "seconds": 3.2026190001051873
+      "seconds": 3.3220683000981808
     },
     {
       "name": "wing3d_ct_windowing",
@@ -242,7 +242,7 @@
       "gif_sha256": "5e745b230bbe437aa60f17fc05cfd581986430a3a25aa1450ee467b8483417f5",
       "mp4_sha256": "0885d4fec4727ef498f84b3da50a4c56658ac7a823d478d85f76b0612e96c5ed",
       "exhibit": "windowing",
-      "seconds": 25.343698000069708
+      "seconds": 24.4810007000342
     },
     {
       "name": "wing3d_vesselness_control",
@@ -286,7 +286,7 @@
       "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_vesselness_control_thumb.jpg",
       "thumb_bytes": 54273,
       "exhibit": "vesselness",
-      "seconds": 2.6893763998523355
+      "seconds": 2.5949915000237525
     },
     {
       "name": "wing3d_skeleton_graph",
@@ -334,7 +334,7 @@
       "gif_sha256": "0c27c243f2169388931a05be0441393ce40e3910a3778147beed26daf08c2fb0",
       "mp4_sha256": "49b95987241c94b7d49398ccf9aaa4d570fcfd0a8e44added9d8f4c32415824f",
       "exhibit": "skeleton",
-      "seconds": 25.211545799858868
+      "seconds": 25.089506700169295
     },
     {
       "name": "wing3d_wall_thickness",
@@ -418,7 +418,7 @@
       "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_wall_thickness_thumb.jpg",
       "thumb_bytes": 63947,
       "exhibit": "wall",
-      "seconds": 2.4227632998954505
+      "seconds": 2.3589984998106956
     },
     {
       "name": "wing3d_richardson_lucy",
@@ -503,7 +503,7 @@
       "gif_sha256": "8e09464195d23fa5f37268f30b5257633721fae95a1ad8dfd9c7ae4ae4bbf779",
       "mp4_sha256": "85cc5fc330f3a3528efde4c68a7323ad2008ec104cf894866535a7c96ef7cd6f",
       "exhibit": "rl",
-      "seconds": 56.961872099898756
+      "seconds": 60.46885979990475
     },
     {
       "name": "wing3d_visual_hull",
@@ -643,7 +643,7 @@
       "gif_sha256": "e923601ba882562691ad1d6f89f12830d9abe1a2476a4a1f1743161dac48cb27",
       "mp4_sha256": "3c561080174108be4c932020d32ca0013f92122ec41e042ffa06f877ede9b689",
       "exhibit": "visualhull",
-      "seconds": 41.30491119995713
+      "seconds": 39.92483489983715
     },
     {
       "name": "wing3d_obb_innerbox",
@@ -732,7 +732,7 @@
       "gif_sha256": "de353b6f6102dc53e67b7a5f077781cc21147ce1229b2976ef3fd22507ff8fc6",
       "mp4_sha256": "796908f7a39a5a34b525b043c3f26820282ee8ce663b52b252b503b7e6e3adc2",
       "exhibit": "obb",
-      "seconds": 43.516478799981996
+      "seconds": 41.91308750002645
     },
     {
       "name": "wing3d_icp_registration",
@@ -816,7 +816,7 @@
       "gif_sha256": "7fa6f0a6cec5647fd2b0db61eb833e9565fb02448d50962bef81eefae32dbaea",
       "mp4_sha256": "6f1d5e1d8af308252ba339de7c3386fb975b93b61835b33552587da941400f99",
       "exhibit": "icp",
-      "seconds": 10.916430299868807
+      "seconds": 10.725454400060698
     },
     {
       "name": "wing3d_anisotropic_voxel",
@@ -872,7 +872,7 @@
       "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_anisotropic_voxel_thumb.jpg",
       "thumb_bytes": 44521,
       "exhibit": "anisotropic",
-      "seconds": 0.3713298998773098
+      "seconds": 0.3834560001268983
     },
     {
       "name": "wing3d_mip_turntable",
@@ -891,8 +891,8 @@
         ],
         "frames": 36,
         "elevation_deg": 12.0,
-        "render_seconds_total_raw": 1.2358772999141365,
-        "ms_per_projection_raw": 17.16496249880745,
+        "render_seconds_total_raw": 1.2243588001001626,
+        "ms_per_projection_raw": 17.004983334724482,
         "mip_max": 0.8000001907348633,
         "xray_max": 87.39982604980469
       },
@@ -921,7 +921,7 @@
       "gif_sha256": "19d183d9e10214a4fdae707b654d8935832062065558f934d405d09c74868c6d",
       "mp4_sha256": "c44ae4d381a4236ab5fed93007a78a7c07312ac6d594b32d1aa5c33de8b12a59",
       "exhibit": "mip",
-      "seconds": 19.239143599988893
+      "seconds": 19.221458200132474
     },
     {
       "name": "wing3d_distance_transform",
@@ -972,7 +972,7 @@
       "gif_sha256": "548d5d82d1a75960aec4d228e5acb2e1890b4be627e36afdebff4102b8f507a1",
       "mp4_sha256": "dc20765f83693b1d7c8c59fe5287197ad84d7d6e4967751708391ac7406688e2",
       "exhibit": "distance",
-      "seconds": 73.24860919988714
+      "seconds": 73.28604919998907
     },
     {
       "name": "wing3d_boundary_connectivity",
@@ -1036,7 +1036,7 @@
       "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_boundary_connectivity_thumb.jpg",
       "thumb_bytes": 66342,
       "exhibit": "connectivity",
-      "seconds": 0.1955870999954641
+      "seconds": 0.203708800021559
     },
     {
       "name": "wing3d_pipeline_flow",
@@ -1105,7 +1105,7 @@
       "gif_sha256": "79f70ee88eb6cbcf507a30a2ebcdad85de289d852b45ec3a06a2b9440bd7cdbd",
       "mp4_sha256": null,
       "exhibit": "pipeline",
-      "seconds": 3.4553787000477314
+      "seconds": 3.385323700029403
     },
     {
       "name": "wing3d_slice_zsweep",
@@ -1157,7 +1157,7 @@
       "gif_sha256": "59e378261b580ace622e33e1cc67a9e087d27e48568fa60c1fcc017e4154ff4d",
       "mp4_sha256": "e9bcadbcbc5ba036537320167d378d6d05a4dfe2b49db1ac75eed0130a389e60",
       "exhibit": "zsweep",
-      "seconds": 47.00721499999054
+      "seconds": 47.20021259994246
     },
     {
       "name": "wing3d_mpr_crosshair",
@@ -1211,7 +1211,7 @@
       "gif_sha256": "7480c3d1fd5b2c4c0df21fb2e77d67aa087164741e6d8c127a3d64462cc685a0",
       "mp4_sha256": "3b9556290ab1c8282152ae822e9c84cda8359820921ff4de0ca73596ba9782f1",
       "exhibit": "mpr",
-      "seconds": 126.50343229994178
+      "seconds": 126.06838119984604
     },
     {
       "name": "wing3d_oblique_slice",
@@ -1616,7 +1616,7 @@
       "gif_sha256": "19fb9c8851196342904a1b42b5ec07e3c76c087282820d1f97150b8eb31370c0",
       "mp4_sha256": "99dd4d9ebd08f0b7137ee39c81c4787a659025646b27ca9f74db95e829b66902",
       "exhibit": "oblique",
-      "seconds": 33.46136710001156
+      "seconds": 31.076354900142178
     },
     {
       "name": "wing3d_window_sweep",
@@ -2715,7 +2715,7 @@
       "gif_sha256": "2bb491b5e7634356f8b896f9e3a11ae862a5f8b39466a1830aba0423373a5298",
       "mp4_sha256": "329902f35f5e07a73ab57f95d89e9077f466876d0ef1cd321e11adfc8ce15e01",
       "exhibit": "windowsweep",
-      "seconds": 62.9297672000248
+      "seconds": 59.15261289989576
     },
     {
       "name": "wing3d_isosurface_sweep",
@@ -3158,7 +3158,7 @@
       "gif_sha256": "9858bde5a3a5d786974ce7f678b24e766502c970adaa392d277b7cfc4bea31f1",
       "mp4_sha256": "f1517a934eb3786128e6e572ecd8223597687433b88298eb272854e04c5c5d66",
       "exhibit": "isosurface",
-      "seconds": 20.608507399912924
+      "seconds": 18.313350500073284
     },
     {
       "name": "wing3d_vessel_reslice",
@@ -3748,7 +3748,7 @@
       "gif_sha256": "78648d300d2e25c296955a166b08d7d76c0a614c51351f146db2d62cf5182e48",
       "mp4_sha256": "2af27e2e5289d7cf8ee27fad1ed7801807493abf37d9dee8e6a55d1d40a8e801",
       "exhibit": "vessel",
-      "seconds": 26.884493599878624
+      "seconds": 24.785294400062412
     }
   ]
 }
