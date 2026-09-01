@@ -1239,6 +1239,6 @@ def beamform_doa(cube, wavelength_m=3.8934e-3, element_spacing_m=None,
         "spectrum": np.asarray(power, dtype=np.float64),
         "range_bin": int(rj), "doppler_bin": int(di - zero),
         "range_m": rng_m, "velocity_ms": vel,
-        "angular_resolution_deg": float(np.degrees(0.886 * lam / (na * d))),
+        "angular_resolution_deg": float(np.degrees(_beamwidth_rad(na, d, lam))),
         "max_unambiguous_angle_deg": float(np.degrees(np.arcsin(sin_max))),
     }
