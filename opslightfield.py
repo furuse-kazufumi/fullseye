@@ -1,13 +1,24 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """opslightfield — fullseye ライトフィールド(plenoptic)op の統一レジストリ。
 
-ユーザー方針(2026-09-01)「VISION Award にあるような事に繋がる機能がほしい」。
-一次確認した実在ファイナリスト photonicSENS **apiCAM**(産業用 plenoptic:
-マイクロレンズアレイで**単一センサ・単一ショット**から 2D 画像と画素ごとの
-校正済み深度を同時取得)に対応する機能が fullseye には 1 つも無かった —
-``light_field`` / ``plenoptic`` / ``refocus`` / ``sub_aperture`` / ``microlens``
-/ ``epi`` は全 op 名でヒット 0(2026-09-01 実測)。本レジストリはその台帳
-(lightfield.py、17 op / 5 カテゴリ)。
+single-shot depth(1 回の露光で 2D 画像と画素ごとの深度を同時に得る)は
+マシンビジョンで活発な領域だが、その基礎であるライトフィールド撮像の演算が
+fullseye には 1 つも無かった — ``light_field`` / ``plenoptic`` / ``refocus`` /
+``sub_aperture`` / ``microlens`` / ``epi`` は全 op 名でヒット 0(2026-09-01 実測)。
+本レジストリはその台帳(lightfield.py、17 op / 5 カテゴリ)。
+
+土台となる公開文献:
+  * Adelson & Wang, "Single Lens Stereo with a Plenoptic Camera",
+    IEEE TPAMI 14(2), 1992 — マイクロレンズアレイによる単一レンズ視差。
+  * Levoy & Hanrahan, "Light Field Rendering", SIGGRAPH 1996 —
+    4-D 光場のパラメータ化と視点合成。
+  * Bolles, Baker & Marimont, "Epipolar-Plane Image Analysis", IJCV 1(1), 1987 —
+    EPI の直線の傾きが視差であるという本モジュールの深度推定の基礎。
+  * Ng et al., "Light Field Photography with a Hand-Held Plenoptic Camera",
+    Stanford Tech Report CTSR 2005-02 — shift-and-add リフォーカスと
+    「角度分解能の分だけ被写界深度が伸びる」関係。
+  * Wanner & Goldluecke, "Globally Consistent Depth Labeling of 4D Light
+    Fields", CVPR 2012 — EPI の構造テンソルによる密なスロープ推定。
 
 既存資産との棲み分け(**再実装せず import して合成**):
   * レンズ・絞り・被写界深度の算術 = optics(``thin_lens`` / ``depth_of_field``

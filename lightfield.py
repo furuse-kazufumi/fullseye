@@ -8,10 +8,29 @@ which direction* — the 4-D light field ``L(v, u, y, x)``. Re-sorting those
 pixels gives a grid of slightly-displaced views of the same scene, and from that
 grid you get, from a single sensor and a single shot: a 2-D image, a refocusable
 focal stack, a synthetic aperture you can stop down (or shoot *through* an
-occluder with), and a dense depth map. That is the capability behind industrial
-plenoptic cameras, and until now fullseye had no operator for any of it —
+occluder with), and a dense depth map. Single-shot depth is an active area in
+machine vision, and until now fullseye had no operator for any of it —
 ``light_field`` / ``plenoptic`` / ``refocus`` / ``sub_aperture`` / ``epi``
 returned zero hits across the whole op catalogue.
+
+Background, in the published literature these operators follow:
+
+  * Adelson & Wang, "Single Lens Stereo with a Plenoptic Camera", IEEE TPAMI
+    14(2), 1992 — parallax from one lens via a microlens array.
+  * Levoy & Hanrahan, "Light Field Rendering", SIGGRAPH 1996 — the 4-D
+    parameterisation and view synthesis.
+  * Bolles, Baker & Marimont, "Epipolar-Plane Image Analysis", IJCV 1(1), 1987
+    — the EPI, whose line gradient *is* the disparity; the basis of
+    :func:`lf_epi` and :func:`lf_epi_slope`.
+  * Ng et al., "Light Field Photography with a Hand-Held Plenoptic Camera",
+    Stanford Tech Report CTSR 2005-02 — shift-and-add refocusing and the
+    result that the refocusable range grows with the angular resolution, which
+    :func:`lf_plenoptic_design` reproduces numerically.
+  * Wanner & Goldluecke, "Globally Consistent Depth Labeling of 4D Light
+    Fields", CVPR 2012 — structure-tensor slope estimation on EPIs.
+  * Vaish et al., "Reconstructing Occluded Surfaces Using Synthetic Apertures",
+    CVPR 2006 — the median (and other robust) reductions that see past a
+    foreground occluder, which is :func:`lf_synthetic_aperture`'s ``reduce``.
 
 Five families:
 
@@ -119,8 +138,8 @@ Honest disclosure (what these ops cannot do):
   * **No vignetting, no microlens diffraction, no hexagonal MLA.** The decode
     assumes a rectangular, non-overlapping, uniformly-illuminated grid. Real
     sensors show strong per-microlens vignetting toward the pupil edge (which is
-    exactly why :func:`lf_aperture_mask` exists) and many commercial MLAs are
-    hexagonal.
+    exactly why :func:`lf_aperture_mask` exists), and hexagonal packings are
+    common in the published designs.
   * **Refocus is shift-and-add, i.e. the Lambertian, fronto-parallel model.**
     Specular highlights move with the viewpoint and will *not* fuse; slanted
     surfaces are only piecewise correct. :func:`lf_synthetic_aperture` with
@@ -184,8 +203,8 @@ LIGHTFIELD = [
 #: ``(64, 64, 512, 512)`` is 1.07e9 elements = 8.6 GB.
 MAX_LF_ELEMENTS = 1 << 24
 
-#: Largest length of one angular axis (``U`` or ``V``). Commercial plenoptic
-#: cameras are in the 7..15 range; 64 is already far past useful.
+#: Largest length of one angular axis (``U`` or ``V``). Published plenoptic
+#: designs sit around 7..15 directions per axis; 64 is already far past useful.
 MAX_ANGULAR = 64
 
 #: Largest length of one spatial axis (``H`` or ``W``) of a sub-aperture view.
