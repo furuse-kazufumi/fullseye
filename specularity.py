@@ -473,6 +473,18 @@ def _split_uniform_body(I, gamma, max_rank_ratio, max_negative_frac, op):
     """
     H, W, _ = I.shape
     P = I.reshape(-1, 3)
+    if P.shape[0] < 3:
+        # Found by the adversarial pass: a 1x1 image made the SVD of a (1, 3)
+        # matrix return a single singular value and `sv[1]` raised a bare
+        # IndexError. The honest failure is not "index out of bounds" but
+        # "one pixel cannot establish a body direction" — the rank-1 fit needs
+        # a population and the minimum-specular constraint needs a pixel to
+        # spare. The known-body path has no such requirement and still works.
+        raise ValueError("%s: the uniform-body route needs at least 3 pixels to "
+                         "fit a body direction and still have one to spare for "
+                         "the minimum-specular constraint, got %d (shape %r). "
+                         "Pass body_rgb to separate a single pixel"
+                         % (op, P.shape[0], (H, W)))
     scale = float(np.linalg.norm(P))
     if scale <= 0.0:
         raise ValueError("%s: the image is identically zero — there is no "
