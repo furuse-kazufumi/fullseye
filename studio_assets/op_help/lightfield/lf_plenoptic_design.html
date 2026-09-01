@@ -1,0 +1,54 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lf_plenoptic_design — LIGHTFIELD <code style="color:#22d3bf">depth</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>table`</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import lightfield; lightfield.lf_plenoptic_design(focal_mm=50.0, f_number=8.0, object_mm=300.0, pixel_um=3.45, mla_pitch_um=27.6, sensor_px=(2048, 2448), *, subpixel_px=0.1)</code> (または <code style="color:#22d3bf">opslightfield.get(&quot;lf_plenoptic_design&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Size a plenoptic camera: what angular/spatial resolution and depth range you buy.</p>
+<p>The plenoptic trade in one table. A microlens spanning ``mla_pitch_um /</p>
+<p>pixel_um`` pixels turns that many pixels into that many *directions*, so the</p>
+<p>sensor&#x27;s pixel count is unchanged but the image is `<code style="color:#22d3bf">U*V</code>` times smaller and</p>
+<p>carries `<code style="color:#22d3bf">U*V</code><code style="color:#22d3bf"> viewpoints. This operator composes :mod:</code>optics` rather than</p>
+<p>re-deriving it: `<code style="color:#22d3bf">optics.thin_lens</code>` places the image, and</p>
+<p>`<code style="color:#22d3bf">optics.depth_of_field</code>` is called <b>twice</b> — once with the pixel pitch as</p>
+<p>the circle of confusion (the depth of field of a single refocused slice) and</p>
+<p>once with the *microlens* pitch (the range over which refocusing can still</p>
+<p>recover a sharp image). Their ratio is the refocusing gain, and it comes out</p>
+<p>at the angular resolution, which is the textbook result — measured</p>
+<p>2026-09-01 at `<code style="color:#22d3bf">f = 50 mm</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">N = 8</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">s_o = 300 mm</code>`: an 8x8 angular</p>
+<p>grid gives `<code style="color:#22d3bf">refocus_gain = 8.0038</code><code style="color:#22d3bf">, 10x10 gives </code><code style="color:#22d3bf">10.0075</code>` and 6x6 gives</p>
+<p>`<code style="color:#22d3bf">6.0016</code>`.</p>
+<p>Returns a dict — `<code style="color:#22d3bf">angular_u</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">angular_v</code>` (whole pixels per microlens,</p>
+<p>from `<code style="color:#22d3bf">floor</code><code style="color:#22d3bf">) · </code><code style="color:#22d3bf">angular_exact</code>` (the unrounded ratio) and</p>
+<p>`<code style="color:#22d3bf">pitch_is_integer</code>` (whether the MLA pitch is a whole number of pixels; it</p>
+<p>usually is not, which is why real decoding needs sub-pixel calibration) ·</p>
+<p>`<code style="color:#22d3bf">spatial_w</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">spatial_h</code>` (microlenses = sub-aperture image size) ·</p>
+<p>`<code style="color:#22d3bf">n_views</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">resolution_loss</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">U*V</code><code style="color:#22d3bf">) · </code><code style="color:#22d3bf">image_mm</code>` /</p>
+<p>`<code style="color:#22d3bf">magnification</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">working_distance_mm</code>` from the thin lens ·</p>
+<p>`<code style="color:#22d3bf">aperture_mm</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">f/N</code><code style="color:#22d3bf">) · </code><code style="color:#22d3bf">baseline_mm</code>` (viewpoint spacing across the</p>
+<p>pupil, `<code style="color:#22d3bf">aperture / (U - 1)</code><code style="color:#22d3bf">) · </code><code style="color:#22d3bf">focal_px_subaperture</code>` (focal length in</p>
+<p>units of the *microlens* pitch, the pixel of a sub-aperture image) ·</p>
+<p>`<code style="color:#22d3bf">dof_pixel_mm</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">dof_refocus_mm</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">refocus_gain</code>` · and</p>
+<p>`<code style="color:#22d3bf">depth_precision_mm</code>`, the object-side distance change that moves the</p>
+<p>disparity by *subpixel_px* pixels (`<code style="color:#22d3bf">Z^2 * dp / (focal_px * baseline)</code>`) —</p>
+<p>the honest depth resolution at *object_mm*.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: any non-positive or non-finite length, an</p>
+<p>`<code style="color:#22d3bf">mla_pitch_um</code>` smaller than two *pixel_um* (fewer than 2 directions is not</p>
+<p>a light field), a sensor smaller than one microlens, a non-positive</p>
+<p>*subpixel_px*, `<code style="color:#22d3bf">object_mm == focal_mm</code>` (propagated from</p>
+<p>`<code style="color:#22d3bf">optics.thin_lens</code>`: the object images at infinity), and an angular</p>
+<p>resolution of 1 in either axis, where the baseline would be a 0/0.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">lightfield_depth ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">depth</code>)</h3>
+<p><a style="color:#22d3bf" href="oplightfield:lf_depth_from_focus">lf_depth_from_focus</a> · <a style="color:#22d3bf" href="oplightfield:lf_epi_slope">lf_epi_slope</a> · <a style="color:#22d3bf" href="oplightfield:lf_disparity_to_depth">lf_disparity_to_depth</a> · <a style="color:#22d3bf" href="oplightfield:lf_all_in_focus">lf_all_in_focus</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: lightfield.py — LIGHTFIELD operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

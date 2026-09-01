@@ -1,0 +1,45 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lf_depth_from_focus — LIGHTFIELD <code style="color:#22d3bf">depth</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import lightfield; lightfield.lf_depth_from_focus(lf, slopes=(-2.0, -1.0, 0.0, 1.0, 2.0), *, window=9, measure=&#x27;laplacian&#x27;, subpixel=True, interp=&#x27;linear&#x27;, edge=&#x27;nearest&#x27;)</code> (または <code style="color:#22d3bf">opslightfield.get(&quot;lf_depth_from_focus&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Per-pixel slope from the <b>sharpness peak</b> across the refocus sweep.</p>
+<p>Refocus at every slope in *slopes*, measure local sharpness (*measure*:</p>
+<p>`<code style="color:#22d3bf">laplacian</code>` = summed modified Laplacian, the classical depth-from-focus</p>
+<p>operator; `<code style="color:#22d3bf">variance</code><code style="color:#22d3bf"> = local variance; </code><code style="color:#22d3bf">gradient</code>` = local gradient</p>
+<p>energy) in a `<code style="color:#22d3bf">window x window</code>` neighbourhood, and take the slope at which</p>
+<p>each pixel is sharpest. With `<code style="color:#22d3bf">subpixel=True</code>` (default) the peak is refined</p>
+<p>by fitting a parabola through the winning sample and its two neighbours on a</p>
+<p><b>uniformly</b> spaced sweep — on a non-uniform sweep the refinement is</p>
+<p>skipped rather than applied with the wrong spacing.</p>
+<p>Unbiased where :func:<code style="color:#22d3bf">lf_epi_slope</code> is not: measured 2026-09-01 on a</p>
+<p>5x5x64x64 synthetic field over a 121-point sweep from -3 to +3, the argmax</p>
+<p>landed <b>exactly</b> on the true slope in 18 of 18 combinations (true slopes</p>
+<p>0.0, +0.5, +1.0, +1.5, +2.0, -1.0 crossed with texture sigma 1.5 / 3.0 /</p>
+<p>5.0 px), and the sub-pixel refinement left every one of them unmoved. Its</p>
+<p>resolution, though, is whatever you put in *slopes* — it cannot see a plane</p>
+<p>you never refocused on.</p>
+<p>Returns `<code style="color:#22d3bf">(slope_map, sharpness)</code><code style="color:#22d3bf">: the </code><code style="color:#22d3bf">(H, W)</code>` map of estimated slopes</p>
+<p>(in px per angular step) and the `<code style="color:#22d3bf">(H, W)</code>` peak focus-measure value, which</p>
+<p>is the honest confidence — a textureless pixel has no sharpness peak, gets</p>
+<p>an essentially arbitrary slope, and its `<code style="color:#22d3bf">sharpness</code>` is ~0. Threshold on it</p>
+<p>rather than trusting the map everywhere.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *lf* not a valid light field, *slopes* empty /</p>
+<p>over :data:<code style="color:#22d3bf">MAX_STACK_SLICES</code> / over :data:<code style="color:#22d3bf">MAX_STACK_ELEMENTS</code> / containing</p>
+<p>a non-finite or over-large value, an even or non-positive *window*, unknown</p>
+<p>*measure* / *interp* / *edge*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">lightfield_depth ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="oplightfield:lf_from_mla">lf_from_mla</a> · <a style="color:#22d3bf" href="oplightfield:lf_disparity_to_depth">lf_disparity_to_depth</a> · <a style="color:#22d3bf" href="oplightfield:lf_all_in_focus">lf_all_in_focus</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">depth</code>)</h3>
+<p><a style="color:#22d3bf" href="oplightfield:lf_epi_slope">lf_epi_slope</a> · <a style="color:#22d3bf" href="oplightfield:lf_disparity_to_depth">lf_disparity_to_depth</a> · <a style="color:#22d3bf" href="oplightfield:lf_all_in_focus">lf_all_in_focus</a> · <a style="color:#22d3bf" href="oplightfield:lf_plenoptic_design">lf_plenoptic_design</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: lightfield.py — LIGHTFIELD operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

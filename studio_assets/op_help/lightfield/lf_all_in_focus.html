@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lf_all_in_focus — LIGHTFIELD <code style="color:#22d3bf">depth</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">lightfield × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import lightfield; lightfield.lf_all_in_focus(lf, slope_map, levels=None, *, n_levels=16, interp=&#x27;linear&#x27;, edge=&#x27;nearest&#x27;)</code> (または <code style="color:#22d3bf">opslightfield.get(&quot;lf_all_in_focus&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Composite one everywhere-sharp image by refocusing each pixel at its own slope.</p>
+<p>Builds a focal stack at *levels* and, for every pixel, takes the slice whose</p>
+<p>level is closest to `<code style="color:#22d3bf">slope_map</code>` there. This is the &quot;2-D image&quot; half of what</p>
+<p>a plenoptic camera delivers, at the full depth range rather than the depth of</p>
+<p>field of one focus setting.</p>
+<p>*levels* controls which refocus planes are actually rendered, and the</p>
+<p>`<code style="color:#22d3bf">None</code>` default has two documented branches — a continuous slope map has</p>
+<p>one distinct value per pixel, and rendering a refocus plane for each of</p>
+<p>those would be tens of thousands of full-frame shifts:</p>
+<p style="margin:2px 0 2px 12px">• if *slope_map* holds at most *n_levels* distinct values (the case when</p>
+<p>it came from :func:<code style="color:#22d3bf">lf_depth_from_focus</code> with `<code style="color:#22d3bf">subpixel=False</code>`), those</p>
+<p>exact values are used and the composite is exact;</p>
+<p style="margin:2px 0 2px 12px">• otherwise the map&#x27;s range is quantised to *n_levels* evenly spaced</p>
+<p>planes (default 16), which is a real approximation: a pixel whose true</p>
+<p>slope falls between two planes is refocused at the nearer one. Pass</p>
+<p>*levels* explicitly — e.g. the sweep you handed</p>
+<p>:func:<code style="color:#22d3bf">lf_depth_from_focus</code> — when that matters.</p>
+<p>Returns a `<code style="color:#22d3bf">(H, W)</code>` 2-D image.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *lf* not a valid light field, a *slope_map* that</p>
+<p>is not 2-D / not `<code style="color:#22d3bf">(H, W)</code>` / non-finite, *levels* empty or over the stack</p>
+<p>caps, *n_levels* outside `<code style="color:#22d3bf">[1, MAX_STACK_SLICES]</code>`, unknown *interp* /</p>
+<p>*edge*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">lightfield_depth ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="oplightfield:lf_from_mla">lf_from_mla</a> · <a style="color:#22d3bf" href="oplightfield:lf_disparity_to_depth">lf_disparity_to_depth</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">depth</code>)</h3>
+<p><a style="color:#22d3bf" href="oplightfield:lf_depth_from_focus">lf_depth_from_focus</a> · <a style="color:#22d3bf" href="oplightfield:lf_epi_slope">lf_epi_slope</a> · <a style="color:#22d3bf" href="oplightfield:lf_disparity_to_depth">lf_disparity_to_depth</a> · <a style="color:#22d3bf" href="oplightfield:lf_plenoptic_design">lf_plenoptic_design</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: lightfield.py — LIGHTFIELD operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

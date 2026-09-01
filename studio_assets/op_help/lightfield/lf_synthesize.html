@@ -1,0 +1,59 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lf_synthesize — LIGHTFIELD <code style="color:#22d3bf">synthesis</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>lightfield`</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import lightfield; lightfield.lf_synthesize(slopes=(0.0,), angular=(5, 5), shape=(64, 64), *, occlusion=True, coverage=0.55, texture_sigma=2.0, interp=&#x27;linear&#x27;, edge=&#x27;wrap&#x27;, seed=0)</code> (または <code style="color:#22d3bf">opslightfield.get(&quot;lf_synthesize&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Build a light field of textured layers at <b>known</b> slopes (the test bed).</p>
+<p>Each entry of *slopes* is one fronto-parallel layer, given as its slope</p>
+<p>`<code style="color:#22d3bf">s = dx/du</code>` in <b>pixels of image shift per angular step</b>; the layer&#x27;s</p>
+<p>texture is band-limited noise (Gaussian-smoothed, `<code style="color:#22d3bf">texture_sigma</code>` px) and</p>
+<p>view `<code style="color:#22d3bf">(v, u)</code><code style="color:#22d3bf"> sees it displaced by </code><code style="color:#22d3bf">(s*(v - v_c), s*(u - u_c))</code>`. Because</p>
+<p>the displacement is exactly linear in the angular index, every downstream</p>
+<p>answer is closed-form: the refocus sharpness peaks at `<code style="color:#22d3bf">s</code>`, the EPI lines</p>
+<p>have slope `<code style="color:#22d3bf">s</code>`, and the disparity between the extreme views is</p>
+<p>`<code style="color:#22d3bf">s * (U - 1)</code>`.</p>
+<p>*angular* is `<code style="color:#22d3bf">(V, U)</code><code style="color:#22d3bf"> and *shape* is </code><code style="color:#22d3bf">(H, W)</code>`.</p>
+<p>With `<code style="color:#22d3bf">occlusion=True</code>` (default) the layers are composited front-to-back by</p>
+<p>`<code style="color:#22d3bf">|slope|</code><code style="color:#22d3bf"> (largest </code><code style="color:#22d3bf">|s|</code>` = nearest = drawn last) through random binary</p>
+<p>masks covering roughly *coverage* of the frame, and the <b>last</b> entry of</p>
+<p>*slopes* is forced opaque as the background. That is what makes a</p>
+<p>see-through synthetic-aperture test meaningful. With `<code style="color:#22d3bf">occlusion=False</code>` the</p>
+<p>layers are averaged instead — a transparent superposition, which is the</p>
+<p>cleanest possible input for refocusing because each layer survives the</p>
+<p>average untouched.</p>
+<p>Returns `<code style="color:#22d3bf">(light_field, slope_map)</code><code style="color:#22d3bf">: the </code><code style="color:#22d3bf">(V, U, H, W)</code>` array and the</p>
+<p>`<code style="color:#22d3bf">(H, W)</code>` map of the front-most layer&#x27;s slope at each pixel — the ground</p>
+<p>truth for :func:<code style="color:#22d3bf">lf_depth_from_focus</code> and :func:<code style="color:#22d3bf">lf_epi_slope</code>. The map is</p>
+<p>in <b>centre-view</b> coordinates (the masks are stated unshifted, and the</p>
+<p>centre view is the one view whose shift is zero), which is also the frame a</p>
+<p>refocused image lands in. With</p>
+<p>`<code style="color:#22d3bf">occlusion=False</code>` the light field also contains the *other* layers at</p>
+<p>every pixel, so a depth estimator will legitimately disagree with the map</p>
+<p>wherever layers overlap; the single-layer case is unambiguous and is what</p>
+<p>the exactness tests use.</p>
+<p>`<code style="color:#22d3bf">edge=&quot;wrap&quot;</code>` (default) makes the scene periodic so an integer slope is a</p>
+<p>pure `<code style="color:#22d3bf">np.roll</code>` and the whole pipeline is bit-exact end to end (measured</p>
+<p>round-trip error 5.6e-16); `<code style="color:#22d3bf">edge=&quot;nearest&quot;</code>` reproduces a real camera&#x27;s</p>
+<p>border clamping.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: an empty or over-long *slopes* list</p>
+<p>(:data:<code style="color:#22d3bf">MAX_LAYERS</code>), a non-finite or over-large slope</p>
+<p>(:data:<code style="color:#22d3bf">MAX_ABS_SLOPE</code>), an angular or spatial shape outside</p>
+<p>`<code style="color:#22d3bf">[1, MAX_ANGULAR]</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">[1, MAX_SPATIAL]</code>`, a total size over</p>
+<p>:data:<code style="color:#22d3bf">MAX_LF_ELEMENTS</code>, *coverage* outside `<code style="color:#22d3bf">(0, 1]</code>`, a *texture_sigma*</p>
+<p>so large the smoothed texture&#x27;s dynamic range falls below</p>
+<p>:data:<code style="color:#22d3bf">MIN_TEXTURE_RANGE</code>, and an unknown *interp* / *edge*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">lightfield_depth ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">lightfield</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="oplightfield:lf_to_mla">lf_to_mla</a> · <a style="color:#22d3bf" href="oplightfield:lf_stats">lf_stats</a> · <a style="color:#22d3bf" href="oplightfield:lf_subaperture">lf_subaperture</a> · <a style="color:#22d3bf" href="oplightfield:lf_center_view">lf_center_view</a> · <a style="color:#22d3bf" href="oplightfield:lf_views">lf_views</a> · <a style="color:#22d3bf" href="oplightfield:lf_epi">lf_epi</a> · <a style="color:#22d3bf" href="oplightfield:lf_refocus">lf_refocus</a> · <a style="color:#22d3bf" href="oplightfield:lf_focal_stack">lf_focal_stack</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">synthesis</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: lightfield.py — LIGHTFIELD operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

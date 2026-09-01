@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lf_disparity_to_depth — LIGHTFIELD <code style="color:#22d3bf">depth</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">depth</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import lightfield; lightfield.lf_disparity_to_depth(slope, focal_px=1000.0, baseline=1.0, *, far_depth=None, min_slope=1e-06)</code> (または <code style="color:#22d3bf">opslightfield.get(&quot;lf_disparity_to_depth&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Slope (px per angular step) -&gt; metric depth, the camera-array model.</p>
+<p>For a rectified array of viewpoints spaced *baseline* apart with focal</p>
+<p>length *focal_px* expressed <b>in pixels of the sub-aperture image</b>, a point</p>
+<p>at distance `<code style="color:#22d3bf">Z</code><code style="color:#22d3bf"> shifts by </code><code style="color:#22d3bf">|s| = focal_px * baseline / Z</code>` pixels per</p>
+<p>step. Inverting: `<code style="color:#22d3bf">Z = focal_px * baseline / |s|</code>`, returned in whatever</p>
+<p>length unit *baseline* was given in (mm in, mm out).</p>
+<p>Only `<code style="color:#22d3bf">|s|</code>` enters, deliberately. The *sign* of the slope says which side of</p>
+<p>the focal plane a point is on, and which sign means &quot;nearer&quot; depends on how</p>
+<p>the angular axis was oriented when the field was decoded — a convention this</p>
+<p>module cannot know and refuses to guess. If your decode puts near objects at</p>
+<p>negative slope, negate before calling.</p>
+<p>*far_depth* is the fail-closed switch for the `<code style="color:#22d3bf">s -&gt; 0</code>` pole (a point at</p>
+<p>infinity has zero parallax). `<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> (default) makes any </code><code style="color:#22d3bf">|s| &lt; min_slope</code>`</p>
+<p>a `<code style="color:#22d3bf">ValueError</code>` naming how many pixels were affected — mask them, or pass an</p>
+<p>explicit saturation distance as *far_depth* and get that value there. There</p>
+<p>is no silent `<code style="color:#22d3bf">inf</code>` and no silent clamp.</p>
+<p>Accepts a scalar or any array; returns the same shape (a scalar in gives a</p>
+<p>0-d array out, so downstream code has one type to handle).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-finite *slope* / *focal_px* / *baseline*, a</p>
+<p>non-positive *focal_px* / *baseline* / *min_slope*, a negative *far_depth*,</p>
+<p>and `<code style="color:#22d3bf">|slope| &lt; min_slope</code><code style="color:#22d3bf"> anywhere when *far_depth* is </code><code style="color:#22d3bf">None</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">lightfield_depth ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">depth</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">depth</code>)</h3>
+<p><a style="color:#22d3bf" href="oplightfield:lf_depth_from_focus">lf_depth_from_focus</a> · <a style="color:#22d3bf" href="oplightfield:lf_epi_slope">lf_epi_slope</a> · <a style="color:#22d3bf" href="oplightfield:lf_all_in_focus">lf_all_in_focus</a> · <a style="color:#22d3bf" href="oplightfield:lf_plenoptic_design">lf_plenoptic_design</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: lightfield.py — LIGHTFIELD operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

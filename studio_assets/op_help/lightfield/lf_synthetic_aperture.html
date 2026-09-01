@@ -1,0 +1,47 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lf_synthetic_aperture — LIGHTFIELD <code style="color:#22d3bf">refocus</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import lightfield; lightfield.lf_synthetic_aperture(lf, slope=0.0, mask=None, *, reduce=&#x27;mean&#x27;, interp=&#x27;linear&#x27;, edge=&#x27;nearest&#x27;)</code> (または <code style="color:#22d3bf">opslightfield.get(&quot;lf_synthetic_aperture&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Refocus through a shaped aperture — and, with `<code style="color:#22d3bf">reduce=&quot;median&quot;</code>`, through occluders.</p>
+<p>Same shift-and-add geometry as :func:<code style="color:#22d3bf">lf_refocus</code>, with two additions:</p>
+<p style="margin:2px 0 2px 12px">• *mask* — a `<code style="color:#22d3bf">(V, U)</code><code style="color:#22d3bf"> weight array from :func:</code>lf_aperture_mask` (or your</p>
+<p>own). A small mask is a stopped-down aperture: less defocus blur, less</p>
+<p>light. `<code style="color:#22d3bf">None</code>` weights every view equally.</p>
+<p style="margin:2px 0 2px 12px">• *reduce* — how the aligned views are combined. `<code style="color:#22d3bf">mean</code>` is the classical</p>
+<p>(and linear) synthetic aperture. `<code style="color:#22d3bf">median</code>` is the interesting one: when</p>
+<p>a foreground occluder covers a *minority* of the views at a pixel, the</p>
+<p>median rejects it and the background behind it is reconstructed —</p>
+<p>looking through a fence, or through a rack of parts. `<code style="color:#22d3bf">max</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">min</code>`</p>
+<p>are the order-statistic extremes, useful for specular / shadow work.</p>
+<p>`<code style="color:#22d3bf">median</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">max</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">min</code>` use the mask only to *select* views</p>
+<p>(weight &gt; 0), because an order statistic has no meaningful weighting;</p>
+<p>that is stated here rather than silently ignoring the weights.</p>
+<p>The see-through result is not a metaphor. When <b>fewer than half</b> the views</p>
+<p>are blocked at a hidden pixel, more than half of them carry the identical</p>
+<p>background sample and the median is that sample <b>exactly</b>. Measured</p>
+<p>2026-09-01 on a 9x9x64x64 field with an occluder covering 25% of the centre</p>
+<p>view at slope 3.0 (blocking at most 46% of the views at any hidden pixel):</p>
+<p>RMS against the true, hidden background was <b>0.0</b> for `<code style="color:#22d3bf">median</code>` and</p>
+<p>0.159 for `<code style="color:#22d3bf">mean</code>`, with the centre view itself at 0.280. Push the coverage</p>
+<p>to 35% (up to 60% of views blocked) and the guarantee is gone — the median</p>
+<p>lands at 0.133, worse than nothing.</p>
+<p>Returns a `<code style="color:#22d3bf">(H, W)</code>` 2-D image.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *lf* not a valid light field, a *mask* whose</p>
+<p>shape is not `<code style="color:#22d3bf">(V, U)</code>` or which is non-finite / negative / selects no view,</p>
+<p>a non-finite or over-large *slope*, unknown *reduce* / *interp* / *edge*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">lightfield_depth ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="oplightfield:lf_from_mla">lf_from_mla</a> · <a style="color:#22d3bf" href="oplightfield:lf_disparity_to_depth">lf_disparity_to_depth</a> · <a style="color:#22d3bf" href="oplightfield:lf_all_in_focus">lf_all_in_focus</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">refocus</code>)</h3>
+<p><a style="color:#22d3bf" href="oplightfield:lf_refocus">lf_refocus</a> · <a style="color:#22d3bf" href="oplightfield:lf_focal_stack">lf_focal_stack</a> · <a style="color:#22d3bf" href="oplightfield:lf_aperture_mask">lf_aperture_mask</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: lightfield.py — LIGHTFIELD operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

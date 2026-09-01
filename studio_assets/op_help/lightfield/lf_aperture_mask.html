@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lf_aperture_mask — LIGHTFIELD <code style="color:#22d3bf">refocus</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>image2d`</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import lightfield; lightfield.lf_aperture_mask(angular=(5, 5), shape=&#x27;circle&#x27;, *, radius=None, inner=0.0, sigma=None, normalize=True)</code> (または <code style="color:#22d3bf">opslightfield.get(&quot;lf_aperture_mask&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Angular weighting mask — the synthetic aperture you stop down or shape.</p>
+<p>Returns a `<code style="color:#22d3bf">(V, U)</code>` 2-D array of per-view weights, indexed the same way as</p>
+<p>the light field&#x27;s angular axes, for :func:<code style="color:#22d3bf">lf_synthetic_aperture</code>. The</p>
+<p>radius is measured in <b>angular steps</b> from the centre ``((V-1)/2,</p>
+<p>(U-1)/2)`<code style="color:#22d3bf">, so </code><code style="color:#22d3bf">radius=0</code>` selects the single centre view (an infinitely</p>
+<p>small aperture: everything in focus, no light) and the default</p>
+<p>`<code style="color:#22d3bf">radius = max(V-1, U-1)/2</code>` is the largest circle that fits.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">circle</code>`   — hard-edged disc, the physical iris.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">square</code>`   — Chebyshev disc; separable, the cheapest to reason about.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">gaussian</code><code style="color:#22d3bf"> — apodised pupil (</code><code style="color:#22d3bf">sigma</code>` in angular steps, default</p>
+<p>`<code style="color:#22d3bf">radius/2</code>`); no ringing in the defocus PSF.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">annulus</code>`  — ring between *inner* and *radius*; a coded aperture whose</p>
+<p>defocus PSF has more high-frequency content, which is what makes</p>
+<p>depth-from-defocus work better.</p>
+<p>With `<code style="color:#22d3bf">normalize=True</code>` (default) the weights sum to exactly 1, so a masked</p>
+<p>reduction is a weighted <b>mean</b> and its result is directly comparable with</p>
+<p>:func:<code style="color:#22d3bf">lf_refocus</code>. Set it to `<code style="color:#22d3bf">False</code>` to keep 0/1 selection weights.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: an angular shape outside </code><code style="color:#22d3bf">[1, MAX_ANGULAR]</code>`, a</p>
+<p>negative *radius* / *inner* / *sigma*, `<code style="color:#22d3bf">inner &gt;= radius</code>`, an unknown</p>
+<p>*shape*, and — explicitly rather than returning a field of zeros — a mask</p>
+<p>that selects <b>no</b> view at all (an opaque aperture), which would make every</p>
+<p>downstream weighted mean a 0/0.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">lightfield_depth ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="oplightfield:lf_from_mla">lf_from_mla</a> · <a style="color:#22d3bf" href="oplightfield:lf_disparity_to_depth">lf_disparity_to_depth</a> · <a style="color:#22d3bf" href="oplightfield:lf_all_in_focus">lf_all_in_focus</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">refocus</code>)</h3>
+<p><a style="color:#22d3bf" href="oplightfield:lf_refocus">lf_refocus</a> · <a style="color:#22d3bf" href="oplightfield:lf_focal_stack">lf_focal_stack</a> · <a style="color:#22d3bf" href="oplightfield:lf_synthetic_aperture">lf_synthetic_aperture</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: lightfield.py — LIGHTFIELD operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
