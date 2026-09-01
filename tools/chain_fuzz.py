@@ -123,8 +123,14 @@ def make_generators():
         "lightfield": lambda rng: __import__("lightfield").lf_synthesize(
             (0.0, 1.0), angular=(3, 3), shape=(32, 32),
             seed=int(rng.integers(0, 1000)))[0],
+        # 光子カウント列。既知距離の dToF 復路 + 背景光を Poisson 標本化した
+        # もの = 実データと同じ形と統計(実測 shape (256,)、値域 [0, 303])
+        "counts": _photon_counts,
+        # SPAD の計数レート列 [Hz]。既定デッドタイム 50 ns の飽和 2e7 Hz の
+        # 半分までしか置かないので逆変換が必ず定義域に入る
+        "countrate": lambda rng: np.sort(10.0 ** rng.uniform(3.0, 7.0, size=32)),
         # histcube = (H, W, T) の到達時刻ヒストグラム立方体。時間軸が最後で、
-        # 128 bin x 200 ps = 一意測距範囲 3.84 m
+        # 128 bin x 200 ps = 一意測距範囲 3.84 m(深度 1-2 m は必ず窓に収まる)
         "histcube": lambda rng: __import__("photoncount").dtof_cube_simulate(
             1.0 + rng.random((16, 16)), bins=128, bin_ps=200.0,
             signal_photons=60.0, ambient_photons=10.0,
