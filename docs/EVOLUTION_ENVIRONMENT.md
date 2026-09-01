@@ -257,8 +257,10 @@ foreach ($p in 'photon_denoise','vibration_map','lf_slope','specular_removal') {
 成果物 `out/rb_2026_09_02_A/robust_<課題>.json`。**恒等と手の基準線もその JSON に
 入っている**(`baseline_trivial*` / `baseline_hand*`)ので、上の表は成果物から
 そのまま読める。各行は測定時の `commit` / `measured_at` / `split_config` を持つ。
-2026-09-02 に**独立に 2 回**(`out/rb_2026_09_02_A` と `_B`)測り、時刻と commit
-以外は全フィールドが一致した。8 個の異なる HEAD を跨いで数字は動いていない。
+2026-09-02 に**独立に 3 回**(`out/rb_2026_09_02_A` / `_B` / A の上書き再実行)
+測り、時刻と commit 以外は全フィールドが一致した。その間も別作業の commit が
+入り続けていて HEAD は 10 通り以上動いているが、**この 12 個の数字はどれも
+動いていない**。だから各行の `commit` は「この数字が生きていた時点」の印。
 
 **恒等の行を見ると、locked と観測で 0.09 ずれている**(`photon_denoise`:
 0.4174 対 0.3265)。op を 1 つも適用しない値が動くのだから、これは抽出そのものの
