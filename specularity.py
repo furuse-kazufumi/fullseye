@@ -106,6 +106,19 @@ Honest disclosure (what these operators cannot do):
     reflection is unpolarised and the split returns all of it as diffuse) and
     false for metals (which depolarise much less on the diffuse side). The
     operator names follow the field's usage; the docstrings name the assumption.
+  * **Nothing here can check that the frames match their angles or lights.** A
+    polariser sweep handed to :func:`polarization_separate` in the wrong order
+    is still a valid sweep of a *different* scene, and it separates cleanly into
+    the wrong answer (measured: a surface with diffuse 0.5 and specular 0.2 came
+    back as 0.559 and 0.141 under one permutation of four frames, with no
+    exception and nothing anomalous about the result). The same holds for
+    ``images`` against ``lights``. That correspondence is metadata; it lives
+    outside the array and cannot be recovered from it, so it is stated rather
+    than pretended away.
+  * **Linear radiance cannot be told from gamma-encoded radiance.** An 8-bit
+    display-encoded image is accepted, converted to float and separated — and
+    the answer is wrong, because the dichromatic model's additivity holds only
+    in linear radiance. No array-level test distinguishes the two.
   * **The BRDF lobes are shading models, not light transport.** No
     interreflection, no cast shadow, no subsurface term. They exist so a
     separation can be tested against a known highlight, in the same spirit as
