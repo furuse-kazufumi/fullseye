@@ -1491,9 +1491,15 @@ def riesz_motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4) -> dict
     coherence = float(coh_num / coh_den) if coh_den > 0.0 else 1.0
     snr_in = motionmag.band_snr(vid, lo, hi, fs)
     snr_out = motionmag.band_snr(out, lo, hi, fs)
+    # band_snr estimates the in-band noise floor from the *out-of-band* bins,
+    # which magnification does not touch — so reading motion_snr_db straight off
+    # the magnified clip credits alpha^2 more in-band power against an unchanged
+    # noise estimate and reports an improvement that did not happen. The noise
+    # floor is a property of the recording, so the *input's* per-bin density is
+    # the right reference, scaled by the gain the in-band content received. Same
+    # correction, same dB window (motionmag.MIN_SNR_DB / MAX_SNR_DB) as there.
     noise_out = snr_in["noise_power_per_bin"] * snr_in["band_bins"] * a * a
-    motion_out_db, _c = motionmag._db(                       # noqa: SLF001
-        max(snr_out["band_power"] - noise_out, 0.0), noise_out)
+    motion_out_db = _db(max(snr_out["band_power"] - noise_out, 0.0), noise_out)
     denom = snr_in["band_power"] * a * a
     band_ratio = (snr_out["band_power"] / denom) if denom > 0.0 else 1.0
     return {
