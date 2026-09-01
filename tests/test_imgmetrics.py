@@ -281,6 +281,10 @@ def test_ssim_agrees_with_an_independent_implementation():
 
     比較は原論文の設定に揃える ―― ガウシアン窓 σ=1.5、母分散
     (``use_sample_covariance=False``)。片方だけ標本分散にすると値が変わる。
+
+    実測(2026-09-02、scikit-image インストール済みの環境)では
+    ``0.98535447`` 対 ``0.98535447`` で **差は厳密に 0.0**(窓の切り詰め方まで
+    一致している)。許容を 1e-9 にしてあるのは版差の余地だけを残すため。
     """
     ski = pytest.importorskip("skimage.metrics")
     rng = np.random.default_rng(4)
@@ -289,7 +293,7 @@ def test_ssim_agrees_with_an_independent_implementation():
     mine = M.ssim(a, b, data_range=1.0)
     theirs = ski.structural_similarity(a, b, data_range=1.0, gaussian_weights=True,
                                        sigma=1.5, use_sample_covariance=False)
-    assert mine == pytest.approx(theirs, abs=2e-3), f"mine={mine!r} theirs={theirs!r}"
+    assert mine == pytest.approx(theirs, abs=1e-9), f"mine={mine!r} theirs={theirs!r}"
 
 
 def test_cropping_the_border_changes_the_number_so_the_setting_must_travel():
