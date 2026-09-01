@@ -2594,6 +2594,15 @@ def ex_slice_zsweep(log) -> dict:
     return {
         "name": "wing3d_slice_zsweep",
         "title": "断層を送る ―― `z = 48 / 95` は %.2f mm のこと" % (48 * sp[0]),
+        "title_en": "Stepping through slices — `z = 48 / 95` means %.2f mm" % (48 * sp[0]),
+        "caption_en": (
+            f"A synthetic CT ({n_z}×{n_y}×{n_x}, spacing ({sp[0]}, {sp[1]}, {sp[2]}) mm) stepped "
+            f"one slice at a time for {n_z} frames. Every frame carries **both the index and the "
+            f"physical position** (`z = 48 / 95` = {48 * sp[0]:.2f} mm) plus a position bar. One "
+            f"slice step is {sp[0]:.2f} mm while one in-plane pixel is {sp[1]:.2f} mm — "
+            f"**{sp[1] / sp[0]:.2f}x** — so, as the plot below shows, \"move the index by one\" "
+            "means a different distance on every axis. The easiest step to trip over in an "
+            "anisotropic CT."),
         "ops": ["vol_window_level"],
         "facts": {"shape": [n_z, n_y, n_x], "spacing_mm": list(sp),
                   "z_extent_mm": thick_mm, "mm_per_slice": sp[0],
