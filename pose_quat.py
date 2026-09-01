@@ -12,16 +12,43 @@ def _q(a):
     return np.asarray(a, dtype=np.float64)
 
 
+def _unit(v, what, hint):
+    """向きを持つベクトルを厳密に単位化する。長さ 0 なら **拒否**する。
+
+    2026-09-01 の敵対監査で、ここが `norm + 1e-12` で割っていたために 2 通りの
+    無言の誤りが起きていた:
+
+      * **零ベクトルが通ってしまう。** ``quat_normalize([0,0,0,0])`` は
+        ``[0,0,0,0]`` を返し、それを ``quat_to_hom_mat3d`` に渡すと**単位行列**
+        になる ―― 「回転が定義できない」が「回転しない」に化ける。
+        ``axis_angle_to_quat(0,0,0,1.0)`` も同様に、軸を持たない回転要求が
+        ノルム 0.878 の非単位四元数(= 再正規化後は恒等)になっていた。
+      * **正しい入力まで系統的に縮む。** 分母に 1e-12 を足すと商のノルムが
+        1 をわずかに下回るので、そこから作った回転行列は直交から外れる
+        (実測 |RᵀR − I| = 4.0e-12)。丸め誤差ではなく一方向の縮みで、
+        合成を重ねるほど溜まる。
+
+    したがって「長さ 0 は拒否、それ以外は厳密に割る」に直した。
+    """
+    n = float(np.linalg.norm(v))
+    if not np.isfinite(n):
+        raise ValueError("%s must be finite (got norm %r)" % (what, n))
+    if n == 0.0:
+        raise ValueError("%s has zero length, so %s — pass a non-zero vector"
+                         % (what, hint))
+    return v / n
+
+
 # ── 四元数 ─────────────────────────────────────────────────────────────────── #
 def axis_angle_to_quat(ax, ay, az, angle):
-    n = np.array([ax, ay, az], float)
-    n = n / (np.linalg.norm(n) + 1e-12)
+    n = _unit(np.array([ax, ay, az], float), "the rotation axis (ax, ay, az)",
+              "there is no rotation to describe")
     return np.concatenate([[np.cos(angle / 2)], n * np.sin(angle / 2)])
 
 
 def quat_normalize(q):
-    q = _q(q)
-    return q / (np.linalg.norm(q) + 1e-12)
+    return _unit(_q(q), "the quaternion",
+                 "it denotes no rotation (a rotor must have unit length)")
 
 
 def quat_conjugate(q):
@@ -190,7 +217,10 @@ def dual_quat_to_pose(dq):
 
 def dual_quat_normalize(dq):
     dq = _q(dq)
-    n = np.linalg.norm(dq[:4]) + 1e-12
+    n = float(np.linalg.norm(dq[:4]))
+    if n == 0.0 or not np.isfinite(n):
+        raise ValueError("the real part of the dual quaternion has zero length, "
+                         "so it denotes no rigid motion — pass a non-zero rotor")
     return dq / n
 
 
@@ -222,8 +252,8 @@ def dual_quat_interpolate(dq1, dq2, t=0.5):
 
 def screw_to_dual_quat(lx, ly, lz, mx, my, mz, theta=0.0, d=0.0):
     """スクリュー(軸方向 l, モーメント m, 回転角 theta, 並進 d)を二重四元数へ(screw_to_dual_quat)。"""
-    l = np.array([lx, ly, lz], float)
-    l = l / (np.linalg.norm(l) + 1e-12)
+    l = _unit(np.array([lx, ly, lz], float), "the screw axis (lx, ly, lz)",
+              "there is no screw motion to describe")
     m = np.array([mx, my, mz], float)
     ct, st = np.cos(theta / 2), np.sin(theta / 2)
     qr = np.concatenate([[ct], st * l])

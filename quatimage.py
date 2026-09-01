@@ -52,7 +52,7 @@ states it everywhere it matters:
 * the **QFT is not faster** than three channel FFTs and this module never
   suggests otherwise: it moves four real transforms' worth of data where the
   channelwise route moves three, and pays for the symplectic pack on top.
-  Measured 2.42x *slower* on ``(256, 256)``, in :func:`qft2`.
+  Measured about 2.4x *slower* on ``(256, 256)``, in :func:`qft2`.
 
 The same accounting applies to the Riesz half, and there the losses are larger.
 :func:`riesz_displacement` is exact to rounding *and* about twice as accurate as
@@ -819,7 +819,8 @@ def quat_color_filter(qimage, direction_rgb, mode) -> np.ndarray:
 
     ``mode="remove"`` returns ``v - (v.g) g`` for the unit RGB direction ``g``:
     the component along ``g`` is **exactly zero everywhere afterwards**, to
-    machine precision (measured max residual 5.8e-16 on a random colour image),
+    machine precision (measured max residual 5.8e-16 and 6.5e-16 on two random
+    colour images — seed-dependent only at the 1e-16 level),
     and ``remove + keep`` reproduces the input to **0.0** exactly.
     ``mode="keep"`` returns the complementary ``(v.g) g``. The scalar part is
     passed through untouched in both.
@@ -947,7 +948,8 @@ def qft2(qimage, side, mu=None) -> np.ndarray:
     **The argument is required.** Left and right are not a sign convention. On
     the fuzzer's ``(32, 32)`` dichromatic render they differ by
     ``max|F_L - F_R| = 19.11`` against a peak modulus of ``1045`` (1.8 % of full
-    scale) and on a random colour field by ``33.35`` against ``892.9`` (3.7 %) —
+    scale) and on a random colour field by ``33.35`` against ``892.9`` (3.7 %; another seed
+    gives 34.05 against 892) —
     with no exception and no NaN to mark the difference. **Mixing them across a
     round trip is much worse**, because there the disagreement is not attenuated
     by the spectrum's dynamic range: ``iqft2(qft2(q, "left"), "right")`` returns
@@ -988,7 +990,7 @@ def qft2(qimage, side, mu=None) -> np.ndarray:
     does not claim it does. It also does not buy speed — it moves four real
     transforms' worth of data where the channelwise route moves three, and pays
     for the symplectic pack/unpack on top: measured on ``(256, 256)``, best of
-    20, **8.246 ms against 3.409 ms, i.e. 2.42x slower**. What it buys is that
+    20, **8.246 ms against 3.409 ms, i.e. 2.42x slower** (run to run, 2.3x-2.4x). What it buys is that
     the four numbers stay one algebraic object, so a rotor can be applied to the
     spectrum and the colour meaning of ``mu`` survives the transform.
 
@@ -1019,7 +1021,7 @@ def iqft2(spectrum, side, mu=None) -> np.ndarray:
     **Using the wrong side does not raise.** ``iqft2(qft2(q, "left"), "right")``
     returns a finite, plausible quaternion image that is simply not ``q``:
     measured ``max|err| = 1.113`` on a random colour image whose own range is
-    ``0.9994``, and — the dangerous case — only ``0.054`` against a range of
+    ``0.9994`` (another seed: 1.063 against 1.0), and — the dangerous case — only ``0.054`` against a range of
     ``1.076`` on a grey-axis-dominated one, which is small enough to survive a
     look at the picture. The ``side`` argument is required at both ends for
     exactly this reason, and the two calls must agree: nothing in the data
@@ -1584,7 +1586,7 @@ def riesz_motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4) -> dict
         if gain == 0.0:
             out += I
             continue
-        nx, ny, zbar, z, live, amp, amp_max, _Ib, _R1b, _R2b, _rm = \
+        _nx, _ny, zbar, z, live, amp, amp_max, _Ib, _R1b, _R2b, _rm = \
             _band_reference(I, R1, R2)
         if amp_max <= _AMP_FLOOR * max(float(np.abs(vid).max()), 1.0):
             out += I                       # contrast-free band: nothing to shift
