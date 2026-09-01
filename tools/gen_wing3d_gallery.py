@@ -2417,6 +2417,14 @@ def ex_distance(log) -> dict:
     return {
         "name": "wing3d_distance_transform",
         "title": "距離変換で局所の太さを測る(最大内接半径 %.3f mm)" % max_mm,
+        "title_en": "Local thickness from a distance transform (max inscribed radius %.3f mm)" % max_mm,
+        "caption_en": (
+            "Run `vol_distance_transform` over three synthetic tubes and every voxel becomes "
+            "\"how many mm am I from the edge\". Its maximum is the radius of the largest "
+            f"inscribed ball — the local thickness — measured at **{max_mm:.4f} mm** "
+            f"(truth {parts[0][2] * sp[0]:.3f} mm, off by "
+            f"{max_mm - parts[0][2] * sp[0]:+.4f} mm because the edge lands half a voxel "
+            "inside on a discrete grid). The rainbow contours step every 0.5 mm."),
         "ops": ["vol_distance_transform"],
         "facts": {"spacing_mm": list(sp), "max_radius_mm": max_mm,
                   "max_radius_voxel": float(dt_vox.max()),
