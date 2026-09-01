@@ -1078,9 +1078,9 @@ def ex_generations(data, log=print):
         p.marks([k], [trains[k - 1]], (1, 1, 1), size=4, shape="dot")
         c = p.c
         items += [
-            (40, 96, "適合度", C_TEXT, 15, True),
-            (96, 116, "train(選択に使う)", C_EVO, 13, True),
-            (96, 136, "観測用 holdout(見るだけ)", C_LOCK, 13, True),
+            (168, 92, "適合度", C_TEXT, 15, True),
+            (240, 116, "train(選択に使う)", C_EVO, 13, True),
+            (240, 136, "観測用 holdout(見るだけ)", C_LOCK, 13, True),
             (86, 358, "世代", C_DIM, 12, False),
             (676, 358, str(len(hist)), C_DIM, 12, False, "ra"),
         ]
