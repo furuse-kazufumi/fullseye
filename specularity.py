@@ -88,10 +88,16 @@ Honest disclosure (what these operators cannot do):
     its minimum over the image is zero. If every pixel of the surface is glossy,
     the split under-reports the specular term by a constant and **no test on the
     image alone can detect it**. Pass ``body_rgb`` when you know the albedo.
-  * **The uniform-body route assumes one material.** The illuminant-orthogonal
-    part of a single-material image is exactly rank one; two materials make it
-    rank two. That is measurable, so it is measured: ``max_rank_ratio`` rejects
-    the image instead of returning a plausible-looking wrong split.
+  * **The uniform-body route assumes one material**, and *two* tests are needed
+    to police that. The illuminant-orthogonal part of a single-material image is
+    exactly rank one, so ``max_rank_ratio`` catches most second materials — but
+    two albedos whose projected chromaticities are nearly anti-parallel still
+    span one line and slip through (measured: rank ratio 0.0815, under the
+    default threshold, returning a diffuse map wrong by more than the image's
+    own maximum). What they cannot hide is a *negative* body coefficient, which
+    one material can never produce, so ``max_negative_frac`` is the second test.
+    Neither is decoration; the first one alone was written first and the
+    adversarial pass broke it.
   * **Polarisation separation equates "unpolarised" with "diffuse".** What the
     sinusoid fit recovers exactly is the unpolarised radiance ``2*I_min`` and
     the linearly polarised radiance ``I_max - I_min``. Calling the first diffuse
