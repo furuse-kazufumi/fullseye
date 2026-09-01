@@ -592,6 +592,14 @@ def anscombe_transform(image, gain=1.0, read_sigma=0.0, offset=0.0, clip=False):
     manufacturing a value.
     """
     arr = _as_float_array(image, "image")
+    if arr.ndim != 2:
+        raise ValueError(
+            "anscombe_transform: image must be a 2-D (H, W) array, got a %d-D "
+            "array of shape %r. The transform is elementwise, but returning the "
+            "caller's shape unchanged would make the 'image2d -> image2d' "
+            "declaration in opsphoton a lie; reshape a 1-D histogram with "
+            "hist[None, :] if you want to stabilise it."
+            % (arr.ndim, tuple(np.shape(image))))
     if arr.size == 0:
         raise ValueError("anscombe_transform: image is empty")
     if arr.size > MAX_IMAGE_ELEMENTS:
