@@ -371,6 +371,18 @@ from cadmap import (  # noqa: E402,F401
     cad_pixel_to_surface, cad_surface_to_pixel, cad_defect_to_cad,
     cad_visible_faces,
 )
+# 断層撮影。CT ボリュームを**扱う** op は多数あったのに、**投影から作る**側が
+# 完全に空だった(radon / サイノグラム / FBP / 反復再構成がゼロ)。閉形式の真値
+# (円板の弦長 2√(r²−s²)、楕円の解析 Radon 変換)で検証してある。
+import tomography  # noqa: E402  (radon / FBP / SART / artifacts / CT-to-voxel)
+from tomography import (  # noqa: E402,F401
+    projection_angles, sinogram_design, ellipse_phantom, ellipse_sinogram,
+    radon_transform, backproject_sinogram, filtered_backprojection,
+    sart_reconstruct, beam_hardening_apply, beam_hardening_correct,
+    ring_artifact_apply, ring_artifact_remove, metal_trace_interpolate,
+    sinogram_center_of_rotation, sinogram_center_shift,
+    radon_volume, fbp_volume,
+)
 # 3-D ラベルの色分け。2-D の colorize_labels しか無かったので、ボリュームを
 # 断面ごとに着色すると**同じ部品の色が断面ごとに変わる**(断面ごとにラベル番号が
 # 振り直されるため。実測: 13 成分中 11 が 32 か所で色が変わる)。ボリュームで
