@@ -153,7 +153,7 @@ def test_legend_box_height_is_the_closed_form():
         m = A.measure_text("row 0", font_size=fs)
         row_h = max(swatch, m["height"])
         want = 2 * pad + n * row_h + (n - 1) * gap
-        img = _canvas(0.0)
+        img = np.zeros((want + 40, W, 3))                    # 箱が入る高さを用意する
         out = A.legend_box(img, rows, (4, 4), swatch=swatch, row_gap=gap, pad=pad,
                            font_size=fs, box_color=(1.0, 1.0, 1.0), box_alpha=1.0,
                            border=0)
