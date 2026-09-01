@@ -531,8 +531,8 @@ def ex_zslices():
                                                 name="inferno", vmin=0.0, vmax=1.0), k),
                       "z = 0..%d の累積 MIP" % z)
         lab += _panel(canvas, 52, 24 * 3 + pw * 2, ph, pw,
-                      _upscale(imgio.apply_cmap((mip - vmin) / (vmax - vmin),
-                                                name="inferno", vmin=0.0, vmax=1.0), k),
+                      _upscale(imgio.apply_cmap(mip_op, name="inferno",
+                                                vmin=0.0, vmax=1.0), k),
                       "全 z の MIP(到達点)")
         # 縦の位置インジケータ: D 個のセルのうち今どこか
         cy0, cell = 66, (ph - 40) / D
