@@ -1588,8 +1588,9 @@ def subject_doc_deskew(log=print) -> dict:
              sweep_panel.astype(np.float64) / 255.0]
     labels = [
         "元の帳票 (合成) — バーは %d 本" % n_true,
-        "%.0f° 傾ける — decode_barcode は %d 本。隅の鏡文字は rotate_image の "
-        "mode='reflect' が折り返したもの (消していない)" % (skew, count_raw),
+        # ラベルは折り返さず両端が黙って切れるので、1 行に収まる長さに抑える
+        # (rotate_image の reflect については展示のキャプション側に書く)。
+        "%.0f° 傾ける — decode_barcode は %d 本" % (skew, count_raw),
         "回転角を 0.5° 刻みで振り、行方向プロファイルの分散が最大の角を探す",
         "推定 %.1f° で逆回転 (真値 %.1f°・誤差 %+.1f°)" % (est, skew, est - skew),
         "otsu で二値化 — decode_barcode は %d 本 (真値 %d 本)"
