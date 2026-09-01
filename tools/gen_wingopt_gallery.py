@@ -2556,6 +2556,8 @@ def main(argv=None) -> int:
             frames = out["frames"]
             if out["fps"] is None:
                 info = _save_png(frames[0], name, log)
+            elif out["fps"] == "flipbook":
+                info = _save_flipbook(frames, name, log)
             else:
                 info = _save_gif(frames, name, out["fps"], out["thumb_index"], log)
             results[name] = {"info": info, "facts": out["facts"]}
