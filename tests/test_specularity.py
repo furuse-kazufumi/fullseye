@@ -1106,7 +1106,6 @@ def test_polarization_render_needs_no_adapter():
     assert "polarization_render" not in opsspecular.RESULT_ADAPTERS
     a, kw = _ledger_args()["polarization_render"]
     raw = opsspecular.get("polarization_render")(*a, **kw)
-    assert raw is opsspecular.call("polarization_render", *a, **kw)
     # `call` re-runs the function, so this is equality of value and type, not
     # of object identity — the point is that no adapter reshapes the return.
     called = opsspecular.call("polarization_render", *a, **kw)
