@@ -438,7 +438,7 @@ def subject_morph_quartet(log=print) -> dict:
                  "/".join(str(w) for w in R["bar_keep"]) or "なし"),
              "閉で埋まった部分 (青)\n埋まったスリット: %s px" % (
                  "/".join(str(w) for w in R["slit_fill"]) or "なし"),
-             "morph_grad (輪郭)\n開−閉の差を見る基準",
+             "morph_grad (輪郭)\n境界だけを 1 px 幅で残す",
              ],
             4, tile=(258, 258), label_h=56,
             title="形態学の 4 兄弟 —— 収縮・膨張・開・閉",
