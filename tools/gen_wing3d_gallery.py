@@ -1485,6 +1485,16 @@ def ex_wall(log) -> dict:
     return {
         "name": "wing3d_wall_thickness",
         "title": "virtual probe で壁厚 %.3f mm(真値 %.3f mm)" % (th[0], truth),
+        "title_en": "A virtual probe reads a %.3f mm wall (truth %.3f mm)" % (th[0], truth),
+        "caption_en": (
+            "One probe pushed through a synthetic pipe of 10.000 mm outer / 8.000 mm "
+            "inner diameter. `vol_edge_probe` picks up four edges at sub-sample "
+            "precision and `vol_wall_thickness` pairs rising→falling to return "
+            f"**{th[0]:.4f} mm / {th[1]:.4f} mm** (truth {truth:.3f} mm). Raise the "
+            f"smoothing sigma to 3.0 and it fattens to {sweep[3.0][0]:.4f} mm "
+            f"(**{100 * (sweep[3.0][0] - truth) / truth:+.1f} %**) — the noise remedy "
+            "turns straight into a dimensional bias, which is the other half of the "
+            "lesson."),
         "ops": ["vol_profile_line", "vol_edge_probe", "vol_wall_thickness"],
         "facts": {"thicknesses_mm": th, "truth_mm": truth,
                   "edges": [{"t_mm": e["t_mm"], "polarity": int(e["polarity"]),
