@@ -583,7 +583,13 @@ def ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03,
                                   crop_border=crop_border)))
 
 
-#: MS-SSIM の段ごとの重み(Wang, Simoncelli & Bovik, Asilomar 2003)。
+#: MS-SSIM の段ごとの重み(Wang, Simoncelli & Bovik, Asilomar Conf. 2003)。
+#:
+#: **この 5 つの和は 1 ではなく 1.0001**(実測: ``sum`` が厳密に ``1.0001``)。
+#: 原論文が小数 4 桁で丸めて公表した値をそのまま使うのが慣例で、正規化して
+#: 使う実装と 1e-4 のずれが出る。**黙って正規化しない** ―― 他所の MS-SSIM と
+#: 比べたときの微差の出所がここだと分かるようにしておく方が大事。
+#: よって ``ms_ssim`` の重み検査の許容は 1e-3(``tests/test_imgmetrics.py``)。
 MS_SSIM_WEIGHTS = (0.0448, 0.2856, 0.3001, 0.2363, 0.1333)
 
 
