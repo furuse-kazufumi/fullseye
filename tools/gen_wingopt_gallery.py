@@ -2022,7 +2022,9 @@ def ex_pixel_pitch(log):
     w, hdr = 1000, 34
     pan_y = hdr + 32
     x1, x2 = 18, 18 + disp + 12
-    plot_box = (x2 + disp + 60, pan_y + 6, w - 26, pan_y + 210)
+    px0 = x2 + disp + 60
+    box_top = (px0, pan_y + 18, w - 26, pan_y + 152)
+    box_bot = (px0, pan_y + 194, w - 26, pan_y + 308)
     h = pan_y + disp + 116
     frames = []
     for r in rows:
@@ -2090,13 +2092,13 @@ def ex_pixel_pitch(log):
              (0.95, 0.95, 0.92), 12, True),
             (x2 + 4, pan_y - 18, "detector vs ground truth",
              (0.95, 0.95, 0.92), 12, True),
-            (plot_box[0] + 6, plot_box[1] + 4, "defect size [pixels]  (blue)",
-             C_OPT, 11, True),
-            (plot_box[0] + 6, plot_box[1] + 20, "detection rate 0..1  (yellow)",
-             C_CURVE, 11, True),
-            (plot_box[2] - 148, plot_box[3] - 16, "pixel pitch [um] ->", C_DIM, 11, False),
-            (int(p.px(pitch_nyq)) - 132, plot_box[1] + 40,
-             f"2 px at pitch {pitch_nyq:.2f} um", C_MISS, 11, True),
+            (box_top[0] + 4, box_top[1] - 16, "defect size [pixels]",
+             C_OPT, 12, True),
+            (box_bot[0] + 4, box_bot[1] - 16, "detection rate (5 seeds)",
+             C_CURVE, 12, True),
+            (box_bot[2] - 130, box_bot[3] + 22, "pixel pitch [um] ->", C_DIM, 11, False),
+            (box_top[0] + 6, box_top[1] + 4,
+             f"Nyquist: 2 px at pitch {pitch_nyq:.2f} um", C_MISS, 11, True),
             (18, yi,
              f"pitch {r['pitch']:5.2f} um  ->  {r['upp']:6.2f} um/px   FOV "
              f"{r['fov'][0]:5.1f}x{r['fov'][1]:5.1f} mm   defect = {r['px']:5.2f} px",
