@@ -1090,10 +1090,12 @@ def beam_hardening_apply(sinogram, high_energy_fraction=0.5,
     it is invertible, which is what :func:`beam_hardening_correct` inverts.
 
     Measured on a uniform disc (radius 60 px in 256 px, density 1/60 so the peak
-    line integral is 2.0) at ``w = 0.5, k = 0.4``: the FBP reconstruction's centre
-    drops to **0.762** of its rim value, against 1.000 before hardening. That
-    ratio is the cupping, and :func:`beam_hardening_correct` returns it to
-    **1.000**.
+    line integral is 2.0) at ``w = 0.5, k = 0.4``: the FBP reconstruction's
+    centre-to-rim ratio drops to **0.9312**, against **0.9981** before hardening,
+    and :func:`beam_hardening_correct` returns it to **0.9981** — the clean value
+    in all four digits. (The clean ratio is 0.9981 rather than exactly 1 because
+    of the detector sampling discussed in :func:`filtered_backprojection`. The
+    cupping is the 6.7-point drop, not the 0.2-point one.)
 
     :param sinogram: ``(n_angles, n_detectors)`` monochromatic line integrals,
         which must be ``>= 0``.

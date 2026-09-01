@@ -476,7 +476,7 @@ def subject_morph_quartet(log=print) -> dict:
     return {
         "name": "morph_quartet", "kind": "gif", "file": info["path"],
         "thumb": info["thumb"], "frames": info["frames"],
-        "bytes": info["bytes"], "size": info["size"],
+        "bytes": info["bytes"], "size": info["size"], "panels": 8,
         "title": "形態学の 4 兄弟 —— どれが何を消すのか",
         "ops": ["threshold", "erosion_circle", "dilation_circle",
                 "opening_circle", "closing_circle", "morph_grad"],
@@ -618,7 +618,7 @@ def subject_freq_sweep(log=print) -> dict:
     return {
         "name": "freq_sweep", "kind": "gif", "file": info["path"],
         "thumb": info["thumb"], "frames": info["frames"],
-        "bytes": info["bytes"], "size": info["size"],
+        "bytes": info["bytes"], "size": info["size"], "panels": 6,
         "title": "周波数フィルタの効き",
         "ops": ["fft_image", "lowpass", "highpass", "bandpass_image"],
         "data": "skimage.data camera (BSD / public domain)",
@@ -1455,13 +1455,12 @@ def subject_doc_deskew(log=print) -> dict:
             "first_skew_where_raw_count_wrong_deg": (min(broke) if broke else None),
         },
         "caption": (
-            "合成の帳票を %.0f° 傾け、回転角を 0.5° 刻みで振りながら「行方向プロファイル"
-            "の分散が最大になる角」を探した。推定 %.1f°(真値 %.1f°・誤差 %+.1f°)。"
-            "0→42° の掃引でも推定誤差は最大 %.1f° に収まり、補正後の `decode_barcode` は"
-            "全域で真値どおり %d 本。補正しない場合は %.0f° を超えたところで %d 本まで"
-            "取りこぼす —— 前処理を 1 段挟むかどうかで、同じ op の答えが変わる。"
-            % (skew, est, skew, est - skew,
-               float(np.max(np.abs(est_err))), n_true,
+            "合成の帳票を 0→42° と傾けながら、回転角を 0.5° 刻みで振って"
+            "「行方向プロファイルの分散が最大になる角」を探した。推定誤差は全域で"
+            "最大 %.1f°(%.0f° のときは真値どおり %.1f°)で、補正後の `decode_barcode` は"
+            "どの傾きでも真値の %d 本を返す。補正しないと %.0f° を超えたところで "
+            "%d 本まで取りこぼす —— 前処理を 1 段挟むかどうかで、同じ op の答えが変わる。"
+            % (float(np.max(np.abs(est_err))), skew, est, n_true,
                (min(broke) if broke else 42.0), int(min(raw_counts)))),
     }
 
@@ -1593,14 +1592,13 @@ def subject_fit_residual(log=print) -> dict:
             "contour_points_line": int(len(line_pts)),
         },
         "caption": (
-            "縁が %d px ぶん欠けた円と 1 本の直線に、輪郭からの当てはめを掛けた 6 コマ。"
+            "縁が %d px 欠けた円と直線に、輪郭からの当てはめを掛けた 6 コマ。"
             "輪郭の全点で当てると半径は真値 %.1f px に対し %.2f px (誤差 %+.2f px、"
-            "中心ずれ %.2f px、残差 RMS %.2f px) —— 欠けの縁が当てはめを引っ張っている。"
-            "残差 3σ を超える %d 点を落として当て直すと %.2f px (誤差 %+.2f px、"
-            "RMS %.2f px) まで戻る。直線の方は真値 %.2f° に対し %.2f° (誤差 %+.3f°)。"
-            "「当てはまった値」より「合わなかった場所」の方が、たいてい情報が多い。"
-            % (notch_w, R0, cf["r"], cf["r"] - R0,
-               float(np.hypot(cf["cy"] - cy, cf["cx"] - cx)), cf["rms"],
+            "残差 RMS %.2f px) —— 欠けの縁が当てはめを引っ張っており、残差 3σ を超える "
+            "%d 点を落として当て直すと %.2f px (誤差 %+.2f px、RMS %.2f px) まで戻る。"
+            "直線は真値 %.2f° に対し %.2f°(誤差 %+.3f°)で、"
+            "「当てはまった値」より「合わなかった場所」の方が情報が多い。"
+            % (notch_w, R0, cf["r"], cf["r"] - R0, cf["rms"],
                int((~inlier).sum()), cf2["r"], cf2["r"] - R0, cf2["rms"],
                true_line_deg, lf["angle_deg"], lf["angle_deg"] - true_line_deg)),
     }
@@ -1703,11 +1701,11 @@ def subject_colour_tour(log=print) -> dict:
         },
         "caption": (
             "同じ赤で塗った 2 つの円を、左は 0.35 倍・右は 1.0 倍の明るさで照らした"
-            "合成シーンを 6 つのチャンネルで見た 9 パネル。1 本のしきい値で赤い 2 円を"
-            "取り切れるかを IoU で測ると、%s が %.3f で最良、%s は最良でも %.3f "
+            "合成シーンを 6 チャンネルで見た 9 パネル。1 本のしきい値で赤い 2 円を"
+            "取り切れるかを IoU で測ると %s が %.3f で最良、%s は最良でも %.3f "
             "—— 明るさを含むチャンネルでは、同じ色が照明で 2 つに割れてしまう。"
-            "(HSV の H は cv2 由来で 0..179 を 255 で割った値、つまり度÷510 で返る。"
-            "純緑 120° が 0.2353 —— 実測して確かめた単位です。)"
+            "なお HSV の H は cv2 由来で 0..179 を 255 で割った値、つまり度÷510 で返る"
+            "(純緑 120° が 0.2353 —— 実測して確かめた単位)。"
             % (winner, scores[winner][0], loser, scores[loser][0])),
     }
 
@@ -1901,14 +1899,13 @@ def subject_resample_loss(log=print) -> dict:
                 "zoom_image_factor vs rescale_img": zoom_maxdiff2},
         },
         "caption": (
-            "同じ画像に 10° の回転を 36 回かけると、幾何としては一周して元の向きに"
-            "戻る。だが画素は戻らない —— 中央部だけで測っても元画像との PSNR は "
-            "%.2f dB、中央の「細かさ」(画像 − ローパスの標準偏差) は元の %.1f%% まで落ちる。"
-            "画像全体では %.2f dB とさらに悪いが、その差の大半は端の処理 "
-            "(rotate_image は reshape=False + mode='reflect') によるもので、"
-            "補間そのものの損失ではない —— なので両方の数字を出している。"
-            "(ついでの実測: `zoom_image_factor` / `zoom_image_size` / `rescale_img` の "
-            "3 op は同じ入力に対して最大差 %.1g。現状は同じ実装に相乗りしています。)"
+            "同じ画像に 10° の回転を 36 回かけると、幾何としては一周して元の向きに戻る"
+            "のに、画素は戻らない。中央部だけで測っても元画像との PSNR は %.2f dB、"
+            "中央の「細かさ」(画像 − ローパスの標準偏差) は元の %.1f%% まで落ちる"
+            "(画像全体では %.2f dB。その差の大半は端の処理 —— rotate_image は "
+            "reshape=False + mode='reflect' —— によるもので補間の損失ではない)。"
+            "ついでの実測として `zoom_image_factor` / `zoom_image_size` / `rescale_img` の "
+            "3 op は同じ入力に対して最大差 %.1g で、現状は同じ実装に相乗りしている。"
             % (psnr_core, 100 * hp_core[36] / hp_core[0], psnr_full,
                max(zoom_maxdiff, zoom_maxdiff2))),
     }
@@ -1994,9 +1991,9 @@ def _write_captions(meta: list) -> None:
     lines = [_HEADER.format(n=len(order))]
     for i, name in enumerate(order, 1):
         m = next(x for x in meta if x["name"] == name)
-        ops = "、".join("`%s`" % o for o in m["ops"])
-        cap = ("**%s** ―― %s 使用 op: %s。"
-               % (m["title"], m["caption"].rstrip("。") + "。", ops))
+        ops = ", ".join("`%s`" % o for o in m["ops"])
+        cap = ("**%s** ―― %s使用 op: %s。"
+               % (m["title"], m["caption"].rstrip() , ops))
         stem = "wing2d_" + name
         lines.append("## %d. %s\n" % (i, m["title"]))
         if m["kind"] == "gif":
