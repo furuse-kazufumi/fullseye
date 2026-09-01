@@ -202,7 +202,10 @@ def _frame(title, tiles, captions, footer_lines, foot_colors=None):
     y = HEAD + TILE + 32
     cols = foot_colors or [C_TEXT] * len(footer_lines)
     for line, col in zip(footer_lines, cols):
-        d.text((PAD, y), line, fill=tuple(int(c * 255) for c in col), font=_font(13))
+        # 等幅 (consola) は日本語グリフを持たず、混ぜると豆腐が出る。**行ごとに**
+        # 選ぶ: ASCII だけの行は等幅(数値が桁で揃う)、日本語を含む行は日本語フォント。
+        f = _font(13) if line.isascii() else _jp_font(13)
+        d.text((PAD, y), line, fill=tuple(int(c * 255) for c in col), font=f)
         y += 18
     return np.asarray(im, np.float64) / 255.0
 
