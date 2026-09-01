@@ -1735,11 +1735,12 @@ def ex_visual_hull(log) -> dict:
             c = _text(c, [(sx, sy + 2 * (tile + 24) + 2,
                            "... 以下 %d 枚(合計 %d 枚を使用)" % (m - 8, m), C_DIM, 12, False)])
 
-        p = Plot(c, 500, 350, 590, 190, (1, n_views), (0.8, 5.0),
+        p = Plot(c, 500, 366, 590, 176, (1, n_views), (0.8, 5.0),
                  xlabel="使ったシルエットの枚数 ->",
-                 ylabel="真の体積を 1.0 としたときの倍率 / IoU",
                  xticks=[1, 4, 8, 12, 16], yticks=[1, 2, 3, 4, 5],
                  xfmt="%d", yfmt="%.0f")
+        p.items.append((500, 348, "縦 = 真の体積を 1.0 としたときの倍率 / IoU",
+                        C_DIM, 11, False))
         p.series(range(1, n_views + 1), [stats[i]["over"] for i in range(1, n_views + 1)],
                  C_B, width=2, markers=True)
         p.series(range(1, n_views + 1),

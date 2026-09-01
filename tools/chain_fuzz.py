@@ -356,10 +356,12 @@ def make_generators():
         # 閉凸包 / 直方体 / 開いた平面パッチの 3 種を混ぜる(理由は _mesh の
         # docstring)
         "mesh": _mesh,
-        # labels の 2-D 画像。既存 7 producers は 3-D (D,H,W) か 1-D (N,) しか
-        # 産まず、**2-D のラベル画像を産む op が 1 つも無い**(実測)ので、
-        # 種を置かないと画像ラベルを食う op が永久に fail-closed になる
-        "labels": _labels_2d,
+        # labels は **2-D 画像と 3-D volume の 2 種を混ぜる**。既存 7 producers は
+        # 3-D (D,H,W) か 1-D (N,) しか産まず**2-D のラベル画像を産む op が 1 つも
+        # 無い**(実測)ので 2-D の種は必須。一方 3-D を種に置かないと
+        # vol_region_props(3-D 要求)が「同じ連鎖で先に vol_label が引かれた場合
+        # だけ」到達する — 詳細は _labels の docstring
+        "labels": _labels,
     }
 
 
