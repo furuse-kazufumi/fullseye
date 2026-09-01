@@ -19,6 +19,100 @@ def test_spectrum_peak_at_tone_frequency():
     assert abs(f[int(np.argmax(mag))] - 1000.0) < 20        # peak at ~1 kHz
 
 
+def test_spectrum_returns_raw_rfft_and_2_over_n_makes_it_an_amplitude():
+    """Pins the scaling convention so it can never drift silently.
+
+    ``spectrum`` returns the unnormalised ``|rfft|``, and the docstring promises
+    that ``mag * 2/N`` is the one-sided amplitude. The amplitude is known *before*
+    the measurement (a unit sine placed exactly on a bin centre), so the assertion
+    is anchored on 1.0 rather than on whatever the code happens to return today.
+    Nothing outside dsp.py may be adjusted to make this pass — every caller in the
+    repo (tests/test_acoustics.py, tools/gen_wing1d_gallery.py,
+    tools/gen_newops_media.py, examples/acoustic_condition_monitoring.py) already
+    applies this same ``2/N`` by hand, and would double-divide if the scale moved.
+    """
+    rate, n, freq = 25600.0, 25600, 3000.0
+    x = np.sin(2 * np.pi * freq * np.arange(n) / rate)   # amplitude exactly 1.0
+    f, mag = dsp.spectrum(x, rate)
+    i = int(np.argmin(np.abs(f - freq)))
+    assert f[i] == freq                                  # bin centre, no leakage
+    assert mag.size == n // 2 + 1                        # one-sided frequency axis
+    assert abs(mag[i] - n / 2.0) < 1e-6                  # raw |rfft| is A*N/2
+    assert abs(mag[i] * (2.0 / n) - 1.0) < 1e-9          # the documented conversion
+
+    # DC and Nyquist are their own mirror image: 1/N, never 2/N.
+    m = 1024
+    _, mag_dc = dsp.spectrum(np.ones(m), 1000.0)         # constant of amplitude 1.0
+    assert abs(mag_dc[0] * (1.0 / m) - 1.0) < 1e-9
+    assert abs(mag_dc[0] * (2.0 / m) - 2.0) < 1e-9       # the wrong factor doubles it
+    _, mag_ny = dsp.spectrum(np.cos(np.pi * np.arange(m)), 1000.0)   # amp 1.0 at Nyquist
+    assert abs(mag_ny[-1] * (1.0 / m) - 1.0) < 1e-9
+
+    # The scale is proportional to N: the same tone, twice as long, is twice as tall.
+    x2 = np.sin(2 * np.pi * freq * np.arange(2 * n) / rate)
+    _, mag2 = dsp.spectrum(x2, rate)
+    j = int(np.argmax(mag2))
+    assert abs(mag2[j] / mag[i] - 2.0) < 1e-6            # raw magnitude is not calibrated
+    assert abs(mag2[j] * (2.0 / (2 * n)) - 1.0) < 1e-9   # ...but 2/N still gives 1.0
+
+
+def test_spectrum_amplitude_matches_the_published_bearing_numbers():
+    """The AM bearing example the acoustics guide and the article quote.
+
+    Carrier 1.000000, sidebands 0.250000 (= m/2) and essentially nothing at the
+    defect rate — all three are *one-sided amplitudes*, i.e. they only appear
+    after ``mag * 2/N``. Building the signal here (rather than importing
+    acoustics) keeps the test inside the dsp layer while pinning the exact
+    numbers the docs publish."""
+    rate, n = 25600.0, 25600
+    fc, fd, m = 3000.0, 107.0, 0.5
+    t = np.arange(n) / rate
+    x = (1.0 + m * np.cos(2 * np.pi * fd * t)) * np.sin(2 * np.pi * fc * t)
+    f, mag = dsp.spectrum(x, rate)
+    amp = mag * (2.0 / n)
+    df = rate / n
+    assert abs(df - 1.0) < 1e-12                          # 1 Hz bins: index == Hz
+    at = lambda hz: float(amp[int(round(hz / df))])       # noqa: E731
+    assert at(fd) < 1e-12                                 # defect rate is simply absent
+    assert abs(at(fc) - 1.0) < 1e-6                       # carrier amplitude 1.000000
+    assert abs(at(fc - fd) - m / 2.0) < 1e-6              # sideband 0.250000
+    assert abs(at(fc + fd) - m / 2.0) < 1e-6
+
+
+def test_spectrogram_amplitude_needs_the_window_gain_not_2_over_win():
+    """Sibling of the spectrum convention, with the trap that makes it different.
+
+    ``spectrogram`` is also raw ``|rfft|``, but the Hann window means ``2/win`` is
+    the *wrong* divisor — it undershoots by the coherent gain ``sum(w)/win``. The
+    reference amplitude is again known before measuring (a unit sine on a bin
+    centre)."""
+    rate, win, freq = 16000.0, 256, 1000.0
+    x = np.sin(2 * np.pi * freq * np.arange(16000) / rate)   # amplitude exactly 1.0
+    f, t, S = dsp.spectrogram(x, rate, win=win)
+    i = int(np.argmin(np.abs(f - freq)))
+    col = S[:, S.shape[1] // 2]                              # a steady-state frame
+    w = np.hanning(win)
+    assert abs(col[i] * (2.0 / w.sum()) - 1.0) < 1e-4        # documented conversion
+    gain = w.sum() / win
+    assert abs(gain - 0.498046875) < 1e-12                   # Hann coherent gain
+    assert abs(col[i] * (2.0 / win) - gain) < 1e-4           # the naive factor undershoots
+
+
+def test_signal_features_is_invariant_to_the_spectrum_scale():
+    """The spectral features are ratios, so the raw-|rfft| convention cancels.
+
+    This is why fixing the scale was a documentation change and not a numeric one:
+    doubling the signal length doubles every magnitude, and none of centroid /
+    peak_freq / bandwidth moves."""
+    rate, freq = 16000.0, 1000.0
+    x1 = np.sin(2 * np.pi * freq * np.arange(16000) / rate)
+    x2 = np.sin(2 * np.pi * freq * np.arange(32000) / rate)   # 2x N -> 2x magnitudes
+    a, b = dsp.signal_features(x1, rate), dsp.signal_features(x2, rate)
+    for k in ("spectral_centroid", "peak_freq"):
+        assert abs(a[k] - b[k]) < 1e-3
+    assert a["peak_freq"] == freq
+
+
 def test_signal_features_on_tone():
     x, rate = _tone(1000.0, rate=16000, amp=0.5)
     feat = dsp.signal_features(x, rate)
