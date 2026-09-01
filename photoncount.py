@@ -1026,7 +1026,7 @@ def tcspc_irf_convolve(hist, bin_ps=100.0, irf_fwhm_ps=200.0, truncate=4.0):
     return np.ascontiguousarray(np.convolve(h, k / ksum, mode="same"))
 
 
-def tcspc_background_subtract(hist, method="median", leading_bins=8,
+def tcspc_background_subtract(hist, method="median", leading_bins=None,
                               quantile=0.5, scale=1.0):
     """Remove the ambient-light / dark-count floor from an arrival-time histogram.
 
