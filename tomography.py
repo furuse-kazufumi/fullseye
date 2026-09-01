@@ -59,12 +59,12 @@ The projector against the closed form (disc of radius 60 px in a 256-px grid,
 normalised RMS error against the truth):
 
     views    FBP ramp   FBP hann   SART x10   |  noisy: FBP ramp / hann / SART
-      180     0.0250     0.0257     0.0175    |   0.0360 / 0.0371 / 0.0291
+      180     0.0250     0.0358     0.0175    |   0.0360 / 0.0371 / 0.0291
        90     0.0454        -       0.0195    |        -
-       45     0.1039     0.0715     0.0353    |   0.1159 / 0.0766 / 0.0385
+       45     0.1039     0.0740     0.0353    |   0.1159 / 0.0766 / 0.0385
        32     0.1362        -       0.0497    |        -
        16     0.2341        -       0.0859    |   0.2481 / 0.1921 / 0.0864
-        8     0.3635        -       0.1257    |   0.3813 / 0.3093 / 0.1259
+        8     0.3635     0.3063     0.1257    |   0.3813 / 0.3093 / 0.1259
 
 FBP degrades **14.5x** from 180 to 8 views; SART **7.2x**. There is no threshold
 where FBP "breaks" — it degrades smoothly — and, contrary to the usual story,
