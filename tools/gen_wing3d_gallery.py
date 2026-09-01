@@ -226,6 +226,22 @@ def _cmap(g: np.ndarray, name: str = "viridis") -> np.ndarray:
     return stops[i0] * (1.0 - f) + stops[i0 + 1] * f
 
 
+def _sig1(x: float) -> float:
+    """実測時間を **有効数字 1 桁** に丸める(図に焼く値と棒の長さの両方に使う)。
+
+    壁時計の実測値をそのまま焼くと、同じコマンドで再生成しても図の画素が変わり
+    「決定的(SHA-256 一致)」を満たせない。かといって時間を測らずに「速い」と
+    書くのは実測でない。折衷として **測った値を 1 桁に丸めて焼き、丸めない生の値は
+    ``_wing3d_meta.json`` に残す**。丸めの幅より実行ごとのばらつきが十分小さいので、
+    表示される数字は再生成しても変わらない(そのことも図に明記する)。
+    """
+    v = float(x)
+    if v == 0.0 or not math.isfinite(v):
+        return 0.0
+    e = math.floor(math.log10(abs(v)))
+    return round(v, -int(e))
+
+
 def _norm01(a: np.ndarray, lo=None, hi=None) -> np.ndarray:
     a = np.asarray(a, np.float64)
     lo = float(a.min()) if lo is None else float(lo)
