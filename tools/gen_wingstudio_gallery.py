@@ -478,3 +478,106 @@ def ex_zslices():
     facts = {"volume_shape": [D, Hs, Ws], "frames": D, "upscale": k,
              "value_range": [round(vmin, 5), round(vmax, 5)], "threshold": round(thr, 6)}
     return save_gif("zslices", frames, facts, fps=5, thumb_index=D // 2)
+
+
+# --------------------------------------------------------------------------- #
+# 展示レジストリ + CLI                                                          #
+# --------------------------------------------------------------------------- #
+#: name -> (builder, needs_studio, 1 行説明)
+EXHIBITS = {
+    "volume_turntable": (lambda: ex_volume_turntable(), False,
+                         "CT ボリュームのターンテーブル(等値面 / 境界シェル)"),
+    "zslices": (lambda: ex_zslices(), False,
+                "z スライス送り(位置インジケータつき)"),
+}
+
+
+def run_one(name: str) -> dict:
+    builder = EXHIBITS[name][0]
+    t0 = time.time()
+    print("[build] %s — %s" % (name, EXHIBITS[name][2]))
+    rec = builder()
+    rec["seconds"] = round(time.time() - t0, 2)
+    return rec
+
+
+def _merge_meta(recs) -> None:
+    old = {}
+    if os.path.exists(META_PATH):
+        try:
+            with open(META_PATH, encoding="utf-8") as f:
+                old = {r["name"]: r for r in json.load(f).get("exhibits", [])}
+        except Exception:
+            old = {}
+    for r in recs:
+        old[r["name"]] = r
+    ordered = [old[k] for k in EXHIBITS if k in old]
+    os.makedirs(ASSETS, exist_ok=True)
+    with open(META_PATH, "w", encoding="utf-8") as f:
+        json.dump({"generator": "tools/gen_wingstudio_gallery.py", "seed": SEED,
+                   "exhibits": ordered}, f, ensure_ascii=False, indent=2)
+    print("meta ->", META_PATH)
+
+
+def main(argv=None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--exhibit", choices=sorted(EXHIBITS),
+                    help="1 件だけこのプロセスで作る(Studio 展示の子プロセス用)")
+    ap.add_argument("--only", help="カンマ区切りの部分集合")
+    ap.add_argument("--no-captions", action="store_true",
+                    help="キャプション原稿を書かない")
+    args = ap.parse_args(argv)
+
+    if args.exhibit:
+        rec = run_one(args.exhibit)
+        # 子プロセスの結果は stdout の 1 行 JSON で親へ返す
+        print("__WINGSTUDIO_JSON__" + json.dumps(rec, ensure_ascii=False))
+        return 0
+
+    wanted = [w.strip() for w in args.only.split(",")] if args.only else list(EXHIBITS)
+    bad = [w for w in wanted if w not in EXHIBITS]
+    if bad:
+        print("unknown exhibits: %s (valid: %s)" % (bad, ", ".join(EXHIBITS)),
+              file=sys.stderr)
+        return 2
+
+    recs, failures = [], []
+    t0 = time.time()
+    for name in wanted:
+        needs_studio = EXHIBITS[name][1]
+        if not needs_studio:
+            try:
+                recs.append(run_one(name))
+            except Exception as e:                       # 1 件の失敗で全部を止めない
+                failures.append((name, repr(e)))
+                print("  FAILED %s: %r" % (name, e))
+            continue
+        # Studio 展示は QApplication を毎回作り直したいので子プロセスで
+        print("[build] %s — %s (subprocess)" % (name, EXHIBITS[name][2]))
+        env = dict(os.environ)
+        env["PYTHONUTF8"] = "1"
+        p = subprocess.run([sys.executable, os.path.abspath(__file__), "--exhibit", name],
+                           env=env, cwd=_ROOT, capture_output=True, text=True,
+                           encoding="utf-8", errors="replace")
+        for line in (p.stdout or "").splitlines():
+            if line.startswith("__WINGSTUDIO_JSON__"):
+                recs.append(json.loads(line[len("__WINGSTUDIO_JSON__"):]))
+            elif line.strip():
+                print("  " + line)
+        if p.returncode != 0:
+            failures.append((name, "exit %d" % p.returncode))
+            print("  FAILED %s (exit %d)" % (name, p.returncode))
+            if p.stderr:
+                print("  " + "\n  ".join((p.stderr or "").strip().splitlines()[-12:]))
+
+    _merge_meta(recs)
+    if not args.no_captions:
+        write_captions()
+    print("=== %d exhibit(s) in %.1fs ===" % (len(recs), time.time() - t0))
+    for name, why in failures:
+        print("  FAILED:", name, why)
+    return 1 if failures else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
