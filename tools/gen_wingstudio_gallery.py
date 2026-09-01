@@ -996,7 +996,8 @@ def ex_depth3d():
     facts = {"source": src, "resolution": RES, "n_points": n_pts,
              "valid_fraction": round(n_pts / (RES * RES), 5),
              "depth_min": round(dmin, 6), "depth_max": round(dmax, 6), "frames": n,
-             "half_pixel_shift_world": round(half_px_shift, 8),
+             "reprojection_rms_px": reproj_rms,
+             "offset_if_half_pixel_added": round(off_half, 8),
              "fx": round(float(K[0, 0]), 4)}
     return save_gif("depth3d", frames, facts, fps=10, thumb_index=n - 1)
 
