@@ -1609,7 +1609,7 @@ def color_grade(rgb, lut):
 
     ``lut`` is ``(n, n, n, 3)`` indexed ``[r, g, b]`` — the layout
     :func:`color_lut` produces. The identity LUT returns the input to within
-    float64 rounding (measured maximum 1.1e-16), which is what makes this
+    float64 rounding (measured maximum 3.3e-16), which is what makes this
     testable without a reference implementation: trilinear interpolation of a
     coordinate function is that coordinate, exactly.
     """
