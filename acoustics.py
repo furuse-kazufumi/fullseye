@@ -1184,7 +1184,7 @@ def spectral_kurtosis(x, rate, win=None, hop=None, window="hann"):
     }
 
 
-def cepstrum(x, rate, mode="real", floor_ratio=1e-12):
+def cepstrum(x, rate, mode="real", floor_ratio=1e-12, min_quefrency=0.0):
     """The spectrum of the log spectrum — periodic structure *in frequency*.
 
     A harmonic family or a family of modulation sidebands is periodic along the
