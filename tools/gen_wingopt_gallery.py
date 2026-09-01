@@ -1267,7 +1267,7 @@ def ex_airy_rayleigh(log):
     """2 点が分離できる/できない境界。Rayleigh 基準を実測の谷で確かめる。"""
     lam, fn = SYS["wavelength_um"], 5.6
     fine = 0.02                                  # 微細格子 [um/画素]
-    size = 601
+    size = 701
     psf = np.asarray(optics.airy_pattern(size=size, wavelength_um=lam,
                                          f_number=fn, pixel_pitch_um=fine),
                      np.float64)

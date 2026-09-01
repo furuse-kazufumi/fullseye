@@ -835,7 +835,7 @@ def ex_beat_null(data, log=print):
             by = y + 12 + j * 23
             p.hbar(v, by, 17, col)
         c = p.c
-        items.append((34, y + 12, TITLES[name].split("(")[0], C_TEXT, 15, True))
+        items.append((34, y + 12, SHORT[name], C_TEXT, 15, True))
         items.append((34, y + 36, f"[{r['unit']}]", C_DIM, 12, False))
         items.append((34, y + 56, f"pipeline {len(r['ops'])} 段", C_DIM, 12, False))
         for j, (lab, v, col) in enumerate(vals):
@@ -907,7 +907,7 @@ def ex_observed_vs_locked(data, log=print):
         p.c = dashed(p.c, (p.X(i - 0.42), p.Y(hb)), (p.X(i + 0.42), p.Y(hb)),
                      C_HAND, 2, 7, 5)
         items += [
-            (p.X(i), H - 118, TITLES[n].split("(")[0], C_TEXT, 14, True, "ma"),
+            (p.X(i), H - 118, SHORT[n], C_TEXT, 14, True, "ma"),
             (p.X(i - 0.16), p.Y(obs) - 6, f"{obs:.4f}", C_EVO, 13, True, "md", True),
             (p.X(i + 0.16), p.Y(lok) - 6, f"{lok:.4f}", C_LOCK, 13, True, "md", True),
             (p.X(i + 0.42) + 6, p.Y(hb), f"手 {hb:.3f}", C_HAND, 11, True, "lm"),
@@ -997,7 +997,7 @@ def ex_seed_spread(data, log=print):
             c = p.c
             arr = np.array(ys, float)
             items += [
-                (34, y0 + 12, TITLES[n].split("(")[0], C_TEXT, 16, True),
+                (34, y0 + 12, SHORT[n], C_TEXT, 16, True),
                 (34, y0 + 214, "seed", C_DIM, 12, False),
                 (W - 286, y0 + 46,
                  f"seeds so far  {len(runs)}", C_TEXT, 13, True),
@@ -1401,8 +1401,8 @@ def ex_type_fixpoint(data, log=print):
                                           fill=True)
         items = [(28, 22, "型到達可能性の不動点 — 1 枚の画像から何段で全体に届くか",
                   C_TEXT, 22, True),
-                 (28, 54, "節点 = 型(58 種)、辺 = 「その型を入力に取り、この型を出す op がある」。"
-                          "初期プールを **image2d 1 種だけ**にして不動点を回した実測。",
+                 (28, 54, "節点 = 型、辺 = 「その型を入力に取り、この型を出す op がある」。"
+                          "初期プールを image2d 1 種だけにして不動点を回した実測。",
                   C_DIM, 13, False)]
         for t in types:
             x, y = pos[t]
@@ -1745,7 +1745,7 @@ def ex_silent_bug(data, log=print):
          "同じ 0.0000 が「型を外した」と「本当に外れた」の両方を意味するので、"
          "表の 0 は必ず内訳と一緒に読む。", C_DIM, 13, False),
         (56, y + 152,
-         "この 3 つに共通するのは、**止まらない**ということ。だから連鎖ファザーは"
+         "この 3 つに共通するのは、止まらないということ。だから連鎖ファザーは"
          "「例外が出たか」ではなく「宣言型と返りが合うか」まで機械検証する。",
          C_TEXT, 13, True),
     ]
@@ -1781,7 +1781,7 @@ def ex_promotion_gate(data, log=print):
     c = canvas(W, H)
     items = [(28, 24, "昇格ゲート — 「強い」ではなく「既存では届かないところに届く」",
               C_TEXT, 22, True),
-             (28, 56, "候補を 1 段として使ったスコアと、**既存語彙の最良 1 段**を"
+             (28, 56, "候補を 1 段として使ったスコアと、「既存語彙の最良 1 段」を"
                       "全 problem で比べる(locked split)。既存で届く分を差し引くのが要点。",
               C_DIM, 13, False)]
     for j, name in enumerate(picks):
