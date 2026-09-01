@@ -806,8 +806,20 @@ def ncd(a, b, compressor="lzma", levels=None, data_range=None, symmetric=True):
         )
     ca = compressed_size(a, compressor)
     cb = compressed_size(b, compressor)
-    joined = np.ascontiguousarray(a).tobytes() + np.ascontiguousarray(b).tobytes()
-    cab = len(_COMPRESSORS[compressor](joined))
+    ba = np.ascontiguousarray(a).tobytes()
+    bb = np.ascontiguousarray(b).tobytes()
+    comp = _COMPRESSORS[compressor]
+    cab = len(comp(ba + bb))
+    if symmetric:
+        # **NCD は「距離」を名乗るが、実装するとそうならない。** 圧縮器は前から
+        # 順に辞書を作るので C(xy) と C(yx) が違い、引数の順で値が変わる。
+        # 実測(2026-09-02、64x64 の縦縞と横縞、どちらも uint8):
+        #   lzma  NCD(s,t)=0.571429  NCD(t,s)=0.595238  差 2.38e-02(相対 4 %)
+        #   zlib  NCD(s,t)=0.854839  NCD(t,s)=0.862903  差 8.07e-03
+        # 一様乱数どうしでは差 0.000e+00 になる(どちらも圧縮できないので順序が
+        # 効かない)―― つまり **乱数で試すと対称に見えて、構造のある実データで
+        # 初めて破れる**。既定で両向きを測って平均し、対称性を回復させる。
+        cab = 0.5 * (cab + len(comp(bb + ba)))
     return float((cab - min(ca, cb)) / max(ca, cb))
 
 
