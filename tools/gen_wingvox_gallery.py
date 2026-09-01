@@ -369,7 +369,7 @@ def ex_sieve(log):
     rgbvol = VC.vol_colorize_labels(labels, seed=SEED)
     vols = sorted(s["volume"] for s in stats)
     thresholds = [0.0] + vols                       # 1 個ずつ落ちていく閾値の列
-    k = 6
+    k = 9
     base_front = VC.vol_label_volume_render(labels, "z", "front", seed=SEED)
     pw = base_front.shape[1] * k
 
