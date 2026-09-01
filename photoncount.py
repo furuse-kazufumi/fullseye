@@ -939,7 +939,7 @@ def tcspc_simulate(distance_m=3.0, bins=256, bin_ps=100.0, signal_photons=50.0,
             "unambiguous range here is %g m."
             % (d, t0, window, n, dt,
                SPEED_OF_LIGHT_M_S * window * 1e-12 / 2.0))
-    sigma = fwhm / FWHM_PER_SIGMA
+    sigma = _pulse_sigma(fwhm, "tcspc_simulate")
     edges = np.arange(n + 1, dtype=np.float64) * dt
     lam = sig * _gauss_bin_probs(edges, t0, sigma) + amb / float(n)
     lam = np.maximum(lam, 0.0)                        # erf round-off can dip <0
