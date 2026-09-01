@@ -944,8 +944,15 @@ def ex_rle(log) -> dict:
     vox = G("vol_rle_volume")(rle)
     log(f"    dense {dense_bytes / 1e6:.2f} MB -> rle {rle.nbytes / 1e6:.3f} MB "
         f"= 1/{ratio:.1f}  runs {len(rle):,}  roundtrip exact={exact}")
+    # 図に焼くのは 1 桁丸め(生の値は meta へ)= 再生成しても画素が変わらない
+    us_rle_vol, us_den_vol = _sig1(t_rle_vol * 1e6), _sig1(t_den_vol * 1e6)
+    us_rle_bb, us_den_bb = _sig1(t_rle_bb * 1e6), _sig1(t_den_bb * 1e6)
+    ms_un, ms_in, ms_di = _sig1(t_un * 1e3), _sig1(t_in * 1e3), _sig1(t_di * 1e3)
+    sp_vol, sp_bb = us_den_vol / us_rle_vol, us_den_bb / us_rle_bb
     log(f"    volume rle {t_rle_vol * 1e6:.1f} us vs dense {t_den_vol * 1e6:.1f} us "
         f"= {t_den_vol / t_rle_vol:.0f}x ;  bbox {t_den_bb / t_rle_bb:.0f}x")
+    log(f"    (図には 1 桁丸めで volume {us_den_vol:.0f}/{us_rle_vol:.0f} us = "
+        f"{sp_vol:.0f}x, bbox {us_den_bb:.0f}/{us_rle_bb:.0f} us = {sp_bb:.0f}x)")
 
     W, H = 1120, 720
     c = _canvas(W, H)
@@ -988,23 +995,24 @@ def ex_rle(log) -> dict:
               ["dense bool", "VolRLE"], [C_A, C_B], fmt="%.3f MB",
               title="同じ領域を保持するメモリ(実測 nbytes)")
     c = _bars(c, 430, 240, 672, 96,
-              [t_den_vol * 1e6, t_rle_vol * 1e6],
+              [us_den_vol, us_rle_vol],
               ["dense.sum()", "vol_rle_volume"], [C_A, C_B], fmt="%.1f us",
               title="体積(voxel 数)を求める時間(25 回の最小値)")
     c = _bars(c, 430, 380, 672, 96,
-              [t_den_bb * 1e6, t_rle_bb * 1e6],
+              [us_den_bb, us_rle_bb],
               ["dense 走査", "vol_rle_bbox"], [C_A, C_B], fmt="%.1f us",
               title="bounding box を求める時間(25 回の最小値)")
 
     rows = [
         f"メモリ比            1/{ratio:.1f}  ({dense_bytes / 1e6:.2f} MB -> {rle.nbytes / 1e6:.3f} MB, run 数 {len(rle):,})",
         f"decode 往復          元と bit 一致: {'YES' if exact else 'NO'}",
-        f"体積                 {vox:,} voxel   ({t_den_vol / t_rle_vol:.0f} 倍速)",
-        f"bounding box         (z,y,x) {bbox[:3]} .. {bbox[3:]}   ({t_den_bb / t_rle_bb:.0f} 倍速)",
+        f"体積                 {vox:,} voxel   ({sp_vol:.0f} 倍速)",
+        f"bounding box         (z,y,x) {bbox[:3]} .. {bbox[3:]}   ({sp_bb:.0f} 倍速)",
         f"重心                 ({cent[0]:.2f}, {cent[1]:.2f}, {cent[2]:.2f}) voxel",
-        f"union(球, 軸)        {v_un:,} voxel  {t_un * 1e3:.2f} ms",
-        f"intersect(球, 軸)    {v_in:,} voxel  {t_in * 1e3:.2f} ms",
-        f"difference(球 - 軸)  {v_di:,} voxel  {t_di * 1e3:.2f} ms",
+        f"union(球, 軸)        {v_un:,} voxel  {ms_un:.0f} ms",
+        f"intersect(球, 軸)    {v_in:,} voxel  {ms_in:.0f} ms",
+        f"difference(球 - 軸)  {v_di:,} voxel  {ms_di:.0f} ms",
+        "(時間はすべて実測値を有効数字 1 桁に丸めた値。生の値は _wing3d_meta.json)",
     ]
     items = [(430, 500, "展開せずに答えた測定(すべて run の上で計算)", C_DIM, 12, False)]
     for i, s in enumerate(rows):
@@ -1027,8 +1035,9 @@ def ex_rle(log) -> dict:
             f"Holding a 256³ synthetic part as run-lengths costs **1/{ratio:.0f}** of the "
             f"dense mask ({dense_bytes / 1e6:.2f} MB to {rle.nbytes / 1e6:.3f} MB, "
             f"{len(rle):,} runs). And nothing has to be decoded: the volume of "
-            f"{vox:,} voxels comes back **{t_den_vol / t_rle_vol:.0f}x faster**, the "
-            f"bounding box **{t_den_bb / t_rle_bb:.0f}x faster**, and set operations "
+            f"{vox:,} voxels comes back **{sp_vol:.0f}x faster**, the "
+            f"bounding box **{sp_bb:.0f}x faster** (measured, rounded to one significant "
+            "figure so the figure stays byte-reproducible), and set operations "
             f"(ball ∪ axle = {v_un:,} voxels) are solved on the runs themselves. The "
             "decode round-trip is bit-identical."),
         "ops": ["vol_rle_encode", "vol_rle_decode", "vol_rle_volume", "vol_rle_bbox",
@@ -1037,15 +1046,21 @@ def ex_rle(log) -> dict:
         "facts": {"dense_MB": dense_bytes / 1e6, "rle_MB": rle.nbytes / 1e6,
                   "ratio": ratio, "runs": len(rle), "roundtrip_exact": exact,
                   "voxels": int(vox), "bbox": list(bbox), "centroid": list(cent),
-                  "volume_speedup": t_den_vol / t_rle_vol,
-                  "bbox_speedup": t_den_bb / t_rle_bb,
+                  "volume_speedup_raw": t_den_vol / t_rle_vol,
+                  "bbox_speedup_raw": t_den_bb / t_rle_bb,
+                  "t_rle_volume_us_raw": t_rle_vol * 1e6,
+                  "t_dense_volume_us_raw": t_den_vol * 1e6,
+                  "t_rle_bbox_us_raw": t_rle_bb * 1e6,
+                  "t_dense_bbox_us_raw": t_den_bb * 1e6,
+                  "volume_speedup_shown": sp_vol, "bbox_speedup_shown": sp_bb,
                   "union_voxels": int(v_un), "intersect_voxels": int(v_in),
                   "difference_voxels": int(v_di)},
         "caption": (f"256³ の合成部品を run-length で持つと **1/{ratio:.0f}**"
                     f"({dense_bytes / 1e6:.2f} MB → {rle.nbytes / 1e6:.3f} MB、"
                     f"{len(rle):,} run)。しかも展開せずに体積 {vox:,} voxel を "
-                    f"**{t_den_vol / t_rle_vol:.0f} 倍速**、BBox を "
-                    f"**{t_den_bb / t_rle_bb:.0f} 倍速**で返し、集合演算(球 ∪ 軸 = "
+                    f"**{sp_vol:.0f} 倍速**、BBox を "
+                    f"**{sp_bb:.0f} 倍速**で返し(時間は実測を有効数字 1 桁に丸めた値)、"
+                    "集合演算(球 ∪ 軸 = "
                     f"{v_un:,} voxel)も run のまま解ける。decode の往復は bit 一致。"),
         **info}
 
@@ -2270,6 +2285,7 @@ def ex_mip(log) -> dict:
         xrays.append(np.asarray(G("render_volume_projection")(soft, azimuth=az,
                                                               elevation=12.0, mode="xray")))
     dt = time.perf_counter() - t0
+    ms_shown = _sig1(1e3 * dt / (2 * nf))          # 図に焼くのは 1 桁丸め
     mip_hi = float(max(m.max() for m in mips))
     xr_hi = float(max(x.max() for x in xrays))
     log(f"    render_volume_projection x{2 * nf} in {dt:.2f} s "
@@ -2309,8 +2325,8 @@ def ex_mip(log) -> dict:
             (930, 170, " 12.0 deg", C_TEXT, 22, True),
             (930, 210, "ボリューム", C_DIM, 12, False),
             (930, 228, "%d x %d x %d" % (n, n, n), C_TEXT, 15, True),
-            (930, 254, "投影 %d 枚 / %.1f s" % (2 * nf, dt), C_TEXT, 13, False),
-            (930, 274, "= %.0f ms / 枚" % (1e3 * dt / (2 * nf)), C_DIM, 12, False),
+            (930, 254, "投影 %d 枚" % (2 * nf), C_TEXT, 13, False),
+            (930, 274, "1 枚 %.0f ms(実測を 1 桁に丸め)" % ms_shown, C_DIM, 12, False),
             (930, 310, "正規化の上限は", C_DIM, 12, False),
             (930, 328, "全フレーム共通", C_TEXT, 13, True),
             (930, 346, "(1 枚ごとに正規化", C_DIM, 11, False),
@@ -2330,19 +2346,21 @@ def ex_mip(log) -> dict:
             "`render_volume_projection`. On the left, maximum-intensity projection (MIP, "
             "bone window) keeps only the brightest sample along each ray, so bone floats "
             "out; on the right, attenuation summing (X-ray) accumulates along the ray, so "
-            f"thickness shows. {2 * nf} projections in {dt:.1f} s "
-            f"(**{1e3 * dt / (2 * nf):.0f} ms each**). The normalisation ceiling is shared "
+            f"thickness shows. {2 * nf} projections at **{ms_shown:.0f} ms each** "
+            "(measured, rounded to one significant figure so the figure stays "
+            "byte-reproducible). The normalisation ceiling is shared "
             "across all frames on purpose — normalise per frame and the brightness "
             "flickers as it turns, which is indistinguishable from the shape changing."),
         "ops": ["vol_window_level", "render_volume_projection"],
         "facts": {"volume": [n, n, n], "frames": nf, "elevation_deg": 12.0,
-                  "render_seconds_total": dt,
-                  "ms_per_projection": 1e3 * dt / (2 * nf),
+                  "render_seconds_total_raw": dt,
+                  "ms_per_projection_raw": 1e3 * dt / (2 * nf),
+                  "ms_per_projection_shown": ms_shown,
                   "mip_max": mip_hi, "xray_max": xr_hi},
         "caption": (f"合成 CT ボリューム({n}³)を `render_volume_projection` で 1 周させた。"
                     "左は最大値投影(MIP、骨窓)で光線上の最大値だけを拾うので骨が浮き、"
                     "右は減衰積算(X 線)で厚みが出る。投影 "
-                    f"{2 * nf} 枚を {dt:.1f} 秒(**{1e3 * dt / (2 * nf):.0f} ms/枚**)。"
+                    f"{2 * nf} 枚を **1 枚 {ms_shown:.0f} ms**(実測を有効数字 1 桁に丸めた値)。"
                     "正規化の上限は全フレーム共通にしてある ―― 1 枚ごとに正規化すると"
                     "回転中に明るさがちらついて、形の変化と見分けがつかなくなる。"),
         **info}

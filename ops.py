@@ -528,8 +528,7 @@ def _clahe(v, a, b):
     # Global CDF: the fallback map for degenerate (empty) tiles, which linspace
     # can produce when nb exceeds the image side.
     ghist, _ = np.histogram(x, 256, (0, 1))
-    gcdf = np.cumsum(ghist).astype(np.float64)
-    gcdf = gcdf / gcdf[-1] if gcdf[-1] > 0 else gcdf
+    gcdf = _clip_limit_cdf(ghist, clip_mult * ghist.sum() / 256.0)
 
     cdfs = np.empty((nb, nb, 256), np.float64)          # per-tile tone maps at bin mids
     for i in range(nb):
@@ -537,8 +536,8 @@ def _clahe(v, a, b):
             blk = x[ys[i]:ys[i + 1], xs[j]:xs[j + 1]]
             if blk.size:
                 hist, _ = np.histogram(blk, 256, (0, 1))
-                cdf = np.cumsum(hist).astype(np.float64)
-                cdfs[i, j] = cdf / cdf[-1] if cdf[-1] > 0 else cdf
+                # clip limit はタイル画素数 / ビン数 (= 平均カウント) の倍数
+                cdfs[i, j] = _clip_limit_cdf(hist, clip_mult * blk.size / 256.0)
             else:
                 cdfs[i, j] = gcdf
 
