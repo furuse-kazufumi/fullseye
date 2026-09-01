@@ -997,18 +997,20 @@ def iqft2(spectrum, side, mu=None) -> np.ndarray:
     """Inverse quaternion Fourier transform of a **centred** spectrum. → (H, W, 4).
 
     The exact inverse of :func:`qft2` **for the same side and the same mu**:
-    measured round-trip error ``8.9e-16`` (left) and ``6.7e-16`` (right) on a
-    random ``(32, 32, 4)`` field, and ``0.0`` exactly for a field that is already
-    real-scalar. The kernel is ``exp(+mu * 2*pi*(...))`` applied on the side
-    named, and the ``1/(H*W)`` normalisation is carried here, as in
+    measured round-trip error ``2.22e-15`` for both sides on a standard-normal
+    ``(32, 32, 4)`` field. The kernel is ``exp(+mu * 2*pi*(...))`` applied on the
+    side named, and the ``1/(H*W)`` normalisation is carried here, as in
     ``numpy.fft.ifft2``.
 
     **Using the wrong side does not raise.** ``iqft2(qft2(q, "left"), "right")``
     returns a finite, plausible quaternion image that is simply not ``q``:
-    measured ``max|err| = 1.1e+00`` where the data's own range is 1.0. The
-    ``side`` argument is required at both ends for exactly this reason, and the
-    two calls must agree — nothing in the data records which transform produced
-    it, so nothing downstream can catch the mismatch for you.
+    measured ``max|err| = 1.113`` on a random colour image whose own range is
+    ``0.9994``, and — the dangerous case — only ``0.054`` against a range of
+    ``1.076`` on a grey-axis-dominated one, which is small enough to survive a
+    look at the picture. The ``side`` argument is required at both ends for
+    exactly this reason, and the two calls must agree: nothing in the data
+    records which transform produced it, so nothing downstream can catch the
+    mismatch for you.
 
     **Raises** ``ValueError``: *spectrum* is not a valid ``(H, W, 4)`` field;
     *side* is not ``'left'`` / ``'right'``; *mu* is not a finite non-zero
