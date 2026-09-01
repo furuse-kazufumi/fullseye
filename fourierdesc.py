@@ -53,7 +53,11 @@ def _as_contour(points, name="points"):
 
 
 def from_xld(contour, i=0):
-    """XLD 輪郭 dict(``{"shape", "cs":[Nx2,...]}``)から i 番目の輪郭を取り出す。"""
+    """XLD 輪郭 dict(``{"shape", "cs":[Nx2,...]}``)から i 番目の輪郭を取り出す。
+
+    返るのは XLD と同じ **(row, col)** 順の (N,2)。``imagemorph`` へ渡すときは
+    ``[:, ::-1]`` で (x, y) に入れ替えること(モジュール冒頭の「座標順の落とし穴」)。
+    """
     return np.asarray(contour["cs"][i], dtype=np.float64).reshape(-1, 2)
 
 
