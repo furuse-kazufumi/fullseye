@@ -447,9 +447,10 @@ def ex_overlay_alpha(log):
     shell = VC.vol_label_overlay(grey, labels, seed=SEED, alpha=1.0, mode="boundary")
     n_shell = int((shell != base).any(axis=3).sum())
     n_fill = int(fg.sum())
-    book = flipbook(frames, ["alpha=%.2f" % a for a in alphas],
-                    title="グレー CT に色ラベルを重ねる(断面 z=%d)" % z0)
-    info = save_animation(book, "wingvox_overlay_alpha", duration_ms=110,
+    title = "グレー CT に色ラベルを重ねる(断面 z=%d)" % z0
+    book = flipbook(frames, ["alpha=%.2f" % a for a in alphas], title=title,
+                    title_font_size=_fit_size(title, pw, 24))
+    info = save_animation(book, "wingvox_overlay_alpha", duration_ms=150,
                           hold_last_ms=700)
     facts = {"slice": z0, "components": int(n), "frames": len(alphas),
              "sweep": sweep[:21],
