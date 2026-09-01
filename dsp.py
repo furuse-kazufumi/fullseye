@@ -14,6 +14,7 @@ specops) instead of quietly turning every downstream feature into NaN.
     import fullseye
     x, rate = fullseye.read_wav("knock.wav")
     f, mag = fullseye.spectrum(x, rate)          # where is the energy?
+    amp = mag * (2.0 / len(x))                   # ...and how much: see spectrum()
     feats = fullseye.signal_features(x, rate)    # rms / zcr / centroid / peak_freq …
     ok = feats["peak_freq"] < 4000               # a simple acoustic verdict
 """
