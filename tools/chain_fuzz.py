@@ -644,6 +644,17 @@ OP_PARAM_HINTS = {
 #: どちらも有限の逆数(curvature_per_mm)や bool を併せて返す。
 NONFINITE_BY_CONTRACT_OPTICS = {"depth_of_field", "gaussian_beam"}
 
+#: 文書化済みの非有限を返す op(cadmap)。**「当たらなかった」を NaN で表すのが
+#: 契約**で、最寄りの面へ丸めないための設計そのもの(丸めると「背景に載っていた
+#: 欠陥」が「面 17 の欠陥」に化ける)。docstring で明記されているもの:
+#:   * cad_pixel_to_surface — miss の bary / point / depth / normal が NaN
+#:     (face_id = -1、hit = False が併せて返るので判別できる)。
+#:   * cad_defect_to_cad — 当たり 0 の領域の centroid / depth_mean が NaN
+#:     (area = 0.0, hit_fraction = 0.0 で**消さずに**残す)。
+#: cad_surface_to_pixel / cad_visible_faces は非有限を返さない(実測)ので入れない
+#: — 入れると本物の非有限が黙って見逃される。
+NONFINITE_BY_CONTRACT_CADMAP = {"cad_pixel_to_surface", "cad_defect_to_cad"}
+
 #: 出力を pool 型へ合わせる梱包アダプタ。基本はレジストリの RESULT_ADAPTERS
 #: (型忠実の一級メタデータ)に委譲し、ファザー固有の追加だけここに置く
 def _registry_adapters():
