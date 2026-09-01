@@ -1083,15 +1083,13 @@ def chromatic_confocal_height(spectrum, wavelength_start_nm=500.0,
     work = np.maximum(x - np.median(x), 0.0) if sub else x
     k = int(np.argmax(work))
     if k == 0 or k == work.size - 1:
-        half = 0.5 * (work.size - 1) * dl * disp
         raise ValueError(
             "%s: the spectral peak is on bin %d of %d — the first or last bin. "
             "The surface is outside the calibrated axial range (%+g..%+g um "
             "about the reference wavelength %g nm), so its height is unknown; "
             "returning the band edge would be a plausible, finite, wrong height."
-            % (op, k, work.size,
-               (l0 - lref) * disp, (l0 + (work.size - 1) * dl - lref) * disp,
-               lref) if half else "%s: peak on the band edge" % (op,))
+            % (op, k, work.size, (l0 - lref) * disp,
+               (l0 + (work.size - 1) * dl - lref) * disp, lref))
     if bins_min > 0.0:
         top = float(work[k])
         above = int((work >= 0.5 * top).sum())
