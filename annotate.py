@@ -1579,14 +1579,31 @@ def panel_grid(panels, labels=None, ncols=3, pad=10, label_h=32, background=0.05
     bgv = float(background)
     if not math.isfinite(bgv) or not (0.0 <= bgv <= 1.0):
         raise ValueError(f"background must be a finite value within [0,1] (got: {background})")
-    if title is not None and title_h <= 0:
-        title_h = int(font_size) + 14
-
     cw = max(p.shape[1] for p in ps)
     ch = max(p.shape[0] for p in ps)
     nrows = (len(ps) + ncols - 1) // ncols
-    cell_h = ch + int(label_h)
     W = 2 * pad + ncols * cw + (ncols - 1) * pad
+
+    # ラベル帯・表題帯の高さは**測ってから**決める。決め打ちの高さに測っていない
+    # 文字を流し込むのが、この repo で文字が隣とぶつかっていた原因。
+    if labels is not None and label_h > 0:
+        need = max(measure_text(s, font_size=font_size, font_path=font_path,
+                                min_font_size=min_font_size, max_width=cw - 4)["height"]
+                   for s in labels) + 4
+        if need > label_h:
+            raise ValueError(
+                f"the labels need {need}px but label_h is {label_h} — they would spill into "
+                "the panel above or below; raise label_h or lower font_size")
+    if title is not None:
+        tm = measure_text(title, font_size=int(font_size) + 3, font_path=font_path,
+                          min_font_size=min_font_size, max_width=W - 2 * pad)
+        need_t = tm["height"] + 2 * 2 + 6
+        if title_h <= 0:
+            title_h = need_t
+        elif title_h < need_t:
+            raise ValueError(
+                f"the title needs {need_t}px but title_h is {title_h} — raise title_h")
+    cell_h = ch + int(label_h)
     H = int(title_h) + 2 * pad + nrows * cell_h + (nrows - 1) * pad
     out = np.full((H, W) if nd == 2 else (H, W, nc), bgv, dtype=np.float64)
 
