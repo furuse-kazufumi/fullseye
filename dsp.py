@@ -279,7 +279,13 @@ def signal_features(x, rate=1.0):
     """A compact acoustic/vibration feature vector for anomaly detection:
     ``rms``, ``peak``, ``crest_factor``, ``zcr``, ``spectral_centroid`` (Hz),
     ``peak_freq`` (Hz), ``bandwidth`` (Hz). All finite — a NaN / Inf sample raises
-    ``ValueError`` rather than producing NaN features; empty signal -> zeros."""
+    ``ValueError`` rather than producing NaN features; empty signal -> zeros.
+
+    The three spectral entries are built on :func:`spectrum`, but every one of
+    them is a *ratio* of magnitudes (``argmax``, a magnitude-weighted mean, a
+    magnitude-weighted spread), so the raw ``|rfft|`` convention documented there
+    cancels out and these numbers are unaffected by it. ``rms``, ``peak`` and
+    ``crest_factor`` are computed in the time domain and never touch the FFT."""
     x = _require_finite(x)
     if x.size == 0:
         return {k: 0.0 for k in ("rms", "peak", "crest_factor", "zcr",
