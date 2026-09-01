@@ -22,12 +22,26 @@ TYPED = [o for o in ops.REGISTRY if o.category == "typed"]
 
 def _seed(sort, seed=0):
     rng = np.random.default_rng(seed)
-    return {
-        "points": rng.random((160, 3)) * 10.0,
-        "signal": np.sin(np.linspace(0, 8 * np.pi, 256)),
-        "matrix": rng.standard_normal((6, 4)),
-        "cimage": np.fft.fftshift(np.fft.fft2(rng.random((32, 32)))),
-    }[sort]
+    banks = {
+        "points": lambda: rng.random((160, 3)) * 10.0,
+        "signal": lambda: np.sin(np.linspace(0, 8 * np.pi, 256)),
+        "matrix": lambda: rng.standard_normal((6, 4)),
+        "cimage": lambda: np.fft.fftshift(np.fft.fft2(rng.random((32, 32)))),
+        # wide 語彙でだけ現れる 3 sort。image を入力に取る入口 op と一緒に
+        # 有効化されるので、既定モードでは呼ばれない
+        "image": lambda: rng.random((32, 32)),
+        "lightfield": lambda: __import__("lightfield").lf_synthesize(
+            (0.0, 1.0), angular=(3, 3), shape=(32, 32), seed=seed)[0],
+        # 非負であることが契約(負のカウントは物理的に存在しない)
+        "counts": lambda: np.abs(rng.standard_normal(256)) * 40.0,
+        "histcube": lambda: __import__("photoncount").dtof_cube_simulate(
+            1.0 + rng.random((8, 8)), bins=64, bin_ps=200.0, seed=seed),
+    }
+    if sort not in banks:
+        raise AssertionError(
+            "sort %r の種が無い。語彙に sort を足したらここにも種を足すこと — "
+            "無いと wide モードの橋が一度も実行されないまま素通りする" % sort)
+    return banks[sort]()
 
 
 def test_bridge_registered_and_named():
