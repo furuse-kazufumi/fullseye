@@ -697,6 +697,17 @@ __all__ = [
     "mutual_information", "normalized_mutual_information",
     "compressed_size", "ncd", "compare_images", "data_range_of",
     "D65_WHITE", "MS_SSIM_WEIGHTS", "CIEDE2000_TEST_PAIRS",
+    # 分布を運ぶ層(測る imgmetrics と対)
+    "colortransport", "opscolortransport",
+    "wasserstein_1d", "transport_plan_1d", "histogram_match", "color_transfer",
+    "sinkhorn", "sinkhorn_distance", "gaussian_transport_map", "poisson_blend",
+    "COLOR_TRANSFER_METHODS",
+    # 画像フォレンジック層(断定せず証拠量を返す)
+    "imgforensics", "opsimgforensics",
+    "perceptual_hash", "hash_distance", "sensor_fingerprint", "fingerprint_correlate",
+    "fingerprint_strength_map", "error_level_map", "jpeg_quality_estimate",
+    "jpeg_ghost_map", "jpeg_ghost_quality", "noise_inconsistency_map",
+    "copy_move_regions", "watermark_embed", "watermark_extract", "watermark_capacity",
     "annotate", "opsannotate", "measure_text", "text_box", "arrow", "leader_line",
     "label_points", "crosshair", "legend_box", "color_bar", "scale_bar",
     "axes_transform", "data_to_pixel", "nice_ticks", "axes_frame", "grid_lines",
