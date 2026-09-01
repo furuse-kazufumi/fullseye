@@ -2051,7 +2051,26 @@ def fit_poly_surface(x, y, z, degree=2):
 
 
 def eval_poly_surface(model, x, y):
-    """model を (x,y) で評価 → z(x の shape で返す)。"""
+    """model を (x,y) で評価 → z(x の shape で返す)。
+
+    *model* は :func:`fit_poly_surface` の返り(dict)。**fail-closed**: B スプライン
+    曲面/曲線の tck(FITPACK の list)を渡すと、以前は ``model["degree"]`` が
+    ``TypeError: list indices must be integers...`` で落ちていた(2026-09-01 実測 7 回)。
+    多項式モデルと B スプラインモデルは中身が違うので、ここで明示的に拒否する
+    (ops3d 台帳側でも poly_surface / bspline_surface と型を分けてある)。
+
+    Raises ValueError: model が多項式モデル dict でない / 必須キー欠落。
+    """
+    if not isinstance(model, dict):
+        raise ValueError(
+            "eval_poly_surface: model must be the dict returned by fit_poly_surface "
+            f"(got {type(model).__name__}). B-spline models (FITPACK tck lists/tuples) "
+            "belong to bspline_surf.eval_bspline_surface / eval_bspline_curve")
+    missing = [k for k in ("coef", "powers", "degree") if k not in model]
+    if missing:
+        raise ValueError(
+            "eval_poly_surface: model is missing key(s) %s; expected the dict from "
+            "fit_poly_surface (coef/powers/degree/rms/pv)" % ", ".join(missing))
     A, _ = _poly_terms(x, y, model["degree"])
     return (A @ model["coef"]).reshape(np.asarray(x).shape)
 
