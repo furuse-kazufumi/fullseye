@@ -420,10 +420,10 @@ def ex_overlay_alpha(log):
     z0 = int(np.argmax([(labels[z] > 0).sum() for z in range(D)]))
     fg = labels > 0
     base = VC.vol_label_overlay(grey, labels, seed=SEED, alpha=0.0)
-    k = 6
+    k = 9
     pw = W * k
 
-    alphas = [round(0.05 * i, 2) for i in range(0, 21)]
+    alphas = [round(0.1 * i, 2) for i in range(0, 11)]
     alphas = alphas + alphas[-2:0:-1]                   # 往復させる(端で止めない)
     frames, sweep = [], []
     for a in alphas:
