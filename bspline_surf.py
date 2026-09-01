@@ -172,9 +172,16 @@ def eval_bspline_surface(tck, x, y, grid=False):
     -------
     z : numpy.ndarray
         grid=False なら x と同 shape、grid=True なら (len(x), len(y))。
+
+    Raises
+    ------
+    ValueError
+        tck が曲面モデル([tx,ty,c,kx,ky])でない(曲線 tck / 多項式 dict を含む)、
+        または x, y の shape 不一致・空。
     """
     from scipy.interpolate import bisplev
 
+    _check_tck(tck, 5, "eval_bspline_surface")
     if grid:
         gx = np.asarray(x, float).ravel()
         gy = np.asarray(y, float).ravel()
