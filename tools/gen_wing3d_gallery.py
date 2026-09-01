@@ -3362,6 +3362,18 @@ def ex_connectivity(log) -> dict:
         "name": "wing3d_boundary_connectivity",
         "title": "連結性の定義だけで殻の厚みが %.1f 倍変わる" % (
             thick["voxels"] / thin["voxels"]),
+        "title_en": "Change only the connectivity and the shell gets %.1fx thicker" % (
+            thick["voxels"] / thin["voxels"]),
+        "caption_en": (
+            f"The shell of a synthetic ball of radius {r:.0f} voxels ({solid:,} voxels), taken "
+            "six ways by varying nothing but `vol_boundary`'s `connectivity` (6 / 18 / 26) and "
+            f"`side` (inner / outer). The 6-neighbour inner shell — face contact only — is "
+            f"{thin['voxels']:,} voxels ({thin['pct_of_solid']:.2f} %); the 26-neighbour outer "
+            f"shell, which counts diagonal contact too, is {thick['voxels']:,} voxels "
+            f"({thick['pct_of_solid']:.2f} %). **The same shape, "
+            f"{thick['voxels'] / thin['voxels']:.2f}x apart.** Six panels showing that "
+            "\"the number of surface voxels\" means nothing without the definition. The near "
+            "half is cut away so the thickness is visible."),
         "ops": ["vol_boundary"],
         "facts": {"solid_voxels": solid, "radius_voxel": r, "variants": variants},
         "caption": (f"半径 {r:.0f} voxel の合成球({solid:,} voxel)の殻を、`vol_boundary` の "
