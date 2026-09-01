@@ -69,22 +69,47 @@ def _wrap(draw, text: str, font, max_w: int) -> list[str]:
 
     日本語には空白が無いので、単語境界ではなく 1 文字ずつ詰めて測る。
     1 文字すら入らない極端な幅のときだけ、そのまま 1 行として返す
-    (無限ループにしない)。
+    (無限ループにしない)。改行はそこで必ず折る。
     """
     if not text:
         return []
     lines: list[str] = []
-    cur = ""
-    for ch in text:
-        trial = cur + ch
-        if draw.textlength(trial, font=font) <= max_w or not cur:
-            cur = trial
-        else:
+    for para in str(text).split("\n"):
+        if not para:
+            lines.append("")
+            continue
+        cur = ""
+        for ch in para:
+            trial = cur + ch
+            if draw.textlength(trial, font=font) <= max_w or not cur:
+                cur = trial
+            else:
+                lines.append(cur)
+                cur = ch
+        if cur:
             lines.append(cur)
-            cur = ch
-    if cur:
-        lines.append(cur)
     return lines
+
+
+def _fit_label(draw, text: str, font_size: int, max_w: int) -> tuple[str, object]:
+    """ラベルを幅に収める。**入り切らないなら文字を小さくする ―― 切らない。**
+
+    パネルのラベルは 1 行で置きたい(2 行にすると格子が崩れる)ので、折り返す
+    かわりにフォントを縮める。それでも入らないところまで来たら、**黙って切らずに
+    例外**にする ―― 図の意味を説明する文字が消えるのは、絵が壊れているのと
+    同じくらい悪い。実際、機械検査は文字切れを検出できない(壊れていない画像
+    として通る)ので、ここで止めるしかない。
+    """
+    for size in range(font_size, max(9, font_size - 8) - 1, -1):
+        font = _font(size)
+        if draw.textlength(text, font=font) <= max_w:
+            return text, font
+    font = _font(max(9, font_size - 8))
+    if draw.textlength(text, font=font) > max_w:
+        raise ValueError(
+            f"label does not fit in {max_w}px even at the smallest size: {text!r} "
+            "— shorten it or widen the panel (truncating it silently is not an option)")
+    return text, font
 
 
 def _to_u8(a: np.ndarray) -> np.ndarray:
