@@ -383,6 +383,38 @@ def _peak_index(env: np.ndarray) -> np.ndarray:
     return np.argmax(env, axis=-1)
 
 
+def _edge_level(env: np.ndarray) -> np.ndarray:
+    """``max(env[0], env[-1]) / max(env)`` along the last axis — how much of the
+    coherence envelope is still outside the scan.
+
+    This is the diagnostic that catches the module's nastiest silent failure, and
+    the threshold on it is measured rather than chosen. With a 2.83 um envelope
+    FWHM on a 12 um scan, the ``"gaussian"`` estimator's error against the true
+    surface height goes:
+
+        edge level  0.0000 -> 3e-14 um     (surface centred in the scan)
+        edge level  0.0013 -> 1.9e-06 um
+        edge level  0.0078 -> 1.3e-03 um
+        edge level  0.0373 -> 7.8e-03 um
+        edge level  0.1831 -> 2.7e-02 um
+        edge level  0.6394 -> **-0.38 um**, on a true height of 0.50 um
+
+    That last row is the point. The envelope peak is at plane 2 of 241 — an
+    *interior* plane, so a first-or-last-plane check does not fire — and the
+    operator returns 0.1189 um for a surface at 0.5000 um: finite, plausible, and
+    76 % wrong. The cause is physical, not an FFT artefact: the analytic signal is
+    a global transform and a truncated envelope is genuinely a different signal.
+    Zero-padding and reflect-padding were both measured and both made it *worse*
+    (-3.3e-02 and -3.7e-02 against -2.7e-02 plain, at edge level 0.183), so there
+    is nothing to fix and the input is refused instead.
+    """
+    top = env.max(axis=-1)
+    ends = np.maximum(env[..., 0], env[..., -1])
+    with np.errstate(divide="ignore", invalid="ignore"):
+        lvl = np.where(top > 0.0, ends / np.where(top > 0.0, top, 1.0), 1.0)
+    return np.asarray(lvl, dtype=np.float64)
+
+
 def _refine(env: np.ndarray, idx: np.ndarray, mode: str) -> np.ndarray:
     """Sub-step offset (in samples) of the envelope peak, along the last axis.
 
