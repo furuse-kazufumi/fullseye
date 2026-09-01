@@ -3549,6 +3549,17 @@ def ex_pipeline(log) -> dict:
     return {
         "name": "wing3d_pipeline_flow",
         "title": "CT のかたまりが寸法になるまで(7 工程)",
+        "title_en": "From a lump of CT to a dimension, in 7 steps",
+        "caption_en": (
+            f"The seven steps that turn a noisy synthetic CT ({n}³, {sp[0]} mm spacing) into a "
+            f"dimension, bundled as a flip-book. Window → threshold → labelling "
+            f"({nlab} connected component) → largest component "
+            f"({biggest['volume']:.1f} mm³, sphericity {biggest['sphericity']:.4f}) → "
+            f"`vol_crop_domain` for **1/{keep.nbytes / part.nbytes:.1f}** the memory → "
+            f"thinning ({n_br} branches / {n_ju} junctions / {n_ep} endpoints) → distance "
+            f"transform giving a maximum inscribed radius of **{max_r:.4f} mm** "
+            f"(truth {parts[0][2] * sp[0]:.3f} mm). Every frame carries its step name and "
+            "progress, so a paused frame still reads."),
         "ops": ["vol_window_level", "vol_label", "vol_region_props", "vol_crop_domain",
                 "vol_uncrop", "skeletonize_vol", "skeleton_branches3d",
                 "skeleton_endpoints3d", "skeleton_junctions3d",
