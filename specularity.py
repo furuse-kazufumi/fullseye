@@ -724,7 +724,10 @@ def specular_diffuse_split(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0),
     illuminant.
 
     Returns ``(diffuse, specular)`` with ``diffuse + specular == image_rgb`` to
-    machine precision in both regimes (measured 1.1e-16).
+    machine precision in both regimes: measured 1.1e-16 on the uniform-body
+    route, which forms the diffuse as ``image - specular``, and 2.1e-15 on the
+    known-body route, which forms both parts from the solved coefficients and
+    so accumulates a little more.
     """
     op = "specular_diffuse_split"
     I = _require_rgb(image_rgb, "image_rgb", op)
