@@ -1705,8 +1705,12 @@ def ex_aliasing(log):
     tref = np.linspace(0.0, 0.03, 1400)
     xref = np.sin(2.0 * np.pi * f_true * tref)
     W, H = GIF_W, GIF_H
-    frames = []
+    frames, labels = [], []
     for k, r in enumerate(rows):
+        labels.append(f"fs {r['fs']:.0f} Hz(Nyquist {r['nyq']:.0f} Hz)  /  "
+                      f"ピークは {r['peak_hz']:.1f} Hz  /  "
+                      + ("折り返し予測 |300 − fs·k| = "
+                         f"{r['expected']:.1f} Hz" if r["aliased"] else "正しい"))
         fig = Fig(W, H)
         _header(fig, "Sampling and aliasing: the tone never changes, the reading does",
                 f"true tone {f_true:g} Hz, {dur:g} s record, sampling rate swept down")
