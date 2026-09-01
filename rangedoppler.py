@@ -1032,21 +1032,19 @@ def range_doppler_peaks(rdmap, range_bin_m=1.0, velocity_bin_ms=1.0, n_peaks=1,
     # Strict local maxima: cyclic along Doppler (velocity is periodic in the
     # FFT), open along range (bin 0 and the last bin have no physical neighbour).
     best = np.full(m.shape, -np.inf)
+    # The range axis is padded with -inf rather than masked at the border: an
+    # earlier version dropped columns 0 and N-1 outright, which silently
+    # discarded a target sitting in the LAST range bin — the strongest cell in
+    # the map returned zero detections (found by the adversarial pass). A cell
+    # at the edge competes only against the neighbours that exist.
+    pad = np.pad(m, ((0, 0), (1, 1)), mode="constant", constant_values=-np.inf)
     for di in (-1, 0, 1):
-        for dj in (-1, 0, 1):
-            if di == 0 and dj == 0:
-                continue
-            sh = np.roll(m, di, axis=0)                # cyclic in Doppler
-            if dj:                                     # open in range
-                sh = np.roll(sh, dj, axis=1)
-                if dj > 0:
-                    sh[:, 0] = np.inf
-                else:
-                    sh[:, -1] = np.inf
-            np.maximum(best, sh, out=best)
+        rolled = np.roll(pad, di, axis=0)              # cyclic in Doppler
+        for dj in (0, 1, 2):
+            if di == 0 and dj == 1:
+                continue                               # the cell itself
+            np.maximum(best, rolled[:, dj:dj + nr], out=best)
     mask = (m > best) & (m >= frac * peak)
-    mask[:, 0] = False
-    mask[:, -1] = False
     idx = np.argwhere(mask)
     order = np.argsort(-m[mask], kind="stable")
     idx = idx[order][:npk]
