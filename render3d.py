@@ -233,7 +233,9 @@ def intrinsics_from_fov(fov_deg: float, width: int, height: int) -> np.ndarray:
     optical axis half a pixel off centre, and a mirrored scene then no longer
     renders to a mirrored image (measured: 54 of 4096 silhouette pixels disagree,
     depth off by up to 0.15 world units, on a 64x64 tilted quad). Matches
-    OpenCV's ``initCameraMatrix2D``, which also uses ``(size - 1) * 0.5``.
+    OpenCV's ``initCameraMatrix2D``, which also uses ``(size - 1) * 0.5``, and
+    :mod:`calibration3d`, which already takes ``((w-1)/2, (h-1)/2)`` as the image
+    centre.
 
     Returns float64 (3, 3). Raises ``ValueError`` for a non-positive size or a
     field of view outside ``(0, 180)`` degrees."""
