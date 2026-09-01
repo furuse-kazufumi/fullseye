@@ -635,3 +635,168 @@ def subject_freq_sweep(log=print) -> dict:
             "にあるのに、見た目は高周波が決めている」という画像の癖がそのまま数字に出る。"
             % (psnr_lo[0], psnr_lo[-1], keep_e[0])),
     }
+
+
+# --------------------------------------------------------------------------- #
+# 展示 3: ノイズ除去の比較 / denoising comparison                                #
+# --------------------------------------------------------------------------- #
+def subject_denoise_compare(log=print) -> dict:
+    """median / bilateral / non-local means を同じノイズ画像に当て PSNR を実測."""
+    src = _load_gray("camera.png")
+    n = 11
+    B = np.linspace(0.0, 1.0, n)
+    sigma = 0.02 + 0.20 * B                          # add_noise_white の b -> σ
+    cols = {"median": (255, 140, 120), "bilateral": (120, 190, 255),
+            "sk_nlm": (150, 230, 160), "noisy": (170, 170, 185)}
+    rows = []
+    for b in B:
+        noisy = np.asarray(fs.apply(src, "add_noise_white", 0.5, float(b)),
+                           np.float64)
+        out = {"noisy": noisy,
+               "median": np.asarray(fs.apply(noisy, "median", 0.3, 0.5), np.float64),
+               "bilateral": np.asarray(fs.apply(noisy, "bilateral", 0.5, 0.5),
+                                       np.float64),
+               "sk_nlm": np.asarray(fs.apply(noisy, "sk_nlm", 0.3, 0.5), np.float64)}
+        rows.append({"img": out,
+                     "psnr": {k: _psnr(src, v) for k, v in out.items()},
+                     "sigma_est": float(fs.apply(noisy, "estimate_noise", 0.5, 0.5))})
+    frames = []
+    for i, b in enumerate(B):
+        R = rows[i]
+        best = max(("median", "bilateral", "sk_nlm"), key=lambda k: R["psnr"][k])
+        grid = _panel_grid(
+            [src, R["img"]["noisy"], R["img"]["median"],
+             R["img"]["bilateral"], R["img"]["sk_nlm"],
+             _cmap(np.abs(src - R["img"][best]), "magma", vmin=0.0, vmax=0.25)],
+            ["元の写真 (ノイズ無し)\n基準",
+             "add_noise_white σ=%.3f\nPSNR %.2f dB (op の推定 σ %.3f)"
+             % (sigma[i], R["psnr"]["noisy"], R["sigma_est"]),
+             "median\nPSNR %.2f dB (%+.2f)"
+             % (R["psnr"]["median"], R["psnr"]["median"] - R["psnr"]["noisy"]),
+             "bilateral\nPSNR %.2f dB (%+.2f)"
+             % (R["psnr"]["bilateral"], R["psnr"]["bilateral"] - R["psnr"]["noisy"]),
+             "sk_nlm (non-local means)\nPSNR %.2f dB (%+.2f)"
+             % (R["psnr"]["sk_nlm"], R["psnr"]["sk_nlm"] - R["psnr"]["noisy"]),
+             "勝者 %s の残差 |元 − 出力|\n明るいほど復元できていない" % best],
+            3, tile=(330, 330), label_h=56,
+            title="ノイズ除去の比較 —— 同じノイズに 3 つの流儀",
+            sub="ノイズ σ = %.3f (add_noise_white b=%.2f)" % (sigma[i], b))
+        plot = _plot(
+            [{"x": sigma[:i + 1], "y": [r["psnr"][k] for r in rows[:i + 1]],
+              "color": cols[k], "label": lab}
+             for k, lab in (("noisy", "ノイズ画像そのもの"), ("median", "median"),
+                            ("bilateral", "bilateral"), ("sk_nlm", "sk_nlm"))],
+            grid.shape[1], 320, xlim=(0.02, 0.22), ylim=(12, 42),
+            title="ノイズを強くしていくと 3 つの順位はどうなるか",
+            xlabel="加えたノイズ σ", legend_pos="tr")
+        frames.append(_stack_v([grid, plot], pad=6))
+    info = _save_gif(frames, "wing2d_denoise_compare", fps=2.2, hold_last=3)
+    win = [max(("median", "bilateral", "sk_nlm"), key=lambda k: r["psnr"][k])
+           for r in rows]
+    return {
+        "name": "denoise_compare", "kind": "gif", "file": info["path"],
+        "thumb": info["thumb"], "frames": info["frames"],
+        "bytes": info["bytes"], "size": info["size"], "panels": 6,
+        "title": "ノイズ除去の比較 —— median / bilateral / NLM",
+        "ops": ["add_noise_white", "median", "bilateral", "sk_nlm",
+                "estimate_noise"],
+        "data": "skimage.data camera (BSD / public domain) + 決定的な白色ノイズ",
+        "measured": {
+            "sigma": [round(float(x), 4) for x in sigma],
+            "psnr_db": {k: [round(r["psnr"][k], 2) for r in rows]
+                        for k in ("noisy", "median", "bilateral", "sk_nlm")},
+            "sigma_estimated_by_op": [round(r["sigma_est"], 4) for r in rows],
+            "winner_per_sigma": win,
+        },
+        "caption": (
+            "同じ写真に σ=%.3f→%.3f の白色ノイズを乗せ、median・bilateral・"
+            "non-local means を当てて PSNR を実測した 6 パネル。σ=%.3f では %.2f dB の"
+            "ノイズ画像が median %.2f / bilateral %.2f / NLM %.2f dB になり、掃引した "
+            "%d 点すべてで %s が勝つ。ノイズが強くなるほど 3 つの差は開く。"
+            % (sigma[0], sigma[-1], sigma[-1], rows[-1]["psnr"]["noisy"],
+               rows[-1]["psnr"]["median"], rows[-1]["psnr"]["bilateral"],
+               rows[-1]["psnr"]["sk_nlm"], n,
+               "sk_nlm" if all(w == "sk_nlm" for w in win)
+               else "/".join(sorted(set(win))))),
+    }
+
+
+# --------------------------------------------------------------------------- #
+# 展示 4: ヒストグラム整形 / histogram shaping                                   #
+# --------------------------------------------------------------------------- #
+def subject_hist_shaping(log=print) -> dict:
+    """コントラストを潰していく入力に equalize / clahe を当て std と entropy を実測."""
+    src = _load_gray("page.png")                    # 照明ムラのある文書画像
+    n = 12
+    K = np.linspace(1.0, 0.16, n)                   # コントラスト圧縮率
+    mid = float(np.mean(src))
+    rows = []
+    for k in K:
+        low = np.clip(mid + (src - mid) * k, 0, 1)  # 低コントラスト化 (numpy 合成)
+        eq = np.asarray(fs.apply(low, "equalize", 0.5, 0.5), np.float64)
+        cl = np.asarray(fs.apply(low, "clahe", 0.67, 0.5), np.float64)
+        rows.append({
+            "low": low, "eq": eq, "cl": cl,
+            "std": {t: float(fs.apply(v, "gray_histo_abs", 0.5, 0.5))
+                    for t, v in (("low", low), ("eq", eq), ("cl", cl))},
+            "ent": {t: float(fs.apply(v, "entropy_gray", 0.5, 0.5))
+                    for t, v in (("low", low), ("eq", eq), ("cl", cl))}})
+    C_LOW, C_EQ, C_CL = (170, 170, 185), (255, 176, 96), (130, 220, 255)
+    frames = []
+    for i, k in enumerate(K):
+        R = rows[i]
+        grid = _panel_grid(
+            [src, R["low"], R["eq"], R["cl"]],
+            ["元の文書画像 (page.png)\nstd %.4f" % rows[0]["std"]["low"],
+             "コントラストを %.2f 倍に圧縮\nstd %.4f / entropy %.3f"
+             % (k, R["std"]["low"], R["ent"]["low"]),
+             "equalize (画像全体で平坦化)\nstd %.4f / entropy %.3f"
+             % (R["std"]["eq"], R["ent"]["eq"]),
+             "clahe (タイル 4×4 で平坦化)\nstd %.4f / entropy %.3f"
+             % (R["std"]["cl"], R["ent"]["cl"])],
+            4, tile=(262, 262), label_h=56,
+            title="ヒストグラム整形 —— 潰れた画像はどこまで戻せるか",
+            sub="入力コントラスト %.2f 倍 (元の平均 %.3f を中心に圧縮)" % (k, mid))
+        hist = _hist_panel(
+            [R["low"], R["eq"], R["cl"]],
+            ["圧縮した入力", "equalize", "clahe"], [C_LOW, C_EQ, C_CL],
+            grid.shape[1] // 2 - 4, 300, ylim=(0, 0.18),
+            title="輝度ヒストグラム (64 bin・頻度は正規化)")
+        curve = _plot(
+            [{"x": K[:i + 1], "y": [r["std"][t] for r in rows[:i + 1]],
+              "color": c, "label": lab}
+             for t, c, lab in (("low", C_LOW, "入力の std"),
+                               ("eq", C_EQ, "equalize 後の std"),
+                               ("cl", C_CL, "clahe 後の std"))],
+            grid.shape[1] // 2 - 4, 300, xlim=(0.16, 1.0), ylim=(0, 0.32),
+            title="gray_histo_abs (標準偏差) で見た復元度",
+            xlabel="入力コントラスト倍率", legend_pos="tl")
+        from PIL import Image
+        row = Image.new("RGB", (grid.shape[1], 300), BG)
+        row.paste(Image.fromarray(hist, "RGB"), (0, 0))
+        row.paste(Image.fromarray(curve, "RGB"), (grid.shape[1] - curve.shape[1], 0))
+        frames.append(_stack_v([grid, np.asarray(row, np.uint8)], pad=6))
+    info = _save_gif(frames, "wing2d_hist_shaping", fps=2.5, hold_last=3)
+    return {
+        "name": "hist_shaping", "kind": "gif", "file": info["path"],
+        "thumb": info["thumb"], "frames": info["frames"],
+        "bytes": info["bytes"], "size": info["size"], "panels": 6,
+        "title": "ヒストグラム整形 —— equalize と clahe",
+        "ops": ["equalize", "clahe", "gray_histo_abs", "entropy_gray"],
+        "data": "skimage.data page (BSD / public domain)",
+        "measured": {
+            "contrast_factor": [round(float(x), 3) for x in K],
+            "std": {t: [round(r["std"][t], 4) for r in rows]
+                    for t in ("low", "eq", "cl")},
+            "entropy_norm": {t: [round(r["ent"][t], 4) for r in rows]
+                             for t in ("low", "eq", "cl")},
+        },
+        "caption": (
+            "文書画像のコントラストを 1.00→%.2f 倍まで潰していき、equalize と clahe で"
+            "戻せるかを追った。入力の標準偏差は %.4f→%.4f まで落ちるが、equalize 後は "
+            "%.4f→%.4f、clahe 後は %.4f→%.4f にとどまる。ヒストグラムは入力が針のように"
+            "細くなっても、平坦化した側は幅を保ったままだ。"
+            % (K[-1], rows[0]["std"]["low"], rows[-1]["std"]["low"],
+               rows[0]["std"]["eq"], rows[-1]["std"]["eq"],
+               rows[0]["std"]["cl"], rows[-1]["std"]["cl"])),
+    }
