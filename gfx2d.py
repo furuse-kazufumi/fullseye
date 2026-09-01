@@ -1649,12 +1649,17 @@ def dither(img, levels=2, method="ordered", matrix_size=4):
       patch the output mean is within ``0.5 / (matrix_size**2 * (levels-1))`` of
       the input, because the fraction of thresholds crossed is the input
       fraction rounded to the nearest ``1/matrix_size**2``. At the defaults
-      (4, 2 levels) that is 0.03125, and the suite measures it and checks the
-      bound holds at every level count from 2 to 16.
+      (4, 2 levels) the bound is 0.03125; the suite checks it holds for 101 grey
+      levels x 3 matrix sizes, with zero violations.
     * ``"floyd_steinberg"`` — error diffusion with the 7/3/5/1 sixteenths of
-      Floyd & Steinberg 1976. Preserves the mean far better (measured 3.1e-4 on
-      the test gradient against 4.5e-3 for ordered) at the cost of being serial
-      and of a directional texture.
+      Floyd & Steinberg 1976, serial and directional.
+
+    Which method preserves the mean better depends on the image, and this
+    docstring will not pretend otherwise. Measured on a 128-step horizontal
+    ramp: ordered is **exact** (0.0) at 2, 3 and 4 levels and drifts to 1.1e-3
+    at 8 levels, while Floyd-Steinberg is 7.3e-4 at 2 levels and improves to
+    4.1e-5 at 16. Ordered wins where the level lattice divides the ramp, error
+    diffusion wins where it does not.
 
     Accepts ``(H, W)`` or ``(H, W, 3|4)``; an alpha channel is quantised too,
     because a dithered sprite with a smooth alpha is exactly the case that
