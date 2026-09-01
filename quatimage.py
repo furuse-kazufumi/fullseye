@@ -1451,17 +1451,17 @@ def riesz_motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4) -> dict
     alpha   image change (dB)   image change (dB)   band ratio      band ratio
             Riesz               steerable           Riesz           steerable
     ======  ==================  ==================  ==============  ==============
-    2       -4.5771             -4.8270             0.997690        0.934861
-    4       -9.9077             -10.3535            0.988136        0.857626
-    8       -14.9518            -15.5146            0.937436        0.628551
+    2       -4.8611             -4.8260             0.937704        0.935433
+    4       -10.3616            -10.3504            0.861162        0.858130
+    8       -15.3515            -15.5097            0.629948        0.628597
     ======  ==================  ==================  ==============  ==============
 
-    The Riesz route stays closer to the linear regime (``band_power_ratio``
-    nearer 1) on this clip because a single band carries the whole moving
-    component instead of splitting it across orientations. That is one clip and
-    one synthetic; the displacement accuracy comparison, which is the one that
-    matters and which the Riesz route does **not** win outright, is in
-    :func:`riesz_displacement`.
+    The two magnifiers cost essentially the same — within 0.16 dB and 0.3 % of
+    band-power linearity at every gain. So the choice between them is **not**
+    about magnification quality; it is about the displacement measurement (where
+    the Riesz route has a 13 % failure mode on multi-orientation texture, see
+    :func:`riesz_displacement`) and about cost (this one is 2.09x faster on the
+    same clip: 0.1034 s against 0.2163 s, best of 7).
 
     **Raises** ``ValueError``: *video* is not a valid ``(T, H, W)`` clip or is
     over :data:`MAX_PYRAMID_ELEMENTS`; ``|alpha|`` is over :data:`MAX_ALPHA`;
