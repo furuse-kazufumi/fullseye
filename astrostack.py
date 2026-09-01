@@ -1232,6 +1232,15 @@ def drizzle_resample(frames, shifts=None, scale=2.0, pixfrac=1.0):
       (出力画素面積を 1 とする)。``pixfrac=1`` かつ ``shifts=0`` なら内部は
       厳密に 1.0。
 
+    ★ **見る / 測る ときは ``sci / wht`` を使うこと。** ``sci`` は総フラックスを
+    保存するために「撒かれた量」をそのまま持っており、**被覆の不均一が像に
+    残っている**。``pixfrac`` を小さくすると被覆は格子状にむらを持つので、
+    生の ``sci`` に検出をかけるとその格子が星に化ける —— 実測(``scale=3``、
+    ``pixfrac=0.4``、二重星 1 組の 24 枚)で :func:`star_detect` は生の ``sci``
+    に対して **200 個**(上限に張り付いた)を返し、``sci / wht`` に対しては
+    正しく **2 個**を返した。保存則(``sci``)と見た目(``sci / wht``)は
+    別の量であり、片方をもう片方の代わりに使うと**例外なく間違う**。
+
     **Raises** ``ValueError``: *frames* が list / tuple でない / 形が揃って
     いない / *scale* が 1 未満 / *pixfrac* が (0, 1] の外 / *shifts* の形が
     ``(N, 2)`` でない / 出力が :data:`MAX_OUTPUT_ELEMENTS` を超える場合。
