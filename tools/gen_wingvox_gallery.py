@@ -193,6 +193,12 @@ def _fit_size(txt: str, width: int, start: int, floor: int = 11) -> int:
     return s
 
 
+def _line(x: int, y: int, txt: str, colour, *, width: int, start: int = 16,
+          anchor: str = "la"):
+    """枠幅 *width* に収まる字数を機械的に選んだ 1 行(目分量で決めない)。"""
+    return (x, y, txt, tuple(colour[:3]) + (_fit_size(txt, width - x, start),), anchor)
+
+
 def _assert_fits(items, width: int, default_size: int, where: str) -> None:
     """焼き込む文字が枠に収まっているかを**生成時に**検査する(fail-closed)。"""
     for x, _y, txt, col, anchor in items:
