@@ -803,7 +803,11 @@ def illuminant_from_dichromatic_planes(image_rgb, labels, min_pixels=16,
                          "plane contains the illuminant but does not locate it"
                          % (op, len(normals), used, skipped))
     Nm = np.asarray(normals)                  # (K, 3)
-    sv2, vt2 = np.linalg.svd(Nm, full_matrices=False)[1:]
+    # full_matrices=True on purpose: with exactly two materials the economy SVD
+    # of a (2, 3) matrix returns a (2, 3) Vt, whose third row — the null
+    # direction that *is* the answer — does not exist. Two materials is the
+    # minimum this operator accepts, so that is the common case, not the corner.
+    sv2, vt2 = np.linalg.svd(Nm, full_matrices=True)[1:]
     if sv2[1] <= min_intersection_ratio * sv2[0]:
         raise ValueError("%s: the %d dichromatic planes are nearly parallel "
                          "(second/first singular value %.3g), so their "
