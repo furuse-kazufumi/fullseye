@@ -596,7 +596,7 @@ def ex_registration():
     noise = rng.normal(0.0, 0.004 * scale, dst.shape)
     src0 = (dst - c0) @ R_gt.T + c0 + t_gt + noise
 
-    n_iter = 26
+    n_iter = 48
     R, t = np.eye(3), np.zeros(3)
     hist = []
     for _ in range(n_iter):
