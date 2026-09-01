@@ -115,10 +115,13 @@ _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
 # 入出力の「種別」語彙(op 連結の型検査に使う):
 #   voxel / points(N,3) / mesh / depth / sdf / normals(N,3) / gaussians / image2d /
 #   pose(R,t) / transform-params(angle,scale,shift) / position / primitive(plane/sphere/...) /
-#   descriptor / keypoints / flow / measurement(scalar) / render(image2d) /
+#   descriptor / keypoints((N,2) 等の画像平面上の点列) / flow /
+#   measurement(scalar) / render(image2d) /
 #   pointmap(H,W,3 organized 点群) / normalmap(H,W,3 organized 法線) / images(list) /
 #   indices(元配列への index 列) / table(dict の列=多物体プロパティ) /
-#   signal(1-D array=点ごと/サンプルごとの値列) / pairs((2,n)=x-y の対列)
+#   signal(1-D array=点ごと/サンプルごとの値列) / pairs((2,n)=x-y の対列) /
+#   poly_surface / bspline_surface / bspline_curve(いずれも曲面/曲線モデル。
+#     互換性が無いので別語彙 — 下の surface_fit / freeform のコメント参照)
 #   ※ organized 系は (N,3) と別型(連鎖ファザー 2026-08-31 で申告と実返却の乖離
 #     20 種を検出し、型語彙を実態に合わせて分離した)
 
