@@ -591,8 +591,9 @@ def subject_freq_sweep(log=print) -> dict:
              "スペクトル + 遮断円\n緑=lowpass 橙=bandpass",
              "lowpass (遮断 %.3f)\nPSNR %.2f dB / エネルギー %.1f%%"
              % (lo_cut[i], psnr_lo[i], keep_e[i]),
-             "highpass (遮断 %.3f)\n細かい模様だけ残る" % hi_cut[i],
-             "bandpass_image (%.3f〜%.3f)\n符号つき出力を 0.5 中心で表示"
+             "highpass (遮断 %.3f)\n実測 std %.3f — 表示は 1〜99%%tile 伸長"
+             % (hi_cut[i], float(np.std(highs[i]))),
+             "bandpass_image (%.3f〜%.3f)\n符号つき出力を 0.5 中心 + 伸長で表示"
              % (bp_lo[i], bp_hi),
              "元 − lowpass の差\n捨てられた高周波"],
             3, tile=(330, 330), label_h=56,
