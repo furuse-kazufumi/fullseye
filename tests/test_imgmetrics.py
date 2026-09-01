@@ -57,13 +57,14 @@ def test_ciede2000_is_vectorised_and_agrees_with_the_scalar_path():
 def test_ciede2000_differs_from_cie76_where_it_is_supposed_to():
     """CIE76 が知覚と合わない典型(彩度の高い青)で、両者が実際に食い違うこと。
 
-    対 1 は ΔE00 = 2.0425 だが、Lab のユークリッド距離は 4 倍以上ある。
+    対 1 の実測: **CIE76 = 4.0011 / ΔE00 = 2.0425 で比は 1.959**。
     「色差」と一言で書いて別の定義を混ぜると、この比率ぶん静かにずれる。
     """
     L1, a1, b1, L2, a2, b2, want = M.CIEDE2000_TEST_PAIRS[0]
     d76 = float(M.delta_e_76((L1, a1, b1), (L2, a2, b2)))
+    assert d76 == pytest.approx(4.0011, abs=1e-4)
     assert float(M.delta_e_2000((L1, a1, b1), (L2, a2, b2))) == pytest.approx(want, abs=5e-5)
-    assert d76 / want > 4.0
+    assert d76 / want == pytest.approx(1.959, abs=1e-3)
 
 
 def test_kL_kC_kH_must_be_positive():
