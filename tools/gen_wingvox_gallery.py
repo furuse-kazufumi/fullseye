@@ -383,21 +383,22 @@ def ex_sieve(log):
                                                                       seed=SEED)[m]))
         rows.append({"min_volume_mm3": round(float(t), 4), "kept": int(kept.size),
                      "colours_unchanged": stable})
-        canvas = _canvas(pw + 78, pw)
+        canvas = _canvas(pw + 92, pw)
         _paste(canvas, _frame_border(_up(img, k)), 0, 0)
         canvas = _text(canvas, [
-            (6, pw + 8, "min_volume = %6.3f mm3" % t, FG, "la"),
-            (pw - 6, pw + 8, "残る粒子 %2d / %d" % (kept.size, n), FG, "ra"),
-            (6, pw + 34, "残った粒子の色は 1 画素も変わっていない: %s"
+            (8, pw + 8, "min_volume = %6.3f mm3      残る粒子 %2d / %d"
+             % (t, kept.size, n), FG + (16,), "la"),
+            (8, pw + 36, "残った粒子の色は 1 画素も変わっていない: %s"
              % ("はい" if stable else "いいえ"),
-             (0.45, 0.85, 0.60) if stable else (1.0, 0.4, 0.3), "la"),
-            (6, pw + 56, "relabel=False なので番号を振り直さない = パレットの行が動かない",
-             MUTED + (13,), "la"),
-        ], size=15)
+             ((0.45, 0.85, 0.60) if stable else (1.0, 0.4, 0.3)) + (15,), "la"),
+            (8, pw + 62, "relabel=False = 番号を振り直さない = パレットの行が動かない",
+             MUTED + (14,), "la"),
+        ], size=16, where="sieve")
         frames.append(canvas)
 
+    title = "体積でふるいにかける(z 方向の front 合成)"
     book = flipbook(frames, ["min_volume=%.2f mm3" % t for t in thresholds],
-                    title="体積でふるいにかける(z 方向の front 合成)")
+                    title=title, title_font_size=_fit_size(title, pw, 24))
     info = save_animation(book, "wingvox_sieve", duration_ms=420, hold_last_ms=1600)
     facts = {"components": int(n), "steps": len(thresholds),
              "volumes_mm3": [round(v, 4) for v in vols],
