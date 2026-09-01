@@ -1068,18 +1068,33 @@ def test_ledger_input_types_match_what_the_operators_accept():
 
 
 def test_result_adapters_only_ever_narrow_the_raw_return():
-    """An adapter may drop parts of a tuple or change the container, never
-    fabricate a value the operator did not produce."""
+    """An adapter may drop parts of a tuple, never fabricate a value the
+    operator did not produce or repackage one into a different container.
+
+    All three surviving adapters are the honest kind. The fourth — repacking
+    ``polarization_render``'s stack into a list to satisfy the ``images``
+    predicate — disappeared when the sweep got its own ndarray sort, which is
+    the right direction: fewer adapters means the TYPEMISS check compares the
+    *raw* return against the declaration."""
     args = _ledger_args()
+    assert set(opsspecular.RESULT_ADAPTERS) == {
+        "specular_diffuse_split", "photometric_stereo_robust",
+        "polarization_separate"}
     for name, adapter in opsspecular.RESULT_ADAPTERS.items():
         a, kw = args[name]
         raw = opsspecular.get(name)(*a, **kw)
-        adapted = adapter(raw)
-        if isinstance(raw, tuple):
-            assert adapted is raw[0]
-        else:                                    # polarization_render: repack
-            assert isinstance(adapted, list) and len(adapted) == raw.shape[0]
-            assert np.array_equal(np.asarray(adapted), raw)
+        assert isinstance(raw, tuple), f"{name} raw return is not a tuple"
+        assert adapter(raw) is raw[0]
+
+
+def test_polarization_render_needs_no_adapter():
+    """Its raw return is already the declared sort, which is the strictest
+    arrangement the fuzzer offers (opsoptics makes the same point)."""
+    assert "polarization_render" not in opsspecular.RESULT_ADAPTERS
+    a, kw = _ledger_args()["polarization_render"]
+    raw = opsspecular.get("polarization_render")(*a, **kw)
+    assert raw is opsspecular.call("polarization_render", *a, **kw)
+    assert POLSWEEP_CHECK(raw)
 
 
 def test_the_new_sort_is_reachable_from_and_returns_to_existing_sorts():
