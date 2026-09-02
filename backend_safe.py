@@ -21,6 +21,7 @@ import numpy as np
 import os
 import threading
 import warnings
+from collections import deque
 from contextlib import contextmanager
 
 # --------------------------------------------------------------------------- #
@@ -57,8 +58,8 @@ class FullseyeFallbackWarning(RuntimeWarning):
 
 
 _LEDGER_LOCK = threading.Lock()
-_EVENTS: list = []                  # bounded ring, oldest first
 _EVENT_MAX = 256
+_EVENTS = deque(maxlen=_EVENT_MAX)  # bounded ring, oldest first (O(1) append, drops the oldest)
 _COUNTS: dict = {}                  # name -> number of fallbacks since clear
 _WARNED: set = set()                # names that already emitted their one warning
 _SEQ = 0                            # monotonically increasing event counter (never reset)
@@ -128,7 +129,6 @@ def record(name, exc, out_sort=None, source: str = "op") -> dict:
         _SEQ += 1
         ev["seq"] = _SEQ
         _EVENTS.append(ev)
-        del _EVENTS[:-_EVENT_MAX]
         _COUNTS[key] = _COUNTS.get(key, 0) + 1
         first = key not in _WARNED
         if first:

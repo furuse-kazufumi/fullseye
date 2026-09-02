@@ -204,7 +204,14 @@ def test_gpu_failure_is_recorded_not_swallowed(monkeypatch):
     assert out.shape == (32, 32)
     evs = [e for e in bs.fallbacks() if e["source"] == "gpu"]
     assert evs and "CUDA kernel exploded" in evs[0]["error"]
-    with pytest.raises(RuntimeError, match="CUDA kernel exploded"):
+    # circuit breaker: the failed op is not retried on the GPU until reset_gpu()
+    assert api.gpu_open_ops() == ["gaussian"]
+    calls = []
+    fake.run_batch = lambda *a, **k: calls.append(1) or (_ for _ in ()).throw(RuntimeError("again"))
+    api.apply(_img(), "gaussian", device="cuda")
+    assert calls == []                                       # breaker open: GPU not attempted
+    assert api.reset_gpu() == ["gaussian"] and api.gpu_open_ops() == []
+    with pytest.raises(RuntimeError, match="again"):
         api.apply(_img(), "gaussian", device="cuda", on_error="raise")
 
 

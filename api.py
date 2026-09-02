@@ -1023,6 +1023,24 @@ def _coerce_input(v, op):
 _ON_ERROR_CHOICES = ("fallback", "warn", "raise")
 _NDIM_OK = {"image": (2, 3), "region": (2, 3), "color": (3,), "volume": (3, 4)}
 _NOACCEL = object()
+# GPU circuit breaker (TRIZ #9 preliminary anti-action / #23 feedback): once an op's
+# accelerated path has FAILED it is not retried on every call — a broken kernel
+# would otherwise cost a GPU attempt + a recorded fallback per invocation. The
+# breaker is per op name, opens on the first failure, and `reset_gpu()` closes it
+# (half-open: the next call tries the GPU again).
+_GPU_OPEN: set = set()
+
+
+def reset_gpu() -> list:
+    """Close the GPU circuit breaker for every op; returns the names that were open."""
+    was = sorted(_GPU_OPEN)
+    _GPU_OPEN.clear()
+    return was
+
+
+def gpu_open_ops() -> list:
+    """Op names whose accelerated path is currently disabled by the breaker."""
+    return sorted(_GPU_OPEN)
 
 
 def _policy(on_error):
@@ -1094,13 +1112,14 @@ def _try_accel(op, v, a, b, device):
             raise
         _bs.record(op.name, e, op.out_sort, source="gpu")
         return _NOACCEL
-    if accel_name is None:
+    if accel_name is None or op.name in _GPU_OPEN:
         return _NOACCEL
     try:
         return accel.run_batch(accel_name, [v], a, b, device)[0]
     except Exception as e:               # noqa: BLE001
         if _bs.is_strict():
             raise
+        _GPU_OPEN.add(op.name)           # breaker opens: no more GPU attempts until reset_gpu()
         _bs.record(op.name, e, op.out_sort, source="gpu")
         return _NOACCEL
 

@@ -13,7 +13,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 # vol_resize — 3D `geom_transform` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import volxform; volxform.vol_resize(vol, factor=None, shape=None, order=1, spacing=None)` (または `ops3d.get("vol_resize")`)
+- **呼び出し**: `import volxform; volxform.vol_resize(vol, factor=None, shape=None, order=1, spacing=None, mode='nearest', cval=0.0)` (または `ops3d.get("vol_resize")`)
 
 ## 使い方
 
