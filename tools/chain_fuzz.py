@@ -1916,6 +1916,11 @@ def main():
     ap.add_argument("--explore", type=float, default=0.5,
                     help="型空間の探索バイアス [0,1]。まだプールに無い型を"
                          "産む op を優先する確率。0 で一様(旧挙動)")
+    ap.add_argument("--cover-all", action="store_true",
+                    help="ランダム歩行の前に、全 op を狙い撃ちで 1 度ずつ走らせる。"
+                         "型が繋がっていても踏まれない op を運任せにしない")
+    ap.add_argument("--cover-tries", type=int, default=8,
+                    help="--cover-all で 1 op あたり試す seed 数")
     ap.add_argument("--coverage-out", metavar="JSON",
                     help="どの op が走り、どの op が一度も走らなかったかを書き出す。"
                          "「304/417」という数だけでは、残る 113 が頑健なのか"
