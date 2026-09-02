@@ -112,9 +112,14 @@ def _rpca(img, a, max_iter=60, work_max=64):
 
     a scales the sparsity penalty lambda around the canonical 1/sqrt(max(m,n));
     larger a -> sparser S / higher-rank L.  Large images are decomposed at a
-    downsampled scale (<= work_max) for a bounded number of SVDs, then resized
-    back (the low-rank/sparse split is scale-tolerant).  Returns (L, S) with the
-    original shape.
+    downsampled scale (<= work_max) for a bounded number of SVDs.  Only the
+    LOW-RANK part is scale-tolerant, so only L is solved at low resolution and
+    resized back; the sparse part is then re-derived at FULL resolution as the
+    residual ``S = soft(M0 - L_up, lam/mu_final)`` (one more PCP S-step against
+    the upsampled background).  Zooming the low-resolution S instead (the
+    2026-09-02 defect) smeared every 1-px defect across the zoom footprint and
+    lost ~3/4 of its amplitude — 30/40 point defects vanished on a 144² image.
+    Returns (L, S) with the original shape.
     """
     M0 = np.asarray(img, np.float64)
     H, W = M0.shape
