@@ -1057,6 +1057,32 @@ def _resolve(name: str):
 _LABEL_READING_OPS = frozenset({"r3_label_to_region"})
 
 
+def _needs_binarise(a) -> bool:
+    """True when *a* has more than two distinct levels, or any value outside [0,1].
+
+    This is the verdict ``np.unique(a)`` used to give, computed in **O(N)** instead
+    of ``O(N log N)``: ``np.unique`` sorts the whole array, which made every region
+    op twice as slow through the facade (2048² region: 17.6 ms of a 35.0 ms call —
+    ``docs/design/PERF_MEMORY_VIDEO_SURVEY.md`` §1.7 / §5.3 item 3).
+
+    Same verdict, not merely a similar one: an array with min ``mn`` and max ``mx``
+    has at most two distinct levels **iff** every element equals ``mn`` or ``mx``.
+    NaN is the one case where min/max stop being informative (``nan < 0`` is False,
+    so the old code fell through to "leave it alone" for a two-element unique), so a
+    NaN-bearing array takes the original ``np.unique`` path verbatim.
+    """
+    if a.size == 0:
+        return False                                  # np.unique -> size 0: neither test fires
+    mn = a.min()
+    mx = a.max()
+    if mn != mn or mx != mx:                          # NaN present: replay the exact old test
+        vals = np.unique(a)
+        return bool(vals.size > 2 or vals.min() < 0.0 or vals.max() > 1.0)
+    if mn < 0.0 or mx > 1.0:
+        return True
+    return bool(mn != mx and not np.all((a == mn) | (a == mx)))
+
+
 def _coerce_input(v, op):
     """Gently match the array to the op's declared input sort (opt-in).
 
