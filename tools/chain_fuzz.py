@@ -1240,6 +1240,10 @@ OP_ARG_BUILDERS = {
 }
 
 OP_PARAM_HINTS = {
+    # raytrace.glass(nd, vd) は必須引数が 2 つで名前ヒントに無い(束縛できず永久
+    # スキップ = 「発見ゼロ」に化ける)。BK7 近傍の実在硝材域で束縛する
+    ("glass", "nd"): lambda rng: float(rng.uniform(1.45, 1.90)),
+    ("glass", "vd"): lambda rng: float(rng.uniform(20.0, 95.0)),
     # 既定 (5,5) はプールの 32x32 を割り切れず毎回 ValueError になり、この op が
     # 一度も実行されないまま「発見ゼロ」に見えていた。32 を割り切る (4,4) にする
     ("lf_from_mla", "angular"): lambda rng: (4, 4),
