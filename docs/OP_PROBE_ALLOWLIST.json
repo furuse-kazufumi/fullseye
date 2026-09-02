@@ -27,6 +27,6 @@
     "hx_split_skeleton_region": {"kind": "constant", "reason": "probe mask is not a skeleton so nothing is split; on a cross skeleton it returns the 60-px branch set"},
     "r2_smallest_circle": {"kind": "constant", "reason": "on the sinusoid mask the enclosing circle covers the frame (all ones); on two blobs it varies (sum 1958-2292)"},
     "xcv2_hitmiss":    {"kind": "constant", "reason": "hit-miss with the fixed 4-neighbour kernel detects isolated 1-px holes only; the probe masks have none. Knobs a,b are unused (narrow op, not broken)"},
-    "xcv_stylization": {"kind": "constant", "reason": "SEE tests: cv2.stylization path returns all-zero for every probe input and knob — under investigation 2026-09-03 (kept listed so CI stays green while the fix lands)"}
+    "xcv_stylization": {"kind": "constant", "reason": "cv2.stylization itself returns all-zero on smooth low-texture input (verified by calling cv2 directly on the uint8 BGR probe); on a noise image the op returns values up to 0.83 — input-sensitive, not dead"}
   }
 }

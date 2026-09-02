@@ -154,10 +154,16 @@ def get_regress_params_xld(contour):
 
 
 def test_xld_point(contour, row, col):
-    """点が閉輪郭の内部にあるか(交差数法)(test_xld_point)。"""
+    """点が閉輪郭の内部にあるか(交差数法)(test_xld_point)。
+    **閉じていない輪郭(始点≠終点)は HALCON と同じく常に False**(以前は暗黙に
+    始点-終点を結んで判定していた: 半円の中心が True になっていた)。"""
     res = []
     for a in contour["cs"]:
-        n = len(a); inside = False; j = n - 1
+        n = len(a)
+        if n < 3 or not np.allclose(a[0], a[-1]):
+            res.append(False)
+            continue
+        inside = False; j = n - 1
         for i in range(n):
             ri, ci = a[i]; rj, cj = a[j]
             if ((ci > col) != (cj > col)) and \
