@@ -372,6 +372,21 @@ _CATALOG = {
         # (ambient_occlusion / cast_shadow / supersample_mesh)は実測どおり
         # 2-D なので image2d のままでよい ― 嘘だったのはここ 1 行だけ。
         ("render_beauty", "render_beauty", ["mesh"], "rgbimage", False),
+        # --- 惑星表面の測光(2026-09-03、イトカワ hero「影が不自然」の是正)---
+        # Lambert は縁を暗く・明暗境界をなだらかにする。小惑星は Lommel-Seeliger /
+        # Hapke(対向効果 + 多重散乱 + 巨視的粗さ)で、影は太陽視直径 0.53° の硬い影、
+        # 環境光は無い。normalmap + 光源/視線方向 → 放射輝度係数 I/F の image2d。
+        ("brdf_lommel_seeliger", "render_shade", ["normalmap"], "image2d", False),
+        ("brdf_hapke", "render_shade", ["normalmap"], "image2d", False),
+        # レイキャスト影(shadow map の階段/acne 無し、光源の視直径で半影が幾何どおり)
+        ("shadow_raycast", "render_shadow", ["mesh", "vector"], "image2d", False),
+        # 物理ベース合成プリセット(Hapke + raycast 影 + 環境光 0 + 線形トーン)
+        ("render_regolith", "render_beauty", ["mesh"], "rgbimage", False),
+    ],
+    "terrain": [  # 地形レリーフ(メッシュに実ジオメトリとして起伏・岩を足す。決定的 seed)
+        ("mesh_displace_fbm", "render3d", ["mesh"], "mesh", False),
+        ("terrain_region_mask", "render3d", ["mesh"], "table", False),
+        ("mesh_scatter_boulders", "render3d", ["mesh"], "mesh", False),
     ],
     "photometric": [  # フォトメトリックステレオ・法線積分(既知光源 → 法線 → 高さ)
         ("photometric_stereo", "photometric", ["images"], "normalmap", False),
