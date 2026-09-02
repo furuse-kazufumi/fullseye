@@ -51,8 +51,13 @@ def _as_mask(v) -> np.ndarray:
     return np.isfinite(a) & (a > 0.5)
 
 
-def _as_gray(v) -> np.ndarray:
-    """Coerce input to a finite 2-D float64 array clipped to [0,1] (fail-soft)."""
+def _as_gray(v, clip: bool = True) -> np.ndarray:
+    """Coerce input to a finite 2-D float64 array (fail-soft).
+
+    ``clip`` squashes the result into [0,1], which is right for intensity ops but
+    destroys a label image: every label >= 1 collapses onto 1.0 and becomes one
+    blob.  Label-reading ops pass ``clip=False`` to keep the label values apart.
+    """
     a = np.asarray(v, dtype=np.float64)
     if a.ndim == 0:
         a = a.reshape(1, 1)
@@ -61,7 +66,7 @@ def _as_gray(v) -> np.ndarray:
     elif a.ndim > 2:
         a = a.reshape(a.shape[0], -1)
     a = np.nan_to_num(a, nan=0.0, posinf=1.0, neginf=0.0)
-    return np.clip(a, 0.0, 1.0)
+    return np.clip(a, 0.0, 1.0) if clip else a
 
 
 def _clip01(a: np.ndarray) -> np.ndarray:
