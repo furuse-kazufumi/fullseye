@@ -390,6 +390,17 @@ _CATALOG = {
         ("mesh_displace_fbm", "render3d", ["mesh"], "mesh", False),
         ("terrain_region_mask", "render3d", ["mesh"], "table", False),
         ("mesh_scatter_boulders", "render3d", ["mesh"], "mesh", False),
+        # --- 2026-09-03「粗すぎる/凹凸が見えない/粗密の使い分けが無い」の是正 ---
+        # Gaskell モデルは辺長 2.6〜14 m と不均一(p5/中央/p95 = 2.6/4.7/7.2 m)。
+        # 局所辺長(解像度マップ)→ 目標辺長への適応テッセレーション(幾何不変・面積体積
+        # 厳密保存、間引きは一切しない)→ 波長ごとに振幅を明示した変位(頂点ごとの
+        # 帯域ゲート: 2×局所辺長より短い波長は変位しない)→ その補集合を陰影法線の
+        # bump に回す(画素ごとの局所辺長で補集合を取る)。
+        ("mesh_edge_lengths", "render3d", ["mesh"], "descriptor", False),
+        ("mesh_subdivide", "render3d", ["mesh"], "mesh", False),
+        ("displacement_band_weights", "render3d", ["mesh"], "image2d", False),
+        ("mesh_displace_spectrum", "render3d", ["mesh"], "mesh", False),
+        ("bump_normals_fbm", "render3d", ["normalmap", "pointmap"], "normalmap", False),
     ],
     "photometric": [  # フォトメトリックステレオ・法線積分(既知光源 → 法線 → 高さ)
         ("photometric_stereo", "photometric", ["images"], "normalmap", False),
