@@ -1180,6 +1180,39 @@ def _drop_overlap(n_in, n_out, shift, scale, pixfrac):
     return np.where(ov > 0.0, ov, 0.0)
 
 
+def drizzle_shifts(matrices):
+    """位置合わせ行列を :func:`drizzle_resample` が要る ``shifts`` へ変換する。
+
+    :func:`frame_align` / :func:`align_frames` の行列は「フレームを基準へ**戻す**」
+    向きの並進を持ち、:func:`drizzle_resample` の ``shifts`` は「フレームが基準から
+    どれだけ**ずれているか**」(:func:`synth_frame_series` の ``truth["shifts"]``
+    と同じ向き)。両者は符号が逆なので、素通しすると誤差が倍になって二重像になる。
+    この関数はその符号を反転するだけの薄い変換で、取り違えを 1 箇所に閉じ込める。
+
+    *matrices* は ``(3, 3)`` 行列の列(``align_frames`` の第 2 返り値)。
+    回転・拡大は drizzle が受けないので**並進成分だけ**を取り出す —— 回転を含む
+    行列を渡した場合は、先に :func:`align_frames` で回転を戻してあることが前提。
+
+    Returns ``(N, 2)`` float64 の ``(dr, dc)``。
+
+    **Raises** ``ValueError``: *matrices* が空 / ``(3, 3)`` でない要素を含む場合。
+    """
+    if matrices is None:
+        raise ValueError("matrices must not be None")
+    mats = list(matrices)
+    if not mats:
+        raise ValueError("matrices must not be empty")
+    out = np.empty((len(mats), 2), dtype=np.float64)
+    for i, m in enumerate(mats):
+        arr = np.asarray(m, dtype=np.float64)
+        if arr.shape != (3, 3):
+            raise ValueError(
+                f"matrices[{i}] has shape {arr.shape}, expected (3, 3)")
+        out[i, 0] = -arr[0, 2]
+        out[i, 1] = -arr[1, 2]
+    return out
+
+
 def drizzle_resample(frames, shifts=None, scale=2.0, pixfrac=1.0):
     """Drizzle —— 副画素でずれた複数フレームから細かい格子を作る(面積保存)。
 
