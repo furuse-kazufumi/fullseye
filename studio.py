@@ -5969,7 +5969,7 @@ def build_window(model=None):
 
     def apply_program():
         text = code_edit.toPlainText()        # capture first: refresh_stage_list rewrites the editor
-        stages, errs = parse_program(text)
+        stages, errs, src_lines = parse_hdev_program_lines(text, op_names)
         if errs:
             code_status.setText("✕ " + "  ·  ".join(errs[:3]))
             flash("code has %d error(s)" % len(errs))

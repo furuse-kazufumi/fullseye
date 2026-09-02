@@ -6,7 +6,6 @@ and get a measured result back::
 
     import fullseye                       # or: import api
     import numpy as np
-import warnings
     frame = np.random.rand(480, 640)      # float64 gray in [0, 1]
     edges = fullseye.apply(frame, "sobel_amp")          # HALCON name or op name
     seg   = fullseye.apply(frame, "otsu")               # image -> region (binary)
@@ -28,6 +27,7 @@ Discover ops with :func:`list_ops` / :func:`op_names`, or the CLI
 from __future__ import annotations
 
 import os
+import warnings
 import sys
 from typing import Iterable, Sequence
 
