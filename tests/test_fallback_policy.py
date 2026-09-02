@@ -249,7 +249,7 @@ def test_every_listed_nary_op_is_callable_from_the_facade():
 
 def test_match_ops_take_a_template_through_the_facade():
     img = np.zeros((48, 48))
-    img[20:28, 30:38] = 1.0
+    img[20:28, 30:38] = _img(8)                 # textured patch (a constant one has zero NCC variance)
     tmpl = img[20:28, 30:38].copy()
     assert np.array_equal(api.apply(img, "ncc_locate"), [0.0, 0.0, 0.0])   # no template: no-match
     corr, r, c = api.apply(img, "ncc_locate", template=tmpl)

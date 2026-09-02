@@ -5153,8 +5153,7 @@ def build_window(model=None):
             _nl = chr(10)
             summ.setText(e["name"] + "  ·  data: " + e["data"] + _nl + e["summary"]
                          + _nl + "実行: py -3.11 examples_3d/" + i + ".py")
-            try: code.setPlainText(EX.code(i))
-            except Exception: code.setPlainText("")
+            code.setPlainText(_example_code_or_error(EX, i))   # a read error is shown, not blanked
         lst.currentRowChanged.connect(lambda _=None: preview())
 
         def copy_code():
@@ -5301,8 +5300,7 @@ def build_window(model=None):
             i = it.data(QtCore.Qt.UserRole); e = meta[i]; _nl = chr(10)
             summ.setText(e["name"] + "  ·  data: " + e["data"] + _nl + e["summary"]
                          + _nl + "実行: py -3.11 examples/" + i + ".py")
-            try: code.setPlainText(EX.code(i))
-            except Exception: code.setPlainText("")
+            code.setPlainText(_example_code_or_error(EX, i))   # a read error is shown, not blanked
         lst.currentRowChanged.connect(lambda _=None: preview())
 
         def copy_code():
