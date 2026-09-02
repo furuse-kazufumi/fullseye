@@ -89,7 +89,12 @@ def test_background_face_is_minus_one():
 # AO の焼き込み                                                                #
 # --------------------------------------------------------------------------- #
 def _ao_of_coarse_plane_under_a_box():
-    """粗い地面 + その上の箱。地面の AO は箱の直下が暗く、外側ほど明るい。"""
+    """粗い地面 + その上の板。地面の AO は板の直下が暗く、外側ほど明るい。
+
+    返り = ``(ao, face, 地面の三角形数)``。face は「どの画素がまだ地面か」を
+    正確に言うために要る ―― 物体の縁で値が飛ぶのは本物の不連続で、
+    補間の粗さとは別物だから。
+    """
     Vg, Fg = _quad_grid(6, half=3.0, z=0.0)          # 7x7 頂点 = わざと粗い
     # 地面の上に浮かせた小さな板(遮蔽物)
     Vb, Fb = _quad_grid(1, half=0.7, z=0.9)
@@ -98,7 +103,8 @@ def _ao_of_coarse_plane_under_a_box():
     pose, K = render3d.auto_view(V, margin=1.1, width=96, height=96)
     ao = render_ao.ambient_occlusion(V, F, pose=pose, intrinsics=K,
                                      width=96, height=96, n_dirs=32)
-    return ao
+    view = render3d.render_mesh(V, F, pose, K, 96, 96, attributes=True)
+    return ao, view["face"], len(Fg)
 
 
 def test_ao_on_a_coarse_surface_has_no_polygonal_cells():
