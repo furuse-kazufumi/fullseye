@@ -1473,7 +1473,7 @@ def _coerce_sort(v, sort: str):
     return a
 
 
-def _apply_impl(image, name, a, b, coerce, device, policy):
+def _apply_impl(image, name, a, b, coerce, device, policy, fast=None):
     nop = _nary_by_name().get(name) if find_op(name) is None else None
     if nop is not None:                                  # n-ary tier: needs a LIST of inputs
         if isinstance(image, np.ndarray) or not isinstance(image, (list, tuple)):

@@ -757,6 +757,24 @@ def _b_mesh_split(*extra):
     return build
 
 
+def _b_mesh_pair():
+    """(V, F, V2, F2) を取る op(meshres.mesh_reduction_report)用 builder。
+
+    2 つの ``mesh`` 種を 4 位置引数へ割る。プールに 1 つしか無ければ同じ
+    メッシュを 2 度渡す(= 何も失っていない reduction の監査、誤差 0 の
+    正当な入力)。
+    """
+    def build(pool, rng):
+        meshes = [m for m in (pool.get("mesh") or [])
+                  if isinstance(m, (tuple, list)) and len(m) >= 2]
+        if not meshes:
+            return None
+        m1 = meshes[int(rng.integers(len(meshes)))]
+        m2 = meshes[int(rng.integers(len(meshes)))]
+        return [m1[0], m1[1], m2[0], m2[1]]
+    return build
+
+
 def _b_vectors(n):
     """先頭 *n* 個の位置引数を **長さ 3 のベクトル**で埋める builder を作る。
 
@@ -1248,6 +1266,7 @@ OP_ARG_BUILDERS = {
     "mesh_sample_points": _b_mesh_split(),
     "mesh_lod_chain": _b_mesh_split(),
     "mesh_decimate_preserving": _b_mesh_split(),
+    "mesh_reduction_report": _b_mesh_pair(),     # (V, F, V2, F2)
     "cast_shadow": _b_mesh_split("vector"),      # (V, F, light)
     # 3-ベクトルだけを取る解析幾何 11 op(理由と実測は _b_vectors の docstring)。
     # これを入れるまで 11 op すべてが未到達で、`primitive` / `position` の
