@@ -53,6 +53,29 @@ def _make(recipe, out_sort=None):
     return fn
 
 
+def _make_raw(recipe):
+    """例外を**そのまま投げる**評価器。登録ゲート専用。
+
+    ``_make`` が返す関数は fail-soft で、レシピが必ず例外を投げても
+    ``sanitize(None, ...)`` が sort として妥当な値(feature なら ``0.0``)を返す。
+    そのため ``_gate`` へ渡すと **どんな壊れたレシピも合格してしまう** ――
+    「動く op だけ登録する」と謳いながら、構造上ひとつも落とせなかった。
+
+    2026-09-02 実測: ``xcv3_brisk_count`` / ``xcv3_agast_count`` は cv2 5.0.0 で
+    ``cv2.BRISK_create`` / ``cv2.AgastFeatureDetector_create`` が
+    ``cv2.xfeatures2d`` へ移動したため 36/36 で ``AttributeError`` になっていたが、
+    どちらも登録され、あらゆる画像に対して ``0.0`` を返し続けていた
+    (対照: ``xcv_orb_count`` は同条件で 8〜365)。
+    """
+    code = compile(recipe, "<recipe>", "eval")
+
+    def raw(v, a, b):
+        g = dict(_NS)
+        g.update(v=v, a=float(a), b=float(b))
+        return eval(code, g)
+    return raw
+
+
 RECIPES = {
  "xmh_zernike": {
   "in": "image",
