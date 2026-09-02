@@ -400,12 +400,12 @@ def test_insert_writes_program_line_at_cursor_and_keeps_stage_lines():
         assert ed.textCursor().blockNumber() + 1 == 1
         idx = next(i for i in range(ol.count()) if ol.item(i).data(QtCore.Qt.UserRole) == "median")
         ol.setCurrentRow(idx)
-        a_spin.setValue(0.12345); b_spin.setValue(0.5)
+        a_spin.setValue(0.37); b_spin.setValue(0.5)                 # (the panel spin is 2-decimal)
         win._op_buttons["insert"].click()
         lines = ed.toPlainText().splitlines()
-        assert lines == ["gaussian (0.5, 0.5)", "median (0.12345, 0.5)", "otsu (0.5, 0.5)"]
+        assert lines == ["gaussian (0.5, 0.5)", "median (0.37, 0.5)", "otsu (0.5, 0.5)"]
         assert [s[0] for s in model.stages] == ["gaussian", "median", "otsu"]
-        assert model.stages[1][1] == pytest.approx(0.12345)
+        assert model.stages[1][1] == pytest.approx(0.37)
         assert win._state["stage_lines"] == [1, 2, 3]
         assert ed.textCursor().blockNumber() + 1 == 2             # cursor on the new line
         assert win._state["code_dirty"] is False
