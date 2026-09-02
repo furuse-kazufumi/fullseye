@@ -60,8 +60,22 @@ def main() -> None:
                  ["difftest.py", "--problem", "edge", "--workdir", str(wd)]):
         r = subprocess.run([PY, str(ROOT / argv[0]), *argv[1:]], cwd=str(ROOT), capture_output=True, text=True)
         print("  " + (r.stdout.strip().splitlines() or [""])[-1])
+        # **終了コードを見る。** 2026-09-02 まで見ておらず、4 段すべてが落ちても
+        # 空行を出して exit 0 になっていた —— この本には assert も参照テストも
+        # 無いので、壊れても誰にも分からない状態だった。「入門の 1 本目」が
+        # 黙って失敗するのは、壊れた op より質が悪い。
+        if r.returncode != 0:
+            tail = (r.stderr.strip().splitlines() or [""])[-1]
+            raise SystemExit(
+                f"quickstart: {argv[0]} が exit {r.returncode} で失敗しました\n  {tail}")
+
+    for f in ("gen_edge.py", "gen_edge.c"):
+        if not (wd / f).exists():
+            raise SystemExit(f"quickstart: 生成されるはずの {f} がありません ({wd})")
 
     print("\ngenerated backend:", wd / "gen_edge.py", "(+ gen_edge.c). See docs/EXAMPLES.md for library recipes.")
+    print("PASS: baseline -> evolve -> codegen -> difftest の 4 段が exit 0 で通り、"
+          "生成物 gen_edge.py / gen_edge.c が揃っている")
 
 
 if __name__ == "__main__":
