@@ -368,64 +368,143 @@ def render_mesh(V, F, pose=None, intrinsics=None, width: int = 256,
     flip = np.einsum("ij,ij->i", fnorm, centroid) > 0.0   # orient toward camera
     fnorm[flip] *= -1.0
 
-    for ti in range(Ff.shape[0]):
-        i0, i1, i2 = Ff[ti]
-        d0, d1, d2 = depth_v[i0], depth_v[i1], depth_v[i2]
-        if not (d0 > _NEAR_EPS and d1 > _NEAR_EPS and d2 > _NEAR_EPS):
-            continue                                # no near-plane clipping (documented)
-        u0, u1, u2 = su[i0], su[i1], su[i2]
-        v0, v1, v2 = sv[i0], sv[i1], sv[i2]
-        cmin = int(np.floor(min(u0, u1, u2)))
-        cmax = int(np.ceil(max(u0, u1, u2)))
-        rmin = int(np.floor(min(v0, v1, v2)))
-        rmax = int(np.ceil(max(v0, v1, v2)))
-        cmin, cmax = max(cmin, 0), min(cmax, w - 1)
-        rmin, rmax = max(rmin, 0), min(rmax, h - 1)
-        if cmin > cmax or rmin > rmax:
-            continue
+    # ---- vectorised rasterisation (2026-09-03) ---------------------------------
+    # Until 2026-09-03 this was a Python ``for ti in range(M)`` loop that rasterised
+    # each triangle's own screen bounding box with numpy. That is fine for 50k
+    # faces (~1 s) but the Itokawa hero now subdivides the Gaskell model to
+    # ~1.5 m facets (≥ 500k faces) and the loop alone cost ~40 s per pass, three
+    # passes per render. The loop is replaced by a **chunked all-triangles-at-once**
+    # rasteriser that evaluates *exactly the same arithmetic* (same barycentric
+    # formulas, same perspective-correct ``1/z`` interpolation, same
+    # ``_BARY_EPS`` / ``_DET_EPS``) over the flattened (triangle, pixel) pairs of
+    # every bounding box. Tie-breaking is preserved too: the loop kept the FIRST
+    # triangle that reached a pixel at a given depth (strict ``<``), so the pairs
+    # are lexsorted by (pixel, depth, triangle index) before the nearest-per-pixel
+    # winner is taken and compared strictly against the running z-buffer.
+    # ``tests/test_render3d.py::test_vectorised_rasteriser_matches_loop`` pins the
+    # bit-exact equivalence (depth / silhouette / normals / face / bary).
+    _raster_all(Ff, su, sv, depth_v, fnorm, w, h, zbuf, sil, normals,
+                face, bary, want_attr)
+
+    depth = np.where(sil > 0, zbuf, background).astype(np.float64)
+    return _pack(depth)
+
+
+#: Upper bound on flattened (triangle, pixel) pairs held in memory per chunk.
+_RASTER_PAIR_CHUNK = 3_000_000
+
+
+def _raster_all(Ff, su, sv, depth_v, fnorm, w, h, zbuf, sil, normals,
+                face, bary, want_attr) -> None:
+    """Rasterise every triangle into the shared buffers (in place), vectorised over
+    (triangle, pixel) pairs and chunked to ``_RASTER_PAIR_CHUNK`` pairs.
+
+    Semantics are identical to the historical per-triangle loop (see the caller):
+    pixel centres at integer coordinates, no near-plane clipping (a triangle with
+    any vertex at depth ≤ ``_NEAR_EPS`` is dropped), degenerate screen triangles
+    dropped, first-triangle-wins on exact depth ties."""
+    M = Ff.shape[0]
+    if M == 0:
+        return
+    d = depth_v[Ff]                                   # (M,3)
+    u = su[Ff]
+    v = sv[Ff]
+    ok = np.all(d > _NEAR_EPS, axis=1)
+    with np.errstate(invalid="ignore"):
+        cmin = np.floor(np.nanmin(u, axis=1))
+        cmax = np.ceil(np.nanmax(u, axis=1))
+        rmin = np.floor(np.nanmin(v, axis=1))
+        rmax = np.ceil(np.nanmax(v, axis=1))
+    ok &= np.isfinite(cmin) & np.isfinite(cmax) & np.isfinite(rmin) & np.isfinite(rmax)
+    cmin = np.clip(np.where(ok, cmin, 0), 0, w - 1).astype(np.int64)
+    cmax = np.clip(np.where(ok, cmax, -1), -1, w - 1).astype(np.int64)
+    rmin = np.clip(np.where(ok, rmin, 0), 0, h - 1).astype(np.int64)
+    rmax = np.clip(np.where(ok, rmax, -1), -1, h - 1).astype(np.int64)
+    ok &= (cmin <= cmax) & (rmin <= rmax)
+    u0, u1, u2 = u[:, 0], u[:, 1], u[:, 2]
+    v0, v1, v2 = v[:, 0], v[:, 1], v[:, 2]
+    with np.errstate(invalid="ignore"):
         denom = (v1 - v2) * (u0 - u2) + (u2 - u1) * (v0 - v2)
-        if abs(denom) < _DET_EPS:
-            continue                                # degenerate (zero screen area)
+    ok &= np.isfinite(denom) & (np.abs(denom) >= _DET_EPS)
+    ids = np.nonzero(ok)[0]
+    if ids.size == 0:
+        return
+    bw = cmax[ids] - cmin[ids] + 1
+    bh = rmax[ids] - rmin[ids] + 1
+    npx = bw * bh
+    cum = np.cumsum(npx)
+    inv_all = np.zeros(M, np.float64)
+    inv_all[ids] = 1.0 / denom[ids]
+    d0, d1, d2 = d[:, 0], d[:, 1], d[:, 2]
+
+    start = 0
+    n_ok = ids.size
+    while start < n_ok:
+        base = cum[start - 1] if start > 0 else 0
+        end = int(np.searchsorted(cum, base + _RASTER_PAIR_CHUNK, side="right"))
+        end = max(end, start + 1)                      # at least one triangle per chunk
+        end = min(end, n_ok)
+        sel = ids[start:end]
+        cnt = npx[start:end]
+        total = int(cnt.sum())
+        tri = np.repeat(sel, cnt)
+        offs = np.repeat(np.cumsum(cnt) - cnt, cnt)
+        k = np.arange(total, dtype=np.int64) - offs
+        bw_r = np.repeat(bw[start:end], cnt)
         # Pixel-centre convention (see the module docstring): the centre of pixel
         # ``(row=r, col=c)`` IS the continuous coordinate ``(u, v) = (c, r)`` —
         # integer, matching :func:`camera.depth_to_points`'s ``np.mgrid[0:H, 0:W]``.
         # Do NOT add 0.5 here: that is the OpenGL "pixel corners are integers"
         # convention and mixing the two silently shifts depth by half a pixel.
-        cols = np.arange(cmin, cmax + 1).astype(np.float64)   # pixel centres (u = c)
-        rows = np.arange(rmin, rmax + 1).astype(np.float64)   # pixel centres (v = r)
-        px, py = np.meshgrid(cols, rows)            # (bh, bw)
-        inv = 1.0 / denom
-        l0 = ((v1 - v2) * (px - u2) + (u2 - u1) * (py - v2)) * inv
-        l1 = ((v2 - v0) * (px - u2) + (u0 - u2) * (py - v2)) * inv
+        pr = np.repeat(rmin[sel], cnt) + k // bw_r
+        pc = np.repeat(cmin[sel], cnt) + k % bw_r
+        px = pc.astype(np.float64)
+        py = pr.astype(np.float64)
+        inv = inv_all[tri]
+        tu0, tu1, tu2 = u0[tri], u1[tri], u2[tri]
+        tv0, tv1, tv2 = v0[tri], v1[tri], v2[tri]
+        l0 = ((tv1 - tv2) * (px - tu2) + (tu2 - tu1) * (py - tv2)) * inv
+        l1 = ((tv2 - tv0) * (px - tu2) + (tu0 - tu2) * (py - tv2)) * inv
         l2 = 1.0 - l0 - l1
         inside = (l0 >= -_BARY_EPS) & (l1 >= -_BARY_EPS) & (l2 >= -_BARY_EPS)
-        if not inside.any():
-            continue
-        inv_d = l0 / d0 + l1 / d1 + l2 / d2         # perspective-correct depth
+        td0, td1, td2 = d0[tri], d1[tri], d2[tri]
+        inv_d = l0 / td0 + l1 / td1 + l2 / td2         # perspective-correct depth
         with np.errstate(divide="ignore", invalid="ignore"):
             zpix = 1.0 / inv_d
-        sub_z = zbuf[rmin:rmax + 1, cmin:cmax + 1]
-        closer = inside & np.isfinite(zpix) & (zpix < sub_z)
-        if not closer.any():
+        keep = inside & np.isfinite(zpix)
+        if not keep.any():
+            start = end
             continue
-        sub_z[closer] = zpix[closer]
-        sil[rmin:rmax + 1, cmin:cmax + 1][closer] = 1.0
-        nblock = normals[rmin:rmax + 1, cmin:cmax + 1]
-        nblock[closer] = fnorm[ti]
-        if want_attr:
-            face[rmin:rmax + 1, cmin:cmax + 1][closer] = ti
-            # Perspective-correct vertex weights: the screen-space barycentric
-            # ``l_i`` divided by that vertex's depth and renormalised by the same
-            # ``1/zpix`` the depth interpolation above uses. Screen-space ``l_i``
-            # alone would be affine-correct only — on the ground plane, seen at a
-            # grazing angle, that is exactly where the error is largest.
-            wblock = bary[rmin:rmax + 1, cmin:cmax + 1]
-            wblock[closer] = np.stack(
-                [(l0 * zpix / d0)[closer], (l1 * zpix / d1)[closer],
-                 (l2 * zpix / d2)[closer]], axis=-1)
-
-    depth = np.where(sil > 0, zbuf, background).astype(np.float64)
-    return _pack(depth)
+        tri, pr, pc, zpix = tri[keep], pr[keep], pc[keep], zpix[keep]
+        l0, l1, l2 = l0[keep], l1[keep], l2[keep]
+        td0, td1, td2 = td0[keep], td1[keep], td2[keep]
+        pix = pr * w + pc
+        # nearest per pixel, first triangle wins exact ties (= the loop's strict '<')
+        order = np.lexsort((tri, zpix, pix))
+        pix_s = pix[order]
+        first = np.empty(pix_s.size, bool)
+        first[0] = True
+        first[1:] = pix_s[1:] != pix_s[:-1]
+        win = order[first]
+        closer = zpix[win] < zbuf.reshape(-1)[pix[win]]
+        win = win[closer]
+        if win.size:
+            r_w, c_w = pr[win], pc[win]
+            zbuf[r_w, c_w] = zpix[win]
+            sil[r_w, c_w] = 1.0
+            normals[r_w, c_w] = fnorm[tri[win]]
+            if want_attr:
+                face[r_w, c_w] = tri[win]
+                # Perspective-correct vertex weights: the screen-space barycentric
+                # ``l_i`` divided by that vertex's depth and renormalised by the same
+                # ``1/zpix`` the depth interpolation above uses. Screen-space ``l_i``
+                # alone would be affine-correct only — on the ground plane, seen at a
+                # grazing angle, that is exactly where the error is largest.
+                zw = zpix[win]
+                bary[r_w, c_w] = np.stack(
+                    [l0[win] * zw / td0[win], l1[win] * zw / td1[win],
+                     l2[win] * zw / td2[win]], axis=-1)
+        start = end
 
 
 # --------------------------------------------------------------------------- #
