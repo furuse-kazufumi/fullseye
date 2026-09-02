@@ -105,7 +105,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **workflow**
 - **imgevolve quickstart — 全ワークフローを 1 ファイルで** — レジストリ→型付き手組みパイプライン→ゲノム復号→タスク採点→進化ドライバ→codegen + 差分テスト(約 1.5 分、repo root から実行)。 `py -3.11 examples/quickstart.py`
 
-### 3-D 点群/体積/曲面(114 例)
+### 3-D 点群/体積/曲面(115 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
@@ -275,6 +275,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **レンダリング品質: hero レンダラ render_beauty(全層合成の映える静止3D)** — ラスタライズ/Phong鏡面/AO/接地影/SSAA/トーンマップを1本に合成。sphere-on-groundで各層を実測: AOは接触凹部を0.07→0.02と選択的に暗化(露出頂部0.01は不変)、鏡面は小面積ハイライト(frac0.018)、接地影はwith-mesh993px vs null0px、reinhardは単調(clip34段潰しを回避)、SSAAはedge0.040→0.026。sdf_ops生成メッシュでhero画像を出力。 `py -3.11 examples_3d/render_beauty.py`
 - **3-D 図注: レンダリングの上に 3-D アンカーの矢印・引き出し線・スケールバー・座標軸・箱・距離を射影して描く** — render_mesh で描いた球+床の絵に annotate3d 族(project/arrow/label/scale_bar/axes/bbox/measure)で図注を載せる。既知カメラの射影が閉形式と 1e-9 で一致、像面平行のバーが f·L/z px、球の裏のアンカーが depth で隠れ判定(破線)されることを GT で確かめる。 `py -3.11 examples_3d/annotate3d_figure.py`
 
+**mesh_processing**
+- **解像度管理: 粗密を測り、粗い所だけ細分/等方リメッシュし、減らすなら監査つきで(meshres)** — UV 球の辺長 p95/p5=5.4(イトカワ実測 2.7)を測り、mesh_split_long_edges(頂点不変)と mesh_isotropic_remesh(5.4→1.7、面積誤差<1%、閉多様体)で揃える。LOD 鎖は各段の幾何誤差と画面誤差 px を返し、mesh_decimate_preserving は細部頂点を厳密固定(誤差 1e-16)で max_error 超は拒否。点群は pc_poisson_disk が孤立点を 1 つも落とさないことを pc_thinning_report で証明。 `py -3.11 examples_3d/mesh_resolution_demo.py`
+
 ## スタンドアロン幾何/数学モジュール(関数 API)
 
 1画像パイプラインに乗らない op(2画像・点列・可変引数)。関数として呼ぶ。
@@ -324,7 +327,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - `spline_curve_resample(points, n, closed=False, smooth=0.0)` — 曲線点列を n 点に滑らかに再サンプルして (n,D) を返す(2D/3D、閉曲線はシーム非重複)。
 
 ## 3-D operators(ops3d)by category
-_計 329 ops / 65 categories。_
+_計 344 ops / 66 categories。_
 
 
 ### annotate3d(7)
@@ -669,6 +672,23 @@ _計 329 ops / 65 categories。_
 - `shadow_raycast` (`mesh, vector → image2d`) — メッシュへ直接レイを飛ばして太陽光の可視性 (H,W) ∈ [0,1] を返す(shadow map 不使用)。 · 例: `itokawa_regolith_hero`
 - `render_regolith` (`mesh → rgbimage`) — 小惑星のレゴリスを物理ベース(Hapke + 太陽視直径のレイキャスト影 + 環境光ゼロ)で描く → RGB ``(size,size,3)``。 · 例: `itokawa_regolith_hero`
 
+### resolution(15)
+- `mesh_edge_stats` (`mesh → table`) — Edge-length and face-area percentiles with non-uniformity ratios (``table``). · 例: `mesh_resolution_demo`
+- `mesh_detail_map` (`mesh → table`) — Per-vertex coarseness and detail of a mesh (``table``). · 例: `mesh_resolution_demo`
+- `mesh_split_long_edges` (`mesh → mesh`) — Bisect edges longer than *max_edge* until none remains — adaptive refinement (``mesh``). · 例: `mesh_resolution_demo`
+- `mesh_isotropic_remesh` (`mesh → mesh`) — Incremental isotropic remeshing to a uniform *target_edge* (``mesh``). · 例: `mesh_resolution_demo`
+- `mesh_sample_points` (`mesh → points`) — Surface samples at a stated spacing — area-weighted random or Poisson-disk (``points``). · 例: `mesh_resolution_demo`
+- `mesh_lod_chain` (`mesh → table`) — Decimation levels with the measured geometric error of each (``table``). · 例: `mesh_resolution_demo`
+- `mesh_select_lod` (`table → table`) — The coarsest LOD level whose geometric error projects below *pixel_tolerance* (``table``). · 例: `mesh_resolution_demo`
+- `mesh_reduction_report` (`mesh, mesh → table`) — What a reduction (decimation, remesh, voxelisation) lost, in numbers (``table``). · 例: `mesh_resolution_demo`
+- `mesh_decimate_preserving` (`mesh → table`) — Decimation that keeps the detailed regions and reports what it lost (``table``). · 例: `mesh_resolution_demo`
+- `pc_density` (`points → table`) — Local spacing per point and the cloud's non-uniformity (``table``). · 例: `mesh_resolution_demo`
+- `pc_poisson_disk` (`points → points`) — Blue-noise thinning: keep points greedily so that no two are closer than *radius* (``points``). · 例: `mesh_resolution_demo`
+- `pc_fill_sparse` (`points → points`) — Insert points where the local spacing exceeds *spacing*, on the local PCA plane (``points``). · 例: `mesh_resolution_demo`
+- `pc_density_equalize` (`points → points`) — Fill the sparse regions, then thin the dense ones: uniform spacing (``points``). · 例: `mesh_resolution_demo`
+- `pc_lod_chain` (`points → table`) — Poisson-disk levels at doubling spacings (``table``). · 例: `mesh_resolution_demo`
+- `pc_thinning_report` (`points, points → table`) — What a point-cloud thinning removed, and whether it touched the rare points (``table``). · 例: `mesh_resolution_demo`
+
 ### restoration(2)
 - `vol_gaussian_psf` (`measurement → voxel`) — A normalised (sums to 1) 3-D Gaussian PSF kernel. *sigma* is a scalar or · 例: `deconv_fft_restore`
 - `vol_richardson_lucy` (`voxel, voxel → voxel`) — Richardson–Lucy deconvolution of a non-negative volume by a known PSF. · 例: `deconv_fft_restore`
@@ -787,7 +807,7 @@ _計 329 ops / 65 categories。_
 - `sampson_distance` (`image2d, image2d → signal`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category
-_計 867 ops / 47 categories。_
+_計 870 ops / 47 categories。_
 
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
@@ -1610,7 +1630,7 @@ _計 867 ops / 47 categories。_
 - `xmh_daubechies` `image → image` · 例: `gallery2d_geometry`
 - `tf_radon_sinogram` `image → image` · 例: `gallery2d_geometry`
 
-### typed(129)
+### typed(132)
 - `tb_points_to_voxel` `points → volume` · 例: なし
 - `tb_estimate_point_normals` `points → points` · 例: なし
 - `tb_iss_keypoints` `points → signal` · 例: なし
@@ -1653,6 +1673,9 @@ _計 867 ops / 47 categories。_
 - `tb_project_cylindrical` `points → image` · 例: なし
 - `tb_sphere_sdf` `points → volume` · 例: なし
 - `tb_box_sdf` `points → volume` · 例: なし
+- `tb_pc_poisson_disk` `points → points` · 例: なし
+- `tb_pc_fill_sparse` `points → points` · 例: なし
+- `tb_pc_density_equalize` `points → points` · 例: なし
 - `tb_create_funct_1d_array` `signal → signal` · 例: なし
 - `tb_smooth_funct_1d_gauss` `signal → signal` · 例: なし
 - `tb_smooth_funct_1d_mean` `signal → signal` · 例: なし

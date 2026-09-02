@@ -1521,7 +1521,8 @@ def _apply_impl(image, name, a, b, coerce, device, policy, fast=None):
 
 
 def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
-                 coerce: bool = True, device: str = "cpu", on_error: str | None = None):
+                 coerce: bool = True, device: str = "cpu", on_error: str | None = None,
+                 fast: bool | None = None):
     """Apply a sequence of operators, threading the array through each.
 
     *stages* is either a list of names (one shared ``a``/``b`` for the whole
