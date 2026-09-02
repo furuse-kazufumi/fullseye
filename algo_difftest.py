@@ -700,7 +700,9 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
             cases.append([float(rng2.randint(0, 200000))])
         for _ in range(10):
             cases.append([float(rng2.randint(4000000000, 4294967295))])         # near 2^32
-        cases += [[float("nan")], [-3.0], [1.5], [5e9]]                         # out-of-domain -> 0.0
+        # out-of-domain -> -1.0 sentinel (NOT 0.0 = "composite"): 4294967311 is a PRIME just past
+        # 2^32 that the old 0.0 sentinel reported as composite (2026-09-03 review F5).
+        cases += [[float("nan")], [-3.0], [1.5], [5e9], [4294967311.0], [4294967296.0]]
         return cases
     if name == "modular_inverse":
         rng2 = random.Random(seed + 1010)
