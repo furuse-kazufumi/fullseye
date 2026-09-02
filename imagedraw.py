@@ -160,17 +160,58 @@ def _settle(color, width, style):
     return drawstyle.resolve_color(col, scheme), drawstyle.check_width(wid), pattern, st
 
 
-def _line_mask(shape, p0, p1):
-    """(x0,y0)-(x1,y1) を結ぶ直線の1px マスク(端はクランプ)。"""
+def _clip_segment(x0, y0, x1, y1, W, H):
+    """Liang–Barsky: 線分 p0→p1 のうち画素枠 ``[-0.5, W-0.5]×[-0.5, H-0.5]`` に
+    入るパラメータ区間 ``(t0, t1)`` を返す。完全に枠外なら ``None``。"""
+    dx, dy = x1 - x0, y1 - y0
+    t0, t1 = 0.0, 1.0
+    for p, q in ((-dx, x0 + 0.5), (dx, W - 0.5 - x0), (-dy, y0 + 0.5), (dy, H - 0.5 - y0)):
+        if p == 0.0:
+            if q < 0.0:
+                return None                       # 枠と平行で外側
+            continue
+        r = q / p
+        if p < 0.0:
+            if r > t1:
+                return None
+            if r > t0:
+                t0 = r
+        else:
+            if r < t0:
+                return None
+            if r < t1:
+                t1 = r
+    return t0, t1
+
+
+def _segment_samples(shape, p0, p1):
+    """線分 p0→p1 を 8 連結でサンプルし、枠内に落ちる ``(xi, yi, t)`` を返す。
+
+    ``t`` は **クリップ前の元の線分**上のパラメータ(0=p0, 1=p1)。破線の位相計算は
+    これに線分長を掛けた弧長を使うので、枠で切られても模様は連続する。
+    サンプル間隔は支配軸で 1 px 以下(``ceil`` で端数を切り上げる)。
+    """
     H, W = shape
     x0, y0 = float(p0[0]), float(p0[1])
     x1, y1 = float(p1[0]), float(p1[1])
-    n = int(max(abs(x1 - x0), abs(y1 - y0))) + 1
-    xs = np.linspace(x0, x1, n)
-    ys = np.linspace(y0, y1, n)
-    xi = np.clip(np.round(xs).astype(int), 0, W - 1)
-    yi = np.clip(np.round(ys).astype(int), 0, H - 1)
-    m = np.zeros((H, W), dtype=bool)
+    empty = (np.zeros(0, dtype=int), np.zeros(0, dtype=int), np.zeros(0, dtype=np.float64))
+    clip = _clip_segment(x0, y0, x1, y1, W, H)
+    if clip is None:
+        return empty
+    t0, t1 = clip
+    dx, dy = x1 - x0, y1 - y0
+    n = int(np.ceil(max(abs(dx) * (t1 - t0), abs(dy) * (t1 - t0)))) + 1
+    t = np.linspace(t0, t1, n)
+    xi = np.round(x0 + t * dx).astype(int)
+    yi = np.round(y0 + t * dy).astype(int)
+    keep = (xi >= 0) & (xi < W) & (yi >= 0) & (yi < H)   # 枠の縁で丸めが越えた分を捨てる
+    return xi[keep], yi[keep], t[keep]
+
+
+def _line_mask(shape, p0, p1):
+    """(x0,y0)-(x1,y1) を結ぶ直線の 1px マスク(枠外はクリップ、クランプしない)。"""
+    xi, yi, _ = _segment_samples(shape, p0, p1)
+    m = np.zeros(shape, dtype=bool)
     m[yi, xi] = True
     return m
 

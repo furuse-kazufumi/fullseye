@@ -3960,6 +3960,7 @@ def build_window(model=None):
     win._reset_layout = reset_layout
     state = {"result": None, "raw": None, "view_raw": False, "reordering": False,
              "dirty": False, "code_dirty": False, "errors": [], "perception_error": None,
+             "program_error": None, "stage_lines": None,
              "renders": 0, "image_path": None, "pipe_path": None,
              # HDevelop dev_update_{window,var,pc,time}: whether the graphics window,
              # variable window, execution cursor and per-line timings auto-update during
