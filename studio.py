@@ -4028,12 +4028,16 @@ def build_window(model=None):
         stage_list.clear()
         try:
             states = model.step_states()
-        except Exception:
+        except Exception as e:                        # summaries lost -> say so, don't blank
             states = []
+            state["errors"].append(("step summaries unavailable", str(e)))
+            flash("step summaries unavailable: %s" % truncate(e, 100))
         try:
             times = model.step_times()
-        except Exception:
+        except Exception as e:
             times = []
+            state["errors"].append(("stage timings unavailable", str(e)))
+            flash("stage timings unavailable: %s" % truncate(e, 100))
         for i, (name, a, b) in enumerate(model.stages):
             st = states[i]["state"] if i < len(states) else {}
             summ = step_summary(st) if st else ""
