@@ -569,7 +569,11 @@ _CATALOG = {
         ("superquadric_residual", "superquadric", ["points"], "measurement", False),
     ],
     "bundle_adjust": [  # N視点バンドル調整(全カメラ姿勢+3D構造を再投影誤差最小で同時最適化)
-        ("bundle_adjust", "bundle3d", ["pose", "points"], "pose", False),
+        # 実返りは dict{cameras (N,6), points (M,3), rmse, cost} = 報告一式で、
+        # 'pose'((R,t) の組)ではない。adapter で cameras だけ取り出すと
+        # **収束したかどうか(rmse)を黙って捨てる**ので採らず、語彙の
+        # 'table'(list|dict)へ移す。2026-09-02 の到達で判明。
+        ("bundle_adjust", "bundle3d", ["pose", "points"], "table", False),
         ("mean_reprojection_error", "bundle3d", ["pose", "points"], "measurement", False),
         ("project", "bundle3d", ["points"], "image2d", False),
     ],
