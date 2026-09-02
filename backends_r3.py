@@ -405,7 +405,8 @@ RECIPES = {
  "xcv3_agast_count": {
   "in": "image",
   "out": "feature",
-  "recipe": "float(len(cv2.AgastFeatureDetector_create(threshold=int(5+40*a)).detect((np.clip(v,0,1)*255).astype(np.uint8),None)))",
+  # AGAST も同じく cv2.xfeatures2d へ移動(cv2 5.0.0 実測)。両対応にする。
+  "recipe": "float(len((getattr(cv2,'AgastFeatureDetector_create',None) or cv2.xfeatures2d.AgastFeatureDetector_create)(threshold=int(5+40*a)).detect((np.clip(v,0,1)*255).astype(np.uint8),None)))",
   "cat": "features"
  },
  "xcv3_lsd_count": {
