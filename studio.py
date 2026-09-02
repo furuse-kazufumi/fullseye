@@ -1940,10 +1940,234 @@ def _to_qimage(arr, QtGui):
     return None
 
 
+def _knob_row_class(QtWidgets, QtCore):
+    """Widget factory for ONE knob (a or b), driven by :mod:`param_specs`.
+
+    The row always holds a RAW 0..1 spin box (exact entry — the value the op really
+    receives) and, depending on the op's spec, a slider spanning the DISPLAYED range
+    (float: σ in px / int: iterations …) plus a typed widget: QDoubleSpinBox with the
+    unit, QSpinBox snapping to ints, QComboBox for a discrete choice (the ``(3,5,7,9)``
+    kernel table), QCheckBox for a bool. A generic op keeps exactly the old two-widget
+    look (0..100 slider + 0..1 spin). The model only ever stores the 0..1 knob.
+
+    Write discipline (F3 review finding, kept): ONLY the widget the user touched
+    emits; the siblings are mirrored with signals blocked, and the untouched knob is
+    never rewritten from a coarse widget."""
+    PS = param_specs
+
+    class KnobRow(QtCore.QObject):
+        SLIDER_MAX_STEPS = 2000
+
+        def __init__(self, letter, parent=None, raw=None, slider=True, raw_tip=None):
+            super().__init__(parent)
+            self.letter = letter
+            self.spec = dict(PS.GENERIC_FLOAT)
+            self.changed = None                       # callback(knob, source) set by the owner
+            self.label = QtWidgets.QLabel(letter)
+            self.slider = None
+            if slider:
+                self.slider = QtWidgets.QSlider(QtCore.Qt.Horizontal)
+                self.slider.setRange(0, 100)
+                self.slider.setToolTip("Knob %s (0..1) — meaning depends on the selected op" % letter)
+                self.slider.valueChanged.connect(self._from_slider)
+            if raw is None:
+                raw = QtWidgets.QDoubleSpinBox()
+                raw.setRange(0.0, 1.0); raw.setSingleStep(0.01); raw.setDecimals(3)
+                raw.setToolTip(raw_tip or ("Knob %s — type an exact value (0..1)" % letter))
+            self.raw = raw
+            self.raw.valueChanged.connect(self._from_raw)
+            # typed presentation widgets, one per spec kind, in a stack
+            self.typed = QtWidgets.QStackedWidget()
+            self.fspin = QtWidgets.QDoubleSpinBox(); self.fspin.setKeyboardTracking(False)
+            self.ispin = QtWidgets.QSpinBox(); self.ispin.setKeyboardTracking(False)
+            self.combo = QtWidgets.QComboBox()
+            self.check = QtWidgets.QCheckBox("on")
+            for w in (self.fspin, self.ispin, self.combo, self.check):
+                self.typed.addWidget(w)
+            self.typed.setVisible(False)
+            self.typed.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+            self.fspin.valueChanged.connect(lambda v: self._from_typed(v))
+            self.ispin.valueChanged.connect(lambda v: self._from_typed(v))
+            self.combo.currentIndexChanged.connect(lambda i: self._from_typed(i))
+            self.check.toggled.connect(lambda t: self._from_typed(t))
+            self._mirroring = False
+
+        # ---- spec / presentation --------------------------------------------- #
+        def _blocked(self, *widgets):
+            class _B:
+                def __enter__(_s):
+                    for w in widgets:
+                        w.blockSignals(True)
+
+                def __exit__(_s, *a):
+                    for w in widgets:
+                        w.blockSignals(False)
+            return _B()
+
+        def set_spec(self, spec):
+            """Configure the widgets for a spec dict (see param_specs) — ranges, unit,
+            decimals, choice names — without emitting a change."""
+            self.spec = dict(spec or PS.GENERIC_FLOAT)
+            sp = self.spec
+            kind = sp.get("kind", "float")
+            generic = PS.is_generic(sp) or kind == "unused"
+            page = None
+            with self._blocked(self.fspin, self.ispin, self.combo, self.check,
+                               *([self.slider] if self.slider else [])):
+                if kind == "float" and not generic:
+                    step = float(sp.get("step") or 0.001)
+                    self.fspin.setDecimals(PS.decimals_for(step))
+                    self.fspin.setRange(float(sp["min"]), float(sp["max"]))
+                    self.fspin.setSingleStep(step)
+                    self.fspin.setSuffix((" " + sp["unit"]) if sp.get("unit") else "")
+                    page = self.fspin
+                    if self.slider:
+                        self.slider.setRange(0, self._float_steps())
+                elif kind == "int":
+                    self.ispin.setRange(int(sp["min"]), int(sp["max"]))
+                    self.ispin.setSuffix((" " + sp["unit"]) if sp.get("unit") else "")
+                    page = self.ispin
+                    if self.slider:
+                        self.slider.setRange(int(sp["min"]), int(sp["max"]))
+                elif kind == "choice":
+                    self.combo.clear()
+                    unit = sp.get("unit")
+                    self.combo.addItems([("%s %s" % (c, unit)) if unit else str(c)
+                                         for c in (sp.get("choices") or [])])
+                    page = self.combo
+                elif kind == "bool":
+                    self.check.setText(sp.get("label") or "on")
+                    page = self.check
+                if page is None and self.slider:
+                    self.slider.setRange(0, 100)            # generic / unused: raw 0..100
+            if page is not None:
+                self.typed.setCurrentWidget(page)
+            self.typed.setVisible(page is not None)
+            if self.slider:
+                self.slider.setVisible(kind not in ("choice", "bool"))
+            tip = sp.get("doc") or ""
+            src = sp.get("source")
+            if src and src not in ("docstring", "docs/ops"):
+                tip = (tip + "\n" if tip else "") + "source: " + src
+            for w in (self.typed, self.label):
+                w.setToolTip(tip)
+            self.label.setText(PS.spec_label(sp, self.letter))
+
+        def set_enabled(self, on):
+            """Enable/disable the editing widgets; an 'unused' knob keeps only the raw
+            spin live (honest: the op never reads it, but the value is still stored)."""
+            unused = self.spec.get("kind") == "unused"
+            if self.slider:
+                self.slider.setEnabled(bool(on) and not unused)
+            self.typed.setEnabled(bool(on) and not unused)
+            self.raw.setEnabled(bool(on))
+
+        # ---- value mapping ---------------------------------------------------- #
+        def _float_steps(self):
+            sp = self.spec
+            step = float(sp.get("step") or 0.001)
+            span = float(sp["max"]) - float(sp["min"])
+            n = int(round(abs(span) / step)) if step > 0 else 100
+            return max(1, min(self.SLIDER_MAX_STEPS, n))
+
+        def knob_to_pos(self, knob):
+            """0..1 knob -> slider position under the current spec."""
+            sp = self.spec
+            kind = sp.get("kind", "float")
+            if kind == "float" and not PS.is_generic(sp):
+                d = PS.knob_to_display(sp, knob)
+                step = float(sp.get("step") or 0.001)
+                return int(round((d - float(sp["min"])) / step))
+            if kind == "int":
+                return int(PS.knob_to_display(sp, knob))
+            return int(round(float(knob) * 100))            # generic / unused: 0..100 raw
+
+        def pos_to_knob(self, pos):
+            sp = self.spec
+            kind = sp.get("kind", "float")
+            if kind == "float" and not PS.is_generic(sp):
+                step = float(sp.get("step") or 0.001)
+                return PS.display_to_knob(sp, float(sp["min"]) + int(pos) * step)
+            if kind == "int":
+                return PS.display_to_knob(sp, int(pos))
+            return float(pos) / 100.0
+
+        def display_text(self, knob):
+            """'a · blur σ: 1.08 px  (0.290)' / 'a: 0.29' for the panel label."""
+            sp = self.spec
+            head = PS.spec_label(sp, self.letter)
+            if sp.get("kind") == "unused":
+                return "%s  ·  unused by this op  (%.3f)" % (head, float(knob))
+            if PS.is_generic(sp):
+                return "%s: %.3f" % (head, float(knob))
+            return "%s: %s  (knob %.3f)" % (head, PS.format_display(sp, knob), float(knob))
+
+        # ---- writes ------------------------------------------------------------ #
+        def set_knob(self, knob, source=None):
+            """Mirror a 0..1 knob into every widget except *source* (signals blocked)."""
+            sp = self.spec
+            kind = sp.get("kind", "float")
+            with self._blocked(self.fspin, self.ispin, self.combo, self.check, self.raw,
+                               *([self.slider] if self.slider else [])):
+                if source != "raw":
+                    self.raw.setValue(float(knob))
+                if self.slider and source != "slider":
+                    self.slider.setValue(self.knob_to_pos(knob))
+                if source != "typed":
+                    d = PS.knob_to_display(sp, knob)
+                    if kind == "float" and not PS.is_generic(sp):
+                        self.fspin.setValue(float(d))
+                    elif kind == "int":
+                        self.ispin.setValue(int(d))
+                    elif kind == "choice":
+                        self.combo.setCurrentIndex(int(d))
+                    elif kind == "bool":
+                        self.check.setChecked(bool(d))
+            self.label.setText(self.display_text(knob))
+
+        def _emit(self, knob, source):
+            knob = min(1.0, max(0.0, float(knob)))
+            self.set_knob(knob, source=source)
+            if self.changed is not None:
+                self.changed(knob, source)
+
+        def _from_slider(self, pos):
+            self._emit(self.pos_to_knob(pos), "slider")
+
+        def _from_raw(self, v):
+            self._emit(float(v), "raw")
+
+        def _from_typed(self, v):
+            sp = self.spec
+            kind = sp.get("kind", "float")
+            if kind == "choice":
+                v = self.combo.currentIndex()
+            elif kind == "bool":
+                v = self.check.isChecked()
+            self._emit(PS.display_to_knob(sp, v), "typed")
+
+        def typed_value(self):
+            """The current DISPLAYED value (what the typed widget shows)."""
+            kind = self.spec.get("kind", "float")
+            if kind == "int":
+                return self.ispin.value()
+            if kind == "choice":
+                return self.combo.currentIndex()
+            if kind == "bool":
+                return self.check.isChecked()
+            return self.fspin.value()
+
+    return KnobRow
+
+
 def _image_view_class(QtWidgets, QtGui, QtCore):
     """A zoom/pan image viewer (wheel = zoom at cursor, drag = pan)."""
     class ImageView(QtWidgets.QGraphicsView):
-        def __init__(self):
+        #: tests set this False so contextMenuEvent builds the menu without the
+        #: blocking ``QMenu.exec`` (the built menu is kept in ``_last_context_menu``)
+        CONTEXT_MENU_EXEC = True
+
+        def __init__(self, tools=False):
             super().__init__()
             self._scene = QtWidgets.QGraphicsScene(self)
             self.setScene(self._scene)
