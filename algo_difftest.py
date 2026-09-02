@@ -1251,8 +1251,12 @@ def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -
         # independent oracle: sympy.isprime (a full, different primality implementation).
         from sympy import isprime
         errs = []
+        # Domain-aware: out-of-domain -> the op's -1.0 sentinel (0.0 = "composite" is a valid answer).
         for arr, got in zip(holdout, py_out):
-            ref = 1.0 if (arr and _int_in(arr[0], 0.0, 4294967295.0) and isprime(int(arr[0]))) else 0.0
+            if arr and _int_in(arr[0], 0.0, 4294967295.0):
+                ref = 1.0 if isprime(int(arr[0])) else 0.0
+            else:
+                ref = -1.0
             errs.append(_diff01(float(got), ref))
         return max(errs, default=0.0)
     if name == "modular_inverse":
