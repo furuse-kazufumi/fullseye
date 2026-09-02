@@ -948,3 +948,70 @@ class TestAdversarialRegressions:
             tg.ring_artifact_apply(sino, offsets=np.zeros(sino.shape[0]))
         ok = tg.ring_artifact_apply(sino, offsets=np.zeros(sino.shape[1]))
         assert np.allclose(ok, sino)
+
+    # -- the 2026-09-02 ledger pass: two more silent unit/estimator bugs -------
+    @pytest.mark.parametrize("n", [100, 180, 720])
+    def test_a_golden_angle_scan_infers_the_full_half_turn(self, n):
+        """Measured before the fix: 162.8 degrees inferred for 180 views (n=180),
+        146.4 for 100 and 153.7 for 720 — the reconstruction 9.6-19 % too dark.
+
+        A golden-angle set has, by the three-gap theorem, exactly three distinct
+        neighbour spacings, and ``median_step * n_angles`` picks the wrong one.
+        The views cover the whole half-turn (largest gap 1.46 degrees at 180
+        views), so the inferred span must be 180 like the uniform grid's.
+        """
+        a = tg.projection_angles(n, 180.0, "golden")
+        inferred = np.rad2deg(tg._span_weight(a, None, "t") * n)
+        assert inferred == pytest.approx(180.0, abs=1e-9)
+        # and the weight is what the explicit span gives, so the two routes agree
+        assert tg._span_weight(a, None, "t") == pytest.approx(
+            tg._span_weight(a, 180.0, "t"), rel=1e-12)
+
+    def test_a_golden_angle_scan_reconstructs_at_the_uniform_density(self):
+        """The observable consequence: same density with and without span_deg."""
+        a = tg.projection_angles(180, 180.0, "golden")
+        sino = tg.ellipse_sinogram(128, SL_CT, a)
+        implicit = tg.filtered_backprojection(sino, a, size=128)
+        explicit = tg.filtered_backprojection(sino, a, size=128, span_deg=180.0)
+        assert np.allclose(implicit, explicit, rtol=1e-12, atol=1e-12)
+
+    def test_span_inference_is_unchanged_for_regular_schemes(self):
+        """The fix must not move the numbers the limited-angle tables rest on."""
+        cases = {
+            (180.0, 180): 180.0, (90.0, 90): 90.0, (60.0, 30): 60.0,
+            (175.0, 100): 175.0, (178.0, 178): 178.0, (179.0, 179): 179.0,
+            # over a half-turn the redundant views renormalise to pi
+            (360.0, 360): 180.0, (270.0, 270): 180.0, (200.0, 200): 180.0,
+        }
+        for (span, n_v), want in cases.items():
+            a = np.linspace(0.0, span, n_v, endpoint=False)
+            got = np.rad2deg(tg._span_weight(a, None, "t") * n_v)
+            assert got == pytest.approx(want, abs=1e-9), (span, n_v)
+        # a shifted start and a bit-reversed order are still regular
+        for scheme in ("uniform", "bit-reversed"):
+            a = tg.projection_angles(180, 180.0, scheme, start_deg=33.0)
+            assert np.rad2deg(tg._span_weight(a, None, "t") * 180) == pytest.approx(
+                180.0, abs=1e-9)
+        # a limited golden set: the wedge is missing, the covered part is counted
+        a = tg.projection_angles(90, 90.0, "golden")
+        got = np.rad2deg(tg._span_weight(a, None, "t") * 90)
+        assert 85.0 < got <= 90.0 + 1e-9
+
+    @pytest.mark.parametrize("pitch", [0.25, 1.0, 2.0, 7.5])
+    def test_streak_free_radius_is_in_pixels_and_pitch_independent(self, pitch):
+        """Measured before the fix: 28.6 px at 0.5 mm pitch, 114.6 px at 2 mm.
+
+        ``pitch / d_theta`` is a length in mm per radian, not a radius in
+        pixels — the pixel is the unit the radius is quoted in, so the pitch
+        cancels and the streak-free radius is ``1 / d_theta`` regardless of how
+        big a detector bin is.
+        """
+        for n_a, span in ((180, 180.0), (90, 180.0), (45, 90.0)):
+            d = tg.sinogram_design(n_angles=n_a, n_detectors=363, size=256,
+                                   detector_pitch_mm=pitch, span_deg=span)
+            d_theta = np.deg2rad(span) / n_a
+            assert d["streak_free_radius_px"] == pytest.approx(1.0 / d_theta,
+                                                               rel=1e-12)
+            ref = tg.sinogram_design(n_angles=n_a, n_detectors=363, size=256,
+                                     detector_pitch_mm=1.0, span_deg=span)
+            assert d["streak_free_radius_px"] == ref["streak_free_radius_px"]
