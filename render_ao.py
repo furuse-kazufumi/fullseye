@@ -225,10 +225,68 @@ def vertex_occlusion(V, F, n_dirs: int = 64, max_dist: float | None = None,
 # --------------------------------------------------------------------------- #
 # 画面 AO(render_mesh を土台に、頂点 AO を可視面へ焼き込む)                    #
 # --------------------------------------------------------------------------- #
+#: ``method='auto'`` が格子加速へ切り替える閾値(頂点数 × 面数)。既存の小さな
+#: メッシュ(テスト・SDF 彫刻 hero)は従来の頂点ループのまま = 出力不変。
+_GRID_AO_THRESHOLD = 1_000_000_000
+
+
+def vertex_occlusion_grid(V, F, n_dirs: int = 64, max_dist: float | None = None,
+                          eps: float | None = None, grid: int = 64) -> np.ndarray:
+    """頂点 AO ``(N,)`` を **大域方向 × 平行レイ束** で求める(大きなメッシュ向け、格子加速)。
+
+    :func:`vertex_occlusion` は頂点ごとに半球へレイを飛ばす(Python ループが頂点数 ×
+    候補面数)ので、イトカワ実メッシュ(2.5 万頂点 / 4.9 万面 + 岩)では 10 分を超えて
+    hero が描けなかった(2026-09-03 実測)。ここでは方向を先に固定する: 球面上の
+    Fibonacci 方向 ``2·n_dirs`` 本を順に取り、その方向を上半球に含む頂点だけを**平行レイ**
+    として一括で遮蔽判定する(``render_shadow._occluded_parallel`` の光源空間 2-D 格子)。
+    各頂点は平均 ``n_dirs`` 本を見る。cos 重み(``max(n·d, 0)``)の平均が AO。
+    ``max_dist``(既定 = 境界箱対角 × 0.5)より遠い当たりは無視(局所性は同じ)。
+    決定的。fail-closed: 退化メッシュ・非正引数は ``ValueError``。"""
+    import render_shadow
+    Vv, Ff = _as_mesh(V, F)
+    nd = int(n_dirs)
+    if nd < 8:
+        raise ValueError(f"n_dirs must be >= 8 for a stable estimate, got {n_dirs}")
+    diag = _bbox_diag(Vv)
+    md = 0.5 * diag if max_dist is None else float(max_dist)
+    if not np.isfinite(md) or md <= 0.0:
+        raise ValueError(f"max_dist must be positive, got {max_dist!r}")
+    eps_n = 1e-3 * diag if eps is None else float(eps)
+    if not np.isfinite(eps_n) or eps_n < 0.0:
+        raise ValueError("eps must be finite and >= 0")
+    A, B, C = Vv[Ff[:, 0]], Vv[Ff[:, 1]], Vv[Ff[:, 2]]
+    fnorm = np.cross(B - A, C - A)
+    vn = np.zeros_like(Vv)
+    for k in range(3):
+        np.add.at(vn, Ff[:, k], fnorm)
+    mag = np.linalg.norm(vn, axis=1, keepdims=True)
+    vn = np.divide(vn, mag, out=np.zeros_like(vn), where=mag > 1e-12)
+    # 球面 Fibonacci 方向(2·n_dirs 本 → 各頂点の上半球に平均 n_dirs 本)
+    m = 2 * nd
+    i = np.arange(m, dtype=np.float64) + 0.5
+    z = 1.0 - 2.0 * i / m
+    r = np.sqrt(np.maximum(0.0, 1.0 - z * z))
+    phi = i * _GOLDEN
+    dirs = np.stack([r * np.cos(phi), r * np.sin(phi), z], axis=1)
+    O = Vv + vn * eps_n
+    occ_w = np.zeros(Vv.shape[0], np.float64)
+    wsum = np.zeros(Vv.shape[0], np.float64)
+    for d in dirs:
+        cosw = vn @ d
+        idx = np.nonzero(cosw > 0.0)[0]
+        if idx.size == 0:
+            continue
+        blocked = render_shadow._occluded_parallel(O[idx], d, A, B, C, 0.0, int(grid), md)
+        occ_w[idx] += cosw[idx] * blocked
+        wsum[idx] += cosw[idx]
+    ao = 1.0 - np.divide(occ_w, wsum, out=np.zeros_like(occ_w), where=wsum > 0.0)
+    return np.clip(ao, 0.0, 1.0)
+
+
 def ambient_occlusion(V, F, pose=None, intrinsics=None, width: int = 256,
                       height: int = 256, n_dirs: int = 64,
                       max_dist: float | None = None, k: int = 3,
-                      background: float = 1.0) -> np.ndarray:
+                      background: float = 1.0, method: str = "auto") -> np.ndarray:
     """メッシュを AO マップ画像 ``(H, W)`` [0,1] にレンダリングして返す。
 
     ``render3d.render_mesh`` で depth / silhouette / **三角形 id と透視補正重心座標** を得て

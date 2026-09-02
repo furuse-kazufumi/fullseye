@@ -318,6 +318,7 @@ def optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4
     merit = float(np.dot(r, r))
     history = [merit]
     steps = {"c": 1e-5, "t": 1e-3, "k": 1e-3, "A": None}
+    ap_scale = max(1.0, float(system["surfaces"][system["stop"]]["ap"] or 1.0))
     converged = False
     small_count = 0
     it = 0
@@ -327,7 +328,10 @@ def optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4
         for j, var in enumerate(varlist):
             kind = var[0]
             if kind == "A":
-                h = 1e-4 * max(1.0, abs(x[j])) * (0.1 ** var[2])   # higher orders: smaller coefficients
+                # a coefficient step that moves the sag at the stop edge by ~1e-4 mm
+                # (A4 of a 50 mm radius is ~1e-6 mm^-3: an absolute step would be
+                # either useless or wildly nonlinear)
+                h = 1e-4 / (ap_scale ** (4 + 2 * var[2]))
             else:
                 h = steps[kind] * max(1.0, abs(x[j]))
             xp = x.copy(); xp[j] += h
