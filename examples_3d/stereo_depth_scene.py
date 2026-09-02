@@ -16,6 +16,15 @@ stereo.disparity_map で視差を推定し、stereo.depth_from_disparity で奥�
   有利な単一定数(=真の奥行きの平均)を null に取っても、実 op のパッチ毎相対誤差はその
   null 誤差を桁で下回る(実誤差平均 < 5% × null 誤差平均)。視差ゼロ null は奥行き∞(全外れ)。
 """
+# repo をそのまま clone した状態(pip install -e . を打っていない / install の
+# マッピングが古い)でも動くように、リポジトリ直下を import パスへ入れる。
+# 2026-09-02 実測: これが無い 29 本は editable install に寄生しており、
+# finder の MAPPING から torch_lazy が抜けた瞬間に 6 本が ModuleNotFoundError
+# で全滅した(docs/OP_CATALOG.md は裸の起動コマンドを載せている)。
+import os as _os
+import sys as _sys
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 import numpy as np
 import stereo
 

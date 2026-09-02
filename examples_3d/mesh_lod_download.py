@@ -21,6 +21,15 @@ QEM と拮抗する — QEM はここで圧勝しない。意味のある差は�
 破綻し、形状保存の帯(A3)を明確に踏み外す(A6)。=「面数を合わせる」だけでは GT を
 満たせず、表面を実際に保つ QEM が要る、を判別的に示す。
 """
+# repo をそのまま clone した状態(pip install -e . を打っていない / install の
+# マッピングが古い)でも動くように、リポジトリ直下を import パスへ入れる。
+# 2026-09-02 実測: これが無い 29 本は editable install に寄生しており、
+# finder の MAPPING から torch_lazy が抜けた瞬間に 6 本が ModuleNotFoundError
+# で全滅した(docs/OP_CATALOG.md は裸の起動コマンドを載せている)。
+import os as _os
+import sys as _sys
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 import sys
 import numpy as np
 

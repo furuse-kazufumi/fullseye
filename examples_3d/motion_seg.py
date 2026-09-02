@@ -4,6 +4,15 @@
 #   運動の一致だけを手がかりに切り分ける(どちらの点がどの物体かの事前ラベルは無い)。
 #   さらに、動きに何の規則も無いバラバラのノイズ点群からは「物体があるフリ」をせず
 #   0 個と答える(honest = 存在しない剛体を捏造しない)ことを確かめる。
+# repo をそのまま clone した状態(pip install -e . を打っていない / install の
+# マッピングが古い)でも動くように、リポジトリ直下を import パスへ入れる。
+# 2026-09-02 実測: これが無い 29 本は editable install に寄生しており、
+# finder の MAPPING から torch_lazy が抜けた瞬間に 6 本が ModuleNotFoundError
+# で全滅した(docs/OP_CATALOG.md は裸の起動コマンドを載せている)。
+import os as _os
+import sys as _sys
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 import numpy as np
 import motion_seg3d as ms
 

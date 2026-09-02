@@ -12,6 +12,15 @@ LiDAR や深度カメラの点群は数十万〜数百万点あり、密度も�
 ハウスドルフ距離で測る。voxel は理論上 ~v で抑えられ、**同数のランダム間引き**より
 必ず良い(ランダムは疎な穴を作る)。これで beat-the-null。
 """
+# repo をそのまま clone した状態(pip install -e . を打っていない / install の
+# マッピングが古い)でも動くように、リポジトリ直下を import パスへ入れる。
+# 2026-09-02 実測: これが無い 29 本は editable install に寄生しており、
+# finder の MAPPING から torch_lazy が抜けた瞬間に 6 本が ModuleNotFoundError
+# で全滅した(docs/OP_CATALOG.md は裸の起動コマンドを載せている)。
+import os as _os
+import sys as _sys
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 import numpy as np
 import pcl_filter
 import pcseg

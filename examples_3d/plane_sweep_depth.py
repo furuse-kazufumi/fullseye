@@ -2,6 +2,15 @@
 #   カメラ姿勢が既知の2枚から、画素ごとの奥行き(深度マップ)を作る。
 #   奥行き候補を並べ、各候補で片方の画像をもう片方へ射影ワープし、
 #   輝度が最も一致する奥行きを画素ごとに選ぶ(winner-take-all)。
+# repo をそのまま clone した状態(pip install -e . を打っていない / install の
+# マッピングが古い)でも動くように、リポジトリ直下を import パスへ入れる。
+# 2026-09-02 実測: これが無い 29 本は editable install に寄生しており、
+# finder の MAPPING から torch_lazy が抜けた瞬間に 6 本が ModuleNotFoundError
+# で全滅した(docs/OP_CATALOG.md は裸の起動コマンドを載せている)。
+import os as _os
+import sys as _sys
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 import numpy as np
 import plane_sweep
 

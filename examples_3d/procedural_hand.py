@@ -11,6 +11,15 @@ CADや計測に頼らず、解剖の知識だけから 3D モデルを作れる�
 同じ体積の**単一球**を null として同じ計測をすると指の本数は 1 にしかならない。
 「手 >= 4 本 / 球 = 1 本」で、blob ではなく手の骨格になっていることを判別的に示す。
 """
+# repo をそのまま clone した状態(pip install -e . を打っていない / install の
+# マッピングが古い)でも動くように、リポジトリ直下を import パスへ入れる。
+# 2026-09-02 実測: これが無い 29 本は editable install に寄生しており、
+# finder の MAPPING から torch_lazy が抜けた瞬間に 6 本が ModuleNotFoundError
+# で全滅した(docs/OP_CATALOG.md は裸の起動コマンドを載せている)。
+import os as _os
+import sys as _sys
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 import numpy as np
 from scipy import ndimage
 import sdf_ops

@@ -1,6 +1,15 @@
 # 事例: 2視点からの相対カメラ姿勢(SfM初期化)
 #   2枚の画像で撮った同じシーンの対応点だけから、カメラがどれだけ動いたか
 #   (回転と並進の向き)と、点群の3D位置を復元する。SfM/VOの出発点。
+# repo をそのまま clone した状態(pip install -e . を打っていない / install の
+# マッピングが古い)でも動くように、リポジトリ直下を import パスへ入れる。
+# 2026-09-02 実測: これが無い 29 本は editable install に寄生しており、
+# finder の MAPPING から torch_lazy が抜けた瞬間に 6 本が ModuleNotFoundError
+# で全滅した(docs/OP_CATALOG.md は裸の起動コマンドを載せている)。
+import os as _os
+import sys as _sys
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 import numpy as np
 import twoview
 

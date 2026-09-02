@@ -13,6 +13,15 @@ Frangi の上限を超えて弾かれる (2) 4倍間引きで上限内に収ま�
 (3) **max プールは 8 欠陥を全て残すが mean プールは薄めて消す**(閾値+ラベリングで
 計数)。max と mean の差で「なぜ欠陥検出には max か」を判別的に示す(beat-the-null)。
 """
+# repo をそのまま clone した状態(pip install -e . を打っていない / install の
+# マッピングが古い)でも動くように、リポジトリ直下を import パスへ入れる。
+# 2026-09-02 実測: これが無い 29 本は editable install に寄生しており、
+# finder の MAPPING から torch_lazy が抜けた瞬間に 6 本が ModuleNotFoundError
+# で全滅した(docs/OP_CATALOG.md は裸の起動コマンドを載せている)。
+import os as _os
+import sys as _sys
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 import numpy as np
 from scipy import ndimage
 import volops

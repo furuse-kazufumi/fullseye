@@ -9,6 +9,15 @@
 という前処理を行い、(a)段差が残る (b)ノイズが減る (c)穴が平面値で埋まる を数値で確認する。
 対照として素朴ガウスが段差をぼかすことも示す(bilateral の優位の判別)。
 """
+# repo をそのまま clone した状態(pip install -e . を打っていない / install の
+# マッピングが古い)でも動くように、リポジトリ直下を import パスへ入れる。
+# 2026-09-02 実測: これが無い 29 本は editable install に寄生しており、
+# finder の MAPPING から torch_lazy が抜けた瞬間に 6 本が ModuleNotFoundError
+# で全滅した(docs/OP_CATALOG.md は裸の起動コマンドを載せている)。
+import os as _os
+import sys as _sys
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 import numpy as np
 from scipy import ndimage
 import depth_bilateral as DB
