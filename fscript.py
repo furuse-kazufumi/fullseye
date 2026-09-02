@@ -1180,7 +1180,14 @@ def _b_invert_image(env, img):
 
 
 def _b_threshold(env, img, lo, hi):
-    return fslib.threshold(_as_fimage(img), float(lo), float(hi))
+    """``threshold(Image, lo, hi)`` in the language's grey unit: a fraction of
+    the image's declared value range (0 = range low, 1 = range high), the same
+    unit ``mean_gray`` / ``min_gray`` / ``max_gray`` report in — so
+    ``threshold(Image, mean_gray(Image), max_gray(Image))`` means the same on
+    an 8-bit frame as on a float one."""
+    return fslib.threshold(_as_fimage(img),
+                           float(_as_number(lo, "threshold lo")),
+                           float(_as_number(hi, "threshold hi")))
 
 
 def _b_binary_threshold(env, img):
