@@ -579,6 +579,12 @@ from optics import (  # noqa: E402,F401
     jones_element, jones_apply, stokes_from_jones,
     mueller_element, mueller_apply, stokes_analyze,
 )
+from raytrace import (  # noqa: E402,F401  (lens design: real rays beyond the paraxial optics module)
+    lens_system, thick_lens, glass, refractive_index, example_system,
+    paraxial_trace, trace_rays, ray_bundle, spot_diagram, spot_stats, ray_fan,
+    opd_map, opd_samples, wavefront_from_opd, seidel_coefficients,
+    tolerance_analysis,
+)
 
 __all__ = [
     "apply", "run_pipeline", "find_op", "list_ops", "op_names",
