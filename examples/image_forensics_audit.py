@@ -236,10 +236,14 @@ def main():
     assert est_clean["quality"] is None and est_clean["jpeg_compressed"] is False
 
     ela = F.error_level_map(submitted, 90)
+    # 貼り込みの内側は縁を 8 px 削って測る(block=16 の平滑が境界をまたぐため)。
+    # 外側は貼り込みから 16 px 以上離れた場所だけ。
     inside = np.zeros((N, N), bool)
-    inside[SPLICE] = True
-    border = ndimage.binary_dilation(inside, np.ones((9, 9))) & ~inside
-    outside = ~ndimage.binary_dilation(inside, np.ones((17, 17)))
+    inside[SPLICE.__getitem__(0).start + 8:SPLICE[0].stop - 8,
+           SPLICE[1].start + 8:SPLICE[1].stop - 8] = True
+    spliced = np.zeros((N, N), bool)
+    spliced[SPLICE] = True
+    outside = ~ndimage.binary_dilation(spliced, np.ones((33, 33)))
     ratio_ela = float(ela[inside].mean() / ela[outside].mean())
     print(f"   ELA(再圧縮品質 90): 貼り込み内 {ela[inside].mean():.4f} / "
           f"外 {ela[outside].mean():.4f} = {ratio_ela:.2f} 倍")
