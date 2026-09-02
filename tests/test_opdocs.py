@@ -485,3 +485,48 @@ def test_no_dangling_relative_links_in_corpus():
     assert not dangling, ("dangling relative links in the op-docs corpus "
                           "(often a docstring with an accidental [x](y) — add a space, e.g. "
                           "'[-1,1] (...)'):\n" + "\n".join(dangling[:30]))
+
+
+# --------------------------------------------------------------------------- #
+# generated ledgers (OP_CATALOG.md / SENSOR_PLAYBOOK.md) must not drift          #
+# --------------------------------------------------------------------------- #
+def _diff_summary(expected: str, on_disk: str, limit: int = 12) -> str:
+    import difflib
+    d = difflib.unified_diff(on_disk.splitlines(), expected.splitlines(),
+                             "committed", "generator", lineterm="", n=0)
+    lines = [l for l in d if l.startswith(("+", "-")) and not l.startswith(("+++", "---"))]
+    return "\n".join(lines[:limit]) + ("\n..." if len(lines) > limit else "")
+
+
+def _assert_no_drift(md: str, rel_paths, regen_cmd: str):
+    """Committed copy == in-memory generator output (no file side effects, like
+    test_notes_match_generator_no_drift). Both the docs/ copy and the shipped fullseye/
+    copy (the one that goes into the wheel) are checked."""
+    drift = []
+    for rel in rel_paths:
+        p = os.path.join(ROOT, rel)
+        assert os.path.exists(p), f"{rel} missing — run `{regen_cmd}`"
+        with open(p, encoding="utf-8") as f:
+            on_disk = f.read()
+        if on_disk != md:
+            drift.append(f"{rel}:\n{_diff_summary(md, on_disk)}")
+    assert not drift, (f"generated ledger is stale — run `{regen_cmd}`:\n" + "\n".join(drift))
+
+
+def test_op_catalog_matches_generator_no_drift():
+    """docs/OP_CATALOG.md drifted from tools/gen_op_catalog.py (2026-09-02 audit: 4 op names
+    listed twice, tb_* out-types stale, a removed op still listed). This pins it."""
+    import gen_op_catalog as GC
+    _assert_no_drift(GC.build_catalog(), ("docs/OP_CATALOG.md", "fullseye/OP_CATALOG.md"),
+                     "py -3.11 tools/gen_op_catalog.py")
+
+
+def test_sensor_playbook_matches_generator_no_drift():
+    """docs/SENSOR_PLAYBOOK.md == tools/gen_sensor_playbook.py output, and every op the
+    curated sensor->pipeline map names resolves in the ops3d registry (no '(未登録)')."""
+    import gen_sensor_playbook as SP
+    md, unresolved = SP.build()
+    assert not unresolved, f"SENSOR_PLAYBOOK names ops that are not registered: {unresolved}"
+    assert "(未登録" not in md
+    _assert_no_drift(md, ("docs/SENSOR_PLAYBOOK.md", "fullseye/SENSOR_PLAYBOOK.md"),
+                     "py -3.11 tools/gen_sensor_playbook.py")
