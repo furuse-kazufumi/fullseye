@@ -1,37 +1,21 @@
-# 次セッション引き継ぎ — 徹底敵対レビュー完結(2026-09-03)
+# 次セッション引き継ぎ — 光学第 2 波 + イトカワ物理(2026-09-03 朝)
 
 ## 正本
-- 全体記録: raptor memory `project_fullseye_adversarial_review_2026_09_03`
-- 構造設計の根拠: `docs/design/TRIZ_DESIGN_PATTERN_MATRIX.md`(TRIZ 40 原理 × パターン / パターン × コンテナ / 原理 × コンテナ、4 軸 + 短所カバー列)
-- 利用者向け説明: `docs/KNOWN_ISSUES.md` 末尾「fail-soft の 3 層沈黙」/ `docs/GETTING_STARTED.md` §2
-- 前回の台帳(2026-09-02): `out/robustness-audit-2026-09-02/LEDGER.md`(その残 8 件はすべて修正済)
+- 今回の記録: raptor memory `project_fullseye_optics_wave2_2026_09_03`(前回 = `project_fullseye_adversarial_review_2026_09_03`)
+- 光学ガイド: `docs/ops/optics/guides/optics_imaging.md`(design / optimization / illumination / imaging_sim の 4 節、全 snippet 実行検証)
+- 例: `examples/lens_optimize_demo.py` / `examples/illumination_design_demo.py` / `examples/lens_calibration_loop_demo.py` / `examples/lens_defect_dataset_demo.py` / `examples_3d/itokawa_regolith_hero.py`(すべて PASS 終端)
 
-## この回でやったこと(2026-09-02 夜〜09-03)
-1. **構造修正**: backends 31 本中 23 本(+ macro/typed の 2 家族)が独自 `_safe` で記録なし → `backend_safe.guard()` に一元化。
-   `apply/run_pipeline(on_error="fallback"|"warn"|"raise")`、`fullseye.fallbacks()` 台帳(deque 256、出所 op/gpu/input/import)、
-   op ごと 1 回の `FullseyeFallbackWarning`、GPU Circuit Breaker(`reset_gpu()`)、strict は thread-local。
-   facade の穴: nary 17 op を `apply([x1,x2], name)` で、`template=`、HALCON 曖昧別名テーブル。Codex 読取レビュー 2 巡目 13 件反映。
-2. **敵対レビュー 7 領域 → 修正完了**: fscript 14 / studio 11 / 体積+IO 15 / 計測系 11+細部 / 3D 幾何 7 / 進化+backends 6 / algo+C 8。
-   すべて再現手順付き・修正後の数値で確認(各エージェント報告は memory に要約)。
-3. **CI 常設**: `tests/test_op_probe_ledger.py` + `docs/OP_PROBE_ALLOWLIST.json`(退化 27 件を理由付き許容、新規は fail)、
-   typed liveness に sort 跨ぎ恒等/定数/3ch 検査、OP_CATALOG/SENSOR_PLAYBOOK drift、examples2d 両方向検査、ci.yml `-rs`。
-4. **Studio UI 4 本柱**: `param_specs.py`(81 op 手書き検証 + 66 doc 由来)、右クリック全ビュー、副窓対称化、Insert→行生成、Ctrl+F 等。
-5. **記事**: 数値を 2D 860 / 3D 310 / HALCON 981(42.4%)へ、`tools/gen_article_assets.py` は記事本文を単一情報源として照合、
-   図・サムネ再生成、wingopt サムネのコードスパンをリンク化、`tools/qiita_patch_overview.py`(GET 退避→検査→PATCH→検証)。
-
-## 利用者が気づく挙動変更(要リリースノート)
-- `fscript`: `mean_gray/min_gray/max_gray` は 0..1 比率 / 署名済みレシピは digest 変更で再署名要 / `read_image` は `base_dir` 内に限定 / タプル演算・添字・数値字句が厳格化
-- `measuring1d`: `amplitude` = 濃度差(旧 勾配ピーク ≈0.32×)、`threshold` も濃度差基準、`row/col/dist` 追加 / `metrology` は実形状で再フィット
-- `calib.camera_calibration` は (row,col) 入力 / `caltab.find_marks_and_pose` は失敗で例外(旧 identity)
-- `algo`: 番兵 0.0→−1.0(`is_prime`/`segments_intersect`/`edit_distance`/`point_in_polygon`/`lcs_length`)、2^53 超の整数は ValueError、graph n ≤ 5e6
-- `imgio.save` は uint8 を彩色しない / 切れた JPEG は ValueError / 偶数線幅が 1px 細く / `to_float01(int16)` はアフィン
-- `pnp3d`: 完全平面入力は例外でなく平面経路で解く / `bundle3d` は scale_anchor で尺度固定 / `register(init="auto")`
-- `apply` 既定で op ごと 1 回の警告が出る(`warnings.filterwarnings("ignore", category=fullseye.FullseyeFallbackWarning)` で消せる)
+## この回でやったこと
+1. **raytrace 拡張**: 実硝材カタログ `glass_catalog`(Sellmeier 20 種、refractiveindex.info ミラーで定数照合)/ `sellmeier` / 非球面 `asph=(A4,A6,…)`(Newton 交点・サグ勾配法線・Seidel 4 次項)/ `chromatic_shift` / `chief_ray`(実絞り中心への Newton エイミング — 従来の近軸瞳狙いは絞りが強い面の後ろにあると外れていた)/ `example_system("asphere"|"catalog_doublet")`。
+2. **lensopt.py(optimization 3 op)**: 減衰最小二乗 `optimize_lens`(変数 R/t/k/A4.. 文字列、EFL 拘束、毎歩再検証、bounds は初期値にも、status)/ `merit_function` / `bend_singlet`。Coddington・Descartes・A4=kc³/8 の閉形式で検証。
+3. **illumdesign.py(illumination 6 op)**: 光源族 → 放射照度(cos⁴ 則)→ 一様性 → 欠陥コントラスト(傾き面/荒れ/顔料、Lambert+GGX、同軸は面光源+鏡面ヒット)→ 仰角スイープ(鏡面で 90°−2×斜面)→ 候補族の順位表(コントラスト × 背景輝度一様性、経験則との一致/不一致を明示)。
+4. **lensimage.calibration_views(imaging_sim 5 op 目)**: 設計レンズの実歪曲で校正多視点を合成 → `calib.camera_calibration` の閉ループ(放物面鏡 1e-10、singlet で歪曲バイアス検出)。
+5. **Agent 2 本の成果**: lensimage(PSF/歪曲/レンズ越し描画/欠陥データセット)、イトカワ(Lommel–Seeliger/Hapke、レイキャスト影 0.53°、fBm 起伏、岩塊 N(>D)∝D^−3.1、`render_regolith`、AMICA 実画像 4 指標比較、記事 ja/en に新静止画)。
+6. Codex 読取レビュー 10 件を実コード検証のうえ全件反映(主光線エイミング、荒れ面エネルギー保存、bounds、stalled、空気層公差、領域ブレンド、零長方向、bool/str 拒否、Sellmeier 検証、端落ち)。
+7. 台帳 opsoptics 34 → **47 op / 8 カテゴリ**、docs/OP_CATALOG/Studio help 再生成、テスト群 330 passed(光学系)+ opdocs 43。
 
 ## 次にやること(優先順)
-1. ~~git push → Qiita PATCH~~ **完了(2026-09-03 03:04)**: push `0cfd1201a..7030e3458`、ja/en PATCH 200・本文長一致を検証。
-   次回以降の記事更新は `py -3.11 tools/qiita_patch_overview.py --check` → 同 `(no flag)` の 2 手。
-2. PyPI リリース(v0.1.4): 上記「挙動変更」をリリースノートに。`docs/GENERAL_ALGORITHMS.md` 末尾の番兵注記を README にも。
-3. TRIZ マトリクスの推奨 Top-5 の未実施分: `fullseye.selfcheck()`(プローブ + 台帳を 1 コマンドに)/ typed ブリッジの `_EMPTY_OF` 欠落 2 sort(lightfield, histcube; wide vocab)/ `tb_euclidean_cluster` 常時ゼロ(tol 配線)。
-4. 未対応の細目: `pow_mod/gcd_seq/popcount_total/polygon_area2` の 0.0 番兵衝突 / `xcv2_hitmiss` の knob 未使用 / render_mesh スムーズシェーディング(設計判断待ち)/ ファザー「呼べたが毎回拒否」35 件(合成シーン要)。
-5. raptor upstream 同期(`update/upstream-2026-09-02` ブランチ、373 ファイル/13 コンフリクト)は保留のまま。
+1. **push → Qiita PATCH**: `git push origin master` 後に `py -3.11 tools/qiita_patch_overview.py --check` → 同 `(no flag)`(イトカワ新静止画 `docs/articles/assets/itokawa_regolith_hero.png` の raw URL は push 後に 200 になる)。フルスイート 3 分割の結果を先に確認。
+2. v0.1.4 リリースノート(前回の「利用者が気づく挙動変更」+ 今回の 47 op 化・`_finite` の bool/str 拒否・`optimize_lens` の status)。
+3. 光学の残候補: 多重反射/相互反射(照明・イトカワ共通)、異方性 BRDF(ヘアライン金属)、ゴースト/迷光解析、テレセントリック計測誤差予算、センサ RS/PRNU/HDR、多色 PSF(lensimage は単色)。
+4. 前回からの残: `fullseye.selfcheck()`、typed `_EMPTY_OF`(lightfield/histcube)、`tb_euclidean_cluster` tol、0.0 番兵 4 件、`xcv2_hitmiss` knob、render_mesh スムーズシェーディング(→ `smooth_normals` で render_beauty 側は対応済)、ファザー拒否 35 件、raptor upstream 同期。
