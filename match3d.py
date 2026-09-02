@@ -38,6 +38,42 @@ def _f32_finite(arr, name):
 # ═══════════════════════════════════════════════════════════════════════════
 # データ変換(構造 → 共通の voxel / 勾配 表現)
 # ═══════════════════════════════════════════════════════════════════════════
+def _lo_hi(bounds):
+    """``bounds=(lo, hi)``(3 次元ベクトル 2 本)を検証して返す。fail-closed。
+
+    このライブラリには ``bounds`` の流儀が 3 つある(2026-09-02 実測):
+
+    * ここ(match3d)      … ``(lo, hi)`` = 3 次元ベクトル 2 本
+    * tsdf_fusion / occupancy(3-D) … ``((xmin,xmax),(ymin,ymax),(zmin,zmax))``
+    * occupancy(2-D)     … ``(xmin, xmax, ymin, ymax)`` の平坦 4 要素
+
+    取り違えても黙って別の体積が出ることは無い(確認済み)が、これまでは
+    ``operands could not be broadcast together with shapes (200,3) (2,)`` という
+    **素の numpy エラー**が漏れていた。それだと「op の契約の穴」なのか
+    「引数の流儀違い」なのかが呼び手に分からない。何が来たかを名指しする。
+    """
+    try:
+        lo = np.asarray(bounds[0], np.float64).reshape(-1)
+        hi = np.asarray(bounds[1], np.float64).reshape(-1)
+    except (TypeError, IndexError, KeyError) as exc:
+        raise ValueError(
+            "bounds must be (lo, hi) with two length-3 vectors; got %r" % (bounds,)
+        ) from exc
+    if lo.size != 3 or hi.size != 3:
+        raise ValueError(
+            "bounds must be (lo, hi) with two length-3 vectors, got lengths "
+            "%d and %d — note tsdf_fusion / occupancy use the other convention "
+            "((xmin,xmax),(ymin,ymax),(zmin,zmax)), which lands here as length 2"
+            % (lo.size, hi.size))
+    if not (np.all(np.isfinite(lo)) and np.all(np.isfinite(hi))):
+        raise ValueError("bounds contain non-finite values: lo=%r hi=%r"
+                         % (lo.tolist(), hi.tolist()))
+    if not np.all(hi > lo):
+        raise ValueError("bounds must satisfy hi > lo on every axis; got lo=%r hi=%r"
+                         % (lo.tolist(), hi.tolist()))
+    return lo, hi
+
+
 def points_to_voxel(points, size, bounds=None, device="cpu", smooth=0.0):
     """点群 (N,3) → 密度 voxel (size³)。scatter_add で splat、任意で gaussian 平滑。
 
@@ -47,7 +83,7 @@ def points_to_voxel(points, size, bounds=None, device="cpu", smooth=0.0):
     if bounds is None:
         lo, hi = P.min(0), P.max(0)
     else:
-        lo, hi = np.asarray(bounds[0], np.float64), np.asarray(bounds[1], np.float64)
+        lo, hi = _lo_hi(bounds)
     span = np.maximum(hi - lo, 1e-9)
     idx = np.clip(np.floor((P - lo) / span * (size - 1)).astype(np.int64), 0, size - 1)
     flat = (idx[:, 0] * size + idx[:, 1]) * size + idx[:, 2]
@@ -68,7 +104,7 @@ def gaussians_to_voxel(means, scales, opacities, size, bounds, device="cpu"):
     """
     P = np.asarray(means, np.float64)
     op = np.asarray(opacities, np.float64).reshape(-1)
-    lo, hi = np.asarray(bounds[0], np.float64), np.asarray(bounds[1], np.float64)
+    lo, hi = _lo_hi(bounds)
     span = np.maximum(hi - lo, 1e-9)
     idx = np.clip(np.floor((P - lo) / span * (size - 1)).astype(np.int64), 0, size - 1)
     flat = (idx[:, 0] * size + idx[:, 1]) * size + idx[:, 2]
@@ -1771,7 +1807,7 @@ def tsdf_from_depth(depth, fx, fy, cx, cy, size=64, bounds=None, trunc=3.0):
     if bounds is None:
         lo, hi = pts.min(0) - 2, pts.max(0) + 2
     else:
-        lo, hi = np.asarray(bounds[0], float), np.asarray(bounds[1], float)
+        lo, hi = _lo_hi(bounds)
     span = np.maximum(hi - lo, 1e-9)
     zz, yy, xx = np.mgrid[0:size, 0:size, 0:size]
     wz = lo[2] + (zz + 0.5) / size * span[2]
