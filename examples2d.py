@@ -147,6 +147,11 @@ EXAMPLES = [
      "summary": "処方(lens_system)から近軸表・面ごとの Seidel・軸上/5 deg のスポット RMS・"
                 "OPD→Zernike・Monte-Carlo 公差 p95 を出し、閉形式(thick_lens / 放物面鏡の"
                 "完全結像)と突き合わせる。"},
+    {"id": "lens_defect_dataset_demo", "task": "optics_sensing", "data": "synthetic",
+     "name": "設計したレンズで欠陥画像を撮る(lensimage)— PSF・歪曲・センサ雑音つき学習データ",
+     "summary": "singlet / doublet の実収差瞳から回折 PSF(Airy 第 1 暗環・Strehl)と歪曲表を出し、"
+                "defectgen の欠陥をレンズ越しに描いて、同じ歪曲だけ通したマスク(IoU)と "
+                "COCO 風注釈を書き出す。"},
     {"id": "lightfield_depth", "task": "optics_sensing", "data": "synthetic",
      "name": "ライトフィールド 17 op で plenoptic 検査機を通す",
      "summary": "画素/MLA ピッチから角度・空間分解能と基線長を設計し、センサ生データ→"
