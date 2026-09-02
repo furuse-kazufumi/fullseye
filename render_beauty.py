@@ -281,6 +281,9 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
     k_bounce = float(self_illumination)
     if not np.isfinite(k_bounce) or k_bounce < 0.0:
         raise ValueError(f"self_illumination must be finite and >= 0, got {self_illumination!r}")
+    alb_var = float(albedo_variation)
+    if not np.isfinite(alb_var) or alb_var < 0.0 or alb_var >= 1.0:
+        raise ValueError(f"albedo_variation must be in [0, 1), got {albedo_variation!r}")
 
     hs = sz * ss                                         # 高解像度の一辺
 
