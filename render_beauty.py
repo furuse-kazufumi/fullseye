@@ -410,6 +410,15 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
             kd_map[is_object] = 1.0
             ks_map[is_object] = 0.0
             diff = np.where(is_object, radf, diff)
+        if alb_var > 0.0 and is_object.any():
+            # アルベドの空間むら(1 ± albedo_variation の fBm、ワールド座標で決定的)。
+            # イトカワは明るい/暗い地形が 1〜2 割の反射率差を持つ(Saito et al. 2006)。
+            Pw_obj = render_shadow.unproject_to_world(depth, P, Khi) if not ground_shadow else Pw
+            pts = Pw_obj[is_object]
+            diag = float(np.linalg.norm(Vv.max(axis=0) - Vv.min(axis=0)))
+            sc = diag / 6.0 if albedo_scale is None else float(albedo_scale)
+            fb = render3d.fbm_noise(pts, sc, octaves=3, seed=int(seed))
+            alb_map[is_object] *= (1.0 + alb_var * fb)[:, None]
 
         # 環境光(AO で遮蔽・影には残す)+ 拡散(AO と影)+ 鏡面(影)。
         ambient_rgb = ka * alb_map * ao_map[..., None]
