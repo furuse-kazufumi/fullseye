@@ -13,7 +13,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 # cast_shadow — 3D `render` op
 
 - **データ種**: `mesh × vector` → `image2d`
-- **呼び出し**: `import render_shadow; render_shadow.cast_shadow(V, F, light, *, pose=None, intrinsics=None, width: 'int' = 256, height: 'int' = 256, directional: 'bool' = True, penumbra: 'float' = 0.0, samples: 'int' = 16, shadow_res: 'int' = 512, bias=None) -> 'np.ndarray'` (または `ops3d.get("cast_shadow")`)
+- **呼び出し**: `import render_shadow; render_shadow.cast_shadow(V, F, light, *, pose=None, intrinsics=None, width: 'int' = 256, height: 'int' = 256, directional: 'bool' = True, penumbra: 'float' = 0.0, samples: 'int' = 16, shadow_res: 'int' = 512, bias=None, pcf: 'int' = 0) -> 'np.ndarray'` (または `ops3d.get("cast_shadow")`)
 
 ## 使い方
 

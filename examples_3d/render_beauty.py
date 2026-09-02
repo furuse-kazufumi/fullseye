@@ -387,7 +387,11 @@ def main() -> int:
         albedo=(0.90, 0.62, 0.30), light=(0.45, 0.55, 0.75), ambient=0.10,
         ao=True, ground_shadow=True, tonemap="aces", exposure=1.25,
         background=(0.07, 0.08, 0.10), ao_samples=48, shadow_res=512,
-        penumbra=2.2, shadow_samples=6)
+        # 半影の幅 ≈ 遮蔽物の高さ × tan(角半径)。2.2 度では 1〜2 画素にしかならず、
+        # 実測でも半影は 283/102400 画素・値の種類は 7 段だけ = 事実上ハード影だった。
+        # 12 度まで上げ、段が見えないようサンプルを増やし、shadow map の参照も
+        # 近傍混合(pcf)にする。地面の上の隣接画素の最大変化 0.667 → 0.176。
+        penumbra=12.0, shadow_samples=24, shadow_pcf=1)
     hero_path = _REPO_ROOT / "examples_3d" / "_gallery" / "render_beauty_hero.png"
     saved = save_png(hero, hero_path)
     print(f"[hero] {hero.shape} 値域[{hero.min():.3f},{hero.max():.3f}] "
