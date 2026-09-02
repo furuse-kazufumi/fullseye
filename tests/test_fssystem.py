@@ -180,3 +180,68 @@ def test_extra_checks_does_not_fire_when_there_is_nothing_to_object_to():
     with S.system(extra_checks="on"):
         out = CT.histogram_match(continuous, rng.normal(0.5, 0.2, 256), ties="break")
     assert out.shape == continuous.shape
+
+
+# =========================================================================
+# 4. 「効いていない設定」を表が正直に言っているか(grep で裏を取る、fail-closed)
+# =========================================================================
+
+_REPO = pathlib.Path(__file__).resolve().parents[1]
+
+
+def _readers_of(name):
+    """``get_system("<name>")`` を実際に呼ぶリポジトリ直下の .py ファイル名。"""
+    pat = re.compile(r"""get_system\(\s*['"]%s['"]\s*\)""" % re.escape(name))
+    hits = set()
+    for p in _REPO.glob("*.py"):
+        if p.name in ("fssystem.py",):
+            continue
+        try:
+            text = p.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue
+        if pat.search(text):
+            hits.add(p.name)
+    return hits
+
+
+def test_every_parameter_declares_who_applies_it():
+    """``applied_by`` は必須。None(予約)なら doc に予約と書いてあること。"""
+    for name, spec in S.SYSTEM_PARAMS.items():
+        assert "applied_by" in spec, f"{name}: applied_by が無い"
+        if spec["applied_by"] is None:
+            assert "予約" in spec["doc"] or "reserved" in spec["doc"].lower(), \
+                f"{name}: 読み手が無いのに doc が予約と言っていない"
+        else:
+            assert isinstance(spec["applied_by"], tuple) and spec["applied_by"], name
+
+
+def test_declared_readers_really_read_and_reserved_params_are_read_by_nobody():
+    """名乗った読み手は本当に get_system を呼び、予約と言った物は誰も読まない。
+
+    数値に影響する(affects_numbers)のに読み手が無い、も落とす —— それは
+    「設定できるのに効かない」を数値の顔で出す最悪の形。
+    """
+    for name, spec in S.SYSTEM_PARAMS.items():
+        actual = _readers_of(name)
+        declared = spec["applied_by"]
+        if declared is None:
+            assert not actual, f"{name}: 予約と言っているが {sorted(actual)} が読んでいる"
+            assert not spec["affects_numbers"], f"{name}: 数値に影響するのに読み手が無い"
+        else:
+            assert set(declared) == actual, \
+                f"{name}: applied_by={sorted(declared)} だが実際の読み手は {sorted(actual)}"
+            for fname in declared:
+                assert (_REPO / fname).exists(), f"{name}: {fname} が存在しない"
+
+
+def test_setting_a_reserved_parameter_changes_nothing_measurable():
+    """予約パラメータは snapshot に写るだけで、寛容な入口の順位は変わらない。"""
+    import metriccontract as MC
+    atts = [MC.Attempt(ok=True, value=30.0, reason=None, metric="psnr"),
+            MC.Attempt(ok=False, value=None, reason="x", metric="psnr"),
+            MC.Attempt(ok=True, value=20.0, reason=None, metric="psnr")]
+    base = [a.value for a in MC.rank_attempts(atts)]
+    with S.system(metric_contract="tolerant", unmeasurable_policy="skip"):
+        assert [a.value for a in MC.rank_attempts(atts)] == base
+        assert S.system_snapshot()["unmeasurable_policy"] == "skip"
