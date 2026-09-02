@@ -144,17 +144,24 @@ def _extrema(v, a, want_max):
     if fit is None:
         return _points_dict(img.shape, [])
     S, coeffs = fit
-    Wi = img.shape[1] - 2
+    Hi, Wi = img.shape[0] - 2, img.shape[1] - 2
     cen = S[4]
     others = np.delete(S, 4, axis=0)      # (8, M)
+    # Non-strict comparison so an extremum sitting exactly between pixels (a 2x2
+    # plateau of equal values, e.g. a blob centred at (20.5, 20.5) or an 8-bit
+    # quantised peak) is not missed; the second term rejects flat neighbourhoods.
+    # Adjacent candidates are necessarily equal-valued, so connected components
+    # of the candidate mask are exactly the plateaus (2026-09-02 fix).
     if want_max:
-        is_ext = cen > others.max(0)
+        is_ext = (cen >= others.max(0)) & (cen > others.min(0))
         prom = cen - S.min(0)             # depth below the deepest neighbour
     else:
-        is_ext = cen < others.min(0)
+        is_ext = (cen <= others.min(0)) & (cen < others.max(0))
         prom = S.max(0) - cen
     thr = 0.01 + 0.30 * float(np.clip(a, 0.0, 1.0))
-    keep = is_ext & (prom >= thr) & np.isfinite(prom)
+    keep = is_ext & np.isfinite(prom)
+    if not keep.any():
+        return _points_dict(img.shape, [])
 
     dxq, dyq, _det, safe = _offsets(coeffs)
     dxs, dys = _sep_offsets(S)
@@ -166,10 +173,20 @@ def _extrema(v, a, want_max):
     dx = np.clip(dx, -1.0, 1.0)
     dy = np.clip(dy, -1.0, 1.0)
 
+    from scipy import ndimage
+    lab, nlab = ndimage.label(keep.reshape(Hi, Wi), structure=np.ones((3, 3), int))
+    labs = lab.ravel()
     idx = np.where(keep)[0]
-    rows = (idx // Wi) + 1
-    cols = (idx % Wi) + 1
-    pts = [(rows[k] + dy[idx[k]], cols[k] + dx[idx[k]]) for k in range(idx.size)]
+    li = labs[idx]
+    rows = (idx // Wi) + 1 + dy[idx]
+    cols = (idx % Wi) + 1 + dx[idx]
+    cnt = np.bincount(li, minlength=nlab + 1).astype(np.float64)
+    r_mean = np.bincount(li, weights=rows, minlength=nlab + 1) / np.maximum(cnt, 1.0)
+    c_mean = np.bincount(li, weights=cols, minlength=nlab + 1) / np.maximum(cnt, 1.0)
+    p_max = np.zeros(nlab + 1)
+    np.maximum.at(p_max, li, prom[idx])
+    pts = [(r_mean[k], c_mean[k]) for k in range(1, nlab + 1)
+           if cnt[k] > 0 and p_max[k] >= thr]
     return _points_dict(img.shape, pts)
 
 
