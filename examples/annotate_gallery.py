@@ -64,9 +64,13 @@ def panel_plot():
     """パネル 2 — グラフ: 軸・格子・目盛り・折れ線・散布(matplotlib を使わない)。"""
     img = np.full((PH, PW, 3), 0.07)
     ax = A.axes_transform((52, 40, 300, 175), (0.0, 10.0), (-1.0, 1.0))
-    img = A.grid_lines(img, ax, color="neutral", alpha=0.28)
+    # 「切りのよい」目盛り値は閉形式で決まる(1/2/5 x 10^k)。既定でも同じものが
+    # 使われるが、ここでは何が選ばれたかを明示するために自分で呼ぶ。
+    xt = A.nice_ticks(0.0, 10.0, 5)
+    yt = A.nice_ticks(-1.0, 1.0, 4)
+    img = A.grid_lines(img, ax, xticks=xt, yticks=yt, color="neutral", alpha=0.28)
     img = A.axes_frame(img, ax, color="neutral", width=1)
-    img = A.ticks(img, ax, tick_len=5, font_size=10)
+    img = A.ticks(img, ax, xticks=xt, yticks=yt, tick_len=5, font_size=10)
     x = np.linspace(0.0, 10.0, 120)
     img = A.plot_series(img, ax, x, np.sin(x), kind="line", color="reference", width=2)
     xs = np.linspace(0.4, 9.6, 10)
