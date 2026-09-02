@@ -892,6 +892,15 @@ def compare_images(a, b, data_range=None, bins=64, channel_axis=None, ms=False):
     out["contract"] = {
         "data_range": dr,
         "bins": bins,
+        # **channel_axis も条件である。** :func:`measure_with` はここから読み戻して
+        # 測り直すので、書き忘れると「同じ条件で測り直す」という約束そのものが
+        # 破れる。実測(2026-09-02、examples/image_quality_metrics.py の作成中に
+        # 発覚):16 バンドの多スペクトル画像で ``channel_axis=-1`` の SSIM
+        # 0.9975395 が、``measure_with`` を通すと 0.9976433 になった ―― **例外は
+        # 出ない**。RGB(最後の軸が 3 < win_size=11)では代わりに
+        # 「each spatial axis must be at least win_size」で落ちる。どちらも
+        # 「条件を持ち回れば比べられない組合せは作れない」という設計意図に反する。
+        "channel_axis": channel_axis,
         "ssim_win_size": 11,
         "ssim_sigma": 1.5,
         "ssim_crop_border": True,
