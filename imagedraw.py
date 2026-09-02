@@ -247,20 +247,14 @@ def _polyline_mask(shape, points, closed, pattern=None):
         for i in range(len(seq) - 1):
             m |= _line_mask(shape, seq[i], seq[i + 1])
         return m
-    H, W = shape
     s0 = 0.0
     for i in range(len(seq) - 1):
         (x0, y0), (x1, y1) = seq[i], seq[i + 1]
-        n = int(max(abs(x1 - x0), abs(y1 - y0))) + 1
-        xs = np.linspace(x0, x1, n)
-        ys = np.linspace(y0, y1, n)
         seg = float(np.hypot(x1 - x0, y1 - y0))
-        t = np.linspace(0.0, 1.0, n) if n > 1 else np.zeros(1)
-        on = _phase_on(s0 + t * seg, pattern)
-        if on.any():
-            xi = np.clip(np.round(xs[on]).astype(int), 0, W - 1)
-            yi = np.clip(np.round(ys[on]).astype(int), 0, H - 1)
-            m[yi, xi] = True
+        xi, yi, t = _segment_samples(shape, seq[i], seq[i + 1])
+        if t.size:
+            on = _phase_on(s0 + t * seg, pattern)  # 弧長は元の線分で数える(クリップ非依存)
+            m[yi[on], xi[on]] = True
         s0 += seg                                  # 頂点をまたいで位相を継ぐ
     return m
 

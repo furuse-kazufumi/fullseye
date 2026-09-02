@@ -300,16 +300,22 @@ def test_f11_opening_json_without_directives_clears_stale_editor_lines(app, win,
 
 
 # ----------------------------------------------------------------- except census
-def test_example_preview_shows_read_error(app, win, monkeypatch):
-    w, _model = win
-    import examples as EX
-    monkeypatch.setattr(EX, "code", lambda i: (_ for _ in ()).throw(OSError("boom")))
-    dlg = w._open_examples_2d()
-    if dlg is None:
-        pytest.skip("examples dialog unavailable")
-    lst, code = dlg._fs_list, dlg._fs_code
-    if lst.count() == 0:
-        pytest.skip("no examples registered")
-    lst.setCurrentRow(0); app.processEvents()
-    assert "boom" in code.toPlainText()
-    dlg.close()
+def test_example_preview_shows_read_error():
+    class _EX:
+        @staticmethod
+        def code(i):
+            raise OSError("boom")
+    txt = studio._example_code_or_error(_EX, "ex1")
+    assert "boom" in txt and "ex1" in txt
+
+
+def test_atomic_write_keeps_old_file_on_failure(tmp_path, monkeypatch):
+    p = tmp_path / "pipe.json"
+    p.write_text("OLD", encoding="utf-8")
+    studio._atomic_write_text(str(p), "NEW")
+    assert p.read_text(encoding="utf-8") == "NEW"
+    monkeypatch.setattr(os, "replace", lambda *a: (_ for _ in ()).throw(OSError("disk full")))
+    with pytest.raises(OSError):
+        studio._atomic_write_text(str(p), "NEWER")
+    assert p.read_text(encoding="utf-8") == "NEW"
+    assert os.listdir(tmp_path) == ["pipe.json"]               # temp file cleaned up
