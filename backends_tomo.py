@@ -20,7 +20,8 @@ NO coverage claim; this is a brand-new capability.
   tm_radon_forward         forward Radon transform of the input (treated as a
                            slice image) -> sinogram, fitted back to HxW.
                            a = angular density (sparse .. dense views),
-                           b = angular span (limited-angle .. full 180 deg).
+                           b = angular span (b < 0.5 limited-angle, b >= 0.5
+                           = the full 180 deg the inverse ops assume).
   tm_fbp_reconstruct       filtered back-projection of the input sinogram.
                            b < 0.5 -> Ram-Lak (ramp) filter, b >= 0.5 ->
                            Shepp-Logan filter. a is unused (b is the knob).
