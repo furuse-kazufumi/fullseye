@@ -454,9 +454,10 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     for name, r in RECIPES.items():
         try:
             fn = _make(r["recipe"], r.get("out"))
+            raw = _make_raw(r["recipe"])
         except Exception:
             continue
-        if _gate(fn, r["in"], r["out"]):                 # drop non-functional recipes (env-dependent)
+        if _gate(fn, r["in"], r["out"], raw):            # drop non-functional recipes (env-dependent)
             out.append(Op(name, r.get("cat") or "extra", "", r["in"], r["out"], fn))
     build.dropped = [n for n in RECIPES if n not in {o.name for o in out}]
     return out
