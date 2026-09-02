@@ -92,7 +92,6 @@ import opsvideostream, videostream as VS
 
 clip = np.random.default_rng(1).random((12, 32, 32))
 batch = opsvideostream.call("temporal_median_window", clip, window=5)
-live = np.stack([VS.TemporalMedianWindow(5).push(f) if i == 0 else None for i, f in enumerate(clip[:1])])
 op = VS.TemporalMedianWindow(5)
 live = np.stack([op.push(f) for f in clip])
 assert np.abs(batch - live).max() == 0.0

@@ -1,5 +1,5 @@
 ---
-op: tb_temporal_bandpass
+op: tb_moving_average_window
 dim: 2d
 category: typed
 in: video
@@ -10,10 +10,10 @@ license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
-# tb_temporal_bandpass — 2D `typed` op
+# tb_moving_average_window — 2D `typed` op
 
 - **データ種**: `video` → `video`
-- **呼び出し**: `fullseye.apply(img, "tb_temporal_bandpass", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
+- **呼び出し**: `fullseye.apply(img, "tb_moving_average_window", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
 ## 使い方
 
@@ -30,7 +30,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`video` を入力に取れる)
 
-[identity](../misc/identity.md) · [tb_temporal_band_power](tb_temporal_band_power.md) · [tb_temporal_median_window](tb_temporal_median_window.md) · [tb_moving_average_window](tb_moving_average_window.md) · [tb_background_subtraction_window](tb_background_subtraction_window.md) · [tb_frame_difference_causal](tb_frame_difference_causal.md) · [tb_exponential_background](tb_exponential_background.md) · [tb_exponential_foreground](tb_exponential_foreground.md)
+[identity](../misc/identity.md) · [tb_temporal_bandpass](tb_temporal_bandpass.md) · [tb_temporal_band_power](tb_temporal_band_power.md) · [tb_temporal_median_window](tb_temporal_median_window.md) · [tb_background_subtraction_window](tb_background_subtraction_window.md) · [tb_frame_difference_causal](tb_frame_difference_causal.md) · [tb_exponential_background](tb_exponential_background.md) · [tb_exponential_foreground](tb_exponential_foreground.md)
 
 ## 同カテゴリ(`typed`)
 
