@@ -1734,13 +1734,15 @@ def run(a):
     a = [x1, y1, x2, y2, x3, y3, x4, y4] — segment A = (x1,y1)-(x2,y2), segment B = (x3,y3)-(x4,y4).
     Returns 1.0 if they intersect (a proper crossing, an endpoint touch, or a collinear overlap), else
     0.0. INTEGER coordinates in [-100000, 100000] make every orientation an exact integer cross product,
-    so C == Python bit-for-bit. Fail-soft 0.0 on malformed / out-of-domain input (CLRS 33.1)."""
+    so C == Python bit-for-bit. Fail-soft **-1.0** (not 0.0 — "no intersection" is a valid answer) on
+    malformed / out-of-domain input: fewer than 8 values, NaN, a coordinate outside the range, or a
+    non-integer coordinate (CLRS 33.1)."""
     if len(a) < 8:
-        return 0.0
+        return -1.0
     for i in range(8):
         c = a[i]
         if not (c >= -100000.0 and c <= 100000.0 and c == float(int(c))):
-            return 0.0
+            return -1.0
     x1 = int(a[0]); y1 = int(a[1]); x2 = int(a[2]); y2 = int(a[3])
     x3 = int(a[4]); y3 = int(a[5]); x4 = int(a[6]); y4 = int(a[7])
 
