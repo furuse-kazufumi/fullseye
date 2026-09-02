@@ -265,6 +265,16 @@ class Parser:
     def __init__(self, toks):
         self.toks = toks
         self.i = 0
+        self.loop_depth = 0      # > 0 while parsing a for/while/repeat body
+        self.depth = 0           # nesting of blocks + expressions (MAX_NESTING)
+
+    def _enter(self, line):
+        self.depth += 1
+        if self.depth > MAX_NESTING:
+            raise FScriptError("nesting too deep (limit %d)" % MAX_NESTING, line)
+
+    def _leave(self):
+        self.depth -= 1
 
     def _peek(self):
         return self.toks[self.i]
