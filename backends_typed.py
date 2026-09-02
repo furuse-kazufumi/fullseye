@@ -205,6 +205,41 @@ def _fallback(v, in_sort, out_sort):
     }.get(out_sort, lambda: np.asarray(v))()
 
 
+def _points_to_grid(v, res=16, margin=0.15):
+    """点群 (N,3) → その境界箱を覆う座標格子 (res,res,res,3)。
+
+    ``box_sdf`` / ``sphere_sdf`` は「``(..., 3)`` の座標を受け、その形から最後の軸を
+    落として距離を返す」**要素ごと**の op なので、点群 (N,3) を渡すと (N,) が返る。
+    宣言している out_sort は ``volume`` なので形の検査に落ち、``_fallback`` が
+    ``zeros((2,2,2))`` を返す —— つまりこの 2 op は **候補枠を 2 つ占めたまま、
+    どんな入力でも定数ゼロしか返していなかった**(2026-09-02 実測: 40 通りの
+    点群すべてで返りが ``zeros((2,2,2))``、非ゼロ 0 件)。
+
+    宣言 ``points → volume`` を素直に読めば「その点群が収まる領域に、この原始形状の
+    距離場を焼く」であり、それには**座標格子**が要る。ここで作る。
+    ``margin`` は境界箱の外側に取る余白(比率)で、これが無いと形状の外側が
+    切れて距離場の符号が片側しか出ない。
+    """
+    P = np.asarray(v, np.float64)
+    if P.ndim != 2 or P.shape[1] != 3 or P.shape[0] < 1 or not np.isfinite(P).all():
+        raise ValueError("points must be a finite (N, 3) cloud")
+    lo, hi = P.min(axis=0), P.max(axis=0)
+    span = np.maximum(hi - lo, 1e-9)
+    lo = lo - margin * span
+    hi = hi + margin * span
+    axes = [np.linspace(lo[k], hi[k], int(res)) for k in range(3)]
+    return np.stack(np.meshgrid(*axes, indexing="ij"), axis=-1)
+
+
+#: 入口の値を op が実際に取れる形へ直す表(op 名 → 変換)。**ADAPTERS が返りを
+#: 直すのに対し、こちらは入力を直す**。捏造ではなく、宣言した in_sort の値から
+#: op の要求する表現へ写すだけのものに限る。
+INPUT_ADAPTERS = {
+    "box_sdf": _points_to_grid,
+    "sphere_sdf": _points_to_grid,
+}
+
+
 def _scaled(default, knob):
     """著者の既定値を中心にした相対スケール(既定の 1/4 〜 2 倍)。
 
