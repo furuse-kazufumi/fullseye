@@ -42,8 +42,9 @@ paraboloid / sphere_mirror の 4 処方(テストと例の共通出発点)。
     opsoptics.get("thin_lens")(focal_mm=50.0, object_mm=200.0)
 """
 import optics
+import raytrace
 
-_MOD = {"optics": optics}
+_MOD = {"optics": optics, "raytrace": raytrace}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 #   既存語彙の再利用: image2d / signal / matrix / measurement(実スカラのみ)/
