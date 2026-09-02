@@ -315,10 +315,19 @@ def ambient_occlusion(V, F, pose=None, intrinsics=None, width: int = 256,
     if K.shape != (3, 3):
         raise ValueError(f"intrinsics must be 3x3, got {K.shape}")
 
+    if method not in ("auto", "brute", "grid"):
+        raise ValueError(f"method must be auto|brute|grid, got {method!r}")
     view = render3d.render_mesh(Vv, Ff, P, K, w, h, attributes=True)
     sil = view["silhouette"]
 
-    ao_vert = vertex_occlusion(Vv, Ff, n_dirs=n_dirs, max_dist=max_dist)
+    # ``method``: 'brute' = 頂点ごとの半球レイ(従来)、'grid' = 大域方向の平行レイ束
+    # (``vertex_occlusion_grid``)、'auto' = 頂点数×面数が閾値を超えたら grid。
+    use_grid = method == "grid" or (
+        method == "auto" and Vv.shape[0] * Ff.shape[0] > _GRID_AO_THRESHOLD)
+    if use_grid:
+        ao_vert = vertex_occlusion_grid(Vv, Ff, n_dirs=n_dirs, max_dist=max_dist)
+    else:
+        ao_vert = vertex_occlusion(Vv, Ff, n_dirs=n_dirs, max_dist=max_dist)
 
     img = np.full((h, w), float(background), np.float64)
     ys, xs = np.where(sil > 0)
