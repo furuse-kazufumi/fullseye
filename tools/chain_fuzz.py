@@ -738,7 +738,210 @@ def _b_vectors(n):
     return build
 
 
+# --------------------------------------------------------------------------- #
+# 2026-09-02: 狙い撃ちの網羅パス(--cover-all)で「必須引数が組めない」と挙がった  #
+# 58 op のためのビルダー。ランダム歩行はこれらに一度も届いていなかったので、    #
+# **束縛に失敗していること自体がこれまで観測されていなかった**。                #
+#                                                                             #
+# ここで分かったのは、そのうち何件かは台帳の ``in`` 宣言が実際のシグネチャと    #
+# 合っていない、ということ ―― 例えば ``triangulate`` は台帳が                   #
+# ``["image2d","image2d"]`` と言うのに実体は ``(pts1, pts2, P1, P2)`` で 2-D の  #
+# 点集合を取る。**一度も実行されないので誰も気づけなかった**型の誤りである。    #
+# 台帳を直すと進化エンジンの型グラフと docs の「次に繋がる op」まで動くため、    #
+# ここではまずビルダーで**正しい呼び方**を固定し、走らせて挙動を見る。          #
+# --------------------------------------------------------------------------- #
+_K32 = np.array([[32.0, 0.0, 16.0], [0.0, 32.0, 16.0], [0.0, 0.0, 1.0]])
+
+
+def _b_pose_error(pool, rng):
+    """pose は ``(R, t)`` の組。台帳の ``["pose","pose"]`` を素直に割ると
+    ``R_est`` に組がまるごと入り、4 引数を 2 個で埋めようとして必ず落ちる。"""
+    ps = pool.get("pose")
+    if not ps:
+        return None
+    r1, t1 = ps[rng.integers(len(ps))]
+    r2, t2 = ps[rng.integers(len(ps))]
+    return ([r1, t1, r2, t2], {})
+
+
+def _b_normal_consistency(pool, rng):
+    """``(points_a, normals_a, points_b, normals_b)`` の 4 データ引数。台帳は
+    2 つしか宣言していない。**法線の行数は点数と一致していなければならない**
+    (別点群の法線を混ぜると近傍 index が範囲外になる)ので同じ長さで揃える。"""
+    pts, nrm = pool.get("points"), pool.get("normals")
+    if not pts or not nrm:
+        return None
+    a, b = pts[rng.integers(len(pts))], pts[rng.integers(len(pts))]
+    na, nb = nrm[rng.integers(len(nrm))], nrm[rng.integers(len(nrm))]
+    n = min(len(a), len(na))
+    m = min(len(b), len(nb))
+    return ([a[:n], na[:n], b[:m], nb[:m]], {})
+
+
+def _b_triangulate(pool, rng):
+    """``(pts1, pts2, P1, P2)``。P は 3x4 の射影行列で、左右に 1 だけ離した
+    ステレオ対にする(視差が出ない配置だと三角測量が退化する)。"""
+    kp = pool.get("keypoints")
+    if not kp:
+        return None
+    p1 = _K32 @ np.hstack([np.eye(3), np.zeros((3, 1))])
+    p2 = _K32 @ np.hstack([np.eye(3), np.array([[-1.0], [0.0], [0.0]])])
+    return ([kp[rng.integers(len(kp))], kp[rng.integers(len(kp))], p1, p2], {})
+
+
+def _b_sampson(pool, rng):
+    """``(F, pts1, pts2)``。F は上の左右ステレオと**同じ**外部標定から作る
+    (``F = K^-T [t]_x R K^-1``、R=I, t=(-1,0,0))ので、幾何が整合する。"""
+    kp = pool.get("keypoints")
+    if not kp:
+        return None
+    ki = np.linalg.inv(_K32)
+    tx = np.array([[0.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, -1.0, 0.0]])
+    f = ki.T @ tx @ ki
+    return ([f, kp[rng.integers(len(kp))], kp[rng.integers(len(kp))]], {})
+
+
+def _b_bundle(pool, rng):
+    """``(cameras, points, obs_cam, obs_pt, obs_uv, K)``。観測は **この族自身の
+    順投影 ``project`` で作る** —— 手で組むと (rvec|t) の並びや符号の約束を
+    取り違えても分からず、「op が壊れている」のか「入力が違う」のかが
+    切り分けられなくなる。カメラは点群 [0,10]^3 が必ず前方に来る位置へ置く。"""
+    pts = pool.get("points")
+    if not pts:
+        return None
+    import ops3d
+    proj = ops3d.OPS3D["project"]["func"]
+    p = np.asarray(pts[rng.integers(len(pts))])[:20]
+    if len(p) < 4:
+        return None
+    cams = np.array([[0.0, 0.0, 0.0, -5.0, -5.0, 20.0],
+                     [0.0, 0.0, 0.0, -3.0, -5.0, 20.0]])
+    oc, op_, uv = [], [], []
+    for ci, c in enumerate(cams):
+        try:
+            q = proj(p, c[:3], c[3:], _K32)
+        except Exception:                      # noqa: BLE001 — 種作りの失敗は skip
+            return None
+        for pi in range(len(p)):
+            oc.append(ci)
+            op_.append(pi)
+            uv.append(q[pi])
+    return ([cams, p], {"obs_cam": np.asarray(oc), "obs_pt": np.asarray(op_),
+                        "obs_uv": np.asarray(uv, dtype=float), "K": _K32})
+
+
+def _b_pose_graph(pool, rng):
+    """``(poses, edges)``。edges は ``(i, j, rvec_ij, t_ij, w_r, w_t)`` の列で、
+    **相対姿勢はこの族自身の ``relative_pose`` から作る**(理由は _b_bundle と
+    同じ)。輪にして最後を先頭へ戻すとループ閉じになる。"""
+    import pose_graph as pg
+    n = 5
+    poses = np.zeros((n, 6))
+    for i in range(n):
+        poses[i, 2] = 0.15 * i                 # z 軸まわりに少しずつ回す
+        poses[i, 3] = 2.0 * i                  # 並進もドリフトさせる
+    edges = [(i, (i + 1) % n) + tuple(pg.relative_pose(poses[i], poses[(i + 1) % n]))
+             + (1.0, 1.0) for i in range(n)]
+    return ([poses, edges], {})
+
+
+def _b_query_distance(pool, rng):
+    """``(esdf_grid, bounds, res, query_points)``。台帳の ``["sdf","points"]`` を
+    素直に割ると **bounds に点群が入る**(第 2 引数が bounds なので)。"""
+    sdf, pts = pool.get("sdf"), pool.get("points")
+    if not sdf or not pts:
+        return None
+    g = np.asarray(sdf[rng.integers(len(sdf))])
+    if g.ndim != 3 or len(set(g.shape)) != 1:
+        return None
+    return ([g], {"bounds": (0.0, 0.0, 0.0, 10.0, 10.0, 10.0), "res": g.shape[0],
+                  "query_points": np.asarray(pts[rng.integers(len(pts))])[:32]})
+
+
+def _b_integrate(pool, rng):
+    """``(tsdf, weight, depth, K, R, t, trunc)``。tsdf と weight は**同じ形**で
+    なければならないので、weight は tsdf から作る(プールから拾うと形が合わない)。
+    この op は in-place で書き換えて ``None`` を返す。"""
+    sdf, dep = pool.get("sdf"), pool.get("depth")
+    if not sdf or not dep:
+        return None
+    g = np.array(sdf[rng.integers(len(sdf))], dtype=float)
+    if g.ndim != 3 or len(set(g.shape)) != 1:
+        return None
+    return ([g, np.zeros_like(g), np.asarray(dep[rng.integers(len(dep))], dtype=float)],
+            {"K": _K32, "R": np.eye(3), "t": np.array([-5.0, -5.0, 20.0]),
+             "trunc": 0.5, "bounds": (0.0, 0.0, 0.0, 10.0, 10.0, 10.0)})
+
+
+def _b_shot(pool, rng):
+    """``(points, normals, kp_idx, tree, radius)``。tree は点群から作る KD 木で、
+    **点群と同じものから作らないと近傍 index が別の点を指す**。"""
+    pts, nrm = pool.get("points"), pool.get("normals")
+    if not pts or not nrm:
+        return None
+    from scipy.spatial import cKDTree
+    p = np.asarray(pts[rng.integers(len(pts))])
+    n = np.asarray(nrm[rng.integers(len(nrm))])
+    m = min(len(p), len(n))
+    if m < 8:
+        return None
+    p, n = p[:m], n[:m]
+    return ([p, n, [0, 1, 2], cKDTree(p)], {"radius": 2.0})
+
+
+def _b_leader_line(pool, rng):
+    """``(img, anchor_xy, target_xy, text=...)``。台帳の ``["image2d","text"]`` を
+    素直に割ると **anchor_xy に文字列が入る**(第 2 引数が座標なので)。"""
+    img, txt = pool.get("image2d"), pool.get("text")
+    if not img:
+        return None
+    return ([np.asarray(img[rng.integers(len(img))])],
+            {"anchor_xy": (8.0, 8.0), "target_xy": (24.0, 22.0),
+             "text": txt[rng.integers(len(txt))] if txt else None})
+
+
+def _b_tilemap(pool, rng):
+    """``(tiles, indices)``。indices は**タイル枚数の範囲に収まる**整数の 2-D 配列。
+    範囲外だと描く前に落ちるので、プールの枚数から作る。"""
+    sp = pool.get("sprites")
+    if not sp:
+        return None
+    tiles = sp[rng.integers(len(sp))]
+    k = len(tiles)
+    if k < 1:
+        return None
+    return ([tiles], {"indices": np.arange(4).reshape(2, 2) % k})
+
+
+def _b_parallax(pool, rng):
+    """``(layers, camera_x, factors)``。factors は**層と同じ本数**でなければ
+    ならない(手前ほど速く動く = 1.0 に近づける)。"""
+    sp = pool.get("sprites")
+    if not sp:
+        return None
+    layers = sp[rng.integers(len(sp))]
+    k = len(layers)
+    if k < 1:
+        return None
+    return ([layers], {"camera_x": 8.0,
+                       "factors": tuple(np.linspace(0.25, 1.0, k))})
+
+
 OP_ARG_BUILDERS = {
+    "pose_error": _b_pose_error,
+    "normal_consistency": _b_normal_consistency,
+    "triangulate": _b_triangulate,
+    "sampson_distance": _b_sampson,
+    "bundle_adjust": _b_bundle,
+    "mean_reprojection_error": _b_bundle,
+    "optimize_pose_graph": _b_pose_graph,
+    "mean_edge_error": _b_pose_graph,
+    "query_distance": _b_query_distance,
+    "integrate": _b_integrate,
+    "shot_descriptor": _b_shot,
+    "leader_line": _b_leader_line,
+    "tilemap_render": _b_tilemap,
+    "parallax_layers": _b_parallax,
     "abcd_matrix": _b_abcd,
     "wavefront_stats": _b_wavefront,
     "abcd_trace": _b_shaped("matrix", (2, 2), _mk_abcd),
