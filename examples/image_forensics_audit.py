@@ -239,7 +239,7 @@ def main():
     # 貼り込みの内側は縁を 8 px 削って測る(block=16 の平滑が境界をまたぐため)。
     # 外側は貼り込みから 16 px 以上離れた場所だけ。
     inside = np.zeros((N, N), bool)
-    inside[SPLICE.__getitem__(0).start + 8:SPLICE[0].stop - 8,
+    inside[SPLICE[0].start + 8:SPLICE[0].stop - 8,
            SPLICE[1].start + 8:SPLICE[1].stop - 8] = True
     spliced = np.zeros((N, N), bool)
     spliced[SPLICE] = True
