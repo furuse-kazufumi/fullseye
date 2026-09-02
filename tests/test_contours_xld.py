@@ -58,7 +58,10 @@ def test_annulus_is_two_loops_with_correct_areas():
     assert len(ann["cs"]) == 2
     outer, inner = ann["cs"]
     assert abs(_area(outer) - np.pi * 30 ** 2) / (np.pi * 30 ** 2) < 0.02
-    assert abs(_area(inner) - np.pi * 12 ** 2) / (np.pi * 12 ** 2) < 0.02
+    # r=12 is small: even the exact Gauss-circle lattice count (441) is 2.5 % under
+    # pi*144 = 452.4, so the raster (438 px) is compared at 4 %; the tracer itself
+    # is exact against the mask (checked below).
+    assert abs(_area(inner) - np.pi * 12 ** 2) / (np.pi * 12 ** 2) < 0.04
     for loop in (outer, inner):
         assert np.allclose(loop[0], loop[-1])
         rad = np.hypot(loop[:, 0] - 60, loop[:, 1] - 60)
