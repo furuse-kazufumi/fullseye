@@ -275,8 +275,8 @@ def main():
     assert abs(hi / lo - 4.0) < 0.08
     nm_sub = F.noise_inconsistency_map(submitted, 16)
     print(f"   提出画像の雑音地図: 貼り込み内 {nm_sub[inside].mean():.3f} / "
-          f"外 {nm_sub[outside].mean():.3f} —— 段差はあるが、**模様の濃い場所でも
-同じ段差が出る**ので、これ単独は証拠にならない".replace("\n", ""))
+          f"外 {nm_sub[outside].mean():.3f} —— 段差はあるが、模様の濃い場所でも"
+          "同じ段差が出るので、これ単独は証拠にならない")
     assert nm_sub.shape == (N, N)
 
     # ------------------------------------------------------------------ #
