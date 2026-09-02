@@ -987,20 +987,6 @@ def _canvas(rng, pool, h=192, w=256):
     return np.kron(a, np.ones((max(1, h // a.shape[0]), max(1, w // a.shape[1]))))
 
 
-def _b_on_canvas(*subst):
-    """台帳の in 型のうち ``image2d`` だけを大きなキャンバスに差し替える builder。
-
-    残る必須引数は通常の名前ヒント経路に任せる(list を返す = data 引数のみ)。
-    *subst* に ``(型, 作る関数)`` を渡すと、その型もプールでなく関数で作る。
-    """
-    special = dict(subst)
-
-    def build(pool, rng):
-        # 台帳の in 型は builder からは見えないので、呼ばれた op 名で引く
-        return None
-    return build
-
-
 def _b_draw(ins, **special):
     """描画 op 用: *ins* の各型を組み立て、``image2d`` はキャンバスに置き換える。"""
     def build(pool, rng):
