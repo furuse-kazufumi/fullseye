@@ -1262,6 +1262,19 @@ OP_PARAM_HINTS = {
     # スキップ = 「発見ゼロ」に化ける)。BK7 近傍の実在硝材域で束縛する
     ("glass", "nd"): lambda rng: float(rng.uniform(1.45, 1.90)),
     ("glass", "vd"): lambda rng: float(rng.uniform(20.0, 95.0)),
+    # raytrace.glass_catalog(name) / sellmeier(B1..C3): 実在硝材名 / N-BK7 近傍の定数で束縛
+    ("glass_catalog", "name"): lambda rng: str(rng.choice(["N-BK7", "N-SF2", "N-SK16", "SILICA", "CAF2"])),
+    ("sellmeier", "B1"): lambda rng: float(rng.uniform(0.9, 1.8)),
+    ("sellmeier", "B2"): lambda rng: float(rng.uniform(0.1, 0.4)),
+    ("sellmeier", "B3"): lambda rng: float(rng.uniform(0.9, 2.0)),
+    ("sellmeier", "C1"): lambda rng: float(rng.uniform(0.005, 0.013)),
+    ("sellmeier", "C2"): lambda rng: float(rng.uniform(0.02, 0.06)),
+    ("sellmeier", "C3"): lambda rng: float(rng.uniform(90.0, 170.0)),
+    # lensopt.optimize_lens は既定 30 反復 × 有限差分で 1 呼び数秒になりうる。
+    # 連鎖では 2 反復・2 リングで実経路(残差→ヤコビアン→LM 更新→再検証)だけ通す
+    ("optimize_lens", "iterations"): lambda rng: 2,
+    ("optimize_lens", "rings"): lambda rng: 2,
+    ("merit_function", "rings"): lambda rng: 2,
     # lensimage.defect_dataset は既定 n=8 / 256x256 を雑音つきで描くと 1 呼び
     # 数秒になり連鎖全体を遅らせる。1 枚・32x32 で実経路(欠陥描画 → レンズ
     # 越し描画 → マスク歪曲 → bbox)だけを通す

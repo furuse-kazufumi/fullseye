@@ -152,7 +152,7 @@ _GLASS_ALIASES = {"BK7": "N-BK7", "FUSED_SILICA": "SILICA", "SIO2": "SILICA", "F
 def _catalog_key(name):
     if not isinstance(name, str):
         raise ValueError("a glass name must be a string, got %r" % type(name).__name__)
-    key = name.strip().upper().replace(" ", "")
+    key = "_".join(name.strip().upper().split())
     key = _GLASS_ALIASES.get(key, key)
     if key not in _SELLMEIER:
         raise ValueError("unknown glass %r (catalogue: %s)" % (name, ", ".join(sorted(_SELLMEIER))))
@@ -173,8 +173,8 @@ def sellmeier(B1, B2, B3, C1, C2, C3, name="custom"):
     nd = refractive_index(g, WL_D)
     nf = refractive_index(g, WL_F)
     nc = refractive_index(g, WL_C)
-    if not (nf > nc > 0):
-        raise ValueError("Sellmeier constants give anomalous dispersion in the visible (n_F <= n_C)")
+    if not (nf > nc >= 1.0):
+        raise ValueError("Sellmeier constants give n < 1 or anomalous dispersion in the visible (n_F <= n_C)")
     g["nd"] = nd
     g["vd"] = (nd - 1.0) / (nf - nc)
     return g
