@@ -755,18 +755,20 @@ def run(a):
     Input packs both strings as code-point sequences: a = [na, A0..A_{na-1}, B0..B_{nb-1}]
     where na = length of the first string, the next na values are string A, the rest are
     string B. Returns the edit distance as an exact non-negative integer (as a float).
-    Bottom-up two-row dynamic programming. Fail-soft: returns 0.0 on na < 0 / truncated
-    input. NaN-free assumed (== is used to score matches)."""
+    Bottom-up two-row dynamic programming. Fail-soft **-1.0** (not 0.0 — "identical" is a
+    valid answer: a truncated header used to read as distance 0) on an empty input or a
+    header that is negative / NaN / oversized / truncated. NaN-free assumed (== is used to
+    score matches)."""
     if len(a) < 1:
-        return 0.0
+        return -1.0
     na_d = a[0]
     # raw-value guard BEFORE int() = exact C parity (fractional/negative/NaN/oversized header
     # fail-softs identically; no int(nan) crash).
     if not (na_d >= 0.0 and na_d <= 2147483000.0):
-        return 0.0
+        return -1.0
     na = int(na_d)
     if len(a) < 1 + na:
-        return 0.0
+        return -1.0
     sa = a[1:1 + na]
     sb = a[1 + na:]
     nb = len(sb)
