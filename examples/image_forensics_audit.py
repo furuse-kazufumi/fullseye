@@ -310,10 +310,13 @@ def main():
     assert abs(lo - 2.55) / 2.55 < 0.01 and abs(hi - 10.20) / 10.20 < 0.01
     assert abs(hi / lo - 4.0) < 0.08
     nm_sub = F.noise_inconsistency_map(submitted, 16)
-    print(f"   提出画像の雑音地図: 貼り込み内 {nm_sub[inside].mean():.3f} / "
-          f"外 {nm_sub[outside].mean():.3f} —— 段差はあるが、模様の濃い場所でも"
-          "同じ段差が出るので、これ単独は証拠にならない")
+    n_in, n_out = float(nm_sub[inside].mean()), float(nm_sub[outside].mean())
+    print(f"   提出画像の雑音地図: 貼り込み内 {n_in:.3f} / 外 {n_out:.3f} "
+          f"= 1/{n_out / n_in:.1f}(強く圧縮された領域は雑音が削られている)")
+    print("   → ただし段差の原因は圧縮とは限らない。模様の濃い領域も同じくらい"
+          "高く出るので、この地図だけを証拠にはできない")
     assert nm_sub.shape == (N, N)
+    assert n_in < n_out                         # 貼り込みの方が滑らか
 
     # ------------------------------------------------------------------ #
     # 6) 自己複製 —— こちらが決めたシフトを誤差 0 px で当てる                #
