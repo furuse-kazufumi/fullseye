@@ -251,8 +251,7 @@ def ambient_occlusion(V, F, pose=None, intrinsics=None, width: int = 256,
     if K.shape != (3, 3):
         raise ValueError(f"intrinsics must be 3x3, got {K.shape}")
 
-    view = render3d.render_mesh(Vv, Ff, P, K, w, h)
-    depth = view["depth"]
+    view = render3d.render_mesh(Vv, Ff, P, K, w, h, attributes=True)
     sil = view["silhouette"]
 
     ao_vert = vertex_occlusion(Vv, Ff, n_dirs=n_dirs, max_dist=max_dist)
@@ -262,22 +261,20 @@ def ambient_occlusion(V, F, pose=None, intrinsics=None, width: int = 256,
     if ys.size == 0:
         return img                                   # 何も写っていない
 
-    z = depth[ys, xs]                                # 前方メトリック距離(正)
-    fx, fy = float(K[0, 0]), float(K[1, 1])
-    cx, cy = float(K[0, 2]), float(K[1, 2])
-    Xc = (xs + 0.5 - cx) * z / fx
-    Yc = (cy - (ys + 0.5)) * z / fy
-    Zc = -z                                          # カメラは -Z を向く
-    pts = np.stack([Xc, Yc, Zc], axis=1)
-
-    Vc = Vv @ P[:3, :3].T + P[:3, 3]                 # カメラ空間の頂点
-    tree = cKDTree(Vc)
-    kq = int(max(1, min(k, Vc.shape[0])))
-    dist, nn = tree.query(pts, k=kq)
-    if kq == 1:
-        img[ys, xs] = ao_vert[nn]
-    else:
-        wgt = 1.0 / (dist + 1e-9)
-        wgt /= wgt.sum(axis=1, keepdims=True)
-        img[ys, xs] = (ao_vert[nn] * wgt).sum(axis=1)
+    # 画素を覆っている**その三角形の 3 頂点**を、深度と同じ透視補正重心座標で
+    # 混ぜる(= 深度が正しいなら AO も同じ精度で正しい)。
+    #
+    # 2026-09-02 まではカメラ空間で最近傍 k 頂点を引いて逆距離重みで混ぜていた。
+    # それは頂点が密なら近似的に合うが、**粗い面では多角形のセルになる**:
+    # 記事の hero 画像の地面(13x13 頂点の板)に出ていたまだら模様がこれで、
+    # 地面の細分を 12 → 80 に上げると消えることを実測して原因を確定した
+    # (ただし AO は頂点ごとの光線飛ばしなので 54 秒 → 398 秒になり、
+    #  細分を上げる方向は直し方として採れない)。
+    #
+    # 重心補間は三角形の中で厳密な線形補間なので、頂点密度に関係なく連続。
+    # 面をまたいで値が漏れることも構造的に起きない(k 近傍は隣の物体の頂点を
+    # 拾いうるが、こちらは覆っている三角形しか見ない)。
+    face = view["face"][ys, xs]
+    bw = view["bary"][ys, xs]                        # (n, 3) 和 = 1
+    img[ys, xs] = np.einsum("ij,ij->i", bw, ao_vert[Ff[face]])
     return img
