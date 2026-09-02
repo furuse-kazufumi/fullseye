@@ -348,6 +348,10 @@ def phase_unwrap(wrapped, method: str = "herraez") -> np.ndarray:
     wrapped : array_like
         A real ``(H, W)`` wrapped phase in radians. Values are wrapped into
         ``(-pi, pi]`` defensively on entry (idempotent for already-wrapped data).
+        A single row ``(1, W)`` or column ``(H, 1)`` is unwrapped along its long
+        axis (identical to ``np.unwrap`` there); a ``(1, 1)`` input is returned
+        unchanged. A plain 1-D vector is refused like every other op in this
+        module — reshape it to ``(1, N)`` first.
     method : str
         ``"herraez"`` (default). ``"goldstein"`` and any other value raise
         ``ValueError``.
