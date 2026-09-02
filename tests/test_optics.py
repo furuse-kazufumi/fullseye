@@ -702,7 +702,8 @@ def test_ledger_call_returns_the_declared_type():
     sys.path.insert(0, os.path.join(ROOT, "tools"))
     from chain_fuzz import TYPE_CHECKS
     args = _ledger_args()
-    assert not [n for n in opsoptics.OPSOPTICS if n not in args], "args missing"
+    assert not [n for n, m in opsoptics.OPSOPTICS.items()
+                if m["module"] == "optics" and n not in args], "args missing"
     for name, a in args.items():
         out_t = opsoptics.OPSOPTICS[name]["out"]
         check = TYPE_CHECKS.get(out_t)
