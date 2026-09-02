@@ -1947,7 +1947,20 @@ def main():
     gens = make_generators()
     log = []
     used = set()
+    census = {"ran": set(), "bind_fail": set(), "no_input": set(), "unbuildable": set()}
     t0 = time.perf_counter()
+    if args.cover_all:
+        print(f"== 網羅フェーズ: {len(ops)} op を狙い撃ち(1 op あたり最大 "
+              f"{args.cover_tries} seed)", flush=True)
+        census = cover_all(ops, gens, log, tries=args.cover_tries)
+        print(f"== 網羅後: fn を呼べた {len(census['ran'])}/{len(ops)}")
+        for key, label in (("bind_fail", "必須引数が組めない"),
+                           ("no_input", "入力型が pool に入らない"),
+                           ("unbuildable", "レシピが組めない")):
+            if census[key]:
+                print(f"   {label} {len(census[key])}: "
+                      f"{sorted(census[key])[:12]}")
+        used |= census["ran"]
     for i in range(args.chains):
         # 連鎖固有 seed: 後から i 番目だけを正確に再走できる(--minimize の前提)
         chain_seed = args.seed * 1_000_003 + i
