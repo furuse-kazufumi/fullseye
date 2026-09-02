@@ -124,22 +124,39 @@ def tokenize(src: str):
                 # ambiguous — keep as the '#' (not-equal) operator, handled below
                 pass
         if c == "'":                                   # 'string'
+            # A string literal lives on ONE line; the only escapes are \' and
+            # \\ (any other backslash is literal, so Windows paths read as
+            # written).  A line break inside the quotes is an unterminated
+            # string — otherwise a missing quote silently swallowed the next
+            # statement(s) into the literal.
             j = i + 1
             buf = []
             while j < n and src[j] != "'":
-                if src[j] == "\\" and j + 1 < n:
+                if src[j] == "\n":
+                    raise FScriptError("unterminated string (a string literal "
+                                       "cannot span a line break)", line)
+                if src[j] == "\\" and j + 1 < n and src[j + 1] in "'\\":
                     buf.append(src[j + 1]); j += 2; continue
                 buf.append(src[j]); j += 1
             if j >= n:
                 raise FScriptError("unterminated string", line)
             toks.append(Tok("str", "".join(buf), line)); i = j + 1; continue
-        if c.isdigit() or (c == "." and i + 1 < n and src[i + 1].isdigit()):
+        if c in _ASCII_DIGITS or (c == "." and i + 1 < n and src[i + 1] in _ASCII_DIGITS):
+            # ASCII digits only: str.isdigit() also accepts '３' and '²', which
+            # int() then either converted silently or blew up with a raw
+            # ValueError.  The scanned text must match the numeral grammar
+            # exactly, so '1.2.3' / '2e' / '1e5e3' are errors with a line.
             j = i
-            while j < n and (src[j].isdigit() or src[j] in ".eE" or
+            while j < n and (src[j] in _ASCII_DIGITS or src[j] in ".eE" or
                              (src[j] in "+-" and j > i and src[j - 1] in "eE")):
                 j += 1
             text = src[i:j]
-            toks.append(Tok("num", float(text) if any(k in text for k in ".eE") else int(text), line))
+            if not _NUM_RE.fullmatch(text):
+                raise FScriptError("bad number literal %r" % text, line)
+            val = float(text) if any(k in text for k in ".eE") else int(text)
+            if isinstance(val, float) and not math.isfinite(val):
+                raise FScriptError("number literal %r is out of range" % text, line)
+            toks.append(Tok("num", val, line))
             i = j; continue
         if c.isalpha() or c == "_":
             j = i
