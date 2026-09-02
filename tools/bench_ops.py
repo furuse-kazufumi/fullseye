@@ -552,8 +552,8 @@ def link_twin_ratios(rows: Sequence[dict]) -> None:
         if not twin or "ms" not in r:
             continue
         t = index.get((twin, r["size"], r["dtype"], r.get("image")))
-        if t is None or "ms" not in t or not t["ms"]:
-            continue
+        if t is None or "ms" not in t or not t["ms"] or "ratio_vs_core" in t:
+            continue                                         # 既に GPU 比が入っている行は触らない
         ratio = round(r["ms"] / t["ms"], 3)                  # twin が core の何倍速いか
         t["core_ref"] = r["name"]
         t["core_ref_ms"] = r["ms"]
