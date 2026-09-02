@@ -111,8 +111,8 @@ def unproject_to_world(depth, pose, intrinsics) -> np.ndarray:
     if abs(fx) < _EPS or abs(fy) < _EPS:
         raise ValueError("intrinsics focal length is degenerate (fx or fy ~ 0)")
 
-    cols = np.arange(w, dtype=np.float64) + 0.5
-    rows = np.arange(h, dtype=np.float64) + 0.5
+    cols = np.arange(w, dtype=np.float64)        # 画素中心 = 整数(0.5 を足さない)
+    rows = np.arange(h, dtype=np.float64)
     u, v = np.meshgrid(cols, rows)                       # (H, W)
 
     valid = np.isfinite(d) & (d > 0.0)
