@@ -1574,8 +1574,18 @@ def evidence_quantile(measurement, null, higher_is_stronger=True):
     Returns
     -------
     dict
-        ``beyond_fraction``(清浄分布のうち、この値より内側にある割合)/
+        ``beyond_fraction``(清浄分布のうち、この値より内側にある割合 =
+        清浄な組の何 % より外側に座るか。``[0, 1]`` の連続値)/
         ``z``(標準偏差の何倍か。ばらつき 0 なら ``None``)/ ``caveats``。
+
+    Notes
+    -----
+    ``beyond_fraction`` は ``null`` が持つ分位点(``min`` / 5 / 25 / 50 / 75 /
+    95 / 99 パーセンタイル / ``max``)を節として **区分線形に内挿した経験分布
+    関数**。節の上では厳密、節の間は線形近似で、``min`` より内側なら 0、
+    ``max`` より外側なら 1 に飽和する(標本の外へは外挿しない)。
+    ``higher_is_stronger=False`` なら 1 から引いた側を返す。清浄な値がすべて
+    同じで節が重なる場合、その値ちょうどは 0.5(中央順位)に置く。
     """
     m = float(measurement)
     if not np.isfinite(m):
@@ -1587,11 +1597,25 @@ def evidence_quantile(measurement, null, higher_is_stronger=True):
                 f"got {type(null).__name__} without a {key!r} key"
             )
     qs = null["quantiles"]
-    pts = sorted(qs.items())
-    if higher_is_stronger:
-        inside = sum(1 for q, val in pts if m > val) / len(pts)
-    else:
-        inside = sum(1 for q, val in pts if m < val) / len(pts)
+    # Knots of the empirical CDF: (value, fraction of clean measurements below it).
+    knots = [(float(val), float(q) / 100.0) for q, val in qs.items()]
+    if "min" in null:
+        knots.append((float(null["min"]), 0.0))
+    if "max" in null:
+        knots.append((float(null["max"]), 1.0))
+    knots.sort()
+    xs = np.array([k[0] for k in knots], dtype=np.float64)
+    ys = np.array([k[1] for k in knots], dtype=np.float64)
+    if not (np.all(np.isfinite(xs)) and np.all(np.diff(ys) >= 0.0)):
+        raise ValueError("null quantiles must be finite and monotone")
+    # np.interp needs strictly increasing x: collapse tied knots (a plateau of
+    # identical clean values) to their mean rank — the mid-rank convention.
+    ux, first = np.unique(xs, return_index=True)
+    uy = np.array([ys[xs == x].mean() for x in ux], dtype=np.float64)
+    below = float(np.interp(m, ux, uy)) if ux.size > 1 else (
+        0.0 if m < ux[0] else 1.0 if m > ux[0] else 0.5)
+    below = min(1.0, max(0.0, below))
+    inside = below if higher_is_stronger else 1.0 - below
     z = None if null["std"] == 0.0 else (m - null["mean"]) / null["std"]
     caveats = list(null.get("caveats", []))
     caveats.append(
