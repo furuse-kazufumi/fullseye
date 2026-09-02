@@ -84,6 +84,32 @@ def test_index_and_samples_generated():
     assert "fingerprint" in top and "fullseye" in top, "version/fingerprint linkage missing in top INDEX"
 
 
+def test_index_fingerprint_matches_the_live_registry():
+    """目次の fingerprint が **live レジストリと実際に一致**すること。
+
+    INDEX.md のヘッダは「この fingerprint が live レジストリと一致することを
+    CI の drift テストが強制する」と書いているが、2026-09-02 まで検査は
+    ``"fingerprint" in top`` という**文字列の存在確認だけ**で、値を比べて
+    いなかった。実測: 目次は 851 op のまま live は 861 op で、**10 op が
+    目次から欠落**していた(個別の md は存在するのに索引から辿れない)。
+
+    主張だけあって実装が無い検査は、無い検査より悪い —— 「守られている」と
+    読める文言が残るぶん、誰も見に行かなくなる。
+    """
+    import re as _re
+    fp_live = OD._registry_fingerprint(_RECS)
+    m = _re.search(r"op-registry fingerprint ([0-9a-f]+)", top_index_text())
+    assert m, "INDEX.md のヘッダに fingerprint が見つからない"
+    assert m.group(1) == fp_live, (
+        f"docs/ops/INDEX.md の fingerprint {m.group(1)} が live レジストリの "
+        f"{fp_live} と違う — `py -3.11 tools/opdocs.py md` で再生成すること")
+
+
+def top_index_text():
+    with open(os.path.join(ROOT, "docs/ops/INDEX.md"), encoding="utf-8") as f:
+        return f.read()
+
+
 def test_every_family_has_a_guide():
     gdir = os.path.join(ROOT, "docs", "ops", "2d", "guides")
     have = {os.path.splitext(f)[0] for f in os.listdir(gdir)} if os.path.isdir(gdir) else set()
