@@ -96,27 +96,51 @@ def _prep(img):
 
 
 def _color_for(a, color):
+    """画像 ``a`` に塗る色ベクトルを返す。
+
+    グレー画像ならスカラ(カラー指定は平均)。カラー画像ではスカラなら全チャンネル
+    同値、シーケンスなら **与えられた長さのまま**(チャンネル数で切り詰めるだけ)
+    返す ―― 足りない分をゼロ埋めしない。塗る側(:func:`_paint`)が先頭 ``len(c)``
+    チャンネルだけを書き、残り(RGBA の alpha 等)は元の値を保つ。
+    """
     if a.ndim == 2:
         return float(color if np.isscalar(color) else np.mean(color))
     c = np.asarray(color, dtype=np.float64)
     if c.ndim == 0:
         c = np.full(a.shape[2], float(c))
-    if c.shape[0] < a.shape[2]:
-        c = np.concatenate([c, np.zeros(a.shape[2] - c.shape[0])])
     return c[: a.shape[2]]
 
 
+def _paint(a, mask, color):
+    """``mask`` の画素に色を塗る(与えられたチャンネルだけ。alpha 等は不変)。"""
+    c = _color_for(a, color)
+    if a.ndim == 2:
+        a[mask] = c
+    else:
+        a[mask, : len(c)] = c
+    return a
+
+
 def _dilate(mask, width):
+    """1 px マスクを線幅 ``width`` に太らせる(定義はモジュール docstring)。
+
+    奇数 w: 半径 (w-1)/2 の菱形(従来どおり)。偶数 w: (w-1) の菱形 + 2×2 dilation
+    で軸平行線が厳密に w 画素(−x/−y 側に半画素寄る)。
+    """
     w = int(round(width))
     if w <= 1:
         return mask
-    return ndimage.binary_dilation(mask, iterations=max(1, (w - 1) // 2 + (w - 1) % 2))
+    out = mask
+    r = (w - 1) // 2
+    if r >= 1:
+        out = ndimage.binary_dilation(out, iterations=r)
+    if w % 2 == 0:
+        out = ndimage.binary_dilation(out, structure=np.ones((2, 2), dtype=bool))
+    return out
 
 
 def _apply(a, mask, color, width):
-    mask = _dilate(mask, width)
-    a[mask] = _color_for(a, color)
-    return a
+    return _paint(a, _dilate(mask, width), color)
 
 
 def _settle(color, width, style):
