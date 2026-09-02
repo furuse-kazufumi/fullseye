@@ -111,11 +111,8 @@ def main() -> int:
     n_b = int(smp["diameter"].size)
     lam = float(smp["expected"])
     sea_faces = int((wts == 0).sum())
-    # 海に岩が無い: 岩の中心に最も近い面が海でないことを面重心の最近傍で確認
-    fc = V[F].mean(axis=1)
-    from scipy.spatial import cKDTree
-    _, near = cKDTree(fc).query(smp["centre"])
-    n_in_sea = int((wts[near] == 0).sum())
+    # 海に岩が無い: 各岩が置かれた面(sample_boulders が返す face)の重みが 0 でない
+    n_in_sea = int((wts[smp["face"]] == 0).sum())
     print(f"[d] fBm 変位 max {disp_max*1000:.2f} m (振幅 {RELIEF['fbm_amplitude']*1000:.1f} m) ; "
           f"岩 {n_b} 個 (期待 {lam:.0f}, 4σ={4*np.sqrt(lam):.0f}) ; 海 {sea_faces} 面, 海の岩 {n_in_sea} ; "
           f"最大岩 {smp['diameter'].max()*1000:.0f} m")
