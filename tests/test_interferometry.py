@@ -911,3 +911,24 @@ class TestSweepPoolIsSafeToShare:
             with pytest.raises(ValueError, match="max_carrier_fraction"):
                 itf.chromatic_confocal_height(s, 500.0, 0.5, 0.20, 600.0,
                                               min_peak_bins=0.0)
+
+
+def test_csi_signal_simulate_scan_range_bound_is_n_planes_minus_one_steps():
+    """The last of ``n_planes`` planes sits at ``z_start + (n_planes - 1)*z_step``.
+
+    A surface exactly there is accepted, one more step is refused, and the
+    refusal names the real formula — the message used to say
+    ``n_planes*z_step_um``, one plane past the scan (the check itself was
+    already right; only the reported bound was off by one)."""
+    for n in (3, 5, 241):
+        last = 0.0 + 0.05 * (n - 1)
+        s = itf.csi_signal_simulate(surface_um=last, z_start_um=0.0,
+                                    z_step_um=0.05, n_planes=n)
+        assert s.shape == (n,)
+        with pytest.raises(ValueError) as ei:
+            itf.csi_signal_simulate(surface_um=0.05 * n, z_start_um=0.0,
+                                    z_step_um=0.05, n_planes=n)
+        msg = str(ei.value)
+        assert "(n_planes - 1)*z_step_um" in msg
+        assert "+ n_planes*z_step_um" not in msg
+        assert "[0, %g]" % last in msg
