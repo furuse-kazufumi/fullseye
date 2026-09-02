@@ -153,6 +153,46 @@ def _two_bumps(n=26):
     return np.column_stack([xs.ravel(), ys.ravel(), z.ravel()])
 
 
+def _bunny_like(n=1500, seed=2):
+    """Asymmetric closed surface (2026-09-02 review shape) — unique registration."""
+    r = np.random.default_rng(seed)
+    th = r.uniform(0, 2 * np.pi, n)
+    ph = r.uniform(0, np.pi, n)
+    R = 1.0 + 0.3 * np.sin(3 * th) * np.sin(2 * ph) + 0.2 * np.cos(5 * ph)
+    return np.c_[R * np.sin(ph) * np.cos(th) * 1.3, R * np.sin(ph) * np.sin(th) * 0.9,
+                 R * np.cos(ph) * 0.7]
+
+
+@pytest.mark.parametrize("cut,frac", [(-0.8, 0.74), (-0.4, 0.5)])
+def test_register_survives_partial_overlap(cut, frac):
+    """Regression: with the PCA start alone, `register` failed below ~80 % overlap
+    (116-171 deg) because the principal axes of a partial view are not those of
+    the whole cloud; the feature (FPFH) start succeeds. `register` now tries both
+    and keeps the lower trimmed rmse."""
+    B = _bunny_like()
+    R0 = _rot(np.deg2rad(30), np.deg2rad(-60), np.deg2rad(100))
+    t0 = np.array([1.0, -2.0, 3.0])
+    dst = reg.apply_transform(B, R0, t0) + np.random.default_rng(0).normal(0, 0.002, B.shape)
+    part = B[B[:, 0] > cut]
+    assert abs(len(part) / len(B) - frac) < 0.05
+    R, t, aligned, rmse = reg.register(part, dst)
+    ang = np.degrees(np.arccos(np.clip((np.trace(R.T @ R0) - 1) / 2, -1, 1)))
+    assert ang < 1.0, f"rotation error {ang:.2f} deg at {frac:.0%} overlap"
+    assert np.linalg.norm(t - t0) < 0.02
+    assert rmse < 0.01
+    # the PCA-only start is genuinely the wrong basin here (so 'auto' did the work)
+    _, _, _, rmse_pca = reg.register(part, dst, init="pca")
+    assert rmse_pca > 5 * rmse
+
+
+def test_register_init_argument_is_validated():
+    B = _bunny_like(n=300)
+    with pytest.raises(ValueError):
+        reg.register(B, B, init="bogus")
+    with pytest.raises(ValueError):
+        reg.register(B[:10], B[:10], init="feature")      # too small for FPFH
+
+
 def test_feature_register_recovers_transform_via_fpfh():
     P = _two_bumps()
     R0 = _rot(0.15, 0.2, 0.25)
