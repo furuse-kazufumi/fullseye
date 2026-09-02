@@ -6123,7 +6123,8 @@ def build_window(model=None):
     c_reset.clicked.connect(reset_program)
     win._program = {"edit": code_edit, "apply": apply_program, "run": run_program,
                     "step": step_program, "continue": continue_program, "run_from": run_from,
-                    "parse": parse_program, "text": program_text_from_model}
+                    "parse": parse_program, "text": program_text_from_model,
+                    "status": lambda: code_status, "stage_line": _stage_line}
 
     # -- variables & objects window wiring (inspect / display any stage output) - #
     def _var_entries():
