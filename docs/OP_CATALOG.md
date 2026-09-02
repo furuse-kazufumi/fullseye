@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(58 例)
+### 2-D 画像/信号/幾何(59 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -57,6 +57,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **optics_sensing**
 - **光学 op(optics)で検査機を 1 台、紙の上で設計する** — 倍率→焦点距離/物体距離、ABCD 行列で結像確認、回折限界・被写界深度・MTF を要求分解能に対して合否判定する。 `py -3.11 examples/optics_imaging.py`
 - **実光線設計 op(raytrace)で singlet と doublet を比べる** — 処方(lens_system)から近軸表・面ごとの Seidel・軸上/5 deg のスポット RMS・OPD→Zernike・Monte-Carlo 公差 p95 を出し、閉形式(thick_lens / 放物面鏡の完全結像)と突き合わせる。 `py -3.11 examples/lens_design_demo.py`
+- **設計したレンズで欠陥画像を撮る(lensimage)— PSF・歪曲・センサ雑音つき学習データ** — singlet / doublet の実収差瞳から回折 PSF(Airy 第 1 暗環・Strehl)と歪曲表を出し、defectgen の欠陥をレンズ越しに描いて、同じ歪曲だけ通したマスク(IoU)と COCO 風注釈を書き出す。 `py -3.11 examples/lens_defect_dataset_demo.py`
 - **ライトフィールド 17 op で plenoptic 検査機を通す** — 画素/MLA ピッチから角度・空間分解能と基線長を設計し、センサ生データ→EPI→深度まで復元して既知深度と照合。 `py -3.11 examples/lightfield_depth.py`
 - **光子計数・時間分解 op(photoncount)で単一光子距離計を仕立てる** — SPAD の √N 雑音・デッドタイム・パイルアップを持つヒストグラムから距離と蛍光寿命を出し、17 op を閉形式 GT と照合。 `py -3.11 examples/photon_timeresolved.py`
 - **コヒーレンス走査干渉(interferometry)で段差表面を測る** — 位相シフト法(fringe)が 2π 周期で壊れる段差を、同じ表面で白色干渉の包絡線ピークから正しく測り、両者の差を数値に出す。 `py -3.11 examples/coherence_scanning.py`
@@ -1805,7 +1806,7 @@ _計 26 ops / 4 categories。_
 - `stat_zscore` (`signal → signal`) — Standardise a 1-D sample: ``(x - mean) / std`` (population ``ddof=0``).
 
 ## Optics operators(opsoptics)by category
-_計 30 ops / 5 categories。_
+_計 34 ops / 6 categories。_
 
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)。光線と面の相互作用(reflect / refract / fresnel_reflectance)と Zernike フィット(fit_zernike)は match3d、PSF 復元は volrestore、FFT は complexops、位相シフト干渉法は fringe が持ち場なので重複させていない。
@@ -1835,6 +1836,12 @@ _計 30 ops / 5 categories。_
 - `psf_to_mtf` (`image2d → pairs`) — Radially-averaged MTF of a measured point-spread function.
 - `mtf_diffraction` (` → pairs`) — The diffraction-limited MTF of a circular pupil (closed form).
 - `wavefront_stats` (`table → table`) — Wavefront error statistics from a Zernike expansion: RMS, PV and Strehl.
+
+### imaging_sim(4)
+- `psf_from_opd` (`table → image2d`) — Diffraction PSF of the real, aberrated pupil (``image2d``, sums to 1).
+- `distortion_map` (`table → table`) — Real chief-ray height versus the paraxial one, and the remap grid (``table``).
+- `render_through_lens` (`image2d, table → image2d`) — Render an ideal irradiance image as the sensor behind *system* would record it (``image2d``).
+- `defect_dataset` (` → table`) — Synthetic defect images through a designed lens, with aligned masks (``table``).
 
 ### polarization(6)
 - `jones_element` (` → cimage`) — A 2x2 complex Jones matrix for one polarisation element.

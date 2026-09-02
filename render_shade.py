@@ -294,6 +294,7 @@ def _hapke_roughness(mu0, mu, cos_g, theta_bar: float):
         return chi * (cx + sx * tan_tb * E2(x) / (2.0 - E1(x)))
 
     E1i, E2i, E1e, E2e = E1(i), E2(i), E1(e), E2(e)
+    np.seterr(all="ignore")                    # 縁(i,e→90°)の 0/0 は下で 0 に潰す
     # i <= e の式
     den_a = 2.0 - E1e - (psi / np.pi) * E1i
     mu0e_a = chi * (m0 + si * tan_tb * (cpsi * E2e + sin2_half * E2i) / den_a)
