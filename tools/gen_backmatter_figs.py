@@ -401,7 +401,10 @@ def fig_optional_extras() -> None:
     extras = py["project"]["optional-dependencies"]
     groups = [  # 見出しは表示上の整理。extras 名と中身は pyproject 原文
         ("画像 I/O・処理", ["opencv", "skimage", "pil", "wavelets", "extra"], BLUE),
-        ("GPU・3D ツールキット", ["gpu", "threed"], PURPLE),
+        # handpose は 2026-08-31 に pyproject へ入ったが、この表が追随して
+        # いなかったので図が 2 日間再生成できなかった(下の fail-closed が
+        # 正しく働いた結果。記事の op 数 pin が生成を止めていたのと同じ形)。
+        ("GPU・3D ツールキット", ["gpu", "threed", "handpose"], PURPLE),
         ("GUI・動画・音声", ["gui", "video", "audio"], GREEN),
         ("3D データ・点群 I/O", ["volume", "raster", "gltf", "lidar", "pcd"], ORANGE),
         ("産業 I/O", ["serial", "modbus", "mqtt", "opcua"], RED),
