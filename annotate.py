@@ -357,9 +357,11 @@ def measure_text(text, font_size=14, font_path=None, max_width=None,
         行送り係数。
     wrap : bool
         True(既定)なら ``max_width`` で**折り返す**。False なら折り返さず
-        **1 行のままフォントを縮めて**収める(格子のラベルのように、2 行に
+        **行を増やさずフォントを縮めて**収める(格子のラベルのように、2 行に
         なると版が崩れる場所で使う ―― ``exhibit_tile._fit_label`` と同じ流儀)。
         どちらでも ``min_font_size`` まで来て入らなければ例外。
+        ``\n`` の改行は ``max_width`` の有無・``wrap`` の値に**よらず常に**効く
+        (幅を与えないと 1 行に潰れる、という事故は起きない)。
 
     Returns
     -------
@@ -389,7 +391,13 @@ def measure_text(text, font_size=14, font_path=None, max_width=None,
 
     for size in range(font_size, min_font_size - 1, -1):
         font = _font(size, font_path)
-        lines = [text] if (max_width is None or not wrap) else _wrap(text, font, max_width)
+        # 改行(``\n``)は max_width / wrap と**無関係に常に**効く。PIL の textlength
+        # は複数行を測れないので、ここで分けないと "a\nb" は幅なしで例外になる。
+        # 折り返し(幅で切る)だけが「幅あり かつ wrap=True」に限られる。
+        if max_width is None or not wrap:
+            lines = text.split("\n")
+        else:
+            lines = _wrap(text, font, max_width)
         widths = [_text_width(s, font) for s in lines]
         w = max(widths) if widths else 0.0
         if max_width is None or w <= max_width:
@@ -443,7 +451,12 @@ def text_box(img, text, xy, color="neutral", text_color=None, box_color=None,
         役割名または RGB。``text_color`` 未指定ならこれが**枠の色**として
         使われ、文字は読みやすい既定色になる。
     text_color, box_color : str/sequence or None
-        文字色・板の色。None なら既定(明るい文字 × 暗い板)。
+        文字色・板の色。None なら既定(明るい文字 × 暗い板)。文字色が None の
+        ときは、**実際に下に出る色**に対して明るい既定色が ``min_contrast`` を
+        割る場合に限り、暗い文字(板の色)へ自動で切り替える ―― 板なし
+        (``box_alpha=0``)で白地に置く目盛り・カラーバー・凡例のラベルが
+        白に溶けないため。``text_color`` を明示したときは切り替えない
+        (色は図の意味なので勝手に変えず、読めなければ例外にする)。
     box_alpha : float
         板の不透明度 [0,1]。``0`` なら板を描かない(目盛りラベル向け)。
     anchor : str
@@ -488,7 +501,7 @@ def text_box(img, text, xy, color="neutral", text_color=None, box_color=None,
         raise ValueError(f"border must be >= 0 (got: {border})")
     _finite("xy", xy)
 
-    ink = _rgb(_INK_RGB if text_color is None else text_color, scheme)
+    ink = None if text_color is None else _rgb(text_color, scheme)
     plate = _rgb(_PLATE_RGB if box_color is None else box_color, scheme)
     edge = _rgb(color if border_color is None else border_color, scheme)
 
@@ -514,6 +527,15 @@ def text_box(img, text, xy, color="neutral", text_color=None, box_color=None,
         tuple(float(v) for v in np.mean(under.reshape(-1, under.shape[-1]), axis=0)[:3])
     if len(under_rgb) < 3:
         under_rgb = (under_rgb[0],) * 3
+    if ink is None:
+        # 既定は明るい文字。ただし板が無い/薄い/明るい場所ではそれが地に溶ける
+        # ので、既定色が min_contrast を割るときだけ暗い文字へ切り替える(両方
+        # 駄目なら良い方を選び、下の検査が例外にする)。既定色が読める限り
+        # 従来と同じ色を出すので、通っていた絵はバイト単位で変わらない。
+        light, dark = _rgb(_INK_RGB, scheme), _rgb(_PLATE_RGB, scheme)
+        ink = light
+        if _contrast_ratio(light, under_rgb) < float(min_contrast) and                 _contrast_ratio(dark, under_rgb) > _contrast_ratio(light, under_rgb):
+            ink = dark
     ratio = _contrast_ratio(ink, under_rgb)
     if ratio < float(min_contrast):
         raise ValueError(
@@ -844,7 +866,7 @@ def legend_box(img, entries, xy, anchor="lt", swatch=14, row_gap=4, pad=8,
         a = _blend(a, sw, _channel_color(a, col, scheme), 1.0)
         a = text_box(a, text, (x0 + pad + int(swatch) + 8, ry + row_h // 2), anchor="lm",
                      pad=0, box_alpha=0.0, font_size=m["font_size"], font_path=font_path,
-                     min_font_size=min_font_size, scheme=scheme, min_contrast=1.0)
+                     min_font_size=min_font_size, scheme=scheme)
     return a
 
 
@@ -918,17 +940,17 @@ def color_bar(img, lut, rect, vmin=0.0, vmax=1.0, unit="", label_fmt="{:g}",
     if orientation == "vertical":
         a = text_box(a, hi, (x + w + 4, y), anchor="lt", pad=2, box_alpha=0.0,
                      font_size=font_size, font_path=font_path, text_color=text_color,
-                     scheme=scheme, min_contrast=1.0)
+                     scheme=scheme)
         a = text_box(a, lo, (x + w + 4, y + h), anchor="lb", pad=2, box_alpha=0.0,
                      font_size=font_size, font_path=font_path, text_color=text_color,
-                     scheme=scheme, min_contrast=1.0)
+                     scheme=scheme)
     else:
         a = text_box(a, lo, (x, y + h + 4), anchor="lt", pad=2, box_alpha=0.0,
                      font_size=font_size, font_path=font_path, text_color=text_color,
-                     scheme=scheme, min_contrast=1.0)
+                     scheme=scheme)
         a = text_box(a, hi, (x + w, y + h + 4), anchor="rt", pad=2, box_alpha=0.0,
                      font_size=font_size, font_path=font_path, text_color=text_color,
-                     scheme=scheme, min_contrast=1.0)
+                     scheme=scheme)
     return a
 
 
@@ -1262,16 +1284,14 @@ def ticks(img, axes, xticks=None, yticks=None, color="neutral", width=1,
         if label:
             a = text_box(a, label_fmt.format(float(v)), (float(px), y + h + tick_len + 2),
                          anchor="ct", pad=1, box_alpha=0.0, font_size=font_size,
-                         font_path=font_path, text_color=text_color, scheme=scheme,
-                         min_contrast=1.0)
+                         font_path=font_path, text_color=text_color, scheme=scheme)
     for v in np.atleast_1d(yt):
         _, py = data_to_pixel(axes, axes["xlim"][0], float(v))
         a = imagedraw.draw_line(a, (x - tick_len, float(py)), (x, float(py)), color=col, **kw)
         if label:
             a = text_box(a, label_fmt.format(float(v)), (x - tick_len - 3, float(py)),
                          anchor="rm", pad=1, box_alpha=0.0, font_size=font_size,
-                         font_path=font_path, text_color=text_color, scheme=scheme,
-                         min_contrast=1.0)
+                         font_path=font_path, text_color=text_color, scheme=scheme)
     return a
 
 
@@ -1696,13 +1716,12 @@ def panel_grid(panels, labels=None, ncols=3, pad=10, label_h=32, background=0.05
             out = text_box(out, labels[i], (x0 + cw // 2, y0 + ch + int(label_h) // 2),
                            anchor="cm", pad=2, box_alpha=0.0, font_size=font_size,
                            min_font_size=min_font_size, font_path=font_path,
-                           text_color=text_color, max_width=cw, scheme=scheme,
-                           min_contrast=1.0, wrap=False)
+                           text_color=text_color, max_width=cw, scheme=scheme, wrap=False)
     if title is not None:
         out = text_box(out, title, (W // 2, int(title_h) // 2), anchor="cm", pad=2,
                        box_alpha=0.0, font_size=font_size + 3, min_font_size=min_font_size,
                        font_path=font_path, text_color=text_color, max_width=W - 2 * pad,
-                       scheme=scheme, min_contrast=1.0)
+                       scheme=scheme)
     return out
 
 
