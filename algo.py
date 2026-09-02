@@ -976,16 +976,20 @@ static int _uf_find(int* parent, int x) {
 double graph_components(const double* a, int n_in) {
     if (n_in < 2) return 0.0;
     double nd = a[0], md = a[1];
-    if (!(nd >= 1.0 && nd <= 2147483000.0)) return 0.0;
-    if (!(md >= 0.0 && md <= 2147483000.0)) return 0.0;
+    if (!(nd >= 1.0 && nd <= 5000000.0 && nd == (double)(int)nd)) return 0.0;   /* node cap (as sieve) */
+    if (!(md >= 0.0 && md <= 2147483000.0 && md == (double)(int)md)) return 0.0;
     int n = (int)nd, m = (int)md;
     if ((long long)n_in < 2LL + 3LL * m) return 0.0;
     int* parent = (int*)malloc((size_t)n * sizeof(int));
     if (!parent) return 0.0;
     for (int i = 0; i < n; i++) parent[i] = i;
     for (int k = 0; k < m; k++) {
-        int u = (int)a[2 + 3 * k], v = (int)a[2 + 3 * k + 1];
-        if (u < 0 || u >= n || v < 0 || v >= n) { free(parent); return 0.0; }
+        double ud = a[2 + 3 * k], vd = a[2 + 3 * k + 1];
+        /* raw-double guard BEFORE the cast (range short-circuits, then integrality):
+         * (int)3e9 / (int)1e300 / (int)NaN are float-cast-overflow UB. */
+        if (!(ud >= 0.0 && ud < (double)n && ud == (double)(int)ud)) { free(parent); return 0.0; }
+        if (!(vd >= 0.0 && vd < (double)n && vd == (double)(int)vd)) { free(parent); return 0.0; }
+        int u = (int)ud, v = (int)vd;
         int ru = _uf_find(parent, u), rv = _uf_find(parent, v);
         if (ru != rv) parent[ru] = rv;
     }
