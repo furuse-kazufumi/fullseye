@@ -15,7 +15,7 @@
 7. 台帳 opsoptics 34 → **47 op / 8 カテゴリ**、docs/OP_CATALOG/Studio help 再生成、テスト群 330 passed(光学系)+ opdocs 43。
 
 ## 次にやること(優先順)
-1. **push → Qiita PATCH**: `git push origin master` 後に `py -3.11 tools/qiita_patch_overview.py --check` → 同 `(no flag)`(イトカワ新静止画 `docs/articles/assets/itokawa_regolith_hero.png` の raw URL は push 後に 200 になる)。フルスイート 3 分割の結果を先に確認。
+1. ~~push → Qiita PATCH~~ **完了(2026-09-03 07:54)**: push `7ba7cf325..1a0f475b6`、ja/en PATCH 200・本文長一致を検証、フルスイート 10,550 passed / 153 skipped / 3 xfailed / 0 failed(3 分割)。次回以降の記事更新は `py -3.11 tools/qiita_patch_overview.py --check` → 同 `(no flag)`(イトカワ新静止画 `docs/articles/assets/itokawa_regolith_hero.png` の raw URL は push 後に 200 になる)。フルスイート 3 分割の結果を先に確認。
 2. v0.1.4 リリースノート(前回の「利用者が気づく挙動変更」+ 今回の 47 op 化・`_finite` の bool/str 拒否・`optimize_lens` の status)。
 3. 光学の残候補: 多重反射/相互反射(照明・イトカワ共通)、異方性 BRDF(ヘアライン金属)、ゴースト/迷光解析、テレセントリック計測誤差予算、センサ RS/PRNU/HDR、多色 PSF(lensimage は単色)。
 4. 前回からの残: `fullseye.selfcheck()`、typed `_EMPTY_OF`(lightfield/histcube)、`tb_euclidean_cluster` tol、0.0 番兵 4 件、`xcv2_hitmiss` knob、render_mesh スムーズシェーディング(→ `smooth_normals` で render_beauty 側は対応済)、ファザー拒否 35 件、raptor upstream 同期。
