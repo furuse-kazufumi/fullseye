@@ -254,7 +254,7 @@ def test_f10_save_result_writes_pipeline_output_not_the_view(app, win, tmp_path,
     monkeypatch.setattr(QtWidgets.QFileDialog, "getSaveFileName",
                         staticmethod(lambda *a, **k: (str(view), "")))
     w._actions["save_view"].trigger()
-    assert imgio.load(str(view)).ndim == 3
+    assert imgio.load(str(view), color=True).ndim == 3
 
 
 # ----------------------------------------------------------------- F11 save_pipe
