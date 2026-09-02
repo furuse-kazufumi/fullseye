@@ -1406,14 +1406,19 @@ def run(src_or_program, images=None, base_dir=None, trace=None, max_steps=2_000_
     if images:
         for name, value in images.items():
             env.vars[name] = _seed_value(value)
-    Interp(env, max_steps=max_steps).run(program)
+    Interp(env, max_steps=max_steps).run_program(program)
     return env
 
 
 def check(src: str):
-    """Parse-only: return a list of error strings (empty when the script parses)."""
+    """Parse-only: return a list of error strings (empty when the script parses).
+
+    Never raises: an editor calls this on every keystroke, so anything the
+    parser lets escape (it should be nothing) is reported as text too."""
     try:
         parse(src)
         return []
     except FScriptError as e:
         return [str(e)]
+    except Exception as e:                            # pragma: no cover - defensive
+        return ["internal parser error: %s: %s" % (type(e).__name__, e)]
