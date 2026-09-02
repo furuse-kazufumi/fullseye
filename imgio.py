@@ -358,22 +358,33 @@ def save(path: str, arr) -> None:
 _JPEG_MAGIC = b"\xff\xd8\xff"
 
 
-def _check_jpeg_complete(path: str, head: bytes, tail: bytes) -> None:
-    """Fail closed on a truncated JPEG.
+def _check_jpeg_complete(path: str) -> None:
+    """Fail closed on a truncated JPEG — run BEFORE any backend decodes it.
 
-    libjpeg (hence OpenCV) *pads* a truncated JPEG with grey and returns a partial
-    image without any error, so a half-downloaded photo silently loads as
-    "top half picture, bottom half grey". Pillow's decoder refuses instead
-    (``OSError: image file is truncated``), so when Pillow is available the file
-    is decoded a second time by Pillow in 1/8-scale ``draft`` mode (the entropy
-    data must still be consumed in full, so truncation is detected, at a fraction
-    of a full decode). Without Pillow the EOI marker ``FF D9`` is required to
-    appear in the last 4 KiB of the file (weaker: a file truncated right after
-    an embedded EXIF thumbnail, which carries its own EOI, would pass).
+    libjpeg-based readers *pad* a truncated JPEG with grey and return a partial
+    image without any error (``cv2.imread`` does; ``cv2.imdecode`` returns None
+    and the ``raster`` fallback then decodes the partial file), so a
+    half-downloaded photo silently loads as "top half picture, bottom half
+    grey". Pillow's decoder refuses instead (``OSError: image file is
+    truncated``), so when Pillow is available the file is decoded once by Pillow
+    in 1/8-scale ``draft`` mode (the entropy data must still be consumed in
+    full, so truncation is detected, at a fraction of a full decode). Without
+    Pillow the EOI marker ``FF D9`` is required to appear in the last 4 KiB of
+    the file (weaker: a file truncated right after an embedded EXIF thumbnail,
+    which carries its own EOI, would pass). Non-JPEG files (by magic bytes) and
+    unreadable paths return silently — the decoders report those.
     Raises ``ValueError`` — the contract :func:`load` promises for a file no
     backend can decode *correctly*.
     """
-    if not head.startswith(_JPEG_MAGIC):
+    try:
+        with open(path, "rb") as fh:
+            head = fh.read(3)
+            if not head.startswith(_JPEG_MAGIC):
+                return
+            fh.seek(0, 2)
+            fh.seek(max(0, fh.tell() - 4096))
+            tail = fh.read()
+    except OSError:
         return
     try:
         from PIL import Image
