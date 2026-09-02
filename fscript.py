@@ -75,6 +75,9 @@ _KEYWORDS = {"if", "elseif", "else", "endif", "for", "to", "by", "endfor",
 # multi-char operators first so ':=' / '<=' win over ':' / '<'
 _OPS = [":=", "<=", ">=", "==", "!=", "<", ">", "=", "#", "+", "-", "*", "/",
         "%", "(", ")", "[", "]", ",", ":"]
+_ASCII_DIGITS = "0123456789"
+#: The numeral grammar: ``12`` / ``1.5`` / ``1.`` / ``.5`` / ``1e-3`` / ``2.5E+4``.
+_NUM_RE = re.compile(r"(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?")
 
 
 class Tok:
