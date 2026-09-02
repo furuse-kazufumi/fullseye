@@ -41,7 +41,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 同カテゴリ(`contour`)
 
-[edges_sub_pix](edges_sub_pix.md) · [select_contours](select_contours.md) · [smooth_contours](smooth_contours.md) · [fit_line_contours](fit_line_contours.md) · [contours_to_region](contours_to_region.md) · [sk_find_contours](sk_find_contours.md) · [lines_gauss](lines_gauss.md) · [smooth_contours_xld](smooth_contours_xld.md)
+[select_contours](select_contours.md) · [smooth_contours](smooth_contours.md) · [fit_line_contours](fit_line_contours.md) · [contours_to_region](contours_to_region.md) · [sk_find_contours](sk_find_contours.md) · [edges_sub_pix](edges_sub_pix.md) · [lines_gauss](lines_gauss.md) · [smooth_contours_xld](smooth_contours_xld.md)
 
 ---
 *Provenance: ops.py — 2D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

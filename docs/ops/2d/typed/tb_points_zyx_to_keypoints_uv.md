@@ -3,7 +3,7 @@ op: tb_points_zyx_to_keypoints_uv
 dim: 2d
 category: typed
 in: points
-out: points
+out: keypoints
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,12 +12,12 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # tb_points_zyx_to_keypoints_uv — 2D `typed` op
 
-- **データ種**: `points` → `points`
+- **データ種**: `points` → `keypoints`
 - **呼び出し**: `fullseye.apply(img, "tb_points_zyx_to_keypoints_uv", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
 ## 使い方
 
-型契約は `points → points`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+型契約は `points → keypoints`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
 
 ## 参考(サンプルデータ・文献)
 
@@ -28,9 +28,9 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 - (まだありません)
 
-## 型が繋がる次の op(`points` を入力に取れる)
+## 型が繋がる次の op(`keypoints` を入力に取れる)
 
-[identity](../misc/identity.md) · [tb_points_to_voxel](tb_points_to_voxel.md) · [tb_estimate_point_normals](tb_estimate_point_normals.md) · [tb_iss_keypoints](tb_iss_keypoints.md) · [tb_angle_3points](tb_angle_3points.md) · [tb_project_points](tb_project_points.md) · [tb_render_point_depth](tb_render_point_depth.md) · [tb_statistical_outlier_removal](tb_statistical_outlier_removal.md)
+[identity](../misc/identity.md) · [tb_keypoints_uv_to_points](tb_keypoints_uv_to_points.md) · [tb_keypoints_to_image2d](tb_keypoints_to_image2d.md)
 
 ## 同カテゴリ(`typed`)
 

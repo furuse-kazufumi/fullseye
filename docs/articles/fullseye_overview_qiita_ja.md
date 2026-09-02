@@ -1322,9 +1322,9 @@ HDevelop の定番機能に、ラベリングした複数領域の特徴量を�
 
 *↑ **死んだ型 `flow` が「見える」ようになった** ―― `flow` は単入力で産む op も食う op も無い完全な孤島だった。密なシーンフロー [3, 24, 96, 96] を大きさ(voxel)と色相環(rgbimage)へ出す 2 つの出口を作り、**色の意味の凡例を同じ図に焼いた**。この repo の `flow` は (3,D,H,W) の密フローと (N,3) の散在フローが**同じ型名で同居している**ので、密用 ['flow_magnitude', 'flow_to_rgbimage'] と散在用 ['flow_speed', 'flow_apply'] でop を分け、相手の形は fail-closed にしてある。*
 
-- PNG: `docs/articles/assets/wingconv_flow_colorwheel.png` (1 frame(s), 676x820 px, 0.07 MB)
+- PNG: `docs/articles/assets/wingconv_flow_colorwheel.png` (1 frame(s), 676x820 px, 0.08 MB)
 - サムネ: `docs/articles/assets/wingconv_flow_colorwheel_thumb.jpg`
-- SHA-256: `ce75caad5b7d998107f9c879883e480fb2da06c7b04bef349cad4d9c20e15ebf`
+- SHA-256: `91311ab72227bd1007a04eb9053b33823dacd2d3bbe5eb3913935c1465729b98`
 
 ## 7. 軸・単位・spacing の取り違えは例外を出さずに通る
 [![軸・単位・spacing の取り違えは例外を出さずに通る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_axis_unit_traps_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_axis_unit_traps.png)
@@ -1338,11 +1338,11 @@ HDevelop の定番機能に、ラベリングした複数領域の特徴量を�
 ## 8. 死んだ語彙 ―― 産む op はあるのに、そこから先へ行けない型
 [![死んだ語彙 ―― 産む op はあるのに、そこから先へ行けない型](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_dead_vocabulary_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_dead_vocabulary.png)
 
-*↑ **死んだ語彙 ―― 産む op はあるのに、そこから先へ行けない型** ―― 台帳 515 op を「単入力かつ in 型 ≠ out 型 = 変換」で機械集計すると、他型へ一歩も出られない型が **25 個**あった。`reprconv` の 42 op で **16 型**に出口ができ、変換ペアは121 → 159 種、袋小路は 25 → 9 個。残した 9 型は**埋めない理由**を台帳に書いてある ―― 埋めないことも判断である。*
+*↑ **死んだ語彙 ―― 産む op はあるのに、そこから先へ行けない型** ―― 台帳 707 op を「単入力かつ in 型 ≠ out 型 = 変換」で機械集計すると、他型へ一歩も出られない型が **15 個**あった。`reprconv` の 42 op で **0 型**に出口ができ、変換ペアは184 → 184 種、袋小路は 15 → 15 個。残した 9 型は**埋めない理由**を台帳に書いてある ―― 埋めないことも判断である。*
 
-- PNG: `docs/articles/assets/wingconv_dead_vocabulary.png` (1 frame(s), 1180x720 px, 0.09 MB)
+- PNG: `docs/articles/assets/wingconv_dead_vocabulary.png` (1 frame(s), 1180x720 px, 0.06 MB)
 - サムネ: `docs/articles/assets/wingconv_dead_vocabulary_thumb.jpg`
-- SHA-256: `ea4ab5aa16bebdd20e8741aab277db3e5ccab6dbc8ca78c1000a265ebf4faf90`
+- SHA-256: `bf69ffebffa729b39bfee9c97190f25010dfd8f557e90d59eaa80b9006848822`
 
 ### Studio と 3D 表示ウィング ―― 見て気づく
 
@@ -1460,9 +1460,9 @@ Studio 画面はすべて `studio.build_window()` が組み立てた**実 UI** �
 
 ![新しい族の op ヘルプを Studio の中で開く](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingstudio_studio_help.gif)
 
-*↑ **新しい族の op ヘルプを Studio の中で開く** —— ライトフィールド → FMCW レンジドップラ → 四元数モノジェニック → 光子計数(SPAD)→ 音響ビームフォーミング → 干渉(角スペクトル伝搬)→ 3D の ICP・主曲率、と 8 ページを実際に開き、各ページを上から下までスクロールした 24 フレームです。ヘルプ本文は `docs/ops/**/*.md` から自動生成された実ファイル(2D 879 枚 / 3D 310 枚)。族別ディレクトリには合計 155 枚が生成済みで、そのうち Studio から開けるのは `tb_*` 型付き op 経由の 45 枚、残り 110 枚はまだ画面から辿れません(干渉は 9 枚中 0 枚)。 使用 op / 機能: Studio のヘルプダイアログ(`op_help_html` / `op_help_html_3d`)、`tools/opdocs.py` 生成の HTML。*
+*↑ **新しい族の op ヘルプを Studio の中で開く** —— ライトフィールド → FMCW レンジドップラ → 四元数モノジェニック → 光子計数(SPAD)→ 音響ビームフォーミング → 干渉(角スペクトル伝搬)→ 3D の ICP・主曲率、と 8 ページを実際に開き、各ページを上から下までスクロールした 24 フレームです。ヘルプ本文は `docs/ops/**/*.md` から自動生成された実ファイル(2D 907 枚 / 3D 310 枚)。族別ディレクトリには合計 351 枚が生成済みで、そのうち Studio から開けるのは `tb_*` 型付き op 経由の 53 枚、残り 298 枚はまだ画面から辿れません(干渉は 9 枚中 0 枚)。 使用 op / 機能: Studio のヘルプダイアログ(`op_help_html` / `op_help_html_3d`)、`tools/opdocs.py` 生成の HTML。*
 
-<sub>`wingstudio_studio_help.gif` — 24 フレーム / 3 fps / 1000×720 px / 0.53 MB / SHA-256 `c61185a31e5cbf8d`</sub>
+<sub>`wingstudio_studio_help.gif` — 24 フレーム / 3 fps / 1000×720 px / 0.53 MB / SHA-256 `49fc9ab4fffe092c`</sub>
 
 ---
 
@@ -1472,7 +1472,7 @@ Studio 画面はすべて `studio.build_window()` が組み立てた**実 UI** �
 
 *↑ **書いて、F5 で走らせて、結果が出るまで** —— タブエディタに 18 行のコードを打ち込み、F5 で実行して出力コンソールを読み下すまでの 24 フレームです(1060×740 px のダイアログ)。実行はモックではなく本物の子プロセスで、ステータスは「PASS ✓ (exit 0)」。出力 6 行の末尾は `foreground fraction = 0.2995` / `objects = 21` / `area  min/median/max = 1118 / 1494 / 3084` —— コインの分割結果です。 使用 op / 機能: Studio の Python エディタ(タブ + F5 実行)、`fullseye.apply`, `fullseye.segment_objects`。*
 
-<sub>`wingstudio_studio_editor.gif` — 24 フレーム / 6 fps / 1060×740 px / 0.36 MB / SHA-256 `fc35f56ab0340f6f`</sub>
+<sub>`wingstudio_studio_editor.gif` — 24 フレーム / 6 fps / 1060×740 px / 0.36 MB / SHA-256 `ce1154f194aeb759`</sub>
 
 ---
 
@@ -1480,9 +1480,9 @@ Studio 画面はすべて `studio.build_window()` が組み立てた**実 UI** �
 
 ![900 超の op から目的の 1 個へ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingstudio_studio_opsearch.gif)
 
-*↑ **900 超の op から目的の 1 個へ** —— 検索欄に 1 文字ずつ「watershed」と打つと、903 個の一覧が 4 件まで絞れます(実測の内訳: (空):903 → w:79 → wa:11 → wat:4 → wate:4 → water:4 → waters:4 → watersh:4 → watershe:4 → watershed:4)。選ぶと `in_sort → out_sort` のシグネチャが右下に出る —— 型が見えるので、次に何を繋げるかがその場で分かります。最後に「cad」で引くと 0 件。 使用 op / 機能: Studio の演算子検索(名前 / HALCON 別名 / 分類 / docstring を横断)。*
+*↑ **900 超の op から目的の 1 個へ** —— 検索欄に 1 文字ずつ「watershed」と打つと、917 個の一覧が 4 件まで絞れます(実測の内訳: (空):917 → w:80 → wa:11 → wat:4 → wate:4 → water:4 → waters:4 → watersh:4 → watershe:4 → watershed:4)。選ぶと `in_sort → out_sort` のシグネチャが右下に出る —— 型が見えるので、次に何を繋げるかがその場で分かります。最後に「cad」で引くと 0 件。 使用 op / 機能: Studio の演算子検索(名前 / HALCON 別名 / 分類 / docstring を横断)。*
 
-<sub>`wingstudio_studio_opsearch.gif` — 17 フレーム / 4 fps / 1280×800 px / 0.54 MB / SHA-256 `8270e44188b4b2a6`</sub>
+<sub>`wingstudio_studio_opsearch.gif` — 17 フレーム / 4 fps / 1280×800 px / 0.54 MB / SHA-256 `7c1af28cc7a99e86`</sub>
 
 ---
 
@@ -1492,7 +1492,7 @@ Studio 画面はすべて `studio.build_window()` が組み立てた**実 UI** �
 
 *↑ **パイプラインを組む —— 型が合わないと Problems に出る** —— coins サンプルに `gaussian → otsu → opening_circle → sk_clear_border` を1 段ずつ足していき、⑤でわざと **region を受け取れない** `circularity_xld`(contour 入力)を足します。すると Problems に 「stage 4 (sk_clear_border) outputs 'region' but circularity_xld expects 'contour'」と出る —— Fullseye は繋いだ後に落ちるのではなく、繋いだ瞬間に型の不一致を言います。⑥で外すと「no problems」に戻ります(全 24 フレーム)。 使用 op / 機能: Studio の Program パネル(HDevelop 風)+ Problems、`engine.diagnose_stages`。*
 
-<sub>`wingstudio_studio_pipeline.gif` — 24 フレーム / 4 fps / 1280×800 px / 0.54 MB / SHA-256 `0fdcb11fdc1bceca`</sub>
+<sub>`wingstudio_studio_pipeline.gif` — 24 フレーム / 4 fps / 1280×800 px / 0.54 MB / SHA-256 `e395b77263a3e87a`</sub>
 
 ---
 
@@ -1860,7 +1860,7 @@ Studio のヘルプ検索は 2D 名 + 3D 名しか引かないため、`tb_*` �
 - GIF: `docs/articles/assets/media/wing1d_kurtosis_band.gif` (24 コマ, 1000x668 px, 2.00 MB, 220 ms/コマ・最終コマ 1400 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_kurtosis_band_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `c5d99ab9b37c33e0120328c4517e86d94cfe66402e7f17b069af75a4752b0e90`
+- SHA-256: `bdec35e49e13c06403e481762ebaa9056965efa0d086294372587df681d11144`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -1911,7 +1911,7 @@ Studio のヘルプ検索は 2D 名 + 3D 名しか引かないため、`tb_*` �
 - GIF: `docs/articles/assets/media/wing1d_window_sweep.gif` (22 コマ, 1000x668 px, 0.69 MB, 380 ms/コマ・最終コマ 1800 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_window_sweep_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `507eb1647e166c69a178c59880d785e0ef0baca7523f32ed8c8d7b5b1f0815c2`
+- SHA-256: `3aba9675419b0a0c316a29575868e7913ddf552e21f0db4f5e69a8d445993713`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -2043,7 +2043,7 @@ Studio のヘルプ検索は 2D 名 + 3D 名しか引かないため、`tb_*` �
 - GIF: `docs/articles/assets/media/wing1d_order_tracking.gif` (30 コマ, 1000x668 px, 1.08 MB, 220 ms/コマ・最終コマ 1400 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_order_tracking_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `db0ab726f8e966c9517713b93d9f90a4d4bc6031dede54761c5e31fa685b1780`
+- SHA-256: `94ed62dd8cc62b6aea2b0e6a32e2eb5250a108c73777340166390ea10da71932`
 
 <details><summary>この図に焼いた実測値</summary>
 

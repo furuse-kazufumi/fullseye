@@ -109,27 +109,63 @@ def test_guide_is_well_formed(guide):
     assert len(hit) >= 3, f"{guide}: names too few of its own family ops ({len(hit)}/{len(fam_ops)})"
 
 
-def test_intentional_op_name_overrides_are_pinned():
-    """The only duplicate 2-D op names are the 4 deliberate backend safe-wrap overrides.
+#: 意図的なバックエンド上書き: コアの ``ops._<name>`` を ``backends_auto`` の
+#: fail-closed ``_safe`` ラッパが置き換える。**上書き先が勝つこと**が設計意図。
+_SAFE_WRAP_OVERRIDES = ["dyn_threshold", "edges_sub_pix", "laplace", "local_max"]
 
-    These names are registered twice on purpose: a core ``ops._<name>`` fallback plus a
-    ``backends_auto`` fail-closed ``_safe`` wrapper that wins (RT/last). Physically removing
-    the core entry would break the Wave0 stable-slot invariant (tests/test_wave0.py) and the
-    no-backend fallback, so instead we PIN the override set — a new *accidental* collision
-    (a backend shadowing a core op unintentionally) makes this fail.
+
+def test_op_names_are_unique_in_the_registry():
+    """レジストリに同名 op が 2 つ存在しない。
+
+    2026-09-02 まで上の 4 件が**二重登録**されていた。当時の判断は「コアの
+    fallback を物理的に消すと Wave0 の stable-slot 不変条件と no-backend
+    fallback が壊れるので、上書きの集合を pin する」だった。
+
+    しかし二重登録には測れる害があった: ``RT`` / ``_BY_NAME`` / ``SLOTS`` は
+    後勝ちの dict なので**先に入った方は名前で二度と引けない**(``decode_by_names``
+    が再現できない)一方、``_candidates`` はリストを走査するので**両方が抽選に
+    入り、この 4 op だけ当たる確率が 2 倍**になっていた。
+
+    いまは ``ops.py`` の登録時に**後勝ちで畳む**。``RT`` は元々後勝ちの dict
+    だったので**名前で引ける実装は 1 ビットも変わらず**、消えるのは抽選の
+    二重取りだけ。backend 不在の環境ではコア定義しか登録されないので
+    no-backend fallback も保たれる。stable-slot は pin を取り直して守る。
     """
     import ops
     from collections import Counter
     dups = sorted(n for n, c in Counter(o.name for o in ops.REGISTRY).items() if c > 1)
-    assert dups == ["dyn_threshold", "edges_sub_pix", "laplace", "local_max"], (
-        f"op-name duplicate set changed to {dups} — if this is a new intentional backend "
-        "override, add it here (and confirm it wins in ops.RT); if accidental, rename it.")
-    for n in dups:
+    assert not dups, (
+        f"op 名が重複している: {dups} — 名前は addressing の鍵で、先に入った方は "
+        "名前で引けなくなるうえ、抽選には両方入って確率が 2 倍になる。"
+        "ops.py の登録で後勝ちに畳まれるはずなので、ここに出るのは畳み損ね。")
+
+
+def test_intentional_overrides_still_win_by_name():
+    """意図的な上書き 4 件が、名前で引いたときに ``_safe`` ラッパを指すこと。
+
+    重複を畳むときに**勝者を入れ替えてはいけない**。最初の実装は「先に来た方を
+    残す」にしてしまい、コアの素実装が勝つようになっていた(= fail-closed の
+    ラッパが外れる)。畳む向きが逆でも重複は消えるので、数だけ見ていると通る。
+    """
+    import ops
+    for n in _SAFE_WRAP_OVERRIDES:
+        assert n in ops.RT, f"{n} がレジストリから消えている"
         assert "_safe" in getattr(ops.RT[n], "__qualname__", ""), (
-            f"{n}: the winning impl is no longer the backends_auto _safe wrapper "
+            f"{n}: 名前で引ける実装が backends_auto の _safe ラッパでない "
             f"({ops.RT[n].__module__}.{getattr(ops.RT[n], '__qualname__', '?')})")
-        # a core fallback of the same op still exists behind the override
-        assert sum(1 for o in ops.REGISTRY if o.name == n) == 2, f"{n}: expected core+override"
+
+
+def test_dropped_duplicates_are_exactly_the_known_overrides():
+    """畳んだ結果として捨てた名前が、既知の上書き集合ちょうどであること。
+
+    黙って消えると「登録したのに使えない」に気づけない。新しい衝突が増えたら
+    ここが赤くなる(意図的なら一覧へ追加、事故なら改名する)。
+    """
+    import ops
+    dropped = sorted(getattr(ops, "DROPPED_DUPLICATES", []))
+    assert dropped == sorted(_SAFE_WRAP_OVERRIDES), (
+        f"畳んだ重複が {dropped} に変わった — 意図的な上書きなら "
+        "_SAFE_WRAP_OVERRIDES へ追加し、勝者が正しいか確認すること。事故なら改名。")
 
 
 # --------------------------------------------------------------------------- #

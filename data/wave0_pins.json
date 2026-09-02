@@ -139,7 +139,7 @@
    "any": "identity"
   },
   {
-   "image": "cv_laplacian(a=0.24,b=0.29) -> rotate_image(a=0.41,b=0.47) -> xpil_contour(a=0.59,b=0.65) -> xkor_motion_blur(a=0.76,b=0.82) -> alife_perona_malik(a=0.94,b=1.00)",
+   "image": "cv_tophat(a=0.24,b=0.29) -> affine_trans_image(a=0.41,b=0.47) -> xpil_contour(a=0.59,b=0.65) -> xkor_motion_blur(a=0.76,b=0.82) -> alife_perona_malik(a=0.94,b=1.00)",
    "region": "sk_find_boundaries(a=0.24,b=0.29) -> compactness(a=0.41,b=0.47)",
    "feature": "identity",
    "contour": "area_center_xld(a=0.24,b=0.29)",

@@ -2,7 +2,7 @@
 op: tb_keypoints_uv_to_points
 dim: 2d
 category: typed
-in: points
+in: keypoints
 out: points
 examples: []
 author: Kazufumi Furuse
@@ -12,12 +12,12 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # tb_keypoints_uv_to_points — 2D `typed` op
 
-- **データ種**: `points` → `points`
+- **データ種**: `keypoints` → `points`
 - **呼び出し**: `fullseye.apply(img, "tb_keypoints_uv_to_points", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
 ## 使い方
 
-型契約は `points → points`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+型契約は `keypoints → points`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
 
 ## 参考(サンプルデータ・文献)
 

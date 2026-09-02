@@ -39,7 +39,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 同カテゴリ(`edges`)
 
-[sobel_mag](sobel_mag.md) · [laplace](laplace.md) · [prewitt_mag](prewitt_mag.md) · [roberts_mag](roberts_mag.md) · [dog](dog.md) · [log](log.md) · [corner_response](corner_response.md) · [sk_scharr](sk_scharr.md)
+[sobel_mag](sobel_mag.md) · [prewitt_mag](prewitt_mag.md) · [roberts_mag](roberts_mag.md) · [dog](dog.md) · [log](log.md) · [corner_response](corner_response.md) · [sk_scharr](sk_scharr.md) · [sk_farid](sk_farid.md)
 
 ---
 *Provenance: ops.py — 2D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

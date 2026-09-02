@@ -2,7 +2,7 @@
 op: tb_keypoints_to_image2d
 dim: 2d
 category: typed
-in: points
+in: keypoints
 out: image
 examples: []
 author: Kazufumi Furuse
@@ -12,12 +12,12 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # tb_keypoints_to_image2d — 2D `typed` op
 
-- **データ種**: `points` → `image`
+- **データ種**: `keypoints` → `image`
 - **呼び出し**: `fullseye.apply(img, "tb_keypoints_to_image2d", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
 ## 使い方
 
-型契約は `points → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+型契約は `keypoints → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
 
 ## 参考(サンプルデータ・文献)
 
