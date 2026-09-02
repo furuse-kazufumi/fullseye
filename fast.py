@@ -385,6 +385,7 @@ NOT_LISTED: dict = {
     "equalize": "cv2.equalizeHist は uint8 の 256 段、core は float の 256 bin + np.interp — interior 0.580",
     "otsu": "cv2 の Otsu は uint8 ヒストグラム、core は float 256 bin。interior 0.0042 でゲートは通るが**二値 op なので不一致率 0 を要求**して不採用",
     "dyn_threshold": "cv2.blur と ndimage.uniform_filter の最終 ulp 差で閾値上の画素が反転 — 二値不一致率 2.97e-4(> 0)なので不採用",
+    "edges_image": "registry のこの名前は backends_auto の skimage canny(本物の hysteresis つき)で core の canny とは別アルゴリズム — 二値不一致率 1.00",
     "percentile": "cv2 に任意パーセンタイルの rank filter が無い",
     "lowpass/highpass": "cv2.dft は np.fft.fft2 とレイアウト規約が違い、調査でも cv2 の利得は測れていない",
     "gamma/invert/scale_clip/threshold": "既に numpy の要素演算で 100〜450 Mpx/s。cv2 化の利得が無い(uint8 LUT は契約外)",
