@@ -53,6 +53,51 @@ def test_polar_ops_stay_in_unit_range(name):
         f"{name} out of [0,1]: min={out.min()} max={out.max()}")
 
 
+@pytest.mark.parametrize("name", POLAR_OPS)
+def test_polar_ops_actually_transform_something(name):
+    """極変換が**中身のある絵**を返す(全ゼロで通り抜けない)。
+
+    2026-09-02 に見つかった: ``polar_trans_image_inv`` / ``polar_trans_region_inv``
+    は cv2 の ``warpPolar`` の**戻り値を捨てて、渡した dst を読んで**いた。
+    ``WARP_INVERSE_MAP`` のとき cv2 は自前のバッファを返すので dst は 0 のまま
+    ―― 実測 360/360 呼び出しで非ゼロ画素ゼロ、つまり**あらゆる入力で真っ黒**を
+    返していた。上の 2 つの検査(決定性・値域)は**全ゼロでも合格する**ので、
+    どちらも赤くならなかった。
+
+    「決定的である」「範囲に収まる」は必要条件でしかない。**仕事をしたか**を
+    別に問う必要がある、というのがこの検査の趣旨。
+    """
+    fn = ops.RT.get(name)
+    if fn is None:
+        pytest.skip(f"{name} not registered (cv2 backend absent)")
+    src = _region() if "region" in name else _img()
+    out = np.asarray(fn(src.copy(), 0.5, 0.5), np.float64)
+    nz = int(np.count_nonzero(out))
+    assert nz > 0.05 * out.size, (
+        f"{name} は非ゼロ画素が {nz}/{out.size} しかない = 実質何も返していない")
+    assert np.unique(out).size >= 8, (
+        f"{name} の出力の値が {np.unique(out).size} 種類しかない = 階調が消えている")
+
+
+def test_polar_inverse_round_trip_recovers_the_disc():
+    """順 → 逆 で円盤の中身が戻る(逆変換が本当に逆であることの検算)。
+
+    全ゼロを返していた頃は、この相関が定義できなかった(分散 0)。滑らかな絵で
+    実測 0.997。乱数の絵だと再標本化で落ちるので、往復の検算には帯域の狭い絵を使う。
+    """
+    fwd = ops.RT.get("polar_trans_image")
+    inv = ops.RT.get("polar_trans_image_inv")
+    if fwd is None or inv is None:
+        pytest.skip("polar ops not registered (cv2 backend absent)")
+    yy, xx = np.mgrid[0:128, 0:128]
+    src = 0.5 + 0.5 * np.sin(xx / 9.0) * np.cos(yy / 11.0)
+    back = np.asarray(inv(np.asarray(fwd(src.copy(), 0.5, 0.5)), 0.5, 0.5), np.float64)
+    m = back > 0
+    assert m.sum() > 0.4 * back.size, "円盤の内側がほとんど残っていない"
+    corr = float(np.corrcoef(src[m], back[m])[0, 1])
+    assert corr > 0.95, f"往復で元に戻っていない(相関 {corr:.4f})"
+
+
 # --- Bug B: skimage.medial_axis breaks ties with an unseeded RNG. -------------- #
 def test_sk_medial_is_deterministic():
     fn = ops.RT.get("sk_medial")
