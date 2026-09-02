@@ -1587,14 +1587,23 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
 
     v = image
     first = True
+    use_fast = _fast_on(fast)
     for name, sa, sb in norm:
         op = _resolve(name)
         if first:
             v = _coerce_input(v, op) if coerce else v
+            v = _contract_dtype(v, op, policy)
             _guard_input(v, op, policy)
             first = False
-        v = _run_guarded(op.name, (lambda _op=op, _v=v, _a=sa, _b=sb: _ops.RT[_op.name](_v, _a, _b)),
-                         policy, op.out_sort, v)
+
+        def _stage(_op=op, _v=v, _a=sa, _b=sb):
+            if use_fast:
+                res = _try_fast(_op, _v, _a, _b)
+                if res is not _NOACCEL:
+                    return res
+            return _ops.RT[_op.name](_v, _a, _b)
+
+        v = _run_guarded(op.name, _stage, policy, op.out_sort, v)
     return v
 
 
