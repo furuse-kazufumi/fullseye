@@ -82,6 +82,7 @@ def _sample_for(sort, rng):
         "signal": "signal", "matrix": "matrix", "cimage": "cimage",
         "lightfield": "lightfield", "counts": "counts", "rgbimage": "rgbimage",
         "video": "video", "qimage": "qimage", "beatcube": "beatcube",
+        "keypoints": "keypoints",
     }
     key = by_sort.get(sort)
     return None if key is None else gens[key](rng)
