@@ -290,15 +290,16 @@ def test_boulder_count_and_size_distribution_follow_the_power_law():
 
 
 def test_terrain_region_mask_neck_is_a_band_around_the_narrowest_section():
-    # ピーナツ: 2 球を細い首でつなぐ → 首の帯が海(weight 0)
-    V1, F1 = _sphere(1.0, (-1.3, 0.0, 0.0), subdiv=3)
-    V2, F2 = _sphere(0.8, (1.3, 0.0, 0.0), subdiv=3)
+    # ピーナツ: 2 球が重なって首を作る → 首のまわりの帯が海(weight 0)
+    V1, F1 = _sphere(1.0, (-0.9, 0.0, 0.0), subdiv=3)
+    V2, F2 = _sphere(0.8, (0.9, 0.0, 0.0), subdiv=3)
     V = np.vstack([V1, V2])
     F = np.vstack([F1, F2 + len(V1)])
-    w = render3d.terrain_region_mask(V, F, smooth_fraction=0.25, method="neck")
+    w = render3d.terrain_region_mask(V, F, smooth_fraction=0.2, method="neck")
     fc = V[F].mean(axis=1)
-    assert abs(fc[w == 0, 0]).max() < 0.9                    # 海は首の近く(|x| 小)
-    assert abs(fc[w == 1, 0]).mean() > abs(fc[w == 0, 0]).mean()
+    assert 0.0 < (w == 0).mean() < 0.5
+    assert abs(fc[w == 0, 0]).mean() < abs(fc[w == 1, 0]).mean()   # 海は首(|x| 小)側
+    assert np.median(abs(fc[w == 0, 0])) < 0.8
     assert render3d.terrain_region_mask(V, F, smooth_fraction=0.0).min() == 1.0
     with pytest.raises(ValueError):
         render3d.terrain_region_mask(V, F, method="ocean")
