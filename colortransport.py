@@ -444,6 +444,18 @@ def sinkhorn_divergence(a, b, cost, cost_aa=None, cost_bb=None, reg=0.05, **kw):
                 "pass them explicitly (reusing a rectangular cost would subtract a quantity "
                 "that is not the self-transport bias)"
             )
+        # 正方なだけでは自己費用にならない。台が別なら c(x_i, x_i) は 0 でなく、
+        # sab と saa/sbb が同じ量になって打ち消しが効き、遠い分布にも 0.0 を
+        # 例外なしで返す(実測: 台 [0,1,2] vs [10,11,12] で真値 100 に対し 0.0)。
+        # 自己費用の定義的な性質「対角=0」で門を締める。
+        d = np.diag(cost)
+        if not np.allclose(d, 0.0, atol=1e-12):
+            raise MetricContractError(
+                f"cost is square but its diagonal is not zero (max |diag| = {np.abs(d).max():g}), "
+                "so it is a cost between two different supports and cannot double as the "
+                "self-transport cost; reusing it would subtract sab from itself and report ~0 "
+                "for distributions that are far apart. Pass cost_aa/cost_bb explicitly"
+            )
         cost_aa = cost if cost_aa is None else cost_aa
         cost_bb = cost if cost_bb is None else cost_bb
     sab = sinkhorn_distance(a, b, cost, reg=reg, **kw)
