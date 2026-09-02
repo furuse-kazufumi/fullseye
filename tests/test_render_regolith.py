@@ -375,7 +375,7 @@ def _graded_plane(seed=3):
 
 
 def test_adaptive_tessellation_makes_facets_uniform_in_metres_and_keeps_geometry():
-    """粗密の混ざった平面: 目標辺長 0.5 で最大辺 ≤ 0.75、中央値 ≈ 0.5、p95/p5 が 7.4 → ≤ 2.5、
+    """粗密の混ざった平面: 目標辺長 0.5 で最大辺 ≤ 1.0、中央値 ≈ 0.5、p95/p5 が 7.4 → ≤ 2.5、
     面積不変、辺は適合(内部辺の valence 2 / 境界 1)。
 
     honest: 元の面の形(最長/最短辺 比)は per-face の適合細分では変えられないので、
