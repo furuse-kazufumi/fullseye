@@ -502,6 +502,74 @@ def test_graph_fail_soft():
     assert algo.run_algo("graph_dijkstra", [3.5, 0.0, 3.4]) == []
 
 
+_BAD_ENDPOINT_GRAPHS = {
+    # (2026-09-03 review F4) endpoints are checked on the RAW double BEFORE the int cast:
+    # 3e9 / 1e300 were float-cast-overflow UB in C (UBSan trap), NaN was a Python
+    # ValueError crash, 1.9 silently truncated to node 1 and -0.5 to node 0.
+    "graph_components": [[3.0, 1.0, 3e9, 0.0, 1.0], [3.0, 1.0, 0.0, 1e300, 1.0],
+                         [3.0, 1.0, 0.0, -1e300, 1.0], [3.0, 1.0, 0.0, 1.9, 1.0],
+                         [3.0, 1.0, -0.5, 0.0, 1.0], [3.0, 1.0, 0.0, float("nan"), 1.0],
+                         [3.0, 1.0, 0.0, 1.0, 1.0]],                        # valid control -> 2
+    "graph_mst_weight": [[3.0, 1.0, 3e9, 0.0, 1.0], [3.0, 1.0, 0.0, 1e300, 1.0],
+                         [3.0, 1.0, 0.0, 1.9, 1.0], [3.0, 1.0, 0.0, float("nan"), 1.0],
+                         [3.0, 1.0, 0.0, 1.0, 4.0]],                        # valid control -> 4
+    "graph_dijkstra": [[2.0, 1.0, 0.0, 3e9, 0.0, 1.0], [2.0, 1.0, 0.0, 0.0, 1e300, 1.0],
+                       [2.0, 1.0, 0.0, 0.0, 1.9, 1.0], [2.0, 1.0, 0.0, float("nan"), 0.0, 1.0],
+                       [2.0, 1.0, 1.5, 0.0, 1.0, 1.0],                       # src 1.5 is no node
+                       [2.0, 1.0, 0.0, 0.0, 1.0, 1.0]],                      # valid control -> [0, 1]
+}
+_GRAPH_SENTINEL = {"graph_components": 0.0, "graph_mst_weight": 0.0, "graph_dijkstra": []}
+
+
+@pytest.mark.parametrize("name", _GRAPH)
+def test_graph_rejects_non_integral_and_huge_endpoints(name):
+    cases = _BAD_ENDPOINT_GRAPHS[name]
+    for c in cases[:-1]:
+        assert algo.run_algo(name, c) == _GRAPH_SENTINEL[name], c   # no crash, no truncation
+    ctrl = algo.run_algo(name, cases[-1])
+    assert ctrl == {"graph_components": 2.0, "graph_mst_weight": 4.0,
+                    "graph_dijkstra": [0.0, 1.0]}[name]
+
+
+@pytest.mark.parametrize("name", _GRAPH)
+def test_graph_node_count_is_capped_like_sieve(name):
+    # (2026-09-03 review F3) n was bounded only by 2^31: graph_components([2147483000, 0])
+    # allocated ~17 GB. n is now an integer in [1, 5,000,000] (the sieve_primes cap).
+    base = [2147483000.0, 0.0] + ([0.0] if name == "graph_dijkstra" else [])
+    assert algo.run_algo(name, base) == _GRAPH_SENTINEL[name]
+    over = [5000001.0, 0.0] + ([0.0] if name == "graph_dijkstra" else [])
+    assert algo.run_algo(name, over) == _GRAPH_SENTINEL[name]
+    frac = [3.5, 0.0] + ([0.0] if name == "graph_dijkstra" else [])   # non-integer n
+    assert algo.run_algo(name, frac) == _GRAPH_SENTINEL[name]
+    frac_m = [3.0, 0.5] + ([0.0] if name == "graph_dijkstra" else [])  # non-integer m
+    assert algo.run_algo(name, frac_m) == _GRAPH_SENTINEL[name]
+    at_cap = [5000000.0, 0.0] + ([0.0] if name == "graph_dijkstra" else [])
+    got = algo.run_algo(name, at_cap)                                  # accepted at the cap
+    if name == "graph_components":
+        assert got == 5000000.0
+    elif name == "graph_mst_weight":
+        assert got == 0.0
+    else:
+        assert len(got) == 5000000 and got[0] == 0.0 and got[-1] == -1.0
+
+
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+@pytest.mark.parametrize("name", _GRAPH)
+def test_graph_c_python_parity_on_bad_endpoints_no_ubsan_trap(name, tmp_path):
+    # The oracle-checked holdout uses only valid integer endpoints, so the raw-double guard
+    # is verified HERE: C == Python on every case AND the UBSan build must not trap (the
+    # old `(int)a[..]` cast on 3e9 / 1e300 / NaN was float-cast-overflow UB).
+    cases = _BAD_ENDPOINT_GRAPHS[name] + [[5000001.0, 0.0] + ([0.0] if name == "graph_dijkstra" else [])]
+    if name == "graph_components":
+        cases.append([5000000.0, 0.0])                     # at the cap: 5e6 components (20 MB)
+    op = algo.ALGO_BY_NAME[name]
+    res = algo_difftest.run_c_backend(op, cases, tmp_path, algo_difftest.find_c_compiler())
+    assert res["status"] == "ran", res
+    assert res["ubsan"] in ("ok", "unsupported"), res.get("ubsan_detail")
+    py = [algo.py_fn(name)([float(x) for x in c]) for c in cases]
+    assert res["outputs"] == py
+
+
 @pytest.mark.parametrize("name", _GRAPH)
 def test_graph_difftest_python_half(name, tmp_path):
     res = algo_difftest.difftest(name, tmp_path, cc=None)
