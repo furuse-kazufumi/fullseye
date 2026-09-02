@@ -25,6 +25,14 @@ Principal-axis orientation in degrees, folded to [0,180) and /180 scaled.
     recover degrees. Line orientation is defined mod 180, so a line at theta and
     theta+180 map to the same value.
 
+    Discontinuity (inherent, documented): a line orientation lives on a circle of
+    180 degrees, and this op unrolls it to [0, 1), so the wrap sits at HORIZONTAL —
+    a line tilted +0.001 deg returns ~0.0 while -0.001 deg returns ~0.9999. Any
+    single-scalar unrolling has a seam somewhere; callers that need continuity
+    across horizontal should compare orientations on the doubled angle
+    (cos 2*theta, sin 2*theta) or take the difference mod 1. The closing point of a
+    closed contour is not double-counted in the PCA.
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_geometry ファミリ ガイド](../guides/gallery2d_geometry.md)

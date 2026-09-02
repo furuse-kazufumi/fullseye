@@ -409,8 +409,7 @@ _PROSE_VERBS = ("sets", "selects", "picks", "controls", "scales", "chooses", "ad
                 "steers", "tunes", "weights", "=", "->", "—", "–", ":")
 _PROSE_RE = re.compile(
     r"``([ab])``\s*(?:" + "|".join(re.escape(v) for v in _PROSE_VERBS) + r")\s+(?:the\s+|a\s+|an\s+)?"
-    r"([^.;,()`
-]{2,60})")
+    r"([^.;,()`\n]{2,60})")
 _UNUSED_RE = re.compile(r"``([ab])``\s*(?:is\s+)?(?:ignored|unused|not\s+used|不使用|未使用)")
 
 
