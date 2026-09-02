@@ -1306,8 +1306,7 @@ def _coerce_sort(v, sort: str):
     if a.dtype.kind == "b":
         return a.astype(np.float64)
     if a.dtype.kind in "fiu" and a.size:
-        vals = np.unique(a)
-        if vals.size > 2 or vals.min() < 0.0 or vals.max() > 1.0:
+        if _needs_binarise(a):                       # O(N) min/max test, same verdict as np.unique
             return (a.astype(np.float64) > 0.5).astype(np.float64)
         if a.dtype.kind in "iu":
             return a.astype(np.float64)
