@@ -188,9 +188,15 @@ def _clip_segment(x0, y0, x1, y1, W, H):
 def _segment_samples(shape, p0, p1):
     """線分 p0→p1 を 8 連結でサンプルし、枠内に落ちる ``(xi, yi, t)`` を返す。
 
-    ``t`` は **クリップ前の元の線分**上のパラメータ(0=p0, 1=p1)。破線の位相計算は
-    これに線分長を掛けた弧長を使うので、枠で切られても模様は連続する。
-    サンプル間隔は支配軸で 1 px 以下(``ceil`` で端数を切り上げる)。
+    サンプル格子は **クリップ前の元の線分**に固定する(``n = ceil(max(|dx|,|dy|))+1``
+    等間隔、``t = k/(n-1)``)。Liang–Barsky は枠内に入る ``k`` の範囲を絞るためだけに
+    使うので、結果は「線全体を描いてから枠で切り抜いた」ものとビット一致し、
+    座標が巨大でも生成するサンプル数は枠内の長さで抑えられる。クリップ点から
+    サンプルし直すと、枠の縁(±0.5)に乗った半端な座標が偶数丸めで階段状にずれる
+    ので、そうしない。
+
+    ``t`` は元の線分上のパラメータ(0=p0, 1=p1)。破線の位相計算はこれに線分長を
+    掛けた弧長を使うので、枠で切られても模様は連続する。
     """
     H, W = shape
     x0, y0 = float(p0[0]), float(p0[1])
@@ -201,8 +207,15 @@ def _segment_samples(shape, p0, p1):
         return empty
     t0, t1 = clip
     dx, dy = x1 - x0, y1 - y0
-    n = int(np.ceil(max(abs(dx) * (t1 - t0), abs(dy) * (t1 - t0)))) + 1
-    t = np.linspace(t0, t1, n)
+    steps = int(np.ceil(max(abs(dx), abs(dy))))          # = n - 1
+    if steps < 1:
+        t = np.zeros(1)
+    else:
+        k0 = max(int(np.floor(t0 * steps)), 0)            # 枠内区間を挟む格子点
+        k1 = min(int(np.ceil(t1 * steps)), steps)
+        if k1 < k0:
+            return empty
+        t = np.arange(k0, k1 + 1, dtype=np.float64) / steps
     xi = np.round(x0 + t * dx).astype(int)
     yi = np.round(y0 + t * dy).astype(int)
     keep = (xi >= 0) & (xi < W) & (yi >= 0) & (yi < H)   # 枠の縁で丸めが越えた分を捨てる
