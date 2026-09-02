@@ -52,13 +52,14 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import astrostack as A  # noqa: E402
 
 
-SHAPE = (128, 128)
+SHAPE = (192, 192)
 N_FRAMES = 12
 SKY, READ = 60.0, 5.0                   # 背景 [e-] と読み出し雑音 [e- rms]
 FWHM, JITTER = 3.2, 0.9                 # シーイングの中心値と揺れ
 DITHER = 2.5                            # 追尾のずれ(px)
-N_STARS = 30
-SEED = 2026
+N_STARS = 16
+SEED = 7
+R_APERTURE = 12.0                       # 測光の開口半径(px)
 
 
 def _match(found, rows, cols):
