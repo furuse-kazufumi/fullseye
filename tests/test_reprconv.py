@@ -808,3 +808,21 @@ class TestAdversarial:
         for name, meta in opsreprconv.OPSREPRCONV.items():
             for t in list(meta["in"]) + [meta["out"]]:
                 assert t in known, f"{name} introduces a new type '{t}' without justification"
+
+
+def test_angle_to_matrix_90_sends_axis1_to_axis2_as_the_docstring_now_says():
+    """90° は軸1(y)→軸2(x)、軸2(x)→ −軸1(−y)。docstring は逆(x→y)と書いていた。
+
+    向きの正本はコード側: 2-D の ``rot_scale_to_matrix``(軸0→軸1)と同じ
+    ``[[c,-s],[s,c]]`` を軸 (1, 2) に置いたもので、``matrix_to_angle`` の
+    ``atan2(R[2,1], R[1,1])`` もこの向きで往復する。単位ベクトルで固定する。
+    """
+    R = rc.angle_to_matrix(90.0)
+    assert np.allclose(R @ np.array([0.0, 1.0, 0.0]), [0.0, 0.0, 1.0], atol=1e-12)
+    assert np.allclose(R @ np.array([0.0, 0.0, 1.0]), [0.0, -1.0, 0.0], atol=1e-12)
+    assert rc.matrix_to_angle(R) == pytest.approx(90.0)
+    R2 = rc.rot_scale_to_matrix((90.0, 1.0))
+    assert np.allclose(R2 @ np.array([1.0, 0.0]), [0.0, 1.0], atol=1e-12)
+    assert np.allclose(R[1:, 1:], R2, atol=1e-12)          # 同じ向きの規約
+    doc = rc.angle_to_matrix.__doc__
+    assert "軸1(y)を軸2(x)へ送り" in doc and "軸2(x)を軸1(y)へ送る" not in doc
