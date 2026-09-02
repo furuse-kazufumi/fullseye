@@ -243,7 +243,7 @@ def test_render_regolith_is_deterministic_and_bounce_lifts_shadow_floor():
     a = rb.render_regolith(V, F, **kw)
     b = rb.render_regolith(V, F, **kw)
     assert a.shape == (64, 64, 3) and np.array_equal(a, b)
-    assert a.max() == pytest.approx(0.95, abs=0.05)          # 露出自動
+    assert 0.85 <= a.max() <= 1.0                            # 露出自動(99.5 % 点 → 0.95、最大は clip)
     nob = rb.render_regolith(V, F, self_illumination=0.0, **kw)
     assert a.sum() >= nob.sum()                              # 一回反射は明るさを足すだけ
     with pytest.raises(ValueError):

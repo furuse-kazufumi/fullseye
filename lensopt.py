@@ -196,6 +196,8 @@ def merit_function(system, fields=None, wavelengths=None, rings=4, efl_target=No
         [RT._finite(w, "wavelength", positive=True) for w in (wavelengths if isinstance(wavelengths, (list, tuple)) else [wavelengths])]
     if not wls:
         raise ValueError("wavelengths must not be empty")
+    if isinstance(rings, (bool, np.bool_)) or not isinstance(rings, (int, np.integer)):
+        raise ValueError("rings must be an integer, got %r" % (rings,))
     rings = int(rings)
     if rings < 1 or rings > 64:
         raise ValueError("rings must be 1..64")
@@ -256,9 +258,12 @@ def optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4
     ``(JᵀJ + λ diag(JᵀJ)) δ = −Jᵀr`` and accepts the step only if the merit
     falls (then λ /= 3; otherwise λ ×= 4 and retried, up to 6 times); a step
     that yields an invalid prescription counts as a failure. Stops when the
-    relative merit change is below *tolerance* twice in a row, when λ blows
-    past 1e8, or after *iterations*. Thickness is clamped to
-    ``[min_thickness, max_thickness]`` and ``|R| >= min_radius``.
+    relative merit change is below *tolerance* twice in a row (``converged``,
+    ``status="converged"``), when two iterations in a row accept no step or λ
+    blows past 1e8 (``status="stalled"``, ``converged=False``), or after
+    *iterations* (``status="iterations"``). Thickness is clamped to
+    ``[min_thickness, max_thickness]`` and ``|R| >= min_radius`` — the start
+    included, so the returned system always obeys the bounds.
 
     Returns ``{"system": optimised prescription, "merit_initial",
     "merit_final", "rms_initial", "rms_final", "efl_initial", "efl_final",
@@ -285,6 +290,8 @@ def optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4
             raise ValueError("t%d is the image distance (None); give it a value or vary another surface" % i)
         if kind == "k" and s["R"] == INF:
             raise ValueError("k%d: a flat has no conic constant" % i)
+    if isinstance(iterations, (bool, np.bool_)) or not isinstance(iterations, (int, np.integer)):
+        raise ValueError("iterations must be an integer, got %r" % (iterations,))
     iterations = int(iterations)
     if iterations < 1 or iterations > MAX_ITERATIONS:
         raise ValueError("iterations must be 1..%d" % MAX_ITERATIONS)
@@ -301,6 +308,10 @@ def optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4
             efl_target = None
     elif efl_target is False or efl_target == 0:
         efl_target = None
+    # the start must obey the bounds too, or a run that accepts no step would return an
+    # out-of-bound prescription with metrics measured on it
+    x_start = np.array([_get(system, v) for v in varlist], dtype=np.float64)
+    system = _rebuild(system, x_start, varlist, bounds)
     m0 = merit_function(system, fields=fields, wavelengths=wavelengths, rings=rings, efl_target=efl_target,
                         efl_weight=efl_weight, field_weights=field_weights, pupil_fill=pupil_fill)
     fl, wls, ew, fw = m0["fields"], m0["wavelengths"], m0["efl_weight"], None
@@ -320,7 +331,9 @@ def optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4
     steps = {"c": 1e-5, "t": 1e-3, "k": 1e-3, "A": None}
     ap_scale = max(1.0, float(system["surfaces"][system["stop"]]["ap"] or 1.0))
     converged = False
+    status = "iterations"
     small_count = 0
+    rejected = 0
     it = 0
     for it in range(1, iterations + 1):
         # Jacobian by forward differences
@@ -370,16 +383,18 @@ def optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4
                 history.append(merit)
                 lam = max(lam / 3.0, 1e-12)
                 accepted = True
+                rejected = 0
                 small_count = small_count + 1 if rel < tolerance else 0
                 break
             lam *= 4.0
         if not accepted:
-            if lam > 1e8:
-                converged = True
+            rejected += 1
+            if lam > 1e8 or rejected >= 2:
+                status = "stalled"                               # no acceptable step: not convergence
                 break
-            small_count += 1
         if small_count >= 2:
             converged = True
+            status = "converged"
             break
     mf = merit_function(cur, fields=fl, wavelengths=wls, rings=rings, efl_target=efl_target,
                         efl_weight=ew, field_weights=fw, pupil_fill=pupil_fill)
@@ -397,7 +412,7 @@ def optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4
             "rms_initial": m0["rms_spot"], "rms_final": mf["rms_spot"],
             "rms_by_field": mf["rms_by_field"], "efl_initial": m0["efl"], "efl_final": mf["efl"],
             "efl_target": efl_target, "history": [float(h) for h in history],
-            "iterations": int(it), "converged": bool(converged), "variables": vars_out,
+            "iterations": int(it), "converged": bool(converged), "status": status, "variables": vars_out,
             "rays_lost": mf["rays_lost"], "damping_final": float(lam)}
 
 

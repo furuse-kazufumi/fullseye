@@ -163,8 +163,8 @@ dc = ID.defect_contrast(low, surface=&quot;glossy&quot;, slopes_deg=[5.0, 10.0])
 print(round(u[&quot;uniformity&quot;], 3), dc[&quot;regime&quot;], [round(r[&quot;max_abs&quot;], 3) for r in dc[&quot;per_slope&quot;]])
 sw = ID.lighting_sweep(surface=&quot;mirror&quot;, slope_deg=10.0, camera_height_mm=1000.0)
 print(sw[int(np.argmax(sw[:, 1])), 0])                                  # 70.0 = 90 - 2*10
-d = ID.illumination_design(surface=&quot;glossy&quot;, defect=&quot;scatter&quot;)
-print(d[&quot;recommended&quot;], d[&quot;rule_of_thumb&quot;], d[&quot;agrees_with_rule&quot;])   # ring_dark_field_20deg … True
+d = ID.illumination_design(surface=&quot;mirror&quot;, defect=&quot;topographic&quot;, slope_deg=10.0)
+print(d[&quot;recommended&quot;], d[&quot;rule_of_thumb&quot;], d[&quot;agrees_with_rule&quot;])   # coaxial coaxial True
 assert d[&quot;ranking&quot;][0][&quot;score&quot;] &gt;= d[&quot;ranking&quot;][-1][&quot;score&quot;]</pre>
 <p><b>正直な限界</b>: 発光点は点光源の和(面光源は <code style="color:#22d3bf">n</code> を増やして近似)、多重反射・相互反射なし、BRDF は Lambert + 等方 GGX(異方性ヘアラインは未対応)、偏光なし、カメラは 1 点(視野内の視線変化は <code style="color:#22d3bf">camera</code> を変えて呼ぶ)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">結像シミュレーション(imaging_sim) — 設計したレンズで撮る</h3>

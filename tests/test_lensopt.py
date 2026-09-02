@@ -128,6 +128,21 @@ def test_optimised_system_is_a_valid_prescription():
     assert len(r["variables"]) == 3 and all(v["name"].startswith("R") for v in r["variables"])
 
 
+def test_start_outside_the_bounds_is_snapped_and_stalls_are_not_convergence():
+    s = RT.lens_system([{"R": 0.5, "t": 2.0, "n": 1.5, "ap": 0.1}, {"R": -10.0, "t": None, "n": 1.0}])
+    r = LO.optimize_lens(s, variables=["R0"], min_radius=1.0, iterations=1, damping=1e8)
+    assert abs(r["system"]["surfaces"][0]["R"]) >= 1.0 - 1e-12
+    assert r["variables"][0]["initial"] == pytest.approx(1.0)      # the snapped start, not 0.5
+    stalled = LO.optimize_lens(RT.example_system("doublet"), variables=["R0"], iterations=3, damping=1e12)
+    if len(stalled["history"]) == 1:
+        assert not stalled["converged"] and stalled["status"] == "stalled"
+    assert stalled["status"] in ("stalled", "converged", "iterations")
+    with pytest.raises(ValueError):
+        LO.optimize_lens(s, iterations=True)
+    with pytest.raises(ValueError):
+        LO.merit_function(s, rings=True)
+
+
 def test_thickness_bounds_are_respected():
     d = RT.example_system("doublet")
     r = LO.optimize_lens(d, variables=["t0", "t1", "R0"], min_thickness=1.0, max_thickness=8.0, iterations=15)

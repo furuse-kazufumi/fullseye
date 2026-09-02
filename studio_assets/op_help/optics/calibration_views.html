@@ -1,37 +1,34 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
-<h2 style="color:#f5a524;margin:0 0 4px 0">illumination_design — OPTICS <code style="color:#22d3bf">illumination</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>table`</p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import illumdesign; illumdesign.illumination_design(surface=&#x27;glossy&#x27;, defect=&#x27;topographic&#x27;, slope_deg=10.0, part_size_mm=50.0, camera_height_mm=300.0)</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;illumination_design&quot;)</code>)</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">calibration_views — OPTICS <code style="color:#22d3bf">imaging_sim</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import lensimage; lensimage.calibration_views(system, image_size=(1024, 1024), pixel_pitch_um=5.5, target=(9, 7, 5.0), poses=None, distance_mm=None, noise_px=0.0, seed=0, order=2)</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;calibration_views&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>Rank the standard light families for a surface / defect pairing (`<code style="color:#22d3bf">table</code>`).</p>
-<p>Candidates: low-angle ring (dark field, elevation 20°), high-angle ring</p>
-<p>(bright field, 70°), the elevation that :func:<code style="color:#22d3bf">lighting_sweep</code> finds best,</p>
-<p>dome, coaxial and (for `<code style="color:#22d3bf">defect=&quot;edge&quot;</code>`) backlight. Each is scored by the</p>
-<p>simulated Michelson contrast of the stated defect — `<code style="color:#22d3bf">topographic</code>`: a</p>
-<p>smooth facet of *slope_deg* (a dent wall, a bump); `<code style="color:#22d3bf">scatter</code>`: a rough</p>
-<p>patch (chipped edge, pit, fine scratch); `<code style="color:#22d3bf">pigment</code>`: an albedo patch at</p>
-<p>half the surround; `<code style="color:#22d3bf">edge</code>`: a silhouette — **multiplied by the uniformity</p>
-<p>of the background radiance the camera sees** across the part (min/max over</p>
-<p>the centre and the four edge midpoints). That second factor is what</p>
-<p>separates a robust choice from a fragile one: coaxial light on a glossy</p>
-<p>part gives a huge negative contrast exactly on axis (the glare) and almost</p>
-<p>none a few millimetres away, so its background uniformity is poor and it</p>
-<p>ranks below a dark field whose background is uniformly dark. Irradiance</p>
-<p>uniformity is reported too. The result lists the candidates best first</p>
-<p>with their numbers, the `<code style="color:#22d3bf">recommended</code><code style="color:#22d3bf"> family, and </code><code style="color:#22d3bf">rule_of_thumb</code>` — the textbook</p>
-<p>choice (a smooth facet → coaxial bright field on a glossy finish, else the</p>
-<p>ring elevation that mirrors it into the camera; scatter → dark field; pigment →</p>
-<p>dome; edge → backlight) so a disagreement between simulation and rule is</p>
-<p>visible rather than hidden. Two things the numbers say that folklore does</p>
-<p>not: a *smooth* 10° facet does <b>not</b> light up in dark field (it mirrors</p>
-<p>the low light away from the camera) — the &quot;dark field shows scratches&quot;</p>
-<p>rule is about their rough flanks, the `<code style="color:#22d3bf">scatter</code>` class here; and for that</p>
-<p>class a large coaxial (bright-field) source often scores *higher* than</p>
-<p>dark field because the rough patch appears dark on a uniform glare with</p>
-<p>contrast near 1 (the wafer / glass inspection practice). The model does</p>
-<p>not score sensor saturation or the glare&#x27;s dependence on part flatness,</p>
-<p>which is why the dark-field rule survives on the shop floor; the table</p>
-<p>shows both so the choice is made with the numbers.</p>
+<p>Synthetic camera-calibration views of a planar target through the designed lens (`<code style="color:#22d3bf">table</code>`).</p>
+<p>A chessboard-like grid of *target* = (cols, rows, pitch_mm) corner points</p>
+<p>on the plane z = 0 is placed at each of *poses* — ``(rx_deg, ry_deg,</p>
+<p>rz_deg, tx_mm, ty_mm, tz_mm)`` in the camera frame (camera at the origin</p>
+<p>looking along +z; default: five poses, frontal and ±20° about x and y, at</p>
+<p>*distance_mm* — default the distance at which the target spans 60 % of</p>
+<p>the sensor width) — projected by a pinhole of the prescription&#x27;s EFL and</p>
+<p>then displaced by the lens&#x27;s <b>real radial distortion</b> (the polynomial</p>
+<p>:func:<code style="color:#22d3bf">distortion_map</code> fits from traced chief rays), and expressed as</p>
+<p>`<code style="color:#22d3bf">(row, col)</code>` pixels on an *image_size* sensor of *pixel_pitch_um*.</p>
+<p>Optional Gaussian corner-detection noise *noise_px* (deterministic for</p>
+<p>*seed*).</p>
+<p>Returns `<code style="color:#22d3bf">object_points</code><code style="color:#22d3bf"> (N,2) mm on the target plane, </code><code style="color:#22d3bf">image_points</code>`</p>
+<p>(a list of (N,2) `<code style="color:#22d3bf">(row, col)</code>` arrays — exactly what</p>
+<p>`<code style="color:#22d3bf">calib.camera_calibration</code><code style="color:#22d3bf"> consumes), </code><code style="color:#22d3bf">K_true</code>` (fx = fy = EFL/pitch</p>
+<p>px, cx, cy at the sensor centre), the distortion polynomial, the poses,</p>
+<p>and per view the fraction of points that landed on the sensor. Views with</p>
+<p>fewer than four visible points, a target behind the camera, or an afocal</p>
+<p>prescription are `<code style="color:#22d3bf">ValueError</code>`.</p>
+<p>The point of the op is the <b>closed loop</b>: feed the output to</p>
+<p>`<code style="color:#22d3bf">calib.camera_calibration</code>` and compare the recovered intrinsics with</p>
+<p>`<code style="color:#22d3bf">K_true</code>` — for a distortion-free lens (the paraboloid) Zhang&#x27;s method</p>
+<p>returns the EFL to 1e-6, and the singlet&#x27;s barrel distortion shows up as a</p>
+<p>focal-length bias and a non-zero reprojection RMS, so the calibration</p>
+<p>module is checked end to end against a lens whose truth is known, and a</p>
+<p>real chart can be judged against the same numbers.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>
@@ -48,11 +45,11 @@
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:illumination_design_demo">illumination_design_demo</a> — <code style="color:#22d3bf">py -3.11 examples/illumination_design_demo.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lens_calibration_loop_demo">lens_calibration_loop_demo</a> — <code style="color:#22d3bf">py -3.11 examples/lens_calibration_loop_demo.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a> · <a style="color:#22d3bf" href="opoptics:spot_diagram">spot_diagram</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">illumination</code>)</h3>
-<p><a style="color:#22d3bf" href="opoptics:light_source">light_source</a> · <a style="color:#22d3bf" href="opoptics:irradiance_map">irradiance_map</a> · <a style="color:#22d3bf" href="opoptics:illumination_uniformity">illumination_uniformity</a> · <a style="color:#22d3bf" href="opoptics:defect_contrast">defect_contrast</a> · <a style="color:#22d3bf" href="opoptics:lighting_sweep">lighting_sweep</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">imaging_sim</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:psf_from_opd">psf_from_opd</a> · <a style="color:#22d3bf" href="opoptics:distortion_map">distortion_map</a> · <a style="color:#22d3bf" href="opoptics:render_through_lens">render_through_lens</a> · <a style="color:#22d3bf" href="opoptics:defect_dataset">defect_dataset</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<p>*Provenance: illumdesign.py — OPTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>*Provenance: lensimage.py — OPTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
 <p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -369,15 +369,21 @@ def test_optics_registry_is_connected():
         "docs corpus and opsoptics ledger disagree: "
         f"only-in-docs={have - set(opsoptics.OPSOPTICS)}, "
         f"only-in-ledger={set(opsoptics.OPSOPTICS) - have}")
-    assert len(_OPT_RECS) == 34                 # optics 18 + raytrace "design" 12 + lensimage "imaging_sim" 4
-    assert {"geometric", "wave", "imaging", "polarization", "design", "imaging_sim"} == {
-        r["category"] for r in _OPT_RECS}
+    # optics 18 + raytrace "design" 15 + lensimage "imaging_sim" 5 + lensopt "optimization" 3
+    # + illumdesign "illumination" 6
+    assert len(_OPT_RECS) == 47
+    assert {"geometric", "wave", "imaging", "polarization", "design", "imaging_sim",
+            "optimization", "illumination"} == {r["category"] for r in _OPT_RECS}
     # the design / imaging_sim notes must say where their implementation lives
     for r in _OPT_RECS:
         if r["category"] == "design":
             assert r["module"] == "raytrace", (r["name"], r["module"])
         if r["category"] == "imaging_sim":
             assert r["module"] == "lensimage", (r["name"], r["module"])
+        if r["category"] == "optimization":
+            assert r["module"] == "lensopt", (r["name"], r["module"])
+        if r["category"] == "illumination":
+            assert r["module"] == "illumdesign", (r["name"], r["module"])
 
 
 def test_every_optics_op_has_a_studio_help_page():

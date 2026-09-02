@@ -158,6 +158,58 @@ def test_chromatic_shift_doublet_beats_singlet_and_reports_lateral_colour():
         RT.chromatic_shift({"surfaces": []})
 
 
+# --------------------------------------------------------------------------- #
+# Codex review (2026-09-03): verified findings pinned                          #
+# --------------------------------------------------------------------------- #
+def test_real_chief_ray_passes_through_the_stop_centre_behind_a_strong_surface():
+    s = RT.lens_system([{"R": 15.0, "t": 6.0, "n": 1.8, "ap": 8.0},
+                        {"R": -20.0, "t": 4.0, "n": 1.0, "ap": 2.0},        # the stop, behind a strong surface
+                        {"R": -40.0, "t": None, "n": 1.0}], stop=1, field=10.0)
+    for wl in (RT.WL_F, RT.WL_D):
+        c = RT.chief_ray(s, wavelength_um=wl)
+        q = c["points"][2]                                       # points[0] launch, [1] surface 0, [2] surface 1
+        assert c["valid"] and np.hypot(q[0], q[1]) < 1e-8, q
+    # the paraxial aim alone misses by a visible amount (this is what the Newton aiming fixes)
+    para = RT.paraxial_trace(s)
+    P, D, _ = RT._launch(s, np.array([0.0]), np.array([0.0]), 10.0, para)
+    q0 = RT.trace_rays(s, P, D)["points"][0, 2, :2]
+    assert np.hypot(q0[0], q0[1]) > 1e-3
+    # the bundle is centred on that aimed ray
+    b = RT.ray_bundle(s, field=10.0, rings=3)
+    assert np.allclose(b["points"][b["chief_index"], 2, :2], 0.0, atol=1e-8)
+
+
+def test_validators_reject_bool_str_and_fractional_stop():
+    with pytest.raises(ValueError):
+        RT.lens_system(stop=0.9)
+    with pytest.raises(ValueError):
+        RT.lens_system([{"R": 50, "t": 3, "n": 1.5, "ap": 5, "mirror": "false"}, {"R": INF, "t": None, "n": 1.0}])
+    with pytest.raises(ValueError):
+        RT.lens_system([{"R": "50", "t": 3, "n": 1.5, "ap": 5}, {"R": INF, "t": None, "n": 1.0}])
+    with pytest.raises(ValueError):
+        RT.lens_system([{"R": 50, "t": True, "n": 1.5, "ap": 5}, {"R": INF, "t": None, "n": 1.0}])
+    with pytest.raises(ValueError):
+        RT.trace_rays(RT.lens_system(), [[0, 0, -1]], [[0, 0, 0]])
+    with pytest.raises(ValueError):
+        RT._index_offset(1.0, -0.01)
+    g = RT.glass_catalog("N-BK7")
+    g["offset"] = float("nan")
+    with pytest.raises(ValueError):
+        RT.refractive_index(g)
+    with pytest.raises(ValueError):
+        RT.refractive_index({"sellmeier": (1.0, 0.0, 0.0, RT.WL_D ** 2, 0.0, 0.0), "offset": 0.0}, RT.WL_D)
+    with pytest.raises(ValueError):
+        RT.refractive_index({"sellmeier": (1.0, 0.0, 0.0), "offset": 0.0})
+
+
+def test_index_tolerance_never_touches_air_gaps():
+    s = RT.example_system("doublet")
+    t = RT.tolerance_analysis(s, trials=3, tolerances={"index": 0.5, "radius_pct": 0, "thickness_mm": 0,
+                                                       "decenter_mm": 0, "tilt_deg": 0})
+    assert t["failed"] == 0                                      # a 0.5 index step on air would raise (n < 1)
+    assert all(r["surface"] != 2 for r in t["sensitivity"] if r["parameter"] == "n")
+
+
 def test_with_wavelength_keeps_everything_but_the_index():
     s = RT.example_system("catalog_doublet")
     w = RT.with_wavelength(s, RT.WL_F)

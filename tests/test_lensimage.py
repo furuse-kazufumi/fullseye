@@ -30,7 +30,7 @@ import opsoptics  # noqa: E402
 import raytrace as RT  # noqa: E402
 
 INF = float("inf")
-SIM_OPS = ["psf_from_opd", "distortion_map", "render_through_lens", "defect_dataset"]
+SIM_OPS = ["psf_from_opd", "distortion_map", "render_through_lens", "defect_dataset", "calibration_views"]
 
 
 def _small():
@@ -274,6 +274,7 @@ def test_imaging_sim_ops_return_their_declared_type_and_reach_the_fuzzer():
     pb = RT.example_system("paraboloid")
     img = np.random.default_rng(0).random((16, 16))
     args = {"psf_from_opd": (pb,), "distortion_map": (pb,), "render_through_lens": (img, pb),
+            "calibration_views": (pb, (64, 64), 5.5, (4, 3, 5.0)),
             "defect_dataset": (1, pb, (32, 32))}
     for name in SIM_OPS:
         out_t = opsoptics.info(name)["out"]

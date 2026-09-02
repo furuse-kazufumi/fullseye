@@ -331,7 +331,9 @@ def illumination_uniformity(irradiance, region_fraction=0.8):
         raise ValueError("the region receives no light")
     centre = float(a[H // 2, W // 2])
     band = max(1, int(round(0.05 * min(H, W))))
-    edge = np.concatenate([a[:band].ravel(), a[-band:].ravel(), a[:, :band].ravel(), a[:, -band:].ravel()])
+    mask = np.zeros(a.shape, bool)
+    mask[:band, :] = True; mask[-band:, :] = True; mask[:, :band] = True; mask[:, -band:] = True
+    edge = a[mask]                                                # each perimeter pixel once
     iy, ix = np.unravel_index(int(np.argmax(a)), a.shape)
     return {"min": float(reg.min()), "max": mx, "mean": float(reg.mean()), "std": float(reg.std()),
             "uniformity": float(reg.min() / mx), "cv": float(reg.std() / reg.mean()) if reg.mean() > 0 else float("inf"),
@@ -405,8 +407,7 @@ def _radiance(point, normal, view_dir, E, D, I0, m, sp, albedo=None, rough=False
     fine scratch's flank). Its specular energy — the Fresnel fraction
     ``F(θ_i)`` of each emitter's light, which the flat surface sends into one
     direction — is scattered diffusely instead, so the patch is Lambertian with
-    albedo ``ρ + F(θ_i)`` per emitter (energy-conserving redistribution, no
-    lobe). That is what dark-field lighting exploits: at grazing incidence
+    reflectance ``F + (1 − F) ρ`` per emitter (never above 1, no lobe). That is what dark-field lighting exploits: at grazing incidence
     ``F`` is large and the flat surface returns none of it to the camera.
     """
     V = E - point[None, :]                                       # point -> emitter
@@ -422,19 +423,29 @@ def _radiance(point, normal, view_dir, E, D, I0, m, sp, albedo=None, rough=False
     irr = I0 * cos_e ** m / d2                                   # irradiance per unit projected area
     rho = sp["albedo"] if albedo is None else albedo
     if rough:
+        # energy partition: the Fresnel fraction F scatters diffusely, the rest enters
+        # and comes back with the body albedo -> reflectance F + (1 - F) rho <= 1
         F = sp["f0"] + (1.0 - sp["f0"]) * (1.0 - np.clip(ndl, 0.0, 1.0)) ** 5
-        return float(np.sum(((rho + F) / np.pi) * irr * np.clip(ndl, 0.0, None)))
-    # an area source whose lobe is narrower than the emitter spacing cannot be
-    # resolved by the point sum: take its specular term from the mirror-hit test on
-    # the uniform disc instead. A wide lobe (matte / satin) is integrated by the sum.
-    if area is not None and (sp["roughness"] ** 2) * max(area["z"] - point[2], 1e-9) \
-            < area["radius"] * math.sqrt(math.pi / max(len(E), 1)):
-        hit, cos_i = _mirror_hits_disc(point, normal, view_dir, area)
-        F = sp["f0"] + (1.0 - sp["f0"]) * (1.0 - cos_i) ** 5
-        diff = float(np.sum((rho / np.pi) * irr * np.clip(ndl, 0.0, None)))
-        return diff + hit * F * area["radiance"]
+        return float(np.sum(((F + (1.0 - F) * rho) / np.pi) * irr * np.clip(ndl, 0.0, None)))
     fs = _ggx(ndl, np.full(len(L), ndv), ndh, vdh, sp["roughness"], sp["f0"])
-    return float(np.sum((rho / np.pi + fs) * irr * np.clip(ndl, 0.0, None)))
+    L_sum = float(np.sum((rho / np.pi + fs) * irr * np.clip(ndl, 0.0, None)))
+    if area is None:
+        return L_sum
+    # an area source whose lobe is narrower than the emitter spacing cannot be
+    # resolved by the point sum: its specular term comes from the mirror-hit test on
+    # the uniform disc. A wide lobe (matte / satin) is integrated by the sum. The two
+    # estimators are blended linearly over one octave of lobe-width / spacing so
+    # that no infinitesimal change of roughness or geometry can jump the answer.
+    lobe = (sp["roughness"] ** 2) * max(area["z"] - point[2], 1e-9)
+    spacing = area["radius"] * math.sqrt(math.pi / max(len(E), 1))
+    w_hit = float(np.clip(2.0 - lobe / spacing, 0.0, 1.0))      # 1 below spacing, 0 above 2x spacing
+    if w_hit <= 0.0:
+        return L_sum
+    hit, cos_i = _mirror_hits_disc(point, normal, view_dir, area)
+    F = sp["f0"] + (1.0 - sp["f0"]) * (1.0 - cos_i) ** 5
+    diff = float(np.sum((rho / np.pi) * irr * np.clip(ndl, 0.0, None)))
+    L_hit = diff + hit * F * area["radiance"]
+    return w_hit * L_hit + (1.0 - w_hit) * L_sum
 
 
 def defect_contrast(light, surface="satin", slopes_deg=(2.0, 5.0, 10.0, 20.0), camera=(0.0, 0.0, 300.0),
@@ -450,9 +461,9 @@ def defect_contrast(light, surface="satin", slopes_deg=(2.0, 5.0, 10.0, 20.0), c
     of a flat patch whose albedo is *pigment_albedo_ratio* × the surround —
     the number specular glare dilutes. ``scatter`` is the contrast of a
     **rough** patch (a chipped edge, a pit floor, a fine scratch: micro-facets
-    of every slope, modelled as Lambertian whose albedo is the surround's plus
+    of every slope, modelled as Lambertian with reflectance ``F + (1 − F)ρ``,
     the Fresnel fraction the flat surface would have sent into its specular
-    direction) against the surround — the defect class dark-field lighting is
+    direction now scattered) against the surround — the defect class dark-field lighting is
     built for, since a smooth facet only lights up when it mirrors the source
     into the camera while a rough patch scatters some of *any* light there,
     and at grazing incidence that Fresnel fraction is large. ``regime`` is

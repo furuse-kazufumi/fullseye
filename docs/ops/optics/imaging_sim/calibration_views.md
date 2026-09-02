@@ -1,40 +1,51 @@
 ---
-op: defect_dataset
+op: calibration_views
 dim: optics
 category: imaging_sim
-in: 
+in: table
 out: table
-examples: [lens_defect_dataset_demo]
+examples: [lens_calibration_loop_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
-# defect_dataset — OPTICS `imaging_sim` op
+# calibration_views — OPTICS `imaging_sim` op
 
-- **データ種**: `` → `table`
-- **呼び出し**: `import lensimage; lensimage.defect_dataset(n=8, system=None, size=(256, 256), kinds=('scratch', 'pits', 'crack', 'blob'), pixel_pitch_um=5.5, noise=True, seed=0, out_dir=None, zones=3, field_of_view=None, texture='orange_peel', max_defects=2)` (または `opsoptics.get("defect_dataset")`)
+- **データ種**: `table` → `table`
+- **呼び出し**: `import lensimage; lensimage.calibration_views(system, image_size=(1024, 1024), pixel_pitch_um=5.5, target=(9, 7, 5.0), poses=None, distance_mm=None, noise_px=0.0, seed=0, order=2)` (または `opsoptics.get("calibration_views")`)
 
 ## 使い方
 
-Synthetic defect images through a designed lens, with aligned masks (``table``).
+Synthetic camera-calibration views of a planar target through the designed lens (``table``).
 
-Each of the *n* records draws 1–*max_defects* defects of the listed *kinds*
-(``defectgen`` scratch / pits / crack / blob with parameters sampled from
-*seed*) on a ``surface_texture`` background of *size*, renders the composite
-with :func:`render_through_lens` (*system* defaults to the cemented doublet
-of :func:`raytrace.example_system`; *noise* as there, default sensor
-noise on), and pushes **each defect's mask through the same distortion
-remap only** (nearest-neighbour, no blur) so the annotation sits where the
-blurred defect actually landed. A record is
-``{"image", "mask", "defects": [{"kind", "params", "bbox" [x, y, w, h],
-"area"}], "lens": {"efl", "fno", "rms_spot_center", "rms_spot_corner",
-"max_distortion_pct"}, "seed"}`` with arrays, or with file paths when
-*out_dir* is given (``img_0000.png`` / ``mask_0000.png`` written with
-``imgio.save`` plus a COCO-like ``annotations.json``: images, annotations
-with bbox/area/params, categories). Deterministic for *seed*; a defect
-that lands entirely outside the sensor after distortion is dropped from
-the annotations rather than reported with an empty box.
+A chessboard-like grid of *target* = (cols, rows, pitch_mm) corner points
+on the plane z = 0 is placed at each of *poses* — ``(rx_deg, ry_deg,
+rz_deg, tx_mm, ty_mm, tz_mm)`` in the camera frame (camera at the origin
+looking along +z; default: five poses, frontal and ±20° about x and y, at
+*distance_mm* — default the distance at which the target spans 60 % of
+the sensor width) — projected by a pinhole of the prescription's EFL and
+then displaced by the lens's **real radial distortion** (the polynomial
+:func:`distortion_map` fits from traced chief rays), and expressed as
+``(row, col)`` pixels on an *image_size* sensor of *pixel_pitch_um*.
+Optional Gaussian corner-detection noise *noise_px* (deterministic for
+*seed*).
+
+Returns ``object_points`` (N,2) mm on the target plane, ``image_points``
+(a list of (N,2) ``(row, col)`` arrays — exactly what
+``calib.camera_calibration`` consumes), ``K_true`` (fx = fy = EFL/pitch
+px, cx, cy at the sensor centre), the distortion polynomial, the poses,
+and per view the fraction of points that landed on the sensor. Views with
+fewer than four visible points, a target behind the camera, or an afocal
+prescription are ``ValueError``.
+
+The point of the op is the **closed loop**: feed the output to
+``calib.camera_calibration`` and compare the recovered intrinsics with
+``K_true`` — for a distortion-free lens (the paraboloid) Zhang's method
+returns the EFL to 1e-6, and the singlet's barrel distortion shows up as a
+focal-length bias and a non-zero reprojection RMS, so the calibration
+module is checked end to end against a lens whose truth is known, and a
+real chart can be judged against the same numbers.
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -60,7 +71,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- [lens_defect_dataset_demo](../../../../examples/lens_defect_dataset_demo.py) — `py -3.11 examples/lens_defect_dataset_demo.py`
+- [lens_calibration_loop_demo](../../../../examples/lens_calibration_loop_demo.py) — `py -3.11 examples/lens_calibration_loop_demo.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
@@ -68,7 +79,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`imaging_sim`)
 
-[psf_from_opd](psf_from_opd.md) · [distortion_map](distortion_map.md) · [render_through_lens](render_through_lens.md) · [calibration_views](calibration_views.md)
+[psf_from_opd](psf_from_opd.md) · [distortion_map](distortion_map.md) · [render_through_lens](render_through_lens.md) · [defect_dataset](defect_dataset.md)
 
 ---
 *Provenance: lensimage.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

@@ -142,6 +142,29 @@ def test_glare_dilutes_pigment_contrast():
     assert glossy["regime"] == "bright_field" and matte["regime"] == "dark_field"
 
 
+def test_rough_patch_never_reflects_more_than_it_receives_and_regime_blend_is_continuous():
+    lt = ID.light_source("ring", radius_mm=60.0, height_mm=15.0, n=24)          # grazing: F -> large
+    E, D, I0, m = ID._check_light(lt)
+    P = np.zeros(3)
+    n = np.array([0.0, 0.0, 1.0])
+    v = np.array([0.0, 0.0, 1.0])
+    for sp in ({"albedo": 0.6, "roughness": 0.9, "f0": 0.03}, {"albedo": 0.05, "roughness": 0.05, "f0": 0.9}):
+        L_rough = ID._radiance(P, n, v, E, D, I0, m, sp, rough=True)
+        L_white = ID._radiance(P, n, v, E, D, I0, m, {"albedo": 1.0, "roughness": 1.0, "f0": 0.0})  # perfect Lambertian
+        assert L_rough <= L_white * (1.0 + 1e-12)
+    # coaxial regime blend: sweeping roughness through the boundary gives a continuous radiance
+    lt = ID.light_source("coaxial", radius_mm=10.0, height_mm=100.0, n=64)
+    r0 = math.sqrt(10.0 * math.sqrt(math.pi / 64) / 100.0)
+    vals = [ID.defect_contrast(lt, {"albedo": 0.3, "roughness": r, "f0": 0.05}, slopes_deg=[1.0])["flat_radiance"]
+            for r in np.linspace(0.8 * r0, 1.6 * r0, 25)]
+    jumps = np.abs(np.diff(vals)) / (np.abs(vals[:-1]) + 1e-300)
+    assert np.max(jumps) < 0.2, jumps.max()
+    # edge fall-off counts each perimeter pixel once
+    a = np.ones((20, 20)); a[0, 0] = a[0, -1] = a[-1, 0] = a[-1, -1] = 0.0
+    u = ID.illumination_uniformity(a)
+    assert u["edge_falloff"] == pytest.approx(1.0 - 4.0 / 76.0)
+
+
 def test_backlight_gives_no_irradiance_on_an_opaque_top_face_but_lights_from_below():
     lt = ID.light_source("backlight", radius_mm=40.0, height_mm=30.0, n=6)
     top = ID.irradiance_map(lt, size_mm=(20, 20), shape=(8, 8))

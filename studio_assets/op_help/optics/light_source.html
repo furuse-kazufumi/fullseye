@@ -16,9 +16,15 @@
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;dome&quot;</code>` — *n* emitters spread over a hemisphere of *radius_mm*</p>
 <p>(Fibonacci lattice, zenith angles 20°–85°), each pointing at the centre:</p>
 <p>the diffuse, shadow-free illumination of a dome light.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;coaxial&quot;</code><code style="color:#22d3bf"> — a small disc of *n* emitters of radius </code><code style="color:#22d3bf">radius_mm/10</code>`</p>
-<p>at *height_mm* pointing down: light along the viewing axis (through a</p>
-<p>beam splitter in practice).</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;coaxial&quot;</code>` — a disc of *n* emitters of radius *radius_mm* at</p>
+<p>*height_mm* pointing down: the diffuse area source a beam splitter folds</p>
+<p>onto the viewing axis. Put it at the camera height with a radius of at</p>
+<p>least twice the part size, so that every point of a flat glossy part</p>
+<p>sees the source in its mirror direction (a *small* source at the camera</p>
+<p>gives one bright spot, not a field-wide glare). The dict carries an</p>
+<p>`<code style="color:#22d3bf">area</code><code style="color:#22d3bf"> record so :func:</code>defect_contrast` takes the specular glare from</p>
+<p>the disc&#x27;s uniform radiance `<code style="color:#22d3bf">L = n I0/(π r²)</code>` by a mirror-hit test</p>
+<p>instead of a point sum that cannot resolve a narrow lobe.</p>
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;backlight&quot;</code><code style="color:#22d3bf"> — *n* × *n* emitters on a square of side </code><code style="color:#22d3bf">2·radius_mm</code>`</p>
 <p>at `<code style="color:#22d3bf">z = −height_mm</code>` pointing <b>up</b>: the part is seen in silhouette.</p>
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;custom&quot;</code>` — *emitters* (N,3) and *directions* (N,3) given explicitly.</p>

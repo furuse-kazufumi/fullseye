@@ -67,6 +67,8 @@ INF = float("inf")
 # validation helpers
 # --------------------------------------------------------------------------- #
 def _finite(x, name, positive=False, nonneg=False):
+    if isinstance(x, (bool, np.bool_, str, bytes)) or x is None:
+        raise ValueError("%s must be a real number, got %r" % (name, x))
     try:
         v = float(x)
     except (TypeError, ValueError) as e:
@@ -85,6 +87,8 @@ def _radius(x, name):
         return INF
     if isinstance(x, str) and x.lower() in ("inf", "flat", "plano"):
         return INF
+    if isinstance(x, (bool, np.bool_, str, bytes)):
+        raise ValueError("%s must be a number or 'inf', got %r" % (name, x))
     v = float(x)
     if math.isnan(v) or v == 0.0:
         raise ValueError("%s: a radius must be non-zero (use inf for a flat), got %r" % (name, x))
@@ -212,12 +216,21 @@ def refractive_index(medium, wavelength_um=WL_D):
     if isinstance(medium, dict) and "sellmeier" in medium:
         if not (_SELLMEIER_RANGE[0] <= wl <= _SELLMEIER_RANGE[1]):
             raise ValueError("wavelength %.4g um is outside the Sellmeier fit range %s" % (wl, _SELLMEIER_RANGE))
-        B1, B2, B3, C1, C2, C3 = medium["sellmeier"]
+        coef = medium["sellmeier"]
+        if not isinstance(coef, (tuple, list)) or len(coef) != 6:
+            raise ValueError("sellmeier must hold six coefficients (B1, B2, B3, C1, C2, C3)")
+        B1, B2, B3, C1, C2, C3 = (_finite(v, "sellmeier coefficient") for v in coef)
+        off = _finite(medium.get("offset", 0.0), "index offset")
         l2 = wl * wl
+        if min(abs(l2 - C1), abs(l2 - C2), abs(l2 - C3)) < 1e-12:
+            raise ValueError("Sellmeier curve has a pole at %.4g um" % wl)
         n2 = 1.0 + B1 * l2 / (l2 - C1) + B2 * l2 / (l2 - C2) + B3 * l2 / (l2 - C3)
         if not (n2 > 0 and math.isfinite(n2)):
             raise ValueError("Sellmeier curve is singular at %.4g um" % wl)
-        return float(math.sqrt(n2) + medium.get("offset", 0.0))
+        n = math.sqrt(n2) + off
+        if not (math.isfinite(n) and n >= 1.0):
+            raise ValueError("Sellmeier index %.4g at %.4g um is below 1 or non-finite" % (n, wl))
+        return float(n)
     if isinstance(medium, dict) and "A" in medium:
         return float(medium["A"] + medium["B"] / wl ** 2)
     if isinstance(medium, (tuple, list)) and len(medium) == 2:
@@ -253,7 +266,9 @@ def _index_offset(medium, delta):
     if isinstance(medium, (tuple, list)):
         return (float(medium[0]) + delta, float(medium[1]))
     n = float(medium) + delta
-    return n if n >= 1.0 else float(medium)
+    if n < 1.0:
+        raise ValueError("index %.4g + %.2g would be below 1" % (float(medium), delta))
+    return n
 
 
 # --------------------------------------------------------------------------- #
@@ -311,7 +326,10 @@ def lens_system(surfaces=None, stop=None, object_mm=INF, wavelength_um=WL_D,
         k = _finite(s.get("k", 0.0), "surface %d k" % i)
         ap = s.get("ap", None)
         ap = None if ap is None else _finite(ap, "surface %d ap" % i, positive=True)
-        mirror = bool(s.get("mirror", False))
+        mirror = s.get("mirror", False)
+        if not isinstance(mirror, (bool, np.bool_)):
+            raise ValueError("surface %d: mirror must be True/False, got %r" % (i, mirror))
+        mirror = bool(mirror)
         dec = tuple(float(v) for v in s.get("decenter", (0.0, 0.0)))
         tilt = tuple(float(v) for v in s.get("tilt", (0.0, 0.0)))
         if len(dec) != 2 or len(tilt) != 2 or not all(map(math.isfinite, dec + tilt)):
@@ -334,7 +352,11 @@ def lens_system(surfaces=None, stop=None, object_mm=INF, wavelength_um=WL_D,
         out.append({"R": R, "t": t, "n": med, "k": k, "ap": ap, "mirror": mirror,
                     "decenter": dec, "tilt": tilt, "asph": asph, "n_value": n_now,
                     "dn": _dispersion(med)})
-    stop = 0 if stop is None else int(stop)
+    if stop is None:
+        stop = 0
+    elif isinstance(stop, (bool, np.bool_)) or not isinstance(stop, (int, np.integer)):
+        raise ValueError("stop must be an integer surface index, got %r" % (stop,))
+    stop = int(stop)
     if not 0 <= stop < len(out):
         raise ValueError("stop must index a surface (0..%d), got %r" % (len(out) - 1, stop))
     if out[stop]["ap"] is None:
@@ -675,7 +697,10 @@ def trace_rays(system, origins, directions, wavelength_um=None, image_mm=None):
         raise ValueError("origins and directions must both be (N,3), got %s %s" % (P.shape, D.shape))
     if not (np.all(np.isfinite(P)) and np.all(np.isfinite(D))):
         raise ValueError("origins/directions must be finite")
-    D = D / np.linalg.norm(D, axis=1, keepdims=True)
+    dn = np.linalg.norm(D, axis=1, keepdims=True)
+    if np.any(dn <= 0):
+        raise ValueError("every direction must have non-zero length")
+    D = D / dn
     surf = system["surfaces"]
     N = len(P)
     n_before = float(system["index_object"])
@@ -812,13 +837,58 @@ def chief_ray(system, field=None, wavelength_um=None, image_mm=None):
     _check_system(system)
     field = system["field"] if field is None else _finite(field, "field")
     para = paraxial_trace(system)
-    P, D, opl0 = _launch(system, np.array([0.0]), np.array([0.0]), field, para)
+    dpx, dpy = _chief_offset(system, field, para, wavelength_um)
+    P, D, opl0 = _launch(system, np.array([dpx]), np.array([dpy]), field, para)
     tr = trace_rays(system, P, D, wavelength_um=wavelength_um, image_mm=image_mm)
     ok = bool(tr["valid"][0])
     return {"image_x": float(tr["points"][0, -1, 0]) if ok else float("nan"),
             "image_y": float(tr["points"][0, -1, 1]) if ok else float("nan"),
             "valid": ok, "points": tr["points"][0], "dirs": tr["dirs"][0],
             "opl": float(tr["opl"][0] - opl0[0]) if ok else float("nan"), "field": field}
+
+
+def _chief_offset(system, field, para, wavelength_um=None):
+    """Normalised pupil offset (dpx, dpy) that sends the real chief ray through the stop centre.
+
+    ``_launch`` aims at the *paraxial* entrance pupil; after real refraction by
+    the surfaces in front of the stop the ray generally misses the physical
+    stop centre. A 2-D Newton iteration on the launch point fixes that (a few
+    single-ray traces). On axis the offset is zero by symmetry.
+    """
+    if field == 0.0 or not math.isfinite(para["ep_radius"]):
+        return 0.0, 0.0
+    stop = system["stop"]
+    surf = system["surfaces"]
+    if stop == 0 and surf[0]["decenter"] == (0.0, 0.0) and surf[0]["tilt"] == (0.0, 0.0):
+        return 0.0, 0.0                                         # the stop is the first surface: paraxial aim is exact
+
+    def at_stop(px, py):
+        P, D, _ = _launch(system, np.array([px]), np.array([py]), field, para)
+        tr = trace_rays(system, P, D, wavelength_um=wavelength_um)
+        return tr["points"][0, stop + 1, :2]
+
+    px, py = 0.0, 0.0
+    h = 1e-3
+    for _ in range(20):
+        q = at_stop(px, py)
+        if not np.all(np.isfinite(q)):
+            return 0.0, 0.0                                     # cannot aim (vignetted): keep the paraxial aim
+        if np.hypot(q[0], q[1]) < 1e-10:
+            break
+        qx = at_stop(px + h, py)
+        qy = at_stop(px, py + h)
+        if not (np.all(np.isfinite(qx)) and np.all(np.isfinite(qy))):
+            return px, py
+        J = np.array([[(qx[0] - q[0]) / h, (qy[0] - q[0]) / h],
+                      [(qx[1] - q[1]) / h, (qy[1] - q[1]) / h]])
+        try:
+            step = np.linalg.solve(J, -q)
+        except np.linalg.LinAlgError:
+            return px, py
+        px, py = px + float(step[0]), py + float(step[1])
+        if abs(px) > 5.0 or abs(py) > 5.0:
+            return 0.0, 0.0
+    return px, py
 
 
 def spot_diagram(system, field=None, rings=8, wavelength_um=None, image_mm=None):
@@ -865,7 +935,8 @@ def ray_bundle(system, field=None, rings=8, wavelength_um=None, image_mm=None, k
     field = system["field"] if field is None else _finite(field, "field")
     para = paraxial_trace(system)
     px, py = _pupil_grid(rings, kind)
-    P, D, opl0 = _launch(system, px, py, field, para, pupil_fill)
+    dpx, dpy = _chief_offset(system, field, para, wavelength_um)   # centre the bundle on the real chief ray
+    P, D, opl0 = _launch(system, px + dpx, py + dpy, field, para, pupil_fill)
     tr = trace_rays(system, P, D, wavelength_um=wavelength_um, image_mm=image_mm)
     img = tr["points"][:, -1, :2]
     # chief ray = pupil centre (index 0 of the hexapolar grid; for "grid" the nearest)
@@ -894,7 +965,8 @@ def ray_fan(system, field=None, n=21, axis="y", wavelength_um=None, image_mm=Non
     else:
         raise ValueError("axis must be 'x' or 'y'")
     px = np.append(px, 0.0); py = np.append(py, 0.0)    # chief ray last
-    P, D, _ = _launch(system, px, py, field, para)
+    dpx, dpy = _chief_offset(system, field, para, wavelength_um)
+    P, D, _ = _launch(system, px + dpx, py + dpy, field, para)
     tr = trace_rays(system, P, D, wavelength_um=wavelength_um, image_mm=image_mm)
     img = tr["points"][:, -1, :2]
     chief = img[-1]
@@ -945,7 +1017,8 @@ def opd_samples(system, field=None, size=64, wavelength_um=None, image_mm=None):
     px, py = gx.ravel(), gy.ravel()
     inside = px * px + py * py <= 1.0 + 1e-12
     px_a = np.append(px, 0.0); py_a = np.append(py, 0.0)    # chief last
-    P, D, opl0 = _launch(system, px_a, py_a, field, para)
+    dpx, dpy = _chief_offset(system, field, para, wavelength_um)
+    P, D, opl0 = _launch(system, px_a + dpx, py_a + dpy, field, para)
     tr = trace_rays(system, P, D, wavelength_um=wl, image_mm=image_mm)
     pts, dirs = tr["points"], tr["dirs"]
     n_img = tr["n_image"]
@@ -1118,7 +1191,7 @@ def _perturbed(system, rng, tol):
             q["R"] = s["R"] * (1.0 + rng.uniform(-1, 1) * tol["radius_pct"] / 100.0)
         if tol.get("thickness_mm", 0) and s["t"] is not None:
             q["t"] = max(0.0, s["t"] + rng.uniform(-1, 1) * tol["thickness_mm"])
-        if tol.get("index", 0) and not s["mirror"]:
+        if tol.get("index", 0) and not s["mirror"] and s["n_value"] > 1.0:   # glass only, never an air gap
             q["n"] = _index_offset(s["n"], rng.uniform(-1, 1) * tol["index"])
         if tol.get("decenter_mm", 0):
             q["decenter"] = (s["decenter"][0] + rng.uniform(-1, 1) * tol["decenter_mm"],
@@ -1191,7 +1264,7 @@ def tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, 
                 continue
             if key == "t" and s["t"] is None:
                 continue
-            if key == "n" and s["mirror"]:
+            if key == "n" and (s["mirror"] or s["n_value"] <= 1.0):
                 continue
             vals = []
             for sgn in (-1.0, 1.0):

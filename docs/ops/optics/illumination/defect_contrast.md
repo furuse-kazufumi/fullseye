@@ -28,9 +28,9 @@ appears brighter or darker than the surround). Reported per slope as
 of a flat patch whose albedo is *pigment_albedo_ratio* × the surround —
 the number specular glare dilutes. ``scatter`` is the contrast of a
 **rough** patch (a chipped edge, a pit floor, a fine scratch: micro-facets
-of every slope, modelled as Lambertian whose albedo is the surround's plus
+of every slope, modelled as Lambertian with reflectance ``F + (1 − F)ρ``,
 the Fresnel fraction the flat surface would have sent into its specular
-direction) against the surround — the defect class dark-field lighting is
+direction now scattered) against the surround — the defect class dark-field lighting is
 built for, since a smooth facet only lights up when it mirrors the source
 into the camera while a rough patch scatters some of *any* light there,
 and at grazing incidence that Fresnel fraction is large. ``regime`` is

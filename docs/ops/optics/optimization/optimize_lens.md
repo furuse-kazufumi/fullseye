@@ -31,9 +31,12 @@ Each iteration builds the Jacobian by forward differences, solves
 ``(JᵀJ + λ diag(JᵀJ)) δ = −Jᵀr`` and accepts the step only if the merit
 falls (then λ /= 3; otherwise λ ×= 4 and retried, up to 6 times); a step
 that yields an invalid prescription counts as a failure. Stops when the
-relative merit change is below *tolerance* twice in a row, when λ blows
-past 1e8, or after *iterations*. Thickness is clamped to
-``[min_thickness, max_thickness]`` and ``|R| >= min_radius``.
+relative merit change is below *tolerance* twice in a row (``converged``,
+``status="converged"``), when two iterations in a row accept no step or λ
+blows past 1e8 (``status="stalled"``, ``converged=False``), or after
+*iterations* (``status="iterations"``). Thickness is clamped to
+``[min_thickness, max_thickness]`` and ``|R| >= min_radius`` — the start
+included, so the returned system always obeys the bounds.
 
 Returns ``{"system": optimised prescription, "merit_initial",
 "merit_final", "rms_initial", "rms_final", "efl_initial", "efl_final",

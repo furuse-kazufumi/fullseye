@@ -15,9 +15,12 @@
 <p>`<code style="color:#22d3bf">(JᵀJ + λ diag(JᵀJ)) δ = −Jᵀr</code>` and accepts the step only if the merit</p>
 <p>falls (then λ /= 3; otherwise λ ×= 4 and retried, up to 6 times); a step</p>
 <p>that yields an invalid prescription counts as a failure. Stops when the</p>
-<p>relative merit change is below *tolerance* twice in a row, when λ blows</p>
-<p>past 1e8, or after *iterations*. Thickness is clamped to</p>
-<p>`<code style="color:#22d3bf">[min_thickness, max_thickness]</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">|R| &gt;= min_radius</code>`.</p>
+<p>relative merit change is below *tolerance* twice in a row (`<code style="color:#22d3bf">converged</code>`,</p>
+<p>`<code style="color:#22d3bf">status=&quot;converged&quot;</code>`), when two iterations in a row accept no step or λ</p>
+<p>blows past 1e8 (`<code style="color:#22d3bf">status=&quot;stalled&quot;</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">converged=False</code>`), or after</p>
+<p>*iterations* (`<code style="color:#22d3bf">status=&quot;iterations&quot;</code>`). Thickness is clamped to</p>
+<p>`<code style="color:#22d3bf">[min_thickness, max_thickness]</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">|R| &gt;= min_radius</code>` — the start</p>
+<p>included, so the returned system always obeys the bounds.</p>
 <p>Returns ``{&quot;system&quot;: optimised prescription, &quot;merit_initial&quot;,</p>
 <p>&quot;merit_final&quot;, &quot;rms_initial&quot;, &quot;rms_final&quot;, &quot;efl_initial&quot;, &quot;efl_final&quot;,</p>
 <p>&quot;history&quot;: [merit per accepted iteration], &quot;iterations&quot;, &quot;converged&quot;,</p>
