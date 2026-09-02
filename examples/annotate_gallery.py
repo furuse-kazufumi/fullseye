@@ -180,13 +180,65 @@ def _check_legend_height():
     return drawn, want
 
 
+def _check_nice_ticks():
+    """刻みは必ず 1/2/5 x 10^k、等間隔、範囲内。既定の目盛りとも画素単位で一致。"""
+    bad, cases = 0, 0
+    for lo, hi in ((0.0, 10.0), (-1.0, 1.0), (0.0, 0.0037), (3.2, 7.9),
+                   (-273.15, 100.0), (1e-6, 4e-6), (0.0, 1.0), (5.0, 5.0001),
+                   (0.0, 1e9)):
+        for n in (3, 4, 5, 7, 10):
+            cases += 1
+            t = A.nice_ticks(lo, hi, n)
+            if t.size and (t.min() < lo - 1e-12 or t.max() > hi + 1e-12):
+                bad += 1                                    # 範囲の外へ出た
+                continue
+            if t.size > 1:
+                step = float(t[1] - t[0])
+                mant = [abs(np.log10(step / m) - round(np.log10(step / m)))
+                        for m in (1.0, 2.0, 5.0)]
+                if min(mant) > 1e-9 or not np.allclose(np.diff(t), step, rtol=1e-9):
+                    bad += 1                                # 刻みが 1/2/5 でない
+    ax = A.axes_transform((52, 40, 300, 175), (0.0, 10.0), (-1.0, 1.0))
+    canvas = np.zeros((260, 380, 3))
+    same = np.array_equal(
+        A.ticks(canvas, ax, tick_len=5, font_size=10),
+        A.ticks(canvas, ax, xticks=A.nice_ticks(0.0, 10.0),
+                yticks=A.nice_ticks(-1.0, 1.0), tick_len=5, font_size=10))
+    return cases, bad, bool(same), A.nice_ticks(0.0, 10.0, 5)
+
+
+def _check_compare_frame():
+    """大きさは閉形式、2 枚は画素単位でそのまま、仕切りはちょうどその色。"""
+    left = np.full((100, 150, 3), 0.2)
+    right = np.full((90, 140, 3), 0.6)
+    div, gap, bg = 3, 2, 0.0
+    out = A.compare_frame(left, right, layout="h", divider=div, gap=gap,
+                          background=bg, divider_color="neutral")
+    want = (max(left.shape[0], right.shape[0]),
+            left.shape[1] + div + 2 * gap + right.shape[1], 3)
+    bx = left.shape[1] + div + 2 * gap
+    exact = (np.array_equal(out[:100, :150], left)
+             and np.array_equal(out[:90, bx:bx + 140], right))
+    dcol = np.unique(out[:, 150 + gap:150 + gap + div].reshape(-1, 3), axis=0)
+    dcol_ok = (dcol.shape[0] == 1
+               and np.array_equal(dcol[0], np.asarray(palette.role_color("neutral"))))
+    # 余白(足りない側の下詰め)と隙間はちょうど background のまま
+    pad_ok = (float(np.abs(out[90:, bx:bx + 140]).max()) == bg
+              and float(np.abs(out[:, 150:150 + gap]).max()) == bg)
+    v = A.compare_frame(left, right, layout="v", divider=div, gap=gap, background=bg)
+    v_ok = v.shape == (100 + div + 2 * gap + 90, max(150, 140), 3)
+    return tuple(out.shape), want, bool(exact), bool(dcol_ok), bool(pad_ok), bool(v_ok)
+
+
 def run():
-    """4 枚のパネルを組み、真値との一致を返す。"""
-    panels = [panel_measure(), panel_plot(), panel_labels(), panel_zoom()]
+    """5 枚のパネルを組み、真値との一致を返す。"""
+    panels = [panel_measure(), panel_plot(), panel_labels(), panel_zoom(),
+              panel_compare()]
     sheet = A.panel_grid(
         panels,
         labels=["1. 計測 (mask/leader/scale bar)", "2. グラフ (axes/ticks/series)",
-                "3. ラベル (labels/color bar/shapes)", "4. 拡大 (zoom inset/arrow)"],
+                "3. ラベル (labels/color bar/shapes)", "4. 拡大 (zoom inset/arrow)",
+                "5. 比較 (compare frame)"],
         ncols=2, pad=12, label_h=30, background=0.04, font_size=14,
         title="annotate — 図注の層 (25 op)")
 
@@ -194,6 +246,8 @@ def run():
     tick_err, tick_n = _check_ticks()
     alpha_err = _check_alpha()
     leg_px, leg_want = _check_legend_height()
+    nt_cases, nt_bad, nt_same, nt_vals = _check_nice_ticks()
+    cf_shape, cf_want, cf_exact, cf_div, cf_pad, cf_v = _check_compare_frame()
     return {
         "sheet": sheet,
         "scale_bar_px": bar_px, "scale_bar_want": bar_want,
@@ -202,6 +256,11 @@ def run():
         "alpha_max_abs_error": alpha_err,
         "legend_height_px": leg_px, "legend_height_want": leg_want,
         "legend_height_error": leg_px - leg_want,
+        "nice_cases": nt_cases, "nice_violations": nt_bad,
+        "nice_matches_default": nt_same, "nice_example": nt_vals,
+        "compare_shape": cf_shape, "compare_want": cf_want,
+        "compare_exact": cf_exact, "compare_divider_color": cf_div,
+        "compare_padding": cf_pad, "compare_vertical": cf_v,
     }
 
 
