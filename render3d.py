@@ -843,7 +843,7 @@ def _unit_ellipsoid(subdiv: int):
 
 def sample_boulders(V, F, *, density: float, d_min: float, d_max=None,
                     exponent: float = 3.1, seed: int = 0, region_weights=None):
-    """Poisson-process boulder sample on a mesh → ``dict(centre (n,3), normal (n,3), diameter (n,))``.
+    """Poisson-process boulder sample on a mesh → ``dict(centre (n,3), normal (n,3), diameter (n,), face (n,), expected)``.
 
     The expected count is ``density × Σ(face area × region weight)`` (``density`` = boulders
     with D ≥ ``d_min`` per unit area, mesh units²); the actual count is Poisson. Positions are
