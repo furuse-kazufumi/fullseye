@@ -301,6 +301,13 @@ SHEPP_LOGAN = (
 #: *IEEE Trans. Med. Imaging* 26(1):68-76, 2007.
 GOLDEN_ANGLE_DEG = 180.0 / ((1.0 + np.sqrt(5.0)) / 2.0)
 
+#: A circular gap between neighbouring views counts as an unmeasured *hole*
+#: (rather than as sampling irregularity) when it is at least this many median
+#: steps wide. The golden-angle sequence's largest gap is at most ``phi``
+#: (1.618) medians, a regular grid's gaps are all one median, and the wedge a
+#: truncated scan leaves is many. See :func:`_span_weight`.
+HOLE_STEPS = 2.0
+
 
 # --------------------------------------------------------------------------- #
 # fail-closed input helpers (same discipline as interferometry / photoncount)  #
