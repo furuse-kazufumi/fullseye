@@ -4255,43 +4255,49 @@ def build_window(model=None):
         # Guarded because early build-time selections fire before the helper is defined.
         getattr(win, "_mark_variable_frontier", lambda: None)()
 
-    def on_knob(_=None):
-        """A knob tick: update the model + the live preview only.
+    def _knob_changed(which, value, from_spin):
+        """One knob (``which`` = 'a' | 'b') changed from ONE widget: write only that
+        knob into the model and mirror it to the sibling widget. The untouched knob is
+        never rewritten from a coarse widget (a slider is 2 decimals, a spin 3 — the
+        model may hold more; F3 review finding).
 
         The per-stage summaries (model.step_states(), which re-runs every prefix and
         is therefore O(n^2) in the number of stages) are debounced onto a timer, so
         dragging a slider costs one pipeline evaluation per tick instead of n + 2."""
         i = selected_index()
-        if 0 <= i < len(model.stages):
-            if getattr(win, "_knob_drag_base", None) is None:
-                # first tick of a drag: capture the PRE-drag pipeline once; the settled
-                # handler turns it into a single undo entry (drags coalesce)
-                win._knob_drag_base = [list(st) for st in model.stages]
-            model.set_knobs(i, a=sa.value() / 100.0, b=sb.value() / 100.0)
-            la.setText(f"a: {sa.value()/100:.2f}"); lb.setText(f"b: {sb.value()/100:.2f}")
-            spin_a.blockSignals(True); spin_a.setValue(sa.value() / 100.0); spin_a.blockSignals(False)
-            spin_b.blockSignals(True); spin_b.setValue(sb.value() / 100.0); spin_b.blockSignals(False)
-            mark_dirty()
-            show_result()
-            knob_timer.start(KNOB_DEBOUNCE_MS)
+        if not (0 <= i < len(model.stages)):
+            return
+        if getattr(win, "_knob_drag_base", None) is None:
+            # first tick of a drag: capture the PRE-drag pipeline once; the settled
+            # handler turns it into a single undo entry (drags coalesce)
+            win._knob_drag_base = [list(st) for st in model.stages]
+        v = float(value)
+        slider, spin, label = (sa, spin_a, la) if which == "a" else (sb, spin_b, lb)
+        if which == "a":
+            model.set_knobs(i, a=v)
+        else:
+            model.set_knobs(i, b=v)
+        if from_spin:
+            slider.blockSignals(True); slider.setValue(int(round(v * 100))); slider.blockSignals(False)
+            label.setText(f"{which}: {v:.3f}")
+        else:
+            spin.blockSignals(True); spin.setValue(v); spin.blockSignals(False)
+            label.setText(f"{which}: {v:.2f}")
+        mark_dirty()
+        show_result()
+        knob_timer.start(KNOB_DEBOUNCE_MS)
 
-    def on_spin(_=None):
-        """Precise numeric knob entry: the spin boxes are the exact source and the
-        coarse sliders follow (without re-triggering on_knob). Shares on_knob's
-        drag-coalescing undo + debounced-summary tail."""
-        i = selected_index()
-        if 0 <= i < len(model.stages):
-            a, b = spin_a.value(), spin_b.value()
-            sa.blockSignals(True); sb.blockSignals(True)
-            sa.setValue(int(round(a * 100))); sb.setValue(int(round(b * 100)))
-            sa.blockSignals(False); sb.blockSignals(False)
-            if getattr(win, "_knob_drag_base", None) is None:
-                win._knob_drag_base = [list(st) for st in model.stages]
-            model.set_knobs(i, a=a, b=b)
-            la.setText(f"a: {a:.3f}"); lb.setText(f"b: {b:.3f}")
-            mark_dirty()
-            show_result()
-            knob_timer.start(KNOB_DEBOUNCE_MS)
+    def on_knob_a(val):
+        _knob_changed("a", val / 100.0, from_spin=False)
+
+    def on_knob_b(val):
+        _knob_changed("b", val / 100.0, from_spin=False)
+
+    def on_spin_a(val):
+        _knob_changed("a", val, from_spin=True)
+
+    def on_spin_b(val):
+        _knob_changed("b", val, from_spin=True)
 
     def on_knob_settled():
         """Debounce tail: refresh the summaries + commit ONE undo entry for the drag."""
