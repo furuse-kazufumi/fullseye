@@ -218,10 +218,13 @@ class PipelineModel:
         return i + 1
 
     def set_knobs(self, i, a=None, b=None):
+        st = self.stages[i]
+        if not isinstance(st, list):                 # belt and braces: never a tuple here
+            st = self.stages[i] = _normalise_stage(st)
         if a is not None:
-            self.stages[i][1] = float(a)
+            st[1] = float(a)
         if b is not None:
-            self.stages[i][2] = float(b)
+            st[2] = float(b)
 
     def load_recipe(self, name):
         """Replace the pipeline with a named sample recipe (see `recipes`)."""
