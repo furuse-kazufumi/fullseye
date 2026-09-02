@@ -79,6 +79,9 @@ def evaluate(chain, task, cache=None):
         return cache[key]
     out = execute(chain, task.x)
     fit = _PENALTY if (out is None or len(out) == 0) else -float(task.metric(out, task.target))
+    if not np.isfinite(fit):
+        # NaN は sorted/max で順序付け不能 → NaN の個体が best に選ばれる(pipeline_evolve と同じ規律)。
+        fit = _PENALTY
     if cache is not None:
         cache[key] = fit
     return fit
