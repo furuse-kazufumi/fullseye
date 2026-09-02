@@ -127,8 +127,14 @@ def _overpaint_region(io, a, b):
 
 
 def _paint_gray(io, a, b):
-    # paint image[1] gray values into image[0] where region... here 2 images:
-    return np.where(_b(io[1]) if io[1].max() <= 1.0 else _f(io[1]) > a, _f(io[1]), _f(io[0]))
+    # HALCON paint_gray(ImageSource, ImageDestination) paints the source's gray
+    # values into the destination over the source's whole DOMAIN. Images here
+    # carry no explicit domain; this tier's own convention (`reduce_domain`
+    # multiplies by the region) is "outside the domain = 0", so every non-zero
+    # source pixel — dark ones included — is painted. (Until 2026-09-03 only
+    # source pixels > 0.5 were painted, so a dark source vanished.)
+    src = _f(io[1])
+    return np.where(src > 0.0, src, _f(io[0]))
 
 
 IMG, REG = "image", "region"
