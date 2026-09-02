@@ -93,7 +93,7 @@
   - 実装(増分): 既定は domain=全面の軽量ラッパ(matrix そのまま + `domain=None`=full)。`reduce_domain` 時のみ Region を保持。DLL 化時も `FImage` の C ABI(pixels ptr + domain run-length)で表現。
 - **式**: `:=`(代入)/ `=`(比較)/ `# != <= >= < >` / `and or not` / `+ - * / mod` / tuple `[..]`・`t[i]`・`|t|`・連結 / 括弧。**未実装構文は黙って解釈せず構文エラー**。
 - **★control = HALCON タプルモデル(ユーザー指摘 2026-08-15)**: HALCON では **control 変数は全て Tuple**(スカラ=長さ1のタプル)で、**1 つのタプル内に整数/実数/文字列が混在**できる(例 `['part', 5, 3.14, 'ok']`)。→ Fullseye も control 値を **異種混在 Tuple**(要素 = int / real / string、bool は int)としてモデル化。
-  - `Tuple` は不変値。要素型は保持(整数 5 と実数 5.0 を区別)。`t[i]`(0-based)・`|t|`(長さ)・`t1 + t2`(連結)・`subset/remove/insert/tuple_gen_const`。算術/比較は**要素ごとにブロードキャスト**(HALCON 準拠、長さ 1↔N・N↔N)。
+  - `Tuple` は不変値。要素型は保持(整数 5 と実数 5.0 を区別)。`t[i]`(0-based)・`|t|`(長さ)・`[t1, t2]`(連結。`+` は要素和、§2b)・`subset/remove/insert/tuple_gen_const`。算術/比較は**要素ごとにブロードキャスト**(HALCON 準拠、長さ 1↔N・N↔N)。
   - 演算子 `+` は **数値タプル同士=要素和、文字列を含む=連結** の HALCON 曖昧規則を踏襲(仕様書に明記、`.` を文字列連結専用にするかは要検討)。空タプル `[]`、混在時の型昇格規則(int→real)を定義。
   - iconic(Image/Region/XLD/ObjectSet)は Tuple ではない別クラス(§3、混同禁止)。
   - ★実装注意: 現 PoC(`fscript.py`)は control を素の float/int/str/list で扱う。**増分1の型システムを HALCON Tuple に置換**(`Tuple` クラス + 要素型保持 + broadcast 演算)する必要がある。
