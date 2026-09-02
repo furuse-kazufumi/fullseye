@@ -837,17 +837,18 @@ def run(a):
 
     Input packs both strings as code-point sequences: a = [na, A0..A_{na-1}, B0..B_{nb-1}]
     (same layout as edit_distance). Returns the LCS length as an exact non-negative integer
-    (as a float). Bottom-up two-row DP. Fail-soft: returns 0.0 on na < 0 / truncated input."""
+    (as a float). Bottom-up two-row DP. Fail-soft **-1.0** (not 0.0 — "nothing in common" is a
+    valid answer) on an empty input or a negative / NaN / oversized / truncated header."""
     if len(a) < 1:
-        return 0.0
+        return -1.0
     na_d = a[0]
     # raw-value guard BEFORE int() = exact C parity (fractional/negative/NaN/oversized header
     # fail-softs identically; no int(nan) crash).
     if not (na_d >= 0.0 and na_d <= 2147483000.0):
-        return 0.0
+        return -1.0
     na = int(na_d)
     if len(a) < 1 + na:
-        return 0.0
+        return -1.0
     sa = a[1:1 + na]
     sb = a[1 + na:]
     nb = len(sb)
