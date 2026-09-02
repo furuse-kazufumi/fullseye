@@ -110,12 +110,21 @@ def _fit_label(draw, text: str, font_size: int, max_w: int) -> tuple[str, object
     同じくらい悪い。実際、機械検査は文字切れを検出できない(壊れていない画像
     として通る)ので、ここで止めるしかない。
     """
+    # **複数行のラベルも来る**(呼び出し側が label_h=54 で "名前\n指標 …" を渡す)。
+    # Pillow 12.3 の ``textlength`` は改行を含む文字列で ValueError を投げるので、
+    # 1 行ずつ測って**最も広い行**で判定する。2026-09-02 実測: これが無いと
+    # gen_wing2d_gallery.py の 11 subject 中 3 件が
+    # "can't measure length of multiline text" で落ちていた(「ラベルは 1 行」と
+    # いうこの関数の前提と、2 行ラベルを渡す呼び出し側の契約が食い違っていた)。
+    def _width(font):
+        return max(draw.textlength(line, font=font) for line in text.split("\n"))
+
     for size in range(font_size, max(9, font_size - 8) - 1, -1):
         font = _font(size)
-        if draw.textlength(text, font=font) <= max_w:
+        if _width(font) <= max_w:
             return text, font
     font = _font(max(9, font_size - 8))
-    if draw.textlength(text, font=font) > max_w:
+    if _width(font) > max_w:
         raise ValueError(
             f"label does not fit in {max_w}px even at the smallest size: {text!r} "
             "— shorten it or widen the panel (truncating it silently is not an option)")
