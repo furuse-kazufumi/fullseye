@@ -602,3 +602,39 @@ def test_transport_cost_checks_that_it_was_handed_a_plan():
         CT.transport_cost(np.array([[-0.5, 0.5]]), np.zeros((1, 2)))
     with pytest.raises(ValueError, match="same shape"):
         CT.transport_cost(np.zeros((2, 3)), np.zeros((3, 2)))
+
+
+def _ks_distance(x, y):
+    """2 標本の経験 CDF の最大差(Kolmogorov–Smirnov 距離)。"""
+    xs, ys = np.sort(np.ravel(x)), np.sort(np.ravel(y))
+    grid = np.concatenate([xs, ys])
+    fx = np.searchsorted(xs, grid, side="right") / xs.size
+    fy = np.searchsorted(ys, grid, side="right") / ys.size
+    return float(np.max(np.abs(fx - fy)))
+
+
+def test_histogram_match_exactness_is_conditional_and_the_bound_is_stated():
+    """台帳は「出力の分布が参照と厳密一致」と無条件に書いていたが、それは
+    **同値の無い入力で画素数が参照と等しいとき**だけ。画素数が違えば分位点の
+    再標本化で KS 距離 ≤ 1/n + 1/m、整数画像の既定 ``ties="average"`` は
+    階段状に丸まる(例外は出ない)。台帳の文言もこの範囲に留めてある。"""
+    rng = np.random.default_rng(0)
+    # (a) 同値なし・n == m: 出力は参照の並べ替え(KS 距離 0)
+    s, r = rng.random(1024), rng.normal(size=1024)
+    out = CT.histogram_match(s, r, ties="break")
+    assert np.allclose(np.sort(out), np.sort(r), atol=1e-12)
+    assert _ks_distance(out, r) == 0.0
+    # (b) n != m: 厳密ではないが KS 距離 ≤ 1/n + 1/m
+    for n, m in ((1024, 500), (300, 1024)):
+        s, r = rng.random(n), rng.normal(size=m)
+        out = CT.histogram_match(s, r, ties="break")
+        assert 0.0 < _ks_distance(out, r) <= 1.0 / n + 1.0 / m
+    # (c) 整数画像(同値だらけ)+ 既定 ties="average": 厳密でない、break なら厳密
+    si, r = rng.integers(0, 8, 1024).astype(float), rng.normal(size=1024)
+    assert _ks_distance(CT.histogram_match(si, r), r) > 0.05
+    assert _ks_distance(CT.histogram_match(si, r, ties="break"), r) == 0.0
+    # 台帳が「無条件に厳密」へ戻っていないこと
+    import opscolortransport
+    assert "厳密一致は同値の無い入力" in opscolortransport.__doc__
+    entries = opscolortransport.silent_failures("histogram_match")
+    assert any("ties='average'" in e["when"] for e in entries)
