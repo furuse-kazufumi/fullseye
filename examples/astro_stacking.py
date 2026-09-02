@@ -130,7 +130,7 @@ def main():
     keep, scores = A.lucky_select(frames, keep_fraction=0.5)
     corr = float(np.corrcoef(truth["fwhms"], scores)[0, 1])
     print(f"2) lucky imaging: 品質点と **真の FWHM** の相関 = {corr:+.3f} "
-          f"(点は像の太さを見ている)  上位 50 % = {sorted(keep)} を採用")
+          f"(点は像の太さを見ている)  上位 50 % = {sorted(int(i) for i in keep)} を採用")
     assert corr < -0.8 and len(keep) == N_FRAMES // 2
     lucky, _ = A.sigma_clip_stack([frames[i] for i in keep], mode="mean")
     every, _ = A.sigma_clip_stack(frames, mode="mean")
