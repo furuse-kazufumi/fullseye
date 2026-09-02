@@ -209,22 +209,45 @@ def main():
     print("   段数   H(Q)     I(X;Q)   H(X,Q)   NMI      検算 |H(X)+H(Q)-I-H(X,Q)|")
     for lv in LEVELS:
         q = quantise(gray, lv)
-        hq = M.image_entropy(q, bins=64, data_range=255.0)
+        # **周辺は同時ヒストグラムから取る。** ``joint_histogram`` のビンは
+        # 幅を data_range で固定する一方、原点は**その 2 枚の最小値**に置く
+        # (``_binned`` の ``lo = min(a.min(), b.min())``)。よって単独で呼んだ
+        # ``image_entropy(X)`` は「X 自身を原点にした H」で、対で測ったときの
+        # 周辺 H とは原点が違うことがある。教科書の恒等式は**同じ原点の 4 つ**
+        # の間でしか成り立たない ―― ここを混ぜると例外なく数値だけがずれる。
+        jh = M.joint_histogram(gray, q, bins=64, data_range=255.0)
+        hx = M._entropy(jh.sum(axis=1))
+        hq = M._entropy(jh.sum(axis=0))
         mi = M.mutual_information(gray, q, bins=64, data_range=255.0)
         hj = M.joint_entropy(gray, q, bins=64, data_range=255.0)
         nmi = M.normalized_mutual_information(gray, q, bins=64, data_range=255.0)
-        resid = abs(h_gray + hq - mi - hj)
+        resid = abs(hx + hq - mi - hj)
         print(f"   {lv:4d}  {hq:7.4f}  {mi:7.4f}  {hj:7.4f}  {nmi:.4f}  {resid:.2e}")
-        assert resid < 1e-12                                # 定義から厳密
-        assert mi <= min(h_gray, hq) + 1e-12                # 情報は増えない
+        assert resid == 0.0                                 # 同じ原点なら厳密
+        assert mi <= min(hx, hq) + 1e-12                    # 情報は増えない
+        assert abs(nmi - 2.0 * mi / (hx + hq)) < 1e-12      # NMI の定義そのもの
         assert 0.0 < nmi <= 1.0 + 1e-12
+        assert abs(hq - M.image_entropy(q, bins=64, data_range=255.0)) < 1e-12 \
+            or q.min() < gray.min()                         # 原点がずれた場合だけ不一致
+
+    # 原点のずれを実測で見せておく(単独 H と対で測った周辺 H の食い違い)
+    q128 = quantise(gray, 128)
+    solo = M.image_entropy(gray, bins=64, data_range=255.0)
+    paired = M._entropy(M.joint_histogram(gray, q128, bins=64,
+                                          data_range=255.0).sum(axis=1))
+    print(f"   ビン原点の落とし穴: 原画の H は単独で {solo:.6f}、"
+          f"128 段と対で測ると {paired:.6f}(差 {abs(solo - paired):.2e} bit)。"
+          f"量子化で最小値が {gray.min()} → {q128.min()} に下がり原点が動くため。"
+          "単独 H と対の H を足し引きしても恒等式は閉じない。")
+    assert q128.min() < gray.min() and abs(solo - paired) > 1e-3
+
     # 同時ヒストグラムは正規化された同時確率
-    jh = M.joint_histogram(gray, quantise(gray, 8), bins=64, data_range=255.0)
-    print(f"   joint_histogram: 形 {jh.shape}  総和 {jh.sum():.15f}  "
-          f"非零セル {int(np.count_nonzero(jh))} / {jh.size}"
+    jh8 = M.joint_histogram(gray, quantise(gray, 8), bins=64, data_range=255.0)
+    print(f"   joint_histogram: 形 {jh8.shape}  総和 {jh8.sum():.15f}  "
+          f"非零セル {int(np.count_nonzero(jh8))} / {jh8.size}"
           "(8 段に潰したので対応が疎)")
-    assert jh.shape == (64, 64) and abs(jh.sum() - 1.0) < 1e-12
-    assert np.all(jh >= 0.0)
+    assert jh8.shape == (64, 64) and abs(jh8.sum() - 1.0) < 1e-12
+    assert np.all(jh8 >= 0.0)
 
     # ------------------------------------------------------------------ #
     # 4) 圧縮距離 —— 使う前に「距離」であることを確かめる                  #
