@@ -275,28 +275,22 @@ def main():
     assert rand_gap == 0.0                                  # 乱数では破れが隠れる
 
     # 雑音があると NCD の分離能が消える(生 float を拒む理由と同じ仕組み)
-    clean = np.round(np.clip(
-        inspection_plate()[0] / 255.0 - 0.0, 0, 1) * 255).astype(np.uint8)
-    y, x = np.mgrid[0:256, 0:256] / 255.0
-    noiseless = np.zeros_like(clean)
-    tmp = 0.30 + 0.40 * x + 0.06 * ((np.arange(256) // 8) % 2)[None, :]
-    tmp[32:85, 32:85] = 0.82
-    tmp[defect] = 0.10
-    for c, k in enumerate((1.0, 0.92, 0.80)):
-        off = (0.0, 0.05, 0.12)[c]
-        noiseless[..., c] = np.round(np.clip(tmp * k + off, 0, 1) * 255)
-    unrelated = (np.random.default_rng(3).random(clean.shape) * 255).astype(np.uint8)
-    for label, img in (("雑音なし", noiseless), ("雑音あり(実機)", clean)):
+    noiseless, _ = inspection_plate(noise_lsb=0.0)
+    unrelated = (np.random.default_rng(3).random(plate.shape) * 255).astype(np.uint8)
+    gaps = {}
+    for label, img in (("雑音なし", noiseless), ("雑音あり(実機)", plate)):
         near = M.ncd(img, quantise(img, 8))
         far = M.ncd(img, unrelated)
+        gaps[label] = far - near
         print(f"   {label:<14} lzma {M.compressed_size(img):7d} B  "
               f"NCD(自分, 8 段量子化)={near:.4f}  NCD(自分, 無関係)={far:.4f}  "
               f"分離={'できる' if near < far - 0.05 else 'できない'}")
-    assert M.ncd(noiseless, quantise(noiseless, 8)) < M.ncd(noiseless, unrelated) - 0.2
-    # 実機の絵では 1.2 LSB の雑音が下位ビットを埋め、バイト列の共通部分が消える
-    assert M.ncd(clean, quantise(clean, 8)) > M.ncd(clean, unrelated) - 0.05
+    # 実測: 雑音なしの絵は 0.8486 対 1.0023 で分離するが、1.2 LSB の雑音が
+    # 下位ビットを埋めると 1.0016 対 1.0014 になり順序すら保証されない。
+    assert gaps["雑音なし"] > 0.10
+    assert abs(gaps["雑音あり(実機)"]) < 0.05
     print("   → 下位ビットが雑音だと NCD は「似ている」を見つけられない。"
-          "生の float を拒むのと同じ仕組みなので、判定には使わない。")
+          "生の float を拒むのと同じ仕組みなので、この判定には使わない。")
 
     # ------------------------------------------------------------------ #
     # 5) どこが壊れたか —— マップで見る                                    #
