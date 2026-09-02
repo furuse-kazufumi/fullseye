@@ -44,8 +44,27 @@ _MINV = np.linalg.pinv(_X)  # (6, 9): coeffs = _MINV @ zvals
 
 
 def _as_image(v):
-    """Coerce input to a 2-D float64 image in [0, 1]; None if not usable."""
-    x = np.asarray(v, np.float64)
+    """Coerce input to a 2-D float64 image in [0, 1]; None if not usable.
+
+    Integer images are scaled by their dtype range first (uint8 -> /255, uint16 ->
+    /65535, int8/int16 by their positive max; wider ints such as python-list input
+    are scaled by 255 / 65535 / their max according to the data range), so a 0..255
+    input is no longer clipped to a flat 1.0 plateau (2026-09-02). Floats are used
+    as-is and clipped to [0, 1]; bool -> {0, 1}.
+    """
+    arr = np.asarray(v)
+    if arr.dtype == bool:
+        x = arr.astype(np.float64)
+    elif np.issubdtype(arr.dtype, np.integer):
+        x = arr.astype(np.float64)
+        if arr.dtype.itemsize <= 2:
+            x /= float(np.iinfo(arr.dtype).max)
+        elif x.size:
+            mx = float(x.max())
+            if mx > 1.0:
+                x /= 255.0 if mx <= 255.0 else (65535.0 if mx <= 65535.0 else mx)
+    else:
+        x = np.asarray(arr, np.float64)
     if x.ndim == 3:
         x = x.mean(-1)
     if x.ndim != 2 or x.size == 0:
