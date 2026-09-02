@@ -454,10 +454,6 @@ def _margin(a: float) -> int:
     return max(3, _k(a) // 2 + 1)
 
 
-def _is_binary(x) -> bool:
-    return bool(set(np.unique(x)) <= {0.0, 1.0})
-
-
 def parity(name: str | None = None, images=None, params=None, tol: float = PARITY_TOL) -> list:
     """全 twin(or *name* 1 つ)を registry の core op と difftest する。
 
