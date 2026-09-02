@@ -1113,8 +1113,7 @@ def _coerce_input(v, op):
     if a.dtype.kind == "b":
         return a.astype(np.float64)                  # mask already; only the dtype is off
     if a.dtype.kind in "fiu":
-        vals = np.unique(a)
-        if vals.size > 2 or (vals.size and (vals.min() < 0.0 or vals.max() > 1.0)):
+        if _needs_binarise(a):
             return (a.astype(np.float64) > 0.5).astype(np.float64)
         if a.dtype.kind in "iu":
             return a.astype(np.float64)              # int/uint {0,1} mask -> float64 (same values)
