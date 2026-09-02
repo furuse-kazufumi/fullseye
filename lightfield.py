@@ -438,8 +438,12 @@ def lf_synthesize(slopes=(0.0,), angular=(5, 5), shape=(64, 64), *,
 
     With ``occlusion=True`` (default) the layers are composited front-to-back by
     ``|slope|`` (largest ``|s|`` = nearest = drawn last) through random binary
-    masks covering roughly *coverage* of the frame, and the **last** entry of
-    *slopes* is forced opaque as the background. That is what makes a
+    masks covering roughly *coverage* of the frame, and the layer with the
+    **smallest** ``|slope|`` is forced opaque as the background — **regardless
+    of its position in *slopes*** (a tie goes to the earlier entry, the sort is
+    stable). ``(0.0, 2.0)`` and ``(2.0, 0.0)`` therefore describe the same
+    scene with the same ``slope_map``; only the per-layer textures are drawn in
+    a different order. That is what makes a
     see-through synthetic-aperture test meaningful. With ``occlusion=False`` the
     layers are averaged instead — a transparent superposition, which is the
     cleanest possible input for refocusing because each layer survives the
