@@ -21,8 +21,17 @@
 <p>Returns</p>
 <p>-------</p>
 <p>dict</p>
-<p>`<code style="color:#22d3bf">beyond_fraction</code>`(清浄分布のうち、この値より内側にある割合)/</p>
+<p>`<code style="color:#22d3bf">beyond_fraction</code>`(清浄分布のうち、この値より内側にある割合 =</p>
+<p>清浄な組の何 % より外側に座るか。`<code style="color:#22d3bf">[0, 1]</code>` の連続値)/</p>
 <p>`<code style="color:#22d3bf">z</code><code style="color:#22d3bf">(標準偏差の何倍か。ばらつき 0 なら </code><code style="color:#22d3bf">None</code><code style="color:#22d3bf">)/ </code><code style="color:#22d3bf">caveats</code>`。</p>
+<p>Notes</p>
+<p>-----</p>
+<p>`<code style="color:#22d3bf">beyond_fraction</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">null</code><code style="color:#22d3bf"> が持つ分位点(</code><code style="color:#22d3bf">min</code>` / 5 / 25 / 50 / 75 /</p>
+<p>95 / 99 パーセンタイル / `<code style="color:#22d3bf">max</code>`)を節として **区分線形に内挿した経験分布</p>
+<p>関数**。節の上では厳密、節の間は線形近似で、`<code style="color:#22d3bf">min</code>` より内側なら 0、</p>
+<p>`<code style="color:#22d3bf">max</code>` より外側なら 1 に飽和する(標本の外へは外挿しない)。</p>
+<p>`<code style="color:#22d3bf">higher_is_stronger=False</code>` なら 1 から引いた側を返す。清浄な値がすべて</p>
+<p>同じで節が重なる場合、その値ちょうどは 0.5(中央順位)に置く。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

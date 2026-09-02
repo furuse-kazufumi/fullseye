@@ -321,7 +321,11 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         def w(v, a, b):
             try:
                 out = fn(v, a, b)
-            except Exception:
+            except Exception as _e:  # noqa: BLE001 - recorded, strict mode re-raises
+                from backend_safe import is_strict as _bs_strict, record as _bs_record
+                if _bs_strict():
+                    raise
+                _bs_record(None, _e, "contour")
                 out = None
             if isinstance(out, dict) and "cs" in out and "shape" in out:
                 return out

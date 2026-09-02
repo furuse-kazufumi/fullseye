@@ -5,7 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Scale the in-band motion of a clip by *alpha* -&gt; `<code style="color:#22d3bf">dict</code>`.</p>
 <p>For every oriented sub-band of every frame the local phase is taken relative</p>
-<p>to that band&#x27;s temporal mean, unwrapped along time, band-passed to</p>
+<p>to that band&#x27;s temporal mean as the <b>wrapped</b> deviation</p>
+<p>`<code style="color:#22d3bf">angle(z * conj(z_mean))</code><code style="color:#22d3bf"> in </code><code style="color:#22d3bf">(-pi, pi]</code>` — it is deliberately <b>not</b></p>
+<p>unwrapped along time (see the design note above `<code style="color:#22d3bf">_AMP_FLOOR</code>`: unwrapping</p>
+<p>a noise band is a random walk that manufactured a 12.27 rad step where</p>
+<p>0.039 rad was intended) — band-passed to</p>
 <p>`<code style="color:#22d3bf">[f_lo, f_hi]</code><code style="color:#22d3bf">, multiplied by </code><code style="color:#22d3bf">alpha - 1</code>` and added back. Because a</p>
 <p>translation by `<code style="color:#22d3bf">d</code><code style="color:#22d3bf"> shifts a band&#x27;s phase by </code><code style="color:#22d3bf">-k·d</code>`, the phase of the</p>
 <p>result is `<code style="color:#22d3bf">-alpha * k·d</code><code style="color:#22d3bf"> for *any* </code><code style="color:#22d3bf">k</code>` — the output displacement is</p>

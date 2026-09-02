@@ -934,6 +934,8 @@ import os as _os  # noqa: E402
 
 if _os.environ.get("IMGEVOLVE_NO_BACKENDS", "") != "1":
     _extra = []
+    FAILED_BACKENDS: list = []   # (module, error) for backends whose build() raised
+
     for _mod in ("backends", "backends_dl", "backends_auto", "backends_color",
                  "backends_extra", "backends_pil", "backends_scipy",
                  "backends_ski2", "backends_cv2b", "backends_r3", "backends_kornia",
@@ -967,8 +969,16 @@ if _os.environ.get("IMGEVOLVE_NO_BACKENDS", "") != "1":
         try:
             _b = __import__(_mod)
             _extra += _b.build(Op, IMAGE, REGION, FEATURE, CONTOUR, _norm, _bin)
-        except Exception:
-            pass
+        except Exception as _e:  # noqa: BLE001 - optional backend; recorded, never silent
+            # A backend that fails to import used to VANISH: every op it defines
+            # silently missing from the registry, evolution / coverage none the
+            # wiser. Keep the registry importable, but leave a trace.
+            FAILED_BACKENDS.append((_mod, "%s: %s" % (type(_e).__name__, _e)))
+            try:
+                import backend_safe as _bs
+                _bs.record(_mod, _e, None, source="import")
+            except Exception:  # pragma: no cover - the ledger itself must never break import
+                pass
     # 名前の衝突を弾く。**op 名は addressing の鍵**で、``RT`` / ``_BY_NAME`` /
     # ``SLOTS`` はどれも後勝ちの dict なので、同名を 2 つ登録すると先に入った方が
     # 名前では二度と引けなくなる(``decode_by_names`` が再現できない)。一方

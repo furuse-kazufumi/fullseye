@@ -16,8 +16,12 @@
 <p>実測による(`<code style="color:#22d3bf">order=3</code>` は星の周りに極小の負の縁を作るが、上の測定では</p>
 <p>最小値 -0.0000 で目に見える量ではなかった)。</p>
 <p><b>フラックスもピークも厳密に保ちたいなら補間せず</b> :func:<code style="color:#22d3bf">drizzle_resample</code></p>
-<p>に :func:<code style="color:#22d3bf">frame_align</code> の推定シフトをそのまま渡すこと —— 補間しないことが</p>
-<p>drizzle の存在理由そのもの。</p>
+<p>へ渡すこと —— 補間しないことが drizzle の存在理由そのもの。ただし</p>
+<p><b>推定シフトをそのまま渡してはいけない</b>: ここで返す `<code style="color:#22d3bf">matrices</code>` の並進は</p>
+<p>「基準へ戻す」向きで、drizzle が要る向きとは符号が逆。</p>
+<p>:func:<code style="color:#22d3bf">drizzle_shifts</code> を通すこと::</p>
+<p>aligned, mats = align_frames(frames)</p>
+<p>sci, wht = drizzle_resample(frames, drizzle_shifts(mats), scale=2.0)</p>
 <p>Returns `<code style="color:#22d3bf">(aligned, matrices)</code>`:</p>
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">aligned</code><code style="color:#22d3bf"> —— 長さ </code><code style="color:#22d3bf">N</code><code style="color:#22d3bf"> の list、各 </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> float64(</code><code style="color:#22d3bf">images</code>` 語彙)。</p>
 <p>基準フレームは<b>変換を通さずそのまま</b>返す(恒等変換でも補間は像を鈍らせる</p>

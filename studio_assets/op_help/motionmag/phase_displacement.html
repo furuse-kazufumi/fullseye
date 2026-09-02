@@ -7,7 +7,9 @@
 <p>The quantitative sibling of :func:<code style="color:#22d3bf">motion_magnify</code>: nothing is amplified and</p>
 <p>nothing is re-rendered, the displacement itself is returned in pixels.</p>
 <p>For each oriented sub-band, the temporal phase deviation `<code style="color:#22d3bf">dphi(t)</code>` (taken</p>
-<p>against the band&#x27;s temporal mean, unwrapped in time, band-passed) obeys</p>
+<p>against the band&#x27;s temporal mean as the wrapped angle in `<code style="color:#22d3bf">(-pi, pi]</code>` —</p>
+<p><b>never</b> unwrapped in time, for the reason given in the design note above</p>
+<p>`<code style="color:#22d3bf">_AMP_FLOOR</code>` — then band-passed) obeys</p>
 <p>`<code style="color:#22d3bf">dphi = -(kx*dx + ky*dy)</code><code style="color:#22d3bf">, where </code><code style="color:#22d3bf">(kx, ky)</code>` is the band&#x27;s <b>local</b></p>
 <p>spatial frequency in radians per pixel — computed exactly as</p>
 <p>`<code style="color:#22d3bf">Im(conj(z) grad z)/|z|^2</code>` with a spectral derivative, not from the band&#x27;s</p>

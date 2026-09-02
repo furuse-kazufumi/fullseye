@@ -55,7 +55,9 @@
 <p>:param filter_name: one of :data:<code style="color:#22d3bf">FILTERS</code>.</p>
 <p>:param cutoff: fraction of Nyquist to keep, `<code style="color:#22d3bf">(0, 1]</code>`.</p>
 <p>:param span_deg: angular range for the `<code style="color:#22d3bf">d(theta)</code><code style="color:#22d3bf"> weight; </code><code style="color:#22d3bf">None</code>` -&gt; the</p>
-<p>median angular step.</p>
+<p>range the views actually cover, inferred from the angle list (exact for</p>
+<p>a uniform grid over any span and for any full-coverage irregular set</p>
+<p>such as golden angle; see :func:<code style="color:#22d3bf">_span_weight</code>).</p>
 <p>:returns: `<code style="color:#22d3bf">(size, size)</code>` float64 image.</p>
 <p>:raises ValueError: on a non-2-D or non-finite sinogram, an angle count that</p>
 <p>disagrees with the row count, an unknown filter, a cutoff outside</p>

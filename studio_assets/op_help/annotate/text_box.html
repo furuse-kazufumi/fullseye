@@ -16,7 +16,12 @@
 <p>役割名または RGB。`<code style="color:#22d3bf">text_color</code>` 未指定ならこれが<b>枠の色</b>として</p>
 <p>使われ、文字は読みやすい既定色になる。</p>
 <p>text_color, box_color : str/sequence or None</p>
-<p>文字色・板の色。None なら既定(明るい文字 × 暗い板)。</p>
+<p>文字色・板の色。None なら既定(明るい文字 × 暗い板)。文字色が None の</p>
+<p>ときは、<b>実際に下に出る色</b>に対して明るい既定色が `<code style="color:#22d3bf">min_contrast</code>` を</p>
+<p>割る場合に限り、暗い文字(板の色)へ自動で切り替える ―― 板なし</p>
+<p>(`<code style="color:#22d3bf">box_alpha=0</code>`)で白地に置く目盛り・カラーバー・凡例のラベルが</p>
+<p>白に溶けないため。`<code style="color:#22d3bf">text_color</code>` を明示したときは切り替えない</p>
+<p>(色は図の意味なので勝手に変えず、読めなければ例外にする)。</p>
 <p>box_alpha : float</p>
 <p>板の不透明度 [0,1]。`<code style="color:#22d3bf">0</code>` なら板を描かない(目盛りラベル向け)。</p>
 <p>anchor : str</p>

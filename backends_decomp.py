@@ -255,18 +255,21 @@ def dc_homomorphic(v, a, b):
 # --------------------------------------------------------------------------- #
 # registry                                                                     #
 # --------------------------------------------------------------------------- #
+def _finish_clip01(out, v):
+    arr = np.asarray(out, np.float64)
+    arr = np.nan_to_num(arr, nan=0.0, posinf=1.0, neginf=0.0)
+    return np.clip(arr, 0.0, 1.0)
+
+
 def _safe(fn):
-    """Wrap so an op never raises on odd input; degrade to a clipped copy."""
-    def w(v, a, b):
-        try:
-            out = fn(v, a, b)
-        except Exception:  # noqa: BLE001  # fail-soft: an op must never raise
-            out = None
-        if out is None:
-            return _img(v)
-        arr = np.asarray(out, np.float64)
-        arr = np.nan_to_num(arr, nan=0.0, posinf=1.0, neginf=0.0)
-        return np.clip(arr, 0.0, 1.0)
+    """Wrap so an op never raises on odd input; degrade to a clipped copy.
+
+    Delegates to the shared, RECORDING guard (backend_safe.guard) with this
+    backend's own post-processing kept bit-identical: failure -> ``_img(v)``,
+    success -> nan_to_num + clip to [0,1].
+    """
+    from backend_safe import guard
+    return guard(fn, "image", on_fail=_img, finish=_finish_clip01)
     return w
 
 

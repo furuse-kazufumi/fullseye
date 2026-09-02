@@ -15,8 +15,12 @@
 <p>*angular* is `<code style="color:#22d3bf">(V, U)</code><code style="color:#22d3bf"> and *shape* is </code><code style="color:#22d3bf">(H, W)</code>`.</p>
 <p>With `<code style="color:#22d3bf">occlusion=True</code>` (default) the layers are composited front-to-back by</p>
 <p>`<code style="color:#22d3bf">|slope|</code><code style="color:#22d3bf"> (largest </code><code style="color:#22d3bf">|s|</code>` = nearest = drawn last) through random binary</p>
-<p>masks covering roughly *coverage* of the frame, and the <b>last</b> entry of</p>
-<p>*slopes* is forced opaque as the background. That is what makes a</p>
+<p>masks covering roughly *coverage* of the frame, and the layer with the</p>
+<p><b>smallest</b> `<code style="color:#22d3bf">|slope|</code>` is forced opaque as the background — **regardless</p>
+<p>of its position in *slopes*** (a tie goes to the earlier entry, the sort is</p>
+<p>stable). `<code style="color:#22d3bf">(0.0, 2.0)</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">(2.0, 0.0)</code>` therefore describe the same</p>
+<p>scene with the same `<code style="color:#22d3bf">slope_map</code>`; only the per-layer textures are drawn in</p>
+<p>a different order. That is what makes a</p>
 <p>see-through synthetic-aperture test meaningful. With `<code style="color:#22d3bf">occlusion=False</code>` the</p>
 <p>layers are averaged instead — a transparent superposition, which is the</p>
 <p>cleanest possible input for refocusing because each layer survives the</p>

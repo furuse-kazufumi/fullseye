@@ -17,11 +17,16 @@
 <p>a fully sampled scan.** Above it you are doing sparse-view CT on purpose and</p>
 <p>the reconstruction algorithm has to make up the difference; the measured</p>
 <p>cost is in this module&#x27;s docstring and in the test suite&#x27;s break table.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">streak_free_radius_px</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">pitch / d(theta)</code>` in radians: the radius at</p>
-<p>which the *azimuthal* sample spacing between neighbouring views grows past</p>
-<p>the detector pitch. Outside it, filtered back-projection lays down visible</p>
-<p>streaks. For 180 views over 180 degrees this is 57.3 px, i.e. a 256-px</p>
-<p>phantom is already streaking at its corners.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">streak_free_radius_px</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">1 / d(theta)</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">d(theta)</code>` in radians:</p>
+<p>the radius, in pixels, at which the *azimuthal* sample spacing between</p>
+<p>neighbouring views (`<code style="color:#22d3bf">r * d(theta)</code>`) grows past one sample. Outside it,</p>
+<p>filtered back-projection lays down visible streaks. For 180 views over 180</p>
+<p>degrees this is 57.3 px, i.e. a 256-px phantom is already streaking at its</p>
+<p>corners. It does <b>not</b> depend on the detector pitch: the radius is</p>
+<p>quoted in the same unit the sample spacing is, so the pitch cancels</p>
+<p>(`<code style="color:#22d3bf">pitch / d(theta)</code>` is the same radius in millimetres, which is what an</p>
+<p>earlier version returned under the pixel label — 28.6 &quot;px&quot; at 0.5 mm,</p>
+<p>114.6 at 2 mm, for a geometry whose streak radius had not changed).</p>
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">sinogram_bytes</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">elements</code>` — what you are about to allocate.</p>
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">verdict</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">&quot;fully sampled&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;sparse view&quot;</code>`.</p>
 <p>:param n_angles: planned number of views.</p>

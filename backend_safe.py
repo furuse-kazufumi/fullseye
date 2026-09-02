@@ -18,6 +18,204 @@ from __future__ import annotations
 
 import numpy as np
 
+import os
+import threading
+import warnings
+from contextlib import contextmanager
+
+# --------------------------------------------------------------------------- #
+# Fallback ledger — the ONE mediator every fail-soft wrapper reports to.
+#
+# 2026-09-02 audit: 23 backend files each carried a private ``_safe`` that swallowed
+# ``Exception`` and recorded nothing, so the strict mode / error ring that lived in
+# ``backends.py`` covered exactly one of 24 wrapper families.  A permanently broken
+# op (an API that raises on every input) was indistinguishable from a working
+# identity op — for evolution, difftest, coverage and the user alike.
+#
+# The contradiction is real (TRIZ: reliability #27 / ease of use #33 vs measurement
+# accuracy #28 / detectability #37): the facade must not crash a user's pipeline,
+# yet every degradation must be visible.  It is resolved by SEPARATION, not by
+# picking a side:
+#   * in SPACE   — inner wrappers may degrade but must report here (``guard``);
+#                  the OUTER layer (``api.apply``) decides what to do about it;
+#   * by CONDITION — the caller chooses ``on_error="fallback" | "warn" | "raise"``
+#                  (or the env var FULLSEYE_ON_ERROR / IMGEVOLVE_STRICT_BACKENDS);
+#   * in TIME    — the default path warns ONCE per op (``FullseyeFallbackWarning``)
+#                  so a notebook user sees it and a long batch is not spammed;
+#   * feedback   — ``fallbacks()`` / ``fallback_counts()`` expose the ledger so CI can
+#                  assert "no op fell back on the structured probe set".
+# See docs/design/TRIZ_DESIGN_PATTERN_MATRIX.md for the pattern mapping.
+# --------------------------------------------------------------------------- #
+
+class FullseyeFallbackWarning(RuntimeWarning):
+    """An operator failed and a sort-valid fallback value was returned instead.
+
+    Emitted once per op name on the default (``on_error="fallback"``) path.  Silence
+    with ``warnings.filterwarnings("ignore", category=FullseyeFallbackWarning)``;
+    turn it into an exception with ``on_error="raise"``.
+    """
+
+
+_LEDGER_LOCK = threading.Lock()
+_EVENTS: list = []                  # bounded ring, oldest first
+_EVENT_MAX = 256
+_COUNTS: dict = {}                  # name -> number of fallbacks since clear
+_WARNED: set = set()                # names that already emitted their one warning
+_SEQ = 0                            # monotonically increasing event counter (never reset)
+_TL = threading.local()             # .op = name the facade is currently running
+
+
+def _env_flag(*names):
+    for n in names:
+        if os.environ.get(n, "") not in ("", "0", "false", "False"):
+            return True
+    return False
+
+
+_STRICT = _env_flag("IMGEVOLVE_STRICT_BACKENDS", "FULLSEYE_STRICT")
+_WARN_ONCE = not _env_flag("FULLSEYE_QUIET_FALLBACK")
+
+
+def is_strict() -> bool:
+    """True when guarded ops re-raise instead of degrading to a fallback."""
+    return _STRICT
+
+
+def set_strict(on: bool = True) -> bool:
+    """Turn strict mode on/off; returns the PREVIOUS value so callers can restore it."""
+    global _STRICT
+    prev, _STRICT = _STRICT, bool(on)
+    return prev
+
+
+@contextmanager
+def strict_mode(on: bool = True):
+    """Scoped strict mode — a verifier wraps a probe call in this to tell a dead op
+    (raises) from an op that genuinely returns its input (does not)."""
+    prev = set_strict(on)
+    try:
+        yield
+    finally:
+        set_strict(prev)
+
+
+@contextmanager
+def current_op(name):
+    """Attribute every fallback recorded inside the block to op *name* (thread-local)."""
+    prev = getattr(_TL, "op", None)
+    _TL.op = name
+    try:
+        yield
+    finally:
+        _TL.op = prev
+
+
+def record(name, exc, out_sort=None, source: str = "op") -> dict:
+    """Append one fallback event to the ledger and emit the once-per-name warning.
+
+    *name* may be None: then the op the facade is currently running (``current_op``)
+    is used.  *source* tags where the degradation happened: ``"op"`` (the op body
+    raised), ``"gpu"`` (an accelerated path failed and the CPU op ran instead),
+    ``"import"`` (a whole backend module failed to import at registry build),
+    ``"input"`` (the facade was handed an array that does not match the op's
+    declared input sort).
+    """
+    global _SEQ
+    key = str(name if name is not None else getattr(_TL, "op", None) or "?")
+    ev = {"name": key, "source": source, "out_sort": out_sort,
+          "error": "%s: %s" % (type(exc).__name__, exc)}
+    with _LEDGER_LOCK:
+        _SEQ += 1
+        ev["seq"] = _SEQ
+        _EVENTS.append(ev)
+        del _EVENTS[:-_EVENT_MAX]
+        _COUNTS[key] = _COUNTS.get(key, 0) + 1
+        first = key not in _WARNED
+        if first:
+            _WARNED.add(key)
+    if first and _WARN_ONCE:
+        warnings.warn("fullseye: %r degraded to a fallback (%s; %s). Further fallbacks "
+                      "of this op are counted silently - see fullseye.fallbacks() or "
+                      "pass on_error='raise'." % (key, source, ev["error"]),
+                      FullseyeFallbackWarning, stacklevel=3)
+    return ev
+
+
+def fallbacks() -> list:
+    """Copy of the recorded fallback events (oldest first, bounded ring)."""
+    with _LEDGER_LOCK:
+        return [dict(e) for e in _EVENTS]
+
+
+def fallback_counts() -> dict:
+    """``{name: n}`` - how many times each op fell back since the last ``clear_fallbacks``."""
+    with _LEDGER_LOCK:
+        return dict(_COUNTS)
+
+
+def last_fallback():
+    """The most recent fallback event as a dict, or None."""
+    with _LEDGER_LOCK:
+        return dict(_EVENTS[-1]) if _EVENTS else None
+
+
+def clear_fallbacks(reset_warnings: bool = False) -> None:
+    """Drop the ledger (call before a probe run). ``reset_warnings=True`` also lets
+    every op warn again once."""
+    with _LEDGER_LOCK:
+        _EVENTS.clear()
+        _COUNTS.clear()
+        if reset_warnings:
+            _WARNED.clear()
+
+
+def mark() -> int:
+    """Opaque position in the ledger; pair with :func:`events_since`."""
+    with _LEDGER_LOCK:
+        return _SEQ
+
+
+def events_since(m: int) -> list:
+    """Events recorded after :func:`mark` value *m* (still in the ring)."""
+    with _LEDGER_LOCK:
+        return [dict(e) for e in _EVENTS if e["seq"] > m]
+
+
+def guard(fn, out_sort=None, *, name=None, on_fail=None, finish=None):
+    """Wrap an op ``fn(v, a, b)`` so a failure degrades to a sort-valid value - RECORDED.
+
+    This is the single exception guard every backend should use (``backends._safe``
+    and the per-backend ``_safe`` helpers delegate here).  Behaviour:
+
+    * ``fn`` raises  -> in strict mode the exception propagates unchanged; otherwise
+      the event is recorded via :func:`record` and the result is ``on_fail(v)`` when
+      given, else the sort fallback from :func:`sanitize`.
+    * ``fn`` returns -> ``finish(out, v)`` when given (a backend's own post-processing,
+      e.g. nan_to_num + clip), else :func:`sanitize` (finite, sort-valid).
+
+    The recorded name is *name* if given, else the op the facade is running
+    (``current_op``), else the function's qualname.
+    """
+    def w(v, a, b):
+        try:
+            out = fn(v, a, b)
+        except Exception as e:           # noqa: BLE001 - the whole point is to record it
+            if _STRICT:
+                raise
+            record(name or getattr(_TL, "op", None) or getattr(fn, "__qualname__", repr(fn)),
+                   e, out_sort)
+            out = None
+        if out is None and on_fail is not None:
+            return on_fail(v)
+        if finish is not None:
+            return finish(out, v)
+        return sanitize(out, v, out_sort)
+    w.__wrapped__ = fn
+    w.__name__ = getattr(fn, "__name__", "op")
+    w.__qualname__ = getattr(fn, "__qualname__", w.__name__)
+    return w
+
+
 
 def signed01(x):
     """Map a SIGNED filter response to [0,1] with the zero-crossing at 0.5.

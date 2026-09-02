@@ -64,16 +64,14 @@ except Exception:  # noqa: BLE001 - optional dependency; NumPy fallback below
 # safety wrapper (shared pattern with the other backends)                     #
 # --------------------------------------------------------------------------- #
 def _safe(fn, out_sort=None):
-    from backend_safe import sanitize
+    """Fail-soft wrapper -> the shared, RECORDING guard (backend_safe.guard).
 
-    def w(v, a, b):
-        try:
-            out = fn(v, a, b)
-        except Exception:  # noqa: BLE001 - fail-soft per op contract
-            out = None
-        return sanitize(out, v, out_sort)
-
-    return w
+    A failure degrades to a sort-valid fallback exactly as before, but the event
+    is now written to the fallback ledger and strict mode re-raises, so a
+    permanently broken op can no longer masquerade as a working identity.
+    """
+    from backend_safe import guard
+    return guard(fn, out_sort)
 
 
 # --------------------------------------------------------------------------- #

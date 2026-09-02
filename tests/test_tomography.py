@@ -992,10 +992,14 @@ class TestAdversarialRegressions:
             a = tg.projection_angles(180, 180.0, scheme, start_deg=33.0)
             assert np.rad2deg(tg._span_weight(a, None, "t") * 180) == pytest.approx(
                 180.0, abs=1e-9)
-        # a limited golden set: the wedge is missing, the covered part is counted
+        # a limited golden set (measured before the fix: 106.6 for a 90-degree
+        # scan, an *over*-credit): the wedge is missing, the covered part is
+        # counted. The last view before the wedge stands for one median step and
+        # nothing in the data says where exactly the scan stopped inside that
+        # step, so the bound is one step (1 degree here), not machine precision.
         a = tg.projection_angles(90, 90.0, "golden")
         got = np.rad2deg(tg._span_weight(a, None, "t") * 90)
-        assert 85.0 < got <= 90.0 + 1e-9
+        assert got == pytest.approx(90.0, abs=1.0)
 
     @pytest.mark.parametrize("pitch", [0.25, 1.0, 2.0, 7.5])
     def test_streak_free_radius_is_in_pixels_and_pitch_independent(self, pitch):

@@ -341,7 +341,11 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         def inner(v, a, b):
             try:
                 out = fn(v, a, b)
-            except Exception:
+            except Exception as _e:  # noqa: BLE001 - recorded, strict mode re-raises
+                from backend_safe import is_strict as _bs_strict, record as _bs_record
+                if _bs_strict():
+                    raise
+                _bs_record(None, _e, osort)
                 out = None
             if osort == FEATURE:
                 try:

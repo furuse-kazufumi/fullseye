@@ -21,9 +21,12 @@
 <p>行送り係数。</p>
 <p>wrap : bool</p>
 <p>True(既定)なら `<code style="color:#22d3bf">max_width</code>` で<b>折り返す</b>。False なら折り返さず</p>
-<p><b>1 行のままフォントを縮めて</b>収める(格子のラベルのように、2 行に</p>
+<p><b>行を増やさずフォントを縮めて</b>収める(格子のラベルのように、2 行に</p>
 <p>なると版が崩れる場所で使う ―― `<code style="color:#22d3bf">exhibit_tile._fit_label</code>` と同じ流儀)。</p>
 <p>どちらでも `<code style="color:#22d3bf">min_font_size</code>` まで来て入らなければ例外。</p>
+<p>``</p>
+<p>`<code style="color:#22d3bf"> の改行は </code><code style="color:#22d3bf">max_width</code><code style="color:#22d3bf"> の有無・</code><code style="color:#22d3bf">wrap</code>` の値に<b>よらず常に</b>効く</p>
+<p>(幅を与えないと 1 行に潰れる、という事故は起きない)。</p>
 <p>Returns</p>
 <p>-------</p>
 <p>dict</p>

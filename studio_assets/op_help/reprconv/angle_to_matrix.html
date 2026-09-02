@@ -4,8 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import reprconv; reprconv.angle_to_matrix(angle)</code> (または <code style="color:#22d3bf">opsreprconv.get(&quot;angle_to_matrix&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>角度 <b>[度]</b> → z 軸まわりの回転行列 `<code style="color:#22d3bf">matrix (3,3)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">angle</code>` の出口。</p>
-<p>`<code style="color:#22d3bf">angle_to_matrix(90)</code>` は軸2(x)を軸1(y)へ送る —— <b>度</b>であることと</p>
-<p><b>どちらの軸へ回るか</b>が、この 2 行の全内容である。ラジアンを渡すと</p>
+<p>`<code style="color:#22d3bf">angle_to_matrix(90)</code>` は軸1(y)を軸2(x)へ送り、軸2(x)を <b>−軸1</b>(−y)へ</p>
+<p>送る(`<code style="color:#22d3bf">R @ [0,1,0] = [0,0,1]</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">R @ [0,0,1] = [0,-1,0]</code>`、実測)。</p>
+<p>2-D の :func:<code style="color:#22d3bf">rot_scale_to_matrix</code> と同じ `<code style="color:#22d3bf">[[c,-s],[s,c]]</code>` の向き</p>
+<p>(軸 0 → 軸 1)を軸 (1, 2) に置いたもので、:func:<code style="color:#22d3bf">matrix_to_angle</code> の</p>
+<p>`<code style="color:#22d3bf">atan2(R[2,1], R[1,1])</code>` もこの向きで往復する。<b>度</b>であることと</p>
+<p><b>どちらの軸へ回るか</b>が、この段落の全内容である。ラジアンを渡すと</p>
 <p>例外は出ず、ただ 57.3 分の 1 だけ回った行列が返る。</p>
 <p>Args:</p>
 <p>angle: 度。</p>

@@ -1,6 +1,6 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">rgb_to_xyz — IMGMETRICS <code style="color:#22d3bf">colorspace</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import imgmetrics; imgmetrics.rgb_to_xyz(rgb)</code> (または <code style="color:#22d3bf">opsimgmetrics.get(&quot;rgb_to_xyz&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>sRGB(`<code style="color:#22d3bf">(..., 3)</code>`)→ CIE XYZ。伝達関数を外してから行列を掛ける。</p>
@@ -10,8 +10,8 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_quality_metrics">image_quality_metrics</a> — <code style="color:#22d3bf">py -3.11 examples/image_quality_metrics.py</code></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">rgbimage</code> を入力に取れる)</h3>
-<p><a style="color:#22d3bf" href="opimgmetrics:rgb_to_lab">rgb_to_lab</a> · <a style="color:#22d3bf" href="opimgmetrics:xyz_to_lab">xyz_to_lab</a> · <a style="color:#22d3bf" href="opimgmetrics:delta_e_map">delta_e_map</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">rgb</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:xyz_to_lab">xyz_to_lab</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">colorspace</code>)</h3>
 <p><a style="color:#22d3bf" href="opimgmetrics:rgb_to_lab">rgb_to_lab</a> · <a style="color:#22d3bf" href="opimgmetrics:lab_to_rgb">lab_to_rgb</a> · <a style="color:#22d3bf" href="opimgmetrics:xyz_to_lab">xyz_to_lab</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

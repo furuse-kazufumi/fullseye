@@ -32,8 +32,14 @@
 <p>:func:<code style="color:#22d3bf">star_detect</code> した実測: **間隔 1.6 入力画素で、平均合成は 1 個、</p>
 <p>drizzle は 2 個**を見つけた(2.0 px 以上ではどちらも 2 個)。</p>
 <p>*shifts* は `<code style="color:#22d3bf">(N, 2)</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">(dr, dc)</code><code style="color:#22d3bf"> で、フレーム </code><code style="color:#22d3bf">i</code>` が基準からどれだけ</p>
-<p>ずれているか(:func:<code style="color:#22d3bf">synth_frame_series</code> の `<code style="color:#22d3bf">truth[&quot;shifts&quot;]</code>`、</p>
-<p>:func:<code style="color:#22d3bf">frame_align</code> の推定値をそのまま渡せる)。`<code style="color:#22d3bf">None</code>` なら全部 0。</p>
+<p>ずれているか(:func:<code style="color:#22d3bf">synth_frame_series</code> の `<code style="color:#22d3bf">truth[&quot;shifts&quot;]</code>` がこの向き)。</p>
+<p>`<code style="color:#22d3bf">None</code>` なら全部 0。</p>
+<p>★ <b>符号に注意</b> —— :func:<code style="color:#22d3bf">frame_align</code> / :func:<code style="color:#22d3bf">align_frames</code> が返す行列の</p>
+<p>並進は「フレームを基準へ<b>戻す</b>」向き、つまりここで要る `<code style="color:#22d3bf">(dr, dc)</code>` の</p>
+<p><b>符号が逆</b>である。推定値をそのまま渡すとずれが打ち消されず<b>倍</b>になり、</p>
+<p>例外も出さずに二重像になる(実測: 6 枚 96x96 で `<code style="color:#22d3bf">est + truth ≈ 0</code>`、</p>
+<p>そのまま渡すと残差が 2 倍)。行列から正しい向きの shifts を作るには</p>
+<p>:func:<code style="color:#22d3bf">drizzle_shifts</code> を使うこと。</p>
 <p><b>回転は受けない</b> —— 回転が入ると軸が分離せず重なり面積が閉形式で書けなく</p>
 <p>なるので、先に :func:<code style="color:#22d3bf">align_frames</code> で戻すこと(そこで補間の誤差を払う、</p>
 <p>という取引が見えている方が正直)。</p>
