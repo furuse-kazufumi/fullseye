@@ -1311,7 +1311,7 @@ OP_PARAM_HINTS = {
     ("annotate_legend", "pad"): lambda rng: 2, ("annotate_legend", "radius"): lambda rng: 5.0,
     ("annotate_legend", "font_size"): lambda rng: 8,
     ("annotate_dimension", "p0"): lambda rng: (4.0, 31.0), ("annotate_dimension", "p1"): lambda rng: (27.0, 31.0),
-    ("annotate_dimension", "offset"): lambda rng: -6.0, ("annotate_dimension", "font_size"): lambda rng: 7,
+    ("annotate_dimension", "offset"): lambda rng: -3.0, ("annotate_dimension", "font_size"): lambda rng: 7,
     ("annotate_dimension_layout", "p0"): lambda rng: (4.0, 31.0),
     ("annotate_dimension_layout", "p1"): lambda rng: (27.0, 31.0),
     ("annotate_angle", "a"): lambda rng: (4.0, 4.0), ("annotate_angle", "vertex"): lambda rng: (4.0, 26.0),
@@ -1321,7 +1321,7 @@ OP_PARAM_HINTS = {
     ("annotate_angle_layout", "vertex"): lambda rng: (4.0, 26.0),
     ("annotate_angle_layout", "b"): lambda rng: (26.0, 26.0),
     ("annotate_scale_bar", "target_fraction"): lambda rng: 0.9, ("annotate_scale_bar", "margin"): lambda rng: 2,
-    ("annotate_scale_bar", "font_size"): lambda rng: 6,
+    ("annotate_scale_bar", "font_size"): lambda rng: 5, ("annotate_scale_bar", "corner"): lambda rng: "lb",
     ("annotate_scale_bar_layout", "shape"): lambda rng: (32, 32),
     ("annotate_scale_bar_layout", "target_fraction"): lambda rng: 0.9,
     ("annotate_scale_bar_layout", "margin"): lambda rng: 2,
@@ -1331,9 +1331,9 @@ OP_PARAM_HINTS = {
     ("annotate_inset_layout", "shape"): lambda rng: (32, 32),
     ("annotate_inset_layout", "src_rect"): lambda rng: (2, 2, 6, 6),
     ("annotate_inset_layout", "margin"): lambda rng: 2,
-    ("annotate_text_path", "path"): lambda rng: [(1.0, 12.0), (31.0, 12.0)],
+    ("annotate_text_path", "path"): lambda rng: [(5.0, 27.0), (29.0, 5.0)],
     ("annotate_text_path", "font_size"): lambda rng: 6,
-    ("annotate_text_path_layout", "path"): lambda rng: [(1.0, 12.0), (31.0, 12.0)],
+    ("annotate_text_path_layout", "path"): lambda rng: [(5.0, 27.0), (29.0, 5.0)],
     ("annotate_text_path_layout", "font_size"): lambda rng: 6,
     ("annotate_colorbar", "rect"): lambda rng: (3, 2, 20, 3),
     ("annotate_colorbar", "orientation"): lambda rng: "horizontal",
@@ -1350,14 +1350,15 @@ OP_PARAM_HINTS = {
     ("annotate3d_label", "pose"): lambda rng: __import__("render3d").look_at(
         (5.0, 5.0, 45.0), (5.0, 5.0, 5.0), (0.0, 1.0, 0.0)),
     ("annotate3d_label", "anchor"): lambda rng: (5.0, 5.0, 5.0),
-    ("annotate3d_label", "offset"): lambda rng: (0.0, -6.0),
+    ("annotate3d_label", "offset"): lambda rng: (0.0, -4.0),
     ("annotate3d_label", "font_size"): lambda rng: 5, ("annotate3d_label", "pad"): lambda rng: 1,
     ("annotate3d_scale_bar", "pose"): lambda rng: __import__("render3d").look_at(
         (5.0, 5.0, 45.0), (5.0, 5.0, 5.0), (0.0, 1.0, 0.0)),
-    ("annotate3d_scale_bar", "origin"): lambda rng: (2.0, 5.0, 5.0),
+    ("annotate3d_scale_bar", "origin"): lambda rng: (2.0, 0.0, 5.0),
+    ("annotate3d_scale_bar", "tick"): lambda rng: 0.0,
     ("annotate3d_scale_bar", "direction"): lambda rng: (1.0, 0.0, 0.0),
     ("annotate3d_scale_bar", "length"): lambda rng: 6.0,
-    ("annotate3d_scale_bar", "font_size"): lambda rng: 6,
+    ("annotate3d_scale_bar", "font_size"): lambda rng: 5,
     ("annotate3d_axes", "pose"): lambda rng: __import__("render3d").look_at(
         (5.0, 5.0, 45.0), (5.0, 5.0, 5.0), (0.0, 1.0, 0.0)),
     ("annotate3d_axes", "origin"): lambda rng: (5.0, 5.0, 5.0),
@@ -1366,7 +1367,10 @@ OP_PARAM_HINTS = {
         (5.0, 5.0, 45.0), (5.0, 5.0, 5.0), (0.0, 1.0, 0.0)),
     ("annotate3d_measure", "pose"): lambda rng: __import__("render3d").look_at(
         (5.0, 5.0, 45.0), (5.0, 5.0, 5.0), (0.0, 1.0, 0.0)),
-    ("annotate3d_measure", "font_size"): lambda rng: 6,
+    ("annotate3d_measure", "font_size"): lambda rng: 5,
+    ("annotate3d_measure", "p0"): lambda rng: (2.0, 0.0, 2.0),
+    ("annotate3d_measure", "p1"): lambda rng: (8.0, 0.0, 2.0),
+    ("annotate3d_measure", "tick"): lambda rng: 0.0,
 
     # --- 2026-09-02: 形が結びついていて名前ヒントでは足りないもの ----------- #
     # 名前ヒントは同名の引数を持つ**全 op**に効くので、寸法が入力と噛み合う

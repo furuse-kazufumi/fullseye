@@ -1430,7 +1430,8 @@ def _tessellate(Vv, Ff, n_seg, target: float):
 def mesh_subdivide(V, F, *, levels: int = 1, target_edge=None,
                    max_faces: int = MAX_SUBDIVIDE_FACES):
     """Refine a triangle mesh → ``(V, F)``: uniform midpoint subdivision (``levels`` passes,
-    ×4 faces each) or **adaptive tessellation to a target edge length** (``target_edge``).
+    ×4 faces each) or **adaptive tessellation to a target edge length** (``target_edge``:
+    median edge = target, edge segments ≤ 1.5×target, in-face Delaunay edges < 2×target).
 
     The geometry is *unchanged* — every new vertex lies on an old facet, so surface area
     and enclosed volume are preserved exactly (tests pin this) and nothing is ever

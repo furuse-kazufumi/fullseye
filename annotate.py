@@ -955,17 +955,21 @@ def color_bar(img, lut, rect, vmin=0.0, vmax=1.0, unit="", label_fmt="{:g}",
     lo = label_fmt.format(float(vmin)) + (f" {unit}" if unit else "")
     if orientation == "vertical":
         a = text_box(a, hi, (x + w + 4, y), anchor="lt", pad=2, box_alpha=0.0,
-                     font_size=font_size, font_path=font_path, text_color=text_color,
+                     font_size=font_size, min_font_size=min(9, int(font_size)),
+                     font_path=font_path, text_color=text_color,
                      scheme=scheme)
         a = text_box(a, lo, (x + w + 4, y + h), anchor="lb", pad=2, box_alpha=0.0,
-                     font_size=font_size, font_path=font_path, text_color=text_color,
+                     font_size=font_size, min_font_size=min(9, int(font_size)),
+                     font_path=font_path, text_color=text_color,
                      scheme=scheme)
     else:
         a = text_box(a, lo, (x, y + h + 4), anchor="lt", pad=2, box_alpha=0.0,
-                     font_size=font_size, font_path=font_path, text_color=text_color,
+                     font_size=font_size, min_font_size=min(9, int(font_size)),
+                     font_path=font_path, text_color=text_color,
                      scheme=scheme)
         a = text_box(a, hi, (x + w, y + h + 4), anchor="rt", pad=2, box_alpha=0.0,
-                     font_size=font_size, font_path=font_path, text_color=text_color,
+                     font_size=font_size, min_font_size=min(9, int(font_size)),
+                     font_path=font_path, text_color=text_color,
                      scheme=scheme)
     return a
 
@@ -2116,6 +2120,7 @@ def annotate_leader_layout(shape, points, labels=None, font_size=12, pad=4, gap=
         raise ValueError(f"side must be 'auto'|'left'|'right' (got: {side!r})")
     g0 = _num(gap, "gap", lo=1.0)
     pad = _num(pad, "pad", lo=0, integer=True)
+    min_font_size = min(int(min_font_size), int(font_size))     # 小さい字を頼まれたら縮小下限も下げる
     for x, y in pts:
         if not (0 <= x <= W - 1 and 0 <= y <= H - 1):
             raise ValueError(f"point ({x:g},{y:g}) lies outside the {W}x{H} image")
@@ -2187,6 +2192,7 @@ def annotate_leader(img, points, labels=None, color="emphasis", width=1.5, cap_s
     a = _prep(img)
     w = _num(width, "width", lo=0.5)
     cap = _num(cap_size, "cap_size", lo=0.0)
+    min_font_size = min(int(min_font_size), int(font_size))
     if layout is None:
         layout = annotate_leader_layout(a.shape[:2], points, labels, font_size=font_size,
                                         pad=pad, gap=gap, side=side, font_path=font_path,
@@ -2306,6 +2312,7 @@ def annotate_legend(img, labels, xy, anchor="lt", start=1, radius=7.0, color="em
     pad = _num(pad, "pad", lo=0, integer=True)
     row_gap = _num(row_gap, "row_gap", lo=0, integer=True)
     start = _num(start, "start", integer=True)
+    min_font_size = min(int(min_font_size), int(font_size))
     if numbers is None:
         numbers = [str(start + i) for i in range(len(rows))]
     numbers = [str(s) for s in numbers]
@@ -3072,6 +3079,7 @@ def annotate_figure_grid(panels, captions=None, ncols=2, pad=10, caption_h=32, l
         if len(captions) != len(ps):
             raise ValueError(f"captions has {len(captions)} entries for {len(ps)} panels")
     use_letters = _flag(letters, "letters")
+    min_font_size = min(int(min_font_size), int(font_size))
     lay = annotate_figure_grid_layout([p.shape[:2] for p in ps], ncols=ncols, pad=pad,
                                       caption_h=caption_h, letter_style=letter_style)
     labels = None
