@@ -1674,6 +1674,10 @@ def panel_grid(panels, labels=None, ncols=3, pad=10, label_h=32, background=0.05
     cell_h = ch + int(label_h)
     H = int(title_h) + 2 * pad + nrows * cell_h + (nrows - 1) * pad
     out = np.full((H, W) if nd == 2 else (H, W, nc), bgv, dtype=np.float64)
+    if nd == 3 and nc == 4:
+        out[..., 3] = 1.0        # RGBA: background fills colour only — a transparent
+                                 # gutter would let whatever is composited underneath
+                                 # show through the padding (color_bar does the same).
 
     for i, p in enumerate(ps):
         r, c = divmod(i, ncols)
