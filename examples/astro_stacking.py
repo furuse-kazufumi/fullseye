@@ -317,11 +317,21 @@ def main():
             sci, wht = A.drizzle_resample(nodither, scale=scale, pixfrac=pixfrac)
             assert sci.shape == (int(48 * scale), int(48 * scale))
             worst_rel = max(worst_rel, abs(float(sci.sum()) - want) / want)
-            assert np.allclose(wht, pixfrac ** 2, atol=1e-12)   # 被覆 = しずくの面積
     print(f"6) drizzle: 倍率 3 通り x pixfrac 3 通りの 9 通りすべてで総フラックス保存 "
           f"—— 最悪の相対誤差 {worst_rel:.2e}(float64 の丸めの桁)")
-    print(f"   被覆マップは厳密に pixfrac^2(1.00 / 0.49 / 0.16)= しずくの面積そのもの")
     assert worst_rel < 1e-12
+    # 被覆マップ: しずくが格子を隙間なく覆う場合だけ、値が閉じた形で言える
+    for scale in (1.0, 2.0, 4.0):
+        _, wht = A.drizzle_resample(nodither, scale=scale, pixfrac=1.0)
+        assert np.allclose(wht, 1.0, atol=1e-12), (scale, wht.min(), wht.max())
+    covered = []
+    for pf in (0.8, 0.5, 0.25):
+        _, wht = A.drizzle_resample(nodither, scale=2.0, pixfrac=pf)
+        covered.append((pf, float(wht.mean())))
+        assert np.allclose(wht, pf * pf, atol=1e-12), (pf, wht.mean())
+    print("   被覆マップ: pixfrac=1・ディザ 0 なら厳密に 1(倍率 1/2/4 で確認)。"
+          "倍率 2 では厳密に pixfrac^2 —— " +
+          " ".join(f"{pf}→{v:.4f}" for pf, v in covered) + " = しずくの面積そのもの")
 
     dsci, dwht = A.drizzle_resample(frames, shifts=truth["shifts"], scale=2.0,
                                     pixfrac=0.7)
