@@ -1072,7 +1072,9 @@ def phase_displacement(video, f_lo, f_hi, fps, scales: int = 4,
     nothing is re-rendered, the displacement itself is returned in pixels.
 
     For each oriented sub-band, the temporal phase deviation ``dphi(t)`` (taken
-    against the band's temporal mean, unwrapped in time, band-passed) obeys
+    against the band's temporal mean as the wrapped angle in ``(-pi, pi]`` —
+    **never** unwrapped in time, for the reason given in the design note above
+    ``_AMP_FLOOR`` — then band-passed) obeys
     ``dphi = -(kx*dx + ky*dy)``, where ``(kx, ky)`` is the band's **local**
     spatial frequency in radians per pixel — computed exactly as
     ``Im(conj(z) grad z)/|z|^2`` with a spectral derivative, not from the band's
