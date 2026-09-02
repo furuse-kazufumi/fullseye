@@ -9,9 +9,12 @@ Verifies the emitted backends reproduce the typed-IR reference on holdout inputs
                    runtime. Compile imgops.c + gen_<problem>.c + a generated driver,
                    run on the same inputs, compare to Python. PASS if < --c-tol
                    (looser than --tol by design: float32 + kernel rounding).
-                   Otherwise SKIP with an honest reason (this environment has no gcc
-                   — verification deferred). A compile/run FAILURE of a backend that
-                   codegen declared c_fully_supported is a gate failure, not a skip.
+                   Compiler discovery is shared with the algo tier
+                   (algo_difftest.find_c_compiler: gcc/cc/clang on PATH, else
+                   `python -m ziglang cc`). Otherwise SKIP with an honest reason.
+                   A compile/run FAILURE of a backend that codegen declared
+                   c_fully_supported is a gate failure, not a skip. A NaN/inf in
+                   either output is a FAILURE (never folds to diff 0.0).
 
 Writes difftest_<problem>.json + report line. Deterministic.
 """
