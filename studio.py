@@ -4234,7 +4234,7 @@ def build_window(model=None):
         if valid:
             name, a, b = model.stages[i]
             sa.blockSignals(True); sb.blockSignals(True)
-            sa.setValue(int(a * 100)); sb.setValue(int(b * 100))
+            sa.setValue(int(round(a * 100))); sb.setValue(int(round(b * 100)))   # 0.29 -> 29, not 28
             sa.blockSignals(False); sb.blockSignals(False)
             spin_a.blockSignals(True); spin_b.blockSignals(True)
             spin_a.setValue(a); spin_b.setValue(b)
