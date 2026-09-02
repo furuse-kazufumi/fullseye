@@ -91,7 +91,7 @@ def test_scale_gauge_is_fixed_exact_observations():
     assert out["rmse"] < 1e-8, out["rmse"]
     assert np.linalg.norm(out["cameras"][1, 3:] - cams[1, 3:]) < 1e-3, out["cameras"][1, 3:]
     ratio = np.linalg.norm(out["points"], axis=1) / np.linalg.norm(pts, axis=1)
-    assert abs(ratio.mean() - 1.0) < 3e-3 and ratio.ptp() < 1e-6      # rigid, not similarity
+    assert abs(ratio.mean() - 1.0) < 3e-3 and np.ptp(ratio) < 1e-6    # rigid, not similarity
     assert out["scale_anchor"] is not None
     # the anchor is honoured exactly: RMS point distance from cam-0 centre == initial
     rms_out = np.sqrt(np.mean(np.sum(out["points"] ** 2, axis=1)))
