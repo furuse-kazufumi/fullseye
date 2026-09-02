@@ -6,7 +6,11 @@
 
 ![小惑星イトカワの実点群を、自作レンダラでターンテーブル表示(全部 numpy 自前実装)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/showcase_turntable_itokawa.gif)
 
-これは小惑星 **25143 イトカワ**の実データ点群(はやぶさ探査機の観測から作られた Gaskell 形状モデル、JAXA DARTS アーカイブ公開)を、本記事の主役 **Fullseye** の自作 3D レンダラで回しているところです。点群の読み込みからレンダリング・岩石マテリアル・影まで、**すべて numpy の自前実装**。この「目」をどう作ってきたかの話をします。
+これは小惑星 **25143 イトカワ**の実データ点群(はやぶさ探査機の観測から作られた Gaskell 形状モデル、JAXA DARTS アーカイブ公開)を、本記事の主役 **Fullseye** の自作 3D レンダラで回しているところです。点群の読み込みからレンダリング・岩石マテリアル・影まで、**すべて numpy の自前実装**。
+
+[![同じイトカワの実形状モデル(49,152 面)を物理ベースで描いた静止画 —— Hapke 反射則・太陽視直径 0.53° の硬い影・環境光ゼロ・fBm 起伏 + べき則 D^-3.1 の岩(クリックでフルサイズ)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/itokawa_regolith_hero_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/itokawa_regolith_hero.png)
+
+*↑ 同じ形状モデル(49,152 面)の**物理ベース版**の静止画(位相角 30°)。上の GIF は Lambert 拡散 + 環境光 + 台座つきのスタジオ照明でしたが、こちらはレゴリスの測光にそろえました —— 反射則は **Hapke**(単一散乱アルベド 0.42、対向効果、平均傾斜角 26°。Lambert だと縁が暗く明暗境界がなだらかになるのに対し、小惑星の実画像は縁まで明るく平坦です)、影は**太陽の視直径 0.53° でメッシュにレイを飛ばした硬い影**(半影は幾何どおり数 cm)、環境光はゼロ(宇宙に空光は無いので影の底は地形の一回反射だけ)、表面には数 m の fBm 起伏と **岩のべき則分布 N(>D) ∝ D^-3.1**(Michikami et al. 2008)で撒いた 252 個の岩(首の「海」は滑らかなまま)。すべて fullseye の op `mesh_displace_fbm → terrain_region_mask → mesh_scatter_boulders → render_regolith` の連鎖で、`examples_3d/itokawa_regolith_hero.py` が GT つきで再生成します。*この「目」をどう作ってきたかの話をします。
 
 ## TL;DR
 
