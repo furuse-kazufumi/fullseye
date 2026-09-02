@@ -369,9 +369,13 @@ def test_optics_registry_is_connected():
         "docs corpus and opsoptics ledger disagree: "
         f"only-in-docs={have - set(opsoptics.OPSOPTICS)}, "
         f"only-in-ledger={set(opsoptics.OPSOPTICS) - have}")
-    assert len(_OPT_RECS) == 18
-    assert {"geometric", "wave", "imaging", "polarization"} == {
+    assert len(_OPT_RECS) == 30                 # optics 18 + raytrace "design" 12
+    assert {"geometric", "wave", "imaging", "polarization", "design"} == {
         r["category"] for r in _OPT_RECS}
+    # the design notes must say where their implementation lives (raytrace, not optics)
+    for r in _OPT_RECS:
+        if r["category"] == "design":
+            assert r["module"] == "raytrace", (r["name"], r["module"])
 
 
 def test_every_optics_op_has_a_studio_help_page():
