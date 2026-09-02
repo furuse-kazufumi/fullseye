@@ -353,7 +353,8 @@ def test_stage_knob_widgets_follow_the_spec():
         assert ra.slider.value() == 40 and ra.raw.value() == pytest.approx(0.4)
         ra.slider.setValue(70)
         assert model.stages[4][1] == pytest.approx(0.70)
-        # rows show display units
+        # rows show display units (the per-stage summaries are debounced: settle now)
+        win._knob_timer.stop(); win._knob_timer.timeout.emit()
         rows = [sl.item(i).text() for i in range(sl.count())]
         assert "blur σ=3.00 px" in rows[0] and "kernel=9 px" in rows[1] and "iterations=1" in rows[2]
         assert "pincushion=on" in rows[3] and "a=0.70" in rows[4]
