@@ -1373,7 +1373,18 @@ def _hdev_strip_comment(line):
     s = line.strip()
     if s.startswith("*"):
         return ""
-    return s.split("#", 1)[0].strip()
+    # an inline '#' starts a comment only OUTSIDE a quoted string: dev_disp_text ('#1 coin')
+    # must keep its caption (F9 review finding)
+    quote = None
+    for i, ch in enumerate(s):
+        if quote is not None:
+            if ch == quote:
+                quote = None
+        elif ch in ("'", '"'):
+            quote = ch
+        elif ch == "#":
+            return s[:i].strip()
+    return s
 
 
 def _hdev_parse_op(line, lineno, errs, names):
