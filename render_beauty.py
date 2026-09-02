@@ -476,6 +476,7 @@ def render_regolith(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: in
                     ao_samples: int = 32, tint: Sequence[float] = (1.0, 0.97, 0.93),
                     self_illumination: float = 1.0, exposure="auto",
                     albedo_variation: float = 0.12, seed: int = 0,
+                    smooth_normals: bool = True,
                     background: Sequence[float] = (0.0, 0.0, 0.0)) -> np.ndarray:
     """小惑星のレゴリスを物理ベース(Hapke + 太陽視直径のレイキャスト影 + 環境光ゼロ)で描く → RGB ``(size,size,3)``。
 
