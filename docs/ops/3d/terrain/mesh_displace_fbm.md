@@ -4,7 +4,7 @@ dim: 3d
 category: terrain
 in: mesh
 out: mesh
-examples: [itokawa_regolith_hero]
+examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -26,7 +26,7 @@ Roughen a mesh by displacing vertices along their normals with seeded fBm noise 
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- [itokawa_regolith_hero](../../../../examples_3d/itokawa_regolith_hero.py) — `py -3.11 examples_3d/itokawa_regolith_hero.py`
+- (まだありません)
 
 ## 型が繋がる次の op(`mesh` を入力に取れる)
 
@@ -34,7 +34,7 @@ Roughen a mesh by displacing vertices along their normals with seeded fBm noise 
 
 ## 同カテゴリ(`terrain`)
 
-[terrain_region_mask](terrain_region_mask.md) · [mesh_scatter_boulders](mesh_scatter_boulders.md)
+[terrain_region_mask](terrain_region_mask.md) · [mesh_scatter_boulders](mesh_scatter_boulders.md) · [mesh_edge_lengths](mesh_edge_lengths.md) · [mesh_subdivide](mesh_subdivide.md) · [displacement_band_weights](displacement_band_weights.md) · [mesh_displace_spectrum](mesh_displace_spectrum.md) · [bump_normals_fbm](bump_normals_fbm.md)
 
 ---
 *Provenance: render3d.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

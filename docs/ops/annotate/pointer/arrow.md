@@ -39,6 +39,10 @@ Raises
 ValueError
     端点が非有限/一致、負の太さ・矢じり寸法、両端とも画像の外。
 
+## 詳しい使い方ガイド
+
+- [figure_annotation ファミリ ガイド](../guides/figure_annotation.md)
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

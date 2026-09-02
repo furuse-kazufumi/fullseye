@@ -50,6 +50,10 @@ ValueError
     矩形が不正、範囲が非有限か幅ゼロ、w か h が 2 未満、
     未知の scale、log 軸で範囲に 0 以下。
 
+## 詳しい使い方ガイド
+
+- [figure_annotation ファミリ ガイド](../guides/figure_annotation.md)
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

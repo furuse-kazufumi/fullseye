@@ -4,7 +4,7 @@ dim: 3d
 category: mesh_process
 in: mesh
 out: mesh
-examples: [mesh_decimate, mesh_lod_download]
+examples: [mesh_decimate, mesh_lod_download, mesh_resolution_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -13,7 +13,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 # decimate_qem — 3D `mesh_process` op
 
 - **データ種**: `mesh` → `mesh`
-- **呼び出し**: `import meshrepair; meshrepair.decimate_qem(V, F, target_faces)` (または `ops3d.get("decimate_qem")`)
+- **呼び出し**: `import meshrepair; meshrepair.decimate_qem(V, F, target_faces, protect=None)` (または `ops3d.get("decimate_qem")`)
 
 ## 使い方
 
@@ -28,6 +28,7 @@ Quadric-error-metric edge-collapse decimation toward *target_faces*.
 
 - [mesh_decimate](../../../../examples_3d/mesh_decimate.py) — `py -3.11 examples_3d/mesh_decimate.py`
 - [mesh_lod_download](../../../../examples_3d/mesh_lod_download.py) — `py -3.11 examples_3d/mesh_lod_download.py`
+- [mesh_resolution_demo](../../../../examples_3d/mesh_resolution_demo.py) — `py -3.11 examples_3d/mesh_resolution_demo.py`
 
 ## 型が繋がる次の op(`mesh` を入力に取れる)
 

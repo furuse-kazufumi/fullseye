@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(62 例)
+### 2-D 画像/信号/幾何(63 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -25,6 +25,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **画像にマーカー/線/円/輪郭を直接描く(ラスタ描画)** — 作業者が指定した対応点を画像そのものに焼き込むラスタ描画op(imagedraw)。描いた既知シーンを検出器が回収し結果を描き返す(描画→検出→注釈)。 `py -3.11 examples/draw_annotate.py`
 - **描画を「ためてから流す」(drawlist 蓄積描画)** — imagedraw の即時描画に対し drawlist はコマンド列を保持し flush() で絵にする。絵になる前の列を検査・差分・変換できることを、同じ絵を両経路で描いて数値で確かめる。 `py -3.11 examples/drawlist_deferred.py`
 - **図注(annotate)op を一枚の図で全部使い真値と突き合わせる** — 文字下敷き/矢印/凡例/カラーバー/目盛り/拡大差し込みの annotate 全 op を 1 枚の図に載せ、配置と画素値を GT と照合する。 `py -3.11 examples/annotate_gallery.py`
+- **学術図の図注: 引き出し線・寸法・角度・輪郭・スケールバー・差し込みを 1 枚に組む** — annotate の paper 族(引き出し線の衝突回避/番号+凡例/寸法線/角度/切りのよいスケールバー/方位/隅の拡大/マスク輪郭/経路文字/色分け+カラーバー/パネル文字)で 4 パネルの論文図を組み、layout の閉形式(肘・寸法値・角度・バー長・輪郭面積・セル矩形)と描画結果を突き合わせる。 `py -3.11 examples/paper_figure.py`
 - **リアルタイム 2-D グラフィックス(gfx2d)で 1 枚の画面を組み立てる** — 背景/タイル/スプライト/パーティクル/光/影/ポスト処理を合成し、ストレート α と乗算済み α の取り違え(この族が黙って間違う唯一の場所)を同じ絵の上で数値化する。 `py -3.11 examples/gfx2d_scene.py`
 
 **signal_processing**
@@ -103,7 +104,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **workflow**
 - **imgevolve quickstart — 全ワークフローを 1 ファイルで** — レジストリ→型付き手組みパイプライン→ゲノム復号→タスク採点→進化ドライバ→codegen + 差分テスト(約 1.5 分、repo root から実行)。 `py -3.11 examples/quickstart.py`
 
-### 3-D 点群/体積/曲面(113 例)
+### 3-D 点群/体積/曲面(114 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
@@ -271,6 +272,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **レンダリング品質: トーンマップ(HDR→LDR)で白飛び救済** — 鏡面HDR(max5.41)をReinhard/ACESで[0,1]へ。全域Spearman1.00で単調、素朴クリップがハイライト域を1段に潰す(分散0)のに対し順位相関1.0・194段の階調を保持。 `py -3.11 examples_3d/render_tonemap.py`
 - **小惑星イトカワを物理ベースで描く(Hapke 反射則・太陽視直径 0.53° のレイキャスト影・地形レリーフ)** — 実形状モデル(49,152 面)に mesh_displace_fbm / terrain_region_mask / mesh_scatter_boulders で起伏と岩(べき則 D^-3.1)を足し、render_regolith(Hapke + shadow_raycast + 環境光 0 + 線形トーン)で hero を描く。Lommel-Seeliger の縁の明るさ、対向効果、硬い影、岩の個数を GT で実測。 `py -3.11 examples_3d/itokawa_regolith_hero.py`
 - **レンダリング品質: hero レンダラ render_beauty(全層合成の映える静止3D)** — ラスタライズ/Phong鏡面/AO/接地影/SSAA/トーンマップを1本に合成。sphere-on-groundで各層を実測: AOは接触凹部を0.07→0.02と選択的に暗化(露出頂部0.01は不変)、鏡面は小面積ハイライト(frac0.018)、接地影はwith-mesh993px vs null0px、reinhardは単調(clip34段潰しを回避)、SSAAはedge0.040→0.026。sdf_ops生成メッシュでhero画像を出力。 `py -3.11 examples_3d/render_beauty.py`
+- **3-D 図注: レンダリングの上に 3-D アンカーの矢印・引き出し線・スケールバー・座標軸・箱・距離を射影して描く** — render_mesh で描いた球+床の絵に annotate3d 族(project/arrow/label/scale_bar/axes/bbox/measure)で図注を載せる。既知カメラの射影が閉形式と 1e-9 で一致、像面平行のバーが f·L/z px、球の裏のアンカーが depth で隠れ判定(破線)されることを GT で確かめる。 `py -3.11 examples_3d/annotate3d_figure.py`
 
 ## スタンドアロン幾何/数学モジュール(関数 API)
 
@@ -321,8 +323,17 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - `spline_curve_resample(points, n, closed=False, smooth=0.0)` — 曲線点列を n 点に滑らかに再サンプルして (n,D) を返す(2D/3D、閉曲線はシーム非重複)。
 
 ## 3-D operators(ops3d)by category
-_計 317 ops / 64 categories。_
+_計 329 ops / 65 categories。_
 
+
+### annotate3d(7)
+- `annotate3d_project` (`points → table`) — table(dict)を返す: 3-D 点の画素座標・前方距離・画像内/遮蔽の判定(:func:`project_anchors`)。 · 例: `annotate3d_figure`
+- `annotate3d_arrow` (`image2d → image2d`) — 画像(image2d)を返す: 3-D の ``p0`` から ``p1`` へ、射影した矢印を描く。 · 例: `annotate3d_figure`
+- `annotate3d_label` (`image2d, text → image2d`) — 画像(image2d)を返す: 3-D のアンカーに引き出し線つきの文字を付ける。 · 例: `annotate3d_figure`
+- `annotate3d_scale_bar` (`image2d → image2d`) — 画像(image2d)を返す: メッシュ単位で ``length`` のバーを面上に置いて射影する。 · 例: `annotate3d_figure`
+- `annotate3d_axes` (`image2d → image2d`) — 画像(image2d)を返す: 世界座標の 3 軸(gnomon)を ``origin`` から射影して描く。 · 例: `annotate3d_figure`
+- `annotate3d_bbox` (`image2d → image2d`) — 画像(image2d)を返す: 軸平行の 3-D 箱 ``((xmin,ymin,zmin),(xmax,ymax,zmax))`` の 12 辺を射影して描く。 · 例: `annotate3d_figure`
+- `annotate3d_measure` (`image2d → image2d`) — 画像(image2d)を返す: 3-D の 2 点間距離(メッシュ単位)を、射影した線と値で示す。 · 例: `annotate3d_figure`
 
 ### augment(6)
 - `jitter` (`points → points`) — 各点に等方ガウスノイズ ``N(0, sigma)`` を付加(センサ位置ノイズの模倣)。 · 例: `augment_pointcloud`
@@ -515,7 +526,7 @@ _計 317 ops / 64 categories。_
 ### mesh_process(7)
 - `laplacian_smooth` (`mesh → mesh`) — umbrella Laplacian による三角形メッシュ平滑化。→ (verts, faces)。 · 例: `mesh_smooth`
 - `taubin_smooth` (`mesh → mesh`) — Taubin λ|μ フィルタによる **非収縮** 平滑化。→ (verts, faces)。 · 例: `mesh_smooth`
-- `decimate_qem` (`mesh → mesh`) — Quadric-error-metric edge-collapse decimation toward *target_faces*. · 例: `mesh_decimate`, `mesh_lod_download`
+- `decimate_qem` (`mesh → mesh`) — Quadric-error-metric edge-collapse decimation toward *target_faces*. · 例: `mesh_decimate`, `mesh_lod_download`, `mesh_resolution_demo`
 - `face_normals` (`mesh → normals`) — 三角形メッシュの**面法線**(各三角形の単位法線ベクトル)。→ (M,3)。 · 例: `mesh_props`
 - `vertex_normals` (`mesh → normals`) — 三角形メッシュの**頂点法線**(面積重み付きで集約した単位法線)。→ (N,3)。 · 例: `mesh_props`
 - `mesh_area` (`mesh → measurement`) — 三角形メッシュの**表面積**(全三角形面積の総和)。→ float。 · 例: `dl_mesh_curvature`, `mesh_props`
@@ -687,7 +698,7 @@ _計 317 ops / 64 categories。_
 - `smooth_flow` (`points, points → flow_scattered`) — 最近傍フローを近傍平均で局所平滑化した正則化フロー (N, 3) を返す。 · 例: `scene_flow_rigid`
 
 ### sdf_csg(7)
-- `sphere_sdf` (`points → sdf`) — 球の符号付き距離場: ``|p - center| - R``(内側負・外側正)。 · 例: `gear_metrology`, `molecule_atom_count`, `procedural_hand`, `render_beauty`, `sdf_csg`, `sfm_recon`
+- `sphere_sdf` (`points → sdf`) — 球の符号付き距離場: ``|p - center| - R``(内側負・外側正)。 · 例: `annotate3d_figure`, `gear_metrology`, `molecule_atom_count`, `procedural_hand`, `render_beauty`, `sdf_csg`, `sfm_recon`
 - `box_sdf` (`points → sdf`) — 軸平行直方体の**厳密**な符号付き距離場(内側負・外側正)。 · 例: `gear_metrology`, `sdf_csg`
 - `sdf_union` (`sdf, sdf → sdf`) — 2 SDF の和集合 A∪B = 要素ごとの min(a, b)(内側=負がどちらかにあれば内側)。 · 例: `gear_metrology`, `sdf_csg`
 - `sdf_intersect` (`sdf, sdf → sdf`) — 2 SDF の積集合 A∩B = 要素ごとの max(a, b)(両方の内側でのみ内側)。 · 例: `gear_metrology`
@@ -738,10 +749,15 @@ _計 317 ops / 64 categories。_
 - `reflect_points` (`points → points`) — 点群を平面(点 plane_point・法線 plane_normal)で鏡映。→ (N,3)。 · 例: `reflection_symmetry`
 - `reflection_symmetry_score` (`points → measurement`) — 反射対称スコア = chamfer(鏡映, 元) / 中央値最近傍間隔(小さいほど対称、スケール不変)。→ float。 · 例: `dl_mesh_symmetry`, `reflection_symmetry`
 
-### terrain(3)
-- `mesh_displace_fbm` (`mesh → mesh`) — Roughen a mesh by displacing vertices along their normals with seeded fBm noise → ``(V, F)``. · 例: `itokawa_regolith_hero`
+### terrain(8)
+- `mesh_displace_fbm` (`mesh → mesh`) — Roughen a mesh by displacing vertices along their normals with seeded fBm noise → ``(V, F)``. · 例: なし
 - `terrain_region_mask` (`mesh → table`) — Per-face terrain weights (M,) in [0,1]: 0 = smooth regolith "sea", 1 = rough highland. · 例: `itokawa_regolith_hero`
-- `mesh_scatter_boulders` (`mesh → mesh`) — Scatter partly-buried ellipsoidal boulders on a mesh (power-law sizes, seeded) → ``(V, F)``. · 例: `itokawa_regolith_hero`
+- `mesh_scatter_boulders` (`mesh → mesh`) — Scatter partly-buried boulders on a mesh (power-law sizes, seeded) → ``(V, F)`` · 例: `itokawa_regolith_hero`
+- `mesh_edge_lengths` (`mesh → signal`) — Local edge length of a triangle mesh → ``(N,)`` per vertex (mean of incident edges), · 例: `itokawa_regolith_hero`
+- `mesh_subdivide` (`mesh → mesh`) — Refine a triangle mesh → ``(V, F)``: uniform midpoint subdivision (``levels`` passes, · 例: `itokawa_regolith_hero`
+- `displacement_band_weights` (`mesh → matrix`) — Per-octave, per-vertex band gate ``(K, N)`` in [0,1]: 1 where the mesh can carry the · 例: `itokawa_regolith_hero`
+- `mesh_displace_spectrum` (`mesh → mesh`) — Displace vertices along their normals with a **stated amplitude spectrum**, band-limited · 例: `itokawa_regolith_hero`
+- `bump_normals_fbm` (`normalmap, pointmap → normalmap`) — Perturb a normal map with the *gradient* of a seeded multi-octave height field · 例: なし
 
 ### transform(12)
 - `points_to_voxel` (`points → voxel`) — 点群 (N,3) → 密度 voxel (size³)。scatter_add で splat、任意で gaussian 平滑。 · 例: `sh_descriptor_retrieval`, `shape_desc_pose`

@@ -2433,7 +2433,7 @@ def annotate_dimension(img, p0, p1, units_per_pixel=1.0, unit="px", offset=20.0,
     nx, ny = layout["normal"]
     text = f"{label_fmt.format(span * upp)} {unit}".rstrip()
     a = text_box(a, text, layout["text_xy"], color=color,
-                 anchor=_text_anchor_for_direction(nx, ny), pad=3, font_size=font_size,
+                 anchor=_text_anchor_for_direction(nx, ny), pad=3, font_size=font_size, min_font_size=min(9, int(font_size)),
                  box_alpha=box_alpha, text_color=text_color, font_path=font_path,
                  scheme=scheme)
     return a
@@ -2483,6 +2483,8 @@ def annotate_angle(img, a, vertex, b, radius=30.0, color="emphasis", width=1.5,
                    text_color=None, scheme="okabe_ito", font_path=None, layout=None):
     """画像(image2d)を返す: 3 点のなす角を弧と値で示す(必要なら 2 本の腕も)。
 
+    ``label_fmt=None`` なら値の文字を描かない(弧だけ)。
+
     Raises
     ------
     ValueError
@@ -2502,8 +2504,10 @@ def annotate_angle(img, a, vertex, b, radius=30.0, color="emphasis", width=1.5,
         im = _aa_polyline(im, [_pt(b, "b"), pv], color, width=w, scheme=scheme)
     im = _aa_arc(im, pv, layout["radius"], layout["start_deg"], layout["end_deg"], color,
                  width=w, scheme=scheme)
+    if label_fmt is None:                          # 弧だけ(値は別の場所に書く用途)
+        return im
     im = text_box(im, label_fmt.format(layout["angle_deg"]), layout["text_xy"], color=color,
-                  anchor="cm", pad=3, font_size=font_size, box_alpha=box_alpha,
+                  anchor="cm", pad=3, font_size=font_size, min_font_size=min(9, int(font_size)), box_alpha=box_alpha,
                   text_color=text_color, font_path=font_path, scheme=scheme)
     return im
 
@@ -2589,7 +2593,7 @@ def annotate_scale_bar(img, units_per_pixel, unit="µm", corner="rb", target_fra
     else:
         txy, anchor = (x0 + px // 2, y0 - 3), "cb"
     return text_box(a, layout["label"], txy, anchor=anchor, pad=3, box_alpha=box_alpha,
-                    font_size=font_size, font_path=font_path, text_color=text_color,
+                    font_size=font_size, min_font_size=min(9, int(font_size)), font_path=font_path, text_color=text_color,
                     scheme=scheme)
 
 
@@ -2636,7 +2640,7 @@ def annotate_orientation(img, angle_deg=0.0, corner="rt", xy=None, size=26.0, ma
               head_len=0.45 * sz, head_width=0.35 * sz, scheme=scheme)
     if label:
         txy = (tip[0] + dx * (font_size * 0.8), tip[1] + dy * (font_size * 0.8))
-        a = text_box(a, str(label), txy, color=color, anchor="cm", pad=2, font_size=font_size,
+        a = text_box(a, str(label), txy, color=color, anchor="cm", pad=2, font_size=font_size, min_font_size=min(9, int(font_size)),
                      box_alpha=box_alpha, text_color=text_color, font_path=font_path,
                      scheme=scheme)
     return a
@@ -2711,7 +2715,7 @@ def annotate_inset(img, src_rect, corner="rt", factor=None, margin=10, color="em
                    width=width, connect=_flag(connect, "connect"), scheme=scheme, style=style)
     if label is not None:
         a = text_box(a, str(label), (dx + 3, dy + 3), color=color, anchor="lt", pad=2,
-                     font_size=font_size, font_path=font_path, scheme=scheme)
+                     font_size=font_size, min_font_size=min(9, int(font_size)), font_path=font_path, scheme=scheme)
     return a
 
 
@@ -2780,7 +2784,7 @@ def annotate_outline(img, mask, label=None, color="emphasis", width=1.5, alpha=1
         ox, oy = _pt(label_offset, "label_offset")
         cx, cy = layout["centroid"]
         a = text_box(a, str(label), (cx + ox, cy + oy), color=color, anchor="cm", pad=3,
-                     font_size=font_size, box_alpha=box_alpha, text_color=text_color,
+                     font_size=font_size, min_font_size=min(9, int(font_size)), box_alpha=box_alpha, text_color=text_color,
                      font_path=font_path, scheme=scheme)
     return a
 
@@ -2993,7 +2997,7 @@ def annotate_panel_label(img, letter="a", corner="lt", margin=8, style="paren", 
         idx = _num(letter, "letter", lo=0, integer=True)
     text = _panel_letter(idx, style)
     x, y = _corner_xy(corner, W, H, margin)
-    return text_box(a, text, (x, y), color=color, anchor=corner, pad=4, font_size=font_size,
+    return text_box(a, text, (x, y), color=color, anchor=corner, pad=4, font_size=font_size, min_font_size=min(9, int(font_size)),
                     box_alpha=box_alpha, text_color=text_color, box_color=box_color,
                     font_path=font_path, scheme=scheme)
 

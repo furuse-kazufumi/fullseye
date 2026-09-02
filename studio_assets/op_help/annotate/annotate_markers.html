@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">annotate_markers — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import annotate; annotate.annotate_markers(img, points, labels=None, start=1, radius=9.0, color=&#x27;emphasis&#x27;, text_color=None, font_size=11, scheme=&#x27;okabe_ito&#x27;, font_path=None, min_contrast=2.0)</code> (または <code style="color:#22d3bf">opsannotate.get(&quot;annotate_markers&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>画像(image2d)を返す: 番号(または短い文字)入りの丸いマーカーを各点に置く。</p>
+<p>:func:<code style="color:#22d3bf">annotate_legend</code> と同じ `<code style="color:#22d3bf">start</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">labels</code>` を渡せば、図中の番号と</p>
+<p>凡例の番号が必ず一致する。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>points : (N, 2)</p>
+<p><b>(x, y)</b>。画像の外の点は ValueError。</p>
+<p>labels : sequence of str or None</p>
+<p>None なら `<code style="color:#22d3bf">start</code>` から連番。</p>
+<p>radius : float</p>
+<p>円の半径[px]。文字が入らなければ ValueError。</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>点が空・非有限・画像外、labels の数不一致、文字が円に入らない、</p>
+<p>文字色と円色のコントラスト不足。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:paper_figure">paper_figure</a> — <code style="color:#22d3bf">py -3.11 examples/paper_figure.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opannotate:text_box">text_box</a> · <a style="color:#22d3bf" href="opannotate:arrow">arrow</a> · <a style="color:#22d3bf" href="opannotate:leader_line">leader_line</a> · <a style="color:#22d3bf" href="opannotate:label_points">label_points</a> · <a style="color:#22d3bf" href="opannotate:crosshair">crosshair</a> · <a style="color:#22d3bf" href="opannotate:legend_box">legend_box</a> · <a style="color:#22d3bf" href="opannotate:color_bar">color_bar</a> · <a style="color:#22d3bf" href="opannotate:scale_bar">scale_bar</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">paper</code>)</h3>
+<p><a style="color:#22d3bf" href="opannotate:annotate_leader_layout">annotate_leader_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_leader">annotate_leader</a> · <a style="color:#22d3bf" href="opannotate:annotate_legend">annotate_legend</a> · <a style="color:#22d3bf" href="opannotate:annotate_dimension_layout">annotate_dimension_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_dimension">annotate_dimension</a> · <a style="color:#22d3bf" href="opannotate:annotate_angle_layout">annotate_angle_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_angle">annotate_angle</a> · <a style="color:#22d3bf" href="opannotate:annotate_scale_bar_layout">annotate_scale_bar_layout</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: annotate.py — ANNOTATE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

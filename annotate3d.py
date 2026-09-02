@@ -162,7 +162,7 @@ def project_anchors(points, pose, K, depth=None, shape=None, occlusion_tol=0.01)
     tol = A._num(occlusion_tol, "occlusion_tol", lo=0.0)
     if tol >= 1.0:
         raise ValueError(f"occlusion_tol must be < 1 (got {tol})")
-    d = _depth_image(depth)
+    d = _depth_image(depth, shape)
     if d is not None:
         shape = d.shape
     uv, z = _project(pts, P, Km)
@@ -278,7 +278,7 @@ def annotate3d_label(img, text, anchor, pose, K, depth=None, offset=(26.0, -22.0
         a = A._aa_disk(a, (x, y), cap, color, scheme=scheme, ring=(1.5 if hidden else 0.0))
     anch = "lm" if ox > 0 else ("rm" if ox < 0 else ("cb" if oy < 0 else "ct"))
     return A.text_box(a, str(text), txy, color=color, anchor=anch, pad=pad,
-                      font_size=font_size, box_alpha=box_alpha, text_color=text_color,
+                      font_size=font_size, min_font_size=min(9, int(font_size)), box_alpha=box_alpha, text_color=text_color,
                       font_path=font_path, scheme=scheme)
 
 
@@ -335,7 +335,7 @@ def annotate3d_scale_bar(img, origin, direction, length, pose, K, unit="", depth
     mid = ((q0[0] + q1[0]) / 2.0 + nx * (t / 2.0 + 4), (q0[1] + q1[1]) / 2.0 + ny * (t / 2.0 + 4))
     text = f"{label_fmt.format(L)} {unit}".rstrip()
     return A.text_box(a, text, mid, color=color, anchor=A._text_anchor_for_direction(nx, ny),
-                      pad=3, font_size=font_size, box_alpha=box_alpha, text_color=text_color,
+                      pad=3, font_size=font_size, min_font_size=min(9, int(font_size)), box_alpha=box_alpha, text_color=text_color,
                       font_path=font_path, scheme=scheme)
 
 
@@ -371,7 +371,7 @@ def annotate3d_axes(img, pose, K, origin=(0.0, 0.0, 0.0), length=1.0, depth=None
         nn = math.hypot(ux, uy)
         txy = (q1[0] + ux / nn * (font_size * 0.7), q1[1] + uy / nn * (font_size * 0.7))
         a = A.text_box(a, str(labels[i]), txy, color=colors[i], anchor="cm", pad=2,
-                       font_size=font_size, box_alpha=0.0, font_path=font_path, scheme=scheme)
+                       font_size=font_size, min_font_size=min(9, int(font_size)), box_alpha=0.0, font_path=font_path, scheme=scheme)
     return a
 
 
@@ -447,5 +447,5 @@ def annotate3d_measure(img, p0, p1, pose, K, unit="", depth=None, color="emphasi
     mid = ((q0[0] + q1[0]) / 2.0 + nx * (t / 2.0 + 4), (q0[1] + q1[1]) / 2.0 + ny * (t / 2.0 + 4))
     text = f"{label_fmt.format(dist)} {unit}".rstrip()
     return A.text_box(a, text, mid, color=color, anchor=A._text_anchor_for_direction(nx, ny),
-                      pad=3, font_size=font_size, box_alpha=box_alpha, text_color=text_color,
+                      pad=3, font_size=font_size, min_font_size=min(9, int(font_size)), box_alpha=box_alpha, text_color=text_color,
                       font_path=font_path, scheme=scheme)

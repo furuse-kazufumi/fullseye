@@ -1,0 +1,46 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">annotate_leader_layout — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>table`</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import annotate; annotate.annotate_leader_layout(shape, points, labels=None, font_size=12, pad=4, gap=22, side=&#x27;auto&#x27;, font_path=None, min_font_size=9)</code> (または <code style="color:#22d3bf">opsannotate.get(&quot;annotate_leader_layout&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>table(dict)を返す: 引き出し線の配置(肘・文字位置・板の矩形)を閉形式で決める。</p>
+<p>各点について候補側を固定順に試し、**板が画像に収まり・他の板と重ならず・</p>
+<p>他の点を覆わない**最初の候補を採る。どの候補も駄目なら肘を 1.6 倍、2.4 倍に</p>
+<p>伸ばして再試行し、それでも駄目なら <b>ValueError</b>(黙って重ねない)。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>shape : (H, W)</p>
+<p>描く画像の大きさ。</p>
+<p>points : (N, 2)</p>
+<p>指す点 <b>(x, y)</b>。</p>
+<p>labels : sequence of str or None</p>
+<p>各点の文字。None なら 1 始まりの番号。</p>
+<p>gap : float</p>
+<p>肘の長さ[px]。斜め腕 = gap、水平腕 = 0.6*gap。</p>
+<p>side : {&#x27;auto&#x27;,&#x27;left&#x27;,&#x27;right&#x27;}</p>
+<p>`<code style="color:#22d3bf">&#x27;auto&#x27;</code>` は画像中心から<b>遠ざかる</b>側を先に試す(対象の上に文字を</p>
+<p>載せないため)。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>dict</p>
+<p>``{&quot;n&quot;, &quot;gap&quot;, &quot;items&quot;: [{&quot;point&quot;, &quot;elbow&quot;, &quot;text_xy&quot;, &quot;anchor&quot;,</p>
+<p>&quot;box&quot;, &quot;side&quot;}]}`<code style="color:#22d3bf">。</code><code style="color:#22d3bf">box</code><code style="color:#22d3bf"> は板の </code><code style="color:#22d3bf">(x, y, w, h)</code>`。</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>点が空・非有限、labels の数が合わない、未知の side、配置できない点。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:paper_figure">paper_figure</a> — <code style="color:#22d3bf">py -3.11 examples/paper_figure.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">paper</code>)</h3>
+<p><a style="color:#22d3bf" href="opannotate:annotate_leader">annotate_leader</a> · <a style="color:#22d3bf" href="opannotate:annotate_markers">annotate_markers</a> · <a style="color:#22d3bf" href="opannotate:annotate_legend">annotate_legend</a> · <a style="color:#22d3bf" href="opannotate:annotate_dimension_layout">annotate_dimension_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_dimension">annotate_dimension</a> · <a style="color:#22d3bf" href="opannotate:annotate_angle_layout">annotate_angle_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_angle">annotate_angle</a> · <a style="color:#22d3bf" href="opannotate:annotate_scale_bar_layout">annotate_scale_bar_layout</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: annotate.py — ANNOTATE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

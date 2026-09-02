@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">shadow_raycast — 3D <code style="color:#22d3bf">render</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">mesh × vector</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import render_shadow; render_shadow.shadow_raycast(V, F, light, *, pose=None, intrinsics=None, width: &#x27;int&#x27; = 256, height: &#x27;int&#x27; = 256, angular_diameter_deg: &#x27;float&#x27; = 0.0, samples: &#x27;int&#x27; = 1, grid: &#x27;int&#x27; = 64, bias=None) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;shadow_raycast&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import render_shadow; render_shadow.shadow_raycast(V, F, light, *, pose=None, intrinsics=None, width: &#x27;int&#x27; = 256, height: &#x27;int&#x27; = 256, angular_diameter_deg: &#x27;float&#x27; = 0.0, samples: &#x27;int&#x27; = 1, grid=None, bias=None) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;shadow_raycast&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>メッシュへ直接レイを飛ばして太陽光の可視性 (H,W) ∈ [0,1] を返す(shadow map 不使用)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

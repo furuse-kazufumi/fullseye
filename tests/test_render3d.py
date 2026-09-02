@@ -375,3 +375,99 @@ def test_render_rejects_degenerate_camera():
     with pytest.raises(ValueError):
         render3d.render_mesh(CUBE_V, CUBE_F, pose=frontal_pose(),
                              intrinsics=np.zeros((3, 3)))
+
+
+# --------------------------------------------------------------------------- #
+# 2026-09-03: vectorised rasteriser must be bit-exact with the per-triangle loop  #
+# --------------------------------------------------------------------------- #
+def _reference_raster_loop(V, F, pose, K, w, h):
+    """The pre-2026-09-03 per-triangle loop, kept verbatim as the reference semantics."""
+    import numpy as np
+    Vv = np.asarray(V, np.float64)
+    Ff = np.asarray(F, np.int64)
+    fx, fy, cx, cy = float(K[0, 0]), float(K[1, 1]), float(K[0, 2]), float(K[1, 2])
+    zbuf = np.full((h, w), np.inf)
+    sil = np.zeros((h, w))
+    normals = np.zeros((h, w, 3))
+    face = np.full((h, w), -1, np.int64)
+    bary = np.zeros((h, w, 3))
+    R, t = pose[:3, :3], pose[:3, 3]
+    Vc = Vv @ R.T + t
+    depth_v = -Vc[:, 2]
+    safe = np.where(depth_v > render3d._NEAR_EPS, depth_v, np.nan)
+    su = fx * (Vc[:, 0] / safe) + cx
+    sv = cy - fy * (Vc[:, 1] / safe)
+    A, B, C = Vc[Ff[:, 0]], Vc[Ff[:, 1]], Vc[Ff[:, 2]]
+    fnorm = np.cross(B - A, C - A)
+    fnorm = fnorm / np.maximum(np.linalg.norm(fnorm, axis=1, keepdims=True), 1e-12)
+    centroid = (A + B + C) / 3.0
+    flip = np.einsum("ij,ij->i", fnorm, centroid) > 0.0
+    fnorm[flip] *= -1.0
+    for ti in range(Ff.shape[0]):
+        i0, i1, i2 = Ff[ti]
+        d0, d1, d2 = depth_v[i0], depth_v[i1], depth_v[i2]
+        if not (d0 > render3d._NEAR_EPS and d1 > render3d._NEAR_EPS and d2 > render3d._NEAR_EPS):
+            continue
+        u0, u1, u2 = su[i0], su[i1], su[i2]
+        v0, v1, v2 = sv[i0], sv[i1], sv[i2]
+        cmin, cmax = max(int(np.floor(min(u0, u1, u2))), 0), min(int(np.ceil(max(u0, u1, u2))), w - 1)
+        rmin, rmax = max(int(np.floor(min(v0, v1, v2))), 0), min(int(np.ceil(max(v0, v1, v2))), h - 1)
+        if cmin > cmax or rmin > rmax:
+            continue
+        denom = (v1 - v2) * (u0 - u2) + (u2 - u1) * (v0 - v2)
+        if abs(denom) < render3d._DET_EPS:
+            continue
+        cols = np.arange(cmin, cmax + 1).astype(np.float64)
+        rows = np.arange(rmin, rmax + 1).astype(np.float64)
+        px, py = np.meshgrid(cols, rows)
+        inv = 1.0 / denom
+        l0 = ((v1 - v2) * (px - u2) + (u2 - u1) * (py - v2)) * inv
+        l1 = ((v2 - v0) * (px - u2) + (u0 - u2) * (py - v2)) * inv
+        l2 = 1.0 - l0 - l1
+        eps = render3d._BARY_EPS
+        inside = (l0 >= -eps) & (l1 >= -eps) & (l2 >= -eps)
+        if not inside.any():
+            continue
+        inv_d = l0 / d0 + l1 / d1 + l2 / d2
+        with np.errstate(divide="ignore", invalid="ignore"):
+            zpix = 1.0 / inv_d
+        sub_z = zbuf[rmin:rmax + 1, cmin:cmax + 1]
+        closer = inside & np.isfinite(zpix) & (zpix < sub_z)
+        if not closer.any():
+            continue
+        sub_z[closer] = zpix[closer]
+        sil[rmin:rmax + 1, cmin:cmax + 1][closer] = 1.0
+        normals[rmin:rmax + 1, cmin:cmax + 1][closer] = fnorm[ti]
+        face[rmin:rmax + 1, cmin:cmax + 1][closer] = ti
+        bary[rmin:rmax + 1, cmin:cmax + 1][closer] = np.stack(
+            [(l0 * zpix / d0)[closer], (l1 * zpix / d1)[closer], (l2 * zpix / d2)[closer]], axis=-1)
+    depth = np.where(sil > 0, zbuf, np.inf)
+    return depth, sil, normals, face, bary
+
+
+def test_vectorised_rasteriser_matches_loop_bit_exactly():
+    """Random closed mesh + a plane whose triangles cross the frame + a vertex behind the
+    camera + coplanar duplicate triangles (exact depth ties): depth / silhouette / normals /
+    face id / barycentric weights are identical to the historical per-triangle loop."""
+    import numpy as np
+    rng = np.random.default_rng(11)
+    pts = rng.random((60, 3)) * 2.0 - 1.0
+    from scipy.spatial import ConvexHull
+    hull = ConvexHull(pts)
+    V = pts
+    F = hull.simplices.astype(np.int64)
+    # a big plane through the frame + a duplicate of the first hull face (tie-break) + a
+    # triangle with one vertex behind the camera (must be dropped, not clipped)
+    V = np.vstack([V, [[-5, -5, -0.9], [5, -5, -0.9], [0, 5, -0.9], [0, 0, 9.0], [0.3, 0.2, 0.1], [0.2, 0.3, 0.0]]])
+    n = 60
+    F = np.vstack([F, [[n, n + 1, n + 2]], F[:1], [[n + 3, n + 4, n + 5]]])
+    pose = render3d.look_at([0.0, 0.0, 4.0], [0.0, 0.0, 0.0], up=(0.0, 1.0, 0.0))
+    K = render3d.intrinsics_from_fov(50.0, 96, 80)
+    got = render3d.render_mesh(V, F, pose=pose, intrinsics=K, width=96, height=80, attributes=True)
+    depth, sil, normals, face, bary = _reference_raster_loop(V, F, pose, K, 96, 80)
+    assert np.array_equal(got["depth"], depth)
+    assert np.array_equal(got["silhouette"], sil)
+    assert np.array_equal(got["normals"], normals)
+    assert np.array_equal(got["face"], face)
+    assert np.array_equal(got["bary"], bary)
+    assert (sil > 0).sum() > 500 and (face == F.shape[0] - 3).sum() > 0     # plane visible

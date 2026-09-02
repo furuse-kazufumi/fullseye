@@ -34,7 +34,7 @@ Per-face terrain weights (M,) in [0,1]: 0 = smooth regolith "sea", 1 = rough hig
 
 ## 同カテゴリ(`terrain`)
 
-[mesh_displace_fbm](mesh_displace_fbm.md) · [mesh_scatter_boulders](mesh_scatter_boulders.md)
+[mesh_displace_fbm](mesh_displace_fbm.md) · [mesh_scatter_boulders](mesh_scatter_boulders.md) · [mesh_edge_lengths](mesh_edge_lengths.md) · [mesh_subdivide](mesh_subdivide.md) · [displacement_band_weights](displacement_band_weights.md) · [mesh_displace_spectrum](mesh_displace_spectrum.md) · [bump_normals_fbm](bump_normals_fbm.md)
 
 ---
 *Provenance: render3d.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

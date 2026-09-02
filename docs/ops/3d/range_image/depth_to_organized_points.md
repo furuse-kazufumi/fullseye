@@ -30,7 +30,7 @@ organized 深度画像 → 格子整列 3D 点 (H,W,3)。
 
 ## 型が繋がる次の op(`pointmap` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [bump_normals_fbm](../terrain/bump_normals_fbm.md)
 
 ## 同カテゴリ(`range_image`)
 

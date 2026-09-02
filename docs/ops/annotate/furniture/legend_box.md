@@ -40,6 +40,10 @@ ValueError
     entries が空 / 形が ``(color, text)`` でない / 箱が画像からはみ出す /
     未知の役割名。
 
+## 詳しい使い方ガイド
+
+- [figure_annotation ファミリ ガイド](../guides/figure_annotation.md)
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

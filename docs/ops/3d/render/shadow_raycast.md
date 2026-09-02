@@ -13,7 +13,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 # shadow_raycast — 3D `render` op
 
 - **データ種**: `mesh × vector` → `image2d`
-- **呼び出し**: `import render_shadow; render_shadow.shadow_raycast(V, F, light, *, pose=None, intrinsics=None, width: 'int' = 256, height: 'int' = 256, angular_diameter_deg: 'float' = 0.0, samples: 'int' = 1, grid: 'int' = 64, bias=None) -> 'np.ndarray'` (または `ops3d.get("shadow_raycast")`)
+- **呼び出し**: `import render_shadow; render_shadow.shadow_raycast(V, F, light, *, pose=None, intrinsics=None, width: 'int' = 256, height: 'int' = 256, angular_diameter_deg: 'float' = 0.0, samples: 'int' = 1, grid=None, bias=None) -> 'np.ndarray'` (または `ops3d.get("shadow_raycast")`)
 
 ## 使い方
 

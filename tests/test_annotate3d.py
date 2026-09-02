@@ -105,10 +105,10 @@ def test_hidden_label_is_drawn_dashed_visible_label_solid():
     depth = np.full((H, W), np.inf)
     depth[:] = 7.0
     seen = T.annotate3d_label(img, "p", (0.0, 0.0, 0.0), pose, K, offset=(30.0, 0.0),
-                              color=(1.0, 1.0, 1.0), box_alpha=0.0, cap_size=0.0, width=1.0)
+                              color=(1.0, 1.0, 1.0), box_alpha=0.0, cap_size=0.0, width=2.0)
     hid = T.annotate3d_label(img, "p", (0.0, 0.0, 0.0), pose, K, depth=depth,
                              offset=(30.0, 0.0), color=(1.0, 1.0, 1.0), box_alpha=0.0,
-                             cap_size=0.0, width=1.0)
+                             cap_size=0.0, width=2.0)
     u, v = T.project_anchors([(0.0, 0.0, 0.0)], pose, K)["uv"][0]
     r = int(round(v))
     seg = slice(int(round(u)) + 2, int(round(u)) + 26)

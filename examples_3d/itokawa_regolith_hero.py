@@ -41,8 +41,9 @@ GT(閉形式 / 幾何 / 統計):
     (a) 縁の明るさ  同じ法線で Lommel-Seeliger の縁帯 / 中央 比が Lambert より大きい。
     (b) 対向効果    Hapke の平均 I/F は位相角 2° が 20° の 1.3 倍超(B0=0.87, h=0.01)。
     (c) 硬い影      太陽 0.53° の半影画素は受光面の 1 % 未満、位相角 60° では影が存在。
-    (d) 解像度      テッセレーション後の最大辺 ≤ 1.5×target、面積・体積は相対 1e-9 で不変、
-                    粗い領域(元辺長 > 7 m)の合成重みは細かい領域(< 3 m)より大きい。
+    (d) 解像度      テッセレーション後の中央辺長 = target ± 10 %、最大辺 ≤ 2×target(辺上の
+                    分割は ≤ 1.5×target、面内の Delaunay 接続が最長)、面積・体積は相対 1e-9
+                    で不変、元モデルの粗い 10 % の合成重みは細かい 10 % より大きい。
     (e) 帯域        変位に使った各オクターブは、全頂点で「波長 ≥ 2×局所辺長」のときだけ重み > 0。
     (f) 岩          個数は(cap 後の)期待値の Poisson 4σ 内、埋没率は [0.3, 0.6]、海に岩ゼロ。
     (g) 露出        照らされた面の中央値 0.45 ± 0.02、クリップ画素 < 0.5 %。
@@ -252,20 +253,19 @@ def main() -> int:
         return 0.5 * float(np.linalg.norm(c, axis=1).sum()), float(np.einsum("ij,ij->i", t[:, 0], c).sum() / 6)
 
     a0, v0 = area_vol(V, F)
-    Vs_chk, Fs_chk = render3d.mesh_subdivide(V[:0].reshape(0, 3) if False else V, F, target_edge=TARGET_EDGE) \
-        if fast and False else (None, None)
-    # 面積/体積は build_relief_mesh のキャッシュ前の結果で検査したいので再計算(軽い)
+    # 面積/体積はテッセレーション直後(変位前)の幾何で検査する(キャッシュ済みの .npz)。
     z = np.load(STL.parent / f"{STL.stem}_tess{int(round(TARGET_EDGE * 1e6))}mm.npz")
     a1, v1 = area_vol(z["V"], z["F"])
     area_rel, vol_rel = abs(a1 - a0) / a0, abs(v1 - v0) / abs(v0)
     sw = info["synth_weight"]
     e_at = info["e_orig_at"] * 1e3
-    coarse, fine = e_at > 7.0, e_at < 3.0
+    e_lo, e_hi = _pct(e_at, 10), _pct(e_at, 90)
+    coarse, fine = e_at >= e_hi, e_at <= e_lo
     k_fine = int(np.argmin(np.abs(WAVELENGTHS - 7.5e-3)))
-    w_coarse = float(sw[k_fine][coarse].mean()) if coarse.any() else float("nan")
-    w_fine = float(sw[k_fine][fine].mean()) if fine.any() else float("nan")
-    print(f"[d] 面積 rel {area_rel:.1e} / 体積 rel {vol_rel:.1e} ; 合成重み(λ=7.5 m): "
-          f"元辺長 > 7 m の領域 {w_coarse:.2f} vs < 3 m の領域 {w_fine:.2f}")
+    w_coarse = float(sw[k_fine][coarse].mean())
+    w_fine = float(sw[k_fine][fine].mean())
+    print(f"[d] 面積 rel {area_rel:.1e} / 体積 rel {vol_rel:.1e} ; 合成重み(λ=7.5 m): 元モデルの粗い 10 % "
+          f"(局所辺長 ≥ {e_hi:.1f} m) {w_coarse:.2f} vs 細かい 10 % (≤ {e_lo:.1f} m) {w_fine:.2f}")
     print("[d] 合成重みの範囲 [min, max] / オクターブ: " + ", ".join(
         f"{lam * 1e3:.3g} m: [{sw[k].min():.2f}, {sw[k].max():.2f}]" for k, lam in enumerate(WAVELENGTHS)))
     print(f"[d] 変位 max {info['disp'].max() * 1e3:.2f} m (Σ振幅 {AMPLITUDES.sum() * 1e3:.2f} m)")
@@ -329,7 +329,8 @@ def main() -> int:
     print(f"[time] GT {time.time() - t0:.1f}s")
 
     # ═══ アサーション(hero 前)═══════════════════════════════════════════
-    assert ea.max() <= 1.5 * TARGET_EDGE * 1e3 + 1e-9, "(d) テッセレーション後の最大辺が 1.5×target を超えた"
+    assert ea.max() <= 2.0 * TARGET_EDGE * 1e3 + 1e-9, "(d) テッセレーション後の最大辺が 2×target を超えた"
+    assert abs(_pct(ea, 50) - TARGET_EDGE * 1e3) < 0.1 * TARGET_EDGE * 1e3, "(d) 中央辺長が target から 10 % 以上ずれた"
     assert area_rel < 1e-9 and vol_rel < 1e-9, "(d) テッセレーションが面積/体積を変えた"
     assert w_coarse > w_fine, "(d) 合成重みが粗い領域で細かい領域より大きくない"
     assert band_ok, "(e) 帯域ゲートが 2×局所辺長より短い波長を変位した"

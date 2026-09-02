@@ -30,7 +30,7 @@ Lambertian フォトメトリックステレオ: 既知光源方向の N 枚か�
 
 ## 型が繋がる次の op(`normalmap` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [render_shaded](../render/render_shaded.md) · [phong_shade](../render/phong_shade.md) · [matcap_shade](../render/matcap_shade.md) · [brdf_lommel_seeliger](../render/brdf_lommel_seeliger.md) · [brdf_hapke](../render/brdf_hapke.md) · [integrate_normals](integrate_normals.md) · [render_lambertian](render_lambertian.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [render_shaded](../render/render_shaded.md) · [phong_shade](../render/phong_shade.md) · [matcap_shade](../render/matcap_shade.md) · [brdf_lommel_seeliger](../render/brdf_lommel_seeliger.md) · [brdf_hapke](../render/brdf_hapke.md) · [bump_normals_fbm](../terrain/bump_normals_fbm.md) · [integrate_normals](integrate_normals.md)
 
 ## 同カテゴリ(`photometric`)
 

@@ -45,6 +45,10 @@ ValueError
     length / units_per_pixel が非正・非有限、画素長が 1 未満、
     バー(とラベル)が画像に収まらない。
 
+## 詳しい使い方ガイド
+
+- [figure_annotation ファミリ ガイド](../guides/figure_annotation.md)
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

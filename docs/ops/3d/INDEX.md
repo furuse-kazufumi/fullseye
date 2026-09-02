@@ -1,8 +1,12 @@
-# 3D operator help — 317 ops in 64 categories
+# 3D operator help — 329 ops in 65 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/3d/<category>/<op>.md` を走査。
 
 ## カテゴリ
+
+### annotate3d (7)
+
+[annotate3d_arrow](annotate3d/annotate3d_arrow.md) · [annotate3d_axes](annotate3d/annotate3d_axes.md) · [annotate3d_bbox](annotate3d/annotate3d_bbox.md) · [annotate3d_label](annotate3d/annotate3d_label.md) · [annotate3d_measure](annotate3d/annotate3d_measure.md) · [annotate3d_project](annotate3d/annotate3d_project.md) · [annotate3d_scale_bar](annotate3d/annotate3d_scale_bar.md)
 
 ### augment (6)
 
@@ -244,9 +248,9 @@
 
 [detect_reflection_symmetry](symmetry/detect_reflection_symmetry.md) · [detect_rotational_symmetry](symmetry/detect_rotational_symmetry.md) · [reflect_points](symmetry/reflect_points.md) · [reflection_symmetry_score](symmetry/reflection_symmetry_score.md)
 
-### terrain (3)
+### terrain (8)
 
-[mesh_displace_fbm](terrain/mesh_displace_fbm.md) · [mesh_scatter_boulders](terrain/mesh_scatter_boulders.md) · [terrain_region_mask](terrain/terrain_region_mask.md)
+[bump_normals_fbm](terrain/bump_normals_fbm.md) · [displacement_band_weights](terrain/displacement_band_weights.md) · [mesh_displace_fbm](terrain/mesh_displace_fbm.md) · [mesh_displace_spectrum](terrain/mesh_displace_spectrum.md) · [mesh_edge_lengths](terrain/mesh_edge_lengths.md) · [mesh_scatter_boulders](terrain/mesh_scatter_boulders.md) · [mesh_subdivide](terrain/mesh_subdivide.md) · [terrain_region_mask](terrain/terrain_region_mask.md)
 
 ### transform (12)
 

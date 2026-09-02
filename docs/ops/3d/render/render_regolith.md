@@ -13,7 +13,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 # render_regolith — 3D `render` op
 
 - **データ種**: `mesh` → `rgbimage`
-- **呼び出し**: `import render_beauty; render_beauty.render_regolith(V, F, *, pose=None, intrinsics=None, size: 'int' = 512, ss: 'int' = 2, sun: 'Sequence[float]' = (0.3, 0.4, 1.0), w: 'float' = 0.42, g: 'float' = -0.35, B0: 'float' = 0.87, h: 'float' = 0.01, roughness_deg: 'float' = 26.0, sun_angular_diameter_deg: 'float' = 0.53, shadow_samples: 'int' = 4, ao_samples: 'int' = 32, tint: 'Sequence[float]' = (1.0, 0.97, 0.93), self_illumination: 'float' = 1.0, exposure='auto', albedo_variation: 'float' = 0.12, seed: 'int' = 0, smooth_normals: 'bool' = True, background: 'Sequence[float]' = (0.0, 0.0, 0.0)) -> 'np.ndarray'` (または `ops3d.get("render_regolith")`)
+- **呼び出し**: `import render_beauty; render_beauty.render_regolith(V, F, *, pose=None, intrinsics=None, size: 'int' = 512, ss: 'int' = 2, sun: 'Sequence[float]' = (0.3, 0.4, 1.0), w: 'float' = 0.42, g: 'float' = -0.35, B0: 'float' = 0.87, h: 'float' = 0.01, roughness_deg: 'float' = 26.0, sun_angular_diameter_deg: 'float' = 0.53, shadow_samples: 'int' = 4, ao_samples: 'int' = 32, tint: 'Sequence[float]' = (1.0, 0.97, 0.93), self_illumination: 'float' = 1.0, exposure='auto', albedo_variation: 'float' = 0.12, seed: 'int' = 0, smooth_normals: 'bool' = True, background: 'Sequence[float]' = (0.0, 0.0, 0.0), bump=None, exposure_target: 'float' = 0.45) -> 'np.ndarray'` (または `ops3d.get("render_regolith")`)
 
 ## 使い方
 

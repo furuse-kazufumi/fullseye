@@ -1,0 +1,18 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">annotate3d_measure — 3D <code style="color:#22d3bf">annotate3d</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import annotate3d; annotate3d.annotate3d_measure(img, p0, p1, pose, K, unit=&#x27;&#x27;, depth=None, color=&#x27;emphasis&#x27;, width=1.5, tick=8.0, font_size=12, label_fmt=&#x27;{:.3g}&#x27;, box_alpha=0.6, text_color=None, occlusion_tol=0.01, scheme=&#x27;okabe_ito&#x27;, font_path=None)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;annotate3d_measure&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>画像(image2d)を返す: 3-D の 2 点間距離(メッシュ単位)を、射影した線と値で示す。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:annotate3d_figure">annotate3d_figure</a> — <code style="color:#22d3bf">py -3.11 examples_3d/annotate3d_figure.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fit_poly_surface">fit_poly_surface</a> · <a style="color:#22d3bf" href="op3d:eval_poly_surface">eval_poly_surface</a> · <a style="color:#22d3bf" href="op3d:surface_form_error">surface_form_error</a> · <a style="color:#22d3bf" href="op3d:background_flatten">background_flatten</a> · <a style="color:#22d3bf" href="op3d:polar_unwrap">polar_unwrap</a> · <a style="color:#22d3bf" href="op3d:fit_zernike">fit_zernike</a> · <a style="color:#22d3bf" href="op3d:matcap_shade">matcap_shade</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">annotate3d</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:annotate3d_project">annotate3d_project</a> · <a style="color:#22d3bf" href="op3d:annotate3d_arrow">annotate3d_arrow</a> · <a style="color:#22d3bf" href="op3d:annotate3d_label">annotate3d_label</a> · <a style="color:#22d3bf" href="op3d:annotate3d_scale_bar">annotate3d_scale_bar</a> · <a style="color:#22d3bf" href="op3d:annotate3d_axes">annotate3d_axes</a> · <a style="color:#22d3bf" href="op3d:annotate3d_bbox">annotate3d_bbox</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: annotate3d.py — 3D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

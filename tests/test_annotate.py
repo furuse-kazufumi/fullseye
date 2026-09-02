@@ -701,8 +701,8 @@ def test_measure_text_newlines_work_without_a_width():
 # ------------------------------------------------------------------ #
 
 def test_ledger_paper_category_counts():
-    """台帳: 7 カテゴリ / 46 op、paper 族は 21 op(描く 13 + layout 8)。"""
-    assert len(opsannotate.categories()) == 7
+    """台帳: 8 カテゴリ / 46 op、paper 族は 21 op(描く 13 + layout 8)。"""
+    assert len(opsannotate.categories()) == 8
     assert len(opsannotate.OPSANNOTATE) == 46
     paper = opsannotate.list_ops("paper")
     assert len(paper) == 21
@@ -745,8 +745,8 @@ def test_leader_layout_is_closed_form_and_collision_free():
 
 
 def test_leader_auto_side_points_away_from_the_image_centre():
-    left = A.annotate_leader_layout((H, W), [(20, 60)], ["L"])["items"][0]["side"][0]
-    right = A.annotate_leader_layout((H, W), [(180, 60)], ["R"])["items"][0]["side"][0]
+    left = A.annotate_leader_layout((H, W), [(70, 60)], ["L"])["items"][0]["side"][0]
+    right = A.annotate_leader_layout((H, W), [(130, 60)], ["R"])["items"][0]["side"][0]
     assert left == -1 and right == 1
 
 
@@ -770,9 +770,9 @@ def test_leader_draw_uses_the_layout_and_is_deterministic():
 
 def test_aa_line_coverage_is_partial_at_the_edge_and_full_on_the_axis():
     """距離ベースの AA: 線の中心画素は被覆 1、半画素外は中間、遠くは 0。"""
-    cov = A._segment_coverage((20, 40), (5.0, 10.0), (35.0, 10.0), width=1.0)
+    cov = A._segment_coverage((20, 40), (5.0, 10.0), (35.0, 10.0), width=2.0)
     assert cov[10, 20] == pytest.approx(1.0)
-    assert 0.0 < cov[11, 20] < 1.0
+    assert cov[11, 20] == pytest.approx(0.5)                 # 半幅 1 + 0.5 - 距離 1
     assert cov[13, 20] == 0.0
     assert cov[10, 2] == 0.0                                  # 端点の外
 
@@ -831,7 +831,7 @@ def test_angle_layout_takes_the_smaller_angle_and_its_bisector():
 def test_angle_draws_arc_on_the_circle_only():
     img = _canvas(0.0)
     out = A.annotate_angle(img, (150, 60), (100, 60), (100, 20), radius=30, draw_rays=False,
-                           color=(1.0, 1.0, 1.0), font_size=10)
+                           color=(1.0, 1.0, 1.0), label_fmt=None)
     yy, xx = np.mgrid[0:H, 0:W]
     d = np.hypot(xx - 100, yy - 60)
     lit = out[..., 0] > 0.5
@@ -965,15 +965,15 @@ def test_colorbar_overlay_matches_alpha_formula():
     img = _canvas(0.2)
     field = np.linspace(0.0, 1.0, W)[None, :].repeat(H, axis=0)
     lut = palette.diverging_lut(256)
-    out = A.annotate_colorbar(img, field, (180, 10, 8, 80), lut=lut, vmin=0.0, vmax=1.0,
+    out = A.annotate_colorbar(img, field, (170, 10, 8, 80), lut=lut, vmin=0.0, vmax=1.0,
                               alpha=0.5, font_size=10)
     # 場が 0 の列は lut[0]、1 の列は lut[-1] を α=0.5 で重ねたもの(バーの外の行で)
     assert np.allclose(out[100, 0], 0.5 * lut[0] + 0.5 * 0.2)
     assert np.allclose(out[100, W - 1], 0.5 * lut[-1] + 0.5 * 0.2)
     with pytest.raises(ValueError, match="non-finite"):
-        A.annotate_colorbar(img, np.full((H, W), np.nan), (180, 10, 8, 80))
+        A.annotate_colorbar(img, np.full((H, W), np.nan), (170, 10, 8, 80))
     with pytest.raises(ValueError, match="zero range"):
-        A.annotate_colorbar(img, np.zeros((H, W)), (180, 10, 8, 80))
+        A.annotate_colorbar(img, np.zeros((H, W)), (170, 10, 8, 80))
 
 
 def test_panel_label_text_and_corners():
