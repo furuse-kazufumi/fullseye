@@ -260,6 +260,51 @@ def main():                                             # noqa: C901 - 一本道
     print("   断面図と 3-D で同じ粒子が同じ色: "
           + str(all(np.allclose(md["color"], pal[md["label"]]) for md in meshes)))
 
+    # 直交 3 断面(MPR)—— 「3 面で同じ粒子が同じ色」がこの図の意味そのもの
+    big = max(stats, key=lambda s: s["voxel_count"])
+    cz, cy, cx = (int(round(v)) for v in big["centroid"])
+    mpr = VC.vol_label_mpr_rgb(rgbvol, center=(cz, cy, cx), gap=4)
+    ax_p = VC.vol_label_slice_rgb(rgbvol, cz, "z")
+    co_p = VC.vol_label_slice_rgb(rgbvol, cy, "y")
+    sa_p = VC.vol_label_slice_rgb(rgbvol, cx, "x")
+    x0 = ax_p.shape[1] + 4
+    x1 = x0 + co_p.shape[1] + 4
+    want = (max(p.shape[0] for p in (ax_p, co_p, sa_p)),
+            ax_p.shape[1] + co_p.shape[1] + sa_p.shape[1] + 2 * 4, 3)
+    placed = (np.array_equal(mpr[:ax_p.shape[0], :ax_p.shape[1]], ax_p)
+              and np.array_equal(mpr[:co_p.shape[0], x0:x0 + co_p.shape[1]], co_p)
+              and np.array_equal(mpr[:sa_p.shape[0], x1:x1 + sa_p.shape[1]], sa_p))
+    col = pal[labels[cz, cy, cx]]
+    three = (np.array_equal(ax_p[cy, cx], col) and np.array_equal(co_p[cz, cx], col)
+             and np.array_equal(sa_p[cz, cy], col))
+
+    def _slice_then_colour(plane):
+        """比較対象: 断面を切ってから、その断面だけで番号を振って色を付ける。"""
+        lab2, _ = volops.vol_label(plane[None, :, :], connectivity=26)
+        return imgio.colorize_labels(lab2[0], seed=SEED)
+
+    naive = (_slice_then_colour(binary[cz]), _slice_then_colour(binary[:, cy, :]),
+             _slice_then_colour(binary[:, :, cx]))
+    naive_cols = (naive[0][cy, cx], naive[1][cz, cx], naive[2][cz, cy])
+    flat = mpr.reshape(-1, 3)
+    table = np.vstack([pal, np.array([[0.05, 0.05, 0.07]])])   # パレット + 背景
+    known = np.zeros(len(flat), bool)
+    for t in table:
+        known |= np.all(np.isclose(flat, t), axis=1)
+    print(f"   直交 3 断面 (MPR) at (z,y,x)={ (cz, cy, cx) }: {mpr.shape} "
+          f"(閉形式 {want} = 幅は 3 枚の和 + 隙間 2 本、高さは最大値)")
+    print(f"     3 枚は画素単位でそのまま貼られている(切り出して一致): {placed}")
+    print(f"     ★label {int(labels[cz, cy, cx])} の色 {np.round(col, 6)} が"
+          f"**3 面とも同じ**: {three}")
+    print("     比べて「切ってから色を付ける」と 3 面はばらばら: "
+          + " / ".join(str(np.round(c, 4)) for c in naive_cols))
+    print(f"     MPR {len(flat)} 画素のうち、パレットにも背景にも無い色は "
+          f"{int((~known).sum())} 画素(= 断面を混ぜて色を作っていない)")
+    assert mpr.shape == want and placed and three
+    assert int((~known).sum()) == 0
+    assert not np.array_equal(naive_cols[0], naive_cols[1])
+    ok &= placed and three
+
     slab = np.zeros((16, 16, 16))
     slab[0:6, 2:12, 2:12] = 1.0
     slab[7:11, 4:14, 4:14] = 1.0
