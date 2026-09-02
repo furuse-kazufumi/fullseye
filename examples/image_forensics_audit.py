@@ -388,9 +388,10 @@ def main():
           f"(ブロック位置がずれる。切り抜き・回転には効かない)")
     assert F.hash_distance(bits, shifted) > 10
 
-    print("PASS: imgforensics 16 op —— 既知のシフト (110, 128) を誤差 0 px、"
-          "貼り込みの真の品質 60、台紙の真の品質 90、透かし BER 0 で当て、"
-          "破綻点(ハッシュは局所改竄に無力 / ELA は無圧縮台紙で無効 / "
+    print(f"PASS: imgforensics 16 op —— 既知のシフト {TRUE_SHIFT} を誤差 0 px、"
+          f"貼り込みの真の品質 {SPLICE_Q}・台紙の真の品質 {BASE_Q} をブラインドで、"
+          "透かし 128 bit を BER 0 で当てた。破綻点(ハッシュは局所改竄に無力 / "
+          "ELA は無圧縮台紙と格子ずれで無効 / 雑音段差は模様と区別できない / "
           "透かしは 1 px のずれで壊れる)も同じ数で示した")
     return True
 
