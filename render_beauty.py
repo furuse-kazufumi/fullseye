@@ -47,7 +47,7 @@ import render_shadow
 import render_ssaa
 import render_tonemap
 
-__all__ = ["render_beauty"]
+__all__ = ["render_beauty", "render_regolith"]
 
 #: 対応マテリアルのプリセット(拡散 / 鏡面 / 光沢 / 金属フラグ)。
 _MATERIALS: dict[str, dict] = {
