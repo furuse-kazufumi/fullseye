@@ -119,6 +119,19 @@ _CATALOG = {
         ("ray_fan", "raytrace", ["table"], "pairs"),
         ("opd_map", "raytrace", ["table"], "image2d"),
     ],
+    # imaging_sim(lensimage、2026-09-03 追加): 処方(table)から**センサが記録する
+    # 画像**まで。psf_from_opd = 実収差瞳の回折 PSF(|FFT(mask·e^{i2πW})|²、画素
+    # 面積積分)、distortion_map = 実主光線 vs 近軸 f·tanθ の歪曲表 + 逆写像格子、
+    # render_through_lens = 歪曲→視野依存ぼけ(zones² タイル PSF の線形ブレンド)
+    # →周辺光量(追跡口径食 × cos⁴)→露光/ショット雑音/読出雑音/量子化、
+    # defect_dataset = defectgen の欠陥をレンズ越しに描き、マスクは**同じ歪曲だけ**
+    # 通す(ぼかさない)ので注釈が像とずれない。乱数 table は全 op が ValueError
+    "imaging_sim": [
+        ("psf_from_opd", "lensimage", ["table"], "image2d"),
+        ("distortion_map", "lensimage", ["table"], "table"),
+        ("render_through_lens", "lensimage", ["image2d", "table"], "image2d"),
+        ("defect_dataset", "lensimage", [], "table"),
+    ],
 }
 
 
