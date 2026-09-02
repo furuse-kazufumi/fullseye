@@ -920,15 +920,18 @@ def run(a):
     """Number of connected components of an undirected graph a = [n, m, (u,v,w)*m].
 
     Union-find with path halving. Returns the component count as an exact integer
-    (weights ignored). Fail-soft 0.0 on malformed input (n<1 / m<0 / truncated) or an
-    out-of-range edge endpoint. Edge endpoints assumed finite (NaN-free contract)."""
+    (weights ignored). Fail-soft 0.0 (never a valid count: n >= 1 gives >= 1) on
+    malformed input: n not an integer in [1, 5000000] (node cap, bounds the parent
+    array), m not an integer in [0, 2147483000], a truncated edge list, or an
+    endpoint that is not an integer in [0, n-1] — checked on the RAW double before
+    any int() (NaN / 1e300 / 1.9 fail-soft instead of crashing or truncating)."""
     if len(a) < 2:
         return 0.0
     nd = a[0]
     md = a[1]
-    if not (nd >= 1.0 and nd <= 2147483000.0):
+    if not (nd >= 1.0 and nd <= 5000000.0 and nd == float(int(nd))):   # node cap (as sieve)
         return 0.0
-    if not (md >= 0.0 and md <= 2147483000.0):
+    if not (md >= 0.0 and md <= 2147483000.0 and md == float(int(md))):
         return 0.0
     n = int(nd)
     m = int(md)
@@ -943,10 +946,16 @@ def run(a):
         return x
 
     for k in range(m):
-        u = int(a[2 + 3 * k])
-        v = int(a[2 + 3 * k + 1])
-        if u < 0 or u >= n or v < 0 or v >= n:
+        ud = a[2 + 3 * k]
+        vd = a[2 + 3 * k + 1]
+        # raw-double guard BEFORE the cast: range first (short-circuits NaN/inf/1e300),
+        # then integrality (1.9 is not a node) — exact C parity, no int() crash/UB.
+        if not (ud >= 0.0 and ud < n and ud == float(int(ud))):
             return 0.0                                     # bad edge -> fail-soft
+        if not (vd >= 0.0 and vd < n and vd == float(int(vd))):
+            return 0.0
+        u = int(ud)
+        v = int(vd)
         ru = find(u)
         rv = find(v)
         if ru != rv:
