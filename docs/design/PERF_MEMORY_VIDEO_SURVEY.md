@@ -374,3 +374,76 @@ tm× = tracemalloc ピーク ÷ 入力バイト(32 MB)、rss× = RSS ピーク�
 2. `scale.scale_class`(`scale.py:27,29,35-58`)が `_norm` を含む edges/segmentation を tile_safe に分類し、タイル結果が全体結果と一致しない(sobel_mag 差 0.98、canny 1.0)。
 3. `api._coerce_input` の `np.unique`(`api.py:1036`)は region op を毎回 2 倍遅くする。`{0,1}` 判定は `np.isin`/min-max で O(N) にできる。
 4. `api._try_accel`(`api.py:1164`)が呼ぶたびに ACCEL の逆引き辞書を作る(モジュールレベルにキャッシュ可)。
+
+---
+
+## 6. bench harness (実装済)
+
+§4 の推奨 **(h)** を実装した(2026-09-03)。この調査の使い捨て profiler(`scratchpad/prof_ops.py`)を repo の恒久ツールに据えたもので、以降の (a′) cv2 twin / (d) VideoPipeline / (g) GPU 常駐 / (c) タイル が「本当に速くなったか」「壊れていないか」を **同じ 1 本の物差し**で言うための土台。
+
+| 追加物 | 役割 |
+|---|---|
+| `tools/bench_ops.py` | 測定 harness + JSON ベースライン比較(CLI) |
+| `tests/test_bench_ops.py` | harness 自身の契約テスト(3 op × 64² のスモーク、合成 2 倍退行の検出、未知 op の fail-closed、ノイズ画像の存在) |
+| `bench/bench_ops_baseline.json` | 実測ベースライン(`--sizes 512,2048,1080p --dtypes float64`)。**`out/` は `.gitignore` 対象**なので、追跡したいベースラインは `bench/` に置く(`bench.py` は module、`bench/` は namespace dir なので `import bench` は従来どおり `bench.py` に解決する — 実測確認済み) |
+
+### 6.1 使い方
+
+```powershell
+# 手元で 1 セット測る(既定 --set all / --sizes 512,2048,1080p / --dtypes float64)
+PYTHONUTF8=1 py -3.11 tools/bench_ops.py --set core --sizes 512 --dtypes float64 --repeat 3
+
+# op を名指し・複数サイズ・uint8 も込みで
+PYTHONUTF8=1 py -3.11 tools/bench_ops.py --ops gaussian,median,cv_median --sizes 2048,1080p --dtypes float64,uint8
+
+# ベースラインを書く(数分)
+PYTHONUTF8=1 py -3.11 tools/bench_ops.py --sizes 512,2048,1080p --dtypes float64 --write-baseline bench/bench_ops_baseline.json
+
+# 退行チェック(30 % 超で表を出して exit 1 = CI 用)
+PYTHONUTF8=1 py -3.11 tools/bench_ops.py --baseline bench/bench_ops_baseline.json --tolerance 0.30
+```
+
+主なオプション: `--ops a,b,c` / `--set core|cv|all` / `--sizes 512,2048,1080p|WxH` / `--dtypes float64,uint8,float32` / `--images noisy,quantised,constant` / `--warm N`(既定 1)/ `--repeat N`(既定 3、**中央値**)/ `--out`(既定 `out/bench_ops.json`)/ `--baseline` / `--write-baseline` / `--tolerance`(既定 0.30)/ `--device cpu|cuda` / `--quiet`。
+
+### 6.2 1 行に載るもの(速度だけを見ない)
+
+`ms`(repeat の中央値。最小値だと外れ値で嘘の改善が出る)、`mpx_s`、`tm_peak_x`(tracemalloc ピーク ÷ 入力バイト)、`rss_peak_x`(0.4 ms ポーリング)、`out_dtype` / `out_shape`、`fallbacks`(`backend_safe.mark` / `events_since` で数えた **1 呼び出しあたり**の降格件数)、`input_mutated`、`shares_mem`(`np.shares_memory`)、`module`(実装モジュール)、`twin` / `accel_key`。**「速くなったが uint8 を返すようになった」「速くなったが毎回 fallback している」を同じ表で捕まえる**のが狙い(§1.3 の「黙って別物」を速度改善で再生産しないため)。
+
+* 例外は握り潰さない: 行に `error` を載せて続行し、最後に件数を出す。時間予算外の重い op は行ごと消さず `skipped` に理由を残す(消すと「発見ゼロ」に化ける)。
+* 未知の op 名は **fail-closed**(近い名前を挙げて exit 2)。ただし `--set` に含まれる任意バックエンド op(`cv_*`/`sk_*`/`xkor_*`)がその環境に無いのは打ち間違いではないので、落とさず `header.set_absent_ops` に記録する。
+
+### 6.3 入力は「ノイズ入り」と「量子化」の 2 本が既定
+
+§5.1 のとおり `median`/`percentile` は **内容で 10 倍変わる**。harness は同じシーンを
+
+* `noisy` — 円板 60 個 + 照明勾配 + 3 % ガウスノイズ(実画像側 = 最悪側)
+* `quantised` — ノイズ無し・16 階調(同値だらけ = 速い側)
+* `constant` — 定数 0.42(縮退。`--images` で追加可能)
+
+で作り、既定は `noisy,quantised` の 2 本。**ノイズ画像を外した `--images` は CLI が拒否する**(最悪側を隠すベンチは退行検出の役に立たない)。実測でも 512² `median` は noisy 113 ms / quantised 18.6 ms(**6.1 倍**)、`clahe` は 20.7 / 7.9 ms と分かれた。seed は固定(既定 7)なので run 間で入力は同一。
+
+### 6.4 相対比較は同一 run の中でだけ
+
+熱定常でないこの PC では絶対値が 1.5〜1.7 倍動く(§5.1)。そこで:
+
+* **cv2 twin 対 core** は同じ run の中で測って `ratio_vs_core` に入れる。twin の対応表は**発明せず**、registry の `Op.halcon`(core と cv2 ラッパが共有する HALCON 名。`backends.py` の登録表)から引く。`edges_image` のように 2 つの cv2 op が名乗る別名は in/out sort で解く(`canny` → `cv_canny`、`cv_scharr` ではない)。候補が複数残る場合は登録順で先頭を採り、`twin_candidates` に全候補を残す。
+* **GPU 対 CPU** は `--device cuda` のときに同じ行で CPU 経路も測り、`ratio_vs_core = "cpu:<op>"` として出す(accel 対応の判定は `accel.ACCEL` の `key -> (fn, core, halcon)` から)。
+* run をまたぐ比較はベースラインの `--tolerance`(既定 30 %)がこの幅を吸収する前提。JSON の `header.caveat` に「熱定常でない」旨を必ず書き込む。
+
+### 6.5 ベースラインのキーと判定
+
+キーは `"gaussian|2048|float64"`。既定でない画像種のときだけ 4 番目の成分が付く(`"median|2048|float64|quantised"`)ので、画像種を増やしても既定キーは不変。比較は 4 つを別々に数える:
+
+| 種別 | 意味 |
+|---|---|
+| `regressions` | `ms` がベースラインの `(1 + tolerance)` 倍超 → 表にして **exit 1** |
+| `improvements` | 逆側(`1/(1+tolerance)` 未満) |
+| `vanished` | ベースラインに在って**今回測れなかった**行(消えた op / 落ちた op。黙って無視すると「退行ゼロ」に化ける) |
+| `dtype_changed` | `out_dtype` が変わった行(速くなっても別物なら別物) |
+
+### 6.6 harness の限界(honest)
+
+* 3-D volume op(§1.5)と動画経路(§3.2)、facade マイクロオーバーヘッド(§1.7)、タイル/フレーム並列(§1.8)は **まだ harness に入っていない**。調査の使い捨てスクリプトにはあり、(d) VideoPipeline を作るときに `--set vol` / `--set video` として足すのが自然。
+* `rss_peak_x` は 0.4 ms ポーリングなので **10 ms 未満の op では取りこぼす**。`tm_peak_x` は numpy 配列しか見ない(C 内部バッファは見えない)。両方を並べているのはそのため。psutil があれば使い、無ければ Windows は `K32GetProcessMemoryInfo`、POSIX は `getrusage` にフォールバックする(どれも無ければ `rss_*` は `null`)。
+* メモリ計測の呼び出しは **時間サンプルに数えない**(tracemalloc が実行時間を数倍にするため)。1 行あたりの呼び出し回数は `warm + 1 + repeat`。
+* `--device cuda` はグローバル環境(torch CPU 版)では静かに CPU に落ちる。GPU 実測は loco venv(cu128)で走らせる(§1.6 と同じ条件)。

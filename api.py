@@ -1158,6 +1158,35 @@ def gpu_open_ops() -> list:
     return sorted(_GPU_OPEN)
 
 
+# Same breaker for the CPU fast-twin path (``fast.py``): a twin that raises once is
+# not retried on every call.
+_FAST_OPEN: set = set()
+
+
+def reset_fast() -> list:
+    """Close the fast-twin circuit breaker for every op; returns the names that were open."""
+    was = sorted(_FAST_OPEN)
+    _FAST_OPEN.clear()
+    return was
+
+
+def fast_open_ops() -> list:
+    """Op names whose CPU fast twin is currently disabled by the breaker."""
+    return sorted(_FAST_OPEN)
+
+
+def _fast_on(flag) -> bool:
+    """Is the CPU fast-twin path enabled for this call?
+
+    ``fast=True/False`` wins; ``None`` reads ``FULLSEYE_FAST`` (``1``/``true``/``yes``).
+    **Default OFF** — the twins are parity-gated (``fast.parity``) but the switch is
+    opt-in until a bench run on the target machine says the default should flip.
+    """
+    if flag is not None:
+        return bool(flag)
+    return os.environ.get("FULLSEYE_FAST", "").strip().lower() in ("1", "true", "yes", "on")
+
+
 def _policy(on_error):
     p = on_error if on_error is not None else os.environ.get("FULLSEYE_ON_ERROR", "fallback")
     if p not in _ON_ERROR_CHOICES:
