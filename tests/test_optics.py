@@ -688,6 +688,8 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     assert len(from_optics) == 18
     assert all(m["module"] == "raytrace" for n, m in opsoptics.OPSOPTICS.items()
                if m["category"] == "design")
+    assert all(m["module"] == "lensimage" for n, m in opsoptics.OPSOPTICS.items()
+               if m["category"] == "imaging_sim")
     for name, meta in opsoptics.OPSOPTICS.items():
         assert meta["doc"], f"{name} has no docstring summary line"
         if meta["module"] == "optics":
