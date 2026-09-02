@@ -1588,18 +1588,19 @@ def run(a):
 
 _C_POINT_IN_POLYGON = '''\
 /* Point-in-polygon by crossing number (integer coords in [-100000,100000], no division).
- * a = [px, py, n, x0,y0,...]; returns 1.0 inside / 0.0 outside. Fail-soft 0.0 on malformed. */
+ * a = [px, py, n, x0,y0,...]; returns 1.0 inside / 0.0 outside. Fail-soft -1.0 on malformed /
+ * out-of-domain (0.0 = "outside" is a valid answer, so it cannot be the sentinel). */
 double point_in_polygon(const double* a, int n_in) {
-    if (n_in < 3) return 0.0;
+    if (n_in < 3) return -1.0;
     double pxd = a[0], pyd = a[1], nd = a[2];
-    if (!(pxd >= -100000.0 && pxd <= 100000.0 && pxd == (double)(long long)pxd)) return 0.0;
-    if (!(pyd >= -100000.0 && pyd <= 100000.0 && pyd == (double)(long long)pyd)) return 0.0;
-    if (!(nd >= 3.0 && nd <= 100000.0 && nd == (double)(long long)nd)) return 0.0;
+    if (!(pxd >= -100000.0 && pxd <= 100000.0 && pxd == (double)(long long)pxd)) return -1.0;
+    if (!(pyd >= -100000.0 && pyd <= 100000.0 && pyd == (double)(long long)pyd)) return -1.0;
+    if (!(nd >= 3.0 && nd <= 100000.0 && nd == (double)(long long)nd)) return -1.0;
     int n = (int)nd;
-    if ((long long)n_in < 3LL + 2LL * n) return 0.0;
+    if ((long long)n_in < 3LL + 2LL * n) return -1.0;
     for (int i = 0; i < 2 * n; i++) {
         double c = a[3 + i];
-        if (!(c >= -100000.0 && c <= 100000.0 && c == (double)(long long)c)) return 0.0;
+        if (!(c >= -100000.0 && c <= 100000.0 && c == (double)(long long)c)) return -1.0;
     }
     long long px = (long long)pxd, py = (long long)pyd;
     int inside = 0;
