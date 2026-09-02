@@ -25,6 +25,7 @@ import api
 import imgio
 import recipes
 import engine        # pipeline validation (Problems panel) — diagnose_stages
+import param_specs   # per-op knob presentation (label / range / unit / int / choice / bool)
 import flow          # v14 perception panel
 import motion
 import stereo

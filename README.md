@@ -53,6 +53,10 @@ n     = fullseye.apply(seg,   "count_obj")          # region → feature → a f
 out   = fullseye.run_pipeline(frame, ["gaussian", "sobel_amp", "otsu"])          # shared knobs
 out   = fullseye.run_pipeline(frame, [("gaussian",0.3,0.5), ("otsu",0.4,0.5)])   # per-stage knobs
 fullseye.list_ops(sort="region"); fullseye.op_names()   # discover
+fullseye.apply([a, b], "add_image")                      # n-ary ops take a LIST of inputs
+fullseye.apply(img, "ncc_locate", template=patch)        # match ops take the template here
+fullseye.apply(frame, "otsu", on_error="raise")          # fail-closed (default: sort-valid fallback,
+fullseye.fallbacks()                                     #   recorded + one warning per op)
 ```
 
 `apply(image, name, a=0.5, b=0.5)` and `run_pipeline` take an operator name and two
