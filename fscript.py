@@ -782,9 +782,10 @@ class Interp:
             raise FScriptError("step limit exceeded (possible infinite loop)", line)
 
     def _st_For(self, node):
-        start = self._eval(node.start)
-        stop = self._eval(node.stop)
-        step = self._eval(node.step) if node.step is not None else 1
+        start = _as_number(self._eval(node.start), "'for' start", node.line)
+        stop = _as_number(self._eval(node.stop), "'for' stop", node.line)
+        step = (_as_number(self._eval(node.step), "'for' step", node.line)
+                if node.step is not None else 1)
         if step == 0:
             raise FScriptError("'for' step must not be 0", node.line)
         i = start
@@ -800,7 +801,7 @@ class Interp:
             i += step
 
     def _st_While(self, node):
-        while _truth(self._eval(node.cond)):
+        while _truth(self._eval(node.cond), node.cond.line or node.line):
             self._tick(node.line)
             try:
                 self.run(node.body)
@@ -818,21 +819,31 @@ class Interp:
                 break
             except _Continue:
                 pass
-            if _truth(self._eval(node.cond)):
+            if _truth(self._eval(node.cond), node.cond.line or node.line):
                 break
 
     def _st_Break(self, node):
-        raise _Break()
+        raise _Break(node.line)
 
     def _st_Continue(self, node):
-        raise _Continue()
+        raise _Continue(node.line)
 
     # -- expressions -------------------------------------------------------- #
     def _eval(self, node):
         m = getattr(self, "_ev_" + type(node).__name__, None)
         if m is None:
             raise FScriptError("cannot evaluate %s" % type(node).__name__, getattr(node, "line", 0))
-        return m(node)
+        # A left-deep chain (`1+1+...+1`, thousands of terms) is shallow to
+        # parse but deep to evaluate; cap it here so the answer is an
+        # FScriptError with a line, not a RecursionError.
+        self.depth += 1
+        try:
+            if self.depth > MAX_NESTING:
+                raise FScriptError("expression nesting too deep (limit %d)" % MAX_NESTING,
+                                   getattr(node, "line", 0))
+            return m(node)
+        finally:
+            self.depth -= 1
 
     def _ev_Num(self, n): return n.v
 
