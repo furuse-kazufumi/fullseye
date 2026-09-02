@@ -295,7 +295,8 @@ def new_canvas(shape, color=_KEEP, style=None):
         a = np.zeros((H, W), dtype=np.float64)
     else:
         a = np.zeros((H, W, len(col)), dtype=np.float64)
-    a[...] = _color_for(a, col)
+    # 与えられたチャンネルだけ塗る(RGB 色を (H,W,4) に敷くと alpha は 0 のまま)
+    _paint(a, np.ones((H, W), dtype=bool), col)
     return np.clip(a, 0.0, 1.0)
 
 
