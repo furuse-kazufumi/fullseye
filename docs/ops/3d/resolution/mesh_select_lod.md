@@ -1,0 +1,42 @@
+---
+op: mesh_select_lod
+dim: 3d
+category: resolution
+in: table
+out: table
+examples: [mesh_resolution_demo]
+author: Kazufumi Furuse
+license: Apache-2.0
+version: 0.1.0  # fullseye lib version this note was generated for
+---
+
+# mesh_select_lod — 3D `resolution` op
+
+- **データ種**: `table` → `table`
+- **呼び出し**: `import meshres; meshres.mesh_select_lod(lod, distance, focal_px, pixel_tolerance=0.5, use='max_error')` (または `ops3d.get("mesh_select_lod")`)
+
+## 使い方
+
+The coarsest LOD level whose geometric error projects below *pixel_tolerance* (``table``).
+
+## 参考(サンプルデータ・文献)
+
+- [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
+- [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
+
+## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
+
+- [mesh_resolution_demo](../../../../examples_3d/mesh_resolution_demo.py) — `py -3.11 examples_3d/mesh_resolution_demo.py`
+
+## 型が繋がる次の op(`table` を入力に取れる)
+
+[fuse_to_voxel](../fusion/fuse_to_voxel.md)
+
+## 同カテゴリ(`resolution`)
+
+[mesh_edge_stats](mesh_edge_stats.md) · [mesh_detail_map](mesh_detail_map.md) · [mesh_split_long_edges](mesh_split_long_edges.md) · [mesh_isotropic_remesh](mesh_isotropic_remesh.md) · [mesh_sample_points](mesh_sample_points.md) · [mesh_lod_chain](mesh_lod_chain.md) · [mesh_reduction_report](mesh_reduction_report.md) · [mesh_decimate_preserving](mesh_decimate_preserving.md)
+
+---
+*Provenance: meshres.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
+
+© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

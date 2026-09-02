@@ -32,7 +32,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [mesh_select_lod](../resolution/mesh_select_lod.md)
 
 ## 同カテゴリ(`curvilinear`)
 

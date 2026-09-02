@@ -1,4 +1,4 @@
-# 3D operator help — 329 ops in 65 categories
+# 3D operator help — 344 ops in 66 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/3d/<category>/<op>.md` を走査。
 
@@ -199,6 +199,10 @@
 ### render (18)
 
 [ambient_occlusion](render/ambient_occlusion.md) · [antialias](render/antialias.md) · [brdf_hapke](render/brdf_hapke.md) · [brdf_lommel_seeliger](render/brdf_lommel_seeliger.md) · [cast_shadow](render/cast_shadow.md) · [edge_alias_energy](render/edge_alias_energy.md) · [matcap_shade](render/matcap_shade.md) · [phong_shade](render/phong_shade.md) · [project_points](render/project_points.md) · [render_beauty](render/render_beauty.md) · [render_point_depth](render/render_point_depth.md) · [render_regolith](render/render_regolith.md) · [render_shaded](render/render_shaded.md) · [render_volume_projection](render/render_volume_projection.md) · [shadow_raycast](render/shadow_raycast.md) · [supersample_mesh](render/supersample_mesh.md) · [tonemap_aces](render/tonemap_aces.md) · [tonemap_reinhard](render/tonemap_reinhard.md)
+
+### resolution (15)
+
+[mesh_decimate_preserving](resolution/mesh_decimate_preserving.md) · [mesh_detail_map](resolution/mesh_detail_map.md) · [mesh_edge_stats](resolution/mesh_edge_stats.md) · [mesh_isotropic_remesh](resolution/mesh_isotropic_remesh.md) · [mesh_lod_chain](resolution/mesh_lod_chain.md) · [mesh_reduction_report](resolution/mesh_reduction_report.md) · [mesh_sample_points](resolution/mesh_sample_points.md) · [mesh_select_lod](resolution/mesh_select_lod.md) · [mesh_split_long_edges](resolution/mesh_split_long_edges.md) · [pc_density](resolution/pc_density.md) · [pc_density_equalize](resolution/pc_density_equalize.md) · [pc_fill_sparse](resolution/pc_fill_sparse.md) · [pc_lod_chain](resolution/pc_lod_chain.md) · [pc_poisson_disk](resolution/pc_poisson_disk.md) · [pc_thinning_report](resolution/pc_thinning_report.md)
 
 ### restoration (2)
 

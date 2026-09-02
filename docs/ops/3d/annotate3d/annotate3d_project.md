@@ -30,7 +30,7 @@ table(dict)を返す: 3-D 点の画素座標・前方距離・画像内/遮蔽�
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [mesh_select_lod](../resolution/mesh_select_lod.md)
 
 ## 同カテゴリ(`annotate3d`)
 

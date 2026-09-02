@@ -30,7 +30,7 @@ Per-face terrain weights (M,) in [0,1]: 0 = smooth regolith "sea", 1 = rough hig
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [mesh_select_lod](../resolution/mesh_select_lod.md)
 
 ## 同カテゴリ(`terrain`)
 

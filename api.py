@@ -1422,9 +1422,21 @@ def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
     left to the op's own 0.5 binarisation). Pass ``coerce=False`` to feed the
     array through untouched.
 
+    An integer or bool *image* is **not** the contract (float64 in [0,1]): it is
+    converted (``/255`` for uint8, ``/65535`` for uint16, re-typed for bool) and the
+    conversion is recorded in the ledger, or refused outright under
+    ``on_error="raise"``. It used to be handed to the op unchanged, which produced a
+    uint8/float16/all-ones result with no exception — see :func:`_contract_dtype`.
+
     ``device`` (default ``"cpu"``): ``"cuda"`` runs accel-enabled ops on the GPU.
     torch/accel *absent* falls back to CPU silently (documented); a kernel that
     FAILS is recorded in the fallback ledger and raises under ``on_error="raise"``.
+
+    ``fast`` (default ``None`` = read ``FULLSEYE_FAST``, i.e. **off**): on the CPU,
+    run the op's parity-gated cv2 twin from ``fast.py`` when it has one (gaussian,
+    box, median, gray morphology, sobel/laplace/prewitt, dog, unsharp, std, canny —
+    ``fast.FAST``). Same answer (``fast.parity``), several times faster; a twin that
+    fails is recorded with ``source="fast"`` and the core op runs instead.
 
     ``on_error``: ``"fallback"`` (default; sort-valid fallback, recorded, warns once
     per op), ``"warn"`` (warn on every fallback of this call) or ``"raise"``
@@ -1437,11 +1449,11 @@ def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
     """
     policy = _policy(on_error)
     if template is None:
-        return _apply_impl(image, name, a, b, coerce, device, policy)
+        return _apply_impl(image, name, a, b, coerce, device, policy, fast)
     prev = _ops._MATCH_CTX.get("template")
     _ops.set_match_template(template)
     try:
-        return _apply_impl(image, name, a, b, coerce, device, policy)
+        return _apply_impl(image, name, a, b, coerce, device, policy, fast)
     finally:
         _ops.set_match_template(prev)
 
