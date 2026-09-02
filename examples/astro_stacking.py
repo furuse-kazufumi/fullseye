@@ -246,7 +246,10 @@ def main():
     naive, _ = A.sigma_clip_stack(frames, mode="mean")
     stacked, accepted = A.sigma_clip_stack(aligned, mode="sigma_clip", kappa=3.0)
     print(f"   合成後の FWHM: 位置合わせなし {A.frame_quality(naive)['fwhm_px']:.3f} px → "
-          f"あり {A.frame_quality(stacked)['fwhm_px']:.3f} px")
+          f"あり {A.frame_quality(stacked)['fwhm_px']:.3f} px  "
+          f"(κ-σ の棄却率 {1.0 - float(accepted.mean()):.4f} = 汚染が無いので"
+          f"ほとんど落とさない)")
+    assert accepted.shape == (N_FRAMES,) + SHAPE and accepted.dtype == bool
     assert A.frame_quality(stacked)["fwhm_px"] < A.frame_quality(naive)["fwhm_px"]
     # 星の無いフレームでは **恒等変換を黙って返さない**(二重像を作らせない)
     try:
