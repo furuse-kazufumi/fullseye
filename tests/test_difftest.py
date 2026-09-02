@@ -88,3 +88,113 @@ def test_c_tol_defaults_to_1e_3_and_is_overridable(tmp_path, monkeypatch):
     rc, res = _run(monkeypatch, wd, "--c-tol", "5e-4")
     assert rc == 0 and res["c_tol"] == 5e-4                 # decoupled from --tol
     assert res["tol"] == 1e-6
+
+
+# --------------------------------------------------------------------------- #
+# 2026-09-03 review: (F2) compiler discovery is shared with the algo tier, so the C
+# half RUNS wherever `python -m ziglang cc` exists instead of silently skipping;
+# (F1) it catches an unclipped C stage; (F8) a NaN in either output is a FAILURE.
+# --------------------------------------------------------------------------- #
+import shutil                                               # noqa: E402
+
+import algo_difftest                                        # noqa: E402
+from test_codegen import genome_for                         # noqa: E402
+
+_CC = algo_difftest.find_c_compiler()
+_REPO = Path(__file__).resolve().parents[1]
+
+
+def _c_champion(tmp_path, specs, problem="edge"):
+    """An S2 workdir whose champion uses ONLY C-runtime ops (real codegen output)."""
+    g = genome_for(specs)
+    (tmp_path / f"champion_{problem}.json").write_text(json.dumps(
+        {"genome": [float(v) for v in g], "pipeline": problem,
+         "config": {"n_train": 4, "n_holdout": 4, "size": 32, "seed": 0}}), encoding="utf-8")
+    info = codegen.emit(problem, tmp_path)
+    assert info["c_fully_supported"] is True
+    (tmp_path / f"codegen_{problem}.json").write_text(json.dumps(info), encoding="utf-8")
+    return tmp_path
+
+
+def _mutant_runtime(tmp_path, monkeypatch, old, new):
+    """Point difftest at a copy of the C runtime with ``old`` replaced by ``new`` (so the
+    pre-fix behaviour can be re-created without touching the repo file)."""
+    rt = tmp_path / "rt"
+    rt.mkdir()
+    src = (_REPO / "imgops.c").read_text(encoding="utf-8")
+    assert old in src, "runtime text changed: update the mutant"
+    (rt / "imgops.c").write_text(src.replace(old, new), encoding="utf-8")
+    shutil.copy(_REPO / "imgops.h", rt / "imgops.h")
+    monkeypatch.setattr(difftest, "__file__", str(rt / "difftest.py"))   # `here` = rt
+
+
+_UNSHARP_GAUSS = [("unsharp", 1.0, 0.0), ("gaussian", 0.7 / 2.7, 0.5)]
+_SHARPEN_CLIPPED = "buf[i] = clampf(buf[i] + amount * (buf[i] - blur[i]), 0.0f, 1.0f);"
+
+
+def test_compiler_discovery_is_shared_with_algo_tier():
+    # the old gcc/cc/clang-only lookup returned None on a ziglang-only machine
+    assert difftest.find_c_compiler is algo_difftest.find_c_compiler
+
+
+@pytest.mark.skipif(_CC is None, reason="no C toolchain (gcc/clang or ziglang)")
+def test_c_gate_runs_here_and_passes_on_unsharp_chain(tmp_path, monkeypatch):
+    wd = _c_champion(tmp_path, _UNSHARP_GAUSS)
+    rc, res = _run(monkeypatch, wd)
+    cb = res["c_backend"]
+    assert cb["status"] == "ran", cb                        # NOT "skipped" on this machine
+    assert cb["compiler"] == algo_difftest.compiler_label(_CC)
+    assert cb["pass"] is True and cb["c_vs_python_max_abs_diff"] < 1e-5, cb
+    assert rc == 0
+
+
+@pytest.mark.skipif(_CC is None, reason="no C toolchain (gcc/clang or ziglang)")
+def test_c_gate_catches_unclipped_sharpen(tmp_path, monkeypatch):
+    # Re-create F1: sharpen without its exit clip AND codegen without the inter-stage
+    # clamp -> the C pipeline diverges from Python and the gate must FAIL (rc 1).
+    _mutant_runtime(tmp_path, monkeypatch, _SHARPEN_CLIPPED,
+                    "buf[i] = buf[i] + amount * (buf[i] - blur[i]);")
+    wd = _c_champion(tmp_path, _UNSHARP_GAUSS)
+    c_path = wd / "gen_edge.c"
+    c_path.write_text("\n".join(ln for ln in c_path.read_text(encoding="utf-8").splitlines()
+                                if "clamp01" not in ln), encoding="utf-8")
+    rc, res = _run(monkeypatch, wd)
+    cb = res["c_backend"]
+    assert cb["status"] == "ran" and cb["pass"] is False, cb
+    assert cb["c_vs_python_max_abs_diff"] > 1e-2            # measured 6.7e-2 before the fix
+    assert rc == 1
+
+
+@pytest.mark.skipif(_CC is None, reason="no C toolchain (gcc/clang or ziglang)")
+def test_codegen_clamp_alone_rescues_an_unclipped_op(tmp_path, monkeypatch):
+    # belt and braces: with the op's own clip removed, the emitted clamp01 still keeps
+    # the C pipeline equal to the Python runtime.
+    _mutant_runtime(tmp_path, monkeypatch, _SHARPEN_CLIPPED,
+                    "buf[i] = buf[i] + amount * (buf[i] - blur[i]);")
+    wd = _c_champion(tmp_path, _UNSHARP_GAUSS)
+    rc, res = _run(monkeypatch, wd)
+    assert res["c_backend"]["status"] == "ran" and res["c_backend"]["pass"] is True
+    assert rc == 0
+
+
+def test_nan_never_folds_to_zero_diff():
+    nan = float("nan")
+    assert difftest._maxdiff(np.array([[nan, 0.0]]), np.zeros((1, 2))) == float("inf")
+    assert difftest._maxdiff(np.zeros((1, 2)), np.array([[0.0, nan]])) == float("inf")
+    assert difftest._maxdiff(np.array([[0.0, float("inf")]]), np.zeros((1, 2))) == float("inf")
+    assert difftest._maxdiff(nan, 0.0) == float("inf")      # scalar (feature) finals too
+    assert difftest._maxdiff(np.zeros((2, 2)), np.zeros((2, 2))) == 0.0
+    assert difftest._maxdiff(np.zeros((2, 2)), np.zeros((3, 2))) == float("inf")
+    assert np.isnan(difftest._maxdiff({"cs": []}, {"cs": []}))   # non-numeric stays non-comparable
+    assert difftest._finite_maxdiff(np.array([nan]), np.array([nan])) == float("inf")
+
+
+@pytest.mark.skipif(_CC is None, reason="no C toolchain (gcc/clang or ziglang)")
+def test_nan_in_c_output_fails_the_gate(tmp_path, monkeypatch):
+    _mutant_runtime(tmp_path, monkeypatch, _SHARPEN_CLIPPED, "buf[i] = NAN;")
+    wd = _c_champion(tmp_path, _UNSHARP_GAUSS)
+    rc, res = _run(monkeypatch, wd)
+    cb = res["c_backend"]
+    assert cb["status"] == "ran" and cb["pass"] is False, cb   # was pass=True with diff 0.0
+    assert cb["c_vs_python_max_abs_diff"] == float("inf")
+    assert rc == 1
