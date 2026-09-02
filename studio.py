@@ -146,6 +146,26 @@ def _log_soft_failure(context, exc):
         pass
 
 
+def _atomic_write_text(path, text):
+    """Write *text* to *path* atomically: temp file in the SAME directory, fsync,
+    then ``os.replace`` — a crash / full disk mid-write leaves the old file intact."""
+    import tempfile
+    d = os.path.dirname(os.path.abspath(path)) or "."
+    fd, tmp = tempfile.mkstemp(prefix=".fs-pipe-", suffix=".tmp", dir=d)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
+            fh.write(text)
+            fh.flush()
+            os.fsync(fh.fileno())
+        os.replace(tmp, path)
+    except Exception:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        raise
+
+
 def _example_code_or_error(EX, key):
     """Source text of a worked example, or a visible error message instead of a
     silently blank preview when the file cannot be read."""
