@@ -551,10 +551,8 @@ def render_through_lens(image, system, pixel_pitch_um=5.5, field_of_view=None, z
     fov = None if field_of_view is None else _num(field_of_view, "field_of_view", lo=1e-9)
     nz = _noise_params(noise)
     seed = _int(seed, "seed", 0, 2 ** 31 - 1)
-    if oversample is None:
-        para = RT.paraxial_trace(system)
-        oversample = int(max(4, math.ceil(2.0 * system["wavelength_um"] * _working_fno(para) / pitch)))
-    oversample = _int(oversample, "oversample", 1, 64)
+    if oversample is not None:
+        oversample = _int(oversample, "oversample", 1, 64)
     if size is not None:
         size = _int(size, "size", 8, MAX_PUPIL_SAMPLES)
     model = _lens_model(system, img.shape, pitch, zones, fov, size, oversample, illumination)
