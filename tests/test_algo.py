@@ -1349,9 +1349,12 @@ def test_segments_intersect_matches_sympy_over_random():
 
 
 def test_segments_intersect_fail_soft():
-    assert algo.run_algo("segments_intersect", [0, 0, 4, 4, 0, 4, 4]) == 0.0        # < 8 values
-    assert algo.run_algo("segments_intersect", [0, 0, 4, 4, 0, 4, 200000, 0]) == 0.0  # coord range
-    assert algo.run_algo("segments_intersect", [0, 0, 4, 4, 0, 4, 4, 0.5]) == 0.0   # non-integer
+    # -1.0, NOT 0.0: "no intersection" is a valid answer (2026-09-03 review F5)
+    assert algo.run_algo("segments_intersect", [0, 0, 4, 4, 0, 4, 4]) == -1.0       # < 8 values
+    assert algo.run_algo("segments_intersect", [0, 0, 4, 4, 0, 4, 200000, 0]) == -1.0  # coord range
+    assert algo.run_algo("segments_intersect", [0, 0, 4, 4, 0, 4, 4, 0.5]) == -1.0  # non-integer
+    assert algo.run_algo("segments_intersect", [float("nan")] * 8) == -1.0
+    assert algo.run_algo("segments_intersect", [0, 0, 1, 0, 0, 1, 1, 1]) == 0.0     # honestly disjoint
 
 
 @pytest.mark.parametrize("name", _GEOMETRY)
