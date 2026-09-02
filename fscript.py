@@ -316,16 +316,27 @@ class Parser:
         return body
 
     def _parse_block(self, terminators):
-        stmts = []
-        while True:
-            self._eat_newlines()
-            t = self._peek()
-            if t.kind == "eof":
-                break
-            if t.kind == "kw" and t.val in terminators:
-                break
-            stmts.append(self._parse_stmt())
-        return stmts
+        self._enter(self._peek().line)
+        try:
+            stmts = []
+            while True:
+                self._eat_newlines()
+                t = self._peek()
+                if t.kind == "eof":
+                    break
+                if t.kind == "kw" and t.val in terminators:
+                    break
+                stmts.append(self._parse_stmt())
+            return stmts
+        finally:
+            self._leave()
+
+    def _parse_loop_body(self, terminators):
+        self.loop_depth += 1
+        try:
+            return self._parse_block(terminators)
+        finally:
+            self.loop_depth -= 1
 
     def _parse_stmt(self):
         t = self._peek()
