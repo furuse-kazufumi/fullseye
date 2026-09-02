@@ -369,7 +369,10 @@ _U8_KERNELS: dict = {} if not _HAS_CV2 else {
 
 # 二値(region)を返す twin。ゲートは **不一致率 0** を要求する(連続 op の
 # 5e-3 より厳しい。二値は 1 画素の食い違いが目に見える差だから)。
-_BINARY_OUT = frozenset({"canny", "edges_image"})
+# ★「観測した出力が {0,1} だったか」で判定してはいけない —— 連続 op でも定数画像
+#   では出力が全 0 になり、二値と誤判定して基準が勝手に厳しくなる(実装中に踏んだ)。
+#   判定は registry の **宣言された out_sort** で行う。
+_BINARY_OUT = frozenset({"canny"})
 
 # 載せなかった候補と、その実測誤差(docs/design/FAST_TWINS.md の表の出典)。
 # 「速いが違う」を作らないための、**捨てた記録**。
