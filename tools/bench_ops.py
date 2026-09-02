@@ -514,7 +514,9 @@ def bench_row(name: str, size: tuple[int, int, str], dtype: str, image: str, *,
         tkey = (sort, image, h, w)
         if tkey not in template_cache:
             ref = input_for(sort, image, h, w, "float64")
-            template_cache[tkey] = np.ascontiguousarray(ref[100:148, 100:148])
+            side = max(4, min(48, h // 4, w // 4))          # 小さな画像でも空テンプレにしない
+            y0, x0 = h // 4, w // 4
+            template_cache[tkey] = np.ascontiguousarray(ref[y0:y0 + side, x0:x0 + side])
         template = template_cache[tkey]
 
     before = _digest(x)
