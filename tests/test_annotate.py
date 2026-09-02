@@ -561,3 +561,31 @@ def test_example_gallery_runs():
     assert report["tick_px_error"] == 0
     assert report["alpha_max_abs_error"] == 0.0
     assert report["legend_height_error"] == 0
+
+
+def test_data_to_pixel_refuses_mismatched_lengths():
+    """長さの違う 2 本を返すと、zip した呼び手が**黙って嘘の図**を描く。
+
+    2026-09-02、連鎖ファザーがこの op を実行できるようになった直後に発覚。
+    それまでは x=7 点・y=3 点でも例外を出さず ``(7,)`` と ``(3,)`` を返していた。
+    zip すると **3 点だけが x の先頭 3 つの位置に**描かれ、点が消えたことも
+    x がずれたことも図からは分からない。
+
+    兄弟の :func:`annotate.plot_series` は同じ状況を拒否していた ―― **同じ族の
+    中で規律が割れていた**ので、文言も揃えてある(片方だけ直すと再発する型)。
+    """
+    import numpy as np
+    import pytest
+
+    import annotate
+
+    ax = annotate.axes_transform((4, 4, 60, 40), (0.0, 10.0), (0.0, 5.0))
+    with pytest.raises(ValueError, match="x and y must have the same length"):
+        annotate.data_to_pixel(ax, np.linspace(0, 10, 7), np.linspace(0, 5, 3))
+    with pytest.raises(ValueError, match="x and y must have the same length"):
+        annotate.plot_series(np.zeros((60, 80)), ax,
+                             np.linspace(0, 10, 7), np.linspace(0, 5, 3))
+
+    # 揃っていれば通る(締めすぎていないこと)
+    px, py = annotate.data_to_pixel(ax, np.linspace(0, 10, 7), np.linspace(0, 5, 7))
+    assert px.shape == py.shape == (7,)

@@ -16,6 +16,18 @@
 <p>------</p>
 <p>ValueError</p>
 <p>log 軸に 0 以下の値を渡したとき(-inf を「端」として描く図は嘘になる)。</p>
+<p>`<code style="color:#22d3bf">x</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">y</code>` の長さが違うとき(下記)。</p>
+<p>Notes</p>
+<p>-----</p>
+<p><b>長さの不一致を拒否するのは 2026-09-02 に足した</b>。連鎖ファザーがこの op を</p>
+<p>実行できるようになった直後、長さの違う 2 本の signal を渡す経路で採掘器が</p>
+<p>`<code style="color:#22d3bf">np.stack</code><code style="color:#22d3bf"> の生の ValueError で落ちて発覚した。それまでは </code><code style="color:#22d3bf">x</code>` 7 点・</p>
+<p>`<code style="color:#22d3bf">y</code>` 3 点でも<b>例外を出さず、長さの違う 2 本をそのまま返していた</b>。</p>
+<p>危ないのは落ちることではなく、落ちないこと ―― 返った 2 本を `<code style="color:#22d3bf">zip</code>` すると</p>
+<p><b>3 点だけが、x の先頭 3 つの位置に</b>描かれる。点が消えたことも、x が</p>
+<p>ずれたことも図からは分からない。兄弟の :func:<code style="color:#22d3bf">plot_series</code> は同じ状況を</p>
+<p>`<code style="color:#22d3bf">&quot;x and y must have the same length&quot;</code>` で拒否していたので、**同じ族の中で</p>
+<p>規律が割れていた**(片方だけ直しても再発する型なので、文言も揃えてある)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

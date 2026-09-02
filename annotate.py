@@ -1084,8 +1084,30 @@ def data_to_pixel(axes, x, y):
     ------
     ValueError
         log 軸に 0 以下の値を渡したとき(-inf を「端」として描く図は嘘になる)。
+        ``x`` と ``y`` の長さが違うとき(下記)。
+
+    Notes
+    -----
+    **長さの不一致を拒否するのは 2026-09-02 に足した**。連鎖ファザーがこの op を
+    実行できるようになった直後、長さの違う 2 本の signal を渡す経路で採掘器が
+    ``np.stack`` の生の ValueError で落ちて発覚した。それまでは ``x`` 7 点・
+    ``y`` 3 点でも**例外を出さず、長さの違う 2 本をそのまま返していた**。
+
+    危ないのは落ちることではなく、落ちないこと ―― 返った 2 本を ``zip`` すると
+    **3 点だけが、x の先頭 3 つの位置に**描かれる。点が消えたことも、x が
+    ずれたことも図からは分からない。兄弟の :func:`plot_series` は同じ状況を
+    ``"x and y must have the same length"`` で拒否していたので、**同じ族の中で
+    規律が割れていた**(片方だけ直しても再発する型なので、文言も揃えてある)。
     """
     rx, ry, rw, rh = axes["rect"]
+    n_x = np.size(np.asarray(x))
+    n_y = np.size(np.asarray(y))
+    if n_x != n_y:
+        raise ValueError(
+            f"x and y must have the same length (got: {n_x} and {n_y}); "
+            "returning two arrays of different lengths would let the caller zip them "
+            "and silently plot the shorter one against the wrong coordinates"
+        )
     fx = _axis_fraction(x, axes["xlim"], axes.get("xscale", "linear"))
     fy = _axis_fraction(y, axes["ylim"], axes.get("yscale", "linear"))
     px = rx + fx * (rw - 1)
