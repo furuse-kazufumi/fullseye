@@ -395,12 +395,30 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
             ks_map[is_ground] = _GROUND_SPECULAR
             spec_tint[is_ground] = 1.0
 
+        if brdf != "phong":
+            # 惑星測光の反射則: 物体画素は I/F(放射輝度係数)そのもの。albedo は平均 1 の
+            # 色味に正規化(明るさは w が決める)。鏡面は無し。地面は従来の Phong のまま。
+            radf = render_shade.brdf_shade(normals, light=light_cam, view=view_cam,
+                                           model=brdf, **bp)
+            tint = albedo / max(float(albedo.mean()), 1e-12)
+            alb_map[is_object] = tint
+            kd_map[is_object] = 1.0
+            ks_map[is_object] = 0.0
+            diff = np.where(is_object, radf, diff)
+
         # 環境光(AO で遮蔽・影には残す)+ 拡散(AO と影)+ 鏡面(影)。
         ambient_rgb = ka * alb_map * ao_map[..., None]
         diffuse_rgb = (kd_map * diff)[..., None] * alb_map \
             * ao_map[..., None] * shadow_map[..., None]
         specular_rgb = (ks_map * spec)[..., None] * spec_tint * shadow_map[..., None]
         hdr = ambient_rgb + diffuse_rgb + specular_rgb
+        if k_bounce > 0.0 and ao:
+            # 地形の一回反射の近似(docstring 参照): 遮蔽された半球の割合 (1−AO) だけ
+            # 隣の地形が見え、その地形は照らされた面の平均放射輝度で光っているとする。
+            lit_obj = is_object & (shadow_map > 0.5) & (diff > 0.0)
+            mean_lit = float((kd_map * diff)[lit_obj].mean()) if lit_obj.any() else 0.0
+            bounce = k_bounce * mean_lit * alb_map * (1.0 - ao_map)[..., None]
+            hdr = hdr + np.where(is_object[..., None], bounce, 0.0)
 
     hdr = np.where(fg[..., None], hdr, 0.0)              # 背景は 0(後で背景色を合成)
     hdr = np.clip(hdr, 0.0, None)                        # 数値上の微小負値を除去
