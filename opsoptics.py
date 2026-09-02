@@ -152,8 +152,9 @@ def categories():
 #: 宣言 out 型と素の返りの橋渡し(ops3d / ops1d / opsmath と同じ一級機構)。
 #:
 #: **現在は空 — 意図的に**。opsmath では ``mat_svd`` が数学慣習の
-#: ``U, s, Vt = ...`` タプルを返すため adapter が要ったが、optics の 18 op は
-#: すべて宣言型そのもの(dict / (n,2) 配列 / ndarray)を素で返す設計にしてある。
+#: ``U, s, Vt = ...`` タプルを返すため adapter が要ったが、optics 18 op も
+#: raytrace 12 op もすべて宣言型そのもの(dict / (n,2) 配列 / ndarray)を素で
+#: 返す設計にしてある。
 #: 空にしておくと :func:`call` は :func:`get` と同じ値を返し、連鎖ファザーの
 #: TYPEMISS 検査が**素の返りをそのまま**宣言と突き合わせる = 検証が最も厳しい。
 #: タプル返しの op を将来足すならここに登録すること(空欄を埋めるために既存の
