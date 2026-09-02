@@ -5950,6 +5950,8 @@ def build_window(model=None):
         body = program_text_from_model()
         code_edit.setPlainText("\n".join(dev_lines) + "\n" + body if dev_lines else body)
         code_edit.blockSignals(False)
+        # regenerated text: directives first, then exactly one op per line
+        _set_stage_lines([len(dev_lines) + i + 1 for i in range(len(model.stages))])
         code_edit.clear_exec()
         state["code_dirty"] = False
 
