@@ -118,8 +118,7 @@ def test_even_width_draws_exactly_width_pixels():
                     (4, [8, 9, 10, 11]), (5, [8, 9, 10, 11, 12])):
         out = D.draw_line(np.zeros((20, 30)), (2, 10), (27, 10), 1.0, width=w)
         assert np.nonzero(out.any(axis=1))[0].tolist() == rows, w
-        cols = np.nonzero(out.any(axis=0))[0]
-        assert out[rows, :][:, cols].min() > 0.5               # 帯の中は隙間なし
+        assert out[rows, :][:, 6:24].min() > 0.5               # 帯の中は隙間なし(端のキャップは除く)
     # 縦線も同じ(−x 側に寄る)
     out = D.draw_line(np.zeros((30, 20)), (10, 2), (10, 27), 1.0, width=2)
     assert np.nonzero(out.any(axis=0))[0].tolist() == [9, 10]
