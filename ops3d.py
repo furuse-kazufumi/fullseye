@@ -520,7 +520,12 @@ _CATALOG = {
         ("essential_8point", "twoview", ["image2d", "image2d"], "matrix", False),
         ("recover_pose", "twoview", ["image2d", "image2d"], "pose", False),
         ("triangulate", "twoview", ["image2d", "image2d"], "points", False),
-        ("sampson_distance", "twoview", ["image2d", "image2d"], "measurement", False),
+        # out は 'measurement'(スカラ 1 つ)ではなく (N,) の**点ごと**の距離。
+        # 2026-09-02、chain_fuzz に引数ビルダーを足してこの op に初めて到達した
+        # ときに TYPEMISS で判明した(それまで必須の P/F 行列が組めずスキップ
+        # され続けていた)。out の変更は decode の候補リスト(in で絞る)に
+        # 影響しないので、既存 champion は動かない。
+        ("sampson_distance", "twoview", ["image2d", "image2d"], "signal", False),
     ],
     "curvature": [  # 点群の主曲率/shape index(把持アフォーダンス・凸凹鞍点分類)
         ("principal_curvatures", "curvature3d", ["points"], "curvature", False),
