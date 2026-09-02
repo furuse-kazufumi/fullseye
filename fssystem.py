@@ -100,7 +100,7 @@ SYSTEM_PARAMS = {
         "default": "off",
         "tightens_only": True,
         "affects_numbers": False,
-        "applied_by": ("colortransport.py",),
+        "applied_by": ("colortransport.py", "imgmetrics.py"),
         "doc": (
             "既定でも fail-closed だが、**理屈の上では正しくないが実害が出るとは"
             "限らない**場面(同値を引き裂くヒストグラム整合、対称でない圧縮距離)を"
