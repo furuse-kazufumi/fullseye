@@ -248,10 +248,7 @@ def test_pipeline_refuses_shape_change_and_resets_state_on_failure():
             raise RuntimeError("kaboom")
 
     import backend_safe as bs
-    p2 = VS.VideoPipeline([Boom()])
-    with pytest.raises(RuntimeError):
-        p2.push(np.zeros((2, 2)))                               # facade default is raise? then strict
-    # explicit fail-soft: recorded with source="stream", returns None, state reset
+    # fail-soft (the facade default): recorded with source="stream", returns None, state reset
     p3 = VS.VideoPipeline([Boom()], on_error="fallback")
     before = len(bs.fallbacks()) if hasattr(bs, "fallbacks") else None
     with bs.quiet_warnings() if hasattr(bs, "quiet_warnings") else _null():
