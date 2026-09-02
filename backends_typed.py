@@ -80,8 +80,11 @@ TYPE_TO_SORT = {
     "cimage": "cimage",
     # 光子計数・ライトフィールド族(2026-09-01)。counts と countrate は
     # 進化側では 1 つの sort に畳む — voxel/sdf/labels を volume に、
-    # points/normals/keypoints を points に畳んでいるのと同じ粒度の判断で、
+    # points/normals を points に畳んでいるのと同じ粒度の判断で、
     # 「非負の 1-D」であることが進化にとって意味のある区別のすべてだから。
+    # (keypoints も当初この列に入れていたが、**形が (N,2) で points の契約を
+    #  満たさない**ため畳めなかった。畳めるかどうかは「意味が近いか」ではなく
+    #  「同じ sort の形の契約を両方が満たすか」で決まる ―― 2026-09-02 の教訓。)
     # カタログ側で 2 語に分けてあるのは、型の嘘(ヒストグラムをレート op に
     # 渡す)をファザーに検出させるためで、そちらは別の目的。
     "lightfield": "lightfield",

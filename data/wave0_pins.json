@@ -1,11 +1,11 @@
 {
  "cand_counts": {
-  "image": 480,
-  "region": 116,
+  "image": 519,
+  "region": 130,
   "feature": 1,
-  "contour": 40,
+  "contour": 66,
   "match": 1,
-  "volume": 10,
+  "volume": 15,
   "any": 1
  },
  "genomes": [
@@ -122,36 +122,36 @@
   },
   {
    "image": "macro_binarize(a=1.00,b=1.00) -> macro_binarize(a=1.00,b=1.00) -> macro_binarize(a=1.00,b=1.00) -> macro_binarize(a=1.00,b=1.00) -> macro_binarize(a=1.00,b=1.00) -> macro_binarize(a=1.00,b=1.00)",
-   "region": "r3_label_to_region(a=1.00,b=1.00) -> r3_label_to_region(a=1.00,b=1.00) -> r3_label_to_region(a=1.00,b=1.00) -> r3_label_to_region(a=1.00,b=1.00) -> r3_label_to_region(a=1.00,b=1.00) -> r3_label_to_region(a=1.00,b=1.00)",
+   "region": "hx_distance_pr(a=1.00,b=1.00)",
    "feature": "identity",
-   "contour": "xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00)",
+   "contour": "hx_distance_sc(a=1.00,b=1.00)",
    "match": "identity",
    "volume": "macro_vol_denoise(a=1.00,b=1.00) -> macro_vol_denoise(a=1.00,b=1.00) -> macro_vol_denoise(a=1.00,b=1.00) -> macro_vol_denoise(a=1.00,b=1.00) -> macro_vol_denoise(a=1.00,b=1.00) -> macro_vol_denoise(a=1.00,b=1.00)",
    "any": "identity"
   },
   {
-   "image": "rft_generic(a=0.50,b=0.50) -> rft_generic(a=0.50,b=0.50) -> rft_generic(a=0.50,b=0.50) -> rft_generic(a=0.50,b=0.50) -> rft_generic(a=0.50,b=0.50) -> rft_generic(a=0.50,b=0.50)",
-   "region": "projective_trans_region(a=0.50,b=0.50) -> projective_trans_region(a=0.50,b=0.50) -> projective_trans_region(a=0.50,b=0.50) -> projective_trans_region(a=0.50,b=0.50) -> projective_trans_region(a=0.50,b=0.50) -> projective_trans_region(a=0.50,b=0.50)",
+   "image": "xsk_blob_log(a=0.50,b=0.50)",
+   "region": "closest_point_transform(a=0.50,b=0.50) -> xsk_blob_log(a=0.50,b=0.50)",
    "feature": "identity",
-   "contour": "orientation_xld(a=0.50,b=0.50)",
+   "contour": "xg_orientation(a=0.50,b=0.50)",
    "match": "identity",
-   "volume": "vol_threshold(a=0.50,b=0.50) -> vol_threshold(a=0.50,b=0.50) -> vol_threshold(a=0.50,b=0.50) -> vol_threshold(a=0.50,b=0.50) -> vol_threshold(a=0.50,b=0.50) -> vol_threshold(a=0.50,b=0.50)",
+   "volume": "vol_reg_erode(a=0.50,b=0.50) -> vol_reg_erode(a=0.50,b=0.50) -> vol_reg_erode(a=0.50,b=0.50) -> vol_reg_erode(a=0.50,b=0.50) -> vol_reg_erode(a=0.50,b=0.50) -> vol_reg_erode(a=0.50,b=0.50)",
    "any": "identity"
   },
   {
-   "image": "sk_entropy_feat(a=0.24,b=0.29)",
-   "region": "sk_euler(a=0.24,b=0.29)",
+   "image": "cv_laplacian(a=0.24,b=0.29) -> rotate_image(a=0.41,b=0.47) -> xpil_contour(a=0.59,b=0.65) -> xkor_motion_blur(a=0.76,b=0.82) -> alife_perona_malik(a=0.94,b=1.00)",
+   "region": "sk_find_boundaries(a=0.24,b=0.29) -> compactness(a=0.41,b=0.47)",
    "feature": "identity",
-   "contour": "select_contours_xld(a=0.24,b=0.29) -> convexity_xld(a=0.41,b=0.47)",
+   "contour": "area_center_xld(a=0.24,b=0.29)",
    "match": "identity",
-   "volume": "vol_gaussian(a=0.24,b=0.29) -> vol_erode(a=0.41,b=0.47) -> vol_threshold(a=0.59,b=0.65) -> vol_slice(a=0.76,b=0.82) -> iv_wiener_deconv_spatial(a=0.94,b=1.00)",
+   "volume": "vol_median(a=0.24,b=0.29) -> vol_threshold(a=0.41,b=0.47) -> vol_reg_erode(a=0.59,b=0.65) -> vol_opening_ball(a=0.76,b=0.82) -> vol_count(a=0.94,b=1.00)",
    "any": "identity"
   },
   {
    "image": "macro_binarize(a=1.00,b=1.00) -> macro_binarize(a=1.00,b=1.00) -> macro_binarize(a=1.00,b=1.00) -> macro_binarize(a=1.00,b=1.00) -> macro_binarize(a=1.00,b=1.00) -> macro_binarize(a=1.00,b=1.00)",
-   "region": "r3_label_to_region(a=1.00,b=1.00) -> r3_label_to_region(a=1.00,b=1.00) -> r3_label_to_region(a=1.00,b=1.00) -> r3_label_to_region(a=1.00,b=1.00) -> r3_label_to_region(a=1.00,b=1.00) -> r3_label_to_region(a=1.00,b=1.00)",
+   "region": "hx_distance_pr(a=1.00,b=1.00)",
    "feature": "identity",
-   "contour": "xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00)",
+   "contour": "hx_distance_sc(a=1.00,b=1.00)",
    "match": "identity",
    "volume": "macro_vol_denoise(a=1.00,b=1.00) -> macro_vol_denoise(a=1.00,b=1.00) -> macro_vol_denoise(a=1.00,b=1.00) -> macro_vol_denoise(a=1.00,b=1.00) -> macro_vol_denoise(a=1.00,b=1.00) -> macro_vol_denoise(a=1.00,b=1.00)",
    "any": "identity"
