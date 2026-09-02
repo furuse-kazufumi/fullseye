@@ -3,55 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-03 08:15:35
+- **最終更新**: 2026-09-03 08:53:09
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-8152ede05 auto: render_shadow.py 編集前 (2026-09-03 08:07)
-ff8334705 auto: render3d.py 編集前 (2026-09-03 08:07)
-e6d1ce02f release notes: CHANGELOG.md (0.1.5 unreleased + history), bump version to 0.1.5, README 3-D count 317
-10a883f2b docs: NEXT_SESSION — push + Qiita PATCH done (2026-09-03 07:54)
-1a0f475b6 optics wave 2: Sellmeier catalogue + aspheres + chromatic shift, lensopt (DLS), illumdesign (6 ops), calibration_views, lensimage imaging_sim, Itokawa Hapke/raycast/regolith ops; ledger 47 optics ops; Codex review fixes
-4a7be3055 auto: NEXT_SESSION.md 編集前 (2026-09-03 07:47)
-c59f3e03d auto: test_render_regolith.py 編集前 (2026-09-03 07:37)
-ae3f51381 auto: fullseye_overview_qiita_en.md 編集前 (2026-09-03 07:31)
-c92bddeb5 auto: fullseye_overview_qiita_ja.md 編集前 (2026-09-03 07:30)
-25540b2fc auto: render_beauty.py 編集前 (2026-09-03 07:29)
+f346ab429 auto: api.py 編集前 (2026-09-03 08:53)
+8cafefefb auto: api.py 編集前 (2026-09-03 08:52)
+4f24ae379 auto: api.py 編集前 (2026-09-03 08:52)
+4418f46a6 auto: api.py 編集前 (2026-09-03 08:52)
+8a2c7eb06 auto: mesh_resolution_demo.py 編集前 (2026-09-03 08:52)
+2347faa59 auto: api.py 編集前 (2026-09-03 08:52)
+25c53ba97 auto: api.py 編集前 (2026-09-03 08:51)
+de4aeffe4 auto: mesh_resolution_demo.py 編集前 (2026-09-03 08:51)
+7dca25be3 auto: api.py 編集前 (2026-09-03 08:51)
+53b2d1e5d auto: mesh_resolution_demo.py 編集前 (2026-09-03 08:51)
 ```
 
 ## 現在の git status
 
 ```
-M meshrepair.py
- M meshres.py
- M render3d.py
- M render_ao.py
- M render_shadow.py
-?? examples_3d/mesh_resolution_demo.py
-?? tests/test_meshres.py
+M api.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-08:15 examples_3d/mesh_resolution_demo.py
-08:13 meshres.py
-08:13 tests/test_meshres.py
-08:12 meshrepair.py
-08:12 render3d.py
-08:08 render_shadow.py
-08:08 render_ao.py
-08:05 examples_3d/_gallery/itokawa_regolith_hero.png
-08:00 docs/SESSION_SUMMARY.md
-07:58 pyproject.toml
-07:58 README.md
-07:58 CHANGELOG.md
-07:54 docs/NEXT_SESSION.md
-07:45 tests/test_opdocs.py
-07:44 fullseye/OP_CATALOG.md
+08:53 api.py
+08:53 .ruff_cache/0.16.0/2128910586982079947
+08:53 .ruff_cache/0.16.0/17072135449836082734
+08:52 .ruff_cache/0.16.0/7363606932562918290
+08:52 docs/design/PERF_MEMORY_VIDEO_SURVEY.md
+08:52 .pytest_cache/v/cache/nodeids
+08:52 .pytest_cache/v/cache/lastfailed
+08:52 examples_3d/mesh_resolution_demo.py
+08:51 fast.py
+08:50 tools/chain_fuzz.py
+08:50 pyproject.toml
+08:50 fullseye/__init__.py
+08:50 examples3d.py
+08:50 ops3d.py
+08:49 tests/test_bench_ops.py
 ```
 
 ---

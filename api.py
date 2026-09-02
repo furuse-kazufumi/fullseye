@@ -1328,6 +1328,52 @@ def _run_guarded(name, fn, policy, out_sort=None, v=None):
     return out
 
 
+# core op name -> accel key, built ONCE. The comprehension used to run on every
+# single ``apply`` (90+ entries per call — survey §1.7 / §5.3 item 4). Keyed on the
+# identity+size of the table so a test that swaps ``accel.ACCEL`` still gets the
+# right answer instead of a stale cache.
+_ACCEL_REV: tuple = (None, None)
+
+
+def _accel_reverse(accel) -> dict:
+    """Cached ``{core_op_name: accel_key}`` reverse index of ``accel.ACCEL``.
+
+    Same value the per-call dict comprehension produced (later keys win, exactly as
+    before), just not rebuilt 90 entries at a time on every call.
+    """
+    global _ACCEL_REV
+    tag = (id(accel.ACCEL), len(accel.ACCEL))
+    if _ACCEL_REV[0] != tag:
+        _ACCEL_REV = (tag, {c: k for k, (_f, c, _h) in accel.ACCEL.items()})
+    return _ACCEL_REV[1]
+
+
+def _try_fast(op, v, a, b):
+    """CPU fast-twin path (``fast.py``, cv2/IPP). ``_NOACCEL`` when there is no twin.
+
+    Same shape as :func:`_try_accel`: OpenCV/``fast`` ABSENT is silent (``ImportError``),
+    an input the twin cannot serve faithfully is silent too (``FastUnsupported`` — that
+    is an absence, not a failure), and anything else is recorded with ``source="fast"``
+    and re-raised under ``on_error="raise"``.
+    """
+    try:
+        import fast as _fast
+    except ImportError:
+        return _NOACCEL
+    if op.name not in _fast.FAST or (op.name in _FAST_OPEN and not _bs.is_strict()):
+        return _NOACCEL                  # breaker open; strict mode retries so "raise" can raise
+    try:
+        return _fast.apply_fast(op.name, v, a, b)
+    except _fast.FastUnsupported:
+        return _NOACCEL                  # no faithful twin for THIS input: core, no ledger noise
+    except Exception as e:               # noqa: BLE001
+        if _bs.is_strict():
+            raise
+        _FAST_OPEN.add(op.name)          # breaker opens: no more twin attempts until reset_fast()
+        _bs.record(op.name, e, op.out_sort, source="fast")
+        return _NOACCEL
+
+
 def _try_accel(op, v, a, b, device):
     """GPU single-op path. Returns ``_NOACCEL`` when there is nothing to accelerate.
 
