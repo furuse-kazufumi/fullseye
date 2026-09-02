@@ -345,7 +345,6 @@ _SPEC: tuple = (
     ("prewitt_amp", t_prewitt_mag, _F64, "prewitt_mag の HALCON twin"),
     ("deviation_image", t_std_filter, _F64, "std_filter の HALCON twin"),
     ("diff_of_gauss", t_dog, _F64, "dog の HALCON twin"),
-    ("edges_image", t_canny, _F64, "canny の HALCON twin"),
 )
 
 FAST: dict = {}
