@@ -64,3 +64,62 @@ def test_invalid_inputs_raise():
         D.draw_line(np.zeros((5, 5, 5, 5)), (0, 0), (1, 1))     # ndim 不正
     with pytest.raises(ValueError):
         D.draw_markers(np.zeros((20, 20)), [(1, 1)], shape="triangle")  # 未知shape
+
+
+# ---- 2026-09-03 描画バグ回帰 ------------------------------------------------- #
+def test_wholly_outside_line_lights_nothing():
+    """回帰: 画面外のサンプルを縁にクランプしていたため、完全に画面外の線でも
+    縁に画素が点いていた(10 画素)。"""
+    z = np.zeros((20, 20))
+    assert D.draw_line(z, (-10, -10), (-1, -5), 1.0).sum() == 0
+    assert D.draw_polyline(z, [(25, 3), (30, 30), (40, 5)], 1.0, closed=True).sum() == 0
+    assert D.draw_markers(z, [(-8, -8)], 1.0, size=3, shape="cross").sum() == 0
+    assert D.draw_markers(z, [(30, 30)], 1.0, size=3, shape="square").sum() == 0
+    assert D.draw_contour(z, np.array([[-5.0, -5.0], [-9.0, -2.0], [-3.0, -8.0]]), 1.0).sum() == 0
+
+
+def test_corner_crossing_line_lights_only_the_inframe_segment():
+    """(10,-5)→(25,10) は x = y + 15 上を走り、枠 20×20 には (15,0)…(19,4) の
+    5 画素だけが入る。クランプ方式は縁に L 字を作っていた。"""
+    m = D.draw_line(np.zeros((20, 20)), (10, -5), (25, 10), 1.0) > 0.5
+    ys, xs = np.nonzero(m)
+    assert m.sum() == 5
+    assert np.array_equal(xs - ys, np.full(5, 15))             # 線上のみ
+    assert m[0, :15].sum() == 0 and m[5:, 19].sum() == 0       # 縁に沿った偽の画素なし
+
+
+def test_rgb_colour_on_rgba_image_keeps_alpha():
+    """回帰: 色を足りないチャンネル分ゼロ埋めしていたので RGB 色で描くと alpha=0。"""
+    img = np.ones((7, 7, 4))
+    out = D.draw_line(img, (0, 3), (6, 3), color=(1.0, 0.0, 0.0))
+    assert out[3, 3].tolist() == [1.0, 0.0, 0.0, 1.0]
+    out = D.draw_circle(img, (3, 3), 2, color=(0.0, 1.0, 0.0), fill=True)
+    assert out[3, 3].tolist() == [0.0, 1.0, 0.0, 1.0]
+    out = D.draw_markers(img, [(3, 3)], color=(0.0, 0.0, 1.0), size=2, shape="cross")
+    assert out[3, 3].tolist() == [0.0, 0.0, 1.0, 1.0]
+    # スカラ色は従来どおり全チャンネル(alpha 含む)に入る
+    assert D.draw_line(img, (0, 3), (6, 3), color=0.5)[3, 3].tolist() == [0.5] * 4
+
+
+def test_fractional_endpoints_give_8_connected_lines():
+    """回帰: サンプル数を int() で切り捨てていたので小数端点の線に穴が空いた。"""
+    m = D._line_mask((5, 5), (0.4, 2), (2.3, 2))
+    assert m[2].astype(int).tolist() == [1, 1, 1, 0, 0]        # 中央画素が抜けない
+    m = D._line_mask((12, 32), (0.5, 0.5), (30.49, 10.2))
+    lab, n = ndimage.label(m, structure=np.ones((3, 3)))
+    assert n == 1                                              # 8 連結で 1 本
+    assert m[0, 0] and m[10, 30]                               # 両端(丸め)が点く
+    assert m.sum() == 31                                       # 支配軸 30 px + 1
+
+
+def test_even_width_draws_exactly_width_pixels():
+    """回帰: 偶数幅が w+1 画素(width=2 で 3 行)になっていた。奇数幅は不変。"""
+    for w, rows in ((1, [10]), (2, [9, 10]), (3, [9, 10, 11]),
+                    (4, [8, 9, 10, 11]), (5, [8, 9, 10, 11, 12])):
+        out = D.draw_line(np.zeros((20, 30)), (2, 10), (27, 10), 1.0, width=w)
+        assert np.nonzero(out.any(axis=1))[0].tolist() == rows, w
+        cols = np.nonzero(out.any(axis=0))[0]
+        assert out[rows, :][:, cols].min() > 0.5               # 帯の中は隙間なし
+    # 縦線も同じ(−x 側に寄る)
+    out = D.draw_line(np.zeros((30, 20)), (10, 2), (10, 27), 1.0, width=2)
+    assert np.nonzero(out.any(axis=0))[0].tolist() == [9, 10]
