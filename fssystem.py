@@ -43,10 +43,17 @@
     fs.get_system("metric_contract")             # -> 'strict'(既定)
 
     with fs.system(metric_contract="tolerant"):  # 範囲を限って切り替える
-        ...                                       # 進化ループを回す
+        ...                                       # (予約のみ: 今はまだ何も読まない)
 
     old = fs.set_system("extra_checks", "on")    # その文脈で切り替え、前の値が返る
     fs.reset_system()                            # 全部を既定へ
+
+### (3) 読み手が居ないパラメータは「予約」と表に書く
+
+``metric_contract`` / ``unmeasurable_policy`` は受理・記録されるが、**2026-09 時点で
+読むコードが無い**(``applied_by=None``)。設定しても数値も経路も変わらない。
+効いていない設定を「効く」と読ませないため、各項目の ``applied_by`` に実際に
+``get_system`` を呼ぶファイルを列挙し、テストが grep で突き合わせる。
 """
 from __future__ import annotations
 
