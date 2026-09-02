@@ -191,7 +191,12 @@ def surface_match(model: dict, scene_points, scene_normals=None,
             if not hits:
                 continue
             for mi, alpha_m in hits:
-                b = int(round(((alpha_s[j] - alpha_m) % two_pi) / (two_pi / ab))) % ab
+                # T = Ts^-1 . Rx(alpha) . Tm maps model -> scene, and Rx(alpha_m) pg_m
+                # and Rx(alpha_s) pg_s both land in the y>=0 half-plane, so
+                # pg_s = Rx(alpha_m - alpha_s) pg_m: vote for alpha_m - alpha_s.
+                # (The reversed difference put the sign of the rotation about the
+                # normal backwards: Rerr 27-169 deg on random poses, 2026-09-02.)
+                b = int(round(((alpha_m - alpha_s[j]) % two_pi) / (two_pi / ab))) % ab
                 acc[mi, b] += 1.0
         if acc.max() <= 0:
             continue
