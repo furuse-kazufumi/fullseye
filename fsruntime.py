@@ -89,6 +89,47 @@ class GoldenVector:
             raise ValueError(
                 "GoldenVector.tol must be finite and >= 0 (an infinite/NaN/negative "
                 "tolerance would make the golden prove nothing), got %r" % (self.tol,))
+        # Every expectation must have a canonical encoding (it is what the
+        # manifest digest covers); an unsupported type is refused here, not
+        # discovered at load time.
+        for k, v in self.expect.items():
+            _canon(v, [], "expect[%r]" % k)
+
+
+def _canon(v, out: list, path: str = "expect") -> None:
+    """Append the canonical byte encoding of an expectation value to ``out``.
+
+    The digest used to hash ``repr()`` of the expectations, which is lossy
+    (numpy elides arrays over 1000 elements to ``...``, so two goldens differing
+    at index 1000 hashed identically) and unstable (it follows
+    ``np.printoptions`` and the numpy version).  This encoding is exact and
+    self-delimiting: type tag + length prefix + raw bytes, ``float.hex()`` for
+    reals, ``dtype.str + shape + tobytes()`` for arrays.  numpy scalars encode
+    as the Python scalar they compare as.
+    """
+    if isinstance(v, (bool, np.bool_)):
+        out.append(b"b1" if v else b"b0")
+    elif isinstance(v, (int, np.integer)):
+        out.append(b"i" + str(int(v)).encode("ascii") + b";")
+    elif isinstance(v, (float, np.floating)):
+        out.append(b"f" + float(v).hex().encode("ascii") + b";")
+    elif isinstance(v, str):
+        b = v.encode("utf-8")
+        out.append(b"s" + str(len(b)).encode("ascii") + b":" + b)
+    elif isinstance(v, np.ndarray):
+        a = np.ascontiguousarray(v)
+        out.append(b"n" + a.dtype.str.encode("ascii") + b"("
+                   + ",".join(str(int(d)) for d in a.shape).encode("ascii") + b")"
+                   + str(a.nbytes).encode("ascii") + b":" + a.tobytes())
+    elif isinstance(v, (list, tuple)):
+        out.append(b"l" + str(len(v)).encode("ascii") + b"[")
+        for i, x in enumerate(v):
+            _canon(x, out, "%s[%d]" % (path, i))
+        out.append(b"]")
+    else:
+        raise TypeError(
+            "GoldenVector %s: unsupported expectation type %s (allowed: bool, int, "
+            "float, str, list/tuple of those, numpy array)" % (path, type(v).__name__))
 
 
 @dataclass(frozen=True)
