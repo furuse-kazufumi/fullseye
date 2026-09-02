@@ -7683,9 +7683,20 @@ def build_window(model=None):
             report_error("Could not open pipeline", "%s\n\n%s" % (path, e)); return
         state["pipe_path"] = os.path.abspath(path)
         state["dirty"] = False                            # freshly loaded == matches the file
-        refresh_stage_list(select=len(model.stages) - 1); show_result()
+        # the file's directives (or none) replace the previous program's dev_* lines —
+        # they never leak from one pipeline into the next (F11 review finding)
+        state["dev_lines"] = list(model.directives)
+        state["code_dirty"] = False
+        code_edit.breakpoints.clear()
+        refresh_stage_list(select=len(model.stages) - 1)
+        if model.directives:
+            apply_dev_directives("\n".join(model.directives), reclaim_stale=True)
+        show_result()
+        if model.directives:
+            apply_text_directives("\n".join(model.directives))
         _push_recent(path); _set_title()
         flash("loaded " + os.path.basename(path))
+    win._open_pipe_path = _open_pipe_path
 
     def open_pipe():
         path, _ = QtWidgets.QFileDialog.getOpenFileName(win, "Open pipeline", "", "JSON (*.json)")
