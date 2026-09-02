@@ -6378,6 +6378,7 @@ def build_window(model=None):
         if cur is None:
             op_param.setText("select an operator to see its signature")
             lbl_a.setText("a"); lbl_b.setText("b")
+            op_row_a.set_spec(param_specs.GENERIC_FLOAT); op_row_b.set_spec(param_specs.GENERIC_FLOAT)
             op_a_spin.setEnabled(True); op_b_spin.setEnabled(True)
             b_insert.setEnabled(False); b_help.setEnabled(False); b_run_once.setEnabled(False); return
         name = cur.data(QtCore.Qt.UserRole)
