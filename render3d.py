@@ -875,7 +875,7 @@ def sample_boulders(V, F, *, density: float, d_min: float, d_max=None,
     n = int(rng.poisson(lam)) if lam > 0.0 else 0
     if n == 0 or eff.sum() <= 0.0:
         return {"centre": np.zeros((0, 3)), "normal": np.zeros((0, 3)),
-                "diameter": np.zeros(0), "expected": lam}
+                "diameter": np.zeros(0), "expected": lam, "face": np.zeros(0, np.int64)}
     faces = rng.choice(Ff.shape[0], size=n, p=eff / eff.sum())
     r1, r2 = rng.random(n), rng.random(n)
     s1 = np.sqrt(r1)
