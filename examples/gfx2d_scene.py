@@ -158,7 +158,33 @@ def part3_composite_and_blend():
         worst = max(worst, abs(got - expect[mode]))
         print(f"     {mode:<12} {got:.4f}  (仕様 {expect[mode]:.4f})")
     print(f"   最大差 {worst:.2e} —— 実装ではなく**仕様**と突き合わせている")
-    return d_st < 1e-15 and d_pm < 1e-15 and worst < 1e-12
+
+    # 層を積む便宜 op は、上の over を畳んだものと**厳密に**同じでなければならない。
+    empty = np.zeros_like(a)
+    stacked = G.layer_stack([{"image": a}, {"image": b}, {"image": c}])
+    nested = G.alpha_composite(c, G.alpha_composite(b, G.alpha_composite(a, empty)))
+    d_ls = float(np.abs(stacked - nested).max())
+    one = G.layer_stack([{"image": a}])
+    d_op = float(np.abs(G.layer_stack([{"image": a},
+                                       {"image": b, "opacity": 0.0}]) - one).max())
+    # W3C の規則: 背景が透明な場所ではブレンド関数を効かせない(自分の色のまま)
+    mul = G.layer_stack([{"image": a}, {"image": b, "mode": "multiply"}])
+    outside = (a[..., 3] == 0) & (b[..., 3] > 0)
+    d_w3c = float(np.abs(mul[..., :3][outside] - b[..., :3][outside]).max())
+    print(f"   layer_stack([a,b,c]) == c over (b over (a over 空)):  差 {d_ls:.1e}")
+    print(f"   opacity=0 の層は恒等 {d_op:.1e} / 透明な背景の上では multiply でも"
+          f"自分の色のまま(W3C 規則、{int(outside.sum())} 画素で差 {d_w3c:.1e})")
+    for label, call in (("空のスタック", lambda: G.layer_stack([])),
+                        ("offset のような未知キー",
+                         lambda: G.layer_stack([{"image": a, "offset": (1, 1)}]))):
+        try:
+            call()
+            print(f"   [FAIL] {label} が拒否されなかった")
+            return False
+        except ValueError as exc:
+            print(f"   拒否 {label:<22} → {str(exc)[:66]}")
+    return (d_st < 1e-15 and d_pm < 1e-15 and worst < 1e-12
+            and d_ls == 0.0 and d_op == 0.0 and d_w3c == 0.0)
 
 
 def part5_terrain():
