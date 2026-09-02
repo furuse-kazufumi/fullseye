@@ -225,14 +225,24 @@ def f2_gauss_pyramid(v, a, b):
     H, W = x.shape
     level = 1 + int(round(float(a) * 3))          # 1..4
     cur = x
+    done = 0
     for _ in range(level):
         cur = ndimage.gaussian_filter(cur, 1.0)
         cur = cur[::2, ::2]
+        done += 1
         if min(cur.shape) < 2:
             break
-    zy, zx = H / cur.shape[0], W / cur.shape[1]
-    up = ndimage.zoom(cur, (zy, zx), order=1) if (zy != 1.0 or zx != 1.0) else cur
-    return np.clip(_fit(up, H, W), 0.0, 1.0)
+    # Up-sample by the SAME geometry the decimation used: ``cur[i]`` sits at
+    # original pixel ``i * 2**done``, so original pixel p is read at ``p / 2**done``.
+    # ``ndimage.zoom(cur, H/h)`` aligns the two CORNERS instead (pixel h-1 -> H-1),
+    # a stretch of (H-1)/(h-1) != 2 that slid content by up to ~1 px towards the
+    # far edge (measured 0.19/0.52/0.85 px at rows 8/24/40 of a 48² image).
+    scale = float(2 ** done)
+    yy, xx = np.mgrid[0:H, 0:W]
+    up = ndimage.map_coordinates(
+        cur, [yy.ravel() / scale, xx.ravel() / scale], order=1, mode="nearest",
+    ).reshape(H, W)
+    return np.clip(up, 0.0, 1.0)
 
 
 def f2_gray_inside(v, a, b):
