@@ -253,6 +253,65 @@ def test_label_volume_helper_keeps_unassigned_distinct_from_empty():
     assert int((vol > 0).sum()) == 2, "空ボクセルにラベルが漏れている"
 
 
+#: ``TYPE_TO_SORT`` の写像のうち、**その型の代表値が写り先 sort の形の契約を
+#: 満たさない**もの。症状(死んだ橋渡し op)ではなく**原因**を直接固定する。
+KNOWN_BROKEN_TYPE_TO_SORT = {
+    ("keypoints", "points"):
+        "keypoints は像面上の **(N,2)** だが points sort は ``ndim==2 and "
+        "shape[1]==3`` を要求する(``_sort_ok``)。代表値の時点で必ず False。"
+        "これが tb_project_points / tb_points_zyx_to_keypoints_uv / "
+        "tb_keypoints_uv_to_points / tb_keypoints_to_image2d が死んでいる**唯一の"
+        "原因**で、2026-09-02 に全 21 型を代表値で走査して**破れているのはここだけ**"
+        "だと確かめた。正しい直し方は keypoints 専用 sort を足すことだが、"
+        "その 4 op が points の候補リストから抜けるので ``ops.decode`` が動く"
+        "(docs/WAVE0_STABLE_SLOTS.md の north-star)。pin の取り直しを伴う判断なので"
+        "単独では入れない。",
+}
+
+
+def test_every_type_to_sort_mapping_holds_for_its_own_seed():
+    """型 → sort の写像が、**その型の代表値**で成り立つこと。
+
+    橋渡し op が死ぬのは、たいてい op の問題ではなく写像の問題である。
+    症状(定数を返す / 恒等になる)を 1 件ずつ潰すより、写像を直接検査した方が
+    原因に近い。種は複数回引く —— ``labels`` のように 2-D と 3-D を混ぜて返す
+    生成器があり、1 回だけだと**たまたま通って**見逃す。
+    """
+    gens = cf.make_generators()
+    rng = np.random.default_rng(0)
+    broken = {}
+    for t, sort in sorted(bt.TYPE_TO_SORT.items()):
+        g = gens.get(t)
+        if g is None:
+            continue                                     # 種の無い型は判定できない
+        fails = 0
+        for _ in range(12):
+            if not bt._sort_ok(g(rng), sort):
+                fails += 1
+        if fails:
+            broken[(t, sort)] = f"12 回中 {fails} 回、代表値が sort の契約を満たさない"
+    new = {k: v for k, v in broken.items() if k not in KNOWN_BROKEN_TYPE_TO_SORT}
+    assert not new, (
+        "型 -> sort の写像が代表値で破れている(新規): %s\n"
+        "この写像で橋渡しされた op は、実行しても sort の検査に落ちて "
+        "_fallback に化ける(例外もログも出ない)。" % new)
+
+
+def test_known_broken_mappings_are_still_broken():
+    """直ったのに一覧へ残り続けない。"""
+    gens = cf.make_generators()
+    rng = np.random.default_rng(1)
+    stale = []
+    for (t, sort), _why in KNOWN_BROKEN_TYPE_TO_SORT.items():
+        g = gens.get(t)
+        if g is None:
+            continue
+        if all(bt._sort_ok(g(rng), sort) for _ in range(12)):
+            stale.append((t, sort))
+    assert not stale, ("KNOWN_BROKEN_TYPE_TO_SORT に残っているが実際は成り立つ: %s"
+                       " — 直ったなら一覧から消すこと" % stale)
+
+
 def test_label_volume_helper_rejects_mismatched_lengths():
     """fail-closed: 点数とラベル数が違うものは黙って切り詰めない。"""
     P = np.zeros((5, 3))
