@@ -1121,6 +1121,28 @@ def _span_weight(ang: np.ndarray, span_deg, op: str) -> float:
     strictly needs Parker weighting, which is not implemented; the uniform
     rescaling gets the mean density right and leaves the redundant wedge
     over-smoothed relative to the rest).
+
+    When *span_deg* is ``None`` the covered range is **inferred from the angle
+    list**, and the estimator has to survive irregular schemes. The first one,
+    ``median_step * n_angles``, did not: a golden-angle set has, by the three-gap
+    theorem, exactly three distinct neighbour spacings, and the median is one of
+    the two small ones, so 180 golden views over a full half-turn were credited
+    with **162.8 degrees** (measured; 146.4 at 100 views, 153.7 at 720) and the
+    slice came out 9.6-19 % too dark — a limited-angle scan with a different set
+    of views is *over*-credited by the same mechanism (90 golden views over 90
+    degrees: 106.6). The estimator now asks the question directly: which part
+    of the half-turn is **not** covered? The angles are folded onto the
+    parallel-beam circle ``[0, 180)`` (which is also what makes a 360-degree
+    scan renormalise to ``pi`` by construction), the circular gaps between
+    neighbouring views are taken, and a gap is a *hole* only when it is at least
+    twice the median step — the golden sequence's largest gap is at most
+    ``phi = 1.618`` times its median (measured over every view count to 3000),
+    a regular grid's are all equal, and a wedge left by a truncated scan is
+    many steps wide. What is missing is the hole beyond the one step the last
+    view before it stands for, ``sum(gap - step)`` over the holes; the span is
+    the half-turn minus that. On a regular grid this is exactly the old
+    ``step * n`` for every span, and on a full-coverage irregular set it is
+    exactly ``pi``.
     """
     if span_deg is not None:
         total = np.deg2rad(_positive(span_deg, "span_deg"))
@@ -1133,8 +1155,35 @@ def _span_weight(ang: np.ndarray, span_deg, op: str) -> float:
                 "%s: the angle list has a non-positive median step (duplicate "
                 "angles?) — pass span_deg explicitly to say what range these views "
                 "cover" % (op,))
-        total = np.deg2rad(step) * ang.size
+        total = np.deg2rad(_covered_span_deg(ang, step))
     return min(total, np.pi) / ang.size
+
+
+#: A circular gap between neighbouring views counts as an unmeasured *hole*
+#: (rather than as sampling irregularity) when it is at least this many median
+#: steps wide. The golden-angle sequence's largest gap is at most ``phi``
+#: (1.618) medians, a regular grid's gaps are all one median, and the wedge a
+#: truncated scan leaves is many. See :func:`_span_weight`.
+HOLE_STEPS = 2.0
+
+
+def _covered_span_deg(ang: np.ndarray, step_deg: float) -> float:
+    """The angular range, in degrees, that *ang* actually samples.
+
+    Views are folded onto the parallel-beam half-turn (``theta`` and
+    ``theta + 180`` are mirror images), the circular neighbour gaps are taken —
+    they sum to 180 exactly — and every gap of at least :data:`HOLE_STEPS`
+    median steps is a hole. Each view stands for one *step_deg* of angle, so
+    the unmeasured part of a hole is ``gap - step_deg``, and the covered span
+    is 180 minus the sum of those. Exact for a uniform grid over any span (the
+    wedge comes back as ``180 - n*step`` to rounding) and for any irregular set
+    without holes (180).
+    """
+    folded = np.sort(np.mod(ang, 180.0))
+    gaps = np.diff(np.concatenate([folded, [folded[0] + 180.0]]))
+    holes = gaps[gaps >= HOLE_STEPS * step_deg]
+    missing = float(np.sum(holes - step_deg)) if holes.size else 0.0
+    return max(180.0 - missing, 0.0)
 
 
 def filtered_backprojection(sinogram, angles_deg=None, size=None,
