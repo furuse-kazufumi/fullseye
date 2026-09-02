@@ -345,6 +345,9 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, _norm, _bin):
         adapter = cf.ADAPTERS.get(name)
         base = fn if adapter is None else (
             lambda *a, _f=fn, _ad=adapter, **k: _ad(_f(*a, **k)))
+        pre = INPUT_ADAPTERS.get(name)
+        if pre is not None:
+            base = (lambda v, *a, _f=base, _pre=pre, **k: _f(_pre(v), *a, **k))
         out.append(Op("tb_" + name, "typed", "", in_sort, out_sort,
                       _make_runner(base, kwargs, tunable, in_sort, out_sort)))
     return out
