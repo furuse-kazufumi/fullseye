@@ -4345,6 +4345,11 @@ def build_window(model=None):
         _sync_undo_actions()
 
     def _restore_stages(stages):
+        # a pending knob debounce belongs to the pipeline we are leaving: its settled
+        # handler would push the pre-drag state and clear redo AFTER this restore,
+        # corrupting history (F8 review finding) — cancel it and forget its base
+        knob_timer.stop()
+        win._knob_drag_base = None
         model.stages = [list(st) for st in stages]
         mark_dirty()
         refresh_stage_list(select=(len(model.stages) - 1) if model.stages else None)
