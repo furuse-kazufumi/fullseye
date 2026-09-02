@@ -93,7 +93,7 @@ def diagnose_stages(stages) -> list[dict]:
                 # renders this same line's own index as index+1.
                 "message": "stage %d (%s) outputs '%s' but %s expects '%s'"
                            % (prev_index + 1, prev_name, prev_out, op.name, op.in_sort)})
-        prev_out = op.out_sort
+        prev_out = _thread_sort(prev_out, op)
         prev_name = op.name
         prev_index = i
     return problems
