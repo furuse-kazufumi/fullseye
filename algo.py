@@ -1166,16 +1166,20 @@ _C_GRAPH_DIJKSTRA = '''\
 int graph_dijkstra(const double* a, int n_in, double* out) {
     if (n_in < 3) return 0;
     double nd = a[0], md = a[1], sd = a[2];
-    if (!(nd >= 1.0 && nd <= 2147483000.0)) return 0;
-    if (!(md >= 0.0 && md <= 2147483000.0)) return 0;
+    if (!(nd >= 1.0 && nd <= 5000000.0 && nd == (double)(int)nd)) return 0;   /* node cap (as sieve) */
+    if (!(md >= 0.0 && md <= 2147483000.0 && md == (double)(int)md)) return 0;
     int n = (int)nd, m = (int)md;
-    if (!(sd >= 0.0 && sd < (double)n)) return 0;      /* bound src against int n, not raw nd */
+    /* bound src against int n, not raw nd; integral (1.5 is no node) */
+    if (!(sd >= 0.0 && sd < (double)n && sd == (double)(int)sd)) return 0;
     int src = (int)sd;
     if ((long long)n_in < 3LL + 3LL * m) return 0;
-    for (int k = 0; k < m; k++) {                      /* validate up front */
-        int u = (int)a[3 + 3 * k], v = (int)a[3 + 3 * k + 1];
+    for (int k = 0; k < m; k++) {                      /* validate up front, on the RAW doubles */
+        double ud = a[3 + 3 * k], vd = a[3 + 3 * k + 1];
         double w = a[3 + 3 * k + 2];
-        if (u < 0 || u >= n || v < 0 || v >= n || w < 0.0) return 0;
+        /* range first (short-circuit), then integrality: (int)3e9 / (int)NaN is UB */
+        if (!(ud >= 0.0 && ud < (double)n && ud == (double)(int)ud)) return 0;
+        if (!(vd >= 0.0 && vd < (double)n && vd == (double)(int)vd)) return 0;
+        if (w < 0.0) return 0;
     }
     if (!out) return n;                                /* size probe: out_len = n (>= input len when sparse) */
     char* settled = (char*)calloc((size_t)n, 1);

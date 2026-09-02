@@ -47,6 +47,33 @@ def test_hs_recovers_small_translation():
     assert abs(np.median(_interior(v)) - 1.0) < 0.5
 
 
+@pytest.mark.parametrize("u0,v0", [(1.0, 0.0), (1.0, 1.0), (3.0, 2.0), (0.0, -3.0)])
+def test_hs_default_converges_to_known_translation(u0, v0):
+    """Regression (2026-09-02): the default 100 Jacobi sweeps returned ~20-27 % of a
+    1 px translation (Jacobi diffuses one pixel per sweep), and even the converged
+    one-shot linearisation overshot by 20 %. With convergence-tolerance sweeps,
+    a pyramid start and re-linearisation the default call must be within 15 %
+    (measured: < 1 %)."""
+    prev = _textured(seed=21)
+    nxt = _shift(prev, u0, v0)
+    u, v = flow.optical_flow_hs(prev, nxt, alpha=0.5)          # all defaults
+    mu, mv = np.median(_interior(u)), np.median(_interior(v))
+    mag = np.hypot(u0, v0)
+    assert np.hypot(mu - u0, mv - v0) < 0.15 * mag, (mu, mv)
+    within = (np.hypot(_interior(u) - u0, _interior(v) - v0) <= 0.25 * mag).mean()
+    assert within > 0.8, within
+
+
+def test_hs_iterates_to_tolerance_not_budget():
+    # a generous budget and a tight tolerance give the same answer as the default:
+    # the solve stops on convergence, not on the sweep count
+    prev = _textured(seed=22)
+    nxt = _shift(prev, 1.0, 0.0)
+    u_a, _ = flow.optical_flow_hs(prev, nxt, alpha=0.5)
+    u_b, _ = flow.optical_flow_hs(prev, nxt, alpha=0.5, iters=20000, tol=1e-6)
+    assert abs(np.median(_interior(u_a)) - np.median(_interior(u_b))) < 0.02
+
+
 def test_warp_by_flow_reconstructs_next():
     prev = _textured(seed=3)
     u0, v0 = 3.0, -2.0
