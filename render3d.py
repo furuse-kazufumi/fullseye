@@ -628,3 +628,314 @@ def marching_cubes(vol, level: float):
         raise ValueError("vol must be a 3-D volume (D, H, W), got %r" % (A.shape,))
     verts, faces, _, _ = measure.marching_cubes(A, level=float(level))
     return np.ascontiguousarray(verts, np.float64), np.ascontiguousarray(faces, np.int64)
+
+
+# --------------------------------------------------------------------------- #
+# Terrain relief — fBm displacement, sea/highland mask, boulder scattering     #
+# --------------------------------------------------------------------------- #
+# 2026-09-03: the Itokawa hero looked "like a potato". Two causes — the turntable
+# mesh came from a 3000-point cloud voxelised at 72³ (no relief survives), and a
+# smooth shape model has no metre-scale roughness (the Gaskell model resolves
+# ~10 m facets). Real Itokawa has smooth regolith "seas" (MUSES-C Regio at the
+# neck, Sagamihara) and boulder-strewn highlands with a cumulative boulder
+# size–frequency N(>D) ∝ D^-3.1 for D ≳ 5 m (Michikami et al. 2008, EPS 60:13).
+# These ops add that relief procedurally and deterministically (seeded), as real
+# geometry so it self-shadows and casts shadows through the same ray path.
+
+def _mesh_check(V, F):
+    Vv = np.asarray(V, np.float64)
+    Ff = np.asarray(F, np.int64)
+    if Vv.ndim != 2 or Vv.shape[1] != 3 or Vv.shape[0] == 0:
+        raise ValueError("V must be a non-empty (N,3) array, got %r" % (Vv.shape,))
+    if Ff.ndim != 2 or Ff.shape[1] != 3 or Ff.shape[0] == 0:
+        raise ValueError("F must be a non-empty (M,3) array, got %r" % (Ff.shape,))
+    if Ff.min() < 0 or Ff.max() >= Vv.shape[0]:
+        raise ValueError("face index out of range")
+    if not np.all(np.isfinite(Vv)):
+        raise ValueError("V contains non-finite coordinates")
+    return Vv, Ff
+
+
+def _vertex_normals(Vv, Ff):
+    """Area-weighted outward vertex normals (unit; zero-area fallback = +Z)."""
+    tri = Vv[Ff]
+    fn = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0])
+    vn = np.zeros_like(Vv)
+    for k in range(3):
+        np.add.at(vn, Ff[:, k], fn)
+    n = np.linalg.norm(vn, axis=1, keepdims=True)
+    vn = np.where(n > 1e-15, vn / np.where(n > 1e-15, n, 1.0), np.array([0.0, 0.0, 1.0]))
+    return vn
+
+
+def _value_noise3(p, perm):
+    """Seeded lattice value noise in [-1, 1] at points ``p`` (N,3) (C1 smoothstep)."""
+    p0 = np.floor(p).astype(np.int64)
+    f = p - p0
+    f = f * f * (3.0 - 2.0 * f)
+
+    def lat(ix, iy, iz):
+        hsh = perm[(perm[(perm[ix & 255] + iy) & 255] + iz) & 255]
+        return hsh / 255.0 * 2.0 - 1.0
+
+    x, y, z = p0[:, 0], p0[:, 1], p0[:, 2]
+    c000 = lat(x, y, z); c100 = lat(x + 1, y, z)
+    c010 = lat(x, y + 1, z); c110 = lat(x + 1, y + 1, z)
+    c001 = lat(x, y, z + 1); c101 = lat(x + 1, y, z + 1)
+    c011 = lat(x, y + 1, z + 1); c111 = lat(x + 1, y + 1, z + 1)
+    fx, fy, fz = f[:, 0], f[:, 1], f[:, 2]
+    x00 = c000 + (c100 - c000) * fx
+    x10 = c010 + (c110 - c010) * fx
+    x01 = c001 + (c101 - c001) * fx
+    x11 = c011 + (c111 - c011) * fx
+    y0 = x00 + (x10 - x00) * fy
+    y1 = x01 + (x11 - x01) * fy
+    return y0 + (y1 - y0) * fz
+
+
+def fbm_noise(points, scale: float, *, octaves: int = 4, lacunarity: float = 2.0,
+              gain: float = 0.5, seed: int = 0) -> np.ndarray:
+    """Seeded fractional-Brownian-motion value noise in [-1, 1] at ``points`` (N,3)."""
+    P = np.asarray(points, np.float64)
+    if P.ndim != 2 or P.shape[1] != 3:
+        raise ValueError("points must be (N,3)")
+    sc = float(scale)
+    if not np.isfinite(sc) or sc <= 0.0:
+        raise ValueError("scale must be a positive finite length")
+    oc = int(octaves)
+    if oc < 1 or oc > 16:
+        raise ValueError("octaves must be in [1, 16]")
+    lac, gn = float(lacunarity), float(gain)
+    if not (np.isfinite(lac) and lac > 0.0 and np.isfinite(gn) and 0.0 < gn <= 1.0):
+        raise ValueError("lacunarity must be > 0 and gain in (0, 1]")
+    rng = np.random.default_rng(int(seed))
+    perm = np.tile(rng.permutation(256), 2)
+    out = np.zeros(P.shape[0], np.float64)
+    amp, freq, norm = 1.0, 1.0 / sc, 0.0
+    offset = np.array([37.1, 17.7, 91.3])                  # keep lattice off the origin
+    for o in range(oc):
+        out += amp * _value_noise3(P * freq + offset * (o + 1), perm)
+        norm += amp
+        amp *= gn
+        freq *= lac
+    return out / norm
+
+
+def mesh_displace_fbm(V, F, amplitude: float, *, scale=None, octaves: int = 4,
+                      lacunarity: float = 2.0, gain: float = 0.5, seed: int = 0):
+    """Roughen a mesh by displacing vertices along their normals with seeded fBm noise → ``(V, F)``.
+
+    ``amplitude`` is the peak displacement **in the mesh's own units** (the Itokawa STL is in
+    km, so 0.003 = 3 m); every vertex moves by at most ``amplitude`` (|fBm| ≤ 1, asserted by
+    tests). ``scale`` is the base wavelength (default = bounding-box diagonal / 12);
+    ``octaves``/``lacunarity``/``gain`` shape the spectrum (multifractal ridges come from the
+    default 4 octaves). Deterministic for a given ``seed``; ``amplitude=0`` returns the input
+    unchanged. Face normals of the displaced mesh carry the matching shading perturbation
+    (no separate bump map is faked). Fail-closed on degenerate meshes / non-finite arguments."""
+    Vv, Ff = _mesh_check(V, F)
+    amp = float(amplitude)
+    if not np.isfinite(amp) or amp < 0.0:
+        raise ValueError("amplitude must be finite and >= 0")
+    if amp == 0.0:
+        return Vv.copy(), Ff.copy()
+    diag = float(np.linalg.norm(Vv.max(axis=0) - Vv.min(axis=0)))
+    sc = diag / 12.0 if scale is None else float(scale)
+    noise = fbm_noise(Vv, sc, octaves=octaves, lacunarity=lacunarity, gain=gain, seed=seed)
+    vn = _vertex_normals(Vv, Ff)
+    return Vv + vn * (amp * noise)[:, None], Ff.copy()
+
+
+def terrain_region_mask(V, F, *, smooth_fraction: float = 0.3, method: str = "neck",
+                        seed: int = 0) -> np.ndarray:
+    """Per-face terrain weights (M,) in [0,1]: 0 = smooth regolith "sea", 1 = rough highland.
+
+    ``method='neck'`` (default, Itokawa-motivated): the sea is the band of faces around the
+    narrowest cross-section along the principal (long) axis — MUSES-C Regio sits in the neck
+    between head and body — widened until it covers ``smooth_fraction`` of the surface area.
+    ``method='noise'``: low-frequency seeded fBm thresholded at the area-weighted
+    ``smooth_fraction`` quantile (generic patches). ``method='slope'``: faces are ranked by
+    local slope (angle between face normal and the smoothed neighbourhood normal); the
+    flattest ``smooth_fraction`` of the area is sea. Deterministic; fail-closed on bad input."""
+    Vv, Ff = _mesh_check(V, F)
+    sf = float(smooth_fraction)
+    if not np.isfinite(sf) or sf < 0.0 or sf > 1.0:
+        raise ValueError("smooth_fraction must be in [0, 1]")
+    if method not in ("neck", "noise", "slope"):
+        raise ValueError("method must be neck|noise|slope, got %r" % (method,))
+    tri = Vv[Ff]
+    fc = tri.mean(axis=1)
+    fn = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0])
+    area = 0.5 * np.linalg.norm(fn, axis=1)
+    M = Ff.shape[0]
+    if sf == 0.0:
+        return np.ones(M, np.float64)
+    if sf == 1.0:
+        return np.zeros(M, np.float64)
+    if method == "neck":
+        c = fc - np.average(fc, axis=0, weights=np.maximum(area, 1e-18))
+        _, _, vt = np.linalg.svd(c, full_matrices=False)
+        axis = vt[0]
+        s = c @ axis
+        perp = np.linalg.norm(c - s[:, None] * axis[None, :], axis=1)
+        # narrowest cross-section: smallest 90th-percentile radius over 24 bins of the
+        # central 60 % of the long axis (ends excluded — tips are trivially narrow)
+        lo, hi = np.percentile(s, 20), np.percentile(s, 80)
+        edges = np.linspace(lo, hi, 25)
+        best, best_s = np.inf, 0.5 * (lo + hi)
+        for k in range(24):
+            sel = (s >= edges[k]) & (s < edges[k + 1])
+            if sel.sum() < 8:
+                continue
+            r90 = np.percentile(perp[sel], 90)
+            if r90 < best:
+                best, best_s = r90, 0.5 * (edges[k] + edges[k + 1])
+        score = np.abs(s - best_s)                     # distance from the neck plane
+    elif method == "noise":
+        diag = float(np.linalg.norm(Vv.max(axis=0) - Vv.min(axis=0)))
+        score = fbm_noise(fc, diag / 3.0, octaves=2, seed=seed)
+    else:
+        vn = _vertex_normals(Vv, Ff)
+        smooth_n = vn[Ff].mean(axis=1)
+        smooth_n /= np.maximum(np.linalg.norm(smooth_n, axis=1, keepdims=True), 1e-15)
+        unit_fn = fn / np.maximum(np.linalg.norm(fn, axis=1, keepdims=True), 1e-15)
+        score = np.arccos(np.clip(np.einsum("ij,ij->i", unit_fn, smooth_n), -1.0, 1.0))
+    order = np.argsort(score, kind="stable")
+    cum = np.cumsum(area[order])
+    n_sea = int(np.searchsorted(cum, sf * cum[-1], side="right")) + 1
+    weights = np.ones(M, np.float64)
+    weights[order[:n_sea]] = 0.0
+    return weights
+
+
+def _unit_ellipsoid(subdiv: int):
+    """Icosphere (unit radius) with ``subdiv`` midpoint subdivisions → (V, F)."""
+    phi = (1.0 + 5.0 ** 0.5) / 2.0
+    Vs = np.array([(-1, phi, 0), (1, phi, 0), (-1, -phi, 0), (1, -phi, 0),
+                   (0, -1, phi), (0, 1, phi), (0, -1, -phi), (0, 1, -phi),
+                   (phi, 0, -1), (phi, 0, 1), (-phi, 0, -1), (-phi, 0, 1)], np.float64)
+    Fs = np.array([[0, 11, 5], [0, 5, 1], [0, 1, 7], [0, 7, 10], [0, 10, 11],
+                   [1, 5, 9], [5, 11, 4], [11, 10, 2], [10, 7, 6], [7, 1, 8],
+                   [3, 9, 4], [3, 4, 2], [3, 2, 6], [3, 6, 8], [3, 8, 9],
+                   [4, 9, 5], [2, 4, 11], [6, 2, 10], [8, 6, 7], [9, 8, 1]], np.int64)
+    Vs /= np.linalg.norm(Vs, axis=1, keepdims=True)
+    for _ in range(int(subdiv)):
+        cache = {}
+        vl = [tuple(v) for v in Vs]
+        nf = []
+
+        def mid(a, b):
+            key = (a, b) if a < b else (b, a)
+            if key in cache:
+                return cache[key]
+            m = (np.asarray(vl[a]) + np.asarray(vl[b])) / 2.0
+            m /= np.linalg.norm(m)
+            vl.append(tuple(m))
+            cache[key] = len(vl) - 1
+            return cache[key]
+
+        for a, b, c in Fs:
+            ab, bc, ca = mid(a, b), mid(b, c), mid(c, a)
+            nf += [[a, ab, ca], [b, bc, ab], [c, ca, bc], [ab, bc, ca]]
+        Vs = np.asarray(vl, np.float64)
+        Fs = np.asarray(nf, np.int64)
+    return Vs, Fs
+
+
+def sample_boulders(V, F, *, density: float, d_min: float, d_max=None,
+                    exponent: float = 3.1, seed: int = 0, region_weights=None):
+    """Poisson-process boulder sample on a mesh → ``dict(centre (n,3), normal (n,3), diameter (n,))``.
+
+    The expected count is ``density × Σ(face area × region weight)`` (``density`` = boulders
+    with D ≥ ``d_min`` per unit area, mesh units²); the actual count is Poisson. Positions are
+    area-weighted (times ``region_weights`` per face, e.g. :func:`terrain_region_mask`) and
+    uniform inside the chosen triangle. Diameters follow the truncated power law
+    N(>D) ∝ D^-exponent on [d_min, d_max] (Michikami et al. 2008: exponent 3.1 for Itokawa;
+    ``d_max`` default 10·d_min). Deterministic under ``seed``. Fail-closed."""
+    Vv, Ff = _mesh_check(V, F)
+    dens, dmin, ex = float(density), float(d_min), float(exponent)
+    dmax = 10.0 * dmin if d_max is None else float(d_max)
+    if not np.isfinite(dens) or dens < 0.0:
+        raise ValueError("density must be finite and >= 0")
+    if not np.isfinite(dmin) or dmin <= 0.0 or not np.isfinite(dmax) or dmax <= dmin:
+        raise ValueError("need 0 < d_min < d_max")
+    if not np.isfinite(ex) or ex <= 0.0:
+        raise ValueError("exponent must be > 0")
+    tri = Vv[Ff]
+    fn = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0])
+    area = 0.5 * np.linalg.norm(fn, axis=1)
+    if region_weights is None:
+        wgt = np.ones(Ff.shape[0], np.float64)
+    else:
+        wgt = np.asarray(region_weights, np.float64).reshape(-1)
+        if wgt.shape[0] != Ff.shape[0] or not np.all(np.isfinite(wgt)) or np.any(wgt < 0.0):
+            raise ValueError("region_weights must be a finite non-negative (M,) array")
+    eff = area * wgt
+    lam = dens * float(eff.sum())
+    rng = np.random.default_rng(int(seed))
+    n = int(rng.poisson(lam)) if lam > 0.0 else 0
+    if n == 0 or eff.sum() <= 0.0:
+        return {"centre": np.zeros((0, 3)), "normal": np.zeros((0, 3)),
+                "diameter": np.zeros(0), "expected": lam}
+    faces = rng.choice(Ff.shape[0], size=n, p=eff / eff.sum())
+    r1, r2 = rng.random(n), rng.random(n)
+    s1 = np.sqrt(r1)
+    b = np.stack([1.0 - s1, s1 * (1.0 - r2), s1 * r2], 1)
+    centre = np.einsum("ij,ijk->ik", b, tri[faces])
+    nrm = fn[faces] / np.maximum(np.linalg.norm(fn[faces], axis=1, keepdims=True), 1e-15)
+    u = rng.random(n)
+    ratio = (dmax / dmin) ** (-ex)
+    diam = dmin * np.power(1.0 - u * (1.0 - ratio), -1.0 / ex)
+    return {"centre": centre, "normal": nrm, "diameter": diam, "expected": lam}
+
+
+def mesh_scatter_boulders(V, F, *, density: float, d_min: float, d_max=None,
+                          exponent: float = 3.1, seed: int = 0, region_weights=None,
+                          aspect=(1.0, 0.7, 0.5), embed: float = 0.35, subdiv: int = 1):
+    """Scatter partly-buried ellipsoidal boulders on a mesh (power-law sizes, seeded) → ``(V, F)``.
+
+    Boulders are icosphere ellipsoids with semi-axes ``D/2 × aspect`` (default 1 : 0.7 : 0.5,
+    the shortest axis along the local surface normal), randomly rotated about the normal and
+    sunk by ``embed`` (0 = resting on the surface, 1 = centre on the surface). Placement and
+    sizes come from :func:`sample_boulders` (Poisson process, N(>D) ∝ D^-exponent); pass
+    ``region_weights`` from :func:`terrain_region_mask` to keep the seas smooth. The boulders
+    are appended as real geometry, so they self-shadow, cast shadows and occlude through the
+    same rasteriser / ray-cast path as the terrain. Deterministic under ``seed``. Fail-closed."""
+    Vv, Ff = _mesh_check(V, F)
+    asp = np.asarray(aspect, np.float64).reshape(-1)
+    if asp.shape != (3,) or not np.all(np.isfinite(asp)) or np.any(asp <= 0.0):
+        raise ValueError("aspect must be three positive numbers")
+    em = float(embed)
+    if not np.isfinite(em) or em < 0.0 or em > 1.0:
+        raise ValueError("embed must be in [0, 1]")
+    sd = int(subdiv)
+    if sd < 0 or sd > 3:
+        raise ValueError("subdiv must be in [0, 3]")
+    smp = sample_boulders(Vv, Ff, density=density, d_min=d_min, d_max=d_max,
+                          exponent=exponent, seed=seed, region_weights=region_weights)
+    n = smp["diameter"].shape[0]
+    if n == 0:
+        return Vv.copy(), Ff.copy()
+    rng = np.random.default_rng(int(seed) + 1)
+    Vu, Fu = _unit_ellipsoid(sd)
+    parts_v, parts_f = [Vv], [Ff]
+    off = Vv.shape[0]
+    for k in range(n):
+        nrm = smp["normal"][k]
+        a = np.array([1.0, 0.0, 0.0]) if abs(nrm[0]) < 0.9 else np.array([0.0, 1.0, 0.0])
+        t1 = np.cross(nrm, a)
+        t1 /= np.linalg.norm(t1)
+        t2 = np.cross(nrm, t1)
+        ang = rng.random() * 2.0 * np.pi
+        ax1 = np.cos(ang) * t1 + np.sin(ang) * t2
+        ax2 = np.cross(nrm, ax1)
+        semi = 0.5 * smp["diameter"][k] * asp
+        R = np.stack([ax1 * semi[0], ax2 * semi[1], nrm * semi[2]], axis=0)   # rows = axes
+        ctr = smp["centre"][k] + nrm * semi[2] * (1.0 - em)
+        parts_v.append(Vu @ R + ctr)
+        parts_f.append(Fu + off)
+        off += Vu.shape[0]
+    return np.vstack(parts_v), np.vstack(parts_f)
+
+
+__all__ += ["fbm_noise", "mesh_displace_fbm", "terrain_region_mask", "sample_boulders",
+            "mesh_scatter_boulders"]
