@@ -2182,6 +2182,125 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             self.hover_cb = None                     # set by build_window
             self.click_cb = None                     # optional pixel-click callback (x, y)
             self._press_pos = None                   # to tell a click from a pan drag
+            self._ctx_items = None                   # context-menu items (list or callable)
+            self._last_context_menu = None
+            self.save_cb = None                      # optional (view) -> None for Save image…
+            self.actions = {}                        # own QActions (secondary windows)
+            self._tools = None                       # overlay icon strip (secondary windows)
+            if tools:
+                self._build_own_actions()
+                self._build_tools_strip()
+
+        # ---- own actions + overlay strip (secondary graphics windows) ---------- #
+        def _build_own_actions(self):
+            """Fit / 1:1 / zoom / save / copy as QActions owned by THIS view, so the
+            overlay strip and the right-click menu share one handler each."""
+            def _a(text, tip, cb, icon=None):
+                act = QtGui.QAction(text, self)
+                act.setToolTip(tip); act.setStatusTip(tip)
+                if icon:
+                    act.setIcon(_icon(QtGui, QtCore, icon, TEXT))
+                act.triggered.connect(lambda _=False: cb())
+                return act
+            self.actions = {
+                "fit": _a("Fit to window", "Fit the image to this window", self.fit, "fit"),
+                "actual_size": _a("Actual size (1:1)", "Reset zoom to 1:1", self.reset_zoom, "actual"),
+                "zoom_in": _a("Zoom in", "Zoom this window in", lambda: self.zoom(1.25), "zin"),
+                "zoom_out": _a("Zoom out", "Zoom this window out", lambda: self.zoom(0.8), "zout"),
+                "save": _a("Save image…", "Save this window's image as a PNG", self.save_image, "save"),
+                "copy": _a("Copy image", "Copy this window's image to the clipboard", self.copy_image),
+            }
+            self.set_context_actions(lambda: [self.actions["fit"], self.actions["actual_size"],
+                                              self.actions["zoom_in"], self.actions["zoom_out"], None,
+                                              self.actions["save"], self.actions["copy"]])
+
+        def _build_tools_strip(self):
+            """A thin floating icon strip (Fit · 1:1 · + · − · Save) in the top-left
+            corner of the viewport, mirroring the primary window's strip (pillar 3:
+            secondary graphics window symmetry). Lives INSIDE the view so the MDI
+            sub-window widget stays the ImageView (``_graphics_view_of`` contract)."""
+            strip = QtWidgets.QWidget(self)
+            strip.setObjectName("view_tools")
+            strip.setStyleSheet("#view_tools { background: rgba(18,20,27,180); border-radius: 6px; }")
+            lay = QtWidgets.QHBoxLayout(strip)
+            lay.setContentsMargins(3, 3, 3, 3); lay.setSpacing(2)
+            self.tool_buttons = {}
+            for key in ("fit", "actual_size", "zoom_in", "zoom_out", "save"):
+                b = QtWidgets.QToolButton(strip)
+                b.setDefaultAction(self.actions[key])
+                b.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
+                b.setIconSize(QtCore.QSize(16, 16)); b.setFixedSize(24, 24)
+                b.setAccessibleName(self.actions[key].text())
+                b.setCursor(QtCore.Qt.PointingHandCursor)
+                lay.addWidget(b)
+                self.tool_buttons[key] = b
+            strip.adjustSize()
+            strip.move(6, 6)
+            strip.raise_()
+            self._tools = strip
+
+        def resizeEvent(self, e):
+            super().resizeEvent(e)
+            if self._tools is not None:
+                self._tools.move(6, 6); self._tools.raise_()
+
+        def save_image(self):
+            """Save what this window shows: the data array when known (imgio.save,
+            full precision), else the pixmap. ``save_cb`` (set by the main window)
+            takes over when present so the app-wide dialog / flash is reused."""
+            if self.save_cb is not None:
+                self.save_cb(self)
+                return
+            pm = self._item.pixmap()
+            if pm.isNull():
+                return
+            path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Save image", "view.png",
+                                                            "PNG (*.png);;All files (*)")
+            if not path:
+                return
+            try:
+                if self._data is not None and np.asarray(self._data).ndim in (2, 3):
+                    imgio.save(path, self._data)
+                else:
+                    pm.save(path)
+            except Exception as e:
+                ERROR_HOOK(self, "Could not save image", "%s\n\n%s" % (path, e))
+
+        def copy_image(self):
+            pm = self._item.pixmap()
+            if not pm.isNull():
+                QtWidgets.QApplication.clipboard().setPixmap(pm)
+
+        # ---- right-click context menu ----------------------------------------- #
+        def set_context_actions(self, items):
+            """*items*: list (or callable returning a list) of QAction | QMenu | None
+            (separator). The primary view is given the app's own QActions (Fit, 1:1,
+            zoom, Save result / Save view as shown / Copy, the Display-mode submenu,
+            3-D surface) — no handler is duplicated."""
+            self._ctx_items = items
+
+        def build_context_menu(self):
+            menu = QtWidgets.QMenu(self)
+            items = self._ctx_items() if callable(self._ctx_items) else self._ctx_items
+            for it in items or []:
+                if it is None:
+                    menu.addSeparator()
+                elif isinstance(it, QtWidgets.QMenu):
+                    menu.addMenu(it)
+                else:
+                    menu.addAction(it)
+            self._last_context_menu = menu
+            return menu
+
+        def contextMenuEvent(self, e):
+            if not self._ctx_items:
+                return super().contextMenuEvent(e)
+            menu = self.build_context_menu()
+            if menu.isEmpty():
+                return
+            e.accept()
+            if self.CONTEXT_MENU_EXEC:
+                menu.exec(e.globalPos())
 
         def set_pixmap(self, pm):
             self.clear_text()                        # a fresh render starts without stale annotations
