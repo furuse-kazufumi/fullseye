@@ -858,8 +858,11 @@ NONFINITE_BY_CONTRACT_SPECULAR = {"photometric_stereo_robust"}
 #: そこに小さな値を足して有限に丸めると「非常に良い一致」が有限値に化け、
 #: 平均を取ったときに嘘になる ―― 丸めない判断そのものが契約
 #: (:func:`imgmetrics.psnr` の docstring と ``tests/test_imgmetrics.py``)。
-#: ``compare_images`` は psnr を内に含むので同じ理由で載る。
-NONFINITE_BY_CONTRACT_METRICS = {"psnr", "compare_images"}
+#: ``compare_images`` は psnr を内に含むので同じ理由で載る。``measure_with`` は
+#: その報告を**同じ条件で測り直す** op なので、同じ 2 枚を渡せば当然 psnr が inf
+#: になる ―― 網羅パス(``--cover-all``)で初めて実行されて挙がった(metrics 型と
+#: image2d 2 枚が同時に要るため、ランダム歩行では一度も踏まれていなかった)。
+NONFINITE_BY_CONTRACT_METRICS = {"psnr", "compare_images", "measure_with"}
 
 #: 文書化済みの非有限を返す op(astrostack / imgforensics)。**「答えられない」を
 #: NaN で言うのが契約**で、0 で埋めると「測れた」に化ける。2026-09-02 に台帳を
