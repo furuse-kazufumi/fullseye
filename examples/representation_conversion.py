@@ -589,7 +589,7 @@ def main():
     print(f"\n   ★★正直な結論 ―― 「往復して戻った」は主張ではない。"
           f"戻らない側を {len(losses)} 件、")
     print(f"     すべて**量つきで**書けて初めて、この一覧は表現変換の仕様になる。")
-    assert len(exact) == 9 and len(losses) == 10
+    assert len(exact) == 9 and len(losses) == 12
 
     # ------------------------------------------------------------------ #
     _rule("14) fail-closed ―― 黙って通さない")
