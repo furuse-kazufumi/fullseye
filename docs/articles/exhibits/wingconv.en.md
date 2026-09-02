@@ -61,9 +61,9 @@ lead exhibits are `A → B → A'` flipbooks whose last frame carries the residu
 
 *↑ **The dead type `flow` becomes visible** — `flow` was a complete island: no single-input op produced or consumed it. Dense scene flow [3, 24, 96, 96] now exits as magnitude (voxel) and as a colour wheel (rgbimage), **with the colour legend burnt into the same figure**. In this repo `flow` holds two different things under one name — dense (3,D,H,W) and scattered (N,3) — so the dense ops ['flow_magnitude', 'flow_to_rgbimage'] and scattered ops ['flow_speed', 'flow_apply'] are separate and fail closed on the other shape.*
 
-- PNG: `docs/articles/assets/wingconv_flow_colorwheel.png` (1 frame(s), 676x820 px, 0.07 MB)
+- PNG: `docs/articles/assets/wingconv_flow_colorwheel.png` (1 frame(s), 676x820 px, 0.08 MB)
 - Thumbnail: `docs/articles/assets/wingconv_flow_colorwheel_thumb.jpg`
-- SHA-256: `ce75caad5b7d998107f9c879883e480fb2da06c7b04bef349cad4d9c20e15ebf`
+- SHA-256: `91311ab72227bd1007a04eb9053b33823dacd2d3bbe5eb3913935c1465729b98`
 
 ## 7. Axis, unit and spacing mix-ups pass without raising
 [![Axis, unit and spacing mix-ups pass without raising](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_axis_unit_traps_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_axis_unit_traps.png)
@@ -77,8 +77,8 @@ lead exhibits are `A → B → A'` flipbooks whose last frame carries the residu
 ## 8. Dead vocabulary — types that are produced but lead nowhere
 [![Dead vocabulary — types that are produced but lead nowhere](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_dead_vocabulary_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_dead_vocabulary.png)
 
-*↑ **Dead vocabulary — types that are produced but lead nowhere** — Counting the 515-op catalogue for 'single input, in type ≠ out type = a conversion' found **25 types** with no outgoing conversion at all. The 42 ops of `reprconv` open **16** of them; conversion pairs go 121 → 159 and dead ends 25 → 9. The 9 that remain carry a written reason for **not** filling them — deciding not to is also a decision.*
+*↑ **Dead vocabulary — types that are produced but lead nowhere** — Counting the 707-op catalogue for 'single input, in type ≠ out type = a conversion' found **15 types** with no outgoing conversion at all. The 42 ops of `reprconv` open **0** of them; conversion pairs go 184 → 184 and dead ends 15 → 15. The 9 that remain carry a written reason for **not** filling them — deciding not to is also a decision.*
 
-- PNG: `docs/articles/assets/wingconv_dead_vocabulary.png` (1 frame(s), 1180x720 px, 0.09 MB)
+- PNG: `docs/articles/assets/wingconv_dead_vocabulary.png` (1 frame(s), 1180x720 px, 0.06 MB)
 - Thumbnail: `docs/articles/assets/wingconv_dead_vocabulary_thumb.jpg`
-- SHA-256: `ea4ab5aa16bebdd20e8741aab277db3e5ccab6dbc8ca78c1000a265ebf4faf90`
+- SHA-256: `bf69ffebffa729b39bfee9c97190f25010dfd8f557e90d59eaa80b9006848822`

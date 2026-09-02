@@ -61,9 +61,9 @@
 
 *↑ **死んだ型 `flow` が「見える」ようになった** ―― `flow` は単入力で産む op も食う op も無い完全な孤島だった。密なシーンフロー [3, 24, 96, 96] を大きさ(voxel)と色相環(rgbimage)へ出す 2 つの出口を作り、**色の意味の凡例を同じ図に焼いた**。この repo の `flow` は (3,D,H,W) の密フローと (N,3) の散在フローが**同じ型名で同居している**ので、密用 ['flow_magnitude', 'flow_to_rgbimage'] と散在用 ['flow_speed', 'flow_apply'] でop を分け、相手の形は fail-closed にしてある。*
 
-- PNG: `docs/articles/assets/wingconv_flow_colorwheel.png` (1 frame(s), 676x820 px, 0.07 MB)
+- PNG: `docs/articles/assets/wingconv_flow_colorwheel.png` (1 frame(s), 676x820 px, 0.08 MB)
 - サムネ: `docs/articles/assets/wingconv_flow_colorwheel_thumb.jpg`
-- SHA-256: `ce75caad5b7d998107f9c879883e480fb2da06c7b04bef349cad4d9c20e15ebf`
+- SHA-256: `91311ab72227bd1007a04eb9053b33823dacd2d3bbe5eb3913935c1465729b98`
 
 ## 7. 軸・単位・spacing の取り違えは例外を出さずに通る
 [![軸・単位・spacing の取り違えは例外を出さずに通る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_axis_unit_traps_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_axis_unit_traps.png)
@@ -77,8 +77,8 @@
 ## 8. 死んだ語彙 ―― 産む op はあるのに、そこから先へ行けない型
 [![死んだ語彙 ―― 産む op はあるのに、そこから先へ行けない型](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_dead_vocabulary_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_dead_vocabulary.png)
 
-*↑ **死んだ語彙 ―― 産む op はあるのに、そこから先へ行けない型** ―― 台帳 515 op を「単入力かつ in 型 ≠ out 型 = 変換」で機械集計すると、他型へ一歩も出られない型が **25 個**あった。`reprconv` の 42 op で **16 型**に出口ができ、変換ペアは121 → 159 種、袋小路は 25 → 9 個。残した 9 型は**埋めない理由**を台帳に書いてある ―― 埋めないことも判断である。*
+*↑ **死んだ語彙 ―― 産む op はあるのに、そこから先へ行けない型** ―― 台帳 707 op を「単入力かつ in 型 ≠ out 型 = 変換」で機械集計すると、他型へ一歩も出られない型が **15 個**あった。`reprconv` の 42 op で **0 型**に出口ができ、変換ペアは184 → 184 種、袋小路は 15 → 15 個。残した 9 型は**埋めない理由**を台帳に書いてある ―― 埋めないことも判断である。*
 
-- PNG: `docs/articles/assets/wingconv_dead_vocabulary.png` (1 frame(s), 1180x720 px, 0.09 MB)
+- PNG: `docs/articles/assets/wingconv_dead_vocabulary.png` (1 frame(s), 1180x720 px, 0.06 MB)
 - サムネ: `docs/articles/assets/wingconv_dead_vocabulary_thumb.jpg`
-- SHA-256: `ea4ab5aa16bebdd20e8741aab277db3e5ccab6dbc8ca78c1000a265ebf4faf90`
+- SHA-256: `bf69ffebffa729b39bfee9c97190f25010dfd8f557e90d59eaa80b9006848822`

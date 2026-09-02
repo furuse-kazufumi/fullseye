@@ -208,6 +208,64 @@ def test_the_two_sdf_primitives_build_a_real_field():
         assert float(r.max()) > 0.0, f"{name}: 形状の外側が出ていない"
 
 
+def test_keypoint_bridges_are_alive_after_the_sort_split():
+    """像面上の (N,2) を扱う 4 op が実際に計算する(回帰)。
+
+    2026-09-02 まで ``keypoints`` は ``points`` sort に畳まれており、
+    ``_sort_ok`` が ``shape[1] == 3`` を要求するので **4 op すべてが
+    fail-soft に落ちていた** —— 2 件は定数ゼロ、2 件は入力の素通し。
+    とくに ``tb_project_points`` が死んでいたということは、進化は
+    「3 次元を撮る」という基本的な写像を一度も使えていなかった。
+    """
+    rng = np.random.default_rng(7)
+    by = {o.name: o for o in ops.REGISTRY}
+    expect = {
+        "tb_project_points": ("points", 2),
+        "tb_points_zyx_to_keypoints_uv": ("points", 2),
+        "tb_keypoints_uv_to_points": ("keypoints", 3),
+        "tb_keypoints_to_image2d": ("keypoints", None),
+    }
+    for name, (in_sort, ncol) in expect.items():
+        assert name in by, f"{name} が登録されていない"
+        op = by[name]
+        assert op.in_sort == in_sort, f"{name}: in_sort が {op.in_sort}"
+        r = np.asarray(op.fn(_sample_for(in_sort, rng), 0.5, 0.5))
+        if ncol is None:                                 # 画像を返す op
+            assert r.ndim == 2 and min(r.shape) >= 8, f"{name}: 形が {r.shape}"
+        else:
+            assert r.ndim == 2 and r.shape[1] == ncol, f"{name}: 形が {r.shape}"
+            assert r.shape[0] > 1, f"{name}: fallback の 1 行だけが返っている"
+        assert np.any(r != 0), f"{name}: 定数ゼロ"
+
+
+def test_keypoints_sort_is_not_a_dead_end():
+    """``keypoints`` sort に産出 op と消費 op の両方があること。
+
+    片方しか無い型を足すのは、この repo が繰り返し踏んできた失敗
+    (入口はあるが消費 op が無い袋小路)。sort を足すときの必須条件として固定する。
+    """
+    producers = [o.name for o in ops.REGISTRY if o.out_sort == "keypoints"]
+    consumers = [o.name for o in ops.REGISTRY if o.in_sort == "keypoints"]
+    assert producers, "keypoints を産む op が無い(この sort へ到達できない)"
+    assert consumers, "keypoints を食う op が無い(袋小路の型になっている)"
+
+
+def test_shape_and_empty_tables_cover_the_same_sorts():
+    """``_SHAPE_OK`` と ``_EMPTY_OF`` が同じ sort を覆っていること。
+
+    片方だけに行を足すと、fail-soft が **sort の契約を破った値**を返す。
+    分岐で書いていた頃はこれが目視でしか確かめられず、実際 keypoints が
+    どちらにも無いまま 4 op が死んでいた。表にしたので機械で検査できる。
+    """
+    only_shape = sorted(set(bt._SHAPE_OK) - set(bt._EMPTY_OF))
+    only_empty = sorted(set(bt._EMPTY_OF) - set(bt._SHAPE_OK))
+    assert not only_shape, f"_EMPTY_OF に無い sort: {only_shape}"
+    assert not only_empty, f"_SHAPE_OK に無い sort: {only_empty}"
+    # 表が返す「空の値」自体がその sort の形の契約を満たすこと
+    for sort, make in bt._EMPTY_OF.items():
+        assert bt._sort_ok(make(), sort), f"{sort} の空値が自分の契約を満たさない"
+
+
 def test_point_segmentation_bridges_produce_a_label_volume():
     """点群セグメンテーション 3 op が**ラベル体積**を返す(回帰)。
 

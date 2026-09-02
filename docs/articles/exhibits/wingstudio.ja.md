@@ -112,9 +112,9 @@ Studio 画面はすべて `studio.build_window()` が組み立てた**実 UI** �
 
 ![新しい族の op ヘルプを Studio の中で開く](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingstudio_studio_help.gif)
 
-*↑ **新しい族の op ヘルプを Studio の中で開く** —— ライトフィールド → FMCW レンジドップラ → 四元数モノジェニック → 光子計数(SPAD)→ 音響ビームフォーミング → 干渉(角スペクトル伝搬)→ 3D の ICP・主曲率、と 8 ページを実際に開き、各ページを上から下までスクロールした 24 フレームです。ヘルプ本文は `docs/ops/**/*.md` から自動生成された実ファイル(2D 879 枚 / 3D 310 枚)。族別ディレクトリには合計 155 枚が生成済みで、そのうち Studio から開けるのは `tb_*` 型付き op 経由の 45 枚、残り 110 枚はまだ画面から辿れません(干渉は 9 枚中 0 枚)。 使用 op / 機能: Studio のヘルプダイアログ(`op_help_html` / `op_help_html_3d`)、`tools/opdocs.py` 生成の HTML。*
+*↑ **新しい族の op ヘルプを Studio の中で開く** —— ライトフィールド → FMCW レンジドップラ → 四元数モノジェニック → 光子計数(SPAD)→ 音響ビームフォーミング → 干渉(角スペクトル伝搬)→ 3D の ICP・主曲率、と 8 ページを実際に開き、各ページを上から下までスクロールした 24 フレームです。ヘルプ本文は `docs/ops/**/*.md` から自動生成された実ファイル(2D 907 枚 / 3D 310 枚)。族別ディレクトリには合計 351 枚が生成済みで、そのうち Studio から開けるのは `tb_*` 型付き op 経由の 53 枚、残り 298 枚はまだ画面から辿れません(干渉は 9 枚中 0 枚)。 使用 op / 機能: Studio のヘルプダイアログ(`op_help_html` / `op_help_html_3d`)、`tools/opdocs.py` 生成の HTML。*
 
-<sub>`wingstudio_studio_help.gif` — 24 フレーム / 3 fps / 1000×720 px / 0.53 MB / SHA-256 `c61185a31e5cbf8d`</sub>
+<sub>`wingstudio_studio_help.gif` — 24 フレーム / 3 fps / 1000×720 px / 0.53 MB / SHA-256 `49fc9ab4fffe092c`</sub>
 
 ---
 
@@ -124,7 +124,7 @@ Studio 画面はすべて `studio.build_window()` が組み立てた**実 UI** �
 
 *↑ **書いて、F5 で走らせて、結果が出るまで** —— タブエディタに 18 行のコードを打ち込み、F5 で実行して出力コンソールを読み下すまでの 24 フレームです(1060×740 px のダイアログ)。実行はモックではなく本物の子プロセスで、ステータスは「PASS ✓ (exit 0)」。出力 6 行の末尾は `foreground fraction = 0.2995` / `objects = 21` / `area  min/median/max = 1118 / 1494 / 3084` —— コインの分割結果です。 使用 op / 機能: Studio の Python エディタ(タブ + F5 実行)、`fullseye.apply`, `fullseye.segment_objects`。*
 
-<sub>`wingstudio_studio_editor.gif` — 24 フレーム / 6 fps / 1060×740 px / 0.36 MB / SHA-256 `fc35f56ab0340f6f`</sub>
+<sub>`wingstudio_studio_editor.gif` — 24 フレーム / 6 fps / 1060×740 px / 0.36 MB / SHA-256 `ce1154f194aeb759`</sub>
 
 ---
 
@@ -132,9 +132,9 @@ Studio 画面はすべて `studio.build_window()` が組み立てた**実 UI** �
 
 ![900 超の op から目的の 1 個へ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingstudio_studio_opsearch.gif)
 
-*↑ **900 超の op から目的の 1 個へ** —— 検索欄に 1 文字ずつ「watershed」と打つと、903 個の一覧が 4 件まで絞れます(実測の内訳: (空):903 → w:79 → wa:11 → wat:4 → wate:4 → water:4 → waters:4 → watersh:4 → watershe:4 → watershed:4)。選ぶと `in_sort → out_sort` のシグネチャが右下に出る —— 型が見えるので、次に何を繋げるかがその場で分かります。最後に「cad」で引くと 0 件。 使用 op / 機能: Studio の演算子検索(名前 / HALCON 別名 / 分類 / docstring を横断)。*
+*↑ **900 超の op から目的の 1 個へ** —— 検索欄に 1 文字ずつ「watershed」と打つと、917 個の一覧が 4 件まで絞れます(実測の内訳: (空):917 → w:80 → wa:11 → wat:4 → wate:4 → water:4 → waters:4 → watersh:4 → watershe:4 → watershed:4)。選ぶと `in_sort → out_sort` のシグネチャが右下に出る —— 型が見えるので、次に何を繋げるかがその場で分かります。最後に「cad」で引くと 0 件。 使用 op / 機能: Studio の演算子検索(名前 / HALCON 別名 / 分類 / docstring を横断)。*
 
-<sub>`wingstudio_studio_opsearch.gif` — 17 フレーム / 4 fps / 1280×800 px / 0.54 MB / SHA-256 `8270e44188b4b2a6`</sub>
+<sub>`wingstudio_studio_opsearch.gif` — 17 フレーム / 4 fps / 1280×800 px / 0.54 MB / SHA-256 `7c1af28cc7a99e86`</sub>
 
 ---
 
@@ -144,7 +144,7 @@ Studio 画面はすべて `studio.build_window()` が組み立てた**実 UI** �
 
 *↑ **パイプラインを組む —— 型が合わないと Problems に出る** —— coins サンプルに `gaussian → otsu → opening_circle → sk_clear_border` を1 段ずつ足していき、⑤でわざと **region を受け取れない** `circularity_xld`(contour 入力)を足します。すると Problems に 「stage 4 (sk_clear_border) outputs 'region' but circularity_xld expects 'contour'」と出る —— Fullseye は繋いだ後に落ちるのではなく、繋いだ瞬間に型の不一致を言います。⑥で外すと「no problems」に戻ります(全 24 フレーム)。 使用 op / 機能: Studio の Program パネル(HDevelop 風)+ Problems、`engine.diagnose_stages`。*
 
-<sub>`wingstudio_studio_pipeline.gif` — 24 フレーム / 4 fps / 1280×800 px / 0.54 MB / SHA-256 `0fdcb11fdc1bceca`</sub>
+<sub>`wingstudio_studio_pipeline.gif` — 24 フレーム / 4 fps / 1280×800 px / 0.54 MB / SHA-256 `e395b77263a3e87a`</sub>
 
 ---
 

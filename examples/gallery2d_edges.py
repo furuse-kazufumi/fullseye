@@ -29,8 +29,12 @@
       (エッジ検出器ではなくコーナー検出器であることの確認)。
 
   edges カテゴリの全 op を漏れなく呼び、上記契約を全 op に、GT を代表 op に適用する。
-  registry には 'laplace' が 2 度登録されている (素の実装 + _safe ラップ版; 出力は一致)
-  ため登録エントリは 57、ユニーク名は 56。本例は 57 エントリすべて (両 laplace) を実行する。
+  2026-09-02 まで registry には 'laplace' が 2 度登録されていた (ops.py のコア実装 +
+  backends_auto の再定義; 9 通りの入力で出力は完全一致 = 純粋な重複)。本例はそれを
+  「既知の癖」として明記し、57 エントリ / 56 ユニーク名という数で辻褄を合わせていた。
+  重複は ops.py 側の登録で弾くようになった (名前は addressing の鍵で、同名を 2 つ
+  登録すると先の 1 つが名前で引けなくなり、しかも抽選には両方入って確率が 2 倍に
+  なるため)。いまは 56 エントリ = 56 ユニーク名。
 
     py -3.11 examples/gallery2d_edges.py
 """
@@ -76,9 +80,9 @@ def input_for(in_sort: str) -> np.ndarray:
 
 
 # --------------------------------------------------------------------------- #
-# TARGET op 名 -- edges カテゴリの登録順・全 57 エントリを文字列リテラルで明示。    #
-# ('laplace' は registry に 2 度登録されるため 2 回現れる; 下の drift チェックで  #
-#  live registry の名前マルチセットと突き合わせる)。op→example 索引はこの列を読む。  #
+# TARGET op 名 -- edges カテゴリの登録順・全 56 エントリを文字列リテラルで明示。    #
+# (2026-09-02 まで 'laplace' が重複登録されていて 2 回現れていた; 下の drift      #
+#  チェックで live registry の名前マルチセットと突き合わせる)。索引はこの列を読む。 #
 # うち 5 件 (KORNIA_OPTIONAL) は backends_kornia (要 torch+kornia) 由来の任意 op で、  #
 # 未インストール環境では registry から静かに消える (backends_kornia.build が [] を    #
 # 返す; ops.py 側は例外を握りつぶす)。BASE = 常設分、OPTIONAL = kornia 依存分。         #
@@ -90,7 +94,7 @@ OPS = [
     "cv_min_eigen", "cv_precorner", "derivate_gauss", "laplace_of_gauss",
     "diff_of_gauss", "sobel_amp", "sobel_dir", "prewitt_amp", "prewitt_dir",
     "roberts", "kirsch_amp", "kirsch_dir", "frei_amp", "robinson_amp",
-    "laplace", "points_foerstner", "points_harris_binomial", "dots_image",
+    "points_foerstner", "points_harris_binomial", "dots_image",
     "frei_dir", "robinson_dir", "edges_color", "xsk_hessian_eig", "xpil_contour",
     "xpil_find_edges", "xsp_morph_laplace", "xsp_gauss_grad_mag", "xsk2_corner_kr",
     "xsk2_inv_gauss_grad", "xwt_hf_reconstruct", "xwt_directional_detail",
@@ -207,27 +211,22 @@ def main() -> None:
     assert len(edges) == expected, (
         f"registry drift: edges エントリは {expected} のはず (got {len(edges)}, "
         f"base={len(BASE_OPS)} skipped_kornia={skipped})")
-    assert len(lap_entries) == 2, f"'laplace' は edges に 2 度登録のはず (got {len(lap_entries)})"
+    assert len(lap_entries) == 1, (
+        f"'laplace' は 1 度だけ登録のはず (got {len(lap_entries)}) — "
+        "重複が復活していると名前で引ける方が 1 つに減り、抽選確率が 2 倍になる")
     assert sorted(active_ops) == sorted(o.name for o in edges), "OPS の名前マルチセットが registry と不一致"
     assert len(active_ops) == expected, f"active_ops 長は {expected} のはず (got {len(active_ops)})"
 
-    # --- 全 op を呼んで契約検証。'laplace' は 2 エントリを個別に実行 (影に隠さない) - #
-    seen_laplace = 0
+    # --- 全 op を呼んで契約検証 ------------------------------------------------ #
     n_called = 0
     for name in active_ops:
-        if name == "laplace":
-            # registry の 2 つの 'laplace' (素 / _safe ラップ) を順に実体で実行する。
-            op = lap_entries[seen_laplace]
-            seen_laplace += 1
-        else:
-            op = ops._BY_NAME[name]
-            assert op.category == "edges", f"{name}: _BY_NAME が edges 以外を指している"
+        op = ops._BY_NAME[name]
+        assert op.category == "edges", f"{name}: _BY_NAME が edges 以外を指している"
         out, deterministic = _call_twice(op, op.in_sort)
         assert deterministic, f"{name}: 非決定的 (同一入力で出力がビット不一致)"
         _validate(name, op, out)
         n_called += 1
 
-    assert seen_laplace == 2, "両 laplace エントリを実行できていない"
     assert n_called == expected, f"呼び出し数が {expected} でない (got {n_called})"
 
     # --- 代表 op に強い GT ----------------------------------------------------- #
