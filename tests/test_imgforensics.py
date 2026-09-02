@@ -992,9 +992,50 @@ def test_the_direction_argument_matters_and_is_not_guessable():
     nd = F.null_distribution(np.arange(100.0))
     strong_low = F.evidence_quantile(1.0, nd, higher_is_stronger=False)
     wrong_way = F.evidence_quantile(1.0, nd, higher_is_stronger=True)
-    assert strong_low["beyond_fraction"] == 1.0
-    assert wrong_way["beyond_fraction"] == 0.0
+    # 1.0 sits beyond ~99% of the clean values 0..99 (exactly 1/99 lie below it)
+    assert abs(strong_low["beyond_fraction"] - (1.0 - 1.0 / 99.0)) < 1e-9
+    assert abs(wrong_way["beyond_fraction"] - 1.0 / 99.0) < 1e-9
     assert strong_low["direction"] != wrong_way["direction"]
+    # strictly outside the clean range the two directions saturate at 1 and 0
+    assert F.evidence_quantile(-1.0, nd, higher_is_stronger=False)["beyond_fraction"] == 1.0
+    assert F.evidence_quantile(-1.0, nd, higher_is_stronger=True)["beyond_fraction"] == 0.0
+
+
+def test_evidence_quantile_is_a_continuous_quantile_not_a_ladder():
+    """Regression (2026-09-02 audit): ``beyond_fraction`` used to count how many of
+    the 6 stored quantile markers the value passed (a {0, 1/6, ..., 1} ladder), so
+    on the uniform sample 0..99 a measurement of 60 (true quantile 0.60) came out
+    as 0.500 and 96 (true 0.96) as 0.833. The documented quantity is the fraction
+    of clean values the measurement lies beyond — a continuous number that is
+    exact at the stored knots and linear between them.
+    """
+    import numpy as np
+    import imgforensics as F
+
+    nd = F.null_distribution(np.arange(100.0))
+    # exact at every stored knot: min / 5 / 25 / 50 / 75 / 95 / 99 percentiles / max
+    for q, val in nd["quantiles"].items():
+        got = F.evidence_quantile(val, nd, higher_is_stronger=True)["beyond_fraction"]
+        assert abs(got - q / 100.0) < 1e-12, (q, val, got)
+    assert F.evidence_quantile(nd["min"], nd)["beyond_fraction"] == 0.0
+    assert F.evidence_quantile(nd["max"], nd)["beyond_fraction"] == 1.0
+    # the two audit reproducers, now within linear-interpolation error of the truth
+    for m, truth in ((60.0, 0.60), (96.0, 0.96), (3.0, 0.03), (80.0, 0.80)):
+        got = F.evidence_quantile(m, nd, higher_is_stronger=True)["beyond_fraction"]
+        assert abs(got - truth) < 0.012, (m, truth, got)
+        assert got not in {0.0, 1 / 6, 2 / 6, 0.5, 4 / 6, 5 / 6, 1.0}
+    # monotone in the measurement, and the two directions are complementary
+    ms = np.linspace(-5.0, 105.0, 111)
+    hi = [F.evidence_quantile(m, nd, higher_is_stronger=True)["beyond_fraction"] for m in ms]
+    lo = [F.evidence_quantile(m, nd, higher_is_stronger=False)["beyond_fraction"] for m in ms]
+    assert all(b >= a for a, b in zip(hi, hi[1:]))
+    assert np.allclose(np.asarray(hi) + np.asarray(lo), 1.0)
+    # a degenerate null (every clean value identical) still answers, at mid-rank
+    flat = F.null_distribution([7.0] * 30)
+    assert F.evidence_quantile(7.0, flat)["beyond_fraction"] == 0.5
+    assert F.evidence_quantile(8.0, flat)["beyond_fraction"] == 1.0
+    assert F.evidence_quantile(6.0, flat)["beyond_fraction"] == 0.0
+    assert F.evidence_quantile(7.0, flat)["z"] is None
 
 
 def test_calibration_ops_fail_closed():

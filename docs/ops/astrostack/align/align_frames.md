@@ -35,8 +35,13 @@ version: 0.1.0  # fullseye lib version this note was generated for
 最小値 -0.0000 で目に見える量ではなかった)。
 
 **フラックスもピークも厳密に保ちたいなら補間せず** :func:`drizzle_resample`
-に :func:`frame_align` の推定シフトをそのまま渡すこと —— 補間しないことが
-drizzle の存在理由そのもの。
+へ渡すこと —— 補間しないことが drizzle の存在理由そのもの。ただし
+**推定シフトをそのまま渡してはいけない**: ここで返す ``matrices`` の並進は
+「基準へ戻す」向きで、drizzle が要る向きとは符号が逆。
+:func:`drizzle_shifts` を通すこと::
+
+    aligned, mats = align_frames(frames)
+    sci, wht = drizzle_resample(frames, drizzle_shifts(mats), scale=2.0)
 
 Returns ``(aligned, matrices)``:
 
