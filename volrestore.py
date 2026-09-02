@@ -42,6 +42,11 @@ VOLRESTORE_OPS = ["vol_richardson_lucy", "vol_gaussian_psf"]
 #: (~16.7 M voxels, the volops Hessian budget).
 MAX_VOXELS = 1 << 24
 
+#: Negative voxels no lower than this fraction of ``max|vol|`` are treated as
+#: floating-point rounding dust (e.g. the -1e-16 an FFT convolution leaves where
+#: the exact value is 0) and clipped to 0 instead of rejected.
+NEGATIVE_DUST_TOL = 1e-9
+
 
 def _require_volume(vol, name: str = "vol") -> np.ndarray:
     v = np.ascontiguousarray(vol, dtype=np.float64)
