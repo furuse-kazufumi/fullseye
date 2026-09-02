@@ -7227,8 +7227,8 @@ def build_window(model=None):
             elif name == "dev_set_part" and len(args) >= 4:
                 try:
                     _set_part(int(args[0]), int(args[1]), int(args[2]), int(args[3]))
-                except (TypeError, ValueError):
-                    pass
+                except (TypeError, ValueError) as e:
+                    report_error("dev_set_part", "bad arguments %r: %s" % (args, e))
             elif name == "dev_set_lut" and args:
                 lut = str(args[0]).lower()             # map a HALCON LUT name to a Studio display mode
                 match = next((m for m in win._display_actions
