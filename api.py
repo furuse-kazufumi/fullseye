@@ -914,9 +914,16 @@ def _coerce_input(v, op):
     left alone: ``_bin`` already reads it as an unambiguous mask, so binarising
     here would change nothing for mask ops while destroying the gray levels that
     the few label-reading region ops (``r3_label_to_region``) legitimately consume.
+
+    Label-reading ops are exempted outright (``_LABEL_READING_OPS``): a real label
+    image has more than two levels by definition, so the two-level carve-out above
+    never reaches it — binarising at 0.5 would merge every label into one blob and
+    the op could only ever return the whole foreground.
     """
     a = np.asarray(v)
     if op.in_sort != "region":
+        return v
+    if op.name in _LABEL_READING_OPS:
         return v
     if a.dtype.kind == "b":
         return a.astype(np.float64)                  # mask already; only the dtype is off
