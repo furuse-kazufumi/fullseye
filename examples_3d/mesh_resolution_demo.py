@@ -177,6 +177,11 @@ def main():
     print("[5] cloud: %d points, spacing non-uniformity %.2f -> poisson-disk %d points (isolated removed: %d, max gap %.3f)"
           % (len(P), dn["nonuniformity"], len(Q), tr["isolated_removed"], tr["max_gap"]))
     print("    equalised (fill sparse + thin dense): %d points, non-uniformity %.2f" % (len(Eq), M.pc_density(Eq)["nonuniformity"]))
+    filled = M.pc_fill_sparse(P, 0.06)
+    lodp = M.pc_lod_chain(P, 0.06, levels=2)
+    print("    fill sparse only: %d -> %d points (the sparse block B was filled, nothing removed); LOD chain: %s"
+          % (len(P), len(filled), ", ".join("%d pts / max gap %.3f" % (lv["n_points"], lv["max_gap"]) for lv in lodp["levels"])))
+    assert len(filled) >= len(P)
     assert tr["isolated_removed"] == 0
     dmin, _ = cKDTree(Q).query(Q, k=2)
     assert dmin[:, 1].min() >= 0.06 - 1e-12
