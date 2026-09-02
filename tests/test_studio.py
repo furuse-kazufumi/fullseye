@@ -791,7 +791,8 @@ def test_knob_tick_costs_one_pipeline_evaluation():
     sa, sb = win._knob_sliders
     sa.setValue(sa.value() + 7)
     assert calls["n"] == 1, "expected 1 pipeline evaluation per knob tick, got %d" % calls["n"]
-    assert model.stages[3][1] == pytest.approx(sa.value() / 100.0)
+    # the slider spans gaussian's DISPLAYED σ range (param_specs); map its position back
+    assert model.stages[3][1] == pytest.approx(win._knob_rows[0].pos_to_knob(sa.value()))
     assert win._state["dirty"] is True
     # the debounce timer carries the (expensive) per-stage summary refresh
     assert win._knob_timer.isActive()
