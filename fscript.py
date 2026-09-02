@@ -743,13 +743,22 @@ class Interp:
     def _st_Assign(self, node):
         val = self._eval(node.expr)
         if isinstance(node.target, Name):
-            self.env.vars[node.target.name] = val
-        elif isinstance(node.target, Index):
-            base = self._eval(node.target.base)
-            idx = int(self._eval(node.target.idx))
+            # Tuples are values, not references: `B := A` copies, so a later
+            # `B[0] := 9` cannot reach into A (or into a seeded input).
+            self.env.vars[node.target.name] = list(val) if isinstance(val, list) else val
+        elif isinstance(node.target, Index) and isinstance(node.target.base, Name):
+            name = node.target.base.name
+            if name not in self.env.vars:
+                raise FScriptError("undefined variable '%s'" % name, node.line)
+            base = self.env.vars[name]
             if not isinstance(base, list):
-                raise FScriptError("cannot index-assign a non-tuple", node.line)
-            base[idx] = val
+                raise FScriptError("cannot index-assign into %s '%s' (only a tuple)"
+                                   % (_describe(base), name), node.line)
+            if isinstance(val, list):
+                raise FScriptError("Name[i] := expr needs a scalar (tuples are flat); "
+                                   "got a tuple of length %d" % len(val), node.line)
+            i = _as_index(self._eval(node.target.idx), len(base), "index", node.line)
+            base[i] = val
         else:
             raise FScriptError("invalid assignment target", node.line)
 
@@ -758,7 +767,7 @@ class Interp:
 
     def _st_If(self, node):
         for cond, body in node.branches:
-            if _truth(self._eval(cond)):
+            if _truth(self._eval(cond), cond.line or node.line):
                 self.run(body)
                 return
         if node.orelse is not None:

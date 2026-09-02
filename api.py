@@ -6,6 +6,7 @@ and get a measured result back::
 
     import fullseye                       # or: import api
     import numpy as np
+import warnings
     frame = np.random.rand(480, 640)      # float64 gray in [0, 1]
     edges = fullseye.apply(frame, "sobel_amp")          # HALCON name or op name
     seg   = fullseye.apply(frame, "otsu")               # image -> region (binary)
@@ -37,6 +38,8 @@ if _HERE not in sys.path:
     sys.path.insert(0, _HERE)
 
 import ops as _ops  # noqa: E402  (the engine registry; imports its backends on load)
+import backend_safe as _bs  # noqa: E402  (fallback ledger / strict mode — the one mediator)
+from backend_safe import FullseyeFallbackWarning  # noqa: E402,F401  (re-exported)
 import stereo  # noqa: E402  (numpy+scipy depth building blocks)
 import terrain  # noqa: E402  (elevation map / traversability)
 import imgio  # noqa: E402  (coercion / colormap visualisation / export)
@@ -869,12 +872,26 @@ def version() -> str:
 
 
 # ---- resolution ------------------------------------------------------------ #
+# HALCON aliases that several ops share while NO op carries the alias as its own
+# name. `find_op` used to fall back to "first registered", so which implementation
+# `fullseye.apply(x, "emphasize")` ran depended on backend registration order — a
+# silent behaviour change whenever a backend was added. The winner is now a TABLE
+# (one row per alias; tests/test_api.py pins that every such alias has a row), so
+# a new ambiguous alias fails CI instead of resolving by accident.
+_ALIAS_CANONICAL = {
+    "emphasize": "unsharp",              # cv_sharpen is the cv2 port of the same idea
+    "points_harris": "corner_response",  # sk_/cv_corner_harris, cv_min_eigen are library ports
+}
+
+
 def find_op(name: str):
     """Return the :class:`ops.Op` for *name*, or ``None``.
 
     Exact op name wins; only then the HALCON alias, preferring the canonical op
-    (``name == halcon``) when several ops share an alias. Identical rule to the
-    CLI's ``_find_op`` so programmatic and command-line resolution agree.
+    (``name == halcon``) when several ops share an alias, then the explicit
+    ``_ALIAS_CANONICAL`` row, and only as a last resort the first registered hit.
+    Identical rule to the CLI's ``_find_op`` so programmatic and command-line
+    resolution agree.
     """
     for o in _ops.REGISTRY:
         if o.name == name:
@@ -885,12 +902,58 @@ def find_op(name: str):
     for o in hits:
         if o.name == o.halcon:
             return o
+    pick = _ALIAS_CANONICAL.get(name)
+    if pick is not None:
+        for o in hits:
+            if o.name == pick:
+                return o
     return hits[0]
+
+
+def ambiguous_aliases() -> dict:
+    """``{alias: [op names]}`` for HALCON aliases shared by >1 op with NO canonical op.
+
+    Each key must have a row in ``_ALIAS_CANONICAL`` naming one of its ops — otherwise
+    :func:`find_op` would resolve it by registration order (pinned by tests).
+    """
+    by_alias: dict = {}
+    for o in _ops.REGISTRY:
+        if o.halcon:
+            by_alias.setdefault(o.halcon, []).append(o.name)
+    return {k: v for k, v in by_alias.items() if len(v) > 1 and k not in v}
+
+
+_NARY_CACHE = None
+
+
+def _nary_by_name() -> dict:
+    """``{name_or_halcon: NaryOp}`` for the n-ary tier (image arithmetic / region set ops)."""
+    global _NARY_CACHE
+    if _NARY_CACHE is None:
+        table = {}
+        try:
+            import imgops_nary as _na
+            for o in _na.build_nary():
+                table[o.name] = o
+                table.setdefault(o.halcon, o)
+        except Exception:                # noqa: BLE001 - the tier is optional
+            pass
+        _NARY_CACHE = table
+    return _NARY_CACHE
 
 
 def _resolve(name: str):
     op = find_op(name)
     if op is None:
+        nop = _nary_by_name().get(name)
+        if nop is not None:
+            # Listed by list_ops() (tier "nary") but not a single-input registry op: say
+            # so instead of the old bare KeyError — the fix is to pass a list of inputs.
+            raise TypeError(
+                "%r is an n-ary operator (arity %d, inputs %s): call "
+                "fullseye.apply([%s], %r, a, b) with a list of inputs"
+                % (name, nop.arity, list(nop.in_sorts),
+                   ", ".join("x%d" % i for i in range(nop.arity)), name))
         raise KeyError(
             "unknown operator %r — try op name or HALCON alias; "
             "list with fullseye.op_names() or `imgevolve.py has %s`" % (name, name)
@@ -943,13 +1006,114 @@ def _coerce_input(v, op):
 
 
 # ---- run ------------------------------------------------------------------- #
+# Error policy. The facade used to be fail-soft with no escape hatch: a broken op, a
+# failed GPU kernel or an input of the wrong sort all became a plausible-looking
+# array with no trace (2026-09-02 audit: 6 of 7 confirmed bugs were of the
+# "no exception, wrong answer" kind). The contradiction — never crash a user's
+# pipeline vs. never hide a failure — is resolved by letting the CALLER choose:
+#
+#   on_error="fallback"  (default) keep the sort-valid fallback; every degradation is
+#                        recorded in the ledger (fullseye.fallbacks()) and each op
+#                        warns ONCE (FullseyeFallbackWarning);
+#   on_error="warn"      as above, but warn on EVERY fallback of this call;
+#   on_error="raise"     fail-closed: the op's real exception propagates, a wrong-sort
+#                        input raises ValueError, a failed GPU kernel raises.
+#
+# The default can be set process-wide with FULLSEYE_ON_ERROR=raise (CI / verifiers).
+_ON_ERROR_CHOICES = ("fallback", "warn", "raise")
+_NDIM_OK = {"image": (2, 3), "region": (2, 3), "color": (3,), "volume": (3, 4)}
+_NOACCEL = object()
+
+
+def _policy(on_error):
+    p = on_error if on_error is not None else os.environ.get("FULLSEYE_ON_ERROR", "fallback")
+    if p not in _ON_ERROR_CHOICES:
+        raise ValueError("on_error must be one of %s, got %r" % (_ON_ERROR_CHOICES, p))
+    return p
+
+
+def _check_input_sort(v, op):
+    """Exception describing a clearly wrong input for *op*, or None (light, ndim-level check)."""
+    ok = _NDIM_OK.get(op.in_sort)
+    if ok is None:
+        return None
+    try:
+        arr = v if isinstance(v, np.ndarray) else np.asarray(v)
+    except Exception as e:               # noqa: BLE001
+        return TypeError("op %r expects a %s array, got %r (%s)" % (op.name, op.in_sort, type(v).__name__, e))
+    if arr.dtype.kind not in "biufc":
+        return TypeError("op %r expects a numeric %s array, got dtype %s" % (op.name, op.in_sort, arr.dtype))
+    if arr.ndim not in ok:
+        return ValueError("op %r expects a %s (%s-D array), got shape %s"
+                          % (op.name, op.in_sort, "/".join(map(str, ok)), arr.shape))
+    return None
+
+
+def _guard_input(v, op, policy):
+    err = _check_input_sort(v, op)
+    if err is None:
+        return
+    if policy == "raise":
+        raise err
+    _bs.record(op.name, err, op.out_sort, source="input")
+
+
+def _run_guarded(name, fn, policy):
+    """Run ``fn()`` under the error policy, attributing any fallback to *name*."""
+    m = _bs.mark()
+    with _bs.current_op(name):
+        if policy == "raise":
+            with _bs.strict_mode(True):
+                return fn()
+        out = fn()
+    if policy == "warn":
+        evs = _bs.events_since(m)
+        if evs:
+            warnings.warn("fullseye: %r degraded to a fallback (%s)"
+                          % (name, "; ".join(e["error"] for e in evs)),
+                          FullseyeFallbackWarning, stacklevel=4)
+    return out
+
+
+def _try_accel(op, v, a, b, device):
+    """GPU single-op path. Returns ``_NOACCEL`` when there is nothing to accelerate.
+
+    torch/accel ABSENT is the documented silent case (``ImportError``). Anything else
+    — a broken kernel, a CUDA error — used to be swallowed by ``except Exception: pass``
+    and became a silent CPU result; it is now recorded (source ``"gpu"``) and re-raised
+    under ``on_error="raise"``.
+    """
+    try:
+        import accel
+    except ImportError:
+        return _NOACCEL
+    try:
+        accel_name = {c: k for k, (_f, c, _h) in accel.ACCEL.items()}.get(op.name)
+    except Exception as e:               # noqa: BLE001 - malformed table is a bug, not an absence
+        if _bs.is_strict():
+            raise
+        _bs.record(op.name, e, op.out_sort, source="gpu")
+        return _NOACCEL
+    if accel_name is None:
+        return _NOACCEL
+    try:
+        return accel.run_batch(accel_name, [v], a, b, device)[0]
+    except Exception as e:               # noqa: BLE001
+        if _bs.is_strict():
+            raise
+        _bs.record(op.name, e, op.out_sort, source="gpu")
+        return _NOACCEL
+
+
 def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
-          device: str = "cpu"):
+          device: str = "cpu", on_error: str | None = None, template=None):
     """Apply one operator to *image* and return its raw output.
 
     image  -> image/region  : returns a float64 ndarray
     region -> feature        : returns a Python float (the scalar measurement)
     *      -> contour        : returns the XLD dict {"shape", "cs"}
+    [x1, x2] -> nary op      : *image* may be a LIST of inputs for the n-ary tier
+                               (``add_image``, ``union2`` … — see ``list_ops(tier)``)
 
     With ``coerce=True`` (default) a grayscale array handed to a ``region`` op is
     binarised at 0.5 and a bool mask is re-typed to float64, matching the CLI —
@@ -957,27 +1121,67 @@ def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
     left to the op's own 0.5 binarisation). Pass ``coerce=False`` to feed the
     array through untouched.
 
-    ``device`` (default ``"cpu"``): ``"cuda"`` で accel が GPU 化した op を GPU 実行(未対応 op や
-    torch/GPU 不在時は静かに CPU)。単発 op は転送律速なので効果は薄い(連鎖は run_pipeline を推奨)。
+    ``device`` (default ``"cpu"``): ``"cuda"`` runs accel-enabled ops on the GPU.
+    torch/accel *absent* falls back to CPU silently (documented); a kernel that
+    FAILS is recorded in the fallback ledger and raises under ``on_error="raise"``.
+
+    ``on_error``: ``"fallback"`` (default; sort-valid fallback, recorded, warns once
+    per op), ``"warn"`` (warn on every fallback of this call) or ``"raise"``
+    (fail-closed). ``None`` reads ``FULLSEYE_ON_ERROR``. See :func:`fallbacks`.
+
+    ``template``: for the matching ops (``ncc_locate`` / ``shape_locate``) the
+    template image to locate; it is set for this call only (thread-local) and the
+    previous template is restored afterwards. Without one those ops return the
+    no-match vector ``[0, 0, 0]`` — see :func:`set_match_template`.
     """
+    policy = _policy(on_error)
+    if template is None:
+        return _apply_impl(image, name, a, b, coerce, device, policy)
+    prev = _ops._MATCH_CTX.get("template")
+    _ops.set_match_template(template)
+    try:
+        return _apply_impl(image, name, a, b, coerce, device, policy)
+    finally:
+        _ops.set_match_template(prev)
+
+
+def _apply_impl(image, name, a, b, coerce, device, policy):
+    if isinstance(image, (list, tuple)):                 # n-ary tier: a list of inputs
+        nop = _nary_by_name().get(name)
+        if nop is None:
+            op = find_op(name)
+            if op is not None:
+                raise TypeError("%r is a single-input op; pass one array, not a list of %d"
+                                % (name, len(image)))
+            raise KeyError("unknown operator %r" % (name,))
+        if len(image) != nop.arity:
+            raise TypeError("%r takes %d inputs %s, got %d"
+                            % (name, nop.arity, list(nop.in_sorts), len(image)))
+        inputs = [np.asarray(x) for x in image]
+        out = _run_guarded(name, lambda: nop.fn(inputs, a, b), policy)
+        if nop.out_sort == "feature":
+            return float(np.asarray(out).reshape(-1)[0])
+        return out
+
     op = _resolve(name)
     v = _coerce_input(image, op) if coerce else image
-    if device != "cpu":
-        try:
-            import accel
-            accel_name = {c: k for k, (_f, c, _h) in accel.ACCEL.items()}.get(op.name)
-            if accel_name is not None:
-                return accel.run_batch(accel_name, [v], a, b, device)[0]
-        except Exception:
-            pass
-    out = _ops.RT[op.name](v, a, b)
+    _guard_input(v, op, policy)
+
+    def _call():
+        if device != "cpu":
+            res = _try_accel(op, v, a, b, device)
+            if res is not _NOACCEL:
+                return res
+        return _ops.RT[op.name](v, a, b)
+
+    out = _run_guarded(op.name, _call, policy)
     if op.out_sort == "feature":
         return float(np.asarray(out).reshape(-1)[0])
     return out
 
 
 def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
-                 coerce: bool = True, device: str = "cpu"):
+                 coerce: bool = True, device: str = "cpu", on_error: str | None = None):
     """Apply a sequence of operators, threading the array through each.
 
     *stages* is either a list of names (one shared ``a``/``b`` for the whole
@@ -990,13 +1194,17 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
     themselves, so re-coercing mid-chain would only strip gray levels a stage may
     still want (see :func:`_coerce_input`).
 
-    ``device`` (default ``"cpu"``): ``"cuda"`` (or any non-cpu) で GPU に載る op を
-    ``accel_bridge`` の **常駐パイプライン**で実行(未対応 op は CPU に自動フォールバック、
-    連続 accel op は転送 1 回に償却)。GPU/torch 不在時は静かに CPU 経路へ。既定の CPU 経路は
-    従来どおり core を鎖状適用する(挙動不変)。GPU 経路は ``ops.run_stages`` と同じ clip 付き
-    意味論(進化 champion と同じ)で、faithful op のみ GPU に載せるため **タスク指標は保存**
-    される(検証: tests/test_accel_bridge.py ほか)。
+    ``device`` (default ``"cpu"``): ``"cuda"`` (or any non-cpu) runs the chain on the
+    ``accel_bridge`` resident pipeline (unsupported ops fall back to CPU inside the
+    bridge; consecutive accel ops share one transfer). torch/GPU *absent* silently
+    uses the CPU path; a bridge that FAILS is recorded (source ``"gpu"``) and raises
+    under ``on_error="raise"``. The GPU path uses ``ops.run_stages`` clip semantics
+    (same as evolution champions) and only faithful ops go to the GPU, so task
+    metrics are preserved (tests/test_accel_bridge.py).
+
+    ``on_error``: as in :func:`apply`; fallbacks are attributed per stage.
     """
+    policy = _policy(on_error)
     norm = []
     for st in stages:
         if isinstance(st, (tuple, list)):
@@ -1005,13 +1213,21 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
             name, sa, sb = st, a, b
         norm.append((name, float(sa), float(sb)))
 
-    if device != "cpu":                                   # GPU 経路(accel_bridge 常駐)
+    if device != "cpu" and norm:                          # GPU 経路(accel_bridge 常駐)
         try:
             import accel_bridge as _bridge
-            v = _coerce_input(image, _resolve(norm[0][0])) if (coerce and norm) else image
-            return _bridge.run(norm, [v], device=device)[0]
-        except Exception:
-            pass                                          # GPU/torch 不在等は CPU にフォールバック
+        except ImportError:
+            _bridge = None
+        if _bridge is not None:
+            first_op = _resolve(norm[0][0])
+            v0 = _coerce_input(image, first_op) if coerce else image
+            _guard_input(v0, first_op, policy)
+            try:
+                return _run_guarded("run_pipeline[gpu]", lambda: _bridge.run(norm, [v0], device=device)[0], policy)
+            except Exception as e:       # noqa: BLE001
+                if policy == "raise":
+                    raise
+                _bs.record("run_pipeline[gpu]", e, None, source="gpu")
 
     v = image
     first = True
@@ -1019,9 +1235,19 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
         op = _resolve(name)
         if first:
             v = _coerce_input(v, op) if coerce else v
+            _guard_input(v, op, policy)
             first = False
-        v = _ops.RT[op.name](v, sa, sb)
+        v = _run_guarded(op.name, (lambda _op=op, _v=v, _a=sa, _b=sb: _ops.RT[_op.name](_v, _a, _b)), policy)
     return v
+
+
+# ---- fallback ledger (re-exported from backend_safe) ------------------------ #
+fallbacks = _bs.fallbacks
+fallback_counts = _bs.fallback_counts
+clear_fallbacks = _bs.clear_fallbacks
+strict_mode = _bs.strict_mode
+set_match_template = _ops.set_match_template
+FAILED_BACKENDS = _ops.FAILED_BACKENDS
 
 
 # ---- discovery ------------------------------------------------------------- #

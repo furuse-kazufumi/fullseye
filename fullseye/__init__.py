@@ -27,6 +27,8 @@ with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     from api import (  # noqa: E402,F401
         apply, run_pipeline, find_op, list_ops, op_names, categories,
+        fallbacks, fallback_counts, clear_fallbacks, FullseyeFallbackWarning, strict_mode,
+        set_match_template, FAILED_BACKENDS, ambiguous_aliases,
         read_image, write_image, RT, REGISTRY, __version__, version,
         stereo, disparity_map, disparity_subpixel, lr_consistency,
         depth_from_disparity, reproject_to_points,
@@ -306,6 +308,8 @@ def capabilities() -> dict:
 
 __all__ = [
     "apply", "run_pipeline", "find_op", "list_ops", "op_names", "categories",
+    "fallbacks", "fallback_counts", "clear_fallbacks", "FullseyeFallbackWarning",
+    "strict_mode", "set_match_template", "FAILED_BACKENDS", "ambiguous_aliases",
     "read_image", "write_image", "RT", "REGISTRY", "__version__", "version",
     "stereo", "disparity_map", "disparity_subpixel", "lr_consistency",
     "depth_from_disparity", "reproject_to_points",
