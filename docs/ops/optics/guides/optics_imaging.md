@@ -17,7 +17,9 @@ version: 0.1.0
 - **wave(4)** — `airy_pattern` / `angular_spectrum_propagate` / `fraunhofer_pattern` / `gaussian_beam`: 円形瞳の回折限界 PSF、角スペクトル法による**厳密な**自由空間伝搬(近軸近似をしない)、開口の遠方回折像、ガウシアンビームの q パラメータ伝搬。
 - **imaging(3)** — `psf_to_mtf` / `mtf_diffraction` / `wavefront_stats`: 測った点像を分解能曲線に変える PSF → OTF → MTF の鎖、それと突き合わせる回折限界の閉形式、Zernike フィットから出す波面統計(RMS / PV / Strehl)。
 - **polarization(6)** — `jones_element` / `jones_apply` / `stokes_from_jones` / `mueller_element` / `mueller_apply` / `stokes_analyze`: 完全偏光を扱う Jones 計算と、**部分偏光**まで運べる Stokes/Mueller 計算(偏光カメラが実際に測るのは後者)。
-- **design(12、実体は `raytrace.py`)** — `lens_system` / `thick_lens` / `glass` / `example_system` / `paraxial_trace` / `spot_diagram` / `spot_stats` / `ray_fan` / `opd_map` / `wavefront_from_opd` / `seidel_coefficients` / `tolerance_analysis`: 上の 4 カテゴリが**近軸・閉形式**なのに対し、こちらは球面/円錐面の逐次処方に**実光線**を通す設計層(下の「設計(design)」節)。
+- **design(15、実体は `raytrace.py`)** — `lens_system` / `thick_lens` / `glass` / `example_system` / `glass_catalog` / `sellmeier` / `paraxial_trace` / `spot_diagram` / `spot_stats` / `ray_fan` / `opd_map` / `wavefront_from_opd` / `seidel_coefficients` / `tolerance_analysis` / `chromatic_shift`: 上の 4 カテゴリが**近軸・閉形式**なのに対し、こちらは球面/円錐面/非球面の逐次処方に**実光線**を通す設計層(下の「設計(design)」節)。
+- **optimization(3、実体は `lensopt.py`)** — `optimize_lens` / `merit_function` / `bend_singlet`: 処方を減衰最小二乗で**変える**側(下の「最適化」節)。
+- **illumination(6、実体は `illumdesign.py`)** — `light_source` / `irradiance_map` / `illumination_uniformity` / `defect_contrast` / `lighting_sweep` / `illumination_design`: レンズの手前、**照明の設計**(下の「照明設計」節)。
 
 データ種は既存語彙の再利用が基本です: **table**(dict、計測値の束/ABCD 素子リスト)、**matrix**(ABCD 2x2・Mueller 4x4 の実行列 — `mat_svd` や `mat_cond` にそのまま流せる)、**image2d**(PSF・開口・強度像)、**cimage**(2-D complex = 複素場と Jones 行列)、**pairs**((n,2) の曲線 = MTF・cos⁴)。新語は 2 つだけ、**jones**(長さ 2 固定の complex ベクトル)と **stokes**(長さ 4 固定 + 偏光度 ≤ 1 の物理制約)で、これは `signal` / `cpoints` に相乗りさせると「256 点の正弦波を Stokes 枠に渡せる」という**型レベルの嘘**になるためです。
 
@@ -166,6 +168,74 @@ assert tol["failed"] == 0 and top["parameter"] == "R"
 ```
 
 **棲み分け**: optics = 近軸/波動(閉形式、設計の出発点)、raytrace = 実光線・設計(処方から数値で)。面での反射・屈折のスカラ公式(`match3d.refract` 等)を 1 本の光線に使うのは今までどおり match3d、**系を通す**のが raytrace です。
+
+### 実硝材・非球面・色収差(2026-09-03 追加)
+
+`glass(nd, vd)` は 2 項 Cauchy の**モデル**でした。`glass_catalog("N-BK7")` は Schott の公開 Sellmeier 定数(N-BK7 / N-K5 / N-BAK4 / N-SK16 / N-SSK5 / N-BAF10 / N-LAK22 / N-LAK9 / N-LASF9 / N-FK51A / N-F2 / N-SF2 / N-SF5 / N-SF10 / N-SF11 / N-SF6 / N-SF57)と Malitson の溶融石英・CaF2・サファイアの 20 種で、面の `n` に**名前をそのまま**書けます。`sellmeier(B1, B2, B3, C1, C2, C3)` は任意メーカーの定数から同じ形の table を作り、評価した `nd` / `vd` を返す(データシートと突き合わせられる)。20 種すべて、データシートの nd を 1e-4・vd を 0.3 以内で再現することをテストが固定しています。
+
+面には `k`(円錐)に加えて `asph=(A4, A6, A8, …)`(偶数次非球面係数、mm⁻³, mm⁻⁵, …)を持たせられます。実光線は円錐面交点からの Newton 反復で非球面に載せ(残差 < 1e-8 mm)、法線はサグの勾配、Seidel には 4 次項 `G = k c³/8 + A4` が入ります。`example_system("asphere")` は Descartes の無収差レンズ(物体側が平面、射出面が `k = −n²` の双曲面)で、スポット RMS が 3e-15 mm — 法線か交点が 1 桁でも違えば通らない検証です。
+
+`chromatic_shift(system, wavelengths)` は処方を波長ごとに評価し直し、EFL / BFL / 主光線像高 / 基準像面でのスポットを返します(`axial_color` = F−C の BFL 差、`lateral_color` = 像高差、`rms_polychromatic` = 全波長プールの RMS)。`example_system("catalog_doublet")` は N-BK7 / N-SF2 の実硝材ダブレットです。
+
+```python
+import raytrace as RT
+
+g = RT.glass_catalog("N-SF2")
+print(round(g["nd"], 5), round(g["vd"], 2))                 # 1.64769 33.82 (データシート)
+single = RT.chromatic_shift(RT.lens_system())
+doub = RT.chromatic_shift(RT.example_system("catalog_doublet"))
+print(round(single["axial_color"], 3), round(doub["axial_color"], 3))   # -1.531 -0.299
+assert abs(doub["axial_color"]) < abs(single["axial_color"]) / 4
+print(round(RT.spot_stats(RT.example_system("asphere"))["rms_radius"], 12))   # 0.0 (stigmatic)
+```
+
+## 最適化(optimization) — 処方を減衰最小二乗で動かす
+
+`raytrace` は処方を**評価**します。`lensopt.optimize_lens(system, variables, fields, wavelengths, efl_target, …)` はそれを**変える**側 — 設計者が毎日回している Levenberg–Marquardt(減衰最小二乗、Wynne & Wormell 1963 / Meiron 1965)です。残差ベクトルは各視野・各波長の瞳充填光線束の**主光線からの横ずれ**(mm、その RMS がスポット RMS)と、EFL を目標に固定する重い残差。変数は `"R0"`(曲率として動く — 平面を通り越せる)/ `"t1"` / `"k1"` / `"A4_1"`… の文字列。ヤコビアンは前進差分、正規方程式は `λ·diag(JᵀJ)` で減衰し、メリットが下がる歩幅だけ採用(λ を適応)。**毎歩 `lens_system` で再検証**するので、追跡器が拒否する処方(口径が円錐の範囲外、負の厚み)は返せません。`merit_function` は同じ残差の評価のみ、`bend_singlet` は Coddington 形状因子の閉形式(既定 = 球面収差最小の曲げ `q = 2(n²−1)/(n+2)`)。
+
+グラウンドトゥルース(`tests/test_lensopt.py`): 等凸 (q=0) から始めて EFL=100 固定で 2 半径を動かすと q=0.732(厚肉の総当たり最適 0.730、薄肉閉形式 0.740)に着地。平凸の射出面の `k` だけ動かすと Descartes の `−n²` を 1e-3 で再発見し RMS 0.57 mm → 1e-15 mm。`A4` は円錐の 4 次項 `k c³/8` に 1 % で収束し、A6/A8 を足すと単調に改善。
+
+```python
+import lensopt
+import raytrace as RT
+
+eq = lensopt.bend_singlet(100.0, 1.5168, 2.0, 5.0, shape_factor=0.0)   # 等凸から
+r = lensopt.optimize_lens(eq["system"], variables=["R0", "R1"], efl_target=100.0)
+R1, R2 = r["variables"][0]["final"], r["variables"][1]["final"]
+print(round((R2 + R1) / (R2 - R1), 3), round(r["efl_final"], 4), r["iterations"])   # 0.732 100.0 …
+d = RT.example_system("catalog_doublet"); d["field"] = 3.0
+m = lensopt.merit_function(d, wavelengths=[RT.WL_F, RT.WL_D, RT.WL_C])
+print(sorted(m["rms_by_field"]), round(m["efl"], 3))
+assert r["rms_final"] < r["rms_initial"] and abs(r["efl_final"] - 100.0) < 1e-3
+```
+
+## 照明設計(illumination) — 欠陥にコントラストがあるか、撮る前に決める
+
+レンズは欠陥をどれだけ**鮮明に**写すかを決め、照明は欠陥に**コントラストがあるか**を決めます。`illumdesign.py` はその照明側を第一原理で数値化します:
+
+- `light_source(kind, radius_mm, height_mm, n, …)` — `point` / `ring` / `bar` / `dome` / `coaxial` / `backlight` / `custom` の発光点集合(位置・向き・放射強度・Lambert 次数 `cos_exponent`)。
+- `irradiance_map(light, size_mm, shape, height, facing)` — 部品面の放射照度 `E = Σ I0 cosᵐθ_e cosθ_s / d²`。起伏 `height` で画素ごとの法線を傾け、`facing="down"` でバックライトが照らす裏面。等方点光源で `I0 cos³θ/h²`、Lambert 発光で cos⁴ 則をテストが 1e-12 で固定。
+- `illumination_uniformity(irr)` — min/max、CV、端落ち、ピーク位置のずれ(リングの狙いずれ)。
+- `defect_contrast(light, surface, slopes_deg, camera)` — 傾いた面(傷の斜面)と平面のカメラ向き輝度の Michelson コントラスト(Lambert + GGX、`specularity.brdf_microfacet` と同じローブ、方位で走査)、顔料コントラスト(グレアが希釈する)、明視野/暗視野の判定。
+- `lighting_sweep(surface, slope_deg, elevations_deg)` — リング仰角 vs コントラスト(pairs)。鏡面に近い面では斜面が光をカメラへ鏡面反射する仰角 `90° − 2×斜面` にピーク(テストが固定)。
+- `illumination_design(surface, defect, slope_deg)` — 候補族(低角リング/高角リング/最良仰角リング/ドーム/同軸/バックライト)を模擬コントラストで順位付けし、経験則(凹凸×光沢→暗視野、顔料→ドーム、輪郭→バックライト)との**一致/不一致を明示**。
+
+```python
+import numpy as np
+import illumdesign as ID
+
+low = ID.light_source("ring", radius_mm=60.0, height_mm=15.0, n=24)     # 暗視野
+u = ID.illumination_uniformity(ID.irradiance_map(low, size_mm=(50, 50), shape=(48, 48)))
+dc = ID.defect_contrast(low, surface="glossy", slopes_deg=[5.0, 10.0])
+print(round(u["uniformity"], 3), dc["regime"], [round(r["max_abs"], 3) for r in dc["per_slope"]])
+sw = ID.lighting_sweep(surface="mirror", slope_deg=10.0, camera_height_mm=1000.0)
+print(sw[int(np.argmax(sw[:, 1])), 0])                                  # 70.0 = 90 - 2*10
+d = ID.illumination_design(surface="glossy", defect="topographic", slope_deg=10.0)
+print(d["recommended"], d["rule_of_thumb"], d["agrees_with_rule"])
+assert d["ranking"][0]["score"] >= d["ranking"][-1]["score"]
+```
+
+**正直な限界**: 発光点は点光源の和(面光源は `n` を増やして近似)、多重反射・相互反射なし、BRDF は Lambert + 等方 GGX(異方性ヘアラインは未対応)、偏光なし、カメラは 1 点(視野内の視線変化は `camera` を変えて呼ぶ)。
 
 ## 結像シミュレーション(imaging_sim) — 設計したレンズで撮る
 

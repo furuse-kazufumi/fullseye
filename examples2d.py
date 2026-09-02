@@ -147,6 +147,16 @@ EXAMPLES = [
      "summary": "処方(lens_system)から近軸表・面ごとの Seidel・軸上/5 deg のスポット RMS・"
                 "OPD→Zernike・Monte-Carlo 公差 p95 を出し、閉形式(thick_lens / 放物面鏡の"
                 "完全結像)と突き合わせる。"},
+    {"id": "lens_optimize_demo", "task": "optics_sensing", "data": "synthetic",
+     "name": "実硝材で色収差を見て、減衰最小二乗でレンズを最適化する(lensopt)",
+     "summary": "glass_catalog(Sellmeier)→ chromatic_shift で singlet/doublet の F-C 焦点移動、"
+                "bend_singlet の Coddington 形状因子を optimize_lens が等凸から再発見、"
+                "円錐 k=-n² と非球面 A4..A8 で無収差化、merit_function を 3 視野 × 3 波長で評価。"},
+    {"id": "illumination_design_demo", "task": "optics_sensing", "data": "synthetic",
+     "name": "検査照明を設計する(illumdesign)— リング/ドーム/同軸/バックライトの照度と欠陥コントラスト",
+     "summary": "light_source → irradiance_map(cos⁴ 則で検証)→ illumination_uniformity、"
+                "defect_contrast で暗視野/明視野の傷斜面コントラストとグレアによる顔料コントラスト希釈、"
+                "lighting_sweep の最良仰角 = 90°−2×斜面、illumination_design の順位表と経験則の照合。"},
     {"id": "lens_defect_dataset_demo", "task": "optics_sensing", "data": "synthetic",
      "name": "設計したレンズで欠陥画像を撮る(lensimage)— PSF・歪曲・センサ雑音つき学習データ",
      "summary": "singlet / doublet の実収差瞳から回折 PSF(Airy 第 1 暗環・Strehl)と歪曲表を出し、"

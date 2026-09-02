@@ -5,8 +5,16 @@
 fullseye は産業ビジョン(検査ライン)と Physical AI(ロボット知覚)の両方に
 足場があり、その**手前**にあるのがレンズ・回折・偏光の計算 — 「どの焦点距離
 か」「被写界深度はどれだけか」「回折で潰れる最小欠陥は何 µm か」「偏光板で
-テカりは消えるか」。本レジストリはその台帳(optics.py 18 op + raytrace.py 12 op
-+ lensimage.py 4 op = 34 op / 6 カテゴリ)。
+テカりは消えるか」。本レジストリはその台帳(optics.py 18 op + raytrace.py 15 op
++ lensimage.py 4 op + lensopt.py 3 op + illumdesign.py 6 op = 46 op / 8 カテゴリ)。
+
+optimization(lensopt.py)/ illumination(illumdesign.py)— 2026-09-03 追加。
+raytrace は処方を**評価**する側、lensopt は減衰最小二乗で処方を**変える**側
+(曲率/間隔/円錐/非球面係数を変数に、多視野・多波長の横収差 + EFL 拘束)。
+illumdesign はレンズの手前の**照明設計**(リング/ドーム/バー/同軸/バックライトの
+放射照度・一様性、傷の斜面と顔料のコントラスト、仰角スイープ、候補族の順位付け)。
+raytrace には実硝材カタログ(``glass_catalog`` / ``sellmeier``、Sellmeier 20 種)、
+非球面(``asph=(A4, A6, …)``)、``chromatic_shift``、``chief_ray`` も同日追加。
 
 imaging_sim(lensimage.py、2026-09-03 追加)— **設計したレンズで撮る**。ユーザー
 の要望「擬似物理空間に光学系を組み、AI 学習用の欠陥画像を生成したい」に応える

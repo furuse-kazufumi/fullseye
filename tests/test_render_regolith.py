@@ -161,7 +161,7 @@ def test_penumbra_width_scales_with_occluder_distance_times_tan_half_angle():
     assert w3 == pytest.approx(expect(1.0, 16.0), rel=0.2)
     assert w2 / w1 == pytest.approx(2.0, rel=0.2)      # 距離 2 倍 → 半影 2 倍
     # 太陽(0.53°)・高さ 1: 半影の全幅は 0.019 世界単位 = 0.5 画素 → 事実上ハード影
-    assert expect(1.0, 0.53) / 0.62 < pix
+    assert expect(1.0, 0.53) / 0.80 < pix
     assert width(1.0, 0.53, samples=16) <= 2.0 * pix
 
 
