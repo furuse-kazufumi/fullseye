@@ -621,7 +621,11 @@ _CATALOG = {
         ("occupancy_grid", "occupancy", ["points"], "voxel", False),
         ("esdf", "occupancy", ["voxel"], "sdf", False),
         ("inflate", "occupancy", ["voxel"], "voxel", False),
-        ("query_distance", "occupancy", ["sdf", "points"], "measurement", False),
+        # 返りは問い合わせ点ごとの距離 (M,) であって 'measurement'(スカラ 1 つ)
+        # ではない。sampson_distance と同じ形の宣言ミスで、こちらは
+        # bounds の流儀(match3d の (lo,hi) と tsdf の ((min,max),...))が
+        # 食い違って毎回拒否されていたため、それを直すまで到達しなかった。
+        ("query_distance", "occupancy", ["sdf", "points"], "signal", False),
     ],
     "symmetry": [  # 対称性検出(反射面/回転軸、chamfer で採点=形状補完・正準姿勢・左右差検査)
         ("detect_reflection_symmetry", "symmetry3d", ["points"], "primitive", False),
