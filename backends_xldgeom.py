@@ -80,6 +80,19 @@ def _allpts(cs):
     return np.concatenate(cs, axis=0)
 
 
+def _openpts(cs):
+    """Like ``_allpts`` but drops the duplicated closing point of closed contours
+    (first == last), so point statistics (moments / PCA / bbox) are not biased by a
+    point counted twice.  The shoelace area does not use this (the closing point is
+    harmless there), and contour->contour ops keep it."""
+    out = []
+    for c in cs:
+        if len(c) > 2 and np.allclose(c[0], c[-1]):
+            c = c[:-1]
+        out.append(c)
+    return _allpts(out)
+
+
 def _pca(pts):
     """Population covariance eigen-decomposition of an (N,2) (row,col) point set.
 
@@ -118,7 +131,7 @@ def xg_moments(v, a, b):
     (HALCON's moments_points_xld normalizes central moments by point count).
     The trace mu20+mu02 is a single rotation-invariant scalar.
     """
-    pts = _allpts(_cs(v))
+    pts = _openpts(_cs(v))
     if len(pts) < 1:
         return np.float64(0.0)
     c = pts - pts.mean(axis=0)
@@ -139,7 +152,7 @@ def xg_area_center(v, a, b):
 
 def xg_eccentricity(v, a, b):
     """Eccentricity sqrt(1 - lambda_min/lambda_max) from the point covariance."""
-    r = _pca(_allpts(_cs(v)))
+    r = _pca(_openpts(_cs(v)))
     if r is None:
         return np.float64(0.0)
     w, _ = r
@@ -156,8 +169,16 @@ def xg_orientation(v, a, b):
     Angle is measured from the +x (column) axis; multiply the result by 180 to
     recover degrees. Line orientation is defined mod 180, so a line at theta and
     theta+180 map to the same value.
+
+    Discontinuity (inherent, documented): a line orientation lives on a circle of
+    180 degrees, and this op unrolls it to [0, 1), so the wrap sits at HORIZONTAL —
+    a line tilted +0.001 deg returns ~0.0 while -0.001 deg returns ~0.9999. Any
+    single-scalar unrolling has a seam somewhere; callers that need continuity
+    across horizontal should compare orientations on the doubled angle
+    (cos 2*theta, sin 2*theta) or take the difference mod 1. The closing point of a
+    closed contour is not double-counted in the PCA.
     """
-    r = _pca(_allpts(_cs(v)))
+    r = _pca(_openpts(_cs(v)))
     if r is None:
         return np.float64(0.0)
     _, vecs = r
@@ -168,7 +189,7 @@ def xg_orientation(v, a, b):
 
 def xg_elliptic_axis(v, a, b):
     """Major/minor axis ratio sqrt(lambda_max/lambda_min) of the point set."""
-    r = _pca(_allpts(_cs(v)))
+    r = _pca(_openpts(_cs(v)))
     if r is None:
         return np.float64(1.0)
     w, _ = r
@@ -180,7 +201,7 @@ def xg_elliptic_axis(v, a, b):
 
 def xg_height_width_ratio(v, a, b):
     """Axis-aligned bounding-box height/width ratio of the point set."""
-    pts = _allpts(_cs(v))
+    pts = _openpts(_cs(v))
     if len(pts) < 1:
         return np.float64(0.0)
     h = float(np.ptp(pts[:, 0]))
@@ -197,7 +218,7 @@ def xg_regress_contours(v, a, b):
     equals its smallest covariance eigenvalue; its square root is the RMS
     perpendicular distance to the best-fit line.
     """
-    r = _pca(_allpts(_cs(v)))
+    r = _pca(_openpts(_cs(v)))
     if r is None:
         return np.float64(0.0)
     w, _ = r
