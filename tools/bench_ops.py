@@ -845,8 +845,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         print("bench_ops: nothing to measure", file=sys.stderr)
         return 2
 
+    if absent:
+        print("bench_ops: set %r skips %d op(s) whose optional backend is absent here: %s"
+              % (args.opset, len(absent), ", ".join(absent)), file=sys.stderr)
     report = run(names, sizes, dtypes, images, warm=args.warm, repeat=args.repeat,
                  device=args.device, verbose=not args.quiet)
+    report["header"]["set"] = None if args.ops else args.opset
+    report["header"]["set_absent_ops"] = absent
     print(format_summary(report))
 
     if args.out:
