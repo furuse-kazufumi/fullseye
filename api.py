@@ -1499,11 +1499,17 @@ def _apply_impl(image, name, a, b, coerce, device, policy, fast=None):
 
     op = _resolve(name)
     v = _coerce_input(image, op) if coerce else image
+    v = _contract_dtype(v, op, policy)
     _guard_input(v, op, policy)
+    use_fast = _fast_on(fast)
 
     def _call():
         if device != "cpu":
             res = _try_accel(op, v, a, b, device)
+            if res is not _NOACCEL:
+                return res
+        elif use_fast:
+            res = _try_fast(op, v, a, b)
             if res is not _NOACCEL:
                 return res
         return _ops.RT[op.name](v, a, b)
