@@ -1,23 +1,23 @@
 ---
-op: tb_tcspc_coates_correct
+op: tb_keypoints_uv_to_points
 dim: 2d
 category: typed
-in: counts
-out: counts
+in: points
+out: points
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
-# tb_tcspc_coates_correct — 2D `typed` op
+# tb_keypoints_uv_to_points — 2D `typed` op
 
-- **データ種**: `counts` → `counts`
-- **呼び出し**: `fullseye.apply(img, "tb_tcspc_coates_correct", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
+- **データ種**: `points` → `points`
+- **呼び出し**: `fullseye.apply(img, "tb_keypoints_uv_to_points", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
 ## 使い方
 
-型契約は `counts → counts`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+型契約は `points → points`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
 
 ## 参考(サンプルデータ・文献)
 
@@ -28,9 +28,9 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 - (まだありません)
 
-## 型が繋がる次の op(`counts` を入力に取れる)
+## 型が繋がる次の op(`points` を入力に取れる)
 
-[identity](../misc/identity.md) · [tb_spad_deadtime_apply](tb_spad_deadtime_apply.md) · [tb_spad_deadtime_correct](tb_spad_deadtime_correct.md) · [tb_tcspc_irf_convolve](tb_tcspc_irf_convolve.md) · [tb_tcspc_background_subtract](tb_tcspc_background_subtract.md) · [tb_dtof_depth](tb_dtof_depth.md) · [tb_countrate_to_counts](tb_countrate_to_counts.md) · [tb_counts_to_countrate](tb_counts_to_countrate.md)
+[identity](../misc/identity.md) · [tb_points_to_voxel](tb_points_to_voxel.md) · [tb_estimate_point_normals](tb_estimate_point_normals.md) · [tb_iss_keypoints](tb_iss_keypoints.md) · [tb_angle_3points](tb_angle_3points.md) · [tb_project_points](tb_project_points.md) · [tb_render_point_depth](tb_render_point_depth.md) · [tb_statistical_outlier_removal](tb_statistical_outlier_removal.md)
 
 ## 同カテゴリ(`typed`)
 

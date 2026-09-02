@@ -1,5 +1,5 @@
 ---
-op: tb_tcspc_coates_correct
+op: tb_counts_to_countrate
 dim: 2d
 category: typed
 in: counts
@@ -10,10 +10,10 @@ license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
-# tb_tcspc_coates_correct — 2D `typed` op
+# tb_counts_to_countrate — 2D `typed` op
 
 - **データ種**: `counts` → `counts`
-- **呼び出し**: `fullseye.apply(img, "tb_tcspc_coates_correct", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
+- **呼び出し**: `fullseye.apply(img, "tb_counts_to_countrate", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
 ## 使い方
 
@@ -30,7 +30,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`counts` を入力に取れる)
 
-[identity](../misc/identity.md) · [tb_spad_deadtime_apply](tb_spad_deadtime_apply.md) · [tb_spad_deadtime_correct](tb_spad_deadtime_correct.md) · [tb_tcspc_irf_convolve](tb_tcspc_irf_convolve.md) · [tb_tcspc_background_subtract](tb_tcspc_background_subtract.md) · [tb_dtof_depth](tb_dtof_depth.md) · [tb_countrate_to_counts](tb_countrate_to_counts.md) · [tb_counts_to_countrate](tb_counts_to_countrate.md)
+[identity](../misc/identity.md) · [tb_spad_deadtime_apply](tb_spad_deadtime_apply.md) · [tb_spad_deadtime_correct](tb_spad_deadtime_correct.md) · [tb_tcspc_coates_correct](tb_tcspc_coates_correct.md) · [tb_tcspc_irf_convolve](tb_tcspc_irf_convolve.md) · [tb_tcspc_background_subtract](tb_tcspc_background_subtract.md) · [tb_dtof_depth](tb_dtof_depth.md) · [tb_countrate_to_counts](tb_countrate_to_counts.md)
 
 ## 同カテゴリ(`typed`)
 

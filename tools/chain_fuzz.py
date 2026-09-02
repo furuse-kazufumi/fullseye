@@ -368,6 +368,13 @@ def make_generators():
         # しなかった。ここが「発見ゼロが未実行の偽装だった」の一番よくある入口。
         # 構造の要る型は**実体を通して作る**(手で組むと相関や不変量が実物と
         # 違う種になり、下流の検査が別の物を測ってしまう)。
+        # mask は **産む op も種も無かった**(2026-09-02、`test_every_declared_
+        # type_has_a_producer_or_a_seed` が検出)。そのため overlay_mask と
+        # poisson_blend は永久に実行されない状態だった。中央に穴を開けない
+        # 連結領域にする —— poisson_blend は「マスクが縁に接していたら拒否」
+        # なので、縁から離すのが実際に走らせる条件。
+        "mask": lambda rng: (lambda m: (m.__setitem__(
+            (slice(6, 26), slice(8, 24)), True), m)[1])(np.zeros((32, 32), bool)),
         "rgb": lambda rng: rng.random((24, 32, 3)),
         "rgbimage": lambda rng: rng.random((24, 32, 3)),
         "rgba": lambda rng: rng.random((24, 32, 4)),

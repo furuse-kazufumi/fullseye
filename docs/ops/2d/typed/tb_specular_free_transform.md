@@ -30,7 +30,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`rgbimage` を入力に取れる)
 
-[identity](../misc/identity.md) · [tb_specular_diffuse_split](tb_specular_diffuse_split.md) · [tb_specular_coefficient_map](tb_specular_coefficient_map.md) · [tb_rgb_to_quaternion](tb_rgb_to_quaternion.md)
+[identity](../misc/identity.md) · [tb_specular_diffuse_split](tb_specular_diffuse_split.md) · [tb_specular_coefficient_map](tb_specular_coefficient_map.md) · [tb_rgb_to_quaternion](tb_rgb_to_quaternion.md) · [tb_rgb_to_xyz](tb_rgb_to_xyz.md)
 
 ## 同カテゴリ(`typed`)
 
