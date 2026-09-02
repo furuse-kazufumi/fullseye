@@ -1147,9 +1147,10 @@ def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -
     if name == "point_in_polygon":
         # independent oracle: the WINDING-NUMBER algorithm (vs the op's crossing number) — a
         # different method, integer-exact, agreeing at strict interior/exterior of a simple polygon.
+        # Domain-aware: malformed / out-of-domain -> the op's -1.0 sentinel (0.0 = "outside").
         errs = []
         for arr, got in zip(holdout, py_out):
-            ref = 0.0
+            ref = -1.0
             if (len(arr) >= 3 and _int_in(arr[0], -100000.0, 100000.0)
                     and _int_in(arr[1], -100000.0, 100000.0) and _int_in(arr[2], 3.0, 100000.0)
                     and len(arr) >= 3 + 2 * int(arr[2])):
