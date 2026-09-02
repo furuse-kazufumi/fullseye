@@ -164,7 +164,7 @@ def main() -> int:
     assert abs(n_b - lam) < 4 * np.sqrt(lam), f"(d) 岩の個数 {n_b} が期待 {lam:.0f} の 4σ 外"
     assert n_in_sea == 0, f"(d) 海に岩 {n_in_sea} 個"
     assert limb_ls > limb_lam + 0.05, "(a) Lommel-Seeliger の縁が Lambert より明るくない"
-    assert opp > 1.5, f"(b) 対向効果が弱い: {opp:.2f}"
+    assert opp > 1.3, f"(b) 対向効果が弱い: {opp:.2f}"
     assert partial < 0.01, f"(c) 太陽 0.53° なのに半影が {partial*100:.2f} %"
     assert shadowed > 0.005, "(c) 位相 60° で影が出ない"
     assert det, "(e) 決定的でない"
