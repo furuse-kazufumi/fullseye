@@ -65,17 +65,27 @@ __all__ = [
 #: ``False`` のものは**数値に一切影響しない**(報告の記述が変わるだけ)。
 #: 「検査を切って速くする」種類のパラメータはここに載せられない —— 載せると
 #: ``tests/test_fssystem.py`` の宣言検査が落ちる。
+#:
+#: ``applied_by`` は**その値を実際に読むモジュール**(``get_system("<name>")`` を
+#: 呼ぶファイル名のタプル)。``None`` は **予約のみ**: 値は受理・記録されるが
+#: **まだ何も読まない**(設定しても挙動は 1 bit も変わらない)。「設定できるのに
+#: 効いていない」を仕様書の文章でなく表で言い、``tests/test_fssystem.py`` が
+#: grep で裏を取る(読み手を名乗るのに読んでいない/数値に影響するのに読み手が
+#: 無い、はどちらも落ちる)。
 SYSTEM_PARAMS = {
     "metric_contract": {
         "values": ("strict", "tolerant"),
         "default": "strict",
         "tightens_only": False,
         "affects_numbers": False,
+        "applied_by": None,
         "doc": (
             "測定 op を人が呼んでいるのか(strict)、自動で回しているのか(tolerant)。"
             "**op 自身はこの値を読まない** —— 読むと隠れた状態で返り値の型が変わり、"
             "この repo がいちばん嫌う『例外でなく、もっともらしく間違う』になる。"
-            "読むのは metriccontract の寛容な入口と、報告に書く条件欄だけ。"
+            "★予約のみ(applied_by=None): 現状 metriccontract の寛容な入口"
+            "(attempt/rank_attempts)はこの値を読まず、明示的に呼び分ける。"
+            "設定は system_snapshot() で報告に写るだけで、数値も経路も変えない。"
         ),
     },
     "extra_checks": {
@@ -83,6 +93,7 @@ SYSTEM_PARAMS = {
         "default": "off",
         "tightens_only": True,
         "affects_numbers": False,
+        "applied_by": ("colortransport.py",),
         "doc": (
             "既定でも fail-closed だが、**理屈の上では正しくないが実害が出るとは"
             "限らない**場面(同値を引き裂くヒストグラム整合、対称でない圧縮距離)を"
@@ -95,9 +106,12 @@ SYSTEM_PARAMS = {
         "default": "worst",
         "tightens_only": False,
         "affects_numbers": False,
+        "applied_by": None,
         "doc": (
             "寛容な契約で『測れなかった』候補をどう扱うか。worst = 最悪値に倒して"
             "順位の最下位に置く / skip = 順位から外す。**strict の経路には無関係**。"
+            "★予約のみ(applied_by=None): rank_attempts は常に worst(最下位)で、"
+            "skip を設定しても順位は変わらない。"
         ),
     },
 }
