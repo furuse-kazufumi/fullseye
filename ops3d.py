@@ -110,7 +110,7 @@ _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "volfreq": volfreq, "volrestore": volrestore,
         "render_ao": render_ao, "render_shadow": render_shadow, "render_shade": render_shade,
         "render_ssaa": render_ssaa, "render_tonemap": render_tonemap,
-        "render_beauty": render_beauty,
+        "render_beauty": render_beauty, "render3d": render3d,
         "measure3d": measure3d}
 
 # 入出力の「種別」語彙(op 連結の型検査に使う):
