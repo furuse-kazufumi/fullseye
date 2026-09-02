@@ -258,7 +258,8 @@ def test_load_honours_exif_orientation(tmp_path, backend):
 def test_to_float01_signed_ints_land_in_unit_interval():
     """Regression: signed ints were divided by the dtype max -> [-1, 1]."""
     out = imgio.to_float01(np.array([-32768, 0, 32767], np.int16))
-    assert np.allclose(out, [0.0, 0.5, 1.0])
+    assert np.allclose(out, [0.0, 32768 / 65535.0, 1.0], atol=1e-12)
+    assert 0.0 <= out.min() and out.max() <= 1.0
     assert imgio.to_float01(np.array([-128, 127], np.int8)).tolist() == [0.0, 1.0]
     assert imgio.to_float01(np.array([0, 255], np.uint8)).tolist() == [0.0, 1.0]  # unchanged
     with pytest.raises(OSError):                        # unknown extension -> cv2.error, normalised
