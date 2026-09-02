@@ -1166,14 +1166,6 @@ def _span_weight(ang: np.ndarray, span_deg, op: str) -> float:
     return min(total, np.pi) / ang.size
 
 
-#: A circular gap between neighbouring views counts as an unmeasured *hole*
-#: (rather than as sampling irregularity) when it is at least this many median
-#: steps wide. The golden-angle sequence's largest gap is at most ``phi``
-#: (1.618) medians, a regular grid's gaps are all one median, and the wedge a
-#: truncated scan leaves is many. See :func:`_span_weight`.
-HOLE_STEPS = 2.0
-
-
 def _covered_span_deg(ang: np.ndarray, step_deg: float) -> float:
     """The angular range, in degrees, that *ang* actually samples.
 
