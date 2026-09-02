@@ -362,15 +362,14 @@ def draw_circle(img, center, radius, color=_KEEP, width=_KEEP, fill=_KEEP, style
     yy, xx = np.mgrid[0:H, 0:W]
     d = np.hypot(xx - cx, yy - cy)
     if do_fill:
-        a[d <= radius] = _color_for(a, col if st is None else st.interior_color())
+        _paint(a, d <= radius, col if st is None else st.interior_color())
         if st is None or st.fill_color is None:
             return a                                  # 従来どおり(塗り色のみ)
     m = np.abs(d - radius) <= max(0.6, wid / 2.0)
     if pattern is not None:
         s = np.mod(np.arctan2(yy - cy, xx - cx), 2.0 * np.pi) * max(float(radius), 1e-9)
         m &= _phase_on(s, pattern)
-    a[m] = _color_for(a, col)
-    return a
+    return _paint(a, m, col)
 
 
 def draw_markers(img, points, color=_KEEP, size=4, shape="cross", width=_KEEP, style=None):
