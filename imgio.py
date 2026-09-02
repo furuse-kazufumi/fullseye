@@ -51,9 +51,17 @@ COLORMAPS = ("gray", "jet", "viridis", "turbo", "magma", "plasma", "inferno",
 def to_float01(x):
     """Coerce an image-like to float64 in [0, 1].
 
-    Handles uint8/uint16 (divide by dtype max), bool (0/1), and float (passed
-    through — assumed already normalised). PIL images and file paths are read if
-    the optional backend is available.
+    Handles bool (0/1), unsigned ints (divide by the dtype max: uint8 -> /255,
+    uint16 -> /65535), signed ints and float (passed through — assumed already
+    normalised). PIL images and file paths are read if the optional backend is
+    available.
+
+    **Signed integers** map the *full dtype range* affinely onto [0, 1]:
+    ``int16 -32768 -> 0.0``, ``0 -> 0.5``, ``32767 -> 1.0`` (before 2026-09-03
+    they were divided by the dtype max, which put a signed image in [-1, 1] and
+    broke the [0, 1] contract every operator relies on). A signed array that is
+    known to hold only non-negative values and should scale like its unsigned
+    twin must be cast first (``a.astype(np.uint16)``).
     """
     if isinstance(x, str):
         return load(x)
@@ -62,8 +70,12 @@ def to_float01(x):
     a = np.asarray(x)
     if a.dtype == bool:
         return a.astype(np.float64)
-    if a.dtype.kind in "ui":
+    if a.dtype.kind == "u":
         return a.astype(np.float64) / float(np.iinfo(a.dtype).max)
+    if a.dtype.kind == "i":
+        info = np.iinfo(a.dtype)
+        lo, hi = float(info.min), float(info.max)
+        return (a.astype(np.float64) - lo) / (hi - lo)
     return a.astype(np.float64)
 
 
