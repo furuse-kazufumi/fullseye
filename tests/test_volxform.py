@@ -262,3 +262,41 @@ def test_ops_registry():
     for name in volxform.VOLXFORM_OPS:
         assert callable(getattr(volxform, name))
         assert name in volxform.__all__
+
+
+# ---- 2026-09-03: resize border handling ----------------------------------- #
+@pytest.mark.parametrize("order", [1, 2, 3])
+@pytest.mark.parametrize("factor", [1.5, 2, 0.5])
+def test_resize_constant_volume_stays_constant(order, factor):
+    """Regression: grid-constant/cval=0 blended the outer half-voxel shell of
+    every upscale toward 0 (an all-ones volume x2 came back with min 0.42)."""
+    out = volxform.vol_resize(np.full((6, 6, 6), 0.7), factor=factor, order=order)
+    assert out.shape == tuple(int(round(6 * factor)) for _ in range(3))
+    assert np.allclose(out, 0.7, atol=1e-12), (order, factor, out.min(), out.max())
+
+
+def test_resize_ramp_keeps_end_values_and_is_monotone():
+    v = np.zeros((1, 1, 8))
+    v[0, 0, :] = np.arange(8.0)
+    out = volxform.vol_resize(v, factor=(1, 1, 2), order=1).ravel()
+    assert out[0] == 0.0 and out[-1] == 7.0                   # ends not pulled toward 0
+    assert np.all(np.diff(out) >= 0.0)
+    assert 0.0 <= out.min() and out.max() <= 7.0              # trilinear: no overshoot
+
+
+def test_resize_mode_and_cval_validated():
+    v = np.ones((4, 4, 4))
+    with pytest.raises(ValueError, match="grid-constant"):
+        volxform.vol_resize(v, factor=2, mode="constant")     # scipy wants the grid- form
+    with pytest.raises(ValueError, match="mode"):
+        volxform.vol_resize(v, factor=2, mode="bogus")
+    with pytest.raises(ValueError, match="cval"):
+        volxform.vol_resize(v, factor=2, mode="grid-constant", cval=np.nan)
+    # the zero-padded border is still reachable when asked for explicitly
+    out = volxform.vol_resize(v, factor=2, order=1, mode="grid-constant", cval=0.0)
+    assert out.min() < 1.0 and out[2:-2, 2:-2, 2:-2].min() == 1.0
+    out = volxform.vol_resize(v, factor=2, order=1, mode="grid-constant", cval=1.0)
+    assert np.allclose(out, 1.0)
+    # order 0 is exact for every mode (cell mapping, no border samples)
+    assert np.array_equal(volxform.vol_resize(v, factor=2, order=0, mode="grid-constant"),
+                          np.ones((8, 8, 8)))
