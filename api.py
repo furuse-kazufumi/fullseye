@@ -1406,7 +1406,8 @@ def _try_accel(op, v, a, b, device):
 
 
 def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
-          device: str = "cpu", on_error: str | None = None, template=None):
+          device: str = "cpu", on_error: str | None = None, template=None,
+          fast: bool | None = None):
     """Apply one operator to *image* and return its raw output.
 
     image  -> image/region  : returns a float64 ndarray
