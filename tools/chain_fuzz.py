@@ -2083,20 +2083,25 @@ def cover_all(ops, gens, log, tries=8, base_seed=90_000, verbose=True):
     素直に通る op は 1 回で終わる。
     """
     recipe = type_recipes(ops, gens)
-    census = {"ran": set(), "bind_fail": set(), "no_input": set(), "unbuildable": set()}
+    census = {"ran": set(), "bind_fail": set(), "no_input": set(),
+              "unbuildable": set(), "ok": set()}
     for idx, op in enumerate(ops):
         name = op[0]
-        if name in census["ran"]:
-            continue              # レシピの途中で既に走った op は再試行しない
+        if name in census["ok"]:
+            continue              # レシピの途中で既に**成功**した op は再試行しない
         script = cover_script(op, recipe)
         if script is None:
             census["unbuildable"].add(name)
             continue
         for k in range(tries):
             seed = base_seed + idx * 101 + k
-            run_chain(ops, gens, np.random.default_rng(seed), 0, log,
-                      chain_seed=seed, script=script, census=census)
-            if name in census["ran"]:
+            trace = run_chain(ops, gens, np.random.default_rng(seed), 0, log,
+                              chain_seed=seed, script=script, census=census)
+            # trace = **値を返せた** op。呼べた(ran)との差が「毎回門前払い」
+            # ―― これは「実行された」と「意味のある入力で試された」の違いで、
+            # 数を 1 つしか出さないと後者の欠落が前者に隠れる。
+            census["ok"].update(trace)
+            if name in census["ok"]:
                 break
         if verbose and (idx + 1) % 100 == 0:
             print(f"  cover {idx + 1}/{len(ops)}, 実行済み {len(census['ran'])}",
