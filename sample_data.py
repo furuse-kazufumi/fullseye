@@ -306,12 +306,29 @@ def _allowed_schemes():
 
 
 def _safe_member_extract(fileobj, member_name: str, out_path: str):
-    """Write a single archive member to *out_path* with a traversal guard."""
+    """Write a single archive member to *out_path* with a traversal guard and a
+    size cap.
+
+    The decompressed size is bounded by ``MAX_EXTRACT_BYTES`` (counted while
+    writing — a gzip/zip "bomb" of a few KB can otherwise expand to fill the
+    disk; the archive's declared size is not trusted). Exceeding it raises
+    ``ValueError``; the caller removes the partial file.
+    """
     norm = posixpath.normpath(member_name.replace("\\", "/"))
     if norm.startswith("/") or norm.startswith("../") or norm == ".." or "/../" in norm:
         raise ValueError("unsafe archive member %r" % member_name)
+    written = 0
     with open(out_path, "wb") as w:
-        shutil.copyfileobj(fileobj, w)
+        while True:
+            chunk = fileobj.read(1 << 20)
+            if not chunk:
+                break
+            written += len(chunk)
+            if written > MAX_EXTRACT_BYTES:
+                raise ValueError("extracted member %r exceeds the %d-byte cap "
+                                 "(MAX_EXTRACT_BYTES) — refusing to inflate further"
+                                 % (member_name, MAX_EXTRACT_BYTES))
+            w.write(chunk)
 
 
 def download(sample_id: str, *, yes: bool = False, quiet: bool = False,
