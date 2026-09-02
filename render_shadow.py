@@ -234,6 +234,9 @@ def cast_shadow(V, F, light, *, pose=None, intrinsics=None, width: int = 256,
     ns = int(samples)
     if ns < 1:
         raise ValueError("samples must be >= 1, got %d" % (samples,))
+    pcf_r = int(pcf)
+    if pcf_r < 0 or pcf_r > 8:
+        raise ValueError("pcf must be a texel radius in [0, 8], got %r" % (pcf,))
 
     light = np.asarray(light, np.float64).reshape(-1)
     if light.size != 3 or not np.all(np.isfinite(light)):
