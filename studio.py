@@ -6011,25 +6011,24 @@ def build_window(model=None):
             v = model.result_upto(-1)     # the raw base image
         except Exception as e:
             code_status.setText("cannot run: %s" % e); return
+        state["program_error"] = None
         timings, last, hit_bp = {}, -1, False
         for i, (name, a, b) in enumerate(model.stages):
-            fn = api.RT.get(name)
-            if fn is None:
-                break
             t0 = _time.perf_counter()
             try:
-                v = fn(v, a, b)
-            except Exception:
-                pass
-            timings[i + 1] = (_time.perf_counter() - t0) * 1000.0
+                v = _run_stage(v, i, name, a, b)
+            except Exception as e:             # unknown op (KeyError) or the op raised
+                _fail_stage(i, name, e, timings, "run"); return
+            ln = _stage_line(i)
+            timings[ln] = timings.get(ln, 0.0) + (_time.perf_counter() - t0) * 1000.0
             last = i
-            if stop_at_breakpoints and (i + 1) in code_edit.breakpoints:
+            if stop_at_breakpoints and ln in code_edit.breakpoints:
                 hit_bp = True
                 break
         if state["dev_update"]["time"]:
             code_edit.set_timings(timings)     # dev_update_time
         if state["dev_update"]["pc"]:
-            code_edit.set_exec_line(last + 1)  # dev_update_pc: execution cursor
+            code_edit.set_exec_line(_stage_line(last) if last >= 0 else 0)   # dev_update_pc
         if 0 <= last < len(model.stages):
             stage_list.setCurrentRow(last)     # show the result up to the reached line
         tmo = state["system"]["operator_timeout_ms"]
@@ -6040,29 +6039,32 @@ def build_window(model=None):
                                ("  · %d stage(s) over %d ms timeout" % (len(slow), tmo)) if slow else ""))
 
     def step_program():
-        cur = code_edit._exec_line
-        nxt = (cur + 1) if cur >= 1 else 1
         if not model.stages:
             code_status.setText("no stages to step"); return
-        nxt = max(1, min(nxt, len(model.stages)))
+        done = _stages_done(code_edit._exec_line)        # stages at/before the cursor line
+        nxt = max(1, min(done + 1, len(model.stages)))   # 1-based stage to execute
+        state["program_error"] = None
+        tmap = dict(code_edit.timings)
         try:
             v = model.result_upto(-1)
-            tmap = dict(code_edit.timings)
-            for i in range(nxt):
-                name, a, b = model.stages[i]
-                fn = api.RT.get(name)
-                t0 = _time.perf_counter()
-                v = fn(v, a, b) if fn else v
-                if i == nxt - 1:
-                    tmap[nxt] = (_time.perf_counter() - t0) * 1000.0
-            if state["dev_update"]["time"]:
-                code_edit.set_timings(tmap)
-        except Exception:
-            pass
+        except Exception as e:
+            code_status.setText("cannot step: %s" % e); return
+        for i in range(nxt):
+            name, a, b = model.stages[i]
+            t0 = _time.perf_counter()
+            try:
+                v = _run_stage(v, i, name, a, b)
+            except Exception as e:
+                _fail_stage(i, name, e, tmap, "step"); return
+            if i == nxt - 1:
+                tmap[_stage_line(i)] = (_time.perf_counter() - t0) * 1000.0
+        if state["dev_update"]["time"]:
+            code_edit.set_timings(tmap)
+        ln = _stage_line(nxt - 1)
         if state["dev_update"]["pc"]:
-            code_edit.set_exec_line(nxt)       # dev_update_pc
+            code_edit.set_exec_line(ln)        # dev_update_pc
         stage_list.setCurrentRow(nxt - 1)
-        code_status.setText("stepped to line %d" % nxt)
+        code_status.setText("stepped to line %d (stage %d)" % (ln, nxt))
 
     def continue_program():
         # HDevelop F5 semantics (user spec 2026-08-30: pause / resume / restart-from-line
@@ -6071,39 +6073,40 @@ def build_window(model=None):
         # run_from() below is the "restart from an arbitrary line".
         if not model.stages:
             code_status.setText("no stages to run"); return
-        start = max(code_edit._exec_line, 0)            # 1-based last-executed line (0 = none)
+        exec_line = max(code_edit._exec_line, 0)        # 1-based last-executed EDITOR line
+        start = _stages_done(exec_line)                 # stage index to resume from
+        state["program_error"] = None
         try:
-            v = model.result_upto(start - 1)            # recompute state up to that line
+            v = model.result_upto(start - 1)            # recompute state up to that stage
         except Exception as e:
             code_status.setText("cannot continue: %s" % e); return
         timings = dict(code_edit.timings); last = start - 1; hit_bp = False
         for i in range(start, len(model.stages)):
             name, a, b = model.stages[i]
-            fn = api.RT.get(name)
-            if fn is None:
-                break
             t0 = _time.perf_counter()
             try:
-                v = fn(v, a, b)
-            except Exception:
-                pass
-            timings[i + 1] = (_time.perf_counter() - t0) * 1000.0
+                v = _run_stage(v, i, name, a, b)
+            except Exception as e:
+                _fail_stage(i, name, e, timings, "continue"); return
+            ln = _stage_line(i)
+            timings[ln] = timings.get(ln, 0.0) + (_time.perf_counter() - t0) * 1000.0
             last = i
-            if (i + 1) in code_edit.breakpoints:
+            if ln in code_edit.breakpoints:
                 hit_bp = True
                 break
         if state["dev_update"]["time"]:
             code_edit.set_timings(timings)
         if state["dev_update"]["pc"]:
-            code_edit.set_exec_line(last + 1)
+            code_edit.set_exec_line(_stage_line(last) if last >= 0 else 0)
         if 0 <= last < len(model.stages):
             stage_list.setCurrentRow(last)
         code_status.setText("continued line %d → %d%s"
-                            % (start + 1, last + 1,
+                            % (_stage_line(start) if start < len(model.stages) else exec_line + 1,
+                               _stage_line(last) if last >= 0 else exec_line,
                                "  · stopped at breakpoint" if hit_bp else ""))
 
     def run_from(line):
-        # restart execution AT `line` (1-based): position the cursor before it, continue
+        # restart execution AT editor `line` (1-based): position the cursor before it, continue
         code_edit.set_exec_line(max(0, int(line) - 1))
         continue_program()
 
