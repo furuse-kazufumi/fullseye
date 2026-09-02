@@ -1554,23 +1554,24 @@ def run(a):
     exactly ON an edge/vertex is implementation-defined and excluded by contract. No floating
     division (an integer cross product decides each crossing), so C == Python bit-for-bit.
 
-    Fail-soft 0.0 on malformed input, n < 3, or an out-of-domain / non-integer coordinate."""
+    Fail-soft **-1.0** (not 0.0 — "outside" is a valid answer) on malformed input, n < 3, a truncated
+    vertex list, or an out-of-domain / non-integer coordinate."""
     if len(a) < 3:
-        return 0.0
+        return -1.0
     pxd = a[0]; pyd = a[1]; nd = a[2]
     if not (pxd >= -100000.0 and pxd <= 100000.0 and pxd == float(int(pxd))):
-        return 0.0
+        return -1.0
     if not (pyd >= -100000.0 and pyd <= 100000.0 and pyd == float(int(pyd))):
-        return 0.0
+        return -1.0
     if not (nd >= 3.0 and nd <= 100000.0 and nd == float(int(nd))):
-        return 0.0
+        return -1.0
     n = int(nd)
     if len(a) < 3 + 2 * n:
-        return 0.0
+        return -1.0
     for i in range(2 * n):
         c = a[3 + i]
         if not (c >= -100000.0 and c <= 100000.0 and c == float(int(c))):
-            return 0.0
+            return -1.0
     px = int(pxd); py = int(pyd)
     inside = False
     for i in range(n):
