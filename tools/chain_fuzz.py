@@ -504,6 +504,39 @@ PARAM_HINTS = {
     "direction_rgb": lambda rng: (lambda v: v / np.linalg.norm(v))(
         rng.standard_normal(3)),
     "angle_rad": lambda rng: float(rng.uniform(-np.pi, np.pi)),
+
+    # --- 2026-09-02: 網羅パスで「束縛できない」と挙がった 58 op の残り ------- #
+    # 値はプールの寸法に合わせる(points は [0,10]^3 / voxel・sdf は 16^3 /
+    # image2d と depth は 32x32)。名前ヒントは**必須引数にしか効かない**ので、
+    # これまで丸ごとスキップされていた op が走るようになるだけで、既に到達
+    # している op の挙動は変わらない。
+    "tau": lambda rng: 0.5,               # fscore の一致許容(点群スケールの 5%)
+    "trunc": lambda rng: 0.5,             # TSDF の切り詰め幅
+    "tol": lambda rng: 0.5,               # クラスタリングの連結許容
+    "min_voxels": lambda rng: 4,
+    "min_inliers": lambda rng: 8,
+    "min_distance": lambda rng: 2,
+    "voxel_size": lambda rng: 0.5,
+    "max_radius": lambda rng: 2.0,
+    "spatial_sigma": lambda rng: 2.0, "range_sigma": lambda rng: 0.5,
+    "ss": lambda rng: 2,                  # antialias の超解像倍率
+    "r": lambda rng: 0.5,                 # sdf_offset のオフセット量
+    "degree": lambda rng: 3,
+    "n_bits": lambda rng: 8,
+    "n_labels": lambda rng: 6,
+    "count": lambda rng: 64, "seed": lambda rng: 0, "dt": lambda rng: 0.05,
+    "rvec": lambda rng: np.zeros(3),
+    # 反射・対称性の平面。点群 [0,10]^3 の中心を通る水平面
+    "plane_point": lambda rng: np.array([5.0, 5.0, 5.0]),
+    "plane_normal": lambda rng: np.array([0.0, 0.0, 1.0]),
+    # 平面掃引の深度候補。カメラを z=20 に置いているので点群を挟む範囲
+    "depth_candidates": lambda rng: np.linspace(8.0, 26.0, 12),
+    # 射影変換。恒等に近い微小変形(恒等そのものだと op が仕事をしない)
+    "H": lambda rng: np.array([[1.0, 0.02, 1.0], [0.0, 1.0, -1.0], [0.0, 0.0, 1.0]]),
+    # 位置合わせの 4x4。恒等 = 「完全に合っている」側の端で、内れ値率 1.0 が
+    # 出るのが正しい —— 端の値が出ることを確かめるのも検査のうち
+    "transform": lambda rng: np.eye(4),
+    "gt_transform": lambda rng: np.eye(4), "est_transform": lambda rng: np.eye(4),
 }
 
 #: シグネチャが「型リスト=先頭位置引数」の素直な形でない op の専用ビルダー。
