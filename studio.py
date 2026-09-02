@@ -5801,8 +5801,8 @@ def build_window(model=None):
     problems_list.itemActivated.connect(jump_to_problem)
     samples.currentIndexChanged.connect(load_sample)
     stage_list.currentRowChanged.connect(lambda _=None: on_stage_selected())
-    sa.valueChanged.connect(on_knob); sb.valueChanged.connect(on_knob)
-    spin_a.valueChanged.connect(on_spin); spin_b.valueChanged.connect(on_spin)
+    sa.valueChanged.connect(on_knob_a); sb.valueChanged.connect(on_knob_b)
+    spin_a.valueChanged.connect(on_spin_a); spin_b.valueChanged.connect(on_spin_b)
     display.currentIndexChanged.connect(lambda _=None: show_result())
     # buttons
     b_rm.clicked.connect(remove); b_up.clicked.connect(lambda: move(-1)); b_dn.clicked.connect(lambda: move(1))
