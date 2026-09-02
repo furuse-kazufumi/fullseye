@@ -701,7 +701,8 @@ def csi_signal_simulate(surface_um=6.0, z_start_um=0.0, z_step_um=0.05,
     if not (z[0] <= z0 <= z[-1]):
         raise ValueError(
             "csi_signal_simulate: surface_um = %g um is outside the scan range "
-            "[%g, %g] um (z_start_um + n_planes*z_step_um). A scan that does not "
+            "[%g, %g] um (z_start_um .. z_start_um + (n_planes - 1)*z_step_um; "
+            "the last of n_planes planes sits at n_planes - 1 steps). A scan that does not "
             "cross the surface has no coherence peak to find, and returning one "
             "anyway is what this module refuses to do." % (z0, z[0], z[-1]))
     out = a + b * refl * _gauss_envelope(z, z0, sigma) * np.cos(
