@@ -348,3 +348,178 @@ def cast_shadow(V, F, light, *, pose=None, intrinsics=None, width: int = 256,
     shadow = 1.0 - occ_frac                              # 1=lit, 0=shadow
     shadow[~surf] = 1.0                                  # 背景は影ではない
     return np.clip(shadow, 0.0, 1.0)
+
+
+# --------------------------------------------------------------------------- #
+# レイキャスト影(太陽の視直径つき、shadow map を使わない厳密な可視性)          #
+# --------------------------------------------------------------------------- #
+# shadow map(上の cast_shadow)は texel 量子化の階段・バイアス由来の acne /
+# peter-panning・解像度依存が構造的に残る。ここでは受光面の各画素からメッシュへ
+# 直接レイを飛ばし、Möller-Trumbore で三角形と交差判定する。加速は「光源方向に
+# 直交する平面へ全三角形を射影し 2-D 格子に入れる」方式: 平行光ではレイは全部
+# 平行なので、各レイは 1 セルの三角形だけ調べれば良い(光源空間の 2-D binning)。
+# 太陽の視直径(0.53°)は方向を円盤内でばらまいて平均する = 半影の幅は幾何どおり
+# 「遮蔽物までの距離 × tan(視直径/2)」になる(テストで固定)。
+_GRID_MAX = 512
+
+
+def _rays_hit_dir(O: np.ndarray, d: np.ndarray, A: np.ndarray, e1: np.ndarray,
+                  e2: np.ndarray, tmin: float) -> np.ndarray:
+    """原点群 ``O`` (K,3) から共通方向 ``d`` のレイが三角形群 (M,3) のどれかに当たるか (K,) bool。"""
+    pvec = np.cross(d[None, :], e2)                          # (M,3)
+    det = np.einsum("md,md->m", e1, pvec)                    # (M,)
+    nz = np.abs(det) > 1e-14
+    inv = np.zeros_like(det)
+    inv[nz] = 1.0 / det[nz]
+    tvec = O[:, None, :] - A[None, :, :]                     # (K,M,3)
+    u = np.einsum("kmd,md->km", tvec, pvec) * inv[None, :]
+    qvec = np.cross(tvec, e1[None, :, :])                    # (K,M,3)
+    v = np.einsum("kmd,d->km", qvec, d) * inv[None, :]
+    t = np.einsum("kmd,md->km", qvec, e2) * inv[None, :]
+    hit = (nz[None, :] & (u >= -1e-9) & (u <= 1.0 + 1e-9) & (v >= -1e-9)
+           & (u + v <= 1.0 + 1e-9) & (t > tmin))
+    return hit.any(axis=1)
+
+
+def _occluded_parallel(O: np.ndarray, d: np.ndarray, A: np.ndarray, B: np.ndarray,
+                       C: np.ndarray, tmin: float, grid: int) -> np.ndarray:
+    """平行光方向 ``d`` について原点群 ``O`` (K,3) が遮蔽されるか (K,) bool(2-D 格子加速)。"""
+    K = O.shape[0]
+    if K == 0:
+        return np.zeros(0, bool)
+    a = np.array([1.0, 0.0, 0.0]) if abs(d[0]) < 0.9 else np.array([0.0, 1.0, 0.0])
+    t1 = np.cross(d, a)
+    t1 /= max(np.linalg.norm(t1), _EPS)
+    t2 = np.cross(d, t1)
+    # 三角形の 2-D 射影と格子
+    P2 = np.stack([np.stack([A @ t1, A @ t2], 1), np.stack([B @ t1, B @ t2], 1),
+                   np.stack([C @ t1, C @ t2], 1)], axis=1)   # (M,3,2)
+    lo = P2.min(axis=(0, 1))
+    hi = P2.max(axis=(0, 1))
+    span = np.maximum(hi - lo, 1e-12)
+    G = int(grid)
+    cell = span / G
+    tmin2 = P2.min(axis=1)
+    tmax2 = P2.max(axis=1)
+    c0 = np.clip(np.floor((tmin2 - lo) / cell).astype(np.int64), 0, G - 1)   # (M,2)
+    c1 = np.clip(np.floor((tmax2 - lo) / cell).astype(np.int64), 0, G - 1)
+    nx = c1[:, 0] - c0[:, 0] + 1
+    ny = c1[:, 1] - c0[:, 1] + 1
+    counts = nx * ny
+    total = int(counts.sum())
+    tri_id = np.repeat(np.arange(A.shape[0]), counts)
+    offs = np.repeat(np.cumsum(counts) - counts, counts)
+    k = np.arange(total) - offs
+    ny_r = np.repeat(ny, counts)
+    ix = k // ny_r
+    iy = k % ny_r
+    cell_t = (np.repeat(c0[:, 0], counts) + ix) * G + (np.repeat(c0[:, 1], counts) + iy)
+    order_t = np.argsort(cell_t, kind="stable")
+    cell_t = cell_t[order_t]
+    tri_id = tri_id[order_t]
+    t_start = np.searchsorted(cell_t, np.arange(G * G + 1))
+    # レイの 2-D 位置と格子
+    O2 = np.stack([O @ t1, O @ t2], 1)
+    cr = np.floor((O2 - lo) / cell).astype(np.int64)
+    inside = (cr[:, 0] >= 0) & (cr[:, 0] < G) & (cr[:, 1] >= 0) & (cr[:, 1] < G)
+    occ = np.zeros(K, bool)
+    ray_idx = np.nonzero(inside)[0]
+    if ray_idx.size == 0:
+        return occ
+    cell_r = cr[ray_idx, 0] * G + cr[ray_idx, 1]
+    order_r = np.argsort(cell_r, kind="stable")
+    cell_r = cell_r[order_r]
+    ray_idx = ray_idx[order_r]
+    uniq, r_start = np.unique(cell_r, return_index=True)
+    r_end = np.append(r_start[1:], cell_r.size)
+    e1_all = B - A
+    e2_all = C - A
+    for c, rs, re_ in zip(uniq.tolist(), r_start.tolist(), r_end.tolist()):
+        ts, te = int(t_start[c]), int(t_start[c + 1])
+        if te <= ts:
+            continue
+        tris = tri_id[ts:te]
+        rays = ray_idx[rs:re_]
+        Ac, e1c, e2c = A[tris], e1_all[tris], e2_all[tris]
+        chunk = max(1, int(200000 // max(tris.size, 1)))
+        for s in range(0, rays.size, chunk):
+            rr = rays[s:s + chunk]
+            occ[rr] = _rays_hit_dir(O[rr], d, Ac, e1c, e2c, tmin)
+    return occ
+
+
+def shadow_raycast(V, F, light, *, pose=None, intrinsics=None, width: int = 256,
+                   height: int = 256, angular_diameter_deg: float = 0.0,
+                   samples: int = 1, grid: int = 64, bias=None) -> np.ndarray:
+    """メッシュへ直接レイを飛ばして太陽光の可視性 (H,W) ∈ [0,1] を返す(shadow map 不使用)。
+
+    ``1=完全に照らされる`` / ``0=完全な影``。背景画素は 1.0。``light`` は平行光の方向
+    (シーン→太陽)。``angular_diameter_deg`` は光源の視直径(太陽 = 0.53°)で、0 なら
+    ハード影、正なら角半径の円盤内へ ``samples`` 方向をばらまいて平均する ―― 半影の幅は
+    「遮蔽物までの距離 × tan(視直径/2)」の幾何どおり(小惑星スケールでは数 cm = 硬い影)。
+    法線が光に背く画素(自己陰)は 0。``bias`` はレイ原点を法線方向へ浮かせる量(既定 =
+    シーン対角 × 1e-5、自己交差の回避)。``grid`` は光源空間の 2-D 格子の一辺セル数。
+
+    honest: 交差は Möller-Trumbore(両面)、加速は 2-D binning(平行光専用。点光源は
+    ``cast_shadow`` を使う)。透明・多重反射・カラー影は扱わない。
+    fail-closed: 退化メッシュ・不正光源・非正サイズ・負の視直径/サンプル数は ``ValueError``。"""
+    Vv = np.asarray(V, np.float64)
+    Ff = np.asarray(F, np.int64)
+    if Vv.ndim != 2 or Vv.shape[1] != 3:
+        raise ValueError("V must be (N,3), got %r" % (Vv.shape,))
+    if Ff.ndim != 2 or Ff.shape[1] != 3 or Ff.shape[0] == 0:
+        raise ValueError("F must be a non-empty (M,3) array")
+    if Ff.min() < 0 or Ff.max() >= Vv.shape[0]:
+        raise ValueError("face index out of range (degenerate mesh)")
+    if not np.all(np.isfinite(Vv)):
+        raise ValueError("V contains non-finite coordinates")
+    w, h = int(width), int(height)
+    if w <= 0 or h <= 0:
+        raise ValueError("width and height must be positive, got %dx%d" % (w, h))
+    diam = float(angular_diameter_deg)
+    if not np.isfinite(diam) or diam < 0.0 or diam >= 180.0:
+        raise ValueError("angular_diameter_deg must be in [0, 180), got %r" % (angular_diameter_deg,))
+    ns = int(samples)
+    if ns < 1:
+        raise ValueError("samples must be >= 1, got %d" % (samples,))
+    G = int(grid)
+    if G < 1 or G > _GRID_MAX:
+        raise ValueError("grid must be in [1, %d], got %r" % (_GRID_MAX, grid))
+    light = np.asarray(light, np.float64).reshape(-1)
+    if light.size != 3 or not np.all(np.isfinite(light)) or np.linalg.norm(light) < _EPS:
+        raise ValueError("light must be a finite non-zero length-3 vector")
+    ldir = light / np.linalg.norm(light)
+
+    pose, K = _resolve_view(Vv, pose, intrinsics, w, h)
+    view = render3d.render_mesh(Vv, Ff, pose=pose, intrinsics=K, width=w, height=h)
+    Pw = unproject_to_world(view["depth"], pose, K)
+    surf = np.all(np.isfinite(Pw), axis=-1)
+    n_world = view["normals"] @ pose[:3, :3]
+    scale = float(np.linalg.norm(Vv.max(axis=0) - Vv.min(axis=0)))
+    if not np.isfinite(scale) or scale <= 0.0:
+        raise ValueError("mesh has zero spatial extent")
+    if bias is None:
+        eps = 1e-5 * scale
+    else:
+        eps = float(bias)
+        if not np.isfinite(eps) or eps < 0.0:
+            raise ValueError("bias must be finite and >= 0")
+
+    ys, xs = np.nonzero(surf)
+    P0 = Pw[ys, xs]
+    N0 = n_world[ys, xs]
+    O = P0 + N0 * eps
+    A, B, C = Vv[Ff[:, 0]], Vv[Ff[:, 1]], Vv[Ff[:, 2]]
+    dirs = _sample_dirs(ldir, np.deg2rad(diam / 2.0), ns)
+    occ = np.zeros(P0.shape[0], np.float64)
+    for k in range(dirs.shape[0]):
+        d = dirs[k]
+        facing = (N0 @ d) > 0.0
+        blocked = ~facing                                # 光に背く面は自己陰
+        idx = np.nonzero(facing)[0]
+        if idx.size:
+            blocked[idx] = _occluded_parallel(O[idx], d, A, B, C, eps, G)
+        occ += blocked
+    vis = np.ones((h, w), np.float64)
+    vis[ys, xs] = 1.0 - occ / dirs.shape[0]
+    return np.clip(vis, 0.0, 1.0)
