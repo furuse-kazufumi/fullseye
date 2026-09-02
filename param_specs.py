@@ -43,6 +43,7 @@ Two tables feed :func:`spec_for`:
 from __future__ import annotations
 
 import functools
+import inspect
 import math
 import os
 import re
@@ -396,25 +397,41 @@ def spec_label(spec: dict, letter: str) -> str:
 # docs / docstring seeding (label-only, honest)
 # --------------------------------------------------------------------------- #
 _DOC_PATTERNS = [
-    # - ``a`` — text  /  ``a`` = text  /  ``b`` — **name** text
-    re.compile(r"^\s*[-*]?\s*``([ab])``\s*(?:—|-|=|:|–)\s*(.+?)\s*$"),
-    # - **a**: text  / a — text
+    # - ``a`` — text  /  ``a`` = text  /  ``b`` — **name** text  (line-anchored)
+    re.compile(r"^\s*[-*]?\s*``([ab])``\s*(?:—|-|=|:|–|->)\s*(.+?)\s*$"),
+    # - **a**: text
     re.compile(r"^\s*[-*]?\s*\*\*([ab])\*\*\s*(?:—|-|=|:|–)\s*(.+?)\s*$"),
-    re.compile(r"^\s*([ab])\s*(?:—|=|:)\s*(.+?)\s*$"),
 ]
+#: prose inside a docstring: "``a`` sets the number of steps", "``b`` selects the
+#: rule", "``a`` = few photons" — the object phrase becomes the label
+_PROSE_VERBS = ("sets", "selects", "picks", "controls", "scales", "chooses", "adds",
+                "shifts", "mixes", "blends", "drops", "defaults", "gives", "drives",
+                "steers", "tunes", "weights", "=", "->", "—", "–", ":")
+_PROSE_RE = re.compile(
+    r"``([ab])``\s*(?:" + "|".join(re.escape(v) for v in _PROSE_VERBS) + r")\s+(?:the\s+|a\s+|an\s+)?"
+    r"([^.;,()`
+]{2,60})")
+_UNUSED_RE = re.compile(r"``([ab])``\s*(?:is\s+)?(?:ignored|unused|not\s+used|不使用|未使用)")
 
 
 def _clean_label(text: str) -> str:
     t = re.sub(r"[`*]", "", text)
     t = t.split("(")[0].split("。")[0].split(".")[0]
     t = re.sub(r"\s+", " ", t).strip(" -—:=")
+    words = t.split(" ")
+    if len(words) > 5:                                 # a prose object phrase: keep it short
+        t = " ".join(words[:5])
     return t[:40]
 
 
 def _labels_from_text(text: str) -> dict[str, dict[str, str]]:
-    """Extract {'a': {'label', 'doc'}, 'b': ...} from a docstring / markdown body."""
+    """Extract ``{'a': {'label', 'doc'}, 'b': ...}`` from a docstring / markdown body.
+
+    Structured bullet lines win; otherwise the first prose sentence that assigns a
+    role to the knob; "``b`` is unused / ignored" yields ``{'label': '(unused)'}``."""
     out: dict[str, dict[str, str]] = {}
-    for line in (text or "").splitlines():
+    text = text or ""
+    for line in text.splitlines():
         for pat in _DOC_PATTERNS:
             mm = pat.match(line)
             if mm:
@@ -422,6 +439,13 @@ def _labels_from_text(text: str) -> dict[str, dict[str, str]]:
                 if letter not in out and body:
                     out[letter] = {"label": _clean_label(body), "doc": re.sub(r"[`*]", "", body)[:200]}
                 break
+    flat = re.sub(r"\s+", " ", text)
+    for mm in _UNUSED_RE.finditer(flat):
+        out.setdefault(mm.group(1), {"label": "(unused)", "doc": mm.group(0).replace("`", "")})
+    for mm in _PROSE_RE.finditer(flat):
+        letter, body = mm.group(1), mm.group(2)
+        if letter not in out:
+            out[letter] = {"label": _clean_label(body), "doc": mm.group(0).replace("`", "")[:200]}
     return out
 
 
@@ -468,7 +492,10 @@ def seed_from_docs(names=None, docs_root: Optional[str] = None) -> dict[str, dic
         src = None
         try:
             op = api.find_op(name)
-            doc = getattr(getattr(op, "fn", None), "__doc__", None) or ""
+            fn = getattr(op, "fn", None)
+            if fn is not None:
+                fn = inspect.unwrap(fn)              # backends wrap ops in a _safe() guard
+            doc = getattr(fn, "__doc__", None) or ""
         except Exception:
             doc = ""
         if doc:
@@ -490,8 +517,11 @@ def seed_from_docs(names=None, docs_root: Optional[str] = None) -> dict[str, dic
         entry = {}
         for letter in ("a", "b"):
             if letter in found:
-                s = dict(GENERIC_FLOAT)
-                s["label"] = found[letter]["label"]
+                if found[letter]["label"] == "(unused)":
+                    s = dict(UNUSED)
+                else:
+                    s = dict(GENERIC_FLOAT)
+                    s["label"] = found[letter]["label"]
                 s["doc"] = found[letter]["doc"]
                 s["source"] = src
                 entry[letter] = s
