@@ -286,7 +286,8 @@ def _generic_op():
     for r in api.list_ops():
         n = r["name"]
         if n not in PS.PARAM_SPECS and n not in seeded and r.get("backend") != "general" \
-                and r["in_sort"] == "image" and r["out_sort"] == "image":
+                and r["in_sort"] == "image" and r["out_sort"] == "image" \
+                and api.find_op(n) is not None:
             return n
     pytest.skip("no generic image op")
 
