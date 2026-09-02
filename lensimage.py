@@ -664,11 +664,10 @@ def defect_dataset(n=8, system=None, size=(256, 256), kinds=_KINDS, pixel_pitch_
         rec_seed = int(rng.integers(0, 2 ** 31 - 1))
         image = render_through_lens(comp, system, pitch, field_of_view=field_of_view, zones=zones,
                                     noise=noise, seed=rec_seed)
-        if model is None:
-            key_model = _lens_model(system, shape, pitch, zones,
-                                    None if field_of_view is None else float(field_of_view),
-                                    None, None, "traced")
-            model = key_model
+        if model is None:                       # same cache key as render_through_lens
+            model = _lens_model(system, shape, pitch, zones,
+                                None if field_of_view is None else _num(field_of_view, "field_of_view", lo=1e-9),
+                                None, None, "traced")
             lens["max_distortion_pct"] = model["dist"]["max_distortion_pct"]
         mask_all = np.zeros(shape, bool)
         anns = []
