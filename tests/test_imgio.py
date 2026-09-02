@@ -262,5 +262,10 @@ def test_to_float01_signed_ints_land_in_unit_interval():
     assert 0.0 <= out.min() and out.max() <= 1.0
     assert imgio.to_float01(np.array([-128, 127], np.int8)).tolist() == [0.0, 1.0]
     assert imgio.to_float01(np.array([0, 255], np.uint8)).tolist() == [0.0, 1.0]  # unchanged
-    with pytest.raises(OSError):                        # unknown extension -> cv2.error, normalised
+
+
+def test_save_unknown_extension_raises_oserror(tmp_path):
+    """imencode raises cv2.error on an unknown extension; save() normalises it
+    (and Pillow's own failure) to OSError so callers see one exception type."""
+    with pytest.raises((OSError, RuntimeError)):
         imgio.save(str(tmp_path / "x.zzz"), np.zeros((8, 8), np.float64))
