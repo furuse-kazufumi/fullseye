@@ -87,11 +87,22 @@ void scale_clip(float* buf, int w, int h, float gain, float bias) {
 }
 
 void sharpen(float* buf, int w, int h, float amount, float sigma) {
+    /* Unsharp mask, clipped to [0,1] at the exit exactly like ops._unsharp: the
+     * raw v + k*(v - blur) overshoots (measured [-0.15, 1.15]), and an unclipped
+     * value fed to the NEXT stage diverged from the Python runtime (unsharp ->
+     * gaussian max|C-py| 6.7e-2; unsharp -> threshold(1.0) flipped 512 px). */
     float* blur = (float*)malloc(sizeof(float) * w * h);
     memcpy(blur, buf, sizeof(float) * w * h);
     gaussian(blur, w, h, sigma);
-    for (int i = 0; i < w * h; i++) buf[i] = buf[i] + amount * (buf[i] - blur[i]);
+    for (int i = 0; i < w * h; i++) buf[i] = clampf(buf[i] + amount * (buf[i] - blur[i]), 0.0f, 1.0f);
     free(blur);
+}
+
+void clamp01(float* buf, int w, int h) {
+    /* The inter-stage clip ops._apply performs after every image/region stage.
+     * codegen.py emits it after each stage so a future op that forgets its own
+     * exit clip cannot leak an out-of-range value into the next stage. */
+    for (int i = 0; i < w * h; i++) buf[i] = clampf(buf[i], 0.0f, 1.0f);
 }
 
 void sobel_mag(float* buf, int w, int h) {
