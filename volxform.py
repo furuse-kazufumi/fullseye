@@ -163,7 +163,15 @@ def _spacing_tuple(spacing, name: str = "spacing"):
 # --------------------------------------------------------------------------- #
 # vol_resize — zoom with cell semantics and spacing recomputation              #
 # --------------------------------------------------------------------------- #
-def vol_resize(vol, factor=None, shape=None, order=1, spacing=None):
+#: Boundary modes vol_resize accepts (scipy's grid_mode=True vocabulary).
+#: ``constant`` / ``wrap`` are deliberately absent: with cell semantics scipy
+#: wants their ``grid-`` variants and warns otherwise.
+_RESIZE_MODES = ("nearest", "reflect", "mirror", "grid-mirror", "grid-constant",
+                 "grid-wrap")
+
+
+def vol_resize(vol, factor=None, shape=None, order=1, spacing=None,
+               mode="nearest", cval=0.0):
     """Resample a volume to a new grid (``scipy.ndimage.zoom``, cell semantics).
 
     Exactly **one** of *factor* / *shape* selects the target grid:
@@ -177,6 +185,18 @@ def vol_resize(vol, factor=None, shape=None, order=1, spacing=None):
     block ``[f*i, f*(i+1))`` (exact at ``order=0``), and the volume's physical
     extent is preserved by the recomputed spacing — not the endpoint-aligned
     convention of scipy's ``grid_mode=False`` default.
+
+    *mode* / *cval* set how samples that fall outside the input cells (the outer
+    half-voxel shell of every upscale at ``order >= 1``) are filled. The default
+    ``"nearest"`` extends the border voxel, so **a constant volume resizes to
+    the same constant** and a ramp keeps its end values. Until 2026-09-03 the
+    call was hard-wired to ``"grid-constant"`` with ``cval=0``, which blended
+    the outer shell toward 0 — an upscale x2 of an all-ones volume came back
+    with ``min = 0.42`` on its faces, an artefact that then leaked into every
+    downstream measurement. Other accepted modes: ``"reflect"``, ``"mirror"``,
+    ``"grid-mirror"``, ``"grid-wrap"``, and ``"grid-constant"`` (with *cval*)
+    when a zero-padded border is genuinely wanted. ``"constant"`` / ``"wrap"``
+    are rejected with a hint (scipy needs the ``grid-`` variants here).
 
     **The return shape depends on** *spacing*:
 
