@@ -318,6 +318,27 @@ def part8_post():
     rng = np.random.default_rng(5)
     img = np.clip(rng.random((64, 64, 3)) * 0.6 + 0.3, 0, 1)
     img[20:30, 20:30] = 1.0
+
+    print("   ★光を足す前に線形へ(srgb_to_linear / linear_to_srgb):")
+    rt1 = float(np.abs(G.linear_to_srgb(G.srgb_to_linear(img)) - img).max())
+    rt2 = float(np.abs(G.srgb_to_linear(G.linear_to_srgb(img)) - img).max())
+    half = float(G.srgb_to_linear(np.full((1, 1, 1), 0.5))[0, 0, 0])
+    knee = float(G.srgb_to_linear(np.full((1, 1, 1), 0.04045))[0, 0, 0])
+    print(f"     往復は厳密な逆写像: sRGB→線形→sRGB {rt1:.1e} / 逆順 {rt2:.1e}")
+    print(f"     中間灰 0.5 の線形値 {half:.9f}(閉形式 ((0.5+0.055)/1.055)^2.4 = "
+          f"{((0.5 + 0.055) / 1.055) ** 2.4:.9f})")
+    print(f"     折れ点 0.04045 は直線側と一致 {knee:.9f} = 0.04045/12.92 = "
+          f"{0.04045 / 12.92:.9f}(不連続が無い)")
+    spr_a = G.sprite_synthesize("disc", 16, (0.5, 0.5, 0.5))
+    lin_a = G.srgb_to_linear(spr_a)
+    print(f"     α は被覆率で既に線形なので変換しない: 一致 "
+          f"{np.array_equal(lin_a[..., 3], spr_a[..., 3])}、色は "
+          f"{spr_a[8, 8, 0]:.1f} → {lin_a[8, 8, 0]:.6f}")
+    naive = 0.5 + 0.5
+    correct = float(G.linear_to_srgb(np.full((1, 1, 1), 2.0 * half))[0, 0, 0])
+    print(f"     ★代償: 中間灰の光を 2 つ重ねると、sRGB のまま足せば "
+          f"{min(naive, 1.0):.4f}(真っ白に飛ぶ)、線形で足して戻せば "
+          f"{correct:.4f}。例外は出ず、ただ**光り過ぎた絵**が返る")
     print(f"   bloom: threshold=1 で恒等 {np.abs(G.bloom(img, threshold=1.0) - img).max():.1e} / "
           f"intensity=0 で恒等 {np.abs(G.bloom(img, intensity=0.0) - img).max():.1e}")
     from scipy import ndimage
