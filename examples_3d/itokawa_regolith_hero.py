@@ -315,6 +315,18 @@ def main() -> int:
     shadowed = float(((vis < 0.5) & surf).mean())
     print(f"[c] 太陽 0.53°: 半影画素 {partial * 100:.2f} % of 受光面 ; 位相 60° の影画素 {shadowed * 100:.1f} %")
 
+    # ── (j) bump の rms 傾斜 ≤ Hapke θ̄(未解像粗さと二重計上しない)────────
+    nb_n = np.zeros((96, 96, 3))
+    nb_n[..., 2] = 1.0
+    gx, gy = np.meshgrid(np.arange(96) * 0.0005, np.arange(96) * 0.0005, indexing="ij")   # 0.5 m/px
+    nb_P = np.stack([gx, gy, np.zeros_like(gx)], axis=-1)
+    bumped = render3d.bump_normals_fbm(nb_n, nb_P, WAVELENGTHS, AMPLITUDES, seed=SEED,
+                                       local_edge=np.full((96, 96), TARGET_EDGE))   # 補集合のみ
+    tilt = np.degrees(np.arccos(np.clip(bumped[..., 2], -1.0, 1.0)))
+    rms_tilt = float(np.sqrt((tilt ** 2).mean()))
+    print(f"[j] bump(補集合: λ ≤ 2×{TARGET_EDGE * 1e3:.1f} m)の rms 傾斜 {rms_tilt:.1f}° / max {tilt.max():.1f}° "
+          f"(Hapke θ̄ = {HAPKE['roughness_deg']:.0f}° が上限)")
+
     # ── (i) 決定的(軽いメッシュで)────────────────────────────────────────
     Vsm, Fsm = render3d.mesh_scatter_boulders(V, F, density=200.0, d_min=0.008, seed=3, shape="hull",
                                               orientation="random")
