@@ -910,38 +910,49 @@ class Interp:
             raise FScriptError("cannot do arithmetic ('%s') on iconic values in the "
                                "language; call an operator instead" % n.op, n.line)
         try:
-            if n.op == "+":
+            if n.op in _ARITH_OPS:
+                fn = _ARITH_OPS[n.op]
                 if isinstance(a, list) or isinstance(b, list):
-                    return _tuple_add(a, b, n.line)          # HALCON element-wise
-                return a + b
-            if n.op == "-": return a - b
-            if n.op == "*": return a * b
-            if n.op == "/": return a / b
-            if n.op == "%": return a % b
+                    return _tuple_op(fn, n.op, a, b, n.line)   # HALCON element-wise
+                return _scalar_op(fn, n.op, a, b, n.line)
+            # comparisons: a length-1 tuple is its scalar; whole tuples compare
+            # as tuples (equal length + equal elements), never lexicographically
+            # against a scalar.
+            a, b = _scalar(a), _scalar(b)
+            if isinstance(a, list) != isinstance(b, list) and n.op not in ("=", "==", "!=", "#"):
+                raise FScriptError("cannot compare a tuple of length %d with a scalar using '%s'"
+                                   % (len(a) if isinstance(a, list) else len(b), n.op), n.line)
             if n.op in ("=", "=="): return a == b
             if n.op in ("!=", "#"): return a != b
             if n.op == "<": return a < b
             if n.op == ">": return a > b
             if n.op == "<=": return a <= b
             if n.op == ">=": return a >= b
-        except FScriptError:
+        except FScriptError as e:
+            if not e.line:
+                e.line = n.line
             raise
-        except (TypeError, ZeroDivisionError) as e:
+        except (TypeError, ValueError, ZeroDivisionError) as e:
             raise FScriptError("bad operation %s: %s" % (n.op, e), n.line)
         raise FScriptError("bad binary op %s" % n.op, n.line)
 
     def _ev_Call(self, n):
         args = [self._eval(a) for a in n.args]
         fn = BUILTINS.get(n.name)
-        if fn is not None:
-            try:
-                return fn(self.env, *args)
-            except FScriptError:
-                raise
-            except Exception as e:                    # surface a clean line-tagged error
-                raise FScriptError("%s: %s" % (n.name, e), n.line)
-        # long-tail: any registered fullseye op, called as op(Input, a=.5, b=.5)
-        op_out = _call_registry_op(n.name, args)
+        try:
+            if fn is not None:
+                try:
+                    return fn(self.env, *args)
+                except FScriptError:
+                    raise
+                except Exception as e:                # surface a clean line-tagged error
+                    raise FScriptError("%s: %s" % (n.name, e), n.line)
+            # long-tail: any registered fullseye op, called as op(Input, a=.5, b=.5)
+            op_out = _call_registry_op(n.name, args)
+        except FScriptError as e:
+            if not e.line:                            # builtins raise without a line
+                e.line = n.line
+            raise
         if op_out is not _NO_OP:
             return op_out
         raise FScriptError("unknown function/operator '%s'" % n.name, n.line)
