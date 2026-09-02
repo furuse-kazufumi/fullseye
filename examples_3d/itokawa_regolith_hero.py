@@ -354,6 +354,7 @@ def main() -> int:
     assert partial < 0.01, f"(c) 太陽 0.53° なのに半影が {partial * 100:.2f} %"
     assert shadowed > 0.005, "(c) 位相 60° で影が出ない"
     assert det, "(i) 決定的でない"
+    assert rms_tilt < HAPKE["roughness_deg"], f"(j) bump の rms 傾斜 {rms_tilt:.1f}° が θ̄ を超えた"
 
     # ═══ hero ════════════════════════════════════════════════════════════
     size, ss = (256, 1) if fast else (int(os.environ.get("FULLSEYE_HERO_SIZE", "640")), 2)

@@ -1299,11 +1299,11 @@ OP_PARAM_HINTS = {
     # 寄せる(外に出れば fail-closed して CONTRACT になり、op の本体は走らない)。
     # 引き出し線・番号は points プールの 160 点だと「置き場が無い」で毎回
     # 拒否されるため、in は image2d だけにして点をここで 2-3 個束縛する。
-    ("annotate_leader", "points"): lambda rng: [(6.0, 6.0), (26.0, 20.0)],
+    ("annotate_leader", "points"): lambda rng: [(6.0, 6.0), (22.0, 24.0)],
     ("annotate_leader", "font_size"): lambda rng: 7, ("annotate_leader", "gap"): lambda rng: 5.0,
     ("annotate_leader", "pad"): lambda rng: 2,
     ("annotate_leader_layout", "shape"): lambda rng: (32, 32),
-    ("annotate_leader_layout", "points"): lambda rng: [(6.0, 6.0), (26.0, 20.0)],
+    ("annotate_leader_layout", "points"): lambda rng: [(6.0, 6.0), (22.0, 24.0)],
     ("annotate_leader_layout", "font_size"): lambda rng: 7,
     ("annotate_leader_layout", "gap"): lambda rng: 5.0,
     ("annotate_leader_layout", "pad"): lambda rng: 2,
