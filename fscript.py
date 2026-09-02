@@ -35,11 +35,20 @@ control-flow / tuple / ``:=`` syntax is HDevelop-flavoured.
 """
 from __future__ import annotations
 
+import math
+import os
+import re
+
 import numpy as np
 from scipy import ndimage as ndi
 
 import fslib
 from fslib import FImage, ObjectSet, Region
+
+#: Nesting cap shared by the parser (parentheses / unary chains / block depth)
+#: and the evaluator (AST depth).  A script over this limit gets an FScriptError
+#: with a line, never a bare RecursionError from the Python stack.
+MAX_NESTING = 200
 
 
 # --------------------------------------------------------------------------- #
