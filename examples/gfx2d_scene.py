@@ -306,7 +306,8 @@ def part7_light_and_shadow():
     print(f"   影: 遮蔽物の背後 {vis[15, 10]:.1f} / 光との間 {vis[5, 10]:.1f} / "
           f"遮蔽物自身の受光面 {vis[10, 10]:.1f} / 値の集合 {sorted(set(np.unique(vis)))}")
     print("   → 二値遮蔽なら結果も厳密に二値(許容差の入る余地が無い)")
-    return worst < 1e-12 and vis[15, 10] == 0.0 and vis[5, 10] == 1.0
+    return (worst < 1e-12 and vis[15, 10] == 0.0 and vis[5, 10] == 1.0
+            and d_dec < 1e-15 and d_shade < 1e-15)
 
 
 def part8_post():
