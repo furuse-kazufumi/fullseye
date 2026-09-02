@@ -232,7 +232,7 @@ def vol_resize(vol, factor=None, shape=None, order=1, spacing=None):
 
     _check_output_voxels(out_shape, "vol_resize")
     zoom = [t / s for t, s in zip(out_shape, v.shape)]
-    out = ndimage.zoom(v, zoom, order=order, grid_mode=True, mode="grid-constant")
+    out = ndimage.zoom(v, zoom, order=order, grid_mode=True, mode=mode, cval=cval)
     if out.shape != out_shape:                      # defensive: scipy's rounding drifted
         raise ValueError("vol_resize: scipy.ndimage.zoom produced shape %r instead "
                          "of the requested %r" % (out.shape, out_shape))

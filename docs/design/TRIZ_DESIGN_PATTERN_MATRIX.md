@@ -482,3 +482,134 @@ TRIZ 原理は「物質・場」の抽象操作、設計パターンは「責務
 |---|---|---|---|---|---|---|
 | Decorator + Ledger + Policy + Warning(= `guard`) | 単独では D=1 の Null Object を、4 パターンの複合で D=5 に。**§4 実例そのもの** | 5 | 4 | 5 | 5 | — |
 | Strategy + Probe(numpy oracle + native) | `fslib` の設計。複合の片方(native)を他方(numpy)で常時検証 | 5 | 2 | 4 | 5 | M: #16 × 標本 |
+
+---
+
+## §3b マトリクス 2: 設計パターン × コンテナ型
+
+パターンを決めた後、「その責務をどのコンテナで持つか」が速度・メモリ・検出性を実際に決める(同じ Ledger でも list ring と deque(maxlen) では S が違う)。ここでは **fullseye で実在するコンテナ**を列にし、自然な組合せ(●)だけを採点する。
+
+### 3b.1 コンテナ列の定義と fullseye での実在箇所(検証済)
+
+| 記号 | コンテナ | fullseye 実在箇所 | 備考 |
+|---|---|---|---|
+| L | `list` | `ops.REGISTRY`(L921)/ `backend_safe._EVENTS`(ring: `del _EVENTS[:-256]`) | 順序あり・末尾 O(1)・先頭削除 O(n) |
+| T | `tuple` | `ops.OPS`(L924 back-compat)/ `api.run_pipeline` の stage `(name,a,b)` | 不変・hashable |
+| D | `dict` | `ops.RT`/`_BY_NAME`(L922-923、**後勝ち**)/ `fssystem.SYSTEM_PARAMS`(L68)/ `graphengine.nodes` / `fslib._REGISTRY[name][backend]` / `backend_safe._COUNTS` | 挿入順保持(3.7+) |
+| S | `set`/`frozenset` | `backend_safe._WARNED`(warn once)/ `api._LABEL_READING_OPS`(L904)/ `ops._UNCLIPPED_SORTS`(L1058) | 所属判定 O(1) |
+| Q | `collections.deque` | `segmentation.py:105`(flood fill BFS)/ `physarum_search.py:284` | 両端 O(1)・`maxlen` で ring |
+| H | `heapq` | `mesh_decimate.py:262,283`(edge collapse 優先度、version stamp で stale 除外)/ `meshrepair.py:518` | 遅延削除が定石 |
+| A | `array.array` | **未使用(0 件)** | ndarray が代替 |
+| B | `bytes` | `comm.py:245`(Modbus frame)/ `dsp.py:62` `frombuffer` / `fslib.py:312` `Seq.__hash__` = `tobytes()` | 不変・境界越え |
+| N | `ndarray`(密) | 全 op。`acoustics.py:329` `ascontiguousarray`。**`order="F"`/`asfortranarray` は 0 件**(全て C 順) | dtype/連続性が速度を決める |
+| V | ndarray view / copy | `tomography.py:1657`・`imgforensics.py:1108` `sliding_window_view` / `evolve.py:23` genome `.copy()` / `fslib.Seq`(コピー + write-protect) | view = 0 コピーだが alias |
+| R | 構造化/masked 配列 | `mathops.py:139,221,857` `np.ma.is_masked` / 構造化 dtype は**コア未使用** | mask = 値つき sentinel |
+| P | `scipy.sparse` | `mesh_smooth.py:84`(COO→CSR Laplacian)/ `geodesic3d.py:20` csr / `colortransport.py` | 疎グラフ・疎行列 |
+| M | `np.memmap` | `volio.py:430` `np.load(mmap_mode="r")` / `scale.py:147,162` `open_memmap`・`process_tiled_memmap` | working set > RAM |
+| G | torch tensor(device) | `accel.py:42` `as_tensor(device=)` / `accel_bridge.plan/run` | 転送コストが支配 |
+| C | `@dataclass` | `ops.Op`/`ops.Stage`/`fsruntime.Recipe`・`GoldenVector`/`metriccontract.Attempt`/`pyramid_gate.GateResult`(22 ファイル) | 自己記述・型ヒント |
+| W | 台帳行(dict の list) | `backend_safe.record()` の `ev` dict / `ops.DROPPED_DUPLICATES` / `runtime_degeneracy.json` | 追記のみ |
+| K | 木(nested dict / kd-tree) | `curvature3d.py:29` `cKDTree` / `fscript` AST(`Node` 群)/ **octree 未使用** | 空間索引・構文木 |
+| E | グラフ(隣接 dict / CSR) | `graphengine.FullseyeGraph`(nodes dict + `topological_order`)/ `mesh_smooth` CSR 隣接 | DAG 実行・Laplacian |
+| Z | `queue.Queue` / `threading.Lock` | `backend_safe._LEDGER_LOCK` / `video.py:246` / **`queue.Queue` 未使用** | スレッド境界 |
+| I | generator / iterator | `acquire.py:269` `yield self.grab()` / `fslib.ObjectSet.__iter__`(L298) | 遅延・流し込み |
+| U | `functools.lru_cache` | `annotate.py:276,296`(maxsize 64 / 8) | 鍵は hashable 必須 |
+
+### 3b.2 適合マトリクス(パターン × コンテナ)
+
+`●` 自然な組合せ(3b.3 で採点)/ `○` 可能だが本命でない / 空欄 = 使わない。
+
+| パターン | L | T | D | S | Q | H | A | B | N | V | R | P | M | G | C | W | K | E | Z | I | U |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Registry / Strategy | ● | ○ | ● | ○ | | | | | | | | | | | ● | | | | | | |
+| Decorator | | | | | | | | | | | | | | | | | | | | | ○ |
+| Facade | | ○ | ● | ○ | | | | | ● | | | | | | | | | | | | |
+| Mediator | | | ● | ● | | | | | | | | | | | | ● | | | ● | | |
+| Observer | ● | | | ● | | | | | | | | | | | | | | | ○ | | |
+| Chain of Responsibility | ● | ○ | | | ● | | | | | | | | | | | | | | | | |
+| Template Method | | | | | | | | | | | | | | | ○ | | | | | | |
+| Null Object | | | | | | | | | ● | | ○ | | | | | | | | | | |
+| Command | ● | | | | ● | ● | | | | | | | | | ● | | | | | | |
+| Memento | | ● | | | | | | ● | | ● | | | | | ● | | | | | | |
+| Proxy / Lazy | | | | | | | | | | | | | ● | ○ | | | | | | ● | |
+| Flyweight | | | ● | | | | | | | ● | | | | | | | | | | | ● |
+| Visitor | | | ○ | | | | | | | | | | | | | | ● | ● | | | |
+| Interpreter | | | ● | ○ | | | | | | | | | | | ● | | ● | | | | |
+| Iterator | ● | | | | ● | | | | ○ | | | | | | | | | | | ● | |
+| Builder | | ● | | | | | | | | | | | | | ● | | | | | | |
+| Prototype | | | | | | | | | | ● | | | | | ○ | | | | | | |
+| Adapter | | | | | | | | ● | ● | | | ● | | ● | | | | | | | |
+| Bridge | | | ● | | | | | | | | | | | ● | | | | | | | |
+| Composite | | | | | | | | | | | | | | | | | ● | ● | | | |
+| State | | | ● | | | | | | | | | | | | ● | | | | | | |
+| Singleton | | | ● | | | | | | | | | | | | | | | | ○ | | |
+| Pipeline | ● | ● | | | | | | | ● | | | | ● | ● | | | | | | ● | |
+| Plugin | | | ● | | | | | | | | | | | | | | | | | | |
+| Result / Either | | ○ | | | | | | | | | ○ | | | | ● | | | | | | |
+| Circuit Breaker | | | ● | | | | | | | | | | | | ○ | | | | | | |
+| Bulkhead | | | | | | | | | | | | | | | | | | | ● | | |
+| Retry / Backoff | | | | | ○ | | | | | | | | | | | | | | | | |
+| Cache / Memoize | | | ● | | | | | | | | | | | | | | | | | | ● |
+| Object Pool | ● | | | | ● | | | | | | | | | ● | | | | | | | |
+| Ledger / Event Sourcing | ● | | ● | ● | ● | | | | | | | | | | | ● | | | ● | | |
+| Saga | ● | | | | | | | | | | | | | | | | | | | | |
+| Health Probe | | | | | | | | | ● | | | | | | | ● | | | | | |
+| Policy / Feature Flag | | | ● | ● | | | | | | | | | | | | | | | | | |
+| Sentinel / Tainted | | | | ● | | | | | | | ● | | | | | | | | | | |
+| Provenance / Tagged | | | ● | | | | | | | | ● | | | | ● | ● | | | | | |
+
+### 3b.3 採点(● セルのみ。列 = S/M/G/D + 古典的な落とし穴 + 短所のカバー)
+
+| パターン × コンテナ | fullseye での形 | S | M | G | D | 落とし穴 | 短所のカバー(≤3 の軸) |
+|---|---|---|---|---|---|---|---|
+| Registry × D(dict) | `ops.RT[name]` | 5 | 3 | 3 | 3 | **後勝ち**で同名が黙って消える | D: Ledger × W — 既存 `DROPPED_DUPLICATES` + `tests/test_op_contracts.py` / G: Registry × C(param spec) |
+| Registry × L(list) | `ops.REGISTRY` の登録順 | 4(線形探索は禁物) | 3 | 3 | 3 | 順序が「先勝ち/後勝ち」の意味を持ち、import 順で挙動が変わる | S/D: 常に D を索引にし、L は列挙専用に(既存 `_BY_NAME`) |
+| Registry × C(dataclass) | `Op(name, category, halcon, in_sort, out_sort, fn, c_stmt)` | 5 | 3 | 4(`params` フィールドを足せば型つき kwargs) | 4(型ヒントで静的検査可) | フィールド追加で 861 op の生成側を全部触る | M: 許容 / #3 局所的性質 × 既定値(`params=()`)で段階導入 |
+| Facade × D | HALCON alias → op 名 の dict(`api.py:875`) | 4 | 3 | 2 | 3 | alias 衝突を先勝ちで隠す(LEDGER「曖昧解決 2 件」) | D: Ledger × W — 既存 `api.ambiguous_aliases`(`__init__.py:312` で公開)/ G: #17 × Composite |
+| Facade × N(ndarray) | `apply(image: ndarray)` | 5 | 5 | 1 | 4(`_check_input_sort` が ndim/dtype を見て `source="input"` 記録) | 1-D を 2-D op に渡しても以前は通った(LEDGER #3) | G: Composite × E(多入力は graph へ)|
+| Mediator × D | `_COUNTS[name] += 1` | 5 | 3(O(op 数)) | 5 | 5 | なし(件数は消えない) | M: 許容 |
+| Mediator × S(set) | `_WARNED`(warn once) | 5 | 3 | 5 | 3(2 回目以降は沈黙 = 意図) | `clear_fallbacks(reset_warnings=True)` を忘れると再警告しない | D: Ledger × D(件数)で補完(既存) |
+| Mediator × W(台帳行) | `record()` の `ev = {name, source, out_sort, error, seq}` | 5 | 4 | 5 | 5 | 行が dict なのでスキーマ drift が沈黙 | (D は 5 だが)将来 Result × C(dataclass 化)で型を固める |
+| Mediator × Z(Lock) | `_LEDGER_LOCK` | 3(失敗時のみ lock、成功経路はゼロ) | 5 | 5 | 5 | GIL 下でも `del _EVENTS[:-N]` と append の競合はあり得るので必要 | S: 失敗時のみなので実質 5。**成功経路に lock を置かない**(#21 高速化) |
+| Observer × L | 購読者 list(Qt signal 内部) | 4 | 3 | 5 | 3(購読漏れは沈黙) | 例外を投げる購読者が他を止める | D: Decorator × try で購読者ごとに隔離(#39 不活性) |
+| Observer × S | `_WARNED` = 「一度通知した」集合 | 5 | 3 | 5 | 3 | 上と同じ | 上と同じ |
+| Chain × L | 処理者 list を順に(alias 解決) | 4 | 3 | 3 | 2(どの処理者が採ったか残らない) | 順序依存 | D: Provenance × W(採用した処理者名を記録) |
+| Chain × Q(deque) | BFS(`segmentation.py:105`) | 5(両端 O(1)) | 2(フロンティア O(N) 最悪) | 3 | 4(終了しない = 明白) | list.pop(0) を使うと O(N²) | M: #16 × 部分(タイル、`scale.process_tiled`) |
+| Null Object × N | `fallback` の `zeros`/`clip(v)` | 5 | 2(image sort は clip で O(N) 複製) | 3 | **1** | 恒等と区別不能 | D: Mediator × W(**既存 `guard` が必ず `record`**)/ M: `np.clip(v, 0, 1, out=...)` は入力を壊すので不可 — 許容 |
+| Command × L / Q / H | undo スタック(未使用)/ 優先度キュー(`mesh_decimate`) | 5 / 5 / 4(log n) | 3 / 4(maxlen) / 3 | 5 | 3 | heapq は stale entry(既存は version stamp `int(vver[i])` で遅延削除 = 正解) | D: Command × C(コマンドに `applied: bool` を持たせる) |
+| Memento × T / B / V / C | `GoldenVector`(C)/ `Seq.__hash__` の `tobytes()`(B)/ genome `.copy()`(V) | 5 / 4(O(N) hash) / 4(O(N) copy) / 5 | 5 / 4 / 2 / 3 | 4 | 5 | view を snapshot と誤認して後で書き換わる | M(V): `fslib.Seq` 方式 = コピー + `setflags(write=False)`(既存 L240) |
+| Proxy/Lazy × M(memmap) | `volio.np.load(mmap_mode="r")`、`scale.process_tiled_memmap` | 4(ページフォルト) | 5 | 3 | 3(OS が握るので I/O エラーが遅れて出る) | 書込み memmap の flush 忘れ | D: Probe × W(タイル完了を台帳に)/ G: Pipeline × M 参照 |
+| Proxy/Lazy × I(generator) | `acquire.stream()` | 5 | 5 | 4 | 2(途中で切れても呼び手は「終わった」と思う) | 1 回しか回せない | D: Result × C(終端理由を返す)+ `limit` 到達を明示 |
+| Flyweight × D / V / U | 共有 kernel dict / view / `lru_cache(64)` | 5 | 4 | 5 | 2(共有物の変更が全員に波及) | view が alias、cache の鍵に version 無し | D: Sentinel × V(`setflags(write=False)`)+ Provenance × D(鍵に fingerprint) |
+| Visitor × K / E | AST / graph の走査 | 4 | 5 | 5 | 4 | ノード型追加で Visitor 全部を直す | (fullseye 未使用。fscript は isinstance 分岐。§4 候補 7) |
+| Interpreter × D / C / K | `fscript.Env`(D)・`Node` dataclass(C)・AST(K) | 4 | 3 | 4 | 4(`FScriptError` に行番号) | builtins が dict でなく if 連鎖だと分岐が増える | 既存で 4 以上。memory `feedback_nested_conditionals_use_a_table` |
+| Iterator × L / Q / I | ObjectSet / BFS / stream | 5 | 5 | 4 | 3 | 反復中の変更 | D: Memento × T(反復前に tuple 化) |
+| Builder × T / C | `Recipe` → `ReadyRecipe`(frozen dataclass) | 5 | 3 | 4 | 5 | 「Ready」なのに可変フィールドを持つ | 既存 `FsNotReady` で fail-closed |
+| Prototype × V | genome `.copy()` | 4 | 2 | 3 | 4 | `copy()` 忘れで親子が alias | M: 許容(genome は小)/ 画像は #26 × view |
+| Adapter × B / N / P / G | Modbus bytes / dtype 変換 / COO→CSR / `as_tensor` | 4 / 3(dtype 複製) / 3 / 1(転送) | 5 / 2 / 3 / 1 | 3 | 2(変換の丸めが沈黙) | S/M(G): #20 × Object Pool × G(常駐)/ D: Probe × N(`parity.py` の cross-backend 比較) |
+| Bridge × D / G | `fslib._REGISTRY[name][backend]` / CPU-GPU 島 `accel_bridge.plan` | 5 | 3 | 4 | 3 | backend 間の意味論差 | D: #26 × Probe(numpy oracle)、既存 `difftest`/`parity` |
+| Composite × K / E | `FullseyeGraph`(隣接 dict + topo sort) | 4 | 3 | 5 | 3(`validate()` は構造のみ) | 循環・未定義入力 | D: Ledger × W(ノード ID で `current_op`) |
+| State × D / C | `_STRICT` / `FullseyeRuntime` | 5 | 5 | 5 | 4 | グローバル状態のテスト間漏れ | (既存 `strict_mode()` context で復元) |
+| Singleton × D | `SYSTEM_PARAMS` / モジュール状態 | 5 | 5 | 5 | 3(設定の食い違いが沈黙) | テスト分離 | D: Memento × C(`system_snapshot()` を digest に) |
+| Pipeline × L / T | stage 列 `[(name,a,b)]` | 5 | 3 | 3 | 3 | 段の失敗が次段入力に化ける | D: Mediator × W(既存 `current_op` 帰属)/ G: Composite × E |
+| Pipeline × N | 段ごとの中間 ndarray | 5 | 2(段数 × O(N)) | 3 | 3 | 中間配列の dtype 昇格(float64 化)で 8 倍 | M: #34 × Object Pool × L(バッファ再利用、`out=`)/ #1 × M(タイル memmap、既存 `scale.py`) |
+| Pipeline × M(memmap tiles) | `scale.process_tiled_memmap(tile=1024, halo=16)` | 3(halo 重複) | 5 | 3 | 3(タイル境界の継ぎ目誤差) | halo 不足 | S: 許容(RAM 超え専用)/ D: 既存 `scale.tiling_error`(L89)で継ぎ目を実測 |
+| Pipeline × G(torch) | `accel_bridge.run(stages, device)` | 2(転送)〜5(島内) | 1(CPU/GPU 二重) | 3 | 4(`source="gpu"` 記録) | 転送律速(`api.apply` docstring「単発 op は転送律速」) | S/M: #20 有用作用継続 × 島分割(既存 `plan`)+ Object Pool × G |
+| Pipeline × I(generator) | フレーム流に op を map | 5 | 5 | 4 | 2 | 途中終了が沈黙 | D: Proxy × I と同じ |
+| Plugin × D | 外部 op パックの登録 dict | 4 | 3 | 5 | 2 | guard を通らない op が混入 | D: Mediator を登録関数で強制(登録時に `guard` で包む) |
+| Result × C | `Attempt(ok, value, reason, metric)` | 4 | 4 | 4 | 5 | `if att.value:` で 0.0 を偽と誤認 | 既存 `__bool__` = ok(設計で回避) |
+| Circuit Breaker × D | `{op_name: state}`(未使用) | 5 | 4 | 5 | 4 | half-open の再挑戦条件が無いと永久 open | Policy × S(明示 reset API) |
+| Bulkhead × Z | per-op timeout / worker 区画(未使用) | 3 | 4 | 5 | 3 | Windows で signal ベースの timeout は使えない | S/D: 進化ループの外側(`robust.py`)で計時、hot path に置かない |
+| Cache × D / U | kernel dict / `lru_cache(64)` | 5 | 4 | 5 | 2 | 鍵に version が無い | D: Provenance × D(鍵に fingerprint) |
+| Object Pool × L / Q / G | バッファ再利用(未使用) | 5 | 4 | 3 | 2(古い内容が残る) | 「空」のつもりで前回の値 | D: Sentinel × N(`fill(nan)` して返却)|
+| Ledger × L(ring) | `_EVENTS` + `del _EVENTS[:-256]` | 4(溢れるたび O(256)) | 4 | 5 | 4 | 古い事象が消える | S: **Ledger × Q(`deque(maxlen=256)`)に替えると append O(1)**(1 行変更・挙動同値) |
+| Ledger × Q(deque maxlen) | 推奨形 | 5 | 4 | 5 | 4 | `events_since` は線形走査(256 件なので無視可) | — |
+| Ledger × D(counts) | `_COUNTS` | 5 | 3 | 5 | 5 | なし | — |
+| Ledger × S(warned) | `_WARNED` | 5 | 3 | 5 | 3 | 上述 | 上述 |
+| Ledger × W | 行 = dict | 5 | 4 | 5 | 5 | スキーマ drift | Result × C |
+| Ledger × Z | lock | (Mediator × Z と同じ) | | | | | |
+| Saga × L | 補償手続き list(未使用) | 4 | 3 | 5 | 3 | 補償自体の失敗 | (fullseye では対象外) |
+| Health Probe × N / W | 構造データ ndarray を全 op に流し、結果行を `runtime_degeneracy.json` | 5(CI) | 4 | 5 | 5 | 乱数データは構造欠陥を隠す | 既存: memory `feedback_random_test_data_hides_structural_defects` |
+| Policy × D / S | `SYSTEM_PARAMS` / `_ON_ERROR_CHOICES` tuple + 検証 | 5 | 5 | 5 | 4(不正値は `ValueError`) | 文字列 typo | 既存 `_policy()` が検証(fail-closed) |
+| Sentinel × S / R | `_LABEL_READING_OPS`(frozenset)/ masked array | 5 / 3(mask 伝播 O(N)) | 5 / 2 | 3 | 4 / 4 | masked が numpy 関数で剥がれる(`np.asarray` で mask 消失) | R: Provenance × W(side channel)に逃がす。R は `mathops` 内に閉じる(既存) |
+| Provenance × D / R / C / W | trace dict / masked / dataclass / 台帳行 | 5 / 3 / 4 / 5 | 4 / 2 / 4 / 4 | 3 / 3 / 4 / 5 | 5 | ndarray subclass は演算で剥がれる | G: **空間分離** — 値と来歴を別コンテナに(`run_pipeline` の trace dict)|
