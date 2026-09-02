@@ -73,7 +73,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`design`)
 
-[lens_system](lens_system.md) · [thick_lens](thick_lens.md) · [glass](glass.md) · [example_system](example_system.md) · [paraxial_trace](paraxial_trace.md) · [spot_stats](spot_stats.md) · [tolerance_analysis](tolerance_analysis.md) · [wavefront_from_opd](wavefront_from_opd.md)
+[lens_system](lens_system.md) · [thick_lens](thick_lens.md) · [glass](glass.md) · [example_system](example_system.md) · [glass_catalog](glass_catalog.md) · [sellmeier](sellmeier.md) · [paraxial_trace](paraxial_trace.md) · [spot_stats](spot_stats.md)
 
 ---
 *Provenance: raytrace.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

@@ -1,0 +1,42 @@
+---
+op: mesh_displace_fbm
+dim: 3d
+category: terrain
+in: mesh
+out: mesh
+examples: [itokawa_regolith_hero]
+author: Kazufumi Furuse
+license: Apache-2.0
+version: 0.1.0  # fullseye lib version this note was generated for
+---
+
+# mesh_displace_fbm — 3D `terrain` op
+
+- **データ種**: `mesh` → `mesh`
+- **呼び出し**: `import render3d; render3d.mesh_displace_fbm(V, F, amplitude: 'float', *, scale=None, octaves: 'int' = 4, lacunarity: 'float' = 2.0, gain: 'float' = 0.5, seed: 'int' = 0)` (または `ops3d.get("mesh_displace_fbm")`)
+
+## 使い方
+
+Roughen a mesh by displacing vertices along their normals with seeded fBm noise → ``(V, F)``.
+
+## 参考(サンプルデータ・文献)
+
+- [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
+- [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
+
+## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
+
+- [itokawa_regolith_hero](../../../../examples_3d/itokawa_regolith_hero.py) — `py -3.11 examples_3d/itokawa_regolith_hero.py`
+
+## 型が繋がる次の op(`mesh` を入力に取れる)
+
+[mesh_to_voxel](../transform/mesh_to_voxel.md) · [mesh_to_points](../transform/mesh_to_points.md) · [to_points](../transform/to_points.md) · [fuse_to_voxel](../fusion/fuse_to_voxel.md) · [ambient_occlusion](../render/ambient_occlusion.md) · [cast_shadow](../render/cast_shadow.md) · [supersample_mesh](../render/supersample_mesh.md) · [render_beauty](../render/render_beauty.md)
+
+## 同カテゴリ(`terrain`)
+
+[terrain_region_mask](terrain_region_mask.md) · [mesh_scatter_boulders](mesh_scatter_boulders.md)
+
+---
+*Provenance: render3d.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
+
+© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

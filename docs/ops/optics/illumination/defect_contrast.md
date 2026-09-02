@@ -1,28 +1,36 @@
 ---
-op: ray_fan
+op: defect_contrast
 dim: optics
-category: design
+category: illumination
 in: table
-out: pairs
-examples: [lens_design_demo]
+out: table
+examples: [illumination_design_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
-# ray_fan — OPTICS `design` op
+# defect_contrast — OPTICS `illumination` op
 
-- **データ種**: `table` → `pairs`
-- **呼び出し**: `import raytrace; raytrace.ray_fan(system, field=None, n=21, axis='y', wavelength_um=None, image_mm=None)` (または `opsoptics.get("ray_fan")`)
+- **データ種**: `table` → `table`
+- **呼び出し**: `import illumdesign; illumdesign.defect_contrast(light, surface='satin', slopes_deg=(2.0, 5.0, 10.0, 20.0), camera=(0.0, 0.0, 300.0), point=(0.0, 0.0), n_azimuth=12, pigment_albedo_ratio=0.5)` (または `opsoptics.get("defect_contrast")`)
 
 ## 使い方
 
-Transverse ray aberration along one pupil diameter (``pairs``).
+Contrast of topographic and pigment defects under a light (``table``).
 
-Returns ``(n,2)``: column 0 the normalised pupil coordinate (−1…1) along
-*axis* (``"y"`` tangential, ``"x"`` sagittal), column 1 the image-plane
-displacement (mm) of that ray from the chief ray along the same axis.
-The classic "ray fan plot"; NaN where a ray is vignetted.
+For each facet slope in *slopes_deg* the radiance toward *camera* of a
+facet tilted by that slope (azimuth swept in *n_azimuth* steps) is compared
+with the flat surface at *point*: ``contrast = (L_defect − L_flat) /
+(L_defect + L_flat)`` (Michelson, −1..1; the sign says whether the flank
+appears brighter or darker than the surround). Reported per slope as
+``mean``, ``max_abs`` and ``azimuth_of_max``. ``pigment`` is the contrast
+of a flat patch whose albedo is *pigment_albedo_ratio* × the surround —
+the number specular glare dilutes. ``regime`` is ``"bright_field"`` when
+the flat surface returns specular light to the camera (specular ≥ diffuse
+radiance) and ``"dark_field"`` otherwise. *surface*: a preset (``matte``,
+``satin``, ``glossy``, ``mirror``, ``brushed_metal``) or a dict ``{albedo,
+roughness, f0}``.
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -48,17 +56,17 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- [lens_design_demo](../../../../examples/lens_design_demo.py) — `py -3.11 examples/lens_design_demo.py`
+- [illumination_design_demo](../../../../examples/illumination_design_demo.py) — `py -3.11 examples/illumination_design_demo.py`
 
-## 型が繋がる次の op(`pairs` を入力に取れる)
+## 型が繋がる次の op(`table` を入力に取れる)
 
-—
+[abcd_matrix](../geometric/abcd_matrix.md) · [wavefront_stats](../imaging/wavefront_stats.md) · [paraxial_trace](../design/paraxial_trace.md) · [seidel_coefficients](../design/seidel_coefficients.md) · [spot_stats](../design/spot_stats.md) · [tolerance_analysis](../design/tolerance_analysis.md) · [wavefront_from_opd](../design/wavefront_from_opd.md) · [spot_diagram](../design/spot_diagram.md)
 
-## 同カテゴリ(`design`)
+## 同カテゴリ(`illumination`)
 
-[lens_system](lens_system.md) · [thick_lens](thick_lens.md) · [glass](glass.md) · [example_system](example_system.md) · [glass_catalog](glass_catalog.md) · [sellmeier](sellmeier.md) · [paraxial_trace](paraxial_trace.md) · [seidel_coefficients](seidel_coefficients.md)
+[light_source](light_source.md) · [irradiance_map](irradiance_map.md) · [illumination_uniformity](illumination_uniformity.md) · [lighting_sweep](lighting_sweep.md) · [illumination_design](illumination_design.md)
 
 ---
-*Provenance: raytrace.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
+*Provenance: illumdesign.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
 
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

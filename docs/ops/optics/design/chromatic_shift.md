@@ -1,28 +1,32 @@
 ---
-op: ray_fan
+op: chromatic_shift
 dim: optics
 category: design
 in: table
-out: pairs
-examples: [lens_design_demo]
+out: table
+examples: [lens_optimize_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
-# ray_fan — OPTICS `design` op
+# chromatic_shift — OPTICS `design` op
 
-- **データ種**: `table` → `pairs`
-- **呼び出し**: `import raytrace; raytrace.ray_fan(system, field=None, n=21, axis='y', wavelength_um=None, image_mm=None)` (または `opsoptics.get("ray_fan")`)
+- **データ種**: `table` → `table`
+- **呼び出し**: `import raytrace; raytrace.chromatic_shift(system, wavelengths=(0.48613, 0.58756, 0.65627), field=None, rings=6)` (または `opsoptics.get("chromatic_shift")`)
 
 ## 使い方
 
-Transverse ray aberration along one pupil diameter (``pairs``).
+Focal shift, image-height shift and spot size versus wavelength (``table``).
 
-Returns ``(n,2)``: column 0 the normalised pupil coordinate (−1…1) along
-*axis* (``"y"`` tangential, ``"x"`` sagittal), column 1 the image-plane
-displacement (mm) of that ray from the chief ray along the same axis.
-The classic "ray fan plot"; NaN where a ray is vignetted.
+Re-evaluates the prescription at each wavelength (real dispersion for
+catalogue / Sellmeier glasses, the Cauchy fit for ``(nd, vd)`` media): per
+wavelength ``efl``, ``bfl``, the chief-ray image height at *field*, and the
+RMS spot radius **on the reference (system-wavelength) image plane** — the
+number a polychromatic sensor sees. Summaries: ``axial_color`` = BFL(first)
+− BFL(last), ``lateral_color`` = height(first) − height(last), and
+``rms_polychromatic`` = RMS of all rays of all wavelengths pooled about
+their common centroid. Needs at least two wavelengths.
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -48,11 +52,11 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- [lens_design_demo](../../../../examples/lens_design_demo.py) — `py -3.11 examples/lens_design_demo.py`
+- [lens_optimize_demo](../../../../examples/lens_optimize_demo.py) — `py -3.11 examples/lens_optimize_demo.py`
 
-## 型が繋がる次の op(`pairs` を入力に取れる)
+## 型が繋がる次の op(`table` を入力に取れる)
 
-—
+[abcd_matrix](../geometric/abcd_matrix.md) · [wavefront_stats](../imaging/wavefront_stats.md) · [paraxial_trace](paraxial_trace.md) · [seidel_coefficients](seidel_coefficients.md) · [spot_stats](spot_stats.md) · [tolerance_analysis](tolerance_analysis.md) · [wavefront_from_opd](wavefront_from_opd.md) · [spot_diagram](spot_diagram.md)
 
 ## 同カテゴリ(`design`)
 

@@ -1,23 +1,23 @@
 ---
-op: render_beauty
+op: render_regolith
 dim: 3d
 category: render
 in: mesh
 out: rgbimage
-examples: [render_beauty]
+examples: [itokawa_regolith_hero]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
-# render_beauty — 3D `render` op
+# render_regolith — 3D `render` op
 
 - **データ種**: `mesh` → `rgbimage`
-- **呼び出し**: `import render_beauty; render_beauty.render_beauty(V, F, *, pose=None, intrinsics=None, size: 'int' = 512, ss: 'int' = 2, light: 'Sequence[float]' = (0.3, 0.4, 1.0), albedo: 'Sequence[float]' = (0.8, 0.8, 0.85), material: 'str' = 'plastic', matcap=None, ambient: 'float' = 0.12, ao: 'bool' = True, ground_shadow: 'bool' = True, tonemap: 'str' = 'reinhard', background: 'Sequence[float]' = (0.1, 0.11, 0.13), exposure: 'float' = 1.0, shininess: 'Optional[float]' = None, ao_samples: 'int' = 32, shadow_res: 'int' = 512, penumbra: 'float' = 2.5, shadow_samples: 'int' = 12, shadow_pcf: 'int' = 1, brdf: 'str' = 'phong', brdf_params=None, shadow_method: 'str' = 'map', sun_angular_diameter_deg: 'float' = 0.0, self_illumination: 'float' = 0.0, albedo_variation: 'float' = 0.0, albedo_scale=None, seed: 'int' = 0) -> 'np.ndarray'` (または `ops3d.get("render_beauty")`)
+- **呼び出し**: `import render_beauty; render_beauty.render_regolith(V, F, *, pose=None, intrinsics=None, size: 'int' = 512, ss: 'int' = 2, sun: 'Sequence[float]' = (0.3, 0.4, 1.0), w: 'float' = 0.42, g: 'float' = -0.35, B0: 'float' = 0.87, h: 'float' = 0.01, roughness_deg: 'float' = 26.0, sun_angular_diameter_deg: 'float' = 0.53, shadow_samples: 'int' = 4, ao_samples: 'int' = 32, tint: 'Sequence[float]' = (1.0, 0.97, 0.93), self_illumination: 'float' = 1.0, exposure='auto', albedo_variation: 'float' = 0.12, seed: 'int' = 0, background: 'Sequence[float]' = (0.0, 0.0, 0.0)) -> 'np.ndarray'` (または `ops3d.get("render_regolith")`)
 
 ## 使い方
 
-メッシュを全品質層合成で「映える静止 3D」1 枚に描く → RGB ``(size, size, 3)`` float [0,1]。
+小惑星のレゴリスを物理ベース(Hapke + 太陽視直径のレイキャスト影 + 環境光ゼロ)で描く → RGB ``(size,size,3)``。
 
 ## 参考(サンプルデータ・文献)
 
@@ -26,7 +26,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- [render_beauty](../../../../examples_3d/render_beauty.py) — `py -3.11 examples_3d/render_beauty.py`
+- [itokawa_regolith_hero](../../../../examples_3d/itokawa_regolith_hero.py) — `py -3.11 examples_3d/itokawa_regolith_hero.py`
 
 ## 型が繋がる次の op(`rgbimage` を入力に取れる)
 

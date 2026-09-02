@@ -1,28 +1,44 @@
 ---
-op: ray_fan
+op: optimize_lens
 dim: optics
-category: design
+category: optimization
 in: table
-out: pairs
-examples: [lens_design_demo]
+out: table
+examples: [lens_optimize_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
-# ray_fan — OPTICS `design` op
+# optimize_lens — OPTICS `optimization` op
 
-- **データ種**: `table` → `pairs`
-- **呼び出し**: `import raytrace; raytrace.ray_fan(system, field=None, n=21, axis='y', wavelength_um=None, image_mm=None)` (または `opsoptics.get("ray_fan")`)
+- **データ種**: `table` → `table`
+- **呼び出し**: `import lensopt; lensopt.optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4, efl_target=None, efl_weight=None, field_weights=None, iterations=30, damping=0.001, tolerance=1e-07, min_thickness=0.5, max_thickness=None, min_radius=1.0, pupil_fill=0.98)` (または `opsoptics.get("optimize_lens")`)
 
 ## 使い方
 
-Transverse ray aberration along one pupil diameter (``pairs``).
+Damped-least-squares (Levenberg–Marquardt) optimisation of a prescription (``table``).
 
-Returns ``(n,2)``: column 0 the normalised pupil coordinate (−1…1) along
-*axis* (``"y"`` tangential, ``"x"`` sagittal), column 1 the image-plane
-displacement (mm) of that ray from the chief ray along the same axis.
-The classic "ray fan plot"; NaN where a ray is vignetted.
+*variables*: surface parameters to move — strings ``"R<i>"``/``"c<i>"``
+(curvature; a radius may pass through flat), ``"t<i>"`` (thickness),
+``"k<i>"`` (conic), ``"A4_<i>"``, ``"A6_<i>"`` … (even aspheric
+coefficients). Default: every finite radius. *efl_target*: hold the
+effective focal length (default: the starting EFL, so a design does not
+"improve" by getting longer); pass ``0`` / ``False`` to leave it free.
+Fields / wavelengths / rings / weights as in :func:`merit_function`.
+
+Each iteration builds the Jacobian by forward differences, solves
+``(JᵀJ + λ diag(JᵀJ)) δ = −Jᵀr`` and accepts the step only if the merit
+falls (then λ /= 3; otherwise λ ×= 4 and retried, up to 6 times); a step
+that yields an invalid prescription counts as a failure. Stops when the
+relative merit change is below *tolerance* twice in a row, when λ blows
+past 1e8, or after *iterations*. Thickness is clamped to
+``[min_thickness, max_thickness]`` and ``|R| >= min_radius``.
+
+Returns ``{"system": optimised prescription, "merit_initial",
+"merit_final", "rms_initial", "rms_final", "efl_initial", "efl_final",
+"history": [merit per accepted iteration], "iterations", "converged",
+"variables": [{"name", "surface", "initial", "final"}], "rays_lost"}``.
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -48,17 +64,17 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- [lens_design_demo](../../../../examples/lens_design_demo.py) — `py -3.11 examples/lens_design_demo.py`
+- [lens_optimize_demo](../../../../examples/lens_optimize_demo.py) — `py -3.11 examples/lens_optimize_demo.py`
 
-## 型が繋がる次の op(`pairs` を入力に取れる)
+## 型が繋がる次の op(`table` を入力に取れる)
 
-—
+[abcd_matrix](../geometric/abcd_matrix.md) · [wavefront_stats](../imaging/wavefront_stats.md) · [paraxial_trace](../design/paraxial_trace.md) · [seidel_coefficients](../design/seidel_coefficients.md) · [spot_stats](../design/spot_stats.md) · [tolerance_analysis](../design/tolerance_analysis.md) · [wavefront_from_opd](../design/wavefront_from_opd.md) · [spot_diagram](../design/spot_diagram.md)
 
-## 同カテゴリ(`design`)
+## 同カテゴリ(`optimization`)
 
-[lens_system](lens_system.md) · [thick_lens](thick_lens.md) · [glass](glass.md) · [example_system](example_system.md) · [glass_catalog](glass_catalog.md) · [sellmeier](sellmeier.md) · [paraxial_trace](paraxial_trace.md) · [seidel_coefficients](seidel_coefficients.md)
+[merit_function](merit_function.md) · [bend_singlet](bend_singlet.md)
 
 ---
-*Provenance: raytrace.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
+*Provenance: lensopt.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
 
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

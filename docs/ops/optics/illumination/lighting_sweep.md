@@ -1,60 +1,31 @@
 ---
-op: airy_pattern
+op: lighting_sweep
 dim: optics
-category: wave
+category: illumination
 in: 
-out: image2d
-examples: [optics_imaging]
+out: pairs
+examples: [illumination_design_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
-# airy_pattern — OPTICS `wave` op
+# lighting_sweep — OPTICS `illumination` op
 
-- **データ種**: `` → `image2d`
-- **呼び出し**: `import optics; optics.airy_pattern(size=64, wavelength_um=0.55, f_number=5.6, pixel_pitch_um=0.5)` (または `opsoptics.get("airy_pattern")`)
+- **データ種**: `` → `pairs`
+- **呼び出し**: `import illumdesign; illumdesign.lighting_sweep(surface='glossy', slope_deg=10.0, elevations_deg=None, radius_mm=60.0, n=24, camera_height_mm=300.0, kind='ring')` (または `opsoptics.get("lighting_sweep")`)
 
 ## 使い方
 
-The diffraction-limited PSF of a circular pupil (Airy pattern).
+Defect contrast versus ring-light elevation angle (``pairs``).
 
-``I(r) = [2*J1(v)/v]^2`` with ``v = pi*r/(lambda*N)``, ``r`` the radial
-distance in the image plane, ``N`` the working f-number. Sampled on a
-``size x size`` grid centred between pixels for even *size* and on a pixel
-for odd *size*. The normalisation is **analytic** (``I(0) = 1`` by the
-``v -> 0`` limit), not a division by the sampled maximum: for odd *size*
-the centre pixel is therefore exactly 1.0, and for even *size* the true
-peak falls between pixels so the largest *sample* is below it (0.9679 at
-``size = 8`` with the defaults, measured). Rescaling to the sampled maximum
-instead would quietly change the physics with the parity of the grid.
-
-Returns a ``(size, size)`` float64 intensity image.
-
-Ground truth it reproduces (measured, ``tests/test_optics.py``): the first
-dark ring sits at the first zero of ``J1``, ``r = 1.2197*lambda*N`` — at
-``lambda = 0.55 um``, ``N = 5.6`` that is ``3.7567 um``, and the sampled
-radial minimum lands at ``3.760 um`` on a 0.01 um grid (0.3 of a sample
-away, which is the sampling, not an error); the peak is exactly 1.0 at the
-centre and the pattern is symmetric to 1e-16.
-
-The encircled energy inside that ring is the textbook 83.8% of the *whole
-infinite* pattern — which a finite grid cannot measure: the Airy tails fall
-off only as ``1/r^3``, so a 25.6 um half-width grid reports 0.857 and a
-51.2 um one 0.847 (both measured). The number is quoted here as physics,
-not as something this op returns.
-
-The ``v -> 0`` limit is evaluated **explicitly** as 1.0 rather than left to
-``0/0``: that division is the classic silent-NaN in every hand-rolled Airy
-routine, and the centre pixel is exactly where it bites.
-
-**Raises** ``ValueError``: *size* outside ``[2, MAX_GRID]``; non-positive or
-non-finite *wavelength_um*, *f_number*, *pixel_pitch_um*.
-
-Scalar, aberration-free, unobstructed circular pupil, low NA. A central
-obscuration (a mirror telescope) changes the ring structure; high NA needs a
-vector treatment. For the *measured* PSF of a real system use
-:func:`psf_to_mtf` on an image of a point source instead.
+A ring (or bar) of *radius_mm* is placed at heights giving each elevation
+in *elevations_deg* (default 5°…85° in 5° steps) and :func:`defect_contrast`
+is evaluated for a facet of *slope_deg* on *surface*. Returns ``(n, 2)``
+``[elevation, max_abs contrast]``; the maximum tells the designer where to
+put the light. On a glossy surface the peak is at elevation ``90° − 2 ×
+slope`` (the facet mirrors the light into a camera on axis) — the closed
+form ``tests/test_illumdesign.py`` pins.
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -80,17 +51,17 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- [optics_imaging](../../../../examples/optics_imaging.py) — `py -3.11 examples/optics_imaging.py`
+- [illumination_design_demo](../../../../examples/illumination_design_demo.py) — `py -3.11 examples/illumination_design_demo.py`
 
-## 型が繋がる次の op(`image2d` を入力に取れる)
+## 型が繋がる次の op(`pairs` を入力に取れる)
 
-[fraunhofer_pattern](fraunhofer_pattern.md) · [psf_to_mtf](../imaging/psf_to_mtf.md) · [illumination_uniformity](../illumination/illumination_uniformity.md) · [render_through_lens](../imaging_sim/render_through_lens.md)
+—
 
-## 同カテゴリ(`wave`)
+## 同カテゴリ(`illumination`)
 
-[angular_spectrum_propagate](angular_spectrum_propagate.md) · [fraunhofer_pattern](fraunhofer_pattern.md) · [gaussian_beam](gaussian_beam.md)
+[light_source](light_source.md) · [irradiance_map](irradiance_map.md) · [illumination_uniformity](illumination_uniformity.md) · [defect_contrast](defect_contrast.md) · [illumination_design](illumination_design.md)
 
 ---
-*Provenance: optics.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
+*Provenance: illumdesign.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
 
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.
