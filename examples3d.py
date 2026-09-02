@@ -32,7 +32,7 @@ Usage::
 
 Each script is also runnable directly::
 
-    PYTHONPATH=<repo> py -3.11 examples_3d/cad_to_scan.py
+    py -3.11 examples_3d/cad_to_scan.py
 """
 from __future__ import annotations
 
@@ -466,10 +466,27 @@ def discover() -> list[str]:
                   if f.endswith(".py") and not f.startswith("_"))
 
 
-def run(example_id: str, timeout: int = 240) -> tuple[bool, str]:
-    """Run one example as a subprocess (repo root on PYTHONPATH). -> (ok, tail_output)."""
+def run(example_id: str, timeout: int = 240, inject_path: bool = False) -> tuple[bool, str]:
+    """Run one example as a subprocess. -> (ok, tail_output).
+
+    **``PYTHONPATH`` は既定で注入しない。** 各スクリプトは自前で
+    リポジトリ直下を ``sys.path`` に入れる約束で、``docs/OP_CATALOG.md`` が載せて
+    いる起動コマンドも ``py -3.11 examples_3d/<id>.py`` の**裸の形**である。
+
+    2026-09-02 まではここで無条件に注入していたため、**ドキュメントが案内する
+    起動方法を一度も試していなかった**。実際 29 本がブートストラップを持たずに
+    editable install に寄生しており、install のマッピングから ``torch_lazy`` が
+    抜けた瞬間に 6 本が ``ModuleNotFoundError`` で落ちた —— それでもテストスイートは
+    緑のままだった(利用者側だけが壊れる形)。
+
+    *inject_path* は「install 済み環境での挙動」を別途確かめたいとき用の opt-in。
+    """
     env = dict(os.environ)
-    env["PYTHONPATH"] = _ROOT + os.pathsep + env.get("PYTHONPATH", "")
+    if inject_path:
+        env["PYTHONPATH"] = _ROOT + os.pathsep + env.get("PYTHONPATH", "")
+    else:
+        # 呼び出し側の環境に残っていると「注入しない」検査にならないので落とす
+        env.pop("PYTHONPATH", None)
     env["PYTHONUTF8"] = "1"
     try:
         p = subprocess.run([sys.executable, path(example_id)], cwd=_ROOT, env=env,
