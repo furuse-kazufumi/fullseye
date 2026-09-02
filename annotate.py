@@ -534,7 +534,8 @@ def text_box(img, text, xy, color="neutral", text_color=None, box_color=None,
         # 従来と同じ色を出すので、通っていた絵はバイト単位で変わらない。
         light, dark = _rgb(_INK_RGB, scheme), _rgb(_PLATE_RGB, scheme)
         ink = light
-        if _contrast_ratio(light, under_rgb) < float(min_contrast) and                 _contrast_ratio(dark, under_rgb) > _contrast_ratio(light, under_rgb):
+        if (_contrast_ratio(light, under_rgb) < float(min_contrast)
+                and _contrast_ratio(dark, under_rgb) > _contrast_ratio(light, under_rgb)):
             ink = dark
     ratio = _contrast_ratio(ink, under_rgb)
     if ratio < float(min_contrast):

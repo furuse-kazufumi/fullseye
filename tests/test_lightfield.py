@@ -688,3 +688,22 @@ class TestAdversarial2026_09_01:
             LF.lf_from_mla(np.zeros((10000, 12)), (2, 2))
         ok = LF.lf_from_mla(np.zeros((4096, 8)), (2, 2))
         assert ok.shape == (2, 2, 2048, 4)
+
+
+def test_synthesize_background_is_the_smallest_absolute_slope_not_the_last_entry():
+    """The docstring used to say the *last* entry of ``slopes`` is the opaque
+    background; the code sorts the layers by ``|slope|`` (stable) and makes the
+    smallest one the backdrop, whatever its position.  Pin the real rule."""
+    _, map_a = LF.lf_synthesize((0.0, 2.0), (3, 3), (32, 32), seed=0)
+    _, map_b = LF.lf_synthesize((2.0, 0.0), (3, 3), (32, 32), seed=0)
+    assert np.array_equal(map_a, map_b)              # same scene either way round
+    assert set(np.unique(map_a).tolist()) == {0.0, 2.0}
+    # the backdrop is the smallest |slope| even when it is listed first and is
+    # not zero: -2 is the near layer (covers ~coverage), 0.5 fills the rest
+    _, m = LF.lf_synthesize((-2.0, 0.5), (3, 3), (32, 32), coverage=0.55, seed=0)
+    assert set(np.unique(m).tolist()) == {-2.0, 0.5}
+    assert float((m == -2.0).mean()) == pytest.approx(0.55, abs=0.02)
+    assert float((m == 0.5).mean()) == pytest.approx(0.45, abs=0.02)
+    # and the "last entry" rule really is false: last = -2 is *not* the backdrop
+    _, m2 = LF.lf_synthesize((0.5, -2.0), (3, 3), (32, 32), coverage=0.55, seed=0)
+    assert np.array_equal(m, m2)
