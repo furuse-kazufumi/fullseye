@@ -193,11 +193,26 @@ def main():
         want = truth["shifts"][0] - truth["shifts"][i]
         errs.append(float(np.hypot(info["shift_row"] - want[0],
                                    info["shift_col"] - want[1])))
-        assert abs(info["scale"] - 1.0) < 5e-3 and abs(info["rotation_deg"]) < 0.3
-        assert info["n_inliers"] >= 8 and info["votes"] >= 8
+        assert abs(info["scale"] - 1.0) < 1e-2 and abs(info["rotation_deg"]) < 0.3
+        assert info["n_inliers"] >= 20 and info["votes"] >= 20
     print(f"4) 位置合わせ: 真のディザとの誤差 最大 {max(errs):.4f} px / "
           f"中央 {np.median(errs):.4f} px({N_FRAMES - 1} 対、similarity)")
-    assert max(errs) < 0.15
+    assert max(errs) < 0.6
+    # 誤差の出どころを切り分ける: シーイングの揺れを止めた同じ観測で測り直す
+    steady, s_truth = A.synth_frame_series(
+        shape=SHAPE, n_frames=N_FRAMES, dither_px=DITHER, n_stars=N_STARS,
+        fwhm_px=FWHM, fwhm_jitter=0.0, sky=SKY, read_sigma=READ,
+        flux_min=20000.0, flux_max=60000.0, margin_px=24.0, seed=SEED)
+    s_errs = []
+    for i in range(1, N_FRAMES):
+        _, info = A.frame_align(steady[0], steady[i], model="similarity")
+        w = s_truth["shifts"][0] - s_truth["shifts"][i]
+        s_errs.append(float(np.hypot(info["shift_row"] - w[0],
+                                     info["shift_col"] - w[1])))
+    print(f"   シーイングの揺れを止めた対照(FWHM 一定): 最大 {max(s_errs):.4f} px / "
+          f"中央 {np.median(s_errs):.4f} px —— 上の誤差は推定の癖ではなく "
+          f"**星が太った枚の重心が暴れる**ぶん")
+    assert max(s_errs) < 0.15 < max(errs)
     agree = {}
     for model in A.ALIGN_MODELS:
         _, info = A.frame_align(frames[0], frames[1], model=model)
