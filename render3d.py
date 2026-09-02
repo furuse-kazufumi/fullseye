@@ -921,15 +921,26 @@ def _unit_ellipsoid(subdiv: int):
 
 
 def sample_boulders(V, F, *, density: float, d_min: float, d_max=None,
-                    exponent: float = 3.1, seed: int = 0, region_weights=None):
-    """Poisson-process boulder sample on a mesh → ``dict(centre (n,3), normal (n,3), diameter (n,), face (n,), expected)``.
+                    exponent: float = 3.1, seed: int = 0, region_weights=None,
+                    max_count=None, burial=(0.3, 0.6)):
+    """Poisson-process boulder sample on a mesh → ``dict(centre (n,3), normal (n,3), diameter (n,),
+    face (n,), burial (n,), expected, d_min_effective)``.
 
     The expected count is ``density × Σ(face area × region weight)`` (``density`` = boulders
     with D ≥ ``d_min`` per unit area, mesh units²); the actual count is Poisson. Positions are
     area-weighted (times ``region_weights`` per face, e.g. :func:`terrain_region_mask`) and
     uniform inside the chosen triangle. Diameters follow the truncated power law
     N(>D) ∝ D^-exponent on [d_min, d_max] (Michikami et al. 2008: exponent 3.1 for Itokawa;
-    ``d_max`` default 10·d_min). Deterministic under ``seed``. Fail-closed."""
+    ``d_max`` default 10·d_min).
+
+    ``max_count`` caps the expected count **without bending the law**: if the expectation
+    exceeds it, ``d_min`` is raised to ``d_min·(expected/max_count)^(1/exponent)`` (the
+    diameter at which the same power law predicts exactly ``max_count`` boulders) and reported
+    as ``d_min_effective`` — the count follows from the law, not from truncating a list.
+    ``burial=(lo, hi)`` gives each boulder a buried fraction of its height: ``hi`` for the
+    smallest (``d_min``) falling log-linearly to ``lo`` for the largest (``d_max``), plus a
+    seeded jitter of ±(hi−lo)/4, clipped to [lo, hi] (small blocks sink deeper into the
+    regolith; used by :func:`mesh_scatter_boulders`). Deterministic under ``seed``. Fail-closed."""
     Vv, Ff = _mesh_check(V, F)
     dens, dmin, ex = float(density), float(d_min), float(exponent)
     dmax = 10.0 * dmin if d_max is None else float(d_max)
@@ -939,6 +950,9 @@ def sample_boulders(V, F, *, density: float, d_min: float, d_max=None,
         raise ValueError("need 0 < d_min < d_max")
     if not np.isfinite(ex) or ex <= 0.0:
         raise ValueError("exponent must be > 0")
+    blo, bhi = (float(burial[0]), float(burial[1])) if burial is not None else (0.0, 0.0)
+    if not (np.isfinite(blo) and np.isfinite(bhi) and 0.0 <= blo <= bhi <= 1.0):
+        raise ValueError("burial must be (lo, hi) with 0 <= lo <= hi <= 1")
     tri = Vv[Ff]
     fn = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0])
     area = 0.5 * np.linalg.norm(fn, axis=1)
@@ -950,11 +964,21 @@ def sample_boulders(V, F, *, density: float, d_min: float, d_max=None,
             raise ValueError("region_weights must be a finite non-negative (M,) array")
     eff = area * wgt
     lam = dens * float(eff.sum())
+    if max_count is not None:
+        mc = int(max_count)
+        if mc < 1:
+            raise ValueError("max_count must be >= 1")
+        if lam > mc:
+            dmin = dmin * (lam / mc) ** (1.0 / ex)
+            if dmin >= dmax:
+                raise ValueError("max_count too small: the effective d_min would exceed d_max")
+            lam = float(mc)
     rng = np.random.default_rng(int(seed))
     n = int(rng.poisson(lam)) if lam > 0.0 else 0
     if n == 0 or eff.sum() <= 0.0:
         return {"centre": np.zeros((0, 3)), "normal": np.zeros((0, 3)),
-                "diameter": np.zeros(0), "expected": lam, "face": np.zeros(0, np.int64)}
+                "diameter": np.zeros(0), "expected": lam, "face": np.zeros(0, np.int64),
+                "burial": np.zeros(0), "d_min_effective": dmin}
     faces = rng.choice(Ff.shape[0], size=n, p=eff / eff.sum())
     r1, r2 = rng.random(n), rng.random(n)
     s1 = np.sqrt(r1)
@@ -964,22 +988,73 @@ def sample_boulders(V, F, *, density: float, d_min: float, d_max=None,
     u = rng.random(n)
     ratio = (dmax / dmin) ** (-ex)
     diam = dmin * np.power(1.0 - u * (1.0 - ratio), -1.0 / ex)
+    frac = np.log(diam / dmin) / np.log(dmax / dmin)              # 0 = smallest, 1 = largest
+    jit = (rng.random(n) * 2.0 - 1.0) * 0.25 * (bhi - blo)
+    bur = np.clip(bhi - (bhi - blo) * frac + jit, blo, bhi)
     return {"centre": centre, "normal": nrm, "diameter": diam, "expected": lam,
-            "face": faces}
+            "face": faces, "burial": bur, "d_min_effective": dmin}
+
+
+def _random_rotation(rng) -> np.ndarray:
+    """Uniform random rotation (Haar) from a seeded generator, via a unit quaternion."""
+    q = rng.normal(size=4)
+    q /= np.linalg.norm(q)
+    w, x, y, z = q
+    return np.array([[1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)],
+                     [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)],
+                     [2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)]])
+
+
+def _hull_boulder(rng, semi: np.ndarray, n_pts: int):
+    """Angular block: convex hull of ``n_pts`` seeded random points on (and slightly inside)
+    an ellipsoid with semi-axes ``semi`` → ``(V (k,3), F (t,3))`` with outward winding."""
+    from scipy.spatial import ConvexHull
+    d = rng.normal(size=(n_pts, 3))
+    d /= np.maximum(np.linalg.norm(d, axis=1, keepdims=True), 1e-15)
+    rad = 0.8 + 0.2 * rng.random(n_pts)                    # radial jitter → flat facets, edges
+    P = d * semi[None, :] * rad[:, None]
+    hull = ConvexHull(P)
+    Fh = hull.simplices.astype(np.int64)
+    # orient outward: face normal · equation normal > 0
+    T = P[Fh]
+    fnrm = np.cross(T[:, 1] - T[:, 0], T[:, 2] - T[:, 0])
+    flip = np.einsum("ij,ij->i", fnrm, hull.equations[:, :3]) < 0.0
+    Fh[flip] = Fh[flip][:, [0, 2, 1]]
+    used = np.unique(Fh)
+    remap = -np.ones(P.shape[0], np.int64)
+    remap[used] = np.arange(used.size)
+    return P[used], remap[Fh]
 
 
 def mesh_scatter_boulders(V, F, *, density: float, d_min: float, d_max=None,
                           exponent: float = 3.1, seed: int = 0, region_weights=None,
-                          aspect=(1.0, 0.7, 0.5), embed: float = 0.35, subdiv: int = 1):
-    """Scatter partly-buried ellipsoidal boulders on a mesh (power-law sizes, seeded) → ``(V, F)``.
+                          aspect=(1.0, 0.7, 0.5), embed: float = 0.35, subdiv: int = 1,
+                          shape: str = "ellipsoid", orientation: str = "normal",
+                          burial=(0.3, 0.6), max_count=None, hull_points=None,
+                          return_info: bool = False):
+    """Scatter partly-buried boulders on a mesh (power-law sizes, seeded) → ``(V, F)``
+    (or ``(V, F, info)`` with ``return_info=True``).
 
-    Boulders are icosphere ellipsoids with semi-axes ``D/2 × aspect`` (default 1 : 0.7 : 0.5,
-    the shortest axis along the local surface normal), randomly rotated about the normal and
-    sunk by ``embed`` (0 = resting on the surface, 1 = centre on the surface). Placement and
-    sizes come from :func:`sample_boulders` (Poisson process, N(>D) ∝ D^-exponent); pass
-    ``region_weights`` from :func:`terrain_region_mask` to keep the seas smooth. The boulders
-    are appended as real geometry, so they self-shadow, cast shadows and occlude through the
-    same rasteriser / ray-cast path as the terrain. Deterministic under ``seed``. Fail-closed."""
+    ``shape='ellipsoid'`` (default, unchanged behaviour): icosphere ellipsoids with semi-axes
+    ``D/2 × aspect`` (1 : 0.7 : 0.5, shortest axis along the local surface normal), spun about
+    the normal and sunk by ``embed`` (0 = resting, 1 = centre on the surface).
+    ``shape='hull'``: **angular blocks** — the convex hull of seeded random points on an
+    ellipsoid of the same aspect with 20 % radial jitter (flat facets, sharp edges, the
+    look of Itokawa's boulders), ``hull_points`` per block (default size-dependent:
+    ``10 + 8·log2(D/d_min)``, 10..40). ``orientation='random'`` gives each block a uniform
+    random rotation instead of aligning its short axis with the normal. For hulls the sink
+    is the size-dependent ``burial`` fraction from :func:`sample_boulders` (30–60 % of the
+    block's height below the surface by default; ``embed`` is ignored). ``max_count`` caps
+    the expected number by raising ``d_min`` along the same law (see
+    :func:`sample_boulders`; ``info['d_min_effective']`` reports it).
+
+    Placement and sizes come from :func:`sample_boulders` (Poisson process,
+    N(>D) ∝ D^-exponent); boulders sit on the mesh *as passed* — pass the displaced /
+    subdivided terrain so they rest on the final surface. ``region_weights`` from
+    :func:`terrain_region_mask` keeps the seas smooth. The boulders are appended as real
+    geometry, so they self-shadow, cast shadows and occlude through the same rasteriser /
+    ray-cast path as the terrain. ``info`` = the sample dict plus ``faces_per_boulder``
+    and ``n_boulders``. Deterministic under ``seed``. Fail-closed."""
     Vv, Ff = _mesh_check(V, F)
     asp = np.asarray(aspect, np.float64).reshape(-1)
     if asp.shape != (3,) or not np.all(np.isfinite(asp)) or np.any(asp <= 0.0):
@@ -990,32 +1065,62 @@ def mesh_scatter_boulders(V, F, *, density: float, d_min: float, d_max=None,
     sd = int(subdiv)
     if sd < 0 or sd > 3:
         raise ValueError("subdiv must be in [0, 3]")
+    if shape not in ("ellipsoid", "hull"):
+        raise ValueError("shape must be 'ellipsoid' or 'hull', got %r" % (shape,))
+    if orientation not in ("normal", "random"):
+        raise ValueError("orientation must be 'normal' or 'random', got %r" % (orientation,))
+    if hull_points is not None and (int(hull_points) < 6 or int(hull_points) > 200):
+        raise ValueError("hull_points must be in [6, 200]")
     smp = sample_boulders(Vv, Ff, density=density, d_min=d_min, d_max=d_max,
-                          exponent=exponent, seed=seed, region_weights=region_weights)
+                          exponent=exponent, seed=seed, region_weights=region_weights,
+                          max_count=max_count, burial=burial)
     n = smp["diameter"].shape[0]
+    info = dict(smp)
+    info["n_boulders"] = n
+    info["faces_per_boulder"] = np.zeros(0, np.int64)
     if n == 0:
-        return Vv.copy(), Ff.copy()
+        return (Vv.copy(), Ff.copy(), info) if return_info else (Vv.copy(), Ff.copy())
     rng = np.random.default_rng(int(seed) + 1)
     Vu, Fu = _unit_ellipsoid(sd)
     parts_v, parts_f = [Vv], [Ff]
     off = Vv.shape[0]
+    fpb = np.zeros(n, np.int64)
+    dmin_eff = float(smp["d_min_effective"])
     for k in range(n):
         nrm = smp["normal"][k]
-        a = np.array([1.0, 0.0, 0.0]) if abs(nrm[0]) < 0.9 else np.array([0.0, 1.0, 0.0])
-        t1 = np.cross(nrm, a)
-        t1 /= np.linalg.norm(t1)
-        t2 = np.cross(nrm, t1)
-        ang = rng.random() * 2.0 * np.pi
-        ax1 = np.cos(ang) * t1 + np.sin(ang) * t2
-        ax2 = np.cross(nrm, ax1)
-        semi = 0.5 * smp["diameter"][k] * asp
-        R = np.stack([ax1 * semi[0], ax2 * semi[1], nrm * semi[2]], axis=0)   # rows = axes
-        ctr = smp["centre"][k] + nrm * semi[2] * (1.0 - em)
-        parts_v.append(Vu @ R + ctr)
-        parts_f.append(Fu + off)
-        off += Vu.shape[0]
-    return np.vstack(parts_v), np.vstack(parts_f)
-
+        D = float(smp["diameter"][k])
+        semi = 0.5 * D * asp
+        if orientation == "normal":
+            a = np.array([1.0, 0.0, 0.0]) if abs(nrm[0]) < 0.9 else np.array([0.0, 1.0, 0.0])
+            t1 = np.cross(nrm, a)
+            t1 /= np.linalg.norm(t1)
+            t2 = np.cross(nrm, t1)
+            ang = rng.random() * 2.0 * np.pi
+            ax1 = np.cos(ang) * t1 + np.sin(ang) * t2
+            ax2 = np.cross(nrm, ax1)
+            Rm = np.stack([ax1, ax2, nrm], axis=0)           # rows = local axes in world
+        else:
+            Rm = _random_rotation(rng)
+        if shape == "ellipsoid":
+            local = Vu * semi[None, :]
+            Fb = Fu
+            ctr = smp["centre"][k] + nrm * semi[2] * (1.0 - em)
+            parts_v.append(local @ Rm + ctr)
+        else:
+            npts = int(hull_points) if hull_points is not None else int(
+                np.clip(10 + 8 * np.log2(max(D / dmin_eff, 1.0)), 10, 40))
+            Vh, Fb = _hull_boulder(rng, semi, npts)
+            Vw = Vh @ Rm                                     # rotated, centred at origin
+            hgt = Vw @ nrm
+            zmin, zmax = float(hgt.min()), float(hgt.max())
+            shift = -(zmin + float(smp["burial"][k]) * (zmax - zmin))
+            parts_v.append(Vw + smp["centre"][k] + nrm * shift)
+        parts_f.append(Fb + off)
+        off += parts_v[-1].shape[0]
+        fpb[k] = Fb.shape[0]
+    info["faces_per_boulder"] = fpb
+    Vo, Fo = np.vstack(parts_v), np.vstack(parts_f)
+    return (Vo, Fo, info) if return_info else (Vo, Fo)
 
 
 # --------------------------------------------------------------------------- #
@@ -1152,9 +1257,11 @@ def _tess_pattern(n0: int, n1: int, n2: int):
     """Conforming tessellation of one triangle whose edges carry ``n0, n1, n2`` segments
     (edge ``i`` = corner ``i`` → corner ``i+1``): returns ``(bary (P,3), tris (T,3),
     n_boundary)`` in a local numbering — corners 0..2, then the interior points of edge 0,
-    1, 2 in traversal order, then interior points. Rings are homothetic insets (OpenGL
-    tessellation-style): inner level ``m = round(mean n)``, ring ``r`` at barycentric inset
-    ``2r/(3m)`` with ``m − 2r`` segments per side, neighbouring rings joined by :func:`_zipper`.
+    1, 2 in traversal order, then interior points. Rings are the concentric triangles of
+    the barycentric lattice of level ``m = round(mean n)``: ring ``r`` sits at barycentric
+    inset ``r/m`` with ``m − 3r`` segments per side (segment ``L_i/m`` along each side, row
+    spacing ``h_i/m`` — for an equilateral face this IS the regular lattice); neighbouring
+    rings are joined by :func:`_zipper`, the outer ring carrying the per-edge counts.
     All points lie inside the triangle (positions are barycentric combinations of its
     corners), so the refined surface is *identical* to the original facet."""
     corners = np.eye(3)
@@ -1175,7 +1282,7 @@ def _tess_pattern(n0: int, n1: int, n2: int):
         return np.asarray(pts), np.array([[0, 1, 2]], np.int64), n_boundary
     r = 1
     while True:
-        mr = m - 2 * r
+        mr = m - 3 * r
         if mr <= 0:
             pts.append(np.full(3, 1.0 / 3.0))
             c = len(pts) - 1
@@ -1184,7 +1291,7 @@ def _tess_pattern(n0: int, n1: int, n2: int):
                 for k in range(len(A) - 1):
                     tris.append([A[k], A[k + 1], c])
             break
-        d = 2.0 * r / (3.0 * m)
+        d = r / float(m)
         cc = [np.array([1 - 2 * d, d, d]), np.array([d, 1 - 2 * d, d]), np.array([d, d, 1 - 2 * d])]
         cid = []
         for i in range(3):
@@ -1217,61 +1324,107 @@ def _tess_pattern(n0: int, n1: int, n2: int):
 _TESS_CACHE: dict = {}
 
 
-def _tessellate(Vv, Ff, n_seg):
-    """Apply per-edge segment counts ``n_seg`` (E,) with conforming per-face patterns."""
+def _hex_lattice_inside(P2, spacing: float, margin: float) -> np.ndarray:
+    """Hexagonal lattice points (spacing ``spacing``) strictly inside the 2-D triangle ``P2``
+    (3,2), at least ``margin`` away from every edge → ``(n,2)`` (may be empty). The lattice
+    is anchored at the triangle's first corner, so the result is deterministic."""
+    lo = P2.min(axis=0)
+    hi = P2.max(axis=0)
+    dy = spacing * np.sqrt(3.0) / 2.0
+    ny = int(np.floor((hi[1] - lo[1]) / dy)) + 1
+    nx = int(np.floor((hi[0] - lo[0]) / spacing)) + 2
+    if nx <= 0 or ny <= 0:
+        return np.zeros((0, 2))
+    j = np.arange(ny)
+    i = np.arange(nx)
+    X = lo[0] + i[None, :] * spacing + (j[:, None] % 2) * 0.5 * spacing
+    Y = lo[1] + j[:, None] * dy + 0.0 * i[None, :]
+    Q = np.stack([X.ravel(), Y.ravel()], axis=1)
+    # signed distance to each edge (positive inside for a CCW triangle)
+    d = np.empty((Q.shape[0], 3))
+    for k in range(3):
+        e0, e1 = P2[k], P2[(k + 1) % 3]
+        t = e1 - e0
+        ln = np.linalg.norm(t)
+        if ln <= 0.0:
+            return np.zeros((0, 2))
+        nrm = np.array([-t[1], t[0]]) / ln                  # left normal
+        d[:, k] = (Q - e0) @ nrm
+    keep = np.all(d >= margin, axis=1)
+    return Q[keep]
+
+
+def _tessellate(Vv, Ff, n_seg, target: float):
+    """Apply per-edge segment counts ``n_seg`` (E,) with a conforming fill of every face:
+    shared edge points (so neighbours agree), a hexagonal interior lattice at spacing
+    ``target`` in the face plane, and a 2-D Delaunay triangulation per face (scipy /
+    Qhull, deterministic for identical input). Faces whose three edges keep 1 segment
+    are copied unchanged. Fail-closed: the sub-triangles of a face must add up to the
+    face area (relative 1e-9) or ``ValueError`` is raised."""
+    from scipy.spatial import Delaunay
     E, fe = _unique_edges(Ff)
     n0 = Vv.shape[0]
-    # shared edge points: edge e gets n_e - 1 points from E[e,0] → E[e,1]
     n_in = n_seg - 1
-    off = np.cumsum(n_in) - n_in + n0
+    off = np.cumsum(n_in) - n_in + n0                       # first point id per edge
     tot = int(n_in.sum())
     ke = np.repeat(np.arange(E.shape[0]), n_in)
     kk = np.arange(tot) - np.repeat(off - n0, n_in) + 1
     t = kk / n_seg[ke]
     Vedge = Vv[E[ke, 0]] + (Vv[E[ke, 1]] - Vv[E[ke, 0]]) * t[:, None]
-    parts_v = [Vv, Vedge]
-    parts_f = []
+    Vall = [Vv, Vedge]
     n_cur = n0 + tot
-    # traversal direction of each face edge relative to the sorted edge
-    fwd = Ff == E[fe][:, :, 0]                              # (M,3) face edge j starts at E[e,0]
+    fwd = Ff == E[fe][:, :, 0]                              # (M,3) traversal = sorted dir
     fn = n_seg[fe]                                          # (M,3)
-    sig = fn[:, 0] * (_MAX_SEGMENTS + 1) ** 2 + fn[:, 1] * (_MAX_SEGMENTS + 1) + fn[:, 2]
-    order = np.argsort(sig, kind="stable")
-    sig_s = sig[order]
-    bounds = np.flatnonzero(np.r_[True, sig_s[1:] != sig_s[:-1], True])
-    for gi in range(bounds.size - 1):
-        faces = order[bounds[gi]:bounds[gi + 1]]
-        a, b, c = (int(x) for x in fn[faces[0]])
-        key = (a, b, c)
-        if key not in _TESS_CACHE:
-            _TESS_CACHE[key] = _tess_pattern(a, b, c)
-        bary, ltris, nb = _TESS_CACHE[key]
-        nf = faces.size
-        P = bary.shape[0]
-        n_int = P - nb
-        # local → global id table (nf, P)
-        gid = np.empty((nf, P), np.int64)
-        gid[:, 0:3] = Ff[faces]
-        col = 3
-        for j, n in enumerate((a, b, c)):
+    keep = np.all(fn == 1, axis=1)
+    faces_out = [Ff[keep]]
+    todo = np.nonzero(~keep)[0]
+    tri_all = Vv[Ff]
+    fnorm = np.cross(tri_all[:, 1] - tri_all[:, 0], tri_all[:, 2] - tri_all[:, 0])
+    area2 = np.linalg.norm(fnorm, axis=1)
+    int_pts = []
+    margin = 0.45 * target
+    for f in todo:
+        P = tri_all[f]
+        nrm = fnorm[f] / max(area2[f], 1e-300)
+        u = P[1] - P[0]
+        u /= max(np.linalg.norm(u), 1e-300)
+        v = np.cross(nrm, u)
+        P2 = (P - P[0]) @ np.stack([u, v], axis=1)          # (3,2), CCW by construction
+        ids = [int(Ff[f, 0]), int(Ff[f, 1]), int(Ff[f, 2])]
+        pts2 = [P2[0], P2[1], P2[2]]
+        for j in range(3):
+            n = int(fn[f, j])
             if n > 1:
-                e = fe[faces, j]
-                base = off[e]                                # first point of that edge
-                k = np.arange(1, n)
-                ids_f = base[:, None] + (k - 1)[None, :]     # forward order
-                ids_b = base[:, None] + (n - 1 - k)[None, :] # reversed traversal
-                gid[:, col:col + n - 1] = np.where(fwd[faces, j][:, None], ids_f, ids_b)
-                col += n - 1
-        if n_int:
-            gid[:, nb:] = n_cur + np.arange(nf * n_int).reshape(nf, n_int)
-            tri = Vv[Ff[faces]]                              # (nf,3,3)
-            Vint = np.einsum("pk,fkd->fpd", bary[nb:], tri).reshape(-1, 3)
-            parts_v.append(Vint)
-            n_cur += nf * n_int
-        parts_f.append(np.take_along_axis(
-            gid[:, None, :].repeat(ltris.shape[0], axis=1),
-            np.broadcast_to(ltris[None, :, :], (nf,) + ltris.shape), axis=2).reshape(-1, 3))
-    return np.vstack(parts_v), np.vstack(parts_f).astype(np.int64)
+                e = fe[f, j]
+                base = int(off[e])
+                order = np.arange(n - 1) if fwd[f, j] else np.arange(n - 2, -1, -1)
+                ids.extend((base + order).tolist())
+                c0, c1 = P2[j], P2[(j + 1) % 3]
+                for k in range(1, n):
+                    pts2.append(c0 + (c1 - c0) * (k / n))
+        Q = _hex_lattice_inside(P2, target, margin)
+        if Q.shape[0]:
+            ids.extend(range(n_cur, n_cur + Q.shape[0]))
+            int_pts.append(P[0] + Q[:, 0:1] * u + Q[:, 1:2] * v)
+            n_cur += Q.shape[0]
+            pts2.extend(Q)
+        A2 = np.asarray(pts2)
+        simp = Delaunay(A2).simplices
+        T = A2[simp]
+        sa = 0.5 * ((T[:, 1, 0] - T[:, 0, 0]) * (T[:, 2, 1] - T[:, 0, 1])
+                    - (T[:, 2, 0] - T[:, 0, 0]) * (T[:, 1, 1] - T[:, 0, 1]))
+        flip = sa < 0.0
+        simp[flip] = simp[flip][:, [0, 2, 1]]
+        sa = np.abs(sa)
+        good = sa > 1e-12 * area2[f]
+        simp = simp[good]
+        if abs(float(sa[good].sum()) - 0.5 * float(area2[f])) > 1e-9 * 0.5 * float(area2[f]):
+            raise ValueError("tessellation of face %d does not cover it (Delaunay dropped points)" % f)
+        gid = np.asarray(ids, np.int64)
+        faces_out.append(gid[simp])
+    if int_pts:
+        Vall.append(np.vstack(int_pts))
+    return np.vstack(Vall), np.vstack(faces_out).astype(np.int64)
 
 
 def mesh_subdivide(V, F, *, levels: int = 1, target_edge=None,
@@ -1286,11 +1439,14 @@ def mesh_subdivide(V, F, *, levels: int = 1, target_edge=None,
 
     Adaptive mode cuts each edge into ``n = round(length / target_edge)`` (≥ 1) segments
     — a per-*edge* count, hence conforming across neighbours (no T-junctions) — and fills
-    each face with an OpenGL-tessellation-style pattern (homothetic inner rings zipped to
-    the outer ring). Unlike repeated midpoint bisection (which leaves a factor-2 spread
-    ``(target/2, target]``) the result is uniform in metres: on the Gaskell Itokawa model
-    (edge p5/median/p95 = 2.6/4.7/7.2 m) a 1.5 m target gives p95/p5 ≈ 1.4 (measured;
-    the test pins ≤ 1.5 on a graded plane). ``max_faces`` (default
+    each face with a **hexagonal lattice at spacing ``target_edge`` in the face plane**,
+    triangulated by a per-face 2-D Delaunay (Qhull). The interior therefore has edges
+    ≈ ``target_edge`` *whatever the shape of the source face* (the Gaskell Itokawa faces
+    have a median longest/shortest edge ratio of 1.83, so a per-face lattice pattern
+    inherits that anisotropy; repeated midpoint bisection additionally leaves a factor-2
+    spread ``(target/2, target]``). Measured on the Itokawa model (edge p5/median/p95 =
+    2.6/4.7/7.2 m, target 1.5 m): see ``examples_3d/itokawa_regolith_hero.py`` — the test
+    pins p95/p5 ≤ 1.5 on a graded plane. ``max_faces`` (default
     ``MAX_SUBDIVIDE_FACES``) is a memory guard: if the plan would exceed it the call
     raises ``ValueError`` (fail-closed) rather than silently under-refining.
     Deterministic. Fail-closed: degenerate mesh, ``levels < 0``, non-positive
@@ -1319,11 +1475,11 @@ def mesh_subdivide(V, F, *, levels: int = 1, target_edge=None,
         return Vv.copy(), Ff.copy()
     fn = n_seg[fe]
     m = np.maximum(1, np.rint(fn.mean(axis=1)).astype(np.int64))
-    est = int((fn.sum(axis=1) + 3 * m * np.maximum(m - 1, 0)).sum())   # upper-ish bound
+    est = int((fn.sum(axis=1) + m * m).sum())                          # upper-ish bound
     if est > mf:
         raise ValueError("adaptive tessellation would produce ~%d faces > max_faces=%d "
                          "(raise max_faces or target_edge)" % (est, mf))
-    return _tessellate(Vv, Ff, n_seg)
+    return _tessellate(Vv, Ff, n_seg, te)
 
 
 # --------------------------------------------------------------------------- #
@@ -1426,7 +1582,8 @@ def mesh_displace_spectrum(V, F, wavelengths=(0.06, 0.03, 0.015, 0.0075, 0.00375
 
 def bump_normals_fbm(normals, positions, wavelengths=(0.002, 0.001),
                      amplitudes=(0.0002, 0.00012), *, seed: int = 0,
-                     rotation=None, step=None) -> np.ndarray:
+                     rotation=None, step=None, local_edge=None, nyquist: float = 2.0,
+                     fade: float = 1.0) -> np.ndarray:
     """Perturb a normal map with the *gradient* of a seeded multi-octave height field
     (sub-facet relief the geometry cannot afford to displace) → unit normals ``(H, W, 3)``.
 
@@ -1439,7 +1596,15 @@ def bump_normals_fbm(normals, positions, wavelengths=(0.002, 0.001),
     surface; ``∇_t`` = tangential gradient by central differences with ``step`` =
     ``min(λ)/64``). ``positions`` are world coordinates ``(H, W, 3)`` (NaN = background,
     left untouched); if ``rotation`` (3×3, world → normal frame, e.g. ``pose[:3,:3]``)
-    is given the normals are taken in that frame. Deterministic; fail-closed."""
+    is given the normals are taken in that frame.
+
+    ``local_edge`` (optional ``(H, W)`` map of the mesh's local edge length under each
+    pixel) makes the bump the exact **complement** of the displacement's band gate: octave
+    ``k`` is bumped with weight ``1 − gate_k`` where ``gate_k`` is
+    :func:`displacement_band_weights`'s rule with the same ``nyquist`` / ``fade`` — so an
+    octave the geometry carried at a pixel is not added twice, and one it could not carry
+    is fully supplied by the bump. Without it every octave is bumped at full amplitude.
+    Deterministic; fail-closed."""
     N = np.asarray(normals, np.float64)
     P = np.asarray(positions, np.float64)
     if N.ndim != 3 or N.shape[2] != 3 or P.shape != N.shape:
@@ -1454,12 +1619,27 @@ def bump_normals_fbm(normals, positions, wavelengths=(0.002, 0.001),
     hstep = float(lam.min()) / 64.0 if step is None else float(step)
     if not np.isfinite(hstep) or hstep <= 0.0:
         raise ValueError("step must be a positive finite length")
+    ny, fd = float(nyquist), float(fade)
+    if not np.isfinite(ny) or ny <= 0.0 or not np.isfinite(fd) or fd < 0.0:
+        raise ValueError("nyquist must be > 0 and fade >= 0")
     mask = np.all(np.isfinite(P), axis=-1) & (np.linalg.norm(N, axis=-1) > 1e-12)
     out = N.copy()
     if not mask.any():
         return out
     pts = P[mask]
     n_w = N[mask] @ R                                       # frame → world (R^T applied)
+    if local_edge is None:
+        wk = np.ones((lam.size, pts.shape[0]))
+    else:
+        em = np.asarray(local_edge, np.float64)
+        if em.shape != N.shape[:2]:
+            raise ValueError("local_edge must be an (H, W) map matching the normals")
+        e = em[mask]
+        if not np.all(np.isfinite(e)) or np.any(e <= 0.0):
+            raise ValueError("local_edge must be positive and finite under every surface pixel")
+        ratio = lam[:, None] / e[None, :]
+        gate = (ratio >= ny).astype(np.float64) if fd == 0.0 else np.clip((ratio - ny) / fd, 0.0, 1.0)
+        wk = 1.0 - gate
     rng = np.random.default_rng(int(seed))
     perm = np.tile(rng.permutation(256), 2)
 
@@ -1467,7 +1647,7 @@ def bump_normals_fbm(normals, positions, wavelengths=(0.002, 0.001),
         h = np.zeros(q.shape[0], np.float64)
         for k in range(lam.size):
             if amp[k] > 0.0:
-                h += amp[k] * _octave_noise(q, lam[k], perm, k)
+                h += (amp[k] * wk[k]) * _octave_noise(q, lam[k], perm, k)
         return h
 
     grad = np.zeros_like(pts)

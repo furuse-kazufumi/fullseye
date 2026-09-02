@@ -84,6 +84,21 @@ __all__ = [
     "zoom_inset", "compare_frame", "panel_grid",
     # 図形
     "rounded_rect", "filled_polygon", "arc", "ellipse",
+    # 学術図の作法(2026-09-03): 引き出し線 / 番号 + 凡例 / 寸法 / 角度 /
+    # 切りのよいスケールバー / 方位 / 隅の拡大 / 輪郭 / 経路文字 / 色分け /
+    # パネル文字 / 図の組版。``*_layout`` は幾何だけを table で返す
+    "annotate_leader_layout", "annotate_leader",
+    "annotate_markers", "annotate_legend",
+    "annotate_dimension_layout", "annotate_dimension",
+    "annotate_angle_layout", "annotate_angle",
+    "annotate_scale_bar_layout", "annotate_scale_bar",
+    "annotate_orientation",
+    "annotate_inset_layout", "annotate_inset",
+    "annotate_outline_layout", "annotate_outline",
+    "annotate_text_path_layout", "annotate_text_path",
+    "annotate_colorbar",
+    "annotate_panel_label",
+    "annotate_figure_grid_layout", "annotate_figure_grid",
 ]
 
 #: フォント候補。**固定順**で探すので、同じ機械なら同じフォントが選ばれる
@@ -1867,3 +1882,1202 @@ def ellipse(img, center, radii, angle_deg=0.0, color="neutral", width=2,
         t = max(1.0, float(width)) / (2.0 * min(ra, rb))
         m = np.abs(np.sqrt(q) - 1.0) <= t
     return _blend(a, m.astype(np.float64), _channel_color(a, color, scheme), alpha)
+
+
+# ------------------------------------------------------------------ #
+# 学術図(paper figure)の図注 —— 2026-09-03
+#
+# 「どこに何があるかを矢印や線で示す」のが学術図の作法。上の 25 op は
+# **部品**(文字・矢印・凡例・軸)で、ここから下は**作法そのもの**を op に
+# する: 引き出し線(衝突回避つき)/ 番号マーカー + 凡例 / 寸法線 / 角度 /
+# 切りのよいスケールバー / 方位矢印 / 隅の拡大差し込み / マスクの輪郭 /
+# 経路に沿う文字 / 色分け重ね + カラーバー / パネル文字 / 図の組版。
+#
+# 規律(上と同じ + 2 つ):
+# * **幾何は layout op が閉形式で決め、draw op はそれを描くだけ** ――
+#   ``annotate_*_layout`` は table(dict)を返し、tests はその数字を検算する。
+#   描く op に ``layout=`` で渡せば、同じ配置を別の絵にも使い回せる。
+# * **線はアンチエイリアス** ―― :mod:`imagedraw` の 1 画素線ではなく、線分
+#   までの距離から被覆率を出して α で載せる(:func:`_aa_polyline`)。破線は
+#   弧長で区切る。文字は従来どおり Pillow の AA マスク。
+# ------------------------------------------------------------------ #
+
+_CORNERS = ("lt", "rt", "lb", "rb")
+_LETTERS = "abcdefghijklmnopqrstuvwxyz"
+
+
+def _num(v, name, lo=None, hi=None, integer=False):
+    """数値引数の検算。**bool と str は黙って数に変換しない**(例外)。"""
+    if isinstance(v, (bool, np.bool_)) or isinstance(v, (str, bytes)):
+        raise ValueError(f"{name} must be a number (got {type(v).__name__}: {v!r})")
+    try:
+        f = float(v)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"{name} must be a number (got {v!r})") from exc
+    if not math.isfinite(f):
+        raise ValueError(f"{name} must be finite (got {v!r})")
+    if integer and f != math.floor(f):
+        raise ValueError(f"{name} must be an integer (got {v!r})")
+    if lo is not None and f < lo:
+        raise ValueError(f"{name} must be >= {lo} (got {v!r})")
+    if hi is not None and f > hi:
+        raise ValueError(f"{name} must be <= {hi} (got {v!r})")
+    return int(f) if integer else f
+
+
+def _flag(v, name):
+    """真偽値引数の検算。``"false"`` のような文字列は真になってしまうので拒否。"""
+    if not isinstance(v, (bool, np.bool_)):
+        raise ValueError(f"{name} must be True or False (got {type(v).__name__}: {v!r})")
+    return bool(v)
+
+
+def _pt(p, name="point"):
+    q = np.asarray(p, dtype=np.float64).ravel()
+    if q.size != 2:
+        raise ValueError(f"{name} must be (x, y) (got {q.size} values)")
+    _finite(name, q)
+    return float(q[0]), float(q[1])
+
+
+def _pts(points, name="points", min_n=1):
+    p = np.asarray(points, dtype=np.float64)
+    if p.ndim != 2 or p.shape[1] != 2:
+        raise ValueError(f"{name} must be (N, 2) (x, y) pairs (got shape {p.shape})")
+    if p.shape[0] < min_n:
+        raise ValueError(f"{name} needs at least {min_n} point(s) (got {p.shape[0]})")
+    _finite(name, p)
+    return p
+
+
+def _shape2(shape, name="shape"):
+    s = tuple(int(v) for v in np.asarray(shape).ravel()[:2]) if np.ndim(shape) else None
+    if s is None or len(s) != 2 or s[0] < 1 or s[1] < 1:
+        raise ValueError(f"{name} must be (H, W) with positive sizes (got {shape!r})")
+    return s
+
+
+def _corner_xy(corner, W, H, margin):
+    if corner not in _CORNERS:
+        raise ValueError(f"corner must be one of {_CORNERS} (got: {corner!r})")
+    x = margin if corner[0] == "l" else W - 1 - margin
+    y = margin if corner[1] == "t" else H - 1 - margin
+    return int(x), int(y)
+
+
+def _segment_coverage(shape, p0, p1, width):
+    """線分 p0→p1(太さ width)の画素被覆率 [0,1](距離ベースの AA)。"""
+    H, W = shape
+    x0, y0 = p0
+    x1, y1 = p1
+    r = width / 2.0 + 0.5
+    xa, xb = int(math.floor(min(x0, x1) - r - 1)), int(math.ceil(max(x0, x1) + r + 1))
+    ya, yb = int(math.floor(min(y0, y1) - r - 1)), int(math.ceil(max(y0, y1) + r + 1))
+    xa, xb = max(0, xa), min(W - 1, xb)
+    ya, yb = max(0, ya), min(H - 1, yb)
+    out = np.zeros((H, W), dtype=np.float64)
+    if xa > xb or ya > yb:
+        return out
+    yy, xx = np.mgrid[ya:yb + 1, xa:xb + 1]
+    dx, dy = x1 - x0, y1 - y0
+    l2 = dx * dx + dy * dy
+    if l2 < 1e-18:
+        t = np.zeros_like(xx, dtype=np.float64)
+    else:
+        t = np.clip(((xx - x0) * dx + (yy - y0) * dy) / l2, 0.0, 1.0)
+    d = np.hypot(xx - (x0 + t * dx), yy - (y0 + t * dy))
+    out[ya:yb + 1, xa:xb + 1] = np.clip(r - d, 0.0, 1.0)
+    return out
+
+
+def _dash_pieces(pts, closed, dash):
+    """折れ線を弧長で ``(on, off)`` の破線片に切る(位相は頂点をまたいで連続)。"""
+    p = [tuple(map(float, q)) for q in pts]
+    if closed and len(p) > 1:
+        p = p + [p[0]]
+    if dash is None:
+        return [(p[i], p[i + 1]) for i in range(len(p) - 1)]
+    on, off = float(dash[0]), float(dash[1])
+    if on <= 0 or off < 0:
+        raise ValueError(f"dash must be (on > 0, off >= 0) pixel lengths (got: {dash!r})")
+    period = on + off
+    pieces = []
+    s = 0.0
+    for i in range(len(p) - 1):
+        a, b = p[i], p[i + 1]
+        seg = math.hypot(b[0] - a[0], b[1] - a[1])
+        if seg < 1e-12:
+            continue
+        t = 0.0
+        while t < seg:
+            phase = (s + t) % period
+            if phase < on:
+                run = min(on - phase, seg - t)
+                u0, u1 = t / seg, (t + run) / seg
+                pieces.append(((a[0] + (b[0] - a[0]) * u0, a[1] + (b[1] - a[1]) * u0),
+                               (a[0] + (b[0] - a[0]) * u1, a[1] + (b[1] - a[1]) * u1)))
+                t += run
+            else:
+                t += period - phase
+        s += seg
+    return pieces
+
+
+def _aa_polyline(a, pts, color, width=1.5, closed=False, dash=None, alpha=1.0,
+                 scheme="okabe_ito"):
+    """アンチエイリアスの折れ線(距離被覆率 → α 合成)。``dash=(on, off)`` で破線。"""
+    w = _num(width, "width", lo=0.5)
+    m = np.zeros(a.shape[:2], dtype=np.float64)
+    for p, q in _dash_pieces(pts, closed, dash):
+        m = np.maximum(m, _segment_coverage(a.shape[:2], p, q, w))
+    return _blend(a, m, _channel_color(a, color, scheme), alpha)
+
+
+def _aa_disk(a, center, radius, color, alpha=1.0, scheme="okabe_ito", ring=0.0):
+    """アンチエイリアスの円板(``ring>0`` なら太さ ring の輪)。"""
+    xx, yy = _grid(a.shape[:2])
+    d = np.hypot(xx - center[0], yy - center[1])
+    if ring > 0:
+        m = np.clip(ring / 2.0 + 0.5 - np.abs(d - radius), 0.0, 1.0)
+    else:
+        m = np.clip(radius + 0.5 - d, 0.0, 1.0)
+    return _blend(a, m, _channel_color(a, color, scheme), alpha)
+
+
+def _aa_arc(a, center, radius, start_deg, end_deg, color, width=1.5, alpha=1.0,
+            scheme="okabe_ito"):
+    """アンチエイリアスの円弧(角度は画面 x 軸から時計回り、度)。"""
+    xx, yy = _grid(a.shape[:2])
+    d = np.hypot(xx - center[0], yy - center[1])
+    ang = np.degrees(np.arctan2(yy - center[1], xx - center[0])) % 360.0
+    s = float(start_deg) % 360.0
+    span = (float(end_deg) - float(start_deg)) % 360.0
+    span = span if span > 0 else 360.0
+    within = ((ang - s) % 360.0) <= span
+    m = np.clip(width / 2.0 + 0.5 - np.abs(d - radius), 0.0, 1.0) * within
+    return _blend(a, m, _channel_color(a, color, scheme), alpha)
+
+
+def _text_anchor_for_direction(nx, ny):
+    """法線 (nx,ny) の側に置く文字のアンカー(文字が線に食い込まない向き)。"""
+    if abs(ny) >= abs(nx):
+        return "cb" if ny < 0 else "ct"
+    return "lm" if nx > 0 else "rm"
+
+
+# ---------------------------------------------------------------- 引き出し線
+
+#: 引き出し線の候補配置(**固定順** = 決定的)。(sx, sy) は肘の向き。
+_LEADER_SIDES = ((1, -1), (1, 1), (-1, -1), (-1, 1), (0, -1), (0, 1))
+
+
+def annotate_leader_layout(shape, points, labels=None, font_size=12, pad=4, gap=22,
+                           side="auto", font_path=None, min_font_size=9):
+    """table(dict)を返す: 引き出し線の配置(肘・文字位置・板の矩形)を閉形式で決める。
+
+    各点について候補側を固定順に試し、**板が画像に収まり・他の板と重ならず・
+    他の点を覆わない**最初の候補を採る。どの候補も駄目なら肘を 1.6 倍、2.4 倍に
+    伸ばして再試行し、それでも駄目なら **ValueError**(黙って重ねない)。
+
+    Parameters
+    ----------
+    shape : (H, W)
+        描く画像の大きさ。
+    points : (N, 2)
+        指す点 **(x, y)**。
+    labels : sequence of str or None
+        各点の文字。None なら 1 始まりの番号。
+    gap : float
+        肘の長さ[px]。斜め腕 = gap、水平腕 = 0.6*gap。
+    side : {'auto','left','right'}
+        ``'auto'`` は画像中心から**遠ざかる**側を先に試す(対象の上に文字を
+        載せないため)。
+
+    Returns
+    -------
+    dict
+        ``{"n", "gap", "items": [{"point", "elbow", "text_xy", "anchor",
+        "box", "side"}]}``。``box`` は板の ``(x, y, w, h)``。
+
+    Raises
+    ------
+    ValueError
+        点が空・非有限、labels の数が合わない、未知の side、配置できない点。
+    """
+    H, W = _shape2(shape)
+    pts = _pts(points)
+    n = pts.shape[0]
+    if labels is None:
+        labels = [str(i + 1) for i in range(n)]
+    labels = [str(s) for s in labels]
+    if len(labels) != n:
+        raise ValueError(f"labels has {len(labels)} entries for {n} points")
+    if side not in ("auto", "left", "right"):
+        raise ValueError(f"side must be 'auto'|'left'|'right' (got: {side!r})")
+    g0 = _num(gap, "gap", lo=1.0)
+    pad = _num(pad, "pad", lo=0, integer=True)
+    for x, y in pts:
+        if not (0 <= x <= W - 1 and 0 <= y <= H - 1):
+            raise ValueError(f"point ({x:g},{y:g}) lies outside the {W}x{H} image")
+
+    items, taken = [], []
+    for i, ((x, y), text) in enumerate(zip(pts, labels)):
+        m = measure_text(text, font_size=font_size, font_path=font_path,
+                         min_font_size=min_font_size)
+        bw, bh = m["width"] + 2 * pad, m["height"] + 2 * pad
+        if side == "auto":
+            first = 1 if x >= (W - 1) / 2.0 else -1
+        else:
+            first = 1 if side == "right" else -1
+        order = sorted(_LEADER_SIDES, key=lambda sxy: (0 if sxy[0] == first else
+                                                        (2 if sxy[0] == 0 else 1)))
+        placed = None
+        for scale in (1.0, 1.6, 2.4):
+            g = g0 * scale
+            for sx, sy in order:
+                if sx != 0:
+                    elbow = (x + sx * g, y + sy * g)
+                    txy = (elbow[0] + sx * 0.6 * g, elbow[1])
+                    anchor = "lm" if sx > 0 else "rm"
+                else:
+                    elbow = (x, y + sy * g)
+                    txy = (x, elbow[1] + sy * 3.0)
+                    anchor = "cb" if sy < 0 else "ct"
+                ox, oy = _anchor_origin(anchor, int(round(txy[0])), int(round(txy[1])), bw, bh)
+                box = (ox, oy, bw, bh)
+                if ox < 0 or oy < 0 or ox + bw > W or oy + bh > H:
+                    continue
+                if any(_overlaps(box, t) for t in taken):
+                    continue
+                covers = any(ox <= px <= ox + bw - 1 and oy <= py <= oy + bh - 1
+                             for j, (px, py) in enumerate(pts) if j != i)
+                if covers:
+                    continue
+                placed = {"point": (float(x), float(y)), "elbow": (float(elbow[0]), float(elbow[1])),
+                          "text_xy": (float(txy[0]), float(txy[1])), "anchor": anchor,
+                          "box": box, "side": (int(sx), int(sy)), "label": text}
+                break
+            if placed is not None:
+                break
+        if placed is None:
+            raise ValueError(
+                f"leader label {text!r} for point ({x:g},{y:g}) cannot be placed: every "
+                f"candidate side at gap {g0:g}/{1.6 * g0:g}/{2.4 * g0:g} leaves the image, "
+                "overlaps another label or covers another point — thin the points, "
+                "shrink the font, or enlarge the image")
+        taken.append(placed["box"])
+        items.append(placed)
+    return {"n": n, "gap": float(g0), "items": items}
+
+
+def annotate_leader(img, points, labels=None, color="emphasis", width=1.5, cap_size=3.0,
+                    font_size=12, pad=4, gap=22, side="auto", box_alpha=0.72,
+                    text_color=None, scheme="okabe_ito", font_path=None,
+                    min_font_size=9, layout=None):
+    """画像(image2d)を返す: 肘つき引き出し線 + 文字(複数点の衝突回避つき)。
+
+    配置は :func:`annotate_leader_layout` が決める(``layout=`` に渡せば再利用)。
+    線はアンチエイリアス、対象側の端には点、文字は :func:`text_box`。
+
+    Raises
+    ------
+    ValueError
+        :func:`annotate_leader_layout` と同じ + 太さ・cap_size が非正。
+    """
+    a = _prep(img)
+    w = _num(width, "width", lo=0.5)
+    cap = _num(cap_size, "cap_size", lo=0.0)
+    if layout is None:
+        layout = annotate_leader_layout(a.shape[:2], points, labels, font_size=font_size,
+                                        pad=pad, gap=gap, side=side, font_path=font_path,
+                                        min_font_size=min_font_size)
+    elif not (isinstance(layout, dict) and "items" in layout):
+        raise ValueError("layout must be the dict returned by annotate_leader_layout")
+    for it in layout["items"]:
+        a = _aa_polyline(a, [it["point"], it["elbow"], it["text_xy"]], color, width=w,
+                         scheme=scheme)
+        if cap > 0:
+            a = _aa_disk(a, it["point"], cap, color, scheme=scheme)
+        a = text_box(a, it["label"], it["text_xy"], color=color, anchor=it["anchor"],
+                     pad=pad, font_size=font_size, box_alpha=box_alpha,
+                     text_color=text_color, font_path=font_path,
+                     min_font_size=min_font_size, scheme=scheme)
+    return a
+
+
+# ---------------------------------------------------------------- 番号マーカー + 凡例
+
+def _numbered_marker(a, xy, text, radius, color, text_color, font_size, font_path,
+                     scheme, min_contrast):
+    a = _aa_disk(a, xy, radius, color, scheme=scheme)
+    plate = _rgb(color, scheme)
+    if text_color is None:
+        light, dark = _rgb(_INK_RGB, scheme), _rgb(_PLATE_RGB, scheme)
+        ink = light if _contrast_ratio(light, plate) >= _contrast_ratio(dark, plate) else dark
+    else:
+        ink = _rgb(text_color, scheme)
+    if _contrast_ratio(ink, plate) < float(min_contrast):
+        raise ValueError(
+            f"marker text colour has contrast {_contrast_ratio(ink, plate):.2f} against the "
+            f"marker colour (minimum {min_contrast}) — the number would be invisible")
+    # 文字の**インクの箱**(行送りではなく実際に塗られる範囲)が円に入るか。
+    Image, ImageDraw, _ = _pil()
+    font = _font(int(font_size), font_path)
+    l, t, r, b = font.getbbox(text)
+    iw, ih = float(r - l), float(b - t)
+    if math.hypot(iw, ih) / 2.0 > radius + 0.5:
+        raise ValueError(
+            f"marker text {text!r} ({iw:g}x{ih:g}px of ink) does not fit in a radius "
+            f"{radius:g} disk — enlarge radius or lower font_size")
+    im = Image.new("L", (int(a.shape[1]), int(a.shape[0])), 0)
+    ImageDraw.Draw(im).text((xy[0] - (l + r) / 2.0, xy[1] - (t + b) / 2.0), text,
+                            fill=255, font=font)
+    mask = np.asarray(im, dtype=np.float64) / 255.0
+    return _blend(a, mask, _channel_color(a, ink, scheme), 1.0)
+
+
+def annotate_markers(img, points, labels=None, start=1, radius=9.0, color="emphasis",
+                     text_color=None, font_size=11, scheme="okabe_ito", font_path=None,
+                     min_contrast=DEFAULT_MIN_CONTRAST):
+    """画像(image2d)を返す: 番号(または短い文字)入りの丸いマーカーを各点に置く。
+
+    :func:`annotate_legend` と同じ ``start`` / ``labels`` を渡せば、図中の番号と
+    凡例の番号が必ず一致する。
+
+    Parameters
+    ----------
+    points : (N, 2)
+        **(x, y)**。画像の外の点は ValueError。
+    labels : sequence of str or None
+        None なら ``start`` から連番。
+    radius : float
+        円の半径[px]。文字が入らなければ ValueError。
+
+    Raises
+    ------
+    ValueError
+        点が空・非有限・画像外、labels の数不一致、文字が円に入らない、
+        文字色と円色のコントラスト不足。
+    """
+    a = _prep(img)
+    pts = _pts(points)
+    r = _num(radius, "radius", lo=1.0)
+    start = _num(start, "start", integer=True)
+    H, W = a.shape[:2]
+    if labels is None:
+        labels = [str(start + i) for i in range(pts.shape[0])]
+    labels = [str(s) for s in labels]
+    if len(labels) != pts.shape[0]:
+        raise ValueError(f"labels has {len(labels)} entries for {pts.shape[0]} points")
+    for (x, y), text in zip(pts, labels):
+        if not (r <= x <= W - 1 - r and r <= y <= H - 1 - r):
+            raise ValueError(f"marker at ({x:g},{y:g}) with radius {r:g} does not fit in the "
+                             f"{W}x{H} image")
+        a = _numbered_marker(a, (x, y), text, r, color, text_color, font_size, font_path,
+                             scheme, min_contrast)
+    return a
+
+
+def annotate_legend(img, labels, xy, anchor="lt", start=1, radius=7.0, color="emphasis",
+                    text_color=None, font_size=12, pad=8, row_gap=4, box_color=None,
+                    box_alpha=0.72, border=1, border_color="neutral", scheme="okabe_ito",
+                    font_path=None, min_font_size=9, numbers=None):
+    """画像(image2d)を返す: 番号つき丸マーカー × 説明の凡例(:func:`annotate_markers` の対)。
+
+    箱の高さは閉形式 ``2*pad + n*row_h + (n-1)*row_gap``(``row_h = max(2r, 文字高)``)。
+
+    Parameters
+    ----------
+    labels : sequence of str
+        各行の説明。
+    numbers : sequence of str or None
+        各行のマーカー文字。None なら ``start`` から連番。
+
+    Raises
+    ------
+    ValueError
+        labels が空、箱が画像からはみ出す、負の余白。
+    """
+    a = _prep(img)
+    rows = [str(s) for s in labels]
+    if not rows:
+        raise ValueError("labels is empty — a legend with no rows says nothing")
+    r = _num(radius, "radius", lo=1.0)
+    pad = _num(pad, "pad", lo=0, integer=True)
+    row_gap = _num(row_gap, "row_gap", lo=0, integer=True)
+    start = _num(start, "start", integer=True)
+    if numbers is None:
+        numbers = [str(start + i) for i in range(len(rows))]
+    numbers = [str(s) for s in numbers]
+    if len(numbers) != len(rows):
+        raise ValueError(f"numbers has {len(numbers)} entries for {len(rows)} labels")
+    ms = [measure_text(t, font_size=font_size, font_path=font_path,
+                       min_font_size=min_font_size) for t in rows]
+    d = int(math.ceil(2 * r))
+    row_h = max(d, max(m["height"] for m in ms))
+    bw = 2 * pad + d + 8 + max(m["width"] for m in ms)
+    bh = 2 * pad + len(rows) * row_h + (len(rows) - 1) * row_gap
+    _finite("xy", xy)
+    x0, y0 = _anchor_origin(anchor, int(round(xy[0])), int(round(xy[1])), bw, bh)
+    _check_inside(a, (x0, y0, bw, bh), name="legend", what="legend box")
+    plate = _rgb(_PLATE_RGB if box_color is None else box_color, scheme)
+    if box_alpha > 0.0:
+        w = np.zeros(a.shape[:2], dtype=np.float64)
+        w[y0:y0 + bh, x0:x0 + bw] = 1.0
+        a = _blend(a, w, _channel_color(a, plate, scheme), box_alpha)
+    if border > 0:
+        a = _aa_polyline(a, [(x0, y0), (x0 + bw - 1, y0), (x0 + bw - 1, y0 + bh - 1),
+                             (x0, y0 + bh - 1)], border_color, width=border, closed=True,
+                         scheme=scheme)
+    for i, (text, num, m) in enumerate(zip(rows, numbers, ms)):
+        ry = y0 + pad + i * (row_h + row_gap)
+        cy = ry + row_h / 2.0
+        cx = x0 + pad + r
+        a = _numbered_marker(a, (cx, cy), num, r, color, text_color, max(6, font_size - 1),
+                             font_path, scheme, DEFAULT_MIN_CONTRAST)
+        a = text_box(a, text, (x0 + pad + d + 8, int(round(cy))), anchor="lm", pad=0,
+                     box_alpha=0.0, font_size=m["font_size"], font_path=font_path,
+                     min_font_size=min_font_size, scheme=scheme)
+    return a
+
+
+# ---------------------------------------------------------------- 寸法線
+
+def annotate_dimension_layout(p0, p1, offset=20.0, extension=6.0, text_gap=8.0):
+    """table(dict)を返す: 寸法線の幾何(寸法線・補助線・文字位置)を閉形式で決める。
+
+    ``n`` を p0→p1 の左法線(画面座標)として、寸法線は ``p + n*offset``、補助線は
+    ``p`` から ``p + n*(offset+extension)``、文字は寸法線の中点から ``n*text_gap``。
+    ``offset`` の符号で側を選ぶ。
+
+    Returns
+    -------
+    dict
+        ``{"p0","p1","line":(q0,q1),"ext0","ext1","text_xy","normal",
+        "angle_deg","length_px"}``。
+
+    Raises
+    ------
+    ValueError
+        2 点が一致(向きが無い)、非有限、offset が 0。
+    """
+    a = _pt(p0, "p0")
+    b = _pt(p1, "p1")
+    off = _num(offset, "offset")
+    ext = _num(extension, "extension", lo=0.0)
+    tg = _num(text_gap, "text_gap", lo=0.0)
+    dx, dy = b[0] - a[0], b[1] - a[1]
+    length = math.hypot(dx, dy)
+    if length < 1e-9:
+        raise ValueError("p0 and p1 coincide — a dimension of zero length has no direction")
+    if off == 0.0:
+        raise ValueError("offset must be non-zero (the dimension line would sit on the "
+                         "measured edge and hide it)")
+    ux, uy = dx / length, dy / length
+    nx, ny = -uy, ux
+    s = 1.0 if off > 0 else -1.0
+    q0 = (a[0] + nx * off, a[1] + ny * off)
+    q1 = (b[0] + nx * off, b[1] + ny * off)
+    e0 = (a, (a[0] + nx * (off + s * ext), a[1] + ny * (off + s * ext)))
+    e1 = (b, (b[0] + nx * (off + s * ext), b[1] + ny * (off + s * ext)))
+    mid = ((q0[0] + q1[0]) / 2.0, (q0[1] + q1[1]) / 2.0)
+    txy = (mid[0] + s * nx * tg, mid[1] + s * ny * tg)
+    return {"p0": a, "p1": b, "line": (q0, q1), "ext0": e0, "ext1": e1, "text_xy": txy,
+            "normal": (s * nx, s * ny), "angle_deg": math.degrees(math.atan2(uy, ux)),
+            "length_px": length}
+
+
+def annotate_dimension(img, p0, p1, units_per_pixel=1.0, unit="px", offset=20.0,
+                       extension=6.0, color="neutral", width=1.5, head_len=9.0,
+                       head_width=6.0, label_fmt="{:.1f}", font_size=11, box_alpha=0.6,
+                       text_color=None, scheme="okabe_ito", font_path=None, layout=None):
+    """画像(image2d)を返す: 寸法線(両端矢じり + 補助線 + 値と単位)。
+
+    値は ``|p1-p0| * units_per_pixel``(閉形式)。幾何は
+    :func:`annotate_dimension_layout`。
+
+    Raises
+    ------
+    ValueError
+        :func:`annotate_dimension_layout` と同じ + units_per_pixel が非正、
+        寸法線が画像の外、文字が収まらない。
+    """
+    a = _prep(img)
+    upp = _num(units_per_pixel, "units_per_pixel", lo=1e-300)
+    w = _num(width, "width", lo=0.5)
+    hl = _num(head_len, "head_len", lo=0.0)
+    hw = _num(head_width, "head_width", lo=0.0)
+    if layout is None:
+        layout = annotate_dimension_layout(p0, p1, offset=offset, extension=extension)
+    q0, q1 = layout["line"]
+    H, W = a.shape[:2]
+    for name, q in (("q0", q0), ("q1", q1)):
+        if not (0 <= q[0] <= W - 1 and 0 <= q[1] <= H - 1):
+            raise ValueError(f"dimension line end {tuple(round(v, 1) for v in q)} is outside "
+                             f"the {W}x{H} image — reduce offset or move the points")
+    a = _aa_polyline(a, list(layout["ext0"]), color, width=w, scheme=scheme)
+    a = _aa_polyline(a, list(layout["ext1"]), color, width=w, scheme=scheme)
+    span = layout["length_px"]
+    if hl > 0 and hw > 0:
+        if 2 * hl > 0.8 * span:
+            k = 0.4 * span / hl
+            hl, hw = hl * k, hw * k
+        mid = ((q0[0] + q1[0]) / 2.0, (q0[1] + q1[1]) / 2.0)
+        tri0, base0 = _head_polygon(mid, q0, hl, hw)
+        tri1, base1 = _head_polygon(mid, q1, hl, hw)
+        a = _aa_polyline(a, [base0, base1], color, width=w, scheme=scheme)
+        a = filled_polygon(a, tri0, color=color, scheme=scheme)
+        a = filled_polygon(a, tri1, color=color, scheme=scheme)
+    else:
+        a = _aa_polyline(a, [q0, q1], color, width=w, scheme=scheme)
+    nx, ny = layout["normal"]
+    text = f"{label_fmt.format(span * upp)} {unit}".rstrip()
+    a = text_box(a, text, layout["text_xy"], color=color,
+                 anchor=_text_anchor_for_direction(nx, ny), pad=3, font_size=font_size,
+                 box_alpha=box_alpha, text_color=text_color, font_path=font_path,
+                 scheme=scheme)
+    return a
+
+
+# ---------------------------------------------------------------- 角度
+
+def annotate_angle_layout(a, vertex, b, radius=30.0, text_gap=12.0):
+    """table(dict)を返す: 3 点 ``a, vertex, b`` のなす角(小さい方)の弧と文字位置。
+
+    角度は画面座標(x 右・y 下)で ``atan2`` から出すので、``start_deg``/``end_deg``
+    は :func:`arc` と同じ「x 軸から時計回り」の度。
+
+    Returns
+    -------
+    dict
+        ``{"vertex","angle_deg","start_deg","end_deg","radius","text_xy",
+        "bisector_deg"}``。
+
+    Raises
+    ------
+    ValueError
+        a か b が vertex と一致、非有限、radius が非正。
+    """
+    pa, pv, pb = _pt(a, "a"), _pt(vertex, "vertex"), _pt(b, "b")
+    r = _num(radius, "radius", lo=1e-9)
+    tg = _num(text_gap, "text_gap", lo=0.0)
+    if math.hypot(pa[0] - pv[0], pa[1] - pv[1]) < 1e-9 or \
+            math.hypot(pb[0] - pv[0], pb[1] - pv[1]) < 1e-9:
+        raise ValueError("a and b must differ from vertex — a ray of zero length has no angle")
+    ta = math.degrees(math.atan2(pa[1] - pv[1], pa[0] - pv[0])) % 360.0
+    tb = math.degrees(math.atan2(pb[1] - pv[1], pb[0] - pv[0])) % 360.0
+    span = (tb - ta) % 360.0
+    if span <= 180.0:
+        start, end = ta, tb
+    else:
+        start, end, span = tb, ta, 360.0 - span
+    bis = (start + span / 2.0) % 360.0
+    txy = (pv[0] + (r + tg) * math.cos(math.radians(bis)),
+           pv[1] + (r + tg) * math.sin(math.radians(bis)))
+    return {"vertex": pv, "angle_deg": span, "start_deg": start, "end_deg": end,
+            "radius": r, "text_xy": txy, "bisector_deg": bis}
+
+
+def annotate_angle(img, a, vertex, b, radius=30.0, color="emphasis", width=1.5,
+                   draw_rays=True, label_fmt="{:.1f}°", font_size=11, box_alpha=0.6,
+                   text_color=None, scheme="okabe_ito", font_path=None, layout=None):
+    """画像(image2d)を返す: 3 点のなす角を弧と値で示す(必要なら 2 本の腕も)。
+
+    Raises
+    ------
+    ValueError
+        :func:`annotate_angle_layout` と同じ + 頂点が画像の外、文字が収まらない。
+    """
+    im = _prep(img)
+    w = _num(width, "width", lo=0.5)
+    rays = _flag(draw_rays, "draw_rays")
+    if layout is None:
+        layout = annotate_angle_layout(a, vertex, b, radius=radius)
+    pv = layout["vertex"]
+    H, W = im.shape[:2]
+    if not (0 <= pv[0] <= W - 1 and 0 <= pv[1] <= H - 1):
+        raise ValueError(f"vertex {pv} is outside the {W}x{H} image")
+    if rays:
+        im = _aa_polyline(im, [_pt(a, "a"), pv], color, width=w, scheme=scheme)
+        im = _aa_polyline(im, [_pt(b, "b"), pv], color, width=w, scheme=scheme)
+    im = _aa_arc(im, pv, layout["radius"], layout["start_deg"], layout["end_deg"], color,
+                 width=w, scheme=scheme)
+    im = text_box(im, label_fmt.format(layout["angle_deg"]), layout["text_xy"], color=color,
+                  anchor="cm", pad=3, font_size=font_size, box_alpha=box_alpha,
+                  text_color=text_color, font_path=font_path, scheme=scheme)
+    return im
+
+
+# ---------------------------------------------------------------- スケールバー(切りのよい長さ)
+
+def _nice_floor(v):
+    """v 以下で最大の 1/2/5 × 10^k。"""
+    if v <= 0:
+        raise ValueError("value must be positive")
+    mag = 10.0 ** math.floor(math.log10(v))
+    norm = v / mag
+    return mag * (5.0 if norm >= 5.0 else (2.0 if norm >= 2.0 else 1.0))
+
+
+def annotate_scale_bar_layout(shape, units_per_pixel, unit="µm", corner="rb",
+                              target_fraction=0.2, margin=14, thickness=5):
+    """table(dict)を返す: 画像幅の ``target_fraction`` 以下で**切りのよい**長さのバー。
+
+    長さは ``1/2/5 × 10^k`` のうち ``target_fraction * W * units_per_pixel`` 以下の
+    最大値。画素長 = ``round(length / units_per_pixel)``。
+
+    Returns
+    -------
+    dict
+        ``{"length","px","rect":(x,y,w,h),"unit","corner","label"}``。
+
+    Raises
+    ------
+    ValueError
+        units_per_pixel / target_fraction が非正、未知の corner、
+        バーが 1 画素未満か画像に収まらない。
+    """
+    H, W = _shape2(shape)
+    upp = _num(units_per_pixel, "units_per_pixel", lo=1e-300)
+    frac = _num(target_fraction, "target_fraction", lo=1e-9, hi=1.0)
+    margin = _num(margin, "margin", lo=0, integer=True)
+    th = _num(thickness, "thickness", lo=1, integer=True)
+    if corner not in _CORNERS:
+        raise ValueError(f"corner must be one of {_CORNERS} (got: {corner!r})")
+    target = frac * (W - 2 * margin) * upp
+    if target <= 0:
+        raise ValueError(f"margin {margin} leaves no room for a bar in a {W}px wide image")
+    length = _nice_floor(target)
+    px = int(round(length / upp))
+    if px < 1:
+        raise ValueError(f"{length:g} {unit} is under one pixel at {upp:g} {unit}/px")
+    x0 = margin if corner[0] == "l" else W - margin - px
+    y0 = margin if corner[1] == "t" else H - margin - th
+    if x0 < 0 or y0 < 0 or y0 + th > H:
+        raise ValueError(f"a {px}px bar does not fit in the {W}x{H} image with margin {margin}")
+    return {"length": float(length), "px": px, "rect": (int(x0), int(y0), px, th),
+            "unit": str(unit), "corner": corner, "label": f"{length:g} {unit}".rstrip()}
+
+
+def annotate_scale_bar(img, units_per_pixel, unit="µm", corner="rb", target_fraction=0.2,
+                       margin=14, color="neutral", thickness=5, font_size=13,
+                       box_alpha=0.55, text_color=None, scheme="okabe_ito", font_path=None,
+                       layout=None):
+    """画像(image2d)を返す: 隅に置く切りのよい長さのスケールバー(値と単位つき)。
+
+    :func:`scale_bar` は長さを**呼び手が決める**のに対し、こちらは画素分解能から
+    長さを選ぶ(:func:`annotate_scale_bar_layout`)。上隅では文字をバーの下に、
+    下隅では上に置く。
+
+    Raises
+    ------
+    ValueError
+        :func:`annotate_scale_bar_layout` と同じ + 文字が画像に収まらない。
+    """
+    a = _prep(img)
+    if layout is None:
+        layout = annotate_scale_bar_layout(a.shape[:2], units_per_pixel, unit=unit,
+                                           corner=corner, target_fraction=target_fraction,
+                                           margin=margin, thickness=thickness)
+    x0, y0, px, th = layout["rect"]
+    _check_inside(a, (x0, y0, px, th), name="scale bar", what="scale bar")
+    w = np.zeros(a.shape[:2], dtype=np.float64)
+    w[y0:y0 + th, x0:x0 + px] = 1.0
+    a = _blend(a, w, _channel_color(a, color, scheme), 1.0)
+    if layout["corner"][1] == "t":
+        txy, anchor = (x0 + px // 2, y0 + th + 3), "ct"
+    else:
+        txy, anchor = (x0 + px // 2, y0 - 3), "cb"
+    return text_box(a, layout["label"], txy, anchor=anchor, pad=3, box_alpha=box_alpha,
+                    font_size=font_size, font_path=font_path, text_color=text_color,
+                    scheme=scheme)
+
+
+# ---------------------------------------------------------------- 方位矢印
+
+def annotate_orientation(img, angle_deg=0.0, corner="rt", xy=None, size=26.0, margin=16,
+                         label="N", color="neutral", width=2, font_size=12, box_alpha=0.0,
+                         text_color=None, scheme="okabe_ito", font_path=None):
+    """画像(image2d)を返す: 方位(北)や向きを示す矢印 + 文字。
+
+    ``angle_deg`` は **画面の上を 0、時計回りが正**(地図の方位と同じ)。矢印は
+    ``xy``(中心)か ``corner`` の隅に置く。
+
+    Raises
+    ------
+    ValueError
+        size が非正、矢印が画像に収まらない、未知の corner。
+    """
+    a = _prep(img)
+    ang = _num(angle_deg, "angle_deg")
+    sz = _num(size, "size", lo=2.0)
+    H, W = a.shape[:2]
+    if xy is None:
+        margin = _num(margin, "margin", lo=0, integer=True)
+        # 矢印 + 文字がまとめて隅に収まるよう、文字の分だけ内側に寄せる
+        cx, cy = _corner_xy(corner, W, H, margin)
+        reach = sz / 2.0 + (float(font_size) if label else 0.0)
+        cx = cx + (reach if corner[0] == "l" else -reach)
+        cy = cy + (reach if corner[1] == "t" else -reach)
+    else:
+        cx, cy = _pt(xy, "xy")
+    dx, dy = math.sin(math.radians(ang)), -math.cos(math.radians(ang))
+    tip = (cx + dx * sz / 2.0, cy + dy * sz / 2.0)
+    tail = (cx - dx * sz / 2.0, cy - dy * sz / 2.0)
+    for name, p in (("tip", tip), ("tail", tail)):
+        if not (0 <= p[0] <= W - 1 and 0 <= p[1] <= H - 1):
+            raise ValueError(f"orientation arrow {name} {tuple(round(v, 1) for v in p)} is "
+                             f"outside the {W}x{H} image — reduce size or move it")
+    a = arrow(a, tail, tip, color=color, width=int(max(1, round(width))),
+              head_len=0.45 * sz, head_width=0.35 * sz, scheme=scheme)
+    if label:
+        txy = (tip[0] + dx * (font_size * 0.8), tip[1] + dy * (font_size * 0.8))
+        a = text_box(a, str(label), txy, color=color, anchor="cm", pad=2, font_size=font_size,
+                     box_alpha=box_alpha, text_color=text_color, font_path=font_path,
+                     scheme=scheme)
+    return a
+
+
+# ---------------------------------------------------------------- 隅の拡大差し込み
+
+def annotate_inset_layout(shape, src_rect, corner="rt", factor=None, margin=10,
+                          max_fraction=0.4):
+    """table(dict)を返す: 拡大差し込みの置き場所と倍率を閉形式で決める。
+
+    ``factor=None`` なら「幅・高さとも画像の ``max_fraction`` 以下」で最大の
+    整数倍率。差し込みが元枠に重なる隅は ValueError(自分の元を隠す)。
+
+    Returns
+    -------
+    dict
+        ``{"src_rect","dst_rect","factor","corner"}``。
+
+    Raises
+    ------
+    ValueError
+        元枠が画像外、倍率 < 1 か非整数、差し込みが収まらない/元枠と重なる。
+    """
+    H, W = _shape2(shape)
+    sx, sy, sw, sh = _rect(src_rect, "src_rect")
+    if sx < 0 or sy < 0 or sx + sw > W or sy + sh > H:
+        raise ValueError(f"src_rect {(sx, sy, sw, sh)} is not inside the {W}x{H} image")
+    margin = _num(margin, "margin", lo=0, integer=True)
+    frac = _num(max_fraction, "max_fraction", lo=1e-9, hi=1.0)
+    if corner not in _CORNERS:
+        raise ValueError(f"corner must be one of {_CORNERS} (got: {corner!r})")
+    if factor is None:
+        f = int(min((frac * W) // sw, (frac * H) // sh))
+        if f < 1:
+            raise ValueError(f"src_rect {sw}x{sh} is too large for a {max_fraction:g}-fraction "
+                             f"inset in a {W}x{H} image")
+    else:
+        f = _num(factor, "factor", lo=1, integer=True)
+    dw, dh = sw * f, sh * f
+    dx = margin if corner[0] == "l" else W - margin - dw
+    dy = margin if corner[1] == "t" else H - margin - dh
+    if dx < 0 or dy < 0 or dx + dw > W or dy + dh > H:
+        raise ValueError(f"a x{f} inset ({dw}x{dh}) does not fit in the {corner} corner of a "
+                         f"{W}x{H} image with margin {margin}")
+    if _overlaps((sx, sy, sw, sh), (dx, dy, dw, dh)):
+        raise ValueError(f"the inset in corner {corner!r} would cover its own source "
+                         f"{(sx, sy, sw, sh)} — pick another corner")
+    return {"src_rect": (sx, sy, sw, sh), "dst_rect": (int(dx), int(dy), int(dw), int(dh)),
+            "factor": int(f), "corner": corner}
+
+
+def annotate_inset(img, src_rect, corner="rt", factor=None, margin=10, color="emphasis",
+                   width=2, connect=True, label=None, font_size=11, scheme="okabe_ito",
+                   font_path=None, style=None, layout=None):
+    """画像(image2d)を返す: 元枠の拡大を隅に差し込み、対応する角を線で結ぶ。
+
+    倍率と位置は :func:`annotate_inset_layout`、描画は :func:`zoom_inset`
+    (最近傍の整数倍 = 元の画素そのもの)。
+
+    Raises
+    ------
+    ValueError
+        :func:`annotate_inset_layout` と同じ。
+    """
+    a = _prep(img)
+    if layout is None:
+        layout = annotate_inset_layout(a.shape[:2], src_rect, corner=corner, factor=factor,
+                                       margin=margin)
+    dx, dy, dw, dh = layout["dst_rect"]
+    a = zoom_inset(a, layout["src_rect"], (dx, dy), factor=layout["factor"], color=color,
+                   width=width, connect=_flag(connect, "connect"), scheme=scheme, style=style)
+    if label is not None:
+        a = text_box(a, str(label), (dx + 3, dy + 3), color=color, anchor="lt", pad=2,
+                     font_size=font_size, font_path=font_path, scheme=scheme)
+    return a
+
+
+# ---------------------------------------------------------------- マスクの輪郭
+
+def annotate_outline_layout(mask):
+    """table(dict)を返す: 2 値マスクの境界ループ(画素の辺に沿う閉多角形)と重心。
+
+    輪郭は :func:`contours_xld._trace_mask_boundaries`(外側 + 穴、成分ごと)。
+    多角形の面積はマスクの画素数と厳密に一致する。
+
+    Returns
+    -------
+    dict
+        ``{"contours": [(K,2) の (x,y)], "centroid": (x,y), "area": int,
+        "bbox": (x,y,w,h), "n_loops": int}``。
+
+    Raises
+    ------
+    ValueError
+        mask が 2-D でない、真の画素が無い、非有限。
+    """
+    import contours_xld
+    m = np.asarray(mask)
+    if m.ndim != 2:
+        raise ValueError(f"mask must be 2-D (H,W) (got shape {m.shape})")
+    if m.dtype != bool:
+        mm = np.asarray(m, dtype=np.float64)
+        if not np.all(np.isfinite(mm)):
+            raise ValueError("mask holds non-finite values")
+        m = mm > 0.5
+    if not m.any():
+        raise ValueError("mask has no true pixel — there is no region to outline")
+    loops = contours_xld._trace_mask_boundaries(m)
+    contours = [np.ascontiguousarray(lp[:, ::-1]) for lp in loops]        # (row,col) -> (x,y)
+    rr, cc = np.nonzero(m)
+    return {"contours": contours, "centroid": (float(cc.mean()), float(rr.mean())),
+            "area": int(rr.size),
+            "bbox": (int(cc.min()), int(rr.min()), int(cc.max() - cc.min() + 1),
+                     int(rr.max() - rr.min() + 1)),
+            "n_loops": len(contours)}
+
+
+def annotate_outline(img, mask, label=None, color="emphasis", width=1.5, alpha=1.0,
+                     dash=None, font_size=12, label_offset=(0, 0), box_alpha=0.6,
+                     text_color=None, scheme="okabe_ito", font_path=None, layout=None):
+    """画像(image2d)を返す: マスクの輪郭を(AA の)閉折れ線で描き、重心に文字を置く。
+
+    Raises
+    ------
+    ValueError
+        mask の形が画像と違う、真の画素が無い、alpha が [0,1] の外。
+    """
+    a = _prep(img)
+    m = np.asarray(mask)
+    if m.shape != a.shape[:2]:
+        raise ValueError(f"mask shape {m.shape} does not match the image {a.shape[:2]} — "
+                         "masks are indexed [row, col]")
+    al = _num(alpha, "alpha", lo=0.0, hi=1.0)
+    w = _num(width, "width", lo=0.5)
+    if layout is None:
+        layout = annotate_outline_layout(m)
+    for c in layout["contours"]:
+        a = _aa_polyline(a, c, color, width=w, closed=True, dash=dash, alpha=al, scheme=scheme)
+    if label is not None:
+        ox, oy = _pt(label_offset, "label_offset")
+        cx, cy = layout["centroid"]
+        a = text_box(a, str(label), (cx + ox, cy + oy), color=color, anchor="cm", pad=3,
+                     font_size=font_size, box_alpha=box_alpha, text_color=text_color,
+                     font_path=font_path, scheme=scheme)
+    return a
+
+
+# ---------------------------------------------------------------- 経路に沿う文字
+
+def annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=1.0,
+                              start=0.0):
+    """table(dict)を返す: 折れ線に沿って 1 文字ずつ置く位置と傾き(弧長で決める)。
+
+    文字 i の中心は弧長 ``s_i = start + Σ_{j<i} w_j*spacing + w_i/2``、傾きは
+    その位置の線分の接線角(画面座標、度)。経路より長い文字列は ValueError。
+
+    Returns
+    -------
+    dict
+        ``{"chars": [{"char","s","xy","angle_deg","width"}], "length": 経路長,
+        "used": 文字が占める弧長}``。
+
+    Raises
+    ------
+    ValueError
+        文字が空、経路が 2 点未満か長さゼロ、非有限、文字列が経路より長い。
+    """
+    text = str(text)
+    if not text:
+        raise ValueError("text is empty")
+    p = _pts(path, "path", min_n=2)
+    seg = np.hypot(np.diff(p[:, 0]), np.diff(p[:, 1]))
+    cum = np.concatenate([[0.0], np.cumsum(seg)])
+    total = float(cum[-1])
+    if total < 1e-9:
+        raise ValueError("path has zero length")
+    sp = _num(spacing, "spacing", lo=0.1)
+    s0 = _num(start, "start", lo=0.0)
+    m = measure_text("x", font_size=font_size, font_path=font_path, min_font_size=1)
+    font = m["font"]
+    chars, s = [], s0
+    for ch in text:
+        w = _text_width(ch, font) if ch != " " else _text_width("n", font)
+        mid = s + w / 2.0
+        if s + w > total + 1e-9:
+            raise ValueError(
+                f"text {text!r} needs {s + w - s0:.1f}px of path from start={s0:g} but the "
+                f"path is {total:.1f}px long — shorten the text, lower font_size or "
+                "lengthen the path (letters piling up at the end would be unreadable)")
+        k = int(np.searchsorted(cum, mid, side="right") - 1)
+        k = min(max(k, 0), len(seg) - 1)
+        t = 0.0 if seg[k] < 1e-12 else (mid - cum[k]) / seg[k]
+        xy = (float(p[k, 0] + t * (p[k + 1, 0] - p[k, 0])),
+              float(p[k, 1] + t * (p[k + 1, 1] - p[k, 1])))
+        ang = math.degrees(math.atan2(p[k + 1, 1] - p[k, 1], p[k + 1, 0] - p[k, 0]))
+        chars.append({"char": ch, "s": float(mid), "xy": xy, "angle_deg": ang,
+                      "width": float(w)})
+        s += w * sp
+    return {"chars": chars, "length": total, "used": float(s - s0)}
+
+
+def annotate_text_path(img, text, path, font_size=13, color="neutral", spacing=1.0,
+                       start=0.0, draw_path=False, width=1.0, scheme="okabe_ito",
+                       font_path=None, layout=None):
+    """画像(image2d)を返す: 折れ線に沿って文字を置く(各字を接線角に回転)。
+
+    文字の板は敷かない(経路の上に載せる用途なので)。配置は
+    :func:`annotate_text_path_layout`。
+
+    Raises
+    ------
+    ValueError
+        :func:`annotate_text_path_layout` と同じ + 回転した字が画像の外に出る。
+    """
+    a = _prep(img)
+    if layout is None:
+        layout = annotate_text_path_layout(text, path, font_size=font_size,
+                                           font_path=font_path, spacing=spacing, start=start)
+    Image, ImageDraw, _ = _pil()
+    font = _font(int(font_size), font_path)
+    H, W = a.shape[:2]
+    if _flag(draw_path, "draw_path"):
+        a = _aa_polyline(a, _pts(path, "path", 2), color, width=width, scheme=scheme)
+    mask = np.zeros((H, W), dtype=np.float64)
+    lh = _line_height(font)
+    for it in layout["chars"]:
+        ch = it["char"]
+        if ch.strip() == "":
+            continue
+        cw = max(1, int(math.ceil(_text_width(ch, font))))
+        glyph = Image.new("L", (cw + 4, lh + 4), 0)
+        ImageDraw.Draw(glyph).text((2, 2), ch, fill=255, font=font)
+        rot = glyph.rotate(-it["angle_deg"], expand=True, resample=Image.BICUBIC)
+        g = np.asarray(rot, dtype=np.float64) / 255.0
+        gh, gw = g.shape
+        x0 = int(round(it["xy"][0] - gw / 2.0))
+        y0 = int(round(it["xy"][1] - gh / 2.0))
+        if x0 < 0 or y0 < 0 or x0 + gw > W or y0 + gh > H:
+            raise ValueError(f"character {ch!r} at {tuple(round(v, 1) for v in it['xy'])} "
+                             f"leaves the {W}x{H} image once rotated — move the path inward")
+        mask[y0:y0 + gh, x0:x0 + gw] = np.maximum(mask[y0:y0 + gh, x0:x0 + gw], g)
+    return _blend(a, mask, _channel_color(a, color, scheme), 1.0)
+
+
+# ---------------------------------------------------------------- 色分け重ね + カラーバー
+
+def annotate_colorbar(img, field, rect, lut=None, vmin=None, vmax=None, alpha=0.6,
+                      mask=None, unit="", label_fmt="{:.3g}", orientation="vertical",
+                      font_size=12, scheme="okabe_ito", font_path=None, text_color=None,
+                      nan_transparent=False):
+    """画像(image2d)を返す: スカラ場を LUT で色分けして重ね、カラーバーを添える。
+
+    ``t = (field - vmin)/(vmax - vmin)`` を [0,1] に**クリップ**し ``lut[round(t*(n-1))]``
+    で色にする(範囲外の値は端の色 —— カラーバーの端と同じなので嘘にならない)。
+    重ねは ``alpha`` の α 合成、``mask`` を渡せばその画素だけ。
+
+    Parameters
+    ----------
+    field : (H, W)
+        画像と同じ大きさのスカラ場。非有限は ``nan_transparent=True`` のときだけ
+        透明として許す(既定は ValueError)。
+    lut : (n, 3) or None
+        None なら :func:`palette.diverging_lut` の 256 段。
+    vmin, vmax : float or None
+        None なら場の(有限値の)最小・最大。等しければ ValueError。
+
+    Raises
+    ------
+    ValueError
+        形の不一致、非有限(許可なし)、vmin == vmax、alpha が [0,1] の外、
+        バーの矩形が画像外、LUT の形。
+    """
+    a = _prep(img)
+    f = np.asarray(field, dtype=np.float64)
+    if f.shape != a.shape[:2]:
+        raise ValueError(f"field shape {f.shape} does not match the image {a.shape[:2]}")
+    al = _num(alpha, "alpha", lo=0.0, hi=1.0)
+    finite = np.isfinite(f)
+    if not finite.all():
+        if not _flag(nan_transparent, "nan_transparent"):
+            raise ValueError(f"field holds {int((~finite).sum())} non-finite value(s); pass "
+                             "nan_transparent=True to leave them uncoloured on purpose")
+    if not finite.any():
+        raise ValueError("field has no finite value to colour")
+    t_lut = palette.diverging_lut(256) if lut is None else np.asarray(lut, dtype=np.float64)
+    if t_lut.ndim != 2 or t_lut.shape[1] < 3 or t_lut.shape[0] < 2:
+        raise ValueError(f"lut must be (n>=2, 3) (got: {t_lut.shape})")
+    lo = float(np.min(f[finite])) if vmin is None else _num(vmin, "vmin")
+    hi = float(np.max(f[finite])) if vmax is None else _num(vmax, "vmax")
+    if lo == hi:
+        raise ValueError(f"vmin == vmax == {lo:g} — a colour scale over a zero range says nothing")
+    t = np.clip((np.where(finite, f, lo) - lo) / (hi - lo), 0.0, 1.0)
+    idx = np.round(t * (t_lut.shape[0] - 1)).astype(int)
+    rgb = t_lut[idx][..., :3]
+    wgt = finite.astype(np.float64)
+    if mask is not None:
+        m = np.asarray(mask)
+        if m.shape != a.shape[:2]:
+            raise ValueError(f"mask shape {m.shape} does not match the image {a.shape[:2]}")
+        wgt = wgt * (m.astype(np.float64) > 0.5)
+    w = np.clip(wgt * al, 0.0, 1.0)
+    if a.ndim == 2:
+        a = a * (1.0 - w) + rgb.mean(axis=2) * w
+    else:
+        c = a.shape[2]
+        col = rgb if c >= 3 else rgb.mean(axis=2)[..., None]
+        if c == 4:
+            col = np.concatenate([rgb, np.ones(rgb.shape[:2] + (1,))], axis=2)
+        a = a * (1.0 - w)[..., None] + col * w[..., None]
+    return color_bar(a, t_lut, rect, vmin=lo, vmax=hi, unit=unit, label_fmt=label_fmt,
+                     orientation=orientation, font_size=font_size, font_path=font_path,
+                     scheme=scheme, text_color=text_color)
+
+
+# ---------------------------------------------------------------- パネル文字と図の組版
+
+def _panel_letter(i, style):
+    if i < 0 or i >= len(_LETTERS):
+        raise ValueError(f"panel index {i} has no single letter (a-z); split the figure")
+    ch = _LETTERS[i]
+    if style == "paren":
+        return f"({ch})"
+    if style == "half":
+        return f"{ch})"
+    if style == "plain":
+        return ch
+    if style == "upper":
+        return ch.upper()
+    raise ValueError(f"letter style must be 'paren'|'half'|'plain'|'upper' (got: {style!r})")
+
+
+def annotate_panel_label(img, letter="a", corner="lt", margin=8, style="paren", font_size=16,
+                         color="neutral", box_alpha=0.72, text_color=None, box_color=None,
+                         scheme="okabe_ito", font_path=None):
+    """画像(image2d)を返す: パネル文字 ``(a)``/``(b)`` を隅に置く。
+
+    ``letter`` は 1 文字(``'a'``)か 0 始まりの番号(``0`` → a)。``style`` で
+    ``(a)`` / ``a)`` / ``a`` / ``A`` を選ぶ。
+
+    Raises
+    ------
+    ValueError
+        未知の corner / style、文字が画像に収まらない。
+    """
+    a = _prep(img)
+    H, W = a.shape[:2]
+    margin = _num(margin, "margin", lo=0, integer=True)
+    if isinstance(letter, str):
+        if len(letter) != 1 or letter.lower() not in _LETTERS:
+            raise ValueError(f"letter must be a single a-z letter or an index (got: {letter!r})")
+        idx = _LETTERS.index(letter.lower())
+    else:
+        idx = _num(letter, "letter", lo=0, integer=True)
+    text = _panel_letter(idx, style)
+    x, y = _corner_xy(corner, W, H, margin)
+    return text_box(a, text, (x, y), color=color, anchor=corner, pad=4, font_size=font_size,
+                    box_alpha=box_alpha, text_color=text_color, box_color=box_color,
+                    font_path=font_path, scheme=scheme)
+
+
+def annotate_figure_grid_layout(shapes, ncols=2, pad=10, caption_h=32, title_h=0,
+                                letter_style="paren"):
+    """table(dict)を返す: 多パネル図の組版(セル・パネル・見出し帯の矩形)を閉形式で。
+
+    :func:`panel_grid` と同じ式: ``cw/ch`` は最大パネル寸、
+    ``W = 2*pad + ncols*cw + (ncols-1)*pad``、
+    ``H = title_h + 2*pad + nrows*(ch+caption_h) + (nrows-1)*pad``。
+    パネルは拡大せずセルの中央に置く。
+
+    Returns
+    -------
+    dict
+        ``{"size":(H,W), "cells":[(x,y,cw,ch)], "panels":[(x,y,w,h)],
+        "captions":[(x,y,cw,caption_h)], "letters":[str], "ncols", "nrows"}``。
+
+    Raises
+    ------
+    ValueError
+        shapes が空、ncols < 1、負の余白、26 枚を超える。
+    """
+    shp = [_shape2(s, f"shapes[{i}]") for i, s in enumerate(shapes)]
+    if not shp:
+        raise ValueError("shapes is empty")
+    ncols = _num(ncols, "ncols", lo=1, integer=True)
+    pad = _num(pad, "pad", lo=0, integer=True)
+    cap = _num(caption_h, "caption_h", lo=0, integer=True)
+    th = _num(title_h, "title_h", lo=0, integer=True)
+    cw = max(w for _, w in shp)
+    ch = max(h for h, _ in shp)
+    n = len(shp)
+    nrows = (n + ncols - 1) // ncols
+    W = 2 * pad + ncols * cw + (ncols - 1) * pad
+    H = th + 2 * pad + nrows * (ch + cap) + (nrows - 1) * pad
+    cells, panels, caps, letters = [], [], [], []
+    for i, (h, w) in enumerate(shp):
+        r, c = divmod(i, ncols)
+        x0 = pad + c * (cw + pad)
+        y0 = th + pad + r * (ch + cap + pad)
+        cells.append((x0, y0, cw, ch))
+        panels.append((x0 + (cw - w) // 2, y0 + (ch - h) // 2, w, h))
+        caps.append((x0, y0 + ch, cw, cap))
+        letters.append(_panel_letter(i, letter_style))
+    return {"size": (H, W), "cells": cells, "panels": panels, "captions": caps,
+            "letters": letters, "ncols": ncols, "nrows": nrows}
+
+
+def annotate_figure_grid(panels, captions=None, ncols=2, pad=10, caption_h=32, letters=True,
+                         letter_style="paren", title=None, font_size=14, min_font_size=9,
+                         background=1.0, border=1, border_color="neutral",
+                         text_color=None, scheme="okabe_ito", font_path=None):
+    """画像(image2d)を返す: 画像 + 見出しを一枚の図に組む(余白一定・パネル文字つき)。
+
+    見出しは ``"(a) caption"``(``letters=True``)。白地(``background=1.0``)が既定
+    なので文字は自動で暗色になる(:func:`text_box` のコントラスト規則)。
+    幾何は :func:`annotate_figure_grid_layout`(``title`` があるときの ``title_h``
+    は :func:`measure_text` から同じ式で決まる)。
+
+    Raises
+    ------
+    ValueError
+        panels が空、captions の数不一致、見出しが帯に収まらない、26 枚超。
+    """
+    ps = [_prep(p) for p in panels]
+    if not ps:
+        raise ValueError("panels is empty")
+    if captions is not None:
+        captions = [str(s) for s in captions]
+        if len(captions) != len(ps):
+            raise ValueError(f"captions has {len(captions)} entries for {len(ps)} panels")
+    use_letters = _flag(letters, "letters")
+    lay = annotate_figure_grid_layout([p.shape[:2] for p in ps], ncols=ncols, pad=pad,
+                                      caption_h=caption_h, letter_style=letter_style)
+    labels = None
+    if use_letters or captions is not None:
+        labels = []
+        for i in range(len(ps)):
+            parts = []
+            if use_letters:
+                parts.append(lay["letters"][i])
+            if captions is not None and captions[i]:
+                parts.append(captions[i])
+            labels.append(" ".join(parts))
+    return panel_grid(ps, labels=labels, ncols=lay["ncols"], pad=pad, label_h=caption_h,
+                      background=background, title=title, font_size=font_size,
+                      min_font_size=min_font_size, font_path=font_path,
+                      text_color=text_color, border=border, border_color=border_color,
+                      scheme=scheme)

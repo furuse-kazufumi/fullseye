@@ -33,6 +33,7 @@ op 本体は :mod:`annotate`。
   「行が色」という意味を持つ(:func:`palette.diverging_lut` の出力)。
 
 ``mask``(2 値の (H,W))と ``labels``(整数の (H,W))は既存語彙。
+``table``(dict)は ``*_layout`` op の返り = **置いた幾何**(矩形・肘・角度)。
 """
 import numpy as np
 
@@ -87,6 +88,36 @@ _CATALOG = {
         ("filled_polygon", "annotate", ["image2d", "pairs"], "image2d"),
         ("arc", "annotate", ["image2d"], "image2d"),
         ("ellipse", "annotate", ["image2d"], "image2d"),
+    ],
+    # 学術図の作法(2026-09-03、著者の要望「どこに何があるかを矢印や線で示す」)。
+    # 上の 6 カテゴリが**部品**なら、ここは**作法そのもの**。幾何は
+    # ``*_layout`` が table(dict)で返し、描く op はそれを描くだけ ―― 配置を
+    # 数字で検算でき、同じ配置を別の絵に使い回せる。
+    # 入力に ``pairs`` を宣言しないのは意図的: 連鎖ファザーの pairs 種は
+    # 32x32 画像に 160 点で、引き出し線・番号は毎回「置き場が無い」で
+    # fail-closed になり一度も走らない(OP_PARAM_HINTS が 3 点を束縛する)。
+    "paper": [
+        ("annotate_leader_layout", "annotate", [], "table"),
+        ("annotate_leader", "annotate", ["image2d"], "image2d"),
+        ("annotate_markers", "annotate", ["image2d"], "image2d"),
+        ("annotate_legend", "annotate", ["image2d"], "image2d"),
+        ("annotate_dimension_layout", "annotate", [], "table"),
+        ("annotate_dimension", "annotate", ["image2d"], "image2d"),
+        ("annotate_angle_layout", "annotate", [], "table"),
+        ("annotate_angle", "annotate", ["image2d"], "image2d"),
+        ("annotate_scale_bar_layout", "annotate", [], "table"),
+        ("annotate_scale_bar", "annotate", ["image2d"], "image2d"),
+        ("annotate_orientation", "annotate", ["image2d"], "image2d"),
+        ("annotate_inset_layout", "annotate", [], "table"),
+        ("annotate_inset", "annotate", ["image2d"], "image2d"),
+        ("annotate_outline_layout", "annotate", ["mask"], "table"),
+        ("annotate_outline", "annotate", ["image2d", "mask"], "image2d"),
+        ("annotate_text_path_layout", "annotate", ["text"], "table"),
+        ("annotate_text_path", "annotate", ["image2d", "text"], "image2d"),
+        ("annotate_colorbar", "annotate", ["image2d", "image2d"], "image2d"),
+        ("annotate_panel_label", "annotate", ["image2d"], "image2d"),
+        ("annotate_figure_grid_layout", "annotate", [], "table"),
+        ("annotate_figure_grid", "annotate", ["image2d"], "image2d"),
     ],
 }
 

@@ -84,6 +84,8 @@ import volxform
 import volprobe
 import volfreq
 import volrestore
+# --- 図注(2026-09-03): 3-D アンカーを射影して矢印・引き出し線・寸法を描く ---
+import annotate3d
 
 _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "feat_shot": feat_shot, "feat_fpfh": feat_fpfh, "fuse3d": fuse3d,
@@ -111,7 +113,8 @@ _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "render_ao": render_ao, "render_shadow": render_shadow, "render_shade": render_shade,
         "render_ssaa": render_ssaa, "render_tonemap": render_tonemap,
         "render_beauty": render_beauty, "render3d": render3d,
-        "measure3d": measure3d}
+        "measure3d": measure3d,
+        "annotate3d": annotate3d}
 
 # 入出力の「種別」語彙(op 連結の型検査に使う):
 #   voxel / points(N,3) / mesh / depth / sdf / normals(N,3) / gaussians / image2d /
@@ -712,6 +715,23 @@ _CATALOG = {
         ("vertex_normals", "mesh_props", ["mesh"], "normals", False),
         ("mesh_area", "mesh_props", ["mesh"], "measurement", False),
         ("vertex_curvature", "mesh_props", ["mesh"], "curvature", False),
+    ],
+    # ---------------------------------------------------------------- #
+    # annotate3d(2026-09-03): 3-D のアンカーを画像へ射影して矢印・引き出し線・
+    # スケールバー・座標軸・箱・距離を描く図注。射影の慣習は render3d と同一
+    # (pose 4x4 object→camera、-Z を見る、K は画素中心整数)。depth(render_mesh
+    # の前方距離)を渡すと隠れたアンカーを破線で描く。in を image2d だけにし
+    # pose/K/点は OP_PARAM_HINTS で束縛する(points プールを in にすると
+    # 160 点の引き出し線になり毎回「置き場が無い」で走らない)。
+    # ---------------------------------------------------------------- #
+    "annotate3d": [
+        ("annotate3d_project", "annotate3d", ["points"], "table", False),
+        ("annotate3d_arrow", "annotate3d", ["image2d"], "image2d", False),
+        ("annotate3d_label", "annotate3d", ["image2d", "text"], "image2d", False),
+        ("annotate3d_scale_bar", "annotate3d", ["image2d"], "image2d", False),
+        ("annotate3d_axes", "annotate3d", ["image2d"], "image2d", False),
+        ("annotate3d_bbox", "annotate3d", ["image2d"], "image2d", False),
+        ("annotate3d_measure", "annotate3d", ["image2d"], "image2d", False),
     ],
 }
 

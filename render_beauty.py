@@ -195,7 +195,7 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
                   shadow_method: str = "map", sun_angular_diameter_deg: float = 0.0,
                   self_illumination: float = 0.0, albedo_variation: float = 0.0,
                   albedo_scale=None, seed: int = 0,
-                  smooth_normals: bool = False) -> np.ndarray:
+                  smooth_normals: bool = False, bump=None) -> np.ndarray:
     """メッシュを全品質層合成で「映える静止 3D」1 枚に描く → RGB ``(size, size, 3)`` float [0,1]。
 
     引数:
@@ -240,6 +240,11 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
                         ―― 遮蔽された半球の分だけ隣の地形が見えており、その地形が平均的な
                         明るさで光っているという近似(相互反射の厳密解ではない、要 ``ao=True``)。
                         宇宙では環境光が無いので ``ambient=0`` とこれで影の底が決まる。
+      * ``bump``        ``dict(wavelengths, amplitudes[, seed, nyquist, fade, complement_edges])``
+                        → 物体画素の陰影法線を :func:`render3d.bump_normals_fbm`(値ノイズ高さ場の
+                        勾配)で摂動する。幾何(depth/影/AO)は不変。``complement_edges=True``
+                        なら画素直下のメッシュ局所辺長を重心補間して渡し、変位の帯域ゲートの
+                        **補集合**だけを bump にする(同じ波長を二重に足さない)。
 
     fail-closed: 形状不正・非有限・空・``ss<1``・不正 ``material``/``tonemap``・不正な色/光/露出は
     ``ValueError``。決定的(乱数なし)。"""
@@ -308,8 +313,14 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
         ground_z, eps_ground = None, None
 
     # --- 幾何バッファ(depth / silhouette / 面法線)-------------------------
+    bump_cfg = None
+    if bump is not None:
+        if not isinstance(bump, dict):
+            raise ValueError("bump must be a dict(wavelengths, amplitudes, ...) or None")
+        bump_cfg = dict(bump)
+    want_attr = bool(smooth_normals) or bump_cfg is not None
     view = render3d.render_mesh(V_all, F_all, pose=P, intrinsics=Khi,
-                                width=hs, height=hs, attributes=bool(smooth_normals))
+                                width=hs, height=hs, attributes=want_attr)
     normals = view["normals"]                            # (hs, hs, 3) camera space
     if smooth_normals:
         # 面積重み付き頂点法線を透視補正重心座標で補間(Phong 補間)。フラット法線の
@@ -330,14 +341,31 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
     fg = sil > 0                                         # 前景(メッシュ or 地面)
 
     # 地面画素の判定(ワールド z が地面高さに一致)。
-    if ground_shadow:
+    Pw = None
+    if ground_shadow or bump_cfg is not None or alb_var > 0.0:
         Pw = render_shadow.unproject_to_world(depth, P, Khi)     # (hs,hs,3), 背景 NaN
+    if ground_shadow:
         with np.errstate(invalid="ignore"):
             is_ground = fg & np.isfinite(Pw[..., 2]) & \
                 (np.abs(Pw[..., 2] - ground_z) < eps_ground)
     else:
         is_ground = np.zeros_like(fg)
     is_object = fg & ~is_ground
+
+    if bump_cfg is not None and is_object.any():
+        # サブファセットの起伏: 変位できなかった短波長オクターブを陰影法線に載せる。
+        comp = bool(bump_cfg.pop("complement_edges", False))
+        edge_map = None
+        if comp:
+            e_v = render3d.mesh_edge_lengths(V_all, F_all, per="vertex")
+            ys_b, xs_b = np.nonzero(is_object)
+            fid_b = view["face"][ys_b, xs_b]
+            e_px = np.einsum("ij,ij->i", view["bary"][ys_b, xs_b], e_v[F_all[fid_b]])
+            edge_map = np.full((hs, hs), np.nan)
+            edge_map[ys_b, xs_b] = np.maximum(e_px, 1e-15)
+        P_obj = np.where(is_object[..., None], Pw, np.nan)
+        normals = render3d.bump_normals_fbm(normals, P_obj, rotation=P[:3, :3],
+                                            local_edge=edge_map, **bump_cfg)
 
     # --- 光源をカメラ空間へ(法線はカメラ空間)------------------------------
     R = P[:3, :3]
@@ -428,8 +456,7 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
         if alb_var > 0.0 and is_object.any():
             # アルベドの空間むら(1 ± albedo_variation の fBm、ワールド座標で決定的)。
             # イトカワは明るい/暗い地形が 1〜2 割の反射率差を持つ(Saito et al. 2006)。
-            Pw_obj = render_shadow.unproject_to_world(depth, P, Khi) if not ground_shadow else Pw
-            pts = Pw_obj[is_object]
+            pts = Pw[is_object]
             diag = float(np.linalg.norm(Vv.max(axis=0) - Vv.min(axis=0)))
             sc = diag / 6.0 if albedo_scale is None else float(albedo_scale)
             fb = render3d.fbm_noise(pts, sc, octaves=3, seed=int(seed))
@@ -477,7 +504,8 @@ def render_regolith(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: in
                     self_illumination: float = 1.0, exposure="auto",
                     albedo_variation: float = 0.12, seed: int = 0,
                     smooth_normals: bool = True,
-                    background: Sequence[float] = (0.0, 0.0, 0.0)) -> np.ndarray:
+                    background: Sequence[float] = (0.0, 0.0, 0.0), bump=None,
+                    exposure_target: float = 0.45) -> np.ndarray:
     """小惑星のレゴリスを物理ベース(Hapke + 太陽視直径のレイキャスト影 + 環境光ゼロ)で描く → RGB ``(size,size,3)``。
 
     :func:`render_beauty` の合成:
@@ -486,17 +514,29 @@ def render_regolith(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: in
         太陽。半影は幾何どおり数 cm なので事実上ハード影)。地面(台座)は置かない。
       * 環境光 0(宇宙に空光は無い)。影の底は地形の一回反射近似 ``self_illumination`` だけ。
       * トーン = 線形(AMICA の 8bit 画像に合わせ、露出 × クリップ)。``exposure='auto'`` は
-        物体画素の 99.5 パーセンタイルが 0.95 に来る露出(決定的)。
+        物体画素の 99.5 パーセンタイルが 0.95 に来る露出(決定的)。``exposure='median'`` は
+        **照らされた面の中央値**(物体画素のうち 99.5 % 点の 30 % 以上の画素の中央値)が
+        ``exposure_target``(既定 0.45)に来る露出 —— 2026-09-03 の hero が「露出過多で
+        白いジャガイモ」になった対策(99.5 % 点合わせは縁まで明るい Lommel-Seeliger 面で
+        中央値が 0.7 超まで上がる)。クリップ率は呼び手が測る(hero は < 0.5 % を要求)。
       * ``smooth_normals=True``: 頂点法線の Phong 補間で陰影を滑らかにする(幾何・影は不変)。
       * ``albedo_variation``: アルベドの空間むら(既定 12 %、Saito et al. 2006 の明暗地形)。
+      * ``bump``: :func:`render_beauty` の ``bump``(サブファセット起伏の陰影法線摂動)。
     ``tint`` は平均 1 に正規化した色味。fail-closed: 引数は下位 op が検証、``exposure`` は
-    ``'auto'`` か正の数。決定的(乱数なし)。"""
-    if not (isinstance(exposure, str) and exposure == "auto"):
+    ``'auto'`` / ``'median'`` か正の数。決定的(乱数なし)。"""
+    mode = None
+    if isinstance(exposure, str):
+        if exposure not in ("auto", "median"):
+            raise ValueError(f"exposure must be 'auto', 'median' or a positive number, got {exposure!r}")
+        mode = exposure
+        exp = None
+    else:
         exp = float(exposure)
         if not np.isfinite(exp) or exp <= 0.0:
             raise ValueError(f"exposure must be 'auto' or a positive finite number, got {exposure!r}")
-    else:
-        exp = None
+    tgt = float(exposure_target)
+    if not np.isfinite(tgt) or tgt <= 0.0 or tgt >= 1.0:
+        raise ValueError(f"exposure_target must be in (0, 1), got {exposure_target!r}")
     params = dict(w=float(w), g=float(g), B0=float(B0), h=float(h),
                   roughness_deg=float(roughness_deg))
     img = render_beauty(V, F, pose=pose, intrinsics=intrinsics, size=size, ss=ss, light=sun,
@@ -507,12 +547,17 @@ def render_regolith(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: in
                         sun_angular_diameter_deg=sun_angular_diameter_deg,
                         self_illumination=self_illumination,
                         albedo_variation=albedo_variation, seed=seed,
-                        smooth_normals=smooth_normals)
+                        smooth_normals=smooth_normals, bump=bump)
     if exp is None:
         obj = img.max(axis=2)
         vals = obj[obj > 0.0]
         p = float(np.percentile(vals, 99.5)) if vals.size else 1.0
-        exp = 0.95 / max(p, 1e-9)
+        if mode == "auto":
+            exp = 0.95 / max(p, 1e-9)
+        else:
+            lit = vals[vals > 0.3 * p]
+            med = float(np.median(lit)) if lit.size else p
+            exp = tgt / max(med, 1e-9)
     bg = _as_color(background, "background")
     fgm = img.max(axis=2) > 0.0
     out = np.where(fgm[..., None], np.clip(img * exp, 0.0, 1.0), bg[None, None, :])
