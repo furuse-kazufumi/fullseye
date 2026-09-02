@@ -93,9 +93,9 @@ py -3.11 studio.py          # または、インストール済みなら: fullse
 
 3 パネル構成です。
 
-- **左（Operators）**: オペレータをカテゴリ / 検索で絞り、**ダブルクリックで挿入**。サンプルパイプラインもここから読み込めます。
-- **中央（Pipeline）**: 並べた段の一覧。ドラッグや Ctrl+↑/↓ で並べ替え、選択した段の **つまみ a / b をスライダー**で調整。**Reset（Home）→ Step（Ctrl+→）→ Run all（Ctrl+Enter）** で 1 段ずつ、または一気に実行。
-- **右（Image / Perception / Analysis）**: 結果画像をズーム・パン表示、ヒストグラム、Inspector（image / region / feature の値を検査）、v14 の知覚パネル（オプティカルフロー / ステレオ深度など）。
+- **左（Operators）**: オペレータをカテゴリ / 検索で絞り、**ダブルクリックで挿入**（Edit ▸ Focus operator search = **Ctrl+F** で検索欄へ）。サンプルパイプラインもここから読み込めます。**Insert（＋）は HDevelop の演算子ウィンドウと同じ**で、パイプラインに段を足すと同時に Program ウィンドウのカーソル位置へ `op (a, b)` の 1 行を書き込みます（値は `repr` の全精度。Program に未適用の手編集があるときは行だけを挿入し、Apply で反映）。
+- **中央（Pipeline）**: 並べた段の一覧。ドラッグや Ctrl+↑/↓ で並べ替え、選択した段の **つまみ a / b** を調整。つまみは常に 0..1 の値ですが、**op ごとの表示仕様（`param_specs.py`）があるものは実際の単位で操作できます** — `gaussian` なら σ を px で（スライダー + 単位付きスピン）、`median` なら核サイズを 3/5/7/9 のコンボで、`reg_erode` なら反復回数を整数スピンで、`aug_barrel` の b は「pincushion」チェックボックスで。右端の 0..1 スピンは常に生の値（正確な入力用）。仕様は ops.py の変換式（`0.3 + 2.7·a` など）から手書きし、テストで実装と突き合わせています（`tests/test_studio_params.py`）。仕様の無い op は従来どおり 0..1 のスライダー 2 本。段の一覧も表示単位で書かれます（`gaussian (blur σ=1.08 px, b=–)`）。**Reset（Home）→ Step（Ctrl+→）→ Run all（Ctrl+Enter）** で 1 段ずつ、または一気に実行。
+- **右（Image / Perception / Analysis）**: 結果画像をズーム・パン表示、ヒストグラム、Inspector（image / region / feature の値を検査）、v14 の知覚パネル（オプティカルフロー / ステレオ深度など）。**画像ビューは右クリック**で Fit / 1:1 / Zoom / Save result / Save view as shown / Copy / Display mode / 3D surface（メニューと同じアクション）。追加で開いたグラフィックスウィンドウにも Fit・1:1・±・Save の小さなストリップと同じ右クリックメニューが付き、3-D ビューア（Ctrl+4）は右クリックで Reset view / 一人称（透視）切替 / Wireframe / Save screenshot。
 
 組んだパイプラインは **Export（Ctrl+E）** で `--ops` 文字列や Python コードとして書き出せ、**Save pipeline（Ctrl+Shift+S）** で JSON 保存できます。全機能とショートカットは [STUDIO_GUIDE.md](STUDIO_GUIDE.md)、アプリ内では **F1** で一覧が出ます。
 
