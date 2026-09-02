@@ -2250,7 +2250,14 @@ def main():
         print(f"== 網羅フェーズ: {len(ops)} op を狙い撃ち(1 op あたり最大 "
               f"{args.cover_tries} seed)", flush=True)
         census = cover_all(ops, gens, log, tries=args.cover_tries)
-        print(f"== 網羅後: fn を呼べた {len(census['ran'])}/{len(ops)}")
+        print(f"== 網羅後: fn を呼べた {len(census['ran'])}/{len(ops)} / "
+              f"うち値を返せた {len(census['ok'])}")
+        # 「呼べたが毎回拒否された」は**成功ゼロ**。呼べた数だけを出すと、
+        # 「入力が絵に収まっていないので毎回 fail-closed」が「実行済み」に
+        # 化ける ―― 未実行が発見ゼロに化けるのと同じ形の見落としである。
+        refused = sorted(census["ran"] - census["ok"])
+        if refused:
+            print(f"   呼べたが毎回拒否 {len(refused)}: {refused[:14]}")
         for key, label in (("bind_fail", "必須引数が組めない"),
                            ("no_input", "入力型が pool に入らない"),
                            ("unbuildable", "レシピが組めない")):
