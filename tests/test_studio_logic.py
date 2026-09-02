@@ -156,7 +156,8 @@ def test_f4_run_reports_failing_stage_and_stops_there(app, win):
     assert st.startswith("✕") and second in st and "line 2" in st
     assert ed._exec_line == 2                             # cursor stops at the failing line
     assert 3 not in ed.timings                            # nothing past it was "run"
-    probs = [w._problems.item(i).text() for i in range(w._problems.count())]
+    pl = w._problems_list
+    probs = [pl.item(i).text() for i in range(pl.count())]
     assert any(second in p and "✕" in p for p in probs)
     # Step also names the failure instead of silently threading the stale value
     ed.clear_exec()
