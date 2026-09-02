@@ -1336,6 +1336,8 @@ def _seed_value(v):
             return Region(v)
         if v.ndim == 2:
             return _wrap_array_as_image(v)
+    if isinstance(v, (list, tuple)):
+        return list(v)                  # a seeded tuple is copied: the script never mutates the caller's list
     return v
 
 
