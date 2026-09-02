@@ -142,6 +142,11 @@ EXAMPLES = [
      "name": "光学 op(optics)で検査機を 1 台、紙の上で設計する",
      "summary": "倍率→焦点距離/物体距離、ABCD 行列で結像確認、回折限界・被写界深度・MTF を"
                 "要求分解能に対して合否判定する。"},
+    {"id": "lens_design_demo", "task": "optics_sensing", "data": "synthetic",
+     "name": "実光線設計 op(raytrace)で singlet と doublet を比べる",
+     "summary": "処方(lens_system)から近軸表・面ごとの Seidel・軸上/5 deg のスポット RMS・"
+                "OPD→Zernike・Monte-Carlo 公差 p95 を出し、閉形式(thick_lens / 放物面鏡の"
+                "完全結像)と突き合わせる。"},
     {"id": "lightfield_depth", "task": "optics_sensing", "data": "synthetic",
      "name": "ライトフィールド 17 op で plenoptic 検査機を通す",
      "summary": "画素/MLA ピッチから角度・空間分解能と基線長を設計し、センサ生データ→"
