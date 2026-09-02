@@ -506,7 +506,8 @@ def test_secondary_graphics_window_symmetry():
         assert gv.transform().m11() == pytest.approx(1.25)
         gv.tool_buttons["fit"].click()
         assert gv.transform().m11() != pytest.approx(1.25)        # fit re-scaled the view
-        assert gv.transform().m11() < 1.0                          # 600 px into a 440 px window
+        want = min(gv.viewport().width() / 600.0, gv.viewport().height() / 400.0)
+        assert gv.transform().m11() == pytest.approx(want, rel=0.05)   # = fitInView's scale
         saved = []
         gv.save_cb = lambda v: saved.append(v)
         gv.tool_buttons["save"].click()
