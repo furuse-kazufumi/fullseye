@@ -83,3 +83,21 @@ def test_jitter_param_is_resolution_relative():
 def test_execute_handles_empty_and_failure():
     task = pe.make_denoise_task(seed=0)
     assert np.array_equal(ep.execute((), task.x), task.x)   # identity
+
+
+def test_nan_metric_never_becomes_champion():
+    """Regression (2026-09-02 review): a NaN fitness slipped past ``sorted``/``max`` and
+    was selected as champion. Non-finite metric -> _PENALTY, same as pipeline_evolve."""
+    task = pe.make_denoise_task(seed=0)
+    n_in = len(task.x)
+    real = task.metric
+
+    def nan_metric(out, tgt):                       # NaN whenever any point was removed
+        return float("nan") if len(out) != n_in else real(out, tgt)
+    task.metric = nan_metric
+    assert ep.evaluate((("sor", 2.0),), task) == ep._PENALTY
+    r = ep.evolve_params(task, pop=12, gens=4, seed=0)
+    assert np.isfinite(r["fitness"]) and np.isfinite(r["history"]).all()
+    assert r["fitness"] > ep._PENALTY
+    # every point-removing op scores NaN -> penalised, so none survives into the champion
+    assert all(op not in ("sor", "ror", "voxel", "dropout") for op, _ in r["best"])
