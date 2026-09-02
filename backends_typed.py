@@ -169,6 +169,15 @@ _SHAPE_OK = {
     "signal": lambda v: v.ndim == 1,
     "matrix": lambda v: v.ndim == 2,
     "cimage": lambda v: v.ndim == 2 and v.dtype.kind == "c",
+    # rgbimage = (H,W,3)、qimage = (H,W,4)。2026-09-02 までどちらも行が無く、
+    # ``tb_quaternion_to_rgb``(qimage → rgbimage)が失敗すると ``_fallback`` が
+    # 表に無い out_sort の既定 ``np.asarray(v)`` = **4 チャンネルの入力をそのまま
+    # rgbimage として返していた**(乱数の (H,W,4) は非純四元数なので quatimage 側の
+    # 番人が必ず拒否する → 毎回この経路)。同 sort の恒等検査には掛からず、
+    # 形の検査にも行が無いので 4 チャンネルがそのまま通った。行を足すと
+    # 4 チャンネルの返りは契約違反として弾かれ、失敗時は下の空値へ落ちる。
+    "rgbimage": lambda v: v.ndim == 3 and v.shape[2] == 3,
+    "qimage": lambda v: v.ndim == 3 and v.shape[2] == 4,
 }
 
 
