@@ -106,12 +106,13 @@ def main():
           f"素の np.std={raw_std:.2f}({raw_std / true_sigma:.1f} 倍)  "
           f"MAD={mad:.3f}({mad / true_sigma:.3f} 倍)  "
           f"κ-クリップ={clipped:.3f}({clipped / true_sigma:.3f} 倍)")
-    assert raw_std / true_sigma > 3.0           # 星は上側だけの外れ値
-    assert 0.9 < mad / true_sigma < 1.4
+    assert raw_std / true_sigma > 10.0          # 星は上側だけの外れ値
+    assert 0.9 < mad / true_sigma < 2.0         # 頑健推定でも星の裾で少し上振れ
     empty, _ = A.synth_starfield(shape=SHAPE, n_stars=0, sky=SKY,
                                  read_sigma=READ, seed=3)
     print(f"   星の無い視野なら MAD は {A.noise_sigma(empty) / true_sigma:.3f} 倍 "
-          f"= 上のずれは星の裾であって推定の癖ではない")
+          f"= 上のずれは星の裾であって推定の癖ではない(この視野は "
+          f"{N_STARS} 個の明るい星が {SHAPE[0]}x{SHAPE[1]} に詰まっている)")
     assert abs(A.noise_sigma(empty) / true_sigma - 1.0) < 0.03
 
     qualities = [A.frame_quality(f) for f in frames]
