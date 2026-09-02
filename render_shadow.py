@@ -56,7 +56,7 @@ import numpy as np
 
 import render3d
 
-__all__ = ["cast_shadow", "unproject_to_world"]
+__all__ = ["cast_shadow", "unproject_to_world", "shadow_raycast"]
 
 _EPS = 1e-12
 
