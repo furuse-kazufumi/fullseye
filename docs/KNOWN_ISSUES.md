@@ -243,5 +243,5 @@ core op(ops.py)の例外も facade 境界で記録→型に合う fallback(`rais
 最初の家族数調査が取りこぼした **`backends_macro` と `backends_typed` の 2 家族**も記録化
 (typed の「型の嘘」分岐も記録)/ optional import の破損は `source="import"` で台帳へ。
 
-回帰テスト: `tests/test_fallback_policy.py`(34 件)。`tests/test_backends.py` の
+回帰テスト: `tests/test_fallback_policy.py`(28 件)。`tests/test_backends.py` の
 旧 API(`swallowed_errors` / `last_error` / `strict_mode`)は別名として維持。

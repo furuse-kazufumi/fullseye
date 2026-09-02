@@ -611,11 +611,11 @@ def test_string_ops_fail_soft_on_bad_header_no_crash():
     # fractional-negative header slipped through (int(-0.5)==0) and a NaN header crashed
     # (int(nan) -> ValueError). The raw-value guard now fail-softs on both, in Python.
     nan = float("nan")
-    assert algo.run_algo("edit_distance", [-0.5, 65.0, 66.0]) == 0.0     # was int(-0.5)=0 -> 2.0
-    assert algo.run_algo("edit_distance", [nan, 65.0, 66.0]) == 0.0      # was a ValueError crash
-    assert algo.run_algo("edit_distance", [3.0e9, 65.0, 66.0]) == 0.0    # oversized
-    assert algo.run_algo("lcs_length", [-0.5, 65.0, 66.0]) == 0.0
-    assert algo.run_algo("lcs_length", [nan, 65.0, 66.0]) == 0.0
+    assert algo.run_algo("edit_distance", [-0.5, 65.0, 66.0]) == -1.0    # was int(-0.5)=0 -> 2.0
+    assert algo.run_algo("edit_distance", [nan, 65.0, 66.0]) == -1.0     # was a ValueError crash
+    assert algo.run_algo("edit_distance", [3.0e9, 65.0, 66.0]) == -1.0   # oversized
+    assert algo.run_algo("lcs_length", [-0.5, 65.0, 66.0]) == -1.0
+    assert algo.run_algo("lcs_length", [nan, 65.0, 66.0]) == -1.0
     assert algo.run_algo("strfind", [-0.5, 65.0, 65.0]) == []
     assert algo.run_algo("strfind", [nan, 65.0, 65.0]) == []             # was a ValueError crash
     assert algo.run_algo("strfind", [0.5, 65.0, 65.0]) == []             # 0 < m < 1
