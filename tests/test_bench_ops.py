@@ -261,7 +261,7 @@ def test_ratio_vs_core_is_emitted_inside_one_run():
     core, twin = rep["rows"]
     assert core["twin"] == "cv_gaussian"
     assert twin["core_ref"] == "gaussian"
-    assert twin["ratio_vs_core"] == pytest.approx(core["ms"] / twin["ms"], rel=1e-6)
+    assert twin["ratio_vs_core"] == pytest.approx(core["ms"] / twin["ms"], abs=1e-3)  # 3 桁丸め
     assert core["twin_ratio_vs_core"] == twin["ratio_vs_core"]
 
 
