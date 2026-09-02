@@ -201,6 +201,14 @@ def vol_resize(vol, factor=None, shape=None, order=1, spacing=None):
     v = _require_volume(vol)
     order = _check_order(order)
     sp = _spacing_tuple(spacing)
+    cval = _check_cval(cval)
+    if mode not in _RESIZE_MODES:
+        hint = ""
+        if mode in ("constant", "wrap"):
+            hint = (" — with cell semantics (grid_mode=True) scipy needs the "
+                    "'grid-%s' variant" % mode)
+        raise ValueError("vol_resize mode must be one of %s, got %r%s"
+                         % (", ".join(repr(m) for m in _RESIZE_MODES), mode, hint))
     if (factor is None) == (shape is None):
         raise ValueError("vol_resize needs exactly one of factor= or shape= "
                          "(got factor=%r, shape=%r)" % (factor, shape))
