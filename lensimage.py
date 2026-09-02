@@ -412,6 +412,8 @@ def _lens_model(system, shape, pitch, zones, fov, size, oversample, illumination
     h, w = shape
     para = RT.paraxial_trace(system)
     obj_inf = system["object_mm"] == INF
+    if oversample is None:                      # >= 2 PSF samples per pixel
+        oversample = int(max(4, math.ceil(2.0 * system["wavelength_um"] * _working_fno(para) / pitch)))
     r_corner = 0.5 * math.hypot(h, w) * pitch * 1e-3
     dist = distortion_map(system, (h, w), pitch)
     # fov: the sensor corner is declared to see this field -> the ideal image is
