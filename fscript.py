@@ -1099,13 +1099,39 @@ def _region_area_center(reg: Region):
     return [area, row_c, col_c]
 
 
+#: Builtins that touch the file system.  They are part of the vetted vocabulary
+#: for the Studio, but a judging recipe under the *industrial* profile must not
+#: read files in the cycle (docs/FSCRIPT_DECISION.md 3.1 R4: no import / file
+#: search / network inside a cycle) — fsruntime refuses them at load.
+CYCLE_UNSAFE_BUILTINS = frozenset({"read_image"})
+
+
+def _resolve_read_path(base_dir, p: str) -> str:
+    """Confine a ``read_image`` path to ``base_dir``.
+
+    Relative paths resolve against ``base_dir``; absolute paths are accepted only
+    when they lie inside it.  ``..`` is resolved before the check, so
+    ``'../../x.png'`` cannot climb out.  Without a ``base_dir`` there is nothing
+    to confine to and the path is used as written (the caller opted out).
+    """
+    if not base_dir:
+        return p
+    root = os.path.realpath(base_dir)
+    cand = os.path.realpath(p if os.path.isabs(p) else os.path.join(root, p))
+    try:
+        inside = os.path.commonpath([root, cand]) == root
+    except ValueError:                                # different drives on Windows
+        inside = False
+    if not inside:
+        raise FScriptError("read_image: path %r is outside the script's base "
+                           "directory %r" % (p, base_dir))
+    return cand
+
+
 def _b_read_image(env, path):
-    import os
-    p = str(path)
-    if env.base_dir and not os.path.isabs(p):
-        cand = os.path.join(env.base_dir, p)
-        if os.path.exists(cand):
-            p = cand
+    if not isinstance(path, str):
+        raise FScriptError("read_image: path must be a string, got %s" % _describe(path))
+    p = _resolve_read_path(env.base_dir, path)
     import imgio
     return _seed_value(imgio.load(p))
 
