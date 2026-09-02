@@ -17,6 +17,7 @@ version: 0.1.0
 - **wave(4)** — `airy_pattern` / `angular_spectrum_propagate` / `fraunhofer_pattern` / `gaussian_beam`: 円形瞳の回折限界 PSF、角スペクトル法による**厳密な**自由空間伝搬(近軸近似をしない)、開口の遠方回折像、ガウシアンビームの q パラメータ伝搬。
 - **imaging(3)** — `psf_to_mtf` / `mtf_diffraction` / `wavefront_stats`: 測った点像を分解能曲線に変える PSF → OTF → MTF の鎖、それと突き合わせる回折限界の閉形式、Zernike フィットから出す波面統計(RMS / PV / Strehl)。
 - **polarization(6)** — `jones_element` / `jones_apply` / `stokes_from_jones` / `mueller_element` / `mueller_apply` / `stokes_analyze`: 完全偏光を扱う Jones 計算と、**部分偏光**まで運べる Stokes/Mueller 計算(偏光カメラが実際に測るのは後者)。
+- **design(12、実体は `raytrace.py`)** — `lens_system` / `thick_lens` / `glass` / `example_system` / `paraxial_trace` / `spot_diagram` / `spot_stats` / `ray_fan` / `opd_map` / `wavefront_from_opd` / `seidel_coefficients` / `tolerance_analysis`: 上の 4 カテゴリが**近軸・閉形式**なのに対し、こちらは球面/円錐面の逐次処方に**実光線**を通す設計層(下の「設計(design)」節)。
 
 データ種は既存語彙の再利用が基本です: **table**(dict、計測値の束/ABCD 素子リスト)、**matrix**(ABCD 2x2・Mueller 4x4 の実行列 — `mat_svd` や `mat_cond` にそのまま流せる)、**image2d**(PSF・開口・強度像)、**cimage**(2-D complex = 複素場と Jones 行列)、**pairs**((n,2) の曲線 = MTF・cos⁴)。新語は 2 つだけ、**jones**(長さ 2 固定の complex ベクトル)と **stokes**(長さ 4 固定 + 偏光度 ≤ 1 の物理制約)で、これは `signal` / `cpoints` に相乗りさせると「256 点の正弦波を Stokes 枠に渡せる」という**型レベルの嘘**になるためです。
 
