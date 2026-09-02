@@ -263,6 +263,17 @@ def main():
     print(f"   同じ貼り込みでも台紙が無圧縮だと {r_png:.2f} 倍 = 区別できない "
           f"(ELA は量子化履歴を比べているのであって、高周波を見ているのではない)")
     assert r_png < 2.0 < r_hi
+    # ELA は「どこから来たか」ではなく「8x8 格子に乗っているか」に反応する。
+    # 複製先を 2 px ずらすだけで複製領域まで光り、内/外の比が潰れる。
+    misaligned = original.copy()
+    misaligned[DST[0] - 2:DST[0] - 2 + PATCH, DST[1]:DST[1] + PATCH] = \
+        original[SRC[0]:SRC[0] + PATCH, SRC[1]:SRC[1] + PATCH]
+    misaligned[SPLICE] = foreign[SPLICE]
+    ela_mis = F.error_level_map(misaligned, BASE_Q)
+    r_mis = float(ela_mis[inside].mean() / ela_mis[outside].mean())
+    print(f"   複製先を格子から 2 px ずらすと同じ画像で 内/外 = {r_mis:.1f} 倍 —— "
+          f"ELA は『外から来たか』ではなく『8x8 格子に乗っているか』を見ている")
+    assert r_mis < r_hi / 10.0
 
     qs = list(range(40, 100, 5))
     ghosts = F.jpeg_ghost_map(submitted, qs, block=16)
