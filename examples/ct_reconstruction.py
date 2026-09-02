@@ -219,9 +219,17 @@ def main():
     m_truth = gauge(truth)
     report("この格子で二値化した真値", m_truth, "   <- 測定の天井")
     report("backproject_sinogram", gauge(rec_bp_scaled),
-           f"   nRMS {nrms(rec_bp_scaled):.4f}")
-    report("filtered_backprojection", gauge(rec_fbp), f"   nRMS {nrms(rec_fbp):.4f}")
-    report("sart_reconstruct(10)", gauge(rec_sart), f"   nRMS {nrms(rec_sart):.4f}")
+           f"   nRMS {nrms(rec_bp_scaled):.4f}  {t_bp:6.2f} s")
+    report("filtered_backprojection", gauge(rec_fbp),
+           f"   nRMS {nrms(rec_fbp):.4f}  {t_fbp:6.2f} s")
+    report("sart_reconstruct(10)", gauge(rec_sart),
+           f"   nRMS {nrms(rec_sart):.4f}  {t_sart:6.2f} s")
+    print(f"   ★SART は nRMS を {nrms(rec_fbp) / nrms(rec_sart):.2f} 倍良くする代わりに "
+          f"{t_sart / max(t_fbp, 1e-9):.0f} 倍の時間を買う "
+          f"({t_fbp:.2f} s -> {t_sart:.1f} s、この機械での実測)。")
+    print(f"     10 sweep x {N_VIEWS} 視点 = 順投影も逆投影も "
+          f"{10 * N_VIEWS} 回で、FBP の逆投影 {N_VIEWS} 回に対する比そのもの。")
+    print(f"     production の走査機が FBP を回しているのはこの一列のためである。")
 
     print(f"\n   フィルタ無し BP の生の値域 = "
           f"[{rec_bp.min():.4f}, {rec_bp.max():.4f}] "
