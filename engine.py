@@ -172,12 +172,15 @@ class FullseyeEngine:
         return None
 
     def output_sort(self):
-        """The sort the pipeline produces (last known op's out_sort)."""
-        for name, *_ in reversed(self.stages):
+        """The sort the pipeline produces — the sort threaded through every known
+        op (a pass-through op such as ``identity`` keeps the sort of the stage
+        before it; only a leading pass-through op yields ``"any"``)."""
+        cur = None
+        for name, *_ in self.stages:
             op = api.find_op(name)
             if op is not None:
-                return op.out_sort
-        return None
+                cur = _thread_sort(cur, op)
+        return cur
 
     def validate(self) -> list[dict]:
         """Structural problems (unknown ops / sort mismatches); [] if sound."""

@@ -3,49 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-02 22:15:48
+- **最終更新**: 2026-09-03 02:35:29
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-5a0c271f5 docs: 堅牢性一掃セッションの引き継ぎ — 確定バグ7件修正 + 残タスク
-db0aa6a9d auto: LEDGER.md 編集前 (2026-09-02 21:39)
-2609c956b auto: colortransport.py 編集前 (2026-09-02 21:38)
-ae735a96a auto: cadmap.py 編集前 (2026-09-02 21:37)
-426c515ab auto: match3d.py 編集前 (2026-09-02 21:37)
-c853d3b8a auto: shapematch.py 編集前 (2026-09-02 21:36)
-e34ca3bfe auto: astrostack.py 編集前 (2026-09-02 21:35)
-d76e26c2f auto: astrostack.py 編集前 (2026-09-02 21:35)
-b0593296a auto: LEDGER.md 編集前 (2026-09-02 21:34)
-4c28c0471 auto: annotate.py 編集前 (2026-09-02 21:33)
+672f8d8da auto: engine.py 編集前 (2026-09-03 02:35)
+130145e81 auto: engine.py 編集前 (2026-09-03 02:35)
+4c071805c auto: engine.py 編集前 (2026-09-03 02:35)
+b633e8c0b auto: test_algo.py 編集前 (2026-09-03 02:35)
+0545f98f5 auto: test_algo.py 編集前 (2026-09-03 02:35)
+d0ad3e73e auto: evolve_params.py 編集前 (2026-09-03 02:35)
+bec84e1d5 auto: pipeline_evolve.py 編集前 (2026-09-03 02:35)
+719a23bc3 auto: backends_tomo.py 編集前 (2026-09-03 02:35)
+7ecbf54de auto: test_algo.py 編集前 (2026-09-03 02:34)
+9bae2e520 auto: backends_tomo.py 編集前 (2026-09-03 02:34)
 ```
 
 ## 現在の git status
 
 ```
-M docs/SESSION_SUMMARY.md
+M engine.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-22:14 docs/NEXT_SESSION.md
-21:39 docs/SESSION_SUMMARY.md
-21:39 .pytest_cache/v/cache/nodeids
-21:38 colortransport.py
-21:37 cadmap.py
-21:37 match3d.py
-21:36 shapematch.py
-21:35 astrostack.py
-21:33 annotate.py
-21:32 api.py
-21:32 backends_regions3.py
-21:15 studio_ui_crash.log
-20:21 docs/articles/exhibits/wing2d.ja.md
-20:21 docs/articles/assets/_wing2d_meta.json
-20:21 docs/articles/assets/wing2d_resample_loss_thumb.jpg
+02:35 engine.py
+02:35 tests/test_algo.py
+02:35 evolve_params.py
+02:35 pipeline_evolve.py
+02:35 backends_tomo.py
+02:34 docs/KNOWN_ISSUES.md
+02:34 backends_filters2.py
+02:34 tests/test_fallback_policy.py
+02:34 backends_decomp.py
+02:34 backends_typed.py
+02:34 backends_macro.py
+02:34 backends.py
+02:34 backend_safe.py
+02:34 api.py
+02:33 tests/test_difftest.py
 ```
 
 ---
