@@ -85,13 +85,31 @@ def test_sim_and_find_share_the_plate_centred_frame():
 
 
 def test_wrong_intrinsics_are_flagged_by_reprojection_rms():
+    """A wrong pixel aspect (fy) cannot be absorbed by the 6-DoF pose -> RMS gate fires.
+    (A wrong principal point mostly CAN be absorbed by re-posing a planar target, so
+    it is not a usable probe here.)"""
     T = _pose(0.2, 0.1, 0.0)
     sim = caltab.sim_caltab(CT, K, T, 256)
-    bad_K = {"fx": 500.0, "fy": 500.0, "cx": 40.0, "cy": 220.0}   # far-off principal point
+    bad_K = {"fx": 500.0, "fy": 300.0, "cx": 128.0, "cy": 128.0}
     with pytest.raises(ValueError, match="reprojection RMS"):
-        caltab.find_marks_and_pose(sim["image"], bad_K, CT, max_reproj_rms=0.5)
+        caltab.find_marks_and_pose(sim["image"], bad_K, CT, max_reproj_rms=3.0)
     res = caltab.find_marks_and_pose(sim["image"], bad_K, CT, max_reproj_rms=None)
-    assert res["reproj_rms"] > 0.5                                 # returned, not hidden
+    assert res["reproj_rms"] > 3.0                                 # returned, not hidden
+
+
+def test_non_planar_target_is_flagged():
+    """Marks that do not lie on a plane (curved target) leave a residual the gate reports."""
+    T = _pose(0.2, 0.1, 0.0)
+    pts = CT["points"]
+    world = np.column_stack([pts[:, 1], pts[:, 0], 0.05 * pts[:, 1] ** 2])
+    px = calib.project_3d_point(world, K, T)
+    img = np.zeros((256, 256))
+    yy, xx = np.mgrid[0:256, 0:256]
+    for row, col in px:
+        img[(yy - row) ** 2 + (xx - col) ** 2 <= 9] = 1.0
+    with pytest.raises(ValueError, match="reprojection RMS"):
+        caltab.find_marks_and_pose(img, K, CT, max_reproj_rms=1.0)
+    assert caltab.find_marks_and_pose(img, K, CT, max_reproj_rms=None)["reproj_rms"] > 1.0
 
 
 def test_too_few_marks_raises():
