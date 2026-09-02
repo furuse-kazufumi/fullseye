@@ -14,7 +14,6 @@ not a crop. Deterministic (fixed seeds); re-runs are idempotent.
 from __future__ import annotations
 
 import argparse
-import json
 import os
 import sys
 
@@ -24,11 +23,15 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 _ROOT = os.path.dirname(HERE)
 if _ROOT not in sys.path:
     sys.path.insert(0, _ROOT)
+if HERE not in sys.path:
+    sys.path.insert(0, HERE)
 
 import imgio
 import synth
+from gen_sample_images import merge_manifest   # shared owner-aware manifest merge (tools/)
 
 OUT = os.path.join(_ROOT, "studio_assets", "sample_images")
+OWNER = "gen_synth_samples"
 _N = 256
 
 
