@@ -215,15 +215,24 @@ def main():
           f"中央 {np.median(s_errs):.4f} px —— 上の誤差は推定の癖ではなく "
           f"**星が太った枚の重心が暴れる**ぶん")
     assert max(s_errs) < 0.15 < max(errs)
-    agree = {}
-    for model in A.ALIGN_MODELS:
-        _, info = A.frame_align(frames[0], frames[1], model=model)
-        want = truth["shifts"][0] - truth["shifts"][1]
-        agree[model] = float(np.hypot(info["shift_row"] - want[0],
-                                      info["shift_col"] - want[1]))
-    print("   並進しか無い対では 4 つのモデルが同じ答えに落ちる: "
+    def model_errs(series, tr):
+        out = {}
+        for model in A.ALIGN_MODELS:
+            _, info = A.frame_align(series[0], series[1], model=model)
+            w = tr["shifts"][0] - tr["shifts"][1]
+            out[model] = float(np.hypot(info["shift_row"] - w[0],
+                                        info["shift_col"] - w[1]))
+        return out
+
+    agree = model_errs(steady, s_truth)
+    noisy = model_errs(frames, truth)
+    print("   並進しか無い対では 4 つのモデルが同じ答えに落ちる(FWHM 一定): "
           + "  ".join(f"{k}={v:.4f}" for k, v in agree.items()))
+    print("   ただしシーイングが揺れると自由度の多いモデルほど悪くなる: "
+          + "  ".join(f"{k}={v:.4f}" for k, v in noisy.items())
+          + " —— 余った自由度が重心の揺れを吸ってしまう")
     assert max(agree.values()) < 0.2
+    assert noisy["affine"] > noisy["translation"]       # 実測で確かめた向き
 
     aligned, mats = A.align_frames(frames, reference=0)
     print(f"   基準(0 枚目)は変換を通さない: 画素が完全一致={np.array_equal(aligned[0], frames[0])}"
