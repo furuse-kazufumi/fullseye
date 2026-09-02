@@ -4,7 +4,7 @@ dim: reprconv
 category: index
 in: points × indices
 out: points
-examples: []
+examples: [representation_conversion]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -41,7 +41,7 @@ Raises:
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [representation_conversion](../../../../examples/representation_conversion.py) — `py -3.11 examples/representation_conversion.py`
 
 ## 型が繋がる次の op(`points` を入力に取れる)
 

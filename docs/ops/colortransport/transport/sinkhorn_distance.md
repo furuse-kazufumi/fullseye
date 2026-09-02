@@ -4,7 +4,7 @@ dim: colortransport
 category: transport
 in: signal × signal × matrix
 out: scalar
-examples: []
+examples: [color_transport]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -31,7 +31,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [color_transport](../../../../examples/color_transport.py) — `py -3.11 examples/color_transport.py`
 
 ## 型が繋がる次の op(`scalar` を入力に取れる)
 

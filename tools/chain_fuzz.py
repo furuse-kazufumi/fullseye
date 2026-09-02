@@ -1819,9 +1819,19 @@ TYPE_CHECKS = {
 #: register_spin/register_fpfh は「対応なしなら rmse=inf」の文書化済み番兵値、
 #: sdf_* は esdf の契約 inf を min/max 代数で厳密伝播 — sdf_ops モジュール docstring)
 #: mat_cond は「厳密特異なら inf を返す(raise しない)」を docstring 契約
+#: 2026-09-02、狙い撃ちの網羅パスで初めて到達して足した 2 つ:
+#:
+#:   * warp_by_plane — ``cval`` の既定が **nan**。射影で元画像の外に出た画素を
+#:     「値が無い」と言うのが契約で、0 で埋めると黒い縁が本物の絵に化ける。
+#:   * triangulate — 視線が平行な対応は有限の 3-D 点を決めない。同日まで
+#:     ``±inf`` を返しており、下流の ``depth > 0`` が **inf を「カメラ前方」として
+#:     数えて** recover_pose の候補選択を歪めていた(``inf > 0`` は True)。
+#:     NaN に直したので比較が False になり数えられない ―― NaN であること自体が
+#:     契約なのでここに載せる。
 NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          "sdf_union", "sdf_intersect", "sdf_subtract",
-                         "sdf_smooth_union", "sdf_offset", "mat_cond"
+                         "sdf_smooth_union", "sdf_offset", "mat_cond",
+                         "warp_by_plane", "triangulate"
                          } | NONFINITE_BY_CONTRACT_METRICS \
                          | NONFINITE_BY_CONTRACT_ASTRO_FORENSICS \
                          | NONFINITE_BY_CONTRACT_OPTICS \

@@ -3,7 +3,7 @@ op: sampson_distance
 dim: 3d
 category: two_view
 in: image2d × image2d
-out: measurement
+out: signal
 examples: [two_view_pose]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # sampson_distance — 3D `two_view` op
 
-- **データ種**: `image2d × image2d` → `measurement`
+- **データ種**: `image2d × image2d` → `signal`
 - **呼び出し**: `import twoview; twoview.sampson_distance(F, pts1, pts2)` (または `ops3d.get("sampson_distance")`)
 
 ## 使い方
@@ -28,9 +28,9 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 - [two_view_pose](../../../../examples_3d/two_view_pose.py) — `py -3.11 examples_3d/two_view_pose.py`
 
-## 型が繋がる次の op(`measurement` を入力に取れる)
+## 型が繋がる次の op(`signal` を入力に取れる)
 
-[vol_gaussian_psf](../restoration/vol_gaussian_psf.md) · [fuse_to_voxel](../fusion/fuse_to_voxel.md) · [fresnel_reflectance](../optics/fresnel_reflectance.md) · [snell_angle](../optics/snell_angle.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md)
 
 ## 同カテゴリ(`two_view`)
 

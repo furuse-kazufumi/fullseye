@@ -4,7 +4,7 @@ dim: astrostack
 category: photometry
 in: image2d × keypoints
 out: table
-examples: []
+examples: [astro_stacking]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -74,7 +74,7 @@ r_outer`` でない / *supersample* が 1 未満 / *gain* が非正 /
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [astro_stacking](../../../../examples/astro_stacking.py) — `py -3.11 examples/astro_stacking.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

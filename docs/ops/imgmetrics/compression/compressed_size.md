@@ -4,7 +4,7 @@ dim: imgmetrics
 category: compression
 in: image2d
 out: scalar
-examples: []
+examples: [image_quality_metrics]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -31,7 +31,7 @@ stdlib の ``zlib`` / ``lzma`` のみ。dtype と shape の違いが結果を変
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [image_quality_metrics](../../../../examples/image_quality_metrics.py) — `py -3.11 examples/image_quality_metrics.py`
 
 ## 型が繋がる次の op(`scalar` を入力に取れる)
 

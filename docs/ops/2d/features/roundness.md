@@ -5,7 +5,7 @@ category: features
 in: region
 out: feature
 halcon: roundness
-examples: [gallery2d_features]
+examples: [astro_stacking, gallery2d_features]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -33,6 +33,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [astro_stacking](../../../../examples/astro_stacking.py) — `py -3.11 examples/astro_stacking.py`
 - [gallery2d_features](../../../../examples/gallery2d_features.py) — `py -3.11 examples/gallery2d_features.py`
 
 ## 型が繋がる次の op(`feature` を入力に取れる)

@@ -4,7 +4,7 @@ dim: tomography
 category: forward
 in: 
 out: image2d
-examples: [tomography_reconstruct]
+examples: [ct_reconstruction, tomography_reconstruct]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -48,6 +48,7 @@ difference is entirely the partial-volume edge.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [ct_reconstruction](../../../../examples/ct_reconstruction.py) — `py -3.11 examples/ct_reconstruction.py`
 - [tomography_reconstruct](../../../../examples/tomography_reconstruct.py) — `py -3.11 examples/tomography_reconstruct.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)

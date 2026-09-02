@@ -4,7 +4,7 @@ dim: astrostack
 category: synth
 in: 
 out: image2d
-examples: []
+examples: [astro_stacking]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -80,7 +80,7 @@ Ground truth it reproduces(``tests/test_astrostack.py`` で固定):
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [astro_stacking](../../../../examples/astro_stacking.py) — `py -3.11 examples/astro_stacking.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

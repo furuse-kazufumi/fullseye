@@ -4,7 +4,7 @@ dim: acoustics
 category: transform
 in: 
 out: table
-examples: []
+examples: [acoustic_condition_monitoring]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -67,7 +67,7 @@ is off by a *gain*, which is the failure that looks like a working system.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [acoustic_condition_monitoring](../../../../examples/acoustic_condition_monitoring.py) — `py -3.11 examples/acoustic_condition_monitoring.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

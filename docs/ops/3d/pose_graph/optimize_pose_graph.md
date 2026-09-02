@@ -3,7 +3,7 @@ op: optimize_pose_graph
 dim: 3d
 category: pose_graph
 in: pose
-out: pose
+out: table
 examples: [pose_graph_slam]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # optimize_pose_graph — 3D `pose_graph` op
 
-- **データ種**: `pose` → `pose`
+- **データ種**: `pose` → `table`
 - **呼び出し**: `import pose_graph; pose_graph.optimize_pose_graph(poses_init, edges, fix_first=True, max_iter=200)` (または `ops3d.get("optimize_pose_graph")`)
 
 ## 使い方
@@ -28,9 +28,9 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 - [pose_graph_slam](../../../../examples_3d/pose_graph_slam.py) — `py -3.11 examples_3d/pose_graph_slam.py`
 
-## 型が繋がる次の op(`pose` を入力に取れる)
+## 型が繋がる次の op(`table` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [pose_error](../metrics/pose_error.md) · [bundle_adjust](../bundle_adjust/bundle_adjust.md) · [mean_reprojection_error](../bundle_adjust/mean_reprojection_error.md) · [relative_pose](relative_pose.md) · [mean_edge_error](mean_edge_error.md) · [rotation_translation_error](../registration_metrics/rotation_translation_error.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md)
 
 ## 同カテゴリ(`pose_graph`)
 

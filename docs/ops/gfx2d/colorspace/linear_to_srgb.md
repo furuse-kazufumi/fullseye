@@ -4,7 +4,7 @@ dim: gfx2d
 category: colorspace
 in: rgb
 out: rgb
-examples: []
+examples: [gfx2d_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -27,7 +27,7 @@ Linear light back to sRGB encoding. Exact inverse of :func:`srgb_to_linear`.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [gfx2d_scene](../../../../examples/gfx2d_scene.py) — `py -3.11 examples/gfx2d_scene.py`
 
 ## 型が繋がる次の op(`rgb` を入力に取れる)
 

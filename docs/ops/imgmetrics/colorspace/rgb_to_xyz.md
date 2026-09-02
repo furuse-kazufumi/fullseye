@@ -4,7 +4,7 @@ dim: imgmetrics
 category: colorspace
 in: rgbimage
 out: rgbimage
-examples: []
+examples: [image_quality_metrics]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -27,7 +27,7 @@ sRGB(``(..., 3)``)→ CIE XYZ。伝達関数を外してから行列を掛ける
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [image_quality_metrics](../../../../examples/image_quality_metrics.py) — `py -3.11 examples/image_quality_metrics.py`
 
 ## 型が繋がる次の op(`rgbimage` を入力に取れる)
 

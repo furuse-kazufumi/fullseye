@@ -4,7 +4,7 @@ dim: tomography
 category: reconstruct
 in: sinogram
 out: image2d
-examples: []
+examples: [ct_reconstruction]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -59,7 +59,7 @@ one is an integral transform, and the only thing they share is a word.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [ct_reconstruction](../../../../examples/ct_reconstruction.py) — `py -3.11 examples/ct_reconstruction.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

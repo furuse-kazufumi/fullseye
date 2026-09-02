@@ -4,7 +4,7 @@ dim: volcolor
 category: slice
 in: rgbvolume
 out: rgbimage
-examples: []
+examples: [voxel_labels_color]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -38,7 +38,7 @@ a *center* outside the volume, or a negative *gap*.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [voxel_labels_color](../../../../examples/voxel_labels_color.py) — `py -3.11 examples/voxel_labels_color.py`
 
 ## 型が繋がる次の op(`rgbimage` を入力に取れる)
 

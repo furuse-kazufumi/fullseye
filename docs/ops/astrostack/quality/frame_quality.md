@@ -4,7 +4,7 @@ dim: astrostack
 category: quality
 in: image2d
 out: table
-examples: []
+examples: [astro_stacking]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -53,7 +53,7 @@ Returns dict(``table`` 語彙)。キーは ``n_stars`` / ``background`` /
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [astro_stacking](../../../../examples/astro_stacking.py) — `py -3.11 examples/astro_stacking.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

@@ -4,7 +4,7 @@ dim: quat
 category: algebra
 in: qimage × qimage
 out: qimage
-examples: []
+examples: [quaternion_monogenic]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -49,7 +49,7 @@ wrong axis and produce an image-shaped answer to a different question.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [quaternion_monogenic](../../../../examples/quaternion_monogenic.py) — `py -3.11 examples/quaternion_monogenic.py`
 
 ## 型が繋がる次の op(`qimage` を入力に取れる)
 

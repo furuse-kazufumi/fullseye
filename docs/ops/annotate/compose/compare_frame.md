@@ -4,7 +4,7 @@ dim: annotate
 category: compose
 in: image2d × image2d
 out: image2d
-examples: []
+examples: [annotate_gallery]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -52,7 +52,7 @@ ValueError
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [annotate_gallery](../../../../examples/annotate_gallery.py) — `py -3.11 examples/annotate_gallery.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

@@ -5,7 +5,7 @@ category: rank
 in: image
 out: image
 halcon: median_image
-examples: [consumer_onocollo, gallery2d_smoothing_rank, lightfield_depth, perception_pipeline, photon_timeresolved, quickstart, representation_roundtrip, specular_photometric]
+examples: [astro_stacking, consumer_onocollo, ct_reconstruction, gallery2d_smoothing_rank, lightfield_depth, perception_pipeline, photon_timeresolved, quickstart, representation_roundtrip, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -33,7 +33,9 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [astro_stacking](../../../../examples/astro_stacking.py) — `py -3.11 examples/astro_stacking.py`
 - [consumer_onocollo](../../../../examples/consumer_onocollo.py) — `py -3.11 examples/consumer_onocollo.py`
+- [ct_reconstruction](../../../../examples/ct_reconstruction.py) — `py -3.11 examples/ct_reconstruction.py`
 - [gallery2d_smoothing_rank](../../../../examples/gallery2d_smoothing_rank.py) — `py -3.11 examples/gallery2d_smoothing_rank.py`
 - [lightfield_depth](../../../../examples/lightfield_depth.py) — `py -3.11 examples/lightfield_depth.py`
 - [perception_pipeline](../../../../examples/perception_pipeline.py) — `py -3.11 examples/perception_pipeline.py`

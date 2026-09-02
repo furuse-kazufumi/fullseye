@@ -4,7 +4,7 @@ dim: imgforensics
 category: noise
 in: image2d
 out: image2d
-examples: []
+examples: [image_forensics_audit]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -47,7 +47,7 @@ Immerkær 1996 の 3x3 マスクで高周波成分を取り、``block`` 角の�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [image_forensics_audit](../../../../examples/image_forensics_audit.py) — `py -3.11 examples/image_forensics_audit.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

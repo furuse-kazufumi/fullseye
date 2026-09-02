@@ -4,7 +4,7 @@ dim: imgmetrics
 category: fidelity
 in: image2d × image2d
 out: image2d
-examples: []
+examples: [image_quality_metrics]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -29,7 +29,7 @@ SSIM の**マップ**(平均を取る前)。どこが似ていないかを絵で
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [image_quality_metrics](../../../../examples/image_quality_metrics.py) — `py -3.11 examples/image_quality_metrics.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
