@@ -1254,7 +1254,9 @@ def filtered_backprojection(sinogram, angles_deg=None, size=None,
     :param filter_name: one of :data:`FILTERS`.
     :param cutoff: fraction of Nyquist to keep, ``(0, 1]``.
     :param span_deg: angular range for the ``d(theta)`` weight; ``None`` -> the
-        median angular step.
+        range the views actually cover, inferred from the angle list (exact for
+        a uniform grid over any span and for any full-coverage irregular set
+        such as golden angle; see :func:`_span_weight`).
     :returns: ``(size, size)`` float64 image.
     :raises ValueError: on a non-2-D or non-finite sinogram, an angle count that
         disagrees with the row count, an unknown filter, a cutoff outside
