@@ -180,15 +180,30 @@ class PipelineModel:
 
     def __init__(self, image=None):
         self.image = None if image is None else np.asarray(image, np.float64)
-        self.stages: list[list] = []          # [ [name, a, b], ... ]
+        self._stages: list[list] = []         # [ [name, a, b], ... ]
+        #: display / config directive lines (dev_* / set_system / disp_*) that belong
+        #: to the program but are not stages; persisted in to_dict() when non-empty
+        self.directives: list[str] = []
+
+    @property
+    def stages(self):
+        return self._stages
+
+    @stages.setter
+    def stages(self, value):
+        # The ONE normalisation point: whatever a loader hands over (parser tuples,
+        # JSON lists, undo snapshots, recipes) becomes mutable [name, a, b] lists, so
+        # set_knobs / knob drags can never hit "'tuple' does not support item assignment".
+        self._stages = [_normalise_stage(s) for s in (value or [])]
 
     def set_image(self, arr):
         self.image = np.asarray(arr, np.float64)
 
     def add_stage(self, name, a=0.5, b=0.5):
-        if api.find_op(name) is None:
+        op = api.find_op(name)
+        if op is None:
             raise KeyError(name)
-        self.stages.append([name, float(a), float(b)])
+        self.stages.append([op.name, float(a), float(b)])     # canonical name (alias ok)
         return len(self.stages) - 1
 
     def remove_stage(self, i):
