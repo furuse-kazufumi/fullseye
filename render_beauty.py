@@ -222,6 +222,22 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
                         既定 2.5 度・12 本・pcf=0 相当で **0.667**、
                         12 度・24 本・pcf=1 で **0.176**(1/6 を超える段は 123→2)。
 
+      * ``brdf``        物体の反射則。``'phong'``(既定 = 従来どおり Lambert 拡散 + cos^n 鏡面)/
+                        ``'lambert'`` / ``'lommel_seeliger'`` / ``'hapke'``(惑星測光、
+                        ``render_shade.brdf_shade``)。phong 以外では鏡面を切り、``albedo`` は
+                        平均 1 に正規化した**色味**として掛ける(明るさは ``brdf_params`` の
+                        単一散乱アルベド ``w`` が決める。二重に掛けない)。
+      * ``brdf_params`` ``dict``(``w, g, B0, h, roughness_deg, multiple_scattering``)。
+      * ``shadow_method`` ``'map'``(既定 = shadow map + PCF)/ ``'raycast'``
+                        (``render_shadow.shadow_raycast``、階段・acne 無し)。
+      * ``sun_angular_diameter_deg`` raycast 時の光源視直径(太陽 0.53°)。半影の幅は
+                        「遮蔽物までの距離 × tan(視直径/2)」= 小惑星では数 cm(硬い影)。
+      * ``self_illumination`` 地形からの一回反射の近似係数(既定 0)。
+                        ``bounce = 係数 × albedo色 × (1 − AO) × 照らされた面の平均放射輝度``
+                        ―― 遮蔽された半球の分だけ隣の地形が見えており、その地形が平均的な
+                        明るさで光っているという近似(相互反射の厳密解ではない、要 ``ao=True``)。
+                        宇宙では環境光が無いので ``ambient=0`` とこれで影の底が決まる。
+
     fail-closed: 形状不正・非有限・空・``ss<1``・不正 ``material``/``tonemap``・不正な色/光/露出は
     ``ValueError``。決定的(乱数なし)。"""
     # --- 検証 ---------------------------------------------------------------
