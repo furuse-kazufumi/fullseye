@@ -1,39 +1,24 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
-<h2 style="color:#f5a524;margin:0 0 4px 0">airy_pattern — OPTICS <code style="color:#22d3bf">wave</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>image2d`</p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import optics; optics.airy_pattern(size=64, wavelength_um=0.55, f_number=5.6, pixel_pitch_um=0.5)</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;airy_pattern&quot;)</code>)</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">psf_from_opd — OPTICS <code style="color:#22d3bf">imaging_sim</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import lensimage; lensimage.psf_from_opd(system, field=None, size=None, wavelength_um=None, pixel_pitch_um=None, oversample=4)</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;psf_from_opd&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>The diffraction-limited PSF of a circular pupil (Airy pattern).</p>
-<p>`<code style="color:#22d3bf">I(r) = [2*J1(v)/v]^2</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">v = pi*r/(lambda*N)</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">r</code>` the radial</p>
-<p>distance in the image plane, `<code style="color:#22d3bf">N</code>` the working f-number. Sampled on a</p>
-<p>`<code style="color:#22d3bf">size x size</code>` grid centred between pixels for even *size* and on a pixel</p>
-<p>for odd *size*. The normalisation is <b>analytic</b> (`<code style="color:#22d3bf">I(0) = 1</code>` by the</p>
-<p>`<code style="color:#22d3bf">v -&gt; 0</code>` limit), not a division by the sampled maximum: for odd *size*</p>
-<p>the centre pixel is therefore exactly 1.0, and for even *size* the true</p>
-<p>peak falls between pixels so the largest *sample* is below it (0.9679 at</p>
-<p>`<code style="color:#22d3bf">size = 8</code>` with the defaults, measured). Rescaling to the sampled maximum</p>
-<p>instead would quietly change the physics with the parity of the grid.</p>
-<p>Returns a `<code style="color:#22d3bf">(size, size)</code>` float64 intensity image.</p>
-<p>Ground truth it reproduces (measured, `<code style="color:#22d3bf">tests/test_optics.py</code>`): the first</p>
-<p>dark ring sits at the first zero of `<code style="color:#22d3bf">J1</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">r = 1.2197*lambda*N</code>` — at</p>
-<p>`<code style="color:#22d3bf">lambda = 0.55 um</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">N = 5.6</code><code style="color:#22d3bf"> that is </code><code style="color:#22d3bf">3.7567 um</code>`, and the sampled</p>
-<p>radial minimum lands at `<code style="color:#22d3bf">3.760 um</code>` on a 0.01 um grid (0.3 of a sample</p>
-<p>away, which is the sampling, not an error); the peak is exactly 1.0 at the</p>
-<p>centre and the pattern is symmetric to 1e-16.</p>
-<p>The encircled energy inside that ring is the textbook 83.8% of the *whole</p>
-<p>infinite* pattern — which a finite grid cannot measure: the Airy tails fall</p>
-<p>off only as `<code style="color:#22d3bf">1/r^3</code>`, so a 25.6 um half-width grid reports 0.857 and a</p>
-<p>51.2 um one 0.847 (both measured). The number is quoted here as physics,</p>
-<p>not as something this op returns.</p>
-<p>The `<code style="color:#22d3bf">v -&gt; 0</code>` limit is evaluated <b>explicitly</b> as 1.0 rather than left to</p>
-<p>`<code style="color:#22d3bf">0/0</code>`: that division is the classic silent-NaN in every hand-rolled Airy</p>
-<p>routine, and the centre pixel is exactly where it bites.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *size* outside </code><code style="color:#22d3bf">[2, MAX_GRID]</code>`; non-positive or</p>
-<p>non-finite *wavelength_um*, *f_number*, *pixel_pitch_um*.</p>
-<p>Scalar, aberration-free, unobstructed circular pupil, low NA. A central</p>
-<p>obscuration (a mirror telescope) changes the ring structure; high NA needs a</p>
-<p>vector treatment. For the *measured* PSF of a real system use</p>
-<p>:func:<code style="color:#22d3bf">psf_to_mtf</code> on an image of a point source instead.</p>
+<p>Diffraction PSF of the real, aberrated pupil (`<code style="color:#22d3bf">image2d</code>`, sums to 1).</p>
+<p>The pupil function `<code style="color:#22d3bf">P = mask · exp(i·2π·W)</code>` comes from</p>
+<p>:func:<code style="color:#22d3bf">raytrace.opd_samples</code> (*W* in waves on a `<code style="color:#22d3bf">size × size</code>` grid over the</p>
+<p>exit pupil; `<code style="color:#22d3bf">size=None</code>` picks a grid that keeps the phase below 0.4 waves</p>
+<p>per sample, up to :data:<code style="color:#22d3bf">MAX_PUPIL_SAMPLES</code>; an explicit *size* that aliases</p>
+<p>is refused). The PSF is `<code style="color:#22d3bf">|FFT(P)|²</code>` on a zero-padded grid whose sample</p>
+<p>spacing is `<code style="color:#22d3bf">λ·F#·(size−1)/M ≈ λ·F#/oversample</code>` with the working</p>
+<p>f-number `<code style="color:#22d3bf">F# = 1/(2·NA_image)</code><code style="color:#22d3bf"> from :func:</code>raytrace.paraxial_trace`.</p>
+<p>With *pixel_pitch_um* the fine PSF is <b>area-integrated</b> onto detector</p>
+<p>pixels of that pitch (each fine sample is binned into the pixel it falls</p>
+<p>in; the pitch must not be finer than the sample spacing).</p>
+<p>Ground truth (`<code style="color:#22d3bf">tests/test_lensimage.py</code>`): an unaberrated pupil (the</p>
+<p>singlet stopped to a 1 mm semi-aperture) gives the Airy pattern — first</p>
+<p>dark ring at `<code style="color:#22d3bf">1.22·λ·F#</code>` within 3 %, 83.8 % ± 1 % of the energy inside</p>
+<p>it; the f/4 singlet (11 waves of spherical aberration) has a Strehl ratio</p>
+<p>below 0.05 (peak versus the unaberrated peak of the same pupil).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>
@@ -50,11 +35,11 @@
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:optics_imaging">optics_imaging</a> — <code style="color:#22d3bf">py -3.11 examples/optics_imaging.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lens_defect_dataset_demo">lens_defect_dataset_demo</a> — <code style="color:#22d3bf">py -3.11 examples/lens_defect_dataset_demo.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="opoptics:fraunhofer_pattern">fraunhofer_pattern</a> · <a style="color:#22d3bf" href="opoptics:psf_to_mtf">psf_to_mtf</a> · <a style="color:#22d3bf" href="opoptics:render_through_lens">render_through_lens</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">wave</code>)</h3>
-<p><a style="color:#22d3bf" href="opoptics:angular_spectrum_propagate">angular_spectrum_propagate</a> · <a style="color:#22d3bf" href="opoptics:fraunhofer_pattern">fraunhofer_pattern</a> · <a style="color:#22d3bf" href="opoptics:gaussian_beam">gaussian_beam</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">imaging_sim</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:distortion_map">distortion_map</a> · <a style="color:#22d3bf" href="opoptics:render_through_lens">render_through_lens</a> · <a style="color:#22d3bf" href="opoptics:defect_dataset">defect_dataset</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<p>*Provenance: optics.py — OPTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>*Provenance: lensimage.py — OPTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
 <p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

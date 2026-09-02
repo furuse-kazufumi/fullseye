@@ -40,9 +40,17 @@ Conventions (every function follows these; they are the textbook ones — Welfor
   surface, is vignetted by a semi-aperture, or suffers total internal reflection
   is reported as ``NaN`` rather than silently clipped.
 
-Glass: a surface's medium may be a plain index or a ``(n_d, V_d)`` pair (index at
-the d line and Abbe number); ``refractive_index`` evaluates it at any wavelength
-with a two-term Cauchy fit through the d line and the F–C dispersion.
+Glass: a surface's medium may be a plain index, a ``(n_d, V_d)`` pair (index at
+the d line and Abbe number — ``glass`` fits a two-term Cauchy model through the
+d line and the F–C dispersion), a catalogue name such as ``"N-BK7"`` (a real
+Sellmeier curve, see ``glass_catalog``), or a ``sellmeier(...)`` dict;
+``refractive_index`` evaluates any of them at any wavelength.
+
+Aspheres: a surface may carry even polynomial deformation coefficients
+``asph=(A4, A6, A8, …)`` added to the conic sag, ``z = z_conic(r) + A4 r⁴ +
+A6 r⁶ + …`` (mm⁻³, mm⁻⁵, … — the coefficients of the *sag in mm* as a function
+of *r in mm*). Real rays are intersected by Newton iteration from the conic
+intersection; ``seidel_coefficients`` includes the fourth-order term ``A4``.
 """
 from __future__ import annotations
 
@@ -104,13 +112,111 @@ def glass(nd, vd):
     return {"nd": nd, "vd": vd, "A": A, "B": B}
 
 
+#: Three-term Sellmeier coefficients ``(B1, B2, B3, C1, C2, C3)`` — ``n² − 1 =
+#: Σ B_i λ² / (λ² − C_i)`` with λ in µm — for a small set of catalogue glasses
+#: and crystals. The Schott "N-" values are the manufacturer's published fit
+#: constants (Schott optical glass data sheets, 2017 catalogue); fused silica is
+#: Malitson (1965), CaF2 Malitson (1963), sapphire (ordinary ray) Malitson &
+#: Dodge (1972). ``tests/test_raytrace.py`` checks every entry's d-line index
+#: and Abbe number against the catalogue figures, so a typo cannot survive.
+#: Valid over the visible / near infrared (≈0.3–2.3 µm); ``refractive_index``
+#: refuses wavelengths outside ``_SELLMEIER_RANGE``.
+_SELLMEIER = {
+    "N-BK7":   (1.03961212, 0.231792344, 1.01046945, 0.00600069867, 0.0200179144, 103.560653),
+    "N-K5":    (1.08511833, 0.199562005, 0.930511663, 0.00661099503, 0.024110866, 111.982777),
+    "N-BAK4":  (1.28834642, 0.132817724, 0.945395373, 0.00779980626, 0.0315631177, 105.965875),
+    "N-SK16":  (1.34317774, 0.241144399, 0.994317969, 0.00704687339, 0.0229005, 92.7508526),
+    "N-SSK5":  (1.59222659, 0.103520774, 1.05174016, 0.00920284626, 0.0423530072, 106.927374),
+    "N-BAF10": (1.5851495, 0.143559385, 1.08521269, 0.00926681282, 0.0424489805, 105.613573),
+    "N-LAK22": (1.14229781, 0.535138441, 1.04088385, 0.00585778594, 0.0198546147, 100.834017),
+    "N-LAK9":  (1.46231905, 0.344399589, 1.15508372, 0.00724270156, 0.0243353131, 85.4686868),
+    "N-LASF9": (2.00029547, 0.298926886, 1.80691843, 0.0121426017, 0.0538736236, 156.530829),
+    "N-FK51A": (0.971247817, 0.216901417, 0.904651666, 0.00472301995, 0.0153575612, 168.68133),
+    "N-F2":    (1.39757037, 0.159201403, 1.2686543, 0.00995906143, 0.0546931752, 119.248346),
+    "N-SF2":   (1.47343127, 0.163681849, 1.36920899, 0.0109019098, 0.0585683687, 127.404933),
+    "N-SF5":   (1.52481889, 0.187882145, 1.42729911, 0.011254756, 0.0588995392, 129.141675),
+    "N-SF10":  (1.62153902, 0.256287842, 1.64447552, 0.0122241457, 0.0595736775, 147.468793),
+    "N-SF11":  (1.73759695, 0.313747346, 1.89878101, 0.013188707, 0.0623068142, 155.23629),
+    "N-SF6":   (1.77931763, 0.338149866, 2.08734474, 0.0133714182, 0.0617533621, 174.01759),
+    "N-SF57":  (1.87543831, 0.37375749, 2.30001797, 0.0141749518, 0.0640509927, 177.389795),
+    "SILICA":  (0.6961663, 0.4079426, 0.8974794, 0.0684043 ** 2, 0.1162414 ** 2, 9.896161 ** 2),
+    "CAF2":    (0.5675888, 0.4710914, 3.8484723, 0.050263605 ** 2, 0.1003909 ** 2, 34.649040 ** 2),
+    "SAPPHIRE": (1.4313493, 0.65054713, 5.3414021, 0.0726631 ** 2, 0.1193242 ** 2, 18.028251 ** 2),
+}
+_SELLMEIER_RANGE = (0.3, 2.3)
+_GLASS_ALIASES = {"BK7": "N-BK7", "FUSED_SILICA": "SILICA", "SIO2": "SILICA", "FLUORITE": "CAF2",
+                  "AL2O3": "SAPPHIRE", "SF11": "N-SF11", "SF2": "N-SF2", "F2": "N-F2", "SK16": "N-SK16"}
+
+
+def _catalog_key(name):
+    if not isinstance(name, str):
+        raise ValueError("a glass name must be a string, got %r" % type(name).__name__)
+    key = name.strip().upper().replace(" ", "")
+    key = _GLASS_ALIASES.get(key, key)
+    if key not in _SELLMEIER:
+        raise ValueError("unknown glass %r (catalogue: %s)" % (name, ", ".join(sorted(_SELLMEIER))))
+    return key
+
+
+def sellmeier(B1, B2, B3, C1, C2, C3, name="custom"):
+    """A dispersive medium from three-term Sellmeier constants (``table``).
+
+    ``n²(λ) − 1 = B1 λ²/(λ² − C1) + B2 λ²/(λ² − C2) + B3 λ²/(λ² − C3)`` with λ in
+    µm (the form every glass maker publishes). Returns ``{"name", "sellmeier",
+    "nd", "vd", "offset"}`` — *nd* / *vd* are **evaluated** from the curve, so
+    they can be checked against the data sheet. ``offset`` (0) is an additive
+    index shift used by :func:`tolerance_analysis` for melt-to-melt variation.
+    """
+    coef = tuple(_finite(v, k, nonneg=True) for v, k in zip((B1, B2, B3, C1, C2, C3), ("B1", "B2", "B3", "C1", "C2", "C3")))
+    g = {"name": str(name), "sellmeier": coef, "offset": 0.0}
+    nd = refractive_index(g, WL_D)
+    nf = refractive_index(g, WL_F)
+    nc = refractive_index(g, WL_C)
+    if not (nf > nc > 0):
+        raise ValueError("Sellmeier constants give anomalous dispersion in the visible (n_F <= n_C)")
+    g["nd"] = nd
+    g["vd"] = (nd - 1.0) / (nf - nc)
+    return g
+
+
+def glass_catalog(name=None):
+    """A catalogue glass by name (``table``), or the list of names when *name* is None.
+
+    Names: Schott ``"N-BK7"``, ``"N-K5"``, ``"N-BAK4"``, ``"N-SK16"``, ``"N-SSK5"``,
+    ``"N-BAF10"``, ``"N-LAK22"``, ``"N-LAK9"``, ``"N-LASF9"``, ``"N-FK51A"``,
+    ``"N-F2"``, ``"N-SF2"``, ``"N-SF5"``, ``"N-SF10"``, ``"N-SF11"``, ``"N-SF6"``,
+    ``"N-SF57"`` and the crystals ``"SILICA"`` (fused), ``"CAF2"``, ``"SAPPHIRE"``
+    (ordinary ray); case-insensitive, a few aliases (``"BK7"``, ``"SF11"``,
+    ``"fused_silica"``, ``"fluorite"``). Any surface's ``n`` may simply be the
+    name — ``lens_system`` resolves it. The returned dict is the
+    :func:`sellmeier` form with the evaluated ``nd`` / ``vd``.
+    """
+    if name is None:
+        return sorted(_SELLMEIER)
+    key = _catalog_key(name)
+    g = sellmeier(*_SELLMEIER[key], name=key)
+    return g
+
+
 def refractive_index(medium, wavelength_um=WL_D):
     """Index of *medium* at *wavelength_um*.
 
-    *medium* is a number (dispersion-free), a ``(nd, vd)`` pair, or a dict from
-    :func:`glass`. Air (1.0) and vacuum are returned unchanged.
+    *medium* is a number (dispersion-free), a ``(nd, vd)`` pair, a dict from
+    :func:`glass` or :func:`sellmeier`, or a catalogue name (:func:`glass_catalog`).
+    Air (1.0) and vacuum are returned unchanged.
     """
     wl = _finite(wavelength_um, "wavelength_um", positive=True)
+    if isinstance(medium, str):
+        medium = glass_catalog(medium)
+    if isinstance(medium, dict) and "sellmeier" in medium:
+        if not (_SELLMEIER_RANGE[0] <= wl <= _SELLMEIER_RANGE[1]):
+            raise ValueError("wavelength %.4g um is outside the Sellmeier fit range %s" % (wl, _SELLMEIER_RANGE))
+        B1, B2, B3, C1, C2, C3 = medium["sellmeier"]
+        l2 = wl * wl
+        n2 = 1.0 + B1 * l2 / (l2 - C1) + B2 * l2 / (l2 - C2) + B3 * l2 / (l2 - C3)
+        if not (n2 > 0 and math.isfinite(n2)):
+            raise ValueError("Sellmeier curve is singular at %.4g um" % wl)
+        return float(math.sqrt(n2) + medium.get("offset", 0.0))
     if isinstance(medium, dict) and "A" in medium:
         return float(medium["A"] + medium["B"] / wl ** 2)
     if isinstance(medium, (tuple, list)) and len(medium) == 2:
@@ -124,11 +230,29 @@ def refractive_index(medium, wavelength_um=WL_D):
 
 def _dispersion(medium):
     """``n_F - n_C`` of *medium* (0 for a dispersion-free index)."""
+    if isinstance(medium, str) or (isinstance(medium, dict) and "sellmeier" in medium):
+        return refractive_index(medium, WL_F) - refractive_index(medium, WL_C)
     if isinstance(medium, dict) and "A" in medium:
         return float(medium["B"] * (1.0 / WL_F ** 2 - 1.0 / WL_C ** 2))
     if isinstance(medium, (tuple, list)) and len(medium) == 2:
         return (float(medium[0]) - 1.0) / float(medium[1])
     return 0.0
+
+
+def _index_offset(medium, delta):
+    """*medium* with its index shifted by *delta* at every wavelength (tolerancing)."""
+    if isinstance(medium, str):
+        medium = glass_catalog(medium)
+    if isinstance(medium, dict) and "sellmeier" in medium:
+        q = dict(medium); q["offset"] = float(medium.get("offset", 0.0)) + delta
+        return q
+    if isinstance(medium, dict) and "A" in medium:
+        q = dict(medium); q["A"] = medium["A"] + delta
+        return q
+    if isinstance(medium, (tuple, list)):
+        return (float(medium[0]) + delta, float(medium[1]))
+    n = float(medium) + delta
+    return n if n >= 1.0 else float(medium)
 
 
 # --------------------------------------------------------------------------- #
@@ -139,7 +263,7 @@ def lens_system(surfaces=None, stop=None, object_mm=INF, wavelength_um=WL_D,
     """Build a validated sequential prescription (the ``table`` every other op consumes).
 
     *surfaces* is a list; each entry is a dict ``{"R", "t", "n", "k", "ap",
-    "mirror", "decenter", "tilt"}`` or a tuple ``(R, t, n[, k[, ap]])``:
+    "mirror", "decenter", "tilt", "asph"}`` or a tuple ``(R, t, n[, k[, ap]])``:
 
     * ``R`` radius (mm, ``inf`` for flat), ``t`` thickness to the next surface
       (mm, the last one is the distance to the image plane when *image_mm* is
@@ -147,7 +271,8 @@ def lens_system(surfaces=None, stop=None, object_mm=INF, wavelength_um=WL_D,
       ``n`` medium after the surface (index, ``(nd, vd)`` or :func:`glass`),
       ``k`` conic (default 0), ``ap`` semi-aperture in mm (default ``None`` =
       unlimited), ``mirror`` bool, ``decenter`` ``(dx, dy)`` mm, ``tilt``
-      ``(ax, ay)`` degrees about x and y.
+      ``(ax, ay)`` degrees about x and y, ``asph`` even aspheric coefficients
+      ``(A4, A6, A8, …)`` in mm⁻³, mm⁻⁵, … (default none = pure conic).
     * *stop*: index of the aperture-stop surface (default: the first surface).
       The stop's ``ap`` is the stop radius (required unless every surface has
       one, in which case the smallest is used).
@@ -190,10 +315,23 @@ def lens_system(surfaces=None, stop=None, object_mm=INF, wavelength_um=WL_D,
         tilt = tuple(float(v) for v in s.get("tilt", (0.0, 0.0)))
         if len(dec) != 2 or len(tilt) != 2 or not all(map(math.isfinite, dec + tilt)):
             raise ValueError("surface %d: decenter/tilt must be finite pairs" % i)
+        asph = s.get("asph", None)
+        if asph is None:
+            asph = ()
+        elif isinstance(asph, (int, float, bool)) or isinstance(asph, str):
+            raise ValueError("surface %d: asph must be a sequence (A4, A6, ...) of coefficients" % i)
+        else:
+            asph = tuple(_finite(a, "surface %d asph[%d]" % (i, j)) for j, a in enumerate(asph))
+            if len(asph) > 8:
+                raise ValueError("surface %d: at most 8 aspheric coefficients (A4..A18)" % i)
+            while asph and asph[-1] == 0.0:
+                asph = asph[:-1]
+        if asph and R == INF and k != 0.0:
+            raise ValueError("surface %d: a flat base with a conic constant is meaningless" % i)
         if math.isfinite(R) and k > -1.0 and ap is not None and (1.0 + k) * (ap / R) ** 2 > 1.0:
             raise ValueError("surface %d: semi-aperture %.3g exceeds the conic's extent for R=%.3g" % (i, ap, R))
         out.append({"R": R, "t": t, "n": med, "k": k, "ap": ap, "mirror": mirror,
-                    "decenter": dec, "tilt": tilt, "n_value": n_now,
+                    "decenter": dec, "tilt": tilt, "asph": asph, "n_value": n_now,
                     "dn": _dispersion(med)})
     stop = 0 if stop is None else int(stop)
     if not 0 <= stop < len(out):
@@ -435,7 +573,80 @@ def _intersect_conic(P, D, c, k):
     return t
 
 
-def _surface_normal(Q, c, k):
+def _sag(r2, c, k, asph=()):
+    """Surface sag z(r²) of the conic plus the even aspheric polynomial (NaN outside the conic)."""
+    r2 = np.asarray(r2, dtype=np.float64)
+    if c == 0.0:
+        z = np.zeros_like(r2)
+    else:
+        with np.errstate(invalid="ignore"):
+            root = np.sqrt(1.0 - (1.0 + k) * c * c * r2)
+            z = c * r2 / (1.0 + root)
+    if asph:
+        p = r2 * r2                                        # r^4
+        for a in asph:
+            z = z + a * p
+            p = p * r2
+    return z
+
+
+def _dsag_dr2(r2, c, k, asph=()):
+    """d z / d(r²) — the sag slope expressed per unit r² (so the normal is (−2x·s, −2y·s, 1))."""
+    r2 = np.asarray(r2, dtype=np.float64)
+    if c == 0.0:
+        s = np.zeros_like(r2)
+    else:
+        with np.errstate(invalid="ignore", divide="ignore"):
+            root = np.sqrt(1.0 - (1.0 + k) * c * c * r2)
+            s = c / (2.0 * root)                            # d/d(r²) of c r²/(1+√(1−(1+k)c²r²)) = c/(2√·)
+    if asph:
+        p = r2                                             # d(r^4)/d(r²) = 2 r²
+        m = 2.0
+        for a in asph:
+            s = s + a * m * p
+            p = p * r2
+            m += 1.0
+    return s
+
+
+def _intersect_asphere(P, D, c, k, asph, t0):
+    """Newton refinement of the conic intersection *t0* onto the aspheric surface."""
+    x, y, z = P[:, 0], P[:, 1], P[:, 2]
+    L, M, N = D[:, 0], D[:, 1], D[:, 2]
+    t = np.where(np.isfinite(t0), t0, 0.0)
+    ok = np.ones(len(t), bool)
+    for _ in range(40):
+        xx, yy, zz = x + t * L, y + t * M, z + t * N
+        r2 = xx * xx + yy * yy
+        F = zz - _sag(r2, c, k, asph)
+        s = _dsag_dr2(r2, c, k, asph)
+        dF = N - 2.0 * s * (xx * L + yy * M)
+        with np.errstate(invalid="ignore", divide="ignore"):
+            step = F / dF
+        step = np.where(np.isfinite(step), step, np.nan)
+        t = t - step
+        if np.all(np.abs(step[np.isfinite(step)]) < 1e-12) if np.any(np.isfinite(step)) else True:
+            break
+    xx, yy, zz = x + t * L, y + t * M, z + t * N
+    r2 = xx * xx + yy * yy
+    F = zz - _sag(r2, c, k, asph)
+    ok &= np.isfinite(t) & np.isfinite(F) & (np.abs(F) < 1e-8)
+    return np.where(ok, t, np.nan)
+
+
+def _intersect_surface(P, D, c, k, asph=()):
+    t = _intersect_conic(P, D, c, k)
+    if asph:
+        t = _intersect_asphere(P, D, c, k, asph, t)
+    return t
+
+
+def _surface_normal(Q, c, k, asph=()):
+    if asph:
+        r2 = Q[:, 0] ** 2 + Q[:, 1] ** 2
+        s = _dsag_dr2(r2, c, k, asph)
+        g = np.stack([-2.0 * s * Q[:, 0], -2.0 * s * Q[:, 1], np.ones(len(Q))], 1)
+        return g / np.linalg.norm(g, axis=1, keepdims=True)
     if c == 0.0:
         n = np.zeros_like(Q); n[:, 2] = -1.0
         return n
@@ -480,7 +691,7 @@ def trace_rays(system, origins, directions, wavelength_um=None, image_mm=None):
         off = np.array([s["decenter"][0], s["decenter"][1], z_vertex])
         Pl = (P - off) @ Rm                               # into the surface frame (R^T x)
         Dl = D @ Rm
-        t = _intersect_conic(Pl, Dl, c, k)
+        t = _intersect_surface(Pl, Dl, c, k, s["asph"])
         # a ray must move forward along its travel direction to reach the surface
         # (allow a tiny negative tolerance for rays already on the vertex plane)
         bad = ~np.isfinite(t) | (t < -1e-9)
@@ -489,7 +700,7 @@ def trace_rays(system, origins, directions, wavelength_um=None, image_mm=None):
         if s["ap"] is not None:
             r = np.hypot(Q[:, 0], Q[:, 1])
             bad |= r > s["ap"] * (1.0 + 1e-12)
-        nrm = _surface_normal(Q, c, k)
+        nrm = _surface_normal(Q, c, k, s["asph"])
         # orient the normal against the incoming ray
         flip = np.sum(nrm * Dl, axis=1) > 0
         nrm[flip] *= -1.0
@@ -800,8 +1011,10 @@ def seidel_coefficients(system, field=None):
         S_V   = −Σ (Ā/A)[Ā² y Δ(u/n) + H² c Δ(1/n)]   distortion
         C_L   = −Σ A y Δ(δn/n),  C_T = −Σ Ā y Δ(δn/n)  axial / lateral colour
 
-    plus the conic contribution ``k c³ (n'−n) y⁴`` to ``S_I`` (and its ``ȳ/y``
-    powers to S_II, S_III, S_V). Sums are in millimetres of wavefront times 8:
+    plus the aspheric deformation contribution ``8 G (n'−n) y⁴`` with ``G = k c³/8
+    + A4`` (conic and fourth-order coefficient) to ``S_I`` (and its ``ȳ/y``
+    powers to S_II, S_III, S_V); higher aspheric orders are fifth order and
+    above and do not enter the Seidel sums. Sums are in millimetres of wavefront times 8:
     the third-order wavefront at the pupil edge is ``W040 = S_I/8``,
     ``W131 = S_II/2``, ``W222 = S_III/2``, ``W220 = (S_III + S_IV)/4``,
     ``W311 = S_V/2`` (Welford's normalisation). ``waves`` gives the same
@@ -851,8 +1064,10 @@ def seidel_coefficients(system, field=None):
         CL = -A * ym[i] * ddn
         CT = -Ab * ym[i] * ddn
         kk = surf[i]["k"]
-        if kk != 0.0 and c[i] != 0.0 and abs(ym[i]) > 0:
-            dS = kk * c[i] ** 3 * (n[i + 1] - n[i]) * ym[i] ** 4
+        A4 = surf[i]["asph"][0] if surf[i]["asph"] else 0.0
+        G = kk * c[i] ** 3 / 8.0 + A4
+        if G != 0.0 and abs(ym[i]) > 0:
+            dS = 8.0 * G * (n[i + 1] - n[i]) * ym[i] ** 4
             ratio = yc[i] / ym[i]
             SI += dS; SII += dS * ratio; SIII += dS * ratio ** 2; SV += dS * ratio ** 3
         row = np.array([SI, SII, SIII, SIV, SV, CL, CT])
@@ -883,15 +1098,7 @@ def _perturbed(system, rng, tol):
         if tol.get("thickness_mm", 0) and s["t"] is not None:
             q["t"] = max(0.0, s["t"] + rng.uniform(-1, 1) * tol["thickness_mm"])
         if tol.get("index", 0) and not s["mirror"]:
-            base = s["n"]
-            if isinstance(base, dict) and "A" in base:
-                q["n"] = dict(base); q["n"]["A"] = base["A"] + rng.uniform(-1, 1) * tol["index"]
-            elif isinstance(base, (tuple, list)):
-                q["n"] = (float(base[0]) + rng.uniform(-1, 1) * tol["index"], float(base[1]))
-            else:
-                q["n"] = float(base) + rng.uniform(-1, 1) * tol["index"]
-                if q["n"] < 1.0:
-                    q["n"] = float(base)
+            q["n"] = _index_offset(s["n"], rng.uniform(-1, 1) * tol["index"])
         if tol.get("decenter_mm", 0):
             q["decenter"] = (s["decenter"][0] + rng.uniform(-1, 1) * tol["decenter_mm"],
                              s["decenter"][1] + rng.uniform(-1, 1) * tol["decenter_mm"])
@@ -963,7 +1170,7 @@ def tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, 
                 continue
             if key == "t" and s["t"] is None:
                 continue
-            if key == "n" and (s["mirror"] or isinstance(s["n"], dict)):
+            if key == "n" and s["mirror"]:
                 continue
             vals = []
             for sgn in (-1.0, 1.0):
@@ -974,9 +1181,7 @@ def tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, 
                 elif key == "t":
                     q["t"] = max(0.0, s["t"] + sgn * tol[tname])
                 elif key == "n":
-                    base = s["n"]
-                    q["n"] = (float(base[0]) + sgn * tol[tname], float(base[1])) if isinstance(base, (tuple, list)) \
-                        else float(base) + sgn * tol[tname]
+                    q["n"] = _index_offset(s["n"], sgn * tol[tname])
                 elif key == "decenter":
                     q["decenter"] = (s["decenter"][0], s["decenter"][1] + sgn * tol[tname])
                 else:
@@ -998,14 +1203,84 @@ def tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, 
 
 
 # --------------------------------------------------------------------------- #
+# chromatic behaviour
+# --------------------------------------------------------------------------- #
+def with_wavelength(system, wavelength_um):
+    """The same prescription evaluated at another wavelength (indices re-resolved)."""
+    _check_system(system)
+    return lens_system([dict(s) for s in system["surfaces"]], stop=system["stop"],
+                       object_mm=system["object_mm"], wavelength_um=wavelength_um,
+                       index_object=system["index_object"], image_mm=system["image_mm"],
+                       field=system["field"])
+
+
+def chromatic_shift(system, wavelengths=(WL_F, WL_D, WL_C), field=None, rings=6):
+    """Focal shift, image-height shift and spot size versus wavelength (``table``).
+
+    Re-evaluates the prescription at each wavelength (real dispersion for
+    catalogue / Sellmeier glasses, the Cauchy fit for ``(nd, vd)`` media): per
+    wavelength ``efl``, ``bfl``, the chief-ray image height at *field*, and the
+    RMS spot radius **on the reference (system-wavelength) image plane** — the
+    number a polychromatic sensor sees. Summaries: ``axial_color`` = BFL(first)
+    − BFL(last), ``lateral_color`` = height(first) − height(last), and
+    ``rms_polychromatic`` = RMS of all rays of all wavelengths pooled about
+    their common centroid. Needs at least two wavelengths.
+    """
+    _check_system(system)
+    wls = [_finite(w, "wavelength", positive=True) for w in (wavelengths if isinstance(wavelengths, (list, tuple)) else [wavelengths])]
+    if len(wls) < 2:
+        raise ValueError("chromatic_shift needs at least two wavelengths")
+    field = system["field"] if field is None else _finite(field, "field")
+    ref = paraxial_trace(system)
+    img_ref = system["image_mm"] if system["image_mm"] is not None else \
+        (system["surfaces"][-1]["t"] if system["surfaces"][-1]["t"] is not None else ref["bfl"])
+    rows = []
+    pool = []
+    for wl in wls:
+        sw = with_wavelength(system, wl)
+        p = paraxial_trace(sw)
+        b = ray_bundle(sw, field=field, rings=rings, image_mm=img_ref)
+        xy = b["image_xy"][b["valid"]]
+        if len(xy) == 0:
+            raise ValueError("no ray reached the image plane at %.4g um" % wl)
+        cen = xy.mean(0)
+        d = xy - cen
+        rows.append({"wavelength_um": wl, "efl": p["efl"], "bfl": p["bfl"],
+                     "chief_height": float(b["chief_xy"][1]),
+                     "rms_spot": float(np.sqrt(np.mean(d[:, 0] ** 2 + d[:, 1] ** 2))),
+                     "n_rays": int(len(xy))})
+        pool.append(xy)
+    allxy = np.concatenate(pool, 0)
+    cen = allxy.mean(0)
+    d = allxy - cen
+    return {"per_wavelength": rows,
+            "axial_color": rows[0]["bfl"] - rows[-1]["bfl"],
+            "lateral_color": rows[0]["chief_height"] - rows[-1]["chief_height"],
+            "efl_range": max(r["efl"] for r in rows) - min(r["efl"] for r in rows),
+            "rms_polychromatic": float(np.sqrt(np.mean(d[:, 0] ** 2 + d[:, 1] ** 2))),
+            "reference_image_mm": float(img_ref), "field": field}
+
+
+# --------------------------------------------------------------------------- #
 # convenience: a few classic prescriptions
 # --------------------------------------------------------------------------- #
 def example_system(name="singlet"):
     """A named example: ``"singlet"`` (plano-convex BK7, f≈100), ``"doublet"``
     (a cemented achromat, BK7/SF2, f≈100), ``"paraboloid"`` (f/2 paraboloid
-    mirror — stigmatic on axis), ``"sphere_mirror"`` (same radius, spherical)."""
+    mirror — stigmatic on axis), ``"sphere_mirror"`` (same radius, spherical),
+    ``"asphere"`` (plano-hyperbolic N-BK7 singlet, flat toward the object, exit
+    conic ``k = −n²`` — Descartes' stigmatic lens, f≈100 at f/4),
+    ``"catalog_doublet"`` (the doublet with real N-BK7 / N-SF2 Sellmeier glass)."""
     if name == "singlet":
         return lens_system()
+    if name == "asphere":
+        n = refractive_index("N-BK7")
+        return lens_system([{"R": INF, "t": 5.0, "n": "N-BK7", "ap": 12.5},
+                            {"R": -(n - 1.0) * 100.0, "t": None, "n": 1.0, "k": -n * n}], stop=0)
+    if name == "catalog_doublet":
+        return lens_system([{"R": 61.47, "t": 6.0, "n": "N-BK7", "ap": 12.5},
+                            {"R": -44.64, "t": 2.5, "n": "N-SF2"},
+                            {"R": -129.94, "t": None, "n": 1.0}], stop=0)
     if name == "doublet":
         return lens_system([{"R": 61.47, "t": 6.0, "n": (1.5168, 64.17), "ap": 12.5},
                             {"R": -44.64, "t": 2.5, "n": (1.6477, 33.85)},

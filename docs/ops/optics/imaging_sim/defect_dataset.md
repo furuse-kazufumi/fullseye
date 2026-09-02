@@ -1,25 +1,40 @@
 ---
-op: example_system
+op: defect_dataset
 dim: optics
-category: design
+category: imaging_sim
 in: 
 out: table
-examples: [lens_defect_dataset_demo, lens_design_demo]
+examples: [lens_defect_dataset_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
-# example_system — OPTICS `design` op
+# defect_dataset — OPTICS `imaging_sim` op
 
 - **データ種**: `` → `table`
-- **呼び出し**: `import raytrace; raytrace.example_system(name='singlet')` (または `opsoptics.get("example_system")`)
+- **呼び出し**: `import lensimage; lensimage.defect_dataset(n=8, system=None, size=(256, 256), kinds=('scratch', 'pits', 'crack', 'blob'), pixel_pitch_um=5.5, noise=True, seed=0, out_dir=None, zones=3, field_of_view=None, texture='orange_peel', max_defects=2)` (または `opsoptics.get("defect_dataset")`)
 
 ## 使い方
 
-A named example: ``"singlet"`` (plano-convex BK7, f≈100), ``"doublet"``
-(a cemented achromat, BK7/SF2, f≈100), ``"paraboloid"`` (f/2 paraboloid
-mirror — stigmatic on axis), ``"sphere_mirror"`` (same radius, spherical).
+Synthetic defect images through a designed lens, with aligned masks (``table``).
+
+Each of the *n* records draws 1–*max_defects* defects of the listed *kinds*
+(``defectgen`` scratch / pits / crack / blob with parameters sampled from
+*seed*) on a ``surface_texture`` background of *size*, renders the composite
+with :func:`render_through_lens` (*system* defaults to the cemented doublet
+of :func:`raytrace.example_system`; *noise* as there, default sensor
+noise on), and pushes **each defect's mask through the same distortion
+remap only** (nearest-neighbour, no blur) so the annotation sits where the
+blurred defect actually landed. A record is
+``{"image", "mask", "defects": [{"kind", "params", "bbox" [x, y, w, h],
+"area"}], "lens": {"efl", "fno", "rms_spot_center", "rms_spot_corner",
+"max_distortion_pct"}, "seed"}`` with arrays, or with file paths when
+*out_dir* is given (``img_0000.png`` / ``mask_0000.png`` written with
+``imgio.save`` plus a COCO-like ``annotations.json``: images, annotations
+with bbox/area/params, categories). Deterministic for *seed*; a defect
+that lands entirely outside the sensor after distortion is dropped from
+the annotations rather than reported with an empty box.
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -46,17 +61,16 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [lens_defect_dataset_demo](../../../../examples/lens_defect_dataset_demo.py) — `py -3.11 examples/lens_defect_dataset_demo.py`
-- [lens_design_demo](../../../../examples/lens_design_demo.py) — `py -3.11 examples/lens_design_demo.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[abcd_matrix](../geometric/abcd_matrix.md) · [wavefront_stats](../imaging/wavefront_stats.md) · [paraxial_trace](paraxial_trace.md) · [seidel_coefficients](seidel_coefficients.md) · [spot_stats](spot_stats.md) · [tolerance_analysis](tolerance_analysis.md) · [wavefront_from_opd](wavefront_from_opd.md) · [spot_diagram](spot_diagram.md)
+[abcd_matrix](../geometric/abcd_matrix.md) · [wavefront_stats](../imaging/wavefront_stats.md) · [paraxial_trace](../design/paraxial_trace.md) · [seidel_coefficients](../design/seidel_coefficients.md) · [spot_stats](../design/spot_stats.md) · [tolerance_analysis](../design/tolerance_analysis.md) · [wavefront_from_opd](../design/wavefront_from_opd.md) · [spot_diagram](../design/spot_diagram.md)
 
-## 同カテゴリ(`design`)
+## 同カテゴリ(`imaging_sim`)
 
-[lens_system](lens_system.md) · [thick_lens](thick_lens.md) · [glass](glass.md) · [paraxial_trace](paraxial_trace.md) · [seidel_coefficients](seidel_coefficients.md) · [spot_stats](spot_stats.md) · [tolerance_analysis](tolerance_analysis.md) · [wavefront_from_opd](wavefront_from_opd.md)
+[psf_from_opd](psf_from_opd.md) · [distortion_map](distortion_map.md) · [render_through_lens](render_through_lens.md)
 
 ---
-*Provenance: raytrace.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
+*Provenance: lensimage.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
 
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

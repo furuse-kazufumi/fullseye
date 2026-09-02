@@ -1,25 +1,38 @@
 ---
-op: example_system
+op: distortion_map
 dim: optics
-category: design
-in: 
+category: imaging_sim
+in: table
 out: table
-examples: [lens_defect_dataset_demo, lens_design_demo]
+examples: [lens_defect_dataset_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
-# example_system — OPTICS `design` op
+# distortion_map — OPTICS `imaging_sim` op
 
-- **データ種**: `` → `table`
-- **呼び出し**: `import raytrace; raytrace.example_system(name='singlet')` (または `opsoptics.get("example_system")`)
+- **データ種**: `table` → `table`
+- **呼び出し**: `import lensimage; lensimage.distortion_map(system, image_size=(256, 256), pixel_pitch_um=5.5, fields=None, order=2)` (または `opsoptics.get("distortion_map")`)
 
 ## 使い方
 
-A named example: ``"singlet"`` (plano-convex BK7, f≈100), ``"doublet"``
-(a cemented achromat, BK7/SF2, f≈100), ``"paraboloid"`` (f/2 paraboloid
-mirror — stigmatic on axis), ``"sphere_mirror"`` (same radius, spherical).
+Real chief-ray height versus the paraxial one, and the remap grid (``table``).
+
+Fields (degrees for an object at infinity, object heights in mm otherwise)
+default to 9 values from the axis to the sensor corner
+(``hypot(H, W)/2 · pitch``). For each, the real chief ray is traced to the
+image plane (``r_real``) and compared with the ideal height ``f·tanθ``
+(or ``m·H``); ``distortion_pct = (r_real − r_ideal)/r_ideal · 100`` —
+negative is barrel. A radial polynomial ``r_real = r(1 + k1 r² + k2 r⁴ …)``
+(*order* even terms) is fitted and inverted on a dense table to build
+``grid_rows`` / ``grid_cols`` — for every **real** sensor pixel, the
+fractional ideal-image pixel it sees (the inverse remap a renderer feeds to
+``scipy.ndimage.map_coordinates``). ``max_distortion_pct`` is at the
+corner. A paraboloid mirror with the stop on it and any system on axis give
+zero (< 1e-7 %); the plano-convex singlet (stop on its first surface) is
+barrel: −0.0059 % at the corner of a 2048 × 5.5 µm sensor (4.55°) and
+−0.065 % at 15°, the doublet −0.28 % at 15° (measured, pinned in the tests).
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -46,17 +59,16 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [lens_defect_dataset_demo](../../../../examples/lens_defect_dataset_demo.py) — `py -3.11 examples/lens_defect_dataset_demo.py`
-- [lens_design_demo](../../../../examples/lens_design_demo.py) — `py -3.11 examples/lens_design_demo.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[abcd_matrix](../geometric/abcd_matrix.md) · [wavefront_stats](../imaging/wavefront_stats.md) · [paraxial_trace](paraxial_trace.md) · [seidel_coefficients](seidel_coefficients.md) · [spot_stats](spot_stats.md) · [tolerance_analysis](tolerance_analysis.md) · [wavefront_from_opd](wavefront_from_opd.md) · [spot_diagram](spot_diagram.md)
+[abcd_matrix](../geometric/abcd_matrix.md) · [wavefront_stats](../imaging/wavefront_stats.md) · [paraxial_trace](../design/paraxial_trace.md) · [seidel_coefficients](../design/seidel_coefficients.md) · [spot_stats](../design/spot_stats.md) · [tolerance_analysis](../design/tolerance_analysis.md) · [wavefront_from_opd](../design/wavefront_from_opd.md) · [spot_diagram](../design/spot_diagram.md)
 
-## 同カテゴリ(`design`)
+## 同カテゴリ(`imaging_sim`)
 
-[lens_system](lens_system.md) · [thick_lens](thick_lens.md) · [glass](glass.md) · [paraxial_trace](paraxial_trace.md) · [seidel_coefficients](seidel_coefficients.md) · [spot_stats](spot_stats.md) · [tolerance_analysis](tolerance_analysis.md) · [wavefront_from_opd](wavefront_from_opd.md)
+[psf_from_opd](psf_from_opd.md) · [render_through_lens](render_through_lens.md) · [defect_dataset](defect_dataset.md)
 
 ---
-*Provenance: raytrace.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
+*Provenance: lensimage.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
 
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

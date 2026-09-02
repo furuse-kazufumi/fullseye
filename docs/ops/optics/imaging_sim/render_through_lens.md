@@ -1,25 +1,50 @@
 ---
-op: example_system
+op: render_through_lens
 dim: optics
-category: design
-in: 
-out: table
-examples: [lens_defect_dataset_demo, lens_design_demo]
+category: imaging_sim
+in: image2d × table
+out: image2d
+examples: [lens_defect_dataset_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
-# example_system — OPTICS `design` op
+# render_through_lens — OPTICS `imaging_sim` op
 
-- **データ種**: `` → `table`
-- **呼び出し**: `import raytrace; raytrace.example_system(name='singlet')` (または `opsoptics.get("example_system")`)
+- **データ種**: `image2d × table` → `image2d`
+- **呼び出し**: `import lensimage; lensimage.render_through_lens(image, system, pixel_pitch_um=5.5, field_of_view=None, zones=3, noise=None, seed=0, illumination='traced', size=None, oversample=None)` (または `opsoptics.get("render_through_lens")`)
 
 ## 使い方
 
-A named example: ``"singlet"`` (plano-convex BK7, f≈100), ``"doublet"``
-(a cemented achromat, BK7/SF2, f≈100), ``"paraboloid"`` (f/2 paraboloid
-mirror — stigmatic on axis), ``"sphere_mirror"`` (same radius, spherical).
+Render an ideal irradiance image as the sensor behind *system* would record it (``image2d``).
+
+*image* (H×W, non-negative) is the ideal (paraxial) image on a sensor of
+*pixel_pitch_um* pixels centred on the optical axis; with *field_of_view*
+(half field to the sensor corner: degrees for an object at infinity,
+object height in mm otherwise) the picture is first zoomed so the corner
+sees that field. Pipeline: (a) inverse distortion remap
+(:func:`distortion_map` grid, ``scipy.ndimage.map_coordinates`` order 1);
+(b) spatially varying blur — a ``zones×zones`` lattice of tile centres,
+each with its own pixel-integrated :func:`psf_from_opd` (the +y-field PSF
+rotated to the tile azimuth), blended with bilinear (tent) weights so
+seams vanish; (c) relative illumination: ``"traced"`` = fraction of the
+field's ray bundle that reaches the image (vignetting, from
+:func:`raytrace.ray_bundle`) normalised to the axis, times cos⁴ (obliquity,
+objects at infinity only), ``"cos4"`` = the classic law alone, ``"none"``;
+(d) sensor, when *noise* is ``True`` or a dict ``{"full_well": 20000,
+"read_e": 3.0, "bits": 12, "exposure": 1.0, "dark_e": 0.0}``: electrons =
+irradiance × exposure × full_well, Poisson shot noise
+(:func:`photoncount.photon_sample`), Gaussian read noise, quantisation to
+*bits*, returned as DN/(2^bits − 1). With ``noise=None`` the float
+irradiance is returned untouched (deterministic; the noisy path is
+deterministic for a given *seed* too).
+
+*oversample* defaults to whatever keeps at least 2 PSF samples per pixel
+(``max(4, ceil(2·λ·F#/pitch))``). Ground truth: a δ image through the
+f/2 paraboloid gives the pixel-integrated Airy PSF; a checkerboard through
+it comes back undistorted (correlation > 0.99); energy is conserved to 1 %
+with illumination off; noise off is bit-reproducible.
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -46,17 +71,16 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [lens_defect_dataset_demo](../../../../examples/lens_defect_dataset_demo.py) — `py -3.11 examples/lens_defect_dataset_demo.py`
-- [lens_design_demo](../../../../examples/lens_design_demo.py) — `py -3.11 examples/lens_design_demo.py`
 
-## 型が繋がる次の op(`table` を入力に取れる)
+## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[abcd_matrix](../geometric/abcd_matrix.md) · [wavefront_stats](../imaging/wavefront_stats.md) · [paraxial_trace](paraxial_trace.md) · [seidel_coefficients](seidel_coefficients.md) · [spot_stats](spot_stats.md) · [tolerance_analysis](tolerance_analysis.md) · [wavefront_from_opd](wavefront_from_opd.md) · [spot_diagram](spot_diagram.md)
+[fraunhofer_pattern](../wave/fraunhofer_pattern.md) · [psf_to_mtf](../imaging/psf_to_mtf.md)
 
-## 同カテゴリ(`design`)
+## 同カテゴリ(`imaging_sim`)
 
-[lens_system](lens_system.md) · [thick_lens](thick_lens.md) · [glass](glass.md) · [paraxial_trace](paraxial_trace.md) · [seidel_coefficients](seidel_coefficients.md) · [spot_stats](spot_stats.md) · [tolerance_analysis](tolerance_analysis.md) · [wavefront_from_opd](wavefront_from_opd.md)
+[psf_from_opd](psf_from_opd.md) · [distortion_map](distortion_map.md) · [defect_dataset](defect_dataset.md)
 
 ---
-*Provenance: raytrace.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
+*Provenance: lensimage.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
 
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

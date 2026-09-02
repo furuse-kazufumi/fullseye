@@ -117,6 +117,39 @@ top = tol[&quot;sensitivity&quot;][0]                      # |d_rms_spot| の大
 print(top[&quot;surface&quot;], top[&quot;parameter&quot;], round(top[&quot;d_efl&quot;], 3))   # 0 R 0.5
 assert tol[&quot;failed&quot;] == 0 and top[&quot;parameter&quot;] == &quot;R&quot;</pre>
 <p><b>棲み分け</b>: optics = 近軸/波動(閉形式、設計の出発点)、raytrace = 実光線・設計(処方から数値で)。面での反射・屈折のスカラ公式(<code style="color:#22d3bf">match3d.refract</code> 等)を 1 本の光線に使うのは今までどおり match3d、<b>系を通す</b>のが raytrace です。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">結像シミュレーション(imaging_sim) — 設計したレンズで撮る</h3>
+<p>「擬似物理空間に光学系を組み、AI 学習用の欠陥画像を生成したい」という要望の出口が <code style="color:#22d3bf">lensimage.py</code>(台帳では <code style="color:#22d3bf">opsoptics</code> の <code style="color:#22d3bf">imaging_sim</code> カテゴリ、4 op)です。処方(<code style="color:#22d3bf">lens_system</code> の table)から<b>センサが記録する画像</b>まで通します:</p>
+<p style="margin:2px 0 2px 12px">• <b>PSF</b>: <code style="color:#22d3bf">psf_from_opd(system, field, size, pixel_pitch_um, oversample)</code> — 実収差瞳の回折 PSF。<code style="color:#22d3bf">raytrace.opd_samples</code> の OPD(波数)から瞳関数 <code style="color:#22d3bf">P = mask·exp(i2πW)</code> を作り、ゼロ詰め FFT の <code style="color:#22d3bf">|FFT(P)|²</code>(インコヒーレント結像)。像面のサンプル間隔は <code style="color:#22d3bf">λ·F#/oversample</code>(<code style="color:#22d3bf">F# = 1/(2·NA_image)</code>、<code style="color:#22d3bf">paraxial_trace</code> から)。<code style="color:#22d3bf">size=None</code> は瞳の位相を 0.4 波/サンプル以下に保つ格子を自動で選び、明示 <code style="color:#22d3bf">size</code> がエイリアスするなら拒否します。<code style="color:#22d3bf">pixel_pitch_um</code> を与えると微細 PSF を<b>画素面積で積分</b>(点サンプルではない)。<code style="color:#22d3bf">psf_field_grid</code> は複数視野の PSF と Strehl(無収差ピークとの比)・RMS スポットを表で返します。</p>
+<p style="margin:2px 0 2px 12px">• <b>歪曲</b>: <code style="color:#22d3bf">distortion_map(system, image_size, pixel_pitch_um, fields)</code> — 各視野の実主光線像高 vs 近軸 <code style="color:#22d3bf">f·tanθ</code>(有限物体は <code style="color:#22d3bf">m·H</code>)、<code style="color:#22d3bf">distortion_pct</code>(負 = 樽型)、奇数次多項式フィット、そして<b>実センサ画素ごとに「理想像のどの座標を見るか」の逆写像格子</b>(<code style="color:#22d3bf">grid_rows</code> / <code style="color:#22d3bf">grid_cols</code>、<code style="color:#22d3bf">map_coordinates</code> 用)。</p>
+<p style="margin:2px 0 2px 12px">• <b>描画</b>: <code style="color:#22d3bf">render_through_lens(image, system, pixel_pitch_um, field_of_view, zones, noise, seed, illumination)</code> — (a) 理想像を逆写像で歪曲、(b) <code style="color:#22d3bf">zones×zones</code> タイルの中心視野ごとに画素積分 PSF(+y 視野の PSF をタイル方位へ回転)で畳み込み、テント重みで線形ブレンド(継ぎ目なし)、(c) 周辺光量 = <b>追跡した光線束の到達率(口径食)× cos⁴</b>(<code style="color:#22d3bf">&quot;traced&quot;</code>、既定)/ <code style="color:#22d3bf">&quot;cos4&quot;</code> / <code style="color:#22d3bf">&quot;none&quot;</code>、(d) センサ: 露光 × full_well で電子数 → ショット雑音(<code style="color:#22d3bf">photoncount.photon_sample</code>)→ 読出雑音 → <code style="color:#22d3bf">bits</code> に量子化。<code style="color:#22d3bf">noise=None</code> は雑音なしの実数(決定的)。</p>
+<p style="margin:2px 0 2px 12px">• <b>データセット</b>: <code style="color:#22d3bf">defect_dataset(n, system, size, kinds, pixel_pitch_um, noise, seed, out_dir)</code> — <code style="color:#22d3bf">defectgen</code> の傷/孔食/割れ/しみを <code style="color:#22d3bf">surface_texture</code> 背景に合成してレンズ越しに描き、<b>マスクは同じ歪曲だけ通す</b>(ぼかさない)ので注釈が像に揃う。<code style="color:#22d3bf">out_dir</code> で PNG と COCO 風 <code style="color:#22d3bf">annotations.json</code>。</p>
+<p>グラウンドトゥルース(<code style="color:#22d3bf">tests/test_lensimage.py</code>): 無収差瞳(singlet を 1 mm 絞り)は Airy — 第 1 暗環 1.22·λ·F# の 0.1 % 以内、暗環内エネルギー 83.8 %。f/4 singlet(球面収差 11 波)の Strehl 0.011。放物面鏡の歪曲 &lt; 1e-7 %、singlet は樽型 −0.065 %(15 deg)。δ 画像を放物面鏡で描くと画素積分 Airy PSF と 1e-12 で一致。傷マスクの歪曲後 IoU 0.77。</p>
+<p><b>1. PSF・Strehl・歪曲を singlet と doublet で見比べる</b>(検証済み <code style="color:#22d3bf">examples/lens_defect_dataset_demo.py</code> の筋):</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import raytrace as RT
+import lensimage
+
+sg, db = RT.example_system(&quot;singlet&quot;), RT.example_system(&quot;doublet&quot;)
+psf = lensimage.psf_from_opd(sg, pixel_pitch_um=5.5)      # 画素積分 PSF、和 = 1
+print(psf.shape, round(float(psf.sum()), 6))
+g = lensimage.psf_field_grid(db, fields=(0.0, 4.0))
+print([round(s, 4) for s in g[&quot;strehl&quot;]], [round(r, 4) for r in g[&quot;rms_spot_mm&quot;]])
+d = lensimage.distortion_map(sg, fields=[0.0, 5.0, 10.0, 15.0])
+print([round(v, 4) for v in d[&quot;distortion_pct&quot;]])          # 0, ..., -0.0649 (樽型)
+assert d[&quot;distortion_pct&quot;][-1] &lt; 0.0</pre>
+<p><b>2. 欠陥画像を doublet 越しに 2 枚作り、注釈が像に揃っていることを確かめる</b>:</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import raytrace as RT
+import lensimage
+
+recs = lensimage.defect_dataset(2, system=RT.example_system(&quot;doublet&quot;),
+                                size=(96, 96), seed=1)  # out_dir=... で PNG + annotations.json
+r = recs[0]
+print(r[&quot;image&quot;].shape, r[&quot;mask&quot;].dtype, [(d[&quot;kind&quot;], d[&quot;bbox&quot;]) for d in r[&quot;defects&quot;]])
+print({k: round(v, 4) for k, v in r[&quot;lens&quot;].items()})   # efl / fno / rms_spot / 歪曲
+assert r[&quot;image&quot;].shape == r[&quot;mask&quot;].shape and r[&quot;mask&quot;].any()
+same = lensimage.defect_dataset(2, system=RT.example_system(&quot;doublet&quot;), size=(96, 96), seed=1)
+assert np.array_equal(r[&quot;image&quot;], same[0][&quot;image&quot;])       # seed で再現</pre>
+<p><b>正直な限界</b>: 単色・インコヒーレント結像(色ごとの PSF が要るなら波長を変えて呼び足し合わせる)。視野依存 PSF は <code style="color:#22d3bf">zones²</code> 点の線形補間で、軸外 PSF は +y 視野の PSF をタイル方位へ回した近似(回転対称な処方が前提 — 偏心・傾きのある処方は +y の PSF のみ)。周辺光量は光線の到達数 × cos⁴ で、瞳収差の重みは入っていません。センサは線形・一様の雑音モデルのみ(クロストーク・PRNU・カラーフィルタなし)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">アルゴリズムの正典(著者・年)</h3>
 <p style="margin:2px 0 2px 12px">• <b>ガウス結像 / ABCD 行列</b>: Gauss (1841) の近軸結像式、行列光学は Kogelnik &amp; Li, *Laser Beams and Resonators*, Appl. Opt. 5(10), 1966(ガウシアンビームの q パラメータもここ)。</p>
 <p style="margin:2px 0 2px 12px">• <b>被写界深度・過焦点距離</b>: 錯乱円モデルの標準式(例 Ray, *Applied Photographic Optics*, 3rd ed., 2002)。</p>

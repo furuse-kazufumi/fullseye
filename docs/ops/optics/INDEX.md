@@ -1,4 +1,4 @@
-# OPTICS operator help — 30 ops in 5 categories
+# OPTICS operator help — 34 ops in 6 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -19,6 +19,10 @@
 ### imaging (3)
 
 [mtf_diffraction](imaging/mtf_diffraction.md) · [psf_to_mtf](imaging/psf_to_mtf.md) · [wavefront_stats](imaging/wavefront_stats.md)
+
+### imaging_sim (4)
+
+[defect_dataset](imaging_sim/defect_dataset.md) · [distortion_map](imaging_sim/distortion_map.md) · [psf_from_opd](imaging_sim/psf_from_opd.md) · [render_through_lens](imaging_sim/render_through_lens.md)
 
 ### polarization (6)
 

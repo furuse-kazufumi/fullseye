@@ -1,11 +1,25 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
-<h2 style="color:#f5a524;margin:0 0 4px 0">example_system — OPTICS <code style="color:#22d3bf">design</code> op</h2>
+<h2 style="color:#f5a524;margin:0 0 4px 0">defect_dataset — OPTICS <code style="color:#22d3bf">imaging_sim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>table`</p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import raytrace; raytrace.example_system(name=&#x27;singlet&#x27;)</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;example_system&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import lensimage; lensimage.defect_dataset(n=8, system=None, size=(256, 256), kinds=(&#x27;scratch&#x27;, &#x27;pits&#x27;, &#x27;crack&#x27;, &#x27;blob&#x27;), pixel_pitch_um=5.5, noise=True, seed=0, out_dir=None, zones=3, field_of_view=None, texture=&#x27;orange_peel&#x27;, max_defects=2)</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;defect_dataset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>A named example: `<code style="color:#22d3bf">&quot;singlet&quot;</code><code style="color:#22d3bf"> (plano-convex BK7, f≈100), </code><code style="color:#22d3bf">&quot;doublet&quot;</code>`</p>
-<p>(a cemented achromat, BK7/SF2, f≈100), `<code style="color:#22d3bf">&quot;paraboloid&quot;</code>` (f/2 paraboloid</p>
-<p>mirror — stigmatic on axis), `<code style="color:#22d3bf">&quot;sphere_mirror&quot;</code>` (same radius, spherical).</p>
+<p>Synthetic defect images through a designed lens, with aligned masks (`<code style="color:#22d3bf">table</code>`).</p>
+<p>Each of the *n* records draws 1–*max_defects* defects of the listed *kinds*</p>
+<p>(`<code style="color:#22d3bf">defectgen</code>` scratch / pits / crack / blob with parameters sampled from</p>
+<p>*seed*) on a `<code style="color:#22d3bf">surface_texture</code>` background of *size*, renders the composite</p>
+<p>with :func:<code style="color:#22d3bf">render_through_lens</code> (*system* defaults to the cemented doublet</p>
+<p>of :func:<code style="color:#22d3bf">raytrace.example_system</code>; *noise* as there, default sensor</p>
+<p>noise on), and pushes **each defect&#x27;s mask through the same distortion</p>
+<p>remap only** (nearest-neighbour, no blur) so the annotation sits where the</p>
+<p>blurred defect actually landed. A record is</p>
+<p>``{&quot;image&quot;, &quot;mask&quot;, &quot;defects&quot;: [{&quot;kind&quot;, &quot;params&quot;, &quot;bbox&quot; [x, y, w, h],</p>
+<p>&quot;area&quot;}], &quot;lens&quot;: {&quot;efl&quot;, &quot;fno&quot;, &quot;rms_spot_center&quot;, &quot;rms_spot_corner&quot;,</p>
+<p>&quot;max_distortion_pct&quot;}, &quot;seed&quot;}`` with arrays, or with file paths when</p>
+<p>*out_dir* is given (`<code style="color:#22d3bf">img_0000.png</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mask_0000.png</code>` written with</p>
+<p>`<code style="color:#22d3bf">imgio.save</code><code style="color:#22d3bf"> plus a COCO-like </code><code style="color:#22d3bf">annotations.json</code>`: images, annotations</p>
+<p>with bbox/area/params, categories). Deterministic for *seed*; a defect</p>
+<p>that lands entirely outside the sensor after distortion is dropped from</p>
+<p>the annotations rather than reported with an empty box.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>
@@ -23,11 +37,10 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lens_defect_dataset_demo">lens_defect_dataset_demo</a> — <code style="color:#22d3bf">py -3.11 examples/lens_defect_dataset_demo.py</code></p>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lens_design_demo">lens_design_demo</a> — <code style="color:#22d3bf">py -3.11 examples/lens_design_demo.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a> · <a style="color:#22d3bf" href="opoptics:spot_diagram">spot_diagram</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">design</code>)</h3>
-<p><a style="color:#22d3bf" href="opoptics:lens_system">lens_system</a> · <a style="color:#22d3bf" href="opoptics:thick_lens">thick_lens</a> · <a style="color:#22d3bf" href="opoptics:glass">glass</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">imaging_sim</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:psf_from_opd">psf_from_opd</a> · <a style="color:#22d3bf" href="opoptics:distortion_map">distortion_map</a> · <a style="color:#22d3bf" href="opoptics:render_through_lens">render_through_lens</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<p>*Provenance: raytrace.py — OPTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>*Provenance: lensimage.py — OPTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
 <p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

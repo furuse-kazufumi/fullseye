@@ -477,6 +477,11 @@ def _remap(image, model, order=1):
     z = model["zoom"]
     rows = (model["dist"]["grid_rows"] - (h - 1) / 2.0) / z + (h - 1) / 2.0
     cols = (model["dist"]["grid_cols"] - (w - 1) / 2.0) / z + (w - 1) / 2.0
+    # a 1e-10-pixel overshoot at the border (zero-distortion systems) must not
+    # read as "outside the image" and zero the edge row/column
+    for c, n in ((rows, h), (cols, w)):
+        c[np.abs(c) < 1e-6] = 0.0
+        c[np.abs(c - (n - 1)) < 1e-6] = float(n - 1)
     return ndimage.map_coordinates(image, [rows, cols], order=order, mode="constant", cval=0.0)
 
 
