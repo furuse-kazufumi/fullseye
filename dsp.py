@@ -266,11 +266,21 @@ def rms(x, frame=None, hop=None):
 
 
 def zero_crossing_rate(x):
-    """Fraction of adjacent samples that change sign — a cheap pitch/noisiness cue."""
+    """Fraction of adjacent samples that change sign — a cheap pitch/noisiness cue.
+
+    Exact zeros are neither a crossing nor a sign: a crossing is counted only when
+    the sign changes between consecutive *non-zero* samples, and the rate divides
+    by the number of adjacent sample pairs ``len(x) - 1``. So ``[1, 0, 1, 0, 1]`` is
+    ``0.0`` and ``[1, 0, -1]`` is ``0.5`` (before 2026-09-02 ``diff(sign(x))`` counted
+    every touch of zero as a crossing: ``1.0`` for both)."""
     x = _require_finite(x)
     if x.size < 2:
         return 0.0
-    return float(np.mean(np.abs(np.diff(np.sign(x))) > 0))
+    s = np.sign(x)
+    nz = s[s != 0.0]
+    if nz.size < 2:
+        return 0.0
+    return float(np.count_nonzero(np.diff(nz) != 0.0)) / float(x.size - 1)
 
 
 def find_peaks(x, height=None, distance=None):
