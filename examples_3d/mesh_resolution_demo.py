@@ -138,6 +138,11 @@ def main():
           % (len(Fr), sr["edge"]["median"], sr["edge_nonuniformity"],
              100 * (sr["total_area"] - 4 * np.pi) / (4 * np.pi), np.abs(np.linalg.norm(Vr, axis=1) - 1).max(), time.time() - t0))
     assert sr["edge_nonuniformity"] < 1.8 and sr["boundary_edges"] == 0
+    Pm = M.mesh_sample_points(Vr, Fr, spacing=0.2, seed=0)
+    dmin_m, _ = cKDTree(Pm).query(Pm, k=2)
+    print("    surface samples at spacing 0.2 (poisson): %d points, min pair distance %.3f, all on the unit sphere within %.1e"
+          % (len(Pm), dmin_m[:, 1].min(), np.abs(np.linalg.norm(Pm, axis=1) - 1).max()))
+    assert dmin_m[:, 1].min() >= 0.2 - 1e-12 and np.abs(np.linalg.norm(Pm, axis=1) - 1).max() < 0.02
 
     # 4. reductions with an audit trail ------------------------------------------------
     lod = M.mesh_lod_chain(V, F, fractions=(0.5, 0.25, 0.125))
