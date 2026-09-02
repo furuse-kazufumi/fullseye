@@ -828,6 +828,10 @@ __all__ = [
     "psf_to_mtf", "mtf_diffraction", "wavefront_stats",
     "jones_element", "jones_apply", "stokes_from_jones",
     "mueller_element", "mueller_apply", "stokes_analyze",
+    "raytrace", "lens_system", "thick_lens", "glass", "refractive_index",
+    "example_system", "paraxial_trace", "trace_rays", "ray_bundle",
+    "spot_diagram", "spot_stats", "ray_fan", "opd_map", "opd_samples",
+    "wavefront_from_opd", "seidel_coefficients", "tolerance_analysis",
 ]
 
 
