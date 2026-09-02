@@ -82,6 +82,7 @@ import synth  # noqa: E402  (learn an image's features -> synthesise a similar i
 import funct1d  # noqa: E402  (HALCON funct_1d family: 1-D function/profile analysis on the index grid)
 import mathops  # noqa: E402  (math for visual metrology: linalg / stats / interp / poly)
 import optics  # noqa: E402  (optics for imaging systems: geometric / wave / imaging / polarisation)
+import raytrace  # noqa: E402  (lens design: real ray tracing / OPD wavefront / Seidel sums / tolerances)
 from videops import (  # noqa: E402,F401
     temporal_mean, temporal_median, temporal_std, temporal_max, temporal_min,
     frame_difference, background_subtraction, temporal_gradient, motion_energy,
