@@ -1627,6 +1627,8 @@ def run_chain(ops, gens, rng, length, log, chain_seed=None, script=None,
                 continue
             name, dim, ins, out, fn = op
             if not all((t in pool and pool[t]) or t == "any" for t in ins):
+                if census is not None:
+                    census["no_input"].add(name)
                 continue          # 入力型が揃わない = この短縮では到達不能
         else:
             # pool にある型を食える op を候補化
