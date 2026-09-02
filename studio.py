@@ -4116,7 +4116,14 @@ def build_window(model=None):
             it.setData(QtCore.Qt.UserRole, -1)
             it.setForeground(QtGui.QColor(AMBER))
             problems_list.addItem(it)
-        if not probs and not perr:
+        rerr = state.get("program_error")                       # last Program Run/Step/Continue failure
+        if rerr:
+            it = QtWidgets.QListWidgetItem("✕ program run: stage %d (%s): %s"
+                                           % (rerr[0] + 1, truncate(rerr[1], 40), truncate(rerr[2])))
+            it.setData(QtCore.Qt.UserRole, rerr[0])
+            it.setForeground(QtGui.QColor(AMBER))
+            problems_list.addItem(it)
+        if not probs and not perr and not rerr:
             hint = QtWidgets.QListWidgetItem("no problems")
             hint.setForeground(QtGui.QColor(MUTED))
             hint.setData(QtCore.Qt.UserRole, -1)
