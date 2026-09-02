@@ -78,8 +78,9 @@ def main():
     yy, xx = np.mgrid[:M, :M]
     r = np.hypot(yy - M // 2, xx - M // 2) * dx
     r1 = 1.22 * wl * fno
-    edges = np.arange(0.0, 2.0 * r1, dx / 2)
-    prof = np.array([psf[(r >= a) & (r < a + dx / 2)].mean() for a in edges])
+    edges = np.arange(0.0, 2.0 * r1, dx)
+    prof = np.array([psf[(r >= a) & (r < a + dx)].mean() if ((r >= a) & (r < a + dx)).any() else np.inf
+                     for a in edges])
     zero = edges[int(np.argmin(prof[: int(0.7 * len(edges))]))]
     ee = psf[r <= r1].sum() / psf.sum()
     print("  first dark ring %.2f um (theory %.2f), encircled energy %.4f" % (zero, r1, ee))
