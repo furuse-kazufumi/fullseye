@@ -434,8 +434,8 @@ def _load_via_fallback(path: str, color: bool):
         f = None
     if f is None:
         try:
-            from PIL import Image
-            im = Image.open(path)
+            from PIL import Image, ImageOps
+            im = ImageOps.exif_transpose(Image.open(path))   # honour EXIF orientation
             im = im.convert("RGB") if color else im.convert("L")
             return np.asarray(im, np.float64) / 255.0
         except FileNotFoundError:
