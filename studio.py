@@ -3191,8 +3191,8 @@ def build_window(model=None):
                     s.setValue("geometry", self.saveGeometry())
                     s.setValue("windowState", self.saveState())
                     s.setValue("layout_version", "3")
-            except Exception:
-                pass
+            except Exception as e:
+                _log_soft_failure("could not save window geometry/layout", e)
             ev.accept()
 
         # -- drag-and-drop: drop an image or a pipeline .json onto the window to load it --
