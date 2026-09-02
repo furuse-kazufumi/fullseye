@@ -212,9 +212,13 @@ def test_zero_crossing_rate_ignores_exact_zeros():
     assert dsp.zero_crossing_rate([1, -1, 1, -1]) == 1.0          # every pair flips
     assert dsp.zero_crossing_rate([5.0]) == 0.0
     n, rate = 1000, 1000.0
-    x = np.sin(2 * np.pi * 50.0 * np.arange(n) / rate)            # 100 crossings
-    assert abs(dsp.zero_crossing_rate(x) - 100 / 999) < 1e-12
-    assert abs(dsp.signal_features(x, rate)["zcr"] - round(100 / 999, 6)) < 1e-9
+    # A 50 Hz sine over 1 s has 100 zeros, but the first one (t = 0) IS a sample
+    # (x[0] == 0 exactly) and lies between no pair, so 99 pair-crossings / 999 pairs.
+    x = np.sin(2 * np.pi * 50.0 * np.arange(n) / rate)
+    assert abs(dsp.zero_crossing_rate(x) - 99 / 999) < 1e-12
+    assert abs(dsp.signal_features(x, rate)["zcr"] - round(99 / 999, 6)) < 1e-9
+    x2 = np.sin(2 * np.pi * 50.0 * np.arange(n) / rate + 0.3)    # no sample on a zero
+    assert abs(dsp.zero_crossing_rate(x2) - 99 / 999) < 1e-12    # zeros at t_k=(k-.0955)/100, k=1..99
 
 
 def test_column_vector_input_is_treated_as_a_1d_signal():
