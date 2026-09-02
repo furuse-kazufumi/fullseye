@@ -211,7 +211,9 @@ def test_dense_polyline_would_degenerate_if_phase_reset():
     dashed = D.draw_contour(np.zeros((80, 80)), xld,
                             style=DrawStyle(line_style="dashed")) > 0.5
     n_solid, n_dash = int(solid.sum()), int(dashed.sum())
-    assert n_solid == 59 and n_dash == 41                        # 実測(69.5 %)
+    # 実測(68.8 %)。2026-09-03 まで 59 / 41 だったのは小数端点のサンプル数切り捨てで
+    # 輪郭が途切れていたため(半径 15 の円周 ≈ 94 px に 59 画素)。
+    assert n_solid == 96 and n_dash == 66
     # 頂点リセット方式の再現: 各辺を独立に phase 0 から描くと実線に戻る
     p = np.asarray(xld["cs"][0], float)[:, ::-1]
     reset = np.zeros((80, 80), bool)
