@@ -473,6 +473,20 @@ from annotate import (  # noqa: E402,F401
     axes_transform, data_to_pixel, nice_ticks, axes_frame, grid_lines, ticks,
     plot_series, overlay_labels, zoom_inset, compare_frame, panel_grid,
     rounded_rect, filled_polygon, arc, ellipse,
+    # 学術図の作法(2026-09-03): 引き出し線・番号/凡例・寸法・角度・スケールバー・
+    # 方位・隅の拡大・輪郭・経路文字・色分け・パネル文字・図の組版(+ *_layout)
+    annotate_leader_layout, annotate_leader, annotate_markers, annotate_legend,
+    annotate_dimension_layout, annotate_dimension, annotate_angle_layout,
+    annotate_angle, annotate_scale_bar_layout, annotate_scale_bar,
+    annotate_orientation, annotate_inset_layout, annotate_inset,
+    annotate_outline_layout, annotate_outline, annotate_text_path_layout,
+    annotate_text_path, annotate_colorbar, annotate_panel_label,
+    annotate_figure_grid_layout, annotate_figure_grid,
+)
+import annotate3d  # noqa: E402  (3-D anchors -> projected arrows / labels / scale bars)
+from annotate3d import (  # noqa: E402,F401
+    annotate3d_project, annotate3d_arrow, annotate3d_label, annotate3d_scale_bar,
+    annotate3d_axes, annotate3d_bbox, annotate3d_measure, project_anchors,
 )
 # ★ ``annotate.overlay_mask`` は **意図的にトップレベルへ出していない**。同名の
 # ``imgio.overlay_mask`` が既に ``fs.overlay_mask`` として公開されており、引数も
@@ -782,6 +796,17 @@ __all__ = [
     "axes_transform", "data_to_pixel", "nice_ticks", "axes_frame", "grid_lines",
     "ticks", "plot_series", "overlay_labels", "zoom_inset", "compare_frame",
     "panel_grid", "rounded_rect", "filled_polygon", "arc", "ellipse",
+    "annotate_leader_layout", "annotate_leader", "annotate_markers", "annotate_legend",
+    "annotate_dimension_layout", "annotate_dimension", "annotate_angle_layout",
+    "annotate_angle", "annotate_scale_bar_layout", "annotate_scale_bar",
+    "annotate_orientation", "annotate_inset_layout", "annotate_inset",
+    "annotate_outline_layout", "annotate_outline", "annotate_text_path_layout",
+    "annotate_text_path", "annotate_colorbar", "annotate_panel_label",
+    "annotate_figure_grid_layout", "annotate_figure_grid",
+    "annotate3d",
+    "annotate3d_project", "annotate3d_arrow", "annotate3d_label",
+    "annotate3d_scale_bar", "annotate3d_axes", "annotate3d_bbox", "annotate3d_measure",
+    "project_anchors",
     "drawlist", "DrawList", "DrawListError", "diff_command_lists", "format_diff", "flush_buffer", "default_text_metrics", "measured_text_metrics", "COMMAND_SPECS", "TEXT_ADVANCE_RATIO",
     "drawstyle", "DrawStyle", "draw_style", "current_style", "set_color", "set_line_width", "set_line_style", "set_draw", "resolve_pattern", "resolve_color", "LINE_STYLES", "DRAW_MODES",
     "imagedraw", "draw_line", "draw_polyline", "draw_circle", "draw_markers", "draw_contour", "new_canvas",

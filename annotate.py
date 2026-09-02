@@ -2616,7 +2616,11 @@ def annotate_orientation(img, angle_deg=0.0, corner="rt", xy=None, size=26.0, ma
         margin = _num(margin, "margin", lo=0, integer=True)
         # 矢印 + 文字がまとめて隅に収まるよう、文字の分だけ内側に寄せる
         cx, cy = _corner_xy(corner, W, H, margin)
-        reach = sz / 2.0 + (float(font_size) if label else 0.0)
+        reach = sz / 2.0
+        if label:
+            tm = measure_text(str(label), font_size=font_size, font_path=font_path,
+                              min_font_size=1)
+            reach += 0.8 * float(font_size) + max(tm["width"], tm["height"]) / 2.0 + 2
         cx = cx + (reach if corner[0] == "l" else -reach)
         cy = cy + (reach if corner[1] == "t" else -reach)
     else:

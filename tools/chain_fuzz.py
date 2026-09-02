@@ -1294,6 +1294,80 @@ OP_PARAM_HINTS = {
     # 増幅経路を通すことなので op 名で上書きする
     ("motion_magnify", "alpha"): lambda rng: 2.0,
 
+    # --- 2026-09-03: 学術図の図注(annotate "paper" 族 / ops3d "annotate3d") -- #
+    # プールの image2d は 32x32 なので、文字・板・矢印が**その中に収まる**寸法に
+    # 寄せる(外に出れば fail-closed して CONTRACT になり、op の本体は走らない)。
+    # 引き出し線・番号は points プールの 160 点だと「置き場が無い」で毎回
+    # 拒否されるため、in は image2d だけにして点をここで 2-3 個束縛する。
+    ("annotate_leader", "points"): lambda rng: [(8.0, 8.0), (20.0, 12.0), (14.0, 24.0)],
+    ("annotate_leader", "font_size"): lambda rng: 7, ("annotate_leader", "gap"): lambda rng: 6.0,
+    ("annotate_leader_layout", "shape"): lambda rng: (32, 32),
+    ("annotate_leader_layout", "points"): lambda rng: [(8.0, 8.0), (20.0, 12.0), (14.0, 24.0)],
+    ("annotate_leader_layout", "font_size"): lambda rng: 7,
+    ("annotate_leader_layout", "gap"): lambda rng: 6.0,
+    ("annotate_markers", "points"): lambda rng: [(10.0, 10.0), (22.0, 20.0)],
+    ("annotate_markers", "radius"): lambda rng: 6.0, ("annotate_markers", "font_size"): lambda rng: 7,
+    ("annotate_legend", "labels"): lambda rng: ["A"], ("annotate_legend", "xy"): lambda rng: (1.0, 1.0),
+    ("annotate_legend", "pad"): lambda rng: 2, ("annotate_legend", "radius"): lambda rng: 5.0,
+    ("annotate_legend", "font_size"): lambda rng: 8,
+    ("annotate_dimension", "p0"): lambda rng: (4.0, 31.0), ("annotate_dimension", "p1"): lambda rng: (27.0, 31.0),
+    ("annotate_dimension", "offset"): lambda rng: -6.0, ("annotate_dimension", "font_size"): lambda rng: 7,
+    ("annotate_dimension_layout", "p0"): lambda rng: (4.0, 31.0),
+    ("annotate_dimension_layout", "p1"): lambda rng: (27.0, 31.0),
+    ("annotate_angle", "a"): lambda rng: (4.0, 4.0), ("annotate_angle", "vertex"): lambda rng: (4.0, 26.0),
+    ("annotate_angle", "b"): lambda rng: (26.0, 26.0), ("annotate_angle", "radius"): lambda rng: 8.0,
+    ("annotate_angle", "font_size"): lambda rng: 7,
+    ("annotate_angle_layout", "a"): lambda rng: (4.0, 4.0),
+    ("annotate_angle_layout", "vertex"): lambda rng: (4.0, 26.0),
+    ("annotate_angle_layout", "b"): lambda rng: (26.0, 26.0),
+    ("annotate_scale_bar", "target_fraction"): lambda rng: 0.9, ("annotate_scale_bar", "margin"): lambda rng: 2,
+    ("annotate_scale_bar", "font_size"): lambda rng: 6,
+    ("annotate_scale_bar_layout", "shape"): lambda rng: (32, 32),
+    ("annotate_scale_bar_layout", "target_fraction"): lambda rng: 0.9,
+    ("annotate_scale_bar_layout", "margin"): lambda rng: 2,
+    ("annotate_orientation", "size"): lambda rng: 10.0, ("annotate_orientation", "margin"): lambda rng: 1,
+    ("annotate_orientation", "font_size"): lambda rng: 6,
+    ("annotate_inset", "src_rect"): lambda rng: (2, 2, 6, 6), ("annotate_inset", "margin"): lambda rng: 2,
+    ("annotate_inset_layout", "shape"): lambda rng: (32, 32),
+    ("annotate_inset_layout", "src_rect"): lambda rng: (2, 2, 6, 6),
+    ("annotate_inset_layout", "margin"): lambda rng: 2,
+    ("annotate_text_path", "path"): lambda rng: [(1.0, 12.0), (31.0, 12.0)],
+    ("annotate_text_path", "font_size"): lambda rng: 6,
+    ("annotate_text_path_layout", "path"): lambda rng: [(1.0, 12.0), (31.0, 12.0)],
+    ("annotate_text_path_layout", "font_size"): lambda rng: 6,
+    ("annotate_colorbar", "rect"): lambda rng: (3, 2, 20, 3),
+    ("annotate_colorbar", "orientation"): lambda rng: "horizontal",
+    ("annotate_colorbar", "font_size"): lambda rng: 6,
+    ("annotate_panel_label", "font_size"): lambda rng: 8, ("annotate_panel_label", "margin"): lambda rng: 2,
+    ("annotate_figure_grid", "font_size"): lambda rng: 8,
+    ("annotate_figure_grid_layout", "shapes"): lambda rng: [(32, 32), (24, 32)],
+    # annotate3d: points プールは [0,10]^3。(5,5,45) から (5,5,5) を見下ろす姿勢と
+    # PARAM_HINTS の K(fx=32, cx=16)で、点は 32x32 の中央 ±4 px に射影される
+    ("annotate3d_project", "pose"): lambda rng: __import__("render3d").look_at(
+        (5.0, 5.0, 45.0), (5.0, 5.0, 5.0), (0.0, 1.0, 0.0)),
+    ("annotate3d_arrow", "pose"): lambda rng: __import__("render3d").look_at(
+        (5.0, 5.0, 45.0), (5.0, 5.0, 5.0), (0.0, 1.0, 0.0)),
+    ("annotate3d_label", "pose"): lambda rng: __import__("render3d").look_at(
+        (5.0, 5.0, 45.0), (5.0, 5.0, 5.0), (0.0, 1.0, 0.0)),
+    ("annotate3d_label", "anchor"): lambda rng: (5.0, 5.0, 5.0),
+    ("annotate3d_label", "offset"): lambda rng: (0.0, -6.0),
+    ("annotate3d_label", "font_size"): lambda rng: 5, ("annotate3d_label", "pad"): lambda rng: 1,
+    ("annotate3d_scale_bar", "pose"): lambda rng: __import__("render3d").look_at(
+        (5.0, 5.0, 45.0), (5.0, 5.0, 5.0), (0.0, 1.0, 0.0)),
+    ("annotate3d_scale_bar", "origin"): lambda rng: (2.0, 5.0, 5.0),
+    ("annotate3d_scale_bar", "direction"): lambda rng: (1.0, 0.0, 0.0),
+    ("annotate3d_scale_bar", "length"): lambda rng: 6.0,
+    ("annotate3d_scale_bar", "font_size"): lambda rng: 6,
+    ("annotate3d_axes", "pose"): lambda rng: __import__("render3d").look_at(
+        (5.0, 5.0, 45.0), (5.0, 5.0, 5.0), (0.0, 1.0, 0.0)),
+    ("annotate3d_axes", "origin"): lambda rng: (5.0, 5.0, 5.0),
+    ("annotate3d_axes", "length"): lambda rng: 3.0, ("annotate3d_axes", "font_size"): lambda rng: 6,
+    ("annotate3d_bbox", "pose"): lambda rng: __import__("render3d").look_at(
+        (5.0, 5.0, 45.0), (5.0, 5.0, 5.0), (0.0, 1.0, 0.0)),
+    ("annotate3d_measure", "pose"): lambda rng: __import__("render3d").look_at(
+        (5.0, 5.0, 45.0), (5.0, 5.0, 5.0), (0.0, 1.0, 0.0)),
+    ("annotate3d_measure", "font_size"): lambda rng: 6,
+
     # --- 2026-09-02: 形が結びついていて名前ヒントでは足りないもの ----------- #
     # 名前ヒントは同名の引数を持つ**全 op**に効くので、寸法が入力と噛み合う
     # 必要があるものはここで op を名指しする。既存の名前ヒントと衝突する

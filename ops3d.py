@@ -396,9 +396,9 @@ _CATALOG = {
         # 厳密保存、間引きは一切しない)→ 波長ごとに振幅を明示した変位(頂点ごとの
         # 帯域ゲート: 2×局所辺長より短い波長は変位しない)→ その補集合を陰影法線の
         # bump に回す(画素ごとの局所辺長で補集合を取る)。
-        ("mesh_edge_lengths", "render3d", ["mesh"], "descriptor", False),
+        ("mesh_edge_lengths", "render3d", ["mesh"], "signal", False),          # (N,) 頂点ごと
         ("mesh_subdivide", "render3d", ["mesh"], "mesh", False),
-        ("displacement_band_weights", "render3d", ["mesh"], "image2d", False),
+        ("displacement_band_weights", "render3d", ["mesh"], "matrix", False),  # (K,N) ゲート
         ("mesh_displace_spectrum", "render3d", ["mesh"], "mesh", False),
         ("bump_normals_fbm", "render3d", ["normalmap", "pointmap"], "normalmap", False),
     ],

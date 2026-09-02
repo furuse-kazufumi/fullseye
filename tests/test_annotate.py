@@ -694,3 +694,353 @@ def test_measure_text_newlines_work_without_a_width():
     h1 = np.flatnonzero((single[..., 0] > 0.9).any(axis=1)).size
     h2 = np.flatnonzero((double[..., 0] > 0.9).any(axis=1)).size
     assert h2 - h1 == one["line_height"]
+
+
+# ------------------------------------------------------------------ #
+# 7. 学術図の作法(paper 族、2026-09-03)—— 配置は layout の閉形式で検算する
+# ------------------------------------------------------------------ #
+
+def test_ledger_paper_category_counts():
+    """台帳: 7 カテゴリ / 46 op、paper 族は 21 op(描く 13 + layout 8)。"""
+    assert len(opsannotate.categories()) == 7
+    assert len(opsannotate.OPSANNOTATE) == 46
+    paper = opsannotate.list_ops("paper")
+    assert len(paper) == 21
+    layouts = [n for n in paper if n.endswith("_layout")]
+    assert len(layouts) == 8
+    for n in layouts:
+        assert opsannotate.info(n)["out"] == "table", n
+    for n in paper:
+        if not n.endswith("_layout"):
+            assert opsannotate.info(n)["out"] == "image2d", n
+    # docstring の 1 行目が返り型を名乗る
+    for n in paper:
+        doc = opsannotate.info(n)["doc"]
+        assert doc.startswith("table(dict)") or doc.startswith("画像(image2d)"), (n, doc)
+
+
+def test_leader_layout_is_closed_form_and_collision_free():
+    """肘 = point + side*gap、文字 = 肘 + side_x*0.6*gap。板同士は重ならない。"""
+    pts = [(60, 80), (66, 84), (72, 88), (150, 40)]
+    lay = A.annotate_leader_layout((H, W), pts, ["alpha", "beta", "gamma", "delta"], gap=20)
+    assert lay["n"] == 4
+    boxes = [it["box"] for it in lay["items"]]
+    for i in range(4):
+        for j in range(i + 1, 4):
+            assert not A._overlaps(boxes[i], boxes[j]), (i, j)
+    for it, (x, y) in zip(lay["items"], pts):
+        sx, sy = it["side"]
+        g = lay["gap"] * (1.0 if it["elbow"] == (x + sx * lay["gap"], y + sy * lay["gap"]) else
+                          abs(it["elbow"][1] - y) / lay["gap"])
+        assert it["elbow"] == pytest.approx((x + sx * g, y + sy * g))
+        if sx != 0:
+            assert it["text_xy"] == pytest.approx((it["elbow"][0] + sx * 0.6 * g, it["elbow"][1]))
+            assert it["anchor"] == ("lm" if sx > 0 else "rm")
+        bx, by, bw, bh = it["box"]
+        assert 0 <= bx and 0 <= by and bx + bw <= W and by + bh <= H
+        # 板は他の点を覆わない
+        for (px, py) in pts:
+            if (px, py) != (x, y):
+                assert not (bx <= px <= bx + bw - 1 and by <= py <= by + bh - 1)
+
+
+def test_leader_auto_side_points_away_from_the_image_centre():
+    left = A.annotate_leader_layout((H, W), [(20, 60)], ["L"])["items"][0]["side"][0]
+    right = A.annotate_leader_layout((H, W), [(180, 60)], ["R"])["items"][0]["side"][0]
+    assert left == -1 and right == 1
+
+
+def test_leader_refuses_when_no_free_spot():
+    pts = [(100, 60)] * 30
+    with pytest.raises(ValueError, match="cannot be placed"):
+        A.annotate_leader_layout((H, W), pts, [f"label {i}" for i in range(30)])
+
+
+def test_leader_draw_uses_the_layout_and_is_deterministic():
+    img = _canvas(0.2)
+    lay = A.annotate_leader_layout((H, W), [(60, 80)], ["a"])
+    out1 = A.annotate_leader(img, [(60, 80)], ["a"])
+    out2 = A.annotate_leader(img, [(60, 80)], ["a"], layout=lay)
+    assert np.array_equal(out1, out2)
+    assert not np.array_equal(out1, img)
+    # 肘の位置の画素に線が乗っている(AA なので > 背景)
+    ex, ey = lay["items"][0]["elbow"]
+    assert out1[int(round(ey)), int(round(ex)), 0] != pytest.approx(0.2)
+
+
+def test_aa_line_coverage_is_partial_at_the_edge_and_full_on_the_axis():
+    """距離ベースの AA: 線の中心画素は被覆 1、半画素外は中間、遠くは 0。"""
+    cov = A._segment_coverage((20, 40), (5.0, 10.0), (35.0, 10.0), width=1.0)
+    assert cov[10, 20] == pytest.approx(1.0)
+    assert 0.0 < cov[11, 20] < 1.0
+    assert cov[13, 20] == 0.0
+    assert cov[10, 2] == 0.0                                  # 端点の外
+
+
+def test_dash_pieces_cover_exactly_the_on_fraction():
+    pieces = A._dash_pieces([(0.0, 0.0), (100.0, 0.0)], False, (6.0, 4.0))
+    on = sum(q[0] - p[0] for p, q in pieces)
+    assert on == pytest.approx(60.0)                            # 10 周期 x 6
+    assert all(q[0] > p[0] for p, q in pieces)
+
+
+def test_dimension_layout_closed_form():
+    lay = A.annotate_dimension_layout((40, 100), (140, 100), offset=20, extension=6)
+    (q0, q1) = lay["line"]
+    assert q0 == pytest.approx((40, 120)) and q1 == pytest.approx((140, 120))
+    assert lay["length_px"] == pytest.approx(100.0)
+    assert lay["normal"] == pytest.approx((0.0, 1.0))
+    assert lay["ext0"][1] == pytest.approx((40, 126))
+    assert lay["text_xy"] == pytest.approx((90, 128))
+    neg = A.annotate_dimension_layout((40, 100), (140, 100), offset=-20)
+    assert neg["line"][0] == pytest.approx((40, 80)) and neg["normal"] == pytest.approx((0.0, -1.0))
+    with pytest.raises(ValueError, match="coincide"):
+        A.annotate_dimension_layout((1, 1), (1, 1))
+    with pytest.raises(ValueError, match="non-zero"):
+        A.annotate_dimension_layout((1, 1), (5, 1), offset=0)
+
+
+def test_dimension_value_is_length_times_resolution():
+    """値 = |p1-p0| * units_per_pixel。文字が書かれた位置は layout の text_xy。"""
+    img = _canvas(0.2)
+    lay = A.annotate_dimension_layout((40, 60), (140, 60), offset=-20)
+    out = A.annotate_dimension(img, (40, 60), (140, 60), 0.25, "mm", offset=-20, layout=lay)
+    # 寸法線の位置に色が乗り、そこから遠い行は無傷
+    assert not np.allclose(out[40, 60:120], 0.2)
+    assert np.allclose(out[110, :], 0.2)
+    assert lay["length_px"] * 0.25 == pytest.approx(25.0)
+    with pytest.raises(ValueError, match="units_per_pixel"):
+        A.annotate_dimension(img, (40, 60), (140, 60), "0.25")
+
+
+def test_angle_layout_takes_the_smaller_angle_and_its_bisector():
+    lay = A.annotate_angle_layout((100, 50), (50, 50), (50, 0), radius=30)
+    assert lay["angle_deg"] == pytest.approx(90.0)
+    # 画面座標: a は右(0°)、b は上(270°)。小さい方は 270→360(=0)
+    assert lay["start_deg"] == pytest.approx(270.0)
+    assert lay["bisector_deg"] == pytest.approx(315.0)
+    r = 30 + 12
+    assert lay["text_xy"] == pytest.approx((50 + r * np.cos(np.radians(315)),
+                                            50 + r * np.sin(np.radians(315))))
+    straight = A.annotate_angle_layout((0, 50), (50, 50), (100, 50))
+    assert straight["angle_deg"] == pytest.approx(180.0)
+    with pytest.raises(ValueError, match="differ from vertex"):
+        A.annotate_angle_layout((50, 50), (50, 50), (1, 1))
+
+
+def test_angle_draws_arc_on_the_circle_only():
+    img = _canvas(0.0)
+    out = A.annotate_angle(img, (150, 60), (100, 60), (100, 20), radius=30, draw_rays=False,
+                           color=(1.0, 1.0, 1.0), font_size=10)
+    yy, xx = np.mgrid[0:H, 0:W]
+    d = np.hypot(xx - 100, yy - 60)
+    lit = out[..., 0] > 0.5
+    # 弧の画素は半径 30 の近く(文字の板は別の場所)
+    on_arc = lit & (d < 40) & (yy <= 61) & (xx >= 99)
+    assert on_arc.sum() > 20
+    assert np.all(np.abs(d[on_arc] - 30) <= 1.5)
+
+
+def test_scale_bar_layout_picks_a_nice_number_under_the_target():
+    lay = A.annotate_scale_bar_layout((H, W), 0.5, "µm", corner="rb", target_fraction=0.2,
+                                      margin=14)
+    target = 0.2 * (W - 28) * 0.5                       # 17.2 µm → 10 µm
+    assert lay["length"] == 10.0
+    assert lay["px"] == int(round(10.0 / 0.5))
+    assert lay["length"] <= target
+    x0, y0, w, h = lay["rect"]
+    assert w == lay["px"] and x0 + w == W - 14 and y0 + h == H - 14
+    for v, want in ((17.2, 10.0), (23.0, 20.0), (0.7, 0.5), (500.0, 500.0), (4.99, 2.0)):
+        assert A._nice_floor(v) == want, v
+    with pytest.raises(ValueError, match="corner"):
+        A.annotate_scale_bar_layout((H, W), 0.5, corner="centre")
+
+
+def test_scale_bar_draws_exactly_the_layout_pixels():
+    img = _canvas(0.0)
+    lay = A.annotate_scale_bar_layout((H, W), 0.5, "um", corner="lb")
+    out = A.annotate_scale_bar(img, 0.5, "um", corner="lb", color=(1.0, 1.0, 1.0),
+                               box_alpha=0.0)
+    x0, y0, w, h = lay["rect"]
+    assert np.all(out[y0:y0 + h, x0:x0 + w, 0] == 1.0)
+    assert np.all(out[y0:y0 + h, x0 + w:x0 + w + 5, 0] == 0.0)
+
+
+def test_orientation_arrow_points_the_stated_way():
+    img = _canvas(0.0)
+    out = A.annotate_orientation(img, 0.0, xy=(100, 60), size=40, label=None,
+                                 color=(1.0, 1.0, 1.0))
+    lit = out[..., 0] > 0.5
+    rows = np.flatnonzero(lit.any(axis=1))
+    # 上向き: 矢じりは上端(row 小)側にあり、幅広い行は上にある
+    widths = lit.sum(axis=1)
+    assert rows.min() < 60 < rows.max()
+    assert widths[rows.min() + 6] > widths[rows.max() - 3]
+    with pytest.raises(ValueError, match="outside"):
+        A.annotate_orientation(img, 0.0, xy=(5, 5), size=40)
+
+
+def test_inset_layout_chooses_largest_integer_factor_that_fits():
+    lay = A.annotate_inset_layout((H, W), (20, 20, 30, 20), corner="rt", margin=10,
+                                  max_fraction=0.4)
+    assert lay["factor"] == min(int(0.4 * W) // 30, int(0.4 * H) // 20)
+    dx, dy, dw, dh = lay["dst_rect"]
+    assert (dw, dh) == (30 * lay["factor"], 20 * lay["factor"])
+    assert dx + dw == W - 10 and dy == 10
+    with pytest.raises(ValueError, match="cover its own source"):
+        A.annotate_inset_layout((H, W), (20, 20, 30, 20), corner="lt", margin=10)
+    with pytest.raises(ValueError, match="integer"):
+        A.annotate_inset_layout((H, W), (20, 20, 30, 20), factor=1.5)
+
+
+def test_inset_copies_source_pixels_nearest_neighbour():
+    img = _canvas(0.0)
+    img[25, 30] = (0.9, 0.1, 0.4)
+    lay = A.annotate_inset_layout((H, W), (20, 20, 20, 10), corner="rb")
+    out = A.annotate_inset(img, (20, 20, 20, 10), corner="rb", width=1, connect=False)
+    f = lay["factor"]
+    dx, dy, _, _ = lay["dst_rect"]
+    block = out[dy + 5 * f:dy + 6 * f, dx + 10 * f:dx + 11 * f]
+    assert np.allclose(block, (0.9, 0.1, 0.4))
+
+
+def test_outline_layout_area_equals_mask_pixels_and_centroid_is_exact():
+    m = np.zeros((H, W), bool)
+    m[30:70, 50:110] = True
+    m[40:50, 60:70] = False                                   # 穴
+    lay = A.annotate_outline_layout(m)
+    assert lay["n_loops"] == 2
+    assert lay["area"] == int(m.sum())
+    rr, cc = np.nonzero(m)
+    assert lay["centroid"] == pytest.approx((cc.mean(), rr.mean()))
+    assert lay["bbox"] == (50, 30, 60, 40)
+    outer = lay["contours"][0]
+    # 外周多角形(靴紐公式)の面積 = 外側の画素数(穴を含む)
+    x, y = outer[:, 0], outer[:, 1]
+    area = 0.5 * abs(np.dot(x, np.roll(y, -1)) - np.dot(np.roll(x, -1), y))
+    assert area == pytest.approx(40 * 60)
+    with pytest.raises(ValueError, match="no true pixel"):
+        A.annotate_outline_layout(np.zeros((H, W), bool))
+
+
+def test_outline_draws_on_the_boundary_and_not_inside():
+    img = _canvas(0.0)
+    m = np.zeros((H, W), bool)
+    m[30:70, 50:110] = True
+    out = A.annotate_outline(img, m, color=(1.0, 1.0, 1.0), width=1.0)
+    assert out[30, 80, 0] > 0.3 and out[69, 80, 0] > 0.3
+    assert out[50, 80, 0] == 0.0                              # 内部は無傷
+    with pytest.raises(ValueError, match="does not match"):
+        A.annotate_outline(img, m[:, :100])
+
+
+def test_text_path_layout_positions_follow_arc_length():
+    path = [(10.0, 50.0), (110.0, 50.0), (110.0, 100.0)]
+    lay = A.annotate_text_path_layout("abc", path, font_size=12)
+    assert lay["length"] == pytest.approx(150.0)
+    s = 0.0
+    for it in lay["chars"]:
+        assert it["s"] == pytest.approx(s + it["width"] / 2.0)
+        assert it["angle_deg"] == pytest.approx(0.0)          # 最初の水平区間
+        assert it["xy"][1] == pytest.approx(50.0) and it["xy"][0] == pytest.approx(10.0 + it["s"])
+        s += it["width"]
+    far = A.annotate_text_path_layout("x", path, font_size=12, start=120.0)["chars"][0]
+    assert far["angle_deg"] == pytest.approx(90.0)            # 縦の区間は下向き
+    assert far["xy"][0] == pytest.approx(110.0)
+    with pytest.raises(ValueError, match="path is"):
+        A.annotate_text_path_layout("x" * 80, path, font_size=12)
+
+
+def test_text_path_draws_only_near_the_path():
+    img = _canvas(0.0)
+    path = [(20.0, 60.0), (180.0, 60.0)]
+    out = A.annotate_text_path(img, "hello", path, font_size=14, color=(1.0, 1.0, 1.0))
+    lit = out[..., 0] > 0.2
+    rows = np.flatnonzero(lit.any(axis=1))
+    assert 40 < rows.min() and rows.max() < 80
+    assert lit.sum() > 20
+
+
+def test_colorbar_overlay_matches_alpha_formula():
+    img = _canvas(0.2)
+    field = np.linspace(0.0, 1.0, W)[None, :].repeat(H, axis=0)
+    lut = palette.diverging_lut(256)
+    out = A.annotate_colorbar(img, field, (180, 10, 8, 80), lut=lut, vmin=0.0, vmax=1.0,
+                              alpha=0.5, font_size=10)
+    # 場が 0 の列は lut[0]、1 の列は lut[-1] を α=0.5 で重ねたもの(バーの外の行で)
+    assert np.allclose(out[100, 0], 0.5 * lut[0] + 0.5 * 0.2)
+    assert np.allclose(out[100, W - 1], 0.5 * lut[-1] + 0.5 * 0.2)
+    with pytest.raises(ValueError, match="non-finite"):
+        A.annotate_colorbar(img, np.full((H, W), np.nan), (180, 10, 8, 80))
+    with pytest.raises(ValueError, match="zero range"):
+        A.annotate_colorbar(img, np.zeros((H, W)), (180, 10, 8, 80))
+
+
+def test_panel_label_text_and_corners():
+    img = _canvas(0.2)
+    for corner in ("lt", "rt", "lb", "rb"):
+        out = A.annotate_panel_label(img, "b", corner=corner)
+        assert not np.array_equal(out, img)
+    assert A._panel_letter(0, "paren") == "(a)"
+    assert A._panel_letter(2, "upper") == "C"
+    with pytest.raises(ValueError, match="letter"):
+        A.annotate_panel_label(img, "ab")
+    with pytest.raises(ValueError, match="style"):
+        A.annotate_panel_label(img, "a", style="bold")
+
+
+def test_figure_grid_layout_matches_panel_grid_formula_and_output_size():
+    shapes = [(60, 80), (50, 70), (60, 80)]
+    lay = A.annotate_figure_grid_layout(shapes, ncols=2, pad=10, caption_h=32)
+    cw, ch = 80, 60
+    assert lay["size"] == (2 * 10 + 2 * (ch + 32) + 10, 2 * 10 + 2 * cw + 10)
+    assert lay["cells"][1] == (10 + cw + 10, 10, cw, ch)
+    assert lay["panels"][1] == (10 + cw + 10 + (cw - 70) // 2, 10 + (ch - 50) // 2, 70, 50)
+    assert lay["captions"][2] == (10, 10 + ch + 32 + 10 + ch, cw, 32)
+    assert lay["letters"] == ["(a)", "(b)", "(c)"]
+    panels = [np.full(s + (3,), v) for s, v in zip(shapes, (0.3, 0.6, 0.9))]
+    fig = A.annotate_figure_grid(panels, ["one", "two", "three"], ncols=2, pad=10,
+                                 caption_h=32, font_size=12)
+    assert fig.shape[:2] == lay["size"]
+    # パネルの画素はそのまま(拡大しない)
+    for (x, y, w, h), v in zip(lay["panels"], (0.3, 0.6, 0.9)):
+        assert np.allclose(fig[y + 2:y + h - 2, x + 2:x + w - 2], v)
+    with pytest.raises(ValueError, match="letters"):
+        A.annotate_figure_grid(panels, letters="yes")
+
+
+def test_numbered_markers_and_legend_share_numbering():
+    img = _canvas(0.2)
+    out = A.annotate_markers(img, [(30, 30), (100, 60)], start=3, radius=9)
+    assert not np.array_equal(out, img)
+    assert np.allclose(out[30, 60], 0.2)                      # 円の外は無傷
+    leg = A.annotate_legend(out, ["first", "second"], (190, 10), anchor="rt", start=3)
+    assert not np.array_equal(leg, out)
+    with pytest.raises(ValueError, match="does not fit"):
+        A.annotate_markers(img, [(30, 30)], labels=["a long label"], radius=6)
+    with pytest.raises(ValueError, match="radius"):
+        A.annotate_markers(img, [(30, 30)], radius=True)
+    with pytest.raises(ValueError, match="empty"):
+        A.annotate_legend(img, [], (10, 10))
+
+
+def test_paper_ops_accept_grayscale_and_rgba():
+    m = np.zeros((H, W), bool)
+    m[30:70, 50:110] = True
+    for ch in (None, 1, 3, 4):
+        img = _canvas(0.2, channels=ch)
+        assert A.annotate_leader(img, [(60, 80)], ["a"]).shape == img.shape
+        assert A.annotate_outline(img, m).shape == img.shape
+        assert A.annotate_dimension(img, (40, 60), (140, 60), offset=-20).shape == img.shape
+        assert A.annotate_scale_bar(img, 0.5).shape == img.shape
+
+
+def test_paper_ops_are_deterministic():
+    img = _canvas(0.2)
+    m = np.zeros((H, W), bool)
+    m[30:70, 50:110] = True
+    for fn in (lambda i: A.annotate_leader(i, [(60, 80), (150, 40)], ["a", "b"]),
+               lambda i: A.annotate_outline(i, m, label="ROI"),
+               lambda i: A.annotate_angle(i, (150, 60), (100, 60), (100, 20)),
+               lambda i: A.annotate_text_path(i, "abc", [(20, 60), (180, 60)])):
+        assert np.array_equal(fn(img), fn(img))

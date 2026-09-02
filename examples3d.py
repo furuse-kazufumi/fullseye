@@ -410,6 +410,11 @@ EXAMPLES = [
     {"id": "render_beauty", "task": "rendering", "data": "synthetic",
      "name": "レンダリング品質: hero レンダラ render_beauty(全層合成の映える静止3D)",
      "summary": "ラスタライズ/Phong鏡面/AO/接地影/SSAA/トーンマップを1本に合成。sphere-on-groundで各層を実測: AOは接触凹部を0.07→0.02と選択的に暗化(露出頂部0.01は不変)、鏡面は小面積ハイライト(frac0.018)、接地影はwith-mesh993px vs null0px、reinhardは単調(clip34段潰しを回避)、SSAAはedge0.040→0.026。sdf_ops生成メッシュでhero画像を出力。"},
+    {"id": "annotate3d_figure", "task": "rendering", "data": "synthetic",
+     "name": "3-D 図注: レンダリングの上に 3-D アンカーの矢印・引き出し線・スケールバー・座標軸・箱・距離を射影して描く",
+     "summary": "render_mesh で描いた球+床の絵に annotate3d 族(project/arrow/label/scale_bar/axes/bbox/measure)で"
+                "図注を載せる。既知カメラの射影が閉形式と 1e-9 で一致、像面平行のバーが f·L/z px、"
+                "球の裏のアンカーが depth で隠れ判定(破線)されることを GT で確かめる。"},
 ]
 
 _BY_ID = {e["id"]: e for e in EXAMPLES}

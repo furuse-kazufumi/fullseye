@@ -223,6 +223,7 @@ def annotate3d_arrow(img, p0, p1, pose, K, depth=None, color="emphasis", width=2
         端点がカメラの後ろ / 一致 / 両端とも画像の外、姿勢・K の不正。
     """
     a = A._prep(img)
+    width = A._num(width, "width", lo=1, integer=True)
     tab = project_anchors(np.vstack([_points3(p0, "p0"), _points3(p1, "p1")]), pose, K,
                           depth=depth, shape=a.shape[:2], occlusion_tol=occlusion_tol)
     _need_front(tab, ("p0", "p1"))
@@ -350,6 +351,7 @@ def annotate3d_axes(img, pose, K, origin=(0.0, 0.0, 0.0), length=1.0, depth=None
         軸の文字が画像に収まらない。
     """
     a = A._prep(img)
+    width = A._num(width, "width", lo=1, integer=True)
     o = _points3(origin, "origin")[0]
     L = A._num(length, "length", lo=1e-300)
     if len(labels) != 3 or len(colors) != 3:
