@@ -68,3 +68,36 @@ def test_real_nary_ops_still_pass():
     v = N.verify()
     assert v["fail"] == []
     assert v["pass"] == v["n"] == len(N._DEFS)
+
+
+# ---- 2026-09-03 semantics regressions -------------------------------------- #
+def test_convol_image_is_a_correlation_not_a_flipped_convolution():
+    """HALCON convol_image lays the mask over the image as written. With the
+    single weight at mask[1, 2] (one column RIGHT of centre), correlation reads
+    the pixel to the right: an impulse at (5, 5) answers at (5, 4). scipy's
+    `convolve` flips the mask and would answer at (5, 6)."""
+    img = np.zeros((11, 11))
+    img[5, 5] = 1.0
+    mask = np.zeros((3, 3))
+    mask[1, 2] = 1.0
+    out = N._convol([img, mask], 0.5, 0.4)
+    assert np.unravel_index(int(out.argmax()), out.shape) == (5, 4)
+    assert out[5, 4] > 0.99 and out[5, 6] == 0.0 and out[5, 5] == 0.0
+    # a symmetric mask is unaffected (box blur stays a box blur)
+    box = np.ones((3, 3))
+    sym = N._convol([img, box], 0.5, 0.4)
+    assert np.allclose(sym[4:7, 4:7], 1.0 / 9.0) and sym.sum() == pytest.approx(1.0)
+
+
+def test_paint_gray_paints_dark_source_pixels():
+    """HALCON paint_gray copies the source's grey values over its whole domain;
+    this tier's domain convention is 'non-zero'. A dark (0.1) source pixel must
+    be painted, not dropped by a > 0.5 threshold."""
+    dst = np.full((3, 3), 0.9)
+    src = np.zeros((3, 3))
+    src[0, 0] = 0.1
+    src[2, 2] = 0.7
+    out = N._paint_gray([dst, src], 0.5, 0.4)
+    assert out[0, 0] == pytest.approx(0.1)
+    assert out[2, 2] == pytest.approx(0.7)
+    assert out[1, 1] == 0.9                                   # outside the source domain

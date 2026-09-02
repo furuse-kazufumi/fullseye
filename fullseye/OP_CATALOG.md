@@ -702,7 +702,7 @@ _計 310 ops / 63 categories。_
 - `sampson_distance` (`image2d, image2d → signal`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category
-_計 865 ops / 47 categories。_
+_計 860 ops / 47 categories。_
 
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
@@ -780,8 +780,7 @@ _計 865 ops / 47 categories。_
 - `rgb3_to_gray` (halcon: `rgb3_to_gray`) `color → image` · 例: `gallery2d_color_artistic`
 - `access_channel` (halcon: `access_channel`) `color → image` · 例: `gallery2d_color_artistic`
 
-### contour(26)
-- `edges_sub_pix` (halcon: `edges_sub_pix`) `image → contour` · 例: `gallery2d_contour_measure`, `quickstart`
+### contour(25)
 - `select_contours` (halcon: `select_contours_xld`) `contour → contour` · 例: `gallery2d_contour_measure`, `quickstart`
 - `smooth_contours` (halcon: `smooth_contours_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
 - `fit_line_contours` (halcon: `fit_line_contour_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
@@ -826,9 +825,8 @@ _計 865 ops / 47 categories。_
 - `it_full_domain` `image → image` · 例: `gallery2d_gray_arith`
 - `it_crop_domain` (halcon: `crop_domain`) `image → image` · 例: `gallery2d_gray_arith`
 
-### edges(57)
+### edges(56)
 - `sobel_mag` (halcon: `sobel_amp`) `image → image` · 例: `gallery2d_edges`
-- `laplace` (halcon: `laplace`) `image → image` · 例: `gallery2d_edges`
 - `prewitt_mag` (halcon: `prewitt_amp`) `image → image` · 例: `gallery2d_edges`
 - `roberts_mag` (halcon: `roberts`) `image → image` · 例: `gallery2d_edges`
 - `dog` (halcon: `diff_of_gauss`) `image → image` · 例: `gallery2d_edges`
@@ -1361,12 +1359,10 @@ _計 865 ops / 47 categories。_
 - `sg_normalized_cut_2` `image → region` · 例: `gallery2d_segmentation`
 - `sg_watershed_gradient` `image → region` · 例: `gallery2d_segmentation`
 
-### segmentation(56)
+### segmentation(54)
 - `threshold` (halcon: `threshold`) `image → region` · 例: `gallery2d_segmentation`
 - `otsu` (halcon: `binary_threshold`) `image → region` · 例: `ct_inspection`, `gallery2d_segmentation`, `quickstart`, `segment_and_classify`
-- `dyn_threshold` (halcon: `dyn_threshold`) `image → region` · 例: `gallery2d_segmentation`
 - `canny` (halcon: `edges_image`) `image → region` · 例: `gallery2d_segmentation`
-- `local_max` (halcon: `local_max_sub_pix`) `image → region` · 例: `gallery2d_segmentation`
 - `adaptive_gauss_thresh` (halcon: `local_threshold`) `image → region` · 例: `gallery2d_segmentation`
 - `sk_otsu` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`
 - `sk_li` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`
@@ -1529,12 +1525,12 @@ _計 865 ops / 47 categories。_
 - `xmh_daubechies` `image → image` · 例: `gallery2d_geometry`
 - `tf_radon_sinogram` `image → image` · 例: `gallery2d_geometry`
 
-### typed(123)
+### typed(122)
 - `tb_points_to_voxel` `points → volume` · 例: なし
 - `tb_estimate_point_normals` `points → points` · 例: なし
 - `tb_iss_keypoints` `points → signal` · 例: なし
 - `tb_angle_3points` `points → feature` · 例: なし
-- `tb_project_points` `points → points` · 例: なし
+- `tb_project_points` `points → keypoints` · 例: なし
 - `tb_render_point_depth` `points → image` · 例: なし
 - `tb_statistical_outlier_removal` `points → points` · 例: なし
 - `tb_radius_outlier_removal` `points → points` · 例: なし
@@ -1646,13 +1642,12 @@ _計 865 ops / 47 categories。_
 - `tb_apply_weighting` `signal → signal` · 例: なし
 - `tb_equivalent_level` `signal → feature` · 例: なし
 - `tb_normals_to_egi` `points → image` · 例: なし
-- `tb_keypoints_uv_to_points` `points → points` · 例: なし
-- `tb_points_zyx_to_keypoints_uv` `points → points` · 例: なし
-- `tb_keypoints_to_image2d` `points → image` · 例: なし
+- `tb_keypoints_uv_to_points` `keypoints → points` · 例: なし
+- `tb_points_zyx_to_keypoints_uv` `points → keypoints` · 例: なし
+- `tb_keypoints_to_image2d` `keypoints → image` · 例: なし
 - `tb_indices_to_labels` `signal → volume` · 例: なし
 - `tb_countrate_to_counts` `counts → counts` · 例: なし
 - `tb_counts_to_countrate` `counts → counts` · 例: なし
-- `tb_rgb_to_xyz` `rgbimage → rgbimage` · 例: なし
 
 ### xldgeom(10)
 - `xg_moments` (halcon: `moments_points_xld`) `contour → feature` · 例: `gallery2d_geometry`
