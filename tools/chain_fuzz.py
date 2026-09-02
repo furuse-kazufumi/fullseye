@@ -1299,6 +1299,13 @@ OP_PARAM_HINTS = {
     ("geodesic_distances", "source"): lambda rng: 0,
     ("box_sdf", "center"): lambda rng: np.array([5.0, 5.0, 5.0]),
     ("box_sdf", "half_extents"): lambda rng: np.array([2.0, 2.0, 2.0]),
+    # sphere_sdf(grid, center, R) の R は**半径のスカラ**。名前ヒントの "R" は
+    # 回転行列 eye(3) なので、そのままだと op 側の番人
+    #(「R must be a scalar radius」)に毎回弾かれていた。番人が正しく働いて
+    # いたおかげで壊れた値が下流へ流れずに済んでいたが、この op は一度も
+    # 仕事をしていなかった(進化側の tb_sphere_sdf は 40/40 で定数ゼロ)。
+    ("sphere_sdf", "center"): lambda rng: np.array([5.0, 5.0, 5.0]),
+    ("sphere_sdf", "R"): lambda rng: 3.0,
     ("render_lambertian", "albedo"): lambda rng: 0.7,
     ("render_lambertian", "light"): lambda rng: (lambda v: v / np.linalg.norm(v))(
         np.array([0.3, 0.3, 1.0])),
