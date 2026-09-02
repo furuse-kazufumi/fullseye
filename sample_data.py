@@ -158,7 +158,10 @@ _BY_ID = {e["id"]: e for e in MANIFEST}
 
 _KNOWN_ARCHIVES = {None, "gz", "tar.gz", "zip"}
 _KNOWN_ACCESS = {"direct", "gated", "info"}
-_MAX_BYTES = 512 * 1024 * 1024  # 512 MB hard cap per file
+_MAX_BYTES = 512 * 1024 * 1024  # 512 MB hard cap per file (transfer)
+#: Cap on the DECOMPRESSED size of an archive member (4x the transfer cap): a
+#: tiny archive must not be allowed to inflate without bound.
+MAX_EXTRACT_BYTES = 4 * _MAX_BYTES
 
 
 def _validate_manifest():
@@ -171,6 +174,9 @@ def _validate_manifest():
         seen.add(i)
         if e["archive"] not in _KNOWN_ARCHIVES:
             raise ValueError("%s: unknown archive %r" % (i, e["archive"]))
+        if e["archive"] is not None and not e.get("sha256_out"):
+            raise ValueError("%s: archive entries must pin sha256_out (the extracted "
+                             "file cannot be verified otherwise)" % i)
         if e["access"] not in _KNOWN_ACCESS:
             raise ValueError("%s: unknown access %r" % (i, e["access"]))
         if e["access"] == "direct" and not e.get("url"):
