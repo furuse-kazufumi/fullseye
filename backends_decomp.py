@@ -86,7 +86,11 @@ def _tv_structure(img, a, n_iter=120, tau=0.125):
     (more cartoon).  a in [0,1] maps to weight in ~[0.02, 0.30].
     """
     f = np.asarray(img, np.float64)
-    if f.size < 4:
+    if f.size < 4 or min(f.shape) < 2:
+        # A 1xN / Nx1 strip has no 2-D divergence (``_bwd_div`` indexes [-2]);
+        # the sort-correct degenerate answer is "all structure": u == f, so the
+        # texture residual is exactly 0.5.  Raising here made the fail-soft
+        # wrapper hand back the INPUT as the "texture" (2026-09-02 review).
         return np.clip(f, 0.0, 1.0)
     weight = 0.02 + 0.28 * float(a)
     px = np.zeros_like(f)
