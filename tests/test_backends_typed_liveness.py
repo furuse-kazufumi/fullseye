@@ -149,6 +149,55 @@ def test_no_new_bridge_op_is_a_constant_fallback():
         "計算していない。" % new)
 
 
+def _identity_report(trials=3, seed=11):
+    """``in_sort == out_sort`` の tb_ op のうち、毎回**入力と bit 一致**を返すもの。"""
+    rng = np.random.default_rng(seed)
+    out = []
+    for op in ops.REGISTRY:
+        if not op.name.startswith("tb_") or op.in_sort != op.out_sort:
+            continue
+        if _sample_for(op.in_sort, rng) is None:
+            continue
+        same = 0
+        for a, b in ((0.2, 0.3), (0.5, 0.5), (0.8, 0.9))[:trials]:
+            v = _sample_for(op.in_sort, rng)
+            try:
+                r = op.fn(v, a, b)
+            except Exception:                            # noqa: BLE001
+                continue
+            va, ra = np.asarray(v), np.asarray(r)
+            if (va.shape == ra.shape and va.dtype == ra.dtype
+                    and np.array_equal(va, ra)):
+                same += 1
+        if same == trials:
+            out.append(op.name)
+    return out
+
+
+def test_no_new_bridge_op_is_a_pass_through():
+    """同 sort の op が「入力をそのまま返し続ける」状態を新しく増やさない。
+
+    定数ゼロの検査ではこれは**捕まらない** —— ``_fallback`` は同 sort のとき
+    入力を通すので、故障が恒等写像の顔をする。最初に書いた検査はここを
+    見落としていて、レジストリ全体を実測して初めて 4 件見つかった。
+    """
+    ident = _identity_report()
+    known = set(KNOWN_IDENTITY_BRIDGES) | set(IDENTITY_BY_CONTRACT)
+    new = sorted(set(ident) - known)
+    assert not new, (
+        "入力をそのまま返し続ける橋渡し op(新規): %s\n"
+        "仕様としての恒等なら IDENTITY_BY_CONTRACT へ、故障なら "
+        "KNOWN_IDENTITY_BRIDGES へ理由つきで記録すること。" % new)
+
+
+def test_known_identity_bridges_are_still_identity():
+    """直ったのに一覧へ残り続けない。"""
+    ident = set(_identity_report())
+    stale = sorted(set(KNOWN_IDENTITY_BRIDGES) - ident)
+    assert not stale, ("KNOWN_IDENTITY_BRIDGES に残っているが実際は変換している: %s"
+                       " — 直ったなら一覧から消すこと" % stale)
+
+
 def test_known_dead_bridges_are_still_dead():
     """直ったのに一覧へ残り続けない(KNOWN_LEDGER_GAPS と同じ規律)。"""
     live, dead, _ = _live_report()
