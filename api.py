@@ -898,6 +898,12 @@ def _resolve(name: str):
     return op
 
 
+# Region ops that read the gray VALUES of their input as labels rather than as a
+# mask. The registry carries no per-op flag for this, so the set is explicit; add
+# an op here when it distinguishes label values instead of foreground/background.
+_LABEL_READING_OPS = frozenset({"r3_label_to_region"})
+
+
 def _coerce_input(v, op):
     """Gently match the array to the op's declared input sort (opt-in).
 
