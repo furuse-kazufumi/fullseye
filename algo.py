@@ -899,11 +899,21 @@ double lcs_length(const double* a, int n_in) {
 # (KIND_REDUCE, exact integer). graph_mst_weight = total minimum-spanning-forest
 # weight (KIND_REDUCE; sums edge weights, so tol like the numeric ops). graph_dijkstra
 # packs a source too — a = [n, m, src, edges...] — and returns the length-n shortest-
-# distance vector (KIND_MAP; -1.0 = unreachable). Node/edge counts get the raw-value
-# guard (they bound loops/memory); edge endpoints/weights are assumed finite (module
-# NaN-free contract). Deterministic union rule + (weight,index) edge sort + lowest-index
-# Dijkstra tie-break => C matches Python bit-for-bit; the independent oracle is
-# scipy.sparse.csgraph. See docs/GENERAL_ALGORITHMS.md P4.
+# distance vector (KIND_MAP; -1.0 = unreachable).
+#
+# Domain guards (2026-09-03 review), identical in Python and C:
+#   * n is an INTEGER in [1, 5,000,000] — the same explicit, disclosed cap as
+#     sieve_primes. n bounds the parent/dist arrays, and the old 2^31 bound let
+#     graph_components([2147483000, 0]) try to allocate ~17 GB (Python) / 8 GB (C).
+#   * m is an integer in [0, 2147483000] and the edge list must not be truncated.
+#   * every endpoint (and src) is checked on the RAW double — range first, then
+#     integrality — BEFORE any int()/(int) cast: 3e9 / 1e300 are float-cast-overflow UB
+#     in C (UBSan trap), NaN was a ValueError crash in Python, and 1.9 silently
+#     truncated to node 1. All of them now fail-soft.
+# Weights are assumed finite (module NaN-free contract). Deterministic union rule +
+# (weight,index) edge sort + lowest-index Dijkstra tie-break => C matches Python
+# bit-for-bit; the independent oracle is scipy.sparse.csgraph. See
+# docs/GENERAL_ALGORITHMS.md P4.
 # --------------------------------------------------------------------------- #
 _PY_GRAPH_COMPONENTS = '''\
 def run(a):
