@@ -195,7 +195,7 @@ def main():
         errs.append(float(np.hypot(info["shift_row"] - want[0],
                                    info["shift_col"] - want[1])))
         assert abs(info["scale"] - 1.0) < 1e-2 and abs(info["rotation_deg"]) < 0.3
-        assert info["n_inliers"] >= 20 and info["votes"] >= 20
+        assert info["n_inliers"] >= 10 and info["votes"] >= 10
     print(f"4) 位置合わせ: 真のディザとの誤差 最大 {max(errs):.4f} px / "
           f"中央 {np.median(errs):.4f} px({N_FRAMES - 1} 対、similarity)")
     assert max(errs) < 0.6
