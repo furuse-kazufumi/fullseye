@@ -51,6 +51,10 @@ def _seed(sort, seed=0):
         "beatcube": lambda: __import__("rangedoppler").fmcw_beat_simulate(
             ranges_m=[5.0], velocities_ms=[0.0], angles_deg=[10.0],
             n_samples=32, n_chirps=16, n_antennas=4),
+        # keypoints = 像面上の (N,2)。points((N,3))とは別 sort(2026-09-02 に分離)。
+        # 同じ sort に畳んでいた頃は _sort_ok の shape[1]==3 に落ちて、
+        # (N,2) を返す/取る橋渡し op 4 件が黙って fail-soft になっていた。
+        "keypoints": lambda: rng.random((160, 2)) * 32.0,
     }
     if sort not in banks:
         raise AssertionError(
