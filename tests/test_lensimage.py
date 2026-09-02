@@ -63,7 +63,7 @@ def test_unaberrated_pupil_gives_the_airy_pattern():
     psf, ref, dx, n = LI._psf_core(s, 0.0, 128, None, 16)
     assert dx == pytest.approx(s["wavelength_um"] * fno * 127 / 2032)
     r1 = 1.22 * s["wavelength_um"] * fno
-    zero, r = _radial_first_zero(psf, dx)
+    zero, r = _radial_first_zero(psf, dx, r1)
     assert zero == pytest.approx(r1, rel=0.03)               # measured 0.999 x
     ee = psf[r <= r1].sum() / psf.sum()
     assert ee == pytest.approx(0.838, abs=0.01)              # measured 0.8378
