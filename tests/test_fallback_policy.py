@@ -38,9 +38,15 @@ def _boom(v, a, b):
 
 @pytest.fixture(autouse=True)
 def _clean_ledger():
+    """Isolate from the rest of the suite: other tests may leave the GPU breaker open
+    (a CPU-only box records every real ``device="cuda"`` attempt) or a match template set."""
     bs.clear_fallbacks(reset_warnings=True)
+    api.reset_gpu()
+    ops.set_match_template(None)
     yield
     bs.clear_fallbacks(reset_warnings=True)
+    api.reset_gpu()
+    ops.set_match_template(None)
 
 
 # --------------------------------------------------------------------------- #
