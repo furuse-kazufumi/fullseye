@@ -5842,6 +5842,7 @@ def build_window(model=None):
     # menu / toolbar actions (share the same handlers as the buttons)
     act_open_img.triggered.connect(load_image); act_demo.triggered.connect(use_demo)
     act_save_res.triggered.connect(save_result); act_export.triggered.connect(export)
+    act_save_view.triggered.connect(save_view)
     act_copy_res.triggered.connect(copy_result)
     act_quit.triggered.connect(win.close)
     act_remove.triggered.connect(remove)
