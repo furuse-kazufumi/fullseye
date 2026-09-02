@@ -534,6 +534,7 @@ class Parser:
         if t.kind == "op" and t.val == "(":
             e = self._parse_expr()
             self._expect_op(")")
+            e.paren = True                           # remembered for the chain check
             return e
         if t.kind == "op" and t.val == "[":
             items = []
