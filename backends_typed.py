@@ -240,6 +240,54 @@ INPUT_ADAPTERS = {
 }
 
 
+def _point_labels_to_volume(points, labels, res=16):
+    """点ごとのラベル ``(N,)`` を、その点群を覆う**ラベル体積** ``(res,res,res)`` にする。
+
+    台帳が ``points → labels`` と宣言する点群セグメンテーション 3 op
+    (``region_growing`` / ``euclidean_cluster`` / ``plane_segmentation``)は
+    **点ごとの (N,) ラベル**を返す。ところが ``labels`` という型名は、この
+    ライブラリでは 3-D のラベル体積も指しており(``TYPE_TO_SORT['labels'] =
+    'volume'``)、進化側は 3 次元を要求する。結果、この 3 op は形の検査に落ちて
+    ``_fallback`` の ``zeros((2,2,2))`` を返し続けていた —— 2026-09-02 実測で、
+    40 通りの点群すべてで返りが定数ゼロ、非ゼロ 0 件。**候補枠を占めながら
+    一度も仕事をしていなかった。**
+
+    ファザー側の ``TYPE_CHECKS['labels']`` は 1/2/3 次元すべてを許す緩い述語なので、
+    この食い違いは**ファザーからは見えない**。厳しい側(進化の sort 契約)だけが
+    弾き、しかも fail-soft なので誰にも気づかれなかった。
+
+    ここでは宣言を動かさずに真にする: 点を境界箱の格子へ落とし、各ボクセルに
+    そこへ落ちた点の**最大ラベル**を入れる(空ボクセルは 0)。「点群を分割して
+    その区分けを体積に焼く」は素直な読み方で、``points → labels(体積)`` が
+    そのまま成り立つ。宣言を変えないので進化の decode(候補リストと out_sort)は
+    1 ビットも動かない。
+    """
+    P = np.asarray(points, np.float64)
+    lab = np.asarray(labels).reshape(-1)
+    if P.ndim != 2 or P.shape[1] != 3 or lab.size != P.shape[0]:
+        raise ValueError("expected (N,3) points and (N,) labels, got %r and %r"
+                         % (P.shape, lab.shape))
+    r = int(res)
+    lo, hi = P.min(axis=0), P.max(axis=0)
+    span = np.maximum(hi - lo, 1e-9)
+    idx = np.clip(((P - lo) / span * (r - 1)).astype(np.int64), 0, r - 1)
+    flat = (idx[:, 0] * r + idx[:, 1]) * r + idx[:, 2]
+    # 未割当(負)は 0 に寄せる。ラベルは 1 起点に持ち上げて「空」と区別する。
+    vals = np.where(lab < 0, 0, lab.astype(np.int64) + 1)
+    vol = np.zeros(r ** 3, np.int64)
+    np.maximum.at(vol, flat, vals)
+    return vol.reshape(r, r, r).astype(np.float64)
+
+
+#: 返りを**入力と一緒に**見て直す表(op 名 → ``fn(入力, 返り)``)。
+#: ``ADAPTERS`` は返りだけを見るので、入力が要る変換はこちらに置く。
+OUTPUT_ADAPTERS_WITH_INPUT = {
+    "region_growing": _point_labels_to_volume,
+    "euclidean_cluster": _point_labels_to_volume,
+    "plane_segmentation": _point_labels_to_volume,
+}
+
+
 def _scaled(default, knob):
     """著者の既定値を中心にした相対スケール(既定の 1/4 〜 2 倍)。
 
