@@ -11,7 +11,7 @@
 ## TL;DR
 
 - **Fullseye（フルズアイ／"Bullseye = 的のど真ん中" のもじり）** は、古典的な画像処理・幾何ビジョンのアルゴリズムを **numpy で自前実装し、1本の型付きインターフェースの裏に約1000個そろえた自作ライブラリ**です。「中身が説明できる（explainable）ビジョン」を、**Physical AI**（物理世界で身体を持って動く AI ―― つまりロボット）の目のために持ち歩けるようにするのが狙いです。
-- 産業用マシンビジョンの定番 **HALCON** を「網羅の地図」として使い、実測で **982 / 2313 operator（42.5%）** に自作の対応物を用意しました（この数字は記憶頼みでなく、公式リファレンスの operator 一覧に対して機械集計したものです）。
+- 産業用マシンビジョンの定番 **HALCON** を「網羅の地図」として使い、実測で **981 / 2313 operator（42.4%）** に自作の対応物を用意しました（この数字は記憶頼みでなく、公式リファレンスの operator 一覧に対して機械集計したものです）。
 - ライブラリの上には、**アルゴリズムを進化計算で"設計"するモード**と、**ステレオ→深度→点群→6自由度姿勢**とつなぐ **Physical AI 知覚スタック**、そして **HDevelop 風の IDE「Fullseye Studio」** が乗っています。
 - **いちばんの推奨運用は AI の RAG 知識ベース**。Claude Code などに読ませると、「この画像から○○を検出して」という**会話だけで約1000個の op からパイプラインが組まれ、実行され、Studio の画面に結果が出る** ―― そういう下地として設計しています。
 - 本記事の裏テーマは **「正直さ（honest disclosure）を仕組みにする」** こと ―― 良い数字だけ見せない・失敗も消さない・限界は明記する、という規律です。品質ゲートが実際にバグを捕まえた例を、**今まさに直した6件**を含めてそのまま載せます。
@@ -40,7 +40,7 @@
 
 | 階層 | Status ラベル | 本記事での中身 |
 |---|---|---|
-| **実装済み・再現可能** | `Production-ready / Verified` | 2D 731 + 3D 265 の op、型契約と統一インターフェース、Studio、PyPI 配布、テスト 6238 件、HALCON 対応 982/2313 の機械集計、展示・デモの実出力 |
+| **実装済み・再現可能** | `Production-ready / Verified` | 2D 860 + 3D 310 の op、型契約と統一インターフェース、Studio、PyPI 配布、テスト 6238 件、HALCON 対応 981/2313 の機械集計、展示・デモの実出力 |
 | **実証途上** | `PoC / Research prototype` | 進化によるパイプライン設計(hold-out 評価つき・限定条件)、RAG 経由の自然言語→パイプライン生成、Physical AI 知覚スタック(シミュレーション実証。実機投入・Sim-to-Real は未着手) |
 | **将来構想** | `Roadmap / Design proposal` | ロボット向けの包括的な op 基盤、AI が約 1000 op を選んで自律実行する運用、産業検査と Physical AI の共通知覚基盤 |
 
@@ -91,7 +91,7 @@ py -3.11 tools/update_fullseye.py --check   # 以後の更新は安全アップ�
 
 | 見たいもの | リンク |
 |---|---|
-| 約1000 op の**ヘルプ総目次**（2D / 3D） | [docs/ops/INDEX.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/ops/INDEX.md) |
+| 約1,200 op の**ヘルプ総目次**（2D / 3D） | [docs/ops/INDEX.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/ops/INDEX.md) |
 | 全 op の**一枚カタログ**（型契約つき） | [docs/OP_CATALOG.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/OP_CATALOG.md) |
 | **処理結果ギャラリー**（本記事の図版のフルサイズ＋解説） | [docs/GALLERY.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/GALLERY.md) |
 | **サンプルデータの入手先カタログ**（実 DL URL・ライセンスつき） | [docs/ops/SAMPLES.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/ops/SAMPLES.md) |
@@ -162,7 +162,7 @@ Fullseye には前身があります。もともとは **`imgevolve`**、つま�
 ```mermaid
 flowchart TB
     subgraph L0["土台：型付き op 約1000個"]
-        OPS["型付きオペレータ・ライブラリ<br/>2D op 731種 + 3D op 265種<br/>numpy 自前実装 / 型(sort)で接続"]
+        OPS["型付きオペレータ・ライブラリ<br/>2D op 860種 + 3D op 310種<br/>numpy 自前実装 / 型(sort)で接続"]
     end
     subgraph L1["使い方は2通り"]
         APPLY["① 既知の op を適用<br/>fullseye.apply / run_pipeline"]

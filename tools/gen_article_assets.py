@@ -45,6 +45,7 @@ Run:  py -3.11 tools/gen_article_assets.py
 from __future__ import annotations
 
 import os
+import re
 import shutil
 import sys
 
@@ -55,6 +56,7 @@ if REPO not in sys.path:
     sys.path.insert(0, REPO)
 
 ASSETS_DIR = os.path.join(REPO, "docs", "articles", "assets")
+ARTICLES_DIR = os.path.join(REPO, "docs", "articles")   # the two overview articles (published-number source)
 SOURCES_DIR = os.path.join(ASSETS_DIR, "_sources")
 THUMBS_DIR = os.path.join(ASSETS_DIR, "thumbs")
 MEDIA_DIR = os.path.join(ASSETS_DIR, "media")  # mp4/gif 動画置き場(GitHub blob リンク用)
@@ -707,6 +709,30 @@ def _treemap_rects(counts: dict, x, y, w, h):
     return list(zip(labels, [v for _, v in items], rects))
 
 
+_ARTICLE_COUNT_RE = {
+    "ja": re.compile(r"2D\s*(\d+)\s*\+\s*3D\s*(\d+)\s*の op"),
+    "en": re.compile(r"The\s+(\d+)\s+2-D\s*\+\s*(\d+)\s+3-D ops"),
+}
+
+
+def published_op_counts() -> dict:
+    """``{"ja": (n_2d, n_3d), "en": (n_2d, n_3d)}`` as written in the two overview articles.
+
+    The status table row is the canonical place ("2D 860 + 3D 310 の op" /
+    "The 860 2-D + 310 3-D ops"); a missing or unparsable row is an error, not a
+    default — an unverifiable number is not a verified one.
+    """
+    out = {}
+    for lang, rx in _ARTICLE_COUNT_RE.items():
+        path = os.path.join(ARTICLES_DIR, f"fullseye_overview_qiita_{lang}.md")
+        text = open(path, encoding="utf-8").read()
+        m = rx.search(text)
+        if not m:
+            raise AssertionError(f"could not find the op-count status row in {path}")
+        out[lang] = (int(m.group(1)), int(m.group(2)))
+    return out
+
+
 def build_op_taxonomy(log=print) -> dict:
     """ops.py(2D)+ops3d.py(3D)の実レジストリからカテゴリ別 op 数を集計し treemap を描く.
 
@@ -736,17 +762,24 @@ def build_op_taxonomy(log=print) -> dict:
     # Published-number gates as explicit raises (assert statements vanish under -O).
     if n_2d != len(ops.RT):
         raise AssertionError(f"2D op count {n_2d} != len(ops.RT) {len(ops.RT)}")
-    if n_2d != 731:
-        raise AssertionError(f"2D distinct op count drifted: {n_2d} (expected 731 per README/article)")
-    if len(counts_2d) != 46:
-        raise AssertionError(f"2D category count drifted: {len(counts_2d)} (expected 46)")
 
     counts_3d = Counter(m["category"] for m in ops3d.OPS3D.values())
     n_3d = sum(counts_3d.values())
-    if not (n_3d == len(ops3d.OPS3D) == 265):
-        raise AssertionError(f"3D op count drifted: {n_3d} (len(OPS3D)={len(ops3d.OPS3D)}, expected 265)")
-    if len(counts_3d) != 55:
-        raise AssertionError(f"3D category count drifted: {len(counts_3d)} (expected 55)")
+    if n_3d != len(ops3d.OPS3D):
+        raise AssertionError(f"3D op count {n_3d} != len(OPS3D) {len(ops3d.OPS3D)}")
+
+    # 公表数値ゲート: 記事本文(ja/en)に書かれた op 数が唯一の情報源。ここでハードコード
+    # していた 731/265 は 2026-09-02 時点で既に 861/310 に乖離しており、ゲートが図の生成を
+    # 止め続けていた。記事側の数字を正規表現で読み、実レジストリと突き合わせる —
+    # 数字を直す場所が「記事」1 か所になり、ツールは嘘を検出する側に回る。
+    pub = published_op_counts()
+    for lang, (p2, p3) in pub.items():
+        if (p2, p3) != (n_2d, n_3d):
+            raise AssertionError(
+                f"article ({lang}) says 2D {p2} / 3D {p3} but the live registry has "
+                f"2D {n_2d} / 3D {n_3d} — update docs/articles/fullseye_overview_qiita_{lang}.md")
+    log(f"op_taxonomy: published counts agree with the registry: 2D {n_2d} / 3D {n_3d} "
+        f"({len(counts_2d)} / {len(counts_3d)} categories)")
 
     bg, fg, muted = "#0b0d12", "#e7e9ee", "#8b91a0"
     fig, axes = plt.subplots(1, 2, figsize=(20, 11), facecolor=bg)

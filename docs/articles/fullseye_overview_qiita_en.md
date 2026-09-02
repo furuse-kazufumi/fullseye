@@ -11,7 +11,7 @@ This is a real point cloud of asteroid **25143 Itokawa** — the Gaskell shape m
 ## TL;DR
 
 - **Fullseye** (a pun on "Bullseye" — the dead center of a target) is a self-built library of classical image-processing and geometric-vision algorithms: **roughly 1,000 operators, implemented from scratch in numpy, sitting behind one typed interface**. The goal is to make "explainable vision" — vision whose internals you can actually account for — something you can carry around as the eyes of **Physical AI** (AI that acts in the physical world with a body, i.e. robots).
-- I use **HALCON**, the industrial machine-vision standard, as a "map of coverage." As measured, Fullseye has a self-built counterpart for **982 of 2,313 HALCON operators (42.5%)** — not a number from memory, but a mechanical tally against the operator list from the official reference.
+- I use **HALCON**, the industrial machine-vision standard, as a "map of coverage." As measured, Fullseye has a self-built counterpart for **981 of 2,313 HALCON operators (42.4%)** — not a number from memory, but a mechanical tally against the operator list from the official reference.
 - On top of the library sit an **evolutionary mode that "designs" algorithms through evolutionary computation**, a **Physical AI perception stack** that chains stereo → depth → point cloud → 6-DoF pose, and an **HDevelop-style IDE, Fullseye Studio**.
 - **The single most recommended way to use it is as an AI's RAG knowledge base.** Feed it to Claude Code or similar, and a plain conversational request like "detect X in this image" gets you a **pipeline assembled from ~1,000 ops, executed, with the results appearing on Studio's screen** — that's the foundation this is designed to be.
 - The undercurrent of this article is **making "honest disclosure" a mechanism** — never showing only the good numbers, never erasing failures, always stating the limitations. I include cases where the quality gates actually caught bugs, **including six I fixed just now**, exactly as they happened.
@@ -40,7 +40,7 @@ This is a long article, so let me sort **which claims sit at which stage** befor
 
 | Tier | Status label | What it covers in this article |
 |---|---|---|
-| **Implemented & reproducible** | `Production-ready / Verified` | The 731 2-D + 265 3-D ops, type contracts and the unified interface, Studio, the PyPI release, 6,238 tests, the machine-tallied 982/2,313 HALCON mapping, and the real outputs behind every exhibit and demo |
+| **Implemented & reproducible** | `Production-ready / Verified` | The 860 2-D + 310 3-D ops, type contracts and the unified interface, Studio, the PyPI release, 6,238 tests, the machine-tallied 981/2,313 HALCON mapping, and the real outputs behind every exhibit and demo |
 | **Under validation** | `PoC / Research prototype` | Evolutionary pipeline design (hold-out evaluated, bounded settings), natural-language-to-pipeline via RAG, and the Physical AI perception stack (validated in simulation; real hardware and sim-to-real are untouched) |
 | **Future vision** | `Roadmap / Design proposal` | A comprehensive op foundation for robots, an AI autonomously selecting and running the ~1,000 ops, and a shared perception base for industrial inspection and Physical AI |
 
@@ -162,7 +162,7 @@ Here is that "pick up a bean with chopsticks" experiment, seen through Fullseye'
 ```mermaid
 flowchart TB
     subgraph L0["Foundation: ~1,000 typed ops"]
-        OPS["The typed operator library<br/>731 2D ops + 265 3D ops<br/>hand-written numpy / wired together by type (sort)"]
+        OPS["The typed operator library<br/>860 2D ops + 310 3D ops<br/>hand-written numpy / wired together by type (sort)"]
     end
     subgraph L1["Two ways to use it"]
         APPLY["① Apply a known op<br/>fullseye.apply / run_pipeline"]
@@ -340,19 +340,19 @@ To avoid talking about "coverage" subjectively, I use the industrial-vision gian
 
 Let me pause on why a yardstick is needed at all. "There are about 1,000 ops" tells a reader nothing on its own — is that a lot, or a little? **The number 1,000 has no meaning until it's compared against something.** But declaring "it's comprehensive" subjectively would violate this article's undercurrent, honest disclosure. So the method I chose was: **measure with the same yardstick as the giant actually used in industry, and produce the number by mechanical tally**. I picked HALCON not merely because it's famous, but because **its operator list is organized and published as an official reference** — that is, for its high comparability.
 
-> **imgevolve maps to 982 / 2313 HALCON operators (42.5%)** — not from memory, but measured against the scraped list.
+> **imgevolve maps to 981 / 2313 HALCON operators (42.4%)** — not from memory, but measured against the scraped list.
 
 To be honest, that's **still under half**. Chapters like Tuple handling, System, Classification, and OCR are almost entirely untouched (they sit outside the core of image processing, so I've deprioritized them). Matching, Morphology, Filtering, and geometric measurement, on the other hand, are where I've built thick. The heart of this number is that **a per-chapter table showing "what's filled in and what's empty" stays open for anyone to see, at all times.**
 
 ### The Per-Chapter Map — Thick Spots and Empty Spots
 
-HALCON's 2,313 operators are divided into **30 chapters**. Fullseye's 982 counterparts are **not** spread evenly across them.
+HALCON's 2,313 operators are divided into **30 chapters**. Fullseye's 981 counterparts are **not** spread evenly across them.
 
 Where I've built thick is the chapters at the heart of image processing: **Filtering** (smoothing, edges, frequency-domain filters), **Morphology** (dilation, erosion, opening, closing), **Regions** (region operations and feature measurement), **Segmentation** (thresholding and region splitting), and **Matching** (template and deformable matching) — all painted **far denser** than the overall 42.5% average. The thin spots are chapters like **Tuple handling** (numeric-tuple operations, the programming-language side of HDevelop), **System** (process and thread control), and **Classification / OCR** (machine-learning-based classification and character recognition). Those are nearly untouched — that's the honest state of things.
 
 The skew described in words is disclosed as-is in a **per-chapter coverage bar chart** (the drawing script asserts agreement with the measured numbers in `docs/HALCON_COVERAGE.md`).
 
-[![HALCON per-chapter coverage — the breakdown of 982/2313 (42.5%) (click for full size)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/halcon_coverage_chart_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/halcon_coverage_chart.png)
+[![HALCON per-chapter coverage — the breakdown of 981/2313 (42.4%) (click for full size)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/halcon_coverage_chart_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/halcon_coverage_chart.png)
 
 *↑ The thick spots (Regions 105/106, Morphology 42/44, Filters 186/196) and the deliberately empty ones (System 0/141, OCR 0/96, Tuple 0/165) are visible at a glance.*
 
