@@ -570,5 +570,7 @@ __all__ = [
     "example_system", "paraxial_trace", "trace_rays", "ray_bundle",
     "spot_diagram", "spot_stats", "ray_fan", "opd_map", "opd_samples",
     "wavefront_from_opd", "seidel_coefficients", "tolerance_analysis",
+    "lensimage", "psf_from_opd", "psf_field_grid", "distortion_map",
+    "render_through_lens", "defect_dataset",
     "vision", "vision_ops", "Image", "Pipeline", "pipeline",
 ]
