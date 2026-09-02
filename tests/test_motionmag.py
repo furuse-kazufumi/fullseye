@@ -628,5 +628,20 @@ def test_the_filter_cache_cannot_grow_without_bound():
     assert len(mm._FILTER_CACHE) <= mm._FILTER_CACHE_MAX
 
 
+def test_docstrings_agree_with_the_design_note_that_phase_is_never_unwrapped_in_time():
+    """The module's design note rejects temporal phase unwrapping (a noise band
+    unwrapped in time is a random walk: 12.27 rad applied where 0.039 rad was
+    meant) and the code has no ``np.unwrap``; the two public docstrings used to
+    claim the phase *is* "unwrapped along time".  Keep all three in agreement."""
+    import inspect
+    src = inspect.getsource(mm)
+    assert "np.unwrap(" not in src
+    assert "Why there is no temporal phase unwrapping" in src
+    for fn in (mm.motion_magnify, mm.phase_displacement):
+        doc = inspect.getdoc(fn)
+        assert "unwrapped along time," not in doc and "unwrapped in time," not in doc, fn.__name__
+        assert "wrapped" in doc and "(-pi, pi]" in doc, fn.__name__
+
+
 if __name__ == "__main__":       # pragma: no cover
     pytest.main([__file__, "-q"])
