@@ -377,12 +377,13 @@ def _rays_hit_dir(O: np.ndarray, d: np.ndarray, A: np.ndarray, e1: np.ndarray,
     v = np.einsum("kmd,d->km", qvec, d) * inv[None, :]
     t = np.einsum("kmd,md->km", qvec, e2) * inv[None, :]
     hit = (nz[None, :] & (u >= -1e-9) & (u <= 1.0 + 1e-9) & (v >= -1e-9)
-           & (u + v <= 1.0 + 1e-9) & (t > tmin))
+           & (u + v <= 1.0 + 1e-9) & (t > tmin) & (t < tmax))
     return hit.any(axis=1)
 
 
 def _occluded_parallel(O: np.ndarray, d: np.ndarray, A: np.ndarray, B: np.ndarray,
-                       C: np.ndarray, tmin: float, grid: int) -> np.ndarray:
+                       C: np.ndarray, tmin: float, grid: int,
+                       tmax: float = np.inf) -> np.ndarray:
     """平行光方向 ``d`` について原点群 ``O`` (K,3) が遮蔽されるか (K,) bool(2-D 格子加速)。"""
     K = O.shape[0]
     if K == 0:
