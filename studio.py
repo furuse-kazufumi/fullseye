@@ -2491,6 +2491,77 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
             self._wheel_timer.setInterval(180)  # full re-render shortly after the last tick
             self._wheel_timer.timeout.connect(self._end_wheel)
             self.info = {"kind": "empty", "n_points": 0}
+            self._last_context_menu = None
+            self.screenshot_cb = None           # optional (viewer) -> None for tests / host
+            self._build_actions()
+
+        # ---- actions + right-click menu (the keys R / F / W and a screenshot) --- #
+        CONTEXT_MENU_EXEC = True
+
+        def _build_actions(self):
+            def _a(text, tip, cb, checkable=False):
+                act = QtGui.QAction(text, self)
+                act.setToolTip(tip); act.setStatusTip(tip)
+                act.setCheckable(checkable)
+                act.triggered.connect(lambda _=False: cb())
+                return act
+            self.actions = {
+                "reset_view": _a("Reset view\tR", "Home the orbit camera (yaw 35°, pitch 25°, zoom 1)",
+                                 self.reset_view),
+                "first_person": _a("First-person walkthrough (perspective)\tF",
+                                   "Toggle orbit (orthographic) <-> first-person perspective camera",
+                                   self.toggle_first_person, checkable=True),
+                "wireframe": _a("Wireframe\tW", "Draw the mesh edges over the shaded splats",
+                                self.toggle_wireframe, checkable=True),
+                "screenshot": _a("Save screenshot…", "Save the rendered 3-D view as a PNG",
+                                 self.save_screenshot),
+            }
+            self.actions["wireframe"].setEnabled(False)   # until a mesh with edges is shown
+
+        def toggle_wireframe(self):
+            if self._edges is None:
+                return
+            self._wire = not self._wire
+            self._repaint()
+
+        def _sync_actions(self):
+            try:
+                self.actions["wireframe"].setEnabled(self._edges is not None)
+                self.actions["wireframe"].setChecked(bool(self._wire))
+                self.actions["first_person"].setChecked(bool(self._fp))
+            except (AttributeError, KeyError, RuntimeError):
+                pass
+
+        def save_screenshot(self):
+            if self.screenshot_cb is not None:
+                self.screenshot_cb(self)
+                return
+            path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Save 3-D screenshot",
+                                                            "view3d.png", "PNG (*.png);;All files (*)")
+            if not path:
+                return
+            try:
+                if not self.grab().save(path):
+                    raise OSError("could not write %s" % path)
+            except Exception as e:
+                ERROR_HOOK(self, "Could not save screenshot", "%s\n\n%s" % (path, e))
+
+        def build_context_menu(self):
+            self._sync_actions()
+            menu = QtWidgets.QMenu(self)
+            menu.addAction(self.actions["reset_view"])
+            menu.addAction(self.actions["first_person"])
+            menu.addAction(self.actions["wireframe"])
+            menu.addSeparator()
+            menu.addAction(self.actions["screenshot"])
+            self._last_context_menu = menu
+            return menu
+
+        def contextMenuEvent(self, e):
+            menu = self.build_context_menu()
+            e.accept()
+            if self.CONTEXT_MENU_EXEC:
+                menu.exec(e.globalPos())
 
         # ---- data ----------------------------------------------------------- #
         def set_points(self, points, colors=None):
@@ -2712,6 +2783,9 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
             return self._radius / 50.0 * self._fp_speed * boost
 
         def mousePressEvent(self, e):
+            if e.button() == QtCore.Qt.RightButton:
+                self._drag = None                 # right button = context menu, not a drag
+                return
             mode = ("pan" if (e.button() == QtCore.Qt.MiddleButton
                               or e.modifiers() & QtCore.Qt.ShiftModifier) else "orbit")
             self._drag = (mode, e.position().toPoint())
@@ -2832,8 +2906,7 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
             if e.key() == QtCore.Qt.Key_R:
                 self.reset_view()
             elif e.key() == QtCore.Qt.Key_W and self._edges is not None:
-                self._wire = not self._wire
-                self._repaint()
+                self.toggle_wireframe()
             else:
                 super().keyPressEvent(e)
 
