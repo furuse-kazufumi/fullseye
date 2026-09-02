@@ -312,7 +312,8 @@ def test_stage_knob_widgets_follow_the_spec():
     sl = win._stage_list
     try:
         sl.setCurrentRow(0)                                       # gaussian: σ = 0.3 + 2.7a
-        assert ra.fspin.value() == pytest.approx(1.083, abs=1e-3) and ra.fspin.suffix() == " px"
+        assert ra.fspin.value() == pytest.approx(1.083, abs=6e-3) and ra.fspin.suffix() == " px"
+        assert ra.fspin.decimals() == 2                           # step 0.01 -> 2 decimals
         assert (ra.slider.minimum(), ra.slider.maximum()) == (0, 270) and ra.slider.value() == 78
         assert not ra.typed.isHidden() and ra.typed.currentWidget() is ra.fspin
         assert "blur σ" in ra.label.text() and "1.08 px" in ra.label.text()
