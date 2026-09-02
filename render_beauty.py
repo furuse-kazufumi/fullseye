@@ -190,7 +190,9 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
                   exposure: float = 1.0, shininess: Optional[float] = None,
                   ao_samples: int = 32, shadow_res: int = 512,
                   penumbra: float = 2.5, shadow_samples: int = 12,
-                  shadow_pcf: int = 1) -> np.ndarray:
+                  shadow_pcf: int = 1, brdf: str = "phong", brdf_params=None,
+                  shadow_method: str = "map", sun_angular_diameter_deg: float = 0.0,
+                  self_illumination: float = 0.0) -> np.ndarray:
     """メッシュを全品質層合成で「映える静止 3D」1 枚に描く → RGB ``(size, size, 3)`` float [0,1]。
 
     引数:
