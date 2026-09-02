@@ -3081,14 +3081,39 @@ def py_fn(name: str) -> Callable:
     return fn
 
 
+_WIRE_INT_MAX = 9007199254740992          # 2^53: the largest magnitude float64 carries exactly
+
+
+def wire_float(x) -> float:
+    """``float(x)`` for the float64 wire, **fail-closed** on an integer it cannot carry.
+
+    Every op's domain guard runs on the float64 value, so an ``int`` above 2^53 was
+    rounded by ``float()`` BEFORE the guard could see it and the op silently computed
+    on the wrong number (``pow_mod([2**53 + 1, 1, 4294967291])`` returned 10485760.0;
+    the exact answer is 10485761). Integral inputs (``int``, ``bool``, numpy ints —
+    anything with ``__index__``) with ``|x| > 2^53`` therefore raise ``ValueError``
+    instead of being converted. Non-integral inputs are converted with ``float()``.
+    """
+    try:
+        ix = operator.index(x)
+    except TypeError:
+        return float(x)
+    if ix > _WIRE_INT_MAX or ix < -_WIRE_INT_MAX:
+        raise ValueError(f"integer {ix} exceeds 2^53 and cannot ride the float64 wire exactly "
+                         f"(every algo op's domain is <= 2^53; it would be rounded before the "
+                         f"domain guard could reject it)")
+    return float(ix)
+
+
 def run_algo(name: str, seq):
     """Run the general-algorithm ``name`` on ``seq`` (any iterable of numbers).
 
     Returns a Python ``list`` for a sort or variable-length map (``out_sort == SEQ``)
     or a ``float`` for a reduction (``out_sort == SCALAR``). Fail-closed ``KeyError``
-    for unknown ops.
+    for unknown ops and ``ValueError`` for an integer input with ``|x| > 2^53``
+    (see ``wire_float``).
     """
-    return py_fn(name)([float(x) for x in seq])
+    return py_fn(name)([wire_float(x) for x in seq])
 
 
 def text_to_seq(s: str) -> list[float]:
