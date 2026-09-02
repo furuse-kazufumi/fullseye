@@ -38,7 +38,8 @@ from __future__ import annotations
 
 import numpy as np
 
-__all__ = ["phong_shade", "matcap_shade"]
+__all__ = ["phong_shade", "matcap_shade", "lommel_seeliger_reflectance",
+           "hapke_reflectance", "brdf_shade", "brdf_lommel_seeliger", "brdf_hapke"]
 
 #: このノルム未満の法線ベクトルは背景(未被覆画素)とみなす。
 _BG_EPS = 1e-6
