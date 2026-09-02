@@ -2050,14 +2050,17 @@ double mode_value(const double* a, int n) {
 _PY_IS_PRIME = '''\
 def run(a):
     """Primality test by deterministic Miller-Rabin. Input a = [n]; returns 1.0 if n is prime, 0.0
-    otherwise. Domain (honest): 0 <= n <= 2^32 - 1 (integer) so the modular squarings a*a mod n fit
-    uint64 in the C mirror and the witness set {2,3,5,7,11,13,17,19,23,29,31,37} is DETERMINISTIC
-    (it certifies primality for every n < 3.3e24, far past the domain). n < 2 and out-of-domain -> 0.0."""
+    if it is not (0 and 1 included: n < 2 is honestly "not prime"). Domain (honest): 0 <= n <= 2^32 - 1
+    (integer) so the modular squarings a*a mod n fit uint64 in the C mirror and the witness set
+    {2,3,5,7,11,13,17,19,23,29,31,37} is DETERMINISTIC (it certifies primality for every n < 3.3e24,
+    far past the domain). Fail-soft **-1.0** (not 0.0 — "composite" is a valid answer) on malformed /
+    out-of-domain input: empty, NaN, negative, non-integer, or n > 2^32 - 1 (an out-of-domain prime
+    such as 4294967311 used to come back 0.0 = "composite")."""
     if len(a) < 1:
-        return 0.0
+        return -1.0
     nd = a[0]
     if not (nd >= 0.0 and nd <= 4294967295.0 and nd == float(int(nd))):   # 2^32 - 1
-        return 0.0
+        return -1.0
     n = int(nd)
     if n < 2:
         return 0.0
