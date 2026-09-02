@@ -269,6 +269,10 @@ with warnings.catch_warnings():
         spot_diagram, spot_stats, ray_fan, opd_map, opd_samples,
         wavefront_from_opd, seidel_coefficients, tolerance_analysis,
     )
+    import lensimage  # noqa: E402,F401  (image formation through a designed lens)
+    from lensimage import (  # noqa: E402,F401
+        psf_from_opd, psf_field_grid, distortion_map, render_through_lens, defect_dataset,
+    )
     from engine import FullseyeEngine, diagnose_stages  # noqa: E402,F401  (pipeline runtime)
     import graphengine  # noqa: E402,F401  (DAG pipeline runtime)
     from graphengine import FullseyeGraph  # noqa: E402,F401
