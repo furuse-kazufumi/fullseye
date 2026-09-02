@@ -559,7 +559,10 @@ class Parser:
 
 
 def parse(src: str):
-    return Parser(tokenize(src)).parse_program()
+    try:
+        return Parser(tokenize(src)).parse_program()
+    except RecursionError:                           # belt and braces behind MAX_NESTING
+        raise FScriptError("nesting too deep (limit %d)" % MAX_NESTING)
 
 
 #: fscript builtins that dispatch to a fslib registry op — used by the Runtime
