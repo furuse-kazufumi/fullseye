@@ -132,12 +132,16 @@ def test_f3_spin_a_leaves_precise_b_untouched(app, win):
 # ----------------------------------------------------------------- F4 raising stage
 def _raising_pair():
     img = studio.demo_image(64)
-    for c in [o.name for o in api._ops.REGISTRY if o.out_sort == "contour"][:6]:
+    for c in [o.name for o in api._ops.REGISTRY if o.out_sort == "contour"][:12]:
+        try:
+            api.run_pipeline(img, [(c, .5, .5)])              # stage 1 itself must work
+        except Exception:
+            continue
         for second in ("gaussian", "otsu", "invert"):
             try:
                 api.run_pipeline(img, [(c, .5, .5), (second, .5, .5)])
             except Exception:
-                return c, second
+                return c, second                              # stage 2 is the one that raises
     pytest.skip("no raising stage pair in this registry")
 
 
