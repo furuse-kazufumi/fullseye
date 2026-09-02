@@ -605,9 +605,8 @@ def run(names: Sequence[str], sizes: Sequence[tuple[int, int, str]], dtypes: Seq
         device: str = "cpu", verbose: bool = True) -> dict[str, Any]:
     """全組み合わせを測って ``{"header":…, "rows":[…], "summary":{…}}`` を返す。"""
     rss_read = _rss_reader()
+    # accel(= torch)の import は ~700 ms かかるので、GPU 比較を実際にやる run でだけ引く。
     accel_map = accel_cores() if device != "cpu" else {}
-    if not accel_map:                                       # cpu run でも accel 有無は記録したい
-        accel_map = accel_cores()
     rows: list[dict[str, Any]] = []
     template_cache: dict = {}
     t0 = time.time()

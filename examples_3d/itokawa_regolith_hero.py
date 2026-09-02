@@ -330,7 +330,9 @@ def main() -> int:
           f"(Hapke θ̄ = {HAPKE['roughness_deg']:.0f}° が上限)")
 
     # ── (i) 決定的(軽いメッシュで)────────────────────────────────────────
-    Vsm, Fsm = render3d.mesh_scatter_boulders(V, F, density=200.0, d_min=0.008, seed=3, shape="hull",
+    # 前版の単一振幅 fBm(mesh_displace_fbm)を軽い参照メッシュとして使う(比較用の旧 op)。
+    Vsm, Fsm = render3d.mesh_displace_fbm(V, F, 0.0025, seed=SEED)
+    Vsm, Fsm = render3d.mesh_scatter_boulders(Vsm, Fsm, density=200.0, d_min=0.008, seed=3, shape="hull",
                                               orientation="random")
     hp_, hK_, hsun_ = camera_and_sun(Vsm, 96, 55.0)
     bump = dict(wavelengths=WAVELENGTHS, amplitudes=AMPLITUDES, seed=SEED, complement_edges=True)
