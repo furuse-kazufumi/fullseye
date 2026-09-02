@@ -594,18 +594,34 @@ def _sh_geom(p):
             # source maps outside the image, so a fresh buffer would leak stale
             # memory (nondeterministic + out of range). Pre-zeroing makes the
             # unmapped pixels a deterministic 0.
+            #
+            # **Use the return value, not the buffer we passed in.** cv2 is free to
+            # allocate its own output and hand it back; the `dst` argument is a hint,
+            # not a promise. Measured on cv2 5.0.0 (2026-09-02): the forward call
+            # happens to return the same object (`ret is dst` -> True) but the
+            # inverse one does NOT (`False`, 3139 non-zero pixels in the returned
+            # array against 0 in `dst`). Reading `dst` therefore produced an
+            # all-black image for every input — see the inverse branch below.
             dst = np.zeros((h, w), np.float32)
-            cv2.warpPolar(x.astype(np.float32), (w, h), (w / 2, h / 2),
-                          min(h, w) / 2, cv2.WARP_POLAR_LINEAR, dst)
-            return np.clip(dst.astype(np.float64), 0, 1)
+            out = cv2.warpPolar(x.astype(np.float32), (w, h), (w / 2, h / 2),
+                                min(h, w) / 2, cv2.WARP_POLAR_LINEAR, dst)
+            return np.clip(np.asarray(out, np.float64), 0, 1)
         if kind == "polar_inv" and _HAS_CV:          # inverse polar->Cartesian (polar_trans_image_inv)
             h, w = x.shape
             # Cartesian corners fall outside the polar disc and are never written;
             # zero-init for determinism (see the forward branch above).
+            #
+            # 2026-09-02: this branch read `dst` instead of the return value and so
+            # returned **an all-zero image for every input** — measured 360/360
+            # calls with zero non-zero pixels, across 4 sizes x 3 contents x 15 knob
+            # settings. It went unnoticed because the existing guards
+            # (`tests/test_known_bugs.py`) check determinism and the [0,1] range,
+            # and an all-black image passes both.
             dst = np.zeros((h, w), np.float32)
-            cv2.warpPolar(x.astype(np.float32), (w, h), (w / 2, h / 2), min(h, w) / 2,
-                          cv2.WARP_POLAR_LINEAR + cv2.WARP_INVERSE_MAP, dst)
-            return np.clip(dst.astype(np.float64), 0, 1)
+            out = cv2.warpPolar(x.astype(np.float32), (w, h), (w / 2, h / 2),
+                                min(h, w) / 2,
+                                cv2.WARP_POLAR_LINEAR + cv2.WARP_INVERSE_MAP, dst)
+            return np.clip(np.asarray(out, np.float64), 0, 1)
         if kind == "projective" and _HAS_CV:         # perspective warp (projective_trans_image)
             h, w = x.shape
             d = 0.06 + 0.12 * a
