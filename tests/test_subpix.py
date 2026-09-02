@@ -260,3 +260,54 @@ def test_constant_image_has_extrema_empty_but_one_plateau():
     assert len(plat) == 1               # the whole image is one flat region
     r, c = plat[0][0]
     assert abs(r - 9.5) < 1e-6 and abs(c - 9.5) < 1e-6
+
+
+# --------------------------------------------------------------------------- #
+# 2026-09-02 regressions: ties between pixels (F7) and integer-dtype input (F11)
+# --------------------------------------------------------------------------- #
+def test_max_exactly_between_pixels_is_found_once():
+    """A blob centred at (20.5, 20.5) makes a 2x2 plateau of equal values; the old
+    strict `>` test reported no maximum at all. Now the plateau is one point."""
+    img = 0.9 * _gauss(20.5, 20.5)
+    out = BY_NAME["sp_local_max_sub_pix"].fn(img, 0.2, 0.0)
+    assert len(out["cs"]) == 1
+    r, c = out["cs"][0][0]
+    assert float(np.hypot(r - 20.5, c - 20.5)) < 0.05
+    out = BY_NAME["sp_local_min_sub_pix"].fn(1.0 - img, 0.2, 0.0)
+    assert len(out["cs"]) == 1
+    r, c = out["cs"][0][0]
+    assert float(np.hypot(r - 20.5, c - 20.5)) < 0.05
+
+
+def test_generic_subpixel_precision_did_not_regress():
+    for cr, cc in [(20.37, 20.62), (20.9, 20.1), (20.0, 20.0)]:
+        out = BY_NAME["sp_local_max_sub_pix"].fn(0.9 * _gauss(cr, cc), 0.2, 0.0)
+        assert len(out["cs"]) == 1
+        r, c = out["cs"][0][0]
+        assert float(np.hypot(r - cr, c - cc)) < 0.05
+
+
+def test_8bit_quantised_peak_is_found():
+    img = np.round(0.9 * _gauss(20.5, 20.5) * 255) / 255      # equal-valued top pixels
+    out = BY_NAME["sp_local_max_sub_pix"].fn(img, 0.2, 0.0)
+    assert len(out["cs"]) == 1
+    r, c = out["cs"][0][0]
+    assert float(np.hypot(r - 20.5, c - 20.5)) < 0.15
+    img = np.round(0.9 * _gauss(20.37, 20.62, s=3.0) * 255) / 255
+    out = BY_NAME["sp_local_max_sub_pix"].fn(img, 0.2, 0.0)
+    assert len(out["cs"]) == 1
+    r, c = out["cs"][0][0]
+    assert float(np.hypot(r - 20.37, c - 20.62)) < 0.15
+
+
+def test_integer_images_are_scaled_by_dtype_range():
+    """uint8 0..255 used to be clipped to a flat 1.0 plateau (no extremum)."""
+    yy, xx = np.mgrid[0:41, 0:41].astype(np.float64)
+    blob = 200 * np.exp(-((yy - 20.37) ** 2 + (xx - 20.62) ** 2) / 8) + 30
+    for arr in (blob.astype(np.uint8), (blob * 257).astype(np.uint16), blob.astype(np.int32)):
+        out = BY_NAME["sp_local_max_sub_pix"].fn(arr, 0.2, 0.0)
+        assert len(out["cs"]) == 1, arr.dtype
+        r, c = out["cs"][0][0]
+        assert float(np.hypot(r - 20.37, c - 20.62)) < 0.2, arr.dtype
+    assert sp._as_image(np.array([[True, False]])).tolist() == [[1.0, 0.0]]
+    assert sp._as_image(np.array([[0, 255]], np.uint8)).tolist() == [[0.0, 1.0]]

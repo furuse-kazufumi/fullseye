@@ -126,24 +126,13 @@ def main() -> int:
         back = imgio.load(path)                       # round-trip check
         assert back.shape == r["image"].shape, f"{name}: save/load shape mismatch"
 
-    # merge manifest (own-work provenance), keep existing entries, no duplicates
-    mpath = os.path.join(OUT, "manifest.json")
-    manifest = {"images": []}
-    if os.path.exists(mpath):
-        with open(mpath, encoding="utf-8") as f:
-            manifest = json.load(f)
-    have = {e["name"] for e in manifest["images"]}
-    for name, r in results.items():
-        if name in have:
-            continue
-        manifest["images"].append({
-            "name": name, "file": f"{name}.png",
-            "source": f"synthesized (Fullseye synth.synthesize_like, {r['desc']})",
-            "licence": "own work",
-        })
-    with open(mpath, "w", encoding="utf-8") as f:
-        json.dump(manifest, f, indent=2)
-    print(f"wrote {len(results)} synthesized samples -> {OUT}")
+    # merge manifest (own-work provenance): owner-aware read-modify-write, so this
+    # script and gen_sample_images.py can run in either order without losing entries.
+    entries = [{"name": name, "file": f"{name}.png",
+                "source": f"synthesized (Fullseye synth.synthesize_like, {r['desc']})",
+                "licence": "own work"} for name, r in results.items()]
+    manifest = merge_manifest(os.path.join(OUT, "manifest.json"), entries, OWNER)
+    print(f"wrote {len(results)} synthesized samples (manifest now {len(manifest['images'])} entries) -> {OUT}")
     return 0
 
 

@@ -267,3 +267,22 @@ def test_measure_projection_offset_selects_different_line():
     bright = float(m1.m1_measure_projection(img, 0.0, 0.9))  # line near row 4
     dark = float(m1.m1_measure_projection(img, 0.0, 0.1))    # line near row 36
     assert bright > 0.8 and dark < 0.2, f"offset failed: bright={bright}, dark={dark}"
+
+
+# --------------------------------------------------------------------------- #
+# 2026-09-02 regression: integer-dtype input (F11)
+# --------------------------------------------------------------------------- #
+def test_uint8_step_finds_its_edge():
+    """A uint8 100->200 step used to be clipped to a flat 1.0 image (no edge)."""
+    row = np.where(np.arange(41) >= 10.5, 200, 100)
+    img8 = np.tile(row[None, :], (5, 1)).astype(np.uint8)
+    out = m1.m1_measure_pos(img8, 0.0, 0.5)
+    assert len(out["cs"]) == 1 and abs(out["cs"][0][0, 1] - 10.5) < 0.3
+    assert float(m1.m1_measure_thresh(img8, 0.0, 0.5)) == 1.0
+    img16 = (img8.astype(np.uint16) * 257)
+    out = m1.m1_measure_pos(img16, 0.0, 0.5)
+    assert len(out["cs"]) == 1 and abs(out["cs"][0][0, 1] - 10.5) < 0.3
+    # a python list of ints (int64) is scaled by its data range, not by 2**63
+    out = m1.m1_measure_pos(img8.tolist(), 0.0, 0.5)
+    assert len(out["cs"]) == 1 and abs(out["cs"][0][0, 1] - 10.5) < 0.3
+    assert m1._as_image(np.array([[0, 255], [255, 0]], np.uint8)).max() == 1.0
