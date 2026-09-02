@@ -184,7 +184,8 @@ def _sample_dirs(ldir, penumbra_rad: float, samples: int):
 
 def cast_shadow(V, F, light, *, pose=None, intrinsics=None, width: int = 256,
                 height: int = 256, directional: bool = True, penumbra: float = 0.0,
-                samples: int = 16, shadow_res: int = 512, bias=None) -> np.ndarray:
+                samples: int = 16, shadow_res: int = 512, bias=None,
+                pcf: int = 0) -> np.ndarray:
     """メッシュのキャスト影 / ソフトシャドウを計算し、可視性マップ (H,W) ∈ [0,1] を返す。
 
     ``1=完全に照らされる`` / ``0=完全な影``。受光面が無い背景画素は ``1.0``。
