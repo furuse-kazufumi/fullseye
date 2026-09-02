@@ -1437,6 +1437,18 @@ def parse_hdev_program(text, names):
       * `if <const-cond> ... [else ...] endif` — pick a branch by a constant test
     `while`/`elseif` are reported as unsupported (they need runtime control variables
     the flat pipeline model does not have). Returns (stages, errors)."""
+    stages, errs, _lines = parse_hdev_program_lines(text, names)
+    return stages, errs
+
+
+def parse_hdev_program_lines(text, names):
+    """:func:`parse_hdev_program` plus the 1-based SOURCE LINE of every emitted stage:
+    ``(stages, errors, lines)`` with ``len(lines) == len(stages)``.
+
+    Directive / comment / control-flow lines emit no stage, and an unrolled ``for``
+    body maps several stages onto one line — so the editor gutter (breakpoints, the
+    execution cursor, per-line timings) must go through this map rather than assume
+    stage index == editor line (F2 review finding)."""
     names = set(names)
     errs = []
     toks = []
