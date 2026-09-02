@@ -105,23 +105,24 @@ def test_ao_on_a_coarse_surface_has_no_polygonal_cells():
     """粗い面でも AO 場が滑らかであること(まだら模様の回帰テスト)。
 
     最近傍 k 頂点の逆距離重みだと、頂点の疎な格子が**多角形のセル**になって
-    現れる。セルの境界では値が折れるので、隣り合う画素の差(勾配)に
-    **飛び**が立つ。滑らかな補間なら勾配は有界に収まる。
+    現れる。セルの境界では値が折れるので、隣り合う画素の差に**飛び**が立つ。
 
-    判定は「AO の値域に対して、隣接画素差の最大が十分小さい」。三角形の
-    境界では法線ならぬ勾配が折れうるが(C0 連続、C1 ではない)、値そのものは
-    連続なので飛びは出ない。
+    ここで測るのは **同じ地面の上で隣り合う 2 画素**の差だけ。最初は画像の
+    内側を一律に見て失敗したが、原因は補間ではなく**測り方**だった ――
+    地面の上に浮かぶ板の縁は本物の不連続(別の面)なので、そこを一緒に数えると
+    どんな補間でも 100% の飛びが出る。面が変わる境目は除いて数える。
     """
-    ao = _ao_of_coarse_plane_under_a_box()
+    ao, face, n_ground_faces = _ao_of_coarse_plane_under_a_box()
     span = float(ao.max() - ao.min())
     assert span > 0.05, f"AO に濃淡が無い(遮蔽が効いていない): span={span}"
-    d = np.abs(np.diff(ao, axis=1))
-    # シルエット境界(物体の縁)は本当に不連続なので、内部だけを見る
-    inner = d[8:-8, 8:-8]
-    jump = float(inner.max()) / span
-    assert jump < 0.25, (
-        f"隣接画素の AO 差が値域の {jump:.0%} に達している = 補間が折れている"
-        "(最近傍逆距離のセル境界の症状)")
+    ground = (face >= 0) & (face < n_ground_faces)
+    pair = ground[:, :-1] & ground[:, 1:]            # 左右とも地面の画素対
+    assert pair.sum() > 200, "地面の画素対が少なすぎて判定にならない"
+    d = np.abs(np.diff(ao, axis=1))[pair]
+    jump = float(d.max()) / span
+    assert jump < 0.15, (
+        f"地面の上で隣り合う画素の AO 差が値域の {jump:.0%} に達している "
+        "= 補間が折れている(最近傍逆距離のセル境界の症状)")
 
 
 def test_ao_is_interpolated_within_the_covering_triangle():
