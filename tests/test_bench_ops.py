@@ -255,6 +255,7 @@ def test_cv_twin_comes_from_the_registry_halcon_alias():
 
 def test_ratio_vs_core_is_emitted_inside_one_run():
     """cv2 twin の効きは **同じ run の中**で比べる(run 跨ぎは熱ぶれ 1.7 倍に埋もれる)。"""
+    pytest.importorskip("cv2")
     rep = B.run(["gaussian", "cv_gaussian"], [(64, 64, "64")], ["float64"], ["noisy"],
                 warm=1, repeat=1, verbose=False)
     core, twin = rep["rows"]
