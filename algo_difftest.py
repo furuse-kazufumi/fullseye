@@ -618,9 +618,9 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
             [0, 0, 10, 0, 3, 5, 3, 0],                       # B-endpoint 2 on A interior -> d4
             [3, 3, 3, 8, 0, 0, 6, 6],                        # diagonal: A-endpoint on B interior -> d1
             [0, 0, 6, 6, 3, 3, 8, 3],                        # diagonal: B-endpoint on A interior -> d3
-            [0, 0, 4, 4, 0, 4, 4],                           # < 8 values -> fail-soft 0.0
-            [0, 0, 4, 4, 0, 4, 200000, 0],                   # coord out of range -> 0.0
-            [0, 0, 4, 4, 0, 4, 4, 0.5],                      # non-integer -> 0.0
+            [0, 0, 4, 4, 0, 4, 4],                           # < 8 values -> fail-soft -1.0
+            [0, 0, 4, 4, 0, 4, 200000, 0],                   # coord out of range -> -1.0
+            [0, 0, 4, 4, 0, 4, 4, 0.5],                      # non-integer -> -1.0 (not "no intersection")
         ]
         for _ in range(40):                                  # small coord range -> many crossings/misses
             while True:
