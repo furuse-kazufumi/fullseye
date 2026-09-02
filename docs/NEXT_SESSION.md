@@ -29,9 +29,8 @@
 - `apply` 既定で op ごと 1 回の警告が出る(`warnings.filterwarnings("ignore", category=fullseye.FullseyeFallbackWarning)` で消せる)
 
 ## 次にやること(優先順)
-1. **git push → Qiita PATCH**(push は ASK FIRST 規約のため未実施)。手順:
-   `git push` → `py -3.11 tools/qiita_patch_overview.py --check`(画像 17 件が 200 になること)→ `py -3.11 tools/qiita_patch_overview.py`。
-   記事のテスト件数(`6238`/`6,238` の 3 か所 × ja/en と末尾コメント)は最終スイート値に置換済みか確認。
+1. ~~git push → Qiita PATCH~~ **完了(2026-09-03 03:04)**: push `0cfd1201a..7030e3458`、ja/en PATCH 200・本文長一致を検証。
+   次回以降の記事更新は `py -3.11 tools/qiita_patch_overview.py --check` → 同 `(no flag)` の 2 手。
 2. PyPI リリース(v0.1.4): 上記「挙動変更」をリリースノートに。`docs/GENERAL_ALGORITHMS.md` 末尾の番兵注記を README にも。
 3. TRIZ マトリクスの推奨 Top-5 の未実施分: `fullseye.selfcheck()`(プローブ + 台帳を 1 コマンドに)/ typed ブリッジの `_EMPTY_OF` 欠落 2 sort(lightfield, histcube; wide vocab)/ `tb_euclidean_cluster` 常時ゼロ(tol 配線)。
 4. 未対応の細目: `pow_mod/gcd_seq/popcount_total/polygon_area2` の 0.0 番兵衝突 / `xcv2_hitmiss` の knob 未使用 / render_mesh スムーズシェーディング(設計判断待ち)/ ファザー「呼べたが毎回拒否」35 件(合成シーン要)。
