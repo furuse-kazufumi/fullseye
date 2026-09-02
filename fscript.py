@@ -1214,14 +1214,20 @@ def _b_binary_threshold(env, img):
 def _b_dilation(env, region, radius):
     from scipy.ndimage import binary_dilation, generate_binary_structure, iterate_structure
     reg = _as_region(region)
-    st = iterate_structure(generate_binary_structure(2, 1), max(1, int(radius)))
+    r = _radius(radius, "dilation radius")
+    if r == 0:
+        return reg                                    # identity
+    st = iterate_structure(generate_binary_structure(2, 1), r)
     return Region(binary_dilation(_region_mask(reg), st))
 
 
 def _b_erosion(env, region, radius):
     from scipy.ndimage import binary_erosion, generate_binary_structure, iterate_structure
     reg = _as_region(region)
-    st = iterate_structure(generate_binary_structure(2, 1), max(1, int(radius)))
+    r = _radius(radius, "erosion radius")
+    if r == 0:
+        return reg                                    # identity
+    st = iterate_structure(generate_binary_structure(2, 1), r)
     return Region(binary_erosion(_region_mask(reg), st))
 
 
