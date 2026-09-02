@@ -71,19 +71,25 @@ def test_f1_natural_call_contour():
 
 
 def test_f1_natural_call_calib():
-    """F1: Zhang 校正が名前空間経由で真値を復元。"""
+    """F1: Zhang 校正が名前空間経由で真値を復元。
+
+    image points are (row, col) — the convention of every calib API (2026-09-02:
+    this test used to hand-build (x, y) points; with fx=fy, cx=cy the swap was
+    invisible, so the truth is now asymmetric to pin the axes)."""
     import calib as C
     obj = np.array([[x, y] for x in range(5) for y in range(5)], float) * 0.05
-    Ktrue = np.array([[700, 0, 100], [0, 700, 100], [0, 0, 1.0]])
+    Ktrue = np.array([[700, 0, 100], [0, 650, 120], [0, 0, 1.0]])
     views = []
     for k in range(8):
         R = C._axis_to_rot(np.array([0.2 * np.sin(k), 0.1 * k, 0.05]))
         t = np.array([0.05, 0.1 * k - 0.3, 1.5 + 0.1 * k])
         P = np.column_stack([obj, np.zeros(len(obj))]) @ R.T + t
         uv = P @ Ktrue.T
-        views.append(uv[:, :2] / uv[:, 2:3])
+        xy = uv[:, :2] / uv[:, 2:3]
+        views.append(xy[:, ::-1])                      # (x, y) -> (row, col)
     K = u.calib.camera_calibration(obj, views)
-    assert abs(K["fx"] - 700) < 10 and abs(K["cx"] - 100) < 10
+    assert abs(K["fx"] - 700) < 1 and abs(K["fy"] - 650) < 1
+    assert abs(K["cx"] - 100) < 1 and abs(K["cy"] - 120) < 1
 
 
 def test_unknown_op_raises_helpful():
