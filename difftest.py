@@ -158,9 +158,12 @@ def main() -> int:
             c_max = 0.0
             for i in range(n):
                 got = np.asarray(gen.pipeline(inp[i].astype(np.float64)), np.float64)
-                c_max = max(c_max, float(np.max(np.abs(got - cout[i]))))
+                # fail-closed: a NaN/inf in either output is inf (the old
+                # max(0.0, nan) fold silently kept 0.0 and PASSED a NaN C output)
+                c_max = max(c_max, _finite_maxdiff(got, cout[i]))
             result["c_backend"] = {"status": "ran", "c_vs_python_max_abs_diff": c_max,
-                                   "pass": c_max < a.c_tol}  # --c-tol: float32 + kernel rounding
+                                   "pass": c_max < a.c_tol,  # --c-tol: float32 + kernel rounding
+                                   "compiler": compiler_label(cc)}
         except subprocess.CalledProcessError as e:
             result["c_backend"] = {"status": "compile_error", "detail": (e.stderr or str(e))[-400:]}
 
