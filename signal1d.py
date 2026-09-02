@@ -36,7 +36,12 @@ __all__ = [
 
 
 def _as_1d(y, name="y"):
-    a = np.asarray(y, dtype=np.float64).ravel()
+    """1D 実数配列に正規化。(N,1)/(1,N) の列・行ベクトルは ravel、それ以外の多次元は
+    ValueError(2026-09-02: 以前は (4,4) も 16 サンプルとして黙って通していた)。"""
+    raw = np.asarray(y, dtype=np.float64)
+    if raw.ndim > 1 and sum(1 for s in raw.shape if s != 1) > 1:
+        raise ValueError(f"{name} must be a 1D signal (or an (N,1)/(1,N) vector); got shape {raw.shape}")
+    a = raw.ravel()
     if a.size < 2:
         raise ValueError(f"{name} must be a 1D array of length >= 2 (got: {a.shape})")
     if not np.all(np.isfinite(a)):
