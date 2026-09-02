@@ -482,6 +482,7 @@ def load(path: str, color: bool = False):
     import os
     if not os.path.exists(path):
         raise FileNotFoundError(path)
+    _check_jpeg_complete(path)                  # before ANY backend touches it
     cv2 = _cv2()
     if cv2 is not None:
         # ANYDEPTH keeps 16-bit / float samples native; the channel coercion
@@ -493,7 +494,6 @@ def load(path: str, color: bool = False):
             buf = np.zeros(0, np.uint8)
         im = cv2.imdecode(buf, flag) if buf.size else None
         if im is not None:
-            _check_jpeg_complete(path, buf[:3].tobytes(), buf[-4096:].tobytes())
             if color:
                 im = im[:, :, ::-1]
             return _to01_by_depth(im)

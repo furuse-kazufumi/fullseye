@@ -187,8 +187,44 @@ def find_marks_and_pose(image, cam_par, caltab, thresh=0.5, max_reproj_rms=3.0):
     pose = proj_hom_mat2d_to_pose(H, K)
     if pose[2, 3] < 0:                                      # 板はカメラの前にある
         pose = proj_hom_mat2d_to_pose(-H, K)
+    # ホモグラフィ分解は初期値。再投影誤差を姿勢 6 自由度で非線形最小化して仕上げる。
+    world3 = np.column_stack([world_xy[ii], np.zeros(len(ii))])
+    pose, residuals = _refine_pose(world3, marks[jj], K, pose)
+    rms = float(np.sqrt(np.mean(residuals ** 2)))
+    if max_reproj_rms is not None and rms > max_reproj_rms:
+        raise ValueError(f"find_marks_and_pose: pose reprojection RMS {rms:.2f} px > "
+                         f"{max_reproj_rms} px — correspondence or calibration is wrong")
     return {"marks": marks[jj], "ideal_index": ii, "pose": pose, "homography": H,
             "reproj_rms": rms, "residuals": residuals, "n_marks": int(len(marks))}
+
+
+def _rotvec_to_mat(v):
+    from calib import _axis_to_rot
+    return _axis_to_rot(np.asarray(v, float))
+
+
+def _mat_to_rotvec(R):
+    from calib import _rot_to_axis
+    return _rot_to_axis(np.asarray(R, float))
+
+
+def _refine_pose(world3, marks_rc, K, pose0):
+    """world (N,3) ↔ 画素 (row,col) の再投影誤差を (回転ベクトル, t) の 6 自由度で
+    最小化(Levenberg-Marquardt, scipy)。(pose 4x4, 各点の残差ノルム) を返す。"""
+    from scipy.optimize import least_squares
+    from calib import project_3d_point
+    p0 = np.concatenate([_mat_to_rotvec(pose0[:3, :3]), pose0[:3, 3]])
+
+    def make_pose(p):
+        T = np.eye(4); T[:3, :3] = _rotvec_to_mat(p[:3]); T[:3, 3] = p[3:]
+        return T
+
+    def resid(p):
+        return (project_3d_point(world3, K, make_pose(p)) - marks_rc).ravel()
+    sol = least_squares(resid, p0, method="lm", xtol=1e-12, ftol=1e-12, max_nfev=200)
+    pose = make_pose(sol.x)
+    r = resid(sol.x).reshape(-1, 2)
+    return pose, np.linalg.norm(r, axis=1)
 
 
 def gen_image_to_world_plane_map(cam_par, pose, shape, scale=1.0):
