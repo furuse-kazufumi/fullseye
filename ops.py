@@ -960,6 +960,32 @@ if _os.environ.get("IMGEVOLVE_NO_BACKENDS", "") != "1":
             _extra += _b.build(Op, IMAGE, REGION, FEATURE, CONTOUR, _norm, _bin)
         except Exception:
             pass
+    # 名前の衝突を弾く。**op 名は addressing の鍵**で、``RT`` / ``_BY_NAME`` /
+    # ``SLOTS`` はどれも後勝ちの dict なので、同名を 2 つ登録すると先に入った方が
+    # 名前では二度と引けなくなる(``decode_by_names`` が再現できない)。一方
+    # ``_candidates`` はリストを走査するので**両方が抽選に入り、その op だけ
+    # 当たる確率が 2 倍**になる。
+    #
+    # 2026-09-02 実測: laplace / dyn_threshold / local_max / edges_sub_pix の 4 件が
+    # ``ops.py`` のコア定義(index 17/31/45/49)と ``backends_auto`` の再定義
+    # (210/236/244/276)で衝突していた。9 通りの入力で両者の出力は完全一致
+    # (= 純粋な重複)。``backends_auto.build`` は自分の spec 内だけ HALCON 名で
+    # de-dup しており、コアが既に登録した名前を知らない。
+    #
+    # 落とすのは**後から来た方**(コア定義を正本として残す)。捨てた分は
+    # ``DROPPED_DUPLICATES`` に残す —— 黙って消すと「登録したのに使えない」に
+    # なるので、テストが「ちょうどこの集合だけ」であることを検査できるようにする。
+    DROPPED_DUPLICATES = []
+    if _extra:
+        _known = {op.name for op in REGISTRY}
+        _kept = []
+        for _op in _extra:
+            if _op.name in _known:
+                DROPPED_DUPLICATES.append(_op.name)
+                continue
+            _known.add(_op.name)
+            _kept.append(_op)
+        _extra = _kept
     if _extra:
         REGISTRY = REGISTRY + _extra
         RT = {op.name: op.fn for op in REGISTRY}
