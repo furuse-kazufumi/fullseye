@@ -60,6 +60,33 @@ KNOWN_DEAD_BRIDGES = {
         "分けるなら sort の追加が要る(= decode の候補リストが動く)。",
 }
 
+#: **入力をそのまま返し続ける** op。``_fallback`` は ``in_sort == out_sort`` のとき
+#: ``np.asarray(v)`` を返す —— 情報を保つ正しい判断だが、**永久に失敗している op が
+#: 恒等写像の顔で候補枠に居座る**ことも意味する。定数ゼロの指紋では捕まらないので
+#: 別に数える(私が最初に書いた検査はこれを見落としていた)。
+KNOWN_IDENTITY_BRIDGES = {
+    "tb_project_points":
+        "3-D 点を像面へ投影して **(N,2)** を返すが out_sort は 'points'((N,3) を要求)。"
+        "sort の検査に落ちて恒等 fallback になる。実測 3/3 で入力と bit 一致。"
+        "つまり進化は『3 次元を撮る』という基本的な写像を一度も使えていない。",
+    "tb_points_zyx_to_keypoints_uv":
+        "tb_project_points と同型: 返りが (N,2) なのに out_sort が 'points'。実測 3/3。",
+    "tb_keypoints_uv_to_points":
+        "入力に (N,2) を要求するのに in_sort 'points' は (N,3) を運ぶ。上の 2 つと"
+        "表裏で、**keypoints と points が同じ sort に同居している**ことの帰結。実測 3/3。",
+    "tb_specular_diffuse_split":
+        "tb_specular_coefficient_map と同じ物理条件(照明直交成分の階数 1)を要求し、"
+        "乱数の rgbimage では必ず拒否される。in_sort == out_sort なのでこちらは"
+        "恒等として現れる。実測 3/3。",
+}
+
+#: **設計上、入力をそのまま返すのが正しい** op。恒等 = 故障ではない例。
+IDENTITY_BY_CONTRACT = {
+    "tb_create_funct_1d_array":
+        "docstring に『返る配列が関数そのもの』と明記された検証 + float64 化の op"
+        "(HALCON create_funct_1d_array)。恒等であることが仕様。",
+}
+
 
 def _sample_for(sort, rng):
     """その in_sort が実際に運ぶ値を 1 つ作る(生成器は chain_fuzz が正本)。"""
