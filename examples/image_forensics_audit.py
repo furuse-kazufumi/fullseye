@@ -133,17 +133,24 @@ def main():
     # ------------------------------------------------------------------ #
     # 1) 同一性 —— 知覚ハッシュは「同じ写真か」しか言えない                 #
     # ------------------------------------------------------------------ #
+    clone_only = original.copy()
+    clone_only[DST[0]:DST[0] + PATCH, DST[1]:DST[1] + PATCH] = \
+        original[SRC[0]:SRC[0] + PATCH, SRC[1]:SRC[1] + PATCH]
     h_orig = F.perceptual_hash(original, "dct")
     h_sub = F.perceptual_hash(submitted, "dct")
+    h_clone = F.perceptual_hash(clone_only, "dct")
     h_other = F.perceptual_hash(natural(N, 77), "dct")
     d_same = F.hash_distance(h_orig, h_sub)
+    d_clone = F.hash_distance(h_orig, h_clone)
     d_other = F.hash_distance(h_orig, h_other)
     print(f"1) 同一性(dct 64 bit): 提出 vs オリジナル = {d_same} bit  /  "
-          f"無関係な 1 枚 = {d_other} bit")
+          f"複製だけの版 = {d_clone} bit  /  無関係な 1 枚 = {d_other} bit")
     assert h_orig.dtype == np.bool_ and h_orig.shape == (64,)
-    assert d_same <= 2 < d_other                # 同じ写真だと分かる
-    print("   → 『同じ写真』とは言える。しかし **改竄の有無は何も言っていない** "
-          f"(8x8 に潰した後では {100 * changed:.1f}% の改竄が {d_same} bit にしかならない)")
+    assert d_clone < d_same < 18 < d_other      # どちらも「同じ写真」の域に入る
+    print(f"   → 『同じ写真』とは言える({d_same} bit は無関係な組の域 {d_other} の"
+          f"はるか内側)。しかし **どこを どう変えたかは何も言っていない** —— "
+          f"画素の {100 * changed:.1f}% を書き換えても {d_same} bit、"
+          f"同じ写真からの複製だけなら {d_clone} bit で、ほぼ見えない")
 
     # ------------------------------------------------------------------ #
     # 2) 証拠を判定に変える —— しきい値は同梱されない。自分の清浄データで作る #
