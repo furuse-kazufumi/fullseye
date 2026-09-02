@@ -91,6 +91,8 @@ py-modules = [
   "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",
   "samples", "references", "codegen", "difftest", "parity", "accel", "accel_bridge", "accel_match", "accel_vol", "bench",
+  # CPU 高速 twin テーブル(cv2/IPP)。api._try_fast が import するので wheel に要る
+  "fast",
   "algo", "algo_codegen", "algo_difftest", "synth",
   "sweep", "graph", "graph_seed", "lib_coverage",
   "halcon_coverage", "halcon_rad_ingest", "halcon_scrape", "imgevolve",
