@@ -1,6 +1,6 @@
-/* imgevolve C runtime. stdlib + math only. Uncompiled in this environment
- * (no C toolchain); difftest.py compiles + verifies it against the Python
- * backend when a compiler is available. */
+/* imgevolve C runtime. stdlib + math only. difftest.py compiles + verifies it
+ * against the Python backend whenever a C toolchain is available (gcc/clang on
+ * PATH, or `python -m ziglang cc` — see algo_difftest.find_c_compiler). */
 #include "imgops.h"
 #include <math.h>
 #include <stdlib.h>
