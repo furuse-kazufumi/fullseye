@@ -473,20 +473,64 @@ def format_inspection(d):
     return "\n".join(f"{k}: {v}" for k, v in d.items())
 
 
+def fmt_num(x, decimals=3):
+    """Compact number for list rows / status text: integral floats print as ints
+    (``12.0 -> '12'``), others to *decimals* places; non-numbers pass through."""
+    try:
+        v = float(x)
+    except (TypeError, ValueError):
+        return str(x)
+    if not math.isfinite(v):
+        return str(v)
+    if abs(v - round(v)) < 1e-9 and abs(v) < 1e12:
+        return "%d" % int(round(v))
+    return "%.*f" % (decimals, v)
+
+
+def fmt_shape(shape):
+    """``(64, 64) -> '64×64'`` (a tuple repr is noise in a one-line row)."""
+    try:
+        return "×".join(str(int(s)) for s in shape)
+    except (TypeError, ValueError):
+        return str(shape)
+
+
 def step_summary(st):
-    """One-line state summary for a step's result (for the pipeline/step list)."""
+    """One-line state summary for a step's result (for the pipeline/step list).
+
+    Floats are rounded to 3 decimals and tuples rendered as ``H×W`` so a row reads
+    ``image 64×64 mean=0.412`` rather than ``image (64, 64) mean=0.41234``."""
     k = st.get("kind")
     if k in ("image", "color"):
-        return f"{k} {st['shape']} mean={st['mean']}"
+        return f"{k} {fmt_shape(st['shape'])} mean={fmt_num(st['mean'])}"
     if k == "region":
-        return f"region: {st['regions']} obj, area={st['area_fraction']}"
+        return f"region: {st['regions']} obj, area={fmt_num(st['area_fraction'])}"
     if k == "feature":
-        return f"feature = {st['value']}"
+        return f"feature = {fmt_num(st['value'])}"
     if k == "contour":
         return f"contour x{st['n_contours']}"
     if k == "error":
         return "ERROR: " + str(st.get("message", ""))[:48]
     return str(k)
+
+
+def stage_knob_text(name, a, b):
+    """Knob text for a pipeline row, in DISPLAY units when the op has a spec:
+    ``gaussian`` -> ``blur σ=1.08 px, b=–``; a generic op -> ``a=0.50, b=0.50``.
+    Headless (no Qt) so the row format is unit-testable."""
+    specs = param_specs.spec_for(name)
+    parts = []
+    for letter, knob in (("a", a), ("b", b)):
+        sp = specs[letter]
+        kind = sp.get("kind")
+        if kind == "unused":
+            parts.append("%s=–" % letter)
+        elif param_specs.is_generic(sp):
+            parts.append("%s=%.2f" % (letter, float(knob)))
+        else:
+            lab = sp.get("label") or letter
+            parts.append("%s=%s" % (lab, param_specs.format_display(sp, float(knob))))
+    return ", ".join(parts)
 
 
 def apply_display(val, mode, base=None, draw=None):
