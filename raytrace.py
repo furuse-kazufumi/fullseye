@@ -115,9 +115,10 @@ def glass(nd, vd):
 #: Three-term Sellmeier coefficients ``(B1, B2, B3, C1, C2, C3)`` — ``n² − 1 =
 #: Σ B_i λ² / (λ² − C_i)`` with λ in µm — for a small set of catalogue glasses
 #: and crystals. The Schott "N-" values are the manufacturer's published fit
-#: constants (Schott optical glass data sheets, 2017 catalogue); fused silica is
-#: Malitson (1965), CaF2 Malitson (1963), sapphire (ordinary ray) Malitson &
-#: Dodge (1972). ``tests/test_raytrace.py`` checks every entry's d-line index
+#: constants (Schott optical glass data sheets; every entry was checked digit by
+#: digit against the refractiveindex.info database mirror, specs/schott/optical,
+#: on 2026-09-03); fused silica is Malitson (1965), CaF2 Malitson (1963),
+#: sapphire (ordinary ray) Malitson & Dodge (1972). ``tests/test_raytrace.py`` checks every entry's d-line index
 #: and Abbe number against the catalogue figures, so a typo cannot survive.
 #: Valid over the visible / near infrared (≈0.3–2.3 µm); ``refractive_index``
 #: refuses wavelengths outside ``_SELLMEIER_RANGE``.
@@ -134,7 +135,7 @@ _SELLMEIER = {
     "N-FK51A": (0.971247817, 0.216901417, 0.904651666, 0.00472301995, 0.0153575612, 168.68133),
     "N-F2":    (1.39757037, 0.159201403, 1.2686543, 0.00995906143, 0.0546931752, 119.248346),
     "N-SF2":   (1.47343127, 0.163681849, 1.36920899, 0.0109019098, 0.0585683687, 127.404933),
-    "N-SF5":   (1.52481889, 0.187882145, 1.42729911, 0.011254756, 0.0588995392, 129.141675),
+    "N-SF5":   (1.52481889, 0.187085527, 1.42729015, 0.011254756, 0.0588995392, 129.141675),
     "N-SF10":  (1.62153902, 0.256287842, 1.64447552, 0.0122241457, 0.0595736775, 147.468793),
     "N-SF11":  (1.73759695, 0.313747346, 1.89878101, 0.013188707, 0.0623068142, 155.23629),
     "N-SF6":   (1.77931763, 0.338149866, 2.08734474, 0.0133714182, 0.0617533621, 174.01759),

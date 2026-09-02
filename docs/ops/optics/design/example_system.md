@@ -19,7 +19,10 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 A named example: ``"singlet"`` (plano-convex BK7, f≈100), ``"doublet"``
 (a cemented achromat, BK7/SF2, f≈100), ``"paraboloid"`` (f/2 paraboloid
-mirror — stigmatic on axis), ``"sphere_mirror"`` (same radius, spherical).
+mirror — stigmatic on axis), ``"sphere_mirror"`` (same radius, spherical),
+``"asphere"`` (plano-hyperbolic N-BK7 singlet, flat toward the object, exit
+conic ``k = −n²`` — Descartes' stigmatic lens, f≈100 at f/4),
+``"catalog_doublet"`` (the doublet with real N-BK7 / N-SF2 Sellmeier glass).
 
 ## ファミリ共通の入力契約(fail-closed)
 

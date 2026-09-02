@@ -294,19 +294,19 @@ def _hapke_roughness(mu0, mu, cos_g, theta_bar: float):
         return chi * (cx + sx * tan_tb * E2(x) / (2.0 - E1(x)))
 
     E1i, E2i, E1e, E2e = E1(i), E2(i), E1(e), E2(e)
-    np.seterr(all="ignore")                    # 縁(i,e→90°)の 0/0 は下で 0 に潰す
-    # i <= e の式
-    den_a = 2.0 - E1e - (psi / np.pi) * E1i
-    mu0e_a = chi * (m0 + si * tan_tb * (cpsi * E2e + sin2_half * E2i) / den_a)
-    mue_a = chi * (m1 + se * tan_tb * (E2e - sin2_half * E2i) / den_a)
-    S_a = (mue_a / eta(e, m1, se)) * (m0 / eta(i, m0, si)) * chi \
-        / (1.0 - f_psi + f_psi * chi * (m0 / eta(i, m0, si)))
-    # i > e の式
-    den_b = 2.0 - E1i - (psi / np.pi) * E1e
-    mu0e_b = chi * (m0 + si * tan_tb * (E2i - sin2_half * E2e) / den_b)
-    mue_b = chi * (m1 + se * tan_tb * (cpsi * E2i + sin2_half * E2e) / den_b)
-    S_b = (mue_b / eta(e, m1, se)) * (m0 / eta(i, m0, si)) * chi \
-        / (1.0 - f_psi + f_psi * chi * (m1 / eta(e, m1, se)))
+    with np.errstate(all="ignore"):            # 縁(i,e→90°)の 0/0 は下で 0 に潰す
+        # i <= e の式
+        den_a = 2.0 - E1e - (psi / np.pi) * E1i
+        mu0e_a = chi * (m0 + si * tan_tb * (cpsi * E2e + sin2_half * E2i) / den_a)
+        mue_a = chi * (m1 + se * tan_tb * (E2e - sin2_half * E2i) / den_a)
+        S_a = (mue_a / eta(e, m1, se)) * (m0 / eta(i, m0, si)) * chi \
+            / (1.0 - f_psi + f_psi * chi * (m0 / eta(i, m0, si)))
+        # i > e の式
+        den_b = 2.0 - E1i - (psi / np.pi) * E1e
+        mu0e_b = chi * (m0 + si * tan_tb * (E2i - sin2_half * E2e) / den_b)
+        mue_b = chi * (m1 + se * tan_tb * (cpsi * E2i + sin2_half * E2e) / den_b)
+        S_b = (mue_b / eta(e, m1, se)) * (m0 / eta(i, m0, si)) * chi \
+            / (1.0 - f_psi + f_psi * chi * (m1 / eta(e, m1, se)))
     use_a = i <= e
     mu0e = np.where(use_a, mu0e_a, mu0e_b)
     mue = np.where(use_a, mue_a, mue_b)

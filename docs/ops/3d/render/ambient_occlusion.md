@@ -13,7 +13,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 # ambient_occlusion — 3D `render` op
 
 - **データ種**: `mesh` → `image2d`
-- **呼び出し**: `import render_ao; render_ao.ambient_occlusion(V, F, pose=None, intrinsics=None, width: 'int' = 256, height: 'int' = 256, n_dirs: 'int' = 64, max_dist: 'float | None' = None, k: 'int' = 3, background: 'float' = 1.0) -> 'np.ndarray'` (または `ops3d.get("ambient_occlusion")`)
+- **呼び出し**: `import render_ao; render_ao.ambient_occlusion(V, F, pose=None, intrinsics=None, width: 'int' = 256, height: 'int' = 256, n_dirs: 'int' = 64, max_dist: 'float | None' = None, k: 'int' = 3, background: 'float' = 1.0, method: 'str' = 'auto') -> 'np.ndarray'` (または `ops3d.get("ambient_occlusion")`)
 
 ## 使い方
 

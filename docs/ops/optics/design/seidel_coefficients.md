@@ -31,8 +31,10 @@ refraction-invariant form: ``A = n(yc + u)``, ``Δ(u/n)``, Lagrange invariant
     S_V   = −Σ (Ā/A)[Ā² y Δ(u/n) + H² c Δ(1/n)]   distortion
     C_L   = −Σ A y Δ(δn/n),  C_T = −Σ Ā y Δ(δn/n)  axial / lateral colour
 
-plus the conic contribution ``k c³ (n'−n) y⁴`` to ``S_I`` (and its ``ȳ/y``
-powers to S_II, S_III, S_V). Sums are in millimetres of wavefront times 8:
+plus the aspheric deformation contribution ``8 G (n'−n) y⁴`` with ``G = k c³/8
++ A4`` (conic and fourth-order coefficient) to ``S_I`` (and its ``ȳ/y``
+powers to S_II, S_III, S_V); higher aspheric orders are fifth order and
+above and do not enter the Seidel sums. Sums are in millimetres of wavefront times 8:
 the third-order wavefront at the pupil edge is ``W040 = S_I/8``,
 ``W131 = S_II/2``, ``W222 = S_III/2``, ``W220 = (S_III + S_IV)/4``,
 ``W311 = S_V/2`` (Welford's normalisation). ``waves`` gives the same

@@ -20,7 +20,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 Build a validated sequential prescription (the ``table`` every other op consumes).
 
 *surfaces* is a list; each entry is a dict ``{"R", "t", "n", "k", "ap",
-"mirror", "decenter", "tilt"}`` or a tuple ``(R, t, n[, k[, ap]])``:
+"mirror", "decenter", "tilt", "asph"}`` or a tuple ``(R, t, n[, k[, ap]])``:
 
 * ``R`` radius (mm, ``inf`` for flat), ``t`` thickness to the next surface
   (mm, the last one is the distance to the image plane when *image_mm* is
@@ -28,7 +28,8 @@ Build a validated sequential prescription (the ``table`` every other op consumes
   ``n`` medium after the surface (index, ``(nd, vd)`` or :func:`glass`),
   ``k`` conic (default 0), ``ap`` semi-aperture in mm (default ``None`` =
   unlimited), ``mirror`` bool, ``decenter`` ``(dx, dy)`` mm, ``tilt``
-  ``(ax, ay)`` degrees about x and y.
+  ``(ax, ay)`` degrees about x and y, ``asph`` even aspheric coefficients
+  ``(A4, A6, A8, …)`` in mm⁻³, mm⁻⁵, … (default none = pure conic).
 * *stop*: index of the aperture-stop surface (default: the first surface).
   The stop's ``ap`` is the stop radius (required unless every surface has
   one, in which case the smallest is used).

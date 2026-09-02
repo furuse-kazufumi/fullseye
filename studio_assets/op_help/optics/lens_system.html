@@ -5,14 +5,15 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Build a validated sequential prescription (the `<code style="color:#22d3bf">table</code>` every other op consumes).</p>
 <p>*surfaces* is a list; each entry is a dict ``{&quot;R&quot;, &quot;t&quot;, &quot;n&quot;, &quot;k&quot;, &quot;ap&quot;,</p>
-<p>&quot;mirror&quot;, &quot;decenter&quot;, &quot;tilt&quot;}`<code style="color:#22d3bf"> or a tuple </code><code style="color:#22d3bf">(R, t, n[, k[, ap]])</code>`:</p>
+<p>&quot;mirror&quot;, &quot;decenter&quot;, &quot;tilt&quot;, &quot;asph&quot;}`<code style="color:#22d3bf"> or a tuple </code><code style="color:#22d3bf">(R, t, n[, k[, ap]])</code>`:</p>
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">R</code><code style="color:#22d3bf"> radius (mm, </code><code style="color:#22d3bf">inf</code><code style="color:#22d3bf"> for flat), </code><code style="color:#22d3bf">t</code>` thickness to the next surface</p>
 <p>(mm, the last one is the distance to the image plane when *image_mm* is</p>
 <p>not given — use `<code style="color:#22d3bf">None</code>` to place the image at the paraxial focus),</p>
 <p>`<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> medium after the surface (index, </code><code style="color:#22d3bf">(nd, vd)</code><code style="color:#22d3bf"> or :func:</code>glass`),</p>
 <p>`<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> conic (default 0), </code><code style="color:#22d3bf">ap</code><code style="color:#22d3bf"> semi-aperture in mm (default </code><code style="color:#22d3bf">None</code>` =</p>
 <p>unlimited), `<code style="color:#22d3bf">mirror</code><code style="color:#22d3bf"> bool, </code><code style="color:#22d3bf">decenter</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(dx, dy)</code><code style="color:#22d3bf"> mm, </code><code style="color:#22d3bf">tilt</code>`</p>
-<p>`<code style="color:#22d3bf">(ax, ay)</code>` degrees about x and y.</p>
+<p>`<code style="color:#22d3bf">(ax, ay)</code><code style="color:#22d3bf"> degrees about x and y, </code><code style="color:#22d3bf">asph</code>` even aspheric coefficients</p>
+<p>`<code style="color:#22d3bf">(A4, A6, A8, …)</code>` in mm⁻³, mm⁻⁵, … (default none = pure conic).</p>
 <p style="margin:2px 0 2px 12px">• *stop*: index of the aperture-stop surface (default: the first surface).</p>
 <p>The stop&#x27;s `<code style="color:#22d3bf">ap</code>` is the stop radius (required unless every surface has</p>
 <p>one, in which case the smallest is used).</p>
