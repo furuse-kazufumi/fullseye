@@ -5,7 +5,21 @@
 fullseye は産業ビジョン(検査ライン)と Physical AI(ロボット知覚)の両方に
 足場があり、その**手前**にあるのがレンズ・回折・偏光の計算 — 「どの焦点距離
 か」「被写界深度はどれだけか」「回折で潰れる最小欠陥は何 µm か」「偏光板で
-テカりは消えるか」。本レジストリはその台帳(optics.py、18 op / 4 カテゴリ)。
+テカりは消えるか」。本レジストリはその台帳(optics.py 18 op + raytrace.py 12 op
+= 30 op / 5 カテゴリ)。
+
+design(raytrace.py、2026-09-03 追加)— **近軸の先**。optics は薄肉・ABCD・
+スカラ回折で「設計の出発点」を出すが、実レンズがそこからどれだけずれるかは
+面を 1 枚ずつ**実光線**で通さないと分からない。raytrace は球面/円錐面の逐次
+処方(``lens_system`` が返す table)を全 op の共通入力にし、近軸諸元
+(``paraxial_trace`` / ``thick_lens``)、スポット(``spot_diagram`` /
+``spot_stats`` / ``ray_fan``)、射出瞳基準球に対する OPD(``opd_map`` →
+``match3d.fit_zernike`` → ``optics.wavefront_stats`` を ``wavefront_from_opd``
+が一本に連結)、面ごとの Seidel 和(``seidel_coefficients``)、製造公差の
+Monte-Carlo と感度(``tolerance_analysis``)を返す。棲み分け: **optics =
+近軸/波動(閉形式)、raytrace = 実光線・設計(処方から数値で)**。硝材は
+``glass``((n_d, V_d) → 2 項 Cauchy)。``example_system`` は singlet / doublet /
+paraboloid / sphere_mirror の 4 処方(テストと例の共通出発点)。
 
 既存資産との棲み分け(**再実装せず import して合成**):
   * 光線と面の相互作用 = match3d(``reflect`` / ``refract`` (Snell) /
