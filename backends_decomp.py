@@ -159,12 +159,14 @@ def _rpca(img, a, max_iter=60, work_max=64):
             break
     if scaled:
         L = ndimage.zoom(L, (H / L.shape[0], W / L.shape[1]), order=1)
-        S = ndimage.zoom(S, (H / S.shape[0], W / S.shape[1]), order=1)
         L = L[:H, :W]
-        S = S[:H, :W]
         if L.shape != (H, W):              # zoom rounding guard
             L = np.resize(L, (H, W))
-            S = np.resize(S, (H, W))
+        # Sparse part at FULL resolution: the residual against the upsampled
+        # background, soft-thresholded at the level the converged ALM used for
+        # its last S-update (lam/mu is ~0 after convergence, so this is the
+        # genuine per-pixel residual, not a blurred copy of the low-res S).
+        S = _soft(M0 - L, lam / mu)
     return L, S
 
 
