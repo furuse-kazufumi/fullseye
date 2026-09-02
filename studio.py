@@ -5886,7 +5886,53 @@ def build_window(model=None):
             return ("* empty pipeline — type ops here (HDevelop syntax), e.g.:\n"
                     "* gaussian (0.4, 0.5)\n* sobel_mag (0.5, 0.5)\n* otsu (0.5, 0.5)\n"
                     "* control flow:  for 3 ... endfor   ·   if 1 ... else ... endif")
-        return "\n".join("%s (%.3f, %.3f)" % (n, a, b) for (n, a, b) in model.stages)
+        # repr = full precision: the program must run the SAME pipeline as the model
+        # (a 0.12345 knob used to come back as 0.123 after Sync/Apply)
+        return "\n".join("%s (%r, %r)" % (n, a, b) for (n, a, b) in model.stages)
+
+    # ---- stage <-> editor line map (F2 review finding) ------------------------- #
+    # Directive lines (dev_* / set_system / disp_*) and comments emit no stage, and an
+    # unrolled `for` maps several stages onto one line; the gutter (breakpoints, the
+    # execution cursor, per-line timings) is keyed by EDITOR LINE, the runners by
+    # STAGE INDEX. state["stage_lines"][i] = 1-based editor line of stage i.
+    def _stage_line(i):
+        m = state.get("stage_lines")
+        if m and len(m) == len(model.stages) and 0 <= i < len(m):
+            return m[i]
+        return i + 1                              # no map -> one op per line
+
+    def _stages_done(exec_line):
+        """How many stages lie on or before editor line *exec_line* (0 = none)."""
+        if exec_line <= 0:
+            return 0
+        return sum(1 for i in range(len(model.stages)) if _stage_line(i) <= exec_line)
+
+    def _set_stage_lines(lines):
+        state["stage_lines"] = list(lines) if lines is not None else None
+
+    def _fail_stage(i, name, exc, timings, what):
+        """A stage raised inside the program runner: stop THERE, put the cursor on its
+        line, name it in the status + Problems (F4 review finding)."""
+        ln = _stage_line(i)
+        msg = "✕ %s: stage %d (%s) on line %d failed: %s" % (what, i + 1, name, ln, truncate(exc, 140))
+        code_status.setText(msg)
+        state["program_error"] = (i, name, str(exc))
+        if state["dev_update"]["time"]:
+            code_edit.set_timings(timings)
+        if state["dev_update"]["pc"]:
+            code_edit.set_exec_line(ln)
+        stage_list.setCurrentRow(i)
+        try:
+            refresh_problems(model.step_states())
+        except Exception as e:
+            state["errors"].append(("problems refresh failed", str(e)))
+        flash(msg)
+
+    def _run_stage(v, i, name, a, b):
+        """The same computation api.run_pipeline performs for stage *i* on value *v*
+        (entry coercion on the first stage, canonical-name resolution, feature ->
+        float), so the timed run IS the displayed pipeline. KeyError for an unknown op."""
+        return api.run_pipeline(v, [(name, a, b)], coerce=(i == 0))
 
     def sync_program():
         # Never clobber what the user is typing OR unapplied edits (Codex #9): the
