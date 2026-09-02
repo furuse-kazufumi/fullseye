@@ -417,13 +417,25 @@ RECIPES = {
 
 
 
-def _gate(fn, in_sort, out_sort):
-    """Fail-closed: only ops that run and return the declared sort enter the registry."""
+def _gate(fn, in_sort, out_sort, raw=None):
+    """Fail-closed: only ops that run and return the declared sort enter the registry.
+
+    *raw* を渡すと、**sanitize を通す前のレシピ**を先に実行する。これが要点で、
+    ``fn`` だけを見るゲートは何も落とせない —— ``_make`` の fail-soft が例外を
+    ``sanitize(None, ...)`` に化かし、feature なら ``0.0``、image なら入力由来の
+    配列という「sort としては妥当な値」を返すため、**必ず合格する**。
+    生レシピを先に叩いて初めて「そもそも動かない」を判定できる。
+    """
     n = 24
     yy, xx = np.mgrid[0:n, 0:n].astype(np.float64)
     img = np.clip(xx / n * 0.6 + 0.2, 0, 1)
     img[(yy - 8) ** 2 + (xx - 8) ** 2 < 12] = 0.9
     base = img if in_sort == "image" else (img > 0.5).astype(np.float64)
+    if raw is not None:
+        try:
+            raw(base.copy(), 0.5, 0.4)
+        except Exception:
+            return False                 # レシピ自体が動かない(環境依存も含む)
     try:
         o = fn(base.copy(), 0.5, 0.4)
     except Exception:
