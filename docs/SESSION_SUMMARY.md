@@ -3,13 +3,14 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-02 21:21:36
+- **最終更新**: 2026-09-02 21:30:08
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+e52b77c1c auto: astro_check.py 編集前 (2026-09-02 21:22)
 7b9770938 auto: metrics_check.py 編集前 (2026-09-02 21:20)
 f12492430 auto: quat_check.py 編集前 (2026-09-02 21:16)
 c4a7ae456 「テストは緑だが利用者だけ壊れる」構造を潰す: ブートストラップ 34 本 + 主張だけの検査 3 件
@@ -19,19 +20,18 @@ f6c44a4f2 auto: test_opdocs.py 編集前 (2026-09-02 20:15)
 6f2bd047f auto: exhibit_tile.py 編集前 (2026-09-02 20:14)
 b5d6372e4 auto: examples3d.py 編集前 (2026-09-02 20:14)
 42f176f51 死んでいた op を全部生かす: keypoints sort 分離 + 重複解消 + backend 実バグ 5 件
-0331348df auto: test_opdocs.py 編集前 (2026-09-02 19:54)
 ```
 
 ## 現在の git status
 
 ```
-(clean)
+M docs/SESSION_SUMMARY.md
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-21:20 docs/SESSION_SUMMARY.md
+21:29 docs/SESSION_SUMMARY.md
 21:19 .pytest_cache/v/cache/nodeids
 21:15 studio_ui_crash.log
 20:21 docs/articles/exhibits/wing2d.ja.md
