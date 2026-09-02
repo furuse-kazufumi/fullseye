@@ -2105,9 +2105,9 @@ static unsigned long long _mr_powmod(unsigned long long b, unsigned long long e,
     return r;
 }
 double is_prime(const double* a, int n_in) {
-    if (n_in < 1) return 0.0;
+    if (n_in < 1) return -1.0;
     double nd = a[0];
-    if (!(nd >= 0.0 && nd <= 4294967295.0 && nd == (double)(long long)nd)) return 0.0;
+    if (!(nd >= 0.0 && nd <= 4294967295.0 && nd == (double)(long long)nd)) return -1.0;
     unsigned long long n = (unsigned long long)nd;
     if (n < 2ULL) return 0.0;
     static const unsigned long long W[12] = {2,3,5,7,11,13,17,19,23,29,31,37};
