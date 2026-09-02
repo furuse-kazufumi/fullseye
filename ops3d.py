@@ -601,7 +601,8 @@ _CATALOG = {
         ("vol_watershed", "volops", ["voxel"], "labels", False),
     ],
     "pose_graph": [  # 姿勢グラフ最適化(SLAM back-end: 相対姿勢+ループ閉じ→大域姿勢)
-        ("optimize_pose_graph", "pose_graph", ["pose"], "pose", False),
+        # bundle_adjust と同型: 実返りは dict{poses (N,6), rmse, cost}。
+        ("optimize_pose_graph", "pose_graph", ["pose"], "table", False),
         ("relative_pose", "pose_graph", ["pose", "pose"], "pose", False),
         ("mean_edge_error", "pose_graph", ["pose"], "measurement", False),
     ],
