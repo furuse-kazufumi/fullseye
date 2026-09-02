@@ -6389,6 +6389,7 @@ def build_window(model=None):
             # model). No a/b knobs, and Insert / Run once / Help are image-pipeline
             # actions that don't apply — run it via the CLI instead.
             lbl_a.setText("a"); lbl_b.setText("b")
+            op_row_a.set_spec(param_specs.GENERIC_FLOAT); op_row_b.set_spec(param_specs.GENERIC_FLOAT)
             op_a_spin.setEnabled(False); op_b_spin.setEnabled(False)
             b_insert.setEnabled(False); b_help.setEnabled(False); b_run_once.setEnabled(False)
             return
