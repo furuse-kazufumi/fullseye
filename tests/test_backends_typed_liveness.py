@@ -374,3 +374,208 @@ def test_label_volume_helper_rejects_mismatched_lengths():
         bt._point_labels_to_volume(P, np.zeros(4))
     with pytest.raises(ValueError):
         bt._point_labels_to_volume(np.zeros((5, 2)), np.zeros(5))
+
+
+# --------------------------------------------------------------------------- #
+# 型が変わる op の素通し / 退化した返り / rgbimage のチャンネル数(2026-09-02)  #
+# --------------------------------------------------------------------------- #
+# 上の恒等検査(``_identity_report``)は **in_sort == out_sort** の op しか見ない。
+# ところが ``_fallback`` は表(``_EMPTY_OF``)に無い out_sort に対して
+# ``np.asarray(v)`` = 入力そのものを返すので、**型が変わる op** が失敗すると
+# 入力が別の sort の顔をして下流へ流れる。実測 2026-09-02: ``tb_quaternion_to_rgb``
+# (qimage → rgbimage)は乱数の (H,W,4) を渡すと quatimage 側の番人(非純四元数の
+# 拒否)が必ず働き、そのたびに **4 チャンネルの入力がそのまま rgbimage として**
+# 返っていた。恒等検査は sort が違うので見ず、定数ゼロの検査は中身が乱数なので
+# 見ず、形の検査(``_SHAPE_OK``)には rgbimage の行が無くて 4 チャンネルが通った。
+# 3 つの検査の隙間にちょうど落ちる形だったので、その 3 つを op ごとに置く。
+#
+# 検査は **op 1 件 = テスト 1 件**(parametrize)にし、直せない/直さない op は
+# 理由つきの xfail(strict)にする。直った瞬間に XPASS で赤くなるので、一覧が
+# 古びたまま残らない(KNOWN_* 辞書と同じ規律を pytest の機構で行う)。
+
+#: 型が変わるのに**入力をそのまま返す**ことが分かっていて、まだ直していない op。
+#: 既定語彙では 0 件(tb_quaternion_to_rgb は表に行を足して解消)。
+#: ``IMGEVOLVE_WIDE_VOCAB=1`` では ``tb_lf_from_mla``(image → lightfield)が
+#: 6/6 で素通し(lightfield / histcube に ``_EMPTY_OF`` の行が無い)— 既定語彙の
+#: 外なのでここでは数えない。表に行を足す判断は sort の所有者に委ねる。
+KNOWN_CROSS_SORT_PASS_THROUGH = {}
+
+#: **設計上**入力をそのまま返す型変換 op(恒等 = 故障ではない)。空。
+CROSS_SORT_IDENTITY_BY_CONTRACT = {}
+
+#: 構造のある入力に対して**毎回定数**を返すことが分かっていて、まだ直していない
+#: op。``KNOWN_DEAD_BRIDGES``(fallback の指紋 = 小さい形の全ゼロ)は自動で含める。
+#: ここに書くのは、fallback ではなく **op 自身が走った上で**定数になるもの。
+KNOWN_DEGENERATE_BRIDGES = {
+    "tb_euclidean_cluster":
+        "op は走っている(16^3 のラベル体積が返る)が、中身が**全ゼロ** —— 種の点群"
+        "(160 点、一辺 ~10 の箱、点間隔 ~0.4)に対して束縛 ``tol=0.5``(PARAM_HINTS)"
+        "と ``min_size`` の相対スケール(既定 10 の 1/4〜2 倍 = 3〜20)では 1 点も"
+        "クラスタに入らず、全点が未割当(-1)→ 体積は 0 のまま。実測 2026-09-02: "
+        "tol=0.5/min_size=3 で 3 点、tol=1.0/min_size=3 で 28 点しか付かず、"
+        "min_size>=10 では常に 0 点。既存の定数検査は fallback の**小さい形**しか"
+        "見ないので (16,16,16) の全ゼロを見逃していた。直すなら tol の束縛か"
+        "min_size の範囲(点群の所有者の判断)。",
+}
+
+#: **設計上**、構造のある入力から定数を返してよい op(縮約 reducer)。
+#: out_sort=feature(スカラー)は size==1 で自動的に対象外なので、ここに書くのは
+#: 配列を返すのに定数が正解の op だけ。空。
+REDUCERS_BY_CONTRACT = {}
+
+_GENS = None
+
+
+def _gens():
+    global _GENS
+    if _GENS is None:
+        _GENS = cf.make_generators()
+    return _GENS
+
+
+_SORT_TO_GEN = {
+    "points": "points", "volume": "voxel", "image": "image2d",
+    "signal": "signal", "matrix": "matrix", "cimage": "cimage",
+    "lightfield": "lightfield", "counts": "counts", "rgbimage": "rgbimage",
+    "video": "video", "qimage": "qimage", "beatcube": "beatcube",
+    "keypoints": "keypoints",
+}
+
+_RUN_CACHE = {}
+
+
+def _runs(op, trials=6, seed=23):
+    """op を種で *trials* 回走らせ ``[(入力, 返り), ...]`` を返す(例外は除く)。
+
+    3 つの検査が同じ実行結果を見るので op ごとに 1 度だけ走らせて共有する。
+    """
+    if op.name in _RUN_CACHE:
+        return _RUN_CACHE[op.name]
+    rng = np.random.default_rng(seed)
+    gen = _gens()[_SORT_TO_GEN[op.in_sort]]
+    outs = []
+    for _ in range(trials):
+        v = gen(rng)
+        try:
+            r = op.fn(v, float(rng.random()), float(rng.random()))
+        except Exception:                                # noqa: BLE001
+            continue
+        outs.append((np.asarray(v), np.asarray(r)))
+    _RUN_CACHE[op.name] = outs
+    return outs
+
+
+def _bridge_ops():
+    return [o for o in ops.REGISTRY
+            if o.name.startswith("tb_") and o.in_sort in _SORT_TO_GEN]
+
+
+def _params(candidates, known, by_contract=()):
+    """op → ``pytest.param``。既知の故障は理由つき strict xfail、仕様上の例外は skip。"""
+    out = []
+    for o in candidates:
+        marks = ()
+        if o.name in known:
+            marks = pytest.mark.xfail(reason=known[o.name], strict=True)
+        elif o.name in by_contract:
+            marks = pytest.mark.skip(reason=by_contract[o.name])
+        out.append(pytest.param(o, id=o.name, marks=marks))
+    return out
+
+
+def _is_constant(a):
+    a = np.asarray(a)
+    return a.size > 1 and np.unique(a).size == 1
+
+
+@pytest.mark.parametrize(
+    "op", _params([o for o in _bridge_ops() if o.in_sort != o.out_sort],
+                  KNOWN_CROSS_SORT_PASS_THROUGH, CROSS_SORT_IDENTITY_BY_CONTRACT))
+def test_cross_sort_bridge_never_returns_its_input(op):
+    """型が変わる op が、1 回でも**入力と bit 一致**を返してはならない。
+
+    同 sort なら「情報を保つ」恒等もありうるが、sort が違うのに同じ配列が返るのは
+    定義上 **型の嘘**(in_sort の値に out_sort の札を付けて流している)。
+    ``_fallback`` が表に無い out_sort で ``np.asarray(v)`` を返すのがその経路で、
+    tb_quaternion_to_rgb はこれで 3/6 回、4 チャンネルを rgbimage として返していた。
+    """
+    runs = _runs(op)
+    assert runs, f"{op.name}: 6 回とも例外(fail-soft が効いていない)"
+    leaked = [i for i, (v, r) in enumerate(runs)
+              if v.shape == r.shape and v.dtype == r.dtype and np.array_equal(v, r)]
+    assert not leaked, (
+        f"{op.name} ({op.in_sort} -> {op.out_sort}): 試行 {leaked} で入力がそのまま"
+        f"返った = in_sort の値に out_sort の札を付けて流している。仕様上の恒等なら"
+        f" CROSS_SORT_IDENTITY_BY_CONTRACT、故障なら KNOWN_CROSS_SORT_PASS_THROUGH へ"
+        f"理由つきで記録すること。")
+
+
+@pytest.mark.parametrize(
+    "op", _params(_bridge_ops(),
+                  dict(KNOWN_DEAD_BRIDGES, **KNOWN_DEGENERATE_BRIDGES),
+                  REDUCERS_BY_CONTRACT))
+def test_bridge_output_is_not_constant_for_structured_input(op):
+    """構造のある(定数でない)入力に対して**毎回**定数の配列を返してはならない。
+
+    ``_is_constant_fallback`` は fallback の**小さい形**だけを指紋にするので、
+    op が走った上で (16,16,16) の全ゼロを返す ``tb_euclidean_cluster`` のような
+    ものは通っていた。形を問わず「中身に 1 種類の値しか無い」を見る。
+    スカラー(feature)は size==1 なので対象外。1 回でも構造のある返りがあれば
+    合格(条件が厳しい op と永久に退化している op は別)。
+    """
+    runs = _runs(op)
+    assert runs, f"{op.name}: 6 回とも例外(fail-soft が効いていない)"
+    judged = [(v, r) for v, r in runs if not _is_constant(v) and np.asarray(r).size > 1]
+    if not judged:
+        pytest.skip(f"{op.name}: 返りがスカラーか、種が定数だった")
+    degenerate = all(_is_constant(r) for _v, r in judged)
+    assert not degenerate, (
+        f"{op.name} ({op.in_sort} -> {op.out_sort}): {len(judged)} 回すべて定数"
+        f"(形 {sorted({r.shape for _v, r in judged})}、値 "
+        f"{sorted({float(np.asarray(r).ravel()[0].real) for _v, r in judged})})。"
+        f"縮約が仕様なら REDUCERS_BY_CONTRACT、故障なら KNOWN_DEGENERATE_BRIDGES へ。")
+
+
+@pytest.mark.parametrize(
+    "op", _params([o for o in _bridge_ops() if o.out_sort == "rgbimage"], {}))
+def test_rgbimage_bridge_returns_exactly_three_channels(op):
+    """rgbimage を宣言する op の返りは**必ず (H,W,3)**。fallback も含めて。
+
+    ``_SHAPE_OK`` に rgbimage の行が無かった間、(H,W,4) の四元数画像がそのまま
+    rgbimage として通っていた。表に行を足したので、ここは「行がある」ことと
+    「その行が効いている」ことの両方を op の実行で確かめる。
+    """
+    assert "rgbimage" in bt._SHAPE_OK and "rgbimage" in bt._EMPTY_OF
+    runs = _runs(op)
+    assert runs, f"{op.name}: 6 回とも例外"
+    bad = [r.shape for _v, r in runs if not (r.ndim == 3 and r.shape[2] == 3)]
+    assert not bad, f"{op.name}: rgbimage 宣言なのに形 {bad} が返った"
+
+
+def test_every_cross_sort_out_sort_has_an_empty_value():
+    """型が変わる op の out_sort には、必ず ``_EMPTY_OF`` の行があること(原因側の固定)。
+
+    行が無い sort へ写す op は、失敗すると ``_fallback`` が入力を素通しする。
+    症状(素通し)を op ごとに捕まえる上の検査と対で、こちらは**表の欠け**を直接見る。
+    既定語彙で 0 件になっていることを固定する(wide 語彙の lightfield / histcube は
+    所有者判断で残っている — モジュール上部の KNOWN_CROSS_SORT_PASS_THROUGH 参照)。
+    """
+    missing = sorted({o.out_sort for o in ops.REGISTRY
+                      if o.name.startswith("tb_") and o.in_sort != o.out_sort
+                      and o.out_sort != "feature" and o.out_sort not in bt._EMPTY_OF})
+    assert not missing, (
+        f"_EMPTY_OF に行が無い out_sort: {missing} — この sort へ写す tb_ op は"
+        f"失敗時に入力を素通しする(型の嘘)。")
+
+
+def test_quaternion_to_rgb_bridge_fails_soft_to_an_rgbimage_not_its_input():
+    """回帰: 非純四元数(番人が拒否する入力)でも 4 チャンネルを返さない。
+
+    2026-09-02 まで乱数の (16,16,4) を渡すと (16,16,4) が bit 一致で返っていた。
+    """
+    by = {o.name: o for o in ops.REGISTRY}
+    op = by["tb_quaternion_to_rgb"]
+    q = np.random.default_rng(0).random((16, 16, 4))
+    r = np.asarray(op.fn(q, 0.5, 0.5))
+    assert r.ndim == 3 and r.shape[2] == 3, f"rgbimage でない形 {r.shape}"
+    assert not (r.shape == q.shape and np.array_equal(r, q)), "入力の素通し"

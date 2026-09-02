@@ -841,3 +841,34 @@ def test_the_new_type_is_reachable_and_has_an_exit():
              if "qimage" in m["in"] and m["out"] != "qimage"]
     assert sorted(entries) == ["monogenic_signal", "rgb_to_quaternion", "riesz_transform"]
     assert len(exits) >= 4
+
+
+# --------------------------------------------------------------------------- #
+# typed bridge (ops.REGISTRY の tb_*)を通した往復                              #
+# --------------------------------------------------------------------------- #
+def test_typed_bridge_quaternion_to_rgb_matches_the_module_and_round_trips():
+    """``tb_quaternion_to_rgb`` が (H,W,3) を返し、:func:`quatimage.quaternion_to_rgb`
+    と bit 一致し、``tb_rgb_to_quaternion`` との往復が元の RGB へ戻る(回帰)。
+
+    2026-09-02 まで、番人に拒否される入力(非純四元数)では橋の fail-soft が
+    **4 チャンネルの入力をそのまま rgbimage として返していた**。純四元数では
+    元々正しく動いていたので、その両方を固定する。
+    """
+    import ops                                          # noqa: PLC0415 - registry is heavy
+    by = {o.name: o for o in ops.REGISTRY}
+    assert by["tb_quaternion_to_rgb"].in_sort == "qimage"
+    assert by["tb_quaternion_to_rgb"].out_sort == "rgbimage"
+    rgb = colour_image(seed=41, h=16, w=16)
+    q = by["tb_rgb_to_quaternion"].fn(rgb, 0.5, 0.5)
+    assert q.shape == (16, 16, 4) and np.array_equal(q, qi.rgb_to_quaternion(rgb))
+    out = by["tb_quaternion_to_rgb"].fn(q, 0.5, 0.5)
+    assert out.shape == (16, 16, 3)
+    assert np.array_equal(out, qi.quaternion_to_rgb(q))
+    assert np.array_equal(out, rgb), "rgb -> quaternion -> rgb が元へ戻らない"
+    # 番人が拒否する入力: fail-soft は rgbimage の契約を守り、入力を素通ししない
+    bad = np.random.default_rng(0).random((16, 16, 4))
+    with pytest.raises(ValueError):
+        qi.quaternion_to_rgb(bad)
+    soft = np.asarray(by["tb_quaternion_to_rgb"].fn(bad, 0.5, 0.5))
+    assert soft.ndim == 3 and soft.shape[2] == 3, f"rgbimage でない形 {soft.shape}"
+    assert not (soft.shape == bad.shape and np.array_equal(soft, bad))
