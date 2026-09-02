@@ -1509,11 +1509,11 @@ def parse_hdev_program_lines(text, names):
                     continue                       # applied via extract_dev_directives
                 st = _hdev_parse_op(line, n, errs, names)
                 if st:
-                    out.append(st)
+                    out.append((st, n))            # (stage, source line)
         return out
 
-    stages = parse_block(())
-    return stages, errs
+    pairs = parse_block(())
+    return [st for st, _n in pairs], errs, [n for _st, n in pairs]
 
 
 #: HDevelop dev_* operators Fullseye Studio honours as display DIRECTIVES — they set
