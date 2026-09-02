@@ -312,8 +312,9 @@ def distortion_map(system, image_size=(256, 256), pixel_pitch_um=5.5, fields=Non
     fractional ideal-image pixel it sees (the inverse remap a renderer feeds to
     ``scipy.ndimage.map_coordinates``). ``max_distortion_pct`` is at the
     corner. A paraboloid mirror with the stop on it and any system on axis give
-    zero; the plano-convex singlet (stop on the lens) is measured at −1.1 %
-    (barrel) at the corner of a 256 × 5.5 µm sensor (pinned in the tests).
+    zero (< 1e-7 %); the plano-convex singlet (stop on its first surface) is
+    barrel: −0.0059 % at the corner of a 2048 × 5.5 µm sensor (4.55°) and
+    −0.065 % at 15°, the doublet −0.28 % at 15° (measured, pinned in the tests).
     """
     _system(system)
     h, w = _shape(image_size)
