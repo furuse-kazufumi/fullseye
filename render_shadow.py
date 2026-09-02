@@ -200,6 +200,11 @@ def cast_shadow(V, F, light, *, pose=None, intrinsics=None, width: int = 256,
       * ``shadow_res``  shadow map の一辺解像度。
       * ``bias``        影判定の深度バイアス(ワールド単位)。``None`` なら texel サイズと
                         傾斜から自動設定(acne / peter-panning を抑制)。
+      * ``pcf``         shadow map を引くときに混ぜる近傍の**半径 [texel]**。
+                        ``0``(既定)は最近傍 1 点 = 従来どおり。``1`` なら 3x3 の
+                        **判定を平均**する(深度を平均するのではない —— 深度の平均は
+                        手前と奥をならして存在しない面を作る)。境目が texel に
+                        量子化されて階段になるのを、shadow map を上げずに緩和する。
 
     手法は shadow mapping(Williams 1978): 光源から ``render_mesh`` で深度を取り、カメラ側の
     受光面点を光源空間へ射影して深度比較する。fail-closed: 退化メッシュ・不正光源・非正の
