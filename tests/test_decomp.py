@@ -280,3 +280,63 @@ def test_ops_fail_soft_on_degenerate_inputs():
             out = op.fn(np.array(iv, copy=True), 0.5, 0.5)
             assert np.isfinite(out).all()
             assert out.min() >= -1e-9 and out.max() <= 1 + 1e-9
+
+
+def _rpca_point_defect_image(n, n_defects, amp=0.25, seed=2):
+    """Smooth rank-1 background (sorted-random outer product) + n_defects 1-px bumps."""
+    rng = np.random.default_rng(seed)
+    u, v = np.sort(rng.random(n)), np.sort(rng.random(n))
+    bg = np.outer(u, v)
+    bg = 0.7 * bg / bg.max()
+    idx = rng.choice(n * n, n_defects, replace=False)
+    m = bg.ravel().copy()
+    m[idx] += amp
+    return m.reshape(n, n), idx
+
+
+def test_rpca_sparse_keeps_point_defects_at_full_resolution():
+    """Regression (2026-09-02 review): ``_rpca`` solves PCP at <= 64 px and used to
+    ZOOM the low-resolution sparse part back up, which smeared every 1-px defect
+    over the zoom footprint — on a 144² image 40 defects of amplitude 0.25 came
+    back at 0.53 (30/40 indistinguishable from background) instead of ~0.75.
+    L may be solved coarsely (it is smooth); S must be the FULL-resolution residual."""
+    m, idx = _rpca_point_defect_image(144, 40)
+    sparse = D.dc_rpca_sparse(m, 0.5, 0.0).ravel()
+    at_defects = sparse[idx]
+    assert int((at_defects > 0.65).sum()) >= 35, at_defects
+    assert at_defects.mean() > 0.70
+    # and the background stays flat at 0.5 (a sparse layer, not a blurred copy)
+    bg = np.delete(sparse, idx)
+    assert np.abs(bg - 0.5).mean() < 0.02
+    assert np.percentile(np.abs(bg - 0.5), 99) < 0.1
+
+
+def test_rpca_small_image_path_is_unchanged():
+    """<= 64 px is never scaled: the sparse part is exactly M - L (the converged ALM
+    residual) and a 0.25 defect on a rank-1 background is returned at 0.75, as it
+    was before the fix."""
+    m, idx = _rpca_point_defect_image(48, 12)
+    L, S = D._rpca(m, 0.5)
+    assert L.shape == S.shape == (48, 48)
+    assert np.allclose(m - L, S, atol=1e-6)                  # no soft-threshold bite
+    out = D.dc_rpca_sparse(m, 0.5, 0.0).ravel()[idx]
+    assert np.all(np.abs(out - 0.75) < 0.02), out
+
+
+def test_structure_texture_degenerate_strip_is_sort_correct_not_input():
+    """Regression (2026-09-02 review): a 1xN / Nx1 input made ``_bwd_div`` raise,
+    and the fail-soft wrapper then returned the INPUT as the "texture residual".
+    The honest degenerate answer: structure == input, texture residual == 0.5."""
+    for shape in ((1, 40), (40, 1)):
+        x = np.linspace(0.0, 1.0, 40).reshape(shape)
+        struct = D.dc_structure_texture(x, 0.3, 0.3)           # direct: must not raise
+        resid = D.dc_texture_residual(x, 0.3, 0.3)
+        assert struct.shape == resid.shape == shape
+        assert np.allclose(struct, x)
+        assert np.allclose(resid, 0.5)
+        # through the registry wrapper too (no fallback-to-input any more)
+        for op in OPS:
+            if op.name == "dc_texture_residual":
+                assert np.allclose(op.fn(x, 0.3, 0.3), 0.5)
+            if op.name == "dc_structure_texture":
+                assert np.allclose(op.fn(x, 0.3, 0.3), x)
