@@ -1271,16 +1271,30 @@ def _b_union_object(env, objects):
     return Region(np.isin(objs.labels, objs.ids))
 
 
+def _relative(img: FImage, value) -> float:
+    """A pixel value in the language's grey unit: fraction of the declared range.
+
+    ``threshold`` has always taken its bounds this way (``FImage.absolute``); the
+    statistics used to report raw pixel units instead, so on an 8-bit frame
+    ``threshold(Image, mean_gray(Image), max_gray(Image))`` compared 50 against
+    a 0..1 scale and silently selected nothing.  One unit for both now."""
+    lo, hi = img.value_range
+    return (float(value) - lo) / (hi - lo)
+
+
 def _b_mean_gray(env, img):
-    return float(_as_fimage(img).pixels.mean())
+    img = _as_fimage(img)
+    return _relative(img, img.pixels.mean())
 
 
 def _b_max_gray(env, img):
-    return float(_as_fimage(img).pixels.max())
+    img = _as_fimage(img)
+    return _relative(img, img.pixels.max())
 
 
 def _b_min_gray(env, img):
-    return float(_as_fimage(img).pixels.min())
+    img = _as_fimage(img)
+    return _relative(img, img.pixels.min())
 
 
 def _b_region_to_image(env, region):
