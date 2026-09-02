@@ -14,7 +14,7 @@
     "it_change_format": {"kind": "identity", "reason": "HALCON change_format on an image already of the target size; values unchanged by contract"},
     "it_full_domain":  {"kind": "identity", "reason": "HALCON full_domain: pixel values unchanged, only the (implicit) domain changes"},
     "f2_expand_domain": {"kind": "identity", "reason": "expand_domain_gray copies nearest valid gray into the border; with a full domain nothing to fill"},
-    "xsk_inpaint":     {"kind": "identity", "reason": "inpainting with no mask given (facade has no mask channel) has nothing to repair; documented no-op without a mask"},
+    "xsk_inpaint":     {"kind": "identity", "reason": "auto-mask = saturated pixels (>0.92 or <0.08); the probe image has none so there is nothing to repair (verified: a saturated patch is inpainted)"},
     "sk_clear_border": {"kind": "identity", "reason": "probe blobs on the second mask do not touch the border; on the sinusoid mask everything touches it and is cleared"},
     "r2_union1":       {"kind": "identity", "reason": "union of a single region is that region"},
     "r3_label_to_region": {"kind": "identity", "reason": "label-reading op; a binary mask has one label so the selection is the whole foreground (fixed 2026-09-02 for multi-label input)"},

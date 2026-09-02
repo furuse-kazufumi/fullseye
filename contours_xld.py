@@ -171,16 +171,73 @@ def _rasterize(arr, shape):
     return Path(arr).contains_points(pts).reshape(H, W)
 
 
+def _trace_mask_boundaries(mask):
+    """2 値マスクの境界を **画素の辺(crack)に沿って追跡**し、閉ループのリストを返す。
+
+    各ループは (K,2) の (row, col) float で始点==終点、頂点は画素の角(半整数座標)。
+    外側境界も穴も、連結成分ごとに 1 本ずつ別のループになる。多角形面積は
+    マスクの画素数に厳密に一致する。斜め接触は 4 連結として分ける(右折優先)。
+    2026-09-02 以前は境界画素を重心まわりの角度でソートしていたため、星形でない
+    領域(三日月・環)がぐちゃぐちゃになり面積も 6-13 % 小さかった。
+    """
+    m = np.asarray(mask, bool)
+    if m.ndim != 2 or not m.any():
+        return []
+    H, W = m.shape
+    pad = np.zeros((H + 2, W + 2), bool)
+    pad[1:-1, 1:-1] = m
+    pr, pc = np.nonzero(pad)
+    # 各画素の 4 辺: 外側に隣接する辺だけを、画面上時計回り(内側が進行方向右手)で出す
+    top = ~pad[pr - 1, pc]; right = ~pad[pr, pc + 1]
+    bottom = ~pad[pr + 1, pc]; left = ~pad[pr, pc - 1]
+    starts, ends = [], []
+    starts.append(np.column_stack([pr[top], pc[top]])); ends.append(np.column_stack([pr[top], pc[top] + 1]))
+    starts.append(np.column_stack([pr[right], pc[right] + 1])); ends.append(np.column_stack([pr[right] + 1, pc[right] + 1]))
+    starts.append(np.column_stack([pr[bottom] + 1, pc[bottom] + 1])); ends.append(np.column_stack([pr[bottom] + 1, pc[bottom]]))
+    starts.append(np.column_stack([pr[left] + 1, pc[left]])); ends.append(np.column_stack([pr[left], pc[left]]))
+    S = np.vstack(starts); E = np.vstack(ends)
+    key = lambda p: (int(p[0]), int(p[1]))  # noqa: E731
+    out_edges: dict = {}
+    for s, e in zip(S, E):
+        out_edges.setdefault(key(s), []).append(key(e))
+    for k in out_edges:
+        out_edges[k].sort()
+    loops = []
+    for start in sorted(out_edges):
+        while out_edges[start]:
+            cur = start
+            prev_dir = None
+            loop = [start]
+            while True:
+                cands = out_edges[cur]
+                if not cands:
+                    break
+                if len(cands) == 1 or prev_dir is None:
+                    nxt = cands.pop(0)
+                else:
+                    # 右折優先(画面上時計回り): cross = dc1*dr2 - dr1*dc2 が最大の候補
+                    best = max(range(len(cands)), key=lambda i: prev_dir[1] * (cands[i][0] - cur[0])
+                               - prev_dir[0] * (cands[i][1] - cur[1]))
+                    nxt = cands.pop(best)
+                prev_dir = (nxt[0] - cur[0], nxt[1] - cur[1])
+                loop.append(nxt)
+                cur = nxt
+                if cur == start:
+                    break
+            if len(loop) >= 4 and loop[0] == loop[-1]:
+                arr = np.asarray(loop, float) - 1.5           # padded corner -> image coords
+                loops.append(arr)
+    # 外側境界(面積大)を先に
+    def _area(a):
+        y, x = a[:, 0], a[:, 1]
+        return abs(float(np.dot(x, np.roll(y, -1)) - np.dot(np.roll(x, -1), y)))
+    loops.sort(key=_area, reverse=True)
+    return loops
+
+
 def _mask_to_contour(mask, shape):
-    from scipy.ndimage import binary_erosion
-    border = mask & ~binary_erosion(mask)
-    rs, cs = np.where(border)
-    if rs.size == 0:
-        return _contour(shape, [])
-    pts = np.column_stack([rs, cs]).astype(float)
-    c = pts.mean(0); ang = np.arctan2(pts[:, 0] - c[0], pts[:, 1] - c[1])
-    pts = pts[np.argsort(ang)]
-    return _contour(shape, [np.vstack([pts, pts[:1]])])
+    """マスク → 境界ループ(外側 + 穴、成分ごと 1 本)の閉輪郭。"""
+    return _contour(shape, _trace_mask_boundaries(mask))
 
 
 def _binop_closed(c1, c2, op):
