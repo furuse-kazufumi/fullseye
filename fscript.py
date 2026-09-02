@@ -1146,12 +1146,30 @@ def _b_rgb1_to_gray(env, img):
 
 
 def _b_gauss_image(env, img, sigma):
-    return fslib.gauss(_as_fimage(img), float(sigma))
+    sigma = float(_as_number(sigma, "gauss_image sigma"))
+    if not (sigma > 0):
+        raise FScriptError("gauss_image sigma must be > 0, got %r" % sigma)
+    return fslib.gauss(_as_fimage(img), sigma)
+
+
+def _radius(r, what) -> int:
+    """A morphology/filter radius: a non-negative whole number.  ``0`` is the
+    identity; a negative or fractional radius is an error (``max(1, int(r))``
+    used to turn -3, 0 and 0.4 all into 1 without a word)."""
+    r = _as_number(r, what)
+    if isinstance(r, (float, np.floating)):
+        if not float(r).is_integer():
+            raise FScriptError("%s must be a whole number of pixels, got %r" % (what, r))
+        r = int(r)
+    r = int(r)
+    if r < 0:
+        raise FScriptError("%s must not be negative, got %d" % (what, r))
+    return r
 
 
 def _b_mean_image(env, img, radius):
     img = _as_fimage(img)
-    k = max(1, int(2 * float(radius) + 1))
+    k = 2 * _radius(radius, "mean_image radius") + 1
     return img.with_pixels(ndi.uniform_filter(img.pixels.astype(np.float64), k))
 
 
