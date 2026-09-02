@@ -107,9 +107,13 @@ import regionprops3d      # noqa: E402,F401
 try:                      # full typed 3-D op registry + composite pipelines
     import ops3d          # noqa: E402,F401  (needs the `threed` extra — torch)
     import pipeline3d     # noqa: E402,F401
-except Exception:         # keep the facade importable on a numpy-only install
+except ImportError:       # keep the facade importable on a numpy-only install
     ops3d = None
     pipeline3d = None
+except Exception as _e:   # noqa: BLE001 - installed but BROKEN is not the same as absent
+    ops3d = None
+    pipeline3d = None
+    _bs.record("ops3d", _e, None, source="import")
 from registration import (  # noqa: E402,F401
     kabsch, icp, point_to_plane_icp, apply_transform, pca_align, register, feature_register,
 )
@@ -936,8 +940,10 @@ def _nary_by_name() -> dict:
             for o in _na.build_nary():
                 table[o.name] = o
                 table.setdefault(o.halcon, o)
-        except Exception:                # noqa: BLE001 - the tier is optional
+        except ImportError:
             pass
+        except Exception as e:           # noqa: BLE001 - installed but broken: leave a trace
+            _bs.record("imgops_nary", e, None, source="import")
         _NARY_CACHE = table
     return _NARY_CACHE
 
@@ -1076,14 +1082,33 @@ def _guard_input(v, op, policy):
     _bs.record(op.name, err, op.out_sort, source="input")
 
 
-def _run_guarded(name, fn, policy):
-    """Run ``fn()`` under the error policy, attributing any fallback to *name*."""
+def _run_guarded(name, fn, policy, out_sort=None, v=None):
+    """Run ``fn()`` under the error policy, attributing any fallback to *name*.
+
+    The facade is the OUTER boundary: a core op (ops.py) carries no guard of its own,
+    so its exception is caught here — recorded (source ``"op"``) and turned into the
+    declared-sort fallback under ``"fallback"``/``"warn"``, propagated under ``"raise"``.
+    Inner guards (backends) already record; ``"warn"`` silences their once-per-op
+    warning and emits one warning per CALL instead (no duplicate on first failure).
+    """
     m = _bs.mark()
     with _bs.current_op(name):
         if policy == "raise":
             with _bs.strict_mode(True):
                 return fn()
-        out = fn()
+        try:
+            if policy == "warn":
+                with _bs.quiet_warnings():
+                    out = fn()
+            else:
+                out = fn()
+        except Exception as e:           # noqa: BLE001 - recorded, sort-valid fallback
+            if policy == "warn":
+                with _bs.quiet_warnings():
+                    _bs.record(name, e, out_sort, source="op")
+            else:
+                _bs.record(name, e, out_sort, source="op")
+            out = _bs.fallback(v, out_sort)
     if policy == "warn":
         evs = _bs.events_since(m)
         if evs:
@@ -1112,8 +1137,8 @@ def _try_accel(op, v, a, b, device):
             raise
         _bs.record(op.name, e, op.out_sort, source="gpu")
         return _NOACCEL
-    if accel_name is None or op.name in _GPU_OPEN:
-        return _NOACCEL
+    if accel_name is None or (op.name in _GPU_OPEN and not _bs.is_strict()):
+        return _NOACCEL                  # breaker open; strict mode retries so "raise" can raise
     try:
         return accel.run_batch(accel_name, [v], a, b, device)[0]
     except Exception as e:               # noqa: BLE001
@@ -1164,23 +1189,45 @@ def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
         _ops.set_match_template(prev)
 
 
+def _coerce_sort(v, sort: str):
+    """The n-ary tier's version of :func:`_coerce_input`: only ``region`` inputs are touched."""
+    a = np.asarray(v)
+    if sort != "region":
+        return a
+    if a.dtype.kind == "b":
+        return a.astype(np.float64)
+    if a.dtype.kind in "fiu" and a.size:
+        vals = np.unique(a)
+        if vals.size > 2 or vals.min() < 0.0 or vals.max() > 1.0:
+            return (a.astype(np.float64) > 0.5).astype(np.float64)
+        if a.dtype.kind in "iu":
+            return a.astype(np.float64)
+    return a
+
+
 def _apply_impl(image, name, a, b, coerce, device, policy):
-    if isinstance(image, (list, tuple)):                 # n-ary tier: a list of inputs
-        nop = _nary_by_name().get(name)
-        if nop is None:
-            op = find_op(name)
-            if op is not None:
-                raise TypeError("%r is a single-input op; pass one array, not a list of %d"
-                                % (name, len(image)))
-            raise KeyError("unknown operator %r" % (name,))
+    nop = _nary_by_name().get(name) if find_op(name) is None else None
+    if nop is not None:                                  # n-ary tier: needs a LIST of inputs
+        if isinstance(image, np.ndarray) or not isinstance(image, (list, tuple)):
+            raise TypeError(
+                "%r is an n-ary operator (arity %d, inputs %s): call "
+                "fullseye.apply([%s], %r, a, b) with a list of inputs"
+                % (name, nop.arity, list(nop.in_sorts),
+                   ", ".join("x%d" % i for i in range(nop.arity)), name))
         if len(image) != nop.arity:
             raise TypeError("%r takes %d inputs %s, got %d"
                             % (name, nop.arity, list(nop.in_sorts), len(image)))
-        inputs = [np.asarray(x) for x in image]
-        out = _run_guarded(name, lambda: nop.fn(inputs, a, b), policy)
+        inputs = [(_coerce_sort(x, srt) if coerce else np.asarray(x))
+                  for x, srt in zip(image, nop.in_sorts)]
+        # the n-ary functions carry no guard of their own: give them the same recorded,
+        # sanitised fail-soft as every backend op (strict mode re-raises inside guard)
+        w = _bs.guard(lambda v0, aa, bb: nop.fn(inputs, aa, bb), nop.out_sort, name=name)
+        out = _run_guarded(name, lambda: w(inputs[0], a, b), policy, nop.out_sort, inputs[0])
         if nop.out_sort == "feature":
             return float(np.asarray(out).reshape(-1)[0])
         return out
+    if isinstance(image, (list, tuple)):                 # legacy: a nested list IS an image
+        image = np.asarray(image)
 
     op = _resolve(name)
     v = _coerce_input(image, op) if coerce else image
@@ -1193,7 +1240,7 @@ def _apply_impl(image, name, a, b, coerce, device, policy):
                 return res
         return _ops.RT[op.name](v, a, b)
 
-    out = _run_guarded(op.name, _call, policy)
+    out = _run_guarded(op.name, _call, policy, op.out_sort, v)
     if op.out_sort == "feature":
         return float(np.asarray(out).reshape(-1)[0])
     return out
@@ -1242,11 +1289,21 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
             v0 = _coerce_input(image, first_op) if coerce else image
             _guard_input(v0, first_op, policy)
             try:
-                return _run_guarded("run_pipeline[gpu]", lambda: _bridge.run(norm, [v0], device=device)[0], policy)
-            except Exception as e:       # noqa: BLE001
+                with _bs.current_op("run_pipeline[gpu]"):
+                    if policy == "raise":
+                        with _bs.strict_mode(True):
+                            return _bridge.run(norm, [v0], device=device)[0]
+                    return _bridge.run(norm, [v0], device=device)[0]
+            except Exception as e:       # noqa: BLE001 - bridge failed: recorded, then the CPU path runs
                 if policy == "raise":
                     raise
-                _bs.record("run_pipeline[gpu]", e, None, source="gpu")
+                if policy == "warn":
+                    with _bs.quiet_warnings():
+                        _bs.record("run_pipeline[gpu]", e, None, source="gpu")
+                    warnings.warn("fullseye: GPU pipeline failed, running on CPU (%s)" % _bs._fmt_exc(e),
+                                  FullseyeFallbackWarning, stacklevel=2)
+                else:
+                    _bs.record("run_pipeline[gpu]", e, None, source="gpu")
 
     v = image
     first = True
@@ -1256,7 +1313,8 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
             v = _coerce_input(v, op) if coerce else v
             _guard_input(v, op, policy)
             first = False
-        v = _run_guarded(op.name, (lambda _op=op, _v=v, _a=sa, _b=sb: _ops.RT[_op.name](_v, _a, _b)), policy)
+        v = _run_guarded(op.name, (lambda _op=op, _v=v, _a=sa, _b=sb: _ops.RT[_op.name](_v, _a, _b)),
+                         policy, op.out_sort, v)
     return v
 
 
@@ -1274,14 +1332,10 @@ def _rows():
     rows = [{"name": o.name, "halcon": o.halcon, "in_sort": o.in_sort,
              "out_sort": o.out_sort, "category": o.category, "tier": "registry"}
             for o in _ops.REGISTRY]
-    try:
-        import imgops_nary as _na
-        rows += [{"name": o.name, "halcon": o.halcon, "in_sort": o.in_sorts[0],
-                  "out_sort": o.out_sort, "category": "nary", "tier": "nary",
-                  "arity": o.arity, "in_sorts": list(o.in_sorts)}
-                 for o in _na.build_nary()]
-    except Exception:
-        pass
+    rows += [{"name": o.name, "halcon": o.halcon, "in_sort": o.in_sorts[0],
+              "out_sort": o.out_sort, "category": "nary", "tier": "nary",
+              "arity": o.arity, "in_sorts": list(o.in_sorts)}
+             for o in {id(o): o for o in _nary_by_name().values()}.values()]
     return rows
 
 

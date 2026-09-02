@@ -342,7 +342,11 @@ def _make_runner(fn, kwargs, tunable, in_sort, out_sort):
             kw[pname] = _scaled(default, knob)
         try:
             got = _coerce(fn(v, **kw), out_sort)
-        except Exception:                                 # noqa: BLE001 - fail-soft
+        except Exception as _e:                           # noqa: BLE001 - fail-soft, RECORDED
+            from backend_safe import is_strict, record
+            if is_strict():
+                raise
+            record(None, _e, out_sort)
             return _fallback(v, in_sort, out_sort)
         # 型の嘘も fail-soft と同じ扱い。**形まで検証する**のが要点で、
         # 「ndarray かどうか」では足りない: 宣言 volume の op が 2-D を返すと、
@@ -350,6 +354,14 @@ def _make_runner(fn, kwargs, tunable, in_sort, out_sort):
         # 顕在化する(実測 2026-09-01: scipy binary_dilation の
         # "structure and input must have same dimensionality")。
         if not _sort_ok(got, out_sort):
+            # a "type lie" (declared out_sort, wrong shape/kind) is a bug in the bridged
+            # op, not an absence: record it so the ledger can count it (strict re-raises)
+            from backend_safe import is_strict, record
+            err = TypeError("typed bridge: op returned %s but declared out_sort %r"
+                            % (getattr(got, "shape", type(got).__name__), out_sort))
+            if is_strict():
+                raise err
+            record(None, err, out_sort)
             return _fallback(v, in_sort, out_sort)
         return got
     return _run

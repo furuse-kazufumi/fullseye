@@ -75,15 +75,14 @@ def _make_runner(stages_spec, out_sort):
     absent in this install, so ``decode_by_names`` fail-closes with ``KeyError``)
     degrades to a sort-valid value derived from the input.
     """
-    def run(v, a, b):
-        from backend_safe import sanitize
-        try:
-            import ops  # fully initialised by call time (build() runs mid-import)
-            out = ops.run_stages(ops.decode_by_names(stages_spec), v)
-        except Exception:  # noqa: BLE001 - fail-soft per op contract
-            out = None
-        return sanitize(out, v, out_sort)
-    return run
+    def body(v, a, b):
+        import ops  # fully initialised by call time (build() runs mid-import)
+        return ops.run_stages(ops.decode_by_names(stages_spec), v)
+
+    from backend_safe import guard
+    # fail-soft per op contract, but RECORDED (ledger) and strict-aware — a macro whose
+    # DNA op is absent in this install used to look like a working identity.
+    return guard(body, out_sort)
 
 
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):

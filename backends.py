@@ -199,7 +199,10 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
              lambda v, a, b: np.float64(measure.blur_effect(v))),
         ]
         ops_out += [Op(n, c, h, i, o, _safe(f, o)) for (n, c, h, i, o, f) in sk]
-    except Exception:
+    except ImportError:
+        pass                                              # skimage absent: documented optional
+    except Exception as _e:                               # noqa: BLE001 - installed but broken: never vanish silently
+        _bs.record("backends.skimage", _e, None, source="import")
         pass
 
     # ---- OpenCV -------------------------------------------------------------- #
@@ -282,7 +285,10 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
                  v.astype(np.float32), int(10 + 40 * a), 0.01 + 0.1 * b, 5)) is None else len(pp))),
         ]
         ops_out += [Op(n, c, h, i, o, _safe(f, o)) for (n, c, h, i, o, f) in cv]
-    except Exception:
+    except ImportError:
+        pass                                              # cv2 absent: documented optional
+    except Exception as _e:                               # noqa: BLE001
+        _bs.record("backends.cv2", _e, None, source="import")
         pass
 
     return ops_out

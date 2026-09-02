@@ -78,8 +78,14 @@ _WARN_ONCE = not _env_flag("FULLSEYE_QUIET_FALLBACK")
 
 
 def is_strict() -> bool:
-    """True when guarded ops re-raise instead of degrading to a fallback."""
-    return _STRICT
+    """True when guarded ops re-raise instead of degrading to a fallback.
+
+    A thread-local override (``strict_mode``) wins over the process default
+    (``set_strict`` / env), so two threads running different ``on_error`` policies
+    cannot flip each other's behaviour.
+    """
+    ov = getattr(_TL, "strict", None)
+    return _STRICT if ov is None else ov
 
 
 def set_strict(on: bool = True) -> bool:
@@ -91,13 +97,34 @@ def set_strict(on: bool = True) -> bool:
 
 @contextmanager
 def strict_mode(on: bool = True):
-    """Scoped strict mode — a verifier wraps a probe call in this to tell a dead op
-    (raises) from an op that genuinely returns its input (does not)."""
-    prev = set_strict(on)
+    """Scoped, THREAD-LOCAL strict mode — a verifier wraps a probe call in this to
+    tell a dead op (raises) from an op that genuinely returns its input (does not)."""
+    prev = getattr(_TL, "strict", None)
+    _TL.strict = bool(on)
     try:
         yield
     finally:
-        set_strict(prev)
+        _TL.strict = prev
+
+
+@contextmanager
+def quiet_warnings():
+    """Suppress the once-per-op warning of :func:`record` inside the block (the caller
+    emits its own, e.g. ``api.apply(on_error="warn")`` warns per call instead)."""
+    prev = getattr(_TL, "quiet", False)
+    _TL.quiet = True
+    try:
+        yield
+    finally:
+        _TL.quiet = prev
+
+
+def _fmt_exc(exc) -> str:
+    """``"Type: message"`` — never raises, even for an exception whose ``__str__`` is broken."""
+    try:
+        return "%s: %s" % (type(exc).__name__, exc)
+    except Exception:                        # noqa: BLE001 - the ledger must never be the thing that fails
+        return "%s: <unprintable>" % type(exc).__name__
 
 
 @contextmanager
@@ -124,7 +151,7 @@ def record(name, exc, out_sort=None, source: str = "op") -> dict:
     global _SEQ
     key = str(name if name is not None else getattr(_TL, "op", None) or "?")
     ev = {"name": key, "source": source, "out_sort": out_sort,
-          "error": "%s: %s" % (type(exc).__name__, exc)}
+          "error": _fmt_exc(exc), "thread": threading.get_ident()}
     with _LEDGER_LOCK:
         _SEQ += 1
         ev["seq"] = _SEQ
@@ -133,7 +160,7 @@ def record(name, exc, out_sort=None, source: str = "op") -> dict:
         first = key not in _WARNED
         if first:
             _WARNED.add(key)
-    if first and _WARN_ONCE:
+    if first and _WARN_ONCE and not getattr(_TL, "quiet", False):
         warnings.warn("fullseye: %r degraded to a fallback (%s; %s). Further fallbacks "
                       "of this op are counted silently - see fullseye.fallbacks() or "
                       "pass on_error='raise'." % (key, source, ev["error"]),
@@ -175,10 +202,15 @@ def mark() -> int:
         return _SEQ
 
 
-def events_since(m: int) -> list:
-    """Events recorded after :func:`mark` value *m* (still in the ring)."""
+def events_since(m: int, this_thread: bool = True) -> list:
+    """Events recorded after :func:`mark` value *m* (still in the ring).
+
+    ``this_thread=True`` (default) keeps only events recorded on the calling thread,
+    so a per-call inspection is not polluted by concurrent work elsewhere.
+    """
+    tid = threading.get_ident()
     with _LEDGER_LOCK:
-        return [dict(e) for e in _EVENTS if e["seq"] > m]
+        return [dict(e) for e in _EVENTS if e["seq"] > m and (not this_thread or e.get("thread") == tid)]
 
 
 def guard(fn, out_sort=None, *, name=None, on_fail=None, finish=None):
@@ -200,7 +232,7 @@ def guard(fn, out_sort=None, *, name=None, on_fail=None, finish=None):
         try:
             out = fn(v, a, b)
         except Exception as e:           # noqa: BLE001 - the whole point is to record it
-            if _STRICT:
+            if is_strict():
                 raise
             record(name or getattr(_TL, "op", None) or getattr(fn, "__qualname__", repr(fn)),
                    e, out_sort)

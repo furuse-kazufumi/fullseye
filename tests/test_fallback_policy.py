@@ -278,3 +278,125 @@ def test_ambiguous_halcon_aliases_all_have_a_table_row():
 def test_failed_backend_imports_are_visible():
     assert isinstance(api.FAILED_BACKENDS, list)
     assert api.FAILED_BACKENDS == [], api.FAILED_BACKENDS   # everything builds in this checkout
+
+
+# --------------------------------------------------------------------------- #
+# Codex review round (2026-09-03): thread safety, duplicate warnings, breaker vs
+# strict, legacy list images, n-ary guard, core ops at the boundary, the two
+# wrapper families the first census missed (macro, typed)
+# --------------------------------------------------------------------------- #
+def test_strict_mode_is_thread_local():
+    import threading
+    seen = {}
+
+    def worker(strict):
+        w = bs.guard(_boom, "image", name="tl_%s" % strict)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            try:
+                if strict:
+                    with bs.strict_mode(True):
+                        w(_img(), 0.5, 0.5)
+                    seen[strict] = "no-raise"
+                else:
+                    w(_img(), 0.5, 0.5)
+                    seen[strict] = "no-raise"
+            except RuntimeError:
+                seen[strict] = "raised"
+    ts = [threading.Thread(target=worker, args=(s,)) for s in (True, False)]
+    [t.start() for t in ts]
+    [t.join() for t in ts]
+    assert seen == {True: "raised", False: "no-raise"}
+    assert bs.is_strict() is False                         # main thread untouched
+
+
+def test_record_survives_an_exception_with_a_broken_str():
+    class Weird(Exception):
+        def __str__(self):
+            raise ValueError("no str for you")
+    ev = bs.record("weird_op", Weird(), "image")
+    assert ev["error"].startswith("Weird:")
+
+
+def test_warn_policy_emits_exactly_one_warning_per_call(monkeypatch):
+    monkeypatch.setitem(ops.RT, "gaussian", bs.guard(_boom, "image"))
+    with warnings.catch_warnings(record=True) as rec:
+        warnings.simplefilter("always")
+        api.apply(_img(), "gaussian", on_error="warn")      # first failure: no duplicate
+    assert len([r for r in rec if issubclass(r.category, bs.FullseyeFallbackWarning)]) == 1
+
+
+def test_open_breaker_still_raises_under_raise_policy(monkeypatch):
+    import types
+    fake = types.SimpleNamespace(ACCEL={"gaussian_gpu": (None, "gaussian", None)},
+                                 run_batch=lambda *a, **k: (_ for _ in ()).throw(RuntimeError("kernel dead")))
+    monkeypatch.setitem(__import__("sys").modules, "accel", fake)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        api.apply(_img(), "gaussian", device="cuda")        # opens the breaker
+    assert api.gpu_open_ops() == ["gaussian"]
+    with pytest.raises(RuntimeError, match="kernel dead"):
+        api.apply(_img(), "gaussian", device="cuda", on_error="raise")
+    api.reset_gpu()
+
+
+def test_nested_list_image_is_still_an_image_for_single_input_ops():
+    rows = _img(16).tolist()                                # a plain nested list
+    out = api.apply(rows, "gaussian")
+    assert out.shape == (16, 16)
+
+
+def test_nary_failure_is_recorded_and_sort_valid(monkeypatch):
+    nary = api._nary_by_name()
+    if "add_image" not in nary:
+        pytest.skip("n-ary tier unavailable")
+    nop = nary["add_image"]
+    monkeypatch.setattr(nop, "fn", lambda io, a, b: (_ for _ in ()).throw(RuntimeError("nary broke")))
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        out = api.apply([_img(), _img()], "add_image")
+    assert out.shape == (32, 32) and np.all(np.isfinite(out))
+    assert bs.fallback_counts() == {"add_image": 1}
+    with pytest.raises(RuntimeError, match="nary broke"):
+        api.apply([_img(), _img()], "add_image", on_error="raise")
+
+
+def test_core_op_exception_is_recorded_at_the_facade_boundary(monkeypatch):
+    monkeypatch.setitem(ops.RT, "invert", _boom)           # unguarded, like a core op
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        out = api.apply(_img(), "invert")
+    assert out.shape == (32, 32)
+    assert bs.fallback_counts() == {"invert": 1}
+    with pytest.raises(RuntimeError):
+        api.apply(_img(), "invert", on_error="raise")
+
+
+def test_macro_and_typed_wrapper_families_report_to_the_ledger():
+    import backends_macro
+    import backends_typed
+    run = backends_macro._macro_fn(stages_spec=[("no_such_op_zzz", 0.5, 0.5)], out_sort="image") \
+        if hasattr(backends_macro, "_macro_fn") else None
+    if run is None:
+        maker = [getattr(backends_macro, n) for n in dir(backends_macro)
+                 if n.startswith("_") and "macro" in n.lower() and callable(getattr(backends_macro, n))]
+        run = maker[0]([("no_such_op_zzz", 0.5, 0.5)], "image") if maker else None
+    if run is not None:
+        bs.clear_fallbacks()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            run(_img(), 0.5, 0.5)
+        assert bs.fallback_counts(), "backends_macro wrapper swallowed silently"
+    bs.clear_fallbacks()
+    r = backends_typed._make_runner(lambda v, **kw: (_ for _ in ()).throw(RuntimeError("typed broke")),
+                                    {}, [], "image", "image")
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        r(_img(), 0.5, 0.5)
+    assert bs.fallback_counts(), "backends_typed wrapper swallowed silently"
+    bs.clear_fallbacks()
+    r2 = backends_typed._make_runner(lambda v, **kw: np.zeros((3, 3, 3, 3)), {}, [], "image", "image")
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        r2(_img(), 0.5, 0.5)
+    assert any("declared out_sort" in e["error"] for e in bs.fallbacks()), "type lie not recorded"

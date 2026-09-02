@@ -374,10 +374,14 @@ def test_lcs_length_known_and_random():
 
 
 def test_string_reductions_fail_soft():
-    assert algo.run_algo("edit_distance", []) == 0.0
-    assert algo.run_algo("lcs_length", []) == 0.0
-    assert algo.run_algo("edit_distance", [5.0, 65.0]) == 0.0    # na=5 but too few values
-    assert algo.run_algo("lcs_length", [5.0, 65.0]) == 0.0
+    # -1.0, NOT 0.0: distance 0 = "identical" / LCS 0 = "nothing in common" are valid
+    # answers, so a truncated header used to masquerade as one (2026-09-03 review F5).
+    assert algo.run_algo("edit_distance", []) == -1.0
+    assert algo.run_algo("lcs_length", []) == -1.0
+    assert algo.run_algo("edit_distance", [5.0, 65.0]) == -1.0   # na=5 but too few values
+    assert algo.run_algo("lcs_length", [5.0, 65.0]) == -1.0
+    assert algo.run_algo("edit_distance", [0.0]) == 0.0          # "" vs "": honestly identical
+    assert algo.run_algo("lcs_length", [1.0, 65.0, 66.0]) == 0.0  # "A" vs "B": honestly 0
 
 
 @pytest.mark.parametrize("name", _STRING)
