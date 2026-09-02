@@ -1187,12 +1187,13 @@ def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -
         return max(errs, default=0.0)
     if name == "segments_intersect":
         # independent oracle: sympy.geometry (symbolic exact intersection) — a wholly different method
-        # from the op's integer orientation tests. Domain-aware: malformed / out-of-domain -> op's 0.0.
+        # from the op's integer orientation tests. Domain-aware: malformed / out-of-domain -> the
+        # op's -1.0 sentinel (0.0 = "no intersection" is a valid answer, so it is not the sentinel).
         from sympy.geometry import Point, Segment
         errs = []
         for arr, got in zip(holdout, py_out):
             if len(arr) < 8 or not all(_int_in(c, -100000.0, 100000.0) for c in arr[:8]):
-                ref = 0.0
+                ref = -1.0
             else:
                 p = [int(arr[i]) for i in range(8)]
                 a_seg = Segment(Point(p[0], p[1]), Point(p[2], p[3]))
