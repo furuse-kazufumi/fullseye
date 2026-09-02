@@ -476,6 +476,17 @@ KNOWN_LEDGER_GAPS = {
         "(a) points sort の候補リスト長が変わり既存 champion を黙って書き換える "
         "(docs/WAVE0_STABLE_SLOTS.md)、(b) 新 op の per-op ノート/help 生成を伴う、ため。",
     "box_sdf": "sphere_sdf と同じ(座標場 op を points 宣言している)。",
+    "pose_error":
+        "宣言 'measurement'(スカラ 1 つ)だが実返りは tuple (回転誤差[deg], 並進誤差)の 2 つ。"
+        "2026-09-02、chain_fuzz に (R,t) を 4 引数へ割る builder を足して**初めて到達**した "
+        "ときに判明した(それまで台帳の ['pose','pose'] を素直に割ると R_est に組が"
+        "まるごと入って必ず落ち、スキップされていた)。"
+        "語彙のどの型もタプルを受けない: 'table' は list|dict、'signal' は ndarray、"
+        "'measurement' は float。adapter で r[0] にすると**並進誤差を黙って捨てる**ので採らない"
+        "(vol_rle_components と同じ判断)。正しい直し方は 2 つあり、どちらも単独では入れない: "
+        "(a) 実体を dict{rot_deg, trans} 返しに変える = 公開 API の破壊的変更、"
+        "(b) 'table' の述語をタプルまで広げる = gaussian_transport_map など他の"
+        "タプル返し op が意図せず 'table' を名乗れるようになる。",
 }
 
 
