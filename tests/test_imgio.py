@@ -1,4 +1,6 @@
 """I/O enrichment: coercion, colormaps, overlays, and export helpers."""
+import os
+
 import numpy as np
 import pytest
 
