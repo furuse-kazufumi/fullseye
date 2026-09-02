@@ -1005,14 +1005,17 @@ def run(a):
     """Total weight of the minimum spanning forest of an undirected graph
     a = [n, m, (u,v,w)*m] (Kruskal + union-find). Edges are sorted by (weight, index) so
     the choice is deterministic; a disconnected graph yields the spanning FOREST (sum over
-    components). Returns the total as a float. Fail-soft 0.0 on malformed / out-of-range."""
+    components). Returns the total as a float. Fail-soft 0.0 on malformed / out-of-range:
+    n not an integer in [1, 5000000] (node cap), m not an integer in [0, 2147483000],
+    truncated edges, or an endpoint that is not an integer in [0, n-1] (raw-double guard
+    before int()). Note 0.0 is also the honest total of an edgeless / zero-weight forest."""
     if len(a) < 2:
         return 0.0
     nd = a[0]
     md = a[1]
-    if not (nd >= 1.0 and nd <= 2147483000.0):
+    if not (nd >= 1.0 and nd <= 5000000.0 and nd == float(int(nd))):   # node cap (as sieve)
         return 0.0
-    if not (md >= 0.0 and md <= 2147483000.0):
+    if not (md >= 0.0 and md <= 2147483000.0 and md == float(int(md))):
         return 0.0
     n = int(nd)
     m = int(md)
@@ -1020,11 +1023,15 @@ def run(a):
         return 0.0
     edges = []
     for k in range(m):
-        u = int(a[2 + 3 * k])
-        v = int(a[2 + 3 * k + 1])
+        ud = a[2 + 3 * k]
+        vd = a[2 + 3 * k + 1]
         w = a[2 + 3 * k + 2]
-        if u < 0 or u >= n or v < 0 or v >= n:
+        if not (ud >= 0.0 and ud < n and ud == float(int(ud))):    # raw guard before int()
             return 0.0
+        if not (vd >= 0.0 and vd < n and vd == float(int(vd))):
+            return 0.0
+        u = int(ud)
+        v = int(vd)
         edges.append((w, k, u, v))
     edges.sort(key=lambda e: (e[0], e[1]))             # (weight, index): fully determined order
     parent = list(range(n))
