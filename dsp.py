@@ -38,8 +38,20 @@ def _require_finite(x, name: str = "signal") -> np.ndarray:
     One poisoned sample spreads across the whole spectrum through the FFT, so the
     1-D layer refuses it up front rather than emitting NaN/Inf features that look
     like measurements. Empty signals are allowed (they are the documented
-    zero-feature case)."""
+    zero-feature case).
+
+    Shape: a 1-D signal, or a column/row vector ``(N,1)`` / ``(1,N)`` (the usual
+    shape from CSV loaders) which is flattened. Any other multi-dimensional input
+    raises ``ValueError`` — before 2026-09-02 an ``(N,1)`` column went through
+    ``rfft`` row by row and silently produced a "spectrum" of per-sample |x|."""
     a = np.asarray(x, np.float64)
+    if a.ndim > 1:
+        if sum(1 for s in a.shape if s != 1) > 1:
+            raise ValueError("%s: expected a 1-D signal (or an (N,1)/(1,N) vector), got shape %s"
+                             % (name, a.shape))
+        a = a.ravel()
+    elif a.ndim == 0:
+        a = a.ravel()
     if a.size and not np.isfinite(a).all():
         n = int((~np.isfinite(a)).sum())
         raise ValueError("%s has %d non-finite sample(s) (NaN/Inf) — refusing" % (name, n))
