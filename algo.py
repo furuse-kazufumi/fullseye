@@ -794,19 +794,21 @@ def run(a):
 
 _C_EDIT_DISTANCE = '''\
 /* Levenshtein edit distance between two strings, two-row DP.
- * Input a = [na, A(na), B(nb)]; returns the distance as an exact integer double. */
+ * Input a = [na, A(na), B(nb)]; returns the distance as an exact integer double.
+ * Fail-soft -1.0 on an empty input / bad or truncated header / OOM (0.0 = "identical"
+ * is a valid answer, so it cannot be the sentinel). */
 double edit_distance(const double* a, int n_in) {
-    if (n_in < 1) return 0.0;
+    if (n_in < 1) return -1.0;
     double na_d = a[0];
-    if (!(na_d >= 0.0 && na_d <= 2147483000.0)) return 0.0;
+    if (!(na_d >= 0.0 && na_d <= 2147483000.0)) return -1.0;
     int na = (int)na_d;
-    if ((long long)na + 1 > (long long)n_in) return 0.0;
+    if ((long long)na + 1 > (long long)n_in) return -1.0;
     const double* sa = a + 1;
     const double* sb = a + 1 + na;
     int nb = n_in - 1 - na;
     double* prev = (double*)malloc((size_t)(nb + 1) * sizeof(double));
     double* cur = (double*)malloc((size_t)(nb + 1) * sizeof(double));
-    if (!prev || !cur) { free(prev); free(cur); return 0.0; }
+    if (!prev || !cur) { free(prev); free(cur); return -1.0; }
     for (int j = 0; j <= nb; j++) prev[j] = (double)j;
     for (int i = 1; i <= na; i++) {
         cur[0] = (double)i;
