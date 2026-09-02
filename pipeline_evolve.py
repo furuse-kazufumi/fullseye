@@ -187,6 +187,10 @@ def evaluate(chain, task, cache=None):
         fit = _PENALTY
     else:
         fit = -float(task.metric(out, task.target))
+        # NaN/Inf は max/sorted が順序付けできず「NaN の chain がチャンピオンに選ばれる」
+        # (2026-09-02 実測)。metric が NaN を返す出力は失敗と同列に大ペナルティ。
+        if not np.isfinite(fit):
+            fit = _PENALTY
     if cache is not None:
         cache[chain] = fit
     return fit
