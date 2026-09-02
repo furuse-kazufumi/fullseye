@@ -207,6 +207,18 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
       * ``exposure``    トーンマップ前の露出。``shininess``  光沢(None でマテリアル既定)。
       * ``ao_samples`` / ``shadow_res`` / ``penumbra`` / ``shadow_samples``
                         品質・速度のチューニング(接地影のソフトさ等)。
+                        **``penumbra`` は光源の角半径 [度]** で、半影の幅はおよそ
+                        「遮蔽物の高さ × tan(penumbra)」。既定の 2.5 度は、地面から
+                        1 単位の高さの物体で半影が **1〜2 画素**にしかならない
+                        (2026-09-02 実測: 320px の絵で半影は 283/102400 画素、
+                        値の種類は ``shadow_samples+1`` の 7 段だけ)。柔らかい影が
+                        欲しいなら 10 度前後まで上げ、段が見えないよう
+                        ``shadow_samples`` も一緒に増やす。
+      * ``shadow_pcf``  shadow map を引くときに混ぜる近傍半径 [texel](既定 1 = 3x3)。
+                        1 点参照だと影の境目が texel に量子化されて階段になる。
+                        実測(地面の上だけで測った隣接画素の最大変化):
+                        既定 2.5 度・12 本・pcf=0 相当で **0.667**、
+                        12 度・24 本・pcf=1 で **0.176**(1/6 を超える段は 123→2)。
 
     fail-closed: 形状不正・非有限・空・``ss<1``・不正 ``material``/``tonemap``・不正な色/光/露出は
     ``ValueError``。決定的(乱数なし)。"""
