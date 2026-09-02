@@ -92,8 +92,14 @@ _CATALOG = {
 #: TYPEMISS で露見**した(それまでこの族はファザーが一度も実行していなかった)。
 #: 写像を当てるには 3 つとも要るので返り自体は変えず、宣言型の ``matrix`` を
 #: 取り出す adapter を置く。**全部が欲しいときはモジュールを直接呼ぶ**。
+#: ``poisson_blend`` も同じ形で、``(blended, info)`` を返すのに台帳は ``image2d``
+#: を宣言していた。**狙い撃ちの網羅パス(``--cover-all``)を入れた瞬間に
+#: TYPEMISS で露見**した —— それまでランダム歩行はこの op に一度も到達して
+#: いなかった(mask と image2d 2 枚が同時に要る = 偶然では踏まれない)。
+#: ``info`` は「実際にどれだけ動いたか」を言う証拠なので返り自体は変えない。
 RESULT_ADAPTERS = {
     "gaussian_transport_map": lambda r: r[0] if isinstance(r, tuple) else r,
+    "poisson_blend": lambda r: r[0] if isinstance(r, tuple) else r,
 }
 
 
