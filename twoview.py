@@ -155,7 +155,14 @@ def triangulate(pts1, pts2, P1, P2):
                       y2 * P2[2] - P2[1]])
         _, _, Vt = np.linalg.svd(A)
         X = Vt[-1]
-        out[i] = X[:3] / X[3]
+        w = X[3]
+        # SVD の右特異ベクトルなので ||X|| = 1。したがって |w| が |X[:3]| に対して
+        # 消えている = 純粋な方向ベクトル = 無限遠点。閾値は保守的に取ってあり、
+        # 「ほぼ 0」ではなく「実質 0」だけを NaN にする(近接退化は大きな有限値のまま)。
+        if not np.isfinite(w) or abs(w) <= _W_AT_INFINITY * np.linalg.norm(X[:3]):
+            out[i] = np.nan
+        else:
+            out[i] = X[:3] / w
     return out
 
 
