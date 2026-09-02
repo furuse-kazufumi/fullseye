@@ -112,9 +112,22 @@ def get_polygon_xld(contour, tolerance=2.0):
     return out
 
 
+def _strip_closing_point(a):
+    """閉輪郭の重複した終点(始点と同じ)を落とす(点統計の偏り防止)。"""
+    a = np.asarray(a, float).reshape(-1, 2)
+    if len(a) > 2 and np.allclose(a[0], a[-1]):
+        return a[:-1]
+    return a
+
+
 def moments_any_points_xld(contour):
-    """輪郭点集合の面積・重心・2 次モーメント(moments_any_points_xld)。"""
-    pts = np.vstack(contour["cs"])
+    """輪郭点集合の重心・2 次中心モーメント(点あたり平均)(moments_any_points_xld)。
+    閉輪郭の重複終点は数えない。"""
+    cs = [_strip_closing_point(a) for a in contour["cs"]]
+    cs = [a for a in cs if len(a)]
+    if not cs:
+        raise ValueError("moments_any_points_xld: contour has no points")
+    pts = np.vstack(cs)
     c = pts.mean(0)
     d = pts - c
     return {"centroid": c, "m20": float((d[:, 1] ** 2).mean()),
