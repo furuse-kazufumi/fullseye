@@ -177,6 +177,18 @@ def test_unknown_set_raises():
         B.resolve_set("nope")
 
 
+def test_a_set_degrades_over_absent_optional_backends():
+    """セットは任意バックエンド(cv_/sk_/xkor_)を含む。無いものは **打ち間違いではない** ので
+    落とさず、代わりに「測らなかった名前」を返す(黙って縮めない)。"""
+    known = set(B.registry_names())
+    for name in B.SETS:
+        present, absent = B.resolve_set(name)
+        assert present, name
+        assert set(present) <= known
+        assert set(absent).isdisjoint(known)
+        assert set(present) | set(absent) == set(B.SETS[name])
+
+
 def test_cli_returns_2_on_an_unknown_op(capsys):
     assert B.main(["--ops", "gaussain", "--sizes", "64"]) == 2
     assert "unknown op name" in capsys.readouterr().err
