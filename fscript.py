@@ -641,11 +641,62 @@ class Env:
 
 
 class _Break(Exception):
-    pass
+    def __init__(self, line=0):
+        super().__init__(); self.line = line
 
 
 class _Continue(Exception):
-    pass
+    def __init__(self, line=0):
+        super().__init__(); self.line = line
+
+
+def _scalar(v):
+    """HALCON: a scalar is a length-1 tuple.  Unwrap ``[x]`` to ``x``."""
+    if isinstance(v, list) and len(v) == 1:
+        return v[0]
+    return v
+
+
+def _as_number(v, what, line=0):
+    """A user value that must be a number (int/float; a length-1 tuple unwraps).
+
+    Every ``int(x)`` / ``float(x)`` on a script value used to be a raw Python
+    coercion: ``'x'`` blew up with a bare ValueError, ``[0.5]`` with a TypeError,
+    and ``'12'`` was quietly accepted.  The language must say what it wanted.
+    """
+    v = _scalar(v)
+    if isinstance(v, bool) or isinstance(v, (int, float, np.integer, np.floating)):
+        return v
+    raise FScriptError("%s must be a number, got %s" % (what, _describe(v)), line)
+
+
+def _as_index(v, n, what, line=0):
+    """Validate a tuple/string index: integral (a float only if it is a whole
+    number), non-negative, and inside ``[0, n)``.  Never a raw ValueError."""
+    v = _scalar(v)
+    if isinstance(v, bool):
+        raise FScriptError("%s must be an integer, got a boolean" % what, line)
+    if isinstance(v, (float, np.floating)):
+        if not float(v).is_integer():
+            raise FScriptError("%s must be an integer, got %r" % (what, v), line)
+        v = int(v)
+    if not isinstance(v, (int, np.integer)):
+        raise FScriptError("%s must be an integer, got %s" % (what, _describe(v)), line)
+    v = int(v)
+    if v < 0:
+        raise FScriptError("%s must not be negative (got %d); tuples are 0-based, "
+                           "there is no negative indexing" % (what, v), line)
+    if v >= n:
+        raise FScriptError("%s %d out of range (length %d)" % (what, v, n), line)
+    return v
+
+
+def _describe(v) -> str:
+    if isinstance(v, str):
+        return "string %r" % v
+    if isinstance(v, list):
+        return "tuple of length %d" % len(v)
+    return type(v).__name__
 
 
 # --------------------------------------------------------------------------- #
