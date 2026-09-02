@@ -266,6 +266,19 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
         raise ValueError(f"exposure must be a positive finite scalar, got {exposure!r}")
     if material == "matcap" and matcap is None:
         raise ValueError("material='matcap' requires a matcap texture (got None)")
+    if brdf not in _BRDFS:
+        raise ValueError(f"brdf must be one of {_BRDFS}, got {brdf!r}")
+    if brdf != "phong" and material == "matcap":
+        raise ValueError("brdf other than 'phong' cannot be combined with material='matcap'")
+    bp = dict(brdf_params or {})
+    if shadow_method not in ("map", "raycast"):
+        raise ValueError(f"shadow_method must be 'map' or 'raycast', got {shadow_method!r}")
+    sun_diam = float(sun_angular_diameter_deg)
+    if not np.isfinite(sun_diam) or sun_diam < 0.0:
+        raise ValueError(f"sun_angular_diameter_deg must be finite and >= 0, got {sun_angular_diameter_deg!r}")
+    k_bounce = float(self_illumination)
+    if not np.isfinite(k_bounce) or k_bounce < 0.0:
+        raise ValueError(f"self_illumination must be finite and >= 0, got {self_illumination!r}")
 
     hs = sz * ss                                         # 高解像度の一辺
 
