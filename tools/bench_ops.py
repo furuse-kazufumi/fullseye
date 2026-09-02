@@ -823,8 +823,12 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: Sequence[str] | None = None) -> int:
     warnings.simplefilter("ignore")
     args = build_parser().parse_args(argv)
+    absent: list[str] = []
     try:
-        names = resolve_ops(args.ops.split(",")) if args.ops else resolve_set(args.opset)
+        if args.ops:
+            names = resolve_ops(args.ops.split(","))
+        else:
+            names, absent = resolve_set(args.opset)
         sizes = [parse_size(t) for t in args.sizes.split(",") if t.strip()]
         dtypes = [parse_dtype(t) for t in args.dtypes.split(",") if t.strip()]
         images = [t.strip() for t in args.images.split(",") if t.strip()]
