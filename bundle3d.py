@@ -82,6 +82,15 @@ def bundle_adjust(cameras, points, obs_cam, obs_pt, obs_uv, K,
 
     cameras (nc,6)=[rvec(3)|t(3)] の初期値、points (m,3) の初期値、観測 obs_cam/obs_pt/obs_uv。
     fix_first=True で先頭カメラを [I|0] 相当(初期値のまま)に固定し gauge を除く。
+
+    **scale gauge**: 再投影誤差は「カメラ 0 の中心を基準にシーン全体を相似拡大」しても
+    厳密に変わらないので、それだけでは解の scale が定まらず LM が任意の倍率へ滑る
+    (実測 ×0.7〜×213、rmse≈0 のまま)。本関数は **構造のカメラ 0 中心からの RMS 距離
+    (``scale_anchor``)を初期値に保つ残差** ``w·(rms/rms0 − 1)`` を 1 本足して固定する。
+    再投影コストは scale 方向に勾配ゼロなので、この残差は最適解で厳密に 0 になり、
+    返る scale は初期構造のそれと一致する(基線長 ``‖t₁‖`` で固定するより、点数で
+    平均される分だけ初期摂動の影響が小さい)。初期構造が退化(全点がカメラ 0 中心に
+    一致)していれば拘束は掛けない。返り dict の ``scale_anchor`` に採用した RMS 距離を載せる。
     """
     cameras = np.asarray(cameras, float)
     points = np.asarray(points, float)
@@ -97,12 +106,26 @@ def bundle_adjust(cameras, points, obs_cam, obs_pt, obs_uv, K,
         raise ValueError("observation array lengths do not match")
     cam0 = cameras[0].copy()
 
+    def _scale_of(cams, pts):
+        # RMS distance of the structure from the camera-0 centre C0 = -R0^T t0:
+        # invariant to the rotation/translation gauge, linear in the scale gauge.
+        C0 = -rvec_to_R(cams[0, :3]).T @ cams[0, 3:]
+        return float(np.sqrt(np.mean(np.sum((pts - C0) ** 2, axis=1))))
+
+    scale0 = _scale_of(cameras, points)
+    fix_scale = scale0 > 0.0
+    w_scale = 1e4          # px per unit relative scale drift (soft, but exact at the optimum)
+
     def fun(p):
         cams, pts = _unpack(p, nc, m, cam0, fix_first)
-        return reprojection_residuals(cams, pts, obs_cam, obs_pt, obs_uv, K)
+        r = reprojection_residuals(cams, pts, obs_cam, obs_pt, obs_uv, K)
+        if fix_scale:
+            r = np.append(r, w_scale * (_scale_of(cams, pts) / scale0 - 1.0))
+        return r
 
     p0 = _pack(cameras, points, fix_first)
     sol = least_squares(fun, p0, method="lm", max_nfev=max_iter * len(p0))
     cams, pts = _unpack(sol.x, nc, m, cam0, fix_first)
     rmse = mean_reprojection_error(cams, pts, obs_cam, obs_pt, obs_uv, K)
-    return {"cameras": cams, "points": pts, "rmse": rmse, "cost": float(sol.cost)}
+    return {"cameras": cams, "points": pts, "rmse": rmse, "cost": float(sol.cost),
+            "scale_anchor": scale0 if fix_scale else None}
