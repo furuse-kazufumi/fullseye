@@ -678,14 +678,21 @@ def _ledger_args():
 
 def test_ledger_is_complete_and_every_op_has_an_implementation():
     assert opsoptics.missing() == []
-    assert len(opsoptics.OPSOPTICS) == 18
-    assert sorted(opsoptics.categories()) == ["geometric", "imaging",
+    assert len(opsoptics.OPSOPTICS) == 30           # optics 18 + raytrace "design" 12
+    assert sorted(opsoptics.categories()) == ["design", "geometric", "imaging",
                                               "polarization", "wave"]
-    assert set(opsoptics.OPSOPTICS) == set(O.OPTICS) == set(O.__all__) & set(O.OPTICS)
+    # the optics-module half of the ledger is exactly optics.OPTICS; the design
+    # half lives in raytrace (its own ledger checks are in tests/test_raytrace.py)
+    from_optics = {n for n, m in opsoptics.OPSOPTICS.items() if m["module"] == "optics"}
+    assert from_optics == set(O.OPTICS) == set(O.__all__) & set(O.OPTICS)
+    assert len(from_optics) == 18
+    assert all(m["module"] == "raytrace" for n, m in opsoptics.OPSOPTICS.items()
+               if m["category"] == "design")
     for name, meta in opsoptics.OPSOPTICS.items():
         assert meta["doc"], f"{name} has no docstring summary line"
-        assert "Raises" in (meta["func"].__doc__ or ""), \
-            f"{name} docstring has no Raises section"
+        if meta["module"] == "optics":
+            assert "Raises" in (meta["func"].__doc__ or ""), \
+                f"{name} docstring has no Raises section"
 
 
 def test_ledger_call_returns_the_declared_type():
