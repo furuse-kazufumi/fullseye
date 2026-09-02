@@ -1788,10 +1788,10 @@ static int _seg_on(long long ax, long long ay, long long bx, long long by,
     return (minx <= px && px <= maxx && miny <= py && py <= maxy);
 }
 double segments_intersect(const double* a, int n_in) {
-    if (n_in < 8) return 0.0;
+    if (n_in < 8) return -1.0;
     for (int i = 0; i < 8; i++) {
         double c = a[i];
-        if (!(c >= -100000.0 && c <= 100000.0 && c == (double)(long long)c)) return 0.0;
+        if (!(c >= -100000.0 && c <= 100000.0 && c == (double)(long long)c)) return -1.0;
     }
     long long x1=(long long)a[0], y1=(long long)a[1], x2=(long long)a[2], y2=(long long)a[3];
     long long x3=(long long)a[4], y3=(long long)a[5], x4=(long long)a[6], y4=(long long)a[7];
