@@ -2108,9 +2108,13 @@ def test_precise_numeric_knob_entry(tmp_path):
     import api
     _app()
     win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    import param_specs
+    # a GENERIC op (no param_specs entry): its slider is the raw 0..100 knob. A spec'd
+    # op's slider spans the displayed range instead (tests/test_studio_params.py).
     op = next(o for i in range(win._op_list.count())
               for o in [win._op_list.item(i).data(QtCore.Qt.UserRole)]
-              if isinstance(o, str) and api.find_op(o) is not None)
+              if isinstance(o, str) and api.find_op(o) is not None
+              and o not in param_specs.PARAM_SPECS and o not in param_specs.seeded_ops())
     pj = str(tmp_path / "p.json")
     io.open(pj, "w", encoding="utf-8").write(
         json.dumps({"stages": [[op, 0.5, 0.5], [op, 0.5, 0.5]]}))

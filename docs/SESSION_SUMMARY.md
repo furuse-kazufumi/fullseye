@@ -3,49 +3,50 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-03 02:35:46
+- **最終更新**: 2026-09-03 02:40:48
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-c74e8efa0 auto: test_algo.py 編集前 (2026-09-03 02:35)
-672f8d8da auto: engine.py 編集前 (2026-09-03 02:35)
-130145e81 auto: engine.py 編集前 (2026-09-03 02:35)
-4c071805c auto: engine.py 編集前 (2026-09-03 02:35)
-b633e8c0b auto: test_algo.py 編集前 (2026-09-03 02:35)
-0545f98f5 auto: test_algo.py 編集前 (2026-09-03 02:35)
-d0ad3e73e auto: evolve_params.py 編集前 (2026-09-03 02:35)
-bec84e1d5 auto: pipeline_evolve.py 編集前 (2026-09-03 02:35)
-719a23bc3 auto: backends_tomo.py 編集前 (2026-09-03 02:35)
-7ecbf54de auto: test_algo.py 編集前 (2026-09-03 02:34)
+e20a3874b auto: test_studio.py 編集前 (2026-09-03 02:40)
+142796c75 auto: test_studio_logic.py 編集前 (2026-09-03 02:40)
+c6c839d68 auto: test_studio.py 編集前 (2026-09-03 02:40)
+4b670efd7 auto: test_studio.py 編集前 (2026-09-03 02:40)
+4ef18f3cb auto: test_engine.py 編集前 (2026-09-03 02:38)
+34ccc9cd3 auto: test_evolve_params.py 編集前 (2026-09-03 02:38)
+07435f78c auto: test_pipeline_evolve.py 編集前 (2026-09-03 02:38)
+3a325105a auto: test_tomo.py 編集前 (2026-09-03 02:38)
+b6cf4328a auto: test_filters2.py 編集前 (2026-09-03 02:38)
+af851ed6c auto: test_decomp.py 編集前 (2026-09-03 02:38)
 ```
 
 ## 現在の git status
 
 ```
-M tests/test_algo.py
+M docs/GENERAL_ALGORITHMS.md
+ M tests/test_studio.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-02:35 tests/test_algo.py
-02:35 docs/SESSION_SUMMARY.md
-02:35 engine.py
-02:35 evolve_params.py
-02:35 pipeline_evolve.py
-02:35 backends_tomo.py
-02:34 docs/KNOWN_ISSUES.md
-02:34 backends_filters2.py
-02:34 tests/test_fallback_policy.py
-02:34 backends_decomp.py
-02:34 backends_typed.py
-02:34 backends_macro.py
-02:34 backends.py
-02:34 backend_safe.py
-02:34 api.py
+02:40 docs/GENERAL_ALGORITHMS.md
+02:40 tests/test_studio.py
+02:40 tests/test_studio_logic.py
+02:39 tests/test_studio_params.py
+02:38 tests/test_engine.py
+02:38 tests/test_evolve_params.py
+02:38 tests/test_pipeline_evolve.py
+02:38 tests/test_tomo.py
+02:38 tests/test_filters2.py
+02:38 tests/test_decomp.py
+02:38 algo_difftest.py
+02:37 studio.py
+02:36 .pytest_cache/v/cache/nodeids
+02:36 .pytest_cache/v/cache/lastfailed
+02:35 tests/test_difftest.py
 ```
 
 ---

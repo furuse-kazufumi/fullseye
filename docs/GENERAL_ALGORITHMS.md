@@ -687,3 +687,24 @@ fail-soft、空/単一→0.0。等値は転倒でない(tie で左を先取り=`
   passed=False/ubsan=trap**(bit は -O2 で True なのに UBSan で捕捉)、他 op 回帰無し。= **「reject-before-cast」を C でも load-bearing に**(Python の
   `int(nan)` raise と対称)。回帰 pytest `test_ubsan_pass_catches_nan_slip_through_cast` 追加。全スイート **295→296 passed / 0 failed**・ruff clean・mypy 新規 0。
 - **★これは max_subarray 固有でなく gate 基盤の強化** = 以後の全 algo op で「非有限値がキャストに達する UB」を gate が falsify 可能に。
+
+## 2026-09-03: 敵対レビュー(algo + C codegen)の修正 8 件
+
+- **[HIGH] C の `unsharp`(`sharpen`)が [0,1] クリップを欠き、後段の op が Python と乖離**(unsharp→gaussian 最大差 6.6e-2、
+  unsharp→threshold(1.0) で 512 px 反転)。`sharpen` 出口でクランプ + `codegen.py` が clip 対象 sort の各 stage 後に
+  `clamp01()` を出力(二重の保険)。修正後 ≤ 3e-7。
+- `difftest.py` が gcc/cc/clang しか探さず **この環境では C ゲートが黙って skip** していた(= 上の乖離が見えなかった)。
+  `algo_difftest.find_c_compiler()`(ziglang fallback)を共用。結果 dict に `compiler` を記録。
+- グラフ op の `n` が int32 上限まで無制限(`graph_components([2147483000,0])` で 17 GB 確保)→ **`n ≤ 5,000,000`**(sieve と同じ
+  明示上限)、`m ≤ 2147483000`、Python/C とも。
+- 端点を `(int)` キャストしてから範囲検査(float→int overflow UB、UBSan トラップ)→ 生の double で範囲・整数性を先に検査。
+  UBSan トラップ 3 → 0、39/39 ビット一致。
+- **番兵値の変更(ABI)**: 「0.0 が正当な答えでもある」op の fail-soft 番兵を **0.0 → −1.0** に変更 —
+  `is_prime` / `segments_intersect` / `edit_distance` / `point_in_polygon` / `lcs_length`(P13〜P18 と同じ規約)。
+  例: `is_prime([4294967311])`(定義域外)は 0.0「合成数」でなく −1.0。未変更(衝突の可能性あり、要検討):
+  `pow_mod` / `gcd_seq` / `popcount_total` / `polygon_area2`。
+- `run_algo` が 2^53 超の int を `float()` で丸めてから定義域検査していた → `wire_float()` で |x|>2^53 の整数入力は
+  `ValueError`(fail-closed)。
+- `box` の偶数 k が k+1 タップ / k で割っていた(gain 1.25)→ scipy `uniform_filter` と同じ origin で k タップ。
+- `difftest` の NaN が `max(0.0, nan)=0.0` で合格していた → 非有限は inf として不合格。
+- 回帰: `tests/test_imgops_c.py`(新設 11)ほか 35 件追加、5 ファイル 355 passed(C テストはすべて ziglang で実行)。
