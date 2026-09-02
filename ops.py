@@ -999,9 +999,6 @@ if _os.environ.get("IMGEVOLVE_NO_BACKENDS", "") != "1":
         REGISTRY = [_op for _i, _op in enumerate(_all) if _last[_op.name] == _i]
         DROPPED_DUPLICATES = [_op.name for _i, _op in enumerate(_all)
                               if _last[_op.name] != _i]
-        _extra = []
-    if _extra:
-        REGISTRY = REGISTRY + _extra
         RT = {op.name: op.fn for op in REGISTRY}
         _BY_NAME = {op.name: op for op in REGISTRY}
         OPS = tuple((op.name, op.fn) for op in REGISTRY)
