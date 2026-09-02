@@ -5985,19 +5985,26 @@ def build_window(model=None):
                   "imgevolve.py algo run %s" % (general[0], general[0]))
             return
         push_undo()
-        model.stages = list(stages)
+        model.stages = list(stages)           # the model setter normalises tuples -> lists
         mark_dirty()
         state["code_dirty"] = False           # the edits are now applied to the pipeline
+        state["program_error"] = None
         # dev_* / set_system 行を退避 — sync_program の再生成後もエディタに残す
         # (以前は Apply でディレクティブ行が消え、再 Apply の意味が変わっていた)
         state["dev_lines"] = [ln.rstrip() for ln in text.splitlines()
-                              if ln.strip().startswith(("dev_", "set_system", "disp_"))]
+                              if ln.strip().startswith(_DIRECTIVE_PREFIXES)]
+        model.directives = list(state["dev_lines"])      # persisted with the pipeline (F11)
+        _set_stage_lines(src_lines)           # gutter <-> stage map for THIS text
         code_edit.clear_exec()                # 旧実行位置は新パイプラインと不整合 — Continue の誤表示防止
         code_status.setText("applied %d stage(s)" % len(stages))
         refresh_stage_list(select=(len(stages) - 1) if stages else None)
+        n_err = len(state["errors"])
         apply_dev_directives(text, reclaim_stale=True)   # state/style directives — pre-render; stale program windows reclaimed
         show_result()
         apply_text_directives(text)           # dev_disp_text annotations — drawn on top of the render
+        if len(state["errors"]) > n_err:      # a directive was rejected (bad set_system …)
+            code_status.setText("applied %d stage(s)  ·  ✕ %s"
+                                % (len(stages), truncate(state["errors"][-1][1], 100)))
 
     def run_program(stop_at_breakpoints=True):
         try:
