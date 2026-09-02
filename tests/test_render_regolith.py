@@ -120,33 +120,36 @@ def test_penumbra_width_scales_with_occluder_distance_times_tan_half_angle():
     size = 200
     Vg, Fg = _plane(4, 4.0, 0.0)
     pix = 8.0 / size                                  # 画素の世界幅(枠 = ±4)
+    a = np.deg2rad(45.0)                              # 光の仰角 45°(影が板の真下から外れ、カメラに見える)
+    light = (np.sin(a), 0.0, np.cos(a))
 
-    def width(height, diam_deg):
-        Vb, Fb = _plane(1, 1.0, height)
+    def width(height, diam_deg, samples=64):
+        Vb, Fb = _plane(1, 0.5, height)               # 半幅 0.5 の板を高さ height に浮かべる
         V = np.vstack([Vg, Vb])
         F = np.vstack([Fg, Fb + len(Vg)])
         pose, K = _topdown(size, 4.0)
-        vis = sh.shadow_raycast(V, F, (0.0, 0.0, 1.0), pose=pose, intrinsics=K, width=size,
-                                height=size, angular_diameter_deg=diam_deg, samples=64)
+        vis = sh.shadow_raycast(V, F, light, pose=pose, intrinsics=K, width=size,
+                                height=size, angular_diameter_deg=diam_deg, samples=samples)
         row = vis[size // 2]
         part = (row > 0.02) & (row < 0.98)
-        # 影の左右 2 つの縁それぞれの半影幅(画素)の平均
+        # 影の左右 2 つの縁それぞれの半影幅の平均(世界単位)
         return part.sum() / 2.0 * pix
+
+    def expect(height, diam_deg):
+        # 円盤光源の角半径 ρ、仰角 a: 地面での半影幅 = h [tan(a+ρ) − tan(a−ρ)]
+        rho = np.deg2rad(diam_deg / 2.0)
+        return height * (np.tan(a + rho) - np.tan(a - rho))
 
     w1 = width(1.0, 8.0)
     w2 = width(2.0, 8.0)
     w3 = width(1.0, 16.0)
-    expect1 = 2 * 1.0 * np.tan(np.deg2rad(4.0))      # 全幅 = 2 h tan(θ/2)
-    assert w1 == pytest.approx(expect1, rel=0.35)
-    assert w2 / w1 == pytest.approx(2.0, rel=0.3)
-    assert w3 / w1 == pytest.approx(2.0, rel=0.3)
-    # 太陽(0.53°)・高さ 1 の半影は 1 画素未満 = 事実上ハード影
-    vis = sh.shadow_raycast(np.vstack([Vg, _plane(1, 1.0, 1.0)[0]]),
-                            np.vstack([Fg, _plane(1, 1.0, 1.0)[1] + len(Vg)]), (0, 0, 1),
-                            pose=_topdown(size, 4.0)[0], intrinsics=_topdown(size, 4.0)[1],
-                            width=size, height=size, angular_diameter_deg=0.53, samples=16)
-    row = vis[size // 2]
-    assert ((row > 0.02) & (row < 0.98)).sum() <= 4
+    assert w1 == pytest.approx(expect(1.0, 8.0), rel=0.25)
+    assert w2 == pytest.approx(expect(2.0, 8.0), rel=0.25)
+    assert w3 == pytest.approx(expect(1.0, 16.0), rel=0.25)
+    assert w2 / w1 == pytest.approx(2.0, rel=0.2)      # 距離 2 倍 → 半影 2 倍
+    # 太陽(0.53°)・高さ 1: 半影は 0.02 世界単位 = 0.5 画素 → 事実上ハード影
+    assert width(1.0, 0.53, samples=16) <= 1.5 * pix
+    assert expect(1.0, 0.53) < pix
 
 
 def test_raycast_sphere_shadow_area_matches_analytic_ellipse():
