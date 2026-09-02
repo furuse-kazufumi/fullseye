@@ -99,3 +99,22 @@ def test_history_non_decreasing():
     ev = pe.evolve(task, pop=24, gens=12, seed=0)
     h = ev["history"]
     assert all(h[i + 1] >= h[i] - 1e-9 for i in range(len(h) - 1)), h
+
+
+def test_nan_metric_never_becomes_champion():
+    """Regression (2026-09-02 review): ``sorted``/``max`` are not NaN-aware, so a chain
+    whose metric returned NaN could be selected as champion and reported as fitness
+    NaN. A non-finite metric must score _PENALTY like any other failure."""
+    task = pe.make_denoise_task(seed=0)
+    n_in = len(task.x)
+    real = task.metric
+
+    def nan_metric(out, tgt):                       # NaN whenever any point was removed
+        return float("nan") if len(out) != n_in else real(out, tgt)
+    task.metric = nan_metric
+    assert pe.evaluate(("statistical_outlier_removal",), task) == pe._PENALTY
+    r = pe.evolve(task, pop=12, gens=4, seed=0)
+    assert np.isfinite(r["fitness"]) and np.isfinite(r["history"]).all()
+    assert r["fitness"] > pe._PENALTY                # a finite chain (identity / mls) won
+    rs = pe.random_search(task, n_evals=10, seed=0)
+    assert np.isfinite(rs["fitness"])
