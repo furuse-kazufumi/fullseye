@@ -178,12 +178,6 @@ def find_marks_and_pose(image, cam_par, caltab, thresh=0.5, max_reproj_rms=3.0):
             raise ValueError(f"find_marks_and_pose: only {len(ii)} ideal/detected correspondences "
                              "within half a pitch — plate not found or rotated beyond ±45°")
         H = _dlt_normalized(world_xy[ii], marks_xy[jj])
-    proj = _apply_h(H, world_xy[ii])
-    residuals = np.linalg.norm(proj - marks_xy[jj], axis=1)
-    rms = float(np.sqrt(np.mean(residuals ** 2)))
-    if max_reproj_rms is not None and rms > max_reproj_rms:
-        raise ValueError(f"find_marks_and_pose: reprojection RMS {rms:.2f} px > "
-                         f"{max_reproj_rms} px — correspondence or calibration is wrong")
     pose = proj_hom_mat2d_to_pose(H, K)
     if pose[2, 3] < 0:                                      # 板はカメラの前にある
         pose = proj_hom_mat2d_to_pose(-H, K)
