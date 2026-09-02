@@ -1733,6 +1733,89 @@ def run_chain(ops, gens, rng, length, log, chain_seed=None, script=None,
 
 
 # --------------------------------------------------------------------------- #
+# 網羅フェーズ: 全 op を「狙い撃ち」で 1 度は走らせる                          #
+# --------------------------------------------------------------------------- #
+# ランダム歩行は、型が繋がっていても**踏まない** op を必ず残す。実測(2026-09-02)
+# では 707 op 中 196 が 500 連鎖 x 長さ 4 で一度も走らなかった一方、型到達性の
+# 不動点計算では**構造的に到達不能な op は 0 件**だった(pool は最初から全生成器
+# 型で埋まるので、入力が全部種型の op は長さ 1 で届く)。つまり残り 196 は
+# 「頑健だから発見が無い」でも「到達不能」でもなく、**運が悪かっただけ**。
+# 運に任せる理由は無いので、op ごとに最短のレシピを組んで直接叩く。
+def type_recipes(ops, gens):
+    """型 → その型を 1 つ作るための op 列(種のある型は空列)。
+
+    ラウンドごとに「今作れる型」を広げる不動点計算なので、返る列は
+    **ラウンド数の意味で最短**(同ラウンド内では台帳の並び順で先勝ち)。
+    """
+    recipe = {t: [] for t in gens}
+    changed = True
+    while changed:
+        changed = False
+        for name, _dim, ins, out, _fn in ops:
+            if out in recipe:
+                continue
+            if not all(t in recipe or t == "any" for t in ins):
+                continue
+            steps = []
+            for t in ins:
+                for s in recipe.get(t, ()):
+                    if s not in steps:
+                        steps.append(s)
+            recipe[out] = steps + [name]
+            changed = True
+    return recipe
+
+
+def cover_script(op, recipe):
+    """1 op を走らせるのに必要な最短の op 列(末尾がその op)。作れなければ None。"""
+    name, _dim, ins, _out, _fn = op
+    steps = []
+    for t in ins:
+        if t == "any":
+            continue              # pool は必ず埋まっているので any は無条件で充足
+        r = recipe.get(t)
+        if r is None:
+            return None
+        for s in r:
+            if s not in steps:
+                steps.append(s)
+    return steps + [name]
+
+
+def cover_all(ops, gens, log, tries=8, base_seed=90_000, verbose=True):
+    """全 op を 1 度は ``fn`` まで到達させる。返り = census(ran/bind_fail/no_input)。
+
+    op ごとに最大 *tries* 種の seed を試す。1 回で足りないのは、レシピ途中の
+    producer が入力値によっては拒否して型が pool に入らないことがあるため
+    (乱数由来なので seed を変えれば通る)。**到達した時点で打ち切る**ので、
+    素直に通る op は 1 回で終わる。
+    """
+    recipe = type_recipes(ops, gens)
+    census = {"ran": set(), "bind_fail": set(), "no_input": set(), "unbuildable": set()}
+    for idx, op in enumerate(ops):
+        name = op[0]
+        if name in census["ran"]:
+            continue              # レシピの途中で既に走った op は再試行しない
+        script = cover_script(op, recipe)
+        if script is None:
+            census["unbuildable"].add(name)
+            continue
+        for k in range(tries):
+            seed = base_seed + idx * 101 + k
+            run_chain(ops, gens, np.random.default_rng(seed), 0, log,
+                      chain_seed=seed, script=script, census=census)
+            if name in census["ran"]:
+                break
+        if verbose and (idx + 1) % 100 == 0:
+            print(f"  cover {idx + 1}/{len(ops)}, 実行済み {len(census['ran'])}",
+                  flush=True)
+    # 到達した op は「組めなかった/型が無かった」の記録から外す(最終状態を残す)
+    for key in ("bind_fail", "no_input"):
+        census[key] -= census["ran"]
+    return census
+
+
+# --------------------------------------------------------------------------- #
 # 収束フェーズ: 発見を「最小再現の連鎖」へ削る(delta debugging)               #
 # --------------------------------------------------------------------------- #
 #: 署名を作るときにメッセージから消す可変部分。良いエラーメッセージほど
