@@ -238,11 +238,12 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ### `imagedraw` — imagedraw — 画像配列に直接マーカー/線/円/輪郭を焼き込むラスタ描画op(numpy)。
 
-- `draw_line(img, p0, p1, color=1.0, width=1)` — (x,y)=p0 から p1 へ太さ width の直線を描く。
-- `draw_polyline(img, points, color=1.0, width=1, closed=False)` — 点列 (N,2) を結ぶ折れ線を描く(closed=True で始点に戻る=多角形)。
-- `draw_circle(img, center, radius, color=1.0, width=1, fill=False)` — 中心 (x,y)・半径 radius の円(fill=True で塗り潰し)。
-- `draw_markers(img, points, color=1.0, size=4, shape='cross', width=1)` — 点列 (N,2) の各点にマーカーを描く。shape='cross'|'square'|'dot'。
-- `draw_contour(img, contour, color=1.0, width=1)` — XLD 輪郭 ``{cs:[Nx2 (row,col),...]}`` または (N,2) 配列を閉じて描く。
+- `draw_line(img, p0, p1, color=<from style>, width=<from style>, style=None)` — (x,y)=p0 から p1 へ太さ width の直線を描く。
+- `draw_polyline(img, points, color=<from style>, width=<from style>, closed=False, style=None)` — 点列 (N,2) を結ぶ折れ線を描く(closed=True で始点に戻る=多角形)。
+- `draw_circle(img, center, radius, color=<from style>, width=<from style>, fill=<from style>, style=None)` — 中心 (x,y)・半径 radius の円(fill=True で塗り潰し)。
+- `draw_markers(img, points, color=<from style>, size=4, shape='cross', width=<from style>, style=None)` — 点列 (N,2) の各点にマーカーを描く。shape='cross'|'square'|'dot'。
+- `draw_contour(img, contour, color=<from style>, width=<from style>, style=None)` — XLD 輪郭 ``{cs:[Nx2 (row,col),...]}`` または (N,2) 配列を閉じて描く。
+- `new_canvas(shape, color=<from style>, style=None)` — 背景色つきの空キャンバスを作る(HALCON の ``set_draw`` + 塗り潰しに当たる下地)。
 
 ### `signal1d` — signal1d — 点列(1D 信号)の多項式近似・フーリエ変換・ローパス/ハイパス(簡単API)。
 
@@ -283,7 +284,7 @@ _計 310 ops / 63 categories。_
 - `min_enclosing_sphere` (`points → primitive`) — 点群 (N,3) → 全点を含む(近似)最小包含球 {center(3), radius}。 · 例: `hull_bounds`
 
 ### bundle_adjust(3)
-- `bundle_adjust` (`pose, points → pose`) — 再投影誤差最小でカメラ姿勢と 3D 点を同時最適化。→ dict{cameras, points, rmse, cost}。 · 例: `bundle_adjust`
+- `bundle_adjust` (`pose, points → table`) — 再投影誤差最小でカメラ姿勢と 3D 点を同時最適化。→ dict{cameras, points, rmse, cost}。 · 例: `bundle_adjust`
 - `mean_reprojection_error` (`pose, points → measurement`) — 再投影 RMS 誤差(ピクセル)。 · 例: `bundle_adjust`
 - `project` (`points → image2d`) — 3D 点 (n,3) をカメラ (rvec,t,K) で 2D (n,2) に射影(透視除算)。 · 例: `bundle_adjust`
 
@@ -501,7 +502,7 @@ _計 310 ops / 63 categories。_
 - `occupancy_grid` (`points → voxel`) — 点群 (N,3) → 3-D 占有ボクセル格子 (res,res,res) bool(点の落ちた voxel を占有)。 · 例: `occupancy_esdf`
 - `esdf` (`voxel → sdf`) — 占有格子 → Euclidean 符号付き距離場 (ESDF)(外=+ 最近占有まで, 内=- 最近自由まで)。 · 例: `occupancy_esdf`
 - `inflate` (`voxel → voxel`) — 障害物を ``radius``(world 単位)膨張した占有格子 bool(= ESDF<=radius を占有)。 · 例: `sensor_seg`
-- `query_distance` (`sdf, points → measurement`) — 任意 world 座標 (M,3) での ESDF 値 (M,) を返す(``mode``='trilinear' 補間 or 'nearest')。 · 例: `occupancy_esdf`
+- `query_distance` (`sdf, points → signal`) — 任意 world 座標 (M,3) での ESDF 値 (M,) を返す(``mode``='trilinear' 補間 or 'nearest')。 · 例: `occupancy_esdf`
 
 ### optics(5)
 - `reflect` (`vector, normals → normals`) — 入射方向 d を法線 n の面で鏡面反射。r = d − 2(d·n)n。 · 例: `sensor_seg`, `snell_refraction`
@@ -526,7 +527,7 @@ _計 310 ops / 63 categories。_
 - `reprojection_error` (`points, keypoints → measurement`) — 再投影誤差(RMS ピクセル)。姿勢の当てはまり評価。→ scalar。 · 例: `pnp_pose_outliers`, `pose_estimation`
 
 ### pose_graph(3)
-- `optimize_pose_graph` (`pose → pose`) — 相対姿勢制約 + ループ閉じから大域姿勢を最適化。→ dict{poses, rmse, cost}。 · 例: `pose_graph_slam`
+- `optimize_pose_graph` (`pose → table`) — 相対姿勢制約 + ループ閉じから大域姿勢を最適化。→ dict{poses, rmse, cost}。 · 例: `pose_graph_slam`
 - `relative_pose` (`pose, pose → pose`) — T_i⁻¹ ∘ T_j = i←j の相対姿勢。pose_* = [rvec|t] (6,)。→ (rvec_ij (3,), t_ij (3,))。 · 例: `pose_graph_slam`, `sfm_recon`
 - `mean_edge_error` (`pose → measurement`) — エッジ残差の RMS(姿勢グラフの整合度)。→ scalar。 · 例: `sfm_recon`
 
@@ -698,10 +699,10 @@ _計 310 ops / 63 categories。_
 - `essential_8point` (`image2d, image2d → matrix`) — 対応点 + K から本質行列 E を直接。→ E (3,3)。 · 例: `sfm_recon`
 - `recover_pose` (`image2d, image2d → pose`) — 対応点 + K から相対姿勢 (R,t) と 3D 構造を復元(cheirality で一意化)。→ (R, t_unit, points3d)。 · 例: `two_view_pose`
 - `triangulate` (`image2d, image2d → points`) — DLT 三角測量: 2 視点の対応点 + 射影行列 → 3D 点。→ (N,3)。 · 例: `sfm_recon`
-- `sampson_distance` (`image2d, image2d → measurement`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
+- `sampson_distance` (`image2d, image2d → signal`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category
-_計 847 ops / 47 categories。_
+_計 865 ops / 47 categories。_
 
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
@@ -921,7 +922,7 @@ _計 847 ops / 47 categories。_
 - `rectangularity` (halcon: `rectangularity`) `region → feature` · 例: `gallery2d_features`
 - `eccentricity` (halcon: `eccentricity`) `region → feature` · 例: `gallery2d_features`
 - `orientation_region` (halcon: `orientation_region`) `region → feature` · 例: `gallery2d_features`
-- `roundness` (halcon: `roundness`) `region → feature` · 例: `gallery2d_features`
+- `roundness` (halcon: `roundness`) `region → feature` · 例: `astro_stacking`, `gallery2d_features`
 - `diameter_region` (halcon: `diameter_region`) `region → feature` · 例: `gallery2d_features`
 - `euler_number` (halcon: `euler_number`) `region → feature` · 例: `gallery2d_features`
 - `min_max_gray` (halcon: `min_max_gray`) `image → feature` · 例: `gallery2d_features`
@@ -1227,10 +1228,10 @@ _計 847 ops / 47 categories。_
 - `ph_total_variation_flow` `image → image` · 例: `gallery2d_physics_alife_3d`
 
 ### rank(23)
-- `median` (halcon: `median_image`) `image → image` · 例: `consumer_onocollo`, `gallery2d_smoothing_rank`, `lightfield_depth`, `perception_pipeline`, `photon_timeresolved`, `quickstart`, `representation_roundtrip`, `specular_photometric`
+- `median` (halcon: `median_image`) `image → image` · 例: `astro_stacking`, `consumer_onocollo`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `lightfield_depth`, `perception_pipeline`, `photon_timeresolved`, `quickstart`, `representation_roundtrip`, `specular_photometric`
 - `min_filter` (halcon: `gray_erosion_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `max_filter` (halcon: `gray_dilation_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `percentile` (halcon: `rank_image`) `image → image` · 例: `gallery2d_smoothing_rank`, `representation_roundtrip`
+- `percentile` (halcon: `rank_image`) `image → image` · 例: `color_transport`, `gallery2d_smoothing_rank`, `image_quality_metrics`, `representation_roundtrip`
 - `sk_median_disk` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `cv_median` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `median_image` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`
@@ -1422,7 +1423,7 @@ _計 847 ops / 47 categories。_
 - `xmh_selfmatch` `image → image` · 例: `gallery2d_features`
 
 ### smoothing(48)
-- `gaussian` (halcon: `gauss_filter`) `image → image` · 例: `coherence_scanning`, `ct_inspection`, `gallery2d_smoothing_rank`, `photon_timeresolved`, `quickstart`
+- `gaussian` (halcon: `gauss_filter`) `image → image` · 例: `coherence_scanning`, `color_transport`, `ct_inspection`, `gallery2d_smoothing_rank`, `photon_timeresolved`, `quickstart`
 - `mean_box` (halcon: `mean_image`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `bilateral` (halcon: `bilateral_filter`) `image → image` · 例: `gallery2d_smoothing_rank`, `quickstart`
 - `unsharp` (halcon: `emphasize`) `image → image` · 例: `gallery2d_smoothing_rank`
@@ -1528,7 +1529,7 @@ _計 847 ops / 47 categories。_
 - `xmh_daubechies` `image → image` · 例: `gallery2d_geometry`
 - `tf_radon_sinogram` `image → image` · 例: `gallery2d_geometry`
 
-### typed(105)
+### typed(123)
 - `tb_points_to_voxel` `points → volume` · 例: なし
 - `tb_estimate_point_normals` `points → points` · 例: なし
 - `tb_iss_keypoints` `points → signal` · 例: なし
@@ -1537,6 +1538,7 @@ _計 847 ops / 47 categories。_
 - `tb_render_point_depth` `points → image` · 例: なし
 - `tb_statistical_outlier_removal` `points → points` · 例: なし
 - `tb_radius_outlier_removal` `points → points` · 例: なし
+- `tb_voxel_grid_downsample` `points → points` · 例: なし
 - `tb_mls_smooth` `points → points` · 例: なし
 - `tb_alpha_shape_boundary` `points → signal` · 例: なし
 - `tb_estimate_alpha` `points → feature` · 例: なし
@@ -1547,8 +1549,12 @@ _計 847 ops / 47 categories。_
 - `tb_gaussian_curvature` `points → signal` · 例: なし
 - `tb_estimate_normals` `points → points` · 例: なし
 - `tb_inertia_tensor` `points → matrix` · 例: なし
+- `tb_geodesic_distances` `points → signal` · 例: なし
 - `tb_farthest_point_sampling` `points → signal` · 例: なし
 - `tb_synthesize_silhouette` `points → image` · 例: なし
+- `tb_inside_outside` `points → signal` · 例: なし
+- `tb_superquadric_residual` `points → feature` · 例: なし
+- `tb_project` `points → image` · 例: なし
 - `tb_jitter` `points → points` · 例: なし
 - `tb_random_rotation` `points → points` · 例: なし
 - `tb_random_scale` `points → points` · 例: なし
@@ -1556,11 +1562,16 @@ _計 847 ops / 47 categories。_
 - `tb_elastic_deform` `points → points` · 例: なし
 - `tb_cutout` `points → points` · 例: なし
 - `tb_region_growing` `points → volume` · 例: なし
+- `tb_euclidean_cluster` `points → volume` · 例: なし
+- `tb_plane_segmentation` `points → volume` · 例: なし
 - `tb_estimate_oriented_normals` `points → points` · 例: なし
 - `tb_occupancy_grid` `points → volume` · 例: なし
+- `tb_reflect_points` `points → points` · 例: なし
+- `tb_reflection_symmetry_score` `points → feature` · 例: なし
 - `tb_project_spherical` `points → image` · 例: なし
 - `tb_project_cylindrical` `points → image` · 例: なし
 - `tb_sphere_sdf` `points → volume` · 例: なし
+- `tb_box_sdf` `points → volume` · 例: なし
 - `tb_create_funct_1d_array` `signal → signal` · 例: なし
 - `tb_smooth_funct_1d_gauss` `signal → signal` · 例: なし
 - `tb_smooth_funct_1d_mean` `signal → signal` · 例: なし
@@ -1634,6 +1645,14 @@ _計 847 ops / 47 categories。_
 - `tb_weighting_response` `signal → signal` · 例: なし
 - `tb_apply_weighting` `signal → signal` · 例: なし
 - `tb_equivalent_level` `signal → feature` · 例: なし
+- `tb_normals_to_egi` `points → image` · 例: なし
+- `tb_keypoints_uv_to_points` `points → points` · 例: なし
+- `tb_points_zyx_to_keypoints_uv` `points → points` · 例: なし
+- `tb_keypoints_to_image2d` `points → image` · 例: なし
+- `tb_indices_to_labels` `signal → volume` · 例: なし
+- `tb_countrate_to_counts` `counts → counts` · 例: なし
+- `tb_counts_to_countrate` `counts → counts` · 例: なし
+- `tb_rgb_to_xyz` `rgbimage → rgbimage` · 例: なし
 
 ### xldgeom(10)
 - `xg_moments` (halcon: `moments_points_xld`) `contour → feature` · 例: `gallery2d_geometry`

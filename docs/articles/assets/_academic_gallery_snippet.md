@@ -24,7 +24,7 @@
 ## 宇宙
 
 ![space_carina](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_space_carina_thumb.jpg)
-*星雲のフィラメント構造を sk_frangi(血管強調フィルタ)で抽出し、応答上位 10% を着色オーバーレイ表示(op: `rgb1_to_gray`, `cv_clahe`, `cv_median`, `sk_frangi`, `sk_area_opening`, `overlay_mask`)。素材: STScI (Webb) — Public domain (NASA)([出典](https://images.nasa.gov/details/carina_nebula))*
+*星雲のフィラメント構造を sk_frangi(血管強調フィルタ)で抽出(op: `rgb1_to_gray`, `cv_clahe`, `cv_median`, `sk_frangi`, `sk_area_opening`, `overlay_mask`)。素材: STScI (Webb) — Public domain (NASA)([出典](https://images.nasa.gov/details/carina_nebula))*
 
 ![space_mars](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_space_mars_thumb.jpg)
 *火星 Nili Patera 砂丘のテクスチャを std_filter / texture_laws で解析(op: `rgb1_to_gray`, `std_filter`, `texture_laws`)。素材: NASA/JPL-Caltech/Univ. of Arizona — Public domain (NASA)([出典](https://images.nasa.gov/details/PIA18244))*
@@ -52,7 +52,7 @@
 ## 生物学
 
 ![bio_neuron](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_neuron_thumb.jpg)
-*神経細胞蛍光像(AI 生成)の樹状突起を sk_frangi でトレースし、応答上位 3% を着色オーバーレイ表示(op: `rgb1_to_gray`, `cv_clahe`, `cv_median`, `sk_frangi`, `sk_area_opening`, `overlay_mask`)。素材: **AI 生成(Google gemini-2.5-flash-image)による模擬データ**(実在の標本・スキャンではない)*
+*神経細胞蛍光像(AI 生成)の樹状突起を sk_frangi でトレース(op: `rgb1_to_gray`, `cv_clahe`, `cv_median`, `sk_frangi`, `sk_area_opening`, `overlay_mask`)。素材: **AI 生成(Google gemini-2.5-flash-image)による模擬データ**(実在の標本・スキャンではない)*
 
 ![bio_diatoms](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_diatoms_thumb.jpg)
 *珪藻顕微鏡像(AI 生成)を分割・計数 検出数 = 123(op: `rgb1_to_gray`, `segment_objects(otsu)`, `colorize_labels`)。素材: **AI 生成(Google gemini-2.5-flash-image)による模擬データ**(実在の標本・スキャンではない)*
@@ -104,7 +104,7 @@
 ## 植物学
 
 ![bot_fern](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bot_fern_thumb.jpg)
-*シダ葉脈(AI 生成)を sk_frangi で葉脈抽出し、応答上位 8% を着色オーバーレイ表示(op: `rgb1_to_gray`, `cv_clahe`, `cv_median`, `sk_frangi`, `sk_area_opening`, `overlay_mask`)。素材: **AI 生成(Google gemini-2.5-flash-image)による模擬データ**(実在の標本・スキャンではない)*
+*シダ葉脈(AI 生成)を sk_frangi で葉脈抽出(op: `rgb1_to_gray`, `cv_clahe`, `cv_median`, `sk_frangi`, `sk_area_opening`, `overlay_mask`)。素材: **AI 生成(Google gemini-2.5-flash-image)による模擬データ**(実在の標本・スキャンではない)*
 
 ![bot_pollen](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bot_pollen_thumb.jpg)
 *花粉 SEM 風画像(AI 生成)を分割・計数 検出数 = 41(op: `rgb1_to_gray`, `segment_objects(otsu)`, `colorize_labels`)。素材: **AI 生成(Google gemini-2.5-flash-image)による模擬データ**(実在の標本・スキャンではない)*
