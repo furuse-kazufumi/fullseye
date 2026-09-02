@@ -1,6 +1,7 @@
 """Ground-truth tests: the applied rigid transform is known, so registration must
 recover it exactly (Kabsch) or converge to it (ICP)."""
 import numpy as np
+import pytest
 
 import registration as reg
 
