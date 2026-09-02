@@ -45,13 +45,19 @@ def _xld():
 
 #: 変更前の imagedraw.py(描画状態を入れる前)で採った出力の SHA-256。
 #: ``style`` を渡さない呼び出しは 1 ビットも変わってはならない。
+#:
+#: 2026-09-03 の描画バグ修正で 7 件だけ意図的に更新: **偶数線幅**(width=2 が
+#: 3 画素幅だった → 2 画素: line_rgb / poly_open / poly_closed / contour_arr /
+#: markers_rgb)と **小数端点のサンプル数切り捨て**(60 頂点の円輪郭が 59 画素しか
+#: 点かず途切れていた → 96 画素の 8 連結: contour_xld)。奇数幅・整数端点の
+#: 11 件は旧ハッシュのまま(= ビット不変を今も保証)。
 LEGACY_SHA256 = {
     "line_default": "f2310d0adbe482f9008152508365a3f7f2fdf01e61ce4bb2e2cfcbd17f7bfcb6",
     "line_pos": "4172e6cc548780bdaab9525493835de5c8412676d44ae8ec0cc8541d6ae6ce6e",
     "line_kw": "aa06f3571f241489d3df3ef02f27e07341194c135ee81b6988db7a71467d5ff3",
-    "line_rgb": "8493bb8a765a19f0f7b2bc203a5a3cc17c21496a697c00173348406a6951c3d7",
-    "poly_open": "001dd54175bea9a6ebf7ff5294f1b9ea87481d5224f118816d94b447362aa3ad",
-    "poly_closed": "cd68351ef37c10eae9a1ede10c09ad0b5396100fd1c18329ddd002da56061940",
+    "line_rgb": "c143fd388eb00988c6e424b6456b017f18e50d00c243be2b4bb043ccb3903154",
+    "poly_open": "900b1432b7937ca8ce1ad306fe183819cf82f374c196513924fd6a333f073300",
+    "poly_closed": "f20601d139cbf4aa46cff0ead69b87c9606580fa1584973dfcf403a01a105801",
     "poly_rgb": "ea3e176164875ced0ffb87f43272ad10194382b7debf34c7894fe3a5f4a412ad",
     "circle_outline": "2b6553c491522334a43e9875d5f1206f33ab65d939469bc58fbae6ab7060f37e",
     "circle_outline_w4": "26f0e989904a0932a055b39408bd9805eb25f98ee3c90765e14374dedcebd6b2",
