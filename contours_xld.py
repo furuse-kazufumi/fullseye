@@ -136,9 +136,14 @@ def moments_any_points_xld(contour):
 
 
 def get_regress_params_xld(contour):
-    """輪郭点への回帰直線パラメータ(法線角 nr,nc と原点距離 dist)(get_regress_params_xld)。"""
+    """輪郭点への回帰直線パラメータ(法線 nr,nc と原点距離 dist、重心 row,col)
+    (get_regress_params_xld)。fail-closed: 2 点未満の輪郭は ``ValueError``
+    (以前は NaN を返していた)。"""
     out = []
-    for a in contour["cs"]:
+    for k, a in enumerate(contour["cs"]):
+        a = _strip_closing_point(a)
+        if len(a) < 2:
+            raise ValueError(f"get_regress_params_xld: contour {k} needs >= 2 points (got {len(a)})")
         c = a.mean(0); d = a - c
         _, V = np.linalg.eigh(np.cov(d.T))
         direction = V[:, 1]                                 # 最大分散方向
