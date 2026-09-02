@@ -615,6 +615,12 @@ def cad_pixel_to_surface(mesh, pixels, K=None, R=None, t=None,
         point[hit] = np.einsum("mkj,mk->mj", tri, bary[hit])
         depth[hit] = tpar[hit]
         normal[hit] = unit[face_id[hit]]
+    if winding_fixed:
+        # 巻きを直した F(=F[:, ::-1])で重心座標を解いたので、weights は裏返した
+        # 頂点順に対応している。呼び手が持つのは元の F なので、そのまま返すと
+        # docstring の恒等式 point = w0*V[i0]+w1*V[i1]+w2*V[i2] が成立せず、
+        # bary で UV/属性を補間する下流が黙って別の点を得る。順序を戻す。
+        bary = bary[:, ::-1]
     return {"face_id": face_id, "bary": bary, "point": point, "depth": depth,
             "normal": normal, "hit": hit,
             "camera": _cam_dict(K, R, t, width, height),
