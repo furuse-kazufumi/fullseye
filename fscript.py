@@ -707,6 +707,21 @@ class Interp:
         self.env = env
         self.steps = 0
         self.max_steps = max_steps
+        self.depth = 0                  # evaluator nesting (MAX_NESTING)
+
+    def run_program(self, body):
+        """Run a whole program.  The parser already rejects ``break`` /
+        ``continue`` outside a loop; this is the defensive net for an AST that
+        was built by hand, so the private signal never escapes as a bare
+        exception."""
+        try:
+            return self.run(body)
+        except _Break as e:
+            raise FScriptError("'break' outside loop", e.line)
+        except _Continue as e:
+            raise FScriptError("'continue' outside loop", e.line)
+        except RecursionError:
+            raise FScriptError("nesting too deep (limit %d)" % MAX_NESTING)
 
     def run(self, body):
         for stmt in body:
