@@ -120,24 +120,65 @@ def _vij(H, i, j):
 
 def camera_calibration(object_points, image_points_list):
     """Zhang 法で平面ターゲット多視点から内部行列 K を推定(camera_calibration)。
-    object_points: (N,2) 平面座標、image_points_list: 各視点の (N,2) 画素対応リスト。"""
+
+    ``object_points``: (N,2) 平面ターゲット座標 **(x, y)**(z=0 平面、ワールド単位)。
+    ``image_points_list``: 各視点の (N,2) 画素対応。**(row, col)** — このモジュールの
+    他 API(``project_3d_point`` の戻り値、``image_points_to_world_plane`` の入力)と
+    同じ規約。内部で (x=col, y=row) に並べ替えてから解くので、``fx``/``cx`` は
+    col 軸、``fy``/``cy`` は row 軸の値になる(2026-09-02 以前は (x,y) として
+    扱っており fx↔fy, cx↔cy が入れ替わっていた)。
+
+    fail-closed: 視点が 3 未満、すべての視点が正面平行(回転不足)で解が定まらない、
+    または K が非有限/非正になる場合は ``ValueError``(NaN を返さない)。戻り値の
+    ``homographies`` は (x,y)→(x=col,y=row) の 3x3、``reproj_rms`` は各視点の
+    ホモグラフィ再投影 RMS [px](対応づけの健全性チェックに使う)。
+    """
     obj = np.asarray(object_points, float).reshape(-1, 2)
-    Hs = [_homography_dlt(obj, ip) for ip in image_points_list]
+    views = [np.asarray(ip, float).reshape(-1, 2) for ip in image_points_list]
+    if len(views) < 3:
+        raise ValueError(f"camera_calibration needs >= 3 views (got {len(views)}); "
+                         "Zhang's method solves 5 intrinsics from 2 constraints per view")
+    for k, ip in enumerate(views):
+        if len(ip) != len(obj) or len(ip) < 4:
+            raise ValueError(f"view {k}: {len(ip)} image points vs {len(obj)} object points "
+                             "(need equal counts, >= 4)")
+        if not np.all(np.isfinite(ip)):
+            raise ValueError(f"view {k}: non-finite image points")
+    Hs, reproj = [], []
+    for ip in views:
+        xy = ip[:, ::-1]                                   # (row,col) -> (x=col, y=row)
+        H = _homography_dlt(obj, xy)
+        Hs.append(H)
+        pr = image_to_world_plane(obj, H)                  # obj -> pixels (x,y)
+        reproj.append(float(np.sqrt(np.mean(np.sum((pr - xy) ** 2, axis=1)))))
     V = []
     for H in Hs:
         V.append(_vij(H, 0, 1))
         V.append(_vij(H, 0, 0) - _vij(H, 1, 1))
-    _, _, Vt = np.linalg.svd(np.asarray(V))
+    V = np.asarray(V)
+    _, sv, Vt = np.linalg.svd(V)
+    # 正面平行ばかりの視点では零空間が 2 次元以上になり b が定まらない(Zhang 1999 §3.3)
+    if sv[-2] <= 1e-8 * sv[0]:
+        raise ValueError("degenerate calibration views: the plane orientations do not "
+                         "constrain the intrinsics (all views fronto-parallel or only "
+                         "rotated about the optical axis) — tilt the target between views")
     b = Vt[-1]
     B = np.array([[b[0], b[1], b[3]], [b[1], b[2], b[4]], [b[3], b[4], b[5]]])
-    cy = (B[0, 1] * B[0, 2] - B[0, 0] * B[1, 2]) / (B[0, 0] * B[1, 1] - B[0, 1] ** 2)
-    lam = B[2, 2] - (B[0, 2] ** 2 + cy * (B[0, 1] * B[0, 2] - B[0, 0] * B[1, 2])) / B[0, 0]
-    fx = np.sqrt(lam / B[0, 0])
-    fy = np.sqrt(lam * B[0, 0] / (B[0, 0] * B[1, 1] - B[0, 1] ** 2))
-    skew = -B[0, 1] * fx * fx * fy / lam
-    cx = skew * cy / fy - B[0, 2] * fx * fx / lam
+    den = B[0, 0] * B[1, 1] - B[0, 1] ** 2
+    with np.errstate(all="ignore"):
+        cy = (B[0, 1] * B[0, 2] - B[0, 0] * B[1, 2]) / den
+        lam = B[2, 2] - (B[0, 2] ** 2 + cy * (B[0, 1] * B[0, 2] - B[0, 0] * B[1, 2])) / B[0, 0]
+        fx = np.sqrt(lam / B[0, 0])
+        fy = np.sqrt(lam * B[0, 0] / den)
+        skew = -B[0, 1] * fx * fx * fy / lam
+        cx = skew * cy / fy - B[0, 2] * fx * fx / lam
+    out = np.array([fx, fy, cx, cy, skew], float)
+    if not np.all(np.isfinite(out)) or fx <= 0 or fy <= 0:
+        raise ValueError("camera_calibration produced a non-finite or non-positive K "
+                         f"(fx={fx}, fy={fy}, cx={cx}, cy={cy}); check the point "
+                         "correspondences ((x,y) object / (row,col) image) and view geometry")
     return {"fx": float(fx), "fy": float(fy), "cx": float(cx), "cy": float(cy),
-            "skew": float(skew), "homographies": Hs}
+            "skew": float(skew), "homographies": Hs, "reproj_rms": reproj}
 
 
 def calibrate_cameras(object_points, image_points_list):
