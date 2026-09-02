@@ -3654,6 +3654,7 @@ def build_window(model=None):
         return b
 
     model = model or PipelineModel(demo_image())
+    KnobRow = _knob_row_class(QtWidgets, QtCore)     # spec-driven knob widgets (param_specs)
 
     class StudioWindow(QtWidgets.QMainWindow):
         """Main window that refuses to close on unsaved pipeline edits.
@@ -3701,6 +3702,7 @@ def build_window(model=None):
     win.setWindowTitle("Fullseye Studio")
     win.setAcceptDrops(True)
     win.resize(1320, 860)
+    win.setMinimumSize(900, 560)      # every dock strip + a usable graphics view still fit
     win.setStyleSheet(THEME)
     if os.path.exists(_ICON_PATH):
         win.setWindowIcon(QtGui.QIcon(_ICON_PATH))
@@ -3823,6 +3825,7 @@ def build_window(model=None):
     m.addAction(act_up); m.addAction(act_down)
     m.addAction(act_top); m.addAction(act_bottom)
     m.addSeparator(); m.addAction(act_clear)
+    m.addSeparator(); m.addAction(act_focus_search)          # Ctrl+F reachable from the menu too
     menu_view = _menu(mb, "&View", "view")
     menu_view.addAction(act_zin); menu_view.addAction(act_zout)
     menu_view.addSeparator(); menu_view.addAction(act_fit); menu_view.addAction(act_11)
@@ -3979,8 +3982,13 @@ def build_window(model=None):
     lbl_a.setToolTip("Argument a — the label shows its role for the selected operator")
     lbl_b.setToolTip("Argument b — the label shows its role for the selected operator")
     lbl_a.setMinimumWidth(96); lbl_b.setMinimumWidth(96)     # room for the role name
-    argrow.addWidget(lbl_a); argrow.addWidget(op_a_spin, 1)
-    argrow.addWidget(lbl_b); argrow.addWidget(op_b_spin, 1)
+    # Spec-driven typed widgets (σ in px / iterations / kernel choice / on-off) sit
+    # next to the raw 0..1 spins: the raw spin is what Insert / Run once pass to the
+    # op, the typed widget shows the same value in the op's own units (param_specs).
+    op_row_a = KnobRow("a", win, raw=op_a_spin, slider=False)
+    op_row_b = KnobRow("b", win, raw=op_b_spin, slider=False)
+    argrow.addWidget(lbl_a); argrow.addWidget(op_a_spin, 1); argrow.addWidget(op_row_a.typed, 1)
+    argrow.addWidget(lbl_b); argrow.addWidget(op_b_spin, 1); argrow.addWidget(op_row_b.typed, 1)
     olay.addLayout(argrow)
     oprow = QtWidgets.QHBoxLayout()
     oprow.addWidget(b_insert); oprow.addWidget(b_run_once); oprow.addWidget(b_help); oprow.addStretch(1)
@@ -4048,23 +4056,23 @@ def build_window(model=None):
 
     stage_detail = QtWidgets.QLabel("select a stage to tune its knobs")
     stage_detail.setWordWrap(True); stage_detail.setProperty("hint", True)
-    sa = QtWidgets.QSlider(QtCore.Qt.Horizontal); sa.setRange(0, 100); sa.setEnabled(False)
-    sb = QtWidgets.QSlider(QtCore.Qt.Horizontal); sb.setRange(0, 100); sb.setEnabled(False)
-    sa.setToolTip("Knob a (0..1) — meaning depends on the selected op")
-    sb.setToolTip("Knob b (0..1) — meaning depends on the selected op")
-    la = QtWidgets.QLabel("a: 0.50"); lb = QtWidgets.QLabel("b: 0.50")
-    spin_a = QtWidgets.QDoubleSpinBox(); spin_a.setRange(0.0, 1.0)
-    spin_a.setSingleStep(0.01); spin_a.setDecimals(3); spin_a.setEnabled(False)
-    spin_a.setToolTip("Knob a — type an exact value (0..1)")
-    spin_b = QtWidgets.QDoubleSpinBox(); spin_b.setRange(0.0, 1.0)
-    spin_b.setSingleStep(0.01); spin_b.setDecimals(3); spin_b.setEnabled(False)
-    spin_b.setToolTip("Knob b — type an exact value (0..1)")
-    _ra = QtWidgets.QHBoxLayout(); _ra.addWidget(sa, 1); _ra.addWidget(spin_a)
-    _rb = QtWidgets.QHBoxLayout(); _rb.addWidget(sb, 1); _rb.addWidget(spin_b)
+    # One KnobRow per knob: slider spanning the DISPLAYED range + typed widget
+    # (unit spin / int spin / choice combo / checkbox, per param_specs) + the raw
+    # 0..1 spin for exact entry. A generic op shows exactly the old slider + spin.
+    krow_a = KnobRow("a", win); krow_b = KnobRow("b", win)
+    sa, sb = krow_a.slider, krow_b.slider
+    la, lb = krow_a.label, krow_b.label
+    spin_a, spin_b = krow_a.raw, krow_b.raw
+    la.setText("a: 0.50"); lb.setText("b: 0.50")
+    krow_a.set_enabled(False); krow_b.set_enabled(False)
+    _ra = QtWidgets.QHBoxLayout(); _ra.addWidget(sa, 1); _ra.addWidget(krow_a.typed); _ra.addWidget(spin_a)
+    _rb = QtWidgets.QHBoxLayout(); _rb.addWidget(sb, 1); _rb.addWidget(krow_b.typed); _rb.addWidget(spin_b)
     klay = QtWidgets.QVBoxLayout()
     klay.addWidget(stage_detail); klay.addWidget(la); klay.addLayout(_ra)
     klay.addWidget(lb); klay.addLayout(_rb)
     mv.addWidget(_group(QtWidgets, "SELECTED STAGE · KNOBS", klay))
+    win._knob_rows = (krow_a, krow_b)
+    win._op_knob_rows = (op_row_a, op_row_b)
 
     b_export = _tbtn("export", "Export this pipeline as an --ops string and Python (Ctrl+E)")
     b_savep = _tbtn("save", "Save pipeline to JSON (Ctrl+Shift+S)")
@@ -4083,6 +4091,11 @@ def build_window(model=None):
     Viewer3D = _viewer3d_class(QtWidgets, QtGui, QtCore)
     win._viewer3d_class = Viewer3D               # for tests / feature-inspection dialog
     view = ImageView()
+    # right-click on the main graphics view = the same View/File actions (reused
+    # QAction objects; the Display-mode submenu is attached once it exists)
+    view.set_context_actions(lambda: [act_fit, act_11, act_zin, act_zout, None,
+                                      act_save_res, act_save_view, act_copy_res, None,
+                                      getattr(win, "_display_menu", None), act_3d])
     b_zin = _tbtn("zin", "Zoom in (Ctrl+=)")
     b_zout = _tbtn("zout", "Zoom out (Ctrl+-)")
     b_fit = _tbtn("fit", "Fit to window (Ctrl+0)")
@@ -4318,7 +4331,8 @@ def build_window(model=None):
         if widget is not None:
             gv = widget
         else:
-            gv = ImageView()
+            gv = ImageView(tools=True)          # Fit · 1:1 · ± · Save strip + right-click menu
+            gv.save_cb = _save_secondary_view
             try:
                 gv.set_pixmap(pixmap if pixmap is not None else view._item.pixmap())
                 gv.fit()
@@ -4529,7 +4543,7 @@ def build_window(model=None):
             summ = step_summary(st) if st else ""
             ms = times[i] if i < len(times) else None
             tstr = ("  ·  %.1f ms" % ms) if isinstance(ms, (int, float)) else ""
-            it = QtWidgets.QListWidgetItem(f"{i + 1}. {name} (a={a:.2f},b={b:.2f})  ->  {summ}{tstr}")
+            it = QtWidgets.QListWidgetItem(f"{i + 1}. {name} ({stage_knob_text(name, a, b)})  ->  {summ}{tstr}")
             it.setData(QtCore.Qt.UserRole, i)         # model index, for drag-reorder mapping
             row = _op_row(name)
             it.setToolTip(op_tooltip(row) if row else name)
@@ -4722,23 +4736,23 @@ def build_window(model=None):
         valid = 0 <= i < len(model.stages)
         if valid:
             state["view_raw"] = False                 # selecting a stage leaves the raw view
-        sa.setEnabled(valid); sb.setEnabled(valid)
-        spin_a.setEnabled(valid); spin_b.setEnabled(valid)
         if valid:
             name, a, b = model.stages[i]
-            sa.blockSignals(True); sb.blockSignals(True)
-            sa.setValue(int(round(a * 100))); sb.setValue(int(round(b * 100)))   # 0.29 -> 29, not 28
-            sa.blockSignals(False); sb.blockSignals(False)
-            spin_a.blockSignals(True); spin_b.blockSignals(True)
-            spin_a.setValue(a); spin_b.setValue(b)
-            spin_a.blockSignals(False); spin_b.blockSignals(False)
+            specs = param_specs.spec_for(name)
+            if getattr(win, "_knob_spec_op", None) != name:
+                krow_a.set_spec(specs["a"]); krow_b.set_spec(specs["b"])
+                win._knob_spec_op = name
+            krow_a.set_knob(a); krow_b.set_knob(b)    # mirrors slider / typed / raw, no emit
             row = _op_row(name)
             a_role, b_role = op_arg_roles(name)
-            la.setText("a: %.2f%s" % (a, ("  ·  " + a_role) if a_role else ""))
-            lb.setText("b: %.2f%s" % (b, ("  ·  " + b_role) if b_role else ""))
+            if a_role and param_specs.is_generic(specs["a"]) and specs["a"].get("kind") != "unused":
+                la.setText("%s  ·  %s" % (la.text(), a_role))
+            if b_role and param_specs.is_generic(specs["b"]) and specs["b"].get("kind") != "unused":
+                lb.setText("%s  ·  %s" % (lb.text(), b_role))
             stage_detail.setText(op_signature_detail(row) if row else name)
         else:
             stage_detail.setText("select a stage to tune its knobs")
+        krow_a.set_enabled(valid); krow_b.set_enabled(valid)
         update_actions()
 
     def on_stage_selected():
@@ -4765,32 +4779,34 @@ def build_window(model=None):
             # handler turns it into a single undo entry (drags coalesce)
             win._knob_drag_base = [list(st) for st in model.stages]
         v = float(value)
-        slider, spin, label = (sa, spin_a, la) if which == "a" else (sb, spin_b, lb)
+        # The KnobRow already mirrored the value into the sibling widgets (signals
+        # blocked) and refreshed the label in display units; only the model, the
+        # dirty flag and ONE render remain here (F3 / C2 review findings kept).
         if which == "a":
             model.set_knobs(i, a=v)
         else:
             model.set_knobs(i, b=v)
-        if from_spin:
-            slider.blockSignals(True); slider.setValue(int(round(v * 100))); slider.blockSignals(False)
-            label.setText(f"{which}: {v:.3f}")
-        else:
-            spin.blockSignals(True); spin.setValue(v); spin.blockSignals(False)
-            label.setText(f"{which}: {v:.2f}")
         mark_dirty()
         show_result()
         knob_timer.start(KNOB_DEBOUNCE_MS)
 
     def on_knob_a(val):
-        _knob_changed("a", val / 100.0, from_spin=False)
+        """Slider a moved (slider position -> knob via the op's spec)."""
+        _knob_changed("a", krow_a.pos_to_knob(val), from_spin=False)
 
     def on_knob_b(val):
-        _knob_changed("b", val / 100.0, from_spin=False)
+        _knob_changed("b", krow_b.pos_to_knob(val), from_spin=False)
 
     def on_spin_a(val):
+        """Raw spin a typed (exact 0..1 knob)."""
         _knob_changed("a", val, from_spin=True)
 
     def on_spin_b(val):
         _knob_changed("b", val, from_spin=True)
+
+    def _on_row_changed(which, knob, source):
+        """KnobRow callback: whichever widget emitted, the model gets the 0..1 knob."""
+        _knob_changed(which, knob, from_spin=(source != "slider"))
 
     def on_knob_settled():
         """Debounce tail: refresh the summaries + commit ONE undo entry for the drag."""
@@ -6313,8 +6329,10 @@ def build_window(model=None):
     problems_list.itemActivated.connect(jump_to_problem)
     samples.currentIndexChanged.connect(load_sample)
     stage_list.currentRowChanged.connect(lambda _=None: on_stage_selected())
-    sa.valueChanged.connect(on_knob_a); sb.valueChanged.connect(on_knob_b)
-    spin_a.valueChanged.connect(on_spin_a); spin_b.valueChanged.connect(on_spin_b)
+    # every knob widget (slider / typed / raw spin) routes through the KnobRow, which
+    # mirrors siblings with signals blocked and then reports the 0..1 knob once
+    krow_a.changed = lambda knob, src: _on_row_changed("a", knob, src)
+    krow_b.changed = lambda knob, src: _on_row_changed("b", knob, src)
     display.currentIndexChanged.connect(lambda _=None: show_result())
     # buttons
     b_rm.clicked.connect(remove); b_up.clicked.connect(lambda: move(-1)); b_dn.clicked.connect(lambda: move(1))
@@ -6322,9 +6340,17 @@ def build_window(model=None):
     b_export.clicked.connect(export)
     b_zin.clicked.connect(lambda: view.zoom(1.25)); b_zout.clicked.connect(lambda: view.zoom(0.8))
     b_fit.clicked.connect(view.fit); b_11.clicked.connect(view.reset_zoom)
+    # ONE handler each for Reset / Step / Run all — the pipeline-strip buttons, the Run
+    # menu actions and the debugger F-keys below all share them (no duplicated lambdas)
+    def _do_step():
+        step_to(min(selected_index() + 1, len(model.stages) - 1))
+
+    def _do_run_all():
+        step_to(len(model.stages) - 1)
+    win._do_step = _do_step; win._do_run_all = _do_run_all; win._do_reset = reset_to_raw
     b_reset.clicked.connect(reset_to_raw)
-    b_step.clicked.connect(lambda: step_to(min(selected_index() + 1, len(model.stages) - 1)))
-    b_runall.clicked.connect(lambda: step_to(len(model.stages) - 1))
+    b_step.clicked.connect(_do_step)
+    b_runall.clicked.connect(_do_run_all)
     stage_list.model().rowsMoved.connect(on_rows_moved)     # drag-reorder -> permute model
     # menu / toolbar actions (share the same handlers as the buttons)
     act_open_img.triggered.connect(load_image); act_demo.triggered.connect(use_demo)
@@ -6343,19 +6369,14 @@ def build_window(model=None):
     act_zin.triggered.connect(lambda: view.zoom(1.25)); act_zout.triggered.connect(lambda: view.zoom(0.8))
     act_fit.triggered.connect(view.fit); act_11.triggered.connect(view.reset_zoom)
     act_reset.triggered.connect(reset_to_raw)
-    act_step.triggered.connect(lambda: step_to(min(selected_index() + 1, len(model.stages) - 1)))
-    act_runall.triggered.connect(lambda: step_to(len(model.stages) - 1))
+    act_step.triggered.connect(_do_step)
+    act_runall.triggered.connect(_do_run_all)
 
     # Debugger-style function keys that fire ANYWHERE in the window. The Ctrl+Arrow
     # step/run keys above are deliberately scoped to the pipeline list so they do
     # not fire while you type in the operator search box; function keys never clash
     # with typing, so these are WindowShortcut — press F6 to step from any panel,
-    # F5 to run all, Shift+F5 to reset, exactly like a debugger.
-    def _do_step():
-        step_to(min(selected_index() + 1, len(model.stages) - 1))
-
-    def _do_run_all():
-        step_to(len(model.stages) - 1)
+    # F5 to run all, Shift+F5 to reset, exactly like a debugger (same _do_* handlers).
 
     act_dbg_run = _act("Run all (F5)", "F5", "Run the whole pipeline to the final result (debugger Run)")
     act_dbg_step = _act("Step (F6)", "F6", "Advance one pipeline stage (debugger Step) — works from any panel")
@@ -8270,6 +8291,7 @@ def build_window(model=None):
 
     # ---- accessibility ------------------------------------------------------ #
     la.setBuddy(sa); lb.setBuddy(sb)
+    krow_a.typed.setAccessibleName("knob a (typed value)"); krow_b.typed.setAccessibleName("knob b (typed value)")
     for _w, _n in ((sa, "knob a (0 to 1)"), (sb, "knob b (0 to 1)"),
                    (stage_list, "pipeline stages"), (op_list, "operator list"),
                    (search, "search operators"), (cat, "operator category filter"),

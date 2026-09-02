@@ -1569,11 +1569,76 @@ def test_is_prime_matches_sympy_over_random():
 
 
 def test_is_prime_fail_soft():
-    assert algo.run_algo("is_prime", []) == 0.0
-    assert algo.run_algo("is_prime", [float("nan")]) == 0.0
-    assert algo.run_algo("is_prime", [-3.0]) == 0.0
-    assert algo.run_algo("is_prime", [2.5]) == 0.0
-    assert algo.run_algo("is_prime", [5e9]) == 0.0     # > 2^32-1 -> fail-soft
+    # -1.0, NOT 0.0: "composite" is a valid answer (2026-09-03 review F5)
+    assert algo.run_algo("is_prime", []) == -1.0
+    assert algo.run_algo("is_prime", [float("nan")]) == -1.0
+    assert algo.run_algo("is_prime", [-3.0]) == -1.0
+    assert algo.run_algo("is_prime", [2.5]) == -1.0
+    assert algo.run_algo("is_prime", [5e9]) == -1.0    # > 2^32-1 -> fail-soft
+    assert algo.run_algo("is_prime", [4294967311.0]) == -1.0   # a PRIME just past 2^32: was 0.0 = "composite"
+    assert algo.run_algo("is_prime", [4294967296.0]) == -1.0   # 2^32 itself
+    assert algo.run_algo("is_prime", [0.0]) == 0.0 and algo.run_algo("is_prime", [1.0]) == 0.0   # in-domain "not prime"
+
+
+# --------------------------------------------------------------------------- #
+# 2026-09-03 review F5: fail-soft sentinel -1.0 (never 0.0) for the ops whose 0.0 is
+# a legitimate answer — and the C mirror returns the SAME sentinel.
+# --------------------------------------------------------------------------- #
+_SENTINEL_CASES = {
+    "is_prime": [[4294967311.0], [], [float("nan")], [-7.0], [7.5], [4294967296.0]],
+    "segments_intersect": [[0, 0, 4, 4, 0, 4, 4], [0, 0, 4, 4, 0, 4, 200000, 0],
+                           [0, 0, 4, 4, 0, 4, 4, 0.5], [float("nan")] * 8, []],
+    "point_in_polygon": [[1, 1, 2, 0, 0, 5, 5], [1.5, 1, 3, 0, 0, 8, 0, 4, 6],
+                         [1, 1, 3, 0, 0, 200000, 0, 4, 6], [1, 1, 3, 0, 0, 8, 0], []],
+    "edit_distance": [[], [5.0, 65.0], [-0.5, 65.0, 66.0], [float("nan"), 65.0, 66.0], [3e9, 65.0, 66.0]],
+    "lcs_length": [[], [5.0, 65.0], [-0.5, 65.0, 66.0], [float("nan"), 65.0, 66.0], [3e9, 65.0, 66.0]],
+}
+_SENTINEL_VALID_ZERO = {                       # an honest 0.0 answer per op (must NOT be -1.0)
+    "is_prime": [4.0], "segments_intersect": [0, 0, 1, 0, 0, 1, 1, 1],
+    "point_in_polygon": [100, 100, 3, 0, 0, 8, 0, 4, 6], "edit_distance": [0.0], "lcs_length": [1.0, 65.0, 66.0],
+}
+
+
+@pytest.mark.parametrize("name", sorted(_SENTINEL_CASES))
+def test_fail_soft_sentinel_is_minus_one_not_a_valid_zero(name):
+    for c in _SENTINEL_CASES[name]:
+        assert algo.run_algo(name, c) == -1.0, (name, c)
+    assert algo.run_algo(name, _SENTINEL_VALID_ZERO[name]) == 0.0
+
+
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+def test_fail_soft_sentinel_c_matches_python(tmp_path):
+    cc = algo_difftest.find_c_compiler()
+    for name, cases in _SENTINEL_CASES.items():
+        cases = [[float(x) for x in c] for c in cases] + [[float(x) for x in _SENTINEL_VALID_ZERO[name]]]
+        res = algo_difftest.run_c_backend(algo.ALGO_BY_NAME[name], cases, tmp_path, cc)
+        assert res["status"] == "ran", (name, res)
+        assert res["ubsan"] in ("ok", "unsupported"), (name, res.get("ubsan_detail"))
+        py = [algo.py_fn(name)(c) for c in cases]
+        assert res["outputs"] == py, name
+        assert res["outputs"][:-1] == [-1.0] * (len(cases) - 1) and res["outputs"][-1] == 0.0, name
+
+
+# --------------------------------------------------------------------------- #
+# 2026-09-03 review F6: run_algo must not round an int > 2^53 BEFORE the domain guard
+# --------------------------------------------------------------------------- #
+def test_run_algo_rejects_integers_beyond_2_53():
+    # float(2**53 + 1) == 2**53, so the op computed on the wrong number and returned
+    # 10485760.0 where the exact answer is 10485761 -> now a fail-closed ValueError.
+    with pytest.raises(ValueError, match="2\\^53"):
+        algo.run_algo("pow_mod", [2**53 + 1, 1, 4294967291])
+    with pytest.raises(ValueError):
+        algo.run_algo("seq_max", [-(2**53) - 1])
+    with pytest.raises(ValueError):
+        algo.run_algo("gcd_seq", [2**60, 4])
+    assert algo.run_algo("pow_mod", [2**53, 1, 4294967291]) == float(pow(2**53, 1, 4294967291))  # exact edge ok
+    assert algo.run_algo("seq_max", [True, 3]) == 3.0                    # bool / small ints unaffected
+    assert algo.run_algo("pow_mod", [2.0**53 + 2, 1.0, 7.0]) == 0.0      # a FLOAT still reaches the op guard
+    np = pytest.importorskip("numpy")
+    with pytest.raises(ValueError):
+        algo.run_algo("seq_max", [np.int64(2**53 + 1)])                  # numpy ints go through __index__
+    assert algo.run_algo("seq_max", [np.int64(5), np.float64(2.5)]) == 5.0
+    assert algo.wire_float(2**53) == 9007199254740992.0 and algo.wire_float(-3) == -3.0
 
 
 def test_modular_inverse_known_and_random():
