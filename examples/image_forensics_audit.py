@@ -244,19 +244,25 @@ def main():
     spliced = np.zeros((N, N), bool)
     spliced[SPLICE] = True
     outside = ~ndimage.binary_dilation(spliced, np.ones((33, 33)))
-    ratio_ela = float(ela[inside].mean() / ela[outside].mean())
-    print(f"   ELA(再圧縮品質 90): 貼り込み内 {ela[inside].mean():.4f} / "
-          f"外 {ela[outside].mean():.4f} = {ratio_ela:.2f} 倍")
-    assert ela.shape == (N, N) and 0.0 <= ela.min() and abs(ela.max() - 1.0) < 1e-12
-    assert ratio_ela > 1.5
-    # ELA が意味を持つのは「台紙が JPEG」のときだけ。無圧縮の台紙で比を測ると消える
+    ela_hi = F.error_level_map(submitted, BASE_Q)       # 台紙の真の品質で撮る
+    ela_lo = F.error_level_map(submitted, SPLICE_Q)     # 貼り込みの真の品質で撮る
+    r_hi = float(ela_hi[inside].mean() / ela_hi[outside].mean())
+    r_lo = float(ela_lo[inside].mean() / ela_lo[outside].mean())
+    print(f"   ELA: 再圧縮品質 {BASE_Q} では 内/外 = {r_hi:.1f} 倍 "
+          f"(台紙は自分の品質では **不動点**なので消え、外来の領域だけが残る)")
+    print(f"       再圧縮品質 {SPLICE_Q} では 内/外 = {r_lo:.3f} 倍 "
+          f"(今度は貼り込みが不動点になって消える。**山と谷が真の品質を指す**)")
+    assert ela_hi.shape == (N, N)
+    assert 0.0 <= ela_hi.min() and abs(ela_hi.max() - 1.0) < 1e-12   # normalize 契約
+    assert r_hi > 50.0 and r_lo < 0.05
+    # ELA が意味を持つのは「台紙に量子化履歴がある」ときだけ。無圧縮だと消える
     png_paste = scene.copy()
     png_paste[SPLICE] = foreign[SPLICE]
-    ela_png = F.error_level_map(png_paste, 90)
-    ratio_png = float(ela_png[inside].mean() / ela_png[outside].mean())
-    print(f"   同じ貼り込みでも台紙が無圧縮だと {ratio_png:.2f} 倍 = 区別できない "
+    ela_png = F.error_level_map(png_paste, BASE_Q)
+    r_png = float(ela_png[inside].mean() / ela_png[outside].mean())
+    print(f"   同じ貼り込みでも台紙が無圧縮だと {r_png:.2f} 倍 = 区別できない "
           f"(ELA は量子化履歴を比べているのであって、高周波を見ているのではない)")
-    assert ratio_png < 1.5 < ratio_ela
+    assert r_png < 2.0 < r_hi
 
     qs = list(range(40, 100, 5))
     ghosts = F.jpeg_ghost_map(submitted, qs, block=16)
