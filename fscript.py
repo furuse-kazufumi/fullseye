@@ -1243,7 +1243,7 @@ def _b_count_obj(env, objects):
 
 def _b_select_obj(env, objects, index):
     objs = _as_objectset(objects)
-    i = int(index)
+    i = _as_index(index, len(objs), "select_obj index")
     try:
         return objs.region(i)
     except IndexError as e:
