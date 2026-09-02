@@ -241,12 +241,21 @@ def main():
           f"break={err_brk:.4f} 階調")
     print(f"   値の種類: 入力 {len(values)} → average {len(np.unique(avg))} / "
           f"break {len(np.unique(brk))}")
+    # average の保証は「等しい入力は等しい出力へ」(単調)であって、
+    # 「違う入力は違う出力へ」ではない。**参照も整数画像で同値を持つ**ので、
+    # 隣り合う入力値が同じ参照値に潰れることがある(実測: 入力 51 種のうち
+    # 3 組が潰れて 48 種)。増えることは無い ―― そこが break との違い。
+    per_value = np.array([avg[src_u8 == v][0] for v in values])
+    print(f"   average の写像は単調非減少か: {bool(np.all(np.diff(per_value) >= 0))}"
+          f"(潰れた組 {len(values) - len(np.unique(avg))} 件 ―― 参照も整数で"
+          "同値を持つため)")
     assert n_avg == 1                                        # 等しい入力は等しい出力へ
     assert n_brk > 1                                         # 平坦部が割れる
     assert err_brk == 0.0                                    # 分布は厳密一致
     assert err_avg > 1.0                                     # そのぶん丸まる
-    assert len(np.unique(avg)) == len(values)
-    assert len(np.unique(brk)) > len(values)
+    assert np.all(np.diff(per_value) >= 0)                   # 単調性は保たれる
+    assert len(np.unique(avg)) <= len(values)                # 値の種類は増えない
+    assert len(np.unique(brk)) > len(values)                 # break は増やす
     print("   → どちらも何かを失う(平坦部の平坦さ か 分布の厳密さ)。"
           "だから既定で片方に決めず引数にしてある。")
 
