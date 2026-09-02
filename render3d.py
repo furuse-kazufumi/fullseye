@@ -330,10 +330,27 @@ def render_mesh(V, F, pose=None, intrinsics=None, width: int = 256,
     zbuf = np.full((h, w), np.inf, np.float64)      # z-test buffer (nearest wins)
     sil = np.zeros((h, w), np.float64)
     normals = np.zeros((h, w, 3), np.float64)
+    # Per-pixel triangle id and perspective-correct barycentric weights. These let a
+    # caller interpolate ANY per-vertex quantity exactly the way depth is interpolated
+    # here, instead of guessing it from nearby vertices in 3-D. Measured 2026-09-02:
+    # ``render_ao`` used inverse-distance weighting over the 3 nearest vertices, which
+    # turns a coarse per-vertex field into polygonal cells — the mottling visible on
+    # the ground plane of the article's hero render. Off by default because the shadow
+    # pass calls this at 512x512 six times and only ever reads ``depth``.
+    want_attr = bool(attributes)
+    face = np.full((h, w), -1, np.int64) if want_attr else None
+    bary = np.zeros((h, w, 3), np.float64) if want_attr else None
+
+    def _pack(depth_img):
+        out = {"depth": depth_img, "silhouette": sil, "normals": normals}
+        if want_attr:
+            out["face"] = face
+            out["bary"] = bary
+        return out
 
     if Ff.shape[0] == 0:
         depth = np.where(sil > 0, zbuf, background).astype(np.float64)
-        return {"depth": depth, "silhouette": sil, "normals": normals}
+        return _pack(depth)
 
     R, t = pose[:3, :3], pose[:3, 3]
     Vc = Vv @ R.T + t                               # camera space (nv, 3)
