@@ -110,7 +110,9 @@ def test_f3_slider_b_leaves_knob_a_untouched(app, win):
     model.stages = [["gaussian", 0.29, 0.57]]
     w._step_to(0)
     sa, sb = w._knob_sliders
-    assert sa.value() == 29                               # round, not truncate
+    ra = w._knob_rows[0]
+    assert sa.value() == ra.knob_to_pos(0.29) == 78       # σ = 0.3 + 2.7·0.29 -> position 78 (step 0.01)
+    assert ra.pos_to_knob(sa.value()) == pytest.approx(0.29, abs=0.002)   # round, not truncate
     sb.setValue(60)
     app.processEvents()
     assert model.stages[0][1] == 0.29
