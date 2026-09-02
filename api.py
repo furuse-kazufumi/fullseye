@@ -585,6 +585,10 @@ from raytrace import (  # noqa: E402,F401  (lens design: real rays beyond the pa
     opd_map, opd_samples, wavefront_from_opd, seidel_coefficients,
     tolerance_analysis,
 )
+import lensimage  # noqa: E402  (image formation through a designed lens + synthetic defect datasets)
+from lensimage import (  # noqa: E402,F401
+    psf_from_opd, psf_field_grid, distortion_map, render_through_lens, defect_dataset,
+)
 
 __all__ = [
     "apply", "run_pipeline", "find_op", "list_ops", "op_names",
