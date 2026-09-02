@@ -57,7 +57,7 @@
 - GIF: `docs/articles/assets/media/wing1d_kurtosis_band.gif` (24 コマ, 1000x668 px, 2.00 MB, 220 ms/コマ・最終コマ 1400 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_kurtosis_band_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `c5d99ab9b37c33e0120328c4517e86d94cfe66402e7f17b069af75a4752b0e90`
+- SHA-256: `bdec35e49e13c06403e481762ebaa9056965efa0d086294372587df681d11144`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -108,7 +108,7 @@
 - GIF: `docs/articles/assets/media/wing1d_window_sweep.gif` (22 コマ, 1000x668 px, 0.69 MB, 380 ms/コマ・最終コマ 1800 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_window_sweep_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `507eb1647e166c69a178c59880d785e0ef0baca7523f32ed8c8d7b5b1f0815c2`
+- SHA-256: `3aba9675419b0a0c316a29575868e7913ddf552e21f0db4f5e69a8d445993713`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -240,7 +240,7 @@
 - GIF: `docs/articles/assets/media/wing1d_order_tracking.gif` (30 コマ, 1000x668 px, 1.08 MB, 220 ms/コマ・最終コマ 1400 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_order_tracking_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `db0ab726f8e966c9517713b93d9f90a4d4bc6031dede54761c5e31fa685b1780`
+- SHA-256: `94ed62dd8cc62b6aea2b0e6a32e2eb5250a108c73777340166390ea10da71932`
 
 <details><summary>この図に焼いた実測値</summary>
 

@@ -86,7 +86,12 @@ RECIPES = {
  "xmh_pftas": {
   "in": "image",
   "out": "feature",
-  "recipe": "float(np.mean(mahotas.features.pftas((np.clip(v,0,1)*255).astype(np.uint8))))",
+  # PFTAS は 54 次元。**平均を取ると情報が消える**: 総和が「退化していない
+  # 正規化ヒストグラム群の個数」という整数になるので、平均は 整数/54 しか
+  # 取れない。2026-09-02 実測、12 通りの絵(4 サイズ x 3 内容)で相異なる値は
+  # わずか **2 個**(0.09259 と 0.11111)= 事実上の定数だった。
+  # 分散にすると 54 次元の分布の広がりが残り、絵ごとに変わる。
+  "recipe": "float(np.var(mahotas.features.pftas((np.clip(v,0,1)*255).astype(np.uint8))))",
   "cat": "texture-feature"
  },
  "xmh_bernsen": {
