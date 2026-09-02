@@ -180,7 +180,7 @@ def main():
     filled = M.pc_fill_sparse(P, 0.06)
     lodp = M.pc_lod_chain(P, 0.06, levels=2)
     print("    fill sparse only: %d -> %d points (the sparse block B was filled, nothing removed); LOD chain: %s"
-          % (len(P), len(filled), ", ".join("%d pts / max gap %.3f" % (lv["n_points"], lv["max_gap"]) for lv in lodp["levels"])))
+          % (len(P), len(filled), ", ".join("%d pts @ spacing %.2f" % (c, s_) for c, s_ in zip(lodp["counts"], lodp["spacings"]))))
     assert len(filled) >= len(P)
     assert tr["isolated_removed"] == 0
     dmin, _ = cKDTree(Q).query(Q, k=2)
