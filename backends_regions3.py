@@ -303,7 +303,7 @@ def r3_label_to_region(v, a, b):
     ascending; the label at index ``round(a * maxlabel)`` is selected and its pixels are
     returned as a mask.  A plain 0/1 mask has a single label and yields its foreground.
     """
-    arr = _as_gray(v)
+    arr = _as_gray(v, clip=False)
     q = np.round(arr, 3)
     levels = np.unique(q[q > 0.0])
     out = np.zeros(arr.shape, np.float64)
