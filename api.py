@@ -1566,6 +1566,7 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
         if _bridge is not None:
             first_op = _resolve(norm[0][0])
             v0 = _coerce_input(image, first_op) if coerce else image
+            v0 = _contract_dtype(v0, first_op, policy)
             _guard_input(v0, first_op, policy)
             try:
                 with _bs.current_op("run_pipeline[gpu]"):
