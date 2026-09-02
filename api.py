@@ -583,7 +583,15 @@ from raytrace import (  # noqa: E402,F401  (lens design: real rays beyond the pa
     lens_system, thick_lens, glass, refractive_index, example_system,
     paraxial_trace, trace_rays, ray_bundle, spot_diagram, spot_stats, ray_fan,
     opd_map, opd_samples, wavefront_from_opd, seidel_coefficients,
-    tolerance_analysis,
+    tolerance_analysis, glass_catalog, sellmeier, chromatic_shift, chief_ray,
+    with_wavelength,
+)
+import lensopt  # noqa: E402  (damped-least-squares lens optimisation)
+from lensopt import optimize_lens, merit_function, bend_singlet  # noqa: E402,F401
+import illumdesign  # noqa: E402  (machine-vision illumination design)
+from illumdesign import (  # noqa: E402,F401
+    light_source, irradiance_map, illumination_uniformity, defect_contrast,
+    lighting_sweep, illumination_design,
 )
 import lensimage  # noqa: E402  (image formation through a designed lens + synthetic defect datasets)
 from lensimage import (  # noqa: E402,F401
@@ -836,6 +844,10 @@ __all__ = [
     "example_system", "paraxial_trace", "trace_rays", "ray_bundle",
     "spot_diagram", "spot_stats", "ray_fan", "opd_map", "opd_samples",
     "wavefront_from_opd", "seidel_coefficients", "tolerance_analysis",
+    "glass_catalog", "sellmeier", "chromatic_shift", "chief_ray", "with_wavelength",
+    "lensopt", "optimize_lens", "merit_function", "bend_singlet",
+    "illumdesign", "light_source", "irradiance_map", "illumination_uniformity",
+    "defect_contrast", "lighting_sweep", "illumination_design",
     "lensimage", "psf_from_opd", "psf_field_grid", "distortion_map",
     "render_through_lens", "defect_dataset",
 ]

@@ -801,6 +801,26 @@ def _launch(system, px, py, field, para, pupil_fill=1.0):
     return P, D, opl0
 
 
+def chief_ray(system, field=None, wavelength_um=None, image_mm=None):
+    """Trace the chief ray (through the stop centre) at one field (``table``).
+
+    Returns ``{"image_x", "image_y"}`` (mm on the image plane), ``"valid"``,
+    the full ``points`` (n_surf+2, 3) / ``dirs`` polylines and ``"opl"``.
+    Fields are along +y (degrees for a distant object, mm otherwise), as
+    everywhere in this module; ``lensimage.distortion_map`` uses this.
+    """
+    _check_system(system)
+    field = system["field"] if field is None else _finite(field, "field")
+    para = paraxial_trace(system)
+    P, D, opl0 = _launch(system, np.array([0.0]), np.array([0.0]), field, para)
+    tr = trace_rays(system, P, D, wavelength_um=wavelength_um, image_mm=image_mm)
+    ok = bool(tr["valid"][0])
+    return {"image_x": float(tr["points"][0, -1, 0]) if ok else float("nan"),
+            "image_y": float(tr["points"][0, -1, 1]) if ok else float("nan"),
+            "valid": ok, "points": tr["points"][0], "dirs": tr["dirs"][0],
+            "opl": float(tr["opl"][0] - opl0[0]) if ok else float("nan"), "field": field}
+
+
 def spot_diagram(system, field=None, rings=8, wavelength_um=None, image_mm=None):
     """Transverse ray intersections on the image plane for one field point.
 

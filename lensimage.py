@@ -275,12 +275,11 @@ def psf_field_grid(system, fields=(0.0, 2.0, 4.0), size=None, wavelength_um=None
 # distortion
 # --------------------------------------------------------------------------- #
 def _chief_image_y(system, field, para):
-    P, D, _ = RT._launch(system, np.array([0.0]), np.array([0.0]), field, para)
-    tr = RT.trace_rays(system, P, D)
-    if not tr["valid"][0]:
+    cr = RT.chief_ray(system, field)
+    if not cr["valid"]:
         raise ValueError("the chief ray at field %r does not reach the image plane (vignetted / TIR); "
                          "reduce the sensor size or the field" % field)
-    return float(tr["points"][0, -1, 1])
+    return cr["image_y"]
 
 
 def _ideal_radius(para, field, obj_inf):

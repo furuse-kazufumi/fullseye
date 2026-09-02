@@ -48,11 +48,14 @@ paraboloid / sphere_mirror の 4 処方(テストと例の共通出発点)。
     opsoptics.list_ops("polarization")
     opsoptics.get("thin_lens")(focal_mm=50.0, object_mm=200.0)
 """
+import illumdesign
 import lensimage
+import lensopt
 import optics
 import raytrace
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage}
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage,
+        "lensopt": lensopt, "illumdesign": illumdesign}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 #   既存語彙の再利用: image2d / signal / matrix / measurement(実スカラのみ)/
@@ -118,6 +121,10 @@ _CATALOG = {
         ("thick_lens", "raytrace", [], "table"),
         ("glass", "raytrace", [], "table"),
         ("example_system", "raytrace", [], "table"),
+        # 2026-09-03 追加: 実硝材(Sellmeier、20 種、データシートの nd/vd で検証済)/
+        # 任意 Sellmeier 定数(どちらも引数無しで呼べる入口 op)
+        ("glass_catalog", "raytrace", [], "table"),
+        ("sellmeier", "raytrace", [], "table"),
         ("paraxial_trace", "raytrace", ["table"], "table"),
         ("seidel_coefficients", "raytrace", ["table"], "table"),
         ("spot_stats", "raytrace", ["table"], "table"),
@@ -126,6 +133,33 @@ _CATALOG = {
         ("spot_diagram", "raytrace", ["table"], "pairs"),
         ("ray_fan", "raytrace", ["table"], "pairs"),
         ("opd_map", "raytrace", ["table"], "image2d"),
+        # 2026-09-03 追加: 波長ごとの焦点移動・倍率色収差・多色スポット
+        ("chromatic_shift", "raytrace", ["table"], "table"),
+    ],
+    # optimization(lensopt、2026-09-03 追加): 処方を**変える**側。減衰最小二乗
+    # (Levenberg–Marquardt)で曲率/間隔/円錐/非球面係数を動かし、多視野・多波長の
+    # 横収差 + EFL 拘束の残差二乗和を最小化。merit_function は同じ残差の評価のみ、
+    # bend_singlet は Coddington 形状因子の閉形式(最適化の正解合わせ用)。
+    "optimization": [
+        ("optimize_lens", "lensopt", ["table"], "table"),
+        ("merit_function", "lensopt", ["table"], "table"),
+        ("bend_singlet", "lensopt", [], "table"),
+    ],
+    # illumination(illumdesign、2026-09-03 追加): レンズの手前、**照明の設計**。
+    # light_source = リング/ドーム/バー/同軸/バックライトの発光点集合(table)、
+    # irradiance_map = 部品面(起伏可)の放射照度(逆二乗×cos^m×cos)、
+    # illumination_uniformity = min/max・CV・端落ち、defect_contrast = 傾いた面
+    # (傷の斜面)と平面の Michelson コントラスト(Lambert + GGX、方位で走査)と
+    # 顔料コントラストのグレア希釈、lighting_sweep = リング仰角 vs コントラスト
+    # (pairs)、illumination_design = 候補族をコントラストで順位付け(経験則との
+    # 一致/不一致を明示)。乱数 table は全 op が ValueError。
+    "illumination": [
+        ("light_source", "illumdesign", [], "table"),
+        ("irradiance_map", "illumdesign", ["table"], "image2d"),
+        ("illumination_uniformity", "illumdesign", ["image2d"], "table"),
+        ("defect_contrast", "illumdesign", ["table"], "table"),
+        ("lighting_sweep", "illumdesign", [], "pairs"),
+        ("illumination_design", "illumdesign", [], "table"),
     ],
     # imaging_sim(lensimage、2026-09-03 追加): 処方(table)から**センサが記録する
     # 画像**まで。psf_from_opd = 実収差瞳の回折 PSF(|FFT(mask·e^{i2πW})|²、画素

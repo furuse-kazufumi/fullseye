@@ -678,9 +678,11 @@ def _ledger_args():
 
 def test_ledger_is_complete_and_every_op_has_an_implementation():
     assert opsoptics.missing() == []
-    assert len(opsoptics.OPSOPTICS) == 34           # optics 18 + raytrace "design" 12 + lensimage "imaging_sim" 4
-    assert sorted(opsoptics.categories()) == ["design", "geometric", "imaging", "imaging_sim",
-                                              "polarization", "wave"]
+    # optics 18 + raytrace "design" 15 + lensimage "imaging_sim" 4 + lensopt "optimization" 3
+    # + illumdesign "illumination" 6
+    assert len(opsoptics.OPSOPTICS) == 46
+    assert sorted(opsoptics.categories()) == ["design", "geometric", "illumination", "imaging", "imaging_sim",
+                                              "optimization", "polarization", "wave"]
     # the optics-module half of the ledger is exactly optics.OPTICS; the design
     # half lives in raytrace (its own ledger checks are in tests/test_raytrace.py)
     from_optics = {n for n, m in opsoptics.OPSOPTICS.items() if m["module"] == "optics"}
@@ -690,6 +692,10 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
                if m["category"] == "design")
     assert all(m["module"] == "lensimage" for n, m in opsoptics.OPSOPTICS.items()
                if m["category"] == "imaging_sim")
+    assert all(m["module"] == "lensopt" for n, m in opsoptics.OPSOPTICS.items()
+               if m["category"] == "optimization")
+    assert all(m["module"] == "illumdesign" for n, m in opsoptics.OPSOPTICS.items()
+               if m["category"] == "illumination")
     for name, meta in opsoptics.OPSOPTICS.items():
         assert meta["doc"], f"{name} has no docstring summary line"
         if meta["module"] == "optics":

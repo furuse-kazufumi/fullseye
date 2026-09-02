@@ -158,6 +158,38 @@ def test_invalid_inputs_are_value_errors(bad):
         bad(d)
 
 
+OPT_OPS = ["optimize_lens", "merit_function", "bend_singlet"]
+
+
+def test_optimization_category_is_registered_and_returns_declared_types():
+    import opsoptics
+    import api
+    import fullseye
+    sys.path.insert(0, os.path.join(ROOT, "tools"))
+    import chain_fuzz
+    assert opsoptics.list_ops("optimization") == OPT_OPS
+    sg = RT.lens_system()
+    args = {"optimize_lens": (sg, None, None, None, 2, None, None, None, 2), "merit_function": (sg,), "bend_singlet": ()}
+    for name in OPT_OPS:
+        meta = opsoptics.info(name)
+        assert meta["module"] == "lensopt" and meta["func"] is getattr(LO, name) and meta["doc"]
+        val = opsoptics.call(name, *args[name])
+        assert chain_fuzz.TYPE_CHECKS[meta["out"]](val), (name, meta["out"], type(val).__name__)
+        assert name in api.__all__ and name in fullseye.__all__
+    names = {o[0] for o in chain_fuzz.catalog() if o[1] == "optics"}
+    assert set(OPT_OPS) <= names
+    rng = np.random.default_rng(0)
+    assert chain_fuzz.OP_PARAM_HINTS[("optimize_lens", "iterations")](rng) <= 3
+
+
+@pytest.mark.parametrize("name", ["optimize_lens", "merit_function"])
+def test_table_consuming_optimisation_ops_refuse_a_random_table(name):
+    rng = np.random.default_rng(1)
+    for bad in ([1, 2, 3], {"x": 1.0}, {"surfaces": []}, rng.random(4).tolist()):
+        with pytest.raises(ValueError):
+            getattr(LO, name)(bad)
+
+
 def test_conic_of_a_flat_is_rejected():
     s = _plano_convex_flat_first()
     with pytest.raises(ValueError):

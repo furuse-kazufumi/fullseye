@@ -36,9 +36,11 @@ import opsoptics  # noqa: E402
 
 INF = float("inf")
 DESIGN_OPS = ["lens_system", "thick_lens", "glass", "example_system",
+              "glass_catalog", "sellmeier",
               "paraxial_trace", "seidel_coefficients", "spot_stats",
               "tolerance_analysis", "wavefront_from_opd", "spot_diagram",
-              "ray_fan", "opd_map"]
+              "ray_fan", "opd_map", "chromatic_shift"]
+N_ENTRY = 6                                          # ops callable with no input (the rest eat a table)
 
 
 def _singlet():
@@ -301,8 +303,8 @@ def test_design_category_is_registered_with_the_declared_types():
         assert meta["doc"], name
     assert opsoptics.info("opd_map")["out"] == "image2d"
     assert opsoptics.info("ray_fan")["out"] == opsoptics.info("spot_diagram")["out"] == "pairs"
-    assert all(opsoptics.info(n)["in"] == [] for n in DESIGN_OPS[:4])
-    assert all(opsoptics.info(n)["in"] == ["table"] for n in DESIGN_OPS[4:])
+    assert all(opsoptics.info(n)["in"] == [] for n in DESIGN_OPS[:N_ENTRY])
+    assert all(opsoptics.info(n)["in"] == ["table"] for n in DESIGN_OPS[N_ENTRY:])
 
 
 def test_design_ops_return_their_declared_type_and_reach_the_fuzzer():
@@ -313,7 +315,9 @@ def test_design_ops_return_their_declared_type_and_reach_the_fuzzer():
             "example_system": (), "paraxial_trace": (sg,), "seidel_coefficients": (sg,),
             "spot_stats": (sg,), "tolerance_analysis": (sg, None, 2),
             "wavefront_from_opd": (sg,), "spot_diagram": (sg,), "ray_fan": (sg,),
-            "opd_map": (sg,)}
+            "opd_map": (sg,), "glass_catalog": ("N-BK7",),
+            "sellmeier": (1.03961212, 0.231792344, 1.01046945, 0.00600069867, 0.0200179144, 103.560653),
+            "chromatic_shift": (sg,)}
     for name in DESIGN_OPS:
         out_t = opsoptics.info(name)["out"]
         val = opsoptics.call(name, *args[name])
@@ -327,7 +331,7 @@ def test_design_ops_return_their_declared_type_and_reach_the_fuzzer():
         assert chain_fuzz.OP_PARAM_HINTS[("glass", p)](rng) > 1.0
 
 
-@pytest.mark.parametrize("name", DESIGN_OPS[4:])
+@pytest.mark.parametrize("name", DESIGN_OPS[N_ENTRY:])
 def test_table_consuming_ops_refuse_a_random_table_with_value_error(name):
     rng = np.random.default_rng(7)
     fn = opsoptics.get(name)

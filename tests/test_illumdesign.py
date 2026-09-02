@@ -1,8 +1,8 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """illumdesign — closed forms for lights, irradiance and defect contrast.
 
-* A point source at height h over a plane gives ``E(r) = I0 cos³θ / h²``
-  (inverse square × emitter cosine × surface cosine) — reproduced to 1e-12.
+* An isotropic point source at height h over a plane gives ``E(r) = I0 cos³θ
+  / h²`` and a Lambertian emitter the cos⁴ law — both reproduced to 1e-12.
 * A ring of n emitters aimed at the origin gives, on axis, ``n I0 cos θ / d²``
   with ``cos θ = h/d`` — one line of algebra, checked exactly.
 * Dome illumination is uniform (min/max > 0.9 over 80 % of a part a third of
@@ -36,15 +36,14 @@ import specularity  # noqa: E402
 
 def test_point_source_inverse_square_cosine_cubed():
     h = 100.0
-    lt = ID.light_source("point", height_mm=h, intensity=3.0)
-    irr = ID.irradiance_map(lt, size_mm=(80.0, 80.0), shape=(9, 9))
     ys = (0.5 - (np.arange(9) + 0.5) / 9) * 80.0
     xs = ((np.arange(9) + 0.5) / 9 - 0.5) * 80.0
     X, Y = np.meshgrid(xs, ys)
-    r2 = X * X + Y * Y
-    cos = h / np.sqrt(r2 + h * h)
-    expect = 3.0 * cos ** 3 / (h * h)
-    assert np.allclose(irr, expect, rtol=1e-12, atol=0)
+    cos = h / np.sqrt(X * X + Y * Y + h * h)
+    iso = ID.light_source("point", height_mm=h, intensity=3.0, cos_exponent=0.0)
+    assert np.allclose(ID.irradiance_map(iso, size_mm=(80.0, 80.0), shape=(9, 9)), 3.0 * cos ** 3 / (h * h), rtol=1e-12, atol=0)
+    lam = ID.light_source("point", height_mm=h, intensity=3.0)
+    assert np.allclose(ID.irradiance_map(lam, size_mm=(80.0, 80.0), shape=(9, 9)), 3.0 * cos ** 4 / (h * h), rtol=1e-12, atol=0)
 
 
 def test_ring_on_axis_closed_form_and_elevation():
@@ -72,23 +71,29 @@ def test_dome_is_uniform_and_low_ring_is_not():
     assert u_dome["uniformity"] > 0.9
     assert u_ring["uniformity"] < u_dome["uniformity"]
     assert u_dome["cv"] < 0.05
-    assert u_dome["peak_offset_px"] == (0, 0) or abs(u_dome["peak_offset_px"][0]) + abs(u_dome["peak_offset_px"][1]) <= 24
+    # a high ring shifted +15 mm in x puts the irradiance peak on the +x side — the
+    # mis-aim shows in peak_offset_px (a grazing ring peaks at the map edge instead)
+    high = ID.light_source("ring", radius_mm=60.0, height_mm=100.0, n=24)
+    off = ID.light_source("custom", emitters=high["emitters"] + np.array([15.0, 0.0, 0.0]), directions=high["directions"])
+    assert ID.illumination_uniformity(ID.irradiance_map(off, size_mm=(50, 50), shape=(48, 48)))["peak_offset_px"][1] > 4
 
 
-def test_height_map_tilts_normals_dent_wall_is_darker_under_grazing_light():
-    ring = ID.light_source("ring", radius_mm=100.0, height_mm=20.0, n=36)
+def test_height_map_tilts_normals_bump_flank_facing_a_bar_light_is_brighter():
+    # one-sided light (a bar at +y): the flank facing it brightens, the far flank darkens.
+    # (under a symmetric ring the first-order tilt terms cancel — that is the physics, not a bug)
+    bar = ID.light_source("bar", radius_mm=100.0, height_mm=20.0, n=9, length_mm=60.0)
     H = W = 41
     ys = (0.5 - (np.arange(H) + 0.5) / H) * 20.0
     xs = ((np.arange(W) + 0.5) / W - 0.5) * 20.0
     X, Y = np.meshgrid(xs, ys)
     bump = 0.5 * np.exp(-(X * X + Y * Y) / 8.0)
-    flat = ID.irradiance_map(ring, size_mm=(20, 20), shape=(H, W))
-    relief = ID.irradiance_map(ring, size_mm=(20, 20), shape=(H, W), height=bump)
-    # the bump's flanks face the ring on one side (brighter) and away on the other (darker)
-    assert relief.max() > flat.max() * 1.05
-    assert relief.min() < flat.min() * 0.95
-    # the top of the bump is flat: same irradiance as the plane to first order
-    assert abs(relief[H // 2, W // 2] - flat[H // 2, W // 2]) / flat[H // 2, W // 2] < 0.05
+    flat = ID.irradiance_map(bar, size_mm=(20, 20), shape=(H, W))
+    relief = ID.irradiance_map(bar, size_mm=(20, 20), shape=(H, W), height=bump)
+    c = H // 2
+    near, far = c - 4, c + 4                       # row index grows toward -y; the bar sits at +y
+    assert relief[near, c] > flat[near, c] * 1.3
+    assert relief[far, c] < flat[far, c] * 0.7
+    assert abs(relief[c, c] - flat[c, c]) / flat[c, c] < 0.05
 
 
 def test_ggx_lobe_matches_specularity_brdf_microfacet():
@@ -128,18 +133,21 @@ def test_coaxial_on_matte_gives_the_lambertian_cosine_contrast():
 
 
 def test_glare_dilutes_pigment_contrast():
-    lt = ID.light_source("ring", radius_mm=60.0, height_mm=200.0, n=24)   # bright field on a glossy surface
+    lt = ID.light_source("coaxial", radius_mm=60.0, height_mm=150.0, n=16)   # light along the view: glare
     matte = ID.defect_contrast(lt, surface="matte", slopes_deg=[5.0])
     glossy = ID.defect_contrast(lt, surface="mirror", slopes_deg=[5.0])
     assert matte["pigment"] == pytest.approx(1.0 / 3.0, abs=0.02)
-    assert glossy["pigment"] < matte["pigment"] * 0.8
-    assert glossy["regime"] == "bright_field"
+    assert glossy["pigment"] < matte["pigment"] * 0.5
+    assert glossy["regime"] == "bright_field" and matte["regime"] == "dark_field"
 
 
 def test_backlight_gives_no_irradiance_on_an_opaque_top_face_but_lights_from_below():
     lt = ID.light_source("backlight", radius_mm=40.0, height_mm=30.0, n=6)
     top = ID.irradiance_map(lt, size_mm=(20, 20), shape=(8, 8))
     assert np.all(top == 0.0)
+    assert np.all(ID.irradiance_map(lt, size_mm=(20, 20), shape=(8, 8), facing="down") > 0.0)
+    with pytest.raises(ValueError):
+        ID.irradiance_map(lt, facing="sideways")
     assert lt["emitters"].shape == (36, 3) and np.all(lt["emitters"][:, 2] == -30.0)
 
 
@@ -154,6 +162,48 @@ def test_design_table_prefers_dark_field_for_topographic_on_glossy():
     assert e["recommended"] == "backlight" and e["agrees_with_rule"]
     p = ID.illumination_design(surface="glossy", defect="pigment")
     assert p["rule_of_thumb"] == "dome"
+
+
+# --------------------------------------------------------------------------- #
+# ledger                                                                       #
+# --------------------------------------------------------------------------- #
+ILLUM_OPS = ["light_source", "irradiance_map", "illumination_uniformity", "defect_contrast",
+             "lighting_sweep", "illumination_design"]
+
+
+def test_illumination_category_is_registered_and_returns_declared_types():
+    import opsoptics
+    sys.path.insert(0, os.path.join(ROOT, "tools"))
+    import chain_fuzz
+    assert opsoptics.list_ops("illumination") == ILLUM_OPS
+    lt = ID.light_source()
+    args = {"light_source": (), "irradiance_map": (lt, (20, 20), (8, 8)),
+            "illumination_uniformity": (ID.irradiance_map(lt, (20, 20), (8, 8)),),
+            "defect_contrast": (lt,), "lighting_sweep": ("glossy", 10.0, [20.0, 50.0]),
+            "illumination_design": ()}
+    for name in ILLUM_OPS:
+        meta = opsoptics.info(name)
+        assert meta["module"] == "illumdesign" and meta["func"] is getattr(ID, name) and meta["doc"]
+        val = opsoptics.call(name, *args[name])
+        assert chain_fuzz.TYPE_CHECKS[meta["out"]](val), (name, meta["out"], type(val).__name__)
+    names = {o[0] for o in chain_fuzz.catalog() if o[1] == "optics"}
+    assert set(ILLUM_OPS) <= names
+
+
+@pytest.mark.parametrize("name", ["irradiance_map", "defect_contrast"])
+def test_light_consuming_ops_refuse_a_random_table(name):
+    rng = np.random.default_rng(5)
+    for bad in ([1, 2, 3], {"x": 1.0}, {"emitters": [[0, 0, 1]]}, rng.random(4).tolist(),
+                {"emitters": [[0, 0, 1]], "directions": [[0, 0, 0]]}):
+        with pytest.raises(ValueError):
+            getattr(ID, name)(bad)
+
+
+def test_facade_exports_every_illumination_op():
+    import api
+    import fullseye
+    for name in ILLUM_OPS:
+        assert name in api.__all__ and name in fullseye.__all__, name
 
 
 @pytest.mark.parametrize("bad", [

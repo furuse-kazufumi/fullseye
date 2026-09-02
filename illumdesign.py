@@ -230,14 +230,20 @@ def _irradiance_at(points, normals, E, D, I0, m):
     return out
 
 
-def irradiance_map(light, size_mm=(50.0, 50.0), shape=(128, 128), height=None, z_mm=0.0):
+def irradiance_map(light, size_mm=(50.0, 50.0), shape=(128, 128), height=None, z_mm=0.0, facing="up"):
     """Irradiance on the part plane (``image2d``, units of intensity / mm²).
 
     The plane is centred on the axis, *size_mm* = (height, width) in mm sampled
     on *shape* = (rows, cols); +y is up (row 0 is the top). *height* (optional,
     same shape as the map, mm) tilts each pixel's normal to that of a relief
     surface — a dent or a bump then shows as the irradiance it actually
-    receives. *z_mm* shifts the plane (a thick part's top face).
+    receives. *z_mm* shifts the plane (a thick part's top face). *facing*
+    ``"up"`` (+z, toward the camera) or ``"down"`` — the face a backlight
+    illuminates (what the camera sees through the part's apertures).
+
+    Closed forms: an isotropic point source (``cos_exponent=0``) at height h
+    gives ``E = I0 cos³θ / h²``; a Lambertian emitter (``cos_exponent=1``)
+    pointing down gives the cos⁴ law ``E = I0 cos⁴θ / h²``.
     """
     E, D, I0, m = _check_light(light)
     if not (isinstance(size_mm, (list, tuple)) and len(size_mm) == 2):
@@ -249,6 +255,8 @@ def irradiance_map(light, size_mm=(50.0, 50.0), shape=(128, 128), height=None, z
     if H * W > MAX_MAP_ELEMENTS:
         raise ValueError("map of %d elements exceeds MAX_MAP_ELEMENTS=%d" % (H * W, MAX_MAP_ELEMENTS))
     z0 = _finite(z_mm, "z_mm")
+    if facing not in ("up", "down"):
+        raise ValueError("facing must be 'up' or 'down'")
     ys = (0.5 - (np.arange(H) + 0.5) / H) * sh
     xs = ((np.arange(W) + 0.5) / W - 0.5) * sw
     X, Y = np.meshgrid(xs, ys)
@@ -266,6 +274,8 @@ def irradiance_map(light, size_mm=(50.0, 50.0), shape=(128, 128), height=None, z
         gy = -gy                                                 # row index runs against +y
         Nn = np.stack([-gx.ravel(), -gy.ravel(), np.ones(H * W)], 1)
         Nn /= np.linalg.norm(Nn, axis=1, keepdims=True)
+    if facing == "down":
+        Nn = -Nn
     pts = np.stack([X.ravel(), Y.ravel(), Z.ravel()], 1)
     return _irradiance_at(pts, Nn, E, D, I0, m).reshape(H, W)
 
@@ -496,7 +506,8 @@ def illumination_design(surface="glossy", defect="topographic", slope_deg=10.0, 
     rows = []
     for name, lt in cands.items():
         dc = defect_contrast(lt, surface=sp, slopes_deg=[slope_deg], camera=(0.0, 0.0, ch))
-        irr = irradiance_map(lt, size_mm=(size, size), shape=(32, 32))
+        irr = irradiance_map(lt, size_mm=(size, size), shape=(32, 32),
+                             facing="down" if lt["kind"] == "backlight" else "up")
         uni = illumination_uniformity(irr)
         if defect == "topographic":
             score = dc["per_slope"][0]["max_abs"]

@@ -271,12 +271,15 @@ def test_fbm_displacement_bounded_and_seeded():
 
 def test_boulder_count_and_size_distribution_follow_the_power_law():
     V, F = _sphere(1.0, (0.0, 0.0, 0.0), subdiv=3)
-    area = 4 * np.pi
+    tri = V[F]
+    area = float(0.5 * np.linalg.norm(np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0]), axis=1).sum())
+    assert area == pytest.approx(4 * np.pi, rel=0.01)       # icosphere ≈ 球
     dens, dmin, ex = 200.0, 0.02, 3.1
     s = render3d.sample_boulders(V, F, density=dens, d_min=dmin, d_max=10 * dmin, exponent=ex, seed=11)
     n = s["diameter"].size
     lam = dens * area
-    assert s["expected"] == pytest.approx(lam, rel=1e-3)   # 面積 = 4π(icosphere 近似)
+    assert s["expected"] == pytest.approx(lam, rel=1e-9)   # 期待個数 = 密度 × メッシュ面積
+    assert np.all(s["face"] >= 0) and np.all(s["face"] < F.shape[0])
     assert abs(n - lam) < 4 * np.sqrt(lam)                  # Poisson 4σ
     # N(>2 d_min)/N(>d_min) = (2^-3.1 - 10^-3.1)/(1 - 10^-3.1)(切断べき則)
     frac = (s["diameter"] > 2 * dmin).mean()
