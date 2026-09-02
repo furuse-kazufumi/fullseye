@@ -118,6 +118,30 @@ def run():
           % (err.ravel()[i], qi.monogenic_amplitude(mono).ravel()[i], rmag.ravel()[i]))
     out["riesz_worst"] = worst_r
 
+    print()
+    print("   局所位相 monogenic_phase — **明るさを一切見ずに**「そこにある構造の種類」")
+    g8 = grating(8, 0)
+    m8 = qi.monogenic_signal(g8, wavelength_px=8.0)          # 8 px 周期の格子
+    ph8 = qi.monogenic_phase(m8)
+    ramp = 2.0 * np.pi * 8.0 * np.mgrid[0:H, 0:W][1] / W
+    closed = np.abs(np.mod(ramp + np.pi, 2.0 * np.pi) - np.pi)   # |位相| ∈ [0, π]
+    print("   閉形式 |wrap(2π·8x/W)| との最大差: %.3e(値域 [%.1e, %.6f])"
+          % (np.abs(ph8 - closed).max(), ph8.min(), ph8.max()))
+    print("   %-10s %-16s %s" % ("位置", "局所位相", "そこにある構造"))
+    for col, what in ((0, "明るい線の頂"), (2, "段差(エッジ)"), (4, "暗い線の底")):
+        print("   x=%-8d %-16.9f %s(π/2 = %.9f, π = %.9f)"
+              % (col, ph8[0, col], what, np.pi / 2.0, np.pi))
+    print("   振幅は全画素で %.6f のまま(構造の種類と明るさは別の量)。"
+          % qi.monogenic_amplitude(m8).mean())
+    print("   値域は [0, π] の**半回転**。complexops.cx_phase の (-π, π] とは違う")
+    print("      —— 符号は位相ではなく方位が持っている。「巻き戻し損ね」に見えるが、")
+    print("      そもそも 1 回転ぶんが無い。")
+    print("   display=True は表示用に π で割るだけ(最大 %.6f)。既定は False ——"
+          % qi.monogenic_phase(m8, display=True).max())
+    print("      表示用の 1/π が黙って測定に混ざるのを避けるため(cx_phase とは逆の既定)。")
+    assert np.abs(ph8 - closed).max() < 1e-12
+    assert abs(ph8[0, 2] - np.pi / 2.0) < 1e-9
+
     # ------------------------------------------------------------------ #
     # 2) 色回転 — チャンネルごとには原理的に不可能、行列とは完全に同じ    #
     # ------------------------------------------------------------------ #
