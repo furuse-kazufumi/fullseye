@@ -313,11 +313,26 @@ def cast_shadow(V, F, light, *, pose=None, intrinsics=None, width: int = 256,
             iu = np.floor(np.where(np.isfinite(uL), uL, -1.0)).astype(np.int64)
             iv = np.floor(np.where(np.isfinite(vL), vL, -1.0)).astype(np.int64)
         inb = front & (iu >= 0) & (iu < sres) & (iv >= 0) & (iv < sres)
-        iu_c = np.clip(iu, 0, sres - 1)
-        iv_c = np.clip(iv, 0, sres - 1)
-        sm_d = sm[iv_c, iu_c]                            # 光源空間の最近面深度
-        blocked = inb & np.isfinite(sm_d) & (sm_d < (dL - bias_world))
-        occ_count += blocked.astype(np.float64)
+        if pcf_r == 0:
+            iu_c = np.clip(iu, 0, sres - 1)
+            iv_c = np.clip(iv, 0, sres - 1)
+            sm_d = sm[iv_c, iu_c]                        # 光源空間の最近面深度
+            blocked = (inb & np.isfinite(sm_d)
+                       & (sm_d < (dL - bias_world))).astype(np.float64)
+        else:
+            # PCF: 1 点の最近傍判定だと、影の境目が shadow map の texel に量子化
+            # されて階段になる。近傍 (2r+1)^2 texel の**判定を平均**すると、
+            # texel より細かい階調が出る(深度を平均するのではない —— 深度の
+            # 平均は物体の手前と奥をならして存在しない面を作る)。
+            acc = np.zeros_like(dL, dtype=np.float64)
+            for du in range(-pcf_r, pcf_r + 1):
+                for dv in range(-pcf_r, pcf_r + 1):
+                    uu = np.clip(iu + du, 0, sres - 1)
+                    vv = np.clip(iv + dv, 0, sres - 1)
+                    d_t = sm[vv, uu]
+                    acc += (np.isfinite(d_t) & (d_t < (dL - bias_world))).astype(np.float64)
+            blocked = inb.astype(np.float64) * (acc / float((2 * pcf_r + 1) ** 2))
+        occ_count += blocked
         n_used += 1
 
     occ_frac = occ_count / max(n_used, 1)
