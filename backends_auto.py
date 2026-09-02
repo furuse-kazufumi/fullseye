@@ -617,11 +617,27 @@ def _sh_geom(p):
             # settings. It went unnoticed because the existing guards
             # (`tests/test_known_bugs.py`) check determinism and the [0,1] range,
             # and an all-black image passes both.
+            radius = min(h, w) / 2
             dst = np.zeros((h, w), np.float32)
-            out = cv2.warpPolar(x.astype(np.float32), (w, h), (w / 2, h / 2),
-                                min(h, w) / 2,
-                                cv2.WARP_POLAR_LINEAR + cv2.WARP_INVERSE_MAP, dst)
-            return np.clip(np.asarray(out, np.float64), 0, 1)
+            out = np.asarray(
+                cv2.warpPolar(x.astype(np.float32), (w, h), (w / 2, h / 2), radius,
+                              cv2.WARP_POLAR_LINEAR + cv2.WARP_INVERSE_MAP, dst),
+                np.float64)
+            # cv2 が**書かなかった画素は未初期化のまま**返ってくる(戻り値は自前で
+            # 確保した新しいバッファで、渡した dst は使われない)。そこを読むと
+            # 実行ごとに値が変わる ―― これが Bug A の本体で、これまでは「dst を
+            # 読んで全ゼロ」だったせいで決定的に見えていただけだった。
+            #
+            # 書かれる範囲は中心からの半径 R の円盤だが、境界の双線形補間の
+            # ぶんだけ実際はわずかに内側で終わる。実測 2026-09-02(8 プロセス x
+            # 4 サイズ 32/48/64/96): 非決定的な画素が円盤内へ食い込む深さは
+            # **最大 0.911 画素**、それより内側は一度も変動しなかった。
+            # 1 画素の余裕を取って外側を 0 で塗る(0 は「写像の外」を表す既定値で、
+            # 元の実装が意図していたもの)。
+            yy, xx = np.mgrid[0:h, 0:w]
+            rr = np.hypot(xx + 0.5 - w / 2, yy + 0.5 - h / 2)
+            out = np.where(rr <= radius - 1.0, out, 0.0)
+            return np.clip(out, 0, 1)
         if kind == "projective" and _HAS_CV:         # perspective warp (projective_trans_image)
             h, w = x.shape
             d = 0.06 + 0.12 * a
