@@ -293,20 +293,28 @@ class PipelineModel:
         lines = ["import fullseye, numpy as np", "", "def pipeline(frame):",
                  "    return fullseye.run_pipeline(frame, ["]
         for name, a, b in self.stages:
-            lines.append(f"        ({name!r}, {a:.3f}, {b:.3f}),")
+            # full precision (repr), not %.3f: the exported script must run the SAME
+            # pipeline as the editor (a 0.12345 knob used to become 0.123 silently)
+            lines.append(f"        ({name!r}, {a!r}, {b!r}),")
         lines += ["    ])"]
         return "\n".join(lines) + "\n"
 
     def to_dict(self):
-        return {"fullseye_pipeline": 1, "stages": [[op, a, b] for op, a, b in self.stages]}
+        d = {"fullseye_pipeline": 1, "stages": [[op, a, b] for op, a, b in self.stages]}
+        if self.directives:                          # key only when used: old files stay byte-identical
+            d["directives"] = list(self.directives)
+        return d
 
     def load_dict(self, d):
         """Replace the pipeline from a saved dict.
 
         The payload is validated into a temporary list first (see
-        :func:`validate_pipeline_dict`), so a malformed file raises
-        :class:`ValueError` and leaves the current pipeline untouched."""
-        self.stages = validate_pipeline_dict(d)
+        :func:`validate_pipeline_dict` / :func:`validate_directives`), so a malformed
+        file raises :class:`ValueError` and leaves the current pipeline untouched."""
+        stages = validate_pipeline_dict(d)
+        directives = validate_directives(d)
+        self.stages = stages
+        self.directives = directives
 
 
 class PerceptionModel:
