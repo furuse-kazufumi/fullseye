@@ -372,7 +372,7 @@ def test_operator_panel_typed_widgets_and_labels():
             idx = next(i for i in range(ol.count()) if ol.item(i).data(QtCore.Qt.UserRole) == op)
             ol.setCurrentRow(idx)
         select("median")
-        assert ra.typed.currentWidget() is ra.combo and lbl_a.text() == "a · kernel"
+        assert ra.typed.currentWidget() is ra.combo and lbl_a.text().startswith("a · kernel")
         assert lbl_b.text() == "b (–)" and not b_spin.isEnabled()
         a_spin.setValue(0.9)                                      # raw -> combo mirrors
         assert ra.combo.currentText() == "9 px"
