@@ -149,30 +149,36 @@ def _coerce(value, sort):
     return np.asarray(value)
 
 
+#: sort ごとの**形の契約**。分岐を積むより表に置く —— sort を 1 つ足すたびに
+#: ``_sort_ok`` / ``_fallback`` / ``TYPE_TO_SORT`` の 3 箇所へ ``if`` を書き足す形
+#: だったので、どこか 1 つ書き忘れても**例外にならず fail-soft に落ちるだけ**で
+#: 気づけなかった(keypoints がまさにそれで、4 op が黙って死んでいた)。
+#: 表にしておけば「この sort の行が無い」が一目で分かり、テストからも回せる。
+_SHAPE_OK = {
+    "volume": lambda v: v.ndim == 3,
+    "image": lambda v: v.ndim == 2,
+    "points": lambda v: v.ndim == 2 and v.shape[1] == 3,
+    "keypoints": lambda v: v.ndim == 2 and v.shape[1] == 2,
+    "signal": lambda v: v.ndim == 1,
+    "matrix": lambda v: v.ndim == 2,
+    "cimage": lambda v: v.ndim == 2 and v.dtype.kind == "c",
+}
+
+
 def _sort_ok(value, sort):
     """*value* が *sort* の形の契約を満たすか。
 
     進化の ``_apply`` は sort を信じて次の op を選ぶので、ここで形まで保証しないと
     嘘が下流へ漏れて**無関係な op** で落ちる。ファザーの ``TYPE_CHECKS`` と同じ
     考え方(宣言と実際の一致を機械検証する)を橋の出口にも置く。
+    表に無い sort は「形の制約なし」= 配列であれば通す。
     """
     if sort == "feature":
         return isinstance(value, float)
     if not isinstance(value, np.ndarray) or value.dtype.kind not in "fciub":
         return False
-    if sort == "volume":
-        return value.ndim == 3
-    if sort == "image":
-        return value.ndim == 2
-    if sort == "points":
-        return value.ndim == 2 and value.shape[1] == 3
-    if sort == "signal":
-        return value.ndim == 1
-    if sort == "matrix":
-        return value.ndim == 2
-    if sort == "cimage":
-        return value.ndim == 2 and value.dtype.kind == "c"
-    return True
+    check = _SHAPE_OK.get(sort)
+    return True if check is None else bool(check(value))
 
 
 def _fallback(v, in_sort, out_sort):
