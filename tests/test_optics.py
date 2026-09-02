@@ -678,8 +678,8 @@ def _ledger_args():
 
 def test_ledger_is_complete_and_every_op_has_an_implementation():
     assert opsoptics.missing() == []
-    assert len(opsoptics.OPSOPTICS) == 30           # optics 18 + raytrace "design" 12
-    assert sorted(opsoptics.categories()) == ["design", "geometric", "imaging",
+    assert len(opsoptics.OPSOPTICS) == 34           # optics 18 + raytrace "design" 12 + lensimage "imaging_sim" 4
+    assert sorted(opsoptics.categories()) == ["design", "geometric", "imaging", "imaging_sim",
                                               "polarization", "wave"]
     # the optics-module half of the ledger is exactly optics.OPTICS; the design
     # half lives in raytrace (its own ledger checks are in tests/test_raytrace.py)
