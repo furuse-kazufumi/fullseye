@@ -102,6 +102,23 @@ _CATALOG = {
         ("mueller_apply", "optics", ["matrix", "stokes"], "stokes"),
         ("stokes_analyze", "optics", ["stokes"], "table"),
     ],
+    # design(raytrace): 入口 3 op(処方 / 閉形式厚肉 / 硝材)+ 例 1 op は引数無しで
+    # 呼べ、残り 8 op は lens_system の返り(table)を食う。table 以外(乱数の
+    # list/dict)は全 op が _check_system で ValueError(fail-closed、テスト済)
+    "design": [
+        ("lens_system", "raytrace", [], "table"),
+        ("thick_lens", "raytrace", [], "table"),
+        ("glass", "raytrace", [], "table"),
+        ("example_system", "raytrace", [], "table"),
+        ("paraxial_trace", "raytrace", ["table"], "table"),
+        ("seidel_coefficients", "raytrace", ["table"], "table"),
+        ("spot_stats", "raytrace", ["table"], "table"),
+        ("tolerance_analysis", "raytrace", ["table"], "table"),
+        ("wavefront_from_opd", "raytrace", ["table"], "table"),
+        ("spot_diagram", "raytrace", ["table"], "pairs"),
+        ("ray_fan", "raytrace", ["table"], "pairs"),
+        ("opd_map", "raytrace", ["table"], "image2d"),
+    ],
 }
 
 
