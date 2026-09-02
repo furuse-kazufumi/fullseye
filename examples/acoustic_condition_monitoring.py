@@ -293,6 +293,52 @@ def main():
     deepc = A.weighting_response(np.array([0.001, 0.01]), "C", floor_db=-1e6)
     print(f"     低域漸近: A {deep[1] - deep[0]:.6f} dB/decade(理論 80)、"
           f"C {deepc[1] - deepc[0]:.6f}(理論 40)")
+    print("   重みを**信号そのもの**に掛ける(apply_weighting、零位相・群遅延なし):")
+    wa1k = A.apply_weighting(one_k, fs, "A")
+    wc1k = A.apply_weighting(one_k, fs, "C")
+    print(f"     1 kHz 正弦は A でも C でも素通り: max|y-x| = "
+          f"{np.abs(wa1k - one_k).max():.3e} / {np.abs(wc1k - one_k).max():.3e}"
+          f"(どちらも 1 kHz で厳密に 0 dB だから)")
+    low = np.sin(2.0 * np.pi * 100.0 * np.arange(16000) / fs)
+    wlow = A.apply_weighting(low, fs, "A")
+    a100 = float(A.weighting_response(np.array([100.0]), "A")[0])
+    print(f"     100 Hz 正弦(振幅 1.0)は A で振幅 {np.abs(wlow).max():.6f}、"
+          f"閉形式 10**({a100:.4f}/20) = {10.0 ** (a100 / 20.0):.6f}")
+    print(f"     零位相の確認: 最初の山は入力も出力も同じ標本 "
+          f"{int(np.argmax(low[:200]))} / {int(np.argmax(wlow[:200]))} "
+          f"(再帰フィルタ実装ならここに群遅延が乗る)")
+    print(f"     kind='Z' は写しを返すだけ: "
+          f"{np.array_equal(A.apply_weighting(one_k, fs, 'Z'), one_k)}")
+    print("     honest: 記録に整数周期で収まらない音は漏れ込みで**大きめ**に読める"
+          "(A は 20 Hz-1 kHz で 40 dB 傾いているため)。")
+    assert np.abs(wa1k - one_k).max() < 1e-12
+    assert abs(np.abs(wlow).max() - 10.0 ** (a100 / 20.0)) < 1e-5
+
+    ob = A.octave_bands(fraction=3, f_min=22.0, f_max=22050.0, base=10)
+    kb = int(np.argmin(np.abs(ob["centers"] - 1000.0)))
+    print("   帯域の定義そのもの(octave_bands。中心周波数の数表も転記していない):")
+    print(f"     1/3 オクターブ {len(ob['centers'])} 帯域、比 G^(1/3) = "
+          f"{ob['ratio']:.9f}")
+    print(f"     1 kHz の帯域: 下 {ob['lower'][kb]:.6f} / 中心 "
+          f"{ob['centers'][kb]:.6f} / 上 {ob['upper'][kb]:.6f} Hz")
+    print(f"     恒等式 max|upper/lower - G^(1/3)| = "
+          f"{np.abs(ob['upper'] / ob['lower'] - ob['ratio']).max():.1e}、"
+          f"max|center - sqrt(lower*upper)| = "
+          f"{np.abs(ob['centers'] - np.sqrt(ob['lower'] * ob['upper'])).max():.1e}")
+    ob2 = A.octave_bands(fraction=2, f_min=22.0, f_max=22050.0)
+    print(f"     ★分母の偶奇で 1 kHz の居場所が変わる: 1/2 オクターブには"
+          f"**中心が 1 kHz の帯域が無い**(最寄りの中心まで "
+          f"{np.abs(ob2['centers'] - 1000.0).min():.3f} Hz)。1000.0 Hz は"
+          f"隣り合う 2 帯域が共有する**境界**"
+          f"(min|lower - 1000| = {np.abs(ob2['lower'] - 1000.0).min():.1e})")
+    print(f"     base=2 の 1/1 オクターブ中心はちょうど "
+          f"{', '.join('%g' % c for c in A.octave_bands(fraction=1, base=2)['centers'])} Hz")
+    print(f"     nominal は 3 桁丸めであって公表の呼称系列ではない(1 kHz 近傍 "
+          f"{ob['nominal'][kb - 2:kb + 3]} ―― 呼称系列は 630/800 のところ)")
+    assert np.abs(ob["upper"] / ob["lower"] - ob["ratio"]).max() < 1e-15
+    assert np.abs(ob["centers"] - np.sqrt(ob["lower"] * ob["upper"])).max() < 1e-9
+    assert np.abs(ob2["lower"] - 1000.0).min() < 1e-9
+
     oct3 = A.octave_spectrum(0.7 * one_k, fs, fraction=3, ref=1.0)
     k1 = int(np.argmin(np.abs(oct3["centers"] - 1000.0)))
     closed = 10.0 * np.log10(0.7 ** 2 / 2.0)
