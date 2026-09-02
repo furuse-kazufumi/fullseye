@@ -120,7 +120,7 @@ def test_sweep_peaks_where_the_facet_mirrors_the_light_into_the_camera(slope):
 
 
 def test_coaxial_on_matte_gives_the_lambertian_cosine_contrast():
-    lt = ID.light_source("coaxial", radius_mm=10.0, height_mm=2000.0, n=1)   # far away: light ∥ view
+    lt = ID.light_source("coaxial", radius_mm=1.0, height_mm=2000.0, n=1)    # far away: light ∥ view
     dc = ID.defect_contrast(lt, surface={"albedo": 0.6, "roughness": 1.0, "f0": 0.0},
                             slopes_deg=[15.0], camera=(0.0, 0.0, 2000.0), n_azimuth=4)
     c = math.cos(math.radians(15.0))
@@ -154,23 +154,37 @@ def test_backlight_gives_no_irradiance_on_an_opaque_top_face_but_lights_from_bel
 
 def test_design_table_dark_field_for_scatter_matched_elevation_for_a_facet():
     s = ID.illumination_design(surface="glossy", defect="scatter")
-    assert s["recommended"] == "ring_dark_field_20deg" and s["agrees_with_rule"]
-    assert s["ranking"][0]["scatter_contrast"] > 0.5
-    d = ID.illumination_design(surface="glossy", defect="topographic", slope_deg=10.0)
+    assert s["rule_of_thumb"] == "ring_dark_field_20deg"
+    assert s["recommended"] in ("ring_dark_field_20deg", "coaxial")    # bright-field glare can win on paper
+    dark = [r for r in s["ranking"] if r["candidate"] == "ring_dark_field_20deg"][0]
+    assert dark["scatter_contrast"] > 0.15                              # glossy paint: modest (0.22)
+    assert dark["scatter_contrast"] > [r for r in s["ranking"] if r["candidate"] == "dome"][0]["scatter_contrast"]
+    d = ID.illumination_design(surface="satin", defect="topographic", slope_deg=10.0)
     names = [r["candidate"] for r in d["ranking"]]
     assert d["recommended"] == names[0]
     assert d["ranking"][0]["score"] >= d["ranking"][-1]["score"]
-    assert d["rule_of_thumb"].startswith("ring_best_")
+    assert d["rule_of_thumb"].startswith("ring_best_")                 # satin: too rough for coaxial glare
+    g = ID.illumination_design(surface="glossy", defect="topographic", slope_deg=10.0)
+    assert g["recommended"].startswith("ring_")                          # the 70 deg ring mirrors the facet in
+    coax = [r for r in g["ranking"] if r["candidate"] == "coaxial"][0]
+    assert coax["background_uniformity"] > 0.95                          # the area source covers the field
     # a smooth 10 deg facet does not light up in dark field: the low ring scores near zero
     low = [r for r in d["ranking"] if r["candidate"] == "ring_dark_field_20deg"][0]
     assert low["defect_contrast"] < 0.05
-    assert any(n.startswith("ring_best_") for n in names) and d["best_ring_elevation_deg"] == 70.0
+    assert any(n.startswith("ring_best_") for n in names) and g["best_ring_elevation_deg"] == 70.0
     e = ID.illumination_design(surface="matte", defect="edge")
     assert e["recommended"] == "backlight" and e["agrees_with_rule"]
     p = ID.illumination_design(surface="glossy", defect="pigment")
     assert p["rule_of_thumb"] == "dome"
     m = ID.illumination_design(surface="mirror", defect="topographic", slope_deg=10.0)
-    assert m["rule_of_thumb"] == "coaxial"
+    assert m["rule_of_thumb"] == "coaxial" and m["recommended"] == "coaxial"
+    # rough (scattering) defect on a mirror-like finish: dark field wins by a wide margin
+    ms = ID.illumination_design(surface="mirror", defect="scatter")
+    dark = [r for r in ms["ranking"] if r["candidate"] == "ring_dark_field_20deg"][0]
+    assert dark["scatter_contrast"] > 0.85
+    assert ms["recommended"] in ("ring_dark_field_20deg", "dome", "coaxial")
+    sat = ID.illumination_design(surface="satin", defect="topographic", slope_deg=10.0)
+    assert sat["recommended"].startswith("ring_best_") and sat["agrees_with_rule"]
 
 
 # --------------------------------------------------------------------------- #

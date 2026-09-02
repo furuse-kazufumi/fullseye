@@ -26,7 +26,15 @@ with the flat surface at *point*: ``contrast = (L_defect − L_flat) /
 appears brighter or darker than the surround). Reported per slope as
 ``mean``, ``max_abs`` and ``azimuth_of_max``. ``pigment`` is the contrast
 of a flat patch whose albedo is *pigment_albedo_ratio* × the surround —
-the number specular glare dilutes. ``regime`` is ``"bright_field"`` when
+the number specular glare dilutes. ``scatter`` is the contrast of a
+**rough** patch (a chipped edge, a pit floor, a fine scratch: micro-facets
+of every slope, modelled as Lambertian whose albedo is the surround's plus
+the Fresnel fraction the flat surface would have sent into its specular
+direction) against the surround — the defect class dark-field lighting is
+built for, since a smooth facet only lights up when it mirrors the source
+into the camera while a rough patch scatters some of *any* light there,
+and at grazing incidence that Fresnel fraction is large. ``regime`` is
+``"bright_field"`` when
 the flat surface returns specular light to the camera (specular ≥ diffuse
 radiance) and ``"dark_field"`` otherwise. *surface*: a preset (``matte``,
 ``satin``, ``glossy``, ``mirror``, ``brushed_metal``) or a dict ``{albedo,

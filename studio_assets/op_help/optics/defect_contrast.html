@@ -11,7 +11,15 @@
 <p>appears brighter or darker than the surround). Reported per slope as</p>
 <p>`<code style="color:#22d3bf">mean</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">max_abs</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">azimuth_of_max</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">pigment</code>` is the contrast</p>
 <p>of a flat patch whose albedo is *pigment_albedo_ratio* × the surround —</p>
-<p>the number specular glare dilutes. `<code style="color:#22d3bf">regime</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">&quot;bright_field&quot;</code>` when</p>
+<p>the number specular glare dilutes. `<code style="color:#22d3bf">scatter</code>` is the contrast of a</p>
+<p><b>rough</b> patch (a chipped edge, a pit floor, a fine scratch: micro-facets</p>
+<p>of every slope, modelled as Lambertian whose albedo is the surround&#x27;s plus</p>
+<p>the Fresnel fraction the flat surface would have sent into its specular</p>
+<p>direction) against the surround — the defect class dark-field lighting is</p>
+<p>built for, since a smooth facet only lights up when it mirrors the source</p>
+<p>into the camera while a rough patch scatters some of *any* light there,</p>
+<p>and at grazing incidence that Fresnel fraction is large. `<code style="color:#22d3bf">regime</code>` is</p>
+<p>`<code style="color:#22d3bf">&quot;bright_field&quot;</code>` when</p>
 <p>the flat surface returns specular light to the camera (specular ≥ diffuse</p>
 <p>radiance) and `<code style="color:#22d3bf">&quot;dark_field&quot;</code><code style="color:#22d3bf"> otherwise. *surface*: a preset (</code><code style="color:#22d3bf">matte</code>`,</p>
 <p>`<code style="color:#22d3bf">satin</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">glossy</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">mirror</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">brushed_metal</code><code style="color:#22d3bf">) or a dict </code>`{albedo,</p>

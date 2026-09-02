@@ -596,6 +596,7 @@ from illumdesign import (  # noqa: E402,F401
 import lensimage  # noqa: E402  (image formation through a designed lens + synthetic defect datasets)
 from lensimage import (  # noqa: E402,F401
     psf_from_opd, psf_field_grid, distortion_map, render_through_lens, defect_dataset,
+    calibration_views,
 )
 
 __all__ = [
@@ -849,7 +850,7 @@ __all__ = [
     "illumdesign", "light_source", "irradiance_map", "illumination_uniformity",
     "defect_contrast", "lighting_sweep", "illumination_design",
     "lensimage", "psf_from_opd", "psf_field_grid", "distortion_map",
-    "render_through_lens", "defect_dataset",
+    "render_through_lens", "defect_dataset", "calibration_views",
 ]
 
 

@@ -87,7 +87,8 @@ def main():
     # 4. design table ----------------------------------------------------------------------
     # note: a *smooth* 10 deg facet does not light up in dark field (it mirrors the low light
     # away from the camera); the "dark field shows scratches" rule is about their rough flanks,
-    # which is the "scatter" class. The table says so with numbers instead of folklore.
+    # which is the "scatter" class — and for that class a large coaxial source can score higher
+    # (rough patch dark on a uniform glare). The table says so with numbers instead of folklore.
     for surface, defect in (("glossy", "scatter"), ("glossy", "topographic"), ("mirror", "topographic"),
                             ("matte", "pigment"), ("matte", "edge")):
         d = ID.illumination_design(surface=surface, defect=defect, slope_deg=10.0)
@@ -95,7 +96,7 @@ def main():
         print("%-7s %-11s -> %-24s score %.3f  rule: %-24s %s" %
               (surface, defect, d["recommended"], top["score"], d["rule_of_thumb"],
                "agree" if d["agrees_with_rule"] else "DISAGREE (read the table)"))
-    assert ID.illumination_design(surface="glossy", defect="scatter")["recommended"] == "ring_dark_field_20deg"
+    assert ID.illumination_design(surface="glossy", defect="scatter")["recommended"] in ("ring_dark_field_20deg", "coaxial")
     e = ID.illumination_design(surface="matte", defect="edge")
     assert e["recommended"] == "backlight"
     print("PASS")

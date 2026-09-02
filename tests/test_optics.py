@@ -678,9 +678,9 @@ def _ledger_args():
 
 def test_ledger_is_complete_and_every_op_has_an_implementation():
     assert opsoptics.missing() == []
-    # optics 18 + raytrace "design" 15 + lensimage "imaging_sim" 4 + lensopt "optimization" 3
+    # optics 18 + raytrace "design" 15 + lensimage "imaging_sim" 5 + lensopt "optimization" 3
     # + illumdesign "illumination" 6
-    assert len(opsoptics.OPSOPTICS) == 46
+    assert len(opsoptics.OPSOPTICS) == 47
     assert sorted(opsoptics.categories()) == ["design", "geometric", "illumination", "imaging", "imaging_sim",
                                               "optimization", "polarization", "wave"]
     # the optics-module half of the ledger is exactly optics.OPTICS; the design

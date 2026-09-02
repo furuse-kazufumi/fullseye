@@ -105,6 +105,19 @@ def _check_light(light):
     return E, D, I0, m
 
 
+def _area_of(light):
+    """The uniform-disc description of an area source (coaxial), or None."""
+    a = light.get("area", None)
+    if a is None:
+        return None
+    if not isinstance(a, dict) or a.get("kind") != "disc":
+        raise ValueError("light['area'] must be {'kind': 'disc', 'radius', 'z', 'radiance'}")
+    r = _finite(a.get("radius"), "area.radius", positive=True)
+    z = _finite(a.get("z"), "area.z")
+    L = _finite(a.get("radiance"), "area.radiance", nonneg=True)
+    return {"kind": "disc", "radius": r, "z": z, "radiance": L}
+
+
 # --------------------------------------------------------------------------- #
 # light sources
 # --------------------------------------------------------------------------- #
@@ -126,9 +139,15 @@ def light_source(kind="ring", radius_mm=60.0, height_mm=100.0, n=24, tilt_deg=No
     * ``"dome"`` — *n* emitters spread over a hemisphere of *radius_mm*
       (Fibonacci lattice, zenith angles 20°–85°), each pointing at the centre:
       the diffuse, shadow-free illumination of a dome light.
-    * ``"coaxial"`` — a small disc of *n* emitters of radius ``radius_mm/10``
-      at *height_mm* pointing down: light along the viewing axis (through a
-      beam splitter in practice).
+    * ``"coaxial"`` — a disc of *n* emitters of radius *radius_mm* at
+      *height_mm* pointing down: the diffuse area source a beam splitter folds
+      onto the viewing axis. Put it at the camera height with a radius of at
+      least twice the part size, so that every point of a flat glossy part
+      sees the source in its mirror direction (a *small* source at the camera
+      gives one bright spot, not a field-wide glare). The dict carries an
+      ``area`` record so :func:`defect_contrast` takes the specular glare from
+      the disc's uniform radiance ``L = n I0/(π r²)`` by a mirror-hit test
+      instead of a point sum that cannot resolve a narrow lobe.
     * ``"backlight"`` — *n* × *n* emitters on a square of side ``2·radius_mm``
       at ``z = −height_mm`` pointing **up**: the part is seen in silhouette.
     * ``"custom"`` — *emitters* (N,3) and *directions* (N,3) given explicitly.
@@ -185,12 +204,17 @@ def light_source(kind="ring", radius_mm=60.0, height_mm=100.0, n=24, tilt_deg=No
         D = -E / np.linalg.norm(E, axis=1, keepdims=True)
         out["radius_mm"] = R
     elif kind == "coaxial":
-        r = R / 10.0
+        r = R
         k = np.arange(nn)
         rr = r * np.sqrt((k + 0.5) / nn)
         ph = k * math.pi * (3.0 - math.sqrt(5.0))
         E = np.stack([rr * np.cos(ph), rr * np.sin(ph), np.full(nn, h)], 1)
         D = np.tile([0.0, 0.0, -1.0], (nn, 1))
+        # the disc as a *uniform Lambertian area source* for the specular term: a
+        # point sum cannot resolve a mirror-like lobe (1.3 deg wide at roughness 0.15,
+        # 0.14 deg at 0.05) between emitters, so the glare is taken from the source
+        # radiance L = n I0 / (pi r^2) wherever the mirror direction lands on the disc
+        out["area"] = {"kind": "disc", "radius": r, "z": h, "radiance": nn * I0 / (math.pi * r * r)}
     else:                                                        # backlight
         g = np.linspace(-R, R, nn) if nn > 1 else np.zeros(1)
         gx, gy = np.meshgrid(g, g)
@@ -362,8 +386,29 @@ def _surface_params(surface):
     return {"albedo": alb, "roughness": rough, "f0": f0}
 
 
-def _radiance(point, normal, view_dir, E, D, I0, m, sp, albedo=None):
-    """Radiance toward the camera from one surface point: Σ_e (ρ/π + f_s) E_e (n·l)."""
+def _mirror_hits_disc(point, normal, view_dir, area):
+    """Fresnel factor × 1 if the view ray mirrored at *point* lands on the disc source, else 0."""
+    r = -view_dir + 2.0 * np.dot(view_dir, normal) * normal   # reflect the (point->camera) direction
+    if r[2] <= 1e-12 or area["z"] <= point[2]:
+        return 0.0, 0.0
+    t = (area["z"] - point[2]) / r[2]
+    hit = point + t * r
+    cos_i = float(np.clip(np.dot(r, normal), 0.0, 1.0))
+    inside = math.hypot(hit[0], hit[1]) <= area["radius"]
+    return (1.0 if inside else 0.0), cos_i
+
+
+def _radiance(point, normal, view_dir, E, D, I0, m, sp, albedo=None, rough=False, area=None):
+    """Radiance toward the camera from one surface point: Σ_e (ρ/π + f_s) E_e (n·l).
+
+    *rough*: a patch of micro-facets of every slope (a chipped edge, a pit, a
+    fine scratch's flank). Its specular energy — the Fresnel fraction
+    ``F(θ_i)`` of each emitter's light, which the flat surface sends into one
+    direction — is scattered diffusely instead, so the patch is Lambertian with
+    albedo ``ρ + F(θ_i)`` per emitter (energy-conserving redistribution, no
+    lobe). That is what dark-field lighting exploits: at grazing incidence
+    ``F`` is large and the flat surface returns none of it to the camera.
+    """
     V = E - point[None, :]                                       # point -> emitter
     d2 = np.sum(V * V, axis=1)
     L = V / np.sqrt(d2)[:, None]
@@ -376,6 +421,18 @@ def _radiance(point, normal, view_dir, E, D, I0, m, sp, albedo=None):
     vdh = np.sum(Hh * view_dir[None, :], axis=1)
     irr = I0 * cos_e ** m / d2                                   # irradiance per unit projected area
     rho = sp["albedo"] if albedo is None else albedo
+    if rough:
+        F = sp["f0"] + (1.0 - sp["f0"]) * (1.0 - np.clip(ndl, 0.0, 1.0)) ** 5
+        return float(np.sum(((rho + F) / np.pi) * irr * np.clip(ndl, 0.0, None)))
+    # an area source whose lobe is narrower than the emitter spacing cannot be
+    # resolved by the point sum: take its specular term from the mirror-hit test on
+    # the uniform disc instead. A wide lobe (matte / satin) is integrated by the sum.
+    if area is not None and (sp["roughness"] ** 2) * max(area["z"] - point[2], 1e-9) \
+            < area["radius"] * math.sqrt(math.pi / max(len(E), 1)):
+        hit, cos_i = _mirror_hits_disc(point, normal, view_dir, area)
+        F = sp["f0"] + (1.0 - sp["f0"]) * (1.0 - cos_i) ** 5
+        diff = float(np.sum((rho / np.pi) * irr * np.clip(ndl, 0.0, None)))
+        return diff + hit * F * area["radiance"]
     fs = _ggx(ndl, np.full(len(L), ndv), ndh, vdh, sp["roughness"], sp["f0"])
     return float(np.sum((rho / np.pi + fs) * irr * np.clip(ndl, 0.0, None)))
 
@@ -393,10 +450,12 @@ def defect_contrast(light, surface="satin", slopes_deg=(2.0, 5.0, 10.0, 20.0), c
     of a flat patch whose albedo is *pigment_albedo_ratio* × the surround —
     the number specular glare dilutes. ``scatter`` is the contrast of a
     **rough** patch (a chipped edge, a pit floor, a fine scratch: micro-facets
-    of every slope, modelled as Lambertian with the surround's albedo) against
-    the surround — the defect class dark-field lighting is built for, since a
-    smooth facet only lights up when it mirrors the source into the camera
-    while a rough patch scatters some of *any* light there. ``regime`` is
+    of every slope, modelled as Lambertian whose albedo is the surround's plus
+    the Fresnel fraction the flat surface would have sent into its specular
+    direction) against the surround — the defect class dark-field lighting is
+    built for, since a smooth facet only lights up when it mirrors the source
+    into the camera while a rough patch scatters some of *any* light there,
+    and at grazing incidence that Fresnel fraction is large. ``regime`` is
     ``"bright_field"`` when
     the flat surface returns specular light to the camera (specular ≥ diffuse
     radiance) and ``"dark_field"`` otherwise. *surface*: a preset (``matte``,
@@ -404,6 +463,7 @@ def defect_contrast(light, surface="satin", slopes_deg=(2.0, 5.0, 10.0, 20.0), c
     roughness, f0}``.
     """
     E, D, I0, m = _check_light(light)
+    area = _area_of(light)
     sp = _surface_params(surface)
     cam = _vec3(camera, "camera")
     if cam[2] <= 0:
@@ -420,8 +480,8 @@ def defect_contrast(light, surface="satin", slopes_deg=(2.0, 5.0, 10.0, 20.0), c
     if not slopes or any(s >= 90.0 for s in slopes):
         raise ValueError("slopes_deg must be a non-empty list of angles < 90")
     flat_n = np.array([0.0, 0.0, 1.0])
-    L_flat = _radiance(P, flat_n, view, E, D, I0, m, sp)
-    L_diff = _radiance(P, flat_n, view, E, D, I0, m, {"albedo": sp["albedo"], "roughness": 1.0, "f0": 0.0})
+    L_flat = _radiance(P, flat_n, view, E, D, I0, m, sp, area=area)
+    L_diff = _radiance(P, flat_n, view, E, D, I0, m, {"albedo": sp["albedo"], "roughness": 1.0, "f0": 0.0}, area=area)
     L_spec = max(L_flat - L_diff, 0.0)
     rows = []
     for s in slopes:
@@ -430,7 +490,7 @@ def defect_contrast(light, surface="satin", slopes_deg=(2.0, 5.0, 10.0, 20.0), c
         for j in range(na):
             ph = 2.0 * math.pi * j / na
             nrm = np.array([math.sin(th) * math.cos(ph), math.sin(th) * math.sin(ph), math.cos(th)])
-            Ld = _radiance(P, nrm, view, E, D, I0, m, sp)
+            Ld = _radiance(P, nrm, view, E, D, I0, m, sp, area=area)
             den = Ld + L_flat
             vals.append((Ld - L_flat) / den if den > 0 else 0.0)
             azs.append(math.degrees(ph))
@@ -438,9 +498,9 @@ def defect_contrast(light, surface="satin", slopes_deg=(2.0, 5.0, 10.0, 20.0), c
         k = int(np.argmax(np.abs(vals)))
         rows.append({"slope_deg": s, "mean": float(vals.mean()), "max_abs": float(abs(vals[k])),
                      "signed_at_max": float(vals[k]), "azimuth_of_max": float(azs[k])})
-    L_pig = _radiance(P, flat_n, view, E, D, I0, m, sp, albedo=sp["albedo"] * ratio)
+    L_pig = _radiance(P, flat_n, view, E, D, I0, m, sp, albedo=sp["albedo"] * ratio, area=area)
     pig = (L_flat - L_pig) / (L_flat + L_pig) if (L_flat + L_pig) > 0 else 0.0
-    L_rough = _radiance(P, flat_n, view, E, D, I0, m, {"albedo": max(sp["albedo"], 0.05), "roughness": 1.0, "f0": 0.0})
+    L_rough = _radiance(P, flat_n, view, E, D, I0, m, sp, rough=True)
     sca = (L_rough - L_flat) / (L_rough + L_flat) if (L_rough + L_flat) > 0 else 0.0
     return {"per_slope": rows, "pigment": float(pig), "scatter": float(sca),
             "regime": "bright_field" if L_spec >= L_diff and L_flat > 0 else "dark_field",
@@ -497,13 +557,19 @@ def illumination_design(surface="glossy", defect="topographic", slope_deg=10.0, 
     ranks below a dark field whose background is uniformly dark. Irradiance
     uniformity is reported too. The result lists the candidates best first
     with their numbers, the ``recommended`` family, and ``rule_of_thumb`` — the textbook
-    choice (a smooth facet → the ring elevation that mirrors it into the
-    camera, or coaxial on a mirror-like finish; scatter → dark field; pigment →
+    choice (a smooth facet → coaxial bright field on a glossy finish, else the
+    ring elevation that mirrors it into the camera; scatter → dark field; pigment →
     dome; edge → backlight) so a disagreement between simulation and rule is
-    visible rather than hidden. Note that a *smooth* 10° facet does **not**
-    light up in dark field (it mirrors the low light away from the camera) —
-    the "dark field shows scratches" rule is about their rough flanks, which is
-    the ``scatter`` class here.
+    visible rather than hidden. Two things the numbers say that folklore does
+    not: a *smooth* 10° facet does **not** light up in dark field (it mirrors
+    the low light away from the camera) — the "dark field shows scratches"
+    rule is about their rough flanks, the ``scatter`` class here; and for that
+    class a large coaxial (bright-field) source often scores *higher* than
+    dark field because the rough patch appears dark on a uniform glare with
+    contrast near 1 (the wafer / glass inspection practice). The model does
+    not score sensor saturation or the glare's dependence on part flatness,
+    which is why the dark-field rule survives on the shop floor; the table
+    shows both so the choice is made with the numbers.
     """
     if defect not in ("topographic", "scatter", "pigment", "edge"):
         raise ValueError("defect must be 'topographic', 'scatter', 'pigment' or 'edge'")
@@ -519,7 +585,9 @@ def illumination_design(surface="glossy", defect="topographic", slope_deg=10.0, 
         "ring_bright_field_70deg": light_source("ring", radius_mm=R, height_mm=R * math.tan(math.radians(70.0))),
         "ring_best_%ddeg" % int(best_el): light_source("ring", radius_mm=R, height_mm=R * math.tan(math.radians(best_el))),
         "dome": light_source("dome", radius_mm=1.5 * R, n=96),
-        "coaxial": light_source("coaxial", radius_mm=R, height_mm=ch * 0.5, n=16),
+        # coaxial = light from the camera's own position (beam splitter): every flat point
+        # mirrors it straight back, so the glare covers the field instead of one spot
+        "coaxial": light_source("coaxial", radius_mm=2.0 * size, height_mm=ch, n=64),
     }
     if defect == "edge":
         cands["backlight"] = light_source("backlight", radius_mm=R, height_mm=R, n=8)
@@ -561,7 +629,7 @@ def illumination_design(surface="glossy", defect="topographic", slope_deg=10.0, 
     elif defect == "scatter":
         rule = "ring_dark_field_20deg"
     else:
-        rule = "coaxial" if sp["roughness"] < 0.1 else "ring_best_%ddeg" % int(best_el)
+        rule = "coaxial" if sp["roughness"] < 0.3 else "ring_best_%ddeg" % int(best_el)
     return {"ranking": rows, "recommended": rows[0]["candidate"], "rule_of_thumb": rule,
             "agrees_with_rule": rows[0]["candidate"] == rule, "best_ring_elevation_deg": best_el,
             "surface": sp, "defect": defect, "slope_deg": float(slope_deg)}

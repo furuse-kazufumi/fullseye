@@ -157,6 +157,11 @@ EXAMPLES = [
      "summary": "light_source → irradiance_map(cos⁴ 則で検証)→ illumination_uniformity、"
                 "defect_contrast で暗視野/明視野の傷斜面コントラストとグレアによる顔料コントラスト希釈、"
                 "lighting_sweep の最良仰角 = 90°−2×斜面、illumination_design の順位表と経験則の照合。"},
+    {"id": "lens_calibration_loop_demo", "task": "optics_sensing", "data": "synthetic",
+     "name": "設計レンズでカメラ校正を閉ループ検証する(calibration_views → calib)",
+     "summary": "処方の実歪曲で平面ターゲットの多視点対応点を合成し、calib.camera_calibration が"
+                "K_true(EFL/画素ピッチ)をどこまで再現するかを、無歪曲の放物面鏡(1e-6)と"
+                "樽型歪曲の singlet(焦点距離バイアス+再投影 RMS)で突き合わせる。"},
     {"id": "lens_defect_dataset_demo", "task": "optics_sensing", "data": "synthetic",
      "name": "設計したレンズで欠陥画像を撮る(lensimage)— PSF・歪曲・センサ雑音つき学習データ",
      "summary": "singlet / doublet の実収差瞳から回折 PSF(Airy 第 1 暗環・Strehl)と歪曲表を出し、"

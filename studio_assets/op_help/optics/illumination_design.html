@@ -7,13 +7,25 @@
 <p>Candidates: low-angle ring (dark field, elevation 20°), high-angle ring</p>
 <p>(bright field, 70°), the elevation that :func:<code style="color:#22d3bf">lighting_sweep</code> finds best,</p>
 <p>dome, coaxial and (for `<code style="color:#22d3bf">defect=&quot;edge&quot;</code>`) backlight. Each is scored by the</p>
-<p>simulated Michelson contrast of the stated defect (`<code style="color:#22d3bf">topographic</code>`: a</p>
-<p>facet of *slope_deg*; `<code style="color:#22d3bf">pigment</code>`: an albedo patch at half the surround)</p>
-<p>and by irradiance uniformity over the part. The result lists the</p>
-<p>candidates best first with their numbers, the `<code style="color:#22d3bf">recommended</code>` family, and</p>
-<p>`<code style="color:#22d3bf">rule_of_thumb</code>` — the textbook choice (topographic on glossy → dark</p>
-<p>field; pigment → dome / bright field; edge → backlight) so a disagreement</p>
-<p>between simulation and rule is visible rather than hidden.</p>
+<p>simulated Michelson contrast of the stated defect — `<code style="color:#22d3bf">topographic</code>`: a</p>
+<p>smooth facet of *slope_deg* (a dent wall, a bump); `<code style="color:#22d3bf">scatter</code>`: a rough</p>
+<p>patch (chipped edge, pit, fine scratch); `<code style="color:#22d3bf">pigment</code>`: an albedo patch at</p>
+<p>half the surround; `<code style="color:#22d3bf">edge</code>`: a silhouette — **multiplied by the uniformity</p>
+<p>of the background radiance the camera sees** across the part (min/max over</p>
+<p>the centre and the four edge midpoints). That second factor is what</p>
+<p>separates a robust choice from a fragile one: coaxial light on a glossy</p>
+<p>part gives a huge negative contrast exactly on axis (the glare) and almost</p>
+<p>none a few millimetres away, so its background uniformity is poor and it</p>
+<p>ranks below a dark field whose background is uniformly dark. Irradiance</p>
+<p>uniformity is reported too. The result lists the candidates best first</p>
+<p>with their numbers, the `<code style="color:#22d3bf">recommended</code><code style="color:#22d3bf"> family, and </code><code style="color:#22d3bf">rule_of_thumb</code>` — the textbook</p>
+<p>choice (a smooth facet → coaxial bright field on a glossy finish, else the</p>
+<p>ring elevation that mirrors it into the camera; scatter → dark field; pigment →</p>
+<p>dome; edge → backlight) so a disagreement between simulation and rule is</p>
+<p>visible rather than hidden. Note that a *smooth* 10° facet does <b>not</b></p>
+<p>light up in dark field (it mirrors the low light away from the camera) —</p>
+<p>the &quot;dark field shows scratches&quot; rule is about their rough flanks, which is</p>
+<p>the `<code style="color:#22d3bf">scatter</code>` class here.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>

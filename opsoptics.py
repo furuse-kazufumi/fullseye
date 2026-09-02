@@ -6,7 +6,7 @@ fullseye は産業ビジョン(検査ライン)と Physical AI(ロボット知�
 足場があり、その**手前**にあるのがレンズ・回折・偏光の計算 — 「どの焦点距離
 か」「被写界深度はどれだけか」「回折で潰れる最小欠陥は何 µm か」「偏光板で
 テカりは消えるか」。本レジストリはその台帳(optics.py 18 op + raytrace.py 15 op
-+ lensimage.py 4 op + lensopt.py 3 op + illumdesign.py 6 op = 46 op / 8 カテゴリ)。
++ lensimage.py 5 op + lensopt.py 3 op + illumdesign.py 6 op = 47 op / 8 カテゴリ)。
 
 optimization(lensopt.py)/ illumination(illumdesign.py)— 2026-09-03 追加。
 raytrace は処方を**評価**する側、lensopt は減衰最小二乗で処方を**変える**側
@@ -181,6 +181,9 @@ _CATALOG = {
         ("distortion_map", "lensimage", ["table"], "table"),
         ("render_through_lens", "lensimage", ["image2d", "table"], "image2d"),
         ("defect_dataset", "lensimage", [], "table"),
+        # 2026-09-03 追加: 設計レンズの実歪曲で平面ターゲットの多視点対応点を合成 →
+        # calib.camera_calibration に渡して K_true と突き合わせる閉ループ
+        ("calibration_views", "lensimage", ["table"], "table"),
     ],
 }
 

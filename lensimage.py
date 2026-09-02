@@ -705,3 +705,119 @@ def defect_dataset(n=8, system=None, size=(256, 256), kinds=_KINDS, pixel_pitch_
         with open(os.path.join(out_dir, "annotations.json"), "w", encoding="utf-8") as f:
             json.dump(ann, f, indent=1, ensure_ascii=False, default=float)
     return records
+
+
+# --------------------------------------------------------------------------- #
+# calibration closed loop
+# --------------------------------------------------------------------------- #
+def _rot_xyz(rx_deg, ry_deg, rz_deg):
+    ax, ay, az = (math.radians(v) for v in (rx_deg, ry_deg, rz_deg))
+    cx, sx, cy, sy, cz, sz = math.cos(ax), math.sin(ax), math.cos(ay), math.sin(ay), math.cos(az), math.sin(az)
+    Rx = np.array([[1, 0, 0], [0, cx, -sx], [0, sx, cx]])
+    Ry = np.array([[cy, 0, sy], [0, 1, 0], [-sy, 0, cy]])
+    Rz = np.array([[cz, -sz, 0], [sz, cz, 0], [0, 0, 1]])
+    return Rz @ Ry @ Rx
+
+
+def calibration_views(system, image_size=(1024, 1024), pixel_pitch_um=5.5, target=(9, 7, 5.0),
+                      poses=None, distance_mm=None, noise_px=0.0, seed=0, order=2):
+    """Synthetic camera-calibration views of a planar target through the designed lens (``table``).
+
+    A chessboard-like grid of *target* = (cols, rows, pitch_mm) corner points
+    on the plane z = 0 is placed at each of *poses* — ``(rx_deg, ry_deg,
+    rz_deg, tx_mm, ty_mm, tz_mm)`` in the camera frame (camera at the origin
+    looking along +z; default: five poses, frontal and ±20° about x and y, at
+    *distance_mm* — default the distance at which the target spans 60 % of
+    the sensor width) — projected by a pinhole of the prescription's EFL and
+    then displaced by the lens's **real radial distortion** (the polynomial
+    :func:`distortion_map` fits from traced chief rays), and expressed as
+    ``(row, col)`` pixels on an *image_size* sensor of *pixel_pitch_um*.
+    Optional Gaussian corner-detection noise *noise_px* (deterministic for
+    *seed*).
+
+    Returns ``object_points`` (N,2) mm on the target plane, ``image_points``
+    (a list of (N,2) ``(row, col)`` arrays — exactly what
+    ``calib.camera_calibration`` consumes), ``K_true`` (fx = fy = EFL/pitch
+    px, cx, cy at the sensor centre), the distortion polynomial, the poses,
+    and per view the fraction of points that landed on the sensor. Views with
+    fewer than four visible points, a target behind the camera, or an afocal
+    prescription are ``ValueError``.
+
+    The point of the op is the **closed loop**: feed the output to
+    ``calib.camera_calibration`` and compare the recovered intrinsics with
+    ``K_true`` — for a distortion-free lens (the paraboloid) Zhang's method
+    returns the EFL to 1e-6, and the singlet's barrel distortion shows up as a
+    focal-length bias and a non-zero reprojection RMS, so the calibration
+    module is checked end to end against a lens whose truth is known, and a
+    real chart can be judged against the same numbers.
+    """
+    _system(system)
+    h, w = _shape(image_size)
+    pitch = _num(pixel_pitch_um, "pixel_pitch_um", lo=1e-6)
+    if not (isinstance(target, (list, tuple)) and len(target) == 3):
+        raise ValueError("target must be (cols, rows, pitch_mm)")
+    tc, tr = _int(target[0], "target cols", 2, 64), _int(target[1], "target rows", 2, 64)
+    tp = _num(target[2], "target pitch_mm", lo=1e-6)
+    noise = _num(noise_px, "noise_px", lo=0.0)
+    para = RT.paraxial_trace(system)
+    if not math.isfinite(para["efl"]) or para["efl"] == 0.0:
+        raise ValueError("afocal system: no pinhole projection")
+    f = abs(para["efl"])
+    pitch_mm = pitch * 1e-3
+    dist = distortion_map(system, image_size=(h, w), pixel_pitch_um=pitch, order=order)
+    coef, powers = dist["coefficients"], dist["powers"]
+    xs = (np.arange(tc) - (tc - 1) / 2.0) * tp
+    ys = (np.arange(tr) - (tr - 1) / 2.0) * tp
+    X, Y = np.meshgrid(xs, ys)
+    obj = np.stack([X.ravel(), Y.ravel()], 1)
+    if distance_mm is None:
+        distance_mm = f * (tc - 1) * tp / (0.6 * w * pitch_mm)
+    dz = _num(distance_mm, "distance_mm", lo=1e-6)
+    if poses is None:
+        poses = [(0.0, 0.0, 0.0, 0.0, 0.0, dz), (20.0, 0.0, 0.0, 0.0, 0.0, dz), (-20.0, 0.0, 0.0, 0.0, 0.0, dz),
+                 (0.0, 20.0, 0.0, 0.0, 0.0, dz), (0.0, -20.0, 0.0, 0.0, 0.0, dz),
+                 (15.0, 15.0, 30.0, 0.1 * (tc - 1) * tp, 0.0, 1.2 * dz)]
+    if not isinstance(poses, (list, tuple)) or len(poses) < 3:
+        raise ValueError("poses must be a list of at least 3 (rx, ry, rz, tx, ty, tz)")
+    rng = np.random.default_rng(int(seed))
+    r_max = float(np.max(np.hypot(*np.meshgrid((np.arange(w) - (w - 1) / 2.0) * pitch_mm,
+                                                (np.arange(h) - (h - 1) / 2.0) * pitch_mm))))
+    views, frac, pose_out = [], [], []
+    P3 = np.concatenate([obj, np.zeros((len(obj), 1))], 1)
+    for k, pose in enumerate(poses):
+        if not (isinstance(pose, (list, tuple)) and len(pose) == 6):
+            raise ValueError("pose %d must be (rx_deg, ry_deg, rz_deg, tx_mm, ty_mm, tz_mm)" % k)
+        pv = [_num(v, "pose %d" % k) for v in pose]
+        R = _rot_xyz(*pv[:3])
+        t = np.array(pv[3:])
+        Pc = P3 @ R.T + t
+        if np.any(Pc[:, 2] <= 1e-9):
+            raise ValueError("pose %d puts target points behind the camera" % k)
+        x_mm = f * Pc[:, 0] / Pc[:, 2]
+        y_mm = f * Pc[:, 1] / Pc[:, 2]
+        r = np.hypot(x_mm, y_mm)
+        with np.errstate(divide="ignore", invalid="ignore"):
+            rr = r + sum(c * r ** p for c, p in zip(coef, powers))
+            scale = np.where(r > 1e-12, rr / r, 1.0)
+        # the polynomial was fitted only up to the sensor corner: beyond 1.2x that it is a guess
+        ok = r <= 1.2 * r_max
+        col = x_mm * scale / pitch_mm + (w - 1) / 2.0
+        row = y_mm * scale / pitch_mm + (h - 1) / 2.0
+        if noise > 0:
+            col = col + rng.normal(0.0, noise, len(col))
+            row = row + rng.normal(0.0, noise, len(row))
+        inside = ok & (col >= 0) & (col <= w - 1) & (row >= 0) & (row <= h - 1)
+        if inside.sum() < 4:
+            raise ValueError("pose %d: only %d target points fall on the sensor (need >= 4); "
+                             "move the target further or make it smaller" % (k, int(inside.sum())))
+        views.append(np.stack([row, col], 1))
+        frac.append(float(inside.mean()))
+        pose_out.append({"rx_deg": pv[0], "ry_deg": pv[1], "rz_deg": pv[2], "tx_mm": pv[3], "ty_mm": pv[4],
+                         "tz_mm": pv[5], "visible_fraction": float(inside.mean())})
+    fx = f / pitch_mm
+    return {"object_points": obj, "image_points": views, "n_views": len(views),
+            "K_true": {"fx": fx, "fy": fx, "cx": (w - 1) / 2.0, "cy": (h - 1) / 2.0},
+            "efl": f, "pixel_pitch_um": pitch, "image_size": (h, w),
+            "distortion": {"coefficients": coef, "powers": powers, "max_distortion_pct": dist["max_distortion_pct"]},
+            "poses": pose_out, "visible_fraction": frac, "noise_px": noise, "seed": int(seed),
+            "target": {"cols": tc, "rows": tr, "pitch_mm": tp}, "distance_mm": dz}

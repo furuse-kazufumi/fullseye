@@ -32,9 +32,15 @@ An emitter set for a standard machine-vision light family (``table``).
 * ``"dome"`` — *n* emitters spread over a hemisphere of *radius_mm*
   (Fibonacci lattice, zenith angles 20°–85°), each pointing at the centre:
   the diffuse, shadow-free illumination of a dome light.
-* ``"coaxial"`` — a small disc of *n* emitters of radius ``radius_mm/10``
-  at *height_mm* pointing down: light along the viewing axis (through a
-  beam splitter in practice).
+* ``"coaxial"`` — a disc of *n* emitters of radius *radius_mm* at
+  *height_mm* pointing down: the diffuse area source a beam splitter folds
+  onto the viewing axis. Put it at the camera height with a radius of at
+  least twice the part size, so that every point of a flat glossy part
+  sees the source in its mirror direction (a *small* source at the camera
+  gives one bright spot, not a field-wide glare). The dict carries an
+  ``area`` record so :func:`defect_contrast` takes the specular glare from
+  the disc's uniform radiance ``L = n I0/(π r²)`` by a mirror-hit test
+  instead of a point sum that cannot resolve a narrow lobe.
 * ``"backlight"`` — *n* × *n* emitters on a square of side ``2·radius_mm``
   at ``z = −height_mm`` pointing **up**: the part is seen in silhouette.
 * ``"custom"`` — *emitters* (N,3) and *directions* (N,3) given explicitly.

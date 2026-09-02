@@ -6,7 +6,11 @@
 
 ![A real point cloud of asteroid Itokawa, spun on a turntable by a custom renderer (all hand-written in numpy)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/showcase_turntable_itokawa.gif)
 
-This is a real point cloud of asteroid **25143 Itokawa** — the Gaskell shape model built from Hayabusa spacecraft observations, published in the JAXA DARTS archive — spinning inside the custom 3D renderer of this article's protagonist, **Fullseye**. Loading the point cloud, rendering it, the rock material, the shadows — **all of it is hand-written numpy**. This is the story of how I've been building that "eye."
+This is a real point cloud of asteroid **25143 Itokawa** — the Gaskell shape model built from Hayabusa spacecraft observations, published in the JAXA DARTS archive — spinning inside the custom 3D renderer of this article's protagonist, **Fullseye**. Loading the point cloud, rendering it, the rock material, the shadows — **all of it is hand-written numpy**.
+
+[![The same Itokawa shape model (49,152 facets) rendered physically: Hapke BRDF, hard 0.53-deg-sun ray-cast shadows, zero ambient, fBm relief + power-law (D^-3.1) boulders (click for full size)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/itokawa_regolith_hero_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/itokawa_regolith_hero.png)
+
+*↑ The same shape model (49,152 facets) as a **physically based** still (phase angle 30°). The GIF above used Lambert diffuse + ambient light + a pedestal — studio lighting; this one follows regolith photometry: a **Hapke** BRDF (single-scattering albedo 0.42, opposition surge, mean slope 26°; Lambert darkens the limb and softens the terminator, whereas real asteroid images are bright to the limb and flat), **hard shadows ray-cast against the mesh with the Sun's 0.53° angular diameter** (the penumbra is a few centimetres, as geometry dictates), zero ambient light (no skylight in space — the shadow floor is only single-bounce terrain light), metre-scale fBm relief and 252 boulders scattered with the power-law size distribution **N(>D) ∝ D^-3.1** (Michikami et al. 2008), leaving the smooth "sea" at the neck untouched. All of it is the fullseye op chain `mesh_displace_fbm → terrain_region_mask → mesh_scatter_boulders → render_regolith`, regenerated with ground-truth checks by `examples_3d/itokawa_regolith_hero.py`.* This is the story of how I've been building that "eye."
 
 ## TL;DR
 

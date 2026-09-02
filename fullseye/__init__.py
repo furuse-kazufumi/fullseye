@@ -280,6 +280,7 @@ with warnings.catch_warnings():
     import lensimage  # noqa: E402,F401  (image formation through a designed lens)
     from lensimage import (  # noqa: E402,F401
         psf_from_opd, psf_field_grid, distortion_map, render_through_lens, defect_dataset,
+        calibration_views,
     )
     from engine import FullseyeEngine, diagnose_stages  # noqa: E402,F401  (pipeline runtime)
     import graphengine  # noqa: E402,F401  (DAG pipeline runtime)
@@ -583,6 +584,6 @@ __all__ = [
     "illumdesign", "light_source", "irradiance_map", "illumination_uniformity",
     "defect_contrast", "lighting_sweep", "illumination_design",
     "lensimage", "psf_from_opd", "psf_field_grid", "distortion_map",
-    "render_through_lens", "defect_dataset",
+    "render_through_lens", "defect_dataset", "calibration_views",
     "vision", "vision_ops", "Image", "Pipeline", "pipeline",
 ]

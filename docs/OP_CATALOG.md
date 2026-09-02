@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(59 例)
+### 2-D 画像/信号/幾何(61 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -57,6 +57,8 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **optics_sensing**
 - **光学 op(optics)で検査機を 1 台、紙の上で設計する** — 倍率→焦点距離/物体距離、ABCD 行列で結像確認、回折限界・被写界深度・MTF を要求分解能に対して合否判定する。 `py -3.11 examples/optics_imaging.py`
 - **実光線設計 op(raytrace)で singlet と doublet を比べる** — 処方(lens_system)から近軸表・面ごとの Seidel・軸上/5 deg のスポット RMS・OPD→Zernike・Monte-Carlo 公差 p95 を出し、閉形式(thick_lens / 放物面鏡の完全結像)と突き合わせる。 `py -3.11 examples/lens_design_demo.py`
+- **実硝材で色収差を見て、減衰最小二乗でレンズを最適化する(lensopt)** — glass_catalog(Sellmeier)→ chromatic_shift で singlet/doublet の F-C 焦点移動、bend_singlet の Coddington 形状因子を optimize_lens が等凸から再発見、円錐 k=-n² と非球面 A4..A8 で無収差化、merit_function を 3 視野 × 3 波長で評価。 `py -3.11 examples/lens_optimize_demo.py`
+- **検査照明を設計する(illumdesign)— リング/ドーム/同軸/バックライトの照度と欠陥コントラスト** — light_source → irradiance_map(cos⁴ 則で検証)→ illumination_uniformity、defect_contrast で暗視野/明視野の傷斜面コントラストとグレアによる顔料コントラスト希釈、lighting_sweep の最良仰角 = 90°−2×斜面、illumination_design の順位表と経験則の照合。 `py -3.11 examples/illumination_design_demo.py`
 - **設計したレンズで欠陥画像を撮る(lensimage)— PSF・歪曲・センサ雑音つき学習データ** — singlet / doublet の実収差瞳から回折 PSF(Airy 第 1 暗環・Strehl)と歪曲表を出し、defectgen の欠陥をレンズ越しに描いて、同じ歪曲だけ通したマスク(IoU)と COCO 風注釈を書き出す。 `py -3.11 examples/lens_defect_dataset_demo.py`
 - **ライトフィールド 17 op で plenoptic 検査機を通す** — 画素/MLA ピッチから角度・空間分解能と基線長を設計し、センサ生データ→EPI→深度まで復元して既知深度と照合。 `py -3.11 examples/lightfield_depth.py`
 - **光子計数・時間分解 op(photoncount)で単一光子距離計を仕立てる** — SPAD の √N 雑音・デッドタイム・パイルアップを持つヒストグラムから距離と蛍光寿命を出し、17 op を閉形式 GT と照合。 `py -3.11 examples/photon_timeresolved.py`
@@ -100,7 +102,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **workflow**
 - **imgevolve quickstart — 全ワークフローを 1 ファイルで** — レジストリ→型付き手組みパイプライン→ゲノム復号→タスク採点→進化ドライバ→codegen + 差分テスト(約 1.5 分、repo root から実行)。 `py -3.11 examples/quickstart.py`
 
-### 3-D 点群/体積/曲面(112 例)
+### 3-D 点群/体積/曲面(113 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
@@ -266,6 +268,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **レンダリング品質: matcap/Phong鏡面シェーディング** — 拡散のみに鏡面を追加。Phongハイライトのピークが反射方向N=norm(L+V)と0.63px一致。Lambertianの最輝点は反射方向を54px外す(nullを約85倍上回る)。matcapはlit-sphere転写で素材感を持ち込む。 `py -3.11 examples_3d/render_shade.py`
 - **レンダリング品質: スーパーサンプリング(SSAA)でジャギー除去** — ss倍レンダ→面積平均縮小。傾き22°エッジでエイリアスエネルギー0.275→0.164(0.59倍)・中間輝度画素0%→0.95%、ss=1..6で単調減少。z-bufferの階段状シルエットを滑らかに。 `py -3.11 examples_3d/render_ssaa.py`
 - **レンダリング品質: トーンマップ(HDR→LDR)で白飛び救済** — 鏡面HDR(max5.41)をReinhard/ACESで[0,1]へ。全域Spearman1.00で単調、素朴クリップがハイライト域を1段に潰す(分散0)のに対し順位相関1.0・194段の階調を保持。 `py -3.11 examples_3d/render_tonemap.py`
+- **小惑星イトカワを物理ベースで描く(Hapke 反射則・太陽視直径 0.53° のレイキャスト影・地形レリーフ)** — 実形状モデル(49,152 面)に mesh_displace_fbm / terrain_region_mask / mesh_scatter_boulders で起伏と岩(べき則 D^-3.1)を足し、render_regolith(Hapke + shadow_raycast + 環境光 0 + 線形トーン)で hero を描く。Lommel-Seeliger の縁の明るさ、対向効果、硬い影、岩の個数を GT で実測。 `py -3.11 examples_3d/itokawa_regolith_hero.py`
 - **レンダリング品質: hero レンダラ render_beauty(全層合成の映える静止3D)** — ラスタライズ/Phong鏡面/AO/接地影/SSAA/トーンマップを1本に合成。sphere-on-groundで各層を実測: AOは接触凹部を0.07→0.02と選択的に暗化(露出頂部0.01は不変)、鏡面は小面積ハイライト(frac0.018)、接地影はwith-mesh993px vs null0px、reinhardは単調(clip34段潰しを回避)、SSAAはedge0.040→0.026。sdf_ops生成メッシュでhero画像を出力。 `py -3.11 examples_3d/render_beauty.py`
 
 ## スタンドアロン幾何/数学モジュール(関数 API)
@@ -317,7 +320,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - `spline_curve_resample(points, n, closed=False, smooth=0.0)` — 曲線点列を n 点に滑らかに再サンプルして (n,D) を返す(2D/3D、閉曲線はシーム非重複)。
 
 ## 3-D operators(ops3d)by category
-_計 310 ops / 63 categories。_
+_計 317 ops / 64 categories。_
 
 
 ### augment(6)
@@ -633,7 +636,7 @@ _計 310 ops / 63 categories。_
 - `registration_recall` (`points, points → measurement`) — 3DMatch 流の per-pair 登録成否 = 1.0(成功)/ 0.0(失敗)。 · 例: `reg_eval`
 - `rotation_translation_error` (`pose, pose → measurement`) — 2 つの 4×4 変換間の相対回転誤差(測地角[度], RRE)と相対並進誤差(RTE)。 · 例: `reg_eval`
 
-### render(14)
+### render(18)
 - `project_points` (`points → keypoints`) — 3D 点群 (N,3) → 画像座標 (u,v) と深度。ピンホール(depth_to_points の順方向)。 · 例: `pnp_pose_outliers`, `pose_estimation`
 - `render_point_depth` (`points → depth`) — 点群 → 深度画像(z-buffer、各画素に最近点の深度)。観測合成/外観検査サンプル。 · 例: `sfm_recon`
 - `render_volume_projection` (`voxel → image2d`) — voxel を任意視点で 2D 投影(mode=xray=減衰積算 / mip=最大値)。DRR(X線)・世界モデル観測。 · 例: `ct_hand_radiograph`
@@ -648,6 +651,10 @@ _計 310 ops / 63 categories。_
 - `tonemap_reinhard` (`image2d → image2d`) — Reinhard トーンマップで HDR を ``[0, 1]`` の LDR へ圧縮。→ float64、入力と同形状。 · 例: `render_beauty`, `render_tonemap`
 - `tonemap_aces` (`image2d → image2d`) — ACES filmic 近似(Narkowicz 2015)で HDR を ``[0, 1]`` の LDR へ圧縮。→ float64。 · 例: `render_tonemap`
 - `render_beauty` (`mesh → rgbimage`) — メッシュを全品質層合成で「映える静止 3D」1 枚に描く → RGB ``(size, size, 3)`` float [0,1]。 · 例: `render_beauty`
+- `brdf_lommel_seeliger` (`normalmap → image2d`) — Lommel-Seeliger 反射則(縁まで明るいレゴリス)で法線マップを陰影付けし I/F ``(H, W)`` を返す。 · 例: `itokawa_regolith_hero`
+- `brdf_hapke` (`normalmap → image2d`) — Hapke 反射則(対向効果 + 多重散乱 + 巨視的粗さ θ̄)で法線マップを陰影付けし I/F ``(H, W)`` を返す。 · 例: `itokawa_regolith_hero`
+- `shadow_raycast` (`mesh, vector → image2d`) — メッシュへ直接レイを飛ばして太陽光の可視性 (H,W) ∈ [0,1] を返す(shadow map 不使用)。 · 例: `itokawa_regolith_hero`
+- `render_regolith` (`mesh → rgbimage`) — 小惑星のレゴリスを物理ベース(Hapke + 太陽視直径のレイキャスト影 + 環境光ゼロ)で描く → RGB ``(size,size,3)``。 · 例: `itokawa_regolith_hero`
 
 ### restoration(2)
 - `vol_gaussian_psf` (`measurement → voxel`) — A normalised (sums to 1) 3-D Gaussian PSF kernel. *sigma* is a scalar or · 例: `deconv_fft_restore`
@@ -729,6 +736,11 @@ _計 310 ops / 63 categories。_
 - `detect_rotational_symmetry` (`points → primitive`) — PCA 主軸を候補軸として最良の回転対称(軸 × order)を選ぶ。 · 例: `rotational_symmetry_fold`, `symmetry`
 - `reflect_points` (`points → points`) — 点群を平面(点 plane_point・法線 plane_normal)で鏡映。→ (N,3)。 · 例: `reflection_symmetry`
 - `reflection_symmetry_score` (`points → measurement`) — 反射対称スコア = chamfer(鏡映, 元) / 中央値最近傍間隔(小さいほど対称、スケール不変)。→ float。 · 例: `dl_mesh_symmetry`, `reflection_symmetry`
+
+### terrain(3)
+- `mesh_displace_fbm` (`mesh → mesh`) — Roughen a mesh by displacing vertices along their normals with seeded fBm noise → ``(V, F)``. · 例: `itokawa_regolith_hero`
+- `terrain_region_mask` (`mesh → table`) — Per-face terrain weights (M,) in [0,1]: 0 = smooth regolith "sea", 1 = rough highland. · 例: `itokawa_regolith_hero`
+- `mesh_scatter_boulders` (`mesh → mesh`) — Scatter partly-buried ellipsoidal boulders on a mesh (power-law sizes, seeded) → ``(V, F)``. · 例: `itokawa_regolith_hero`
 
 ### transform(12)
 - `points_to_voxel` (`points → voxel`) — 点群 (N,3) → 密度 voxel (size³)。scatter_add で splat、任意で gaussian 平滑。 · 例: `sh_descriptor_retrieval`, `shape_desc_pose`
@@ -1806,16 +1818,18 @@ _計 26 ops / 4 categories。_
 - `stat_zscore` (`signal → signal`) — Standardise a 1-D sample: ``(x - mean) / std`` (population ``ddof=0``).
 
 ## Optics operators(opsoptics)by category
-_計 34 ops / 6 categories。_
+_計 46 ops / 8 categories。_
 
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)。光線と面の相互作用(reflect / refract / fresnel_reflectance)と Zernike フィット(fit_zernike)は match3d、PSF 復元は volrestore、FFT は complexops、位相シフト干渉法は fringe が持ち場なので重複させていない。
 
-### design(12)
+### design(15)
 - `lens_system` (` → table`) — Build a validated sequential prescription (the ``table`` every other op consumes).
 - `thick_lens` (` → table`) — Closed-form thick lens in air: EFL, back/front focal lengths, principal points.
 - `glass` (` → table`) — A dispersive medium from its d-line index *nd* and Abbe number *vd*.
 - `example_system` (` → table`) — A named example: ``"singlet"`` (plano-convex BK7, f≈100), ``"doublet"``
+- `glass_catalog` (` → table`) — A catalogue glass by name (``table``), or the list of names when *name* is None.
+- `sellmeier` (` → table`) — A dispersive medium from three-term Sellmeier constants (``table``).
 - `paraxial_trace` (`table → table`) — First-order properties of the prescription: focal lengths, pupils, image.
 - `seidel_coefficients` (`table → table`) — Third-order (Seidel) aberration sums per surface and total (``table``).
 - `spot_stats` (`table → table`) — RMS / geometric spot radius (mm) and centroid for one field point (``table``).
@@ -1824,6 +1838,7 @@ _計 34 ops / 6 categories。_
 - `spot_diagram` (`table → pairs`) — Transverse ray intersections on the image plane for one field point.
 - `ray_fan` (`table → pairs`) — Transverse ray aberration along one pupil diameter (``pairs``).
 - `opd_map` (`table → image2d`) — Optical path difference over the exit pupil, in waves (``image2d``).
+- `chromatic_shift` (`table → table`) — Focal shift, image-height shift and spot size versus wavelength (``table``).
 
 ### geometric(5)
 - `thin_lens` (` → table`) — Gaussian thin-lens imaging: where the image lands and how big it is.
@@ -1831,6 +1846,14 @@ _計 34 ops / 6 categories。_
 - `abcd_trace` (`matrix → table`) — Propagate one paraxial ray through an ABCD matrix.
 - `depth_of_field` (` → table`) — Photographic depth of field: near limit, far limit and hyperfocal distance.
 - `relative_illumination` (` → pairs`) — Natural vignetting: relative image-plane illuminance versus field angle.
+
+### illumination(6)
+- `light_source` (` → table`) — An emitter set for a standard machine-vision light family (``table``).
+- `irradiance_map` (`table → image2d`) — Irradiance on the part plane (``image2d``, units of intensity / mm²).
+- `illumination_uniformity` (`image2d → table`) — Uniformity figures of an irradiance map (``table``).
+- `defect_contrast` (`table → table`) — Contrast of topographic and pigment defects under a light (``table``).
+- `lighting_sweep` (` → pairs`) — Defect contrast versus ring-light elevation angle (``pairs``).
+- `illumination_design` (` → table`) — Rank the standard light families for a surface / defect pairing (``table``).
 
 ### imaging(3)
 - `psf_to_mtf` (`image2d → pairs`) — Radially-averaged MTF of a measured point-spread function.
@@ -1842,6 +1865,11 @@ _計 34 ops / 6 categories。_
 - `distortion_map` (`table → table`) — Real chief-ray height versus the paraxial one, and the remap grid (``table``).
 - `render_through_lens` (`image2d, table → image2d`) — Render an ideal irradiance image as the sensor behind *system* would record it (``image2d``).
 - `defect_dataset` (` → table`) — Synthetic defect images through a designed lens, with aligned masks (``table``).
+
+### optimization(3)
+- `optimize_lens` (`table → table`) — Damped-least-squares (Levenberg–Marquardt) optimisation of a prescription (``table``).
+- `merit_function` (`table → table`) — The DLS merit ``Σ residual²`` and its parts for one prescription (``table``).
+- `bend_singlet` (` → table`) — A thin singlet of given focal length at a Coddington shape factor (``table``).
 
 ### polarization(6)
 - `jones_element` (` → cimage`) — A 2x2 complex Jones matrix for one polarisation element.

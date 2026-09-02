@@ -22,13 +22,31 @@ Rank the standard light families for a surface / defect pairing (``table``).
 Candidates: low-angle ring (dark field, elevation 20°), high-angle ring
 (bright field, 70°), the elevation that :func:`lighting_sweep` finds best,
 dome, coaxial and (for ``defect="edge"``) backlight. Each is scored by the
-simulated Michelson contrast of the stated defect (``topographic``: a
-facet of *slope_deg*; ``pigment``: an albedo patch at half the surround)
-and by irradiance uniformity over the part. The result lists the
-candidates best first with their numbers, the ``recommended`` family, and
-``rule_of_thumb`` — the textbook choice (topographic on glossy → dark
-field; pigment → dome / bright field; edge → backlight) so a disagreement
-between simulation and rule is visible rather than hidden.
+simulated Michelson contrast of the stated defect — ``topographic``: a
+smooth facet of *slope_deg* (a dent wall, a bump); ``scatter``: a rough
+patch (chipped edge, pit, fine scratch); ``pigment``: an albedo patch at
+half the surround; ``edge``: a silhouette — **multiplied by the uniformity
+of the background radiance the camera sees** across the part (min/max over
+the centre and the four edge midpoints). That second factor is what
+separates a robust choice from a fragile one: coaxial light on a glossy
+part gives a huge negative contrast exactly on axis (the glare) and almost
+none a few millimetres away, so its background uniformity is poor and it
+ranks below a dark field whose background is uniformly dark. Irradiance
+uniformity is reported too. The result lists the candidates best first
+with their numbers, the ``recommended`` family, and ``rule_of_thumb`` — the textbook
+choice (a smooth facet → coaxial bright field on a glossy finish, else the
+ring elevation that mirrors it into the camera; scatter → dark field; pigment →
+dome; edge → backlight) so a disagreement between simulation and rule is
+visible rather than hidden. Two things the numbers say that folklore does
+not: a *smooth* 10° facet does **not** light up in dark field (it mirrors
+the low light away from the camera) — the "dark field shows scratches"
+rule is about their rough flanks, the ``scatter`` class here; and for that
+class a large coaxial (bright-field) source often scores *higher* than
+dark field because the rough patch appears dark on a uniform glare with
+contrast near 1 (the wafer / glass inspection practice). The model does
+not score sensor saturation or the glare's dependence on part flatness,
+which is why the dark-field rule survives on the shop floor; the table
+shows both so the choice is made with the numbers.
 
 ## ファミリ共通の入力契約(fail-closed)
 

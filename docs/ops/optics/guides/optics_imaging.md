@@ -230,8 +230,8 @@ dc = ID.defect_contrast(low, surface="glossy", slopes_deg=[5.0, 10.0])
 print(round(u["uniformity"], 3), dc["regime"], [round(r["max_abs"], 3) for r in dc["per_slope"]])
 sw = ID.lighting_sweep(surface="mirror", slope_deg=10.0, camera_height_mm=1000.0)
 print(sw[int(np.argmax(sw[:, 1])), 0])                                  # 70.0 = 90 - 2*10
-d = ID.illumination_design(surface="glossy", defect="scatter")
-print(d["recommended"], d["rule_of_thumb"], d["agrees_with_rule"])   # ring_dark_field_20deg … True
+d = ID.illumination_design(surface="mirror", defect="topographic", slope_deg=10.0)
+print(d["recommended"], d["rule_of_thumb"], d["agrees_with_rule"])   # coaxial coaxial True
 assert d["ranking"][0]["score"] >= d["ranking"][-1]["score"]
 ```
 
