@@ -38,6 +38,20 @@ def _compatible(out_sort: str, in_sort: str) -> bool:
     return out_sort == in_sort or out_sort == _ANY or in_sort == _ANY
 
 
+def _thread_sort(cur, op) -> str:
+    """The sort flowing OUT of *op* when *cur* flows in (mirrors ``ops._effective_out_sort``).
+
+    An op whose ``out_sort`` is ``"any"`` (``identity``) passes its input through,
+    so it KEEPS the incoming sort rather than resetting it to "matches everything".
+    Reading the declaration literally made ``diagnose_stages`` go blind after an
+    identity stage (``[gaussian, identity, vol_gaussian]`` -> no warning while
+    ``[gaussian, vol_gaussian]`` warns) and ``output_sort()`` report ``"any"``
+    for a pipeline that plainly produces an image (2026-09-02 review)."""
+    if op.out_sort == _ANY and cur is not None:
+        return cur
+    return op.out_sort
+
+
 def diagnose_stages(stages) -> list[dict]:
     """Validate a list of ``(op, a, b)`` stages without running them.
 
