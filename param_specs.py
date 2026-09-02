@@ -445,7 +445,11 @@ def _labels_from_text(text: str) -> dict[str, dict[str, str]]:
             mm = pat.match(line)
             if mm:
                 letter, body = mm.group(1), mm.group(2)
-                if letter not in out and body and _clean_label(body):
+                if letter in out or not body:
+                    break
+                if re.match(r"^\W*(?:is\s+)?(?:unused|ignored|not\s+used|不使用|未使用)", body, re.I):
+                    out[letter] = {"label": "(unused)", "doc": re.sub(r"[`*]", "", body)[:200]}
+                elif _clean_label(body):
                     out[letter] = {"label": _clean_label(body), "doc": re.sub(r"[`*]", "", body)[:200]}
                 break
     flat = re.sub(r"\s+", " ", text)
