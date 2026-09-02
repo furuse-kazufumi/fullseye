@@ -445,7 +445,7 @@ def _occluded_parallel(O: np.ndarray, d: np.ndarray, A: np.ndarray, B: np.ndarra
         chunk = max(1, int(200000 // max(tris.size, 1)))
         for s in range(0, rays.size, chunk):
             rr = rays[s:s + chunk]
-            occ[rr] = _rays_hit_dir(O[rr], d, Ac, e1c, e2c, tmin)
+            occ[rr] = _rays_hit_dir(O[rr], d, Ac, e1c, e2c, tmin, tmax)
     return occ
 
 
