@@ -175,7 +175,10 @@ def tm_radon_forward(v, a, b):
     along parallel rays to build a sinogram (rows = angles, cols = detector),
     refit to the original HxW. ``a`` sets how many angles are acquired
     (``n = round(H*a)`` clamped to 8..360 -- the sparse-view knob), ``b`` sets the
-    angular span (``span = 180*(0.5+0.5*b)`` deg -- b<1 is limited-angle CT).
+    angular span (``span = 180*min(1, 0.5+b)`` deg: b < 0.5 is limited-angle CT,
+    b >= 0.5 -- including the default b = 0.5 -- is the full [0,180) span that
+    ``tm_fbp_reconstruct`` / ``tm_sart_reconstruct`` / ``tm_backproject_unfiltered``
+    assume, so the natural chain forward -> inverse round-trips at default knobs).
     Uses ``skimage.transform.radon`` when available, else the NumPy
     rotate-and-sum Radon transform."""
     x = _img(v)
@@ -183,7 +186,10 @@ def tm_radon_forward(v, a, b):
     if H < 3 or W < 3:
         return x
     n_ang = int(np.clip(round(H * float(np.clip(a, 0.05, 1.0))), 8, 360))
-    span = 180.0 * float(np.clip(0.5 + 0.5 * b, 0.5, 1.0))
+    # 2026-09-02: the old map 180*(0.5+0.5*b) made the DEFAULT b=0.5 a 135-deg
+    # sinogram, which every inverse op here re-read as [0,180) -> the default
+    # forward->fbp chain reconstructed at corr 0.75 instead of 0.99.
+    span = 180.0 * float(np.clip(0.5 + float(b), 0.5, 1.0))
     thetas = _thetas(n_ang, span)
     if _HAVE_SKI:
         sino = radon(x, theta=thetas, circle=True).T        # (angles, detector)
