@@ -1610,7 +1610,7 @@ def evidence_quantile(measurement, null, higher_is_stronger=True):
         raise ValueError("null quantiles must be finite and monotone")
     # np.interp needs strictly increasing x: collapse tied knots (a plateau of
     # identical clean values) to their mean rank — the mid-rank convention.
-    ux, first = np.unique(xs, return_index=True)
+    ux = np.unique(xs)
     uy = np.array([ys[xs == x].mean() for x in ux], dtype=np.float64)
     below = float(np.interp(m, ux, uy)) if ux.size > 1 else (
         0.0 if m < ux[0] else 1.0 if m > ux[0] else 0.5)
