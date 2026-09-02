@@ -4758,6 +4758,11 @@ def build_window(model=None):
     def on_stage_selected():
         sync_stage_ui()
         show_result()
+        # the Program window follows the selection (HDevelop) — unless the user is
+        # typing there, in which case their cursor is theirs
+        i = selected_index()
+        if 0 <= i < len(model.stages) and not code_edit.hasFocus() and not state.get("code_dirty"):
+            _place_program_cursor(_stage_line(i))
         # step-through frontier: grey out variables past the current stage (Codex #8).
         # Guarded because early build-time selections fire before the helper is defined.
         getattr(win, "_mark_variable_frontier", lambda: None)()
@@ -4889,16 +4894,86 @@ def build_window(model=None):
             flash("‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: "
                   "imgevolve.py algo run %s" % (name, name))
             return
+        a_val, b_val = op_a_spin.value(), op_b_spin.value()
+        line = "%s (%r, %r)" % (name, float(a_val), float(b_val))   # repr: full precision
+        if state.get("code_dirty"):
+            # The Program window holds unapplied hand edits: the pipeline and the text
+            # are already out of step, so insert the LINE only (at the cursor, HDevelop
+            # operator-window semantics) and let Apply bring the pipeline in line —
+            # never clobber what the user typed (Codex #9).
+            ln = _insert_program_line(line, code_edit.textCursor().blockNumber() + 1)
+            code_status.setText("● inserted %s on line %d — Apply to run the program" % (name, ln))
+            flash("inserted `%s` at line %d of the Program (Apply to run)" % (line, ln))
+            return
         push_undo()
-        i = selected_index()
-        # insert with the args entered in the operator panel (HDevelop-style)
-        model.add_stage(name, op_a_spin.value(), op_b_spin.value())
-        newpos = len(model.stages) - 1
-        if 0 <= i < newpos:                                  # insert just after the selected stage
-            model.move_stage(newpos, i + 1); newpos = i + 1
+        # Insertion point = the Program cursor (which follows the selected stage, so a
+        # selected stage still means "insert right after it"; no selection = the end).
+        cur_line = code_edit.textCursor().blockNumber() + 1
+        newpos = min(len(model.stages), _stages_done(cur_line)) if model.stages else 0
+        if not model.stages or state.get("stage_lines") is None:
+            i = selected_index()
+            newpos = (i + 1) if 0 <= i < len(model.stages) else len(model.stages)
+        model.add_stage(name, a_val, b_val)
+        last = len(model.stages) - 1
+        if newpos < last:
+            model.move_stage(last, newpos)
+        # lockstep text edit: the line lands after the cursor line and the
+        # stage<->line map shifts with it, so the gutter stays right even if the
+        # regenerating sync below is skipped (editor focused / dev_update off)
+        anchor = _stage_line(newpos - 1) if newpos > 0 else (len(state.get("dev_lines") or []))
+        ln = _insert_program_line(line, anchor)
+        lines = state.get("stage_lines")
+        if lines is not None:
+            lines = [l + 1 if l > anchor else l for l in lines]
+            lines.insert(newpos, ln)
+            _set_stage_lines(lines)
         mark_dirty()
         refresh_stage_list(select=newpos)
         show_result()
+        _place_program_cursor(_stage_line(newpos))
+
+    def _insert_program_line(text, after_line):
+        """Insert *text* as a new editor line after 1-based *after_line* (0 = at the
+        top). Signals are blocked so the edit is not mistaken for typing (code_dirty).
+        Returns the 1-based line number the text landed on."""
+        doc = code_edit.document()
+        n = doc.blockCount()
+        body = code_edit.toPlainText()
+        if not model.stages and body.lstrip().startswith("* empty pipeline"):
+            body, n, after_line = "", 0, 0            # replace the placeholder comment
+        code_edit.blockSignals(True)
+        try:
+            cur = QtGui.QTextCursor(doc)
+            if n == 0 or not body:
+                code_edit.setPlainText(text)
+                ln = 1
+            elif after_line <= 0:
+                cur.movePosition(QtGui.QTextCursor.Start)
+                cur.insertText(text + "\n")
+                ln = 1
+            else:
+                blk = doc.findBlockByNumber(min(after_line, n) - 1)
+                cur.setPosition(blk.position())
+                cur.movePosition(QtGui.QTextCursor.EndOfBlock)
+                cur.insertText("\n" + text)
+                ln = min(after_line, n) + 1
+        finally:
+            code_edit.blockSignals(False)
+        return ln
+
+    def _place_program_cursor(line):
+        """Move the Program cursor to a 1-based line (HDevelop: the program window
+        follows the selected stage / the freshly inserted operator)."""
+        try:
+            doc = code_edit.document()
+            blk = doc.findBlockByNumber(max(0, min(int(line), doc.blockCount()) - 1))
+            cur = QtGui.QTextCursor(blk)
+            cur.movePosition(QtGui.QTextCursor.EndOfBlock)
+            code_edit.setTextCursor(cur)
+        except Exception as e:
+            _log_soft_failure("could not place the program cursor", e)
+    win._insert_program_line = _insert_program_line
+    win._place_program_cursor = _place_program_cursor
 
     def run_op_once():
         """HDevelop single-step: apply the selected operator ONCE with the a, b from
@@ -5117,6 +5192,25 @@ def build_window(model=None):
         if not isinstance(state.get("result"), np.ndarray):
             flash("nothing to save — run the pipeline first"); return
         _save_array(state["result"], "Save view as shown", "view.png", "view")
+
+    def _save_secondary_view(gv):
+        """Save button / right-click Save of a secondary graphics window: its data
+        array when known (full precision), else exactly the pixmap it shows."""
+        data = getattr(gv, "_data", None)
+        if isinstance(data, np.ndarray) and data.ndim in (2, 3):
+            _save_array(data, "Save graphics window", "graphics.png", "graphics window")
+            return
+        pm = gv._item.pixmap()
+        if pm.isNull():
+            flash("nothing to save in this window"); return
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, "Save graphics window", "graphics.png",
+                                                        "PNG (*.png);;All files (*)")
+        if not path:
+            return
+        if not pm.save(path):
+            report_error("Could not save graphics window", path); return
+        flash("saved " + os.path.basename(path))
+    win._save_secondary_view = _save_secondary_view
 
     def copy_result():
         arr = _result_array()
@@ -6263,10 +6357,11 @@ def build_window(model=None):
     win._op_completer = op_completer
     win._select_op_in_list = _select_op_in_list
     # pipeline + knobs
-    def _knob_label(letter, role, curated):
+    def _knob_label(letter, role, curated, spec=None):
         """The a/b label text for the selected op: its role's short name when known,
         "(–)" when the op curates the knob as genuinely unused, else the bare letter
-        (an un-curated op may still use the knob, so we never claim it is unused)."""
+        (an un-curated op may still use the knob, so we never claim it is unused).
+        A param_specs entry (hand-verified or docstring-seeded) counts as curation."""
         if role:                                  # a curated, non-empty role
             short = role
             for sep in ("—", "=", "("):
@@ -6275,6 +6370,8 @@ def build_window(model=None):
             return "%s · %s" % (letter, short) if short else letter
         if curated and role == "":                # curated AND explicitly empty = unused
             return "%s (–)" % letter
+        if spec is not None and (spec.get("kind") == "unused" or spec.get("label")):
+            return param_specs.spec_label(spec, letter)
         return letter                             # un-curated op: keep it generic
 
     def on_op_selected(cur, _prev=None):
@@ -6296,13 +6393,24 @@ def build_window(model=None):
             return
         curated = name in _ARG_ROLES
         a_role, b_role = op_arg_roles(name)
-        lbl_a.setText(_knob_label("a", a_role, curated))
-        lbl_b.setText(_knob_label("b", b_role, curated))
-        # only disable a knob we KNOW is unused (curated ""); never for un-curated ops
-        op_a_spin.setEnabled(not (curated and a_role == ""))
-        op_b_spin.setEnabled(not (curated and b_role == ""))
-        lbl_a.setToolTip(a_role or ("(unused by %s)" % name if curated else "argument a"))
-        lbl_b.setToolTip(b_role or ("(unused by %s)" % name if curated else "argument b"))
+        specs = param_specs.spec_for(name)
+        # typed widgets (σ px / iterations / kernel choice / on-off) follow the spec;
+        # the raw spins keep their values (the knob is what Insert / Run once pass)
+        for krow, letter in ((op_row_a, "a"), (op_row_b, "b")):
+            krow.set_spec(specs[letter])
+            krow.set_knob(krow.raw.value(), source="raw")
+        lbl_a.setText(_knob_label("a", a_role, curated, specs["a"]))
+        lbl_b.setText(_knob_label("b", b_role, curated, specs["b"]))
+        # only disable a knob we KNOW is unused (curated "" or a source-verified spec);
+        # never for an un-curated op
+        a_unused = (curated and a_role == "") or specs["a"].get("kind") == "unused"
+        b_unused = (curated and b_role == "") or specs["b"].get("kind") == "unused"
+        op_a_spin.setEnabled(not a_unused); op_row_a.typed.setEnabled(not a_unused)
+        op_b_spin.setEnabled(not b_unused); op_row_b.typed.setEnabled(not b_unused)
+        lbl_a.setToolTip(a_role or specs["a"].get("doc")
+                         or ("(unused by %s)" % name if a_unused else "argument a"))
+        lbl_b.setToolTip(b_role or specs["b"].get("doc")
+                         or ("(unused by %s)" % name if b_unused else "argument b"))
         b_insert.setEnabled(True); b_help.setEnabled(True); b_run_once.setEnabled(True)
     op_list.currentItemChanged.connect(on_op_selected)
     win._op_arg_labels = (lbl_a, lbl_b)
@@ -6464,6 +6572,11 @@ def build_window(model=None):
         _set_stage_lines([len(dev_lines) + i + 1 for i in range(len(model.stages))])
         code_edit.clear_exec()
         state["code_dirty"] = False
+        # setPlainText parks the cursor at the top; HDevelop keeps it on the current
+        # line — the selected stage, else after the last line (the insertion point)
+        i = selected_index()
+        _place_program_cursor(_stage_line(i) if 0 <= i < len(model.stages)
+                              else code_edit.document().blockCount())
 
     def _on_code_changed():
         # A real user edit (sync_program blocks signals around its own setPlainText,

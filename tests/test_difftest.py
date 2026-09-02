@@ -8,8 +8,10 @@ so tightening it was impossible — it is now --c-tol and is recorded in the JSO
 import json
 import os
 import sys
+from pathlib import Path
 
 import numpy as np
+import pytest
 
 import codegen
 import difftest
