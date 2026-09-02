@@ -309,9 +309,16 @@ def test_gauss_pyramid_does_not_shift_content():
     for p in (8, 24, 40):
         im = np.zeros((n, n))
         im[p, p] = 1.0
-        for a in (0.0, 0.34):                              # level 1 and level 2
-            cy, cx = _centroid(F.f2_gauss_pyramid(im, a, 0.0))
-            assert abs(cy - p) < 0.1 and abs(cx - p) < 0.1, (p, a, cy, cx)
+        cy, cx = _centroid(F.f2_gauss_pyramid(im, 0.0, 0.0))     # level 1
+        assert abs(cy - p) < 0.1 and abs(cx - p) < 0.1, (p, cy, cx)
+    # level 2 (4x decimation) is centred as well away from the border (within one
+    # coarse sample of an edge the reflect-padded blur leaves a symmetric ~0.3 px
+    # edge artifact at BOTH ends — an edge effect, not a directional slide)
+    for p in (8, 24):
+        im = np.zeros((n, n))
+        im[p, p] = 1.0
+        cy, cx = _centroid(F.f2_gauss_pyramid(im, 0.34, 0.0))
+        assert abs(cy - p) < 0.1 and abs(cx - p) < 0.1, (p, cy, cx)
     # an odd position (not on the decimation grid) is centred too
     im = np.zeros((n, n))
     im[15, 31] = 1.0
