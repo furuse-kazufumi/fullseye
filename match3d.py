@@ -1813,11 +1813,17 @@ def tsdf_from_depth(depth, fx, fy, cx, cy, size=64, bounds=None, trunc=3.0):
     wz = lo[2] + (zz + 0.5) / size * span[2]
     wy = lo[1] + (yy + 0.5) / size * span[1]
     wx = lo[0] + (xx + 0.5) / size * span[0]
-    ui = np.clip((wx * fx / np.maximum(wz, 1e-6) + cx).round().astype(int), 0, W - 1)
-    vi = np.clip((wy * fy / np.maximum(wz, 1e-6) + cy).round().astype(int), 0, H - 1)
+    uf = (wx * fx / np.maximum(wz, 1e-6) + cx).round()
+    vf = (wy * fy / np.maximum(wz, 1e-6) + cy).round()
+    # 視野外に落ちる voxel を端画素へ clip して「観測済み」に化けさせない。
+    # clip したまま depth を引くと、bounds が視野より広い正当な入力で volume の
+    # 端に実在しないゼロ交差が並び、marching cubes が幻の壁を作る。
+    inside = (uf >= 0) & (uf <= W - 1) & (vf >= 0) & (vf <= H - 1)
+    ui = np.clip(uf, 0, W - 1).astype(int)      # 索引を安全にするためだけの clip
+    vi = np.clip(vf, 0, H - 1).astype(int)
     dz = d[vi, ui]
     tsdf = np.clip((dz - wz) / trunc, -1, 1)
-    tsdf[~((dz > 0) & (wz > 0))] = 1.0
+    tsdf[~(inside & (dz > 0) & (wz > 0))] = 1.0   # 視野外・無効深度 = 未観測
     return tsdf.astype(np.float32)
 
 
