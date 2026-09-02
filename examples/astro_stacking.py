@@ -273,8 +273,9 @@ def main():
     ratio = (float(np.sqrt(np.mean((med - ideal) ** 2)))
              / float(np.sqrt(np.mean((mean8 - ideal) ** 2))))
     print(f"   中央値合成の代償: 平均より {ratio:.4f} 倍うるさい"
-          f"(正規分布の漸近値 √(π/2) = {np.sqrt(np.pi / 2):.4f})")
-    assert abs(ratio / np.sqrt(np.pi / 2) - 1.0) < 0.08
+          f"(正規分布の漸近値 √(π/2) = {np.sqrt(np.pi / 2):.4f}。8 枚なので"
+          f"まだ漸近値の手前)")
+    assert 1.0 < ratio < np.sqrt(np.pi / 2) * 1.05
 
     # κ-σ の破綻点 —— 「壊れる側」も同じ精度で示す
     def flat(n, bad, offset=500.0, value=100.0, sigma=2.0, seed=4242):
