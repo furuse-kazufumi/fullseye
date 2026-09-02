@@ -71,7 +71,10 @@ def vector_to_hom_mat2d(src_points, dst_points):
 
 
 def image_to_world_plane(image_points, homography):
-    """画像点を平面ホモグラフィで world 平面(z=0)へ写す(image_to_world_plane)。"""
+    """画像点を平面ホモグラフィで world 平面(z=0)へ写す(image_to_world_plane)。
+    規約に依らず ``homography`` を点に **そのまま** 適用する: H を (x=col, y=row)
+    で推定したなら点も (col, row) で渡す(``camera_calibration`` の
+    ``homographies`` は (x,y)→(col,row) なので、その逆行列をこの向きで使う)。"""
     p = np.asarray(image_points, float).reshape(-1, 2)
     H = np.asarray(homography, float)
     h = np.column_stack([p, np.ones(len(p))]) @ H.T

@@ -45,14 +45,17 @@ print(n)                                       # 例: 316.0
 - `apply(image, name, a=0.5, b=0.5)` は **1 個のオペレータ**を適用します。`name` は **オペレータ名**（例 `gaussian`）でも **HALCON エイリアス**（例 `gauss_filter`）でも解決されます。
 - `a`、`b` は各オペレータが持つ **2 つのつまみ（0.0〜1.0）**。意味はオペレータごとに異なります（半径・しきい値・σ など）。
 - 出力の型（sort）はオペレータで決まります: `image`（gray）/ `region`（二値）/ `feature`（スカラ float）/ `color`（RGB）/ `contour`（XLD）/ `volume`（3D）。
+- **失敗したらどうなるか**（2026-09-03〜）: 既定 `on_error="fallback"` では、op が内部で失敗しても型に合った無害な値（画像なら入力のコピー等）が返り、**同じ op につき 1 回だけ `FullseyeFallbackWarning`** が出ます。何が何回フォールバックしたかは `fullseye.fallbacks()` / `fullseye.fallback_counts()` で確認できます。`on_error="raise"` を渡す（または環境変数 `FULLSEYE_ON_ERROR=raise`）と **fail-closed** になり、op の本当の例外・入力型の不一致・GPU カーネルの失敗がそのまま送出されます。CI や検証では `raise` を推奨します。
+- **多入力 op**（`add_image` / `union2` など、`list_ops()` で `tier == "nary"`）は **入力をリストで**渡します: `fullseye.apply([img1, img2], "add_image")`。
+- **テンプレートマッチ**（`ncc_locate` / `shape_locate`）は `template=` で探す画像を渡します: `corr, row, col = fullseye.apply(img, "ncc_locate", template=patch)`（戻り値の row/col は一致位置の**中心**）。テンプレート無しでは no-match の `[0, 0, 0]` が返ります。
 
 どんなオペレータがあるかは次で探せます。
 
 ```python
-fullseye.op_names()                 # 全レジストリ・オペレータ名（521 個）
+fullseye.op_names()                 # 全レジストリ・オペレータ名（860 個、2026-09-03 時点）
 fullseye.list_ops(search="edge")    # 名前 / HALCON 名 / カテゴリを部分一致で検索
 fullseye.list_ops(sort="region")    # 入力 sort で絞り込み
-fullseye.categories()               # 31 カテゴリ
+fullseye.categories()               # 47 カテゴリ
 ```
 
 ---

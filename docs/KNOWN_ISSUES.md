@@ -195,3 +195,45 @@ min==max なので `normalize` が `hi=lo+1` に倒し、**値によらずカラ
 **0.500 px**、精密化後は {20.324, 20.370} で **0.0228 px**(約 22 倍)。点の個数・連結成分の
 分け方は不変。非極大抑制はしていないので太いエッジでは帯の全画素が稜線に寄って重なる
 (1 画素幅の連鎖は `canny`、より高精度な等値線は `threshold_sub_pix` = 実測 0.001 px)。
+
+---
+
+# 構造的な既知課題と対策 — fail-soft の 3 層沈黙(2026-09-02 監査 → 09-03 対策)
+
+2026-09-02 の堅牢性監査(8 本の並列監査 + 4417 テストの偽安心監査)で分かったこと:
+**個々のテストの質は高い(真正 assertion-only 0.14%)のにバグが残る**のは、fail-soft が
+3 層に重なって失敗を沈黙させる構造だった。確定バグ 7 件中 6 件が「例外を出さず黙って
+間違う」型。
+
+| 層 | 以前 | 問題 |
+|---|---|---|
+| facade `fullseye.apply` | ほぼ例外を出さない | 1-D 配列を画像 op に渡しても何か返る |
+| GPU 分岐(`device="cuda"`) | `except Exception: pass` | 壊れたカーネルも CPU 結果に化ける(CI は CUDA 不在=GPU 実効カバレッジ 0%) |
+| backend ラッパ `_safe` | 24 家族中 **1 家族だけ**が記録・strict 対応 | 永久に壊れた op と「働く恒等」が区別不能 |
+
+## 対策(TRIZ: 信頼性 #27 vs 検出性 #37 の矛盾を「分離」で解く)
+
+「落ちない」と「壊れが見える」をどちらかに倒すのではなく分離した(設計の対応表は
+`docs/design/TRIZ_DESIGN_PATTERN_MATRIX.md`):
+
+- **空間分離 / #24 仲介**: 記録・strict・sanitize を `backend_safe.guard()` に一元化。
+  23 本の backend の `_safe` は全部これに委譲(`__fullseye_guarded__` マーカー付き)。
+  backend モジュール自体の import 失敗も `ops.FAILED_BACKENDS` と台帳に残る。
+- **条件分離 / #35**: `apply(..., on_error="fallback"|"warn"|"raise")`(既定は互換の
+  `fallback`、`FULLSEYE_ON_ERROR` で一括変更)。`raise` は fail-closed。
+- **時間分離 / #11 緩衝 + #32 可視化**: 既定経路でも op ごとに **1 回だけ**
+  `FullseyeFallbackWarning` を出す(長いバッチを警告で埋めない)。
+- **#23 フィードバック / #22 災い転じて福**: `fullseye.fallbacks()` /
+  `fallback_counts()` の台帳が「死んだ op の監査」そのもの(8 本の Agent でやった仕事が
+  常設化)。台帳の出所は `op` / `gpu` / `input` / `import` の 4 種で区別。
+- **#1 分割**: GPU 分岐は「torch/accel 不在(ImportError)= 静かに CPU」と「カーネル失敗
+  = 記録・strict なら送出」を分けた。
+- 併せて facade の穴 2 つを塞いだ: 多入力 op(`tier == "nary"` 17 件)は
+  `apply([x1, x2], name)` で呼べる(以前は一覧に載るのに `KeyError`)/ テンプレート
+  マッチは `apply(img, "ncc_locate", template=T)` で設定できる(以前は内部 API のみで
+  常に `[0,0,0]`)。HALCON 別名が複数 op に共有され正規 op が無い 2 件(`emphasize` /
+  `points_harris`)は登録順でなくテーブル `api._ALIAS_CANONICAL` で解決(新しい曖昧
+  別名はテストで fail)。
+
+回帰テスト: `tests/test_fallback_policy.py`(20 件)。`tests/test_backends.py` の
+旧 API(`swallowed_errors` / `last_error` / `strict_mode`)は別名として維持。
