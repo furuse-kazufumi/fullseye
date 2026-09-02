@@ -126,22 +126,7 @@ def fit_cone(points) -> dict:
     centroid = P.mean(0)
     Q = P - centroid
 
-    # --- 初期化: PCA 軸 + 半径の線形回帰 ---
-    d0 = _symmetry_axis(Q)
-    t = Q @ d0
-    rho = np.linalg.norm(Q - np.outer(t, d0), axis=1)
-    m, b = np.polyfit(t, rho, 1)               # ρ ≈ m t + b
-    if m < 0:                                   # 開く向きが逆 → 軸反転して再フィット
-        d0 = -d0
-        t = -t
-        m, b = np.polyfit(t, rho, 1)
-    if abs(m) < 1e-6:
-        raise ValueError("fit_cone: cannot detect cone spread (half-angle ~0, degenerates to cylinder)")
-    t_apex = -b / m
-    apex0 = centroid + t_apex * d0
-    alpha0 = float(np.clip(np.arctan(abs(m)), 1e-3, np.pi / 2 - 1e-3))
-
-    # --- least_squares 精密化(軸は 3 ベクトルを内部正規化 = 極特異点なし)---
+    # --- least_squares 残差(軸は 3 ベクトルを内部正規化 = 極特異点なし)---
     def resid(p):
         v = p[0:3]
         d = _unit(p[3:6])
@@ -149,11 +134,41 @@ def fit_cone(points) -> dict:
         a, r = _axial_radial(P, v, d)
         return a * np.sin(alpha) - r * np.cos(alpha)
 
-    p0 = np.concatenate([apex0, d0, [alpha0]])
     lb = np.array([-np.inf] * 6 + [1e-3])
     ub = np.array([np.inf] * 6 + [np.pi / 2 - 1e-3])
-    sol = least_squares(resid, p0, bounds=(lb, ub), method="trf",
-                        xtol=1e-12, ftol=1e-12, max_nfev=8000)
+
+    # --- 初期化: 3 本の PCA 主軸それぞれを軸候補として試し、残差最小を採る ---
+    # 「近い固有値ペアの残り」で 1 本に絞る旧法は、円錐の軸方向分散が半径方向分散と
+    # 偶然近い配置(例: 半角 25°・軸長 0.5..3)で軸を 90° 取り違え、傾き ~0 →
+    # 「半角 ~0」として **きれいな円錐を拒否**していた(2026-09-02 実測)。候補は
+    # 高々 3 本なので全部当てて選ぶ方が頑健で、コストも 3 倍止まり。
+    _, evecs = np.linalg.eigh(Q.T @ Q)
+    best = None
+    for k in range(3):
+        d0 = _unit(evecs[:, k])
+        t = Q @ d0
+        rho = np.linalg.norm(Q - np.outer(t, d0), axis=1)
+        m, b = np.polyfit(t, rho, 1)           # ρ ≈ m t + b
+        if m < 0:                               # 開く向きが逆 → 軸反転して再フィット
+            d0 = -d0
+            t = -t
+            m, b = np.polyfit(t, rho, 1)
+        if abs(m) < 1e-6:
+            continue                            # この軸では広がりが見えない → 次の候補
+        t_apex = -b / m
+        apex0 = centroid + t_apex * d0
+        alpha0 = float(np.clip(np.arctan(abs(m)), 1e-3, np.pi / 2 - 1e-3))
+        p0 = np.concatenate([apex0, d0, [alpha0]])
+        sol = least_squares(resid, p0, bounds=(lb, ub), method="trf",
+                            xtol=1e-12, ftol=1e-12, max_nfev=8000)
+        if not np.all(np.isfinite(sol.x)):
+            continue
+        cost = float(np.mean(sol.fun ** 2))
+        if best is None or cost < best[0]:
+            best = (cost, sol)
+    if best is None:
+        raise ValueError("fit_cone: cannot detect cone spread (half-angle ~0, degenerates to cylinder)")
+    sol = best[1]
 
     apex = np.asarray(sol.x[0:3], dtype=np.float64)
     axis = _unit(sol.x[3:6])
