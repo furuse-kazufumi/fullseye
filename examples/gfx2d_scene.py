@@ -396,7 +396,7 @@ def part8_post():
           f"{optimal} / 平均誤差 {chosen.mean():.4f}")
     exact = table[rng.integers(0, len(table), (12, 12))]
     print(f"   既にパレット上の色なら完全に不変: {np.abs(G.palette_quantize(exact) - exact).max():.1e}")
-    return lut_err < 1e-14 and bad <= 0.0 and optimal
+    return lut_err < 1e-14 and bad <= 0.0 and optimal and max(rt1, rt2) < 1e-15
 
 
 def part9_fail_closed():
