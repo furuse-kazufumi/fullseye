@@ -649,7 +649,7 @@ def main():
         ok = False
 
     print(f"\nPASS: 部品 1 個のずれ (dz,dy,dx)={TRUE_ROLL} / 回転 "
-          f"{TRUE_ANGLE_DEG:.0f} 度 を 8 表現で往復させ、")
+          f"{TRUE_ANGLE_DEG:.0f} 度 を 12 系統の表現で往復させ、")
     print(f"      可逆 {len(exact)} 件は誤差 0 〜 {max(rt_c, worst):.0e}、"
           f"不可逆 {len(losses)} 件は落ちた量を数値で確定した。")
     print(f"      reprconv 42 op のうち 26 op を実行 "
