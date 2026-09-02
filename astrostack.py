@@ -1217,8 +1217,15 @@ def drizzle_resample(frames, shifts=None, scale=2.0, pixfrac=1.0):
     drizzle は 2 個**を見つけた(2.0 px 以上ではどちらも 2 個)。
 
     *shifts* は ``(N, 2)`` の ``(dr, dc)`` で、フレーム ``i`` が基準からどれだけ
-    ずれているか(:func:`synth_frame_series` の ``truth["shifts"]``、
-    :func:`frame_align` の推定値をそのまま渡せる)。``None`` なら全部 0。
+    ずれているか(:func:`synth_frame_series` の ``truth["shifts"]`` がこの向き)。
+    ``None`` なら全部 0。
+
+    ★ **符号に注意** —— :func:`frame_align` / :func:`align_frames` が返す行列の
+    並進は「フレームを基準へ**戻す**」向き、つまりここで要る ``(dr, dc)`` の
+    **符号が逆**である。推定値をそのまま渡すとずれが打ち消されず**倍**になり、
+    例外も出さずに二重像になる(実測: 6 枚 96x96 で ``est + truth ≈ 0``、
+    そのまま渡すと残差が 2 倍)。行列から正しい向きの shifts を作るには
+    :func:`drizzle_shifts` を使うこと。
     **回転は受けない** —— 回転が入ると軸が分離せず重なり面積が閉形式で書けなく
     なるので、先に :func:`align_frames` で戻すこと(そこで補間の誤差を払う、
     という取引が見えている方が正直)。
