@@ -1024,6 +1024,59 @@ OP_PARAM_HINTS = {
     # motion_magnify は毎回実行されるのに**一度も増幅しない**。狙いは
     # 増幅経路を通すことなので op 名で上書きする
     ("motion_magnify", "alpha"): lambda rng: 2.0,
+
+    # --- 2026-09-02: 形が結びついていて名前ヒントでは足りないもの ----------- #
+    # 名前ヒントは同名の引数を持つ**全 op**に効くので、寸法が入力と噛み合う
+    # 必要があるものはここで op を名指しする。既存の名前ヒントと衝突する
+    # ものが実際にあった: PARAM_HINTS["center"] は 0.5(窓関数の中心)なので、
+    # 描画系の center(画素座標の 2 つ組)には使えない。
+    ("arc", "center"): lambda rng: (16.0, 16.0),
+    ("arc", "radius"): lambda rng: 8.0,
+    ("arc", "start_deg"): lambda rng: 0.0, ("arc", "end_deg"): lambda rng: 120.0,
+    ("ellipse", "center"): lambda rng: (16.0, 16.0),
+    ("ellipse", "radii"): lambda rng: (8.0, 5.0),
+    ("zoom_inset", "src_rect"): lambda rng: (4, 4, 10, 10),
+    ("zoom_inset", "dst_xy"): lambda rng: (18, 18),
+    # gfx2d。rgba プールは 24x32、sprites は 8x8 が 3 枚
+    ("sprite_sheet_slice", "tile_height"): lambda rng: 8,
+    ("sprite_sheet_slice", "tile_width"): lambda rng: 8,
+    ("nine_slice", "left"): lambda rng: 6, ("nine_slice", "right"): lambda rng: 6,
+    ("nine_slice", "top"): lambda rng: 6, ("nine_slice", "bottom"): lambda rng: 6,
+    ("nine_slice", "out_height"): lambda rng: 48,
+    ("nine_slice", "out_width"): lambda rng: 64,
+    ("particle_render", "height"): lambda rng: 32,
+    ("particle_render", "width"): lambda rng: 32,
+    ("radial_light", "height"): lambda rng: 32, ("radial_light", "width"): lambda rng: 32,
+    ("radial_light", "x"): lambda rng: 16.0, ("radial_light", "y"): lambda rng: 16.0,
+    ("radial_light", "radius"): lambda rng: 8.0,
+    ("viewport", "x"): lambda rng: 4, ("viewport", "y"): lambda rng: 4,
+    ("viewport", "width"): lambda rng: 16, ("viewport", "height"): lambda rng: 12,
+    # volcolor。rgbvolume プールは (8,16,16,3) なので index < 8
+    ("vol_label_slice_rgb", "index"): lambda rng: 4,
+    # 3-D。voxel / sdf プールは 16^3
+    ("vol_uncrop", "offset"): lambda rng: (2, 2, 2),
+    ("vol_uncrop", "shape"): lambda rng: (20, 20, 20),
+    ("vol_tiled_map", "fn"): lambda rng: (lambda s: s * 0.5),
+    ("vol_tiled_map", "tile"): lambda rng: 8, ("vol_tiled_map", "overlap"): lambda rng: 2,
+    ("vol_watershed", "markers"): lambda rng: (lambda m: (
+        m.__setitem__((4, 4, 4), 1), m.__setitem__((11, 11, 11), 2), m)[2])(
+            np.zeros((16, 16, 16), dtype=np.int32)),
+    ("vol_local_maxima", "min_distance"): lambda rng: 2,
+    ("extract_surface_points", "weight"): lambda rng: np.ones((16, 16, 16)),
+    ("geodesic_distances", "source"): lambda rng: 0,
+    ("box_sdf", "center"): lambda rng: np.array([5.0, 5.0, 5.0]),
+    ("box_sdf", "half_extents"): lambda rng: np.array([2.0, 2.0, 2.0]),
+    ("render_lambertian", "albedo"): lambda rng: 0.7,
+    ("render_lambertian", "light"): lambda rng: (lambda v: v / np.linalg.norm(v))(
+        np.array([0.3, 0.3, 1.0])),
+    # 超二次曲面 3 op。PARAM_HINTS["a"] は 1.0(スカラ)だが、ここでの a は
+    # **3 軸の半径**、eps は 2 つの丸み指数。名前ヒントのままだと形が違う
+    ("sample_surface", "a"): lambda rng: np.array([2.0, 1.5, 1.0]),
+    ("sample_surface", "eps"): lambda rng: np.array([1.0, 1.0]),
+    ("inside_outside", "a"): lambda rng: np.array([2.0, 1.5, 1.0]),
+    ("inside_outside", "eps"): lambda rng: np.array([1.0, 1.0]),
+    ("superquadric_residual", "a"): lambda rng: np.array([2.0, 1.5, 1.0]),
+    ("superquadric_residual", "eps"): lambda rng: np.array([1.0, 1.0]),
     # bounds という 1 つの名前に 3 通りの形が要求されている(平坦 6-tuple /
     # ((min,max)x3) / (lo(3,), hi(3,)))。名前ヒントは平坦形のままにして、
     # 別形を要求する op だけ狙い撃つ ― さもないと毎回 ValueError で
