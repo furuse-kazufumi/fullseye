@@ -534,7 +534,9 @@ def test_render_regolith_median_exposure_and_bump_keep_geometry():
     bump = dict(wavelengths=(0.2, 0.1), amplitudes=(0.01, 0.006), complement_edges=True)
     b = rb.render_regolith(V, F, exposure="median", bump=bump, **kw)
     assert b.shape == a.shape and not np.array_equal(a, b)
-    assert np.array_equal((a.max(axis=2) > 0), (b.max(axis=2) > 0))   # シルエット(幾何)は不変
+    # 幾何(depth/影/AO)は不変: 明るさ 0 の画素は明暗境界で法線の傾きにより入れ替わり得るが
+    # 1 % 未満(bump は陰影法線だけを変える)
+    assert ((a.max(axis=2) > 0) != (b.max(axis=2) > 0)).mean() < 0.01
     assert np.array_equal(b, rb.render_regolith(V, F, exposure="median", bump=bump, **kw))
     with pytest.raises(ValueError):
         rb.render_regolith(V, F, exposure="p99", **kw)
