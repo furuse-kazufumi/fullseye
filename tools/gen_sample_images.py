@@ -77,25 +77,85 @@ def _skimage():
     return out
 
 
+OWNER = "gen_sample_images"
+
+
+class ManifestError(RuntimeError):
+    """The existing manifest is unreadable / malformed — refuse to overwrite it (fail-closed)."""
+
+
+def load_manifest(mpath: str) -> dict:
+    """Read ``manifest.json`` (``{"images": [...]}``); a missing file is an empty manifest.
+
+    A file that exists but is not valid JSON of that shape raises :class:`ManifestError`
+    instead of being silently replaced — provenance records must never be clobbered.
+    """
+    if not os.path.exists(mpath):
+        return {"images": []}
+    try:
+        with open(mpath, encoding="utf-8") as f:
+            data = json.load(f)
+    except (OSError, ValueError) as e:
+        raise ManifestError(f"{mpath}: cannot parse existing manifest ({e}); fix or delete it") from e
+    imgs = data.get("images") if isinstance(data, dict) else None
+    if not isinstance(imgs, list) or not all(isinstance(e, dict) and "name" in e for e in imgs):
+        raise ManifestError(f"{mpath}: expected {{'images': [{{'name': ...}}, ...]}}")
+    return data
+
+
+def merge_manifest(mpath: str, entries: list, owner: str) -> dict:
+    """Read-modify-write ``manifest.json`` so generators can run in ANY order.
+
+    Each entry is stamped ``owner``. Merge rules (per name, order-stable, idempotent):
+
+    * an existing entry with the same ``name`` is replaced in place by the new one
+      (legacy entries without an ``owner`` are claimed the same way);
+    * an existing entry owned by *this* ``owner`` whose name is no longer generated
+      is dropped (the generator is the truth for what it owns);
+    * entries owned by *other* generators are kept untouched, in their position;
+    * new names are appended.
+
+    Before this, ``gen_sample_images`` rewrote the whole file and silently dropped the
+    three ``gen_synth_samples`` entries whenever it ran second.
+    """
+    manifest = load_manifest(mpath)
+    new = {e["name"]: dict(e, owner=owner) for e in entries}
+    merged, seen = [], set()
+    for old in manifest["images"]:
+        n = old["name"]
+        if n in new:
+            merged.append(new[n]); seen.add(n)
+        elif old.get("owner") == owner:
+            continue                                   # stale entry of ours: dropped
+        else:
+            merged.append(old)                         # someone else's: preserved
+    merged += [new[n] for n in new if n not in seen]
+    manifest["images"] = merged
+    os.makedirs(os.path.dirname(os.path.abspath(mpath)), exist_ok=True)
+    with open(mpath, "w", encoding="utf-8") as f:
+        json.dump(manifest, f, indent=2)
+    return manifest
+
+
 def main() -> int:
     os.makedirs(OUT, exist_ok=True)
     import imgio  # local: license-clean save
 
-    manifest = {"images": []}
+    entries = []
     for name, arr in _synthetic().items():
         p = os.path.join(OUT, name + ".png")
         imgio.save(p, np.asarray(arr, float))
-        manifest["images"].append({"name": name, "file": name + ".png",
-                                    "source": "synthetic (Fullseye)", "licence": "own work"})
+        entries.append({"name": name, "file": name + ".png",
+                        "source": "synthetic (Fullseye)", "licence": "own work"})
     for name, arr in _skimage().items():
         p = os.path.join(OUT, name + ".png")
         imgio.save(p, np.asarray(arr, float))
-        manifest["images"].append({"name": name, "file": name + ".png",
-                                    "source": "skimage.data", "licence": "BSD / public domain (see scikit-image)"})
+        entries.append({"name": name, "file": name + ".png",
+                        "source": "skimage.data", "licence": "BSD / public domain (see scikit-image)"})
 
-    with open(os.path.join(OUT, "manifest.json"), "w", encoding="utf-8") as f:
-        json.dump(manifest, f, indent=2)
-    print("[sample_images] wrote %d images -> %s" % (len(manifest["images"]), OUT))
+    manifest = merge_manifest(os.path.join(OUT, "manifest.json"), entries, OWNER)
+    print("[sample_images] wrote %d images (manifest now %d entries) -> %s"
+          % (len(entries), len(manifest["images"]), OUT))
     for it in manifest["images"]:
         print("  %-14s %s" % (it["name"], it["source"]))
     return 0

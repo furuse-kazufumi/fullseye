@@ -131,17 +131,21 @@ def main() -> int:
               "c_backend": None}
 
     # --- C backend (compile-gated) ------------------------------------------ #
-    cc = shutil.which("gcc") or shutil.which("cc") or shutil.which("clang")
+    # Same discovery as the algo tier (gcc/cc/clang on PATH, else `python -m ziglang
+    # cc`): the old gcc/cc/clang-only lookup made this gate silently "skipped" on every
+    # machine whose only compiler is ziglang, so the image C backend was never run here.
+    cc = find_c_compiler()
     if not info["c_fully_supported"]:
         result["c_backend"] = {"status": "skipped", "reason": "champion uses ops not yet in the C runtime"}
     elif not cc:
-        result["c_backend"] = {"status": "skipped", "reason": "no C toolchain (gcc/clang) in this environment"}
+        result["c_backend"] = {"status": "skipped",
+                               "reason": "no C toolchain (gcc/clang or 'pip install ziglang') in this environment"}
     else:
         try:
             (wd / "driver.c").write_text(_DRIVER_C, encoding="utf-8")
             here = Path(__file__).resolve().parent
             exe = wd / ("cbackend.exe" if sys.platform == "win32" else "cbackend")
-            subprocess.run([cc, "-O2", "-I", str(here), "-I", str(wd),
+            subprocess.run(list(cc) + ["-O2", "-I", str(here), "-I", str(wd),
                             str(here / "imgops.c"), str(wd / f"gen_{a.problem}.c"), str(wd / "driver.c"),
                             "-lm", "-o", str(exe)], check=True, capture_output=True, text=True)
             n, sz = len(inp), cfg["size"]
