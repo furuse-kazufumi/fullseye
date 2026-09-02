@@ -56,7 +56,8 @@ _MATERIALS: dict[str, dict] = {
     # 金属: 拡散を抑え・鏡面を強く・ハイライトは素材色(albedo)で色付く・鋭い光沢。
     "metal": {"diffuse": 0.22, "specular": 0.95, "shininess": 90.0, "metal": True},
 }
-_TONEMAPS = ("reinhard", "aces", "none")
+_TONEMAPS = ("reinhard", "aces", "none", "linear")   # linear = none(露出 × クリップ、AMICA 風)
+_BRDFS = ("phong", "lambert", "lommel_seeliger", "hapke")
 
 #: 地面(pedestal)の反射率と質感(ややマットな中間グレー)。
 _GROUND_ALBEDO = np.array([0.55, 0.56, 0.58], np.float64)
