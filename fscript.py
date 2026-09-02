@@ -1386,8 +1386,8 @@ def _call_registry_op(name, args):
             "op '%s' takes at most 3 arguments (input, a, b); got %d"
             % (name, len(args)))
     inp = args[0]
-    a = float(args[1]) if len(args) > 1 else 0.5
-    b = float(args[2]) if len(args) > 2 else 0.5
+    a = float(_as_number(args[1], "op '%s' argument a" % name)) if len(args) > 1 else 0.5
+    b = float(_as_number(args[2], "op '%s' argument b" % name)) if len(args) > 2 else 0.5
     out = api.RT[name](_unwrap_iconic(inp), a, b)
     return _wrap_registry_out(out, getattr(op, "out_sort", None), inp)
 
