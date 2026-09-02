@@ -171,3 +171,22 @@ def test_run_file(tmp_path):
     result = eng.run_file(str(src), str(out))
     assert out.exists()
     assert isinstance(result, np.ndarray) and result.ndim == 2
+
+
+def test_identity_threads_the_sort_instead_of_matching_everything():
+    """Regression (2026-09-02 review): ``identity`` declares out_sort 'any', which
+    ``diagnose_stages`` read as 'matches everything' — so [gaussian, identity,
+    vol_gaussian] passed while [gaussian, vol_gaussian] warned, and output_sort()
+    said 'any' for a pipeline that produces an image. 'any' out means pass-through:
+    keep the incoming sort (same rule as ops._effective_out_sort)."""
+    without = diagnose_stages([("gaussian", .5, .5), ("vol_gaussian", .5, .5)])
+    assert [p["severity"] for p in without] == ["warning"]
+    with_id = diagnose_stages([("gaussian", .5, .5), ("identity", .5, .5), ("vol_gaussian", .5, .5)])
+    assert [p["severity"] for p in with_id] == ["warning"]
+    assert with_id[0]["index"] == 2 and with_id[0]["prev_index"] == 1
+    assert "outputs 'image'" in with_id[0]["message"]
+    # a sort-consistent chain through identity stays clean
+    assert diagnose_stages([("gaussian", .5, .5), ("identity", .5, .5), ("otsu", .5, .5)]) == []
+    assert FullseyeEngine.from_ops("gaussian,identity").output_sort() == "image"
+    assert FullseyeEngine.from_ops("gaussian,otsu,identity").output_sort() == "region"
+    assert FullseyeEngine.from_ops("identity").output_sort() == "any"   # nothing to thread
