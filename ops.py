@@ -1044,7 +1044,7 @@ def decode(genome, start: str = IMAGE) -> list[Stage]:
 #: 下回った(0.194 vs 0.684)。既存 sort の挙動は 1 ビットも変えないため、
 #: 「新 sort だけを除外する」形で書く(既存 champion のスコアは不変)。
 _UNCLIPPED_SORTS = frozenset({POINTS, SIGNAL, MATRIX, CIMAGE,
-                              LIGHTFIELD, COUNTS, HISTCUBE})
+                              LIGHTFIELD, COUNTS, HISTCUBE, KEYPOINTS})
 
 
 def _effective_out_sort(st):
