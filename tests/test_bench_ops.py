@@ -194,10 +194,11 @@ def test_cli_returns_2_on_an_unknown_op(capsys):
     assert "unknown op name" in capsys.readouterr().err
 
 
-def test_named_sets_only_contain_real_ops():
-    """セットの op 名が registry から消えたら即失敗(名前の腐りを放置しない)。"""
-    for name in B.SETS:
-        assert B.resolve_set(name), name
+def test_the_core_set_is_fully_present_without_optional_backends():
+    """core セットは numpy+scipy だけで全件測れる(= 任意依存に隠れた欠測が無い)。"""
+    present, absent = B.resolve_set("core")
+    assert absent == [], "core set names rotted out of the registry: %s" % absent
+    assert len(present) == len(B.CORE_OPS)
 
 
 # --------------------------------------------------------------------------- #
