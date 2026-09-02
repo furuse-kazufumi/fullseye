@@ -230,6 +230,8 @@ _EMPTY_OF = {
     "signal": lambda: np.zeros(2, np.float64),
     "matrix": lambda: np.zeros((2, 2), np.float64),
     "cimage": lambda: np.zeros((2, 2), np.complex128),
+    "rgbimage": lambda: np.zeros((2, 2, 3), np.float64),
+    "qimage": lambda: np.zeros((2, 2, 4), np.float64),
 }
 
 
