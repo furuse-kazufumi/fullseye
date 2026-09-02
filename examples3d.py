@@ -410,6 +410,12 @@ EXAMPLES = [
     {"id": "render_beauty", "task": "rendering", "data": "synthetic",
      "name": "レンダリング品質: hero レンダラ render_beauty(全層合成の映える静止3D)",
      "summary": "ラスタライズ/Phong鏡面/AO/接地影/SSAA/トーンマップを1本に合成。sphere-on-groundで各層を実測: AOは接触凹部を0.07→0.02と選択的に暗化(露出頂部0.01は不変)、鏡面は小面積ハイライト(frac0.018)、接地影はwith-mesh993px vs null0px、reinhardは単調(clip34段潰しを回避)、SSAAはedge0.040→0.026。sdf_ops生成メッシュでhero画像を出力。"},
+    {"id": "mesh_resolution_demo", "task": "mesh_processing", "data": "synthetic",
+     "name": "解像度管理: 粗密を測り、粗い所だけ細分/等方リメッシュし、減らすなら監査つきで(meshres)",
+     "summary": "UV 球の辺長 p95/p5=5.4(イトカワ実測 2.7)を測り、mesh_split_long_edges(頂点不変)と "
+                "mesh_isotropic_remesh(5.4→1.7、面積誤差<1%、閉多様体)で揃える。LOD 鎖は各段の幾何誤差と"
+                "画面誤差 px を返し、mesh_decimate_preserving は細部頂点を厳密固定(誤差 1e-16)で max_error 超は"
+                "拒否。点群は pc_poisson_disk が孤立点を 1 つも落とさないことを pc_thinning_report で証明。"},
     {"id": "annotate3d_figure", "task": "rendering", "data": "synthetic",
      "name": "3-D 図注: レンダリングの上に 3-D アンカーの矢印・引き出し線・スケールバー・座標軸・箱・距離を射影して描く",
      "summary": "render_mesh で描いた球+床の絵に annotate3d 族(project/arrow/label/scale_bar/axes/bbox/measure)で"

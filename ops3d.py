@@ -64,6 +64,7 @@ import mesh_smooth
 import mesh_props
 import fit_primitives_ext
 import meshrepair
+import meshres
 import pcseg
 import volops
 # --- Wave B: rendering quality ops(AO/shadow/matcap-Phong/SSAA/tonemap = 映える静止3D)---
@@ -107,6 +108,7 @@ _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "depth_bilateral": depth_bilateral, "registration_eval": registration_eval,
         "hull3d": hull3d, "mesh_smooth": mesh_smooth, "mesh_props": mesh_props,
         "fit_primitives_ext": fit_primitives_ext, "meshrepair": meshrepair,
+        "meshres": meshres,
         "pcseg": pcseg, "volops": volops, "volregion": volregion,
         "volgray": volgray, "volxform": volxform, "volprobe": volprobe,
         "volfreq": volfreq, "volrestore": volrestore,
@@ -743,6 +745,27 @@ _CATALOG = {
         ("annotate3d_axes", "annotate3d", ["image2d"], "image2d", False),
         ("annotate3d_bbox", "annotate3d", ["image2d"], "image2d", False),
         ("annotate3d_measure", "annotate3d", ["image2d"], "image2d", False),
+    ],
+    # 2026-09-03: 解像度管理(粗密を測る/揃える/監査つきで減らす)。動機はユーザーの
+    # 指摘「点群の粗い部分と密な部分の使い分けが出来ていない」「学術系は安易に
+    # 間引きを使わない」。減らす op は必ず失ったものを table で返し、保護領域の
+    # 誤差が max_error を超えれば拒否する(meshres.py 冒頭と docs のガイド参照)。
+    "resolution": [
+        ("mesh_edge_stats", "meshres", ["mesh"], "table", False),
+        ("mesh_detail_map", "meshres", ["mesh"], "table", False),
+        ("mesh_split_long_edges", "meshres", ["mesh"], "mesh", False),
+        ("mesh_isotropic_remesh", "meshres", ["mesh"], "mesh", False),
+        ("mesh_sample_points", "meshres", ["mesh"], "points", False),
+        ("mesh_lod_chain", "meshres", ["mesh"], "table", False),
+        ("mesh_select_lod", "meshres", ["table"], "table", False),
+        ("mesh_reduction_report", "meshres", ["mesh", "mesh"], "table", False),
+        ("mesh_decimate_preserving", "meshres", ["mesh"], "table", False),
+        ("pc_density", "meshres", ["points"], "table", False),
+        ("pc_poisson_disk", "meshres", ["points"], "points", False),
+        ("pc_fill_sparse", "meshres", ["points"], "points", False),
+        ("pc_density_equalize", "meshres", ["points"], "points", False),
+        ("pc_lod_chain", "meshres", ["points"], "table", False),
+        ("pc_thinning_report", "meshres", ["points", "points"], "table", False),
     ],
 }
 

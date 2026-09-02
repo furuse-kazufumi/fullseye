@@ -317,6 +317,9 @@ _SPEC: tuple = (
     ("unsharp", t_unsharp, _F64, "v + k(v - GaussianBlur)。一致 6e-16"),
     ("std_filter", t_std_filter, _F64, "box(v²) - box(v)² の sqrt + _norm。一致 2e-14"),
     ("canny", t_canny, _F64, "core は hysteresis 無し(gauss→sobel→閾値)なので cv2 プリミティブで同式を組む。二値不一致率 0"),
+    # ★``edges_image``(HALCON 名としては canny と同じ)は載せない。registry の
+    #   その名前は backends_auto の **skimage canny**(本物の hysteresis つき)で、
+    #   core の ``canny`` とは別のアルゴリズム。不一致率 1.0(実測)。
     # ── HALCON 名の twin(registry に同一実装で別名登録されている op)──────────
     # accel._TWIN_ALIASES と同じ発想。ゲートは registry の**その名前の実装**に
     # 対して回すので、実装がずれていれば落ちて載らない。

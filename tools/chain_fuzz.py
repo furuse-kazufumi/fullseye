@@ -1240,6 +1240,14 @@ OP_ARG_BUILDERS = {
     "render_beauty": _b_mesh_split(),
     "geodesic_mesh": _b_mesh_split(),
     "decimate_qem": _b_mesh_split(),
+    # meshres(2026-09-03): (V, F) を 2 位置引数へ割る解像度管理 op
+    "mesh_edge_stats": _b_mesh_split(),
+    "mesh_detail_map": _b_mesh_split(),
+    "mesh_split_long_edges": _b_mesh_split(),
+    "mesh_isotropic_remesh": _b_mesh_split(),
+    "mesh_sample_points": _b_mesh_split(),
+    "mesh_lod_chain": _b_mesh_split(),
+    "mesh_decimate_preserving": _b_mesh_split(),
     "cast_shadow": _b_mesh_split("vector"),      # (V, F, light)
     # 3-ベクトルだけを取る解析幾何 11 op(理由と実測は _b_vectors の docstring)。
     # これを入れるまで 11 op すべてが未到達で、`primitive` / `position` の
@@ -1471,6 +1479,19 @@ OP_PARAM_HINTS = {
     # パッチ 2 面)より大きいが、実測でこの op は目標超過を例外にせず現状を
     # 返す(nf=2 / target=8 で (4,3),(2,3) が返る)ので毎回 CONTRACT にはならない
     ("decimate_qem", "target_faces"): lambda rng: 8,
+    # meshres: 目標辺長/間隔は種メッシュ(単位球級)の辺長域、面数は小さく
+    ("mesh_split_long_edges", "max_edge"): lambda rng: float(rng.uniform(0.3, 1.0)),
+    ("mesh_isotropic_remesh", "target_edge"): lambda rng: float(rng.uniform(0.3, 0.8)),
+    ("mesh_isotropic_remesh", "iterations"): lambda rng: 2,
+    ("mesh_sample_points", "spacing"): lambda rng: float(rng.uniform(0.2, 0.6)),
+    ("mesh_decimate_preserving", "target_faces"): lambda rng: 8,
+    ("mesh_select_lod", "distance"): lambda rng: float(rng.uniform(1.0, 50.0)),
+    ("mesh_select_lod", "focal_px"): lambda rng: 500.0,
+    ("pc_poisson_disk", "radius"): lambda rng: float(rng.uniform(0.05, 0.3)),
+    ("pc_fill_sparse", "spacing"): lambda rng: float(rng.uniform(0.1, 0.4)),
+    ("pc_density_equalize", "spacing"): lambda rng: float(rng.uniform(0.1, 0.4)),
+    ("pc_lod_chain", "spacing"): lambda rng: float(rng.uniform(0.1, 0.4)),
+    ("pc_lod_chain", "levels"): lambda rng: 2,
     # 測地距離の起点は頂点添字。種の最小メッシュでも 0 は必ず存在する
     ("geodesic_mesh", "source"): lambda rng: 0,
 }

@@ -483,6 +483,23 @@ from annotate import (  # noqa: E402,F401
     annotate_text_path, annotate_colorbar, annotate_panel_label,
     annotate_figure_grid_layout, annotate_figure_grid,
 )
+import meshres  # noqa: E402  (resolution management: measure coarse/dense, remesh, audited reductions)
+from meshres import (  # noqa: E402,F401
+    mesh_edge_stats, mesh_detail_map, mesh_split_long_edges, mesh_isotropic_remesh,
+    mesh_sample_points, mesh_lod_chain, mesh_select_lod, mesh_reduction_report,
+    mesh_decimate_preserving, pc_density, pc_poisson_disk, pc_fill_sparse,
+    pc_density_equalize, pc_lod_chain, pc_thinning_report,
+)
+import videostream  # noqa: E402  (frame-by-frame video: ring buffer, stateful ops, VideoPipeline)
+import opsvideostream  # noqa: E402  (the streaming-video op ledger)
+from videostream import (  # noqa: E402,F401
+    FrameRing, StatefulOp, TemporalMedianWindow, MovingAverageWindow,
+    BackgroundSubtractionWindow, FrameDifference, ExponentialBackground, RunningStats,
+    OpticalFlowStream, VideoPipeline, stream_replay,
+    temporal_median_window, moving_average_window, background_subtraction_window,
+    frame_difference_causal, exponential_background, exponential_foreground,
+    running_mean_std, optical_flow_magnitude_stream,
+)
 import annotate3d  # noqa: E402  (3-D anchors -> projected arrows / labels / scale bars)
 from annotate3d import (  # noqa: E402,F401
     annotate3d_project, annotate3d_arrow, annotate3d_label, annotate3d_scale_bar,
@@ -803,6 +820,18 @@ __all__ = [
     "annotate_outline_layout", "annotate_outline", "annotate_text_path_layout",
     "annotate_text_path", "annotate_colorbar", "annotate_panel_label",
     "annotate_figure_grid_layout", "annotate_figure_grid",
+    "meshres",
+    "mesh_edge_stats", "mesh_detail_map", "mesh_split_long_edges", "mesh_isotropic_remesh",
+    "mesh_sample_points", "mesh_lod_chain", "mesh_select_lod", "mesh_reduction_report",
+    "mesh_decimate_preserving", "pc_density", "pc_poisson_disk", "pc_fill_sparse",
+    "pc_density_equalize", "pc_lod_chain", "pc_thinning_report",
+    "videostream", "opsvideostream",
+    "FrameRing", "StatefulOp", "TemporalMedianWindow", "MovingAverageWindow",
+    "BackgroundSubtractionWindow", "FrameDifference", "ExponentialBackground", "RunningStats",
+    "OpticalFlowStream", "VideoPipeline", "stream_replay",
+    "temporal_median_window", "moving_average_window", "background_subtraction_window",
+    "frame_difference_causal", "exponential_background", "exponential_foreground",
+    "running_mean_std", "optical_flow_magnitude_stream",
     "annotate3d",
     "annotate3d_project", "annotate3d_arrow", "annotate3d_label",
     "annotate3d_scale_bar", "annotate3d_axes", "annotate3d_bbox", "annotate3d_measure",
