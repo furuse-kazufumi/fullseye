@@ -182,6 +182,7 @@ def tokenize(src: str):
 # --------------------------------------------------------------------------- #
 class Node:
     line = 0
+    paren = False        # set when the expression was written inside ( ... )
 
 
 class Num(Node):
