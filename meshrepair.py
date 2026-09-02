@@ -457,8 +457,14 @@ def _vertex_quadrics(V: np.ndarray, F: np.ndarray) -> np.ndarray:
     return Q
 
 
-def decimate_qem(V, F, target_faces):
+def decimate_qem(V, F, target_faces, protect=None):
     """Quadric-error-metric edge-collapse decimation toward *target_faces*.
+
+    *protect* (optional, (nv,) bool): vertices that must survive untouched —
+    no edge incident to a protected vertex is collapsed, so the faces around a
+    crater rim, a boulder or any region you flagged keep their exact geometry
+    (``meshres.mesh_decimate_preserving`` derives the mask from the detail map
+    and reports what the rest of the reduction lost).
 
     Garland & Heckbert 1997: each vertex carries the sum of the squared-distance
     quadrics of its incident face planes; the cheapest edge is collapsed to the
@@ -480,6 +486,10 @@ def decimate_qem(V, F, target_faces):
     if target_faces <= 0:
         raise ValueError("target_faces must be > 0, got %r" % (target_faces,))
     nv = V.shape[0]
+    if protect is not None:
+        protect = np.asarray(protect)
+        if protect.shape != (nv,) or protect.dtype != bool:
+            raise ValueError("protect must be a (nv,) bool mask, got %r %s" % (protect.shape, protect.dtype))
     pos = V.copy()
     Q = _vertex_quadrics(pos, F)
     alive = np.ones(nv, bool)
@@ -533,6 +543,9 @@ def decimate_qem(V, F, target_faces):
         if vj not in neighbors[vi]:
             continue
         shared = [f for f in (vfaces[vi] & vfaces[vj]) if face_alive[f]]
+        if protect is not None and (protect[vi] or protect[vj]
+                                    or any(protect[x] for f in shared for x in faces[f])):
+            continue                             # the fan around a protected vertex is kept intact
         if len(shared) > 2:                    # non-manifold edge: refuse
             continue
         # inversion guard: reject a collapse that folds any surviving face over

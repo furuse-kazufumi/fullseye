@@ -361,6 +361,13 @@ def cast_shadow(V, F, light, *, pose=None, intrinsics=None, width: int = 256,
 # 太陽の視直径(0.53°)は方向を円盤内でばらまいて平均する = 半影の幅は幾何どおり
 # 「遮蔽物までの距離 × tan(視直径/2)」になる(テストで固定)。
 _GRID_MAX = 512
+#: (ray, triangle) ペアを一度にメモリへ展開する上限(``_occluded_parallel``)。
+_PAIR_CHUNK = 2_000_000
+
+
+def auto_grid(n_faces: int) -> int:
+    """面数に応じた光源空間 2-D 格子の一辺セル数(1 セルあたり ~6 面が目安、[16, 512])。"""
+    return int(np.clip(int(np.sqrt(max(int(n_faces), 1) / 6.0)), 16, _GRID_MAX))
 
 
 def _rays_hit_dir(O: np.ndarray, d: np.ndarray, A: np.ndarray, e1: np.ndarray,
@@ -428,30 +435,58 @@ def _occluded_parallel(O: np.ndarray, d: np.ndarray, A: np.ndarray, B: np.ndarra
     if ray_idx.size == 0:
         return occ
     cell_r = cr[ray_idx, 0] * G + cr[ray_idx, 1]
-    order_r = np.argsort(cell_r, kind="stable")
-    cell_r = cell_r[order_r]
-    ray_idx = ray_idx[order_r]
-    uniq, r_start = np.unique(cell_r, return_index=True)
-    r_end = np.append(r_start[1:], cell_r.size)
+    # ---- (ray, triangle) ペアの一括判定(2026-09-03) ---------------------------
+    # 以前はセルごとに Python ループで ``_rays_hit_dir``(K×M の総当たり)を回して
+    # いた。格子を細かくするほどセル数 = ループ回数が増えるので、100 万面の細分
+    # メッシュでは格子を細かくできず(64² で 1 セル 250 面)、逆に 1 方向 20 秒近く
+    # かかった。ここでは各レイに「そのセルの三角形リスト」を展開した平坦な
+    # (ray, tri) ペア列を作り、Möller-Trumbore をペア全体に一括適用する(ペア数で
+    # チャンク)。Python ループはチャンク数だけ。結果は同じ(交差判定は同式)。
+    n_per_ray = t_start[cell_r + 1] - t_start[cell_r]
+    keep_r = n_per_ray > 0
+    ray_idx = ray_idx[keep_r]
+    cell_r = cell_r[keep_r]
+    n_per_ray = n_per_ray[keep_r]
+    if ray_idx.size == 0:
+        return occ
     e1_all = B - A
     e2_all = C - A
-    for c, rs, re_ in zip(uniq.tolist(), r_start.tolist(), r_end.tolist()):
-        ts, te = int(t_start[c]), int(t_start[c + 1])
-        if te <= ts:
-            continue
-        tris = tri_id[ts:te]
-        rays = ray_idx[rs:re_]
-        Ac, e1c, e2c = A[tris], e1_all[tris], e2_all[tris]
-        chunk = max(1, int(200000 // max(tris.size, 1)))
-        for s in range(0, rays.size, chunk):
-            rr = rays[s:s + chunk]
-            occ[rr] = _rays_hit_dir(O[rr], d, Ac, e1c, e2c, tmin, tmax)
+    pvec_all = np.cross(d[None, :], e2_all)                  # (M,3)
+    det_all = np.einsum("md,md->m", e1_all, pvec_all)
+    nz_all = np.abs(det_all) > 1e-14
+    inv_all = np.zeros_like(det_all)
+    inv_all[nz_all] = 1.0 / det_all[nz_all]
+    cum = np.cumsum(n_per_ray)
+    start = 0
+    n_r = ray_idx.size
+    while start < n_r:
+        base = cum[start - 1] if start > 0 else 0
+        end = int(np.searchsorted(cum, base + _PAIR_CHUNK, side="right"))
+        end = min(max(end, start + 1), n_r)
+        cnt = n_per_ray[start:end]
+        total = int(cnt.sum())
+        rr = np.repeat(ray_idx[start:end], cnt)
+        offs = np.repeat(np.cumsum(cnt) - cnt, cnt)
+        k = np.arange(total, dtype=np.int64) - offs
+        tt = tri_id[np.repeat(t_start[cell_r[start:end]], cnt) + k]
+        Op = O[rr]
+        tvec = Op - A[tt]
+        inv = inv_all[tt]
+        u = np.einsum("kd,kd->k", tvec, pvec_all[tt]) * inv
+        qvec = np.cross(tvec, e1_all[tt])
+        v = np.einsum("kd,d->k", qvec, d) * inv
+        t = np.einsum("kd,kd->k", qvec, e2_all[tt]) * inv
+        hit = (nz_all[tt] & (u >= -1e-9) & (u <= 1.0 + 1e-9) & (v >= -1e-9)
+               & (u + v <= 1.0 + 1e-9) & (t > tmin) & (t < tmax))
+        if hit.any():
+            occ[rr[hit]] = True
+        start = end
     return occ
 
 
 def shadow_raycast(V, F, light, *, pose=None, intrinsics=None, width: int = 256,
                    height: int = 256, angular_diameter_deg: float = 0.0,
-                   samples: int = 1, grid: int = 64, bias=None) -> np.ndarray:
+                   samples: int = 1, grid=None, bias=None) -> np.ndarray:
     """メッシュへ直接レイを飛ばして太陽光の可視性 (H,W) ∈ [0,1] を返す(shadow map 不使用)。
 
     ``1=完全に照らされる`` / ``0=完全な影``。背景画素は 1.0。``light`` は平行光の方向
@@ -459,7 +494,8 @@ def shadow_raycast(V, F, light, *, pose=None, intrinsics=None, width: int = 256,
     ハード影、正なら角半径の円盤内へ ``samples`` 方向をばらまいて平均する ―― 半影の幅は
     「遮蔽物までの距離 × tan(視直径/2)」の幾何どおり(小惑星スケールでは数 cm = 硬い影)。
     法線が光に背く画素(自己陰)は 0。``bias`` はレイ原点を法線方向へ浮かせる量(既定 =
-    シーン対角 × 1e-5、自己交差の回避)。``grid`` は光源空間の 2-D 格子の一辺セル数。
+    シーン対角 × 1e-5、自己交差の回避)。``grid`` は光源空間の 2-D 格子の一辺セル数
+    (既定 ``None`` = 面数から :func:`auto_grid`。結果は格子に依らず同じ、速度だけ変わる)。
 
     honest: 交差は Möller-Trumbore(両面)、加速は 2-D binning(平行光専用。点光源は
     ``cast_shadow`` を使う)。透明・多重反射・カラー影は扱わない。
@@ -483,7 +519,7 @@ def shadow_raycast(V, F, light, *, pose=None, intrinsics=None, width: int = 256,
     ns = int(samples)
     if ns < 1:
         raise ValueError("samples must be >= 1, got %d" % (samples,))
-    G = int(grid)
+    G = auto_grid(Ff.shape[0]) if grid is None else int(grid)
     if G < 1 or G > _GRID_MAX:
         raise ValueError("grid must be in [1, %d], got %r" % (_GRID_MAX, grid))
     light = np.asarray(light, np.float64).reshape(-1)

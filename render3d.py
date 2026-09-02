@@ -1017,5 +1017,472 @@ def mesh_scatter_boulders(V, F, *, density: float, d_min: float, d_max=None,
     return np.vstack(parts_v), np.vstack(parts_f)
 
 
+
+# --------------------------------------------------------------------------- #
+# mesh resolution: local edge length / adaptive midpoint subdivision            #
+# --------------------------------------------------------------------------- #
+# The Gaskell Itokawa model (itokawa_f0049152.stl) is NOT uniform: edge length
+# p5 2.6 m / median 4.7 m / p95 7.2 m / max 14.1 m (measured 2026-09-03). Any
+# synthetic detail added uniformly in *noise space* therefore resolves in the
+# dense regions and aliases into facet noise in the coarse ones. The ops below
+# make the facet size uniform in metres first (adaptive midpoint subdivision:
+# geometry is unchanged, only refined — never decimated) and expose the local
+# edge length so the displacement can be band-limited per vertex.
+
+def _unique_edges(Ff):
+    """Sorted unique undirected edges ``(E,2)`` and per-face edge ids ``(M,3)``
+    (face edge ``j`` = ``(v_j, v_{j+1 mod 3})``)."""
+    e = np.stack([Ff[:, [0, 1]], Ff[:, [1, 2]], Ff[:, [2, 0]]], axis=1)   # (M,3,2)
+    e = np.sort(e, axis=2).reshape(-1, 2)
+    uniq, inv = np.unique(e, axis=0, return_inverse=True)
+    return uniq, np.asarray(inv).reshape(-1, 3)
+
+
+def mesh_edge_lengths(V, F, *, per: str = "vertex") -> np.ndarray:
+    """Local edge length of a triangle mesh → ``(N,)`` per vertex (mean of incident edges),
+    ``(M,)`` per face (mean of its 3 edges) or ``(E,)`` per unique edge.
+
+    This is the resolution map of the mesh in its own units: the shortest wavelength a
+    region can carry as *geometry* is about twice the local edge (Nyquist), which is what
+    :func:`mesh_subdivide` (``target_edge``) and :func:`displacement_band_weights` use.
+    Deterministic; fail-closed on degenerate meshes / unknown ``per``."""
+    Vv, Ff = _mesh_check(V, F)
+    if per not in ("vertex", "face", "edge"):
+        raise ValueError("per must be vertex|face|edge, got %r" % (per,))
+    E, fe = _unique_edges(Ff)
+    el = np.linalg.norm(Vv[E[:, 0]] - Vv[E[:, 1]], axis=1)
+    if per == "edge":
+        return el
+    if per == "face":
+        return el[fe].mean(axis=1)
+    acc = np.zeros(Vv.shape[0], np.float64)
+    cnt = np.zeros(Vv.shape[0], np.float64)
+    for k in range(2):
+        np.add.at(acc, E[:, k], el)
+        np.add.at(cnt, E[:, k], 1.0)
+    out = np.divide(acc, cnt, out=np.zeros_like(acc), where=cnt > 0)
+    if np.any(cnt == 0):                                    # isolated vertices: global mean
+        out[cnt == 0] = float(el.mean())
+    return out
+
+
+def _subdivide_once(Vv, Ff, split_edge):
+    """One conforming midpoint pass: edges flagged in ``split_edge`` (E,) get a midpoint;
+    faces are split by their 1 / 2 / 3-edge pattern (2 / 3 / 4 triangles, winding kept)."""
+    E, fe = _unique_edges(Ff)
+    if split_edge.shape[0] != E.shape[0]:
+        raise ValueError("split mask does not match the edge count")
+    n0 = Vv.shape[0]
+    mid_id = np.full(E.shape[0], -1, np.int64)
+    sel = np.nonzero(split_edge)[0]
+    mid_id[sel] = n0 + np.arange(sel.size)
+    Vm = 0.5 * (Vv[E[sel, 0]] + Vv[E[sel, 1]])
+    Vout = np.vstack([Vv, Vm]) if sel.size else Vv.copy()
+    fsplit = split_edge[fe]                                 # (M,3) bool
+    s = fsplit.sum(axis=1)
+    parts = [Ff[s == 0]]
+    # --- 3 edges: 4 triangles ------------------------------------------------
+    f3 = np.nonzero(s == 3)[0]
+    if f3.size:
+        a, b, c = Ff[f3, 0], Ff[f3, 1], Ff[f3, 2]
+        m01, m12, m20 = mid_id[fe[f3, 0]], mid_id[fe[f3, 1]], mid_id[fe[f3, 2]]
+        parts += [np.stack([a, m01, m20], 1), np.stack([b, m12, m01], 1),
+                  np.stack([c, m20, m12], 1), np.stack([m01, m12, m20], 1)]
+    # --- 1 edge: rotate so the split edge is edge 0 → 2 triangles --------------
+    f1 = np.nonzero(s == 1)[0]
+    if f1.size:
+        k = np.argmax(fsplit[f1], axis=1)                   # index of the split edge
+        rot = (np.arange(3)[None, :] + k[:, None]) % 3
+        Fr = np.take_along_axis(Ff[f1], rot, axis=1)
+        er = np.take_along_axis(fe[f1], rot, axis=1)
+        a, b, c = Fr[:, 0], Fr[:, 1], Fr[:, 2]
+        m = mid_id[er[:, 0]]
+        parts += [np.stack([a, m, c], 1), np.stack([m, b, c], 1)]
+    # --- 2 edges: rotate so the UNsplit edge is edge 2 → 3 triangles ----------
+    f2 = np.nonzero(s == 2)[0]
+    if f2.size:
+        k = np.argmin(fsplit[f2], axis=1)                   # index of the unsplit edge
+        rot = (np.arange(3)[None, :] + ((k + 1) % 3)[:, None]) % 3
+        Fr = np.take_along_axis(Ff[f2], rot, axis=1)
+        er = np.take_along_axis(fe[f2], rot, axis=1)
+        a, b, c = Fr[:, 0], Fr[:, 1], Fr[:, 2]
+        m01, m12 = mid_id[er[:, 0]], mid_id[er[:, 1]]
+        parts.append(np.stack([b, m12, m01], 1))
+        # quad (a, m01, m12, c): cut along the shorter diagonal (fewer slivers)
+        d1 = np.linalg.norm(Vout[m01] - Vout[c], axis=1)
+        d2 = np.linalg.norm(Vout[a] - Vout[m12], axis=1)
+        use1 = d1 <= d2
+        parts += [np.where(use1[:, None], np.stack([a, m01, c], 1), np.stack([a, m01, m12], 1)),
+                  np.where(use1[:, None], np.stack([m01, m12, c], 1), np.stack([a, m12, c], 1))]
+    Fout = np.vstack([p_ for p_ in parts if p_.size]).astype(np.int64)
+    return Vout, Fout
+
+
+#: Hard cap on the number of faces a subdivision may produce (memory guard).
+MAX_SUBDIVIDE_FACES = 4_000_000
+#: Adaptive tessellation: an edge is cut into at most this many segments per call.
+_MAX_SEGMENTS = 64
+
+
+def _zipper(a: int, b: int):
+    """Triangle strip between two parallel point sequences of ``a`` (outer) and ``b`` (inner)
+    points, as (i, j, advance_outer) steps — purely parametric (geometry-independent)."""
+    steps = []
+    i = j = 0
+    while i < a - 1 or j < b - 1:
+        if j == b - 1:
+            adv = True
+        elif i == a - 1:
+            adv = False
+        else:
+            ui1 = (i + 1) / (a - 1)
+            vj = j / (b - 1)
+            ui = i / (a - 1)
+            vj1 = (j + 1) / (b - 1)
+            adv = abs(ui1 - vj) <= abs(ui - vj1)
+        steps.append((i, j, adv))
+        if adv:
+            i += 1
+        else:
+            j += 1
+    return steps
+
+
+def _tess_pattern(n0: int, n1: int, n2: int):
+    """Conforming tessellation of one triangle whose edges carry ``n0, n1, n2`` segments
+    (edge ``i`` = corner ``i`` → corner ``i+1``): returns ``(bary (P,3), tris (T,3),
+    n_boundary)`` in a local numbering — corners 0..2, then the interior points of edge 0,
+    1, 2 in traversal order, then interior points. Rings are homothetic insets (OpenGL
+    tessellation-style): inner level ``m = round(mean n)``, ring ``r`` at barycentric inset
+    ``2r/(3m)`` with ``m − 2r`` segments per side, neighbouring rings joined by :func:`_zipper`.
+    All points lie inside the triangle (positions are barycentric combinations of its
+    corners), so the refined surface is *identical* to the original facet."""
+    corners = np.eye(3)
+    pts = [corners[0], corners[1], corners[2]]
+    edge_ids = []
+    for i, n in enumerate((n0, n1, n2)):
+        c0, c1 = corners[i], corners[(i + 1) % 3]
+        ids = []
+        for k in range(1, n):
+            pts.append(c0 + (c1 - c0) * (k / n))
+            ids.append(len(pts) - 1)
+        edge_ids.append(ids)
+    n_boundary = len(pts)
+    ring = [[i] + edge_ids[i] + [(i + 1) % 3] for i in range(3)]   # 3 sides, each a point list
+    tris = []
+    m = max(1, int(round((n0 + n1 + n2) / 3.0)))
+    if m == 1 and n0 == 1 and n1 == 1 and n2 == 1:
+        return np.asarray(pts), np.array([[0, 1, 2]], np.int64), n_boundary
+    r = 1
+    while True:
+        mr = m - 2 * r
+        if mr <= 0:
+            pts.append(np.full(3, 1.0 / 3.0))
+            c = len(pts) - 1
+            for i in range(3):
+                A = ring[i]
+                for k in range(len(A) - 1):
+                    tris.append([A[k], A[k + 1], c])
+            break
+        d = 2.0 * r / (3.0 * m)
+        cc = [np.array([1 - 2 * d, d, d]), np.array([d, 1 - 2 * d, d]), np.array([d, d, 1 - 2 * d])]
+        cid = []
+        for i in range(3):
+            pts.append(cc[i])
+            cid.append(len(pts) - 1)
+        new_ring = []
+        for i in range(3):
+            c0, c1 = cc[i], cc[(i + 1) % 3]
+            side = [cid[i]]
+            for k in range(1, mr):
+                pts.append(c0 + (c1 - c0) * (k / mr))
+                side.append(len(pts) - 1)
+            side.append(cid[(i + 1) % 3])
+            new_ring.append(side)
+        for i in range(3):
+            A, B = ring[i], new_ring[i]
+            for (ii, jj, adv) in _zipper(len(A), len(B)):
+                if adv:
+                    tris.append([A[ii], A[ii + 1], B[jj]])
+                else:
+                    tris.append([A[ii], B[jj + 1], B[jj]])
+        ring = new_ring
+        if mr == 1:
+            tris.append([cid[0], cid[1], cid[2]])
+            break
+        r += 1
+    return np.asarray(pts), np.asarray(tris, np.int64), n_boundary
+
+
+_TESS_CACHE: dict = {}
+
+
+def _tessellate(Vv, Ff, n_seg):
+    """Apply per-edge segment counts ``n_seg`` (E,) with conforming per-face patterns."""
+    E, fe = _unique_edges(Ff)
+    n0 = Vv.shape[0]
+    # shared edge points: edge e gets n_e - 1 points from E[e,0] → E[e,1]
+    n_in = n_seg - 1
+    off = np.cumsum(n_in) - n_in + n0
+    tot = int(n_in.sum())
+    ke = np.repeat(np.arange(E.shape[0]), n_in)
+    kk = np.arange(tot) - np.repeat(off - n0, n_in) + 1
+    t = kk / n_seg[ke]
+    Vedge = Vv[E[ke, 0]] + (Vv[E[ke, 1]] - Vv[E[ke, 0]]) * t[:, None]
+    parts_v = [Vv, Vedge]
+    parts_f = []
+    n_cur = n0 + tot
+    # traversal direction of each face edge relative to the sorted edge
+    fwd = Ff == E[fe][:, :, 0]                              # (M,3) face edge j starts at E[e,0]
+    fn = n_seg[fe]                                          # (M,3)
+    sig = fn[:, 0] * (_MAX_SEGMENTS + 1) ** 2 + fn[:, 1] * (_MAX_SEGMENTS + 1) + fn[:, 2]
+    order = np.argsort(sig, kind="stable")
+    sig_s = sig[order]
+    bounds = np.flatnonzero(np.r_[True, sig_s[1:] != sig_s[:-1], True])
+    for gi in range(bounds.size - 1):
+        faces = order[bounds[gi]:bounds[gi + 1]]
+        a, b, c = (int(x) for x in fn[faces[0]])
+        key = (a, b, c)
+        if key not in _TESS_CACHE:
+            _TESS_CACHE[key] = _tess_pattern(a, b, c)
+        bary, ltris, nb = _TESS_CACHE[key]
+        nf = faces.size
+        P = bary.shape[0]
+        n_int = P - nb
+        # local → global id table (nf, P)
+        gid = np.empty((nf, P), np.int64)
+        gid[:, 0:3] = Ff[faces]
+        col = 3
+        for j, n in enumerate((a, b, c)):
+            if n > 1:
+                e = fe[faces, j]
+                base = off[e]                                # first point of that edge
+                k = np.arange(1, n)
+                ids_f = base[:, None] + (k - 1)[None, :]     # forward order
+                ids_b = base[:, None] + (n - 1 - k)[None, :] # reversed traversal
+                gid[:, col:col + n - 1] = np.where(fwd[faces, j][:, None], ids_f, ids_b)
+                col += n - 1
+        if n_int:
+            gid[:, nb:] = n_cur + np.arange(nf * n_int).reshape(nf, n_int)
+            tri = Vv[Ff[faces]]                              # (nf,3,3)
+            Vint = np.einsum("pk,fkd->fpd", bary[nb:], tri).reshape(-1, 3)
+            parts_v.append(Vint)
+            n_cur += nf * n_int
+        parts_f.append(np.take_along_axis(
+            gid[:, None, :].repeat(ltris.shape[0], axis=1),
+            np.broadcast_to(ltris[None, :, :], (nf,) + ltris.shape), axis=2).reshape(-1, 3))
+    return np.vstack(parts_v), np.vstack(parts_f).astype(np.int64)
+
+
+def mesh_subdivide(V, F, *, levels: int = 1, target_edge=None,
+                   max_faces: int = MAX_SUBDIVIDE_FACES):
+    """Refine a triangle mesh → ``(V, F)``: uniform midpoint subdivision (``levels`` passes,
+    ×4 faces each) or **adaptive tessellation to a target edge length** (``target_edge``).
+
+    The geometry is *unchanged* — every new vertex lies on an old facet, so surface area
+    and enclosed volume are preserved exactly (tests pin this) and nothing is ever
+    decimated; only the facet size changes, so a later :func:`mesh_displace_spectrum` can
+    carry short wavelengths without aliasing.
+
+    Adaptive mode cuts each edge into ``n = round(length / target_edge)`` (≥ 1) segments
+    — a per-*edge* count, hence conforming across neighbours (no T-junctions) — and fills
+    each face with an OpenGL-tessellation-style pattern (homothetic inner rings zipped to
+    the outer ring). Unlike repeated midpoint bisection (which leaves a factor-2 spread
+    ``(target/2, target]``) the result is uniform in metres: on the Gaskell Itokawa model
+    (edge p5/median/p95 = 2.6/4.7/7.2 m) a 1.5 m target gives p95/p5 ≈ 1.4 (measured;
+    the test pins ≤ 1.5 on a graded plane). ``max_faces`` (default
+    ``MAX_SUBDIVIDE_FACES``) is a memory guard: if the plan would exceed it the call
+    raises ``ValueError`` (fail-closed) rather than silently under-refining.
+    Deterministic. Fail-closed: degenerate mesh, ``levels < 0``, non-positive
+    ``target_edge`` / caps → ``ValueError``."""
+    Vv, Ff = _mesh_check(V, F)
+    lv = int(levels)
+    if lv < 0:
+        raise ValueError("levels must be >= 0")
+    mf = int(max_faces)
+    if mf < 1:
+        raise ValueError("max_faces must be >= 1")
+    if target_edge is None:
+        for _ in range(lv):
+            if Ff.shape[0] * 4 > mf:
+                raise ValueError("uniform subdivision would exceed max_faces=%d" % mf)
+            E, _fe = _unique_edges(Ff)
+            Vv, Ff = _subdivide_once(Vv, Ff, np.ones(E.shape[0], bool))
+        return Vv, Ff
+    te = float(target_edge)
+    if not np.isfinite(te) or te <= 0.0:
+        raise ValueError("target_edge must be a positive finite length")
+    E, fe = _unique_edges(Ff)
+    el = np.linalg.norm(Vv[E[:, 0]] - Vv[E[:, 1]], axis=1)
+    n_seg = np.clip(np.rint(el / te).astype(np.int64), 1, _MAX_SEGMENTS)
+    if not np.any(n_seg > 1):
+        return Vv.copy(), Ff.copy()
+    fn = n_seg[fe]
+    m = np.maximum(1, np.rint(fn.mean(axis=1)).astype(np.int64))
+    est = int((fn.sum(axis=1) + 3 * m * np.maximum(m - 1, 0)).sum())   # upper-ish bound
+    if est > mf:
+        raise ValueError("adaptive tessellation would produce ~%d faces > max_faces=%d "
+                         "(raise max_faces or target_edge)" % (est, mf))
+    return _tessellate(Vv, Ff, n_seg)
+
+
+# --------------------------------------------------------------------------- #
+# band-limited multi-octave displacement + sub-facet bump normals               #
+# --------------------------------------------------------------------------- #
+def _octave_noise(P, wavelength: float, perm, k: int) -> np.ndarray:
+    """One value-noise octave in [-1, 1] at wavelength ``wavelength`` (lattice offset per octave)."""
+    offset = np.array([37.1, 17.7, 91.3]) * (k + 1)
+    return _value_noise3(P / float(wavelength) + offset, perm)
+
+
+def _check_spectrum(wavelengths, amplitudes):
+    lam = np.asarray(wavelengths, np.float64).reshape(-1)
+    if lam.size == 0 or lam.size > 32:
+        raise ValueError("wavelengths must hold 1..32 values")
+    if not np.all(np.isfinite(lam)) or np.any(lam <= 0.0):
+        raise ValueError("wavelengths must be positive finite lengths")
+    if amplitudes is None:
+        raise ValueError("amplitudes are required (one per wavelength, mesh units)")
+    amp = np.asarray(amplitudes, np.float64).reshape(-1)
+    if amp.shape != lam.shape:
+        raise ValueError("amplitudes must have one entry per wavelength")
+    if not np.all(np.isfinite(amp)) or np.any(amp < 0.0):
+        raise ValueError("amplitudes must be finite and >= 0")
+    return lam, amp
+
+
+def displacement_band_weights(V, F, wavelengths=(0.06, 0.03, 0.015, 0.0075, 0.00375), *,
+                              nyquist: float = 2.0, fade: float = 1.0,
+                              local_edge=None) -> np.ndarray:
+    """Per-octave, per-vertex band gate ``(K, N)`` in [0,1]: 1 where the mesh can carry the
+    wavelength as geometry, 0 where it would alias.
+
+    A vertex with local edge length ``e`` (mean incident edge, :func:`mesh_edge_lengths`,
+    or ``local_edge`` (N,) if given) carries wavelength ``λ`` only when ``λ ≥ nyquist·e``;
+    the gate rises linearly from 0 at ``λ = nyquist·e`` to 1 at ``λ = (nyquist+fade)·e``
+    (``fade=0`` → hard cut). Used two ways by the Itokawa pipeline: (i) on the *rendered*
+    mesh to decide which octaves may be displaced (the rest go to bump normals); (ii) on
+    the *source* model to measure which wavelengths the real data already carries — the
+    complement ``1 − gate`` is the synthetic-relief weight (0 where the data are fine,
+    1 where they are coarse), so dense regions are not double-textured. Deterministic."""
+    Vv, Ff = _mesh_check(V, F)
+    lam = np.asarray(wavelengths, np.float64).reshape(-1)
+    if lam.size == 0 or not np.all(np.isfinite(lam)) or np.any(lam <= 0.0):
+        raise ValueError("wavelengths must be positive finite lengths")
+    ny, fd = float(nyquist), float(fade)
+    if not np.isfinite(ny) or ny <= 0.0 or not np.isfinite(fd) or fd < 0.0:
+        raise ValueError("nyquist must be > 0 and fade >= 0")
+    if local_edge is None:
+        e = mesh_edge_lengths(Vv, Ff, per="vertex")
+    else:
+        e = np.asarray(local_edge, np.float64).reshape(-1)
+        if e.shape[0] != Vv.shape[0] or not np.all(np.isfinite(e)) or np.any(e <= 0.0):
+            raise ValueError("local_edge must be a positive finite (N,) array")
+    ratio = lam[:, None] / e[None, :]                       # (K,N)
+    if fd == 0.0:
+        return (ratio >= ny).astype(np.float64)
+    return np.clip((ratio - ny) / fd, 0.0, 1.0)
+
+
+def mesh_displace_spectrum(V, F, wavelengths=(0.06, 0.03, 0.015, 0.0075, 0.00375),
+                           amplitudes=(0.003, 0.00176, 0.00103, 0.0006, 0.00035), *,
+                           seed: int = 0, nyquist: float = 2.0, fade: float = 1.0,
+                           weights=None, local_edge=None):
+    """Displace vertices along their normals with a **stated amplitude spectrum**, band-limited
+    per vertex → ``(V, F)``.
+
+    ``displacement_i = Σ_k A_k · n_k(x_i) · gate_k(i) · w_k(i)`` with one seeded value-noise
+    octave ``n_k ∈ [−1, 1]`` per ``(wavelength_k, amplitude_k)`` pair (mesh units — the
+    Itokawa STL is in km, so the default is 3 m at 60 m falling as ``A ∝ λ^0.77`` to
+    0.35 m at 3.75 m), ``gate`` = :func:`displacement_band_weights` on *this* mesh
+    (an octave shorter than ``nyquist × local edge`` is not applied — it would alias into
+    facet noise; route it to :func:`bump_normals_fbm` instead) and ``weights`` = optional
+    ``(N,)`` per-vertex or ``(K, N)`` per-octave-per-vertex factor in [0,1] (e.g. the
+    synthetic-relief weight ``1 − gate`` of the source model). The peak displacement at a
+    vertex is at most ``Σ_k A_k`` (tests pin it). Unlike :func:`mesh_displace_fbm` (one
+    amplitude, octave ratio 2, no band limit) every octave's amplitude is explicit.
+    Deterministic under ``seed``. Fail-closed on shapes / non-finite / negative values."""
+    Vv, Ff = _mesh_check(V, F)
+    lam, amp = _check_spectrum(wavelengths, amplitudes)
+    gate = displacement_band_weights(Vv, Ff, lam, nyquist=nyquist, fade=fade,
+                                     local_edge=local_edge)          # (K,N)
+    if weights is not None:
+        w = np.asarray(weights, np.float64)
+        if w.ndim == 1:
+            w = np.broadcast_to(w[None, :], gate.shape)
+        if w.shape != gate.shape or not np.all(np.isfinite(w)) or np.any(w < 0.0) or np.any(w > 1.0):
+            raise ValueError("weights must be (N,) or (K,N) in [0,1], got %r" % (w.shape,))
+        gate = gate * w
+    rng = np.random.default_rng(int(seed))
+    perm = np.tile(rng.permutation(256), 2)
+    disp = np.zeros(Vv.shape[0], np.float64)
+    for k in range(lam.size):
+        if amp[k] == 0.0:
+            continue
+        disp += amp[k] * gate[k] * _octave_noise(Vv, lam[k], perm, k)
+    vn = _vertex_normals(Vv, Ff)
+    return Vv + vn * disp[:, None], Ff.copy()
+
+
+def bump_normals_fbm(normals, positions, wavelengths=(0.002, 0.001),
+                     amplitudes=(0.0002, 0.00012), *, seed: int = 0,
+                     rotation=None, step=None) -> np.ndarray:
+    """Perturb a normal map with the *gradient* of a seeded multi-octave height field
+    (sub-facet relief the geometry cannot afford to displace) → unit normals ``(H, W, 3)``.
+
+    ``h(x) = Σ_k A_k n_k(x)`` is the same value-noise field :func:`mesh_displace_spectrum`
+    would displace with (same ``seed`` ⇒ same lattice), so passing the octaves that the
+    displacement's band gate rejected makes the shading continue the *same* amplitude
+    spectrum below the facet size (no fake sandpaper: an octave of amplitude ``A`` at
+    wavelength ``λ`` tilts the normal by about ``2πA/λ`` at most). The bumped normal is
+    ``normalize(n − ∇_t h)`` (first-order shading normal of a height field over the
+    surface; ``∇_t`` = tangential gradient by central differences with ``step`` =
+    ``min(λ)/64``). ``positions`` are world coordinates ``(H, W, 3)`` (NaN = background,
+    left untouched); if ``rotation`` (3×3, world → normal frame, e.g. ``pose[:3,:3]``)
+    is given the normals are taken in that frame. Deterministic; fail-closed."""
+    N = np.asarray(normals, np.float64)
+    P = np.asarray(positions, np.float64)
+    if N.ndim != 3 or N.shape[2] != 3 or P.shape != N.shape:
+        raise ValueError("normals and positions must both be (H, W, 3)")
+    lam, amp = _check_spectrum(wavelengths, amplitudes)
+    if rotation is None:
+        R = np.eye(3)
+    else:
+        R = np.asarray(rotation, np.float64)
+        if R.shape != (3, 3) or not np.all(np.isfinite(R)):
+            raise ValueError("rotation must be a finite 3x3 matrix")
+    hstep = float(lam.min()) / 64.0 if step is None else float(step)
+    if not np.isfinite(hstep) or hstep <= 0.0:
+        raise ValueError("step must be a positive finite length")
+    mask = np.all(np.isfinite(P), axis=-1) & (np.linalg.norm(N, axis=-1) > 1e-12)
+    out = N.copy()
+    if not mask.any():
+        return out
+    pts = P[mask]
+    n_w = N[mask] @ R                                       # frame → world (R^T applied)
+    rng = np.random.default_rng(int(seed))
+    perm = np.tile(rng.permutation(256), 2)
+
+    def height(q):
+        h = np.zeros(q.shape[0], np.float64)
+        for k in range(lam.size):
+            if amp[k] > 0.0:
+                h += amp[k] * _octave_noise(q, lam[k], perm, k)
+        return h
+
+    grad = np.zeros_like(pts)
+    for ax in range(3):
+        dv = np.zeros(3)
+        dv[ax] = hstep
+        grad[:, ax] = (height(pts + dv) - height(pts - dv)) / (2.0 * hstep)
+    gt = grad - np.einsum("ij,ij->i", grad, n_w)[:, None] * n_w   # tangential part
+    nb = n_w - gt
+    nb /= np.maximum(np.linalg.norm(nb, axis=1, keepdims=True), 1e-15)
+    out[mask] = nb @ R.T                                    # back to the normals' frame
+    return out
+
+
 __all__ += ["fbm_noise", "mesh_displace_fbm", "terrain_region_mask", "sample_boulders",
-            "mesh_scatter_boulders"]
+            "mesh_scatter_boulders", "mesh_edge_lengths", "mesh_subdivide",
+            "displacement_band_weights", "mesh_displace_spectrum", "bump_normals_fbm",
+            "MAX_SUBDIVIDE_FACES"]

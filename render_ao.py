@@ -231,7 +231,7 @@ _GRID_AO_THRESHOLD = 1_000_000_000
 
 
 def vertex_occlusion_grid(V, F, n_dirs: int = 64, max_dist: float | None = None,
-                          eps: float | None = None, grid: int = 64) -> np.ndarray:
+                          eps: float | None = None, grid=None) -> np.ndarray:
     """頂点 AO ``(N,)`` を **大域方向 × 平行レイ束** で求める(大きなメッシュ向け、格子加速)。
 
     :func:`vertex_occlusion` は頂点ごとに半球へレイを飛ばす(Python ループが頂点数 ×
@@ -269,6 +269,7 @@ def vertex_occlusion_grid(V, F, n_dirs: int = 64, max_dist: float | None = None,
     phi = i * _GOLDEN
     dirs = np.stack([r * np.cos(phi), r * np.sin(phi), z], axis=1)
     O = Vv + vn * eps_n
+    G = render_shadow.auto_grid(Ff.shape[0]) if grid is None else int(grid)
     occ_w = np.zeros(Vv.shape[0], np.float64)
     wsum = np.zeros(Vv.shape[0], np.float64)
     for d in dirs:
@@ -276,7 +277,7 @@ def vertex_occlusion_grid(V, F, n_dirs: int = 64, max_dist: float | None = None,
         idx = np.nonzero(cosw > 0.0)[0]
         if idx.size == 0:
             continue
-        blocked = render_shadow._occluded_parallel(O[idx], d, A, B, C, 0.0, int(grid), md)
+        blocked = render_shadow._occluded_parallel(O[idx], d, A, B, C, 0.0, G, md)
         occ_w[idx] += cosw[idx] * blocked
         wsum[idx] += cosw[idx]
     ao = 1.0 - np.divide(occ_w, wsum, out=np.zeros_like(occ_w), where=wsum > 0.0)
