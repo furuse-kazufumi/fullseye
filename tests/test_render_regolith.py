@@ -180,22 +180,17 @@ def test_raycast_sphere_shadow_area_matches_analytic_ellipse():
     depth = render3d.render_mesh(V, F, pose=pose, intrinsics=K, width=size, height=size)["depth"]
     Pw = sh.unproject_to_world(depth, pose, K)
     ground = np.isfinite(Pw[..., 2]) & (np.abs(Pw[..., 2]) < 1e-6)
-    pix_area = (8.0 / size) ** 2
-    shadow_area = float(((vis < 0.5) & ground).sum()) * pix_area
-    ellipse = np.pi * r * r / np.cos(theta)
-    # 球の真下の楕円のうち球の投影(半径 r の円)に隠れる部分は地面画素として見えない
-    hidden = _hidden_overlap(r, theta, size)
-    assert shadow_area == pytest.approx(ellipse - hidden, rel=0.01)
-
-
-def _hidden_overlap(r, theta, n=2000):
-    """楕円影(中心 (-2.5 tanθ, 0)、半軸 r/cosθ, r)と球の投影円(中心 0、半径 r)の重なり面積(数値)。"""
-    xs = np.linspace(-4, 4, n)
-    X, Y = np.meshgrid(xs, xs, indexing="ij")
+    # 見えている地面画素の上で、解析楕円(中心 (-2.5 tanθ, 0)、半軸 r/cosθ, r)の内側の
+    # 画素数と、レイキャストで影になった画素数を比べる(球に隠れた地面は両方から外れる)。
     cx = -2.5 * np.tan(theta)
-    inside_e = ((X - cx) * np.cos(theta) / r) ** 2 + (Y / r) ** 2 <= 1.0
-    inside_c = X * X + Y * Y <= r * r
-    return float((inside_e & inside_c).sum()) * (8.0 / n) ** 2
+    X, Y = Pw[..., 0], Pw[..., 1]
+    with np.errstate(invalid="ignore"):
+        inside = ground & (((X - cx) * np.cos(theta) / r) ** 2 + (Y / r) ** 2 <= 1.0)
+    n_shadow = int(((vis < 0.5) & ground).sum())
+    n_ellipse = int(inside.sum())
+    pix_area = (8.0 / size) ** 2
+    assert n_ellipse * pix_area > 0.5 * np.pi * r * r / np.cos(theta)   # 楕円の大半が見えている
+    assert n_shadow == pytest.approx(n_ellipse, rel=0.01)
 
 
 def test_raycast_matches_shadow_map_where_map_is_unambiguous():
