@@ -7656,9 +7656,8 @@ def build_window(model=None):
         if not path:
             return
         try:
-            with open(path, "w", encoding="utf-8") as fh:     # permission / bad path / full disk
-                fh.write(json.dumps(model.to_dict(), indent=2))
-        except Exception as e:
+            _atomic_write_text(path, json.dumps(model.to_dict(), indent=2))   # never a half file
+        except Exception as e:                                # permission / bad path / full disk
             report_error("Could not save pipeline", "%s\n\n%s" % (path, e)); return
         state["dirty"] = False                                # now matches a file on disk
         state["pipe_path"] = os.path.abspath(path)
