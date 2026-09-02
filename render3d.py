@@ -412,9 +412,20 @@ def render_mesh(V, F, pose=None, intrinsics=None, width: int = 256,
         sil[rmin:rmax + 1, cmin:cmax + 1][closer] = 1.0
         nblock = normals[rmin:rmax + 1, cmin:cmax + 1]
         nblock[closer] = fnorm[ti]
+        if want_attr:
+            face[rmin:rmax + 1, cmin:cmax + 1][closer] = ti
+            # Perspective-correct vertex weights: the screen-space barycentric
+            # ``l_i`` divided by that vertex's depth and renormalised by the same
+            # ``1/zpix`` the depth interpolation above uses. Screen-space ``l_i``
+            # alone would be affine-correct only — on the ground plane, seen at a
+            # grazing angle, that is exactly where the error is largest.
+            wblock = bary[rmin:rmax + 1, cmin:cmax + 1]
+            wblock[closer] = np.stack(
+                [(l0 * zpix / d0)[closer], (l1 * zpix / d1)[closer],
+                 (l2 * zpix / d2)[closer]], axis=-1)
 
     depth = np.where(sil > 0, zbuf, background).astype(np.float64)
-    return {"depth": depth, "silhouette": sil, "normals": normals}
+    return _pack(depth)
 
 
 # --------------------------------------------------------------------------- #
