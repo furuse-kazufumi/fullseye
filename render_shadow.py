@@ -81,8 +81,21 @@ def unproject_to_world(depth, pose, intrinsics) -> np.ndarray:
 
     ``render3d.render_mesh`` の depth(camera 前方の距離、背景は非有限)と、そのときの
     ``pose`` (object->camera 4x4) / ``intrinsics`` (3x3) から各画素の 3D 位置を復元する。
-    背景(非有限 depth)や光源背後(depth<=0)の画素は NaN。ピクセル中心は ``render_mesh`` と
-    同じ ``+0.5`` を使う。fail-closed: 形状不正・非有限行列は ``ValueError``。"""
+    背景(非有限 depth)や光源背後(depth<=0)の画素は NaN。fail-closed: 形状不正・
+    非有限行列は ``ValueError``。
+
+    ピクセル中心は ``camera`` / ``render3d`` と同じ **整数**(画素 ``(r, c)`` の中心が
+    連続座標 ``(u, v) = (c, r)``)。2026-09-02 まではここだけが ``+0.5`` を足しており、
+    しかも docstring は「``render_mesh`` と同じ ``+0.5``」と**逆のことを書いていた**
+    ―― ``render_mesh`` は 0.5 を足さないと明記している側である。
+
+    症状は「半画素ずれる」では済まない。逆投影の誤差は**深度に比例**するので、
+    実測(96x96・画角 40 度・距離 ~5)では地面の画素が真の平面から
+    **1.3e-2 〜 3.4e-2 ずれ、一部は平面より下に落ちていた**。そのため
+    ``examples_3d/render_beauty.py`` の接地影の検査は「地面の画素が 1 つも無い」と
+    判定して失敗し続けており、**記事の hero 画像は検証つきでは再生成できない状態**
+    だった。:func:`cast_shadow` もここで得た世界座標を光源カメラへ投げ直すので、
+    影の参照そのものが同じだけずれていた。"""
     d = np.asarray(depth, np.float64)
     if d.ndim != 2:
         raise ValueError("depth must be 2-D (H,W), got %r" % (d.shape,))
