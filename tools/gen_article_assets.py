@@ -262,8 +262,12 @@ def copy_hero_assets(log=print) -> list:
     These are pre-existing, already-real renders from the 3D gallery — copied
     verbatim (no edits) so the article has a self-contained asset directory.
     """
+    # itokawa_regolith_hero.png (2026-09-03): the Itokawa still made with the fullseye op
+    # chain mesh_displace_fbm -> terrain_region_mask -> mesh_scatter_boulders ->
+    # render_regolith (Hapke BRDF, 0.53-deg sun ray-cast shadows, zero ambient) by
+    # examples_3d/itokawa_regolith_hero.py — the article's Itokawa hero.
     names = ["render_beauty_hero.png", "hand_hero.png", "gear_hero.png",
-             "showcase_turntable_itokawa.gif"]
+             "showcase_turntable_itokawa.gif", "itokawa_regolith_hero.png"]
     copied = []
     for name in names:
         src = os.path.join(GALLERY_DIR, name)
