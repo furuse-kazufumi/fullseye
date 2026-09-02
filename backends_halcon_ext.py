@@ -368,9 +368,33 @@ def _gen_bandfilter(v, a, b):
 
 
 def _gen_derivative_filter(v, a, b):
-    """周波数領域の微分フィルタ(高周波ほど強い=周波数半径に比例)。"""
-    r = _freq_radius(v.shape)
-    return _norm01(r)
+    """周波数領域の微分フィルタ。``a`` が微分の階数、``b`` が向き。
+
+    HALCON の ``gen_derivative_filter`` は Derivative(x / y / xx / yy / xy)と
+    次数を取るが、ここは長らく ``|f|`` を正規化して返すだけで、**入力の中身も
+    つまみも一切見ていなかった** —— 2026-09-02 実測で、同じ形なら
+    ``a``/``b`` を変えても、別の絵を渡しても、返りが**バイト一致**だった
+    (兄弟の ``hx_gen_lowpass`` / ``hx_gen_highpass`` / ``hx_gen_bandfilter`` は
+    つまみで変わるので、この 1 件だけ浮いていた)。
+
+    * ``a`` : 階数 1〜2(``|f|`` か ``|f|^2``)。2 階はラプラシアンに対応する。
+    * ``b`` : 向き。0 で x 方向 ``|f_x|``、1 で y 方向 ``|f_y|``、間は等方 ``|f|``
+      へ滑らかに混ぜる(0.5 でちょうど等方)。
+
+    返りは周波数領域の**フィルタそのもの**(HALCON の gen_* と同じ約束)なので、
+    入力は形を決めるためだけに使う。ただし形だけでなく**つまみでちゃんと変わる**
+    ようになったので、進化が階数と向きを選べる。
+    """
+    h, w = np.asarray(v).shape[:2]
+    fy = np.fft.fftfreq(h)[:, None]
+    fx = np.fft.fftfreq(w)[None, :]
+    t = float(np.clip(b, 0.0, 1.0))
+    # 0 -> x のみ / 0.5 -> 等方 / 1 -> y のみ
+    wx = min(1.0, 2.0 * (1.0 - t))
+    wy = min(1.0, 2.0 * t)
+    mag = np.sqrt((wx * fx) ** 2 + (wy * fy) ** 2)
+    order = 1.0 + float(np.clip(a, 0.0, 1.0))          # 1..2 階
+    return _norm01(np.fft.fftshift(mag ** order))
 
 
 def _fill_interlace(v, a, b):
