@@ -259,7 +259,7 @@ def _refine_lm(X, x, K, R, t, iters=30):
                 break
         else:
             lam = min(lam * 4.0, 1e6)
-    return R, t
+    return R, t - R @ c
 
 
 def _check_inputs(points_3d, points_2d, name):

@@ -175,4 +175,4 @@ py -3.11 imgevolve.py ops --search edge
 py -3.11 -c "import fullseye; print(fullseye.version(), len(fullseye.op_names()), 'ops')"
 ```
 
-`fullseye.version()` は `0.1.0`、`op_names()` は 521 個のレジストリ・オペレータを返します。
+`fullseye.version()` は `0.1.0`、`op_names()` は 860 個のレジストリ・オペレータを返します(2026-09-03 時点)。

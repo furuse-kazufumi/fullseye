@@ -60,8 +60,8 @@ knobs in `[0, 1]`. Feature operators return a Python float; contour operators a 
 
 ## Operator library
 
-**~1000 typed operators** (measured: 731 distinct 2-D across 46 categories + 265 3-D
-across 55 categories), covering denoising, smoothing, sharpening,
+**~1200 typed operators** (measured 2026-09-03: 860 distinct 2-D across 47 categories + 310 3-D
+across 63 categories), covering denoising, smoothing, sharpening,
 thresholding/segmentation, morphology, edge/corner/blob detection, distance
 transforms, color-space conversion, texture/shape features, contours, and the 3-D
 modality (point clouds / meshes / volumes / SDF / 6-DoF pose). Sorts: `image` (gray
