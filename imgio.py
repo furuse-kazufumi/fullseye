@@ -290,31 +290,105 @@ def _cv2():
 def save(path: str, arr) -> None:
     """Save an image/region/color array (or a colourised scalar field) to *path*.
 
-    2-D arrays already in [0, 1] save as grayscale; 3-D (H,W,3) save as RGB; a
-    2-D array with values outside [0, 1] is colourised (viridis) first.
+    The input **dtype is honoured first**: bool -> 0/1 and unsigned integers are
+    scaled by their dtype max (uint8 -> /255, uint16 -> /65535, via
+    :func:`to_float01`), so a uint8 grey image saves as that grey image and a
+    uint8 RGB image saves as that RGB image — they are *not* colourised or
+    saturated to white (a 2026-09-03 fix; before, every array was taken as raw
+    float values). Signed-integer and float arrays are taken as raw values.
+
+    Then: a 2-D array already in [0, 1] saves as grayscale; a 2-D array with
+    values outside [0, 1] (a depth map, an int label map, NaN/inf) is colourised
+    (viridis) first; ``(H, W, 3)`` saves as RGB, ``(H, W, 4)`` as RGBA with the
+    alpha channel kept (R/G/B/A land in the file's R/G/B/A — the cv2 path used to
+    reverse *all four* channels and write R into alpha), ``(H, W, 1)`` as
+    grayscale. Any other channel count raises ``ValueError``.
+
+    Non-ASCII paths (a Japanese file name on Windows) work: the image is encoded
+    in memory (``cv2.imencode``) and the bytes are written by numpy, so the
+    ``cv2.imwrite`` code-page limitation never applies. Unwritable paths and
+    unknown extensions both raise ``OSError``.
     """
-    a = np.asarray(arr, np.float64)
+    import os
+    a0 = np.asarray(arr)
+    if a0.dtype == bool or a0.dtype.kind == "u":
+        a = to_float01(a0)                      # dtype-aware: uint8 stays grey/RGB
+    else:
+        a = np.asarray(a0, np.float64)          # signed ints / floats = raw values
+    if a.ndim == 3 and a.shape[-1] == 1:
+        a = a[:, :, 0]
     if a.ndim == 2 and (a.min() < -1e-9 or a.max() > 1 + 1e-9 or not np.isfinite(a).all()):
         a = apply_cmap(a)
+    if a.ndim not in (2, 3) or (a.ndim == 3 and a.shape[-1] not in (3, 4)):
+        raise ValueError("save expects (H, W), (H, W, 1), (H, W, 3) or (H, W, 4), got "
+                         "shape %r" % (a.shape,))
     u8 = to_uint8(a)
     cv2 = _cv2()
     if cv2 is not None:
-        bgr = u8[:, :, ::-1] if u8.ndim == 3 else u8
-        # cv2.imwrite RETURNS False (never raises) on an unwritable path, but RAISES
-        # cv2.error on an unknown extension — so a caller's try/except would either see
-        # a phantom success or a raw cv2.error. Normalise BOTH to a clean OSError.
+        if u8.ndim == 3:
+            # RGB -> BGR, RGBA -> BGRA: the alpha channel stays in place.
+            order = [2, 1, 0, 3] if u8.shape[-1] == 4 else [2, 1, 0]
+            bgr = np.ascontiguousarray(u8[:, :, order])
+        else:
+            bgr = np.ascontiguousarray(u8)
+        ext = os.path.splitext(path)[1]
+        # cv2.imencode RAISES cv2.error on an unknown extension (or returns False);
+        # tofile raises OSError on an unwritable path. Normalise ALL of them to a
+        # clean OSError so a caller's try/except sees one exception type.
         try:
-            ok = cv2.imwrite(path, bgr)
+            ok, buf = cv2.imencode(ext, bgr)
         except cv2.error as e:
-            raise OSError("could not write image to %r (unknown extension?): %s" % (path, e))
+            raise OSError("could not write image to %r (unknown extension %r?): %s"
+                          % (path, ext, e))
         if not ok:
-            raise OSError("could not write image to %r (unwritable path?)" % path)
+            raise OSError("could not encode image for %r (unknown extension %r?)"
+                          % (path, ext))
+        try:
+            np.asarray(buf, np.uint8).ravel().tofile(path)
+        except OSError as e:
+            raise OSError("could not write image to %r (unwritable path?): %s" % (path, e))
         return
     try:
         from PIL import Image
         Image.fromarray(u8).save(path)
     except Exception as e:  # pragma: no cover
         raise RuntimeError("save needs opencv-python or Pillow: %s" % e)
+
+
+_JPEG_MAGIC = b"\xff\xd8\xff"
+
+
+def _check_jpeg_complete(path: str, head: bytes, tail: bytes) -> None:
+    """Fail closed on a truncated JPEG.
+
+    libjpeg (hence OpenCV) *pads* a truncated JPEG with grey and returns a partial
+    image without any error, so a half-downloaded photo silently loads as
+    "top half picture, bottom half grey". Pillow's decoder refuses instead
+    (``OSError: image file is truncated``), so when Pillow is available the file
+    is decoded a second time by Pillow in 1/8-scale ``draft`` mode (the entropy
+    data must still be consumed in full, so truncation is detected, at a fraction
+    of a full decode). Without Pillow the EOI marker ``FF D9`` is required to
+    appear in the last 4 KiB of the file (weaker: a file truncated right after
+    an embedded EXIF thumbnail, which carries its own EOI, would pass).
+    Raises ``ValueError`` — the contract :func:`load` promises for a file no
+    backend can decode *correctly*.
+    """
+    if not head.startswith(_JPEG_MAGIC):
+        return
+    try:
+        from PIL import Image
+    except Exception:  # pragma: no cover - Pillow absent
+        if b"\xff\xd9" not in tail:
+            raise ValueError("cannot decode image: %s (truncated JPEG: no EOI marker "
+                             "in the file tail)" % path)
+        return
+    try:
+        with Image.open(path) as im:
+            im.draft(None, (max(1, im.width // 8), max(1, im.height // 8)))
+            im.load()
+    except OSError as e:
+        raise ValueError("cannot decode image: %s (truncated or corrupt JPEG: %s)"
+                         % (path, e))
 
 
 def _as_gray_or_color(f, color: bool):
