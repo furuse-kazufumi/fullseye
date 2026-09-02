@@ -7246,13 +7246,15 @@ def build_window(model=None):
             elif name == "dev_set_line_width" and args:
                 try:
                     set_draw_style(line_width=int(args[0]))
-                except (TypeError, ValueError):
-                    pass
+                except (TypeError, ValueError) as e:
+                    report_error("dev_set_line_width", "bad argument %r: %s" % (args, e))
             elif name == "set_system" and len(args) >= 2:
                 try:
                     _set_system_param(str(args[0]), args[1])   # HALCON set_system(param, value)
-                except (TypeError, ValueError):
-                    pass
+                except (TypeError, ValueError) as e:            # fail-closed AND visible
+                    report_error("set_system", "set_system (%r, %r): %s" % (args[0], args[1], e))
+            elif name == "set_system":
+                report_error("set_system", "set_system needs (parameter, value), got %r" % (args,))
             elif name == "dev_open_window":
                 open_slot += 1
                 try:
