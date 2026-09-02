@@ -1,45 +1,34 @@
 ---
-op: abcd_trace
+op: tolerance_analysis
 dim: optics
-category: geometric
-in: matrix
+category: design
+in: table
 out: table
-examples: [optics_imaging]
+examples: [lens_design_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
-# abcd_trace — OPTICS `geometric` op
+# tolerance_analysis — OPTICS `design` op
 
-- **データ種**: `matrix` → `table`
-- **呼び出し**: `import optics; optics.abcd_trace(matrix, height_mm=1.0, angle_mrad=0.0)` (または `opsoptics.get("abcd_trace")`)
+- **データ種**: `table` → `table`
+- **呼び出し**: `import raytrace; raytrace.tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, rings=6)` (または `opsoptics.get("tolerance_analysis")`)
 
 ## 使い方
 
-Propagate one paraxial ray through an ABCD matrix.
+Monte-Carlo manufacturing tolerances + per-parameter sensitivities (``table``).
 
-Applies ``[y', theta'] = M @ [y, theta]`` with ``y`` in millimetres and
-``theta`` in radians internally; the API speaks **milliradians** because a
-paraxial angle is small by definition and mrad keeps the numbers readable.
-
-Returns a dict: ``height_mm`` and ``angle_mrad`` of the outgoing ray ·
-``determinant`` of *M* (``= n_in/n_out``; a value that is not 1 for a
-same-medium system means the matrix is wrong, so it is reported rather than
-assumed) · ``imaging`` — True when ``|B| <= 1e-12 * (1 + |A| + |C| + |D|)``,
-i.e. the output height does not depend on the input angle, which is the
-definition of a conjugate (image) plane.
-
-Ground truth it reproduces exactly: free space of length ``d`` gives
-``y' = y + d*theta`` and ``theta' = theta``; a thin lens leaves ``y``
-untouched and bends the ray by ``-y/f``; a ray parallel to the axis
-(``angle_mrad = 0``) entering a lens crosses the axis exactly one focal
-length behind it.
-
-**Raises** ``ValueError``: *matrix* is not ``(2, 2)``, is complex or masked,
-holds NaN/Inf, or has a determinant of 0 (a system that collapses every ray
-to a point is not a ray-transfer matrix); non-finite *height_mm* /
-*angle_mrad*; a result that overflowed float64.
+*tolerances*: ``{"radius_pct": 0.5, "thickness_mm": 0.05, "index": 0.001,
+"decenter_mm": 0.02, "tilt_deg": 0.05}`` — each perturbation is drawn
+uniformly in ``±tol`` for every surface independently, *trials* times.
+Returns the distribution of ``efl`` and ``rms_spot`` (mean, std, p5, p95,
+worst), the nominal values, and ``sensitivity``: the change of EFL and RMS
+spot per **one full tolerance** of each parameter on each surface (central
+finite difference), so you can see which surface's radius or tilt drives
+the yield. Deterministic for a given *seed*. Spots are sampled to 99 % of the
+pupil radius so that edge vignetting by a tilt cannot masquerade as an
+improvement (``n_vignetted`` would otherwise jump on the nominal design).
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -65,17 +54,17 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- [optics_imaging](../../../../examples/optics_imaging.py) — `py -3.11 examples/optics_imaging.py`
+- [lens_design_demo](../../../../examples/lens_design_demo.py) — `py -3.11 examples/lens_design_demo.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[abcd_matrix](abcd_matrix.md) · [wavefront_stats](../imaging/wavefront_stats.md) · [paraxial_trace](../design/paraxial_trace.md) · [seidel_coefficients](../design/seidel_coefficients.md) · [spot_stats](../design/spot_stats.md) · [tolerance_analysis](../design/tolerance_analysis.md) · [wavefront_from_opd](../design/wavefront_from_opd.md) · [spot_diagram](../design/spot_diagram.md)
+[abcd_matrix](../geometric/abcd_matrix.md) · [wavefront_stats](../imaging/wavefront_stats.md) · [paraxial_trace](paraxial_trace.md) · [seidel_coefficients](seidel_coefficients.md) · [spot_stats](spot_stats.md) · [wavefront_from_opd](wavefront_from_opd.md) · [spot_diagram](spot_diagram.md) · [ray_fan](ray_fan.md)
 
-## 同カテゴリ(`geometric`)
+## 同カテゴリ(`design`)
 
-[thin_lens](thin_lens.md) · [abcd_matrix](abcd_matrix.md) · [depth_of_field](depth_of_field.md) · [relative_illumination](relative_illumination.md)
+[lens_system](lens_system.md) · [thick_lens](thick_lens.md) · [glass](glass.md) · [example_system](example_system.md) · [paraxial_trace](paraxial_trace.md) · [seidel_coefficients](seidel_coefficients.md) · [spot_stats](spot_stats.md) · [wavefront_from_opd](wavefront_from_opd.md)
 
 ---
-*Provenance: optics.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
+*Provenance: raytrace.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
 
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

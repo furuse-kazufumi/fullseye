@@ -6,6 +6,7 @@
 <p style="margin:2px 0 2px 12px">• <b>wave(4)</b> — <code style="color:#22d3bf">airy_pattern</code> / <code style="color:#22d3bf">angular_spectrum_propagate</code> / <code style="color:#22d3bf">fraunhofer_pattern</code> / <code style="color:#22d3bf">gaussian_beam</code>: 円形瞳の回折限界 PSF、角スペクトル法による<b>厳密な</b>自由空間伝搬(近軸近似をしない)、開口の遠方回折像、ガウシアンビームの q パラメータ伝搬。</p>
 <p style="margin:2px 0 2px 12px">• <b>imaging(3)</b> — <code style="color:#22d3bf">psf_to_mtf</code> / <code style="color:#22d3bf">mtf_diffraction</code> / <code style="color:#22d3bf">wavefront_stats</code>: 測った点像を分解能曲線に変える PSF → OTF → MTF の鎖、それと突き合わせる回折限界の閉形式、Zernike フィットから出す波面統計(RMS / PV / Strehl)。</p>
 <p style="margin:2px 0 2px 12px">• <b>polarization(6)</b> — <code style="color:#22d3bf">jones_element</code> / <code style="color:#22d3bf">jones_apply</code> / <code style="color:#22d3bf">stokes_from_jones</code> / <code style="color:#22d3bf">mueller_element</code> / <code style="color:#22d3bf">mueller_apply</code> / <code style="color:#22d3bf">stokes_analyze</code>: 完全偏光を扱う Jones 計算と、<b>部分偏光</b>まで運べる Stokes/Mueller 計算(偏光カメラが実際に測るのは後者)。</p>
+<p style="margin:2px 0 2px 12px">• **design(12、実体は <code style="color:#22d3bf">raytrace.py</code>)** — <code style="color:#22d3bf">lens_system</code> / <code style="color:#22d3bf">thick_lens</code> / <code style="color:#22d3bf">glass</code> / <code style="color:#22d3bf">example_system</code> / <code style="color:#22d3bf">paraxial_trace</code> / <code style="color:#22d3bf">spot_diagram</code> / <code style="color:#22d3bf">spot_stats</code> / <code style="color:#22d3bf">ray_fan</code> / <code style="color:#22d3bf">opd_map</code> / <code style="color:#22d3bf">wavefront_from_opd</code> / <code style="color:#22d3bf">seidel_coefficients</code> / <code style="color:#22d3bf">tolerance_analysis</code>: 上の 4 カテゴリが<b>近軸・閉形式</b>なのに対し、こちらは球面/円錐面の逐次処方に<b>実光線</b>を通す設計層(下の「設計(design)」節)。</p>
 <p>データ種は既存語彙の再利用が基本です: <b>table</b>(dict、計測値の束/ABCD 素子リスト)、<b>matrix</b>(ABCD 2x2・Mueller 4x4 の実行列 — <code style="color:#22d3bf">mat_svd</code> や <code style="color:#22d3bf">mat_cond</code> にそのまま流せる)、<b>image2d</b>(PSF・開口・強度像)、<b>cimage</b>(2-D complex = 複素場と Jones 行列)、<b>pairs</b>((n,2) の曲線 = MTF・cos⁴)。新語は 2 つだけ、<b>jones</b>(長さ 2 固定の complex ベクトル)と <b>stokes</b>(長さ 4 固定 + 偏光度 ≤ 1 の物理制約)で、これは <code style="color:#22d3bf">signal</code> / <code style="color:#22d3bf">cpoints</code> に相乗りさせると「256 点の正弦波を Stokes 枠に渡せる」という<b>型レベルの嘘</b>になるためです。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">既存 op との棲み分け(重複させていないもの)</h3>
 <p>| やりたいこと | 使う op | 置き場所 |</p>
@@ -63,6 +64,59 @@ print(dof[&quot;depth_mm&quot;], mtf[-1, 0])              # 深度 [mm], カッ�
 blocked = O.jones_apply(O.jones_element(&quot;polarizer&quot;, 90.0)
                         @ O.jones_element(&quot;polarizer&quot;, 0.0), [1.0, 0.0])
 print(abs(blocked).max())                        # 0.0</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">設計(design) — 近軸の先を実光線で</h3>
+<p>上の 4 カテゴリは「設計の出発点」を閉形式で出します。実レンズがそこからどれだけずれるか — 像はどこに結び、どれだけボケ、どの面が原因で、製造ばらつきで歩留まりはどうなるか — は面を 1 枚ずつ<b>実光線</b>で通さないと分かりません。<code style="color:#22d3bf">raytrace.py</code> はそのための逐次光線追跡で、台帳では <code style="color:#22d3bf">opsoptics</code> の <code style="color:#22d3bf">design</code> カテゴリ(12 op)に載ります。全 op の共通入力は <code style="color:#22d3bf">lens_system</code> が返す<b>検証済みの処方(table)</b> です:</p>
+<p style="margin:2px 0 2px 12px">• <b>処方</b>: <code style="color:#22d3bf">lens_system(surfaces, stop, object_mm, wavelength_um, ...)</code>。面は <code style="color:#22d3bf">{&quot;R&quot;, &quot;t&quot;, &quot;n&quot;, &quot;k&quot;, &quot;ap&quot;, &quot;mirror&quot;, &quot;decenter&quot;, &quot;tilt&quot;}</code>(R は曲率中心が +z 側で正、<code style="color:#22d3bf">inf</code> で平面、<code style="color:#22d3bf">k</code> は円錐定数、<code style="color:#22d3bf">n</code> は面の<b>後ろ</b>の媒質 = 数値 / <code style="color:#22d3bf">(n_d, V_d)</code> / <code style="color:#22d3bf">glass</code>)。<code style="color:#22d3bf">thick_lens</code> は空気中の厚肉レンズの閉形式(lensmaker + 主点)、<code style="color:#22d3bf">glass</code> は d 線と F–C 分散から 2 項 Cauchy を張る硝材モデル、<code style="color:#22d3bf">example_system</code> は singlet / doublet / paraboloid / sphere_mirror。</p>
+<p style="margin:2px 0 2px 12px">• <b>近軸</b>: <code style="color:#22d3bf">paraxial_trace</code> → EFL / BFL / FFL / 主点 / 入射・射出瞳 / f 値 / 倍率 / Lagrange 不変量 / 周辺・主光線。</p>
+<p style="margin:2px 0 2px 12px">• <b>実光線</b>: <code style="color:#22d3bf">spot_stats</code>(RMS・幾何スポット半径、口径食本数)/ <code style="color:#22d3bf">spot_diagram</code>(主光線基準の (x, y) pairs)/ <code style="color:#22d3bf">ray_fan</code>(横収差曲線 pairs)。口径食・面外れ・全反射は <b>NaN で報告</b>(黙って切らない)。</p>
+<p style="margin:2px 0 2px 12px">• <b>波面</b>: <code style="color:#22d3bf">opd_map</code>(射出瞳基準球に対する OPD、波数、image2d)→ <code style="color:#22d3bf">match3d.fit_zernike</code> → <code style="color:#22d3bf">optics.wavefront_stats</code> を <code style="color:#22d3bf">wavefront_from_opd</code> が一本に繋ぐ(Zernike 係数・RMS/PV/Strehl・フィット非依存の直接 RMS)。符号は Welford: 補正不足の球面収差が <code style="color:#22d3bf">W040 = +S_I/8</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>三次収差</b>: <code style="color:#22d3bf">seidel_coefficients</code> → 面ごとの S_I…S_V と色収差 C_L / C_T(mm × 8、<code style="color:#22d3bf">waves</code> 併記、<code style="color:#22d3bf">W040 = S_I/8</code> 等の波面換算つき)。小口径の厳密 OPD をフィットすると W040 が 0.3 %、W131 が 1 %(1 deg)で一致し、5 deg では<b>高次が 10 % 上乗せされる</b>(実光線ならではのずれ)。</p>
+<p style="margin:2px 0 2px 12px">• <b>公差</b>: <code style="color:#22d3bf">tolerance_analysis</code> → 半径 % / 厚み mm / 屈折率 / 偏心 mm / 傾き deg を全面独立に一様乱数で振る Monte-Carlo(EFL と rms_spot の mean / std / p5 / p95 / worst)と、面 × パラメータごとの中心差分感度。seed で決定的。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    A[面リスト R/t/n/k/ap] --&gt; B[lens_system 処方 table]
+    G[glass n_d,V_d] --&gt; A
+    B --&gt; C[paraxial_trace EFL/BFL/瞳/f値]
+    B --&gt; D[spot_stats / spot_diagram / ray_fan]
+    B --&gt; E[opd_map 波面 image2d]
+    E --&gt; F[wavefront_from_opd Zernike/Strehl]
+    B --&gt; H[seidel_coefficients 面ごとの S_I..S_V, C_L/C_T]
+    B --&gt; I[tolerance_analysis Monte-Carlo + 感度]
+    C -.thick_lens 閉形式と 1e-9 で一致.- C</pre>
+<p><b>1. singlet を近軸 → スポット → Seidel と流す</b>(検証済み <code style="color:#22d3bf">examples/lens_design_demo.py</code> の筋):</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import raytrace as RT
+
+lens = RT.lens_system()                          # 平凸 BK7 f=100 f/4、絞りは第 1 面
+p = RT.paraxial_trace(lens)
+print(round(p[&quot;efl&quot;], 3), round(p[&quot;bfl&quot;], 3), p[&quot;fno&quot;])      # 100.0 96.704 4.0
+spot = RT.spot_stats(lens)                       # 軸上の RMS スポット半径 [mm]
+se = RT.seidel_coefficients(lens, field=5.0)     # 面ごとの三次収差
+print(round(spot[&quot;rms_radius&quot;], 4), round(se[&quot;waves&quot;][&quot;S_I&quot;] / 8, 2))   # 0.1304 11.29
+assert abs(p[&quot;efl&quot;] - 100.0) &lt; 1e-6 and se[&quot;waves&quot;][&quot;S_I&quot;] &gt; 0            # 補正不足(正)
+assert abs(sum(r[&quot;S_I&quot;] for r in se[&quot;per_surface&quot;]) - se[&quot;total&quot;][&quot;S_I&quot;]) &lt; 1e-12</pre>
+<p><b>2. 放物面鏡は軸上で完全結像(OPD が 0)、同半径の球面鏡はそうでない</b>:</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import raytrace as RT
+
+para = RT.example_system(&quot;paraboloid&quot;)           # R=-200, k=-1, f=100
+sph = RT.example_system(&quot;sphere_mirror&quot;)
+opd = RT.opd_map(para, fill=np.nan)              # 射出瞳基準球に対する OPD [waves]
+print(np.nanmax(np.abs(opd)) &lt; 1e-6)             # True: 無収差(stigmatic)
+print(RT.spot_stats(para)[&quot;rms_radius&quot;] &lt; 1e-9,  # True
+      round(RT.spot_stats(sph)[&quot;rms_radius&quot;], 3))  # 0.119(球面収差)
+assert RT.spot_stats(para, field=1.0)[&quot;rms_radius&quot;] &gt; 0.01     # 軸外はコマ</pre>
+<p><b>3. 公差表 — どの面のどの誤差が効くか</b>:</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import raytrace as RT
+
+tol = RT.tolerance_analysis(RT.lens_system(),
+                            {&quot;radius_pct&quot;: 0.5, &quot;thickness_mm&quot;: 0.05,
+                             &quot;index&quot;: 0.001, &quot;decenter_mm&quot;: 0.02, &quot;tilt_deg&quot;: 0.05},
+                            trials=20, seed=1)
+r = tol[&quot;rms_spot&quot;]
+print(round(tol[&quot;nominal&quot;][&quot;rms_spot&quot;], 4), round(r[&quot;p95&quot;], 4), tol[&quot;failed&quot;])
+top = tol[&quot;sensitivity&quot;][0]                      # |d_rms_spot| の大きい順
+print(top[&quot;surface&quot;], top[&quot;parameter&quot;], round(top[&quot;d_efl&quot;], 3))   # 0 R 0.5
+assert tol[&quot;failed&quot;] == 0 and top[&quot;parameter&quot;] == &quot;R&quot;</pre>
+<p><b>棲み分け</b>: optics = 近軸/波動(閉形式、設計の出発点)、raytrace = 実光線・設計(処方から数値で)。面での反射・屈折のスカラ公式(<code style="color:#22d3bf">match3d.refract</code> 等)を 1 本の光線に使うのは今までどおり match3d、<b>系を通す</b>のが raytrace です。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">アルゴリズムの正典(著者・年)</h3>
 <p style="margin:2px 0 2px 12px">• <b>ガウス結像 / ABCD 行列</b>: Gauss (1841) の近軸結像式、行列光学は Kogelnik &amp; Li, *Laser Beams and Resonators*, Appl. Opt. 5(10), 1966(ガウシアンビームの q パラメータもここ)。</p>
 <p style="margin:2px 0 2px 12px">• <b>被写界深度・過焦点距離</b>: 錯乱円モデルの標準式(例 Ray, *Applied Photographic Optics*, 3rd ed., 2002)。</p>

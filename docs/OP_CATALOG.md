@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(57 例)
+### 2-D 画像/信号/幾何(58 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -56,6 +56,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **optics_sensing**
 - **光学 op(optics)で検査機を 1 台、紙の上で設計する** — 倍率→焦点距離/物体距離、ABCD 行列で結像確認、回折限界・被写界深度・MTF を要求分解能に対して合否判定する。 `py -3.11 examples/optics_imaging.py`
+- **実光線設計 op(raytrace)で singlet と doublet を比べる** — 処方(lens_system)から近軸表・面ごとの Seidel・軸上/5 deg のスポット RMS・OPD→Zernike・Monte-Carlo 公差 p95 を出し、閉形式(thick_lens / 放物面鏡の完全結像)と突き合わせる。 `py -3.11 examples/lens_design_demo.py`
 - **ライトフィールド 17 op で plenoptic 検査機を通す** — 画素/MLA ピッチから角度・空間分解能と基線長を設計し、センサ生データ→EPI→深度まで復元して既知深度と照合。 `py -3.11 examples/lightfield_depth.py`
 - **光子計数・時間分解 op(photoncount)で単一光子距離計を仕立てる** — SPAD の √N 雑音・デッドタイム・パイルアップを持つヒストグラムから距離と蛍光寿命を出し、17 op を閉形式 GT と照合。 `py -3.11 examples/photon_timeresolved.py`
 - **コヒーレンス走査干渉(interferometry)で段差表面を測る** — 位相シフト法(fringe)が 2π 周期で壊れる段差を、同じ表面で白色干渉の包絡線ピークから正しく測り、両者の差を数値に出す。 `py -3.11 examples/coherence_scanning.py`
@@ -1804,10 +1805,24 @@ _計 26 ops / 4 categories。_
 - `stat_zscore` (`signal → signal`) — Standardise a 1-D sample: ``(x - mean) / std`` (population ``ddof=0``).
 
 ## Optics operators(opsoptics)by category
-_計 18 ops / 4 categories。_
+_計 30 ops / 5 categories。_
 
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)。光線と面の相互作用(reflect / refract / fresnel_reflectance)と Zernike フィット(fit_zernike)は match3d、PSF 復元は volrestore、FFT は complexops、位相シフト干渉法は fringe が持ち場なので重複させていない。
+
+### design(12)
+- `lens_system` (` → table`) — Build a validated sequential prescription (the ``table`` every other op consumes).
+- `thick_lens` (` → table`) — Closed-form thick lens in air: EFL, back/front focal lengths, principal points.
+- `glass` (` → table`) — A dispersive medium from its d-line index *nd* and Abbe number *vd*.
+- `example_system` (` → table`) — A named example: ``"singlet"`` (plano-convex BK7, f≈100), ``"doublet"``
+- `paraxial_trace` (`table → table`) — First-order properties of the prescription: focal lengths, pupils, image.
+- `seidel_coefficients` (`table → table`) — Third-order (Seidel) aberration sums per surface and total (``table``).
+- `spot_stats` (`table → table`) — RMS / geometric spot radius (mm) and centroid for one field point (``table``).
+- `tolerance_analysis` (`table → table`) — Monte-Carlo manufacturing tolerances + per-parameter sensitivities (``table``).
+- `wavefront_from_opd` (`table → table`) — OPD map → Zernike coefficients (waves) → RMS / PV / Strehl, in one call (``table``).
+- `spot_diagram` (`table → pairs`) — Transverse ray intersections on the image plane for one field point.
+- `ray_fan` (`table → pairs`) — Transverse ray aberration along one pupil diameter (``pairs``).
+- `opd_map` (`table → image2d`) — Optical path difference over the exit pupil, in waves (``image2d``).
 
 ### geometric(5)
 - `thin_lens` (` → table`) — Gaussian thin-lens imaging: where the image lands and how big it is.

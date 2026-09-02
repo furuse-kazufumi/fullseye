@@ -1,36 +1,14 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
-<h2 style="color:#f5a524;margin:0 0 4px 0">depth_of_field — OPTICS <code style="color:#22d3bf">geometric</code> op</h2>
+<h2 style="color:#f5a524;margin:0 0 4px 0">thick_lens — OPTICS <code style="color:#22d3bf">design</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>table`</p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import optics; optics.depth_of_field(focal_mm=50.0, f_number=8.0, subject_mm=2000.0, coc_mm=0.03)</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;depth_of_field&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import raytrace; raytrace.thick_lens(R1=50.0, R2=-50.0, thickness=5.0, index=1.5168)</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;thick_lens&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>Photographic depth of field: near limit, far limit and hyperfocal distance.</p>
-<p>The classical circle-of-confusion model. With `<code style="color:#22d3bf">H = f^2/(N*c) + f</code>` the</p>
-<p>hyperfocal distance and `<code style="color:#22d3bf">s</code>` the focused subject distance:</p>
-<p>`<code style="color:#22d3bf">near = s*(H - f) / (H + s - 2f)</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">far = s*(H - f) / (H - s)</code>`.</p>
-<p>Returns a dict: `<code style="color:#22d3bf">near_mm</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">far_mm</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">depth_mm</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">far - near</code>`) ·</p>
-<p>`<code style="color:#22d3bf">hyperfocal_mm</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">far_is_infinite</code>` (a bool, so a caller never has to</p>
-<p>test for `<code style="color:#22d3bf">inf</code>` by accident).</p>
-<p>**`<code style="color:#22d3bf">far_mm</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">inf</code>` at or beyond the hyperfocal distance, by contract,</p>
-<p>not by accident** — focus at `<code style="color:#22d3bf">H</code><code style="color:#22d3bf"> and everything from </code><code style="color:#22d3bf">H/2</code>` to infinity</p>
-<p>is acceptably sharp, which is the whole point of the hyperfocal distance.</p>
-<p>`<code style="color:#22d3bf">depth_mm</code><code style="color:#22d3bf"> is then </code><code style="color:#22d3bf">inf</code><code style="color:#22d3bf"> too. </code><code style="color:#22d3bf">far_is_infinite</code>` says so explicitly,</p>
-<p>and the identity `<code style="color:#22d3bf">near(H) == H/2</code>` is exact (verified in the tests).</p>
-<p>*coc_mm* is the acceptable circle of confusion <b>in the image plane</b>: the</p>
-<p>35 mm convention is 0.03 mm, a machine-vision rule of thumb is 1-2 pixel</p>
-<p>pitches. It is a *choice*, not a property of the lens — halve it and the</p>
-<p>depth of field halves with it, which is why two depth-of-field calculators</p>
-<p>disagree.</p>
-<p>Ground truth: `<code style="color:#22d3bf">f = 50, N = 8, c = 0.03</code><code style="color:#22d3bf"> gives </code><code style="color:#22d3bf">H = 10466.67 mm</code>`; at</p>
-<p>`<code style="color:#22d3bf">s = H</code><code style="color:#22d3bf"> the near limit is exactly </code><code style="color:#22d3bf">H/2 = 5233.33 mm</code>` and the far limit</p>
-<p>is `<code style="color:#22d3bf">inf</code><code style="color:#22d3bf">; the near/far limits bracket the subject for every </code><code style="color:#22d3bf">s &lt; H</code>`.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-positive or non-finite *focal_mm*,</p>
-<p>*f_number*, *subject_mm*, *coc_mm*; `<code style="color:#22d3bf">subject_mm &lt;= focal_mm</code>` (an object</p>
-<p>inside the front focal length cannot be imaged by this lens — see</p>
-<p>:func:<code style="color:#22d3bf">thin_lens</code>); a hyperfocal distance that is not greater than the</p>
-<p>focal length (a degenerate combination of `<code style="color:#22d3bf">N</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">c</code>`).</p>
-<p>Paraxial, thin, and blur-circle based: it ignores diffraction, which for</p>
-<p>small apertures becomes the real resolution limit — compare with</p>
-<p>:func:<code style="color:#22d3bf">mtf_diffraction</code> before trusting an `<code style="color:#22d3bf">N = 22</code>` calculation.</p>
+<p>Closed-form thick lens in air: EFL, back/front focal lengths, principal points.</p>
+<p>`<code style="color:#22d3bf">1/f = (n−1)[1/R1 − 1/R2 + (n−1)·t/(n·R1·R2)]</code>` (lensmaker), rear principal</p>
+<p>point `<code style="color:#22d3bf">pp_rear = −f(n−1)t/(n·R1)</code>` from the rear vertex, front</p>
+<p>`<code style="color:#22d3bf">pp_front = −f(n−1)t/(n·R2)</code><code style="color:#22d3bf"> from the front vertex, </code><code style="color:#22d3bf">bfl = f + pp_rear</code>`,</p>
+<p>`<code style="color:#22d3bf">ffl = −f + pp_front</code><code style="color:#22d3bf">. Same sign convention as :func:</code>lens_system`; agrees</p>
+<p>with :func:<code style="color:#22d3bf">paraxial_trace</code> to machine precision (tested).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>
@@ -47,12 +25,11 @@
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:optics_imaging">optics_imaging</a> — <code style="color:#22d3bf">py -3.11 examples/optics_imaging.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lens_design_demo">lens_design_demo</a> — <code style="color:#22d3bf">py -3.11 examples/lens_design_demo.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a> · <a style="color:#22d3bf" href="opoptics:spot_diagram">spot_diagram</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">geometric</code>)</h3>
-<p><a style="color:#22d3bf" href="opoptics:thin_lens">thin_lens</a> · <a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:abcd_trace">abcd_trace</a> · <a style="color:#22d3bf" href="opoptics:relative_illumination">relative_illumination</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">design</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:lens_system">lens_system</a> · <a style="color:#22d3bf" href="opoptics:glass">glass</a> · <a style="color:#22d3bf" href="opoptics:example_system">example_system</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<p>*Provenance: optics.py — OPTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>*Provenance: raytrace.py — OPTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
 <p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

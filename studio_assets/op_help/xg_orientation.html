@@ -8,6 +8,13 @@
 <p>Angle is measured from the +x (column) axis; multiply the result by 180 to</p>
 <p>recover degrees. Line orientation is defined mod 180, so a line at theta and</p>
 <p>theta+180 map to the same value.</p>
+<p>Discontinuity (inherent, documented): a line orientation lives on a circle of</p>
+<p>180 degrees, and this op unrolls it to [0, 1), so the wrap sits at HORIZONTAL —</p>
+<p>a line tilted +0.001 deg returns ~0.0 while -0.001 deg returns ~0.9999. Any</p>
+<p>single-scalar unrolling has a seam somewhere; callers that need continuity</p>
+<p>across horizontal should compare orientations on the doubled angle</p>
+<p>(cos 2*theta, sin 2*theta) or take the difference mod 1. The closing point of a</p>
+<p>closed contour is not double-counted in the PCA.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

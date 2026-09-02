@@ -95,6 +95,78 @@ blocked = O.jones_apply(O.jones_element("polarizer", 90.0)
 print(abs(blocked).max())                        # 0.0
 ```
 
+## 設計(design) — 近軸の先を実光線で
+
+上の 4 カテゴリは「設計の出発点」を閉形式で出します。実レンズがそこからどれだけずれるか — 像はどこに結び、どれだけボケ、どの面が原因で、製造ばらつきで歩留まりはどうなるか — は面を 1 枚ずつ**実光線**で通さないと分かりません。`raytrace.py` はそのための逐次光線追跡で、台帳では `opsoptics` の `design` カテゴリ(12 op)に載ります。全 op の共通入力は `lens_system` が返す**検証済みの処方(table)** です:
+
+- **処方**: `lens_system(surfaces, stop, object_mm, wavelength_um, ...)`。面は `{"R", "t", "n", "k", "ap", "mirror", "decenter", "tilt"}`(R は曲率中心が +z 側で正、`inf` で平面、`k` は円錐定数、`n` は面の**後ろ**の媒質 = 数値 / `(n_d, V_d)` / `glass`)。`thick_lens` は空気中の厚肉レンズの閉形式(lensmaker + 主点)、`glass` は d 線と F–C 分散から 2 項 Cauchy を張る硝材モデル、`example_system` は singlet / doublet / paraboloid / sphere_mirror。
+- **近軸**: `paraxial_trace` → EFL / BFL / FFL / 主点 / 入射・射出瞳 / f 値 / 倍率 / Lagrange 不変量 / 周辺・主光線。
+- **実光線**: `spot_stats`(RMS・幾何スポット半径、口径食本数)/ `spot_diagram`(主光線基準の (x, y) pairs)/ `ray_fan`(横収差曲線 pairs)。口径食・面外れ・全反射は **NaN で報告**(黙って切らない)。
+- **波面**: `opd_map`(射出瞳基準球に対する OPD、波数、image2d)→ `match3d.fit_zernike` → `optics.wavefront_stats` を `wavefront_from_opd` が一本に繋ぐ(Zernike 係数・RMS/PV/Strehl・フィット非依存の直接 RMS)。符号は Welford: 補正不足の球面収差が `W040 = +S_I/8`。
+- **三次収差**: `seidel_coefficients` → 面ごとの S_I…S_V と色収差 C_L / C_T(mm × 8、`waves` 併記、`W040 = S_I/8` 等の波面換算つき)。小口径の厳密 OPD をフィットすると W040 が 0.3 %、W131 が 1 %(1 deg)で一致し、5 deg では**高次が 10 % 上乗せされる**(実光線ならではのずれ)。
+- **公差**: `tolerance_analysis` → 半径 % / 厚み mm / 屈折率 / 偏心 mm / 傾き deg を全面独立に一様乱数で振る Monte-Carlo(EFL と rms_spot の mean / std / p5 / p95 / worst)と、面 × パラメータごとの中心差分感度。seed で決定的。
+
+```mermaid
+flowchart LR
+    A[面リスト R/t/n/k/ap] --> B[lens_system 処方 table]
+    G[glass n_d,V_d] --> A
+    B --> C[paraxial_trace EFL/BFL/瞳/f値]
+    B --> D[spot_stats / spot_diagram / ray_fan]
+    B --> E[opd_map 波面 image2d]
+    E --> F[wavefront_from_opd Zernike/Strehl]
+    B --> H[seidel_coefficients 面ごとの S_I..S_V, C_L/C_T]
+    B --> I[tolerance_analysis Monte-Carlo + 感度]
+    C -.thick_lens 閉形式と 1e-9 で一致.- C
+```
+
+**1. singlet を近軸 → スポット → Seidel と流す**(検証済み `examples/lens_design_demo.py` の筋):
+
+```python
+import raytrace as RT
+
+lens = RT.lens_system()                          # 平凸 BK7 f=100 f/4、絞りは第 1 面
+p = RT.paraxial_trace(lens)
+print(round(p["efl"], 3), round(p["bfl"], 3), p["fno"])      # 100.0 96.704 4.0
+spot = RT.spot_stats(lens)                       # 軸上の RMS スポット半径 [mm]
+se = RT.seidel_coefficients(lens, field=5.0)     # 面ごとの三次収差
+print(round(spot["rms_radius"], 4), round(se["waves"]["S_I"] / 8, 2))   # 0.1304 11.29
+assert abs(p["efl"] - 100.0) < 1e-6 and se["waves"]["S_I"] > 0            # 補正不足(正)
+assert abs(sum(r["S_I"] for r in se["per_surface"]) - se["total"]["S_I"]) < 1e-12
+```
+
+**2. 放物面鏡は軸上で完全結像(OPD が 0)、同半径の球面鏡はそうでない**:
+
+```python
+import numpy as np
+import raytrace as RT
+
+para = RT.example_system("paraboloid")           # R=-200, k=-1, f=100
+sph = RT.example_system("sphere_mirror")
+opd = RT.opd_map(para, fill=np.nan)              # 射出瞳基準球に対する OPD [waves]
+print(np.nanmax(np.abs(opd)) < 1e-6)             # True: 無収差(stigmatic)
+print(RT.spot_stats(para)["rms_radius"] < 1e-9,  # True
+      round(RT.spot_stats(sph)["rms_radius"], 3))  # 0.119(球面収差)
+assert RT.spot_stats(para, field=1.0)["rms_radius"] > 0.01     # 軸外はコマ
+```
+
+**3. 公差表 — どの面のどの誤差が効くか**:
+
+```python
+import raytrace as RT
+
+tol = RT.tolerance_analysis(RT.lens_system(),
+                            {"radius_pct": 0.5, "thickness_mm": 0.05,
+                             "index": 0.001, "decenter_mm": 0.02, "tilt_deg": 0.05},
+                            trials=20, seed=1)
+r = tol["rms_spot"]
+print(round(tol["nominal"]["rms_spot"], 4), round(r["p95"], 4), tol["failed"])
+top = tol["sensitivity"][0]                      # |d_rms_spot| の大きい順
+print(top["surface"], top["parameter"], round(top["d_efl"], 3))   # 0 R 0.5
+assert tol["failed"] == 0 and top["parameter"] == "R"
+```
+
+**棲み分け**: optics = 近軸/波動(閉形式、設計の出発点)、raytrace = 実光線・設計(処方から数値で)。面での反射・屈折のスカラ公式(`match3d.refract` 等)を 1 本の光線に使うのは今までどおり match3d、**系を通す**のが raytrace です。
+
 ## アルゴリズムの正典(著者・年)
 
 - **ガウス結像 / ABCD 行列**: Gauss (1841) の近軸結像式、行列光学は Kogelnik & Li, *Laser Beams and Resonators*, Appl. Opt. 5(10), 1966(ガウシアンビームの q パラメータもここ)。

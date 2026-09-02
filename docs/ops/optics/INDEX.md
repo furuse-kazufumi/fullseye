@@ -1,4 +1,4 @@
-# OPTICS operator help — 18 ops in 4 categories
+# OPTICS operator help — 30 ops in 5 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -7,6 +7,10 @@
 - [optics_imaging](guides/optics_imaging.md) — 光学(レンズ・回折・偏光) — 使い方ガイド
 
 ## カテゴリ
+
+### design (12)
+
+[example_system](design/example_system.md) · [glass](design/glass.md) · [lens_system](design/lens_system.md) · [opd_map](design/opd_map.md) · [paraxial_trace](design/paraxial_trace.md) · [ray_fan](design/ray_fan.md) · [seidel_coefficients](design/seidel_coefficients.md) · [spot_diagram](design/spot_diagram.md) · [spot_stats](design/spot_stats.md) · [thick_lens](design/thick_lens.md) · [tolerance_analysis](design/tolerance_analysis.md) · [wavefront_from_opd](design/wavefront_from_opd.md)
 
 ### geometric (5)
 
