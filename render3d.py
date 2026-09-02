@@ -287,7 +287,7 @@ def _default_view(V, width, height):
 # --------------------------------------------------------------------------- #
 # rasteriser (z-buffer)                                                       #
 # --------------------------------------------------------------------------- #
-def render_mesh(V, F, pose=None, intrinsics=None, width: int = 256,
+def render_mesh(V, F, pose=None, intrinsics=None, width: int = 256, attributes: bool = False,
                 height: int = 256, background=np.inf) -> dict:
     """Rasterise a triangle mesh to a depth image, silhouette and normal map.
 
