@@ -269,6 +269,28 @@ def part7_light_and_shadow():
                                  diffuse=(1.0, 1.0, 1.0)).max()
         worst = max(worst, abs(got - np.cos(th)))
         print(f"   法線を {deg:>4.0f}° 傾けると {got:.6f}(閉形式 cosθ = {np.cos(th):.6f})")
+    # 法線マップは画像として保存されるので、光に渡す前に**復号**が要る。
+    yy, xx = np.mgrid[0:33, 0:33].astype(np.float64)
+    u, v = (xx - 16.0) / 20.0, (yy - 16.0) / 20.0
+    dome = np.stack([u, v, np.sqrt(np.maximum(1.0 - u * u - v * v, 0.04))], axis=-1)
+    dome /= np.linalg.norm(dome, axis=2, keepdims=True)      # 半球 = 構造のある法線
+    decoded = G.normal_map_decode(0.5 * dome + 0.5)          # 標準の n = 2c - 1
+    d_dec = float(np.abs(decoded - dome).max())
+    d_unit = float(np.abs(np.linalg.norm(decoded, axis=2) - 1.0).max())
+    dome_lit = G.normal_map_shade(decoded, (0.0, 0.0, 1.0), ambient=0.0,
+                                  diffuse=(1.0, 1.0, 1.0))
+    d_shade = float(np.abs(dome_lit[..., 0] - dome[..., 2]).max())
+    print(f"   normal_map_decode: 半球の法線を [0,1] に符号化 → 復号して "
+          f"最大差 {d_dec:.1e}、長さの誤差 {d_unit:.1e}")
+    print(f"   復号した半球を正面から照らすと、明るさは法線の z 成分そのもの: "
+          f"最大差 {d_shade:.1e}(中心 {dome_lit[16, 16, 0]:.6f} / "
+          f"隅 {dome_lit[0, 0, 0]:.6f})")
+    try:
+        G.normal_map_decode(np.full((4, 4, 3), 0.5))
+        print("   [FAIL] ちょうど中間灰(長さ 0)が拒否されなかった")
+        return False
+    except ValueError as exc:
+        print(f"   ちょうど中間灰は拒否(向きを捏造しない): {str(exc)[:70]}")
     lit = G.radial_light(41, 41, 20, 20, 10.0, intensity=0.8, falloff="smooth",
                          color=(1.0, 1.0, 1.0))
     print(f"   radial_light 中心 {lit[20, 20, 0]:.15f}(= intensity)/ "
