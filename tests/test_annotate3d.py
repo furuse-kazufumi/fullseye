@@ -156,9 +156,7 @@ def test_bad_pose_intrinsics_and_flags_are_refused():
     with pytest.raises(ValueError, match="zero vector"):
         T.annotate3d_scale_bar(img, (0.0, 0.0, 0.0), (0.0, 0.0, 0.0), 1.0, pose, K)
     with pytest.raises(ValueError, match="does not match"):
-        T.project_anchors([(0.0, 0.0, 0.0)], pose, K, depth=np.ones((H + 1, W)),
-                          shape=(H, W)) if False else T.annotate3d_label(
-            img, "x", (0.0, 0.0, 0.0), pose, K, depth=np.ones((H + 1, W)))
+        T.annotate3d_label(img, "x", (0.0, 0.0, 0.0), pose, K, depth=np.ones((H + 1, W)))
     with pytest.raises(ValueError, match="max must be >= min"):
         T.annotate3d_bbox(img, ((1.0, 1.0, 1.0), (0.0, 0.0, 0.0)), pose, K)
     with pytest.raises(ValueError, match="same pixel"):
