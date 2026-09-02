@@ -167,6 +167,52 @@ assert tol["failed"] == 0 and top["parameter"] == "R"
 
 **棲み分け**: optics = 近軸/波動(閉形式、設計の出発点)、raytrace = 実光線・設計(処方から数値で)。面での反射・屈折のスカラ公式(`match3d.refract` 等)を 1 本の光線に使うのは今までどおり match3d、**系を通す**のが raytrace です。
 
+## 結像シミュレーション(imaging_sim) — 設計したレンズで撮る
+
+「擬似物理空間に光学系を組み、AI 学習用の欠陥画像を生成したい」という要望の出口が `lensimage.py`(台帳では `opsoptics` の `imaging_sim` カテゴリ、4 op)です。処方(`lens_system` の table)から**センサが記録する画像**まで通します:
+
+- **PSF**: `psf_from_opd(system, field, size, pixel_pitch_um, oversample)` — 実収差瞳の回折 PSF。`raytrace.opd_samples` の OPD(波数)から瞳関数 `P = mask·exp(i2πW)` を作り、ゼロ詰め FFT の `|FFT(P)|²`(インコヒーレント結像)。像面のサンプル間隔は `λ·F#/oversample`(`F# = 1/(2·NA_image)`、`paraxial_trace` から)。`size=None` は瞳の位相を 0.4 波/サンプル以下に保つ格子を自動で選び、明示 `size` がエイリアスするなら拒否します。`pixel_pitch_um` を与えると微細 PSF を**画素面積で積分**(点サンプルではない)。`psf_field_grid` は複数視野の PSF と Strehl(無収差ピークとの比)・RMS スポットを表で返します。
+- **歪曲**: `distortion_map(system, image_size, pixel_pitch_um, fields)` — 各視野の実主光線像高 vs 近軸 `f·tanθ`(有限物体は `m·H`)、`distortion_pct`(負 = 樽型)、奇数次多項式フィット、そして**実センサ画素ごとに「理想像のどの座標を見るか」の逆写像格子**(`grid_rows` / `grid_cols`、`map_coordinates` 用)。
+- **描画**: `render_through_lens(image, system, pixel_pitch_um, field_of_view, zones, noise, seed, illumination)` — (a) 理想像を逆写像で歪曲、(b) `zones×zones` タイルの中心視野ごとに画素積分 PSF(+y 視野の PSF をタイル方位へ回転)で畳み込み、テント重みで線形ブレンド(継ぎ目なし)、(c) 周辺光量 = **追跡した光線束の到達率(口径食)× cos⁴**(`"traced"`、既定)/ `"cos4"` / `"none"`、(d) センサ: 露光 × full_well で電子数 → ショット雑音(`photoncount.photon_sample`)→ 読出雑音 → `bits` に量子化。`noise=None` は雑音なしの実数(決定的)。
+- **データセット**: `defect_dataset(n, system, size, kinds, pixel_pitch_um, noise, seed, out_dir)` — `defectgen` の傷/孔食/割れ/しみを `surface_texture` 背景に合成してレンズ越しに描き、**マスクは同じ歪曲だけ通す**(ぼかさない)ので注釈が像に揃う。`out_dir` で PNG と COCO 風 `annotations.json`。
+
+グラウンドトゥルース(`tests/test_lensimage.py`): 無収差瞳(singlet を 1 mm 絞り)は Airy — 第 1 暗環 1.22·λ·F# の 0.1 % 以内、暗環内エネルギー 83.8 %。f/4 singlet(球面収差 11 波)の Strehl 0.011。放物面鏡の歪曲 < 1e-7 %、singlet は樽型 −0.065 %(15 deg)。δ 画像を放物面鏡で描くと画素積分 Airy PSF と 1e-12 で一致。傷マスクの歪曲後 IoU 0.77。
+
+**1. PSF・Strehl・歪曲を singlet と doublet で見比べる**(検証済み `examples/lens_defect_dataset_demo.py` の筋):
+
+```python
+import raytrace as RT
+import lensimage
+
+sg, db = RT.example_system("singlet"), RT.example_system("doublet")
+psf = lensimage.psf_from_opd(sg, pixel_pitch_um=5.5)      # 画素積分 PSF、和 = 1
+print(psf.shape, round(float(psf.sum()), 6))
+g = lensimage.psf_field_grid(db, fields=(0.0, 4.0))
+print([round(s, 4) for s in g["strehl"]], [round(r, 4) for r in g["rms_spot_mm"]])
+d = lensimage.distortion_map(sg, fields=[0.0, 5.0, 10.0, 15.0])
+print([round(v, 4) for v in d["distortion_pct"]])          # 0, ..., -0.0649 (樽型)
+assert d["distortion_pct"][-1] < 0.0
+```
+
+**2. 欠陥画像を doublet 越しに 2 枚作り、注釈が像に揃っていることを確かめる**:
+
+```python
+import numpy as np
+import raytrace as RT
+import lensimage
+
+recs = lensimage.defect_dataset(2, system=RT.example_system("doublet"),
+                                size=(96, 96), seed=1)  # out_dir=... で PNG + annotations.json
+r = recs[0]
+print(r["image"].shape, r["mask"].dtype, [(d["kind"], d["bbox"]) for d in r["defects"]])
+print({k: round(v, 4) for k, v in r["lens"].items()})   # efl / fno / rms_spot / 歪曲
+assert r["image"].shape == r["mask"].shape and r["mask"].any()
+same = lensimage.defect_dataset(2, system=RT.example_system("doublet"), size=(96, 96), seed=1)
+assert np.array_equal(r["image"], same[0]["image"])       # seed で再現
+```
+
+**正直な限界**: 単色・インコヒーレント結像(色ごとの PSF が要るなら波長を変えて呼び足し合わせる)。視野依存 PSF は `zones²` 点の線形補間で、軸外 PSF は +y 視野の PSF をタイル方位へ回した近似(回転対称な処方が前提 — 偏心・傾きのある処方は +y の PSF のみ)。周辺光量は光線の到達数 × cos⁴ で、瞳収差の重みは入っていません。センサは線形・一様の雑音モデルのみ(クロストーク・PRNU・カラーフィルタなし)。
+
 ## アルゴリズムの正典(著者・年)
 
 - **ガウス結像 / ABCD 行列**: Gauss (1841) の近軸結像式、行列光学は Kogelnik & Li, *Laser Beams and Resonators*, Appl. Opt. 5(10), 1966(ガウシアンビームの q パラメータもここ)。
