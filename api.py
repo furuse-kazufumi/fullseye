@@ -1543,6 +1543,10 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
     (same as evolution champions) and only faithful ops go to the GPU, so task
     metrics are preserved (tests/test_accel_bridge.py).
 
+    ``fast`` (default ``None`` = ``FULLSEYE_FAST``, i.e. off): as in :func:`apply`,
+    but for the whole CPU chain — each stage that has a parity-gated cv2 twin in
+    ``fast.py`` runs it. Ignored on the GPU path (the bridge is already the fast one).
+
     ``on_error``: as in :func:`apply`; fallbacks are attributed per stage.
     """
     policy = _policy(on_error)
