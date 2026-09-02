@@ -1080,19 +1080,26 @@ def _b_sorted_xy(n_extra):
     return build
 
 
-def _b_two_view_pts(pool, rng):
+def _b_two_view_pts(with_k):
     """``essential_8point`` / ``fundamental_8point`` / ``recover_pose`` は
     **(N,2) の対応点** を取るのに、台帳は ``['image2d','image2d']`` と宣言している。
     triangulate と同じ形の宣言ミスで、絵を渡すと「pts1 は (N,2)」で必ず拒否される。
-    対応は既知の左右ステレオから作る(視差が無いと本質行列が退化する)。"""
-    kp = pool.get("keypoints")
-    if not kp:
-        return None
-    p1 = np.asarray(kp[rng.integers(len(kp))], dtype=float)
-    if len(p1) < 8:
-        return None
-    p2 = p1 + np.array([1.5, 0.0])        # 水平視差 = 左右カメラ
-    return ([p1, p2], {"K1": _K32})
+    対応は既知の左右ステレオから作る(視差が無いと本質行列が退化する)。
+
+    ``fundamental_8point`` だけは **内部標定を取らない**(F は較正不要)。最初は
+    3 つとも ``K1`` を渡してしまい、素の ``TypeError`` になった —— 幾何の意味を
+    型でなく引数名で確かめるべき場所だった。
+    """
+    def build(pool, rng):
+        kp = pool.get("keypoints")
+        if not kp:
+            return None
+        p1 = np.asarray(kp[rng.integers(len(kp))], dtype=float)
+        if len(p1) < 8:
+            return None
+        p2 = p1 + np.array([1.5, 0.0])    # 水平視差 = 左右カメラ
+        return ([p1, p2], {"K1": _K32}) if with_k else ([p1, p2], {})
+    return build
 
 
 def _b_square_matrix(shape):
@@ -1178,9 +1185,9 @@ OP_ARG_BUILDERS = {
     "matrix_to_angle": _b_square_matrix((3, 3)),
     "matrix_to_rot_scale": _b_square_matrix((2, 2)),
     # --- 台帳が image2d と宣言しているが実体は (N,2) 対応点 ------------------ #
-    "essential_8point": _b_two_view_pts,
-    "fundamental_8point": _b_two_view_pts,
-    "recover_pose": _b_two_view_pts,
+    "essential_8point": _b_two_view_pts(True),
+    "fundamental_8point": _b_two_view_pts(False),   # F は較正不要
+    "recover_pose": _b_two_view_pts(True),
 
     "pose_error": _b_pose_error,
     "normal_consistency": _b_normal_consistency,
