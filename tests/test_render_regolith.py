@@ -147,10 +147,11 @@ def test_penumbra_width_scales_with_occluder_distance_times_tan_half_angle():
 
     def expect(height, diam_deg):
         # 円盤光源の角半径 ρ、仰角 a: 地面での半影の全幅 = h [tan(a+ρ) − tan(a−ρ)]。
-        # 円盤を直線の縁が横切るとき、遮蔽率が 5 % / 95 % になるのは端から全幅の 0.19 の
-        # 位置(円弧の切片面積 = 0.05 π)なので 5→95 % の距離は全幅 × 0.62。
+        # 円盤を直線の縁が横切るとき、遮蔽率が 5 % / 95 % になるのは端から直径の 0.098 の
+        # 位置(円の切片面積 acos(1−H) − (1−H)√(1−(1−H)²) = 0.05π ⇒ H = 0.195 半径)
+        # なので 5→95 % の距離は全幅 × 0.80。
         rho = np.deg2rad(diam_deg / 2.0)
-        return 0.62 * height * (np.tan(a + rho) - np.tan(a - rho))
+        return 0.80 * height * (np.tan(a + rho) - np.tan(a - rho))
 
     w1 = width(1.0, 8.0)
     w2 = width(2.0, 8.0)
