@@ -295,6 +295,17 @@ def compile_recipe(recipe: Recipe, profile: str = "industrial") -> ReadyRecipe:
             "recipe uses un-vetted operator(s) %s — only the curated fslib "
             "vocabulary may judge parts; the fail-open evolution registry must not "
             "be a recipe's operator (any profile)" % ", ".join(un_vetted))
+    #    A judging cycle may not touch the file system (docs/FSCRIPT_DECISION.md
+    #    3.1 R4: no import / file search / network in the cycle): frames arrive
+    #    through ``images=``.  ``read_image`` is a Studio convenience, not a
+    #    line operator, so the industrial profile refuses a recipe that calls it.
+    if industrial:
+        unsafe = sorted(n for n in op_names if n in fscript.CYCLE_UNSAFE_BUILTINS)
+        if unsafe:
+            raise FsNotReady(
+                "industrial profile forbids file access inside the inspection cycle "
+                "(%s); feed frames through images=, not read_image "
+                "(docs/FSCRIPT_DECISION.md 3.1 R4)" % ", ".join(unsafe))
     #    Name existence is not availability; the industrial profile has no numpy
     #    fallback, so a missing native backend stops the load.
     fslib_ops = sorted({fscript.FSLIB_OP_FOR_BUILTIN[n] for n in op_names
