@@ -69,12 +69,32 @@ def main():
                              ("blackman", 512, 128), ("boxcar", 256, 128)):
         tr = A.stft(x, fs, win=win, hop=hop, window=window)
         err = float(np.abs(A.istft(tr) - x).max())
+        co = A.stft_cola_check(window, win, hop)
         print(f"   {window:9s} win={win:4d} hop={hop:4d} -> "
-              f"max|x-istft(stft(x))| = {err:.3e}  (NOLA 下限 {tr['nola_min']:.4g})")
+              f"max|x-istft(stft(x))| = {err:.3e}  (NOLA 下限 {tr['nola_min']:.4g}"
+              f"、COLA {str(co['cola']):5s} 重なりの和 {co['constant']:.4f})")
         assert err < 1e-12
+        assert co["cola"] and co["nola"]
     tr = A.stft(x, fs, win=256, hop=255)
     print(f"   hann      win= 256 hop= 255 -> {np.abs(A.istft(tr) - x).max():.3e}"
           f"  (NOLA 下限 {tr['nola_min']:.3e} = 条件数が悪い、と分かる)")
+    # istft は重み付き(NOLA だけを要求する)ので上の往復はどの対でも戻る。素の
+    # overlap-add をする側は COLA が要る。stft_cola_check はその可否を先に出す。
+    good = A.stft_cola_check("blackman", 512, 128)
+    bad = A.stft_cola_check("blackman", 256, 128)
+    print(f"   COLA は「窓」ではなく「窓とホップの**対**」の性質: 同じ blackman が")
+    print(f"     hop=win/4 -> COLA {good['cola']}、和 {good['constant']:.4f}"
+          f"(相対ずれ {good['relative_deviation']:.2e})")
+    print(f"     hop=win/2 -> COLA {bad['cola']}、和 {bad['constant']:.4f}"
+          f"(相対ずれ {bad['relative_deviation']:.4f} = 素の overlap-add なら "
+          f"{fs / 128:.0f} Hz の振幅リップル = トレモロに聞こえてバグに見えない)")
+    print(f"   ついでに直感の逆: 矩形窓 50 % 重なりは和がちょうど 2 で COLA "
+          f"(相対ずれ {A.stft_cola_check('boxcar', 256, 128)['relative_deviation']:.1e})。")
+    print(f"     そして和は 1 とは限らない ―― 割らない overlap-add は"
+          f"**利得**の分だけ静かに間違う。")
+    assert good["cola"] and not bad["cola"]
+    assert abs(bad["relative_deviation"] - 0.1905) < 1e-3
+    assert A.stft_cola_check("boxcar", 256, 128)["constant"] == 2.0
     _, _, S = dsp.spectrogram(x, fs, win=256)
     print(f"   比較: dsp.spectrogram の返りは {S.dtype} = 位相が無く、"
           f"原理的に戻れない")
