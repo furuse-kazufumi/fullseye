@@ -217,6 +217,10 @@ EXAMPLES = [
      "name": "見えない振動を見せる/測る(motionmag モーション増幅・位相変位)",
      "summary": "0.2 画素の振動を帯域通過した局所位相から増幅表示し、同じ量からサブピクセル"
                 "変位を数値で出して既知振幅と照合。"},
+    {"id": "video_streaming", "task": "imaging_quality", "data": "synthetic",
+     "name": "動画を 1 フレームずつ流して処理する(videostream リング/状態つき op/パイプライン)",
+     "summary": "uint8 リング(float64 の 1/8)で背景差分し既知速度の物体を追う。台帳の一括 op と"
+                "ストリーム版がフレーム単位で一致することを 6 op で確認。"},
     {"id": "quaternion_monogenic", "task": "imaging_quality", "data": "synthetic",
      "name": "四元数画像 op(quatimage)を閉形式の真値と突き合わせる",
      "summary": "色の 3 次元回転とモノジェニック信号が本物の差で、それ以外(QFT 等)は差でない"

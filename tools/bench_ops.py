@@ -766,6 +766,12 @@ def format_summary(report: dict) -> str:
     if rows:
         lines.append("  slowest by Mpx/s: %s"
                      % ", ".join("%s %.2f" % (r["key"], r["mpx_s"]) for r in rows[:5]))
+    twins = [r for r in report["rows"] if r.get("ratio_vs_core")]
+    twins.sort(key=lambda r: -r["ratio_vs_core"])
+    if twins:
+        lines.append("  same-run ratio_vs_core (this row is Nx faster than its core): %s"
+                     % ", ".join("%s %.2fx vs %s" % (r["key"], r["ratio_vs_core"], r["core_ref"])
+                                 for r in twins[:8]))
     lines.append("  " + CAVEAT)
     return "\n".join(lines)
 
