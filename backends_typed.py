@@ -70,7 +70,10 @@ TYPE_TO_SORT = {
     "measurement": "feature",
     "points": "points",
     "normals": "points",
-    "keypoints": "points",
+    # keypoints は像面上の (N,2)。points((N,3))とは**別 sort**。
+    # 2026-09-02 まで points へ写しており、_sort_ok が shape[1]==3 を要求する
+    # ため (N,2) を返す/取る op が 4 件まるごと fail-soft に落ちていた。
+    "keypoints": "keypoints",
     "signal": "signal",
     "indices": "signal",
     "matrix": "matrix",
@@ -126,7 +129,8 @@ TYPE_TO_SORT = {
 #: wide 語彙(IMGEVOLVE_WIDE_VOCAB=1)では従来どおり入る。
 _NEW_SORTS = frozenset({"points", "signal", "matrix", "cimage",
                         "lightfield", "counts",
-                        "rgbimage", "video", "qimage", "beatcube"})
+                        "rgbimage", "video", "qimage", "beatcube",
+                        "keypoints"})
 
 
 def _coerce(value, sort):
@@ -200,15 +204,21 @@ def _fallback(v, in_sort, out_sort):
             return 0.0
     if in_sort == out_sort:
         return np.asarray(v)
-    # 型が変わる op の失敗: 中身のない、しかし sort として妥当な値
-    return {
-        "volume": lambda: np.zeros((2, 2, 2), np.float64),
-        "image": lambda: np.zeros((2, 2), np.float64),
-        "points": lambda: np.zeros((1, 3), np.float64),
-        "signal": lambda: np.zeros(2, np.float64),
-        "matrix": lambda: np.zeros((2, 2), np.float64),
-        "cimage": lambda: np.zeros((2, 2), np.complex128),
-    }.get(out_sort, lambda: np.asarray(v))()
+    return _EMPTY_OF.get(out_sort, lambda: np.asarray(v))()
+
+
+#: 型が変わる op の失敗時に返す「中身は無いが sort として妥当な値」。
+#: :data:`_SHAPE_OK` と**対**になる表で、片方に行を足したらもう片方にも要る
+#: (両方に無いと fail-soft が sort 契約を破り、下流の無関係な op で落ちる)。
+_EMPTY_OF = {
+    "volume": lambda: np.zeros((2, 2, 2), np.float64),
+    "image": lambda: np.zeros((2, 2), np.float64),
+    "points": lambda: np.zeros((1, 3), np.float64),
+    "keypoints": lambda: np.zeros((1, 2), np.float64),
+    "signal": lambda: np.zeros(2, np.float64),
+    "matrix": lambda: np.zeros((2, 2), np.float64),
+    "cimage": lambda: np.zeros((2, 2), np.complex128),
+}
 
 
 def _points_to_grid(v, res=16, margin=0.15):
