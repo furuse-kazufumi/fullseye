@@ -266,7 +266,7 @@ def run():
 
 def main(save=None):
     r = run()
-    print(f"合成: 4 パネル -> {r['sheet'].shape[1]}x{r['sheet'].shape[0]} px のシート。")
+    print(f"合成: 5 パネル -> {r['sheet'].shape[1]}x{r['sheet'].shape[0]} px のシート。")
     print(f"1) スケールバー: 描画 {r['scale_bar_px']} px / 真値 "
           f"{r['scale_bar_want']} px (100 µm を 0.5 µm/px で) -> 誤差 {r['scale_bar_px_error']} px")
     print(f"2) 目盛り: {r['tick_count']} 本の列位置と閉形式の最大差 = {r['tick_px_error']} px")
