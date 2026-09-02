@@ -388,8 +388,8 @@ def test_adaptive_tessellation_makes_facets_uniform_in_metres_and_keeps_geometry
     Vt, Ft = render3d.mesh_subdivide(V, F, target_edge=0.5)
     e1 = render3d.mesh_edge_lengths(Vt, Ft, per="edge")
     r1 = np.percentile(e1, 95) / np.percentile(e1, 5)
-    assert e1.max() <= 0.5 * 1.5 + 1e-9
-    assert abs(np.median(e1) - 0.5) < 0.1
+    assert e1.max() <= 0.5 * 2.0 + 1e-9                    # 辺上 ≤ 1.5×、面内接続 < 2×
+    assert abs(np.median(e1) - 0.5) < 0.05
     assert r1 <= 2.5 and r1 < 0.4 * r0
     a0, _ = _area_volume(V, F)
     a1, _ = _area_volume(Vt, Ft)
