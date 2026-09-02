@@ -1260,8 +1260,12 @@ def _b_area(env, region):
 
 def _b_select_shape(env, objects, feature, vmin, vmax):
     try:
-        return fslib.select_shape(_as_objectset(objects), str(feature),
-                                  float(vmin), float(vmax))
+        if not isinstance(feature, str):
+            raise FScriptError("select_shape feature must be a string, got %s"
+                               % _describe(feature))
+        return fslib.select_shape(_as_objectset(objects), feature,
+                                  float(_as_number(vmin, "select_shape min")),
+                                  float(_as_number(vmax, "select_shape max")))
     except fslib.FsTypeError as e:
         raise FScriptError(str(e))
 
