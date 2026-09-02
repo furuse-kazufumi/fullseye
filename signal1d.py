@@ -82,13 +82,18 @@ def fft_spectrum(y, sample_spacing=1.0):
     """点列 y の片側振幅スペクトルを返す ``(freqs, magnitude)``。
 
     freqs は cycles/sample(sample_spacing を渡せば物理周波数)、magnitude は各周波数
-    成分の振幅(正弦波の振幅にほぼ対応するよう 2/N 正規化、DC 除く)。信号に何本の
-    周期成分が含まれるかを読むのに使う。
+    成分の振幅(正弦波の振幅に対応するよう 2/N 正規化)。DC と、N が偶数のときの
+    ナイキスト bin(最後の bin)は鏡像の相方を持たないので 1/N(``cos(pi n)`` の
+    振幅 1.0 が 1.0 と出る。2026-09-02 以前はナイキスト bin が 2.0 になっていた)。
+    信号に何本の周期成分が含まれるかを読むのに使う。
     """
     a = _as_1d(y, "y")
     n = a.size
-    mag = np.abs(np.fft.rfft(a)) * (2.0 / n)
-    mag[0] = np.abs(np.fft.rfft(a)[0]) / n          # DC は 1/N
+    raw = np.abs(np.fft.rfft(a))
+    mag = raw * (2.0 / n)
+    mag[0] = raw[0] / n                              # DC は 1/N
+    if n % 2 == 0:
+        mag[-1] = raw[-1] / n                        # 偶数 N のナイキスト bin も 1/N
     freqs = np.fft.rfftfreq(n, d=float(sample_spacing))
     return freqs, mag
 
