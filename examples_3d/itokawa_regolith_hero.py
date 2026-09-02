@@ -50,6 +50,8 @@ GT(閉形式 / 幾何 / 統計):
     (h) レリーフ    高域(σ=2 px を引いた残差)の std / 中央値 ≥ 0.03(AMICA 実画像 0.037、
                     AMICA と同じ円盤画素数に縮小して比較)。
     (i) 決定的      render_regolith を 2 回呼んで画素完全一致。
+    (j) bump        補集合オクターブ(λ ≤ 2×1.5 m)の陰影法線の rms 傾斜 < Hapke θ̄ = 26°
+                    (未解像粗さと二重計上しない、「偽のサンドペーパー」でない)。
 
 hero 画像: examples_3d/_gallery/itokawa_regolith_hero.png(既定 640 px・SSAA 2・位相角 55°・
 太陽は左上)。``--fast`` で 256 px / ss=1(テスト用)。データ: JAXA はやぶさ / Gaskell 形状モデル

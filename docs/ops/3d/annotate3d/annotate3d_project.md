@@ -4,7 +4,7 @@ dim: 3d
 category: annotate3d
 in: points
 out: table
-examples: []
+examples: [annotate3d_figure]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -26,7 +26,7 @@ table(dict)を返す: 3-D 点の画素座標・前方距離・画像内/遮蔽�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [annotate3d_figure](../../../../examples_3d/annotate3d_figure.py) — `py -3.11 examples_3d/annotate3d_figure.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
