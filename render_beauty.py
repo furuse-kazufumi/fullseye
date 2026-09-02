@@ -487,6 +487,8 @@ def render_regolith(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: in
       * 環境光 0(宇宙に空光は無い)。影の底は地形の一回反射近似 ``self_illumination`` だけ。
       * トーン = 線形(AMICA の 8bit 画像に合わせ、露出 × クリップ)。``exposure='auto'`` は
         物体画素の 99.5 パーセンタイルが 0.95 に来る露出(決定的)。
+      * ``smooth_normals=True``: 頂点法線の Phong 補間で陰影を滑らかにする(幾何・影は不変)。
+      * ``albedo_variation``: アルベドの空間むら(既定 12 %、Saito et al. 2006 の明暗地形)。
     ``tint`` は平均 1 に正規化した色味。fail-closed: 引数は下位 op が検証、``exposure`` は
     ``'auto'`` か正の数。決定的(乱数なし)。"""
     if not (isinstance(exposure, str) and exposure == "auto"):

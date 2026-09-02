@@ -488,9 +488,15 @@ def illumination_design(surface="glossy", defect="topographic", slope_deg=10.0, 
     simulated Michelson contrast of the stated defect — ``topographic``: a
     smooth facet of *slope_deg* (a dent wall, a bump); ``scatter``: a rough
     patch (chipped edge, pit, fine scratch); ``pigment``: an albedo patch at
-    half the surround; ``edge``: a silhouette — and by irradiance uniformity
-    over the part. The result lists the candidates best first with their
-    numbers, the ``recommended`` family, and ``rule_of_thumb`` — the textbook
+    half the surround; ``edge``: a silhouette — **multiplied by the uniformity
+    of the background radiance the camera sees** across the part (min/max over
+    the centre and the four edge midpoints). That second factor is what
+    separates a robust choice from a fragile one: coaxial light on a glossy
+    part gives a huge negative contrast exactly on axis (the glare) and almost
+    none a few millimetres away, so its background uniformity is poor and it
+    ranks below a dark field whose background is uniformly dark. Irradiance
+    uniformity is reported too. The result lists the candidates best first
+    with their numbers, the ``recommended`` family, and ``rule_of_thumb`` — the textbook
     choice (a smooth facet → the ring elevation that mirrors it into the
     camera, or coaxial on a mirror-like finish; scatter → dark field; pigment →
     dome; edge → backlight) so a disagreement between simulation and rule is
@@ -518,20 +524,31 @@ def illumination_design(surface="glossy", defect="topographic", slope_deg=10.0, 
     if defect == "edge":
         cands["backlight"] = light_source("backlight", radius_mm=R, height_mm=R, n=8)
     rows = []
+    probe = [(0.0, 0.0), (size / 2, 0.0), (-size / 2, 0.0), (0.0, size / 2), (0.0, -size / 2)]
     for name, lt in cands.items():
         dc = defect_contrast(lt, surface=sp, slopes_deg=[slope_deg], camera=(0.0, 0.0, ch))
         irr = irradiance_map(lt, size_mm=(size, size), shape=(32, 32),
                              facing="down" if lt["kind"] == "backlight" else "up")
         uni = illumination_uniformity(irr)
+        if lt["kind"] == "backlight":
+            bg_uni = uni["uniformity"]                           # the camera sees the emitter plane
+        else:
+            # background radiance toward the camera at the centre and the edge midpoints:
+            # a specular glare that exists only on axis has a poor ratio here
+            bg = [defect_contrast(lt, surface=sp, slopes_deg=[slope_deg], camera=(0.0, 0.0, ch),
+                                  point=p, n_azimuth=1)["flat_radiance"] for p in probe]
+            bg_uni = (min(bg) / max(bg)) if max(bg) > 0 else 1.0
         if defect == "topographic":
-            score = dc["per_slope"][0]["max_abs"]
+            contrast = dc["per_slope"][0]["max_abs"]
         elif defect == "scatter":
-            score = abs(dc["scatter"])
+            contrast = abs(dc["scatter"])
         elif defect == "pigment":
-            score = abs(dc["pigment"])
+            contrast = abs(dc["pigment"])
         else:                                                    # edge: silhouette wants a backlight
-            score = 1.0 if lt["kind"] == "backlight" else dc["per_slope"][0]["max_abs"] * 0.5
+            contrast = 1.0 if lt["kind"] == "backlight" else dc["per_slope"][0]["max_abs"] * 0.5
+        score = contrast * bg_uni
         rows.append({"candidate": name, "kind": lt["kind"], "score": float(score),
+                     "contrast": float(contrast), "background_uniformity": float(bg_uni),
                      "defect_contrast": dc["per_slope"][0]["max_abs"], "pigment_contrast": abs(dc["pigment"]),
                      "scatter_contrast": abs(dc["scatter"]),
                      "regime": dc["regime"], "uniformity": uni["uniformity"],

@@ -1,14 +1,14 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
-<h2 style="color:#f5a524;margin:0 0 4px 0">example_system — OPTICS <code style="color:#22d3bf">design</code> op</h2>
+<h2 style="color:#f5a524;margin:0 0 4px 0">sellmeier — OPTICS <code style="color:#22d3bf">design</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>table`</p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import raytrace; raytrace.example_system(name=&#x27;singlet&#x27;)</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;example_system&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import raytrace; raytrace.sellmeier(B1, B2, B3, C1, C2, C3, name=&#x27;custom&#x27;)</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;sellmeier&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>A named example: `<code style="color:#22d3bf">&quot;singlet&quot;</code><code style="color:#22d3bf"> (plano-convex BK7, f≈100), </code><code style="color:#22d3bf">&quot;doublet&quot;</code>`</p>
-<p>(a cemented achromat, BK7/SF2, f≈100), `<code style="color:#22d3bf">&quot;paraboloid&quot;</code>` (f/2 paraboloid</p>
-<p>mirror — stigmatic on axis), `<code style="color:#22d3bf">&quot;sphere_mirror&quot;</code>` (same radius, spherical),</p>
-<p>`<code style="color:#22d3bf">&quot;asphere&quot;</code>` (plano-hyperbolic N-BK7 singlet, flat toward the object, exit</p>
-<p>conic `<code style="color:#22d3bf">k = −n²</code>` — Descartes&#x27; stigmatic lens, f≈100 at f/4),</p>
-<p>`<code style="color:#22d3bf">&quot;catalog_doublet&quot;</code>` (the doublet with real N-BK7 / N-SF2 Sellmeier glass).</p>
+<p>A dispersive medium from three-term Sellmeier constants (`<code style="color:#22d3bf">table</code>`).</p>
+<p>`<code style="color:#22d3bf">n²(λ) − 1 = B1 λ²/(λ² − C1) + B2 λ²/(λ² − C2) + B3 λ²/(λ² − C3)</code>` with λ in</p>
+<p>µm (the form every glass maker publishes). Returns ``{&quot;name&quot;, &quot;sellmeier&quot;,</p>
+<p>&quot;nd&quot;, &quot;vd&quot;, &quot;offset&quot;}`` — *nd* / *vd* are <b>evaluated</b> from the curve, so</p>
+<p>they can be checked against the data sheet. `<code style="color:#22d3bf">offset</code>` (0) is an additive</p>
+<p>index shift used by :func:<code style="color:#22d3bf">tolerance_analysis</code> for melt-to-melt variation.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>
@@ -25,13 +25,11 @@
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lens_defect_dataset_demo">lens_defect_dataset_demo</a> — <code style="color:#22d3bf">py -3.11 examples/lens_defect_dataset_demo.py</code></p>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lens_design_demo">lens_design_demo</a> — <code style="color:#22d3bf">py -3.11 examples/lens_design_demo.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lens_optimize_demo">lens_optimize_demo</a> — <code style="color:#22d3bf">py -3.11 examples/lens_optimize_demo.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a> · <a style="color:#22d3bf" href="opoptics:spot_diagram">spot_diagram</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">design</code>)</h3>
-<p><a style="color:#22d3bf" href="opoptics:lens_system">lens_system</a> · <a style="color:#22d3bf" href="opoptics:thick_lens">thick_lens</a> · <a style="color:#22d3bf" href="opoptics:glass">glass</a> · <a style="color:#22d3bf" href="opoptics:glass_catalog">glass_catalog</a> · <a style="color:#22d3bf" href="opoptics:sellmeier">sellmeier</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a></p>
+<p><a style="color:#22d3bf" href="opoptics:lens_system">lens_system</a> · <a style="color:#22d3bf" href="opoptics:thick_lens">thick_lens</a> · <a style="color:#22d3bf" href="opoptics:glass">glass</a> · <a style="color:#22d3bf" href="opoptics:example_system">example_system</a> · <a style="color:#22d3bf" href="opoptics:glass_catalog">glass_catalog</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">
 <p>*Provenance: raytrace.py — OPTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
 <p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
