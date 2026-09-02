@@ -640,9 +640,10 @@ def test_string_c_python_parity_on_bad_headers(name, tmp_path):
     else:
         cases = [
             [1.0, 65.0, 66.0],              # valid control (edit 1 / lcs 0)
-            [-0.5, 65.0, 66.0],             # fractional-negative -> 0.0 (was Py 2.0 vs C 0.0)
-            [nan, 65.0, 66.0],              # NaN -> 0.0 (was a Python crash)
-            [3.0e9, 65.0, 66.0],            # oversized -> 0.0
+            [-0.5, 65.0, 66.0],             # fractional-negative -> -1.0 (was Py 2.0 vs C 0.0)
+            [nan, 65.0, 66.0],              # NaN -> -1.0 (was a Python crash)
+            [3.0e9, 65.0, 66.0],            # oversized -> -1.0
+            [],                             # empty -> -1.0 (sentinel, not "identical")
         ]
     op = algo.ALGO_BY_NAME[name]
     cc = algo_difftest.find_c_compiler()
