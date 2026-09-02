@@ -292,3 +292,42 @@ def test_topographic_straight_ridge_crest_is_ridge_not_hillside():
     code_v = f2_topographic(valley, 0.3, 0.3)
     trough = code_v[32, 8:-8]
     assert np.median(trough) == 0.30, f"trough classified {np.median(trough)}, want ravine 0.30"
+
+
+def _centroid(img):
+    yy, xx = np.mgrid[0:img.shape[0], 0:img.shape[1]]
+    s = img.sum()
+    return (img * yy).sum() / s, (img * xx).sum() / s
+
+
+def test_gauss_pyramid_does_not_shift_content():
+    """Regression (2026-09-02 review): decimating with ``[::2, ::2]`` and zooming
+    back with ``ndimage.zoom(cur, H/h)`` aligned CORNERS ((H-1)/(h-1) != 2), which
+    slid content towards the far edge by 0.19 / 0.52 / 0.85 px for impulses at
+    rows 8 / 24 / 40 of a 48² image. The pyramid level must stay centred."""
+    n = 48
+    for p in (8, 24, 40):
+        im = np.zeros((n, n))
+        im[p, p] = 1.0
+        for a in (0.0, 0.34):                              # level 1 and level 2
+            cy, cx = _centroid(F.f2_gauss_pyramid(im, a, 0.0))
+            assert abs(cy - p) < 0.1 and abs(cx - p) < 0.1, (p, a, cy, cx)
+    # an odd position (not on the decimation grid) is centred too
+    im = np.zeros((n, n))
+    im[15, 31] = 1.0
+    cy, cx = _centroid(F.f2_gauss_pyramid(im, 0.0, 0.0))
+    assert abs(cy - 15) < 0.1 and abs(cx - 31) < 0.1, (cy, cx)
+
+
+def test_topographic_degenerate_strip_is_flat_not_input():
+    """Regression (2026-09-02 review): ``np.gradient`` raised on a 1xN / Nx1 strip
+    and the fail-soft wrapper returned the INPUT as the sketch. A strip has no
+    Hessian: every pixel is the 'flat' class (0.0)."""
+    for shape in ((1, 40), (40, 1)):
+        x = np.linspace(0.0, 1.0, 40).reshape(shape)
+        direct = F.f2_topographic(x, 0.3, 0.3)                # must not raise
+        assert direct.shape == shape and np.allclose(direct, 0.0)
+        for op in OPS:
+            if op.name == "f2_topographic":
+                out = op.fn(x, 0.3, 0.3)
+                assert np.allclose(out, 0.0) and not np.allclose(out, x)
