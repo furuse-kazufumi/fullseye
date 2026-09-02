@@ -47,18 +47,24 @@ void gaussian(float* buf, int w, int h, float sigma) {
 }
 
 void box(float* buf, int w, int h, int k) {
+    /* Mirrors scipy.ndimage.uniform_filter(size=k, origin=0): the window at x is
+     * x-k/2 .. x-k/2+k-1, i.e. exactly k taps for ODD and EVEN k (-r..r for odd k,
+     * -r..r-1 for even k). The old `-r..r` loop summed k+1 taps for an even k and
+     * still divided by k (box(4) on a step edge peaked at 1.5625). */
+    if (k < 1) return;
     int r = k / 2;
+    int hi = k - r;                                /* exclusive upper offset */
     float* tmp = (float*)malloc(sizeof(float) * w * h);
     for (int y = 0; y < h; y++)
         for (int x = 0; x < w; x++) {
             float acc = 0.0f;
-            for (int i = -r; i <= r; i++) acc += buf[y * w + reflect(x + i, w)];
+            for (int i = -r; i < hi; i++) acc += buf[y * w + reflect(x + i, w)];
             tmp[y * w + x] = acc / (float)k;
         }
     for (int y = 0; y < h; y++)
         for (int x = 0; x < w; x++) {
             float acc = 0.0f;
-            for (int i = -r; i <= r; i++) acc += tmp[reflect(y + i, h) * w + x];
+            for (int i = -r; i < hi; i++) acc += tmp[reflect(y + i, h) * w + x];
             buf[y * w + x] = acc / (float)k;
         }
     free(tmp);

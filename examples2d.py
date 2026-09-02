@@ -10,7 +10,9 @@ only ever advertises examples that actually work.
 
 Mirror of :mod:`examples3d`; kept separate so 2-D (image-plane) and 3-D (point-cloud
 / volume) galleries stay legible. Add a new example by dropping a runnable script in
-``examples/`` and appending an entry here.
+``examples/`` and appending an entry here — or, if it cannot self-run (needs external
+assets / hardware), list it in :data:`EXCLUDED` with the reason. ``tests/test_examples2d``
+reconciles both against the directory in *both* directions (:func:`registry_gaps`).
 
 Usage::
 
@@ -142,7 +144,7 @@ EXAMPLES = [
                 "要求分解能に対して合否判定する。"},
     {"id": "lightfield_depth", "task": "optics_sensing", "data": "synthetic",
      "name": "ライトフィールド 17 op で plenoptic 検査機を通す",
-     "summary": "画素/MLA ピッチから角度・空間分解能と基線長を設計し、センサ生データ→サブ開口→"
+     "summary": "画素/MLA ピッチから角度・空間分解能と基線長を設計し、センサ生データ→"
                 "EPI→深度まで復元して既知深度と照合。"},
     {"id": "photon_timeresolved", "task": "optics_sensing", "data": "synthetic",
      "name": "光子計数・時間分解 op(photoncount)で単一光子距離計を仕立てる",
@@ -154,16 +156,16 @@ EXAMPLES = [
                 "正しく測り、両者の差を数値に出す。"},
     {"id": "specular_photometric", "task": "optics_sensing", "data": "synthetic",
      "name": "光沢面の外観検査(specularity 13 op)",
-     "summary": "Lambertian 前提の形状復元がハイライトで壊れる場所を見せてから、ハイライト分離・"
-                "偏光・多光源の 3 つの逃げ道を順に通し法線誤差で比較。"},
+     "summary": "Lambertian 前提の形状復元がハイライトで壊れる場所を見せてから、二色性射影分離・"
+                "影下の頑健最小二乗・偏光分離を順に通し、破綻点(4 灯遮蔽)も隠さず出す。"},
     {"id": "fmcw_range_doppler", "task": "optics_sensing", "data": "synthetic",
      "name": "コヒーレント測距 op(rangedoppler)で 4D レーダを仕立てる",
      "summary": "FMCW の位相を保つビート信号から距離-速度マップと角度を出す。lidar_scan には無い"
                 "速度軸を既知ターゲットの GT と照合。"},
     {"id": "event_camera", "task": "optics_sensing", "data": "synthetic",
      "name": "通常フレームからイベントカメラ(DVS)表現を作り運動を復元",
-     "summary": "フレーム対/短クリップを events 表現(極性/タイムサーフェス/ボクセル)に変換し、"
-                "コントラスト最大化で大域運動を回収する(events.py ファサード)。"},
+     "summary": "フレーム対/短クリップを events 表現(タイムサーフェス等)に変換し、"
+                "コントラスト最大化で注入した運動を回収する(events.py ファサード、終了コードで判定)。"},
     # -- image quality / forensics / color / astronomy ---------------------------- #
     {"id": "image_quality_metrics", "task": "imaging_quality", "data": "synthetic",
      "name": "画質 op(imgmetrics)で保存時の量子化段数を 1 つ選ぶ",
@@ -171,16 +173,16 @@ EXAMPLES = [
                 "「欠陥が見えなくならない」を合否条件に落として量子化段を決める。"},
     {"id": "image_forensics_audit", "task": "imaging_quality", "data": "synthetic",
      "name": "1 枚の写真を証拠として「どこまで言えるか」まで切り分ける(forensics)",
-     "summary": "PRNU カメラ指紋・二重 JPEG・コピー移動・ノイズ不整合を順に検定し、"
-                "主張のどこが保ててどこが崩れるかを合成 GT で確かめる。"},
+     "summary": "知覚ハッシュ→帰無分布→PRNU カメラ指紋→JPEG 品質/ELA/ゴースト→雑音整合→"
+                "コピー&ムーブ(誤差 0 px)→電子透かしの 7 段。改竄側を自分で作った GT で検定。"},
     {"id": "color_transport", "task": "imaging_quality", "data": "synthetic",
      "name": "2 台のカメラの色を揃える(colortransport 色輸送)",
-     "summary": "クロストークと黒レベルずれを持つカメラ B の色を A に合わせ(行列/ヒストグラム/"
-                "最適輸送)、既知の変換を回収できるかを GT で照合。"},
+     "summary": "クロストークと黒レベルずれを持つカメラ B の色を A に合わせ(ヒストグラム/"
+                "最適輸送ベース)、既知の変換を回収できるかを GT で照合。"},
     {"id": "astro_stacking", "task": "imaging_quality", "data": "synthetic",
      "name": "一晩ぶんの生フレームから 1 枚の星像を作り星の明るさを測る",
-     "summary": "バイアス/フラット補正→宇宙線除去→位置合わせ→スタック→背景推定→"
-                "開口測光。既知の星等級・位置を GT に照合。"},
+     "summary": "フラット補正→宇宙線除去→ディザ位置合わせ→スタック→測光。"
+                "既知の星の明るさ・位置を GT に照合(12 枚の合成生フレーム)。"},
     {"id": "motion_magnification", "task": "imaging_quality", "data": "synthetic",
      "name": "見えない振動を見せる/測る(motionmag モーション増幅・位相変位)",
      "summary": "0.2 画素の振動を帯域通過した局所位相から増幅表示し、同じ量からサブピクセル"
@@ -212,8 +214,8 @@ EXAMPLES = [
                 "既知配置の欠陥で往復誤差を確認。"},
     {"id": "representation_conversion", "task": "tomography_3d", "data": "synthetic",
      "name": "部品 2 回スキャンのずれ量を 8 つの表現で測って往復する",
-     "summary": "点群/メッシュ/SDF/ボクセル/深度/法線/…の 8 表現で既知剛体変位を測り、"
-                "戻るものは誤差 0、戻らないものは落ちた量を数値で言う。"},
+     "summary": "法線/曲率/記述子/添字/スコア/シフト/回転倍率/フロー/変形/複素など 12 系統の表現を"
+                "経由して既知剛体変位を測り、戻るものは誤差 0、戻らないものは落ちた量を数値で言う。"},
     {"id": "representation_roundtrip", "task": "tomography_3d", "data": "synthetic",
      "name": "表現変換(reprconv)op を往復させて嘘を露見させる",
      "summary": "産む op はあるが食う op が無かった 25 型を消費する reprconv 族を往復させ、"
