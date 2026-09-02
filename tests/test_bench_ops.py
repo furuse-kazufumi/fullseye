@@ -245,6 +245,7 @@ def test_input_for_matches_the_op_sort():
 # 5. twin 対応(発明ではなく registry の HALCON 名から引く)                       #
 # --------------------------------------------------------------------------- #
 def test_cv_twin_comes_from_the_registry_halcon_alias():
+    pytest.importorskip("cv2")
     assert B.cv_twin("gaussian")[0] == "cv_gaussian"
     assert B.cv_twin("median")[0] == "cv_median"
     # edges_image は cv_scharr(image)と cv_canny(region)が名乗る -> sort で解く
