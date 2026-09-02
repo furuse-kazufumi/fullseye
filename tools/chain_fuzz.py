@@ -1591,12 +1591,22 @@ def _step_rng(chain_seed, name, occurrence, fallback):
 
 
 def run_chain(ops, gens, rng, length, log, chain_seed=None, script=None,
-              explore=0.0):
+              explore=0.0, census=None):
     """1 連鎖 = 型付き pool を育てながら op を実行。発見は log に積む。
 
     *script* に op 名の列を渡すと**その順で強制実行**する(--minimize の再走)。
     型が揃わない step は黙って飛ばす = その短縮では再現しない、と判定される。
     *chain_seed* は findings に載せて再現に使う。
+
+    *census* に ``{"ran": set(), "bind_fail": set(), "no_input": set()}`` を渡すと、
+    **返り値の trace(成功した op だけ)とは別に**、op ごとの到達状況を記録する。
+    返す trace で覆われた op を数えると、以下の 3 つが区別できずに全部
+    「未実行」へ落ちる —— これは repo の
+    「発見ゼロは未実行の偽装かもしれない」をカバレッジ側でやり直す話:
+
+    * ``ran`` —— ``fn`` を実際に呼んだ(拒否・例外でも呼んだことに変わりない)
+    * ``bind_fail`` —— 必須引数が組めず **一度も呼んでいない**
+    * ``no_input`` —— 入力型が pool に無く **一度も呼んでいない**
     """
     pool = {}
     for t, g in gens.items():
