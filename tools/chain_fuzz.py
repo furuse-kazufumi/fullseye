@@ -1207,6 +1207,7 @@ OP_ARG_BUILDERS = {
     "wavefront_stats": _b_wavefront,
     "abcd_trace": _b_shaped("matrix", (2, 2), _mk_abcd),
     "jones_apply": _b_shaped("cimage", (2, 2), _mk_jones, "jones"),
+    "render_through_lens": _b_render_lens,
     "mueller_apply": _b_shaped("matrix", (4, 4), _mk_mueller, "stokes"),
     "fuse_to_voxel": _b_fuse,
     "register_cross": _b_register_cross,
