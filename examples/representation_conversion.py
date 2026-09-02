@@ -380,12 +380,25 @@ def main():
     assert abs(float(np.asarray(score).max()) - 1.0) < 1e-9
 
     mip = np.asarray(R.score_to_image2d(score, axis=0))
-    n_ridge = int((mip > 0.9 * mip.max()).sum())
-    print(f"   score_to_image2d(axis=0) -> {mip.shape} 最大値投影  "
-          f"0.9 x ピーク以上の画素 = {n_ridge} 個")
-    print(f"     -> 1 個なら対応は一意。2 個以上見えたら「どちらへ合わせても"
-          f"同じくらい合う」という意味。")
-    assert n_ridge == 1
+    print(f"   score_to_image2d(axis=0) -> {mip.shape} 最大値投影(z を潰す)")
+    extents = {}
+    for frac in (0.98, 0.95, 0.90):
+        sel = mip > frac * mip.max()
+        rows, cols = np.nonzero(sel)
+        extents[frac] = (int(rows.max() - rows.min()) + 1,
+                         int(cols.max() - cols.min()) + 1)
+        print(f"     ピークの {frac:.2f} 倍以上: {int(sel.sum()):2d} 画素  "
+              f"(y 方向 {extents[frac][0]} px x x 方向 {extents[frac][1]} px)")
+    print(f"   ★{0.98:.2f} 倍では 1 画素 = 対応は一意。ただし裾は等方ではない —— "
+          f"0.90 倍で見ると")
+    print(f"     x 方向 {extents[0.90][1]} px に対し y 方向 {extents[0.90][0]} px と、"
+          f"**部品が長い x 方向のほうが緩い**。")
+    print(f"     ブロックは x に {4 * HALF[0]:.0f} voxel、y に {4 * HALF[1]:.0f} voxel "
+          f"なので、長辺に沿って滑らせても重なりが減りにくい。")
+    print(f"     最大値投影は「ピークが 1 本か」だけでなく"
+          f"**どの向きの位置合わせが効いていないか**を見せる。")
+    assert int((mip > 0.98 * mip.max()).sum()) == 1
+    assert extents[0.90][1] > extents[0.90][0]
     losses.append(("score -> position", False,
                    "体積 1 個 -> 1 点(整数格子の argmax。副画素は refine_peak_newton の仕事)"))
 
