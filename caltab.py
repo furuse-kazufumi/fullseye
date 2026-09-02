@@ -138,7 +138,7 @@ def _assign(proj, marks, max_dist):
 
 
 def find_marks_and_pose(image, cam_par, caltab, thresh=0.5, max_reproj_rms=3.0):
-    """マーク検出 + 校正板の姿勢推定(平面ホモhomography → pose)(find_marks_and_pose)。
+    """マーク検出 + 校正板の姿勢推定(平面ホモグラフィ → pose)(find_marks_and_pose)。
 
     対応づけは行優先ソートではなく **ホモグラフィ誘導**: 検出マークと理想格子の 4 隅
     (row±col の極値)から初期 H を作り、理想点を投影して最近傍マークを 1 対 1 に
