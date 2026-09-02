@@ -85,12 +85,17 @@ def main():
         assert abs(best - (90.0 - 2.0 * slope)) <= 2.0
 
     # 4. design table ----------------------------------------------------------------------
-    for surface, defect in (("glossy", "topographic"), ("matte", "pigment"), ("matte", "edge")):
+    # note: a *smooth* 10 deg facet does not light up in dark field (it mirrors the low light
+    # away from the camera); the "dark field shows scratches" rule is about their rough flanks,
+    # which is the "scatter" class. The table says so with numbers instead of folklore.
+    for surface, defect in (("glossy", "scatter"), ("glossy", "topographic"), ("mirror", "topographic"),
+                            ("matte", "pigment"), ("matte", "edge")):
         d = ID.illumination_design(surface=surface, defect=defect, slope_deg=10.0)
         top = d["ranking"][0]
         print("%-7s %-11s -> %-24s score %.3f  rule: %-24s %s" %
               (surface, defect, d["recommended"], top["score"], d["rule_of_thumb"],
                "agree" if d["agrees_with_rule"] else "DISAGREE (read the table)"))
+    assert ID.illumination_design(surface="glossy", defect="scatter")["recommended"] == "ring_dark_field_20deg"
     e = ID.illumination_design(surface="matte", defect="edge")
     assert e["recommended"] == "backlight"
     print("PASS")

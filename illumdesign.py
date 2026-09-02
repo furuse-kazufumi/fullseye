@@ -391,7 +391,13 @@ def defect_contrast(light, surface="satin", slopes_deg=(2.0, 5.0, 10.0, 20.0), c
     appears brighter or darker than the surround). Reported per slope as
     ``mean``, ``max_abs`` and ``azimuth_of_max``. ``pigment`` is the contrast
     of a flat patch whose albedo is *pigment_albedo_ratio* × the surround —
-    the number specular glare dilutes. ``regime`` is ``"bright_field"`` when
+    the number specular glare dilutes. ``scatter`` is the contrast of a
+    **rough** patch (a chipped edge, a pit floor, a fine scratch: micro-facets
+    of every slope, modelled as Lambertian with the surround's albedo) against
+    the surround — the defect class dark-field lighting is built for, since a
+    smooth facet only lights up when it mirrors the source into the camera
+    while a rough patch scatters some of *any* light there. ``regime`` is
+    ``"bright_field"`` when
     the flat surface returns specular light to the camera (specular ≥ diffuse
     radiance) and ``"dark_field"`` otherwise. *surface*: a preset (``matte``,
     ``satin``, ``glossy``, ``mirror``, ``brushed_metal``) or a dict ``{albedo,
@@ -434,7 +440,9 @@ def defect_contrast(light, surface="satin", slopes_deg=(2.0, 5.0, 10.0, 20.0), c
                      "signed_at_max": float(vals[k]), "azimuth_of_max": float(azs[k])})
     L_pig = _radiance(P, flat_n, view, E, D, I0, m, sp, albedo=sp["albedo"] * ratio)
     pig = (L_flat - L_pig) / (L_flat + L_pig) if (L_flat + L_pig) > 0 else 0.0
-    return {"per_slope": rows, "pigment": float(pig),
+    L_rough = _radiance(P, flat_n, view, E, D, I0, m, {"albedo": max(sp["albedo"], 0.05), "roughness": 1.0, "f0": 0.0})
+    sca = (L_rough - L_flat) / (L_rough + L_flat) if (L_rough + L_flat) > 0 else 0.0
+    return {"per_slope": rows, "pigment": float(pig), "scatter": float(sca),
             "regime": "bright_field" if L_spec >= L_diff and L_flat > 0 else "dark_field",
             "flat_radiance": L_flat, "flat_specular_fraction": float(L_spec / L_flat) if L_flat > 0 else 0.0,
             "surface": sp, "camera": [float(v) for v in cam]}
@@ -477,16 +485,22 @@ def illumination_design(surface="glossy", defect="topographic", slope_deg=10.0, 
     Candidates: low-angle ring (dark field, elevation 20°), high-angle ring
     (bright field, 70°), the elevation that :func:`lighting_sweep` finds best,
     dome, coaxial and (for ``defect="edge"``) backlight. Each is scored by the
-    simulated Michelson contrast of the stated defect (``topographic``: a
-    facet of *slope_deg*; ``pigment``: an albedo patch at half the surround)
-    and by irradiance uniformity over the part. The result lists the
-    candidates best first with their numbers, the ``recommended`` family, and
-    ``rule_of_thumb`` — the textbook choice (topographic on glossy → dark
-    field; pigment → dome / bright field; edge → backlight) so a disagreement
-    between simulation and rule is visible rather than hidden.
+    simulated Michelson contrast of the stated defect — ``topographic``: a
+    smooth facet of *slope_deg* (a dent wall, a bump); ``scatter``: a rough
+    patch (chipped edge, pit, fine scratch); ``pigment``: an albedo patch at
+    half the surround; ``edge``: a silhouette — and by irradiance uniformity
+    over the part. The result lists the candidates best first with their
+    numbers, the ``recommended`` family, and ``rule_of_thumb`` — the textbook
+    choice (a smooth facet → the ring elevation that mirrors it into the
+    camera, or coaxial on a mirror-like finish; scatter → dark field; pigment →
+    dome; edge → backlight) so a disagreement between simulation and rule is
+    visible rather than hidden. Note that a *smooth* 10° facet does **not**
+    light up in dark field (it mirrors the low light away from the camera) —
+    the "dark field shows scratches" rule is about their rough flanks, which is
+    the ``scatter`` class here.
     """
-    if defect not in ("topographic", "pigment", "edge"):
-        raise ValueError("defect must be 'topographic', 'pigment' or 'edge'")
+    if defect not in ("topographic", "scatter", "pigment", "edge"):
+        raise ValueError("defect must be 'topographic', 'scatter', 'pigment' or 'edge'")
     sp = _surface_params(surface)
     size = _finite(part_size_mm, "part_size_mm", positive=True)
     ch = _finite(camera_height_mm, "camera_height_mm", positive=True)
@@ -511,21 +525,26 @@ def illumination_design(surface="glossy", defect="topographic", slope_deg=10.0, 
         uni = illumination_uniformity(irr)
         if defect == "topographic":
             score = dc["per_slope"][0]["max_abs"]
+        elif defect == "scatter":
+            score = abs(dc["scatter"])
         elif defect == "pigment":
             score = abs(dc["pigment"])
         else:                                                    # edge: silhouette wants a backlight
             score = 1.0 if lt["kind"] == "backlight" else dc["per_slope"][0]["max_abs"] * 0.5
         rows.append({"candidate": name, "kind": lt["kind"], "score": float(score),
                      "defect_contrast": dc["per_slope"][0]["max_abs"], "pigment_contrast": abs(dc["pigment"]),
+                     "scatter_contrast": abs(dc["scatter"]),
                      "regime": dc["regime"], "uniformity": uni["uniformity"],
                      "elevation_deg": lt.get("elevation_deg")})
     rows.sort(key=lambda r: (-r["score"], -r["uniformity"]))
     if defect == "edge":
         rule = "backlight"
     elif defect == "pigment":
-        rule = "dome" if sp["roughness"] < 0.5 else "ring_bright_field_70deg"
+        rule = "dome"
+    elif defect == "scatter":
+        rule = "ring_dark_field_20deg"
     else:
-        rule = "ring_dark_field_20deg" if sp["roughness"] < 0.5 else "ring_best_%ddeg" % int(best_el)
+        rule = "coaxial" if sp["roughness"] < 0.1 else "ring_best_%ddeg" % int(best_el)
     return {"ranking": rows, "recommended": rows[0]["candidate"], "rule_of_thumb": rule,
             "agrees_with_rule": rows[0]["candidate"] == rule, "best_ring_elevation_deg": best_el,
             "surface": sp, "defect": defect, "slope_deg": float(slope_deg)}

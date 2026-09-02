@@ -216,9 +216,9 @@ assert r["rms_final"] < r["rms_initial"] and abs(r["efl_final"] - 100.0) < 1e-3
 - `light_source(kind, radius_mm, height_mm, n, …)` — `point` / `ring` / `bar` / `dome` / `coaxial` / `backlight` / `custom` の発光点集合(位置・向き・放射強度・Lambert 次数 `cos_exponent`)。
 - `irradiance_map(light, size_mm, shape, height, facing)` — 部品面の放射照度 `E = Σ I0 cosᵐθ_e cosθ_s / d²`。起伏 `height` で画素ごとの法線を傾け、`facing="down"` でバックライトが照らす裏面。等方点光源で `I0 cos³θ/h²`、Lambert 発光で cos⁴ 則をテストが 1e-12 で固定。
 - `illumination_uniformity(irr)` — min/max、CV、端落ち、ピーク位置のずれ(リングの狙いずれ)。
-- `defect_contrast(light, surface, slopes_deg, camera)` — 傾いた面(傷の斜面)と平面のカメラ向き輝度の Michelson コントラスト(Lambert + GGX、`specularity.brdf_microfacet` と同じローブ、方位で走査)、顔料コントラスト(グレアが希釈する)、明視野/暗視野の判定。
+- `defect_contrast(light, surface, slopes_deg, camera)` — 傾いた面(傷の斜面)と平面のカメラ向き輝度の Michelson コントラスト(Lambert + GGX、`specularity.brdf_microfacet` と同じローブ、方位で走査)、荒れた面(欠け・ピット・微細傷 = あらゆる傾きのマイクロファセット、Lambert でモデル化)の `scatter` コントラスト、顔料コントラスト(グレアが希釈する)、明視野/暗視野の判定。**滑らかな 10° の面は暗視野で光らない**(低い光をカメラの外へ鏡面反射する)— 「暗視野で傷が光る」は傷の荒れた側面の話で、それが `scatter` 級。表は民間伝承でなく数で示します。
 - `lighting_sweep(surface, slope_deg, elevations_deg)` — リング仰角 vs コントラスト(pairs)。鏡面に近い面では斜面が光をカメラへ鏡面反射する仰角 `90° − 2×斜面` にピーク(テストが固定)。
-- `illumination_design(surface, defect, slope_deg)` — 候補族(低角リング/高角リング/最良仰角リング/ドーム/同軸/バックライト)を模擬コントラストで順位付けし、経験則(凹凸×光沢→暗視野、顔料→ドーム、輪郭→バックライト)との**一致/不一致を明示**。
+- `illumination_design(surface, defect, slope_deg)` — 候補族(低角リング/高角リング/最良仰角リング/ドーム/同軸/バックライト)を模擬コントラストで順位付けし、経験則(荒れ `scatter`→暗視野、滑らかな面 `topographic`→鏡面反射をカメラへ返す仰角のリング/鏡面仕上げなら同軸、顔料→ドーム、輪郭→バックライト)との**一致/不一致を明示**。
 
 ```python
 import numpy as np
@@ -230,8 +230,8 @@ dc = ID.defect_contrast(low, surface="glossy", slopes_deg=[5.0, 10.0])
 print(round(u["uniformity"], 3), dc["regime"], [round(r["max_abs"], 3) for r in dc["per_slope"]])
 sw = ID.lighting_sweep(surface="mirror", slope_deg=10.0, camera_height_mm=1000.0)
 print(sw[int(np.argmax(sw[:, 1])), 0])                                  # 70.0 = 90 - 2*10
-d = ID.illumination_design(surface="glossy", defect="topographic", slope_deg=10.0)
-print(d["recommended"], d["rule_of_thumb"], d["agrees_with_rule"])
+d = ID.illumination_design(surface="glossy", defect="scatter")
+print(d["recommended"], d["rule_of_thumb"], d["agrees_with_rule"])   # ring_dark_field_20deg … True
 assert d["ranking"][0]["score"] >= d["ranking"][-1]["score"]
 ```
 

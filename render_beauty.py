@@ -309,8 +309,22 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
 
     # --- 幾何バッファ(depth / silhouette / 面法線)-------------------------
     view = render3d.render_mesh(V_all, F_all, pose=P, intrinsics=Khi,
-                                width=hs, height=hs)
+                                width=hs, height=hs, attributes=bool(smooth_normals))
     normals = view["normals"]                            # (hs, hs, 3) camera space
+    if smooth_normals:
+        # 面積重み付き頂点法線を透視補正重心座標で補間(Phong 補間)。フラット法線の
+        # ファセット模様(10 m 面の Gaskell モデルが 1 m/px で「モザイク」に見える)を消す。
+        # 幾何(depth/silhouette/影/AO)はそのまま —— 陰影だけを滑らかにする。
+        vn_world = render3d._vertex_normals(V_all, F_all)
+        vn_cam = vn_world @ P[:3, :3].T
+        cov = view["silhouette"] > 0
+        ys_s, xs_s = np.nonzero(cov)
+        fid = view["face"][ys_s, xs_s]
+        bw = view["bary"][ys_s, xs_s]                    # (n,3) 和 = 1
+        n_px = np.einsum("ij,ijk->ik", bw, vn_cam[F_all[fid]])
+        n_px /= np.maximum(np.linalg.norm(n_px, axis=1, keepdims=True), 1e-15)
+        normals = np.zeros_like(normals)
+        normals[ys_s, xs_s] = n_px
     sil = view["silhouette"]                             # (hs, hs)
     depth = view["depth"]
     fg = sil > 0                                         # 前景(メッシュ or 地面)

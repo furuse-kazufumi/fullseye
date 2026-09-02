@@ -15,9 +15,10 @@
 * Coaxial light on a matte surface: a tilted Lambertian facet is darker by
   ``cos s``; Michelson contrast ``(cos s − 1)/(cos s + 1)`` — checked.
 * Backlight: a flat opaque part plane receives nothing from below (E = 0).
-* The design table ranks dark field first for a topographic defect on a glossy
-  surface and reports agreement with the rule of thumb; every bad input is a
-  ``ValueError``.
+* The design table: a rough (scattering) defect on a glossy surface wants dark
+  field, a smooth facet wants the ring elevation that mirrors it into the
+  camera (dark field scores near zero for it — the physics, spelled out), an
+  edge wants a backlight; every bad input is a ``ValueError``.
 """
 import math
 import os
@@ -151,17 +152,25 @@ def test_backlight_gives_no_irradiance_on_an_opaque_top_face_but_lights_from_bel
     assert lt["emitters"].shape == (36, 3) and np.all(lt["emitters"][:, 2] == -30.0)
 
 
-def test_design_table_prefers_dark_field_for_topographic_on_glossy():
+def test_design_table_dark_field_for_scatter_matched_elevation_for_a_facet():
+    s = ID.illumination_design(surface="glossy", defect="scatter")
+    assert s["recommended"] == "ring_dark_field_20deg" and s["agrees_with_rule"]
+    assert s["ranking"][0]["scatter_contrast"] > 0.5
     d = ID.illumination_design(surface="glossy", defect="topographic", slope_deg=10.0)
     names = [r["candidate"] for r in d["ranking"]]
     assert d["recommended"] == names[0]
     assert d["ranking"][0]["score"] >= d["ranking"][-1]["score"]
-    assert d["rule_of_thumb"] == "ring_dark_field_20deg"
-    assert any(n.startswith("ring_best_") for n in names)
+    assert d["rule_of_thumb"].startswith("ring_best_")
+    # a smooth 10 deg facet does not light up in dark field: the low ring scores near zero
+    low = [r for r in d["ranking"] if r["candidate"] == "ring_dark_field_20deg"][0]
+    assert low["defect_contrast"] < 0.05
+    assert any(n.startswith("ring_best_") for n in names) and d["best_ring_elevation_deg"] == 70.0
     e = ID.illumination_design(surface="matte", defect="edge")
     assert e["recommended"] == "backlight" and e["agrees_with_rule"]
     p = ID.illumination_design(surface="glossy", defect="pigment")
     assert p["rule_of_thumb"] == "dome"
+    m = ID.illumination_design(surface="mirror", defect="topographic", slope_deg=10.0)
+    assert m["rule_of_thumb"] == "coaxial"
 
 
 # --------------------------------------------------------------------------- #
@@ -227,6 +236,7 @@ def test_facade_exports_every_illumination_op():
     lambda: ID.lighting_sweep(elevations_deg=[0.0]),
     lambda: ID.lighting_sweep(kind="dome"),
     lambda: ID.illumination_design(defect="crack"),
+    lambda: ID.defect_contrast(ID.light_source(), n_azimuth=0),
 ])
 def test_invalid_inputs_are_value_errors(bad):
     with pytest.raises(ValueError):
