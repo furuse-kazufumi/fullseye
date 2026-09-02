@@ -50,10 +50,6 @@ KNOWN_DEAD_BRIDGES = {
         "満たす絵にしか使えない(乱数の rgbimage は必ず拒否される)。宣言の誤りでは"
         "なく到達性の問題 —— 上流が dichromatic_render のような順方向モデルの出力を"
         "供給したときだけ成功する。op 側の番人は正しく働いている。",
-    "tb_monogenic_amplitude":
-        "入力が**本物のモノジェニック信号**であることを要求する(乱数の qimage は"
-        "『k 成分が大きすぎる』と名指しで拒否される)。上流が monogenic_signal を"
-        "作ったときだけ成功する。これも到達性の問題。",
     "tb_keypoints_to_image2d":
         "台帳の in 型は 'keypoints'((N,2))だが TYPE_TO_SORT はこれを 'points' sort へ"
         "写す。points sort は普段 (N,3) の点群を運ぶので、上流が keypoints を産んだ"
