@@ -1774,7 +1774,8 @@ def run(a):
 
 _C_SEGMENTS_INTERSECT = '''\
 /* Do two closed segments a = [x1,y1,x2,y2,x3,y3,x4,y4] intersect? 1.0 yes / 0.0 no (CLRS 33.1;
- * integer coords in [-100000,100000], exact orientation cross products). Fail-soft 0.0 on malformed. */
+ * integer coords in [-100000,100000], exact orientation cross products). Fail-soft -1.0 on malformed /
+ * out-of-domain (0.0 = "no intersection" is a valid answer, so it cannot be the sentinel). */
 static int _seg_orient(long long ax, long long ay, long long bx, long long by,
                        long long cx, long long cy) {
     long long v = (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
