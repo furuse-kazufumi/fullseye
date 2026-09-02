@@ -276,14 +276,17 @@ def _final_sha(e) -> str:
         return e["sha256_out"]
     if e["archive"] is None:
         return e.get("sha256") or ""
-    return ""  # archived but no extracted-file pin -> existence only
+    return ""  # archived but no extracted-file pin -> cannot be verified
 
 
 def verify(sample_id: str) -> bool:
     """True iff the local file exists and matches its pinned final sha256.
 
-    Returns False (never raises) when the file is missing.  An entry with no
-    pinned final sha counts as verified once the file simply exists.
+    Returns False (never raises) when the file is missing — and also when the
+    entry pins **no** final sha (fail-closed: "exists" is not "verified"; until
+    2026-09-03 an archive entry without ``sha256_out`` counted as verified once
+    the file merely existed). The shipped manifest requires ``sha256_out`` on
+    every archive entry (:func:`_validate_manifest`).
     """
     e = entry(sample_id)
     p = local_path(sample_id)
@@ -291,7 +294,7 @@ def verify(sample_id: str) -> bool:
         return False
     want = _final_sha(e)
     if not want:
-        return True
+        return False
     return _sha256(p) == want
 
 
