@@ -303,7 +303,8 @@ def test_gray_u8_matches_rec601_and_cv2_within_1lsb():
     rng = np.random.default_rng(1)
     rgb = rng.integers(0, 256, (8, 9, 3), np.uint8)
     g_np = video._gray_u8(rgb, "numpy")
-    ref = (299 * rgb[..., 0].astype(np.uint32) + 587 * rgb[..., 1] + 114 * rgb[..., 2] + 500) // 1000
+    w = rgb.astype(np.uint32)
+    ref = (299 * w[..., 0] + 587 * w[..., 1] + 114 * w[..., 2] + 500) // 1000
     np.testing.assert_array_equal(g_np, ref.astype(np.uint8))
     assert g_np.dtype == np.uint8
     g_auto = video._gray_u8(rgb, "auto")
