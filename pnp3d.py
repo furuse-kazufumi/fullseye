@@ -212,6 +212,14 @@ def _refine_lm(X, x, K, R, t, iters=30):
     """再投影誤差の Levenberg-Marquardt 精密化(解析ヤコビアン、左乗の微小回転)。→ (R, t)。"""
     K = np.asarray(K, float)
     N = len(X)
+    # Parametrise the rotation about the point centroid, not the world origin:
+    # X_c = R (X - c) + t'. With a far world origin (|X| ~ 1e2..1e3) a rotation
+    # update about the origin moves the points by |X|·δω and t must undo it, an
+    # ill-conditioned coupling on which LM stalled (offset (1000,0,0): 110 px rms
+    # after 300 iterations, 2026-09-02). Centred, the two are nearly decoupled.
+    c = X.mean(0)
+    X = X - c
+    t = t + R @ c
 
     def residual(R, t):
         return (_project(X, K, R, t) - x).ravel()
