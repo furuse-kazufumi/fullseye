@@ -176,9 +176,13 @@ def test_intentional_overrides_still_win_by_name():
     import ops
     for n in _SAFE_WRAP_OVERRIDES:
         assert n in ops.RT, f"{n} がレジストリから消えている"
-        assert "_safe" in getattr(ops.RT[n], "__qualname__", ""), (
-            f"{n}: 名前で引ける実装が backends_auto の _safe ラッパでない "
-            f"({ops.RT[n].__module__}.{getattr(ops.RT[n], '__qualname__', '?')})")
+        fn = ops.RT[n]
+        # ★2026-09-03: 全 backend の _safe が backend_safe.guard に集約されたので、
+        # qualname の文字列一致ではなく guard が立てる構造化マーカーで判定する
+        # (guard は qualname にも "_safe(...)" を残すが、そちらは表示用)。
+        assert getattr(fn, "__fullseye_guarded__", False) or "_safe" in getattr(fn, "__qualname__", ""), (
+            f"{n}: 名前で引ける実装が fail-closed ラッパでない "
+            f"({fn.__module__}.{getattr(fn, '__qualname__', '?')})")
 
 
 def test_dropped_duplicates_are_exactly_the_known_overrides():

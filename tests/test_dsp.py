@@ -198,3 +198,79 @@ def test_short_signal_filter_raises_instead_of_silent_no_op():
 def test_facade_exposes_dsp():
     import fullseye
     assert hasattr(fullseye, "read_wav") and hasattr(fullseye, "signal_features")
+
+
+def test_zero_crossing_rate_ignores_exact_zeros():
+    """An exact-zero sample is not a sign change. ``np.diff(np.sign(x))`` counted
+    ``+1 -> 0 -> +1`` as two crossings (rate 1.0 for a signal that never changes
+    sign); zeros are now skipped and the sign is compared between consecutive
+    non-zero samples, while the denominator stays ``len(x) - 1``."""
+    assert dsp.zero_crossing_rate([1, 0, 1, 0, 1]) == 0.0
+    assert dsp.zero_crossing_rate([1, 0, -1]) == 0.5              # 1 crossing / 2 pairs
+    assert abs(dsp.zero_crossing_rate([3, 0, 0, 0, -3, 0, 3]) - 2 / 6) < 1e-12
+    assert dsp.zero_crossing_rate([0, 0, 0]) == 0.0
+    assert dsp.zero_crossing_rate([1, -1, 1, -1]) == 1.0          # every pair flips
+    assert dsp.zero_crossing_rate([5.0]) == 0.0
+    n, rate = 1000, 1000.0
+    x = np.sin(2 * np.pi * 50.0 * np.arange(n) / rate)            # 100 crossings
+    assert abs(dsp.zero_crossing_rate(x) - 100 / 999) < 1e-12
+    assert abs(dsp.signal_features(x, rate)["zcr"] - round(100 / 999, 6)) < 1e-9
+
+
+def test_column_vector_input_is_treated_as_a_1d_signal():
+    """A ``(N, 1)`` CSV column used to flow through ``spectrum`` as a 2-D array:
+    ``rfft`` ran along the length-1 axis, so ``mag`` was just ``|x|`` per row and
+    ``signal_features`` reported peak_freq = 5 Hz for a 50 Hz tone. Vectors with a
+    single non-trivial axis are now flattened; genuinely 2-D input is refused."""
+    n, rate = 1000, 1000.0
+    x = np.sin(2 * np.pi * 50.0 * np.arange(n) / rate)
+    f1, m1 = dsp.spectrum(x, rate)
+    f2, m2 = dsp.spectrum(x[:, None], rate)
+    f3, m3 = dsp.spectrum(x[None, :], rate)
+    assert m2.shape == m1.shape == m3.shape and np.allclose(m1, m2) and np.allclose(m1, m3)
+    assert dsp.signal_features(x[:, None], rate)["peak_freq"] == 50.0
+    assert dsp.signal_features(x, rate) == dsp.signal_features(x[:, None], rate)
+    assert dsp.rms(np.float64(0.5)) == 0.5                        # 0-d scalar ravels too
+    with pytest.raises(ValueError, match="1-D signal"):
+        dsp.spectrum(np.ones((4, 4)), rate)
+
+
+@pytest.mark.parametrize("call", [
+    lambda x, rate: dsp.spectrum(x, rate),
+    lambda x, rate: dsp.spectrogram(x, rate, win=128),
+    lambda x, rate: dsp.rms(x),
+    lambda x, rate: dsp.rms(x, frame=64),
+    lambda x, rate: dsp.envelope(x),
+    lambda x, rate: dsp.lowpass(x, rate, 100),
+    lambda x, rate: dsp.highpass(x, rate, 100),
+    lambda x, rate: dsp.bandpass(x, rate, 20, 200),
+    lambda x, rate: dsp.resample(x, rate, rate / 2)[0],
+    lambda x, rate: dsp.find_peaks(x, height=0.5, distance=5),
+    lambda x, rate: dsp.zero_crossing_rate(x),
+    lambda x, rate: dsp.signal_features(x, rate),
+], ids=["spectrum", "spectrogram", "rms", "rms_framed", "envelope", "lowpass",
+        "highpass", "bandpass", "resample", "find_peaks", "zcr", "signal_features"])
+def test_every_public_function_accepts_column_and_refuses_matrix(call):
+    """Every public dsp entry point goes through ``_require_finite``, so the same
+    shape rule applies uniformly: ``(N,1)`` == 1-D result, ``(N,M>1)`` raises."""
+    n, rate = 1000, 1000.0
+    x = np.sin(2 * np.pi * 50.0 * np.arange(n) / rate)
+    a, b = call(x, rate), call(x[:, None], rate)
+    if isinstance(a, tuple):
+        for u, v in zip(a, b):
+            assert np.allclose(u, v)
+    elif isinstance(a, dict):
+        assert a == b
+    else:
+        assert np.allclose(a, b)
+    with pytest.raises(ValueError, match="1-D signal"):
+        call(np.tile(x[:, None], (1, 3)), rate)
+
+
+def test_write_wav_accepts_column_and_refuses_matrix(tmp_path):
+    x, rate = _tone(440.0, rate=8000, amp=0.6)
+    dsp.write_wav(str(tmp_path / "col.wav"), x[:, None], rate)
+    y, _ = dsp.read_wav(str(tmp_path / "col.wav"))
+    assert len(y) == len(x) and np.max(np.abs(y - x)) < 1e-3
+    with pytest.raises(ValueError, match="1-D signal"):
+        dsp.write_wav(str(tmp_path / "bad.wav"), np.ones((8, 2)), rate)

@@ -891,8 +891,8 @@ class Interp:
         if n.op in ("and", "or"):                    # short-circuit
             a = self._eval(n.a)
             if n.op == "and":
-                return _truth(a) and _truth(self._eval(n.b))
-            return _truth(a) or _truth(self._eval(n.b))
+                return _truth(a, n.line) and _truth(self._eval(n.b), n.line)
+            return _truth(a, n.line) or _truth(self._eval(n.b), n.line)
         a, b = self._eval(n.a), self._eval(n.b)
         if n.op in _COMPARE_OPS and (isinstance(a, _ICONIC) or isinstance(b, _ICONIC)):
             # Defect 5: comparing an iconic value against a scalar yields an array,

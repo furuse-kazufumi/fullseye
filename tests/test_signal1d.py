@@ -113,3 +113,23 @@ def test_invalid_inputs_raise():
         S.bandpass(np.zeros(50), low=0.5, high=0.2)            # low>=high
     with pytest.raises(ValueError):
         S.spline_curve_fit(np.zeros((3, 2)))                   # <4点
+
+
+def test_fft_spectrum_scaling_dc_nyquist_and_midband():
+    """振幅正規化の規約を固定する。DC と(偶数 N の)ナイキストは自分自身が鏡像なので
+    1/N、それ以外は 2/N。以前はナイキスト bin にも 2/N が掛かり cos(pi*n) の振幅が
+    2.0 と報告されていた(正しくは 1.0)。奇数 N にはナイキスト bin が無いので末尾 bin
+    は 2/N のまま。"""
+    N = 1024
+    _, mag = S.fft_spectrum(np.cos(np.pi * np.arange(N)))          # amplitude 1.0 at Nyquist
+    assert abs(mag[-1] - 1.0) < 1e-9
+    _, mag = S.fft_spectrum(np.ones(N))                             # DC amplitude 1.0
+    assert abs(mag[0] - 1.0) < 1e-9
+    t = np.arange(N)
+    _, mag = S.fft_spectrum(0.7 * np.sin(2 * np.pi * (64 / N) * t))  # bin-centred mid tone
+    assert abs(mag[64] - 0.7) < 1e-9
+    # odd N: no Nyquist bin -> last bin keeps the ordinary 2/N factor
+    M = 1023
+    y = 0.7 * np.sin(2 * np.pi * (511 / M) * np.arange(M))          # bin 511 = last rfft bin
+    _, mag = S.fft_spectrum(y)
+    assert mag.size == M // 2 + 1 and abs(mag[-1] - 0.7) < 1e-9

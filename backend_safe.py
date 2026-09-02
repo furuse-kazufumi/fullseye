@@ -212,7 +212,10 @@ def guard(fn, out_sort=None, *, name=None, on_fail=None, finish=None):
         return sanitize(out, v, out_sort)
     w.__wrapped__ = fn
     w.__name__ = getattr(fn, "__name__", "op")
-    w.__qualname__ = getattr(fn, "__qualname__", w.__name__)
+    # Keep "_safe" in the qualname: the registry-integrity tests identify a guarded
+    # op that way, and `__fullseye_guarded__` is the structured form of the same fact.
+    w.__qualname__ = "_safe(%s)" % getattr(fn, "__qualname__", w.__name__)
+    w.__fullseye_guarded__ = True
     return w
 
 
