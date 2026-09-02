@@ -86,8 +86,7 @@ def test_row_key_is_a_stable_string():
 # 2. ベースライン比較                                                           #
 # --------------------------------------------------------------------------- #
 def _baseline_of(report):
-    return B.load_baseline_dict(B.baseline_from(report)) if hasattr(B, "load_baseline_dict") \
-        else B.baseline_from(report)["metrics"]
+    return B.baseline_from(report)["metrics"]
 
 
 def test_baseline_passes_when_identical(smoke_report):
