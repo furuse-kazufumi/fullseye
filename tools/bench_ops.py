@@ -264,10 +264,24 @@ def resolve_ops(names: Iterable[str]) -> list[str]:
     return out
 
 
-def resolve_set(name: str) -> list[str]:
+def resolve_set(name: str) -> tuple[list[str], list[str]]:
+    """名前付きセット -> ``(measurable names, absent names)``。
+
+    ユーザーが打った ``--ops`` は fail-closed(打ち間違いを黙って落とさない)。対して
+    **セットは任意バックエンドを含む**(``cv_*`` は opencv、``sk_*`` は scikit-image、
+    ``xkor_*`` は kornia)ので、その op が registry に居ないのは「打ち間違い」ではなく
+    「そのバックエンドが入っていない」= 正常な劣化。落とさず、**何を測らなかったかを
+    返して header に残す**(黙って縮めると「退行ゼロ」に化ける)。
+    """
     if name not in SETS:
-        raise ValueError("unknown set %r (%s)" % (name, "|".join(SETS)))
-    return resolve_ops(SETS[name])
+        raise ValueError("unknown set %r (%s)" % (name, "|".join(sorted(SETS))))
+    known = set(registry_names())
+    present = [n for n in SETS[name] if n in known]
+    absent = [n for n in SETS[name] if n not in known]
+    if not present:
+        raise ValueError("set %r has no measurable op in this install (absent: %s)"
+                         % (name, ", ".join(absent)))
+    return present, absent
 
 
 # --------------------------------------------------------------------------- #

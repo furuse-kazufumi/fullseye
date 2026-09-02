@@ -5,7 +5,7 @@ category: smoothing
 in: image
 out: image
 halcon: gauss_filter
-examples: [coherence_scanning, color_transport, ct_inspection, gallery2d_smoothing_rank, photon_timeresolved, quickstart]
+examples: [coherence_scanning, color_transport, ct_inspection, gallery2d_smoothing_rank, photon_timeresolved, quickstart, video_streaming]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -39,6 +39,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 - [gallery2d_smoothing_rank](../../../../examples/gallery2d_smoothing_rank.py) — `py -3.11 examples/gallery2d_smoothing_rank.py`
 - [photon_timeresolved](../../../../examples/photon_timeresolved.py) — `py -3.11 examples/photon_timeresolved.py`
 - [quickstart](../../../../examples/quickstart.py) — `py -3.11 examples/quickstart.py`
+- [video_streaming](../../../../examples/video_streaming.py) — `py -3.11 examples/video_streaming.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 
