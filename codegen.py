@@ -55,6 +55,13 @@ def emit(problem: str, wd: Path) -> dict:
             c.append("    /* identity */")
         elif op.c_stmt is not None:
             c.append("    " + op.c_stmt(s.a, s.b))
+            # Mirror ops._apply EXACTLY: the runtime clips every image/region stage to
+            # [0,1] before the next stage sees it. Emit the same clip in C (belt and
+            # braces with the op's own exit clip) — without it an overshooting op such
+            # as unsharp fed the next stage raw values and the C pipeline diverged
+            # while codegen still reported c_fully_supported (2026-09-03 review).
+            if ops._effective_out_sort(s) not in ops._UNCLIPPED_SORTS:
+                c.append("    clamp01(buf, w, h);")
         else:
             c.append(f"    /* op '{s.op}' ({op.halcon}) not yet in the C runtime — compile-gated */")
     c += ["}", ""]
