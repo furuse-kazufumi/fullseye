@@ -465,6 +465,13 @@ class Parser:
     _NOT_PREC = 3                       # 'not' binds looser than comparison (like Python)
 
     def _parse_expr(self, min_prec=0):
+        self._enter(self._peek().line)
+        try:
+            return self._parse_expr_inner(min_prec)
+        finally:
+            self._leave()
+
+    def _parse_expr_inner(self, min_prec):
         # 'not' is a low-precedence prefix (looser than comparison): `not a = b`
         # is `not (a = b)`, not `(not a) = b`.  Unary '-' stays tight (_parse_unary).
         t0 = self._peek()
@@ -484,8 +491,11 @@ class Parser:
                 break
             # Comparisons do not chain: `0 <= X <= 10` would silently parse as
             # `(0 <= X) <= 10` and return a wrong boolean — forbidden by the
-            # language's no-silent-wrong rule.  Require parentheses.
-            if op in self._COMPARE and isinstance(left, BinOp) and left.op in self._COMPARE:
+            # language's no-silent-wrong rule.  Require parentheses: a
+            # comparison the author wrapped in ( ... ) is an explicit operand,
+            # so `(X > 3) = true` is fine.
+            if (op in self._COMPARE and isinstance(left, BinOp)
+                    and left.op in self._COMPARE and not left.paren):
                 raise FScriptError("chained comparison '%s' is ambiguous; "
                                    "parenthesise (e.g. (0 <= X) and (X <= 10))" % op, t.line)
             self._next()
@@ -497,7 +507,11 @@ class Parser:
         t = self._peek()
         if t.kind == "op" and t.val == "-":
             self._next()
-            return UnOp(t.val, self._parse_unary(), t.line)
+            self._enter(t.line)
+            try:
+                return UnOp(t.val, self._parse_unary(), t.line)
+            finally:
+                self._leave()
         return self._parse_postfix()
 
     def _parse_postfix(self):
