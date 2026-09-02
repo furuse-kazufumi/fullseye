@@ -96,6 +96,9 @@ LEDGER_DIMS = {
                      "module": "imgforensics", "family": "image_forensics"},
     "astrostack": {"registry": "opsastrostack", "table": "OPSASTROSTACK",
                    "module": "astrostack", "family": "astro_stacking"},
+    # 2026-09-03: ストリーミング動画処理(リング/状態つき op/パイプライン)
+    "videostream": {"registry": "opsvideostream", "table": "OPSVIDEOSTREAM",
+                    "module": "videostream", "family": "video_streaming"},
 }
 
 

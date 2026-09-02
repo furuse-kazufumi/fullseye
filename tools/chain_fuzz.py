@@ -1713,6 +1713,9 @@ def catalog():
         ("opscolortransport", "OPSCOLORTRANSPORT", "colortransport"),
         ("opsimgforensics", "OPSIMGFORENSICS", "imgforensics"),
         ("opsastrostack", "OPSASTROSTACK", "astrostack"),
+        # 2026-09-03: ストリーミング動画処理。入力は既存の `video` 種
+        # (_motion_clip = (32,32,32) の並進格子)をそのまま使う
+        ("opsvideostream", "OPSVIDEOSTREAM", "videostream"),
     ):
         _m = __import__(_mod)
         for n, m in getattr(_m, _tbl).items():

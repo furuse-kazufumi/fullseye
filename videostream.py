@@ -170,8 +170,9 @@ class FrameRing:
     # -- access ----------------------------------------------------------- #
     def push(self, frame) -> None:
         a = _frame(frame)
-        if self._buf is None:
-            self._buf = np.empty((self.n,) + a.shape, a.dtype)
+        if self._buf is None or (self._count == 0 and (a.shape != self._buf.shape[1:]
+                                                       or a.dtype != self._buf.dtype)):
+            self._buf = np.empty((self.n,) + a.shape, a.dtype)      # (re)allocate: empty ring = new stream
         elif a.shape != self._buf.shape[1:] or a.dtype != self._buf.dtype:
             raise ValueError("frame %r %s does not match the ring's %r %s (stream refused; call reset())"
                              % (a.shape, a.dtype, self._buf.shape[1:], self._buf.dtype))
