@@ -52,14 +52,31 @@ def _import_gen(path: Path):
     return mod
 
 
+def _finite_maxdiff(ref, got) -> float:
+    """``max|ref - got|`` over two numeric arrays, **inf** if any element of either is
+    non-finite — so a NaN can never fold to 0.0 (``max(0.0, nan)`` is 0.0 in Python
+    and ``np.max`` of a NaN array is NaN, which ``<`` tol then treats as pass/skip).
+    Same fail-closed rule as ``algo_difftest._diff01``."""
+    ref = np.asarray(ref, np.float64)
+    got = np.asarray(got, np.float64)
+    if ref.shape != got.shape:
+        return float("inf")
+    if ref.size == 0:
+        return 0.0
+    if not (np.isfinite(ref).all() and np.isfinite(got).all()):
+        return float("inf")
+    return float(np.max(np.abs(ref - got)))
+
+
 def _maxdiff(ref, got):
     """Max abs difference between two pipeline outputs. Handles array (image/
-    region) and scalar (feature) finals; returns nan for non-numeric finals (a
-    contour dict), which are recorded as non-comparable rather than silently passed."""
+    region) and scalar (feature) finals; a non-finite value on either side is
+    **inf** (a gate FAILURE, never a silent pass). Returns nan only for non-numeric
+    finals (a contour dict), which are recorded as non-comparable."""
     if isinstance(ref, np.ndarray) and isinstance(got, np.ndarray):
-        return float("inf") if ref.shape != got.shape else float(np.max(np.abs(ref - got)))
+        return _finite_maxdiff(ref, got)
     try:
-        return abs(float(ref) - float(got))
+        return _finite_maxdiff(np.array([float(ref)]), np.array([float(got)]))
     except (TypeError, ValueError):
         return float("nan")
 
