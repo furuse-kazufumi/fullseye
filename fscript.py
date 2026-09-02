@@ -965,7 +965,7 @@ _ICONIC = (FImage, Region, ObjectSet, np.ndarray)
 _COMPARE_OPS = ("=", "==", "!=", "#", "<", ">", "<=", ">=")
 
 
-def _truth(v) -> bool:
+def _truth(v, line=0) -> bool:
     if isinstance(v, _ICONIC):
         # Defect 4: an iconic value used as a condition was silently coerced with
         # ndarray.any().  The language forbids it — a condition must be a scalar
@@ -973,18 +973,43 @@ def _truth(v) -> bool:
         raise FScriptError(
             "an iconic value has no truth value in a condition; write an explicit "
             "predicate such as count_obj(Objects) > 0, area(R) > 0 or "
-            "mean_gray(Image) > 0.5")
+            "mean_gray(Image) > 0.5", line)
     if isinstance(v, list):
-        return len(v) > 0
+        # HALCON: a scalar IS a length-1 tuple, so `if ([0])` is `if (0)`.  Any
+        # other length has no single truth value (the old `len(v) > 0` made
+        # `if ([0])` true and `not [0]` false).
+        if len(v) == 1:
+            return _truth(v[0], line)
+        raise FScriptError("a tuple of length %d has no truth value in a condition; "
+                           "test one element or a reduction" % len(v), line)
     return bool(v)
 
 
-def _tuple_add(a, b, line=0):
-    """HALCON numeric-tuple ``+`` — element-wise with scalar broadcast.
+_ARITH_OPS = {
+    "+": lambda x, y: x + y, "-": lambda x, y: x - y, "*": lambda x, y: x * y,
+    "/": lambda x, y: x / y, "%": lambda x, y: x % y,
+}
 
-    Defect 3: the old path concatenated (Python list ``+``), so ``[1,2,3] +
-    [10,20,30]`` gave a 6-tuple.  HALCON's ``+`` is element-wise; concatenation
-    is the ``[t1, t2]`` literal.
+
+def _scalar_op(fn, op, x, y, line=0):
+    """One arithmetic step on two scalars.  ``str + str`` concatenates (HALCON);
+    every other string arithmetic is an error — Python's ``'ab' * 3`` repetition
+    is not a language feature and used to slip through unchanged."""
+    if isinstance(x, str) or isinstance(y, str):
+        if op == "+" and isinstance(x, str) and isinstance(y, str):
+            return x + y
+        raise FScriptError("cannot apply '%s' to %s and %s (only string + string "
+                           "concatenates)" % (op, _describe(x), _describe(y)), line)
+    return fn(x, y)
+
+
+def _tuple_op(fn, op, a, b, line=0):
+    """HALCON tuple arithmetic — element-wise with scalar broadcast, for every
+    one of ``+ - * / %``.
+
+    Defect 3: ``+`` concatenated (Python list ``+``); likewise ``[1,2] * 2`` was
+    Python repetition ``[1,2,1,2]`` and ``- / %`` raised raw TypeErrors.  HALCON
+    is element-wise for all of them; concatenation is the ``[t1, t2]`` literal.
     """
     la = a if isinstance(a, list) else [a]
     lb = b if isinstance(b, list) else [b]
@@ -994,9 +1019,9 @@ def _tuple_add(a, b, line=0):
         lb = lb * len(la)
     if len(la) != len(lb):
         raise FScriptError(
-            "tuple '+' needs equal lengths or a scalar (HALCON is element-wise); "
-            "use [t1, t2] to concatenate", line)
-    return [x + y for x, y in zip(la, lb)]
+            "tuple '%s' needs equal lengths or a scalar (HALCON is element-wise); "
+            "use [t1, t2] to concatenate" % op, line)
+    return [_scalar_op(fn, op, x, y, line) for x, y in zip(la, lb)]
 
 
 # --------------------------------------------------------------------------- #
