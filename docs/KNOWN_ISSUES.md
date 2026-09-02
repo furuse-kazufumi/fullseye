@@ -235,5 +235,13 @@ min==max なので `normalize` が `hi=lo+1` に倒し、**値によらずカラ
   `points_harris`)は登録順でなくテーブル `api._ALIAS_CANONICAL` で解決(新しい曖昧
   別名はテストで fail)。
 
-回帰テスト: `tests/test_fallback_policy.py`(20 件)。`tests/test_backends.py` の
+Codex(読取専用)の敵対レビューで追加した 2 巡目: strict は **thread-local**(別スレッドの方針を
+汚さない)/ `record()` は `__str__` が壊れた例外でも落ちない / `warn` は呼び出し 1 回につき
+1 警告(初回の二重発火なし)/ ブレーカー open でも `on_error="raise"` は GPU を再試行して送出 /
+入れ子リストは従来どおり画像(n-ary 分岐は **op 名**で選ぶ)/ n-ary 本体も guard 経由 /
+core op(ops.py)の例外も facade 境界で記録→型に合う fallback(`raise` では送出)/
+最初の家族数調査が取りこぼした **`backends_macro` と `backends_typed` の 2 家族**も記録化
+(typed の「型の嘘」分岐も記録)/ optional import の破損は `source="import"` で台帳へ。
+
+回帰テスト: `tests/test_fallback_policy.py`(34 件)。`tests/test_backends.py` の
 旧 API(`swallowed_errors` / `last_error` / `strict_mode`)は別名として維持。

@@ -238,8 +238,9 @@ def test_nary_ops_are_callable_with_a_list_and_explain_single_input_misuse():
         api.apply(a, "add_image")
     with pytest.raises(TypeError, match="takes 2 inputs"):
         api.apply([a], "add_image")
-    with pytest.raises(TypeError, match="single-input"):
-        api.apply([a, b], "gaussian")
+    # a list handed to a SINGLE-input op is legacy behaviour: np.asarray(image) (nested
+    # lists are images), so no error — the n-ary branch is selected by the op NAME only
+    assert api.apply([a, b], "gaussian").shape[0] == 2
 
 
 def test_every_listed_nary_op_is_callable_from_the_facade():

@@ -140,7 +140,10 @@ def f2_topographic(v, a, b):
     hillside=0.55, ridge=0.75, peak=1.0.
     """
     x = _img(v)
-    if x.size < 4:
+    if x.size < 4 or min(x.shape) < 2:
+        # np.gradient needs >= 2 samples per axis; a 1xN / Nx1 strip has no
+        # Hessian, so every pixel is the "flat" class (0.0).  Raising here made
+        # the fail-soft wrapper return the INPUT as a sketch (2026-09-02 review).
         return np.zeros_like(x)
     sigma = 0.6 + 2.5 * float(a)
     xs = ndimage.gaussian_filter(x, sigma)
