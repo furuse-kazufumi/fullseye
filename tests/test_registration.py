@@ -164,7 +164,7 @@ def _bunny_like(n=1500, seed=2):
                  R * np.cos(ph) * 0.7]
 
 
-@pytest.mark.parametrize("cut,frac", [(-0.8, 0.74), (-0.4, 0.5)])
+@pytest.mark.parametrize("cut,frac", [(-0.4, 0.74), (0.0, 0.5)])
 def test_register_survives_partial_overlap(cut, frac):
     """Regression: with the PCA start alone, `register` failed below ~80 % overlap
     (116-171 deg) because the principal axes of a partial view are not those of
