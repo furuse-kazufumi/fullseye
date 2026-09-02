@@ -372,8 +372,12 @@ def phase_unwrap(wrapped, method: str = "herraez") -> np.ndarray:
     Hh, Ww = phi.shape
     N = Hh * Ww
 
-    # A 1x1 (or single-row/col) image has no interior and nothing to unwrap.
-    if N <= 1 or Hh < 2 or Ww < 2:
+    # Only a single pixel has nothing to unwrap. A single row / column (1, N) or
+    # (N, 1) is a 1-D path: it has no interior (every reliability is 0, so the
+    # edge order below is arbitrary), but on a path graph the union-find result
+    # is order-independent and equals the Itoh / ``np.unwrap`` result along the
+    # long axis. Returning the wrapped input here was a bug (2026-09-02 audit).
+    if N <= 1:
         return phi.copy()
 
     R = _herraez_reliability(phi)
