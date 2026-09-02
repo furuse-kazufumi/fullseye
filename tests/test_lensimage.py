@@ -39,11 +39,11 @@ def _small():
                            {"R": INF, "t": None, "n": 1.0}], stop=0)
 
 
-def _radial_first_zero(psf, dx):
+def _radial_first_zero(psf, dx, r1):
     M = psf.shape[0]
     yy, xx = np.mgrid[:M, :M]
     r = np.hypot(yy - M // 2, xx - M // 2) * dx
-    edges = np.arange(0.0, r.max() * 0.4, dx)
+    edges = np.arange(0.0, 2.0 * r1, dx)
     prof = []
     for a in edges:
         sel = (r >= a) & (r < a + dx)
