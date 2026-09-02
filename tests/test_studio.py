@@ -527,16 +527,20 @@ def test_remove_keeps_a_neighbour_selected():
     m.add_stage("gaussian"); m.add_stage("otsu")
     win, model = studio.build_window(m)
     win._stage_list.setCurrentRow(1)                     # select the last stage -> knobs live
-    sa, sb = win._knob_sliders
+    # the raw 0..1 spins are live for any selected stage (a slider is greyed for a
+    # knob the op's spec marks unused — otsu reads neither — so test the spins)
+    sa, sb = (r.raw for r in win._knob_rows)
     assert sa.isEnabled() and sb.isEnabled()
     win._actions["remove"].trigger()                     # remove it
     # neighbour (now the last, index 0) stays selected; knobs describe it
     assert win._stage_list.currentRow() == 0
     assert sa.isEnabled() and sb.isEnabled()
+    assert win._knob_rows[0].slider.isEnabled()           # gaussian a (blur σ) is a live slider
     win._actions["remove"].trigger()                     # remove the last remaining stage
     # nothing left -> no selection, knobs off
     assert win._stage_list.currentRow() == -1
     assert not sa.isEnabled() and not sb.isEnabled()
+    assert not win._knob_rows[0].slider.isEnabled()
 
 
 def test_reset_shows_raw_image():
