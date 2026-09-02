@@ -187,9 +187,12 @@ def main():
     # 天面だけが他の 5 面より少ない = ボスに食われた分。EGI が帳簿になっている
     face_counts = sorted(int(egi[r, c]) for r, c in zip(*top6))
     print(f"   ★天面の bin だけ {face_counts[0]} 点(他の 5 面は "
-          f"{face_counts[1]}-{face_counts[-1]})。差 "
-          f"{face_counts[-1] - face_counts[0]} 点がボスに食われた足跡で、"
-          f"EGI はそれを勘定できている。")
+          f"{face_counts[1]}-{face_counts[-1]} 点)。1 面 {FACE_GRID ** 2} 点から"
+          f"ボスの足跡 {n_eaten} 点が抜けて {FACE_GRID ** 2 - n_eaten} 点、")
+    print(f"     そこへボス頂上付近の真上を向いた法線が "
+          f"{face_counts[0] - (FACE_GRID ** 2 - n_eaten)} 本入って "
+          f"{face_counts[0]} 点 —— **計数は 1 本単位で追える**。")
+    assert face_counts[0] >= FACE_GRID ** 2 - n_eaten
     losses.append(("normals -> EGI", False,
                    f"方向を bin 幅 10 度へ量子化(計数は保存、向きの解像度が落ちる)"))
 
