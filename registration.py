@@ -199,12 +199,51 @@ def pca_align(src, dst):
 
 
 def register(src, dst, max_iter: int = 60, trim: float | None = 0.2,
-             tol: float = 1e-8):
-    """Robust one-call registration: :func:`pca_align` for a large-rotation start,
-    then Trimmed :func:`icp` for outlier/partial-overlap robustness. Returns the
-    same ``(R, t, aligned, rmse)`` tuple as :func:`icp`."""
-    R0, t0 = pca_align(src, dst)
-    return icp(src, dst, max_iter=max_iter, tol=tol, init=(R0, t0), trim=trim)
+             tol: float = 1e-8, init: str = "auto"):
+    """Robust one-call registration: a large-rotation start, then Trimmed
+    :func:`icp` for outlier/partial-overlap robustness. Returns the same
+    ``(R, t, aligned, rmse)`` tuple as :func:`icp`.
+
+    *init* selects the coarse initialiser:
+
+    * ``"pca"`` — :func:`pca_align` (principal axes). Fast, but the axes of a
+      *partial* view differ from those of the full cloud, so below ~80 %
+      overlap it starts ICP in the wrong basin (measured 2026-09-02: 116-171
+      deg rotation error at 50-74 % source overlap).
+    * ``"feature"`` — :func:`feature_register` (FPFH + RANSAC), which matches
+      local geometry and so survives partial overlap.
+    * ``"auto"`` (default) — run ICP from **both** starts (feature only when the
+      clouds are big enough for FPFH neighbourhoods) and keep the one with the
+      lower trimmed ``rmse``; the returned ``rmse`` is that of the kept pose.
+    """
+    if init not in ("auto", "pca", "feature"):
+        raise ValueError("init must be 'auto', 'pca' or 'feature'")
+    P = np.asarray(src, np.float64)
+    Q = np.asarray(dst, np.float64)
+    starts = []
+    if init in ("auto", "pca"):
+        starts.append(pca_align(P, Q))
+    if init in ("auto", "feature"):
+        # FPFH needs k-neighbourhoods on both clouds; on tiny inputs fall back to
+        # PCA silently in auto mode, but fail loudly if the caller asked for it.
+        big_enough = min(P.shape[0], Q.shape[0]) >= 32
+        if big_enough:
+            try:
+                R0, t0, _, _ = feature_register(P, Q, refine=False)
+                starts.append((R0, t0))
+            except (ValueError, IndexError) as e:
+                if init == "feature":
+                    raise ValueError(f"feature initialiser failed: {e}") from e
+        elif init == "feature":
+            raise ValueError("feature initialiser needs >= 32 points in both clouds")
+    if not starts:                      # auto on a tiny cloud -> PCA/centroid start
+        starts.append(pca_align(P, Q))
+    best = None
+    for R0, t0 in starts:
+        out = icp(P, Q, max_iter=max_iter, tol=tol, init=(R0, t0), trim=trim)
+        if best is None or out[3] < best[3]:
+            best = out
+    return best
 
 
 def feature_register(src, dst, k: int = 16, bins: int = 11, ransac_iter: int = 4000,
