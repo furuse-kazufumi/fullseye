@@ -20,7 +20,6 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import json
-import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -29,6 +28,7 @@ import numpy as np
 
 import ops
 import problems
+from algo_difftest import compiler_label, find_c_compiler
 
 _DRIVER_C = r"""
 #include "imgops.h"
