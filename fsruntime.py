@@ -163,9 +163,12 @@ class Recipe:
         h.update(str(self.abi_major).encode("utf-8")); h.update(b"\x00")
         h.update(self.build_id.encode("utf-8")); h.update(b"\x00")
         for g in self.goldens:
-            items = sorted(g.expect.items(), key=lambda kv: kv[0])
-            h.update(repr(items).encode("utf-8"))
-            h.update(("%.12g" % float(g.tol)).encode("utf-8"))
+            parts: list = []
+            for k in sorted(g.expect):
+                _canon(k, parts)
+                _canon(g.expect[k], parts, "expect[%r]" % k)
+            h.update(b"".join(parts))
+            h.update(float(g.tol).hex().encode("ascii"))
             h.update(b"\x01")
         return h.hexdigest()
 
