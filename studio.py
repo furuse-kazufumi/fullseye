@@ -4580,17 +4580,21 @@ def build_window(model=None):
         flash("loaded dev_* visualization demo")
     win._load_visual_demo = load_visual_demo
 
-    def save_result():
-        if state["result"] is None:
-            flash("nothing to save — run the pipeline first"); return
-        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, "Save result", "result.png",
+    def _result_array():
+        """The pipeline OUTPUT array (state['raw']); the display-transformed view
+        (state['result']) is what 'Save view as shown' writes (F10 review finding)."""
+        raw = state.get("raw")
+        return raw if isinstance(raw, np.ndarray) else None
+
+    def _save_array(arr, title, default, what):
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, title, default,
                                                         "PNG (*.png);;All files (*)")
         if not path:
             return
         try:
-            imgio.save(path, state["result"])     # permission / bad extension / full disk
+            imgio.save(path, arr)                 # permission / bad extension / full disk
         except Exception as e:
-            report_error("Could not save result", "%s\n\n%s" % (path, e)); return
+            report_error("Could not save %s" % what, "%s\n\n%s" % (path, e)); return
         # Ctrl+S saves a PNG of the RESULT; the dirty '*' tracks the PIPELINE. If the
         # pipeline has unsaved edits, say which key saves it so the star isn't a mystery.
         if state.get("dirty") and model.stages:
@@ -4598,13 +4602,25 @@ def build_window(model=None):
         else:
             flash("saved " + os.path.basename(path))
 
+    def save_result():
+        arr = _result_array()
+        if arr is None:
+            flash("nothing to save — run the pipeline first"); return
+        _save_array(arr, "Save result (pipeline output)", "result.png", "result")
+
+    def save_view():
+        if not isinstance(state.get("result"), np.ndarray):
+            flash("nothing to save — run the pipeline first"); return
+        _save_array(state["result"], "Save view as shown", "view.png", "view")
+
     def copy_result():
-        if state.get("result") is None:
+        arr = _result_array()
+        if arr is None:
             flash("nothing to copy — run the pipeline first"); return
-        qi = _to_qimage(state["result"], QtGui)
+        qi = _to_qimage(arr, QtGui)
         if qi is not None:
             QtWidgets.QApplication.clipboard().setImage(qi)
-            flash("copied result image to clipboard")
+            flash("copied result image (pipeline output) to clipboard")
 
     def export():
         dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Export"); v = QtWidgets.QVBoxLayout(dlg)
