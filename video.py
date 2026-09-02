@@ -72,11 +72,68 @@ def _to01(a: np.ndarray) -> np.ndarray:
     return np.clip(a.astype(np.float64), 0.0, 1.0)
 
 
-def _coerce(frame, gray: bool) -> np.ndarray:
-    """One decoded frame → float64 ``[0,1]``; grayscale ``(H,W)`` or RGB ``(H,W,3)``."""
+_GRAY_BACKENDS = ("auto", "cv2", "numpy")
+
+
+def _gray_u8(a: np.ndarray, backend: str) -> np.ndarray:
+    """RGB integer frame → gray in the **same integer dtype** (Rec. 601 weights).
+
+    ``cv2.cvtColor`` (fixed-point, IPP; 0.4 ms for 1080p) when available and
+    allowed, else integer numpy arithmetic ``(299R + 587G + 114B + 500) // 1000``.
+    The two can differ by 1 LSB in rounding; both are the same luma convention
+    :func:`_coerce` applies to float frames.
+    """
+    if backend not in _GRAY_BACKENDS:
+        raise ValueError("gray_backend must be one of %r, got %r" % (_GRAY_BACKENDS, backend))
+    if backend in ("auto", "cv2"):
+        cv2 = _cv2()
+        if cv2 is not None and a.dtype in (np.uint8, np.uint16):
+            return cv2.cvtColor(np.ascontiguousarray(a), cv2.COLOR_RGB2GRAY)
+        if backend == "cv2":
+            raise RuntimeError("gray_backend='cv2' needs opencv-python and a uint8/uint16 frame")
+    wide = a.astype(np.uint32) if a.dtype.itemsize <= 2 else a.astype(np.uint64)
+    g = (299 * wide[:, :, 0] + 587 * wide[:, :, 1] + 114 * wide[:, :, 2] + 500) // 1000
+    return g.astype(a.dtype)
+
+
+def _coerce(frame, gray: bool, dtype: str = "float64", gray_backend: str = "auto") -> np.ndarray:
+    """One decoded frame → the requested dtype; grayscale ``(H,W)`` or RGB ``(H,W,3)``.
+
+    ``dtype="float64"`` (default) is the library contract ``[0, 1]``.
+    ``dtype="uint8"`` / ``"uint16"`` pass an integer frame through **without
+    conversion** (zero-copy for the gray→gray and RGB→RGB cases; measured
+    18 → ~180 fps for 1080p, PERF_MEMORY_VIDEO_SURVEY §3.2) — a float frame
+    asked for as integer is scaled and rounded, so the request is always
+    honoured. Integer gray conversion uses :func:`_gray_u8`.
+    """
     a = np.asarray(frame)
     if a.ndim == 3 and a.shape[2] == 4:          # RGBA → drop alpha
         a = a[:, :, :3]
+    if dtype != "float64":
+        if dtype not in ("uint8", "uint16"):
+            raise ValueError("dtype must be 'float64', 'uint8' or 'uint16', got %r" % (dtype,))
+        want = np.dtype(dtype)
+        if a.dtype != want:
+            if np.issubdtype(a.dtype, np.integer):
+                a = np.round(_to01(a) * float(np.iinfo(want).max)).astype(want)
+            else:
+                a = np.round(np.clip(np.asarray(a, np.float64), 0.0, 1.0)
+                             * float(np.iinfo(want).max)).astype(want)
+        if gray:
+            if a.ndim == 2:
+                return a
+            if a.ndim == 3 and a.shape[2] == 1:
+                return a[:, :, 0]
+            if a.ndim == 3 and a.shape[2] == 3:
+                return _gray_u8(a, gray_backend)
+            raise ValueError("unexpected frame shape %r" % (a.shape,))
+        if a.ndim == 2:
+            return np.repeat(a[:, :, None], 3, axis=2)
+        if a.ndim == 3 and a.shape[2] == 1:
+            return np.repeat(a, 3, axis=2)
+        if a.ndim == 3 and a.shape[2] == 3:
+            return a
+        raise ValueError("unexpected frame shape %r" % (a.shape,))
     a = _to01(a)
     if gray:
         if a.ndim == 2:
@@ -114,7 +171,7 @@ def _iter_cv2(path):
 
 
 def iter_frames(path: str, gray: bool = True, step: int = 1, start: int = 0,
-                max_frames=None):
+                max_frames=None, dtype: str = "float64", gray_backend: str = "auto"):
     """Yield frames from *path* one at a time (memory-friendly for long clips).
 
     Parameters
@@ -124,8 +181,14 @@ def iter_frames(path: str, gray: bool = True, step: int = 1, start: int = 0,
     step       : keep every *step*-th frame (``step=2`` halves the frame rate).
     start      : skip this many leading frames before the first kept frame.
     max_frames : stop after yielding this many kept frames (``None`` = all).
+    dtype      : ``"float64"`` (default, ``[0, 1]`` contract) or ``"uint8"`` /
+                 ``"uint16"`` to pass decoded integer frames through untouched
+                 (the streaming path: :class:`videostream.VideoPipeline` keeps
+                 its ring in that dtype and converts once at the first op).
+    gray_backend : ``"auto"`` (cv2 if present), ``"cv2"`` or ``"numpy"`` for the
+                 integer gray conversion; ignored for float64 output.
 
-    Frames are float64 in ``[0, 1]``. Being a generator, errors surface when it is
+    Frames are float64 in ``[0, 1]`` unless *dtype* says otherwise. Being a generator, errors surface when it is
     iterated (not at call): ``FileNotFoundError`` for a missing path, and
     ``RuntimeError`` if no video backend is available or the file cannot be
     decoded. Accepts a ``str`` or ``os.PathLike``.
@@ -139,6 +202,10 @@ def iter_frames(path: str, gray: bool = True, step: int = 1, start: int = 0,
     step = max(1, int(step))
     start = max(0, int(start))
     cap = None if max_frames is None else max(0, int(max_frames))
+    if dtype not in ("float64", "uint8", "uint16"):
+        raise ValueError("dtype must be 'float64', 'uint8' or 'uint16', got %r" % (dtype,))
+    if gray_backend not in _GRAY_BACKENDS:
+        raise ValueError("gray_backend must be one of %r, got %r" % (_GRAY_BACKENDS, gray_backend))
     if cap == 0:
         return
     # a truly-missing file is FileNotFoundError; a file that exists but fails to
@@ -164,7 +231,7 @@ def iter_frames(path: str, gray: bool = True, step: int = 1, start: int = 0,
                 for i, fr in enumerate(reader):
                     if i < start or (i - start) % step:
                         continue
-                    yield _coerce(fr, gray)
+                    yield _coerce(fr, gray, dtype, gray_backend)
                     kept += 1
                     if cap is not None and kept >= cap:
                         break
@@ -185,7 +252,7 @@ def iter_frames(path: str, gray: bool = True, step: int = 1, start: int = 0,
         for i, fr in enumerate(_iter_cv2(path)):
             if i < start or (i - start) % step:
                 continue
-            yield _coerce(fr, gray)
+            yield _coerce(fr, gray, dtype, gray_backend)
             kept += 1
             if cap is not None and kept >= cap:
                 break
@@ -196,16 +263,17 @@ def iter_frames(path: str, gray: bool = True, step: int = 1, start: int = 0,
 
 
 def read_frames(path: str, gray: bool = True, step: int = 1, start: int = 0,
-                max_frames=None) -> np.ndarray:
+                max_frames=None, dtype: str = "float64", gray_backend: str = "auto") -> np.ndarray:
     """Read a clip into a single array: ``(T, H, W)`` gray or ``(T, H, W, 3)`` RGB.
 
-    A thin eager wrapper over :func:`iter_frames` (same arguments). Use
+    A thin eager wrapper over :func:`iter_frames` (same arguments, including
+    ``dtype="uint8"`` for an integer clip that is 8× smaller than float64). Use
     :func:`iter_frames` instead when a clip will not fit comfortably in memory.
     Raises ``ValueError`` if the clip decodes to zero frames or the frames are
     not all the same shape.
     """
     frames = list(iter_frames(path, gray=gray, step=step, start=start,
-                              max_frames=max_frames))
+                              max_frames=max_frames, dtype=dtype, gray_backend=gray_backend))
     if not frames:
         raise ValueError("no frames read from %s" % path)
     shapes = {f.shape for f in frames}

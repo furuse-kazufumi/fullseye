@@ -263,10 +263,10 @@ def main() -> int:
     e_at = info["e_orig_at"] * 1e3
     e_lo, e_hi = _pct(e_at, 10), _pct(e_at, 90)
     coarse, fine = e_at >= e_hi, e_at <= e_lo
-    k_fine = int(np.argmin(np.abs(WAVELENGTHS - 7.5e-3)))
+    k_fine = int(np.argmin(np.abs(WAVELENGTHS - 15e-3)))      # 元辺長 4〜7 m の Nyquist をまたぐ帯
     w_coarse = float(sw[k_fine][coarse].mean())
     w_fine = float(sw[k_fine][fine].mean())
-    print(f"[d] 面積 rel {area_rel:.1e} / 体積 rel {vol_rel:.1e} ; 合成重み(λ=7.5 m): 元モデルの粗い 10 % "
+    print(f"[d] 面積 rel {area_rel:.1e} / 体積 rel {vol_rel:.1e} ; 合成重み(λ=15 m): 元モデルの粗い 10 % "
           f"(局所辺長 ≥ {e_hi:.1f} m) {w_coarse:.2f} vs 細かい 10 % (≤ {e_lo:.1f} m) {w_fine:.2f}")
     print("[d] 合成重みの範囲 [min, max] / オクターブ: " + ", ".join(
         f"{lam * 1e3:.3g} m: [{sw[k].min():.2f}, {sw[k].max():.2f}]" for k, lam in enumerate(WAVELENGTHS)))

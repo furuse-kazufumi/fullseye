@@ -76,9 +76,9 @@ def run():
     out = T.annotate3d_bbox(out, ((-1, -1, 0), (1, 1, 2)), pose, K, depth=depth, color="neutral")
     out = T.annotate3d_label(out, "apex", top, pose, K, depth=depth, offset=(30, -26))
     out = T.annotate3d_label(out, "hidden side", back, pose, K, depth=depth, offset=(40, -10))
-    out = T.annotate3d_label(out, "front", front, pose, K, depth=depth, offset=(-34, 22))
-    out = T.annotate3d_arrow(out, (1.8, -1.8, 0.0), (0.7, -0.7, 0.3), pose, K, color="wrong")
-    out = T.annotate3d_scale_bar(out, (-1.5, -1.9, 0.0), (1, 0, 0), 1.0, pose, K, unit="m")
+    out = T.annotate3d_label(out, "front", front, pose, K, depth=depth, offset=(36, 30))
+    out = T.annotate3d_arrow(out, (1.6, -1.2, 0.0), (0.75, -0.65, 0.3), pose, K, color="wrong")
+    out = T.annotate3d_scale_bar(out, (0.3, -1.95, 0.0), (1, 0, 0), 1.0, pose, K, unit="m")
     out = T.annotate3d_measure(out, front, top, pose, K, unit="m", color="reference")
 
     # ---- GT ----------------------------------------------------------------

@@ -270,7 +270,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **レンダリング品質: matcap/Phong鏡面シェーディング** — 拡散のみに鏡面を追加。Phongハイライトのピークが反射方向N=norm(L+V)と0.63px一致。Lambertianの最輝点は反射方向を54px外す(nullを約85倍上回る)。matcapはlit-sphere転写で素材感を持ち込む。 `py -3.11 examples_3d/render_shade.py`
 - **レンダリング品質: スーパーサンプリング(SSAA)でジャギー除去** — ss倍レンダ→面積平均縮小。傾き22°エッジでエイリアスエネルギー0.275→0.164(0.59倍)・中間輝度画素0%→0.95%、ss=1..6で単調減少。z-bufferの階段状シルエットを滑らかに。 `py -3.11 examples_3d/render_ssaa.py`
 - **レンダリング品質: トーンマップ(HDR→LDR)で白飛び救済** — 鏡面HDR(max5.41)をReinhard/ACESで[0,1]へ。全域Spearman1.00で単調、素朴クリップがハイライト域を1段に潰す(分散0)のに対し順位相関1.0・194段の階調を保持。 `py -3.11 examples_3d/render_tonemap.py`
-- **小惑星イトカワを物理ベースで描く(Hapke 反射則・太陽視直径 0.53° のレイキャスト影・地形レリーフ)** — 実形状モデル(49,152 面)に mesh_displace_fbm / terrain_region_mask / mesh_scatter_boulders で起伏と岩(べき則 D^-3.1)を足し、render_regolith(Hapke + shadow_raycast + 環境光 0 + 線形トーン)で hero を描く。Lommel-Seeliger の縁の明るさ、対向効果、硬い影、岩の個数を GT で実測。 `py -3.11 examples_3d/itokawa_regolith_hero.py`
+- **小惑星イトカワを物理ベースで描く(Hapke 反射則・太陽視直径 0.53° のレイキャスト影・解像度を意識した地形レリーフ)** — 実形状モデル(49,152 面、辺長 2.6〜14 m と不均一。間引きなし)を mesh_edge_lengths で測り、mesh_subdivide(target 1.5 m の適応テッセレーション、面積体積不変)→ displacement_band_weights(元データが持つ波長の補集合 = 合成重み)→ mesh_displace_spectrum(3 m@60 m〜0.2 m@1.9 m、頂点ごとに 2×局所辺長で帯域制限)→ terrain_region_mask / mesh_scatter_boulders(shape='hull': 角張った凸包、べき則 D^-3.1、30–60 % 埋没、変位後の面に置く)→ render_regolith(Hapke + shadow_raycast + 環境光 0 + bump_normals_fbm の補集合 + exposure='median')。縁の明るさ、対向効果、硬い影、辺長ヒストグラム、帯域ゲート、岩の個数/埋没、露出中央値 0.45、AMICA 実画像に対するレリーフコントラストを GT で実測。 `py -3.11 examples_3d/itokawa_regolith_hero.py`
 - **レンダリング品質: hero レンダラ render_beauty(全層合成の映える静止3D)** — ラスタライズ/Phong鏡面/AO/接地影/SSAA/トーンマップを1本に合成。sphere-on-groundで各層を実測: AOは接触凹部を0.07→0.02と選択的に暗化(露出頂部0.01は不変)、鏡面は小面積ハイライト(frac0.018)、接地影はwith-mesh993px vs null0px、reinhardは単調(clip34段潰しを回避)、SSAAはedge0.040→0.026。sdf_ops生成メッシュでhero画像を出力。 `py -3.11 examples_3d/render_beauty.py`
 - **3-D 図注: レンダリングの上に 3-D アンカーの矢印・引き出し線・スケールバー・座標軸・箱・距離を射影して描く** — render_mesh で描いた球+床の絵に annotate3d 族(project/arrow/label/scale_bar/axes/bbox/measure)で図注を載せる。既知カメラの射影が閉形式と 1e-9 で一致、像面平行のバーが f·L/z px、球の裏のアンカーが depth で隠れ判定(破線)されることを GT で確かめる。 `py -3.11 examples_3d/annotate3d_figure.py`
 
@@ -757,7 +757,7 @@ _計 329 ops / 65 categories。_
 - `mesh_subdivide` (`mesh → mesh`) — Refine a triangle mesh → ``(V, F)``: uniform midpoint subdivision (``levels`` passes, · 例: `itokawa_regolith_hero`
 - `displacement_band_weights` (`mesh → matrix`) — Per-octave, per-vertex band gate ``(K, N)`` in [0,1]: 1 where the mesh can carry the · 例: `itokawa_regolith_hero`
 - `mesh_displace_spectrum` (`mesh → mesh`) — Displace vertices along their normals with a **stated amplitude spectrum**, band-limited · 例: `itokawa_regolith_hero`
-- `bump_normals_fbm` (`normalmap, pointmap → normalmap`) — Perturb a normal map with the *gradient* of a seeded multi-octave height field · 例: なし
+- `bump_normals_fbm` (`normalmap, pointmap → normalmap`) — Perturb a normal map with the *gradient* of a seeded multi-octave height field · 例: `itokawa_regolith_hero`
 
 ### transform(12)
 - `points_to_voxel` (`points → voxel`) — 点群 (N,3) → 密度 voxel (size³)。scatter_add で splat、任意で gaussian 平滑。 · 例: `sh_descriptor_retrieval`, `shape_desc_pose`
