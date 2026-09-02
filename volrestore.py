@@ -112,6 +112,11 @@ def vol_richardson_lucy(vol, psf, iterations=10, clip_tiny=1e-12):
     preserved). *iterations* trades sharpness against noise amplification —
     5-30 is the practical range (see the module notes on semi-convergence).
 
+    Negative voxels are refused (RL is a Poisson model) — except *rounding
+    dust*: values no lower than ``-NEGATIVE_DUST_TOL * max|vol|`` (1e-9
+    relative; an FFT-blurred observation typically carries -1e-16) are clipped
+    to 0 instead of rejected, so the module's own forward model feeds back in.
+
     Returns the deblurred ``(D, H, W)`` float64 volume (non-negative).
     Measured on the test scene (binary sphere pair blurred by a sigma-2
     Gaussian): the RMSE to ground truth falls to 0.81x the blurred
