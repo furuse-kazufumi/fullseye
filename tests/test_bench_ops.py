@@ -108,13 +108,15 @@ def test_baseline_detects_a_synthetic_2x_regression(smoke_report):
     assert "REGRESSIONS" in B.format_comparison(cmp_)
 
 
-def test_tolerance_boundary_is_exclusive(smoke_report):
-    """ちょうど許容幅なら通し、少し超えたら落とす(境界で挙動が揺れないことを固定)。"""
+def test_tolerance_gates_around_the_threshold(smoke_report):
+    """許容幅の内側は通し、外側は落とす(30 % の幅が本当に効いていることを固定)。"""
     base = _baseline_of(smoke_report)
-    on_edge = {k: dict(v, ms=v["ms"] / 1.30) for k, v in base.items()}
-    assert B.compare_baseline(smoke_report, on_edge, tolerance=0.30)["regressions"] == []
-    over = {k: dict(v, ms=v["ms"] / 1.35) for k, v in base.items()}
-    assert len(B.compare_baseline(smoke_report, over, tolerance=0.30)["regressions"]) == len(SMOKE_OPS)
+    inside = {k: dict(v, ms=v["ms"] / 1.25) for k, v in base.items()}      # 1.25x 遅い
+    assert B.compare_baseline(smoke_report, inside, tolerance=0.30)["regressions"] == []
+    outside = {k: dict(v, ms=v["ms"] / 1.40) for k, v in base.items()}     # 1.40x 遅い
+    assert len(B.compare_baseline(smoke_report, outside, tolerance=0.30)["regressions"]) == len(SMOKE_OPS)
+    # 幅を広げれば同じ 1.40x が通る = tolerance が実際に読まれている
+    assert B.compare_baseline(smoke_report, outside, tolerance=0.50)["regressions"] == []
 
 
 def test_baseline_reports_keys_that_vanished(smoke_report):

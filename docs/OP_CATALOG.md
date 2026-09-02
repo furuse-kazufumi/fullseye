@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(63 例)
+### 2-D 画像/信号/幾何(64 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -75,6 +75,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **2 台のカメラの色を揃える(colortransport 色輸送)** — クロストークと黒レベルずれを持つカメラ B の色を A に合わせ(ヒストグラム/最適輸送ベース)、既知の変換を回収できるかを GT で照合。 `py -3.11 examples/color_transport.py`
 - **一晩ぶんの生フレームから 1 枚の星像を作り星の明るさを測る** — フラット補正→宇宙線除去→ディザ位置合わせ→スタック→測光。既知の星の明るさ・位置を GT に照合(12 枚の合成生フレーム)。 `py -3.11 examples/astro_stacking.py`
 - **見えない振動を見せる/測る(motionmag モーション増幅・位相変位)** — 0.2 画素の振動を帯域通過した局所位相から増幅表示し、同じ量からサブピクセル変位を数値で出して既知振幅と照合。 `py -3.11 examples/motion_magnification.py`
+- **動画を 1 フレームずつ流して処理する(videostream リング/状態つき op/パイプライン)** — uint8 リング(float64 の 1/8)で背景差分し既知速度の物体を追う。台帳の一括 op とストリーム版がフレーム単位で一致することを 6 op で確認。 `py -3.11 examples/video_streaming.py`
 - **四元数画像 op(quatimage)を閉形式の真値と突き合わせる** — 色の 3 次元回転とモノジェニック信号が本物の差で、それ以外(QFT 等)は差でないことを 19 op の GT 照合で示す(勝つ/勝たない/負ける を実測で分ける)。 `py -3.11 examples/quaternion_monogenic.py`
 
 **tomography_3d**
@@ -750,7 +751,7 @@ _計 329 ops / 65 categories。_
 - `reflection_symmetry_score` (`points → measurement`) — 反射対称スコア = chamfer(鏡映, 元) / 中央値最近傍間隔(小さいほど対称、スケール不変)。→ float。 · 例: `dl_mesh_symmetry`, `reflection_symmetry`
 
 ### terrain(8)
-- `mesh_displace_fbm` (`mesh → mesh`) — Roughen a mesh by displacing vertices along their normals with seeded fBm noise → ``(V, F)``. · 例: なし
+- `mesh_displace_fbm` (`mesh → mesh`) — Roughen a mesh by displacing vertices along their normals with seeded fBm noise → ``(V, F)``. · 例: `itokawa_regolith_hero`
 - `terrain_region_mask` (`mesh → table`) — Per-face terrain weights (M,) in [0,1]: 0 = smooth regolith "sea", 1 = rough highland. · 例: `itokawa_regolith_hero`
 - `mesh_scatter_boulders` (`mesh → mesh`) — Scatter partly-buried boulders on a mesh (power-law sizes, seeded) → ``(V, F)`` · 例: `itokawa_regolith_hero`
 - `mesh_edge_lengths` (`mesh → signal`) — Local edge length of a triangle mesh → ``(N,)`` per vertex (mean of incident edges), · 例: `itokawa_regolith_hero`
@@ -786,7 +787,7 @@ _計 329 ops / 65 categories。_
 - `sampson_distance` (`image2d, image2d → signal`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category
-_計 860 ops / 47 categories。_
+_計 867 ops / 47 categories。_
 
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
@@ -1444,7 +1445,7 @@ _計 860 ops / 47 categories。_
 - `sg_watershed_gradient` `image → region` · 例: `gallery2d_segmentation`
 
 ### segmentation(54)
-- `threshold` (halcon: `threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `threshold` (halcon: `threshold`) `image → region` · 例: `gallery2d_segmentation`, `video_streaming`
 - `otsu` (halcon: `binary_threshold`) `image → region` · 例: `ct_inspection`, `gallery2d_segmentation`, `quickstart`, `segment_and_classify`
 - `canny` (halcon: `edges_image`) `image → region` · 例: `gallery2d_segmentation`
 - `adaptive_gauss_thresh` (halcon: `local_threshold`) `image → region` · 例: `gallery2d_segmentation`
@@ -1503,7 +1504,7 @@ _計 860 ops / 47 categories。_
 - `xmh_selfmatch` `image → image` · 例: `gallery2d_features`
 
 ### smoothing(48)
-- `gaussian` (halcon: `gauss_filter`) `image → image` · 例: `coherence_scanning`, `color_transport`, `ct_inspection`, `gallery2d_smoothing_rank`, `photon_timeresolved`, `quickstart`
+- `gaussian` (halcon: `gauss_filter`) `image → image` · 例: `coherence_scanning`, `color_transport`, `ct_inspection`, `gallery2d_smoothing_rank`, `photon_timeresolved`, `quickstart`, `video_streaming`
 - `mean_box` (halcon: `mean_image`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `bilateral` (halcon: `bilateral_filter`) `image → image` · 例: `gallery2d_smoothing_rank`, `quickstart`
 - `unsharp` (halcon: `emphasize`) `image → image` · 例: `gallery2d_smoothing_rank`
@@ -1609,7 +1610,7 @@ _計 860 ops / 47 categories。_
 - `xmh_daubechies` `image → image` · 例: `gallery2d_geometry`
 - `tf_radon_sinogram` `image → image` · 例: `gallery2d_geometry`
 
-### typed(122)
+### typed(129)
 - `tb_points_to_voxel` `points → volume` · 例: なし
 - `tb_estimate_point_normals` `points → points` · 例: なし
 - `tb_iss_keypoints` `points → signal` · 例: なし
@@ -1732,6 +1733,13 @@ _計 860 ops / 47 categories。_
 - `tb_indices_to_labels` `signal → volume` · 例: なし
 - `tb_countrate_to_counts` `counts → counts` · 例: なし
 - `tb_counts_to_countrate` `counts → counts` · 例: なし
+- `tb_temporal_median_window` `video → video` · 例: なし
+- `tb_moving_average_window` `video → video` · 例: なし
+- `tb_background_subtraction_window` `video → video` · 例: なし
+- `tb_frame_difference_causal` `video → video` · 例: なし
+- `tb_exponential_background` `video → video` · 例: なし
+- `tb_exponential_foreground` `video → video` · 例: なし
+- `tb_optical_flow_magnitude_stream` `video → video` · 例: なし
 
 ### xldgeom(10)
 - `xg_moments` (halcon: `moments_points_xld`) `contour → feature` · 例: `gallery2d_geometry`
