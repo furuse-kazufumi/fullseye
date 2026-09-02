@@ -1,5 +1,6 @@
 """pnp3d — PnP/DLT 姿勢推定の ground-truth 検証(既知姿勢で投影→復元)。"""
 import numpy as np
+import pytest
 import pnp3d as P
 
 
