@@ -54,6 +54,7 @@ P17 maximum subarray sum (Kadane's reset scan; empty allowed so the result is >=
 """
 from __future__ import annotations
 
+import operator
 from collections.abc import Callable
 from dataclasses import dataclass
 
