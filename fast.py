@@ -481,7 +481,10 @@ def parity(name: str | None = None, images=None, params=None, tol: float = PARIT
                          "error": "no registry op named %r" % nm})
             continue
         full = inter = 0.0
-        binary = False
+        # 二値かどうかは **宣言された out_sort** で決める(観測値で決めると定数画像で
+        # 全 0 になった連続 op を二値と誤判定する)。
+        op = ops._BY_NAME.get(nm)
+        binary = (nm in _BINARY_OUT) or (op is not None and op.out_sort == "region")
         err = None
         for a, b in abs_:
             m = _margin(a)
@@ -496,18 +499,18 @@ def parity(name: str | None = None, images=None, params=None, tol: float = PARIT
                     err = "shape %s vs %s" % (ref.shape, got.shape)
                     break
                 d = np.abs(ref - got)
-                if _is_binary(ref) and _is_binary(got):
-                    binary = True
+                inside = d[m:-m, m:-m] if (d.shape[0] > 2 * m and d.shape[1] > 2 * m) else d
+                if binary:
+                    # 「刃の上の 1 画素」で max-diff が即 1.0 になるので不一致率で測る
+                    # (accel.parity と同じ計量。ただし採否は 0 を要求する)。
                     full = max(full, float(d.mean()))
-                    inter = max(inter, float(d[m:-m, m:-m].mean())
-                                if d.shape[0] > 2 * m and d.shape[1] > 2 * m else float(d.mean()))
+                    inter = max(inter, float(inside.mean()))
                 else:
                     full = max(full, float(d.max()))
-                    inter = max(inter, float(d[m:-m, m:-m].max())
-                                if d.shape[0] > 2 * m and d.shape[1] > 2 * m else float(d.max()))
+                    inter = max(inter, float(inside.max()))
             if err:
                 break
-        lim = 0.0 if (binary or nm in _BINARY_OUT) else tol
+        lim = 0.0 if binary else tol
         row = {"name": nm, "full": full, "interior": inter, "binary": binary,
                "tol": lim, "ok": err is None and inter <= lim}
         if err:
