@@ -398,7 +398,8 @@ RECIPES = {
  "xcv3_brisk_count": {
   "in": "image",
   "out": "feature",
-  "recipe": "float(len(cv2.BRISK_create(thresh=int(10+60*a)).detect((np.clip(v,0,1)*255).astype(np.uint8),None)))",
+  # cv2 5.0.0 で BRISK は cv2.xfeatures2d へ移った。旧配置も残る環境があるので両対応。
+  "recipe": "float(len((getattr(cv2,'BRISK_create',None) or cv2.xfeatures2d.BRISK_create)(thresh=int(10+60*a)).detect((np.clip(v,0,1)*255).astype(np.uint8),None)))",
   "cat": "features"
  },
  "xcv3_agast_count": {
