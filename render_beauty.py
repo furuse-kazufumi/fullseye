@@ -340,7 +340,12 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
                                              background=1.0)
     else:
         ao_map = np.ones((hs, hs), np.float64)
-    if ground_shadow:
+    if shadow_method == "raycast":
+        # 地面の有無に関わらず自己影(self-shadow)を含む厳密な可視性。
+        shadow_map = render_shadow.shadow_raycast(
+            V_all, F_all, light_world, pose=P, intrinsics=Khi, width=hs, height=hs,
+            angular_diameter_deg=sun_diam, samples=int(shadow_samples))
+    elif ground_shadow:
         shadow_map = render_shadow.cast_shadow(
             V_all, F_all, light_world, pose=P, intrinsics=Khi, width=hs, height=hs,
             directional=True, penumbra=float(penumbra), samples=int(shadow_samples),
