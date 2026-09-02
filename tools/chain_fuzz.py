@@ -479,8 +479,17 @@ PARAM_HINTS = {
     "ts": lambda rng: [np.array([0.0, 0.0, 12.0 + 2.0 * i]) for i in range(3)],
     # RANSAC の内れ値許容。points プールは [0,10]^3 なのでその 2% 相当
     "thresh": lambda rng: 0.2,
-    # voxel 化の対象領域と解像度。points プールを丸ごと含む箱にする
-    "bounds": lambda rng: (0.0, 0.0, 0.0, 10.0, 10.0, 10.0),
+    # voxel 化の対象領域と解像度。points プールを丸ごと含む箱にする。
+    #
+    # **``bounds`` はこのライブラリ内で 3 つの流儀がある**(2026-09-02 実測):
+    #   match3d          … ``(lo, hi)`` = 3 次元ベクトル 2 本
+    #   tsdf_fusion / occupancy(3-D) … ``((xmin,xmax),(ymin,ymax),(zmin,zmax))``
+    #   occupancy(2-D)   … ``(xmin, xmax, ymin, ymax)`` の平坦 4 要素
+    # 取り違えは**両方向とも例外**になるので黙って違う体積が出ることは無い
+    # (確認済み)が、名前ヒント 1 つでは全部を満たせない。既定は match3d 流に
+    # 置き、((xmin,xmax),...) を要る op は下の OP_PARAM_HINTS で名指しする。
+    # それまでの平坦 6 要素はどの流儀にも当たらず、4 op が毎回拒否されていた。
+    "bounds": lambda rng: ((0.0, 0.0, 0.0), (10.0, 10.0, 10.0)),
     "res": lambda rng: 16,
     "alpha": lambda rng: 1.0,
     # 3 点から線・面を作る系の 2 番目・3 番目の点(1 番目は型プールから来る)
