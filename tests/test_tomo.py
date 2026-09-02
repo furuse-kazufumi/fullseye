@@ -285,3 +285,23 @@ def test_numpy_fallback_radon_and_fbp_are_genuine():
     c_bp = _corr(nrm(bp)[mask], disk[mask])
     assert c_fbp > 0.8
     assert c_fbp > c_bp + 0.03
+
+
+def test_default_span_round_trips_forward_to_fbp():
+    """Regression (2026-09-02 review): ``tm_radon_forward`` mapped the DEFAULT knob
+    b=0.5 to a 135-deg sinogram while every inverse op here assumes [0,180), so the
+    natural chain forward -> fbp at default knobs reconstructed at corr ~0.75 on a
+    disc+rectangle phantom (0.99 at span 180). b >= 0.5 is now the full 180 deg."""
+    n = 48
+    yy, xx = np.mgrid[0:n, 0:n]
+    phantom = (((yy - 20) ** 2 + (xx - 18) ** 2) < 8 ** 2).astype(np.float64)
+    phantom[28:36, 26:40] = 0.6
+    sino_default = T.tm_radon_forward(phantom, 0.5, 0.5)
+    recon = T.tm_fbp_reconstruct(sino_default, 0.5, 0.0)
+    assert _corr(recon, phantom) > 0.85
+    # b=0.5 and b=1.0 are the same full span; b<0.5 is still limited-angle
+    assert np.allclose(T.tm_radon_forward(phantom, 0.5, 0.5),
+                       T.tm_radon_forward(phantom, 0.5, 1.0))
+    limited = T.tm_radon_forward(phantom, 0.5, 0.0)          # 90-deg span
+    assert not np.allclose(limited, sino_default)
+    assert _corr(T.tm_fbp_reconstruct(limited, 0.5, 0.0), phantom) < _corr(recon, phantom)
