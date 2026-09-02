@@ -451,6 +451,11 @@ EXTRA_OP_HINTS = {
 NONE_BY_CONTRACT = {
     "intersect_planes": "平行な 2 平面には交線が無い(docstring「平行なら None」)",
     "intersect_line_plane": "平面と平行な直線には交点が無い(docstring「平行なら None」)",
+    "integrate": "volume を **in-place** で更新する op(docstring 冒頭「in-place、"
+                 "重み付き移動平均」、シグネチャも -> None)。新しい配列を返すと "
+                 "1 フレームごとに体積ぶんのコピーが増えるので返さないのが設計。"
+                 "2026-09-02、chain_fuzz に (tsdf, weight, depth, K, R, t, trunc) を"
+                 "組む builder を足して**初めて到達**したため、ここに載っていなかった。",
 }
 
 #: 実行に時間がかかりすぎる/この検査では意味の無い op(理由つきで飛ばす)。

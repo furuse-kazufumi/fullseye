@@ -3,7 +3,7 @@ op: query_distance
 dim: 3d
 category: occupancy
 in: sdf × points
-out: measurement
+out: signal
 examples: [occupancy_esdf]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # query_distance — 3D `occupancy` op
 
-- **データ種**: `sdf × points` → `measurement`
+- **データ種**: `sdf × points` → `signal`
 - **呼び出し**: `import occupancy; occupancy.query_distance(esdf_grid, bounds, res, query_points, mode='trilinear')` (または `ops3d.get("query_distance")`)
 
 ## 使い方
@@ -28,9 +28,9 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 - [occupancy_esdf](../../../../examples_3d/occupancy_esdf.py) — `py -3.11 examples_3d/occupancy_esdf.py`
 
-## 型が繋がる次の op(`measurement` を入力に取れる)
+## 型が繋がる次の op(`signal` を入力に取れる)
 
-[vol_gaussian_psf](../restoration/vol_gaussian_psf.md) · [fuse_to_voxel](../fusion/fuse_to_voxel.md) · [fresnel_reflectance](../optics/fresnel_reflectance.md) · [snell_angle](../optics/snell_angle.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md)
 
 ## 同カテゴリ(`occupancy`)
 
