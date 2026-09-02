@@ -349,17 +349,23 @@ class Parser:
                 return self._parse_while()
             if t.val == "repeat":
                 return self._parse_repeat()
-            if t.val == "break":
-                self._next(); self._expect_end_of_stmt(); return Break(t.line)
-            if t.val == "continue":
-                self._next(); self._expect_end_of_stmt(); return Continue(t.line)
+            if t.val in ("break", "continue"):
+                # Outside a loop there is nothing to break out of; the old
+                # parser accepted it and the bare _Break exception escaped run().
+                if self.loop_depth == 0:
+                    raise FScriptError("'%s' outside loop" % t.val, t.line)
+                self._next(); self._expect_end_of_stmt()
+                return (Break if t.val == "break" else Continue)(t.line)
             raise FScriptError("unexpected keyword '%s'" % t.val, t.line)
         # assignment  Name := expr   or   Name[i] := expr   or bare expression
         if t.kind == "name":
             save = self.i
-            target = self._parse_primary()          # Name or Name[idx]
+            target = self._parse_postfix()          # Name, Name[idx], or a call
             if self._at_op(":="):
                 self._next()
+                if not (isinstance(target, Name) or
+                        (isinstance(target, Index) and isinstance(target.base, Name))):
+                    raise FScriptError("assignment target must be a name or Name[i]", t.line)
                 expr = self._parse_expr()
                 self._expect_end_of_stmt()
                 return Assign(target, expr, t.line)
@@ -370,13 +376,13 @@ class Parser:
 
     def _parse_if(self):
         line = self._next().line                     # 'if'
-        cond = self._parse_paren_cond()
+        cond = self._parse_cond()
         body = self._parse_block(("elseif", "else", "endif"))
         branches = [(cond, body)]
         orelse = None
         while self._at_kw("elseif"):
             self._next()
-            c = self._parse_paren_cond()
+            c = self._parse_cond()
             b = self._parse_block(("elseif", "else", "endif"))
             branches.append((c, b))
         if self._at_kw("else"):
@@ -387,15 +393,30 @@ class Parser:
         self._next(); self._expect_end_of_stmt()
         return If(branches, orelse, line)
 
-    def _parse_paren_cond(self):
-        # HDevelop uses parentheses around conditions; accept with or without.
+    def _parse_cond(self):
+        """The header condition of if/elseif/while/until, up to the end of the
+        line.
+
+        HDevelop writes ``if (cond)``; the parentheses are an ordinary grouping,
+        so ``if (X = 1) or (Y = 1)`` is one condition.  A parenthesised header
+        may only continue with ``and`` / ``or`` — ``if (X = 1) -1`` used to parse
+        the ``-1`` as the first body statement (the condition silently lost
+        nothing, but the body gained a statement the author never wrote), and
+        as an arithmetic continuation it would compute ``true - 1 = 0``.  Both
+        are now "unexpected after statement".
+        """
         if self._at_op("("):
-            self._next()
-            c = self._parse_expr()
-            self._expect_op(")")
+            t = self._peek()
+            left = self._parse_primary()             # the ( ... ) group
+            while self._at_kw("and", "or"):
+                op = self._next().val
+                right = self._parse_expr(self._BINPREC[op] + 1)
+                left = BinOp(op, left, right, t.line)
+            cond = left
         else:
-            c = self._parse_expr()
-        return c
+            cond = self._parse_expr()
+        self._expect_end_of_stmt()
+        return cond
 
     def _parse_for(self):
         line = self._next().line                     # 'for'
@@ -411,7 +432,8 @@ class Parser:
         step = None
         if self._at_kw("by"):
             self._next(); step = self._parse_expr()
-        body = self._parse_block(("endfor",))
+        self._expect_end_of_stmt()                   # the header ends the line
+        body = self._parse_loop_body(("endfor",))
         if not self._at_kw("endfor"):
             raise FScriptError("missing 'endfor'", line)
         self._next(); self._expect_end_of_stmt()
@@ -419,8 +441,8 @@ class Parser:
 
     def _parse_while(self):
         line = self._next().line
-        cond = self._parse_paren_cond()
-        body = self._parse_block(("endwhile",))
+        cond = self._parse_cond()
+        body = self._parse_loop_body(("endwhile",))
         if not self._at_kw("endwhile"):
             raise FScriptError("missing 'endwhile'", line)
         self._next(); self._expect_end_of_stmt()
@@ -428,12 +450,11 @@ class Parser:
 
     def _parse_repeat(self):
         line = self._next().line
-        body = self._parse_block(("until",))
+        body = self._parse_loop_body(("until",))
         if not self._at_kw("until"):
             raise FScriptError("missing 'until'", line)
         self._next()
-        cond = self._parse_paren_cond()
-        self._expect_end_of_stmt()
+        cond = self._parse_cond()
         return Repeat(body, cond, line)
 
     # -- expressions (precedence climbing) ---------------------------------- #
