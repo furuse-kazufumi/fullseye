@@ -181,6 +181,9 @@ REQUIRES_EXPLICIT = {
 #: 新設した型と、それを既存語彙と混ぜたときに**例外でなく何が起きるか**。
 NEW_SORTS = {
     "lab": "rgbimage と形も dtype も同じ。sRGB を渡すと ΔE00 が 2 桁小さく静かに出る",
+    "rgb": ("XYZ の置き場(gfx2d と共有、符号化を特定しない 3 チャネル)。rgbimage と"
+            "宣言すると rgb_to_lab(rgb_to_xyz(x)) が通り、灰色 0.3 の L* が 32.53 "
+            "でなく 5.72 と静かに出る(2026-09-02 に実測して分けた)"),
     "metrics": "table と混ぜると contract(data_range 等)が落ち、条件の違う測定が同じ表に並ぶ",
 }
 
