@@ -64,14 +64,94 @@ def validate_pipeline_dict(d):
         if not isinstance(name, str):
             raise ValueError("stage %d: operator name must be text, got %r"
                              % (i + 1, truncate(name, 40)))
-        if api.find_op(name) is None:
+        op = api.find_op(name)
+        if op is None:
             raise ValueError("stage %d: unknown operator %r" % (i + 1, name))
         try:
             a, b = float(s[1]), float(s[2])
         except (TypeError, ValueError):
             raise ValueError("stage %d (%s): knobs a, b must be numbers" % (i + 1, name))
-        out.append([name, a, b])
+        # fail-closed on a knob the pipeline cannot honour: the op contract is a, b in
+        # [0, 1]; api.run_pipeline does not clamp, so an out-of-range / NaN knob would
+        # run one thing here and another after a script round trip (which clamps).
+        for label, v in (("a", a), ("b", b)):
+            if not math.isfinite(v):
+                raise ValueError("stage %d (%s): knob %s must be a finite number, got %r"
+                                 % (i + 1, name, label, v))
+            if not 0.0 <= v <= 1.0:
+                raise ValueError("stage %d (%s): knob %s must be in [0, 1], got %r"
+                                 % (i + 1, name, label, v))
+        # store the CANONICAL op name: a HALCON alias is accepted on input, but the
+        # program text / runners resolve canonical names (F5 review finding)
+        out.append([op.name, a, b])
     return out
+
+
+#: Program lines that are display / config DIRECTIVES (not pipeline stages) and are
+#: therefore persisted next to the stages in a pipeline file (key ``directives``).
+_DIRECTIVE_PREFIXES = ("dev_", "set_system", "disp_")
+
+
+def validate_directives(d):
+    """Validate the optional ``directives`` key of a pipeline payload → list of str.
+
+    Absent → ``[]`` (files written before the key existed stay loadable). Present →
+    must be a list of program lines that each start with a directive operator
+    (``dev_*`` / ``set_system`` / ``disp_*``); anything else is rejected, so a stage
+    can never sneak into the pipeline through the directive channel (fail-closed)."""
+    if not isinstance(d, dict):
+        raise ValueError("not a pipeline file (expected a JSON object)")
+    raw = d.get("directives")
+    if raw is None:
+        return []
+    if not isinstance(raw, (list, tuple)):
+        raise ValueError("'directives' must be a list of program lines, got %s"
+                         % type(raw).__name__)
+    out = []
+    for i, ln in enumerate(raw):
+        if not isinstance(ln, str):
+            raise ValueError("directive %d must be text, got %r" % (i + 1, truncate(ln, 40)))
+        s = ln.strip()
+        if not s.startswith(_DIRECTIVE_PREFIXES):
+            raise ValueError("directive %d is not a dev_* / set_system / disp_* line: %r"
+                             % (i + 1, truncate(s, 60)))
+        out.append(ln.rstrip())
+    return out
+
+
+def _normalise_stage(s):
+    """One pipeline stage as the mutable ``[name, a, b]`` list the model edits in place.
+
+    Every loader (parser tuples, JSON, recipes, undo snapshots) passes through here,
+    so ``set_knobs`` can never meet a tuple again (F1 review finding)."""
+    if isinstance(s, str) or not isinstance(s, (list, tuple)) or len(s) != 3:
+        raise ValueError("stage must be [op, a, b], got %r" % (truncate(s, 60),))
+    return [str(s[0]), float(s[1]), float(s[2])]
+
+
+def _log_soft_failure(context, exc):
+    """Record a non-fatal failure (settings that could not be saved, …) in the same
+    ``studio_crash.log`` the crash hooks write, and on stderr. Never raises."""
+    msg = "%s: %s: %s" % (context, type(exc).__name__, exc)
+    try:
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "studio_crash.log")
+        with open(path, "a", encoding="utf-8") as fh:
+            fh.write(msg + "\n")
+    except Exception:
+        pass
+    try:
+        sys.stderr.write("[studio] " + msg + "\n")
+    except Exception:
+        pass
+
+
+def _example_code_or_error(EX, key):
+    """Source text of a worked example, or a visible error message instead of a
+    silently blank preview when the file cannot be read."""
+    try:
+        return EX.code(key)
+    except Exception as e:
+        return "(could not read example %r: %s: %s)" % (key, type(e).__name__, e)
 
 
 # UI hooks, module-level so a headless test can stub the modal dialogs.
