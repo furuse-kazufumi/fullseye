@@ -960,7 +960,233 @@ def _b_parallax(pool, rng):
                        "factors": tuple(np.linspace(0.25, 1.0, k))})
 
 
+# --------------------------------------------------------------------------- #
+# 2026-09-02(第 2 波): 「呼べたが毎回拒否された」68 op を減らす                 #
+# --------------------------------------------------------------------------- #
+# 網羅パスで **fn を呼べた 706 / 値を返せた 638** と分かれた。差の 68 は
+# 「実行された」の数には入るが一度も成功していない = 実質は未実行に近い。
+# 内訳を 1 件ずつ読むと大半が**入力の寸法**の話で、op 側は正しく門前払いして
+# いた(例: 32x32 の絵に 100px の座標枠は入らない)。ここは種を op の要求に
+# 合わせて直す。逆に**台帳の宣言が実際と違う**ものも混ざっていたので、
+# それは builder で正しい呼び方を固定する(triangulate と同じ形)。
+def _canvas(rng, pool, h=192, w=256):
+    """プールの 32x32 を整数倍に引き伸ばした描画用キャンバス。
+
+    annotate / gfx2d の描画 op は**文字や目盛りが物理的に収まる大きさ**を要求
+    する。32x32 では text_box が 55px、legend_box が 111px はみ出して必ず
+    fail-closed になり、13 op が「実行はされるが一度も描かない」状態だった。
+    新しい絵を作らず既存プールを拡大するのは、下流に流れる値の素性を
+    プール由来のまま保つため。
+    """
+    src = pool.get("image2d")
+    if not src:
+        return None
+    a = np.asarray(src[rng.integers(len(src))], dtype=float)
+    if a.ndim != 2 or a.shape[0] < 1 or a.shape[1] < 1:
+        return None
+    return np.kron(a, np.ones((max(1, h // a.shape[0]), max(1, w // a.shape[1]))))
+
+
+def _b_on_canvas(*subst):
+    """台帳の in 型のうち ``image2d`` だけを大きなキャンバスに差し替える builder。
+
+    残る必須引数は通常の名前ヒント経路に任せる(list を返す = data 引数のみ)。
+    *subst* に ``(型, 作る関数)`` を渡すと、その型もプールでなく関数で作る。
+    """
+    special = dict(subst)
+
+    def build(pool, rng):
+        # 台帳の in 型は builder からは見えないので、呼ばれた op 名で引く
+        return None
+    return build
+
+
+def _b_draw(ins, **special):
+    """描画 op 用: *ins* の各型を組み立て、``image2d`` はキャンバスに置き換える。"""
+    def build(pool, rng):
+        args = []
+        for t in ins:
+            if t in special:
+                v = special[t](rng, pool)
+                if v is None:
+                    return None
+                args.append(v)
+                continue
+            if t == "image2d":
+                c = _canvas(rng, pool)
+                if c is None:
+                    return None
+                args.append(c)
+                continue
+            src = pool.get(t)
+            if not src:
+                return None
+            args.append(src[rng.integers(len(src))])
+        return args
+    return build
+
+
+#: color_bar の ``lut`` は **(n>=2, 3) のカラーマップ**だが、プールの ``lut`` 型は
+#: 3-D の色変換 LUT (17,17,17,3) —— 同じ名前で別物。型では防げないので op で狙う。
+def _colormap(rng, pool):
+    t = np.linspace(0.0, 1.0, 256)[:, None]
+    return np.hstack([t, 1.0 - t, np.full_like(t, 0.5)])
+
+
+def _labels_for_canvas(rng, pool):
+    """キャンバスと**同じ形**のラベル画像。形が違うと overlay_labels は必ず拒否。"""
+    lab = np.zeros((192, 256), dtype=np.int32)
+    lab[40:100, 50:140] = 1
+    lab[120:170, 160:230] = 2
+    return lab
+
+
+def _points_for_canvas(rng, pool):
+    """キャンバスの内側に十分な余白を持つ点(ラベルの置き場所が残る配置)。"""
+    return np.array([[60.0, 60.0], [180.0, 90.0], [110.0, 150.0]])
+
+
+def _b_panels(pool, rng):
+    """``panel_grid(panels, ...)`` は**画像の並び**を取る。台帳は ``['image2d']`` と
+    宣言しており、1 枚の (H,W) を渡すと**行ごとに 1 枚**と解釈されて
+    「img は (H,W) か (H,W,C)、実際は (32,)」で必ず落ちていた。"""
+    src = pool.get("images") or pool.get("image2d")
+    if not src:
+        return None
+    v = src[rng.integers(len(src))]
+    return ([[np.asarray(x, float) for x in v]] if isinstance(v, list)
+            else [[np.asarray(v, float)] * 3], {})
+
+
+def _b_particles(pool, rng):
+    """``particle_step`` / ``particle_render`` は ``particle_emit`` が返す**粒子 dict**
+    を取る。台帳の ``table``(list|dict)プールには任意の dict が入るので、
+    実際には毎回「キーが違う」で拒否されていた。族の入口 op から作る。"""
+    import gfx2d
+    st = gfx2d.particle_emit(64, 0, origin=(128.0, 96.0), spread=40.0)
+    return [st]
+
+
+def _b_sorted_xy(n_extra):
+    """``interp_*`` / ``poly_fit`` は **x が狭義単調増加**であることを要求する。
+    ``signal`` プールは雑音つき正弦波なので順序がなく、必ず拒否されていた。"""
+    def build(pool, rng):
+        src = pool.get("signal")
+        if not src:
+            return None
+        y = np.asarray(src[rng.integers(len(src))], dtype=float).ravel()
+        if y.size < 4:
+            return None
+        x = np.linspace(0.0, 1.0, y.size)
+        args = [x, y]
+        if n_extra:                       # xq: 定義域の内側に取る(外挿で拒否されない)
+            args.append(np.linspace(0.05, 0.95, 16))
+        return args
+    return build
+
+
+def _b_two_view_pts(pool, rng):
+    """``essential_8point`` / ``fundamental_8point`` / ``recover_pose`` は
+    **(N,2) の対応点** を取るのに、台帳は ``['image2d','image2d']`` と宣言している。
+    triangulate と同じ形の宣言ミスで、絵を渡すと「pts1 は (N,2)」で必ず拒否される。
+    対応は既知の左右ステレオから作る(視差が無いと本質行列が退化する)。"""
+    kp = pool.get("keypoints")
+    if not kp:
+        return None
+    p1 = np.asarray(kp[rng.integers(len(kp))], dtype=float)
+    if len(p1) < 8:
+        return None
+    p2 = p1 + np.array([1.5, 0.0])        # 水平視差 = 左右カメラ
+    return ([p1, p2], {"K1": _K32})
+
+
+def _b_square_matrix(shape):
+    """``matrix`` プールは 2..12 の任意形。正方 / 3x3 / 2x2 を要求する op 用。"""
+    def build(pool, rng):
+        n, m = shape
+        a = rng.standard_normal((n, m))
+        if n == m == 3:                   # 回転行列(matrix_to_angle が要求する)
+            th = float(rng.uniform(-np.pi, np.pi))
+            c, s = np.cos(th), np.sin(th)
+            a = np.array([[c, -s, 0.0], [s, c, 0.0], [0.0, 0.0, 1.0]])
+        elif n == m == 2:                 # 回転 x 等方スケール
+            th = float(rng.uniform(-np.pi, np.pi))
+            k = float(rng.uniform(0.5, 2.0))
+            c, s = np.cos(th) * k, np.sin(th) * k
+            a = np.array([[c, -s], [s, c]])
+        elif n == m:
+            a = a + a.T                   # 対称化(mat_eigh は実対称を要求)
+        return [a]
+    return build
+
+
+def _b_linear_system(pool, rng):
+    """``mat_solve(a, b)`` は正方 a と長さの合う b。プールの組合せでは滅多に揃わない。"""
+    n = int(rng.integers(3, 8))
+    a = rng.standard_normal((n, n)) + n * np.eye(n)      # 十分に非特異
+    return [a, rng.standard_normal(n)]
+
+
+def _b_lstsq(pool, rng):
+    """``mat_lstsq`` は m >= n(優決定)。プールの (2,6) 等では必ず拒否される。"""
+    m = int(rng.integers(6, 14))
+    n = int(rng.integers(2, 5))
+    return [rng.standard_normal((m, n)), rng.standard_normal(m)]
+
+
+def _b_watermark(with_bits):
+    """透かしの容量は絵の大きさで決まる。32x32 は LL が (16,16) = **4 ビット**しか
+    入らないので、既定の 8 ビットや 64 ビット列は必ず容量超過で拒否されていた。
+    絵を大きくして、実際に埋め込める本数を渡す。"""
+    def build(pool, rng):
+        c = _canvas(rng, pool)
+        if c is None:
+            return None
+        c = np.clip(c, 0.0, 1.0)
+        # LL は level=1 で 1/2、容量はその 2x2 ブロック数 = (H/4) * (W/4)
+        cap = (c.shape[0] // 4) * (c.shape[1] // 4)
+        bits = (rng.integers(0, 2, size=min(64, cap))).astype(np.int64)
+        return [c, bits] if with_bits else ([c], {"n_bits": int(bits.size)})
+    return build
+
+
 OP_ARG_BUILDERS = {
+    # --- 描画: 32x32 では物理的に収まらない 13 op ---------------------------- #
+    "text_box": _b_draw(["image2d", "text"]),
+    "leader_line": _b_leader_line,
+    "legend_box": _b_draw(["image2d", "entries"]),
+    "scale_bar": _b_draw(["image2d"]),
+    "axes_frame": _b_draw(["image2d", "axes"]),
+    "grid_lines": _b_draw(["image2d", "axes"]),
+    "ticks": _b_draw(["image2d", "axes"]),
+    "plot_series": _b_draw(["image2d", "axes", "signal", "signal"]),
+    "rounded_rect": _b_draw(["image2d"]),
+    "zoom_inset": _b_draw(["image2d"]),
+    "compare_frame": _b_draw(["image2d", "image2d"]),
+    "color_bar": _b_draw(["image2d", "lut"], lut=_colormap),
+    "overlay_labels": _b_draw(["image2d", "labels"], labels=_labels_for_canvas),
+    "label_points": _b_draw(["image2d", "pairs"], pairs=_points_for_canvas),
+    "panel_grid": _b_panels,
+    # --- 族の入口 op から作らないと形が合わないもの -------------------------- #
+    "particle_step": _b_particles,
+    "particle_render": _b_particles,
+    "watermark_embed": _b_watermark(True),
+    "watermark_capacity": _b_watermark(True),
+    "watermark_extract": _b_watermark(False),
+    # --- 単調な x / 正方行列 / 優決定系 -------------------------------------- #
+    "interp_linear": _b_sorted_xy(1),
+    "interp_cubic": _b_sorted_xy(1),
+    "poly_fit": _b_sorted_xy(0),
+    "mat_eigh": _b_square_matrix((5, 5)),
+    "mat_solve": _b_linear_system,
+    "mat_lstsq": _b_lstsq,
+    "matrix_to_angle": _b_square_matrix((3, 3)),
+    "matrix_to_rot_scale": _b_square_matrix((2, 2)),
+    # --- 台帳が image2d と宣言しているが実体は (N,2) 対応点 ------------------ #
+    "essential_8point": _b_two_view_pts,
+    "fundamental_8point": _b_two_view_pts,
+    "recover_pose": _b_two_view_pts,
+
     "pose_error": _b_pose_error,
     "normal_consistency": _b_normal_consistency,
     "triangulate": _b_triangulate,
