@@ -727,7 +727,10 @@ def create_cam_pose_look_at_point(cam_pos, look_at, up=(0, 0, 1)):
     cam_pos = np.asarray(cam_pos, float); look_at = np.asarray(look_at, float)
     up = np.asarray(up, float)
     z = look_at - cam_pos; z = z / (np.linalg.norm(z) + 1e-12)   # 前方
-    x = np.cross(up, z); x = x / (np.linalg.norm(x) + 1e-12)     # 右
+    # x = cross(z, up) でなければ camera.py の規約(x=右, y=下, z=前)にならない。
+    # cross(up, z) だと x が左・y が上を向き、光軸まわりに 180 度回った姿勢を
+    # 例外も出さずに返す(投影像が黙って上下左右反転する)。
+    x = np.cross(z, up); x = x / (np.linalg.norm(x) + 1e-12)     # 右
     y = np.cross(z, x)                                           # 下
     R = np.column_stack([x, y, z])
     T = np.eye(4); T[:3, :3] = R; T[:3, 3] = cam_pos
