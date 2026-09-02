@@ -54,7 +54,7 @@ N_FRAMES = 12
 SKY, READ = 60.0, 5.0                   # 背景 [e-] と読み出し雑音 [e- rms]
 FWHM, JITTER = 3.2, 0.9                 # シーイングの中心値と揺れ
 DITHER = 2.5                            # 追尾のずれ(px)
-N_STARS = 12
+N_STARS = 30
 SEED = 2026
 
 
