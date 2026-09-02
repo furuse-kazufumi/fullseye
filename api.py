@@ -1341,7 +1341,7 @@ def _try_accel(op, v, a, b, device):
     except ImportError:
         return _NOACCEL
     try:
-        accel_name = {c: k for k, (_f, c, _h) in accel.ACCEL.items()}.get(op.name)
+        accel_name = _accel_reverse(accel).get(op.name)
     except Exception as e:               # noqa: BLE001 - malformed table is a bug, not an absence
         if _bs.is_strict():
             raise
