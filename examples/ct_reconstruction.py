@@ -200,8 +200,12 @@ def main():
         ref = truth if ref is None else ref
         return float(np.sqrt(((img - ref) ** 2).mean()) / (ref.max() - ref.min()))
 
+    t0 = time.perf_counter()
     rec_bp = T.backproject_sinogram(sino_exact, angles)
+    t_bp = time.perf_counter() - t0
+    t0 = time.perf_counter()
     rec_sart = T.sart_reconstruct(sino_exact, angles, n_iter=10)
+    t_sart = time.perf_counter() - t0
 
     # フィルタ無し BP は絶対スケールを持たない(1/|r| に有限積分が無い)。
     # 表示器の自動窓がやるのと同じ最小二乗の載せ替えをして初めて比較できる。
