@@ -170,6 +170,59 @@ def run():
           % np.abs(quat_out - mat_out).max())
     print("   → **行列に対しては勝たない**(SO(3) と単位四元数は同型)。")
     print()
+    print("   ── 回転子まわりの 4 つの道具(往復・共役・正規化・Hamilton 積)")
+    rgb_in = np.random.default_rng(21).random((16, 16, 3))
+    Qc = qi.rgb_to_quaternion(rgb_in)
+    print("   rgb_to_quaternion → quaternion_to_rgb の往復誤差: %.1e"
+          % np.abs(qi.quaternion_to_rgb(Qc) - rgb_in).max())
+    print("   ★戻り道は**検査付き**。スカラー部を持つ場を色画像として読もうとすると拒否:")
+    try:
+        qi.quaternion_to_rgb(mono)
+        print("      [FAIL] モノジェニック信号が色画像として通った")
+    except ValueError as exc:
+        print("      %s" % str(exc)[:100])
+    print("      w を黙って捨てれば「もっともらしい色画像」が返る。明示したときだけ")
+    print("      切り捨てる: allow_scalar=True → 形 %s"
+          % (qi.quaternion_to_rgb(mono, allow_scalar=True).shape,))
+
+    Cc = qi.quat_conjugate_image(Qc)
+    prod = qi.quat_image_multiply(Qc, Cc, "right")           # q · q*
+    print("   共役は符号反転だけなので対合(2 回で最後の bit まで戻る): %s"
+          % np.array_equal(qi.quat_conjugate_image(Cc), Qc))
+    print("   q·q* はベクトル部が厳密に 0、スカラー部が |q|²: |v|max %.1e / "
+          "|w-|q|²|max %.1e"
+          % (np.abs(prod[..., 1:]).max(),
+             np.abs(prod[..., 0] - qi.quat_norm(Qc) ** 2).max()))
+    unit = qi.quat_normalize_image(Qc + np.array([1.0, 0.0, 0.0, 0.0]))
+    print("   正規化後の modulus 誤差: %.1e" % np.abs(qi.quat_norm(unit) - 1.0).max())
+    try:
+        qi.quat_normalize_image(qi.rgb_to_quaternion(np.zeros((4, 4, 3))))
+        print("   [FAIL] 真っ黒な画像(modulus 0)が通った")
+    except ValueError as exc:
+        print("   ★真っ黒な画素 (0,0,0,0) には向きが無いので拒否する。norm+eps で割れば")
+        print("      0 が返り、回転子として使うと**恒等回転**になって何も知らせない:")
+        print("      %s" % str(exc)[:96])
+
+    half = np.radians(15.0)
+    rotor = np.array([np.cos(half), 0.0, 0.0, np.sin(half)])
+    rotor_c = qi.quat_conjugate_image(rotor.reshape(1, 1, 4))[0, 0]
+    manual = qi.quat_image_multiply(
+        qi.quat_image_multiply(Qc, rotor, "left"), rotor_c, "right")
+    print("   Hamilton 積を 2 回(左に q、右に q*)= quat_color_rotate(30 度): 差 %.1e"
+          % np.abs(manual - qi.quat_color_rotate(Qc, (0, 0, 1), 2.0 * half)).max())
+    field = np.random.default_rng(4).standard_normal((32, 32, 4))
+    Lm = qi.quat_image_multiply(field, rotor, "left")
+    Rm = qi.quat_image_multiply(field, rotor, "right")
+    print("   左右は同じ回転子でも別物: max|left-right| = %.4f / mean %.4f"
+          "(データ自身の極値 %.4f)"
+          % (np.abs(Lm - Rm).max(), np.abs(Lm - Rm).mean(), np.abs(field).max()))
+    print("   → どちらも例外も NaN も出さず、立派な四元数画像に見える。だから side は")
+    print("      qft2 と同じく**既定値なしの必須引数**にしてある。")
+    assert np.abs(qi.quaternion_to_rgb(Qc) - rgb_in).max() == 0.0
+    assert np.abs(prod[..., 1:]).max() == 0.0
+    assert np.abs(qi.quat_norm(unit) - 1.0).max() < 1e-12
+    assert np.abs(manual - qi.quat_color_rotate(Qc, (0, 0, 1), 2.0 * half)).max() < 1e-12
+    print()
     rng = np.random.default_rng(3)
     q_acc, R_acc = np.array([1.0, 0, 0, 0]), np.eye(3)
     for _ in range(100_000):
