@@ -190,7 +190,9 @@ def main():
     # ------------------------------------------------------------------ #
     _rule("3) 再構成 3 種 ―― 寸法はどれで測れて、どれで測れないか")
     # ------------------------------------------------------------------ #
+    t0 = time.perf_counter()
     rec_fbp = T.filtered_backprojection(sino_exact, angles)
+    t_fbp = time.perf_counter() - t0
     n = rec_fbp.shape[0]
     pix_eff = SIZE * PIX_MM / n
     gauge = Gauge(n, pix_eff)
