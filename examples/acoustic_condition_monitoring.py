@@ -241,6 +241,32 @@ def main():
           f"{a_o[int(np.argmin(np.abs(f_o - 400.0)))]:.4f}(鋭い)、"
           f"角度領域では {ordsp['magnitude'][selr].max():.4f} が "
           f"{hi_o - lo_o:.1f} 次数に散る")
+    # 下ごしらえを開けて見る: 次数スペクトル = 角度軸へ載せ替えてから普通の DFT。
+    ang = A.angular_resample(xs, rate_s, rpm_s, samples_per_rev=64)
+    f_shaft = np.asarray(rpm_s) / 60.0
+    dt_s = 1.0 / rate_s
+    rev_closed = dt_s * (f_shaft.sum() - 0.5 * f_shaft[0] - 0.5 * f_shaft[-1])
+    seg = ang["signal"][:78 * 64]
+    hand = np.abs(np.fft.rfft(seg - seg.mean())) * 2.0 / seg.size
+    print(f"   角度領域リサンプル: {ang['revolutions']:.6f} 回転"
+          f"(台形積分の閉形式 {rev_closed:.6f}、差 "
+          f"{abs(ang['revolutions'] - rev_closed):.1e})、"
+          f"{ang['samples_per_rev']} 標本/回転 -> 角度軸の Nyquist は次数 "
+          f"{ang['max_order']:.0f}、平均 {ang['mean_rpm']:.2f} rpm")
+    print(f"   その 78 回転ぶんを自分で DFT すると order_spectrum と一致: "
+          f"次数 3.5 の振幅 {hand[273]:.6f} vs {ordsp['magnitude'][j]:.6f}、"
+          f"全 {hand.size} 次数点で最大差 "
+          f"{np.abs(hand - ordsp['magnitude']).max():.1e}")
+    print("   → 次数スペクトルは魔法ではなく「時間軸を角度軸に置き換えただけ」。")
+    assert abs(ang["revolutions"] - rev_closed) < 1e-9
+    assert np.abs(hand - ordsp["magnitude"]).max() < 1e-12
+    try:
+        A.angular_resample(xs, rate_s, rpm_s, samples_per_rev=512)
+        print("   [FAIL] 記録に無い帯域を作る samples_per_rev が通った")
+        return False
+    except ValueError as exc:
+        print(f"   記録の Nyquist を超える samples_per_rev は拒否(補間で"
+              f"作れてしまうから): {str(exc)[:88]}...")
     odd = A.order_spectrum(xs, rate_s, rpm_s, 64, revolutions=79)
     j_odd = int(round(3.5 / odd["resolution_order"]))
     print(f"   罠: 半整数次数は回転数が奇数だと bin をまたぐ — 次数 3.5 の振幅は "
