@@ -1561,6 +1561,8 @@ def compare_frame(left, right, layout="h", labels=None, divider=3, gap=0,
         W = a.shape[1] + sep + b.shape[1]
         shape = (H, W) if a.ndim == 2 else (H, W, a.shape[2])
         out = np.full(shape, bgv, dtype=np.float64)
+        if a.ndim == 3 and a.shape[2] == 4:
+            out[..., 3] = 1.0                        # RGBA: keep the gutter opaque
         out[:a.shape[0], :a.shape[1]] = a
         bx = a.shape[1] + sep
         out[:b.shape[0], bx:bx + b.shape[1]] = b
