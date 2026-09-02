@@ -13,5 +13,6 @@ void sharpen(float* buf, int w, int h, float amount, float sigma);
 void sobel_mag(float* buf, int w, int h);
 void invert(float* buf, int w, int h);
 void scale_clip(float* buf, int w, int h, float gain, float bias);
+void clamp01(float* buf, int w, int h);          /* the inter-stage clip of ops._apply */
 
 #endif /* IMGOPS_H */
