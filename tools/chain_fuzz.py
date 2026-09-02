@@ -1966,8 +1966,10 @@ def main():
         chain_seed = args.seed * 1_000_003 + i
         trace = run_chain(ops, gens, np.random.default_rng(chain_seed),
                           args.length, log, chain_seed=chain_seed,
-                          explore=args.explore)
+                          explore=args.explore, census=census)
         used.update(trace)
+        # trace は**成功した op だけ**。実行して拒否された op を未実行に混ぜない
+        used.update(census["ran"])
         if (i + 1) % 50 == 0:
             print(f"  {i + 1}/{args.chains} chains, findings {len(log)}, "
                   f"ops covered {len(used)}", flush=True)
