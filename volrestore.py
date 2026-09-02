@@ -122,9 +122,20 @@ def vol_richardson_lucy(vol, psf, iterations=10, clip_tiny=1e-12):
     is the quantity the RL update actually optimises).
     """
     v = _require_volume(vol)
-    if (v < 0.0).any():
-        raise ValueError("vol has negative voxel(s) — Richardson-Lucy models "
-                         "non-negative (Poisson) intensities")
+    vmin = float(v.min())
+    if vmin < 0.0:
+        # Rounding dust: an FFT forward model (this module's own
+        # vol_gaussian_psf + fftconvolve) returns -3.6e-16 where the exact
+        # answer is 0. Relative to the data's scale that is nothing — tolerate
+        # it (NEGATIVE_DUST_TOL x max |v|) and clip to 0; anything larger is
+        # genuinely negative data and is still refused.
+        scale = max(float(np.abs(v).max()), np.finfo(np.float64).tiny)
+        if vmin < -NEGATIVE_DUST_TOL * scale:
+            raise ValueError("vol has negative voxel(s) (min %g vs max |v| %g) — "
+                             "Richardson-Lucy models non-negative (Poisson) "
+                             "intensities; only rounding dust below %g x max|v| "
+                             "is tolerated" % (vmin, scale, NEGATIVE_DUST_TOL))
+        v = np.maximum(v, 0.0)
     k = np.ascontiguousarray(psf, dtype=np.float64)
     if k.ndim != 3:
         raise ValueError("psf must be a 3-D kernel, got a %d-D array" % (k.ndim,))

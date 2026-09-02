@@ -253,7 +253,7 @@ def test_match_ops_take_a_template_through_the_facade():
     tmpl = img[20:28, 30:38].copy()
     assert np.array_equal(api.apply(img, "ncc_locate"), [0.0, 0.0, 0.0])   # no template: no-match
     corr, r, c = api.apply(img, "ncc_locate", template=tmpl)
-    assert corr > 0.99 and abs(r - 20) <= 1 and abs(c - 30) <= 1
+    assert corr > 0.99 and abs(r - 24) <= 1 and abs(c - 34) <= 1     # (row, col) of the match CENTRE
     assert ops._MATCH_CTX.get("template") is None                            # restored
     out = api.apply(img, "shape_locate", template=tmpl)
     assert out.shape == (4,) and out[0] > 0.9
