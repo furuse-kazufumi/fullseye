@@ -436,3 +436,50 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
     out_hi = np.where(fg[..., None], ldr, background[None, None, :])
     out = render_ssaa.antialias(out_hi, ss, filter="box")
     return np.clip(out, 0.0, 1.0).astype(np.float64)
+
+
+# --------------------------------------------------------------------------- #
+# 宇宙のレゴリス(小惑星)プリセット                                            #
+# --------------------------------------------------------------------------- #
+def render_regolith(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int = 2,
+                    sun: Sequence[float] = (0.3, 0.4, 1.0), w: float = 0.42, g: float = -0.35,
+                    B0: float = 0.87, h: float = 0.01, roughness_deg: float = 26.0,
+                    sun_angular_diameter_deg: float = 0.53, shadow_samples: int = 4,
+                    ao_samples: int = 32, tint: Sequence[float] = (1.0, 0.97, 0.93),
+                    self_illumination: float = 1.0, exposure="auto",
+                    background: Sequence[float] = (0.0, 0.0, 0.0)) -> np.ndarray:
+    """小惑星のレゴリスを物理ベース(Hapke + 太陽視直径のレイキャスト影 + 環境光ゼロ)で描く → RGB ``(size,size,3)``。
+
+    :func:`render_beauty` の合成:
+      * 反射則 = Hapke(``w, g, B0, h, roughness_deg``; 既定はイトカワの S 型典型値)。
+      * 影 = ``render_shadow.shadow_raycast``(視直径 ``sun_angular_diameter_deg``、既定 0.53° =
+        太陽。半影は幾何どおり数 cm なので事実上ハード影)。地面(台座)は置かない。
+      * 環境光 0(宇宙に空光は無い)。影の底は地形の一回反射近似 ``self_illumination`` だけ。
+      * トーン = 線形(AMICA の 8bit 画像に合わせ、露出 × クリップ)。``exposure='auto'`` は
+        物体画素の 99.5 パーセンタイルが 0.95 に来る露出(決定的)。
+    ``tint`` は平均 1 に正規化した色味。fail-closed: 引数は下位 op が検証、``exposure`` は
+    ``'auto'`` か正の数。決定的(乱数なし)。"""
+    if not (isinstance(exposure, str) and exposure == "auto"):
+        exp = float(exposure)
+        if not np.isfinite(exp) or exp <= 0.0:
+            raise ValueError(f"exposure must be 'auto' or a positive finite number, got {exposure!r}")
+    else:
+        exp = None
+    params = dict(w=float(w), g=float(g), B0=float(B0), h=float(h),
+                  roughness_deg=float(roughness_deg))
+    img = render_beauty(V, F, pose=pose, intrinsics=intrinsics, size=size, ss=ss, light=sun,
+                        albedo=tint, material="plastic", ambient=0.0, ao=True,
+                        ground_shadow=False, tonemap="linear", background=(0.0, 0.0, 0.0),
+                        exposure=1.0, ao_samples=ao_samples, shadow_samples=shadow_samples,
+                        brdf="hapke", brdf_params=params, shadow_method="raycast",
+                        sun_angular_diameter_deg=sun_angular_diameter_deg,
+                        self_illumination=self_illumination)
+    if exp is None:
+        obj = img.max(axis=2)
+        vals = obj[obj > 0.0]
+        p = float(np.percentile(vals, 99.5)) if vals.size else 1.0
+        exp = 0.95 / max(p, 1e-9)
+    bg = _as_color(background, "background")
+    fgm = img.max(axis=2) > 0.0
+    out = np.where(fgm[..., None], np.clip(img * exp, 0.0, 1.0), bg[None, None, :])
+    return np.clip(out, 0.0, 1.0).astype(np.float64)
