@@ -113,6 +113,20 @@ def panel_zoom():
     return out
 
 
+def panel_compare():
+    """パネル 5 — 前後比較: 同じ場面の「元」と「計測後」を仕切りを挟んで並べる。"""
+    img, disks, _ = _scene()
+    marked = A.overlay_mask(img, disks, "right", alpha=0.45, outline=2)
+    # 188 + 仕切り 3 + 189 = 380 = PW(他のパネルと同じ大きさに揃える)
+    out = A.compare_frame(img[:, :188], marked[:, PW - 189:], layout="h",
+                          labels=("元画像", "マスク重ね"), divider=3, gap=0,
+                          divider_color="emphasis", background=0.04,
+                          label_margin=34, font_size=12)
+    out = A.text_box(out, "前後比較(仕切りと見出しはこの op の仕事)", (10, 10),
+                     anchor="lt", font_size=13)
+    return out
+
+
 # ------------------------------------------------------------------ #
 # ground truth — 描いた絵を測り直す
 # ------------------------------------------------------------------ #
