@@ -55,12 +55,13 @@ MAX_P95_DE = 1.0           # 上位 5 % の色差(局所的な破綻を拾う)
 MIN_SSIM = 0.99            # 構造の保存
 
 
-def inspection_plate(n=256):
+def inspection_plate(n=256, noise_lsb=1.2):
     """検査画像を組む —— **乱数だけにしない**。
 
     照明の勾配(なだらか)+ 8 px 周期の縦縞(細かい構造)+ 平坦なワーク面
     (同値だらけの領域)+ 円形の欠陥(見失ってはいけないもの)、その上に
-    1.2 LSB のセンサ雑音。乱数だけの絵は対称性の破れも量子化の影響も隠す。
+    ``noise_lsb`` LSB のセンサ雑音。乱数だけの絵は対称性の破れも量子化の
+    影響も隠す。``noise_lsb=0`` で雑音のない理想の絵になる。
     """
     y, x = np.mgrid[0:n, 0:n] / (n - 1.0)
     img = 0.30 + 0.40 * x                                   # 照明の勾配
@@ -69,7 +70,8 @@ def inspection_plate(n=256):
     defect = (y - 0.66) ** 2 + (x - 0.62) ** 2 < 0.0045
     img[defect] = 0.10                                      # 円形の欠陥
     rgb = np.stack([img, img * 0.92 + 0.05, img * 0.80 + 0.12], axis=-1)
-    rgb = rgb + (1.2 / 255.0) * np.random.default_rng(7).standard_normal(rgb.shape)
+    if noise_lsb:
+        rgb = rgb + (noise_lsb / 255.0) * np.random.default_rng(7).standard_normal(rgb.shape)
     return np.round(np.clip(rgb, 0.0, 1.0) * 255.0).astype(np.uint8), defect
 
 
