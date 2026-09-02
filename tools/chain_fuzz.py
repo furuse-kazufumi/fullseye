@@ -1663,8 +1663,17 @@ def run_chain(ops, gens, rng, length, log, chain_seed=None, script=None,
                 data_args.append(src[arng.integers(len(src))])
             bound = _bind_args(name, fn, data_args, arng)
         if bound is None:
+            # **必須引数を組めなかった** = fn は一度も呼ばれていない。成功列
+            # (trace)からも findings からも消えるので、これを数えないと
+            # 「頑健で発見ゼロ」と「引数が作れず未実行」が同じ顔になる。
+            if census is not None:
+                census["bind_fail"].add(name)
             continue
         args, kwargs = bound
+        # ここから先は fn を必ず呼ぶ。**呼んだこと自体**を成否と別に記録する
+        # (拒否された op も「実行済み」— 実行されていない op とは意味が違う)。
+        if census is not None:
+            census["ran"].add(name)
         big = sum(_nbytes(a) for a in args)
         if big > 32 * 2 ** 20:
             # 重い入力は実行前に予告(万一のストールでもログだけで犯人が判る)
