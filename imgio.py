@@ -459,27 +459,37 @@ def load(path: str, color: bool = False):
     the bit-depth-preserving :mod:`raster` reader (then Pillow) instead of
     reporting the failure as a missing file. A file that genuinely does not exist
     raises ``FileNotFoundError``; a file that exists but no backend can decode
-    raises a clear ``ValueError``.
+    raises a clear ``ValueError`` — and so does a **truncated JPEG** (libjpeg
+    would otherwise hand back a partial image padded with grey, silently; see
+    :func:`_check_jpeg_complete`).
+
+    The bytes are read by numpy and decoded with ``cv2.imdecode`` (not
+    ``cv2.imread``), so non-ASCII paths work on Windows too. EXIF orientation is
+    honoured on every path (``imdecode`` applies it like ``imread``; the Pillow
+    branches use ``ImageOps.exif_transpose``).
     """
     import os
+    if not os.path.exists(path):
+        raise FileNotFoundError(path)
     cv2 = _cv2()
     if cv2 is not None:
         # ANYDEPTH keeps 16-bit / float samples native; the channel coercion
         # (gray vs 3-channel) is untouched, so 8-bit files decode as before.
         flag = (cv2.IMREAD_COLOR if color else cv2.IMREAD_GRAYSCALE) | cv2.IMREAD_ANYDEPTH
-        im = cv2.imread(path, flag)
+        try:
+            buf = np.fromfile(path, dtype=np.uint8)
+        except OSError:                         # a directory, a locked file, ...
+            buf = np.zeros(0, np.uint8)
+        im = cv2.imdecode(buf, flag) if buf.size else None
         if im is not None:
+            _check_jpeg_complete(path, buf[:3].tobytes(), buf[-4096:].tobytes())
             if color:
                 im = im[:, :, ::-1]
             return _to01_by_depth(im)
-        if not os.path.exists(path):            # None + absent -> genuinely missing
-            raise FileNotFoundError(path)
-        return _load_via_fallback(path, color)  # None + present -> undecodable by cv2
-    if not os.path.exists(path):
-        raise FileNotFoundError(path)
+        return _load_via_fallback(path, color)  # present -> undecodable by cv2
     try:
-        from PIL import Image
-        im = Image.open(path)
+        from PIL import Image, ImageOps
+        im = ImageOps.exif_transpose(Image.open(path))   # honour EXIF orientation
         im = im.convert("RGB") if color else im.convert("L")
         return np.asarray(im, np.float64) / 255.0
     except Exception as e:  # pragma: no cover
