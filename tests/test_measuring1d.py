@@ -148,10 +148,10 @@ def test_measure_pairs_width_and_points():
     assert abs(p["width"] - 7.45) < 0.1
     assert abs(p["first_point"][1] - 10.37) < 0.06 and abs(p["second_point"][1] - 17.82) < 0.06
     # fuzzy pairing ranks the pair closest to pair_size first
-    bar2 = bar + np.clip(_area_step(41, 28.1) - _area_step(41, 31.0), 0, 1)
+    bar2 = bar + np.clip(_area_step(41, 28.1) - _area_step(41, 32.6), 0, 1)
     ms2 = m1.gen_measure_rectangle2(20, 20, 0.0, 19, 3, im.shape)
-    fz = m1.fuzzy_measure_pairing(_img(bar2), ms2, 1.0, 0.05, pair_size=2.9)
-    assert len(fz) == 2 and abs(fz[0]["width"] - 2.9) < 0.15
+    fz = m1.fuzzy_measure_pairing(_img(bar2), ms2, 1.0, 0.05, pair_size=4.5)
+    assert len(fz) == 2 and abs(fz[0]["width"] - 4.5) < 0.15 and abs(fz[1]["width"] - 7.45) < 0.1
 
 
 def test_translate_measure_moves_everything():
