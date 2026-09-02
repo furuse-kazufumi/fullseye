@@ -108,10 +108,9 @@ def main():
         ann = json.load(open(os.path.join(td, "annotations.json"), encoding="utf-8"))
         ok &= check(len(recs) == 4 and len(ann["images"]) == 4, "4 records + annotations.json")
         ok &= check(all(os.path.exists(r["image"]) and os.path.exists(r["mask"]) for r in recs), "PNG files written")
-        for a in ann["annotations"]:
-            x, y, w, h = a["bbox"]
-            ok &= 0 <= x and 0 <= y and x + w <= 192 and y + h <= 192
-        check(ok, "every bbox inside the image")
+        inside = all(0 <= a["bbox"][0] and 0 <= a["bbox"][1] and a["bbox"][0] + a["bbox"][2] <= 192
+                     and a["bbox"][1] + a["bbox"][3] <= 192 for a in ann["annotations"])
+        ok &= check(inside and len(ann["annotations"]) >= 4, "every bbox inside the image")
         print("  lens:", {k: round(v, 4) for k, v in recs[0]["lens"].items()})
     recs_a = LI.defect_dataset(2, system=doublet, size=(96, 96), seed=9)
     recs_b = LI.defect_dataset(2, system=doublet, size=(96, 96), seed=9)
