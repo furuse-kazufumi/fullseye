@@ -7946,8 +7946,9 @@ def build_window(model=None):
                 s.setValue("geometry", geo); s.setValue("state", st)
                 s.endGroup()
             s.endGroup()
-        except Exception:
-            pass
+        except Exception as e:
+            _log_soft_failure("could not save layout presets", e)
+            flash("could not save layout presets: %s" % truncate(e, 100))
 
     def save_layout_preset(name):
         """Capture the current window geometry + full dock/toolbar arrangement under
