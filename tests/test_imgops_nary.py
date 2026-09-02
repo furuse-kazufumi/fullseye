@@ -12,6 +12,7 @@ and `verify` claims an op counts only if it returns the declared sort. Both leak
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
 import imgops_nary as N
 
