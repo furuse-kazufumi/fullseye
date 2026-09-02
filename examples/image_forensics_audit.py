@@ -287,7 +287,7 @@ def main():
     print(f"   JPEG ゴースト({len(ghosts)} 品質を掃引): 貼り込み内の最頻品質 "
           f"{q_in}(真値 {SPLICE_Q})  /  台紙側 {q_out}(真値 {BASE_Q})")
     assert len(ghosts) == len(qs) and all(g.shape == (N, N) for g in ghosts)
-    assert q_in == SPLICE_Q
+    assert q_in == SPLICE_Q and q_out == BASE_Q     # 2 つとも真値
     assert qmap.shape == (N, N)
     # 本数がずれたら黙って答えない(添字のずれた地図は返さない)
     try:
