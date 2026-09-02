@@ -629,3 +629,37 @@ def test_metrics_table_always_carries_the_conditions():
     assert "psnr" in names
     assert any(n.startswith("条件: ") for n in names)
     assert "条件: data_range" in names
+
+
+# =========================================================================
+# 台帳の型 —— XYZ を rgbimage と宣言すると二重変換が型検査を素通りする
+# =========================================================================
+
+def test_xyz_is_not_declared_as_rgbimage_so_the_double_conversion_chain_is_refused():
+    """``rgb_to_lab(rgb_to_xyz(x))`` は例外を出さず、暗い L* を静かに返す。
+
+    2026-09-02 まで台帳が ``rgb_to_xyz`` の出力を ``rgbimage`` と宣言していた
+    ため、この連鎖が型検査を通っていた(灰色 0.3 で正解 L* = 32.53 のところ
+    5.72)。宣言を直したので、rgbimage を食う op は XYZ を受け取らない。
+    正解の側は**独立な式**で出す: sRGB 0.3 → 線形 ((0.3+0.055)/1.055)^2.4、
+    灰色なので Y はその線形値、L* = 116 cbrt(Y) − 16。
+    """
+    import opsimgmetrics
+    xyz_out = opsimgmetrics.OPSIMGMETRICS["rgb_to_xyz"]["out"]
+    assert xyz_out != "rgbimage"
+    assert xyz_out not in opsimgmetrics.OPSIMGMETRICS["rgb_to_lab"]["in"]
+    assert xyz_out not in opsimgmetrics.OPSIMGMETRICS["delta_e_map"]["in"]
+    # 産んだ XYZ を食える op は xyz_to_lab だけ(連鎖が切れていないこと)
+    assert opsimgmetrics.OPSIMGMETRICS["xyz_to_lab"]["in"] == [xyz_out]
+    assert "rgb" in opsimgmetrics.NEW_SORTS
+
+    gray = np.full((3, 3, 3), 0.3)
+    y_lin = ((0.3 + 0.055) / 1.055) ** 2.4
+    expected = 116.0 * np.cbrt(y_lin) - 16.0
+    assert abs(expected - 32.53) < 0.01                    # レビュアーの参照値
+    good = M.rgb_to_lab(gray)[..., 0]
+    assert np.allclose(good, expected, atol=1e-4)
+    # 黙って間違う値は「そうなる」として固定する(型で防ぐ理由の記録)
+    bad = M.rgb_to_lab(M.rgb_to_xyz(gray))[..., 0]
+    assert abs(float(bad[0, 0]) - 5.72) < 0.05
+    assert float(bad[0, 0]) < expected - 20.0
