@@ -896,7 +896,7 @@ def _b_query_distance(pool, rng):
     g = np.asarray(sdf[rng.integers(len(sdf))])
     if g.ndim != 3 or len(set(g.shape)) != 1:
         return None
-    return ([g], {"bounds": (0.0, 0.0, 0.0, 10.0, 10.0, 10.0), "res": g.shape[0],
+    return ([g], {"bounds": ((0.0, 10.0), (0.0, 10.0), (0.0, 10.0)), "res": g.shape[0],
                   "query_points": np.asarray(pts[rng.integers(len(pts))])[:32]})
 
 
@@ -912,7 +912,7 @@ def _b_integrate(pool, rng):
         return None
     return ([g, np.zeros_like(g), np.asarray(dep[rng.integers(len(dep))], dtype=float)],
             {"K": _K32, "R": np.eye(3), "t": np.array([-5.0, -5.0, 20.0]),
-             "trunc": 0.5, "bounds": (0.0, 0.0, 0.0, 10.0, 10.0, 10.0)})
+             "trunc": 0.5, "bounds": ((0.0, 10.0), (0.0, 10.0), (0.0, 10.0))})
 
 
 def _b_shot(pool, rng):
@@ -1284,6 +1284,11 @@ OP_PARAM_HINTS = {
             np.zeros((16, 16, 16), dtype=np.int32)),
     ("vol_local_maxima", "min_distance"): lambda rng: 2,
     ("extract_surface_points", "weight"): lambda rng: np.ones((16, 16, 16)),
+    # tsdf_fusion / occupancy(3-D)流の bounds(軸ごとの (min, max) の 3 つ組)
+    ("extract_surface_points", "bounds"): lambda rng: ((0.0, 10.0), (0.0, 10.0), (0.0, 10.0)),
+    ("integrate", "bounds"): lambda rng: ((0.0, 10.0), (0.0, 10.0), (0.0, 10.0)),
+    ("query_distance", "bounds"): lambda rng: ((0.0, 10.0), (0.0, 10.0), (0.0, 10.0)),
+    ("fuse", "bounds"): lambda rng: ((0.0, 10.0), (0.0, 10.0), (0.0, 10.0)),
     ("geodesic_distances", "source"): lambda rng: 0,
     ("box_sdf", "center"): lambda rng: np.array([5.0, 5.0, 5.0]),
     ("box_sdf", "half_extents"): lambda rng: np.array([2.0, 2.0, 2.0]),
