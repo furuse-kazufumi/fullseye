@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(18 例)
+### 2-D 画像/信号/幾何(57 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -23,9 +23,14 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **drawing**
 - **画像にマーカー/線/円/輪郭を直接描く(ラスタ描画)** — 作業者が指定した対応点を画像そのものに焼き込むラスタ描画op(imagedraw)。描いた既知シーンを検出器が回収し結果を描き返す(描画→検出→注釈)。 `py -3.11 examples/draw_annotate.py`
+- **描画を「ためてから流す」(drawlist 蓄積描画)** — imagedraw の即時描画に対し drawlist はコマンド列を保持し flush() で絵にする。絵になる前の列を検査・差分・変換できることを、同じ絵を両経路で描いて数値で確かめる。 `py -3.11 examples/drawlist_deferred.py`
+- **図注(annotate)op を一枚の図で全部使い真値と突き合わせる** — 文字下敷き/矢印/凡例/カラーバー/目盛り/拡大差し込みの annotate 全 op を 1 枚の図に載せ、配置と画素値を GT と照合する。 `py -3.11 examples/annotate_gallery.py`
+- **リアルタイム 2-D グラフィックス(gfx2d)で 1 枚の画面を組み立てる** — 背景/タイル/スプライト/パーティクル/光/影/ポスト処理を合成し、ストレート α と乗算済み α の取り違え(この族が黙って間違う唯一の場所)を同じ絵の上で数値化する。 `py -3.11 examples/gfx2d_scene.py`
 
 **signal_processing**
 - **点列の多項式近似・フーリエ・ローパス/ハイパス** — 計測1D列をトレンド抽出(多項式)・周波数分析(FFT)・平滑化(ローパス)・細部抽出(ハイパス)する(signal1d)。各処理に beat-the-null のGT付き。 `py -3.11 examples/signal_filter.py`
+- **減衰振動のセンサー信号を HALCON funct_1d ファミリで解析** — 平滑化→極値で周期→ゼロ交差で半周期→微分/積分往復→包絡線から減衰時定数→相互相関で遅延。各段に beat-the-null の GT 付き。 `py -3.11 examples/signal_funct1d.py`
+- **音だけで回転機械を診断する(acoustics 音響状態監視)** — マイク 1〜2 本の音圧列から、傷んだ部品・dB 値・加振との因果(伝達関数/コヒーレンス)を出す。合成音源の既知パラメータを GT に照合。 `py -3.11 examples/acoustic_condition_monitoring.py`
 
 **interpolation**
 - **スプライン補間(開/閉曲線・2D/3D・時間変形)** — 疎な点列を滑らかに補間・再サンプル。輪郭は閉曲線(滑らかに閉じる)、軌跡は開曲線、3D空間曲線も同API。座標を時間で補間すれば時間軸の変形も表せる。 `py -3.11 examples/spline_curve.py`
@@ -44,6 +49,54 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **色・芸術・拡張(sim2real)op 族を総なめ** — 色空間変換/芸術効果/augmentation など色・拡張族の全 op を GT 検証。 `py -3.11 examples/gallery2d_color_artistic.py`
 - **HALCON 拡充 tier(hx_ 一族)を総なめ** — HALCON 互換の拡充 op(``hx_`` prefix, category=halcon_ext)の全 op を GT 検証。 `py -3.11 examples/gallery2d_halcon_ext.py`
 - **物理PDE・人工生命・トモグラフィ・3Dボリューム op 族を総なめ** — 拡散/反応拡散/CA/tomography/volume など物理・人工生命・3D 族の全 op を GT 検証。 `py -3.11 examples/gallery2d_physics_alife_3d.py`
+
+**math**
+- **視覚計測を支える数学 op(mathops)を計測ワークフローで一巡** — 平面フィット→残差統計→共分散楕円の主軸化→較正曲線の多項式フィット(条件数監視)→補間で逆引き。mathops 16 op を実データ風に通し閉形式 GT と照合。 `py -3.11 examples/math_metrology.py`
+- **複素解析 op(mathops tier2)を閉形式の真値と突き合わせる** — 偏角原理で零点数、コーシー積分で内部値復元、等角性・正則性判定を点列として持つ閉曲線から numpy 演算で答える。 `py -3.11 examples/math_complex.py`
+
+**optics_sensing**
+- **光学 op(optics)で検査機を 1 台、紙の上で設計する** — 倍率→焦点距離/物体距離、ABCD 行列で結像確認、回折限界・被写界深度・MTF を要求分解能に対して合否判定する。 `py -3.11 examples/optics_imaging.py`
+- **ライトフィールド 17 op で plenoptic 検査機を通す** — 画素/MLA ピッチから角度・空間分解能と基線長を設計し、センサ生データ→EPI→深度まで復元して既知深度と照合。 `py -3.11 examples/lightfield_depth.py`
+- **光子計数・時間分解 op(photoncount)で単一光子距離計を仕立てる** — SPAD の √N 雑音・デッドタイム・パイルアップを持つヒストグラムから距離と蛍光寿命を出し、17 op を閉形式 GT と照合。 `py -3.11 examples/photon_timeresolved.py`
+- **コヒーレンス走査干渉(interferometry)で段差表面を測る** — 位相シフト法(fringe)が 2π 周期で壊れる段差を、同じ表面で白色干渉の包絡線ピークから正しく測り、両者の差を数値に出す。 `py -3.11 examples/coherence_scanning.py`
+- **光沢面の外観検査(specularity 13 op)** — Lambertian 前提の形状復元がハイライトで壊れる場所を見せてから、二色性射影分離・影下の頑健最小二乗・偏光分離を順に通し、破綻点(4 灯遮蔽)も隠さず出す。 `py -3.11 examples/specular_photometric.py`
+- **コヒーレント測距 op(rangedoppler)で 4D レーダを仕立てる** — FMCW の位相を保つビート信号から距離-速度マップと角度を出す。lidar_scan には無い速度軸を既知ターゲットの GT と照合。 `py -3.11 examples/fmcw_range_doppler.py`
+- **通常フレームからイベントカメラ(DVS)表現を作り運動を復元** — フレーム対/短クリップを events 表現(タイムサーフェス等)に変換し、コントラスト最大化で注入した運動を回収する(events.py ファサード、終了コードで判定)。 `py -3.11 examples/event_camera.py`
+
+**imaging_quality**
+- **画質 op(imgmetrics)で保存時の量子化段数を 1 つ選ぶ** — CIEDE2000 を公開検証表 34 組で、SSIM を既知条件で検定してから、「欠陥が見えなくならない」を合否条件に落として量子化段を決める。 `py -3.11 examples/image_quality_metrics.py`
+- **1 枚の写真を証拠として「どこまで言えるか」まで切り分ける(forensics)** — 知覚ハッシュ→帰無分布→PRNU カメラ指紋→JPEG 品質/ELA/ゴースト→雑音整合→コピー&ムーブ(誤差 0 px)→電子透かしの 7 段。改竄側を自分で作った GT で検定。 `py -3.11 examples/image_forensics_audit.py`
+- **2 台のカメラの色を揃える(colortransport 色輸送)** — クロストークと黒レベルずれを持つカメラ B の色を A に合わせ(ヒストグラム/最適輸送ベース)、既知の変換を回収できるかを GT で照合。 `py -3.11 examples/color_transport.py`
+- **一晩ぶんの生フレームから 1 枚の星像を作り星の明るさを測る** — フラット補正→宇宙線除去→ディザ位置合わせ→スタック→測光。既知の星の明るさ・位置を GT に照合(12 枚の合成生フレーム)。 `py -3.11 examples/astro_stacking.py`
+- **見えない振動を見せる/測る(motionmag モーション増幅・位相変位)** — 0.2 画素の振動を帯域通過した局所位相から増幅表示し、同じ量からサブピクセル変位を数値で出して既知振幅と照合。 `py -3.11 examples/motion_magnification.py`
+- **四元数画像 op(quatimage)を閉形式の真値と突き合わせる** — 色の 3 次元回転とモノジェニック信号が本物の差で、それ以外(QFT 等)は差でないことを 19 op の GT 照合で示す(勝つ/勝たない/負ける を実測で分ける)。 `py -3.11 examples/quaternion_monogenic.py`
+
+**tomography_3d**
+- **CT で 1 本の試料をスキャンし、寸法 mm と欠陥の数まで出す** — 楕円ファントムの閉形式サイノグラム→FBP 再構成→外径測定→空洞計数。真値(30.00 mm / 1 個)との誤差を印字し断定する。 `py -3.11 examples/ct_reconstruction.py`
+- **投影からボクセルと体積 mm³ まで一本で閉じる(tomography 族)** — サイノグラムから再構成した後は既存の 3-D op(窓/ラベル/境界/メッシュ/領域統計)をそのまま呼び、既知体積と照合。 `py -3.11 examples/tomography_reconstruct.py`
+- **X 線 CT / ラミノグラフィ検査: スライス毎に内部空洞を見つけて測る** — 合成円柱ボリューム(空洞 2 つ)をスライス毎に denoise→材料分割→空洞抽出→計測。--laminography で限られた角度の軸方向ぼけを模す(テンプレート、数値を印字)。 `py -3.11 examples/ct_inspection.py`
+- **ボクセルのラベル色分け(volcolor)で CT の粒子を数えて見せる** — vol_label/vol_region_props の結果を色付けし、「切ってから色を付ける」と「色を付けてから切る」の差を数値に出す。 `py -3.11 examples/voxel_labels_color.py`
+- **2-D 画像で見つけた欠陥は CAD のどの面のどこか(cadmap)** — 姿勢(ICP/PPF)から先、画素→レイ→CAD 面 ID と (x,y,z)・面積 mm² へ写す。既知配置の欠陥で往復誤差を確認。 `py -3.11 examples/defect_to_cad.py`
+- **部品 2 回スキャンのずれ量を 8 つの表現で測って往復する** — 法線/曲率/記述子/添字/スコア/シフト/回転倍率/フロー/変形/複素など 12 系統の表現を経由して既知剛体変位を測り、戻るものは誤差 0、戻らないものは落ちた量を数値で言う。 `py -3.11 examples/representation_conversion.py`
+- **表現変換(reprconv)op を往復させて嘘を露見させる** — 産む op はあるが食う op が無かった 25 型を消費する reprconv 族を往復させ、可逆なものは誤差 0、不可逆なものは何がどれだけ落ちるかを印字する。 `py -3.11 examples/representation_roundtrip.py`
+
+**perception_templates**
+- **整流ステレオ対→深度→点群→地形高さマップ→通行可能性** — ロボット移動用の一本道テンプレート(--save で色付き PNG + PLY)。合成データ、実行して数値を印字するテンプレート型(tests/test_examples.py で煙試験)。 `py -3.11 examples/perception_pipeline.py`
+- **物体を分割→記述(Hu+形状)→プロトタイプと照合して識別** — ピック/仕分けに必要な知覚のテンプレート。prototypes を 1 度作り、segment_objects の結果を分類する。 `py -3.11 examples/segment_and_classify.py`
+- **2 フレーム→密なオプティカルフロー→大域運動除去→独立運動領域** — 動画対から運動を読むテンプレート(--save で色付きフロー PNG)。物理クリップ/身体言語の「本当に動いたか」に使う。 `py -3.11 examples/motion_analysis.py`
+- **観測点群を既知モデルに登録して 6-DoF 姿勢と把持接近方向を出す** — ノイズ・欠け・変位のある観測点群→ダウンサンプル→法線→登録→姿勢。マニピュレーション用テンプレート(合成データ、--save で PLY)。 `py -3.11 examples/grasp_pose.py`
+- **実クリップの知覚: フロー→運動エネルギー/イベント→大域運動除去→点追跡** — mp4/gif を渡せば実映像で走り、無ければ合成クリップに落ちる。GT が無いので測光自己整合(identity 基準比)の honest 指標で判定。 `py -3.11 examples/perception_on_video.py`
+- **Physical-AI 知覚パイプライン 2 本(把持/歩行)を fullseye だけで組む** — MANIPULATION: 地面除去→クラスタ→PPF 6-DoF→反対把持。LOCOMOTION: 深度→点群+法線→高さマップ→足場候補→支持多角形と安定余裕。 `py -3.11 examples/physical_ai_perception.py`
+- **物体を取り込み→シム用に整える→把持位置→レンダリング** — OBJ/STL/PLY/OFF メッシュを水密化し正確な慣性テンソル(MuJoCo 用)、反対把持候補のランク付け、深度/シルエットのレンダまで numpy だけで通す。 `py -3.11 examples/import_and_grasp.py`
+- **3D Gaussian Splatting の出力(中心点群)を fullseye で処理する** — 3DGS を学習はしない(GPU レンダラが要る)。結果の点群を取り込みダウンサンプル・法線推定・2 回撮影の登録まで(テンプレート、--save で PLY)。 `py -3.11 examples/gaussian_splat_cloud.py`
+- **sim2real 劣化(aug_*)・人工生命・触覚 op 族の一巡** — 光子雑音/固定パターン/ローリングシャッター/JPEG/歪み等でクリーンな描画を実カメラ風に劣化させ、人工生命・触覚 op も含めて実行する(数値を印字)。 `py -3.11 examples/sim2real_and_alife.py`
+
+**consumer**
+- **hillco / evis(筋骨格ヒューマノイド歩行)が fullseye を使う 3 つの検査** — 物理シムが真値を持つ前提で、fullseye は独立な知覚側の二重チェックのみ: 歩行安定性(支持多角形/COM 余裕)、レンダ動画の運動検証、姿勢の骨格化。制御は駆動しない。 `py -3.11 examples/consumer_hillco.py`
+- **onocollo(CPU 世界モデル/gaitlab)が fullseye を使う 2 つの検査** — MuJoCo 風状態からの静的安定性チェック(support_polygon/com_support_margin)と、物理レンダ動画 2 フレームからの運動検証。 `py -3.11 examples/consumer_onocollo.py`
+
+**workflow**
+- **imgevolve quickstart — 全ワークフローを 1 ファイルで** — レジストリ→型付き手組みパイプライン→ゲノム復号→タスク採点→進化ドライバ→codegen + 差分テスト(約 1.5 分、repo root から実行)。 `py -3.11 examples/quickstart.py`
 
 ### 3-D 点群/体積/曲面(112 例)
 
@@ -702,7 +755,7 @@ _計 310 ops / 63 categories。_
 - `sampson_distance` (`image2d, image2d → signal`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category
-_計 865 ops / 47 categories。_
+_計 860 ops / 47 categories。_
 
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
@@ -780,8 +833,7 @@ _計 865 ops / 47 categories。_
 - `rgb3_to_gray` (halcon: `rgb3_to_gray`) `color → image` · 例: `gallery2d_color_artistic`
 - `access_channel` (halcon: `access_channel`) `color → image` · 例: `gallery2d_color_artistic`
 
-### contour(26)
-- `edges_sub_pix` (halcon: `edges_sub_pix`) `image → contour` · 例: `gallery2d_contour_measure`, `quickstart`
+### contour(25)
 - `select_contours` (halcon: `select_contours_xld`) `contour → contour` · 例: `gallery2d_contour_measure`, `quickstart`
 - `smooth_contours` (halcon: `smooth_contours_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
 - `fit_line_contours` (halcon: `fit_line_contour_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
@@ -826,9 +878,8 @@ _計 865 ops / 47 categories。_
 - `it_full_domain` `image → image` · 例: `gallery2d_gray_arith`
 - `it_crop_domain` (halcon: `crop_domain`) `image → image` · 例: `gallery2d_gray_arith`
 
-### edges(57)
+### edges(56)
 - `sobel_mag` (halcon: `sobel_amp`) `image → image` · 例: `gallery2d_edges`
-- `laplace` (halcon: `laplace`) `image → image` · 例: `gallery2d_edges`
 - `prewitt_mag` (halcon: `prewitt_amp`) `image → image` · 例: `gallery2d_edges`
 - `roberts_mag` (halcon: `roberts`) `image → image` · 例: `gallery2d_edges`
 - `dog` (halcon: `diff_of_gauss`) `image → image` · 例: `gallery2d_edges`
@@ -1361,12 +1412,10 @@ _計 865 ops / 47 categories。_
 - `sg_normalized_cut_2` `image → region` · 例: `gallery2d_segmentation`
 - `sg_watershed_gradient` `image → region` · 例: `gallery2d_segmentation`
 
-### segmentation(56)
+### segmentation(54)
 - `threshold` (halcon: `threshold`) `image → region` · 例: `gallery2d_segmentation`
 - `otsu` (halcon: `binary_threshold`) `image → region` · 例: `ct_inspection`, `gallery2d_segmentation`, `quickstart`, `segment_and_classify`
-- `dyn_threshold` (halcon: `dyn_threshold`) `image → region` · 例: `gallery2d_segmentation`
 - `canny` (halcon: `edges_image`) `image → region` · 例: `gallery2d_segmentation`
-- `local_max` (halcon: `local_max_sub_pix`) `image → region` · 例: `gallery2d_segmentation`
 - `adaptive_gauss_thresh` (halcon: `local_threshold`) `image → region` · 例: `gallery2d_segmentation`
 - `sk_otsu` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`
 - `sk_li` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`
@@ -1529,12 +1578,12 @@ _計 865 ops / 47 categories。_
 - `xmh_daubechies` `image → image` · 例: `gallery2d_geometry`
 - `tf_radon_sinogram` `image → image` · 例: `gallery2d_geometry`
 
-### typed(123)
+### typed(122)
 - `tb_points_to_voxel` `points → volume` · 例: なし
 - `tb_estimate_point_normals` `points → points` · 例: なし
 - `tb_iss_keypoints` `points → signal` · 例: なし
 - `tb_angle_3points` `points → feature` · 例: なし
-- `tb_project_points` `points → points` · 例: なし
+- `tb_project_points` `points → keypoints` · 例: なし
 - `tb_render_point_depth` `points → image` · 例: なし
 - `tb_statistical_outlier_removal` `points → points` · 例: なし
 - `tb_radius_outlier_removal` `points → points` · 例: なし
@@ -1646,13 +1695,12 @@ _計 865 ops / 47 categories。_
 - `tb_apply_weighting` `signal → signal` · 例: なし
 - `tb_equivalent_level` `signal → feature` · 例: なし
 - `tb_normals_to_egi` `points → image` · 例: なし
-- `tb_keypoints_uv_to_points` `points → points` · 例: なし
-- `tb_points_zyx_to_keypoints_uv` `points → points` · 例: なし
-- `tb_keypoints_to_image2d` `points → image` · 例: なし
+- `tb_keypoints_uv_to_points` `keypoints → points` · 例: なし
+- `tb_points_zyx_to_keypoints_uv` `points → keypoints` · 例: なし
+- `tb_keypoints_to_image2d` `keypoints → image` · 例: なし
 - `tb_indices_to_labels` `signal → volume` · 例: なし
 - `tb_countrate_to_counts` `counts → counts` · 例: なし
 - `tb_counts_to_countrate` `counts → counts` · 例: なし
-- `tb_rgb_to_xyz` `rgbimage → rgbimage` · 例: なし
 
 ### xldgeom(10)
 - `xg_moments` (halcon: `moments_points_xld`) `contour → feature` · 例: `gallery2d_geometry`

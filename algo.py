@@ -1102,28 +1102,34 @@ def run(a):
     graph a = [n, m, src, (u,v,w)*m]. Returns the length-n distance vector (src = 0.0),
     with -1.0 for an unreachable node. Deterministic: settle the reachable unsettled node
     of least distance (lowest index on ties), then relax all incident edges in input order.
-    Fail-soft []: malformed / out-of-range src or endpoint / a negative edge weight."""
+    Fail-soft []: n not an integer in [1, 5000000] (node cap), m not an integer in
+    [0, 2147483000], truncated edges, src or an endpoint that is not an integer in
+    [0, n-1] (raw-double guard before int()), or a negative edge weight."""
     if len(a) < 3:
         return []
     nd = a[0]
     md = a[1]
     sd = a[2]
-    if not (nd >= 1.0 and nd <= 2147483000.0):
+    if not (nd >= 1.0 and nd <= 5000000.0 and nd == float(int(nd))):   # node cap (as sieve)
         return []
-    if not (md >= 0.0 and md <= 2147483000.0):
+    if not (md >= 0.0 and md <= 2147483000.0 and md == float(int(md))):
         return []
     n = int(nd)
     m = int(md)
-    if not (sd >= 0.0 and sd < n):                     # bound src against the INTEGER n, not
-        return []                                      # raw nd: a fractional nd could pass sd<nd
-    src = int(sd)                                      # yet give src==n (out-of-range write)
+    if not (sd >= 0.0 and sd < n and sd == float(int(sd))):   # bound src against the INTEGER
+        return []                                      # n, not raw nd; integral (1.5 is no node)
+    src = int(sd)
     if len(a) < 3 + 3 * m:
         return []
-    for k in range(m):                                 # validate up front
-        u = int(a[3 + 3 * k])
-        v = int(a[3 + 3 * k + 1])
+    for k in range(m):                                 # validate up front, on the RAW doubles
+        ud = a[3 + 3 * k]
+        vd = a[3 + 3 * k + 1]
         w = a[3 + 3 * k + 2]
-        if u < 0 or u >= n or v < 0 or v >= n or w < 0.0:
+        if not (ud >= 0.0 and ud < n and ud == float(int(ud))):
+            return []
+        if not (vd >= 0.0 and vd < n and vd == float(int(vd))):
+            return []
+        if w < 0.0:
             return []
     dist = [-1.0] * n
     settled = [False] * n
