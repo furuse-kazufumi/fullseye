@@ -75,8 +75,15 @@ def test_polar_ops_actually_transform_something(name):
     nz = int(np.count_nonzero(out))
     assert nz > 0.05 * out.size, (
         f"{name} は非ゼロ画素が {nz}/{out.size} しかない = 実質何も返していない")
-    assert np.unique(out).size >= 8, (
-        f"{name} の出力の値が {np.unique(out).size} 種類しかない = 階調が消えている")
+    # region op は出力が {0,1} に二値化される契約なので階調では見られない
+    #(最初これを一律 8 段で見て region 版を落とした ―― 検査側の誤り)。
+    # 二値なら「両方の値が出ていること」、濃淡画像なら「階調が残っていること」。
+    uniq = np.unique(out).size
+    if "region" in name:
+        assert uniq == 2, f"{name} の region 出力が {uniq} 種類(0 と 1 の両方が要る)"
+    else:
+        assert uniq >= 8, (
+            f"{name} の出力の値が {uniq} 種類しかない = 階調が消えている")
 
 
 def test_polar_inverse_round_trip_recovers_the_disc():

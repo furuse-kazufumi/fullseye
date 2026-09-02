@@ -3,49 +3,51 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-02 19:00:36
+- **最終更新**: 2026-09-02 19:26:33
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-6e7a298f0 auto: test_backends_typed_liveness.py 編集前 (2026-09-02 19:00)
-2411bec8b auto: test_backends_typed_liveness.py 編集前 (2026-09-02 18:59)
-8a5dd9a15 auto: test_backends_typed_liveness.py 編集前 (2026-09-02 18:58)
-3d54bf0cd 進化エンジンの中に「何も計算していない op」が 7 件あった (5 件を修正)
-5672a3f66 auto: test_backends_typed_liveness.py 編集前 (2026-09-02 18:38)
-fa749a855 auto: test_backends_typed_liveness.py 編集前 (2026-09-02 18:37)
-25f83db62 auto: test_backends_typed_liveness.py 編集前 (2026-09-02 18:37)
-17e713349 auto: backends_typed.py 編集前 (2026-09-02 18:35)
-0a2b73eb0 auto: backends_typed.py 編集前 (2026-09-02 18:35)
-6af3663c7 auto: chain_fuzz.py 編集前 (2026-09-02 18:32)
+bcda987c3 auto: test_known_bugs.py 編集前 (2026-09-02 19:25)
+f783a5bd7 auto: test_known_bugs.py 編集前 (2026-09-02 19:25)
+18ae668dc auto: backends_auto.py 編集前 (2026-09-02 19:23)
+bc3a7dc5d auto: backends_r3.py 編集前 (2026-09-02 19:20)
+e829b5c45 auto: backends_halcon_ext.py 編集前 (2026-09-02 19:20)
+665adb1f9 auto: backends_ski2.py 編集前 (2026-09-02 19:19)
+437917ade auto: backends_r3.py 編集前 (2026-09-02 19:18)
+0efc2b5f8 auto: backends_r3.py 編集前 (2026-09-02 19:18)
+8150f2110 auto: backends_r3.py 編集前 (2026-09-02 19:18)
+00217f3ed auto: backends_r3.py 編集前 (2026-09-02 19:17)
 ```
 
 ## 現在の git status
 
 ```
-M tests/test_backends_typed_liveness.py
+M docs/articles/assets/_wing2d_meta.json
+ M docs/articles/assets/media/wing2d_fit_residual.gif
+ M tests/test_known_bugs.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-19:00 .pytest_cache/v/cache/nodeids
-19:00 .pytest_cache/v/cache/lastfailed
-19:00 tests/test_backends_typed_liveness.py
-19:00 examples_3d/_gallery/render_beauty_hero.png
-18:59 examples_3d/_gallery/watershed3d.png
-18:59 examples_3d/_gallery/render_tonemap.png
-18:59 examples_3d/_gallery/render_shadow.png
-18:59 examples_3d/_gallery/render_ssaa.png
-18:59 examples_3d/_gallery/render_ao.png
-18:59 examples_3d/_gallery/render_shade.png
-18:58 examples_3d/_gallery/mesh_smooth.png
-18:58 examples_3d/_gallery/mesh_props.png
-18:58 examples_3d/_gallery/mesh_decimate.png
-18:58 examples_3d/_gallery/hull_bounds.png
-18:58 examples_3d/_gallery/fit_primitives_ext.png
+19:26 docs/articles/assets/wing3d_rle_compression_thumb.jpg
+19:26 docs/articles/assets/wing3d_rle_compression.png
+19:26 docs/articles/assets/thumbs/wing3d_boundary_shell_thumb.jpg
+19:26 docs/articles/assets/media/wing3d_boundary_shell.mp4
+19:26 docs/articles/assets/media/wing3d_boundary_shell.gif
+19:26 docs/articles/assets/thumbs/wing3d_domain_memory_thumb.jpg
+19:25 docs/articles/assets/media/wing3d_domain_memory.mp4
+19:25 docs/articles/assets/media/wing3d_domain_memory.gif
+19:25 .pytest_cache/v/cache/nodeids
+19:25 .pytest_cache/v/cache/lastfailed
+19:25 docs/articles/exhibits/wing2d.ja.md
+19:25 docs/articles/assets/_wing2d_meta.json
+19:25 tests/test_known_bugs.py
+19:25 docs/articles/assets/thumbs/wing2d_fit_residual_thumb.jpg
+19:25 docs/articles/assets/media/wing2d_fit_residual.gif
 ```
 
 ---
