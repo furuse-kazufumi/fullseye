@@ -981,20 +981,25 @@ if _os.environ.get("IMGEVOLVE_NO_BACKENDS", "") != "1":
     # (= 純粋な重複)。``backends_auto.build`` は自分の spec 内だけ HALCON 名で
     # de-dup しており、コアが既に登録した名前を知らない。
     #
-    # 落とすのは**後から来た方**(コア定義を正本として残す)。捨てた分は
-    # ``DROPPED_DUPLICATES`` に残す —— 黙って消すと「登録したのに使えない」に
-    # なるので、テストが「ちょうどこの集合だけ」であることを検査できるようにする。
+    # 残すのは**最後に登録された方**。``RT`` / ``_BY_NAME`` は元々「後勝ち」の
+    # dict なので、こうすると**名前で引ける実装は 1 ビットも変わらない** ――
+    # 4 件はいずれも「コアの fallback + backends_auto の fail-closed ``_safe``
+    # ラッパが勝つ」という意図的な上書きで(tests/test_opdocs.py に pin されて
+    # いた)、勝者を入れ替えてはいけない。消えるのは抽選の二重取りだけ。
+    # backend が不在の環境ではコア定義しか登録されないので、fallback も保たれる。
+    #
+    # 捨てた分は ``DROPPED_DUPLICATES`` に残す —— 黙って消すと「登録したのに
+    # 使えない」になるので、テストが「ちょうどこの集合だけ」を検査できるようにする。
     DROPPED_DUPLICATES = []
     if _extra:
-        _known = {op.name for op in REGISTRY}
-        _kept = []
-        for _op in _extra:
-            if _op.name in _known:
-                DROPPED_DUPLICATES.append(_op.name)
-                continue
-            _known.add(_op.name)
-            _kept.append(_op)
-        _extra = _kept
+        _all = REGISTRY + _extra
+        _last = {}
+        for _i, _op in enumerate(_all):
+            _last[_op.name] = _i
+        REGISTRY = [_op for _i, _op in enumerate(_all) if _last[_op.name] == _i]
+        DROPPED_DUPLICATES = [_op.name for _i, _op in enumerate(_all)
+                              if _last[_op.name] != _i]
+        _extra = []
     if _extra:
         REGISTRY = REGISTRY + _extra
         RT = {op.name: op.fn for op in REGISTRY}
