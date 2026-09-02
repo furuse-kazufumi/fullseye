@@ -29,23 +29,28 @@ def project_3d_point(points_3d, cam_par, pose=None):
 
 
 def project_point_hom_mat3d(points_3d, hom_mat3d):
-    """4x4 or 3x4 同次変換で 3D 点を変換し投影(project_point_hom_mat3d)。"""
+    """4x4 or 3x4 射影行列 P=K[R|t] で 3D 点を投影し画素 (row, col) を返す
+    (project_point_hom_mat3d)。``project_3d_point`` と同じ (row, col) 規約
+    (2026-09-02 以前は (x, y) を返しており兄弟 API と食い違っていた)。"""
     P = np.asarray(points_3d, float).reshape(-1, 3)
     Hm = np.asarray(hom_mat3d, float)
     if Hm.shape == (4, 4):
         Hm = Hm[:3]
     out = (np.column_stack([P, np.ones(len(P))]) @ Hm.T)
-    return out[:, :2] / out[:, 2:3]
+    uv = out[:, :2] / out[:, 2:3]
+    return np.column_stack([uv[:, 1], uv[:, 0]])
 
 
 def project_hom_point_hom_mat3d(points_hom, hom_mat3d):
-    """同次 3D 点 (4,) を 3x4/4x4 行列で投影(project_hom_point_hom_mat3d)。"""
+    """同次 3D 点 (4,) を 3x4/4x4 射影行列で投影し画素 (row, col) を返す
+    (project_hom_point_hom_mat3d)。"""
     P = np.asarray(points_hom, float).reshape(-1, 4)
     Hm = np.asarray(hom_mat3d, float)
     if Hm.shape == (4, 4):
         Hm = Hm[:3]
     out = P @ Hm.T
-    return out[:, :2] / out[:, 2:3]
+    uv = out[:, :2] / out[:, 2:3]
+    return np.column_stack([uv[:, 1], uv[:, 0]])
 
 
 def _homography_dlt(src, dst):
