@@ -53,6 +53,31 @@ def test_find_surface_pose_one_shot_identity():
     assert np.linalg.norm(res["t"]) < 0.05
 
 
+@pytest.mark.parametrize("seed", [0, 1, 2, 3])
+def test_voting_alone_recovers_random_so3_pose(seed):
+    """Regression (2026-09-02): the vote used ``alpha_s - alpha_m``; the aligning
+    rotation is ``Rx(alpha_m - alpha_s)`` (T = Ts^-1 Rx(a) Tm), so pure voting
+    (refine=False) was 27-169 deg off on random rotations and even ICP refine
+    could not recover 2 of 4. Pure voting must now land within the angular
+    quantisation (2 bins) and ICP refine must finish below 1 deg."""
+    from scipy.spatial.transform import Rotation
+    P, N = _ellipsoid(seed=10 + seed)
+    R_true = Rotation.random(random_state=seed).as_matrix()
+    t_true = np.random.default_rng(seed).normal(size=3)
+    S = P @ R_true.T + t_true
+    SN = N @ R_true.T                                   # exact normals
+    bins = 30
+    res = ppf.find_surface_pose(P, S, N, SN, angle_bins=bins, ref_fraction=0.2,
+                                topk=5, refine=False, seed=seed)
+    ang = np.degrees(np.linalg.norm(camera.rotation_log(res["R"].T @ R_true)))
+    assert ang < 2.0 * (180.0 / bins), f"vote-only rotation error {ang:.2f} deg"
+    res = ppf.find_surface_pose(P, S, N, SN, angle_bins=bins, ref_fraction=0.2,
+                                topk=5, refine=True, seed=seed)
+    ang = np.degrees(np.linalg.norm(camera.rotation_log(res["R"].T @ R_true)))
+    assert ang < 1.0, f"refined rotation error {ang:.3f} deg"
+    assert np.linalg.norm(res["t"] - t_true) < 0.02
+
+
 def test_ppf_model_builds_table():
     P, N = _ellipsoid(n=80, seed=7)
     model = ppf.ppf_model(P, N, angle_bins=20)
