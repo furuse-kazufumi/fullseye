@@ -447,6 +447,10 @@ def download(sample_id: str, *, yes: bool = False, quiet: bool = False,
 
     # verify the extracted/placed artifact (fail-closed).
     out_want = e.get("sha256_out")
+    if arch is not None and not out_want:
+        os.remove(target)
+        raise ValueError("[%s] archive entry has no sha256_out pin - the extracted "
+                         "file cannot be verified; deleted." % e["id"])
     if out_want and _sha256(target) != out_want:
         os.remove(target)
         raise ValueError("[%s] extracted-file sha256 mismatch - deleted." % e["id"])
