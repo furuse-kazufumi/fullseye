@@ -364,8 +364,8 @@ _GRID_MAX = 512
 
 
 def _rays_hit_dir(O: np.ndarray, d: np.ndarray, A: np.ndarray, e1: np.ndarray,
-                  e2: np.ndarray, tmin: float) -> np.ndarray:
-    """原点群 ``O`` (K,3) から共通方向 ``d`` のレイが三角形群 (M,3) のどれかに当たるか (K,) bool。"""
+                  e2: np.ndarray, tmin: float, tmax: float = np.inf) -> np.ndarray:
+    """原点群 ``O`` (K,3) から共通方向 ``d`` のレイが三角形群 (M,3) のどれかに ``t∈(tmin,tmax)`` で当たるか (K,) bool。"""
     pvec = np.cross(d[None, :], e2)                          # (M,3)
     det = np.einsum("md,md->m", e1, pvec)                    # (M,)
     nz = np.abs(det) > 1e-14
