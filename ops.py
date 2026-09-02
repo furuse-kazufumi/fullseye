@@ -52,6 +52,15 @@ CIMAGE = "cimage"                     # 2-D complex image (HALCON complex format
 LIGHTFIELD = "lightfield"             # 4-D (V,U,H,W) light field
 COUNTS = "counts"                     # 非負の 1-D 光子カウント/レート
 HISTCUBE = "histcube"                 # (H,W,T) 到達時刻ヒストグラム立方体
+# keypoints = 像面上の (N,2) 点。**points((N,3) の点群)とは別の sort**。
+# 2026-09-02 まで両者は同じ 'points' sort に写されており、``_sort_ok`` は
+# points に ``shape[1] == 3`` を要求するので、(N,2) を返す/取る橋渡し op は
+# 全部 fail-soft に落ちていた —— tb_project_points / tb_points_zyx_to_keypoints_uv /
+# tb_keypoints_uv_to_points / tb_keypoints_to_image2d の 4 件が、あらゆる入力で
+# 「定数ゼロ」か「入力の素通し」を返していた(実測)。つまり進化は
+# **「3 次元を撮る」という基本的な写像を一度も使えていなかった**。
+# 型を分ける基準(混ぜると例外でなく黙って別物になるか)にも合致する。
+KEYPOINTS = "keypoints"               # (N,2) 像面上の点
 
 
 # Matching context: the locate problem sets a reference template here before scoring
