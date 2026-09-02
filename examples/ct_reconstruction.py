@@ -522,8 +522,9 @@ def main():
     print(f"\nPASS: 投影 -> 再構成 -> 外径 {m_fbp['outer_mm']:.3f} mm "
           f"(真値 {2 * R_OUT_MM:.2f} mm, {m_fbp['outer_mm'] / (2 * R_OUT_MM) - 1:+.2%}) "
           f"/ 空洞 {m_fbp['void_mm']:.3f} mm (真値 {2 * R_VOID_MM:.2f} mm) まで閉じた。")
-    print(f"      tomography 17 op のうち 14 op を実行 "
-          f"(例の無かった 12 op すべてを含む)。")
+    print(f"      tomography 17 op のうち 15 op を実行 "
+          f"(残る 2 op = radon_volume / fbp_volume は 3-D 側で、"
+          f"examples/tomography_reconstruct.py が通す)。")
     return ok
 
 
