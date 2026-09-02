@@ -413,13 +413,23 @@ _PROSE_RE = re.compile(
 _UNUSED_RE = re.compile(r"``([ab])``\s*(?:is\s+)?(?:ignored|unused|not\s+used|不使用|未使用)")
 
 
+_STOP_LABELS = {"the", "a", "an", "it", "it in", "in", "of", "to", "and", "which", "this"}
+
+
 def _clean_label(text: str) -> str:
+    """Trim a docstring phrase to a short label: stop at a formula / parenthesis /
+    sentence end / stray number, cap at five words; '' when nothing usable remains."""
     t = re.sub(r"[`*]", "", text)
-    t = t.split("(")[0].split("。")[0].split(".")[0]
-    t = re.sub(r"\s+", " ", t).strip(" -—:=")
+    t = re.split(r"\(|。|\s=\s|--|->|\s-\s|:\s|;", t)[0]
+    t = re.split(r"(?<=[a-zA-Z])\.\s|\.$", t)[0]
+    t = re.sub(r"\s+\d[\d.]*\s*[+\-*/·×]?.*$", "", t)     # "steps 1 + int(..." -> "steps"
+    t = re.sub(r"\s+", " ", t).strip(" -—:=,")
     words = t.split(" ")
     if len(words) > 5:                                 # a prose object phrase: keep it short
         t = " ".join(words[:5])
+    t = t.strip()
+    if t.lower() in _STOP_LABELS or len(t) < 3:
+        return ""
     return t[:40]
 
 
@@ -435,7 +445,7 @@ def _labels_from_text(text: str) -> dict[str, dict[str, str]]:
             mm = pat.match(line)
             if mm:
                 letter, body = mm.group(1), mm.group(2)
-                if letter not in out and body:
+                if letter not in out and body and _clean_label(body):
                     out[letter] = {"label": _clean_label(body), "doc": re.sub(r"[`*]", "", body)[:200]}
                 break
     flat = re.sub(r"\s+", " ", text)
@@ -443,7 +453,7 @@ def _labels_from_text(text: str) -> dict[str, dict[str, str]]:
         out.setdefault(mm.group(1), {"label": "(unused)", "doc": mm.group(0).replace("`", "")})
     for mm in _PROSE_RE.finditer(flat):
         letter, body = mm.group(1), mm.group(2)
-        if letter not in out:
+        if letter not in out and _clean_label(body):
             out[letter] = {"label": _clean_label(body), "doc": mm.group(0).replace("`", "")[:200]}
     return out
 

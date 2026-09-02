@@ -2092,7 +2092,8 @@ def run(a):
 
 _C_IS_PRIME = '''\
 /* Deterministic Miller-Rabin primality of a = [n] (0 <= n <= 2^32-1). 1.0 prime / 0.0 not.
- * Domain keeps a*a mod n within uint64 (n <= 2^32-1 -> n^2 < 2^64). Fail-soft 0.0. */
+ * Domain keeps a*a mod n within uint64 (n <= 2^32-1 -> n^2 < 2^64). Fail-soft -1.0 on
+ * malformed / out-of-domain (0.0 = "composite" is a valid answer, so it cannot be the sentinel). */
 static unsigned long long _mr_powmod(unsigned long long b, unsigned long long e, unsigned long long m) {
     unsigned long long r = 1ULL % m;
     b %= m;
