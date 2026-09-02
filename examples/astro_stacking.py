@@ -351,38 +351,72 @@ def main():
     # ------------------------------------------------------------------ #
     # 7) 測光 —— 出来上がった 1 枚から、カタログのフラックスを測り返す       #
     # ------------------------------------------------------------------ #
-    sigma_px = FWHM / A.FWHM_PER_SIGMA
+    # まず「当てはめが返す数字は何なのか」を、FWHM が一定の既知の 1 枚で確かめる。
+    # 画素は連続分布を幅 1 の箱で積分した値なので(一様な箱の分散 = 1/12)、
+    # 当てはめは必ず sqrt(sigma^2 + 1/12) を返す。3 つの尺度で見るので
+    # 「1/12 がたまたま合っている」ということが起こらない。
+    print("7) PSF 当てはめが返す数字の意味(FWHM 既知の 1 枚で先に固定):")
+    for fw in (2.5, 3.5, 5.0):
+        one_f, _ = A.synth_starfield(shape=(96, 96), n_stars=6, fwhm_px=fw,
+                                     flux_min=40000.0, flux_max=60000.0,
+                                     sky=50.0, read_sigma=4.0, seed=29,
+                                     margin_px=16.0)
+        fits1 = A.psf_fit(one_f, A.star_detect(one_f), box=15)
+        got = float(np.median([f["fwhm_px"] for f in fits1]))
+        sg = fw / A.FWHM_PER_SIGMA
+        pred = A.FWHM_PER_SIGMA * np.sqrt(sg ** 2 + 1.0 / 12.0)
+        back = A.FWHM_PER_SIGMA * np.sqrt((got / A.FWHM_PER_SIGMA) ** 2 - 1.0 / 12.0)
+        print(f"   真の FWHM {fw:.1f} → 当てはめ {got:.4f}(閉形式 "
+              f"√(σ²+1/12) = {pred:.4f}、箱を外すと {back:.4f})")
+        assert abs(got / pred - 1.0) < 0.01
+        assert abs(back / fw - 1.0) < 0.012
+
     found = A.star_detect(stacked, threshold_sigma=5.0)
     ref_rows = truth["rows"] + truth["shifts"][0][0]     # 基準は 0 枚目の座標系
     ref_cols = truth["cols"] + truth["shifts"][0][1]
     pairs = _match(found, ref_rows, ref_cols)
-    hit_d = [d for d, _ in pairs if d < 1.0]
-    print(f"7) 合成画像からの検出: {len(found)} 点(植えた {N_STARS} 個)  "
-          f"位置誤差 最大 {max(hit_d):.3f} px / 中央 {np.median(hit_d):.3f} px")
-    assert len(hit_d) >= N_STARS - 1 and max(hit_d) < 0.5
+    hit_d = [d for d, _ in pairs if d < 2.0]
+    sep = np.hypot(ref_rows[:, None] - ref_rows[None, :],
+                   ref_cols[:, None] - ref_cols[None, :])
+    np.fill_diagonal(sep, np.inf)
+    nn = sep.min(axis=1)
+    print(f"   合成画像からの検出: {len(found)} 点(植えた {N_STARS} 個。星表の最小"
+          f"間隔は {nn.min():.1f} px なので、近すぎる対は 1 点に融合する)  "
+          f"位置誤差 中央 {np.median(hit_d):.3f} px / 最大 {max(hit_d):.3f} px")
+    assert len(hit_d) >= N_STARS - 4 and np.median(hit_d) < 0.3
 
     fits = A.psf_fit(stacked, found, box=15)
     got_fwhm = float(np.median([f["fwhm_px"] for f in fits if f["converged"]]))
-    predicted = A.FWHM_PER_SIGMA * np.sqrt(sigma_px ** 2 + 1.0 / 12.0)
-    print(f"   PSF 当てはめ: FWHM {got_fwhm:.4f} px。**真値 {FWHM} px ではなく** "
-          f"画素の箱(分散 1/12)込みの {predicted:.4f} px に当たるのが正しい "
-          f"(真円度 {np.median([f['roundness'] for f in fits]):.3f})")
-    assert abs(got_fwhm / predicted - 1.0) < 0.08
+    print(f"   合成画像の PSF: FWHM {got_fwhm:.4f} px、真円度 "
+          f"{np.median([f['roundness'] for f in fits]):.3f} —— 12 枚の "
+          f"FWHM {min(truth['fwhms']):.2f}〜{max(truth['fwhms']):.2f} px を"
+          f"混ぜた像なので、単一の σ の閉形式では書けない(だから上で先に検算した)")
+    assert 0.95 < got_fwhm / A.frame_quality(stacked)["fwhm_px"] < 1.05
 
-    r_ap = 8.0 * sigma_px
-    phot = A.aperture_photometry(stacked, found, r_aperture=r_ap,
-                                 r_inner=r_ap + 4.0, r_outer=r_ap + 10.0)
-    rel = []
+    phot = A.aperture_photometry(stacked, found, r_aperture=R_APERTURE,
+                                 r_inner=R_APERTURE + 4.0,
+                                 r_outer=R_APERTURE + 12.0)
+    iso, crowded = [], []
     for p, (d, k) in zip(phot, pairs):
-        if d < 1.0:
-            rel.append((p["flux"] - truth["fluxes"][k]) / truth["fluxes"][k])
-    print(f"   開口測光(r = 8σ = {r_ap:.2f} px、面積 {phot[0]['area_px']:.2f} px "
-          f"/ πr^2 = {np.pi * r_ap ** 2:.2f}): カタログとの相対誤差 中央 "
-          f"{100 * np.median(rel):+.3f} % / 最大 {100 * np.max(np.abs(rel)):.3f} %")
-    assert abs(phot[0]["area_px"] - np.pi * r_ap ** 2) / (np.pi * r_ap ** 2) < 3e-3
-    assert abs(np.median(rel)) < 0.02 and np.max(np.abs(rel)) < 0.08
-    print(f"   背景の推定 {np.median([p['background'] for p in phot]):.2f} "
+        if d >= 2.0:
+            continue
+        rel = float((p["flux"] - truth["fluxes"][k]) / truth["fluxes"][k])
+        (iso if nn[k] > 2 * R_APERTURE + 4.0 else crowded).append(rel)
+    print(f"   開口測光(r = {R_APERTURE:.0f} px、実効面積 {phot[0]['area_px']:.3f} px "
+          f"/ πr² = {np.pi * R_APERTURE ** 2:.3f}):")
+    print(f"     孤立星 {len(iso)} 個(隣まで {2 * R_APERTURE + 4:.0f} px 以上): "
+          f"カタログとの相対誤差 中央 {100 * np.median(iso):+.3f} % / "
+          f"最大 {100 * np.max(np.abs(iso)):.3f} %")
+    print(f"     混み合った星 {len(crowded)} 個: 中央 {100 * np.median(crowded):+.3f} % / "
+          f"最大 {100 * np.max(np.abs(crowded)):.1f} % —— 開口が隣の星を"
+          f"拾うので、**測光の誤差は測光 op ではなく星表の混み具合で決まる**")
+    assert abs(phot[0]["area_px"] - np.pi * R_APERTURE ** 2) \
+        / (np.pi * R_APERTURE ** 2) < 3e-3
+    assert abs(np.median(iso)) < 0.02 and np.max(np.abs(iso)) < 0.03
+    assert np.max(np.abs(crowded)) > np.max(np.abs(iso))
+    print(f"   背景の推定 {np.median([p['background'] for p in phot]):.3f} "
           f"(真値 {SKY:.0f})  S/N 中央 {np.median([p['snr'] for p in phot]):.0f}")
+    assert abs(np.median([p["background"] for p in phot]) - SKY) < 0.05 * SKY
 
     # 雑音の無い 1 星で、測光そのものの正しさを閉形式に当てる
     one, t1 = A.synth_starfield(shape=(96, 96), n_stars=1, flux_min=1e4,
