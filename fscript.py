@@ -872,17 +872,19 @@ class Interp:
     def _ev_Index(self, n):
         base = self._eval(n.base)
         idx = self._eval(n.idx)
-        try:
-            return base[int(idx)]
-        except (TypeError, IndexError, KeyError) as e:
-            raise FScriptError("cannot index %s: %s" % (type(base).__name__, e), n.line)
+        if not isinstance(base, (list, str)):
+            raise FScriptError("cannot index %s (only a tuple or a string)"
+                               % _describe(base), n.line)
+        return base[_as_index(idx, len(base), "index", n.line)]
 
     def _ev_UnOp(self, n):
         v = self._eval(n.a)
         if n.op == "-":
-            return -v
+            if isinstance(v, list):                   # element-wise, like HALCON
+                return [-_as_number(x, "operand of unary '-'", n.line) for x in v]
+            return -_as_number(v, "operand of unary '-'", n.line)
         if n.op == "not":
-            return not _truth(v)
+            return not _truth(v, n.line)
         raise FScriptError("bad unary op %s" % n.op, n.line)
 
     def _ev_BinOp(self, n):
