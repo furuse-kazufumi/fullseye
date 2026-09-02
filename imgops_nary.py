@@ -88,9 +88,14 @@ def _or_img(io, a, b):
 
 
 def _convol(io, a, b):
+    # HALCON convol_image applies the mask as a CORRELATION (the mask is laid
+    # over the image as written, not flipped): out[r,c] = sum_ij m[i,j] *
+    # img[r+i-cr, c+j-cc]. scipy's `convolve` flips the mask, which mirrors any
+    # asymmetric filter (a mask with its weight right of centre would shift the
+    # image the wrong way) — so `correlate` it is.
     ker = np.asarray(io[1], np.float64)
     ker = ker / (np.abs(ker).sum() + 1e-8)
-    return np.clip(ndimage.convolve(_f(io[0]), ker, mode="reflect"), 0, 1)
+    return np.clip(ndimage.correlate(_f(io[0]), ker, mode="reflect"), 0, 1)
 
 
 # --- region (x2) -> region : HALCON set theory ------------------------------- #
