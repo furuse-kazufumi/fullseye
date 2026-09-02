@@ -301,7 +301,7 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
         shadow_map = render_shadow.cast_shadow(
             V_all, F_all, light_world, pose=P, intrinsics=Khi, width=hs, height=hs,
             directional=True, penumbra=float(penumbra), samples=int(shadow_samples),
-            shadow_res=int(shadow_res))
+            shadow_res=int(shadow_res), pcf=int(shadow_pcf))
     else:
         shadow_map = np.ones((hs, hs), np.float64)
 
