@@ -62,11 +62,20 @@ _MOD = {"imgmetrics": imgmetrics}
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
     # 色空間。lab が新語(rgbimage と混ぜても例外にならないため分けた)
+    #
+    # XYZ は **rgbimage ではない**。2026-09-02 まで rgb_to_xyz の出力を rgbimage と
+    # 宣言していたため、``rgb_to_lab(rgb_to_xyz(x))`` が型検査を素通りし、
+    # 灰色 0.3 で L* = 32.53 が正しいところ 5.72 が黙って出ていた(XYZ を
+    # もう一度 sRGB として伝達関数を外すぶん暗くなる)。宣言を ``rgb``
+    # (gfx2d と共有する「符号化を特定しない 3 チャネル」の語)に改めると、
+    # rgbimage を食う op は XYZ を受け取らなくなる。専用の ``xyz`` 語を立てる
+    # のが本筋だが、それには tools/chain_fuzz.TYPE_CHECKS に述語が要る
+    # (述語の無い out 型は不変条件テストが拒む)ので、そこは別途。
     "colorspace": [
         ("rgb_to_lab", "imgmetrics", ["rgbimage"], "lab"),
         ("lab_to_rgb", "imgmetrics", ["lab"], "rgbimage"),
-        ("rgb_to_xyz", "imgmetrics", ["rgbimage"], "rgbimage"),
-        ("xyz_to_lab", "imgmetrics", ["rgbimage"], "lab"),
+        ("rgb_to_xyz", "imgmetrics", ["rgbimage"], "rgb"),
+        ("xyz_to_lab", "imgmetrics", ["rgb"], "lab"),
     ],
     # 色差。delta_e_map だけが画像入口(他は lab 入口)
     "colordiff": [
