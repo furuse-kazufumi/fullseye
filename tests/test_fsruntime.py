@@ -293,3 +293,67 @@ def test_zero_d_array_result_honours_tolerance():
 def test_ndarray_expect_matches_an_equal_python_list():
     # A golden authored with a numpy array must accept an equal Python-list got.
     assert fsruntime._compare("x", [10.0, 3.0, 5.0], np.array([10.0, 3.0, 5.0]), 0.0) is None
+
+
+# --------------------------------------------------------------------------- #
+# 2026-09 audit: the manifest digest is canonical, not repr()-based
+# --------------------------------------------------------------------------- #
+def test_digest_sees_a_one_element_change_deep_inside_a_large_array():
+    """repr() elides arrays over 1000 elements, so two goldens differing only at
+    index 1000 of 2000 used to hash identically — a swapped golden loaded."""
+    a = np.arange(2000, dtype=np.float64)
+    b = a.copy(); b[1000] = -1.0
+    ga = GoldenVector({"Image": scene()}, {"N": 3, "Big": a})
+    gb = GoldenVector({"Image": scene()}, {"N": 3, "Big": b})
+    ra, rb = fsruntime.sign(RECIPE_SRC, goldens=[ga]), fsruntime.sign(RECIPE_SRC, goldens=[gb])
+    assert ra.digest() != rb.digest()
+    # and the same for a long Python list
+    gl_a = GoldenVector({}, {"Big": list(a)}); gl_b = GoldenVector({}, {"Big": list(b)})
+    assert fsruntime.sign("X := 1", goldens=[gl_a]).digest() != \
+        fsruntime.sign("X := 1", goldens=[gl_b]).digest()
+    # swapping the golden under a signed manifest is now detected at load
+    swapped = Recipe(RECIPE_SRC, goldens=(gb,), source_sha256=ra.source_sha256)
+    with pytest.raises(FsNotReady, match="digest mismatch"):
+        fsruntime.compile_recipe(swapped, "studio")
+
+
+def test_digest_is_independent_of_numpy_print_options():
+    g = GoldenVector({}, {"X": np.float64(3.0), "A": np.linspace(0, 1, 7)})
+    d1 = fsruntime.sign("X := 3.0", goldens=[g]).source_sha256
+    with np.printoptions(precision=2, threshold=3):
+        d2 = fsruntime.sign("X := 3.0", goldens=[g]).source_sha256
+    assert d1 == d2
+    # numpy scalars digest as the Python scalar they compare as
+    g_py = GoldenVector({}, {"X": 3.0}); g_np = GoldenVector({}, {"X": np.float64(3.0)})
+    assert fsruntime.sign("X := 3.0", goldens=[g_py]).digest() == \
+        fsruntime.sign("X := 3.0", goldens=[g_np]).digest()
+    # ...but a different value, dtype or shape does not collide
+    g_i = GoldenVector({}, {"X": 3}); g_f = GoldenVector({}, {"X": 3.0})
+    assert fsruntime.sign("X := 3", goldens=[g_i]).digest() != \
+        fsruntime.sign("X := 3", goldens=[g_f]).digest()
+    g_r = GoldenVector({}, {"A": np.zeros((2, 3))}); g_c = GoldenVector({}, {"A": np.zeros((3, 2))})
+    assert fsruntime.sign("X := 1", goldens=[g_r]).digest() != \
+        fsruntime.sign("X := 1", goldens=[g_c]).digest()
+
+
+@pytest.mark.parametrize("bad", [{"a": 1}, {1, 2}, object(), {"X": [1, {"y": 2}]}])
+def test_unsupported_expectation_types_are_refused_at_authoring(bad):
+    with pytest.raises(TypeError):
+        GoldenVector({}, {"X": bad} if not isinstance(bad, dict) or "X" not in bad else bad)
+
+
+# --------------------------------------------------------------------------- #
+# 2026-09 audit: no file access inside an industrial cycle
+# --------------------------------------------------------------------------- #
+def test_industrial_refuses_read_image_in_a_recipe(tmp_path):
+    src = "I := read_image('frame.png')\nN := 1\n"
+    r = fsruntime.sign(src, goldens=[GoldenVector({}, {"N": 1})])
+    with pytest.raises(FsNotReady, match="file access"):
+        fsruntime.compile_recipe(r, "industrial")
+    # the studio profile still allows the builtin (it is vetted, just not cycle-safe)
+    assert "read_image" in fscript_builtins()
+
+
+def fscript_builtins():
+    import fscript
+    return fscript.BUILTINS
