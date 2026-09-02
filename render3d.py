@@ -885,7 +885,8 @@ def sample_boulders(V, F, *, density: float, d_min: float, d_max=None,
     u = rng.random(n)
     ratio = (dmax / dmin) ** (-ex)
     diam = dmin * np.power(1.0 - u * (1.0 - ratio), -1.0 / ex)
-    return {"centre": centre, "normal": nrm, "diameter": diam, "expected": lam}
+    return {"centre": centre, "normal": nrm, "diameter": diam, "expected": lam,
+            "face": faces}
 
 
 def mesh_scatter_boulders(V, F, *, density: float, d_min: float, d_max=None,
