@@ -273,14 +273,31 @@ def main(save=None):
     print(f"3) α 重ね: |描画 - (a*f+(1-a)*b)| の最大 = {r['alpha_max_abs_error']}")
     print(f"4) 凡例の高さ: 描画 {r['legend_height_px']} px / 閉形式 "
           f"{r['legend_height_want']} px -> 誤差 {r['legend_height_error']} px")
+    print(f"5) 切りのよい目盛り: {r['nice_cases']} 通りの範囲 x 分割数で"
+          f"「刻みが 1/2/5 x 10^k・等間隔・範囲内」に違反 {r['nice_violations']} 件"
+          f"(例: [0,10] を 5 分割 -> {r['nice_example']})")
+    print(f"   既定の目盛りと画素単位で同一: {r['nice_matches_default']}"
+          f"(= ticks / grid_lines が内部で使っているのはこの閉形式そのもの)")
+    print(f"6) 前後比較の枠: 大きさ {r['compare_shape']} / 閉形式 "
+          f"{r['compare_want']}、2 枚が画素単位でそのまま {r['compare_exact']}、"
+          f"仕切りがちょうど指定色 {r['compare_divider_color']}、"
+          f"隙間と余白が background のまま {r['compare_padding']}、"
+          f"縦置きも閉形式どおり {r['compare_vertical']}")
 
     assert r["scale_bar_px_error"] == 0, "スケールバーが物理長と合っていない"
     assert r["tick_px_error"] == 0, "目盛りが閉形式とずれている"
     assert r["alpha_max_abs_error"] == 0.0, "α 合成が式と一致しない"
     assert r["legend_height_error"] == 0, "凡例の高さが要素数と合っていない"
+    assert r["nice_violations"] == 0, "刻みが 1/2/5 x 10^k になっていない"
+    assert r["nice_matches_default"], "明示した目盛りと既定の目盛りが違う"
+    assert r["compare_shape"] == r["compare_want"], "並べた図の大きさが閉形式と違う"
+    assert r["compare_exact"], "並べた 2 枚が画素単位で保たれていない"
+    assert r["compare_divider_color"] and r["compare_padding"]
+    assert r["compare_vertical"], "縦置きの大きさが閉形式と違う"
 
     print("\nPASS: 図注 op が描いた絵は、測り直しても閉形式と一致した"
-          "(スケールバー・目盛り・α 合成・凡例の高さの 4 点で誤差ゼロ)。")
+          "(スケールバー・目盛り・α 合成・凡例の高さ・刻みの選び方・"
+          "比較枠の 6 点で誤差ゼロ)。")
     if save:
         from PIL import Image
         Path(save).parent.mkdir(parents=True, exist_ok=True)
