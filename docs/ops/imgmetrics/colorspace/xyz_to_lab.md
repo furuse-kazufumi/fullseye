@@ -2,7 +2,7 @@
 op: xyz_to_lab
 dim: imgmetrics
 category: colorspace
-in: rgbimage
+in: rgb
 out: lab
 examples: [image_quality_metrics]
 author: Kazufumi Furuse
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # xyz_to_lab — IMGMETRICS `colorspace` op
 
-- **データ種**: `rgbimage` → `lab`
+- **データ種**: `rgb` → `lab`
 - **呼び出し**: `import imgmetrics; imgmetrics.xyz_to_lab(xyz, white=(0.95047, 1.0, 1.08883))` (または `opsimgmetrics.get("xyz_to_lab")`)
 
 ## 使い方

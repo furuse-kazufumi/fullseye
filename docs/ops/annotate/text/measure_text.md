@@ -19,37 +19,40 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 文字を**描く前に**測る。収まらないなら折り返すか縮め、駄目なら例外。
 
-Parameters
-----------
-text : str
-    測る文字列(``\n`` で改行)。
-font_size : int
-    希望のサイズ。``max_width`` に入らなければ 1pt ずつ縮める。
-font_path : str or None
-    明示すると機械をまたいでも同じ結果になる。None は :data:`FONT_CANDIDATES`
-    を固定順で探す。
-max_width : int or None
-    入れたい幅[px]。None なら縮小も折り返しもしない。
-min_font_size : int
-    ここまで縮めても入らなければ **ValueError**(黙って切らない)。
-line_spacing : float
-    行送り係数。
-wrap : bool
-    True(既定)なら ``max_width`` で**折り返す**。False なら折り返さず
-    **1 行のままフォントを縮めて**収める(格子のラベルのように、2 行に
-    なると版が崩れる場所で使う ―― ``exhibit_tile._fit_label`` と同じ流儀)。
-    どちらでも ``min_font_size`` まで来て入らなければ例外。
+    Parameters
+    ----------
+    text : str
+        測る文字列(``\n`` で改行)。
+    font_size : int
+        希望のサイズ。``max_width`` に入らなければ 1pt ずつ縮める。
+    font_path : str or None
+        明示すると機械をまたいでも同じ結果になる。None は :data:`FONT_CANDIDATES`
+        を固定順で探す。
+    max_width : int or None
+        入れたい幅[px]。None なら縮小も折り返しもしない。
+    min_font_size : int
+        ここまで縮めても入らなければ **ValueError**(黙って切らない)。
+    line_spacing : float
+        行送り係数。
+    wrap : bool
+        True(既定)なら ``max_width`` で**折り返す**。False なら折り返さず
+        **行を増やさずフォントを縮めて**収める(格子のラベルのように、2 行に
+        なると版が崩れる場所で使う ―― ``exhibit_tile._fit_label`` と同じ流儀)。
+        どちらでも ``min_font_size`` まで来て入らなければ例外。
+        ``
+`` の改行は ``max_width`` の有無・``wrap`` の値に**よらず常に**効く
+        (幅を与えないと 1 行に潰れる、という事故は起きない)。
 
-Returns
--------
-dict
-    ``{"lines", "font", "font_size", "width", "height", "line_height"}``。
-    ``width``/``height`` は実測[px]。
+    Returns
+    -------
+    dict
+        ``{"lines", "font", "font_size", "width", "height", "line_height"}``。
+        ``width``/``height`` は実測[px]。
 
-Raises
-------
-ValueError
-    ``max_width`` が非正 / ``min_font_size`` まで縮めても 1 行が入らない。
+    Raises
+    ------
+    ValueError
+        ``max_width`` が非正 / ``min_font_size`` まで縮めても 1 行が入らない。
 
 ## 参考(サンプルデータ・文献)
 

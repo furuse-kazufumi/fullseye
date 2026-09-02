@@ -20,7 +20,11 @@ version: 0.1.0  # fullseye lib version this note was generated for
 Scale the in-band motion of a clip by *alpha* -> ``dict``.
 
 For every oriented sub-band of every frame the local phase is taken relative
-to that band's temporal mean, unwrapped along time, band-passed to
+to that band's temporal mean as the **wrapped** deviation
+``angle(z * conj(z_mean))`` in ``(-pi, pi]`` — it is deliberately **not**
+unwrapped along time (see the design note above ``_AMP_FLOOR``: unwrapping
+a noise band is a random walk that manufactured a 12.27 rad step where
+0.039 rad was intended) — band-passed to
 ``[f_lo, f_hi]``, multiplied by ``alpha - 1`` and added back. Because a
 translation by ``d`` shifts a band's phase by ``-k·d``, the phase of the
 result is ``-alpha * k·d`` for *any* ``k`` — the output displacement is

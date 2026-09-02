@@ -34,11 +34,16 @@ Returns a dict with, among others:
   a fully sampled scan.** Above it you are doing sparse-view CT on purpose and
   the reconstruction algorithm has to make up the difference; the measured
   cost is in this module's docstring and in the test suite's break table.
-* ``streak_free_radius_px`` — ``pitch / d(theta)`` in radians: the radius at
-  which the *azimuthal* sample spacing between neighbouring views grows past
-  the detector pitch. Outside it, filtered back-projection lays down visible
-  streaks. For 180 views over 180 degrees this is 57.3 px, i.e. a 256-px
-  phantom is already streaking at its corners.
+* ``streak_free_radius_px`` — ``1 / d(theta)`` with ``d(theta)`` in radians:
+  the radius, in pixels, at which the *azimuthal* sample spacing between
+  neighbouring views (``r * d(theta)``) grows past one sample. Outside it,
+  filtered back-projection lays down visible streaks. For 180 views over 180
+  degrees this is 57.3 px, i.e. a 256-px phantom is already streaking at its
+  corners. It does **not** depend on the detector pitch: the radius is
+  quoted in the same unit the sample spacing is, so the pitch cancels
+  (``pitch / d(theta)`` is the same radius in millimetres, which is what an
+  earlier version returned under the pixel label — 28.6 "px" at 0.5 mm,
+  114.6 at 2 mm, for a geometry whose streak radius had not changed).
 * ``sinogram_bytes`` / ``elements`` — what you are about to allocate.
 * ``verdict`` — ``"fully sampled"`` / ``"sparse view"``.
 

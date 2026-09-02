@@ -3,7 +3,7 @@ op: rgb_to_xyz
 dim: imgmetrics
 category: colorspace
 in: rgbimage
-out: rgbimage
+out: rgb
 examples: [image_quality_metrics]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # rgb_to_xyz — IMGMETRICS `colorspace` op
 
-- **データ種**: `rgbimage` → `rgbimage`
+- **データ種**: `rgbimage` → `rgb`
 - **呼び出し**: `import imgmetrics; imgmetrics.rgb_to_xyz(rgb)` (または `opsimgmetrics.get("rgb_to_xyz")`)
 
 ## 使い方
@@ -29,9 +29,9 @@ sRGB(``(..., 3)``)→ CIE XYZ。伝達関数を外してから行列を掛ける
 
 - [image_quality_metrics](../../../../examples/image_quality_metrics.py) — `py -3.11 examples/image_quality_metrics.py`
 
-## 型が繋がる次の op(`rgbimage` を入力に取れる)
+## 型が繋がる次の op(`rgb` を入力に取れる)
 
-[rgb_to_lab](rgb_to_lab.md) · [xyz_to_lab](xyz_to_lab.md) · [delta_e_map](../colordiff/delta_e_map.md)
+[xyz_to_lab](xyz_to_lab.md)
 
 ## 同カテゴリ(`colorspace`)
 

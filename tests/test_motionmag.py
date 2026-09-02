@@ -639,8 +639,11 @@ def test_docstrings_agree_with_the_design_note_that_phase_is_never_unwrapped_in_
     assert "Why there is no temporal phase unwrapping" in src
     for fn in (mm.motion_magnify, mm.phase_displacement):
         doc = inspect.getdoc(fn)
-        assert "unwrapped along time," not in doc and "unwrapped in time," not in doc, fn.__name__
-        assert "wrapped" in doc and "(-pi, pi]" in doc, fn.__name__
+        # the two phrases that were wrong, verbatim
+        assert "temporal mean, unwrapped along time" not in doc, fn.__name__
+        assert "temporal mean, unwrapped in time" not in doc, fn.__name__
+        assert "not** unwrapped" in doc or "never** unwrapped" in doc, fn.__name__
+        assert "(-pi, pi]" in doc, fn.__name__
 
 
 if __name__ == "__main__":       # pragma: no cover

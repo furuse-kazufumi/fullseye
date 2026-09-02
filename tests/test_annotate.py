@@ -589,3 +589,108 @@ def test_data_to_pixel_refuses_mismatched_lengths():
     # 揃っていれば通る(締めすぎていないこと)
     px, py = annotate.data_to_pixel(ax, np.linspace(0, 10, 7), np.linspace(0, 5, 7))
     assert px.shape == py.shape == (7,)
+
+
+# ------------------------------------------------------------------ #
+# 5. 板なしラベルの可読性 / 改行の契約(2026-09-02 の回帰)
+# ------------------------------------------------------------------ #
+
+def _ink_contrast(before, after, region, bg):
+    """``region``(y0,y1,x0,x1)内で描画により変わった画素(= 文字)の平均色と
+    地 ``bg`` との WCAG コントラスト比。変わった画素が無ければ ``(0, 1.0)``。
+
+    平均には縁のアンチエイリアス画素も混ざるので、字の芯より低めに出る
+    (= 検査は保守的)。
+    """
+    y0, y1, x0, x1 = region
+    b = before[y0:y1, x0:x1]
+    a = after[y0:y1, x0:x1]
+    changed = np.abs(a - b).reshape(a.shape[0], a.shape[1], -1).max(axis=2) > 1e-9
+    n = int(changed.sum())
+    if n == 0:
+        return 0, 1.0
+    m = float(a[changed].mean())
+    return n, A._contrast_ratio((m,) * 3, (bg,) * 3)
+
+
+@pytest.mark.parametrize("bg", [1.0, 0.0])
+def test_color_bar_labels_are_legible_on_white_and_on_black(bg):
+    """板なし(``box_alpha=0``)のラベルは**白地でも黒地でも**読めること。
+
+    2026-09-02 まで内部の text_box 呼び出しが ``min_contrast=1.0`` で検査を切り、
+    既定の明るい文字を白地に置いていた ―― 白い紙の上のカラーバーの数値が
+    コントラスト比 1.07 で「そこにあるのに見えない」。例外も出ないので機械には
+    気づけなかった。文字色が既定のときは下地に合わせて暗い字へ切り替える。
+    """
+    img = _canvas(bg)
+    out = A.color_bar(img, palette.diverging_lut(64), (20, 20, 16, 80),
+                      vmin=0.0, vmax=1.0, border=0)
+    n, ratio = _ink_contrast(img, out, (0, H, 40, W), bg)          # バーの右 = ラベル
+    assert n > 0, "ラベルが描かれていない"
+    assert ratio >= A.DEFAULT_MIN_CONTRAST, f"bg={bg}: label contrast {ratio:.2f}"
+
+
+@pytest.mark.parametrize("bg", [1.0, 0.0])
+def test_tick_labels_are_legible_on_white_and_on_black(bg):
+    """目盛りの数値も同じ(x ラベル = 枠の下、y ラベル = 枠の左)。"""
+    img = _canvas(bg)
+    ax = A.axes_transform((50, 20, 120, 60), (0.0, 1.0), (0.0, 1.0))
+    out = A.ticks(img, ax, xticks=[0.0, 0.5, 1.0], yticks=[0.0, 1.0],
+                  color=(0.5, 0.5, 0.5), tick_len=5)
+    # 目盛り線は y<=84 / x>=45 に収まるので、下の 2 領域には文字しか無い
+    for region in ((88, H, 40, W), (0, H, 0, 44)):
+        n, ratio = _ink_contrast(img, out, region, bg)
+        assert n > 0, f"region {region}: ラベルが描かれていない"
+        assert ratio >= A.DEFAULT_MIN_CONTRAST, f"bg={bg} region={region}: {ratio:.2f}"
+
+
+def test_legend_and_panel_labels_are_legible_on_white():
+    """同じ型の兄弟: 板なし凡例と、白地の panel_grid のラベル・題。"""
+    img = _canvas(1.0)
+    out = A.legend_box(img, [("right", "ok"), ("wrong", "ng")], (4, 4),
+                       box_alpha=0.0, border=0, markers=False)
+    n, ratio = _ink_contrast(img, out, (0, 60, 34, W), 1.0)         # x>=34 は文字だけ
+    assert n > 0 and ratio >= A.DEFAULT_MIN_CONTRAST, f"legend: {ratio:.2f}"
+
+    panels = [np.full((30, 40, 3), 0.5) for _ in range(2)]
+    grid = A.panel_grid(panels, ["a", "b"], ncols=2, pad=6, label_h=32,
+                        background=1.0, border=0, title="T")
+    ink = grid[(np.abs(grid - 1.0).max(axis=2) > 1e-9) & (np.abs(grid - 0.5).max(axis=2) > 1e-9)]
+    assert ink.size > 0, "ラベルが描かれていない"
+    ratio = A._contrast_ratio((float(ink.mean()),) * 3, (1.0,) * 3)
+    assert ratio >= A.DEFAULT_MIN_CONTRAST, f"panel_grid: {ratio:.2f}"
+
+
+def test_explicit_text_colour_is_not_silently_replaced():
+    """自動切り替えは**既定色のときだけ**。明示した色が読めなければ例外のまま。"""
+    with pytest.raises(ValueError, match="contrast"):
+        A.text_box(_canvas(1.0), "白い字", (10, 10), text_color=(0.97, 0.97, 0.97),
+                   box_alpha=0.0)
+
+
+def test_measure_text_newlines_work_without_a_width():
+    """``\\n`` は ``max_width`` の有無・``wrap`` によらず効く。
+
+    2026-09-02 まで ``max_width=None``(と ``wrap=False``)では改行を分けずに
+    1 行として PIL に渡していた。PIL は複数行の幅を測れないので
+    ``measure_text("a\\nb")`` は文書の契約と違って **ValueError** になっていた。
+    """
+    one = A.measure_text("ab", max_width=None)
+    two = A.measure_text("ab\ncd", max_width=None)
+    assert two["lines"] == ["ab", "cd"]
+    assert two["line_height"] == one["line_height"]
+    assert two["height"] == 2 * one["height"]
+    assert two["width"] == max(one["width"], A.measure_text("cd")["width"])
+    nowrap = A.measure_text("ab\ncd", max_width=500, wrap=False)
+    assert nowrap["lines"] == ["ab", "cd"] and nowrap["height"] == two["height"]
+    wrapped = A.measure_text("ab\ncd", max_width=500)
+    assert wrapped["lines"] == ["ab", "cd"] and wrapped["height"] == two["height"]
+
+    # text_box も同じ契約: 板は改行 1 つぶん(= line_height)だけ高くなる
+    img = _canvas(0.0)
+    kw = dict(box_alpha=1.0, box_color=(1.0, 1.0, 1.0), text_color=(0.0, 0.0, 0.0))
+    single = A.text_box(img, "ab", (5, 5), **kw)
+    double = A.text_box(img, "ab\ncd", (5, 5), **kw)
+    h1 = np.flatnonzero((single[..., 0] > 0.9).any(axis=1)).size
+    h2 = np.flatnonzero((double[..., 0] > 0.9).any(axis=1)).size
+    assert h2 - h1 == one["line_height"]
