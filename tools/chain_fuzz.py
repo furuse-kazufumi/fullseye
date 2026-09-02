@@ -640,6 +640,23 @@ def _mk_jones(rng):
                                 float(rng.uniform(0.0, 360.0)))
 
 
+def _b_render_lens(pool, rng):
+    """lensimage.render_through_lens(image2d, table): 2 入力なので jones_apply と
+    同じ理由(生成元 lens_system と消費側が同一連鎖に並ぶ確率 ~0.03%)で、
+    半分は example_system の妥当な処方(実経路)、半分は pool の table(敵対
+    入力 → ValueError)。list を返して残り(pixel_pitch_um 等)は既定値に任せる。"""
+    imgs = pool.get("image2d") or []
+    if not imgs:
+        return None
+    img = imgs[int(rng.integers(len(imgs)))]
+    if rng.random() < 0.5:
+        tables = pool.get("table") or []
+        if tables:
+            return [img, tables[int(rng.integers(len(tables)))]]
+    import raytrace
+    return [img, raytrace.example_system(str(rng.choice(["singlet", "doublet", "paraboloid"])))]
+
+
 def _mk_mueller(rng):
     import optics
     return optics.mueller_element(str(rng.choice(list(optics.MUELLER_KINDS))),
