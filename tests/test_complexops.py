@@ -139,6 +139,40 @@ def test_phase_unwrap_matches_numpy_1d_reference_per_row():
     assert np.allclose(row - row.mean(), ref - ref.mean(), atol=1e-6)
 
 
+@pytest.mark.parametrize("shape", [(1, 200), (200, 1)])
+def test_phase_unwrap_single_row_or_column_unwraps_along_long_axis(shape):
+    """Regression (2026-09-02 audit): a (1, N) / (N, 1) input used to be returned
+    still wrapped (max error 33.1 rad on a 0.3 rad/px ramp of 200 px). It must
+    unwrap along its long axis exactly like ``np.unwrap``."""
+    x = np.arange(200, dtype=np.float64) * 0.3               # spans ~9.5 turns
+    wrapped = np.angle(np.exp(1j * x)).reshape(shape)
+    out = cx.phase_unwrap(wrapped)
+    assert out.shape == shape and out.dtype == np.float64
+    resid = out.ravel() - x
+    assert float(np.abs(resid - resid.mean()).max()) < 1e-9
+    ref = np.unwrap(wrapped.ravel())
+    assert np.allclose(out.ravel() - out.ravel().mean(), ref - ref.mean(), atol=1e-9)
+
+
+def test_phase_unwrap_two_by_two_and_single_pixel():
+    """The smallest images: 2x2 has no interior (all reliabilities 0) but every
+    edge is still merged; 1x1 has nothing to unwrap and comes back unchanged."""
+    truth = np.array([[0.0, 3.0], [3.0, 6.0]])               # steps < pi, spans > 2*pi
+    out = cx.phase_unwrap(np.angle(np.exp(1j * truth)))
+    resid = out - truth
+    assert float(np.abs(resid - resid.mean()).max()) < 1e-9
+    one = cx.phase_unwrap(np.array([[2.5]]))
+    assert one.shape == (1, 1) and abs(float(one[0, 0]) - 2.5) < 1e-12
+
+
+def test_phase_unwrap_single_row_with_nan_is_refused():
+    """Fail-closed: NaN in a degenerate (1, N) input must raise like any other shape."""
+    w = np.angle(np.exp(1j * np.arange(50, dtype=np.float64) * 0.3)).reshape(1, 50)
+    w[0, 7] = np.nan
+    with pytest.raises(ValueError):
+        cx.phase_unwrap(w)
+
+
 # --------------------------------------------------------------------------- #
 # Wiener deconvolution                                                          #
 # --------------------------------------------------------------------------- #
