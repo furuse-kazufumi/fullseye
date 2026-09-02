@@ -225,5 +225,8 @@ def align_metrology_model(model, drow=0.0, dcol=0.0) -> dict:
         p = list(obj["p"])
         p[0] += drow
         p[1] += dcol
+        if obj["type"] == "line":                            # 両端点を動かす
+            p[2] += drow
+            p[3] += dcol
         out["objects"].append({**obj, "p": tuple(p)})
     return out
