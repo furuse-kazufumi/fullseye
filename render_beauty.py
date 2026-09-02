@@ -487,7 +487,8 @@ def render_regolith(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: in
                         exposure=1.0, ao_samples=ao_samples, shadow_samples=shadow_samples,
                         brdf="hapke", brdf_params=params, shadow_method="raycast",
                         sun_angular_diameter_deg=sun_angular_diameter_deg,
-                        self_illumination=self_illumination)
+                        self_illumination=self_illumination,
+                        albedo_variation=albedo_variation, seed=seed)
     if exp is None:
         obj = img.max(axis=2)
         vals = obj[obj > 0.0]
