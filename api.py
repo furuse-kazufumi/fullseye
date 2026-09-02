@@ -1220,6 +1220,78 @@ def _guard_input(v, op, policy):
     _bs.record(op.name, err, op.out_sort, source="input")
 
 
+# ---- integer input: fail-closed instead of silently wrong -------------------- #
+# The public contract is "image = H*W float64 in [0,1]" (module docstring), but the
+# facade used to accept an integer array and hand it straight to the op. The core
+# ops call ``ndimage.*`` with no dtype argument, so a uint8 image was filtered AS
+# uint8 and came back uint8 (gaussian / mean_box / gerode / rotate_img), float16
+# (sobel_mag) or all-ones (threshold: ``v > 0.5`` on 0..255). No exception, a
+# plausible-looking array, a different answer — the third state between "accept"
+# and "reject" (survey §1.3 / §2.1 / §5.3 item 1).
+#
+# The policy is the ``on_error`` policy, like every other degradation:
+#   "raise"              -> ValueError naming the dtype and the contract (fail-closed)
+#   "fallback" / "warn"  -> convert explicitly and RECORD it (source="input")
+#
+# ``region`` inputs are deliberately NOT touched: an int {0,1} mask is a legitimate
+# region and ``_coerce_input`` already re-types it without rescaling.
+_DTYPE_CONTRACT_SORTS = frozenset({"image", "color", "volume"})
+_DTYPE_FULL_SCALE = {"uint8": 255.0, "uint16": 65535.0}
+
+
+def _dtype_scale(a):
+    """Divisor mapping *a*'s integer dtype onto the float64 [0,1] contract.
+
+    uint8 / uint16 are the documented sensor dtypes and get their full scale. Any
+    other integer dtype has no agreed full scale, so an array that is already inside
+    [0,1] (an int mask) is only re-typed, and anything wider is divided by the
+    dtype's maximum. Whichever branch runs, the conversion is recorded.
+    """
+    s = _DTYPE_FULL_SCALE.get(a.dtype.name)
+    if s is not None:
+        return s
+    if a.size == 0:
+        return 1.0
+    if float(a.min()) >= 0.0 and float(a.max()) <= 1.0:
+        return 1.0                                   # already contract-valued; only the dtype is off
+    try:
+        return float(np.iinfo(a.dtype).max)
+    except ValueError:                               # not an integer dtype after all
+        return 1.0
+
+
+def _contract_dtype(v, op, policy):
+    """Bring an integer/bool image onto the float64 [0,1] contract, or refuse it.
+
+    Returns the value to run the op on. Independent of ``coerce`` (which is about
+    the *sort*, not the dtype): a dtype outside the contract is wrong for every
+    caller, and staying silent is what produced the wrong answers above.
+    """
+    if op.in_sort not in _DTYPE_CONTRACT_SORTS:
+        return v
+    a = v if isinstance(v, np.ndarray) else None
+    if a is None or a.dtype.kind not in "bui":
+        return v                                     # float / complex / non-array: unchanged
+    if policy == "raise":
+        raise ValueError(
+            "op %r expects a %s of float64 in [0,1] (the fullseye contract), got dtype %s. "
+            "Convert explicitly, e.g. img.astype(np.float64) / 255.0 for uint8 — the core "
+            "operators run scipy.ndimage with no dtype argument, so an integer image is "
+            "filtered as an integer and the result is a different image, not a slower one."
+            % (op.name, op.in_sort, a.dtype))
+    if a.dtype.kind == "b":
+        out = a.astype(np.float64)
+        how = "bool -> float64 {0,1}"
+    else:
+        s = _dtype_scale(a)
+        out = a.astype(np.float64) if s == 1.0 else a.astype(np.float64) / s
+        how = "%s -> float64 (/%g)" % (a.dtype, s)
+    _bs.record(op.name,
+               ValueError("dtype_converted: %s; the contract is float64 in [0,1]" % how),
+               op.out_sort, source="input")
+    return out
+
+
 def _run_guarded(name, fn, policy, out_sort=None, v=None):
     """Run ``fn()`` under the error policy, attributing any fallback to *name*.
 
