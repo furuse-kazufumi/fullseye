@@ -1247,10 +1247,12 @@ def test_point_in_polygon_matches_matplotlib_over_random():
 
 def test_point_in_polygon_fail_soft():
     tri = [float(v) for v in (0, 0, 8, 0, 4, 6)]
-    assert algo.run_algo("point_in_polygon", [1.0, 1.0, 2.0, 0, 0, 5, 5]) == 0.0   # n < 3
-    assert algo.run_algo("point_in_polygon", [1.5, 1.0, 3.0] + tri) == 0.0          # non-integer point
-    assert algo.run_algo("point_in_polygon", [1.0, 1.0, 3.0, 0, 0, 200000, 0, 4, 6]) == 0.0  # range
-    assert algo.run_algo("point_in_polygon", [1.0, 1.0, 3.0, 0, 0, 8, 0]) == 0.0    # truncated
+    # -1.0, NOT 0.0: "outside" is a valid answer (2026-09-03 review F5 sibling)
+    assert algo.run_algo("point_in_polygon", [1.0, 1.0, 2.0, 0, 0, 5, 5]) == -1.0  # n < 3
+    assert algo.run_algo("point_in_polygon", [1.5, 1.0, 3.0] + tri) == -1.0         # non-integer point
+    assert algo.run_algo("point_in_polygon", [1.0, 1.0, 3.0, 0, 0, 200000, 0, 4, 6]) == -1.0  # range
+    assert algo.run_algo("point_in_polygon", [1.0, 1.0, 3.0, 0, 0, 8, 0]) == -1.0   # truncated
+    assert algo.run_algo("point_in_polygon", [100.0, 100.0, 3.0] + tri) == 0.0      # honestly outside
 
 
 def test_convex_hull_known():
