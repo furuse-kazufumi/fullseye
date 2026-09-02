@@ -1262,6 +1262,12 @@ OP_PARAM_HINTS = {
     # スキップ = 「発見ゼロ」に化ける)。BK7 近傍の実在硝材域で束縛する
     ("glass", "nd"): lambda rng: float(rng.uniform(1.45, 1.90)),
     ("glass", "vd"): lambda rng: float(rng.uniform(20.0, 95.0)),
+    # lensimage.defect_dataset は既定 n=8 / 256x256 を雑音つきで描くと 1 呼び
+    # 数秒になり連鎖全体を遅らせる。1 枚・32x32 で実経路(欠陥描画 → レンズ
+    # 越し描画 → マスク歪曲 → bbox)だけを通す
+    ("defect_dataset", "n"): lambda rng: 1,
+    ("defect_dataset", "size"): lambda rng: (32, 32),
+    ("defect_dataset", "zones"): lambda rng: 1,
     # 既定 (5,5) はプールの 32x32 を割り切れず毎回 ValueError になり、この op が
     # 一度も実行されないまま「発見ゼロ」に見えていた。32 を割り切る (4,4) にする
     ("lf_from_mla", "angular"): lambda rng: (4, 4),
