@@ -3333,7 +3333,7 @@ def build_window(model=None):
                           "example as editable code, F5 to run in a subprocess")
     m.addAction(act_pyedit); win._act_pyedit = act_pyedit
     m.addSeparator()
-    m.addAction(act_save_res); m.addAction(act_copy_res)      # result out
+    m.addAction(act_save_res); m.addAction(act_save_view); m.addAction(act_copy_res)   # result out
     m.addSeparator(); m.addAction(act_quit)
     m = _menu(mb, "&Edit", "edit")
     m.addAction(act_undo); m.addAction(act_redo)
