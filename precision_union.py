@@ -155,7 +155,8 @@ def _plan_tile(vals: np.ndarray, atol: float) -> _Tile:
         err = float(np.abs(recon - vals.astype(np.float64)).max())
         ok = (err == 0.0) if int_exact else (err <= atol)
         if ok:
-            candidates.append((bits, _Tile(bits, vmin, scale, _pack_codes(codes, bits), n)))
+            candidates.append((bits, _Tile(bits, vmin, scale, _pack_codes(codes, bits), n,
+                                           cmax=int(codes.max()))))
             break
 
     # Unit-scale integer candidate: offset=min, scale=1, code = value - min.
