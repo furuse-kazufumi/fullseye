@@ -410,6 +410,33 @@ class PrecisionUnion:
         return PrecisionUnion(self.shape, np.float64, self.tile, new_tiles, self._grid,
                               atol=tol_out)
 
+    def _clip_straddling(self, t: _Tile, lo: float, hi: float, tol: float) -> _Tile:
+        """Clip one tile whose range crosses a bound, choosing the cheapest EXACT-
+        enough representation:
+          (a) both bounds lie on the tile's code grid -> clip the CODES in place
+              (same offset/scale/bits): exact, no decode of values, no re-plan;
+          (b) tol == 0 (lossless union) -> a raw float64 tile: exact, costs memory;
+          (c) otherwise -> decode, clip, re-quantise at tol (bounded error).
+        """
+        if t.bits not in (0, 64) and t.scale != 0.0:
+            clo = (lo - t.offset) / t.scale
+            chi = (hi - t.offset) / t.scale
+            if clo > chi:
+                clo, chi = chi, clo                          # negative scale flips order
+            rlo, rhi = round(clo), round(chi)
+            if abs(clo - rlo) < 1e-9 and abs(chi - rhi) < 1e-9:   # (a) on-grid bounds
+                codes = _unpack_codes(t.buf, t.bits, t.n).astype(np.int64)
+                codes = np.clip(codes, max(int(rlo), 0), min(int(rhi), (1 << t.bits) - 1))
+                return _Tile(t.bits, t.offset, t.scale, _pack_codes(codes.astype(np.uint16), t.bits),
+                             t.n, cmax=int(codes.max()))
+        dense = np.clip(self._tile_values(t), lo, hi)
+        if tol == 0.0:                                       # (b) lossless: keep exact
+            planned = _plan_tile(dense, atol=0.0)
+            if float(np.abs(self._tile_values(planned) - dense).max()) == 0.0:
+                return planned                               # a grid happened to fit exactly
+            return _raw_tile(dense)
+        return _plan_tile(dense, atol=tol)                   # (c) bounded re-quantisation
+
     def threshold(self, thr) -> np.ndarray:
         """Boolean mask ``value > thr`` — constant tiles resolve without decoding.
 
