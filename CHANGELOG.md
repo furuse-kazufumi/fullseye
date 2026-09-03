@@ -11,7 +11,7 @@ light field 17, photon counting 17, specular 13, motion magnification 9, quatern
 acoustics 19, interferometry 9, tomography 17, volume colour 11, representation 42, CAD 4,
 annotate 46, gfx2d 32, image metrics 24, colour transport 11, forensics 16, astro stacking 14,
 video streaming 16).
-Full suite: **10,550 passed / 153 skipped / 3 xfailed / 0 failed**. Four things a user notices:
+Full suite: **10,854 passed / 171 skipped / 3 xfailed / 0 failed**. Four things a user notices:
 (1) `apply()` now warns once per op when it silently fell back, and `fullseye.fallbacks()` shows
 the ledger; (2) 32 measured behaviour changes from the adversarial review (listed below, several
 are corrections of wrong answers); (3) a lens-design / illumination-design / image-formation layer
