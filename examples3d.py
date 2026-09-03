@@ -410,6 +410,13 @@ EXAMPLES = [
     {"id": "render_beauty", "task": "rendering", "data": "synthetic",
      "name": "レンダリング品質: hero レンダラ render_beauty(全層合成の映える静止3D)",
      "summary": "ラスタライズ/Phong鏡面/AO/接地影/SSAA/トーンマップを1本に合成。sphere-on-groundで各層を実測: AOは接触凹部を0.07→0.02と選択的に暗化(露出頂部0.01は不変)、鏡面は小面積ハイライト(frac0.018)、接地影はwith-mesh993px vs null0px、reinhardは単調(clip34段潰しを回避)、SSAAはedge0.040→0.026。sdf_ops生成メッシュでhero画像を出力。"},
+    {"id": "anatomical_hand", "task": "rendering", "data": "download",
+     "name": "実解剖骨メッシュ(MyoSuite myo_sim, Apache-2.0)から手骨格 27 個を組み立てて描く",
+     "summary": "MJCF(include 構成)を stdlib だけで辿り body 木の pos/euler を累積して 27 骨(手根骨 8・"
+                "中手骨 5・指骨 14、実寸 m)をワールドへ配置。mujoco があれば forward kinematics と"
+                "突き合わせ(重心誤差 6e-11 m・最近傍頂点 2e-9 m で一致)。指長は中指 123>示指 117.5>"
+                "薬指 112>小指 99.5 mm と解剖学順。render_beauty で骨質 hero(1280px)。手続きカプセル"
+                "の手(procedural_hand)との違い=もっともらしさでなく実データの幾何。未取得時は SKIP し exit0。"},
     {"id": "mesh_resolution_demo", "task": "mesh_processing", "data": "synthetic",
      "name": "解像度管理: 粗密を測り、粗い所だけ細分/等方リメッシュし、減らすなら監査つきで(meshres)",
      "summary": "UV 球の辺長 p95/p5=5.4(イトカワ実測 2.7)を測り、mesh_split_long_edges(頂点不変)と "

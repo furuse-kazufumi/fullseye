@@ -106,7 +106,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **hillco / evis(筋骨格ヒューマノイド歩行)が fullseye を使う 3 つの検査** — 物理シムが真値を持つ前提で、fullseye は独立な知覚側の二重チェックのみ: 歩行安定性(支持多角形/COM 余裕)、レンダ動画の運動検証、姿勢の骨格化。制御は駆動しない。 `py -3.11 examples/consumer_hillco.py`
 - **onocollo(CPU 世界モデル/gaitlab)が fullseye を使う 2 つの検査** — MuJoCo 風状態からの静的安定性チェック(support_polygon/com_support_margin)と、物理レンダ動画 2 フレームからの運動検証。 `py -3.11 examples/consumer_onocollo.py`
 
-### 3-D 点群/体積/曲面(115 例)
+### 3-D 点群/体積/曲面(116 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
@@ -274,6 +274,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **レンダリング品質: トーンマップ(HDR→LDR)で白飛び救済** — 鏡面HDR(max5.41)をReinhard/ACESで[0,1]へ。全域Spearman1.00で単調、素朴クリップがハイライト域を1段に潰す(分散0)のに対し順位相関1.0・194段の階調を保持。 `py -3.11 examples_3d/render_tonemap.py`
 - **小惑星イトカワを物理ベースで描く(Hapke 反射則・太陽視直径 0.53° のレイキャスト影・解像度を意識した地形レリーフ)** — 実形状モデル(49,152 面、辺長 2.6〜14 m と不均一。間引きなし)を mesh_edge_lengths で測り、mesh_subdivide(target 1.5 m の適応テッセレーション、面積体積不変)→ displacement_band_weights(元データが持つ波長の補集合 = 合成重み)→ mesh_displace_spectrum(3 m@60 m〜0.2 m@1.9 m、頂点ごとに 2×局所辺長で帯域制限)→ terrain_region_mask / mesh_scatter_boulders(shape='hull': 角張った凸包、べき則 D^-3.1、30–60 % 埋没、変位後の面に置く)→ render_regolith(Hapke + shadow_raycast + 環境光 0 + bump_normals_fbm の補集合 + exposure='median')。縁の明るさ、対向効果、硬い影、辺長ヒストグラム、帯域ゲート、岩の個数/埋没、露出中央値 0.45、AMICA 実画像に対するレリーフコントラストを GT で実測。 `py -3.11 examples_3d/itokawa_regolith_hero.py`
 - **レンダリング品質: hero レンダラ render_beauty(全層合成の映える静止3D)** — ラスタライズ/Phong鏡面/AO/接地影/SSAA/トーンマップを1本に合成。sphere-on-groundで各層を実測: AOは接触凹部を0.07→0.02と選択的に暗化(露出頂部0.01は不変)、鏡面は小面積ハイライト(frac0.018)、接地影はwith-mesh993px vs null0px、reinhardは単調(clip34段潰しを回避)、SSAAはedge0.040→0.026。sdf_ops生成メッシュでhero画像を出力。 `py -3.11 examples_3d/render_beauty.py`
+- **実解剖骨メッシュ(MyoSuite myo_sim, Apache-2.0)から手骨格 27 個を組み立てて描く** — MJCF(include 構成)を stdlib だけで辿り body 木の pos/euler を累積して 27 骨(手根骨 8・中手骨 5・指骨 14、実寸 m)をワールドへ配置。mujoco があれば forward kinematics と突き合わせ(重心誤差 6e-11 m・最近傍頂点 2e-9 m で一致)。指長は中指 123>示指 117.5>薬指 112>小指 99.5 mm と解剖学順。render_beauty で骨質 hero(1280px)。手続きカプセルの手(procedural_hand)との違い=もっともらしさでなく実データの幾何。未取得時は SKIP し exit0。 `py -3.11 examples_3d/anatomical_hand.py`
 - **3-D 図注: レンダリングの上に 3-D アンカーの矢印・引き出し線・スケールバー・座標軸・箱・距離を射影して描く** — render_mesh で描いた球+床の絵に annotate3d 族(project/arrow/label/scale_bar/axes/bbox/measure)で図注を載せる。既知カメラの射影が閉形式と 1e-9 で一致、像面平行のバーが f·L/z px、球の裏のアンカーが depth で隠れ判定(破線)されることを GT で確かめる。 `py -3.11 examples_3d/annotate3d_figure.py`
 
 **mesh_processing**
@@ -667,7 +668,7 @@ _計 344 ops / 66 categories。_
 - `edge_alias_energy` (`image2d → measurement`) — エッジのエイリアス(ジャギー)エネルギー = ラプラシアンの RMS(小さいほど滑らか)。 · 例: `render_beauty`, `render_ssaa`
 - `tonemap_reinhard` (`image2d → image2d`) — Reinhard トーンマップで HDR を ``[0, 1]`` の LDR へ圧縮。→ float64、入力と同形状。 · 例: `render_beauty`, `render_tonemap`
 - `tonemap_aces` (`image2d → image2d`) — ACES filmic 近似(Narkowicz 2015)で HDR を ``[0, 1]`` の LDR へ圧縮。→ float64。 · 例: `render_tonemap`
-- `render_beauty` (`mesh → rgbimage`) — メッシュを全品質層合成で「映える静止 3D」1 枚に描く → RGB ``(size, size, 3)`` float [0,1]。 · 例: `render_beauty`
+- `render_beauty` (`mesh → rgbimage`) — メッシュを全品質層合成で「映える静止 3D」1 枚に描く → RGB ``(size, size, 3)`` float [0,1]。 · 例: `anatomical_hand`, `render_beauty`
 - `brdf_lommel_seeliger` (`normalmap → image2d`) — Lommel-Seeliger 反射則(縁まで明るいレゴリス)で法線マップを陰影付けし I/F ``(H, W)`` を返す。 · 例: `itokawa_regolith_hero`
 - `brdf_hapke` (`normalmap → image2d`) — Hapke 反射則(対向効果 + 多重散乱 + 巨視的粗さ θ̄)で法線マップを陰影付けし I/F ``(H, W)`` を返す。 · 例: `itokawa_regolith_hero`
 - `shadow_raycast` (`mesh, vector → image2d`) — メッシュへ直接レイを飛ばして太陽光の可視性 (H,W) ∈ [0,1] を返す(shadow map 不使用)。 · 例: `itokawa_regolith_hero`
