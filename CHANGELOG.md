@@ -68,6 +68,19 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
   — dense は /255 変換+比較を 100 万ボクセルに払うが lazy は大半をヘッダで決める(これは
   Python ループで dense に勝てなかった dense-出力 `threshold()` とは別物: 出力もユニオンなので
   decode/scatter が無い)。テスト計 64 件。
+  **ユニオンで閉じる op を拡充(勝ち筋=閉包性)**: `apply` の n-ary 枝と feature 枝が
+  `PrecisionUnion` を受ける。**2 入力(`LAZY_NARY`、同形・同タイリングの 2 ユニオン)**:
+  `union2`/`intersection`/`difference`/`symm_difference`(`mask_binop`: 0/1 化は dense と同じ
+  `> 0.5`、定数タイル代数 `x|1=1, x|0=x(コード共有), x&0=0, x&1=x, 1&~x=NOT x(ヘッダ反転)`
+  で大半を O(1) 決定、両方非定数のタイルだけ decode)、`max_image`/`min_image`(`extremum_with`:
+  片方定数なら他方を定数で片側 clip=ヘッダ判定、両方非定数だけ decode、atol は max で伝播)。
+  タイリング不一致は materialize。**feature(`LAZY_FEATURES`、ユニオン→スカラ)**: `area_frac`
+  (定数 O(1)+1bit は popcount)、`min_max_gray`(=clip 後の max、**ヘッダのみ O(タイル数)**)、
+  `intensity`(=clip 後の mean、`clipped_mean` で再量子化なしに厳密)。`threshold_lazy` は
+  1bit タイルを**ヘッダ書換だけ**で処理(コード共有)。実測(ラベルボリューム (64,128,128)):
+  集合演算 **lazy 0.6–0.7 ms vs dense 8.3 ms(~12x)、結果 400–1300x・≤1bit**、`max_image`
+  **47x**、`min_max_gray` **82x**、`area_frac` **34x**。parity テストで全 op を dense に固定。
+  テスト計 88 件(test_precision_union 75)。
 - `fullseye.__version__` はパッケージメタデータ(= pyproject の version)を単一
   真実源として解決するようになった。従来はハードコードで、0.1.5 でも `"0.1.0"` を
   返していた。ソース/sdist では `api.py` 隣の `pyproject.toml`、インストール時は
