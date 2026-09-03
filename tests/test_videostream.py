@@ -284,7 +284,9 @@ def test_pipeline_validation_and_callables():
 # --------------------------------------------------------------------------- ledger
 def test_ledger_is_connected():
     assert not opsvideostream.missing()
-    assert len(opsvideostream.OPSVIDEOSTREAM) == 8 and opsvideostream.categories() == ["window", "recursive", "flow"]
+    assert len(opsvideostream.OPSVIDEOSTREAM) == 16
+    assert opsvideostream.categories() == ["window", "recursive", "flow", "motion",
+                                           "background", "denoise", "restore", "analysis"]
     for n, m in opsvideostream.OPSVIDEOSTREAM.items():
         assert m["in"] == ["video"] and m["out"] in ("video", "table") and m["doc"]
         assert n in VS.__all__
