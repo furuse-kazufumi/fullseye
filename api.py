@@ -1075,7 +1075,7 @@ def _needs_binarise(a) -> bool:
         return False                                  # np.unique -> size 0: neither test fires
     mn = a.min()
     mx = a.max()
-    if mn != mn or mx != mx:                          # NaN present: replay the exact old test
+    if a.dtype.kind == "f" and (np.isnan(mn) or np.isnan(mx)):   # replay the exact old test
         vals = np.unique(a)
         return bool(vals.size > 2 or vals.min() < 0.0 or vals.max() > 1.0)
     if mn < 0.0 or mx > 1.0:
