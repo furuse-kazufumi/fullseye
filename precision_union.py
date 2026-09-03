@@ -362,7 +362,10 @@ class PrecisionUnion:
         endpoints, hence the min/max."""
         if t.bits == 0:
             return t.offset, t.offset
-        e = t.offset + t.scale * ((1 << t.bits) - 1)
+        if t.bits == 64:                                   # raw tile: decode (rare)
+            v = self._tile_values(t)
+            return float(v.min()), float(v.max())
+        e = t.offset + t.scale * t.cmax                    # EXACT: largest code present
         return (t.offset, e) if e >= t.offset else (e, t.offset)
 
     def clip(self, lo: float, hi: float, atol: float | None = None) -> "PrecisionUnion":
