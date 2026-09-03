@@ -929,3 +929,89 @@ def optical_flow_magnitude_stream(video, **flow_kwargs) -> np.ndarray:
     Zero first frame; frames ``1..T−1`` equal :func:`videops.optical_flow_sequence`
     shifted by one, computed with one frame of state."""
     return stream_replay(video, OpticalFlowStream(**flow_kwargs))
+
+
+def motion_history_image(video, tau: int = 15, threshold: float = 0.1) -> np.ndarray:
+    """Bobick–Davis Motion History Image per frame → ``(T, H, W)`` in ``[0, 1]`` (``video``).
+
+    Frame ``t`` is the MHI of frames ``0..t``: 1 where motion is happening,
+    decaying by ``1/tau`` per frame elsewhere. The last frame is the classic
+    single-image temporal template of the whole clip's motion."""
+    return stream_replay(video, MotionHistoryImage(tau, threshold))
+
+
+def motion_energy_image(video, tau: int = 15, threshold: float = 0.1) -> np.ndarray:
+    """Bobick–Davis Motion Energy Image per frame → 0/1 ``(T, H, W)`` (``video``).
+
+    The binary companion of :func:`motion_history_image`: *where* motion has
+    occurred within the last ``tau`` frames (``MHI > 0``), regardless of when."""
+    vid = _video(video)
+    op = MotionHistoryImage(tau, threshold)
+    out = np.empty(vid.shape, np.float64)
+    for t in range(vid.shape[0]):
+        op.push(vid[t])
+        out[t] = op.energy()
+    return out
+
+
+def three_frame_difference(video, threshold: float = 0.1) -> np.ndarray:
+    """Collins three-frame-difference motion mask per frame → 0/1 ``(T, H, W)`` (``video``).
+
+    ``(|f_t−f_{t−1}|>T) AND (|f_{t−1}−f_{t−2}|>T)``; zeros for the first two
+    frames. Ghost-free compared with :func:`frame_difference_causal`."""
+    return stream_replay(video, ThreeFrameDifference(threshold))
+
+
+def running_gaussian_foreground(video, alpha: float = 0.02, k: float = 2.5,
+                                var_init: float = 0.01, selective: bool = True) -> np.ndarray:
+    """Adaptive single-Gaussian foreground masks per frame → 0/1 ``(T, H, W)`` (``video``).
+
+    Per-pixel mean/variance background (Wren *Pfinder*); foreground is
+    ``> k`` standard deviations from the mean. The first frame is all background."""
+    return stream_replay(video, RunningGaussianForeground(alpha, k, var_init, selective=selective))
+
+
+def running_gaussian_background(video, alpha: float = 0.02, k: float = 2.5,
+                                var_init: float = 0.01, selective: bool = True) -> np.ndarray:
+    """Adaptive single-Gaussian background (the running mean) per frame → ``(T, H, W)`` (``video``)."""
+    vid = _video(video)
+    op = RunningGaussianForeground(alpha, k, var_init, selective=selective)
+    out = np.empty(vid.shape, np.float64)
+    for t in range(vid.shape[0]):
+        op.push(vid[t])
+        out[t] = op.background()
+    return out
+
+
+def temporal_bilateral(video, window: int = 5, sigma_t: float = 2.0,
+                       sigma_r: float = 0.1) -> np.ndarray:
+    """Causal temporal bilateral denoise per frame → ``(T, H, W)`` (``video``).
+
+    Edge-preserving in time: averages recent frames but drops the weight of
+    frames that differ (moved), so it denoises static regions without ghosting
+    the motion the way :func:`moving_average_window` does."""
+    return stream_replay(video, TemporalBilateral(window, sigma_t, sigma_r))
+
+
+def deflicker(video, alpha: float = 0.1, max_gain: float = 4.0) -> np.ndarray:
+    """Luminance deflicker per frame → ``(T, H, W)`` (``video``).
+
+    Rescales each frame so its mean tracks a slow running reference, cancelling
+    one-frame brightness pumping while following genuine lighting changes."""
+    return stream_replay(video, Deflicker(alpha, max_gain))
+
+
+def scene_cut_detection(video, bins: int = 64, threshold: float = 0.3) -> dict:
+    """Shot-boundary chi-square histogram distance over a clip → ``{"distance", "cut", "n"}`` (``table``).
+
+    ``distance[t]`` is the chi-square distance of frame ``t``'s histogram to
+    frame ``t−1``'s (``distance[0] = 0``); ``cut[t]`` is ``distance[t] > threshold``.
+    Streaming form: one histogram of state, no frames kept."""
+    vid = _video(video)
+    op = SceneCutDetection(bins, threshold)
+    dist = np.empty(vid.shape[0], np.float64)
+    cut = np.empty(vid.shape[0], bool)
+    for t in range(vid.shape[0]):
+        r = op.push(vid[t])
+        dist[t], cut[t] = r["distance"], r["cut"]
+    return {"distance": dist, "cut": cut, "n": int(vid.shape[0])}
