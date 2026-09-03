@@ -155,7 +155,7 @@ def peanut(res: int = 24) -> tuple[np.ndarray, np.ndarray]:
                      ((-2.0, 2.0), (-1.3, 1.3), (-1.3, 1.3)), res=res, k=0.5)
 
 
-def sculpture(res: int = 48) -> tuple[np.ndarray, np.ndarray]:
+def sculpture(res: int = 48, with_normals: bool = False):
     """hero 用: 4 球の smooth union で作る有機的な「種子/ポッド」形の彫刻。"""
     spheres = [
         ((-0.55, -0.10, 0.00), 0.72),
