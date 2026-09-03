@@ -103,3 +103,30 @@ def test_adaptive_matches_exact_random_insphere():
     for _ in range(1500):
         a, b, c, d, e = (tuple(rng.random(3)) for _ in range(5))
         assert P.insphere(a, b, c, d, e) == P.insphere_exact(a, b, c, d, e)
+
+
+# --- downstream: the convex hull built on the robust predicate is always convex #
+def test_convex_hull_output_is_exactly_convex():
+    """backends_regions2._convex_hull_xy uses predicates.orient2d for its turn test.
+    Its output must be exactly convex (every consecutive triple a non-right turn)
+    on random and near-collinear point sets — verified with exact arithmetic.
+    """
+    from backends_regions2 import _convex_hull_xy
+    rng = np.random.default_rng(3)
+
+    def is_convex(h):
+        n = len(h)
+        if n < 3:
+            return True
+        return all(P.orient2d_exact(h[i], h[(i + 1) % n], h[(i + 2) % n]) >= 0
+                   for i in range(n))
+
+    for _ in range(500):
+        m = int(rng.integers(4, 25))
+        if rng.random() < 0.5:
+            pts = rng.random((m, 2))                      # generic
+        else:                                            # near-collinear + float-scale noise
+            t = np.sort(rng.random(m))
+            pts = np.c_[t, t * 0.999999999] + 1e-12 * rng.standard_normal((m, 2))
+        hull = _convex_hull_xy(pts)
+        assert is_convex(hull), f"non-convex hull on {m} points"

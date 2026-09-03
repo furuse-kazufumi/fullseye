@@ -82,14 +82,21 @@ def _disk(shape, cy: float, cx: float, r: float) -> np.ndarray:
 
 
 def _convex_hull_xy(pts_xy: np.ndarray) -> np.ndarray:
-    """Andrew's monotone chain. ``pts_xy`` = Nx2 (x, y); returns CCW hull vertices."""
+    """Andrew's monotone chain. ``pts_xy`` = Nx2 (x, y); returns CCW hull vertices.
+
+    The turn test uses the robust :func:`predicates.orient2d` rather than a raw
+    float cross product: near-collinear points make a float determinant pick the
+    wrong side ~19% of the time (see predicates.py), which would keep a reflex
+    vertex or drop a real one and yield a non-convex "hull".
+    """
+    import predicates                                     # noqa: PLC0415
     pts = np.unique(pts_xy.astype(np.float64), axis=0)
     if len(pts) <= 2:
         return pts
     pts = pts[np.lexsort((pts[:, 1], pts[:, 0]))]
 
-    def _cross(o, a, b):
-        return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+    def _cross(o, a, b):                                  # >0 left turn, <0 right, 0 collinear
+        return predicates.orient2d(o, a, b)
 
     lower = []
     for p in pts:
