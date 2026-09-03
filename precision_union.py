@@ -491,6 +491,7 @@ class PrecisionUnion:
             "offset": np.asarray([t.offset for t in self._tiles], dtype=np.float64),
             "scale": np.asarray([t.scale for t in self._tiles], dtype=np.float64),
             "n": np.asarray([t.n for t in self._tiles], dtype=np.int64),
+            "cmax": np.asarray([t.cmax for t in self._tiles], dtype=np.int64),
             "buflens": buflens,
             "body": (np.frombuffer(body, dtype=np.uint8) if body
                      else np.zeros(0, dtype=np.uint8)),
