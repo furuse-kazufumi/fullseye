@@ -356,6 +356,7 @@ def capabilities() -> dict:
 __all__ = [
     "orient2d", "orient3d", "incircle", "insphere",
     "orient2d_exact", "orient3d_exact", "incircle_exact", "insphere_exact",
+    "PrecisionUnion",
     "apply", "run_pipeline", "find_op", "list_ops", "op_names", "categories",
     "fallbacks", "fallback_counts", "clear_fallbacks", "FullseyeFallbackWarning",
     "strict_mode", "set_match_template", "FAILED_BACKENDS", "ambiguous_aliases", "reset_gpu", "gpu_open_ops",
