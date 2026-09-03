@@ -44,6 +44,24 @@ _CATALOG = {
     "flow": [
         ("optical_flow_magnitude_stream", "videostream", ["video"], "video"),
     ],
+    "motion": [
+        ("motion_history_image", "videostream", ["video"], "video"),
+        ("motion_energy_image", "videostream", ["video"], "video"),
+        ("three_frame_difference", "videostream", ["video"], "video"),
+    ],
+    "background": [
+        ("running_gaussian_foreground", "videostream", ["video"], "video"),
+        ("running_gaussian_background", "videostream", ["video"], "video"),
+    ],
+    "denoise": [
+        ("temporal_bilateral", "videostream", ["video"], "video"),
+    ],
+    "restore": [
+        ("deflicker", "videostream", ["video"], "video"),
+    ],
+    "analysis": [
+        ("scene_cut_detection", "videostream", ["video"], "table"),
+    ],
 }
 
 
