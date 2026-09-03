@@ -424,7 +424,7 @@ def main() -> int:
     print(f"[hero] {hero.shape} 値域[{hero.min():.3f},{hero.max():.3f}] "
           f"保存={saved} path={hero_path} ({time.time() - th:.1f}s)")
     assert saved and hero_path.exists(), "hero PNG が保存されていない"
-    assert hero.shape == (640, 640, 3), f"hero shape 不正: {hero.shape}"
+    assert hero.shape == (HERO, HERO, 3), f"hero shape 不正: {hero.shape}"
 
     print(
         f"PASS: render_beauty が全品質層(ラスタライズ/鏡面/AO/接地影/SSAA/トーンマップ)を"
