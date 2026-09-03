@@ -168,7 +168,8 @@ def _plan_tile(vals: np.ndarray, atol: float) -> _Tile:
         for bits in (1, 2, 4, 8, 16):
             if ((1 << bits) - 1) >= ispan:
                 codes = (np.rint(vals).astype(np.int64) - int(round(vmin))).astype(np.uint16)
-                candidates.append((bits, _Tile(bits, float(round(vmin)), 1.0, _pack_codes(codes, bits), n)))
+                candidates.append((bits, _Tile(bits, float(round(vmin)), 1.0, _pack_codes(codes, bits), n,
+                                               cmax=ispan)))
                 break
 
     if candidates:
