@@ -324,7 +324,9 @@ class PrecisionUnion:
         """
         new_tiles = [_Tile(t.bits, a * t.offset + b, a * t.scale, t.buf, t.n)
                      for t in self._tiles]
-        return PrecisionUnion(self.shape, np.float64, self.tile, new_tiles, self._grid)
+        # a gain of |a| scales every stored error by |a|: carry the tolerance along
+        return PrecisionUnion(self.shape, np.float64, self.tile, new_tiles, self._grid,
+                              atol=abs(a) * self.atol)
 
     def _tile_range(self, t: _Tile):
         """Conservative ``(lo, hi)`` bounds of a tile's values from its header alone,
