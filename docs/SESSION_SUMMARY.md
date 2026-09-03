@@ -3,47 +3,48 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-04 06:20:08
+- **最終更新**: 2026-09-04 06:30:09
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+c53934cb0 feat(precision_union): promote PoC -> feature — N-D volumes + save/load + example
+d02fc171e auto: CHANGELOG.md 編集前 (2026-09-04 06:28)
+c0db94448 auto: test_examples.py 編集前 (2026-09-04 06:27)
+b47a353ef auto: precision_union_volume.py 編集前 (2026-09-04 06:27)
+32303c8bd auto: test_precision_union.py 編集前 (2026-09-04 06:25)
+a8ff0a21a auto: precision_union.py 編集前 (2026-09-04 06:25)
+d5ee6c3ff auto: precision_union.py 編集前 (2026-09-04 06:25)
+b938fb55a auto: precision_union.py 編集前 (2026-09-04 06:24)
+54c2683db auto: precision_union.py 編集前 (2026-09-04 06:24)
 9456fdbc3 auto: NEXT_SESSION.md 編集前 (2026-09-04 06:11)
-138f78352 auto: CHANGELOG.md 編集前 (2026-09-04 06:11)
-96bda1dbd auto: test_geompred.py 編集前 (2026-09-04 06:09)
-2bea9c463 auto: pyproject.toml 編集前 (2026-09-04 06:08)
-36e5eb111 auto: __init__.py 編集前 (2026-09-04 06:08)
-a4c3a6a1a auto: __init__.py 編集前 (2026-09-04 06:08)
-0147b70ec auto: api.py 編集前 (2026-09-04 06:07)
-f020ed3e1 auto: api.py 編集前 (2026-09-04 06:07)
-61fd4a291 feat(precision_union): add deferred-affine scale_shift; consolidate the PoC to one impl
-09e74d4c0 auto: CHANGELOG.md 編集前 (2026-09-04 06:03)
 ```
 
 ## 現在の git status
 
 ```
-M docs/NEXT_SESSION.md
- M docs/SESSION_SUMMARY.md
+(clean)
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-06:11 docs/SESSION_SUMMARY.md
+06:28 CHANGELOG.md
+06:28 .pytest_cache/v/cache/nodeids
+06:27 tests/test_examples.py
+06:27 examples/precision_union_volume.py
+06:25 tests/test_precision_union.py
+06:25 precision_union.py
+06:20 docs/SESSION_SUMMARY.md
 06:11 docs/NEXT_SESSION.md
-06:11 CHANGELOG.md
-06:10 .pytest_cache/v/cache/nodeids
 06:09 tests/test_geompred.py
 06:08 .pytest_cache/v/cache/lastfailed
 06:08 pyproject.toml
 06:08 fullseye/__init__.py
 06:07 api.py
 06:06 geompred.py
-06:03 tests/test_precision_union.py
-06:03 precision_union.py
 ```
 
 ---
