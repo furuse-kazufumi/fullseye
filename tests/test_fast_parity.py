@@ -110,5 +110,5 @@ def test_not_listed_documents_the_rejects():
     """落とした候補は消さずに理由と実測値を残す(「速いが違う」を作らない規律)。"""
     for key in ("clahe", "bilateral", "rotate_img", "equalize", "otsu", "dyn_threshold",
                 "edges_image"):
-        assert key in fast.NOT_LISTED and fast.NOT_LISTED[key]
+        assert fast.NOT_LISTED.get(key)
         assert key not in fast.FAST

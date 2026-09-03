@@ -505,8 +505,11 @@ def _bind(name, fn, data_args, rng):
         sig = inspect.signature(fn)
     except (TypeError, ValueError):
         return list(data_args), {}
+    # KEYWORD_ONLY も束縛する(chain_fuzz._bind_args と同じ修正、2026-09-03):
+    # ``mesh_scatter_boulders(V, F, *, density, d_min)`` の必須キーワード引数が
+    # 生の TypeError(= 未実行)になっていた
     params = [p for p in sig.parameters.values()
-              if p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD)]
+              if p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD, p.KEYWORD_ONLY)]
     kwargs, unbound = {}, []
     for p in params[len(data_args):]:
         op_hint = EXTRA_OP_HINTS.get((name, p.name))

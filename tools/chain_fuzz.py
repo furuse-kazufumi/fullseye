@@ -1799,8 +1799,13 @@ def _bind_args(op_name, fn, data_args, rng):
         return list(data_args), {}
     args = list(data_args)
     kwargs = {}
+    # KEYWORD_ONLY も束縛する(2026-09-03): ``mesh_scatter_boulders(V, F, *, density,
+    # d_min)`` のような必須キーワード引数は positional だけを見ていると **束縛されず、
+    # 生の TypeError で「必須引数が組めない」**になっていた(ledger の raw-exception 検査
+    # と --cover-all の SUSPECT で顕在化)。署名順では keyword-only は positional の
+    # 後ろに並ぶので、data 引数で positional を埋めたあとのスライスはそのまま使える。
     params = [p for p in sig.parameters.values()
-              if p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD)]
+              if p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD, p.KEYWORD_ONLY)]
     for p in params[len(args):]:
         if p.default is not inspect.Parameter.empty:
             # 既定値つきの引数は原則そのまま使う。ただし **op 固有ヒントがあれば

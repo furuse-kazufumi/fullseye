@@ -268,7 +268,7 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
              lambda v, a, b: cv2.threshold(v, a, 1.0, cv2.THRESH_TRUNC)[1]),
             # region->image / feature
             ("cv_dist", "region", "distance_transform", REGION, IMAGE,
-             lambda v, a, b: norm(cv2.distanceTransform(_u8(binm(v).astype(np.float64)), cv2.DIST_L2, 3))),
+             lambda v, a, b: norm(cv2.distanceTransform(_u8(binm(v).astype(np.float64)), cv2.DIST_L2, 3).astype(np.float64))),  # cv2 returns float32; contract is float64 (bench 2026-09-03)
             ("cv_cc_count", "features", "connection", REGION, FEATURE,
              lambda v, a, b: np.float64(cv2.connectedComponents(_u8(binm(v).astype(np.float64)))[0] - 1)),
             # image->feature (Hough / features)

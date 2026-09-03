@@ -447,3 +447,11 @@ PYTHONUTF8=1 py -3.11 tools/bench_ops.py --baseline bench/bench_ops_baseline.jso
 * `rss_peak_x` は 0.4 ms ポーリングなので **10 ms 未満の op では取りこぼす**。`tm_peak_x` は numpy 配列しか見ない(C 内部バッファは見えない)。両方を並べているのはそのため。psutil があれば使い、無ければ Windows は `K32GetProcessMemoryInfo`、POSIX は `getrusage` にフォールバックする(どれも無ければ `rss_*` は `null`)。
 * メモリ計測の呼び出しは **時間サンプルに数えない**(tracemalloc が実行時間を数倍にするため)。1 行あたりの呼び出し回数は `warm + 1 + repeat`。
 * `--device cuda` はグローバル環境(torch CPU 版)では静かに CPU に落ちる。GPU 実測は loco venv(cu128)で走らせる(§1.6 と同じ条件)。
+
+### 6.7 初回ベースライン run が拾ったもの(2026-09-03、`--sizes 512,2048,1080p --dtypes float64`)
+
+420 行 / 384 測定 / 36 skipped(重い op の大サイズ)/ **error 0・fallback 0・入力破壊 0**、826 s。§1.1 の主表を独立に再現した(2048² gaussian 59.6 ms、median 1834 ms、rss 最大は shape_locate 22.3×)ほかに、**この harness が新たに出したもの**:
+
+1. **`cv_dist` は float64 契約なのに float32 を返す**(`backends.py:270`、declared `out_sort=IMAGE`)。速度ではなく **契約の嘘**で、`out_dtype` 列を置いたから出た(§5.3 の一覧に 5 件目として追加すべき候補)。
+2. **cv2 twin が core より遅い組がある**: `cv_otsu` は 2048² で **0.76〜0.92×**(= core の scipy 実装のほうが速い)、`cv_gaussian` は 512² で 1.45× しか出ない(小画像では `_u8` 往復と cv2 の起動費が支配)。(a′) の twin テーブルは **「速い op だけ載せる」**を実測で決める必要がある — 全 cv_ を無条件に既定にすると遅くなる op が混ざる。
+3. **内容依存は median だけではない**: 512² で `clahe` 20.7 → 7.9 ms、`equalize` 7.1 → 2.7 ms、`gerode` 4.0 → 1.6 ms も noisy/quantised で 2.5 倍前後動く。ヒストグラム系と rank 系はどちらも「同値の多さ」に効かれる。
