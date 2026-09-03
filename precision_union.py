@@ -191,7 +191,10 @@ class PrecisionUnion:
     a feature for fullseye's ``(depth,row,col)`` volumes and stacks.
     """
 
-    def __init__(self, shape, dtype, tile, tiles, grid):
+    def __init__(self, shape, dtype, tile, tiles, grid, atol=0.0):
+        # the precision the caller accepted at from_array (0 = lossless). Lazy ops
+        # carry it forward (a gain scales it) so re-quantisation never exceeds it.
+        self.atol = float(atol)
         self.shape = tuple(int(s) for s in shape)
         self.dtype = np.dtype(dtype)
         ndim = len(self.shape)
