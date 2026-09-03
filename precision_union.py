@@ -715,3 +715,22 @@ LAZY_OPS = {
     "scale_clip": lambda pu, a, b: pu.scale_shift(0.5 + 1.5 * a, b - 0.5).clip(0.0, 1.0),
     "threshold": lambda pu, a, b: pu.threshold_lazy(a),
 }
+
+# Two-input ops closed over unions (fullseye n-ary tier; both inputs must be unions
+# with the same shape/tiling — otherwise api materialises). Region set ops binarise
+# at > 0.5 exactly like imgops_nary._b; max/min are the plain pixelwise extrema.
+LAZY_NARY = {
+    "union2": lambda p, q, a, b: p.mask_binop(q, "or"),
+    "intersection": lambda p, q, a, b: p.mask_binop(q, "and"),
+    "difference": lambda p, q, a, b: p.mask_binop(q, "diff"),
+    "symm_difference": lambda p, q, a, b: p.mask_binop(q, "xor"),
+    "max_image": lambda p, q, a, b: p.extremum_with(q, "max"),
+    "min_image": lambda p, q, a, b: p.extremum_with(q, "min"),
+}
+
+# union -> scalar features computable from headers (exact). The gray metrics clip
+# to [0,1] first, exactly as the dense closures in ops.py do; min/max of a clipped
+# array are the clipped min/max, so they are O(#tiles) with no decode at all.
+LAZY_FEATURES = {
+    "area_frac": lambda pu, a, b: float(pu.area_frac()),
+}
