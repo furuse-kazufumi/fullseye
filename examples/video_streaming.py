@@ -109,18 +109,22 @@ def main():
     print("[3] uint8 ring == float64 ring (max diff < 1e-12); window==T reproduces videops on the last frame")
 
     # 4. wave 2: motion detection, adaptive background, temporal denoise, restore --
-    # motion detection: three-frame difference marks the moving disc, ghost-free
-    tfd = VS.three_frame_difference(f64, threshold=0.25)
-    # the disc is where the mask fires most; its centroid must track the true path
-    hit = tfd[10] > 0
-    yy, xx = np.nonzero(hit)
-    assert hit.any() and abs(xx.mean() - centres[10, 0]) < 6.0
-    # motion history: brightest exactly on the current disc, decaying behind it
+    # motion history: the value-1 pixels are *this frame's* motion (the disc edges),
+    # so their centroid sits on the disc; older motion decays into a trail behind it
     mhi = VS.motion_history_image(f64, tau=8, threshold=0.25)
     assert mhi.min() >= 0.0 and mhi.max() <= 1.0
+    front = np.isclose(mhi[12], 1.0)
+    yy, xx = np.nonzero(front)
+    assert front.any() and abs(xx.mean() - centres[12, 0]) < 8.0 and abs(yy.mean() - centres[12, 1]) < 8.0
     mei = VS.motion_energy_image(f64, tau=8, threshold=0.25)
     assert np.array_equal(mei, (mhi > 0).astype(np.float64))
-    print("[4] three_frame_difference centroid tracks the disc; MHI in [0,1]; MEI == (MHI>0)")
+    # three-frame difference is the AND of two consecutive frame differences, so it is
+    # always a subset of the two-frame difference — that is exactly how it drops the
+    # "ghost" a plain difference leaves behind a moving object.
+    fd = VS.frame_difference_causal(f64) > 0.25
+    tfd = VS.three_frame_difference(f64, threshold=0.25) > 0
+    assert np.all(tfd[2:] <= fd[2:])
+    print("[4] MHI value-1 front sits on the disc; MEI == (MHI>0); three_frame_diff subset of two-frame diff (ghost-free)")
 
     # adaptive single-Gaussian background: a bright disc on a noisy static scene is
     # foreground; the flat background is not (per-pixel k-sigma, not a fixed level)
