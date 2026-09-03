@@ -5,6 +5,17 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 
 ## 0.1.6 — unreleased
 
+- **実解剖骨メッシュから手骨格を組み立てる例 `examples_3d/anatomical_hand.py`(ユーザー指摘「手骨も
+  今となっては粗い」)**: 記事の手骨 hero は手続きカプセル SDF で実物と並べると粗かった。「正確な骨格」
+  は画像生成 AI のもっともらしさでなく**実データの幾何**で担保する方針で、MyoSuite `myo_sim`
+  (Apache-2.0、同梱せず `MYO_SIM_DIR`)の OpenSim 由来骨メッシュ 27 個(手根骨 8・中手骨 5・指骨 14、
+  実寸 m)を MJCF(include 構成、`<worldbody>` 複数)から **stdlib だけ**で辿って配置(body 木の
+  pos/euler 累積、MuJoCo 既定 eulerseq xyz)。`mujoco` があれば forward kinematics と突き合わせ
+  (重心 6e-11 m・最近傍頂点 2e-9 m で一致)、無ければスキップを明示。解剖サニティ=指長 中指 123 >
+  示指 117.5 > 薬指 112 > 小指 99.5 mm。手背を手首側から見下ろす構図(掌側の豆状骨で背側を判定、
+  中指末節骨で指方向を判定)、`render_beauty` 1280px。データ未取得は SKIP(exit 0)。テスト 4 件
+  (27 骨・FK 一致・指長順・euler/quat 規約)。記事 ja/en の手骨 hero を差し替え(手続き版は
+  ターンテーブル節に残置)。
 - **hero レンダの品質修正(Qiita 記事の 1 枚目)+ `render_beauty(vertex_normals=)`**: 記事の
   SDF 彫刻 hero は 640px・marching cubes res=48・**フラット法線**で、ファセット模様と四角い
   スペキュラが見えていた(ユーザー指摘)。`smooth_normals=True` にしても、面から作る頂点法線は
