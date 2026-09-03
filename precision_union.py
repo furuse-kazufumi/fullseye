@@ -53,8 +53,10 @@ import numpy as np
 
 __all__ = ["PrecisionUnion", "pack", "unpack", "LAZY_OPS"]
 
-# bit-depths the union may choose from. 0 = constant tile (offset only).
-_ALLOWED_BITS = (0, 1, 2, 4, 8, 16)
+# bit-depths the union may choose from. 0 = constant tile (offset only); 64 = raw
+# float64 (never chosen by the planner — only a lossless clip that cannot be put on
+# a code grid falls back to it, see _clip_straddling).
+_ALLOWED_BITS = (0, 1, 2, 4, 8, 16, 64)
 
 
 # --------------------------------------------------------------------------- #

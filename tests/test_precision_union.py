@@ -515,3 +515,57 @@ def test_save_load_persists_atol(tmp_path):
     p = tmp_path / "t.npz"
     pu.save(p)
     assert PrecisionUnion.load(p).atol == pytest.approx(2.5e-3)
+
+
+# --- exact clip guarantees: cmax range, code-space clip, raw fallback ------- #
+def test_tile_range_is_exact_not_overestimated():
+    # a busy uint8 tile with max 250 (unit-scale path, 8 bits) must report hi=250,
+    # not offset+255 — the over-estimate turned in-range tiles into false straddles.
+    a = np.full((16, 16), 3, np.uint8); a[0, :] = 250; a[1, :] = 100
+    pu = PrecisionUnion.from_array(a, tile=16)
+    assert pu._tile_range(pu._tiles[0]) == (3.0, 250.0)
+
+
+def test_lossless_uint8_union_through_scale_clip_is_bit_exact_vs_dense():
+    """The lossless contract under a straddling clip: a uint8 union pushed past 1 by
+    scale_clip must still match the dense float64 path EXACTLY (raw tiles if a
+    grid cannot hold the clipped values), not to within a 16-bit half-step."""
+    import api
+    rng = np.random.default_rng(50)
+    u8 = rng.integers(0, 256, (32, 32), dtype=np.uint8)
+    pu = PrecisionUnion.from_array(u8, tile=16)
+    r = api.apply(pu, "scale_clip", 1.0, 1.0)             # 2v+0.5: heavy clipping
+    assert isinstance(r, PrecisionUnion) and r.atol == 0.0
+    # exact in real arithmetic; float64 association differs from the dense path by
+    # ulps (~1e-16), six orders below a 16-bit half-step (7.6e-6) — the bug this guards
+    np.testing.assert_allclose(r.to_dense(), api.apply(u8, "scale_clip", 1.0, 1.0),
+                               rtol=0, atol=1e-12)
+
+
+def test_on_grid_bounds_clip_in_code_space_without_raw_fallback():
+    # values k/3 sit exactly on the 2-bit grid (2**2-1 = 3 steps; note k/4 would NOT:
+    # 4 is not 2**b-1). Clipping to [1/3, 2/3] keeps the bounds on that grid ->
+    # code-space clip: same bits, no raw tile, exact.
+    a = (np.arange(256) % 4 / 3.0).reshape(16, 16)
+    pu = PrecisionUnion.from_array(a, tile=16, atol=0.0)
+    t0 = pu._tiles[0]
+    assert t0.bits == 2
+    c = pu.clip(1.0 / 3.0, 2.0 / 3.0)
+    assert c._tiles[0].bits == 2                            # stayed on the 2-bit grid
+    np.testing.assert_array_equal(c.to_dense(), np.clip(a, 1.0 / 3.0, 2.0 / 3.0))
+
+
+def test_raw_tile_roundtrips_through_save_load(tmp_path):
+    pu = PrecisionUnion.from_array(np.linspace(-0.3, 1.3, 256).reshape(16, 16), tile=16, atol=0.0)
+    c = pu.clip(0.0, 1.0)                                  # off-grid bounds, atol=0 -> raw
+    assert 64 in {t.bits for t in c._tiles}
+    p = tmp_path / "raw.npz"
+    c.save(p)
+    np.testing.assert_array_equal(PrecisionUnion.load(p).to_dense(), c.to_dense())
+
+
+def test_float_union_with_atol_requantises_instead_of_raw():
+    pu = PrecisionUnion.from_array(np.linspace(-0.3, 1.3, 256).reshape(16, 16), tile=16, atol=1e-3)
+    c = pu.clip(0.0, 1.0)
+    assert 64 not in {t.bits for t in c._tiles}            # memory-cheap path
+    assert np.abs(c.to_dense() - np.clip(pu.to_dense(), 0, 1)).max() <= 1e-3 + 1e-12
