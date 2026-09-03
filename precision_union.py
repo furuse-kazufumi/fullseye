@@ -465,8 +465,7 @@ class PrecisionUnion:
             if t.bits == 0:
                 total += t.offset * t.n
             else:
-                codes = _unpack_codes(t.buf, t.bits, t.n)
-                total += float((t.offset + codes.astype(np.float64) * t.scale).sum())
+                total += float(self._tile_values(t).sum())
             count += t.n
         return total / count
 
