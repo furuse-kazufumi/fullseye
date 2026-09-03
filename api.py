@@ -1335,9 +1335,11 @@ def _pu_contract(pu, op, policy, *, in_sort=None, name=None):
     (``atol`` scales by ``1/s``). The same ledger record / ``on_error="raise"``
     refusal as the dense rule, so an integer input is never silently accepted.
     """
+    in_sort = op.in_sort if in_sort is None else in_sort      # NaryOp has in_sorts[i]
+    name = op.name if name is None else name
     if np.issubdtype(pu.dtype, np.floating):
         return pu
-    if op.in_sort not in _DTYPE_CONTRACT_SORTS:
+    if in_sort not in _DTYPE_CONTRACT_SORTS:
         return pu                                    # no conversion on the dense path either
     kind = pu.dtype.kind
     if kind not in "bui":
