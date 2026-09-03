@@ -137,7 +137,9 @@ def main():
     rgf = VS.running_gaussian_foreground(f64, alpha=0.02, k=3.0, var_init=1e-3)
     disc = (np.mgrid[:h, :w][1] - centres[-1, 0]) ** 2 + (np.mgrid[:h, :w][0] - centres[-1, 1]) ** 2 <= 16
     assert rgf[-1][disc].mean() > 0.5 and rgf[-1][~disc].mean() < 0.1
-    print("    running_gaussian_foreground: disc flagged, static background quiet")
+    rgb = VS.running_gaussian_background(f64, alpha=0.05)         # the learned mean image (the disc averaged out)
+    assert rgb.shape == f64.shape and rgb[-1][~disc].std() < f64[:, ~disc].std()
+    print("    running_gaussian_foreground: disc flagged, static background quiet; background() is the learned mean")
 
     # temporal bilateral denoise: recover a static noisy scene better than the raw
     truth = 0.35 + 0.15 * np.sin(np.mgrid[:h, :w][1] / 5.0) * np.cos(np.mgrid[:h, :w][0] / 7.0)

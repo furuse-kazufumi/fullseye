@@ -807,7 +807,7 @@ _計 344 ops / 66 categories。_
 - `sampson_distance` (`image2d, image2d → signal`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category
-_計 870 ops / 47 categories。_
+_計 877 ops / 47 categories。_
 
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
@@ -1630,7 +1630,7 @@ _計 870 ops / 47 categories。_
 - `xmh_daubechies` `image → image` · 例: `gallery2d_geometry`
 - `tf_radon_sinogram` `image → image` · 例: `gallery2d_geometry`
 
-### typed(132)
+### typed(139)
 - `tb_points_to_voxel` `points → volume` · 例: なし
 - `tb_estimate_point_normals` `points → points` · 例: なし
 - `tb_iss_keypoints` `points → signal` · 例: なし
@@ -1763,6 +1763,13 @@ _計 870 ops / 47 categories。_
 - `tb_exponential_background` `video → video` · 例: なし
 - `tb_exponential_foreground` `video → video` · 例: なし
 - `tb_optical_flow_magnitude_stream` `video → video` · 例: なし
+- `tb_motion_history_image` `video → video` · 例: なし
+- `tb_motion_energy_image` `video → video` · 例: なし
+- `tb_three_frame_difference` `video → video` · 例: なし
+- `tb_running_gaussian_foreground` `video → video` · 例: なし
+- `tb_running_gaussian_background` `video → video` · 例: なし
+- `tb_temporal_bilateral` `video → video` · 例: なし
+- `tb_deflicker` `video → video` · 例: なし
 
 ### xldgeom(10)
 - `xg_moments` (halcon: `moments_points_xld`) `contour → feature` · 例: `gallery2d_geometry`

@@ -4,7 +4,7 @@ dim: videostream
 category: background
 in: video
 out: video
-examples: []
+examples: [video_streaming]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -31,7 +31,7 @@ Adaptive single-Gaussian background (the running mean) per frame → ``(T, H, W)
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [video_streaming](../../../../examples/video_streaming.py) — `py -3.11 examples/video_streaming.py`
 
 ## 型が繋がる次の op(`video` を入力に取れる)
 
