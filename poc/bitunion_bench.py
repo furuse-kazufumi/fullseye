@@ -72,6 +72,7 @@ def affine_chain_speed(n_ops=20, reps=50):
     print("-" * 92)
     arr, tol = _bench_arrays()["smooth gradient (f64)"]
     pu = bu.encode(arr, tile=16, tol=tol)
+    base = pu.to_dense()                    # the array the union actually represents
     ops = [(1.0 + 0.01 * i, -0.5 * i) for i in range(n_ops)]
 
     def run_union():
@@ -81,7 +82,9 @@ def affine_chain_speed(n_ops=20, reps=50):
         return cur.to_dense()               # one decode
 
     def run_dense():
-        cur = arr.astype(np.float64).copy()
+        # same starting array as the union (quantisation cost is accounted for in
+        # the memory/fidelity table, not here); compare the op work fairly.
+        cur = base.copy()
         for a, b in ops:
             cur = a * cur + b               # O(#pixels) every op
         return cur
