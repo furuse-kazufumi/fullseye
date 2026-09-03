@@ -210,9 +210,10 @@ def main() -> int:
     myo = Path(os.environ.get("MYO_SIM_DIR", r"C:/dev/projects/myo_sim"))
     xml = myo / "hand" / "myohand.xml"
     if not xml.exists():
-        print(f"[anatomical_hand] myo_sim not found: {xml}\n"
+        # examples3d の "download" 系の作法: データ未取得は SKIP(exit 0)。捏造はしない。
+        print(f"SKIP: myo_sim not found: {xml}\n"
               "  set MYO_SIM_DIR or: git clone https://github.com/MyoHub/myo_sim  (Apache-2.0)")
-        return 2
+        return 0
     t0 = time.time()
     bones = load_mjcf_bone_meshes(xml)
     names = sorted(n for n, *_ in bones)
