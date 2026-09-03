@@ -177,64 +177,79 @@ def _plan_tile(vals: np.ndarray, atol: float) -> _Tile:
 
 
 class PrecisionUnion:
-    """A 2-D array stored as tiles of heterogeneous bit-depth.
+    """An **N-D** array stored as tiles of heterogeneous bit-depth.
 
     Build with :meth:`from_array` (or :func:`pack`). Read back with
     :meth:`to_dense`. Operate uniformly with :meth:`map_pointwise`,
-    :meth:`threshold`, :meth:`mean` — none of which branch on tile bit-depth at
-    the call site.
+    :meth:`threshold`, :meth:`mean`, :meth:`scale_shift` — none of which branch on
+    tile bit-depth at the call site. Persist with :meth:`save` / :meth:`load`.
+
+    Tiling generalises to any number of dimensions: a 2-D image tiles into squares,
+    a 3-D volume into cubes, a video (T,H,W) into space-time bricks. The volume /
+    label-volume case is where the memory win is largest (a flat or few-valued brick
+    costs a fraction of a byte per voxel), so N-D support is what turns the PoC into
+    a feature for fullseye's ``(depth,row,col)`` volumes and stacks.
     """
 
     def __init__(self, shape, dtype, tile, tiles, grid):
-        self.shape = tuple(shape)
+        self.shape = tuple(int(s) for s in shape)
         self.dtype = np.dtype(dtype)
-        self.tile = int(tile)
-        self._tiles = tiles                # list[_Tile], row-major over grid
-        self._grid = grid                  # (n_tile_rows, n_tile_cols)
+        ndim = len(self.shape)
+        if isinstance(tile, (tuple, list, np.ndarray)):
+            self._tsz = tuple(int(t) for t in tile)
+        else:
+            self._tsz = (int(tile),) * ndim
+        self.tile = tile                   # as given (int or per-axis tuple)
+        self._tiles = tiles                # list[_Tile], row-major over the tile grid
+        self._grid = tuple(int(g) for g in grid)  # per-axis tile counts
+
+    # -- tile grid iteration (shared by every N-D operation) ----------------- #
+    def _blocks(self):
+        """Yield ``(tile_index, slices, block_shape)`` for every tile, row-major
+        over the per-axis tile grid. The single place tiling geometry lives."""
+        import itertools
+        idx = 0
+        for coord in itertools.product(*(range(g) for g in self._grid)):
+            slices = tuple(slice(c * ts, min(c * ts + ts, s))
+                           for c, ts, s in zip(coord, self._tsz, self.shape))
+            bshape = tuple(sl.stop - sl.start for sl in slices)
+            yield idx, slices, bshape
+            idx += 1
 
     # -- construction -------------------------------------------------------- #
     @classmethod
     def from_array(cls, arr, tile=32, atol=0.0):
         a = np.asarray(arr)
-        if a.ndim != 2:
-            raise ValueError("PrecisionUnion PoC handles 2-D arrays; got shape "
-                             f"{a.shape}")
-        h, w = a.shape
-        tr = (h + tile - 1) // tile
-        tc = (w + tile - 1) // tile
-        tiles = []
-        for ti in range(tr):
-            for tj in range(tc):
-                block = a[ti * tile:(ti + 1) * tile, tj * tile:(tj + 1) * tile]
-                tiles.append(_plan_tile(block.ravel(), atol))
-        return cls(a.shape, a.dtype, tile, tiles, (tr, tc))
+        if a.ndim < 1:
+            raise ValueError("PrecisionUnion needs an array of >= 1 dimension; got "
+                             f"a 0-d scalar")
+        tsz = (tuple(int(t) for t in tile) if isinstance(tile, (tuple, list, np.ndarray))
+               else (int(tile),) * a.ndim)
+        if len(tsz) != a.ndim:
+            raise ValueError(f"tile {tile} has {len(tsz)} axes but array is {a.ndim}-D")
+        if any(t < 1 for t in tsz):
+            raise ValueError("tile sizes must be >= 1")
+        grid = tuple((s + t - 1) // t for s, t in zip(a.shape, tsz))
+        obj = cls(a.shape, a.dtype, tile, [], grid)
+        obj._tiles = [_plan_tile(a[sl].ravel(), atol) for _, sl, _ in obj._blocks()]
+        return obj
 
     # -- reconstruction ------------------------------------------------------ #
-    def _tile_dense(self, t: _Tile, th: int, tw: int) -> np.ndarray:
+    def _tile_dense(self, t: _Tile, bshape) -> np.ndarray:
         if t.bits == 0:
             vals = np.full(t.n, t.offset, dtype=np.float64)
         else:
             codes = _unpack_codes(t.buf, t.bits, t.n)
             vals = t.offset + codes.astype(np.float64) * t.scale
-        return vals.reshape(th, tw)
+        return vals.reshape(bshape)
 
     def to_dense(self) -> np.ndarray:
-        h, w = self.shape
-        out = np.empty((h, w), dtype=np.float64)
-        tr, tc = self._grid
-        idx = 0
-        for ti in range(tr):
-            for tj in range(tc):
-                th = min(self.tile, h - ti * self.tile)
-                tw = min(self.tile, w - tj * self.tile)
-                out[ti * self.tile:ti * self.tile + th,
-                    tj * self.tile:tj * self.tile + tw] = self._tile_dense(self._tiles[idx], th, tw)
-                idx += 1
+        out = np.empty(self.shape, dtype=np.float64)
+        for idx, sl, bshape in self._blocks():
+            out[sl] = self._tile_dense(self._tiles[idx], bshape)
         if np.issubdtype(self.dtype, np.integer):
-            out = np.rint(out).astype(self.dtype)
-        else:
-            out = out.astype(self.dtype)
-        return out
+            return np.rint(out).astype(self.dtype)
+        return out.astype(self.dtype)
 
     # -- size accounting ----------------------------------------------------- #
     @property
