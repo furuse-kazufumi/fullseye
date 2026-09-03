@@ -433,6 +433,7 @@ class PrecisionUnion:
             "shape": np.asarray(self.shape, dtype=np.int64),
             "tsz": np.asarray(self._tsz, dtype=np.int64),
             "grid": np.asarray(self._grid, dtype=np.int64),
+            "atol": np.asarray(self.atol, dtype=np.float64),
             "dtype": np.asarray(self.dtype.str),          # e.g. '<f8' (0-d '<U..')
             "bits": np.asarray([t.bits for t in self._tiles], dtype=np.uint8),
             "offset": np.asarray([t.offset for t in self._tiles], dtype=np.float64),
