@@ -133,13 +133,32 @@ CV_OPS: tuple[str, ...] = (
     "sk_butterworth", "sk_canny", "sk_tv", "sk_find_contours", "xkor_gaussian",
 )
 
+# Streaming video ops that emit one image per frame. Measured on the *streaming*
+# path (a StatefulOp fed one frame at a time), so the metric is the per-frame cost
+# and the memory is the ring, not a whole (T, H, W) clip — the whole point of
+# videostream. optical_flow_magnitude_stream is left out of the default set (its
+# pyramidal LK is seconds/frame at 1080p); bench it explicitly with --ops if wanted.
+VIDEO_OPS: tuple[str, ...] = (
+    "frame_difference_causal", "three_frame_difference", "moving_average_window",
+    "temporal_median_window", "temporal_bilateral", "background_subtraction_window",
+    "exponential_background", "running_gaussian_foreground", "motion_history_image",
+    "deflicker",
+)
+
 SETS: dict[str, tuple[str, ...]] = {
     "core": CORE_OPS,
     "cv": CV_OPS,
+    "video": VIDEO_OPS,
     "all": CORE_OPS + CV_OPS,
 }
 
 MATCH_OPS = frozenset({"ncc_locate", "shape_locate"})
+
+#: name -> factory of a fresh streaming StatefulOp (default parameters). The
+#: per-frame bench pushes frames through one of these; every entry emits an
+#: ``(H, W)`` image per push so the timing is directly ms/frame.
+VIDEO_STREAM_FACTORY: dict[str, Callable[[], Any]] = {}
+VIDEO_FRAMES = 24                       # clip length for the per-frame video bench
 
 
 # --------------------------------------------------------------------------- #
