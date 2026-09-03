@@ -1567,13 +1567,17 @@ def _apply_impl(image, name, a, b, coerce, device, policy, fast=None):
         image = np.asarray(image)
 
     if isinstance(image, PrecisionUnion):
-        # A float precision-union runs a LAZY op (precision_union.LAZY_OPS) as header
-        # algebra + per-tile clip and stays a union — O(#tiles), codes untouched. Any
-        # other op, or an integer/bool union (whose dtype contract conversion is the
-        # normal path's job), materialises once and continues as a dense array.
-        lazy = _PU_LAZY.get(name) if np.issubdtype(image.dtype, np.floating) else None
+        # A precision-union runs a LAZY op (precision_union.LAZY_OPS) as header
+        # algebra + per-tile clip and stays a union — O(#tiles), codes untouched.
+        # An integer/bool union is first brought onto the float64 [0,1] contract
+        # LAZILY (a pure gain, so a lossless union stays lossless) with the same
+        # ledger record / refusal as _contract_dtype; a dtype that needs the data to
+        # pick its scale, or an op not in the table, materialises once instead.
+        lazy = _PU_LAZY.get(name)
         if lazy is not None:
-            return lazy(image, a, b)
+            pu = _pu_contract(image, _resolve(name), policy)
+            if pu is not None:
+                return lazy(pu, a, b)
         image = image.to_dense()
 
     op = _resolve(name)
