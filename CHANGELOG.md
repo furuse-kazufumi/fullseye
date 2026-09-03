@@ -31,6 +31,7 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
   返していた。ソース/sdist では `api.py` 隣の `pyproject.toml`、インストール時は
   `importlib.metadata` から引く。
 - **exact geometric predicates(`predicates.py`、公開: `fullseye.orient2d/orient3d/incircle/insphere`)** — 向き・内接円・内接球の判定を返す。float64 の行列式は near-collinear/coplanar/cocircular で**符号を誤る**(線上補間点のスイープで naive は約 19% 誤符号)。Shewchuk 流の 2 段適応(float 高速フィルタ→`fractions.Fraction` の厳密フォールバック。float64→Fraction は lossless)で**常に正しい符号**を返す。stdlib+numpy のみ(bignum/C 拡張なし)。凸包(`_convex_hull_xy`)の turn 判定をこれに載せ替えて堅牢化。
+- **robust geometry queries(`geompred.py`、公開: `fullseye.point_in_polygon/point_in_convex_polygon/is_convex_polygon/point_in_tetrahedron/point_in_convex_polytope/is_delaunay_2d/mesh_orientation_consistent`)** — 上の exact predicates を、naive float で符号が反転する**組合せ判定**に使う消費層。内外判定は 3 値(`+1` 厳密内 / `0` 境界上 / `-1` 厳密外)で境界を明示。`point_in_polygon` は winding のエッジ交差を `orient2d` の厳密符号で決めるので、辺・頂点に厳密に乗る点を境界として正しく返す(整数座標の実測: 全エッジ点を境界検出)。near-edge スイープでは**naive float winding が robust と 8.64% 食い違う**(=naive が誤る)。`is_delaunay_2d` は各三角形の外接円が空かを `incircle` で検査し違反 `(三角形, 点)` を返す(cocircular は非厳密なので誤検出しない)。`mesh_orientation_consistent` は隣接面が共有エッジを逆向きに辿るか(非多様体/向き反転)を報告。stdlib+numpy のみ。
 - `scale.scale_class` のタイル可否がカテゴリ推測から**実測**に。カテゴリだけの
   分類は 141 個の非局所 op(region の skeleton/distance/形状、gray のヒストグラム、
   edges の勾配強度/コーナー/DoG、多スケール texture、TV/拡散/変換系 smoother)を
