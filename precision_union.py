@@ -346,7 +346,7 @@ class PrecisionUnion:
         clear win once several ops are chained (measured, not assumed). Output dtype
         is float64 since an affine image of integers is generally non-integer.
         """
-        new_tiles = [_Tile(t.bits, a * t.offset + b, a * t.scale, t.buf, t.n)
+        new_tiles = [_Tile(t.bits, a * t.offset + b, a * t.scale, t.buf, t.n, cmax=t.cmax)
                      for t in self._tiles]
         # a gain of |a| scales every stored error by |a|: carry the tolerance along
         return PrecisionUnion(self.shape, np.float64, self.tile, new_tiles, self._grid,
