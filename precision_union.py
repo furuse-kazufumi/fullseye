@@ -764,5 +764,5 @@ LAZY_FEATURES = {
     # min_max_gray is the clipped MAX, intensity the clipped MEAN (probed against the
     # dense closures in ops.py; locked by parity tests)
     "min_max_gray": lambda pu, a, b: float(min(max(pu.max(), 0.0), 1.0)),
-    "intensity": lambda pu, a, b: float(pu.clip(0.0, 1.0).mean()),
+    "intensity": lambda pu, a, b: float(pu.clipped_mean(0.0, 1.0)),
 }
