@@ -8,9 +8,9 @@
 
 This is a real point cloud of asteroid **25143 Itokawa** — the Gaskell shape model built from Hayabusa spacecraft observations, published in the JAXA DARTS archive — spinning inside the custom 3D renderer of this article's protagonist, **Fullseye**. Loading the point cloud, rendering it, the rock material, the shadows — **all of it is hand-written numpy**.
 
-[![The same Itokawa shape model (49,152 facets) rendered physically: Hapke BRDF, hard 0.53-deg-sun ray-cast shadows, zero ambient, fBm relief + power-law (D^-3.1) boulders (click for full size)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/itokawa_regolith_hero_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/itokawa_regolith_hero.png)
+[![The same Itokawa shape model (49,152 facets) rendered physically: Hapke BRDF, hard 0.53-deg-sun ray-cast shadows, zero ambient, fBm relief + power-law (D^-3.1) boulders (click for full size)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/itokawa_regolith_hero_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/itokawa_regolith_hero.png?v=2)
 
-*↑ The same shape model (49,152 facets) as a **physically based** still (phase angle 30°). The GIF above used Lambert diffuse + ambient light + a pedestal — studio lighting; this one follows regolith photometry: a **Hapke** BRDF (single-scattering albedo 0.42, opposition surge, mean slope 26°; Lambert darkens the limb and softens the terminator, whereas real asteroid images are bright to the limb and flat), **hard shadows ray-cast against the mesh with the Sun's 0.53° angular diameter** (the penumbra is a few centimetres, as geometry dictates), zero ambient light (no skylight in space — the shadow floor is only single-bounce terrain light), metre-scale fBm relief and 252 boulders scattered with the power-law size distribution **N(>D) ∝ D^-3.1** (Michikami et al. 2008), leaving the smooth "sea" at the neck untouched. All of it is the fullseye op chain `mesh_displace_fbm → terrain_region_mask → mesh_scatter_boulders → render_regolith`, regenerated with ground-truth checks by `examples_3d/itokawa_regolith_hero.py`.* This is the story of how I've been building that "eye."
+*↑ The same shape model as a **physically based** still (phase angle 55°). The GIF above used Lambert diffuse + ambient light + a pedestal — studio lighting; this one follows regolith photometry: a **Hapke** BRDF (single-scattering albedo 0.42, opposition surge, mean slope 26°; Lambert darkens the limb and softens the terminator, whereas real asteroid images are bright to the limb and flat), **hard shadows ray-cast against the mesh with the Sun's 0.53° angular diameter** (the penumbra is a few centimetres, as geometry dictates), zero ambient light (no skylight in space — the shadow floor is only single-bounce terrain light). **Redone so the relief is actually visible** (2026-09-03): the original 49,152 facets have edges from 2.6 to 14 m, so the mesh is first re-tessellated adaptively to a 1.5 m target edge (432,550 faces) with `mesh_subdivide` **without changing the geometry at all** (area and volume relative error 0); relief is added by `mesh_displace_spectrum` **band-limited per wavelength** (a wavelength shorter than twice the local facet size is not displaced but handed to `bump_normals_fbm` as a normal perturbation — carving fine relief into coarse facets only adds facet noise); boulders are 2,909 **angular convex hulls** from `mesh_scatter_boulders(shape='hull')` with the power-law size distribution **N(>D) ∝ D^-3.1** (Michikami et al. 2008), buried 30–60 %, none on the smooth "sea" at the neck; exposure pins the lit median to 0.45 (the previous version sat at 0.74, nearly washed out). Relief contrast went from 0.034 to 0.081 (0.090 at the AMICA disc scale; AMICA's 0.037 is at phase 8.8°, so not a strict comparison). All of it is the fullseye op chain `mesh_subdivide → mesh_displace_spectrum → terrain_region_mask → mesh_scatter_boulders → render_regolith`, regenerated with ground-truth checks by `examples_3d/itokawa_regolith_hero.py`.* This is the story of how I've been building that "eye."
 
 ## TL;DR
 
@@ -44,7 +44,7 @@ This is a long article, so let me sort **which claims sit at which stage** befor
 
 | Tier | Status label | What it covers in this article |
 |---|---|---|
-| **Implemented & reproducible** | `Production-ready / Verified` | The 860 2-D + 310 3-D ops, type contracts and the unified interface, Studio, the PyPI release, 10,345 tests, the machine-tallied 981/2,313 HALCON mapping, and the real outputs behind every exhibit and demo |
+| **Implemented & reproducible** | `Production-ready / Verified` | The 870 2-D + 344 3-D ops, type contracts and the unified interface, Studio, the PyPI release, 10,345 tests, the machine-tallied 981/2,313 HALCON mapping, and the real outputs behind every exhibit and demo |
 | **Under validation** | `PoC / Research prototype` | Evolutionary pipeline design (hold-out evaluated, bounded settings), natural-language-to-pipeline via RAG, and the Physical AI perception stack (validated in simulation; real hardware and sim-to-real are untouched) |
 | **Future vision** | `Roadmap / Design proposal` | A comprehensive op foundation for robots, an AI autonomously selecting and running the ~1,000 ops, and a shared perception base for industrial inspection and Physical AI |
 
@@ -166,7 +166,7 @@ Here is that "pick up a bean with chopsticks" experiment, seen through Fullseye'
 ```mermaid
 flowchart TB
     subgraph L0["Foundation: ~1,000 typed ops"]
-        OPS["The typed operator library<br/>860 2D ops + 310 3D ops<br/>hand-written numpy / wired together by type (sort)"]
+        OPS["The typed operator library<br/>870 2D ops + 344 3D ops<br/>hand-written numpy / wired together by type (sort)"]
     end
     subgraph L1["Two ways to use it"]
         APPLY["① Apply a known op<br/>fullseye.apply / run_pipeline"]
@@ -4023,7 +4023,7 @@ Thank you for reading. If there's a "tell me more about this part," that will be
 
 <!--
 Publication notes (not shown in the article body):
-- All numbers are measured (ops 860, 3D 310, HALCON 981/2313=42.4%, tests 10345). Re-measure before updating any of them.
+- All numbers are measured (ops 870, 3D 344, HALCON 981/2313=42.4%, tests 10800). Re-measure before updating any of them.
 - Prefer Mermaid over images where possible (native to Qiita; avoids SVG path/cache issues). If figures become SVG, always apply raw absolute URL + HTTP 200 check + ?v=N cache-bust.
 - Apache-2.0 and reimplemented-from-public-knowledge are stated explicitly (the no-derivation-from-commercial-products line).
 - Release logistics: queue as a private draft, and publish when a slot opens, avoiding Qiita's consecutive-post 502.

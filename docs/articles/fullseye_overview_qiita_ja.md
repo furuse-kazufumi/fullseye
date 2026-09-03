@@ -8,9 +8,9 @@
 
 これは小惑星 **25143 イトカワ**の実データ点群(はやぶさ探査機の観測から作られた Gaskell 形状モデル、JAXA DARTS アーカイブ公開)を、本記事の主役 **Fullseye** の自作 3D レンダラで回しているところです。点群の読み込みからレンダリング・岩石マテリアル・影まで、**すべて numpy の自前実装**。
 
-[![同じイトカワの実形状モデル(49,152 面)を物理ベースで描いた静止画 —— Hapke 反射則・太陽視直径 0.53° の硬い影・環境光ゼロ・fBm 起伏 + べき則 D^-3.1 の岩(クリックでフルサイズ)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/itokawa_regolith_hero_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/itokawa_regolith_hero.png)
+[![同じイトカワの実形状モデル(49,152 面)を物理ベースで描いた静止画 —— Hapke 反射則・太陽視直径 0.53° の硬い影・環境光ゼロ・fBm 起伏 + べき則 D^-3.1 の岩(クリックでフルサイズ)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/itokawa_regolith_hero_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/itokawa_regolith_hero.png?v=2)
 
-*↑ 同じ形状モデル(49,152 面)の**物理ベース版**の静止画(位相角 30°)。上の GIF は Lambert 拡散 + 環境光 + 台座つきのスタジオ照明でしたが、こちらはレゴリスの測光にそろえました —— 反射則は **Hapke**(単一散乱アルベド 0.42、対向効果、平均傾斜角 26°。Lambert だと縁が暗く明暗境界がなだらかになるのに対し、小惑星の実画像は縁まで明るく平坦です)、影は**太陽の視直径 0.53° でメッシュにレイを飛ばした硬い影**(半影は幾何どおり数 cm)、環境光はゼロ(宇宙に空光は無いので影の底は地形の一回反射だけ)、表面には数 m の fBm 起伏と **岩のべき則分布 N(>D) ∝ D^-3.1**(Michikami et al. 2008)で撒いた 252 個の岩(首の「海」は滑らかなまま)。すべて fullseye の op `mesh_displace_fbm → terrain_region_mask → mesh_scatter_boulders → render_regolith` の連鎖で、`examples_3d/itokawa_regolith_hero.py` が GT つきで再生成します。*この「目」をどう作ってきたかの話をします。
+*↑ 同じ形状モデルの**物理ベース版**の静止画(位相角 55°)。上の GIF は Lambert 拡散 + 環境光 + 台座つきのスタジオ照明でしたが、こちらはレゴリスの測光にそろえました —— 反射則は **Hapke**(単一散乱アルベド 0.42、対向効果、平均傾斜角 26°。Lambert だと縁が暗く明暗境界がなだらかになるのに対し、小惑星の実画像は縁まで明るく平坦です)、影は**太陽の視直径 0.53° でメッシュにレイを飛ばした硬い影**(半影は幾何どおり数 cm)、環境光はゼロ(宇宙に空光は無いので影の底は地形の一回反射だけ)。**凹凸が見えるように作り直した版**(2026-09-03): 元の 49,152 面は辺長が 2.6〜14 m と不揃いなので、まず `mesh_subdivide` で**幾何を一切変えずに**(面積・体積の相対誤差 0)辺長 1.5 m 目標の適応テッセレーション(432,550 面)にし、起伏は `mesh_displace_spectrum` で**波長ごとに帯域制限**(その場所の面サイズの 2 倍より短い波長は変位せず `bump_normals_fbm` の法線側へ回す ——粗い所に細かい起伏を刻んでも面のノイズになるだけなので)、岩は `mesh_scatter_boulders(shape='hull')` の**角ばった凸包** 2,909 個(**N(>D) ∝ D^-3.1**、Michikami et al. 2008、30〜60 % 埋没、首の「海」には撒かない)、露出は照らされた面の中央値を 0.45 に(前の版は 0.74 で飛び気味)。起伏コントラストは 0.034 → 0.081(AMICA 円盤尺度で 0.090。AMICA 実画像の 0.037 は位相角 8.8° なので厳密な比較ではありません)。すべて fullseye の op `mesh_subdivide → mesh_displace_spectrum → terrain_region_mask → mesh_scatter_boulders → render_regolith` の連鎖で、`examples_3d/itokawa_regolith_hero.py` が GT つきで再生成します。*この「目」をどう作ってきたかの話をします。
 
 ## TL;DR
 
@@ -44,7 +44,7 @@
 
 | 階層 | Status ラベル | 本記事での中身 |
 |---|---|---|
-| **実装済み・再現可能** | `Production-ready / Verified` | 2D 860 + 3D 310 の op、型契約と統一インターフェース、Studio、PyPI 配布、テスト 10345 件、HALCON 対応 981/2313 の機械集計、展示・デモの実出力 |
+| **実装済み・再現可能** | `Production-ready / Verified` | 2D 870 + 3D 344 の op、型契約と統一インターフェース、Studio、PyPI 配布、テスト 10345 件、HALCON 対応 981/2313 の機械集計、展示・デモの実出力 |
 | **実証途上** | `PoC / Research prototype` | 進化によるパイプライン設計(hold-out 評価つき・限定条件)、RAG 経由の自然言語→パイプライン生成、Physical AI 知覚スタック(シミュレーション実証。実機投入・Sim-to-Real は未着手) |
 | **将来構想** | `Roadmap / Design proposal` | ロボット向けの包括的な op 基盤、AI が約 1000 op を選んで自律実行する運用、産業検査と Physical AI の共通知覚基盤 |
 
@@ -166,7 +166,7 @@ Fullseye には前身があります。もともとは **`imgevolve`**、つま�
 ```mermaid
 flowchart TB
     subgraph L0["土台：型付き op 約1000個"]
-        OPS["型付きオペレータ・ライブラリ<br/>2D op 860種 + 3D op 310種<br/>numpy 自前実装 / 型(sort)で接続"]
+        OPS["型付きオペレータ・ライブラリ<br/>2D op 870種 + 3D op 344種<br/>numpy 自前実装 / 型(sort)で接続"]
     end
     subgraph L1["使い方は2通り"]
         APPLY["① 既知の op を適用<br/>fullseye.apply / run_pipeline"]
@@ -4047,7 +4047,7 @@ GPU 加速は「**CPU の正解と数値一致した op だけ載せる**」と�
 
 <!--
 公開メモ（本文には出しません）:
-- 数字はすべて実測（op 860・3D 310、HALCON 981/2313=42.4%、テスト 10345）。更新時は再測定してから差し替える。
+- 数字はすべて実測（op 870・3D 344、HALCON 981/2313=42.4%、テスト 10800）。更新時は再測定してから差し替える。
 - 画像は使わず Mermaid のみ（Qiita ネイティブ・SVG のパス/キャッシュ問題を回避）。図を SVG 化する場合は raw 絶対 URL + HTTP 200 + ?v=N cache-bust を必ず適用。
 - Apache-2.0・公開知識からの再実装であることを明記済み（商用製品非派生の一線）。
 - 公開の運び：限定公開で在庫に積み、Qiita の連続投稿 502 を避けて枠が空いたら出す。
