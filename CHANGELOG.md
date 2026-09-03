@@ -20,7 +20,12 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
   データ)であることを honest に記録。既知技術(ブロック適応量子化+ビットパック)の
   組合せで、新規性は「異種精度ストア上の型付き一元処理層」にある。速度化は Python
   タイルループの overhead が定数タイル近道を食っており、ベクトル化が前提(現状は
-  メモリ削減が主効果)。
+  メモリ削減が主効果)。**遅延アフィン `scale_shift(a,b)`** を追加: `値=offset+code*scale`
+  の代数から `offset'=a*offset+b, scale'=a*scale` でパックコードを一切触らず O(タイル数)
+  で `a*x+b` を返す(コードバッファは元と共有=コピーなし)。明るさ/コントラスト/正規化の
+  連鎖はメタデータ1パス+最後に1回だけ decode に畳める。遅延代数のみなら dense の `a*x+b`
+  連鎖比 ~100x、materialize 込みでも数 op 連鎖で明確に速い(実測)。`threshold` は逆に
+  dense(完全ベクトル化・帯域律速)に Python ループでは勝てない旨を docstring に honest に明記。
 - `fullseye.__version__` はパッケージメタデータ(= pyproject の version)を単一
   真実源として解決するようになった。従来はハードコードで、0.1.5 でも `"0.1.0"` を
   返していた。ソース/sdist では `api.py` 隣の `pyproject.toml`、インストール時は
