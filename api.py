@@ -1355,8 +1355,8 @@ def _pu_contract(pu, op, policy, *, in_sort=None, name=None):
         raise ValueError(
             "op %r expects a %s of float64 in [0,1] (the fullseye contract), got a "
             "PrecisionUnion of dtype %s. Convert explicitly (e.g. pu.scale_shift(1/255, 0) "
-            "for uint8) or build the union from a float array." % (op.name, op.in_sort, pu.dtype))
-    _bs.record(op.name,
+            "for uint8) or build the union from a float array." % (name, in_sort, pu.dtype))
+    _bs.record(name,
                ValueError("dtype_converted: %s; the contract is float64 in [0,1]" % how),
                op.out_sort, source="input")
     return pu.scale_shift(1.0 / s, 0.0)
