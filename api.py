@@ -106,7 +106,7 @@ from predicates import (orient2d, orient3d, incircle, insphere,  # noqa: E402,F4
 # over {0,1,2,4,8,16} bits), chosen per tile from its local entropy. Cuts memory
 # on low-entropy machine-vision data (label/region maps, smooth depth, 3-D
 # volumes) while presenting one uniform op surface (to_dense/threshold/mean/map).
-from precision_union import PrecisionUnion  # noqa: E402,F401
+from precision_union import PrecisionUnion, LAZY_OPS as _PU_LAZY  # noqa: E402,F401
 # Robust geometry queries built on the exact predicates above: point-in-polygon /
 # tetrahedron / convex-polytope (3-valued in/on/out), convexity, Delaunay validity,
 # and mesh orientation consistency — the combinatorial decisions that flip under a
