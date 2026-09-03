@@ -82,7 +82,6 @@ def test_adaptive_matches_exact_random_orient3d():
     rng = np.random.default_rng(7)
     for _ in range(3000):
         pts = [tuple(rng.random(3)) for _ in range(3)]
-        d0 = pts[0]
         t = rng.random()
         # d on the plane of pts (coplanar in reals, rounded in float) sometimes,
         # random otherwise — exercises both the filter and the exact fallback

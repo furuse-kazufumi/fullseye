@@ -97,6 +97,11 @@ from stereo import (  # noqa: E402,F401
 )
 from measure import (line_profile, distance, angle,  # noqa: E402,F401
                      fit_line, fit_circle, fit_ellipse, fit_rectangle2)
+# Exact geometric predicates (robust orientation / in-circle / in-sphere): the
+# correct SIGN even when float64 rounds a near-degenerate determinant to the wrong
+# side. Used by the convex hull; exposed for robust user-side geometry.
+from predicates import (orient2d, orient3d, incircle, insphere,  # noqa: E402,F401
+                        orient2d_exact, orient3d_exact, incircle_exact, insphere_exact)
 # 3-D metrology fits — the (depth, row, col) analogue of the 2-D fits above.
 # numpy-only (no torch), so always available; the torch-backed op registry below is guarded.
 from measure3d import (  # noqa: E402,F401
@@ -636,6 +641,8 @@ from lensimage import (  # noqa: E402,F401
 )
 
 __all__ = [
+    "orient2d", "orient3d", "incircle", "insphere",
+    "orient2d_exact", "orient3d_exact", "incircle_exact", "insphere_exact",
     "apply", "run_pipeline", "find_op", "list_ops", "op_names",
     "categories", "read_image", "write_image", "RT", "REGISTRY", "version",
     "stereo", "disparity_map", "disparity_subpixel", "lr_consistency",

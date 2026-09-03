@@ -115,6 +115,8 @@ with warnings.catch_warnings():
         event_rate_map, time_surface, warp_frame, contrast_maximization,
         video, read_frames, iter_frames, frame_pairs, write_video, probe,
         recipes, recipe, measure, line_profile, distance, angle,
+        orient2d, orient3d, incircle, insphere,
+        orient2d_exact, orient3d_exact, incircle_exact, insphere_exact,
         fit_line, fit_circle, fit_ellipse, fit_rectangle2,
         fit_line3, fit_plane3, fit_sphere3, fit_circle3,
         smallest_box3, smallest_box3_axis, fit_box3, smallest_sphere3, inner_box3,
@@ -351,6 +353,8 @@ def capabilities() -> dict:
             "device": device.capabilities()}
 
 __all__ = [
+    "orient2d", "orient3d", "incircle", "insphere",
+    "orient2d_exact", "orient3d_exact", "incircle_exact", "insphere_exact",
     "apply", "run_pipeline", "find_op", "list_ops", "op_names", "categories",
     "fallbacks", "fallback_counts", "clear_fallbacks", "FullseyeFallbackWarning",
     "strict_mode", "set_match_template", "FAILED_BACKENDS", "ambiguous_aliases", "reset_gpu", "gpu_open_ops",

@@ -9,6 +9,7 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
   真実源として解決するようになった。従来はハードコードで、0.1.5 でも `"0.1.0"` を
   返していた。ソース/sdist では `api.py` 隣の `pyproject.toml`、インストール時は
   `importlib.metadata` から引く。
+- **exact geometric predicates(`predicates.py`、公開: `fullseye.orient2d/orient3d/incircle/insphere`)** — 向き・内接円・内接球の判定を返す。float64 の行列式は near-collinear/coplanar/cocircular で**符号を誤る**(線上補間点のスイープで naive は約 19% 誤符号)。Shewchuk 流の 2 段適応(float 高速フィルタ→`fractions.Fraction` の厳密フォールバック。float64→Fraction は lossless)で**常に正しい符号**を返す。stdlib+numpy のみ(bignum/C 拡張なし)。凸包(`_convex_hull_xy`)の turn 判定をこれに載せ替えて堅牢化。
 - `scale.scale_class` のタイル可否がカテゴリ推測から**実測**に。カテゴリだけの
   分類は 141 個の非局所 op(region の skeleton/distance/形状、gray のヒストグラム、
   edges の勾配強度/コーナー/DoG、多スケール texture、TV/拡散/変換系 smoother)を
