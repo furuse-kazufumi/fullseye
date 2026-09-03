@@ -579,3 +579,105 @@ def test_quaternion_to_rgb_bridge_fails_soft_to_an_rgbimage_not_its_input():
     r = np.asarray(op.fn(q, 0.5, 0.5))
     assert r.ndim == 3 and r.shape[2] == 3, f"rgbimage でない形 {r.shape}"
     assert not (r.shape == q.shape and np.array_equal(r, q)), "入力の素通し"
+
+
+# --- bridge outputs must be finite and deterministic -------------------------- #
+# The evolution scores tb_* outputs; a NaN/Inf poisons the holdout and a
+# nondeterministic op makes scores irreproducible. These were never enforced on
+# the bridges (conftest has no input bank for points/signal/matrix/video/qimage/…,
+# so the universal contracts in test_op_contracts skip all 139 bridge ops — they
+# "passed" by running zero times). Measure them here over the fuzzer's own
+# generators plus degenerate inputs and knob extremes.
+
+#: tb_* ops whose HONEST answer includes a non-finite value — not a bug, documented
+#: in the op. Anything not listed that returns NaN/Inf is a real defect.
+KNOWN_NONFINITE_BY_CONTRACT = {
+    "tb_mat_cond":
+        "spectral condition number s_max/s_min; an exactly singular matrix "
+        "(e.g. the all-zeros probe) has s_min=0, so inf is the correct answer "
+        "(mathops.mat_cond returns inf, does not raise — 'how conditioned is it?' "
+        "has that honest answer).",
+    "tb_geodesic_distances":
+        "shortest-path distance on a kNN graph; when the knob maps k down to ~2 "
+        "the graph disconnects and unreachable points are inf by definition "
+        "(geodesic3d docstring: 不達は inf). A finite fill would be a fabricated "
+        "distance.",
+}
+
+
+def _finite_battery(gk):
+    """Generator samples (3 seeds) + degenerate zeros/ones of the same shape."""
+    g = _gens()[gk]
+    out = []
+    for seed in (1, 7, 29):
+        try:
+            out.append(g(np.random.default_rng(seed)))
+        except Exception:                                # noqa: BLE001
+            continue
+    if out:
+        a = np.asarray(out[0])
+        if a.dtype != object:
+            out.append(np.zeros_like(a))
+            try:
+                out.append(np.ones_like(a))
+            except Exception:                            # noqa: BLE001
+                pass
+    return out
+
+
+_FINITE_KNOBS = [(0.0, 0.0), (0.5, 0.5), (1.0, 1.0), (0.15, 0.85), (0.0, 1.0), (1.0, 0.0)]
+
+
+def _bridge_nonfinite_report():
+    """tb_* ops that return a NaN/Inf anywhere in the battery."""
+    bad = set()
+    for op in _bridge_ops():
+        gk = _SORT_TO_GEN[op.in_sort]
+        for v in _finite_battery(gk):
+            for a, b in _FINITE_KNOBS:
+                try:
+                    r = np.asarray(op.fn(np.array(v, copy=True), a, b))
+                except Exception:                        # noqa: BLE001 - fail-soft path, covered elsewhere
+                    continue
+                if r.dtype != object and np.issubdtype(r.dtype, np.number) \
+                        and r.size and not np.all(np.isfinite(r)):
+                    bad.add(op.name)
+    return bad
+
+
+def test_no_bridge_op_returns_nonfinite_except_by_contract():
+    """A bridge op that returns NaN/Inf on any battery input is a defect, unless its
+    honest answer is non-finite (then list it in KNOWN_NONFINITE_BY_CONTRACT with the
+    reason). Also fails if a listed op has stopped producing non-finite (stale).
+    """
+    bad = _bridge_nonfinite_report()
+    known = set(KNOWN_NONFINITE_BY_CONTRACT)
+    new = sorted(bad - known)
+    stale = sorted(known - bad)
+    assert not new, ("bridge ops returning NaN/Inf (fix, or document in "
+                     "KNOWN_NONFINITE_BY_CONTRACT): %s" % new)
+    assert not stale, ("KNOWN_NONFINITE_BY_CONTRACT entries that are now finite "
+                       "(remove them): %s" % stale)
+
+
+def test_bridge_ops_are_deterministic():
+    """Same input + knobs twice -> identical output (the evolution's scoring is
+    reproducible only if every op is)."""
+    nondet = []
+    for op in _bridge_ops():
+        gk = _SORT_TO_GEN[op.in_sort]
+        batt = _finite_battery(gk)[:2]                   # first gen sample + zeros is enough
+        for v in batt:
+            for a, b in ((0.5, 0.5), (0.15, 0.85)):
+                try:
+                    r1 = np.asarray(op.fn(np.array(v, copy=True), a, b))
+                    r2 = np.asarray(op.fn(np.array(v, copy=True), a, b))
+                except Exception:                        # noqa: BLE001
+                    continue
+                if r1.shape != r2.shape or not np.array_equal(r1, r2, equal_nan=True):
+                    nondet.append(op.name)
+                    break
+            else:
+                continue
+            break
+    assert not nondet, "nondeterministic bridge ops: %s" % sorted(set(nondet))
