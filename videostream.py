@@ -56,10 +56,15 @@ __all__ = [
     "FrameRing", "StatefulOp",
     "TemporalMedianWindow", "MovingAverageWindow", "BackgroundSubtractionWindow",
     "FrameDifference", "ExponentialBackground", "RunningStats", "OpticalFlowStream",
+    "MotionHistoryImage", "ThreeFrameDifference", "RunningGaussianForeground",
+    "TemporalBilateral", "Deflicker", "SceneCutDetection",
     "VideoPipeline",
     "temporal_median_window", "moving_average_window", "background_subtraction_window",
     "frame_difference_causal", "exponential_background", "exponential_foreground",
     "running_mean_std", "optical_flow_magnitude_stream", "stream_replay",
+    "motion_history_image", "motion_energy_image", "three_frame_difference",
+    "running_gaussian_foreground", "running_gaussian_background",
+    "temporal_bilateral", "deflicker", "scene_cut_detection",
 ]
 
 MAX_WINDOW = 4096
