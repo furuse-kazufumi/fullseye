@@ -615,6 +615,34 @@ def measure_op(name: str, x: np.ndarray, *, warm: int = 1, repeat: int = 3,
     }
 
 
+def bench_video_row(name: str, size: tuple[int, int, str], dtype: str, image: str, *,
+                    warm: int, repeat: int, rss_read) -> dict[str, Any]:
+    """Per-frame streaming row for a video op (``--set video``). Same row shape as
+    :func:`bench_row` but with ``ms_frame`` / ``fps`` / ``frames`` and ``streaming``."""
+    h, w, size_label = size
+    row: dict[str, Any] = {
+        "key": row_key(name, size_label, dtype, image),
+        "name": name, "size": size_label, "shape": [h, w], "dtype": dtype, "image": image,
+        "kind": "video", "category": "video_streaming", "module": "videostream",
+    }
+    if name not in VIDEO_STREAM_FACTORY:
+        row["error"] = "no streaming factory for %r" % name
+        return row
+    # the batch-heavy ops are already cheap per frame; still cap huge clips by area
+    if h * w * VIDEO_FRAMES > 8 * HEAVY_MAX_PX * VIDEO_FRAMES and name == "temporal_median_window" and h * w > HEAVY_MAX_PX:
+        pass                                            # median is content-dependent but fine per frame; keep
+    try:
+        clip = video_clip(h, w, image if image in ("noisy", "quantised", "constant") else "noisy", dtype)
+    except Exception as e:                              # noqa: BLE001
+        row["error"] = "%s: %s" % (type(e).__name__, str(e)[:200])
+        return row
+    try:
+        row.update(measure_video_stream(name, clip, warm=warm, repeat=repeat, rss_read=rss_read))
+    except Exception as e:                              # noqa: BLE001
+        row["error"] = "%s: %s" % (type(e).__name__, str(e)[:200])
+    return row
+
+
 def bench_row(name: str, size: tuple[int, int, str], dtype: str, image: str, *,
               warm: int, repeat: int, device: str, rss_read, accel_map: dict[str, str],
               template_cache: dict) -> dict[str, Any]:
