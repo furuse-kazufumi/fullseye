@@ -40,6 +40,9 @@
 - **ゴール「勝ち筋に沿って op を増やす」= 閉包性で拡充(完了)**: n-ary `union2/intersection/difference/symm_difference`(定数タイル代数、コード共有)+ `max_image/min_image`(片側 clip)、feature `area_frac/min_max_gray/intensity`(ヘッダ厳密)。実測: 集合演算 ~12x・結果 400–1300x、max_image 47x、min_max_gray 82x、area_frac 34x。設計則: **閉じる=ヘッダ(定数/値域)で決まる部分が大半で、decode は跨ぎ/両非定数だけ**。
 - **次の候補(未着手)**: 残る閉じる候補は `abs_diff_image`/`add_image`/`sub_image`(片方定数→scale_shift+clip、両非定数は decode — 勝ちは集合演算より薄い)、`reduce_domain`(image×region: region 定数 0 タイル→定数化)、region の `select_shape`/CC 系は**閉じない**(materialize が正しい)。Studio/CLI `.npz` I/O は製品面の露出として別枠。(`gamma` は定数タイル O(1)・非定数は decode+再量子化=勝ちが薄い)。他: Studio/CLI の `.npz` ユニオン I/O(勝ちを製品面に出す)/unpack カーネル自体の高速化(optional numba)。 = `gamma` は非アフィンだが**定数タイルは O(1)**(map_pointwise の fast path 経由)、threshold 系 op は `threshold()` で bool 出力(c) `threshold`/`mean` のタイル群ベクトル化(同ビット幅タイルを SoA で一括)で Python ループ税を外す(d) Studio/CLI からの `.npz` ユニオン読み書き。
 
+## 2026-09-04 追加: Qiita hero 画像の品質修正(ユーザー指摘)
+- 原因 = 640px・res48・フラット法線。`smooth_normals` だけでは格子由来のバンディングが残る → **SDF 勾配法線**(`sdf_vertex_normals`)+ `render_beauty(vertex_normals=)` 注入口。1280px で再生成、`?v=2` でキャッシュバスト、`tools/qiita_patch_overview.py --lang ja --lang en` で PATCH。教訓: **marching cubes メッシュの法線は場から取る**(面法線の平均は格子を引き継ぐ)。他の SDF 由来 hero(itokawa は実測メッシュなので対象外)にも同じ手が効く。
+
 ## 次にやること(優先順)
 1. ~~v0.1.5 タグ(PyPI 公開)~~ **完了(2026-09-03)**: PyPI に 0.1.5 公開済(wheel+sdist、latest=0.1.5)。公開前に liveness テスト 1 件(tb_running_gaussian_foreground が video 生成器で定数)を修正 = bridge に per-op tunable override を足し (k, var_init) を振る(公開 op 既定は不変)。※v0.1.4 は 3 日前に PyPI 400 で失敗しており PyPI 上は 0.1.3→0.1.5(同 license 形式で今回は成功 = 一過性)。
 2. ~~`FULLSEYE_FAST` 既定 ON の判断~~ **完了: OFF 維持**(上記)。
