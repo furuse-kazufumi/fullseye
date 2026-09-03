@@ -359,6 +359,9 @@ def capabilities() -> dict:
 __all__ = [
     "orient2d", "orient3d", "incircle", "insphere",
     "orient2d_exact", "orient3d_exact", "incircle_exact", "insphere_exact",
+    "point_in_polygon", "point_in_convex_polygon", "is_convex_polygon",
+    "point_in_tetrahedron", "point_in_convex_polytope",
+    "is_delaunay_2d", "mesh_orientation_consistent",
     "PrecisionUnion",
     "apply", "run_pipeline", "find_op", "list_ops", "op_names", "categories",
     "fallbacks", "fallback_counts", "clear_fallbacks", "FullseyeFallbackWarning",
