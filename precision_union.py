@@ -130,6 +130,19 @@ def _plan_tile(vals: np.ndarray, atol: float) -> _Tile:
 
     is_int = np.issubdtype(vals.dtype, np.integer)
     span = vmax - vmin
+
+    # Integer data with a lossless request: use UNIT-scale integer codes
+    # (offset=min, scale=1, code = value - min). Affine-over-span would give a
+    # non-integer scale whose rounding is not exact, forcing every busy tile up
+    # to 16 bits even when 8 would round-trip perfectly. The bit-width is just
+    # what it takes to count to `span`.
+    if is_int and atol == 0.0 and span <= 65535:
+        ispan = int(round(span))
+        for bits in (1, 2, 4, 8, 16):
+            if ((1 << bits) - 1) >= ispan:
+                codes = (vals.astype(np.int64) - int(round(vmin))).astype(np.uint16)
+                return _Tile(bits, float(round(vmin)), 1.0, _pack_codes(codes, bits), n)
+
     for bits in (1, 2, 4, 8, 16):
         levels = (1 << bits) - 1
         scale = span / levels
