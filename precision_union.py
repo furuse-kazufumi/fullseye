@@ -335,7 +335,7 @@ class PrecisionUnion:
         e = t.offset + t.scale * ((1 << t.bits) - 1)
         return (t.offset, e) if e >= t.offset else (e, t.offset)
 
-    def clip(self, lo: float, hi: float) -> "PrecisionUnion":
+    def clip(self, lo: float, hi: float, atol: float | None = None) -> "PrecisionUnion":
         """``np.clip(value, lo, hi)`` with per-tile deferral — the union's answer to
         a non-affine op.
 
@@ -345,10 +345,18 @@ class PrecisionUnion:
           * range entirely below ``lo`` / above ``hi`` -> the tile becomes a
             CONSTANT (0-bit) tile — cheaper than before;
           * range straddling a bound -> only THIS tile is decoded, clipped and
-            re-encoded (lossless: clipping an already-quantised tile creates no new
-            levels, so ``atol=0`` re-planning is exact).
-        Exact w.r.t. the dense ``np.clip`` — verified by parity tests against
-        :func:`fullseye.apply` on the real ops.
+            re-quantised.
+
+        Honest precision contract for the straddling case: ``lo``/``hi`` are new
+        values that do not lie on the tile's affine code grid, so the clipped tile
+        cannot be bit-exact at its old bit-depth (with ``atol=0`` it would drop to
+        the 16-bit fallback — ~1e-5 error and 16 bits/element, the worst of both).
+        Instead it is re-quantised at ``atol`` = **its own quantisation step / 2**
+        (``atol=None``), i.e. no worse than the precision the tile already had, and
+        at no more bits than it already used. So a lazy op never adds error beyond
+        the union's own tolerance — the parity tests against :func:`fullseye.apply`
+        bound the difference by the encoding ``atol``, not by machine epsilon.
+        Pass an explicit ``atol`` to override.
         """
         lo, hi = float(lo), float(hi)
         new_tiles = []
@@ -363,7 +371,8 @@ class PrecisionUnion:
                 new_tiles.append(_Tile(0, hi, 0.0, b"", t.n))   # all clipped to hi
             else:                                            # straddles: pay for this one
                 dense = np.clip(self._tile_dense(t, bshape), lo, hi)
-                new_tiles.append(_plan_tile(dense.ravel(), atol=0.0))
+                step_tol = abs(t.scale) * 0.5 if atol is None else float(atol)
+                new_tiles.append(_plan_tile(dense.ravel(), atol=step_tol))
         return PrecisionUnion(self.shape, np.float64, self.tile, new_tiles, self._grid)
 
     def threshold(self, thr) -> np.ndarray:
