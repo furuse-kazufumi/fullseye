@@ -180,7 +180,7 @@ def test_unknown_set_raises():
 def test_a_set_degrades_over_absent_optional_backends():
     """セットは任意バックエンド(cv_/sk_/xkor_)を含む。無いものは **打ち間違いではない** ので
     落とさず、代わりに「測らなかった名前」を返す(黙って縮めない)。"""
-    known = set(B.registry_names())
+    known = set(B.registry_names()) | B.VIDEO_OP_SET      # video ops live in videostream, not the api registry
     for name in B.SETS:
         present, absent = B.resolve_set(name)
         assert present, name
