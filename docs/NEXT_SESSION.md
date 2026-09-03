@@ -19,7 +19,7 @@
 5. `CHANGELOG.md` 0.1.5 に「2026-09-03 追加」節、README/CHANGELOG の op 数を 870 / 344 / 409 に更新、docs/OP_CATALOG/Studio help 再生成。
 
 ## 次にやること(優先順)
-1. **フルスイートの結果確認 → commit → push**(この回の最後に走らせた `out/full_suite_2026_09_03b.log`)。push 後に `py -3.11 tools/qiita_patch_overview.py --check` → PATCH(イトカワ新静止画の raw URL が 200 になってから)。
+1. ~~フルスイート → commit → push → Qiita PATCH~~ **完了(2026-09-03 09:37)**: 10,800 passed / 163 skipped / 3 xfailed / 0 failed(17.5 分、`out/full_suite_2026_09_03c.log`)、push `e6d1ce02f..bb89e5e9a`、ja/en PATCH 200(イトカワ新静止画の説明を差し替え・`?v=2` でキャッシュ回避、op 数 870/344、テスト 10800)。
 2. **v0.1.5 タグ**(= PyPI 公開)は **ユーザー判断待ち**。CHANGELOG は書けている。
 3. `FULLSEYE_FAST` 既定 ON の判断: `tools/bench_ops.py --set core --sizes 2048,1080p --baseline bench/bench_ops_baseline.json` を FAST=0/1 で取り、退行ゼロなら既定 ON。
 4. 高速化の次の梃子: `ops._norm` の一元化 + `Op.global_reduction` フラグ(sobel_mag/canny の残り 2〜3×、`scale.scale_class` の誤分類修正 → タイル配線 (c))、GPU 常駐リング(accel `Resident`)を `VideoPipeline(device="cuda")` に (g)、フレーム並列 executor (f)、bench に `--set vol` / `--set video`。
