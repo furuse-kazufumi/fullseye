@@ -134,10 +134,13 @@ def threshold_speed(reps=50):
 
     tu = timeit(lambda: pu.threshold(t))
     td = timeit(lambda: dense > t)
-    print(f"union threshold (flat tiles O(1))          : {tu*1e3:7.3f} ms")
-    print(f"dense  (arr > t over all px)               : {td*1e3:7.3f} ms")
-    print(f"ratio: {tu/td:5.2f}x  (union wins only when many tiles are one-sided;")
-    print(f"       on high-entropy data every tile straddles and it LOSES — honest)")
+    print(f"union threshold (flat tiles O(1), py loop) : {tu*1e3:7.3f} ms")
+    print(f"dense  (arr > t, one vectorised numpy op)  : {td*1e3:7.3f} ms")
+    print(f"ratio: {tu/td:5.2f}x  -> union LOSES here. HONEST FINDING: dense threshold")
+    print(f"       is already a single fully-vectorised pass (~memory-bandwidth bound);")
+    print(f"       the code-space 'skip one-sided tiles' shortcut cannot beat it from a")
+    print(f"       PYTHON per-tile loop. It would only pay off in a vectorised/compiled")
+    print(f"       kernel, or when the input never materialises to a dense array at all.")
     print("=" * 92)
 
 
