@@ -18,7 +18,13 @@
    ``background_subtraction_window`` / ``frame_difference_causal`` /
    ``exponential_background`` / ``exponential_foreground`` /
    ``running_mean_std`` / ``optical_flow_magnitude_stream``)。
-4. ``stats()`` で 1 フレームあたりの時間とリングのバイト数を印字。
+4. 第 2 波 op を既知の真値で確認: ``motion_history_image``(値 1 の前線が円盤上、
+   後ろに減衰する軌跡)/ ``motion_energy_image``(= MHI>0)/
+   ``three_frame_difference``(二連続差分の AND = 二フレーム差分の部分集合 =
+   ゴースト除去)/ ``running_gaussian_foreground``(画素ごとの k-σ で円盤を切り出し、
+   静止背景は静か)/ ``temporal_bilateral``(静止シーンをノイズ除去、動きは残す)/
+   ``deflicker``(輝度脈動を打ち消す)/ ``scene_cut_detection``(ヒストグラム距離で
+   ハードカットを検出)。
 
 EXTEND: ``fs.iter_frames("clip.mp4", dtype="uint8")`` を frames に差し替えれば
 実動画で同じパイプラインが動く。段は文字列(台帳 op)/状態つき op/任意の callable
