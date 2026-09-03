@@ -459,6 +459,13 @@ class PrecisionUnion:
                 new_tiles.append(_Tile(0, 1.0, 0.0, b"", t.n))
             elif thi <= thr:                                 # whole tile at/below
                 new_tiles.append(_Tile(0, 0.0, 0.0, b"", t.n))
+            elif t.bits == 1:
+                # a 1-bit tile has exactly two levels; thr falls between them (the
+                # one-sided cases are handled above), so the answer is the SAME codes
+                # with a 0/1 header: offset'=(level0 > thr), scale'=(level1 > thr)-offset'
+                r0 = float(t.offset > thr)
+                r1 = float(t.offset + t.scale > thr)
+                new_tiles.append(_Tile(1, r0, r1 - r0, t.buf, t.n, cmax=t.cmax))
             else:                                            # straddles: decode this one
                 m = (self._tile_values(t) > thr).astype(np.float64)
                 new_tiles.append(_plan_tile(m, atol=0.0))    # 0/1 -> 1-bit (or constant)
