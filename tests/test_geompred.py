@@ -58,30 +58,38 @@ def _naive_pip(pt, poly):
     return 1 if wn != 0 else -1
 
 
-def test_point_in_polygon_boundary_robustness_vs_naive():
-    """Points placed exactly on polygon edges (collinear in the reals, rounded in
-    float): geompred reports boundary (0); a naive float winding is forced to pick
-    a side and disagrees with the robust in/out truth on a real fraction of them."""
+def test_point_in_polygon_detects_exact_boundary():
+    """Points that are EXACTLY on an edge in float (integer/exactly-representable
+    coordinates) are reported as boundary (0), not pushed in or out."""
+    poly = [(0, 0), (6, 0), (6, 6), (0, 6)]                  # integer square
+    for x in range(7):
+        assert G.point_in_polygon((x, 0), poly) == 0         # bottom edge
+        assert G.point_in_polygon((x, 6), poly) == 0         # top edge
+    for y in range(7):
+        assert G.point_in_polygon((0, y), poly) == 0 == G.point_in_polygon((6, y), poly)
+    # exactly-representable interior midpoints of a diagonal edge
+    tri = [(0, 0), (8, 8), (8, 0)]
+    for k in range(1, 8):
+        assert G.point_in_polygon((k, k), tri) == 0          # on the (0,0)-(8,8) edge
+
+
+def test_point_in_polygon_robust_where_naive_flips():
+    """Points interpolated onto an edge are rounded to ~1e-16 off it — inside the
+    float determinant's error band. The exact-predicate winding still returns the
+    true in/out; a naive float winding disagrees on a real fraction of them."""
     rng = np.random.default_rng(0)
-    # a random convex polygon (angular order) with float coordinates
     ang = np.sort(rng.uniform(0, 2 * np.pi, 7))
     poly = np.c_[3 + 2 * np.cos(ang), 3 + 2 * np.sin(ang)]
-    on_edge_detected = 0
-    naive_disagree = 0
-    N = 4000
+    disagree = 0
+    N = 5000
     for _ in range(N):
         i = rng.integers(0, len(poly))
         a, b = poly[i], poly[(i + 1) % len(poly)]
-        f = rng.random()
-        p = a + f * (b - a)                                  # exactly on edge i
-        if G.point_in_polygon(p, poly) == 0:
-            on_edge_detected += 1
-        # a robust truth for "not strictly outside" is boundary-or-inside; the naive
-        # float call, forced to +1/-1, disagrees with that truth sometimes.
-        if _naive_pip(p, poly) == -1:
-            naive_disagree += 1
-    assert on_edge_detected > 0.9 * N, on_edge_detected      # robust: almost all caught
-    assert naive_disagree > 0, naive_disagree                # naive misses some as "outside"
+        p = a + rng.random() * (b - a)                       # near-edge (float-rounded)
+        robust = G.point_in_polygon(p, poly)
+        if robust != 0 and _naive_pip(p, poly) != robust:
+            disagree += 1
+    assert disagree > 0, "naive float winding never disagreed — sweep not degenerate enough"
 
 
 # --------------------------------------------------------------------------- #
