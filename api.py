@@ -1622,10 +1622,13 @@ def _apply_impl(image, name, a, b, coerce, device, policy, fast=None):
         # ledger record / refusal as _contract_dtype; a dtype that needs the data to
         # pick its scale, or an op not in the table, materialises once instead.
         lazy = _PU_LAZY.get(name)
-        if lazy is not None:
+        feat = _PU_LAZY_FEAT.get(name)
+        if lazy is not None or feat is not None:
             pu = _pu_contract(image, _resolve(name), policy)
             if pu is not None:
-                return lazy(pu, a, b)
+                # a feature (union -> scalar) is computed from the headers where the
+                # op allows it and returns the same python float as the dense path
+                return lazy(pu, a, b) if lazy is not None else float(feat(pu, a, b))
         image = image.to_dense()
 
     op = _resolve(name)
