@@ -359,3 +359,56 @@ class PrecisionUnion:
         """Max |reconstruction - original|; 0 for lossless integer round-trips."""
         a = np.asarray(original, dtype=np.float64)
         return float(np.abs(self.to_dense().astype(np.float64) - a).max())
+
+    # -- serialization: the memory win becomes a file-size win --------------- #
+    def to_state(self) -> dict:
+        """Flatten to a dict of numpy arrays (no python objects) — the persistent
+        form. Per-tile headers become parallel arrays and every tile's packed bytes
+        are concatenated into one buffer with an offsets array."""
+        buflens = np.array([len(t.buf) for t in self._tiles], dtype=np.int64)
+        body = b"".join(t.buf for t in self._tiles)
+        return {
+            "shape": np.asarray(self.shape, dtype=np.int64),
+            "tsz": np.asarray(self._tsz, dtype=np.int64),
+            "grid": np.asarray(self._grid, dtype=np.int64),
+            "dtype": np.asarray(self.dtype.str),          # e.g. '<f8' (0-d '<U..')
+            "bits": np.asarray([t.bits for t in self._tiles], dtype=np.uint8),
+            "offset": np.asarray([t.offset for t in self._tiles], dtype=np.float64),
+            "scale": np.asarray([t.scale for t in self._tiles], dtype=np.float64),
+            "n": np.asarray([t.n for t in self._tiles], dtype=np.int64),
+            "buflens": buflens,
+            "body": (np.frombuffer(body, dtype=np.uint8) if body
+                     else np.zeros(0, dtype=np.uint8)),
+        }
+
+    @classmethod
+    def from_state(cls, d) -> "PrecisionUnion":
+        """Inverse of :meth:`to_state`."""
+        shape = tuple(int(x) for x in np.asarray(d["shape"]))
+        tsz = tuple(int(x) for x in np.asarray(d["tsz"]))
+        grid = tuple(int(x) for x in np.asarray(d["grid"]))
+        dtype = np.dtype(str(np.asarray(d["dtype"])))
+        bits, offset = np.asarray(d["bits"]), np.asarray(d["offset"])
+        scale, ncnt = np.asarray(d["scale"]), np.asarray(d["n"])
+        buflens = np.asarray(d["buflens"])
+        body = np.asarray(d["body"]).tobytes()
+        tiles, pos = [], 0
+        for i in range(len(bits)):
+            L = int(buflens[i])
+            tiles.append(_Tile(int(bits[i]), float(offset[i]), float(scale[i]),
+                               body[pos:pos + L], int(ncnt[i])))
+            pos += L
+        return cls(shape, dtype, tsz, tiles, grid)
+
+    def save(self, path) -> None:
+        """Write the compressed store to ``path`` (a ``.npz``). File size tracks
+        :attr:`nbytes`, so the memory win persists to disk."""
+        np.savez_compressed(path, **self.to_state())
+
+    @classmethod
+    def load(cls, path) -> "PrecisionUnion":
+        """Read a store written by :meth:`save`. ``allow_pickle=False`` — the store
+        is pure numeric arrays, never pickled objects."""
+        with np.load(path, allow_pickle=False) as z:
+            state = {k: z[k] for k in z.files}
+        return cls.from_state(state)
