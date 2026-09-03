@@ -354,15 +354,16 @@ class PrecisionUnion:
             re-quantised.
 
         Honest precision contract for the straddling case: ``lo``/``hi`` are new
-        values that do not lie on the tile's affine code grid, so the clipped tile
-        cannot be bit-exact at its old bit-depth (with ``atol=0`` it would drop to
-        the 16-bit fallback — ~1e-5 error and 16 bits/element, the worst of both).
-        Instead it is re-quantised at ``atol`` = **its own quantisation step / 2**
-        (``atol=None``), i.e. no worse than the precision the tile already had, and
-        at no more bits than it already used. So a lazy op never adds error beyond
-        the union's own tolerance — the parity tests against :func:`fullseye.apply`
-        bound the difference by the encoding ``atol``, not by machine epsilon.
-        Pass an explicit ``atol`` to override.
+        values that generally do not lie on the tile's affine code grid, so the
+        clipped tile must be re-quantised. It is re-quantised at the union's own
+        ``atol`` — the tolerance the caller accepted at :meth:`from_array`, scaled
+        by any gain applied since (:meth:`scale_shift`) — never at the tile's
+        (possibly much coarser) grid step. So a lazy op never adds error beyond the
+        precision the caller already agreed to, and a lossless union (``atol=0``,
+        e.g. an integer label map clipped to integer bounds) clips losslessly. This
+        may cost the straddling tile more bits than it had (precision is kept,
+        memory is what gives). Parity tests against :func:`fullseye.apply` bound
+        the difference by ``atol``. Pass an explicit ``atol`` to override.
         """
         lo, hi = float(lo), float(hi)
         new_tiles = []
