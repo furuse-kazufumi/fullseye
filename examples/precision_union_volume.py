@@ -16,7 +16,7 @@ and the two things that make it a *feature*, not just a compressor:
   * ``scale_shift`` — a chain of affine ops (offset/gain/normalise) is deferred to
     per-tile header algebra (codes untouched) and materialised once.
 
-Honest boundary (printed): on a high-entropy natural photo the union does NOT win —
+Honest limit (printed): on a high-entropy natural photo the union does NOT win —
 every tile needs its 8 bits and the per-tile metadata is overhead. The demo reports
 that ratio too, so the win is never overstated.
 
@@ -88,7 +88,7 @@ def run() -> dict:
     out["affine_shares_code_buffers"] = all(
         t2.buf is t1.buf for t1, t2 in zip(pd._tiles, chained._tiles))
 
-    # --- honest boundary: a busy natural-ish photo does NOT win -------------- #
+    # --- honest limit: a busy natural-ish photo does NOT win -------------- #
     rng = np.random.default_rng(1)
     photo = rng.integers(0, 256, (256, 256), dtype=np.uint8)
     out["photo_ratio_vs_u8"] = PrecisionUnion.from_array(photo, tile=32).ratio  # ~<=1
@@ -109,6 +109,6 @@ if __name__ == "__main__":
     print(f"  max abs error   : {r['depth_max_error']:.4f}  (<= atol: {r['depth_within_atol']})")
     print(f"deferred affine chain == dense : {r['affine_chain_matches_dense']} "
           f"(codes shared: {r['affine_shares_code_buffers']})")
-    print(f"HONEST boundary — busy photo   : {r['photo_ratio_vs_u8']:.2f}x "
+    print(f"HONEST limit — busy photo   : {r['photo_ratio_vs_u8']:.2f}x "
           f"(<= ~1: no win on high-entropy data)")
     print("PASS")

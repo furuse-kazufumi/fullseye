@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(64 例)
+### 2-D 画像/信号/幾何(65 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -50,6 +50,10 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **色・芸術・拡張(sim2real)op 族を総なめ** — 色空間変換/芸術効果/augmentation など色・拡張族の全 op を GT 検証。 `py -3.11 examples/gallery2d_color_artistic.py`
 - **HALCON 拡充 tier(hx_ 一族)を総なめ** — HALCON 互換の拡充 op(``hx_`` prefix, category=halcon_ext)の全 op を GT 検証。 `py -3.11 examples/gallery2d_halcon_ext.py`
 - **物理PDE・人工生命・トモグラフィ・3Dボリューム op 族を総なめ** — 拡散/反応拡散/CA/tomography/volume など物理・人工生命・3D 族の全 op を GT 検証。 `py -3.11 examples/gallery2d_physics_alife_3d.py`
+
+**workflow**
+- **精度ユニオン型ストレージ(PrecisionUnion)を N-D の実データ様式で使う** — ラベルボリューム(無損失)と深度ボリューム(atol 量子化)をタイル別最小ビット深さで保持し、メモリ比・save/load のファイル比・遅延アフィン連鎖の一致を数値で確かめる。高エントロピー画像では勝たないことも同じ場で示す(honest な境界)。 `py -3.11 examples/precision_union_volume.py`
+- **imgevolve quickstart — 全ワークフローを 1 ファイルで** — レジストリ→型付き手組みパイプライン→ゲノム復号→タスク採点→進化ドライバ→codegen + 差分テスト(約 1.5 分、repo root から実行)。 `py -3.11 examples/quickstart.py`
 
 **math**
 - **視覚計測を支える数学 op(mathops)を計測ワークフローで一巡** — 平面フィット→残差統計→共分散楕円の主軸化→較正曲線の多項式フィット(条件数監視)→補間で逆引き。mathops 16 op を実データ風に通し閉形式 GT と照合。 `py -3.11 examples/math_metrology.py`
@@ -101,9 +105,6 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **consumer**
 - **hillco / evis(筋骨格ヒューマノイド歩行)が fullseye を使う 3 つの検査** — 物理シムが真値を持つ前提で、fullseye は独立な知覚側の二重チェックのみ: 歩行安定性(支持多角形/COM 余裕)、レンダ動画の運動検証、姿勢の骨格化。制御は駆動しない。 `py -3.11 examples/consumer_hillco.py`
 - **onocollo(CPU 世界モデル/gaitlab)が fullseye を使う 2 つの検査** — MuJoCo 風状態からの静的安定性チェック(support_polygon/com_support_margin)と、物理レンダ動画 2 フレームからの運動検証。 `py -3.11 examples/consumer_onocollo.py`
-
-**workflow**
-- **imgevolve quickstart — 全ワークフローを 1 ファイルで** — レジストリ→型付き手組みパイプライン→ゲノム復号→タスク採点→進化ドライバ→codegen + 差分テスト(約 1.5 分、repo root から実行)。 `py -3.11 examples/quickstart.py`
 
 ### 3-D 点群/体積/曲面(115 例)
 
