@@ -452,6 +452,240 @@ class OpticalFlowStream(StatefulOp):
         return out
 
 
+class MotionHistoryImage(StatefulOp):
+    """Motion History Image (Bobick & Davis 2001) → ``(H, W)`` float64 in ``[0, 1]``.
+
+    Where motion happens now the image is set to 1; elsewhere it decays linearly
+    by ``1/tau`` per frame, so a bright-to-dark gradient records *where* motion
+    was and *how recently* — a compact temporal signature of a gesture. Motion is
+    ``|frame − previous| > threshold``. ``energy()`` gives the Motion Energy Image
+    (the binary union ``MHI > 0``, i.e. *where* motion happened at all).
+    """
+    name = "motion_history_image"
+
+    def __init__(self, tau: int = 15, threshold: float = 0.1):
+        super().__init__()
+        self.tau = _int(tau, "tau", 1, MAX_WINDOW)
+        self.threshold = _float(threshold, "threshold", 0.0, 1.0)
+        self.hist = None
+        self.prev = None
+
+    def _reset(self):
+        self.hist = None
+        self.prev = None
+
+    def _update(self, raw):
+        f = _to01(raw)
+        if self.hist is None:
+            self.hist = np.zeros(f.shape, np.float64)
+        if self.prev is not None:
+            motion = np.abs(f - self.prev) > self.threshold
+            decayed = np.maximum(0.0, self.hist - 1.0 / self.tau)
+            self.hist = np.where(motion, 1.0, decayed)
+        self.prev = f
+        return self.hist.copy()
+
+    def energy(self) -> np.ndarray:
+        if self.hist is None:
+            raise ValueError("no frame pushed yet")
+        return (self.hist > 0.0).astype(np.float64)
+
+
+class ThreeFrameDifference(StatefulOp):
+    """Three-frame difference motion mask (Collins et al., VSAM 2000) → 0/1 float64 ``(H, W)``.
+
+    ``(|f_t − f_{t−1}| > threshold) AND (|f_{t−1} − f_{t−2}| > threshold)``. The
+    logical AND of two consecutive frame differences removes the *ghost* (the
+    trailing region a plain two-frame difference marks behind a moving object)
+    and fills the object's interior better than one difference alone. Zeros for
+    the first two frames (two differences are not available yet).
+    """
+    name = "three_frame_difference"
+
+    def __init__(self, threshold: float = 0.1):
+        super().__init__()
+        self.threshold = _float(threshold, "threshold", 0.0, 1.0)
+        self.prev1 = None
+        self.prev2 = None
+
+    def _reset(self):
+        self.prev1 = None
+        self.prev2 = None
+
+    def _update(self, raw):
+        f = _to01(raw)
+        if self.prev1 is None:
+            out = np.zeros(f.shape, np.float64)
+        elif self.prev2 is None:
+            out = np.zeros(f.shape, np.float64)
+        else:
+            d_now = np.abs(f - self.prev1) > self.threshold
+            d_prev = np.abs(self.prev1 - self.prev2) > self.threshold
+            out = (d_now & d_prev).astype(np.float64)
+        self.prev2 = self.prev1
+        self.prev1 = f
+        return out
+
+
+class RunningGaussianForeground(StatefulOp):
+    """Adaptive single-Gaussian background (Wren *Pfinder* 1997) → 0/1 foreground ``(H, W)``.
+
+    Each pixel keeps a running mean and variance. A pixel is foreground when it
+    is more than ``k`` standard deviations from its mean
+    (``(frame − mean)² > k²·var``). Unlike :class:`ExponentialBackground` (a fixed
+    absolute threshold on a mean-only model), the threshold is *per pixel* and
+    scales with how noisy that pixel is, so a busy texture and a flat wall get
+    different sensitivities. With ``selective=True`` (the default) the background
+    is updated only where the pixel is *not* foreground, so a slow-moving object
+    is not absorbed into the background. ``background()`` returns the mean image.
+    """
+    name = "running_gaussian_foreground"
+
+    def __init__(self, alpha: float = 0.02, k: float = 2.5,
+                 var_init: float = 0.01, var_floor: float = 1e-4, selective: bool = True):
+        super().__init__()
+        self.alpha = _float(alpha, "alpha", 0.0, 1.0)
+        self.k = _float(k, "k", 0.0, 100.0)
+        self.var_init = _float(var_init, "var_init", 1e-9, 1.0)
+        self.var_floor = _float(var_floor, "var_floor", 1e-12, 1.0)
+        self.selective = bool(selective)
+        self.mean = None
+        self.var = None
+
+    def _reset(self):
+        self.mean = None
+        self.var = None
+
+    def _update(self, raw):
+        f = _to01(raw)
+        if self.mean is None:
+            self.mean = f.copy()
+            self.var = np.full(f.shape, self.var_init, np.float64)
+            return np.zeros(f.shape, np.float64)
+        diff = f - self.mean
+        dist2 = diff * diff
+        fg = dist2 > (self.k * self.k) * self.var
+        upd = ~fg if self.selective else np.ones(f.shape, bool)
+        self.mean = np.where(upd, self.mean + self.alpha * diff, self.mean)
+        self.var = np.where(upd, self.var + self.alpha * (dist2 - self.var), self.var)
+        np.maximum(self.var, self.var_floor, out=self.var)
+        return fg.astype(np.float64)
+
+    def background(self) -> np.ndarray:
+        if self.mean is None:
+            raise ValueError("no frame pushed yet")
+        return self.mean.copy()
+
+
+class TemporalBilateral(_RingOp):
+    """Causal temporal bilateral denoise over the last *window* frames → ``(H, W)`` float64.
+
+    A per-pixel weighted average of the recent frames where the weight of frame
+    ``i`` is a Gaussian in *time* (older frames count less, ``sigma_t`` in frames)
+    times a Gaussian in *intensity* (frames whose value differs from the current
+    one count less, ``sigma_r`` in ``[0, 1]`` units). The intensity term is what
+    makes it edge-preserving *in time*: a pixel that just moved gets a small
+    weight on the stale frames, so the moving edge is not smeared into a ghost the
+    way :class:`MovingAverageWindow` smears it. Falls back to the current frame
+    where every weight underflows.
+    """
+    name = "temporal_bilateral"
+
+    def __init__(self, window: int = 5, sigma_t: float = 2.0, sigma_r: float = 0.1):
+        super().__init__(window)
+        self.sigma_t = _float(sigma_t, "sigma_t", 1e-3, 1e6)
+        self.sigma_r = _float(sigma_r, "sigma_r", 1e-4, 1e6)
+
+    def _update(self, raw):
+        self.ring.push(raw)
+        w = _to01(self.ring.window())          # (k, H, W), oldest .. newest
+        k = w.shape[0]
+        cur = w[-1]
+        age = np.arange(k - 1, -1, -1.0)        # newest -> 0
+        wt = np.exp(-(age * age) / (2.0 * self.sigma_t * self.sigma_t))
+        dr = w - cur                            # intensity difference to current
+        wr = np.exp(-(dr * dr) / (2.0 * self.sigma_r * self.sigma_r))
+        weight = wt[:, None, None] * wr
+        denom = weight.sum(axis=0)
+        num = (weight * w).sum(axis=0)
+        out = np.where(denom > 0, num / np.where(denom > 0, denom, 1.0), cur)
+        return out
+
+
+class Deflicker(StatefulOp):
+    """Luminance deflicker: rescale each frame so its mean tracks a running reference → ``(H, W)`` float64.
+
+    Old film, auto-exposure hunting and mains-frequency lighting make a clip's
+    overall brightness pump frame to frame. Each frame is multiplied by
+    ``reference_mean / frame_mean`` (clipped to ``[0, 1]``), and the reference is
+    itself a slow exponential of the frame means (``alpha``), so a genuine, gradual
+    lighting change is followed while a one-frame flicker is cancelled. The first
+    frame sets the reference and passes through unchanged.
+    """
+    name = "deflicker"
+
+    def __init__(self, alpha: float = 0.1, max_gain: float = 4.0):
+        super().__init__()
+        self.alpha = _float(alpha, "alpha", 0.0, 1.0)
+        self.max_gain = _float(max_gain, "max_gain", 1.0, 1e6)
+        self.ref = None
+
+    def _reset(self):
+        self.ref = None
+
+    def _update(self, raw):
+        f = _to01(raw)
+        m = float(f.mean())
+        if self.ref is None:
+            self.ref = m
+            return f.copy()
+        gain = self.ref / m if m > 1e-6 else 1.0
+        gain = min(max(gain, 1.0 / self.max_gain), self.max_gain)
+        out = np.clip(f * gain, 0.0, 1.0)
+        self.ref += self.alpha * (m - self.ref)
+        return out
+
+
+class SceneCutDetection(StatefulOp):
+    """Shot-boundary detection by histogram distance → ``{"distance", "cut"}`` per frame (``table``).
+
+    Each frame's intensity histogram (``bins`` bins over ``[0, 1]``, area-normalised)
+    is compared to the previous frame's with the chi-square distance
+    ``½·Σ (h−p)² / (h+p)``. A hard cut makes the histogram jump, so ``distance``
+    spikes and ``cut`` is ``True`` when it exceeds ``threshold``. The first frame
+    has ``distance`` 0 and ``cut`` ``False``. Robust to motion (which moves pixels
+    but keeps the histogram) in a way a raw frame difference is not.
+    """
+    name = "scene_cut_detection"
+
+    def __init__(self, bins: int = 64, threshold: float = 0.3):
+        super().__init__()
+        self.bins = _int(bins, "bins", 2, 4096)
+        self.threshold = _float(threshold, "threshold", 0.0, 1.0)
+        self.prev_hist = None
+
+    def _reset(self):
+        self.prev_hist = None
+
+    def _hist(self, f):
+        h, _ = np.histogram(f, bins=self.bins, range=(0.0, 1.0), density=True)
+        s = h.sum()
+        return h / s if s > 0 else h
+
+    def _update(self, raw):
+        f = _to01(raw)
+        h = self._hist(f)
+        if self.prev_hist is None:
+            dist, cut = 0.0, False
+        else:
+            p = self.prev_hist
+            denom = h + p
+            chi2 = 0.5 * float(np.sum(np.where(denom > 0, (h - p) ** 2 / np.where(denom > 0, denom, 1.0), 0.0)))
+            dist, cut = chi2, chi2 > self.threshold
+        self.prev_hist = h
+        return {"distance": dist, "cut": bool(cut)}
+
+
 # --------------------------------------------------------------------------- #
 # pipeline
 # --------------------------------------------------------------------------- #
