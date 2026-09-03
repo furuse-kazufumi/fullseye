@@ -146,7 +146,7 @@ def _plan_tile(vals: np.ndarray, atol: float) -> _Tile:
         codes = np.clip(codes, 0, levels).astype(np.uint16)
         recon = vmin + codes.astype(np.float64) * scale
         err = float(np.abs(recon - vals.astype(np.float64)).max())
-        ok = (err == 0.0) if (is_int and atol == 0.0) else (err <= atol)
+        ok = (err == 0.0) if int_exact else (err <= atol)
         if ok:
             candidates.append((bits, _Tile(bits, vmin, scale, _pack_codes(codes, bits), n)))
             break
