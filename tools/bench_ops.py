@@ -69,6 +69,7 @@ if ROOT not in sys.path:
 import api                                                     # noqa: E402
 import backend_safe as bs                                      # noqa: E402
 import ops                                                     # noqa: E402
+import videostream as _vs                                      # noqa: E402  (streaming video ops)
 
 # --------------------------------------------------------------------------- #
 # honest な但し書き(JSON header に必ず載る)                                   #
