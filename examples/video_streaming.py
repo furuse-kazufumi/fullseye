@@ -107,6 +107,45 @@ def main():
     assert np.allclose(VS.temporal_median_window(f64, t)[-1], videops.temporal_median(f64))
     assert np.allclose(VS.frame_difference_causal(f64)[1:], videops.frame_difference(f64))
     print("[3] uint8 ring == float64 ring (max diff < 1e-12); window==T reproduces videops on the last frame")
+
+    # 4. wave 2: motion detection, adaptive background, temporal denoise, restore --
+    # motion detection: three-frame difference marks the moving disc, ghost-free
+    tfd = VS.three_frame_difference(f64, threshold=0.25)
+    # the disc is where the mask fires most; its centroid must track the true path
+    hit = tfd[10] > 0
+    yy, xx = np.nonzero(hit)
+    assert hit.any() and abs(xx.mean() - centres[10, 0]) < 6.0
+    # motion history: brightest exactly on the current disc, decaying behind it
+    mhi = VS.motion_history_image(f64, tau=8, threshold=0.25)
+    assert mhi.min() >= 0.0 and mhi.max() <= 1.0
+    mei = VS.motion_energy_image(f64, tau=8, threshold=0.25)
+    assert np.array_equal(mei, (mhi > 0).astype(np.float64))
+    print("[4] three_frame_difference centroid tracks the disc; MHI in [0,1]; MEI == (MHI>0)")
+
+    # adaptive single-Gaussian background: a bright disc on a noisy static scene is
+    # foreground; the flat background is not (per-pixel k-sigma, not a fixed level)
+    rgf = VS.running_gaussian_foreground(f64, alpha=0.02, k=3.0, var_init=1e-3)
+    disc = (np.mgrid[:h, :w][1] - centres[-1, 0]) ** 2 + (np.mgrid[:h, :w][0] - centres[-1, 1]) ** 2 <= 16
+    assert rgf[-1][disc].mean() > 0.5 and rgf[-1][~disc].mean() < 0.1
+    print("    running_gaussian_foreground: disc flagged, static background quiet")
+
+    # temporal bilateral denoise: recover a static noisy scene better than the raw
+    truth = 0.35 + 0.15 * np.sin(np.mgrid[:h, :w][1] / 5.0) * np.cos(np.mgrid[:h, :w][0] / 7.0)
+    static = np.clip(np.stack([truth + 0.06 * np.random.default_rng(k).standard_normal((h, w))
+                               for k in range(9)]), 0, 1)
+    den = VS.temporal_bilateral(static, window=5, sigma_t=3.0, sigma_r=0.2)
+    assert np.abs(den[-1] - truth).mean() < np.abs(static[-1] - truth).mean()
+    print("    temporal_bilateral denoises the static scene (closer to truth than the raw frame)")
+
+    # deflicker: cancel a synthetic brightness pump; a hard cut is found by histogram
+    flick = np.clip(f64 * (1.0 + 0.3 * (np.arange(t) % 2 - 0.5))[:, None, None], 0, 1)
+    deflk = VS.deflicker(flick, alpha=0.1)
+    assert deflk.mean((1, 2)).std() < flick.mean((1, 2)).std()
+    cutclip = np.concatenate([f64[:t // 2], 1.0 - f64[t // 2:]])       # invert half -> a hard cut
+    sc = VS.scene_cut_detection(cutclip, bins=32, threshold=0.3)
+    assert sc["cut"][t // 2] and sc["distance"][t // 2] == sc["distance"].max()
+    print("    deflicker cuts brightness pumping (%.3f -> %.3f std); scene_cut_detection found the cut at frame %d"
+          % (flick.mean((1, 2)).std(), deflk.mean((1, 2)).std(), t // 2))
     print("ALL GT CHECKS PASSED")
     return 0
 
