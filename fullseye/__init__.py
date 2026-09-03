@@ -117,6 +117,7 @@ with warnings.catch_warnings():
         recipes, recipe, measure, line_profile, distance, angle,
         orient2d, orient3d, incircle, insphere,
         orient2d_exact, orient3d_exact, incircle_exact, insphere_exact,
+        PrecisionUnion,
         fit_line, fit_circle, fit_ellipse, fit_rectangle2,
         fit_line3, fit_plane3, fit_sphere3, fit_circle3,
         smallest_box3, smallest_box3_axis, fit_box3, smallest_sphere3, inner_box3,
