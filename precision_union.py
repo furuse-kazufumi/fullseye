@@ -420,6 +420,12 @@ class PrecisionUnion:
           (b) tol == 0 (lossless union) -> a raw float64 tile: exact, costs memory;
           (c) otherwise -> decode, clip, re-quantise at tol (bounded error).
         """
+        if not np.isfinite(lo) or not np.isfinite(hi):
+            # a one-sided clip (max/min against a constant): the open side is the
+            # tile's own endpoint, which is on the grid and clips to itself
+            tlo, thi = self._tile_range(t)
+            lo = tlo if not np.isfinite(lo) else lo
+            hi = thi if not np.isfinite(hi) else hi
         if t.bits not in (0, 64) and t.scale != 0.0:
             clo = (lo - t.offset) / t.scale
             chi = (hi - t.offset) / t.scale
