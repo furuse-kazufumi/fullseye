@@ -128,7 +128,10 @@ def _plan_tile(vals: np.ndarray, atol: float) -> _Tile:
     if vmax == vmin:  # constant tile — 0 bits, offset carries everything
         return _Tile(0, vmin, 0.0, b"", n)
 
-    is_int = np.issubdtype(vals.dtype, np.integer)
+    # "integer-exact" covers both an integer dtype and a float array whose values
+    # are all integers (e.g. the output of `2*x+1` on decoded float tiles) — both
+    # round-trip losslessly through the unit-scale integer path.
+    int_exact = (atol == 0.0) and bool(np.all(vals == np.rint(vals)))
     span = vmax - vmin
     candidates = []  # (bits, _Tile) — the union picks the cheapest that fits
 
