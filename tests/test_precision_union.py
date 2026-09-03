@@ -196,9 +196,14 @@ def test_pack_unpack_free_functions():
     assert np.array_equal(unpack(pack(a, tile=4)), a)
 
 
-def test_rejects_non_2d():
+def test_rejects_zero_d_scalar():
     with pytest.raises(ValueError):
-        PrecisionUnion.from_array(np.zeros((4, 4, 4), np.uint8))
+        PrecisionUnion.from_array(np.asarray(7, np.uint8))       # 0-d has no tiles
+
+
+def test_rejects_tile_axis_mismatch():
+    with pytest.raises(ValueError):
+        PrecisionUnion.from_array(np.zeros((4, 4, 4), np.uint8), tile=(8, 8))
 
 
 # --- exposed through the public facade -------------------------------------- #
@@ -240,3 +245,84 @@ def test_scale_shift_handles_constant_tiles():
     pu = PrecisionUnion.from_array(np.full((32, 32), 7.0), tile=16)
     out = pu.scale_shift(3.0, 1.0).to_dense()
     np.testing.assert_allclose(out, np.full((32, 32), 22.0))
+
+
+# --- N-D: the volume case is the headline memory win ------------------------ #
+def _label_volume(rng, shape=(24, 48, 48), k=6):
+    return rng.integers(0, k, size=shape, dtype=np.int64)
+
+
+def test_3d_integer_volume_roundtrips_losslessly():
+    rng = np.random.default_rng(10)
+    vol = _label_volume(rng)
+    pu = PrecisionUnion.from_array(vol, tile=8, atol=0.0)
+    assert pu.shape == vol.shape
+    assert np.array_equal(pu.to_dense(), vol)               # lossless N-D round-trip
+
+
+def test_3d_volume_saves_memory():
+    # a label volume with large constant regions compresses hard in 3-D
+    vol = np.zeros((32, 32, 32), np.uint8)
+    vol[8:24, 8:24, 8:24] = 1                               # one interior box
+    pu = PrecisionUnion.from_array(vol, tile=8)
+    assert pu.ratio > 8.0, pu.ratio                         # dense uint8 vs the union
+
+
+def test_3d_uniform_ops_match_dense():
+    rng = np.random.default_rng(11)
+    vol = (rng.random((16, 20, 24)) * 50).astype(np.float64)
+    pu = PrecisionUnion.from_array(vol, tile=8, atol=0.2)
+    dense = pu.to_dense()
+    # threshold, mean, scale_shift all work in N-D with no bit-depth branching
+    np.testing.assert_array_equal(pu.threshold(25.0), dense > 25.0)
+    assert abs(pu.mean() - dense.mean()) < 1e-6 * abs(dense.mean())
+    np.testing.assert_allclose(pu.scale_shift(2.0, -3.0).to_dense(),
+                               2.0 * dense - 3.0, rtol=0, atol=1e-9)
+
+
+def test_per_axis_tile_sizes():
+    rng = np.random.default_rng(12)
+    vol = rng.integers(0, 4, (10, 20, 30), dtype=np.int64)
+    pu = PrecisionUnion.from_array(vol, tile=(5, 10, 10))
+    assert pu._grid == (2, 2, 3)
+    assert np.array_equal(pu.to_dense(), vol)
+
+
+def test_1d_signal_roundtrips():
+    sig = np.arange(1000, dtype=np.int64) % 7
+    pu = PrecisionUnion.from_array(sig, tile=64)
+    assert np.array_equal(pu.to_dense(), sig)
+
+
+# --- serialization: the memory win becomes a file-size win ------------------ #
+def test_save_load_roundtrip_2d(tmp_path):
+    rng = np.random.default_rng(20)
+    arr = rng.integers(0, 5, (40, 50), dtype=np.int64)
+    pu = PrecisionUnion.from_array(arr, tile=16)
+    p = tmp_path / "pu.npz"
+    pu.save(p)
+    back = PrecisionUnion.load(p)
+    assert back.shape == pu.shape
+    assert np.array_equal(back.to_dense(), arr)
+    # the file is in the ballpark of the in-memory store, not the dense array
+    assert p.stat().st_size < pu.dense_nbytes
+
+
+def test_save_load_roundtrip_3d_float(tmp_path):
+    rng = np.random.default_rng(21)
+    vol = (rng.random((16, 16, 16)) * 100).astype(np.float64)
+    pu = PrecisionUnion.from_array(vol, tile=8, atol=0.3)
+    p = tmp_path / "vol.npz"
+    pu.save(p)
+    back = PrecisionUnion.load(p)
+    np.testing.assert_array_equal(back.to_dense(), pu.to_dense())   # bit-identical
+    assert back._tsz == pu._tsz and back._grid == pu._grid
+
+
+def test_to_state_is_pure_numeric():
+    pu = PrecisionUnion.from_array(np.arange(64, dtype=np.uint8).reshape(8, 8), tile=4)
+    st = pu.to_state()
+    for k, v in st.items():
+        assert isinstance(v, np.ndarray), (k, type(v))
+    assert np.array_equal(PrecisionUnion.from_state(st).to_dense(),
+                          pu.to_dense())
