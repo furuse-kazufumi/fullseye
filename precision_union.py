@@ -303,7 +303,8 @@ class PrecisionUnion:
                 dense = self._tile_dense(t, bshape)
                 new_tiles.append(_plan_tile(np.asarray(f(dense)).ravel(), atol=atol))
         out_dtype = np.asarray(f(np.zeros(1, dtype=np.float64))).dtype
-        return PrecisionUnion(self.shape, out_dtype, self.tile, new_tiles, self._grid)
+        return PrecisionUnion(self.shape, out_dtype, self.tile, new_tiles, self._grid,
+                              atol=atol)
 
     def scale_shift(self, a: float, b: float) -> "PrecisionUnion":
         """Affine map ``value -> a*value + b`` WITHOUT decoding or re-encoding a tile.
