@@ -158,8 +158,115 @@ MATCH_OPS = frozenset({"ncc_locate", "shape_locate"})
 #: name -> factory of a fresh streaming StatefulOp (default parameters). The
 #: per-frame bench pushes frames through one of these; every entry emits an
 #: ``(H, W)`` image per push so the timing is directly ms/frame.
-VIDEO_STREAM_FACTORY: dict[str, Callable[[], Any]] = {}
+VIDEO_STREAM_FACTORY: dict[str, Callable[[], Any]] = {
+    "frame_difference_causal": lambda: _vs.FrameDifference(),
+    "three_frame_difference": lambda: _vs.ThreeFrameDifference(0.1),
+    "moving_average_window": lambda: _vs.MovingAverageWindow(3),
+    "temporal_median_window": lambda: _vs.TemporalMedianWindow(5),
+    "temporal_bilateral": lambda: _vs.TemporalBilateral(5, 2.0, 0.1),
+    "background_subtraction_window": lambda: _vs.BackgroundSubtractionWindow(5, 0.1),
+    "exponential_background": lambda: _vs.ExponentialBackground(0.05),
+    "running_gaussian_foreground": lambda: _vs.RunningGaussianForeground(),
+    "motion_history_image": lambda: _vs.MotionHistoryImage(15, 0.1),
+    "deflicker": lambda: _vs.Deflicker(0.1),
+    "optical_flow_magnitude_stream": lambda: _vs.OpticalFlowStream(),
+}
+VIDEO_OP_SET = frozenset(VIDEO_STREAM_FACTORY)
 VIDEO_FRAMES = 24                       # clip length for the per-frame video bench
+
+
+def video_clip(h: int, w: int, kind: str, dtype: str, frames: int = VIDEO_FRAMES) -> np.ndarray:
+    """A ``(T, H, W)`` clip: the still :func:`scene` plus per-frame noise and a
+    moving bright block, so temporal / motion / background ops all do real work
+    (a static clip would make every temporal op trivially cheap and lie)."""
+    base = scene(h, w, kind).astype(np.float64)
+    rng = np.random.default_rng(SEED + 7)
+    vid = np.empty((frames, h, w), np.float64)
+    bh, bw = max(2, h // 12), max(2, w // 12)
+    for t in range(frames):
+        f = np.clip(base + 0.02 * rng.standard_normal((h, w)), 0.0, 1.0)
+        y = (h // 4 + 2 * t) % max(1, h - bh)
+        x = (w // 4 + 3 * t) % max(1, w - bw)
+        f[y:y + bh, x:x + bw] = 0.9
+        vid[t] = f
+    if dtype == "uint8":
+        return np.round(vid * 255).astype(np.uint8)
+    if dtype == "uint16":
+        return np.round(vid * 65535).astype(np.uint16)
+    return vid.astype(dtype)
+
+
+def measure_video_stream(name: str, clip: np.ndarray, *, warm: int = 1, repeat: int = 3,
+                         rss_read: Callable[[], int] | None = None) -> dict[str, Any]:
+    """Per-frame streaming cost of one video op: push the clip frame by frame.
+
+    The timing is the **median push time** over frames after the ring has filled
+    (warm-up frames dropped), so the number is ms/frame in steady state, and the
+    memory is measured over one full pass (the ring, not the clip). ``fps`` is the
+    frame budget this op meets on this machine; 30 fps needs ``ms_frame <= 33``.
+    """
+    T = int(clip.shape[0])
+    frame_bytes = int(clip[0].nbytes)
+    npx = int(np.prod(clip.shape[1:3]))
+    skip = min(T // 3, 8)                      # drop warm-up frames (ring still filling)
+
+    def one_pass(collect):
+        op = VIDEO_STREAM_FACTORY[name]()
+        for t in range(T):
+            if collect is not None and t >= skip:
+                t0 = time.perf_counter()
+                op.push(clip[t])
+                collect.append(time.perf_counter() - t0)
+            else:
+                op.push(clip[t])
+
+    gc.collect()
+    for _ in range(max(0, warm)):
+        one_pass(None)
+
+    # memory over one full streaming pass (ring, not clip)
+    gc.collect()
+    poller = None
+    rss0 = 0
+    if rss_read is not None:
+        rss0 = rss_read()
+        poller = _RssPoller(rss_read)
+        poller.start()
+    mark = bs.mark()
+    tracemalloc.start(); tracemalloc.reset_peak()
+    one_pass(None)
+    _cur, tm_peak = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
+    events = bs.events_since(mark)
+    rss_peak = 0
+    if poller is not None:
+        poller.stop = True
+        poller.join()
+        rss_peak = max(0, poller.peak - rss0)
+
+    per_frame: list[float] = []
+    for _ in range(max(1, repeat)):
+        one_pass(per_frame)
+    per_frame.sort()
+    ms_frame = statistics.median(per_frame) * 1e3 if per_frame else float("nan")
+    return {
+        "frames": T,
+        "ms_frame": round(ms_frame, 4),
+        "ms": round(ms_frame * T, 4),                   # whole-clip equivalent
+        "fps": round(1e3 / ms_frame, 1) if ms_frame > 0 else None,
+        "repeat": int(max(1, repeat)),
+        "mpx_s": round(npx / ms_frame / 1e3, 2) if ms_frame > 0 else None,
+        "npx": npx,
+        "in_bytes": frame_bytes,
+        "tm_peak_mb": round(tm_peak / 2 ** 20, 3),
+        "tm_peak_x": round(tm_peak / frame_bytes, 3) if frame_bytes else None,
+        "rss_peak_mb": round(rss_peak / 2 ** 20, 3) if rss_read is not None else None,
+        "rss_peak_x": (round(rss_peak / frame_bytes, 3) if (rss_read is not None and frame_bytes) else None),
+        "out_dtype": "float64",
+        "streaming": True,
+        "fallbacks": len(events),
+        "fallback_msg": (events[0].get("error", "")[:160] if events else ""),
+    }
 
 
 # --------------------------------------------------------------------------- #
