@@ -7,7 +7,7 @@ out: table
 examples: [motion_magnification]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.0  # fullseye lib version this note was generated for
+version: 0.1.5  # fullseye lib version this note was generated for
 ---
 
 # band_snr — MOTIONMAG `temporal` op
