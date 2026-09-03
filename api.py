@@ -1323,6 +1323,42 @@ def _dtype_scale(a):
         return 1.0
 
 
+def _pu_contract(pu, op, policy):
+    """The :func:`_contract_dtype` rule for a :class:`PrecisionUnion`, done lazily.
+
+    Returns a float64-contract union, or ``None`` when the conversion cannot be
+    decided from the dtype alone (an int dtype outside the documented sensor
+    dtypes picks its divisor from the DATA in ``_dtype_scale``) — the caller then
+    materialises and takes the normal path. The conversion is a pure gain, so it is
+    ``scale_shift(1/s, 0)``: codes untouched, and a lossless union stays lossless
+    (``atol`` scales by ``1/s``). The same ledger record / ``on_error="raise"``
+    refusal as the dense rule, so an integer input is never silently accepted.
+    """
+    if np.issubdtype(pu.dtype, np.floating):
+        return pu
+    if op.in_sort not in _DTYPE_CONTRACT_SORTS:
+        return pu                                    # no conversion on the dense path either
+    kind = pu.dtype.kind
+    if kind not in "bui":
+        return pu                                    # complex etc.: unchanged, as dense
+    if kind == "b":
+        s, how = 1.0, "bool -> float64 {0,1}"
+    else:
+        s = _DTYPE_FULL_SCALE.get(pu.dtype.name)
+        if s is None:
+            return None                              # data-dependent divisor: materialise
+        how = "%s -> float64 (/%g)" % (pu.dtype, s)
+    if policy == "raise":
+        raise ValueError(
+            "op %r expects a %s of float64 in [0,1] (the fullseye contract), got a "
+            "PrecisionUnion of dtype %s. Convert explicitly (e.g. pu.scale_shift(1/255, 0) "
+            "for uint8) or build the union from a float array." % (op.name, op.in_sort, pu.dtype))
+    _bs.record(op.name,
+               ValueError("dtype_converted: %s; the contract is float64 in [0,1]" % how),
+               op.out_sort, source="input")
+    return pu.scale_shift(1.0 / s, 0.0)
+
+
 def _contract_dtype(v, op, policy):
     """Bring an integer/bool image onto the float64 [0,1] contract, or refuse it.
 

@@ -409,16 +409,65 @@ def test_apply_non_lazy_op_materialises_once_and_matches():
                                rtol=0, atol=1e-12)
 
 
-def test_apply_integer_union_takes_the_contract_path():
-    """A uint8 union is NOT run lazily (its /255 contract conversion and ledger
-    record belong to the normal path); it materialises and matches dense exactly."""
+def test_apply_uint8_union_converts_lazily_and_records_the_ledger():
+    """A uint8 union is brought onto the [0,1] contract LAZILY (scale_shift(1/255)):
+    it stays a union, matches the dense path bit-for-bit, and leaves the same
+    dtype_converted ledger record that the dense /255 conversion leaves."""
     import api
     rng = np.random.default_rng(32)
     u8 = rng.integers(0, 256, (32, 32), dtype=np.uint8)
     pu = PrecisionUnion.from_array(u8, tile=16)
+    api.clear_fallbacks()
+    r = api.apply(pu, "invert", 0.5, 0.5)
+    assert isinstance(r, PrecisionUnion)                  # lazy, not materialised
+    assert r.atol == 0.0                                  # lossless stays lossless
+    np.testing.assert_allclose(r.to_dense(), api.apply(u8, "invert", 0.5, 0.5),
+                               rtol=0, atol=1e-12)
+    assert api.fallback_counts().get("invert", 0) >= 1
+    assert any("dtype_converted" in str(e) for e in api.fallbacks())
+
+
+def test_apply_uint8_union_is_refused_under_raise_like_dense():
+    import api
+    pu = PrecisionUnion.from_array(np.zeros((16, 16), np.uint8), tile=16)
+    with pytest.raises(ValueError):
+        api.apply(pu, "invert", 0.5, 0.5, on_error="raise")
+
+
+def test_apply_int64_union_materialises_data_dependent_scale():
+    """int64 has no documented full scale (the divisor depends on the data), so the
+    union cannot convert lazily: it materialises and matches the dense path."""
+    import api
+    rng = np.random.default_rng(33)
+    i64 = rng.integers(0, 1000, (32, 32), dtype=np.int64)
+    pu = PrecisionUnion.from_array(i64, tile=16)
     r = api.apply(pu, "invert", 0.5, 0.5)
     assert isinstance(r, np.ndarray)
-    np.testing.assert_allclose(r, api.apply(u8, "invert", 0.5, 0.5), rtol=0, atol=1e-12)
+    np.testing.assert_allclose(r, api.apply(i64, "invert", 0.5, 0.5), rtol=0, atol=1e-12)
+
+
+def test_apply_bool_union_converts_lazily():
+    import api
+    m = (np.arange(256).reshape(16, 16) % 3 == 0)
+    pu = PrecisionUnion.from_array(m, tile=16)
+    r = api.apply(pu, "invert", 0.5, 0.5)
+    assert isinstance(r, PrecisionUnion)
+    np.testing.assert_allclose(r.to_dense(), api.apply(m, "invert", 0.5, 0.5),
+                               rtol=0, atol=1e-12)
+
+
+def test_run_pipeline_uint8_label_volume_chain_stays_lazy():
+    """The headline case: a uint8 label VOLUME through a point-op chain never
+    materialises until the first non-lazy stage."""
+    import api
+    vol = np.zeros((16, 32, 32), np.uint8)
+    vol[4:12, 8:24, 8:24] = 200
+    pu = PrecisionUnion.from_array(vol, tile=8)
+    chain = [("invert", 0.5, 0.5), ("scale_clip", 0.6, 0.4)]
+    lazy = api.run_pipeline(pu, chain)
+    assert isinstance(lazy, PrecisionUnion)
+    np.testing.assert_allclose(lazy.to_dense(), api.run_pipeline(vol, chain),
+                               rtol=0, atol=1e-12)
 
 
 def test_run_pipeline_lazy_chain_then_materialise():
