@@ -206,3 +206,37 @@ def test_exposed_via_api_and_facade():
     import api
     assert "PrecisionUnion" in api.__all__
     assert api.PrecisionUnion is PrecisionUnion
+
+
+# --- deferred affine: scale_shift is exact and touches no codes ------------- #
+def _smooth(h=70, w=90):
+    yy, xx = np.mgrid[0:h, 0:w]
+    return (yy * 0.3 + xx * 0.2 + 5.0 * np.sin(xx * 0.1)).astype(np.float64)
+
+
+def test_scale_shift_equals_dense_affine_and_shares_code_buffers():
+    pu = PrecisionUnion.from_array(_smooth(), tile=16, atol=0.25)
+    base = pu.to_dense()
+    a, b = -1.7, 3.5
+    shifted = pu.scale_shift(a, b)
+    # the packed code buffers are reused verbatim — no decode, no re-encode
+    for t_src, t_dst in zip(pu._tiles, shifted._tiles):
+        assert t_dst.buf is t_src.buf
+        assert t_dst.bits == t_src.bits
+    np.testing.assert_allclose(shifted.to_dense(), a * base + b, rtol=0, atol=1e-9)
+
+
+def test_scale_shift_chain_matches_dense_chain():
+    pu = PrecisionUnion.from_array(_smooth(), tile=16, atol=0.25)
+    dense = pu.to_dense()
+    cur_pu, cur_d = pu, dense.copy()
+    for a, b in [(1.5, -2.0), (0.5, 10.0), (-3.0, 1.0), (2.0, 0.0)]:
+        cur_pu = cur_pu.scale_shift(a, b)
+        cur_d = a * cur_d + b
+    np.testing.assert_allclose(cur_pu.to_dense(), cur_d, rtol=0, atol=1e-6)
+
+
+def test_scale_shift_handles_constant_tiles():
+    pu = PrecisionUnion.from_array(np.full((32, 32), 7.0), tile=16)
+    out = pu.scale_shift(3.0, 1.0).to_dense()
+    np.testing.assert_allclose(out, np.full((32, 32), 22.0))

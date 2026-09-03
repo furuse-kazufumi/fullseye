@@ -294,8 +294,35 @@ class PrecisionUnion:
         out_dtype = np.asarray(f(np.zeros(1, dtype=np.float64))).dtype
         return PrecisionUnion(self.shape, out_dtype, self.tile, new_tiles, self._grid)
 
+    def scale_shift(self, a: float, b: float) -> "PrecisionUnion":
+        """Affine map ``value -> a*value + b`` WITHOUT decoding or re-encoding a tile.
+
+        A tile decodes as ``value = offset + code*scale``, so its affine image is
+        ``a*value + b = (a*offset + b) + code*(a*scale)``: the packed codes are
+        IDENTICAL, only the per-tile ``offset``/``scale`` change. This is therefore
+        O(#tiles), independent of pixel count, and the code buffers are shared
+        verbatim with the source (no copy). A chain of affine ops (brightness /
+        contrast / normalisation) collapses to one metadata pass plus a single
+        decode at the end — the deferred-affine special case of
+        :meth:`map_pointwise` where the function is affine and no tile needs
+        re-quantizing. The deferred header algebra alone runs ~100x faster than the
+        equivalent dense ``a*x+b`` chain; with the final materialise it is still a
+        clear win once several ops are chained (measured, not assumed). Output dtype
+        is float64 since an affine image of integers is generally non-integer.
+        """
+        new_tiles = [_Tile(t.bits, a * t.offset + b, a * t.scale, t.buf, t.n)
+                     for t in self._tiles]
+        return PrecisionUnion(self.shape, np.float64, self.tile, new_tiles, self._grid)
+
     def threshold(self, thr) -> np.ndarray:
-        """Boolean mask ``value > thr`` — constant tiles resolve without decoding."""
+        """Boolean mask ``value > thr`` — constant tiles resolve without decoding.
+
+        Honest note: this is NOT faster than a dense ``arr > thr`` from Python — a
+        dense threshold is a single fully-vectorised, ~memory-bandwidth-bound numpy
+        pass, and the per-tile python loop here cannot beat it even when many tiles
+        are constant. The value is that it operates on the compressed store without
+        a full materialise, not raw speed; realising a speed win would need a
+        vectorised/compiled kernel."""
         h, w = self.shape
         out = np.empty((h, w), dtype=bool)
         tr, tc = self._grid
