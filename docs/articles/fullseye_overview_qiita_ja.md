@@ -145,7 +145,9 @@ Fullseye には前身があります。もともとは **`imgevolve`**、つま�
 
 背景には **evis（エビス）** の存在があります。私が別シリーズの記事で進めている**筋骨格ヒューマノイド**（700 筋モデルなど）の実験群で、Fullseye の"お客さん第一号"です。ロボットに箸で豆をつまませたり、歩かせたりするには、**「世界を正しく見る目」** が要る。
 
-![手続き生成した手の骨格（手根骨8・中手骨5・指骨14、カプセルSDF）を Fullseye の自前レンダラで描画したもの](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/hand_hero.png)
+[![実解剖由来の骨メッシュ（MyoSuite myo_sim、Apache-2.0）の手骨 27 個（手根骨8・中手骨5・指骨14）を MJCF の運動学木から組み立て、Fullseye の自前レンダラ（AO・接地影・SSAA・ACES）で描画 — クリックでフルサイズ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/anatomical_hand_hero_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/anatomical_hand_hero.png)
+
+*↑ 以前ここに置いていた手続き生成（カプセル SDF）の手は、実物の骨と並べると明らかに粗かったので差し替えました。「正確な骨格」は画像生成 AI のもっともらしさではなく実データの幾何で担保する、という方針です。骨の配置は MJCF を純 numpy で辿って計算し、MuJoCo の forward kinematics と 1e-10 m で一致することを確認しています（`examples_3d/anatomical_hand.py`、データは同梱せず `git clone MyoHub/myo_sim`）。手続き版は後段のターンテーブルにそのまま残しています。*
 
 *↑ その「手」を Fullseye 側から見た一枚。手続き生成した手の骨格（手根骨8・中手骨5・指骨14）を、これも自前レンダラで描画しています。*
 

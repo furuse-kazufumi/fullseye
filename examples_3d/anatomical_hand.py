@@ -235,33 +235,41 @@ def main() -> int:
     V, F = merge(bones)
     print(f"[mesh] merged {V.shape[0]} verts / {F.shape[0]} faces, extent {(V.max(0) - V.min(0)) * 1e3} mm")
 
-    # ── hero: 手背側やや斜め上から、骨質(象牙色)・AO・接地影・ACES ───────────
-    lo, hi = V.min(0), V.max(0)
-    cen = 0.5 * (lo + hi)
-    rad = float(np.linalg.norm(hi - lo)) * 0.5
-    # 手のひら法線方向(PCA の最小分散軸)から見下ろす
+    # ── hero: 手背(dorsal)を手首側やや上から、全体が収まる距離で。骨質(象牙色)・AO・接地影 ──
+    by = {n: Vb for n, _b, Vb, _F in bones}
+    cen = 0.5 * (V.min(0) + V.max(0))
     _, _, Vt = np.linalg.svd(V - cen, full_matrices=False)
-    normal = Vt[2]
-    long_axis = Vt[0]
-    eye = cen + normal * (2.4 * rad) + long_axis * (0.35 * rad) - Vt[1] * (0.6 * rad)
-    pose = render3d.look_at(eye, cen, up=long_axis)
-    HERO = 1280
-    K = render3d.intrinsics_from_fov(30.0, HERO, HERO)
-    Vg = V - cen
-    Vg = Vg - normal * (Vg @ normal).min()               # 最下点を地面(z=0)に置く前段
-    # render_beauty は z-up・地面 z=min を仮定するので、手のひら法線を +z に回す
-    Rz = _basis_to_z(normal)
-    Vz = (Vg @ Rz.T)
-    Vz[:, 2] -= Vz[:, 2].min()
-    pose_z = render3d.look_at((eye - cen) @ Rz.T + np.array([0, 0, 0.0]), np.array([0, 0, Vz[:, 2].mean()]),
-                              up=(long_axis @ Rz.T))
+    long_axis, normal = Vt[0], Vt[2]                     # 最大分散=指方向、最小分散=手掌法線
+    # 向きを解剖で決める: 指先(中指末節骨)は手根骨(月状骨)より +long 側、
+    # 豆状骨(pisiform)は掌側 → 法線は背側(dorsal)を向ける
+    if (by["3distph"].mean(0) - by["lunate"].mean(0)) @ long_axis < 0:
+        long_axis = -long_axis
+    if (by["pisiform"].mean(0) - cen) @ normal > 0:
+        normal = -normal
+    e3 = normal / np.linalg.norm(normal)
+    e2 = long_axis - (long_axis @ e3) * e3
+    e2 /= np.linalg.norm(e2)
+    e1 = np.cross(e2, e3)
+    R = np.stack([e1, e2, e3])                           # rows: x=横, y=指方向, z=背側(上)
+    Vz = (V - cen) @ R.T
+    Vz[:, 2] -= Vz[:, 2].min()                           # 地面 z=0 に置く(掌側が接地)
+    ext = Vz.max(0) - Vz.min(0)
+    target = np.array([0.0, 0.0, 0.5 * ext[2]])
+    # 手首側(−y)から仰角 ~55° で見下ろし、fov に全体(対角)を 1.2 倍の余裕で収める
+    HERO = int(os.environ.get("FULLSEYE_HERO_SIZE", "1280"))
+    SS = 1 if HERO <= 400 else 2
+    fov = 30.0
+    d = 0.5 * float(np.linalg.norm(ext[:2])) / np.tan(np.radians(fov / 2)) * 1.02
+    eye = target + d * np.array([0.0, -0.58, 0.81])
+    pose_z = render3d.look_at(eye, target, up=(0.0, 0.0, 1.0))
+    K = render3d.intrinsics_from_fov(fov, HERO, HERO)
     t1 = time.time()
     img = rb.render_beauty(
-        Vz, F, pose=pose_z, intrinsics=K, size=HERO, ss=2, material="plastic",
-        albedo=(0.93, 0.89, 0.80), light=(0.35, 0.5, 0.8), ambient=0.14,
+        Vz, F, pose=pose_z, intrinsics=K, size=HERO, ss=SS, material="plastic",
+        albedo=(0.93, 0.89, 0.80), light=(0.35, -0.45, 0.82), ambient=0.14,
         ao=True, ground_shadow=True, tonemap="aces", exposure=1.15,
-        background=(0.07, 0.08, 0.10), ao_samples=64, shadow_res=1024,
-        penumbra=10.0, shadow_samples=24, shadow_pcf=1, smooth_normals=True)
+        background=(0.07, 0.08, 0.10), ao_samples=64 if SS == 2 else 16, shadow_res=1024,
+        penumbra=10.0, shadow_samples=24 if SS == 2 else 6, shadow_pcf=1, smooth_normals=True)
     out = _REPO_ROOT / "examples_3d" / "_gallery" / "anatomical_hand_hero.png"
     out.parent.mkdir(parents=True, exist_ok=True)
     from PIL import Image

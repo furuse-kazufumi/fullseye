@@ -145,7 +145,9 @@ That redefinition was a big call for me. I'd been stacking up general-purpose al
 
 Behind this is **evis**, the musculoskeletal humanoid (a 700-muscle model, among others) I've been building in a separate series of articles — Fullseye's **customer number one**. Getting a robot to pick up a bean with chopsticks, or to walk, requires **an eye that sees the world correctly**.
 
-![A procedurally generated hand skeleton (8 carpal bones, 5 metacarpals, 14 phalanges, capsule SDFs) rendered by Fullseye's custom renderer](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/hand_hero.png)
+[![All 27 hand bones (8 carpals, 5 metacarpals, 14 phalanges) from real anatomy-derived meshes (MyoSuite myo_sim, Apache-2.0), assembled through the MJCF kinematic tree and rendered by Fullseye's custom renderer (AO, contact shadow, SSAA, ACES) — click for full size](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/anatomical_hand_hero_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/anatomical_hand_hero.png)
+
+*↑ The procedurally generated (capsule-SDF) hand that used to sit here looked plainly crude next to real bones, so it was replaced. The stance: an "accurate skeleton" is guaranteed by real data geometry, not by the plausibility of an image generator. Bone placement is computed by walking the MJCF in pure numpy and verified to match MuJoCo's forward kinematics to 1e-10 m (`examples_3d/anatomical_hand.py`; the data is not bundled — `git clone MyoHub/myo_sim`). The procedural version still spins on the turntable further down.*
 
 *↑ That "hand," seen from Fullseye's side. A procedurally generated hand skeleton (8 carpal bones, 5 metacarpals, 14 phalanges), rendered — again — with the custom renderer.*
 
