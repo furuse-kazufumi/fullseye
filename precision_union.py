@@ -439,6 +439,31 @@ class PrecisionUnion:
             return _raw_tile(dense)
         return _plan_tile(dense, atol=tol)                   # (c) bounded re-quantisation
 
+    def threshold_lazy(self, thr: float) -> "PrecisionUnion":
+        """``(value > thr)`` as a 0/1 float64 **union** — the memory win propagates
+        through the most common op on label / depth data instead of materialising.
+
+        Per tile, from the header alone: a constant tile becomes a constant 0/1;
+        a tile whose whole range is on one side of ``thr`` becomes a constant 0/1
+        (O(1), no decode); only a tile that straddles ``thr`` is decoded, and its
+        0/1 result re-plans as a 1-bit tile. The result is exact (``atol=0``) and
+        never costs more than 1 bit/element; it matches the dense op
+        ``(v > thr).astype(float64)`` (``fullseye`` ``threshold``) exactly.
+        """
+        thr = float(thr)
+        new_tiles = []
+        for idx, _sl, _bshape in self._blocks():
+            t = self._tiles[idx]
+            tlo, thi = self._tile_range(t)
+            if tlo > thr:                                    # whole tile above
+                new_tiles.append(_Tile(0, 1.0, 0.0, b"", t.n))
+            elif thi <= thr:                                 # whole tile at/below
+                new_tiles.append(_Tile(0, 0.0, 0.0, b"", t.n))
+            else:                                            # straddles: decode this one
+                m = (self._tile_values(t) > thr).astype(np.float64)
+                new_tiles.append(_plan_tile(m, atol=0.0))    # 0/1 -> 1-bit (or constant)
+        return PrecisionUnion(self.shape, np.float64, self.tile, new_tiles, self._grid, atol=0.0)
+
     def threshold(self, thr) -> np.ndarray:
         """Boolean mask ``value > thr`` — constant tiles resolve without decoding.
 
