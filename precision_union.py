@@ -256,13 +256,19 @@ class PrecisionUnion:
         return obj
 
     # -- reconstruction ------------------------------------------------------ #
-    def _tile_dense(self, t: _Tile, bshape) -> np.ndarray:
+    @staticmethod
+    def _tile_values(t: _Tile) -> np.ndarray:
+        """Decode one tile to a flat float64 array (the single decode path)."""
         if t.bits == 0:
-            vals = np.full(t.n, t.offset, dtype=np.float64)
-        else:
-            codes = _unpack_codes(t.buf, t.bits, t.n)
-            vals = t.offset + codes.astype(np.float64) * t.scale
-        return vals.reshape(bshape)
+            return np.full(t.n, t.offset, dtype=np.float64)
+        if t.bits == 64:                                   # raw float64 "codes"
+            raw = np.frombuffer(t.buf, dtype="<f8", count=t.n).astype(np.float64)
+            return t.offset + raw * t.scale
+        codes = _unpack_codes(t.buf, t.bits, t.n)
+        return t.offset + codes.astype(np.float64) * t.scale
+
+    def _tile_dense(self, t: _Tile, bshape) -> np.ndarray:
+        return self._tile_values(t).reshape(bshape)
 
     def to_dense(self) -> np.ndarray:
         out = np.empty(self.shape, dtype=np.float64)
