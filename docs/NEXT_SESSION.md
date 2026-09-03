@@ -28,6 +28,11 @@
 - **exact geometry predicates(`predicates.py`)実装**: orient2d/orient3d/incircle/insphere を Shewchuk 流 2 段適応(float→Fraction 厳密)。naive は 19% 誤符号→adaptive は完全一致。凸包 robust 化、`fullseye.*` 露出、py-modules 登録。詳細 = memory [[project_fullseye_representation_future_backlog]]。次候補: Delaunay/point-in-polytope/mesh 向き検査へ横展開。
 - **教訓**: `pytest | grep | tail` はパイプで exit code をマスクし drift/packaging 失敗を見逃す → 以後 `> log; echo $?` で実 exit を捕捉。
 
+## 2026-09-04 追加: 精度ユニオン型 PoC(ユーザー発案)+ geompred(predicates 横展開)
+- **精度ユニオン型 PoC = 一本化して公開(`precision_union.py`、`fullseye.PrecisionUnion`)**: ユーザー発案「ビット深さのユニオンに量子化要素を乗せ一元処理」。タイルごとに最小ビット幅 {0,1,2,4,8,16}(アフィン vs unit-scale 整数の2候補 min、実 sub-byte パック)。正直な実測: メモリはラベル/深度/3Dボリュームで 4〜17x 勝ち、自然画像 uint8 は 0.98x で微損(隠さず報告)。**遅延アフィン `scale_shift(a,b)` を追加**(私の PoC 由来): `offset'=a·off+b, scale'=a·scale` でコード不変・O(タイル数)、連鎖を1 decode に畳む(遅延代数のみ ~100x)。`threshold` は dense ベクトル化に Python ループでは勝てない旨を honest に明記。※並列 fork がコンテキスト継承で PoC を重複実装したため公開版に一本化(重複 `poc/bitunion.py` は削除)。
+- **geompred(`geompred.py`)= exact predicates の横展開(本来の次候補)**: point_in_polygon / point_in_convex_polygon / is_convex_polygon / point_in_tetrahedron / point_in_convex_polytope(内外3値)/ is_delaunay_2d(incircle で外接円空を検査・違反返す)/ mesh_orientation_consistent。`fullseye.*` 露出 + py-modules 登録。near-edge スイープで **naive float winding が robust と 8.64% 食い違う**(価値の実証)。テスト 18 件。
+- **教訓(fork の使い方)**: `subagent_type:"fork"` はコンテキスト+役割を継承するため、別タスクを頼んでも親の最優先タスク(PoC)を再実行し自分を orchestrator と誤認しうる。独立タスクの委任は fresh general-purpose の方が混乱しない。
+
 ## 次にやること(優先順)
 1. ~~v0.1.5 タグ(PyPI 公開)~~ **完了(2026-09-03)**: PyPI に 0.1.5 公開済(wheel+sdist、latest=0.1.5)。公開前に liveness テスト 1 件(tb_running_gaussian_foreground が video 生成器で定数)を修正 = bridge に per-op tunable override を足し (k, var_init) を振る(公開 op 既定は不変)。※v0.1.4 は 3 日前に PyPI 400 で失敗しており PyPI 上は 0.1.3→0.1.5(同 license 形式で今回は成功 = 一過性)。
 2. ~~`FULLSEYE_FAST` 既定 ON の判断~~ **完了: OFF 維持**(上記)。
