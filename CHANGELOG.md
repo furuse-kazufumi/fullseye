@@ -6,11 +6,11 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 ## 0.1.5 — unreleased (main since 2026-08-31)
 
 **Summary (en)**: the largest release so far — 63 feature/fix commits, 2,600 files, +219k lines.
-Registry now measures **870 distinct 2-D ops + 344 3-D ops + 409 ledger ops** (math 26, optics 47,
+Registry now measures **870 distinct 2-D ops + 344 3-D ops + 417 ledger ops** (math 26, optics 47,
 light field 17, photon counting 17, specular 13, motion magnification 9, quaternion 19, FMCW 8,
 acoustics 19, interferometry 9, tomography 17, volume colour 11, representation 42, CAD 4,
 annotate 46, gfx2d 32, image metrics 24, colour transport 11, forensics 16, astro stacking 14,
-video streaming 8).
+video streaming 16).
 Full suite: **10,550 passed / 153 skipped / 3 xfailed / 0 failed**. Four things a user notices:
 (1) `apply()` now warns once per op when it silently fell back, and `fullseye.fallbacks()` shows
 the ledger; (2) 32 measured behaviour changes from the adversarial review (listed below, several
