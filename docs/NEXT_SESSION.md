@@ -43,6 +43,11 @@
 ## 2026-09-04 追加: Qiita hero 画像の品質修正(ユーザー指摘)
 - 原因 = 640px・res48・フラット法線。`smooth_normals` だけでは格子由来のバンディングが残る → **SDF 勾配法線**(`sdf_vertex_normals`)+ `render_beauty(vertex_normals=)` 注入口。1280px で再生成、`?v=2` でキャッシュバスト、`tools/qiita_patch_overview.py --lang ja --lang en` で PATCH。教訓: **marching cubes メッシュの法線は場から取る**(面法線の平均は格子を引き継ぐ)。他の SDF 由来 hero(itokawa は実測メッシュなので対象外)にも同じ手が効く。
 
+## 2026-09-04 追加: 画像の総点検(ユーザー「他にも粗い物やお粗末な画像があれば改善」)
+- 232 アセットの寸法表で候補抽出 → 実画像を見て判断。**手骨 hero(512px 手続きカプセル)→ 実解剖メッシュ 27 骨に差し替え**(`examples_3d/anatomical_hand.py`、myo_sim Apache-2.0、MuJoCo FK と 6e-11 m 一致、指長順 OK)。イトカワ hero は 640→1280(`FULLSEYE_HERO_SIZE=1280`)。gear_hero(512)は記事未参照(バナーのみ)で後回し。
+- 小さいが「実態」の画像(後回し、改善=パイプライン再実行の重作業): evis 筋活性 480×360(動画フレーム)、bin-pick 680×480(MuJoCo フレーム)、evis stereo 960×268(SGM 出力のブロック状=アルゴリズム出力そのもの)、dragon anaglyph 640、turntable GIF 480(容量)。
+- 方針: **「正確」は実データの幾何で担保、レンダは SDF 勾配/頂点法線+1280px+SSAA。** 手続き形状の hero は差し替え候補(evis 700 筋モデルの骨格も同じ手で実骨格化できる)。
+
 ## 次にやること(優先順)
 1. ~~v0.1.5 タグ(PyPI 公開)~~ **完了(2026-09-03)**: PyPI に 0.1.5 公開済(wheel+sdist、latest=0.1.5)。公開前に liveness テスト 1 件(tb_running_gaussian_foreground が video 生成器で定数)を修正 = bridge に per-op tunable override を足し (k, var_init) を振る(公開 op 既定は不変)。※v0.1.4 は 3 日前に PyPI 400 で失敗しており PyPI 上は 0.1.3→0.1.5(同 license 形式で今回は成功 = 一過性)。
 2. ~~`FULLSEYE_FAST` 既定 ON の判断~~ **完了: OFF 維持**(上記)。

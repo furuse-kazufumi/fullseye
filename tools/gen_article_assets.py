@@ -266,7 +266,7 @@ def copy_hero_assets(log=print) -> list:
     # chain mesh_displace_fbm -> terrain_region_mask -> mesh_scatter_boulders ->
     # render_regolith (Hapke BRDF, 0.53-deg sun ray-cast shadows, zero ambient) by
     # examples_3d/itokawa_regolith_hero.py — the article's Itokawa hero.
-    names = ["render_beauty_hero.png", "hand_hero.png", "gear_hero.png",
+    names = ["render_beauty_hero.png", "anatomical_hand_hero.png", "hand_hero.png", "gear_hero.png",
              "showcase_turntable_itokawa.gif", "itokawa_regolith_hero.png"]
     copied = []
     for name in names:
@@ -512,6 +512,7 @@ def build_thumbnails(log=print) -> list:
     from PIL import Image
 
     names = ["physical_ai_montage.png", "vision_ops_montage.png", "render_beauty_hero.png",
+             "anatomical_hand_hero.png",
              "itokawa_regolith_hero.png",
              "itokawa_montage.png", "op_taxonomy.png", "halcon_coverage_chart.png",
              "op_sampler_2d.png", "op_sampler_3d.png"]
