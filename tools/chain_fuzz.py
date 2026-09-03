@@ -1268,6 +1268,17 @@ OP_ARG_BUILDERS = {
     "mesh_decimate_preserving": _b_mesh_split(),
     "mesh_reduction_report": _b_mesh_pair(),     # (V, F, V2, F2)
     "cast_shadow": _b_mesh_split("vector"),      # (V, F, light)
+    # terrain / 惑星測光(2026-09-03): (V, F) を割る 9 op。--cover-all で
+    # 「必須引数が組めない」と出ていた(= 一度も実行されていなかった)
+    "mesh_displace_fbm": _b_mesh_split(),
+    "terrain_region_mask": _b_mesh_split(),
+    "mesh_scatter_boulders": _b_mesh_split(),
+    "mesh_edge_lengths": _b_mesh_split(),
+    "mesh_subdivide": _b_mesh_split(),
+    "displacement_band_weights": _b_mesh_split(),
+    "mesh_displace_spectrum": _b_mesh_split(),
+    "render_regolith": _b_mesh_split(),
+    "shadow_raycast": _b_mesh_split("vector"),   # (V, F, light)
     # 3-ベクトルだけを取る解析幾何 11 op(理由と実測は _b_vectors の docstring)。
     # これを入れるまで 11 op すべてが未到達で、`primitive` / `position` の
     # 述語がこの一族に一度も当たっていなかった
@@ -1498,6 +1509,20 @@ OP_PARAM_HINTS = {
     # パッチ 2 面)より大きいが、実測でこの op は目標超過を例外にせず現状を
     # 返す(nf=2 / target=8 で (4,3),(2,3) が返る)ので毎回 CONTRACT にはならない
     ("decimate_qem", "target_faces"): lambda rng: 8,
+    # terrain(2026-09-03): 種メッシュ([0,10]^3 の凸包 / 直方体 / 平面パッチ)の寸法に合わせる
+    ("mesh_displace_fbm", "amplitude"): lambda rng: float(rng.uniform(0.05, 0.3)),
+    ("mesh_scatter_boulders", "density"): lambda rng: 0.05,     # 面積 ~10²〜10³ → 数個〜数十個
+    ("mesh_scatter_boulders", "d_min"): lambda rng: 0.3,
+    ("mesh_subdivide", "target_edge"): lambda rng: float(rng.uniform(1.5, 4.0)),
+    ("mesh_displace_spectrum", "wavelengths"): lambda rng: (8.0, 4.0, 2.0),
+    ("mesh_displace_spectrum", "amplitudes"): lambda rng: (0.3, 0.15, 0.08),
+    ("displacement_band_weights", "wavelengths"): lambda rng: (8.0, 4.0, 2.0),
+    ("render_regolith", "size"): lambda rng: 32,
+    ("render_regolith", "ss"): lambda rng: 1,
+    ("render_regolith", "ao_samples"): lambda rng: 8,
+    ("render_regolith", "shadow_samples"): lambda rng: 1,
+    ("shadow_raycast", "width"): lambda rng: 32,
+    ("shadow_raycast", "height"): lambda rng: 32,
     # meshres: 目標辺長/間隔は種メッシュ(単位球級)の辺長域、面数は小さく
     ("mesh_split_long_edges", "max_edge"): lambda rng: float(rng.uniform(0.3, 1.0)),
     ("mesh_isotropic_remesh", "target_edge"): lambda rng: float(rng.uniform(0.3, 0.8)),

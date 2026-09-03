@@ -251,11 +251,11 @@ def _u8in(v):
     return np.ascontiguousarray(a)
 
 
-def u8_gaussian(v, a, b):
-    x = _u8in(v)
-    s = _sigma(a)
-    kz = _gauss_ksize(s)
-    return cv2.GaussianBlur(x, (kz, kz), s, borderType=_BORDER)
+# ★uint8 の gaussian は **置かない**。``cv2.GaussianBlur`` の 8U 経路は 8 bit 固定小数
+#   のカーネルを使うので、float64 の core との差が **1.174/255**(実測、この module の
+#   ゲート画像 6 枚 × PARITY_AB 5 点の最大)になり「1/255 まで一致」を満たさない。
+#   box は 0.494/255、median / モルフォロジは 0.000/255 なのでそちらだけ載せる。
+#   uint8 の高速 gaussian が要るなら「2/255 まで」という別の契約で明示的に足すこと。
 
 
 def u8_mean_box(v, a, b):
@@ -295,7 +295,7 @@ _F64U8 = "f64+u8"
 #   追加するときは「実装 → ゲートを回す → 通ったら載せる」の順を必ず守る。
 _SPEC: tuple = (
     # (registry name, twin fn, dtype_policy, note)
-    ("gaussian", t_gaussian, _F64U8,
+    ("gaussian", t_gaussian, _F64,
      "cv2.GaussianBlur、scipy の半径 int(4σ+0.5) を明示 + BORDER_REFLECT。full-image bit 一致(2e-16)。2048² 58→8.6 ms"),
     ("mean_box", t_mean_box, _F64U8,
      "cv2.blur + BORDER_REFLECT。full-image 一致(1e-15)。2048² 54→10 ms"),
@@ -323,8 +323,8 @@ _SPEC: tuple = (
     # ── HALCON 名の twin(registry に同一実装で別名登録されている op)──────────
     # accel._TWIN_ALIASES と同じ発想。ゲートは registry の**その名前の実装**に
     # 対して回すので、実装がずれていれば落ちて載らない。
-    ("gauss_filter", t_gaussian, _F64U8, "gaussian の HALCON twin"),
-    ("gauss_image", t_gaussian, _F64U8, "gaussian の HALCON twin"),
+    ("gauss_filter", t_gaussian, _F64, "gaussian の HALCON twin"),
+    ("gauss_image", t_gaussian, _F64, "gaussian の HALCON twin"),
     ("mean_image", t_mean_box, _F64U8, "mean_box の HALCON twin"),
     ("median_image", t_median, _F64U8, "median の HALCON twin"),
     ("median_separate", t_median, _F64U8, "median の HALCON twin"),
@@ -353,12 +353,12 @@ if _HAS_CV2:
 
 # uint8 の整数カーネル。``dtype_policy == "f64+u8"`` の op だけがここに居る。
 _U8_KERNELS: dict = {} if not _HAS_CV2 else {
-    "gaussian": u8_gaussian, "mean_box": u8_mean_box, "median": u8_median,
+    "mean_box": u8_mean_box, "median": u8_median,
     "min_filter": u8_min_filter, "max_filter": u8_max_filter,
     "gerode": u8_min_filter, "gdilate": u8_max_filter,
     "gopen": u8_gopen, "gclose": u8_gclose,
     # HALCON twin 別名
-    "gauss_filter": u8_gaussian, "gauss_image": u8_gaussian, "mean_image": u8_mean_box,
+    "mean_image": u8_mean_box,
     "median_image": u8_median, "median_separate": u8_median, "median_weighted": u8_median,
     "eliminate_min_max": u8_median,
     "gray_erosion": u8_min_filter, "gray_erosion_rect": u8_min_filter,
@@ -387,6 +387,7 @@ NOT_LISTED: dict = {
     "dyn_threshold": "cv2.blur と ndimage.uniform_filter の最終 ulp 差で閾値上の画素が反転 — 二値不一致率 2.97e-4(> 0)なので不採用",
     "edges_image": "registry のこの名前は backends_auto の skimage canny(本物の hysteresis つき)で core の canny とは別アルゴリズム — 二値不一致率 1.00",
     "percentile": "cv2 に任意パーセンタイルの rank filter が無い",
+    "gaussian (uint8 kernel)": "float64 twin は載っているが uint8 の整数カーネルは載せない — cv2 の 8U GaussianBlur は 8bit 固定小数カーネルで core との差が 1.174/255(box 0.494/255・median/morph 0.000/255)",
     "lowpass/highpass": "cv2.dft は np.fft.fft2 とレイアウト規約が違い、調査でも cv2 の利得は測れていない",
     "gamma/invert/scale_clip/threshold": "既に numpy の要素演算で 100〜450 Mpx/s。cv2 化の利得が無い(uint8 LUT は契約外)",
 }

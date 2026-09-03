@@ -772,7 +772,7 @@ _計 344 ops / 66 categories。_
 
 ### terrain(8)
 - `mesh_displace_fbm` (`mesh → mesh`) — Roughen a mesh by displacing vertices along their normals with seeded fBm noise → ``(V, F)``. · 例: `itokawa_regolith_hero`
-- `terrain_region_mask` (`mesh → table`) — Per-face terrain weights (M,) in [0,1]: 0 = smooth regolith "sea", 1 = rough highland. · 例: `itokawa_regolith_hero`
+- `terrain_region_mask` (`mesh → signal`) — Per-face terrain weights (M,) in [0,1]: 0 = smooth regolith "sea", 1 = rough highland. · 例: `itokawa_regolith_hero`
 - `mesh_scatter_boulders` (`mesh → mesh`) — Scatter partly-buried boulders on a mesh (power-law sizes, seeded) → ``(V, F)`` · 例: `itokawa_regolith_hero`
 - `mesh_edge_lengths` (`mesh → signal`) — Local edge length of a triangle mesh → ``(N,)`` per vertex (mean of incident edges), · 例: `itokawa_regolith_hero`
 - `mesh_subdivide` (`mesh → mesh`) — Refine a triangle mesh → ``(V, F)``: uniform midpoint subdivision (``levels`` passes, · 例: `itokawa_regolith_hero`

@@ -390,7 +390,8 @@ _CATALOG = {
     ],
     "terrain": [  # 地形レリーフ(メッシュに実ジオメトリとして起伏・岩を足す。決定的 seed)
         ("mesh_displace_fbm", "render3d", ["mesh"], "mesh", False),
-        ("terrain_region_mask", "render3d", ["mesh"], "table", False),
+        # 面ごとの重み (M,) ndarray。旧宣言 "table" は型の嘘(chain_fuzz TYPEMISS 2026-09-03)
+        ("terrain_region_mask", "render3d", ["mesh"], "signal", False),
         ("mesh_scatter_boulders", "render3d", ["mesh"], "mesh", False),
         # --- 2026-09-03「粗すぎる/凹凸が見えない/粗密の使い分けが無い」の是正 ---
         # Gaskell モデルは辺長 2.6〜14 m と不均一(p5/中央/p95 = 2.6/4.7/7.2 m)。
