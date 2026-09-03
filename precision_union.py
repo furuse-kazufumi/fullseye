@@ -404,9 +404,8 @@ class PrecisionUnion:
             elif tlo >= hi:
                 new_tiles.append(_Tile(0, hi, 0.0, b"", t.n))   # all clipped to hi
             else:                                            # straddles: pay for this one
-                dense = np.clip(self._tile_dense(t, bshape), lo, hi)
                 tol = self.atol if atol is None else float(atol)
-                new_tiles.append(_plan_tile(dense.ravel(), atol=tol))
+                new_tiles.append(self._clip_straddling(t, lo, hi, tol))
         tol_out = self.atol if atol is None else float(atol)
         return PrecisionUnion(self.shape, np.float64, self.tile, new_tiles, self._grid,
                               atol=tol_out)
