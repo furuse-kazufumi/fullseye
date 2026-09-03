@@ -25,11 +25,13 @@ Run: py -3.11 examples/precision_union_volume.py
 from __future__ import annotations
 
 import os
+import sys
 import tempfile
 
 import numpy as np
 
-from precision_union import PrecisionUnion
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from precision_union import PrecisionUnion  # noqa: E402
 
 
 def _label_volume(shape=(64, 128, 128)) -> np.ndarray:
