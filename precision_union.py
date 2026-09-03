@@ -21,7 +21,13 @@ The point the design is probing is **uniform processing**: the caller operates o
 the container without ever branching on a tile's bit-depth. :meth:`to_dense`,
 :meth:`map_pointwise`, :meth:`threshold`, and :meth:`mean` all work the same
 regardless of how each tile is stored, and the cheap tiles (constant / low-bit)
-are handled by a fast path so the *savings compound into speed*, not only memory.
+are handled by a fast path. Two ops are genuinely *deferred* (no decode at all for
+most tiles): :meth:`scale_shift` (pure header algebra, O(#tiles)) and :meth:`clip`
+(tiles inside the window untouched, outside collapsed to constants, only straddling
+tiles re-quantised). ``fullseye.apply``/``run_pipeline`` use these through
+:data:`LAZY_OPS` so a chain of point ops on a union materialises once at the end.
+The union carries the ``atol`` accepted at :meth:`from_array` and every lazy op
+respects it (a gain scales it), so laziness never silently costs precision.
 
 What this is and is not
 -----------------------
