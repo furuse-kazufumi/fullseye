@@ -464,6 +464,136 @@ class PrecisionUnion:
                 new_tiles.append(_plan_tile(m, atol=0.0))    # 0/1 -> 1-bit (or constant)
         return PrecisionUnion(self.shape, np.float64, self.tile, new_tiles, self._grid, atol=0.0)
 
+    # -- two-union algebra (masks and pixelwise max/min), closed over unions ---- #
+    def _same_tiling(self, other: "PrecisionUnion") -> bool:
+        return (isinstance(other, PrecisionUnion) and other.shape == self.shape
+                and other._tsz == self._tsz and other._grid == self._grid)
+
+    @staticmethod
+    def _const(v: float, n: int) -> _Tile:
+        return _Tile(0, float(v), 0.0, b"", n)
+
+    @staticmethod
+    def _is_const(t: _Tile):
+        """(True, value) for a constant tile, else (False, None)."""
+        return (True, t.offset) if t.bits == 0 else (False, None)
+
+    def mask_binop(self, other: "PrecisionUnion", op: str) -> "PrecisionUnion":
+        """Region set operation on two 0/1 unions — ``"or"`` / ``"and"`` /
+        ``"diff"`` (self & ~other) / ``"xor"`` — matching fullseye's
+        ``union2`` / ``intersection`` / ``difference`` / ``symm_difference``
+        (inputs binarised at ``> 0.5``, output 0/1 float64).
+
+        Per tile, the constant-tile algebra decides most of a label-derived mask
+        without touching codes: ``x | 1 = 1``, ``x | 0 = x`` (codes SHARED),
+        ``x & 0 = 0``, ``x & 1 = x``, ``1 & ~x = NOT x`` (header flip, codes shared),
+        ``x ^ 0 = x``, ``x ^ 1 = NOT x``. Only two non-constant tiles decode.
+        Both unions must share shape and tiling (else ``ValueError``; the caller
+        materialises). Exact (``atol=0``).
+        """
+        if not self._same_tiling(other):
+            raise ValueError("mask_binop needs two unions with the same shape and tiling")
+        p = self.threshold_lazy(0.5)                     # binarise like ops._b (> 0.5)
+        q = other.threshold_lazy(0.5)
+
+        def NOT(t: _Tile) -> _Tile:                      # 1 - x on a 0/1 tile: header flip
+            if t.bits == 0:
+                return self._const(1.0 - t.offset, t.n)
+            return _Tile(t.bits, 1.0 - t.offset, -t.scale, t.buf, t.n, cmax=t.cmax)
+
+        out = []
+        for tp, tq in zip(p._tiles, q._tiles):
+            cp, vp = self._is_const(tp)
+            cq, vq = self._is_const(tq)
+            if op == "or":
+                if (cp and vp > 0.5) or (cq and vq > 0.5):
+                    out.append(self._const(1.0, tp.n)); continue
+                if cp:  out.append(tq); continue          # 0 | q = q
+                if cq:  out.append(tp); continue
+            elif op == "and":
+                if (cp and vp < 0.5) or (cq and vq < 0.5):
+                    out.append(self._const(0.0, tp.n)); continue
+                if cp:  out.append(tq); continue          # 1 & q = q
+                if cq:  out.append(tp); continue
+            elif op == "diff":                            # p & ~q
+                if (cp and vp < 0.5) or (cq and vq > 0.5):
+                    out.append(self._const(0.0, tp.n)); continue
+                if cq:  out.append(tp); continue          # p & ~0 = p
+                if cp:  out.append(NOT(tq)); continue     # 1 & ~q = NOT q
+            elif op == "xor":
+                if cp and cq:
+                    out.append(self._const(float((vp > 0.5) != (vq > 0.5)), tp.n)); continue
+                if cp:  out.append(tq if vp < 0.5 else NOT(tq)); continue
+                if cq:  out.append(tp if vq < 0.5 else NOT(tp)); continue
+            else:
+                raise ValueError(f"unknown mask op {op!r}")
+            a = self._tile_values(tp) > 0.5              # both non-constant: decode this pair
+            b = self._tile_values(tq) > 0.5
+            r = {"or": a | b, "and": a & b, "diff": a & ~b, "xor": a ^ b}[op]
+            out.append(_plan_tile(r.astype(np.float64), atol=0.0))
+        return PrecisionUnion(self.shape, np.float64, self.tile, out, self._grid, atol=0.0)
+
+    def extremum_with(self, other: "PrecisionUnion", which: str) -> "PrecisionUnion":
+        """Pixelwise ``max`` / ``min`` of two unions (fullseye ``max_image`` /
+        ``min_image``). Per tile: two constants -> a constant; one constant ``c``
+        -> the other tile clipped against ``c`` from the header (unchanged when its
+        whole range is already on the right side of ``c``, a constant when it is
+        entirely on the wrong side, decoded only when it straddles); two coded
+        tiles decode. Error never grows: result ``atol`` = max of the inputs'.
+        """
+        if which not in ("max", "min"):
+            raise ValueError("which must be 'max' or 'min'")
+        if not self._same_tiling(other):
+            raise ValueError("extremum_with needs two unions with the same shape and tiling")
+        tol = max(self.atol, other.atol)
+        out = []
+        for tp, tq in zip(self._tiles, other._tiles):
+            cp, vp = self._is_const(tp)
+            cq, vq = self._is_const(tq)
+            if cp and cq:
+                out.append(self._const(max(vp, vq) if which == "max" else min(vp, vq), tp.n))
+                continue
+            if cp or cq:                                  # one constant: bound the other
+                c, t = (vp, tq) if cp else (vq, tp)
+                tlo, thi = self._tile_range(t)
+                if which == "max":
+                    if tlo >= c:   out.append(t); continue                  # already >= c
+                    if thi <= c:   out.append(self._const(c, t.n)); continue
+                    out.append(self._clip_straddling(t, c, np.inf, tol)); continue
+                else:
+                    if thi <= c:   out.append(t); continue                  # already <= c
+                    if tlo >= c:   out.append(self._const(c, t.n)); continue
+                    out.append(self._clip_straddling(t, -np.inf, c, tol)); continue
+            a, b = self._tile_values(tp), self._tile_values(tq)
+            r = np.maximum(a, b) if which == "max" else np.minimum(a, b)
+            out.append(_plan_tile(r, atol=tol))
+        return PrecisionUnion(self.shape, np.float64, self.tile, out, self._grid, atol=tol)
+
+    # -- header-exact reductions (union -> scalar) ------------------------------ #
+    def min(self) -> float:
+        """Exact minimum in O(#tiles) from the headers (raw tiles decode)."""
+        return min(self._tile_range(t)[0] for t in self._tiles)
+
+    def max(self) -> float:
+        """Exact maximum in O(#tiles) from the headers (raw tiles decode)."""
+        return max(self._tile_range(t)[1] for t in self._tiles)
+
+    def area_frac(self) -> float:
+        """Fraction of elements ``> 0.5`` (fullseye ``area_frac`` on a region).
+        Constant tiles cost O(1); a 1-bit tile with a {0,1} grid is a popcount of
+        its packed bits (padding bits are zero); other tiles decode."""
+        total = 0
+        count = 0
+        for t in self._tiles:
+            count += t.n
+            if t.bits == 0:
+                total += t.n if t.offset > 0.5 else 0
+            elif (t.bits == 1 and t.scale > 0 and t.offset <= 0.5 < t.offset + t.scale):
+                total += int(np.unpackbits(np.frombuffer(t.buf, dtype=np.uint8)).sum())
+            else:
+                total += int((self._tile_values(t) > 0.5).sum())
+        return total / count
+
     def threshold(self, thr) -> np.ndarray:
         """Boolean mask ``value > thr`` — constant tiles resolve without decoding.
 
