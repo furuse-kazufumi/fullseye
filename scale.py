@@ -88,7 +88,12 @@ def scale_class(op) -> dict:
     """Classify an Op (or a name+category) for large-image behaviour.
 
     Returns {class, tile_safe, reason}. class in
-    {tile_safe, global, compute_bound, memory_bound, cv2_limited}.
+    {tile_safe, global, global_reduce, compute_bound, memory_bound, cv2_limited}.
+    ``global_reduce`` = spatially local but ends in a whole-image normalization, so
+    the standard haloed tiler is wrong (normalize once on the full image instead).
+    Membership of the non-tileable set is measured (see ``_NOT_TILE_SAFE``), not
+    guessed from the category alone — a category-only rule marked 141 non-tileable
+    ops as safe.
     """
     name = getattr(op, "name", op if isinstance(op, str) else "")
     cat = getattr(op, "category", "")
