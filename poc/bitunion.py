@@ -173,14 +173,23 @@ class PrecisionUnion:
         npix = (self.tile_hw[:, 0] * self.tile_hw[:, 1]).astype(np.int64)
         return int((bits[:k] * npix[:k]).sum())
 
+    def _unpacked(self) -> np.ndarray:
+        # unpack the shared bitstream once and cache it (blob never mutates; only
+        # the affine headers change under scale_shift, so the cache stays valid).
+        cache = self.__dict__.get("_bits_cache")
+        if cache is None:
+            cache = np.unpackbits(self.blob) if self.blob.size else np.zeros(0, np.uint8)
+            self.__dict__["_bits_cache"] = cache
+        return cache
+
     def _tile_codes(self, k: int) -> np.ndarray:
         bits = int(self.headers[k, 0])
         h, w = int(self.tile_hw[k, 0]), int(self.tile_hw[k, 1])
         n = h * w
         start = self._bit_offset(k)
         nbits = bits * n
-        # slice the bitstream, unpack, and fold groups of `bits` into integer codes
-        all_bits = np.unpackbits(self.blob)
+        # slice the (cached) bitstream and fold groups of `bits` into integer codes
+        all_bits = self._unpacked()
         seg = all_bits[start:start + nbits].reshape(n, bits)
         weights = (1 << np.arange(bits - 1, -1, -1)).astype(np.int64)  # MSB first
         return (seg.astype(np.int64) * weights).sum(axis=1)
