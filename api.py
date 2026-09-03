@@ -962,7 +962,37 @@ def algo_difftest(name: str, workdir="out/algo", **kw) -> dict:
     """Run the honest gate for general algorithm *name* (Python==oracle, C==Python)."""
     return _algo_difftest.difftest(name, workdir, **kw)
 
-__version__ = "0.1.0"
+def _resolve_version() -> str:
+    """version の単一真実源 = pyproject。ハードコードは陳腐化する(0.1.5 でも
+    "0.1.0" を返していた)。
+
+    順に試す: (1) この api.py の隣にある ``pyproject.toml`` —— ソース/sdist の
+    チェックアウトではこれが正本(wheel では隣に無いので None)。(2) インストール
+    済みなら ``importlib.metadata`` の版。(1) を先に見るのは、開発ツリーに古い版が
+    pip 済みだと metadata がソースとずれる(0.1.5 のソースで 0.1.4 が返る)ため。
+    どちらも駄目なら最後の既知版。
+    """
+    import os as _os                                      # noqa: PLC0415
+    try:
+        import tomllib as _toml                           # noqa: PLC0415
+        _pp = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "pyproject.toml")
+        if _os.path.exists(_pp):
+            with open(_pp, "rb") as _f:
+                return _toml.load(_f)["project"]["version"]
+    except Exception:                                     # noqa: BLE001
+        pass
+    try:
+        from importlib.metadata import version as _v, PackageNotFoundError  # noqa: PLC0415
+        try:
+            return _v("fullseye")
+        except PackageNotFoundError:
+            pass
+    except Exception:                                     # noqa: BLE001
+        pass
+    return "0.1.5"
+
+
+__version__ = _resolve_version()
 
 
 def version() -> str:

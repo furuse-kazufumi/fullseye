@@ -3,6 +3,17 @@
 All notable changes to the PyPI package `fullseye`. Dates are release dates (JST).
 Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/release.yml`).
 
+## 0.1.6 — unreleased
+
+- `fullseye.__version__` はパッケージメタデータ(= pyproject の version)を単一
+  真実源として解決するようになった。従来はハードコードで、0.1.5 でも `"0.1.0"` を
+  返していた。ソース/sdist では `api.py` 隣の `pyproject.toml`、インストール時は
+  `importlib.metadata` から引く。
+- 進化ブリッジ(`backends_typed`)に per-op tunable override を追加し、
+  `running_gaussian_foreground` は検出感度を支配する `var_init` を振れるように
+  なった(既定ヒューリスティックは効きの薄い `alpha` を選んでいた)。公開 op の
+  既定値は不変。
+
 ## 0.1.5 — 2026-09-03 (main since 2026-08-31)
 
 **Summary (en)**: the largest release so far — 63 feature/fix commits, 2,600 files, +219k lines.
