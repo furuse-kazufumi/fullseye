@@ -18,10 +18,15 @@
    - (d) `videostream.py` / `opsvideostream`(8 op): `FrameRing` / `StatefulOp` 7 種 / `VideoPipeline`、`iter_frames(dtype="uint8")`。テスト 21 件、ファザー 8/8 到達、一括 op = ストリーム版がフレーム単位で一致。
 5. `CHANGELOG.md` 0.1.5 に「2026-09-03 追加」節、README/CHANGELOG の op 数を 870 / 344 / 409 に更新、docs/OP_CATALOG/Studio help 再生成。
 
+## 2026-09-03(午後)追加: 動画像処理 第 2 波 + FAST 既定判断 + bench --set video
+- **動画 op 第 2 波(videostream 8→16 op)**: `MotionHistoryImage`/`MotionEnergyImage`(Bobick–Davis)、`ThreeFrameDifference`(Collins・ゴースト除去)、`RunningGaussianForeground`/`RunningGaussianBackground`(Wren *Pfinder*・画素ごと k-σ)、`TemporalBilateral`(時間バイラテラル)、`Deflicker`、`SceneCutDetection`(χ² ヒストグラム)。カテゴリ motion/background/denoise/restore/analysis を追加。テスト +10(計 31)、fuzz cover-all 8/8 到達(uncovered 0/807)、例 `examples/video_streaming.py` に第 2 波 GT ブロック、ガイド更新、per-op 注記 8 本 + OP_CATALOG/Studio help 再生成(drift テスト green)。
+- **`FULLSEYE_FAST` 既定は OFF 維持(計測で判断・完了)**: `--set core --sizes 1080p` を FAST=0/1 比較 → テーブル 10 op が 1.3〜10×(gerode 10×、gaussian 5.3〜5.8×)、dtype 変化ゼロ、テーブル外は経路同一で不変。cv2 twin の内部差 5e-3 が再現性(SHA-256 ピン)を暗黙に破るため既定 ON にしない。速度が要る場面で `FULLSEYE_FAST=1` opt-in。
+- **bench `--set video`**: per-frame ストリーミング計測(ring メモリのみ、ms/frame・fps)。720p float64 で deflicker 152 fps・exp_bg 124 fps・frame_diff 101 fps 〜 per-画素中央値/窓(temporal_median 14.7・background_subtraction 13.2・temporal_bilateral 10.2 fps)。`tools/bench_ops.py --set video --sizes 720p`。
+
 ## 次にやること(優先順)
-1. ~~フルスイート → commit → push → Qiita PATCH~~ **完了(2026-09-03 09:37)**: 10,800 passed / 163 skipped / 3 xfailed / 0 failed(17.5 分、`out/full_suite_2026_09_03c.log`)、push `e6d1ce02f..bb89e5e9a`、ja/en PATCH 200(イトカワ新静止画の説明を差し替え・`?v=2` でキャッシュ回避、op 数 870/344、テスト 10800)。
-2. **v0.1.5 タグ**(= PyPI 公開)は **ユーザー判断待ち**。CHANGELOG は書けている。
-3. `FULLSEYE_FAST` 既定 ON の判断: `tools/bench_ops.py --set core --sizes 2048,1080p --baseline bench/bench_ops_baseline.json` を FAST=0/1 で取り、退行ゼロなら既定 ON。
-4. 高速化の次の梃子: `ops._norm` の一元化 + `Op.global_reduction` フラグ(sobel_mag/canny の残り 2〜3×、`scale.scale_class` の誤分類修正 → タイル配線 (c))、GPU 常駐リング(accel `Resident`)を `VideoPipeline(device="cuda")` に (g)、フレーム並列 executor (f)、bench に `--set vol` / `--set video`。
+1. **v0.1.5 タグ**(= PyPI 公開)は **ユーザー判断待ち**。CHANGELOG は書けている(op 数 870/344/417、videostream 16)。
+2. ~~`FULLSEYE_FAST` 既定 ON の判断~~ **完了: OFF 維持**(上記)。
+3. 高速化の次の梃子: `ops._norm` の一元化 + `Op.global_reduction` フラグ(sobel_mag/canny の残り 2〜3×、`scale.scale_class` の誤分類修正 → タイル配線 (c))、GPU 常駐リング(accel `Resident`)を `VideoPipeline(device="cuda")` に (g)、フレーム並列 executor (f)、bench に `--set vol`。
+4. 動画の残: `optical_flow_magnitude_stream` は per-frame が重い(既定 video セット外)→ 高速化 or cv2 twin 検討。scene_cut のフリッカ耐性は deflicker を前段に置く導線を例示済み。
 5. 解像度管理の残: 増分中央値(大きい窓)、`mesh_isotropic_remesh` をイトカワの表示用 LOD にだけ使う導線(解析データとは分離)。
 6. 前回からの残: 光学候補(多重反射/異方性 BRDF/ゴースト/テレセン誤差予算/センサ RS・PRNU・HDR/多色 PSF)、`fullseye.selfcheck()`、typed `_EMPTY_OF`、0.0 番兵 4 件、ファザー拒否 35 件、TYPEMISS 既知 3 件(pose_error / sphere_sdf / box_sdf)、raptor upstream 同期。
