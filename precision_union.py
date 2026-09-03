@@ -233,7 +233,7 @@ class PrecisionUnion:
         if any(t < 1 for t in tsz):
             raise ValueError("tile sizes must be >= 1")
         grid = tuple((s + t - 1) // t for s, t in zip(a.shape, tsz))
-        obj = cls(a.shape, a.dtype, tile, [], grid)
+        obj = cls(a.shape, a.dtype, tile, [], grid, atol=atol)
         obj._tiles = [_plan_tile(a[sl].ravel(), atol) for _, sl, _ in obj._blocks()]
         return obj
 
