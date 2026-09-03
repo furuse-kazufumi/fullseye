@@ -270,6 +270,19 @@ INPUT_ADAPTERS = {
 }
 
 
+#: bridge の tunable 選定(既定 = 正の数値既定を持つ先頭 2 引数)を op ごとに
+#: 上書きする。既定ヒューリスティックが「効きの薄い引数」を選び、判別軸になる
+#: 引数を素通ししてしまう op のための逃げ道。値は tune したい引数名(最大 2、
+#: a→[0], b→[1])。**公開 op の既定値は変えない**(進化ブリッジ内部だけの選択)。
+#: running_gaussian_foreground: 検出感度は初期分散 var_init が支配し(既定 0.01 は
+#: サブピクセル並進の合成クリップの信号 std^2≈1.8e-4 に対して過大で、k/alpha を
+#: いくら振っても前景が出ない)、学習率 alpha はほぼ効かない。k と var_init を
+#: 振ると弱信号でも到達できる(2026-09-03 実測)。
+OP_TUNABLE_OVERRIDE = {
+    "running_gaussian_foreground": ("k", "var_init"),
+}
+
+
 def _point_labels_to_volume(points, labels, res=16):
     """点ごとのラベル ``(N,)`` を、その点群を覆う**ラベル体積** ``(res,res,res)`` にする。
 
@@ -411,12 +424,15 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, _norm, _bin):
         params = [p for p in sig.parameters.values()
                   if p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD)]
         kwargs, ok, tunable = {}, True, []
+        want = OP_TUNABLE_OVERRIDE.get(name)              # 指定があればその引数だけ振る
         for p in params[1:]:
             if p.default is not inspect.Parameter.empty:
                 # 正の数値既定 = 進化が触れる調整点(最大 2 個を a, b に割り当て)
-                if (isinstance(p.default, (int, float))
-                        and not isinstance(p.default, bool)
-                        and p.default > 0 and len(tunable) < 2):
+                numeric = (isinstance(p.default, (int, float))
+                           and not isinstance(p.default, bool)
+                           and p.default > 0)
+                pick = (p.name in want) if want is not None else numeric
+                if numeric and pick and len(tunable) < 2:
                     tunable.append((p.name, p.default))
                 continue
             hint = cf.OP_PARAM_HINTS.get((name, p.name))

@@ -3,7 +3,7 @@
 All notable changes to the PyPI package `fullseye`. Dates are release dates (JST).
 Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/release.yml`).
 
-## 0.1.5 — unreleased (main since 2026-08-31)
+## 0.1.5 — 2026-09-03 (main since 2026-08-31)
 
 **Summary (en)**: the largest release so far — 63 feature/fix commits, 2,600 files, +219k lines.
 Registry now measures **870 distinct 2-D ops + 344 3-D ops + 417 ledger ops** (math 26, optics 47,
