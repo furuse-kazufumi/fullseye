@@ -628,9 +628,6 @@ def bench_video_row(name: str, size: tuple[int, int, str], dtype: str, image: st
     if name not in VIDEO_STREAM_FACTORY:
         row["error"] = "no streaming factory for %r" % name
         return row
-    # the batch-heavy ops are already cheap per frame; still cap huge clips by area
-    if h * w * VIDEO_FRAMES > 8 * HEAVY_MAX_PX * VIDEO_FRAMES and name == "temporal_median_window" and h * w > HEAVY_MAX_PX:
-        pass                                            # median is content-dependent but fine per frame; keep
     try:
         clip = video_clip(h, w, image if image in ("noisy", "quantised", "constant") else "noisy", dtype)
     except Exception as e:                              # noqa: BLE001
