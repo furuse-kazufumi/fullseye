@@ -182,7 +182,16 @@ def _plan_tile(vals: np.ndarray, atol: float) -> _Tile:
     levels = (1 << bits) - 1
     scale = span / levels
     codes = np.clip(np.rint((vals.astype(np.float64) - vmin) / scale), 0, levels).astype(np.uint16)
-    return _Tile(bits, vmin, scale, _pack_codes(codes, bits), n)
+    return _Tile(bits, vmin, scale, _pack_codes(codes, bits), n, cmax=int(codes.max()))
+
+
+def _raw_tile(vals: np.ndarray) -> _Tile:
+    """A tile that keeps its values as raw float64 (bits=64): value = offset + raw*scale
+    with offset 0 / scale 1. The honest escape hatch when a lossless (atol=0) union
+    must hold values that no uniform code grid can represent exactly — precision is
+    kept, memory is what gives (only the tiles that need it)."""
+    v = np.ascontiguousarray(vals.ravel().astype(np.float64))
+    return _Tile(64, 0.0, 1.0, v.astype("<f8").tobytes(), v.size, cmax=0)
 
 
 class PrecisionUnion:
