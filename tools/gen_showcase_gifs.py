@@ -404,13 +404,16 @@ def gen_all(*, frames: int, size: int, ss: int, fps: int, out_dir: str,
         log("[build] itokawa (point cloud -> mesh)")
         Vi, Fi, method_i = build_itokawa()
         log(f"    itokawa mesh V{Vi.shape} F{Fi.shape}  via {method_i}")
-        log("[render] showcase_turntable_itokawa.gif  (rock/plastic)")
+        # 2026-09-03: 記事の Itokawa ターンテーブル(showcase_turntable_itokawa.gif / media/itokawa.mp4)
+        # は tools/gen_itokawa_turntable.py(物理ベース・間引きなし)が正本。ここは低ポリの
+        # 旧版を *_lowpoly として残すだけで、記事の GIF を上書きしない。
+        log("[render] showcase_turntable_itokawa_lowpoly.gif  (rock/plastic; the article GIF is gen_itokawa_turntable.py)")
         frames_i = render_turntable(
             Vi, Fi, frames=frames, size=size, ss=ss, material="plastic",
             albedo=(0.55, 0.50, 0.44), light=(0.55, 0.35, 0.80),
             background=(0.03, 0.03, 0.05), elev_deg=13.0, tonemap="aces",
             ambient=0.13, log=log)
-        p = os.path.join(out_dir, "showcase_turntable_itokawa.gif")
+        p = os.path.join(out_dir, "showcase_turntable_itokawa_lowpoly.gif")
         sb = save_gif(frames_i, p, fps=fps, log=log)
         n, shp = verify_gif(p, len(frames_i), log=log)
         results["itokawa"] = dict(path=p, frames=frames, bytes=sb, n=n, shape=shp,
@@ -418,12 +421,12 @@ def gen_all(*, frames: int, size: int, ss: int, fps: int, out_dir: str,
         _report("turntable_itokawa", p, frames, sb, n, shp,
                 f"subject=Itokawa asteroid / mesh via {method_i}", log)
 
-        p_mp4 = os.path.join(_MEDIA_DIR, "itokawa.mp4")
+        p_mp4 = os.path.join(_MEDIA_DIR, "itokawa_lowpoly.mp4")
         sb_mp4 = save_mp4(frames_i, p_mp4, fps=fps, log=log)
         n_mp4, shp_mp4 = verify_mp4(p_mp4, len(frames_i), log=log)
         results["itokawa"]["mp4"] = dict(path=p_mp4, bytes=sb_mp4, n=n_mp4, shape=shp_mp4)
         _report("turntable_itokawa_mp4", p_mp4, frames, sb_mp4, n_mp4, shp_mp4,
-                "same frames as showcase_turntable_itokawa.gif", log)
+                "same frames as showcase_turntable_itokawa_lowpoly.gif", log)
 
     # --- 3. 手骨 CT ターンテーブル(骨色)------------------------------------
     if "skeleton" in subjects:

@@ -4,9 +4,9 @@
 
 ![Fullseye ―― 実処理結果 12 タイルの看板(欠陥検査・寸法計測・watershed・恐竜X線・星雲・LiDAR ほか、すべて本記事に登場する実出力)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fullseye_banner.png)
 
-![小惑星イトカワの実点群を、自作レンダラでターンテーブル表示(全部 numpy 自前実装)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/showcase_turntable_itokawa.gif)
+![小惑星イトカワの実形状モデル(49,152 面、間引きなし)を物理ベースの自作レンダラでターンテーブル表示 —— Hapke 反射則・太陽視直径 0.53° の硬い影・環境光ゼロ・帯域制限した起伏と角ばった岩(全部 numpy 自前実装)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/showcase_turntable_itokawa.gif?v=2)
 
-これは小惑星 **25143 イトカワ**の実データ点群(はやぶさ探査機の観測から作られた Gaskell 形状モデル、JAXA DARTS アーカイブ公開)を、本記事の主役 **Fullseye** の自作 3D レンダラで回しているところです。点群の読み込みからレンダリング・岩石マテリアル・影まで、**すべて numpy の自前実装**。
+これは小惑星 **25143 イトカワ**の実形状モデル(はやぶさ探査機の観測から作られた Gaskell 形状モデル、JAXA DARTS アーカイブ公開、49,152 面を**間引かずそのまま**)の周りを、本記事の主役 **Fullseye** の自作 3D レンダラのカメラと太陽が一周しているところです(位相角 45° 固定)。形状の読み込み、辺長 1.5 m への適応テッセレーション(幾何は不変)、波長ごとに帯域制限した起伏、べき則 D^-3.1 で撒いた角ばった岩、Hapke 反射則、太陽の視直径ぶんのレイキャスト影まで、**すべて numpy の自前実装**(環境光ゼロ、露出は全フレーム共通)。
 
 [![同じイトカワの実形状モデル(49,152 面)を物理ベースで描いた静止画 —— Hapke 反射則・太陽視直径 0.53° の硬い影・環境光ゼロ・fBm 起伏 + べき則 D^-3.1 の岩(クリックでフルサイズ)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/itokawa_regolith_hero_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/itokawa_regolith_hero.png?v=2)
 

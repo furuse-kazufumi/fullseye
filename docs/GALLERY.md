@@ -166,7 +166,7 @@ GitHub 上でそのまま表示されます。
 | <img src="../examples_3d/_gallery/render_tonemap.png" width="180"> | `render_tonemap.png` | HDRレンダの Reinhard / ACES トーンマッピング(素朴クリップとの比較、階調保持を実証) | `examples_3d/render_tonemap.py` |
 | <img src="../examples_3d/_gallery/watershed3d.png" width="180"> | `watershed3d.png` | 接触した2物体を距離変換+分水嶺(watershed)で分離(連結成分ラベリングでは1個に融合してしまうケース) | `examples_3d/watershed3d.py` |
 | (GIF — GitHub上でアニメ表示) | `showcase_turntable_pod.gif` | SDF生成の hero pod を金属マテリアルで1回転させるターンテーブル | `tools/gen_showcase_gifs.py`(`build_pod`) |
-| (GIF) | `showcase_turntable_itokawa.gif` | 小惑星 25143 Itokawa の実点群を岩石マテリアルで1回転 | `tools/gen_showcase_gifs.py`(`build_itokawa`) |
+| (GIF) | `showcase_turntable_itokawa.gif` | 小惑星 25143 Itokawa の実形状モデル(49,152 面、間引きなし)の周りをカメラと太陽が一周(位相角 45°): 適応テッセレーション 1.5 m・帯域制限起伏・角ばった岩 D^-3.1・Hapke・太陽視直径 0.53° の影・環境光ゼロ | `tools/gen_itokawa_turntable.py` |
 | (GIF) | `showcase_turntable_skeleton.gif` | 手骨CTボリュームを骨色マテリアルで1回転(骨格標本風) | `tools/gen_showcase_gifs.py`(`build_skeleton`、subject=hand-bone CT) |
 | (GIF) | `showcase_hue_cycle.gif` | hero pod を回転させながら表面アルベドの色相を0→360で回す | `tools/gen_showcase_gifs.py`(`build_pod` + hue cycle) |
 | (GIF) | `showcase_hand.gif` | 手続き的手骨格のターンテーブル(推定、`hand_hero.png` と同じ被写体) | 特定不能(再生成スクリプトが現在のツリーに見当たらない) |
@@ -205,7 +205,7 @@ GitHub 上でそのまま表示されます。
 | 動画 | 説明 |
 |---|---|
 | [`pod.mp4`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/pod.mp4) | SDF生成の hero pod を金属マテリアルで1回転させるターンテーブル(`showcase_turntable_pod.gif` と同一フレーム) |
-| [`itokawa.mp4`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/itokawa.mp4) | 小惑星 25143 Itokawa の実点群を岩石マテリアルで1回転(`showcase_turntable_itokawa.gif` と同一フレーム) |
+| [`itokawa.mp4`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/itokawa.mp4) | 小惑星 25143 Itokawa の実形状モデルを物理ベースで一周(`showcase_turntable_itokawa.gif` と同一フレーム、`tools/gen_itokawa_turntable.py`) |
 | [`skeleton.mp4`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/skeleton.mp4) | 手骨CTボリュームを骨色マテリアルで1回転、骨格標本風(`showcase_turntable_skeleton.gif` と同一フレーム) |
 | [`hue_cycle.mp4`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/hue_cycle.mp4) | hero pod を回転させながら表面アルベドの色相を0→360で回す(`showcase_hue_cycle.gif` と同一フレーム) |
 | [`dvs_stream.mp4`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/dvs_stream.mp4) | イベントカメラ(DVS)シミュレーション — MuJoCoシーンをパンしながら発生するON(明)/OFF(暗)イベントが物体エッジ上を流れる様子(`event_camera.py` と同一のログ輝度差分モデルをステップ実行、軽量版 `dvs_stream.gif` も同梱) |
