@@ -818,6 +818,11 @@ def format_row(row: dict) -> str:
     if "skipped" in row:
         return "%-20s %-6s %-8s %-9s  skipped (%s)" % (
             row["name"], row["size"], row["dtype"], row.get("image", ""), row["skipped"])
+    if row.get("streaming"):                            # per-frame video row
+        return ("%-30s %-6s %-8s %-9s %8.2f ms/frame %7.1f fps %7.1f Mpx/s  tm x%-6s rss x%-6s fb=%d"
+                % (row["name"], row["size"], row["dtype"], row.get("image", ""),
+                   row["ms_frame"], row.get("fps") or 0.0, row["mpx_s"] or 0.0,
+                   row["tm_peak_x"], row["rss_peak_x"], row["fallbacks"]))
     return ("%-20s %-6s %-8s %-9s %9.2f ms %8.1f Mpx/s  tm x%-6s rss x%-6s out=%-9s fb=%d%s"
             % (row["name"], row["size"], row["dtype"], row.get("image", ""), row["ms"],
                row["mpx_s"] or 0.0, row["tm_peak_x"], row["rss_peak_x"], row["out_dtype"],
