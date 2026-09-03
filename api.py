@@ -1601,7 +1601,8 @@ def _apply_impl(image, name, a, b, coerce, device, policy, fast=None):
             if (lazy is not None and nop.arity == 2
                     and all(isinstance(x, PrecisionUnion) for x in image)
                     and image[0]._same_tiling(image[1])):
-                pus = [_pu_contract(x, nop, policy) for x in image]
+                pus = [_pu_contract(x, nop, policy, in_sort=srt, name=name)
+                       for x, srt in zip(image, nop.in_sorts)]
                 if all(p is not None for p in pus):
                     return lazy(pus[0], pus[1], a, b)
             image = [x.to_dense() if isinstance(x, PrecisionUnion) else x for x in image]
