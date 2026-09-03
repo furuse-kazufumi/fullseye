@@ -331,43 +331,28 @@ class PrecisionUnion:
         are constant. The value is that it operates on the compressed store without
         a full materialise, not raw speed; realising a speed win would need a
         vectorised/compiled kernel."""
-        h, w = self.shape
-        out = np.empty((h, w), dtype=bool)
-        tr, tc = self._grid
-        idx = 0
-        for ti in range(tr):
-            for tj in range(tc):
-                th = min(self.tile, h - ti * self.tile)
-                tw = min(self.tile, w - tj * self.tile)
-                t = self._tiles[idx]
-                sl = (slice(ti * self.tile, ti * self.tile + th),
-                      slice(tj * self.tile, tj * self.tile + tw))
-                if t.bits == 0:
-                    out[sl] = (t.offset > thr)
-                else:
-                    out[sl] = self._tile_dense(t, th, tw) > thr
-                idx += 1
+        out = np.empty(self.shape, dtype=bool)
+        for idx, sl, bshape in self._blocks():
+            t = self._tiles[idx]
+            if t.bits == 0:
+                out[sl] = (t.offset > thr)
+            else:
+                out[sl] = self._tile_dense(t, bshape) > thr
         return out
 
     def mean(self) -> float:
         """Exact mean over the reconstructed array, computed tile-wise. Constant
-        tiles contribute ``offset * n`` without touching any codes."""
+        tiles contribute ``offset * n`` without touching any codes. Dimension-free
+        (no slicing needed) — sums each tile's decoded values directly."""
         total = 0.0
         count = 0
-        h, w = self.shape
-        tr, tc = self._grid
-        idx = 0
-        for ti in range(tr):
-            for tj in range(tc):
-                th = min(self.tile, h - ti * self.tile)
-                tw = min(self.tile, w - tj * self.tile)
-                t = self._tiles[idx]
-                if t.bits == 0:
-                    total += t.offset * t.n
-                else:
-                    total += float(self._tile_dense(t, th, tw).sum())
-                count += t.n
-                idx += 1
+        for t in self._tiles:
+            if t.bits == 0:
+                total += t.offset * t.n
+            else:
+                codes = _unpack_codes(t.buf, t.bits, t.n)
+                total += float((t.offset + codes.astype(np.float64) * t.scale).sum())
+            count += t.n
         return total / count
 
     def max_abs_error(self, original) -> float:
