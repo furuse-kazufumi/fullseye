@@ -34,6 +34,20 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
   連結)でメモリ勝ちがそのままファイル勝ちに(構造的ラベルボリュームで **on-disk 378x**、
   npz の gzip も乗る)。1D/2D の既存 API・挙動は不変。例 `examples/precision_union_volume.py`
   (PASS 終端、2 regime + 遅延アフィン + honest な非勝ちを実演)。
+  **op パイプライン統合(遅延実行)**: `fullseye.apply` / `run_pipeline` が `PrecisionUnion`
+  を入力に受ける。`precision_union.LAZY_OPS`(`identity`/`invert`/`scale_clip`)にある op は
+  **materialize せずヘッダ代数+タイル単位 clip で実行しユニオンのまま返す**(O(タイル数))。
+  表に無い最初の op で 1 回だけ materialize して通常経路(coerce/契約変換/台帳)へ。整数・bool
+  ユニオンは `/255` 契約変換と台帳記録が通常経路の責務なので遅延せず materialize(parity 固定)。
+  GPU 経路(`device!="cpu"`)は dense を要するので materialize。新 `clip(lo,hi)`: ヘッダから
+  各タイルの値域を O(1) で判定し、**窓内=不変(コード共有)/窓外=定数化/跨ぎだけ decode→
+  再量子化**。**精度契約**: ユニオンは `from_array` で受け入れた `atol` を保持し、`scale_shift`
+  は |gain| 倍で伝播、`clip` の跨ぎ再量子化はその atol で行う(無損失ユニオン=整数ラベルの
+  clip は無損失、float は符号化 atol を超えない)。この契約は開発中に「タイル自身のステップ/2」
+  という誤った契約(4bit で厳密だったタイルに 0.067 の誤差を許した)をテストで摘発して修正した
+  もの。**drift 防止**: `LAZY_OPS` の (a,b)→gain/offset 写像は ops.py と二重管理なので、
+  `apply(pu,op).to_dense() == apply(dense,op)` の parity テストで実 op に固定(乖離は CI 失敗)。
+  テスト計 51 件。
 - `fullseye.__version__` はパッケージメタデータ(= pyproject の version)を単一
   真実源として解決するようになった。従来はハードコードで、0.1.5 でも `"0.1.0"` を
   返していた。ソース/sdist では `api.py` 隣の `pyproject.toml`、インストール時は
