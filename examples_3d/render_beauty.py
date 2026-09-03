@@ -164,7 +164,7 @@ def sculpture(res: int = 48, with_normals: bool = False):
         ((0.10, -0.35, 0.55), 0.42),
     ]
     return blob_mesh(spheres, ((-1.9, 1.9), (-1.7, 1.7), (-1.5, 1.9)),
-                     res=res, k=0.42)
+                     res=res, k=0.42, with_normals=with_normals)
 
 
 def sit_on_ground(V: np.ndarray) -> np.ndarray:
