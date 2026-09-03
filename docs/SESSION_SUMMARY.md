@@ -3,13 +3,15 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-03 19:07:58
+- **最終更新**: 2026-09-03 20:57:42
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+ef6a078fb test(bridge): lock finiteness + determinism on all tb_* ops
+aab7b8fbc fix(scale): measure tile-safety instead of guessing from category
 5b6cb9b0d auto: scale.py 編集前 (2026-09-03 19:06)
 08ac583a5 auto: scale.py 編集前 (2026-09-03 19:04)
 3873b243e auto: scale.py 編集前 (2026-09-03 19:03)
@@ -18,28 +20,23 @@ f87193f47 auto: scale.py 編集前 (2026-09-03 19:03)
 6e42f2ffe docs: mark v0.1.5 published to PyPI (0.1.3 -> 0.1.5; v0.1.4 was a PyPI 400)
 1540255eb fix(bridge): tune var_init for running_gaussian_foreground; set 0.1.5 release date
 97da7ac33 video: streaming ops wave 2 + bench --set video + FULLSEYE_FAST decision (measured)
-f06088a30 auto: CHANGELOG.md 編集前 (2026-09-03 13:42)
-132092a27 auto: NEXT_SESSION.md 編集前 (2026-09-03 13:27)
 ```
 
 ## 現在の git status
 
 ```
-M CHANGELOG.md
- M docs/NEXT_SESSION.md
- M scale.py
+(clean)
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
+20:53 tests/test_backends_typed_liveness.py
+19:07 docs/SESSION_SUMMARY.md
 19:07 docs/NEXT_SESSION.md
 19:07 CHANGELOG.md
 19:06 scale.py
 19:05 tests/test_scale.py
-18:43 docs/SESSION_SUMMARY.md
-18:42 api.py
-18:35 backends_typed.py
 ```
 
 ---
