@@ -26,7 +26,7 @@ This is the real shape model of asteroid **25143 Itokawa** — the Gaskell model
 First, one image. This is output from Fullseye's 3D renderer (hand-written numpy, of course) — an SDF-built shape baked with ambient occlusion, soft shadows, and ACES tone mapping:
 
 <!-- Post-publication check: the raw URL must return HTTP 200. Images are lightweight thumbnails that click through to full size (to keep the article's memory footprint down) -->
-[![Output from Fullseye's custom renderer (SDF smooth union + AO + soft shadows + ACES) — click for full size](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/render_beauty_hero_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/render_beauty_hero.png)
+[![Output from Fullseye's custom renderer (SDF smooth union + AO + soft shadows + ACES) — click for full size](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/render_beauty_hero_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/render_beauty_hero.png?v=2)
 
 ---
 

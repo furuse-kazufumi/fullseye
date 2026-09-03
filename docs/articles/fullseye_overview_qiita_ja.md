@@ -26,7 +26,7 @@
 まず1枚。これは Fullseye の 3D レンダラ（もちろん numpy 自前実装）が、SDF で作った形状に環境光遮蔽・ソフトシャドウ・ACES トーンマップまでかけて焼いた出力です：
 
 <!-- 公開後チェック: raw URL が HTTP 200 を返すこと。画像は軽量サムネ+クリックでフルサイズ(記事のメモリ負荷対策) -->
-[![Fullseye 自前レンダラの出力（SDF smooth union + AO + ソフトシャドウ + ACES）— クリックでフルサイズ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/render_beauty_hero_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/render_beauty_hero.png)
+[![Fullseye 自前レンダラの出力（SDF smooth union + AO + ソフトシャドウ + ACES）— クリックでフルサイズ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/render_beauty_hero_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/render_beauty_hero.png?v=2)
 
 ---
 
