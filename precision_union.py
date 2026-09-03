@@ -130,19 +130,12 @@ def _plan_tile(vals: np.ndarray, atol: float) -> _Tile:
 
     is_int = np.issubdtype(vals.dtype, np.integer)
     span = vmax - vmin
+    candidates = []  # (bits, _Tile) — the union picks the cheapest that fits
 
-    # Integer data with a lossless request: use UNIT-scale integer codes
-    # (offset=min, scale=1, code = value - min). Affine-over-span would give a
-    # non-integer scale whose rounding is not exact, forcing every busy tile up
-    # to 16 bits even when 8 would round-trip perfectly. The bit-width is just
-    # what it takes to count to `span`.
-    if is_int and atol == 0.0 and span <= 65535:
-        ispan = int(round(span))
-        for bits in (1, 2, 4, 8, 16):
-            if ((1 << bits) - 1) >= ispan:
-                codes = (vals.astype(np.int64) - int(round(vmin))).astype(np.uint16)
-                return _Tile(bits, float(round(vmin)), 1.0, _pack_codes(codes, bits), n)
-
+    # Affine candidate: value = offset + code*scale over the tile's range. Best
+    # when the distinct values are (near-)equally spaced — a smooth gradient tile
+    # rounds exactly at very few bits, and a two-value tile needs just 1 bit even
+    # if those two values are far apart.
     for bits in (1, 2, 4, 8, 16):
         levels = (1 << bits) - 1
         scale = span / levels
@@ -152,7 +145,25 @@ def _plan_tile(vals: np.ndarray, atol: float) -> _Tile:
         err = float(np.abs(recon - vals.astype(np.float64)).max())
         ok = (err == 0.0) if (is_int and atol == 0.0) else (err <= atol)
         if ok:
-            return _Tile(bits, vmin, scale, _pack_codes(codes, bits), n)
+            candidates.append((bits, _Tile(bits, vmin, scale, _pack_codes(codes, bits), n)))
+            break
+
+    # Unit-scale integer candidate: offset=min, scale=1, code = value - min.
+    # Guaranteed lossless for integer data (no rounding); best when the range is
+    # narrow but densely populated (a busy uint8 tile needs 8 bits, not 16 — the
+    # affine scale would be non-integer and its rounding never exactly lossless).
+    if is_int and atol == 0.0 and span <= 65535:
+        ispan = int(round(span))
+        for bits in (1, 2, 4, 8, 16):
+            if ((1 << bits) - 1) >= ispan:
+                codes = (vals.astype(np.int64) - int(round(vmin))).astype(np.uint16)
+                candidates.append((bits, _Tile(bits, float(round(vmin)), 1.0, _pack_codes(codes, bits), n)))
+                break
+
+    if candidates:
+        candidates.sort(key=lambda bt: bt[0])  # fewest bits wins
+        return candidates[0][1]
+
     # 16 bits still not enough (extreme float range at atol==0): store raw-ish at
     # 16 bits anyway — this is the honest fallback, error is reported by caller.
     bits = 16
