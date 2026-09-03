@@ -326,3 +326,107 @@ def test_to_state_is_pure_numeric():
         assert isinstance(v, np.ndarray), (k, type(v))
     assert np.array_equal(PrecisionUnion.from_state(st).to_dense(),
                           pu.to_dense())
+
+
+# --- clip: per-tile deferral, exact vs np.clip ------------------------------ #
+def _clip_probe():
+    """Tiles of four kinds: fully inside [0,1], fully above, fully below, straddling."""
+    a = np.zeros((64, 16), np.float64)
+    a[0:16] = np.linspace(0.2, 0.8, 16)[:, None]      # inside  -> identity (lazy)
+    a[16:32] = 1.5 + np.linspace(0, 0.3, 16)[:, None]  # above   -> constant 1
+    a[32:48] = -0.7 + np.linspace(0, 0.2, 16)[:, None] # below   -> constant 0
+    a[48:64] = np.linspace(-0.5, 1.5, 16)[:, None]     # straddle -> decoded+re-encoded
+    return a
+
+
+def test_clip_matches_dense_and_defers_by_tile():
+    a = _clip_probe()
+    pu = PrecisionUnion.from_array(a, tile=16, atol=1e-3)
+    dense = pu.to_dense()
+    c = pu.clip(0.0, 1.0)
+    np.testing.assert_allclose(c.to_dense(), np.clip(dense, 0, 1), rtol=0, atol=1e-12)
+    inside, above, below, straddle = c._tiles[0], c._tiles[1], c._tiles[2], c._tiles[3]
+    assert inside.buf is pu._tiles[0].buf                # untouched: codes shared
+    assert above.bits == 0 and above.offset == 1.0       # collapsed to a constant
+    assert below.bits == 0 and below.offset == 0.0
+    assert straddle.buf is not pu._tiles[3].buf          # the only tile that paid
+
+
+def test_clip_after_negative_gain_uses_flipped_range():
+    # scale_shift(-1, 1) makes scale negative; _tile_range must still bound correctly
+    a = np.linspace(0.0, 1.0, 256).reshape(16, 16)
+    pu = PrecisionUnion.from_array(a, tile=16, atol=1e-3)
+    inv = pu.scale_shift(-1.0, 1.0)
+    lo, hi = inv._tile_range(inv._tiles[0])
+    assert lo <= inv.to_dense().min() + 1e-9 and hi >= inv.to_dense().max() - 1e-9
+    np.testing.assert_allclose(inv.clip(0, 1).to_dense(), np.clip(1 - pu.to_dense(), 0, 1),
+                               rtol=0, atol=1e-12)
+
+
+# --- op-pipeline integration: lazy ops via fullseye.apply / run_pipeline ---- #
+def _contract_image():
+    rng = np.random.default_rng(30)
+    yy, xx = np.mgrid[0:64, 0:48]
+    img = 0.5 + 0.45 * np.sin(xx / 7.0) * np.cos(yy / 9.0) + 0.02 * rng.standard_normal((64, 48))
+    return np.clip(img, 0, 1)                            # float64 in [0,1]: the contract
+
+
+@pytest.mark.parametrize("name", sorted(__import__("precision_union").LAZY_OPS))
+def test_apply_lazy_op_parity_with_dense(name):
+    """apply(pu, name) must equal apply(dense, name) on the REAL op — this locks
+    the (a,b) -> gain/offset mapping in LAZY_OPS to ops.py (drift fails here)."""
+    import api
+    pu = PrecisionUnion.from_array(_contract_image(), tile=16, atol=1e-3)
+    dense = pu.to_dense()
+    rng = np.random.default_rng(31)
+    for _ in range(6):
+        a, b = float(rng.random()), float(rng.random())  # b=1 pushes scale_clip past 1
+        r = api.apply(pu, name, a, b)
+        assert isinstance(r, PrecisionUnion), "lazy op must stay a union"
+        np.testing.assert_allclose(r.to_dense(), api.apply(dense, name, a, b),
+                                   rtol=0, atol=1e-9)
+
+
+def test_apply_lazy_scale_clip_activates_clip_and_stays_partly_lazy():
+    import api
+    pu = PrecisionUnion.from_array(_contract_image(), tile=16, atol=1e-3)
+    r = api.apply(pu, "scale_clip", 1.0, 1.0)            # 2v + 0.5: clips above 0.25
+    dense = api.apply(pu.to_dense(), "scale_clip", 1.0, 1.0)
+    np.testing.assert_allclose(r.to_dense(), dense, rtol=0, atol=1e-9)
+    assert (dense == 1.0).any()                          # the clip really fired
+
+
+def test_apply_non_lazy_op_materialises_once_and_matches():
+    import api
+    pu = PrecisionUnion.from_array(_contract_image(), tile=16, atol=1e-3)
+    r = api.apply(pu, "gaussian", 0.5, 0.5)
+    assert isinstance(r, np.ndarray)                      # materialised
+    np.testing.assert_allclose(r, api.apply(pu.to_dense(), "gaussian", 0.5, 0.5),
+                               rtol=0, atol=1e-12)
+
+
+def test_apply_integer_union_takes_the_contract_path():
+    """A uint8 union is NOT run lazily (its /255 contract conversion and ledger
+    record belong to the normal path); it materialises and matches dense exactly."""
+    import api
+    rng = np.random.default_rng(32)
+    u8 = rng.integers(0, 256, (32, 32), dtype=np.uint8)
+    pu = PrecisionUnion.from_array(u8, tile=16)
+    r = api.apply(pu, "invert", 0.5, 0.5)
+    assert isinstance(r, np.ndarray)
+    np.testing.assert_allclose(r, api.apply(u8, "invert", 0.5, 0.5), rtol=0, atol=1e-12)
+
+
+def test_run_pipeline_lazy_chain_then_materialise():
+    import api
+    pu = PrecisionUnion.from_array(_contract_image(), tile=16, atol=1e-3)
+    dense = pu.to_dense()
+    chain = [("invert", 0.5, 0.5), ("scale_clip", 0.8, 0.3), ("invert", 0.5, 0.5)]
+    lazy = api.run_pipeline(pu, chain)
+    assert isinstance(lazy, PrecisionUnion)              # all-lazy chain stays a union
+    np.testing.assert_allclose(lazy.to_dense(), api.run_pipeline(dense, chain),
+                               rtol=0, atol=1e-9)
+    full = chain + [("gaussian", 0.5, 0.5)]
+    out = api.run_pipeline(pu, full)
+    assert isinstance(out, np.ndarray)                    # first non-lazy stage materialises
+    np.testing.assert_allclose(out, api.run_pipeline(dense, full), rtol=0, atol=1e-9)

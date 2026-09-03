@@ -1631,6 +1631,8 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
             name, sa, sb = st, a, b
         norm.append((name, float(sa), float(sb)))
 
+    if isinstance(image, PrecisionUnion) and device != "cpu":
+        image = image.to_dense()      # the lazy union path is CPU-only; the GPU bridge needs a dense array
     if device != "cpu" and norm:                          # GPU 経路(accel_bridge 常駐)
         try:
             import accel_bridge as _bridge
