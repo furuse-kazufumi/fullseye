@@ -201,6 +201,20 @@ def test_the_core_set_is_fully_present_without_optional_backends():
     assert len(present) == len(B.CORE_OPS)
 
 
+def test_video_set_is_present_and_measures_per_frame():
+    """--set video は videostream の op を streaming 経路で per-frame 計測する。"""
+    present, absent = B.resolve_set("video")
+    assert absent == [] and len(present) == len(B.VIDEO_OPS)
+    rep = B.run(["frame_difference_causal", "deflicker"], [(48, 64, "48x64")],
+                ["float64"], ["noisy"], warm=0, repeat=1, verbose=False)
+    assert rep["summary"]["errors"] == 0, [r.get("error") for r in rep["rows"]]
+    for r in rep["rows"]:
+        assert r["streaming"] is True and r["kind"] == "video"
+        assert r["frames"] == B.VIDEO_FRAMES and r["ms_frame"] > 0.0 and r["fps"] > 0.0
+        assert r["out_dtype"] == "float64" and r["module"] == "videostream"
+        assert r["fallbacks"] == 0
+
+
 # --------------------------------------------------------------------------- #
 # 4. 入力: ノイズ画像が必ず在る                                                  #
 # --------------------------------------------------------------------------- #
