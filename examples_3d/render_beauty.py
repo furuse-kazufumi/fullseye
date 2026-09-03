@@ -125,7 +125,28 @@ def blob_mesh(spheres, bounds, res: int, k: float) -> tuple[np.ndarray, np.ndarr
     V_idx, F = render3d.marching_cubes(vol, 0.0)
     V = _mc_to_world(V_idx, vol.shape, ext)
     F = _orient_outward(V, F)
-    return V, F
+    if not with_normals:
+        return V, F
+    return V, F, sdf_vertex_normals(vol, V_idx, ext)
+
+
+def sdf_vertex_normals(vol: np.ndarray, V_idx: np.ndarray, ext) -> np.ndarray:
+    """SDF 勾配 ∇f をメッシュ頂点で三線形補間した**真の滑らかな法線** (N, 3)。
+
+    marching cubes の頂点法線を面法線から作ると、ボクセル格子の階段が法線に残り、
+    陰影に等高線状のバンディング(スペキュラの階段)が出る。等値面の法線は定義から
+    ∇f/|∇f| なので、場を直接微分して頂点位置でサンプルすれば格子の痕跡は残らない。
+    ``vol`` は index 順 (nx, ny, nz)、``V_idx`` は marching_cubes の index 空間頂点、
+    ``ext`` は grid_coords の範囲(軸ごとのボクセル幅で勾配を world 単位へ換算)。"""
+    from scipy.ndimage import map_coordinates
+    nx, ny, nz = vol.shape
+    span = np.array([ext[1] - ext[0], ext[3] - ext[2], ext[5] - ext[4]], np.float64)
+    h = span / np.array([nx, ny, nz], np.float64)          # ボクセル幅(world)
+    g = np.gradient(vol.astype(np.float64), h[0], h[1], h[2])  # 軸別 world 勾配
+    pts = np.asarray(V_idx, np.float64).T                  # (3, N) index 座標
+    N = np.stack([map_coordinates(gi, pts, order=1, mode="nearest") for gi in g], axis=1)
+    N /= np.maximum(np.linalg.norm(N, axis=1, keepdims=True), 1e-15)
+    return N
 
 
 def peanut(res: int = 24) -> tuple[np.ndarray, np.ndarray]:
