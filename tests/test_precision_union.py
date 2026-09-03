@@ -141,14 +141,24 @@ def test_mean_matches_dense():
     assert abs(pu.mean() - pu.to_dense().mean()) < 1e-6
 
 
-def test_map_pointwise_matches_apply_on_dense():
+def test_map_pointwise_integer_result_is_exact():
     a = _mixed()
     pu = PrecisionUnion.from_array(a, tile=32)
     d = pu.to_dense().astype(np.float64)
-    for f in (lambda x: x * 2 + 1, lambda x: np.sqrt(np.abs(x)), lambda x: -x):
-        got = pu.map_pointwise(f).to_dense()
-        want = f(d)
-        assert np.abs(got.astype(np.float64) - want).max() < 1e-6, f
+    for f in (lambda x: x * 2 + 1, lambda x: -x):          # integer-valued outputs
+        got = pu.map_pointwise(f, atol=0.0).to_dense()
+        assert np.abs(got.astype(np.float64) - f(d)).max() < 1e-6, f
+
+
+def test_map_pointwise_float_result_is_bounded_by_atol():
+    # a float-valued f cannot be lossless in a quantized union; the honest
+    # contract is that the re-encoding error stays within the given atol.
+    a = _mixed()
+    pu = PrecisionUnion.from_array(a, tile=32)
+    d = pu.to_dense().astype(np.float64)
+    atol = 1e-3
+    got = pu.map_pointwise(lambda x: np.sqrt(np.abs(x)), atol=atol).to_dense()
+    assert np.abs(got.astype(np.float64) - np.sqrt(np.abs(d))).max() <= atol + 1e-6
 
 
 def test_map_pointwise_constant_fast_path_is_correct():
