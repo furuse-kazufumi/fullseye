@@ -45,7 +45,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-__all__ = ["PrecisionUnion", "pack", "unpack"]
+__all__ = ["PrecisionUnion", "pack", "unpack", "LAZY_OPS"]
 
 # bit-depths the union may choose from. 0 = constant tile (offset only).
 _ALLOWED_BITS = (0, 1, 2, 4, 8, 16)
@@ -322,6 +322,50 @@ class PrecisionUnion:
                      for t in self._tiles]
         return PrecisionUnion(self.shape, np.float64, self.tile, new_tiles, self._grid)
 
+    def _tile_range(self, t: _Tile):
+        """Conservative ``(lo, hi)`` bounds of a tile's values from its header alone,
+        O(1). Exact for the affine candidate (codes 0 and 2**bits-1 are both
+        present); for the unit-scale integer candidate ``hi`` may over-estimate,
+        which is SAFE: a tile is only kept-as-is when its bounds lie inside the clip
+        window, so over-estimating can cost a needless decode, never a wrong skip.
+        A negative ``scale`` (after a negative-gain :meth:`scale_shift`) flips the
+        endpoints, hence the min/max."""
+        if t.bits == 0:
+            return t.offset, t.offset
+        e = t.offset + t.scale * ((1 << t.bits) - 1)
+        return (t.offset, e) if e >= t.offset else (e, t.offset)
+
+    def clip(self, lo: float, hi: float) -> "PrecisionUnion":
+        """``np.clip(value, lo, hi)`` with per-tile deferral — the union's answer to
+        a non-affine op.
+
+        Every tile's value range is known from its header in O(1), so:
+          * range inside ``[lo, hi]``  -> the tile is UNCHANGED (clip is identity);
+            it stays lazy and its codes are shared verbatim;
+          * range entirely below ``lo`` / above ``hi`` -> the tile becomes a
+            CONSTANT (0-bit) tile — cheaper than before;
+          * range straddling a bound -> only THIS tile is decoded, clipped and
+            re-encoded (lossless: clipping an already-quantised tile creates no new
+            levels, so ``atol=0`` re-planning is exact).
+        Exact w.r.t. the dense ``np.clip`` — verified by parity tests against
+        :func:`fullseye.apply` on the real ops.
+        """
+        lo, hi = float(lo), float(hi)
+        new_tiles = []
+        for idx, _sl, bshape in self._blocks():
+            t = self._tiles[idx]
+            tlo, thi = self._tile_range(t)
+            if tlo >= lo and thi <= hi:
+                new_tiles.append(t)                          # identity: stays lazy
+            elif thi <= lo:
+                new_tiles.append(_Tile(0, lo, 0.0, b"", t.n))   # all clipped to lo
+            elif tlo >= hi:
+                new_tiles.append(_Tile(0, hi, 0.0, b"", t.n))   # all clipped to hi
+            else:                                            # straddles: pay for this one
+                dense = np.clip(self._tile_dense(t, bshape), lo, hi)
+                new_tiles.append(_plan_tile(dense.ravel(), atol=0.0))
+        return PrecisionUnion(self.shape, np.float64, self.tile, new_tiles, self._grid)
+
     def threshold(self, thr) -> np.ndarray:
         """Boolean mask ``value > thr`` — constant tiles resolve without decoding.
 
@@ -412,3 +456,22 @@ class PrecisionUnion:
         with np.load(path, allow_pickle=False) as z:
             state = {k: z[k] for k in z.files}
         return cls.from_state(state)
+
+
+# --------------------------------------------------------------------------- #
+# lazy op table: fullseye ops that a PrecisionUnion can run WITHOUT materialising #
+# --------------------------------------------------------------------------- #
+# Each entry maps an op name to ``fn(pu, a, b) -> PrecisionUnion`` reproducing the
+# op's exact dense semantics (ops.py) with header algebra + per-tile clip:
+#   invert     : 1 - clip(v, 0, 1)                 -> clip(0,1) then scale_shift(-1, 1)
+#   scale_clip : clip((0.5+1.5a)*v + (b-0.5), 0, 1) -> scale_shift(g, off) then clip(0,1)
+# The (a, b) -> (gain, offset) mapping is duplicated from ops.py on purpose and
+# LOCKED by parity tests (tests/test_precision_union.py): apply(pu, name).to_dense()
+# must equal apply(pu.to_dense(), name) on the real op, so any drift fails CI.
+# fullseye.apply / run_pipeline consult this table for a PrecisionUnion input: a
+# listed op stays a union (deferred); the first unlisted op materialises once.
+LAZY_OPS = {
+    "identity": lambda pu, a, b: pu,
+    "invert": lambda pu, a, b: pu.clip(0.0, 1.0).scale_shift(-1.0, 1.0),
+    "scale_clip": lambda pu, a, b: pu.scale_shift(0.5 + 1.5 * a, b - 0.5).clip(0.0, 1.0),
+}
