@@ -378,9 +378,11 @@ class PrecisionUnion:
                 new_tiles.append(_Tile(0, hi, 0.0, b"", t.n))   # all clipped to hi
             else:                                            # straddles: pay for this one
                 dense = np.clip(self._tile_dense(t, bshape), lo, hi)
-                step_tol = abs(t.scale) * 0.5 if atol is None else float(atol)
-                new_tiles.append(_plan_tile(dense.ravel(), atol=step_tol))
-        return PrecisionUnion(self.shape, np.float64, self.tile, new_tiles, self._grid)
+                tol = self.atol if atol is None else float(atol)
+                new_tiles.append(_plan_tile(dense.ravel(), atol=tol))
+        tol_out = self.atol if atol is None else float(atol)
+        return PrecisionUnion(self.shape, np.float64, self.tile, new_tiles, self._grid,
+                              atol=tol_out)
 
     def threshold(self, thr) -> np.ndarray:
         """Boolean mask ``value > thr`` — constant tiles resolve without decoding.
