@@ -60,6 +60,14 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
   (c) それ以外は atol で再量子化。※(2^b−1) 等分グリッドの性質上 k/4 のような値は厳密表現
   不可(4 は 2^b−1 でない)— 遅延アフィンは実数では厳密だが float64 の結合順で dense と ulp
   差(~1e-16)が出る。parity は atol=1e-12(16bit 半ステップ 7.6e-6 とは 6 桁差)。テスト計 60 件。
+  **lazy `threshold`(`threshold_lazy` / `LAZY_OPS["threshold"]`)**: `(v > a)` を 0/1 の float64
+  ユニオンとして返す。定数タイルと**片側タイル(ヘッダ値域で判定)は O(1) で定数化**、跨ぎだけ
+  decode→1bit。厳密(atol=0)、≤1 bit/要素、dense op と完全一致。ラベル/深度データで最頻の op を
+  通じて**メモリ勝ちが伝播**する: ラベルボリューム (64,128,128) uint8 で union 14.8x → threshold
+  後 **616.8x**(238 タイル定数 + 18 タイル 1bit)。速度も **1.74 ms vs dense op 6.63 ms(3.8x)**
+  — dense は /255 変換+比較を 100 万ボクセルに払うが lazy は大半をヘッダで決める(これは
+  Python ループで dense に勝てなかった dense-出力 `threshold()` とは別物: 出力もユニオンなので
+  decode/scatter が無い)。テスト計 64 件。
 - `fullseye.__version__` はパッケージメタデータ(= pyproject の version)を単一
   真実源として解決するようになった。従来はハードコードで、0.1.5 でも `"0.1.0"` を
   返していた。ソース/sdist では `api.py` 隣の `pyproject.toml`、インストール時は
