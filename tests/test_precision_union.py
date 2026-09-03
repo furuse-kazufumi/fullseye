@@ -184,7 +184,11 @@ def test_single_pixel_and_all_constant():
     a = np.full((40, 40), 3, np.uint8)
     pu = PrecisionUnion.from_array(a, tile=16)
     assert np.array_equal(pu.to_dense(), a)
-    assert pu.ratio > 20.0                            # constant tiles are tiny
+    # constant tiles carry no codes, but each still costs 17 B of metadata, so a
+    # tiny array wins modestly; the win grows with tile size / region size.
+    assert pu.ratio > 5.0, pu.ratio
+    big = np.full((512, 512), 3, np.uint8)            # large constant region
+    assert PrecisionUnion.from_array(big, tile=64).ratio > 200.0
 
 
 def test_pack_unpack_free_functions():
