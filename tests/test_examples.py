@@ -43,6 +43,15 @@ def test_grasp_pose_runs():
     assert r["rot_error_deg"] < 2.0                # recovers the object's orientation
 
 
+def test_precision_union_volume_runs():
+    r = _load("precision_union_volume").run()
+    assert r["label_lossless"] and r["label_reload_ok"]     # N-D lossless + save/load
+    assert r["label_ratio_vs_u8"] > 5.0                     # real memory win on a volume
+    assert r["depth_within_atol"]                           # float quantized honestly
+    assert r["affine_chain_matches_dense"] and r["affine_shares_code_buffers"]
+    assert r["photo_ratio_vs_u8"] < 1.1                     # honest: no win on a busy photo
+
+
 def test_perception_on_video_synthetic():
     r = _load("perception_on_video").run()          # synthetic pan + burst + object
     assert r["n_frames"] >= 8
