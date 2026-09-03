@@ -195,7 +195,8 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
                   shadow_method: str = "map", sun_angular_diameter_deg: float = 0.0,
                   self_illumination: float = 0.0, albedo_variation: float = 0.0,
                   albedo_scale=None, seed: int = 0,
-                  smooth_normals: bool = False, bump=None) -> np.ndarray:
+                  smooth_normals: bool = False, bump=None,
+                  vertex_normals=None) -> np.ndarray:
     """メッシュを全品質層合成で「映える静止 3D」1 枚に描く → RGB ``(size, size, 3)`` float [0,1]。
 
     引数:
