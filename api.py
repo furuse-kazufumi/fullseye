@@ -648,6 +648,7 @@ from lensimage import (  # noqa: E402,F401
 __all__ = [
     "orient2d", "orient3d", "incircle", "insphere",
     "orient2d_exact", "orient3d_exact", "incircle_exact", "insphere_exact",
+    "PrecisionUnion",
     "apply", "run_pipeline", "find_op", "list_ops", "op_names",
     "categories", "read_image", "write_image", "RT", "REGISTRY", "version",
     "stereo", "disparity_map", "disparity_subpixel", "lr_consistency",
