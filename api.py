@@ -107,6 +107,13 @@ from predicates import (orient2d, orient3d, incircle, insphere,  # noqa: E402,F4
 # on low-entropy machine-vision data (label/region maps, smooth depth, 3-D
 # volumes) while presenting one uniform op surface (to_dense/threshold/mean/map).
 from precision_union import PrecisionUnion  # noqa: E402,F401
+# Robust geometry queries built on the exact predicates above: point-in-polygon /
+# tetrahedron / convex-polytope (3-valued in/on/out), convexity, Delaunay validity,
+# and mesh orientation consistency — the combinatorial decisions that flip under a
+# naive float determinant but not under the exact-sign predicates.
+from geompred import (point_in_polygon, point_in_convex_polygon, is_convex_polygon,  # noqa: E402,F401
+                      point_in_tetrahedron, point_in_convex_polytope,
+                      is_delaunay_2d, mesh_orientation_consistent)
 # 3-D metrology fits — the (depth, row, col) analogue of the 2-D fits above.
 # numpy-only (no torch), so always available; the torch-backed op registry below is guarded.
 from measure3d import (  # noqa: E402,F401
