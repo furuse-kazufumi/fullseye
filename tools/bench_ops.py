@@ -620,6 +620,9 @@ def bench_row(name: str, size: tuple[int, int, str], dtype: str, image: str, *,
               template_cache: dict) -> dict[str, Any]:
     """1 つの ``(op, size, dtype, image)`` を測って row dict を返す(例外も row になる)。"""
     h, w, size_label = size
+    if name in VIDEO_OP_SET:
+        return bench_video_row(name, size, dtype, image, warm=warm, repeat=repeat,
+                               rss_read=rss_read)
     op = api.find_op(name)
     row: dict[str, Any] = {
         "key": row_key(name, size_label, dtype, image),
