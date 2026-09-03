@@ -3,23 +3,23 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-04 06:43:12
+- **最終更新**: 2026-09-04 06:50:48
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-43636f9e1 docs: NEXT_SESSION — precision-union promotion (N-D / save-load / lazy op integration) + next candidates
-ed9b21d9e feat(precision_union): lazy op integration — apply/run_pipeline run point ops on a union
-57903addd auto: precision_union.py 編集前 (2026-09-04 06:41)
-ce2d2ab2e auto: api.py 編集前 (2026-09-04 06:41)
-453539340 auto: CHANGELOG.md 編集前 (2026-09-04 06:41)
-a2a92bbc5 auto: precision_union.py 編集前 (2026-09-04 06:40)
-eed3a3821 auto: precision_union.py 編集前 (2026-09-04 06:40)
-e533339ae auto: precision_union.py 編集前 (2026-09-04 06:40)
-41e095c2e auto: precision_union.py 編集前 (2026-09-04 06:40)
-597163223 auto: precision_union.py 編集前 (2026-09-04 06:40)
+98a89239d feat(precision_union): lazy integer unions + exact clip (cmax range, code-space clip, raw fallback)
+6bd8b2e1d auto: NEXT_SESSION.md 編集前 (2026-09-04 06:50)
+0669a66fb auto: CHANGELOG.md 編集前 (2026-09-04 06:50)
+756c54da2 auto: precision_union.py 編集前 (2026-09-04 06:47)
+cc06c042e auto: precision_union.py 編集前 (2026-09-04 06:47)
+d1b518c43 auto: precision_union.py 編集前 (2026-09-04 06:47)
+876ddf54c auto: precision_union.py 編集前 (2026-09-04 06:47)
+6cdb73b81 auto: precision_union.py 編集前 (2026-09-04 06:47)
+31c3f30a4 auto: precision_union.py 編集前 (2026-09-04 06:47)
+6b52395b5 auto: precision_union.py 編集前 (2026-09-04 06:46)
 ```
 
 ## 現在の git status
@@ -31,14 +31,14 @@ e533339ae auto: precision_union.py 編集前 (2026-09-04 06:40)
 ## 直近 2 時間に変更されたファイル
 
 ```
-06:42 docs/NEXT_SESSION.md
-06:41 precision_union.py
-06:41 api.py
-06:41 CHANGELOG.md
-06:41 .pytest_cache/v/cache/lastfailed
-06:41 .pytest_cache/v/cache/nodeids
-06:41 tests/test_precision_union.py
-06:30 docs/SESSION_SUMMARY.md
+06:50 docs/NEXT_SESSION.md
+06:50 CHANGELOG.md
+06:48 .pytest_cache/v/cache/nodeids
+06:48 .pytest_cache/v/cache/lastfailed
+06:48 tests/test_precision_union.py
+06:47 precision_union.py
+06:44 api.py
+06:43 docs/SESSION_SUMMARY.md
 06:27 tests/test_examples.py
 06:27 examples/precision_union_volume.py
 06:09 tests/test_geompred.py
