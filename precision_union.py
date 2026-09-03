@@ -746,4 +746,8 @@ LAZY_NARY = {
 # array are the clipped min/max, so they are O(#tiles) with no decode at all.
 LAZY_FEATURES = {
     "area_frac": lambda pu, a, b: float(pu.area_frac()),
+    # min_max_gray is the clipped MAX, intensity the clipped MEAN (probed against the
+    # dense closures in ops.py; locked by parity tests)
+    "min_max_gray": lambda pu, a, b: float(min(max(pu.max(), 0.0), 1.0)),
+    "intensity": lambda pu, a, b: float(pu.clip(0.0, 1.0).mean()),
 }

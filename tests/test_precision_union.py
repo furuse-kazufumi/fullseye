@@ -680,3 +680,19 @@ def test_area_frac_feature_matches_dense_and_uses_popcount():
     got = api.apply(m, "area_frac", 0.5, 0.5)
     ref = api.apply(api.apply(a, "threshold", 0.5, 0.5), "area_frac", 0.5, 0.5)
     assert isinstance(got, float) and got == pytest.approx(ref, abs=0)
+
+
+@pytest.mark.parametrize("name", ["min_max_gray", "intensity"])
+def test_gray_features_from_headers_match_dense(name):
+    """min_max_gray (clipped max) is pure header algebra; intensity (clipped mean)
+    decodes only non-constant tiles. Both must equal the dense closure exactly."""
+    import api
+    rng = np.random.default_rng(62)
+    yy, xx = np.mgrid[0:48, 0:40]
+    a = np.clip(0.5 + 0.6 * np.sin(xx / 6.0) * np.cos(yy / 5.0), -0.2, 1.2)   # clips matter
+    pu = PrecisionUnion.from_array(a, tile=16, atol=1e-3)
+    d = pu.to_dense()
+    assert api.apply(pu, name, 0.5, 0.5) == pytest.approx(api.apply(d, name, 0.5, 0.5), abs=1e-12)
+    u8 = rng.integers(0, 256, (32, 32), dtype=np.uint8)               # lazy /255 first
+    pu8 = PrecisionUnion.from_array(u8, tile=16)
+    assert api.apply(pu8, name, 0.5, 0.5) == pytest.approx(api.apply(u8, name, 0.5, 0.5), abs=1e-12)
