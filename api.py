@@ -1324,7 +1324,7 @@ def _dtype_scale(a):
         return 1.0
 
 
-def _pu_contract(pu, op, policy):
+def _pu_contract(pu, op, policy, *, in_sort=None, name=None):
     """The :func:`_contract_dtype` rule for a :class:`PrecisionUnion`, done lazily.
 
     Returns a float64-contract union, or ``None`` when the conversion cannot be
