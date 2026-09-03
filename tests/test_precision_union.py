@@ -607,3 +607,76 @@ def test_apply_threshold_stays_lazy_and_keeps_the_memory_win():
     lazy = api.run_pipeline(pu, chain)
     assert isinstance(lazy, PrecisionUnion)
     np.testing.assert_array_equal(lazy.to_dense(), api.run_pipeline(vol, chain))
+
+
+# --- two-union ops closed over unions (n-ary tier) --------------------------- #
+def _two_label_masks():
+    """Two uint8 label volumes whose masks overlap partially: many tiles are
+    constant on one or both sides (the shortcut cases), some straddle on both."""
+    a = np.zeros((16, 32, 32), np.uint8); a[2:12, 4:20, 4:20] = 200
+    b = np.zeros((16, 32, 32), np.uint8); b[6:16, 12:28, 12:28] = 200
+    return a, b
+
+
+@pytest.mark.parametrize("name", ["union2", "intersection", "difference", "symm_difference"])
+def test_nary_region_ops_stay_lazy_and_match_dense(name):
+    import api
+    a, b = _two_label_masks()
+    pa, pb = PrecisionUnion.from_array(a, tile=8), PrecisionUnion.from_array(b, tile=8)
+    r = api.apply([pa, pb], name, 0.5, 0.5)
+    assert isinstance(r, PrecisionUnion) and r.atol == 0.0
+    np.testing.assert_array_equal(r.to_dense(), api.apply([a, b], name, 0.5, 0.5))
+    assert set(k for k, v in r.bit_histogram().items() if v) <= {0, 1}   # <= 1 bit/voxel
+
+
+def test_mask_binop_shares_codes_on_constant_shortcuts():
+    a, b = _two_label_masks()
+    pa, pb = PrecisionUnion.from_array(a, tile=8), PrecisionUnion.from_array(b, tile=8)
+    qa, qb = pa.threshold_lazy(0.5), pb.threshold_lazy(0.5)
+    r = qa.mask_binop(qb, "or")
+    shared = sum(1 for t, tq, ta in zip(r._tiles, qb._tiles, qa._tiles)
+                 if t.bits == 1 and (t.buf is tq.buf or t.buf is ta.buf))
+    assert shared > 0                                     # x | 0 = x reused verbatim
+
+
+@pytest.mark.parametrize("name", ["max_image", "min_image"])
+def test_nary_extrema_stay_lazy_and_match_dense(name):
+    import api
+    rng = np.random.default_rng(60)
+    yy, xx = np.mgrid[0:64, 0:64]
+    a = np.clip(0.5 + 0.4 * np.sin(xx / 9.0), 0, 1)                 # smooth
+    b = np.full((64, 64), 0.5); b[:32] = 0.9; b[32:, :32] = 0.1         # constant tiles
+    pa = PrecisionUnion.from_array(a, tile=16, atol=1e-3)
+    pb = PrecisionUnion.from_array(b, tile=16, atol=0.0)
+    r = api.apply([pa, pb], name, 0.5, 0.5)
+    assert isinstance(r, PrecisionUnion)
+    np.testing.assert_allclose(r.to_dense(), api.apply([pa.to_dense(), pb.to_dense()], name, 0.5, 0.5),
+                               rtol=0, atol=1e-3 + 1e-9)
+
+
+def test_nary_with_mismatched_tiling_materialises():
+    import api
+    a, b = _two_label_masks()
+    pa, pb = PrecisionUnion.from_array(a, tile=8), PrecisionUnion.from_array(b, tile=16)
+    r = api.apply([pa, pb], "union2", 0.5, 0.5)
+    assert isinstance(r, np.ndarray)
+    np.testing.assert_array_equal(r, api.apply([a, b], "union2", 0.5, 0.5))
+
+
+# --- header-exact features --------------------------------------------------- #
+def test_min_max_from_headers_are_exact():
+    rng = np.random.default_rng(61)
+    a = rng.random((48, 40))
+    pu = PrecisionUnion.from_array(a, tile=16, atol=1e-3)
+    d = pu.to_dense()
+    assert pu.min() == d.min() and pu.max() == d.max()
+
+
+def test_area_frac_feature_matches_dense_and_uses_popcount():
+    import api
+    a, _ = _two_label_masks()
+    pu = PrecisionUnion.from_array(a, tile=8)
+    m = api.apply(pu, "threshold", 0.5, 0.5)              # 0/1 union (lazy)
+    got = api.apply(m, "area_frac", 0.5, 0.5)
+    ref = api.apply(api.apply(a, "threshold", 0.5, 0.5), "area_frac", 0.5, 0.5)
+    assert isinstance(got, float) and got == pytest.approx(ref, abs=0)
