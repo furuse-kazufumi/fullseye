@@ -42,7 +42,9 @@ import render_beauty as rb  # noqa: E402
 # 手骨として集める mesh 名(myo_sim の命名)。radius/ulna は前腕なので既定では外す。
 _CARPALS = ("lunate", "scaphoid", "pisiform", "triquetrum", "capitate", "hamate",
             "trapezium", "trapezoid")
-_HAND_RE = re.compile(r"^(?:[1-5]mc|[1-5](?:prox|mid|dist)ph|" + "|".join(_CARPALS) + r")$")
+# 親指の指骨は myo_sim では thumbprox / thumbdist(1proxph/1distph ではない)
+_HAND_RE = re.compile(r"^(?:[1-5]mc|[2-5](?:prox|mid|dist)ph|thumbprox|thumbdist|"
+                      + "|".join(_CARPALS) + r")$")
 
 
 # --------------------------------------------------------------------------- #
