@@ -591,6 +591,21 @@ class PrecisionUnion:
         """Exact maximum in O(#tiles) from the headers (raw tiles decode)."""
         return max(self._tile_range(t)[1] for t in self._tiles)
 
+    def clipped_mean(self, lo: float, hi: float) -> float:
+        """``mean(clip(value, lo, hi))`` exactly: constant tiles contribute
+        ``n * clip(c)`` in O(1); other tiles decode and are clipped in place —
+        no re-quantisation (unlike ``clip(lo, hi).mean()``, which would re-encode
+        straddling tiles at the union's atol and perturb the mean)."""
+        total = 0.0
+        count = 0
+        for t in self._tiles:
+            count += t.n
+            if t.bits == 0:
+                total += t.n * float(np.clip(t.offset, lo, hi))
+            else:
+                total += float(np.clip(self._tile_values(t), lo, hi).sum())
+        return total / count
+
     def area_frac(self) -> float:
         """Fraction of elements ``> 0.5`` (fullseye ``area_frac`` on a region).
         Constant tiles cost O(1); a 1-bit tile with a {0,1} grid is a popcount of
