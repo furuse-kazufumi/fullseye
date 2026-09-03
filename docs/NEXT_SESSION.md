@@ -23,6 +23,11 @@
 - **`FULLSEYE_FAST` 既定は OFF 維持(計測で判断・完了)**: `--set core --sizes 1080p` を FAST=0/1 比較 → テーブル 10 op が 1.3〜10×(gerode 10×、gaussian 5.3〜5.8×)、dtype 変化ゼロ、テーブル外は経路同一で不変。cv2 twin の内部差 5e-3 が再現性(SHA-256 ピン)を暗黙に破るため既定 ON にしない。速度が要る場面で `FULLSEYE_FAST=1` opt-in。
 - **bench `--set video`**: per-frame ストリーミング計測(ring メモリのみ、ms/frame・fps)。720p float64 で deflicker 152 fps・exp_bg 124 fps・frame_diff 101 fps 〜 per-画素中央値/窓(temporal_median 14.7・background_subtraction 13.2・temporal_bilateral 10.2 fps)。`tools/bench_ops.py --set video --sizes 720p`。
 
+## 2026-09-03(さらに後半)追加: 検証キャンペーン + exact geometry predicates
+- **検証キャンペーン A(契約監査)**: 公開 op(`ops.REGISTRY`)は test_op_contracts の4大契約で既に完全網羅と確認。唯一の穴 = tb_ ブリッジ 139 op の有限性/決定性契約(conftest に新 sort バンク無く「ゼロ反復で自明パス」= 未実行だった)を test_backends_typed_liveness にロック追加。実バグ 0、honest-inf 2 件(tb_mat_cond 特異=inf / tb_geodesic_distances 不達=inf)を allowlist。= 契約レベルでは fullseye は既に堅牢という発見。
+- **exact geometry predicates(`predicates.py`)実装**: orient2d/orient3d/incircle/insphere を Shewchuk 流 2 段適応(float→Fraction 厳密)。naive は 19% 誤符号→adaptive は完全一致。凸包 robust 化、`fullseye.*` 露出、py-modules 登録。詳細 = memory [[project_fullseye_representation_future_backlog]]。次候補: Delaunay/point-in-polytope/mesh 向き検査へ横展開。
+- **教訓**: `pytest | grep | tail` はパイプで exit code をマスクし drift/packaging 失敗を見逃す → 以後 `> log; echo $?` で実 exit を捕捉。
+
 ## 次にやること(優先順)
 1. ~~v0.1.5 タグ(PyPI 公開)~~ **完了(2026-09-03)**: PyPI に 0.1.5 公開済(wheel+sdist、latest=0.1.5)。公開前に liveness テスト 1 件(tb_running_gaussian_foreground が video 生成器で定数)を修正 = bridge に per-op tunable override を足し (k, var_init) を振る(公開 op 既定は不変)。※v0.1.4 は 3 日前に PyPI 400 で失敗しており PyPI 上は 0.1.3→0.1.5(同 license 形式で今回は成功 = 一過性)。
 2. ~~`FULLSEYE_FAST` 既定 ON の判断~~ **完了: OFF 維持**(上記)。
