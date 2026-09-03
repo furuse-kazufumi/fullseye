@@ -27,7 +27,7 @@ import numpy as np
 _TILE_SAFE_CATS = {"smoothing", "rank", "morphology", "edges", "gray", "texture", "region"}
 # Need GLOBAL statistics (histogram / whole-image threshold) -> not tileable as-is.
 _GLOBAL_CATS = {"segmentation", "features", "classification", "barcode", "matching"}
-_COMPUTE_BOUND = {"bilateral", "sk_tv", "median", "xsp_wiener"}      # slow at XL
+_COMPUTE_BOUND = {"bilateral", "median"}      # local but slow at XL (sk_tv/xsp_wiener are non-local: see _NOT_TILE_SAFE)
 _MEMORY_BOUND_CATS = {"frequency"}                                   # FFT: O(N^2) memory
 _CV2_LIMITED_HINTS = ("polar", "warp", "logpolar")                   # cv2 SHRT_MAX (~32767)
 
