@@ -1560,6 +1560,16 @@ def _apply_impl(image, name, a, b, coerce, device, policy, fast=None):
     if isinstance(image, (list, tuple)):                 # legacy: a nested list IS an image
         image = np.asarray(image)
 
+    if isinstance(image, PrecisionUnion):
+        # A float precision-union runs a LAZY op (precision_union.LAZY_OPS) as header
+        # algebra + per-tile clip and stays a union — O(#tiles), codes untouched. Any
+        # other op, or an integer/bool union (whose dtype contract conversion is the
+        # normal path's job), materialises once and continues as a dense array.
+        lazy = _PU_LAZY.get(name) if np.issubdtype(image.dtype, np.floating) else None
+        if lazy is not None:
+            return lazy(image, a, b)
+        image = image.to_dense()
+
     op = _resolve(name)
     v = _coerce_input(image, op) if coerce else image
     v = _contract_dtype(v, op, policy)
