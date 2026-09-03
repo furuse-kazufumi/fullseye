@@ -280,9 +280,12 @@ def test_cli_writes_report_and_baseline_then_exits_1_on_regression(tmp_path, cap
     stored = json.loads(base.read_text(encoding="utf-8"))
     assert set(stored["metrics"]) == {"gaussian|64|float64", "invert|64|float64"}
 
-    # 記録した ms を半分に書き換える = 今回が 2 倍遅い -> exit 1
+    # 記録した ms を 1/20 に書き換える = 今回が 20 倍遅い -> exit 1。
+    # (1/2 では 64² の ~0.05 ms 計測が 2 回目に warm で半分以下になり得て、
+    #  フルスイート中に rc 0 になった = 2026-09-03 実測。閾値の検査は
+    #  test_baseline_compare_* が固定値でやるので、ここは経路の検査に徹する)
     for v in stored["metrics"].values():
-        v["ms"] = v["ms"] / 2.0
+        v["ms"] = v["ms"] / 20.0
     base.write_text(json.dumps(stored), encoding="utf-8")
     rc = B.main(["--ops", "gaussian,invert", "--sizes", "64", "--dtypes", "float64",
                  "--images", "noisy", "--repeat", "1", "--quiet",

@@ -1,21 +1,27 @@
-# 次セッション引き継ぎ — 光学第 2 波 + イトカワ物理(2026-09-03 朝)
+# 次セッション引き継ぎ — 高速化・省メモリ・動画 + 解像度管理 + 図注(2026-09-03 午前〜)
 
 ## 正本
-- 今回の記録: raptor memory `project_fullseye_optics_wave2_2026_09_03`(前回 = `project_fullseye_adversarial_review_2026_09_03`)
-- 光学ガイド: `docs/ops/optics/guides/optics_imaging.md`(design / optimization / illumination / imaging_sim の 4 節、全 snippet 実行検証)
-- 例: `examples/lens_optimize_demo.py` / `examples/illumination_design_demo.py` / `examples/lens_calibration_loop_demo.py` / `examples/lens_defect_dataset_demo.py` / `examples_3d/itokawa_regolith_hero.py`(すべて PASS 終端)
+- 今回の記録: raptor memory `project_fullseye_perf_video_meshres_2026_09_03`(前回 = `project_fullseye_optics_wave2_2026_09_03`)
+- 調査報告(実測、着手順の根拠): `docs/design/PERF_MEMORY_VIDEO_SURVEY.md`(§6 = ベンチ台の使い方)
+- 高速 twin の設計と載せなかったもの: `docs/design/FAST_TWINS.md`
+- ガイド: `docs/ops/videostream/guides/video_streaming.md` / `docs/ops/annotate/guides/figure_annotation.md`
+- 例(すべて PASS 終端): `examples/video_streaming.py` / `examples/paper_figure.py` / `examples_3d/mesh_resolution_demo.py` / `examples_3d/annotate3d_figure.py` / `examples_3d/itokawa_regolith_hero.py`
+- 規律: raptor memory `feedback_no_casual_decimation_academic`(学術用途では間引きを安易に行わない。減らす op は監査を返し、保護領域を壊すなら拒否)
 
 ## この回でやったこと
-1. **raytrace 拡張**: 実硝材カタログ `glass_catalog`(Sellmeier 20 種、refractiveindex.info ミラーで定数照合)/ `sellmeier` / 非球面 `asph=(A4,A6,…)`(Newton 交点・サグ勾配法線・Seidel 4 次項)/ `chromatic_shift` / `chief_ray`(実絞り中心への Newton エイミング — 従来の近軸瞳狙いは絞りが強い面の後ろにあると外れていた)/ `example_system("asphere"|"catalog_doublet")`。
-2. **lensopt.py(optimization 3 op)**: 減衰最小二乗 `optimize_lens`(変数 R/t/k/A4.. 文字列、EFL 拘束、毎歩再検証、bounds は初期値にも、status)/ `merit_function` / `bend_singlet`。Coddington・Descartes・A4=kc³/8 の閉形式で検証。
-3. **illumdesign.py(illumination 6 op)**: 光源族 → 放射照度(cos⁴ 則)→ 一様性 → 欠陥コントラスト(傾き面/荒れ/顔料、Lambert+GGX、同軸は面光源+鏡面ヒット)→ 仰角スイープ(鏡面で 90°−2×斜面)→ 候補族の順位表(コントラスト × 背景輝度一様性、経験則との一致/不一致を明示)。
-4. **lensimage.calibration_views(imaging_sim 5 op 目)**: 設計レンズの実歪曲で校正多視点を合成 → `calib.camera_calibration` の閉ループ(放物面鏡 1e-10、singlet で歪曲バイアス検出)。
-5. **Agent 2 本の成果**: lensimage(PSF/歪曲/レンズ越し描画/欠陥データセット)、イトカワ(Lommel–Seeliger/Hapke、レイキャスト影 0.53°、fBm 起伏、岩塊 N(>D)∝D^−3.1、`render_regolith`、AMICA 実画像 4 指標比較、記事 ja/en に新静止画)。
-6. Codex 読取レビュー 10 件を実コード検証のうえ全件反映(主光線エイミング、荒れ面エネルギー保存、bounds、stalled、空気層公差、領域ブレンド、零長方向、bool/str 拒否、Sellmeier 検証、端落ち)。
-7. 台帳 opsoptics 34 → **47 op / 8 カテゴリ**、docs/OP_CATALOG/Studio help 再生成、テスト群 330 passed(光学系)+ opdocs 43。
+1. **解像度管理 `meshres.py`(ops3d `resolution` 15 op)**: 粗密を測る(`mesh_edge_stats` p95/p5、`mesh_detail_map`)、揃える(`mesh_split_long_edges` 頂点不変、`mesh_isotropic_remesh` 5.4→1.7)、監査つきで減らす(`mesh_lod_chain`/`mesh_select_lod`/`mesh_decimate_preserving` 細部固定+`max_error` 超は拒否/`mesh_reduction_report`)、点群(`pc_density`/`pc_poisson_disk` 孤立点を落とさない/`pc_fill_sparse`/`pc_density_equalize`/`pc_lod_chain`/`pc_thinning_report`)。`meshrepair.decimate_qem(protect=)`。テスト 29 件、ファザー 15/15 到達。
+2. **イトカワ hero 再描画(Agent)**: 幾何は減らさず、適応テッセレーション(辺長 1.5 m 目標、p95/p5 2.72→2.38、面積・体積誤差 0)、帯域制限つき起伏(`mesh_displace_spectrum` + Nyquist ゲート `displacement_band_weights`、短波長は `bump_normals_fbm` へ)、角ばった岩塊 2,909 個(D^−3.1、埋没 0.3〜0.6)、露出を lit 中央値 0.45 に。起伏コントラスト 0.034→0.081(AMICA 円盤尺度 0.090、AMICA 実測 0.037 は位相角 8.8° なので厳密比較不可)。`render_mesh` をベクトル化(bit-exact)、影/AO のグリッド自動。新 op 5 つ(terrain)。記事本文は未変更、静止画 `docs/articles/assets/itokawa_regolith_hero.png` は差し替え済(**Qiita PATCH は未実施**)。
+3. **図注(Agent)**: annotate `paper` 21 op + ops3d `annotate3d` 7 op、テスト 36 件、例 2 本、族ガイド。
+4. **調査 → 着手(ユーザー指示「調査した上で着手」)**: `PERF_MEMORY_VIDEO_SURVEY.md`(65 op × 3 サイズ × 2 dtype + GPU)。推奨 3 件を全部実装:
+   - (h) ベンチ台 `tools/bench_ops.py` + `bench/bench_ops_baseline.json`(384 行)+ テスト 31 件。初回で `cv_dist` の float32 契約違反を発見→修正。
+   - (a′) `fast.py` cv2 twin 41 op(parity ゲート 41/41、**既定 OFF** `FULLSEYE_FAST=1`)、`fast.apply_uint8` 21 op、uint8 fail-closed(`on_error="raise"` は拒否、既定は `/255` 変換+台帳 `source="input"`)、`_coerce_input` O(N) 化、ACCEL 逆引きキャッシュ。float64 の結果は 1 ビット不変(SHA-256 で固定)。
+   - (d) `videostream.py` / `opsvideostream`(8 op): `FrameRing` / `StatefulOp` 7 種 / `VideoPipeline`、`iter_frames(dtype="uint8")`。テスト 21 件、ファザー 8/8 到達、一括 op = ストリーム版がフレーム単位で一致。
+5. `CHANGELOG.md` 0.1.5 に「2026-09-03 追加」節、README/CHANGELOG の op 数を 870 / 344 / 409 に更新、docs/OP_CATALOG/Studio help 再生成。
 
 ## 次にやること(優先順)
-1. ~~push → Qiita PATCH~~ **完了(2026-09-03 07:54)**: push `7ba7cf325..1a0f475b6`、ja/en PATCH 200・本文長一致を検証、フルスイート 10,550 passed / 153 skipped / 3 xfailed / 0 failed(3 分割)。次回以降の記事更新は `py -3.11 tools/qiita_patch_overview.py --check` → 同 `(no flag)`(イトカワ新静止画 `docs/articles/assets/itokawa_regolith_hero.png` の raw URL は push 後に 200 になる)。フルスイート 3 分割の結果を先に確認。
-2. v0.1.4 リリースノート(前回の「利用者が気づく挙動変更」+ 今回の 47 op 化・`_finite` の bool/str 拒否・`optimize_lens` の status)。
-3. 光学の残候補: 多重反射/相互反射(照明・イトカワ共通)、異方性 BRDF(ヘアライン金属)、ゴースト/迷光解析、テレセントリック計測誤差予算、センサ RS/PRNU/HDR、多色 PSF(lensimage は単色)。
-4. 前回からの残: `fullseye.selfcheck()`、typed `_EMPTY_OF`(lightfield/histcube)、`tb_euclidean_cluster` tol、0.0 番兵 4 件、`xcv2_hitmiss` knob、render_mesh スムーズシェーディング(→ `smooth_normals` で render_beauty 側は対応済)、ファザー拒否 35 件、raptor upstream 同期。
+1. **フルスイートの結果確認 → commit → push**(この回の最後に走らせた `out/full_suite_2026_09_03b.log`)。push 後に `py -3.11 tools/qiita_patch_overview.py --check` → PATCH(イトカワ新静止画の raw URL が 200 になってから)。
+2. **v0.1.5 タグ**(= PyPI 公開)は **ユーザー判断待ち**。CHANGELOG は書けている。
+3. `FULLSEYE_FAST` 既定 ON の判断: `tools/bench_ops.py --set core --sizes 2048,1080p --baseline bench/bench_ops_baseline.json` を FAST=0/1 で取り、退行ゼロなら既定 ON。
+4. 高速化の次の梃子: `ops._norm` の一元化 + `Op.global_reduction` フラグ(sobel_mag/canny の残り 2〜3×、`scale.scale_class` の誤分類修正 → タイル配線 (c))、GPU 常駐リング(accel `Resident`)を `VideoPipeline(device="cuda")` に (g)、フレーム並列 executor (f)、bench に `--set vol` / `--set video`。
+5. 解像度管理の残: 増分中央値(大きい窓)、`mesh_isotropic_remesh` をイトカワの表示用 LOD にだけ使う導線(解析データとは分離)。
+6. 前回からの残: 光学候補(多重反射/異方性 BRDF/ゴースト/テレセン誤差予算/センサ RS・PRNU・HDR/多色 PSF)、`fullseye.selfcheck()`、typed `_EMPTY_OF`、0.0 番兵 4 件、ファザー拒否 35 件、TYPEMISS 既知 3 件(pose_error / sphere_sdf / box_sdf)、raptor upstream 同期。
