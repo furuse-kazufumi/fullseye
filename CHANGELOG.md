@@ -47,7 +47,19 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
   という誤った契約(4bit で厳密だったタイルに 0.067 の誤差を許した)をテストで摘発して修正した
   もの。**drift 防止**: `LAZY_OPS` の (a,b)→gain/offset 写像は ops.py と二重管理なので、
   `apply(pu,op).to_dense() == apply(dense,op)` の parity テストで実 op に固定(乖離は CI 失敗)。
-  テスト計 51 件。
+  **整数ユニオンも遅延**: uint8/uint16(文書化されたセンサ dtype)と bool のユニオンは `/255`
+  等の契約変換を `scale_shift(1/s,0)`(純 gain、無損失のまま)で遅延実行し、dense 経路の
+  `_contract_dtype` と**同じ台帳記録**(`dtype_converted`, source="input")と `on_error="raise"`
+  の拒否を鏡写し(`api._pu_contract`)。int64 等はデータ依存の除数(`_dtype_scale`)なので
+  materialize。→ 最大の勝ち筋(uint8 ラベルボリューム)が点 op 連鎖を通じて一度も materialize
+  されない。**clip の厳密化**: `_Tile.cmax`(実際に存在する最大コード)でタイル値域を厳密に
+  (従来の保守的過大評価が「範囲内タイルを偽の跨ぎ」にし 16bit 再量子化で 7.5e-6 の誤差を
+  出していた — テストで摘発)。跨ぎタイルの処理は 3 段階: (a) 境界がコードグリッド上なら
+  **コード空間で clip**(同ビット、値の decode 不要、厳密)(b) 無損失ユニオン(atol=0)なら
+  **raw float64 タイル(bits=64)**で厳密保持(精度契約を守りメモリが払う。planner は選ばない)
+  (c) それ以外は atol で再量子化。※(2^b−1) 等分グリッドの性質上 k/4 のような値は厳密表現
+  不可(4 は 2^b−1 でない)— 遅延アフィンは実数では厳密だが float64 の結合順で dense と ulp
+  差(~1e-16)が出る。parity は atol=1e-12(16bit 半ステップ 7.6e-6 とは 6 桁差)。テスト計 60 件。
 - `fullseye.__version__` はパッケージメタデータ(= pyproject の version)を単一
   真実源として解決するようになった。従来はハードコードで、0.1.5 でも `"0.1.0"` を
   返していた。ソース/sdist では `api.py` 隣の `pyproject.toml`、インストール時は
