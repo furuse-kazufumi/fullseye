@@ -282,6 +282,121 @@ def test_pipeline_validation_and_callables():
 
 
 # --------------------------------------------------------------------------- ledger
+# --------------------------------------------------------------------------- motion (wave 2)
+def test_motion_history_decays_by_one_over_tau_and_energy_is_binary():
+    vid = _clip(t=12)
+    tau = 5
+    mhi = VS.motion_history_image(vid, tau=tau, threshold=0.2)
+    mei = VS.motion_energy_image(vid, tau=tau, threshold=0.2)
+    assert mhi.shape == vid.shape and mhi.min() >= 0.0 and mhi.max() <= 1.0
+    np.testing.assert_array_equal(mei, (mhi > 0.0).astype(np.float64))       # MEI == (MHI > 0)
+    # a pixel that stops moving decays by exactly 1/tau per frame, floored at 0
+    op = VS.MotionHistoryImage(tau, 0.2)
+    prev = None
+    for t in range(vid.shape[0]):
+        h = op.push(vid[t])
+        if prev is not None:
+            motion = np.abs(VS._to01(vid[t]) - VS._to01(vid[t - 1])) > 0.2
+            expect = np.where(motion, 1.0, np.maximum(0.0, prev - 1.0 / tau))
+            np.testing.assert_allclose(h, expect, atol=1e-12)
+        prev = h.copy()
+    np.testing.assert_allclose(VS.stream_replay(vid, VS.MotionHistoryImage(tau, 0.2)), mhi, atol=0)
+
+
+def test_three_frame_difference_zero_start_and_is_and_of_two_diffs():
+    vid = _clip(t=10)
+    thr = 0.25
+    out = VS.three_frame_difference(vid, threshold=thr)
+    assert out.shape == vid.shape
+    np.testing.assert_array_equal(out[0], 0.0)                               # need 2 diffs
+    np.testing.assert_array_equal(out[1], 0.0)
+    f = VS._to01(vid)
+    for t in range(2, vid.shape[0]):
+        d_now = np.abs(f[t] - f[t - 1]) > thr
+        d_prev = np.abs(f[t - 1] - f[t - 2]) > thr
+        np.testing.assert_array_equal(out[t], (d_now & d_prev).astype(np.float64))
+    # ghost-free: a subset of the plain two-frame difference mask
+    fd = VS.frame_difference_causal(vid) > thr
+    assert np.all((out > 0)[2:] <= fd[2:])
+
+
+def test_three_frame_diff_uint8_matches_float():
+    vid = _clip(t=8)
+    np.testing.assert_allclose(VS.three_frame_difference(_u8(vid), 0.2),
+                               VS.three_frame_difference(vid, 0.2), atol=1e-12)
+
+
+# --------------------------------------------------------------------------- adaptive background (wave 2)
+def test_running_gaussian_first_frame_is_all_background_and_static_stays_quiet():
+    rng = np.random.default_rng(3)
+    base = rng.random((16, 20))
+    vid = np.stack([base] * 6)                       # perfectly static
+    fg = VS.running_gaussian_foreground(vid, alpha=0.05, k=2.5)
+    np.testing.assert_array_equal(fg, 0.0)           # nothing ever moves -> no foreground
+    bg = VS.running_gaussian_background(vid)
+    np.testing.assert_allclose(bg[-1], base, atol=1e-12)
+
+
+def test_running_gaussian_flags_a_sudden_bright_patch():
+    rng = np.random.default_rng(4)
+    base = 0.3 + 0.01 * rng.standard_normal((24, 24))
+    vid = np.clip(np.stack([base + 0.01 * rng.standard_normal((24, 24)) for _ in range(8)]), 0, 1)
+    vid[5, 8:16, 8:16] = 0.95                         # a bright object appears at t=5
+    fg = VS.running_gaussian_foreground(vid, alpha=0.02, k=3.0, var_init=1e-3)
+    assert fg[5, 8:16, 8:16].mean() > 0.9             # the patch is foreground
+    assert fg[1:5].mean() < 0.05                      # quiet before it appears
+
+
+# --------------------------------------------------------------------------- temporal denoise / restore (wave 2)
+def test_temporal_bilateral_reduces_to_moving_average_when_range_is_flat():
+    vid = _clip(t=10)
+    # sigma_t, sigma_r huge -> every weight ~1 -> plain causal mean over the window
+    got = VS.temporal_bilateral(vid, window=4, sigma_t=1e6, sigma_r=1e6)
+    ref = VS.moving_average_window(vid, window=4)
+    np.testing.assert_allclose(got, ref, atol=1e-9)
+
+
+def test_temporal_bilateral_denoises_static_and_keeps_constant():
+    rng = np.random.default_rng(5)
+    truth = rng.random((20, 20))
+    vid = np.clip(np.stack([truth + 0.05 * rng.standard_normal((20, 20)) for _ in range(9)]), 0, 1)
+    den = VS.temporal_bilateral(vid, window=5, sigma_t=3.0, sigma_r=0.2)
+    # denoised last frame is closer to the truth than the raw noisy frame
+    assert np.abs(den[-1] - truth).mean() < np.abs(vid[-1] - truth).mean()
+    const = np.full((3, 8, 8), 0.4)
+    np.testing.assert_allclose(VS.temporal_bilateral(const, 3, 2.0, 0.1), const, atol=1e-12)
+    np.testing.assert_allclose(VS.stream_replay(vid, VS.TemporalBilateral(5, 3.0, 0.2)), den, atol=0)
+
+
+def test_deflicker_cancels_brightness_pumping_and_passes_first_frame():
+    rng = np.random.default_rng(6)
+    base = rng.random((16, 16))
+    vid = np.stack([np.clip(base * g, 0, 1) for g in [1.0, 1.3, 0.8, 1.2, 0.85, 1.1]])
+    out = VS.deflicker(vid, alpha=0.1)
+    np.testing.assert_allclose(out[0], VS._to01(vid[0]), atol=1e-12)          # first frame passes through
+    assert out.mean(axis=(1, 2)).std() < vid.mean(axis=(1, 2)).std()          # pumping reduced
+    flat = np.stack([base] * 5)
+    np.testing.assert_allclose(VS.deflicker(flat), flat, atol=1e-12)          # constant brightness -> unchanged
+
+
+# --------------------------------------------------------------------------- shot detection (wave 2)
+def test_scene_cut_detects_a_hard_cut_and_is_quiet_otherwise():
+    rng = np.random.default_rng(7)
+    a = 0.2 + 0.02 * rng.standard_normal((5, 24, 24))
+    b = 0.8 + 0.02 * rng.standard_normal((5, 24, 24))
+    vid = np.clip(np.concatenate([a, b]), 0, 1)
+    r = VS.scene_cut_detection(vid, bins=32, threshold=0.3)
+    assert r["distance"][0] == 0.0 and r["n"] == 10
+    assert r["cut"].dtype == bool and r["cut"][5] and r["cut"].sum() == 1       # exactly the join at t=5
+    assert r["distance"][5] > r["distance"][1:5].max()                          # the cut is the biggest jump
+
+
+def test_scene_cut_no_cut_on_static_clip():
+    vid = np.stack([np.full((12, 12), 0.5)] * 6)
+    r = VS.scene_cut_detection(vid, threshold=0.1)
+    assert not r["cut"].any() and np.allclose(r["distance"], 0.0)
+
+
 def test_ledger_is_connected():
     assert not opsvideostream.missing()
     assert len(opsvideostream.OPSVIDEOSTREAM) == 16
