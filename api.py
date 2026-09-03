@@ -1509,6 +1509,12 @@ def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
     template image to locate; it is set for this call only (thread-local) and the
     previous template is restored afterwards. Without one those ops return the
     no-match vector ``[0, 0, 0]`` — see :func:`set_match_template`.
+
+    A :class:`PrecisionUnion` *image* (float) runs an op listed in
+    ``precision_union.LAZY_OPS`` (``invert``, ``scale_clip``, ``identity``) lazily —
+    per-tile header algebra + clip, O(#tiles), returning a union — and any other op
+    by materialising once. Integer/bool unions always materialise so the ``/255``
+    contract conversion and its ledger record happen on the normal path.
     """
     policy = _policy(on_error)
     if template is None:
