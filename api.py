@@ -496,9 +496,14 @@ from videostream import (  # noqa: E402,F401
     FrameRing, StatefulOp, TemporalMedianWindow, MovingAverageWindow,
     BackgroundSubtractionWindow, FrameDifference, ExponentialBackground, RunningStats,
     OpticalFlowStream, VideoPipeline, stream_replay,
+    MotionHistoryImage, ThreeFrameDifference, RunningGaussianForeground,
+    TemporalBilateral, Deflicker, SceneCutDetection,
     temporal_median_window, moving_average_window, background_subtraction_window,
     frame_difference_causal, exponential_background, exponential_foreground,
     running_mean_std, optical_flow_magnitude_stream,
+    motion_history_image, motion_energy_image, three_frame_difference,
+    running_gaussian_foreground, running_gaussian_background,
+    temporal_bilateral, deflicker, scene_cut_detection,
 )
 import annotate3d  # noqa: E402  (3-D anchors -> projected arrows / labels / scale bars)
 from annotate3d import (  # noqa: E402,F401
