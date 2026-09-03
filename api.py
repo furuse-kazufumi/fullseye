@@ -102,6 +102,11 @@ from measure import (line_profile, distance, angle,  # noqa: E402,F401
 # side. Used by the convex hull; exposed for robust user-side geometry.
 from predicates import (orient2d, orient3d, incircle, insphere,  # noqa: E402,F401
                         orient2d_exact, orient3d_exact, incircle_exact, insphere_exact)
+# Precision-union storage: a tiled array whose bit-depth varies per tile (a union
+# over {0,1,2,4,8,16} bits), chosen per tile from its local entropy. Cuts memory
+# on low-entropy machine-vision data (label/region maps, smooth depth, 3-D
+# volumes) while presenting one uniform op surface (to_dense/threshold/mean/map).
+from precision_union import PrecisionUnion  # noqa: E402,F401
 # 3-D metrology fits — the (depth, row, col) analogue of the 2-D fits above.
 # numpy-only (no torch), so always available; the torch-backed op registry below is guarded.
 from measure3d import (  # noqa: E402,F401
