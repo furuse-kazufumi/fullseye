@@ -1662,6 +1662,14 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
     first = True
     use_fast = _fast_on(fast)
     for name, sa, sb in norm:
+        if isinstance(v, PrecisionUnion):
+            # lazy stages keep the union (see _apply_impl); the first non-lazy stage
+            # materialises once and is then coerced/contracted as the entry array.
+            lazy = _PU_LAZY.get(name) if np.issubdtype(v.dtype, np.floating) else None
+            if lazy is not None:
+                v = lazy(v, sa, sb)
+                continue
+            v = v.to_dense()
         op = _resolve(name)
         if first:
             v = _coerce_input(v, op) if coerce else v
