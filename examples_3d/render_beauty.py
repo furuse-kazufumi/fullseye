@@ -112,7 +112,7 @@ def _mc_to_world(V_idx: np.ndarray, vol_shape: tuple[int, int, int],
     return W
 
 
-def blob_mesh(spheres, bounds, res: int, k: float) -> tuple[np.ndarray, np.ndarray]:
+def blob_mesh(spheres, bounds, res: int, k: float, with_normals: bool = False):
     """複数球の smooth union(sdf_ops)を marching cubes で滑らかな有機メッシュに。
 
     ``spheres`` = [(center, radius), ...]、``bounds`` = ((xlo,xhi),(ylo,yhi),(zlo,zhi))、
