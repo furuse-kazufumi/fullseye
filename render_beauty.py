@@ -328,6 +328,21 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
         # ファセット模様(10 m 面の Gaskell モデルが 1 m/px で「モザイク」に見える)を消す。
         # 幾何(depth/silhouette/影/AO)はそのまま —— 陰影だけを滑らかにする。
         vn_world = render3d._vertex_normals(V_all, F_all)
+        if vertex_normals is not None:
+            # Caller-supplied per-vertex normals for the MESH (rows [:n_mesh]; the
+            # ground keeps its own). Use case: a marching-cubes mesh whose face-derived
+            # vertex normals inherit the voxel grid as stair-step banding — the SDF
+            # gradient sampled at the vertices is the true smooth normal.
+            vn_user = np.asarray(vertex_normals, dtype=np.float64)
+            n_mesh_v = int(np.asarray(V).shape[0])
+            if vn_user.shape != (n_mesh_v, 3):
+                raise ValueError("vertex_normals must be (n_mesh, 3) for the mesh vertices, "
+                                 f"got {vn_user.shape} for {n_mesh_v} vertices")
+            if not np.all(np.isfinite(vn_user)):
+                raise ValueError("vertex_normals contains non-finite values")
+            vn_user = vn_user / np.maximum(np.linalg.norm(vn_user, axis=1, keepdims=True), 1e-15)
+            vn_world = vn_world.copy()
+            vn_world[:n_mesh_v] = vn_user
         vn_cam = vn_world @ P[:3, :3].T
         cov = view["silhouette"] > 0
         ys_s, xs_s = np.nonzero(cov)
