@@ -24,7 +24,7 @@
 - **bench `--set video`**: per-frame ストリーミング計測(ring メモリのみ、ms/frame・fps)。720p float64 で deflicker 152 fps・exp_bg 124 fps・frame_diff 101 fps 〜 per-画素中央値/窓(temporal_median 14.7・background_subtraction 13.2・temporal_bilateral 10.2 fps)。`tools/bench_ops.py --set video --sizes 720p`。
 
 ## 次にやること(優先順)
-1. **v0.1.5 タグ**(= PyPI 公開)は **ユーザー判断待ち**。CHANGELOG は書けている(op 数 870/344/417、videostream 16)。
+1. ~~v0.1.5 タグ(PyPI 公開)~~ **完了(2026-09-03)**: PyPI に 0.1.5 公開済(wheel+sdist、latest=0.1.5)。公開前に liveness テスト 1 件(tb_running_gaussian_foreground が video 生成器で定数)を修正 = bridge に per-op tunable override を足し (k, var_init) を振る(公開 op 既定は不変)。※v0.1.4 は 3 日前に PyPI 400 で失敗しており PyPI 上は 0.1.3→0.1.5(同 license 形式で今回は成功 = 一過性)。
 2. ~~`FULLSEYE_FAST` 既定 ON の判断~~ **完了: OFF 維持**(上記)。
 3. 高速化の次の梃子: `ops._norm` の一元化 + `Op.global_reduction` フラグ(sobel_mag/canny の残り 2〜3×、`scale.scale_class` の誤分類修正 → タイル配線 (c))、GPU 常駐リング(accel `Resident`)を `VideoPipeline(device="cuda")` に (g)、フレーム並列 executor (f)、bench に `--set vol`。
 4. 動画の残: `optical_flow_magnitude_stream` は per-frame が重い(既定 video セット外)→ 高速化 or cv2 twin 検討。scene_cut のフリッカ耐性は deflicker を前段に置く導線を例示済み。
