@@ -402,7 +402,7 @@ def resolve_set(name: str) -> tuple[list[str], list[str]]:
     """
     if name not in SETS:
         raise ValueError("unknown set %r (%s)" % (name, "|".join(sorted(SETS))))
-    known = set(registry_names())
+    known = set(registry_names()) | VIDEO_OP_SET       # video ops live in videostream, not the api registry
     present = [n for n in SETS[name] if n in known]
     absent = [n for n in SETS[name] if n not in known]
     if not present:
