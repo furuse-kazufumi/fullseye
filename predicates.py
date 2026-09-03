@@ -130,8 +130,12 @@ def orient3d(a, b, c, d) -> int:
     cdxady, adxcdy = cdx * ady, adx * cdy
     adxbdy, bdxady = adx * bdy, bdx * ady
     det = (adz * (bdxcdy - cdxbdy) + bdz * (cdxady - adxcdy) + cdz * (adxbdy - bdxady))
-    permanent = (abs(bdxcdy - cdxbdy) * abs(adz) + abs(cdxady - adxcdy) * abs(bdz)
-                 + abs(adxbdy - bdxady) * abs(cdz))
+    # permanent bounds the roundoff: SUM of |terms|, not |difference| — a near-equal
+    # pair (the degenerate case) makes |x-y| tiny and would shrink the bound below
+    # the true error, so the float sign would be trusted when it is wrong.
+    permanent = ((abs(bdxcdy) + abs(cdxbdy)) * abs(adz)
+                 + (abs(cdxady) + abs(adxcdy)) * abs(bdz)
+                 + (abs(adxbdy) + abs(bdxady)) * abs(cdz))
     errbound = _ORIENT3D_A * permanent
     if abs(det) > errbound:
         return _sign(det)
