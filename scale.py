@@ -130,8 +130,11 @@ def process_tiled(fn, img, a=0.5, b=0.5, tile=1024, halo=16):
 
     Caveat: ops that end in a GLOBAL normalization (`_norm`/`signed01`, e.g.
     `sobel_mag`, `laplace`) tile *spatially* correctly, but the [0,1] scale is a
-    whole-image reduction — each tile would normalize by its own max. For those,
-    tile the raw filter and normalize once at the end.
+    whole-image reduction — each tile would normalize by its own max, giving
+    piecewise scale jumps at tile seams. For those, tile the raw filter and
+    normalize once at the end. `scale_class(op)["tile_safe"]` already returns False
+    for them (class `global_reduce`) and for every other measured non-local op
+    (`_NOT_TILE_SAFE`); check it before tiling.
     """
     src = np.asarray(img, np.float64)
     H, W = src.shape[:2]

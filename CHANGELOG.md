@@ -9,6 +9,15 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
   真実源として解決するようになった。従来はハードコードで、0.1.5 でも `"0.1.0"` を
   返していた。ソース/sdist では `api.py` 隣の `pyproject.toml`、インストール時は
   `importlib.metadata` から引く。
+- `scale.scale_class` のタイル可否がカテゴリ推測から**実測**に。カテゴリだけの
+  分類は 141 個の非局所 op(region の skeleton/distance/形状、gray のヒストグラム、
+  edges の勾配強度/コーナー/DoG、多スケール texture、TV/拡散/変換系 smoother)を
+  `tile_safe=True` と偽っていた。これらを `_NOT_TILE_SAFE` に列挙し、正規化で
+  スケールだけずれるものは新クラス `global_reduce`、残りは `global`/`compute_bound`
+  として理由つきで返す。3 プローブ×2 パラメータのライブ計測テストが、tile_safe と
+  分類した op が実際にタイルで壊れないこと(完全性)と一覧が陳腐化していないこと
+  (非陳腐化)をロックする。`process_tiled` の消費者は実行時に居らず助言専用なので
+  実行時挙動は不変。
 - 進化ブリッジ(`backends_typed`)に per-op tunable override を追加し、
   `running_gaussian_foreground` は検出感度を支配する `var_init` を振れるように
   なった(既定ヒューリスティックは効きの薄い `alpha` を選んでいた)。公開 op の

@@ -26,7 +26,7 @@
 ## 次にやること(優先順)
 1. ~~v0.1.5 タグ(PyPI 公開)~~ **完了(2026-09-03)**: PyPI に 0.1.5 公開済(wheel+sdist、latest=0.1.5)。公開前に liveness テスト 1 件(tb_running_gaussian_foreground が video 生成器で定数)を修正 = bridge に per-op tunable override を足し (k, var_init) を振る(公開 op 既定は不変)。※v0.1.4 は 3 日前に PyPI 400 で失敗しており PyPI 上は 0.1.3→0.1.5(同 license 形式で今回は成功 = 一過性)。
 2. ~~`FULLSEYE_FAST` 既定 ON の判断~~ **完了: OFF 維持**(上記)。
-3. 高速化の次の梃子: `ops._norm` の一元化 + `Op.global_reduction` フラグ(sobel_mag/canny の残り 2〜3×、`scale.scale_class` の誤分類修正 → タイル配線 (c))、GPU 常駐リング(accel `Resident`)を `VideoPipeline(device="cuda")` に (g)、フレーム並列 executor (f)、bench に `--set vol`。
+3. 高速化の次の梃子: **`scale.scale_class` の誤分類修正は完了(2026-09-03)** — カテゴリ推測が 141 個の非局所 op を tile_safe と偽っていたのを実測ベースの `_NOT_TILE_SAFE`(class `global_reduce`/`global`/`compute_bound`)に置換、ライブ計測テストで完全性・非陳腐化をロック。**残**: `ops._norm` の一元化 + `Op.global_reduction` フラグ(sobel_mag/canny の残り 2〜3× 高速化と、`global_reduce` op を「生フィルタをタイル→一度だけ正規化」で実際にタイル可能にする `process_tiled_norm` 配線 (c))、GPU 常駐リング(accel `Resident`)を `VideoPipeline(device="cuda")` に (g)、フレーム並列 executor (f)、bench に `--set vol`。
 4. 動画の残: `optical_flow_magnitude_stream` は per-frame が重い(既定 video セット外)→ 高速化 or cv2 twin 検討。scene_cut のフリッカ耐性は deflicker を前段に置く導線を例示済み。
 5. 解像度管理の残: 増分中央値(大きい窓)、`mesh_isotropic_remesh` をイトカワの表示用 LOD にだけ使う導線(解析データとは分離)。
 6. 前回からの残: 光学候補(多重反射/異方性 BRDF/ゴースト/テレセン誤差予算/センサ RS・PRNU・HDR/多色 PSF)、`fullseye.selfcheck()`、typed `_EMPTY_OF`、0.0 番兵 4 件、ファザー拒否 35 件、TYPEMISS 既知 3 件(pose_error / sphere_sdf / box_sdf)、raptor upstream 同期。
