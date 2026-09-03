@@ -290,22 +290,15 @@ class PrecisionUnion:
         fallback with an unbounded error. The result's :meth:`max_abs_error`
         against ``f(dense)`` is then bounded by ``atol``.
         """
-        tr, tc = self._grid
-        h, w = self.shape
         new_tiles = []
-        idx = 0
-        for ti in range(tr):
-            for tj in range(tc):
-                th = min(self.tile, h - ti * self.tile)
-                tw = min(self.tile, w - tj * self.tile)
-                t = self._tiles[idx]
-                if t.bits == 0:  # fast path: one function evaluation for the whole tile
-                    v = float(f(np.asarray(t.offset, dtype=np.float64)))
-                    new_tiles.append(_Tile(0, v, 0.0, b"", t.n))
-                else:
-                    dense = self._tile_dense(t, th, tw)
-                    new_tiles.append(_plan_tile(np.asarray(f(dense)).ravel(), atol=atol))
-                idx += 1
+        for idx, _sl, bshape in self._blocks():
+            t = self._tiles[idx]
+            if t.bits == 0:  # fast path: one function evaluation for the whole tile
+                v = float(f(np.asarray(t.offset, dtype=np.float64)))
+                new_tiles.append(_Tile(0, v, 0.0, b"", t.n))
+            else:
+                dense = self._tile_dense(t, bshape)
+                new_tiles.append(_plan_tile(np.asarray(f(dense)).ravel(), atol=atol))
         out_dtype = np.asarray(f(np.zeros(1, dtype=np.float64))).dtype
         return PrecisionUnion(self.shape, out_dtype, self.tile, new_tiles, self._grid)
 
