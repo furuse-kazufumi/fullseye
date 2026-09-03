@@ -26,6 +26,14 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
   連鎖はメタデータ1パス+最後に1回だけ decode に畳める。遅延代数のみなら dense の `a*x+b`
   連鎖比 ~100x、materialize 込みでも数 op 連鎖で明確に速い(実測)。`threshold` は逆に
   dense(完全ベクトル化・帯域律速)に Python ループでは勝てない旨を docstring に honest に明記。
+  **昇格(PoC→機能): N-D 対応 + ディスク永続化**。タイリングを任意次元に一般化(共有
+  `_blocks()` ジェネレータ、per-axis タイルサイズ可)し、**3D ボリューム・スタック・動画**を
+  扱えるように(最大の勝ち筋)。実測: ラベルボリューム `(64,128,128)` uint8 で **15.9x**
+  (無損失)、深度ボリューム float32(atol=0.02)**3.9x**、自然画像 uint8 は 0.98x で不変
+  (honest)。`save`/`load`(`.npz`、`allow_pickle=False`、ヘッダを並列配列化+パック本体を
+  連結)でメモリ勝ちがそのままファイル勝ちに(構造的ラベルボリュームで **on-disk 378x**、
+  npz の gzip も乗る)。1D/2D の既存 API・挙動は不変。例 `examples/precision_union_volume.py`
+  (PASS 終端、2 regime + 遅延アフィン + honest な非勝ちを実演)。
 - `fullseye.__version__` はパッケージメタデータ(= pyproject の version)を単一
   真実源として解決するようになった。従来はハードコードで、0.1.5 でも `"0.1.0"` を
   返していた。ソース/sdist では `api.py` 隣の `pyproject.toml`、インストール時は
