@@ -155,11 +155,11 @@ def _plan_tile(vals: np.ndarray, atol: float) -> _Tile:
     # Guaranteed lossless for integer data (no rounding); best when the range is
     # narrow but densely populated (a busy uint8 tile needs 8 bits, not 16 — the
     # affine scale would be non-integer and its rounding never exactly lossless).
-    if is_int and atol == 0.0 and span <= 65535:
+    if int_exact and span <= 65535:
         ispan = int(round(span))
         for bits in (1, 2, 4, 8, 16):
             if ((1 << bits) - 1) >= ispan:
-                codes = (vals.astype(np.int64) - int(round(vmin))).astype(np.uint16)
+                codes = (np.rint(vals).astype(np.int64) - int(round(vmin))).astype(np.uint16)
                 candidates.append((bits, _Tile(bits, float(round(vmin)), 1.0, _pack_codes(codes, bits), n)))
                 break
 
