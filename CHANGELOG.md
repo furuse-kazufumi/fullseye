@@ -5,6 +5,22 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 
 ## 0.1.6 — unreleased
 
+- **精度ユニオン型ストレージ(`precision_union.py`、公開: `fullseye.PrecisionUnion`)** —
+  配列をタイルに切り、**各タイルを局所エントロピーに応じた最小ビット深さ**(`{0,1,2,4,8,16}`
+  bit/要素の union。定数=0bit、2値=1bit、平滑=4bit、繁雑=8/16bit)で保持する。
+  タイルごとにアフィン(`値=offset+code*scale`)と unit-scale 整数の 2 候補を計算し
+  少ビットな方を採用、sub-byte はビットパックするので 2bit タイルは実際に 1/4 バイト
+  で収まる。整数(および整数値 float)は**無損失**、float は指定 `atol` 内。呼び出し側は
+  タイルのビット深さで分岐せず `to_dense/threshold/mean/map_pointwise` を一元的に使える
+  (定数タイルは復号せず offset だけで処理する fast path つき)。numpy+stdlib のみ。
+  実測(512×512): セグメンテーションラベル **17.0x**、64 枚ラベルボリューム 17.0x、
+  深度 float32(atol=0.02)**4.0x**、平滑勾配 1.3x。自然画像 uint8 は 0.98x で
+  **わずかに損**(高局所エントロピーで 8bit を割れず、per-tile メタデータが overhead)—
+  勝ち筋はラベル/領域マップ・平滑深度・CAD/合成・3D ボリューム(fullseye のマシンビジョン
+  データ)であることを honest に記録。既知技術(ブロック適応量子化+ビットパック)の
+  組合せで、新規性は「異種精度ストア上の型付き一元処理層」にある。速度化は Python
+  タイルループの overhead が定数タイル近道を食っており、ベクトル化が前提(現状は
+  メモリ削減が主効果)。
 - `fullseye.__version__` はパッケージメタデータ(= pyproject の version)を単一
   真実源として解決するようになった。従来はハードコードで、0.1.5 でも `"0.1.0"` を
   返していた。ソース/sdist では `api.py` 隣の `pyproject.toml`、インストール時は
