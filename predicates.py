@@ -237,13 +237,20 @@ def insphere(a, b, c, d, e) -> int:
                      - r0[1] * (r1[0] * r2[2] - r1[2] * r2[0])
                      + r0[2] * (r1[0] * r2[1] - r1[1] * r2[0]))
 
+    def perm3(r0, r1, r2):
+        # SUM of |product terms| of the 3x3 determinant (not |det|): the bound must
+        # not collapse when the sub-determinant itself cancels near-degenerately.
+        return (abs(r0[0]) * (abs(r1[1] * r2[2]) + abs(r1[2] * r2[1]))
+                + abs(r0[1]) * (abs(r1[0] * r2[2]) + abs(r1[2] * r2[0]))
+                + abs(r0[2]) * (abs(r1[0] * r2[1]) + abs(r1[1] * r2[0])))
+
     d_abc = det3f(ae, be, ce)
     d_abd = det3f(ae, be, de)
     d_acd = det3f(ae, ce, de)
     d_bcd = det3f(be, ce, de)
     det = -lifts[3] * d_abc + lifts[2] * d_abd - lifts[1] * d_acd + lifts[0] * d_bcd
-    permanent = (abs(d_abc) * lifts[3] + abs(d_abd) * lifts[2]
-                 + abs(d_acd) * lifts[1] + abs(d_bcd) * lifts[0])
+    permanent = (perm3(ae, be, ce) * lifts[3] + perm3(ae, be, de) * lifts[2]
+                 + perm3(ae, ce, de) * lifts[1] + perm3(be, ce, de) * lifts[0])
     errbound = _INSPHERE_A * permanent
     if abs(det) > errbound:
         return _sign(det)
