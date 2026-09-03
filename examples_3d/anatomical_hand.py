@@ -140,10 +140,12 @@ def load_mjcf_bone_meshes(xml_path, select=_HAND_RE):
             Rc, tc = _local_pose(child)
             walk(child, R_p @ Rc, R_p @ tc + t_p)
 
-    world = root.find("worldbody")
-    if world is None:
+    # include 展開後は <worldbody> が複数並びうる(scene 用と本体用)。全部を根から辿る。
+    worlds = root.findall("worldbody")
+    if not worlds:
         raise ValueError(f"{xml_path}: no <worldbody>")
-    walk(world, np.eye(3), np.zeros(3))
+    for world in worlds:
+        walk(world, np.eye(3), np.zeros(3))
     return out
 
 
