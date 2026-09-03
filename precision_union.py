@@ -259,11 +259,18 @@ class PrecisionUnion:
         return h
 
     # -- uniform operations (never branch on bit-depth at the call site) ----- #
-    def map_pointwise(self, f) -> "PrecisionUnion":
+    def map_pointwise(self, f, atol=0.0) -> "PrecisionUnion":
         """Apply a scalar numpy function elementwise, returning a new union.
 
         Constant tiles are transformed in O(1) (evaluate ``f`` once), which is
         the concrete way the union's cheap tiles turn into *compute* savings.
+
+        ``atol`` is the tolerance for re-encoding the *output* tiles: 0.0 is
+        exact for integer-valued results, but a float-valued ``f`` (e.g. sqrt)
+        cannot be stored losslessly in a quantized union — pass a small ``atol``
+        so the result is quantized honestly rather than dropped to the 16-bit
+        fallback with an unbounded error. The result's :meth:`max_abs_error`
+        against ``f(dense)`` is then bounded by ``atol``.
         """
         tr, tc = self._grid
         h, w = self.shape
@@ -279,7 +286,7 @@ class PrecisionUnion:
                     new_tiles.append(_Tile(0, v, 0.0, b"", t.n))
                 else:
                     dense = self._tile_dense(t, th, tw)
-                    new_tiles.append(_plan_tile(np.asarray(f(dense)).ravel(), atol=0.0))
+                    new_tiles.append(_plan_tile(np.asarray(f(dense)).ravel(), atol=atol))
                 idx += 1
         out_dtype = np.asarray(f(np.zeros(1, dtype=np.float64))).dtype
         return PrecisionUnion(self.shape, out_dtype, self.tile, new_tiles, self._grid)
