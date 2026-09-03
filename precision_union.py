@@ -578,8 +578,10 @@ class PrecisionUnion:
 # must equal apply(pu.to_dense(), name) on the real op, so any drift fails CI.
 # fullseye.apply / run_pipeline consult this table for a PrecisionUnion input: a
 # listed op stays a union (deferred); the first unlisted op materialises once.
+#   threshold  : (v > a).astype(float64)             -> threshold_lazy(a): 0/1 union, <= 1 bit/elem
 LAZY_OPS = {
     "identity": lambda pu, a, b: pu,
     "invert": lambda pu, a, b: pu.clip(0.0, 1.0).scale_shift(-1.0, 1.0),
     "scale_clip": lambda pu, a, b: pu.scale_shift(0.5 + 1.5 * a, b - 0.5).clip(0.0, 1.0),
+    "threshold": lambda pu, a, b: pu.threshold_lazy(a),
 }

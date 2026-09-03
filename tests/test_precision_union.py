@@ -569,3 +569,41 @@ def test_float_union_with_atol_requantises_instead_of_raw():
     c = pu.clip(0.0, 1.0)
     assert 64 not in {t.bits for t in c._tiles}            # memory-cheap path
     assert np.abs(c.to_dense() - np.clip(pu.to_dense(), 0, 1)).max() <= 1e-3 + 1e-12
+
+
+# --- lazy threshold: the memory win propagates through the most common op --- #
+def test_threshold_lazy_matches_dense_and_costs_at_most_one_bit():
+    a = _clip_probe()                                       # constant/above/below/straddle
+    pu = PrecisionUnion.from_array(a, tile=16, atol=1e-3)
+    dense = pu.to_dense()
+    for thr in (-1.0, 0.0, 0.5, 1.0, 5.0):
+        m = pu.threshold_lazy(thr)
+        assert isinstance(m, PrecisionUnion) and m.atol == 0.0
+        np.testing.assert_array_equal(m.to_dense(), (dense > thr).astype(np.float64))
+        assert set(m.bit_histogram()) - {0, 1} == set() or all(
+            m.bit_histogram()[b] == 0 for b in m.bit_histogram() if b > 1)
+
+
+def test_threshold_lazy_one_sided_tiles_skip_decode():
+    pu = PrecisionUnion.from_array(_clip_probe(), tile=16, atol=1e-3)
+    m = pu.threshold_lazy(0.5)
+    # tile 1 (all >= 1.5) and tile 2 (all <= -0.5) are decided from the header
+    assert m._tiles[1].bits == 0 and m._tiles[1].offset == 1.0
+    assert m._tiles[2].bits == 0 and m._tiles[2].offset == 0.0
+
+
+def test_apply_threshold_stays_lazy_and_keeps_the_memory_win():
+    """uint8 label VOLUME -> lazy /255 -> lazy threshold: never materialised, and
+    the result is a tiny 0/1 union (<= 1 bit/voxel) that matches the dense op."""
+    import api
+    vol = np.zeros((32, 64, 64), np.uint8)
+    vol[8:24, 16:48, 16:48] = 200
+    pu = PrecisionUnion.from_array(vol, tile=8)
+    r = api.apply(pu, "threshold", 0.5, 0.5)
+    assert isinstance(r, PrecisionUnion)
+    np.testing.assert_array_equal(r.to_dense(), api.apply(vol, "threshold", 0.5, 0.5))
+    assert r.ratio > 8.0, r.ratio                           # the win propagated
+    chain = [("invert", 0.5, 0.5), ("threshold", 0.7, 0.5)]
+    lazy = api.run_pipeline(pu, chain)
+    assert isinstance(lazy, PrecisionUnion)
+    np.testing.assert_array_equal(lazy.to_dense(), api.run_pipeline(vol, chain))
