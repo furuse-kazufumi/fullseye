@@ -5,6 +5,17 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 
 ## 0.1.6 — unreleased
 
+- **hero レンダの品質修正(Qiita 記事の 1 枚目)+ `render_beauty(vertex_normals=)`**: 記事の
+  SDF 彫刻 hero は 640px・marching cubes res=48・**フラット法線**で、ファセット模様と四角い
+  スペキュラが見えていた(ユーザー指摘)。`smooth_normals=True` にしても、面から作る頂点法線は
+  ボクセル格子の階段を引き継いで**等高線状のバンディング**が残る(1280px で拡大確認)。等値面の
+  法線は定義から ∇f/|∇f| なので、`examples_3d/render_beauty.py` に `sdf_vertex_normals`(SDF 勾配
+  `np.gradient` を頂点で三線形サンプル)を追加し、`render_beauty` / `render_regolith` に
+  `vertex_normals=(n_mesh,3)` の注入口を追加(メッシュ行のみ上書き、地面は既定、単位正規化、
+  形状/非有限は ValueError)。hero は res=128・1280px・ss=2・AO 64・shadow_res 1024 で再生成
+  (AO/影が支配的で所要時間は 640px と同じ ~80 s)。記事の画像 URL は `?v=2` で imgix キャッシュを
+  バスト。テスト 3 件(既定法線の明示渡しは float 丸めまで一致/解析法線は陰影だけ変えシルエット不変/
+  不正入力拒否)。
 - **精度ユニオン型ストレージ(`precision_union.py`、公開: `fullseye.PrecisionUnion`)** —
   配列をタイルに切り、**各タイルを局所エントロピーに応じた最小ビット深さ**(`{0,1,2,4,8,16}`
   bit/要素の union。定数=0bit、2値=1bit、平滑=4bit、繁雑=8/16bit)で保持する。
