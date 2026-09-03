@@ -1,7 +1,7 @@
 ---
-op: exponential_foreground
+op: running_gaussian_foreground
 dim: videostream
-category: recursive
+category: background
 in: video
 out: video
 examples: [video_streaming]
@@ -10,14 +10,17 @@ license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
-# exponential_foreground — VIDEOSTREAM `recursive` op
+# running_gaussian_foreground — VIDEOSTREAM `background` op
 
 - **データ種**: `video` → `video`
-- **呼び出し**: `import videostream; videostream.exponential_foreground(video, alpha: 'float' = 0.05, threshold: 'float' = 0.1) -> 'np.ndarray'` (または `opsvideostream.get("exponential_foreground")`)
+- **呼び出し**: `import videostream; videostream.running_gaussian_foreground(video, alpha: 'float' = 0.02, k: 'float' = 2.5, var_init: 'float' = 0.01, selective: 'bool' = True) -> 'np.ndarray'` (または `opsvideostream.get("running_gaussian_foreground")`)
 
 ## 使い方
 
-Foreground masks ``|frame − exponential background| > threshold`` → 0/1 ``(T, H, W)`` (``video``).
+Adaptive single-Gaussian foreground masks per frame → 0/1 ``(T, H, W)`` (``video``).
+
+Per-pixel mean/variance background (Wren *Pfinder*); foreground is
+``> k`` standard deviations from the mean. The first frame is all background.
 
 ## 詳しい使い方ガイド
 
@@ -35,11 +38,11 @@ Foreground masks ``|frame − exponential background| > threshold`` → 0/1 ``(T
 
 ## 型が繋がる次の op(`video` を入力に取れる)
 
-[temporal_median_window](../window/temporal_median_window.md) · [moving_average_window](../window/moving_average_window.md) · [background_subtraction_window](../window/background_subtraction_window.md) · [frame_difference_causal](frame_difference_causal.md) · [exponential_background](exponential_background.md) · [running_mean_std](running_mean_std.md) · [optical_flow_magnitude_stream](../flow/optical_flow_magnitude_stream.md) · [motion_history_image](../motion/motion_history_image.md)
+[temporal_median_window](../window/temporal_median_window.md) · [moving_average_window](../window/moving_average_window.md) · [background_subtraction_window](../window/background_subtraction_window.md) · [frame_difference_causal](../recursive/frame_difference_causal.md) · [exponential_background](../recursive/exponential_background.md) · [exponential_foreground](../recursive/exponential_foreground.md) · [running_mean_std](../recursive/running_mean_std.md) · [optical_flow_magnitude_stream](../flow/optical_flow_magnitude_stream.md)
 
-## 同カテゴリ(`recursive`)
+## 同カテゴリ(`background`)
 
-[frame_difference_causal](frame_difference_causal.md) · [exponential_background](exponential_background.md) · [running_mean_std](running_mean_std.md)
+[running_gaussian_background](running_gaussian_background.md)
 
 ---
 *Provenance: videostream.py — VIDEOSTREAM operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

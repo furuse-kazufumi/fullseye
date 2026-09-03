@@ -38,7 +38,7 @@ which is what a live stream can do.
 
 ## 型が繋がる次の op(`video` を入力に取れる)
 
-[temporal_median_window](temporal_median_window.md) · [background_subtraction_window](background_subtraction_window.md) · [frame_difference_causal](../recursive/frame_difference_causal.md) · [exponential_background](../recursive/exponential_background.md) · [exponential_foreground](../recursive/exponential_foreground.md) · [running_mean_std](../recursive/running_mean_std.md) · [optical_flow_magnitude_stream](../flow/optical_flow_magnitude_stream.md)
+[temporal_median_window](temporal_median_window.md) · [background_subtraction_window](background_subtraction_window.md) · [frame_difference_causal](../recursive/frame_difference_causal.md) · [exponential_background](../recursive/exponential_background.md) · [exponential_foreground](../recursive/exponential_foreground.md) · [running_mean_std](../recursive/running_mean_std.md) · [optical_flow_magnitude_stream](../flow/optical_flow_magnitude_stream.md) · [motion_history_image](../motion/motion_history_image.md)
 
 ## 同カテゴリ(`window`)
 

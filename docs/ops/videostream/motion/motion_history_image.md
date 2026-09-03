@@ -1,7 +1,7 @@
 ---
-op: exponential_foreground
+op: motion_history_image
 dim: videostream
-category: recursive
+category: motion
 in: video
 out: video
 examples: [video_streaming]
@@ -10,14 +10,18 @@ license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
-# exponential_foreground — VIDEOSTREAM `recursive` op
+# motion_history_image — VIDEOSTREAM `motion` op
 
 - **データ種**: `video` → `video`
-- **呼び出し**: `import videostream; videostream.exponential_foreground(video, alpha: 'float' = 0.05, threshold: 'float' = 0.1) -> 'np.ndarray'` (または `opsvideostream.get("exponential_foreground")`)
+- **呼び出し**: `import videostream; videostream.motion_history_image(video, tau: 'int' = 15, threshold: 'float' = 0.1) -> 'np.ndarray'` (または `opsvideostream.get("motion_history_image")`)
 
 ## 使い方
 
-Foreground masks ``|frame − exponential background| > threshold`` → 0/1 ``(T, H, W)`` (``video``).
+Bobick–Davis Motion History Image per frame → ``(T, H, W)`` in ``[0, 1]`` (``video``).
+
+Frame ``t`` is the MHI of frames ``0..t``: 1 where motion is happening,
+decaying by ``1/tau`` per frame elsewhere. The last frame is the classic
+single-image temporal template of the whole clip's motion.
 
 ## 詳しい使い方ガイド
 
@@ -35,11 +39,11 @@ Foreground masks ``|frame − exponential background| > threshold`` → 0/1 ``(T
 
 ## 型が繋がる次の op(`video` を入力に取れる)
 
-[temporal_median_window](../window/temporal_median_window.md) · [moving_average_window](../window/moving_average_window.md) · [background_subtraction_window](../window/background_subtraction_window.md) · [frame_difference_causal](frame_difference_causal.md) · [exponential_background](exponential_background.md) · [running_mean_std](running_mean_std.md) · [optical_flow_magnitude_stream](../flow/optical_flow_magnitude_stream.md) · [motion_history_image](../motion/motion_history_image.md)
+[temporal_median_window](../window/temporal_median_window.md) · [moving_average_window](../window/moving_average_window.md) · [background_subtraction_window](../window/background_subtraction_window.md) · [frame_difference_causal](../recursive/frame_difference_causal.md) · [exponential_background](../recursive/exponential_background.md) · [exponential_foreground](../recursive/exponential_foreground.md) · [running_mean_std](../recursive/running_mean_std.md) · [optical_flow_magnitude_stream](../flow/optical_flow_magnitude_stream.md)
 
-## 同カテゴリ(`recursive`)
+## 同カテゴリ(`motion`)
 
-[frame_difference_causal](frame_difference_causal.md) · [exponential_background](exponential_background.md) · [running_mean_std](running_mean_std.md)
+[motion_energy_image](motion_energy_image.md) · [three_frame_difference](three_frame_difference.md)
 
 ---
 *Provenance: videostream.py — VIDEOSTREAM operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

@@ -11,12 +11,25 @@ version: 0.1.0
 
 ## この族は何をする道具箱か
 
-`videops` 族は動画を `(T, H, W)` の float64 配列として**一括**で受け取ります。1080p の 1 秒は 475 MB、状態を持つ op は表せません。カメラ・ロボットの眼・長時間録画は「全フレーム」を一度に渡してこないので、`videostream` 族(台帳 `opsvideostream.py`、8 op / 3 カテゴリ、モジュール `videostream.py`)は **1 フレームずつ**処理する形を op として持ちます。
+`videops` 族は動画を `(T, H, W)` の float64 配列として**一括**で受け取ります。1080p の 1 秒は 475 MB、状態を持つ op は表せません。カメラ・ロボットの眼・長時間録画は「全フレーム」を一度に渡してこないので、`videostream` 族(台帳 `opsvideostream.py`、16 op / 8 カテゴリ、モジュール `videostream.py`)は **1 フレームずつ**処理する形を op として持ちます。
 
 - **リングバッファ `FrameRing(n)`** — 直近 n 枚だけを、**フレームの dtype のまま**保持(uint8 の 1080p を 5 枚で 10 MB。float64 一括の 1 秒は 475 MB)。形や dtype の違うフレームは**拒否**します(落ちたフレームが黙って窓を汚さない)。
-- **状態つき op(`StatefulOp`、`push(frame) → 出力` / `reset()` / `state`)** — `TemporalMedianWindow` / `MovingAverageWindow` / `BackgroundSubtractionWindow`(窓つき、因果)、`FrameDifference` / `ExponentialBackground` / `RunningStats`(状態 1〜2 枚の再帰形)、`OpticalFlowStream`(前フレーム保持の密な流れ)。
+- **状態つき op(`StatefulOp`、`push(frame) → 出力` / `reset()` / `state`)** — 第 1 波: `TemporalMedianWindow` / `MovingAverageWindow` / `BackgroundSubtractionWindow`(窓つき、因果)、`FrameDifference` / `ExponentialBackground` / `RunningStats`(状態 1〜2 枚の再帰形)、`OpticalFlowStream`(前フレーム保持の密な流れ)。第 2 波: `MotionHistoryImage`(動き履歴画像)/ `ThreeFrameDifference`(三フレーム差分)/ `RunningGaussianForeground`(画素ごと単一ガウス背景)/ `TemporalBilateral`(時間方向バイラテラル)/ `Deflicker`(輝度デフリッカ)/ `SceneCutDetection`(ショット境界)。
 - **`VideoPipeline(stages)`** — 台帳 op の文字列(`"gaussian"` / `("gaussian", a, b)`、`api.apply` を通るので GPU 経路と fallback 台帳はそのまま)、状態つき op、任意の callable を混ぜて連ねる。`push(frame)` / `run(frames)` / `stats()`(1 フレームあたり ms、段ごとの時間、リングのバイト数)。
-- **台帳 op(一括版)** — `temporal_median_window` / `moving_average_window` / `background_subtraction_window` / `frame_difference_causal` / `exponential_background` / `exponential_foreground` / `running_mean_std` / `optical_flow_magnitude_stream`。実体は**ストリーミングクラスをクリップに沿って再生したもの**(`stream_replay`)なので、生の配信で 1 フレームずつ得た結果と台帳 op の結果は**フレーム単位で一致**します(`tests/test_videostream.py` と `examples/video_streaming.py` が固定)。
+- **台帳 op(一括版)** — 第 1 波: `temporal_median_window` / `moving_average_window` / `background_subtraction_window` / `frame_difference_causal` / `exponential_background` / `exponential_foreground` / `running_mean_std` / `optical_flow_magnitude_stream`。第 2 波: `motion_history_image` / `motion_energy_image` / `three_frame_difference` / `running_gaussian_foreground` / `running_gaussian_background` / `temporal_bilateral` / `deflicker` / `scene_cut_detection`。実体は**ストリーミングクラスをクリップに沿って再生したもの**(`stream_replay`)なので、生の配信で 1 フレームずつ得た結果と台帳 op の結果は**フレーム単位で一致**します(`tests/test_videostream.py` と `examples/video_streaming.py` が固定)。
+
+## 第 2 波の op(動き検出・適応背景・時間ノイズ除去・復元・ショット検出)
+
+| op | 何をするか | 出典 |
+|---|---|---|
+| `motion_history_image` / `motion_energy_image` | 動き履歴画像(いま動いた所を 1、後ろへ `1/tau` ずつ減衰)/ その二値版(直近 tau で動いた所) | Bobick & Davis 2001 |
+| `three_frame_difference` | 連続する二つのフレーム差分の AND。移動体の後ろに残る「ゴースト」を消す | Collins et al., VSAM 2000 |
+| `running_gaussian_foreground` / `running_gaussian_background` | 画素ごとに平均・分散を持ち、平均から `k` 標準偏差を超えたら前景。閾値が画素ごとに雑音へ追従(固定閾値の `exponential_background` の上位) | Wren *Pfinder* 1997 |
+| `temporal_bilateral` | 時間方向のバイラテラル。動いた画素は過去フレームの重みが落ちるので、平均化のようにゴーストを引かずに静止部だけ雑音除去 | — |
+| `deflicker` | 各フレームの平均を緩やかな基準へ合わせて輝度の脈動を打ち消す(自動露出・商用電源のちらつき) | 動画復元 |
+| `scene_cut_detection` | フレーム間ヒストグラムのカイ二乗距離。ハードカットで跳ねる。動き(画素は動くがヒストグラムは保つ)に強い | ショット境界検出 |
+
+スループット(`--set video`、per-frame・ring メモリのみ、720p float64、非熱定常なので相対で読む): `deflicker` / `exponential_background` / `frame_difference_causal` は 100 fps 超、`motion_history_image` / `three_frame_difference` / `moving_average_window` は 30 fps 余裕、`running_gaussian_foreground` ~46 fps、per-画素中央値/窓を持つ `temporal_median_window` / `background_subtraction_window` / `temporal_bilateral` は 720p で 10〜15 fps(中央値・窓が重い、`docs/design/PERF_MEMORY_VIDEO_SURVEY.md` の median 所見どおり)。計測は `py -3.11 tools/bench_ops.py --set video --sizes 720p`。
 - **読み込みの素通し** — `video.iter_frames(path, dtype="uint8")` はデコードした整数フレームを float64 に変換せず渡します(1080p の読み込みが 18 fps → 約 180 fps、`docs/design/PERF_MEMORY_VIDEO_SURVEY.md` §3.2)。灰色化は `gray_backend="auto"|"cv2"|"numpy"`(どちらも Rec. 601、丸めで 1 LSB 差)。
 
 ## videops との違いは名前に出す

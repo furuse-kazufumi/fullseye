@@ -38,7 +38,7 @@ so it composes frame-for-frame with the other stream ops.
 
 ## 型が繋がる次の op(`video` を入力に取れる)
 
-[temporal_median_window](../window/temporal_median_window.md) · [moving_average_window](../window/moving_average_window.md) · [background_subtraction_window](../window/background_subtraction_window.md) · [exponential_background](exponential_background.md) · [exponential_foreground](exponential_foreground.md) · [running_mean_std](running_mean_std.md) · [optical_flow_magnitude_stream](../flow/optical_flow_magnitude_stream.md)
+[temporal_median_window](../window/temporal_median_window.md) · [moving_average_window](../window/moving_average_window.md) · [background_subtraction_window](../window/background_subtraction_window.md) · [exponential_background](exponential_background.md) · [exponential_foreground](exponential_foreground.md) · [running_mean_std](running_mean_std.md) · [optical_flow_magnitude_stream](../flow/optical_flow_magnitude_stream.md) · [motion_history_image](../motion/motion_history_image.md)
 
 ## 同カテゴリ(`recursive`)
 

@@ -1,4 +1,4 @@
-# VIDEOSTREAM operator help — 8 ops in 3 categories
+# VIDEOSTREAM operator help — 16 ops in 8 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/videostream/<category>/<op>.md` を走査。
 
@@ -8,13 +8,33 @@
 
 ## カテゴリ
 
+### analysis (1)
+
+[scene_cut_detection](analysis/scene_cut_detection.md)
+
+### background (2)
+
+[running_gaussian_background](background/running_gaussian_background.md) · [running_gaussian_foreground](background/running_gaussian_foreground.md)
+
+### denoise (1)
+
+[temporal_bilateral](denoise/temporal_bilateral.md)
+
 ### flow (1)
 
 [optical_flow_magnitude_stream](flow/optical_flow_magnitude_stream.md)
 
+### motion (3)
+
+[motion_energy_image](motion/motion_energy_image.md) · [motion_history_image](motion/motion_history_image.md) · [three_frame_difference](motion/three_frame_difference.md)
+
 ### recursive (4)
 
 [exponential_background](recursive/exponential_background.md) · [exponential_foreground](recursive/exponential_foreground.md) · [frame_difference_causal](recursive/frame_difference_causal.md) · [running_mean_std](recursive/running_mean_std.md)
+
+### restore (1)
+
+[deflicker](restore/deflicker.md)
 
 ### window (3)
 

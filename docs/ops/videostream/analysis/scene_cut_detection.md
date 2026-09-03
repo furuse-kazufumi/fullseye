@@ -1,23 +1,27 @@
 ---
-op: exponential_background
+op: scene_cut_detection
 dim: videostream
-category: recursive
+category: analysis
 in: video
-out: video
+out: table
 examples: [video_streaming]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
-# exponential_background — VIDEOSTREAM `recursive` op
+# scene_cut_detection — VIDEOSTREAM `analysis` op
 
-- **データ種**: `video` → `video`
-- **呼び出し**: `import videostream; videostream.exponential_background(video, alpha: 'float' = 0.05) -> 'np.ndarray'` (または `opsvideostream.get("exponential_background")`)
+- **データ種**: `video` → `table`
+- **呼び出し**: `import videostream; videostream.scene_cut_detection(video, bins: 'int' = 64, threshold: 'float' = 0.3) -> 'dict'` (または `opsvideostream.get("scene_cut_detection")`)
 
 ## 使い方
 
-Recursive background ``bg ← (1−α)·bg + α·frame`` per frame → ``(T, H, W)`` (``video``).
+Shot-boundary chi-square histogram distance over a clip → ``{"distance", "cut", "n"}`` (``table``).
+
+``distance[t]`` is the chi-square distance of frame ``t``'s histogram to
+frame ``t−1``'s (``distance[0] = 0``); ``cut[t]`` is ``distance[t] > threshold``.
+Streaming form: one histogram of state, no frames kept.
 
 ## 詳しい使い方ガイド
 
@@ -33,13 +37,13 @@ Recursive background ``bg ← (1−α)·bg + α·frame`` per frame → ``(T, H, 
 
 - [video_streaming](../../../../examples/video_streaming.py) — `py -3.11 examples/video_streaming.py`
 
-## 型が繋がる次の op(`video` を入力に取れる)
+## 型が繋がる次の op(`table` を入力に取れる)
 
-[temporal_median_window](../window/temporal_median_window.md) · [moving_average_window](../window/moving_average_window.md) · [background_subtraction_window](../window/background_subtraction_window.md) · [frame_difference_causal](frame_difference_causal.md) · [exponential_foreground](exponential_foreground.md) · [running_mean_std](running_mean_std.md) · [optical_flow_magnitude_stream](../flow/optical_flow_magnitude_stream.md) · [motion_history_image](../motion/motion_history_image.md)
+—
 
-## 同カテゴリ(`recursive`)
+## 同カテゴリ(`analysis`)
 
-[frame_difference_causal](frame_difference_causal.md) · [exponential_foreground](exponential_foreground.md) · [running_mean_std](running_mean_std.md)
+—
 
 ---
 *Provenance: videostream.py — VIDEOSTREAM operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
