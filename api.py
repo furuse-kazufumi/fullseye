@@ -1590,6 +1590,18 @@ def _apply_impl(image, name, a, b, coerce, device, policy, fast=None):
         if len(image) != nop.arity:
             raise TypeError("%r takes %d inputs %s, got %d"
                             % (name, nop.arity, list(nop.in_sorts), len(image)))
+        if any(isinstance(x, PrecisionUnion) for x in image):
+            # two unions with the same tiling run a closed op (precision_union.LAZY_NARY)
+            # tile-by-tile without materialising; anything else materialises the
+            # union inputs and continues on the normal n-ary path.
+            lazy = _PU_LAZY_NARY.get(name)
+            if (lazy is not None and nop.arity == 2
+                    and all(isinstance(x, PrecisionUnion) for x in image)
+                    and image[0]._same_tiling(image[1])):
+                pus = [_pu_contract(x, nop, policy) for x in image]
+                if all(p is not None for p in pus):
+                    return lazy(pus[0], pus[1], a, b)
+            image = [x.to_dense() if isinstance(x, PrecisionUnion) else x for x in image]
         inputs = [(_coerce_sort(x, srt) if coerce else np.asarray(x))
                   for x, srt in zip(image, nop.in_sorts)]
         # the n-ary functions carry no guard of their own: give them the same recorded,
