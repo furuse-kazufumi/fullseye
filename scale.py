@@ -104,6 +104,10 @@ def scale_class(op) -> dict:
     if cat in _GLOBAL_CATS:
         return {"class": "global", "tile_safe": False,
                 "reason": "needs global statistics (histogram/threshold); compute stats globally, then apply"}
+    if name in _NOT_TILE_SAFE:
+        cls, reason = _NOT_TILE_SAFE_REASON.get(
+            cat, ("global", "measured non-tileable under haloed tiling"))
+        return {"class": cls, "tile_safe": False, "reason": reason}
     if cat in _TILE_SAFE_CATS:
         return {"class": "tile_safe", "tile_safe": True, "reason": "local filter/morphology"}
     return {"class": "global", "tile_safe": False, "reason": "unclassified; treat as non-tileable"}
