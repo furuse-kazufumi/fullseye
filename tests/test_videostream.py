@@ -250,6 +250,10 @@ def test_pipeline_refuses_shape_change_and_resets_state_on_failure():
     import backend_safe as bs
     # fail-soft (the facade default): recorded with source="stream", returns None, state reset
     p3 = VS.VideoPipeline([Boom()], on_error="fallback")
+    # the ledger is a bounded ring (256): if earlier tests filled it, "before + 1"
+    # can never hold. Start from an empty ledger so the delta is what is asserted.
+    if hasattr(bs, "clear_fallbacks"):
+        bs.clear_fallbacks()
     before = len(bs.fallbacks()) if hasattr(bs, "fallbacks") else None
     with bs.quiet_warnings() if hasattr(bs, "quiet_warnings") else _null():
         r = p3.push(np.zeros((2, 2)))
