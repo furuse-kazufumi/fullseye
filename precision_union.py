@@ -118,11 +118,12 @@ def unpack(pu):
 # --------------------------------------------------------------------------- #
 @dataclass
 class _Tile:
-    bits: int
+    bits: int          # 0 = constant, 1/2/4/8/16 = packed codes, 64 = RAW float64 "codes"
     offset: float
     scale: float
     buf: bytes
-    n: int  # element count (last row/col tiles are smaller)
+    n: int             # element count (last row/col tiles are smaller)
+    cmax: int = 0      # largest code actually present (exact tile range, no over-estimate)
 
 
 def _plan_tile(vals: np.ndarray, atol: float) -> _Tile:
