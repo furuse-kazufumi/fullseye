@@ -31,6 +31,58 @@ _COMPUTE_BOUND = {"bilateral", "sk_tv", "median", "xsp_wiener"}      # slow at X
 _MEMORY_BOUND_CATS = {"frequency"}                                   # FFT: O(N^2) memory
 _CV2_LIMITED_HINTS = ("polar", "warp", "logpolar")                   # cv2 SHRT_MAX (~32767)
 
+# Category is only a *hint*. Many ops in the "tile-safe" categories are in fact NOT
+# tileable under the standard haloed tiler (:func:`process_tiled`): region shape /
+# topology ops need the whole connected component (skeleton, distance, bounding
+# shapes), gray histogram/contrast ops need whole-image statistics, edge magnitude /
+# corner / DoG / LoG ops end in a *whole-image* normalization that the tiler would
+# redo per tile (piecewise scale jumps at tile seams — not a single global scale, so
+# "normalize once at the end" is the only correct route and the standard tiler does
+# not do it), texture ridge filters are multiscale, and TV / diffusion / wavelet /
+# DCT smoothers are iterative or transform-domain (effective receptive field = the
+# whole image). This set was **measured** (3 structured probes x 2 param settings,
+# tiling_error > 1e-6) and is locked by tests/test_scale_tiling.py, which fails if
+# any op marked tile_safe measurably breaks under tiling, or if a listed op has
+# become genuinely tileable (stale). A category-only classifier said 141 of these
+# were safe; they are not.
+_NOT_TILE_SAFE = frozenset({
+    'anisotropic_diffusion', 'bothat', 'clahe', 'closest_point_transform', 'coherence_enhancing_diff', 'corner_response',
+    'cv_blackhat', 'cv_clahe', 'cv_corner_harris', 'cv_dist', 'cv_gradient', 'cv_laplacian',
+    'cv_min_eigen', 'cv_precorner', 'cv_scharr', 'cv_tophat', 'derivate_gauss', 'deviation_image',
+    'diff_of_gauss', 'dist_transform', 'distance_transform', 'dl_aniso_diffusion', 'dog', 'dots_image',
+    'edges_color', 'em_skeleton', 'entropy_image', 'equ_histo_image', 'equ_histo_image_rect', 'equalize',
+    'f2_gauss_pyramid', 'f2_gray_inside', 'f2_gray_skeleton', 'f2_symmetry', 'f2_topographic', 'fill_up_shape',
+    'frei_amp', 'get_region_convex', 'gray_bothat', 'gray_range_rect', 'gray_tophat', 'illuminate',
+    'junctions_skeleton', 'kirsch_amp', 'laplace', 'laplace_of_gauss', 'log', 'monotony',
+    'morph_grad', 'morph_skeleton', 'points_foerstner', 'points_harris_binomial', 'prewitt_amp', 'prewitt_mag',
+    'pruning', 'r2_inner_circle', 'r2_inner_rectangle1', 'r2_partition_rectangle', 'r2_smallest_circle', 'r2_smallest_rectangle1',
+    'r2_smallest_rectangle2', 'r2_sort_region', 'r2_split_skeleton_lines', 'r3_clip_region', 'r3_label_to_region', 'r3_partition_dynamic',
+    'r3_select_region_point', 'remove_small', 'roberts', 'roberts_mag', 'robinson_amp', 'scale_image_max',
+    'select_largest', 'select_shape_std', 'shape_trans', 'sk_adapthist', 'sk_area_opening', 'sk_clear_border',
+    'sk_convex', 'sk_corner_harris', 'sk_dog', 'sk_entropy', 'sk_farid', 'sk_frangi',
+    'sk_gabor', 'sk_hessian', 'sk_hessian_det', 'sk_medial', 'sk_meijering', 'sk_scharr',
+    'sk_shape_index', 'sk_skeleton', 'sk_thin', 'sk_tv', 'sk_tv_bregman', 'skeleton',
+    'smallest_rectangle1', 'sobel_amp', 'sobel_mag', 'std_filter', 'texture_laws', 'tf_phase_congruency',
+    'tf_steerable_filter', 'thinning', 'thinning_golay', 'thinning_seq', 'tophat', 'xcv3_denoise_tvl1',
+    'xcv_detail_enhance', 'xcv_edge_preserving', 'xkor_clahe', 'xkor_dog', 'xkor_gftt', 'xkor_harris',
+    'xkor_hessian', 'xkor_laplacian', 'xpil_autocontrast', 'xpil_contrast', 'xsk2_corner_kr', 'xsk2_hog',
+    'xsk2_inv_gauss_grad', 'xsk2_reconstruction', 'xsk3_area_closing', 'xsk3_corner_fast', 'xsk3_corner_moravec', 'xsk3_integral_image',
+    'xsk_hessian_eig', 'xsk_meijering', 'xsk_sato', 'xsp_chamfer_dist', 'xsp_cspline_smooth', 'xsp_dct_denoise',
+    'xsp_detrend_flatten', 'xsp_gauss_grad_mag', 'xsp_hilbert_env', 'xsp_morph_laplace', 'xsp_wiener', 'xwt_directional_detail',
+    'xwt_firm_denoise', 'xwt_hf_reconstruct', 'xwt_visushrink',
+})
+
+# class + reason for a measured non-tileable op, from its (optimistic) category.
+_NOT_TILE_SAFE_REASON = {
+    "region":     ("global", "region shape/topology (skeleton, distance, connectivity, bounding shapes) needs the whole connected region"),
+    "gray":       ("global", "needs whole-image statistics (histogram / contrast normalization); compute globally"),
+    "edges":      ("global_reduce", "local derivative but ends in a whole-image normalization; the haloed tiler renormalizes each tile (piecewise scale) — normalize once on the full image instead"),
+    "morphology": ("global_reduce", "morphological reconstruction or a structuring element larger than the tile halo"),
+    "texture":    ("global", "multiscale or large-window texture support exceeds any fixed halo"),
+    "smoothing":  ("global", "iterative or transform-domain (TV, diffusion, wavelet, DCT): effective receptive field is the whole image"),
+    "rank":       ("compute_bound", "window (rect) can exceed the tile halo; enlarge halo or process globally"),
+}
+
 
 def scale_class(op) -> dict:
     """Classify an Op (or a name+category) for large-image behaviour.
