@@ -461,7 +461,8 @@ class PrecisionUnion:
             tiles.append(_Tile(int(bits[i]), float(offset[i]), float(scale[i]),
                                body[pos:pos + L], int(ncnt[i])))
             pos += L
-        return cls(shape, dtype, tsz, tiles, grid)
+        atol = float(np.asarray(d["atol"])) if "atol" in d else 0.0   # older files: lossless
+        return cls(shape, dtype, tsz, tiles, grid, atol=atol)
 
     def save(self, path) -> None:
         """Write the compressed store to ``path`` (a ``.npz``). File size tracks

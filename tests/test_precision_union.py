@@ -435,3 +435,34 @@ def test_run_pipeline_lazy_chain_then_materialise():
     out = api.run_pipeline(pu, full)
     assert isinstance(out, np.ndarray)                    # first non-lazy stage materialises
     np.testing.assert_allclose(out, api.run_pipeline(dense, full), rtol=0, atol=5e-3)
+
+
+# --- the atol contract travels with the union ------------------------------- #
+def test_lossless_union_clips_losslessly():
+    """atol=0 (integer label map): clip to integer bounds must stay bit-exact —
+    the straddling tiles re-plan at atol=0 and take the exact integer path."""
+    rng = np.random.default_rng(40)
+    lab = rng.integers(-3, 9, (48, 32), dtype=np.int64)
+    pu = PrecisionUnion.from_array(lab, tile=16)
+    assert pu.atol == 0.0
+    c = pu.clip(0, 5)
+    assert c.atol == 0.0
+    np.testing.assert_array_equal(c.to_dense(), np.clip(lab, 0, 5))
+
+
+def test_scale_shift_scales_the_tolerance_and_clip_honours_it():
+    a = _clip_probe()
+    pu = PrecisionUnion.from_array(a, tile=16, atol=1e-3)
+    g = pu.scale_shift(3.0, 0.0)
+    assert g.atol == pytest.approx(3e-3)                # |gain| x atol
+    c = g.clip(0.0, 1.0)
+    assert c.atol == pytest.approx(3e-3)
+    np.testing.assert_allclose(c.to_dense(), np.clip(3.0 * pu.to_dense(), 0, 1),
+                               rtol=0, atol=3e-3 + 1e-9)
+
+
+def test_save_load_persists_atol(tmp_path):
+    pu = PrecisionUnion.from_array(_clip_probe(), tile=16, atol=2.5e-3)
+    p = tmp_path / "t.npz"
+    pu.save(p)
+    assert PrecisionUnion.load(p).atol == pytest.approx(2.5e-3)
