@@ -508,11 +508,19 @@ class PrecisionUnion:
         scale, ncnt = np.asarray(d["scale"]), np.asarray(d["n"])
         buflens = np.asarray(d["buflens"])
         body = np.asarray(d["body"]).tobytes()
+        cmax = np.asarray(d["cmax"]) if "cmax" in d else None
         tiles, pos = [], 0
         for i in range(len(bits)):
             L = int(buflens[i])
-            tiles.append(_Tile(int(bits[i]), float(offset[i]), float(scale[i]),
-                               body[pos:pos + L], int(ncnt[i])))
+            b_i = int(bits[i])
+            if cmax is not None:
+                cm = int(cmax[i])
+            elif b_i in (0, 64):
+                cm = 0
+            else:                                   # older file: no cmax -> recover it (exact)
+                cm = int(_unpack_codes(body[pos:pos + L], b_i, int(ncnt[i])).max())
+            tiles.append(_Tile(b_i, float(offset[i]), float(scale[i]),
+                               body[pos:pos + L], int(ncnt[i]), cmax=cm))
             pos += L
         atol = float(np.asarray(d["atol"])) if "atol" in d else 0.0   # older files: lossless
         return cls(shape, dtype, tsz, tiles, grid, atol=atol)
