@@ -393,8 +393,12 @@ def main() -> int:
     # ═══ hero 画像 ══════════════════════════════════════════════════════
     print("[hero] 有機彫刻をレンダリング中 ...")
     th = time.time()
-    Vh, Fh = sculpture(res=48)
-    Vh = sit_on_ground(Vh)
+    # 2026-09-04: 品質見直し。旧設定(res=48, 640px, フラット法線)は Qiita 記事の hero で
+    # ファセット模様と四角いスペキュラが見えた。marching cubes を 128 に上げ、法線は面から
+    # 作らず SDF 勾配を頂点でサンプル(格子由来の等高線バンディングが消える)、1280px。
+    # AO/影が支配的なので描画時間は 640px とほぼ同じ(実測 ~75 s)。
+    Vh, Fh, Nh = sculpture(res=128, with_normals=True)
+    Vh = sit_on_ground(Vh)                               # 平行移動: 法線は不変
     # 良い構図: 少し上・斜め前から。金属質・暖色・ソフト接地影。
     lo, hi = Vh.min(0), Vh.max(0)
     cen = 0.5 * (lo + hi)
@@ -402,12 +406,14 @@ def main() -> int:
     eye = cen + np.array([2.6 * rad, -3.0 * rad, 2.0 * rad])
     hpose = render3d.look_at(eye, [cen[0], cen[1], cen[2] * 0.9 + 0.15 * rad],
                              up=(0.0, 0.0, 1.0))
-    hK = render3d.intrinsics_from_fov(34.0, 640, 640)
+    HERO = 1280
+    hK = render3d.intrinsics_from_fov(34.0, HERO, HERO)
     hero = rb.render_beauty(
-        Vh, Fh, pose=hpose, intrinsics=hK, size=640, ss=2, material="metal",
+        Vh, Fh, pose=hpose, intrinsics=hK, size=HERO, ss=2, material="metal",
         albedo=(0.90, 0.62, 0.30), light=(0.45, 0.55, 0.75), ambient=0.10,
         ao=True, ground_shadow=True, tonemap="aces", exposure=1.25,
-        background=(0.07, 0.08, 0.10), ao_samples=48, shadow_res=512,
+        background=(0.07, 0.08, 0.10), ao_samples=64, shadow_res=1024,
+        smooth_normals=True, vertex_normals=Nh,
         # 半影の幅 ≈ 遮蔽物の高さ × tan(角半径)。2.2 度では 1〜2 画素にしかならず、
         # 実測でも半影は 283/102400 画素・値の種類は 7 段だけ = 事実上ハード影だった。
         # 12 度まで上げ、段が見えないようサンプルを増やし、shadow map の参照も
