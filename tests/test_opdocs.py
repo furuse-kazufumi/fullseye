@@ -373,8 +373,8 @@ def test_optics_registry_is_connected():
     # + illumdesign "illumination" 6 = 47。2026-09-04 に見え方の 5 族 33 op を追加:
     # matappear "appearance" 7 + glassmirror "interface" 4 / "mirror" 2 / "glassbody" 4
     # + metalfinish "finish" 5 + surfacelib "material" 6 / "surface" 5 = 33 → 計 80。
-    # 2026-09-05: optscene "scene" 37 op を追加 → 計 117。
-    assert len(_OPT_RECS) == 117
+    # 2026-09-05: optscene "scene" 38 op を追加 → 計 118。
+    assert len(_OPT_RECS) == 118
     assert {"geometric", "wave", "imaging", "polarization", "design", "imaging_sim",
             "optimization", "illumination", "appearance", "interface", "mirror",
             "glassbody", "finish", "material", "surface",

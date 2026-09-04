@@ -69,7 +69,7 @@ __all__ = [
     "trace_rays", "illumination_visibility",
     "surface_defect", "surface_finish", "random_defects", "render_optscene", "optscene_depth", "optscene_mask",
     "optscene_defect_mask", "optscene_instances", "sensor_catalog", "sensor_spec", "lens_spec", "light_spec", "light_wavelengths",
-    "vision_layout", "layout_capture", "optical_budget", "observe_surface", "defocus_blur", "diffraction_blur", "airy_radius_um", "sensor_capture", "inspection_dataset",
+    "vision_layout", "layout_capture", "interface_budget", "optical_budget", "observe_surface", "defocus_blur", "diffraction_blur", "airy_radius_um", "sensor_capture", "inspection_dataset",
     "dataset_throughput", "env_studio", "env_lightbox", "render_studio",
 ]
 
@@ -2195,8 +2195,10 @@ def sensor_spec(pixel_um: float = 3.45, resolution=(1024, 1024),
             read_noise_e = c["read_noise_e"]
     px = _pos(pixel_um, "pixel_um")
     res = np.asarray(resolution, dtype=int)
-    if res.shape != (2,) or np.any(res < 2):
-        raise ValueError(f"resolution must be (width, height) >= 2, got {resolution!r}")
+    # 高さ 1 = ラインセンサ(竹中 TL 系や Vieworks VT の TDI がこれ)。撮像側はまだ
+    # エリア前提だが、諸元と帯域の計算はラインでも成立するので入口では拒否しない
+    if res.shape != (2,) or res[0] < 2 or res[1] < 1:
+        raise ValueError(f"resolution must be (width >= 2, height >= 1), got {resolution!r}")
     qe = float(quantum_efficiency)
     if not (0.0 < qe <= 1.0):
         raise ValueError(f"quantum_efficiency must lie in (0, 1], got {quantum_efficiency!r}")
@@ -2366,6 +2368,60 @@ def layout_capture(layout: dict, exposure_ms: float = 10.0, supersample: int = 2
            "defect_mask": optscene_defect_mask(scene, cam)}
     if raw:
         out["radiance"] = acc
+    return out
+
+
+#: 産業用カメラの伝送規格と 1 接続あたりの帯域 [Gbps]。フレームグラバーの台帳は
+#: .claude/skills/corpus/machine_vision_optics_corpus/products/frame_grabbers.md(raptor)。
+#: 光学が「必要なコントラストで写るか」を決めるのに対し、ここは「落とさずに運べるか」。
+_INTERFACES = {
+    "CXP-6": 6.25, "CXP-12": 12.5,           # CoaXPress(PoCXP で電源・制御・データを 1 本に)
+    "CameraLink-Base": 2.04, "CameraLink-Full": 6.8,
+    "CameraLinkHS": 3.125,                    # 1 lane あたり
+    "GigE": 1.0, "5GigE": 5.0, "10GigE": 10.0, "25GigE": 25.0,
+    "USB3": 5.0,
+}
+
+
+def interface_budget(sensor: dict, interface: str = "CXP-12", links: int = 4,
+                     efficiency: float = 0.85, line_scan: bool = False) -> dict:
+    """伝送帯域から**帯域律速の最大フレーム / ラインレート**を返す。
+
+    高解像度・高速・ラインスキャンでは、律速がセンサではなく**伝送帯域**になることが
+    普通にある。撮る前にどちらが律速かを知るための op(光学の :func:`optical_budget`
+    と対になる)。
+
+    ``efficiency`` は符号化・パケットの実効効率(CoaXPress で概ね 0.8-0.9)。
+    ``line_scan=True`` なら 1 ライン(幅 x 1 画素)あたりで計算し、ラインレート [kHz]
+    を返す。
+
+    返り値 dict: ``gbps``(総帯域)/ ``bytes_per_frame`` / ``max_fps`` /
+    ``max_line_rate_khz``(line_scan のとき)/ ``interface`` / ``links``。
+
+    実測の目安: CXP-12 x4 = 50 Gbps = 5 GB/s は、8 bit・16k ラインセンサを 300 kHz で
+    回せる帯域にちょうど一致する(Vieworks VT の TDI がこの前提)。一方エリアスキャンの
+    IMX541(20.3 MP・8 bit)は 1 枚 20.3 MB なので理論 246 fps 出るが、センサ自体が
+    18-42 fps なので**帯域は余る**。
+    """
+    if not isinstance(sensor, dict) or sensor.get("kind") != "sensor":
+        raise ValueError("sensor must be a sensor_spec() result")
+    if interface not in _INTERFACES:
+        raise ValueError(f"interface must be one of {sorted(_INTERFACES)}, got {interface!r}")
+    n = int(links)
+    if n < 1:
+        raise ValueError(f"links must be >= 1, got {links!r}")
+    eff = float(efficiency)
+    if not (0.0 < eff <= 1.0):
+        raise ValueError(f"efficiency must lie in (0, 1], got {efficiency!r}")
+    gbps = _INTERFACES[interface] * n * eff
+    bytes_per_s = gbps * 1e9 / 8.0
+    px = sensor["width"] * (1 if line_scan else sensor["height"])
+    per_frame = px * sensor["bit_depth"] / 8.0
+    rate = bytes_per_s / max(per_frame, 1e-12)
+    out = {"interface": interface, "links": n, "gbps": gbps,
+           "bytes_per_frame": per_frame, "max_fps": rate}
+    if line_scan:
+        out["max_line_rate_khz"] = rate / 1e3
     return out
 
 
