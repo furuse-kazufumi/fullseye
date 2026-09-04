@@ -319,7 +319,15 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
         if not isinstance(bump, dict):
             raise ValueError("bump must be a dict(wavelengths, amplitudes, ...) or None")
         bump_cfg = dict(bump)
-    want_attr = bool(smooth_normals) or bump_cfg is not None
+    if vertex_albedo is not None:
+        vertex_albedo = np.asarray(vertex_albedo, dtype=np.float64)
+        n_mesh_a = int(np.asarray(V).shape[0])
+        if vertex_albedo.shape != (n_mesh_a, 3):
+            raise ValueError("vertex_albedo must be (n_mesh, 3) RGB for the mesh vertices, "
+                             f"got {vertex_albedo.shape} for {n_mesh_a} vertices")
+        if not np.all(np.isfinite(vertex_albedo)) or vertex_albedo.min() < 0.0 or vertex_albedo.max() > 1.0:
+            raise ValueError("vertex_albedo must be finite RGB in [0, 1]")
+    want_attr = bool(smooth_normals) or bump_cfg is not None or vertex_albedo is not None
     view = render3d.render_mesh(V_all, F_all, pose=P, intrinsics=Khi,
                                 width=hs, height=hs, attributes=want_attr)
     normals = view["normals"]                            # (hs, hs, 3) camera space
