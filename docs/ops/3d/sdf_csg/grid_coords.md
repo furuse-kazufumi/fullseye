@@ -7,7 +7,7 @@ out: coordgrid
 examples: [gear_metrology, molecule_atom_count, procedural_hand, render_beauty, sdf_csg, sfm_recon]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.5  # fullseye lib version this note was generated for
+version: 0.1.6  # fullseye lib version this note was generated for
 ---
 
 # grid_coords — 3D `sdf_csg` op

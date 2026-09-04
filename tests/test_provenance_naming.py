@@ -61,9 +61,21 @@ _GLOBAL_INTEROP = {
 #: ここに無い語は、コード面のどこに現れても失格。
 _INTEROP_ALLOWLIST = {
     "basler": (
-        ("acquire.py",),
-        "カメラ driver を選ぶ backend 識別子。実在する機材を名指しているだけで、"
-        "fullseye 側の何かに名前を付けてはいない",
+        ("acquire.py", "optscene.py"),
+        "acquire.py = カメラ driver を選ぶ backend 識別子。optscene.py = sensor_catalog に"
+        "載せた諸元の**出典**(公開されている EMVA1288 実測表)。どちらも実在するものを"
+        "名指しているだけで、fullseye 側の何かに名前を付けてはいない。出典を消すと"
+        "数値が検証不能になる(PROVENANCE.md の「出典表記」に当たる)",
+    ),
+    "teledyne": (
+        ("optscene.py",),
+        "sensor_catalog が載せる**実在センサの製造元**。型番だけでは何のセンサか"
+        "特定できず、利用者が一次情報に当たれなくなる。fullseye 側の命名ではない",
+    ),
+    "hamamatsu": (
+        ("optscene.py",),
+        "同上 —— sensor_catalog が載せる実在センサの製造元であり、諸元の出所を"
+        "たどるための識別子。fullseye 側の何かに名前を付けてはいない",
     ),
 }
 

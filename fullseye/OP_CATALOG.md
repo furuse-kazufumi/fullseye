@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(69 例)
+### 2-D 画像/信号/幾何(71 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -113,6 +113,10 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **consumer**
 - **hillco / evis(筋骨格ヒューマノイド歩行)が fullseye を使う 3 つの検査** — 物理シムが真値を持つ前提で、fullseye は独立な知覚側の二重チェックのみ: 歩行安定性(支持多角形/COM 余裕)、レンダ動画の運動検証、姿勢の骨格化。制御は駆動しない。 `py -3.11 examples/consumer_hillco.py`
 - **onocollo(CPU 世界モデル/gaitlab)が fullseye を使う 2 つの検査** — MuJoCo 風状態からの静的安定性チェック(support_polygon/com_support_margin)と、物理レンダ動画 2 フレームからの運動検証。 `py -3.11 examples/consumer_onocollo.py`
+
+**optics_layout**
+- **型番から検査セルを組み、撮る前に成立するかを数字で決める** — カタログのセンサー/レンズ/照明を選び、①レンズがセンサーを覆うか②必要な寸法を分解できるか③そのフレームレートを伝送路が運べるか④実際に撮ったらどう写るか、を閉じた式で確かめる(optscene)。 `py -3.11 examples/vision_layout_from_catalog.py`
+- **光線を追ってレンダラを検算する(交点・法線・反射・遮蔽)** — 絵の見た目でなく光線の量で答え合わせをする。交点 z、法線の向き、反射の法則 |d·n+r·n|<1e-14、遮蔽で可視率が落ちること、環境光の違いを固定してから studio 描画する(optscene)。 `py -3.11 examples/studio_raytrace_scene.py`
 
 ### 3-D 点群/体積/曲面(117 例)
 
@@ -1348,7 +1352,7 @@ _計 881 ops / 47 categories。_
 - `median` (halcon: `median_image`) `image → image` · 例: `astro_stacking`, `consumer_onocollo`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `lightfield_depth`, `machined_metal_and_materials`, `perception_pipeline`, `photon_timeresolved`, `quickstart`, `representation_roundtrip`, `specular_photometric`
 - `min_filter` (halcon: `gray_erosion_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `max_filter` (halcon: `gray_dilation_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `percentile` (halcon: `rank_image`) `image → image` · 例: `color_transport`, `gallery2d_smoothing_rank`, `image_quality_metrics`, `representation_roundtrip`
+- `percentile` (halcon: `rank_image`) `image → image` · 例: `color_transport`, `gallery2d_smoothing_rank`, `image_quality_metrics`, `representation_roundtrip`, `vision_layout_from_catalog`
 - `sk_median_disk` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `cv_median` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `median_image` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`

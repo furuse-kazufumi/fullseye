@@ -7,7 +7,7 @@ out: image2d
 examples: [annotate_gallery, drawlist_deferred]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.5  # fullseye lib version this note was generated for
+version: 0.1.6  # fullseye lib version this note was generated for
 ---
 
 # text_box — ANNOTATE `text` op

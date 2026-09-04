@@ -4,10 +4,10 @@ dim: optics
 category: scene
 in: table × table
 out: table
-examples: []
+examples: [studio_raytrace_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.5  # fullseye lib version this note was generated for
+version: 0.1.6  # fullseye lib version this note was generated for
 ---
 
 # scene_difference — OPTICS `scene` op
@@ -58,7 +58,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [studio_raytrace_scene](../../../../examples/studio_raytrace_scene.py) — `py -3.11 examples/studio_raytrace_scene.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

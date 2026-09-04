@@ -5,10 +5,10 @@ category: rank
 in: image
 out: image
 halcon: rank_image
-examples: [color_transport, gallery2d_smoothing_rank, image_quality_metrics, representation_roundtrip]
+examples: [color_transport, gallery2d_smoothing_rank, image_quality_metrics, representation_roundtrip, vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.5  # fullseye lib version this note was generated for
+version: 0.1.6  # fullseye lib version this note was generated for
 ---
 
 # percentile — 2D `rank` op
@@ -37,6 +37,7 @@ version: 0.1.5  # fullseye lib version this note was generated for
 - [gallery2d_smoothing_rank](../../../../examples/gallery2d_smoothing_rank.py) — `py -3.11 examples/gallery2d_smoothing_rank.py`
 - [image_quality_metrics](../../../../examples/image_quality_metrics.py) — `py -3.11 examples/image_quality_metrics.py`
 - [representation_roundtrip](../../../../examples/representation_roundtrip.py) — `py -3.11 examples/representation_roundtrip.py`
+- [vision_layout_from_catalog](../../../../examples/vision_layout_from_catalog.py) — `py -3.11 examples/vision_layout_from_catalog.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

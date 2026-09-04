@@ -2,8 +2,71 @@
 
 All notable changes to the PyPI package `fullseye`. Dates are release dates (JST).
 Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/release.yml`).
+What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
+("Versioning") — the minor slot is our breaking signal.
 
-## 0.1.6 — unreleased
+## 0.1.6 — 2026-09-05
+
+- **ドキュメントに「知識ガイド」層を足し、ガイドを二種に体系化**。op の使い方を書く
+  **族ガイド**(ファイル名が族名と一致し、その族の全 op ノートから自動リンクされる)に加えて、
+  op の**手前にある物理と規約**を書く**背景知識ガイド**を導入した。後者は frontmatter の
+  `applies_to: <dim>` / `<dim>/<category>` で該当する op ノートへ配線される
+  (`applies_to: none` は「繋ぐ先が無い」の明示宣言で、書き忘れと区別できる)。
+  この配線が無かったあいだ、知識ガイドは dim の INDEX にしか出ず
+  **op ノートから辿る経路が一本も無かった**。書き忘れ・綴り違いは生成時に報告し、
+  `tests/test_opdocs.py` が不変条件として固定する。
+  投入したガイド: `3d/depth_sensors`(測距 5 原理の誤差の距離依存・実機の公表値・欠測の出方) /
+  `annotate/dataset_conventions`(COCO/YOLO/VOC の bbox 換算・列優先 RLE・小箱で IoU が崩れる) /
+  `2d/colorimetry`(色は分光 × 光源 × 観測者・メタメリズム・カメラは観測者でない) /
+  `math/measurement_uncertainty`(VIM の条番号つき定義・GUM・校正は 2 段階) /
+  `optics/mv_illumination_practice`(波長選択・偏光・オーバードライブ・IEC 62471) /
+  `imgmetrics/image_difference_metrics`(`data_range` の 48.13 dB・SSIM の実装差・
+  リサイズ実装だけで FID が動くこと・LPIPS の入力レンジ)。
+  いずれも一次情報の出典と「症状 → まず疑う → 確かめ方」の診断表を持つ。
+- **測色の実装を 1 か所に統一(実バグ修正)**。`color_pca.trans_from_rgb` は `"lab"` /
+  `"xyz"` で `ValueError` を投げていたが、CIE の定義どおりの実装は `imgmetrics` に
+  既にあった(白色点を選べ、CIEDE2000 は Sharma らの 34 組の検証対で固定されている)。
+  もう一組書かずに**委譲**へ寄せた —— 行列と伝達関数を二組持つと、片方だけ直したときに
+  **例外を出さずに違う色**が出る。回帰テスト `tests/test_colorimetry.py`(8 件)。
+  なお op 台帳経由の同名 op(OpenCV 実装)は uint8 に量子化した 8-bit スケールを返すので、
+  **同じ名前でも数値の尺度が違う**。ガイドに表で明記した。
+- **3-D のガイドが Studio ヘルプに 1 枚も出ていなかったのを修正**。HTML 生成の
+  次元ループから `3d` が抜けていた。全ガイドにヘルプページがあることをテストで固定。
+- **ドキュメント生成が 30 分級 → 8 秒**。`tools/op_example_index.py` が
+  **(op 名 × example ファイル) の全組合せ**でソースを `ast.parse` + `tokenize` し直しており、
+  実測で約 14 万回に達していた。散文落としは op 名に依存しないのでソースごとに 1 回だけ行い、
+  正規表現の前に部分文字列の素通し判定を置いた。**出力は 1722 枚とも byte 一致**
+  (生成前スナップショットとの差分 0 行で確認)。`md` 10 分 → 3.6 秒。
+- **optics の worked-example カバレッジを 100% に戻した**。光学第 2 波で入った 29 op に
+  例が無かった。`examples/vision_layout_from_catalog.py`(型番から組んで「覆えるか・
+  分解できるか・運べるか・写るか」を撮る前に数字で決める)と
+  `examples/studio_raytrace_scene.py`(光線の量で答え合わせをする)を追加。
+  検証はすべて閉じた式 —— センサー対角 `p·√(w²+h²)`、Airy `1.22λN`、実効 F 値 `N(1+m)`、
+  視野 `N·p·WD/f`、伝送帯域 `規格 × links × 効率`、回折ボケの総和保存、
+  反射の法則 `|d·n + r·n| < 1e-14`、ライン走査の走査画素 `速度 / ライン周波数`
+  (**既定では正方画素にならない**。周波数を `速度 / 直交画素` に合わせるとアスペクトが厳密に 1)。
+- `optscene` の docstring 2 か所が偶然 Markdown リンク `[x](y)` になり、
+  生成ドキュメントに壊れた相対リンクを作っていたのを修正。
+- **`optscene` が非 editable な wheel から丸ごと欠落していた(出荷バグ)**。root モジュール
+  なのに `pyproject.toml` の `py-modules` に無く、同梱の worked example が
+  `import optscene` しているのに `pip install fullseye` 後の環境では ImportError に
+  なる状態だった(0.1.5 以前が該当)。`py-modules` へ追加。
+- **PyPI の `classifiers` が 0 件だった**のを 13 件追加(分類・検索の導線が無かった)。
+- **版の付け方がどこにも書かれていなかった**のを `CONTRIBUTING.md` に明文化。
+  0.x では SemVer 上「いつ何を変えてもよい」が、PyPI から入れる人がいる以上
+  **minor の桁を破壊的変更の合図として使う**と約束する(op の削除・改名、既存 op の
+  型/単位/尺度の変更、`apply()` の意味論、**既定の数値が変わる変更**、型付き
+  レジストリの契約、Python 下限、fail-soft → fail-closed の反転 = 0.2.0)。
+  値が bit 一致のままの高速化・op 追加・ドキュメント・翻訳は 0.1.x のまま。
+- **総合紹介記事(en 39 万字 / ja 24 万字)がリポジトリにありながら、どこからも
+  辿れなかった**のを修正。README の冒頭とドキュメント地図から絶対 URL で辿れるように
+  し(この README は PyPI の long description を兼ねるため、相対パスは使えない)、
+  `docs/articles/README.md` の一覧を実態に合わせた(**英語版が載っていなかった**)。
+  各記事の冒頭に言語スイッチャの 1 行を置いた。
+- **`docs/I18N.md` に多言語の方針を追記**: ④ 散文ドキュメントは**兄弟ファイル**
+  (`<name>.en.md` / `<name>.zh.md`)、③ **コメント・docstring の併記は ja+en まで**
+  (三言語を 1 つの docstring に詰めるとコードの可読性が先に壊れる。中国語以降は ④ へ)。
+  導線の表と、v1.0.0 までの計画(実測した分量つき)も記載。
 
 - **外観 op 族の敵対的検証(ユーザー「敵対的検証をしてください。特に未実施のものを重点に」)
   —— 実バグ 4 件を摘発して修正**。`tests/test_appearance_adversarial.py`(17 件)は

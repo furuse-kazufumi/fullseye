@@ -7,7 +7,7 @@ out: countrate
 examples: [photon_timeresolved]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.5  # fullseye lib version this note was generated for
+version: 0.1.6  # fullseye lib version this note was generated for
 ---
 
 # spad_deadtime_apply — PHOTON `spad` op

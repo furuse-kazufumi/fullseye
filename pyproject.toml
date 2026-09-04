@@ -4,13 +4,28 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fullseye"
-version = "0.1.5"
-description = "Evolvable image-processing operator library and honest pipeline designer (numpy-native, optional GPU)"
+version = "0.1.6"
+description = "Numpy-native operator library for vision, 3-D and measurement (1,500+ typed ops: imaging, point clouds, optics, tomography, metrology) with an evolutionary pipeline designer and honest holdout gating"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }
 authors = [{ name = "Kazufumi Furuse", email = "kazufumi@furuse.work" }]
 keywords = ["image-processing", "computer-vision", "evolutionary-algorithm", "pipeline", "operators"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: Apache Software License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Image Processing",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Scientific/Engineering :: Visualization",
+  "Topic :: Multimedia :: Graphics :: 3D Modeling",
+  "Typing :: Typed",
+]
 # The core (75 ops) runs on numpy + scipy alone. Everything else is optional and
 # only its own operators are affected when a backend is absent (graceful degradation).
 dependencies = ["numpy>=1.23", "scipy>=1.9"]
@@ -86,7 +101,8 @@ py-modules = [
   "imgops_nary", "scale", "stereo", "terrain", "locomotion", "occupancy", "imgio", "detect", "registration", "deformreg", "ppf", "pose",
   "unified", "sim_source", "oss_adapter", "filters_flow", "matching3d",
   "calib", "matching", "mosaic", "objmodel3d", "pose_quat", "reconstruction", "transforms",
-  "pointcloud", "pcseg", "mesh", "meshio_opt", "volio", "raster", "render3d", "camera", "odometry", "grasp", "meshrepair", "volops", "volregion", "volgray", "volxform", "volprobe", "volfreq", "volrestore", "handpose", "complexops", "specops", "flow", "motion", "sceneflow", "features", "events", "video", "videops", "engine", "graphengine", "acquire", "comm", "device", "dsp", "funct1d", "mathops", "predicates", "precision_union", "geompred", "matappear", "glassmirror", "metalfinish", "surfacelib", "opassist", "ops1d", "opsmath", "optics", "raytrace", "lensopt", "illumdesign", "lensimage", "opsoptics", "visiondesign", "defectgen", "visionlab", "lightfield", "opslightfield", "photoncount", "opsphoton", "specularity", "opsspecular", "motionmag", "opsmotionmag", "gfx2d", "opsgfx2d", "quatimage", "opsquat", "rangedoppler", "opsrangedoppler", "interferometry", "opsinterferometry", "opsinterferometry", "acoustics", "opsacoustics", "cadmap", "opscadmap", "volcolor", "opsvolcolor", "tomography", "opstomography", "palette", "annotate", "opsannotate", "reprconv", "opsreprconv", "imgmetrics", "opsimgmetrics", "colortransport", "opscolortransport", "imgforensics", "opsimgforensics", "astrostack", "opsastrostack", "meshres", "videostream", "opsvideostream", "annotate3d", "contours_xld", "metriccontract", "fssystem",
+  "pointcloud", "pcseg", "mesh", "meshio_opt", "volio", "raster", "render3d", "camera", "odometry", "grasp", "meshrepair", "volops", "volregion", "volgray", "volxform", "volprobe", "volfreq", "volrestore", "handpose", "complexops", "specops", "flow", "motion", "sceneflow", "features", "events", "video", "videops", "engine", "graphengine", "acquire", "comm", "device", "dsp", "funct1d", "mathops", "predicates", "precision_union", "geompred", "matappear", "glassmirror", "metalfinish", "surfacelib", "opassist", "ops1d", "opsmath", "optics",
+  "optscene", "raytrace", "lensopt", "illumdesign", "lensimage", "opsoptics", "visiondesign", "defectgen", "visionlab", "lightfield", "opslightfield", "photoncount", "opsphoton", "specularity", "opsspecular", "motionmag", "opsmotionmag", "gfx2d", "opsgfx2d", "quatimage", "opsquat", "rangedoppler", "opsrangedoppler", "interferometry", "opsinterferometry", "opsinterferometry", "acoustics", "opsacoustics", "cadmap", "opscadmap", "volcolor", "opsvolcolor", "tomography", "opstomography", "palette", "annotate", "opsannotate", "reprconv", "opsreprconv", "imgmetrics", "opsimgmetrics", "colortransport", "opscolortransport", "imgforensics", "opsimgforensics", "astrostack", "opsastrostack", "meshres", "videostream", "opsvideostream", "annotate3d", "contours_xld", "metriccontract", "fssystem",
   "recipes", "measure", "studio", "sample_images", "sample_data", "accuracy_bench",
   "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",

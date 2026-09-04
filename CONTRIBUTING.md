@@ -36,6 +36,36 @@ input. The fastest routes:
 (regenerates the per-op note + Studio help; CI enforces doc↔code drift) →
 `py -3.11 -m pytest -q`.
 
+## Versioning (what makes a release 0.1.x vs 0.2.0)
+
+SemVer says a `0.x` project may change anything at any time. We give up that freedom
+on purpose, because people install this from PyPI: **the minor slot is our breaking
+signal.**
+
+A release becomes **0.2.0** (breaking) when any of these ships:
+
+- an operator is **removed or renamed** (adding an alias does not count);
+- an existing operator's **signature, return type, units, or numeric scale** changes;
+- `apply()` / `run_pipeline()` **semantics** change;
+- **the default numbers change** — e.g. turning `FULLSEYE_FAST` on by default,
+  unifying `_norm`, or swapping a backend whose output is not bit-identical;
+- the **typed registry contract** changes (sort names, declared in/out types);
+- the **Python floor** is raised, or a public root module leaves `py-modules`;
+- behaviour a caller relied on flips from **fail-soft to fail-closed**.
+
+A release stays **0.1.x** (patch) for: new operators and families, new docs, guides and
+translations, new Studio features, **speed-ups that keep results bit-identical**, and
+bug fixes — including fixes that make a previously broken path work.
+
+**1.0.0** is the point where we can promise the above without a major bump, *and* the
+documentation gate in `docs/I18N.md` is met (English and Chinese for `OP_CATALOG` and
+the knowledge guides).
+
+Worked example of the rule: `FULLSEYE_FAST` stays **off** by default even though it is
+1.3–10× faster on ten table operators, because the cv2 twin differs internally by 5e-3
+and that silently breaks the SHA-256 reproducibility pins (`docs/NEXT_SESSION.md`).
+Turning it on is not a tuning change — **it is 0.2.0**.
+
 ## Dev quickstart
 
 ```bash

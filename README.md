@@ -25,6 +25,12 @@ on plain numpy arrays, so other projects can drop it into a vision pipeline dire
 
 *Rendered by Fullseye's numpy renderer (SDF → marching cubes → AO / soft shadows / ACES). More real outputs below.*
 
+> **New here? Read the full introduction.** A single long-form article walks through
+> the whole system — the three layers, the Studio IDE, the honest-evaluation
+> discipline, and 151 worked exhibits, all illustrated with real operator output.
+> **[English](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_en.md)** ·
+> **[日本語](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_ja.md)**
+
 ## Install
 
 ```bash
@@ -183,8 +189,10 @@ Everything below lives in the repo — start at the guide that matches what you 
 
 | You want to… | Read |
 |---|---|
+| **Read the whole story end to end (long-form)** | [`docs/articles/fullseye_overview_qiita_en.md`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_en.md) · [日本語](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_ja.md) |
 | See what the operators produce (result gallery) | `docs/GALLERY.md` |
-| Look up any of the ~1000 operators | `docs/ops/INDEX.md` (full TOC) · `docs/OP_CATALOG.md` (one-page catalog) |
+| Browse the paper exhibits (151 op demos, en/ja) | `docs/articles/exhibits/` |
+| Look up any of the 1,500+ operators | `docs/ops/INDEX.md` (full TOC) · `docs/OP_CATALOG.md` (one-page catalog) |
 | Find real sample data (meshes / volumes / images, with licenses) | `docs/ops/SAMPLES.md` |
 | Use Fullseye as an AI/RAG knowledge base | `docs/AI_RAG_GUIDE.md` (+ `fullseye-rag`) |
 | Drive the Studio IDE | `docs/STUDIO_GUIDE.md` · `docs/HDEVELOP_DEV_OPS.md` (dev_* window ops) |

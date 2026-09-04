@@ -3,30 +3,86 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-05 06:53:48
+- **最終更新**: 2026-09-05 08:42:46
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-38600e84c auto: image_difference_metrics.md 編集前 (2026-09-05 06:38)
-956fb85ae auto: image_difference_metrics.md 編集前 (2026-09-05 06:38)
-a1d6e757a auto: depth_sensors.md 編集前 (2026-09-05 05:47)
-910d58e69 auto: colorimetry.md 編集前 (2026-09-05 05:28)
-1e549d9cc auto: test_colorimetry.py 編集前 (2026-09-05 05:28)
-6eb1fe7db auto: color_pca.py 編集前 (2026-09-05 05:27)
-d04e32dca auto: dataset_conventions.md 編集前 (2026-09-05 05:17)
-b2a744386 auto: colorimetry.md 編集前 (2026-09-05 05:17)
-566d4f8de auto: depth_sensors.md 編集前 (2026-09-05 05:16)
-001644ad9 auto: dataset_conventions.md 編集前 (2026-09-05 05:12)
+f7c04f4ba auto: studio_raytrace_scene.py 編集前 (2026-09-05 07:34)
+d5e04c3e2 auto: studio_raytrace_scene.py 編集前 (2026-09-05 07:34)
+831236bb3 auto: studio_raytrace_scene.py 編集前 (2026-09-05 07:33)
+fac35f747 auto: vision_layout_from_catalog.py 編集前 (2026-09-05 07:32)
+89ef2c234 auto: vision_layout_from_catalog.py 編集前 (2026-09-05 07:32)
+022a87b25 auto: vision_layout_from_catalog.py 編集前 (2026-09-05 07:31)
+f2b935d29 auto: vision_layout_from_catalog.py 編集前 (2026-09-05 07:31)
+aef64363d auto: vision_layout_from_catalog.py 編集前 (2026-09-05 07:31)
+b08c7ed1e docs: 知識ガイド層とガイドの二種化、測色の一本化、生成 30 分→8 秒
+d54ec7a7b feat(optscene): 照明も「メーカー + 型番」で引く(OEM の重複を fail-closed に)
 ```
 
 ## 現在の git status
 
 ```
-M docs/SESSION_SUMMARY.md
- M docs/ops/2d/INDEX.md
+M CHANGELOG.md
+ M CONTRIBUTING.md
+ M README.md
+ M docs/I18N.md
+ M docs/OP_CATALOG.md
+ M docs/SESSION_SUMMARY.md
+ M docs/articles/README.md
+ M docs/articles/fullseye_overview_qiita_en.md
+ M docs/articles/fullseye_overview_qiita_ja.md
+ M docs/ops/2d/3d/vol_dilate.md
+ M docs/ops/2d/3d/vol_dilation_ball.md
+ M docs/ops/2d/3d/vol_erode.md
+ M docs/ops/2d/3d/vol_erosion_ball.md
+ M docs/ops/2d/3d/vol_gaussian.md
+ M docs/ops/2d/3d/vol_median.md
+ M docs/ops/2d/3d/vol_mip.md
+ M docs/ops/2d/3d/vol_opening_ball.md
+ M docs/ops/2d/3d/vol_reg_dilate.md
+ M docs/ops/2d/3d/vol_reg_erode.md
+ M docs/ops/2d/3d/vol_slice.md
+ M docs/ops/2d/3d/vol_threshold.md
+ M docs/ops/2d/arithmetic/abs_image.md
+ M docs/ops/2d/arithmetic/acos_image.md
+ M docs/ops/2d/arithmetic/asin_image.md
+ M docs/ops/2d/arithmetic/atan_image.md
+ M docs/ops/2d/arithmetic/cos_image.md
+ M docs/ops/2d/arithmetic/exp_image.md
+ M docs/ops/2d/arithmetic/log_image.md
+ M docs/ops/2d/arithmetic/sin_image.md
+ M docs/ops/2d/arithmetic/sqrt_image.md
+ M docs/ops/2d/arithmetic/tan_image.md
+ M docs/ops/2d/artificial_life/alife_curvature_flow.md
+ M docs/ops/2d/artificial_life/alife_cyclic_ca.md
+ M docs/ops/2d/artificial_life/alife_dla.md
+ M docs/ops/2d/artificial_life/alife_gray_scott.md
+ M docs/ops/2d/artificial_life/alife_langton_ant.md
+ M docs/ops/2d/artificial_life/alife_lenia.md
+ M docs/ops/2d/artificial_life/alife_life_step.md
+ M docs/ops/2d/artificial_life/alife_perona_malik.md
+ M docs/ops/2d/artificial_life/alife_reaction_bz.md
+ M docs/ops/2d/artificial_life/alife_sandpile.md
+ M docs/ops/2d/artificial_life/alife_turing.md
+ M docs/ops/2d/artificial_life/alife_wolfram1d.md
+ M docs/ops/2d/artistic/xcv_pencil_sketch.md
+ M docs/ops/2d/artistic/xcv_stylization.md
+ M docs/ops/2d/artistic/xpil_emboss.md
+ M docs/ops/2d/augmentation/aug_barrel.md
+ M docs/ops/2d/augmentation/aug_chromatic.md
+ M docs/ops/2d/augmentation/aug_cutout.md
+ M docs/ops/2d/augmentation/aug_fixed_pattern.md
+ M docs/ops/2d/augmentation/aug_jpeg_blocks.md
+ M docs/ops/2d/augmentation/aug_motion_blur.md
+ M docs/ops/2d/augmentation/aug_read_noise.md
+ M docs/ops/2d/augmentation/aug_rolling_shutter.md
+ M docs/ops/2d/augmentation/aug_shot_noise.md
+ M docs/ops/2d/augmentation/aug_vignette.md
+ M docs/ops/2d/barcode/decode_barcode.md
+ M docs/ops/2d/classification/classify_shape.md
  M docs/ops/2d/color/access_channel.md
  M docs/ops/2d/color/cfa_to_rgb.md
  M docs/ops/2d/color/linear_trans_color.md
@@ -35,28 +91,978 @@ M docs/SESSION_SUMMARY.md
  M docs/ops/2d/color/rgb3_to_gray.md
  M docs/ops/2d/color/trans_from_rgb.md
  M docs/ops/2d/color/trans_to_rgb.md
+ M docs/ops/2d/contour/affine_trans_contour_xld.md
+ M docs/ops/2d/contour/affine_trans_polygon_xld.md
+ M docs/ops/2d/contour/close_contours_xld.md
+ M docs/ops/2d/contour/contour_point_num_xld.md
+ M docs/ops/2d/contour/contours_to_region.md
+ M docs/ops/2d/contour/edges_color_sub_pix.md
+ M docs/ops/2d/contour/edges_sub_pix.md
+ M docs/ops/2d/contour/fit_line_contours.md
+ M docs/ops/2d/contour/gen_contour_region_xld.md
+ M docs/ops/2d/contour/gen_region_contour_xld.md
+ M docs/ops/2d/contour/gen_region_polygon_xld.md
+ M docs/ops/2d/contour/lines_color.md
+ M docs/ops/2d/contour/lines_facet.md
+ M docs/ops/2d/contour/lines_gauss.md
+ M docs/ops/2d/contour/polar_trans_contour_xld.md
+ M docs/ops/2d/contour/projective_trans_contour_xld.md
+ M docs/ops/2d/contour/select_contours.md
+ M docs/ops/2d/contour/select_contours_xld.md
+ M docs/ops/2d/contour/select_shape_xld.md
+ M docs/ops/2d/contour/shape_trans_xld.md
+ M docs/ops/2d/contour/sk_find_contours.md
+ M docs/ops/2d/contour/smooth_contours.md
+ M docs/ops/2d/contour/smooth_contours_xld.md
+ M docs/ops/2d/contour/threshold_sub_pix.md
+ M docs/ops/2d/contour/zero_crossing_sub_pix.md
+ M docs/ops/2d/decomposition/dc_homomorphic.md
+ M docs/ops/2d/decomposition/dc_local_contrast_norm.md
+ M docs/ops/2d/decomposition/dc_retinex.md
+ M docs/ops/2d/decomposition/dc_rpca_lowrank.md
+ M docs/ops/2d/decomposition/dc_rpca_sparse.md
+ M docs/ops/2d/decomposition/dc_structure_texture.md
+ M docs/ops/2d/decomposition/dc_texture_residual.md
+ M docs/ops/2d/deformation/deform_ffd.md
+ M docs/ops/2d/deformation/deform_mls.md
+ M docs/ops/2d/deformation/deform_tps.md
+ M docs/ops/2d/domain/it_crop_domain.md
+ M docs/ops/2d/domain/it_full_domain.md
+ M docs/ops/2d/edges/corner_response.md
+ M docs/ops/2d/edges/cv_corner_harris.md
+ M docs/ops/2d/edges/cv_laplacian.md
+ M docs/ops/2d/edges/cv_min_eigen.md
+ M docs/ops/2d/edges/cv_precorner.md
+ M docs/ops/2d/edges/cv_scharr.md
+ M docs/ops/2d/edges/derivate_gauss.md
+ M docs/ops/2d/edges/diff_of_gauss.md
+ M docs/ops/2d/edges/dog.md
+ M docs/ops/2d/edges/dots_image.md
+ M docs/ops/2d/edges/edges_color.md
+ M docs/ops/2d/edges/f2_shock.md
+ M docs/ops/2d/edges/f2_topographic.md
+ M docs/ops/2d/edges/frei_amp.md
+ M docs/ops/2d/edges/frei_dir.md
+ M docs/ops/2d/edges/grad_dir.md
+ M docs/ops/2d/edges/kirsch_amp.md
+ M docs/ops/2d/edges/kirsch_dir.md
+ M docs/ops/2d/edges/laplace.md
+ M docs/ops/2d/edges/laplace_of_gauss.md
+ M docs/ops/2d/edges/log.md
+ M docs/ops/2d/edges/points_foerstner.md
+ M docs/ops/2d/edges/points_harris_binomial.md
+ M docs/ops/2d/edges/prewitt_amp.md
+ M docs/ops/2d/edges/prewitt_dir.md
+ M docs/ops/2d/edges/prewitt_mag.md
+ M docs/ops/2d/edges/roberts.md
+ M docs/ops/2d/edges/roberts_mag.md
+ M docs/ops/2d/edges/robinson_amp.md
+ M docs/ops/2d/edges/robinson_dir.md
+ M docs/ops/2d/edges/sk_corner_harris.md
+ M docs/ops/2d/edges/sk_dog.md
+ M docs/ops/2d/edges/sk_farid.md
+ M docs/ops/2d/edges/sk_hessian_det.md
+ M docs/ops/2d/edges/sk_scharr.md
+ M docs/ops/2d/edges/sobel_amp.md
+ M docs/ops/2d/edges/sobel_dir.md
+ M docs/ops/2d/edges/sobel_mag.md
+ M docs/ops/2d/edges/tf_phase_congruency.md
+ M docs/ops/2d/edges/tf_steerable_filter.md
+ M docs/ops/2d/edges/xkor_dog.md
+ M docs/ops/2d/edges/xkor_gftt.md
+ M docs/ops/2d/edges/xkor_harris.md
+ M docs/ops/2d/edges/xkor_hessian.md
+ M docs/ops/2d/edges/xkor_laplacian.md
+ M docs/ops/2d/edges/xpil_contour.md
+ M docs/ops/2d/edges/xpil_find_edges.md
+ M docs/ops/2d/edges/xsk2_corner_kr.md
+ M docs/ops/2d/edges/xsk2_inv_gauss_grad.md
+ M docs/ops/2d/edges/xsk3_corner_fast.md
+ M docs/ops/2d/edges/xsk3_corner_moravec.md
+ M docs/ops/2d/edges/xsk_hessian_eig.md
+ M docs/ops/2d/edges/xsp_gauss_grad_mag.md
+ M docs/ops/2d/edges/xsp_morph_laplace.md
+ M docs/ops/2d/edges/xwt_directional_detail.md
+ M docs/ops/2d/edges/xwt_hf_reconstruct.md
+ M docs/ops/2d/extra/xsitk_closing_by_recon.md
+ M docs/ops/2d/extra/xsitk_confidence_connected.md
+ M docs/ops/2d/extra/xsitk_connected_threshold.md
+ M docs/ops/2d/extra/xsitk_curv_aniso_diff.md
+ M docs/ops/2d/extra/xsitk_curvature_flow.md
+ M docs/ops/2d/extra/xsitk_grayscale_fillhole.md
+ M docs/ops/2d/extra/xsitk_grayscale_grindpeak.md
+ M docs/ops/2d/extra/xsitk_huang_thresh.md
+ M docs/ops/2d/extra/xsitk_laplacian_sharpen.md
+ M docs/ops/2d/extra/xsitk_maxentropy_thresh.md
+ M docs/ops/2d/extra/xsitk_minmax_curv_flow.md
+ M docs/ops/2d/extra/xsitk_moments_thresh.md
+ M docs/ops/2d/extra/xsitk_opening_by_recon.md
+ M docs/ops/2d/extra/xsitk_signed_maurer_dist.md
+ M docs/ops/2d/features/area_center.md
+ M docs/ops/2d/features/area_center_xld.md
+ M docs/ops/2d/features/area_frac.md
+ M docs/ops/2d/features/area_holes.md
+ M docs/ops/2d/features/blob_count.md
+ M docs/ops/2d/features/circularity.md
+ M docs/ops/2d/features/circularity_xld.md
+ M docs/ops/2d/features/compactness.md
+ M docs/ops/2d/features/compactness_xld.md
+ M docs/ops/2d/features/connect_and_holes.md
+ M docs/ops/2d/features/contlength.md
+ M docs/ops/2d/features/convexity.md
+ M docs/ops/2d/features/convexity_xld.md
+ M docs/ops/2d/features/count_channels.md
+ M docs/ops/2d/features/count_contours.md
+ M docs/ops/2d/features/count_obj.md
+ M docs/ops/2d/features/cv_cc_count.md
+ M docs/ops/2d/features/cv_good_features.md
+ M docs/ops/2d/features/cv_hough_circles.md
+ M docs/ops/2d/features/cv_hough_lines.md
+ M docs/ops/2d/features/diameter_region.md
+ M docs/ops/2d/features/diameter_xld.md
+ M docs/ops/2d/features/eccentricity.md
+ M docs/ops/2d/features/eccentricity_xld.md
+ M docs/ops/2d/features/elliptic_axis.md
+ M docs/ops/2d/features/elliptic_axis_xld.md
+ M docs/ops/2d/features/entropy_gray.md
+ M docs/ops/2d/features/estimate_noise.md
+ M docs/ops/2d/features/euler_number.md
+ M docs/ops/2d/features/get_region_thickness.md
+ M docs/ops/2d/features/gray_histo_abs.md
+ M docs/ops/2d/features/height_width_ratio.md
+ M docs/ops/2d/features/hough_circle_trans.md
+ M docs/ops/2d/features/hough_line_trans.md
+ M docs/ops/2d/features/intensity.md
+ M docs/ops/2d/features/length_xld.md
+ M docs/ops/2d/features/min_max_gray.md
+ M docs/ops/2d/features/moments_region_2nd.md
+ M docs/ops/2d/features/moments_region_2nd_invar.md
+ M docs/ops/2d/features/moments_region_2nd_rel_invar.md
+ M docs/ops/2d/features/moments_region_3rd.md
+ M docs/ops/2d/features/moments_region_3rd_invar.md
+ M docs/ops/2d/features/moments_region_central.md
+ M docs/ops/2d/features/moments_region_central_invar.md
+ M docs/ops/2d/features/moments_xld.md
+ M docs/ops/2d/features/orientation_region.md
+ M docs/ops/2d/features/orientation_xld.md
+ M docs/ops/2d/features/rectangularity.md
+ M docs/ops/2d/features/rectangularity_xld.md
+ M docs/ops/2d/features/roundness.md
+ M docs/ops/2d/features/sk_blur_effect.md
+ M docs/ops/2d/features/sk_entropy_feat.md
+ M docs/ops/2d/features/sk_euler.md
+ M docs/ops/2d/features/total_length.md
+ M docs/ops/2d/features/vol_count.md
+ M docs/ops/2d/features/xcv2_fast_count.md
+ M docs/ops/2d/features/xcv2_lap_var.md
+ M docs/ops/2d/features/xcv3_agast_count.md
+ M docs/ops/2d/features/xcv3_brisk_count.md
+ M docs/ops/2d/features/xcv3_gray_hu1.md
+ M docs/ops/2d/features/xcv3_lsd_count.md
+ M docs/ops/2d/features/xcv3_sift_count.md
+ M docs/ops/2d/features/xcv_orb_count.md
+ M docs/ops/2d/features/xsk3_estimate_sigma.md
+ M docs/ops/2d/features/xsk3_is_low_contrast.md
+ M docs/ops/2d/features/xsk_blob_dog.md
+ M docs/ops/2d/features/xsk_blob_doh.md
+ M docs/ops/2d/features/xsk_blob_log.md
+ M docs/ops/2d/features/xsk_orb_count.md
+ M docs/ops/2d/features/xwt_detail_energy.md
+ M docs/ops/2d/features/xwt_packet_entropy.md
+ M docs/ops/2d/filtering/tf_gradient_domain_reintegrate.md
+ M docs/ops/2d/frequency/bandpass_image.md
+ M docs/ops/2d/frequency/fft_generic.md
+ M docs/ops/2d/frequency/fft_image.md
+ M docs/ops/2d/frequency/fft_image_inv.md
+ M docs/ops/2d/frequency/highpass.md
+ M docs/ops/2d/frequency/highpass_image.md
+ M docs/ops/2d/frequency/lowpass.md
+ M docs/ops/2d/frequency/phase_deg.md
+ M docs/ops/2d/frequency/phase_rad.md
+ M docs/ops/2d/frequency/power_byte.md
+ M docs/ops/2d/frequency/power_ln.md
+ M docs/ops/2d/frequency/power_real.md
+ M docs/ops/2d/frequency/rft_generic.md
+ M docs/ops/2d/frequency/sk_butterworth.md
+ M docs/ops/2d/frequency/xsk2_radon.md
+ M docs/ops/2d/frequency/xsp_dct.md
+ M docs/ops/2d/frequency/xsp_dct_lowpass.md
+ M docs/ops/2d/frequency/xwt_mra_component.md
+ M docs/ops/2d/frequency/xwt_subband_tile.md
+ M docs/ops/2d/geometry/affine_trans_image.md
+ M docs/ops/2d/geometry/affine_trans_image_size.md
+ M docs/ops/2d/geometry/affine_trans_region.md
+ M docs/ops/2d/geometry/affine_warp.md
+ M docs/ops/2d/geometry/it_add_image_border.md
+ M docs/ops/2d/geometry/it_change_format.md
+ M docs/ops/2d/geometry/it_crop_part.md
+ M docs/ops/2d/geometry/it_crop_rectangle1.md
+ M docs/ops/2d/geometry/mirror_image.md
+ M docs/ops/2d/geometry/mirror_region.md
+ M docs/ops/2d/geometry/polar_trans_image.md
+ M docs/ops/2d/geometry/polar_trans_image_ext.md
+ M docs/ops/2d/geometry/polar_trans_image_inv.md
+ M docs/ops/2d/geometry/polar_trans_region_inv.md
+ M docs/ops/2d/geometry/projective_trans_image.md
+ M docs/ops/2d/geometry/projective_trans_image_size.md
+ M docs/ops/2d/geometry/projective_trans_region.md
+ M docs/ops/2d/geometry/rescale_img.md
+ M docs/ops/2d/geometry/rotate_image.md
+ M docs/ops/2d/geometry/rotate_img.md
+ M docs/ops/2d/geometry/sk_swirl.md
+ M docs/ops/2d/geometry/tf_log_polar.md
+ M docs/ops/2d/geometry/transpose_region.md
+ M docs/ops/2d/geometry/xcv2_warp_logpolar.md
+ M docs/ops/2d/geometry/xpil_offset.md
+ M docs/ops/2d/geometry/zoom_image_factor.md
+ M docs/ops/2d/geometry/zoom_image_size.md
+ M docs/ops/2d/geometry/zoom_region.md
+ M docs/ops/2d/gray/bit_not.md
+ M docs/ops/2d/gray/clahe.md
+ M docs/ops/2d/gray/cv_clahe.md
+ M docs/ops/2d/gray/cv_trunc.md
+ M docs/ops/2d/gray/equ_histo_image.md
+ M docs/ops/2d/gray/equ_histo_image_rect.md
+ M docs/ops/2d/gray/equalize.md
+ M docs/ops/2d/gray/f2_bit_slice.md
+ M docs/ops/2d/gray/f2_expand_domain.md
+ M docs/ops/2d/gray/f2_lut_trans.md
+ M docs/ops/2d/gray/gamma.md
+ M docs/ops/2d/gray/gamma_image.md
+ M docs/ops/2d/gray/illuminate.md
+ M docs/ops/2d/gray/invert.md
+ M docs/ops/2d/gray/invert_image.md
+ M docs/ops/2d/gray/it_bit_lshift.md
+ M docs/ops/2d/gray/it_bit_mask.md
+ M docs/ops/2d/gray/it_bit_rshift.md
+ M docs/ops/2d/gray/it_convert_image_type.md
+ M docs/ops/2d/gray/monotony.md
+ M docs/ops/2d/gray/pow_image.md
+ M docs/ops/2d/gray/scale_clip.md
+ M docs/ops/2d/gray/scale_image.md
+ M docs/ops/2d/gray/scale_image_max.md
+ M docs/ops/2d/gray/sigmoid.md
+ M docs/ops/2d/gray/sk_adapthist.md
+ M docs/ops/2d/gray/sk_adjust_log.md
+ M docs/ops/2d/gray/sk_autolevel.md
+ M docs/ops/2d/gray/sk_enhance_contrast.md
+ M docs/ops/2d/gray/xcv_detail_enhance.md
+ M docs/ops/2d/gray/xkor_clahe.md
+ M docs/ops/2d/gray/xpil_autocontrast.md
+ M docs/ops/2d/gray/xpil_contrast.md
+ M docs/ops/2d/gray/xpil_detail.md
+ M docs/ops/2d/gray/xpil_edge_enhance.md
+ M docs/ops/2d/gray/xpil_posterize.md
+ M docs/ops/2d/gray/xpil_solarize.md
+ M docs/ops/2d/gray/xsk3_integral_image.md
+ M docs/ops/2d/gray/xsk3_rank_equalize.md
+ M docs/ops/2d/gray/xsk3_rank_subtract_mean.md
+ M docs/ops/2d/gray/xsp_detrend_flatten.md
+ M docs/ops/2d/halcon_ext/hx_add_noise_contour.md
+ M docs/ops/2d/halcon_ext/hx_char_threshold.md
+ M docs/ops/2d/halcon_ext/hx_clip_contours.md
+ M docs/ops/2d/halcon_ext/hx_clip_end_points.md
+ M docs/ops/2d/halcon_ext/hx_clip_region_rel.md
+ M docs/ops/2d/halcon_ext/hx_close_edges.md
+ M docs/ops/2d/halcon_ext/hx_close_edges_length.md
+ M docs/ops/2d/halcon_ext/hx_closing.md
+ M docs/ops/2d/halcon_ext/hx_cooc_feature.md
+ M docs/ops/2d/halcon_ext/hx_crop_contours.md
+ M docs/ops/2d/halcon_ext/hx_detect_edge_segments.md
+ M docs/ops/2d/halcon_ext/hx_dilation1.md
+ M docs/ops/2d/halcon_ext/hx_dilation2.md
+ M docs/ops/2d/halcon_ext/hx_disparity_to_xyz.md
+ M docs/ops/2d/halcon_ext/hx_dist_ellipse_contour.md
+ M docs/ops/2d/halcon_ext/hx_dist_ellipse_points.md
+ M docs/ops/2d/halcon_ext/hx_dist_rect2_points.md
+ M docs/ops/2d/halcon_ext/hx_distance_pc.md
+ M docs/ops/2d/halcon_ext/hx_distance_pr.md
+ M docs/ops/2d/halcon_ext/hx_distance_sc.md
+ M docs/ops/2d/halcon_ext/hx_erosion1.md
+ M docs/ops/2d/halcon_ext/hx_estimate_al_am.md
+ M docs/ops/2d/halcon_ext/hx_estimate_sl_al_lr.md
+ M docs/ops/2d/halcon_ext/hx_estimate_sl_al_zc.md
+ M docs/ops/2d/halcon_ext/hx_estimate_tilt_lr.md
+ M docs/ops/2d/halcon_ext/hx_estimate_tilt_zc.md
+ M docs/ops/2d/halcon_ext/hx_expand_region.md
+ M docs/ops/2d/halcon_ext/hx_fill_interlace.md
+ M docs/ops/2d/halcon_ext/hx_fit_circle_contour.md
+ M docs/ops/2d/halcon_ext/hx_fit_ellipse_contour.md
+ M docs/ops/2d/halcon_ext/hx_fit_rectangle2_contour.md
+ M docs/ops/2d/halcon_ext/hx_fit_surface1.md
+ M docs/ops/2d/halcon_ext/hx_fit_surface2.md
+ M docs/ops/2d/halcon_ext/hx_full_domain.md
+ M docs/ops/2d/halcon_ext/hx_fuzzy_measure_pairs.md
+ M docs/ops/2d/halcon_ext/hx_gabor.md
+ M docs/ops/2d/halcon_ext/hx_gen_bandfilter.md
+ M docs/ops/2d/halcon_ext/hx_gen_bandpass.md
+ M docs/ops/2d/halcon_ext/hx_gen_checker_region.md
+ M docs/ops/2d/halcon_ext/hx_gen_circle.md
+ M docs/ops/2d/halcon_ext/hx_gen_circle_sector.md
+ M docs/ops/2d/halcon_ext/hx_gen_derivative_filter.md
+ M docs/ops/2d/halcon_ext/hx_gen_disc_se.md
+ M docs/ops/2d/halcon_ext/hx_gen_ellipse.md
+ M docs/ops/2d/halcon_ext/hx_gen_ellipse_sector.md
+ M docs/ops/2d/halcon_ext/hx_gen_empty_region.md
+ M docs/ops/2d/halcon_ext/hx_gen_grid_region.md
+ M docs/ops/2d/halcon_ext/hx_gen_highpass.md
+ M docs/ops/2d/halcon_ext/hx_gen_image_proto.md
+ M docs/ops/2d/halcon_ext/hx_gen_lowpass.md
+ M docs/ops/2d/halcon_ext/hx_gen_parallel_contour.md
+ M docs/ops/2d/halcon_ext/hx_gen_rectangle2.md
+ M docs/ops/2d/halcon_ext/hx_get_domain.md
+ M docs/ops/2d/halcon_ext/hx_histo_to_thresh.md
+ M docs/ops/2d/halcon_ext/hx_lowlands.md
+ M docs/ops/2d/halcon_ext/hx_mean_shape.md
+ M docs/ops/2d/halcon_ext/hx_moments_any_xld.md
+ M docs/ops/2d/halcon_ext/hx_move_region.md
+ M docs/ops/2d/halcon_ext/hx_nonmax_dir.md
+ M docs/ops/2d/halcon_ext/hx_opening.md
+ M docs/ops/2d/halcon_ext/hx_plane_deviation.md
+ M docs/ops/2d/halcon_ext/hx_plateaus_center.md
+ M docs/ops/2d/halcon_ext/hx_polar_trans_inv.md
+ M docs/ops/2d/halcon_ext/hx_radial_distort_contour.md
+ M docs/ops/2d/halcon_ext/hx_rectangle1_domain.md
+ M docs/ops/2d/halcon_ext/hx_region_to_label.md
+ M docs/ops/2d/halcon_ext/hx_region_to_mean.md
+ M docs/ops/2d/halcon_ext/hx_regress_contours.md
+ M docs/ops/2d/halcon_ext/hx_select_xld_point.md
+ M docs/ops/2d/halcon_ext/hx_shade_height_field.md
+ M docs/ops/2d/halcon_ext/hx_smallest_circle_xld.md
+ M docs/ops/2d/halcon_ext/hx_smallest_rect1_xld.md
+ M docs/ops/2d/halcon_ext/hx_smallest_rect2_xld.md
+ M docs/ops/2d/halcon_ext/hx_sort_contours.md
+ M docs/ops/2d/halcon_ext/hx_split_contours.md
+ M docs/ops/2d/halcon_ext/hx_split_skeleton_region.md
+ M docs/ops/2d/halcon_ext/hx_test_closed_xld.md
+ M docs/ops/2d/halcon_ext/hx_test_region_point.md
+ M docs/ops/2d/halcon_ext/hx_test_region_points.md
+ M docs/ops/2d/halcon_ext/hx_test_self_intersect.md
+ M docs/ops/2d/halcon_ext/hx_union_adjacent.md
+ M docs/ops/2d/intensity_transform/xmh_soft.md
+ M docs/ops/2d/macro/macro_binarize.md
+ M docs/ops/2d/macro/macro_denoise.md
+ M docs/ops/2d/macro/macro_edge.md
+ M docs/ops/2d/macro/macro_vol_denoise.md
+ M docs/ops/2d/matching/ncc_locate.md
+ M docs/ops/2d/matching/shape_locate.md
  M docs/ops/2d/measure1d/m1_fuzzy_measure_pos.md
  M docs/ops/2d/measure1d/m1_measure_pairs.md
  M docs/ops/2d/measure1d/m1_measure_pos.md
  M docs/ops/2d/measure1d/m1_measure_projection.md
  M docs/ops/2d/measure1d/m1_measure_thresh.md
+ M docs/ops/2d/misc/identity.md
+ M docs/ops/2d/morphology/bothat.md
+ M docs/ops/2d/morphology/cv_blackhat.md
+ M docs/ops/2d/morphology/cv_close.md
+ M docs/ops/2d/morphology/cv_dilate.md
+ M docs/ops/2d/morphology/cv_erode.md
+ M docs/ops/2d/morphology/cv_gradient.md
+ M docs/ops/2d/morphology/cv_open.md
+ M docs/ops/2d/morphology/cv_tophat.md
+ M docs/ops/2d/morphology/f2_gray_inside.md
+ M docs/ops/2d/morphology/f2_gray_skeleton.md
+ M docs/ops/2d/morphology/gclose.md
+ M docs/ops/2d/morphology/gdilate.md
+ M docs/ops/2d/morphology/gerode.md
+ M docs/ops/2d/morphology/gopen.md
+ M docs/ops/2d/morphology/gray_bothat.md
+ M docs/ops/2d/morphology/gray_closing.md
+ M docs/ops/2d/morphology/gray_closing_rect.md
+ M docs/ops/2d/morphology/gray_closing_shape.md
+ M docs/ops/2d/morphology/gray_dilation.md
+ M docs/ops/2d/morphology/gray_dilation_shape.md
+ M docs/ops/2d/morphology/gray_erosion.md
+ M docs/ops/2d/morphology/gray_erosion_shape.md
+ M docs/ops/2d/morphology/gray_opening.md
+ M docs/ops/2d/morphology/gray_opening_rect.md
+ M docs/ops/2d/morphology/gray_opening_shape.md
+ M docs/ops/2d/morphology/gray_tophat.md
+ M docs/ops/2d/morphology/morph_grad.md
+ M docs/ops/2d/morphology/sk_area_opening.md
+ M docs/ops/2d/morphology/tophat.md
+ M docs/ops/2d/morphology/xsk2_diameter_opening.md
+ M docs/ops/2d/morphology/xsk2_reconstruction.md
+ M docs/ops/2d/morphology/xsk3_area_closing.md
+ M docs/ops/2d/morphology/xsk3_diameter_closing.md
+ M docs/ops/2d/morphology_markers/xmh_regmin.md
  M docs/ops/2d/noise/add_noise_distribution.md
  M docs/ops/2d/noise/add_noise_white.md
+ M docs/ops/2d/physics/ph_coherence_enhancing_diffusion.md
+ M docs/ops/2d/physics/ph_heat_flow.md
+ M docs/ops/2d/physics/ph_mean_curvature_motion.md
+ M docs/ops/2d/physics/ph_perona_malik.md
+ M docs/ops/2d/physics/ph_reaction_diffusion.md
+ M docs/ops/2d/physics/ph_total_variation_flow.md
+ M docs/ops/2d/rank/cv_median.md
+ M docs/ops/2d/rank/dual_rank.md
+ M docs/ops/2d/rank/eliminate_min_max.md
+ M docs/ops/2d/rank/eliminate_sp.md
+ M docs/ops/2d/rank/gray_dilation_rect.md
+ M docs/ops/2d/rank/gray_erosion_rect.md
+ M docs/ops/2d/rank/gray_range_rect.md
+ M docs/ops/2d/rank/max_filter.md
+ M docs/ops/2d/rank/mean_sp.md
+ M docs/ops/2d/rank/median.md
+ M docs/ops/2d/rank/median_image.md
+ M docs/ops/2d/rank/median_rect.md
+ M docs/ops/2d/rank/median_separate.md
+ M docs/ops/2d/rank/median_weighted.md
+ M docs/ops/2d/rank/min_filter.md
+ M docs/ops/2d/rank/percentile.md
+ M docs/ops/2d/rank/rank_image.md
+ M docs/ops/2d/rank/rank_rect.md
+ M docs/ops/2d/rank/sk_median_disk.md
+ M docs/ops/2d/rank/trimmed_mean.md
+ M docs/ops/2d/rank/xkor_median.md
+ M docs/ops/2d/rank/xpil_mode_filter.md
+ M docs/ops/2d/rank/xsk2_rank_geomean.md
+ M docs/ops/2d/region/boundary.md
+ M docs/ops/2d/region/closest_point_transform.md
+ M docs/ops/2d/region/closing_circle.md
+ M docs/ops/2d/region/closing_golay.md
+ M docs/ops/2d/region/closing_rectangle1.md
+ M docs/ops/2d/region/convex_fill.md
+ M docs/ops/2d/region/cv_dist.md
+ M docs/ops/2d/region/dilation_circle.md
+ M docs/ops/2d/region/dilation_golay.md
+ M docs/ops/2d/region/dilation_rectangle1.md
+ M docs/ops/2d/region/dilation_seq.md
+ M docs/ops/2d/region/dist_transform.md
+ M docs/ops/2d/region/distance_transform.md
+ M docs/ops/2d/region/em_skeleton.md
+ M docs/ops/2d/region/erosion_circle.md
+ M docs/ops/2d/region/erosion_golay.md
+ M docs/ops/2d/region/erosion_rectangle1.md
+ M docs/ops/2d/region/erosion_seq.md
+ M docs/ops/2d/region/fill_holes.md
+ M docs/ops/2d/region/fill_up.md
+ M docs/ops/2d/region/fill_up_shape.md
+ M docs/ops/2d/region/get_region_contour.md
+ M docs/ops/2d/region/get_region_convex.md
+ M docs/ops/2d/region/invert_region.md
+ M docs/ops/2d/region/junctions_skeleton.md
+ M docs/ops/2d/region/morph_skeleton.md
+ M docs/ops/2d/region/opening_circle.md
+ M docs/ops/2d/region/opening_golay.md
+ M docs/ops/2d/region/opening_rectangle1.md
+ M docs/ops/2d/region/pruning.md
+ M docs/ops/2d/region/r2_endpoints_skeleton.md
+ M docs/ops/2d/region/r2_inner_circle.md
+ M docs/ops/2d/region/r2_inner_rectangle1.md
+ M docs/ops/2d/region/r2_partition_rectangle.md
+ M docs/ops/2d/region/r2_runlength_features.md
+ M docs/ops/2d/region/r2_smallest_circle.md
+ M docs/ops/2d/region/r2_smallest_rectangle1.md
+ M docs/ops/2d/region/r2_smallest_rectangle2.md
+ M docs/ops/2d/region/r2_sort_region.md
+ M docs/ops/2d/region/r2_split_skeleton_lines.md
+ M docs/ops/2d/region/r2_union1.md
+ M docs/ops/2d/region/r3_background_seg.md
+ M docs/ops/2d/region/r3_clip_region.md
+ M docs/ops/2d/region/r3_eliminate_runs.md
+ M docs/ops/2d/region/r3_label_to_region.md
+ M docs/ops/2d/region/r3_partition_dynamic.md
+ M docs/ops/2d/region/r3_polar_trans_region.md
+ M docs/ops/2d/region/r3_rank_region.md
+ M docs/ops/2d/region/r3_region_features.md
+ M docs/ops/2d/region/r3_runlength_distribution.md
+ M docs/ops/2d/region/r3_select_region_point.md
+ M docs/ops/2d/region/reg_close.md
+ M docs/ops/2d/region/reg_dilate.md
+ M docs/ops/2d/region/reg_erode.md
+ M docs/ops/2d/region/reg_open.md
+ M docs/ops/2d/region/region_boundary.md
+ M docs/ops/2d/region/remove_noise_region.md
+ M docs/ops/2d/region/remove_small.md
+ M docs/ops/2d/region/select_largest.md
+ M docs/ops/2d/region/select_shape.md
+ M docs/ops/2d/region/select_shape_std.md
+ M docs/ops/2d/region/shape_trans.md
+ M docs/ops/2d/region/sk_clear_border.md
+ M docs/ops/2d/region/sk_convex.md
+ M docs/ops/2d/region/sk_find_boundaries.md
+ M docs/ops/2d/region/sk_medial.md
+ M docs/ops/2d/region/sk_remove_holes.md
+ M docs/ops/2d/region/sk_skeleton.md
+ M docs/ops/2d/region/sk_thin.md
+ M docs/ops/2d/region/skeleton.md
+ M docs/ops/2d/region/smallest_rectangle1.md
+ M docs/ops/2d/region/thinning.md
+ M docs/ops/2d/region/thinning_golay.md
+ M docs/ops/2d/region/thinning_seq.md
+ M docs/ops/2d/region/xcv2_hitmiss.md
+ M docs/ops/2d/region/xsk2_isotropic_close.md
+ M docs/ops/2d/region/xsk3_rank_majority.md
+ M docs/ops/2d/region/xsp_chamfer_dist.md
+ M docs/ops/2d/region_morphology/xmh_majority.md
+ M docs/ops/2d/region_transform/xmh_bwperim.md
+ M docs/ops/2d/restoration/iv_backproject_superres.md
+ M docs/ops/2d/restoration/iv_gradient_inpaint.md
+ M docs/ops/2d/restoration/iv_motion_deblur.md
+ M docs/ops/2d/restoration/iv_richardson_lucy.md
+ M docs/ops/2d/restoration/iv_unsharp_deblur.md
+ M docs/ops/2d/restoration/iv_wiener_deconv_spatial.md
+ M docs/ops/2d/restoration/xcv3_inpaint_ns.md
+ M docs/ops/2d/restoration/xcv_inpaint.md
+ M docs/ops/2d/restoration/xsk2_wiener.md
+ M docs/ops/2d/restoration/xsk_inpaint.md
+ M docs/ops/2d/restoration/xsk_richardson_lucy.md
+ M docs/ops/2d/restoration/xsk_unwrap_phase.md
+ M docs/ops/2d/segment/sg_felzenszwalb.md
+ M docs/ops/2d/segment/sg_gmm_segment.md
+ M docs/ops/2d/segment/sg_kmeans_intensity.md
+ M docs/ops/2d/segment/sg_normalized_cut_2.md
+ M docs/ops/2d/segment/sg_region_growing_seeded.md
+ M docs/ops/2d/segment/sg_slic_superpixels.md
+ M docs/ops/2d/segment/sg_watershed_gradient.md
+ M docs/ops/2d/segmentation/adaptive_gauss_thresh.md
+ M docs/ops/2d/segmentation/auto_threshold.md
+ M docs/ops/2d/segmentation/bin_threshold.md
+ M docs/ops/2d/segmentation/binary_threshold.md
+ M docs/ops/2d/segmentation/canny.md
+ M docs/ops/2d/segmentation/cv_adaptive_gauss.md
+ M docs/ops/2d/segmentation/cv_adaptive_mean.md
+ M docs/ops/2d/segmentation/cv_canny.md
+ M docs/ops/2d/segmentation/cv_otsu.md
+ M docs/ops/2d/segmentation/dual_threshold.md
+ M docs/ops/2d/segmentation/dyn_threshold.md
+ M docs/ops/2d/segmentation/edges_image.md
+ M docs/ops/2d/segmentation/fast_threshold.md
+ M docs/ops/2d/segmentation/h_threshold.md
+ M docs/ops/2d/segmentation/hysteresis_threshold.md
+ M docs/ops/2d/segmentation/it_region_to_bin.md
+ M docs/ops/2d/segmentation/local_max.md
+ M docs/ops/2d/segmentation/local_min.md
+ M docs/ops/2d/segmentation/local_threshold.md
+ M docs/ops/2d/segmentation/nonmax_suppression_amp.md
+ M docs/ops/2d/segmentation/otsu.md
+ M docs/ops/2d/segmentation/pouring.md
+ M docs/ops/2d/segmentation/regiongrowing.md
+ M docs/ops/2d/segmentation/regiongrowing_mean.md
+ M docs/ops/2d/segmentation/segment_image_mser.md
+ M docs/ops/2d/segmentation/sk_canny.md
+ M docs/ops/2d/segmentation/sk_chan_vese.md
+ M docs/ops/2d/segmentation/sk_felzenszwalb.md
+ M docs/ops/2d/segmentation/sk_hysteresis.md
+ M docs/ops/2d/segmentation/sk_li.md
+ M docs/ops/2d/segmentation/sk_local_maxima.md
+ M docs/ops/2d/segmentation/sk_niblack.md
+ M docs/ops/2d/segmentation/sk_otsu.md
+ M docs/ops/2d/segmentation/sk_sauvola.md
+ M docs/ops/2d/segmentation/sk_slic.md
+ M docs/ops/2d/segmentation/sk_yen.md
+ M docs/ops/2d/segmentation/threshold.md
+ M docs/ops/2d/segmentation/var_threshold.md
+ M docs/ops/2d/segmentation/watersheds.md
+ M docs/ops/2d/segmentation/watersheds_threshold.md
+ M docs/ops/2d/segmentation/xcv2_meanshift.md
+ M docs/ops/2d/segmentation/xcv_grabcut.md
+ M docs/ops/2d/segmentation/xcv_watershed_markers.md
+ M docs/ops/2d/segmentation/xkor_canny.md
+ M docs/ops/2d/segmentation/xmh_bernsen.md
+ M docs/ops/2d/segmentation/xsk2_h_maxima.md
+ M docs/ops/2d/segmentation/xsk2_multiotsu.md
+ M docs/ops/2d/segmentation/xsk3_h_minima.md
+ M docs/ops/2d/segmentation/xsk3_peak_local_max.md
+ M docs/ops/2d/segmentation/xsk3_rank_otsu.md
+ M docs/ops/2d/segmentation/xsk3_threshold_local_median.md
+ M docs/ops/2d/segmentation/xsk_flood.md
+ M docs/ops/2d/segmentation/xsk_random_walker.md
+ M docs/ops/2d/segmentation/zero_crossing.md
+ M docs/ops/2d/self_similarity/xmh_selfmatch.md
+ M docs/ops/2d/smoothing/anisotropic_diffusion.md
+ M docs/ops/2d/smoothing/bilateral.md
+ M docs/ops/2d/smoothing/bilateral_filter.md
+ M docs/ops/2d/smoothing/binomial_filter.md
+ M docs/ops/2d/smoothing/coherence_enhancing_diff.md
+ M docs/ops/2d/smoothing/cv_bilateral.md
+ M docs/ops/2d/smoothing/cv_box.md
+ M docs/ops/2d/smoothing/cv_gaussian.md
+ M docs/ops/2d/smoothing/cv_nlmeans.md
+ M docs/ops/2d/smoothing/cv_sharpen.md
+ M docs/ops/2d/smoothing/dl_aniso_diffusion.md
+ M docs/ops/2d/smoothing/dl_guided_filter.md
+ M docs/ops/2d/smoothing/f2_gauss_pyramid.md
+ M docs/ops/2d/smoothing/gauss_filter.md
+ M docs/ops/2d/smoothing/gauss_image.md
+ M docs/ops/2d/smoothing/gaussian.md
+ M docs/ops/2d/smoothing/guided_filter.md
+ M docs/ops/2d/smoothing/isotropic_diffusion.md
+ M docs/ops/2d/smoothing/mean_box.md
+ M docs/ops/2d/smoothing/mean_curvature_flow.md
+ M docs/ops/2d/smoothing/mean_image.md
+ M docs/ops/2d/smoothing/sigma_image.md
+ M docs/ops/2d/smoothing/simulate_defocus.md
+ M docs/ops/2d/smoothing/simulate_motion.md
+ M docs/ops/2d/smoothing/sk_nlm.md
+ M docs/ops/2d/smoothing/sk_rolling_ball.md
+ M docs/ops/2d/smoothing/sk_tv.md
+ M docs/ops/2d/smoothing/sk_tv_bregman.md
+ M docs/ops/2d/smoothing/sk_wavelet.md
+ M docs/ops/2d/smoothing/smooth_image.md
+ M docs/ops/2d/smoothing/unsharp.md
+ M docs/ops/2d/smoothing/xcv3_denoise_tvl1.md
+ M docs/ops/2d/smoothing/xcv3_pyr_laplacian.md
+ M docs/ops/2d/smoothing/xcv_edge_preserving.md
+ M docs/ops/2d/smoothing/xkor_bilateral.md
+ M docs/ops/2d/smoothing/xkor_gaussian.md
+ M docs/ops/2d/smoothing/xkor_motion_blur.md
+ M docs/ops/2d/smoothing/xkor_unsharp.md
+ M docs/ops/2d/smoothing/xpil_smooth_more.md
+ M docs/ops/2d/smoothing/xpil_unsharp_mask.md
+ M docs/ops/2d/smoothing/xsk3_rank_mean_bilateral.md
+ M docs/ops/2d/smoothing/xsp_cspline_smooth.md
+ M docs/ops/2d/smoothing/xsp_dct_denoise.md
+ M docs/ops/2d/smoothing/xsp_savgol.md
+ M docs/ops/2d/smoothing/xsp_wiener.md
+ M docs/ops/2d/smoothing/xwt_firm_denoise.md
+ M docs/ops/2d/smoothing/xwt_lf_reconstruct.md
+ M docs/ops/2d/smoothing/xwt_visushrink.md
  M docs/ops/2d/subpix/sp_critical_points_sub_pix.md
  M docs/ops/2d/subpix/sp_local_max_sub_pix.md
  M docs/ops/2d/subpix/sp_local_min_sub_pix.md
  M docs/ops/2d/subpix/sp_lowlands_center.md
  M docs/ops/2d/subpix/sp_plateaus.md
  M docs/ops/2d/subpix/sp_saddle_points_sub_pix.md
- M docs/ops/3d/INDEX.md
+ M docs/ops/2d/tactile/tac_contact_mask.md
+ M docs/ops/2d/tactile/tac_height_from_shading.md
+ M docs/ops/2d/tactile/tac_pressure_proxy.md
+ M docs/ops/2d/tactile/tac_shear_field.md
+ M docs/ops/2d/tactile/tac_surface_normal.md
+ M docs/ops/2d/texture/cooc_feature_matrix.md
+ M docs/ops/2d/texture/deviation_image.md
+ M docs/ops/2d/texture/entropy_image.md
+ M docs/ops/2d/texture/f2_symmetry.md
+ M docs/ops/2d/texture/gabor.md
+ M docs/ops/2d/texture/gen_gabor.md
+ M docs/ops/2d/texture/sk_entropy.md
+ M docs/ops/2d/texture/sk_frangi.md
+ M docs/ops/2d/texture/sk_gabor.md
+ M docs/ops/2d/texture/sk_hessian.md
+ M docs/ops/2d/texture/sk_lbp.md
+ M docs/ops/2d/texture/sk_meijering.md
+ M docs/ops/2d/texture/sk_shape_index.md
+ M docs/ops/2d/texture/std_filter.md
+ M docs/ops/2d/texture/texture_laws.md
+ M docs/ops/2d/texture/tf_census_transform.md
+ M docs/ops/2d/texture/tf_rank_transform.md
+ M docs/ops/2d/texture/xsk2_hog.md
+ M docs/ops/2d/texture/xsk_meijering.md
+ M docs/ops/2d/texture/xsk_sato.md
+ M docs/ops/2d/texture/xsk_struct_coherence.md
+ M docs/ops/2d/texture/xsp_hilbert_env.md
+ M docs/ops/2d/texture_feature/xmh_pftas.md
+ M docs/ops/2d/texture_shape_feature/xmh_zernike.md
+ M docs/ops/2d/tomography/tm_backproject_unfiltered.md
+ M docs/ops/2d/tomography/tm_fbp_reconstruct.md
+ M docs/ops/2d/tomography/tm_radon_forward.md
+ M docs/ops/2d/tomography/tm_sart_reconstruct.md
+ M docs/ops/2d/tomography/tm_sinogram_denoise.md
+ M docs/ops/2d/transform/tf_radon_sinogram.md
+ M docs/ops/2d/transform/xmh_daubechies.md
+ M docs/ops/2d/transform/xmh_haar.md
+ M docs/ops/2d/typed/tb_abs_funct_1d.md
+ M docs/ops/2d/typed/tb_alpha_shape_boundary.md
+ M docs/ops/2d/typed/tb_angle_3points.md
+ M docs/ops/2d/typed/tb_angular_spectrum_propagate.md
+ M docs/ops/2d/typed/tb_apply_weighting.md
+ M docs/ops/2d/typed/tb_arc_length.md
+ M docs/ops/2d/typed/tb_background_subtraction_window.md
+ M docs/ops/2d/typed/tb_bandpass.md
+ M docs/ops/2d/typed/tb_beamform_delay_sum.md
+ M docs/ops/2d/typed/tb_box_sdf.md
+ M docs/ops/2d/typed/tb_countrate_to_counts.md
+ M docs/ops/2d/typed/tb_counts_to_countrate.md
+ M docs/ops/2d/typed/tb_cplx_cr_residual.md
+ M docs/ops/2d/typed/tb_create_funct_1d_array.md
+ M docs/ops/2d/typed/tb_cutout.md
+ M docs/ops/2d/typed/tb_cx_apply_transfer_function.md
+ M docs/ops/2d/typed/tb_cx_ifft.md
+ M docs/ops/2d/typed/tb_cx_imag.md
+ M docs/ops/2d/typed/tb_cx_log_magnitude.md
+ M docs/ops/2d/typed/tb_cx_magnitude.md
+ M docs/ops/2d/typed/tb_cx_phase.md
+ M docs/ops/2d/typed/tb_cx_real.md
+ M docs/ops/2d/typed/tb_deflicker.md
+ M docs/ops/2d/typed/tb_derivate_funct_1d.md
+ M docs/ops/2d/typed/tb_dtof_depth.md
+ M docs/ops/2d/typed/tb_elastic_deform.md
+ M docs/ops/2d/typed/tb_env_lightbox.md
+ M docs/ops/2d/typed/tb_env_studio.md
+ M docs/ops/2d/typed/tb_envelope.md
+ M docs/ops/2d/typed/tb_equivalent_level.md
+ M docs/ops/2d/typed/tb_estimate_alpha.md
+ M docs/ops/2d/typed/tb_estimate_normals.md
+ M docs/ops/2d/typed/tb_estimate_oriented_normals.md
+ M docs/ops/2d/typed/tb_estimate_point_normals.md
+ M docs/ops/2d/typed/tb_euclidean_cluster.md
+ M docs/ops/2d/typed/tb_exponential_background.md
+ M docs/ops/2d/typed/tb_exponential_foreground.md
+ M docs/ops/2d/typed/tb_farthest_point_sampling.md
+ M docs/ops/2d/typed/tb_find_peaks.md
+ M docs/ops/2d/typed/tb_fit_spline_curve.md
+ M docs/ops/2d/typed/tb_fmcw_range_profile.md
+ M docs/ops/2d/typed/tb_fmcw_window_apply.md
+ M docs/ops/2d/typed/tb_frame_difference_causal.md
+ M docs/ops/2d/typed/tb_gaussian_curvature.md
+ M docs/ops/2d/typed/tb_geodesic_distances.md
+ M docs/ops/2d/typed/tb_get_y_value_funct_1d.md
+ M docs/ops/2d/typed/tb_highpass.md
+ M docs/ops/2d/typed/tb_indices_to_labels.md
+ M docs/ops/2d/typed/tb_inertia_tensor.md
+ M docs/ops/2d/typed/tb_inside_outside.md
+ M docs/ops/2d/typed/tb_integrate_funct_1d.md
+ M docs/ops/2d/typed/tb_iqft2.md
+ M docs/ops/2d/typed/tb_iss_keypoints.md
+ M docs/ops/2d/typed/tb_jitter.md
+ M docs/ops/2d/typed/tb_keypoints_to_image2d.md
+ M docs/ops/2d/typed/tb_keypoints_uv_to_points.md
+ M docs/ops/2d/typed/tb_lf_center_view.md
+ M docs/ops/2d/typed/tb_lf_depth_from_focus.md
+ M docs/ops/2d/typed/tb_lf_epi.md
+ M docs/ops/2d/typed/tb_lf_epi_slope.md
+ M docs/ops/2d/typed/tb_lf_refocus.md
+ M docs/ops/2d/typed/tb_lf_subaperture.md
+ M docs/ops/2d/typed/tb_lf_synthetic_aperture.md
+ M docs/ops/2d/typed/tb_lf_to_mla.md
+ M docs/ops/2d/typed/tb_lowpass.md
+ M docs/ops/2d/typed/tb_mat_cond.md
+ M docs/ops/2d/typed/tb_mat_pinv.md
+ M docs/ops/2d/typed/tb_mean_curvature.md
+ M docs/ops/2d/typed/tb_mls_smooth.md
+ M docs/ops/2d/typed/tb_monogenic_amplitude.md
+ M docs/ops/2d/typed/tb_monogenic_orientation.md
+ M docs/ops/2d/typed/tb_monogenic_phase.md
+ M docs/ops/2d/typed/tb_motion_energy_image.md
+ M docs/ops/2d/typed/tb_motion_history_image.md
+ M docs/ops/2d/typed/tb_moving_average_window.md
+ M docs/ops/2d/typed/tb_negate_funct_1d.md
+ M docs/ops/2d/typed/tb_normals_to_egi.md
+ M docs/ops/2d/typed/tb_num_points_funct_1d.md
+ M docs/ops/2d/typed/tb_occupancy_grid.md
+ M docs/ops/2d/typed/tb_optical_flow_magnitude_stream.md
+ M docs/ops/2d/typed/tb_pc_density_equalize.md
+ M docs/ops/2d/typed/tb_pc_fill_sparse.md
+ M docs/ops/2d/typed/tb_pc_poisson_disk.md
+ M docs/ops/2d/typed/tb_plane_segmentation.md
+ M docs/ops/2d/typed/tb_points_to_voxel.md
+ M docs/ops/2d/typed/tb_points_zyx_to_keypoints_uv.md
+ M docs/ops/2d/typed/tb_project.md
+ M docs/ops/2d/typed/tb_project_cylindrical.md
+ M docs/ops/2d/typed/tb_project_points.md
+ M docs/ops/2d/typed/tb_project_spherical.md
+ M docs/ops/2d/typed/tb_qft2.md
+ M docs/ops/2d/typed/tb_quat_color_filter.md
+ M docs/ops/2d/typed/tb_quat_color_rotate.md
+ M docs/ops/2d/typed/tb_quat_conjugate_image.md
+ M docs/ops/2d/typed/tb_quat_norm.md
+ M docs/ops/2d/typed/tb_quat_normalize_image.md
+ M docs/ops/2d/typed/tb_quaternion_to_rgb.md
+ M docs/ops/2d/typed/tb_radius_outlier_removal.md
+ M docs/ops/2d/typed/tb_random_dropout.md
+ M docs/ops/2d/typed/tb_random_rotation.md
+ M docs/ops/2d/typed/tb_random_scale.md
+ M docs/ops/2d/typed/tb_range_doppler_map.md
+ M docs/ops/2d/typed/tb_reflect_points.md
+ M docs/ops/2d/typed/tb_reflection_symmetry_score.md
+ M docs/ops/2d/typed/tb_region_growing.md
+ M docs/ops/2d/typed/tb_render_point_depth.md
+ M docs/ops/2d/typed/tb_resample.md
+ M docs/ops/2d/typed/tb_resample_uniform.md
+ M docs/ops/2d/typed/tb_rgb_to_quaternion.md
+ M docs/ops/2d/typed/tb_rms.md
+ M docs/ops/2d/typed/tb_running_gaussian_background.md
+ M docs/ops/2d/typed/tb_running_gaussian_foreground.md
+ M docs/ops/2d/typed/tb_sample_funct_1d.md
+ M docs/ops/2d/typed/tb_scale_y_funct_1d.md
+ M docs/ops/2d/typed/tb_sensor_capture.md
+ M docs/ops/2d/typed/tb_smooth_funct_1d_gauss.md
+ M docs/ops/2d/typed/tb_smooth_funct_1d_mean.md
+ M docs/ops/2d/typed/tb_spad_deadtime_apply.md
+ M docs/ops/2d/typed/tb_spad_deadtime_correct.md
+ M docs/ops/2d/typed/tb_spectrogram.md
+ M docs/ops/2d/typed/tb_specular_coefficient_map.md
+ M docs/ops/2d/typed/tb_specular_diffuse_split.md
+ M docs/ops/2d/typed/tb_specular_free_transform.md
+ M docs/ops/2d/typed/tb_sphere_sdf.md
+ M docs/ops/2d/typed/tb_stat_correlation.md
+ M docs/ops/2d/typed/tb_stat_covariance.md
+ M docs/ops/2d/typed/tb_stat_zscore.md
+ M docs/ops/2d/typed/tb_statistical_outlier_removal.md
+ M docs/ops/2d/typed/tb_superquadric_residual.md
+ M docs/ops/2d/typed/tb_synthesize_silhouette.md
+ M docs/ops/2d/typed/tb_tcspc_background_subtract.md
+ M docs/ops/2d/typed/tb_tcspc_coates_correct.md
+ M docs/ops/2d/typed/tb_tcspc_irf_convolve.md
+ M docs/ops/2d/typed/tb_temporal_band_power.md
+ M docs/ops/2d/typed/tb_temporal_bandpass.md
+ M docs/ops/2d/typed/tb_temporal_bilateral.md
+ M docs/ops/2d/typed/tb_temporal_median_window.md
+ M docs/ops/2d/typed/tb_three_frame_difference.md
+ M docs/ops/2d/typed/tb_voxel_grid_downsample.md
+ M docs/ops/2d/typed/tb_weighting_response.md
+ M docs/ops/2d/typed/tb_wetness.md
+ M docs/ops/2d/typed/tb_zero_crossing_rate.md
+ M docs/ops/2d/typed/tb_zero_crossings_funct_1d.md
+ M docs/ops/2d/xldgeom/xg_area_center.md
+ M docs/ops/2d/xldgeom/xg_clip_contours.md
+ M docs/ops/2d/xldgeom/xg_crop_contours.md
+ M docs/ops/2d/xldgeom/xg_eccentricity.md
+ M docs/ops/2d/xldgeom/xg_elliptic_axis.md
+ M docs/ops/2d/xldgeom/xg_gen_polygons.md
+ M docs/ops/2d/xldgeom/xg_height_width_ratio.md
+ M docs/ops/2d/xldgeom/xg_moments.md
+ M docs/ops/2d/xldgeom/xg_orientation.md
+ M docs/ops/2d/xldgeom/xg_regress_contours.md
+ M docs/ops/3d/annotate3d/annotate3d_arrow.md
+ M docs/ops/3d/annotate3d/annotate3d_axes.md
+ M docs/ops/3d/annotate3d/annotate3d_bbox.md
+ M docs/ops/3d/annotate3d/annotate3d_label.md
+ M docs/ops/3d/annotate3d/annotate3d_measure.md
+ M docs/ops/3d/annotate3d/annotate3d_project.md
+ M docs/ops/3d/annotate3d/annotate3d_scale_bar.md
+ M docs/ops/3d/augment/cutout.md
+ M docs/ops/3d/augment/elastic_deform.md
+ M docs/ops/3d/augment/jitter.md
+ M docs/ops/3d/augment/random_dropout.md
+ M docs/ops/3d/augment/random_rotation.md
+ M docs/ops/3d/augment/random_scale.md
+ M docs/ops/3d/boundary/vol_boundary.md
+ M docs/ops/3d/boundary/vol_boundary_points.md
+ M docs/ops/3d/bounds/aabb.md
+ M docs/ops/3d/bounds/convex_hull.md
+ M docs/ops/3d/bounds/min_enclosing_sphere.md
+ M docs/ops/3d/bounds/obb.md
+ M docs/ops/3d/bundle_adjust/bundle_adjust.md
+ M docs/ops/3d/bundle_adjust/mean_reprojection_error.md
+ M docs/ops/3d/bundle_adjust/project.md
+ M docs/ops/3d/curvature/estimate_normals.md
+ M docs/ops/3d/curvature/gaussian_curvature.md
+ M docs/ops/3d/curvature/mean_curvature.md
+ M docs/ops/3d/curvature/principal_curvatures.md
+ M docs/ops/3d/curvature/shape_index.md
+ M docs/ops/3d/curve/arc_length.md
+ M docs/ops/3d/curve/curvature_torsion.md
+ M docs/ops/3d/curve/fit_spline_curve.md
+ M docs/ops/3d/curve/frenet_frame.md
+ M docs/ops/3d/curve/resample_uniform.md
+ M docs/ops/3d/curvilinear/cylinder_unwrap.md
+ M docs/ops/3d/curvilinear/fit_zernike.md
+ M docs/ops/3d/curvilinear/polar_unwrap.md
+ M docs/ops/3d/deform/register_cpd_rigid.md
+ M docs/ops/3d/deform/register_nonrigid.md
+ M docs/ops/3d/deform/tps_fit.md
+ M docs/ops/3d/deform/tps_warp.md
  M docs/ops/3d/depth_denoise/bilateral_filter_depth.md
  M docs/ops/3d/depth_denoise/fill_holes.md
  M docs/ops/3d/depth_denoise/joint_bilateral.md
+ M docs/ops/3d/describe/match_sh_descriptor.md
+ M docs/ops/3d/describe/sh_descriptor.md
+ M docs/ops/3d/detect/hough_plane_3d.md
+ M docs/ops/3d/detect/hough_sphere_3d.md
+ M docs/ops/3d/domain/vol_bounding_box.md
+ M docs/ops/3d/domain/vol_crop_domain.md
+ M docs/ops/3d/domain/vol_reduce_domain.md
+ M docs/ops/3d/domain/vol_tiled_map.md
+ M docs/ops/3d/domain/vol_uncrop.md
+ M docs/ops/3d/edges/canny3d.md
+ M docs/ops/3d/edges/edge_points.md
+ M docs/ops/3d/edges/gradient3d.md
+ M docs/ops/3d/edges/link_edges.md
+ M docs/ops/3d/edges/log_zero_crossings.md
+ M docs/ops/3d/feature/curvature_maps.md
+ M docs/ops/3d/feature/edt_jfa.md
+ M docs/ops/3d/feature/hessian3d.md
+ M docs/ops/3d/feature/sobel3d.md
+ M docs/ops/3d/feature/vol_frangi.md
+ M docs/ops/3d/feature/vol_gradient_magnitude.md
+ M docs/ops/3d/feature/vol_hessian_blobness.md
+ M docs/ops/3d/feature/vol_local_maxima.md
+ M docs/ops/3d/feature/vol_sato.md
+ M docs/ops/3d/feature_register/compute_fpfh.md
+ M docs/ops/3d/feature_register/harris3d_keypoints.md
+ M docs/ops/3d/feature_register/iss_keypoints.md
+ M docs/ops/3d/feature_register/register_fpfh.md
+ M docs/ops/3d/feature_register/register_shot.md
+ M docs/ops/3d/feature_register/register_spin.md
+ M docs/ops/3d/feature_register/shot_descriptor.md
+ M docs/ops/3d/freeform/eval_bspline_curve.md
+ M docs/ops/3d/freeform/eval_bspline_surface.md
+ M docs/ops/3d/freeform/fit_bspline_curve.md
+ M docs/ops/3d/freeform/fit_bspline_surface.md
+ M docs/ops/3d/freeform/surface_residual.md
+ M docs/ops/3d/frequency/vol_fft_bandpass.md
+ M docs/ops/3d/frequency/vol_fft_highpass.md
+ M docs/ops/3d/frequency/vol_fft_lowpass.md
  M docs/ops/3d/fusion/fuse_to_voxel.md
  M docs/ops/3d/fusion/register_cross.md
+ M docs/ops/3d/geodesic/farthest_point_sampling.md
+ M docs/ops/3d/geodesic/geodesic_distances.md
+ M docs/ops/3d/geodesic/geodesic_mesh.md
+ M docs/ops/3d/geodesic/knn_graph.md
+ M docs/ops/3d/geom_transform/vol_affine.md
+ M docs/ops/3d/geom_transform/vol_resize.md
+ M docs/ops/3d/geom_transform/vol_rotate.md
+ M docs/ops/3d/geometry/angle_3points.md
+ M docs/ops/3d/geometry/angle_between_lines.md
+ M docs/ops/3d/geometry/angle_between_planes.md
+ M docs/ops/3d/geometry/angle_line_plane.md
+ M docs/ops/3d/geometry/distance_line_line.md
+ M docs/ops/3d/geometry/distance_point_line.md
+ M docs/ops/3d/geometry/distance_point_plane.md
+ M docs/ops/3d/geometry/fit_box3.md
+ M docs/ops/3d/geometry/fit_circle3.md
+ M docs/ops/3d/geometry/fit_circle_3d.md
+ M docs/ops/3d/geometry/fit_line3.md
+ M docs/ops/3d/geometry/fit_line_3d.md
+ M docs/ops/3d/geometry/fit_plane3.md
+ M docs/ops/3d/geometry/fit_plane_3d.md
+ M docs/ops/3d/geometry/fit_sphere3.md
+ M docs/ops/3d/geometry/fit_sphere_3d.md
+ M docs/ops/3d/geometry/intersect_line_plane.md
+ M docs/ops/3d/geometry/intersect_planes.md
+ M docs/ops/3d/geometry/line_from_2points.md
+ M docs/ops/3d/geometry/plane_from_3points.md
+ M docs/ops/3d/geometry/smallest_box3.md
+ M docs/ops/3d/geometry/smallest_box3_axis.md
+ M docs/ops/3d/geometry/smallest_sphere3.md
+ M docs/ops/3d/gicp/estimate_covariances.md
+ M docs/ops/3d/gicp/gicp.md
+ M docs/ops/3d/gray/vol_equalize.md
+ M docs/ops/3d/gray/vol_gamma.md
+ M docs/ops/3d/gray/vol_stretch.md
+ M docs/ops/3d/gray/vol_window_level.md
  M docs/ops/3d/lidar_projection/project_cylindrical.md
  M docs/ops/3d/lidar_projection/project_spherical.md
  M docs/ops/3d/lidar_projection/unproject_spherical.md
+ M docs/ops/3d/match_localize/match_chamfer_3d.md
+ M docs/ops/3d/match_localize/match_curvature_3d.md
+ M docs/ops/3d/match_localize/match_hough_3d.md
+ M docs/ops/3d/match_localize/match_mip_2d.md
+ M docs/ops/3d/match_localize/match_points_ncc.md
+ M docs/ops/3d/match_localize/match_shape_3d.md
+ M docs/ops/3d/match_pose/match_logpolar_z.md
+ M docs/ops/3d/match_pose/match_pca.md
+ M docs/ops/3d/match_pose/match_phase_3d.md
+ M docs/ops/3d/match_pose/moment_axes.md
+ M docs/ops/3d/medial/distance_ridge.md
+ M docs/ops/3d/medial/medial_axis_points.md
+ M docs/ops/3d/medial/medial_match.md
+ M docs/ops/3d/medial/skeleton_branches3d.md
+ M docs/ops/3d/medial/skeleton_endpoints3d.md
+ M docs/ops/3d/medial/skeleton_junctions3d.md
+ M docs/ops/3d/medial/skeleton_prune3d.md
+ M docs/ops/3d/medial/skeletonize_vol.md
+ M docs/ops/3d/medial/topology_signature.md
+ M docs/ops/3d/medial/vol_distance_transform.md
+ M docs/ops/3d/mesh_process/decimate_qem.md
+ M docs/ops/3d/mesh_process/face_normals.md
+ M docs/ops/3d/mesh_process/laplacian_smooth.md
+ M docs/ops/3d/mesh_process/mesh_area.md
+ M docs/ops/3d/mesh_process/taubin_smooth.md
+ M docs/ops/3d/mesh_process/vertex_curvature.md
+ M docs/ops/3d/mesh_process/vertex_normals.md
  M docs/ops/3d/metrics/chamfer_distance.md
  M docs/ops/3d/metrics/fscore.md
  M docs/ops/3d/metrics/hausdorff_distance.md
@@ -64,17 +1070,66 @@ M docs/SESSION_SUMMARY.md
  M docs/ops/3d/metrics/pose_error.md
  M docs/ops/3d/metrics/rmse_correspondence.md
  M docs/ops/3d/metrics/voxel_iou.md
+ M docs/ops/3d/moment_invariant/central_moments.md
+ M docs/ops/3d/moment_invariant/inertia_tensor.md
+ M docs/ops/3d/moment_invariant/moment_invariants.md
+ M docs/ops/3d/moment_invariant/principal_moments.md
+ M docs/ops/3d/morphology/morph_blackhat3d.md
+ M docs/ops/3d/morphology/morph_close3d.md
+ M docs/ops/3d/morphology/morph_dilate3d.md
+ M docs/ops/3d/morphology/morph_erode3d.md
+ M docs/ops/3d/morphology/morph_gradient3d.md
+ M docs/ops/3d/morphology/morph_open3d.md
+ M docs/ops/3d/morphology/morph_tophat3d.md
+ M docs/ops/3d/motion/scene_flow_lk.md
+ M docs/ops/3d/motion_segment/estimate_flow.md
+ M docs/ops/3d/motion_segment/fit_rigid.md
+ M docs/ops/3d/motion_segment/segment_rigid_motions.md
+ M docs/ops/3d/normals_orient/estimate_oriented_normals.md
+ M docs/ops/3d/normals_orient/orient_normals.md
+ M docs/ops/3d/occupancy/esdf.md
+ M docs/ops/3d/occupancy/inflate.md
+ M docs/ops/3d/occupancy/occupancy_grid.md
+ M docs/ops/3d/occupancy/query_distance.md
+ M docs/ops/3d/optics/fresnel_reflectance.md
+ M docs/ops/3d/optics/normal_from_reflection.md
+ M docs/ops/3d/optics/reflect.md
+ M docs/ops/3d/optics/refract.md
+ M docs/ops/3d/optics/snell_angle.md
+ M docs/ops/3d/photometric/integrate_normals.md
+ M docs/ops/3d/photometric/photometric_stereo.md
+ M docs/ops/3d/photometric/render_lambertian.md
+ M docs/ops/3d/photometric/surface_normals.md
  M docs/ops/3d/plane_sweep_stereo/plane_sweep_depth.md
  M docs/ops/3d/plane_sweep_stereo/warp_by_plane.md
+ M docs/ops/3d/pose_estimation/dlt_pose.md
+ M docs/ops/3d/pose_estimation/pnp_ransac.md
+ M docs/ops/3d/pose_estimation/reprojection_error.md
+ M docs/ops/3d/pose_graph/mean_edge_error.md
+ M docs/ops/3d/pose_graph/optimize_pose_graph.md
+ M docs/ops/3d/pose_graph/relative_pose.md
  M docs/ops/3d/preprocess/mls_smooth.md
  M docs/ops/3d/preprocess/radius_outlier_removal.md
  M docs/ops/3d/preprocess/statistical_outlier_removal.md
  M docs/ops/3d/preprocess/volume_downsample.md
  M docs/ops/3d/preprocess/voxel_grid_downsample.md
+ M docs/ops/3d/probe/vol_edge_probe.md
+ M docs/ops/3d/probe/vol_profile_line.md
+ M docs/ops/3d/probe/vol_wall_thickness.md
  M docs/ops/3d/range_image/bearing_angle_image.md
  M docs/ops/3d/range_image/depth_to_organized_points.md
  M docs/ops/3d/range_image/normals_from_depth.md
  M docs/ops/3d/range_image/occlusion_edges.md
+ M docs/ops/3d/reconstruct/alpha_shape_boundary.md
+ M docs/ops/3d/reconstruct/alpha_shape_mesh.md
+ M docs/ops/3d/reconstruct/estimate_alpha.md
+ M docs/ops/3d/reconstruct/poisson_lite.md
+ M docs/ops/3d/refine/icp_point2plane.md
+ M docs/ops/3d/refine/icp_point2point_3d.md
+ M docs/ops/3d/refine/refine_lm.md
+ M docs/ops/3d/refine/refine_peak_newton.md
+ M docs/ops/3d/refine/refine_rotation_z.md
+ M docs/ops/3d/refine/refine_translation_lk.md
  M docs/ops/3d/regionprops/filter_by_volume.md
  M docs/ops/3d/regionprops/inner_box3.md
  M docs/ops/3d/regionprops/label_components.md
@@ -82,6 +1137,28 @@ M docs/SESSION_SUMMARY.md
  M docs/ops/3d/regionprops/region_props.md
  M docs/ops/3d/regionprops/vol_label.md
  M docs/ops/3d/regionprops/vol_region_props.md
+ M docs/ops/3d/registration_metrics/inlier_ratio.md
+ M docs/ops/3d/registration_metrics/registration_recall.md
+ M docs/ops/3d/registration_metrics/rmse_inliers.md
+ M docs/ops/3d/registration_metrics/rotation_translation_error.md
+ M docs/ops/3d/render/ambient_occlusion.md
+ M docs/ops/3d/render/antialias.md
+ M docs/ops/3d/render/brdf_hapke.md
+ M docs/ops/3d/render/brdf_lommel_seeliger.md
+ M docs/ops/3d/render/cast_shadow.md
+ M docs/ops/3d/render/edge_alias_energy.md
+ M docs/ops/3d/render/matcap_shade.md
+ M docs/ops/3d/render/phong_shade.md
+ M docs/ops/3d/render/project_points.md
+ M docs/ops/3d/render/render_beauty.md
+ M docs/ops/3d/render/render_point_depth.md
+ M docs/ops/3d/render/render_regolith.md
+ M docs/ops/3d/render/render_shaded.md
+ M docs/ops/3d/render/render_volume_projection.md
+ M docs/ops/3d/render/shadow_raycast.md
+ M docs/ops/3d/render/supersample_mesh.md
+ M docs/ops/3d/render/tonemap_aces.md
+ M docs/ops/3d/render/tonemap_reinhard.md
  M docs/ops/3d/resolution/mesh_decimate_preserving.md
  M docs/ops/3d/resolution/mesh_detail_map.md
  M docs/ops/3d/resolution/mesh_edge_stats.md
@@ -97,6 +1174,47 @@ M docs/SESSION_SUMMARY.md
  M docs/ops/3d/resolution/pc_lod_chain.md
  M docs/ops/3d/resolution/pc_poisson_disk.md
  M docs/ops/3d/resolution/pc_thinning_report.md
+ M docs/ops/3d/restoration/vol_gaussian_psf.md
+ M docs/ops/3d/restoration/vol_richardson_lucy.md
+ M docs/ops/3d/rle_region/vol_rle_bbox.md
+ M docs/ops/3d/rle_region/vol_rle_centroid.md
+ M docs/ops/3d/rle_region/vol_rle_components.md
+ M docs/ops/3d/rle_region/vol_rle_decode.md
+ M docs/ops/3d/rle_region/vol_rle_difference.md
+ M docs/ops/3d/rle_region/vol_rle_encode.md
+ M docs/ops/3d/rle_region/vol_rle_intersect.md
+ M docs/ops/3d/rle_region/vol_rle_union.md
+ M docs/ops/3d/rle_region/vol_rle_volume.md
+ M docs/ops/3d/robust_fit/fit_cone.md
+ M docs/ops/3d/robust_fit/fit_ellipsoid.md
+ M docs/ops/3d/robust_fit/fit_torus.md
+ M docs/ops/3d/robust_fit/ransac_cylinder.md
+ M docs/ops/3d/robust_fit/ransac_line.md
+ M docs/ops/3d/robust_fit/ransac_plane.md
+ M docs/ops/3d/robust_fit/ransac_sphere.md
+ M docs/ops/3d/scene_flow3d/nearest_neighbor_flow.md
+ M docs/ops/3d/scene_flow3d/rigid_flow.md
+ M docs/ops/3d/scene_flow3d/smooth_flow.md
+ M docs/ops/3d/sdf_csg/box_sdf.md
+ M docs/ops/3d/sdf_csg/grid_coords.md
+ M docs/ops/3d/sdf_csg/sdf_intersect.md
+ M docs/ops/3d/sdf_csg/sdf_offset.md
+ M docs/ops/3d/sdf_csg/sdf_smooth_union.md
+ M docs/ops/3d/sdf_csg/sdf_subtract.md
+ M docs/ops/3d/sdf_csg/sdf_union.md
+ M docs/ops/3d/sdf_csg/sphere_sdf.md
+ M docs/ops/3d/segment/euclidean_cluster.md
+ M docs/ops/3d/segment/plane_segmentation.md
+ M docs/ops/3d/segment/region_growing.md
+ M docs/ops/3d/segment/vol_watershed.md
+ M docs/ops/3d/shape_descriptor/a3_distribution.md
+ M docs/ops/3d/shape_descriptor/d2_distribution.md
+ M docs/ops/3d/shape_descriptor/describe.md
+ M docs/ops/3d/shape_descriptor/extent_signature.md
+ M docs/ops/3d/shape_descriptor/shape_distance.md
+ M docs/ops/3d/space_carving/carve.md
+ M docs/ops/3d/space_carving/synthesize_silhouette.md
+ M docs/ops/3d/space_carving/visual_hull.md
  M docs/ops/3d/structured_light/absolute_phase.md
  M docs/ops/3d/structured_light/decode_fringe.md
  M docs/ops/3d/structured_light/graycode_decode.md
@@ -104,6 +1222,38 @@ M docs/SESSION_SUMMARY.md
  M docs/ops/3d/structured_light/triangulate_column.md
  M docs/ops/3d/structured_light/unwrap_phase_2d.md
  M docs/ops/3d/structured_light/wrapped_phase.md
+ M docs/ops/3d/superquadric/fit_superquadric.md
+ M docs/ops/3d/superquadric/inside_outside.md
+ M docs/ops/3d/superquadric/sample_surface.md
+ M docs/ops/3d/superquadric/superquadric_residual.md
+ M docs/ops/3d/surface_fit/background_flatten.md
+ M docs/ops/3d/surface_fit/eval_poly_surface.md
+ M docs/ops/3d/surface_fit/fit_poly_surface.md
+ M docs/ops/3d/surface_fit/surface_form_error.md
+ M docs/ops/3d/symmetry/detect_reflection_symmetry.md
+ M docs/ops/3d/symmetry/detect_rotational_symmetry.md
+ M docs/ops/3d/symmetry/reflect_points.md
+ M docs/ops/3d/symmetry/reflection_symmetry_score.md
+ M docs/ops/3d/terrain/bump_normals_fbm.md
+ M docs/ops/3d/terrain/displacement_band_weights.md
+ M docs/ops/3d/terrain/mesh_displace_fbm.md
+ M docs/ops/3d/terrain/mesh_displace_spectrum.md
+ M docs/ops/3d/terrain/mesh_edge_lengths.md
+ M docs/ops/3d/terrain/mesh_scatter_boulders.md
+ M docs/ops/3d/terrain/mesh_subdivide.md
+ M docs/ops/3d/terrain/terrain_region_mask.md
+ M docs/ops/3d/transform/depth_to_points.md
+ M docs/ops/3d/transform/estimate_point_normals.md
+ M docs/ops/3d/transform/gaussians_to_voxel.md
+ M docs/ops/3d/transform/mesh_to_points.md
+ M docs/ops/3d/transform/mesh_to_voxel.md
+ M docs/ops/3d/transform/points_to_voxel.md
+ M docs/ops/3d/transform/sdf_to_occupancy.md
+ M docs/ops/3d/transform/signed_distance_field.md
+ M docs/ops/3d/transform/to_points.md
+ M docs/ops/3d/transform/tsdf_from_depth.md
+ M docs/ops/3d/transform/voxel_to_mesh.md
+ M docs/ops/3d/transform/voxel_to_mips.md
  M docs/ops/3d/tsdf_fusion/extract_surface_points.md
  M docs/ops/3d/tsdf_fusion/fuse.md
  M docs/ops/3d/tsdf_fusion/integrate.md
@@ -112,7 +1262,26 @@ M docs/SESSION_SUMMARY.md
  M docs/ops/3d/two_view/recover_pose.md
  M docs/ops/3d/two_view/sampson_distance.md
  M docs/ops/3d/two_view/triangulate.md
- M docs/ops/annotate/INDEX.md
+ M docs/ops/INDEX.md
+ M docs/ops/acoustics/bearing/bearing_defect_frequencies.md
+ M docs/ops/acoustics/bearing/cepstrum.md
+ M docs/ops/acoustics/bearing/envelope_spectrum.md
+ M docs/ops/acoustics/bearing/spectral_kurtosis.md
+ M docs/ops/acoustics/dual/coherence.md
+ M docs/ops/acoustics/dual/transfer_function.md
+ M docs/ops/acoustics/level/apply_weighting.md
+ M docs/ops/acoustics/level/equivalent_level.md
+ M docs/ops/acoustics/level/octave_bands.md
+ M docs/ops/acoustics/level/octave_spectrum.md
+ M docs/ops/acoustics/level/percentile_level.md
+ M docs/ops/acoustics/level/weighting_response.md
+ M docs/ops/acoustics/order/angular_resample.md
+ M docs/ops/acoustics/order/order_spectrum.md
+ M docs/ops/acoustics/synthesis/synthesize_bearing_signal.md
+ M docs/ops/acoustics/synthesis/synthesize_speed_ramp.md
+ M docs/ops/acoustics/transform/istft.md
+ M docs/ops/acoustics/transform/stft.md
+ M docs/ops/acoustics/transform/stft_cola_check.md
  M docs/ops/annotate/compose/compare_frame.md
  M docs/ops/annotate/compose/panel_grid.md
  M docs/ops/annotate/compose/zoom_inset.md
@@ -159,6 +1328,24 @@ M docs/SESSION_SUMMARY.md
  M docs/ops/annotate/shape/rounded_rect.md
  M docs/ops/annotate/text/measure_text.md
  M docs/ops/annotate/text/text_box.md
+ M docs/ops/astrostack/align/align_frames.md
+ M docs/ops/astrostack/align/frame_align.md
+ M docs/ops/astrostack/cosmic/cosmic_ray_reject.md
+ M docs/ops/astrostack/cosmic/cosmic_ray_reject_stack.md
+ M docs/ops/astrostack/photometry/aperture_photometry.md
+ M docs/ops/astrostack/photometry/psf_fit.md
+ M docs/ops/astrostack/photometry/star_detect.md
+ M docs/ops/astrostack/quality/frame_quality.md
+ M docs/ops/astrostack/quality/lucky_select.md
+ M docs/ops/astrostack/quality/noise_sigma.md
+ M docs/ops/astrostack/stack/drizzle_resample.md
+ M docs/ops/astrostack/stack/sigma_clip_stack.md
+ M docs/ops/astrostack/synth/synth_frame_series.md
+ M docs/ops/astrostack/synth/synth_starfield.md
+ M docs/ops/cadmap/defect/cad_defect_to_cad.md
+ M docs/ops/cadmap/project/cad_surface_to_pixel.md
+ M docs/ops/cadmap/raycast/cad_pixel_to_surface.md
+ M docs/ops/cadmap/visibility/cad_visible_faces.md
  M docs/ops/colortransport/blend/poisson_blend.md
  M docs/ops/colortransport/matching/color_transfer.md
  M docs/ops/colortransport/matching/gaussian_transport_map.md
@@ -170,7 +1357,54 @@ M docs/SESSION_SUMMARY.md
  M docs/ops/colortransport/transport/sinkhorn_divergence.md
  M docs/ops/colortransport/transport/transport_plan_1d.md
  M docs/ops/colortransport/transport/wasserstein_1d.md
- M docs/ops/imgmetrics/INDEX.md
+ M docs/ops/gfx2d/camera/viewport.md
+ M docs/ops/gfx2d/colorspace/linear_to_srgb.md
+ M docs/ops/gfx2d/colorspace/srgb_to_linear.md
+ M docs/ops/gfx2d/composite/alpha_composite.md
+ M docs/ops/gfx2d/composite/alpha_composite_premul.md
+ M docs/ops/gfx2d/composite/blend_mode.md
+ M docs/ops/gfx2d/composite/layer_stack.md
+ M docs/ops/gfx2d/composite/premultiply.md
+ M docs/ops/gfx2d/composite/unpremultiply.md
+ M docs/ops/gfx2d/light/light_mask.md
+ M docs/ops/gfx2d/light/normal_map_decode.md
+ M docs/ops/gfx2d/light/normal_map_shade.md
+ M docs/ops/gfx2d/light/radial_light.md
+ M docs/ops/gfx2d/light/shadow_cast_2d.md
+ M docs/ops/gfx2d/particle/particle_emit.md
+ M docs/ops/gfx2d/particle/particle_render.md
+ M docs/ops/gfx2d/particle/particle_step.md
+ M docs/ops/gfx2d/post/bloom.md
+ M docs/ops/gfx2d/post/chromatic_aberration.md
+ M docs/ops/gfx2d/post/color_grade.md
+ M docs/ops/gfx2d/post/color_lut.md
+ M docs/ops/gfx2d/post/dither.md
+ M docs/ops/gfx2d/post/film_grain.md
+ M docs/ops/gfx2d/post/palette_quantize.md
+ M docs/ops/gfx2d/post/vignette.md
+ M docs/ops/gfx2d/sprite/nine_slice.md
+ M docs/ops/gfx2d/sprite/sprite_blit.md
+ M docs/ops/gfx2d/sprite/sprite_sheet_slice.md
+ M docs/ops/gfx2d/sprite/sprite_synthesize.md
+ M docs/ops/gfx2d/sprite/sprite_transform.md
+ M docs/ops/gfx2d/tile/parallax_layers.md
+ M docs/ops/gfx2d/tile/tilemap_render.md
+ M docs/ops/imgforensics/calibration/evidence_quantile.md
+ M docs/ops/imgforensics/calibration/null_distribution.md
+ M docs/ops/imgforensics/compression/error_level_map.md
+ M docs/ops/imgforensics/compression/jpeg_ghost_map.md
+ M docs/ops/imgforensics/compression/jpeg_ghost_quality.md
+ M docs/ops/imgforensics/compression/jpeg_quality_estimate.md
+ M docs/ops/imgforensics/copy_move/copy_move_regions.md
+ M docs/ops/imgforensics/hash/hash_distance.md
+ M docs/ops/imgforensics/hash/perceptual_hash.md
+ M docs/ops/imgforensics/noise/noise_inconsistency_map.md
+ M docs/ops/imgforensics/sensor/fingerprint_correlate.md
+ M docs/ops/imgforensics/sensor/fingerprint_strength_map.md
+ M docs/ops/imgforensics/sensor/sensor_fingerprint.md
+ M docs/ops/imgforensics/watermark/watermark_capacity.md
+ M docs/ops/imgforensics/watermark/watermark_embed.md
+ M docs/ops/imgforensics/watermark/watermark_extract.md
  M docs/ops/imgmetrics/colordiff/delta_e_2000.md
  M docs/ops/imgmetrics/colordiff/delta_e_76.md
  M docs/ops/imgmetrics/colordiff/delta_e_map.md
@@ -186,7 +1420,6 @@ M docs/SESSION_SUMMARY.md
  M docs/ops/imgmetrics/fidelity/rmse.md
  M docs/ops/imgmetrics/fidelity/ssim.md
  M docs/ops/imgmetrics/fidelity/ssim_map.md
- M docs/ops/imgmetrics/guides/image_difference_metrics.md
  M docs/ops/imgmetrics/information/image_entropy.md
  M docs/ops/imgmetrics/information/joint_entropy.md
  M docs/ops/imgmetrics/information/joint_histogram.md
@@ -196,13 +1429,67 @@ M docs/SESSION_SUMMARY.md
  M docs/ops/imgmetrics/report/data_range_of.md
  M docs/ops/imgmetrics/report/measure_with.md
  M docs/ops/imgmetrics/report/metrics_table.md
- M docs/ops/math/INDEX.md
+ M docs/ops/interferometry/chromatic/chromatic_confocal_height.md
+ M docs/ops/interferometry/design/csi_design.md
+ M docs/ops/interferometry/envelope/csi_envelope.md
+ M docs/ops/interferometry/locate/csi_peak_position.md
+ M docs/ops/interferometry/simulate/chromatic_confocal_simulate.md
+ M docs/ops/interferometry/simulate/csi_signal_simulate.md
+ M docs/ops/interferometry/simulate/csi_stack_simulate.md
+ M docs/ops/interferometry/surface/csi_contrast_map.md
+ M docs/ops/interferometry/surface/csi_height_map.md
+ M docs/ops/lightfield/decode/lf_from_mla.md
+ M docs/ops/lightfield/decode/lf_stats.md
+ M docs/ops/lightfield/decode/lf_to_mla.md
+ M docs/ops/lightfield/depth/lf_all_in_focus.md
+ M docs/ops/lightfield/depth/lf_depth_from_focus.md
+ M docs/ops/lightfield/depth/lf_disparity_to_depth.md
+ M docs/ops/lightfield/depth/lf_epi_slope.md
+ M docs/ops/lightfield/depth/lf_plenoptic_design.md
+ M docs/ops/lightfield/refocus/lf_aperture_mask.md
+ M docs/ops/lightfield/refocus/lf_focal_stack.md
+ M docs/ops/lightfield/refocus/lf_refocus.md
+ M docs/ops/lightfield/refocus/lf_synthetic_aperture.md
+ M docs/ops/lightfield/synthesis/lf_synthesize.md
+ M docs/ops/lightfield/views/lf_center_view.md
+ M docs/ops/lightfield/views/lf_epi.md
+ M docs/ops/lightfield/views/lf_subaperture.md
+ M docs/ops/lightfield/views/lf_views.md
+ M docs/ops/math/complex/cplx_argument_principle.md
+ M docs/ops/math/complex/cplx_cauchy_value.md
+ M docs/ops/math/complex/cplx_contour_circle.md
+ M docs/ops/math/complex/cplx_contour_integral.md
+ M docs/ops/math/complex/cplx_cr_residual.md
+ M docs/ops/math/complex/cplx_joukowski.md
+ M docs/ops/math/complex/cplx_laurent_coeffs.md
+ M docs/ops/math/complex/cplx_mobius.md
+ M docs/ops/math/complex/cplx_poly_eval.md
+ M docs/ops/math/complex/cplx_winding_number.md
+ M docs/ops/math/interp_poly/interp_cubic.md
+ M docs/ops/math/interp_poly/interp_linear.md
+ M docs/ops/math/interp_poly/poly_eval.md
+ M docs/ops/math/interp_poly/poly_fit.md
+ M docs/ops/math/interp_poly/poly_roots.md
+ M docs/ops/math/linalg/mat_cond.md
+ M docs/ops/math/linalg/mat_eigh.md
+ M docs/ops/math/linalg/mat_lstsq.md
+ M docs/ops/math/linalg/mat_pinv.md
+ M docs/ops/math/linalg/mat_solve.md
+ M docs/ops/math/linalg/mat_svd.md
  M docs/ops/math/stats/stat_correlation.md
  M docs/ops/math/stats/stat_covariance.md
  M docs/ops/math/stats/stat_describe.md
  M docs/ops/math/stats/stat_histogram.md
  M docs/ops/math/stats/stat_zscore.md
- M docs/ops/optics/INDEX.md
+ M docs/ops/motionmag/decompose/complex_steerable_decompose.md
+ M docs/ops/motionmag/decompose/complex_steerable_reconstruct.md
+ M docs/ops/motionmag/magnify/motion_magnify.md
+ M docs/ops/motionmag/measure/displacement_series.md
+ M docs/ops/motionmag/measure/phase_displacement.md
+ M docs/ops/motionmag/synthesis/synthesize_translation.md
+ M docs/ops/motionmag/temporal/band_snr.md
+ M docs/ops/motionmag/temporal/temporal_band_power.md
+ M docs/ops/motionmag/temporal/temporal_bandpass.md
  M docs/ops/optics/appearance/cie_xyz_from_wavelength.md
  M docs/ops/optics/appearance/grating_rgb.md
  M docs/ops/optics/appearance/grating_wavelengths.md
@@ -210,6 +1497,35 @@ M docs/SESSION_SUMMARY.md
  M docs/ops/optics/appearance/thin_film_reflectance.md
  M docs/ops/optics/appearance/thin_film_rgb.md
  M docs/ops/optics/appearance/ward_anisotropic.md
+ M docs/ops/optics/design/chromatic_shift.md
+ M docs/ops/optics/design/example_system.md
+ M docs/ops/optics/design/glass.md
+ M docs/ops/optics/design/glass_catalog.md
+ M docs/ops/optics/design/lens_system.md
+ M docs/ops/optics/design/opd_map.md
+ M docs/ops/optics/design/paraxial_trace.md
+ M docs/ops/optics/design/ray_fan.md
+ M docs/ops/optics/design/seidel_coefficients.md
+ M docs/ops/optics/design/sellmeier.md
+ M docs/ops/optics/design/spot_diagram.md
+ M docs/ops/optics/design/spot_stats.md
+ M docs/ops/optics/design/thick_lens.md
+ M docs/ops/optics/design/tolerance_analysis.md
+ M docs/ops/optics/design/wavefront_from_opd.md
+ M docs/ops/optics/finish/blast_normals.md
+ M docs/ops/optics/finish/finish_catalog.md
+ M docs/ops/optics/finish/finish_shade.md
+ M docs/ops/optics/finish/micro_normals.md
+ M docs/ops/optics/finish/tangent_field.md
+ M docs/ops/optics/geometric/abcd_matrix.md
+ M docs/ops/optics/geometric/abcd_trace.md
+ M docs/ops/optics/geometric/depth_of_field.md
+ M docs/ops/optics/geometric/relative_illumination.md
+ M docs/ops/optics/geometric/thin_lens.md
+ M docs/ops/optics/glassbody/beer_lambert_transmittance.md
+ M docs/ops/optics/glassbody/prism_min_deviation_deg.md
+ M docs/ops/optics/glassbody/refract_rays.md
+ M docs/ops/optics/glassbody/slab_transmittance.md
  M docs/ops/optics/illumination/defect_contrast.md
  M docs/ops/optics/illumination/illumination_design.md
  M docs/ops/optics/illumination/illumination_uniformity.md
@@ -224,6 +1540,27 @@ M docs/SESSION_SUMMARY.md
  M docs/ops/optics/imaging_sim/distortion_map.md
  M docs/ops/optics/imaging_sim/psf_from_opd.md
  M docs/ops/optics/imaging_sim/render_through_lens.md
+ M docs/ops/optics/interface/brewster_angle_deg.md
+ M docs/ops/optics/interface/critical_angle_deg.md
+ M docs/ops/optics/interface/fresnel_conductor.md
+ M docs/ops/optics/interface/fresnel_dielectric.md
+ M docs/ops/optics/material/clearcoat_shade.md
+ M docs/ops/optics/material/material_catalog.md
+ M docs/ops/optics/material/oren_nayar.md
+ M docs/ops/optics/material/sheen_shade.md
+ M docs/ops/optics/material/subsurface_approx.md
+ M docs/ops/optics/material/wetness.md
+ M docs/ops/optics/mirror/metal_mirror_rgb.md
+ M docs/ops/optics/mirror/metal_optical_constants.md
+ M docs/ops/optics/optimization/bend_singlet.md
+ M docs/ops/optics/optimization/merit_function.md
+ M docs/ops/optics/optimization/optimize_lens.md
+ M docs/ops/optics/polarization/jones_apply.md
+ M docs/ops/optics/polarization/jones_element.md
+ M docs/ops/optics/polarization/mueller_apply.md
+ M docs/ops/optics/polarization/mueller_element.md
+ M docs/ops/optics/polarization/stokes_analyze.md
+ M docs/ops/optics/polarization/stokes_from_jones.md
  M docs/ops/optics/scene/airy_radius_um.md
  M docs/ops/optics/scene/camera_rays.md
  M docs/ops/optics/scene/covers_sensor.md
@@ -268,6 +1605,131 @@ M docs/SESSION_SUMMARY.md
  M docs/ops/optics/scene/surface_finish.md
  M docs/ops/optics/scene/trace_rays.md
  M docs/ops/optics/scene/vision_layout.md
+ M docs/ops/optics/surface/corrosion_mask.md
+ M docs/ops/optics/surface/metallic_flake_normals.md
+ M docs/ops/optics/surface/rough_transmission.md
+ M docs/ops/optics/surface/weave_normals.md
+ M docs/ops/optics/surface/wood_grain.md
+ M docs/ops/optics/wave/airy_pattern.md
+ M docs/ops/optics/wave/angular_spectrum_propagate.md
+ M docs/ops/optics/wave/fraunhofer_pattern.md
+ M docs/ops/optics/wave/gaussian_beam.md
+ M docs/ops/photon/counting/photon_sample.md
+ M docs/ops/photon/counting/photon_statistics.md
+ M docs/ops/photon/counting/photon_uncertainty.md
+ M docs/ops/photon/dtof/dtof_cube_depth.md
+ M docs/ops/photon/dtof/dtof_cube_simulate.md
+ M docs/ops/photon/dtof/dtof_depth.md
+ M docs/ops/photon/lifetime/lifetime_fit.md
+ M docs/ops/photon/lifetime/lifetime_phasor.md
+ M docs/ops/photon/spad/spad_deadtime_apply.md
+ M docs/ops/photon/spad/spad_deadtime_correct.md
+ M docs/ops/photon/spad/tcspc_coates_correct.md
+ M docs/ops/photon/tcspc/tcspc_background_subtract.md
+ M docs/ops/photon/tcspc/tcspc_irf_convolve.md
+ M docs/ops/photon/tcspc/tcspc_simulate.md
+ M docs/ops/photon/tcspc/tcspc_stats.md
+ M docs/ops/photon/transform/anscombe_inverse.md
+ M docs/ops/photon/transform/anscombe_transform.md
+ M docs/ops/quat/algebra/quat_conjugate_image.md
+ M docs/ops/quat/algebra/quat_image_multiply.md
+ M docs/ops/quat/algebra/quat_normalize_image.md
+ M docs/ops/quat/color/quat_color_filter.md
+ M docs/ops/quat/color/quat_color_rotate.md
+ M docs/ops/quat/convert/quat_norm.md
+ M docs/ops/quat/convert/quaternion_to_rgb.md
+ M docs/ops/quat/convert/rgb_to_quaternion.md
+ M docs/ops/quat/fourier/iqft2.md
+ M docs/ops/quat/fourier/qft2.md
+ M docs/ops/quat/match/quat_correlate.md
+ M docs/ops/quat/motion/riesz_displacement.md
+ M docs/ops/quat/motion/riesz_displacement_series.md
+ M docs/ops/quat/motion/riesz_motion_magnify.md
+ M docs/ops/quat/riesz/monogenic_amplitude.md
+ M docs/ops/quat/riesz/monogenic_orientation.md
+ M docs/ops/quat/riesz/monogenic_phase.md
+ M docs/ops/quat/riesz/monogenic_signal.md
+ M docs/ops/quat/riesz/riesz_transform.md
+ M docs/ops/rangedoppler/beamform/beamform_delay_sum.md
+ M docs/ops/rangedoppler/beamform/beamform_doa.md
+ M docs/ops/rangedoppler/design/fmcw_design.md
+ M docs/ops/rangedoppler/process/fmcw_range_profile.md
+ M docs/ops/rangedoppler/process/fmcw_window_apply.md
+ M docs/ops/rangedoppler/process/range_doppler_map.md
+ M docs/ops/rangedoppler/process/range_doppler_peaks.md
+ M docs/ops/rangedoppler/simulate/fmcw_beat_simulate.md
+ M docs/ops/reprconv/algebra/angle_to_matrix.md
+ M docs/ops/reprconv/algebra/countrate_to_counts.md
+ M docs/ops/reprconv/algebra/counts_to_countrate.md
+ M docs/ops/reprconv/algebra/cscalar_to_polar.md
+ M docs/ops/reprconv/algebra/deformation_to_points.md
+ M docs/ops/reprconv/algebra/matrix_to_angle.md
+ M docs/ops/reprconv/algebra/matrix_to_rot_scale.md
+ M docs/ops/reprconv/algebra/polar_to_cscalar.md
+ M docs/ops/reprconv/algebra/rot_scale_to_matrix.md
+ M docs/ops/reprconv/algebra/shift_to_vector.md
+ M docs/ops/reprconv/algebra/vector_to_shift.md
+ M docs/ops/reprconv/curvature/curvature_to_shape_index.md
+ M docs/ops/reprconv/curvature/curvature_to_table.md
+ M docs/ops/reprconv/curvature/shape_index_to_curvature.md
+ M docs/ops/reprconv/descriptor/descriptor_to_matrix.md
+ M docs/ops/reprconv/descriptor/descriptor_to_table.md
+ M docs/ops/reprconv/descriptor/matrix_to_descriptor.md
+ M docs/ops/reprconv/direction/angles_to_normals.md
+ M docs/ops/reprconv/direction/normals_to_angles.md
+ M docs/ops/reprconv/direction/normals_to_egi.md
+ M docs/ops/reprconv/flow/flow_apply.md
+ M docs/ops/reprconv/flow/flow_magnitude.md
+ M docs/ops/reprconv/flow/flow_speed.md
+ M docs/ops/reprconv/flow/flow_to_rgbimage.md
+ M docs/ops/reprconv/gaussians/gaussians_to_points.md
+ M docs/ops/reprconv/gaussians/gaussians_to_voxel.md
+ M docs/ops/reprconv/gaussians/points_to_gaussians.md
+ M docs/ops/reprconv/index/indices_to_labels.md
+ M docs/ops/reprconv/index/labels_to_indices.md
+ M docs/ops/reprconv/index/select_points.md
+ M docs/ops/reprconv/keypoint/keypoints_from_image2d.md
+ M docs/ops/reprconv/keypoint/keypoints_to_image2d.md
+ M docs/ops/reprconv/keypoint/keypoints_uv_to_points.md
+ M docs/ops/reprconv/keypoint/points_to_position.md
+ M docs/ops/reprconv/keypoint/points_zyx_to_keypoints_uv.md
+ M docs/ops/reprconv/keypoint/position_to_points.md
+ M docs/ops/reprconv/pairs/pairs_to_image2d.md
+ M docs/ops/reprconv/pairs/pairs_to_signal.md
+ M docs/ops/reprconv/pairs/pairs_to_table.md
+ M docs/ops/reprconv/score/correlation_score.md
+ M docs/ops/reprconv/score/score_to_image2d.md
+ M docs/ops/reprconv/score/score_to_position.md
+ M docs/ops/specular/dichromatic/illuminant_from_dichromatic_planes.md
+ M docs/ops/specular/dichromatic/specular_coefficient_map.md
+ M docs/ops/specular/dichromatic/specular_diffuse_split.md
+ M docs/ops/specular/dichromatic/specular_free_transform.md
+ M docs/ops/specular/photometric/photometric_residual.md
+ M docs/ops/specular/photometric/photometric_stereo_robust.md
+ M docs/ops/specular/polarization/polarization_dolp_map.md
+ M docs/ops/specular/polarization/polarization_render.md
+ M docs/ops/specular/polarization/polarization_separate.md
+ M docs/ops/specular/polarization/polarization_stokes.md
+ M docs/ops/specular/reflectance/brdf_blinn_phong.md
+ M docs/ops/specular/reflectance/brdf_microfacet.md
+ M docs/ops/specular/reflectance/dichromatic_render.md
+ M docs/ops/tomography/artifact/beam_hardening_apply.md
+ M docs/ops/tomography/artifact/beam_hardening_correct.md
+ M docs/ops/tomography/artifact/metal_trace_interpolate.md
+ M docs/ops/tomography/artifact/ring_artifact_apply.md
+ M docs/ops/tomography/artifact/ring_artifact_remove.md
+ M docs/ops/tomography/forward/ellipse_phantom.md
+ M docs/ops/tomography/forward/ellipse_sinogram.md
+ M docs/ops/tomography/forward/radon_transform.md
+ M docs/ops/tomography/geometry/sinogram_center_of_rotation.md
+ M docs/ops/tomography/geometry/sinogram_center_shift.md
+ M docs/ops/tomography/layout/projection_angles.md
+ M docs/ops/tomography/layout/sinogram_design.md
+ M docs/ops/tomography/reconstruct/backproject_sinogram.md
+ M docs/ops/tomography/reconstruct/filtered_backprojection.md
+ M docs/ops/tomography/reconstruct/sart_reconstruct.md
+ M docs/ops/tomography/volume/fbp_volume.md
+ M docs/ops/tomography/volume/radon_volume.md
  M docs/ops/videostream/analysis/scene_cut_detection.md
  M docs/ops/videostream/background/running_gaussian_background.md
  M docs/ops/videostream/background/running_gaussian_foreground.md
@@ -284,26 +1746,75 @@ M docs/SESSION_SUMMARY.md
  M docs/ops/videostream/window/background_subtraction_window.md
  M docs/ops/videostream/window/moving_average_window.md
  M docs/ops/videostream/window/temporal_median_window.md
+ M docs/ops/volcolor/colorize/vol_colorize_labels.md
+ M docs/ops/volcolor/colorize/vol_label_overlay.md
+ M docs/ops/volcolor/diagnose/vol_label_color_flicker.md
+ M docs/ops/volcolor/measure/vol_label_legend.md
+ M docs/ops/volcolor/measure/vol_label_shape_stats.md
+ M docs/ops/volcolor/palette/vol_label_palette.md
+ M docs/ops/volcolor/render/vol_label_volume_render.md
+ M docs/ops/volcolor/render/vol_labels_to_meshes.md
+ M docs/ops/volcolor/select/vol_select_labels.md
+ M docs/ops/volcolor/slice/vol_label_mpr_rgb.md
+ M docs/ops/volcolor/slice/vol_label_slice_rgb.md
+ M examples/studio_raytrace_scene.py
+ M examples2d.py
+ M fullseye/OP_CATALOG.md
+ M pyproject.toml
+ M studio_assets/op_help/optics/airy_radius_um.html
+ M studio_assets/op_help/optics/camera_rays.html
+ M studio_assets/op_help/optics/covers_sensor.html
+ M studio_assets/op_help/optics/diffraction_blur.html
+ M studio_assets/op_help/optics/env_lightbox.html
+ M studio_assets/op_help/optics/env_studio.html
+ M studio_assets/op_help/optics/illumination_visibility.html
+ M studio_assets/op_help/optics/interface_budget.html
+ M studio_assets/op_help/optics/layout_capture.html
+ M studio_assets/op_help/optics/lens_catalog.html
+ M studio_assets/op_help/optics/lens_spec.html
+ M studio_assets/op_help/optics/light_catalog.html
+ M studio_assets/op_help/optics/light_spec.html
+ M studio_assets/op_help/optics/light_wavelengths.html
+ M studio_assets/op_help/optics/linescan_capture.html
+ M studio_assets/op_help/optics/observe_surface.html
+ M studio_assets/op_help/optics/optical_budget.html
+ M studio_assets/op_help/optics/optical_camera.html
+ M studio_assets/op_help/optics/optscene_defect_mask.html
+ M studio_assets/op_help/optics/reflect_rays.html
+ M studio_assets/op_help/optics/register_light.html
+ M studio_assets/op_help/optics/render_studio.html
+ M studio_assets/op_help/optics/scene_box.html
+ M studio_assets/op_help/optics/scene_difference.html
+ M studio_assets/op_help/optics/scene_material.html
+ M studio_assets/op_help/optics/sensor_capture.html
+ M studio_assets/op_help/optics/sensor_catalog.html
+ M studio_assets/op_help/optics/sensor_diagonal_mm.html
+ M studio_assets/op_help/optics/sensor_spec.html
+ M studio_assets/op_help/optics/surface_defect.html
+ M studio_assets/op_help/optics/trace_rays.html
+ M studio_assets/op_help/optics/vision_layout.html
+ M studio_assets/op_help/percentile.html
+ M tests/test_provenance_naming.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-06:47 docs/SESSION_SUMMARY.md
-06:47 docs/ops/videostream/INDEX.md
-06:47 docs/ops/imgmetrics/INDEX.md
-06:47 docs/ops/imgforensics/INDEX.md
-06:47 docs/ops/gfx2d/INDEX.md
-06:47 docs/ops/colortransport/INDEX.md
-06:47 docs/ops/astrostack/INDEX.md
-06:47 docs/ops/annotate/INDEX.md
-06:47 docs/ops/volcolor/INDEX.md
-06:47 docs/ops/tomography/INDEX.md
-06:47 docs/ops/specular/INDEX.md
-06:47 docs/ops/reprconv/INDEX.md
-06:47 docs/ops/rangedoppler/INDEX.md
-06:47 docs/ops/quat/INDEX.md
-06:47 docs/ops/photon/INDEX.md
+08:31 docs/SESSION_SUMMARY.md
+08:31 CHANGELOG.md
+08:31 CONTRIBUTING.md
+08:26 README.md
+08:24 pyproject.toml
+08:18 fullseye/OP_CATALOG.md
+08:18 docs/OP_CATALOG.md
+08:18 studio_assets/op_help/guide_video_streaming.html
+08:18 studio_assets/op_help/guide_image_difference_metrics.html
+08:18 studio_assets/op_help/guide_figure_annotation.html
+08:18 studio_assets/op_help/guide_dataset_conventions.html
+08:18 studio_assets/op_help/guide_coherence_scanning.html
+08:18 studio_assets/op_help/guide_acoustic_condition_monitoring.html
+08:18 studio_assets/op_help/guide_specular_photometric.html
+08:18 studio_assets/op_help/guide_quaternion_monogenic.html
 ```
 
 ---

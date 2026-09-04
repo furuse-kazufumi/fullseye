@@ -8,7 +8,7 @@ halcon: gray_range_rect
 examples: [gallery2d_morphology]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.5  # fullseye lib version this note was generated for
+version: 0.1.6  # fullseye lib version this note was generated for
 ---
 
 # morph_grad — 2D `morphology` op

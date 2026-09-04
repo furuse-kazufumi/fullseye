@@ -330,6 +330,17 @@ EXAMPLES = [
      "name": "imgevolve quickstart — 全ワークフローを 1 ファイルで",
      "summary": "レジストリ→型付き手組みパイプライン→ゲノム復号→タスク採点→進化ドライバ→"
                 "codegen + 差分テスト(約 1.5 分、repo root から実行)。"},
+    # -- machine-vision layout / optics ------------------------------------------ #
+    {"id": "vision_layout_from_catalog", "task": "optics_layout", "data": "synthetic",
+     "name": "型番から検査セルを組み、撮る前に成立するかを数字で決める",
+     "summary": "カタログのセンサー/レンズ/照明を選び、①レンズがセンサーを覆うか"
+                "②必要な寸法を分解できるか③そのフレームレートを伝送路が運べるか"
+                "④実際に撮ったらどう写るか、を閉じた式で確かめる(optscene)。"},
+    {"id": "studio_raytrace_scene", "task": "optics_layout", "data": "synthetic",
+     "name": "光線を追ってレンダラを検算する(交点・法線・反射・遮蔽)",
+     "summary": "絵の見た目でなく光線の量で答え合わせをする。交点 z、法線の向き、"
+                "反射の法則 |d·n+r·n|<1e-14、遮蔽で可視率が落ちること、"
+                "環境光の違いを固定してから studio 描画する(optscene)。"},
 ]
 
 # Scripts under examples/ that are deliberately NOT in the gallery — each with the

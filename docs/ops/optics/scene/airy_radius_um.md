@@ -4,10 +4,10 @@ dim: optics
 category: scene
 in: 
 out: measurement
-examples: []
+examples: [vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.5  # fullseye lib version this note was generated for
+version: 0.1.6  # fullseye lib version this note was generated for
 ---
 
 # airy_radius_um — OPTICS `scene` op
@@ -55,7 +55,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [vision_layout_from_catalog](../../../../examples/vision_layout_from_catalog.py) — `py -3.11 examples/vision_layout_from_catalog.py`
 
 ## 型が繋がる次の op(`measurement` を入力に取れる)
 
