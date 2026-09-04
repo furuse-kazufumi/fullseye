@@ -51,6 +51,9 @@
 ## 2026-09-04 追加: hero 被写体の刷新 + 改善過程の公開 + 材質ロードマップ
 - 1 枚目 hero: 「ジャガイモ」(4 球 smooth union)→ **SDF/CSG 静物**(ジャイロイド格子球=鋼/三葉結び目=金/歯車=黒鉄、`still_life()`、`vertex_albedo=` 新設で物体別色)。ターンテーブル `tools/gen_still_life_turntable.py`。改善過程モンタージュ `tools/gen_hero_making_of.py`(素材 `tools/_making_of/`、ウ○コ注意書き入り)を記事に挿入。
 - **材質ロードマップ(ユーザー質問「鏡面・ガラス」「CD の虹色」「ヘアライン」)**: 現 `render_beauty` はラスタライザ=反射/屈折不可。① **numpy レイトレーサ**(`render_shadow._rays_hit_dir` の Möller–Trumbore を nearest-hit 化+BVH、鏡面反射・Fresnel・屈折・環境マップ) ② **回折格子 BRDF**(格子方程式 d(sinθi+sinθo)=mλ → λ→RGB(CIE 近似が未実装、要追加)、Stam 1999 簡略)③ **薄膜干渉** ④ **異方性 BRDF**(Ward/Ashikhmin、接線場=研磨方向)。順に op 化し hero を更新、改善過程に追記(ユーザーは過程の公開を好む)。
+- **PS 閉ループの教訓**: 素朴な `photometric_stereo`(LS)は付着影(cos_i<0→0)で球でも中央値 9° 偏る。点灯光源だけで解けば 0.000°、`photometric_stereo_robust`(RANSAC)0.001°。→ LS 版に「点灯光源のみ」オプションを足す価値あり。GT 法線は `render_mesh` のフラット法線でなく陰影に使った頂点法線の補間で比べる(そうしないと偽の 9°)。光源は camera 系 `R@l`。
+- **4D LiDAR(ユーザー質問)**: 既存 LiDAR 模倣(ビーム方向レイキャスト深度)+動くシーンの点速度を視線方向へ射影した**視線速度チャンネル**+FMCW `rangedoppler` で模倣可能。材質拡張と並ぶ次候補。
+- **記事は図で訴求、文は最小限**(ユーザー指示)。
 - **記事と実装の開き**: 記事は 2026-09-02 時点の構成で、以後の precision_union(N-D/遅延 op)・geompred・anatomical_hand・材質は未反映。次: 章ごとに実装差分を洗い、画像素材を増やして整理(ユーザー指示)。
 
 ## 次にやること(優先順)
