@@ -26,7 +26,19 @@
 まず1枚。これは Fullseye の 3D レンダラ（もちろん numpy 自前実装）が、SDF で作った形状に環境光遮蔽・ソフトシャドウ・ACES トーンマップまでかけて焼いた出力です：
 
 <!-- 公開後チェック: raw URL が HTTP 200 を返すこと。画像は軽量サムネ+クリックでフルサイズ(記事のメモリ負荷対策) -->
-[![Fullseye 自前レンダラの出力（SDF smooth union + AO + ソフトシャドウ + ACES）— クリックでフルサイズ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/render_beauty_hero_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/render_beauty_hero.png?v=2)
+[![Fullseye 自前レンダラの出力: SDF/CSG の静物（ジャイロイド格子球・三葉結び目・歯車、AO + ソフトシャドウ + ACES、法線は SDF 勾配、色は頂点色）— クリックでフルサイズ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/render_beauty_hero_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/render_beauty_hero.png?v=3)
+
+**絵そのものは差別化ではありません**（この程度は DirectX で昔からできる）。違いは、同じシーンから **depth・法線・AO・影が numpy 配列で返り、同じツールキットの op で真値つきに採点できる**こと ―― ゲームエンジンではなく**計測器**です：
+
+![同じシーンの計測チャンネル: beauty / depth / 法線 / AO / 影 / depth を食った sobel_mag と真値照合](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/hero_channels.png)
+
+（右下: depth を `sobel_mag` に通すと、レンダラ自身のシルエット境界で内部の 21 倍。op の出力を真値で採点する閉ループの最小例）
+
+同じシーンを 6 方向の光で撮り（`render_beauty`）、`photometric_stereo` で法線を復元し、真値法線との角度誤差で採点 ―― **撮影・復元・採点が全部 Fullseye の op** です：
+
+![フォトメトリックステレオの閉ループ: 6 灯撮影 → photometric_stereo / robust → 真値法線との角度誤差](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/hero_photometric_stereo.png)
+
+（素朴な最小二乗は付着影で 9° 偏り、RANSAC 版は影ありでも 0.0x°。数字は図中）
 
 **この 1 枚も一発では出ていません。** 改善の過程をそのまま載せます（作っている感が伝わるように）：
 
@@ -61,7 +73,7 @@
 
 | 階層 | Status ラベル | 本記事での中身 |
 |---|---|---|
-| **実装済み・再現可能** | `Production-ready / Verified` | 2D 870 + 3D 344 の op、型契約と統一インターフェース、Studio、PyPI 配布、テスト 10345 件、HALCON 対応 981/2313 の機械集計、展示・デモの実出力 |
+| **実装済み・再現可能** | `Production-ready / Verified` | 2D 877 + 3D 344 の op、型契約と統一インターフェース、Studio、PyPI 配布、テスト 10345 件、HALCON 対応 981/2313 の機械集計、展示・デモの実出力 |
 | **実証途上** | `PoC / Research prototype` | 進化によるパイプライン設計(hold-out 評価つき・限定条件)、RAG 経由の自然言語→パイプライン生成、Physical AI 知覚スタック(シミュレーション実証。実機投入・Sim-to-Real は未着手) |
 | **将来構想** | `Roadmap / Design proposal` | ロボット向けの包括的な op 基盤、AI が約 1000 op を選んで自律実行する運用、産業検査と Physical AI の共通知覚基盤 |
 
@@ -185,7 +197,7 @@ Fullseye には前身があります。もともとは **`imgevolve`**、つま�
 ```mermaid
 flowchart TB
     subgraph L0["土台：型付き op 約1000個"]
-        OPS["型付きオペレータ・ライブラリ<br/>2D op 870種 + 3D op 344種<br/>numpy 自前実装 / 型(sort)で接続"]
+        OPS["型付きオペレータ・ライブラリ<br/>2D op 877種 + 3D op 344種<br/>numpy 自前実装 / 型(sort)で接続"]
     end
     subgraph L1["使い方は2通り"]
         APPLY["① 既知の op を適用<br/>fullseye.apply / run_pipeline"]
@@ -4022,6 +4034,23 @@ GPU 加速は「**CPU の正解と数値一致した op だけ載せる**」と�
 | パイプラインを進化で作る | `robust.py --problem <name>` | locked holdout とばらつきを同時に |
 
 族ごとの詳しい使い方(単位・破綻条件・既存手法との比較)は `docs/ops/<族>/guides/` に 24 本のガイドがあります。テストは **8,169 件**が全緑です。
+
+## 2026-09-04 の拡張 ―― 全体像はここまで広がった
+
+この記事の初版（9/2）から 2 日で、技術の全体像がかなり伸びました。op 数は **2D 870 → 877、3D 344**（レジストリ実測）ですが、増えたのは op の数より「層」です。要点だけ、実測の数字つきで：
+
+| 何が増えたか | 中身 | 実測 |
+|---|---|---|
+| **精度ユニオン型ストレージ** `PrecisionUnion` | 配列をタイルに切り、各タイルを局所値域が要る最小ビット深さ {0,1,2,4,8,16} で保持（真のビットパック）。N-D 対応・`save/load`。`apply`/`run_pipeline` がそのまま受け、**ユニオン→ユニオンで閉じる op は復号せず遅延実行**（点アフィン・clip・threshold・集合演算 4 種・max/min・feature 3 種） | ラベルボリューム (64,128,128) で **15.9x 無損失**、深度 f32 で 3.9x、ディスク **378x**。threshold 後 **616x**、集合演算は dense 比 **~12x 速く**結果 400〜1300x 小。自然画像では 0.98x で勝たない（正直に報告） |
+| **exact geometry predicates** | orient2d/orient3d/incircle/insphere を Shewchuk 流 2 段適応（float フィルタ → `Fraction` 厳密）。stdlib+numpy のみ | naive float は線上補間点で **約 19% 誤符号**、adaptive は厳密解と完全一致。凸包を堅牢化 |
+| **robust 幾何判定** `geompred` | point-in-polygon/tetrahedron/polytope（内外 3 値）、Delaunay 検査、メッシュ向き検査 | near-edge で naive winding が **8.64%** 食い違う |
+| **実解剖の手骨格** | MyoSuite myo_sim（Apache-2.0）の骨メッシュ 27 個を MJCF から stdlib で組み立て | MuJoCo FK と **6e-11 m** で一致、指長順は解剖学どおり（上の手骨 hero） |
+| **レンダラの注入口** | `vertex_normals=`（SDF 勾配法線）・`vertex_albedo=`（頂点色） | この記事の hero と改善過程がそのもの |
+| **画像点検** | 232 アセットを寸法表→実画像で点検 | hero 3 点を 1280px に、手骨を実骨格に |
+
+読み方の変化として大事なのは 1 点だけです。**「ユニオン→ユニオンで閉じる演算が勝つ」**。復号して dense 配列を作る op は numpy にかないませんが、ヘッダ（定数タイル・値域）で決まる部分が大半になる演算では、メモリと速度が同時に桁で変わります。「発見ゼロ」が「未実行」でないことも、同じ日に台帳リング満杯で落ちた自分のテストを直しながら再確認しました。
+
+次の材質拡張（鏡・ガラスのレイトレーシング、CD の回折虹、薄膜干渉、ヘアライン）は着手前です。できたら改善過程ごと、この記事に足します。
 
 ## まとめ
 

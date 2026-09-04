@@ -26,7 +26,19 @@ This is the real shape model of asteroid **25143 Itokawa** — the Gaskell model
 First, one image. This is output from Fullseye's 3D renderer (hand-written numpy, of course) — an SDF-built shape baked with ambient occlusion, soft shadows, and ACES tone mapping:
 
 <!-- Post-publication check: the raw URL must return HTTP 200. Images are lightweight thumbnails that click through to full size (to keep the article's memory footprint down) -->
-[![Output from Fullseye's custom renderer (SDF smooth union + AO + soft shadows + ACES) — click for full size](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/render_beauty_hero_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/render_beauty_hero.png?v=2)
+[![Output from Fullseye's custom renderer: an SDF/CSG still life (gyroid lattice sphere, trefoil knot, gear; AO + soft shadows + ACES, SDF-gradient normals, vertex colours) — click for full size](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/render_beauty_hero_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/render_beauty_hero.png?v=3)
+
+**The picture itself is not the differentiator** (DirectX has done this for ages). The difference: the same scene returns **depth, normals, AO and shadow as numpy arrays, scored with ground truth by the same toolkit's ops** — a measuring instrument, not a game engine:
+
+![Measurement channels of the same scene: beauty / depth / normals / AO / shadow / sobel_mag on depth checked against the silhouette](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/hero_channels.png)
+
+(bottom-right: depth through `sobel_mag` is 21x stronger on the renderer's own silhouette than inside — the smallest closed loop of scoring an op against ground truth)
+
+Shoot the same scene under six light directions (`render_beauty`), recover normals with `photometric_stereo`, score them against the ground-truth normals — **capture, reconstruction and scoring are all Fullseye ops**:
+
+![Photometric-stereo closed loop: 6-light capture → photometric_stereo / robust → angular error against GT normals](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/hero_photometric_stereo.png)
+
+(plain least squares is biased 9° by attached shadows; the RANSAC version stays at 0.0x° even with cast shadows — numbers in the figure)
 
 **This one did not come out on the first try either.** Here is the improvement process as it happened:
 
@@ -60,7 +72,7 @@ This is a long article, so let me sort **which claims sit at which stage** befor
 
 | Tier | Status label | What it covers in this article |
 |---|---|---|
-| **Implemented & reproducible** | `Production-ready / Verified` | The 870 2-D + 344 3-D ops, type contracts and the unified interface, Studio, the PyPI release, 10,345 tests, the machine-tallied 981/2,313 HALCON mapping, and the real outputs behind every exhibit and demo |
+| **Implemented & reproducible** | `Production-ready / Verified` | The 877 2-D + 344 3-D ops, type contracts and the unified interface, Studio, the PyPI release, 10,345 tests, the machine-tallied 981/2,313 HALCON mapping, and the real outputs behind every exhibit and demo |
 | **Under validation** | `PoC / Research prototype` | Evolutionary pipeline design (hold-out evaluated, bounded settings), natural-language-to-pipeline via RAG, and the Physical AI perception stack (validated in simulation; real hardware and sim-to-real are untouched) |
 | **Future vision** | `Roadmap / Design proposal` | A comprehensive op foundation for robots, an AI autonomously selecting and running the ~1,000 ops, and a shared perception base for industrial inspection and Physical AI |
 
@@ -3997,6 +4009,23 @@ Here is what `pip install -U fullseye` gives you, listed by capability.
 | Designing pipelines by evolution | `robust.py --problem <name>` | locked holdout and spread, together |
 
 Per-family usage in detail (units, breaking conditions, comparisons against existing methods) lives in 24 guides under `docs/ops/<family>/guides/`. The test suite stands at **8,169 passing**.
+
+## What Grew Since 2026-09-02 — the Updated Big Picture
+
+Two days after the first version of this article (9/2) the overall picture has grown a lot. Operator counts moved from **2-D 870 → 877, 3-D 344** (measured from the registry), but what really grew are the *layers*. Just the essentials, with measured numbers:
+
+| What was added | Content | Measured |
+|---|---|---|
+| **Precision-union storage** `PrecisionUnion` | The array is tiled and each tile is stored at the smallest bit-depth its local range needs, {0,1,2,4,8,16} bits (real bit-packing). N-D, `save/load`. `apply`/`run_pipeline` accept it directly, and **ops that close union→union run lazily without decoding** (point affine, clip, threshold, the 4 set ops, max/min, 3 features) | label volume (64,128,128): **15.9x lossless**, float32 depth 3.9x, **378x on disk**. After threshold **616x**; set ops **~12x faster** than dense with results 400–1300x smaller. No win on natural photos (0.98x — reported, not hidden) |
+| **Exact geometric predicates** | orient2d/orient3d/incircle/insphere with Shewchuk's two-level adaptivity (float filter → exact `Fraction`). stdlib+numpy only | naive float gets the sign wrong on **~19%** of on-line points; adaptive matches the exact answer everywhere. Robust convex hull |
+| **Robust geometry queries** `geompred` | point-in-polygon/tetrahedron/polytope (3-valued in/on/out), Delaunay check, mesh orientation | naive winding disagrees on **8.64%** of near-edge points |
+| **Real anatomical hand** | 27 bone meshes from MyoSuite myo_sim (Apache-2.0) assembled from the MJCF tree in stdlib | matches MuJoCo forward kinematics to **6e-11 m**; finger lengths in anatomical order (the hand hero above) |
+| **Renderer hooks** | `vertex_normals=` (SDF-gradient normals), `vertex_albedo=` (vertex colours) | this article's hero and its making-of |
+| **Image audit** | 232 assets checked by size table, then by eye | three heroes re-rendered at 1280px, the hand replaced by real bones |
+
+One reading rule matters most: **operations that close union→union win.** An op that must decode into a dense array cannot beat numpy, but where most of the work is decided from headers (constant tiles, value ranges), memory and speed change by orders of magnitude at the same time. "Zero findings" is not "never executed" — a lesson re-learned the same day while fixing my own test that broke when the ledger ring filled up.
+
+The next material extensions (ray-traced mirrors and glass, CD-like diffraction rainbows, thin-film interference, brushed metal) are not started yet. When they land, they will be added here — making-of included.
 
 ## Summary
 

@@ -48,6 +48,11 @@
 - 小さいが「実態」の画像(後回し、改善=パイプライン再実行の重作業): evis 筋活性 480×360(動画フレーム)、bin-pick 680×480(MuJoCo フレーム)、evis stereo 960×268(SGM 出力のブロック状=アルゴリズム出力そのもの)、dragon anaglyph 640、turntable GIF 480(容量)。
 - 方針: **「正確」は実データの幾何で担保、レンダは SDF 勾配/頂点法線+1280px+SSAA。** 手続き形状の hero は差し替え候補(evis 700 筋モデルの骨格も同じ手で実骨格化できる)。
 
+## 2026-09-04 追加: hero 被写体の刷新 + 改善過程の公開 + 材質ロードマップ
+- 1 枚目 hero: 「ジャガイモ」(4 球 smooth union)→ **SDF/CSG 静物**(ジャイロイド格子球=鋼/三葉結び目=金/歯車=黒鉄、`still_life()`、`vertex_albedo=` 新設で物体別色)。ターンテーブル `tools/gen_still_life_turntable.py`。改善過程モンタージュ `tools/gen_hero_making_of.py`(素材 `tools/_making_of/`、ウ○コ注意書き入り)を記事に挿入。
+- **材質ロードマップ(ユーザー質問「鏡面・ガラス」「CD の虹色」「ヘアライン」)**: 現 `render_beauty` はラスタライザ=反射/屈折不可。① **numpy レイトレーサ**(`render_shadow._rays_hit_dir` の Möller–Trumbore を nearest-hit 化+BVH、鏡面反射・Fresnel・屈折・環境マップ) ② **回折格子 BRDF**(格子方程式 d(sinθi+sinθo)=mλ → λ→RGB(CIE 近似が未実装、要追加)、Stam 1999 簡略)③ **薄膜干渉** ④ **異方性 BRDF**(Ward/Ashikhmin、接線場=研磨方向)。順に op 化し hero を更新、改善過程に追記(ユーザーは過程の公開を好む)。
+- **記事と実装の開き**: 記事は 2026-09-02 時点の構成で、以後の precision_union(N-D/遅延 op)・geompred・anatomical_hand・材質は未反映。次: 章ごとに実装差分を洗い、画像素材を増やして整理(ユーザー指示)。
+
 ## 次にやること(優先順)
 1. ~~v0.1.5 タグ(PyPI 公開)~~ **完了(2026-09-03)**: PyPI に 0.1.5 公開済(wheel+sdist、latest=0.1.5)。公開前に liveness テスト 1 件(tb_running_gaussian_foreground が video 生成器で定数)を修正 = bridge に per-op tunable override を足し (k, var_init) を振る(公開 op 既定は不変)。※v0.1.4 は 3 日前に PyPI 400 で失敗しており PyPI 上は 0.1.3→0.1.5(同 license 形式で今回は成功 = 一過性)。
 2. ~~`FULLSEYE_FAST` 既定 ON の判断~~ **完了: OFF 維持**(上記)。
