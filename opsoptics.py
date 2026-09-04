@@ -302,6 +302,7 @@ _CATALOG = {
         ("light_wavelengths", "optscene", ["table"], "pairs"),
         ("vision_layout", "optscene", ["table", "table", "table"], "table"),
         ("layout_capture", "optscene", ["table"], "table"),
+        ("linescan_capture", "optscene", ["table", "table", "table"], "table"),
         ("interface_budget", "optscene", ["table"], "table"),
         ("optical_budget", "optscene", [], "table"),
         ("observe_surface", "optscene", [], "table"),

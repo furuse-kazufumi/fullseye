@@ -69,7 +69,7 @@ __all__ = [
     "trace_rays", "illumination_visibility",
     "surface_defect", "surface_finish", "random_defects", "render_optscene", "optscene_depth", "optscene_mask",
     "optscene_defect_mask", "optscene_instances", "sensor_catalog", "sensor_spec", "lens_spec", "light_spec", "light_wavelengths",
-    "vision_layout", "layout_capture", "interface_budget", "optical_budget", "observe_surface", "defocus_blur", "diffraction_blur", "airy_radius_um", "sensor_capture", "inspection_dataset",
+    "vision_layout", "layout_capture", "linescan_capture", "interface_budget", "optical_budget", "observe_surface", "defocus_blur", "diffraction_blur", "airy_radius_um", "sensor_capture", "inspection_dataset",
     "dataset_throughput", "env_studio", "env_lightbox", "render_studio",
 ]
 
@@ -246,8 +246,9 @@ def optical_camera(focal_mm: float = 25.0, pixel_um: float = 3.45,
     f = _pos(focal_mm, "focal_mm")
     px = _pos(pixel_um, "pixel_um") * 1e-3                      # µm → mm
     res = np.asarray(resolution, dtype=int)
-    if res.shape != (2,) or np.any(res < 2):
-        raise ValueError(f"resolution must be (width, height) >= 2, got {resolution!r}")
+    # 高さ 1 = ラインセンサ(linescan_capture が搬送しながら積む)
+    if res.shape != (2,) or res[0] < 2 or res[1] < 1:
+        raise ValueError(f"resolution must be (width >= 2, height >= 1), got {resolution!r}")
     wd = _pos(working_distance_mm, "working_distance_mm")
     tgt = _arr(look_at_mm, "look_at_mm", 3)
     tilt, az = np.radians(float(tilt_deg)), np.radians(float(azimuth_deg))
@@ -2376,11 +2377,110 @@ def layout_capture(layout: dict, exposure_ms: float = 10.0, supersample: int = 2
 #: 光学が「必要なコントラストで写るか」を決めるのに対し、ここは「落とさずに運べるか」。
 _INTERFACES = {
     "CXP-6": 6.25, "CXP-12": 12.5,           # CoaXPress(PoCXP で電源・制御・データを 1 本に)
-    "CameraLink-Base": 2.04, "CameraLink-Full": 6.8,
+    # Camera Link: 構成でビット幅が変わる(Base 24bit / Medium 48 / Full 64 / Deca 80、
+    # いずれも最大 85 MHz)。2026-09-05 に Full を 6.8 と誤記していたのを修正
+    # (6.8 は Deca の値。Full は 5.44)。
+    "CameraLink-Base": 2.04, "CameraLink-Medium": 4.08,
+    "CameraLink-Full": 5.44, "CameraLink-Deca": 6.80,
     "CameraLinkHS": 3.125,                    # 1 lane あたり
+    # Opt-C:Link(アバールデータ独自の光 I/F)。ノイズに強く数百 m 延ばせる。
+    # 1 ch 6.25 Gbps、2 ch 束ねて 12.5 Gbps。Camera Link カメラは変換ユニットで繋ぐ
+    "Opt-C:Link": 6.25,
     "GigE": 1.0, "5GigE": 5.0, "10GigE": 10.0, "25GigE": 25.0,
     "USB3": 5.0,
 }
+
+
+def linescan_capture(scene, camera, lights, velocity_mm_s: float = 100.0,
+                     line_rate_hz: float = 10000.0, lines: int = 512,
+                     tdi_stages: int = 1, sync_error: float = 0.0,
+                     scan_axis=(1.0, 0.0, 0.0), ambient: float = 0.0,
+                     depth: int = 1, light_samples: int = None) -> dict:
+    """**ラインスキャン / TDI** で撮る(搬送しながら 1 ラインずつ積む)。
+
+    エリアセンサの模型では表せない領域。``camera`` は高さ 1 のラインセンサ
+    (``sensor_spec(resolution=(N, 1))`` → :func:`vision_layout`)を想定するが、
+    高さ h のカメラを渡した場合は**先頭ラインだけ**を使う。
+
+    走査方向の画素実寸は **搬送速度 ÷ ラインレート** で決まる。横方向は光学倍率で
+    決まるので、この 2 つが合っていないと**画像の縦横比が崩れる** ―― 光学をいくら
+    詰めても直らない、ラインスキャン固有の故障モードである。
+
+    ``tdi_stages`` を 2 以上にすると TDI(時間遅延積分)。M 段で信号が M 倍になるが、
+    ``sync_error``(搬送とラインレートの相対誤差、0.01 = 1%)があると段ごとに位置が
+    ずれて**M 段ぶんボケる**。感度と同期精度のトレードオフがそのまま出る。
+
+    返り値 dict: ``image``(lines, width, 3 の放射輝度)/ ``depth_mm`` /
+    ``part_mask`` / ``defect_mask`` / ``pixel_mm_scan``(走査方向の画素実寸)/
+    ``pixel_mm_cross``(横方向)/ ``aspect``(縦横比。1.0 が正方画素)。
+    """
+    scene = _check_scene(scene)
+    lights = [lights] if isinstance(lights, dict) else list(lights)
+    if not lights:
+        raise ValueError("lights must contain at least one illumdesign.light_source() result")
+    v = _pos(velocity_mm_s, "velocity_mm_s")
+    lr = _pos(line_rate_hz, "line_rate_hz")
+    n_lines = int(lines)
+    if n_lines < 1:
+        raise ValueError(f"lines must be >= 1, got {lines!r}")
+    m = int(tdi_stages)
+    if m < 1:
+        raise ValueError(f"tdi_stages must be >= 1, got {tdi_stages!r}")
+    err = float(sync_error)
+    if not np.isfinite(err):
+        raise ValueError(f"sync_error must be finite, got {sync_error!r}")
+    axis = _unit(_arr(scan_axis, "scan_axis", 3)[None])[0]
+
+    step = v / lr                                        # 1 ライン進む距離 [mm]
+    W = camera["width"]
+    o0, d0 = camera_rays(camera)
+    o0, d0 = o0[:W], d0[:W]                              # 先頭ラインだけ使う
+
+    k = np.arange(n_lines, dtype=np.float64)[:, None]    # (L, 1)
+    acc = None
+    hit0 = None
+    for stage in range(m):
+        # TDI: 電荷が被写体と一緒に送られるので、**完全同期なら全段が同じ物点を見る**
+        # (段が 1 つ進むあいだに被写体も 1 ライン進むので相殺する)。ずれるのは
+        # 同期誤差のぶんだけ。2026-09-05 に (1 + err) と書いていて、誤差 0 でも
+        # 段数ぶん スメアが出ていた ―― 明るくなるだけのはずが 64 段で鮮鋭度 0.38 に
+        # 落ちており、TDI の利点が消えていた
+        shift = (k + stage * err) * step
+        org = (o0[None, :, :] + shift[..., None] * axis).reshape(-1, 3)
+        dirs = np.broadcast_to(d0[None, :, :], (n_lines, W, 3)).reshape(-1, 3)
+        hit = trace_rays(scene, org, dirs)
+        fp = (np.where(np.isfinite(hit["t"]), hit["t"], 0.0)
+              * camera["pixel_mm"] / camera["focal_mm"])
+        col = _shade(scene, hit, dirs, lights, float(ambient), int(depth), True, fp,
+                     light_samples)
+        bg = float(ambient) + _light_background(lights, org, dirs)
+        col = np.where((hit["index"] < 0)[..., None], bg[..., None], col)
+        acc = col if acc is None else acc + col
+        if stage == 0:
+            hit0 = (hit, org, dirs)
+    img = (acc / m).reshape(n_lines, W, 3)
+
+    hit, org, dirs = hit0
+    z = (hit["t"] * (dirs @ camera["forward"])).reshape(n_lines, W)
+    idx = hit["index"].reshape(n_lines, W)
+    defect = np.zeros((n_lines, W), bool)
+    for j, obj in enumerate(scene):
+        sel = hit["index"] == j
+        if not sel.any():
+            continue
+        if obj.get("is_defect"):
+            defect |= (idx == j)
+        elif obj.get("defect") is not None:
+            flat = np.zeros(n_lines * W, bool)
+            _mod, _tilt, lab = _defect_sample(obj, hit["point"][sel])
+            flat[np.nonzero(sel)[0]] = lab
+            defect |= flat.reshape(n_lines, W)
+    cross = camera["pixel_mm"] * camera["working_distance_mm"] / camera["focal_mm"]
+    return {"image": img, "depth_mm": np.where(idx >= 0, z, np.nan),
+            "part_mask": idx == 0, "defect_mask": defect,
+            "pixel_mm_scan": step, "pixel_mm_cross": cross,
+            "aspect": step / max(cross, 1e-12),
+            "tdi_stages": m, "sync_error": err}
 
 
 def interface_budget(sensor: dict, interface: str = "CXP-12", links: int = 4,

@@ -3,13 +3,14 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-05 04:05:49
+- **最終更新**: 2026-09-05 04:10:43
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+b87de7144 feat(optscene): 伝送帯域の律速を計算する interface_budget + ラインセンサ対応
 a05b9e533 feat(optscene): センサカタログを 5 メーカー 38 型へ拡張(onsemi / Gpixel / ams / e2v)
 138548a39 feat(optscene): センサカタログを EMVA1288 実測で作り直す(手入力の解像度 4 件が誤り)
 6ba6c722a feat(optscene): 光学系を物理空間に組んで、外観検査 AI の学習画像を真値つきで生成する
@@ -19,7 +20,6 @@ a0d012609 auto: gen_hero_metals.py 編集前 (2026-09-05 01:48)
 76cd966cd feat(article): relighting from recovered normals — move the light with photometric-stereo output alone
 cad1675ff auto: CHANGELOG.md 編集前 (2026-09-04 18:09)
 b351f53c0 chore(article): photometric-stereo panel with non-overlapping captions
-d13e24397 feat(render+article): SDF/CSG still-life hero, vertex_albedo, differentiation panels, making-of, big-picture chapter
 ```
 
 ## 現在の git status
@@ -31,14 +31,14 @@ d13e24397 feat(render+article): SDF/CSG still-life hero, vertex_albedo, differen
 ## 直近 2 時間に変更されたファイル
 
 ```
-04:05 .pytest_cache/v/cache/nodeids
-04:04 optscene.py
-04:03 docs/SESSION_SUMMARY.md
-03:53 .pytest_cache/v/cache/lastfailed
-03:53 tests/test_optics.py
-03:53 tests/test_opdocs.py
+04:10 .pytest_cache/v/cache/nodeids
+04:10 .pytest_cache/v/cache/lastfailed
+04:09 tests/test_optics.py
+04:09 tests/test_opdocs.py
+04:09 optscene.py
+04:09 opsoptics.py
+04:05 docs/SESSION_SUMMARY.md
 03:53 examples/virtual_machine_vision.py
-03:53 opsoptics.py
 03:34 docs/ops/optics/guides/virtual_machine_vision.md
 03:25 docs/articles/assets/inspection_gallery.png
 03:01 tests/test_optscene.py
