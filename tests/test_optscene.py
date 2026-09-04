@@ -687,3 +687,24 @@ def test_catalogs_filter_by_maker_and_unknown_models_are_refused():
         OS.lens_spec(model="NOT-A-LENS")
     with pytest.raises(ValueError, match="unknown sensor model"):
         OS.sensor_spec(model="IMX9999")
+
+
+def test_lighting_identity_needs_the_maker_because_of_oem_relabelling():
+    """照明は OEM 供給が多く、同じ型番が別ブランドで出る。型番だけでは一意にならない。"""
+    a = OS.register_light("TestBrandA", "XX-100", kind="ring", radius_mm=45.0,
+                          height_mm=60.0, size_mm=20.0)
+    b = OS.register_light("TestBrandB", "XX-100", kind="ring", radius_mm=45.0,
+                          height_mm=60.0, size_mm=20.0, oem_of=a)
+    assert OS.light_catalog()[b]["oem_of"] == a          # 来歴が辿れる
+    with pytest.raises(ValueError, match="ambiguous across makers"):
+        OS.light_spec(model="XX-100")
+    assert OS.light_spec(model="XX-100", maker="TestBrandA")["model"] == a
+    with pytest.raises(ValueError, match="both maker and model are required"):
+        OS.register_light("", "XX-100")
+
+
+def test_light_catalog_ships_no_invented_vendor_specs():
+    """既定は一般形状のみ。配光・波長・実体寸法はデータシートにしかないので捏造しない。"""
+    assert all(v["maker"] == "generic" for k, v in OS.light_catalog().items()
+               if not k.startswith("TestBrand") and not k.startswith("CCS")
+               and not k.startswith("OtherBrand"))

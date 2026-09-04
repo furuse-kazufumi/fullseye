@@ -680,10 +680,10 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     assert opsoptics.missing() == []
     # optics 18 + raytrace "design" 15 + lensimage "imaging_sim" 5 + lensopt "optimization" 3
     # + illumdesign "illumination" 6
-    # 2026-09-05: optscene "scene" 39 op を追加(80 → 119)。物理空間にシーンを組んで
+    # 2026-09-05: optscene "scene" 44 op を追加(80 → 124)。物理空間にシーンを組んで
     # 撮る層で、これで「レンダラを持てないので画像でなく限界を返す」線引きが外れた。
     # センサー/レンズ/光源/レイアウトの 4 オブジェクトもここに入る。
-    assert len(opsoptics.OPSOPTICS) == 119
+    assert len(opsoptics.OPSOPTICS) == 124
     # 2026-09-04: 見え方の 5 族(33 op)を追加 —— matappear "appearance" 7 /
     # glassmirror "interface" 4・"mirror" 2・"glassbody" 4 / metalfinish "finish" 5 /
     # surfacelib "material" 6・"surface" 5。下の module 検査と同じ形で実装元も固定する。
@@ -691,7 +691,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
         "appearance", "design", "finish", "geometric", "glassbody", "illumination",
         "imaging", "imaging_sim", "interface", "material", "mirror", "optimization",
         "polarization", "scene", "surface", "wave"]
-    assert len(opsoptics.list_ops("scene")) == 39
+    assert len(opsoptics.list_ops("scene")) == 44
     # 同名 op は後勝ちで静かに上書きされる。2026-09-05 に optscene.depth_of_field が
     # optics.depth_of_field(被写界深度の数値)を潰していたのを取り逃していたので、
     # 台帳の定義そのものを突き合わせて機械で禁じる。

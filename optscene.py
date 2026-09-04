@@ -69,7 +69,7 @@ __all__ = [
     "trace_rays", "illumination_visibility",
     "surface_defect", "surface_finish", "random_defects", "render_optscene", "optscene_depth", "optscene_mask",
     "optscene_defect_mask", "optscene_instances", "sensor_catalog", "sensor_spec", "lens_catalog", "sensor_diagonal_mm",
-    "covers_sensor", "lens_spec", "light_spec", "light_wavelengths",
+    "covers_sensor", "lens_spec", "light_spec", "light_catalog", "register_light", "light_wavelengths",
     "vision_layout", "layout_capture", "linescan_capture", "interface_budget", "optical_budget", "observe_surface", "defocus_blur", "diffraction_blur", "airy_radius_um", "sensor_capture", "inspection_dataset",
     "dataset_throughput", "env_studio", "env_lightbox", "render_studio",
 ]
@@ -2398,11 +2398,78 @@ def lens_spec(focal_mm: float = 25.0, f_number: float = None, na: float = None,
                                 else _pos(image_circle_mm, "image_circle_mm"))}
 
 
+#: 照明のカタログ。**鍵は「メーカー 型番」**。照明は OEM 供給が多く、同じ実体が
+#: 別ブランドで売られる(型番までよく似る)ので、型番だけでは一意にならない
+#: (2026-09-05 のユーザー指摘)。``oem_of`` に元の型番を書けば来歴を辿れる。
+#:
+#: 既定では**一般形状のみ**を持ち、ベンダ型番は入れていない ―― 実機の配光・波長・
+#: 実体寸法はデータシートにしかなく、推測で埋めると「実測です」と誤解させるため。
+#: 手元の機種は :func:`register_light` で足す(強い国内メーカーは CCS など)。
+_LIGHT_CATALOG = {
+    # 鍵:                     (kind, 半径mm, 高さmm, 実体寸法mm, 種別, 波長nm, 帯域nm, oem_of)
+    "generic ring-70": ("ring", 70.0, 90.0, 25.0, "led", 630.0, 25.0, None),
+    "generic ring-lowangle": ("ring", 95.0, 20.0, 25.0, "led", 630.0, 25.0, None),
+    "generic dome-80": ("dome", 80.0, 70.0, 60.0, "led", 630.0, 25.0, None),
+    "generic bar-100": ("bar", 60.0, 120.0, 30.0, "led", 630.0, 25.0, None),
+    "generic coaxial-70": ("coaxial", 70.0, 140.0, 25.0, "led", 630.0, 25.0, None),
+    "generic backlight-40": ("backlight", 40.0, 60.0, 60.0, "led", 630.0, 25.0, None),
+    "generic halogen-fiber": ("ring", 60.0, 90.0, 20.0, "halogen", 600.0, 300.0, None),
+    "generic laser-line": ("bar", 40.0, 150.0, 2.0, "laser", 660.0, 0.0, None),
+}
+
+
+def light_catalog(maker: str = None, kind: str = None) -> dict:
+    """照明の諸元表(鍵は「メーカー 型番」)。``maker`` / ``kind`` で絞れる。
+
+    照明は **OEM 供給が多く、同じ実体が別ブランドで売られる**ので、型番だけでは
+    一意にならない。``oem_of`` にたどれる元があれば入る。
+
+    既定は一般形状だけで、ベンダ型番は入っていない ―― 配光・波長・実体寸法は
+    データシートにしかなく、推測で埋めると実測と誤解させるため。手元の機種は
+    :func:`register_light` で足す。
+    """
+    out = {}
+    for name, (k, r, h, sz, src, lam, bw, oem) in _LIGHT_CATALOG.items():
+        mk = name.split(" ", 1)[0]
+        if maker is not None and mk.lower() != maker.lower():
+            continue
+        if kind is not None and k != kind:
+            continue
+        out[name] = {"maker": mk, "model": name.split(" ", 1)[1], "kind": k,
+                     "radius_mm": r, "height_mm": h, "size_mm": sz, "source": src,
+                     "wavelength_nm": lam, "bandwidth_nm": bw, "oem_of": oem}
+    return out
+
+
+def register_light(maker: str, model: str, kind: str = "ring", radius_mm: float = 60.0,
+                   height_mm: float = 100.0, size_mm: float = 25.0, source: str = "led",
+                   wavelength_nm: float = 630.0, bandwidth_nm: float = 25.0,
+                   oem_of: str = None) -> str:
+    """手元の照明をカタログに登録する(データシートの値をそのまま入れる)。
+
+    ``oem_of`` に元の「メーカー 型番」を書いておくと、OEM で名前が違うだけの同一品を
+    後から突き合わせられる。返り値は登録した鍵(「メーカー 型番」)。
+    """
+    if not maker or not model:
+        raise ValueError("both maker and model are required (lighting is often OEM-relabelled, "
+                         "so the model number alone does not identify the unit)")
+    if kind not in ("ring", "dome", "bar", "coaxial", "backlight"):
+        raise ValueError(f"kind must be ring/dome/bar/coaxial/backlight, got {kind!r}")
+    if source not in _SOURCE_KINDS:
+        raise ValueError(f"source must be one of {_SOURCE_KINDS}, got {source!r}")
+    key = f"{maker} {model}"
+    _LIGHT_CATALOG[key] = (kind, _pos(radius_mm, "radius_mm"), _pos(height_mm, "height_mm"),
+                           _pos(size_mm, "size_mm"), source, _pos(wavelength_nm, "wavelength_nm"),
+                           float(bandwidth_nm), oem_of)
+    return key
+
+
 def light_spec(kind: str = "coaxial", source: str = "led",
                wavelength_nm: float = 550.0, bandwidth_nm: float = 30.0,
                radius_mm: float = 40.0, height_mm: float = 110.0,
                size_mm: float = None, n: int = 196, intensity: float = 1.0,
-               cos_exponent: float = 1.0, polarization: str = None) -> dict:
+               cos_exponent: float = 1.0, polarization: str = None,
+               model: str = None, maker: str = None) -> dict:
     """照明の諸元。**幾何は illumdesign.light_source に委ね、光の性質をここで足す**。
 
     ``kind`` は coaxial / ring / dome / bar / backlight(器具の形)。
@@ -2415,6 +2482,28 @@ def light_spec(kind: str = "coaxial", source: str = "led",
     本体なので、点近似のままだと暗視野が原理的に成立しない。省くと ``radius_mm``
     の半分を使う。
     """
+    if model is not None:
+        cat = light_catalog()
+        key = model if model in cat else None
+        if key is None:
+            hits = [k for k, v in cat.items()
+                    if v["model"].lower() == model.lower()
+                    and (maker is None or v["maker"].lower() == maker.lower())]
+            if len(hits) > 1:
+                raise ValueError(f"light model {model!r} is ambiguous across makers "
+                                 f"{sorted({cat[h]['maker'] for h in hits})}; pass maker= "
+                                 "or use the full 'Maker Model' key (lighting is often "
+                                 "OEM-relabelled)")
+            if not hits:
+                raise ValueError(f"unknown light model {model!r}; choose from {sorted(cat)} "
+                                 "or register it with register_light()")
+            key = hits[0]
+        c = cat[key]
+        kind, source = c["kind"], c["source"]
+        radius_mm, height_mm = c["radius_mm"], c["height_mm"]
+        wavelength_nm, bandwidth_nm = c["wavelength_nm"], c["bandwidth_nm"]
+        size_mm = c["size_mm"] if size_mm is None else size_mm
+        model, maker = key, c["maker"]
     if source not in _SOURCE_KINDS:
         raise ValueError(f"source must be one of {_SOURCE_KINDS}, got {source!r}")
     bw = float(bandwidth_nm)
@@ -2428,7 +2517,8 @@ def light_spec(kind: str = "coaxial", source: str = "led",
                            intensity=float(intensity), cos_exponent=float(cos_exponent))
     geo["size_mm"] = float(size_mm) if size_mm is not None else float(radius_mm) * 0.5
     geo.update(source=source, wavelength_nm=float(wavelength_nm), bandwidth_nm=bw,
-               coherent=source == "laser", polarization=polarization)
+               coherent=source == "laser", polarization=polarization,
+               model=model, maker=maker)
     return geo
 
 

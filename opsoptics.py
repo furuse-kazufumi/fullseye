@@ -301,6 +301,8 @@ _CATALOG = {
         ("sensor_diagonal_mm", "optscene", ["table"], "measurement"),
         ("covers_sensor", "optscene", ["table", "table"], "table"),
         ("lens_spec", "optscene", [], "table"),
+        ("light_catalog", "optscene", [], "table"),
+        ("register_light", "optscene", [], "table"),
         ("light_spec", "optscene", [], "table"),
         ("light_wavelengths", "optscene", ["table"], "pairs"),
         ("vision_layout", "optscene", ["table", "table", "table"], "table"),
