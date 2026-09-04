@@ -167,6 +167,71 @@ def sculpture(res: int = 48, with_normals: bool = False):
                      res=res, k=0.42, with_normals=with_normals)
 
 
+# ── hero 被写体(2026-09-04 改訂): SDF/CSG で作った 3 つの物体の静物 ──────────────
+#   旧 hero(4 球の smooth union)は「茶色い滑らかな塊」で、SDF・AO・ソフトシャドウ・ACES の
+#   どれも伝わらなかった(ユーザー評: ジャガイモ)。物体ごとに違う SDF 技法と材質を持たせる:
+#   ジャイロイド格子球(陰関数曲面 ∩ 球、空洞だらけ=AO が効く、鋼)/三葉結び目(曲線への
+#   距離場、張り出し=ソフトシャドウ、金)/歯車(CSG 和差、黒鉄)。法線は全て SDF 勾配。
+def knot_sdf(coords, R=1.0, r=0.26, n=2400):
+    """三葉結び目 (2+cos3t)(cos2t, sin2t), sin3t の周りの管。曲線への最近距離 − r。"""
+    from scipy.spatial import cKDTree
+    t = np.linspace(0.0, 2.0 * np.pi, n, endpoint=False)
+    P = np.stack([(2 + np.cos(3 * t)) * np.cos(2 * t), (2 + np.cos(3 * t)) * np.sin(2 * t),
+                  np.sin(3 * t)], axis=1) * (R / 3.0)
+    d = cKDTree(P).query(coords.reshape(-1, 3), k=1)[0].reshape(coords.shape[:-1])
+    return d - r
+
+
+def gyroid_sphere_sdf(coords, R=1.0, period=0.55, thickness=0.045):
+    """ジャイロイド陰関数 sin x cos y + sin y cos z + sin z cos x の等値面を厚み付きシェルにし
+    球で切り出す。|g|/k は等値面までの近似距離(勾配 ≈ k)。"""
+    k = 2.0 * np.pi / period
+    x, y, z = (coords[..., i] * k for i in range(3))
+    g = np.sin(x) * np.cos(y) + np.sin(y) * np.cos(z) + np.sin(z) * np.cos(x)
+    shell = np.abs(g) / k - thickness
+    return np.maximum(shell, np.linalg.norm(coords, axis=-1) - R)
+
+
+def gear_sdf(coords, n_teeth=14, r_disc=0.35, r_c=0.42, hr=0.11, hz=0.06, bore=0.13):
+    """平歯車の CSG: (球 ∩ z スラブ)∪ N 本の半径方向の箱 − 軸穴。"""
+    disc = sdf_ops.sdf_intersect(sdf_ops.sphere_sdf(coords, (0, 0, 0), r_disc),
+                                 sdf_ops.box_sdf(coords, (0, 0, 0), (2.0, 2.0, hz)))
+    sdf = disc
+    tw = np.pi * (r_c + 0.02) / (2.0 * n_teeth)
+    for kk in range(n_teeth):
+        th = 2.0 * np.pi * kk / n_teeth
+        ct, st = np.cos(th), np.sin(th)
+        rc = np.stack([ct * coords[..., 0] + st * coords[..., 1],
+                       -st * coords[..., 0] + ct * coords[..., 1], coords[..., 2]], axis=-1)
+        sdf = sdf_ops.sdf_union(sdf, sdf_ops.box_sdf(rc, (r_c, 0.0, 0.0), (hr, tw, hz)))
+    return np.maximum(sdf, -sdf_ops.sphere_sdf(coords, (0, 0, 0), bore))
+
+
+def _sdf_mesh(sdf_fn, bounds, res):
+    coords, ext = grid_coords(bounds, res)
+    vol = sdf_fn(coords)
+    V_idx, F = render3d.marching_cubes(vol, 0.0)
+    V = _mc_to_world(V_idx, vol.shape, ext)
+    return V, _orient_outward(V, F), sdf_vertex_normals(vol, V_idx, ext)
+
+
+def still_life(res_scale: float = 1.0):
+    """hero 被写体: (V, F, N, albedo(N,3)) — 格子球(鋼)・結び目(金)・歯車(黒鉄)を地面に配置。"""
+    parts = [
+        (gyroid_sphere_sdf, ((-1.1, 1.1),) * 3, int(110 * res_scale), 0.9, (-0.9, 0.9), (0.80, 0.82, 0.86)),
+        (knot_sdf, ((-1.4, 1.4), (-1.4, 1.4), (-0.6, 0.6)), int(96 * res_scale), 0.75, (0.9, -0.3), (1.00, 0.80, 0.40)),
+        (gear_sdf, ((-0.6, 0.6), (-0.6, 0.6), (-0.12, 0.12)), int(100 * res_scale), 1.6, (-0.8, -1.0), (0.33, 0.34, 0.38)),
+    ]
+    Vs, Fs, Ns, As, off = [], [], [], [], 0
+    for fn, bounds, res, scale, xy, rgb in parts:
+        V, F, N = _sdf_mesh(fn, bounds, res)
+        V = V * scale
+        V[:, :2] += np.asarray(xy)
+        V[:, 2] -= V[:, 2].min()                       # 各物体を地面に置く
+        Vs.append(V); Fs.append(F + off); Ns.append(N); As.append(np.tile(rgb, (len(V), 1))); off += len(V)
+    return np.vstack(Vs), np.vstack(Fs), np.vstack(Ns), np.vstack(As)
+
+
 def sit_on_ground(V: np.ndarray) -> np.ndarray:
     """メッシュを最下点が z=0 に来るよう平行移動(地面に載せる)。"""
     V = V.copy()
