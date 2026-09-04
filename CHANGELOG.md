@@ -15,6 +15,10 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
   付着影で 9° 偏り、点灯光源のみ/RANSAC で 0.00x°)(c) **改善の過程モンタージュ**(`tools/gen_hero_making_of.py`、
   素材 `tools/_making_of/`)(d) ターンテーブル(`tools/gen_still_life_turntable.py`)(e) 「2026-09-04 の拡張」章
   (op 数 2D 877/3D 344、新層の表)を追加。テスト +3(vertex_albedo)。
+  (f) **復元法線からの再照明 GIF**(`tools/gen_hero_relight.py`): 6 灯撮影 → `photometric_stereo_robust`
+  で法線+アルベド復元 → `render_lambertian` で光を一周(左=復元のみ / 右=真値法線)。有限画素の
+  中央値角度誤差 **0.000°**、RANSAC が inlier 不足で未定にした 3763/21461 画素は `(0,0,1)` を明示的に
+  詰める(嘘の形を作らない)。`integrate_normals` で高さ場も確認。
 
 - **実解剖骨メッシュから手骨格を組み立てる例 `examples_3d/anatomical_hand.py`(ユーザー指摘「手骨も
   今となっては粗い」)**: 記事の手骨 hero は手続きカプセル SDF で実物と並べると粗かった。「正確な骨格」
