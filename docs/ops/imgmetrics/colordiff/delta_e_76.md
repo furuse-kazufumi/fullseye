@@ -22,6 +22,14 @@ CIE76 色差 ―― Lab 空間のユークリッド距離。
 単純だが**知覚と合わない**(特に彩度の高い青)ので、比較の基準としてのみ
 置いてある。実用は :func:`delta_e_2000`。
 
+## 詳しい使い方ガイド
+
+- [image_difference_metrics ファミリ ガイド](../guides/image_difference_metrics.md)
+
+## 背景知識ガイド(この op の手前にある物理・規約)
+
+- [colorimetry](../../2d/guides/colorimetry.md) — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

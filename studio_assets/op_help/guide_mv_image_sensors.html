@@ -1,0 +1,136 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p>&lt;!-- fullseye guide: 機械視覚の周辺知識。op ではなく、op に渡す値の</p>
+<p>出どころを示す教材。関連 op: sensor_spec / sensor_catalog / optical_budget --&gt;</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">産業用イメージセンサ（現行品中心）</h2>
+<p>カメラは、ピクセルシフトや TDI を使わない限り<b>ほぼイメージセンサでスペックが決まる</b>。</p>
+<p>接続インターフェース（USB3 Vision / GigE Vision / CoaXPress / 10GigE）が変えるのは</p>
+<p>主にフレームレートと ROI の制約であって、画質そのものではない。したがって仮想化で</p>
+<p>与えるべきパラメータは、カメラ型番ではなく<b>センサの諸元</b>である。</p>
+<p>出典: Basler「CMOS sensor selection」（世代・画素・解像度・シャッタ・フレームレート）。</p>
+<p>飽和容量・読み出し雑音・QE の実数は Basler 等の <b>EMVA1288 レポート</b>か Sony の</p>
+<p>データシートにしか無く、一般公開ページには載らない（下表で「非公開」と明記する）。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">メーカー</h3>
+<p>イメージセンサを作るメーカーは多くない。産業用で実際に選択肢になるのは:</p>
+<p>| メーカー | 産業用ライン | 位置づけ |</p>
+<p>| --- | --- | --- |</p>
+<p>| Sony Semiconductor | Pregius / Pregius S / STARVIS 2 | 事実上の標準。グローバルシャッタの主流 |</p>
+<p>| onsemi | XGS / PYTHON | 大判・高速。XGS は 3.2 µm 世代 |</p>
+<p>| Gpixel | GMAX / GSPRINT / GSENSE | 高解像度・高速。中判以上で強い |</p>
+<p>| Teledyne e2v | Emerald / Sapphire | 低ノイズ・高感度。宇宙/科学寄りも |</p>
+<p>| OmniVision | OG / OS 系 | 車載・組込寄り |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">産業用センサ 38 型 — EMVA1288 実測つき（5 メーカー横並び）</h3>
+<p>出典は Basler のカメラ実測表なので、<b>ここに載っているのはカメラ側の値</b>である。</p>
+<p style="margin:2px 0 2px 12px">• <b>解像度</b>はそのカメラが出す画素数。メーカーは端を切って**センサ全有効画素より</p>
+<p>少し低く**することがあるので、センサ単体の仕様とは一致しないことがある。</p>
+<p style="margin:2px 0 2px 12px">• <b>フレームレート</b>は接続インターフェース（USB3 Vision / GigE / 5GigE / CXP-12）で</p>
+<p>変わる。センサの属性ではないので、この表には入れない。</p>
+<p style="margin:2px 0 2px 12px">• <b>QE / ダークノイズ / 飽和容量 / ダイナミックレンジ</b>は EMVA1288 実測（ace /</p>
+<p>ace 2 / boost）で、実装込みの値。別のカメラなら少し変わる。</p>
+<p style="margin:2px 0 2px 12px">• <b>画素ピッチ・シャッタ方式・世代</b>はセンサ由来なので、カメラが変わっても動かない。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Sony</h3>
+<p>| 型番 | 系列 | 解像度 | 画素 [µm] | シャッタ | QE | 雑音 [e-] | 飽和 [ke-] | DR [dB] | 状態 |</p>
+<p>| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |</p>
+<p>| IMX530 | Pregius S 4th | 24.6 MP / 5328×4608 | 2.74 | global | 66% | 2 | 9.6 | 71 | current |</p>
+<p>| IMX540 | Pregius S 4th | 24.6 MP / 5328×4608 | 2.74 | global | 66% | 2 | 9.7 | 71 | current |</p>
+<p>| IMX541 | Pregius S 4th | 20.3 MP / 4504×4504 | 2.74 | global | 66% | 2 | 9.7 | 71 | current |</p>
+<p>| IMX183 | STARVIS | 20.0 MP / 5472×3648 | 2.40 | rolling | 75% | 3 | 13.8 | 71 | mature |</p>
+<p>| IMX542 | Pregius S 4th | 16.1 MP / 5320×3032 | 2.74 | global | 66% | 2 | 9.7 | 71 | current |</p>
+<p>| IMX304 | Pregius 2nd | 12.3 MP / 4096×3000 | 3.45 | global | 69% | 2 | 10.2 | 73 | mature |</p>
+<p>| IMX545 | Pregius S 4th | 12.3 MP / 4096×3000 | 2.74 | global | 67% | 3 | 9.9 | 70 | current |</p>
+<p>| IMX226 | STARVIS | 12.2 MP / 4024×3036 | 1.85 | rolling | 83% | 3 | 11.0 | 70 | mature |</p>
+<p>| IMX267 | Pregius 2nd | 8.8 MP / 4096×2160 | 3.45 | global | 69% | 2 | 10.2 | 73 | mature |</p>
+<p>| IMX546 | Pregius S 4th | 8.1 MP / 2840×2840 | 2.74 | global | 66% | 2 | 9.8 | 70 | current |</p>
+<p>| IMX178 | STARVIS | 6.4 MP / 3088×2064 | 2.40 | rolling | 81% | 3 | 14.3 | 73 | mature |</p>
+<p>| IMX264 | Pregius 2nd | 5.0 MP / 2448×2048 | 3.45 | global | 68% | 2 | 10.4 | 73 | mature |</p>
+<p>| IMX252 | Pregius 2nd | 3.1 MP / 2048×1536 | 3.45 | global | 69% | 2 | 10.5 | 73 | mature |</p>
+<p>| IMX265 | Pregius 2nd | 3.1 MP / 2048×1536 | 3.45 | global | 68% | 2 | 10.5 | 73 | mature |</p>
+<p>| IMX174 | Pregius 1st | 2.3 MP / 1920×1200 | 5.86 | global | 70% | 7 | 31.8 | 74 | legacy |</p>
+<p>| IMX249 | Pregius 1st | 2.3 MP / 1920×1200 | 5.86 | global | 70% | 7 | 31.9 | 74 | legacy |</p>
+<p>| IMX392 | Pregius 2nd | 2.3 MP / 1920×1200 | 3.45 | global | 62% | 3 | 10.5 | 72 | mature |</p>
+<p>| IMX273 | Pregius 2nd | 1.6 MP / 1440×1080 | 3.45 | global | 63% | 3 | 10.5 | 71 | mature |</p>
+<p>| IMX287 | Pregius 2nd | 0.4 MP / 720×540 | 6.90 | global | 63% | 7 | 21.0 | 74 | mature |</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">onsemi</h3>
+<p>| 型番 | 系列 | 解像度 | 画素 [µm] | シャッタ | QE | 雑音 [e-] | 飽和 [ke-] | DR [dB] | 状態 |</p>
+<p>| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |</p>
+<p>| XGS 45000 | onsemi XGS | 44.7 MP / 8192×5460 | 3.20 | global | 55% | 5 | 9.0 | 65 | current |</p>
+<p>| XGS 32000 | onsemi XGS | 32.5 MP / 6580×4935 | 3.20 | global | 56% | 4 | 9.3 | 66 | current |</p>
+<p>| XGS 20000 | onsemi XGS | 20.2 MP / 4500×4500 | 3.20 | global | 55% | 4 | 9.2 | 66 | current |</p>
+<p>| MT9J003 | onsemi | 10.6 MP / 3840×2748 | 1.67 | rolling | 46% | 6 | 2.8 | 54 | legacy |</p>
+<p>| PYTHON 5000 | onsemi PYTHON | 5.3 MP / 2590×2048 | 4.80 | global | 55% | 12 | 8.2 | 57 | mature |</p>
+<p>| PYTHON 2000 | onsemi PYTHON | 2.3 MP / 1920×1200 | 4.80 | global | 54% | 11 | 7.8 | 57 | mature |</p>
+<p>| PYTHON 1300 | onsemi PYTHON | 1.3 MP / 1280×1024 | 4.80 | global | 53% | 11 | 6.9 | 56 | mature |</p>
+<p>| PYTHON 500 | onsemi PYTHON | 0.5 MP / 800×600 | 4.80 | global | 54% | 11 | 7.8 | 57 | mature |</p>
+<p>| PYTHON 300 | onsemi PYTHON | 0.3 MP / 640×480 | 4.80 | global | 52% | 11 | 7.1 | 57 | mature |</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Gpixel</h3>
+<p>| 型番 | 系列 | 解像度 | 画素 [µm] | シャッタ | QE | 雑音 [e-] | 飽和 [ke-] | DR [dB] | 状態 |</p>
+<p>| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |</p>
+<p>| GMAX3265 | Gpixel GMAX | 65.4 MP / 9344×7000 | 3.20 | global | 52% | 8 | 10.4 | 61 | current |</p>
+<p>| GMAX0505 | Gpixel GMAX | 26.2 MP / 5120×5120 | 2.50 | global | 51% | 4 | 4.3 | 60 | current |</p>
+<p>| GMAX2518 | Gpixel GMAX | 18.5 MP / 4508×4096 | 2.50 | global | 56% | 3 | 6.7 | 66 | current |</p>
+<p>| GMAX2509 | Gpixel GMAX | 9.1 MP / 4200×2160 | 2.50 | global | 53% | 1 | 4.6 | 69 | current |</p>
+<p>| GMAX2505 | Gpixel GMAX | 5.6 MP / 2600×2160 | 2.50 | global | 53% | 1 | 4.8 | 70 | current |</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">ams</h3>
+<p>| 型番 | 系列 | 解像度 | 画素 [µm] | シャッタ | QE | 雑音 [e-] | 飽和 [ke-] | DR [dB] | 状態 |</p>
+<p>| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |</p>
+<p>| CMV12000 | ams CMV | 12.6 MP / 4096×3072 | 5.50 | global | 45% | 14 | 11.6 | 59 | mature |</p>
+<p>| CMV4000 | ams CMV | 4.2 MP / 2048×2048 | 5.50 | global | 62% | 14 | 11.9 | 59 | mature |</p>
+<p>| CMV2000 | ams CMV | 2.2 MP / 2048×1088 | 5.50 | global | 63% | 14 | 9.3 | 57 | mature |</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Teledyne</h3>
+<p>| 型番 | 系列 | 解像度 | 画素 [µm] | シャッタ | QE | 雑音 [e-] | 飽和 [ke-] | DR [dB] | 状態 |</p>
+<p>| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |</p>
+<p>| EV76C570 | Teledyne e2v | 1.9 MP / 1602×1202 | 4.50 | switchable | 47% | 22 | 6.8 | 50 | legacy |</p>
+<p>| EV76C661 | Teledyne e2v NIR | 1.3 MP / 1280×1024 | 5.30 | switchable | 59% | 23 | 7.4 | 50 | legacy |</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">メーカーごとの立ち位置（同じ測定法で比べた結果）</h3>
+<p style="margin:2px 0 2px 12px">• <b>Sony Pregius / Pregius S</b> — バランスの基準。QE 62-70%、雑音 2-3 e-、飽和 9.6-10.5 ke-。</p>
+<p>1st（5.86 µm）だけ飽和 31.8 ke- と別格で、ダイナミックレンジ重視なら今も候補。</p>
+<p style="margin:2px 0 2px 12px">• <b>onsemi XGS</b>（3.2 µm）— <b>APS-C / 35 mm の大判</b>が本領。44.7 MP（8192×5460）まであり、</p>
+<p>この判は Sony に無い。QE 55-57%、雑音 4-5 e-。</p>
+<p style="margin:2px 0 2px 12px">• <b>onsemi PYTHON</b>（4.8 µm）— 小型・高速。ただし<b>雑音 11-12 e- は Pregius の 5 倍</b>で、</p>
+<p>暗い場面・暗視野では効いてくる。DR も 56-57 dB と低め。</p>
+<p style="margin:2px 0 2px 12px">• <b>Gpixel GMAX</b>（2.5 µm）— <b>雑音 1 e- 級</b>（GMAX2505 / 2509）が売り。飽和は 4-5 ke- と</p>
+<p>小さいので DR は 69-70 dB で Sony とほぼ同等になる。**65 MP（9344×7000）の</p>
+<p>GMAX3265** は超高解像度の選択肢がここしかない。</p>
+<p style="margin:2px 0 2px 12px">• <b>ams CMV</b>（5.5 µm、旧 CMOSIS）— 飽和 9-12 ke- だが<b>雑音 14 e-</b>。DR 57-59 dB。</p>
+<p style="margin:2px 0 2px 12px">• <b>Teledyne e2v EV76</b>（切替シャッタ）— 雑音 22-23 e-、DR 50 dB。NIR 強化版がある。</p>
+<p><b>選び方の含意</b>: 「画素が小さい＝不利」ではない。GMAX2505（2.5 µm・雑音 1 e-）は</p>
+<p>DR 70 dB で Pregius S（2.74 µm・雑音 2 e-・71 dB）と並ぶ。効くのは**画素サイズ単体</p>
+<p>ではなく飽和容量と雑音の比**で、暗視野のように信号が小さい用途では雑音が支配する。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">自社でセンサを作っているカメラメーカー（型番から引けない）</h3>
+<p>上の表は「センサを買ってカメラを作る」メーカー（Basler / FLIR / IDS / Baumer /</p>
+<p>Allied Vision / JAI …）の話である。<b>自社でセンサを設計・製造しているカメラメーカー</b>は</p>
+<p>構造が違い、センサ型番から諸元を引くことができない。**カメラのデータシートが唯一の</p>
+<p>出所**になるので、1 社ずつ個別に当たる必要がある。</p>
+<p>| メーカー | センサ | 押さえ方 |</p>
+<p>| --- | --- | --- |</p>
+<p>| <b>Canon</b> | 2000 年から自社 CMOS を製造。<b>自社製品専用</b>で外販しない | 産業/医療/科学向けカメラのデータシート。画素レベルの独自構造が性能の根拠 |</p>
+<p>| <b>Teledyne DALSA / e2v</b> | センサもカメラも自社（Teledyne Vision Solutions）。Emerald / Sapphire / Xineos、ラインスキャンの TDI | センサ単体も売っているので、両方のデータシートが引ける（例外的に楽） |</p>
+<p>| <b>Photron</b> | FASTCAM SA-Z などに自社 CMOS。Mini 4K は自社 4096×2304 | 高速カメラのデータシート。フレームレートと画素数のトレードオフが主要諸元 |</p>
+<p>| <b>Vision Research（Phantom）</b> | 自社設計のカスタム CMOS。v1211/v1611/v2011/v2511 系は <b>28 µm 画素</b>（感度重視）。TMX 系は裏面照射のカスタム | カメラのデータシート。画素が桁違いに大きいので、飽和容量と感度の前提が上表と全く違う |</p>
+<p>| <b>Hamamatsu</b> | ORCA 系。<b>自社と外部の混在</b>（ORCA-Quest は Fairchild Imaging 開発のセンサを搭載）| 機種ごとに確認が要る。qCMOS など光子数分解の系統は別枠 |</p>
+<p>| <b>Sony</b> | センサもカメラも作る（XCG 等）| センサ側の資料が引けるので上表と同じ扱いでよい |</p>
+<p><b>仮想化への含意</b>: 28 µm 画素（Phantom）と 2.74 µm 画素（Pregius S）では、飽和容量も</p>
+<p>回折律速に入る F 値も一桁違う。<code style="color:#22d3bf">optical_budget</code> の「回折 1.22λN_w 対 標本化 2p」の</p>
+<p>境目は画素ピッチで決まるので、**自社センサ機を想定するなら画素ピッチを実機の値で</p>
+<p>与えないと、結論が逆になる**。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Sony STARVIS 2（ローリング／一部グローバル、低照度）</h3>
+<p>IMX675 / IMX678 など。低照度でのダイナミックレンジが売り。外観検査では</p>
+<p>グローバルシャッタが要る場面が多いので主役ではないが、暗視野や低照度の用途では候補。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">一般公開されていない値（datasheet / EMVA1288 が要る）</h3>
+<p>以下は仮想化に<b>必須</b>だが、上の表の出典には無い:</p>
+<p style="margin:2px 0 2px 12px">• 飽和容量（full well capacity）[e⁻]</p>
+<p style="margin:2px 0 2px 12px">• 時間ダークノイズ / 読み出し雑音 [e⁻]</p>
+<p style="margin:2px 0 2px 12px">• 量子効率 QE(λ) [%]（分光感度曲線）</p>
+<p style="margin:2px 0 2px 12px">• 暗電流 [e⁻/s]、その温度依存</p>
+<p style="margin:2px 0 2px 12px">• 変換ゲイン [e⁻/DN]、ADC ビット深度</p>
+<p style="margin:2px 0 2px 12px">• PRNU / DSNU（画素間ばらつき）</p>
+<p>上表の QE / ダークノイズ / 飽和容量 / DR は Basler の EMVA1288 実測で埋めた。</p>
+<p>残る未取得は <b>暗電流の温度依存・変換ゲイン・PRNU / DSNU・分光感度曲線 QE(λ)</b> で、</p>
+<p>これらは Sony のデータシート（NDA 相当）か、各社の EMVA1288 詳細レポートが要る。</p>
+<p><code style="color:#22d3bf">optscene.sensor_spec(model=...)</code> は埋まっている値を使い、戻り値の</p>
+<p><code style="color:#22d3bf">noise_values_are</code> に出所（EMVA1288 かユーザー指定か）を残す。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">3.45 µm 画素が効いてくる場面（実装との接続）</h3>
+<p><code style="color:#22d3bf">optical_budget</code> の分解限界は「回折 1.22λN_w と 標本化 2p の大きい方」。</p>
+<p>画素 3.45 µm・550 nm なら、作動 F 値 N_w が <b>約 5.1 を超えたところで回折律速</b>に</p>
+<p>変わる（1.22 × 0.55 × 5.1 ≈ 3.4 µm ≈ p）。つまり 3.45 µm 世代では F5.6 より絞ると</p>
+<p>解像度は上がらず、被写界深度だけが伸びる。Pregius S の 2.74 µm ではこの境目が</p>
+<p>F4 付近へ下がる。<b>画素ピッチを変えたら絞りの上限も変わる</b>、が設計上の帰結。</p>

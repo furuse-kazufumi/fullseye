@@ -6,6 +6,10 @@
 
 - [math_metrology](guides/math_metrology.md) — 数学(計測を支える数値計算) — 使い方ガイド
 
+## 背景知識ガイド(op の手前にある物理・規約)
+
+- [measurement_uncertainty](guides/measurement_uncertainty.md) — 計測の不確かさと校正の知識 — 「測れている」を主張するために
+
 ## カテゴリ
 
 ### complex (10)

@@ -12,6 +12,39 @@ def _img(a):
     return np.asarray(a, dtype=np.float64)
 
 
+# --------------------------------------------------------------------------- #
+# 測色(colorimetry)。**実体はここに持たない。** 詳細は docs/ops/2d/guides/colorimetry.md。
+#
+# fullseye には CIE の定義どおりの測色が既にある(:mod:`imgmetrics` —— 白色点を
+# ``white=`` で選べ、CIEDE2000 は Sharma, Wu & Dalal (2005) の 34 組の検証対で
+# 固定されている)。ここで行列と伝達関数をもう一組持つと、片方だけ直したときに
+# **例外を出さずに違う色**が出る。だから遅延 import して委譲するだけにしてある
+# (``imgmetrics`` 自身も同じ理由で伝達関数を ``gfx2d`` に委譲している)。
+#
+# **スケールの注意**: fullseye には RGB→Lab が名前違いで 3 つある。
+#   1. ``imgmetrics.rgb_to_lab``   —— CIE 定義、float、L* は 0-100(**これが正**)
+#   2. ここ(``trans_from_rgb``)   —— 1 への委譲。同じ値
+#   3. op 台帳の同名 op(``backends_color``、OpenCV)—— **uint8 に量子化**してから
+#      変換し 255 で割った 8-bit スケール。値も精度も 1 とは別物
+# 混ぜて使わないこと。
+
+
+def _colorimetry():
+    """測色モジュールを遅延 import する(循環 import を避けるためだけの関数)。"""
+    import imgmetrics
+    return imgmetrics
+
+
+def srgb_to_linear(rgb):
+    """sRGB の伝達関数を外して**線形**の RGB にする(IEC 61966-2-1)。
+
+    実体は :func:`imgmetrics.srgb_to_linear`(さらにその実体は ``gfx2d``)。
+    測色や平均・リサイズは**線形空間で**行う。ガンマの載ったまま平均すると
+    暗く濁る(物理量ではないものを平均している)。
+    """
+    return _colorimetry().srgb_to_linear(rgb)
+
+
 def create_color_trans_lut(kind="rgb_to_hsv"):
     """色変換 LUT(変換種別)を作る(create_color_trans_lut)。"""
     return {"kind": kind}
@@ -23,7 +56,14 @@ def clear_color_trans_lut(lut):
 
 
 def apply_color_trans_lut(image_rgb, lut):
-    """RGB (H,W,3) を LUT の色空間へ変換(apply_color_trans_lut)。rgb_to_hsv / rgb_to_yuv 等。"""
+    """RGB (H,W,3) を LUT の色空間へ変換(apply_color_trans_lut)。
+
+    ``kind`` = ``rgb_to_hsv`` / ``rgb_to_yuv`` / ``rgb_to_gray`` / ``rgb_to_xyz`` /
+    ``rgb_to_lab``。XYZ と L*a*b* は :mod:`imgmetrics` に委譲する ―― **CIE の
+    定義どおり**(sRGB 原色・D65 白色点、L* は 0-100)で、op 台帳経由の同名 op
+    (OpenCV 実装、uint8 量子化の 8-bit スケール)とは**数値の尺度が違う**。
+    混ぜないこと。背景は docs/ops/2d/guides/colorimetry.md。
+    """
     rgb = _img(image_rgb)
     r, g, b = rgb[..., 0], rgb[..., 1], rgb[..., 2]
     kind = lut["kind"]
@@ -43,11 +83,19 @@ def apply_color_trans_lut(image_rgb, lut):
         return np.stack([y, u, v], axis=-1)
     if kind == "rgb_to_gray":
         return 0.299 * r + 0.587 * g + 0.114 * b
+    if kind == "rgb_to_xyz":
+        return _colorimetry().rgb_to_xyz(rgb)
+    if kind == "rgb_to_lab":
+        return _colorimetry().rgb_to_lab(rgb)
     raise ValueError("unknown color transform: " + kind)
 
 
 def trans_from_rgb(image_rgb, color_space="hsv"):
-    """RGB から指定色空間へ変換(trans_from_rgb)。"""
+    """RGB から指定色空間へ変換(trans_from_rgb)。
+
+    ``color_space`` = ``hsv`` / ``yuv`` / ``gray`` / ``xyz`` / ``lab``。
+    スケールの注意は :func:`apply_color_trans_lut` を参照。
+    """
     return apply_color_trans_lut(image_rgb, {"kind": "rgb_to_" + color_space})
 
 

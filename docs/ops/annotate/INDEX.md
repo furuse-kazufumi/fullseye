@@ -6,6 +6,10 @@
 
 - [figure_annotation](guides/figure_annotation.md) — 図注(figure annotation)— 学術図に「どこに何があるか」を描く 使い方ガイド
 
+## 背景知識ガイド(op の手前にある物理・規約)
+
+- [dataset_conventions](guides/dataset_conventions.md) — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴
+
 ## カテゴリ
 
 ### compose (3)

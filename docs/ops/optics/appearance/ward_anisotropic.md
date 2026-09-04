@@ -46,6 +46,11 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 - [optics_imaging ファミリ ガイド](../guides/optics_imaging.md)
 
+## 背景知識ガイド(この op の手前にある物理・規約)
+
+- [colorimetry](../../2d/guides/colorimetry.md) — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない
+- [mv_illumination_practice](../guides/mv_illumination_practice.md) — 照明の実務知識 — 波長・偏光・点灯方式・外光・安全
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

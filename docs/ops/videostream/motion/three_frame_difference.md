@@ -26,6 +26,12 @@ frames. Ghost-free compared with :func:`frame_difference_causal`.
 
 - [video_streaming ファミリ ガイド](../guides/video_streaming.md)
 
+## 背景知識ガイド(この op の手前にある物理・規約)
+
+- [mv_cables](../../optics/guides/mv_cables.md) — ケーブル（規格・速度・給電・ロボットケーブル）
+- [mv_frame_grabbers](../../optics/guides/mv_frame_grabbers.md) — フレームグラバーボード（光学系ではないが、撮れるかを決める）
+- [mv_standards](../../optics/guides/mv_standards.md) — カメラインターフェースの規格と団体
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

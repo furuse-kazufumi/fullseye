@@ -32,6 +32,10 @@ ValueError
 
 - [figure_annotation ファミリ ガイド](../guides/figure_annotation.md)
 
+## 背景知識ガイド(この op の手前にある物理・規約)
+
+- [dataset_conventions](../guides/dataset_conventions.md) — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

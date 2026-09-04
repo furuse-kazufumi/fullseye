@@ -13,7 +13,7 @@ version: 0.1.5  # fullseye lib version this note was generated for
 # random_defects — OPTICS `scene` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import optscene; optscene.random_defects(primitive: 'dict', count: 'int' = 2, kinds=('scratch', 'crack', 'pits', 'blob', 'stain', 'foreign'), seed: 'int' = 0, uv_size_mm=(20.0, 20.0), height_um=(5.0, 40.0), albedo_defects: 'bool' = True, shape=(192, 192)) -> 'dict'` (または `opsoptics.get("random_defects")`)
+- **呼び出し**: `import optscene; optscene.random_defects(primitive: 'dict', count: 'int' = 2, kinds=('scratch', 'crack', 'pits', 'blob', 'stain', 'foreign'), seed: 'int' = 0, uv_size_mm=(20.0, 20.0), height_um=(5.0, 40.0), albedo_defects: 'bool' = True, shape=(192, 192), defect_roughness_um: 'float' = 0.6) -> 'dict'` (または `opsoptics.get("random_defects")`)
 
 ## 使い方
 
@@ -49,6 +49,14 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 詳しい使い方ガイド
 
 - [optics_imaging ファミリ ガイド](../guides/optics_imaging.md)
+
+## 背景知識ガイド(この op の手前にある物理・規約)
+
+- [dataset_conventions](../../annotate/guides/dataset_conventions.md) — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴
+- [mv_cameras](../guides/mv_cameras.md) — 産業用カメラメーカー（センサとの紐付け・ラインスキャン / TDI）
+- [mv_illumination_practice](../guides/mv_illumination_practice.md) — 照明の実務知識 — 波長・偏光・点灯方式・外光・安全
+- [mv_image_sensors](../guides/mv_image_sensors.md) — 産業用イメージセンサ（現行品中心）
+- [virtual_machine_vision](../guides/virtual_machine_vision.md) — 仮想マシンビジョン — パラメータの洗い出しとオブジェクト模型
 
 ## 参考(サンプルデータ・文献)
 

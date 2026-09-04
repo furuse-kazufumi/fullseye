@@ -23,8 +23,14 @@ Subcommands (all idempotent; safe to re-run)::
     py -3.11 tools/opdocs.py all     # md + toc + html
 
 Per-op notes and every INDEX.md are **generated** — do not hand-edit (a drift test
-regenerates and diffs). The family guides under ``docs/ops/2d/guides/`` are authored
-(grounded in the runnable examples) and are NOT overwritten by ``md``.
+regenerates and diffs). The guides under ``docs/ops/<dim>/guides/`` are authored and
+are NOT overwritten by ``md``. They come in two kinds (see :func:`knowledge_guides`):
+
+* **family guide** — filename equals the family name; linked from every op note of
+  that family.
+* **knowledge guide** — cross-cutting background (colorimetry, depth sensors,
+  measurement uncertainty, dataset conventions …); linked from the op notes named by
+  its ``applies_to`` frontmatter (``<dim>`` or ``<dim>/<category>``).
 """
 from __future__ import annotations
 
@@ -119,6 +125,101 @@ def families_without_a_guide(recs):
             missing.setdefault(fam, 0)
             missing[fam] += 1
     return dict(sorted(missing.items()))
+
+#: ガイドは二種ある。**族ガイド**はファイル名が族名と一致し(:data:`LEDGER_DIMS`
+#: の ``family`` / 2-D は ``gallery2d_*``)、その族の全 op ノートから自動でリンク
+#: される。**背景知識ガイド**は族に属さない横断的な教材(測色、深度センサ、計測の
+#: 不確かさ、データセット規約 …)で、frontmatter の ``applies_to`` に書いた
+#: ``<dim>`` または ``<dim>/<category>`` の op ノートからリンクされる。
+#:
+#: 置き場所(どの ``<dim>/guides/`` に置くか)は**分類であって配線ではない** ――
+#: 例えばデータセット規約は ``annotate/guides/`` に置きつつ、生成側の op がいる
+#: ``optics/scene`` からも辿れる。この分離が無かったあいだ、知識ガイドは INDEX に
+#: しか出ず、**op から辿る経路が一本も無かった**(2026-09-05 に発見)。
+_KNOWLEDGE_GUIDES = None
+
+
+def _guide_front(path):
+    """ガイド md の frontmatter を最小限だけ読む(YAML 依存を持たない)。"""
+    front = {}
+    try:
+        with open(path, encoding="utf-8") as f:
+            if f.readline().strip() != "---":
+                return front
+            for line in f:
+                if line.strip() == "---":
+                    break
+                if ":" in line:
+                    k, v = line.split(":", 1)
+                    front[k.strip()] = v.strip()
+    except OSError:
+        pass
+    return front
+
+
+def _family_guide_stems():
+    """族ガイドのファイル名(拡張子なし)の集合。"""
+    stems = {m["family"] for m in LEDGER_DIMS.values()}
+    stems |= {os.path.splitext(os.path.basename(p))[0]
+              for p in glob.glob(os.path.join(DOCS, "2d", "guides", "gallery2d_*.md"))}
+    return stems
+
+
+def knowledge_guides():
+    """背景知識ガイド一覧(族ガイドを除く全ガイド)。1 回だけ走査してキャッシュ。"""
+    global _KNOWLEDGE_GUIDES
+    if _KNOWLEDGE_GUIDES is None:
+        fams = _family_guide_stems()
+        out = []
+        for g in sorted(glob.glob(os.path.join(DOCS, "*", "guides", "*.md"))):
+            stem = os.path.splitext(os.path.basename(g))[0]
+            if stem in fams:
+                continue
+            spec = _guide_front(g).get("applies_to", "").strip()
+            targets = () if spec == "none" else tuple(
+                t.strip() for t in spec.split(",") if t.strip())
+            out.append({"path": g, "stem": stem, "title": _md_title(g),
+                        "spec": spec, "applies_to": targets})
+        _KNOWLEDGE_GUIDES = out
+    return _KNOWLEDGE_GUIDES
+
+
+def guides_for(dim, category):
+    """``(dim, category)`` の op ノートから張るべき背景知識ガイド。"""
+    return [g for g in knowledge_guides()
+            if dim in g["applies_to"] or f"{dim}/{category}" in g["applies_to"]]
+
+
+def guides_not_wired():
+    """``applies_to`` を書き忘れた = **どの op からも辿れない**知識ガイド。
+
+    リンク切れは出ないが「書いたのに繋がっていない」は見えなくなるので、
+    :func:`families_without_a_guide` と同じ理由でここで数えて生成時に出す。
+
+    ``applies_to: none`` は**意図的に配線しない**宣言(op 台帳に載っていない
+    ファサード専用のガイドなど、繋ぐ先がそもそも無いもの)で、報告しない。
+    書き忘れと区別できるように、空欄ではなく明示させている。
+    """
+    return [g["stem"] for g in knowledge_guides() if not g["applies_to"] and g["spec"] != "none"]
+
+
+def guides_with_unknown_targets():
+    """``applies_to`` が実在しない ``<dim>`` / ``<dim>/<category>`` を指しているもの。
+
+    綴り違いを黙って無視すると「配線したつもり」で終わるので、報告して落とす
+    材料にする。
+    """
+    dims = {d for d in ("2d", "3d", *LEDGER_DIMS) if os.path.isdir(os.path.join(DOCS, d))}
+    known = set(dims)
+    for d in dims:
+        known |= {f"{d}/{c}" for c in _walk_ops(d)}
+    bad = {}
+    for g in knowledge_guides():
+        miss = [t for t in g["applies_to"] if t not in known]
+        if miss:
+            bad[g["stem"]] = miss
+    return bad
+
 
 _AUTHOR = "Kazufumi Furuse"
 _LICENSE = "Apache-2.0"
@@ -397,6 +498,16 @@ def _op_md(rec, path, by_name):
             lines.append("")
             lines.append(f"- [{rec['family']} ファミリ ガイド]({_rel(path, gp)})")
             lines.append("")
+    # 背景知識ガイド(族に属さない横断的な教材)。frontmatter の ``applies_to`` が
+    # この op の dim / dim+category を挙げているものだけを張る。配線し忘れは
+    # :func:`guides_not_wired` が数えて生成時に報告する。
+    kg = guides_for(dim, rec["category"])
+    if kg:
+        lines.append("## 背景知識ガイド(この op の手前にある物理・規約)")
+        lines.append("")
+        for g in kg:
+            lines.append(f"- [{g['stem']}]({_rel(path, g['path'])}) — {g['title']}")
+        lines.append("")
     # sample data + references (honest pointers to the curated catalogs)
     sp = os.path.join(DOCS, "SAMPLES.md")
     rp = os.path.join(_ROOT, "docs", "REFERENCES.md")
@@ -470,6 +581,14 @@ def cmd_md():
     for _d in LEDGER_DIMS:
         os.makedirs(os.path.join(DOCS, _d, "guides"), exist_ok=True)
     print(f"opdocs md: wrote {n} per-op notes under {DOCS}")
+    unwired = guides_not_wired()
+    if unwired:
+        print("  (背景知識ガイドに applies_to が無く、どの op からも辿れない: "
+              + ", ".join(unwired) + ")", file=sys.stderr)
+    bad = guides_with_unknown_targets()
+    for stem, miss in bad.items():
+        print(f"  (背景知識ガイド {stem} の applies_to が実在しない対象を指している: "
+              + ", ".join(miss) + ")", file=sys.stderr)
     return recs
 
 
@@ -568,10 +687,16 @@ def cmd_toc():
         out = [f"# {dim.upper()} operator help — {total} ops in {len(cats)} categories", "",
                "自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/" + dim + "/<category>/<op>.md` を走査。", ""]
         guides = sorted(glob.glob(os.path.join(DOCS, dim, "guides", "*.md")))
-        if guides:
-            out.append("## ファミリ使い方ガイド(用途→op の教材)")
+        kstems = {g["stem"] for g in knowledge_guides()}
+        for _head, _sel in (("## ファミリ使い方ガイド(用途→op の教材)", False),
+                            ("## 背景知識ガイド(op の手前にある物理・規約)", True)):
+            group = [g for g in guides
+                     if (os.path.splitext(os.path.basename(g))[0] in kstems) is _sel]
+            if not group:
+                continue
+            out.append(_head)
             out.append("")
-            for g in guides:
+            for g in group:
                 stem = os.path.splitext(os.path.basename(g))[0]
                 out.append(f"- [{stem}](guides/{stem}.md) — {_md_title(g)}")
             out.append("")
@@ -840,12 +965,15 @@ def cmd_html():
                          .replace('href="guide2d:', 'href="guide%s:' % ldim))
                 if _write_generated(os.path.join(dmout, f[:-3] + ".html"), htmlm):
                     nm += 1
-    # family guides -> guide_<family>.html (always generated from guide md; the 2-D
-    # gallery guides and the ledger family guides share the flat guide_ namespace —
-    # stems are distinct by construction: gallery2d_* / handpose / math_metrology /
-    # optics_imaging)
+    # guides -> guide_<stem>.html (always generated from guide md; every dim's
+    # guides share the flat guide_ namespace — stems are distinct by construction:
+    # gallery2d_* / family names / knowledge-guide stems).
+    #
+    # ``3d`` がこのループから抜けていたため、``docs/ops/3d/guides/`` のガイドは
+    # Studio ヘルプに 1 枚も出ていなかった(2026-09-05 に depth_sensors を書いて
+    # 発覚)。dim の一覧は TOC と同じ順にそろえてある。
     g = 0
-    for gdim in ("2d", *LEDGER_DIMS):
+    for gdim in ("2d", "3d", *LEDGER_DIMS):
         gdir = os.path.join(DOCS, gdim, "guides")
         if not os.path.isdir(gdir):
             continue
@@ -858,7 +986,7 @@ def cmd_html():
             g += 1
     print(f"opdocs html: wrote {n} 2-D op pages ({skipped} hand-authored preserved) "
           f"+ {n3} 3-D op pages + {nm} ledger op pages ({'/'.join(LEDGER_DIMS)}) "
-          f"+ {g} family guides to {HELP_ROOT}")
+          f"+ {g} guides to {HELP_ROOT}")
 
 
 def main(argv):

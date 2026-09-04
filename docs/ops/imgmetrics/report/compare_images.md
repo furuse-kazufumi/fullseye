@@ -31,6 +31,10 @@ dict
     ``ms=True`` なら ``ms_ssim`` も(成立しない大きさなら ``ValueError``)。
     カラー画像で ``channel_axis`` を渡すと ``delta_e_2000_mean`` も入る。
 
+## 詳しい使い方ガイド
+
+- [image_difference_metrics ファミリ ガイド](../guides/image_difference_metrics.md)
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

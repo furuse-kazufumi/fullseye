@@ -5,6 +5,7 @@ title: 手の 21 キーポイントと指屈曲角 — 使い方ガイド
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0
+applies_to: none
 ---
 
 # 手の 21 キーポイントと指屈曲角 — 使い方ガイド

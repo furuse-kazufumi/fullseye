@@ -37,15 +37,30 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 
 
+#: ``subdir`` -> {example id: **散文を落とした**ソース}。1 プロセス内で使い回す。
+#:
+#: ★ここを持たなかったあいだ、:func:`_called` が (op 名 × example) の**全組合せ**で
+#: :func:`_strip_prose` を呼び、そのたびに ``ast.parse`` + ``tokenize`` でソース全体を
+#: 解析し直していた。実測 2026-09-05: 2-D 881 op × 73 本 + 3-D 347 op × 118 本 +
+#: ledger 494 op × 73 本 = **約 14 万回**のフルパースで、``opdocs.py md`` 1 回に
+#: 10 分かかっていた(``toc`` も ``html`` も同じ索引を作り直すのでフル再生成は 30 分級)。
+#: 散文落としは**ソースごとに 1 回**あれば足りる ―― op 名に依存しないので。
+_STRIPPED_SOURCES: dict = {}
+
+
 def _sources(subdir: str) -> dict:
-    """example id (file stem) -> source text, for a directory of scripts."""
+    """example id (file stem) -> **散文を落とした**ソース text（プロセス内キャッシュ）。"""
+    cached = _STRIPPED_SOURCES.get(subdir)
+    if cached is not None:
+        return cached
     out = {}
     for f in sorted(glob.glob(os.path.join(ROOT, subdir, "*.py"))):
         stem = os.path.splitext(os.path.basename(f))[0]
         if stem.startswith("_") or stem == "__init__":
             continue
         with open(f, encoding="utf-8") as fh:
-            out[stem] = fh.read()
+            out[stem] = _strip_prose(fh.read())
+    _STRIPPED_SOURCES[subdir] = out
     return out
 
 
@@ -154,8 +169,17 @@ def _strip_prose(src: str) -> str:
 
 
 def _called(name: str, src: str) -> bool:
-    """True if `src` calls the op (direct call or via a quoted-name dispatch)."""
-    src = _strip_prose(src)
+    """True if `src` calls the op (direct call or via a quoted-name dispatch).
+
+    ``src`` は :func:`_sources` が**既に散文を落とした**もの。ここで落とし直さない
+    (op 名ごとに解析し直すと同じ仕事を数万回する ―― :data:`_STRIPPED_SOURCES`)。
+
+    最初の ``not in`` は**素通しの前置き**。下の 3 つの正規表現はどれも op 名の
+    リテラルを含むので、部分文字列として現れないソースは**原理的にどれにも当たらない**。
+    大半の (op 名 × example) の組はここで落ちるので、結果を変えずに正規表現の回数だけ減る。
+    """
+    if name not in src:
+        return False
     esc = re.escape(name)
     if re.search(r"(?<![\w.])" + esc + r"\s*\(", src):      # name(
         return True

@@ -1,0 +1,55 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p>&lt;!-- fullseye guide: 機械視覚の周辺知識。op ではなく、op に渡す値の</p>
+<p>出どころを示す教材。関連 op: interface_budget --&gt;</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">フレームグラバーボード（光学系ではないが、撮れるかを決める）</h2>
+<p>光学が「必要なコントラストで写るか」を決めるのに対し、フレームグラバーは</p>
+<p><b>それを落とさずに運べるか</b>を決める。高解像度・高速・ラインスキャンでは、</p>
+<p>律速がセンサではなく<b>伝送帯域</b>になることが普通にある。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">インターフェースの帯域（一次資料で確認した値）</h3>
+<p>| 規格 | 1 接続あたり | 実用構成 | 備考 |</p>
+<p>| --- | --- | --- | --- |</p>
+<p>| <b>CoaXPress CXP-6</b> | 6.25 Gbps | 1〜8 接続 | 同軸 1 本で電源（PoCXP）・制御・データ |</p>
+<p>| <b>CoaXPress CXP-12</b> | <b>12.5 Gbps</b> | <b>4 接続 = 50 Gbps = 5 GB/s</b> | 8 bit・16k ラインセンサを <b>300 kHz</b> で回せる帯域 |</p>
+<p>| <b>Camera Link Base</b> | 2.04 Gbps | 24 bit × 85 MHz、コネクタ 1 本 | 旧来だが現役。ケーブルが太く短い（〜10 m） |</p>
+<p>| <b>Camera Link Medium</b> | 4.08 Gbps | 48 bit、コネクタ 2 本 | |</p>
+<p>| <b>Camera Link Full</b> | 5.44 Gbps | 64 bit | |</p>
+<p>| <b>Camera Link Deca</b> | 6.80 Gbps | 80 bit | Camera Link の上限 |</p>
+<p>| Camera Link HS | 3.125 Gbps/lane | 複数 lane | 長距離（光ファイバ可） |</p>
+<p>| <b>Opt-C:Link</b>（アバールデータ独自） | <b>6.25 Gbps/ch</b>、2 ch 束ねて <b>12.5 Gbps</b> | 光ファイバ（コア 50 / 62.5 µm、クラッド 125 µm） | <b>数百 m 延長可・ノイズに強い</b>。画像・シリアル・トリガ・リンク・ユーザの 5 種パケットで制御まで光に載る。Camera Link カメラは変換ユニット（AOC-162 等）で接続 |</p>
+<p>| GigE Vision | 1 / 5 / 10 / 25 GigE | — | ケーブルが安く長い。CPU 負荷は高め |</p>
+<p><b>16k × 300 kHz × 8 bit ≈ 4.9 GB/s</b> が CXP-12 ×4 の 5 GB/s にちょうど収まる、という</p>
+<p>設計になっている。Vieworks VT シリーズ（TDI・最大 300 kHz）はこの帯域を前提にした製品。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">主なメーカーと現行ボード</h3>
+<p>| メーカー | 製品 | 確認した仕様 |</p>
+<p>| --- | --- | --- |</p>
+<p>| <b>Euresys</b> | Coaxlink Quad CXP-12 | PCIe 3.0 x8、カメラ帯域 5000 MB/s、CXP-12 ×4 |</p>
+<p>| Euresys | Coaxlink Quad CXP-12 JPEG | 4 独立チャネル + <b>ベースライン JPEG エンコーダ 250 Mpixel/s</b>（ボード上で圧縮） |</p>
+<p>| Euresys | Coaxlink QSFP+ / Duo / Mono LH | 1〜8 カメラ、CXP-6〜CXP-12 の幅で構成できる |</p>
+<p>| <b>Matrox</b> | Rapixo CXP（RAP8G4C12P602） | CoaXPress 2.0、CXP-12 ×4、PCIe 3.1 x8、<b>12.5 GB/s カメラ帯域</b>、PoCXP |</p>
+<p>| <b>Teledyne DALSA</b> | Xtium2-CXP PX8 Quad | CXP-12 ×4、カメラ帯域 5000 MB/s、PCIe Gen3 x8（バス 7000 MB/s まで） |</p>
+<p>| BitFlow | Claxon / Cyton | CXP / Camera Link |</p>
+<p>| Active Silicon | FireBird | CXP / Camera Link |</p>
+<p>| Kaya Instruments | Komodo | CXP |</p>
+<p>| <b>アバールデータ</b> | APX-3312A / APX-3313A（Camera Link）、Opt-C:Link 系 | Camera Link 対応ボードと、独自光 I/F の両方を持つ。国内の装置向けで強い |</p>
+<p>| Euresys | Grablink（Camera Link） | CXP の Coaxlink と別系統で Camera Link を継続 |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">なぜ仮想化で無視できないか</h3>
+<p>0. <b>長距離が要るなら選択肢が絞られる</b>。Camera Link は 10 m 級で頭打ちだが、</p>
+<p>Opt-C:Link（光）なら数百 m。装置が大きい・電気ノイズが多い現場（溶接、</p>
+<p>モータドライブの近く）では、帯域より先に<b>距離とノイズ耐性</b>で規格が決まる。</p>
+<p>1. <b>エリアスキャンでは普通センサが律速</b>。IMX541（20.3 MP・8 bit）は 1 枚 20.3 MB なので</p>
+<p>5 GB/s なら理論 246 fps 出せるが、センサ自体が 18〜42 fps。→ 帯域は余る。</p>
+<p>2. <b>ラインスキャン / TDI では帯域が律速</b>になる。16k × 300 kHz で 4.9 GB/s を使い切る。</p>
+<p>ラインレートを上げたいなら、まずボードとケーブルの本数の話になる。</p>
+<p>3. <b>エンコーダ同期</b>（ラインスキャン専用）。搬送速度とラインレートを同期させるのは</p>
+<p>グラバーの仕事で、ここがずれると<b>画像の縦横比が崩れる</b>。エリアスキャンには</p>
+<p>存在しない故障モードで、光学をいくら詰めても直らない。</p>
+<p>4. <b>ボード上の前処理</b>。シェーディング補正・ビット詰め・JPEG 圧縮をボードでやると</p>
+<p>ホストの負荷が下がる。合成データで学習したモデルを載せるとき、</p>
+<p><b>推論の前段にこの補正が入る</b>ので、学習データ側にも同じ補正を通すか、</p>
+<p>補正前の生データで学習するかを決めておく必要がある。</p>
+<p>5. <b>トリガのジッタ</b>。パルス照明やストロボと同期する場合、ジッタが露光ばらつき＝</p>
+<p>明るさばらつきになる。ドメインランダム化の <code style="color:#22d3bf">intensity_jitter</code> は本来ここに根拠がある。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実装との接続</h3>
+<p><code style="color:#22d3bf">optscene.interface_budget()</code> が、センサの画素数・ビット深度・インターフェースから</p>
+<p><b>帯域律速の最大フレームレート / ラインレート</b>を返す。センサ側の上限と突き合わせて</p>
+<p>「どちらが律速か」を先に知るための op。</p>

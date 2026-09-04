@@ -31,6 +31,10 @@ Returns
 float
     1.0 が完全一致。
 
+## 詳しい使い方ガイド
+
+- [image_difference_metrics ファミリ ガイド](../guides/image_difference_metrics.md)
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

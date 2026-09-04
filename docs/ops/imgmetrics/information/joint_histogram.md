@@ -22,6 +22,10 @@ version: 0.1.5  # fullseye lib version this note was generated for
 ビン幅は ``data_range`` から決める ―― 画像ごとに min/max で伸縮させると、
 **一様に暗い絵と一様に明るい絵の相互情報量が同じになる**ので。
 
+## 詳しい使い方ガイド
+
+- [image_difference_metrics ファミリ ガイド](../guides/image_difference_metrics.md)
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

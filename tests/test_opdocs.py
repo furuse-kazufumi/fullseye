@@ -261,7 +261,6 @@ def test_3d_help_pages_carry_marker_and_have_no_stray_2d_anchors():
 # --------------------------------------------------------------------------- #
 _MATH_RECS = [r for r in _RECS if r["dim"] == "math"]
 _HELPMATH = os.path.join(ROOT, "studio_assets", "op_help", "math")
-_MATH_GUIDE = os.path.join(ROOT, "docs", "ops", "math", "guides", "math_metrology.md")
 
 
 def test_math_registry_is_connected():
@@ -320,33 +319,6 @@ def test_math_help_pages_carry_marker_and_are_namespaced():
     assert not stray, f"math help pages carry non-namespaced op:/guide2d: anchors: {stray}"
 
 
-def test_math_family_guide_is_well_formed():
-    """The maths family has one authored usage guide, held to the same bar as the
-    2-D gallery guides: frontmatter, author, a mermaid diagram, a runnable python
-    snippet, and grounded mentions of its own ops."""
-    assert os.path.exists(_MATH_GUIDE), "docs/ops/math/guides/math_metrology.md missing"
-    with open(_MATH_GUIDE, encoding="utf-8") as f:
-        md = f.read()
-    assert md.lstrip().startswith("---"), "math guide: missing YAML frontmatter"
-    assert "Kazufumi Furuse" in md, "math guide: missing author/copyright"
-    assert "```mermaid" in md, "math guide: missing a mermaid pipeline diagram"
-    assert "```python" in md, "math guide: missing a runnable python snippet"
-    import opsmath
-    hit = {n for n in opsmath.OPSMATH
-           if re.search(r"(?<![\w])" + re.escape(n) + r"(?![\w])", md)}
-    assert len(hit) >= 3, f"math guide names too few of its own ops ({len(hit)}/{len(opsmath.OPSMATH)})"
-
-
-def test_math_notes_link_their_family_guide():
-    """Every math note points at the family guide (the AI-usage entry point)."""
-    unlinked = []
-    for r in _MATH_RECS:
-        with open(OD._op_path(r), encoding="utf-8") as f:
-            if "../guides/math_metrology.md" not in f.read():
-                unlinked.append(r["name"])
-    assert not unlinked, f"math notes without a family-guide link: {unlinked}"
-
-
 # --------------------------------------------------------------------------- #
 # optics ops (opsoptics ledger, 2026-09-01): the second *ledger* dimension, on
 # the same md=source-of-truth pipeline as math — notes under
@@ -357,8 +329,6 @@ def test_math_notes_link_their_family_guide():
 # --------------------------------------------------------------------------- #
 _OPT_RECS = [r for r in _RECS if r["dim"] == "optics"]
 _HELPOPT = os.path.join(ROOT, "studio_assets", "op_help", "optics")
-_OPT_GUIDE = os.path.join(ROOT, "docs", "ops", "optics", "guides",
-                          "optics_imaging.md")
 
 
 def test_optics_registry_is_connected():
@@ -434,30 +404,6 @@ def test_optics_help_pages_carry_marker_and_are_namespaced():
             stray.append(r["name"])
     assert not unmarked, f"optics help pages missing the generated marker: {unmarked}"
     assert not stray, f"optics help pages carry non-namespaced anchors: {stray}"
-
-
-def test_optics_family_guide_is_well_formed():
-    assert os.path.exists(_OPT_GUIDE), "docs/ops/optics/guides/optics_imaging.md missing"
-    with open(_OPT_GUIDE, encoding="utf-8") as f:
-        md = f.read()
-    assert md.lstrip().startswith("---"), "optics guide: missing YAML frontmatter"
-    assert "Kazufumi Furuse" in md, "optics guide: missing author/copyright"
-    assert "```mermaid" in md, "optics guide: missing a mermaid pipeline diagram"
-    assert "```python" in md, "optics guide: missing a runnable python snippet"
-    import opsoptics
-    hit = {n for n in opsoptics.OPSOPTICS
-           if re.search(r"(?<![\w])" + re.escape(n) + r"(?![\w])", md)}
-    assert len(hit) >= 12, (
-        f"optics guide names too few of its own ops ({len(hit)}/{len(opsoptics.OPSOPTICS)})")
-
-
-def test_optics_notes_link_their_family_guide():
-    unlinked = []
-    for r in _OPT_RECS:
-        with open(OD._op_path(r), encoding="utf-8") as f:
-            if "../guides/optics_imaging.md" not in f.read():
-                unlinked.append(r["name"])
-    assert not unlinked, f"optics notes without a family-guide link: {unlinked}"
 
 
 def test_optics_notes_state_the_fail_closed_contract():
@@ -547,3 +493,142 @@ def test_sensor_playbook_matches_generator_no_drift():
     assert "(未登録" not in md
     _assert_no_drift(md, ("docs/SENSOR_PLAYBOOK.md", "fullseye/SENSOR_PLAYBOOK.md"),
                      "py -3.11 tools/gen_sensor_playbook.py")
+
+
+# --------------------------------------------------------------------------- #
+# ガイドの二種(2026-09-05)
+#
+# **族ガイド** —— ファイル名が族名と一致し、その族の全 op ノートから自動リンク
+# される(2-D は ``gallery2d_*``、ledger 次元は :data:`opdocs.LEDGER_DIMS` の
+# ``family``)。ここまで math と optics にだけ双子のテストがあり、コード側の
+# コメントが「3 つ目の ledger 次元が来たら一般化せよ」と書いていた。ledger 次元は
+# 21 に増えたので、ここで**全次元へ一般化**して双子を畳んだ。
+#
+# **背景知識ガイド** —— 族に属さない横断的な教材(測色、深度センサ、計測の
+# 不確かさ、データセット規約 …)。frontmatter の ``applies_to`` に書いた
+# ``<dim>`` / ``<dim>/<category>`` の op ノートからリンクされる。この配線が
+# 無かったあいだ、知識ガイドは INDEX にしか出ず **op から辿る経路が一本も無かった**。
+# --------------------------------------------------------------------------- #
+_LEDGER_GUIDES = [(dim, meta["family"],
+                   os.path.join(ROOT, "docs", "ops", dim, "guides", meta["family"] + ".md"))
+                  for dim, meta in OD.LEDGER_DIMS.items()]
+_AUTHORED_LEDGER_GUIDES = [t for t in _LEDGER_GUIDES if os.path.exists(t[2])]
+_LEDGER_IDS = [d for d, _, _ in _AUTHORED_LEDGER_GUIDES]
+
+
+@pytest.mark.parametrize("dim,fam,path", _AUTHORED_LEDGER_GUIDES, ids=_LEDGER_IDS)
+def test_ledger_family_guide_is_well_formed(dim, fam, path):
+    """すべての ledger 族ガイドを 2-D ギャラリーガイドと同じ水準で見る。
+
+    要求: frontmatter / 著者 / mermaid のパイプライン図 / 実行できる python /
+    自分の族の op を実際に名指ししていること(一般論で埋めていないこと)。
+    op を名指しする本数の下限は、族の大きさで 2 段(小さい族 3、30 op 以上は 12)
+    —— これは畳む前の math(3)と optics(12)の水準をそのまま残したもの。
+    """
+    with open(path, encoding="utf-8") as f:
+        md = f.read()
+    assert md.lstrip().startswith("---"), f"{fam}: missing YAML frontmatter"
+    assert "Kazufumi Furuse" in md, f"{fam}: missing author/copyright"
+    assert "```mermaid" in md, f"{fam}: missing a mermaid pipeline diagram"
+    assert "```python" in md, f"{fam}: missing a runnable python snippet"
+    meta = OD.LEDGER_DIMS[dim]
+    table = getattr(__import__(meta["registry"]), meta["table"])
+    hit = {n for n in table if re.search(r"(?<![\w])" + re.escape(n) + r"(?![\w])", md)}
+    need = 3 if len(table) < 30 else 12
+    assert len(hit) >= need, (
+        f"{fam} names too few of its own ops ({len(hit)}/{len(table)}, need {need})")
+
+
+@pytest.mark.parametrize("dim,fam,path", _AUTHORED_LEDGER_GUIDES, ids=_LEDGER_IDS)
+def test_ledger_notes_link_their_family_guide(dim, fam, path):
+    """族ガイドがある次元では、その次元の全 op ノートから辿れること。"""
+    unlinked = []
+    for r in (x for x in _RECS if x["dim"] == dim):
+        with open(OD._op_path(r), encoding="utf-8") as f:
+            if f"../guides/{fam}.md" not in f.read():
+                unlinked.append(r["name"])
+    assert not unlinked, f"{dim} notes without a family-guide link: {unlinked[:20]}"
+
+
+#: 一次情報の URL も「症状→原因」の診断表もまだ持たない知識ガイド。**書いた時期が
+#: 技術移転の水準を決める前**で、記憶から書かれている可能性がある(この repo は
+#: 手入力で 4 件の誤記を出した前科がある)。下げた基準で通すのではなく、
+#: **隠さず並べて**埋まった順に外す。
+_KNOWLEDGE_GUIDES_PENDING_SOURCES = {
+    "mv_cables", "mv_cameras", "mv_frame_grabbers", "mv_image_sensors",
+    "mv_standards", "virtual_machine_vision",
+}
+_KNOWLEDGE_STEMS = [g["stem"] for g in OD.knowledge_guides()]
+
+
+def test_knowledge_guides_are_wired_or_explicitly_opted_out():
+    """``applies_to`` の書き忘れが無いこと(``none`` は意図的な非配線の宣言)。"""
+    unwired = OD.guides_not_wired()
+    assert not unwired, (
+        "背景知識ガイドに applies_to が無く、どの op ノートからも辿れない: "
+        + ", ".join(unwired) + "  (繋ぐ先が無いなら `applies_to: none` と明記する)")
+
+
+def test_knowledge_guide_targets_all_exist():
+    """``applies_to`` の綴り違いを黙って無視しないこと。"""
+    bad = OD.guides_with_unknown_targets()
+    assert not bad, f"applies_to が実在しない dim/category を指している: {bad}"
+
+
+def test_wired_knowledge_guides_reach_at_least_one_op():
+    """配線した知識ガイドは、実際に 1 枚以上の op ノートから辿れること。"""
+    orphan = []
+    for g in OD.knowledge_guides():
+        if not g["applies_to"]:
+            continue
+        if not any(g in OD.guides_for(r["dim"], r["category"]) for r in _RECS):
+            orphan.append(g["stem"])
+    assert not orphan, f"applies_to を持つのに届く op が 0 枚: {orphan}"
+
+
+@pytest.mark.parametrize("stem", _KNOWLEDGE_STEMS)
+def test_knowledge_guide_is_well_formed(stem):
+    """背景知識ガイドの水準 —— 族ガイドとは**別の**基準で見る。
+
+    族ガイドが「op の使い方」を教えるのに対し、知識ガイドは **op の手前にある
+    物理と規約**を教える。したがって mermaid や python ではなく、
+    **一次情報の出典**と**症状→原因の診断表**を持つことを要求する
+    (「誰でも同じ仕事がこなせる」ための最小要件)。
+    """
+    g = next(x for x in OD.knowledge_guides() if x["stem"] == stem)
+    with open(g["path"], encoding="utf-8") as f:
+        md = f.read()
+    assert md.lstrip().startswith("---"), f"{stem}: missing YAML frontmatter"
+    assert "Kazufumi Furuse" in md, f"{stem}: missing author"
+    assert "applies_to:" in md.split("---")[1], f"{stem}: frontmatter has no applies_to"
+    if g["spec"] == "none" or stem in _KNOWLEDGE_GUIDES_PENDING_SOURCES:
+        return
+    assert "| 症状" in md, f"{stem}: 診断表(症状→原因)が無い"
+    assert "http" in md, f"{stem}: 一次情報の URL が 1 本も無い"
+
+
+def test_every_guide_has_a_studio_help_page():
+    """ガイドは種類を問わず Studio ヘルプに出ること。
+
+    ``cmd_html`` の dim ループから ``3d`` が抜けており、``docs/ops/3d/guides/`` の
+    ガイドは Studio ヘルプに 1 枚も出ていなかった(2026-09-05 に depth_sensors を
+    書いて発覚)。同じ抜けを二度作らないための検査。
+    """
+    missing = []
+    for p in sorted(glob.glob(os.path.join(ROOT, "docs", "ops", "*", "guides", "*.md"))):
+        stem = os.path.splitext(os.path.basename(p))[0]
+        page = os.path.join(ROOT, "studio_assets", "op_help", "guide_" + stem + ".html")
+        if not os.path.exists(page):
+            missing.append(stem)
+    assert not missing, f"guides with no Studio help page: {missing}"
+
+
+def test_guide_stems_are_unique_across_dims():
+    """ヘルプページは ``guide_<stem>.html`` の平坦な名前空間を共有するので、
+    次元をまたいで stem が衝突すると**片方が黙って上書きされる**。"""
+    seen = {}
+    for p in sorted(glob.glob(os.path.join(ROOT, "docs", "ops", "*", "guides", "*.md"))):
+        stem = os.path.splitext(os.path.basename(p))[0]
+        seen.setdefault(stem, []).append(os.path.relpath(p, ROOT))
+    dupes = {k: v for k, v in seen.items() if len(v) > 1}
+    assert not dupes, f"guide stem collisions (flat guide_ namespace): {dupes}"

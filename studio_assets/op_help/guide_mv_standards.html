@@ -1,0 +1,48 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p>&lt;!-- fullseye guide: 機械視覚の周辺知識。op ではなく、op に渡す値の</p>
+<p>出どころを示す教材。関連 op: sensor_spec / lens_spec / light_spec / interface_budget --&gt;</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">カメラインターフェースの規格と団体</h2>
+<p>産業用カメラのインターフェースは<b>業界標準として規格化</b>されており、各規格に所管団体が</p>
+<p>ある。どの団体がどれを持っているかを押さえておくと、仕様の一次情報にたどり着ける。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">1. 誰がどれを持っているか</h3>
+<p>| 団体 | 所管する規格 |</p>
+<p>| --- | --- |</p>
+<p>| <b>A3</b>（Association for Advancing Automation、旧 AIA・米） | <b>Camera Link</b>（PoCL / PoCL-Lite を含む）、<b>Camera Link HS</b>、<b>GigE Vision</b>、<b>USB3 Vision</b> |</p>
+<p>| <b>JIIA</b>（日本インダストリアルイメージング協会） | <b>CoaXPress</b>（2013 年リリース）、IIDC2、SLVS-EC 系 |</p>
+<p>| <b>EMVA</b>（European Machine Vision Association） | <b>GenICam</b>（GenApi / <b>GenTL</b> / <b>SFNC</b> / PFNC）、<b>EMVA1288</b>（カメラ性能の測定法）、<b>OOCI</b>（Open Optics Camera Interface） |</p>
+<p>| <b>VDMA</b>（独） | 規格そのものより、解説・普及・調整の側 |</p>
+<p>| <b>CMVU</b>（中） | 中国側の窓口 |</p>
+<p>| <b>G3</b> | 上記を横断する<b>調整体</b>。ハードウェア規格をまたいで共通のソフト層を保つ枠組み |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">2. 層が 2 つある（ここが要点）</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">アプリケーション
+      │
+  GenICam（EMVA）          ← ソフトの層：機能名と設定の共通化
+      │  GenApi / SFNC / GenTL / PFNC
+      ├── Camera Link / Camera Link HS  (A3)
+      ├── GigE Vision                   (A3)
+      ├── USB3 Vision                   (A3)
+      ├── CoaXPress                     (JIIA)
+      └── Open Optics Camera Interface  (EMVA)</pre>
+<p><b>GenICam は G3 の全ハードウェア規格が使う共通のソフト層</b>である。だから</p>
+<p>「露光時間を変える」「ROI を切る」といった操作は、伝送規格が Camera Link でも</p>
+<p>CoaXPress でも GigE でも<b>同じ機能名</b>（SFNC = Standard Features Naming Convention）で</p>
+<p>書ける。ケーブルと帯域は規格ごとに違うのに、アプリは書き換えなくてよい。</p>
+<p style="margin:2px 0 2px 12px">• <b>GenApi</b> — カメラが自分の機能を XML で記述し、ホストがそれを読んで UI/API を作る。</p>
+<p style="margin:2px 0 2px 12px">• <b>SFNC</b> — 機能名の標準（<code style="color:#22d3bf">ExposureTime</code>, <code style="color:#22d3bf">Gain</code>, <code style="color:#22d3bf">Width</code>, <code style="color:#22d3bf">OffsetX</code>, <code style="color:#22d3bf">TriggerMode</code> …）。</p>
+<p style="margin:2px 0 2px 12px">• <b>GenTL</b> — トランスポート層の共通 API。フレームグラバーやドライバの差を吸収する。</p>
+<p style="margin:2px 0 2px 12px">• <b>PFNC</b> — 画素フォーマット名の標準（<code style="color:#22d3bf">Mono8</code>, <code style="color:#22d3bf">BayerRG12p</code>, <code style="color:#22d3bf">RGB8</code> …）。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">3. EMVA1288（性能の測定法）</h3>
+<p>同じ EMVA が持つ<b>カメラ性能の測定・表記の標準</b>。QE・時間ダークノイズ・飽和容量・</p>
+<p>ダイナミックレンジ・最大 SNR・絶対感度しきい値を、<b>同じ手順で測って同じ形で出す</b>。</p>
+<p><code style="color:#22d3bf">image_sensors.md</code> のセンサ表がメーカーを跨いで横並び比較できるのは、</p>
+<p>値が全部 EMVA1288 で測られているからである。逆に、EMVA1288 レポートを出していない</p>
+<p>カメラの数値は、そのままでは他社と比べられない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">4. 仮想化への含意</h3>
+<p style="margin:2px 0 2px 12px">• <b>伝送規格が変わっても、制御の語彙（SFNC）は変わらない</b>。だから</p>
+<p><code style="color:#22d3bf">optscene</code> のセンサ/レンズ/照明オブジェクトも、伝送規格に依存しない量</p>
+<p>（露光・ゲイン・ROI・トリガ）で持つのが正しい。伝送は <code style="color:#22d3bf">interface_budget</code> に</p>
+<p>分離してある、という切り分けはこの構造に合っている。</p>
+<p style="margin:2px 0 2px 12px">• <b>EMVA1288 が単一真実源</b>。カタログの QE / 雑音 / 飽和容量はここから取る。</p>
+<p>独自指標の数値を混ぜると横並び比較が壊れる。</p>
+<p style="margin:2px 0 2px 12px">• 一次情報のたどり方: 伝送規格の仕様書は A3 / JIIA、ソフト層と測定法は EMVA。</p>
+<p>カメラの実測値はメーカーの EMVA1288 レポート。</p>

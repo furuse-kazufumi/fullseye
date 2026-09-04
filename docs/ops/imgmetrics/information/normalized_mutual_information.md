@@ -22,6 +22,10 @@ version: 0.1.5  # fullseye lib version this note was generated for
 周辺エントロピーが両方 0(どちらも一様な絵)のときは、**上限が 0 なので
 比が定義できない** ―― 0 除算を避けるために 0 や 1 を返さず ``ValueError``。
 
+## 詳しい使い方ガイド
+
+- [image_difference_metrics ファミリ ガイド](../guides/image_difference_metrics.md)
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

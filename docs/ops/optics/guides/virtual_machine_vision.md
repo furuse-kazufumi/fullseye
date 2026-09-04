@@ -1,3 +1,13 @@
+---
+guide: virtual_machine_vision
+dim: optics
+title: 仮想マシンビジョン — パラメータの洗い出しとオブジェクト模型
+author: Kazufumi Furuse
+license: Apache-2.0
+version: 0.1.0
+applies_to: optics/imaging_sim, optics/scene, optics/imaging
+---
+
 # 仮想マシンビジョン — パラメータの洗い出しとオブジェクト模型
 
 観察光学系を物理空間に組んで画像を生成するために、**何を与えれば像が決まるか**を

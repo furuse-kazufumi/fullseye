@@ -2,6 +2,10 @@
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/imgmetrics/<category>/<op>.md` を走査。
 
+## ファミリ使い方ガイド(用途→op の教材)
+
+- [image_difference_metrics](guides/image_difference_metrics.md) — 画質・差分指標の知識 — 数字が動く前に、たいてい条件が動いている
+
 ## カテゴリ
 
 ### colordiff (3)

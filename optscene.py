@@ -906,7 +906,7 @@ def _check_scene(scene):
 def trace_rays(scene, origins, directions) -> dict:
     """光線束を撃って最初の交点を返す(レンダラの素になる公開 op)。
 
-    返り値 dict: ``t`` 距離 [mm](当たらなければ inf)、``index`` 当たった
+    返り値 dict: ``t`` 距離 [mm] (当たらなければ inf)、``index`` 当たった
     プリミティブの番号(-1 = 当たらず)、``point`` 交点 [mm]、``normal`` 単位法線
     (当たらなかった行は 0)。当たり判定は fail-closed で、シーンが空なら例外。
     """
@@ -962,7 +962,7 @@ def _emitter_spread(e):
 
 
 def illumination_visibility(scene, points, light) -> np.ndarray:
-    """各点から見た**発光点の可視率** [0, 1](= 落ち影)。
+    """各点から見た**発光点の可視率** [0, 1] (= 落ち影)。
 
     点ごとに全発光点への遮蔽を判定して平均する。バックライトのように部品の裏に
     光源がある配置では 0 になり、シルエットが立つ。返り値 (M,)。

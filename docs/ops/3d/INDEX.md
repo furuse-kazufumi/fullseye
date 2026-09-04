@@ -2,6 +2,10 @@
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/3d/<category>/<op>.md` を走査。
 
+## 背景知識ガイド(op の手前にある物理・規約)
+
+- [depth_sensors](guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方
+
 ## カテゴリ
 
 ### annotate3d (7)

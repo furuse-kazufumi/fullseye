@@ -13,7 +13,7 @@ version: 0.1.5  # fullseye lib version this note was generated for
 # surface_defect — OPTICS `scene` op
 
 - **データ種**: `table × image2d` → `table`
-- **呼び出し**: `import optscene; optscene.surface_defect(primitive: 'dict', field, mask=None, uv_size_mm=(20.0, 20.0), centre_mm=(0.0, 0.0), height_um: 'float' = 0.0, height_field=None) -> 'dict'` (または `opsoptics.get("surface_defect")`)
+- **呼び出し**: `import optscene; optscene.surface_defect(primitive: 'dict', field, mask=None, uv_size_mm=(20.0, 20.0), centre_mm=(0.0, 0.0), height_um: 'float' = 0.0, height_field=None, roughness_um: 'float' = 0.6) -> 'dict'` (または `opsoptics.get("surface_defect")`)
 
 ## 使い方
 
@@ -27,6 +27,18 @@ version: 0.1.5  # fullseye lib version this note was generated for
 ``height_field`` を別に渡すと、**色は変わらないが凹凸だけがある欠陥**(打痕・
 ひけ・浅い擦り傷)を作れる。``field`` を全ゼロにすれば純粋な地形欠陥になり、
 ドーム照明では消えて低角の暗視野照明で光る ―― この差こそ照明を選ぶ理由。
+
+``roughness_um`` は**欠陥のところだけ面が粗くなる量**(既定 0.6 µm)。
+
+見方を変えると、:func:`surface_finish` の加工目も同じものを別の粒度で持っている
+―― 加工目は**表面凹凸のテクスチャを数オクターブの雑音に圧縮した**表現で、
+ここでいう粗さは「画素より細かくて解像できない凹凸」を 1 つの数(σ)に潰した表現。
+解像できる凹凸は法線として、解像できない凹凸は粗さとして扱う、という分担である。傷は材料を
+削り取った跡なので、健全面より必ず粗い。これがあると
+鏡面割合 exp(-(4πσcosθ/λ)²) が下がって**明視野で暗く**なり、同時に散乱が増えて
+**暗視野で明るく**なる ―― 教科書どおりのコントラスト反転は、法線の傾きではなく
+この粗さから出る(低角の光を真上へ返すには面が 39 度傾く必要があり、傷の傾斜では
+届かないため。2026-09-05 に実測で確認)。0 にすれば粗さを変えない欠陥になる。
 
 ``uv_size_mm`` は貼り付ける実寸 [mm]、``centre_mm`` は面座標上の中心。
 ``mask`` を渡すとその画素が欠陥ラベル(``optscene_defect_mask`` が返す真値)。
@@ -48,6 +60,14 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 詳しい使い方ガイド
 
 - [optics_imaging ファミリ ガイド](../guides/optics_imaging.md)
+
+## 背景知識ガイド(この op の手前にある物理・規約)
+
+- [dataset_conventions](../../annotate/guides/dataset_conventions.md) — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴
+- [mv_cameras](../guides/mv_cameras.md) — 産業用カメラメーカー（センサとの紐付け・ラインスキャン / TDI）
+- [mv_illumination_practice](../guides/mv_illumination_practice.md) — 照明の実務知識 — 波長・偏光・点灯方式・外光・安全
+- [mv_image_sensors](../guides/mv_image_sensors.md) — 産業用イメージセンサ（現行品中心）
+- [virtual_machine_vision](../guides/virtual_machine_vision.md) — 仮想マシンビジョン — パラメータの洗い出しとオブジェクト模型
 
 ## 参考(サンプルデータ・文献)
 

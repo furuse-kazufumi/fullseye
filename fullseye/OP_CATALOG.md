@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(68 例)
+### 2-D 画像/信号/幾何(69 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -78,6 +78,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **加工された金属表面と素材(粗い拡散・上塗り・布・木・濡れ・腐食)** — Oren-Nayarがσ=0でLambertと厳密一致し端は1.35倍、上塗りは下地の寄与を単調に減らす、布の縁光沢は鏡面と逆(正面1e-6/縁0.09)、濡れは0.50→0.357、腐食面積0.30→実測0.2995、すりガラスは直進+拡散=平板の透過率0.923077でエネルギー保存。接線場は同心円が半径と直交。 `py -3.11 examples/machined_metal_and_materials.py`
 
 **optics**
+- **検査セルの光学デジタルツインから学習画像を真値つきで生成** — 視野25.875mmと深度294.000mmが閉じた式に厳密一致、透過照明のシルエット19552画素=πr²と1%以内で部品は厳密に0。色を1画素も変えない凹凸だけの欠陥が拡散+3.41%対低角+93.46%=27倍、ラベルは照明によらず273画素。個体別bbox 4個の合計が合成マスクと一致。絞るほど高周波が残る。18,994枚/時。 `py -3.11 examples/virtual_machine_vision.py`
 - **ガラスと鏡面の光学を閉じた式で解く** — 垂直入射0.0422=((n1-n2)/(n1+n2))²、Brewster 56.6°でp偏光が1e-15未満、臨界角超は厳密1.0、平板0.9191=2n/(n²+1)、Beer-Lambertがexp(-1)、Snell残差1e-12未満で全反射は光線ごと、プリズム最小偏角F/d/C=39.14/38.65/38.43°。金の色(1.00,0.67,0.38)はn,kから出る。 `py -3.11 examples/glass_and_mirror_optics.py`
 
 **imaging_quality**
@@ -820,7 +821,7 @@ _計 347 ops / 66 categories。_
 - `sampson_distance` (`image2d, image2d → signal`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category
-_計 878 ops / 47 categories。_
+_計 881 ops / 47 categories。_
 
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
@@ -1643,7 +1644,7 @@ _計 878 ops / 47 categories。_
 - `xmh_daubechies` `image → image` · 例: `gallery2d_geometry`
 - `tf_radon_sinogram` `image → image` · 例: `gallery2d_geometry`
 
-### typed(140)
+### typed(143)
 - `tb_points_to_voxel` `points → volume` · 例: なし
 - `tb_estimate_point_normals` `points → points` · 例: なし
 - `tb_iss_keypoints` `points → signal` · 例: なし
@@ -1725,6 +1726,9 @@ _計 878 ops / 47 categories。_
 - `tb_cplx_cr_residual` `cimage → feature` · 例: なし
 - `tb_angular_spectrum_propagate` `cimage → cimage` · 例: なし
 - `tb_wetness` `rgbimage → rgbimage` · 例: なし
+- `tb_env_studio` `points → signal` · 例: なし
+- `tb_env_lightbox` `points → signal` · 例: なし
+- `tb_sensor_capture` `rgbimage → rgbimage` · 例: なし
 - `tb_lf_to_mla` `lightfield → image` · 例: なし
 - `tb_lf_subaperture` `lightfield → image` · 例: なし
 - `tb_lf_center_view` `lightfield → image` · 例: なし
@@ -1887,7 +1891,7 @@ _計 26 ops / 4 categories。_
 - `stat_zscore` (`signal → signal`) — Standardise a 1-D sample: ``(x - mean) / std`` (population ``ddof=0``).
 
 ## Optics operators(opsoptics)by category
-_計 80 ops / 15 categories。_
+_計 124 ops / 16 categories。_
 
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)。光線と面の相互作用(reflect / refract / fresnel_reflectance)と Zernike フィット(fit_zernike)は match3d、PSF 復元は volrestore、FFT は complexops、位相シフト干渉法は fringe が持ち場なので重複させていない。
@@ -1988,6 +1992,52 @@ _計 80 ops / 15 categories。_
 - `mueller_element` (` → matrix`) — A 4x4 real Mueller matrix for one polarisation element.
 - `mueller_apply` (`matrix, stokes → stokes`) — Push a Stokes vector through a Mueller matrix: ``S' = M @ S``.
 - `stokes_analyze` (`stokes → table`) — Read a Stokes vector: degree of polarisation, azimuth, ellipticity.
+
+### scene(44)
+- `scene_material` (` → table`) — 材質を 1 つ作る。``kind`` は lambert / conductor / dielectric の 3 種。
+- `scene_plane` (` → table`) — z = ``z_mm`` の水平面(ステージ/コンベア)。``half_size_mm`` で有限の板にできる。
+- `scene_sphere` (` → table`) — 球の部品。``center_mm`` は (x, y, z) [mm]、``radius_mm`` > 0。
+- `scene_box` (` → table`) — 軸平行な直方体の部品(AABB)。``half_size_mm`` は各軸の半サイズ [mm]。
+- `scene_cylinder` (` → table`) — z 軸に平行な有限円筒(端面つき)。**加工仕上げが実際に載る形**。
+- `surface_defect` (`table, image2d → table`) — 2-D の欠陥図を**部品の面に貼る**(``defectgen`` の出力をそのまま食う)。
+- `surface_finish` (`table → table`) — 部品の面に**加工目**(旋盤目・ヘアライン・ローレット・梨地・研削目)を刻む。
+- `random_defects` (`table → table`) — 部品に**ランダムな欠陥**を作る(傷・割れ・ピット・しみ・打痕・異物)。
+- `scene_difference` (`table, table → table`) — ``solid`` から ``cavity`` をくり抜く(CSG の差集合)。**中空の部品**を作る唯一の手段。
+- `optical_camera` (` → table`) — 実在の諸元(焦点距離・画素ピッチ・解像度・作動距離)から理想ピンホールを組む。
+- `camera_rays` (`table → points`) — カメラ dict → 全画素の光線 (origins (H·W, 3), directions (H·W, 3))。
+- `reflect_rays` (`points, points → points`) — 鏡面反射 d − 2(d·n)n。``glassmirror.refract_rays`` の相方(反射側が無かった)。
+- `trace_rays` (`table, points, points → table`) — 光線束を撃って最初の交点を返す(レンダラの素になる公開 op)。
+- `illumination_visibility` (`table, points, table → signal`) — 各点から見た**発光点の可視率** [0, 1] (= 落ち影)。
+- `render_optscene` (`table, table, table → rgbimage`) — **検査用**に撮る: 実在の照明器具を物理単位で置き直接光を数える(真値つき)。
+- `optscene_depth` (`table, table → image2d`) — 深度の**真値** (H, W) [mm]。**光軸方向の z** であって視点からの斜距離ではない。
+- `optscene_mask` (`table, table → image2d`) — ``index`` 番のプリミティブが見えている画素の**真値マスク** (H, W) の bool。
+- `optscene_defect_mask` (`table, table → image2d`) — **欠陥画素の真値マスク** (H, W)。学習・評価のラベルはこれを使う。
+- `optscene_instances` (`table, table → table`) — 欠陥を**個体ごと**に返す(クラス・画素マスク・bounding box・面積)。
+- `defocus_blur` (`rgbimage, image2d, table → rgbimage`) — 深度の真値から**被写界深度のぼけ**を掛ける(理想ピンホール像 -> 実レンズの像)。
+- `diffraction_blur` (`rgbimage, table → rgbimage`) — 開口で決まる**回折ぼけ**を掛ける(エアリーディスクをガウスで近似)。
+- `airy_radius_um` (` → measurement`) — エアリーディスクの第 1 暗環までの半径 [µm] = 1.22 · λ · N(閉じた式)。
+- `sensor_catalog` (` → table`) — 実在センサの諸元表(Basler の EMVA1288 実測つき)。
+- `sensor_spec` (` → table`) — イメージセンサの諸元。**電子の数**まで決める側の値だけを持つ。
+- `lens_catalog` (` → table`) — 産業用レンズの諸元表(型番で引ける)。``maker`` / ``mount`` で絞れる。
+- `sensor_diagonal_mm` (`table → measurement`) — センサの対角 [mm]。レンズのイメージサークルと比べて**覆えるか**を見る。
+- `covers_sensor` (`table, table → table`) — レンズがそのセンサを覆えるか(イメージサークル 対 対角)。
+- `lens_spec` (` → table`) — レンズの諸元。NA と F 値は**どちらで与えてもよい**(N = 1/(2·NA))。
+- `light_catalog` (` → table`) — 照明の諸元表(鍵は「メーカー 型番」)。``maker`` / ``kind`` で絞れる。
+- `register_light` (` → table`) — 手元の照明をカタログに登録する(データシートの値をそのまま入れる)。
+- `light_spec` (` → table`) — 照明の諸元。**幾何は illumdesign.light_source に委ね、光の性質をここで足す**。
+- `light_wavelengths` (`table → pairs`) — 光源のスペクトルを、撮像に使う数本の波長と重みに落とす。
+- `vision_layout` (`table, table, table → table`) — センサー・レンズ・照明・シーンを束ね、**導出量を閉じた式で**返す。
+- `layout_capture` (`table → table`) — レイアウトのとおりに撮る(スペクトル -> 回折 -> 被写界深度 -> センサー)。
+- `linescan_capture` (`table, table, table → table`) — **ラインスキャン / TDI** で撮る(搬送しながら 1 ラインずつ積む)。
+- `interface_budget` (`table → table`) — 伝送帯域から**帯域律速の最大フレーム / ラインレート**を返す。
+- `optical_budget` (` → table`) — 観察光学系の**分解能バジェット**を閉じた式で出す(撮る前に成立するかを見る)。
+- `observe_surface` (` → table`) — **観察光学系を組んで、指定した素材の仕上げ面を撮る**(一行で使える入口)。
+- `inspection_dataset` (`table, table, table → table`) — 外観検査 AI の**学習画像を n 枚**、画素完全なラベル付きで生成する(検査用)。
+- `dataset_throughput` (`table → table`) — :func:`inspection_dataset` の結果 → 生成スループットの実測まとめ。
+- `env_studio` (`points → signal`) — スタジオ環境の放射輝度(方向 -> 明るさ)。**無彩色**。
+- `env_lightbox` (`points → signal`) — 撮影ボックスの環境(広い天井の明かり + ほんのり明るい周囲)。**無彩色**。
+- `render_studio` (`table, table → rgbimage`) — **見せる絵**を描く: 環境光・多重反射・屈折と分散つき(測光の真値は無い)。
+- `sensor_capture` (`rgbimage → rgbimage`) — 放射輝度 → 実センサの出力(ショット雑音・読み出し雑音・飽和・量子化)。
 
 ### surface(5)
 - `metallic_flake_normals` (` → normalmap`) — メタリック塗装のフレーク(アルミ片)の法線場を作る。

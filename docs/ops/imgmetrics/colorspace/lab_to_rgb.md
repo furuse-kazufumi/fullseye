@@ -20,6 +20,14 @@ version: 0.1.5  # fullseye lib version this note was generated for
 CIE L\*a\*b\* → sRGB ``[0, 1]``。**色域外は切り詰められる**ので
 ``rgb_to_lab`` との往復は色域内でしか一致しない(テストで固定)。
 
+## 詳しい使い方ガイド
+
+- [image_difference_metrics ファミリ ガイド](../guides/image_difference_metrics.md)
+
+## 背景知識ガイド(この op の手前にある物理・規約)
+
+- [colorimetry](../../2d/guides/colorimetry.md) — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

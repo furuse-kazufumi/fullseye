@@ -19,7 +19,7 @@ version: 0.1.5  # fullseye lib version this note was generated for
 
 光線束を撃って最初の交点を返す(レンダラの素になる公開 op)。
 
-返り値 dict: ``t`` 距離 [mm](当たらなければ inf)、``index`` 当たった
+返り値 dict: ``t`` 距離 [mm] (当たらなければ inf)、``index`` 当たった
 プリミティブの番号(-1 = 当たらず)、``point`` 交点 [mm]、``normal`` 単位法線
 (当たらなかった行は 0)。当たり判定は fail-closed で、シーンが空なら例外。
 
@@ -38,6 +38,14 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 詳しい使い方ガイド
 
 - [optics_imaging ファミリ ガイド](../guides/optics_imaging.md)
+
+## 背景知識ガイド(この op の手前にある物理・規約)
+
+- [dataset_conventions](../../annotate/guides/dataset_conventions.md) — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴
+- [mv_cameras](../guides/mv_cameras.md) — 産業用カメラメーカー（センサとの紐付け・ラインスキャン / TDI）
+- [mv_illumination_practice](../guides/mv_illumination_practice.md) — 照明の実務知識 — 波長・偏光・点灯方式・外光・安全
+- [mv_image_sensors](../guides/mv_image_sensors.md) — 産業用イメージセンサ（現行品中心）
+- [virtual_machine_vision](../guides/virtual_machine_vision.md) — 仮想マシンビジョン — パラメータの洗い出しとオブジェクト模型
 
 ## 参考(サンプルデータ・文献)
 

@@ -20,6 +20,9 @@
 <p style="margin:2px 0 2px 12px">• <b>物理的に不可能な状態も拒否</b>: 偏光度 &gt; 1 の Stokes ベクトル、負の透過率、負の強度、n-|m| が奇数などの不正な Zernike 添字。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:colorimetry">colorimetry</a> — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:mv_illumination_practice">mv_illumination_practice</a> — 照明の実務知識 — 波長・偏光・点灯方式・外光・安全</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
@@ -27,7 +30,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:appearance_structural_colour">appearance_structural_colour</a> — <code style="color:#22d3bf">py -3.11 examples/appearance_structural_colour.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">rgbimage</code> を入力に取れる)</h3>
-<p><a style="color:#22d3bf" href="opoptics:clearcoat_shade">clearcoat_shade</a> · <a style="color:#22d3bf" href="opoptics:wetness">wetness</a></p>
+<p><a style="color:#22d3bf" href="opoptics:clearcoat_shade">clearcoat_shade</a> · <a style="color:#22d3bf" href="opoptics:wetness">wetness</a> · <a style="color:#22d3bf" href="opoptics:defocus_blur">defocus_blur</a> · <a style="color:#22d3bf" href="opoptics:diffraction_blur">diffraction_blur</a> · <a style="color:#22d3bf" href="opoptics:sensor_capture">sensor_capture</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">appearance</code>)</h3>
 <p><a style="color:#22d3bf" href="opoptics:cie_xyz_from_wavelength">cie_xyz_from_wavelength</a> · <a style="color:#22d3bf" href="opoptics:spectrum_to_srgb">spectrum_to_srgb</a> · <a style="color:#22d3bf" href="opoptics:thin_film_reflectance">thin_film_reflectance</a> · <a style="color:#22d3bf" href="opoptics:grating_wavelengths">grating_wavelengths</a> · <a style="color:#22d3bf" href="opoptics:grating_rgb">grating_rgb</a> · <a style="color:#22d3bf" href="opoptics:ward_anisotropic">ward_anisotropic</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

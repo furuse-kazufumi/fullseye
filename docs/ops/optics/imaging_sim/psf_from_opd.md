@@ -52,6 +52,15 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 - [optics_imaging ファミリ ガイド](../guides/optics_imaging.md)
 
+## 背景知識ガイド(この op の手前にある物理・規約)
+
+- [mv_cables](../guides/mv_cables.md) — ケーブル（規格・速度・給電・ロボットケーブル）
+- [mv_cameras](../guides/mv_cameras.md) — 産業用カメラメーカー（センサとの紐付け・ラインスキャン / TDI）
+- [mv_frame_grabbers](../guides/mv_frame_grabbers.md) — フレームグラバーボード（光学系ではないが、撮れるかを決める）
+- [mv_image_sensors](../guides/mv_image_sensors.md) — 産業用イメージセンサ（現行品中心）
+- [mv_standards](../guides/mv_standards.md) — カメラインターフェースの規格と団体
+- [virtual_machine_vision](../guides/virtual_machine_vision.md) — 仮想マシンビジョン — パラメータの洗い出しとオブジェクト模型
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
