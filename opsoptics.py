@@ -57,6 +57,7 @@ paraboloid / sphere_mirror の 4 処方(テストと例の共通出発点)。
     opsoptics.get("thin_lens")(focal_mm=50.0, object_mm=200.0)
 """
 import illumdesign
+import optscene
 import lensimage
 import lensopt
 import numpy as np
@@ -71,7 +72,8 @@ import raytrace
 _MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage,
         "matappear": matappear, "glassmirror": glassmirror,
         "metalfinish": metalfinish, "surfacelib": surfacelib,
-        "lensopt": lensopt, "illumdesign": illumdesign}
+        "lensopt": lensopt, "illumdesign": illumdesign,
+        "optscene": optscene}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 #   既存語彙の再利用: image2d / signal / matrix / measurement(実スカラのみ)/
@@ -261,6 +263,55 @@ _CATALOG = {
         # calib.camera_calibration に渡して K_true と突き合わせる閉ループ
         ("calibration_views", "lensimage", ["table"], "table"),
     ],
+    # scene(optscene、2026-09-05 追加): **光学系を物理空間に組んで撮る**。
+    # これまでの仮想 MV(visiondesign/defectgen/visionlab)は「レンダラを持てない
+    # ので画像でなく限界を返す」線引きだった ―― その線引きを外す層。mm 単位の
+    # 3-D 空間に部品(球/直方体/円筒/CSG 差集合=中空)・照明(illumdesign の
+    # light_source をそのまま食う)・カメラ(焦点距離/画素ピッチ/作動距離)を置き、
+    # 実光線で **画像 + 深度の真値 + 画素完全なマスク**を同時に返す。真値が同じ
+    # 計算から出るので検査アルゴリズムを採点できる(バックライトのシルエット面積
+    # が閉形式 πr² と 0.09% 一致、再投影の往復 1.4e-14)。材質の色は指定せず
+    # glassmirror の Fresnel(n,k)、粗さは metalfinish、分散は raytrace から取る。
+    "scene": [
+        ("scene_material", "optscene", [], "table"),
+        ("scene_plane", "optscene", [], "table"),
+        ("scene_sphere", "optscene", [], "table"),
+        ("scene_box", "optscene", [], "table"),
+        ("scene_cylinder", "optscene", [], "table"),
+        ("surface_defect", "optscene", ["table", "image2d"], "table"),
+        ("surface_finish", "optscene", ["table"], "table"),
+        ("random_defects", "optscene", ["table"], "table"),
+        ("scene_difference", "optscene", ["table", "table"], "table"),
+        ("optical_camera", "optscene", [], "table"),
+        ("camera_rays", "optscene", ["table"], "points"),
+        ("reflect_rays", "optscene", ["points", "points"], "points"),
+        ("trace_rays", "optscene", ["table", "points", "points"], "table"),
+        ("illumination_visibility", "optscene", ["table", "points", "table"], "signal"),
+        ("render_optscene", "optscene", ["table", "table", "table"], "rgbimage"),
+        ("optscene_depth", "optscene", ["table", "table"], "image2d"),
+        ("optscene_mask", "optscene", ["table", "table"], "image2d"),
+        ("optscene_defect_mask", "optscene", ["table", "table"], "image2d"),
+        ("optscene_instances", "optscene", ["table", "table"], "table"),
+        ("defocus_blur", "optscene", ["rgbimage", "image2d", "table"], "rgbimage"),
+        ("diffraction_blur", "optscene", ["rgbimage", "table"], "rgbimage"),
+        ("airy_radius_um", "optscene", [], "measurement"),
+        ("sensor_catalog", "optscene", [], "table"),
+        ("sensor_spec", "optscene", [], "table"),
+        ("lens_spec", "optscene", [], "table"),
+        ("light_spec", "optscene", [], "table"),
+        ("light_wavelengths", "optscene", ["table"], "pairs"),
+        ("vision_layout", "optscene", ["table", "table", "table"], "table"),
+        ("layout_capture", "optscene", ["table"], "table"),
+        ("optical_budget", "optscene", [], "table"),
+        ("observe_surface", "optscene", [], "table"),
+        ("inspection_dataset", "optscene", ["table", "table", "table"], "table"),
+        ("dataset_throughput", "optscene", ["table"], "table"),
+        # 見せる絵は作り方が違う(環境光・多重反射・分散)ので検査用と別 op にしてある
+        ("env_studio", "optscene", ["points"], "signal"),
+        ("env_lightbox", "optscene", ["points"], "signal"),
+        ("render_studio", "optscene", ["table", "table"], "rgbimage"),
+        ("sensor_capture", "optscene", ["rgbimage"], "rgbimage"),
+    ],
 }
 
 
@@ -311,6 +362,13 @@ RESULT_ADAPTERS = {
     "refract_rays": lambda r: r[0] if isinstance(r, tuple) else r,
     # (色の変調, 繊維方向) → 変調。接線は ward_anisotropic へ渡す用で素の関数から取る。
     "wood_grain": lambda r: r[0] if isinstance(r, tuple) else r,
+    # (原点, 方向) → 方向。原点は全画素で視点 1 点(camera["eye"])なので情報が無い。
+    "camera_rays": lambda r: r[1] if isinstance(r, tuple) else r,
+    # bool マスク → 0/1 の画像(宣言 image2d に揃える。面積を数える用途をそのまま保つ)
+    "optscene_mask": lambda r: np.asarray(r, dtype=float),
+    "optscene_defect_mask": lambda r: np.asarray(r, dtype=float),
+    # 深度の真値は当たらない画素が NaN。宣言 image2d のままで NaN を潰さない
+    # (0 で埋めると「距離 0 の面」と区別できなくなる)。
     # (直進, 拡散) → (K, 2) の pairs。どちらも捨てない(合計が板の透過率になる)。
     "rough_transmission": lambda r: (np.stack(np.broadcast_arrays(*r), axis=-1).reshape(-1, 2)
                                      if isinstance(r, tuple) else r),

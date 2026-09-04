@@ -55,13 +55,14 @@ def _glass(glass, sigma):
 
 SPHERES = [
     # 奥列: 材質 x 仕上げ(左から)
-    (np.array([-1.62, -0.48, -0.55]), 0.42, _metal("al", "linear", "アルミ ヘアライン")),
-    (np.array([-0.54, -0.48, -0.55]), 0.42, _metal("cr", "circular", "クロム 旋盤目")),
-    (np.array([0.54, -0.48, -0.55]), 0.42, _metal("au", "crosshatch", "金 ローレット")),
-    (np.array([1.62, -0.48, -0.55]), 0.42, _metal("ag", "random", "銀 梨地")),
-    # 手前: ガラス(左 = 無吸収の N-BK7 / 右 = 高分散の N-SF11 に吸収を入れたもの)
-    (np.array([-0.88, -0.40, 1.05]), 0.50, _glass("N-BK7", 0.0)),
-    (np.array([0.88, -0.40, 1.05]), 0.50, _glass("N-SF11", 0.55)),
+    (np.array([-1.86, -0.48, -0.35]), 0.42, _metal("al", "linear", "アルミ ヘアライン")),
+    (np.array([-0.62, -0.48, -0.35]), 0.42, _metal("cr", "circular", "クロム 旋盤目")),
+    (np.array([0.62, -0.48, -0.35]), 0.42, _metal("au", "crosshatch", "金 ローレット")),
+    (np.array([1.86, -0.48, -0.35]), 0.42, _metal("ag", "random", "銀 梨地")),
+    # 手前: ガラス(左 = 無吸収の N-BK7 / 右 = 高分散の N-SF11 に吸収を入れたもの)。
+    # 奥の球に重ねてあるのは、**金属球が上下反転して透ける**のを見せるため
+    (np.array([-0.60, -0.53, 1.25]), 0.37, _glass("N-BK7", 0.0)),
+    (np.array([0.60, -0.53, 1.25]), 0.37, _glass("N-SF11", 0.9)),
 ]
 
 # 硝材ごとの RGB 屈折率(Sellmeier)。ここが虹の出どころで、手で色を置いてはいない
@@ -84,11 +85,33 @@ def environment(d):
     up = np.clip(d[..., 1], -1.0, 1.0)
     az = np.arctan2(d[..., 0], d[..., 2])
     el = np.arcsin(up)
-    env = 0.05 + 0.22 * np.clip(up * 0.5 + 0.5, 0.0, 1.0) ** 2
-    env = env + 11.0 * _smoothbox(az, -0.85, 0.40, 0.26) * _smoothbox(el, 0.62, 0.26, 0.24)
-    env = env + 3.6 * _smoothbox(az, 1.25, 0.20, 0.20) * _smoothbox(el, 0.24, 0.44, 0.20)
-    env = env + 1.5 * _smoothbox(el, 0.02, 0.035, 0.05)          # 水平の帯: 伸びると仕上げが見える
+    env = 0.020 + 0.14 * np.clip(up, 0.0, 1.0) ** 1.5
+    env = env + 12.0 * _smoothbox(az, -0.85, 0.34, 0.22) * _smoothbox(el, 0.66, 0.22, 0.20)
+    env = env + 3.2 * _smoothbox(az, 1.30, 0.18, 0.18) * _smoothbox(el, 0.26, 0.40, 0.18)
+    env = env + 0.45 * _smoothbox(el, 0.015, 0.012, 0.035)       # 細い水平の帯(仕上げの伸びが読める)
     return env
+
+
+# 主光源の向き(環境の主ソフトボックスと同じ方位・仰角)。影と床の直接光はこれで作る
+_KEY_AZ, _KEY_EL = -0.85, 0.66
+KEY_DIR = np.array([np.sin(_KEY_AZ) * np.cos(_KEY_EL), np.sin(_KEY_EL),
+                    np.cos(_KEY_AZ) * np.cos(_KEY_EL)])
+
+
+def shadow(p, samples=5, softness=0.10):
+    """主光源へ向かう可視率(0..1)。影が無いと球が床から浮いて見えるので、面光源を模して柔らかく。"""
+    vis = np.zeros(p.shape[:1])
+    rng = np.random.default_rng(3)
+    offs = rng.normal(scale=softness, size=(samples, 3))
+    offs[0] = 0.0
+    for off in offs:
+        ld = _normalize((KEY_DIR + off)[None])[0]
+        ld = np.broadcast_to(ld, p.shape)
+        blocked = np.zeros(p.shape[:1], bool)
+        for c, r, _m in SPHERES:
+            blocked |= np.isfinite(_sphere_t(p + 1e-3 * ld, ld, c, r))
+        vis += ~blocked
+    return vis / samples
 
 
 def checker(p, t):
@@ -193,10 +216,12 @@ def trace(o, d, depth):
     fl = hit & (idx == len(SPHERES))
     if fl.any():
         p = o[fl] + tmin[fl][..., None] * d[fl]
-        shade = checker(p, tmin[fl])
+        albedo = checker(p, tmin[fl])
+        direct = 1.35 * max(float(KEY_DIR[1]), 0.0) * shadow(p)   # 主光源 + 落ち影
+        shade = albedo * (0.16 + direct)
         if depth > 0:                       # 床にも空が映る(弱い鏡面) = 奥行きの手がかり
             rr = d[fl] - 2.0 * (d[fl] * UP).sum(-1, keepdims=True) * UP
-            shade = shade + 0.05 * environment(_normalize(rr))
+            shade = shade + 0.04 * environment(_normalize(rr))
         col[fl] = shade[..., None]
 
     # --- 球 -----------------------------------------------------------------
@@ -242,7 +267,7 @@ def _shade_glass(p, n, d, c, r, mat, depth):
     out = np.zeros(p.shape[:1] + (3,))
 
     refl_d = _normalize(d - 2.0 * (d * n).sum(-1, keepdims=True) * n)
-    refl = (environment(refl_d)[..., None] if depth <= 1
+    refl = (np.repeat(environment(refl_d)[..., None], 3, -1) if depth <= 1
             else trace(p + 1e-4 * n, refl_d, depth - 1))
 
     for ch in range(3):
@@ -382,7 +407,7 @@ def build_plots(P):
     d_line = float(G.prism_min_deviation_deg(587.6, 60.0, "N-BK7"))
     tick_specs.append((np.power(np.clip(band, 0.0, 1.0), 1.0 / 2.2), None,
                        ["検算: プリズムの分散(N-BK7 頂角 60 度)",
-                        f"左 = 偏角小(赤) → 右 = 偏角大(青) / d 線 {d_line:.2f} 度"],
+                        f"左 = 偏角小(赤) → 右 = 偏角大(青)"],
                        None, None, None))
 
     thick = np.linspace(0.0, 30.0, 300)
@@ -417,7 +442,7 @@ def main() -> int:
     tick = ImageFont.truetype(FONT, 13)
     T, pad, cap, head = 300, 14, 46, 70
     labels = [s[2]["label"] for s in SPHERES if s[2]["kind"] == "metal"]
-    cv = Image.new("RGB", (pad + 4 * (T + pad), head + SH + 30 + pad + T + cap + pad), (17, 19, 23))
+    cv = Image.new("RGB", (pad + 4 * (T + pad), head + SH + 48 + pad + T + cap + pad), (17, 19, 23))
     dr = ImageDraw.Draw(cv)
     dr.text((pad, 9), "加工された金属表面とガラスの光学 — 材質(n+ik) x 仕上げ(微小面の向きと粗さ)",
             font=font, fill=(242, 242, 242))
@@ -425,12 +450,15 @@ def main() -> int:
                        "色は Fresnel(n,k) と硝材の分散だけから出ている",
             font=sub, fill=(196, 198, 205))
     cv.paste(scene_im, (pad, head))
-    dr.text((pad, head + SH + 6),
-            "奥列 = " + " / ".join(labels) + "。手前 = ガラス球(左 N-BK7 無吸収 / 右 N-SF11 + 吸収)"
-            "。床の市松と奥の球が上下反転して透けているのが屈折、中心ほど暗いのが Beer–Lambert 吸収",
-            font=small, fill=(198, 200, 206))
+    dr.text((pad, head + SH + 4), "奥列 = " + " / ".join(labels)
+            + "。手前 = ガラス球(左 N-BK7 無吸収 / 右 N-SF11 + 吸収)",
+            font=small, fill=(224, 226, 232))
+    dr.text((pad, head + SH + 23),
+            "床の市松と奥の金属球が上下反転して透けているのが屈折。中心ほど暗いのが Beer–Lambert 吸収で、"
+            "縁の色づきは RGB で屈折率が違うこと(分散)から出ている",
+            font=small, fill=(184, 186, 192))
 
-    y0 = head + SH + 30 + pad
+    y0 = head + SH + 48 + pad
     for i, (img, rng, caption, xf, yf, leg) in enumerate(plots):
         im = Image.fromarray((np.clip(img, 0, 1) * 255 + 0.5).astype(np.uint8)).resize((T, T), Image.LANCZOS)
         if rng is not None:
