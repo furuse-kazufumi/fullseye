@@ -38,7 +38,7 @@ Shoot the same scene under six light directions (`render_beauty`), recover norma
 
 ![Photometric-stereo closed loop: 6-light capture → photometric_stereo / robust → angular error against GT normals](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/hero_photometric_stereo.png)
 
-(plain least squares is biased 9° by attached shadows; the RANSAC version stays at 0.0x° even with cast shadows — numbers in the figure)
+(plain least squares is biased 4.5° by attached shadows and 16° with cast shadows + AO; the RANSAC version gives 0.000° and 0.04°)
 
 **This one did not come out on the first try either.** Here is the improvement process as it happened:
 

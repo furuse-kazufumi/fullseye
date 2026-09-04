@@ -5,6 +5,17 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 
 ## 0.1.6 — unreleased
 
+- **hero の被写体刷新 + `render_beauty(vertex_albedo=)` + 差別化パネル**(ユーザー: 「ジャガイモにしか見えない」
+  「この絵は DirectX で昔からできる、差別化を見せろ」「図で訴求」): 被写体を 4 球 smooth union から
+  **SDF/CSG の静物**(ジャイロイド格子球=鋼/三葉結び目=金/歯車=黒鉄、`examples_3d/render_beauty.still_life`)へ。
+  物体別の色は新設 `vertex_albedo=(n_mesh,3)`(重心補間、金属は鏡面色も追従、範囲/形状検査)。
+  記事には (a) **同シーンの計測チャンネル**(depth/法線/AO/影/`sobel_mag(depth)` 境界 21x、
+  `tools/gen_hero_channels.py`)(b) **フォトメトリックステレオ閉ループ**(6 灯 `render_beauty(lambert,linear)`
+  → `photometric_stereo`/`_robust` → 真値法線と角度誤差、`tools/gen_hero_photometric_stereo.py`。素朴 LS は
+  付着影で 9° 偏り、点灯光源のみ/RANSAC で 0.00x°)(c) **改善の過程モンタージュ**(`tools/gen_hero_making_of.py`、
+  素材 `tools/_making_of/`)(d) ターンテーブル(`tools/gen_still_life_turntable.py`)(e) 「2026-09-04 の拡張」章
+  (op 数 2D 877/3D 344、新層の表)を追加。テスト +3(vertex_albedo)。
+
 - **実解剖骨メッシュから手骨格を組み立てる例 `examples_3d/anatomical_hand.py`(ユーザー指摘「手骨も
   今となっては粗い」)**: 記事の手骨 hero は手続きカプセル SDF で実物と並べると粗かった。「正確な骨格」
   は画像生成 AI のもっともらしさでなく**実データの幾何**で担保する方針で、MyoSuite `myo_sim`

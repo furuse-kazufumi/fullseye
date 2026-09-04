@@ -4,7 +4,7 @@ dim: 3d
 category: sdf_csg
 in: points
 out: sdf
-examples: [gear_metrology, sdf_csg]
+examples: [gear_metrology, render_beauty, sdf_csg]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.5  # fullseye lib version this note was generated for
@@ -27,6 +27,7 @@ version: 0.1.5  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gear_metrology](../../../../examples_3d/gear_metrology.py) — `py -3.11 examples_3d/gear_metrology.py`
+- [render_beauty](../../../../examples_3d/render_beauty.py) — `py -3.11 examples_3d/render_beauty.py`
 - [sdf_csg](../../../../examples_3d/sdf_csg.py) — `py -3.11 examples_3d/sdf_csg.py`
 
 ## 型が繋がる次の op(`sdf` を入力に取れる)

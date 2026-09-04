@@ -38,7 +38,7 @@
 
 ![フォトメトリックステレオの閉ループ: 6 灯撮影 → photometric_stereo / robust → 真値法線との角度誤差](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/hero_photometric_stereo.png)
 
-（素朴な最小二乗は付着影で 9° 偏り、RANSAC 版は影ありでも 0.0x°。数字は図中）
+（素朴な最小二乗は付着影で 4.5° 偏り、影+AO ありでは 16°。RANSAC 版は 0.000° / 影ありでも 0.04°）
 
 **この 1 枚も一発では出ていません。** 改善の過程をそのまま載せます（作っている感が伝わるように）：
 

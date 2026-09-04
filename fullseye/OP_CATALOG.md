@@ -722,9 +722,9 @@ _計 344 ops / 66 categories。_
 
 ### sdf_csg(7)
 - `sphere_sdf` (`points → sdf`) — 球の符号付き距離場: ``|p - center| - R``(内側負・外側正)。 · 例: `annotate3d_figure`, `gear_metrology`, `molecule_atom_count`, `procedural_hand`, `render_beauty`, `sdf_csg`, `sfm_recon`
-- `box_sdf` (`points → sdf`) — 軸平行直方体の**厳密**な符号付き距離場(内側負・外側正)。 · 例: `gear_metrology`, `sdf_csg`
-- `sdf_union` (`sdf, sdf → sdf`) — 2 SDF の和集合 A∪B = 要素ごとの min(a, b)(内側=負がどちらかにあれば内側)。 · 例: `gear_metrology`, `sdf_csg`
-- `sdf_intersect` (`sdf, sdf → sdf`) — 2 SDF の積集合 A∩B = 要素ごとの max(a, b)(両方の内側でのみ内側)。 · 例: `gear_metrology`
+- `box_sdf` (`points → sdf`) — 軸平行直方体の**厳密**な符号付き距離場(内側負・外側正)。 · 例: `gear_metrology`, `render_beauty`, `sdf_csg`
+- `sdf_union` (`sdf, sdf → sdf`) — 2 SDF の和集合 A∪B = 要素ごとの min(a, b)(内側=負がどちらかにあれば内側)。 · 例: `gear_metrology`, `render_beauty`, `sdf_csg`
+- `sdf_intersect` (`sdf, sdf → sdf`) — 2 SDF の積集合 A∩B = 要素ごとの max(a, b)(両方の内側でのみ内側)。 · 例: `gear_metrology`, `render_beauty`
 - `sdf_subtract` (`sdf, sdf → sdf`) — 差集合 A\B = max(a, -b)(A の内側 かつ B の外側 = ``-b`` の内側)。 · 例: `sdf_csg`
 - `sdf_smooth_union` (`sdf, sdf → sdf`) — 滑らかに丸めた和集合(polynomial smooth-min)。``k>0`` で継ぎ目を半径 ~k で丸める。 · 例: `render_beauty`
 - `sdf_offset` (`sdf → sdf`) — SDF のゼロ等値面を距離 ``r`` だけ法線方向へ動かす = ``sdf - r``(r>0 膨張, r<0 収縮)。 · 例: `sfm_recon`

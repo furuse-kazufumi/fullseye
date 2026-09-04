@@ -60,9 +60,9 @@ def main() -> int:
     assert m0 < 1.0 and m3 < m2 and m3 < m1, (m0, m1, m2, m3)
     def g(a, hi): return np.repeat(np.clip(np.asarray(a) / hi, 0, 1)[..., None], 3, -1)
     def nrm(n): return 0.5 * (n + 1) * sil[..., None]
-    panels = [(g(clean[0], clean[0].max()), "撮影 1/6: render_beauty(lambert, linear)"), (g(shad[3], shad[3].max()), "撮影 4/6: 影・AO あり"),
-              (nrm(gt), "真値法線: render_mesh"), (nrm(n_ls_c), f"photometric_stereo(最小二乗) {m1:.1f}° ← 付着影で偏る"),
-              (nrm(n_ls_s), f"同・影+AO あり {m2:.1f}°"), (nrm(n_rb_s), f"photometric_stereo_robust(RANSAC) {m3:.2f}°(影ありでも)")]
+    panels = [(g(clean[0], clean[0].max()), "撮影 1/6: render_beauty(lambert)"), (g(shad[3], shad[3].max()), "撮影 4/6: 影・AO あり"),
+              (nrm(gt), "真値法線: render_mesh"), (nrm(n_ls_c), f"最小二乗 {m1:.1f}°(付着影で偏る)"),
+              (nrm(n_ls_s), f"同・影+AO あり {m2:.1f}°"), (nrm(n_rb_s), f"RANSAC 版 {m3:.2f}°(影あり、黒=未定画素)")]
     font = ImageFont.truetype("C:/Windows/Fonts/YuGothB.ttc", 20); T, pad, cap = 400, 12, 36
     cv = Image.new("RGB", (pad + 3 * (T + pad), pad + 2 * (T + cap + pad)), (18, 20, 24)); dr = ImageDraw.Draw(cv)
     for i, (img, c) in enumerate(panels):
