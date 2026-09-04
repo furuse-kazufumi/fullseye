@@ -163,7 +163,15 @@ def main() -> int:
     d_bp = max(dice(rec_bp > c, gt) for c in cand)
     d_few = dice(rec_few > thr, gt)
     err_mu = [float(np.mean(rec[lab == i + 1]) - m) for i, m in enumerate(mus)]
-    d_mat = [dice((rec > thr) & (lab == i + 1), lab == i + 1) for i in range(len(mus))]
+    # ★材質ごとの数字は **再現率(recall)**。「その材質のラベル内で拾えた割合」であって
+    # Dice ではない(ラベルの外に出た偽陽性を数えないので、Dice と名乗ると必ず 1.0 に
+    # 近づく)。全体の取りこぼし/拾いすぎは下の precision / recall で別に出す。
+    rec_bin = rec > thr
+    d_mat = [float((rec_bin & (lab == i + 1)).sum()) / max(float((lab == i + 1).sum()), 1e-9)
+             for i in range(len(mus))]
+    tp = float((rec_bin & gt).sum())
+    prec = tp / max(float(rec_bin.sum()), 1e-9)
+    recall = tp / max(float(gt.sum()), 1e-9)
     # 各材質の「最も薄いところ」が体素いくつぶんか(分解能の限界を数字で出す)。
     # 薄い板は部分体積効果で μ が薄まる ―― バグではなく物理なので、隠さず並べる。
     from scipy import ndimage as _ndi
@@ -172,11 +180,11 @@ def main() -> int:
         m = lab == i + 1
         edt = _ndi.distance_transform_edt(m)       # 材質内の「表面までの距離」
         thin.append(2.0 * float(np.median(edt[m])))   # ×2 ≒ 局所の肉厚(体素)
-    print(f"[score] Dice 実手法 {d_real:.4f} / 単純逆投影 {d_bp:.4f}(最良しきい値)/ "
-          f"{VIEWS_FEW} ビュー {d_few:.4f}", flush=True)
+    print(f"[score] Dice 実手法 {d_real:.4f}(precision {prec:.4f} / recall {recall:.4f})"
+          f" / 単純逆投影 {d_bp:.4f}(最良しきい値)/ {VIEWS_FEW} ビュー {d_few:.4f}", flush=True)
     for nm, m, e, dm, th in zip(names, mus, err_mu, d_mat, thin):
         print(f"  {nm}: μ 真値 {m / px_cm:.3f} cm^-1 → 誤差 {e / px_cm:+.4f} "
-              f"({100 * abs(e) / m:.1f}%) / Dice {dm:.3f} / 局所肉厚 {th:.1f} 体素", flush=True)
+              f"({100 * abs(e) / m:.1f}%) / 再現率 {dm:.3f} / 局所肉厚 {th:.1f} 体素", flush=True)
     # 実手法が両方の零点を **明確に**(1.5 倍以上)上回ること。
     assert d_real > 1.5 * max(d_bp, d_few), (d_real, d_bp, d_few)
     assert d_real > 0.85, d_real
@@ -193,30 +201,31 @@ def main() -> int:
     mip_gt = mu_vol.max(axis=0)
     mip_rec = rec.max(axis=0)
     panels = [
-        (cmap(mu_vol[ks] / vmax),
-         f"真値スライス z={ks}(μ[cm⁻¹]: Al {mus_cm[0]} / Ti {mus_cm[1]} / PMMA {mus_cm[2]})"),
+        (cmap(mu_vol[ks] / vmax), f"真値スライス z={ks}"),
         (cmap((sino_show - sino_show.min()) / max(float(np.ptp(sino_show)), 1e-9)),
-         f"サイノグラム({VIEWS} ビュー × {sino_show.shape[1]} 検出器、光子 {I0:.0e})"),
+         f"サイノグラム({VIEWS} ビュー × {sino_show.shape[1]} 検出器)"),
         (cmap(rec[ks] / vmax), f"FBP 再構成(Dice {d_real:.3f})"),
         (cmap(rec_bp[ks] / max(rec_bp[ks].max(), 1e-9)),
-         f"零点(a) ランプ無しの単純逆投影(Dice {d_bp:.3f})"),
+         f"零点(a) ランプ無しの逆投影(Dice {d_bp:.3f})"),
         (cmap(rec_few[ks] / vmax), f"零点(b) {VIEWS_FEW} ビュー FBP(Dice {d_few:.3f})"),
-        (cmap(err / (0.25 * vmax)), f"|Δμ| 誤差マップ  材質別 Dice "
-                                    f"{d_mat[0]:.2f}/{d_mat[1]:.2f}/{d_mat[2]:.2f}"),
+        (cmap(err / (0.25 * vmax)), f"|Δμ| 誤差マップ  適合率 {prec:.2f} / 再現率 {recall:.2f}"),
     ]
     extra = [(cmap(mip_gt / vmax), "真値の最大値投影(上から)"),
              (cmap(mip_rec / vmax), "再構成の最大値投影(上から)")]
 
     font = ImageFont.truetype("C:/Windows/Fonts/YuGothB.ttc", 20)
     small = ImageFont.truetype("C:/Windows/Fonts/YuGothB.ttc", 17)
-    T, pad, cap, head = 380, 12, 34, 44
+    T, pad, cap, head = 380, 12, 34, 70
     cols = 4
     rows = 2
     cv = Image.new("RGB", (pad + cols * (T + pad), head + pad + rows * (T + cap + pad)), (18, 20, 24))
     dr = ImageDraw.Draw(cv)
-    dr.text((pad, 12), f"同じ静物を X 線 CT にかける — 横幅 {PART_MM:.0f} mm / 体素 {10 * px_cm:.3f} mm / "
-                       f"{nz} スライス × {VIEWS} ビュー / 光子 {I0:.0e} のポアソンノイズ / 真値は SDF そのもの",
+    dr.text((pad, 8), f"同じ静物を X 線 CT にかける — 横幅 {PART_MM:.0f} mm / 体素 {10 * px_cm:.3f} mm / "
+                      f"{nz} スライス × {VIEWS} ビュー / 光子 {I0:.0e} のポアソンノイズ",
             font=font, fill=(240, 240, 240))
+    dr.text((pad, 36), f"μ[1/cm] = Al {mus_cm[0]} / Ti {mus_cm[1]} / PMMA {mus_cm[2]}  ―― "
+                       f"真値は SDF そのもの(メッシュ化を経ない中身)",
+            font=small, fill=(198, 200, 206))
     for i, (img, c) in enumerate(panels[:3] + extra[:1] + panels[3:] + extra[1:]):
         im = Image.fromarray((np.clip(img, 0, 1) * 255 + 0.5).astype(np.uint8)).resize((T, T), Image.LANCZOS)
         x = pad + (i % cols) * (T + pad)

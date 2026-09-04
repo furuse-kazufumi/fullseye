@@ -69,6 +69,16 @@ The runnable sample is `examples_3d/structured_light_scan.py` (sphere + step box
 
 > The first run gave **RMSE 78 mm**. `look_at` builds poses in the gluLookAt convention (camera looks down −Z), while `render_mesh` converts that to (x, −y, −z) before applying K (the CV convention). Skip the difference and the projector ends up facing behind the camera — the depths stay **plausibly sized and entirely wrong**. I only noticed because the null (Gray only, 79 mm) landed on the same number. Without measuring the null alongside, I would probably have shipped it.
 
+Having measured the surface, the next question is what is **inside**. The same still life goes through an **X-ray CT**: a solid attenuation volume is built from the SDFs (three materials), each slice is projected with `radon_transform`, **photon-counting Poisson noise** is applied, and `filtered_backprojection` reconstructs it — then it is scored against the truth:
+
+![X-ray CT of the still life: truth slice / sinogram / FBP / plain back-projection / 24 views / error / MIP](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/hero_ct.png?v=1)
+
+30 mm wide, 0.210 mm voxels, 74 slices × 180 views. **Dice 0.882 (precision 0.79 / recall 1.00)**, with μ recovered to 4.3% (Ti), 6.3% (PMMA) and 16.6% (Al). The nulls — unfiltered back-projection at 0.492 (scored at the threshold most favourable to *it*) and 24-view FBP at 0.452 — are beaten by **1.8–2.0x**.
+
+Two honest breakdowns: (1) almost nothing is missed (recall 1.00); what costs Dice is **over-picking** (precision 0.79), because the binarisation threshold is set at half of the *weakest* material (PMMA) and therefore also catches reconstruction noise. (2) Al is the only μ off by 16.6%, because the gyroid shell is just **2.0 voxels thick locally** — partial-volume averaging, not a bug (Ti is 4.9 voxels at 4.3%, PMMA 4.0 voxels at 6.3%).
+
+> This one fell over too. The first version put μ at 0.55–1.0 *per pixel*, so line integrals reached p = 30, **exp(−p) dropped below a single photon** and the logarithm saturated (photon starvation). Recovered μ came out 50–84% low and **the null — plain back-projection — beat the real method on Dice** (0.63 vs 0.43). When a null beats your method, suspect your physics first: re-deriving μ from real material values (1/cm) and the physical voxel size brought the maximum p down to 1.46.
+
 Mirror reflections, glass refraction, CD-like diffraction rainbows and brushed-metal (anisotropic) highlights are **not possible yet** — this is a rasteriser; reflection and refraction need ray tracing. Consider it the announced next material extension.
 
 ---

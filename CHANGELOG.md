@@ -5,6 +5,16 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 
 ## 0.1.6 — unreleased
 
+- **静物の X 線 CT(記事図)**: `tools/gen_hero_ct.py` — hero の静物を SDF から**中身の詰まった
+  減衰係数ボリューム**(Al 0.46 / Ti 1.20 / PMMA 0.17 [1/cm]、横幅 30 mm・体素 0.210 mm)に
+  戻し、74 スライス × 180 ビューを `radon_transform` → 光子ポアソンノイズ →
+  `filtered_backprojection` で再構成 → 真値と照合。**Dice 0.882(適合率 0.79 / 再現率 1.00)**、
+  μ 誤差 Ti 4.3% / PMMA 6.3% / Al 16.6%(格子球の殻は局所肉厚 2.0 体素 = 部分体積効果)。
+  零点は単純逆投影 0.492(その手法に最も有利なしきい値)・24 ビュー FBP 0.452 で 1.8〜2.0 倍差。
+  ★教訓: 初回は μ を「/画素」で置いて線積分 p=30 に達し、exp(-p) が光子 1 個を割って
+  **対数が飽和**(photon starvation)。復元 μ が 50〜84% 低く、**零点の方が Dice で勝った**
+  (0.63 対 0.43)。零点が勝ったらまず自分の物理を疑う。材質別の数字は Dice ではなく
+  **再現率**(ラベル内しか見ないので Dice と名乗ると必ず 1.0 に寄る)と明記した。
 - **構造化光スキャナを閉ループで組めるようにした(新 op 2 件)**: `fringe.absolute_phase`
   (巻き込み位相 + 粗い絶対推定 → 画素ごとに 2π 次数を確定。空間アンラップと違い島に分かれた
   場面でも絶対、要件は「粗推定の誤差 < π」)と `fringe.triangulate_column`(投影機コラム番号 →
