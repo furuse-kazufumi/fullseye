@@ -68,7 +68,8 @@ __all__ = [
     "optical_camera", "camera_rays", "reflect_rays",
     "trace_rays", "illumination_visibility",
     "surface_defect", "surface_finish", "random_defects", "render_optscene", "optscene_depth", "optscene_mask",
-    "optscene_defect_mask", "optscene_instances", "sensor_catalog", "sensor_spec", "lens_spec", "light_spec", "light_wavelengths",
+    "optscene_defect_mask", "optscene_instances", "sensor_catalog", "sensor_spec", "lens_catalog", "sensor_diagonal_mm",
+    "covers_sensor", "lens_spec", "light_spec", "light_wavelengths",
     "vision_layout", "layout_capture", "linescan_capture", "interface_budget", "optical_budget", "observe_surface", "defocus_blur", "diffraction_blur", "airy_radius_um", "sensor_capture", "inspection_dataset",
     "dataset_throughput", "env_studio", "env_lightbox", "render_studio",
 ]
@@ -2147,7 +2148,7 @@ _SENSOR_CATALOG = {
 }
 
 
-def sensor_catalog(status: str = None) -> dict:
+def sensor_catalog(status: str = None, maker: str = None) -> dict:
     """実在センサの諸元表(Basler の EMVA1288 実測つき)。
 
     ``status`` に current / mature / legacy を渡すと絞れる。ディスコンで古すぎるものは
@@ -2189,6 +2190,9 @@ def sensor_catalog(status: str = None) -> dict:
     for name, v in _SENSOR_CATALOG.items():
         w, h, px, sh, gen, st, qe, dn, sat, dr, snr = v
         if status is not None and st != status:
+            continue
+        if maker is not None and not gen.lower().startswith(maker.lower()) \
+                and not (maker.lower() == "sony" and name.startswith("IMX")):
             continue
         maker = ("Sony" if name.startswith("IMX")
                  else gen.split()[0] if gen else "unknown")
@@ -2261,14 +2265,120 @@ def sensor_spec(pixel_um: float = 3.45, resolution=(1024, 1024),
             "noise_values_are": "EMVA1288 (Basler camera)" if model else "user-supplied"}
 
 
+#: センサ形式 -> イメージサークル直径 [mm](規格値)。レンズが「その形式まで」と
+#: 書いているのは、この直径を覆えるという意味。ラインセンサは長さが直接効く
+#: (16k x 7 µm = 115 mm)ので、専用レンズのイメージサークルが桁違いに大きくなる。
+_FORMATS = {
+    '1/3"': 6.0, '1/2.5"': 7.2, '1/2"': 8.0, '1/1.8"': 9.0, '2/3"': 11.0,
+    '1"': 16.0, '1.1"': 17.6, '4/3"': 22.5, 'APS-C': 28.4, '35mm': 43.3,
+}
+
+#: 産業用レンズ(固定焦点)。**スペックシートに載る項目だけ**を持つ ―― 焦点距離・
+#: F 値の範囲・対応形式(= イメージサークル)・マウント。収差や MTF は機種ごとの
+#: グラフでしか出ないので持たない(持つと「実測です」と誤解させる)。
+_LENS_CATALOG = {
+    # 型番:              (メーカー, f[mm], F最小, F最大, 形式, マウント)
+    # 鍵は「メーカー 型番」。レンズはメーカー間で型番が似通う(FL-/LM-/HF- の数字部が
+    # かぶる)ので、型番だけでは一意にならない(2026-09-05 のユーザー指摘)
+    "Kowa LM6HC": ("Kowa", 6.0, 1.8, 11.0, '1"', "C"),
+    "Fujinon HF8XA-1": ("Fujinon", 8.0, 1.6, 16.0, '2/3"', "C"),
+    "Fujinon HF25XA-1": ("Fujinon", 25.0, 1.8, 16.0, '2/3"', "C"),
+    "Fujinon HF35XA-1": ("Fujinon", 35.0, 1.9, 16.0, '2/3"', "C"),
+    "Ricoh FL-CC0814A-2M": ("Ricoh", 8.0, 1.4, 16.0, '2/3"', "C"),
+    "Ricoh FL-CC1214A-2M": ("Ricoh", 12.0, 1.4, 16.0, '2/3"', "C"),
+    "Ricoh FL-CC1614-5M": ("Ricoh", 16.0, 1.4, 16.0, '2/3"', "C"),
+    "Ricoh FL-CC3516-2M": ("Ricoh", 35.0, 1.6, 16.0, '2/3"', "C"),
+}
+
+
+def lens_catalog(maker: str = None, mount: str = None) -> dict:
+    """産業用レンズの諸元表(型番で引ける)。``maker`` / ``mount`` で絞れる。
+
+    **スペックシートに載る項目だけ**を持つ ―― 焦点距離・F 値の範囲・対応形式・
+    マウント・イメージサークル。ユーザー指摘のとおり「レンズそのもののスペックに
+    載るパラメータはそんなに多くない」ので、これで足りる。収差・MTF・歪曲は機種ごとの
+    グラフでしか出ないため**持たない**(持つと実測だと誤解させる)。
+
+    返り値の各項目に ``image_circle_mm`` が入るので、センサの対角と比べて
+    「そのセンサを覆えるか」を機械で判定できる。
+    """
+    out = {}
+    for name, (mk, f, fmin, fmax, fmt, mnt) in _LENS_CATALOG.items():
+        if maker is not None and mk.lower() != maker.lower():
+            continue
+        if mount is not None and mnt.lower() != mount.lower():
+            continue
+        out[name] = {"maker": mk, "model": name.split(" ", 1)[1],
+                     "focal_mm": f, "f_number_min": fmin,
+                     "f_number_max": fmax, "format": fmt, "mount": mnt,
+                     "image_circle_mm": _FORMATS[fmt]}
+    return out
+
+
+def sensor_diagonal_mm(sensor: dict) -> float:
+    """センサの対角 [mm]。レンズのイメージサークルと比べて**覆えるか**を見る。"""
+    if not isinstance(sensor, dict) or sensor.get("kind") != "sensor":
+        raise ValueError("sensor must be a sensor_spec() result")
+    w = sensor["width"] * sensor["pixel_um"] * 1e-3
+    h = sensor["height"] * sensor["pixel_um"] * 1e-3
+    return float(np.hypot(w, h))
+
+
+def covers_sensor(lens: dict, sensor: dict) -> dict:
+    """レンズがそのセンサを覆えるか(イメージサークル 対 対角)。
+
+    覆えないと**四隅が黒く落ちる**(ケラレ)。カタログの「1 インチまで」等はこの判定を
+    形式名で言っているだけなので、実寸で比べたほうが確実 ―― とくにラインセンサは
+    長さがそのまま効く(16k x 7 µm = 115 mm)ので、エリア用レンズでは全く足りない。
+    """
+    circle = float(lens.get("image_circle_mm", 0.0))
+    if circle <= 0.0:
+        raise ValueError("lens has no image_circle_mm; build it with lens_spec(model=...) "
+                         "or pass image_circle_mm explicitly")
+    diag = sensor_diagonal_mm(sensor)
+    # 形式名(2/3" など)は「その対角を覆う」という意味なので、ちょうど同寸のときに
+    # 浮動小数の差で False にしない。1% の許容差を置く
+    return {"image_circle_mm": circle, "sensor_diagonal_mm": diag,
+            "covers": bool(circle >= diag * 0.99), "margin_mm": circle - diag}
+
+
 def lens_spec(focal_mm: float = 25.0, f_number: float = None, na: float = None,
               working_distance_mm: float = 200.0, coc_um: float = None,
-              telecentric: bool = False, transmission: float = 0.9) -> dict:
+              telecentric: bool = False, transmission: float = 0.9,
+              model: str = None, maker: str = None,
+              image_circle_mm: float = None) -> dict:
     """レンズの諸元。NA と F 値は**どちらで与えてもよい**(N = 1/(2·NA))。
 
     ``coc_um`` を省くと画素ピッチを許容錯乱円に使う(レイアウトが束ねるときに解決)。
     ``telecentric=True`` は倍率が距離で変わらない前提 ―― 寸法測定ではここが効く。
+
+    ``model`` に実在の型番を渡すと(``lens_catalog()`` のキー "Kowa LM6HC" でも、
+    型番だけ "LM6HC" + ``maker="Kowa"`` でもよい。**レンズは型番がメーカー間で
+    似通う**ので、曖昧なときは fail-closed で メーカー を要求する)、焦点距離・
+    イメージサークルが公開値で埋まり、F 値を省いたときは開放値が入る。**カタログに
+    載るのはそこまで**で、収差や MTF は入らない(機種ごとのグラフでしか出ないため)。
     """
+    if model is not None:
+        cat = lens_catalog()
+        key = model if model in cat else None
+        if key is None:                               # 「メーカー 型番」でなく型番だけ
+            hits = [k for k, v in cat.items()
+                    if v["model"].lower() == model.lower()
+                    and (maker is None or v["maker"].lower() == maker.lower())]
+            if len(hits) > 1:
+                raise ValueError(f"lens model {model!r} is ambiguous across makers "
+                                 f"{sorted({cat[h]['maker'] for h in hits})}; "
+                                 "pass maker= or use the full 'Maker Model' key")
+            if not hits:
+                raise ValueError(f"unknown lens model {model!r}; "
+                                 f"choose from {sorted(cat)} or pass the numbers directly")
+            key = hits[0]
+        c = cat[key]
+        model = key
+        focal_mm = c["focal_mm"]
+        image_circle_mm = c["image_circle_mm"] if image_circle_mm is None else image_circle_mm
+        if f_number is None and na is None:
+            f_number = c["f_number_min"]              # 省略時は開放
     f = _pos(focal_mm, "focal_mm")
     wd = _pos(working_distance_mm, "working_distance_mm")
     if wd <= f:
@@ -2282,7 +2392,10 @@ def lens_spec(focal_mm: float = 25.0, f_number: float = None, na: float = None,
     return {"kind": "lens", "focal_mm": f, "f_number": N,
             "numerical_aperture": 1.0 / (2.0 * N), "working_distance_mm": wd,
             "coc_um": None if coc_um is None else _pos(coc_um, "coc_um"),
-            "telecentric": bool(telecentric), "transmission": tr}
+            "telecentric": bool(telecentric), "transmission": tr, "model": model,
+            "maker": maker if model is None else _LENS_CATALOG.get(model, (maker,))[0],
+            "image_circle_mm": (None if image_circle_mm is None
+                                else _pos(image_circle_mm, "image_circle_mm"))}
 
 
 def light_spec(kind: str = "coaxial", source: str = "led",

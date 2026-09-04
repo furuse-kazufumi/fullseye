@@ -653,3 +653,37 @@ def test_defect_roughness_is_what_creates_the_inversion():
     # 倍率まで固定すると、加工目の強さや照明の置き方で簡単に破れる
     weak, strong = contrast(0.0, dark), contrast(0.4, dark)
     assert strong > weak, f"粗さ 0 で {weak:+.3f} / 0.4 で {strong:+.3f}"
+
+
+# --------------------------------------------------------------------------- #
+# 型番でスペックを引く
+# --------------------------------------------------------------------------- #
+def test_specs_load_by_model_number():
+    """メーカー・型番を指定すれば、カメラとレンズのオブジェクトが 1 行で組める。"""
+    sen = OS.sensor_spec(model="IMX264")
+    assert (sen["width"], sen["height"]) == (2448, 2048)
+    assert sen["pixel_um"] == 3.45 and sen["noise_values_are"].startswith("EMVA1288")
+    lens = OS.lens_spec(model="HF25XA-1", maker="Fujinon", working_distance_mm=250.0)
+    assert lens["focal_mm"] == 25.0 and lens["f_number"] == 1.8      # 省略時は開放
+    assert lens["image_circle_mm"] == 11.0                           # 2/3"
+    lay = OS.vision_layout(sen, lens, [OS.light_spec(kind="coaxial")])
+    assert lay["budget"]["magnification"] > 0.0
+
+
+def test_image_circle_must_cover_the_sensor_diagonal():
+    """覆えないと四隅が黒く落ちる。形式名でなく実寸で比べる。"""
+    lens = OS.lens_spec(model="Fujinon HF25XA-1")                   # 2/3" = 11.0 mm
+    assert OS.covers_sensor(lens, OS.sensor_spec(model="IMX264"))["covers"]      # 対角 11.0
+    big = OS.covers_sensor(lens, OS.sensor_spec(model="IMX541"))     # 対角 17.5
+    assert not big["covers"] and big["margin_mm"] < -5.0
+
+
+def test_catalogs_filter_by_maker_and_unknown_models_are_refused():
+    assert set(OS.lens_catalog(maker="Ricoh")) == {
+        "Ricoh FL-CC0814A-2M", "Ricoh FL-CC1214A-2M",
+        "Ricoh FL-CC1614-5M", "Ricoh FL-CC3516-2M"}
+    assert all(v["maker"] == "Gpixel" for v in OS.sensor_catalog(maker="Gpixel").values())
+    with pytest.raises(ValueError, match="unknown lens model"):
+        OS.lens_spec(model="NOT-A-LENS")
+    with pytest.raises(ValueError, match="unknown sensor model"):
+        OS.sensor_spec(model="IMX9999")
