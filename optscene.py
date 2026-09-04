@@ -2078,6 +2078,30 @@ _SENSOR_CATALOG = {
     "IMX178": (3088, 2064, 2.40, "rolling", "STARVIS", "mature", 81, 3, 14.3, 73, 42),
     "IMX183": (5472, 3648, 2.40, "rolling", "STARVIS", "mature", 75, 3, 13.8, 71, 41),
     "IMX226": (4024, 3036, 1.85, "rolling", "STARVIS", "mature", 83, 3, 11.0, 70, 40),
+    # -- onsemi PYTHON(4.8 µm グローバル。小型・高速。ダークノイズは 11-12 e- と大きい)
+    "PYTHON 300": (640, 480, 4.80, "global", "onsemi PYTHON", "mature", 52, 11, 7.1, 57, 39),
+    "PYTHON 500": (800, 600, 4.80, "global", "onsemi PYTHON", "mature", 54, 11, 7.8, 57, 39),
+    "PYTHON 1300": (1280, 1024, 4.80, "global", "onsemi PYTHON", "mature", 53, 11, 6.9, 56, 38),
+    "PYTHON 2000": (1920, 1200, 4.80, "global", "onsemi PYTHON", "mature", 54, 11, 7.8, 57, 39),
+    "PYTHON 5000": (2590, 2048, 4.80, "global", "onsemi PYTHON", "mature", 55, 12, 8.2, 57, 39),
+    # -- onsemi XGS(3.2 µm グローバル。**大判**が本領。APS-C / 35 mm まである)
+    "XGS 20000": (4500, 4500, 3.20, "global", "onsemi XGS", "current", 55, 4, 9.2, 66, 40),
+    "XGS 32000": (6580, 4935, 3.20, "global", "onsemi XGS", "current", 57, 4, 9.3, 66, 40),
+    "XGS 45000": (8192, 5460, 3.20, "global", "onsemi XGS", "current", 55, 5, 9.0, 65, 40),
+    "MT9J003": (3840, 2748, 1.67, "rolling", "onsemi", "legacy", 46, 6, 2.8, 54, 34),
+    # -- Gpixel GMAX(2.5 µm グローバル。**ダークノイズ 1 e- 級**が特徴。超高解像度も)
+    "GMAX0505": (5120, 5120, 2.50, "global", "Gpixel GMAX", "current", 51, 4, 4.3, 60, 36),
+    "GMAX2505": (2600, 2160, 2.50, "global", "Gpixel GMAX", "current", 53, 1, 4.8, 70, 37),
+    "GMAX2509": (4200, 2160, 2.50, "global", "Gpixel GMAX", "current", 53, 1, 4.6, 69, 37),
+    "GMAX2518": (4508, 4096, 2.50, "global", "Gpixel GMAX", "current", 56, 3, 6.7, 66, 38),
+    "GMAX3265": (9344, 7000, 3.20, "global", "Gpixel GMAX", "current", 52, 8, 10.4, 61, 40),
+    # -- ams(旧 CMOSIS)CMV(5.5 µm。飽和容量は大きいがダークノイズも 14 e- と大きい)
+    "CMV2000": (2048, 1088, 5.50, "global", "ams CMV", "mature", 63, 14, 9.3, 57, 40),
+    "CMV4000": (2048, 2048, 5.50, "global", "ams CMV", "mature", 62, 14, 11.9, 59, 41),
+    "CMV12000": (4096, 3072, 5.50, "global", "ams CMV", "mature", 45, 14, 11.6, 59, 41),
+    # -- Teledyne e2v(切替シャッタ。NIR 強化版がある)
+    "EV76C570": (1602, 1202, 4.50, "switchable", "Teledyne e2v", "legacy", 47, 22, 6.8, 50, 38),
+    "EV76C661": (1280, 1024, 5.30, "switchable", "Teledyne e2v NIR", "legacy", 59, 23, 7.4, 50, 39),
 }
 
 
@@ -2097,9 +2121,25 @@ def sensor_catalog(status: str = None) -> dict:
         なく実装込みなので、別のカメラなら少し変わる。
       * 画素ピッチ・シャッタ方式・世代はセンサ由来なので、カメラが変わっても動かない。
 
+    **自社でセンサを作っているカメラメーカーはここに載せられない**(Canon / Photron /
+    Vision Research(Phantom) / Teledyne DALSA / Hamamatsu の一部)。型番から引けず、
+    カメラのデータシートが唯一の出所だからである。画素ピッチが桁違いのものがあり
+    (Phantom の高感度機は 28 µm、Pregius S は 2.74 µm)、回折律速に入る F 値も
+    飽和容量も一桁変わるので、**実機の値を直接 sensor_spec に渡すこと**。
+
     世代で何が変わるかは飽和容量に出る: Pregius 1st は 31.8 ke- で、2nd(10.4 ke-)の
     **3 倍**。画素を 5.86 µm から 3.45 µm へ小さくした代償である。Pregius S(2.74 µm)は
     9.7 ke- で 2nd と同等を保っている(裏面照射)。
+
+    Sony 以外(``maker`` で引ける)も同じ表から取ってあるので、**同じ測定法で横並び
+    比較できる**:
+      * **onsemi XGS**(3.2 µm)は APS-C / 35 mm の**大判**が本領。Sony にこの判は無い。
+      * **onsemi PYTHON**(4.8 µm)は小型・高速だが、ダークノイズが 11-12 e- と
+        Pregius の 5 倍。暗い場面では効いてくる。
+      * **Gpixel GMAX**(2.5 µm)は**ダークノイズ 1 e- 級**が売り(GMAX2505/2509)。
+        飽和容量は 4-5 ke- と小さいので、ダイナミックレンジは 70 dB でほぼ同等。
+        GMAX3265 は 65 MP(9344x7000)で、超高解像度なら選択肢がここしかない。
+      * **ams CMV**(5.5 µm)は飽和容量が大きい代わりにダークノイズも 14 e-。
     """
     if status is not None and status not in ("current", "mature", "legacy"):
         raise ValueError("status must be current / mature / legacy, got %r" % status)
@@ -2108,8 +2148,10 @@ def sensor_catalog(status: str = None) -> dict:
         w, h, px, sh, gen, st, qe, dn, sat, dr, snr = v
         if status is not None and st != status:
             continue
+        maker = ("Sony" if name.startswith("IMX")
+                 else gen.split()[0] if gen else "unknown")
         out[name] = {"width": w, "height": h, "pixel_um": px, "shutter": sh,
-                     "generation": gen, "status": st,
+                     "generation": gen, "status": st, "maker": maker,
                      "megapixels": round(w * h / 1e6, 2),
                      "quantum_efficiency": qe / 100.0, "read_noise_e": float(dn),
                      "full_well_e": sat * 1e3, "dynamic_range_db": float(dr),
