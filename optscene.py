@@ -526,7 +526,7 @@ def _uv_frame(obj, p):
 
 def surface_defect(primitive: dict, field, mask=None, uv_size_mm=(20.0, 20.0),
                    centre_mm=(0.0, 0.0), height_um: float = 0.0,
-                   height_field=None) -> dict:
+                   height_field=None, roughness_um: float = 0.6) -> dict:
     """2-D の欠陥図を**部品の面に貼る**(``defectgen`` の出力をそのまま食う)。
 
     ``field`` は明るさの変調 (H, W)(0 = 変化なし、−0.3 = 30% 暗い傷)。
@@ -537,6 +537,18 @@ def surface_defect(primitive: dict, field, mask=None, uv_size_mm=(20.0, 20.0),
     ``height_field`` を別に渡すと、**色は変わらないが凹凸だけがある欠陥**(打痕・
     ひけ・浅い擦り傷)を作れる。``field`` を全ゼロにすれば純粋な地形欠陥になり、
     ドーム照明では消えて低角の暗視野照明で光る ―― この差こそ照明を選ぶ理由。
+
+    ``roughness_um`` は**欠陥のところだけ面が粗くなる量**(既定 0.6 µm)。
+
+    見方を変えると、:func:`surface_finish` の加工目も同じものを別の粒度で持っている
+    ―― 加工目は**表面凹凸のテクスチャを数オクターブの雑音に圧縮した**表現で、
+    ここでいう粗さは「画素より細かくて解像できない凹凸」を 1 つの数(σ)に潰した表現。
+    解像できる凹凸は法線として、解像できない凹凸は粗さとして扱う、という分担である。傷は材料を
+    削り取った跡なので、健全面より必ず粗い。これがあると
+    鏡面割合 exp(-(4πσcosθ/λ)²) が下がって**明視野で暗く**なり、同時に散乱が増えて
+    **暗視野で明るく**なる ―― 教科書どおりのコントラスト反転は、法線の傾きではなく
+    この粗さから出る(低角の光を真上へ返すには面が 39 度傾く必要があり、傷の傾斜では
+    届かないため。2026-09-05 に実測で確認)。0 にすれば粗さを変えない欠陥になる。
 
     ``uv_size_mm`` は貼り付ける実寸 [mm]、``centre_mm`` は面座標上の中心。
     ``mask`` を渡すとその画素が欠陥ラベル(``optscene_defect_mask`` が返す真値)。
@@ -559,8 +571,12 @@ def surface_defect(primitive: dict, field, mask=None, uv_size_mm=(20.0, 20.0),
     hf = f if height_field is None else _arr(height_field, "height_field")
     if hf.shape != f.shape:
         raise ValueError(f"height_field shape {hf.shape} must match field shape {f.shape}")
+    rq = float(roughness_um)
+    if not np.isfinite(rq) or rq < 0.0:
+        raise ValueError(f"roughness_um must be finite and >= 0, got {roughness_um!r}")
     out["defect"] = {"field": f, "mask": m, "uv": uv, "height_field": hf,
-                     "centre": _arr(centre_mm, "centre_mm", 2), "height_mm": h * 1e-3}
+                     "centre": _arr(centre_mm, "centre_mm", 2), "height_mm": h * 1e-3,
+                     "roughness_um": rq}
     _uv_frame(out, np.zeros((1, 3)))                      # 貼れない形はここで落とす
     return out
 
@@ -1068,13 +1084,25 @@ def _tangent(n, finish):
     return t, _safe_unit(np.cross(n, t))
 
 
-def _specular_fraction(mat, cos_theta, wavelength_nm):
+#: 粗面の相関長 [µm]。RMS 高さ σ から RMS 傾き √2·σ/T を出すのに使う。加工面では
+#: 数 µm 程度で、これが小さいほど同じ粗さでも傾きが急になる(散乱が広がる)。
+#:
+#: **正直な線引き**: ここは厳密な散乱計算ではなく、「鏡面割合 exp(-(4πσcosθ/λ)²) と
+#: 表面テクスチャの粒度」で擬似的に作っている。教科書どおりの明視野/暗視野の反転
+#: (明視野で暗く・暗視野で明るく)が出るのは、欠陥の粗さが **0.2-0.6 µm** の範囲。
+#: それより粗いと、散乱が広がりすぎて暗視野でも周囲より暗くなる(2026-09-05 の実測:
+#: 1.0 µm で -89%/-21%)。実際の欠陥はこの範囲に収まることが多いが、範囲外を使うなら
+#: 符号が反転しうることを承知して使うこと。
+_ROUGH_CORR_UM = 2.5
+
+
+def _specular_fraction(mat, cos_theta, wavelength_nm, extra_roughness_um=0.0):
     """面粗さ σ の面が**鏡面として**返す割合(Davies 1954 / Bennett-Porteus 1961)。
 
     s = exp(-(4 π σ cosθ / λ)²)。σ << λ なら鏡(明視野で器具が映る)、σ >> λ なら
     ほぼ散乱(暗視野で光る)。この 1 本で明視野と暗視野の役割分担が決まる。
     """
-    sigma_um = float(mat.get("roughness_um", 0.05))
+    sigma_um = float(mat.get("roughness_um", 0.05)) + np.asarray(extra_roughness_um, float)
     lam_um = float(wavelength_nm) * 1e-3
     g = 4.0 * np.pi * sigma_um * np.asarray(cos_theta, float) / max(lam_um, 1e-9)
     return np.exp(-np.minimum(g * g, 700.0))
@@ -1118,7 +1146,13 @@ def _shade(scene, hit, view, lights, ambient, depth, shadows, footprint=None,
         mat = obj["material"]
         pm, nm, vm = p[m], n[m], -view[m]
         fp = None if footprint is None else footprint[m]
-        dmod, dtilt, _lab = _defect_sample(obj, pm, fp)    # 傷は明るさと法線の両方を変える
+        dmod, dtilt, dlab = _defect_sample(obj, pm, fp)    # 傷は明るさ・法線・粗さを変える
+        # 欠陥のところは面が粗い(材料を削り取った跡)。鏡面が減り散乱が増えるので、
+        # 明視野では暗く、暗視野では明るくなる ―― 反転はここから出る
+        extra_rq = 0.0
+        dspec = obj.get("defect")
+        if dspec is not None and dlab.any():
+            extra_rq = dlab * float(dspec.get("roughness_um", 0.0))
         if np.any(dtilt):
             nm = _safe_unit(nm + dtilt)
         col = np.full(pm.shape, float(ambient))
@@ -1137,11 +1171,16 @@ def _shade(scene, hit, view, lights, ambient, depth, shadows, footprint=None,
                 # 39 度傾く必要があり、加工目の数度では届かない。実際の暗視野が成立
                 # するのは、微小な粗さが光を広い角度へ散らすからである(2026-09-05 の実測)。
                 t, b = _tangent(nm, mat["finish"])
-                ax = np.hypot(mat["alpha_x"], theta)
-                ay = np.hypot(mat["alpha_y"], theta)
+                # 粗さはローブの**広がり**も決める。割合だけ変えて狭いローブのまま
+                # 拡散成分を増やすと、粗い欠陥がどの方向でも明るくなる嘘になる
+                # (2026-09-05 の実測: 明視野でも +52% と出た)。RMS 高さ σ と相関長 T の
+                # ガウス粗面の RMS 傾きは √2·σ/T。T は加工面で数 µm 程度
+                rough_slope = np.sqrt(2.0) * np.asarray(extra_rq, float) / _ROUGH_CORR_UM
+                ax = np.sqrt(mat["alpha_x"] ** 2 + theta ** 2 + rough_slope ** 2)
+                ay = np.sqrt(mat["alpha_y"] ** 2 + theta ** 2 + rough_slope ** 2)
                 lobe = _ward(nm, ldir, vm, t, b, ax, ay)
                 cos_v = np.clip((nm * vm).sum(-1), 0.0, 1.0)
-                diffuse = 1.0 - _specular_fraction(mat, cos_v, wavelength_nm)
+                diffuse = 1.0 - _specular_fraction(mat, cos_v, wavelength_nm, extra_rq)
                 col += (E * lobe * diffuse)[..., None] * _gm.metal_mirror_rgb(mat["metal"], cos_v)
             else:
                 cos_i = np.clip((nm * vm).sum(-1), 0.0, 1.0)
@@ -1149,7 +1188,7 @@ def _shade(scene, hit, view, lights, ambient, depth, shadows, footprint=None,
                 col += (E * R / np.pi)[..., None]               # 表面の映り込み(拡散近似)
         if mat["kind"] == "conductor":
             cos_v = np.clip((nm * vm).sum(-1), 0.0, 1.0)
-            spec = _specular_fraction(mat, cos_v, wavelength_nm)
+            spec = _specular_fraction(mat, cos_v, wavelength_nm, extra_rq)
             col = col + spec[..., None] * _specular_fixtures(
                 scene, pm, nm, vm, mat, lights, shadows)
         if mat["kind"] == "dielectric" and depth > 0:
@@ -1607,7 +1646,8 @@ def _top_of(primitive):
 
 def random_defects(primitive: dict, count: int = 2, kinds=_ALL_KINDS, seed: int = 0,
                    uv_size_mm=(20.0, 20.0), height_um=(5.0, 40.0),
-                   albedo_defects: bool = True, shape=(192, 192)) -> dict:
+                   albedo_defects: bool = True, shape=(192, 192),
+                   defect_roughness_um: float = 0.6) -> dict:
     """部品に**ランダムな欠陥**を作る(傷・割れ・ピット・しみ・打痕・異物)。
 
     外観検査 AI の学習データはこれが本体。1 回の呼び出しで ``count`` 件を引き、
@@ -1677,7 +1717,8 @@ def random_defects(primitive: dict, count: int = 2, kinds=_ALL_KINDS, seed: int 
 
     # height は µm の実寸なので、surface_defect には 1 µm 単位で渡す
     part = surface_defect(primitive, field, mask, uv_size_mm=uv,
-                          height_um=1.0, height_field=height)
+                          height_um=1.0, height_field=height,
+                          roughness_um=float(defect_roughness_um))
     return {"part": part, "objects": objects, "labels": labels}
 
 

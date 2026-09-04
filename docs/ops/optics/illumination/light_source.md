@@ -4,7 +4,7 @@ dim: optics
 category: illumination
 in: 
 out: table
-examples: [illumination_design_demo]
+examples: [illumination_design_demo, virtual_machine_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.5  # fullseye lib version this note was generated for
@@ -74,6 +74,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [illumination_design_demo](../../../../examples/illumination_design_demo.py) — `py -3.11 examples/illumination_design_demo.py`
+- [virtual_machine_vision](../../../../examples/virtual_machine_vision.py) — `py -3.11 examples/virtual_machine_vision.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

@@ -591,3 +591,65 @@ def test_brushed_metal_needs_an_oblique_view_to_show_its_grain():
                                 environment=OS.env_lightbox).mean(-1)
         grain.append(float(np.abs(np.diff(im, axis=1)).mean() / max(im.mean(), 1e-30)))
     assert grain[1] > 3.0 * grain[0]
+
+
+# --------------------------------------------------------------------------- #
+# 明視野 / 暗視野のコントラスト反転
+# --------------------------------------------------------------------------- #
+def test_bright_and_dark_field_invert_the_defect_contrast():
+    """傷は**明視野で暗く、暗視野で明るく**写る(教科書どおりの反転)。
+
+    鏡面だけのモデルでは暗視野は原理的に成立しない ―― 低角 12 度の照明を真上の
+    カメラへ返すには面法線が 39 度傾く必要があり、傷の傾斜(5-15 度)では届かない。
+    実際の暗視野が光るのは、傷が材料を削り取った跡で**局所的に粗く、散乱で返す**
+    から。だから欠陥は法線だけでなく粗さも上げる必要がある(2026-09-05)。
+    """
+    base = OS.surface_finish(
+        OS.scene_box((0.0, 0.0, 2.5), (20.0, 20.0, 2.5),
+                     OS.scene_material("conductor", metal="al", finish="linear",
+                                       roughness_um=0.03)),
+        kind="hairline", pitch_um=90.0, depth_um=0.6, uv_size_mm=(42.0, 42.0), seed=3)
+    part = OS.random_defects(base, count=1, kinds=("scratch",), seed=21,
+                             uv_size_mm=(42.0, 42.0), height_um=(20.0, 40.0),
+                             albedo_defects=False, defect_roughness_um=0.4)["part"]
+    cam = _cam(resolution=(140, 140), focal_mm=12.0, working_distance_mm=260.0)
+    lab = OS.optscene_defect_mask([part], cam)
+    good = OS.optscene_mask([part], cam, 0) & ~lab
+    assert lab.any()
+
+    bright = illumdesign.light_source(kind="coaxial", radius_mm=70.0, height_mm=140.0, n=128)
+    bright["size_mm"] = 25.0                       # 器具の実体。点近似だと鏡像が細すぎる
+    dark = illumdesign.light_source(kind="ring", radius_mm=95.0, height_mm=20.0, n=96)
+    dark["size_mm"] = 25.0
+    out = []
+    for light in (bright, dark):
+        im = OS.render_optscene([part], cam, [light], depth=1).mean(-1)
+        out.append(float(im[lab].mean() - im[good].mean()) / max(float(im[good].mean()), 1e-30))
+    assert out[0] < -0.1, f"明視野で傷が暗くならない: {out[0]:+.3f}"
+    assert out[1] > +0.1, f"暗視野で傷が明るくならない: {out[1]:+.3f}"
+
+
+def test_defect_roughness_is_what_creates_the_inversion():
+    """粗さを 0 にすると反転がほぼ消える(法線の傾きだけでは足りない)。"""
+    def contrast(rq, light):
+        # 加工目のある面で比べる。完全鏡面だと暗視野では背景も欠陥も光らず、
+        # 「粗さの効果」ではなく「どちらも真っ暗」を測ってしまう
+        base = OS.surface_finish(
+            OS.scene_box((0.0, 0.0, 2.5), (20.0, 20.0, 2.5),
+                         OS.scene_material("conductor", metal="al", finish="linear",
+                                           roughness_um=0.03)),
+            kind="hairline", pitch_um=90.0, depth_um=0.6, uv_size_mm=(42.0, 42.0), seed=3)
+        part = OS.random_defects(base, count=1, kinds=("scratch",), seed=21,
+                                 uv_size_mm=(42.0, 42.0), height_um=(20.0, 40.0),
+                                 albedo_defects=False, defect_roughness_um=rq)["part"]
+        cam = _cam(resolution=(120, 120), focal_mm=12.0, working_distance_mm=260.0)
+        lab = OS.optscene_defect_mask([part], cam)
+        good = OS.optscene_mask([part], cam, 0) & ~lab
+        im = OS.render_optscene([part], cam, [light], depth=1).mean(-1)
+        return float(im[lab].mean() - im[good].mean()) / max(float(im[good].mean()), 1e-30)
+    dark = illumdesign.light_source(kind="ring", radius_mm=95.0, height_mm=20.0, n=96)
+    dark["size_mm"] = 25.0
+    # 主張は「粗さを上げると暗視野のコントラストが上がる」という向きだけ。
+    # 倍率まで固定すると、加工目の強さや照明の置き方で簡単に破れる
+    weak, strong = contrast(0.0, dark), contrast(0.4, dark)
+    assert strong > weak, f"粗さ 0 で {weak:+.3f} / 0.4 で {strong:+.3f}"

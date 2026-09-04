@@ -54,7 +54,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`points` を入力に取れる)
 
-[refract_rays](../glassbody/refract_rays.md)
+[refract_rays](../glassbody/refract_rays.md) · [reflect_rays](../scene/reflect_rays.md) · [trace_rays](../scene/trace_rays.md) · [illumination_visibility](../scene/illumination_visibility.md) · [env_studio](../scene/env_studio.md) · [env_lightbox](../scene/env_lightbox.md)
 
 ## 同カテゴリ(`appearance`)
 

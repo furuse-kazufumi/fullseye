@@ -1,10 +1,11 @@
-# OPTICS operator help — 80 ops in 15 categories
+# OPTICS operator help — 118 ops in 16 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
 ## ファミリ使い方ガイド(用途→op の教材)
 
 - [optics_imaging](guides/optics_imaging.md) — 光学(レンズ・回折・偏光) — 使い方ガイド
+- [virtual_machine_vision](guides/virtual_machine_vision.md) — 仮想マシンビジョン — パラメータの洗い出しとオブジェクト模型
 
 ## カテゴリ
 
@@ -59,6 +60,10 @@
 ### polarization (6)
 
 [jones_apply](polarization/jones_apply.md) · [jones_element](polarization/jones_element.md) · [mueller_apply](polarization/mueller_apply.md) · [mueller_element](polarization/mueller_element.md) · [stokes_analyze](polarization/stokes_analyze.md) · [stokes_from_jones](polarization/stokes_from_jones.md)
+
+### scene (38)
+
+[airy_radius_um](scene/airy_radius_um.md) · [camera_rays](scene/camera_rays.md) · [dataset_throughput](scene/dataset_throughput.md) · [defocus_blur](scene/defocus_blur.md) · [diffraction_blur](scene/diffraction_blur.md) · [env_lightbox](scene/env_lightbox.md) · [env_studio](scene/env_studio.md) · [illumination_visibility](scene/illumination_visibility.md) · [inspection_dataset](scene/inspection_dataset.md) · [interface_budget](scene/interface_budget.md) · [layout_capture](scene/layout_capture.md) · [lens_spec](scene/lens_spec.md) · [light_spec](scene/light_spec.md) · [light_wavelengths](scene/light_wavelengths.md) · [observe_surface](scene/observe_surface.md) · [optical_budget](scene/optical_budget.md) · [optical_camera](scene/optical_camera.md) · [optscene_defect_mask](scene/optscene_defect_mask.md) · [optscene_depth](scene/optscene_depth.md) · [optscene_instances](scene/optscene_instances.md) · [optscene_mask](scene/optscene_mask.md) · [random_defects](scene/random_defects.md) · [reflect_rays](scene/reflect_rays.md) · [render_optscene](scene/render_optscene.md) · [render_studio](scene/render_studio.md) · [scene_box](scene/scene_box.md) · [scene_cylinder](scene/scene_cylinder.md) · [scene_difference](scene/scene_difference.md) · [scene_material](scene/scene_material.md) · [scene_plane](scene/scene_plane.md) · [scene_sphere](scene/scene_sphere.md) · [sensor_capture](scene/sensor_capture.md) · [sensor_catalog](scene/sensor_catalog.md) · [sensor_spec](scene/sensor_spec.md) · [surface_defect](scene/surface_defect.md) · [surface_finish](scene/surface_finish.md) · [trace_rays](scene/trace_rays.md) · [vision_layout](scene/vision_layout.md)
 
 ### surface (5)
 

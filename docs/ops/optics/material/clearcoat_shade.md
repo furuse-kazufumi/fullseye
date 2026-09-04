@@ -57,7 +57,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`rgbimage` を入力に取れる)
 
-[wetness](wetness.md)
+[wetness](wetness.md) · [defocus_blur](../scene/defocus_blur.md) · [diffraction_blur](../scene/diffraction_blur.md) · [sensor_capture](../scene/sensor_capture.md)
 
 ## 同カテゴリ(`material`)
 
