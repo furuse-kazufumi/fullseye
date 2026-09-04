@@ -60,3 +60,34 @@ def test_bad_vertex_normals_are_refused():
     bad = np.ones((len(V), 3)); bad[0, 0] = np.nan
     with pytest.raises(ValueError):
         rb.render_beauty(V, F, vertex_normals=bad, **_kw())                  # non-finite
+
+
+# --- vertex_albedo: per-vertex RGB (vertex painting) ------------------------- #
+def test_constant_vertex_albedo_reproduces_uniform_albedo():
+    V, F = _sphere_mesh()
+    kw = _kw()
+    base = rb.render_beauty(V, F, **kw)
+    va = np.tile(np.asarray(kw["albedo"], float), (len(V), 1))
+    same = rb.render_beauty(V, F, vertex_albedo=va, **kw)
+    np.testing.assert_allclose(same, base, rtol=0, atol=1e-12)
+
+
+def test_two_colour_mesh_shows_both_colours_and_keeps_silhouette():
+    V, F = _sphere_mesh()
+    kw = _kw()
+    va = np.where((V[:, 0] > 0)[:, None], [0.9, 0.2, 0.2], [0.2, 0.3, 0.9])   # red / blue halves
+    img = rb.render_beauty(V, F, vertex_albedo=va, **kw)
+    base = rb.render_beauty(V, F, **kw)
+    bg = np.array((0.10, 0.11, 0.13))
+    sil = np.any(np.abs(base - bg) > 1e-9, axis=-1)
+    np.testing.assert_array_equal(np.any(np.abs(img - bg) > 1e-9, axis=-1), sil)
+    obj = img[sil]
+    assert (obj[:, 0] > obj[:, 2]).any() and (obj[:, 2] > obj[:, 0]).any()   # red-ish and blue-ish pixels
+
+
+def test_bad_vertex_albedo_is_refused():
+    V, F = _sphere_mesh()
+    with pytest.raises(ValueError):
+        rb.render_beauty(V, F, vertex_albedo=np.ones((5, 3)), **_kw())
+    with pytest.raises(ValueError):
+        rb.render_beauty(V, F, vertex_albedo=np.full((len(V), 3), 1.5), **_kw())   # out of [0,1]
