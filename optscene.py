@@ -2053,44 +2053,67 @@ _SOURCE_KINDS = ("led", "halogen", "laser")
 #: (「特定型番の実測」だと誤解させないため)。台帳は
 #: .claude/skills/corpus/machine_vision_optics_corpus/products/image_sensors.md(raptor)。
 _SENSOR_CATALOG = {
-    # 型番:        (幅,   高さ,  画素µm, シャッタ, 最大fps, 世代,           状態)
-    "IMX174": (1920, 1200, 5.86, "global", 166.0, "Pregius 1st", "legacy"),
-    "IMX249": (1920, 1200, 5.86, "global", 41.0, "Pregius 1st", "legacy"),
-    "IMX252": (2048, 1536, 3.45, "global", 120.0, "Pregius 2nd", "mature"),
-    "IMX250": (2448, 2048, 3.45, "global", 75.0, "Pregius 2nd", "mature"),
-    "IMX264": (2448, 2048, 3.45, "global", 75.0, "Pregius 2nd", "mature"),
-    "IMX255": (4112, 2176, 3.45, "global", 40.0, "Pregius 2nd", "mature"),
-    "IMX267": (4112, 2176, 3.45, "global", 40.0, "Pregius 2nd", "mature"),
-    "IMX253": (4096, 3000, 3.45, "global", 60.0, "Pregius 2nd", "mature"),
-    "IMX304": (4096, 3000, 3.45, "global", 24.0, "Pregius 2nd", "mature"),
-    "IMX287": (720, 540, 6.9, "global", 500.0, "Pregius 2nd", "mature"),
-    "IMX392": (1920, 1200, 3.45, "global", 120.0, "Pregius 2nd", "mature"),
-    "IMX541": (5320, 4600, 2.74, "global", 35.0, "Pregius S 4th", "current"),
-    "IMX542": (4128, 3008, 2.74, "global", 61.0, "Pregius S 4th", "current"),
-    "IMX546": (2472, 2064, 2.74, "global", 122.0, "Pregius S 4th", "current"),
-    "IMX530": (5328, 4608, 2.74, "global", 35.0, "Pregius S 4th", "current"),
+    # 型番: (幅, 高さ, 画素µm, シャッタ, 世代, 状態,
+    #        QE%, ダークノイズ e-, 飽和容量 ke-, DR dB, 最大SNR dB)
+    # -- Pregius 1st: 画素が大きく飽和容量が 3 倍。ダイナミックレンジで選ぶなら今も強い
+    "IMX174": (1920, 1200, 5.86, "global", "Pregius 1st", "legacy", 70, 7, 31.8, 74, 45),
+    "IMX249": (1920, 1200, 5.86, "global", "Pregius 1st", "legacy", 70, 7, 31.9, 74, 45),
+    # -- Pregius 2nd: 3.45 µm。解像度を稼ぐ代わりに 1 画素の容量が 1/3 になった
+    "IMX252": (2048, 1536, 3.45, "global", "Pregius 2nd", "mature", 69, 2, 10.5, 73, 40),
+    "IMX264": (2448, 2048, 3.45, "global", "Pregius 2nd", "mature", 68, 2, 10.4, 73, 40),
+    "IMX265": (2048, 1536, 3.45, "global", "Pregius 2nd", "mature", 68, 2, 10.5, 73, 40),
+    "IMX267": (4096, 2160, 3.45, "global", "Pregius 2nd", "mature", 69, 2, 10.2, 73, 40),
+    "IMX273": (1440, 1080, 3.45, "global", "Pregius 2nd", "mature", 63, 3, 10.5, 71, 40),
+    "IMX287": (720, 540, 6.90, "global", "Pregius 2nd", "mature", 63, 7, 21.0, 74, 43),
+    "IMX304": (4096, 3000, 3.45, "global", "Pregius 2nd", "mature", 69, 2, 10.2, 73, 40),
+    "IMX392": (1920, 1200, 3.45, "global", "Pregius 2nd", "mature", 62, 3, 10.5, 72, 40),
+    # -- Pregius S 4th: 2.74 µm 裏面照射。**新規設計はここ**
+    "IMX530": (5328, 4608, 2.74, "global", "Pregius S 4th", "current", 66, 2, 9.6, 71, 40),
+    "IMX540": (5328, 4608, 2.74, "global", "Pregius S 4th", "current", 66, 2, 9.7, 71, 40),
+    "IMX541": (4504, 4504, 2.74, "global", "Pregius S 4th", "current", 66, 2, 9.7, 71, 40),
+    "IMX542": (5320, 3032, 2.74, "global", "Pregius S 4th", "current", 66, 2, 9.7, 71, 40),
+    "IMX545": (4096, 3000, 2.74, "global", "Pregius S 4th", "current", 67, 3, 9.9, 70, 40),
+    "IMX546": (2840, 2840, 2.74, "global", "Pregius S 4th", "current", 66, 2, 9.8, 70, 40),
+    # -- ローリングシャッタ(低照度で QE が高い。動体が無いなら候補)
+    "IMX178": (3088, 2064, 2.40, "rolling", "STARVIS", "mature", 81, 3, 14.3, 73, 42),
+    "IMX183": (5472, 3648, 2.40, "rolling", "STARVIS", "mature", 75, 3, 13.8, 71, 41),
+    "IMX226": (4024, 3036, 1.85, "rolling", "STARVIS", "mature", 83, 3, 11.0, 70, 40),
 }
 
 
 def sensor_catalog(status: str = None) -> dict:
-    """実在センサの諸元表。``status`` に current / mature / legacy を渡すと絞れる。
+    """実在センサの諸元表(Basler の EMVA1288 実測つき)。
 
-    ディスコンで古すぎるものは載せていない(2026-09-05 のユーザー方針)。新規設計は
-    ``status="current"``(Pregius S、2.74 µm 裏面照射)から選ぶ。
+    ``status`` に current / mature / legacy を渡すと絞れる。ディスコンで古すぎるものは
+    載せていない。新規設計は ``status="current"``(Pregius S、2.74 µm 裏面照射)から選ぶ。
 
-    **載っているのは公開値だけ** ―― 飽和容量・読み出し雑音・QE はデータシートか
-    EMVA1288 レポートにしかないので、:func:`sensor_spec` の既定(典型値)が使われる。
-    それを特定型番の実測だと誤解しないこと。
+    **ここに載っているのは「カメラ側の値」**である。出典が Basler のカメラ実測表なので:
+      * 解像度は**そのカメラが出す画素数**で、センサの全有効画素とは限らない
+        (メーカーは端を切って少し低くすることがある)。
+      * フレームレートは**接続インターフェース**(USB3 / GigE / 5GigE / CXP-12)で
+        変わるので、センサの属性として持たない ―― だからこの表には入れていない。
+      * QE / ダークノイズ / 飽和容量 / ダイナミックレンジ / 最大 SNR は
+        **カメラの EMVA1288 実測**(ace / ace 2 / boost)。センサ単体の理論値では
+        なく実装込みなので、別のカメラなら少し変わる。
+      * 画素ピッチ・シャッタ方式・世代はセンサ由来なので、カメラが変わっても動かない。
+
+    世代で何が変わるかは飽和容量に出る: Pregius 1st は 31.8 ke- で、2nd(10.4 ke-)の
+    **3 倍**。画素を 5.86 µm から 3.45 µm へ小さくした代償である。Pregius S(2.74 µm)は
+    9.7 ke- で 2nd と同等を保っている(裏面照射)。
     """
     if status is not None and status not in ("current", "mature", "legacy"):
         raise ValueError("status must be current / mature / legacy, got %r" % status)
     out = {}
-    for name, (w, h, px, sh, fps, gen, st) in _SENSOR_CATALOG.items():
+    for name, v in _SENSOR_CATALOG.items():
+        w, h, px, sh, gen, st, qe, dn, sat, dr, snr = v
         if status is not None and st != status:
             continue
         out[name] = {"width": w, "height": h, "pixel_um": px, "shutter": sh,
-                     "max_fps": fps, "generation": gen, "status": st,
-                     "megapixels": round(w * h / 1e6, 2)}
+                     "generation": gen, "status": st,
+                     "megapixels": round(w * h / 1e6, 2),
+                     "quantum_efficiency": qe / 100.0, "read_noise_e": float(dn),
+                     "full_well_e": sat * 1e3, "dynamic_range_db": float(dr),
+                     "max_snr_db": float(snr), "source": "Basler EMVA1288 data overview"}
     return out
 
 
@@ -2110,9 +2133,9 @@ def sensor_spec(pixel_um: float = 3.45, resolution=(1024, 1024),
     変わった」ような追跡不能な変更になる。
 
     ``model`` に実在の型番(``sensor_catalog()`` のキー、例 "IMX541")を渡すと、
-    解像度・画素ピッチ・シャッタが**公開値で上書き**される。飽和容量・読み出し雑音・
-    QE は公開されていないので引数の値(既定は典型値)がそのまま残る ―― 型番を
-    指定しても、それらは**その型番の実測ではない**。
+    解像度・画素ピッチ・シャッタに加えて **QE・読み出し雑音・飽和容量も
+    Basler の EMVA1288 実測**で埋まる(引数で明示した値はそちらを優先)。
+    出所はカメラ実測なので、別のカメラなら少し変わる。
     """
     if model is not None:
         cat = sensor_catalog()
@@ -2121,6 +2144,13 @@ def sensor_spec(pixel_um: float = 3.45, resolution=(1024, 1024),
                              f"choose from {sorted(cat)} or pass the numbers directly")
         c = cat[model]
         pixel_um, resolution, shutter = c["pixel_um"], (c["width"], c["height"]), c["shutter"]
+        # EMVA1288 の実測があるものはそちらを既定にする(引数で明示指定されていれば尊重)
+        if quantum_efficiency == 0.6:
+            quantum_efficiency = c["quantum_efficiency"]
+        if full_well_e == 1.0e4:
+            full_well_e = c["full_well_e"]
+        if read_noise_e == 2.5:
+            read_noise_e = c["read_noise_e"]
     px = _pos(pixel_um, "pixel_um")
     res = np.asarray(resolution, dtype=int)
     if res.shape != (2,) or np.any(res < 2):
@@ -2141,8 +2171,8 @@ def sensor_spec(pixel_um: float = 3.45, resolution=(1024, 1024),
             "read_noise_e": float(read_noise_e), "dark_e_per_s": dk, "bit_depth": bits,
             "gain_e_per_unit": _pos(gain_e_per_unit, "gain_e_per_unit"), "shutter": shutter,
             "model": model,
-            # 公開されていない値は型番を指定しても典型値のまま。後から追跡できるよう明示する
-            "noise_values_are": "typical" if model else "user-supplied"}
+            # 値の出所を残す(実測か典型値かを後から追跡できるように)
+            "noise_values_are": "EMVA1288 (Basler camera)" if model else "user-supplied"}
 
 
 def lens_spec(focal_mm: float = 25.0, f_number: float = None, na: float = None,
