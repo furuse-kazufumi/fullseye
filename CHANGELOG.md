@@ -5,6 +5,21 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 
 ## 0.1.6 — unreleased
 
+- **構造化光スキャナを閉ループで組めるようにした(新 op 2 件)**: `fringe.absolute_phase`
+  (巻き込み位相 + 粗い絶対推定 → 画素ごとに 2π 次数を確定。空間アンラップと違い島に分かれた
+  場面でも絶対、要件は「粗推定の誤差 < π」)と `fringe.triangulate_column`(投影機コラム番号 →
+  カメラ視線 × コラム平面の交点 → 深度、閉形式。既知面で 1e-8 一致)。3D 台帳 344 → **346**。
+  事例 `examples_3d/structured_light_scan.py`: 球+段差箱+床を描画し、相補 Gray 18 枚 + 位相
+  シフト 4 枚の撮影を合成 → 復号 → 三角測量 → **レンダラの真値深度**と mm で照合。
+  奥行き 287 mm を **RMSE 0.233 mm(0.081%)**、Gray 復号は 16,521 画素で誤り 0。零点は
+  Gray 整数のみ 0.548 mm(2.4 倍)・位相のみ 209.8 mm(901 倍)を判別的に上回る。
+  記事図 `tools/gen_hero_structured_light.py`(静物へ 24 枚投影 → RMSE 0.036 mm / 中央値
+  0.017 mm / 奥行き 102 mm)。テスト +8(`tests/test_fringe.py`)。
+  ★教訓: 最初の実行は **RMSE 78 mm** で、しかも零点(Gray のみ 79 mm)と見分けがつかなかった。
+  原因は `look_at` の gluLookAt 規約(-Z 前方)と `render_mesh`/K の CV 規約(+Z 前方、(x,-y,-z))の
+  取り違えで、深度は「もっともらしい大きさのまま全部間違う」。零点を同時に測っていなければ
+  通していた。相補 Gray(Inokuchi 1984)に替えるまでは固定しきい値が暗い画素だけ誤読していた
+  (RMSE 5.3 mm の外れ値の正体)。
 - **hero の被写体刷新 + `render_beauty(vertex_albedo=)` + 差別化パネル**(ユーザー: 「ジャガイモにしか見えない」
   「この絵は DirectX で昔からできる、差別化を見せろ」「図で訴求」): 被写体を 4 球 smooth union から
   **SDF/CSG の静物**(ジャイロイド格子球=鋼/三葉結び目=金/歯車=黒鉄、`examples_3d/render_beauty.still_life`)へ。

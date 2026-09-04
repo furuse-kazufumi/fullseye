@@ -19,7 +19,7 @@ This is the real shape model of asteroid **25143 Itokawa** — the Gaskell model
 - On top of the library sit an **evolutionary mode that "designs" algorithms through evolutionary computation**, a **Physical AI perception stack** that chains stereo → depth → point cloud → 6-DoF pose, and an **HDevelop-style IDE, Fullseye Studio**.
 - **The single most recommended way to use it is as an AI's RAG knowledge base.** Feed it to Claude Code or similar, and a plain conversational request like "detect X in this image" gets you a **pipeline assembled from ~1,000 ops, executed, with the results appearing on Studio's screen** — that's the foundation this is designed to be.
 - The undercurrent of this article is **making "honest disclosure" a mechanism** — never showing only the good numbers, never erasing failures, always stating the limitations. I include cases where the quality gates actually caught bugs, **including six I fixed just now**, exactly as they happened.
-- Tests currently number **10,345**. Every deep dependency (OpenCV, torch, etc.) is optional — **the core runs on nothing but numpy + scipy**.
+- Tests currently number **10,982**. Every deep dependency (OpenCV, torch, etc.) is optional — **the core runs on nothing but numpy + scipy**.
 
 > This article isn't a victory lap over something finished. It's a record of **why I shaped it this way and where it's still weak**, at a granularity you could reproduce yourself. Every number is measured; no limitation is hidden.
 
@@ -59,6 +59,16 @@ It is 3-D, so it spins:
 
 ![Turntable of the SDF/CSG still life](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/still_life_turntable.gif)
 
+And you can point a **structured-light scanner** at that still life. A synthetic capture projects 20 complementary Gray-code frames plus 4 phase-shifted fringe frames; `wrapped_phase` (precise but 2π-ambiguous) and `graycode_decode` (coarse but absolute) are merged by the new `absolute_phase` into an absolute phase, and `triangulate_column` solves the **camera ray against the projector column plane** in closed form to get depth — capture, decoding and triangulation are all Fullseye ops:
+
+![Structured-light scanner: complementary Gray + phase-shift capture, absolute phase, triangulation, error against ground-truth depth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/hero_structured_light.png?v=1)
+
+This is where a picture stops and an instrument begins. **The renderer itself holds the ground-truth depth in its z-buffer**, so the reconstruction can be scored in millimetres: over a 102 mm depth span, **RMSE 0.036 mm, median 0.017 mm**, with **0** Gray-decode errors across 36,011 pixels. The nulls are measured from the same capture: Gray integer columns alone give 0.073 mm (twice as bad, from quantisation), and phase alone collapses by orders of magnitude on the 2π ambiguity.
+
+The runnable sample is `examples_3d/structured_light_scan.py` (sphere + step box + floor, 22 frames). It recovers a 287 mm depth span at **RMSE 0.233 mm (0.081%)** and asserts that it discriminatively beats both nulls (Gray only 0.548 mm, phase only 209.8 mm).
+
+> The first run gave **RMSE 78 mm**. `look_at` builds poses in the gluLookAt convention (camera looks down −Z), while `render_mesh` converts that to (x, −y, −z) before applying K (the CV convention). Skip the difference and the projector ends up facing behind the camera — the depths stay **plausibly sized and entirely wrong**. I only noticed because the null (Gray only, 79 mm) landed on the same number. Without measuring the null alongside, I would probably have shipped it.
+
 Mirror reflections, glass refraction, CD-like diffraction rainbows and brushed-metal (anisotropic) highlights are **not possible yet** — this is a rasteriser; reflection and refraction need ray tracing. Consider it the announced next material extension.
 
 ---
@@ -77,7 +87,7 @@ This is a long article, so let me sort **which claims sit at which stage** befor
 
 | Tier | Status label | What it covers in this article |
 |---|---|---|
-| **Implemented & reproducible** | `Production-ready / Verified` | The 877 2-D + 344 3-D ops, type contracts and the unified interface, Studio, the PyPI release, 10,345 tests, the machine-tallied 981/2,313 HALCON mapping, and the real outputs behind every exhibit and demo |
+| **Implemented & reproducible** | `Production-ready / Verified` | The 877 2-D + 346 3-D ops, type contracts and the unified interface, Studio, the PyPI release, 10,982 tests, the machine-tallied 981/2,313 HALCON mapping, and the real outputs behind every exhibit and demo |
 | **Under validation** | `PoC / Research prototype` | Evolutionary pipeline design (hold-out evaluated, bounded settings), natural-language-to-pipeline via RAG, and the Physical AI perception stack (validated in simulation; real hardware and sim-to-real are untouched) |
 | **Future vision** | `Roadmap / Design proposal` | A comprehensive op foundation for robots, an AI autonomously selecting and running the ~1,000 ops, and a shared perception base for industrial inspection and Physical AI |
 
@@ -201,7 +211,7 @@ Here is that "pick up a bean with chopsticks" experiment, seen through Fullseye'
 ```mermaid
 flowchart TB
     subgraph L0["Foundation: ~1,000 typed ops"]
-        OPS["The typed operator library<br/>870 2D ops + 344 3D ops<br/>hand-written numpy / wired together by type (sort)"]
+        OPS["The typed operator library<br/>877 2D ops + 346 3D ops<br/>hand-written numpy / wired together by type (sort)"]
     end
     subgraph L1["Two ways to use it"]
         APPLY["① Apply a known op<br/>fullseye.apply / run_pipeline"]
@@ -231,7 +241,7 @@ Let's dig into each layer.
 
 ## Layer 1: A Ready-to-Use Operator Library (~1,000 Ops)
 
-> **Status: Production-ready / Verified** — installable from PyPI; 10,345 tests; every number is machine-tallied.
+> **Status: Production-ready / Verified** — installable from PyPI; 10,982 tests; every number is machine-tallied.
 
 ### What Is an Op? (In Three Passes)
 
@@ -3500,7 +3510,7 @@ On the unified-API migration, honestly, a large part of it is **cleaning up afte
 
 On GPU work, the accurate picture is: **the usable parts already exist and are fast, as measured on a real RTX 5090** — it's just that **the full ~1,000-op catalog isn't covered yet**. Every GPU-ported op passes a faithfulness gate (interior error < 5e-3 against the CPU implementation), because "faster but with different answers" is exactly the kind of accident this library refuses to create. The remaining work is widening coverage in the order ops are actually used.
 
-The pile of work is tall, but **the foundation — typed ops, honest evaluation, md-as-source-of-truth docs, 10,345 tests — is set**. From here, the work is extending coverage and the natural API.
+The pile of work is tall, but **the foundation — typed ops, honest evaluation, md-as-source-of-truth docs, 10,982 tests — is set**. From here, the work is extending coverage and the natural API.
 
 ---
 
@@ -4027,6 +4037,7 @@ Two days after the first version of this article (9/2) the overall picture has g
 | **Real anatomical hand** | 27 bone meshes from MyoSuite myo_sim (Apache-2.0) assembled from the MJCF tree in stdlib | matches MuJoCo forward kinematics to **6e-11 m**; finger lengths in anatomical order (the hand hero above) |
 | **Renderer hooks** | `vertex_normals=` (SDF-gradient normals), `vertex_albedo=` (vertex colours) | this article's hero and its making-of |
 | **Image audit** | 232 assets checked by size table, then by eye | three heroes re-rendered at 1280px, the hand replaced by real bones |
+| **Structured-light scanner** | `absolute_phase` (fixes the 2π order from a coarse absolute estimate) + `triangulate_column` (camera ray × projector column plane, closed form). Capture synthesis, decoding and triangulation all close inside the op set | still life (102 mm depth span): **RMSE 0.036 mm, median 0.017 mm**, 0/36,011 px Gray-decode errors. Nulls: Gray only 0.073 mm, phase only orders of magnitude worse |
 
 One reading rule matters most: **operations that close union→union win.** An op that must decode into a dense array cannot beat numpy, but where most of the work is decided from headers (constant tiles, value ranges), memory and speed change by orders of magnitude at the same time. "Zero findings" is not "never executed" — a lesson re-learned the same day while fixing my own test that broke when the ledger ring filled up.
 
@@ -4040,7 +4051,7 @@ The next material extensions (ray-traced mirrors and glass, CD-like diffraction 
 - **design with them by evolution (evolve, with honest evaluation)**, or
 - **use them as a robot's eyes (the Physical AI perception stack)** —
 
-a numpy-native, self-built library. **42.5% against the HALCON yardstick (measured)**, **10,345 tests**, a documentation system with **Markdown as its single source of truth**, and the **HDevelop-style Studio**. Every deep dependency is optional, and **the core runs on nothing but numpy + scipy**.
+a numpy-native, self-built library. **42.5% against the HALCON yardstick (measured)**, **10,982 tests**, a documentation system with **Markdown as its single source of truth**, and the **HDevelop-style Studio**. Every deep dependency is optional, and **the core runs on nothing but numpy + scipy**.
 
 What I most want to convey is neither the scale nor the coverage rate, but the stance of **making honesty a mechanism**. Hold-out data never selects. Coverage is disclosed as measured. **When a bug is found, the article keeps the bug — together with the quality assurance that caught it.** Over flash, the priorities are being **explainable, reproducible, and maintainable for the long haul** — built up steadily.
 
@@ -4075,7 +4086,7 @@ Thank you for reading. If there's a "tell me more about this part," that will be
 
 <!--
 Publication notes (not shown in the article body):
-- All numbers are measured (ops 870, 3D 344, HALCON 981/2313=42.4%, tests 10800). Re-measure before updating any of them.
+- All numbers are measured (ops 877, 3D 346, HALCON 981/2313=42.4%, tests 10982). Re-measure before updating any of them.
 - Prefer Mermaid over images where possible (native to Qiita; avoids SVG path/cache issues). If figures become SVG, always apply raw absolute URL + HTTP 200 check + ?v=N cache-bust.
 - Apache-2.0 and reimplemented-from-public-knowledge are stated explicitly (the no-derivation-from-commercial-products line).
 - Release logistics: queue as a private draft, and publish when a slot opens, avoiding Qiita's consecutive-post 502.

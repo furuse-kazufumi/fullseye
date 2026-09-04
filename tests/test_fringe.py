@@ -271,3 +271,106 @@ def test_synthesize_output_domain():
     frames = fringe.synthesize_fringes(height, n_steps=6, freq=3.0)
     assert frames.shape == (6, 20, 30)
     assert frames.min() >= 0.0 and frames.max() <= 1.0
+
+
+# --------------------------------------------------------------------------- #
+# absolute_phase(粗い絶対推定で 2π 次数を確定する)                              #
+# --------------------------------------------------------------------------- #
+def test_absolute_phase_recovers_known_order():
+    """既知の絶対位相 → wrap → 粗い推定と合わせて元の絶対位相へ厳密に戻る。"""
+    rng = np.random.default_rng(3)
+    true = 2.0 * np.pi * (0.5 + 7.0 * rng.random((16, 24)))       # 0..~44 rad
+    wrapped = np.arctan2(np.sin(true), np.cos(true))               # (-π, π]
+    coarse = true + rng.uniform(-1.0, 1.0, true.shape)             # 誤差 < π の粗推定
+    got = fringe.absolute_phase(wrapped, coarse)
+    assert np.allclose(got, true, atol=1e-9)
+
+
+def test_absolute_phase_wrapped_alone_is_wrong():
+    """巻き込み位相そのままでは次数が抜ける(実手法がその零点を上回ることの確認)。"""
+    true = np.linspace(0.0, 40.0, 200).reshape(10, 20)
+    wrapped = np.arctan2(np.sin(true), np.cos(true))
+    err_null = np.abs(wrapped - true).max()
+    err_real = np.abs(fringe.absolute_phase(wrapped, true) - true).max()
+    assert err_null > 30.0 and err_real < 1e-9
+
+
+def test_absolute_phase_half_period_limit():
+    """粗推定の誤差が π を超えると隣の次数を選ぶ(fail-closed でなく静かにずれる境界)。"""
+    true = np.full((4, 4), 10.0)
+    wrapped = np.arctan2(np.sin(true), np.cos(true))
+    ok = fringe.absolute_phase(wrapped, true + 3.0)                # < π
+    bad = fringe.absolute_phase(wrapped, true + 4.0)               # > π
+    assert np.allclose(ok, true, atol=1e-9)
+    assert np.allclose(bad - true, 2.0 * np.pi, atol=1e-9)
+
+
+def test_absolute_phase_nan_and_errors():
+    wrapped = np.zeros((3, 3))
+    wrapped[0, 0] = np.nan
+    out = fringe.absolute_phase(wrapped, np.zeros((3, 3)))
+    assert np.isnan(out[0, 0]) and np.allclose(out[1:], 0.0)
+    with pytest.raises(ValueError):
+        fringe.absolute_phase(np.zeros(3), np.zeros(3))            # 2D でない
+    with pytest.raises(ValueError):
+        fringe.absolute_phase(np.zeros((3, 3)), np.zeros((3, 4)))  # 形状不一致
+    with pytest.raises(ValueError):
+        fringe.absolute_phase(np.full((3, 3), 12.0), np.zeros((3, 3)))  # 既にアンラップ済み
+
+
+# --------------------------------------------------------------------------- #
+# triangulate_column(投影機コラム → 深度)                                       #
+# --------------------------------------------------------------------------- #
+def _rig():
+    """カメラ / 投影機の内部行列と、カメラ系 → 投影機系の外部(x に 100 mm 基線)。"""
+    k_cam = np.array([[300.0, 0.0, 64.0], [0.0, 300.0, 48.0], [0.0, 0.0, 1.0]])
+    k_proj = np.array([[400.0, 0.0, 128.0], [0.0, 400.0, 128.0], [0.0, 0.0, 1.0]])
+    ang = np.deg2rad(-12.0)
+    rot = np.array([[np.cos(ang), 0.0, np.sin(ang)], [0.0, 1.0, 0.0],
+                    [-np.sin(ang), 0.0, np.cos(ang)]])
+    trans = np.array([-100.0, 0.0, 0.0])
+    return k_cam, k_proj, rot, trans
+
+
+def test_triangulate_column_exact_on_known_surface():
+    """既知の深度場 → 投影機コラムを順方向に計算 → 三角測量で深度が厳密に戻る。"""
+    k_cam, k_proj, rot, trans = _rig()
+    h, w = 24, 32
+    v, u = np.mgrid[0:h, 0:w].astype(np.float64)
+    depth = 500.0 + 0.8 * u - 0.5 * v + 40.0 * np.sin(u / 7.0)     # 平面 + うねり
+    d = np.stack([(u - k_cam[0, 2]) / k_cam[0, 0],
+                  (v - k_cam[1, 2]) / k_cam[1, 1], np.ones_like(u)], -1)
+    X = d * depth[..., None]
+    Xp = X @ rot.T + trans
+    col = k_proj[0, 0] * Xp[..., 0] / Xp[..., 2] + k_proj[0, 2]
+    got = fringe.triangulate_column(col, k_cam, k_proj, rot, trans)
+    assert np.allclose(got, depth, atol=1e-8)
+
+
+def test_triangulate_column_nan_and_behind():
+    k_cam, k_proj, rot, trans = _rig()
+    col = np.full((5, 5), 128.0)
+    col[0, 0] = np.nan
+    out = fringe.triangulate_column(col, k_cam, k_proj, rot, trans)
+    assert np.isnan(out[0, 0])
+    assert np.isnan(out).all() or np.all(out[np.isfinite(out)] > 0.0)
+
+
+def test_triangulate_column_rejects_zero_baseline():
+    k_cam, k_proj, rot, _ = _rig()
+    with pytest.raises(ValueError, match="baseline"):
+        fringe.triangulate_column(np.zeros((4, 4)), k_cam, k_proj, rot, np.zeros(3))
+
+
+def test_triangulate_column_argument_validation():
+    k_cam, k_proj, rot, trans = _rig()
+    with pytest.raises(ValueError):
+        fringe.triangulate_column(np.zeros(4), k_cam, k_proj, rot, trans)      # 2D でない
+    with pytest.raises(ValueError):
+        fringe.triangulate_column(np.zeros((4, 4)), np.eye(2), k_proj, rot, trans)
+    with pytest.raises(ValueError):
+        fringe.triangulate_column(np.zeros((4, 4)), np.zeros((3, 3)), k_proj, rot, trans)
+    with pytest.raises(ValueError):
+        fringe.triangulate_column(np.zeros((4, 4)), k_cam, k_proj, np.eye(2), trans)
+    with pytest.raises(ValueError):
+        fringe.triangulate_column(np.zeros((4, 4)), k_cam, k_proj, rot, np.zeros(2))

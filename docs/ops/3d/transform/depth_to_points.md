@@ -4,7 +4,7 @@ dim: 3d
 category: transform
 in: depth
 out: points
-examples: [transforms_repr]
+examples: [structured_light_scan, transforms_repr]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.5  # fullseye lib version this note was generated for
@@ -26,6 +26,7 @@ version: 0.1.5  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [structured_light_scan](../../../../examples_3d/structured_light_scan.py) — `py -3.11 examples_3d/structured_light_scan.py`
 - [transforms_repr](../../../../examples_3d/transforms_repr.py) — `py -3.11 examples_3d/transforms_repr.py`
 
 ## 型が繋がる次の op(`points` を入力に取れる)

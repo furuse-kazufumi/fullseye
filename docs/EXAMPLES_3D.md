@@ -1,6 +1,6 @@
 # Fullseye 3-D ビジョン — 事例ギャラリー(EXAMPLES_3D)
 
-Fullseye の 3-D オペレータ群(`ops3d` = 310 の型付き op)を、**実問題を解く実行可能な事例**（全 112 件）で示します。
+Fullseye の 3-D オペレータ群(`ops3d` = 346 の型付き op)を、**実問題を解く実行可能な事例**（全 117 件）で示します。
 各事例は自己完結・自己検証のスクリプト(`examples_3d/<id>.py`)で、データを読み・op を呼び・**ground truth を print して assert** します。
 一覧は `examples3d.py` レジストリが正本で、`examples3d.validate()` が全件を実行して**動くものだけ**を掲示します。
 
@@ -21,11 +21,11 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 
 ## 実データ源
 
-- **合成データ(制御GT)** — 86 事例
+- **合成データ(制御GT)** — 89 事例
 - **手続き生成(GTは幾何/解析)** — 14 事例
 - **骨格CT(MS-Human-700 実解剖骨)** — 4 事例
-- **小惑星イトカワ(Gaskell形状モデル/JAXA)** — 5 事例
-- **DL実データ(オプトイン取得 / fullseye samples)** — 3 事例
+- **小惑星イトカワ(Gaskell形状モデル/JAXA)** — 6 事例
+- **DL実データ(オプトイン取得 / fullseye samples)** — 4 事例
 
 実データの帰属・引用は `studio_assets/sample_3d/ATTRIBUTION.md`(骨格CT/イトカワ)および `fullseye samples list`(DL実データの各ソース URL / ライセンス)を参照。
 
@@ -166,6 +166,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 ### 構造化光
 
 - **位相シフト縞投影で高さを復元** (`structured_light`, synthetic) — 縞合成→wrapped_phase→unwrap_phase_2d→decode で高さ(RMSE 0.63%)。位相アンラップ無しは2π跳びで88%誤る。
+- **構造化光スキャナ 1 台を閉ループで回す(投影→撮影→復号→三角測量)** (`structured_light_scan`, synthetic) — 描画した実シーン(球+段差箱+床)へ相補Gray 18枚+位相シフト4枚を投影し、absolute_phaseで2π次数を確定、triangulate_columnで視線×コラム平面を解いて深度へ。真値深度をRMSE 0.233mm(レンジ287mmの0.081%)で再現。Gray整数のみ(0.548mm)の2.4倍、位相のみ(209.8mm)の901倍良い。Gray復号は全16521画素で誤り0。
 - **Gray code 構造化光の絶対デコード** (`graycode_structured_light`, synthetic) — 物体で湾曲した投影機コラム番号(0..127)をGray codeビット面7枚からgraycode_decodeで絶対復号。全12288画素で整数厳密一致(100%)。極性反転(0%)/面順取り違え(13%)/最頻値決め打ち(2%)のnullを判別的に上回る。撮影ノイズ42%まで厳密。
 
 ### 光学(光線)
@@ -202,7 +203,10 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 - **レンダリング品質: matcap/Phong鏡面シェーディング** (`render_shade`, synthetic) — 拡散のみに鏡面を追加。Phongハイライトのピークが反射方向N=norm(L+V)と0.63px一致。Lambertianの最輝点は反射方向を54px外す(nullを約85倍上回る)。matcapはlit-sphere転写で素材感を持ち込む。
 - **レンダリング品質: スーパーサンプリング(SSAA)でジャギー除去** (`render_ssaa`, synthetic) — ss倍レンダ→面積平均縮小。傾き22°エッジでエイリアスエネルギー0.275→0.164(0.59倍)・中間輝度画素0%→0.95%、ss=1..6で単調減少。z-bufferの階段状シルエットを滑らかに。
 - **レンダリング品質: トーンマップ(HDR→LDR)で白飛び救済** (`render_tonemap`, synthetic) — 鏡面HDR(max5.41)をReinhard/ACESで[0,1]へ。全域Spearman1.00で単調、素朴クリップがハイライト域を1段に潰す(分散0)のに対し順位相関1.0・194段の階調を保持。
+- **小惑星イトカワを物理ベースで描く(Hapke 反射則・太陽視直径 0.53° のレイキャスト影・解像度を意識した地形レリーフ)** (`itokawa_regolith_hero`, itokawa) — 実形状モデル(49,152 面、辺長 2.6〜14 m と不均一。間引きなし)を mesh_edge_lengths で測り、mesh_subdivide(target 1.5 m の適応テッセレーション、面積体積不変)→ displacement_band_weights(元データが持つ波長の補集合 = 合成重み)→ mesh_displace_spectrum(3 m@60 m〜0.2 m@1.9 m、頂点ごとに 2×局所辺長で帯域制限)→ terrain_region_mask / mesh_scatter_boulders(shape='hull': 角張った凸包、べき則 D^-3.1、30–60 % 埋没、変位後の面に置く)→ render_regolith(Hapke + shadow_raycast + 環境光 0 + bump_normals_fbm の補集合 + exposure='median')。縁の明るさ、対向効果、硬い影、辺長ヒストグラム、帯域ゲート、岩の個数/埋没、露出中央値 0.45、AMICA 実画像に対するレリーフコントラストを GT で実測。
 - **レンダリング品質: hero レンダラ render_beauty(全層合成の映える静止3D)** (`render_beauty`, synthetic) — ラスタライズ/Phong鏡面/AO/接地影/SSAA/トーンマップを1本に合成。sphere-on-groundで各層を実測: AOは接触凹部を0.07→0.02と選択的に暗化(露出頂部0.01は不変)、鏡面は小面積ハイライト(frac0.018)、接地影はwith-mesh993px vs null0px、reinhardは単調(clip34段潰しを回避)、SSAAはedge0.040→0.026。sdf_ops生成メッシュでhero画像を出力。
+- **実解剖骨メッシュ(MyoSuite myo_sim, Apache-2.0)から手骨格 27 個を組み立てて描く** (`anatomical_hand`, download) — MJCF(include 構成)を stdlib だけで辿り body 木の pos/euler を累積して 27 骨(手根骨 8・中手骨 5・指骨 14、実寸 m)をワールドへ配置。mujoco があれば forward kinematics と突き合わせ(重心誤差 6e-11 m・最近傍頂点 2e-9 m で一致)。指長は中指 123>示指 117.5>薬指 112>小指 99.5 mm と解剖学順。render_beauty で骨質 hero(1280px)。手続きカプセルの手(procedural_hand)との違い=もっともらしさでなく実データの幾何。未取得時は SKIP し exit0。
+- **3-D 図注: レンダリングの上に 3-D アンカーの矢印・引き出し線・スケールバー・座標軸・箱・距離を射影して描く** (`annotate3d_figure`, synthetic) — render_mesh で描いた球+床の絵に annotate3d 族(project/arrow/label/scale_bar/axes/bbox/measure)で図注を載せる。既知カメラの射影が閉形式と 1e-9 で一致、像面平行のバーが f·L/z px、球の裏のアンカーが depth で隠れ判定(破線)されることを GT で確かめる。
 
 ### freeform_geometry
 
@@ -211,6 +215,10 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 ### match_localize
 
 - **3-D テンプレート定位(NCC/形状/chamfer/Hough/MIP/曲率)** (`matching_localize`, synthetic) — 同一の合成シーン(滑らかな充実球=ターゲット と、球と同一ピーク濃度の立方体=おとり を離して配置)に対し、match3d の 6 定位手法を全て当てて、球テンプレートの中心を真値±2 voxel(実測の 6 手法合議 spread は 0.87vox)で復元できることを検証する事例。球は表面点群(match_points_ncc 用)と解析的 smooth 占有場(voxel 5 手法用)を同一幾何から生成し(bounds=(0,N-1) で world…
+
+### mesh_processing
+
+- **解像度管理: 粗密を測り、粗い所だけ細分/等方リメッシュし、減らすなら監査つきで(meshres)** (`mesh_resolution_demo`, synthetic) — UV 球の辺長 p95/p5=5.4(イトカワ実測 2.7)を測り、mesh_split_long_edges(頂点不変)と mesh_isotropic_remesh(5.4→1.7、面積誤差<1%、閉多様体)で揃える。LOD 鎖は各段の幾何誤差と画面誤差 px を返し、mesh_decimate_preserving は細部頂点を厳密固定(誤差 1e-16)で max_error 超は拒否。点群は pc_poisson_disk が孤立点を 1 つも落とさないことを pc_thinning_report で証明。
 
 ### pose_refinement
 

@@ -1,23 +1,23 @@
 ---
-op: decode_fringe
+op: triangulate_column
 dim: 3d
 category: structured_light
-in: images
+in: image2d
 out: depth
-examples: [structured_light]
+examples: [structured_light_scan]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.5  # fullseye lib version this note was generated for
 ---
 
-# decode_fringe — 3D `structured_light` op
+# triangulate_column — 3D `structured_light` op
 
-- **データ種**: `images` → `depth`
-- **呼び出し**: `import fringe; fringe.decode_fringe(phase_shift_images, ref_phase=None, k=1.0, mask=None, min_modulation=None) -> 'np.ndarray'` (または `ops3d.get("decode_fringe")`)
+- **データ種**: `image2d` → `depth`
+- **呼び出し**: `import fringe; fringe.triangulate_column(column, k_cam, k_proj, rot, trans) -> 'np.ndarray'` (または `ops3d.get("triangulate_column")`)
 
 ## 使い方
 
-位相シフト画像列を一括復号: wrapped → unwrap →(参照減算で)高さ。
+各カメラ画素の「投影機コラム番号」から深度 Z を三角測量する(構造化光の最終段)。
 
 ## 参考(サンプルデータ・文献)
 
@@ -26,7 +26,7 @@ version: 0.1.5  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- [structured_light](../../../../examples_3d/structured_light.py) — `py -3.11 examples_3d/structured_light.py`
+- [structured_light_scan](../../../../examples_3d/structured_light_scan.py) — `py -3.11 examples_3d/structured_light_scan.py`
 
 ## 型が繋がる次の op(`depth` を入力に取れる)
 
@@ -34,7 +34,7 @@ version: 0.1.5  # fullseye lib version this note was generated for
 
 ## 同カテゴリ(`structured_light`)
 
-[wrapped_phase](wrapped_phase.md) · [unwrap_phase_2d](unwrap_phase_2d.md) · [graycode_decode](graycode_decode.md) · [synthesize_fringes](synthesize_fringes.md) · [absolute_phase](absolute_phase.md) · [triangulate_column](triangulate_column.md)
+[wrapped_phase](wrapped_phase.md) · [unwrap_phase_2d](unwrap_phase_2d.md) · [graycode_decode](graycode_decode.md) · [decode_fringe](decode_fringe.md) · [synthesize_fringes](synthesize_fringes.md) · [absolute_phase](absolute_phase.md)
 
 ---
 *Provenance: fringe.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

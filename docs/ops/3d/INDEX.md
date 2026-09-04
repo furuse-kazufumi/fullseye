@@ -1,4 +1,4 @@
-# 3D operator help — 344 ops in 66 categories
+# 3D operator help — 346 ops in 66 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/3d/<category>/<op>.md` を走査。
 
@@ -236,9 +236,9 @@
 
 [carve](space_carving/carve.md) · [synthesize_silhouette](space_carving/synthesize_silhouette.md) · [visual_hull](space_carving/visual_hull.md)
 
-### structured_light (5)
+### structured_light (7)
 
-[decode_fringe](structured_light/decode_fringe.md) · [graycode_decode](structured_light/graycode_decode.md) · [synthesize_fringes](structured_light/synthesize_fringes.md) · [unwrap_phase_2d](structured_light/unwrap_phase_2d.md) · [wrapped_phase](structured_light/wrapped_phase.md)
+[absolute_phase](structured_light/absolute_phase.md) · [decode_fringe](structured_light/decode_fringe.md) · [graycode_decode](structured_light/graycode_decode.md) · [synthesize_fringes](structured_light/synthesize_fringes.md) · [triangulate_column](structured_light/triangulate_column.md) · [unwrap_phase_2d](structured_light/unwrap_phase_2d.md) · [wrapped_phase](structured_light/wrapped_phase.md)
 
 ### superquadric (4)
 

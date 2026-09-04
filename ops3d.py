@@ -430,6 +430,8 @@ _CATALOG = {
         ("graycode_decode", "fringe", ["images"], "image2d", False),
         ("decode_fringe", "fringe", ["images"], "depth", False),
         ("synthesize_fringes", "fringe", ["image2d"], "images", False),
+        ("absolute_phase", "fringe", ["image2d", "image2d"], "image2d", False),
+        ("triangulate_column", "fringe", ["image2d"], "depth", False),
     ],
     "deform": [  # 3D 非剛体・変形登録(TPS / non-rigid ICP / CPD)
         ("tps_fit", "deform3d", ["points", "points"], "deformation", False),

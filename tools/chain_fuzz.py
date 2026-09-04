@@ -1492,6 +1492,17 @@ OP_PARAM_HINTS = {
     ("fmcw_beat_simulate", "n_antennas"): lambda rng: 4,
     # 生成器の走査範囲と辻褄を合わせる(既定 2.8 でも動くが端切れが増える)
     ("csi_stack_simulate", "envelope_fwhm_um"): lambda rng: 2.8258,
+    # 構造化光の三角測量。名前ヒントの "K"/"R"/"t" と綴りが違う(k_cam/k_proj/rot/
+    # trans)ので、書かないと必須引数が組めず **一度も実行されない**まま
+    # 「発見ゼロ」に化ける。基線は x 方向 60 mm 相当(実機の投影機オフセット)。
+    ("triangulate_column", "k_cam"): lambda rng: np.array([[32.0, 0.0, 16.0],
+                                                           [0.0, 32.0, 16.0],
+                                                           [0.0, 0.0, 1.0]]),
+    ("triangulate_column", "k_proj"): lambda rng: np.array([[32.0, 0.0, 16.0],
+                                                            [0.0, 32.0, 16.0],
+                                                            [0.0, 0.0, 1.0]]),
+    ("triangulate_column", "rot"): lambda rng: np.eye(3),
+    ("triangulate_column", "trans"): lambda rng: np.array([-6.0, 0.0, 0.0]),
     ("vol_richardson_lucy", "psf"): lambda rng: __import__("volrestore").vol_gaussian_psf(1.0),
     ("cx_wiener_deconvolve", "psf"): lambda rng: (lambda k: k / k.sum())(
         np.outer(*(np.exp(-np.linspace(-2, 2, 5) ** 2),) * 2)),

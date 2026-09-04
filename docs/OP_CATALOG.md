@@ -106,7 +106,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **hillco / evis(筋骨格ヒューマノイド歩行)が fullseye を使う 3 つの検査** — 物理シムが真値を持つ前提で、fullseye は独立な知覚側の二重チェックのみ: 歩行安定性(支持多角形/COM 余裕)、レンダ動画の運動検証、姿勢の骨格化。制御は駆動しない。 `py -3.11 examples/consumer_hillco.py`
 - **onocollo(CPU 世界モデル/gaitlab)が fullseye を使う 2 つの検査** — MuJoCo 風状態からの静的安定性チェック(support_polygon/com_support_margin)と、物理レンダ動画 2 フレームからの運動検証。 `py -3.11 examples/consumer_onocollo.py`
 
-### 3-D 点群/体積/曲面(116 例)
+### 3-D 点群/体積/曲面(117 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
@@ -230,6 +230,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **structured_light**
 - **位相シフト縞投影で高さを復元** — 縞合成→wrapped_phase→unwrap_phase_2d→decode で高さ(RMSE 0.63%)。位相アンラップ無しは2π跳びで88%誤る。 `py -3.11 examples_3d/structured_light.py`
+- **構造化光スキャナ 1 台を閉ループで回す(投影→撮影→復号→三角測量)** — 描画した実シーン(球+段差箱+床)へ相補Gray 18枚+位相シフト4枚を投影し、absolute_phaseで2π次数を確定、triangulate_columnで視線×コラム平面を解いて深度へ。真値深度をRMSE 0.233mm(レンジ287mmの0.081%)で再現。Gray整数のみ(0.548mm)の2.4倍、位相のみ(209.8mm)の901倍良い。Gray復号は全16521画素で誤り0。 `py -3.11 examples_3d/structured_light_scan.py`
 - **Gray code 構造化光の絶対デコード** — 物体で湾曲した投影機コラム番号(0..127)をGray codeビット面7枚からgraycode_decodeで絶対復号。全12288画素で整数厳密一致(100%)。極性反転(0%)/面順取り違え(13%)/最頻値決め打ち(2%)のnullを判別的に上回る。撮影ノイズ42%まで厳密。 `py -3.11 examples_3d/graycode_structured_light.py`
 
 **deformable_registration**
@@ -329,7 +330,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - `spline_curve_resample(points, n, closed=False, smooth=0.0)` — 曲線点列を n 点に滑らかに再サンプルして (n,D) を返す(2D/3D、閉曲線はシーム非重複)。
 
 ## 3-D operators(ops3d)by category
-_計 344 ops / 66 categories。_
+_計 346 ops / 66 categories。_
 
 
 ### annotate3d(7)
@@ -747,12 +748,14 @@ _計 344 ops / 66 categories。_
 - `visual_hull` (`images → voxel`) — 多視点シルエットの visual hull を voxel 占有として返す(:func:`carve` の別名)。 · 例: `space_carving`
 - `synthesize_silhouette` (`points → image2d`) — 3-D 点群を (K,R,t) カメラへ射影し占有画素 True のシルエット(H,W bool)を返す。 · 例: `space_carving`
 
-### structured_light(5)
-- `wrapped_phase` (`images → image2d`) — N-step 位相シフト縞画像から wrapped phase (-π, π] を求める。 · 例: `structured_light`
+### structured_light(7)
+- `wrapped_phase` (`images → image2d`) — N-step 位相シフト縞画像から wrapped phase (-π, π] を求める。 · 例: `structured_light`, `structured_light_scan`
 - `unwrap_phase_2d` (`image2d → image2d`) — wrapped phase を skimage.restoration.unwrap_phase で連続位相に展開する。 · 例: `structured_light`
-- `graycode_decode` (`images → image2d`) — Gray code ビット画像列 → 整数フリンジ次数マップ(絶対次数)。 · 例: `graycode_structured_light`
+- `graycode_decode` (`images → image2d`) — Gray code ビット画像列 → 整数フリンジ次数マップ(絶対次数)。 · 例: `graycode_structured_light`, `structured_light_scan`
 - `decode_fringe` (`images → depth`) — 位相シフト画像列を一括復号: wrapped → unwrap →(参照減算で)高さ。 · 例: `structured_light`
 - `synthesize_fringes` (`image2d → images`) — 既知の height map から N-step 位相シフト縞画像列を合成する(テスト/サンプル生成用)。 · 例: `structured_light`
+- `absolute_phase` (`image2d, image2d → image2d`) — 巻き込み位相を、粗いが絶対的な位相推定で「次数確定」して絶対位相にする。 · 例: `structured_light_scan`
+- `triangulate_column` (`image2d → depth`) — 各カメラ画素の「投影機コラム番号」から深度 Z を三角測量する(構造化光の最終段)。 · 例: `structured_light_scan`
 
 ### superquadric(4)
 - `fit_superquadric` (`points → primitive`) — 点群にスーパー2次曲面を least_squares で当てはめ dict{a,eps,R,t,residual} を返す。 · 例: `superquadric_fit`
@@ -787,7 +790,7 @@ _計 344 ops / 66 categories。_
 - `gaussians_to_voxel` (`points → voxel`) — 3DGS(異方性ガウス)→ 密度 voxel。各ガウスを means に opacity で置き、平均 scale で平滑。 · 例: `transforms_repr`
 - `mesh_to_voxel` (`mesh → voxel`) — mesh(頂点+面)→ 密度 voxel。面上を一様サンプリング → splat(mesh 行を全手法へ接続)。 · 例: `transforms_repr`
 - `mesh_to_points` (`mesh → points`) — mesh(頂点+面)→ 表面点群(面積重み一様サンプリング)。mesh→point cloud 変換。 · 例: `mesh_decimate`
-- `depth_to_points` (`depth → points`) — 深度マップ(2.5D)→ point cloud(ピンホール逆投影)。depth 行を全手法へ接続。 · 例: `transforms_repr`
+- `depth_to_points` (`depth → points`) — 深度マップ(2.5D)→ point cloud(ピンホール逆投影)。depth 行を全手法へ接続。 · 例: `structured_light_scan`, `transforms_repr`
 - `voxel_to_mips` (`voxel → images`) — 3D → 直交 3 方向の最大値投影(MIP)。2D 手法(accel の 2D NCC 等)を適用する入口。 · 例: `transforms_repr`
 - `voxel_to_mesh` (`voxel → mesh`) — voxel → mesh(marching cubes、skimage)。返り値 (verts, faces, normals)。voxel→mesh 変換。 · 例: `mesh_smooth`
 - `tsdf_from_depth` (`depth → sdf`) — 深度マップ(2.5D)→ TSDF volume(RGB-D 再構成の標準表現)。depth→TSDF 変換。 · 例: `transforms_repr`

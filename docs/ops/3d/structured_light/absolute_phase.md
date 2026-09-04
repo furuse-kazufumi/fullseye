@@ -1,23 +1,23 @@
 ---
-op: unwrap_phase_2d
+op: absolute_phase
 dim: 3d
 category: structured_light
-in: image2d
+in: image2d × image2d
 out: image2d
-examples: [structured_light]
+examples: [structured_light_scan]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.5  # fullseye lib version this note was generated for
 ---
 
-# unwrap_phase_2d — 3D `structured_light` op
+# absolute_phase — 3D `structured_light` op
 
-- **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import fringe; fringe.unwrap_phase_2d(wrapped, mask=None) -> 'np.ndarray'` (または `ops3d.get("unwrap_phase_2d")`)
+- **データ種**: `image2d × image2d` → `image2d`
+- **呼び出し**: `import fringe; fringe.absolute_phase(wrapped, coarse) -> 'np.ndarray'` (または `ops3d.get("absolute_phase")`)
 
 ## 使い方
 
-wrapped phase を skimage.restoration.unwrap_phase で連続位相に展開する。
+巻き込み位相を、粗いが絶対的な位相推定で「次数確定」して絶対位相にする。
 
 ## 参考(サンプルデータ・文献)
 
@@ -26,7 +26,7 @@ wrapped phase を skimage.restoration.unwrap_phase で連続位相に展開す�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- [structured_light](../../../../examples_3d/structured_light.py) — `py -3.11 examples_3d/structured_light.py`
+- [structured_light_scan](../../../../examples_3d/structured_light_scan.py) — `py -3.11 examples_3d/structured_light_scan.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
@@ -34,7 +34,7 @@ wrapped phase を skimage.restoration.unwrap_phase で連続位相に展開す�
 
 ## 同カテゴリ(`structured_light`)
 
-[wrapped_phase](wrapped_phase.md) · [graycode_decode](graycode_decode.md) · [decode_fringe](decode_fringe.md) · [synthesize_fringes](synthesize_fringes.md) · [absolute_phase](absolute_phase.md) · [triangulate_column](triangulate_column.md)
+[wrapped_phase](wrapped_phase.md) · [unwrap_phase_2d](unwrap_phase_2d.md) · [graycode_decode](graycode_decode.md) · [decode_fringe](decode_fringe.md) · [synthesize_fringes](synthesize_fringes.md) · [triangulate_column](triangulate_column.md)
 
 ---
 *Provenance: fringe.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

@@ -307,3 +307,118 @@ def synthesize_fringes(height, n_steps=4, freq=1.0, phase_gain=1.0,
     if return_phase:
         return images, total_phase
     return images
+
+
+# --------------------------------------------------------------------------- #
+# 8. 絶対位相(粗い推定で 2π 次数を確定する)                                     #
+# --------------------------------------------------------------------------- #
+def absolute_phase(wrapped, coarse) -> np.ndarray:
+    """巻き込み位相を、粗いが絶対的な位相推定で「次数確定」して絶対位相にする。
+
+    Φ = wrapped + 2π·round((coarse − wrapped) / 2π)
+
+    wrapped: wrapped_phase の出力 (-π,π] の 2D 配列(高精度・絶対次数なし)。
+    coarse:  同形の 2D 配列。**絶対だが粗い**位相推定 [rad]。Gray code で復号した投影機
+             コラム番号を位相に直したもの(2π·freq·col/width)が典型。NaN 可(出力も NaN)。
+
+    返り値: 絶対位相 [rad](2D float64)。無効画素(どちらかが NaN)は NaN。
+
+    なぜ必要か(空間アンラップとの違い): `unwrap_phase_2d` は隣接画素を辿って 2π 跳びを
+    繋ぐので、(a) 大域オフセット +2πm が残り、(b) オクルージョンで切れた島の間では次数が
+    伝播できない。本 op は画素ごとに独立に次数を決めるため、**島に分かれた場面でも絶対**で、
+    伝播も要らない。その代わり coarse の誤差が半周期(π)未満であることが要件。
+
+    要件(fail-closed): |coarse − Φ_true| < π。これを破ると round が隣の次数を選び、
+    その画素だけ 2π ぶん(= 縞 1 本ぶんの奥行き)静かにずれる。Gray code の粗さ(±0.5 コラム)
+    を位相に直した量が半周期を超えないよう、縞本数 freq を選ぶこと
+    (例: 投影機幅 512 px・freq 24 → 1 周期 21.3 px、Gray の ±0.5 px は余裕で内側)。
+
+    Raises: 形状不一致・2D でない・wrapped が (-π,π] を大きく外れる場合に ValueError。
+
+    来歴(公開文献): Gray code と位相シフトを併用して絶対位相を得る合成法 —
+    Sansoni et al., *Appl. Opt.* 38(31) 1999 / Zhang, *Opt. Lasers Eng.* 48 2010(総説)。
+    Gray code そのものの投影は Inokuchi et al., *ICPR* 1984。
+    """
+    w = np.asarray(wrapped, dtype=np.float64)
+    c = np.asarray(coarse, dtype=np.float64)
+    if w.ndim != 2:
+        raise ValueError(f"wrapped must be a 2D array: got shape={w.shape}")
+    if c.shape != w.shape:
+        raise ValueError(f"coarse shape {c.shape} does not match wrapped shape {w.shape}")
+    finite = np.isfinite(w)
+    if finite.any() and np.nanmax(np.abs(w[finite])) > np.pi + 1e-6:
+        raise ValueError(
+            "wrapped must lie in (-pi, pi] (did you pass an already-unwrapped phase?): "
+            f"max|wrapped|={float(np.nanmax(np.abs(w[finite]))):.6g}"
+        )
+    two_pi = 2.0 * np.pi
+    with np.errstate(invalid="ignore"):
+        order = np.round((c - w) / two_pi)
+    return w + two_pi * order
+
+
+# --------------------------------------------------------------------------- #
+# 9. 三角測量(投影機コラム → カメラ深度)                                        #
+# --------------------------------------------------------------------------- #
+def triangulate_column(column, k_cam, k_proj, rot, trans) -> np.ndarray:
+    """各カメラ画素の「投影機コラム番号」から深度 Z を三角測量する(構造化光の最終段)。
+
+    構造化光スキャナの幾何そのもの: カメラ画素 (u,v) は 1 本の視線を張り、投影機のコラム
+    番号 u_p は 1 枚の平面(投影機中心とそのコラムを含む平面)を張る。視線と平面の交点が
+    表面の 3D 点で、そのカメラ系 Z が深度になる。**閉じた式**なので反復も最適化も要らない。
+
+    column: (H, W) の投影機コラム番号(**サブピクセル実数**)。位相から出した値をそのまま
+            渡せる。NaN = 未確定画素(出力も NaN)。
+    k_cam:  カメラ内部行列 3x3(fx, fy, cx, cy[, skew])。画素中心は整数座標
+            (`render3d.render_mesh` / `camera.depth_to_points` と同じ約束)。
+    k_proj: 投影機内部行列 3x3。使うのは第 0 行(コラム方向)と第 2 行だけ。
+    rot:    3x3 回転。カメラ系 → 投影機系(X_proj = rot·X_cam + trans)。
+    trans:  長さ 3 の並進(同上、単位はシーンと同じ)。**ゼロベクトルは禁止**
+            (基線 0 = カメラと投影機が同一点。平面と視線が交わらず深度が定義できない)。
+
+    返り値: (H, W) float64 の深度マップ(カメラ前方の Z、`render_mesh` の depth と同じ量)。
+            交点が後方(Z<=0)や視線が平面と平行な画素は NaN。
+
+    導出: X_cam = Z·d(d = K_cam⁻¹[u,v,1])。投影機側のコラム条件は
+    (K_proj[0] − u_p·K_proj[2])·X_proj = 0。X_proj = rot·X_cam + trans を代入して
+    Z について解くと Z = −(a·trans) / (a·(rot·d))、a = K_proj[0] − u_p·K_proj[2]。
+
+    Raises: 形状・行列不正、基線ゼロ、特異なカメラ行列で ValueError。
+
+    来歴(公開文献): 光線と平面の交点による構造化光三角測量 — Hartley & Zisserman,
+    *Multiple View Geometry* 2nd ed. §12(射影幾何の交わり)/ Salvi et al.,
+    *Pattern Recognition* 43 2010(構造化光パターンの分類と復号)。
+    """
+    col = np.asarray(column, dtype=np.float64)
+    if col.ndim != 2:
+        raise ValueError(f"column must be a 2D (H, W) map: got shape={col.shape}")
+    kc = np.asarray(k_cam, dtype=np.float64)
+    kp = np.asarray(k_proj, dtype=np.float64)
+    for nm, m in (("k_cam", kc), ("k_proj", kp)):
+        if m.shape != (3, 3) or not np.all(np.isfinite(m)):
+            raise ValueError(f"{nm} must be a finite 3x3 intrinsic matrix: got shape={m.shape}")
+    if abs(float(np.linalg.det(kc))) < 1e-12:
+        raise ValueError("k_cam is singular (zero focal length?)")
+    R = np.asarray(rot, dtype=np.float64)
+    if R.shape != (3, 3) or not np.all(np.isfinite(R)):
+        raise ValueError(f"rot must be a finite 3x3 rotation: got shape={R.shape}")
+    t = np.asarray(trans, dtype=np.float64).reshape(-1)
+    if t.shape != (3,) or not np.all(np.isfinite(t)):
+        raise ValueError(f"trans must be a finite length-3 vector: got shape={t.shape}")
+    if float(np.linalg.norm(t)) < 1e-12:
+        raise ValueError("zero baseline: camera and projector coincide, depth is undefined")
+
+    h, w = col.shape
+    v_i, u_i = np.mgrid[0:h, 0:w].astype(np.float64)
+    pix = np.stack([u_i, v_i, np.ones_like(u_i)], axis=-1)          # (H, W, 3)
+    d = pix @ np.linalg.inv(kc).T                                    # カメラ視線方向(z=1)
+    rd = d @ R.T                                                     # 投影機系での視線方向
+
+    a = kp[0][None, None, :] - col[..., None] * kp[2][None, None, :]  # (H, W, 3)
+    denom = np.einsum("ijk,ijk->ij", a, rd)
+    num = -np.einsum("ijk,k->ij", a, t)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        z = num / denom
+    bad = ~np.isfinite(z) | (np.abs(denom) < 1e-12) | (z <= 0.0) | ~np.isfinite(col)
+    z[bad] = np.nan
+    return z

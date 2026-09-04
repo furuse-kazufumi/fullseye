@@ -4,7 +4,7 @@ dim: 3d
 category: structured_light
 in: images
 out: image2d
-examples: [graycode_structured_light]
+examples: [graycode_structured_light, structured_light_scan]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.5  # fullseye lib version this note was generated for
@@ -27,6 +27,7 @@ Gray code ビット画像列 → 整数フリンジ次数マップ(絶対次数)
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [graycode_structured_light](../../../../examples_3d/graycode_structured_light.py) — `py -3.11 examples_3d/graycode_structured_light.py`
+- [structured_light_scan](../../../../examples_3d/structured_light_scan.py) — `py -3.11 examples_3d/structured_light_scan.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
@@ -34,7 +35,7 @@ Gray code ビット画像列 → 整数フリンジ次数マップ(絶対次数)
 
 ## 同カテゴリ(`structured_light`)
 
-[wrapped_phase](wrapped_phase.md) · [unwrap_phase_2d](unwrap_phase_2d.md) · [decode_fringe](decode_fringe.md) · [synthesize_fringes](synthesize_fringes.md)
+[wrapped_phase](wrapped_phase.md) · [unwrap_phase_2d](unwrap_phase_2d.md) · [decode_fringe](decode_fringe.md) · [synthesize_fringes](synthesize_fringes.md) · [absolute_phase](absolute_phase.md) · [triangulate_column](triangulate_column.md)
 
 ---
 *Provenance: fringe.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
