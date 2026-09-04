@@ -486,6 +486,23 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
             fb = render3d.fbm_noise(pts, sc, octaves=3, seed=int(seed))
             alb_map[is_object] *= (1.0 + alb_var * fb)[:, None]
 
+        if vertex_albedo is not None and is_object.any():
+            # Per-vertex RGB albedo (vertex painting): interpolated to the mesh pixels
+            # with the same perspective-correct barycentrics as the smooth normals.
+            # Ground pixels keep the ground material. For a metal the specular tint
+            # follows the local colour (a gold part highlights gold, a steel part white).
+            # Use cases: several CSG parts in one scene with their own materials,
+            # label / heatmap colouring of a mesh.
+            va_all = np.ones((V_all.shape[0], 3), np.float64)
+            va_all[:vertex_albedo.shape[0]] = vertex_albedo
+            ys_a, xs_a = np.nonzero(is_object)
+            fid_a = view["face"][ys_a, xs_a]
+            bw_a = view["bary"][ys_a, xs_a]
+            col = np.einsum("ij,ijk->ik", bw_a, va_all[F_all[fid_a]])
+            alb_map[ys_a, xs_a] = np.clip(col, 0.0, 1.0)
+            if is_metal:
+                spec_tint[ys_a, xs_a] = alb_map[ys_a, xs_a]
+
         # 環境光(AO で遮蔽・影には残す)+ 拡散(AO と影)+ 鏡面(影)。
         ambient_rgb = ka * alb_map * ao_map[..., None]
         diffuse_rgb = (kd_map * diff)[..., None] * alb_map \
