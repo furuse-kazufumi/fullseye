@@ -130,6 +130,35 @@ TYPE_TO_SORT = {
 #: 「1 手で外へ出るだけ」= 進化する余地がゼロの死んだ枠になる。課題を足しても
 #: 手の基準線と同じ 1 手しか組めない。**使える仕事が無い語彙は足さない**。
 #: wide 語彙(IMGEVOLVE_WIDE_VOCAB=1)では従来どおり入る。
+#: **2-D 橋渡しから外す op**。理由は「性能」でも「未対応」でもなく **定義域**:
+#: これらは cos・光路長 [mm]・波長 [nm] のような物理量を取るのに、橋が渡すのは
+#: sort `signal` の汎用 0..1 列である。domain の外なので op は ValueError を返し、
+#: 橋のランナーは fail-soft で**入力をそのまま返す** —— つまり登録しても
+#: 「恒等を返し続ける死んだ op」が 2-D 台帳に増えるだけになる
+#: (2026-09-04、liveness テストが 6 件を pass-through として摘発)。
+#: 単位に合う種を渡す仕組みができたら外してよい(その時は `opassist` の
+#: 単位ベース種と同じ考え方で `chain_fuzz` 側に種を足すのが筋)。
+_OP_BRIDGE_SKIP = {
+    "fresnel_dielectric", "fresnel_conductor", "beer_lambert_transmittance",
+    "slab_transmittance", "thin_film_reflectance", "prism_min_deviation_deg",
+    "cie_xyz_from_wavelength", "spectrum_to_srgb",
+}
+
+
+#: **op 単位の sort 上書き**。台帳の型を型ごとに畳むのではなく、この op だけ別の sort で
+#: 橋渡しする。2026-09-04: sphere_sdf / box_sdf の台帳 in を正しい `coordgrid`
+#: (座標場)に直した結果、型ごとの写像 `coordgrid -> points` を入れると
+#: **代表値((nx,ny,nz,3))が points の契約(ndim==2, shape[1]==3)を満たさない**
+#: (liveness テストが 12/12 で摘発)。一方この 2 op には INPUT_ADAPTERS._points_to_grid
+#: が付いていて**点群から座標場を実際に作って**から呼ぶので、2-D 橋での "points" は真。
+#: 型ごとに畳むと嘘になり、落とすと points 候補の長さが変わって既存 champion を
+#: 黙って書き換える(docs/WAVE0_STABLE_SLOTS.md)。op 単位の上書きが両方を避ける。
+_OP_SORT_OVERRIDE = {
+    "sphere_sdf": ("points", "volume"),
+    "box_sdf": ("points", "volume"),
+}
+
+
 _NEW_SORTS = frozenset({"points", "signal", "matrix", "cimage",
                         "lightfield", "counts",
                         "rgbimage", "video", "qimage", "beatcube",
@@ -411,8 +440,14 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, _norm, _bin):
     for name, dim, ins, out_type, fn in entries:
         if len(ins) != 1:
             continue                                      # 多入力は別の合成モデル
-        in_sort = TYPE_TO_SORT.get(ins[0])
-        out_sort = TYPE_TO_SORT.get(out_type)
+        if name in _OP_BRIDGE_SKIP:
+            continue                                      # 定義域が合わない(上の表)
+        override = _OP_SORT_OVERRIDE.get(name)
+        if override is not None:
+            in_sort, out_sort = override
+        else:
+            in_sort = TYPE_TO_SORT.get(ins[0])
+            out_sort = TYPE_TO_SORT.get(out_type)
         if in_sort is None or out_sort is None:
             continue
         if in_sort not in _NEW_SORTS and not wide:

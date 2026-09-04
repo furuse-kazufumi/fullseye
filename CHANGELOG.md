@@ -5,6 +5,135 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 
 ## 0.1.6 — unreleased
 
+- **外観 op 族の敵対的検証(ユーザー「敵対的検証をしてください。特に未実施のものを重点に」)
+  —— 実バグ 4 件を摘発して修正**。`tests/test_appearance_adversarial.py`(17 件)は
+  「自分が期待した振る舞い」ではなく**まだ一度も掛けていない不変量**を突く:
+  相反性 / 極限での一致 / エネルギー保存 / 線形性 / 敵対入力 / 決定性 / 補助層の正直さ /
+  導線の実行可能性。
+  摘発した実バグ:
+  1. `matappear._normal_map` が **NaN/Inf を素通し**していた。外観 op の共通入口なので
+     `ward_anisotropic`/`grating_rgb`/`oren_nayar`/`finish_shade` など**全部が例外を出さずに
+     NaN 画像を返す**。下流のトーンマップが NaN を黒へ丸めるので「暗いだけの絵」になり
+     原因が消える → 入口で fail-closed に。
+  2. `cie_xyz_from_wavelength` の宣言 `pairs`((N,2))が嘘。実返りは (…,3) の XYZ →
+     `points` へ直し、スカラ波長の (3,) は adapter で (1,3) に揃える。
+  3. `prism_min_deviation_deg` が**台帳規約(先頭 N 個が宣言 in 型のデータ)に違反**して
+     `apex_deg` を先頭に置いていた。波長配列が頂角に入り **素の TypeError**。波長を
+     第 1 引数へ(規約に揃えるのが正しい直し方)+ 頂角に配列が来たら ValueError。
+  4. `spectrum_to_srgb` が 0 次元入力で **素の IndexError**(`r.shape[-1]`)→ 番人を追加。
+  併せて `opassist.sample_input` が単位を無視して波長に 0..1 を渡し「サンプルが動かない op」
+  を作っていたのを修正(単位から可視域 400–700 nm を選ぶ)。
+  通った不変量: 相反性(Ward / Oren–Nayar とも相対 <1e-9)/ 金属 Fresnel は **k→0 で誘電体
+  Fresnel と 1e-9 一致**(独立に書いた 2 式が同じ物理へ収束)/ 薄膜は膜厚 0 で界面式と斜入射まで
+  一致 / 透過係数から作った T で **R+T=1**(1e-12)/ 金属は全角度・全波長で R≤1 /
+  分光→sRGB はスケールと和に対して厳密に線形 / 敵対入力 5 種 × 外観 op 9 種で素の例外漏れ 0・
+  NaN 出力 0 / 乱数 op 5 件が seed 固定で bit 一致 / `accepted_sorts` の "works" が
+  空の成功を隠していない / `op_path` の連鎖が台帳の型で本当に繋がる。
+  最終監査: 新 op 33 件すべて型整合・素の例外漏れ 0(実行 30 / 契約拒否 3 / 問題 0)。
+- **op 別の入力補助 `opassist` + Studio の op help に接続**(ユーザー「Studio の周りとか、
+  入力補助機能とかもっと op 別にあったらいい」): `param_specs` は 2-D の a,b ノブ 2 本の
+  見せ方を説明する層で、**実引数を取る台帳 op**(3-D / optics / tomography …)には効かない。
+  そこを埋める。(1) `param_spec` 引数の型・単位・既定・選択肢・説明を署名と docstring から
+  (選択肢は `METALS` / `FINISHES` など**モジュール定数から引く**ので実体とずれない)
+  (2) `presets` CD/DVD/BD・実硝材・仕上げ・素材などの名前つき設定(テストで「実際に呼べる」
+  ことを固定)(3) `producers`/`consumers` 「この入力はどう作る/次にどこへ繋ぐ」
+  (4) `sample_input` すぐ動かせる引数一式 (5) `preflight` 実行前の注意
+  (回折を溝と同じ向きから照らしている / 全反射を疎→密で呼んでいる等 —— **実際に踏んだ
+  失敗**から起こした。例外にはせず実行は妨げない)。テスト +18。台帳 op は増やしていない。
+  ★**コンテナ型の統一**(ユーザー「色々なコンテナ型は扱えるほうが良いけど、統一感も大事」):
+  最初は `kind` に "seq"/"matrix" を混ぜていた = **値の型と容器の形が 1 つの欄で競合**
+  していた(「int の 3 ベクトル」が表現できず、行列だけ構造の置き場が違う)。`kind` は
+  値型(number/int/bool/choice/text/data)だけにし、容器は常に `container`
+  (form: scalar/vector/matrix/list/nested/data、shape は必ず tuple、elem/role/labels)へ。
+  スカラも例外にしない(shape=())ので UI の分岐が 1 本で済む。
+  ★ tuple は既定値からだけでは分からない: `center=None`(省略可の (row,col))、必須の
+  `trans`(3 ベクトル)、`k_cam`(3x3 行列)は**既定値が tuple ではない**ため、名前から
+  構造を補う(名前と実際の長さが食い違うときは**形を優先** — 名前は当てにならない)。
+  ★**op の多態性を実測で出す** `accepted_sorts`(ユーザー「op は複数の型に対応してると
+  いいね」): 台帳は 1 op に 1 入力型しか書けないが、実体は要素ごとの演算が多く、
+  `signal` 宣言の op が image2d / voxel / rgbimage / images も通す。宣言を広げると
+  台帳と champion に波及するので、まず**測って見せる**層として置いた
+  (`declared` / `works` / `rejected` / `error` の 4 値)。実測: `fresnel_dielectric` は
+  宣言 signal に対し image2d・voxel・rgbimage・normalmap・images が通り、
+  **素の例外漏れ(error)は 0 件** = 断るときは必ず ValueError で断れている。
+  数えられていない多態性は「無い」のと同じで、UI も利用者も使えないままになる。
+  ★**使いやすさの入口 3 つ**(ユーザー「使いやすさを考慮して、実装しましょう」):
+  `op_find("虹")` でやりたいことの言葉(日本語可)から op を引き、`op_run(op)` は
+  **引数ゼロでも動く**(プリセット解決 → 前提チェック → 台帳の宣言 out 型で返すので
+  素のタプルを呼び手が剥がさなくてよい。`strict=True` で警告を例外に)、
+  `op_path("normalmap","rgbimage")` で**型 A から B へ繋ぐ op の列**が出る
+  (型で繋ぐライブラリなので、手順を知らなくても辿れる導線)。`fullseye.op_*` で公開。
+  ★ `sample_input` の必須引数を**容器の形から**埋めるよう修正: 値型だけで決めると
+  `corrosion_mask(shape, ...)` の `shape` に 1.0 が入り
+  「'float' object is not iterable」で落ちた(実際に踏んだ)。
+  ★ 単位の suffix 照合を最長一致に修正(`sigma_per_mm` が `_mm` に当たって "mm" と
+  表示されていた。単位の取り違えは UI の数字を黙って別物にする)。
+- **金属・ガラス以外の素材と表面処理 `surfacelib`(新 op 11 件)**(ユーザー「他にもいろんな
+  素材や表面を再現できるなら対応してほしい」): 紙・石膏・コンクリート・プラスチック・塗装・
+  陶器・布・ベルベット・木・皮革・ゴム・濡れた面・錆びた面・すりガラス ―― これらの大半は
+  **(1) 粗い拡散 (2) 透明な上塗り (3) 微細構造 (4) むら** の 4 つで説明できる、という整理で
+  op 化した。`oren_nayar`(σ=0 で **Lambert に厳密一致 1.1e-16**、σ=30° で端が 1.35 倍明るい
+  = 満月が円盤に見える効果)/ `clearcoat_shade`(上塗りで反射した分だけ下地を (1−F_in)(1−F_out)
+  で減衰 ―― 掛けないと足すほど明るくなる)/ `metallic_flake_normals` / `sheen_shade`
+  (**鏡面と逆に縁で最大** — Phong では出せない布の見え方)/ `weave_normals`(FFT に 2 本の
+  ピーク)/ `wood_grain`(年輪の変調 + 繊維方向)/ `wetness`(濡れは拡散を暗くする:
+  0.50 → 0.357)/ `corrosion_mask`(面積率が指定値に一致: 0.30 → 0.2995)/
+  `subsurface_approx` / `rough_transmission`(**直進 + 拡散 = 平板の透過率**でエネルギー保存)/
+  `material_catalog`(素材 11 種の既定パラメータ)。テスト +14。
+  optics 台帳 47 → **80 op**(appearance 7 / interface 4 / mirror 2 / glassbody 4 /
+  finish 5 / material 6 / surface 5)。
+- **ガラス・鏡面の光学 `glassmirror`(新 op 10 件)**(ユーザー「光学的にガラスや鏡面を
+  扱う op が沢山あると良いね」): 誘電体/金属の Fresnel(s・p・無偏光)、Brewster 角、
+  臨界角、金属の複素屈折率 n+ik(Ag/Au/Al/Cu/Cr)、金属鏡の**色**(n,k → 分光 → 等色関数)、
+  Beer–Lambert 吸収、平行平板の多重反射、per-ray TIR つきベクトル屈折、プリズムの最小偏角
+  (実硝材の分散)。検算: 垂直入射 = ((n1−n2)/(n1+n2))²(rel 1e-12)/ Brewster で Rp = 0
+  (< 1e-15)/ 臨界角超 = 1.0 厳密 / 平板 T = 2n/(n²+1) 厳密 / 金 rgb (1.00, 0.67, 0.38)・
+  銅 (0.98, 0.73, 0.53)・銀はほぼ中性 / プリズム d 線 38.65°、短波長ほど大きく曲がる。
+  テスト +15。★ `match3d.refract` は「1 本でも TIR ならバッチ全体が None」なので画像
+  サイズでは使えない —— `refract_rays` は per-ray マスクを返す。
+  ★教訓: 「銅は金より赤い」と思って書いた assert が落ちた。公開値でも Au の R(450nm)
+  ≈ 0.40 < Cu ≈ 0.56 で、**青は銅の方が多い**(金の方が飽和した黄色)。データが正しかった。
+- **加工された金属表面 `metalfinish`(新 op 5 件 + ヘルパ 1)**(ユーザー「いろいろ加工された
+  いろんな素材の金属表面を再現できると良いね」): 仕上げ 5 種(ヘアライン / 旋盤の同心目 /
+  放射ブラシ / ローレット交差目 / ビーズブラスト)の**接線場**と**異方性粗さ場**、加工痕を
+  法線へ刻む `micro_normals`、無方向凹凸の `blast_normals`、材質 × 仕上げの `finish_shade`
+  (金属色は `glassmirror.metal_mirror_rgb`、微小面は Ward)。テスト +9。
+  ★ これに合わせて `matappear.ward_anisotropic` / `grating_rgb` の接線を**場 (H,W,3)**
+  でも受けられるようにした ―― 定ベクトルのままでは同心目・交差目・無方向が原理的に作れない。
+  optics 台帳 47 → **69 op**(appearance 7 / interface 4 / mirror 2 / glassbody 4 / finish 5)。
+- **溜まっていた実バグの一掃**:
+  - `tools/op_example_index`: docstring の散文「<op名> (」を op 呼び出しと誤判定して
+    **偽リンク**を生んでいた → 走査前に docstring とコメントを除去。実装中に
+    **`ast.col_offset` が UTF-8 バイト基準**である二次バグも摘発(日本語コメント混じりだと
+    docstring の代わりに実コードを消し、`match_sh_descriptor` が偽の未到達になった)。
+  - `photometric.photometric_stereo(lit_only=True)`: 付着影(max(N·L,0) の非線形)で
+    最小二乗が偏る既知欠陥を修正。実測 **6.499° → 0.003°**。既定は従来挙動のまま。
+  - **TYPEMISS 既知 3 件を全解消**: `pose_error` は宣言 `measurement` に対し実返りが
+    (回転誤差, 並進誤差) の 2 つ → 宣言を `table` にし adapter で名前つき dict へ
+    (**並進誤差を捨てない**)。`sphere_sdf` / `box_sdf` は座標場を取るのに `points` 宣言
+    だった → `grid_coords` を台帳に登録し新語彙 `coordgrid` を入口に。保留理由だった
+    「champion を黙って書き換える」は `TYPE_TO_SORT["coordgrid"] = "points"` で解消
+    (2-D 橋の tb_ 版は INPUT_ADAPTER が点群から座標場を作っているので、あちらの
+    `points` 宣言は嘘ではない)。`test_wave0` green = champion 不変を実測で確認。
+- **構造色・異方性の材質族 `matappear`(新 op 7 件)+ `render_beauty(surface=)`**
+  (ユーザー: 「鏡面やガラスは?」「CD の虹は?」「ヘアラインは?」): 光線追跡を要さない 3 つ
+  ―― 回折(CD)・薄膜干渉(シャボン/陽極酸化)・異方性微小面(ヘアライン)――
+  を**波長から**作る。`cie_xyz_from_wavelength`(Wyman 2013 の多ローブ Gauss 近似)/
+  `spectrum_to_srgb`(D65 白色順応つき、平坦反射率 1 → sRGB 白 (1,1,1))/
+  `thin_film_reflectance`(Airy)/ `grating_wavelengths`(d(sinθo−sinθi)=mλ)/
+  `grating_rgb` / `thin_film_rgb` / `ward_anisotropic`。optics 台帳 47 → **54**、
+  新カテゴリ `appearance`。`render_beauty(surface="brushed"|"grating"|"thinfilm",
+  surface_params=...)` で物体画素の鏡面項を置き換える。テスト +17。
+  検算: 膜厚 0 = 基板単体のフレネル(n=1.5 で 0.040000、rel 1e-12)/ λ/4 = 解析値 0.077113 /
+  λ/2 = absentee layer / CD 1.6 µm・Δsin 0.35 の 1 次 = 560 nm / 異方性ローブの伸び比 9:1:0.11。
+  ★教訓 3 件: (a) 分散は**溝に直交する向き**にしか起きない ―― 溝と同じ向きに光源を振ると
+  λ が ±100 nm(不可視)にしかならず「色が出ない」。(b) 実際の格子は**両側**に回折するのに
+  +m しか計算せず、解が全部負 → 正の λ だけ残すフィルタが全部落として真っ黒だった
+  (本命は m=−2 の 440 nm)。(c) 手組みの球メッシュの**巻き順が逆**だと法線が内を向き、
+  render_beauty は例外を出さずに真っ黒を返す。
+- **記事を「画像処理の分類別」に再構成(ja/en)**(ユーザー要望): 冒頭の実演を時系列の
+  積み増しから、① 合成と計測チャンネル ② 受動計測 ③ 能動計測 ④ 断層 ⑤ 材質の見え方
+  ⑥ 作り込みの過程、の 6 分類に並べ直し、分類マップの表(各項目に実測値)を先頭に置いた。
 - **静物の X 線 CT(記事図)**: `tools/gen_hero_ct.py` — hero の静物を SDF から**中身の詰まった
   減衰係数ボリューム**(Al 0.46 / Ti 1.20 / PMMA 0.17 [1/cm]、横幅 30 mm・体素 0.210 mm)に
   戻し、74 スライス × 180 ビューを `radon_transform` → 光子ポアソンノイズ →

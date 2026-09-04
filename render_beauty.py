@@ -40,6 +40,7 @@ from typing import Optional, Sequence
 
 import numpy as np
 
+import matappear
 import render3d
 import render_ao
 import render_shade
@@ -58,6 +59,8 @@ _MATERIALS: dict[str, dict] = {
 }
 _TONEMAPS = ("reinhard", "aces", "none", "linear")   # linear = none(露出 × クリップ、AMICA 風)
 _BRDFS = ("phong", "lambert", "lommel_seeliger", "hapke")
+#: 微細構造の見え方(matappear)。"none" 以外は物体画素の鏡面項を置き換える。
+_SURFACES = ("none", "brushed", "grating", "thinfilm")
 
 #: 地面(pedestal)の反射率と質感(ややマットな中間グレー)。
 _GROUND_ALBEDO = np.array([0.55, 0.56, 0.58], np.float64)
@@ -196,7 +199,8 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
                   self_illumination: float = 0.0, albedo_variation: float = 0.0,
                   albedo_scale=None, seed: int = 0,
                   smooth_normals: bool = False, bump=None,
-                  vertex_normals=None, vertex_albedo=None) -> np.ndarray:
+                  vertex_normals=None, vertex_albedo=None,
+                  surface: str = "none", surface_params=None) -> np.ndarray:
     """メッシュを全品質層合成で「映える静止 3D」1 枚に描く → RGB ``(size, size, 3)`` float [0,1]。
 
     引数:
@@ -277,6 +281,9 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
         raise ValueError("material='matcap' requires a matcap texture (got None)")
     if brdf not in _BRDFS:
         raise ValueError(f"brdf must be one of {_BRDFS}, got {brdf!r}")
+    if surface not in _SURFACES:
+        raise ValueError(f"surface must be one of {_SURFACES}, got {surface!r}")
+    sp = dict(surface_params or {})
     if brdf != "phong" and material == "matcap":
         raise ValueError("brdf other than 'phong' cannot be combined with material='matcap'")
     bp = dict(brdf_params or {})
@@ -503,12 +510,44 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
             if is_metal:
                 spec_tint[ys_a, xs_a] = alb_map[ys_a, xs_a]
 
+        if surface != "none" and is_object.any():
+            # 微細構造の見え方(matappear): 面の微細構造が**波長ごとに違う反射**を返す
+            # 3 つ ―― 回折格子(CD)・薄膜干渉(シャボン/陽極酸化)・異方性微小面
+            # (ヘアライン)。どれも光線追跡を要さないので、ラスタライザのままで出せる。
+            # 物体画素の鏡面項をこの項で**置き換える**(拡散と環境光はそのまま残す)。
+            if surface == "brushed":
+                lobe = matappear.ward_anisotropic(
+                    normals * is_object[..., None], light=light_cam, view=view_cam,
+                    tangent=sp.get("tangent", (1.0, 0.0, 0.0)),
+                    alpha_x=sp.get("alpha_x", 0.30), alpha_y=sp.get("alpha_y", 0.03))
+                extra = (sp.get("strength", 0.6) * lobe)[..., None] * spec_tint
+            elif surface == "grating":
+                extra = matappear.grating_rgb(
+                    normals * is_object[..., None], light=light_cam, view=view_cam,
+                    tangent=sp.get("tangent", (1.0, 0.0, 0.0)),
+                    pitch_um=sp.get("pitch_um", 1.6), orders=sp.get("orders", (1, 2)),
+                    strength=sp.get("strength", 1.0), width_nm=sp.get("width_nm", 60.0))
+            else:                                        # "thinfilm"
+                extra = matappear.thin_film_rgb(
+                    normals * is_object[..., None], view=view_cam,
+                    thickness_nm=sp.get("thickness_nm", 350.0),
+                    n_film=sp.get("n_film", 1.33), n_sub=sp.get("n_sub", 1.0),
+                    strength=sp.get("strength", 1.0))
+            # 色域外(負)はここで初めて落とす。分光側で丸めない方針(matappear 参照)。
+            extra = np.clip(np.nan_to_num(extra), 0.0, None)
+            ks_map = np.where(is_object, 0.0, ks_map)
+            surface_rgb = np.where(is_object[..., None], extra, 0.0)
+        else:
+            surface_rgb = None
+
         # 環境光(AO で遮蔽・影には残す)+ 拡散(AO と影)+ 鏡面(影)。
         ambient_rgb = ka * alb_map * ao_map[..., None]
         diffuse_rgb = (kd_map * diff)[..., None] * alb_map \
             * ao_map[..., None] * shadow_map[..., None]
         specular_rgb = (ks_map * spec)[..., None] * spec_tint * shadow_map[..., None]
         hdr = ambient_rgb + diffuse_rgb + specular_rgb
+        if surface_rgb is not None:
+            hdr = hdr + surface_rgb * shadow_map[..., None] * ao_map[..., None]
         if k_bounce > 0.0 and ao:
             # 地形の一回反射の近似(docstring 参照): 遮蔽された半球の割合 (1−AO) だけ
             # 隣の地形が見え、その地形は照らされた面の平均放射輝度で光っているとする。

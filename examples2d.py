@@ -202,6 +202,21 @@ EXAMPLES = [
      "summary": "フレーム対/短クリップを events 表現(タイムサーフェス等)に変換し、"
                 "コントラスト最大化で注入した運動を回収する(events.py ファサード、終了コードで判定)。"},
     # -- image quality / forensics / color / astronomy ---------------------------- #
+    {"id": "appearance_structural_colour", "task": "appearance", "data": "synthetic",
+     "name": "構造色を波長から作る(回折・薄膜干渉・異方性)",
+     "summary": "色を塗らず分光反射率→CIE等色関数→線形sRGB。等色関数ȳピーク554nm、反射率1が白(1,1,1)、"
+                "膜厚0が基板フレネルに厳密一致、λ/4が解析値0.077113、CD 1.6µm・Δsin0.35の1次が560nm、"
+                "異方性ローブの伸び39:5。同条件でBD 0.32µmは可視域に届かず総量が1/3以下。"},
+    {"id": "glass_and_mirror_optics", "task": "optics", "data": "synthetic",
+     "name": "ガラスと鏡面の光学を閉じた式で解く",
+     "summary": "垂直入射0.0422=((n1-n2)/(n1+n2))²、Brewster 56.6°でp偏光が1e-15未満、臨界角超は厳密1.0、"
+                "平板0.9191=2n/(n²+1)、Beer-Lambertがexp(-1)、Snell残差1e-12未満で全反射は光線ごと、"
+                "プリズム最小偏角F/d/C=39.14/38.65/38.43°。金の色(1.00,0.67,0.38)はn,kから出る。"},
+    {"id": "machined_metal_and_materials", "task": "appearance", "data": "synthetic",
+     "name": "加工された金属表面と素材(粗い拡散・上塗り・布・木・濡れ・腐食)",
+     "summary": "Oren-Nayarがσ=0でLambertと厳密一致し端は1.35倍、上塗りは下地の寄与を単調に減らす、"
+                "布の縁光沢は鏡面と逆(正面1e-6/縁0.09)、濡れは0.50→0.357、腐食面積0.30→実測0.2995、"
+                "すりガラスは直進+拡散=平板の透過率0.923077でエネルギー保存。接線場は同心円が半径と直交。"},
     {"id": "image_quality_metrics", "task": "imaging_quality", "data": "synthetic",
      "name": "画質 op(imgmetrics)で保存時の量子化段数を 1 つ選ぶ",
      "summary": "CIEDE2000 を公開検証表 34 組で、SSIM を既知条件で検定してから、"

@@ -115,6 +115,29 @@ from precision_union import (PrecisionUnion, LAZY_OPS as _PU_LAZY,  # noqa: E402
 from geompred import (point_in_polygon, point_in_convex_polygon, is_convex_polygon,  # noqa: E402,F401
                       point_in_tetrahedron, point_in_convex_polytope,
                       is_delaunay_2d, mesh_orientation_consistent)
+# 見え方を**波長から**作る 3 族(2026-09-04): 構造色(回折・干渉・異方性)= matappear、
+# ガラスと鏡面の界面/体積/分散 = glassmirror、加工された金属表面(仕上げの筋と粗さ)
+# = metalfinish。どれも色を絵の具として塗らず、n,k や格子ピッチや膜厚から計算して
+# CIE 等色関数で RGB に落とすので、角度やパラメータを変えると色が物理的に動く。
+from matappear import (cie_xyz_from_wavelength, spectrum_to_srgb,  # noqa: E402,F401
+                       thin_film_reflectance, grating_wavelengths, grating_rgb,
+                       thin_film_rgb, ward_anisotropic)
+from glassmirror import (fresnel_dielectric, fresnel_conductor,  # noqa: E402,F401
+                         brewster_angle_deg, critical_angle_deg,
+                         metal_optical_constants, metal_mirror_rgb,
+                         beer_lambert_transmittance, slab_transmittance,
+                         refract_rays, prism_min_deviation_deg)
+from metalfinish import (finish_catalog, tangent_field, micro_normals,  # noqa: E402,F401
+                         blast_normals, finish_shade)
+# 金属・ガラス以外の素材と表面(粗い拡散・上塗り・布・木・濡れ・腐食・すりガラス)。
+from surfacelib import (material_catalog, oren_nayar, clearcoat_shade,  # noqa: E402,F401
+                        metallic_flake_normals, sheen_shade, weave_normals,
+                        wood_grain, wetness, corrosion_mask, subsurface_approx,
+                        rough_transmission)
+# op 別の入力補助(探す / すぐ動かす / 型を繋ぐ)。台帳 op ではなく利用の入口。
+import opassist  # noqa: E402,F401
+from opassist import (op_find, op_run, op_path, op_assist,  # noqa: E402,F401
+                      op_presets, op_producers, op_consumers, op_accepts)
 # 3-D metrology fits — the (depth, row, col) analogue of the 2-D fits above.
 # numpy-only (no torch), so always available; the torch-backed op registry below is guarded.
 from measure3d import (  # noqa: E402,F401

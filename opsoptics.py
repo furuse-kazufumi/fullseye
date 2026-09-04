@@ -59,10 +59,18 @@ paraboloid / sphere_mirror の 4 処方(テストと例の共通出発点)。
 import illumdesign
 import lensimage
 import lensopt
+import numpy as np
+
+import glassmirror
+import matappear
+import metalfinish
+import surfacelib
 import optics
 import raytrace
 
 _MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage,
+        "matappear": matappear, "glassmirror": glassmirror,
+        "metalfinish": metalfinish, "surfacelib": surfacelib,
         "lensopt": lensopt, "illumdesign": illumdesign}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
@@ -112,6 +120,74 @@ _CATALOG = {
         ("psf_to_mtf", "optics", ["image2d"], "pairs"),
         ("mtf_diffraction", "optics", [], "pairs"),
         ("wavefront_stats", "optics", ["table"], "table"),
+    ],
+    # appearance(matappear): 微細構造の見え方を**波長から**作る族。回折格子・薄膜干渉・
+    # 異方性微小面。入口 2 op(等色関数・分光→sRGB)は波長格子だけで呼べ、残り 3 op は
+    # **normalmap**(H,W,3 の法線場)を食って rgbimage / image2d を返す。
+    #   ★ normals(点群の (N,3) 法線)ではなく normalmap。両者は形は似ているが、
+    #   (N,3) を渡すと _normal_map が ValueError で弾く。ここを normals と申告すると
+    #   「点群の法線を渡してよい」という嘘になり、連鎖ファザーは毎回 CONTRACT で
+    #   終わって**この族を一度も実行しない**(= 発見ゼロに化ける)。
+    "appearance": [
+        # 返りは (..., 3) の XYZ 三つ組。`pairs` は (N,2) なので嘘だった
+        # (2026-09-04 の敵対的監査で摘発)。行が 3 要素なので `points` が正しく、
+        # スカラ波長の (3,) は adapter で (1,3) に揃える。
+        ("cie_xyz_from_wavelength", "matappear", ["signal"], "points"),
+        ("spectrum_to_srgb", "matappear", ["signal"], "vector"),
+        ("thin_film_reflectance", "matappear", ["signal"], "signal"),
+        ("grating_wavelengths", "matappear", [], "vector"),
+        ("grating_rgb", "matappear", ["normalmap"], "rgbimage"),
+        ("thin_film_rgb", "matappear", ["normalmap"], "rgbimage"),
+        ("ward_anisotropic", "matappear", ["normalmap"], "image2d"),
+    ],
+    # glassmirror(2026-09-04、ユーザー「光学的にガラスや鏡面を扱う op が沢山あると良い」):
+    # 界面(誘電体・金属)・体積吸収・平行平板・分散を**閉じた式**で。光線追跡は要らない。
+    # 既存の match3d.fresnel_reflectance / refract は**スカラ・単一光線の教材版**で、
+    # 後者は「1 本でも TIR ならバッチ全体が None」。こちらは配列と per-ray マスク。
+    "interface": [
+        ("fresnel_dielectric", "glassmirror", ["signal"], "signal"),
+        ("fresnel_conductor", "glassmirror", ["signal"], "signal"),
+        ("brewster_angle_deg", "glassmirror", [], "measurement"),
+        ("critical_angle_deg", "glassmirror", [], "measurement"),
+    ],
+    "mirror": [
+        ("metal_optical_constants", "glassmirror", ["signal"], "pairs"),
+        ("metal_mirror_rgb", "glassmirror", [], "vector"),
+    ],
+    "glassbody": [
+        ("beer_lambert_transmittance", "glassmirror", ["signal"], "signal"),
+        ("slab_transmittance", "glassmirror", ["signal"], "signal"),
+        ("refract_rays", "glassmirror", ["points", "points"], "points"),
+        ("prism_min_deviation_deg", "glassmirror", ["signal"], "signal"),
+    ],
+    # finish(metalfinish、2026-09-04、ユーザー「いろいろ加工された金属表面を再現したい」):
+    # 金属の見え方 = 材質(n+ik)× 仕上げ(微小面の向きと粗さ)。ここは後者を作る。
+    # 旋盤の同心目・ローレットの交差目・ビーズブラストの無方向は、接線を**場**で
+    # 持たないと成立しない(定ベクトルではヘアラインしか作れない)。
+    "finish": [
+        ("finish_catalog", "metalfinish", [], "table"),
+        ("tangent_field", "metalfinish", [], "normalmap"),
+        ("micro_normals", "metalfinish", ["normalmap"], "normalmap"),
+        ("blast_normals", "metalfinish", ["normalmap"], "normalmap"),
+        ("finish_shade", "metalfinish", ["normalmap"], "rgbimage"),
+    ],
+    # material / surface(surfacelib、2026-09-04、ユーザー「他にもいろんな素材や表面を
+    # 再現できるなら対応してほしい」): 金属とガラス以外の大半は
+    # (1) 粗い拡散 (2) 透明な上塗り (3) 微細構造 (4) むら の 4 つで説明できる。
+    "material": [
+        ("material_catalog", "surfacelib", [], "table"),
+        ("oren_nayar", "surfacelib", ["normalmap"], "image2d"),
+        ("clearcoat_shade", "surfacelib", ["rgbimage", "normalmap"], "rgbimage"),
+        ("sheen_shade", "surfacelib", ["normalmap"], "image2d"),
+        ("subsurface_approx", "surfacelib", ["normalmap"], "image2d"),
+        ("wetness", "surfacelib", ["rgbimage"], "rgbimage"),
+    ],
+    "surface": [
+        ("metallic_flake_normals", "surfacelib", [], "normalmap"),
+        ("weave_normals", "surfacelib", [], "normalmap"),
+        ("wood_grain", "surfacelib", [], "image2d"),
+        ("corrosion_mask", "surfacelib", [], "image2d"),
+        ("rough_transmission", "surfacelib", ["signal"], "pairs"),
     ],
     "polarization": [
         ("jones_element", "optics", [], "cimage"),
@@ -225,7 +301,20 @@ def categories():
 #: TYPEMISS 検査が**素の返りをそのまま**宣言と突き合わせる = 検証が最も厳しい。
 #: タプル返しの op を将来足すならここに登録すること(空欄を埋めるために既存の
 #: 返り型をタプルへ変える、は本末転倒なのでしない)。
-RESULT_ADAPTERS = {}
+RESULT_ADAPTERS = {
+    # (n, k) の 2 本 → (K, 2) の pairs。どちらも捨てない。
+    # スカラ波長では (3,) が返る。宣言 points((N,3))へ揃える。
+    "cie_xyz_from_wavelength": lambda r: np.atleast_2d(r),
+    "metal_optical_constants": lambda r: (np.stack(r, axis=1)
+                                          if isinstance(r, tuple) else r),
+    # (方向, TIR マスク) → 方向。マスクが要る呼び手は素の関数を直接呼ぶ。
+    "refract_rays": lambda r: r[0] if isinstance(r, tuple) else r,
+    # (色の変調, 繊維方向) → 変調。接線は ward_anisotropic へ渡す用で素の関数から取る。
+    "wood_grain": lambda r: r[0] if isinstance(r, tuple) else r,
+    # (直進, 拡散) → (K, 2) の pairs。どちらも捨てない(合計が板の透過率になる)。
+    "rough_transmission": lambda r: (np.stack(np.broadcast_arrays(*r), axis=-1).reshape(-1, 2)
+                                     if isinstance(r, tuple) else r),
+}
 
 
 def get(name):

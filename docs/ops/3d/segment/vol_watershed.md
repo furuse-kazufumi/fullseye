@@ -4,7 +4,7 @@ dim: 3d
 category: segment
 in: voxel
 out: labels
-examples: [molecule_atom_count, watershed3d]
+examples: [molecule_atom_count]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.5  # fullseye lib version this note was generated for
@@ -27,7 +27,6 @@ Marker-controlled 3-D watershed segmentation (**optional — scikit-image**).
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [molecule_atom_count](../../../../examples_3d/molecule_atom_count.py) — `py -3.11 examples_3d/molecule_atom_count.py`
-- [watershed3d](../../../../examples_3d/watershed3d.py) — `py -3.11 examples_3d/watershed3d.py`
 
 ## 型が繋がる次の op(`labels` を入力に取れる)
 

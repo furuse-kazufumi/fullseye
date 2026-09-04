@@ -1,4 +1,4 @@
-# OPTICS operator help — 47 ops in 8 categories
+# OPTICS operator help — 80 ops in 15 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -8,13 +8,25 @@
 
 ## カテゴリ
 
+### appearance (7)
+
+[cie_xyz_from_wavelength](appearance/cie_xyz_from_wavelength.md) · [grating_rgb](appearance/grating_rgb.md) · [grating_wavelengths](appearance/grating_wavelengths.md) · [spectrum_to_srgb](appearance/spectrum_to_srgb.md) · [thin_film_reflectance](appearance/thin_film_reflectance.md) · [thin_film_rgb](appearance/thin_film_rgb.md) · [ward_anisotropic](appearance/ward_anisotropic.md)
+
 ### design (15)
 
 [chromatic_shift](design/chromatic_shift.md) · [example_system](design/example_system.md) · [glass](design/glass.md) · [glass_catalog](design/glass_catalog.md) · [lens_system](design/lens_system.md) · [opd_map](design/opd_map.md) · [paraxial_trace](design/paraxial_trace.md) · [ray_fan](design/ray_fan.md) · [seidel_coefficients](design/seidel_coefficients.md) · [sellmeier](design/sellmeier.md) · [spot_diagram](design/spot_diagram.md) · [spot_stats](design/spot_stats.md) · [thick_lens](design/thick_lens.md) · [tolerance_analysis](design/tolerance_analysis.md) · [wavefront_from_opd](design/wavefront_from_opd.md)
 
+### finish (5)
+
+[blast_normals](finish/blast_normals.md) · [finish_catalog](finish/finish_catalog.md) · [finish_shade](finish/finish_shade.md) · [micro_normals](finish/micro_normals.md) · [tangent_field](finish/tangent_field.md)
+
 ### geometric (5)
 
 [abcd_matrix](geometric/abcd_matrix.md) · [abcd_trace](geometric/abcd_trace.md) · [depth_of_field](geometric/depth_of_field.md) · [relative_illumination](geometric/relative_illumination.md) · [thin_lens](geometric/thin_lens.md)
+
+### glassbody (4)
+
+[beer_lambert_transmittance](glassbody/beer_lambert_transmittance.md) · [prism_min_deviation_deg](glassbody/prism_min_deviation_deg.md) · [refract_rays](glassbody/refract_rays.md) · [slab_transmittance](glassbody/slab_transmittance.md)
 
 ### illumination (6)
 
@@ -28,6 +40,18 @@
 
 [calibration_views](imaging_sim/calibration_views.md) · [defect_dataset](imaging_sim/defect_dataset.md) · [distortion_map](imaging_sim/distortion_map.md) · [psf_from_opd](imaging_sim/psf_from_opd.md) · [render_through_lens](imaging_sim/render_through_lens.md)
 
+### interface (4)
+
+[brewster_angle_deg](interface/brewster_angle_deg.md) · [critical_angle_deg](interface/critical_angle_deg.md) · [fresnel_conductor](interface/fresnel_conductor.md) · [fresnel_dielectric](interface/fresnel_dielectric.md)
+
+### material (6)
+
+[clearcoat_shade](material/clearcoat_shade.md) · [material_catalog](material/material_catalog.md) · [oren_nayar](material/oren_nayar.md) · [sheen_shade](material/sheen_shade.md) · [subsurface_approx](material/subsurface_approx.md) · [wetness](material/wetness.md)
+
+### mirror (2)
+
+[metal_mirror_rgb](mirror/metal_mirror_rgb.md) · [metal_optical_constants](mirror/metal_optical_constants.md)
+
 ### optimization (3)
 
 [bend_singlet](optimization/bend_singlet.md) · [merit_function](optimization/merit_function.md) · [optimize_lens](optimization/optimize_lens.md)
@@ -35,6 +59,10 @@
 ### polarization (6)
 
 [jones_apply](polarization/jones_apply.md) · [jones_element](polarization/jones_element.md) · [mueller_apply](polarization/mueller_apply.md) · [mueller_element](polarization/mueller_element.md) · [stokes_analyze](polarization/stokes_analyze.md) · [stokes_from_jones](polarization/stokes_from_jones.md)
+
+### surface (5)
+
+[corrosion_mask](surface/corrosion_mask.md) · [metallic_flake_normals](surface/metallic_flake_normals.md) · [rough_transmission](surface/rough_transmission.md) · [weave_normals](surface/weave_normals.md) · [wood_grain](surface/wood_grain.md)
 
 ### wave (4)
 

@@ -473,25 +473,6 @@ KNOWN_LEDGER_GAPS = {
         "ローカル adapter(r[0])を後掛けしており、そこを直さないと "
         "'table' 宣言に対して VolRLE が返って新たな TYPEMISS になる。"
         "chain_fuzz.py は親が編集中で触れないため、台帳側も現状維持として記録する。",
-    "sphere_sdf":
-        "宣言 in 'points' / out 'sdf' の組が成立しない。実体はボクセル中心の座標場 "
-        "(nx,ny,nz,3) を取り grid.shape[:-1] を返すので、(N,3) 点群を渡すと (N,) の "
-        "1-D になり 'sdf'(3-D 場)にならない。正しくは未登録の sdf_ops.grid_coords を "
-        "台帳に足し、in を新語彙 'coordgrid' にする。単独で入れなかったのは "
-        "(a) points sort の候補リスト長が変わり既存 champion を黙って書き換える "
-        "(docs/WAVE0_STABLE_SLOTS.md)、(b) 新 op の per-op ノート/help 生成を伴う、ため。",
-    "box_sdf": "sphere_sdf と同じ(座標場 op を points 宣言している)。",
-    "pose_error":
-        "宣言 'measurement'(スカラ 1 つ)だが実返りは tuple (回転誤差[deg], 並進誤差)の 2 つ。"
-        "2026-09-02、chain_fuzz に (R,t) を 4 引数へ割る builder を足して**初めて到達**した "
-        "ときに判明した(それまで台帳の ['pose','pose'] を素直に割ると R_est に組が"
-        "まるごと入って必ず落ち、スキップされていた)。"
-        "語彙のどの型もタプルを受けない: 'table' は list|dict、'signal' は ndarray、"
-        "'measurement' は float。adapter で r[0] にすると**並進誤差を黙って捨てる**ので採らない"
-        "(vol_rle_components と同じ判断)。正しい直し方は 2 つあり、どちらも単独では入れない: "
-        "(a) 実体を dict{rot_deg, trans} 返しに変える = 公開 API の破壊的変更、"
-        "(b) 'table' の述語をタプルまで広げる = gaussian_transport_map など他の"
-        "タプル返し op が意図せず 'table' を名乗れるようになる。",
 }
 
 

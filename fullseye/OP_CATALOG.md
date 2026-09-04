@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(65 例)
+### 2-D 画像/信号/幾何(68 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -72,6 +72,13 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **光沢面の外観検査(specularity 13 op)** — Lambertian 前提の形状復元がハイライトで壊れる場所を見せてから、二色性射影分離・影下の頑健最小二乗・偏光分離を順に通し、破綻点(4 灯遮蔽)も隠さず出す。 `py -3.11 examples/specular_photometric.py`
 - **コヒーレント測距 op(rangedoppler)で 4D レーダを仕立てる** — FMCW の位相を保つビート信号から距離-速度マップと角度を出す。lidar_scan には無い速度軸を既知ターゲットの GT と照合。 `py -3.11 examples/fmcw_range_doppler.py`
 - **通常フレームからイベントカメラ(DVS)表現を作り運動を復元** — フレーム対/短クリップを events 表現(タイムサーフェス等)に変換し、コントラスト最大化で注入した運動を回収する(events.py ファサード、終了コードで判定)。 `py -3.11 examples/event_camera.py`
+
+**appearance**
+- **構造色を波長から作る(回折・薄膜干渉・異方性)** — 色を塗らず分光反射率→CIE等色関数→線形sRGB。等色関数ȳピーク554nm、反射率1が白(1,1,1)、膜厚0が基板フレネルに厳密一致、λ/4が解析値0.077113、CD 1.6µm・Δsin0.35の1次が560nm、異方性ローブの伸び39:5。同条件でBD 0.32µmは可視域に届かず総量が1/3以下。 `py -3.11 examples/appearance_structural_colour.py`
+- **加工された金属表面と素材(粗い拡散・上塗り・布・木・濡れ・腐食)** — Oren-Nayarがσ=0でLambertと厳密一致し端は1.35倍、上塗りは下地の寄与を単調に減らす、布の縁光沢は鏡面と逆(正面1e-6/縁0.09)、濡れは0.50→0.357、腐食面積0.30→実測0.2995、すりガラスは直進+拡散=平板の透過率0.923077でエネルギー保存。接線場は同心円が半径と直交。 `py -3.11 examples/machined_metal_and_materials.py`
+
+**optics**
+- **ガラスと鏡面の光学を閉じた式で解く** — 垂直入射0.0422=((n1-n2)/(n1+n2))²、Brewster 56.6°でp偏光が1e-15未満、臨界角超は厳密1.0、平板0.9191=2n/(n²+1)、Beer-Lambertがexp(-1)、Snell残差1e-12未満で全反射は光線ごと、プリズム最小偏角F/d/C=39.14/38.65/38.43°。金の色(1.00,0.67,0.38)はn,kから出る。 `py -3.11 examples/glass_and_mirror_optics.py`
 
 **imaging_quality**
 - **画質 op(imgmetrics)で保存時の量子化段数を 1 つ選ぶ** — CIEDE2000 を公開検証表 34 組で、SSIM を既知条件で検定してから、「欠陥が見えなくならない」を合否条件に落として量子化段を決める。 `py -3.11 examples/image_quality_metrics.py`
@@ -330,7 +337,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - `spline_curve_resample(points, n, closed=False, smooth=0.0)` — 曲線点列を n 点に滑らかに再サンプルして (n,D) を返す(2D/3D、閉曲線はシーム非重複)。
 
 ## 3-D operators(ops3d)by category
-_計 346 ops / 66 categories。_
+_計 347 ops / 66 categories。_
 
 
 ### annotate3d(7)
@@ -546,7 +553,7 @@ _計 346 ops / 66 categories。_
 - `rmse_correspondence` (`points, points → measurement`) — 対応既知(同 index)の RMSE = sqrt(mean |a_i - b_i|^2)。→ scalar。登録残差の評価。 · 例: `metrics_eval`
 - `normal_consistency` (`points, normals → measurement`) — 最近傍対応での法線一致度 = mean|cos(na, nb)|(向き無視)。→ [0,1]。1=完全一致。 · 例: `metrics_eval`
 - `voxel_iou` (`voxel, voxel → measurement`) — voxel 占有の IoU(intersection over union)。→ [0,1]。体積一致度。 · 例: `metrics_eval`
-- `pose_error` (`pose, pose → measurement`) — 姿勢誤差 = (回転角[度], 並進ノルム)。登録結果の GT 比較。→ (rot_deg, trans_err)。 · 例: `itokawa_self_register`
+- `pose_error` (`pose, pose → table`) — 姿勢誤差 = (回転角[度], 並進ノルム)。登録結果の GT 比較。→ (rot_deg, trans_err)。 · 例: `itokawa_self_register`
 
 ### moment_invariant(4)
 - `moment_invariants` (`points → descriptor`) — 並進+回転+スケール不変な形状特徴ベクトル(Sadjadi–Hall 流 + 高次半径分布)。 · 例: `moment_invariants`
@@ -721,9 +728,10 @@ _計 346 ops / 66 categories。_
 - `rigid_flow` (`points, points → pose`) — pts0 -> pts1 を説明する単一剛体運動を最近傍対応 + Kabsch(ICP 風)で推定。 · 例: `scene_flow_rigid`
 - `smooth_flow` (`points, points → flow_scattered`) — 最近傍フローを近傍平均で局所平滑化した正則化フロー (N, 3) を返す。 · 例: `scene_flow_rigid`
 
-### sdf_csg(7)
-- `sphere_sdf` (`points → sdf`) — 球の符号付き距離場: ``|p - center| - R``(内側負・外側正)。 · 例: `annotate3d_figure`, `gear_metrology`, `molecule_atom_count`, `procedural_hand`, `render_beauty`, `sdf_csg`, `sfm_recon`
-- `box_sdf` (`points → sdf`) — 軸平行直方体の**厳密**な符号付き距離場(内側負・外側正)。 · 例: `gear_metrology`, `render_beauty`, `sdf_csg`
+### sdf_csg(8)
+- `grid_coords` (` → coordgrid`) — CSG 評価用のボクセル中心座標グリッドを作る(occupancy と同じ格子規約)。 · 例: `gear_metrology`, `molecule_atom_count`, `procedural_hand`, `render_beauty`, `sdf_csg`, `sfm_recon`
+- `sphere_sdf` (`coordgrid → sdf`) — 球の符号付き距離場: ``|p - center| - R``(内側負・外側正)。 · 例: `annotate3d_figure`, `gear_metrology`, `molecule_atom_count`, `procedural_hand`, `render_beauty`, `sdf_csg`, `sfm_recon`
+- `box_sdf` (`coordgrid → sdf`) — 軸平行直方体の**厳密**な符号付き距離場(内側負・外側正)。 · 例: `gear_metrology`, `render_beauty`, `sdf_csg`
 - `sdf_union` (`sdf, sdf → sdf`) — 2 SDF の和集合 A∪B = 要素ごとの min(a, b)(内側=負がどちらかにあれば内側)。 · 例: `gear_metrology`, `render_beauty`, `sdf_csg`
 - `sdf_intersect` (`sdf, sdf → sdf`) — 2 SDF の積集合 A∩B = 要素ごとの max(a, b)(両方の内側でのみ内側)。 · 例: `gear_metrology`, `render_beauty`
 - `sdf_subtract` (`sdf, sdf → sdf`) — 差集合 A\B = max(a, -b)(A の内側 かつ B の外側 = ``-b`` の内側)。 · 例: `sdf_csg`
@@ -734,7 +742,7 @@ _計 346 ops / 66 categories。_
 - `region_growing` (`points → labels`) — 法線類似で領域成長し連結した平滑領域へ同ラベルを付す(曲率ゲート無し変種)。 · 例: `sensor_seg`
 - `euclidean_cluster` (`points → labels`) — 半径 tol の近接グラフの連結成分で距離クラスタリング(-1=ノイズ)。 · 例: `object_segmentation`
 - `plane_segmentation` (`points → labels`) — 反復 RANSAC で最大 max_planes 枚の平面を逐次抽出(残差点 -1)。 · 例: `object_segmentation`
-- `vol_watershed` (`voxel → labels`) — Marker-controlled 3-D watershed segmentation (**optional — scikit-image**). · 例: `molecule_atom_count`, `watershed3d`
+- `vol_watershed` (`voxel → labels`) — Marker-controlled 3-D watershed segmentation (**optional — scikit-image**). · 例: `molecule_atom_count`
 
 ### shape_descriptor(5)
 - `d2_distribution` (`points → descriptor`) — ランダムな 2 点対のユークリッド距離分布(Osada 2002 の D2)。 · 例: `shape_desc_pose`
@@ -812,7 +820,7 @@ _計 346 ops / 66 categories。_
 - `sampson_distance` (`image2d, image2d → signal`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category
-_計 877 ops / 47 categories。_
+_計 878 ops / 47 categories。_
 
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
@@ -1336,7 +1344,7 @@ _計 877 ops / 47 categories。_
 - `ph_total_variation_flow` `image → image` · 例: `gallery2d_physics_alife_3d`
 
 ### rank(23)
-- `median` (halcon: `median_image`) `image → image` · 例: `astro_stacking`, `consumer_onocollo`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `lightfield_depth`, `perception_pipeline`, `photon_timeresolved`, `quickstart`, `representation_roundtrip`, `specular_photometric`
+- `median` (halcon: `median_image`) `image → image` · 例: `astro_stacking`, `consumer_onocollo`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `lightfield_depth`, `machined_metal_and_materials`, `perception_pipeline`, `photon_timeresolved`, `quickstart`, `representation_roundtrip`, `specular_photometric`
 - `min_filter` (halcon: `gray_erosion_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `max_filter` (halcon: `gray_dilation_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `percentile` (halcon: `rank_image`) `image → image` · 例: `color_transport`, `gallery2d_smoothing_rank`, `image_quality_metrics`, `representation_roundtrip`
@@ -1635,7 +1643,7 @@ _計 877 ops / 47 categories。_
 - `xmh_daubechies` `image → image` · 例: `gallery2d_geometry`
 - `tf_radon_sinogram` `image → image` · 例: `gallery2d_geometry`
 
-### typed(139)
+### typed(140)
 - `tb_points_to_voxel` `points → volume` · 例: なし
 - `tb_estimate_point_normals` `points → points` · 例: なし
 - `tb_iss_keypoints` `points → signal` · 例: なし
@@ -1716,6 +1724,7 @@ _計 877 ops / 47 categories。_
 - `tb_stat_zscore` `signal → signal` · 例: なし
 - `tb_cplx_cr_residual` `cimage → feature` · 例: なし
 - `tb_angular_spectrum_propagate` `cimage → cimage` · 例: なし
+- `tb_wetness` `rgbimage → rgbimage` · 例: なし
 - `tb_lf_to_mla` `lightfield → image` · 例: なし
 - `tb_lf_subaperture` `lightfield → image` · 例: なし
 - `tb_lf_center_view` `lightfield → image` · 例: なし
@@ -1878,10 +1887,19 @@ _計 26 ops / 4 categories。_
 - `stat_zscore` (`signal → signal`) — Standardise a 1-D sample: ``(x - mean) / std`` (population ``ddof=0``).
 
 ## Optics operators(opsoptics)by category
-_計 47 ops / 8 categories。_
+_計 80 ops / 15 categories。_
 
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)。光線と面の相互作用(reflect / refract / fresnel_reflectance)と Zernike フィット(fit_zernike)は match3d、PSF 復元は volrestore、FFT は complexops、位相シフト干渉法は fringe が持ち場なので重複させていない。
+
+### appearance(7)
+- `cie_xyz_from_wavelength` (`signal → points`) — 波長 [nm] → CIE 1931 2° 等色関数 (x̄, ȳ, z̄)。入力形状 + 末尾 3 の配列を返す。
+- `spectrum_to_srgb` (`signal → vector`) — 分光反射率 → **線形 sRGB**(ガンマ前)。白い面(反射率 1)が (1,1,1) になる正規化。
+- `thin_film_reflectance` (`signal → signal`) — 薄膜(厚さ d、屈折率 n_film)の分光反射率。Airy(多重反射)の閉じた式。
+- `grating_wavelengths` (` → vector`) — 回折格子の式 d(sinθ_out − sinθ_in) = mλ を λ について解く。
+- `grating_rgb` (`normalmap → rgbimage`) — 法線マップ + 光源 + 視線 → **回折による虹色** (H, W, 3) の線形 sRGB。
+- `thin_film_rgb` (`normalmap → rgbimage`) — 法線マップ + 視線 → **薄膜干渉の色** (H, W, 3) の線形 sRGB。
+- `ward_anisotropic` (`normalmap → image2d`) — Ward の異方性反射(楕円ガウス微小面)。ヘアライン仕上げの**伸びたハイライト**。
 
 ### design(15)
 - `lens_system` (` → table`) — Build a validated sequential prescription (the ``table`` every other op consumes).
@@ -1900,12 +1918,25 @@ _計 47 ops / 8 categories。_
 - `opd_map` (`table → image2d`) — Optical path difference over the exit pupil, in waves (``image2d``).
 - `chromatic_shift` (`table → table`) — Focal shift, image-height shift and spot size versus wavelength (``table``).
 
+### finish(5)
+- `finish_catalog` (` → table`) — 仕上げ名 → 既定パラメータの表(αx, αy, grain)。
+- `tangent_field` (` → normalmap`) — 仕上げの**筋の向き**を (H, W, 3) の接線場として作る。
+- `micro_normals` (`normalmap → normalmap`) — 加工痕そのものを**法線に刻む**(旋盤の送りマーク・ローレットの山)。
+- `blast_normals` (`normalmap → normalmap`) — ビーズブラスト / 梨地の**無方向な微小凹凸**を法線へ載せる。
+- `finish_shade` (`normalmap → rgbimage`) — **材質 × 仕上げ**で金属面を陰影付けする → 線形 sRGB (H, W, 3)。
+
 ### geometric(5)
 - `thin_lens` (` → table`) — Gaussian thin-lens imaging: where the image lands and how big it is.
 - `abcd_matrix` (`table → matrix`) — Compose a paraxial system into one 2x2 ray-transfer (ABCD) matrix.
 - `abcd_trace` (`matrix → table`) — Propagate one paraxial ray through an ABCD matrix.
 - `depth_of_field` (` → table`) — Photographic depth of field: near limit, far limit and hyperfocal distance.
 - `relative_illumination` (` → pairs`) — Natural vignetting: relative image-plane illuminance versus field angle.
+
+### glassbody(4)
+- `beer_lambert_transmittance` (`signal → signal`) — Beer–Lambert の内部透過率 T = exp(−σ·L)。色ガラス・厚いガラスの緑かぶり。
+- `slab_transmittance` (`signal → signal`) — 平行平板(窓ガラス)の透過率。**両面での多重反射**と内部吸収を含む。
+- `refract_rays` (`points, points → points`) — Snell 屈折のベクトル版。**光線ごとに全反射を判定**して (方向, TIR マスク) を返す。
+- `prism_min_deviation_deg` (`signal → signal`) — プリズムの最小偏角 [deg]。**実硝材の分散**で波長ごとに変わる = 虹が出る理由。
 
 ### illumination(6)
 - `light_source` (` → table`) — An emitter set for a standard machine-vision light family (``table``).
@@ -1927,6 +1958,24 @@ _計 47 ops / 8 categories。_
 - `defect_dataset` (` → table`) — Synthetic defect images through a designed lens, with aligned masks (``table``).
 - `calibration_views` (`table → table`) — Synthetic camera-calibration views of a planar target through the designed lens (``table``).
 
+### interface(4)
+- `fresnel_dielectric` (`signal → signal`) — 誘電体界面の Fresnel 反射率(配列対応、全反射を含む)。
+- `fresnel_conductor` (`signal → signal`) — 金属(複素屈折率 n + ik)界面の反射率。入射側は真空/空気を仮定。
+- `brewster_angle_deg` (` → measurement`) — Brewster 角 [deg] = atan(n2/n1)。この角度で p 偏光の反射が厳密に 0 になる。
+- `critical_angle_deg` (` → measurement`) — 全反射の臨界角 [deg] = asin(n2/n1)。n1 > n2 でなければ ValueError(存在しない)。
+
+### material(6)
+- `material_catalog` (` → table`) — 素材名 → 既定パラメータ(拡散の粗さ / 上塗りの強さ・粗さ / 布の縁光沢)。
+- `oren_nayar` (`normalmap → image2d`) — 粗い拡散面の陰影(Oren–Nayar)。紙・石膏・コンクリート・月の見え方。
+- `clearcoat_shade` (`rgbimage, normalmap → rgbimage`) — 透明な上塗りを被せる(車の塗装・陶器の釉薬・光沢プラスチック)。
+- `sheen_shade` (`normalmap → image2d`) — 布の**縁の光沢**(ベルベット・サテン)。視線に対して寝た所ほど明るい。
+- `subsurface_approx` (`normalmap → image2d`) — 半透明の回り込み(葉・肌・大理石・プラ乳白)の近似。
+- `wetness` (`rgbimage → rgbimage`) — 濡れた面の下地色。**拡散が暗くなる**(そして鏡面が増える)。
+
+### mirror(2)
+- `metal_optical_constants` (`signal → pairs`) — 金属の複素屈折率 (n, k) を波長で引く(可視域、線形補間)。
+- `metal_mirror_rgb` (` → vector`) — 金属鏡の**色**(線形 sRGB)。n,k → 分光反射率 → CIE 等色関数 → sRGB。
+
 ### optimization(3)
 - `optimize_lens` (`table → table`) — Damped-least-squares (Levenberg–Marquardt) optimisation of a prescription (``table``).
 - `merit_function` (`table → table`) — The DLS merit ``Σ residual²`` and its parts for one prescription (``table``).
@@ -1939,6 +1988,13 @@ _計 47 ops / 8 categories。_
 - `mueller_element` (` → matrix`) — A 4x4 real Mueller matrix for one polarisation element.
 - `mueller_apply` (`matrix, stokes → stokes`) — Push a Stokes vector through a Mueller matrix: ``S' = M @ S``.
 - `stokes_analyze` (`stokes → table`) — Read a Stokes vector: degree of polarisation, azimuth, ellipticity.
+
+### surface(5)
+- `metallic_flake_normals` (` → normalmap`) — メタリック塗装のフレーク(アルミ片)の法線場を作る。
+- `weave_normals` (` → normalmap`) — 織り目の法線場(布・カーボンファイバー・金網)。直交する 2 周期の畝。
+- `wood_grain` (` → image2d`) — 木目(年輪)の**色の変調**と**繊維の向き**を作る。
+- `corrosion_mask` (` → image2d`) — 錆・緑青・汚れの**むら**(0–1 のマスク)。
+- `rough_transmission` (`signal → pairs`) — すりガラスの透過を「直進成分」と「拡散成分」に分ける。
 
 ### wave(4)
 - `airy_pattern` (` → image2d`) — The diffraction-limited PSF of a circular pupil (Airy pattern).

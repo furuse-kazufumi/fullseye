@@ -680,9 +680,20 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     assert opsoptics.missing() == []
     # optics 18 + raytrace "design" 15 + lensimage "imaging_sim" 5 + lensopt "optimization" 3
     # + illumdesign "illumination" 6
-    assert len(opsoptics.OPSOPTICS) == 47
-    assert sorted(opsoptics.categories()) == ["design", "geometric", "illumination", "imaging", "imaging_sim",
-                                              "optimization", "polarization", "wave"]
+    assert len(opsoptics.OPSOPTICS) == 80
+    # 2026-09-04: 見え方の 5 族(33 op)を追加 —— matappear "appearance" 7 /
+    # glassmirror "interface" 4・"mirror" 2・"glassbody" 4 / metalfinish "finish" 5 /
+    # surfacelib "material" 6・"surface" 5。下の module 検査と同じ形で実装元も固定する。
+    assert sorted(opsoptics.categories()) == [
+        "appearance", "design", "finish", "geometric", "glassbody", "illumination",
+        "imaging", "imaging_sim", "interface", "material", "mirror", "optimization",
+        "polarization", "surface", "wave"]
+    for cat, mod in (("appearance", "matappear"), ("interface", "glassmirror"),
+                     ("mirror", "glassmirror"), ("glassbody", "glassmirror"),
+                     ("finish", "metalfinish"), ("material", "surfacelib"),
+                     ("surface", "surfacelib")):
+        assert all(m["module"] == mod for m in opsoptics.OPSOPTICS.values()
+                   if m["category"] == cat), (cat, mod)
     # the optics-module half of the ledger is exactly optics.OPTICS; the design
     # half lives in raytrace (its own ledger checks are in tests/test_raytrace.py)
     from_optics = {n for n, m in opsoptics.OPSOPTICS.items() if m["module"] == "optics"}

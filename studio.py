@@ -3255,6 +3255,59 @@ def op_help_html(name, lang="en", meta=None, dim="2d"):
             % (name, m.get("category", "operator"), halcon, sorts, name))
 
 
+def opassist_html(name):
+    """台帳 op の**入力補助**カード(引数フォーム仕様 / プリセット / 入力の作り方 / 注意)。
+
+    `opassist` は 2-D の a,b ノブ(`param_specs`)が扱えない**実引数を取る台帳 op**の
+    ための層。ここではその内容を help の末尾に足すだけで、失敗しても help 本体は出す
+    (補助が本体を壊さない)。値型 `kind` と容器型 `container` が直交しているので、
+    フォームの組み立ては「容器の form で分岐 → 要素を kind で描く」の 2 段で書ける。
+    """
+    try:
+        import opassist
+        info = opassist.assist(name)
+    except Exception:                                    # noqa: BLE001 — 補助層
+        return ""
+
+    def _e(v):
+        return str(v).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+    rows = []
+    for sp in info["params"]:
+        c = sp.get("container") or {}
+        form = c.get("form", "scalar")
+        shape = "" if form in ("scalar", "data") else " %s" % (c.get("shape"),)
+        extra = ""
+        if sp["kind"] == "choice":
+            extra = " · ".join(_e(x) for x in (sp.get("choices") or []))
+        elif sp.get("default") is not None:
+            extra = "既定 %s" % _e(sp["default"])
+        if sp["kind"] == "data":
+            extra = "入力データ (%s)" % _e(sp.get("sort"))
+        rows.append("<tr><td style='color:#f5a524'>%s</td><td>%s%s</td>"
+                    "<td style='color:#8b91a0'>%s</td><td style='color:#8b91a0'>%s</td></tr>"
+                    % (_e(sp["name"]), _e(sp["kind"]), _e(shape),
+                       _e(sp.get("unit") or ""), extra))
+    out = ["<h3 style='color:#f5a524;margin:14px 0 4px 0'>入力補助</h3>",
+           "<table style='font-size:11px;border-collapse:collapse'>"
+           "<tr style='color:#8b91a0'><th align='left'>引数</th><th align='left'>型・形</th>"
+           "<th align='left'>単位</th><th align='left'>候補 / 既定</th></tr>",
+           "".join(rows), "</table>"]
+    if info["presets"]:
+        out.append("<p style='font-size:11px'><b>プリセット:</b> %s</p>"
+                   % " · ".join(_e(k) for k in info["presets"]))
+    for sort, makers in (info["inputs"] or {}).items():
+        if makers:
+            out.append("<p style='font-size:11px;color:#8b91a0'><b>%s</b> を作れる op: %s</p>"
+                       % (_e(sort), ", ".join(_e(m) for m in makers[:8])))
+    if info["next"]:
+        out.append("<p style='font-size:11px;color:#8b91a0'><b>次に繋げる先:</b> %s</p>"
+                   % ", ".join(_e(m) for m in info["next"][:8]))
+    for note in info["preflight"]:
+        out.append("<p style='font-size:11px;color:#f5a524'>⚠ %s</p>" % _e(note))
+    return "".join(out)
+
+
 def op_help_html_3d(name, meta=None):
     """Rich HTML help for one 3-D operator (point-cloud / mesh / volume modality).
 
@@ -3267,7 +3320,7 @@ def op_help_html_3d(name, meta=None):
     if os.path.exists(p):
         try:
             with open(p, encoding="utf-8") as f:
-                return f.read()
+                return f.read() + opassist_html(name)
         except Exception:
             pass
 
@@ -3284,7 +3337,7 @@ def op_help_html_3d(name, meta=None):
             "<code>py -3.11 tools/opdocs.py html</code> to generate 3-D help from "
             "<code>docs/ops/3d/</code>.</p>"
             % (_e(name), _e(m.get("category", "operator")), _e(ins),
-               _e(m.get("out", "?")), _e(m.get("doc") or "")))
+               _e(m.get("out", "?")), _e(m.get("doc") or ""))) + opassist_html(name)
 
 
 def _python_highlighter_class(QtGui, QtCore):

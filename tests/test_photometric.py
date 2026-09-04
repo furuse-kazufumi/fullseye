@@ -74,3 +74,50 @@ def test_flat_surface_zero_gradient():
     assert np.allclose(n[..., 2], 1.0, atol=1e-5)
     z_rec = PH.integrate_normals(n)
     assert np.ptp(z_rec) < 1e-6
+
+
+def test_photometric_stereo_lit_only_removes_attached_shadow_bias():
+    """★付着影のバイアス(2026-09-04 修正): モデルの max(N·L, 0) は非線形なので、
+    N·L < 0 の観測を線形最小二乗にそのまま入れると解が偏る。影も AO も無い球で
+    実測 6.5°。`lit_only=True` は画素ごとに点灯している光源だけで解き直し、0.00x° に戻す。"""
+    import numpy as np
+    import photometric as P
+
+    n = 128
+    y, x = np.mgrid[-1:1:n * 1j, -1:1:n * 1j]
+    r2 = x * x + y * y
+    m = r2 < 0.98
+    z = np.sqrt(np.maximum(1.0 - r2, 0.0))
+    N = np.stack([x, y, z], -1)
+    N = N / np.maximum(np.linalg.norm(N, axis=-1, keepdims=True), 1e-12)
+
+    L = []
+    for a in np.linspace(0, 2 * np.pi, 6, endpoint=False):
+        v = np.array([np.cos(a) * 0.85, np.sin(a) * 0.85, 0.53])
+        L.append(v / np.linalg.norm(v))
+    L = np.array(L)
+    imgs = [np.clip(np.einsum("ijk,k->ij", N, l), 0.0, None) * 0.8 * m for l in L]
+
+    def err(nr):
+        d = np.clip(np.abs(np.einsum("ijk,ijk->ij", nr, N)), 0.0, 1.0)
+        return float(np.median(np.degrees(np.arccos(d))[m]))
+
+    plain, _ = P.photometric_stereo(imgs, L, mask=m)
+    lit, _ = P.photometric_stereo(imgs, L, mask=m, lit_only=True)
+    e_plain, e_lit = err(plain), err(lit)
+    assert e_plain > 2.0, f"付着影のバイアスが再現していない: {e_plain:.3f} deg"
+    assert e_lit < 0.05, f"lit_only がバイアスを取り切れていない: {e_lit:.3f} deg"
+    assert e_lit < 0.05 * e_plain
+
+
+def test_photometric_stereo_lit_only_falls_back_when_too_few_lights():
+    """点灯光源が 3 未満の画素は全光源の解に戻す(fail-open) — 形と有限性は保つ。"""
+    import numpy as np
+    import photometric as P
+
+    imgs = [np.zeros((8, 8)) for _ in range(4)]
+    imgs[0][:] = 0.5                                    # 1 灯しか点いていない
+    L = np.array([[0, 0, 1.0], [0.5, 0, 0.87], [-0.5, 0, 0.87], [0, 0.5, 0.87]])
+    nr, al = P.photometric_stereo(imgs, L, lit_only=True)
+    assert nr.shape == (8, 8, 3) and al.shape == (8, 8)
+    assert np.isfinite(nr).all() and np.isfinite(al).all()

@@ -30,9 +30,26 @@ First, one image. This is output from Fullseye's 3D renderer (hand-written numpy
 
 **The picture itself is not the differentiator** (DirectX has done this for ages). The difference: the same scene returns **depth, normals, AO and shadow as numpy arrays, scored with ground truth by the same toolkit's ops** — a measuring instrument, not a game engine:
 
+## What Fullseye can do — organised by image-processing category
+
+From here on, everything is shown on the **same still life with the same library**, ordered not by the date it was built but by **the kind of relationship between light and shape**. Every entry carries a measured number scored against ground truth.
+
+| Category | What it does | Measured |
+|---|---|---|
+| ① Synthesis & measurement channels | depth, normals, AO and shadows come back as numpy arrays | **21x** stronger at the boundary (`sobel_mag(depth)`) |
+| ② Passive measurement | solve normals and albedo from shading under several lights | **0.000°** angular error; relighting also 0.000° |
+| ③ Active measurement | project fringes and codes, triangulate from phase | **RMSE 0.036 mm** over a 102 mm depth span |
+| ④ Tomography | projections → filtered back-projection recovers the interior | **Dice 0.882**, μ error 4.3–16.6% |
+| ⑤ Material appearance | diffraction/interference/microfacets → spectral reflectance | film matches the closed form exactly; white is (1,1,1) |
+| ⑥ How it was built | how a low-quality hero got fixed | a five-step improvement log |
+
+### ① Synthesis and measurement channels — arrays come back, not pictures
+
 ![Measurement channels of the same scene: beauty / depth / normals / AO / shadow / sobel_mag on depth checked against the silhouette](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/hero_channels.png)
 
 (bottom-right: depth through `sobel_mag` is 21x stronger on the renderer's own silhouette than inside — the smallest closed loop of scoring an op against ground truth)
+
+### ② Passive measurement — photometric stereo and relighting
 
 Shoot the same scene under six light directions (`render_beauty`), recover normals with `photometric_stereo`, score them against the ground-truth normals — **capture, reconstruction and scoring are all Fullseye ops**:
 
@@ -44,6 +61,44 @@ And the recovered normals and albedo alone are enough to **move the light** (lef
 
 
 (plain least squares is biased 4.5° by attached shadows and 16° with cast shadows + AO; the RANSAC version gives 0.000° and 0.04°)
+
+### ③ Active measurement — a structured-light scanner
+
+And you can point a **structured-light scanner** at that still life. A synthetic capture projects 20 complementary Gray-code frames plus 4 phase-shifted fringe frames; `wrapped_phase` (precise but 2π-ambiguous) and `graycode_decode` (coarse but absolute) are merged by the new `absolute_phase` into an absolute phase, and `triangulate_column` solves the **camera ray against the projector column plane** in closed form to get depth — capture, decoding and triangulation are all Fullseye ops:
+
+![Structured-light scanner: complementary Gray + phase-shift capture, absolute phase, triangulation, error against ground-truth depth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/hero_structured_light.png?v=1)
+
+This is where a picture stops and an instrument begins. **The renderer itself holds the ground-truth depth in its z-buffer**, so the reconstruction can be scored in millimetres: over a 102 mm depth span, **RMSE 0.036 mm, median 0.017 mm**, with **0** Gray-decode errors across 36,011 pixels. The nulls are measured from the same capture: Gray integer columns alone give 0.073 mm (twice as bad, from quantisation), and phase alone collapses by orders of magnitude on the 2π ambiguity.
+
+The runnable sample is `examples_3d/structured_light_scan.py` (sphere + step box + floor, 22 frames). It recovers a 287 mm depth span at **RMSE 0.233 mm (0.081%)** and asserts that it discriminatively beats both nulls (Gray only 0.548 mm, phase only 209.8 mm).
+
+> The first run gave **RMSE 78 mm**. `look_at` builds poses in the gluLookAt convention (camera looks down −Z), while `render_mesh` converts that to (x, −y, −z) before applying K (the CV convention). Skip the difference and the projector ends up facing behind the camera — the depths stay **plausibly sized and entirely wrong**. I only noticed because the null (Gray only, 79 mm) landed on the same number. Without measuring the null alongside, I would probably have shipped it.
+
+### ④ Tomography — the still life under X-ray CT
+
+Having measured the surface, the next question is what is **inside**. The same still life goes through an **X-ray CT**: a solid attenuation volume is built from the SDFs (three materials), each slice is projected with `radon_transform`, **photon-counting Poisson noise** is applied, and `filtered_backprojection` reconstructs it — then it is scored against the truth:
+
+![X-ray CT of the still life: truth slice / sinogram / FBP / plain back-projection / 24 views / error / MIP](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/hero_ct.png?v=1)
+
+30 mm wide, 0.210 mm voxels, 74 slices × 180 views. **Dice 0.882 (precision 0.79 / recall 1.00)**, with μ recovered to 4.3% (Ti), 6.3% (PMMA) and 16.6% (Al). The nulls — unfiltered back-projection at 0.492 (scored at the threshold most favourable to *it*) and 24-view FBP at 0.452 — are beaten by **1.8–2.0x**.
+
+Two honest breakdowns: (1) almost nothing is missed (recall 1.00); what costs Dice is **over-picking** (precision 0.79), because the binarisation threshold is set at half of the *weakest* material (PMMA) and therefore also catches reconstruction noise. (2) Al is the only μ off by 16.6%, because the gyroid shell is just **2.0 voxels thick locally** — partial-volume averaging, not a bug (Ti is 4.9 voxels at 4.3%, PMMA 4.0 voxels at 6.3%).
+
+> This one fell over too. The first version put μ at 0.55–1.0 *per pixel*, so line integrals reached p = 30, **exp(−p) dropped below a single photon** and the logarithm saturated (photon starvation). Recovered μ came out 50–84% low and **the null — plain back-projection — beat the real method on Dice** (0.63 vs 0.43). When a null beats your method, suspect your physics first: re-deriving μ from real material values (1/cm) and the physical voxel size brought the maximum p down to 1.46.
+
+### ⑤ Material appearance — colour computed from wavelength, not painted
+
+This section used to end with "mirror reflections, glass refraction, CD-like rainbows and brushed metal are **not possible yet**". The three that do **not** need ray tracing — diffraction, interference and anisotropic microfacets — now exist, so they belong here. Only mirrors and glass refraction remain (that is a ray tracer bolted onto the rasteriser).
+
+![The promised materials: brushed metal (Ward anisotropy) / CD rainbow (1.6 µm grating) / thin-film interference (380 nm water film), with the physics checked](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/hero_materials.png?v=1)
+
+**No colour is painted.** Diffraction, interference and microfacet statistics produce a **spectral reflectance**, which is integrated against the CIE 1931 colour-matching functions into XYZ and then converted to linear sRGB (new module `matappear`, 7 ops). Change the angle and the colour moves; change the groove pitch or the film thickness and the colour itself changes.
+
+The bottom row is the check. (1) At zero thickness the film reflectance matches the **bare-substrate Fresnel value exactly** (0.040000 at n=1.5), a quarter-wave film hits the closed-form 0.077113, and a half-wave film is an absentee layer. (2) Diffraction solves the grating equation d(sinθ_out − sinθ_in) = mλ literally — a CD at 1.6 µm and Δsin 0.35 puts first order at 560 nm. (3) The anisotropic lobe's elongation ratio follows αx/αy. On the colour side, a flat reflectance of 1 lands on sRGB white (1.000, 1.000, 1.000) and 0.5 on 0.5.
+
+> Two more stumbles here. (a) Offsetting the light **along** the grooves produces no dispersion at all (λ = d·Δsin only reaches ±100 nm, invisible) — most "no colour appears" is a layout mistake, not a bug. (b) A real grating diffracts to **both** sides, but only +m was computed; every solution came out negative, the positive-λ filter dropped them all, and the result was pure black. Lighting a CD across the grooves, the one that matters is m = −2 at 440 nm.
+
+### ⑥ How it was built — back when the hero was a potato
 
 **This one did not come out on the first try either.** Here is the improvement process as it happened:
 
@@ -58,28 +113,6 @@ And the recovered normals and albedo alone are enough to **move the light** (lef
 It is 3-D, so it spins:
 
 ![Turntable of the SDF/CSG still life](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/still_life_turntable.gif)
-
-And you can point a **structured-light scanner** at that still life. A synthetic capture projects 20 complementary Gray-code frames plus 4 phase-shifted fringe frames; `wrapped_phase` (precise but 2π-ambiguous) and `graycode_decode` (coarse but absolute) are merged by the new `absolute_phase` into an absolute phase, and `triangulate_column` solves the **camera ray against the projector column plane** in closed form to get depth — capture, decoding and triangulation are all Fullseye ops:
-
-![Structured-light scanner: complementary Gray + phase-shift capture, absolute phase, triangulation, error against ground-truth depth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/hero_structured_light.png?v=1)
-
-This is where a picture stops and an instrument begins. **The renderer itself holds the ground-truth depth in its z-buffer**, so the reconstruction can be scored in millimetres: over a 102 mm depth span, **RMSE 0.036 mm, median 0.017 mm**, with **0** Gray-decode errors across 36,011 pixels. The nulls are measured from the same capture: Gray integer columns alone give 0.073 mm (twice as bad, from quantisation), and phase alone collapses by orders of magnitude on the 2π ambiguity.
-
-The runnable sample is `examples_3d/structured_light_scan.py` (sphere + step box + floor, 22 frames). It recovers a 287 mm depth span at **RMSE 0.233 mm (0.081%)** and asserts that it discriminatively beats both nulls (Gray only 0.548 mm, phase only 209.8 mm).
-
-> The first run gave **RMSE 78 mm**. `look_at` builds poses in the gluLookAt convention (camera looks down −Z), while `render_mesh` converts that to (x, −y, −z) before applying K (the CV convention). Skip the difference and the projector ends up facing behind the camera — the depths stay **plausibly sized and entirely wrong**. I only noticed because the null (Gray only, 79 mm) landed on the same number. Without measuring the null alongside, I would probably have shipped it.
-
-Having measured the surface, the next question is what is **inside**. The same still life goes through an **X-ray CT**: a solid attenuation volume is built from the SDFs (three materials), each slice is projected with `radon_transform`, **photon-counting Poisson noise** is applied, and `filtered_backprojection` reconstructs it — then it is scored against the truth:
-
-![X-ray CT of the still life: truth slice / sinogram / FBP / plain back-projection / 24 views / error / MIP](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/hero_ct.png?v=1)
-
-30 mm wide, 0.210 mm voxels, 74 slices × 180 views. **Dice 0.882 (precision 0.79 / recall 1.00)**, with μ recovered to 4.3% (Ti), 6.3% (PMMA) and 16.6% (Al). The nulls — unfiltered back-projection at 0.492 (scored at the threshold most favourable to *it*) and 24-view FBP at 0.452 — are beaten by **1.8–2.0x**.
-
-Two honest breakdowns: (1) almost nothing is missed (recall 1.00); what costs Dice is **over-picking** (precision 0.79), because the binarisation threshold is set at half of the *weakest* material (PMMA) and therefore also catches reconstruction noise. (2) Al is the only μ off by 16.6%, because the gyroid shell is just **2.0 voxels thick locally** — partial-volume averaging, not a bug (Ti is 4.9 voxels at 4.3%, PMMA 4.0 voxels at 6.3%).
-
-> This one fell over too. The first version put μ at 0.55–1.0 *per pixel*, so line integrals reached p = 30, **exp(−p) dropped below a single photon** and the logarithm saturated (photon starvation). Recovered μ came out 50–84% low and **the null — plain back-projection — beat the real method on Dice** (0.63 vs 0.43). When a null beats your method, suspect your physics first: re-deriving μ from real material values (1/cm) and the physical voxel size brought the maximum p down to 1.46.
-
-Mirror reflections, glass refraction, CD-like diffraction rainbows and brushed-metal (anisotropic) highlights are **not possible yet** — this is a rasteriser; reflection and refraction need ray tracing. Consider it the announced next material extension.
 
 ---
 

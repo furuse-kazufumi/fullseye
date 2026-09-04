@@ -370,10 +370,13 @@ def test_optics_registry_is_connected():
         f"only-in-docs={have - set(opsoptics.OPSOPTICS)}, "
         f"only-in-ledger={set(opsoptics.OPSOPTICS) - have}")
     # optics 18 + raytrace "design" 15 + lensimage "imaging_sim" 5 + lensopt "optimization" 3
-    # + illumdesign "illumination" 6
-    assert len(_OPT_RECS) == 47
+    # + illumdesign "illumination" 6 = 47。2026-09-04 に見え方の 5 族 33 op を追加:
+    # matappear "appearance" 7 + glassmirror "interface" 4 / "mirror" 2 / "glassbody" 4
+    # + metalfinish "finish" 5 + surfacelib "material" 6 / "surface" 5 = 33 → 計 80。
+    assert len(_OPT_RECS) == 80
     assert {"geometric", "wave", "imaging", "polarization", "design", "imaging_sim",
-            "optimization", "illumination"} == {r["category"] for r in _OPT_RECS}
+            "optimization", "illumination", "appearance", "interface", "mirror",
+            "glassbody", "finish", "material", "surface"} == {r["category"] for r in _OPT_RECS}
     # the design / imaging_sim notes must say where their implementation lives
     for r in _OPT_RECS:
         if r["category"] == "design":

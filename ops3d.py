@@ -467,7 +467,12 @@ _CATALOG = {
         ("rmse_correspondence", "metrics3d", ["points", "points"], "measurement", False),
         ("normal_consistency", "metrics3d", ["points", "normals"], "measurement", False),
         ("voxel_iou", "metrics3d", ["voxel", "voxel"], "measurement", False),
-        ("pose_error", "metrics3d", ["pose", "pose"], "measurement", False),
+        # 返りは (回転誤差[deg], 並進誤差) の 2 つ。単位も意味も違うので
+        # 'measurement'(スカラ 1 つ)を名乗るのは嘘、adapter で r[0] にすると
+        # **並進誤差を黙って捨てる**。宣言を 'table'(list|dict)へ移し、adapter で
+        # 名前つきの dict にする ―― 素の関数の返り値仕様は互換のため不変
+        # (2026-09-04、KNOWN_LEDGER_GAPS から解消)。
+        ("pose_error", "metrics3d", ["pose", "pose"], "table", False),
     ],
     "robust_fit": [  # RANSAC 頑健プリミティブ適合(外れ値に強い、最小二乗の上位)
         ("ransac_plane", "ransac_fit", ["points"], "primitive", False),
@@ -686,19 +691,19 @@ _CATALOG = {
         ("warp_by_plane", "plane_sweep", ["image2d"], "image2d", False),
     ],
     "sdf_csg": [  # 符号付き距離場の CSG 合成(陰関数ソリッドモデリング、marching cubes へ橋渡し)
-        # ★既知の乖離(2026-09-01 実測、**あえて未修正**): プリミティブが取るのは
-        # ボクセル中心の座標場 (nx,ny,nz,3) であって (N,3) の点群ではない。
-        # 点群を渡すと返りは (N,) の 1-D で、宣言の "sdf"(3-D 場)にならない。
-        # 座標場を産む sdf_ops.grid_coords は実在するのに未登録なので、正しい形は
-        #   ("grid_coords", "sdf_ops", [], "coordgrid", False) を足したうえで
-        #   sphere_sdf / box_sdf の in を ["coordgrid"] にする。
-        # ただしそれは (a) points sort の候補リストから tb_sphere_sdf / tb_box_sdf を
-        # 落とす(docs/WAVE0_STABLE_SLOTS.md: 長さが変わると既存 champion を黙って
-        # 書き換える)、(b) 新 op の per-op ノート/help ページ生成を伴う、の 2 点で
-        # 単独判断すべきでないため、tests/test_ops3d_ledger.py の KNOWN_LEDGER_GAPS に
-        # 記録して据え置く。
-        ("sphere_sdf", "sdf_ops", ["points"], "sdf", False),
-        ("box_sdf", "sdf_ops", ["points"], "sdf", False),
+        # 2026-09-04 解消(旧「既知の乖離・あえて未修正」): プリミティブが取るのは
+        # ボクセル中心の**座標場** (nx,ny,nz,3) であって (N,3) の点群ではない。
+        # 点群を渡すと返りは (N,) の 1-D で、宣言の "sdf"(3-D 場)にならなかった。
+        # 座標場を産む sdf_ops.grid_coords を登録し、新語彙 "coordgrid" を入口にした。
+        #   ★ 保留していた理由(a)「points 候補リストが短くなり既存 champion を黙って
+        #   書き換える」は、backends_typed.TYPE_TO_SORT で coordgrid → points へ畳む
+        #   ことで消えている: 2-D 橋の tb_sphere_sdf / tb_box_sdf には
+        #   INPUT_ADAPTERS._points_to_grid が付いていて **点群から座標場を実際に作って
+        #   いる**ので、あちらの "points" 宣言は嘘ではない(実測: (64,3) を渡すと
+        #   (16,16,16) が返る = 生きている)。嘘だったのは 3-D 台帳の側だけだった。
+        ("grid_coords", "sdf_ops", [], "coordgrid", False),
+        ("sphere_sdf", "sdf_ops", ["coordgrid"], "sdf", False),
+        ("box_sdf", "sdf_ops", ["coordgrid"], "sdf", False),
         ("sdf_union", "sdf_ops", ["sdf", "sdf"], "sdf", False),
         ("sdf_intersect", "sdf_ops", ["sdf", "sdf"], "sdf", False),
         ("sdf_subtract", "sdf_ops", ["sdf", "sdf"], "sdf", False),
@@ -802,9 +807,17 @@ RESULT_ADAPTERS = {
     # `pose` の型述語を入れて初めて顕在化した — 述語が無いあいだ 3 通りの
     # 意味が同居していた)。返り自体は情報が多くて正直なので削らず、
     # adapter で正典の並びを取り出す
+    # 回転誤差[deg] と並進誤差は単位が違う 2 つの量。名前つき dict にして
+    # どちらも捨てない(宣言 'table')。
+    "pose_error": lambda r: ({"rotation_deg": float(r[0]), "translation": float(r[1])}
+                             if isinstance(r, tuple) and len(r) == 2 else r),
     "gicp": lambda r: (r["R"], r["t"]) if isinstance(r, dict) else r,
     "rigid_flow": lambda r: (r["R"], r["t"]) if isinstance(r, dict) else r,
     "vol_label": lambda r: r[0],                    # (labels, n)
+    # grid_coords は (座標場, extent) を返す。宣言型は座標場そのもの。extent は
+    # world へ戻すための補助情報なので、要る呼び手は素の関数を直接呼ぶ
+    # (vol_crop_domain / distance_ridge と同じ扱い)。
+    "grid_coords": lambda r: r[0] if isinstance(r, tuple) else r,
     "vol_crop_domain": lambda r: r[0],              # (part, offset)
     "distance_ridge": lambda r: r[0],               # (ridge, dist)
     "medial_axis_points": lambda r: r[0],           # (points, radii)

@@ -354,8 +354,8 @@ _校正済みなら2D計測を3D幾何当てはめへ橋渡し_
 ### ジオメトリ生成
 _SDFのCSGで形を作りmarching cubesでメッシュ化_
 
-- `sphere_sdf` (`points → sdf`) — 球の符号付き距離場: ``|p - center| - R``(内側負・外側正)。
-- `box_sdf` (`points → sdf`) — 軸平行直方体の**厳密**な符号付き距離場(内側負・外側正)。
+- `sphere_sdf` (`coordgrid → sdf`) — 球の符号付き距離場: ``|p - center| - R``(内側負・外側正)。
+- `box_sdf` (`coordgrid → sdf`) — 軸平行直方体の**厳密**な符号付き距離場(内側負・外側正)。
 - `sdf_smooth_union` (`sdf, sdf → sdf`) — 滑らかに丸めた和集合(polynomial smooth-min)。``k>0`` で継ぎ目を半径 ~k で丸める。
 - `sdf_subtract` (`sdf, sdf → sdf`) — 差集合 A\B = max(a, -b)(A の内側 かつ B の外側 = ``-b`` の内側)。
 - `voxel_to_mesh` (`voxel → mesh`) — voxel → mesh(marching cubes、skimage)。返り値 (verts, faces, normals)。voxel→mesh 変換。

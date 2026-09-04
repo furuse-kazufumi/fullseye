@@ -1,4 +1,4 @@
-# 3D operator help — 346 ops in 66 categories
+# 3D operator help — 347 ops in 66 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/3d/<category>/<op>.md` を走査。
 
@@ -220,9 +220,9 @@
 
 [nearest_neighbor_flow](scene_flow3d/nearest_neighbor_flow.md) · [rigid_flow](scene_flow3d/rigid_flow.md) · [smooth_flow](scene_flow3d/smooth_flow.md)
 
-### sdf_csg (7)
+### sdf_csg (8)
 
-[box_sdf](sdf_csg/box_sdf.md) · [sdf_intersect](sdf_csg/sdf_intersect.md) · [sdf_offset](sdf_csg/sdf_offset.md) · [sdf_smooth_union](sdf_csg/sdf_smooth_union.md) · [sdf_subtract](sdf_csg/sdf_subtract.md) · [sdf_union](sdf_csg/sdf_union.md) · [sphere_sdf](sdf_csg/sphere_sdf.md)
+[box_sdf](sdf_csg/box_sdf.md) · [grid_coords](sdf_csg/grid_coords.md) · [sdf_intersect](sdf_csg/sdf_intersect.md) · [sdf_offset](sdf_csg/sdf_offset.md) · [sdf_smooth_union](sdf_csg/sdf_smooth_union.md) · [sdf_subtract](sdf_csg/sdf_subtract.md) · [sdf_union](sdf_csg/sdf_union.md) · [sphere_sdf](sdf_csg/sphere_sdf.md)
 
 ### segment (4)
 

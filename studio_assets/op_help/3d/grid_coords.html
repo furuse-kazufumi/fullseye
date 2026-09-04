@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">grid_coords — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>coordgrid`</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import sdf_ops; sdf_ops.grid_coords(bounds, res)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;grid_coords&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>CSG 評価用のボクセル中心座標グリッドを作る(occupancy と同じ格子規約)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:gear_metrology">gear_metrology</a> — <code style="color:#22d3bf">py -3.11 examples_3d/gear_metrology.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:molecule_atom_count">molecule_atom_count</a> — <code style="color:#22d3bf">py -3.11 examples_3d/molecule_atom_count.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:procedural_hand">procedural_hand</a> — <code style="color:#22d3bf">py -3.11 examples_3d/procedural_hand.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:render_beauty">render_beauty</a> — <code style="color:#22d3bf">py -3.11 examples_3d/render_beauty.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:sdf_csg">sdf_csg</a> — <code style="color:#22d3bf">py -3.11 examples_3d/sdf_csg.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:sfm_recon">sfm_recon</a> — <code style="color:#22d3bf">py -3.11 examples_3d/sfm_recon.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">coordgrid</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:sphere_sdf">sphere_sdf</a> · <a style="color:#22d3bf" href="op3d:box_sdf">box_sdf</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">sdf_csg</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:sphere_sdf">sphere_sdf</a> · <a style="color:#22d3bf" href="op3d:box_sdf">box_sdf</a> · <a style="color:#22d3bf" href="op3d:sdf_union">sdf_union</a> · <a style="color:#22d3bf" href="op3d:sdf_intersect">sdf_intersect</a> · <a style="color:#22d3bf" href="op3d:sdf_subtract">sdf_subtract</a> · <a style="color:#22d3bf" href="op3d:sdf_smooth_union">sdf_smooth_union</a> · <a style="color:#22d3bf" href="op3d:sdf_offset">sdf_offset</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: sdf_ops.py — 3D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -317,6 +317,11 @@ def make_generators():
         # 種が無いと「project_points が同じ連鎖の中で先に引かれた場合だけ」
         # 到達する状態になり、実測で pnp_ransac / dlt_pose / reprojection_error
         # が一度も実行されていなかった
+        # coordgrid の種。産出 op(grid_coords)も台帳にあるが、種が無いと
+        # sphere_sdf/box_sdf は「同じ連鎖で先に grid_coords が引かれた場合だけ」
+        # 到達する状態になる。
+        "coordgrid": lambda rng: __import__("sdf_ops").grid_coords(
+            ((0.0, 10.0),) * 3, 16)[0],
         "keypoints": lambda rng: rng.random((160, 2)) * 32.0,
         # rgbimage = (H,W,3) の色画像。二色性反射モデルは**色の方向**で拡散と
         # 鏡面を分けるので、輝度画像 (image2d) では原理的に成立しない。
@@ -1452,6 +1457,8 @@ OP_PARAM_HINTS = {
     ("extract_surface_points", "weight"): lambda rng: np.ones((16, 16, 16)),
     # tsdf_fusion / occupancy(3-D)流の bounds(軸ごとの (min, max) の 3 つ組)
     ("extract_surface_points", "bounds"): lambda rng: ((0.0, 10.0), (0.0, 10.0), (0.0, 10.0)),
+    ("grid_coords", "bounds"): lambda rng: ((0.0, 10.0), (0.0, 10.0), (0.0, 10.0)),
+    ("grid_coords", "res"): lambda rng: 16,
     ("integrate", "bounds"): lambda rng: ((0.0, 10.0), (0.0, 10.0), (0.0, 10.0)),
     ("query_distance", "bounds"): lambda rng: ((0.0, 10.0), (0.0, 10.0), (0.0, 10.0)),
     ("fuse", "bounds"): lambda rng: ((0.0, 10.0), (0.0, 10.0), (0.0, 10.0)),
@@ -1963,6 +1970,9 @@ TYPE_CHECKS = {
     # で落ちる — 第 3 波でプール汚染として実測)
     "measurement": lambda v: isinstance(v, (int, float, np.floating, np.integer)),
     "indices": lambda v: isinstance(v, np.ndarray) and v.ndim == 1,
+    # coordgrid = ボクセル中心の座標場 (nx,ny,nz,3)。points((N,3))とは**別 sort**:
+    # 点群を sphere_sdf に渡すと (N,) が返り、宣言の 3-D 場にならない(型の嘘)。
+    "coordgrid": lambda v: isinstance(v, np.ndarray) and v.ndim == 4 and v.shape[3] == 3,
     "table": lambda v: isinstance(v, (list, dict)),
     "rle_region": lambda v: type(v).__name__ == "VolRLE",
     "pointmap": lambda v: isinstance(v, np.ndarray) and v.ndim == 3 and v.shape[2] == 3,

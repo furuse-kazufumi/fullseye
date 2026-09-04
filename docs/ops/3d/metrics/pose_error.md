@@ -3,7 +3,7 @@ op: pose_error
 dim: 3d
 category: metrics
 in: pose × pose
-out: measurement
+out: table
 examples: [itokawa_self_register]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.5  # fullseye lib version this note was generated for
 
 # pose_error — 3D `metrics` op
 
-- **データ種**: `pose × pose` → `measurement`
+- **データ種**: `pose × pose` → `table`
 - **呼び出し**: `import metrics3d; metrics3d.pose_error(R_est, t_est, R_gt, t_gt)` (または `ops3d.get("pose_error")`)
 
 ## 使い方
@@ -28,9 +28,9 @@ version: 0.1.5  # fullseye lib version this note was generated for
 
 - [itokawa_self_register](../../../../examples_3d/itokawa_self_register.py) — `py -3.11 examples_3d/itokawa_self_register.py`
 
-## 型が繋がる次の op(`measurement` を入力に取れる)
+## 型が繋がる次の op(`table` を入力に取れる)
 
-[vol_gaussian_psf](../restoration/vol_gaussian_psf.md) · [fuse_to_voxel](../fusion/fuse_to_voxel.md) · [fresnel_reflectance](../optics/fresnel_reflectance.md) · [snell_angle](../optics/snell_angle.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [mesh_select_lod](../resolution/mesh_select_lod.md)
 
 ## 同カテゴリ(`metrics`)
 
