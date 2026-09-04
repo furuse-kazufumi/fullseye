@@ -38,6 +38,11 @@ Shoot the same scene under six light directions (`render_beauty`), recover norma
 
 ![Photometric-stereo closed loop: 6-light capture → photometric_stereo / robust → angular error against GT normals](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/hero_photometric_stereo.png)
 
+And the recovered normals and albedo alone are enough to **move the light** (left: recovery only, right: ground-truth normals — practically indistinguishable, median 0.000°):
+
+![Relighting from recovered normals: left photometric_stereo_robust only, right ground-truth normals](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/relight_from_normals.gif)
+
+
 (plain least squares is biased 4.5° by attached shadows and 16° with cast shadows + AO; the RANSAC version gives 0.000° and 0.04°)
 
 **This one did not come out on the first try either.** Here is the improvement process as it happened:

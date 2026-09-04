@@ -38,6 +38,11 @@
 
 ![フォトメトリックステレオの閉ループ: 6 灯撮影 → photometric_stereo / robust → 真値法線との角度誤差](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/hero_photometric_stereo.png)
 
+さらに、**復元した法線とアルベドだけで光を動かせます**（左＝復元のみ / 右＝真値法線。ほぼ区別がつかない＝中央値 0.000°）：
+
+![復元した法線から再照明: 左は photometric_stereo_robust の復元のみ、右は真値法線](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/relight_from_normals.gif)
+
+
 （素朴な最小二乗は付着影で 4.5° 偏り、影+AO ありでは 16°。RANSAC 版は 0.000° / 影ありでも 0.04°）
 
 **この 1 枚も一発では出ていません。** 改善の過程をそのまま載せます（作っている感が伝わるように）：
