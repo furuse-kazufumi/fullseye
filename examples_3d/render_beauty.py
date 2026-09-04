@@ -25,6 +25,7 @@ hero 画像:
 """
 from __future__ import annotations
 
+import os
 import sys
 import time
 from pathlib import Path
@@ -43,6 +44,7 @@ import render_ssaa  # noqa: E402
 import render_tonemap  # noqa: E402
 import render_beauty as rb  # noqa: E402  (ルート側 hero レンダラ)
 from sdf_ops import grid_coords, sphere_sdf, sdf_smooth_union  # noqa: E402
+import sdf_ops  # noqa: E402  (CSG 用: box/intersect/union)
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -462,22 +464,22 @@ def main() -> int:
     # ファセット模様と四角いスペキュラが見えた。marching cubes を 128 に上げ、法線は面から
     # 作らず SDF 勾配を頂点でサンプル(格子由来の等高線バンディングが消える)、1280px。
     # AO/影が支配的なので描画時間は 640px とほぼ同じ(実測 ~75 s)。
-    Vh, Fh, Nh = sculpture(res=128, with_normals=True)
-    Vh = sit_on_ground(Vh)                               # 平行移動: 法線は不変
-    # 良い構図: 少し上・斜め前から。金属質・暖色・ソフト接地影。
+    # 被写体は SDF/CSG の静物(格子球=鋼・結び目=金・歯車=黒鉄、物体別 vertex_albedo)。
+    # 旧 4 球 smooth union(sculpture)は GT 検証と「改善の過程」図に残す。
+    HERO = int(os.environ.get("FULLSEYE_HERO_SIZE", "1280"))
+    SS = 1 if HERO <= 400 else 2
+    Vh, Fh, Nh, Ah = still_life(res_scale=1.0 if HERO > 400 else 0.7)
     lo, hi = Vh.min(0), Vh.max(0)
     cen = 0.5 * (lo + hi)
     rad = float(np.linalg.norm(hi - lo)) * 0.5
-    eye = cen + np.array([2.6 * rad, -3.0 * rad, 2.0 * rad])
-    hpose = render3d.look_at(eye, [cen[0], cen[1], cen[2] * 0.9 + 0.15 * rad],
-                             up=(0.0, 0.0, 1.0))
-    HERO = 1280
-    hK = render3d.intrinsics_from_fov(34.0, HERO, HERO)
+    eye = cen + np.array([2.2 * rad, -2.8 * rad, 1.6 * rad]) * 0.85
+    hpose = render3d.look_at(eye, [cen[0], cen[1], cen[2] * 0.8], up=(0.0, 0.0, 1.0))
+    hK = render3d.intrinsics_from_fov(36.0, HERO, HERO)
     hero = rb.render_beauty(
-        Vh, Fh, pose=hpose, intrinsics=hK, size=HERO, ss=2, material="metal",
-        albedo=(0.90, 0.62, 0.30), light=(0.45, 0.55, 0.75), ambient=0.10,
-        ao=True, ground_shadow=True, tonemap="aces", exposure=1.25,
-        background=(0.07, 0.08, 0.10), ao_samples=64, shadow_res=1024,
+        Vh, Fh, pose=hpose, intrinsics=hK, size=HERO, ss=SS, material="metal",
+        albedo=(0.85, 0.85, 0.85), vertex_albedo=Ah, light=(0.45, 0.55, 0.75), ambient=0.16,
+        ao=True, ground_shadow=True, tonemap="aces", exposure=1.5,
+        background=(0.07, 0.08, 0.10), ao_samples=48 if SS == 2 else 16, shadow_res=1024,
         smooth_normals=True, vertex_normals=Nh,
         # 半影の幅 ≈ 遮蔽物の高さ × tan(角半径)。2.2 度では 1〜2 画素にしかならず、
         # 実測でも半影は 283/102400 画素・値の種類は 7 段だけ = 事実上ハード影だった。

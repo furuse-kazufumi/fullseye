@@ -28,6 +28,22 @@ First, one image. This is output from Fullseye's 3D renderer (hand-written numpy
 <!-- Post-publication check: the raw URL must return HTTP 200. Images are lightweight thumbnails that click through to full size (to keep the article's memory footprint down) -->
 [![Output from Fullseye's custom renderer (SDF smooth union + AO + soft shadows + ACES) — click for full size](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/render_beauty_hero_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/render_beauty_hero.png?v=2)
 
+**This one did not come out on the first try either.** Here is the improvement process as it happened:
+
+![hero making-of: ① old 640px flat normals ② grid banding survives smooth normals ③ SDF-gradient normals ④ 1280px but a potato ⑤ SDF/CSG still life](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/hero_making_of.png)
+
+1. The first version was **640px with flat per-face normals** — facets and square highlights.
+2. Switching to interpolated (smooth) vertex normals still left **contour-like banding inherited from the marching-cubes voxel grid** (crop ②).
+3. An isosurface normal is ∇f/|∇f| by definition, so **sampling the SDF gradient at the vertices** removed it (③). `render_beauty(vertex_normals=)` was born here.
+4. It still looked like nothing but a **smooth brown blob — a potato** (④; and no, the one on the left is not what you think; it is an SDF smooth union).
+5. The subject became an **SDF/CSG still life**: a gyroid lattice sphere (implicit surface ∩ sphere, all cavities so AO shows, steel), a trefoil knot (distance field to a curve, overhangs cast soft shadows, gold) and a gear (CSG union/difference, dark iron). Per-object colour comes from `vertex_albedo=` (vertex colours).
+
+It is 3-D, so it spins:
+
+![Turntable of the SDF/CSG still life](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/still_life_turntable.gif)
+
+Mirror reflections, glass refraction, CD-like diffraction rainbows and brushed-metal (anisotropic) highlights are **not possible yet** — this is a rasteriser; reflection and refraction need ray tracing. Consider it the announced next material extension.
+
 ---
 
 ## What This Article Is (in Three Lines)

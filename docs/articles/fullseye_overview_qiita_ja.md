@@ -28,6 +28,23 @@
 <!-- 公開後チェック: raw URL が HTTP 200 を返すこと。画像は軽量サムネ+クリックでフルサイズ(記事のメモリ負荷対策) -->
 [![Fullseye 自前レンダラの出力（SDF smooth union + AO + ソフトシャドウ + ACES）— クリックでフルサイズ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/render_beauty_hero_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/render_beauty_hero.png?v=2)
 
+**この 1 枚も一発では出ていません。** 改善の過程をそのまま載せます（作っている感が伝わるように）：
+
+![hero 改善の過程: ①旧640pxフラット法線 ②smooth法線でも残る格子バンディング ③SDF勾配法線 ④1280pxだがジャガイモ ⑤SDF/CSG静物](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/hero_making_of.png)
+
+1. 最初の版は **640px・面ごとのフラット法線**でした。ファセットと四角いハイライトが見えます。
+2. 頂点法線の補間（smooth）に切り替えても、marching cubes の**ボクセル格子が法線に残って等高線状のバンディング**が出ました（拡大②）。
+3. 等値面の法線は定義から ∇f/|∇f| なので、**SDF の勾配を頂点でサンプル**して法線にしたら消えました（③）。`render_beauty(vertex_normals=)` はこのとき生えた注入口です。
+4. それでも被写体が **茶色い滑らかな塊＝ジャガイモ**にしか見えなかった（④。※左のはウ○コではありません、SDF の smooth union です）。
+5. 被写体を **SDF/CSG の静物**に変えました：ジャイロイド格子球（陰関数曲面 ∩ 球、空洞だらけで AO が効く、鋼）・三葉結び目（曲線への距離場、張り出しがソフトシャドウを作る、金）・歯車（CSG の和と差、黒鉄）。物体ごとの色は `vertex_albedo=`（頂点色）で付けています。
+
+立体なので回しておきます：
+
+![SDF/CSG 静物のターンテーブル](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/still_life_turntable.gif)
+
+鏡面反射・ガラスの屈折・CD のような回折の虹色・ヘアライン（異方性ハイライト）は**まだ出せません**（このレンダラはラスタライザで、反射・屈折にはレイトレーシングが要ります）。次の材質拡張として予告しておきます。
+
+
 ---
 
 ## この記事は何？（3行で）
