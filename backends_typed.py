@@ -309,7 +309,6 @@ INPUT_ADAPTERS = {
 #: 振ると弱信号でも到達できる(2026-09-03 実測)。
 OP_TUNABLE_OVERRIDE = {
     "running_gaussian_foreground": ("k", "var_init"),
-    "nonexistent_op_zzz_mutation": ("a", "b"),
 }
 
 
