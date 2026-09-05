@@ -57,6 +57,31 @@ def _toplevel_imports(tree):
     return out
 
 
+def _guarded_before(tree):
+    """``pytest.importorskip("X")`` が top-level に現れた行 -> {X: 行}。
+
+    素の import でも、**それより前に** importorskip があれば安全
+    (importorskip が Skipped を投げるので、後ろの import には到達しない)。
+    この区別を入れないと、正しく書かれている側を誤検出する
+    —— 実際、最初の版が `test_op_contract_property.py` を誤検出した。
+    """
+    seen = {}
+    for node in tree.body:
+        expr = node.value if isinstance(node, ast.Expr) else None
+        if isinstance(node, ast.Assign):
+            expr = node.value
+        if not isinstance(expr, ast.Call):
+            continue
+        fn = expr.func
+        nm = fn.attr if isinstance(fn, ast.Attribute) else getattr(fn, "id", "")
+        if nm != "importorskip" or not expr.args:
+            continue
+        arg = expr.args[0]
+        if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+            seen.setdefault(arg.value.split(".")[0], node.lineno)
+    return seen
+
+
 def test_no_test_module_imports_a_guarded_dependency_at_top_level():
     """収集を止めうる import が、素のまま書かれていないこと。"""
     offenders = []
