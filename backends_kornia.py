@@ -109,22 +109,59 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         return []
 
     def _gauss(v, a, b):
+        """ガウシアンぼかし（kornia の GPU ネイティブ実装）。torch テンソル上で
+        ``kornia.filters.gaussian_blur2d`` を 5x5 カーネル・シグマ可変で掛ける。
+
+        a はシグマを 0.3〜3.0 の範囲で振る（``0.3 + 2.7 * a``）。b は未使用。
+        CPU 実行では scipy 版と比べて速くはならない（GPU・バッチ実行時に効く
+        実装。``IMGEVOLVE_KORNIA_DEVICE=cuda`` で GPU に乗る）。
+        """
         s = 0.3 + 2.7 * a
         return _np(_m()["KF"].gaussian_blur2d(_t(v), (5, 5), (s, s)))
 
     def _bilateral(v, a, b):
+        """バイラテラルフィルタ（エッジ保存平滑化）。``kornia.filters.bilateral_blur``
+        を 5x5 カーネルで呼ぶ。
+
+        a は空間方向のシグマ（``1.0 + 3.0 * a``、範囲 1.0〜4.0）、b は明度方向の
+        シグマ（``0.05 + 0.4 * b``、範囲 0.05〜0.45）を振る。値が近い画素だけを
+        混ぜるため、平滑化しつつエッジは保たれる。
+        """
         return np.clip(_np(_m()["KF"].bilateral_blur(
             _t(v), (5, 5), 0.05 + 0.4 * b, (1.0 + 3.0 * a,) * 2)), 0, 1)
 
     def _median(v, a, b):
+        """メディアン（中央値）フィルタ。``kornia.filters.median_blur`` を呼ぶ。
+
+        a でカーネルサイズを 3/5/7/9 の 4 段階から選ぶ
+        （``(3,5,7,9)[min(3, int(a*4))]``）。b は未使用。ごま塩ノイズなど
+        外れ値ノイズに強く、ガウシアンぼかしよりエッジを保ちやすい。
+        """
         k = _k(a)
         return _np(_m()["KF"].median_blur(_t(v), (k, k)))
 
     def _unsharp(v, a, b):
+        """アンシャープマスク（鮮鋭化）。``kornia.filters.unsharp_mask`` を 5x5
+        カーネルで呼ぶ。
+
+        **a は未使用**、b がぼかしのシグマ（``0.5 + 2.0 * b``、範囲 0.5〜2.5）を
+        振る。元画像から低周波成分（ぼかし版）を引いた差分を強調して足し戻す
+        古典的な鮮鋭化。
+        """
         s = 0.5 + 2.0 * b
         return np.clip(_np(_m()["KF"].unsharp_mask(_t(v), (5, 5), (s, s))), 0, 1)
 
     def _motion(v, a, b):
+        """モーションブラー。``kornia.filters.motion_blur`` を呼ぶ。
+
+        a がカーネル長とブラー角度の**両方**を振る
+        （カーネルサイズ ``2*int(2+a*6)+1`` = 5〜17、角度 ``360*a`` 度）ため、
+        この 2 つは独立には制御できない。b はブラー方向のオフセット
+        （``2*b-1``、範囲 -1〜1）を振る。kornia は float32 の畳み込みなので
+        重み和の丸めで出力が 1 をわずかに超えることがある(実測 max=1+2e-7)。
+        `image` は [0,1] 契約なので出口で clip する（`ops._apply` が段間で
+        掛けている clip と同じで、パイプライン全体の結果は変わらない）。
+        """
         # kornia は float32 の畳み込みなので重み和の丸めで 1 をわずかに超えることが
         # ある(実測 max=1+2e-7)。`image` は [0,1] 契約なので出口で clip する
         # (`ops._apply` が段間で掛けている clip と同じ = パイプライン結果は不変)。
@@ -133,15 +170,36 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
                                                   float(2 * b - 1))), 0, 1)
 
     def _canny(v, a, b):
+        """Canny 法によるエッジ（二値領域）検出。``kornia.filters.canny`` を呼び、
+        返り値のうち二値エッジマップ（``edges``）を採用する（勾配強度側は捨てる）。
+
+        a が低いしきい値（``0.1 + 0.3 * a``）、b が高いしきい値
+        （``max(低いしきい値 + 1e-3, 0.3 + 0.4 * b)``、低い方を必ず上回るよう
+        下駄を履かせている）を振る。出力の sort は `region`。
+        """
         low = 0.1 + 0.3 * a
         _, edges = _m()["KF"].canny(_t(v), low_threshold=low,
                                     high_threshold=max(low + 1e-3, 0.3 + 0.4 * b))
         return _np(edges)
 
     def _clahe(v, a, b):
+        """CLAHE（コントラスト制限適応ヒストグラム均等化）。
+        ``kornia.enhance.equalize_clahe`` を呼ぶ。
+
+        a がクリップ制限（``1.0 + 4.0 * a``、範囲 1.0〜5.0）を振る。値が大きい
+        ほどコントラストが強く持ち上がる代わりにノイズも強調されやすい。
+        b は未使用。
+        """
         return np.clip(_np(_m()["KE"].equalize_clahe(_t(v), clip_limit=1.0 + 4.0 * a)), 0, 1)
 
     def _laplacian(v, a, b):
+        """ラプラシアン（2 階微分）によるエッジ・ブロブ応答。
+        ``kornia.filters.laplacian`` を呼び、絶対値を取ってから最大絶対値で
+        正規化する。
+
+        a でカーネルサイズを 3/5/7/9 の 4 段階から選ぶ（``_k(a)``、``_median``
+        と同じ量子化）。b は未使用。
+        """
         return _norm(np.abs(_np(_m()["KF"].laplacian(_t(v), _k(a)))))
 
     def _resp(*attrs):
