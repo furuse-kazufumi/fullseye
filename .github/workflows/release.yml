@@ -15,6 +15,8 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+        with:
+          fetch-depth: 0        # タグの注釈(RELEASE-OVERRIDE)を読むため
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5
         with:
           python-version: "3.11"
@@ -22,6 +24,33 @@ jobs:
         run: |
           V=$(python -c "import tomllib;print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
           [ "v$V" = "$GITHUB_REF_NAME" ] || { echo "tag $GITHUB_REF_NAME != pyproject v$V"; exit 1; }
+      # ★**この門が無かった。** 0.1.6 / 0.1.7 / 0.1.8 は Linux CI が赤のまま
+      # PyPI に出ている —— release は CI に依存していないので、赤でも publish できた。
+      # 「見落とした」のではなく**門がそもそも無かった**。
+      #
+      # 迂回はできる(上流の一時的な不調で出せなくなるのは困る)が、
+      # **迂回したことが必ず記録に残る**: タグの注釈に
+      # `RELEASE-OVERRIDE: <理由>` を書いた場合だけ通す。
+      #   git tag -a v0.1.9 -m "0.1.9 ... 
+
+RELEASE-OVERRIDE: 上流 CVE で pip-audit が落ちるだけ"
+      - name: Guard - CI is green for this commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          SHA="${{ github.sha }}"
+          NOTE=$(git tag -l --format='%(contents)' "$GITHUB_REF_NAME")
+          if printf '%s' "$NOTE" | grep -q 'RELEASE-OVERRIDE:'; then
+            echo "::warning::CI ゲートを明示的に迂回しました —— $(printf '%s' "$NOTE" | grep 'RELEASE-OVERRIDE:')"
+            exit 0
+          fi
+          CONC=$(gh api "repos/${{ github.repository }}/actions/runs?head_sha=$SHA&per_page=50"                  --jq '[.workflow_runs[] | select(.name=="CI")] | sort_by(.created_at) | last | .conclusion')
+          echo "CI conclusion for $SHA: ${CONC:-<none>}"
+          if [ "$CONC" != "success" ]; then
+            echo "CI がこのコミットで緑ではありません(${CONC:-未実行})。"
+            echo "意図して出すなら、タグの注釈に 'RELEASE-OVERRIDE: <理由>' を書いて打ち直してください。"
+            exit 1
+          fi
       - name: Build sdist + wheel
         run: |
           pip install build
