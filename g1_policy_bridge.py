@@ -52,12 +52,51 @@ class _Stub:
                     self.__dict__.update(s)
 
 
+#: unpickle 時に **実物のクラス解決を許すトップレベルモジュール**。
+#:
+#: ★セキュリティ境界。`pickle` は load 中に任意の callable を呼べるので、
+#: `find_class` を素通しにすると **チェックポイントを開いただけでコードが走る**。
+#: RL のチェックポイントは他人から貰う前提の成果物なので、これは現実的な脅威。
+#: (2026-09-05 実測: 素通し版は `os.system` / `subprocess.Popen` / `builtins.eval`
+#:  をそのまま返し、`load()` 中に実際にファイルを作れた。)
+#:
+#: ここに載っているのは、brax PPO のチェックポイントが実際に参照する数値系だけ。
+#: 足りないものが出たら**このリストに足す**(例外メッセージがモジュール名を出す)。
+_CKPT_ALLOWED_MODULES = frozenset({
+    "numpy", "jax", "jaxlib", "ml_dtypes",      # 配列そのもの
+    "flax", "brax", "optax", "chex",            # 学習側のコンテナ
+    "collections", "copyreg",                   # OrderedDict / 再構築ヘルパ
+})
+
+
 class _CkptUnpickler:
+    """チェックポイント専用の unpickler。**allowlist 外は開かない**(fail-closed)。
+
+    許可モジュールが未インストールなら従来どおりスタブへ落とす —— これは
+    「brax/flax が Fullseye 側に無くてもペイロードだけ読む」という元の設計意図。
+    許可**外**のモジュールは、スタブで黙って成功させず ``UnpicklingError`` にする。
+    黙って成功する検査は、無い検査より悪い(あると思い込ませる分だけ)。
+    """
+
     def __new__(cls, f):
         import pickle
 
         class U(pickle.Unpickler):
             def find_class(self, module, name):
+                root = (module or "").split(".")[0]
+                if root not in _CKPT_ALLOWED_MODULES:
+                    raise pickle.UnpicklingError(
+                        "refusing to resolve %s.%s while loading a checkpoint: "
+                        "module %r is not in the numeric allow-list %s. A pickle can run "
+                        "arbitrary code, so only array/、training container modules are "
+                        "resolved. Add the module to _CKPT_ALLOWED_MODULES if it is "
+                        "genuinely part of a checkpoint payload."
+                        % (module, name, root, sorted(_CKPT_ALLOWED_MODULES)))
+                if not name.isidentifier() or name.startswith("__"):
+                    raise pickle.UnpicklingError(
+                        "refusing to resolve %s.%s while loading a checkpoint: "
+                        "dunder/non-identifier attribute names are not payload classes"
+                        % (module, name))
                 try:
                     return super().find_class(module, name)
                 except (ImportError, AttributeError):
