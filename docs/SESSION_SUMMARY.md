@@ -3,23 +3,23 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-05 20:50:39
+- **最終更新**: 2026-09-05 21:16:24
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-3cf58baf4 セキュリティ監査の高 3 件と、Linux で日本語が豆腐になる問題を直す
-aee38ff14 auto: anatomical_hand.py 編集前 (2026-09-05 20:48)
-ad1bb169a auto: annotate.py 編集前 (2026-09-05 20:43)
-2e5555647 auto: annotate.py 編集前 (2026-09-05 20:43)
-4519e0e4b auto: sweep.py 編集前 (2026-09-05 20:40)
-2cbafd437 auto: sweep.py 編集前 (2026-09-05 20:40)
-ed0e998f1 auto: graph_seed.py 編集前 (2026-09-05 20:39)
-8c21f6971 auto: evis_fullseye_bridge.py 編集前 (2026-09-05 20:39)
-4f4a8150b auto: evis_fullseye_bridge.py 編集前 (2026-09-05 20:39)
-fa193f448 auto: g1_policy_bridge.py 編集前 (2026-09-05 20:38)
+d9b5fab05 収集が中断する形を静的に止める + fail-soft で全ゼロのまま緑だったギャラリーを直す
+4b7844103 auto: test_suite_hygiene.py 編集前 (2026-09-05 21:14)
+35cb52d71 auto: test_suite_hygiene.py 編集前 (2026-09-05 21:14)
+308e10ff5 auto: test_no_local_paths_in_shipped_code.py 編集前 (2026-09-05 21:12)
+3d4bb1a40 大域照明レンダラを optional backend として足す(gi_render / Mitsuba 3, BSD-3)
+5dbeb7ebc auto: gi_render.py 編集前 (2026-09-05 21:07)
+e4332236e auto: gi_render.py 編集前 (2026-09-05 21:06)
+4ab2b9df5 auto: gi_render.py 編集前 (2026-09-05 21:06)
+ebaa3f800 CI の A 群を分類でなく設計で消す(optional backend の宣言 + 両方向の門)
+c20723a4a auto: test_fscript.py 編集前 (2026-09-05 20:59)
 ```
 
 ## 現在の git status
@@ -31,21 +31,21 @@ fa193f448 auto: g1_policy_bridge.py 編集前 (2026-09-05 20:38)
 ## 直近 2 時間に変更されたファイル
 
 ```
-20:48 .ruff_cache/0.16.0/9851346804524619435
-20:48 examples_3d/anatomical_hand.py
-20:47 .pytest_cache/v/cache/nodeids
-20:47 .pytest_cache/v/cache/lastfailed
-20:47 .ruff_cache/0.16.0/15563442506313268617
-20:47 .ruff_cache/0.16.0/12943517194686254008
-20:47 tests/test_no_local_paths_in_shipped_code.py
-20:46 .github/workflows/ci.yml
-20:45 annotate.py
-20:40 sweep.py
-20:40 halcon_rad_ingest.py
-20:40 graph_seed.py
-20:39 evis_fullseye_bridge.py
-20:38 g1_policy_bridge.py
-20:34 tests/test_studio_settings_isolation.py
+21:15 .pytest_cache/v/cache/nodeids
+21:15 .pytest_cache/v/cache/lastfailed
+21:15 .ruff_cache/0.16.0/15563442506313268617
+21:14 tests/test_suite_hygiene.py
+21:12 tests/test_no_local_paths_in_shipped_code.py
+21:11 backends_r3.py
+21:09 pyproject.toml
+21:08 tests/test_gi_render.py
+21:07 .ruff_cache/0.16.0/12943517194686254008
+21:07 gi_render.py
+20:59 tests/test_fscript.py
+20:57 tests/test_backends_typed_liveness.py
+20:55 .github/workflows/ci.yml
+20:53 tests/test_op_descriptions.py
+20:53 tests/test_ops3d_ledger.py
 ```
 
 ---
