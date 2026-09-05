@@ -1346,8 +1346,6 @@ GUARD_WRAPPED_AT_REGISTRATION = _wrap_unguarded()
 #: 直したら消す、ではなく**上流が直ったことを確認できたら**消す(こちらは
 #: 自分のコードではないので、消す条件が違う)。
 NATIVE_CRASHES_ON_DEGENERATE = {
-    "cv_cc_count":
-        "OpenCV の connectedComponents に 0 サイズを渡すと Linux ビルドで SIGSEGV。",
     "xsitk_minmax_curv_flow":
         "SimpleITK の MinMaxCurvatureFlow は非有限で SIGSEGV。**一部だけ NaN の"
         "画像でも落ちる**(欠測を含む実データで普通に起こる形)。",

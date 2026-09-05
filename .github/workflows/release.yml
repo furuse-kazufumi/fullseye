@@ -31,9 +31,8 @@ jobs:
       # 迂回はできる(上流の一時的な不調で出せなくなるのは困る)が、
       # **迂回したことが必ず記録に残る**: タグの注釈に
       # `RELEASE-OVERRIDE: <理由>` を書いた場合だけ通す。
-      #   git tag -a v0.1.9 -m "0.1.9 ... 
-
-RELEASE-OVERRIDE: 上流 CVE で pip-audit が落ちるだけ"
+      #   例: git tag -a v0.1.9 -F msg.txt   (msg.txt の末尾に
+      #       RELEASE-OVERRIDE: 上流 CVE で pip-audit が落ちるだけ  と書く)
       - name: Guard - CI is green for this commit
         env:
           GH_TOKEN: ${{ github.token }}
