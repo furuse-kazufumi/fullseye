@@ -138,6 +138,15 @@ def _linear_trans_color(v, a, b):                 # color -> color : 3x3 channel
 
 
 def _principal_comp(v, a, b):                     # color -> color : PCA over the 3 channels
+    """3 チャンネルの主成分分析（PCA）を行い、色空間を分散の大きい順に並べ替える。
+    HALCON の ``principal_comp``（多チャンネル画像の主成分を計算する）に相当。
+
+    画素を (H*W, 3) の行列とみなして平均を引き、共分散行列の固有値分解
+    （``np.linalg.eigh``）で固有ベクトルを求め、固有値の降順に射影する。
+    各成分は画像内で min-max により個別に [0,1] へ正規化するため、
+    出力の明るさは元画像のスケールと無関係になる（正規化後は毎回フルレンジ）。
+    a, b は未使用。
+    """
     c = _to_color(v)
     H, W, _ = c.shape
     X = c.reshape(-1, 3)
