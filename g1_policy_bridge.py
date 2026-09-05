@@ -30,8 +30,12 @@ import os
 
 import numpy as np
 
-G1_XML = "C:/dev/projects/mujoco_menagerie/unitree_g1/scene.xml"
-_REF_DEFAULT = "C:/dev/projects/onocollo-complete/out/humanoid/g1_walk_cycle_straight.npy"
+# ★配布物にローカル絶対パスを焼き込まない(2026-09-05 の監査で、非公開の兄弟
+# プロジェクト名が PyPI の wheel に載っていた)。既定は環境変数で与える。
+#: Unitree G1 のシーン XML。MuJoCo Menagerie の `unitree_g1/scene.xml` を指す。
+G1_XML = os.environ.get("FULLSEYE_G1_SCENE_XML", "")
+#: 歩行の mocap 参照軌道(`.npy`)。学習側で作ったものを指す。
+_REF_DEFAULT = os.environ.get("FULLSEYE_G1_REF_NPY", "")
 
 
 # ------------------------------------------------------------------ policy (numpy)
