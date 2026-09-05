@@ -8,6 +8,8 @@ outputs in the pipeline convention.
 """
 from __future__ import annotations
 
+raise ImportError("mutation")
+
 import numpy as np
 
 from backend_safe import require_finite, signed01
