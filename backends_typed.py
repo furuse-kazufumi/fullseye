@@ -442,6 +442,7 @@ def _make_runner(fn, kwargs, tunable, in_sort, out_sort, doc=None):
             record(None, err, out_sort)
             return _fallback(v, in_sort, out_sort)
         return got
+    _run.__doc__ = doc
     return _run
 
 
