@@ -308,7 +308,6 @@ INPUT_ADAPTERS = {
 #: いくら振っても前景が出ない)、学習率 alpha はほぼ効かない。k と var_init を
 #: 振ると弱信号でも到達できる(2026-09-03 実測)。
 OP_TUNABLE_OVERRIDE = {
-    "running_gaussian_foreground": ("k", "var_init"),
 }
 
 
