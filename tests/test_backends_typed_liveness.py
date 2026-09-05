@@ -595,7 +595,6 @@ def test_quaternion_to_rgb_bridge_fails_soft_to_an_rgbimage_not_its_input():
 #: tb_* ops whose HONEST answer includes a non-finite value — not a bug, documented
 #: in the op. Anything not listed that returns NaN/Inf is a real defect.
 KNOWN_NONFINITE_BY_CONTRACT = {
-    "zz_not_a_real_op": "MUTATION TEST: fabricated ledger entry.",
     "tb_mat_cond":
         "spectral condition number s_max/s_min; an exactly singular matrix "
         "(e.g. the all-zeros probe) has s_min=0, so inf is the correct answer "
