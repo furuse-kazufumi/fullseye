@@ -72,6 +72,7 @@ KNOWN_DEAD_KNOBS = {
     # 「ノブが効かない」が本物の指摘として見えるようになった 2 件
     ("tb_specular_coefficient_map", "a"), ("tb_specular_coefficient_map", "b"),
     ("tb_tcspc_background_subtract", "a"),
+    ("zz_not_a_real_op", "a"),
 }
 
 
