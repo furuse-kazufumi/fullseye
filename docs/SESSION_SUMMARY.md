@@ -3,13 +3,15 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-05 12:12:10
+- **最終更新**: 2026-09-05 12:12:59
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+31c0b537c auto: backends_segment2.py 編集前 (2026-09-05 12:12)
+3e44114db auto: backends_regions3.py 編集前 (2026-09-05 12:12)
 d992293f9 auto: backends_macro.py 編集前 (2026-09-05 12:11)
 4b46c6d5d auto: backends_cv2b.py 編集前 (2026-09-05 12:11)
 ee22f66d3 auto: backends_r3.py 編集前 (2026-09-05 12:11)
@@ -18,23 +20,22 @@ ceb0b0b71 auto: backends_dl.py 編集前 (2026-09-05 12:11)
 600b53418 auto: backends_scipy.py 編集前 (2026-09-05 12:10)
 9cc410385 auto: backends_scipy.py 編集前 (2026-09-05 12:10)
 5614842fc auto: backends_scipy.py 編集前 (2026-09-05 12:10)
-c8579f599 auto: backends.py 編集前 (2026-09-05 12:10)
-19bca6771 auto: backends_ski2.py 編集前 (2026-09-05 12:10)
 ```
 
 ## 現在の git status
 
 ```
-M backends_macro.py
- M docs/KNOWN_ISSUES.md
- M ops.py
+M backends_segment2.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
+12:12 backends_segment2.py
 12:12 docs/KNOWN_ISSUES.md
 12:12 .pytest_cache/v/cache/nodeids
+12:12 backends_regions3.py
+12:12 docs/SESSION_SUMMARY.md
 12:11 ops.py
 12:11 backends_macro.py
 12:11 backends_cv2b.py
@@ -45,9 +46,6 @@ M backends_macro.py
 12:11 data/auto_specs/transform_tools_r2.json
 12:11 data/auto_specs/regions_r2.json
 12:11 data/auto_specs/regions.json
-12:11 data/auto_specs/morph_segment.json
-12:11 data/auto_specs/misc_legacy.json
-12:11 data/auto_specs/filters_r2.json
 ```
 
 ---
