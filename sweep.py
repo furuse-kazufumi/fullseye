@@ -10,11 +10,22 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+
+
+def _default_workdir() -> str:
+    """work-graph の作業 dir。**配布物にローカル絶対パスを焼き込まない**ため環境変数から。
+
+    2026-09-05 の監査で、非公開の兄弟ツリーのパスが PyPI の wheel に載っていた。
+    手元の使い勝手は `$RAPTOR_DIR` で保ち、未設定なら `--workdir` を要求する。
+    """
+    root = os.environ.get("RAPTOR_DIR", "")
+    return os.path.join(root, "out", "worklog", "imgevolve") if root else ""
 PROBLEMS = ("denoise", "edge", "binarize")
 
 
@@ -32,6 +43,8 @@ def main() -> int:
                     help="work-graph の作業 dir(既定は $RAPTOR_DIR/out/worklog/imgevolve)")
     ap.add_argument("--gens", type=int, default=40)
     a = ap.parse_args()
+    if not a.raptor or not a.workdir:
+        ap.error("--raptor と --workdir が要る($RAPTOR_DIR 未設定のため既定が決まらない)")
     n = a.round
     sd = HERE / "specs"; sd.mkdir(exist_ok=True)
     wl = [sys.executable, str(Path(a.raptor) / "libexec" / "raptor-worklog")]

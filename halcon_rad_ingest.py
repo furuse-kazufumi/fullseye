@@ -96,6 +96,8 @@ def main():
                     help="出力先(既定は $HALCON_CORPUS_OUT)。必須")
     ap.add_argument("--operators", default=os.path.join(DATA, "halcon_operators.json"))
     a = ap.parse_args()
+    if not a.out:
+        ap.error("--out が要る($HALCON_CORPUS_OUT 未設定のため既定が決まらない)")
 
     data = load("halcon_operators.json")
     if not data:

@@ -40,6 +40,8 @@ def main() -> int:
     ap.add_argument("--workdir", default=_default_workdir(),
                     help="work-graph の作業 dir(既定は $RAPTOR_DIR/out/worklog/imgevolve)")
     a = ap.parse_args()
+    if not a.workdir:
+        ap.error("--workdir が要る($RAPTOR_DIR 未設定のため既定が決まらない)")
     sd = HERE / "specs"; sd.mkdir(exist_ok=True)
     w = a.workdir
 
