@@ -223,6 +223,17 @@ def _edges_color_sub_pix(v, a, b):                # color -> contour
 
 
 def _lines_color(v, a, b):                        # color -> contour : ridges on luminance
+    """カラー画像の線（リッジ）を検出する。HALCON の ``lines_color``（カラーの
+    線とその幅を検出する）に相当するとされるが、**線幅は推定しない**——輝度
+    画像上のガウシアン・ラプラシアン応答をしきい値二値化して連結成分を
+    輪郭として返すだけで、線幅（HALCON 側が返す値）に相当する出力は持たない。
+
+    ``_rgb_to_gray`` で輝度化した後、``scipy.ndimage.gaussian_laplace`` を
+    シグマ ``0.5 + 2.5 * a`` でかけて絶対値を最大値正規化し、
+    ``0.2 + 0.4 * b`` でしきい値二値化して 8 連結ラベリングする。
+    a はリッジの太さ（LoG のスケール）、b は検出しきい値を振る。
+    3 画素未満の成分は捨てる。
+    """
     g = _rgb_to_gray(v, a, b)
     r = _norm(np.abs(ndimage.gaussian_laplace(g, 0.5 + 2.5 * a)))
     lab, n = ndimage.label(r > (0.2 + 0.4 * b), structure=np.ones((3, 3)))
