@@ -102,7 +102,7 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
 
         def _blob(kind):
             def fn(v, a, b):
-                """ブロブ(斑点状構造)の検出数。
+                """ブロブ(斑点状構造)の検出数(LoG/DoG/DoH のいずれかで検出)。
 
                 skimage.feature の Laplacian of Gaussian(LoG)/ Difference of
                 Gaussian(DoG)/ Determinant of Hessian(DoH)のいずれか(このコードは
