@@ -539,6 +539,8 @@ def test_bridge_output_is_not_constant_for_structured_input(op):
     スカラー(feature)は size==1 なので対象外。1 回でも構造のある返りがあれば
     合格(条件が厳しい op と永久に退化している op は別)。
     """
+    if op.name in TORCH_BACKED_BRIDGES:
+        requires_backend("torch")
     runs = _runs(op)
     assert runs, f"{op.name}: 6 回とも例外(fail-soft が効いていない)"
     judged = [(v, r) for v, r in runs if not _is_constant(v) and np.asarray(r).size > 1]
