@@ -1,0 +1,43 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">plot_series — ANNOTATE <code style="color:#22d3bf">plot</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × axes × signal × signal</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import annotate; annotate.plot_series(img, axes, x, y, kind=&#x27;line&#x27;, color=&#x27;reference&#x27;, width=2, marker_size=3, baseline=None, bar_width=0.7, clip=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code> (oder <code style="color:#22d3bf">opsannotate.get(&quot;plot_series&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>折れ線・散布・棒を描く。<b>データ座標</b>で受ける(画素は axes が決める)。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>axes : dict</p>
+<p>:func:<code style="color:#22d3bf">axes_transform</code> の返り。</p>
+<p>x, y : 1-D</p>
+<p>同じ長さの系列。<b>空は ValueError</b>(空のグラフは「データが無い」のか</p>
+<p>「描き忘れ」なのか区別がつかない)。</p>
+<p>kind : {&#x27;line&#x27;,&#x27;scatter&#x27;,&#x27;bar&#x27;}</p>
+<p>baseline : float or None</p>
+<p>`<code style="color:#22d3bf">kind=&#x27;bar&#x27;</code><code style="color:#22d3bf"> の基準値。None なら </code><code style="color:#22d3bf">ylim</code>` の下端。</p>
+<p>bar_width : float</p>
+<p>棒の幅(隣り合う x 間隔に対する比 ∈ (0,1])。</p>
+<p>clip : bool</p>
+<p>True なら描画域の外に出る点を<b>例外</b>にする(黙って端に張り付く</p>
+<p>:mod:<code style="color:#22d3bf">imagedraw</code> のクランプは、嘘の折れ線を描いてしまう)。</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>長さ不一致 / 空 / 非有限 / 未知の kind / clip=True で範囲外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_gallery">annotate_gallery</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_gallery.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opannotate:text_box">text_box</a> · <a style="color:#22d3bf" href="opannotate:arrow">arrow</a> · <a style="color:#22d3bf" href="opannotate:leader_line">leader_line</a> · <a style="color:#22d3bf" href="opannotate:label_points">label_points</a> · <a style="color:#22d3bf" href="opannotate:crosshair">crosshair</a> · <a style="color:#22d3bf" href="opannotate:legend_box">legend_box</a> · <a style="color:#22d3bf" href="opannotate:color_bar">color_bar</a> · <a style="color:#22d3bf" href="opannotate:scale_bar">scale_bar</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">plot</code>)</h3>
+<p><a style="color:#22d3bf" href="opannotate:axes_transform">axes_transform</a> · <a style="color:#22d3bf" href="opannotate:data_to_pixel">data_to_pixel</a> · <a style="color:#22d3bf" href="opannotate:nice_ticks">nice_ticks</a> · <a style="color:#22d3bf" href="opannotate:axes_frame">axes_frame</a> · <a style="color:#22d3bf" href="opannotate:grid_lines">grid_lines</a> · <a style="color:#22d3bf" href="opannotate:ticks">ticks</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: annotate.py — ANNOTATE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

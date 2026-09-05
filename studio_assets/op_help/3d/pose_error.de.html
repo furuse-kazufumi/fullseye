@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">pose_error — 3D <code style="color:#22d3bf">metrics</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">pose × pose</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import metrics3d; metrics3d.pose_error(R_est, t_est, R_gt, t_gt)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;pose_error&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>姿勢誤差 = (回転角[度], 並進ノルム)。登録結果の GT 比較。→ (rot_deg, trans_err)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 計測の不確かさと校正の知識 — 「測れている」を主張するために</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:itokawa_self_register">itokawa_self_register</a> — <code style="color:#22d3bf">py -3.11 examples_3d/itokawa_self_register.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_select_lod">mesh_select_lod</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">metrics</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:chamfer_distance">chamfer_distance</a> · <a style="color:#22d3bf" href="op3d:hausdorff_distance">hausdorff_distance</a> · <a style="color:#22d3bf" href="op3d:fscore">fscore</a> · <a style="color:#22d3bf" href="op3d:rmse_correspondence">rmse_correspondence</a> · <a style="color:#22d3bf" href="op3d:normal_consistency">normal_consistency</a> · <a style="color:#22d3bf" href="op3d:voxel_iou">voxel_iou</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: metrics3d.py — 3D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

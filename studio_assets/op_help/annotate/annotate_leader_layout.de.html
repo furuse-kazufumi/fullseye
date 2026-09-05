@@ -1,0 +1,49 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">annotate_leader_layout — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import annotate; annotate.annotate_leader_layout(shape, points, labels=None, font_size=12, pad=4, gap=22, side=&#x27;auto&#x27;, font_path=None, min_font_size=9)</code> (oder <code style="color:#22d3bf">opsannotate.get(&quot;annotate_leader_layout&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>table(dict)を返す: 引き出し線の配置(肘・文字位置・板の矩形)を閉形式で決める。</p>
+<p>各点について候補側を固定順に試し、**板が画像に収まり・他の板と重ならず・</p>
+<p>他の点を覆わない**最初の候補を採る。どの候補も駄目なら肘を 1.6 倍、2.4 倍に</p>
+<p>伸ばして再試行し、それでも駄目なら <b>ValueError</b>(黙って重ねない)。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>shape : (H, W)</p>
+<p>描く画像の大きさ。</p>
+<p>points : (N, 2)</p>
+<p>指す点 <b>(x, y)</b>。</p>
+<p>labels : sequence of str or None</p>
+<p>各点の文字。None なら 1 始まりの番号。</p>
+<p>gap : float</p>
+<p>肘の長さ[px]。斜め腕 = gap、水平腕 = 0.6*gap。</p>
+<p>side : {&#x27;auto&#x27;,&#x27;left&#x27;,&#x27;right&#x27;}</p>
+<p>`<code style="color:#22d3bf">&#x27;auto&#x27;</code>` は画像中心から<b>遠ざかる</b>側を先に試す(対象の上に文字を</p>
+<p>載せないため)。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>dict</p>
+<p>``{&quot;n&quot;, &quot;gap&quot;, &quot;items&quot;: [{&quot;point&quot;, &quot;elbow&quot;, &quot;text_xy&quot;, &quot;anchor&quot;,</p>
+<p>&quot;box&quot;, &quot;side&quot;}]}`<code style="color:#22d3bf">。</code><code style="color:#22d3bf">box</code><code style="color:#22d3bf"> は板の </code><code style="color:#22d3bf">(x, y, w, h)</code>`。</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>点が空・非有限、labels の数が合わない、未知の side、配置できない点。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:paper_figure">paper_figure</a> — <code style="color:#22d3bf">py -3.11 examples/paper_figure.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">paper</code>)</h3>
+<p><a style="color:#22d3bf" href="opannotate:annotate_leader">annotate_leader</a> · <a style="color:#22d3bf" href="opannotate:annotate_markers">annotate_markers</a> · <a style="color:#22d3bf" href="opannotate:annotate_legend">annotate_legend</a> · <a style="color:#22d3bf" href="opannotate:annotate_dimension_layout">annotate_dimension_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_dimension">annotate_dimension</a> · <a style="color:#22d3bf" href="opannotate:annotate_angle_layout">annotate_angle_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_angle">annotate_angle</a> · <a style="color:#22d3bf" href="opannotate:annotate_scale_bar_layout">annotate_scale_bar_layout</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: annotate.py — ANNOTATE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

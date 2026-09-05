@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cscalar_to_polar — REPRCONV <code style="color:#22d3bf">algebra</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">cscalar</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import reprconv; reprconv.cscalar_to_polar(cscalar)</code> (oder <code style="color:#22d3bf">opsreprconv.get(&quot;cscalar_to_polar&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>複素スカラ → 極形式 `<code style="color:#22d3bf">pairs (1,2) = [|z|, arg z[度]]</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">cscalar</code>` の出口。</p>
+<p>`<code style="color:#22d3bf">cplx_contour_integral</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cplx_cauchy_value</code>` が返す複素スカラは、</p>
+<p>`<code style="color:#22d3bf">measurement</code>`(実スカラのみ)へ混ぜると下流が生 TypeError で落ちるので</p>
+<p>型が分かれている。極形式の対にすると 1-D 語彙へ渡せる。</p>
+<p><b>角度は度</b>。:func:<code style="color:#22d3bf">polar_to_cscalar</code> と往復して実測 max|Δ| = 8.9e-16。</p>
+<p>Args:</p>
+<p>cscalar: complex(または複素 0-d 配列)。</p>
+<p>Returns:</p>
+<p>(1, 2) float64。</p>
+<p>Raises:</p>
+<p>ValueError: 複素スカラでない / 非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">pairs</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:angles_to_normals">angles_to_normals</a> · <a style="color:#22d3bf" href="opreprconv:shape_index_to_curvature">shape_index_to_curvature</a> · <a style="color:#22d3bf" href="opreprconv:pairs_to_signal">pairs_to_signal</a> · <a style="color:#22d3bf" href="opreprconv:pairs_to_image2d">pairs_to_image2d</a> · <a style="color:#22d3bf" href="opreprconv:pairs_to_table">pairs_to_table</a> · <a style="color:#22d3bf" href="opreprconv:polar_to_cscalar">polar_to_cscalar</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">algebra</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:angle_to_matrix">angle_to_matrix</a> · <a style="color:#22d3bf" href="opreprconv:matrix_to_angle">matrix_to_angle</a> · <a style="color:#22d3bf" href="opreprconv:rot_scale_to_matrix">rot_scale_to_matrix</a> · <a style="color:#22d3bf" href="opreprconv:matrix_to_rot_scale">matrix_to_rot_scale</a> · <a style="color:#22d3bf" href="opreprconv:shift_to_vector">shift_to_vector</a> · <a style="color:#22d3bf" href="opreprconv:vector_to_shift">vector_to_shift</a> · <a style="color:#22d3bf" href="opreprconv:polar_to_cscalar">polar_to_cscalar</a> · <a style="color:#22d3bf" href="opreprconv:countrate_to_counts">countrate_to_counts</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

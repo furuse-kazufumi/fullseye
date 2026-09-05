@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">hx_gen_derivative_filter — 2D <code style="color:#22d3bf">halcon_ext</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_gen_derivative_filter&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">gen_derivative_filter</code>(其含義與參數可參考 HALCON 手冊)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>周波数領域の微分フィルタ。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が微分の階数、</code><code style="color:#22d3bf">b</code>` が向き。</p>
+<p>HALCON の `<code style="color:#22d3bf">gen_derivative_filter</code>` は Derivative(x / y / xx / yy / xy)と</p>
+<p>次数を取るが、ここは長らく `<code style="color:#22d3bf">|f|</code>` を正規化して返すだけで、**入力の中身も</p>
+<p>つまみも一切見ていなかった** —— 2026-09-02 実測で、同じ形なら</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">b</code>` を変えても、別の絵を渡しても、返りが<b>バイト一致</b>だった</p>
+<p>(兄弟の `<code style="color:#22d3bf">hx_gen_lowpass</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">hx_gen_highpass</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">hx_gen_bandfilter</code>` は</p>
+<p>つまみで変わるので、この 1 件だけ浮いていた)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> : 階数 1〜2(</code><code style="color:#22d3bf">|f|</code><code style="color:#22d3bf"> か </code><code style="color:#22d3bf">|f|^2</code>`)。2 階はラプラシアンに対応する。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> : 向き。0 で x 方向 </code><code style="color:#22d3bf">|f_x|</code><code style="color:#22d3bf">、1 で y 方向 </code><code style="color:#22d3bf">|f_y|</code><code style="color:#22d3bf">、間は等方 </code><code style="color:#22d3bf">|f|</code>`</p>
+<p>へ滑らかに混ぜる(0.5 でちょうど等方)。</p>
+<p>返りは周波数領域の<b>フィルタそのもの</b>(HALCON の gen_* と同じ約束)なので、</p>
+<p>入力は形を決めるためだけに使う。ただし形だけでなく<b>つまみでちゃんと変わる</b></p>
+<p>ようになったので、進化が階数と向きを選べる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_halcon_ext">gallery2d_halcon_ext</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_halcon_ext.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">halcon_ext</code>)</h3>
+<p><a style="color:#22d3bf" href="op:hx_gen_circle">hx_gen_circle</a> · <a style="color:#22d3bf" href="op:hx_gen_ellipse">hx_gen_ellipse</a> · <a style="color:#22d3bf" href="op:hx_gen_rectangle2">hx_gen_rectangle2</a> · <a style="color:#22d3bf" href="op:hx_gen_checker_region">hx_gen_checker_region</a> · <a style="color:#22d3bf" href="op:hx_gen_grid_region">hx_gen_grid_region</a> · <a style="color:#22d3bf" href="op:hx_gabor">hx_gabor</a> · <a style="color:#22d3bf" href="op:hx_fit_surface1">hx_fit_surface1</a> · <a style="color:#22d3bf" href="op:hx_fit_surface2">hx_fit_surface2</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

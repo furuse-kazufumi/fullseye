@@ -1,0 +1,61 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">illumination_design — OPTICS <code style="color:#22d3bf">illumination</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import illumdesign; illumdesign.illumination_design(surface=&#x27;glossy&#x27;, defect=&#x27;topographic&#x27;, slope_deg=10.0, part_size_mm=50.0, camera_height_mm=300.0)</code>(또는 <code style="color:#22d3bf">opsoptics.get(&quot;illumination_design&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
+<p>Rank the standard light families for a surface / defect pairing (`<code style="color:#22d3bf">table</code>`).</p>
+<p>Candidates: low-angle ring (dark field, elevation 20°), high-angle ring</p>
+<p>(bright field, 70°), the elevation that :func:<code style="color:#22d3bf">lighting_sweep</code> finds best,</p>
+<p>dome, coaxial and (for `<code style="color:#22d3bf">defect=&quot;edge&quot;</code>`) backlight. Each is scored by the</p>
+<p>simulated Michelson contrast of the stated defect — `<code style="color:#22d3bf">topographic</code>`: a</p>
+<p>smooth facet of *slope_deg* (a dent wall, a bump); `<code style="color:#22d3bf">scatter</code>`: a rough</p>
+<p>patch (chipped edge, pit, fine scratch); `<code style="color:#22d3bf">pigment</code>`: an albedo patch at</p>
+<p>half the surround; `<code style="color:#22d3bf">edge</code>`: a silhouette — **multiplied by the uniformity</p>
+<p>of the background radiance the camera sees** across the part (min/max over</p>
+<p>the centre and the four edge midpoints). That second factor is what</p>
+<p>separates a robust choice from a fragile one: coaxial light on a glossy</p>
+<p>part gives a huge negative contrast exactly on axis (the glare) and almost</p>
+<p>none a few millimetres away, so its background uniformity is poor and it</p>
+<p>ranks below a dark field whose background is uniformly dark. Irradiance</p>
+<p>uniformity is reported too. The result lists the candidates best first</p>
+<p>with their numbers, the `<code style="color:#22d3bf">recommended</code><code style="color:#22d3bf"> family, and </code><code style="color:#22d3bf">rule_of_thumb</code>` — the textbook</p>
+<p>choice (a smooth facet → coaxial bright field on a glossy finish, else the</p>
+<p>ring elevation that mirrors it into the camera; scatter → dark field; pigment →</p>
+<p>dome; edge → backlight) so a disagreement between simulation and rule is</p>
+<p>visible rather than hidden. Two things the numbers say that folklore does</p>
+<p>not: a *smooth* 10° facet does <b>not</b> light up in dark field (it mirrors</p>
+<p>the low light away from the camera) — the &quot;dark field shows scratches&quot;</p>
+<p>rule is about their rough flanks, the `<code style="color:#22d3bf">scatter</code>` class here; and for that</p>
+<p>class a large coaxial (bright-field) source often scores *higher* than</p>
+<p>dark field because the rough patch appears dark on a uniform glare with</p>
+<p>contrast near 1 (the wafer / glass inspection practice). The model does</p>
+<p>not score sensor saturation or the glare&#x27;s dependence on part flatness,</p>
+<p>which is why the dark-field rule survives on the shop floor; the table</p>
+<p>shows both so the choice is made with the numbers.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
+<p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
+<p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>
+<p style="margin:2px 0 2px 12px">• **문자열은 <code style="color:#22d3bf">ValueError</code>** —— <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> 은 성공하므로 파싱되지 않은 설정값이 길이로 통과해 버립니다(실측: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> 이 그럴듯한 66.667 mm 를 돌려주고 있었습니다). bool 도 <code style="color:#22d3bf">True == 1</code> 의 암묵 승격으로 보고 거부합니다.</p>
+<p style="margin:2px 0 2px 12px">• **complex / masked array 는 <code style="color:#22d3bf">ValueError</code><b>(실수 슬롯만. 허수부의 무언 절삭·마스크 벗기기를 거부).</b>NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code>**.</p>
+<p style="margin:2px 0 2px 12px">• <b>0 나눗셈과 그 친척들을 이름을 들어 거부</b>: 초점거리 0, 곡률반경 0, 굴절률 &lt;= 0, 불투명한 조리개(전부 0 이라 정규화가 0/0), 총합 &lt;= 0 인 PSF, S0 = 0 인 스토크스 벡터, 물체가 앞쪽 초점에 있는 경우(상이 무한대).</p>
+<p style="margin:2px 0 2px 12px">• <b>비유한 값을 돌려주는 것은 2 개 연산자뿐이며, 둘 다 계약으로 명시</b>: <code style="color:#22d3bf">depth_of_field</code> 의 과초점거리 너머 <code style="color:#22d3bf">far_mm = inf</code>(그것이 과초점거리의 정의)와 <code style="color:#22d3bf">gaussian_beam</code> 의 허리에서의 <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(평면 파면의 곡률반경). 둘 다 유한한 짝(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)을 함께 돌려줍니다. **그 밖의 무언 NaN/Inf 는 내부에서 검출해 <code style="color:#22d3bf">ValueError</code>** —— 「float64 가 넘쳤다」와 「답이 무한대다」는 다른 주장이므로, 후자의 얼굴로 전자를 돌려주지 않습니다.</p>
+<p style="margin:2px 0 2px 12px">• <b>크기 상한</b>: 생성 격자는 <code style="color:#22d3bf">optics.MAX_GRID</code>(4096), 넘겨받은 필드/PSF/조리개는 <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24), ABCD 소자열은 <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024), Zernike 는 <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25). 작은 인자에서 거대한 내부 할당이 일어나는 경로(실측: n_max=40 × 4096² 로 108 GB)를 fail-closed 로 막습니다.</p>
+<p style="margin:2px 0 2px 12px">• <b>물리적으로 불가능한 상태도 거부</b>: 편광도 &gt; 1 인 스토크스 벡터, 음의 투과율, 음의 강도, n-|m| 이 홀수인 잘못된 Zernike 첨자 등.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:mv_illumination_practice">mv_illumination_practice</a> — 照明の実務知識 — 波長・偏光・点灯方式・外光・安全</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:illumination_design_demo">illumination_design_demo</a> — <code style="color:#22d3bf">py -3.11 examples/illumination_design_demo.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a> · <a style="color:#22d3bf" href="opoptics:spot_diagram">spot_diagram</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">illumination</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:light_source">light_source</a> · <a style="color:#22d3bf" href="opoptics:irradiance_map">irradiance_map</a> · <a style="color:#22d3bf" href="opoptics:illumination_uniformity">illumination_uniformity</a> · <a style="color:#22d3bf" href="opoptics:defect_contrast">defect_contrast</a> · <a style="color:#22d3bf" href="opoptics:lighting_sweep">lighting_sweep</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: illumdesign.py — OPTICS 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

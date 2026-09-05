@@ -1,0 +1,44 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">interp_cubic — MATH <code style="color:#22d3bf">interp_poly</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal × signal</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import mathops; mathops.interp_cubic(x, y, xq, out_of_range=&#x27;raise&#x27;, bc_type=&#x27;not-a-knot&#x27;)</code>(또는 <code style="color:#22d3bf">opsmath.get(&quot;interp_cubic&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>3차 스플라인 보간(`<code style="color:#22d3bf">scipy.interpolate.CubicSpline</code>`).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>C²-smooth through all nodes — the step up from :func:<code style="color:#22d3bf">interp_linear</code> when</p>
+<p>the underlying curve is smooth (a lens-distortion or gamma curve). Needs at</p>
+<p>least 4 points. *bc_type* is the boundary condition: `<code style="color:#22d3bf">&#x27;not-a-knot&#x27;</code>`</p>
+<p>(default — reproduces a global cubic polynomial *exactly*, the property the</p>
+<p>tests pin), `<code style="color:#22d3bf">&#x27;natural&#x27;</code>` (zero second derivative at the ends; slightly</p>
+<p>smoother-looking, but it will NOT reproduce a cubic), or `<code style="color:#22d3bf">&#x27;clamped&#x27;</code>`.</p>
+<p>Same strict grid and the same explicit *out_of_range* policy as</p>
+<p>:func:<code style="color:#22d3bf">interp_linear</code> (&#x27;raise&#x27; by default, &#x27;clamp&#x27; to hold end values) —</p>
+<p>spline <b>extrapolation diverges cubically</b> and is refused outright.</p>
+<p>Honest note: between nodes a spline can overshoot (it is a minimum-</p>
+<p>curvature interpolant, not shape-preserving); for monotone data whose</p>
+<p>interpolant must stay monotone, use a PCHIP-type method instead — not</p>
+<p>provided here, stated so nobody assumes otherwise.</p>
+<p>HALCON: no cubic tuple interpolation operator (`<code style="color:#22d3bf">create_funct_1d_pairs</code>`</p>
+<p>feeds linear interpolation only).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
+<p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
+<p style="margin:2px 0 2px 12px">• **complex 입력은 <code style="color:#22d3bf">ValueError</code>** —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>
+<p style="margin:2px 0 2px 12px">• **masked 요소가 있는 masked array 는 <code style="color:#22d3bf">ValueError</code>** —— 마스크를 벗겨 아래 원값을 쓰는 암묵 변환을 거부합니다. 채울지 버릴지를 명시하세요.</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code>**(개수를 명시하고 거부 —— 결과 전체로 전파되므로).</p>
+<p style="margin:2px 0 2px 12px">• <b>형상은 엄격</b>: 1-D 와 2-D 를 암묵적으로 승격·브로드캐스트하지 않습니다(vector 슬롯에 matrix, matrix 슬롯에 vector 는 <code style="color:#22d3bf">ValueError</code>. reshape 를 명시하세요).</p>
+<p style="margin:2px 0 2px 12px">• <b>크기 상한</b>: 행렬을 받는 연산자와 <code style="color:#22d3bf">stat_histogram</code> 의 bins 는 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 만 요소)를 넘으면 <code style="color:#22d3bf">ValueError</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:math_metrology">math_metrology</a> — <code style="color:#22d3bf">py -3.11 examples/math_metrology.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">signal</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opmath:mat_solve">mat_solve</a> · <a style="color:#22d3bf" href="opmath:mat_lstsq">mat_lstsq</a> · <a style="color:#22d3bf" href="opmath:stat_describe">stat_describe</a> · <a style="color:#22d3bf" href="opmath:stat_histogram">stat_histogram</a> · <a style="color:#22d3bf" href="opmath:stat_zscore">stat_zscore</a> · <a style="color:#22d3bf" href="opmath:interp_linear">interp_linear</a> · <a style="color:#22d3bf" href="opmath:poly_fit">poly_fit</a> · <a style="color:#22d3bf" href="opmath:poly_eval">poly_eval</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">interp_poly</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:interp_linear">interp_linear</a> · <a style="color:#22d3bf" href="opmath:poly_fit">poly_fit</a> · <a style="color:#22d3bf" href="opmath:poly_eval">poly_eval</a> · <a style="color:#22d3bf" href="opmath:poly_roots">poly_roots</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

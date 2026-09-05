@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">noise_inconsistency_map — IMGFORENSICS <code style="color:#22d3bf">noise</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import imgforensics; imgforensics.noise_inconsistency_map(image, block: &#x27;int&#x27; = 16) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsimgforensics.get(&quot;noise_inconsistency_map&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>ブロックごとの <b>雑音標準偏差</b> を並べた地図。`<code style="color:#22d3bf">image2d</code>`。</p>
+<p>Immerkær 1996 の 3x3 マスクで高周波成分を取り、`<code style="color:#22d3bf">block</code>` 角の非重複ブロックごとに</p>
+<p>`<code style="color:#22d3bf">sigma = sqrt(pi/2) / 6 * mean(|conv|)</code>` を出してブロック定数で戻す。</p>
+<p>貼り付けた領域が別の露出・別の圧縮率・別のカメラから来ていれば、この値が</p>
+<p>まわりと <b>段差</b>になる。</p>
+<p><b>精度は良い</b>(`<code style="color:#22d3bf">tests/test_imgforensics.py</code>` が固定)。真の σ が上半分 0.01・</p>
+<p>下半分 0.04(8 bit で 2.55 と 10.20、比 4.0)の合成画像で、推定は</p>
+<p><b>2.533 と 10.214、比 4.033</b> —— 絶対値も比も 1% 以内。</p>
+<p><b>この地図が言えないこと</b>:</p>
+<p style="margin:2px 0 2px 12px">• <b>テクスチャは雑音として数えられる</b>。Immerkær のマスクはラプラシアン風なので、</p>
+<p>細かい模様の領域は σ が高く出る。実測:<b>雑音は上下とも同じ σ=0.01</b> で、</p>
+<p>下半分にだけ市松模様を足した画像では、模様側 15.97 / 平坦側 2.58 = <b>6.2 倍</b>。</p>
+<p>段差があっても「改竄」ではなく「模様」かもしれない。</p>
+<p style="margin:2px 0 2px 12px">• 逆に <b>平滑化された改竄は σ が下がる</b>ので見えるが、平坦な背景に平坦な物を</p>
+<p>貼った場合は差が出ない。</p>
+<p style="margin:2px 0 2px 12px">• JPEG は雑音をブロックごとに削るので、圧縮済みの画像では `<code style="color:#22d3bf">block</code>` を 8 の倍数に</p>
+<p>しないとブロック格子と干渉して縞が出る(既定 16 は 8 の倍数)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_forensics_audit">image_forensics_audit</a> — <code style="color:#22d3bf">py -3.11 examples/image_forensics_audit.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">image2d</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:perceptual_hash">perceptual_hash</a> · <a style="color:#22d3bf" href="opimgforensics:fingerprint_correlate">fingerprint_correlate</a> · <a style="color:#22d3bf" href="opimgforensics:error_level_map">error_level_map</a> · <a style="color:#22d3bf" href="opimgforensics:jpeg_quality_estimate">jpeg_quality_estimate</a> · <a style="color:#22d3bf" href="opimgforensics:jpeg_ghost_map">jpeg_ghost_map</a> · <a style="color:#22d3bf" href="opimgforensics:copy_move_regions">copy_move_regions</a> · <a style="color:#22d3bf" href="opimgforensics:watermark_embed">watermark_embed</a> · <a style="color:#22d3bf" href="opimgforensics:watermark_extract">watermark_extract</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">noise</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgforensics.py — IMGFORENSICS 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

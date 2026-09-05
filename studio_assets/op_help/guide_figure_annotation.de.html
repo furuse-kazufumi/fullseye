@@ -1,0 +1,94 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">Dieser Leitfaden liegt nur auf Japanisch vor (es ist von Menschen geschriebene Prosa, hier wird nichts maschinell ersetzt).</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">図注(figure annotation)— 学術図に「どこに何があるか」を描く 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>論文・報告書の図は「どこに何があるか」を<b>矢印や線で示す</b>のが作法です。Fullseye の <code style="color:#22d3bf">annotate</code> 族(台帳 <code style="color:#22d3bf">opsannotate.py</code>、46 op / 7 カテゴリ)は、その作法を op として持ちます。numpy + scipy(文字だけ Pillow)で動き、matplotlib は使いません。</p>
+<p style="margin:2px 0 2px 12px">• <b>部品(25 op)</b> — <code style="color:#22d3bf">text_box</code> / <code style="color:#22d3bf">arrow</code> / <code style="color:#22d3bf">leader_line</code> / <code style="color:#22d3bf">label_points</code> / <code style="color:#22d3bf">crosshair</code> / <code style="color:#22d3bf">legend_box</code> / <code style="color:#22d3bf">color_bar</code> / <code style="color:#22d3bf">scale_bar</code> / <code style="color:#22d3bf">axes_transform</code> … <code style="color:#22d3bf">plot_series</code> / <code style="color:#22d3bf">overlay_mask</code> / <code style="color:#22d3bf">overlay_labels</code> / <code style="color:#22d3bf">zoom_inset</code> / <code style="color:#22d3bf">compare_frame</code> / <code style="color:#22d3bf">panel_grid</code> / <code style="color:#22d3bf">rounded_rect</code> / <code style="color:#22d3bf">filled_polygon</code> / <code style="color:#22d3bf">arc</code> / <code style="color:#22d3bf">ellipse</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>学術図の作法(paper、21 op、2026-09-03)</b> — 部品を組み合わせた<b>作法そのもの</b>:</p>
+<p style="margin:2px 0 2px 12px">• 指し示す: <code style="color:#22d3bf">annotate_leader</code>(肘つき引き出し線、複数点の<b>衝突回避</b>)、<code style="color:#22d3bf">annotate_markers</code> + <code style="color:#22d3bf">annotate_legend</code>(番号つき丸マーカーと、同じ番号の凡例)</p>
+<p style="margin:2px 0 2px 12px">• 測る: <code style="color:#22d3bf">annotate_dimension</code>(両端矢じりの寸法線 + 補助線 + 値と単位)、<code style="color:#22d3bf">annotate_angle</code>(3 点のなす角の弧 + 値)、<code style="color:#22d3bf">annotate_scale_bar</code>(画素分解能から <b>1/2/5×10^k の切りのよい長さ</b>を選ぶ隅置き)、<code style="color:#22d3bf">annotate_orientation</code>(方位/向きの矢印)</p>
+<p style="margin:2px 0 2px 12px">• 領域: <code style="color:#22d3bf">annotate_outline</code>(マスク → 境界の閉折れ線 + 重心のラベル)、<code style="color:#22d3bf">annotate_inset</code>(隅への拡大差し込み、対応角を結ぶ)、<code style="color:#22d3bf">annotate_text_path</code>(折れ線に沿う文字)</p>
+<p style="margin:2px 0 2px 12px">• 場と組版: <code style="color:#22d3bf">annotate_colorbar</code>(スカラ場の色分け重ね + カラーバー)、<code style="color:#22d3bf">annotate_panel_label</code>(<code style="color:#22d3bf">(a)</code>/<code style="color:#22d3bf">(b)</code>)、<code style="color:#22d3bf">annotate_figure_grid</code>(画像 + 見出しを一定余白で組む)</p>
+<p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">*_layout</code>(8 op)** — <code style="color:#22d3bf">annotate_leader_layout</code> / <code style="color:#22d3bf">annotate_dimension_layout</code> / <code style="color:#22d3bf">annotate_angle_layout</code> / <code style="color:#22d3bf">annotate_scale_bar_layout</code> / <code style="color:#22d3bf">annotate_inset_layout</code> / <code style="color:#22d3bf">annotate_outline_layout</code> / <code style="color:#22d3bf">annotate_text_path_layout</code> / <code style="color:#22d3bf">annotate_figure_grid_layout</code>: <b>描かずに幾何だけ</b>を <code style="color:#22d3bf">table</code>(dict)で返す。描く op に <code style="color:#22d3bf">layout=</code> で渡せば同じ配置を別の絵に使い回せ、テストは肘・寸法値・角度・バー長・輪郭面積・セル矩形を<b>数字で検算</b>できる。</p>
+<p style="margin:2px 0 2px 12px">• **3-D(<code style="color:#22d3bf">ops3d</code> の <code style="color:#22d3bf">annotate3d</code> カテゴリ、7 op、モジュール <code style="color:#22d3bf">annotate3d.py</code>)** — 3-D のアンカーを <code style="color:#22d3bf">pose</code>(4x4、<code style="color:#22d3bf">render3d.look_at</code>)と <code style="color:#22d3bf">K</code>(<code style="color:#22d3bf">render3d.intrinsics_from_fov</code>)で射影して描く: <code style="color:#22d3bf">annotate3d_project</code>(画素・前方距離・画像内・遮蔽の表)/ <code style="color:#22d3bf">annotate3d_arrow</code> / <code style="color:#22d3bf">annotate3d_label</code>(引き出し線つき文字)/ <code style="color:#22d3bf">annotate3d_scale_bar</code>(メッシュ単位の長さのバーを面上に置いて射影 = <b>短縮を正直に</b>)/ <code style="color:#22d3bf">annotate3d_axes</code>(座標軸 gnomon)/ <code style="color:#22d3bf">annotate3d_bbox</code>(軸平行の箱の 12 辺)/ <code style="color:#22d3bf">annotate3d_measure</code>(2 点の 3-D 距離を値で)。<code style="color:#22d3bf">depth=</code> に <code style="color:#22d3bf">render_mesh</code> の深度を渡すと、<b>隠れたアンカーは破線 + 白抜き印</b>で描かれる(消さない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の契約(fail-closed)</h3>
+<p style="margin:2px 0 2px 12px">• 画像は <code style="color:#22d3bf">(H,W)</code> か <code style="color:#22d3bf">(H,W,C)</code> の float [0,1]。<b>点は (x,y) = (col,row)</b>、矩形は <code style="color:#22d3bf">(x,y,w,h)</code> 左上基準。全 op は入力を破壊せず新しい配列を返し、<b>決定的</b>(乱数・時刻を使わない)。</p>
+<p style="margin:2px 0 2px 12px">• 文字は<b>測ってから描く</b>: 板が画像からはみ出す / 文字が収まらない / 地とのコントラスト不足は <code style="color:#22d3bf">ValueError</code>(黙って切らない・黙って消えない)。</p>
+<p style="margin:2px 0 2px 12px">• 数値引数は <code style="color:#22d3bf">bool</code> / <code style="color:#22d3bf">str</code> を<b>数に変換しない</b>(<code style="color:#22d3bf">width=True</code>、<code style="color:#22d3bf">units_per_pixel=&quot;0.5&quot;</code> は <code style="color:#22d3bf">ValueError</code>)。真偽引数は <code style="color:#22d3bf">&quot;yes&quot;</code> のような文字列を拒否する。</p>
+<p style="margin:2px 0 2px 12px">• 引き出し線は「置き場が無い」を例外にする(<code style="color:#22d3bf">allow_overlap</code> のような黙認は無い)。寸法線は 2 点一致 / <code style="color:#22d3bf">offset=0</code> を拒否。角度は頂点と一致する腕を拒否。輪郭は真の画素が無いマスクを拒否。経路文字は経路より長い文字列を拒否。</p>
+<p style="margin:2px 0 2px 12px">• 3-D: カメラの後ろ(前方距離 ≤ 0)の点、退化した姿勢、3x3 でない <code style="color:#22d3bf">K</code>、画像と形の違う <code style="color:#22d3bf">depth</code> は <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">camera.project_points</code> の +Z 慣習の姿勢を渡すと「後ろ」と判定される(render3d の -Z 慣習に揃えること)。</p>
+<p style="margin:2px 0 2px 12px">• 線は<b>アンチエイリアス</b>(線分までの距離 → 被覆率 → α 合成)。破線は弧長で区切る。文字は Pillow の AA マスク。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン(op の繋がり)</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    M[マスク / 点 / 場] --&gt; L[annotate_*_layout&lt;br/&gt;幾何を table で]
+    L --&gt; D[annotate_leader / dimension / angle /&lt;br/&gt;scale_bar / outline / inset / text_path]
+    F[スカラ場] --&gt; C[annotate_colorbar]
+    D --&gt; P[annotate_panel_label]
+    C --&gt; P
+    P --&gt; G[annotate_figure_grid&lt;br/&gt;一枚の図]
+    V[mesh + pose + K] --&gt; R[render3d.render_mesh&lt;br/&gt;depth]
+    R --&gt; A3[annotate3d_label / arrow / scale_bar /&lt;br/&gt;axes / bbox / measure]
+    A3 --&gt; P</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">2-D: 引き出し線・寸法・角度・スケールバー・輪郭</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import annotate as A
+
+img = np.full((240, 320, 3), 0.15)                       # (H,W,3) float [0,1]
+mask = np.zeros((240, 320), bool); mask[70:150, 70:150] = True
+
+# 幾何を先に決める(table)→ 描く。同じ layout を別の絵にも渡せる
+pts = [(110, 110), (240, 60)]
+lay = A.annotate_leader_layout(img.shape[:2], pts, [&quot;disk&quot;, &quot;bar&quot;], gap=24)
+out = A.annotate_leader(img, pts, [&quot;disk&quot;, &quot;bar&quot;], gap=24, layout=lay)
+assert lay[&quot;items&quot;][0][&quot;elbow&quot;] == (110 + lay[&quot;items&quot;][0][&quot;side&quot;][0] * 24,
+                                    110 + lay[&quot;items&quot;][0][&quot;side&quot;][1] * 24)
+
+out = A.annotate_dimension(out, (60, 200), (160, 200), 0.4, &quot;mm&quot;, offset=-24)   # 40.0 mm
+out = A.annotate_angle(out, (260, 150), (210, 150), (210, 100), radius=30)      # 90.0°
+sb = A.annotate_scale_bar_layout(img.shape[:2], 0.4, &quot;mm&quot;, corner=&quot;rb&quot;)          # 切りのよい長さ
+out = A.annotate_scale_bar(out, 0.4, &quot;mm&quot;, corner=&quot;rb&quot;, layout=sb)
+out = A.annotate_outline(out, mask, label=&quot;ROI&quot;)                                 # 輪郭 + 重心ラベル
+out = A.annotate_markers(out, [(80, 40), (280, 200)], start=1)
+out = A.annotate_legend(out, [&quot;defect&quot;, &quot;reference&quot;], (310, 230), anchor=&quot;rb&quot;, start=1)
+out = A.annotate_panel_label(out, &quot;a&quot;)
+print(sb[&quot;length&quot;], sb[&quot;px&quot;], A.annotate_outline_layout(mask)[&quot;area&quot;])</pre>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">2-D: 図の組版</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import annotate as A
+
+panels = [np.full((120, 160, 3), v) for v in (0.3, 0.5, 0.7)]
+lay = A.annotate_figure_grid_layout([p.shape[:2] for p in panels], ncols=2, pad=12, caption_h=30)
+fig = A.annotate_figure_grid(panels, [&quot;before&quot;, &quot;after&quot;, &quot;difference&quot;], ncols=2, pad=12, caption_h=30)
+assert fig.shape[:2] == lay[&quot;size&quot;]           # 大きさは閉形式
+assert lay[&quot;letters&quot;] == [&quot;(a)&quot;, &quot;(b)&quot;, &quot;(c)&quot;]</pre>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">3-D: レンダリングの上に射影して描く</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import annotate3d as T
+import render3d
+
+K = render3d.intrinsics_from_fov(45.0, 320, 240)
+pose = render3d.look_at((0.0, 0.0, 10.0), (0.0, 0.0, 0.0), up=(0.0, 1.0, 0.0))
+img = np.full((240, 320, 3), 0.2)
+out = T.annotate3d_axes(img, pose, K, length=1.0)
+out = T.annotate3d_bbox(out, ((-1, -1, -1), (1, 1, 1)), pose, K)
+out = T.annotate3d_label(out, &quot;apex&quot;, (0.0, 1.0, 0.0), pose, K, offset=(30, -26))
+out = T.annotate3d_scale_bar(out, (-1.0, -2.0, 0.0), (1, 0, 0), 2.0, pose, K, unit=&quot;mm&quot;)
+out = T.annotate3d_measure(out, (-1.0, 0.0, 0.0), (1.0, 0.0, 0.0), pose, K, unit=&quot;mm&quot;)
+
+tab = T.annotate3d_project([(1.0, 2.0, 0.0)], pose, K, shape=(240, 320))
+f, cx, cy = K[0, 0], K[0, 2], K[1, 2]
+assert np.allclose(tab[&quot;uv&quot;][0], (f * 1.0 / 10 + cx, cy - f * 2.0 / 10), atol=1e-9)
+# render_mesh(...)[&quot;depth&quot;] を depth= に渡すと tab[&quot;hidden&quot;] が立ち、ラベルは破線になる</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">台帳での呼び方</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import opsannotate, ops3d
+opsannotate.list_ops(&quot;paper&quot;)                  # 21 op
+opsannotate.call(&quot;annotate_scale_bar_layout&quot;, (240, 320), 0.4, &quot;mm&quot;)
+ops3d.list_ops(&quot;annotate3d&quot;)                   # 7 op</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">正直な限界</h3>
+<p style="margin:2px 0 2px 12px">• 引き出し線の衝突回避は<b>貪欲</b>(固定順の候補を先着で埋める)で、最適配置(全体の交差最小化)ではない。候補が尽きれば例外。</p>
+<p style="margin:2px 0 2px 12px">• 線の AA は距離被覆率の近似(端点は丸い)。<code style="color:#22d3bf">imagedraw</code> の 1 画素線(非 AA)と混在させると太さの見えが違う。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">annotate_text_path</code> は 1 文字ずつ回転して置くので、カーニングは無く、急カーブでは字間が開く。</p>
+<p style="margin:2px 0 2px 12px">• 遮蔽判定は<b>アンカー 1 画素の深度比較</b>(<code style="color:#22d3bf">occlusion_tol</code> の相対許容)。線が途中で面の裏に入る場合は「両端が隠れたときだけ破線」で、部分遮蔽は表現しない。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">annotate3d_scale_bar</code> は線分の射影であり、面の傾きで縮む。<b>画素長から長さを読み取る図ではない</b>(値は文字で示す)。像面に平行に置きたいときは <code style="color:#22d3bf">direction</code> を視線に直交させること。</p>
+<p style="margin:2px 0 2px 12px">• 例: 2-D は <code style="color:#22d3bf">examples/paper_figure.py</code>、3-D は <code style="color:#22d3bf">examples_3d/annotate3d_figure.py</code>(どちらも閉形式との一致を assert する)。</p>

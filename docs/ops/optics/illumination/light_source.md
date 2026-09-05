@@ -7,12 +7,12 @@ out: table
 examples: [illumination_design_demo, virtual_machine_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # light_source — OPTICS `illumination` op
 
-- **データ種**: `` → `table`
+- **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import illumdesign; illumdesign.light_source(kind='ring', radius_mm=60.0, height_mm=100.0, n=24, tilt_deg=None, length_mm=100.0, intensity=1.0, cos_exponent=1.0, position=None, emitters=None, directions=None)` (または `opsoptics.get("light_source")`)
 
 ## 使い方

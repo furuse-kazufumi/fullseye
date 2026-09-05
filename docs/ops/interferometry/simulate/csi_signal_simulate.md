@@ -7,12 +7,12 @@ out: sweep
 examples: [coherence_scanning]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # csi_signal_simulate — INTERFEROMETRY `simulate` op
 
-- **データ種**: `` → `sweep`
+- **データ種**: `なし` → `sweep`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import interferometry; interferometry.csi_signal_simulate(surface_um=6.0, z_start_um=0.0, z_step_um=0.05, n_planes=241, wavelength_um=0.6, envelope_fwhm_um=2.8, envelope_sigma_um=None, bias=0.5, amplitude=0.4, reflectivity=1.0, noise=0.0, seed=0)` (または `opsinterferometry.get("csi_signal_simulate")`)
 
 ## 使い方

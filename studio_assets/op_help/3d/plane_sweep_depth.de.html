@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">plane_sweep_depth — 3D <code style="color:#22d3bf">plane_sweep_stereo</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">depth</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import plane_sweep; plane_sweep.plane_sweep_depth(img_ref: &#x27;np.ndarray&#x27;, img_src: &#x27;np.ndarray&#x27;, K: &#x27;np.ndarray&#x27;, R: &#x27;np.ndarray&#x27;, t: &#x27;np.ndarray&#x27;, depth_candidates, window: &#x27;int&#x27; = 1, normal=(0.0, 0.0, 1.0)) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;plane_sweep_depth&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>plane-sweep stereo で密な深度マップを推定。→ (H,W) depth。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:plane_sweep_depth">plane_sweep_depth</a> — <code style="color:#22d3bf">py -3.11 examples_3d/plane_sweep_depth.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">depth</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="op3d:depth_to_points">depth_to_points</a> · <a style="color:#22d3bf" href="op3d:tsdf_from_depth">tsdf_from_depth</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:depth_to_organized_points">depth_to_organized_points</a> · <a style="color:#22d3bf" href="op3d:normals_from_depth">normals_from_depth</a> · <a style="color:#22d3bf" href="op3d:occlusion_edges">occlusion_edges</a> · <a style="color:#22d3bf" href="op3d:bearing_angle_image">bearing_angle_image</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">plane_sweep_stereo</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:warp_by_plane">warp_by_plane</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: plane_sweep.py — 3D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

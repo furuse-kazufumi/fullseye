@@ -7,12 +7,12 @@ out: table
 examples: [paper_figure]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # annotate_scale_bar_layout — ANNOTATE `paper` op
 
-- **データ種**: `` → `table`
+- **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import annotate; annotate.annotate_scale_bar_layout(shape, units_per_pixel, unit='µm', corner='rb', target_fraction=0.2, margin=14, thickness=5)` (または `opsannotate.get("annotate_scale_bar_layout")`)
 
 ## 使い方

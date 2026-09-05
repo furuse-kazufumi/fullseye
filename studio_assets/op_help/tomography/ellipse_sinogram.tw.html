@@ -1,0 +1,48 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ellipse_sinogram — TOMOGRAPHY <code style="color:#22d3bf">forward</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">sinogram</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import tomography; tomography.ellipse_sinogram(size=256, ellipses=None, angles_deg=None, n_detectors=None)</code>(或 <code style="color:#22d3bf">opstomography.get(&quot;ellipse_sinogram&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>The <b>closed-form</b> Radon transform of a sum of uniform ellipses.</p>
+<p>The ground truth this module is tested against, and a usable operator in its</p>
+<p>own right: a sinogram with no discretisation error to feed a reconstruction,</p>
+<p>so that any error in the picture belongs to the reconstruction and not to the</p>
+<p>projector.</p>
+<p>For one ellipse with centre `<code style="color:#22d3bf">(x0, y0)</code><code style="color:#22d3bf">, semi-axes </code><code style="color:#22d3bf">(a, b)</code>`, rotation</p>
+<p>`<code style="color:#22d3bf">phi</code><code style="color:#22d3bf"> and density </code><code style="color:#22d3bf">rho</code><code style="color:#22d3bf">, the line integral along </code>`x cos(t) + y sin(t) =</p>
+<p>s`` is::</p>
+<p>A(t)^2 = a^2 cos^2(t - phi) + b^2 sin^2(t - phi)</p>
+<p>s&#x27;     = s - (x0 cos t + y0 sin t)</p>
+<p>p      = 2 rho a b sqrt(A^2 - s&#x27;^2) / A^2      for |s&#x27;| &lt; A,  else 0</p>
+<p>which for a disc (`<code style="color:#22d3bf">a = b = r</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">rho = 1</code>`) collapses to the chord length</p>
+<p>`<code style="color:#22d3bf">2 sqrt(r^2 - s^2)</code>`. Densities add, so a sum of ellipses projects to a sum</p>
+<p>of these.</p>
+<p>The result is in the <b>same pixel units</b> as :func:<code style="color:#22d3bf">radon_transform</code> applied</p>
+<p>to :func:<code style="color:#22d3bf">ellipse_phantom</code> at the same *size*: the normalised half-width is</p>
+<p>`<code style="color:#22d3bf">size/2</code>` pixels, and a line integral scales with length, so the closed form</p>
+<p>is multiplied by `<code style="color:#22d3bf">size/2</code>`. Getting that factor wrong is invisible in the</p>
+<p>picture — a sinogram has no absolute scale — and shows up only as a</p>
+<p>reconstruction whose density is off by a constant, which is why it is pinned</p>
+<p>by a test rather than by a comment.</p>
+<p>:param size: the pixel grid the units refer to (as in :func:<code style="color:#22d3bf">ellipse_phantom</code>).</p>
+<p>:param ellipses: as :func:<code style="color:#22d3bf">ellipse_phantom</code>; `<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> -&gt; :data:</code>SHEPP_LOGAN`.</p>
+<p>:param angles_deg: view angles; `<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> -&gt; </code>`linspace(0, 180, 180,</p>
+<p>endpoint=False)``.</p>
+<p>:param n_detectors: detector bins; `<code style="color:#22d3bf">None</code>` -&gt; enough to cover the diagonal.</p>
+<p>:returns: `<code style="color:#22d3bf">(n_angles, n_detectors)</code>` float64 sinogram.</p>
+<p>:raises ValueError: on a degenerate ellipse or a sinogram over</p>
+<p>:data:<code style="color:#22d3bf">MAX_SINOGRAM_ELEMENTS</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:ct_reconstruction">ct_reconstruction</a> — <code style="color:#22d3bf">py -3.11 examples/ct_reconstruction.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">sinogram</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="optomography:backproject_sinogram">backproject_sinogram</a> · <a style="color:#22d3bf" href="optomography:filtered_backprojection">filtered_backprojection</a> · <a style="color:#22d3bf" href="optomography:sart_reconstruct">sart_reconstruct</a> · <a style="color:#22d3bf" href="optomography:beam_hardening_apply">beam_hardening_apply</a> · <a style="color:#22d3bf" href="optomography:beam_hardening_correct">beam_hardening_correct</a> · <a style="color:#22d3bf" href="optomography:ring_artifact_apply">ring_artifact_apply</a> · <a style="color:#22d3bf" href="optomography:ring_artifact_remove">ring_artifact_remove</a> · <a style="color:#22d3bf" href="optomography:metal_trace_interpolate">metal_trace_interpolate</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">forward</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:ellipse_phantom">ellipse_phantom</a> · <a style="color:#22d3bf" href="optomography:radon_transform">radon_transform</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tomography.py — TOMOGRAPHY 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

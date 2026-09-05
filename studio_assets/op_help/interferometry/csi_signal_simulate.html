@@ -1,6 +1,6 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">csi_signal_simulate — INTERFEROMETRY <code style="color:#22d3bf">simulate</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>sweep`</p>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">sweep</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import interferometry; interferometry.csi_signal_simulate(surface_um=6.0, z_start_um=0.0, z_step_um=0.05, n_planes=241, wavelength_um=0.6, envelope_fwhm_um=2.8, envelope_sigma_um=None, bias=0.5, amplitude=0.4, reflectivity=1.0, noise=0.0, seed=0)</code> (または <code style="color:#22d3bf">opsinterferometry.get(&quot;csi_signal_simulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Synthesise the z-scan interferogram of one pixel over a known surface height.</p>

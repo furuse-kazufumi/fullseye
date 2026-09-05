@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">temporal_bandpass — MOTIONMAG <code style="color:#22d3bf">temporal</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import motionmag; motionmag.temporal_bandpass(video, f_lo, f_hi, fps) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsmotionmag.get(&quot;temporal_bandpass&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Ideal temporal band-pass of every pixel&#x27;s time series -&gt; `<code style="color:#22d3bf">(T, H, W)</code>`.</p>
+<p>Each pixel is transformed along time, every DFT bin whose frequency lies</p>
+<p>outside `<code style="color:#22d3bf">[f_lo, f_hi]</code>` (in Hz, magnitude, DC always excluded) is zeroed,</p>
+<p>and the result is transformed back. Frequency-selective where</p>
+<p>`<code style="color:#22d3bf">videops.moving_average</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">videops.spatiotemporal_gaussian</code>` are</p>
+<p>low-pass; this is the filter isolating &quot;what is happening at 4 Hz&quot;.</p>
+<p>Exact for a component sitting on a bin: with `<code style="color:#22d3bf">T</code><code style="color:#22d3bf"> frames at </code><code style="color:#22d3bf">fps</code>`, a</p>
+<p>sinusoid at `<code style="color:#22d3bf">k*fps/T</code>` Hz passes with gain 1 and everything else in the band</p>
+<p>passes untouched. Measured on a bin-centred 4 Hz unit sinusoid in a 64-frame</p>
+<p>32 fps clip that also carries a DC offset of 0.5 and a 12 Hz component of</p>
+<p>amplitude 0.3, the recovered waveform matches the 4 Hz term alone to</p>
+<p>`<code style="color:#22d3bf">max|err| = 4.36e-15</code>`.</p>
+<p>A brick-wall filter rings in time; that is the price of an exact pass-band</p>
+<p>and it is the same choice the 2012 Eulerian magnification paper makes. The</p>
+<p>output is zero-mean along time by construction.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemotionmag:motion_magnification">motion_magnification 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:motion_magnification">motion_magnification</a> — <code style="color:#22d3bf">py -3.11 examples/motion_magnification.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">video</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opmotionmag:temporal_band_power">temporal_band_power</a> · <a style="color:#22d3bf" href="opmotionmag:band_snr">band_snr</a> · <a style="color:#22d3bf" href="opmotionmag:motion_magnify">motion_magnify</a> · <a style="color:#22d3bf" href="opmotionmag:phase_displacement">phase_displacement</a> · <a style="color:#22d3bf" href="opmotionmag:displacement_series">displacement_series</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">temporal</code>)</h3>
+<p><a style="color:#22d3bf" href="opmotionmag:temporal_band_power">temporal_band_power</a> · <a style="color:#22d3bf" href="opmotionmag:band_snr">band_snr</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: motionmag.py — MOTIONMAG 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -7,12 +7,12 @@ out: pairs
 examples: [optics_imaging]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # relative_illumination — OPTICS `geometric` op
 
-- **データ種**: `` → `pairs`
+- **データ種**: `なし` → `pairs`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import optics; optics.relative_illumination(half_angle_deg=20.0, samples=64, exponent=4.0)` (または `opsoptics.get("relative_illumination")`)
 
 ## 使い方

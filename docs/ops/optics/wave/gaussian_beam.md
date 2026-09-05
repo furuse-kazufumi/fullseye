@@ -7,12 +7,12 @@ out: table
 examples: [optics_imaging]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # gaussian_beam — OPTICS `wave` op
 
-- **データ種**: `` → `table`
+- **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import optics; optics.gaussian_beam(waist_um=100.0, wavelength_um=1.064, distance_mm=0.0, n_medium=1.0)` (または `opsoptics.get("gaussian_beam")`)
 
 ## 使い方

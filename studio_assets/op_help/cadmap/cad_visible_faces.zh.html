@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cad_visible_faces — CADMAP <code style="color:#22d3bf">visibility</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">indices</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import cadmap; cadmap.cad_visible_faces(mesh, K=None, R=None, t=None, width=64, height=64, cull_backfaces=True, strict=True)</code>(或 <code style="color:#22d3bf">opscadmap.get(&quot;cad_visible_faces&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>このカメラから<b>実際に見えている</b>面の ID(昇順、`<code style="color:#22d3bf">indices</code>` sort)。</p>
+<p>画像格子(`<code style="color:#22d3bf">width</code><code style="color:#22d3bf"> x </code><code style="color:#22d3bf">height</code>`、画素中心は整数座標)へ光線を撃ち、最も</p>
+<p>手前に来た面を集める。裏面(法線がカメラを向いていない)と、手前の面に</p>
+<p>完全に隠れた面は入らない。検査カバレッジ — 「この視点で CAD のどの面を</p>
+<p>見たことになるか」— をそのまま返す量で、`<code style="color:#22d3bf">mesh_area</code>` と組み合わせれば</p>
+<p>「未検査の面積」が出る。</p>
+<p>格子の分解能より小さく写る面は取りこぼす(標本化なので当然)。**取りこぼし</p>
+<p>を「隠れている」と言い換えない**ために、返るのは「見えた面」であって</p>
+<p>「見えない面の補集合」ではない。</p>
+<p>★ここだけ `<code style="color:#22d3bf">strict</code><code style="color:#22d3bf"> の既定が </code><code style="color:#22d3bf">True</code><code style="color:#22d3bf">(他の 3 つは </code><code style="color:#22d3bf">False</code>`)。返りが素の</p>
+<p>添字配列なので、<b>巻きを直したという事実を載せる先が無い</b>からで、</p>
+<p>「黙って直す」を避けるにはここは拒否するしかない。`<code style="color:#22d3bf">cull_backfaces=True</code>`</p>
+<p>のまま内向きの閉メッシュを渡すと `<code style="color:#22d3bf">ValueError</code>` になる。自動修正が欲しい</p>
+<p>ときは `<code style="color:#22d3bf">strict=False</code>` を<b>呼び出し側で明示</b>すること — そのときは利用者が</p>
+<p>修正を要求したのだから、返り値に載らなくても黙ってはいない。</p>
+<p>`<code style="color:#22d3bf">cull_backfaces=False</code>` なら巻き方向は結果に効かないので検査もしない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:defect_to_cad">defect_to_cad</a> — <code style="color:#22d3bf">py -3.11 examples/defect_to_cad.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">indices</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">visibility</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cadmap.py — CADMAP 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

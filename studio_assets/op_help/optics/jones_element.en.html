@@ -1,0 +1,57 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">jones_element — OPTICS <code style="color:#22d3bf">polarization</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">cimage</code> (an op determined by its arguments alone — it takes no image or data input)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import optics; optics.jones_element(kind=&#x27;polarizer&#x27;, angle_deg=0.0, retardance_deg=90.0)</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;jones_element&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>A 2x2 complex Jones matrix for one polarisation element.</p>
+<p>*kind* is one of :data:<code style="color:#22d3bf">JONES_KINDS</code>:</p>
+<p>`<code style="color:#22d3bf">&quot;polarizer&quot;</code>` ideal linear polariser, transmission axis at *angle_deg*</p>
+<p>from x · `<code style="color:#22d3bf">&quot;retarder&quot;</code>` linear retarder, fast axis at *angle_deg*,</p>
+<p>retardance *retardance_deg* · `<code style="color:#22d3bf">&quot;quarter_wave&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;half_wave&quot;</code>`</p>
+<p>retarders with the retardance fixed at 90 / 180 degrees (*retardance_deg*</p>
+<p>is then <b>ignored</b> — stated here so a caller who passes one is not left</p>
+<p>wondering) · `<code style="color:#22d3bf">&quot;rotator&quot;</code>` optical rotator turning the polarisation by</p>
+<p>*angle_deg*.</p>
+<p>The retarder is written symmetrically, `<code style="color:#22d3bf">diag(exp(-i*d/2), exp(+i*d/2))</code>`</p>
+<p>before rotation, so it introduces no common phase — the fast axis leads.</p>
+<p>Elements are built as `<code style="color:#22d3bf">R(+a) @ J0 @ R(-a)</code>`.</p>
+<p>Returns a `<code style="color:#22d3bf">(2, 2)</code>` complex128 matrix acting on a Jones vector</p>
+<p>`<code style="color:#22d3bf">[Ex, Ey]</code><code style="color:#22d3bf">; compose a train with </code><code style="color:#22d3bf">J_total = J_last @ ... @ J_first</code>` and</p>
+<p>apply it with :func:<code style="color:#22d3bf">jones_apply</code>.</p>
+<p>Ground truth it reproduces exactly (machine precision): two crossed ideal</p>
+<p>polarisers multiply to the zero matrix; a polariser is idempotent</p>
+<p>(`<code style="color:#22d3bf">P @ P == P</code>`); a half-wave plate is an involution up to a global phase</p>
+<p>(`<code style="color:#22d3bf">H @ H == -I</code>` in this symmetric convention); a quarter-wave plate at 45</p>
+<p>degrees turns horizontal linear light into circular (`<code style="color:#22d3bf">|S3| == 1</code>`); the</p>
+<p>Malus law `<code style="color:#22d3bf">cos^2(theta)</code>` falls out of two polarisers at relative angle</p>
+<p>theta.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: an unknown *kind* (the message lists the valid</p>
+<p>ones); non-finite *angle_deg* or *retardance_deg*.</p>
+<p>Ideal, lossless, normal-incidence elements. A real polariser has a finite</p>
+<p>extinction ratio and a real waveplate is chromatic; neither is modelled, and</p>
+<p>neither is silently approximated. Jones algebra can only carry **fully</p>
+<p>polarised** light — for partial polarisation use :func:<code style="color:#22d3bf">mueller_element</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
+<p>Every optics op validates its input before computing (nothing slips through silently):</p>
+<p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>
+<p style="margin:2px 0 2px 12px">• **Strings raise <code style="color:#22d3bf">ValueError</code>** — <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> succeeds, so an unparsed configuration value would slip through as a length (measured: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> returned a plausible 66.667 mm). bool is refused too, as the implicit promotion <code style="color:#22d3bf">True == 1</code>.</p>
+<p style="margin:2px 0 2px 12px">• **complex / masked arrays raise <code style="color:#22d3bf">ValueError</code><b> (real-valued slots only; silently dropping the imaginary part or peeling off the mask is refused). </b>NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input.**</p>
+<p style="margin:2px 0 2px 12px">• <b>Division by zero and its relatives are refused by name</b>: focal length 0, radius of curvature 0, refractive index &lt;= 0, a fully opaque aperture (all zeros, so the normalisation is 0/0), a PSF whose sum is &lt;= 0, a Stokes vector with S0 = 0, and an object sitting at the front focal point (the image is at infinity).</p>
+<p style="margin:2px 0 2px 12px">• <b>Only two ops return a non-finite value, and both state it as a contract</b>: <code style="color:#22d3bf">depth_of_field</code> returns <code style="color:#22d3bf">far_mm = inf</code> beyond the hyperfocal distance (that is what the hyperfocal distance means), and <code style="color:#22d3bf">gaussian_beam</code> returns <code style="color:#22d3bf">wavefront_radius_mm = inf</code> at the waist (the radius of curvature of a plane wavefront). Both also return a finite companion (<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>). **Any other silent NaN/Inf is detected internally and raises <code style="color:#22d3bf">ValueError</code>** — &quot;float64 overflowed&quot; and &quot;the answer is infinite&quot; are different claims, so the first is never returned wearing the face of the second.</p>
+<p style="margin:2px 0 2px 12px">• <b>Size caps</b>: generated grids are capped by <code style="color:#22d3bf">optics.MAX_GRID</code> (4096); supplied fields/PSFs/apertures by <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code> (2^24); ABCD element chains by <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code> (1024); Zernike by <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code> (512) / <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code> (40) / <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code> (2^25). This closes, fail-closed, the paths where a small argument triggers a huge internal allocation (measured: n_max=40 × 4096² needs 108 GB).</p>
+<p style="margin:2px 0 2px 12px">• <b>Physically impossible states are refused too</b>: a Stokes vector with degree of polarisation &gt; 1, negative transmittance, negative intensity, and invalid Zernike indices such as n-|m| odd.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:optics_imaging">optics_imaging</a> — <code style="color:#22d3bf">py -3.11 examples/optics_imaging.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">cimage</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opoptics:angular_spectrum_propagate">angular_spectrum_propagate</a> · <a style="color:#22d3bf" href="opoptics:jones_apply">jones_apply</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">polarization</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:jones_apply">jones_apply</a> · <a style="color:#22d3bf" href="opoptics:stokes_from_jones">stokes_from_jones</a> · <a style="color:#22d3bf" href="opoptics:mueller_element">mueller_element</a> · <a style="color:#22d3bf" href="opoptics:mueller_apply">mueller_apply</a> · <a style="color:#22d3bf" href="opoptics:stokes_analyze">stokes_analyze</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: optics.py — OPTICS operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

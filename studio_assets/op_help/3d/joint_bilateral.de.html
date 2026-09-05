@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">joint_bilateral — 3D <code style="color:#22d3bf">depth_denoise</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">depth × image2d</code> → <code style="color:#22d3bf">depth</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import depth_bilateral; depth_bilateral.joint_bilateral(depth: &#x27;np.ndarray&#x27;, guide: &#x27;np.ndarray&#x27;, spatial_sigma: &#x27;float&#x27;, range_sigma: &#x27;float&#x27;, *, invalid: &#x27;float | None&#x27; = 0.0, truncate: &#x27;float&#x27; = 3.0) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;joint_bilateral&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>joint / cross bilateral: 平滑対象は depth、range 重みは guide の差で作る。→ float64 (H,W)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:sensor_seg">sensor_seg</a> — <code style="color:#22d3bf">py -3.11 examples_3d/sensor_seg.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">depth</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="op3d:depth_to_points">depth_to_points</a> · <a style="color:#22d3bf" href="op3d:tsdf_from_depth">tsdf_from_depth</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:depth_to_organized_points">depth_to_organized_points</a> · <a style="color:#22d3bf" href="op3d:normals_from_depth">normals_from_depth</a> · <a style="color:#22d3bf" href="op3d:occlusion_edges">occlusion_edges</a> · <a style="color:#22d3bf" href="op3d:bearing_angle_image">bearing_angle_image</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">depth_denoise</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:bilateral_filter_depth">bilateral_filter_depth</a> · <a style="color:#22d3bf" href="op3d:fill_holes">fill_holes</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: depth_bilateral.py — 3D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

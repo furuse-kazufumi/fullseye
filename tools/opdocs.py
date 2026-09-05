@@ -35,8 +35,10 @@ are NOT overwritten by ``md``. They come in two kinds (see :func:`knowledge_guid
 from __future__ import annotations
 
 import glob
+import hashlib
 import html as _html
 import inspect
+import json
 import os
 import re
 import sys
@@ -225,6 +227,153 @@ _AUTHOR = "Kazufumi Furuse"
 _LICENSE = "Apache-2.0"
 _COPYRIGHT = f"© 2026 {_AUTHOR} — Fullseye operator documentation. Licensed under {_LICENSE}."
 
+
+# ------------------------------------------------------------------ #
+# i18n —— ヘルプの「枠」の対訳
+# ------------------------------------------------------------------ #
+#: 出力する言語。``ja`` が**原文**(ベース言語)で、残りは対訳表からの差し替え。
+#: 半導体サプライチェーンの主要国を見て選んだ: 台湾(繁体字)・韓国・ドイツ。
+#: 追加は :data:`I18N_PATH` に 1 列足すだけ ―― 生成器のコード変更は要らない。
+LANGS = ("ja", "en", "zh", "tw", "ko", "de")
+
+#: 言語コード -> 自称表記(切替リンクに出す。英語名ではなく**その言語での名前**)。
+LANG_NAMES = {"ja": "日本語", "en": "English", "zh": "简体中文",
+              "tw": "繁體中文", "ko": "한국어", "de": "Deutsch"}
+
+#: 標準の言語タグ(BCP 47)-> 上のコード。ファイル名を 2 文字でそろえたいので
+#: 台湾は ``tw`` にしてあるが、``tw`` は本来 ISO 639-1 で Twi 語の記号なので、
+#: OS/ブラウザのロケールから引くときはこの表を通す(``zh-Hant`` も同じ行き先)。
+LANG_ALIASES = {"zh-tw": "tw", "zh-hant": "tw", "zh-hant-tw": "tw", "zh-hk": "tw",
+                "zh-cn": "zh", "zh-hans": "zh", "ja-jp": "ja", "en-us": "en",
+                "en-gb": "en", "ko-kr": "ko", "de-de": "de", "de-at": "de",
+                "de-ch": "de"}
+
+
+def normalize_lang(tag):
+    """``zh-TW`` / ``zh-Hant`` のような標準タグを :data:`LANGS` のコードへ。
+
+    未知のタグは主部分(``de-LU`` -> ``de``)で引き直し、それも無ければ ``en``。
+    """
+    t = (tag or "").strip().replace("_", "-").lower()
+    if t in LANG_ALIASES:
+        return LANG_ALIASES[t]
+    if t in LANGS:
+        return t
+    head = t.split("-")[0]
+    return head if head in LANGS else "en"
+
+#: 枠の対訳表。**原文(日本語)がキー**で、値が言語コード -> 訳。studio.py の
+#: :func:`tr` と同じ規約(ベース言語をキーにする)なので、翻訳者はキーを発明せずに
+#: 済み、原文を変えれば「訳が古い」ことが未訳として即座に見える。
+I18N_PATH = os.path.join(_ROOT, "docs", "i18n", "opdocs.json")
+
+#: op 要約(docstring 1 行目)の対訳表。こちらは原文が長く数も多いので
+#: ``<dim>/<op>`` をキーにし、原文の指紋 ``fp`` を併記する。**指紋が合わない訳は
+#: 出さない**(原文が変わったのに訳が古いまま、が一番たちが悪い ――
+#: :func:`op_summary_stale` が数える)。
+SUMMARY_I18N_PATH = os.path.join(_ROOT, "docs", "i18n", "op_summary.json")
+
+_I18N = None
+_SUMMARY_I18N = None
+
+#: :func:`T` が実際に引いた原文。対訳表の**過不足**をテストで突き合わせるための実測。
+SEEN_STRINGS = set()
+
+
+def _load_json(path, key):
+    try:
+        with open(path, encoding="utf-8") as f:
+            return json.load(f).get(key, {}) or {}
+    except Exception:                                    # noqa: BLE001 — 訳が無くても原文で出す
+        return {}
+
+
+def _i18n():
+    global _I18N
+    if _I18N is None:
+        _I18N = _load_json(I18N_PATH, "strings")
+    return _I18N
+
+
+def summary_i18n():
+    global _SUMMARY_I18N
+    if _SUMMARY_I18N is None:
+        _SUMMARY_I18N = _load_json(SUMMARY_I18N_PATH, "summaries")
+    return _SUMMARY_I18N
+
+
+def T(s, lang="ja"):
+    """生成文書の固定文言を ``lang`` へ。**原文(日本語)がキー**。
+
+    未訳・未知の言語は**原文のまま**返す(壊れた訳より原文 —— studio.py の
+    :func:`tr` と同じ規約)。黙って原文に落ちると「訳したつもり」になるので、
+    引いた原文は :data:`SEEN_STRINGS` に記録し、テストが表と突き合わせる。
+    """
+    SEEN_STRINGS.add(s)
+    if lang == "ja" or not s:
+        return s
+    return (_i18n().get(s) or {}).get(lang) or s
+
+
+def fingerprint(text: str) -> str:
+    """原文の指紋(先頭 12 桁)。訳が原文に追随しているかの判定にだけ使う。"""
+    return hashlib.sha256(text.strip().encode("utf-8")).hexdigest()[:12]
+
+
+_CJK = re.compile(r"[぀-ヿ㐀-鿿＀-￯]")
+
+
+def has_japanese(text) -> bool:
+    """かな・漢字・全角記号を含むか(= 英語話者がそのままでは読めない散文か)。"""
+    return bool(_CJK.search(text or ""))
+
+
+def summary_and_rest(doc):
+    """docstring を **先頭段落** と残りに割る。``(summary, rest)``。
+
+    以前は「先頭の 1 行」を要約にしていたが、折り返した docstring では
+    935 本のうち **35 本が文の途中で切れていた**(``…enclosed by a contour, from``)。
+    切れた断片は訳しようがなく、訳してもそこだけ意味が通らない。段落で切っても
+    総量はほぼ変わらない(実測 51,975 → 52,577 字)ので、段落を単位にする。
+    """
+    doc = (doc or "").strip()
+    if not doc:
+        return "", ""
+    head, _, tail = doc.partition("\n\n")
+    return " ".join(l.strip() for l in head.strip().split("\n")), tail.strip()
+
+
+def op_summary(rec, lang):
+    """op 要約(先頭段落)の訳。``(text, in_readers_language)``。
+
+    docstring は**もともと英語のものが混じっている**(2-D の 94 本のうち 30 本ほど)。
+    それを英語の読者に出すとき「まだ訳がありません」と断るのは嘘なので、日本語を
+    含まない原文は英語版では**訳済みとして扱う**(英語がこのリポジトリのベース言語)。
+    """
+    src = summary_and_rest(rec.get("doc"))[0]
+    if not src or lang == "ja":
+        return src, True
+    if lang == "en" and not has_japanese(src):
+        return src, True                                 # もともと英語 —— 訳す物が無い
+    ent = summary_i18n().get("%s/%s" % (rec["dim"], rec["name"])) or {}
+    if ent.get("fp") != fingerprint(src):
+        return src, False                                # 原文が変わった → 古い訳は出さない
+    tr = (ent.get(lang) or "").strip()
+    return (tr, True) if tr else (src, False)
+
+
+def op_summary_stale():
+    """指紋が現行の原文と合わない要約訳のキー(= 出せない訳)を列挙する。"""
+    recs, _, _, _ = _records()
+    live = {"%s/%s" % (r["dim"], r["name"]):
+            fingerprint(summary_and_rest(r.get("doc"))[0])
+            for r in recs if (r.get("doc") or "").strip()}
+    bad = []
+    for k, ent in summary_i18n().items():
+        if live.get(k) != ent.get("fp"):
+            bad.append(k)
+    return sorted(bad)
+
 # ------------------------------------------------------------------ #
 # registry access
 # ------------------------------------------------------------------ #
@@ -374,7 +523,13 @@ def _rel(from_file: str, to_file: str) -> str:
     return r
 
 
-def _op_md(rec, path, by_name):
+def _op_md(rec, path, by_name, lang="ja"):
+    """1 op 分のノート(Markdown)。``lang`` は**枠**の言語。
+
+    枠(見出し・ラベル・契約の説明)は :func:`T` の対訳表で差し替わる。本文の散文
+    (op の docstring)は原文が日本語で、要約 1 行だけ :func:`op_summary` の表を持つ
+    —— 訳が無い部分は**訳したふりをせず**、その旨を明示した 1 行を添えて原文を出す。
+    """
     dim, name, cat = rec["dim"], rec["name"], rec["category"]
     ins, out = rec["in"], rec["out"]
     lines = []
@@ -397,90 +552,113 @@ def _op_md(rec, path, by_name):
     lines.append("")
     lines.append(f"# {name} — {dim.upper()} `{cat}` op")
     lines.append("")
-    lines.append(f"- **データ種**: `{ins}` → `{out}`")
+    # 入力ソートが空の op が 82 個ある —— **引数だけで動く** op(`thin_lens(focal_mm=…)`
+    # のように画像やデータを取らない)。空のまま流すと `` → `table` という中身の無い
+    # コードスパンになり、「型が抜けている」のか「入力が無い」のかが読み手に区別
+    # できない(2026-09-05 に 5 言語へ複製する直前に発見)。名指しで書く。
+    if str(ins).strip():
+        lines.append(T('- **データ種**: `{a0}` → `{a1}`', lang).format(a0=ins, a1=out))
+    else:
+        lines.append(T('- **データ種**: `{a0}` → `{a1}`(引数だけで決まる op —— '
+                       '画像やデータの入力を取らない)', lang)
+                     .format(a0=T("なし", lang), a1=out))
     if dim == "2d":
-        lines.append(f'- **呼び出し**: `fullseye.apply(img, "{name}", a=0.5, b=0.5)` '
-                     "(2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)")
+        lines.append(T('- **呼び出し**: `fullseye.apply(img, "{a0}", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)', lang).format(a0=name))
     else:
         reg_mod = ({"3d": "ops3d"}.get(dim)
                    or (LEDGER_DIMS[dim]["registry"] if dim in LEDGER_DIMS
                        else rec["module"]))
-        lines.append(f"- **呼び出し**: `import {rec['module']}; {rec['module']}.{name}{rec['sig']}` "
-                     f'(または `{reg_mod}.get("{name}")`)')
+        lines.append(T('- **呼び出し**: `import {a0}; {a1}.{a2}{a3}` (または `{a4}.get("{a5}")`)', lang).format(a0=rec['module'], a1=rec['module'], a2=name, a3=rec['sig'], a4=reg_mod, a5=name))
     if rec["halcon"]:
-        lines.append(f"- **HALCON 相当**: `{rec['halcon']}`(意味・パラメータは HALCON リファレンスが参考になる)")
+        lines.append(T('- **HALCON 相当**: `{a0}`(意味・パラメータは HALCON リファレンスが参考になる)', lang).format(a0=rec['halcon']))
     if rec.get("gpu"):
-        lines.append("- **GPU**: この op は GPU 経路あり(`device=\"cuda\"`)")
+        lines.append(T("- **GPU**: この op は GPU 経路あり(`device=\"cuda\"`)", lang))
     if rec.get("override"):
-        lines.append(f"- **上書き登録**: この名前は 2 回登録されている(core 実装 + backend の安全ラッパ)。"
-                     "`apply` が実行するのは**後勝ちの安全版**(fail-closed ラッパ)。core 版は backend "
-                     "不在時のフォールバックとして残る(登録順=Wave0 stable slot は不変、`tests/test_opdocs.py` "
-                     "が上書き集合を pin)。")
+        lines.append(T('- **上書き登録**: この名前は 2 回登録されている(core 実装 + backend の安全ラッパ)。`apply` が実行するのは**後勝ちの安全版**(fail-closed ラッパ)。core 版は backend 不在時のフォールバックとして残る(登録順=Wave0 stable slot は不変、`tests/test_opdocs.py` が上書き集合を pin)。', lang))
     lines.append("")
     # usage / behaviour — honest: docstring if present, else typed contract only
-    lines.append("## 使い方")
+    lines.append(T("## 使い方", lang))
     lines.append("")
     if rec["doc"]:
-        lines.append(rec["doc"])
+        # 散文は原文が日本語。要約 1 行だけ対訳表を持ち、残りは**訳したふりをせず**
+        # 原文を出したうえで「ここは原文だ」と明示する(黙って日本語が出てくると、
+        # 訳が抜けているのか原文がそうなのかを読者が区別できない)。
+        _src_summary, rest = summary_and_rest(rec["doc"])
+        summ, translated = op_summary(rec, lang)
+        if lang == "ja":
+            lines.append(rec["doc"])
+        # 断り書きを出すかは「読み手の言語で書かれているか」で決める —— 表を引けたかでは
+        # ない。原文が英語の op を英語の読者に出すとき「未訳です」と断るのは嘘になる。
+        elif translated:
+            lines.append(summ)
+            if rest:
+                lines.append("")
+                if lang != "en" or has_japanese(rest):
+                    lines.append(T("> 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。", lang))
+                    lines.append("")
+                lines.append(rest)
+        else:
+            lines.append(T("> この op の説明はまだ訳がありません。原文をそのまま載せます。", lang))
+            lines.append("")
+            lines.append(rec["doc"])
     else:
-        lines.append(f"型契約は `{ins} → {out}`。挙動の言語説明は下記のファミリ使い方ガイドと"
-                     "実行可能サンプルを参照(ここでは推測を書かない)。")
+        lines.append(T('型契約は `{a0} → {a1}`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。', lang).format(a0=ins, a1=out))
     lines.append("")
     if dim == "optics":
         # family-wide fail-closed input contract for the optics ledger (grounded in
         # optics._finite_scalar / _require_image / _require_vec / the size caps —
         # every item below is a bug the 2026-09-01 adversarial pass actually found,
         # or a trap it was written to close).
-        lines.append("## ファミリ共通の入力契約(fail-closed)")
+        lines.append(T("## ファミリ共通の入力契約(fail-closed)", lang))
         lines.append("")
-        lines.append("optics の全 op は入力を検証してから計算する(黙って通さない):")
+        lines.append(T("optics の全 op は入力を検証してから計算する(黙って通さない):", lang))
         lines.append("")
-        lines.append("- **単位は引数名に埋め込む** — `_mm` / `_um` / `_deg` / `_mrad`。"
+        lines.append(T("- **単位は引数名に埋め込む** — `_mm` / `_um` / `_deg` / `_mrad`。"
                      "mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」"
-                     "なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。")
-        lines.append("- **文字列は `ValueError`** — `float('50')` は成功してしまうため、"
+                     "なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。", lang))
+        lines.append(T("- **文字列は `ValueError`** — `float('50')` は成功してしまうため、"
                      "未パースの設定値が長さとして通り抜ける(実測: `thin_lens('50', '200')` が"
                      "もっともらしい 66.667 mm を返していた)。bool も `True == 1` の"
-                     "暗黙昇格として拒否。")
-        lines.append("- **complex / masked array は `ValueError`**(実数枠のみ。虚部の"
-                     "無言切り捨て・マスク剥がしを拒否)。**NaN/Inf は全入力で `ValueError`**。")
-        lines.append("- **0 除算とその親戚を名指しで拒否**: 焦点距離 0・曲率半径 0・"
+                     "暗黙昇格として拒否。", lang))
+        lines.append(T("- **complex / masked array は `ValueError`**(実数枠のみ。虚部の"
+                     "無言切り捨て・マスク剥がしを拒否)。**NaN/Inf は全入力で `ValueError`**。", lang))
+        lines.append(T("- **0 除算とその親戚を名指しで拒否**: 焦点距離 0・曲率半径 0・"
                      "屈折率 <= 0・不透明な開口(全 0 なので正規化が 0/0)・総和 <= 0 の PSF・"
-                     "S0 = 0 の Stokes ベクトル・物体が前側焦点にある(像が無限遠)。")
-        lines.append("- **非有限を返すのは 2 op だけ、しかも契約として明記**: "
+                     "S0 = 0 の Stokes ベクトル・物体が前側焦点にある(像が無限遠)。", lang))
+        lines.append(T("- **非有限を返すのは 2 op だけ、しかも契約として明記**: "
                      "`depth_of_field` の過焦点距離以遠の `far_mm = inf`(それが過焦点距離の"
                      "定義)と `gaussian_beam` のウエストでの `wavefront_radius_mm = inf`"
                      "(平面波面の曲率半径)。どちらも有限の相棒(`far_is_infinite` / "
                      "`curvature_per_mm`)を併せて返す。**それ以外の無言 NaN/Inf は内部で"
                      "検出して `ValueError`** —「float64 が溢れた」と「答えが無限大」は"
-                     "別の主張なので、後者の顔で前者を返さない。")
-        lines.append("- **サイズ上限**: 生成格子は `optics.MAX_GRID`(4096)、供給された"
+                     "別の主張なので、後者の顔で前者を返さない。", lang))
+        lines.append(T("- **サイズ上限**: 生成格子は `optics.MAX_GRID`(4096)、供給された"
                      "場/PSF/開口は `optics.MAX_FIELD_ELEMENTS`(2^24)、ABCD 素子列は "
                      "`optics.MAX_SYSTEM_ELEMENTS`(1024)、Zernike は "
                      "`MAX_ZERNIKE_TERMS`(512)/ `MAX_ZERNIKE_ORDER`(40)/ "
                      "`MAX_ZERNIKE_BASIS`(2^25)。小さな引数から巨大な内部確保が起きる経路"
-                     "(実測: n_max=40 × 4096² で 108 GB)を fail-closed で塞ぐ。")
-        lines.append("- **物理的に不可能な状態も拒否**: 偏光度 > 1 の Stokes ベクトル、"
-                     "負の透過率、負の強度、n-|m| が奇数などの不正な Zernike 添字。")
+                     "(実測: n_max=40 × 4096² で 108 GB)を fail-closed で塞ぐ。", lang))
+        lines.append(T("- **物理的に不可能な状態も拒否**: 偏光度 > 1 の Stokes ベクトル、"
+                     "負の透過率、負の強度、n-|m| が奇数などの不正な Zernike 添字。", lang))
         lines.append("")
     if dim == "math":
         # family-wide fail-closed input contract, stated once per note (grounded in
         # mathops._as_float64 / _require_* / _check_elements — the 2026-08 adversarial
         # audits' confirmed bug families, refused explicitly instead of silently).
-        lines.append("## ファミリ共通の入力契約(fail-closed)")
+        lines.append(T("## ファミリ共通の入力契約(fail-closed)", lang))
         lines.append("")
-        lines.append("mathops の全 op は入力を検証してから計算する(黙って通さない):")
+        lines.append(T("mathops の全 op は入力を検証してから計算する(黙って通さない):", lang))
         lines.append("")
-        lines.append("- **complex 入力は `ValueError`** — float64 への強制変換は虚部を黙って捨てる"
+        lines.append(T("- **complex 入力は `ValueError`** — float64 への強制変換は虚部を黙って捨てる"
                      "(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。"
-                     "`.real`/`.imag`/`abs()` を明示するか、複素対応の complexops を使う。")
-        lines.append("- **masked array(masked 要素あり)は `ValueError`** — マスクを剥がして"
-                     "下の生値を使う暗黙変換を拒否。埋める/落とすを明示する。")
-        lines.append("- **NaN/Inf は全入力で `ValueError`**(件数を明示して拒否 — 結果全体に伝播するため)。")
-        lines.append("- **形状は厳格**: 1-D と 2-D を暗黙昇格・ブロードキャストしない"
-                     "(vector 枠に matrix、matrix 枠に vector は `ValueError`。reshape を明示する)。")
-        lines.append("- **サイズ上限**: 行列を取る op と `stat_histogram` の bins は "
-                     "`mathops.MAX_ELEMENTS`(2^26 ≈ 6700 万要素)超で `ValueError`。")
+                     "`.real`/`.imag`/`abs()` を明示するか、複素対応の complexops を使う。", lang))
+        lines.append(T("- **masked array(masked 要素あり)は `ValueError`** — マスクを剥がして"
+                     "下の生値を使う暗黙変換を拒否。埋める/落とすを明示する。", lang))
+        lines.append(T("- **NaN/Inf は全入力で `ValueError`**(件数を明示して拒否 — 結果全体に伝播するため)。", lang))
+        lines.append(T("- **形状は厳格**: 1-D と 2-D を暗黙昇格・ブロードキャストしない"
+                     "(vector 枠に matrix、matrix 枠に vector は `ValueError`。reshape を明示する)。", lang))
+        lines.append(T("- **サイズ上限**: 行列を取る op と `stat_histogram` の bins は "
+                     "`mathops.MAX_ELEMENTS`(2^26 ≈ 6700 万要素)超で `ValueError`。", lang))
         lines.append("")
     # family guide —— **実在するときだけリンクする**。
     #
@@ -494,16 +672,16 @@ def _op_md(rec, path, by_name):
         gp = os.path.join(DOCS, dim if dim in LEDGER_DIMS else "2d",
                           "guides", rec["family"] + ".md")
         if os.path.exists(gp):
-            lines.append("## 詳しい使い方ガイド")
+            lines.append(T("## 詳しい使い方ガイド", lang))
             lines.append("")
-            lines.append(f"- [{rec['family']} ファミリ ガイド]({_rel(path, gp)})")
+            lines.append(T('- [{a0} ファミリ ガイド]({a1})', lang).format(a0=rec['family'], a1=_rel(path, gp)))
             lines.append("")
     # 背景知識ガイド(族に属さない横断的な教材)。frontmatter の ``applies_to`` が
     # この op の dim / dim+category を挙げているものだけを張る。配線し忘れは
     # :func:`guides_not_wired` が数えて生成時に報告する。
     kg = guides_for(dim, rec["category"])
     if kg:
-        lines.append("## 背景知識ガイド(この op の手前にある物理・規約)")
+        lines.append(T("## 背景知識ガイド(この op の手前にある物理・規約)", lang))
         lines.append("")
         for g in kg:
             lines.append(f"- [{g['stem']}]({_rel(path, g['path'])}) — {g['title']}")
@@ -511,16 +689,15 @@ def _op_md(rec, path, by_name):
     # sample data + references (honest pointers to the curated catalogs)
     sp = os.path.join(DOCS, "SAMPLES.md")
     rp = os.path.join(_ROOT, "docs", "REFERENCES.md")
-    lines.append("## 参考(サンプルデータ・文献)")
+    lines.append(T("## 参考(サンプルデータ・文献)", lang))
     lines.append("")
-    lines.append(f"- [サンプルデータ カタログ(DL URL / ライセンス)]({_rel(path, sp)}) "
-                 "— 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。")
-    lines.append(f"- [演算子の来歴・参考文献]({_rel(path, rp)}) — この op 族の元になった研究/手法の出典。")
+    lines.append(T('- [サンプルデータ カタログ(DL URL / ライセンス)]({a0}) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。', lang).format(a0=_rel(path, sp)))
+    lines.append(T('- [演算子の来歴・参考文献]({a0}) — この op 族の元になった研究/手法の出典。', lang).format(a0=_rel(path, rp)))
     if rec.get("family"):
-        lines.append("- アルゴリズムの正典(著者・年)と用途は上記**ファミリ使い方ガイド**に記載。")
+        lines.append(T("- アルゴリズムの正典(著者・年)と用途は上記**ファミリ使い方ガイド**に記載。", lang))
     lines.append("")
     # worked examples
-    lines.append("## 実行できる例(この op を実際に呼ぶ検証済みサンプル)")
+    lines.append(T("## 実行できる例(この op を実際に呼ぶ検証済みサンプル)", lang))
     lines.append("")
     if rec["examples"]:
         exdir = "examples_3d" if dim == "3d" else "examples"
@@ -528,7 +705,7 @@ def _op_md(rec, path, by_name):
             ep = os.path.join(_ROOT, exdir, e + ".py")
             lines.append(f"- [{e}]({_rel(path, ep)}) — `py -3.11 {exdir}/{e}.py`")
     else:
-        lines.append("- (まだありません)")
+        lines.append(T("- (まだありません)", lang))
     lines.append("")
     # related ops: type-compatible successors + same-category siblings
     succ, sib = [], []
@@ -545,17 +722,16 @@ def _op_md(rec, path, by_name):
     def _links(rs):
         return " · ".join(f"[{r['name']}]({_rel(path, _op_path(r))})" for r in rs) or "—"
 
-    lines.append(f"## 型が繋がる次の op(`{out}` を入力に取れる)")
+    lines.append(T('## 型が繋がる次の op(`{a0}` を入力に取れる)', lang).format(a0=out))
     lines.append("")
     lines.append(_links(succ))
     lines.append("")
-    lines.append(f"## 同カテゴリ(`{cat}`)")
+    lines.append(T('## 同カテゴリ(`{a0}`)', lang).format(a0=cat))
     lines.append("")
     lines.append(_links(sib))
     lines.append("")
     lines.append(f"---")
-    lines.append(f"*Provenance: {rec['module']}.py — {dim.upper()} operator registry. "
-                 "この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*")
+    lines.append(T('*Provenance: {a0}.py — {a1} operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*', lang).format(a0=rec['module'], a1=dim.upper()))
     lines.append("")
     lines.append(_COPYRIGHT)
     lines.append("")
@@ -899,79 +1075,90 @@ def _write_generated(path: str, body: str) -> bool:
     return True
 
 
-def cmd_html():
-    os.makedirs(HELP_ROOT, exist_ok=True)
-    n = skipped = 0
-    # per-op 2-D pages from their Markdown notes -> op_help/<name>.html (Studio's lookup dir)
-    for cat in sorted(os.listdir(os.path.join(DOCS, "2d"))):
-        cdir = os.path.join(DOCS, "2d", cat)
+def _anchor_rewrite(html: str, dim: str) -> str:
+    """生成 HTML のアンカーを次元ごとの名前空間へ。
+
+    op 名は登録簿をまたいで衝突する(``fill_holes`` は 2-D にも 3-D にもある)ので、
+    兄弟 op / 次の op / 族ガイドへのリンクは開くべき登録簿を接頭辞で持つ。
+    """
+    if dim == "2d":
+        return html
+    if dim == "3d":
+        return html.replace('href="op:', 'href="op3d:')
+    return (html.replace('href="op:', 'href="op%s:' % dim)
+                .replace('href="guide2d:', 'href="guide%s:' % dim))
+
+
+def _help_pages_for_dim(dim, recs_by_name, langs):
+    """1 次元ぶんの op ヘルプを書き出す。``(written, skipped, translated)``。
+
+    ``ja`` は**コミット済みの Markdown ノートから**変換する(ノート自体が単一真実源で、
+    drift テストがノートと生成器の一致を担保しているため、ここで作り直さない)。
+    それ以外の言語はノートを持たない —— レコードから ``lang`` 付きで組み立てて
+    ``<op>.<lang>.html`` にだけ落とす。docs/ops を言語ぶん複製しないのは、あの木が
+    RAG コーパス(読み手は LLM で、日本語で困らない)だからで、人が読むのはヘルプ側。
+    """
+    src = os.path.join(DOCS, dim)
+    out = HELP_ROOT if dim == "2d" else os.path.join(HELP_ROOT, dim)
+    if not os.path.isdir(src):
+        return 0, 0, 0
+    os.makedirs(out, exist_ok=True)
+    n = skipped = tr = 0
+    for cat in sorted(os.listdir(src)):
+        cdir = os.path.join(src, cat)
         if not os.path.isdir(cdir) or cat == "guides":
             continue
         for f in sorted(os.listdir(cdir)):
             if not f.endswith(".md"):
                 continue
+            op = f[:-3]
             with open(os.path.join(cdir, f), encoding="utf-8") as fh:
                 md = fh.read()
-            op = f[:-3]
-            if _write_generated(os.path.join(HELP_ROOT, op + ".html"), md_to_html(md)):
+            if _write_generated(os.path.join(out, op + ".html"),
+                                _anchor_rewrite(md_to_html(md), dim)):
                 n += 1
             else:
+                # 手書きの上書きページ(gaussian / otsu / sobel_mag)。**言語版も作らない** ――
+                # これらは英語で書かれていて `sample:` で実行可能なパイプラインまで載せて
+                # おり、生成訳を横に置くと言語を選んだ瞬間に**中身の薄いほうへ差し替わる**
+                # (2026-09-05 実測: 英語を選ぶと sample リンクが消えた)。訳が本家より
+                # 貧しくなるなら、訳を出さないほうが親切。
                 skipped += 1
-    # per-op 3-D pages from their Markdown notes -> op_help/3d/<name>.html (a namespaced
-    # subdir: 2-D and 3-D op names can collide, e.g. fill_holes, so 3-D help is kept apart).
-    # Same md=source-of-truth path as 2-D — this supersedes the old standalone
-    # tools/gen_op_help_3d.py (retired), so 3-D help is no longer double-authored. A 3-D note's
-    # sibling / next-op links target 3-D ops, so their op: anchors are rewritten to op3d: for a
-    # future 3-D operator browser (2-D op: anchors are left untouched).
-    n3 = 0
-    d3out = os.path.join(HELP_ROOT, "3d")
-    d3src = os.path.join(DOCS, "3d")
-    if os.path.isdir(d3src):
-        os.makedirs(d3out, exist_ok=True)
-        for cat in sorted(os.listdir(d3src)):
-            cdir = os.path.join(d3src, cat)
-            if not os.path.isdir(cdir):
                 continue
-            for f in sorted(os.listdir(cdir)):
-                if not f.endswith(".md"):
-                    continue
-                with open(os.path.join(cdir, f), encoding="utf-8") as fh:
-                    md = fh.read()
-                html3d = md_to_html(md).replace('href="op:', 'href="op3d:')
-                if _write_generated(os.path.join(d3out, f[:-3] + ".html"), html3d):
-                    n3 += 1
-    # per-op ledger pages (math / optics) from their Markdown notes ->
-    # op_help/<dim>/<name>.html (namespaced like 3-D; sibling/next-op anchors become
-    # op<dim>:, the guide anchor guide<dim>:, for a future ledger-operator browser —
-    # Studio's 2-D lookup dir stays uncluttered).
-    nm = 0
+            rec = recs_by_name.get((dim, op))
+            if rec is None:
+                continue
+            npath = os.path.join(cdir, f)
+            for lang in langs:
+                body = md_to_html(_op_md(rec, npath, recs_by_name, lang=lang))
+                if _write_generated(os.path.join(out, "%s.%s.html" % (op, lang)),
+                                    _anchor_rewrite(body, dim)):
+                    tr += 1
+    return n, skipped, tr
+
+
+def cmd_html():
+    os.makedirs(HELP_ROOT, exist_ok=True)
+    recs, _idx, _of, _fo = _records()
+    by_name = {(r["dim"], r["name"]): r for r in recs}
+    langs = [c for c in LANGS if c != "ja"]
+    n, skipped, tr = _help_pages_for_dim("2d", by_name, langs)
+    n3, _s3, tr3 = _help_pages_for_dim("3d", by_name, langs)
+    nm = trm = 0
     for ldim in LEDGER_DIMS:
-        dmsrc = os.path.join(DOCS, ldim)
-        if not os.path.isdir(dmsrc):
-            continue
-        dmout = os.path.join(HELP_ROOT, ldim)
-        os.makedirs(dmout, exist_ok=True)
-        for cat in sorted(os.listdir(dmsrc)):
-            cdir = os.path.join(dmsrc, cat)
-            if not os.path.isdir(cdir) or cat == "guides":
-                continue
-            for f in sorted(os.listdir(cdir)):
-                if not f.endswith(".md"):
-                    continue
-                with open(os.path.join(cdir, f), encoding="utf-8") as fh:
-                    md = fh.read()
-                htmlm = (md_to_html(md)
-                         .replace('href="op:', 'href="op%s:' % ldim)
-                         .replace('href="guide2d:', 'href="guide%s:' % ldim))
-                if _write_generated(os.path.join(dmout, f[:-3] + ".html"), htmlm):
-                    nm += 1
+        a, _b, c = _help_pages_for_dim(ldim, by_name, langs)
+        nm += a
+        trm += c
     # guides -> guide_<stem>.html (always generated from guide md; every dim's
     # guides share the flat guide_ namespace — stems are distinct by construction:
     # gallery2d_* / family names / knowledge-guide stems).
     #
+    # ガイドは**人が書いた散文**なので機械的な差し替えができない。訳を持たない以上、
+    # 訳したふりはせず日本語 1 枚だけを出し、その事実を冒頭に多言語で 1 行書く
+    # (英語表示のユーザーが日本語のページに落ちた理由が分かるように)。
+    #
     # ``3d`` がこのループから抜けていたため、``docs/ops/3d/guides/`` のガイドは
-    # Studio ヘルプに 1 枚も出ていなかった(2026-09-05 に depth_sensors を書いて
-    # 発覚)。dim の一覧は TOC と同じ順にそろえてある。
+    # Studio ヘルプに 1 枚も出ていなかった(2026-09-05 に depth_sensors を書いて発覚)。
     g = 0
     for gdim in ("2d", "3d", *LEDGER_DIMS):
         gdir = os.path.join(DOCS, gdim, "guides")
@@ -982,11 +1169,41 @@ def cmd_html():
                 continue
             with open(os.path.join(gdir, f), encoding="utf-8") as fh:
                 md = fh.read()
-            _write_generated(os.path.join(HELP_ROOT, "guide_" + f[:-3] + ".html"), md_to_html(md))
+            body = md_to_html(md)
+            _write_generated(os.path.join(HELP_ROOT, "guide_" + f[:-3] + ".html"), body)
             g += 1
+            for lang in langs:
+                banner = ('<p style="color:%s;font-size:11px;margin:0 0 8px 0">%s</p>\n'
+                          % (_AMBER, _html.escape(
+                              T("このガイドは日本語のみです(人が書いた散文なので機械的な差し替えをしていません)。", lang))))
+                _write_generated(
+                    os.path.join(HELP_ROOT, "guide_%s.%s.html" % (f[:-3], lang)),
+                    banner + body)
     print(f"opdocs html: wrote {n} 2-D op pages ({skipped} hand-authored preserved) "
           f"+ {n3} 3-D op pages + {nm} ledger op pages ({'/'.join(LEDGER_DIMS)}) "
           f"+ {g} guides to {HELP_ROOT}")
+    print(f"  translated op pages: {tr + tr3 + trm} "
+          f"({len(langs)} languages: {', '.join(langs)})")
+    missing = untranslated_strings()
+    for lang, miss in sorted(missing.items()):
+        print(f"  ({lang}: 枠の対訳が {len(miss)} 件未訳 — 原文のまま出ます)", file=sys.stderr)
+
+
+def untranslated_strings():
+    """枠の対訳表に**穴**がある言語と、その原文。生成のたびに報告する。
+
+    :data:`SEEN_STRINGS` は生成中に :func:`T` が実際に引いた原文なので、「表には
+    あるが誰も引かない古い行」と「引かれたのに訳が無い行」を区別できる。
+    """
+    tbl = _i18n()
+    out = {}
+    for lang in LANGS:
+        if lang == "ja":
+            continue
+        miss = sorted(s for s in SEEN_STRINGS if not (tbl.get(s) or {}).get(lang))
+        if miss:
+            out[lang] = miss
+    return out
 
 
 def main(argv):

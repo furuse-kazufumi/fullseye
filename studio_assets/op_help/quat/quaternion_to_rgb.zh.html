@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">quaternion_to_rgb — QUAT <code style="color:#22d3bf">convert</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">qimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import quatimage; quatimage.quaternion_to_rgb(qimage, allow_scalar: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsquat.get(&quot;quaternion_to_rgb&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Vector part of a quaternion image, as linear RGB. → (H, W, 3).</p>
+<p>The inverse of :func:<code style="color:#22d3bf">rgb_to_quaternion</code> — and, by default, a *checked*</p>
+<p>inverse. A quaternion image that picked up a scalar component somewhere (a</p>
+<p>Hamilton product with a non-pure quaternion, a monogenic signal handed here</p>
+<p>by mistake) is <b>refused</b> rather than silently truncated, because dropping</p>
+<p>the `<code style="color:#22d3bf">w</code>` component is exactly the kind of loss that produces a plausible</p>
+<p>picture from the wrong data. Pass `<code style="color:#22d3bf">allow_scalar=True</code>` to opt in to the</p>
+<p>truncation when it is what you meant.</p>
+<p>The tolerance is relative to the field&#x27;s own peak modulus</p>
+<p>(:data:<code style="color:#22d3bf">_MONOGENIC_K_TOL</code>, 1e-9): a quaternion image that really is pure</p>
+<p>carries `<code style="color:#22d3bf">|w|</code>` at the 1e-17 level after a round trip through two FFTs, and</p>
+<p>anything with a meaningful scalar part is many orders above that. Nothing</p>
+<p>real lives in between.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *qimage* is not a finite </code><code style="color:#22d3bf">(H, W, 4)</code>` array; or</p>
+<p>it has a non-negligible scalar part and `<code style="color:#22d3bf">allow_scalar</code>` is False.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidequat:quaternion_monogenic">quaternion_monogenic 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:quaternion_monogenic">quaternion_monogenic</a> — <code style="color:#22d3bf">py -3.11 examples/quaternion_monogenic.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">rgbimage</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opquat:rgb_to_quaternion">rgb_to_quaternion</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">convert</code>)</h3>
+<p><a style="color:#22d3bf" href="opquat:rgb_to_quaternion">rgb_to_quaternion</a> · <a style="color:#22d3bf" href="opquat:quat_norm">quat_norm</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: quatimage.py — QUAT 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

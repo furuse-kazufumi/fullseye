@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">polarization_render — SPECULAR <code style="color:#22d3bf">polarization</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">polsweep</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import specularity; specularity.polarization_render(diffuse, specular, angles_deg=(0.0, 45.0, 90.0, 135.0), azimuth_deg=0.0)</code>(或 <code style="color:#22d3bf">opsspecular.get(&quot;polarization_render&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Forward model of a polariser sweep: turn a known split into the frames a polarisation camera would record. → (N, H, W).</p>
+<p>`<code style="color:#22d3bf">I(t) = 0.5 * diffuse + specular * cos^2(t - azimuth)</code>`. The diffuse term is</p>
+<p>treated as completely unpolarised, so it contributes half its radiance at</p>
+<p>every analyser angle; the specular term is treated as completely linearly</p>
+<p>polarised at *azimuth_deg*, so it follows Malus&#x27;s law. Those are the two</p>
+<p>assumptions :func:<code style="color:#22d3bf">polarization_separate</code> inverts, and rendering with them</p>
+<p>is how the inversion gets a ground truth to be exact against.</p>
+<p>Physically the assumptions hold near Brewster&#x27;s angle for a dielectric and</p>
+<p>fail at normal incidence; the module docstring says where. This operator</p>
+<p>does not model the incidence angle at all — it takes the two radiance maps</p>
+<p>you specify and produces the sweep they imply.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *diffuse* / *specular* are not 2-D arrays of the</p>
+<p>same shape, or are complex / masked / non-finite / string-typed; either has</p>
+<p>a negative value (a negative radiance is not a scene); *angles_deg* has</p>
+<p>fewer than 3 entries or does not determine the three unknowns.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:specular_photometric">specular_photometric</a> — <code style="color:#22d3bf">py -3.11 examples/specular_photometric.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">polsweep</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opspecular:polarization_separate">polarization_separate</a> · <a style="color:#22d3bf" href="opspecular:polarization_dolp_map">polarization_dolp_map</a> · <a style="color:#22d3bf" href="opspecular:polarization_stokes">polarization_stokes</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">polarization</code>)</h3>
+<p><a style="color:#22d3bf" href="opspecular:polarization_separate">polarization_separate</a> · <a style="color:#22d3bf" href="opspecular:polarization_dolp_map">polarization_dolp_map</a> · <a style="color:#22d3bf" href="opspecular:polarization_stokes">polarization_stokes</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: specularity.py — SPECULAR 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

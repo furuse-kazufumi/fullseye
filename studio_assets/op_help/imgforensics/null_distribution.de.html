@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">null_distribution — IMGFORENSICS <code style="color:#22d3bf">calibration</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import imgforensics; imgforensics.null_distribution(values)</code> (oder <code style="color:#22d3bf">opsimgforensics.get(&quot;null_distribution&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p><b>改竄が無い</b>と分かっている標本から、証拠量の帰無分布をまとめる。</p>
+<p>この族は一貫して判定を返さない。それは正しいが、そのままだと利用者は</p>
+<p>`<code style="color:#22d3bf">PCE 1832</code>` のような数値を渡されて<b>解釈する手段が無い</b>。かといって</p>
+<p>しきい値を同梱すると嘘になる ―― 分離点は枚数・解像度・圧縮率・被写体で</p>
+<p>動くので、出荷時に決められる値ではない。</p>
+<p>そこで<b>利用者自身の清浄データから分布を測る</b>。同梱するのは「しきい値」</p>
+<p>ではなく「しきい値の測り方」で、それなら条件が変わっても正しいままでいる。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>values : array_like</p>
+<p>改竄が無いと分かっている組で測った証拠量(`<code style="color:#22d3bf">hash_distance</code>` や</p>
+<p>`<code style="color:#22d3bf">fingerprint_correlate()[&quot;pce&quot;]</code>` など)。<b>同じ条件</b>で集めること。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>dict</p>
+<p>`<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">std</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">min</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">max</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">quantiles</code>`</p>
+<p>(5, 25, 50, 75, 95, 99 パーセンタイル)。標本が少ないと裾は測れない</p>
+<p>ので `<code style="color:#22d3bf">n &lt; 20</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">caveats</code>` に出す(黙って外挿しない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_forensics_audit">image_forensics_audit</a> — <code style="color:#22d3bf">py -3.11 examples/image_forensics_audit.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:evidence_quantile">evidence_quantile</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">calibration</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:evidence_quantile">evidence_quantile</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgforensics.py — IMGFORENSICS Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

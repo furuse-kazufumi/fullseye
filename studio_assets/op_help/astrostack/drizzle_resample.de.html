@@ -1,0 +1,77 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">drizzle_resample — ASTROSTACK <code style="color:#22d3bf">stack</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import astrostack; astrostack.drizzle_resample(frames, shifts=None, scale=2.0, pixfrac=1.0)</code> (oder <code style="color:#22d3bf">opsastrostack.get(&quot;drizzle_resample&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Drizzle —— 副画素でずれた複数フレームから細かい格子を作る(面積保存)。</p>
+<p>Fruchter &amp; Hook, *Drizzle: A Method for the Linear Reconstruction of</p>
+<p>Undersampled Images*, PASP 114, 144 (2002)。入力画素を一回り縮めた</p>
+<p>「しずく(drop、辺 `<code style="color:#22d3bf">pixfrac</code>`)」とみなし、出力格子の画素との<b>重なり面積</b></p>
+<p>に比例してフラックスを撒く。補間しないので、</p>
+<p style="margin:2px 0 2px 12px">• <b>総フラックスが保存される。</b> しずくが出力格子の内側に収まっている限り</p>
+<p>`<code style="color:#22d3bf">sci.sum()</code>` は入力フレームの総和の平均と厳密に一致する</p>
+<p>(実測: `<code style="color:#22d3bf">shifts=0</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">scale=2</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">pixfrac=0.7</code>` で相対誤差 0.0)。</p>
+<p>これが<b>返り値だけで検算できる</b>形にしてある理由。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">pixfrac</code>` を小さくするほど、しずくが出力画素の内側に入る割合が増えて</p>
+<p><b>解像度は上がるが、覆われない出力画素が出る</b>(`<code style="color:#22d3bf">wht</code>` がそこで小さく</p>
+<p>なる)。この綱引きが drizzle の唯一の調整点。</p>
+<p><b>効くのは標本化が足りていないときだけ</b>、というのが実測の結論。48x48 に</p>
+<p>10 星、ディザ 1.5 px、16 枚での測定(値は入力画素に換算した FWHM)::</p>
+<p>真の FWHM  単フレーム  そのまま平均  drizzle x2 (pixfrac=0.5)</p>
+<p>1.0        1.773       2.249         1.312</p>
+<p>1.3        1.929       2.876         1.572</p>
+<p>1.8        2.262       2.648         3.086</p>
+<p>2.5        4.057       4.295         3.586</p>
+<p>FWHM が 2 画素を割る(ナイキストを破る)ところでだけ drizzle が勝つ。</p>
+<p>ディザしたフレームを<b>そのまま平均すると像は逆に鈍る</b>(1.773 → 2.249)</p>
+<p>—— ずれを平均してしまうからで、drizzle はその同じずれを解像度に変える。</p>
+<p>1.8 px 以上では既に十分標本化されているので、drizzle は得をせず</p>
+<p>しずくの畳み込みぶんだけ損をする。</p>
+<p>二つの星が分かれるかどうかで見ると分かりやすい。σ=0.55 px の星を 2 つ、</p>
+<p>間隔を変えて 16 枚ディザ撮影し、平均合成と drizzle x3 (pixfrac=0.4) で</p>
+<p>:func:<code style="color:#22d3bf">star_detect</code> した実測: **間隔 1.6 入力画素で、平均合成は 1 個、</p>
+<p>drizzle は 2 個**を見つけた(2.0 px 以上ではどちらも 2 個)。</p>
+<p>*shifts* は `<code style="color:#22d3bf">(N, 2)</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">(dr, dc)</code><code style="color:#22d3bf"> で、フレーム </code><code style="color:#22d3bf">i</code>` が基準からどれだけ</p>
+<p>ずれているか(:func:<code style="color:#22d3bf">synth_frame_series</code> の `<code style="color:#22d3bf">truth[&quot;shifts&quot;]</code>` がこの向き)。</p>
+<p>`<code style="color:#22d3bf">None</code>` なら全部 0。</p>
+<p>★ <b>符号に注意</b> —— :func:<code style="color:#22d3bf">frame_align</code> / :func:<code style="color:#22d3bf">align_frames</code> が返す行列の</p>
+<p>並進は「フレームを基準へ<b>戻す</b>」向き、つまりここで要る `<code style="color:#22d3bf">(dr, dc)</code>` の</p>
+<p><b>符号が逆</b>である。推定値をそのまま渡すとずれが打ち消されず<b>倍</b>になり、</p>
+<p>例外も出さずに二重像になる(実測: 6 枚 96x96 で `<code style="color:#22d3bf">est + truth ≈ 0</code>`、</p>
+<p>そのまま渡すと残差が 2 倍)。行列から正しい向きの shifts を作るには</p>
+<p>:func:<code style="color:#22d3bf">drizzle_shifts</code> を使うこと。</p>
+<p><b>回転は受けない</b> —— 回転が入ると軸が分離せず重なり面積が閉形式で書けなく</p>
+<p>なるので、先に :func:<code style="color:#22d3bf">align_frames</code> で戻すこと(そこで補間の誤差を払う、</p>
+<p>という取引が見えている方が正直)。</p>
+<p>Returns `<code style="color:#22d3bf">(sci, wht)</code>`:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">sci</code><code style="color:#22d3bf"> —— </code><code style="color:#22d3bf">(round(H*scale), round(W*scale))</code>` float64、**総フラックス</p>
+<p>単位**(入力と同じ電子)。格子の外へ出たしずくの分だけ総和が減るので、</p>
+<p>`<code style="color:#22d3bf">sci.sum()</code>` と入力総和の差は「縁で失った量」そのもの。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">wht</code>` —— 同じ形の重みマップ。出力画素が何枚ぶんのしずくに覆われたか</p>
+<p>(出力画素面積を 1 とする)。`<code style="color:#22d3bf">pixfrac=1</code><code style="color:#22d3bf"> かつ </code><code style="color:#22d3bf">shifts=0</code>` なら内部は</p>
+<p>厳密に 1.0。</p>
+<p>★ **見る / 測る ときは `<code style="color:#22d3bf">sci / wht</code><code style="color:#22d3bf"> を使うこと。** </code><code style="color:#22d3bf">sci</code>` は総フラックスを</p>
+<p>保存するために「撒かれた量」をそのまま持っており、**被覆の不均一が像に</p>
+<p>残っている**。`<code style="color:#22d3bf">pixfrac</code>` を小さくすると被覆は格子状にむらを持つので、</p>
+<p>生の `<code style="color:#22d3bf">sci</code><code style="color:#22d3bf"> に検出をかけるとその格子が星に化ける —— 実測(</code><code style="color:#22d3bf">scale=3</code>`、</p>
+<p>`<code style="color:#22d3bf">pixfrac=0.4</code><code style="color:#22d3bf">、二重星 1 組の 24 枚)で :func:</code>star_detect<code style="color:#22d3bf"> は生の </code><code style="color:#22d3bf">sci</code>`</p>
+<p>に対して <b>200 個</b>(上限に張り付いた)を返し、`<code style="color:#22d3bf">sci / wht</code>` に対しては</p>
+<p>正しく <b>2 個</b>を返した。保存則(`<code style="color:#22d3bf">sci</code><code style="color:#22d3bf">)と見た目(</code><code style="color:#22d3bf">sci / wht</code>`)は</p>
+<p>別の量であり、片方をもう片方の代わりに使うと<b>例外なく間違う</b>。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *frames* が list / tuple でない / 形が揃って</p>
+<p>いない / *scale* が 1 未満 / *pixfrac* が (0, 1] の外 / *shifts* の形が</p>
+<p>`<code style="color:#22d3bf">(N, 2)</code><code style="color:#22d3bf"> でない / 出力が :data:</code>MAX_OUTPUT_ELEMENTS` を超える場合。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:astro_stacking">astro_stacking</a> — <code style="color:#22d3bf">py -3.11 examples/astro_stacking.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:frame_quality">frame_quality</a> · <a style="color:#22d3bf" href="opastrostack:noise_sigma">noise_sigma</a> · <a style="color:#22d3bf" href="opastrostack:cosmic_ray_reject">cosmic_ray_reject</a> · <a style="color:#22d3bf" href="opastrostack:star_detect">star_detect</a> · <a style="color:#22d3bf" href="opastrostack:psf_fit">psf_fit</a> · <a style="color:#22d3bf" href="opastrostack:aperture_photometry">aperture_photometry</a> · <a style="color:#22d3bf" href="opastrostack:frame_align">frame_align</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">stack</code>)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:sigma_clip_stack">sigma_clip_stack</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: astrostack.py — ASTROSTACK Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

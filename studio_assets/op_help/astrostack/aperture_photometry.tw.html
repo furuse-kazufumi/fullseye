@@ -1,0 +1,56 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">aperture_photometry — ASTROSTACK <code style="color:#22d3bf">photometry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × keypoints</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import astrostack; astrostack.aperture_photometry(image, centers, r_aperture=5.0, r_inner=8.0, r_outer=12.0, read_sigma=0.0, gain=1.0, supersample=8)</code>(或 <code style="color:#22d3bf">opsastrostack.get(&quot;aperture_photometry&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>円形開口 + 環状背景の測光(古典的な CCD 測光)。</p>
+<p>開口内の画素は<b>副画素で重み付け</b>する(`<code style="color:#22d3bf">supersample^2</code>` 点の標本化)ので、</p>
+<p>半径が整数でなくても面積が階段状に飛ばない。背景は `<code style="color:#22d3bf">r_inner</code><code style="color:#22d3bf">〜</code><code style="color:#22d3bf">r_outer</code>`</p>
+<p>の環の<b>中央値</b>(隣の星が環に入っても引きずられない)。</p>
+<p>フラックスは `<code style="color:#22d3bf">sum(w * (I - background))</code>`、S/N は古典的な CCD 方程式</p>
+<p>(Merline &amp; Howell, *Exp. Astron.* 6, 163 (1995); Howell, *Handbook of CCD</p>
+<p>Astronomy*)::</p>
+<p>SNR = F / sqrt(F/gain + A*(B/gain + read_sigma^2))</p>
+<p>ここで `<code style="color:#22d3bf">A</code><code style="color:#22d3bf"> は開口の実効画素数、</code><code style="color:#22d3bf">B</code><code style="color:#22d3bf"> は背景レベル。</code><code style="color:#22d3bf">read_sigma=0</code>` かつ</p>
+<p>`<code style="color:#22d3bf">gain=1</code><code style="color:#22d3bf"> なら純 Poisson の </code><code style="color:#22d3bf">F/sqrt(F + A*B)</code>` に落ちる。</p>
+<p>Returns 各星 1 つの dict の `<code style="color:#22d3bf">list</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">table</code><code style="color:#22d3bf"> 語彙)。キーは </code><code style="color:#22d3bf">row</code>` /</p>
+<p>`<code style="color:#22d3bf">col</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">flux</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">background</code><code style="color:#22d3bf">(1 画素あたり)/ </code><code style="color:#22d3bf">area_px</code>`(開口の実効</p>
+<p>画素数)/ `<code style="color:#22d3bf">n_annulus</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">snr</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">flux_error</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mag_instrumental</code>`</p>
+<p>(`<code style="color:#22d3bf">-2.5 log10(flux)</code><code style="color:#22d3bf">、フラックスが非正なら </code><code style="color:#22d3bf">nan</code>`)。</p>
+<p>Ground truth it reproduces(`<code style="color:#22d3bf">tests/test_astrostack.py</code>`): ノイズ無しの</p>
+<p>ガウシアン星(フラックス 10000 e-)に対して、半径 `<code style="color:#22d3bf">r</code>` の開口が拾う割合は</p>
+<p>`<code style="color:#22d3bf">1 - exp(-r^2/(2 sigma^2))</code>`。<b>開口を広げれば厳密に一致する</b> ——</p>
+<p>`<code style="color:#22d3bf">r = 8 sigma</code>` では sigma = 1.0 / 1.5 / 2.0 / 3.0 のどれでも</p>
+<p>測定 10000.00000、誤差 -0.0000 %。</p>
+<p><b>小さい開口には系統的な負のずれが残る、という正直な話。</b> `<code style="color:#22d3bf">r = 3 sigma</code>`</p>
+<p>では実測が理論を下回る::</p>
+<p>sigma = 1.0  -&gt;  9798.57 / 9888.91  = -0.914 %</p>
+<p>sigma = 1.5  -&gt;  9850.70 / 9888.91  = -0.386 %</p>
+<p>sigma = 2.0  -&gt;  9868.61 / 9888.91  = -0.205 %</p>
+<p>sigma = 3.0  -&gt;  9879.86 / 9888.91  = -0.092 %</p>
+<p>これはバグではなく<b>画素化そのもの</b>。閉形式は連続なガウシアンを円で積分した</p>
+<p>値だが、こちらは「画素の総フラックス × 円に入る面積の割合」を足している。</p>
+<p>開口の縁にある画素では、円の内側(中心寄り)の方が実際には明るいので、</p>
+<p>画素平均で代表すると必ず<b>少なく</b>出る。誤差が `<code style="color:#22d3bf">sigma</code>` の 2 乗に反比例</p>
+<p>して減る(1.0→3.0 で 10 倍)のがその証拠で、標本化が良くなるほど画素平均と</p>
+<p>真の分布の差が縮む。開口を広げれば縁の画素の寄与自体が消えるので誤差も消える。</p>
+<p>`<code style="color:#22d3bf">supersample</code><code style="color:#22d3bf"> は**円の面積**の離散化だけを直す(実測: </code><code style="color:#22d3bf">r=4.5</code>` で</p>
+<p>`<code style="color:#22d3bf">pi r^2</code><code style="color:#22d3bf"> に対し相対 1.6e-3、</code><code style="color:#22d3bf">r=3</code>` で 2.5e-4)。上のずれとは別の話で、</p>
+<p>上げても縁の画素平均の偏りは消えない。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: 半径の順序が </code>`0 &lt; r_aperture &lt;= r_inner &lt;</p>
+<p>r_outer`` でない / *supersample* が 1 未満 / *gain* が非正 /</p>
+<p>*centers* が `<code style="color:#22d3bf">(N, 2)</code>` でない場合。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:astro_stacking">astro_stacking</a> — <code style="color:#22d3bf">py -3.11 examples/astro_stacking.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">photometry</code>)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:star_detect">star_detect</a> · <a style="color:#22d3bf" href="opastrostack:psf_fit">psf_fit</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: astrostack.py — ASTROSTACK 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

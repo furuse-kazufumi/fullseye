@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">descriptor_to_table — REPRCONV <code style="color:#22d3bf">descriptor</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">descriptor</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import reprconv; reprconv.descriptor_to_table(descriptor)</code>(或 <code style="color:#22d3bf">opsreprconv.get(&quot;descriptor_to_table&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>記述子 → 要約 `<code style="color:#22d3bf">table</code>`。<b>一方向</b>。</p>
+<p>次元・ノルム・エネルギー集中(正規化した二乗和の上位 10% が占める割合)を</p>
+<p>出す。記述子が「実質何次元使っているか」を見るためのもので、次元だけ多くて</p>
+<p>ほぼ全部 0 という失敗を可視化する。</p>
+<p>Args:</p>
+<p>descriptor: (n,) または (m, n)。</p>
+<p>Returns:</p>
+<p>dict(`<code style="color:#22d3bf">shape</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">l2</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">std</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">min</code>` /</p>
+<p>`<code style="color:#22d3bf">max</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">top10pct_energy</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">nonzero_fraction</code>`)。</p>
+<p>Raises:</p>
+<p>ValueError: 形状不正 / 非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">descriptor</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:descriptor_to_matrix">descriptor_to_matrix</a> · <a style="color:#22d3bf" href="opreprconv:matrix_to_descriptor">matrix_to_descriptor</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

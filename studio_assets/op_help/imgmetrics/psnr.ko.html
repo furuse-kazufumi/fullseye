@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">psnr — IMGMETRICS <code style="color:#22d3bf">fidelity</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import imgmetrics; imgmetrics.psnr(a, b, data_range=None)</code>(또는 <code style="color:#22d3bf">opsimgmetrics.get(&quot;psnr&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>최대 신호 대 잡음비 [dB].</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>完全に一致する 2 枚では **`<code style="color:#22d3bf">inf</code>`** を返す(0 除算を黙って回避するために</p>
+<p>小さな値を足したりしない ―― それは「非常に良い一致」を有限の数値に化かし、</p>
+<p>平均を取ったときに嘘になる)。</p>
+<p>`<code style="color:#22d3bf">data_range</code><code style="color:#22d3bf"> の決め方は :func:</code>data_range_of` を参照。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_quality_metrics">image_quality_metrics</a> — <code style="color:#22d3bf">py -3.11 examples/image_quality_metrics.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">scalar</code> 를 입력으로 받는 것)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">fidelity</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:mse">mse</a> · <a style="color:#22d3bf" href="opimgmetrics:rmse">rmse</a> · <a style="color:#22d3bf" href="opimgmetrics:ssim">ssim</a> · <a style="color:#22d3bf" href="opimgmetrics:ms_ssim">ms_ssim</a> · <a style="color:#22d3bf" href="opimgmetrics:ssim_map">ssim_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgmetrics.py — IMGMETRICS 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

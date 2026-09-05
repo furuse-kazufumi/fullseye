@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">finish_shade — OPTICS <code style="color:#22d3bf">finish</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">rgbimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import metalfinish; metalfinish.finish_shade(normals, kind=&#x27;linear&#x27;, metal=&#x27;al&#x27;, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), angle_deg=0.0, center=None, scale=1.0, patchiness=0.0, strength=1.0, seed=0) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;finish_shade&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p><b>材質 × 仕上げ</b>で金属面を陰影付けする → 線形 sRGB (H, W, 3)。</p>
+<p>材質は複素屈折率から色を作り(<code style="color:#22d3bf">glassmirror.metal_mirror_rgb</code>)、仕上げは</p>
+<p>接線場と異方性粗さから微小面の分布を作る(<code style="color:#22d3bf">matappear.ward_anisotropic</code>)。</p>
+<p>さらに角度依存の Fresnel を掛けるので、<b>縁ほど明るくなる</b>(金属でも起きる)。</p>
+<p>normals: (H, W, 3)。kind: <code style="color:#22d3bf">FINISHES</code>。metal: <code style="color:#22d3bf">glassmirror.METALS</code>。</p>
+<p>strength: 全体の強さ。その他は <code style="color:#22d3bf">tangent_field</code> / <code style="color:#22d3bf">roughness_field</code> と同じ。</p>
+<p>返り値: (H, W, 3) 線形 sRGB(拡散項は含まない — 金属に拡散反射は無い)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
+<p>Every optics op validates its input before computing (nothing slips through silently):</p>
+<p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>
+<p style="margin:2px 0 2px 12px">• **Strings raise <code style="color:#22d3bf">ValueError</code>** — <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> succeeds, so an unparsed configuration value would slip through as a length (measured: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> returned a plausible 66.667 mm). bool is refused too, as the implicit promotion <code style="color:#22d3bf">True == 1</code>.</p>
+<p style="margin:2px 0 2px 12px">• **complex / masked arrays raise <code style="color:#22d3bf">ValueError</code><b> (real-valued slots only; silently dropping the imaginary part or peeling off the mask is refused). </b>NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input.**</p>
+<p style="margin:2px 0 2px 12px">• <b>Division by zero and its relatives are refused by name</b>: focal length 0, radius of curvature 0, refractive index &lt;= 0, a fully opaque aperture (all zeros, so the normalisation is 0/0), a PSF whose sum is &lt;= 0, a Stokes vector with S0 = 0, and an object sitting at the front focal point (the image is at infinity).</p>
+<p style="margin:2px 0 2px 12px">• <b>Only two ops return a non-finite value, and both state it as a contract</b>: <code style="color:#22d3bf">depth_of_field</code> returns <code style="color:#22d3bf">far_mm = inf</code> beyond the hyperfocal distance (that is what the hyperfocal distance means), and <code style="color:#22d3bf">gaussian_beam</code> returns <code style="color:#22d3bf">wavefront_radius_mm = inf</code> at the waist (the radius of curvature of a plane wavefront). Both also return a finite companion (<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>). **Any other silent NaN/Inf is detected internally and raises <code style="color:#22d3bf">ValueError</code>** — &quot;float64 overflowed&quot; and &quot;the answer is infinite&quot; are different claims, so the first is never returned wearing the face of the second.</p>
+<p style="margin:2px 0 2px 12px">• <b>Size caps</b>: generated grids are capped by <code style="color:#22d3bf">optics.MAX_GRID</code> (4096); supplied fields/PSFs/apertures by <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code> (2^24); ABCD element chains by <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code> (1024); Zernike by <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code> (512) / <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code> (40) / <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code> (2^25). This closes, fail-closed, the paths where a small argument triggers a huge internal allocation (measured: n_max=40 × 4096² needs 108 GB).</p>
+<p style="margin:2px 0 2px 12px">• <b>Physically impossible states are refused too</b>: a Stokes vector with degree of polarisation &gt; 1, negative transmittance, negative intensity, and invalid Zernike indices such as n-|m| odd.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machined_metal_and_materials">machined_metal_and_materials</a> — <code style="color:#22d3bf">py -3.11 examples/machined_metal_and_materials.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">rgbimage</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opoptics:clearcoat_shade">clearcoat_shade</a> · <a style="color:#22d3bf" href="opoptics:wetness">wetness</a> · <a style="color:#22d3bf" href="opoptics:defocus_blur">defocus_blur</a> · <a style="color:#22d3bf" href="opoptics:diffraction_blur">diffraction_blur</a> · <a style="color:#22d3bf" href="opoptics:sensor_capture">sensor_capture</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">finish</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:finish_catalog">finish_catalog</a> · <a style="color:#22d3bf" href="opoptics:tangent_field">tangent_field</a> · <a style="color:#22d3bf" href="opoptics:micro_normals">micro_normals</a> · <a style="color:#22d3bf" href="opoptics:blast_normals">blast_normals</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: metalfinish.py — OPTICS operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

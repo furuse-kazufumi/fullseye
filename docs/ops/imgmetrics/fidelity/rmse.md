@@ -7,7 +7,7 @@ out: scalar
 examples: [grasp_pose, image_quality_metrics, physical_ai_perception]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # rmse — IMGMETRICS `fidelity` op

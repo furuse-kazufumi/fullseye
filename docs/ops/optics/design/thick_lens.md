@@ -7,12 +7,12 @@ out: table
 examples: [lens_design_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # thick_lens — OPTICS `design` op
 
-- **データ種**: `` → `table`
+- **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import raytrace; raytrace.thick_lens(R1=50.0, R2=-50.0, thickness=5.0, index=1.5168)` (または `opsoptics.get("thick_lens")`)
 
 ## 使い方

@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">flow_apply — REPRCONV <code style="color:#22d3bf">flow</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points × flow_scattered</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import reprconv; reprconv.flow_apply(points, flow)</code> (oder <code style="color:#22d3bf">opsreprconv.get(&quot;flow_apply&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>点群 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> に散在フロー </code><code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> を足す → </code><code style="color:#22d3bf">points</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">flow</code>` の消費側。</p>
+<p>`<code style="color:#22d3bf">estimate_flow(a, b)</code>` が「a の各点から b の最近傍への変位」を返すので、</p>
+<p>`<code style="color:#22d3bf">flow_apply(a, estimate_flow(a, b))</code>` は **b の点のうち a から最近傍として</p>
+<p>選ばれたもの**へ移る。往復が厳密になるのは対応が全単射のときだけで、</p>
+<p>そうでなければ「a の 2 点が b の同じ点へ落ちる」ぶんだけ形が縮む</p>
+<p>—— `<code style="color:#22d3bf">selftest</code>` はこの残差を数字で出す。</p>
+<p>Args:</p>
+<p>points: (N, 3)。</p>
+<p>flow: (N, 3)。</p>
+<p>Returns:</p>
+<p>(N, 3) float64。</p>
+<p>Raises:</p>
+<p>ValueError: 行数不一致 / 形状不正 / 非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">points</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:points_zyx_to_keypoints_uv">points_zyx_to_keypoints_uv</a> · <a style="color:#22d3bf" href="opreprconv:points_to_position">points_to_position</a> · <a style="color:#22d3bf" href="opreprconv:select_points">select_points</a> · <a style="color:#22d3bf" href="opreprconv:points_to_gaussians">points_to_gaussians</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">flow</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:flow_magnitude">flow_magnitude</a> · <a style="color:#22d3bf" href="opreprconv:flow_to_rgbimage">flow_to_rgbimage</a> · <a style="color:#22d3bf" href="opreprconv:flow_speed">flow_speed</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

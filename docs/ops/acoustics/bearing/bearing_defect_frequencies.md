@@ -7,12 +7,12 @@ out: table
 examples: [acoustic_condition_monitoring]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # bearing_defect_frequencies — ACOUSTICS `bearing` op
 
-- **データ種**: `` → `table`
+- **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import acoustics; acoustics.bearing_defect_frequencies(rpm=1800.0, n_elements=9, element_diameter=8.0, pitch_diameter=40.0, contact_angle_deg=0.0)` (または `opsacoustics.get("bearing_defect_frequencies")`)
 
 ## 使い方

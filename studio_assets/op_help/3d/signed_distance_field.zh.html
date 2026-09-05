@@ -1,0 +1,20 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">signed_distance_field — 3D <code style="color:#22d3bf">transform</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">sdf</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import match3d; match3d.signed_distance_field(vol, device=&#x27;cpu&#x27;, iso=0.5)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;signed_distance_field&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>occupancy/密度 voxel → 符号付き距離場 SDF(内側&lt;0・外側&gt;0)。edt_jfa を両側に。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:transforms_repr">transforms_repr</a> — <code style="color:#22d3bf">py -3.11 examples_3d/transforms_repr.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">sdf</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="op3d:sdf_to_occupancy">sdf_to_occupancy</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:integrate">integrate</a> · <a style="color:#22d3bf" href="op3d:extract_surface_points">extract_surface_points</a> · <a style="color:#22d3bf" href="op3d:query_distance">query_distance</a> · <a style="color:#22d3bf" href="op3d:sdf_union">sdf_union</a> · <a style="color:#22d3bf" href="op3d:sdf_intersect">sdf_intersect</a> · <a style="color:#22d3bf" href="op3d:sdf_subtract">sdf_subtract</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">transform</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:points_to_voxel">points_to_voxel</a> · <a style="color:#22d3bf" href="op3d:gaussians_to_voxel">gaussians_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_voxel">mesh_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_points">mesh_to_points</a> · <a style="color:#22d3bf" href="op3d:depth_to_points">depth_to_points</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mips">voxel_to_mips</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mesh">voxel_to_mesh</a> · <a style="color:#22d3bf" href="op3d:tsdf_from_depth">tsdf_from_depth</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: match3d.py — 3D 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,19 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">register_shot — 3D <code style="color:#22d3bf">feature_register</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">pose</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import feat_shot; feat_shot.register_shot(src, dst, radius=None, normal_k=16, ratio=0.9, ransac_iters=2000, inlier_thr=None, refine_icp=True, max_kp=400, device=&#x27;cpu&#x27;, seed=0)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;register_shot&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>SHOT 記述子による疎特徴マッチング + RANSAC 剛体姿勢推定(全パイプライン)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:feature_register">feature_register</a> — <code style="color:#22d3bf">py -3.11 examples_3d/feature_register.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">pose</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:pose_error">pose_error</a> · <a style="color:#22d3bf" href="op3d:bundle_adjust">bundle_adjust</a> · <a style="color:#22d3bf" href="op3d:mean_reprojection_error">mean_reprojection_error</a> · <a style="color:#22d3bf" href="op3d:optimize_pose_graph">optimize_pose_graph</a> · <a style="color:#22d3bf" href="op3d:relative_pose">relative_pose</a> · <a style="color:#22d3bf" href="op3d:mean_edge_error">mean_edge_error</a> · <a style="color:#22d3bf" href="op3d:rotation_translation_error">rotation_translation_error</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">feature_register</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:harris3d_keypoints">harris3d_keypoints</a> · <a style="color:#22d3bf" href="op3d:iss_keypoints">iss_keypoints</a> · <a style="color:#22d3bf" href="op3d:compute_fpfh">compute_fpfh</a> · <a style="color:#22d3bf" href="op3d:shot_descriptor">shot_descriptor</a> · <a style="color:#22d3bf" href="op3d:register_spin">register_spin</a> · <a style="color:#22d3bf" href="op3d:register_fpfh">register_fpfh</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: feat_shot.py — 3D 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

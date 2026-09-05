@@ -7,12 +7,12 @@ out: vector
 examples: [appearance_structural_colour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # grating_wavelengths — OPTICS `appearance` op
 
-- **データ種**: `` → `vector`
+- **データ種**: `なし` → `vector`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import matappear; matappear.grating_wavelengths(pitch_um, sin_in, sin_out, orders=(1, 2, 3)) -> 'np.ndarray'` (または `opsoptics.get("grating_wavelengths")`)
 
 ## 使い方

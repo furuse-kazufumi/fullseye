@@ -7,12 +7,12 @@ out: table
 examples: [acoustic_condition_monitoring]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # synthesize_speed_ramp — ACOUSTICS `synthesis` op
 
-- **データ種**: `` → `table`
+- **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import acoustics; acoustics.synthesize_speed_ramp(rate=5000.0, duration=4.0, rpm_start=600.0, rpm_end=1800.0, orders=(1.0, 3.5), amplitudes=None, resonance_hz=None, noise_sigma=0.0, seed=None)` (または `opsacoustics.get("synthesize_speed_ramp")`)
 
 ## 使い方

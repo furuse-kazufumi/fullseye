@@ -7,12 +7,12 @@ out: sinogram
 examples: [ct_reconstruction]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # ellipse_sinogram — TOMOGRAPHY `forward` op
 
-- **データ種**: `` → `sinogram`
+- **データ種**: `なし` → `sinogram`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import tomography; tomography.ellipse_sinogram(size=256, ellipses=None, angles_deg=None, n_detectors=None)` (または `opstomography.get("ellipse_sinogram")`)
 
 ## 使い方

@@ -3,37 +3,32 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-05 08:42:46
+- **最終更新**: 2026-09-05 10:04:30
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-f7c04f4ba auto: studio_raytrace_scene.py 編集前 (2026-09-05 07:34)
-d5e04c3e2 auto: studio_raytrace_scene.py 編集前 (2026-09-05 07:34)
-831236bb3 auto: studio_raytrace_scene.py 編集前 (2026-09-05 07:33)
-fac35f747 auto: vision_layout_from_catalog.py 編集前 (2026-09-05 07:32)
-89ef2c234 auto: vision_layout_from_catalog.py 編集前 (2026-09-05 07:32)
-022a87b25 auto: vision_layout_from_catalog.py 編集前 (2026-09-05 07:31)
-f2b935d29 auto: vision_layout_from_catalog.py 編集前 (2026-09-05 07:31)
-aef64363d auto: vision_layout_from_catalog.py 編集前 (2026-09-05 07:31)
-b08c7ed1e docs: 知識ガイド層とガイドの二種化、測色の一本化、生成 30 分→8 秒
-d54ec7a7b feat(optscene): 照明も「メーカー + 型番」で引く(OEM の重複を fail-closed に)
+17b501f3b auto: test_packaging_foundation.py 編集前 (2026-09-05 09:55)
+921fbd523 auto: pyproject.toml 編集前 (2026-09-05 09:54)
+ad92da321 auto: pyproject.toml 編集前 (2026-09-05 09:52)
+6041dc8fb auto: pyproject.toml 編集前 (2026-09-05 09:50)
+dbc007334 auto: opdocs.py 編集前 (2026-09-05 09:32)
+a2ac671d4 auto: opdocs.py 編集前 (2026-09-05 09:30)
+e40a0fbe4 auto: opdocs.py 編集前 (2026-09-05 09:30)
+d01fcbddd auto: test_opdocs.py 編集前 (2026-09-05 09:27)
+9e89f3c31 auto: studio.py 編集前 (2026-09-05 09:27)
+7856a847d auto: opdocs.py 編集前 (2026-09-05 09:27)
 ```
 
 ## 現在の git status
 
 ```
 M CHANGELOG.md
- M CONTRIBUTING.md
  M README.md
- M docs/I18N.md
- M docs/OP_CATALOG.md
  M docs/SESSION_SUMMARY.md
- M docs/articles/README.md
- M docs/articles/fullseye_overview_qiita_en.md
- M docs/articles/fullseye_overview_qiita_ja.md
+ M docs/i18n/op_summary.json
  M docs/ops/2d/3d/vol_dilate.md
  M docs/ops/2d/3d/vol_dilation_ball.md
  M docs/ops/2d/3d/vol_erode.md
@@ -1757,64 +1752,263 @@ M CHANGELOG.md
  M docs/ops/volcolor/select/vol_select_labels.md
  M docs/ops/volcolor/slice/vol_label_mpr_rgb.md
  M docs/ops/volcolor/slice/vol_label_slice_rgb.md
- M examples/studio_raytrace_scene.py
- M examples2d.py
- M fullseye/OP_CATALOG.md
  M pyproject.toml
- M studio_assets/op_help/optics/airy_radius_um.html
- M studio_assets/op_help/optics/camera_rays.html
- M studio_assets/op_help/optics/covers_sensor.html
- M studio_assets/op_help/optics/diffraction_blur.html
- M studio_assets/op_help/optics/env_lightbox.html
- M studio_assets/op_help/optics/env_studio.html
- M studio_assets/op_help/optics/illumination_visibility.html
- M studio_assets/op_help/optics/interface_budget.html
- M studio_assets/op_help/optics/layout_capture.html
- M studio_assets/op_help/optics/lens_catalog.html
- M studio_assets/op_help/optics/lens_spec.html
- M studio_assets/op_help/optics/light_catalog.html
- M studio_assets/op_help/optics/light_spec.html
- M studio_assets/op_help/optics/light_wavelengths.html
- M studio_assets/op_help/optics/linescan_capture.html
- M studio_assets/op_help/optics/observe_surface.html
- M studio_assets/op_help/optics/optical_budget.html
- M studio_assets/op_help/optics/optical_camera.html
- M studio_assets/op_help/optics/optscene_defect_mask.html
- M studio_assets/op_help/optics/reflect_rays.html
- M studio_assets/op_help/optics/register_light.html
- M studio_assets/op_help/optics/render_studio.html
- M studio_assets/op_help/optics/scene_box.html
- M studio_assets/op_help/optics/scene_difference.html
- M studio_assets/op_help/optics/scene_material.html
- M studio_assets/op_help/optics/sensor_capture.html
- M studio_assets/op_help/optics/sensor_catalog.html
- M studio_assets/op_help/optics/sensor_diagonal_mm.html
- M studio_assets/op_help/optics/sensor_spec.html
- M studio_assets/op_help/optics/surface_defect.html
- M studio_assets/op_help/optics/trace_rays.html
- M studio_assets/op_help/optics/vision_layout.html
- M studio_assets/op_help/percentile.html
- M tests/test_provenance_naming.py
+ M studio.py
+ M studio_assets/op_help/imgmetrics/compare_images.de.html
+ M studio_assets/op_help/imgmetrics/compare_images.en.html
+ M studio_assets/op_help/imgmetrics/compare_images.ko.html
+ M studio_assets/op_help/imgmetrics/compare_images.tw.html
+ M studio_assets/op_help/imgmetrics/compare_images.zh.html
+ M studio_assets/op_help/imgmetrics/compressed_size.de.html
+ M studio_assets/op_help/imgmetrics/compressed_size.en.html
+ M studio_assets/op_help/imgmetrics/compressed_size.ko.html
+ M studio_assets/op_help/imgmetrics/compressed_size.tw.html
+ M studio_assets/op_help/imgmetrics/compressed_size.zh.html
+ M studio_assets/op_help/imgmetrics/data_range_of.de.html
+ M studio_assets/op_help/imgmetrics/data_range_of.en.html
+ M studio_assets/op_help/imgmetrics/data_range_of.ko.html
+ M studio_assets/op_help/imgmetrics/data_range_of.tw.html
+ M studio_assets/op_help/imgmetrics/data_range_of.zh.html
+ M studio_assets/op_help/imgmetrics/delta_e_2000.de.html
+ M studio_assets/op_help/imgmetrics/delta_e_2000.en.html
+ M studio_assets/op_help/imgmetrics/delta_e_2000.ko.html
+ M studio_assets/op_help/imgmetrics/delta_e_2000.tw.html
+ M studio_assets/op_help/imgmetrics/delta_e_2000.zh.html
+ M studio_assets/op_help/imgmetrics/delta_e_76.de.html
+ M studio_assets/op_help/imgmetrics/delta_e_76.en.html
+ M studio_assets/op_help/imgmetrics/delta_e_76.ko.html
+ M studio_assets/op_help/imgmetrics/delta_e_76.tw.html
+ M studio_assets/op_help/imgmetrics/delta_e_76.zh.html
+ M studio_assets/op_help/imgmetrics/delta_e_map.de.html
+ M studio_assets/op_help/imgmetrics/delta_e_map.en.html
+ M studio_assets/op_help/imgmetrics/delta_e_map.ko.html
+ M studio_assets/op_help/imgmetrics/delta_e_map.tw.html
+ M studio_assets/op_help/imgmetrics/delta_e_map.zh.html
+ M studio_assets/op_help/imgmetrics/image_entropy.de.html
+ M studio_assets/op_help/imgmetrics/image_entropy.en.html
+ M studio_assets/op_help/imgmetrics/image_entropy.ko.html
+ M studio_assets/op_help/imgmetrics/image_entropy.tw.html
+ M studio_assets/op_help/imgmetrics/image_entropy.zh.html
+ M studio_assets/op_help/imgmetrics/joint_entropy.de.html
+ M studio_assets/op_help/imgmetrics/joint_entropy.en.html
+ M studio_assets/op_help/imgmetrics/joint_entropy.ko.html
+ M studio_assets/op_help/imgmetrics/joint_entropy.tw.html
+ M studio_assets/op_help/imgmetrics/joint_entropy.zh.html
+ M studio_assets/op_help/imgmetrics/joint_histogram.de.html
+ M studio_assets/op_help/imgmetrics/joint_histogram.en.html
+ M studio_assets/op_help/imgmetrics/joint_histogram.ko.html
+ M studio_assets/op_help/imgmetrics/joint_histogram.tw.html
+ M studio_assets/op_help/imgmetrics/joint_histogram.zh.html
+ M studio_assets/op_help/imgmetrics/lab_to_rgb.de.html
+ M studio_assets/op_help/imgmetrics/lab_to_rgb.en.html
+ M studio_assets/op_help/imgmetrics/lab_to_rgb.ko.html
+ M studio_assets/op_help/imgmetrics/lab_to_rgb.tw.html
+ M studio_assets/op_help/imgmetrics/lab_to_rgb.zh.html
+ M studio_assets/op_help/imgmetrics/measure_with.de.html
+ M studio_assets/op_help/imgmetrics/measure_with.en.html
+ M studio_assets/op_help/imgmetrics/measure_with.ko.html
+ M studio_assets/op_help/imgmetrics/measure_with.tw.html
+ M studio_assets/op_help/imgmetrics/measure_with.zh.html
+ M studio_assets/op_help/imgmetrics/metrics_table.de.html
+ M studio_assets/op_help/imgmetrics/metrics_table.en.html
+ M studio_assets/op_help/imgmetrics/metrics_table.ko.html
+ M studio_assets/op_help/imgmetrics/metrics_table.tw.html
+ M studio_assets/op_help/imgmetrics/metrics_table.zh.html
+ M studio_assets/op_help/imgmetrics/ms_ssim.de.html
+ M studio_assets/op_help/imgmetrics/ms_ssim.en.html
+ M studio_assets/op_help/imgmetrics/ms_ssim.ko.html
+ M studio_assets/op_help/imgmetrics/ms_ssim.tw.html
+ M studio_assets/op_help/imgmetrics/ms_ssim.zh.html
+ M studio_assets/op_help/imgmetrics/mse.de.html
+ M studio_assets/op_help/imgmetrics/mse.en.html
+ M studio_assets/op_help/imgmetrics/mse.ko.html
+ M studio_assets/op_help/imgmetrics/mse.tw.html
+ M studio_assets/op_help/imgmetrics/mse.zh.html
+ M studio_assets/op_help/imgmetrics/mutual_information.de.html
+ M studio_assets/op_help/imgmetrics/mutual_information.en.html
+ M studio_assets/op_help/imgmetrics/mutual_information.ko.html
+ M studio_assets/op_help/imgmetrics/mutual_information.tw.html
+ M studio_assets/op_help/imgmetrics/mutual_information.zh.html
+ M studio_assets/op_help/imgmetrics/ncd.de.html
+ M studio_assets/op_help/imgmetrics/ncd.en.html
+ M studio_assets/op_help/imgmetrics/ncd.ko.html
+ M studio_assets/op_help/imgmetrics/ncd.tw.html
+ M studio_assets/op_help/imgmetrics/ncd.zh.html
+ M studio_assets/op_help/imgmetrics/normalized_mutual_information.de.html
+ M studio_assets/op_help/imgmetrics/normalized_mutual_information.en.html
+ M studio_assets/op_help/imgmetrics/normalized_mutual_information.ko.html
+ M studio_assets/op_help/imgmetrics/normalized_mutual_information.tw.html
+ M studio_assets/op_help/imgmetrics/normalized_mutual_information.zh.html
+ M studio_assets/op_help/imgmetrics/psnr.de.html
+ M studio_assets/op_help/imgmetrics/psnr.en.html
+ M studio_assets/op_help/imgmetrics/psnr.ko.html
+ M studio_assets/op_help/imgmetrics/psnr.tw.html
+ M studio_assets/op_help/imgmetrics/psnr.zh.html
+ M studio_assets/op_help/imgmetrics/rgb_to_lab.de.html
+ M studio_assets/op_help/imgmetrics/rgb_to_lab.en.html
+ M studio_assets/op_help/imgmetrics/rgb_to_lab.ko.html
+ M studio_assets/op_help/imgmetrics/rgb_to_lab.tw.html
+ M studio_assets/op_help/imgmetrics/rgb_to_lab.zh.html
+ M studio_assets/op_help/imgmetrics/rgb_to_xyz.de.html
+ M studio_assets/op_help/imgmetrics/rgb_to_xyz.en.html
+ M studio_assets/op_help/imgmetrics/rgb_to_xyz.ko.html
+ M studio_assets/op_help/imgmetrics/rgb_to_xyz.tw.html
+ M studio_assets/op_help/imgmetrics/rgb_to_xyz.zh.html
+ M studio_assets/op_help/imgmetrics/rmse.de.html
+ M studio_assets/op_help/imgmetrics/rmse.en.html
+ M studio_assets/op_help/imgmetrics/rmse.ko.html
+ M studio_assets/op_help/imgmetrics/rmse.tw.html
+ M studio_assets/op_help/imgmetrics/rmse.zh.html
+ M studio_assets/op_help/imgmetrics/ssim.de.html
+ M studio_assets/op_help/imgmetrics/ssim.en.html
+ M studio_assets/op_help/imgmetrics/ssim.ko.html
+ M studio_assets/op_help/imgmetrics/ssim.tw.html
+ M studio_assets/op_help/imgmetrics/ssim.zh.html
+ M studio_assets/op_help/imgmetrics/ssim_map.de.html
+ M studio_assets/op_help/imgmetrics/ssim_map.en.html
+ M studio_assets/op_help/imgmetrics/ssim_map.ko.html
+ M studio_assets/op_help/imgmetrics/ssim_map.tw.html
+ M studio_assets/op_help/imgmetrics/ssim_map.zh.html
+ M studio_assets/op_help/imgmetrics/xyz_to_lab.de.html
+ M studio_assets/op_help/imgmetrics/xyz_to_lab.en.html
+ M studio_assets/op_help/imgmetrics/xyz_to_lab.ko.html
+ M studio_assets/op_help/imgmetrics/xyz_to_lab.tw.html
+ M studio_assets/op_help/imgmetrics/xyz_to_lab.zh.html
+ M studio_assets/op_help/math/cplx_argument_principle.de.html
+ M studio_assets/op_help/math/cplx_argument_principle.en.html
+ M studio_assets/op_help/math/cplx_argument_principle.ko.html
+ M studio_assets/op_help/math/cplx_argument_principle.tw.html
+ M studio_assets/op_help/math/cplx_argument_principle.zh.html
+ M studio_assets/op_help/math/cplx_cauchy_value.de.html
+ M studio_assets/op_help/math/cplx_cauchy_value.en.html
+ M studio_assets/op_help/math/cplx_cauchy_value.ko.html
+ M studio_assets/op_help/math/cplx_cauchy_value.tw.html
+ M studio_assets/op_help/math/cplx_cauchy_value.zh.html
+ M studio_assets/op_help/math/cplx_contour_circle.de.html
+ M studio_assets/op_help/math/cplx_contour_circle.ko.html
+ M studio_assets/op_help/math/cplx_contour_circle.tw.html
+ M studio_assets/op_help/math/cplx_contour_circle.zh.html
+ M studio_assets/op_help/math/cplx_contour_integral.de.html
+ M studio_assets/op_help/math/cplx_contour_integral.ko.html
+ M studio_assets/op_help/math/cplx_contour_integral.tw.html
+ M studio_assets/op_help/math/cplx_contour_integral.zh.html
+ M studio_assets/op_help/math/cplx_cr_residual.de.html
+ M studio_assets/op_help/math/cplx_cr_residual.en.html
+ M studio_assets/op_help/math/cplx_cr_residual.ko.html
+ M studio_assets/op_help/math/cplx_cr_residual.tw.html
+ M studio_assets/op_help/math/cplx_cr_residual.zh.html
+ M studio_assets/op_help/math/cplx_joukowski.de.html
+ M studio_assets/op_help/math/cplx_joukowski.ko.html
+ M studio_assets/op_help/math/cplx_joukowski.tw.html
+ M studio_assets/op_help/math/cplx_joukowski.zh.html
+ M studio_assets/op_help/math/cplx_laurent_coeffs.de.html
+ M studio_assets/op_help/math/cplx_laurent_coeffs.en.html
+ M studio_assets/op_help/math/cplx_laurent_coeffs.ko.html
+ M studio_assets/op_help/math/cplx_laurent_coeffs.tw.html
+ M studio_assets/op_help/math/cplx_laurent_coeffs.zh.html
+ M studio_assets/op_help/math/cplx_mobius.de.html
+ M studio_assets/op_help/math/cplx_mobius.ko.html
+ M studio_assets/op_help/math/cplx_mobius.tw.html
+ M studio_assets/op_help/math/cplx_mobius.zh.html
+ M studio_assets/op_help/math/cplx_poly_eval.de.html
+ M studio_assets/op_help/math/cplx_poly_eval.ko.html
+ M studio_assets/op_help/math/cplx_poly_eval.tw.html
+ M studio_assets/op_help/math/cplx_poly_eval.zh.html
+ M studio_assets/op_help/math/cplx_winding_number.de.html
+ M studio_assets/op_help/math/cplx_winding_number.ko.html
+ M studio_assets/op_help/math/cplx_winding_number.tw.html
+ M studio_assets/op_help/math/cplx_winding_number.zh.html
+ M studio_assets/op_help/math/interp_cubic.de.html
+ M studio_assets/op_help/math/interp_cubic.ko.html
+ M studio_assets/op_help/math/interp_cubic.tw.html
+ M studio_assets/op_help/math/interp_cubic.zh.html
+ M studio_assets/op_help/math/interp_linear.de.html
+ M studio_assets/op_help/math/interp_linear.ko.html
+ M studio_assets/op_help/math/interp_linear.tw.html
+ M studio_assets/op_help/math/interp_linear.zh.html
+ M studio_assets/op_help/math/mat_cond.de.html
+ M studio_assets/op_help/math/mat_cond.en.html
+ M studio_assets/op_help/math/mat_cond.ko.html
+ M studio_assets/op_help/math/mat_cond.tw.html
+ M studio_assets/op_help/math/mat_cond.zh.html
+ M studio_assets/op_help/math/mat_eigh.de.html
+ M studio_assets/op_help/math/mat_eigh.ko.html
+ M studio_assets/op_help/math/mat_eigh.tw.html
+ M studio_assets/op_help/math/mat_eigh.zh.html
+ M studio_assets/op_help/math/mat_lstsq.de.html
+ M studio_assets/op_help/math/mat_lstsq.en.html
+ M studio_assets/op_help/math/mat_lstsq.ko.html
+ M studio_assets/op_help/math/mat_lstsq.tw.html
+ M studio_assets/op_help/math/mat_lstsq.zh.html
+ M studio_assets/op_help/math/mat_pinv.de.html
+ M studio_assets/op_help/math/mat_pinv.ko.html
+ M studio_assets/op_help/math/mat_pinv.tw.html
+ M studio_assets/op_help/math/mat_pinv.zh.html
+ M studio_assets/op_help/math/mat_solve.de.html
+ M studio_assets/op_help/math/mat_solve.en.html
+ M studio_assets/op_help/math/mat_solve.ko.html
+ M studio_assets/op_help/math/mat_solve.tw.html
+ M studio_assets/op_help/math/mat_solve.zh.html
+ M studio_assets/op_help/math/mat_svd.de.html
+ M studio_assets/op_help/math/mat_svd.ko.html
+ M studio_assets/op_help/math/mat_svd.tw.html
+ M studio_assets/op_help/math/mat_svd.zh.html
+ M studio_assets/op_help/math/poly_eval.de.html
+ M studio_assets/op_help/math/poly_eval.ko.html
+ M studio_assets/op_help/math/poly_eval.tw.html
+ M studio_assets/op_help/math/poly_eval.zh.html
+ M studio_assets/op_help/math/poly_fit.de.html
+ M studio_assets/op_help/math/poly_fit.ko.html
+ M studio_assets/op_help/math/poly_fit.tw.html
+ M studio_assets/op_help/math/poly_fit.zh.html
+ M studio_assets/op_help/math/poly_roots.de.html
+ M studio_assets/op_help/math/poly_roots.en.html
+ M studio_assets/op_help/math/poly_roots.ko.html
+ M studio_assets/op_help/math/poly_roots.tw.html
+ M studio_assets/op_help/math/poly_roots.zh.html
+ M studio_assets/op_help/math/stat_correlation.de.html
+ M studio_assets/op_help/math/stat_correlation.ko.html
+ M studio_assets/op_help/math/stat_correlation.tw.html
+ M studio_assets/op_help/math/stat_correlation.zh.html
+ M studio_assets/op_help/math/stat_covariance.de.html
+ M studio_assets/op_help/math/stat_covariance.ko.html
+ M studio_assets/op_help/math/stat_covariance.tw.html
+ M studio_assets/op_help/math/stat_covariance.zh.html
+ M studio_assets/op_help/math/stat_describe.de.html
+ M studio_assets/op_help/math/stat_describe.ko.html
+ M studio_assets/op_help/math/stat_describe.tw.html
+ M studio_assets/op_help/math/stat_describe.zh.html
+ M studio_assets/op_help/math/stat_histogram.de.html
+ M studio_assets/op_help/math/stat_histogram.ko.html
+ M studio_assets/op_help/math/stat_histogram.tw.html
+ M studio_assets/op_help/math/stat_histogram.zh.html
+ M studio_assets/op_help/math/stat_zscore.de.html
+ M studio_assets/op_help/math/stat_zscore.ko.html
+ M studio_assets/op_help/math/stat_zscore.tw.html
+ M studio_assets/op_help/math/stat_zscore.zh.html
+ M studio_assets/op_help/optics/example_system.en.html
+ M tests/test_packaging_foundation.py
+ M tools/opdocs.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-08:31 docs/SESSION_SUMMARY.md
-08:31 CHANGELOG.md
-08:31 CONTRIBUTING.md
-08:26 README.md
-08:24 pyproject.toml
-08:18 fullseye/OP_CATALOG.md
-08:18 docs/OP_CATALOG.md
-08:18 studio_assets/op_help/guide_video_streaming.html
-08:18 studio_assets/op_help/guide_image_difference_metrics.html
-08:18 studio_assets/op_help/guide_figure_annotation.html
-08:18 studio_assets/op_help/guide_dataset_conventions.html
-08:18 studio_assets/op_help/guide_coherence_scanning.html
-08:18 studio_assets/op_help/guide_acoustic_condition_monitoring.html
-08:18 studio_assets/op_help/guide_specular_photometric.html
-08:18 studio_assets/op_help/guide_quaternion_monogenic.html
+10:03 studio.py
+10:03 CHANGELOG.md
+09:57 docs/SESSION_SUMMARY.md
+09:56 .pytest_cache/v/cache/nodeids
+09:56 fullseye/OP_CATALOG.md
+09:56 docs/OP_CATALOG.md
+09:56 studio_assets/op_help/guide_video_streaming.zh.html
+09:56 studio_assets/op_help/guide_video_streaming.tw.html
+09:56 studio_assets/op_help/guide_video_streaming.ko.html
+09:56 studio_assets/op_help/guide_video_streaming.html
+09:56 studio_assets/op_help/guide_video_streaming.en.html
+09:56 studio_assets/op_help/guide_video_streaming.de.html
+09:56 studio_assets/op_help/guide_image_difference_metrics.zh.html
+09:56 studio_assets/op_help/guide_image_difference_metrics.tw.html
+09:56 studio_assets/op_help/guide_image_difference_metrics.ko.html
 ```
 
 ---

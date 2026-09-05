@@ -1,0 +1,38 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mat_svd — MATH <code style="color:#22d3bf">linalg</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import mathops; mathops.mat_svd(a, full_matrices=False)</code> (or <code style="color:#22d3bf">opsmath.get(&quot;mat_svd&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Singular value decomposition `<code style="color:#22d3bf">A = U @ diag(s) @ Vt</code><code style="color:#22d3bf"> (LAPACK </code><code style="color:#22d3bf">gesdd</code>`).</p>
+<p>Returns `<code style="color:#22d3bf">(U, s, Vt)</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">s</code>` descending and non-negative. With the</p>
+<p>default `<code style="color:#22d3bf">full_matrices=False</code><code style="color:#22d3bf"> the *thin* SVD is returned (</code><code style="color:#22d3bf">U</code>` is</p>
+<p>`<code style="color:#22d3bf">(m, r)</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">Vt</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">(r, n)</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">r = min(m, n)</code>`) — enough to</p>
+<p>reconstruct `<code style="color:#22d3bf">A</code><code style="color:#22d3bf"> exactly and what every rank/PCA use wants; pass </code><code style="color:#22d3bf">True</code>`</p>
+<p>for the full orthogonal bases.</p>
+<p><b>Sign trap (honest)</b>: each singular-vector pair `<code style="color:#22d3bf">(u_i, v_i)</code>` is defined</p>
+<p>only up to a simultaneous sign flip, and vectors within a *degenerate*</p>
+<p>(equal-`<code style="color:#22d3bf">s</code><code style="color:#22d3bf">) block only up to rotation. Assert on </code><code style="color:#22d3bf">s</code>`, on</p>
+<p>`<code style="color:#22d3bf">U diag(s) Vt</code><code style="color:#22d3bf">, or on projectors — never on raw </code><code style="color:#22d3bf">U</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">Vt</code>` entries.</p>
+<p>HALCON: `<code style="color:#22d3bf">svd_matrix</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
+<p>Every mathops op validates its input before computing (nothing slips through silently):</p>
+<p style="margin:2px 0 2px 12px">• **complex input raises <code style="color:#22d3bf">ValueError</code>** — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
+<p style="margin:2px 0 2px 12px">• **masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code>** — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input** (refused with the count stated — it propagates through the whole result).</p>
+<p style="margin:2px 0 2px 12px">• <b>Shapes are strict</b>: 1-D and 2-D are never implicitly promoted or broadcast (a matrix in a vector slot, or a vector in a matrix slot, raises <code style="color:#22d3bf">ValueError</code>; reshape explicitly).</p>
+<p style="margin:2px 0 2px 12px">• <b>Size cap</b>: ops that take a matrix, and the <code style="color:#22d3bf">stat_histogram</code> bins, raise <code style="color:#22d3bf">ValueError</code> beyond <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 million elements).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:math_metrology">math_metrology</a> — <code style="color:#22d3bf">py -3.11 examples/math_metrology.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">linalg</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:mat_solve">mat_solve</a> · <a style="color:#22d3bf" href="opmath:mat_lstsq">mat_lstsq</a> · <a style="color:#22d3bf" href="opmath:mat_eigh">mat_eigh</a> · <a style="color:#22d3bf" href="opmath:mat_pinv">mat_pinv</a> · <a style="color:#22d3bf" href="opmath:mat_cond">mat_cond</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

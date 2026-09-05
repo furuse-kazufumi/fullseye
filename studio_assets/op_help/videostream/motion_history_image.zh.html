@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">motion_history_image — VIDEOSTREAM <code style="color:#22d3bf">motion</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import videostream; videostream.motion_history_image(video, tau: &#x27;int&#x27; = 15, threshold: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsvideostream.get(&quot;motion_history_image&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Bobick–Davis Motion History Image per frame → `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> in </code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">video</code>`).</p>
+<p>Frame `<code style="color:#22d3bf">t</code><code style="color:#22d3bf"> is the MHI of frames </code><code style="color:#22d3bf">0..t</code>`: 1 where motion is happening,</p>
+<p>decaying by `<code style="color:#22d3bf">1/tau</code>` per frame elsewhere. The last frame is the classic</p>
+<p>single-image temporal template of the whole clip&#x27;s motion.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:video_streaming">video_streaming 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_cables">mv_cables</a> — ケーブル（規格・速度・給電・ロボットケーブル）</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_frame_grabbers">mv_frame_grabbers</a> — フレームグラバーボード（光学系ではないが、撮れるかを決める）</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_standards">mv_standards</a> — カメラインターフェースの規格と団体</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:video_streaming">video_streaming</a> — <code style="color:#22d3bf">py -3.11 examples/video_streaming.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">video</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opvideostream:temporal_median_window">temporal_median_window</a> · <a style="color:#22d3bf" href="opvideostream:moving_average_window">moving_average_window</a> · <a style="color:#22d3bf" href="opvideostream:background_subtraction_window">background_subtraction_window</a> · <a style="color:#22d3bf" href="opvideostream:frame_difference_causal">frame_difference_causal</a> · <a style="color:#22d3bf" href="opvideostream:exponential_background">exponential_background</a> · <a style="color:#22d3bf" href="opvideostream:exponential_foreground">exponential_foreground</a> · <a style="color:#22d3bf" href="opvideostream:running_mean_std">running_mean_std</a> · <a style="color:#22d3bf" href="opvideostream:optical_flow_magnitude_stream">optical_flow_magnitude_stream</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">motion</code>)</h3>
+<p><a style="color:#22d3bf" href="opvideostream:motion_energy_image">motion_energy_image</a> · <a style="color:#22d3bf" href="opvideostream:three_frame_difference">three_frame_difference</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: videostream.py — VIDEOSTREAM 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

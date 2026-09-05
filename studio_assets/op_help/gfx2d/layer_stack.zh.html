@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">layer_stack — GFX2D <code style="color:#22d3bf">composite</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">rgba</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import gfx2d; gfx2d.layer_stack(layers)</code>(或 <code style="color:#22d3bf">opsgfx2d.get(&quot;layer_stack&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Composite a z-ordered list of `<code style="color:#22d3bf">rgba</code>` layers, bottom first.</p>
+<p>Each layer is a dict:</p>
+<p>`<code style="color:#22d3bf">{&quot;image&quot;: rgba, &quot;mode&quot;: str = &quot;normal&quot;, &quot;opacity&quot;: float = 1.0}</code>`</p>
+<p>and the W3C rule for a blend mode against a *partially transparent* backdrop</p>
+<p>is used — the blend function is weighted by the backdrop&#x27;s own alpha,</p>
+<p>`<code style="color:#22d3bf">Cs&#x27; = (1 - a_b) Cs + a_b B(Cb, Cs)</code>` — so a layer over empty space keeps</p>
+<p>its own colour whatever the mode. The result is straight-alpha `<code style="color:#22d3bf">rgba</code>`.</p>
+<p>All layers must share one shape; see :func:<code style="color:#22d3bf">alpha_composite</code> on why.</p>
+<p>Raises ValueError: empty list, more than :data:<code style="color:#22d3bf">MAX_LAYERS</code>, a non-dict</p>
+<p>entry, an unknown key, mismatched shapes.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gfx2d_scene">gfx2d_scene</a> — <code style="color:#22d3bf">py -3.11 examples/gfx2d_scene.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">rgba</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:premultiply">premultiply</a> · <a style="color:#22d3bf" href="opgfx2d:alpha_composite">alpha_composite</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_blit">sprite_blit</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_transform">sprite_transform</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_sheet_slice">sprite_sheet_slice</a> · <a style="color:#22d3bf" href="opgfx2d:nine_slice">nine_slice</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">composite</code>)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:premultiply">premultiply</a> · <a style="color:#22d3bf" href="opgfx2d:unpremultiply">unpremultiply</a> · <a style="color:#22d3bf" href="opgfx2d:alpha_composite">alpha_composite</a> · <a style="color:#22d3bf" href="opgfx2d:alpha_composite_premul">alpha_composite_premul</a> · <a style="color:#22d3bf" href="opgfx2d:blend_mode">blend_mode</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gfx2d.py — GFX2D 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

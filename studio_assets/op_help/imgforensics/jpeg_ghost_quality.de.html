@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">jpeg_ghost_quality — IMGFORENSICS <code style="color:#22d3bf">compression</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import imgforensics; imgforensics.jpeg_ghost_quality(ghosts, qualities=None) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">opsimgforensics.get(&quot;jpeg_ghost_quality&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>ゴースト地図の列 → 画素ごとに <b>残差が最小になる品質</b> の地図。`<code style="color:#22d3bf">image2d</code>`。</p>
+<p>`<code style="color:#22d3bf">qualities</code><code style="color:#22d3bf"> を省くと :func:</code>jpeg_ghost_map` の既定(40..95 step 5)を仮定する</p>
+<p>—— **枚数が合わなければ :class:<code style="color:#22d3bf">ValueError</code>**(添字と品質がずれた地図を返さない)。</p>
+<p>返りは品質そのものを画素値に持つ `<code style="color:#22d3bf">(H, W)</code>` なので、値域は [0, 1] ではない。</p>
+<p>表示するときは正規化すること(この op は数値を返すのであって絵を返さない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_forensics_audit">image_forensics_audit</a> — <code style="color:#22d3bf">py -3.11 examples/image_forensics_audit.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:perceptual_hash">perceptual_hash</a> · <a style="color:#22d3bf" href="opimgforensics:fingerprint_correlate">fingerprint_correlate</a> · <a style="color:#22d3bf" href="opimgforensics:error_level_map">error_level_map</a> · <a style="color:#22d3bf" href="opimgforensics:jpeg_quality_estimate">jpeg_quality_estimate</a> · <a style="color:#22d3bf" href="opimgforensics:jpeg_ghost_map">jpeg_ghost_map</a> · <a style="color:#22d3bf" href="opimgforensics:noise_inconsistency_map">noise_inconsistency_map</a> · <a style="color:#22d3bf" href="opimgforensics:copy_move_regions">copy_move_regions</a> · <a style="color:#22d3bf" href="opimgforensics:watermark_embed">watermark_embed</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">compression</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:error_level_map">error_level_map</a> · <a style="color:#22d3bf" href="opimgforensics:jpeg_quality_estimate">jpeg_quality_estimate</a> · <a style="color:#22d3bf" href="opimgforensics:jpeg_ghost_map">jpeg_ghost_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgforensics.py — IMGFORENSICS Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

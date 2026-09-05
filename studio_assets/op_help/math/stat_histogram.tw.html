@@ -1,0 +1,47 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">stat_histogram — MATH <code style="color:#22d3bf">stats</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import mathops; mathops.stat_histogram(x, bins=10, range=None, density=False)</code>(或 <code style="color:#22d3bf">opsmath.get(&quot;stat_histogram&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>一維樣本的直方圖,分箱方式<b>明確給出</b>。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>*bins* is a positive integer count of equal-width bins; *range* is an</p>
+<p>explicit `<code style="color:#22d3bf">(lo, hi)</code><code style="color:#22d3bf"> (finite, </code><code style="color:#22d3bf">lo &lt; hi</code><code style="color:#22d3bf">) or </code><code style="color:#22d3bf">None</code>` to span the data</p>
+<p>(values exactly at `<code style="color:#22d3bf">hi</code>` land in the last bin, numpy&#x27;s convention; with an</p>
+<p>explicit *range*, values outside it are excluded from every bin — they</p>
+<p>simply do not count, which is why passing *range* explicitly is the honest</p>
+<p>choice when comparing histograms across datasets). With `<code style="color:#22d3bf">density=False</code>`</p>
+<p>(default) *counts* are occurrence <b>frequencies</b> (int64, summing to the</p>
+<p>number of in-range samples); with `<code style="color:#22d3bf">density=True</code>` they form a</p>
+<p><b>probability density</b> (float64, integrating to 1 over the range).</p>
+<p>A *range* that excludes <b>every</b> sample raises `<code style="color:#22d3bf">ValueError</code>` under</p>
+<p>`<code style="color:#22d3bf">density=True</code>` (the density would be 0/0 — silent NaNs refused) while</p>
+<p>`<code style="color:#22d3bf">density=False</code>` honestly returns all-zero counts. *bins* is capped at</p>
+<p>`<code style="color:#22d3bf">MAX_ELEMENTS</code>` (the edge/count arrays are allocations too).</p>
+<p>Returns `<code style="color:#22d3bf">(counts, edges)</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">edges</code><code style="color:#22d3bf"> has </code><code style="color:#22d3bf">bins + 1</code>` entries;</p>
+<p>bin *i* is `<code style="color:#22d3bf">[edges[i], edges[i+1])</code>`.</p>
+<p>HALCON: `<code style="color:#22d3bf">tuple_histo_range</code><code style="color:#22d3bf"> (and </code><code style="color:#22d3bf">gray_histo</code>` for whole images).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
+<p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
+<p style="margin:2px 0 2px 12px">• **complex 輸入一律 <code style="color:#22d3bf">ValueError</code>** —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>
+<p style="margin:2px 0 2px 12px">• **含被遮罩元素的 masked array 一律 <code style="color:#22d3bf">ValueError</code>** —— 拒絕「剝掉遮罩直接使用下面原值」的隱式轉換。請明確選擇填補還是丟棄。</p>
+<p style="margin:2px 0 2px 12px">• **所有輸入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code>**(明確給出個數後拒絕 —— 它會汙染整個結果)。</p>
+<p style="margin:2px 0 2px 12px">• <b>形狀嚴格</b>:不對 1-D 與 2-D 做隱式提升或廣播(向量槽位收到矩陣、矩陣槽位收到向量都是 <code style="color:#22d3bf">ValueError</code>;請明確 reshape)。</p>
+<p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:接受矩陣的運算子與 <code style="color:#22d3bf">stat_histogram</code> 的 bins,超過 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 萬個元素)即 <code style="color:#22d3bf">ValueError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:measurement_uncertainty">measurement_uncertainty</a> — 計測の不確かさと校正の知識 — 「測れている」を主張するために</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:math_metrology">math_metrology</a> — <code style="color:#22d3bf">py -3.11 examples/math_metrology.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">pairs</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">stats</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:stat_describe">stat_describe</a> · <a style="color:#22d3bf" href="opmath:stat_covariance">stat_covariance</a> · <a style="color:#22d3bf" href="opmath:stat_correlation">stat_correlation</a> · <a style="color:#22d3bf" href="opmath:stat_zscore">stat_zscore</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

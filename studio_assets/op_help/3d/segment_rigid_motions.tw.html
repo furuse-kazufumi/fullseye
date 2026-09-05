@@ -1,0 +1,19 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">segment_rigid_motions — 3D <code style="color:#22d3bf">motion_segment</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">labels</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import motion_seg3d; motion_seg3d.segment_rigid_motions(pts0, pts1, thresh, max_bodies: &#x27;int&#x27; = 5, min_inliers=None, n_iter: &#x27;int&#x27; = 100, k_sample: &#x27;int&#x27; = 6, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;segment_rigid_motions&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>2 点群を運動が一致する剛体ごとに分割する(反復 RANSAC による multi-body 分割)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:motion_seg">motion_seg</a> — <code style="color:#22d3bf">py -3.11 examples_3d/motion_seg.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">labels</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:vol_region_props">vol_region_props</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">motion_segment</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:estimate_flow">estimate_flow</a> · <a style="color:#22d3bf" href="op3d:fit_rigid">fit_rigid</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: motion_seg3d.py — 3D 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

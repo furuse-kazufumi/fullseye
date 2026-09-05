@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">alpha_composite — GFX2D <code style="color:#22d3bf">composite</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgba × rgba</code> → <code style="color:#22d3bf">rgba</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import gfx2d; gfx2d.alpha_composite(src, dst)</code>(或 <code style="color:#22d3bf">opsgfx2d.get(&quot;alpha_composite&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>Porter–Duff <b>over</b> on straight-alpha `<code style="color:#22d3bf">rgba</code>` (Porter &amp; Duff 1984).</p>
+<p>`<code style="color:#22d3bf">a_o = a_s + a_d (1 - a_s)</code>` and</p>
+<p>`<code style="color:#22d3bf">C_o = (C_s a_s + C_d a_d (1 - a_s)) / a_o</code><code style="color:#22d3bf">, with </code><code style="color:#22d3bf">C_o = 0</code>` where</p>
+<p>`<code style="color:#22d3bf">a_o == 0</code>`.</p>
+<p>Both arguments must be straight-alpha and the <b>same shape</b> — this family</p>
+<p>never broadcasts, because a broadcast image is a silently wrong picture. Use</p>
+<p>:func:<code style="color:#22d3bf">sprite_blit</code> to place something smaller.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gfx2d_scene">gfx2d_scene</a> — <code style="color:#22d3bf">py -3.11 examples/gfx2d_scene.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">rgba</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:premultiply">premultiply</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_blit">sprite_blit</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_transform">sprite_transform</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_sheet_slice">sprite_sheet_slice</a> · <a style="color:#22d3bf" href="opgfx2d:nine_slice">nine_slice</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">composite</code>)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:premultiply">premultiply</a> · <a style="color:#22d3bf" href="opgfx2d:unpremultiply">unpremultiply</a> · <a style="color:#22d3bf" href="opgfx2d:alpha_composite_premul">alpha_composite_premul</a> · <a style="color:#22d3bf" href="opgfx2d:blend_mode">blend_mode</a> · <a style="color:#22d3bf" href="opgfx2d:layer_stack">layer_stack</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gfx2d.py — GFX2D 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

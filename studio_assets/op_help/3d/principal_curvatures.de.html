@@ -1,0 +1,20 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">principal_curvatures — 3D <code style="color:#22d3bf">curvature</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">curvature</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import curvature3d; curvature3d.principal_curvatures(points, k=25, normals=None)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;principal_curvatures&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>各点の主曲率 (k1&gt;=k2)。→ (k1 (N,), k2 (N,))。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:curvature_grasp">curvature_grasp</a> — <code style="color:#22d3bf">py -3.11 examples_3d/curvature_grasp.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:itokawa_curvature">itokawa_curvature</a> — <code style="color:#22d3bf">py -3.11 examples_3d/itokawa_curvature.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">curvature</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">curvature</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:mean_curvature">mean_curvature</a> · <a style="color:#22d3bf" href="op3d:gaussian_curvature">gaussian_curvature</a> · <a style="color:#22d3bf" href="op3d:shape_index">shape_index</a> · <a style="color:#22d3bf" href="op3d:estimate_normals">estimate_normals</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: curvature3d.py — 3D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

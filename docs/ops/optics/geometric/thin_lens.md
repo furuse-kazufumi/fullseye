@@ -7,12 +7,12 @@ out: table
 examples: [lightfield_depth, optics_imaging]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # thin_lens — OPTICS `geometric` op
 
-- **データ種**: `` → `table`
+- **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import optics; optics.thin_lens(focal_mm=50.0, object_mm=200.0)` (または `opsoptics.get("thin_lens")`)
 
 ## 使い方

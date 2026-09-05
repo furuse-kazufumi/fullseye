@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vol_label_slice_rgb — VOLCOLOR <code style="color:#22d3bf">slice</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">rgbvolume</code> → <code style="color:#22d3bf">rgbimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import volcolor; volcolor.vol_label_slice_rgb(rgbvol, index: &#x27;int&#x27;, axis=&#x27;z&#x27;)</code> (oder <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_slice_rgb&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>色付きボリュームから 1 枚の断面 RGB を取り出す(axial / coronal / sagittal)。</p>
+<p>*axis* は `<code style="color:#22d3bf">&quot;z&quot;</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">&quot;axial&quot;</code><code style="color:#22d3bf">/0(</code><code style="color:#22d3bf">(H, W, 3)</code><code style="color:#22d3bf"> が返る)、</code><code style="color:#22d3bf">&quot;y&quot;</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">&quot;coronal&quot;</code>`/1</p>
+<p>(`<code style="color:#22d3bf">(D, W, 3)</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">&quot;x&quot;</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">&quot;sagittal&quot;</code><code style="color:#22d3bf">/2(</code><code style="color:#22d3bf">(D, H, 3)</code>`)。**返る 2 軸が</p>
+<p>軸ごとに違う**のは `<code style="color:#22d3bf">(D, H, W)</code><code style="color:#22d3bf"> から 1 軸抜くのだから当然だが、</code><code style="color:#22d3bf">(H, W)</code>` を</p>
+<p>期待して受けると縦横が入れ替わった絵が例外なしに出る。3 通りの形は</p>
+<p>`<code style="color:#22d3bf">tests/test_volcolor.py::test_slice_axes_shapes_and_content</code>` が固定している。</p>
+<p>*index* は<b>非負</b>でなければならない。`<code style="color:#22d3bf">-1</code>` を「最後の断面」として黙って</p>
+<p>受けると、範囲外の指定が最後の断面として通ってしまう(切り出す位置が</p>
+<p>1 箇所ずれた図は、機械にも目にも「壊れている」と見えない)。</p>
+<p>Returns a contiguous float64 `<code style="color:#22d3bf">(..., 3)</code><code style="color:#22d3bf"> copy. Raises </code><code style="color:#22d3bf">ValueError</code>` for a bad</p>
+<p>volume, an unknown *axis*, or an out-of-range / negative *index*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:voxel_labels_color">voxel_labels_color</a> — <code style="color:#22d3bf">py -3.11 examples/voxel_labels_color.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">rgbimage</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">slice</code>)</h3>
+<p><a style="color:#22d3bf" href="opvolcolor:vol_label_mpr_rgb">vol_label_mpr_rgb</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: volcolor.py — VOLCOLOR Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

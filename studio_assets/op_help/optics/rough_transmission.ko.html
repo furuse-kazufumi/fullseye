@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">rough_transmission — OPTICS <code style="color:#22d3bf">surface</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import surfacelib; surfacelib.rough_transmission(cos_i, roughness=0.3, n1=1.0, n2=1.5)</code>(또는 <code style="color:#22d3bf">opsoptics.get(&quot;rough_transmission&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
+<p>すりガラスの透過を「直進成分」と「拡散成分」に分ける。</p>
+<p>cos_i: 入射角の cos。roughness: 面の粗さ(0 = 透明、1 = 完全拡散)。</p>
+<p>返り値: (直進 T_spec, 拡散 T_diff) の 2 本。合計は透明板の透過率に一致する</p>
+<p>(エネルギーを作らない ―― テストで確認)。曇りガラス越しの見え方は、この</p>
+<p>直進成分が落ちて拡散成分が増えるだけで説明できる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
+<p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
+<p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>
+<p style="margin:2px 0 2px 12px">• **문자열은 <code style="color:#22d3bf">ValueError</code>** —— <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> 은 성공하므로 파싱되지 않은 설정값이 길이로 통과해 버립니다(실측: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> 이 그럴듯한 66.667 mm 를 돌려주고 있었습니다). bool 도 <code style="color:#22d3bf">True == 1</code> 의 암묵 승격으로 보고 거부합니다.</p>
+<p style="margin:2px 0 2px 12px">• **complex / masked array 는 <code style="color:#22d3bf">ValueError</code><b>(실수 슬롯만. 허수부의 무언 절삭·마스크 벗기기를 거부).</b>NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code>**.</p>
+<p style="margin:2px 0 2px 12px">• <b>0 나눗셈과 그 친척들을 이름을 들어 거부</b>: 초점거리 0, 곡률반경 0, 굴절률 &lt;= 0, 불투명한 조리개(전부 0 이라 정규화가 0/0), 총합 &lt;= 0 인 PSF, S0 = 0 인 스토크스 벡터, 물체가 앞쪽 초점에 있는 경우(상이 무한대).</p>
+<p style="margin:2px 0 2px 12px">• <b>비유한 값을 돌려주는 것은 2 개 연산자뿐이며, 둘 다 계약으로 명시</b>: <code style="color:#22d3bf">depth_of_field</code> 의 과초점거리 너머 <code style="color:#22d3bf">far_mm = inf</code>(그것이 과초점거리의 정의)와 <code style="color:#22d3bf">gaussian_beam</code> 의 허리에서의 <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(평면 파면의 곡률반경). 둘 다 유한한 짝(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)을 함께 돌려줍니다. **그 밖의 무언 NaN/Inf 는 내부에서 검출해 <code style="color:#22d3bf">ValueError</code>** —— 「float64 가 넘쳤다」와 「답이 무한대다」는 다른 주장이므로, 후자의 얼굴로 전자를 돌려주지 않습니다.</p>
+<p style="margin:2px 0 2px 12px">• <b>크기 상한</b>: 생성 격자는 <code style="color:#22d3bf">optics.MAX_GRID</code>(4096), 넘겨받은 필드/PSF/조리개는 <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24), ABCD 소자열은 <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024), Zernike 는 <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25). 작은 인자에서 거대한 내부 할당이 일어나는 경로(실측: n_max=40 × 4096² 로 108 GB)를 fail-closed 로 막습니다.</p>
+<p style="margin:2px 0 2px 12px">• <b>물리적으로 불가능한 상태도 거부</b>: 편광도 &gt; 1 인 스토크스 벡터, 음의 투과율, 음의 강도, n-|m| 이 홀수인 잘못된 Zernike 첨자 등.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machined_metal_and_materials">machined_metal_and_materials</a> — <code style="color:#22d3bf">py -3.11 examples/machined_metal_and_materials.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">pairs</code> 를 입력으로 받는 것)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">surface</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:metallic_flake_normals">metallic_flake_normals</a> · <a style="color:#22d3bf" href="opoptics:weave_normals">weave_normals</a> · <a style="color:#22d3bf" href="opoptics:wood_grain">wood_grain</a> · <a style="color:#22d3bf" href="opoptics:corrosion_mask">corrosion_mask</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: surfacelib.py — OPTICS 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

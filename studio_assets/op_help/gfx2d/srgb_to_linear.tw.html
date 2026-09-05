@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">srgb_to_linear — GFX2D <code style="color:#22d3bf">colorspace</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">rgb</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import gfx2d; gfx2d.srgb_to_linear(img)</code>(或 <code style="color:#22d3bf">opsgfx2d.get(&quot;srgb_to_linear&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>sRGB-encoded values to linear light (IEC 61966-2-1).</p>
+<p>An alpha channel, if present, is <b>not</b> transformed — coverage is already</p>
+<p>linear. Accepts `<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">(H, W, 1|3|4)</code>`.</p>
+<p>Use this before anything that adds or scales light (:func:<code style="color:#22d3bf">radial_light</code>,</p>
+<p>:func:<code style="color:#22d3bf">light_mask</code>, :func:<code style="color:#22d3bf">normal_map_shade</code>, :func:<code style="color:#22d3bf">bloom</code>) if the input</p>
+<p>came out of an image file. Skipping it does not raise: it makes highlights</p>
+<p>bloom too early and shadows too dark, by the amount quoted in the module</p>
+<p>docstring.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gfx2d_scene">gfx2d_scene</a> — <code style="color:#22d3bf">py -3.11 examples/gfx2d_scene.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">rgb</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:linear_to_srgb">linear_to_srgb</a> · <a style="color:#22d3bf" href="opgfx2d:blend_mode">blend_mode</a> · <a style="color:#22d3bf" href="opgfx2d:light_mask">light_mask</a> · <a style="color:#22d3bf" href="opgfx2d:normal_map_decode">normal_map_decode</a> · <a style="color:#22d3bf" href="opgfx2d:bloom">bloom</a> · <a style="color:#22d3bf" href="opgfx2d:vignette">vignette</a> · <a style="color:#22d3bf" href="opgfx2d:chromatic_aberration">chromatic_aberration</a> · <a style="color:#22d3bf" href="opgfx2d:film_grain">film_grain</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">colorspace</code>)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:linear_to_srgb">linear_to_srgb</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gfx2d.py — GFX2D 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

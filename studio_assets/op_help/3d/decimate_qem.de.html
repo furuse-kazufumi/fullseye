@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">decimate_qem — 3D <code style="color:#22d3bf">mesh_process</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">mesh</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import meshrepair; meshrepair.decimate_qem(V, F, target_faces, protect=None)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;decimate_qem&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Quadric-error-metric edge-collapse decimation toward *target_faces*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:mesh_decimate">mesh_decimate</a> — <code style="color:#22d3bf">py -3.11 examples_3d/mesh_decimate.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:mesh_lod_download">mesh_lod_download</a> — <code style="color:#22d3bf">py -3.11 examples_3d/mesh_lod_download.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:mesh_resolution_demo">mesh_resolution_demo</a> — <code style="color:#22d3bf">py -3.11 examples_3d/mesh_resolution_demo.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">mesh</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="op3d:mesh_to_voxel">mesh_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_points">mesh_to_points</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:ambient_occlusion">ambient_occlusion</a> · <a style="color:#22d3bf" href="op3d:cast_shadow">cast_shadow</a> · <a style="color:#22d3bf" href="op3d:supersample_mesh">supersample_mesh</a> · <a style="color:#22d3bf" href="op3d:render_beauty">render_beauty</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">mesh_process</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:laplacian_smooth">laplacian_smooth</a> · <a style="color:#22d3bf" href="op3d:taubin_smooth">taubin_smooth</a> · <a style="color:#22d3bf" href="op3d:face_normals">face_normals</a> · <a style="color:#22d3bf" href="op3d:vertex_normals">vertex_normals</a> · <a style="color:#22d3bf" href="op3d:mesh_area">mesh_area</a> · <a style="color:#22d3bf" href="op3d:vertex_curvature">vertex_curvature</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: meshrepair.py — 3D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

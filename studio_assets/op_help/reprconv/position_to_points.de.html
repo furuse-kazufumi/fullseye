@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">position_to_points — REPRCONV <code style="color:#22d3bf">keypoint</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">position</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import reprconv; reprconv.position_to_points(position)</code> (oder <code style="color:#22d3bf">opsreprconv.get(&quot;position_to_points&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>位置 `<code style="color:#22d3bf">(z, y, x)</code><code style="color:#22d3bf"> → 1 点の点群 </code><code style="color:#22d3bf">(1, 3)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">position</code>` の出口(<b>可逆</b>)。</p>
+<p>`<code style="color:#22d3bf">position</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">volregion.vol_rle_centroid</code>` などが返す 3-tuple で、</p>
+<p>順序は <b>(z, y, x)</b>(`<code style="color:#22d3bf">vol_rle_centroid</code>` の docstring が明示している)。</p>
+<p>点群も voxel 由来なら同じ順なので、そのまま 1 行の点群にできる。</p>
+<p>Args:</p>
+<p>position: 長さ 3 の列 (z, y, x)。</p>
+<p>Returns:</p>
+<p>(1, 3) float64。</p>
+<p>Raises:</p>
+<p>ValueError: 長さが 3 でない / 非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">points</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:points_zyx_to_keypoints_uv">points_zyx_to_keypoints_uv</a> · <a style="color:#22d3bf" href="opreprconv:points_to_position">points_to_position</a> · <a style="color:#22d3bf" href="opreprconv:select_points">select_points</a> · <a style="color:#22d3bf" href="opreprconv:flow_apply">flow_apply</a> · <a style="color:#22d3bf" href="opreprconv:points_to_gaussians">points_to_gaussians</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">keypoint</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:keypoints_uv_to_points">keypoints_uv_to_points</a> · <a style="color:#22d3bf" href="opreprconv:points_zyx_to_keypoints_uv">points_zyx_to_keypoints_uv</a> · <a style="color:#22d3bf" href="opreprconv:keypoints_to_image2d">keypoints_to_image2d</a> · <a style="color:#22d3bf" href="opreprconv:keypoints_from_image2d">keypoints_from_image2d</a> · <a style="color:#22d3bf" href="opreprconv:points_to_position">points_to_position</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

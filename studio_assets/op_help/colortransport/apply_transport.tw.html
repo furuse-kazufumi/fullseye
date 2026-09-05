@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">apply_transport — COLORTRANSPORT <code style="color:#22d3bf">plan_use</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">transport_plan × signal</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import colortransport; colortransport.apply_transport(plan, target_values)</code>(或 <code style="color:#22d3bf">opscolortransport.get(&quot;apply_transport&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>輸送計画で `<code style="color:#22d3bf">target_values</code>` を元の点へ引き戻す(重心写像)。</p>
+<p>各行(送り元)について、運んだ質量で重み付けした行き先の値の平均を返す。</p>
+<p>これが「計画を<b>使って絵を直す</b>」入口 ―― 計画を作るだけで使い道が無いと、</p>
+<p>:func:<code style="color:#22d3bf">sinkhorn</code> の出力は台帳の袋小路になる(この repo が繰り返し踏んできた</p>
+<p>「入口はあるが消費 op が無い型」の形)。</p>
+<p>質量ゼロの行は行き先が無い ―― 0 で埋めると「黒い画素」が黙って混ざるので</p>
+<p>`<code style="color:#22d3bf">ValueError</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:color_transport">color_transport</a> — <code style="color:#22d3bf">py -3.11 examples/color_transport.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">signal</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opcolortransport:wasserstein_1d">wasserstein_1d</a> · <a style="color:#22d3bf" href="opcolortransport:transport_plan_1d">transport_plan_1d</a> · <a style="color:#22d3bf" href="opcolortransport:sinkhorn">sinkhorn</a> · <a style="color:#22d3bf" href="opcolortransport:sinkhorn_distance">sinkhorn_distance</a> · <a style="color:#22d3bf" href="opcolortransport:sinkhorn_divergence">sinkhorn_divergence</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">plan_use</code>)</h3>
+<p><a style="color:#22d3bf" href="opcolortransport:transport_cost">transport_cost</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: colortransport.py — COLORTRANSPORT 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

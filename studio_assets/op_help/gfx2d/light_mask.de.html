@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">light_mask — GFX2D <code style="color:#22d3bf">light</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">rgb × rgb</code> → <code style="color:#22d3bf">rgb</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.light_mask(base, light, ambient=0.0)</code> (oder <code style="color:#22d3bf">opsgfx2d.get(&quot;light_mask&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Modulate an `<code style="color:#22d3bf">rgb</code><code style="color:#22d3bf"> image by an </code><code style="color:#22d3bf">rgb</code><code style="color:#22d3bf"> light map: </code><code style="color:#22d3bf">base * (ambient + light)</code>`.</p>
+<p>`<code style="color:#22d3bf">ambient</code><code style="color:#22d3bf"> is the light that reaches everything; </code><code style="color:#22d3bf">ambient=1</code>` with a black</p>
+<p>light map returns the base <b>exactly</b>, which is the identity the test suite</p>
+<p>pins.</p>
+<p>The product is clipped to `<code style="color:#22d3bf">[0, 1]</code>`; the clipped amount is not returned.</p>
+<p>Both arguments should be in the same encoding — mixing an sRGB base with a</p>
+<p>linear light map is the second silent-error trap of this family, and the</p>
+<p>only defence is that both arguments are named.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gfx2d_scene">gfx2d_scene</a> — <code style="color:#22d3bf">py -3.11 examples/gfx2d_scene.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">rgb</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:srgb_to_linear">srgb_to_linear</a> · <a style="color:#22d3bf" href="opgfx2d:linear_to_srgb">linear_to_srgb</a> · <a style="color:#22d3bf" href="opgfx2d:blend_mode">blend_mode</a> · <a style="color:#22d3bf" href="opgfx2d:normal_map_decode">normal_map_decode</a> · <a style="color:#22d3bf" href="opgfx2d:bloom">bloom</a> · <a style="color:#22d3bf" href="opgfx2d:vignette">vignette</a> · <a style="color:#22d3bf" href="opgfx2d:chromatic_aberration">chromatic_aberration</a> · <a style="color:#22d3bf" href="opgfx2d:film_grain">film_grain</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">light</code>)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:radial_light">radial_light</a> · <a style="color:#22d3bf" href="opgfx2d:normal_map_decode">normal_map_decode</a> · <a style="color:#22d3bf" href="opgfx2d:normal_map_shade">normal_map_shade</a> · <a style="color:#22d3bf" href="opgfx2d:shadow_cast_2d">shadow_cast_2d</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gfx2d.py — GFX2D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

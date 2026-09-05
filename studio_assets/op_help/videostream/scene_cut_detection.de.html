@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">scene_cut_detection — VIDEOSTREAM <code style="color:#22d3bf">analysis</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import videostream; videostream.scene_cut_detection(video, bins: &#x27;int&#x27; = 64, threshold: &#x27;float&#x27; = 0.3) -&gt; &#x27;dict&#x27;</code> (oder <code style="color:#22d3bf">opsvideostream.get(&quot;scene_cut_detection&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Shot-boundary chi-square histogram distance over a clip → `<code style="color:#22d3bf">{&quot;distance&quot;, &quot;cut&quot;, &quot;n&quot;}</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">table</code>`).</p>
+<p>`<code style="color:#22d3bf">distance[t]</code><code style="color:#22d3bf"> is the chi-square distance of frame </code><code style="color:#22d3bf">t</code>`&#x27;s histogram to</p>
+<p>frame `<code style="color:#22d3bf">t−1</code><code style="color:#22d3bf">&#x27;s (</code><code style="color:#22d3bf">distance[0] = 0</code><code style="color:#22d3bf">); </code><code style="color:#22d3bf">cut[t]</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">distance[t] &gt; threshold</code>`.</p>
+<p>Streaming form: one histogram of state, no frames kept.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:video_streaming">Leitfaden zur Familie video_streaming</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_cables">mv_cables</a> — ケーブル（規格・速度・給電・ロボットケーブル）</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_frame_grabbers">mv_frame_grabbers</a> — フレームグラバーボード（光学系ではないが、撮れるかを決める）</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_standards">mv_standards</a> — カメラインターフェースの規格と団体</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:video_streaming">video_streaming</a> — <code style="color:#22d3bf">py -3.11 examples/video_streaming.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">analysis</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: videostream.py — VIDEOSTREAM Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

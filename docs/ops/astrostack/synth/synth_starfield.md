@@ -7,12 +7,12 @@ out: image2d
 examples: [astro_stacking]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # synth_starfield — ASTROSTACK `synth` op
 
-- **データ種**: `` → `image2d`
+- **データ種**: `なし` → `image2d`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import astrostack; astrostack.synth_starfield(shape=(128, 128), n_stars=30, flux_min=400.0, flux_max=9000.0, fwhm_px=3.2, psf='gaussian', moffat_beta=2.5, sky=60.0, read_sigma=6.0, shift_row=0.0, shift_col=0.0, n_cosmic=0, cosmic_flux=4000.0, margin_px=6.0, seed=0, field_seed=None, noise=True)` (または `opsastrostack.get("synth_starfield")`)
 
 ## 使い方

@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">star_detect — ASTROSTACK <code style="color:#22d3bf">photometry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">keypoints</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import astrostack; astrostack.star_detect(image, threshold_sigma=5.0, min_separation=3, max_stars=200, edge_margin=None, centroid_box=None, method=&#x27;mad&#x27;)</code>(或 <code style="color:#22d3bf">opsastrostack.get(&quot;star_detect&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>星を検出して `<code style="color:#22d3bf">(row, col)</code>` の重心列を返す。</p>
+<p>背景と雑音を :func:<code style="color:#22d3bf">noise_sigma</code> と同じ頑健推定で出し、</p>
+<p>`<code style="color:#22d3bf">background + threshold_sigma * sigma</code>` を超える<b>局所最大</b>を拾う</p>
+<p>(最大値フィルタとの一致で判定するので、`<code style="color:#22d3bf">min_separation</code>` 画素以内に</p>
+<p>2 つは出ない)。中心はしきい値の画素位置ではなく、`<code style="color:#22d3bf">centroid_box</code>`</p>
+<p>(既定 `<code style="color:#22d3bf">2*min_separation+1</code>`)の窓で<b>背景を引いた強度で重み付けした重心</b></p>
+<p>—— これが副画素の位置精度を出す唯一の理由で、連結成分の重心</p>
+<p>(:func:<code style="color:#22d3bf">detect.segment_objects</code>)は硬いしきい値の分だけ明るさに依存して</p>
+<p>偏る。</p>
+<p>明るい順に並べて `<code style="color:#22d3bf">max_stars</code><code style="color:#22d3bf"> 個で打ち切る。縁から </code><code style="color:#22d3bf">edge_margin</code>`</p>
+<p>(既定 `<code style="color:#22d3bf">centroid_box // 2</code>`)より内側の星だけを返す —— 窓が画像からはみ出す</p>
+<p>星は重心が縁側へ引っ張られるので、黙って偏った値を返すより落とす。</p>
+<p>Returns `<code style="color:#22d3bf">(N, 2)</code><code style="color:#22d3bf"> float64 </code><code style="color:#22d3bf">keypoints</code><code style="color:#22d3bf">。1 個も無ければ </code><code style="color:#22d3bf">(0, 2)</code>`</p>
+<p>(空は正当な答えなので例外にしない —— 星が無い視野は存在する)。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 2-D でない / 非有限を含む / *threshold_sigma* が</p>
+<p>非正 / *min_separation* が 1 未満 / *max_stars* が 1 未満の場合。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:astro_stacking">astro_stacking</a> — <code style="color:#22d3bf">py -3.11 examples/astro_stacking.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">keypoints</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:psf_fit">psf_fit</a> · <a style="color:#22d3bf" href="opastrostack:aperture_photometry">aperture_photometry</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">photometry</code>)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:psf_fit">psf_fit</a> · <a style="color:#22d3bf" href="opastrostack:aperture_photometry">aperture_photometry</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: astrostack.py — ASTROSTACK 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sinkhorn_distance — COLORTRANSPORT <code style="color:#22d3bf">transport</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal × matrix</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import colortransport; colortransport.sinkhorn_distance(a, b, cost, reg=0.05, **kw)</code> (oder <code style="color:#22d3bf">opscolortransport.get(&quot;sinkhorn_distance&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>正則化つき輸送費 `<code style="color:#22d3bf">&lt;plan, cost&gt;</code>`。<b>厳密な距離ではない</b>。</p>
+<p>正則化のぶん系統的に偏るので、自分自身との「距離」も 0 にならない</p>
+<p>(そのずれ幅はテストに実測で残してある)。1 次元で厳密が要るときは</p>
+<p>:func:<code style="color:#22d3bf">wasserstein_1d</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:color_transport">color_transport</a> — <code style="color:#22d3bf">py -3.11 examples/color_transport.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">scalar</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">transport</code>)</h3>
+<p><a style="color:#22d3bf" href="opcolortransport:wasserstein_1d">wasserstein_1d</a> · <a style="color:#22d3bf" href="opcolortransport:transport_plan_1d">transport_plan_1d</a> · <a style="color:#22d3bf" href="opcolortransport:sinkhorn">sinkhorn</a> · <a style="color:#22d3bf" href="opcolortransport:sinkhorn_divergence">sinkhorn_divergence</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: colortransport.py — COLORTRANSPORT Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

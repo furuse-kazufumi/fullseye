@@ -1,6 +1,6 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">light_spec — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>table`</p>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import optscene; optscene.light_spec(kind: &#x27;str&#x27; = &#x27;coaxial&#x27;, source: &#x27;str&#x27; = &#x27;led&#x27;, wavelength_nm: &#x27;float&#x27; = 550.0, bandwidth_nm: &#x27;float&#x27; = 30.0, radius_mm: &#x27;float&#x27; = 40.0, height_mm: &#x27;float&#x27; = 110.0, size_mm: &#x27;float&#x27; = None, n: &#x27;int&#x27; = 196, intensity: &#x27;float&#x27; = 1.0, cos_exponent: &#x27;float&#x27; = 1.0, polarization: &#x27;str&#x27; = None, model: &#x27;str&#x27; = None, maker: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;light_spec&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>照明の諸元。<b>幾何は illumdesign.light_source に委ね、光の性質をここで足す</b>。</p>

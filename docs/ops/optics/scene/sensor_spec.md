@@ -7,12 +7,12 @@ out: table
 examples: [vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # sensor_spec — OPTICS `scene` op
 
-- **データ種**: `` → `table`
+- **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import optscene; optscene.sensor_spec(pixel_um: 'float' = 3.45, resolution=(1024, 1024), quantum_efficiency: 'float' = 0.6, full_well_e: 'float' = 10000.0, read_noise_e: 'float' = 2.5, dark_e_per_s: 'float' = 5.0, bit_depth: 'int' = 8, gain_e_per_unit: 'float' = 50000.0, shutter: 'str' = 'global', model: 'str' = None) -> 'dict'` (または `opsoptics.get("sensor_spec")`)
 
 ## 使い方

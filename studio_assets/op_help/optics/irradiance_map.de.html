@@ -1,0 +1,43 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">irradiance_map — OPTICS <code style="color:#22d3bf">illumination</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import illumdesign; illumdesign.irradiance_map(light, size_mm=(50.0, 50.0), shape=(128, 128), height=None, z_mm=0.0, facing=&#x27;up&#x27;)</code> (oder <code style="color:#22d3bf">opsoptics.get(&quot;irradiance_map&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Irradiance on the part plane (`<code style="color:#22d3bf">image2d</code>`, units of intensity / mm²).</p>
+<p>The plane is centred on the axis, *size_mm* = (height, width) in mm sampled</p>
+<p>on *shape* = (rows, cols); +y is up (row 0 is the top). *height* (optional,</p>
+<p>same shape as the map, mm) tilts each pixel&#x27;s normal to that of a relief</p>
+<p>surface — a dent or a bump then shows as the irradiance it actually</p>
+<p>receives. *z_mm* shifts the plane (a thick part&#x27;s top face). *facing*</p>
+<p>`<code style="color:#22d3bf">&quot;up&quot;</code><code style="color:#22d3bf"> (+z, toward the camera) or </code><code style="color:#22d3bf">&quot;down&quot;</code>` — the face a backlight</p>
+<p>illuminates (what the camera sees through the part&#x27;s apertures).</p>
+<p>Closed forms: an isotropic point source (`<code style="color:#22d3bf">cos_exponent=0</code>`) at height h</p>
+<p>gives `<code style="color:#22d3bf">E = I0 cos³θ / h²</code><code style="color:#22d3bf">; a Lambertian emitter (</code><code style="color:#22d3bf">cos_exponent=1</code>`)</p>
+<p>pointing down gives the cos⁴ law `<code style="color:#22d3bf">E = I0 cos⁴θ / h²</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
+<p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
+<p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>
+<p style="margin:2px 0 2px 12px">• **Strings lösen <code style="color:#22d3bf">ValueError</code> aus** — <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> gelingt, sodass ein ungeparster Konfigurationswert als Länge durchrutschen würde (gemessen: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> lieferte plausible 66,667 mm). bool wird als implizite Hochstufung <code style="color:#22d3bf">True == 1</code> ebenfalls abgelehnt.</p>
+<p style="margin:2px 0 2px 12px">• **complex / Masked Arrays lösen <code style="color:#22d3bf">ValueError</code> aus<b> (nur reelle Slots; das stille Verwerfen des Imaginärteils bzw. Abstreifen der Maske wird abgelehnt). </b>NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus.**</p>
+<p style="margin:2px 0 2px 12px">• <b>Division durch null und Verwandtes wird namentlich abgelehnt</b>: Brennweite 0, Krümmungsradius 0, Brechzahl &lt;= 0, undurchlässige Blende (alles 0, die Normierung wird 0/0), PSF mit Summe &lt;= 0, Stokes-Vektor mit S0 = 0 und ein Objekt im vorderen Brennpunkt (Bild im Unendlichen).</p>
+<p style="margin:2px 0 2px 12px">• <b>Nur zwei Operatoren liefern einen nicht-endlichen Wert, und beide halten das vertraglich fest</b>: <code style="color:#22d3bf">depth_of_field</code> liefert jenseits der hyperfokalen Distanz <code style="color:#22d3bf">far_mm = inf</code> (genau das bedeutet die hyperfokale Distanz), und <code style="color:#22d3bf">gaussian_beam</code> liefert an der Taille <code style="color:#22d3bf">wavefront_radius_mm = inf</code> (der Krümmungsradius einer ebenen Wellenfront). Beide liefern zusätzlich einen endlichen Partner (<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>). **Jedes andere stille NaN/Inf wird intern erkannt und löst <code style="color:#22d3bf">ValueError</code> aus** — &quot;float64 ist übergelaufen&quot; und &quot;die Antwort ist unendlich&quot; sind verschiedene Aussagen; die erste wird nie im Gewand der zweiten geliefert.</p>
+<p style="margin:2px 0 2px 12px">• <b>Größenobergrenzen</b>: erzeugte Gitter durch <code style="color:#22d3bf">optics.MAX_GRID</code> (4096), übergebene Felder/PSFs/Blenden durch <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code> (2^24), ABCD-Elementketten durch <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code> (1024), Zernike durch <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code> (512) / <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code> (40) / <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code> (2^25). Damit werden Pfade fail-closed geschlossen, in denen ein kleines Argument eine riesige interne Allokation auslöst (gemessen: n_max=40 × 4096² braucht 108 GB).</p>
+<p style="margin:2px 0 2px 12px">• <b>Physikalisch unmögliche Zustände werden ebenfalls abgelehnt</b>: Stokes-Vektor mit Polarisationsgrad &gt; 1, negative Transmission, negative Intensität und ungültige Zernike-Indizes wie ungerades n-|m|.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">Leitfaden zur Familie optics_imaging</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:mv_illumination_practice">mv_illumination_practice</a> — 照明の実務知識 — 波長・偏光・点灯方式・外光・安全</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:illumination_design_demo">illumination_design_demo</a> — <code style="color:#22d3bf">py -3.11 examples/illumination_design_demo.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opoptics:fraunhofer_pattern">fraunhofer_pattern</a> · <a style="color:#22d3bf" href="opoptics:psf_to_mtf">psf_to_mtf</a> · <a style="color:#22d3bf" href="opoptics:illumination_uniformity">illumination_uniformity</a> · <a style="color:#22d3bf" href="opoptics:render_through_lens">render_through_lens</a> · <a style="color:#22d3bf" href="opoptics:surface_defect">surface_defect</a> · <a style="color:#22d3bf" href="opoptics:defocus_blur">defocus_blur</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">illumination</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:light_source">light_source</a> · <a style="color:#22d3bf" href="opoptics:illumination_uniformity">illumination_uniformity</a> · <a style="color:#22d3bf" href="opoptics:defect_contrast">defect_contrast</a> · <a style="color:#22d3bf" href="opoptics:lighting_sweep">lighting_sweep</a> · <a style="color:#22d3bf" href="opoptics:illumination_design">illumination_design</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: illumdesign.py — OPTICS Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

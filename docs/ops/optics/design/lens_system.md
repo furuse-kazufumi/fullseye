@@ -7,12 +7,12 @@ out: table
 examples: [lens_calibration_loop_demo, lens_defect_dataset_demo, lens_design_demo, lens_optimize_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # lens_system — OPTICS `design` op
 
-- **データ種**: `` → `table`
+- **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import raytrace; raytrace.lens_system(surfaces=None, stop=None, object_mm=inf, wavelength_um=0.58756, index_object=1.0, image_mm=None, field=None)` (または `opsoptics.get("lens_system")`)
 
 ## 使い方

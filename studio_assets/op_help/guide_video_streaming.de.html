@@ -1,0 +1,85 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">Dieser Leitfaden liegt nur auf Japanisch vor (es ist von Menschen geschriebene Prosa, hier wird nichts maschinell ersetzt).</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">動画ストリーミング(video streaming)— 1 フレームずつ流して処理する 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p><code style="color:#22d3bf">videops</code> 族は動画を <code style="color:#22d3bf">(T, H, W)</code> の float64 配列として<b>一括</b>で受け取ります。1080p の 1 秒は 475 MB、状態を持つ op は表せません。カメラ・ロボットの眼・長時間録画は「全フレーム」を一度に渡してこないので、<code style="color:#22d3bf">videostream</code> 族(台帳 <code style="color:#22d3bf">opsvideostream.py</code>、16 op / 8 カテゴリ、モジュール <code style="color:#22d3bf">videostream.py</code>)は <b>1 フレームずつ</b>処理する形を op として持ちます。</p>
+<p style="margin:2px 0 2px 12px">• **リングバッファ <code style="color:#22d3bf">FrameRing(n)</code><b> — 直近 n 枚だけを、</b>フレームの dtype のまま<b>保持(uint8 の 1080p を 5 枚で 10 MB。float64 一括の 1 秒は 475 MB)。形や dtype の違うフレームは</b>拒否**します(落ちたフレームが黙って窓を汚さない)。</p>
+<p style="margin:2px 0 2px 12px">• **状態つき op(<code style="color:#22d3bf">StatefulOp</code>、<code style="color:#22d3bf">push(frame) → 出力</code> / <code style="color:#22d3bf">reset()</code> / <code style="color:#22d3bf">state</code>)** — 第 1 波: <code style="color:#22d3bf">TemporalMedianWindow</code> / <code style="color:#22d3bf">MovingAverageWindow</code> / <code style="color:#22d3bf">BackgroundSubtractionWindow</code>(窓つき、因果)、<code style="color:#22d3bf">FrameDifference</code> / <code style="color:#22d3bf">ExponentialBackground</code> / <code style="color:#22d3bf">RunningStats</code>(状態 1〜2 枚の再帰形)、<code style="color:#22d3bf">OpticalFlowStream</code>(前フレーム保持の密な流れ)。第 2 波: <code style="color:#22d3bf">MotionHistoryImage</code>(動き履歴画像)/ <code style="color:#22d3bf">ThreeFrameDifference</code>(三フレーム差分)/ <code style="color:#22d3bf">RunningGaussianForeground</code>(画素ごと単一ガウス背景)/ <code style="color:#22d3bf">TemporalBilateral</code>(時間方向バイラテラル)/ <code style="color:#22d3bf">Deflicker</code>(輝度デフリッカ)/ <code style="color:#22d3bf">SceneCutDetection</code>(ショット境界)。</p>
+<p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">VideoPipeline(stages)</code>** — 台帳 op の文字列(<code style="color:#22d3bf">&quot;gaussian&quot;</code> / <code style="color:#22d3bf">(&quot;gaussian&quot;, a, b)</code>、<code style="color:#22d3bf">api.apply</code> を通るので GPU 経路と fallback 台帳はそのまま)、状態つき op、任意の callable を混ぜて連ねる。<code style="color:#22d3bf">push(frame)</code> / <code style="color:#22d3bf">run(frames)</code> / <code style="color:#22d3bf">stats()</code>(1 フレームあたり ms、段ごとの時間、リングのバイト数)。</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳 op(一括版)</b> — 第 1 波: <code style="color:#22d3bf">temporal_median_window</code> / <code style="color:#22d3bf">moving_average_window</code> / <code style="color:#22d3bf">background_subtraction_window</code> / <code style="color:#22d3bf">frame_difference_causal</code> / <code style="color:#22d3bf">exponential_background</code> / <code style="color:#22d3bf">exponential_foreground</code> / <code style="color:#22d3bf">running_mean_std</code> / <code style="color:#22d3bf">optical_flow_magnitude_stream</code>。第 2 波: <code style="color:#22d3bf">motion_history_image</code> / <code style="color:#22d3bf">motion_energy_image</code> / <code style="color:#22d3bf">three_frame_difference</code> / <code style="color:#22d3bf">running_gaussian_foreground</code> / <code style="color:#22d3bf">running_gaussian_background</code> / <code style="color:#22d3bf">temporal_bilateral</code> / <code style="color:#22d3bf">deflicker</code> / <code style="color:#22d3bf">scene_cut_detection</code>。実体は<b>ストリーミングクラスをクリップに沿って再生したもの</b>(<code style="color:#22d3bf">stream_replay</code>)なので、生の配信で 1 フレームずつ得た結果と台帳 op の結果は<b>フレーム単位で一致</b>します(<code style="color:#22d3bf">tests/test_videostream.py</code> と <code style="color:#22d3bf">examples/video_streaming.py</code> が固定)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">第 2 波の op(動き検出・適応背景・時間ノイズ除去・復元・ショット検出)</h3>
+<p>| op | 何をするか | 出典 |</p>
+<p>|---|---|---|</p>
+<p>| <code style="color:#22d3bf">motion_history_image</code> / <code style="color:#22d3bf">motion_energy_image</code> | 動き履歴画像(いま動いた所を 1、後ろへ <code style="color:#22d3bf">1/tau</code> ずつ減衰)/ その二値版(直近 tau で動いた所) | Bobick &amp; Davis 2001 |</p>
+<p>| <code style="color:#22d3bf">three_frame_difference</code> | 連続する二つのフレーム差分の AND。移動体の後ろに残る「ゴースト」を消す | Collins et al., VSAM 2000 |</p>
+<p>| <code style="color:#22d3bf">running_gaussian_foreground</code> / <code style="color:#22d3bf">running_gaussian_background</code> | 画素ごとに平均・分散を持ち、平均から <code style="color:#22d3bf">k</code> 標準偏差を超えたら前景。閾値が画素ごとに雑音へ追従(固定閾値の <code style="color:#22d3bf">exponential_background</code> の上位) | Wren *Pfinder* 1997 |</p>
+<p>| <code style="color:#22d3bf">temporal_bilateral</code> | 時間方向のバイラテラル。動いた画素は過去フレームの重みが落ちるので、平均化のようにゴーストを引かずに静止部だけ雑音除去 | — |</p>
+<p>| <code style="color:#22d3bf">deflicker</code> | 各フレームの平均を緩やかな基準へ合わせて輝度の脈動を打ち消す(自動露出・商用電源のちらつき) | 動画復元 |</p>
+<p>| <code style="color:#22d3bf">scene_cut_detection</code> | フレーム間ヒストグラムのカイ二乗距離。ハードカットで跳ねる。動き(画素は動くがヒストグラムは保つ)に強い | ショット境界検出 |</p>
+<p>スループット(<code style="color:#22d3bf">--set video</code>、per-frame・ring メモリのみ、720p float64、非熱定常なので相対で読む): <code style="color:#22d3bf">deflicker</code> / <code style="color:#22d3bf">exponential_background</code> / <code style="color:#22d3bf">frame_difference_causal</code> は 100 fps 超、<code style="color:#22d3bf">motion_history_image</code> / <code style="color:#22d3bf">three_frame_difference</code> / <code style="color:#22d3bf">moving_average_window</code> は 30 fps 余裕、<code style="color:#22d3bf">running_gaussian_foreground</code> ~46 fps、per-画素中央値/窓を持つ <code style="color:#22d3bf">temporal_median_window</code> / <code style="color:#22d3bf">background_subtraction_window</code> / <code style="color:#22d3bf">temporal_bilateral</code> は 720p で 10〜15 fps(中央値・窓が重い、<code style="color:#22d3bf">docs/design/PERF_MEMORY_VIDEO_SURVEY.md</code> の median 所見どおり)。計測は <code style="color:#22d3bf">py -3.11 tools/bench_ops.py --set video --sizes 720p</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>読み込みの素通し</b> — <code style="color:#22d3bf">video.iter_frames(path, dtype=&quot;uint8&quot;)</code> はデコードした整数フレームを float64 に変換せず渡します(1080p の読み込みが 18 fps → 約 180 fps、<code style="color:#22d3bf">docs/design/PERF_MEMORY_VIDEO_SURVEY.md</code> §3.2)。灰色化は <code style="color:#22d3bf">gray_backend=&quot;auto&quot;|&quot;cv2&quot;|&quot;numpy&quot;</code>(どちらも Rec. 601、丸めで 1 LSB 差)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">videops との違いは名前に出す</h3>
+<p>同じ名前で違う数を出す op は作りません。窓つき・因果の版は必ず別名です。</p>
+<p>| videops(一括・全 T) | videostream(因果・直近 N) | 一致する条件 |</p>
+<p>|---|---|---|</p>
+<p>| <code style="color:#22d3bf">temporal_median</code>(全 T の中央値) | <code style="color:#22d3bf">temporal_median_window(video, window)</code> | <code style="color:#22d3bf">window == T</code> の最終フレーム |</p>
+<p>| <code style="color:#22d3bf">moving_average</code>(中心窓・端複製) | <code style="color:#22d3bf">moving_average_window</code> | 内部フレームで 1 フレームずれて一致 |</p>
+<p>| <code style="color:#22d3bf">background_subtraction</code> | <code style="color:#22d3bf">background_subtraction_window</code> | <code style="color:#22d3bf">window == T</code> の最終フレーム |</p>
+<p>| <code style="color:#22d3bf">frame_difference</code>(T−1 枚) | <code style="color:#22d3bf">frame_difference_causal</code>(T 枚、先頭ゼロ) | 2 枚目以降 |</p>
+<p>| <code style="color:#22d3bf">optical_flow_sequence</code>(T−1 枚) | <code style="color:#22d3bf">optical_flow_magnitude_stream</code>(T 枚) | 2 枚目以降 |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の契約(fail-closed)</h3>
+<p style="margin:2px 0 2px 12px">• フレームは <code style="color:#22d3bf">(H, W)</code>(リングのみ <code style="color:#22d3bf">(H, W, C)</code> も可)。<b>最初のフレームが形と dtype を決め</b>、以後違うものは <code style="color:#22d3bf">ValueError</code>(<code style="color:#22d3bf">reset()</code> で新しいストリームを始める)。float の非有限は拒否。</p>
+<p style="margin:2px 0 2px 12px">• 受け付ける dtype は float64 <code style="color:#22d3bf">[0,1]</code>(ライブラリ契約)と <code style="color:#22d3bf">uint8</code> / <code style="color:#22d3bf">uint16</code> / <code style="color:#22d3bf">bool</code>。整数はリングに整数のまま置き、計算のときに <code style="color:#22d3bf">/255</code>・<code style="color:#22d3bf">/65535</code> で正直に換算。<b>出力は常に float64 契約</b>。uint8 の中央値は整数のまま取ってから割るので、float64 で計算した値と 1 ulp 以内で一致。</p>
+<p style="margin:2px 0 2px 12px">• 窓 op は<b>因果</b>(フレーム t は t−N+1 .. t だけを使う)。窓が埋まるまでは見えた分だけで計算(最初は 1 枚の窓)。</p>
+<p style="margin:2px 0 2px 12px">• 状態つき段が例外を出したら **状態をリセットして台帳に <code style="color:#22d3bf">source=&quot;stream&quot;</code> で記録**(汚れた窓のまま続けない)。<code style="color:#22d3bf">on_error=&quot;raise&quot;</code> なら再送出。既定(fail-soft)では、その段の出力は <code style="color:#22d3bf">None</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">window</code> は 1〜4096 の int(bool は拒否)、<code style="color:#22d3bf">alpha</code> / <code style="color:#22d3bf">threshold</code> は [0,1]。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン(op の繋がり)</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    S[iter_frames dtype=uint8&lt;br/&gt;or camera] --&gt; P[VideoPipeline]
+    P --&gt; G[&quot;gaussian (台帳 op, api.apply)&quot;]
+    G --&gt; B[BackgroundSubtractionWindow&lt;br/&gt;ring N=5]
+    B --&gt; M[mask → 重心・速度]
+    S --&gt; R[RunningStats&lt;br/&gt;状態 2 枚]
+    R --&gt; N[mean / std 画像]
+    C[(T,H,W) clip] --&gt; L[台帳 op temporal_median_window …&lt;br/&gt;= stream_replay]
+    L --&gt; E[フレーム単位で&lt;br/&gt;live と一致]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">生の配信を流す</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import videostream as VS
+
+rng = np.random.default_rng(0)
+frames = [np.round(rng.random((48, 64)) * 255).astype(np.uint8) for _ in range(20)]
+
+pipe = VS.VideoPipeline([(&quot;gaussian&quot;, 0.15, 0.5), VS.BackgroundSubtractionWindow(5, 0.25)])
+for mask in pipe.run(frames):            # 1 フレームずつ、mask は (H, W) の 0/1 float64
+    pass
+st = pipe.stats()
+print(st[&quot;ms_per_frame&quot;], st[&quot;ring_bytes&quot;], st[&quot;stages&quot;])</pre>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">状態つき op を直接使う</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import videostream as VS
+
+op = VS.TemporalMedianWindow(5)          # 直近 5 枚の中央値、リングは入力 dtype のまま
+u8 = np.zeros((48, 64), np.uint8)
+med = op.push(u8)                        # (48, 64) float64
+print(op.state[&quot;stored&quot;], op.state[&quot;ring_bytes&quot;])   # 1, 5*48*64 bytes
+op.reset()                               # 新しいストリーム(形が変わってもよい)</pre>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">台帳 op(一括)= ストリーム版</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import opsvideostream, videostream as VS
+
+clip = np.random.default_rng(1).random((12, 32, 32))
+batch = opsvideostream.call(&quot;temporal_median_window&quot;, clip, window=5)
+op = VS.TemporalMedianWindow(5)
+live = np.stack([op.push(f) for f in clip])
+assert np.abs(batch - live).max() == 0.0</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">数式</h3>
+<p style="margin:2px 0 2px 12px">• 窓中央値: <code style="color:#22d3bf">y_t = median(x_{t−N+1}, …, x_t)</code>(t &lt; N−1 では見えた分)。</p>
+<p style="margin:2px 0 2px 12px">• 指数背景: <code style="color:#22d3bf">bg_t = (1−α)·bg_{t−1} + α·x_t</code>、<code style="color:#22d3bf">bg_0 = x_0</code>。前景 <code style="color:#22d3bf">|x_t − bg_t| &gt; θ</code>。</p>
+<p style="margin:2px 0 2px 12px">• Welford: <code style="color:#22d3bf">μ_n = μ_{n−1} + (x_n − μ_{n−1})/n</code>、<code style="color:#22d3bf">M2_n = M2_{n−1} + (x_n − μ_{n−1})(x_n − μ_n)</code>、母分散 <code style="color:#22d3bf">M2_n / n</code>(<code style="color:#22d3bf">video.std(0)</code> と一致)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実装の根拠と限界(正直に)</h3>
+<p style="margin:2px 0 2px 12px">• 動機と数字は <code style="color:#22d3bf">docs/design/PERF_MEMORY_VIDEO_SURVEY.md</code> §3(2026-09-03 実測。熱定常でない単日測定なので絶対値は 1.5〜2 倍の幅)。</p>
+<p style="margin:2px 0 2px 12px">• 窓中央値は毎フレーム <code style="color:#22d3bf">np.median</code> を窓全体に掛ける(O(N·HW))。N が大きいときの増分中央値(ヒストグラム法)は未実装。</p>
+<p style="margin:2px 0 2px 12px">• フレーム並列・GPU 常駐リング・タイル分割は同報告 §4 の (f)(g)(c) として後続。<code style="color:#22d3bf">VideoPipeline</code> の <code style="color:#22d3bf">device=&quot;cuda&quot;</code> は各台帳 op に渡るが、リングは CPU に置かれる。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">OpticalFlowStream</code> は <code style="color:#22d3bf">flow.optical_flow_lk</code> をそのまま呼ぶ(前フレーム 1 枚の状態)。</p>

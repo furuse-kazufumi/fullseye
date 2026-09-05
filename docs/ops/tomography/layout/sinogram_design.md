@@ -7,12 +7,12 @@ out: table
 examples: [ct_reconstruction, tomography_reconstruct]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # sinogram_design — TOMOGRAPHY `layout` op
 
-- **データ種**: `` → `table`
+- **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import tomography; tomography.sinogram_design(n_angles=180, n_detectors=None, size=256, detector_pitch_mm=1.0, span_deg=180.0)` (または `opstomography.get("sinogram_design")`)
 
 ## 使い方

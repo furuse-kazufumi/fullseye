@@ -1,0 +1,19 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">register_shot — 3D <code style="color:#22d3bf">feature_register</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">pose</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import feat_shot; feat_shot.register_shot(src, dst, radius=None, normal_k=16, ratio=0.9, ransac_iters=2000, inlier_thr=None, refine_icp=True, max_kp=400, device=&#x27;cpu&#x27;, seed=0)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;register_shot&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>SHOT 記述子による疎特徴マッチング + RANSAC 剛体姿勢推定(全パイプライン)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:feature_register">feature_register</a> — <code style="color:#22d3bf">py -3.11 examples_3d/feature_register.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">pose</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:pose_error">pose_error</a> · <a style="color:#22d3bf" href="op3d:bundle_adjust">bundle_adjust</a> · <a style="color:#22d3bf" href="op3d:mean_reprojection_error">mean_reprojection_error</a> · <a style="color:#22d3bf" href="op3d:optimize_pose_graph">optimize_pose_graph</a> · <a style="color:#22d3bf" href="op3d:relative_pose">relative_pose</a> · <a style="color:#22d3bf" href="op3d:mean_edge_error">mean_edge_error</a> · <a style="color:#22d3bf" href="op3d:rotation_translation_error">rotation_translation_error</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">feature_register</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:harris3d_keypoints">harris3d_keypoints</a> · <a style="color:#22d3bf" href="op3d:iss_keypoints">iss_keypoints</a> · <a style="color:#22d3bf" href="op3d:compute_fpfh">compute_fpfh</a> · <a style="color:#22d3bf" href="op3d:shot_descriptor">shot_descriptor</a> · <a style="color:#22d3bf" href="op3d:register_spin">register_spin</a> · <a style="color:#22d3bf" href="op3d:register_fpfh">register_fpfh</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: feat_shot.py — 3D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">inner_box3 — 3D <code style="color:#22d3bf">regionprops</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">primitive</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import regionprops3d; regionprops3d.inner_box3(vol) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;inner_box3&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>二値ボクセル領域に完全に内接する最大の軸平行ボックス(2-D `<code style="color:#22d3bf">inner_rectangle1</code>` の</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 計測の不確かさと校正の知識 — 「測れている」を主張するために</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:inner_box_inspection">inner_box_inspection</a> — <code style="color:#22d3bf">py -3.11 examples_3d/inner_box_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">primitive</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:angle_between_lines">angle_between_lines</a> · <a style="color:#22d3bf" href="op3d:angle_between_planes">angle_between_planes</a> · <a style="color:#22d3bf" href="op3d:angle_line_plane">angle_line_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_plane">distance_point_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_line">distance_point_line</a> · <a style="color:#22d3bf" href="op3d:distance_line_line">distance_line_line</a> · <a style="color:#22d3bf" href="op3d:intersect_line_plane">intersect_line_plane</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">regionprops</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:label_components">label_components</a> · <a style="color:#22d3bf" href="op3d:region_props">region_props</a> · <a style="color:#22d3bf" href="op3d:largest_component">largest_component</a> · <a style="color:#22d3bf" href="op3d:filter_by_volume">filter_by_volume</a> · <a style="color:#22d3bf" href="op3d:vol_label">vol_label</a> · <a style="color:#22d3bf" href="op3d:vol_region_props">vol_region_props</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: regionprops3d.py — 3D 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

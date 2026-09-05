@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">select_points — REPRCONV <code style="color:#22d3bf">index</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points × indices</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import reprconv; reprconv.select_points(points, indices)</code>(或 <code style="color:#22d3bf">opsreprconv.get(&quot;select_points&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>点群 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> と添字 </code><code style="color:#22d3bf">(M,)</code><code style="color:#22d3bf"> → 部分点群 </code><code style="color:#22d3bf">(M,3)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">indices</code>` の消費側。</p>
+<p>`<code style="color:#22d3bf">indices</code><code style="color:#22d3bf"> を産む op は 6 つあるのに(</code><code style="color:#22d3bf">iss_keypoints</code>` /</p>
+<p>`<code style="color:#22d3bf">farthest_point_sampling</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">alpha_shape_boundary</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">find_peaks</code>` /</p>
+<p>`<code style="color:#22d3bf">zero_crossings_funct_1d</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cad_visible_faces</code>`)、**添字を食う単入力 op が</p>
+<p>1 つも無かった** —— 添字は「元の集合とセットで初めて意味を持つ」ので、</p>
+<p>単入力では原理的に作れない。よってこれは 2 入力にしてある。</p>
+<p>Args:</p>
+<p>points: (N, 3)。</p>
+<p>indices: (M,) の非負整数、N 未満。</p>
+<p>Returns:</p>
+<p>(M, 3) float64。</p>
+<p>Raises:</p>
+<p>ValueError: 範囲外の添字 / 形状不正 / 非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">points</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:points_zyx_to_keypoints_uv">points_zyx_to_keypoints_uv</a> · <a style="color:#22d3bf" href="opreprconv:points_to_position">points_to_position</a> · <a style="color:#22d3bf" href="opreprconv:flow_apply">flow_apply</a> · <a style="color:#22d3bf" href="opreprconv:points_to_gaussians">points_to_gaussians</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">index</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:indices_to_labels">indices_to_labels</a> · <a style="color:#22d3bf" href="opreprconv:labels_to_indices">labels_to_indices</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

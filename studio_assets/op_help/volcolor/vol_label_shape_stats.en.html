@@ -1,0 +1,68 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vol_label_shape_stats — VOLCOLOR <code style="color:#22d3bf">measure</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import volcolor; volcolor.vol_label_shape_stats(labels, spacing=None, shape: &#x27;bool&#x27; = True)</code> (or <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_shape_stats&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>成分ごとの<b>線形時間で出せる</b>定量値(体積・重心・箱・主成分形状指標)。</p>
+<p>:func:<code style="color:#22d3bf">volops.vol_region_props</code> の姉妹だが、<b>目的が違う</b>:</p>
+<p style="margin:2px 0 2px 12px">• あちらは `<code style="color:#22d3bf">surface_area</code><code style="color:#22d3bf"> と Wadell </code><code style="color:#22d3bf">sphericity</code>` を出す。そのために</p>
+<p>成分ごとに marching cubes を回すので、**成分数に比例して Python ループが</p>
+<p>回る**(1 ボクセル 1 ラベルの病的入力で急速に重くなる)。</p>
+<p style="margin:2px 0 2px 12px">• こちらは `<code style="color:#22d3bf">np.bincount</code>` の重み付き総和だけで済む量に限る。ラベル配列 1 本</p>
+<p>あたり 9 回の `<code style="color:#22d3bf">bincount</code><code style="color:#22d3bf"> = **O(N + n)**。実測(</code><code style="color:#22d3bf">connectivity=26</code>`、</p>
+<p><b>1 ボクセル 1 ラベル</b>の市松模様 = 病的入力):</p>
+<p>16<b>3 = 4096 ボクセル / 512 成分 = 0.0037 s、32</b>3 = 32768 / 4096 =</p>
+<p>0.0350 s、64<b>3 = 262144 / 32768 = 0.2556 s、128</b>3 = 2097152 / 262144 =</p>
+<p>2.3122 s。<b>ボクセル 8 倍ごとに 9.5 / 7.3 / 9.0 倍</b>(二次なら 64 倍)で、</p>
+<p>全域で約 1.1 マイクロ秒/ボクセル。同じ 128**3 の色付けは 0.0357 s。</p>
+<p>(参考: `<code style="color:#22d3bf">volops.vol_region_props(surface=&quot;faces&quot;)</code>` は同じ 16**3 で</p>
+<p>0.0121 s ―― 成分ごとの Python ループがあるぶん 3.5 倍。marching cubes を</p>
+<p>使う既定の `<code style="color:#22d3bf">surface=&quot;auto&quot;</code>` はさらに重い。)</p>
+<p>`<code style="color:#22d3bf">label</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">voxel_count</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">volume</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">centroid</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">bbox</code>` の 5 つは</p>
+<p>:func:<code style="color:#22d3bf">volops.vol_region_props</code> と<b>同一の定義・同一の値</b>である</p>
+<p>(`<code style="color:#22d3bf">tests/test_volcolor.py::test_stats_agree_with_vol_region_props_exactly</code>` が</p>
+<p>厳密一致で固定)。`<code style="color:#22d3bf">bbox</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">(z0, z1, y0, y1, x0, x1)</code>` で上限は排他的。</p>
+<p>加えて返すもの:</p>
+<p>`<code style="color:#22d3bf">centroid_mm</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(z, y, x)</code>` 物理座標(spacing 無しなら voxel と同値)·</p>
+<p>`<code style="color:#22d3bf">extent</code><code style="color:#22d3bf"> bbox の物理寸法 </code><code style="color:#22d3bf">(dz, dy, dx)</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">equivalent_diameter</code>`</p>
+<p>`<code style="color:#22d3bf">(6V/pi)**(1/3)</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">touches_border</code>` bbox がボリューム端に接するか ·</p>
+<p>`<code style="color:#22d3bf">principal_extent</code><code style="color:#22d3bf"> 共分散固有値の平方根 </code><code style="color:#22d3bf">(s1 &gt;= s2 &gt;= s3)</code>`(物理単位) ·</p>
+<p>`<code style="color:#22d3bf">linearity</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(l1-l2)/l1</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">planarity</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(l2-l3)/l1</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">isotropy</code>`</p>
+<p>`<code style="color:#22d3bf">l3/l1</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">elongation</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">sqrt(l1/l2)</code>`。</p>
+<p>**`<code style="color:#22d3bf">elongation</code><code style="color:#22d3bf"> は無限になりうる**(契約):</code><code style="color:#22d3bf">l1 &gt; 0</code><code style="color:#22d3bf"> かつ </code><code style="color:#22d3bf">l2 == 0</code>`、</p>
+<p>すなわち厚み 1 ボクセルの完全な直線の成分では `<code style="color:#22d3bf">inf</code>` を返す。0 で割った事故</p>
+<p>ではなく「第 2 軸方向に広がりが無い」という事実であり、丸めると細長さの順位が</p>
+<p>黙って入れ替わる。単一ボクセル(`<code style="color:#22d3bf">l1 == 0</code><code style="color:#22d3bf">)は等方な点なので </code><code style="color:#22d3bf">1.0</code>`。</p>
+<p><b>spacing を渡し忘れると数字も結論も変わる</b>。実測 ―― 半径 6 mm の球を</p>
+<p>`<code style="color:#22d3bf">spacing = (3.0, 1.0, 1.0)</code>` mm の異方格子(z だけ 3 倍粗い)で標本化すると</p>
+<p>293 ボクセルになる。閉形式の真値は `<code style="color:#22d3bf">4/3 pi 6**3 = 904.78 mm**3</code>`:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">spacing</code>` あり = 879.0 mm<b>3(誤差 </b>-2.85 %**)、</p>
+<p>`<code style="color:#22d3bf">isotropy</code>` = 0.7349(ほぼ等方 = 正しい)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">spacing</code>` なし = 293.0(voxel 単位。mm<b>3 と読むと誤差 </b>-67.62 %**)、</p>
+<p>`<code style="color:#22d3bf">isotropy</code>` = 0.0817 ―― <b>球が「板」に見える</b>。異方性を無視すると</p>
+<p>形状指標は破綻し、しかも有限で妥当そうな値として返る。</p>
+<p style="margin:2px 0 2px 12px">• 等価直径も 11.8849 mm 対 8.2406 と 1.44 倍ずれる。</p>
+<p>数値上の注意:2 次モーメントは `<code style="color:#22d3bf">E[x**2] - E[x]**2</code>` で求めるので、座標が</p>
+<p>大きく広がりが小さい成分では桁落ちが起きうる。上限 :data:<code style="color:#22d3bf">MAX_COLOR_VOXELS</code></p>
+<p>(1 辺 ~2000 まで)では `<code style="color:#22d3bf">E[x**2] ~ 4e6</code>` に対し float64 の相対精度 1e-16 =</p>
+<p>絶対 1e-10 で、ボクセル単位の分散に対して 10 桁の余裕がある。それより大きい</p>
+<p>ボリュームは ROI を切ってから渡すこと(上限があるのはこのためでもある)。</p>
+<p>*shape* を `<code style="color:#22d3bf">False</code>` にすると共分散(9 本のうち 6 本の bincount)を省き、</p>
+<p>`<code style="color:#22d3bf">principal_extent</code>` 以下の 5 項目を返さない ―― 体積フィルタしか要らない</p>
+<p>ときに O(N) の一時配列を 1 本に減らせる。</p>
+<p>Returns `<code style="color:#22d3bf">list[dict]</code>` in ascending label order (<b>実在するラベルのみ</b> ――</p>
+<p>番号に欠番があっても、`<code style="color:#22d3bf">labels.max()</code>` ぶんの空 dict は返さない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:voxel_labels_color">voxel_labels_color</a> — <code style="color:#22d3bf">py -3.11 examples/voxel_labels_color.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">measure</code>)</h3>
+<p><a style="color:#22d3bf" href="opvolcolor:vol_label_legend">vol_label_legend</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: volcolor.py — VOLCOLOR operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

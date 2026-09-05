@@ -1,0 +1,82 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">wavefront_stats — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import optics; optics.wavefront_stats(coeffs, radial=128, angular=192)</code>(또는 <code style="color:#22d3bf">opsoptics.get(&quot;wavefront_stats&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
+<p>Wavefront error statistics from a Zernike expansion: RMS, PV and Strehl.</p>
+<p>*coeffs* is exactly the dict :func:<code style="color:#22d3bf">match3d.fit_zernike</code> returns —</p>
+<p>`<code style="color:#22d3bf">{(n, m): coefficient}</code>`, coefficients <b>in waves</b> — and this op re-uses</p>
+<p>`<code style="color:#22d3bf">match3d</code>`&#x27;s own basis builder, so the two cannot drift apart in</p>
+<p>normalisation or in the `<code style="color:#22d3bf">(n, m)</code><code style="color:#22d3bf"> convention. Fit with </code><code style="color:#22d3bf">fit_zernike</code>`,</p>
+<p>characterise here.</p>
+<p>The wavefront is reconstructed on a polar grid (*radial* x *angular*) over</p>
+<p>the unit pupil and reduced with the <b>area element</b> `<code style="color:#22d3bf">rho d(rho) d(theta)</code>`</p>
+<p>— an unweighted mean over a uniform-in-rho grid over-counts the centre and</p>
+<p>is a real, silent, ~10% error.</p>
+<p>Returns a dict: `<code style="color:#22d3bf">rms_waves</code>` (piston removed — piston is not an</p>
+<p>aberration) · `<code style="color:#22d3bf">pv_waves</code><code style="color:#22d3bf"> peak-to-valley over the pupil · </code><code style="color:#22d3bf">strehl</code>` the</p>
+<p>Marechal estimate `<code style="color:#22d3bf">exp(-(2*pi*rms)^2)</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">marechal_valid</code>` whether</p>
+<p>`<code style="color:#22d3bf">rms_waves &lt;= MARECHAL_RMS_LIMIT</code>` (0.1), because past that the estimate is</p>
+<p>optimistic and reporting the number without the caveat is the dishonest</p>
+<p>option · `<code style="color:#22d3bf">terms</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">n_max</code>` of the expansion.</p>
+<p>Ground truth it reproduces (measured at the defaults): pure defocus</p>
+<p>`<code style="color:#22d3bf">{(2, 0): 0.1}</code><code style="color:#22d3bf"> — for which </code><code style="color:#22d3bf">Z = 2*rho^2 - 1</code>` has an exact pupil RMS of</p>
+<p>`<code style="color:#22d3bf">1/sqrt(3)</code><code style="color:#22d3bf"> — gives </code><code style="color:#22d3bf">rms_waves = 0.0577422</code>` against the exact</p>
+<p>`<code style="color:#22d3bf">0.0577350</code>`, a relative error of 1.2e-4 from the discrete quadrature</p>
+<p>(3.1e-5 at `<code style="color:#22d3bf">radial=256</code><code style="color:#22d3bf">), and </code><code style="color:#22d3bf">pv_waves = 0.2</code>` exactly; the Strehl is</p>
+<p>0.8766676 against the exact 0.8766962. Pure astigmatism `<code style="color:#22d3bf">{(2, 2): 0.1}</code>`</p>
+<p>(exact RMS `<code style="color:#22d3bf">1/sqrt(6)</code>`) gives 0.0408280 against 0.0408248. Piston alone</p>
+<p>(`<code style="color:#22d3bf">{(0, 0): c}</code><code style="color:#22d3bf">) gives rms 0 and Strehl 1 for any </code><code style="color:#22d3bf">c</code>`, and RMS scales</p>
+<p>exactly linearly in the coefficients (doubling them doubles the RMS to</p>
+<p>machine precision).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *coeffs* is not a dict, is empty, holds more than</p>
+<p>:data:<code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code> terms, has a key that is not an `<code style="color:#22d3bf">(n, m)</code>` int</p>
+<p>pair or is not a valid Zernike index (`<code style="color:#22d3bf">n &gt;= 0</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">|m| &lt;= n</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">n-|m|</code>`</p>
+<p>even), or a non-finite coefficient; a radial order above</p>
+<p>:data:<code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code> (40 — the shared basis builder&#x27;s factorial</p>
+<p>recurrence breaks its own `<code style="color:#22d3bf">|Z| &lt;= 1</code><code style="color:#22d3bf"> bound at </code><code style="color:#22d3bf">n = 46</code>`, measured, and</p>
+<p>the same bound is re-checked at runtime); *radial* / *angular* outside</p>
+<p>`<code style="color:#22d3bf">[8, MAX_GRID]</code>`.</p>
+<p>The radial quadrature is discrete, so its error grows with the order being</p>
+<p>integrated: measured, the relative RMS error tracks `<code style="color:#22d3bf">(n_max/radial)^2</code>`</p>
+<p>within a factor 2 — 1.2e-4 at `<code style="color:#22d3bf">n_max=2</code><code style="color:#22d3bf">, 1.7e-3 at </code><code style="color:#22d3bf">n_max=6</code>` and 4.3e-2</p>
+<p>at `<code style="color:#22d3bf">n_max=20</code><code style="color:#22d3bf">, all at the default </code><code style="color:#22d3bf">radial=128</code>`. Below</p>
+<p>`<code style="color:#22d3bf">radial &gt;= 16*n_max</code><code style="color:#22d3bf"> a </code><code style="color:#22d3bf">RuntimeWarning</code>` says so rather than letting a</p>
+<p>12%-wrong Strehl look authoritative. Raising *radial* fixes it at</p>
+<p>`<code style="color:#22d3bf">O(1/radial^2)</code>`, but note the basis is built for *all* orders up to</p>
+<p>`<code style="color:#22d3bf">n_max</code><code style="color:#22d3bf">, so the working set grows as </code><code style="color:#22d3bf">n_max^2 * radial * angular</code>` and is</p>
+<p>capped by :data:<code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>.</p>
+<p>Marechal is a small-aberration approximation and the RMS is over the *fitted*</p>
+<p>expansion, so it says nothing about wavefront structure finer than `<code style="color:#22d3bf">n_max</code>`</p>
+<p>— and `<code style="color:#22d3bf">fit_zernike</code>` itself discloses ~10% inter-mode crosstalk at its</p>
+<p>default sampling. Both limits compound; treat the Strehl as an indicator,</p>
+<p>not a measurement.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
+<p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
+<p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>
+<p style="margin:2px 0 2px 12px">• **문자열은 <code style="color:#22d3bf">ValueError</code>** —— <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> 은 성공하므로 파싱되지 않은 설정값이 길이로 통과해 버립니다(실측: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> 이 그럴듯한 66.667 mm 를 돌려주고 있었습니다). bool 도 <code style="color:#22d3bf">True == 1</code> 의 암묵 승격으로 보고 거부합니다.</p>
+<p style="margin:2px 0 2px 12px">• **complex / masked array 는 <code style="color:#22d3bf">ValueError</code><b>(실수 슬롯만. 허수부의 무언 절삭·마스크 벗기기를 거부).</b>NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code>**.</p>
+<p style="margin:2px 0 2px 12px">• <b>0 나눗셈과 그 친척들을 이름을 들어 거부</b>: 초점거리 0, 곡률반경 0, 굴절률 &lt;= 0, 불투명한 조리개(전부 0 이라 정규화가 0/0), 총합 &lt;= 0 인 PSF, S0 = 0 인 스토크스 벡터, 물체가 앞쪽 초점에 있는 경우(상이 무한대).</p>
+<p style="margin:2px 0 2px 12px">• <b>비유한 값을 돌려주는 것은 2 개 연산자뿐이며, 둘 다 계약으로 명시</b>: <code style="color:#22d3bf">depth_of_field</code> 의 과초점거리 너머 <code style="color:#22d3bf">far_mm = inf</code>(그것이 과초점거리의 정의)와 <code style="color:#22d3bf">gaussian_beam</code> 의 허리에서의 <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(평면 파면의 곡률반경). 둘 다 유한한 짝(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)을 함께 돌려줍니다. **그 밖의 무언 NaN/Inf 는 내부에서 검출해 <code style="color:#22d3bf">ValueError</code>** —— 「float64 가 넘쳤다」와 「답이 무한대다」는 다른 주장이므로, 후자의 얼굴로 전자를 돌려주지 않습니다.</p>
+<p style="margin:2px 0 2px 12px">• <b>크기 상한</b>: 생성 격자는 <code style="color:#22d3bf">optics.MAX_GRID</code>(4096), 넘겨받은 필드/PSF/조리개는 <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24), ABCD 소자열은 <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024), Zernike 는 <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25). 작은 인자에서 거대한 내부 할당이 일어나는 경로(실측: n_max=40 × 4096² 로 108 GB)를 fail-closed 로 막습니다.</p>
+<p style="margin:2px 0 2px 12px">• <b>물리적으로 불가능한 상태도 거부</b>: 편광도 &gt; 1 인 스토크스 벡터, 음의 투과율, 음의 강도, n-|m| 이 홀수인 잘못된 Zernike 첨자 등.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:measurement_uncertainty">measurement_uncertainty</a> — 計測の不確かさと校正の知識 — 「測れている」を主張するために</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:mv_cameras">mv_cameras</a> — 産業用カメラメーカー（センサとの紐付け・ラインスキャン / TDI）</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:virtual_machine_vision">virtual_machine_vision</a> — 仮想マシンビジョン — パラメータの洗い出しとオブジェクト模型</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:optics_imaging">optics_imaging</a> — <code style="color:#22d3bf">py -3.11 examples/optics_imaging.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a> · <a style="color:#22d3bf" href="opoptics:spot_diagram">spot_diagram</a> · <a style="color:#22d3bf" href="opoptics:ray_fan">ray_fan</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">imaging</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:psf_to_mtf">psf_to_mtf</a> · <a style="color:#22d3bf" href="opoptics:mtf_diffraction">mtf_diffraction</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: optics.py — OPTICS 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

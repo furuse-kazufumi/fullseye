@@ -1,0 +1,19 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">euclidean_cluster — 3D <code style="color:#22d3bf">segment</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">labels</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import segment3d; segment3d.euclidean_cluster(points, tol: &#x27;float&#x27;, min_size: &#x27;int&#x27; = 10) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;euclidean_cluster&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>半径 tol の近接グラフの連結成分で距離クラスタリング(-1=ノイズ)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:object_segmentation">object_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples_3d/object_segmentation.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">labels</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:vol_region_props">vol_region_props</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">segment</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:region_growing">region_growing</a> · <a style="color:#22d3bf" href="op3d:plane_segmentation">plane_segmentation</a> · <a style="color:#22d3bf" href="op3d:vol_watershed">vol_watershed</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: segment3d.py — 3D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

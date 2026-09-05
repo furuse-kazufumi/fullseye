@@ -7,7 +7,7 @@ out: counts
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # tb_tcspc_coates_correct — 2D `typed` op

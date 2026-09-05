@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">measure_with — IMGMETRICS <code style="color:#22d3bf">report</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">metrics × image2d × image2d</code> → <code style="color:#22d3bf">metrics</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import imgmetrics; imgmetrics.measure_with(report, a, b, ms=False)</code>(或 <code style="color:#22d3bf">opsimgmetrics.get(&quot;measure_with&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p><b>在与上一次完全相同的条件下</b>测量另一组。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>:func:<code style="color:#22d3bf">compare_images</code> の返り値(`<code style="color:#22d3bf">contract</code>` を含む)を受け取り、そこに</p>
+<p>記録された `<code style="color:#22d3bf">data_range</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">bins</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">ncd_levels</code>` をそのまま使って測り直す。</p>
+<p>これが要るのは、この repo で実際に起きた事故の型があるから ―― **数値だけを</p>
+<p>図注や表に写して、条件が消える**。別々に測った 2 つの PSNR を並べたとき、</p>
+<p>片方が `<code style="color:#22d3bf">data_range=1.0</code><code style="color:#22d3bf">、もう片方が </code><code style="color:#22d3bf">255</code>` なら **48.13 dB の差が「改善」に</p>
+<p>見える**。条件を持ち回れば、そもそも比べられない組合せは作れない。</p>
+<p>同時に、これが `<code style="color:#22d3bf">metrics</code><code style="color:#22d3bf"> 型の**消費側**でもある。</code><code style="color:#22d3bf">compare_images</code>` だけが</p>
+<p>`<code style="color:#22d3bf">metrics</code>` を産んで誰も食わない状態は、この repo が繰り返し踏んできた</p>
+<p>「入口はあるが消費 op が無い型」そのものだった(2026-09-02 の点検で検出)。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>report : dict</p>
+<p>:func:<code style="color:#22d3bf">compare_images</code> の返り値、または `<code style="color:#22d3bf">contract</code>` そのもの。</p>
+<p>a, b : array_like</p>
+<p>測り直す 2 枚。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>dict</p>
+<p>同じ形の報告。`<code style="color:#22d3bf">contract</code>` は受け取ったものと<b>同一</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_quality_metrics">image_quality_metrics</a> — <code style="color:#22d3bf">py -3.11 examples/image_quality_metrics.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">metrics</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:metrics_table">metrics_table</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">report</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:compare_images">compare_images</a> · <a style="color:#22d3bf" href="opimgmetrics:metrics_table">metrics_table</a> · <a style="color:#22d3bf" href="opimgmetrics:data_range_of">data_range_of</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgmetrics.py — IMGMETRICS 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">color_transfer — COLORTRANSPORT <code style="color:#22d3bf">matching</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">rgbimage × rgbimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import colortransport; colortransport.color_transfer(src, ref, method=&#x27;reinhard&#x27;, space=&#x27;lab&#x27;)</code>(或 <code style="color:#22d3bf">opscolortransport.get(&quot;color_transfer&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>`<code style="color:#22d3bf">src</code><code style="color:#22d3bf"> の色味を </code><code style="color:#22d3bf">ref</code>` に寄せる。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>src, ref : array_like</p>
+<p>`<code style="color:#22d3bf">(..., 3)</code><code style="color:#22d3bf"> の sRGB(</code><code style="color:#22d3bf">[0, 1]</code>` の float、または整数 dtype)。</p>
+<p>大きさは違ってよい(統計だけを使う)。</p>
+<p>method : {&quot;reinhard&quot;, &quot;gaussian&quot;, &quot;histogram&quot;}</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;reinhard&quot;</code>` —— 各チャネルの平均と標準偏差だけ合わせる</p>
+<p>(Reinhard, Ashikhmin, Gooch &amp; Shirley, IEEE CG&amp;A 21(5), 2001)。</p>
+<p><b>各チャネルが単峰の正規分布</b>という仮定が効いている。</p>
+<p>前景と背景がはっきり分かれた 二峰の絵では、平均と分散は合うのに</p>
+<p><b>どちらの峰にも当たらない色</b>になる(例外は出ない)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;gaussian&quot;</code>` —— 共分散ごと運ぶ Monge 写像。<b>相関が保たれる</b>。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;histogram&quot;</code>` —— チャネルごとに厳密なヒストグラム整合。</p>
+<p>周辺分布は完全に一致するが、<b>チャネル間の相関は壊れる</b>。</p>
+<p>space : {&quot;lab&quot;, &quot;rgb&quot;}</p>
+<p>統計を取る空間。既定の `<code style="color:#22d3bf">lab</code><code style="color:#22d3bf"> は :mod:</code>imgmetrics` の実体を使う。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>ndarray</p>
+<p>`<code style="color:#22d3bf">src</code><code style="color:#22d3bf"> と同じ形の sRGB </code><code style="color:#22d3bf">[0, 1]</code>`(色域外は切り詰められる)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:color_transport">color_transport</a> — <code style="color:#22d3bf">py -3.11 examples/color_transport.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">rgbimage</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">matching</code>)</h3>
+<p><a style="color:#22d3bf" href="opcolortransport:histogram_match">histogram_match</a> · <a style="color:#22d3bf" href="opcolortransport:gaussian_transport_map">gaussian_transport_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: colortransport.py — COLORTRANSPORT 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

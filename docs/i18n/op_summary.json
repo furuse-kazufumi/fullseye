@@ -1,0 +1,386 @@
+{
+ "_": "op 要約(docstring 1 行目)の対訳表。キーは `<dim>/<op>`、`fp` は原文の指紋(sha256 先頭 12 桁)。**指紋が合わない訳は出さない** —— 原文を書き換えたのに訳が古いまま残るのが一番たちが悪いので、その場合はヘルプが原文(日本語)と『未訳』の断り書きに戻る。tools/opdocs.py の op_summary_stale() が古い行を列挙し、tests/test_opdocs.py が古い行の同梱を止める。指紋の作り方は `py -3.11 -c \"import sys;sys.path.insert(0,'tools');import opdocs;print(opdocs.fingerprint('<原文>'))\"`。",
+ "languages": [
+  "en",
+  "zh",
+  "tw",
+  "ko",
+  "de"
+ ],
+ "summaries": {
+  "imgmetrics/compare_images": {
+   "fp": "f54793291b6c",
+   "en": "Measure several metrics at once and **return what was measured and how, alongside the numbers**.",
+   "zh": "一次测量多个指标,并**把「测了什么、怎么测的」与数值一起返回**。",
+   "tw": "一次測量多個指標,並**把「測了什麼、怎麼測的」與數值一起回傳**。",
+   "ko": "여러 지표를 한 번에 재고, **무엇을 어떻게 쟀는지를 값과 함께 돌려줍니다**.",
+   "de": "Misst mehrere Metriken auf einmal und **liefert zusammen mit den Zahlen, was wie gemessen wurde**."
+  },
+  "imgmetrics/compressed_size": {
+   "fp": "49e5c437f688",
+   "en": "Size in bytes of the array after lossless compression. The raw material for ``ncd``.",
+   "zh": "数组无损压缩后的字节数。``ncd`` 的原料。",
+   "tw": "陣列無失真壓縮後的位元組數。``ncd`` 的原料。",
+   "ko": "배열을 무손실 압축했을 때의 바이트 수. ``ncd`` 의 재료입니다.",
+   "de": "Größe des Arrays in Bytes nach verlustfreier Kompression — die Grundlage für ``ncd``."
+  },
+  "imgmetrics/data_range_of": {
+   "fp": "a21a275966e9",
+   "en": "Decide the span the pixel values may take. **It does not guess.**",
+   "zh": "确定像素值可取的范围。**不做猜测。**",
+   "tw": "確定像素值可取的範圍。**不做猜測。**",
+   "ko": "화소값이 취할 수 있는 폭을 정합니다. **추측하지 않습니다.**",
+   "de": "Bestimmt die Spanne, die die Pixelwerte annehmen können. **Es wird nichts geraten.**"
+  },
+  "imgmetrics/delta_e_2000": {
+   "fp": "bf794a6b9a57",
+   "en": "CIEDE2000 colour difference (CIE 142-2001).",
+   "zh": "CIEDE2000 色差(CIE 142-2001)。",
+   "tw": "CIEDE2000 色差(CIE 142-2001)。",
+   "ko": "CIEDE2000 색차(CIE 142-2001).",
+   "de": "CIEDE2000-Farbabstand (CIE 142-2001)."
+  },
+  "imgmetrics/delta_e_76": {
+   "fp": "13f5373cbfb0",
+   "en": "CIE76 colour difference — the Euclidean distance in Lab space.",
+   "zh": "CIE76 色差 —— Lab 空间中的欧几里得距离。",
+   "tw": "CIE76 色差 —— Lab 空間中的歐幾里得距離。",
+   "ko": "CIE76 색차 —— Lab 공간에서의 유클리드 거리.",
+   "de": "CIE76-Farbabstand — der euklidische Abstand im Lab-Raum."
+  },
+  "imgmetrics/delta_e_map": {
+   "fp": "e8da548b25fd",
+   "en": "Per-pixel colour-difference map between two **sRGB images**.",
+   "zh": "两张 **sRGB 图像**逐像素的色差图。",
+   "tw": "兩張 **sRGB 影像**逐像素的色差圖。",
+   "ko": "두 **sRGB 이미지**의 화소별 색차 맵.",
+   "de": "Farbabstandskarte zweier **sRGB-Bilder**, Pixel für Pixel."
+  },
+  "imgmetrics/image_entropy": {
+   "fp": "fbc18655ca7f",
+   "en": "Shannon entropy of one image [bit].",
+   "zh": "单张图像的香农熵 [bit]。",
+   "tw": "單張影像的夏農熵 [bit]。",
+   "ko": "이미지 한 장의 섀넌 엔트로피 [bit].",
+   "de": "Shannon-Entropie eines Bildes [bit]."
+  },
+  "imgmetrics/joint_entropy": {
+   "fp": "4b9454020bc5",
+   "en": "Joint entropy H(A, B) [bit].",
+   "zh": "联合熵 H(A, B) [bit]。",
+   "tw": "聯合熵 H(A, B) [bit]。",
+   "ko": "결합 엔트로피 H(A, B) [bit].",
+   "de": "Verbundentropie H(A, B) [bit]."
+  },
+  "imgmetrics/joint_histogram": {
+   "fp": "dd583db718e5",
+   "en": "Joint histogram of two images (the normalised joint probability).",
+   "zh": "两张图像的联合直方图(归一化后的联合概率)。",
+   "tw": "兩張影像的聯合直方圖(正規化後的聯合機率)。",
+   "ko": "두 이미지의 결합 히스토그램(정규화한 결합 확률).",
+   "de": "Verbundhistogramm zweier Bilder (die normierte Verbundwahrscheinlichkeit)."
+  },
+  "imgmetrics/lab_to_rgb": {
+   "fp": "7a0f1ca963b7",
+   "en": "CIE L\\*a\\*b\\* → sRGB ``[0, 1]``. **Out-of-gamut colours are clipped**, so a round trip through ``rgb_to_lab`` only matches inside the gamut (pinned by a test).",
+   "zh": "CIE L\\*a\\*b\\* → sRGB ``[0, 1]``。**超出色域的颜色会被截断**,因此与 ``rgb_to_lab`` 的往返只在色域内一致(有测试固定)。",
+   "tw": "CIE L\\*a\\*b\\* → sRGB ``[0, 1]``。**超出色域的顏色會被截斷**,因此與 ``rgb_to_lab`` 的往返只在色域內一致(有測試固定)。",
+   "ko": "CIE L\\*a\\*b\\* → sRGB ``[0, 1]``. **색역 밖은 잘립니다**. 따라서 ``rgb_to_lab`` 와의 왕복은 색역 안에서만 일치합니다(테스트로 고정).",
+   "de": "CIE L\\*a\\*b\\* → sRGB ``[0, 1]``. **Farben außerhalb des Gamuts werden abgeschnitten**, ein Roundtrip über ``rgb_to_lab`` stimmt daher nur innerhalb des Gamuts (durch einen Test festgehalten)."
+  },
+  "imgmetrics/measure_with": {
+   "fp": "e63692836f2c",
+   "en": "Measure another pair **under exactly the same conditions as the previous measurement**.",
+   "zh": "**在与上一次完全相同的条件下**测量另一组。",
+   "tw": "**在與上一次完全相同的條件下**測量另一組。",
+   "ko": "**직전 측정과 정확히 같은 조건으로** 다른 한 쌍을 잽니다.",
+   "de": "Misst ein weiteres Paar **unter exakt denselben Bedingungen wie die vorige Messung**."
+  },
+  "imgmetrics/metrics_table": {
+   "fp": "012e6e59cc18",
+   "en": "Turn a report into a ``(name, value)`` table — the rows describing the conditions are **always listed with it**.",
+   "zh": "把报告整理成 ``(名称, 数值)`` 的表 —— 描述测量条件的行**必定一并列出**。",
+   "tw": "把報告整理成 ``(名稱, 數值)`` 的表 —— 描述測量條件的列**必定一併列出**。",
+   "ko": "보고를 ``(이름, 값)`` 표로 만듭니다 —— 조건을 적은 행도 **반드시 함께** 늘어놓습니다.",
+   "de": "Macht aus einem Bericht eine ``(Name, Wert)``-Tabelle — die Zeilen mit den Messbedingungen stehen **immer mit dabei**."
+  },
+  "imgmetrics/ms_ssim": {
+   "fp": "f9063e1c5bf3",
+   "en": "Multi-scale SSIM (Wang, Simoncelli & Bovik, Asilomar Conf. 2003).",
+   "zh": "多尺度 SSIM(Wang, Simoncelli & Bovik, Asilomar Conf. 2003)。",
+   "tw": "多尺度 SSIM(Wang, Simoncelli & Bovik, Asilomar Conf. 2003)。",
+   "ko": "다중 스케일 SSIM(Wang, Simoncelli & Bovik, Asilomar Conf. 2003).",
+   "de": "Multiskalen-SSIM (Wang, Simoncelli & Bovik, Asilomar Conf. 2003)."
+  },
+  "imgmetrics/mse": {
+   "fp": "087c247de1a0",
+   "en": "Mean squared error. A raw quantity that does not depend on ``data_range``.",
+   "zh": "均方误差。不依赖 ``data_range`` 的原始量。",
+   "tw": "均方誤差。不依賴 ``data_range`` 的原始量。",
+   "ko": "평균 제곱 오차. ``data_range`` 에 의존하지 않는 날것의 양입니다.",
+   "de": "Mittlerer quadratischer Fehler — eine rohe Größe, die nicht von ``data_range`` abhängt."
+  },
+  "imgmetrics/mutual_information": {
+   "fp": "71bd884d0124",
+   "en": "Mutual information I(A; B) [bit] = H(A) + H(B) - H(A, B).",
+   "zh": "互信息 I(A; B) [bit] = H(A) + H(B) - H(A, B)。",
+   "tw": "互資訊 I(A; B) [bit] = H(A) + H(B) - H(A, B)。",
+   "ko": "상호정보량 I(A; B) [bit] = H(A) + H(B) - H(A, B).",
+   "de": "Transinformation I(A; B) [bit] = H(A) + H(B) - H(A, B)."
+  },
+  "imgmetrics/ncd": {
+   "fp": "963b585cf958",
+   "en": "Normalised compression distance (Li, Chen, Li, Ma & Vitányi, IEEE TIT 50(12), 2004).",
+   "zh": "归一化压缩距离(Li, Chen, Li, Ma & Vitányi, IEEE TIT 50(12), 2004)。",
+   "tw": "正規化壓縮距離(Li, Chen, Li, Ma & Vitányi, IEEE TIT 50(12), 2004)。",
+   "ko": "정규화 압축 거리(Li, Chen, Li, Ma & Vitányi, IEEE TIT 50(12), 2004).",
+   "de": "Normalisierte Kompressionsdistanz (Li, Chen, Li, Ma & Vitányi, IEEE TIT 50(12), 2004)."
+  },
+  "imgmetrics/normalized_mutual_information": {
+   "fp": "3d115be001ea",
+   "en": "Normalised mutual information 2*I(A;B) / (H(A) + H(B)). 1.0 for identical images.",
+   "zh": "归一化互信息 2*I(A;B) / (H(A) + H(B))。同一张图为 1.0。",
+   "tw": "正規化互資訊 2*I(A;B) / (H(A) + H(B))。同一張圖為 1.0。",
+   "ko": "정규화 상호정보량 2*I(A;B) / (H(A) + H(B)). 같은 그림이면 1.0.",
+   "de": "Normierte Transinformation 2*I(A;B) / (H(A) + H(B)). Bei identischen Bildern 1,0."
+  },
+  "imgmetrics/psnr": {
+   "fp": "467dd2045c9a",
+   "en": "Peak signal-to-noise ratio [dB].",
+   "zh": "峰值信噪比 [dB]。",
+   "tw": "峰值訊噪比 [dB]。",
+   "ko": "최대 신호 대 잡음비 [dB].",
+   "de": "Spitzen-Signal-Rausch-Verhältnis [dB]."
+  },
+  "imgmetrics/rgb_to_lab": {
+   "fp": "7d7fd603a583",
+   "en": "sRGB → CIE L\\*a\\*b\\* (D65). The step before measuring ΔE.",
+   "zh": "sRGB → CIE L\\*a\\*b\\*(D65)。测 ΔE 之前的一步。",
+   "tw": "sRGB → CIE L\\*a\\*b\\*(D65)。測 ΔE 之前的一步。",
+   "ko": "sRGB → CIE L\\*a\\*b\\*(D65). ΔE 를 재기 전 단계.",
+   "de": "sRGB → CIE L\\*a\\*b\\* (D65) — der Schritt vor der ΔE-Messung."
+  },
+  "imgmetrics/rgb_to_xyz": {
+   "fp": "44b7846f9632",
+   "en": "sRGB (``(..., 3)``) → CIE XYZ. The transfer function is removed first, then the matrix is applied.",
+   "zh": "sRGB(``(..., 3)``)→ CIE XYZ。先去掉传递函数,再乘矩阵。",
+   "tw": "sRGB(``(..., 3)``)→ CIE XYZ。先去掉轉換函數,再乘矩陣。",
+   "ko": "sRGB(``(..., 3)``)→ CIE XYZ. 전달 함수를 먼저 벗긴 뒤 행렬을 곱합니다.",
+   "de": "sRGB (``(..., 3)``) → CIE XYZ. Zuerst wird die Übertragungsfunktion entfernt, dann die Matrix angewendet."
+  },
+  "imgmetrics/rmse": {
+   "fp": "501ac12db19e",
+   "en": "Root mean squared error (in the same units as the pixel values).",
+   "zh": "均方根误差(与像素值同单位)。",
+   "tw": "均方根誤差(與像素值同單位)。",
+   "ko": "평균 제곱 오차의 제곱근(화소값과 같은 단위).",
+   "de": "Wurzel des mittleren quadratischen Fehlers (in denselben Einheiten wie die Pixelwerte)."
+  },
+  "imgmetrics/ssim": {
+   "fp": "a33483d93a8a",
+   "en": "Structural similarity (Wang, Bovik, Sheikh & Simoncelli, IEEE TIP 13(4), 2004).",
+   "zh": "结构相似性(Wang, Bovik, Sheikh & Simoncelli, IEEE TIP 13(4), 2004)。",
+   "tw": "結構相似性(Wang, Bovik, Sheikh & Simoncelli, IEEE TIP 13(4), 2004)。",
+   "ko": "구조적 유사도(Wang, Bovik, Sheikh & Simoncelli, IEEE TIP 13(4), 2004).",
+   "de": "Strukturelle Ähnlichkeit (Wang, Bovik, Sheikh & Simoncelli, IEEE TIP 13(4), 2004)."
+  },
+  "imgmetrics/ssim_map": {
+   "fp": "17a9b5a092fa",
+   "en": "The SSIM **map** (before averaging) — to see *where* the two differ, as a picture.",
+   "zh": "SSIM 的**图**(取平均之前)。用来看清哪里不像。",
+   "tw": "SSIM 的**圖**(取平均之前)。用來看清哪裡不像。",
+   "ko": "SSIM 의 **맵**(평균 내기 전). 어디가 다른지를 그림으로 보기 위한 것.",
+   "de": "Die SSIM-**Karte** (vor der Mittelung) — um als Bild zu sehen, *wo* sich beide unterscheiden."
+  },
+  "imgmetrics/xyz_to_lab": {
+   "fp": "4e6d72d56a3c",
+   "en": "CIE XYZ → CIE 1976 L\\*a\\*b\\*. The default white point is D65 2°.",
+   "zh": "CIE XYZ → CIE 1976 L\\*a\\*b\\*。默认白点为 D65 2°。",
+   "tw": "CIE XYZ → CIE 1976 L\\*a\\*b\\*。預設白點為 D65 2°。",
+   "ko": "CIE XYZ → CIE 1976 L\\*a\\*b\\*. 기본 백색점은 D65 2°.",
+   "de": "CIE XYZ → CIE 1976 L\\*a\\*b\\*. Der Standard-Weißpunkt ist D65 2°."
+  },
+  "math/cplx_argument_principle": {
+   "fp": "30108a1ac6cd",
+   "zh": "辐角原理:仅凭 ``f`` 的采样值,数出围道内零点数减去极点数。",
+   "tw": "輻角原理:僅憑 ``f`` 的取樣值,數出圍道內零點數減去極點數。",
+   "ko": "편각 원리: ``f`` 의 표본값만으로 폐곡선이 둘러싼 영점 수에서 극점 수를 뺀 값을 셉니다.",
+   "de": "Argumentprinzip: zählt allein aus abgetasteten Werten von ``f`` die von einer Kontur umschlossenen Nullstellen minus Polstellen."
+  },
+  "math/cplx_cauchy_value": {
+   "fp": "44fa82f3475e",
+   "zh": "柯西积分公式:由围道**上**的值还原围道**内**的 ``f(w)``。",
+   "tw": "柯西積分公式:由圍道**上**的值還原圍道**內**的 ``f(w)``。",
+   "ko": "코시 적분 공식: 폐곡선 **위**의 값으로부터 폐곡선 **안**의 ``f(w)`` 를 복원합니다.",
+   "de": "Cauchysche Integralformel: rekonstruiert ``f(w)`` **innerhalb** einer Kontur aus deren Werten **auf** der Kontur."
+  },
+  "math/cplx_contour_circle": {
+   "fp": "7693a38287ba",
+   "zh": "把圆采样成闭合围道 —— 标准的积分路径。",
+   "tw": "把圓取樣成閉合圍道 —— 標準的積分路徑。",
+   "ko": "원을 닫힌 폐곡선으로 표본화합니다 —— 표준적인 적분 경로.",
+   "de": "Tastet einen Kreis als geschlossene Kontur ab — der übliche Integrationsweg."
+  },
+  "math/cplx_contour_integral": {
+   "fp": "70c4d45ceeb8",
+   "zh": "用弦梯形法计算闭合围道积分 ``∮ f(z) dz``。",
+   "tw": "用弦梯形法計算閉合圍道積分 ``∮ f(z) dz``。",
+   "ko": "현 사다리꼴 공식으로 닫힌 폐곡선 적분 ``∮ f(z) dz`` 를 계산합니다.",
+   "de": "Geschlossenes Konturintegral ``∮ f(z) dz`` mit der Sehnen-Trapezregel."
+  },
+  "math/cplx_cr_residual": {
+   "fp": "47a406c97e41",
+   "zh": "采样复场的柯西-黎曼残差 —— 把「这个场全纯吗?」变成一个数。",
+   "tw": "取樣複場的柯西-黎曼殘差 —— 把「這個場全純嗎?」變成一個數。",
+   "ko": "표본화된 복소장의 코시-리만 잔차 —— 「이 장은 정칙인가?」를 하나의 수로.",
+   "de": "Cauchy-Riemann-Residuum eines abgetasteten komplexen Feldes — „ist dieses Feld holomorph?“ als Zahl."
+  },
+  "math/cplx_joukowski": {
+   "fp": "cbd6b3394f0a",
+   "zh": "儒可夫斯基共形映射 ``w = z + c^2 / z``。",
+   "tw": "儒可夫斯基共形映射 ``w = z + c^2 / z``。",
+   "ko": "주코프스키 등각 사상 ``w = z + c^2 / z``.",
+   "de": "Joukowski-(Schukowski-)konforme Abbildung ``w = z + c^2 / z``."
+  },
+  "math/cplx_laurent_coeffs": {
+   "fp": "8cf9210a8139",
+   "zh": "**均匀采样圆周**上的 Laurent(以及 Taylor)系数 —— 含留数。",
+   "tw": "**均勻取樣圓周**上的 Laurent(以及 Taylor)係數 —— 含留數。",
+   "ko": "**균일하게 표본화한 원** 위의 로랑(및 테일러) 계수 —— 유수 포함.",
+   "de": "Laurent- (und Taylor-)Koeffizienten auf einem **gleichmäßig abgetasteten Kreis** — Residuen inbegriffen."
+  },
+  "math/cplx_mobius": {
+   "fp": "a9262970abce",
+   "zh": "莫比乌斯(线性分式)变换 ``w = (a z + b) / (c z + d)``。",
+   "tw": "莫比烏斯(線性分式)變換 ``w = (a z + b) / (c z + d)``。",
+   "ko": "뫼비우스(일차분수) 변환 ``w = (a z + b) / (c z + d)``.",
+   "de": "Möbius-Transformation (gebrochen lineare Abbildung) ``w = (a z + b) / (c z + d)``."
+  },
+  "math/cplx_poly_eval": {
+   "fp": "5fe611a1b06d",
+   "zh": "在复平面上求多项式的值(Horner 法,支持复数)。",
+   "tw": "在複平面上求多項式的值(Horner 法,支援複數)。",
+   "ko": "복소평면에서 다항식을 계산합니다(호너 법, 복소수 대응).",
+   "de": "Wertet ein Polynom in der komplexen Ebene aus (Horner-Schema, komplexfähig)."
+  },
+  "math/cplx_winding_number": {
+   "fp": "84cd61152cfe",
+   "zh": "闭合围道绕某点的卷绕数(回转数)。",
+   "tw": "閉合圍道繞某點的卷繞數(迴轉數)。",
+   "ko": "닫힌 폐곡선이 한 점을 감는 횟수(회전수).",
+   "de": "Windungszahl einer geschlossenen Kontur um einen Punkt (Umlaufzahl)."
+  },
+  "math/interp_cubic": {
+   "fp": "4cf3d6b52865",
+   "zh": "三次样条插值(``scipy.interpolate.CubicSpline``)。",
+   "tw": "三次雲形線插值(``scipy.interpolate.CubicSpline``)。",
+   "ko": "3차 스플라인 보간(``scipy.interpolate.CubicSpline``).",
+   "de": "Kubische Spline-Interpolation (``scipy.interpolate.CubicSpline``)."
+  },
+  "math/interp_linear": {
+   "fp": "0773219b143e",
+   "zh": "对 ``(x, y)`` 样本在查询点 *xq* 处做分段线性插值。",
+   "tw": "對 ``(x, y)`` 樣本在查詢點 *xq* 處做分段線性插值。",
+   "ko": "``(x, y)`` 표본을 질의점 *xq* 에서 구간별 선형 보간합니다.",
+   "de": "Stückweise lineare Interpolation von ``(x, y)``-Stützstellen an den Abfragepunkten *xq*."
+  },
+  "math/mat_cond": {
+   "fp": "23a52abfa3a6",
+   "zh": "谱(2-范数)条件数 ``s_max / s_min`` —— 整个线性代数族的数值警报器。",
+   "tw": "譜(2-範數)條件數 ``s_max / s_min`` —— 整個線性代數族的數值警報器。",
+   "ko": "스펙트럼(2-노름) 조건수 ``s_max / s_min`` —— 선형대수 계열 전체의 수치적 경보기.",
+   "de": "Spektrale (2-Norm-)Konditionszahl ``s_max / s_min`` — der numerische Warnkanarienvogel der ganzen Linalg-Familie."
+  },
+  "math/mat_eigh": {
+   "fp": "c40a495dfb67",
+   "zh": "**对称**矩阵的特征分解(LAPACK ``syevd``)。",
+   "tw": "**對稱**矩陣的特徵分解(LAPACK ``syevd``)。",
+   "ko": "**대칭** 행렬의 고유분해(LAPACK ``syevd``).",
+   "de": "Eigenzerlegung einer **symmetrischen** Matrix (LAPACK ``syevd``)."
+  },
+  "math/mat_lstsq": {
+   "fp": "cea00335ee7c",
+   "zh": "超定方程组 ``A x ≈ b`` 的最小二乘解(LAPACK ``gelsd``,基于 SVD)。",
+   "tw": "超定方程組 ``A x ≈ b`` 的最小平方解(LAPACK ``gelsd``,基於 SVD)。",
+   "ko": "과결정 연립방정식 ``A x ≈ b`` 의 최소제곱해(LAPACK ``gelsd``, SVD 기반).",
+   "de": "Kleinste-Quadrate-Lösung eines überbestimmten Systems ``A x ≈ b`` (LAPACK ``gelsd``, SVD-basiert)."
+  },
+  "math/mat_pinv": {
+   "fp": "c896b0f8621b",
+   "zh": "基于 SVD 的 Moore-Penrose 伪逆,截断阈值**显式给出**。",
+   "tw": "基於 SVD 的 Moore-Penrose 偽逆,截斷閾值**明確給出**。",
+   "ko": "SVD 를 통한 무어-펜로즈 유사역행렬. 절단 임계값을 **명시**합니다.",
+   "de": "Moore-Penrose-Pseudoinverse über SVD, mit **explizitem** Abschneidewert."
+  },
+  "math/mat_solve": {
+   "fp": "c54b24516a55",
+   "zh": "解方阵线性方程组 ``A x = b``(LAPACK ``gesv``,部分选主元的 LU)。",
+   "tw": "解方陣線性方程組 ``A x = b``(LAPACK ``gesv``,部分選主元的 LU)。",
+   "ko": "정방 선형계 ``A x = b`` 를 풉니다(LAPACK ``gesv``, 부분 피벗 LU).",
+   "de": "Löst das quadratische lineare System ``A x = b`` (LAPACK ``gesv``, LU mit Teilpivotisierung)."
+  },
+  "math/mat_svd": {
+   "fp": "c6259bd562ce",
+   "zh": "奇异值分解 ``A = U @ diag(s) @ Vt``(LAPACK ``gesdd``)。",
+   "tw": "奇異值分解 ``A = U @ diag(s) @ Vt``(LAPACK ``gesdd``)。",
+   "ko": "특이값 분해 ``A = U @ diag(s) @ Vt``(LAPACK ``gesdd``).",
+   "de": "Singulärwertzerlegung ``A = U @ diag(s) @ Vt`` (LAPACK ``gesdd``)."
+  },
+  "math/poly_eval": {
+   "fp": "5f9a69fd2a97",
+   "zh": "在 *x* 处求多项式的值(系数按最高次在前)。",
+   "tw": "在 *x* 處求多項式的值(係數按最高次在前)。",
+   "ko": "*x* 에서 다항식을 계산합니다(계수는 최고차항부터).",
+   "de": "Wertet ein Polynom (Koeffizienten höchste Potenz zuerst) an *x* aus."
+  },
+  "math/poly_fit": {
+   "fp": "0f6c2aa00351",
+   "zh": "最小二乘多项式拟合,并**记录其条件数**。",
+   "tw": "最小平方多項式擬合,並**記錄其條件數**。",
+   "ko": "최소제곱 다항식 적합. 그 조건수를 **기록으로 남깁니다**.",
+   "de": "Kleinste-Quadrate-Polynomanpassung, deren Konditionierung **mit protokolliert** wird."
+  },
+  "math/poly_roots": {
+   "fp": "dc07ba9dfec8",
+   "zh": "多项式的全部根(系数按最高次在前)—— 含复根。",
+   "tw": "多項式的全部根(係數按最高次在前)—— 含複根。",
+   "ko": "다항식의 모든 근(계수는 최고차항부터) —— 복소근 포함.",
+   "de": "Alle Wurzeln eines Polynoms (Koeffizienten höchste Potenz zuerst) — komplexe eingeschlossen."
+  },
+  "math/stat_correlation": {
+   "fp": "bd33cd23f258",
+   "zh": "``(N, D)`` 观测的 Pearson 相关矩阵 → ``(D, D)``。",
+   "tw": "``(N, D)`` 觀測的 Pearson 相關矩陣 → ``(D, D)``。",
+   "ko": "``(N, D)`` 관측의 피어슨 상관행렬 → ``(D, D)``.",
+   "de": "Pearson-Korrelationsmatrix von ``(N, D)``-Beobachtungen → ``(D, D)``."
+  },
+  "math/stat_covariance": {
+   "fp": "c813d642e90a",
+   "zh": "``(N, D)`` 观测的样本协方差矩阵 → ``(D, D)``。",
+   "tw": "``(N, D)`` 觀測的樣本共變異數矩陣 → ``(D, D)``。",
+   "ko": "``(N, D)`` 관측의 표본 공분산 행렬 → ``(D, D)``.",
+   "de": "Stichproben-Kovarianzmatrix von ``(N, D)``-Beobachtungen → ``(D, D)``."
+  },
+  "math/stat_describe": {
+   "fp": "54ff297cf4bc",
+   "zh": "一维样本的五数概括(及更多),以普通 dict 返回。",
+   "tw": "一維樣本的五數概括(及更多),以普通 dict 回傳。",
+   "ko": "1-D 표본의 다섯 수 요약(그 이상 포함)을 평범한 dict 로.",
+   "de": "Fünf-Punkte-Zusammenfassung (und mehr) einer 1-D-Stichprobe als einfaches dict."
+  },
+  "math/stat_histogram": {
+   "fp": "4ef5b09580ea",
+   "zh": "一维样本的直方图,分箱方式**显式给出**。",
+   "tw": "一維樣本的直方圖,分箱方式**明確給出**。",
+   "ko": "1-D 표본의 히스토그램. 구간 나누기를 **명시**합니다.",
+   "de": "Histogramm einer 1-D-Stichprobe mit **expliziter** Klasseneinteilung."
+  },
+  "math/stat_zscore": {
+   "fp": "8d1e753b1ffc",
+   "zh": "标准化一维样本:``(x - mean) / std``(总体 ``ddof=0``)。",
+   "tw": "標準化一維樣本:``(x - mean) / std``(母體 ``ddof=0``)。",
+   "ko": "1-D 표본을 표준화합니다: ``(x - mean) / std``(모집단 ``ddof=0``).",
+   "de": "Standardisiert eine 1-D-Stichprobe: ``(x - mean) / std`` (Population, ``ddof=0``)."
+  }
+ }
+}

@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">displacement_series — MOTIONMAG <code style="color:#22d3bf">measure</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import motionmag; motionmag.displacement_series(video, f_lo, f_hi, fps, scales: &#x27;int&#x27; = 4, orientations: &#x27;int&#x27; = 4) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsmotionmag.get(&quot;displacement_series&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Whole-frame displacement waveform -&gt; `<code style="color:#22d3bf">(T, 2)</code><code style="color:#22d3bf"> array of </code><code style="color:#22d3bf">(dx, dy)</code>`.</p>
+<p>The contrast-weighted spatial mean of :func:<code style="color:#22d3bf">phase_displacement</code>, i.e. the</p>
+<p>rigid-body motion of the scene in pixels, one row per frame. This is the</p>
+<p>trace to plot, or to feed to `<code style="color:#22d3bf">dsp.spectrum</code>` to read off the resonant</p>
+<p>frequency — a vibration waveform recovered from a camera.</p>
+<p>Weights are the same `<code style="color:#22d3bf">|z|^2</code>` contrast the field solve uses, restricted to</p>
+<p>the pixels marked `<code style="color:#22d3bf">valid</code>`, so blank regions do not drag the average</p>
+<p>towards zero. A clip with no valid pixel anywhere (a constant image) returns</p>
+<p>exact zeros rather than a division by zero.</p>
+<p>Sub-pixel accuracy and its cliff inherit from :func:<code style="color:#22d3bf">phase_displacement</code>;</p>
+<p>measured on the 64x64x64 / 8 px / 4 Hz synthetic, a true 0.5 px amplitude is</p>
+<p>recovered as 0.50000000 px (6.7e-16 relative), and a true 0.001 px amplitude</p>
+<p>as 0.00100000 px (8.7e-15).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemotionmag:motion_magnification">motion_magnification 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:motion_magnification">motion_magnification</a> — <code style="color:#22d3bf">py -3.11 examples/motion_magnification.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:quaternion_monogenic">quaternion_monogenic</a> — <code style="color:#22d3bf">py -3.11 examples/quaternion_monogenic.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">pairs</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">measure</code>)</h3>
+<p><a style="color:#22d3bf" href="opmotionmag:phase_displacement">phase_displacement</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: motionmag.py — MOTIONMAG 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

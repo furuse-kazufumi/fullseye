@@ -1,0 +1,20 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mesh_area — 3D <code style="color:#22d3bf">mesh_process</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import mesh_props; mesh_props.mesh_area(mesh) -&gt; &#x27;float&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;mesh_area&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>三角形メッシュの<b>表面積</b>(全三角形面積の総和)。→ float。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:dl_mesh_curvature">dl_mesh_curvature</a> — <code style="color:#22d3bf">py -3.11 examples_3d/dl_mesh_curvature.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:mesh_props">mesh_props</a> — <code style="color:#22d3bf">py -3.11 examples_3d/mesh_props.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">measurement</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="op3d:vol_gaussian_psf">vol_gaussian_psf</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">mesh_process</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:laplacian_smooth">laplacian_smooth</a> · <a style="color:#22d3bf" href="op3d:taubin_smooth">taubin_smooth</a> · <a style="color:#22d3bf" href="op3d:decimate_qem">decimate_qem</a> · <a style="color:#22d3bf" href="op3d:face_normals">face_normals</a> · <a style="color:#22d3bf" href="op3d:vertex_normals">vertex_normals</a> · <a style="color:#22d3bf" href="op3d:vertex_curvature">vertex_curvature</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mesh_props.py — 3D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

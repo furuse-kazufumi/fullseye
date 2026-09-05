@@ -7,12 +7,12 @@ out: image2d
 examples: [machined_metal_and_materials]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # wood_grain — OPTICS `surface` op
 
-- **データ種**: `` → `image2d`
+- **データ種**: `なし` → `image2d`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import surfacelib; surfacelib.wood_grain(shape, ring_px=18.0, angle_deg=15.0, wobble=0.25, seed=0)` (または `opsoptics.get("wood_grain")`)
 
 ## 使い方

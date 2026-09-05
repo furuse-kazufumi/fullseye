@@ -1,0 +1,67 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">octave_spectrum — ACOUSTICS <code style="color:#22d3bf">level</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import acoustics; acoustics.octave_spectrum(x, rate, fraction=3, f_min=22.0, f_max=None, ref=1.0, weighting=&#x27;Z&#x27;, floor_db=-200.0)</code>(或 <code style="color:#22d3bf">opsacoustics.get(&quot;octave_spectrum&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Band levels in dB, summed over fractional-octave bands by Parseval.</p>
+<p>Energy is accumulated from the single-sided periodogram into the bands</p>
+<p>:func:<code style="color:#22d3bf">octave_bands</code> defines, so the band powers sum to the signal&#x27;s</p>
+<p>mean-square exactly (up to the bins outside the requested range). That</p>
+<p>identity is the test: measured on 16384 samples of white noise at 16 kHz</p>
+<p>over 22 Hz - 8 kHz at 1/3 octave, the band powers sum to <b>0.996367</b> of</p>
+<p>`<code style="color:#22d3bf">mean(x**2)</code><code style="color:#22d3bf"> while </code><code style="color:#22d3bf">total_power</code>` (which counts every FFT bin) comes to</p>
+<p><b>1.000000</b> of it. The 0.36 % difference is exactly the bins outside the</p>
+<p>requested range, and returning both numbers is what makes that visible</p>
+<p>instead of leaving a reader to wonder where the energy went.</p>
+<p><b>The reference is explicit and there is no implicit 20 uPa.</b> `<code style="color:#22d3bf">ref</code>` is an</p>
+<p>amplitude in the same units as the signal, and the default 1.0 means &quot;dB</p>
+<p>relative to one unit of whatever you passed in&quot;. This library never sees a</p>
+<p>microphone calibration, so a number labelled dB SPL would be a fabrication;</p>
+<p>pass `<code style="color:#22d3bf">ref=20e-6</code>` when the signal really is pascals and the result really is</p>
+<p>dB SPL.</p>
+<p>`<code style="color:#22d3bf">weighting</code><code style="color:#22d3bf"> applies :func:</code>apply_weighting<code style="color:#22d3bf"> first (</code><code style="color:#22d3bf">&quot;Z&quot;</code>` = none).</p>
+<p>Returns a dict: `<code style="color:#22d3bf">centers</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">nominal</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">lower</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">upper</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">levels</code>`</p>
+<p>(dB), `<code style="color:#22d3bf">powers</code><code style="color:#22d3bf"> (mean-square), </code><code style="color:#22d3bf">total_level</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">total_power</code>`,</p>
+<p>`<code style="color:#22d3bf">clamped</code><code style="color:#22d3bf"> (bool mask of bands floored at </code><code style="color:#22d3bf">floor_db</code><code style="color:#22d3bf">), </code><code style="color:#22d3bf">ref</code>`,</p>
+<p>`<code style="color:#22d3bf">weighting</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">fraction</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">resolution_hz</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">narrow_bands</code>` (how many</p>
+<p>FFT bins landed in each band — a band with 0 or 1 is under-resolved and the</p>
+<p>level is not trustworthy), and `<code style="color:#22d3bf">truncated</code>`.</p>
+<p>`<code style="color:#22d3bf">truncated</code>` is a bool mask of bands whose <b>upper edge is above Nyquist</b>,</p>
+<p>which means only the part of the band below Nyquist was measured and the</p>
+<p>level is the level of that part, not of the band. This is not an exotic</p>
+<p>case: `<code style="color:#22d3bf">f_max</code>` bounds band *centres*, so the top band&#x27;s edge always</p>
+<p>overhangs it by half a band width, and the **default `<code style="color:#22d3bf">f_max = 22050</code>`</p>
+<p>against the canonical rate of 44100** puts the top third-octave band at</p>
+<p>17782.79-22387.21 Hz over a Nyquist of 22050. Measured on 1 s of white</p>
+<p>noise at 44100: that band collects <b>4268</b> of the <b>4604</b> bins it spans</p>
+<p>(7.3 % missing) and reported a level with nothing in the old return value</p>
+<p>saying it was partial. Nothing raises — the missing bins simply do not</p>
+<p>exist. Drop the flagged bands, or lower `<code style="color:#22d3bf">f_max</code>` until</p>
+<p>`<code style="color:#22d3bf">upper[-1] &lt;= rate/2</code>`.</p>
+<p>Measured exactness: a 1 kHz sine of amplitude 0.7 at 16 kHz over exactly</p>
+<p>1000 periods, `<code style="color:#22d3bf">ref=1.0</code>`, gives the 1 kHz band level</p>
+<p><b>-6.1083391564</b> dB against the closed form</p>
+<p>`<code style="color:#22d3bf">10*log10(0.7**2/2) = -6.1083391564</code>` dB — the difference is</p>
+<p><b>0.000e+00</b>. 25 of the 26 bands are at the floor, and `<code style="color:#22d3bf">total_level</code>`</p>
+<p>equals the band level to the digit shown, because there is nothing else in</p>
+<p>the record.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: everything :func:</code>_as_signal` and</p>
+<p>:func:<code style="color:#22d3bf">octave_bands</code> refuse, `<code style="color:#22d3bf">ref &lt;= 0</code>` (a dB with a zero or negative</p>
+<p>reference is not a number), an unknown `<code style="color:#22d3bf">weighting</code><code style="color:#22d3bf">, and an </code><code style="color:#22d3bf">f_max</code>` above</p>
+<p>Nyquist.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:acoustic_condition_monitoring">acoustic_condition_monitoring</a> — <code style="color:#22d3bf">py -3.11 examples/acoustic_condition_monitoring.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:istft">istft</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">level</code>)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:octave_bands">octave_bands</a> · <a style="color:#22d3bf" href="opacoustics:weighting_response">weighting_response</a> · <a style="color:#22d3bf" href="opacoustics:apply_weighting">apply_weighting</a> · <a style="color:#22d3bf" href="opacoustics:equivalent_level">equivalent_level</a> · <a style="color:#22d3bf" href="opacoustics:percentile_level">percentile_level</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acoustics.py — ACOUSTICS 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lf_from_mla — LIGHTFIELD <code style="color:#22d3bf">decode</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">lightfield</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import lightfield; lightfield.lf_from_mla(raw, angular=(5, 5), *, offset=(0, 0), crop=False)</code> (oder <code style="color:#22d3bf">opslightfield.get(&quot;lf_from_mla&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Decode a microlens-array raw frame into a `<code style="color:#22d3bf">(V, U, H, W)</code>` light field.</p>
+<p>The plenoptic sensor stores, for microlens `<code style="color:#22d3bf">(t, s)</code><code style="color:#22d3bf">, a </code><code style="color:#22d3bf">V x U</code>` block of</p>
+<p>pixels — one per direction through the main lens&#x27; exit pupil. So raw pixel</p>
+<p>`<code style="color:#22d3bf">(offset_y + t*V + v, offset_x + s*U + u)</code><code style="color:#22d3bf"> is exactly </code><code style="color:#22d3bf">L[v, u, t, s]</code>`:</p>
+<p>the decode is a pure re-sort, no interpolation, no data invented.</p>
+<p>:func:<code style="color:#22d3bf">lf_to_mla</code> inverts it <b>bit-exactly</b>.</p>
+<p>*offset* is the integer position of the first whole microlens; a real MLA is</p>
+<p>never aligned to pixel `<code style="color:#22d3bf">(0, 0)</code>`. Sub-pixel MLA calibration is out of scope</p>
+<p>(see the module docstring) — this operator works on an already-rectified</p>
+<p>frame.</p>
+<p>By default a raw frame whose usable size is not a whole multiple of the</p>
+<p>microlens pitch is a `<code style="color:#22d3bf">ValueError</code>`, because the alternative — quietly</p>
+<p>dropping the last partial row of microlenses — shifts every subsequent</p>
+<p>microlens centre and produces a light field that looks right and is wrong.</p>
+<p>Pass `<code style="color:#22d3bf">crop=True</code>` to opt in to that crop explicitly.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *raw* not 2-D or non-finite, *angular* outside</p>
+<p>`<code style="color:#22d3bf">[1, MAX_ANGULAR]</code>`, a negative *offset*, an *offset* that leaves fewer</p>
+<p>than one whole microlens, a size that is not a multiple of the pitch (unless</p>
+<p>`<code style="color:#22d3bf">crop=True</code><code style="color:#22d3bf">), a decoded sub-aperture image over :data:</code>MAX_SPATIAL` on a</p>
+<p>side, and a decoded size over :data:<code style="color:#22d3bf">MAX_LF_ELEMENTS</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">Leitfaden zur Familie lightfield_depth</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">lightfield</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="oplightfield:lf_to_mla">lf_to_mla</a> · <a style="color:#22d3bf" href="oplightfield:lf_stats">lf_stats</a> · <a style="color:#22d3bf" href="oplightfield:lf_subaperture">lf_subaperture</a> · <a style="color:#22d3bf" href="oplightfield:lf_center_view">lf_center_view</a> · <a style="color:#22d3bf" href="oplightfield:lf_views">lf_views</a> · <a style="color:#22d3bf" href="oplightfield:lf_epi">lf_epi</a> · <a style="color:#22d3bf" href="oplightfield:lf_refocus">lf_refocus</a> · <a style="color:#22d3bf" href="oplightfield:lf_focal_stack">lf_focal_stack</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">decode</code>)</h3>
+<p><a style="color:#22d3bf" href="oplightfield:lf_to_mla">lf_to_mla</a> · <a style="color:#22d3bf" href="oplightfield:lf_stats">lf_stats</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: lightfield.py — LIGHTFIELD Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

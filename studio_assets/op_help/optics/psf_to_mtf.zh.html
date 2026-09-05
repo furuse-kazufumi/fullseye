@@ -1,0 +1,60 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">psf_to_mtf — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import optics; optics.psf_to_mtf(psf, pixel_pitch_um=1.0)</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;psf_to_mtf&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Radially-averaged MTF of a measured point-spread function.</p>
+<p>`<code style="color:#22d3bf">OTF = FFT{PSF}</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">MTF = |OTF| / |OTF(0)|</code>`, then averaged over annuli of</p>
+<p>constant spatial frequency out to the Nyquist limit `<code style="color:#22d3bf">1/(2*pitch)</code>`. This</p>
+<p>is the measurement side of resolution: image a point source (or a slit, or</p>
+<p>differentiate a knife edge), hand the spot here, and compare the curve with</p>
+<p>the diffraction limit from :func:<code style="color:#22d3bf">mtf_diffraction</code>.</p>
+<p>Returns an `<code style="color:#22d3bf">(n, 2)</code><code style="color:#22d3bf"> float64 </code><code style="color:#22d3bf">pairs</code>` array: column 0 the spatial</p>
+<p>frequency in <b>cycles per millimetre</b>, column 1 the MTF in [0, 1]. One row</p>
+<p>per non-empty radial bin (a very anisotropic array can leave a bin empty;</p>
+<p>those rows are dropped rather than filled with a NaN).</p>
+<p>Ground truth it reproduces (measured): a delta PSF gives MTF == 1 at every</p>
+<p>frequency <b>exactly</b> (max deviation 0.0); a Gaussian PSF of sigma pixels</p>
+<p>gives the closed form `<code style="color:#22d3bf">exp(-2*pi^2*sigma^2*f^2)</code>` — the maximum absolute</p>
+<p>deviation over the whole curve is 4.1e-4 at sigma = 2 px on 128x128,</p>
+<p>8.3e-4 at sigma = 1.5 px on 64x64 and 2.4e-4 at sigma = 3 px on 256x256</p>
+<p>(the residual is the radial average over a square grid, not an error in the</p>
+<p>transform). Doubling *pixel_pitch_um* halves every reported frequency and</p>
+<p>leaves the MTF column bit-identical.</p>
+<p>The PSF is <b>not</b> re-normalised or re-centred: a PSF whose energy is not</p>
+<p>centred carries a linear phase, which the modulus discards, so the MTF is</p>
+<p>unaffected — but the *phase* transfer function, which is where a</p>
+<p>decentred/asymmetric PSF shows up, is deliberately not summarised here.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *psf* is not 2-D / smaller than 2x2 / over the</p>
+<p>size cap / complex / masked / non-finite; a PSF that sums to zero or less</p>
+<p>(the DC normalisation would be 0/0 — an all-zero &quot;PSF&quot; is not a PSF);</p>
+<p>non-positive or non-finite *pixel_pitch_um*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
+<p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
+<p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>
+<p style="margin:2px 0 2px 12px">• **字符串一律 <code style="color:#22d3bf">ValueError</code>** —— <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> 会成功,于是未解析的配置值会被当成长度混进来(实测:<code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> 曾返回看着合理的 66.667 mm)。bool 也按 <code style="color:#22d3bf">True == 1</code> 的隐式提升拒绝。</p>
+<p style="margin:2px 0 2px 12px">• **complex / masked array 一律 <code style="color:#22d3bf">ValueError</code><b>(仅接受实数槽位;拒绝无声丢弃虚部或剥掉掩码)。</b>所有输入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code>**。</p>
+<p style="margin:2px 0 2px 12px">• <b>逐项点名拒绝除零及其近亲</b>:焦距 0、曲率半径 0、折射率 &lt;= 0、全不透明光阑(全为 0,归一化变成 0/0)、总和 &lt;= 0 的 PSF、S0 = 0 的 Stokes 矢量、物体位于前焦点(像在无穷远)。</p>
+<p style="margin:2px 0 2px 12px">• <b>只有两个算子会返回非有限值,而且都写进了契约</b>:<code style="color:#22d3bf">depth_of_field</code> 在超焦距以外返回 <code style="color:#22d3bf">far_mm = inf</code>(这正是超焦距的定义),<code style="color:#22d3bf">gaussian_beam</code> 在束腰处返回 <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(平面波前的曲率半径)。两者都同时返回一个有限的搭档(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)。**除此之外的无声 NaN/Inf 都在内部检出并 <code style="color:#22d3bf">ValueError</code>** ——「float64 溢出了」和「答案是无穷大」是两种不同的主张,不能拿后者的脸去交付前者。</p>
+<p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:生成网格受 <code style="color:#22d3bf">optics.MAX_GRID</code>(4096)限制,传入的场/PSF/光阑受 <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24),ABCD 元件序列受 <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024),Zernike 受 <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25)。以 fail-closed 堵住「小参数引发巨大内部分配」的路径(实测:n_max=40 × 4096² 需要 108 GB)。</p>
+<p style="margin:2px 0 2px 12px">• <b>物理上不可能的状态同样拒绝</b>:偏振度 &gt; 1 的 Stokes 矢量、负透过率、负强度、n-|m| 为奇数等非法 Zernike 指标。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:measurement_uncertainty">measurement_uncertainty</a> — 計測の不確かさと校正の知識 — 「測れている」を主張するために</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:mv_cameras">mv_cameras</a> — 産業用カメラメーカー（センサとの紐付け・ラインスキャン / TDI）</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:virtual_machine_vision">virtual_machine_vision</a> — 仮想マシンビジョン — パラメータの洗い出しとオブジェクト模型</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:optics_imaging">optics_imaging</a> — <code style="color:#22d3bf">py -3.11 examples/optics_imaging.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">pairs</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">imaging</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:mtf_diffraction">mtf_diffraction</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: optics.py — OPTICS 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

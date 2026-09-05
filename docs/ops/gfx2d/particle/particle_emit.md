@@ -7,12 +7,12 @@ out: table
 examples: [gfx2d_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # particle_emit — GFX2D `particle` op
 
-- **データ種**: `` → `table`
+- **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import gfx2d; gfx2d.particle_emit(count, seed, origin=(0.0, 0.0), spread=0.0, speed=(10.0, 40.0), direction=(0.0, 360.0), life=(0.5, 1.5), size=(1.0, 3.0), color='emphasis', scheme='okabe_ito')` (または `opsgfx2d.get("particle_emit")`)
 
 ## 使い方

@@ -1,0 +1,19 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">compute_fpfh — 3D <code style="color:#22d3bf">feature_register</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points × normals</code> → <code style="color:#22d3bf">descriptor</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import feat_fpfh; feat_fpfh.compute_fpfh(points, normals, k=60, n_bins=11)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;compute_fpfh&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>FPFH 記述子 (N, 3*n_bins) を計算(Rusu 2009)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:fpfh_correspondence">fpfh_correspondence</a> — <code style="color:#22d3bf">py -3.11 examples_3d/fpfh_correspondence.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">descriptor</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:shape_distance">shape_distance</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">feature_register</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:harris3d_keypoints">harris3d_keypoints</a> · <a style="color:#22d3bf" href="op3d:iss_keypoints">iss_keypoints</a> · <a style="color:#22d3bf" href="op3d:shot_descriptor">shot_descriptor</a> · <a style="color:#22d3bf" href="op3d:register_spin">register_spin</a> · <a style="color:#22d3bf" href="op3d:register_fpfh">register_fpfh</a> · <a style="color:#22d3bf" href="op3d:register_shot">register_shot</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: feat_fpfh.py — 3D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

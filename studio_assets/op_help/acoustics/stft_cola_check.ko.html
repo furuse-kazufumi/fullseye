@@ -1,0 +1,52 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">stft_cola_check — ACOUSTICS <code style="color:#22d3bf">transform</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import acoustics; acoustics.stft_cola_check(window=&#x27;hann&#x27;, win=256, hop=None)</code>(또는 <code style="color:#22d3bf">opsacoustics.get(&quot;stft_cola_check&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
+<p>Does this (window, hop) pair satisfy COLA, and how exactly?</p>
+<p>COLA — the analysis windows summing to a constant over the hop lattice — is</p>
+<p>what lets plain overlap-add work without a division. It is *not* required by</p>
+<p>:func:<code style="color:#22d3bf">istft</code>, which is weighted, but it is required by anything that</p>
+<p>overlap-adds modified frames without renormalising, and getting it wrong</p>
+<p>produces a periodic amplitude ripple at `<code style="color:#22d3bf">rate/hop</code>` Hz that looks like</p>
+<p>tremolo rather than like a bug.</p>
+<p>Returns a dict: `<code style="color:#22d3bf">cola</code><code style="color:#22d3bf"> (bool), </code><code style="color:#22d3bf">constant</code>` (the mean of the overlap sum),</p>
+<p>`<code style="color:#22d3bf">max_deviation</code><code style="color:#22d3bf"> (absolute), </code><code style="color:#22d3bf">relative_deviation</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">nola</code>` (bool),</p>
+<p>`<code style="color:#22d3bf">min_squared_sum</code>`, plus the geometry.</p>
+<p>Measured (periodic windows, `<code style="color:#22d3bf">relative_deviation</code>` of the plain sum):</p>
+<p>========  ====  ====  ==================  ========  ====</p>
+<p>window    win   hop   relative_deviation  constant  COLA</p>
+<p>========  ====  ====  ==================  ========  ====</p>
+<p>hann      256   128   4.44e-16            1.00      yes</p>
+<p>hann      256   64    2.22e-16            2.00      yes</p>
+<p>hann      256   85    1.48e-03            1.506     no</p>
+<p>hamming   256   128   2.06e-16            1.08      yes</p>
+<p>blackman  256   128   1.91e-01            0.84      no</p>
+<p>blackman  256   64    3.97e-16            1.68      yes</p>
+<p>boxcar    256   128   0.00e+00            2.00      yes</p>
+<p>========  ====  ====  ==================  ========  ====</p>
+<p>The two blackman rows are the useful ones: the same window is COLA at</p>
+<p>hop = win/4 and 19 % off at hop = win/2, so &quot;which window&quot; is not the</p>
+<p>question — the pair is. The boxcar row was worth measuring rather than</p>
+<p>assuming: a rectangular window at 50 % overlap sums to exactly 2 and is</p>
+<p>COLA, which is the opposite of the usual intuition about it. Note also that</p>
+<p>the constant is not 1 in general — an overlap-add that does not divide by it</p>
+<p>is off by a *gain*, which is the failure that looks like a working system.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: unknown / all-zero window, </code><code style="color:#22d3bf">hop</code>` outside</p>
+<p>`<code style="color:#22d3bf">[1, win]</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">win</code><code style="color:#22d3bf"> outside </code><code style="color:#22d3bf">[2, MAX_WINDOW]</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:acoustic_condition_monitoring">acoustic_condition_monitoring</a> — <code style="color:#22d3bf">py -3.11 examples/acoustic_condition_monitoring.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:istft">istft</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">transform</code>)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:stft">stft</a> · <a style="color:#22d3bf" href="opacoustics:istft">istft</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acoustics.py — ACOUSTICS 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

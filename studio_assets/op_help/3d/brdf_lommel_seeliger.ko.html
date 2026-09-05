@@ -1,0 +1,19 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">brdf_lommel_seeliger — 3D <code style="color:#22d3bf">render</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import render_shade; render_shade.brdf_lommel_seeliger(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), w: &#x27;float&#x27; = 0.42) -&gt; &#x27;np.ndarray&#x27;</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;brdf_lommel_seeliger&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
+<p>Lommel-Seeliger 反射則(縁まで明るいレゴリス)で法線マップを陰影付けし I/F `<code style="color:#22d3bf">(H, W)</code>` を返す。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:itokawa_regolith_hero">itokawa_regolith_hero</a> — <code style="color:#22d3bf">py -3.11 examples_3d/itokawa_regolith_hero.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">image2d</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fit_poly_surface">fit_poly_surface</a> · <a style="color:#22d3bf" href="op3d:eval_poly_surface">eval_poly_surface</a> · <a style="color:#22d3bf" href="op3d:surface_form_error">surface_form_error</a> · <a style="color:#22d3bf" href="op3d:background_flatten">background_flatten</a> · <a style="color:#22d3bf" href="op3d:polar_unwrap">polar_unwrap</a> · <a style="color:#22d3bf" href="op3d:fit_zernike">fit_zernike</a> · <a style="color:#22d3bf" href="op3d:matcap_shade">matcap_shade</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">render</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:project_points">project_points</a> · <a style="color:#22d3bf" href="op3d:render_point_depth">render_point_depth</a> · <a style="color:#22d3bf" href="op3d:render_volume_projection">render_volume_projection</a> · <a style="color:#22d3bf" href="op3d:render_shaded">render_shaded</a> · <a style="color:#22d3bf" href="op3d:ambient_occlusion">ambient_occlusion</a> · <a style="color:#22d3bf" href="op3d:cast_shadow">cast_shadow</a> · <a style="color:#22d3bf" href="op3d:phong_shade">phong_shade</a> · <a style="color:#22d3bf" href="op3d:matcap_shade">matcap_shade</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: render_shade.py — 3D 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

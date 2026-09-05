@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">curvature_to_table — REPRCONV <code style="color:#22d3bf">curvature</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">curvature</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import reprconv; reprconv.curvature_to_table(curvature)</code>(或 <code style="color:#22d3bf">opsreprconv.get(&quot;curvature_to_table&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>曲率 → 分布の要約 `<code style="color:#22d3bf">table</code>`。<b>一方向</b>(統計は情報を捨てるのが仕事)。</p>
+<p>(N,) の単独曲率も (N,2) の主曲率対も受ける —— 統計を出すだけなら対で</p>
+<p>ある必要が無いため。`<code style="color:#22d3bf">kind</code>` に受けた形を書き戻すので、下流は「対だったのか」</p>
+<p>を後から判別できる。</p>
+<p>Args:</p>
+<p>curvature: (N,) / (N, 2) / 2 本の等長 1-D のタプル。</p>
+<p>Returns:</p>
+<p>dict。`<code style="color:#22d3bf">kind</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">min</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">max</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">rms</code>` /</p>
+<p>`<code style="color:#22d3bf">p05</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">p50</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">p95</code><code style="color:#22d3bf">、対なら </code><code style="color:#22d3bf">gauss_mean</code>`(K = k1*k2 の平均)と</p>
+<p>`<code style="color:#22d3bf">mean_curvature_mean</code>`((k1+k2)/2 の平均)。</p>
+<p>Raises:</p>
+<p>ValueError: 形状不正 / 非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">curvature</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:curvature_to_shape_index">curvature_to_shape_index</a> · <a style="color:#22d3bf" href="opreprconv:shape_index_to_curvature">shape_index_to_curvature</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

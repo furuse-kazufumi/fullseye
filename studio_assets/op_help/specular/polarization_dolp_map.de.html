@@ -1,0 +1,38 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">polarization_dolp_map — SPECULAR <code style="color:#22d3bf">polarization</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">polsweep</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import specularity; specularity.polarization_dolp_map(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)</code> (oder <code style="color:#22d3bf">opsspecular.get(&quot;polarization_dolp_map&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Degree of linear polarisation, per pixel. → (H, W) in [0, 1].</p>
+<p>`<code style="color:#22d3bf">sqrt(S1^2 + S2^2) / S0</code>`, from the same sinusoid fit as</p>
+<p>:func:<code style="color:#22d3bf">polarization_separate</code>. It answers the question that decides whether</p>
+<p>a polariser is worth mounting at all: <b>1</b> means the light at that pixel is</p>
+<p>fully linearly polarised and a crossed analyser extinguishes it completely,</p>
+<p><b>0</b> means the polariser will only cost you a stop of exposure.</p>
+<p>Being a ratio, it is invariant to exposure: scaling every frame by 1e-4,</p>
+<p>1e4 or 1e8 moves it by at most 3.9e-16 (measured), which is what makes it</p>
+<p>comparable across a production line where the lamps age. Not *bit*-</p>
+<p>identical — the least-squares fit rounds differently at a different scale —</p>
+<p>and the difference between &quot;invariant&quot; and &quot;bit-identical&quot; is the kind of</p>
+<p>claim this library measures rather than asserts.</p>
+<p>Pixels with zero total radiance have no degree of polarisation (every ratio</p>
+<p>would be 0/0) and are returned as 0.0 rather than as NaN; that is a</p>
+<p>convention, and it is stated here because a NaN spreading into a</p>
+<p>thresholding routine is exactly the silent failure this library refuses.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: as :func:</code>polarization_separate`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">Leitfaden zur Familie specular_photometric</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:specular_photometric">specular_photometric</a> — <code style="color:#22d3bf">py -3.11 examples/specular_photometric.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opspecular:polarization_render">polarization_render</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">polarization</code>)</h3>
+<p><a style="color:#22d3bf" href="opspecular:polarization_render">polarization_render</a> · <a style="color:#22d3bf" href="opspecular:polarization_separate">polarization_separate</a> · <a style="color:#22d3bf" href="opspecular:polarization_stokes">polarization_stokes</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: specularity.py — SPECULAR Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

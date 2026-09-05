@@ -1,0 +1,44 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">stokes_from_jones — OPTICS <code style="color:#22d3bf">polarization</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">jones</code> → <code style="color:#22d3bf">stokes</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import optics; optics.stokes_from_jones(state)</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;stokes_from_jones&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Jones vector -&gt; Stokes vector (the four measurable intensities).</p>
+<p>`<code style="color:#22d3bf">S0 = |Ex|^2 + |Ey|^2</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">S1 = |Ex|^2 - |Ey|^2</code>` ·</p>
+<p>`<code style="color:#22d3bf">S2 = 2*Re(Ex*conj(Ey))</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">S3 = 2*Im(Ex*conj(Ey))</code>`.</p>
+<p>In this convention (`<code style="color:#22d3bf">exp(-i*omega*t)</code><code style="color:#22d3bf"> time dependence) </code><code style="color:#22d3bf">S3 &gt; 0</code>` is</p>
+<p><b>right-circular</b>: the Jones vector `<code style="color:#22d3bf">[1, -i]/sqrt(2)</code>` maps to</p>
+<p>`<code style="color:#22d3bf">[1, 0, 0, +1]</code>`. The convention is pinned by a test rather than left to</p>
+<p>the reader, because every textbook picks a different one and a sign slip</p>
+<p>here is invisible in intensity measurements.</p>
+<p>Returns a `<code style="color:#22d3bf">(4,)</code>` float64 vector. A Jones vector always describes fully</p>
+<p>polarised light, so the result always satisfies `<code style="color:#22d3bf">S0^2 = S1^2+S2^2+S3^2</code>`</p>
+<p>exactly (degree of polarisation 1) — verified to 1e-15 in the tests. That</p>
+<p>identity is also the reason Jones cannot represent a partially polarised</p>
+<p>beam: for that, start from :func:<code style="color:#22d3bf">mueller_element</code> instead.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *state* is not a 1-D 2-vector, is masked, or is</p>
+<p>non-finite.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
+<p>Every optics op validates its input before computing (nothing slips through silently):</p>
+<p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>
+<p style="margin:2px 0 2px 12px">• **Strings raise <code style="color:#22d3bf">ValueError</code>** — <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> succeeds, so an unparsed configuration value would slip through as a length (measured: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> returned a plausible 66.667 mm). bool is refused too, as the implicit promotion <code style="color:#22d3bf">True == 1</code>.</p>
+<p style="margin:2px 0 2px 12px">• **complex / masked arrays raise <code style="color:#22d3bf">ValueError</code><b> (real-valued slots only; silently dropping the imaginary part or peeling off the mask is refused). </b>NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input.**</p>
+<p style="margin:2px 0 2px 12px">• <b>Division by zero and its relatives are refused by name</b>: focal length 0, radius of curvature 0, refractive index &lt;= 0, a fully opaque aperture (all zeros, so the normalisation is 0/0), a PSF whose sum is &lt;= 0, a Stokes vector with S0 = 0, and an object sitting at the front focal point (the image is at infinity).</p>
+<p style="margin:2px 0 2px 12px">• <b>Only two ops return a non-finite value, and both state it as a contract</b>: <code style="color:#22d3bf">depth_of_field</code> returns <code style="color:#22d3bf">far_mm = inf</code> beyond the hyperfocal distance (that is what the hyperfocal distance means), and <code style="color:#22d3bf">gaussian_beam</code> returns <code style="color:#22d3bf">wavefront_radius_mm = inf</code> at the waist (the radius of curvature of a plane wavefront). Both also return a finite companion (<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>). **Any other silent NaN/Inf is detected internally and raises <code style="color:#22d3bf">ValueError</code>** — &quot;float64 overflowed&quot; and &quot;the answer is infinite&quot; are different claims, so the first is never returned wearing the face of the second.</p>
+<p style="margin:2px 0 2px 12px">• <b>Size caps</b>: generated grids are capped by <code style="color:#22d3bf">optics.MAX_GRID</code> (4096); supplied fields/PSFs/apertures by <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code> (2^24); ABCD element chains by <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code> (1024); Zernike by <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code> (512) / <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code> (40) / <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code> (2^25). This closes, fail-closed, the paths where a small argument triggers a huge internal allocation (measured: n_max=40 × 4096² needs 108 GB).</p>
+<p style="margin:2px 0 2px 12px">• <b>Physically impossible states are refused too</b>: a Stokes vector with degree of polarisation &gt; 1, negative transmittance, negative intensity, and invalid Zernike indices such as n-|m| odd.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:optics_imaging">optics_imaging</a> — <code style="color:#22d3bf">py -3.11 examples/optics_imaging.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">stokes</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opoptics:mueller_apply">mueller_apply</a> · <a style="color:#22d3bf" href="opoptics:stokes_analyze">stokes_analyze</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">polarization</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:jones_element">jones_element</a> · <a style="color:#22d3bf" href="opoptics:jones_apply">jones_apply</a> · <a style="color:#22d3bf" href="opoptics:mueller_element">mueller_element</a> · <a style="color:#22d3bf" href="opoptics:mueller_apply">mueller_apply</a> · <a style="color:#22d3bf" href="opoptics:stokes_analyze">stokes_analyze</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: optics.py — OPTICS operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

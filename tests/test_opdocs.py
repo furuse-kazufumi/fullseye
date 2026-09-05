@@ -9,6 +9,7 @@ the note drifts and this fails, forcing a regenerate so docs and code share one 
 (image-processing behaviour is sensitive; docs must never silently lag the op set).
 """
 import glob
+import json
 import os
 import re
 import sys
@@ -632,3 +633,275 @@ def test_guide_stems_are_unique_across_dims():
         seen.setdefault(stem, []).append(os.path.relpath(p, ROOT))
     dupes = {k: v for k, v in seen.items() if len(v) > 1}
     assert not dupes, f"guide stem collisions (flat guide_ namespace): {dupes}"
+
+
+def test_every_generated_help_page_is_reachable_from_studio():
+    """生成した op ヘルプは**すべて Studio から開ける**こと。
+
+    2026-09-05: `opdocs.py html` は ledger 21 族ぶんの 494 枚を
+    ``op_help/<dim>/`` に書いていたが、Studio のヘルプ画面は 2-D と 3-D しか
+    捌いておらず、**生成して同梱しているのに 1 枚も開けなかった**。
+    「仕組みはあるが経路が通っていない」型なので、経路そのものを検査で固定する。
+    """
+    import studio
+    root = os.path.join(ROOT, "studio_assets", "op_help")
+    unreachable = []
+    for dim in sorted(os.listdir(root)):
+        d = os.path.join(root, dim)
+        if not os.path.isdir(d):
+            continue
+        pages = [f for f in sorted(os.listdir(d)) if f.endswith(".html") and f.count(".") == 1]
+        if not pages:
+            continue
+        # 各次元の先頭・中間・末尾を代表として引く(全数だと I/O が重い)
+        for f in {pages[0], pages[len(pages) // 2], pages[-1]}:
+            op = f[:-5]
+            html = studio.op_help_html(op, "en", None, dim)
+            if not html or len(html) < 400:
+                unreachable.append("%s/%s" % (dim, op))
+    assert not unreachable, ("生成済みヘルプが Studio から開けない: " + ", ".join(unreachable))
+
+
+def test_help_lookup_honours_the_selected_language():
+    """``<op>.<lang>.html`` があればそれを、無ければ既定の頁を返すこと。
+
+    2026-09-05 まで 3-D と ledger の経路には ``lang`` 引数が無く、**ユーザーが選んだ
+    言語が黙って無視されていた**。翻訳を入れる前に、選択が届くことを固定しておく。
+    """
+    import studio
+    root = os.path.join(ROOT, "studio_assets", "op_help")
+    probe = os.path.join(root, "3d", "_i18n_probe.html")
+    probe_en = os.path.join(root, "3d", "_i18n_probe.en.html")
+    try:
+        with open(probe, "w", encoding="utf-8") as f:
+            f.write("<p>BASE</p>")
+        with open(probe_en, "w", encoding="utf-8") as f:
+            f.write("<p>ENGLISH</p>")
+        assert "ENGLISH" in studio.op_help_html("_i18n_probe", "en", None, "3d")
+        assert "BASE" in studio.op_help_html("_i18n_probe", "ja", None, "3d")   # ja 版は無い
+        # ledger 次元でも同じ規則が効く
+        led = os.path.join(root, "math", "_i18n_probe.zh.html")
+        with open(os.path.join(root, "math", "_i18n_probe.html"), "w", encoding="utf-8") as f:
+            f.write("<p>BASE</p>")
+        with open(led, "w", encoding="utf-8") as f:
+            f.write("<p>CHINESE</p>")
+        assert "CHINESE" in studio.op_help_html("_i18n_probe", "zh", None, "math")
+    finally:
+        for q in (probe, probe_en, os.path.join(root, "math", "_i18n_probe.html"),
+                  os.path.join(root, "math", "_i18n_probe.zh.html")):
+            if os.path.exists(q):
+                os.remove(q)
+
+
+# ------------------------------------------------------------------ #
+# i18n — ヘルプの「枠」の対訳(ja / en / zh / tw / ko / de)
+# ------------------------------------------------------------------ #
+_TARGET_LANGS = [c for c in OD.LANGS if c != "ja"]
+
+
+def test_chrome_translation_table_has_no_holes():
+    """生成器が実際に引く固定文言が、全ターゲット言語で訳されていること。
+
+    表に**引かれない古い行**があっても構わないが、**引かれるのに訳が無い行**は
+    「訳したつもりで日本語が出る」なので許さない。OD.SEEN_STRINGS は生成を 1 周
+    走らせた実測なので、この 2 つを取り違えない。
+    """
+    by = {(r["dim"], r["name"]): r for r in _RECS}
+    for rec in _RECS:                                   # 1 周まわして原文を集める
+        for lang in _TARGET_LANGS:
+            OD._op_md(rec, OD._op_path(rec), by, lang=lang)
+    OD.T("このガイドは日本語のみです(人が書いた散文なので機械的な差し替えをしていません)。", "en")
+    missing = OD.untranslated_strings()
+    assert not missing, ("枠の対訳に穴がある: "
+                         + "; ".join("%s=%d 件" % (k, len(v)) for k, v in missing.items()))
+
+
+def test_chrome_translation_keys_are_real_source_strings():
+    """対訳表のキーは**生成器のソースにある原文そのもの**であること。
+
+    キーが 1 文字でもずれると、その行は永久に引かれない(=黙って日本語のまま出る)。
+    表が肥大しても気づけないので、キー側を実ソースと突き合わせる。
+    """
+    import ast
+    src = open(os.path.join(ROOT, "tools", "opdocs.py"), encoding="utf-8").read()
+    lits = {n.value for n in ast.walk(ast.parse(src))
+            if isinstance(n, ast.Constant) and isinstance(n.value, str)}
+    with open(os.path.join(ROOT, "docs", "i18n", "opdocs.json"), encoding="utf-8") as f:
+        tbl = json.load(f)["strings"]
+    orphan = sorted(k for k in tbl if k not in lits)
+    assert not orphan, ("対訳表のキーが生成器の原文と一致しない(この行は永久に使われない): "
+                        + ", ".join(repr(k[:60]) for k in orphan))
+
+
+#: 言語版を**あえて作らない** op —— 手書きの上書きページがあるもの。これらは英語で
+#: 書かれていて `sample:` で実行可能なパイプラインまで載せており、生成訳を横に置くと
+#: 言語を選んだ瞬間に中身の薄いほうへ差し替わる(2026-09-05 実測)。
+_HAND_AUTHORED_HELP = {"gaussian", "otsu", "sobel_mag"}
+
+
+def test_hand_authored_help_is_not_shadowed_by_a_translation():
+    """手書きヘルプの横に生成訳を置かないこと(訳が本家より貧しくなるなら出さない)。"""
+    root = os.path.join(ROOT, "studio_assets", "op_help")
+    import studio
+    for op in sorted(_HAND_AUTHORED_HELP):
+        base = os.path.join(root, op + ".html")
+        assert os.path.exists(base), op
+        assert OD._GEN_MARK not in open(base, encoding="utf-8").read(200), (
+            "%s が生成物で上書きされた(手書きの上書きページが消えている)" % op)
+        for lang in _TARGET_LANGS:
+            sib = os.path.join(root, "%s.%s.html" % (op, lang))
+            assert not os.path.exists(sib), ("%s が手書きページを覆い隠している" % sib)
+        # 言語を選んでも中身の濃い手書き頁が出続けること(実行できるサンプルつき)
+        for lang in ("en", "ko"):
+            assert "sample:" in studio.op_help_html(op, lang,
+                                                    {"in_sort": "image", "out_sort": "image"})
+        assert studio.help_lang_bar(op, "2d", "en") == ""   # 選べない導線は出さない
+
+
+def test_every_op_help_page_ships_in_every_language():
+    """全 op に全言語のヘルプ頁があること(片言語だけ欠ける、を作らない)。"""
+    root = os.path.join(ROOT, "studio_assets", "op_help")
+    missing = []
+    for rec in _RECS:
+        if rec["dim"] == "2d" and rec["name"] in _HAND_AUTHORED_HELP:
+            continue
+        d = root if rec["dim"] == "2d" else os.path.join(root, rec["dim"])
+        for lang in _TARGET_LANGS:
+            if not os.path.exists(os.path.join(d, "%s.%s.html" % (rec["name"], lang))):
+                missing.append("%s/%s.%s" % (rec["dim"], rec["name"], lang))
+    assert not missing, ("翻訳ヘルプが欠けている(%d 件) 例: %s "
+                         "— `py -3.11 tools/opdocs.py html` を実行"
+                         % (len(missing), ", ".join(missing[:8])))
+
+
+@pytest.mark.parametrize("lang", _TARGET_LANGS)
+def test_translated_help_is_generated_from_the_generator_no_drift(lang):
+    """同梱の翻訳頁が、いまの生成器の出力と一致すること(次元ごとに標本抽出)。
+
+    全 8610 枚を毎回作り直すと重いので、次元ごとに 1 枚ずつ引く。ズレたら
+    `tools/opdocs.py html` を回し忘れている。
+    """
+    by = {(r["dim"], r["name"]): r for r in _RECS}
+    seen, bad = set(), []
+    for rec in sorted(_RECS, key=lambda r: (r["dim"], r["name"])):
+        if rec["dim"] in seen:
+            continue
+        seen.add(rec["dim"])
+        p = OD._op_path(rec)
+        d = (os.path.join(ROOT, "studio_assets", "op_help")
+             if rec["dim"] == "2d"
+             else os.path.join(ROOT, "studio_assets", "op_help", rec["dim"]))
+        f = os.path.join(d, "%s.%s.html" % (rec["name"], lang))
+        want = OD._anchor_rewrite(OD.md_to_html(OD._op_md(rec, p, by, lang=lang)), rec["dim"])
+        with open(f, encoding="utf-8") as fh:
+            got = fh.read()
+        if got != OD._GEN_MARK + "\n" + want:
+            bad.append("%s/%s" % (rec["dim"], rec["name"]))
+    assert not bad, ("翻訳ヘルプが生成器とずれている(%s): %s" % (lang, ", ".join(bad)))
+
+
+def test_translated_pages_say_plainly_what_is_not_translated():
+    """訳の無い散文を**訳したふりで**出さないこと。
+
+    枠だけ訳して本文が日本語のとき、その旨の 1 行が必ず入る。これが無いと読者は
+    「英語版のはずなのに日本語」を不具合と受け取る(あるいは訳だと誤解する)。
+    """
+    with open(os.path.join(ROOT, "docs", "i18n", "opdocs.json"), encoding="utf-8") as f:
+        tbl = json.load(f)["strings"]
+    notice = tbl["> この op の説明はまだ訳がありません。原文をそのまま載せます。"]
+    root = os.path.join(ROOT, "studio_assets", "op_help")
+    rec = next(r for r in _RECS
+               if (r.get("doc") or "").strip() and not OD.op_summary(r, "en")[1])
+    d = root if rec["dim"] == "2d" else os.path.join(root, rec["dim"])
+    for lang in _TARGET_LANGS:
+        with open(os.path.join(d, "%s.%s.html" % (rec["name"], lang)), encoding="utf-8") as f:
+            html = f.read()
+        import html as _h
+        head = _h.escape(notice[lang].lstrip("> ")[:24])   # 頁側は escape 済み
+        assert head in html, ("%s の %s 版に『未訳』の断り書きが無い" % (rec["name"], lang))
+
+
+def test_no_stale_summary_translation_is_shipped():
+    """原文が変わった要約訳を**出さない**こと(指紋で検出し、日本語へ戻す)。
+
+    古い訳が黙って残るのが翻訳で一番たちが悪い。ここが赤いときは訳を更新するか
+    該当行を消す —— 指紋だけ合わせる更新は禁止(それは訳の更新ではない)。
+    """
+    stale = OD.op_summary_stale()
+    assert not stale, ("原文と指紋が合わない要約訳(古い訳): " + ", ".join(stale[:12]))
+
+
+def test_help_language_bar_only_offers_languages_that_exist():
+    """言語の導線は**実在する頁だけ**を出し、現在地を現在地として示すこと。"""
+    import studio
+    rec = _RECS[0]
+    langs = studio.help_langs_available(rec["name"], rec["dim"])
+    assert langs[0] == "ja" and set(_TARGET_LANGS) <= set(langs)
+    bar = studio.help_lang_bar(rec["name"], rec["dim"], "ko")
+    assert 'href="lang:en"' in bar and 'href="lang:ko"' not in bar   # 現在地はリンクにしない
+    assert "<b" in bar and "한국어" in bar
+    # 存在しない op には導線を出さない(押せないリンクを作らない)
+    assert studio.help_lang_bar("_no_such_op_", "2d") == ""
+
+
+def test_studio_ui_language_menu_and_help_agree():
+    """UI の言語メニューとヘルプの言語が同じ集合であること。
+
+    i18n.json に足せば増える、という約束をコード側が破っていた(``apply_language``
+    に固定の許可リストがあり、メニューに出るのに選ぶと英語へ戻る言語があった)。
+    """
+    import studio
+    assert set(studio.LANGUAGES) == set(OD.LANGS), (
+        "Studio の languages と opdocs.LANGS が食い違う: %s vs %s"
+        % (sorted(studio.LANGUAGES), sorted(OD.LANGS)))
+    src = open(os.path.join(ROOT, "studio.py"), encoding="utf-8").read()
+    assert 'lang in ("en", "ja", "zh")' not in src, (
+        "apply_language に固定の言語許可リストが戻っている")
+
+
+#: UI 表は**英語がキー**(ベース言語)なので en 行は存在しない —— 訳を数えるのは残り。
+_UI_TARGET_LANGS = [c for c in OD.LANGS if c not in ("en",)]
+
+
+@pytest.mark.parametrize("lang", _UI_TARGET_LANGS)
+def test_studio_ui_strings_are_translated(lang):
+    """Studio の UI 文字列・ツールチップが全言語ぶんそろっていること。
+
+    2026-09-05 実測: `strings` は ja しか持っておらず、中文を選んでも 43 個の
+    メニュー項目が英語のままだった(表があるのに埋まっていない、の型)。
+    """
+    with open(os.path.join(ROOT, "studio_assets", "i18n.json"), encoding="utf-8") as f:
+        d = json.load(f)
+    for key in ("strings", "tooltips"):
+        miss = sorted(k for k, v in d[key].items() if not (v or {}).get(lang))
+        assert not miss, ("%s に %s の訳が無い(%d 件) 例: %s"
+                          % (key, lang, len(miss), ", ".join(repr(m[:40]) for m in miss[:5])))
+    assert d["guide"].get(lang), "クイックガイドに %s 版が無い" % lang
+
+
+def test_ledger_help_pages_ship_in_the_wheel():
+    """台帳族と翻訳頁が package-data の glob に載っていること。
+
+    2026-09-05 実測: `op_help/3d/*.html` しか挙げていなかったので、生成して
+    コミット済みの台帳ヘルプ 494 枚は **wheel に 1 枚も入っていなかった**。
+    """
+    with open(os.path.join(ROOT, "pyproject.toml"), encoding="utf-8") as f:
+        toml = f.read()
+    assert '"op_help/*/*.html"' in toml, (
+        "package-data が op_help のサブディレクトリを網羅していない"
+        "(台帳族 21 個と翻訳頁が wheel から落ちる)")
+
+
+def test_locale_tags_map_to_the_shipped_language_codes():
+    """OS/ブラウザの標準タグ(BCP 47)が同梱の言語コードへ落ちること。
+
+    台湾向け繁体字はファイル名を 2 文字にそろえて ``tw`` にしてあるが、``tw`` は
+    本来 ISO 639-1 で Twi 語の記号なので、外から来るタグは必ず対応表を通す。
+    """
+    assert OD.normalize_lang("zh-TW") == "tw"
+    assert OD.normalize_lang("zh-Hant") == "tw"
+    assert OD.normalize_lang("zh-CN") == "zh"
+    assert OD.normalize_lang("de-LU") == "de"          # 未知の地域は主部分へ
+    assert OD.normalize_lang("fr") == "en"             # 未対応は英語へ
+    for code in OD.LANGS:
+        assert OD.normalize_lang(code) == code

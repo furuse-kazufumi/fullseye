@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">beamform_doa — RANGEDOPPLER <code style="color:#22d3bf">beamform</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">beatcube</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import rangedoppler; rangedoppler.beamform_doa(cube, wavelength_m=0.0038934, element_spacing_m=None, angles_deg=None, range_bin=None, doppler_bin=None, n_targets=1, min_fraction=0.1, range_bin_m=None, velocity_bin_ms=None)</code>(或 <code style="color:#22d3bf">opsrangedoppler.get(&quot;beamform_doa&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>Direction(s) of arrival for one range-Doppler cell, in degrees.</p>
+<p>:func:<code style="color:#22d3bf">beamform_delay_sum</code> followed by strict local-maximum picking on the</p>
+<p>angle spectrum: the peaks are sorted by power, filtered at *min_fraction* of</p>
+<p>the strongest, and the top *n_targets* returned. Two targets closer than the</p>
+<p>array&#x27;s beamwidth (`<code style="color:#22d3bf">~0.886*lambda/(N_a*d)</code>`, reported here as</p>
+<p>`<code style="color:#22d3bf">angular_resolution_deg</code>`) merge into one lobe — delay-and-sum cannot</p>
+<p>separate them, and this reports one peak rather than pretending otherwise.</p>
+<p>When *range_bin_m* / *velocity_bin_ms* are supplied (from</p>
+<p>:func:<code style="color:#22d3bf">fmcw_design</code>) the cell&#x27;s range and velocity are converted too, giving</p>
+<p>the complete `<code style="color:#22d3bf">(range, velocity, angle)</code>` detection this family exists to</p>
+<p>produce; without them those two fields are `<code style="color:#22d3bf">None</code>` rather than a number in</p>
+<p>unknown units.</p>
+<p>Returns a `<code style="color:#22d3bf">dict</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">angles_deg</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">powers</code>` (lists, strongest first),</p>
+<p>`<code style="color:#22d3bf">n_found</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">grid_deg</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">spectrum</code><code style="color:#22d3bf"> (the full sweep), </code><code style="color:#22d3bf">range_bin</code>` /</p>
+<p>`<code style="color:#22d3bf">doppler_bin</code><code style="color:#22d3bf"> (the cell used), </code><code style="color:#22d3bf">range_m</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">velocity_ms</code>`,</p>
+<p>`<code style="color:#22d3bf">angular_resolution_deg</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">max_unambiguous_angle_deg</code>`.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: everything :func:</code>beamform_delay_sum` raises, plus</p>
+<p>*n_targets* &lt; 1 or a *min_fraction* outside `<code style="color:#22d3bf">[0, 1]</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guiderangedoppler:fmcw_range_doppler">fmcw_range_doppler 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:fmcw_range_doppler">fmcw_range_doppler</a> — <code style="color:#22d3bf">py -3.11 examples/fmcw_range_doppler.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">beamform</code>)</h3>
+<p><a style="color:#22d3bf" href="oprangedoppler:beamform_delay_sum">beamform_delay_sum</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: rangedoppler.py — RANGEDOPPLER 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

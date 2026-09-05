@@ -7,12 +7,12 @@ out: normalmap
 examples: [machined_metal_and_materials]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # weave_normals — OPTICS `surface` op
 
-- **データ種**: `` → `normalmap`
+- **データ種**: `なし` → `normalmap`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import surfacelib; surfacelib.weave_normals(shape, warp_px=8.0, weft_px=8.0, depth=0.25, angle_deg=0.0) -> 'np.ndarray'` (または `opsoptics.get("weave_normals")`)
 
 ## 使い方

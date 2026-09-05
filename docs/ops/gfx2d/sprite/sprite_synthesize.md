@@ -7,12 +7,12 @@ out: rgba
 examples: [gfx2d_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # sprite_synthesize — GFX2D `sprite` op
 
-- **データ種**: `` → `rgba`
+- **データ種**: `なし` → `rgba`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import gfx2d; gfx2d.sprite_synthesize(kind='disc', size=32, color='emphasis', thickness=0.25, scheme='okabe_ito')` (または `opsgfx2d.get("sprite_synthesize")`)
 
 ## 使い方

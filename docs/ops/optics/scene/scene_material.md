@@ -7,12 +7,12 @@ out: table
 examples: [studio_raytrace_scene, virtual_machine_vision, vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # scene_material — OPTICS `scene` op
 
-- **データ種**: `` → `table`
+- **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import optscene; optscene.scene_material(kind: 'str' = 'lambert', albedo=0.6, metal: 'str' = 'al', finish: 'str' = 'random', glass: 'str' = 'N-BK7', sigma_per_mm: 'float' = 0.0, roughness_um: 'float' = 0.05) -> 'dict'` (または `opsoptics.get("scene_material")`)
 
 ## 使い方

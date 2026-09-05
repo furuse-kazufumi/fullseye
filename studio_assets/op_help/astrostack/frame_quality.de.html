@@ -1,0 +1,40 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">frame_quality — ASTROSTACK <code style="color:#22d3bf">quality</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import astrostack; astrostack.frame_quality(image, threshold_sigma=5.0, max_stars=25, min_separation=3, psf_box=11, n_score_stars=5)</code> (oder <code style="color:#22d3bf">opsastrostack.get(&quot;frame_quality&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>1 枚の品質を数える —— 鋭さ・FWHM・背景・真円度、そして選別用の点。</p>
+<p>lucky imaging の選別基準は歴史的に <b>「基準星のピーク強度」</b> である</p>
+<p>(Law, Mackay &amp; Baldwin, *Lucky imaging: high angular resolution imaging in</p>
+<p>the visible from the ground*, A&amp;A 446, 739 (2006))—— 大気が良い瞬間ほど</p>
+<p>同じ総フラックスが少ない画素に集まるので、`<code style="color:#22d3bf">ピーク / 総フラックス</code>` が</p>
+<p>上がる。ここでもそれを採り、追尾の伸びを弾くために真円度を掛ける::</p>
+<p>score = median(roundness) * median(peak_fraction)</p>
+<p>`<code style="color:#22d3bf">peak_fraction</code><code style="color:#22d3bf"> は明るい方から </code><code style="color:#22d3bf">n_score_stars</code>` 個の星について</p>
+<p>`<code style="color:#22d3bf">(ピーク画素 - 背景) / 開口フラックス</code>`。<b>尺度に依らない</b>(露出時間や</p>
+<p>ゲインを変えても動かない)ので、フレーム間の比較にそのまま使える。</p>
+<p>`<code style="color:#22d3bf">sharpness</code>` は別に、ラプラシアンの分散を画像の分散で割った古典的な</p>
+<p>合焦指標(Pech-Pacheco et al., *Diatom autofocusing in brightfield</p>
+<p>microscopy*, ICPR 2000)。星の数が変わると動くので<b>選別には使わない</b>が、</p>
+<p>星が 1 つも無いフレームでも値が出る唯一の指標なので残してある。</p>
+<p>Returns dict(`<code style="color:#22d3bf">table</code><code style="color:#22d3bf"> 語彙)。キーは </code><code style="color:#22d3bf">n_stars</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">background</code>` /</p>
+<p>`<code style="color:#22d3bf">noise_sigma</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">fwhm_px</code><code style="color:#22d3bf">(検出星の FWHM 中央値)/ </code><code style="color:#22d3bf">roundness</code>` /</p>
+<p>`<code style="color:#22d3bf">peak_fraction</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">peak_snr</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">sharpness</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">score</code>` /</p>
+<p>`<code style="color:#22d3bf">total_flux</code><code style="color:#22d3bf">。星が 1 つも無いときは星由来の値が </code><code style="color:#22d3bf">nan</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">score</code>` は</p>
+<p>`<code style="color:#22d3bf">0.0</code><code style="color:#22d3bf">(「選ばない」が正しい答えなので、</code><code style="color:#22d3bf">nan</code>` で並べ替えを壊さない)。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 2-D でない / 非有限を含む / *n_score_stars* が</p>
+<p>1 未満の場合。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:astro_stacking">astro_stacking</a> — <code style="color:#22d3bf">py -3.11 examples/astro_stacking.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">quality</code>)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:lucky_select">lucky_select</a> · <a style="color:#22d3bf" href="opastrostack:noise_sigma">noise_sigma</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: astrostack.py — ASTROSTACK Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

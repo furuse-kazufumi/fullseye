@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">photon_statistics — PHOTON <code style="color:#22d3bf">counting</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import photoncount; photoncount.photon_statistics(counts)</code>(或 <code style="color:#22d3bf">opsphoton.get(&quot;photon_statistics&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>Poisson statistics of a photon-count frame: is it really shot-noise limited?</p>
+<p>Returns a dict: `<code style="color:#22d3bf">mean</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">variance</code><code style="color:#22d3bf"> (population, </code><code style="color:#22d3bf">ddof=0</code>`) ·</p>
+<p>`<code style="color:#22d3bf">fano_factor</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">= variance / mean</code>` (<b>1 for a Poisson process</b>) ·</p>
+<p>`<code style="color:#22d3bf">snr_poisson</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">= sqrt(mean)</code>` (the theoretical photon-limited SNR) ·</p>
+<p>`<code style="color:#22d3bf">snr_measured</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">= mean / std</code>` (what this frame actually achieved) ·</p>
+<p>`<code style="color:#22d3bf">total_counts</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">n_samples</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">zero_fraction</code>` (the fraction of pixels</p>
+<p>that saw no photon at all — the honest measure of &quot;photon starved&quot;;</p>
+<p>`<code style="color:#22d3bf">exp(-lambda)</code><code style="color:#22d3bf"> for a flat field) · </code><code style="color:#22d3bf">max_counts</code>`.</p>
+<p><b>The Fano factor is evidence of Poisson statistics only on a flat field.</b></p>
+<p>On a structured scene the scene&#x27;s own spatial variance dominates and the</p>
+<p>ratio is large and meaningless — this op computes the number, it cannot tell</p>
+<p>you which situation you are in. Measured on the test scenes: a flat</p>
+<p>`<code style="color:#22d3bf">lambda = 100</code>` field (512x512, seed 0) gives 1.001089; the same detector</p>
+<p>looking at a linear ramp from 20 to 180 photons gives 22.4102. Both are</p>
+<p>&quot;correct&quot; and only one of them means anything.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: negative, non-finite or non-2-D *counts*, fewer</p>
+<p>than 2 pixels (no variance), an all-zero frame (`<code style="color:#22d3bf">fano_factor</code>` would be</p>
+<p>`<code style="color:#22d3bf">0/0</code>` — say &quot;no photons were detected&quot; instead of returning NaN), and a</p>
+<p>frame with exactly zero variance (`<code style="color:#22d3bf">snr_measured</code><code style="color:#22d3bf"> would be </code><code style="color:#22d3bf">inf</code>`; for</p>
+<p>`<code style="color:#22d3bf">n &gt;= 2</code>` a constant frame is not a Poisson realisation but a synthetic</p>
+<p>constant, i.e. an input mistake).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidephoton:photon_timeresolved">photon_timeresolved 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:photon_timeresolved">photon_timeresolved</a> — <code style="color:#22d3bf">py -3.11 examples/photon_timeresolved.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">counting</code>)</h3>
+<p><a style="color:#22d3bf" href="opphoton:photon_sample">photon_sample</a> · <a style="color:#22d3bf" href="opphoton:photon_uncertainty">photon_uncertainty</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: photoncount.py — PHOTON 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,51 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cplx_winding_number — MATH <code style="color:#22d3bf">complex</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">cpoints</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import mathops; mathops.cplx_winding_number(z, w=0.0)</code>(或 <code style="color:#22d3bf">opsmath.get(&quot;cplx_winding_number&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>閉合圍道繞某點的卷繞數(迴轉數)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>How many times the polygon `<code style="color:#22d3bf">z</code>` (closing segment implicit) travels</p>
+<p>counter-clockwise around *w*: `<code style="color:#22d3bf">+1</code>` for a simple positively-oriented loop</p>
+<p>containing it, `<code style="color:#22d3bf">-1</code><code style="color:#22d3bf"> clockwise, </code><code style="color:#22d3bf">0</code><code style="color:#22d3bf"> outside, </code><code style="color:#22d3bf">±k</code><code style="color:#22d3bf"> for a </code><code style="color:#22d3bf">k</code>`-fold</p>
+<p>loop. Computed as the sum of the principal-value argument increments of</p>
+<p>`<code style="color:#22d3bf">z_k - w</code><code style="color:#22d3bf"> divided by </code><code style="color:#22d3bf">2*pi</code>` and rounded — for a *polygon* that sum is an</p>
+<p>exact multiple of `<code style="color:#22d3bf">2*pi</code>`, so the result is an exact integer, not an</p>
+<p>estimate (the rounding merely removes ~1e-14 of accumulated float error).</p>
+<p>Honest limitation — **the count can alias low, and no local check can stop</p>
+<p>it**: this is the winding number of the polygon *through the samples*,</p>
+<p>which equals that of the underlying curve only if the sampling resolves it.</p>
+<p>A segment that turns the ray to *w* by `<code style="color:#22d3bf">&gt;= pi</code>` is ambiguous (which side</p>
+<p>did it pass?) and raises. Below that there is no contradiction to detect:</p>
+<p>`<code style="color:#22d3bf">z**5</code><code style="color:#22d3bf"> sampled on a 4-point circle turns exactly </code><code style="color:#22d3bf">pi/2</code>` per step and</p>
+<p>counts <b>1</b> instead of 5 (measured). From `<code style="color:#22d3bf">pi/2</code>` up, a</p>
+<p>`<code style="color:#22d3bf">RuntimeWarning</code><code style="color:#22d3bf"> says so (</code><code style="color:#22d3bf">WIND_ALIAS_WARN</code>`); the only real remedy is</p>
+<p>the classical one — refine until the count stops changing.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *w* coincides with a vertex or lies on a segment</p>
+<p>(the winding number is undefined on the contour), a segment subtends</p>
+<p>`<code style="color:#22d3bf">&gt;= pi</code>` as seen from *w* (undersampled — refine the contour), fewer than</p>
+<p>3 points, degenerate contour, non-finite/masked input.</p>
+<p>HALCON: no operator (`<code style="color:#22d3bf">test_region_point</code>` answers the related but weaker</p>
+<p>inside/outside question for regions).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
+<p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
+<p style="margin:2px 0 2px 12px">• **complex 輸入一律 <code style="color:#22d3bf">ValueError</code>** —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>
+<p style="margin:2px 0 2px 12px">• **含被遮罩元素的 masked array 一律 <code style="color:#22d3bf">ValueError</code>** —— 拒絕「剝掉遮罩直接使用下面原值」的隱式轉換。請明確選擇填補還是丟棄。</p>
+<p style="margin:2px 0 2px 12px">• **所有輸入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code>**(明確給出個數後拒絕 —— 它會汙染整個結果)。</p>
+<p style="margin:2px 0 2px 12px">• <b>形狀嚴格</b>:不對 1-D 與 2-D 做隱式提升或廣播(向量槽位收到矩陣、矩陣槽位收到向量都是 <code style="color:#22d3bf">ValueError</code>;請明確 reshape)。</p>
+<p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:接受矩陣的運算子與 <code style="color:#22d3bf">stat_histogram</code> 的 bins,超過 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 萬個元素)即 <code style="color:#22d3bf">ValueError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:math_complex">math_complex</a> — <code style="color:#22d3bf">py -3.11 examples/math_complex.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">measurement</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">complex</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:cplx_contour_circle">cplx_contour_circle</a> · <a style="color:#22d3bf" href="opmath:cplx_poly_eval">cplx_poly_eval</a> · <a style="color:#22d3bf" href="opmath:cplx_contour_integral">cplx_contour_integral</a> · <a style="color:#22d3bf" href="opmath:cplx_cauchy_value">cplx_cauchy_value</a> · <a style="color:#22d3bf" href="opmath:cplx_argument_principle">cplx_argument_principle</a> · <a style="color:#22d3bf" href="opmath:cplx_laurent_coeffs">cplx_laurent_coeffs</a> · <a style="color:#22d3bf" href="opmath:cplx_joukowski">cplx_joukowski</a> · <a style="color:#22d3bf" href="opmath:cplx_mobius">cplx_mobius</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

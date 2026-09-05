@@ -1,0 +1,50 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cplx_contour_integral — MATH <code style="color:#22d3bf">complex</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">cpoints × cpoints</code> → <code style="color:#22d3bf">cscalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import mathops; mathops.cplx_contour_integral(z, fz)</code> (or <code style="color:#22d3bf">opsmath.get(&quot;cplx_contour_integral&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Closed contour integral `<code style="color:#22d3bf">∮ f(z) dz</code>` by the chordal trapezoidal rule.</p>
+<p>*z* are the contour vertices (closing segment implicit, see</p>
+<p>:func:<code style="color:#22d3bf">cplx_contour_circle</code>) and *fz* the function sampled at exactly those</p>
+<p>points — the op never calls back into Python, so any `<code style="color:#22d3bf">f</code>` is allowed as</p>
+<p>long as you can sample it. The quadrature is</p>
+<p>`<code style="color:#22d3bf">sum_k (f_k + f_{k+1})/2 * (z_{k+1} - z_k)</code>`, i.e. the trapezoidal rule</p>
+<p>along the *chords*; it is exact for a piecewise-linear integrand and second</p>
+<p>order otherwise.</p>
+<p>Ground truth it reproduces: `<code style="color:#22d3bf">f = 1/(z - a)</code>` around a circle enclosing</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> integrates to </code><code style="color:#22d3bf">2*pi*i</code>` (Cauchy); measured on the unit circle with</p>
+<p>`<code style="color:#22d3bf">a = 0</code><code style="color:#22d3bf">, the relative error is 1.0e-4 at </code><code style="color:#22d3bf">n = 256</code>` and</p>
+<p>6.3e-6 at `<code style="color:#22d3bf">n = 1024</code>` — a factor 16.0 for 4x</p>
+<p>refinement, i.e. the `<code style="color:#22d3bf">O(n^-2)</code>` rate, *not* the spectral accuracy the</p>
+<p>trapezoid rule enjoys when applied in the angle parameter. That difference</p>
+<p>is the honest price of accepting an arbitrary point list instead of a</p>
+<p>parametrisation.</p>
+<p>Orientation follows the sample order: a clockwise contour returns the</p>
+<p>negative of the counter-clockwise one.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: fewer than 3 points, </code><code style="color:#22d3bf">len(z) != len(fz)</code>`, a</p>
+<p>degenerate contour (all points coincide), non-finite/masked input, or a sum</p>
+<p>that overflowed (`<code style="color:#22d3bf">|f|</code>` near a pole *on* the path).</p>
+<p>HALCON: no operator (contour integration is not part of its tuple/XLD API).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
+<p>Every mathops op validates its input before computing (nothing slips through silently):</p>
+<p style="margin:2px 0 2px 12px">• **complex input raises <code style="color:#22d3bf">ValueError</code>** — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
+<p style="margin:2px 0 2px 12px">• **masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code>** — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input** (refused with the count stated — it propagates through the whole result).</p>
+<p style="margin:2px 0 2px 12px">• <b>Shapes are strict</b>: 1-D and 2-D are never implicitly promoted or broadcast (a matrix in a vector slot, or a vector in a matrix slot, raises <code style="color:#22d3bf">ValueError</code>; reshape explicitly).</p>
+<p style="margin:2px 0 2px 12px">• <b>Size cap</b>: ops that take a matrix, and the <code style="color:#22d3bf">stat_histogram</code> bins, raise <code style="color:#22d3bf">ValueError</code> beyond <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 million elements).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:math_complex">math_complex</a> — <code style="color:#22d3bf">py -3.11 examples/math_complex.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">cscalar</code> as input)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">complex</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:cplx_contour_circle">cplx_contour_circle</a> · <a style="color:#22d3bf" href="opmath:cplx_poly_eval">cplx_poly_eval</a> · <a style="color:#22d3bf" href="opmath:cplx_winding_number">cplx_winding_number</a> · <a style="color:#22d3bf" href="opmath:cplx_cauchy_value">cplx_cauchy_value</a> · <a style="color:#22d3bf" href="opmath:cplx_argument_principle">cplx_argument_principle</a> · <a style="color:#22d3bf" href="opmath:cplx_laurent_coeffs">cplx_laurent_coeffs</a> · <a style="color:#22d3bf" href="opmath:cplx_joukowski">cplx_joukowski</a> · <a style="color:#22d3bf" href="opmath:cplx_mobius">cplx_mobius</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

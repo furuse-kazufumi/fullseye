@@ -7,12 +7,12 @@ out: video
 examples: [motion_magnification, quaternion_monogenic]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # synthesize_translation — MOTIONMAG `synthesis` op
 
-- **データ種**: `` → `video`
+- **データ種**: `なし` → `video`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import motionmag; motionmag.synthesize_translation(shape=(64, 64), frames: 'int' = 32, amplitude_px=0.5, frequency_hz=4.0, fps=32.0, direction_deg=0.0, wavelength_px=(8.0, 16.0), contrast=0.4, offset=0.5, noise_sigma=0.0, seed: 'int' = 0) -> 'np.ndarray'` (または `opsmotionmag.get("synthesize_translation")`)
 
 ## 使い方

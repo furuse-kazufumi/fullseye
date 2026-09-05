@@ -1,0 +1,52 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">frame_align — ASTROSTACK <code style="color:#22d3bf">align</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import astrostack; astrostack.frame_align(reference, frame, model=&#x27;similarity&#x27;, threshold_sigma=5.0, max_stars=60, tolerance_px=2.0, max_shift_px=None, ransac_iters=500, seed=0, min_inliers=3)</code> (oder <code style="color:#22d3bf">opsastrostack.get(&quot;frame_align&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>星の対応から `<code style="color:#22d3bf">frame</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">reference</code>` の 2-D 変換を推定する。</p>
+<p>工程は 3 段で、<b>推定の本体はどれも既存 op</b>:</p>
+<p>1. :func:<code style="color:#22d3bf">star_detect</code> で両方の星を取る。</p>
+<p>2. 粗い平行移動を<b>オフセット投票</b>で出す(`<code style="color:#22d3bf">_vote_translation</code>`)。</p>
+<p>ここで :func:<code style="color:#22d3bf">features.match_keypoints</code> を使わないのは実測に基づく判断で、</p>
+<p>星野の 9x9 パッチは互いにほとんど同じ形なので Lowe の比検定</p>
+<p>(既定 ratio=0.8)がほぼ全部を捨てる。128x128 に 40 星、真のずれが</p>
+<p>`<code style="color:#22d3bf">(+0.590, -0.540)</code><code style="color:#22d3bf"> px のフレーム対での実測: </code><code style="color:#22d3bf">match_keypoints</code>` が</p>
+<p>返した対応は <b>4 件、うち真値から 1 px 以内は 0 件</b>(= 使えるものが</p>
+<p>1 つも無い)。同じ対で投票法は <b>26 票 → 26 対応 → 26 内点</b>、推定誤差</p>
+<p><b>0.0155 px</b>。星野は「特徴が無い」のではなく「特徴が全部同じ」なので、</p>
+<p>記述子ではなく<b>配置の幾何</b>を使うのが正しい。</p>
+<p>3. 粗い移動で最近傍の対応を作り、</p>
+<p>:func:<code style="color:#22d3bf">mosaic.proj_match_points_ransac</code> で誤対応を落とし、</p>
+<p>:func:<code style="color:#22d3bf">fit_transform.vector_to_similarity</code>(`<code style="color:#22d3bf">model</code>` に応じて</p>
+<p>`<code style="color:#22d3bf">vector_to_rigid</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">vector_to_hom_mat2d</code>`)で当てはめる。</p>
+<p>RANSAC ループも Umeyama もここには書いていない。</p>
+<p>*model* `<code style="color:#22d3bf">&quot;translation&quot;</code>` は対応の差の中央値だけを使う(星が 1 個でも動く)。</p>
+<p>`<code style="color:#22d3bf">&quot;rigid&quot;</code><code style="color:#22d3bf"> = 回転 + 並進、</code><code style="color:#22d3bf">&quot;similarity&quot;</code>` = + 等方スケール、</p>
+<p>`<code style="color:#22d3bf">&quot;affine&quot;</code><code style="color:#22d3bf"> = 6 自由度。**視野が広くなければ </code><code style="color:#22d3bf">&quot;similarity&quot;</code>` で足りる**</p>
+<p>(赤道儀の追尾誤差は回転と並進、大気差はスケールに一次で乗る)。</p>
+<p>Returns `<code style="color:#22d3bf">(matrix, info)</code>`:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">matrix</code><code style="color:#22d3bf"> —— </code><code style="color:#22d3bf">(3, 3)</code><code style="color:#22d3bf"> float64。</code><code style="color:#22d3bf">(row, col, 1)</code>` に左から掛けると</p>
+<p>`<code style="color:#22d3bf">reference</code><code style="color:#22d3bf"> の座標になる(</code><code style="color:#22d3bf">fit_transform</code>` と同じ規約)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">info</code><code style="color:#22d3bf"> —— dict。</code><code style="color:#22d3bf">n_stars_ref</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_stars_src</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_pairs</code>` /</p>
+<p>`<code style="color:#22d3bf">n_inliers</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">inlier_ratio</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">shift_row</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">shift_col</code>` /</p>
+<p>`<code style="color:#22d3bf">rotation_deg</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">scale</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">rms_px</code><code style="color:#22d3bf">(内点の残差 RMS)/ </code><code style="color:#22d3bf">model</code>`。</p>
+<p><b>fail-closed</b>: 内点が *min_inliers* に満たなければ `<code style="color:#22d3bf">ValueError</code>` を送出</p>
+<p>する。<b>恒等変換を黙って返さない</b> —— 位置合わせに失敗したフレームを</p>
+<p>「ずれ 0」として合成に混ぜると、例外も警告も無しに二重像ができる。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 2-D でない / 形が違う / *model* が</p>
+<p>:data:<code style="color:#22d3bf">ALIGN_MODELS</code> にない / どちらかで星が 1 つも見つからない /</p>
+<p>対応が作れない / 内点が足りない場合。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:astro_stacking">astro_stacking</a> — <code style="color:#22d3bf">py -3.11 examples/astro_stacking.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">matrix</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">align</code>)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:align_frames">align_frames</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: astrostack.py — ASTROSTACK Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

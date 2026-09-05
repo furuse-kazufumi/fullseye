@@ -7,12 +7,12 @@ out: table
 examples: [vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # observe_surface — OPTICS `scene` op
 
-- **データ種**: `` → `table`
+- **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import optscene; optscene.observe_surface(material: 'str' = 'al', finish: 'str' = 'hairline', pitch_um: 'float' = 90.0, depth_um: 'float' = 1.0, roughness_um: 'float' = 0.08, focal_mm: 'float' = 25.0, working_distance_mm: 'float' = 200.0, f_number: 'float' = None, na: 'float' = None, pixel_um: 'float' = 3.45, resolution=(256, 256), wavelength_nm: 'float' = 550.0, illumination: 'str' = 'coaxial', tilt_deg: 'float' = 0.0, source_size_mm: 'float' = 40.0, supersample: 'int' = 2, exposure: 'str' = 'auto', defects: 'dict' = None, seed: 'int' = 0) -> 'dict'` (または `opsoptics.get("observe_surface")`)
 
 ## 使い方

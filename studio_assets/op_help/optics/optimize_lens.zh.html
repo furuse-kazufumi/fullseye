@@ -1,0 +1,52 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">optimize_lens — OPTICS <code style="color:#22d3bf">optimization</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import lensopt; lensopt.optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4, efl_target=None, efl_weight=None, field_weights=None, iterations=30, damping=0.001, tolerance=1e-07, min_thickness=0.5, max_thickness=None, min_radius=1.0, pupil_fill=0.98)</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;optimize_lens&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Damped-least-squares (Levenberg–Marquardt) optimisation of a prescription (`<code style="color:#22d3bf">table</code>`).</p>
+<p>*variables*: surface parameters to move — strings `<code style="color:#22d3bf">&quot;R&lt;i&gt;&quot;</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">&quot;c&lt;i&gt;&quot;</code>`</p>
+<p>(curvature; a radius may pass through flat), `<code style="color:#22d3bf">&quot;t&lt;i&gt;&quot;</code>` (thickness),</p>
+<p>`<code style="color:#22d3bf">&quot;k&lt;i&gt;&quot;</code><code style="color:#22d3bf"> (conic), </code><code style="color:#22d3bf">&quot;A4_&lt;i&gt;&quot;</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">&quot;A6_&lt;i&gt;&quot;</code>` … (even aspheric</p>
+<p>coefficients). Default: every finite radius. *efl_target*: hold the</p>
+<p>effective focal length (default: the starting EFL, so a design does not</p>
+<p>&quot;improve&quot; by getting longer); pass `<code style="color:#22d3bf">0</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">False</code>` to leave it free.</p>
+<p>Fields / wavelengths / rings / weights as in :func:<code style="color:#22d3bf">merit_function</code>.</p>
+<p>Each iteration builds the Jacobian by forward differences, solves</p>
+<p>`<code style="color:#22d3bf">(JᵀJ + λ diag(JᵀJ)) δ = −Jᵀr</code>` and accepts the step only if the merit</p>
+<p>falls (then λ /= 3; otherwise λ ×= 4 and retried, up to 6 times); a step</p>
+<p>that yields an invalid prescription counts as a failure. Stops when the</p>
+<p>relative merit change is below *tolerance* twice in a row (`<code style="color:#22d3bf">converged</code>`,</p>
+<p>`<code style="color:#22d3bf">status=&quot;converged&quot;</code>`), when two iterations in a row accept no step or λ</p>
+<p>blows past 1e8 (`<code style="color:#22d3bf">status=&quot;stalled&quot;</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">converged=False</code>`), or after</p>
+<p>*iterations* (`<code style="color:#22d3bf">status=&quot;iterations&quot;</code>`). Thickness is clamped to</p>
+<p>`<code style="color:#22d3bf">[min_thickness, max_thickness]</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">|R| &gt;= min_radius</code>` — the start</p>
+<p>included, so the returned system always obeys the bounds.</p>
+<p>Returns ``{&quot;system&quot;: optimised prescription, &quot;merit_initial&quot;,</p>
+<p>&quot;merit_final&quot;, &quot;rms_initial&quot;, &quot;rms_final&quot;, &quot;efl_initial&quot;, &quot;efl_final&quot;,</p>
+<p>&quot;history&quot;: [merit per accepted iteration], &quot;iterations&quot;, &quot;converged&quot;,</p>
+<p>&quot;variables&quot;: [{&quot;name&quot;, &quot;surface&quot;, &quot;initial&quot;, &quot;final&quot;}], &quot;rays_lost&quot;}``.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
+<p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
+<p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>
+<p style="margin:2px 0 2px 12px">• **字符串一律 <code style="color:#22d3bf">ValueError</code>** —— <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> 会成功,于是未解析的配置值会被当成长度混进来(实测:<code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> 曾返回看着合理的 66.667 mm)。bool 也按 <code style="color:#22d3bf">True == 1</code> 的隐式提升拒绝。</p>
+<p style="margin:2px 0 2px 12px">• **complex / masked array 一律 <code style="color:#22d3bf">ValueError</code><b>(仅接受实数槽位;拒绝无声丢弃虚部或剥掉掩码)。</b>所有输入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code>**。</p>
+<p style="margin:2px 0 2px 12px">• <b>逐项点名拒绝除零及其近亲</b>:焦距 0、曲率半径 0、折射率 &lt;= 0、全不透明光阑(全为 0,归一化变成 0/0)、总和 &lt;= 0 的 PSF、S0 = 0 的 Stokes 矢量、物体位于前焦点(像在无穷远)。</p>
+<p style="margin:2px 0 2px 12px">• <b>只有两个算子会返回非有限值,而且都写进了契约</b>:<code style="color:#22d3bf">depth_of_field</code> 在超焦距以外返回 <code style="color:#22d3bf">far_mm = inf</code>(这正是超焦距的定义),<code style="color:#22d3bf">gaussian_beam</code> 在束腰处返回 <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(平面波前的曲率半径)。两者都同时返回一个有限的搭档(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)。**除此之外的无声 NaN/Inf 都在内部检出并 <code style="color:#22d3bf">ValueError</code>** ——「float64 溢出了」和「答案是无穷大」是两种不同的主张,不能拿后者的脸去交付前者。</p>
+<p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:生成网格受 <code style="color:#22d3bf">optics.MAX_GRID</code>(4096)限制,传入的场/PSF/光阑受 <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24),ABCD 元件序列受 <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024),Zernike 受 <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25)。以 fail-closed 堵住「小参数引发巨大内部分配」的路径(实测:n_max=40 × 4096² 需要 108 GB)。</p>
+<p style="margin:2px 0 2px 12px">• <b>物理上不可能的状态同样拒绝</b>:偏振度 &gt; 1 的 Stokes 矢量、负透过率、负强度、n-|m| 为奇数等非法 Zernike 指标。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lens_optimize_demo">lens_optimize_demo</a> — <code style="color:#22d3bf">py -3.11 examples/lens_optimize_demo.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a> · <a style="color:#22d3bf" href="opoptics:spot_diagram">spot_diagram</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">optimization</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:merit_function">merit_function</a> · <a style="color:#22d3bf" href="opoptics:bend_singlet">bend_singlet</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: lensopt.py — OPTICS 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

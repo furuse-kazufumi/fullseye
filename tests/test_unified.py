@@ -106,3 +106,64 @@ def test_backward_compat_fullseye_package():
     assert len(fs.REGISTRY) > 0             # 進化 registry 健在
     c = fs.vision.contour.gen_circle_contour_xld(row=10, col=10, radius=5, n=12)
     assert c["cs"][0].shape == (12, 2)
+
+
+def test_every_facade_reference_actually_imports():
+    """facade map の**全参照が実際に解決する**こと(黙って欠ける経路を塞ぐ)。
+
+    ``_load_facade`` は import に失敗した参照を ``except Exception: continue`` で
+    握りつぶす。設計としては正しい(データ 1 行の綻びで層ごと落とさない)が、その
+    ぶん**永久に解決しない参照が無言で減るだけ**になる ―― 落ちないので誰も気づかない。
+
+    2026-09-05 の実測: `color_pca.py` を「どこからも import されていない死んだ
+    モジュール」と判断して削除したところ、facade は 600 → **589** へ静かに減った。
+    実体は HALCON facade 11 op(``create_color_trans_lut`` / ``inpainting_ced`` /
+    ``inpainting_mcf`` / ``inpainting_texture`` / ``exhaustive_match_mg`` /
+    ``gen_principal_comp_trans`` / ``gen_canonical_variates_trans`` …)の中身だった。
+    `ops.REGISTRY` にはひとつも登録されないので、**そちらだけを見ると死んで見える**。
+
+    さらに `color_pca` は ``py-modules`` に無かったので、**pip install した wheel では
+    もともとこの 11 op が消えていた**(リポジトリでだけ通る、を検査が見逃していた)。
+    数の閾値(>= 590)ではなく、**参照そのものの解決**を検査する。
+    """
+    import json
+    import os
+    with open(u._FACADE, encoding="utf-8") as f:
+        facade = json.load(f)
+    refs = {k: v for k, v in facade.items() if not k.startswith("_")}
+    broken = {}
+    for name, ref in sorted(refs.items()):
+        try:
+            u._import(ref)
+        except Exception as e:                       # noqa: BLE001 — 何が壊れたかを出す
+            broken[name] = "%s (%s: %s)" % (ref, type(e).__name__, e)
+    assert not broken, (
+        "facade map の参照が %d 件解決しない —— _load_facade は例外を握るので "
+        "op が黙って消えるだけになる:\n" % len(broken)
+        + "\n".join("  %s -> %s" % kv for kv in sorted(broken.items())[:20]))
+    assert u.ops.stats()["by_provenance"]["facade"] == len(refs), (
+        "解決したのに registry に載っていない facade op がある")
+
+
+def test_facade_module_dependencies_ship_in_the_wheel():
+    """facade map が指す**ルート直下のモジュールが py-modules に載っている**こと。
+
+    リポジトリでは import できるのに wheel には入っていない、という取りこぼしを
+    塞ぐ(``color_pca`` が実際にそれだった)。``fullseye/`` パッケージ配下の参照は
+    packages で運ばれるのでここでは見ない。
+    """
+    import json
+    import os
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(u._FACADE, encoding="utf-8") as f:
+        facade = json.load(f)
+    mods = {str(v).split(".")[0] for k, v in facade.items() if not k.startswith("_")}
+    with open(os.path.join(root, "pyproject.toml"), encoding="utf-8") as f:
+        toml = f.read()
+    py_modules = toml.split("py-modules = [", 1)[1].split("\n]", 1)[0]
+    missing = sorted(m for m in mods
+                     if os.path.exists(os.path.join(root, m + ".py"))
+                     and ('"%s"' % m) not in py_modules)
+    assert not missing, (
+        "facade が使うルートモジュールが py-modules に無い(wheel でその op が黙って"
+        "消える): " + ", ".join(missing))

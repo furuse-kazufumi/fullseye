@@ -1,0 +1,48 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">data_to_pixel — ANNOTATE <code style="color:#22d3bf">plot</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">axes × signal × signal</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import annotate; annotate.data_to_pixel(axes, x, y)</code>(或 <code style="color:#22d3bf">opsannotate.get(&quot;data_to_pixel&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>:func:<code style="color:#22d3bf">axes_transform</code> の対応でデータ点を画素 (x,y) に写す。</p>
+<p><b>クリップしない</b> ―― `<code style="color:#22d3bf">np.clip(v, lo, hi)</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">lo &gt; hi</code>`(反転軸)の</p>
+<p>とき黙って `<code style="color:#22d3bf">hi</code>` を返し、全点が端に貼り付いた「もっともらしい嘘の図」に</p>
+<p>なる(この repo の生成器で実際に一度騙されている)。範囲外を弾くのは</p>
+<p>:func:<code style="color:#22d3bf">plot_series</code> の `<code style="color:#22d3bf">clip=True</code>` の仕事で、そこでは<b>例外</b>にする。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>(ndarray, ndarray)</p>
+<p>`<code style="color:#22d3bf">px</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">py</code>`(float、丸めない ―― 丸めは描画側の仕事)。</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>log 軸に 0 以下の値を渡したとき(-inf を「端」として描く図は嘘になる)。</p>
+<p>`<code style="color:#22d3bf">x</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">y</code>` の長さが違うとき(下記)。</p>
+<p>Notes</p>
+<p>-----</p>
+<p><b>長さの不一致を拒否するのは 2026-09-02 に足した</b>。連鎖ファザーがこの op を</p>
+<p>実行できるようになった直後、長さの違う 2 本の signal を渡す経路で採掘器が</p>
+<p>`<code style="color:#22d3bf">np.stack</code><code style="color:#22d3bf"> の生の ValueError で落ちて発覚した。それまでは </code><code style="color:#22d3bf">x</code>` 7 点・</p>
+<p>`<code style="color:#22d3bf">y</code>` 3 点でも<b>例外を出さず、長さの違う 2 本をそのまま返していた</b>。</p>
+<p>危ないのは落ちることではなく、落ちないこと ―― 返った 2 本を `<code style="color:#22d3bf">zip</code>` すると</p>
+<p><b>3 点だけが、x の先頭 3 つの位置に</b>描かれる。点が消えたことも、x が</p>
+<p>ずれたことも図からは分からない。兄弟の :func:<code style="color:#22d3bf">plot_series</code> は同じ状況を</p>
+<p>`<code style="color:#22d3bf">&quot;x and y must have the same length&quot;</code>` で拒否していたので、**同じ族の中で</p>
+<p>規律が割れていた**(片方だけ直しても再発する型なので、文言も揃えてある)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_gallery">annotate_gallery</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_gallery.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">pairs</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opannotate:label_points">label_points</a> · <a style="color:#22d3bf" href="opannotate:filled_polygon">filled_polygon</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">plot</code>)</h3>
+<p><a style="color:#22d3bf" href="opannotate:axes_transform">axes_transform</a> · <a style="color:#22d3bf" href="opannotate:nice_ticks">nice_ticks</a> · <a style="color:#22d3bf" href="opannotate:axes_frame">axes_frame</a> · <a style="color:#22d3bf" href="opannotate:grid_lines">grid_lines</a> · <a style="color:#22d3bf" href="opannotate:ticks">ticks</a> · <a style="color:#22d3bf" href="opannotate:plot_series">plot_series</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: annotate.py — ANNOTATE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

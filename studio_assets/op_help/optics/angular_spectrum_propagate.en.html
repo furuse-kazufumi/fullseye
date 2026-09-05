@@ -1,0 +1,61 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">angular_spectrum_propagate — OPTICS <code style="color:#22d3bf">wave</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">cimage</code> → <code style="color:#22d3bf">cimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import optics; optics.angular_spectrum_propagate(field, wavelength_um=0.55, distance_um=100.0, pixel_pitch_um=1.0)</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;angular_spectrum_propagate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Exact scalar free-space propagation of a complex field (angular spectrum).</p>
+<p>`<code style="color:#22d3bf">U(z) = IFFT{ FFT{U(0)} * exp(i*2*pi*z*sqrt(1/lambda^2 - fx^2 - fy^2)) }</code>`</p>
+<p>in the `<code style="color:#22d3bf">exp(-i*omega*t)</code>` convention, so a positive *distance_um*</p>
+<p>propagates forward. Components beyond the propagating cone</p>
+<p>(`<code style="color:#22d3bf">fx^2 + fy^2 &gt; 1/lambda^2</code>`) are <b>attenuated</b> by</p>
+<p>`<code style="color:#22d3bf">exp(-2*pi*|z|*sqrt(fx^2 + fy^2 - 1/lambda^2))</code>`, which is the physical</p>
+<p>evanescent decay — not zeroed, so `<code style="color:#22d3bf">distance_um = 0</code>` is an *exact*</p>
+<p>identity and the transfer function is continuous through it.</p>
+<p>Unlike Fresnel propagation this makes no paraxial approximation: it is the</p>
+<p>exact solution of the Helmholtz equation for a band-limited field, valid</p>
+<p>from a fraction of a wavelength outward.</p>
+<p>Returns a complex128 array with the same shape as *field*.</p>
+<p>Ground truth it reproduces (measured): `<code style="color:#22d3bf">distance_um = 0</code>` returns the field</p>
+<p>bit-identically (it short-circuits the transform pair); propagating `<code style="color:#22d3bf">+z</code>`</p>
+<p>then `<code style="color:#22d3bf">-z</code>` returns the original to a relative L2 error of 4.3e-16 to</p>
+<p>5.3e-16 for a band-limited field (measured on three: 64x64 random at</p>
+<p>+/-50 um, a 64x64 Gaussian at +/-250 um, a 128x128 random at +/-500 um);</p>
+<p>total power is conserved to between 0 and 3.5e-16 relative on the same</p>
+<p>three. A field *with*</p>
+<p>evanescent content does <b>not</b> round-trip — those components are gone by</p>
+<p>construction, in both directions, because that is what physically happens.</p>
+<p>*field* is a field in the <b>space</b> domain, not a spectrum: do not hand it</p>
+<p>the fftshifted output of :func:<code style="color:#22d3bf">complexops.cx_fft</code>. Real input is promoted</p>
+<p>to complex, which loses nothing.</p>
+<p>Aliasing: the discrete transfer function is periodic, so a field that</p>
+<p>diffracts past the array edge wraps around. The practical guard is the</p>
+<p>usual one — pad the field so the propagated support stays inside, and keep</p>
+<p>`<code style="color:#22d3bf">pixel_pitch_um</code><code style="color:#22d3bf"> below </code><code style="color:#22d3bf">lambda/(2*NA)</code>`. No warning can detect this</p>
+<p>reliably from the array alone, so none is invented.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *field* is not 2-D, smaller than 2x2, larger than</p>
+<p>:data:<code style="color:#22d3bf">MAX_FIELD_ELEMENTS</code>, masked, or non-finite; non-positive or</p>
+<p>non-finite *wavelength_um* / *pixel_pitch_um*; non-finite *distance_um*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
+<p>Every optics op validates its input before computing (nothing slips through silently):</p>
+<p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>
+<p style="margin:2px 0 2px 12px">• **Strings raise <code style="color:#22d3bf">ValueError</code>** — <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> succeeds, so an unparsed configuration value would slip through as a length (measured: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> returned a plausible 66.667 mm). bool is refused too, as the implicit promotion <code style="color:#22d3bf">True == 1</code>.</p>
+<p style="margin:2px 0 2px 12px">• **complex / masked arrays raise <code style="color:#22d3bf">ValueError</code><b> (real-valued slots only; silently dropping the imaginary part or peeling off the mask is refused). </b>NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input.**</p>
+<p style="margin:2px 0 2px 12px">• <b>Division by zero and its relatives are refused by name</b>: focal length 0, radius of curvature 0, refractive index &lt;= 0, a fully opaque aperture (all zeros, so the normalisation is 0/0), a PSF whose sum is &lt;= 0, a Stokes vector with S0 = 0, and an object sitting at the front focal point (the image is at infinity).</p>
+<p style="margin:2px 0 2px 12px">• <b>Only two ops return a non-finite value, and both state it as a contract</b>: <code style="color:#22d3bf">depth_of_field</code> returns <code style="color:#22d3bf">far_mm = inf</code> beyond the hyperfocal distance (that is what the hyperfocal distance means), and <code style="color:#22d3bf">gaussian_beam</code> returns <code style="color:#22d3bf">wavefront_radius_mm = inf</code> at the waist (the radius of curvature of a plane wavefront). Both also return a finite companion (<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>). **Any other silent NaN/Inf is detected internally and raises <code style="color:#22d3bf">ValueError</code>** — &quot;float64 overflowed&quot; and &quot;the answer is infinite&quot; are different claims, so the first is never returned wearing the face of the second.</p>
+<p style="margin:2px 0 2px 12px">• <b>Size caps</b>: generated grids are capped by <code style="color:#22d3bf">optics.MAX_GRID</code> (4096); supplied fields/PSFs/apertures by <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code> (2^24); ABCD element chains by <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code> (1024); Zernike by <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code> (512) / <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code> (40) / <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code> (2^25). This closes, fail-closed, the paths where a small argument triggers a huge internal allocation (measured: n_max=40 × 4096² needs 108 GB).</p>
+<p style="margin:2px 0 2px 12px">• <b>Physically impossible states are refused too</b>: a Stokes vector with degree of polarisation &gt; 1, negative transmittance, negative intensity, and invalid Zernike indices such as n-|m| odd.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:optics_imaging">optics_imaging</a> — <code style="color:#22d3bf">py -3.11 examples/optics_imaging.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">cimage</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opoptics:jones_apply">jones_apply</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">wave</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:airy_pattern">airy_pattern</a> · <a style="color:#22d3bf" href="opoptics:fraunhofer_pattern">fraunhofer_pattern</a> · <a style="color:#22d3bf" href="opoptics:gaussian_beam">gaussian_beam</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: optics.py — OPTICS operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">matrix_to_rot_scale — REPRCONV <code style="color:#22d3bf">algebra</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">rot_scale</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import reprconv; reprconv.matrix_to_rot_scale(matrix)</code> (oder <code style="color:#22d3bf">opsreprconv.get(&quot;matrix_to_rot_scale&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>2-D 相似変換 `<code style="color:#22d3bf">(2,2)</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">(角度[度], 倍率)</code><code style="color:#22d3bf">。:func:</code>rot_scale_to_matrix` の逆。</p>
+<p>倍率は列ノルム、角度は `<code style="color:#22d3bf">atan2(m[1,0], m[0,0])</code>`。</p>
+<p>せん断を含む一般の (2,2) を渡しても例外は出ない(相似成分だけを読む)ので、</p>
+<p>`<code style="color:#22d3bf">residual</code><code style="color:#22d3bf"> が要るときは呼び出し側で </code><code style="color:#22d3bf">m - rot_scale_to_matrix(...)</code>` を取ること。</p>
+<p>Args:</p>
+<p>matrix: (2, 2)。</p>
+<p>Returns:</p>
+<p>2-tuple の float `<code style="color:#22d3bf">(angle_deg, scale)</code>`。</p>
+<p>Raises:</p>
+<p>ValueError: (2,2) でない / 退化(倍率 0)/ 非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">rot_scale</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:rot_scale_to_matrix">rot_scale_to_matrix</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">algebra</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:angle_to_matrix">angle_to_matrix</a> · <a style="color:#22d3bf" href="opreprconv:matrix_to_angle">matrix_to_angle</a> · <a style="color:#22d3bf" href="opreprconv:rot_scale_to_matrix">rot_scale_to_matrix</a> · <a style="color:#22d3bf" href="opreprconv:shift_to_vector">shift_to_vector</a> · <a style="color:#22d3bf" href="opreprconv:vector_to_shift">vector_to_shift</a> · <a style="color:#22d3bf" href="opreprconv:cscalar_to_polar">cscalar_to_polar</a> · <a style="color:#22d3bf" href="opreprconv:polar_to_cscalar">polar_to_cscalar</a> · <a style="color:#22d3bf" href="opreprconv:countrate_to_counts">countrate_to_counts</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -7,12 +7,12 @@ out: images
 examples: [astro_stacking]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # synth_frame_series — ASTROSTACK `synth` op
 
-- **データ種**: `` → `images`
+- **データ種**: `なし` → `images`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import astrostack; astrostack.synth_frame_series(shape=(128, 128), n_frames=8, dither_px=1.5, fwhm_px=3.2, fwhm_jitter=0.0, n_cosmic=0, seed=0, **starfield_kw)` (または `opsastrostack.get("synth_frame_series")`)
 
 ## 使い方

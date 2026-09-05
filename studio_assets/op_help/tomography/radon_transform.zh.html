@@ -1,0 +1,46 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">radon_transform — TOMOGRAPHY <code style="color:#22d3bf">forward</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">sinogram</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import tomography; tomography.radon_transform(image, angles_deg=None, n_detectors=None, oversample=1)</code>(或 <code style="color:#22d3bf">opstomography.get(&quot;radon_transform&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Forward parallel-beam projection: a slice in, a <b>sinogram</b> out.</p>
+<p>Rows of the result are projection angles and columns are detector bins. The</p>
+<p>convention is fixed here and never negotiated again; every other operator in</p>
+<p>this module reads it the same way, and a transposed sinogram is structurally</p>
+<p>indistinguishable from a valid one (see :mod:<code style="color:#22d3bf">opstomography</code> for the measured</p>
+<p>consequences of not giving it its own sort).</p>
+<p>The ray at detector bin `<code style="color:#22d3bf">j</code><code style="color:#22d3bf"> and angle </code><code style="color:#22d3bf">theta</code>` is the line</p>
+<p>`<code style="color:#22d3bf">x cos(theta) + y sin(theta) = j - (n_det-1)/2</code><code style="color:#22d3bf">, with </code><code style="color:#22d3bf">x</code>` the column</p>
+<p>offset from the image centre and `<code style="color:#22d3bf">y</code><code style="color:#22d3bf"> the row offset — so </code><code style="color:#22d3bf">+y</code>` runs *down*</p>
+<p>the array, matching the rest of Fullseye&#x27;s image indexing rather than a</p>
+<p>textbook&#x27;s upward `<code style="color:#22d3bf">y</code>`. The transform is the same either way (the sinogram is</p>
+<p>mirrored in the angle axis), but only one of the two agrees with</p>
+<p>:func:<code style="color:#22d3bf">ellipse_phantom</code>, and the tests hold them together.</p>
+<p>Accuracy against the closed form (a disc of radius 60 px in a 256-px grid,</p>
+<p>180 views), measured in `<code style="color:#22d3bf">tests/test_tomography.py</code>`: interior RMS error</p>
+<p><b>0.073 %</b> of the peak line integral, whole-sinogram RMS <b>0.402 %</b> — the</p>
+<p>difference between the two being the partial-volume edge, where the phantom&#x27;s</p>
+<p>own anti-aliased boundary is what is being sampled.</p>
+<p>:param image: 2-D slice, at least 2x2.</p>
+<p>:param angles_deg: 1-D view angles in degrees; `<code style="color:#22d3bf">None</code>` -&gt;</p>
+<p>`<code style="color:#22d3bf">linspace(0, 180, 180, endpoint=False)</code>`.</p>
+<p>:param n_detectors: bins; `<code style="color:#22d3bf">None</code>` -&gt; odd count covering the diagonal.</p>
+<p>:param oversample: ray samples per pixel, `<code style="color:#22d3bf">1 .. 8</code>`. The default is 1</p>
+<p>because 4 measures no better (0.073 % against 0.070 %).</p>
+<p>:returns: `<code style="color:#22d3bf">(n_angles, n_detectors)</code>` float64 sinogram.</p>
+<p>:raises ValueError: on non-finite input, an empty angle list, a detector count</p>
+<p>under 4, or a sinogram over :data:<code style="color:#22d3bf">MAX_SINOGRAM_ELEMENTS</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:ct_reconstruction">ct_reconstruction</a> — <code style="color:#22d3bf">py -3.11 examples/ct_reconstruction.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">sinogram</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="optomography:backproject_sinogram">backproject_sinogram</a> · <a style="color:#22d3bf" href="optomography:filtered_backprojection">filtered_backprojection</a> · <a style="color:#22d3bf" href="optomography:sart_reconstruct">sart_reconstruct</a> · <a style="color:#22d3bf" href="optomography:beam_hardening_apply">beam_hardening_apply</a> · <a style="color:#22d3bf" href="optomography:beam_hardening_correct">beam_hardening_correct</a> · <a style="color:#22d3bf" href="optomography:ring_artifact_apply">ring_artifact_apply</a> · <a style="color:#22d3bf" href="optomography:ring_artifact_remove">ring_artifact_remove</a> · <a style="color:#22d3bf" href="optomography:metal_trace_interpolate">metal_trace_interpolate</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">forward</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:ellipse_phantom">ellipse_phantom</a> · <a style="color:#22d3bf" href="optomography:ellipse_sinogram">ellipse_sinogram</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tomography.py — TOMOGRAPHY 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

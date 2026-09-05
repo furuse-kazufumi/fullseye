@@ -7,7 +7,7 @@ out: points
 examples: [transforms_repr, tsdf_fusion_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # extract_surface_points — 3D `tsdf_fusion` op

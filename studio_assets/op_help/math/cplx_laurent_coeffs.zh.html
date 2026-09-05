@@ -1,0 +1,66 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cplx_laurent_coeffs — MATH <code style="color:#22d3bf">complex</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">cpoints × cpoints</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import mathops; mathops.cplx_laurent_coeffs(z, fz, kmin=-1, kmax=4)</code>(或 <code style="color:#22d3bf">opsmath.get(&quot;cplx_laurent_coeffs&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p><b>均匀采样圆周</b>上的 Laurent(以及 Taylor)系数 —— 含留数。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>For `<code style="color:#22d3bf">f</code><code style="color:#22d3bf"> holomorphic on an annulus around </code><code style="color:#22d3bf">c</code>`,</p>
+<p>`<code style="color:#22d3bf">f(z) = sum_k c_k (z - c)^k</code>` with</p>
+<p>`<code style="color:#22d3bf">c_k = 1/(2*pi*i) ∮ f(zeta)/(zeta - c)^(k+1) dzeta</code>`. On a circle of</p>
+<p>radius `<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> sampled at </code><code style="color:#22d3bf">n</code>` equally spaced angles this becomes a discrete</p>
+<p>Fourier sum, `<code style="color:#22d3bf">c_k = (1/(n r^k)) sum_j f_j exp(-i k theta_j)</code>` — the</p>
+<p>trapezoidal rule in the angle, where it converges <b>geometrically</b> rather</p>
+<p>than as `<code style="color:#22d3bf">O(n^-2)</code>` (Trefethen &amp; Weideman 2014, &quot;The exponentially</p>
+<p>convergent trapezoidal rule&quot;).</p>
+<p>`<code style="color:#22d3bf">c_-1</code><code style="color:#22d3bf"> **is the residue** at </code><code style="color:#22d3bf">c</code><code style="color:#22d3bf"> (when </code><code style="color:#22d3bf">c</code>` is the only singularity</p>
+<p>inside), `<code style="color:#22d3bf">c_k</code><code style="color:#22d3bf"> for </code><code style="color:#22d3bf">k &gt;= 0</code>` are the Taylor coefficients</p>
+<p>`<code style="color:#22d3bf">f^(k)(c)/k!</code><code style="color:#22d3bf">, and a non-zero </code><code style="color:#22d3bf">c_-m</code><code style="color:#22d3bf"> for </code><code style="color:#22d3bf">m &gt; 1</code>` reveals a pole of</p>
+<p>order `<code style="color:#22d3bf">m</code><code style="color:#22d3bf">. Measured on the unit circle with </code><code style="color:#22d3bf">f = 1/(z - 0.5)</code>`,</p>
+<p>`<code style="color:#22d3bf">n = 64</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">c_-1 = 1</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">c_-2 = 0.5</code>` to 1e-16 (machine precision).</p>
+<p>Returns a dict: `<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> (int64 orders, </code><code style="color:#22d3bf">kmin..kmax</code><code style="color:#22d3bf">) · </code><code style="color:#22d3bf">c</code>` (complex128</p>
+<p>coefficients) · `<code style="color:#22d3bf">center</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">radius</code>`. The centre is the sample mean,</p>
+<p>which is exact for a uniformly sampled circle.</p>
+<p><b>Orientation, and how it differs from the rest of the family</b>: the sum</p>
+<p>runs over the sample *set*, not the sample *order*, so this op always</p>
+<p>returns the coefficients of the positively oriented circle — the standard</p>
+<p>definition — whatever order the points arrive in. Feed a clockwise circle</p>
+<p>and `<code style="color:#22d3bf">c_-1</code><code style="color:#22d3bf"> still comes back </code><code style="color:#22d3bf">+</code>` the residue, while</p>
+<p>`<code style="color:#22d3bf">cplx_contour_integral / (2*pi*i)</code><code style="color:#22d3bf"> on the same points returns </code><code style="color:#22d3bf">-</code>` it</p>
+<p>(verified). Both are right; they answer different questions (the intrinsic</p>
+<p>coefficient vs the integral along *this* traversal). Do not cross-check one</p>
+<p>against the other without fixing the orientation first.</p>
+<p>Honest limitation — <b>aliasing</b>: the discrete sum cannot distinguish</p>
+<p>`<code style="color:#22d3bf">c_k</code><code style="color:#22d3bf"> from </code><code style="color:#22d3bf">c_{k+n}</code>`, so a coefficient carries the alias sum</p>
+<p>`<code style="color:#22d3bf">sum_m c_{k+m n} r^{m n}</code>`. That is negligible for a rapidly converging</p>
+<p>series (the `<code style="color:#22d3bf">0.5^64</code>` term above) and ruinous near the annulus boundary.</p>
+<p>Requesting more than `<code style="color:#22d3bf">n</code>` coefficients is refused for the same reason.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: the samples are not a uniformly spaced circle</p>
+<p>(unequal radii or unequal angular gaps beyond `<code style="color:#22d3bf">1e-8</code>` relative — this op</p>
+<p>is *not* valid on an arbitrary contour, and silently pretending otherwise</p>
+<p>would return numbers that mean nothing), `<code style="color:#22d3bf">kmin &gt; kmax</code><code style="color:#22d3bf">, more than </code><code style="color:#22d3bf">n</code>`</p>
+<p>coefficients requested, non-integer orders, and a coefficient that</p>
+<p>overflowed (`<code style="color:#22d3bf">r^-k</code>` for a small radius and a large negative order).</p>
+<p>HALCON: no operator.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
+<p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
+<p style="margin:2px 0 2px 12px">• **complex 输入一律 <code style="color:#22d3bf">ValueError</code>** —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>
+<p style="margin:2px 0 2px 12px">• **含被掩元素的 masked array 一律 <code style="color:#22d3bf">ValueError</code>** —— 拒绝「剥掉掩码直接使用下面原值」的隐式转换。请显式选择填充还是丢弃。</p>
+<p style="margin:2px 0 2px 12px">• **所有输入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code>**(明确给出个数后拒绝 —— 它会污染整个结果)。</p>
+<p style="margin:2px 0 2px 12px">• <b>形状严格</b>:不对 1-D 与 2-D 做隐式提升或广播(向量槽位收到矩阵、矩阵槽位收到向量都是 <code style="color:#22d3bf">ValueError</code>;请显式 reshape)。</p>
+<p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:接受矩阵的算子与 <code style="color:#22d3bf">stat_histogram</code> 的 bins,超过 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 万个元素)即 <code style="color:#22d3bf">ValueError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:math_complex">math_complex</a> — <code style="color:#22d3bf">py -3.11 examples/math_complex.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">complex</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:cplx_contour_circle">cplx_contour_circle</a> · <a style="color:#22d3bf" href="opmath:cplx_poly_eval">cplx_poly_eval</a> · <a style="color:#22d3bf" href="opmath:cplx_contour_integral">cplx_contour_integral</a> · <a style="color:#22d3bf" href="opmath:cplx_winding_number">cplx_winding_number</a> · <a style="color:#22d3bf" href="opmath:cplx_cauchy_value">cplx_cauchy_value</a> · <a style="color:#22d3bf" href="opmath:cplx_argument_principle">cplx_argument_principle</a> · <a style="color:#22d3bf" href="opmath:cplx_joukowski">cplx_joukowski</a> · <a style="color:#22d3bf" href="opmath:cplx_mobius">cplx_mobius</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

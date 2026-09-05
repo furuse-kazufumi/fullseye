@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gray_dilation — 2D <code style="color:#22d3bf">morphology</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;gray_dilation&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">gray_dilation</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>타입 계약은 <code style="color:#22d3bf">image → image</code>. 동작의 언어 설명은 아래 패밀리 사용 가이드와 실행 가능한 샘플을 보세요(여기서는 추측을 쓰지 않습니다).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_morphology">gallery2d_morphology</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_morphology.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">image</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">morphology</code>)</h3>
+<p><a style="color:#22d3bf" href="op:gerode">gerode</a> · <a style="color:#22d3bf" href="op:gdilate">gdilate</a> · <a style="color:#22d3bf" href="op:gopen">gopen</a> · <a style="color:#22d3bf" href="op:gclose">gclose</a> · <a style="color:#22d3bf" href="op:tophat">tophat</a> · <a style="color:#22d3bf" href="op:bothat">bothat</a> · <a style="color:#22d3bf" href="op:morph_grad">morph_grad</a> · <a style="color:#22d3bf" href="op:sk_area_opening">sk_area_opening</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

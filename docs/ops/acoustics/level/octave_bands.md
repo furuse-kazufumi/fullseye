@@ -7,12 +7,12 @@ out: table
 examples: [acoustic_condition_monitoring]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # octave_bands — ACOUSTICS `level` op
 
-- **データ種**: `` → `table`
+- **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import acoustics; acoustics.octave_bands(fraction=3, f_min=22.0, f_max=22050.0, base=10)` (または `opsacoustics.get("octave_bands")`)
 
 ## 使い方

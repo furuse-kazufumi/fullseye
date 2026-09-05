@@ -1,0 +1,19 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mesh_to_points — 3D <code style="color:#22d3bf">transform</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import match3d; match3d.mesh_to_points(vertices, faces, samples=20000, seed=0)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;mesh_to_points&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>mesh(頂点+面)→ 表面点群(面積重み一様サンプリング)。mesh→point cloud 変換。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:mesh_decimate">mesh_decimate</a> — <code style="color:#22d3bf">py -3.11 examples_3d/mesh_decimate.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">points</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="op3d:points_to_voxel">points_to_voxel</a> · <a style="color:#22d3bf" href="op3d:gaussians_to_voxel">gaussians_to_voxel</a> · <a style="color:#22d3bf" href="op3d:estimate_point_normals">estimate_point_normals</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:match_points_ncc">match_points_ncc</a> · <a style="color:#22d3bf" href="op3d:match_pca">match_pca</a> · <a style="color:#22d3bf" href="op3d:moment_axes">moment_axes</a> · <a style="color:#22d3bf" href="op3d:icp_point2point_3d">icp_point2point_3d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">transform</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:points_to_voxel">points_to_voxel</a> · <a style="color:#22d3bf" href="op3d:gaussians_to_voxel">gaussians_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_voxel">mesh_to_voxel</a> · <a style="color:#22d3bf" href="op3d:depth_to_points">depth_to_points</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mips">voxel_to_mips</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mesh">voxel_to_mesh</a> · <a style="color:#22d3bf" href="op3d:tsdf_from_depth">tsdf_from_depth</a> · <a style="color:#22d3bf" href="op3d:signed_distance_field">signed_distance_field</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: match3d.py — 3D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

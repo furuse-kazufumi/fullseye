@@ -1,6 +1,6 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">observe_surface — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>table`</p>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import optscene; optscene.observe_surface(material: &#x27;str&#x27; = &#x27;al&#x27;, finish: &#x27;str&#x27; = &#x27;hairline&#x27;, pitch_um: &#x27;float&#x27; = 90.0, depth_um: &#x27;float&#x27; = 1.0, roughness_um: &#x27;float&#x27; = 0.08, focal_mm: &#x27;float&#x27; = 25.0, working_distance_mm: &#x27;float&#x27; = 200.0, f_number: &#x27;float&#x27; = None, na: &#x27;float&#x27; = None, pixel_um: &#x27;float&#x27; = 3.45, resolution=(256, 256), wavelength_nm: &#x27;float&#x27; = 550.0, illumination: &#x27;str&#x27; = &#x27;coaxial&#x27;, tilt_deg: &#x27;float&#x27; = 0.0, source_size_mm: &#x27;float&#x27; = 40.0, supersample: &#x27;int&#x27; = 2, exposure: &#x27;str&#x27; = &#x27;auto&#x27;, defects: &#x27;dict&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;observe_surface&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p><b>観察光学系を組んで、指定した素材の仕上げ面を撮る</b>(一行で使える入口)。</p>

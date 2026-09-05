@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">rgb_to_xyz — IMGMETRICS <code style="color:#22d3bf">colorspace</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">rgb</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import imgmetrics; imgmetrics.rgb_to_xyz(rgb)</code>(或 <code style="color:#22d3bf">opsimgmetrics.get(&quot;rgb_to_xyz&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>sRGB(`<code style="color:#22d3bf">(..., 3)</code>`)→ CIE XYZ。先去掉传递函数,再乘矩阵。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:colorimetry">colorimetry</a> — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_quality_metrics">image_quality_metrics</a> — <code style="color:#22d3bf">py -3.11 examples/image_quality_metrics.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">rgb</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:xyz_to_lab">xyz_to_lab</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">colorspace</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:rgb_to_lab">rgb_to_lab</a> · <a style="color:#22d3bf" href="opimgmetrics:lab_to_rgb">lab_to_rgb</a> · <a style="color:#22d3bf" href="opimgmetrics:xyz_to_lab">xyz_to_lab</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgmetrics.py — IMGMETRICS 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">normals_to_angles — REPRCONV <code style="color:#22d3bf">direction</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">normals</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import reprconv; reprconv.normals_to_angles(normals)</code>(或 <code style="color:#22d3bf">opsreprconv.get(&quot;normals_to_angles&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>法線 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> → 方位・仰角の対 </code><code style="color:#22d3bf">(N,2)</code><code style="color:#22d3bf"> **[度]**。</code><code style="color:#22d3bf">normals</code>` の出口。</p>
+<p>`<code style="color:#22d3bf">az = atan2(c1, c0)</code><code style="color:#22d3bf"> を軸0-軸1 平面内の方位、</code><code style="color:#22d3bf">el = asin(c2/|v|)</code>` を</p>
+<p>軸2 からの仰角とする。<b>x/y/z でなく「軸0/1/2」で定義する</b>のは、この repo に</p>
+<p>(z,y,x) 順の点群と (x,y,z) 順の点群が両方いるため —— 名前で書くと、渡された</p>
+<p>配列がどちらの流儀かに依存して意味が変わってしまう。</p>
+<p>可逆: :func:<code style="color:#22d3bf">angles_to_normals</code> と往復して <b>方向は厳密に戻る</b>(実測</p>
+<p>max|Δ| = 6.1e-16、`<code style="color:#22d3bf">selftest</code>` が毎回測る)。<b>戻らないのは長さだけ</b> ——</p>
+<p>法線は向きなので、非単位ベクトルを渡すと往復で単位ベクトルになる。</p>
+<p>Args:</p>
+<p>normals: (N, 3) 実配列。零ベクトルは拒否(方位が定義できない)。</p>
+<p>Returns:</p>
+<p>(N, 2) float64。列 0 = 方位 (-180, 180]、列 1 = 仰角 [-90, 90]。</p>
+<p>Raises:</p>
+<p>ValueError: 形状が (N,3) でない / 非有限 / 長さ 0 のベクトルを含む。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_roundtrip">representation_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/representation_roundtrip.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">pairs</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:angles_to_normals">angles_to_normals</a> · <a style="color:#22d3bf" href="opreprconv:shape_index_to_curvature">shape_index_to_curvature</a> · <a style="color:#22d3bf" href="opreprconv:pairs_to_signal">pairs_to_signal</a> · <a style="color:#22d3bf" href="opreprconv:pairs_to_image2d">pairs_to_image2d</a> · <a style="color:#22d3bf" href="opreprconv:pairs_to_table">pairs_to_table</a> · <a style="color:#22d3bf" href="opreprconv:polar_to_cscalar">polar_to_cscalar</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">direction</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:angles_to_normals">angles_to_normals</a> · <a style="color:#22d3bf" href="opreprconv:normals_to_egi">normals_to_egi</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,51 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">projection_angles — TOMOGRAPHY <code style="color:#22d3bf">layout</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">signal</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import tomography; tomography.projection_angles(n_angles=180, span_deg=180.0, scheme=&#x27;uniform&#x27;, start_deg=0.0)</code>(或 <code style="color:#22d3bf">opstomography.get(&quot;projection_angles&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>The angle sequence of a scan, in <b>degrees</b>, as a 1-D float64 array.</p>
+<p>Three schemes, and the difference between them is what happens when a scan is</p>
+<p>cut short:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;uniform&quot;</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">start + span * k / n</code>`. The textbook scan. A prefix of it</p>
+<p>covers only a wedge, so an interrupted uniform scan is a limited-angle scan.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;golden&quot;</code><code style="color:#22d3bf"> — increments of </code><code style="color:#22d3bf">180/phi = 111.246...</code>` degrees, wrapped into</p>
+<p>`<code style="color:#22d3bf">[start, start+span)</code>`. Every prefix is near-uniform, so an interrupted</p>
+<p>golden scan is a *sparse* scan, which is a far easier problem. Largest</p>
+<p>angular gap left by a scan that stops early, measured:</p>
+<p>scheme          after 32 of 180    all 180</p>
+<p>uniform            149.000 deg     1.000 deg</p>
+<p>golden              10.031 deg     1.464 deg</p>
+<p>bit-reversed         8.000 deg     1.000 deg</p>
+<p>Uniform&#x27;s 149-degree hole is the entire limited-angle problem arriving by</p>
+<p>accident. Bit-reversed is the only one of the three that is good at both</p>
+<p>ends; golden&#x27;s price for working at *every* prefix length rather than only</p>
+<p>at powers of two is a completed set 1.46x less even than the grid.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;bit-reversed&quot;</code>` — the uniform grid, visited in bit-reversed order. Same</p>
+<p>guarantee as golden for power-of-two prefixes and exactly uniform at the</p>
+<p>end, which golden is not.</p>
+<p>*span_deg* is the total angular range. 180 degrees is the complete data set</p>
+<p>for parallel beam — projections at `<code style="color:#22d3bf">theta</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">theta+180</code>` are mirror</p>
+<p>images and carry no new information — so a 360-degree span is redundancy, not</p>
+<p>resolution, and anything under 180 is the limited-angle problem.</p>
+<p>:param n_angles: number of views, `<code style="color:#22d3bf">1 .. 65536</code>`.</p>
+<p>:param span_deg: total angular range in degrees, `<code style="color:#22d3bf">&gt; 0</code>`.</p>
+<p>:param scheme: one of :data:<code style="color:#22d3bf">ANGLE_SCHEMES</code>.</p>
+<p>:param start_deg: angle of the first view.</p>
+<p>:returns: `<code style="color:#22d3bf">(n_angles,)</code>` float64 array of degrees.</p>
+<p>:raises ValueError: on a non-int count, a non-positive span, a non-finite</p>
+<p>start, or an unknown scheme.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:ct_reconstruction">ct_reconstruction</a> — <code style="color:#22d3bf">py -3.11 examples/ct_reconstruction.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:tomography_reconstruct">tomography_reconstruct</a> — <code style="color:#22d3bf">py -3.11 examples/tomography_reconstruct.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">signal</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">layout</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:sinogram_design">sinogram_design</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tomography.py — TOMOGRAPHY 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,6 +1,6 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">synthesize_translation — MOTIONMAG <code style="color:#22d3bf">synthesis</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>video`</p>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">video</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import motionmag; motionmag.synthesize_translation(shape=(64, 64), frames: &#x27;int&#x27; = 32, amplitude_px=0.5, frequency_hz=4.0, fps=32.0, direction_deg=0.0, wavelength_px=(8.0, 16.0), contrast=0.4, offset=0.5, noise_sigma=0.0, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">opsmotionmag.get(&quot;synthesize_translation&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>A clip whose displacement is known in closed form -&gt; `<code style="color:#22d3bf">(T, H, W)</code>` video.</p>

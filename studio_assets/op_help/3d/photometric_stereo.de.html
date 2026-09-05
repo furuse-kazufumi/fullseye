@@ -1,0 +1,19 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">photometric_stereo — 3D <code style="color:#22d3bf">photometric</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">normalmap</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import photometric; photometric.photometric_stereo(images, lights, mask=None, normalize=True, *, lit_only=False, lit_thresh=0.001)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;photometric_stereo&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Lambertian フォトメトリックステレオ: 既知光源方向の N 枚から法線とアルベドを復元。→ (normals HxWx3, albedo HxW)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:photometric_stereo">photometric_stereo</a> — <code style="color:#22d3bf">py -3.11 examples_3d/photometric_stereo.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">normalmap</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:render_shaded">render_shaded</a> · <a style="color:#22d3bf" href="op3d:phong_shade">phong_shade</a> · <a style="color:#22d3bf" href="op3d:matcap_shade">matcap_shade</a> · <a style="color:#22d3bf" href="op3d:brdf_lommel_seeliger">brdf_lommel_seeliger</a> · <a style="color:#22d3bf" href="op3d:brdf_hapke">brdf_hapke</a> · <a style="color:#22d3bf" href="op3d:bump_normals_fbm">bump_normals_fbm</a> · <a style="color:#22d3bf" href="op3d:integrate_normals">integrate_normals</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">photometric</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:surface_normals">surface_normals</a> · <a style="color:#22d3bf" href="op3d:integrate_normals">integrate_normals</a> · <a style="color:#22d3bf" href="op3d:render_lambertian">render_lambertian</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: photometric.py — 3D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,19 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">geodesic_distances — 3D <code style="color:#22d3bf">geodesic</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import geodesic3d; geodesic3d.geodesic_distances(points: numpy.ndarray, source: int, k: int = 8) -&gt; numpy.ndarray</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;geodesic_distances&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>source から全点への測地距離(kNN グラフ上 Dijkstra)。→ (N,) float(不達は inf)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:geodesic_distance">geodesic_distance</a> — <code style="color:#22d3bf">py -3.11 examples_3d/geodesic_distance.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">signal</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">geodesic</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:geodesic_mesh">geodesic_mesh</a> · <a style="color:#22d3bf" href="op3d:farthest_point_sampling">farthest_point_sampling</a> · <a style="color:#22d3bf" href="op3d:knn_graph">knn_graph</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: geodesic3d.py — 3D 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

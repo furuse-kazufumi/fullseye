@@ -1,0 +1,43 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sinogram_center_shift — TOMOGRAPHY <code style="color:#22d3bf">geometry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">sinogram</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import tomography; tomography.sinogram_center_shift(sinogram, shift_px=None, angles_deg=None)</code>(或 <code style="color:#22d3bf">opstomography.get(&quot;sinogram_center_shift&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Re-centre a sinogram on its axis of rotation.</p>
+<p>Shifts every projection by `<code style="color:#22d3bf">-shift_px</code>` along the detector axis with linear</p>
+<p>interpolation. With `<code style="color:#22d3bf">shift_px=None</code>` the shift is measured first by</p>
+<p>:func:<code style="color:#22d3bf">sinogram_center_of_rotation</code>, which makes this the one-call fix.</p>
+<p>Round-trip on the Shepp-Logan phantom, shifting by *d* and back:</p>
+<p>d        max |error|    relative to the peak line integral</p>
+<p>1.00 px   0.0e+00        0.0e+00     (an integer shift is exact)</p>
+<p>0.50 px   1.4e-01        1.2e-01</p>
+<p>0.25 px   1.1e-01        9.2e-02</p>
+<p>A *fractional* shift is <b>not</b> a small operation and this is the operator&#x27;s</p>
+<p>honest limitation: 12 % of the peak, on a phantom with sharp edges, from one</p>
+<p>round trip. Interpolation is a low-pass filter and the sinogram of an edge is</p>
+<p>not band-limited, so there is nothing to recover on the way back. Using a</p>
+<p>Fourier shift instead would trade this visible blur for invisible ringing at</p>
+<p>the detector edges, which is worse in the way that matters here. The</p>
+<p>consequence is in :func:<code style="color:#22d3bf">sinogram_center_of_rotation</code>&#x27;s table: an integer</p>
+<p>centre error is fully repairable, a half-pixel one is not.</p>
+<p>:param sinogram: `<code style="color:#22d3bf">(n_angles, n_detectors)</code>`.</p>
+<p>:param shift_px: axis offset in detector bins; `<code style="color:#22d3bf">None</code>` -&gt; measure it.</p>
+<p>:param angles_deg: view angles, used only when *shift_px* is `<code style="color:#22d3bf">None</code>`.</p>
+<p>:returns: `<code style="color:#22d3bf">(n_angles, n_detectors)</code>` float64 sinogram.</p>
+<p>:raises ValueError: if `<code style="color:#22d3bf">|shift_px|</code>` is at or past half the detector width —</p>
+<p>past that the object has been shifted out of the field of view and what</p>
+<p>comes back is edge padding, which reconstructs as a plausible, empty slice.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:ct_reconstruction">ct_reconstruction</a> — <code style="color:#22d3bf">py -3.11 examples/ct_reconstruction.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">sinogram</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="optomography:backproject_sinogram">backproject_sinogram</a> · <a style="color:#22d3bf" href="optomography:filtered_backprojection">filtered_backprojection</a> · <a style="color:#22d3bf" href="optomography:sart_reconstruct">sart_reconstruct</a> · <a style="color:#22d3bf" href="optomography:beam_hardening_apply">beam_hardening_apply</a> · <a style="color:#22d3bf" href="optomography:beam_hardening_correct">beam_hardening_correct</a> · <a style="color:#22d3bf" href="optomography:ring_artifact_apply">ring_artifact_apply</a> · <a style="color:#22d3bf" href="optomography:ring_artifact_remove">ring_artifact_remove</a> · <a style="color:#22d3bf" href="optomography:metal_trace_interpolate">metal_trace_interpolate</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">geometry</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:sinogram_center_of_rotation">sinogram_center_of_rotation</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tomography.py — TOMOGRAPHY 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

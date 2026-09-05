@@ -1,0 +1,40 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lucky_select — ASTROSTACK <code style="color:#22d3bf">quality</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">indices</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import astrostack; astrostack.lucky_select(frames, keep_fraction=0.3, min_keep=1, **quality_kw)</code>(或 <code style="color:#22d3bf">opsastrostack.get(&quot;lucky_select&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>品質点の上位 `<code style="color:#22d3bf">keep_fraction</code>` だけを採る —— lucky imaging の選別。</p>
+<p>採用枚数は `<code style="color:#22d3bf">max(min_keep, ceil(keep_fraction * N))</code>`。<b>必ず 1 枚は残す</b></p>
+<p>ので、`<code style="color:#22d3bf">keep_fraction</code>` をいくら小さくしても空にはならない(空の合成を</p>
+<p>後段へ渡す方が事故が大きい)。並べ替えは点の降順で、同点は元の順序を保つ</p>
+<p>安定ソート —— 同じ入力なら同じ並びが返る。</p>
+<p>Returns `<code style="color:#22d3bf">(indices, scores)</code>`:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">indices</code><code style="color:#22d3bf"> —— </code><code style="color:#22d3bf">(K,)</code>` int64、<b>採用フレームの添字を良い順に</b></p>
+<p>(`<code style="color:#22d3bf">indices</code><code style="color:#22d3bf"> 語彙)。</code><code style="color:#22d3bf">[frames[i] for i in indices]</code>` がそのまま</p>
+<p>:func:<code style="color:#22d3bf">sigma_clip_stack</code> へ渡せる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">scores</code><code style="color:#22d3bf"> —— </code><code style="color:#22d3bf">(N,)</code>` float64、<b>全フレームの点</b>(捨てた側も含む)。</p>
+<p>捨てた理由を図にできるように、選別の結果ではなく素材を返す。</p>
+<p>Ground truth it reproduces(`<code style="color:#22d3bf">tests/test_astrostack.py</code>`): 同じ星野を</p>
+<p>FWHM だけ変えて撮ったフレーム列では、点は FWHM とともに<b>下がる</b>。</p>
+<p>96x96 に 20 星、FWHM を 3.462〜6.080 px で振った 12 枚の実測で</p>
+<p>`<code style="color:#22d3bf">corr(fwhm, score) = -0.925</code>`。上位 25 %(3 枚)を採って平均合成すると、</p>
+<p>12 枚全部を平均した場合に比べて合成後の FWHM が 4.403 → 3.672 px、</p>
+<p><b>16.6 % 改善</b>する —— 枚数を 1/4 に減らしたのに像は鋭くなる、というのが</p>
+<p>lucky imaging の主張そのもの(その代わり雑音は sqrt(4) = 2 倍になる)。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *frames* が list / tuple でない(3-D 配列は</p>
+<p>明示的に拒否)/ 枚数が 1 未満 / `<code style="color:#22d3bf">keep_fraction</code>` が (0, 1] の外 /</p>
+<p>*min_keep* が枚数を超える場合。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:astro_stacking">astro_stacking</a> — <code style="color:#22d3bf">py -3.11 examples/astro_stacking.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">indices</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">quality</code>)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:frame_quality">frame_quality</a> · <a style="color:#22d3bf" href="opastrostack:noise_sigma">noise_sigma</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: astrostack.py — ASTROSTACK 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

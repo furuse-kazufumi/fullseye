@@ -1,0 +1,51 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sensor_fingerprint — IMGFORENSICS <code style="color:#22d3bf">sensor</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">fingerprint</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import imgforensics; imgforensics.sensor_fingerprint(images, denoiser: &#x27;str&#x27; = &#x27;wiener&#x27;, sigma: &#x27;float&#x27; = 0.02, zero_mean: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsimgforensics.get(&quot;sensor_fingerprint&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>複数枚から <b>PRNU センサ指紋</b> K を最尤推定する(Chen et al. 2008)。</p>
+<p>`<code style="color:#22d3bf">K = Σ_i W_i I_i / Σ_i I_i²</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">W_i = I_i - denoise(I_i)</code>`)。撮像モデル</p>
+<p>`<code style="color:#22d3bf">I = I⁰ + I⁰·K + Θ</code>` の下で、これが K の最尤推定量になる —— 明るい画素ほど</p>
+<p>PRNU が強く出る(乗法的な欠陥だから)ので、<b>明るさで重み付けした平均</b>である。</p>
+<p>返りは `<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> の float64 で、</code><code style="color:#22d3bf">zero_mean=True</code>`(既定)なら行・列平均を</p>
+<p>抜いたうえで <b>標準偏差 1 に正規化</b>してある。正規化は :func:<code style="color:#22d3bf">fingerprint_correlate</code></p>
+<p>の PCE をスケール不変にするためで、指紋の絶対的な強さは</p>
+<p>:func:<code style="color:#22d3bf">fingerprint_strength_map</code> が別に返す。</p>
+<p>`<code style="color:#22d3bf">images</code>` は同じ shape の 2 枚以上。<b>リサイズして揃えてはいけない</b> ——</p>
+<p>PRNU は画素の物理位置そのものなので、内挿した瞬間に指紋は消える(shape 不一致は</p>
+<p>:class:<code style="color:#22d3bf">ValueError</code>)。</p>
+<p>枚数と分離度の実測(`<code style="color:#22d3bf">tests/test_imgforensics.py::test_prnu_separates_two_sensors</code>`、</p>
+<p>128x128・PRNU 強度 3%・読み出し雑音 σ=0.01、既定 `<code style="color:#22d3bf">denoiser=&quot;wiener&quot;</code>`):</p>
+<p>====== ======================== ================= =================</p>
+<p>枚数   真の K との相関          同一センサの PCE  別センサの PCE</p>
+<p>====== ======================== ================= =================</p>
+<p>2      +0.727                   5295             16.5</p>
+<p>4      +0.809                   6472             14.5</p>
+<p>8      +0.859                   7246             13.1</p>
+<p>16     +0.892                   7755             -12.3</p>
+<p>====== ======================== ================= =================</p>
+<p><b>「真の K との相関」を測ることが重要</b>である。PCE だけを見ていると、</p>
+<p>指紋がセンサのパターンをまったく捉えていなくても「分離しているように見える」</p>
+<p>—— 実際この実装は一度その状態にあった(:func:<code style="color:#22d3bf">_wiener_denoise</code> の docstring)。</p>
+<p>PCE は「同一センサで一貫して現れる何か」を測るので、それが PRNU である保証は</p>
+<p>PCE 自体には無い。</p>
+<p>`<code style="color:#22d3bf">denoiser=&quot;wavelet&quot;</code>`(PyWavelets 必須)は同じ条件で相関 +0.745 〜 +0.901、</p>
+<p>同一センサ PCE 6068 〜 8852 と一貫して強い。既定を `<code style="color:#22d3bf">&quot;wiener&quot;</code>` にしてあるのは</p>
+<p><b>optional 依存を必須にしないため</b>であって、精度で選んだのではない。</p>
+<p><b>これは合成雑音での値</b>であり、実カメラでは被写体の内容が残差に漏れるので</p>
+<p>桁で小さくなる。この表は「実装が正しく動いている」ことの固定であって、</p>
+<p>実運用のしきい値ではない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_forensics_audit">image_forensics_audit</a> — <code style="color:#22d3bf">py -3.11 examples/image_forensics_audit.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">fingerprint</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:fingerprint_correlate">fingerprint_correlate</a> · <a style="color:#22d3bf" href="opimgforensics:fingerprint_strength_map">fingerprint_strength_map</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">sensor</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:fingerprint_correlate">fingerprint_correlate</a> · <a style="color:#22d3bf" href="opimgforensics:fingerprint_strength_map">fingerprint_strength_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgforensics.py — IMGFORENSICS 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,58 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">depth_of_field — OPTICS <code style="color:#22d3bf">geometric</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import optics; optics.depth_of_field(focal_mm=50.0, f_number=8.0, subject_mm=2000.0, coc_mm=0.03)</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;depth_of_field&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Photographic depth of field: near limit, far limit and hyperfocal distance.</p>
+<p>The classical circle-of-confusion model. With `<code style="color:#22d3bf">H = f^2/(N*c) + f</code>` the</p>
+<p>hyperfocal distance and `<code style="color:#22d3bf">s</code>` the focused subject distance:</p>
+<p>`<code style="color:#22d3bf">near = s*(H - f) / (H + s - 2f)</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">far = s*(H - f) / (H - s)</code>`.</p>
+<p>Returns a dict: `<code style="color:#22d3bf">near_mm</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">far_mm</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">depth_mm</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">far - near</code>`) ·</p>
+<p>`<code style="color:#22d3bf">hyperfocal_mm</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">far_is_infinite</code>` (a bool, so a caller never has to</p>
+<p>test for `<code style="color:#22d3bf">inf</code>` by accident).</p>
+<p>**`<code style="color:#22d3bf">far_mm</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">inf</code>` at or beyond the hyperfocal distance, by contract,</p>
+<p>not by accident** — focus at `<code style="color:#22d3bf">H</code><code style="color:#22d3bf"> and everything from </code><code style="color:#22d3bf">H/2</code>` to infinity</p>
+<p>is acceptably sharp, which is the whole point of the hyperfocal distance.</p>
+<p>`<code style="color:#22d3bf">depth_mm</code><code style="color:#22d3bf"> is then </code><code style="color:#22d3bf">inf</code><code style="color:#22d3bf"> too. </code><code style="color:#22d3bf">far_is_infinite</code>` says so explicitly,</p>
+<p>and the identity `<code style="color:#22d3bf">near(H) == H/2</code>` is exact (verified in the tests).</p>
+<p>*coc_mm* is the acceptable circle of confusion <b>in the image plane</b>: the</p>
+<p>35 mm convention is 0.03 mm, a machine-vision rule of thumb is 1-2 pixel</p>
+<p>pitches. It is a *choice*, not a property of the lens — halve it and the</p>
+<p>depth of field halves with it, which is why two depth-of-field calculators</p>
+<p>disagree.</p>
+<p>Ground truth: `<code style="color:#22d3bf">f = 50, N = 8, c = 0.03</code><code style="color:#22d3bf"> gives </code><code style="color:#22d3bf">H = 10466.67 mm</code>`; at</p>
+<p>`<code style="color:#22d3bf">s = H</code><code style="color:#22d3bf"> the near limit is exactly </code><code style="color:#22d3bf">H/2 = 5233.33 mm</code>` and the far limit</p>
+<p>is `<code style="color:#22d3bf">inf</code><code style="color:#22d3bf">; the near/far limits bracket the subject for every </code><code style="color:#22d3bf">s &lt; H</code>`.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-positive or non-finite *focal_mm*,</p>
+<p>*f_number*, *subject_mm*, *coc_mm*; `<code style="color:#22d3bf">subject_mm &lt;= focal_mm</code>` (an object</p>
+<p>inside the front focal length cannot be imaged by this lens — see</p>
+<p>:func:<code style="color:#22d3bf">thin_lens</code>); a hyperfocal distance that is not greater than the</p>
+<p>focal length (a degenerate combination of `<code style="color:#22d3bf">N</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">c</code>`).</p>
+<p>Paraxial, thin, and blur-circle based: it ignores diffraction, which for</p>
+<p>small apertures becomes the real resolution limit — compare with</p>
+<p>:func:<code style="color:#22d3bf">mtf_diffraction</code> before trusting an `<code style="color:#22d3bf">N = 22</code>` calculation.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
+<p>Every optics op validates its input before computing (nothing slips through silently):</p>
+<p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>
+<p style="margin:2px 0 2px 12px">• **Strings raise <code style="color:#22d3bf">ValueError</code>** — <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> succeeds, so an unparsed configuration value would slip through as a length (measured: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> returned a plausible 66.667 mm). bool is refused too, as the implicit promotion <code style="color:#22d3bf">True == 1</code>.</p>
+<p style="margin:2px 0 2px 12px">• **complex / masked arrays raise <code style="color:#22d3bf">ValueError</code><b> (real-valued slots only; silently dropping the imaginary part or peeling off the mask is refused). </b>NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input.**</p>
+<p style="margin:2px 0 2px 12px">• <b>Division by zero and its relatives are refused by name</b>: focal length 0, radius of curvature 0, refractive index &lt;= 0, a fully opaque aperture (all zeros, so the normalisation is 0/0), a PSF whose sum is &lt;= 0, a Stokes vector with S0 = 0, and an object sitting at the front focal point (the image is at infinity).</p>
+<p style="margin:2px 0 2px 12px">• <b>Only two ops return a non-finite value, and both state it as a contract</b>: <code style="color:#22d3bf">depth_of_field</code> returns <code style="color:#22d3bf">far_mm = inf</code> beyond the hyperfocal distance (that is what the hyperfocal distance means), and <code style="color:#22d3bf">gaussian_beam</code> returns <code style="color:#22d3bf">wavefront_radius_mm = inf</code> at the waist (the radius of curvature of a plane wavefront). Both also return a finite companion (<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>). **Any other silent NaN/Inf is detected internally and raises <code style="color:#22d3bf">ValueError</code>** — &quot;float64 overflowed&quot; and &quot;the answer is infinite&quot; are different claims, so the first is never returned wearing the face of the second.</p>
+<p style="margin:2px 0 2px 12px">• <b>Size caps</b>: generated grids are capped by <code style="color:#22d3bf">optics.MAX_GRID</code> (4096); supplied fields/PSFs/apertures by <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code> (2^24); ABCD element chains by <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code> (1024); Zernike by <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code> (512) / <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code> (40) / <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code> (2^25). This closes, fail-closed, the paths where a small argument triggers a huge internal allocation (measured: n_max=40 × 4096² needs 108 GB).</p>
+<p style="margin:2px 0 2px 12px">• <b>Physically impossible states are refused too</b>: a Stokes vector with degree of polarisation &gt; 1, negative transmittance, negative intensity, and invalid Zernike indices such as n-|m| odd.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:optics_imaging">optics_imaging</a> — <code style="color:#22d3bf">py -3.11 examples/optics_imaging.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a> · <a style="color:#22d3bf" href="opoptics:spot_diagram">spot_diagram</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">geometric</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:thin_lens">thin_lens</a> · <a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:abcd_trace">abcd_trace</a> · <a style="color:#22d3bf" href="opoptics:relative_illumination">relative_illumination</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: optics.py — OPTICS operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

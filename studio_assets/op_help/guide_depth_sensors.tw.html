@@ -1,0 +1,209 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">本指南僅有日文版(它是人寫的散文,這裡不做機械替換)。</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">深度センサの知識 — 測距原理・実機の値・欠測の出方</h2>
+<p>3-D 族の op は 347 個あるが、<b>その入力になる点群がどこから来たのか</b>はどこにも書いて</p>
+<p>いなかった。この文書は op の説明ではない —— <code style="color:#22d3bf">lidar_projection</code> / <code style="color:#22d3bf">range_image</code> /</p>
+<p><code style="color:#22d3bf">structured_light</code> / <code style="color:#22d3bf">plane_sweep_stereo</code> / <code style="color:#22d3bf">two_view</code> / <code style="color:#22d3bf">depth_denoise</code> /</p>
+<p><code style="color:#22d3bf">tsdf_fusion</code> に渡す値の<b>出どころ</b>と、実機がどう壊れるかを書く教材である。</p>
+<p>2-D 側の <code style="color:#22d3bf">optics/guides/mv_*.md</code>（センサ・カメラ・フレームグラバ・ケーブル・規格）と</p>
+<p>同じ位置づけで、こちらが 3-D 版にあたる。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">1. 測距原理は 5 つしかない —— そして誤差の効き方が全部違う</h3>
+<p><b>選定で最初に見るのは絶対値の確度ではなく、確度が距離とどうスケールするか</b>である。</p>
+<p>ここを間違えると、カタログの数字が良く見える機種を選んで現場で外す。</p>
+<p>| 原理 | 代表 | 測距誤差の距離依存 | 効く設計値 |</p>
+<p>| --- | --- | --- | --- |</p>
+<p>| <b>受動ステレオ</b> | 一般のステレオカメラ | <b>σ_Z ∝ Z²</b> | 基線 B、焦点距離 f、視差のサブピクセル精度 |</p>
+<p>| <b>能動ステレオ</b> | RealSense D4xx | 同上（テクスチャを投影で足すだけ） | 上に加えプロジェクタの届く距離 |</p>
+<p>| <b>構造化光</b>（位相シフト / グレイコード） | Zivid, Photoneo | 同上だが <b>B を大きく取れるので係数が小さい</b> | 投影パターンの周期、階調、露光 |</p>
+<p>| <b>レーザ三角測量</b>（ラインプロファイラ） | Keyence LJ-X | 同上。<b>測定レンジを数 mm に切って µm を出す</b> | 基準距離、受光角、X ピッチ |</p>
+<p>| <b>直接 ToF（dToF）</b> | Ouster, Livox | <b>距離にほぼ依存しない</b>（時間分解能で決まる） | パルス幅、時間分解能、戻り光量 |</p>
+<p>| （間接 ToF / iToF） | 一部の ToF カメラ | 位相分解能で決まる。<b>折り返しがある</b> | 変調周波数（= 一意距離） |</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">三角測量の式（全部これで説明がつく）</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">Z = B·f / d          B = 基線 [mm], f = 焦点距離 [px], d = 視差 [px]
+δZ = Z² / (B·f) · δd</pre>
+<p><b>距離の二乗で悪化する</b>。だから受動 / 能動ステレオは遠距離に使えないし、</p>
+<p>構造化光が µm 級を出せるのは B·f を大きく取り Z を小さく固定しているからである。</p>
+<p>*カタログの %表記を視差誤差に読み替える*: D455 は基線 95 mm、1280×720・HFOV 87° なので</p>
+<p>f ≈ (1280/2)/tan(43.5°) ≈ 674 px（<b>概算</b> —— 厳密には左イメージャの HFOV を使う。</p>
+<p>公表されている「深度 FOV」は無効帯のぶんだけ狭いので、この f はやや小さめに出る）。</p>
+<p>公称「4 m で 2% 未満」は</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">δd = δZ·B·f / Z² = 80 × 95 × 674 / 4000² ≈ 0.32 px</pre>
+<p>に相当する。つまりこの数字は「サブピクセルマッチングが 1/3 画素で効いている」という</p>
+<p>主張であって、テクスチャの無い面ではそのまま成り立たない。</p>
+<p><b>%表記を見たらこの換算をする。</b></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">dToF の式</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">σ_Z = c·σ_t / 2      c = 光速, σ_t = 時間分解能</pre>
+<p>距離が入らない —— これが LiDAR が 100 m でも cm を保てる理由。</p>
+<p>ただし戻り光量は <b>1/Z²</b> で落ちるので、遠方では確度ではなく<b>検出確率</b>が落ちる。</p>
+<p>カタログが「170 m @ 80% 反射率」「90 m @ 10% 反射率」と反射率つきで書くのはこのため。</p>
+<p><b>反射率を書いていない到達距離は比較に使えない。</b></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">2. 実機の値（一次情報のみ）</h3>
+<p>推測値は入れない。以下はすべてメーカー公開仕様（出典は末尾）。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">2.1 能動ステレオ — Intel RealSense D455</h3>
+<p>| 項目 | 値 |</p>
+<p>| --- | --- |</p>
+<p>| 方式 | ステレオ（IR プロジェクタ併用） |</p>
+<p>| 基線 | <b>95 mm</b>（D435 系は 50 mm、D415 は 55 mm、D405 は 18 mm） |</p>
+<p>| 深度 FOV（16:9） | H 87° / V 58° / D 95° |</p>
+<p>| 深度出力 | 1280×720 まで、最大 90 fps |</p>
+<p>| 推奨レンジ | 0.6 – 6 m |</p>
+<p>| <b>Min-Z</b>（1280×720） | <b>520 mm</b>（848×480 で 350、424×240 で 180） |</p>
+<p><b>Min-Z が解像度で変わる</b>のが要点。低解像度にすると近づける —— 視差の上限が画素数で</p>
+<p>決まるためで、「近すぎて測れない」は解像度を落とせば回避できることがある。</p>
+<p><b>無効深度帯</b>（Intel が式で公開している構造的欠測）:</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">無効帯の幅 [px] = B·f / Z</pre>
+<p>D455 で Z = 1 m なら 95 × 674 / 1000 ≈ <b>64 px</b> が左端で必ず無効になる。</p>
+<p>右のイメージャに写らない領域だから原理的に埋まらない。**合成深度画像を作るなら、</p>
+<p>この帯は必ず入れる**（入れないと、学習側が画面端を信用するモデルになる）。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">2.2 構造化光（産業用） — Zivid 2+ M130</h3>
+<p>| 項目 | 値 |</p>
+<p>| --- | --- |</p>
+<p>| 撮像 | 2448×2048（5.0 MPx）、ネイティブ 3D カラー |</p>
+<p>| 焦点距離 | 1300 mm / 作動範囲 800 – 2700 mm / 最適 1000 – 1600 mm |</p>
+<p>| 視野 | 790 × 650 mm @ 1300 mm |</p>
+<p>| <b>点精度 1σ</b> | <b>210 µm</b> @ 焦点距離 |</p>
+<p>| <b>局所平面性精度 1σ</b> | 300 µm |</p>
+<p>| <b>全体平面性 真度誤差</b> | &lt; 0.24 mm |</p>
+<p>| <b>寸法真度誤差</b> | &lt; 0.35 %（焦点距離・常温）／&lt; 0.60 %（最適範囲・全温度） |</p>
+<p>| 撮像時間 | 50 ms – 1500 ms（処理込み） |</p>
+<p>| 光源 | プロジェクタ 360 lm（1×）〜 900 lm（2.5×）、IEC 62471-5 RG2 |</p>
+<p><b>精度（precision）と真度（trueness）を分けて載せている</b>のがこのメーカーの美点で、</p>
+<p>そこが読みどころ。点精度 210 µm は「連続撮像でどれだけばらつかないか」、</p>
+<p>寸法真度 0.35 % は「校正長を測ったときにどれだけずれるか」。</p>
+<p><b>測定用途で効くのは後者。</b> 前者しか書かないカタログは、平均すれば良くなる数字だけを</p>
+<p>見せている。さらに真度は<b>温度で 0.35 % → 0.60 % に倒れる</b>と明記されている ——</p>
+<p>盤内で暖まる装置では、常温スペックをそのまま使うと合わない。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">2.3 レーザ三角測量（ラインプロファイラ） — Keyence LJ-X8060</h3>
+<p>| 項目 | 値 |</p>
+<p>| --- | --- |</p>
+<p>| 基準距離 | 64 mm |</p>
+<p>| Z 測定範囲 | ±7.3 mm（F.S. 14.6 mm） |</p>
+<p>| X 測定範囲 | 15 mm（近側）／16 mm（基準距離） |</p>
+<p>| 光源 | 405 nm 可視、クラス 2M |</p>
+<p>| プロファイルデータ間隔（X ピッチ） | 5 µm |</p>
+<p>| <b>Z 繰り返し精度</b> | <b>0.4 µm</b> |</p>
+<p>| <b>X 繰り返し精度</b> | 0.5 µm |</p>
+<p>| 1 プロファイルの点数 | 3200 点 |</p>
+<p>µm を出すために<b>測定レンジを ±7.3 mm に切っている</b>のが本質。三角測量の δZ ∝ Z² は</p>
+<p>変わらないので、レンジを狭めるほかに手が無い。</p>
+<p>そして<b>ここに載っているのは繰り返し精度であって直線性ではない</b> —— 「0.4 µm で測れる」</p>
+<p>と読むのは誤り。絶対寸法を主張するなら直線性（linearity）と校正が別途要る。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">2.4 回転式 LiDAR — Ouster OS1（Rev7）</h3>
+<p>| 項目 | 値 |</p>
+<p>| --- | --- |</p>
+<p>| 波長 / クラス | <b>865 nm</b> / Class 1（IEC 60825-1:2014） |</p>
+<p>| 到達距離 | 170 m @ 80% ランバート／<b>90 m @ 10% ランバート</b>（1024@10 Hz、検出確率 &gt; 90%、100 klx 日照） |</p>
+<p>| 最小距離 | 0.0 m（既定 0.5 m、0.3 m 選択可） |</p>
+<p>| 垂直 FOV | 42.4° ±1.0°（+21.2° 〜 −21.2°） |</p>
+<p>| 解像度 | 垂直 32 / 64 / 128 ch、水平 512 / 1024 / 2048、回転 10 / 20 Hz |</p>
+<p>| <b>測距確度</b> | <b>±2.5 cm（ランバート）／±5 cm（再帰反射）</b> |</p>
+<p>| <b>測距精度 1σ</b> | ±0.5 cm（最小）〜 ±3 cm（最大） |</p>
+<p>| 距離分解能 | 0.1 cm |</p>
+<p>| 点数 | 最大 5,242,880 点/秒（128 ch） |</p>
+<p>| ビーム | 出射径 9.5 mm、発散 0.18°（FWHM） |</p>
+<p>| 1 点あたりのデータ | 距離・信号強度・<b>反射率</b>・近赤外・チャンネル・方位角・タイムスタンプ |</p>
+<p>| 誤検出率 | 1/10,000 |</p>
+<p><b>再帰反射ターゲットのほうが確度が悪い（±5 cm）</b>のが重要。直感に反するが、戻り光が</p>
+<p>強すぎて受光波形が飽和し、立ち上がり時刻がずれる（レンジウォーク）。</p>
+<p><b>反射テープや標識を基準に据えた合成データは、この誤差を入れないと現実と合わない。</b></p>
+<p>また <b>ビーム角は等間隔ではない</b>（センサが intrinsic として beam angles を返す仕様）。</p>
+<p>チャンネル番号を等間隔の仰角と仮定してレンジ画像にすると、系統的に歪む。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">2.5 非反復走査 LiDAR — Livox Mid-360</h3>
+<p>| 項目 | 値 |</p>
+<p>| --- | --- |</p>
+<p>| 波長 | 905 nm |</p>
+<p>| 到達距離 | 70 m @ 80% 反射率／<b>40 m @ 10% 反射率</b>（周囲 25 °C） |</p>
+<p>| 最小距離 | 0.1 m |</p>
+<p>| FOV | 水平 360°／垂直 −7° 〜 +52° |</p>
+<p>| 点数 | 200,000 点/秒（ファーストリターン） |</p>
+<p>| 測距精度 1σ | ≤ 2 cm @ 10 m、≤ 3 cm @ 0.2 m |</p>
+<p>| 角度精度 1σ | &lt; 0.15° |</p>
+<p>| 内蔵 IMU | ICM40609 |</p>
+<p><b>走査が非反復</b>なので、1 フレームだけ見ると穴だらけで、積算するほど密になる。</p>
+<p>「1 スキャンで完成した点群が得られる」前提のアルゴリズムはここで崩れる。</p>
+<p>垂直 FOV が上下非対称（−7° 〜 +52°）なのも実務では効く —— 足元は見えない。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">3. 欠測と誤りの出方（合成データの肝）</h3>
+<p><b>深度に一様なガウス雑音を載せる</b>のは、この分野で最もよくある嘘である。</p>
+<p>実機の壊れ方は原理ごとに決まっていて、それぞれ形を持つ。</p>
+<p>| 原理 | 出る故障モード |</p>
+<p>| --- | --- |</p>
+<p>| 受動ステレオ | テクスチャの無い面で<b>穴</b>／繰り返し模様で<b>視差が飛ぶ</b>（誤マッチは滑らかな誤りになるので気づきにくい）／オクルージョン境界で片側だけ欠測 |</p>
+<p>| 能動ステレオ | 上に加え、プロジェクタが届かない遠方で受動に劣化／<b>日光下でパターンが埋もれる</b>（屋外で急に性能が落ちる） |</p>
+<p>| 構造化光 | 鏡面で<b>飛ぶ</b>（戻らない）／凹部の<b>相互反射</b>で位相が壊れ面が膨らむ／透明・半透明で表面下散乱により<b>奥にずれる</b> |</p>
+<p>| dToF | <b>マルチパス</b>で入隅が丸まる／エッジで <b>flying pixel</b>（1 画素に 2 距離が混ざり中間値が出る）／再帰反射で<b>レンジウォーク</b>／雨・霧・粉塵で偽点 |</p>
+<p>| iToF | マルチパスがさらに強い／<b>位相の折り返し</b>で遠方が近距離に化ける（変調周波数で決まる一意距離を超えたとき） |</p>
+<p>| レーザ三角測量 | オクルージョンが<b>2 種類</b>（投光側の影・受光側の影）／鏡面で戻らない／段差の縁で座標が引きずられる |</p>
+<p><b>共通</b>: 反射率・強度チャンネルは距離と入射角に依存する（1/Z²、cos θ）。生の強度を</p>
+<p>そのまま特徴量に使うと、<b>距離に依存した学習</b>をしてしまう。正規化するか、距離を明示的に</p>
+<p>与える。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">4. 座標系と単位の罠</h3>
+<p>1. <b>深度は「光軸方向の z」か「斜距離」か。</b> レンジ画像（LiDAR 由来）は斜距離、</p>
+<p>深度カメラは光軸 z が普通。取り違えると中心では一致し<b>視野の端だけ系統的にずれる</b></p>
+<p>ので、テストが中心だけ見ていると通ってしまう。fullseye は <code style="color:#22d3bf">optscene_depth</code> で</p>
+<p>光軸 z を採っている（マシンビジョンの慣習）。</p>
+<p>2. <b>深度スケール。</b> RealSense は既定で 1 unit = 1 mm だが機種と設定で変わる。</p>
+<p>深度画像を uint16 で受けたら、必ずスケールを一緒に運ぶ。</p>
+<p>3. <b>LiDAR の ring / channel は等間隔でない。</b> §2.4 のとおり。</p>
+<p>4. <b>点群の原点。</b> カメラは前面ガラス基準ではない（RealSense は左イメージャ中心、</p>
+<p>Ouster は筐体の基準面）。数 mm 〜 十数 mm の系統オフセットになる。</p>
+<p>5. <b>時刻。</b> 移動体では 1 フレーム内でも走査中に動く（LiDAR のスキュー）。</p>
+<p>タイムスタンプが点ごとに付くセンサは、それを使って補正する前提の点群である。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">5. 選定の決め方</h3>
+<p><b>用途 → 距離 → 要求確度 → 原理</b> の順に決まる。逆順（機種から入る）と外す。</p>
+<p>| 用途 | 距離 | 要求確度 | 原理 |</p>
+<p>| --- | --- | --- | --- |</p>
+<p>| インライン形状・段差検査 | 数十 mm | µm | レーザ三角測量（ラインプロファイラ） |</p>
+<p>| ビンピッキング・組付 | 0.5 – 2 m | 0.1 – 0.5 mm | 構造化光 |</p>
+<p>| 人・什器の大まかな把握 | 0.5 – 6 m | cm | 能動ステレオ |</p>
+<p>| 移動ロボットの自己位置・障害物 | 0.5 – 100 m | cm | LiDAR |</p>
+<p>| 屋外広域・地形 | 10 m 〜 | cm | LiDAR ／ フォトグラメトリ |</p>
+<p>判断の芯は 1 行で言える —— **µm が要るなら測定レンジを削る（三角測量）、</p>
+<p>遠くが要るなら確度が距離に依存しない方式にする（ToF）。両立はしない。**</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">6. fullseye op への接続</h3>
+<p>| 渡す値 | 出どころ | 使う op |</p>
+<p>| --- | --- | --- |</p>
+<p>| 垂直 FOV・チャンネル数・角度分解能 | §2.4 / §2.5 | <code style="color:#22d3bf">lidar_projection</code> 系（3 op）、<code style="color:#22d3bf">range_image</code> 系（4 op） |</p>
+<p>| 基線・焦点距離・Min-Z・無効帯 | §2.1 | <code style="color:#22d3bf">two_view</code> 系（5 op）、<code style="color:#22d3bf">plane_sweep_stereo</code>（2 op） |</p>
+<p>| パターン周期・位相段数 | §2.2 | <code style="color:#22d3bf">structured_light</code> 系（7 op） |</p>
+<p>| 点精度 1σ・平面性 | §2.2 | <code style="color:#22d3bf">surface_fit</code> / <code style="color:#22d3bf">registration_metrics</code> / <code style="color:#22d3bf">metrics</code> |</p>
+<p>| flying pixel・エッジ欠測 | §3 | <code style="color:#22d3bf">depth_denoise</code> 系（3 op） |</p>
+<p>| 点間隔（ボクセルはこれより粗く） | §2.2 の空間分解能 | <code style="color:#22d3bf">tsdf_fusion</code>（3 op）、<code style="color:#22d3bf">occupancy</code>（4 op） |</p>
+<p>| 反射率の距離・角度依存 | §3 末尾 | <code style="color:#22d3bf">photometric</code> 系（4 op） |</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">7. 現状の穴（正直に）</h3>
+<p style="margin:2px 0 2px 12px">• <b>センサ誤差モデルの op が無い。</b> 2-D 側には <code style="color:#22d3bf">optscene</code> があり、レンズ・照明・</p>
+<p>センサを組んで欠陥画像を真値つきで出せる。3-D 側に対応するもの —— 深度に</p>
+<p><b>Z² 依存のノイズ</b>を載せる／<b>無効深度帯</b>を作る／<b>flying pixel</b> を生やす／</p>
+<p><b>マルチパスで入隅を丸める</b> —— は 1 つも無い。合成 3-D データを学習に使うなら、</p>
+<p>ここが最初に要る。</p>
+<p style="margin:2px 0 2px 12px">• <b>ビーム角の非等間隔</b>を扱う入口が無い（<code style="color:#22d3bf">lidar_projection</code> は等間隔前提）。</p>
+<p style="margin:2px 0 2px 12px">• <b>時刻つき点群</b>（スキュー補正）の語彙が無い。</p>
+<p style="margin:2px 0 2px 12px">• iToF の<b>位相折り返し</b>を再現する手立てが無い。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">8. 診断表 —— 症状から原因へ</h3>
+<p>現場で最初に開くのはここ。<b>症状は原理まで遡れば必ず説明がつく。</b></p>
+<p>| 症状 | まず疑う | 確かめ方 |</p>
+<p>| --- | --- | --- |</p>
+<p>| 遠くだけ精度が出ない | 三角測量を遠距離に使っている（σ_Z ∝ Z²） | 距離を変えて σ を測り、Z² に乗るか見る。乗るなら<b>方式の限界</b>で、後処理では直らない |</p>
+<p>| 平面が反る／寸法が合わない | 真度（trueness）側の問題 —— 校正・温度 | 校正済み平面板を視野の<b>複数位置</b>で撮り、平面フィット残差を見る。暖機前後（10 分）で比べる |</p>
+<p>| 画面の片側だけ穴が空く | ステレオの<b>無効深度帯</b> | 幅が <code style="color:#22d3bf">B·f/Z</code> px に一致するか計算する。一致すれば原理的な欠測で、埋まらない |</p>
+<p>| 黒い部品・光る部品だけ落ちる | 戻り光量（ToF なら反射率、構造化光なら鏡面反射） | 同形状の<b>白い艶消しダミー</b>で撮り直す。直れば材質起因 |</p>
+<p>| 入隅が丸い／エッジに中間距離の点 | ToF のマルチパスと <b>flying pixel</b> | エッジ近傍の点だけ抜いて距離ヒストグラムを見る。二峰の<b>谷に点が乗る</b> |</p>
+<p>| 反射テープの位置だけずれる | レンジウォーク（受光飽和） | 露光や強度を下げて再測。ずれが減れば飽和起因 |</p>
+<p>| 点群が斜めに引きずられる | 走査中の移動（スキュー）／点ごとのタイムスタンプ未使用 | 静止させて撮り直す。直れば動き補正が要る |</p>
+<p>| レンジ画像にすると横縞が出る | チャンネル = 等間隔仰角と仮定した | センサの <b>beam angles</b>（intrinsic）を問い合わせて投影し直す |</p>
+<p>| 中心は合うのに視野の端だけずれる | 光軸 z と斜距離の取り違え | 端の点で <code style="color:#22d3bf">z</code> と <code style="color:#22d3bf">‖p‖</code> の比を見る。<code style="color:#22d3bf">cos θ</code> 倍になっていれば取り違え |</p>
+<p>| 1 フレームが穴だらけ | 非反復走査の LiDAR を単フレームで使った | 数フレーム積算して密度が上がるか見る |</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">出典（一次情報）</h3>
+<p style="margin:2px 0 2px 12px">• Livox Mid-360 Specs — &lt;https://www.livoxtech.com/mid-360/specs&gt;</p>
+<p style="margin:2px 0 2px 12px">• Ouster OS1 Rev7 Datasheet (FW 3.1.x) — &lt;https://data.ouster.io/downloads/datasheets/datasheet-rev7-v3p1-os1.pdf&gt;</p>
+<p style="margin:2px 0 2px 12px">• Zivid 2+ M130 Technical Specification (1.5 – 7/25) — &lt;https://www.zivid.com/hubfs/User%20guides%20and%20datasheets/Zivid%202+%20M130%20Datasheet.pdf&gt;</p>
+<p style="margin:2px 0 2px 12px">• Intel RealSense D400 Series Datasheet, Doc. 337029-017 (Oct 2025) — &lt;https://realsenseai.com/wp-content/uploads/2025/09/Intel-RealSense-D400-Series-Datasheet-October-2025.pdf&gt;</p>
+<p style="margin:2px 0 2px 12px">• Keyence LJ-X8000 series — LJ-X8060 — &lt;https://www.keyence.com/products/measure/laser-2d/lj-x8000/models/lj-x8060/&gt;</p>

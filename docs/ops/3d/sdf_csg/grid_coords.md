@@ -7,12 +7,12 @@ out: coordgrid
 examples: [gear_metrology, molecule_atom_count, procedural_hand, render_beauty, sdf_csg, sfm_recon]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # grid_coords — 3D `sdf_csg` op
 
-- **データ種**: `` → `coordgrid`
+- **データ種**: `なし` → `coordgrid`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import sdf_ops; sdf_ops.grid_coords(bounds, res)` (または `ops3d.get("grid_coords")`)
 
 ## 使い方

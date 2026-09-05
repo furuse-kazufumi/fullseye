@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">polarization_stokes — SPECULAR <code style="color:#22d3bf">polarization</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">polsweep</code> → <code style="color:#22d3bf">stokes</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import specularity; specularity.polarization_stokes(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)</code>(또는 <code style="color:#22d3bf">opsspecular.get(&quot;polarization_stokes&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
+<p>The scene-integrated Stokes vector of a polariser sweep. → (4,), ready for :func:<code style="color:#22d3bf">optics.stokes_analyze</code>.</p>
+<p>Stokes parameters are linear in radiance, so the spatial mean of the frames</p>
+<p>has a Stokes vector that is the mean of the per-pixel ones — the vector a</p>
+<p>non-imaging polarimeter looking at the whole field would report. Fitting</p>
+<p>`<code style="color:#22d3bf">I(t) = 0.5 (S0 + S1 cos 2t + S2 sin 2t)</code><code style="color:#22d3bf"> gives </code><code style="color:#22d3bf">(S0, S1, S2)</code>` directly.</p>
+<p><b>S3 is always exactly 0, and that is a limitation, not a measurement.</b> A</p>
+<p>set of linear analysers cannot see circular polarisation; a quarter-wave</p>
+<p>plate is needed. The returned vector is therefore the linear part of the</p>
+<p>truth, and :func:<code style="color:#22d3bf">optics.stokes_analyze</code> will report `<code style="color:#22d3bf">handedness=&quot;linear&quot;</code>`</p>
+<p>for it no matter what the scene actually did. Returning an invented `<code style="color:#22d3bf">S3</code>`</p>
+<p>would be worse, and returning a 3-vector would break the Stokes contract the</p>
+<p>optics family is built on.</p>
+<p>The result satisfies that contract by construction — ``S0 &gt;= sqrt(S1^2 +</p>
+<p>S2^2 + S3^2)``, i.e. degree of polarisation at most 1 — because the same</p>
+<p>non-negativity check that guards :func:<code style="color:#22d3bf">polarization_separate</code> is exactly</p>
+<p>the condition for it. That is why `<code style="color:#22d3bf">optics.stokes_analyze</code>` accepts the</p>
+<p>output without a further test.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: as :func:</code>polarization_separate`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:specular_photometric">specular_photometric</a> — <code style="color:#22d3bf">py -3.11 examples/specular_photometric.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">stokes</code> 를 입력으로 받는 것)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">polarization</code>)</h3>
+<p><a style="color:#22d3bf" href="opspecular:polarization_render">polarization_render</a> · <a style="color:#22d3bf" href="opspecular:polarization_separate">polarization_separate</a> · <a style="color:#22d3bf" href="opspecular:polarization_dolp_map">polarization_dolp_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: specularity.py — SPECULAR 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

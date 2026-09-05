@@ -1,0 +1,20 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dlt_pose — 3D <code style="color:#22d3bf">pose_estimation</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points × keypoints</code> → <code style="color:#22d3bf">pose</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import pnp3d; pnp3d.dlt_pose(points_3d, points_2d, K)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;dlt_pose&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>DLT で 3D-2D 対応からカメラ姿勢を復元(K 既知)。→ (R (3,3), t (3,))。6 点以上必要。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:pnp_pose_outliers">pnp_pose_outliers</a> — <code style="color:#22d3bf">py -3.11 examples_3d/pnp_pose_outliers.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:pose_estimation">pose_estimation</a> — <code style="color:#22d3bf">py -3.11 examples_3d/pose_estimation.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">pose</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:pose_error">pose_error</a> · <a style="color:#22d3bf" href="op3d:bundle_adjust">bundle_adjust</a> · <a style="color:#22d3bf" href="op3d:mean_reprojection_error">mean_reprojection_error</a> · <a style="color:#22d3bf" href="op3d:optimize_pose_graph">optimize_pose_graph</a> · <a style="color:#22d3bf" href="op3d:relative_pose">relative_pose</a> · <a style="color:#22d3bf" href="op3d:mean_edge_error">mean_edge_error</a> · <a style="color:#22d3bf" href="op3d:rotation_translation_error">rotation_translation_error</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">pose_estimation</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:pnp_ransac">pnp_ransac</a> · <a style="color:#22d3bf" href="op3d:reprojection_error">reprojection_error</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pnp3d.py — 3D 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,57 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cosmic_ray_reject_stack — ASTROSTACK <code style="color:#22d3bf">cosmic</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">images</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import astrostack; astrostack.cosmic_ray_reject_stack(frames, kappa=5.0, min_frames=3, read_sigma=None, gain=1.0)</code>(或 <code style="color:#22d3bf">opsastrostack.get(&quot;cosmic_ray_reject_stack&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>フレーム間比較による宇宙線除去 —— <b>同じ場所に二度は当たらない</b>。</p>
+<p>宇宙線が単一フレームの検出で難しいのは「星も尖っている」からだが、</p>
+<p>位置合わせ済みのフレームが何枚もあれば話は簡単になる: 星は<b>毎回同じ画素</b></p>
+<p>に居て、宇宙線は<b>一度しか来ない</b>。そこで画素ごとにフレーム方向の中央値と</p>
+<p>MAD を取り、`<code style="color:#22d3bf">value &gt; median + kappa * sigma</code>` のフレームだけを落として</p>
+<p>中央値で埋める(下側は落とさない —— 宇宙線は必ず<b>足す</b>方向の外れ値で、</p>
+<p>下側を落とすと欠損画素まで消してしまう)。</p>
+<p>`<code style="color:#22d3bf">min_frames</code>` 枚未満では中央値も MAD も意味を成さないので拒否する</p>
+<p>(3 枚が最低限: 2 枚だとどちらが外れ値か決まらない)。**フレームは位置合わせ</p>
+<p>済みであること** —— ずれたまま渡すと星が「一度しか来ない」ことになり、</p>
+<p>星の方が消える。</p>
+<p><b>枚数が少ないと MAD 自体が当てにならない、という実測。</b> 8 枚の背景で</p>
+<p>MAD 推定は真の σ 9.22 に対し 7.89(-14.5 %)、しかも画素ごとに大きく散る</p>
+<p>ので、`<code style="color:#22d3bf">kappa=5</code>` のつもりが実質 4.3 になり、偽陽性が真陽性の 2.4 倍</p>
+<p>(546 対 227 画素)出た。しかも<b>偽陽性は星の上ではなく背景に居た</b></p>
+<p>(偽陽性画素の真値の中央値が 60 = sky そのもの)ので、「星が尖っているから」</p>
+<p>では説明がつかない —— 少数標本の MAD が画素ごとに大きく散ることが原因。</p>
+<p>対策は 2 つ重ねてある:</p>
+<p>1. :func:<code style="color:#22d3bf">_mad_correction</code>(Croux &amp; Rousseeuw 1992)の小標本補正を掛ける。</p>
+<p>2. *read_sigma* を渡すと、<b>このモジュールが持つ唯一のノイズモデル</b></p>
+<p>`<code style="color:#22d3bf">sigma = sqrt(median/gain + read_sigma^2)</code>` を尺度の<b>床</b>にする。</p>
+<p>これは :func:<code style="color:#22d3bf">synth_starfield</code> が使っているのと同じ</p>
+<p>「Poisson(信号) + Gauss(読み出し)」で、二つ目の理論ではない。</p>
+<p>床を入れると、標本のゆらぎで MAD がたまたま小さく出た画素が</p>
+<p>宇宙線に化けることが無くなる。</p>
+<p>効き方の実測(128x128 / 25 星 / 1 枚あたり 10 宇宙線 / 8 枚、真の宇宙線</p>
+<p>227 画素、`<code style="color:#22d3bf">kappa=5</code>`)::</p>
+<p>read_sigma=None  -&gt;  594 画素検出、偽陽性 367、適合率 0.382</p>
+<p>read_sigma=5.0   -&gt;  228 画素検出、偽陽性   1、適合率 0.996</p>
+<p>再現率はどちらも <b>1.000</b>(1 画素も取りこぼさない)。床は宇宙線を</p>
+<p>見逃す方向には効かない —— 宇宙線は雑音の何十倍もあるので、床が数 e-</p>
+<p>上がっても越えてくる。</p>
+<p>Returns `<code style="color:#22d3bf">(cleaned, masks)</code>`:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">cleaned</code><code style="color:#22d3bf"> —— 長さ </code><code style="color:#22d3bf">N</code><code style="color:#22d3bf"> の list、各 </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> float64(</code><code style="color:#22d3bf">images</code>` 語彙)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">masks</code><code style="color:#22d3bf"> —— </code><code style="color:#22d3bf">(N, H, W)</code><code style="color:#22d3bf"> bool、</code><code style="color:#22d3bf">True</code>` = 宇宙線と判定した画素。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *frames* が list / tuple でない / 枚数が</p>
+<p>*min_frames* 未満 / 形が揃っていない / *kappa* が非正 / *gain* が非正 /</p>
+<p>*read_sigma* が負の場合。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:astro_stacking">astro_stacking</a> — <code style="color:#22d3bf">py -3.11 examples/astro_stacking.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">images</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:lucky_select">lucky_select</a> · <a style="color:#22d3bf" href="opastrostack:sigma_clip_stack">sigma_clip_stack</a> · <a style="color:#22d3bf" href="opastrostack:drizzle_resample">drizzle_resample</a> · <a style="color:#22d3bf" href="opastrostack:align_frames">align_frames</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">cosmic</code>)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:cosmic_ray_reject">cosmic_ray_reject</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: astrostack.py — ASTROSTACK 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

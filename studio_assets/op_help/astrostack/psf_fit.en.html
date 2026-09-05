@@ -1,0 +1,52 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">psf_fit — ASTROSTACK <code style="color:#22d3bf">photometry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × keypoints</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import astrostack; astrostack.psf_fit(image, centers, model=&#x27;gaussian&#x27;, box=11, max_iter=200)</code> (or <code style="color:#22d3bf">opsastrostack.get(&quot;psf_fit&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>星像に PSF を当てはめて中心と FWHM を出す。</p>
+<p>*model* `<code style="color:#22d3bf">&quot;gaussian&quot;</code>` は<b>楕円</b>ガウシアン</p>
+<p>`<code style="color:#22d3bf">bkg + amp * exp(-((dr/sr)^2 + (dc/sc)^2)/2)</code>` の 6 パラメータ当てはめで、</p>
+<p>真円度(`<code style="color:#22d3bf">roundness = min(sr,sc)/max(sr,sc)</code>`)が副産物として出る ——</p>
+<p>追尾誤差や風で伸びた星像はここに出る。`<code style="color:#22d3bf">&quot;moffat&quot;</code>` は円対称の</p>
+<p>`<code style="color:#22d3bf">bkg + amp * (1 + r^2/alpha^2)^(-beta)</code><code style="color:#22d3bf">(Moffat 1969)で、</code><code style="color:#22d3bf">beta</code>` も</p>
+<p>自由パラメータ。最小二乗は :func:<code style="color:#22d3bf">scipy.optimize.least_squares</code></p>
+<p>(Trust Region Reflective)で、初期値は 2 次モーメントから作る決定的な値</p>
+<p>—— 乱数を使わないので同じ入力なら同じ答え。</p>
+<p>FWHM は当てはめたパラメータからの<b>閉形式</b>:</p>
+<p>ガウシアンは `<code style="color:#22d3bf">2 sqrt(2 ln 2) * sqrt(sr*sc)</code>`(幾何平均)、Moffat は</p>
+<p>`<code style="color:#22d3bf">2 alpha sqrt(2^(1/beta) - 1)</code>`。</p>
+<p><b>画素の箱のぶんだけ、必ず太く出る。</b> ここが当てはめているのは*連続の*</p>
+<p>ガウシアンだが、画像の各画素は連続分布を 1 画素の箱で積分した値である。</p>
+<p>一様な幅 1 の箱の分散は `<code style="color:#22d3bf">1/12</code>` なので、返る sigma は真の sigma ではなく</p>
+<p>`<code style="color:#22d3bf">sqrt(sigma^2 + 1/12)</code>` になる —— これは推定の誤差ではなく**画像がそう</p>
+<p>できている**ということ。実測はこの予測とよく合う::</p>
+<p>真の FWHM   予測 = 2.3548*sqrt(sigma^2+1/12)   実測(中央値)</p>
+<p>2.5              2.5908                        2.5930</p>
+<p>3.5              3.5654                        3.5625</p>
+<p>5.0              5.0460                        5.0145</p>
+<p>真の sigma が欲しければ `<code style="color:#22d3bf">sqrt(sigma_fit^2 - 1/12)</code>` と引けばよいが、</p>
+<p><b>既定では引かない</b> —— 星の測定で普通に言う「FWHM」は画像上の見た目の</p>
+<p>幅であり、黙って補正を入れると他の道具の値と合わなくなる。</p>
+<p>Returns 各星 1 つの dict の `<code style="color:#22d3bf">list</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">table</code>` 語彙)。キーは</p>
+<p>`<code style="color:#22d3bf">row</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">col</code><code style="color:#22d3bf">(当てはめた中心)、</code><code style="color:#22d3bf">fwhm_px</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">amplitude</code>`、</p>
+<p>`<code style="color:#22d3bf">background</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">roundness</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">rms</code><code style="color:#22d3bf">(残差 RMS)、</code><code style="color:#22d3bf">converged</code>`(bool)、</p>
+<p>`<code style="color:#22d3bf">model</code><code style="color:#22d3bf">、そして model 依存の </code><code style="color:#22d3bf">sigma_row_px</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">sigma_col_px</code>`</p>
+<p>または `<code style="color:#22d3bf">alpha_px</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">beta</code>`。窓が画像からはみ出す星、当てはめが</p>
+<p>収束しなかった星も<b>落とさずに</b> `<code style="color:#22d3bf">converged=False</code>` で返す</p>
+<p>—— 黙って消すと「星が減った」ことに誰も気づけない。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *model* が :data:</code>PSF_MODELS` にない /</p>
+<p>*box* が 5 未満または偶数 / *centers* が `<code style="color:#22d3bf">(N, 2)</code>` でない場合。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:astro_stacking">astro_stacking</a> — <code style="color:#22d3bf">py -3.11 examples/astro_stacking.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">photometry</code>)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:star_detect">star_detect</a> · <a style="color:#22d3bf" href="opastrostack:aperture_photometry">aperture_photometry</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: astrostack.py — ASTROSTACK operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

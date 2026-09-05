@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sinkhorn_distance — COLORTRANSPORT <code style="color:#22d3bf">transport</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal × matrix</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import colortransport; colortransport.sinkhorn_distance(a, b, cost, reg=0.05, **kw)</code>(或 <code style="color:#22d3bf">opscolortransport.get(&quot;sinkhorn_distance&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>正則化つき輸送費 `<code style="color:#22d3bf">&lt;plan, cost&gt;</code>`。<b>厳密な距離ではない</b>。</p>
+<p>正則化のぶん系統的に偏るので、自分自身との「距離」も 0 にならない</p>
+<p>(そのずれ幅はテストに実測で残してある)。1 次元で厳密が要るときは</p>
+<p>:func:<code style="color:#22d3bf">wasserstein_1d</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:color_transport">color_transport</a> — <code style="color:#22d3bf">py -3.11 examples/color_transport.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">scalar</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">transport</code>)</h3>
+<p><a style="color:#22d3bf" href="opcolortransport:wasserstein_1d">wasserstein_1d</a> · <a style="color:#22d3bf" href="opcolortransport:transport_plan_1d">transport_plan_1d</a> · <a style="color:#22d3bf" href="opcolortransport:sinkhorn">sinkhorn</a> · <a style="color:#22d3bf" href="opcolortransport:sinkhorn_divergence">sinkhorn_divergence</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: colortransport.py — COLORTRANSPORT 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

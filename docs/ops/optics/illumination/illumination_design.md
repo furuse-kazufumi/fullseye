@@ -7,12 +7,12 @@ out: table
 examples: [illumination_design_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # illumination_design — OPTICS `illumination` op
 
-- **データ種**: `` → `table`
+- **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import illumdesign; illumdesign.illumination_design(surface='glossy', defect='topographic', slope_deg=10.0, part_size_mm=50.0, camera_height_mm=300.0)` (または `opsoptics.get("illumination_design")`)
 
 ## 使い方

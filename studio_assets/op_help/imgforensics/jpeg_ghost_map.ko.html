@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">jpeg_ghost_map — IMGFORENSICS <code style="color:#22d3bf">compression</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">images</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import imgforensics; imgforensics.jpeg_ghost_map(image, qualities=None, block: &#x27;int&#x27; = 16) -&gt; &#x27;list&#x27;</code>(또는 <code style="color:#22d3bf">opsimgforensics.get(&quot;jpeg_ghost_map&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
+<p>JPEG ゴースト(Farid 2009)。品質を掃引した <b>再圧縮残差の地図の列</b>。`<code style="color:#22d3bf">images</code>`。</p>
+<p>ある領域が品質 `<code style="color:#22d3bf">q0</code><code style="color:#22d3bf"> で一度圧縮されていると、</code><code style="color:#22d3bf">q = q0</code>` で再圧縮したときに</p>
+<p>その領域の差分が <b>谷</b> になる。画像全体が同じ `<code style="color:#22d3bf">q0</code>` なら谷は全面に出るが、</p>
+<p>別の品質で圧縮された部分が貼られていると、**その領域だけ別の `<code style="color:#22d3bf">q</code>` で谷になる**。</p>
+<p>返りは `<code style="color:#22d3bf">len(qualities)</code><code style="color:#22d3bf"> 本の </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> 地図(</code><code style="color:#22d3bf">block</code>` 角の箱平均で平滑化した</p>
+<p>二乗差)。谷の位置を画素ごとに読むのは :func:<code style="color:#22d3bf">jpeg_ghost_quality</code>。</p>
+<p><b>Pillow 必須</b>(:class:<code style="color:#22d3bf">ImportError</code>)。理由は :func:<code style="color:#22d3bf">error_level_map</code> と同じ。</p>
+<p>実測(`<code style="color:#22d3bf">tests/test_imgforensics.py::test_jpeg_ghost_finds_the_pasted_quality</code>`、</p>
+<p>品質 92 の背景に品質 60 で圧縮した 64x64 を貼った 192x192、掃引 40..95 step 5):</p>
+<p>貼った領域の谷は <b>品質 60</b>(真値 60、誤差 0)、背景の谷は <b>品質 95</b>。</p>
+<p>背景が 92 ではなく 95 になるのは掃引が 5 刻みで 92 を含まないからで、</p>
+<p><b>谷は掃引した品質の中からしか出ない</b> —— 刻みより細かい品質は読めない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_forensics_audit">image_forensics_audit</a> — <code style="color:#22d3bf">py -3.11 examples/image_forensics_audit.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">images</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:sensor_fingerprint">sensor_fingerprint</a> · <a style="color:#22d3bf" href="opimgforensics:jpeg_ghost_quality">jpeg_ghost_quality</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">compression</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:error_level_map">error_level_map</a> · <a style="color:#22d3bf" href="opimgforensics:jpeg_quality_estimate">jpeg_quality_estimate</a> · <a style="color:#22d3bf" href="opimgforensics:jpeg_ghost_quality">jpeg_ghost_quality</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgforensics.py — IMGFORENSICS 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

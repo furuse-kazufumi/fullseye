@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">synth_frame_series — ASTROSTACK <code style="color:#22d3bf">synth</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">images</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import astrostack; astrostack.synth_frame_series(shape=(128, 128), n_frames=8, dither_px=1.5, fwhm_px=3.2, fwhm_jitter=0.0, n_cosmic=0, seed=0, **starfield_kw)</code>(或 <code style="color:#22d3bf">opsastrostack.get(&quot;synth_frame_series&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>同じ星野を `<code style="color:#22d3bf">n_frames</code>` 枚、<b>別々のノイズと別々のディザ</b>で撮り直す。</p>
+<p>星の座標・フラックスは全フレームで同じ(`<code style="color:#22d3bf">field_seed</code>` を固定して星の抽選を</p>
+<p>再現し、観測ごとの `<code style="color:#22d3bf">seed</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">shift_row</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">shift_col</code>` だけを振る)ので、</p>
+<p>位置合わせ・合成・drizzle の正解が 1 組で済む。*fwhm_jitter* を与えると FWHM がフレームごとに揺れる</p>
+<p>—— これが lucky imaging の「シーイングが揺らぐ」条件で、0 のままだと</p>
+<p>:func:<code style="color:#22d3bf">lucky_select</code> が選ぶ理由が無くなる。</p>
+<p>ディザは `<code style="color:#22d3bf">dither_px</code><code style="color:#22d3bf"> を半径とする決定的な螺旋(</code><code style="color:#22d3bf">i</code>` 番目のフレームを</p>
+<p>`<code style="color:#22d3bf">dither_px * (i / (n-1))</code>` の半径・黄金角の方向へ置く)。乱数でないので</p>
+<p>フレーム数を変えても並びが安定し、図が再現する。</p>
+<p>Returns `<code style="color:#22d3bf">(frames, truth)</code>`:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">frames</code><code style="color:#22d3bf"> —— 長さ </code><code style="color:#22d3bf">n_frames</code><code style="color:#22d3bf"> の list、各要素は </code><code style="color:#22d3bf">(H, W)</code>` float64。</p>
+<p>**`<code style="color:#22d3bf">images</code>` 語彙そのもの**なので、合成 op へそのまま渡せる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">truth</code><code style="color:#22d3bf"> —— :func:</code>synth_starfield<code style="color:#22d3bf"> の truth に、</code><code style="color:#22d3bf">shifts</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(N, 2)</code>`</p>
+<p>(各フレームの `<code style="color:#22d3bf">(dr, dc)</code><code style="color:#22d3bf">)と </code><code style="color:#22d3bf">fwhms</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(N,)</code>` を足したもの。</p>
+<p>`<code style="color:#22d3bf">rows</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cols</code>` は<b>ディザ前</b>(フレーム 0 の位置)。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: :func:</code>synth_starfield` の条件に加えて、</p>
+<p>*n_frames* が 1 未満、*dither_px* が負、*fwhm_jitter* が負の場合。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:astro_stacking">astro_stacking</a> — <code style="color:#22d3bf">py -3.11 examples/astro_stacking.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">images</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:lucky_select">lucky_select</a> · <a style="color:#22d3bf" href="opastrostack:sigma_clip_stack">sigma_clip_stack</a> · <a style="color:#22d3bf" href="opastrostack:drizzle_resample">drizzle_resample</a> · <a style="color:#22d3bf" href="opastrostack:cosmic_ray_reject_stack">cosmic_ray_reject_stack</a> · <a style="color:#22d3bf" href="opastrostack:align_frames">align_frames</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">synth</code>)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:synth_starfield">synth_starfield</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: astrostack.py — ASTROSTACK 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

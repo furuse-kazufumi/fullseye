@@ -1,0 +1,53 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">psf_from_opd — OPTICS <code style="color:#22d3bf">imaging_sim</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import lensimage; lensimage.psf_from_opd(system, field=None, size=None, wavelength_um=None, pixel_pitch_um=None, oversample=4)</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;psf_from_opd&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>Diffraction PSF of the real, aberrated pupil (`<code style="color:#22d3bf">image2d</code>`, sums to 1).</p>
+<p>The pupil function `<code style="color:#22d3bf">P = mask · exp(i·2π·W)</code>` comes from</p>
+<p>:func:<code style="color:#22d3bf">raytrace.opd_samples</code> (*W* in waves on a `<code style="color:#22d3bf">size × size</code>` grid over the</p>
+<p>exit pupil; `<code style="color:#22d3bf">size=None</code>` picks a grid that keeps the phase below 0.4 waves</p>
+<p>per sample, up to :data:<code style="color:#22d3bf">MAX_PUPIL_SAMPLES</code>; an explicit *size* that aliases</p>
+<p>is refused). The PSF is `<code style="color:#22d3bf">|FFT(P)|²</code>` on a zero-padded grid whose sample</p>
+<p>spacing is `<code style="color:#22d3bf">λ·F#·(size−1)/M ≈ λ·F#/oversample</code>` with the working</p>
+<p>f-number `<code style="color:#22d3bf">F# = 1/(2·NA_image)</code><code style="color:#22d3bf"> from :func:</code>raytrace.paraxial_trace`.</p>
+<p>With *pixel_pitch_um* the fine PSF is <b>area-integrated</b> onto detector</p>
+<p>pixels of that pitch (each fine sample is binned into the pixel it falls</p>
+<p>in; the pitch must not be finer than the sample spacing).</p>
+<p>Ground truth (`<code style="color:#22d3bf">tests/test_lensimage.py</code>`): an unaberrated pupil (the</p>
+<p>singlet stopped to a 1 mm semi-aperture) gives the Airy pattern — first</p>
+<p>dark ring at `<code style="color:#22d3bf">1.22·λ·F#</code>` within 3 %, 83.8 % ± 1 % of the energy inside</p>
+<p>it; the f/4 singlet (11 waves of spherical aberration) has a Strehl ratio</p>
+<p>below 0.05 (peak versus the unaberrated peak of the same pupil).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
+<p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
+<p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>
+<p style="margin:2px 0 2px 12px">• **字串一律 <code style="color:#22d3bf">ValueError</code>** —— <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> 會成功,於是未解析的設定值會被當成長度混進來(實測:<code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> 曾回傳看似合理的 66.667 mm)。bool 也按 <code style="color:#22d3bf">True == 1</code> 的隱式提升拒絕。</p>
+<p style="margin:2px 0 2px 12px">• **complex / masked array 一律 <code style="color:#22d3bf">ValueError</code><b>(僅接受實數槽位;拒絕無聲丟棄虛部或剝掉遮罩)。</b>所有輸入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code>**。</p>
+<p style="margin:2px 0 2px 12px">• <b>逐項點名拒絕除零及其近親</b>:焦距 0、曲率半徑 0、折射率 &lt;= 0、全不透明光闌(全為 0,正規化變成 0/0)、總和 &lt;= 0 的 PSF、S0 = 0 的 Stokes 向量、物體位於前焦點(像在無窮遠)。</p>
+<p style="margin:2px 0 2px 12px">• <b>只有兩個運算子會回傳非有限值,而且都寫進了契約</b>:<code style="color:#22d3bf">depth_of_field</code> 在超焦距以外回傳 <code style="color:#22d3bf">far_mm = inf</code>(這正是超焦距的定義),<code style="color:#22d3bf">gaussian_beam</code> 在束腰處回傳 <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(平面波前的曲率半徑)。兩者都同時回傳一個有限的夥伴(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)。**除此之外的無聲 NaN/Inf 都在內部檢出並 <code style="color:#22d3bf">ValueError</code>** ——「float64 溢位了」和「答案是無窮大」是兩種不同的主張,不能拿後者的臉去交付前者。</p>
+<p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:生成網格受 <code style="color:#22d3bf">optics.MAX_GRID</code>(4096)限制,傳入的場/PSF/光闌受 <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24),ABCD 元件序列受 <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024),Zernike 受 <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25)。以 fail-closed 堵住「小參數引發巨大內部配置」的路徑(實測:n_max=40 × 4096² 需要 108 GB)。</p>
+<p style="margin:2px 0 2px 12px">• <b>物理上不可能的狀態同樣拒絕</b>:偏振度 &gt; 1 的 Stokes 向量、負穿透率、負強度、n-|m| 為奇數等非法 Zernike 指標。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:mv_cables">mv_cables</a> — ケーブル（規格・速度・給電・ロボットケーブル）</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:mv_cameras">mv_cameras</a> — 産業用カメラメーカー（センサとの紐付け・ラインスキャン / TDI）</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:mv_frame_grabbers">mv_frame_grabbers</a> — フレームグラバーボード（光学系ではないが、撮れるかを決める）</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:mv_image_sensors">mv_image_sensors</a> — 産業用イメージセンサ（現行品中心）</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:mv_standards">mv_standards</a> — カメラインターフェースの規格と団体</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:virtual_machine_vision">virtual_machine_vision</a> — 仮想マシンビジョン — パラメータの洗い出しとオブジェクト模型</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lens_defect_dataset_demo">lens_defect_dataset_demo</a> — <code style="color:#22d3bf">py -3.11 examples/lens_defect_dataset_demo.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image2d</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opoptics:fraunhofer_pattern">fraunhofer_pattern</a> · <a style="color:#22d3bf" href="opoptics:psf_to_mtf">psf_to_mtf</a> · <a style="color:#22d3bf" href="opoptics:illumination_uniformity">illumination_uniformity</a> · <a style="color:#22d3bf" href="opoptics:render_through_lens">render_through_lens</a> · <a style="color:#22d3bf" href="opoptics:surface_defect">surface_defect</a> · <a style="color:#22d3bf" href="opoptics:defocus_blur">defocus_blur</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">imaging_sim</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:distortion_map">distortion_map</a> · <a style="color:#22d3bf" href="opoptics:render_through_lens">render_through_lens</a> · <a style="color:#22d3bf" href="opoptics:defect_dataset">defect_dataset</a> · <a style="color:#22d3bf" href="opoptics:calibration_views">calibration_views</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: lensimage.py — OPTICS 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

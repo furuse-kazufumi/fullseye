@@ -1,0 +1,69 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fingerprint_correlate — IMGFORENSICS <code style="color:#22d3bf">sensor</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × fingerprint</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import imgforensics; imgforensics.fingerprint_correlate(image, fingerprint, denoiser: &#x27;str&#x27; = &#x27;wiener&#x27;, sigma: &#x27;float&#x27; = 0.02, exclude: &#x27;int&#x27; = 11) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">opsimgforensics.get(&quot;fingerprint_correlate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>1 枚の画像を指紋に照合する。<b>判定は返さない</b> —— 証拠量と注意書きを返す。</p>
+<p>残差 `<code style="color:#22d3bf">W = I - denoise(I)</code><code style="color:#22d3bf"> と参照信号 </code><code style="color:#22d3bf">I·K</code>` の巡回相互相関を FFT で取り、</p>
+<p>正規化相互相関のピークと <b>PCE</b>(peak-to-correlation energy)を返す。</p>
+<p>返り(`<code style="color:#22d3bf">table</code>` 語彙の dict):</p>
+<p>`<code style="color:#22d3bf">pce</code>`          PCE。<b>しきい値は同梱しない</b>(下の caveats 参照)</p>
+<p>`<code style="color:#22d3bf">ncc_peak</code>`     正規化相互相関のピーク値([-1, 1])</p>
+<p>`<code style="color:#22d3bf">peak_shift</code><code style="color:#22d3bf">   ピークの位置 </code><code style="color:#22d3bf">(dy, dx)</code>`。<b>(0, 0) でなければ位置がずれている</b></p>
+<p>= 切り出し / 手ぶれ補正 / リサイズを疑う手がかり</p>
+<p>`<code style="color:#22d3bf">n_pixels</code>`     使った画素数</p>
+<p>`<code style="color:#22d3bf">caveats</code>`      この数値が言えないことの列(文字列)</p>
+<p>`<code style="color:#22d3bf">peak_shift</code><code style="color:#22d3bf"> を返すのは重要で、</code><code style="color:#22d3bf">(0, 0)</code>` 以外のピークは「同じセンサだが</p>
+<p>切り出されている」か「<b>たまたまの相関</b>」のどちらかである。どちらかは</p>
+<p>この op には決められない。実測では別センサの照合はいつも `<code style="color:#22d3bf">(0, 0)</code>` 以外に</p>
+<p>ピークが立ち(`<code style="color:#22d3bf">(-51, -60)</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(31, -8)</code>` など毎回ばらばら)、同一センサは</p>
+<p>必ず `<code style="color:#22d3bf">(0, 0)</code>` に立つ。</p>
+<p><b>再圧縮で PRNU は消える</b>(`<code style="color:#22d3bf">tests/test_imgforensics.py::test_prnu_dies_under_recompression</code>`、</p>
+<p>8 枚から作った指紋・128x128):</p>
+<p>========== ========== ==========</p>
+<p>再圧縮      PCE        無圧縮比</p>
+<p>========== ========== ==========</p>
+<p>無圧縮     7246       1.00</p>
+<p>品質 95    6174       0.85</p>
+<p>品質 90    4214       0.58</p>
+<p>品質 75    1412       0.19</p>
+<p>品質 50     530       0.07</p>
+<p>品質 30     207       0.03</p>
+<p>========== ========== ==========</p>
+<p>つまり <b>低い PCE は「別のカメラ」ではなく「情報が残っていない」かもしれない</b>。</p>
+<p>ここでしきい値を同梱すると、圧縮された画像を機械的に「別カメラ」と判定する</p>
+<p>道具になってしまう。</p>
+<p><b>黙って間違う経路(実測)</b>: `<code style="color:#22d3bf">fingerprint</code>` に指紋ではなく普通の画像を渡すと、</p>
+<p>shape は合っているので例外は出ず、PCE も有限値が返る。指紋は `<code style="color:#22d3bf">(H, W)</code>` の</p>
+<p>float64 なので既存の `<code style="color:#22d3bf">image2d</code>` 述語を完全に満たし、<b>実行時には区別できない</b>。</p>
+<p>そこで入口で「ゼロ平均でない」ものを :class:<code style="color:#22d3bf">ValueError</code> で弾く</p>
+<p>(`<code style="color:#22d3bf">|mean| &gt; 0.05 * std</code>`)。実測</p>
+<p>(`<code style="color:#22d3bf">tests/test_imgforensics.py::test_fingerprint_gate_rejects_plain_images</code>`):</p>
+<p>============================== ==============</p>
+<p>渡したもの                     `<code style="color:#22d3bf">|mean|/std</code>`</p>
+<p>============================== ==============</p>
+<p>:func:<code style="color:#22d3bf">sensor_fingerprint</code> の返り 4.8e-18</p>
+<p>普通の自然画像                 4.626</p>
+<p>暗い画像(平均 0.015)         4.626</p>
+<p>高コントラスト画像             1.801</p>
+<p>============================== ==============</p>
+<p>比は<b>スケール不変</b>なので、暗い画像でも明るい画像でも同じように弾ける</p>
+<p>(0.05 のしきい値から 1.5 桁以上離れている)。</p>
+<p><b>それでも完全ではない</b>: 自分でゼロ平均化した画像を渡すとゲートは通り、</p>
+<p>PCE = -5.97 という有限値が返る(実測)。つまり実行時チェックは</p>
+<p><b>片側しか守れない</b>。これが「指紋を `<code style="color:#22d3bf">image2d</code>` に相乗りさせず語彙を分ける」</p>
+<p>判断の根拠で、詳細は `<code style="color:#22d3bf">opsimgforensics</code>` の docstring にある。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_forensics_audit">image_forensics_audit</a> — <code style="color:#22d3bf">py -3.11 examples/image_forensics_audit.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:evidence_quantile">evidence_quantile</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">sensor</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:sensor_fingerprint">sensor_fingerprint</a> · <a style="color:#22d3bf" href="opimgforensics:fingerprint_strength_map">fingerprint_strength_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgforensics.py — IMGFORENSICS 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

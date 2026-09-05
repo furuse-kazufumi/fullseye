@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vol_label_slice_rgb — VOLCOLOR <code style="color:#22d3bf">slice</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">rgbvolume</code> → <code style="color:#22d3bf">rgbimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import volcolor; volcolor.vol_label_slice_rgb(rgbvol, index: &#x27;int&#x27;, axis=&#x27;z&#x27;)</code>(或 <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_slice_rgb&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>色付きボリュームから 1 枚の断面 RGB を取り出す(axial / coronal / sagittal)。</p>
+<p>*axis* は `<code style="color:#22d3bf">&quot;z&quot;</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">&quot;axial&quot;</code><code style="color:#22d3bf">/0(</code><code style="color:#22d3bf">(H, W, 3)</code><code style="color:#22d3bf"> が返る)、</code><code style="color:#22d3bf">&quot;y&quot;</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">&quot;coronal&quot;</code>`/1</p>
+<p>(`<code style="color:#22d3bf">(D, W, 3)</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">&quot;x&quot;</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">&quot;sagittal&quot;</code><code style="color:#22d3bf">/2(</code><code style="color:#22d3bf">(D, H, 3)</code>`)。**返る 2 軸が</p>
+<p>軸ごとに違う**のは `<code style="color:#22d3bf">(D, H, W)</code><code style="color:#22d3bf"> から 1 軸抜くのだから当然だが、</code><code style="color:#22d3bf">(H, W)</code>` を</p>
+<p>期待して受けると縦横が入れ替わった絵が例外なしに出る。3 通りの形は</p>
+<p>`<code style="color:#22d3bf">tests/test_volcolor.py::test_slice_axes_shapes_and_content</code>` が固定している。</p>
+<p>*index* は<b>非負</b>でなければならない。`<code style="color:#22d3bf">-1</code>` を「最後の断面」として黙って</p>
+<p>受けると、範囲外の指定が最後の断面として通ってしまう(切り出す位置が</p>
+<p>1 箇所ずれた図は、機械にも目にも「壊れている」と見えない)。</p>
+<p>Returns a contiguous float64 `<code style="color:#22d3bf">(..., 3)</code><code style="color:#22d3bf"> copy. Raises </code><code style="color:#22d3bf">ValueError</code>` for a bad</p>
+<p>volume, an unknown *axis*, or an out-of-range / negative *index*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:voxel_labels_color">voxel_labels_color</a> — <code style="color:#22d3bf">py -3.11 examples/voxel_labels_color.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">rgbimage</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">slice</code>)</h3>
+<p><a style="color:#22d3bf" href="opvolcolor:vol_label_mpr_rgb">vol_label_mpr_rgb</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: volcolor.py — VOLCOLOR 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,290 +1,583 @@
 {
-  "_note": "Fullseye Studio localisation data. Loaded at runtime by studio.py (edit here, not in code). Add a NEW language by (1) adding it to 'languages' below, (2) adding its code to each 'tooltips' entry, (3) adding a 'guide' string, and optionally (4) dropping op-help files named <op>.<code>.html under op_help/. No code change is needed. 'en' is always the base/fallback.",
-  "languages": {
-    "en": "English",
-    "ja": "日本語",
-    "zh": "中文"
+ "_note": "Fullseye Studio localisation data. Loaded at runtime by studio.py (edit here, not in code). Add a NEW language by (1) adding it to 'languages' below, (2) adding its code to each 'tooltips' entry, (3) adding a 'guide' string, and optionally (4) dropping op-help files named <op>.<code>.html under op_help/. No code change is needed. 'en' is always the base/fallback.",
+ "languages": {
+  "en": "English",
+  "ja": "日本語",
+  "zh": "简体中文",
+  "tw": "繁體中文",
+  "ko": "한국어",
+  "de": "Deutsch"
+ },
+ "tooltips": {
+  "Load an image file (Ctrl+O)": {
+   "ja": "画像ファイルを開く (Ctrl+O)",
+   "zh": "加载图像文件 (Ctrl+O)",
+   "tw": "載入影像檔 (Ctrl+O)",
+   "ko": "이미지 파일 불러오기 (Ctrl+O)",
+   "de": "Bilddatei laden (Strg+O)"
   },
-  "tooltips": {
-    "Load an image file (Ctrl+O)": {
-      "ja": "画像ファイルを開く (Ctrl+O)",
-      "zh": "打开图像文件 (Ctrl+O)"
-    },
-    "Load the synthetic demo scene (Ctrl+D)": {
-      "ja": "合成デモ画像を読み込む (Ctrl+D)",
-      "zh": "载入合成演示图像 (Ctrl+D)"
-    },
-    "Save the displayed result (Ctrl+S)": {
-      "ja": "表示中の結果を保存 (Ctrl+S)",
-      "zh": "保存当前结果 (Ctrl+S)"
-    },
-    "Filter operators by category": {
-      "ja": "オペレータをカテゴリで絞り込む",
-      "zh": "按类别筛选算子"
-    },
-    "Filter by op name, HALCON alias or category": {
-      "ja": "op 名・HALCON 別名・カテゴリで絞り込む",
-      "zh": "按算子名、HALCON 别名或类别筛选"
-    },
-    "Double-click an operator to insert it into the pipeline": {
-      "ja": "オペレータをダブルクリックでパイプラインに挿入",
-      "zh": "双击算子将其插入流水线"
-    },
-    "The selected operator's input→output sorts, HALCON alias and knob roles": {
-      "ja": "選択中 op の入力→出力の型・HALCON 別名・ノブの意味",
-      "zh": "所选算子的输入→输出类型、HALCON 别名与旋钮含义"
-    },
-    "Append the selected operator to the pipeline (or press Enter / double-click)": {
-      "ja": "選択中 op をパイプライン末尾に追加(Enter / ダブルクリックでも可)",
-      "zh": "将所选算子追加到流水线(也可按 Enter / 双击)"
-    },
-    "Replace the pipeline with a ready-made sample recipe": {
-      "ja": "既成のサンプルレシピでパイプラインを置き換える",
-      "zh": "用现成的示例配方替换流水线"
-    },
-    "Remove the selected stage (Del)": {
-      "ja": "選択中ステージを削除 (Del)",
-      "zh": "删除所选阶段 (Del)"
-    },
-    "Move the selected stage earlier (Ctrl+Up)": {
-      "ja": "選択中ステージを前へ移動 (Ctrl+Up)",
-      "zh": "将所选阶段前移 (Ctrl+Up)"
-    },
-    "Move the selected stage later (Ctrl+Down)": {
-      "ja": "選択中ステージを後ろへ移動 (Ctrl+Down)",
-      "zh": "将所选阶段后移 (Ctrl+Down)"
-    },
-    "Show the raw image (Home)": {
-      "ja": "元画像を表示 (Home)",
-      "zh": "显示原始图像 (Home)"
-    },
-    "Advance one stage (Ctrl+Right)": {
-      "ja": "1 ステージ進める (Ctrl+Right)",
-      "zh": "前进一个阶段 (Ctrl+Right)"
-    },
-    "Show the final result (Ctrl+Enter)": {
-      "ja": "最終結果を表示 (Ctrl+Enter)",
-      "zh": "显示最终结果 (Ctrl+Enter)"
-    },
-    "Knob a (0..1) — meaning depends on the selected op": {
-      "ja": "ノブ a (0..1) — 意味は選択中 op に依存",
-      "zh": "旋钮 a (0..1) — 含义取决于所选算子"
-    },
-    "Knob b (0..1) — meaning depends on the selected op": {
-      "ja": "ノブ b (0..1) — 意味は選択中 op に依存",
-      "zh": "旋钮 b (0..1) — 含义取决于所选算子"
-    },
-    "Copy this pipeline as an --ops string and Python (Ctrl+E)": {
-      "ja": "パイプラインを --ops 文字列と Python として書き出す (Ctrl+E)",
-      "zh": "将流水线导出为 --ops 字符串和 Python (Ctrl+E)"
-    },
-    "Colour-map the current 2-D result for display": {
-      "ja": "現在の 2D 結果を疑似カラー表示",
-      "zh": "对当前 2D 结果进行伪彩色显示"
-    },
-    "Rotatable 3-D surface (Ctrl+3)": {
-      "ja": "回転可能な 3D サーフェス (Ctrl+3)",
-      "zh": "可旋转的 3D 曲面 (Ctrl+3)"
-    },
-    "Two-frame perception mode": {
-      "ja": "2 フレーム知覚モード",
-      "zh": "双帧感知模式"
-    },
-    "Open an image file (Ctrl+O)": {
-      "ja": "画像ファイルを開く (Ctrl+O)",
-      "zh": "打开图像文件 (Ctrl+O)"
-    },
-    "Edit the pipeline as code — one `op a b` per line (# starts a comment).\nType for autocomplete; click the gutter to toggle a breakpoint.": {
-      "ja": "パイプラインをコードとして編集 — 1 行 1 op「op a b」(# 以降はコメント)。\n入力で自動補完・行番号左をクリックでブレークポイント切替。",
-      "zh": "以代码方式编辑流水线 — 每行一个「op a b」(# 之后为注释)。\n输入即自动补全;点击行号槽可切换断点。"
-    },
-    "Run every line, timing each; stops at a breakpoint (Ctrl+Shift+Return)": {
-      "ja": "全行を実行し各行を計時・ブレークポイントで停止 (Ctrl+Shift+Return)",
-      "zh": "运行每一行并计时;在断点处停止 (Ctrl+Shift+Return)"
-    },
-    "Execute one more line and show its result (F10)": {
-      "ja": "1 行実行して結果を表示 (F10)",
-      "zh": "再执行一行并显示结果 (F10)"
-    },
-    "Clear the run highlight and per-line timings": {
-      "ja": "実行ハイライトと行ごとの計時をクリア",
-      "zh": "清除运行高亮与每行计时"
-    },
-    "Parse the code and replace the pipeline": {
-      "ja": "コードを解析してパイプラインを置き換える",
-      "zh": "解析代码并替换流水线"
-    },
-    "Regenerate the code from the current pipeline": {
-      "ja": "現在のパイプラインからコードを再生成",
-      "zh": "根据当前流水线重新生成代码"
-    },
-    "Every pipeline variable: the input frame and each stage's output.\nSelect one to inspect it; the buttons display it in a graphics window.": {
-      "ja": "全パイプライン変数(入力フレームと各ステージ出力)。\n選択で検査・ボタンでグラフィクス窓に表示。",
-      "zh": "所有流水线变量(输入帧与各阶段输出)。\n选择以检查;按钮可在图形窗口中显示。"
-    },
-    "Open the selected variable in a new graphics window": {
-      "ja": "選択中の変数を新しいグラフィクス窓で開く",
-      "zh": "在新图形窗口中打开所选变量"
-    },
-    "Show the selected variable in the main graphics window": {
-      "ja": "選択中の変数をメイングラフィクス窓に表示",
-      "zh": "在主图形窗口中显示所选变量"
-    },
-    "Open another image / result window": {
-      "ja": "別の画像/結果ウィンドウを開く",
-      "zh": "打开另一个图像/结果窗口"
-    },
-    "Restore the default tool-panel layout": {
-      "ja": "ツールパネル配置を初期状態に戻す",
-      "zh": "恢复默认工具面板布局"
-    },
-    "Detach every tool panel to its own window — move them across monitors": {
-      "ja": "各ツールパネルを独立ウィンドウに分離 — 複数モニタへ移動可",
-      "zh": "将每个工具面板分离为独立窗口 — 可移动到多显示器"
-    },
-    "Re-dock every floated tool panel": {
-      "ja": "分離した全パネルを再ドック",
-      "zh": "重新停靠所有浮动面板"
-    },
-    "Show the selected operator's HTML help (image-processing details)": {
-      "ja": "選択中 op の HTML ヘルプを表示(画像処理の詳細)",
-      "zh": "显示所选算子的 HTML 帮助(图像处理细节)"
-    }
+  "Load the synthetic demo scene (Ctrl+D)": {
+   "ja": "合成デモ画像を読み込む (Ctrl+D)",
+   "zh": "加载合成演示场景 (Ctrl+D)",
+   "tw": "載入合成示範場景 (Ctrl+D)",
+   "ko": "합성 데모 장면 불러오기 (Ctrl+D)",
+   "de": "Synthetische Demoszene laden (Strg+D)"
   },
-  "guide": {
-    "en": "Fullseye Studio — quick guide\n\n• Operators panel: pick an op, read its signature + HTML help, Insert into the pipeline.\n• Program (code) panel: edit the pipeline as text, autocomplete as you type,\n  click the gutter for breakpoints, Run (timed) shows each line's ms.\n• Variables & Objects: every stage's output; display any of them in a graphics window.\n• Windows menu: show/float every panel, open several graphics windows,\n  or 'Float all panels' for multi-monitor work.\n• The window position, panel layout and language are remembered between sessions.",
-    "ja": "Fullseye Studio — クイックガイド\n\n• Operators パネル: op を選び署名と HTML ヘルプを読み、Insert でパイプラインへ。\n• Program(コード)パネル: パイプラインをテキスト編集、入力で自動補完、\n  行番号左でブレークポイント、Run(計時)で各行の ms を表示。\n• Variables & Objects: 各ステージの出力。任意の変数をグラフィクス窓に表示。\n• Windows メニュー: 各パネルの表示/フロート、複数グラフィクス窓、\n  「Float all panels」で複数モニタ作業。\n• ウィンドウ位置・パネル配置・言語はセッション間で記憶されます。",
-    "zh": "Fullseye Studio — 快速指南\n\n• 算子面板:选择算子,查看其签名与 HTML 帮助,点击 Insert 加入流水线。\n• 程序(代码)面板:以文本编辑流水线,输入即自动补全,\n  点击行号槽设断点,Run(计时)显示每行毫秒。\n• 变量与对象:每个阶段的输出;可在图形窗口中显示任意变量。\n• Windows 菜单:显示/浮动各面板、打开多个图形窗口,\n  或用「Float all panels」进行多显示器工作。\n• 窗口位置、面板布局与语言会在会话之间保存。"
+  "Save the displayed result (Ctrl+S)": {
+   "ja": "表示中の結果を保存 (Ctrl+S)",
+   "zh": "保存显示的结果 (Ctrl+S)",
+   "tw": "儲存顯示的結果 (Ctrl+S)",
+   "ko": "표시된 결과 저장 (Ctrl+S)",
+   "de": "Angezeigtes Ergebnis speichern (Strg+S)"
   },
-  "strings": {
-    "&File": {
-      "ja": "ファイル(&F)"
-    },
-    "&Edit": {
-      "ja": "編集(&E)"
-    },
-    "&View": {
-      "ja": "表示(&V)"
-    },
-    "&Run": {
-      "ja": "実行(&R)"
-    },
-    "&Window": {
-      "ja": "ウィンドウ(&W)"
-    },
-    "&Tools": {
-      "ja": "ツール(&T)"
-    },
-    "&Help": {
-      "ja": "ヘルプ(&H)"
-    },
-    "Python Editor…": {
-      "ja": "Python エディタ…"
-    },
-    "2-D Examples…": {
-      "ja": "2D サンプル集…"
-    },
-    "3-D Examples…": {
-      "ja": "3D サンプル集…"
-    },
-    "3-D Operators…": {
-      "ja": "3D オペレータ一覧…"
-    },
-    "System settings…": {
-      "ja": "環境設定…"
-    },
-    "Feedback / Report an issue…": {
-      "ja": "フィードバック / 問題を報告…"
-    },
-    "dev_* visualization demo": {
-      "ja": "dev_* 可視化デモ"
-    },
-    "New graphics window": {
-      "ja": "新しいグラフィクスウィンドウ"
-    },
-    "Tile graphics windows": {
-      "ja": "グラフィクスウィンドウを並べて表示"
-    },
-    "Cascade graphics windows": {
-      "ja": "グラフィクスウィンドウを重ねて表示"
-    },
-    "Quick guide (en/ja/zh)": {
-      "ja": "クイックガイド (en/ja/zh)"
-    },
-    "New": {
-      "ja": "新規"
-    },
-    "Open…": {
-      "ja": "開く…"
-    },
-    "Save": {
-      "ja": "保存"
-    },
-    "Save as…": {
-      "ja": "名前を付けて保存…"
-    },
-    "Samples ▾": {
-      "ja": "サンプル ▾"
-    },
-    "Stop": {
-      "ja": "停止"
-    },
-    "Run (F5)": {
-      "ja": "実行 (F5)"
-    },
-    "Run": {
-      "ja": "実行"
-    },
-    "Copy code": {
-      "ja": "コードをコピー"
-    },
-    "Open in editor": {
-      "ja": "エディタで開く"
-    },
-    "Open in window": {
-      "ja": "ウィンドウで開く"
-    },
-    "Copy all": {
-      "ja": "全部コピー"
-    },
-    "Execution": {
-      "ja": "実行"
-    },
-    "Windows": {
-      "ja": "ウィンドウ"
-    },
-    "Display": {
-      "ja": "表示"
-    },
-    "Editor": {
-      "ja": "エディタ"
-    },
-    "Threads (thread_num)": {
-      "ja": "スレッド数 (thread_num)"
-    },
-    "Operator timeout": {
-      "ja": "オペレータタイムアウト"
-    },
-    "Max graphics windows": {
-      "ja": "グラフィクスウィンドウ上限"
-    },
-    "Default display mode": {
-      "ja": "既定の表示モード"
-    },
-    "Region draw (dev_set_draw)": {
-      "ja": "Region 描画 (dev_set_draw)"
-    },
-    "Region line width": {
-      "ja": "Region 線幅"
-    },
-    "Editor font size": {
-      "ja": "エディタのフォントサイズ"
-    },
-    "Python Editor interpreter": {
-      "ja": "Python エディタの実行インタプリタ"
-    },
-    "Error checking (set_check)": {
-      "ja": "エラー検査 (set_check)"
-    }
+  "Filter operators by category": {
+   "ja": "オペレータをカテゴリで絞り込む",
+   "zh": "按类别筛选算子",
+   "tw": "依類別篩選運算子",
+   "ko": "카테고리로 연산자 거르기",
+   "de": "Operatoren nach Kategorie filtern"
+  },
+  "Filter by op name, HALCON alias or category": {
+   "ja": "op 名・HALCON 別名・カテゴリで絞り込む",
+   "zh": "按算子名、HALCON 别名或类别筛选",
+   "tw": "依運算子名稱、HALCON 別名或類別篩選",
+   "ko": "연산자 이름·HALCON 별칭·카테고리로 거르기",
+   "de": "Nach Operatorname, HALCON-Alias oder Kategorie filtern"
+  },
+  "Double-click an operator to insert it into the pipeline": {
+   "ja": "オペレータをダブルクリックでパイプラインに挿入",
+   "zh": "双击算子即可插入流水线",
+   "tw": "按兩下運算子即可插入管線",
+   "ko": "연산자를 두 번 누르면 파이프라인에 삽입됩니다",
+   "de": "Doppelklick auf einen Operator fügt ihn in die Pipeline ein"
+  },
+  "The selected operator's input→output sorts, HALCON alias and knob roles": {
+   "ja": "選択中 op の入力→出力の型・HALCON 別名・ノブの意味",
+   "zh": "所选算子的输入→输出类别、HALCON 别名与旋钮含义",
+   "tw": "所選運算子的輸入→輸出類別、HALCON 別名與旋鈕含義",
+   "ko": "선택한 연산자의 입력→출력 종류, HALCON 별칭, 노브의 역할",
+   "de": "Eingabe-→Ausgabe-Sorten, HALCON-Alias und Reglerbedeutung des gewählten Operators"
+  },
+  "Append the selected operator to the pipeline (or press Enter / double-click)": {
+   "ja": "選択中 op をパイプライン末尾に追加(Enter / ダブルクリックでも可)",
+   "zh": "把所选算子追加到流水线(或按 Enter / 双击)",
+   "tw": "把所選運算子附加到管線(或按 Enter / 按兩下)",
+   "ko": "선택한 연산자를 파이프라인에 추가(Enter 또는 더블클릭으로도 가능)",
+   "de": "Gewählten Operator an die Pipeline anhängen (oder Enter / Doppelklick)"
+  },
+  "Replace the pipeline with a ready-made sample recipe": {
+   "ja": "既成のサンプルレシピでパイプラインを置き換える",
+   "zh": "用现成的示例配方替换流水线",
+   "tw": "用現成的範例配方取代管線",
+   "ko": "미리 만들어 둔 샘플 레시피로 파이프라인을 교체",
+   "de": "Pipeline durch ein fertiges Beispielrezept ersetzen"
+  },
+  "Remove the selected stage (Del)": {
+   "ja": "選択中ステージを削除 (Del)",
+   "zh": "删除所选阶段 (Del)",
+   "tw": "刪除所選階段 (Del)",
+   "ko": "선택한 단계 삭제 (Del)",
+   "de": "Gewählte Stufe entfernen (Entf)"
+  },
+  "Move the selected stage earlier (Ctrl+Up)": {
+   "ja": "選択中ステージを前へ移動 (Ctrl+Up)",
+   "zh": "把所选阶段前移 (Ctrl+Up)",
+   "tw": "把所選階段前移 (Ctrl+Up)",
+   "ko": "선택한 단계를 앞으로 이동 (Ctrl+Up)",
+   "de": "Gewählte Stufe nach vorn (Strg+Auf)"
+  },
+  "Move the selected stage later (Ctrl+Down)": {
+   "ja": "選択中ステージを後ろへ移動 (Ctrl+Down)",
+   "zh": "把所选阶段后移 (Ctrl+Down)",
+   "tw": "把所選階段後移 (Ctrl+Down)",
+   "ko": "선택한 단계를 뒤로 이동 (Ctrl+Down)",
+   "de": "Gewählte Stufe nach hinten (Strg+Ab)"
+  },
+  "Show the raw image (Home)": {
+   "ja": "元画像を表示 (Home)",
+   "zh": "显示原始图像 (Home)",
+   "tw": "顯示原始影像 (Home)",
+   "ko": "원본 이미지 표시 (Home)",
+   "de": "Rohbild anzeigen (Pos1)"
+  },
+  "Advance one stage (Ctrl+Right)": {
+   "ja": "1 ステージ進める (Ctrl+Right)",
+   "zh": "前进一个阶段 (Ctrl+Right)",
+   "tw": "前進一個階段 (Ctrl+Right)",
+   "ko": "한 단계 진행 (Ctrl+Right)",
+   "de": "Eine Stufe weiter (Strg+Rechts)"
+  },
+  "Show the final result (Ctrl+Enter)": {
+   "ja": "最終結果を表示 (Ctrl+Enter)",
+   "zh": "显示最终结果 (Ctrl+Enter)",
+   "tw": "顯示最終結果 (Ctrl+Enter)",
+   "ko": "최종 결과 표시 (Ctrl+Enter)",
+   "de": "Endergebnis anzeigen (Strg+Eingabe)"
+  },
+  "Knob a (0..1) — meaning depends on the selected op": {
+   "ja": "ノブ a (0..1) — 意味は選択中 op に依存",
+   "zh": "旋钮 a (0..1) —— 含义取决于所选算子",
+   "tw": "旋鈕 a (0..1) —— 含義取決於所選運算子",
+   "ko": "노브 a (0..1) —— 의미는 선택한 연산자에 따라 다름",
+   "de": "Regler a (0..1) — Bedeutung hängt vom gewählten Operator ab"
+  },
+  "Knob b (0..1) — meaning depends on the selected op": {
+   "ja": "ノブ b (0..1) — 意味は選択中 op に依存",
+   "zh": "旋钮 b (0..1) —— 含义取决于所选算子",
+   "tw": "旋鈕 b (0..1) —— 含義取決於所選運算子",
+   "ko": "노브 b (0..1) —— 의미는 선택한 연산자에 따라 다름",
+   "de": "Regler b (0..1) — Bedeutung hängt vom gewählten Operator ab"
+  },
+  "Copy this pipeline as an --ops string and Python (Ctrl+E)": {
+   "ja": "パイプラインを --ops 文字列と Python として書き出す (Ctrl+E)",
+   "zh": "把该流水线复制为 --ops 字符串与 Python 代码 (Ctrl+E)",
+   "tw": "把該管線複製為 --ops 字串與 Python 程式碼 (Ctrl+E)",
+   "ko": "이 파이프라인을 --ops 문자열과 Python 코드로 복사 (Ctrl+E)",
+   "de": "Diese Pipeline als --ops-String und Python kopieren (Strg+E)"
+  },
+  "Colour-map the current 2-D result for display": {
+   "ja": "現在の 2D 結果を疑似カラー表示",
+   "zh": "为当前 2-D 结果着色以便显示",
+   "tw": "為目前 2-D 結果著色以便顯示",
+   "ko": "현재 2-D 결과에 색을 입혀 표시",
+   "de": "Aktuelles 2-D-Ergebnis zur Anzeige einfärben"
+  },
+  "Rotatable 3-D surface (Ctrl+3)": {
+   "ja": "回転可能な 3D サーフェス (Ctrl+3)",
+   "zh": "可旋转的 3-D 曲面 (Ctrl+3)",
+   "tw": "可旋轉的 3-D 曲面 (Ctrl+3)",
+   "ko": "회전 가능한 3-D 표면 (Ctrl+3)",
+   "de": "Drehbare 3-D-Oberfläche (Strg+3)"
+  },
+  "Two-frame perception mode": {
+   "ja": "2 フレーム知覚モード",
+   "zh": "双帧感知模式",
+   "tw": "雙影格感知模式",
+   "ko": "두 프레임 지각 모드",
+   "de": "Zwei-Bild-Wahrnehmungsmodus"
+  },
+  "Open an image file (Ctrl+O)": {
+   "ja": "画像ファイルを開く (Ctrl+O)",
+   "zh": "打开图像文件 (Ctrl+O)",
+   "tw": "開啟影像檔 (Ctrl+O)",
+   "ko": "이미지 파일 열기 (Ctrl+O)",
+   "de": "Bilddatei öffnen (Strg+O)"
+  },
+  "Edit the pipeline as code — one `op a b` per line (# starts a comment).\nType for autocomplete; click the gutter to toggle a breakpoint.": {
+   "ja": "パイプラインをコードとして編集 — 1 行 1 op「op a b」(# 以降はコメント)。\n入力で自動補完・行番号左をクリックでブレークポイント切替。",
+   "zh": "以代码方式编辑流水线 —— 每行一个 `op a b`(# 开始注释)。\n输入时自动补全;点击行号槽切换断点。",
+   "tw": "以程式碼方式編輯管線 —— 每行一個 `op a b`(# 開始註解)。\n輸入時自動完成;點擊行號槽切換中斷點。",
+   "ko": "파이프라인을 코드로 편집 —— 한 줄에 `op a b` 하나(# 부터는 주석).\n입력하면 자동 완성되고, 여백을 누르면 중단점이 켜집니다.",
+   "de": "Pipeline als Code bearbeiten — ein `op a b` pro Zeile (# beginnt einen Kommentar).\nTippen vervollständigt automatisch; Klick auf den Rand setzt einen Haltepunkt."
+  },
+  "Run every line, timing each; stops at a breakpoint (Ctrl+Shift+Return)": {
+   "ja": "全行を実行し各行を計時・ブレークポイントで停止 (Ctrl+Shift+Return)",
+   "zh": "逐行运行并计时;遇断点停止 (Ctrl+Shift+Return)",
+   "tw": "逐行執行並計時;遇中斷點停止 (Ctrl+Shift+Return)",
+   "ko": "모든 줄을 실행하며 시간을 재고, 중단점에서 멈춥니다 (Ctrl+Shift+Return)",
+   "de": "Jede Zeile ausführen und messen; hält am Haltepunkt (Strg+Umschalt+Eingabe)"
+  },
+  "Execute one more line and show its result (F10)": {
+   "ja": "1 行実行して結果を表示 (F10)",
+   "zh": "再执行一行并显示结果 (F10)",
+   "tw": "再執行一行並顯示結果 (F10)",
+   "ko": "한 줄 더 실행하고 결과를 표시 (F10)",
+   "de": "Eine weitere Zeile ausführen und ihr Ergebnis zeigen (F10)"
+  },
+  "Clear the run highlight and per-line timings": {
+   "ja": "実行ハイライトと行ごとの計時をクリア",
+   "zh": "清除运行高亮与逐行计时",
+   "tw": "清除執行高亮與逐行計時",
+   "ko": "실행 강조와 줄별 시간 표시를 지웁니다",
+   "de": "Ausführungsmarkierung und Zeilenzeiten löschen"
+  },
+  "Parse the code and replace the pipeline": {
+   "ja": "コードを解析してパイプラインを置き換える",
+   "zh": "解析代码并替换流水线",
+   "tw": "解析程式碼並取代管線",
+   "ko": "코드를 해석해 파이프라인을 교체",
+   "de": "Code parsen und Pipeline ersetzen"
+  },
+  "Regenerate the code from the current pipeline": {
+   "ja": "現在のパイプラインからコードを再生成",
+   "zh": "从当前流水线重新生成代码",
+   "tw": "從目前管線重新產生程式碼",
+   "ko": "현재 파이프라인에서 코드를 다시 생성",
+   "de": "Code aus der aktuellen Pipeline neu erzeugen"
+  },
+  "Every pipeline variable: the input frame and each stage's output.\nSelect one to inspect it; the buttons display it in a graphics window.": {
+   "ja": "全パイプライン変数(入力フレームと各ステージ出力)。\n選択で検査・ボタンでグラフィクス窓に表示。",
+   "zh": "流水线的全部变量:输入帧与每个阶段的输出。\n选中即可查看;按钮可在图形窗口中显示。",
+   "tw": "管線的全部變數:輸入影格與每個階段的輸出。\n選取即可檢視;按鈕可在圖形視窗中顯示。",
+   "ko": "파이프라인의 모든 변수: 입력 프레임과 각 단계의 출력.\n선택하면 살펴볼 수 있고, 버튼으로 그래픽 창에 표시합니다.",
+   "de": "Alle Pipeline-Variablen: das Eingabebild und die Ausgabe jeder Stufe.\nEine auswählen, um sie zu prüfen; die Schaltflächen zeigen sie im Grafikfenster."
+  },
+  "Open the selected variable in a new graphics window": {
+   "ja": "選択中の変数を新しいグラフィクス窓で開く",
+   "zh": "在新图形窗口中打开所选变量",
+   "tw": "在新圖形視窗中開啟所選變數",
+   "ko": "선택한 변수를 새 그래픽 창에서 열기",
+   "de": "Gewählte Variable in einem neuen Grafikfenster öffnen"
+  },
+  "Show the selected variable in the main graphics window": {
+   "ja": "選択中の変数をメイングラフィクス窓に表示",
+   "zh": "在主图形窗口中显示所选变量",
+   "tw": "在主圖形視窗中顯示所選變數",
+   "ko": "선택한 변수를 메인 그래픽 창에 표시",
+   "de": "Gewählte Variable im Hauptgrafikfenster anzeigen"
+  },
+  "Open another image / result window": {
+   "ja": "別の画像/結果ウィンドウを開く",
+   "zh": "再打开一个图像 / 结果窗口",
+   "tw": "再開啟一個影像 / 結果視窗",
+   "ko": "이미지 / 결과 창을 하나 더 열기",
+   "de": "Ein weiteres Bild-/Ergebnisfenster öffnen"
+  },
+  "Restore the default tool-panel layout": {
+   "ja": "ツールパネル配置を初期状態に戻す",
+   "zh": "恢复默认工具面板布局",
+   "tw": "還原預設工具面板配置",
+   "ko": "도구 패널 배치를 기본값으로 되돌리기",
+   "de": "Standardlayout der Werkzeugpanels wiederherstellen"
+  },
+  "Detach every tool panel to its own window — move them across monitors": {
+   "ja": "各ツールパネルを独立ウィンドウに分離 — 複数モニタへ移動可",
+   "zh": "把每个工具面板拆成独立窗口 —— 可跨显示器摆放",
+   "tw": "把每個工具面板拆成獨立視窗 —— 可跨螢幕擺放",
+   "ko": "모든 도구 패널을 각각의 창으로 분리 —— 여러 모니터에 나눠 놓을 수 있습니다",
+   "de": "Jedes Werkzeugpanel in ein eigenes Fenster lösen — über mehrere Monitore verteilen"
+  },
+  "Re-dock every floated tool panel": {
+   "ja": "分離した全パネルを再ドック",
+   "zh": "把浮动的工具面板全部重新停靠",
+   "tw": "把浮動的工具面板全部重新停駐",
+   "ko": "떠 있는 도구 패널을 모두 다시 도킹",
+   "de": "Alle gelösten Werkzeugpanels wieder andocken"
+  },
+  "Show the selected operator's HTML help (image-processing details)": {
+   "ja": "選択中 op の HTML ヘルプを表示(画像処理の詳細)",
+   "zh": "显示所选算子的 HTML 帮助(图像处理细节)",
+   "tw": "顯示所選運算子的 HTML 說明(影像處理細節)",
+   "ko": "선택한 연산자의 HTML 도움말 표시(영상 처리 상세)",
+   "de": "HTML-Hilfe des gewählten Operators anzeigen (Details zur Bildverarbeitung)"
   }
+ },
+ "guide": {
+  "en": "Fullseye Studio — quick guide\n\n• Operators panel: pick an op, read its signature + HTML help, Insert into the pipeline.\n• Program (code) panel: edit the pipeline as text, autocomplete as you type,\n  click the gutter for breakpoints, Run (timed) shows each line's ms.\n• Variables & Objects: every stage's output; display any of them in a graphics window.\n• Windows menu: show/float every panel, open several graphics windows,\n  or 'Float all panels' for multi-monitor work.\n• The window position, panel layout and language are remembered between sessions.",
+  "ja": "Fullseye Studio — クイックガイド\n\n• Operators パネル: op を選び署名と HTML ヘルプを読み、Insert でパイプラインへ。\n• Program(コード)パネル: パイプラインをテキスト編集、入力で自動補完、\n  行番号左でブレークポイント、Run(計時)で各行の ms を表示。\n• Variables & Objects: 各ステージの出力。任意の変数をグラフィクス窓に表示。\n• Windows メニュー: 各パネルの表示/フロート、複数グラフィクス窓、\n  「Float all panels」で複数モニタ作業。\n• ウィンドウ位置・パネル配置・言語はセッション間で記憶されます。",
+  "zh": "Fullseye Studio — 快速指南\n\n• 算子面板:选择算子,查看其签名与 HTML 帮助,点击 Insert 加入流水线。\n• 程序(代码)面板:以文本编辑流水线,输入即自动补全,\n  点击行号槽设断点,Run(计时)显示每行毫秒。\n• 变量与对象:每个阶段的输出;可在图形窗口中显示任意变量。\n• Windows 菜单:显示/浮动各面板、打开多个图形窗口,\n  或用「Float all panels」进行多显示器工作。\n• 窗口位置、面板布局与语言会在会话之间保存。",
+  "tw": "Fullseye Studio — 快速指南\n\n• 運算子面板:挑一個運算子,讀它的簽章 + HTML 說明,再 Insert 進管線。\n• Program(程式碼)面板:以文字編輯管線,輸入時自動完成,\n  點擊行號槽設中斷點,Run(計時)會顯示每行的 ms。\n• Variables & Objects:每個階段的輸出;任何一個都能顯示在圖形視窗。\n• Windows 選單:顯示/浮動各面板,開多個圖形視窗,\n  或用 'Float all panels' 做多螢幕作業。\n• 視窗位置、面板配置與語言會在下次啟動時還原。",
+  "ko": "Fullseye Studio — 빠른 안내\n\n• 연산자 패널: 연산자를 고르고, 시그니처와 HTML 도움말을 읽고, Insert 로 파이프라인에 넣습니다.\n• Program(코드) 패널: 파이프라인을 텍스트로 편집합니다. 입력하면 자동 완성되고,\n  여백을 누르면 중단점이 켜지며, Run(계측)은 각 줄의 ms 를 보여 줍니다.\n• Variables & Objects: 각 단계의 출력. 어느 것이든 그래픽 창에 표시할 수 있습니다.\n• Windows 메뉴: 패널을 표시/분리하고, 그래픽 창을 여러 개 열고,\n  여러 모니터로 작업하려면 'Float all panels' 를 씁니다.\n• 창 위치, 패널 배치, 언어는 다음 실행 때 복원됩니다.",
+  "de": "Fullseye Studio — Kurzanleitung\n\n• Operatoren-Panel: einen Operator wählen, seine Signatur und HTML-Hilfe lesen,\n  mit Insert in die Pipeline übernehmen.\n• Program-Panel (Code): die Pipeline als Text bearbeiten, Autovervollständigung\n  beim Tippen, Klick auf den Rand setzt Haltepunkte, Run (gemessen) zeigt die ms je Zeile.\n• Variables & Objects: die Ausgabe jeder Stufe; jede lässt sich in einem Grafikfenster anzeigen.\n• Windows-Menü: Panels ein-/ausblenden und lösen, mehrere Grafikfenster öffnen\n  oder 'Float all panels' für die Arbeit an mehreren Monitoren.\n• Fensterposition, Panel-Layout und Sprache bleiben zwischen den Sitzungen erhalten."
+ },
+ "strings": {
+  "&File": {
+   "ja": "ファイル(&F)",
+   "zh": "文件(&F)",
+   "tw": "檔案(&F)",
+   "ko": "파일(&F)",
+   "de": "&Datei"
+  },
+  "&Edit": {
+   "ja": "編集(&E)",
+   "zh": "编辑(&E)",
+   "tw": "編輯(&E)",
+   "ko": "편집(&E)",
+   "de": "&Bearbeiten"
+  },
+  "&View": {
+   "ja": "表示(&V)",
+   "zh": "视图(&V)",
+   "tw": "檢視(&V)",
+   "ko": "보기(&V)",
+   "de": "&Ansicht"
+  },
+  "&Run": {
+   "ja": "実行(&R)",
+   "zh": "运行(&R)",
+   "tw": "執行(&R)",
+   "ko": "실행(&R)",
+   "de": "&Ausführen"
+  },
+  "&Window": {
+   "ja": "ウィンドウ(&W)",
+   "zh": "窗口(&W)",
+   "tw": "視窗(&W)",
+   "ko": "창(&W)",
+   "de": "&Fenster"
+  },
+  "&Tools": {
+   "ja": "ツール(&T)",
+   "zh": "工具(&T)",
+   "tw": "工具(&T)",
+   "ko": "도구(&T)",
+   "de": "&Werkzeuge"
+  },
+  "&Help": {
+   "ja": "ヘルプ(&H)",
+   "zh": "帮助(&H)",
+   "tw": "說明(&H)",
+   "ko": "도움말(&H)",
+   "de": "&Hilfe"
+  },
+  "Python Editor…": {
+   "ja": "Python エディタ…",
+   "zh": "Python 编辑器…",
+   "tw": "Python 編輯器…",
+   "ko": "Python 편집기…",
+   "de": "Python-Editor…"
+  },
+  "2-D Examples…": {
+   "ja": "2D サンプル集…",
+   "zh": "2-D 示例集…",
+   "tw": "2-D 範例集…",
+   "ko": "2-D 예제 모음…",
+   "de": "2-D-Beispiele…"
+  },
+  "3-D Examples…": {
+   "ja": "3D サンプル集…",
+   "zh": "3-D 示例集…",
+   "tw": "3-D 範例集…",
+   "ko": "3-D 예제 모음…",
+   "de": "3-D-Beispiele…"
+  },
+  "3-D Operators…": {
+   "ja": "3D オペレータ一覧…",
+   "zh": "3-D 算子一览…",
+   "tw": "3-D 運算子一覽…",
+   "ko": "3-D 연산자 목록…",
+   "de": "3-D-Operatoren…"
+  },
+  "System settings…": {
+   "ja": "環境設定…",
+   "zh": "系统设置…",
+   "tw": "系統設定…",
+   "ko": "환경 설정…",
+   "de": "Systemeinstellungen…"
+  },
+  "Feedback / Report an issue…": {
+   "ja": "フィードバック / 問題を報告…",
+   "zh": "反馈 / 报告问题…",
+   "tw": "意見回饋 / 回報問題…",
+   "ko": "피드백 / 문제 신고…",
+   "de": "Feedback / Problem melden…"
+  },
+  "dev_* visualization demo": {
+   "ja": "dev_* 可視化デモ",
+   "zh": "dev_* 可视化演示",
+   "tw": "dev_* 視覺化示範",
+   "ko": "dev_* 시각화 데모",
+   "de": "dev_*-Visualisierungsdemo"
+  },
+  "New graphics window": {
+   "ja": "新しいグラフィクスウィンドウ",
+   "zh": "新建图形窗口",
+   "tw": "新增圖形視窗",
+   "ko": "새 그래픽 창",
+   "de": "Neues Grafikfenster"
+  },
+  "Tile graphics windows": {
+   "ja": "グラフィクスウィンドウを並べて表示",
+   "zh": "平铺图形窗口",
+   "tw": "並排圖形視窗",
+   "ko": "그래픽 창 바둑판 배열",
+   "de": "Grafikfenster nebeneinander"
+  },
+  "Cascade graphics windows": {
+   "ja": "グラフィクスウィンドウを重ねて表示",
+   "zh": "层叠图形窗口",
+   "tw": "重疊圖形視窗",
+   "ko": "그래픽 창 계단식 배열",
+   "de": "Grafikfenster überlappend"
+  },
+  "Quick guide (en/ja/zh)": {
+   "ja": "クイックガイド (en/ja/zh)",
+   "zh": "快速指南 (en/ja/zh)",
+   "tw": "快速指南 (en/ja/zh)",
+   "ko": "빠른 안내 (en/ja/zh)",
+   "de": "Kurzanleitung (en/ja/zh)"
+  },
+  "New": {
+   "ja": "新規",
+   "zh": "新建",
+   "tw": "新增",
+   "ko": "새로 만들기",
+   "de": "Neu"
+  },
+  "Open…": {
+   "ja": "開く…",
+   "zh": "打开…",
+   "tw": "開啟…",
+   "ko": "열기…",
+   "de": "Öffnen…"
+  },
+  "Save": {
+   "ja": "保存",
+   "zh": "保存",
+   "tw": "儲存",
+   "ko": "저장",
+   "de": "Speichern"
+  },
+  "Save as…": {
+   "ja": "名前を付けて保存…",
+   "zh": "另存为…",
+   "tw": "另存新檔…",
+   "ko": "다른 이름으로 저장…",
+   "de": "Speichern unter…"
+  },
+  "Samples ▾": {
+   "ja": "サンプル ▾",
+   "zh": "示例 ▾",
+   "tw": "範例 ▾",
+   "ko": "샘플 ▾",
+   "de": "Beispiele ▾"
+  },
+  "Stop": {
+   "ja": "停止",
+   "zh": "停止",
+   "tw": "停止",
+   "ko": "중지",
+   "de": "Stopp"
+  },
+  "Run (F5)": {
+   "ja": "実行 (F5)",
+   "zh": "运行 (F5)",
+   "tw": "執行 (F5)",
+   "ko": "실행 (F5)",
+   "de": "Ausführen (F5)"
+  },
+  "Run": {
+   "ja": "実行",
+   "zh": "运行",
+   "tw": "執行",
+   "ko": "실행",
+   "de": "Ausführen"
+  },
+  "Copy code": {
+   "ja": "コードをコピー",
+   "zh": "复制代码",
+   "tw": "複製程式碼",
+   "ko": "코드 복사",
+   "de": "Code kopieren"
+  },
+  "Open in editor": {
+   "ja": "エディタで開く",
+   "zh": "在编辑器中打开",
+   "tw": "在編輯器中開啟",
+   "ko": "편집기에서 열기",
+   "de": "Im Editor öffnen"
+  },
+  "Open in window": {
+   "ja": "ウィンドウで開く",
+   "zh": "在窗口中打开",
+   "tw": "在視窗中開啟",
+   "ko": "창에서 열기",
+   "de": "Im Fenster öffnen"
+  },
+  "Copy all": {
+   "ja": "全部コピー",
+   "zh": "全部复制",
+   "tw": "全部複製",
+   "ko": "모두 복사",
+   "de": "Alles kopieren"
+  },
+  "Execution": {
+   "ja": "実行",
+   "zh": "执行",
+   "tw": "執行",
+   "ko": "실행",
+   "de": "Ausführung"
+  },
+  "Windows": {
+   "ja": "ウィンドウ",
+   "zh": "窗口",
+   "tw": "視窗",
+   "ko": "창",
+   "de": "Fenster"
+  },
+  "Display": {
+   "ja": "表示",
+   "zh": "显示",
+   "tw": "顯示",
+   "ko": "표시",
+   "de": "Anzeige"
+  },
+  "Editor": {
+   "ja": "エディタ",
+   "zh": "编辑器",
+   "tw": "編輯器",
+   "ko": "편집기",
+   "de": "Editor"
+  },
+  "Threads (thread_num)": {
+   "ja": "スレッド数 (thread_num)",
+   "zh": "线程数 (thread_num)",
+   "tw": "執行緒數 (thread_num)",
+   "ko": "스레드 수 (thread_num)",
+   "de": "Threads (thread_num)"
+  },
+  "Operator timeout": {
+   "ja": "オペレータタイムアウト",
+   "zh": "算子超时",
+   "tw": "運算子逾時",
+   "ko": "연산자 제한 시간",
+   "de": "Operator-Zeitlimit"
+  },
+  "Max graphics windows": {
+   "ja": "グラフィクスウィンドウ上限",
+   "zh": "图形窗口上限",
+   "tw": "圖形視窗上限",
+   "ko": "그래픽 창 최대 개수",
+   "de": "Max. Grafikfenster"
+  },
+  "Default display mode": {
+   "ja": "既定の表示モード",
+   "zh": "默认显示模式",
+   "tw": "預設顯示模式",
+   "ko": "기본 표시 모드",
+   "de": "Standard-Anzeigemodus"
+  },
+  "Region draw (dev_set_draw)": {
+   "ja": "Region 描画 (dev_set_draw)",
+   "zh": "Region 绘制 (dev_set_draw)",
+   "tw": "Region 繪製 (dev_set_draw)",
+   "ko": "Region 그리기 (dev_set_draw)",
+   "de": "Region-Zeichnung (dev_set_draw)"
+  },
+  "Region line width": {
+   "ja": "Region 線幅",
+   "zh": "Region 线宽",
+   "tw": "Region 線寬",
+   "ko": "Region 선 두께",
+   "de": "Region-Linienbreite"
+  },
+  "Editor font size": {
+   "ja": "エディタのフォントサイズ",
+   "zh": "编辑器字号",
+   "tw": "編輯器字級",
+   "ko": "편집기 글꼴 크기",
+   "de": "Editor-Schriftgröße"
+  },
+  "Python Editor interpreter": {
+   "ja": "Python エディタの実行インタプリタ",
+   "zh": "Python 编辑器解释器",
+   "tw": "Python 編輯器直譯器",
+   "ko": "Python 편집기 인터프리터",
+   "de": "Python-Editor-Interpreter"
+  },
+  "Error checking (set_check)": {
+   "ja": "エラー検査 (set_check)",
+   "zh": "错误检查 (set_check)",
+   "tw": "錯誤檢查 (set_check)",
+   "ko": "오류 검사 (set_check)",
+   "de": "Fehlerprüfung (set_check)"
+  },
+  "Language": {
+   "ja": "言語",
+   "zh": "语言",
+   "tw": "語言",
+   "ko": "언어",
+   "de": "Sprache"
+  }
+ }
 }

@@ -1,0 +1,53 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">perceptual_hash — IMGFORENSICS <code style="color:#22d3bf">hash</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">phash</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import imgforensics; imgforensics.perceptual_hash(image, mode: &#x27;str&#x27; = &#x27;dct&#x27;, hash_size: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsimgforensics.get(&quot;perceptual_hash&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>知覚ハッシュ(perceptual hash)。<b>bool の 1-D ビット列</b>を返す。</p>
+<p>`<code style="color:#22d3bf">mode</code>`:</p>
+<p>`<code style="color:#22d3bf">&quot;dct&quot;</code><code style="color:#22d3bf">   縮小 </code><code style="color:#22d3bf">(hash_size * 4)</code>` 角 → 2-D DCT-II(直交)→ 左上</p>
+<p>`<code style="color:#22d3bf">hash_size x hash_size</code>` を取り、<b>DC を除いた中央値</b>と比較。</p>
+<p>Zauner 2010 の pHash と同じ手順。長さ `<code style="color:#22d3bf">hash_size**2</code>` ビット。</p>
+<p>`<code style="color:#22d3bf">&quot;average&quot;</code><code style="color:#22d3bf"> 縮小 </code><code style="color:#22d3bf">hash_size</code>` 角 → 平均と比較(aHash)。同じ長さ。</p>
+<p>`<code style="color:#22d3bf">&quot;difference&quot;</code><code style="color:#22d3bf"> 縮小 </code><code style="color:#22d3bf">(hash_size, hash_size + 1)</code>` → **横に隣り合う画素の</p>
+<p>大小**を比較(dHash)。同じ長さで、平均輝度の変化に強い。</p>
+<p>実測(`<code style="color:#22d3bf">tests/test_imgforensics.py</code>` が数で固定。256x256 の 1/f^1.6 画像、</p>
+<p>`<code style="color:#22d3bf">hash_size=8</code>` = 64 ビット。<b>無関係な 2 枚の距離</b>は dct 31.3 / average 34.2 /</p>
+<p>difference 32.6(20 対の平均。理論値は 32 = ビット長の半分)):</p>
+<p>===================== ======== ========== ============</p>
+<p>変換                  dct      average    difference</p>
+<p>===================== ======== ========== ============</p>
+<p>JPEG 品質 60 再圧縮   0        0          0</p>
+<p>JPEG 品質 30 再圧縮   2        0          0</p>
+<p>1/2 縮小              0        0          0</p>
+<p>1/4 縮小              0        0          0</p>
+<p>明るさ +0.1           0        0          0</p>
+<p><b>左右反転</b>          <b>28</b>   <b>42</b>     <b>34</b></p>
+<p><b>90 度回転</b>         <b>32</b>   <b>30</b>     <b>32</b></p>
+<p>別の画像              28       40         34</p>
+<p>===================== ======== ========== ============</p>
+<p><b>この op が言えないこと</b>:</p>
+<p style="margin:2px 0 2px 12px">• 距離が小さい = 同じ画像、ではない。8x8 の粗い縮小に落としているので、</p>
+<p><b>細部の改竄は距離 0 のまま通る</b>。実測:512x512 の画像に 24x24 の</p>
+<p>コピー&amp;ムーブを入れたときの距離は dct 0 / average 0 / difference 1。</p>
+<p style="margin:2px 0 2px 12px">• 距離が大きい = 別画像、でもない。上の表のとおり **反転と回転は「別の画像」と</p>
+<p>区別が付かない**(どちらも無関係な 2 枚と同じ距離域に入る)。幾何変換に対する</p>
+<p>不変性は一切無い。</p>
+<p style="margin:2px 0 2px 12px">• 返り値は **`<code style="color:#22d3bf">phash</code><code style="color:#22d3bf"> 語彙**であって </code><code style="color:#22d3bf">signal</code>` ではない。bool の 1-D は</p>
+<p>既存の `<code style="color:#22d3bf">signal</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">indices</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">descriptor</code>` の述語をすべて満たすので、</p>
+<p>取り違えると `<code style="color:#22d3bf">signal1d.lowpass</code>` などが <b>有限でもっともらしい値</b>を返す</p>
+<p>(実測 5 op)。だから :func:<code style="color:#22d3bf">hash_distance</code> は dtype を検査する。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_forensics_audit">image_forensics_audit</a> — <code style="color:#22d3bf">py -3.11 examples/image_forensics_audit.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">phash</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:hash_distance">hash_distance</a> · <a style="color:#22d3bf" href="opimgforensics:watermark_embed">watermark_embed</a> · <a style="color:#22d3bf" href="opimgforensics:watermark_capacity">watermark_capacity</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">hash</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:hash_distance">hash_distance</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgforensics.py — IMGFORENSICS 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

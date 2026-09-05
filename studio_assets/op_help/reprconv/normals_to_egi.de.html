@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">normals_to_egi — REPRCONV <code style="color:#22d3bf">direction</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">normals</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import reprconv; reprconv.normals_to_egi(normals, n_az=36, n_el=18)</code> (oder <code style="color:#22d3bf">opsreprconv.get(&quot;normals_to_egi&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>法線 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> → 拡張ガウス像 </code><code style="color:#22d3bf">(n_el, n_az)</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">image2d</code>`。</p>
+<p>方向の 2-D ヒストグラム(Horn, *Extended Gaussian Images*, Proc. IEEE 72(12)</p>
+<p>1984)。「どの向きの面がどれだけあるか」の地図で、平面が支配的な物体では</p>
+<p>1 つの bin に山が立つ。<b>不可逆</b> —— bin 幅ぶんの方向解像度を捨てる。</p>
+<p>捨てた量は測れる: 最頻 bin の中心方向と入力の平均方向の角度差が量子化誤差で、</p>
+<p>既定 (36, 18) では bin 幅 10 度に対し実測 3.7 度(`<code style="color:#22d3bf">selftest</code>` が出す)。</p>
+<p>仰角の bin は `<code style="color:#22d3bf">sin(el)</code>` で等分する(等立体角)。度で等分すると極が過剰に</p>
+<p>細かくなり、「北極に面が集中している」という嘘の山が立つ。</p>
+<p>Args:</p>
+<p>normals: (N, 3)。</p>
+<p>n_az: 方位の bin 数(既定 36 = 10 度刻み)。</p>
+<p>n_el: 仰角の bin 数(既定 18)。</p>
+<p>Returns:</p>
+<p>(n_el, n_az) float64 の計数マップ(行 = 仰角、列 = 方位)。</p>
+<p>Raises:</p>
+<p>ValueError: bin 数が 1 未満 / 上限超 / 入力不正。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:keypoints_from_image2d">keypoints_from_image2d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">direction</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:normals_to_angles">normals_to_angles</a> · <a style="color:#22d3bf" href="opreprconv:angles_to_normals">angles_to_normals</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

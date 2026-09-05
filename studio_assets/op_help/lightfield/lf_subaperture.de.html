@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lf_subaperture — LIGHTFIELD <code style="color:#22d3bf">views</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import lightfield; lightfield.lf_subaperture(lf, v=0, u=0)</code> (oder <code style="color:#22d3bf">opslightfield.get(&quot;lf_subaperture&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>One sub-aperture view — the image seen through one point of the pupil.</p>
+<p>Returns a copy of `<code style="color:#22d3bf">L[v, u]</code><code style="color:#22d3bf"> as a plain </code><code style="color:#22d3bf">(H, W)</code>` 2-D image, so every</p>
+<p>other fullseye image operator applies to it unchanged. Indices are</p>
+<p><b>not</b> wrapped: a negative or out-of-range index is a `<code style="color:#22d3bf">ValueError</code>`, not a</p>
+<p>silent Python wrap-around to the opposite corner of the pupil (which is the</p>
+<p>single easiest way to get a mirrored disparity sign downstream).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *lf* not a valid light field, and *v* / *u* not</p>
+<p>an int in `<code style="color:#22d3bf">[0, V)</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">[0, U)</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">Leitfaden zur Familie lightfield_depth</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="oplightfield:lf_from_mla">lf_from_mla</a> · <a style="color:#22d3bf" href="oplightfield:lf_disparity_to_depth">lf_disparity_to_depth</a> · <a style="color:#22d3bf" href="oplightfield:lf_all_in_focus">lf_all_in_focus</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">views</code>)</h3>
+<p><a style="color:#22d3bf" href="oplightfield:lf_center_view">lf_center_view</a> · <a style="color:#22d3bf" href="oplightfield:lf_views">lf_views</a> · <a style="color:#22d3bf" href="oplightfield:lf_epi">lf_epi</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: lightfield.py — LIGHTFIELD Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

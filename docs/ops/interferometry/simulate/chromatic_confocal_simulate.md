@@ -7,12 +7,12 @@ out: sweep
 examples: [coherence_scanning]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # chromatic_confocal_simulate — INTERFEROMETRY `simulate` op
 
-- **データ種**: `` → `sweep`
+- **データ種**: `なし` → `sweep`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import interferometry; interferometry.chromatic_confocal_simulate(surface_um=0.0, wavelength_start_nm=500.0, wavelength_step_nm=0.5, n_bins=401, dispersion_um_per_nm=0.2, reference_wavelength_nm=600.0, peak_fwhm_nm=4.0, peak_counts=1000.0, background=10.0, noise=0.0, seed=0)` (または `opsinterferometry.get("chromatic_confocal_simulate")`)
 
 ## 使い方

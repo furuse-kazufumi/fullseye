@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ticks — ANNOTATE <code style="color:#22d3bf">plot</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × axes</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import annotate; annotate.ticks(img, axes, xticks=None, yticks=None, color=&#x27;neutral&#x27;, width=1, tick_len=5, label=True, label_fmt=&#x27;{:g}&#x27;, font_size=11, font_path=None, scheme=&#x27;okabe_ito&#x27;, text_color=None, style=None)</code>(또는 <code style="color:#22d3bf">opsannotate.get(&quot;ticks&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
+<p>目盛りとその数値。<b>位置は閉形式</b>(:func:<code style="color:#22d3bf">data_to_pixel</code> そのもの)。</p>
+<p>目盛りは枠の<b>外側</b>へ `<code style="color:#22d3bf">tick_len</code>` px 出す。ラベルは目盛りの外側に置くので、</p>
+<p>軸の周りに余白が無ければ :func:<code style="color:#22d3bf">text_box</code> の境界検査が例外にする</p>
+<p>(= 図の外に文字が消える事故が起きない)。</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>tick_len が負、ラベルが画像に収まらない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_gallery">annotate_gallery</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_gallery.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">image2d</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opannotate:text_box">text_box</a> · <a style="color:#22d3bf" href="opannotate:arrow">arrow</a> · <a style="color:#22d3bf" href="opannotate:leader_line">leader_line</a> · <a style="color:#22d3bf" href="opannotate:label_points">label_points</a> · <a style="color:#22d3bf" href="opannotate:crosshair">crosshair</a> · <a style="color:#22d3bf" href="opannotate:legend_box">legend_box</a> · <a style="color:#22d3bf" href="opannotate:color_bar">color_bar</a> · <a style="color:#22d3bf" href="opannotate:scale_bar">scale_bar</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">plot</code>)</h3>
+<p><a style="color:#22d3bf" href="opannotate:axes_transform">axes_transform</a> · <a style="color:#22d3bf" href="opannotate:data_to_pixel">data_to_pixel</a> · <a style="color:#22d3bf" href="opannotate:nice_ticks">nice_ticks</a> · <a style="color:#22d3bf" href="opannotate:axes_frame">axes_frame</a> · <a style="color:#22d3bf" href="opannotate:grid_lines">grid_lines</a> · <a style="color:#22d3bf" href="opannotate:plot_series">plot_series</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: annotate.py — ANNOTATE 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

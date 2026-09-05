@@ -1,0 +1,38 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">matrix_to_descriptor — REPRCONV <code style="color:#22d3bf">descriptor</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">descriptor</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import reprconv; reprconv.matrix_to_descriptor(matrix)</code>(或 <code style="color:#22d3bf">opsreprconv.get(&quot;matrix_to_descriptor&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>`<code style="color:#22d3bf">matrix</code><code style="color:#22d3bf"> → 記述子。:func:</code>descriptor_to_matrix` の逆。</p>
+<p>1 行の行列 (1, n) は (n,) へ戻す(それが元の 1-D 記述子だから)。</p>
+<p>2 行以上はそのまま。<b>この非対称は意図的</b>で、これが無いと</p>
+<p>`<code style="color:#22d3bf">descriptor -&gt; matrix -&gt; descriptor</code>` の往復が (n,) から (1,n) へ</p>
+<p>静かに形を変える = 型の嘘そのものになる。</p>
+<p>★<b>測って残す非可逆点</b>: そのぶん、元から <b>(1, n) の 2-D だった記述子</b>は</p>
+<p>往復で (n,) の 1-D になる —— (1,n) の行列は「1-D 記述子を包んだもの」と</p>
+<p>「行が 1 本しかない記述子束」の区別を持たないので、**この 1 ケースだけは</p>
+<p>原理的に戻せない**。値は全て保存されるので損失は「行が 1 本だった」という</p>
+<p>メタ情報のみ。どちらを非可逆にするか選ばされる状況で、</p>
+<p>`<code style="color:#22d3bf">descriptor</code>` の圧倒的多数(実測 14 producers 中 12 が 1-D)を厳密側に</p>
+<p>倒した。`<code style="color:#22d3bf">tests/test_reprconv.py::test_one_row_descriptor_ambiguity_is_documented</code>`</p>
+<p>がこの穴を<b>塞がずに固定</b>している(隠すと、いつか黙って形が変わる)。</p>
+<p>Args:</p>
+<p>matrix: (m, n) の実配列。</p>
+<p>Returns:</p>
+<p>m == 1 なら (n,)、それ以外は (m, n)。</p>
+<p>Raises:</p>
+<p>ValueError: 2-D でない / 非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">descriptor</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:descriptor_to_matrix">descriptor_to_matrix</a> · <a style="color:#22d3bf" href="opreprconv:descriptor_to_table">descriptor_to_table</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">descriptor</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:descriptor_to_matrix">descriptor_to_matrix</a> · <a style="color:#22d3bf" href="opreprconv:descriptor_to_table">descriptor_to_table</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

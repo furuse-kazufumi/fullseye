@@ -7,12 +7,12 @@ out: axes
 examples: [annotate_gallery]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # axes_transform — ANNOTATE `plot` op
 
-- **データ種**: `` → `axes`
+- **データ種**: `なし` → `axes`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import annotate; annotate.axes_transform(rect, xlim, ylim, invert_y=True, xscale='linear', yscale='linear')` (または `opsannotate.get("axes_transform")`)
 
 ## 使い方

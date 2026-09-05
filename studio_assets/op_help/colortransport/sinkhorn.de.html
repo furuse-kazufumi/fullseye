@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sinkhorn — COLORTRANSPORT <code style="color:#22d3bf">transport</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal × matrix</code> → <code style="color:#22d3bf">transport_plan</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import colortransport; colortransport.sinkhorn(a, b, cost, reg=0.05, n_iter=2000, tol=1e-09)</code> (oder <code style="color:#22d3bf">opscolortransport.get(&quot;sinkhorn&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>エントロピー正則化つき最適輸送の計画(Cuturi, NIPS 2013)。</p>
+<p><b>厳密解ではない。</b> `<code style="color:#22d3bf">reg</code>` を小さくすると厳密解に近づくが、同時に</p>
+<p>数値的に不安定になる(指数がアンダーフローする)。`<code style="color:#22d3bf">reg</code>` を下げると</p>
+<p>厳密解との差が縮むこと自体をテストで固定してある。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>ndarray</p>
+<p>`<code style="color:#22d3bf">(n, m)</code><code style="color:#22d3bf"> の輸送計画。行和・列和は </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">b</code>` に一致する</p>
+<p>(`<code style="color:#22d3bf">tol</code><code style="color:#22d3bf"> まで)。収束しなければ </code><code style="color:#22d3bf">RuntimeError</code>` ―― 収束しないまま</p>
+<p>最後の反復を返すと、行和が合っていない計画が黙って下流へ流れる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:color_transport">color_transport</a> — <code style="color:#22d3bf">py -3.11 examples/color_transport.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">transport_plan</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opcolortransport:transport_cost">transport_cost</a> · <a style="color:#22d3bf" href="opcolortransport:apply_transport">apply_transport</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">transport</code>)</h3>
+<p><a style="color:#22d3bf" href="opcolortransport:wasserstein_1d">wasserstein_1d</a> · <a style="color:#22d3bf" href="opcolortransport:transport_plan_1d">transport_plan_1d</a> · <a style="color:#22d3bf" href="opcolortransport:sinkhorn_distance">sinkhorn_distance</a> · <a style="color:#22d3bf" href="opcolortransport:sinkhorn_divergence">sinkhorn_divergence</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: colortransport.py — COLORTRANSPORT Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

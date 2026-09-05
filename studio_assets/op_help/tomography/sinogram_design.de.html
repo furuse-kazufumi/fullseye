@@ -1,0 +1,54 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sinogram_design — TOMOGRAPHY <code style="color:#22d3bf">layout</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import tomography; tomography.sinogram_design(n_angles=180, n_detectors=None, size=256, detector_pitch_mm=1.0, span_deg=180.0)</code> (oder <code style="color:#22d3bf">opstomography.get(&quot;sinogram_design&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>What a scan geometry can and cannot resolve — <b>before</b> anything is built.</p>
+<p>The axial counterpart of :func:<code style="color:#22d3bf">visiondesign.imaging_budget</code> and of</p>
+<p>:func:<code style="color:#22d3bf">interferometry.csi_design</code>: no data goes in, only the geometry, and</p>
+<p>what comes out are the limits that the geometry has already decided.</p>
+<p>Returns a dict with, among others:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">resolvable_feature_mm</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">2 * pitch</code>`: two detector samples per cycle is</p>
+<p>the Nyquist floor, and no reconstruction algorithm recovers a detail finer</p>
+<p>than the detector saw.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">views_for_full_sampling</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">ceil(pi/2 * n_detectors)</code>`, the classical</p>
+<p>matching of angular to radial sampling (:data:<code style="color:#22d3bf">VIEWS_PER_DETECTOR</code>).</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">undersampling_factor</code><code style="color:#22d3bf"> — that number over </code><code style="color:#22d3bf">n_angles</code>`. **1.0 or below is</p>
+<p>a fully sampled scan.** Above it you are doing sparse-view CT on purpose and</p>
+<p>the reconstruction algorithm has to make up the difference; the measured</p>
+<p>cost is in this module&#x27;s docstring and in the test suite&#x27;s break table.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">streak_free_radius_px</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">1 / d(theta)</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">d(theta)</code>` in radians:</p>
+<p>the radius, in pixels, at which the *azimuthal* sample spacing between</p>
+<p>neighbouring views (`<code style="color:#22d3bf">r * d(theta)</code>`) grows past one sample. Outside it,</p>
+<p>filtered back-projection lays down visible streaks. For 180 views over 180</p>
+<p>degrees this is 57.3 px, i.e. a 256-px phantom is already streaking at its</p>
+<p>corners. It does <b>not</b> depend on the detector pitch: the radius is</p>
+<p>quoted in the same unit the sample spacing is, so the pitch cancels</p>
+<p>(`<code style="color:#22d3bf">pitch / d(theta)</code>` is the same radius in millimetres, which is what an</p>
+<p>earlier version returned under the pixel label — 28.6 &quot;px&quot; at 0.5 mm,</p>
+<p>114.6 at 2 mm, for a geometry whose streak radius had not changed).</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">sinogram_bytes</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">elements</code>` — what you are about to allocate.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">verdict</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">&quot;fully sampled&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;sparse view&quot;</code>`.</p>
+<p>:param n_angles: planned number of views.</p>
+<p>:param n_detectors: planned detector bins; `<code style="color:#22d3bf">None</code>` -&gt; enough to cover the</p>
+<p>diagonal of a *size* x *size* image.</p>
+<p>:param size: reconstruction grid side in pixels.</p>
+<p>:param detector_pitch_mm: physical detector bin spacing.</p>
+<p>:param span_deg: angular range of the scan.</p>
+<p>:returns: dict of floats / ints / str.</p>
+<p>:raises ValueError: on non-int counts, non-positive pitch or span.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:ct_reconstruction">ct_reconstruction</a> — <code style="color:#22d3bf">py -3.11 examples/ct_reconstruction.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:tomography_reconstruct">tomography_reconstruct</a> — <code style="color:#22d3bf">py -3.11 examples/tomography_reconstruct.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">layout</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:projection_angles">projection_angles</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tomography.py — TOMOGRAPHY Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

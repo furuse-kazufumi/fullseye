@@ -7,12 +7,12 @@ out: signal
 examples: [acoustic_condition_monitoring]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # synthesize_bearing_signal — ACOUSTICS `synthesis` op
 
-- **データ種**: `` → `signal`
+- **データ種**: `なし` → `signal`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import acoustics; acoustics.synthesize_bearing_signal(rate=25600.0, duration=1.0, carrier_hz=3000.0, defect_hz=107.0, modulation=0.5, mode='am', damping=0.05, noise_sigma=0.0, seed=None)` (または `opsacoustics.get("synthesize_bearing_signal")`)
 
 ## 使い方

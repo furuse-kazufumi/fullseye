@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">watermark_capacity — IMGFORENSICS <code style="color:#22d3bf">watermark</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × phash</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import imgforensics; imgforensics.watermark_capacity(image, bits, strengths=(0.02, 0.05, 0.1, 0.2, 0.4), wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1, jpeg_quality=None) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">opsimgforensics.get(&quot;watermark_capacity&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>埋め込み強度と <b>PSNR / BER</b> のトレードオフを掃引して返す。`<code style="color:#22d3bf">table</code>`。</p>
+<p>各 `<code style="color:#22d3bf">strength</code>` について埋め込み → 抽出を実際に走らせ、</p>
+<p>`<code style="color:#22d3bf">psnr_db</code><code style="color:#22d3bf">  原画像と透かし入り画像の PSNR(値域 [0, 1] 基準、</code><code style="color:#22d3bf">MAX=1</code>`)</p>
+<p>`<code style="color:#22d3bf">ber</code><code style="color:#22d3bf">      抽出のビット誤り率(:func:</code>hash_distance` で数える)</p>
+<p>`<code style="color:#22d3bf">clipped</code>`  透かし入り画像が [0, 1] からはみ出した画素の割合。</p>
+<p><b>はみ出しは保存時に必ず失われる</b>ので、PSNR だけ見て強度を</p>
+<p>上げると「測っていない劣化」が増える</p>
+<p>`<code style="color:#22d3bf">jpeg_quality</code>` に品質を渡すと、透かし入り画像を <b>本物の JPEG</b> に通してから</p>
+<p>抽出した `<code style="color:#22d3bf">ber_jpeg</code>` も入る(Pillow 必須。省略時は列ごと入らない ——</p>
+<p>環境によって返る列が変わらないようにするため、既定では走らせない)。</p>
+<p>返りは `<code style="color:#22d3bf">{&quot;capacity_bits&quot;: int, &quot;n_bits&quot;: int, &quot;rows&quot;: [...], &quot;caveats&quot;: [...]}</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_forensics_audit">image_forensics_audit</a> — <code style="color:#22d3bf">py -3.11 examples/image_forensics_audit.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:evidence_quantile">evidence_quantile</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">watermark</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:watermark_embed">watermark_embed</a> · <a style="color:#22d3bf" href="opimgforensics:watermark_extract">watermark_extract</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgforensics.py — IMGFORENSICS 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

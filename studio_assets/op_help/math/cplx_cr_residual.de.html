@@ -1,0 +1,56 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cplx_cr_residual — MATH <code style="color:#22d3bf">complex</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">cimage</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import mathops; mathops.cplx_cr_residual(f, spacing=1.0)</code> (oder <code style="color:#22d3bf">opsmath.get(&quot;cplx_cr_residual&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Cauchy-Riemann-Residuum eines abgetasteten komplexen Feldes — „ist dieses Feld holomorph?“ als Zahl.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>With `<code style="color:#22d3bf">f = u + i v</code>` sampled on a uniform grid, holomorphy means</p>
+<p>`<code style="color:#22d3bf">u_x = v_y</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">u_y = -v_x</code>` (Cauchy-Riemann). This returns the</p>
+<p><b>relative</b> residual `<code style="color:#22d3bf">max(|u_x - v_y|, |u_y + v_x|) / max|grad|</code>`</p>
+<p>(central differences, `<code style="color:#22d3bf">numpy.gradient</code><code style="color:#22d3bf">): </code><code style="color:#22d3bf">0</code>` = the samples satisfy CR to</p>
+<p>the discretisation limit, `<code style="color:#22d3bf">2</code>` = the field is the conjugate of a</p>
+<p>holomorphic one (`<code style="color:#22d3bf">conj(z)</code>` gives exactly 2), values in between = partly</p>
+<p>analytic or noisy.</p>
+<p><b>Grid convention (it decides the sign of the answer)</b>: `<code style="color:#22d3bf">f[i, j]</code>` is the</p>
+<p>field at `<code style="color:#22d3bf">z = x0 + j*spacing + i*spacing*1j</code>` — rows index the *increasing</p>
+<p>imaginary* axis, columns the real axis. Image arrays usually run rows</p>
+<p>*downward*; feeding one directly measures the conjugate field, whose</p>
+<p>residual is `<code style="color:#22d3bf">2</code><code style="color:#22d3bf">, not </code><code style="color:#22d3bf">0</code><code style="color:#22d3bf">. Flip rows (</code><code style="color:#22d3bf">f[::-1]</code>`) to use image data.</p>
+<p>Discretisation, honestly: central differences are exact for polynomials of</p>
+<p>degree &lt;= 2, so `<code style="color:#22d3bf">f = z**2</code>` returns exactly 0; for higher order the</p>
+<p>residual floors at `<code style="color:#22d3bf">O(h^2 * |f&#x27;&#x27;&#x27;|)</code><code style="color:#22d3bf"> (measured: </code><code style="color:#22d3bf">f = z**3</code>` on a</p>
+<p>`<code style="color:#22d3bf">[-1,1]^2</code><code style="color:#22d3bf"> grid returns 1.7e-3 at </code><code style="color:#22d3bf">h</code>` and 4.2e-4 at</p>
+<p>`<code style="color:#22d3bf">h/2</code>` — a factor 4.00, the expected second order). Read a</p>
+<p>small value as &quot;consistent with holomorphic at this resolution&quot;, never as</p>
+<p>proof.</p>
+<p>A constant field returns `<code style="color:#22d3bf">0.0</code><code style="color:#22d3bf"> (it is holomorphic; the </code><code style="color:#22d3bf">0/0</code>` of the</p>
+<p>normalisation is resolved by that limit, and stated here rather than left</p>
+<p>to numpy).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: not a 2-D array, either dimension below 3 (no</p>
+<p>central difference exists), non-finite/masked input, over-cap size,</p>
+<p>non-finite or non-positive *spacing*.</p>
+<p>HALCON: no operator (`<code style="color:#22d3bf">derivate_gauss</code>` supplies the real-valued</p>
+<p>derivatives one would build this from).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
+<p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
+<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
+<p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">Leitfaden zur Familie math_metrology</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:math_complex">math_complex</a> — <code style="color:#22d3bf">py -3.11 examples/math_complex.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">measurement</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">complex</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:cplx_contour_circle">cplx_contour_circle</a> · <a style="color:#22d3bf" href="opmath:cplx_poly_eval">cplx_poly_eval</a> · <a style="color:#22d3bf" href="opmath:cplx_contour_integral">cplx_contour_integral</a> · <a style="color:#22d3bf" href="opmath:cplx_winding_number">cplx_winding_number</a> · <a style="color:#22d3bf" href="opmath:cplx_cauchy_value">cplx_cauchy_value</a> · <a style="color:#22d3bf" href="opmath:cplx_argument_principle">cplx_argument_principle</a> · <a style="color:#22d3bf" href="opmath:cplx_laurent_coeffs">cplx_laurent_coeffs</a> · <a style="color:#22d3bf" href="opmath:cplx_joukowski">cplx_joukowski</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

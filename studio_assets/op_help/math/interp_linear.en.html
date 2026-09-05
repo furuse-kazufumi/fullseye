@@ -1,0 +1,40 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">interp_linear — MATH <code style="color:#22d3bf">interp_poly</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal × signal</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import mathops; mathops.interp_linear(x, y, xq, out_of_range=&#x27;raise&#x27;)</code> (or <code style="color:#22d3bf">opsmath.get(&quot;interp_linear&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Piecewise-linear interpolation of `<code style="color:#22d3bf">(x, y)</code>` samples at query *xq*.</p>
+<p>*x* must be strictly increasing (fail-closed: an unsorted or duplicated</p>
+<p>grid raises rather than being silently reordered). *xq* is a scalar or a</p>
+<p>1-D array; a scalar query returns a Python float, an array returns float64.</p>
+<p><b>Out-of-range is an explicit choice</b>, never silent: `<code style="color:#22d3bf">&#x27;raise&#x27;</code>` (default)</p>
+<p>refuses any query outside `<code style="color:#22d3bf">[x[0], x[-1]]</code>` — a calibration table queried</p>
+<p>beyond its calibrated range is a wrong answer waiting to happen — while</p>
+<p>`<code style="color:#22d3bf">&#x27;clamp&#x27;</code>` holds the boundary values (the honest flat extension; there is</p>
+<p>deliberately no silent linear extrapolation mode).</p>
+<p>Exact on the nodes and exact for data that is genuinely piecewise linear.</p>
+<p>HALCON: `<code style="color:#22d3bf">get_y_value_funct_1d</code>` interpolates function pairs the same way</p>
+<p>(see :mod:<code style="color:#22d3bf">funct1d</code>, which works HALCON&#x27;s index-grid convention; this op</p>
+<p>takes an arbitrary strictly-increasing x grid).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
+<p>Every mathops op validates its input before computing (nothing slips through silently):</p>
+<p style="margin:2px 0 2px 12px">• **complex input raises <code style="color:#22d3bf">ValueError</code>** — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
+<p style="margin:2px 0 2px 12px">• **masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code>** — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input** (refused with the count stated — it propagates through the whole result).</p>
+<p style="margin:2px 0 2px 12px">• <b>Shapes are strict</b>: 1-D and 2-D are never implicitly promoted or broadcast (a matrix in a vector slot, or a vector in a matrix slot, raises <code style="color:#22d3bf">ValueError</code>; reshape explicitly).</p>
+<p style="margin:2px 0 2px 12px">• <b>Size cap</b>: ops that take a matrix, and the <code style="color:#22d3bf">stat_histogram</code> bins, raise <code style="color:#22d3bf">ValueError</code> beyond <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 million elements).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:math_metrology">math_metrology</a> — <code style="color:#22d3bf">py -3.11 examples/math_metrology.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">signal</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opmath:mat_solve">mat_solve</a> · <a style="color:#22d3bf" href="opmath:mat_lstsq">mat_lstsq</a> · <a style="color:#22d3bf" href="opmath:stat_describe">stat_describe</a> · <a style="color:#22d3bf" href="opmath:stat_histogram">stat_histogram</a> · <a style="color:#22d3bf" href="opmath:stat_zscore">stat_zscore</a> · <a style="color:#22d3bf" href="opmath:interp_cubic">interp_cubic</a> · <a style="color:#22d3bf" href="opmath:poly_fit">poly_fit</a> · <a style="color:#22d3bf" href="opmath:poly_eval">poly_eval</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">interp_poly</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:interp_cubic">interp_cubic</a> · <a style="color:#22d3bf" href="opmath:poly_fit">poly_fit</a> · <a style="color:#22d3bf" href="opmath:poly_eval">poly_eval</a> · <a style="color:#22d3bf" href="opmath:poly_roots">poly_roots</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,53 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cad_defect_to_cad — CADMAP <code style="color:#22d3bf">defect</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">mesh × labels</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import cadmap; cadmap.cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True, min_pixels=1, background=0, strict=False)</code>(或 <code style="color:#22d3bf">opscadmap.get(&quot;cad_defect_to_cad&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>2-D の欠陥ラベル画像 → <b>CAD 面上の表</b>(面 ID / 面上の面積 / 3-D 重心)。</p>
+<p>`<code style="color:#22d3bf">labels</code><code style="color:#22d3bf"> は (H, W) の整数ラベル画像(</code><code style="color:#22d3bf">background</code>` は無視、bool マスクも</p>
+<p>可)。ラベルごとに全画素の視線を撃ち、当たった面と、その画素が**面の上で</p>
+<p>占める実面積**を積む。面積は画素数ではなく</p>
+<p>dA = Z^2 * cosα / (fx * fy * |cosθ|)</p>
+<p>で、`<code style="color:#22d3bf">cosα</code><code style="color:#22d3bf"> は光軸からの傾き、</code><code style="color:#22d3bf">cosθ</code>` は視線と面法線のなす角。**斜めから</p>
+<p>見た面ほど 1 画素が広い面積を覆う**という透視投影のヤコビアンそのもので、</p>
+<p>ここを `<code style="color:#22d3bf">Z^2/(fx*fy)</code>` のままにすると傾いた面の欠陥が小さく出る(60 度で</p>
+<p>ちょうど半分になる)。</p>
+<p>返りはラベルごとの dict の list(`<code style="color:#22d3bf">table</code>` sort):</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">label</code>`        ラベル値。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">n_pixels</code>`     そのラベルの画素数。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">n_hit</code><code style="color:#22d3bf">        CAD に当たった画素数。</code><code style="color:#22d3bf">hit_fraction</code>` = その比。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">area</code>`         面上の実面積(mesh の長さ単位の 2 乗)。当たった画素分</p>
+<p>だけの和で、当たらなかった画素は<b>足さない</b>。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">area_naive</code><code style="color:#22d3bf">   </code><code style="color:#22d3bf">Z^2/(fx*fy)</code>` だけの和(= 傾きを無視した値)。両方</p>
+<p>返すのは、傾き補正が効いているかを利用者が自分で確かめられるようにする</p>
+<p>ため。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">face_ids</code>`     当たった面の昇順一意リスト(int64 配列)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">face_areas</code><code style="color:#22d3bf">   </code><code style="color:#22d3bf">face_ids</code>` と同じ並びの面ごとの面積。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">centroid</code><code style="color:#22d3bf">     面積重みの 3-D 重心(世界座標)。当たり 0 なら </code><code style="color:#22d3bf">NaN</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">depth_mean</code><code style="color:#22d3bf">   当たった画素の平均 Z。当たり 0 なら </code><code style="color:#22d3bf">NaN</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">winding_fixed</code>` bool — 内向きに巻かれた閉メッシュを検出して直したか。</p>
+<p><b>全レコードに同じ値</b>が入る(mesh 単位の性質なので)。</p>
+<p>`<code style="color:#22d3bf">min_pixels</code><code style="color:#22d3bf"> 未満の領域は落とす。当たり 0 の領域は**消さずに** </code>`area =</p>
+<p>0.0`<code style="color:#22d3bf">, </code><code style="color:#22d3bf">hit_fraction = 0.0</code>` で残す — 消すと「CAD の外にあった欠陥」が</p>
+<p>表から静かに消えるため。</p>
+<p>巻き方向の扱いは他の op と同じ(`<code style="color:#22d3bf">cull_backfaces=True</code>` で閉じた内向き</p>
+<p>メッシュを検出 → 既定は自動修正 + `<code style="color:#22d3bf">winding_fixed</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">strict=True</code>` で</p>
+<p>`<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">)。**正直な限界**: 返るのがレコードの list なので、</code><code style="color:#22d3bf">labels</code>`</p>
+<p>が全部背景だったり全領域が `<code style="color:#22d3bf">min_pixels</code>` 未満だったりして <b>list が空</b>に</p>
+<p>なると、修正の事実を載せる先が無い。その場合はそもそも 1 つも欠陥を写して</p>
+<p>いない(誤った数を返しようがない)。載せる先が要るなら `<code style="color:#22d3bf">strict=True</code>` に</p>
+<p>するか、同じ mesh で :func:<code style="color:#22d3bf">cad_pixel_to_surface</code> を 1 画素だけ引くこと。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:defect_to_cad">defect_to_cad</a> — <code style="color:#22d3bf">py -3.11 examples/defect_to_cad.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">defect</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cadmap.py — CADMAP 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">shape_index_to_curvature — REPRCONV <code style="color:#22d3bf">curvature</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">curvature</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import reprconv; reprconv.shape_index_to_curvature(pairs)</code> (oder <code style="color:#22d3bf">opsreprconv.get(&quot;shape_index_to_curvature&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>形状指数と曲がり `<code style="color:#22d3bf">(N,2)</code><code style="color:#22d3bf"> → 主曲率 </code><code style="color:#22d3bf">(N,2)</code><code style="color:#22d3bf">。:func:</code>curvature_to_shape_index` の逆。</p>
+<p>theta = pi*S/2 として `<code style="color:#22d3bf">k1 = C(sin+cos)</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">k2 = C(sin-cos)</code>`。</p>
+<p>(S, C) の定義式を解いた閉形式で、近似も反復も入っていない。</p>
+<p>Args:</p>
+<p>pairs: (N, 2) の `<code style="color:#22d3bf">[S, C]</code>`。</p>
+<p>Returns:</p>
+<p>(N, 2) float64 の `<code style="color:#22d3bf">[k1, k2]</code>`(k1 &gt;= k2)。</p>
+<p>Raises:</p>
+<p>ValueError: |S| &gt; 1 / C &lt; 0 / 形状不正 / 非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_roundtrip">representation_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/representation_roundtrip.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">curvature</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:curvature_to_shape_index">curvature_to_shape_index</a> · <a style="color:#22d3bf" href="opreprconv:curvature_to_table">curvature_to_table</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">curvature</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:curvature_to_shape_index">curvature_to_shape_index</a> · <a style="color:#22d3bf" href="opreprconv:curvature_to_table">curvature_to_table</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

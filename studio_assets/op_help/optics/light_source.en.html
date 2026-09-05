@@ -1,0 +1,60 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">light_source — OPTICS <code style="color:#22d3bf">illumination</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import illumdesign; illumdesign.light_source(kind=&#x27;ring&#x27;, radius_mm=60.0, height_mm=100.0, n=24, tilt_deg=None, length_mm=100.0, intensity=1.0, cos_exponent=1.0, position=None, emitters=None, directions=None)</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;light_source&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>An emitter set for a standard machine-vision light family (`<code style="color:#22d3bf">table</code>`).</p>
+<p>*kind*:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;point&quot;</code><code style="color:#22d3bf"> — one emitter at *position* (default </code><code style="color:#22d3bf">(0, 0, height_mm)</code>`)</p>
+<p>pointing straight down.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;ring&quot;</code>` — *n* emitters on a circle of *radius_mm* at *height_mm*,</p>
+<p>each tilted toward the axis by *tilt_deg* (default: aimed at the origin,</p>
+<p>so the ring&#x27;s elevation angle is `<code style="color:#22d3bf">atan(height/radius)</code>`; low</p>
+<p>height/radius = dark field, high = bright field).</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;bar&quot;</code>` — *n* emitters along a line of *length_mm* parallel to x at</p>
+<p>`<code style="color:#22d3bf">y = radius_mm</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">z = height_mm</code>`, aimed at the origin line.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;dome&quot;</code>` — *n* emitters spread over a hemisphere of *radius_mm*</p>
+<p>(Fibonacci lattice, zenith angles 20°–85°), each pointing at the centre:</p>
+<p>the diffuse, shadow-free illumination of a dome light.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;coaxial&quot;</code>` — a disc of *n* emitters of radius *radius_mm* at</p>
+<p>*height_mm* pointing down: the diffuse area source a beam splitter folds</p>
+<p>onto the viewing axis. Put it at the camera height with a radius of at</p>
+<p>least twice the part size, so that every point of a flat glossy part</p>
+<p>sees the source in its mirror direction (a *small* source at the camera</p>
+<p>gives one bright spot, not a field-wide glare). The dict carries an</p>
+<p>`<code style="color:#22d3bf">area</code><code style="color:#22d3bf"> record so :func:</code>defect_contrast` takes the specular glare from</p>
+<p>the disc&#x27;s uniform radiance `<code style="color:#22d3bf">L = n I0/(π r²)</code>` by a mirror-hit test</p>
+<p>instead of a point sum that cannot resolve a narrow lobe.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;backlight&quot;</code><code style="color:#22d3bf"> — *n* × *n* emitters on a square of side </code><code style="color:#22d3bf">2·radius_mm</code>`</p>
+<p>at `<code style="color:#22d3bf">z = −height_mm</code>` pointing <b>up</b>: the part is seen in silhouette.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;custom&quot;</code>` — *emitters* (N,3) and *directions* (N,3) given explicitly.</p>
+<p>*intensity* is the radiant intensity of one emitter on its axis (arbitrary</p>
+<p>units), *cos_exponent* the Lambertian order of its angular distribution</p>
+<p>(1 = ideal Lambertian LED; ~2–4 for a lensed LED with a narrower beam).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
+<p>Every optics op validates its input before computing (nothing slips through silently):</p>
+<p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>
+<p style="margin:2px 0 2px 12px">• **Strings raise <code style="color:#22d3bf">ValueError</code>** — <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> succeeds, so an unparsed configuration value would slip through as a length (measured: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> returned a plausible 66.667 mm). bool is refused too, as the implicit promotion <code style="color:#22d3bf">True == 1</code>.</p>
+<p style="margin:2px 0 2px 12px">• **complex / masked arrays raise <code style="color:#22d3bf">ValueError</code><b> (real-valued slots only; silently dropping the imaginary part or peeling off the mask is refused). </b>NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input.**</p>
+<p style="margin:2px 0 2px 12px">• <b>Division by zero and its relatives are refused by name</b>: focal length 0, radius of curvature 0, refractive index &lt;= 0, a fully opaque aperture (all zeros, so the normalisation is 0/0), a PSF whose sum is &lt;= 0, a Stokes vector with S0 = 0, and an object sitting at the front focal point (the image is at infinity).</p>
+<p style="margin:2px 0 2px 12px">• <b>Only two ops return a non-finite value, and both state it as a contract</b>: <code style="color:#22d3bf">depth_of_field</code> returns <code style="color:#22d3bf">far_mm = inf</code> beyond the hyperfocal distance (that is what the hyperfocal distance means), and <code style="color:#22d3bf">gaussian_beam</code> returns <code style="color:#22d3bf">wavefront_radius_mm = inf</code> at the waist (the radius of curvature of a plane wavefront). Both also return a finite companion (<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>). **Any other silent NaN/Inf is detected internally and raises <code style="color:#22d3bf">ValueError</code>** — &quot;float64 overflowed&quot; and &quot;the answer is infinite&quot; are different claims, so the first is never returned wearing the face of the second.</p>
+<p style="margin:2px 0 2px 12px">• <b>Size caps</b>: generated grids are capped by <code style="color:#22d3bf">optics.MAX_GRID</code> (4096); supplied fields/PSFs/apertures by <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code> (2^24); ABCD element chains by <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code> (1024); Zernike by <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code> (512) / <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code> (40) / <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code> (2^25). This closes, fail-closed, the paths where a small argument triggers a huge internal allocation (measured: n_max=40 × 4096² needs 108 GB).</p>
+<p style="margin:2px 0 2px 12px">• <b>Physically impossible states are refused too</b>: a Stokes vector with degree of polarisation &gt; 1, negative transmittance, negative intensity, and invalid Zernike indices such as n-|m| odd.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:mv_illumination_practice">mv_illumination_practice</a> — 照明の実務知識 — 波長・偏光・点灯方式・外光・安全</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:illumination_design_demo">illumination_design_demo</a> — <code style="color:#22d3bf">py -3.11 examples/illumination_design_demo.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:virtual_machine_vision">virtual_machine_vision</a> — <code style="color:#22d3bf">py -3.11 examples/virtual_machine_vision.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a> · <a style="color:#22d3bf" href="opoptics:spot_diagram">spot_diagram</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">illumination</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:irradiance_map">irradiance_map</a> · <a style="color:#22d3bf" href="opoptics:illumination_uniformity">illumination_uniformity</a> · <a style="color:#22d3bf" href="opoptics:defect_contrast">defect_contrast</a> · <a style="color:#22d3bf" href="opoptics:lighting_sweep">lighting_sweep</a> · <a style="color:#22d3bf" href="opoptics:illumination_design">illumination_design</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: illumdesign.py — OPTICS operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

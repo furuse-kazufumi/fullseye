@@ -7,12 +7,12 @@ out: normalmap
 examples: [machined_metal_and_materials]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # metallic_flake_normals — OPTICS `surface` op
 
-- **データ種**: `` → `normalmap`
+- **データ種**: `なし` → `normalmap`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import surfacelib; surfacelib.metallic_flake_normals(shape, density=0.06, size_px=2.0, tilt=0.35, seed=0) -> 'np.ndarray'` (または `opsoptics.get("metallic_flake_normals")`)
 
 ## 使い方

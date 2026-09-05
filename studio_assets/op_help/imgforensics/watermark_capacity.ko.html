@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">watermark_capacity — IMGFORENSICS <code style="color:#22d3bf">watermark</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × phash</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import imgforensics; imgforensics.watermark_capacity(image, bits, strengths=(0.02, 0.05, 0.1, 0.2, 0.4), wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1, jpeg_quality=None) -&gt; &#x27;dict&#x27;</code>(또는 <code style="color:#22d3bf">opsimgforensics.get(&quot;watermark_capacity&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
+<p>埋め込み強度と <b>PSNR / BER</b> のトレードオフを掃引して返す。`<code style="color:#22d3bf">table</code>`。</p>
+<p>各 `<code style="color:#22d3bf">strength</code>` について埋め込み → 抽出を実際に走らせ、</p>
+<p>`<code style="color:#22d3bf">psnr_db</code><code style="color:#22d3bf">  原画像と透かし入り画像の PSNR(値域 [0, 1] 基準、</code><code style="color:#22d3bf">MAX=1</code>`)</p>
+<p>`<code style="color:#22d3bf">ber</code><code style="color:#22d3bf">      抽出のビット誤り率(:func:</code>hash_distance` で数える)</p>
+<p>`<code style="color:#22d3bf">clipped</code>`  透かし入り画像が [0, 1] からはみ出した画素の割合。</p>
+<p><b>はみ出しは保存時に必ず失われる</b>ので、PSNR だけ見て強度を</p>
+<p>上げると「測っていない劣化」が増える</p>
+<p>`<code style="color:#22d3bf">jpeg_quality</code>` に品質を渡すと、透かし入り画像を <b>本物の JPEG</b> に通してから</p>
+<p>抽出した `<code style="color:#22d3bf">ber_jpeg</code>` も入る(Pillow 必須。省略時は列ごと入らない ——</p>
+<p>環境によって返る列が変わらないようにするため、既定では走らせない)。</p>
+<p>返りは `<code style="color:#22d3bf">{&quot;capacity_bits&quot;: int, &quot;n_bits&quot;: int, &quot;rows&quot;: [...], &quot;caveats&quot;: [...]}</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_forensics_audit">image_forensics_audit</a> — <code style="color:#22d3bf">py -3.11 examples/image_forensics_audit.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:evidence_quantile">evidence_quantile</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">watermark</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:watermark_embed">watermark_embed</a> · <a style="color:#22d3bf" href="opimgforensics:watermark_extract">watermark_extract</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgforensics.py — IMGFORENSICS 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

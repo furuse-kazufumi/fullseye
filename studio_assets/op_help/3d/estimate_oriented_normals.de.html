@@ -1,0 +1,19 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">estimate_oriented_normals — 3D <code style="color:#22d3bf">normals_orient</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">normals</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import normals_orient; normals_orient.estimate_oriented_normals(points, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;estimate_oriented_normals&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>PCA 法線推定 + Hoppe 大域向き付けの合成。→ (N,3) の向き付き単位法線。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:oriented_normals">oriented_normals</a> — <code style="color:#22d3bf">py -3.11 examples_3d/oriented_normals.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">normals</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="op3d:icp_point2plane">icp_point2plane</a> · <a style="color:#22d3bf" href="op3d:compute_fpfh">compute_fpfh</a> · <a style="color:#22d3bf" href="op3d:shot_descriptor">shot_descriptor</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:reflect">reflect</a> · <a style="color:#22d3bf" href="op3d:refract">refract</a> · <a style="color:#22d3bf" href="op3d:normal_consistency">normal_consistency</a> · <a style="color:#22d3bf" href="op3d:ransac_cylinder">ransac_cylinder</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">normals_orient</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:orient_normals">orient_normals</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: normals_orient.py — 3D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

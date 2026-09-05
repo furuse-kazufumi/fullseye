@@ -1,0 +1,48 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gaussians_to_voxel — REPRCONV <code style="color:#22d3bf">gaussians</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">gaussians</code> → <code style="color:#22d3bf">voxel</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import reprconv; reprconv.gaussians_to_voxel(gaussians, shape=(32, 32, 32), origin=(0.0, 0.0, 0.0), spacing=(1.0, 1.0, 1.0), truncate=3.0)</code>(或 <code style="color:#22d3bf">opsreprconv.get(&quot;gaussians_to_voxel&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>`<code style="color:#22d3bf">gaussians</code><code style="color:#22d3bf"> → 密度 </code><code style="color:#22d3bf">voxel (D,H,W)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">gaussians</code>` の 2 つ目の出口。</p>
+<p>各ガウシアンを `<code style="color:#22d3bf">truncate * sigma</code>` で打ち切って加算する。**格子の原点と</p>
+<p>刻みを明示引数にしてある**のが要点で、既定の `<code style="color:#22d3bf">spacing=(1,1,1)</code>` を</p>
+<p>そのまま使うと「世界座標をそのまま添字にする」ことになり、実データでは</p>
+<p>まず間違う —— しかも例外は出ず、密度が別の場所に立つだけなので気づけない。</p>
+<p>`<code style="color:#22d3bf">tests/test_reprconv.py</code>` はこの取り違えを明示的に測っている。</p>
+<p><b>不可逆</b>。損失は 3 つあり、どれも数字で測れる:</p>
+<p style="margin:2px 0 2px 12px">• <b>打ち切り</b> —— 打ち切りは<b>軸並行の箱</b>(各軸 ±truncate*sigma)なので、</p>
+<p>残る質量は `<code style="color:#22d3bf">erf(t/sqrt(2))**3</code>`。t = 3 で <b>99.194%</b>。</p>
+<p>★ここは一度間違えた: 最初「3 sigma の<b>球</b>の質量 97.07%」と書いたが、</p>
+<p>実装は箱なので値が違う。刻みを 1.0 → 0.125 と細かくして極限を取ると</p>
+<p>99.30% → 99.19% へ収束し、球の 97.07% には<b>近づかない</b>ことで反証できた</p>
+<p>(`<code style="color:#22d3bf">tests/test_reprconv.py::test_gaussians_to_voxel_mass_matches_box_truncation</code>`)。</p>
+<p>例外も NaN も出ない、まさに「黙って間違った数字を返す」種類の誤り。</p>
+<p style="margin:2px 0 2px 12px">• <b>格子求積</b> —— 中点則なので刻みが sigma に対して粗いと<b>上振れ</b>する</p>
+<p>(実測: sigma = 1.5 で刻み 1.0 のとき 99.94%、0.125 で 99.30%)。</p>
+<p style="margin:2px 0 2px 12px">• <b>境界の切り落とし</b> —— 箱が volume の外へ出た分は落ちる。中心が縁に</p>
+<p>近いガウシアンでは打ち切りより遥かに大きい損失になる。</p>
+<p>Args:</p>
+<p>gaussians: `<code style="color:#22d3bf">mu</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">sigma</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">w</code><code style="color:#22d3bf"> を持つ dict。</code><code style="color:#22d3bf">mu</code>` は (z, y, x)。</p>
+<p>shape: (D, H, W)。</p>
+<p>origin: 格子の (z, y, x) 原点(世界座標)。</p>
+<p>spacing: 格子の (dz, dy, dx) 刻み(世界単位 / voxel)。</p>
+<p>truncate: 何 sigma で打ち切るか(既定 3)。</p>
+<p>Returns:</p>
+<p>(D, H, W) float64 の密度(値は「voxel あたりの重み和」で、体積積分が</p>
+<p>`<code style="color:#22d3bf">sum(w)</code>` に近づく)。</p>
+<p>Raises:</p>
+<p>ValueError: shape/spacing 不正 / truncate &lt;= 0 / gaussians 不正。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_roundtrip">representation_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/representation_roundtrip.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">voxel</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:correlation_score">correlation_score</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">gaussians</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:points_to_gaussians">points_to_gaussians</a> · <a style="color:#22d3bf" href="opreprconv:gaussians_to_points">gaussians_to_points</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

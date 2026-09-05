@@ -7,12 +7,12 @@ out: table
 examples: [coherence_scanning]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # csi_design — INTERFEROMETRY `design` op
 
-- **データ種**: `` → `table`
+- **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import interferometry; interferometry.csi_design(wavelength_um=0.6, bandwidth_um=0.1, z_range_um=12.0, width_px=640, height_px=480, min_visibility=0.3, step_divisor=8.0)` (または `opsinterferometry.get("csi_design")`)
 
 ## 使い方

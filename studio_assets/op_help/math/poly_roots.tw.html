@@ -1,0 +1,44 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">poly_roots — MATH <code style="color:#22d3bf">interp_poly</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">roots</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import mathops; mathops.poly_roots(coeffs, real_only=False, imag_tol=1e-09)</code>(或 <code style="color:#22d3bf">opsmath.get(&quot;poly_roots&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>多項式的全部根(係數按最高次在前)—— 含複根。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>Roots are the eigenvalues of the companion matrix (`<code style="color:#22d3bf">np.roots</code>`); the</p>
+<p>polynomial must have degree ≥ 1 and a <b>non-zero leading coefficient</b></p>
+<p>(fail-closed: a zero leading coefficient means the stated degree is a lie —</p>
+<p>trim it explicitly rather than have it silently dropped).</p>
+<p>Returns complex128, sorted by real part then imaginary part</p>
+<p>(deterministic). Complex answers are honest answers: `<code style="color:#22d3bf">x² + 1</code>` really does</p>
+<p>have roots `<code style="color:#22d3bf">±i</code>`, and hiding them would misreport the polynomial. Pass</p>
+<p>`<code style="color:#22d3bf">real_only=True</code>` to keep only roots whose imaginary part is negligible</p>
+<p>(`<code style="color:#22d3bf">|imag| &lt;= imag_tol * max(1, |root|)</code>`) and get them back as a sorted</p>
+<p>float64 array — possibly <b>empty</b>, which is the correct answer for</p>
+<p>`<code style="color:#22d3bf">x² + 1</code>`.</p>
+<p>Numerical note: root-finding conditioning degrades with degree and with</p>
+<p>clustered roots (a double root moves ~`<code style="color:#22d3bf">sqrt(eps)</code>` under coefficient</p>
+<p>noise — Wilkinson&#x27;s classic analysis); treat high-degree roots as</p>
+<p>approximate. HALCON: no root-finding tuple operator.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
+<p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
+<p style="margin:2px 0 2px 12px">• **complex 輸入一律 <code style="color:#22d3bf">ValueError</code>** —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>
+<p style="margin:2px 0 2px 12px">• **含被遮罩元素的 masked array 一律 <code style="color:#22d3bf">ValueError</code>** —— 拒絕「剝掉遮罩直接使用下面原值」的隱式轉換。請明確選擇填補還是丟棄。</p>
+<p style="margin:2px 0 2px 12px">• **所有輸入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code>**(明確給出個數後拒絕 —— 它會汙染整個結果)。</p>
+<p style="margin:2px 0 2px 12px">• <b>形狀嚴格</b>:不對 1-D 與 2-D 做隱式提升或廣播(向量槽位收到矩陣、矩陣槽位收到向量都是 <code style="color:#22d3bf">ValueError</code>;請明確 reshape)。</p>
+<p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:接受矩陣的運算子與 <code style="color:#22d3bf">stat_histogram</code> 的 bins,超過 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 萬個元素)即 <code style="color:#22d3bf">ValueError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:math_metrology">math_metrology</a> — <code style="color:#22d3bf">py -3.11 examples/math_metrology.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">roots</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">interp_poly</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:interp_linear">interp_linear</a> · <a style="color:#22d3bf" href="opmath:interp_cubic">interp_cubic</a> · <a style="color:#22d3bf" href="opmath:poly_fit">poly_fit</a> · <a style="color:#22d3bf" href="opmath:poly_eval">poly_eval</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

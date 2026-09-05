@@ -1,0 +1,38 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mat_solve — MATH <code style="color:#22d3bf">linalg</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix × signal</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import mathops; mathops.mat_solve(a, b)</code> (oder <code style="color:#22d3bf">opsmath.get(&quot;mat_solve&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Löst das quadratische lineare System `<code style="color:#22d3bf">A x = b</code><code style="color:#22d3bf"> (LAPACK </code><code style="color:#22d3bf">gesv</code>`, LU mit Teilpivotisierung).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>*a* must be square `<code style="color:#22d3bf">(n, n)</code><code style="color:#22d3bf">; *b* is </code><code style="color:#22d3bf">(n,)</code><code style="color:#22d3bf"> or </code><code style="color:#22d3bf">(n, k)</code>` (multiple</p>
+<p>right-hand sides). An exactly singular *A* raises `<code style="color:#22d3bf">ValueError</code>`.</p>
+<p><b>Do not trust the answer of an ill-conditioned system</b>: a solve loses</p>
+<p>about `<code style="color:#22d3bf">log10(cond(A))</code><code style="color:#22d3bf"> significant digits, so at </code><code style="color:#22d3bf">cond &gt; 1e12</code>` maybe 3</p>
+<p>of float64&#x27;s ~16 digits survive — and *this function cannot tell you that*,</p>
+<p>because a near-singular system still &quot;solves&quot;. Check :func:<code style="color:#22d3bf">mat_cond</code></p>
+<p>first; for a rank-deficient or noisy system use :func:<code style="color:#22d3bf">mat_lstsq</code> /</p>
+<p>:func:<code style="color:#22d3bf">mat_pinv</code> with an explicit `<code style="color:#22d3bf">rcond</code>` instead.</p>
+<p>HALCON: `<code style="color:#22d3bf">solve_matrix</code>`. Returns float64, same trailing shape as *b*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
+<p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
+<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
+<p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">Leitfaden zur Familie math_metrology</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:math_metrology">math_metrology</a> — <code style="color:#22d3bf">py -3.11 examples/math_metrology.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">signal</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opmath:mat_lstsq">mat_lstsq</a> · <a style="color:#22d3bf" href="opmath:stat_describe">stat_describe</a> · <a style="color:#22d3bf" href="opmath:stat_histogram">stat_histogram</a> · <a style="color:#22d3bf" href="opmath:stat_zscore">stat_zscore</a> · <a style="color:#22d3bf" href="opmath:interp_linear">interp_linear</a> · <a style="color:#22d3bf" href="opmath:interp_cubic">interp_cubic</a> · <a style="color:#22d3bf" href="opmath:poly_fit">poly_fit</a> · <a style="color:#22d3bf" href="opmath:poly_eval">poly_eval</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">linalg</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:mat_lstsq">mat_lstsq</a> · <a style="color:#22d3bf" href="opmath:mat_svd">mat_svd</a> · <a style="color:#22d3bf" href="opmath:mat_eigh">mat_eigh</a> · <a style="color:#22d3bf" href="opmath:mat_pinv">mat_pinv</a> · <a style="color:#22d3bf" href="opmath:mat_cond">mat_cond</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

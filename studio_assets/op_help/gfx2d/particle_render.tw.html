@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">particle_render — GFX2D <code style="color:#22d3bf">particle</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">rgba</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import gfx2d; gfx2d.particle_render(state, height, width, mode=&#x27;add&#x27;, fade=True)</code>(或 <code style="color:#22d3bf">opsgfx2d.get(&quot;particle_render&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>Splat a particle state into an `<code style="color:#22d3bf">rgba</code>` image.</p>
+<p>Each particle is a radially symmetric `<code style="color:#22d3bf">(1 - (r/R)^2)^2</code>` kernel of radius</p>
+<p>`<code style="color:#22d3bf">size</code><code style="color:#22d3bf">, weighted by its alpha and, when </code><code style="color:#22d3bf">fade</code>` is set, by the remaining</p>
+<p>fraction of its life `<code style="color:#22d3bf">(1 - age/life)</code>`. Particles past their lifetime</p>
+<p>contribute nothing.</p>
+<p>`<code style="color:#22d3bf">mode</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">&quot;add&quot;</code>` (premultiplied additive — what a spark does; the</p>
+<p>result is clipped at 1 and the clipped energy is *not* returned) or</p>
+<p>`<code style="color:#22d3bf">&quot;over&quot;</code>` (each particle composited in array order, which is what a soft</p>
+<p>smoke puff does).</p>
+<p>Pure function of the state: no randomness enters here, so two calls on the</p>
+<p>same state produce identical bytes.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gfx2d_scene">gfx2d_scene</a> — <code style="color:#22d3bf">py -3.11 examples/gfx2d_scene.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">rgba</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:premultiply">premultiply</a> · <a style="color:#22d3bf" href="opgfx2d:alpha_composite">alpha_composite</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_blit">sprite_blit</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_transform">sprite_transform</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_sheet_slice">sprite_sheet_slice</a> · <a style="color:#22d3bf" href="opgfx2d:nine_slice">nine_slice</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">particle</code>)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:particle_emit">particle_emit</a> · <a style="color:#22d3bf" href="opgfx2d:particle_step">particle_step</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gfx2d.py — GFX2D 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

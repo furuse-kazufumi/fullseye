@@ -1,0 +1,44 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cplx_joukowski — MATH <code style="color:#22d3bf">complex</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">cpoints</code> → <code style="color:#22d3bf">cpoints</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import mathops; mathops.cplx_joukowski(z, c=1.0)</code> (oder <code style="color:#22d3bf">opsmath.get(&quot;cplx_joukowski&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Joukowski-(Schukowski-)konforme Abbildung `<code style="color:#22d3bf">w = z + c^2 / z</code>`.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>The classical aerofoil map (Zhukovsky 1910): the circle `<code style="color:#22d3bf">|z| = c</code>` folds</p>
+<p>onto the flat plate `<code style="color:#22d3bf">[-2c, 2c]</code><code style="color:#22d3bf"> of the real axis (</code><code style="color:#22d3bf">z = c e^(i t)</code>` gives</p>
+<p>`<code style="color:#22d3bf">w = 2c cos t</code>` — exact, and what the tests pin); a circle of radius</p>
+<p>`<code style="color:#22d3bf">R &gt; c</code>` centred at the origin maps to the ellipse with semi-axes</p>
+<p>`<code style="color:#22d3bf">R + c^2/R</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">R - c^2/R</code><code style="color:#22d3bf">; and a circle through </code><code style="color:#22d3bf">z = c</code>` whose</p>
+<p>centre is offset into the second quadrant maps to a cambered aerofoil with</p>
+<p>a cusped trailing edge — the reason the map exists.</p>
+<p>Conformal (angle-preserving) everywhere except at `<code style="color:#22d3bf">z = ±c</code>`, where the</p>
+<p>derivative `<code style="color:#22d3bf">1 - c^2/z^2</code>` vanishes and angles are <b>doubled</b> — that is</p>
+<p>what creates the cusp, and it is a property of the map, not a defect.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: a sample at </code><code style="color:#22d3bf">z = 0</code>` (the map&#x27;s pole), a result</p>
+<p>that overflowed (a sample so close to 0 that `<code style="color:#22d3bf">c^2/z</code>` leaves float64</p>
+<p>range), a non-finite or non-positive-real *c*, plus the usual shape and</p>
+<p>finiteness contracts.</p>
+<p>HALCON: no operator (conformal maps are not part of its transform set).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
+<p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
+<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
+<p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">Leitfaden zur Familie math_metrology</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:math_complex">math_complex</a> — <code style="color:#22d3bf">py -3.11 examples/math_complex.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">cpoints</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opmath:cplx_poly_eval">cplx_poly_eval</a> · <a style="color:#22d3bf" href="opmath:cplx_contour_integral">cplx_contour_integral</a> · <a style="color:#22d3bf" href="opmath:cplx_winding_number">cplx_winding_number</a> · <a style="color:#22d3bf" href="opmath:cplx_cauchy_value">cplx_cauchy_value</a> · <a style="color:#22d3bf" href="opmath:cplx_argument_principle">cplx_argument_principle</a> · <a style="color:#22d3bf" href="opmath:cplx_laurent_coeffs">cplx_laurent_coeffs</a> · <a style="color:#22d3bf" href="opmath:cplx_mobius">cplx_mobius</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">complex</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:cplx_contour_circle">cplx_contour_circle</a> · <a style="color:#22d3bf" href="opmath:cplx_poly_eval">cplx_poly_eval</a> · <a style="color:#22d3bf" href="opmath:cplx_contour_integral">cplx_contour_integral</a> · <a style="color:#22d3bf" href="opmath:cplx_winding_number">cplx_winding_number</a> · <a style="color:#22d3bf" href="opmath:cplx_cauchy_value">cplx_cauchy_value</a> · <a style="color:#22d3bf" href="opmath:cplx_argument_principle">cplx_argument_principle</a> · <a style="color:#22d3bf" href="opmath:cplx_laurent_coeffs">cplx_laurent_coeffs</a> · <a style="color:#22d3bf" href="opmath:cplx_mobius">cplx_mobius</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

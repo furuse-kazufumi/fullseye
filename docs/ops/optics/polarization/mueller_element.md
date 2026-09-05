@@ -7,12 +7,12 @@ out: matrix
 examples: [optics_imaging]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # mueller_element — OPTICS `polarization` op
 
-- **データ種**: `` → `matrix`
+- **データ種**: `なし` → `matrix`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import optics; optics.mueller_element(kind='polarizer', angle_deg=0.0, retardance_deg=90.0)` (または `opsoptics.get("mueller_element")`)
 
 ## 使い方

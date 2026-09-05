@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">keypoints_uv_to_points — REPRCONV <code style="color:#22d3bf">keypoint</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import reprconv; reprconv.keypoints_uv_to_points(keypoints, z=0.0)</code> (oder <code style="color:#22d3bf">opsreprconv.get(&quot;keypoints_uv_to_points&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>画像座標 `<code style="color:#22d3bf">(N,2) = (u, v)</code><code style="color:#22d3bf"> → 点群 </code><code style="color:#22d3bf">(N,3) = (z, y, x)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">keypoints</code>` の出口。</p>
+<p><b>op 名に軸の約束が書いてある</b>のは、この repo で `<code style="color:#22d3bf">keypoints</code>` を産む</p>
+<p>`<code style="color:#22d3bf">match3d.project_points</code><code style="color:#22d3bf"> が **(u, v) = (列, 行)** を返し、</code><code style="color:#22d3bf">points</code>` を産む</p>
+<p>`<code style="color:#22d3bf">fuse3d.to_points(voxel)</code>` が <b>(z, y, x)</b> を返すから —— 素直に「先頭 2 列」</p>
+<p>として繋ぐと<b>例外も NaN も出ないまま行と列が入れ替わる</b>。ここでは</p>
+<p>`<code style="color:#22d3bf">y = v</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">x = u</code>` と明示的に入れ替えて渡す。</p>
+<p>:func:<code style="color:#22d3bf">points_zyx_to_keypoints_uv</code> と往復して <b>bit 一致</b>(z を渡した向き)。</p>
+<p>Args:</p>
+<p>keypoints: (N, 2) の (u, v)。</p>
+<p>z: 載せる平面の z(スカラ、または (N,) の配列)。</p>
+<p>Returns:</p>
+<p>(N, 3) float64 の (z, y, x)。</p>
+<p>Raises:</p>
+<p>ValueError: 形状不正 / 非有限 / z の長さ不一致。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_roundtrip">representation_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/representation_roundtrip.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">points</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:points_zyx_to_keypoints_uv">points_zyx_to_keypoints_uv</a> · <a style="color:#22d3bf" href="opreprconv:points_to_position">points_to_position</a> · <a style="color:#22d3bf" href="opreprconv:select_points">select_points</a> · <a style="color:#22d3bf" href="opreprconv:flow_apply">flow_apply</a> · <a style="color:#22d3bf" href="opreprconv:points_to_gaussians">points_to_gaussians</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">keypoint</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:points_zyx_to_keypoints_uv">points_zyx_to_keypoints_uv</a> · <a style="color:#22d3bf" href="opreprconv:keypoints_to_image2d">keypoints_to_image2d</a> · <a style="color:#22d3bf" href="opreprconv:keypoints_from_image2d">keypoints_from_image2d</a> · <a style="color:#22d3bf" href="opreprconv:position_to_points">position_to_points</a> · <a style="color:#22d3bf" href="opreprconv:points_to_position">points_to_position</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

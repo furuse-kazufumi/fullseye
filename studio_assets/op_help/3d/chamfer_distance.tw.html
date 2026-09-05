@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">chamfer_distance — 3D <code style="color:#22d3bf">metrics</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import metrics3d; metrics3d.chamfer_distance(a, b, squared=False)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;chamfer_distance&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>対称 Chamfer 距離 = 0.5*(mean_a min_b + mean_b min_a)。→ scalar。小さいほど一致。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 計測の不確かさと校正の知識 — 「測れている」を主張するために</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:itokawa_pose_canonical">itokawa_pose_canonical</a> — <code style="color:#22d3bf">py -3.11 examples_3d/itokawa_pose_canonical.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:itokawa_shape_match">itokawa_shape_match</a> — <code style="color:#22d3bf">py -3.11 examples_3d/itokawa_shape_match.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:mesh_lod_download">mesh_lod_download</a> — <code style="color:#22d3bf">py -3.11 examples_3d/mesh_lod_download.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:poisson_surface_recon">poisson_surface_recon</a> — <code style="color:#22d3bf">py -3.11 examples_3d/poisson_surface_recon.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">measurement</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="op3d:vol_gaussian_psf">vol_gaussian_psf</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">metrics</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:hausdorff_distance">hausdorff_distance</a> · <a style="color:#22d3bf" href="op3d:fscore">fscore</a> · <a style="color:#22d3bf" href="op3d:rmse_correspondence">rmse_correspondence</a> · <a style="color:#22d3bf" href="op3d:normal_consistency">normal_consistency</a> · <a style="color:#22d3bf" href="op3d:voxel_iou">voxel_iou</a> · <a style="color:#22d3bf" href="op3d:pose_error">pose_error</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: metrics3d.py — 3D 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

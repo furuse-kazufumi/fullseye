@@ -1,0 +1,43 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cplx_poly_eval — MATH <code style="color:#22d3bf">complex</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × cpoints</code> → <code style="color:#22d3bf">cpoints</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import mathops; mathops.cplx_poly_eval(coeffs, z)</code> (oder <code style="color:#22d3bf">opsmath.get(&quot;cplx_poly_eval&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Wertet ein Polynom in der komplexen Ebene aus (Horner-Schema, komplexfähig).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>The complex twin of :func:<code style="color:#22d3bf">poly_eval</code>: *coeffs* is highest-power-first</p>
+<p>(`<code style="color:#22d3bf">[c_d, ..., c_1, c_0]</code>`, possibly complex) and *z* is a complex scalar or</p>
+<p>1-D array. A scalar query returns a Python `<code style="color:#22d3bf">complex</code>`, an array returns</p>
+<p>`<code style="color:#22d3bf">complex128</code><code style="color:#22d3bf"> — mirroring :func:</code>poly_eval`&#x27;s scalar/array behaviour.</p>
+<p>This is what makes the rest of the family usable: sample a polynomial on a</p>
+<p>contour from :func:<code style="color:#22d3bf">cplx_contour_circle</code>, then count its zeros with</p>
+<p>:func:<code style="color:#22d3bf">cplx_argument_principle</code> or reconstruct interior values with</p>
+<p>:func:<code style="color:#22d3bf">cplx_cauchy_value</code>. (:func:<code style="color:#22d3bf">poly_eval</code> refuses complex input by</p>
+<p>design — silent imaginary-part truncation — so it cannot serve here.)</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: empty/multi-dimensional *coeffs*, non-finite or</p>
+<p>masked input, over-cap size, and — the honest one — a result that</p>
+<p>overflowed to Inf/NaN (a degree-200 polynomial on `<code style="color:#22d3bf">|z| = 10</code>` genuinely</p>
+<p>exceeds float64 range; that is refused rather than returned as `<code style="color:#22d3bf">inf</code>`).</p>
+<p>HALCON: no complex polynomial operator.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
+<p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
+<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
+<p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">Leitfaden zur Familie math_metrology</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:math_complex">math_complex</a> — <code style="color:#22d3bf">py -3.11 examples/math_complex.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">cpoints</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opmath:cplx_contour_integral">cplx_contour_integral</a> · <a style="color:#22d3bf" href="opmath:cplx_winding_number">cplx_winding_number</a> · <a style="color:#22d3bf" href="opmath:cplx_cauchy_value">cplx_cauchy_value</a> · <a style="color:#22d3bf" href="opmath:cplx_argument_principle">cplx_argument_principle</a> · <a style="color:#22d3bf" href="opmath:cplx_laurent_coeffs">cplx_laurent_coeffs</a> · <a style="color:#22d3bf" href="opmath:cplx_joukowski">cplx_joukowski</a> · <a style="color:#22d3bf" href="opmath:cplx_mobius">cplx_mobius</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">complex</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:cplx_contour_circle">cplx_contour_circle</a> · <a style="color:#22d3bf" href="opmath:cplx_contour_integral">cplx_contour_integral</a> · <a style="color:#22d3bf" href="opmath:cplx_winding_number">cplx_winding_number</a> · <a style="color:#22d3bf" href="opmath:cplx_cauchy_value">cplx_cauchy_value</a> · <a style="color:#22d3bf" href="opmath:cplx_argument_principle">cplx_argument_principle</a> · <a style="color:#22d3bf" href="opmath:cplx_laurent_coeffs">cplx_laurent_coeffs</a> · <a style="color:#22d3bf" href="opmath:cplx_joukowski">cplx_joukowski</a> · <a style="color:#22d3bf" href="opmath:cplx_mobius">cplx_mobius</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

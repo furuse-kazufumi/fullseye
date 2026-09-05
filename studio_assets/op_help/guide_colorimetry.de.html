@@ -1,0 +1,148 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">Dieser Leitfaden liegt nur auf Japanisch vor (es ist von Menschen geschriebene Prosa, hier wird nichts maschinell ersetzt).</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない</h2>
+<p>fullseye には測色そのものがある（<code style="color:#22d3bf">imgmetrics</code> 族の <code style="color:#22d3bf">rgb_to_lab</code> / <code style="color:#22d3bf">delta_e_2000</code> ほか）。</p>
+<p>一方で 2-D の色 op（<code style="color:#22d3bf">trans_from_rgb</code> / <code style="color:#22d3bf">trans_to_rgb</code> / <code style="color:#22d3bf">cfa_to_rgb</code> / <code style="color:#22d3bf">linear_trans_color</code></p>
+<p>ほか）は<b>色空間の変換</b>であって、測色ではない。</p>
+<p>外観検査で「色が違う」を判定するとき、RGB の差だけを見ると必ずどこかで外す。</p>
+<p>この文書は op の説明ではなく、<b>その手前にある物理と規約</b>を書く教材である。</p>
+<p><code style="color:#22d3bf">optics/guides/mv_*.md</code>（撮像系）、<code style="color:#22d3bf">3d/guides/depth_sensors.md</code>（深度）、</p>
+<p><code style="color:#22d3bf">annotate/guides/dataset_conventions.md</code>（出口）と同じ位置づけ。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">1. 色の定義式（ここから全部出る）</h3>
+<p>物体色は<b>物体だけでは決まらない</b>。三刺激値は 3 つの掛け算の積分:</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">X = k ∫ S(λ) · R(λ) · x̄(λ) dλ
+Y = k ∫ S(λ) · R(λ) · ȳ(λ) dλ
+Z = k ∫ S(λ) · R(λ) · z̄(λ) dλ
+
+S(λ) = 光源の分光分布   R(λ) = 物体の分光反射率   x̄ȳz̄ = 等色関数（観測者）
+k は完全拡散反射面で Y = 100 になるよう正規化する</pre>
+<p><b>この式に無いものは色を決められない。</b> つまり:</p>
+<p style="margin:2px 0 2px 12px">• <b>光源が変われば色は変わる</b>（同じ物体でも）。</p>
+<p style="margin:2px 0 2px 12px">• <b>観測者が変われば色は変わる</b> —— CIE 1931 <b>2° 標準観測者</b>と CIE 1964 <b>10° 標準観測者</b>は</p>
+<p>別物。検査の視野は広いので 10° を使う場面がある。**どちらで測ったか書いていない</p>
+<p>Lab 値は比較できない。**</p>
+<p style="margin:2px 0 2px 12px">• <b>カメラの RGB はこの式の出力ではない</b>（§4）。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">2. 標準光源 —— 名前と実体がずれている</h3>
+<p>| 記号 | 実体 | 相関色温度 |</p>
+<p>| --- | --- | --- |</p>
+<p>| <b>D65</b> | 平均昼光（D 系列は 1964 年に実測から統計的に定義） | <b>約 6504 K</b> |</p>
+<p>| D50 | 印刷・グラフィックアートの基準 | 約 5003 K |</p>
+<p>| A | タングステン電球（黒体） | 2856 K |</p>
+<p>| F1–F12 | 蛍光灯（12 種） | 種による |</p>
+<p><b>D65 の相関色温度が 6500 K ちょうどでない</b>のは、標準を定めた後にプランクの法則の</p>
+<p>定数 c₂ の推定値が改定されたため。名前は 6500 のまま残っている。</p>
+<p>そして重要なのは —— <b>D 系列も F 系列も、実際には artificially にはほとんど再現できない</b></p>
+<p>（数学的に定義された分布であって、実在の光源ではない）。さらに:</p>
+<p>&gt; <b>LED は D 系にも F 系にも当てはまらない。</b></p>
+<p>外観検査の照明は今ほぼ LED である。つまり<b>規格光源の表を引いても現場の S(λ) は出てこない</b>。</p>
+<p>分光放射計で実測するか、メーカーの分光データを使うのが唯一確実な道である。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">3. メタメリズム —— 検査で最もよく踏む地雷</h3>
+<p><b>分光反射率 R(λ) が違うのに、ある光源下では三刺激値が一致する</b>組が存在する。</p>
+<p>これをメタメリック・ペアと呼ぶ。</p>
+<p>積分してから比べる以上、これは避けられない。3 つの数字（XYZ）に落とす時点で、</p>
+<p>無限次元の R(λ) の情報は捨てられている。結果として:</p>
+<p style="margin:2px 0 2px 12px">• <b>昼と夜で判定が変わる</b>（外光が混じる検査ブースで起きる）</p>
+<p style="margin:2px 0 2px 12px">• <b>目視 OK なのにカメラ NG</b>（人の等色関数とカメラの感度が違う、§4）</p>
+<p style="margin:2px 0 2px 12px">• <b>照明を別ロットの LED に替えたら合格率が変わった</b>（S(λ) が微妙に違う）</p>
+<p><b>判別したいなら分光で測るしかない。</b> RGB でも XYZ でも足りない。</p>
+<p>逆に言えば「色差で管理している」と言うとき、<b>どの光源で・どの観測者で</b>が</p>
+<p>決まっていなければ、その管理は再現しない。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">4. カメラは観測者ではない</h3>
+<p>カメラの分光感度が等色関数の線形結合になっている（<b>Luther–Ives 条件</b>）ことは、</p>
+<p>実機ではまず無い。したがって:</p>
+<p style="margin:2px 0 2px 12px">• <b>RGB → XYZ / Lab の 3×3 行列は、その光源・その被写体群でだけ成り立つ近似</b>である。</p>
+<p>別の光源、別の材質群に持っていくと系統誤差が出る（カメラ内メタメリズム）。</p>
+<p style="margin:2px 0 2px 12px">• だから<b>カラーチャートで校正する</b>。X-Rite ColorChecker（24 パッチ）などを</p>
+<p>同じ照明・同じ露光で撮り、パッチの既知 Lab に対して線形（あるいは多項式）回帰で</p>
+<p>変換を推定する。<b>校正なしの RGB から ΔE を出しても数字にしかならない。</b></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">前処理の順番（ここを崩すと色が壊れる）</h3>
+<p>1. <b>暗電流・オフセット減算</b></p>
+<p>2. <b>シェーディング（平場）補正</b> —— 照明ムラとレンズの cos⁴ を取る</p>
+<p>3. <b>ホワイトバランス</b> —— von Kries 型の対角スケーリング、より正確には Bradford CAT</p>
+<p>4. <b>線形空間で演算</b> —— ここが要点。sRGB のガンマを外さずに平均・リサイズ・補間すると</p>
+<p><b>暗く濁る</b>（非線形空間での平均は物理的に意味が無い）</p>
+<p>5. 表示するときだけガンマを戻す</p>
+<p><b>飽和した画素は色として無効。</b> 1 チャンネルでもクリップすると色相が回る。</p>
+<p>検査では飽和マスクを別に持ち、色差の計算から外す。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">5. 色差 ΔE —— どれを使うか</h3>
+<p>| 式 | 年 | 性質 |</p>
+<p>| --- | --- | --- |</p>
+<p>| **ΔE\*ab（CIE76）<b> | 1976 | Lab のユークリッド距離。実装は簡単だが</b>知覚均等でない**（特に高彩度でずれる） |</p>
+<p>| <b>ΔE94（CIE94）</b> | 1994 | 明度・彩度・色相に重みを入れた。CIE76 からの改善が大きい |</p>
+<p>| <b>ΔE00（CIEDE2000）</b> | 2001 | さらに回転項とグレー補正を追加。最も洗練されているが<b>式が複雑</b> |</p>
+<p>研究上の知見として、**CIE76 → CIE94 の改善のほうが、CIE94 → CIEDE2000 の改善より</p>
+<p>大きい**と報告されている。CIEDE2000 の補正項の寄与も、彩度差補正を 100 とすると</p>
+<p>色相差 29・回転項 8・明度差 8・グレー補正 6 という順で、<b>彩度差補正が支配的</b>。</p>
+<p><code style="color:#22d3bf">kL</code>（明度の重み）は<b>用途で変える</b> —— グラフィックアートで 1、繊維で 2 が慣例。</p>
+<p>検査対象に合わせて決める値であって、既定値をそのまま使う性質のものではない。</p>
+<p><b>「ΔE = 1 が識別限界」は俗説</b>として扱うこと。実際の弁別閾は色相・彩度・明度・</p>
+<p>背景・観察条件で変わる。<b>自社の対象で、自社の観察条件で、閾値を実測して決める。</b></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">6. fullseye での現在地（正直に）</h3>
+<p>| 要素 | 今あるもの | 足りないもの |</p>
+<p>| --- | --- | --- |</p>
+<p>| 光源 S(λ) | <code style="color:#22d3bf">light_spec(source=led/halogen/laser, wavelength_nm, bandwidth_nm)</code> —— <b>中心波長 + 帯域幅</b>のモデル（実機の照明カタログ付き） | 実測の分光分布を持てない。D65/A/F 系の表も無い |</p>
+<p>| 反射率 R(λ) | <code style="color:#22d3bf">scene_material(albedo=...)</code> —— スカラまたは RGB | <b>分光反射率を持てない</b>。だからメタメリズムが原理的に再現できない |</p>
+<p>| 観測者 x̄ȳz̄ | 無し | CIE 1931 2° / 1964 10° の等色関数表 |</p>
+<p>| カメラ感度 | <code style="color:#22d3bf">sensor_spec(qe=...)</code> —— <b>スカラの QE</b> | QE(λ) 曲線、カラーフィルタの分光透過 |</p>
+<p>| 色空間変換 | <code style="color:#22d3bf">imgmetrics</code> の <code style="color:#22d3bf">rgb_to_xyz</code> / <code style="color:#22d3bf">xyz_to_lab</code> / <code style="color:#22d3bf">rgb_to_lab</code> / <code style="color:#22d3bf">lab_to_rgb</code> —— CIE 定義で、**白色点は <code style="color:#22d3bf">white=</code> で選べる<b>（既定 D65 2°） | 白色点の</b>適応**（Bradford CAT）。逆変換は色域外を切り詰めるので往復は色域内でしか一致しない |</p>
+<p>| 色差 | **<code style="color:#22d3bf">delta_e_76</code> / <code style="color:#22d3bf">delta_e_2000</code> / <code style="color:#22d3bf">delta_e_map</code><b> —— CIEDE2000 は Sharma らの </b>34 組の検証対**で固定（<code style="color:#22d3bf">kL</code> / <code style="color:#22d3bf">kC</code> / <code style="color:#22d3bf">kH</code> を渡せる） | ΔE94。分光ベースの色差 |</p>
+<p>指標そのものの使い方（<code style="color:#22d3bf">data_range</code> の罠、SSIM の実装差、報告に条件を添える型）は</p>
+<p><code style="color:#22d3bf">imgmetrics/guides/image_difference_metrics.md</code> に分けてある。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">★ 同じ変換が 3 つある —— 名前が同じでも尺度が違う</h3>
+<p>fullseye には RGB → L\*a\*b\* が <b>3 つ</b>ある:</p>
+<p>| どこ | 実装 | 尺度・精度 |</p>
+<p>| --- | --- | --- |</p>
+<p>| <code style="color:#22d3bf">imgmetrics.rgb_to_lab</code> | CIE 定義（sRGB 原色、白色点を選べる） | float、**L\* は 0–100<b>。</b>これが正** |</p>
+<p>| <code style="color:#22d3bf">color_pca.trans_from_rgb(img, &quot;lab&quot;)</code> | 上への<b>委譲</b> | 同じ値 |</p>
+<p>| op 台帳の <code style="color:#22d3bf">trans_from_rgb</code>（<code style="color:#22d3bf">backends_color</code>） | OpenCV | <b>uint8 に量子化</b>してから変換し 255 で割った 8-bit スケール |</p>
+<p>この文書を書いている途中に見つけた不整合が、まさにこれだった ——</p>
+<p><code style="color:#22d3bf">color_pca.trans_from_rgb()</code> は <code style="color:#22d3bf">hsv</code> / <code style="color:#22d3bf">yuv</code> / <code style="color:#22d3bf">gray</code> しか受け付けず、<code style="color:#22d3bf">&quot;lab&quot;</code> や</p>
+<p><code style="color:#22d3bf">&quot;xyz&quot;</code> を渡すと <code style="color:#22d3bf">ValueError</code> になっていた。**正しい実装は <code style="color:#22d3bf">imgmetrics</code> に既に</p>
+<p>あったのに、色空間変換の入口からそこへ到達する道が無かった。**</p>
+<p>直し方は「もう一組実装を書く」ではなく <b>委譲</b>にした。行列と伝達関数を二組持つと、</p>
+<p>片方だけ直したときに<b>例外を出さずに違う色</b>が出る（<code style="color:#22d3bf">imgmetrics</code> 自身も同じ理由で</p>
+<p>sRGB の伝達関数を <code style="color:#22d3bf">gfx2d</code> に委譲している）。</p>
+<p>検証（<code style="color:#22d3bf">tests/test_colorimetry.py</code>）: 白 → <code style="color:#22d3bf">(100, 0, 0)</code>（残差 2e-5 ―― 公表されている</p>
+<p>sRGB 行列が 7 桁に丸められているぶん）、sRGB 原色 → <code style="color:#22d3bf">(53.241, 80.092, 67.203)</code> ほか</p>
+<p>公表値と一致、**中間グレー 0.5 → L\* = 53.389**（50 ではない）、そして</p>
+<p><code style="color:#22d3bf">color_pca</code> と <code style="color:#22d3bf">imgmetrics</code> が<b>同一の値</b>を返すこと。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">7. まとめ（判断の芯）</h3>
+<p style="margin:2px 0 2px 12px">• <b>色を数字で管理するなら、光源・観測者・白色点を先に固定する。</b> これが決まっていない</p>
+<p>ΔE は再現しない。</p>
+<p style="margin:2px 0 2px 12px">• <b>RGB の差は色差ではない。</b> カラーチャートで校正して初めて色差になる。</p>
+<p style="margin:2px 0 2px 12px">• <b>分光が違うものを 3 数字で分けようとしない。</b> それがメタメリズムで、</p>
+<p>照明を変えた瞬間に破綻する。分けたいなら分光で測る。</p>
+<p style="margin:2px 0 2px 12px">• <b>線形空間で計算する。</b> ガンマを外さない平均は物理量ではない。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">8. 診断表 —— 症状から原因へ</h3>
+<p>| 症状 | まず疑う | 確かめ方 |</p>
+<p>| --- | --- | --- |</p>
+<p>| 目視 OK なのにカメラ NG | カメラの分光感度が人と違う（カメラ内メタメリズム） | 分光反射率を測る。無理なら校正チャートを同条件で撮り、<b>その色の近傍</b>で残差が大きいか見る |</p>
+<p>| 昼と夜／季節で判定が変わる | 外光が混じり S(λ) が変わっている | 遮光して再現するか確認。暗幕で囲って比較 |</p>
+<p>| 照明を交換したら合格率が変わった | LED の分光ばらつき（同型番でもロット差がある） | 新旧の照明で<b>同じ標準板</b>を撮り、チャネル比を比べる |</p>
+<p>| 画像を縮小・平均したら色が変わった | ガンマ空間で演算した | 線形に戻してから同じ処理をして比較 |</p>
+<p>| 明るい部分だけ色相が回る | 飽和（1 チャンネルでもクリップすると回る） | チャネル最大値の分布を見る。飽和値に張り付いた画素を数える |</p>
+<p>| 視野の端だけ色が違う | シェーディング未補正／周辺光量落ち（cos⁴） | 白板を全面に撮り、平場を取ってから再判定 |</p>
+<p>| ΔE の数字が現場感覚と合わない | 式の選択（CIE76 のまま）と <code style="color:#22d3bf">kL</code> | ΔE94 / ΔE00 に替えて目視順位との相関を見る。閾値は自社の弁別実験で決め直す |</p>
+<p>| Lab 値が他社と合わない | 白色点と観測者が違う（D65/D50、2°/10°） | 相手方に<b>白色点と観測者</b>を確認する。書いていなければ比較しない |</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">出典</h3>
+<p style="margin:2px 0 2px 12px">• CIE Standard Illuminants（D 系列の定義経緯、D65 の相関色温度 約 6504 K、</p>
+<p>c₂ 改定による名目値とのずれ、D 系は人工的にはほぼ再現できない） —</p>
+<p>&lt;https://www.rp-photonics.com/cie_standard_illuminants.html&gt; ／</p>
+<p>&lt;https://www.image-engineering.de/library/technotes/753-cie-standard-illuminants&gt;</p>
+<p style="margin:2px 0 2px 12px">• G. Sharma, W. Wu, E. N. Dalal, *The CIEDE2000 color-difference formula:</p>
+<p>Implementation notes, supplementary test data, and mathematical observations* —</p>
+<p>&lt;https://hajim.rochester.edu/ece/sites/gsharma/papers/CIEDE2000CRNAFeb05.pdf&gt;</p>
+<p style="margin:2px 0 2px 12px">• CIEDE2000 と CIE94 の補正項の相対寄与、および CIE76 → CIE94 の改善が</p>
+<p>CIE94 → CIEDE2000 の改善より大きいこと（比較研究） —</p>
+<p>&lt;https://www.researchgate.net/publication/8127013_Relative_significance_of_the_terms_in_the_CIEDE2000_and_CIE94_color-difference_formulas&gt;</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kL</code> の慣例値（グラフィックアート 1・繊維 2） — MATLAB <code style="color:#22d3bf">imcolordiff</code> —</p>
+<p>&lt;https://www.mathworks.com/help/images/ref/imcolordiff.html&gt;</p>

@@ -1,0 +1,40 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dither — GFX2D <code style="color:#22d3bf">post</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.dither(img, levels=2, method=&#x27;ordered&#x27;, matrix_size=4)</code> (oder <code style="color:#22d3bf">opsgfx2d.get(&quot;dither&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Quantise to `<code style="color:#22d3bf">levels</code>` values per channel while preserving the local mean.</p>
+<p>`<code style="color:#22d3bf">method</code>`:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;ordered&quot;</code><code style="color:#22d3bf"> — Bayer threshold matrix of side </code><code style="color:#22d3bf">matrix_size</code>` (a power of</p>
+<p>two, 2..16). <b>The mean error has a closed-form bound</b>: for a uniform</p>
+<p>patch the output mean is within `<code style="color:#22d3bf">0.5 / (matrix_size**2 * (levels-1))</code>` of</p>
+<p>the input, because the fraction of thresholds crossed is the input</p>
+<p>fraction rounded to the nearest `<code style="color:#22d3bf">1/matrix_size**2</code>`. At the defaults</p>
+<p>(4, 2 levels) the bound is 0.03125; the suite checks it holds for 101 grey</p>
+<p>levels x 3 matrix sizes, with zero violations.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;floyd_steinberg&quot;</code>` — error diffusion with the 7/3/5/1 sixteenths of</p>
+<p>Floyd &amp; Steinberg 1976, serial and directional.</p>
+<p>Which method preserves the mean better depends on the image, and this</p>
+<p>docstring will not pretend otherwise. Measured on a 128-step horizontal</p>
+<p>ramp: ordered is <b>exact</b> (0.0) at 2, 3 and 4 levels and drifts to 1.1e-3</p>
+<p>at 8 levels, while Floyd-Steinberg is 7.3e-4 at 2 levels and improves to</p>
+<p>4.1e-5 at 16. Ordered wins where the level lattice divides the ramp, error</p>
+<p>diffusion wins where it does not.</p>
+<p>Accepts `<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> or </code><code style="color:#22d3bf">(H, W, 3|4)</code>`; an alpha channel is quantised too,</p>
+<p>because a dithered sprite with a smooth alpha is exactly the case that</p>
+<p>motivates this.</p>
+<p>Output values lie on the lattice `<code style="color:#22d3bf">k / (levels - 1)</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gfx2d_scene">gfx2d_scene</a> — <code style="color:#22d3bf">py -3.11 examples/gfx2d_scene.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:shadow_cast_2d">shadow_cast_2d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">post</code>)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:bloom">bloom</a> · <a style="color:#22d3bf" href="opgfx2d:vignette">vignette</a> · <a style="color:#22d3bf" href="opgfx2d:chromatic_aberration">chromatic_aberration</a> · <a style="color:#22d3bf" href="opgfx2d:film_grain">film_grain</a> · <a style="color:#22d3bf" href="opgfx2d:color_lut">color_lut</a> · <a style="color:#22d3bf" href="opgfx2d:color_grade">color_grade</a> · <a style="color:#22d3bf" href="opgfx2d:palette_quantize">palette_quantize</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gfx2d.py — GFX2D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

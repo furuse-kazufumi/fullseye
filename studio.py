@@ -3201,20 +3201,78 @@ def tr(text):
     return STRINGS_I18N.get(text, {}).get(_UI_LANG["code"], text)
 
 
+#: ヘルプの言語切替に出す順序。``studio_assets/op_help/`` を走査して**実在するものだけ**
+#: を出すので、生成していない言語は勝手に消える(空リンクを出さない)。台湾向け繁体字は
+#: ファイル名を 2 文字にそろえて ``tw``(標準タグ ``zh-TW`` との対応は
+#: ``tools/opdocs.py`` の ``LANG_ALIASES``)。
+HELP_LANG_ORDER = ("ja", "en", "zh", "tw", "ko", "de")
+
+
+#: i18n.json の 'languages' に無い言語コードの表示名(最後の砦。i18n.json 側に
+#: 足せばそちらが優先される)。
+HELP_LANG_NAMES = {"ja": "日本語", "en": "English", "zh": "简体中文",
+                   "tw": "繁體中文", "ko": "한국어", "de": "Deutsch"}
+
+
+def help_langs_available(name, dim="2d", kind="op"):
+    """この help ページが**実際に存在する**言語コード(``ja`` を先頭に)。
+
+    生成物を見て決めるので、``tools/opdocs.py html`` を走らせていない環境では
+    日本語 1 枚だけが返り、切替リンクは出ない(押しても何も無いリンクを出さない)。
+    """
+    base = os.path.join(_ASSETS, "op_help")
+    if kind == "op" and dim != "2d":
+        base = os.path.join(base, dim)
+    stem = ("guide_" + name) if kind == "guide" else name
+    out = []
+    for code in HELP_LANG_ORDER:
+        fn = "%s.html" % stem if code == "ja" else "%s.%s.html" % (stem, code)
+        if os.path.exists(os.path.join(base, fn)):
+            out.append(code)
+    return out
+
+
+def help_lang_bar(name, dim="2d", cur="ja", kind="op"):
+    """ヘルプ冒頭に置く言語の導線。現在地は太字、他はクリックで切り替わる。
+
+    翻訳があるページとないページが混在するので、**そのページに実在する言語だけ**を
+    並べる —— 「英語があるはずなのに開くと日本語」を避けるため(ガイドは人が書いた
+    散文なので日本語 1 枚だけ、という状態が普通に起きる)。
+    """
+    langs = help_langs_available(name, dim, kind)
+    if len(langs) < 2:
+        return ""
+    parts = []
+    for c in langs:
+        label = LANGUAGES.get(c, HELP_LANG_NAMES.get(c, c))
+        if c == cur:
+            parts.append('<b style="color:#f5a524">%s</b>' % label)
+        else:
+            parts.append('<a style="color:#22d3bf" href="lang:%s">%s</a>' % (c, label))
+    return ('<p style="color:#8b91a0;font-size:11px;margin:0 0 6px 0">%s: %s</p>'
+            % (tr("Language"), " · ".join(parts)))
+
+
 def op_help_html(name, lang="en", meta=None, dim="2d"):
     """Rich HTML help for one operator. Lookup order (see studio_assets/op_help/):
       1. op_help/<name>.<lang>.html   language-specific
-      2. op_help/<name>.html          default (English)
+      2. op_help/<name>.html          the authored page (**currently Japanese**)
       3. a generated card from the op's registry metadata (no file needed).
     The HTML may use anchors ``op:<name>`` (jump to a related op) and
     ``sample:<url-encoded ops>`` / ``run:<...>`` (load/run a sample pipeline).
 
-    ``dim="3d"`` delegates to :func:`op_help_html_3d` (point-cloud / mesh / volume
-    modality, looked up under op_help/3d/) so a single dim-aware entry point serves
-    both operator registries — 2-D and 3-D op names can collide (e.g. ``fill_holes``),
-    so the modality must be passed, not inferred from the name."""
-    if dim == "3d":
-        return op_help_html_3d(name, meta)
+    Any ``dim`` other than ``"2d"`` delegates to :func:`op_help_html_3d`, which looks
+    under ``op_help/<dim>/`` — that serves 3-D **and every ledger family** (math /
+    optics / imgmetrics / …). Op names collide across registries (e.g. ``fill_holes``
+    exists in 2-D and 3-D), so the modality must be passed, not inferred from the name.
+
+    2026-09-05: step 2 used to be documented as "default (English)". It is not — the
+    bulk-generated pages are Japanese (the ones `tools/opdocs.py html` writes), and only
+    three hand-authored pages (gaussian / otsu / sobel_mag) are English. Those three are
+    deliberately left without language siblings so that picking a language never swaps a
+    rich page (they carry runnable `sample:` pipelines) for a thinner generated one."""
+    if dim != "2d":
+        return op_help_html_3d(name, meta, lang=lang, subdir=dim)
     base = os.path.join(_ASSETS, "op_help")
     for fn in ("%s.%s.html" % (name, lang), "%s.html" % name):
         p = os.path.join(base, fn)
@@ -3308,21 +3366,28 @@ def opassist_html(name):
     return "".join(out)
 
 
-def op_help_html_3d(name, meta=None):
-    """Rich HTML help for one 3-D operator (point-cloud / mesh / volume modality).
+def op_help_html_3d(name, meta=None, lang="en", subdir="3d"):
+    """Rich HTML help for one non-2-D operator (3-D, or any ledger family).
 
-    Reads ``op_help/3d/<name>.html`` — bulk-generated from the Markdown corpus
-    (``docs/ops/3d/**/*.md``) by ``tools/opdocs.py`` — and falls back to a small card
-    built from the ops3d registry metadata if that file is absent. Kept separate from
-    :func:`op_help_html` because 2-D and 3-D op names can collide (e.g. ``fill_holes``),
-    so the two help sets live in different directories and are looked up by modality."""
-    p = os.path.join(_ASSETS, "op_help", "3d", "%s.html" % name)
-    if os.path.exists(p):
-        try:
-            with open(p, encoding="utf-8") as f:
-                return f.read() + opassist_html(name)
-        except Exception:
-            pass
+    Reads ``op_help/<subdir>/<name>.<lang>.html`` then ``op_help/<subdir>/<name>.html``
+    — bulk-generated from the Markdown corpus by ``tools/opdocs.py`` — and falls back to
+    a small card built from registry metadata if neither exists. Kept separate from
+    :func:`op_help_html` because op names collide across registries (e.g. ``fill_holes``),
+    so each modality's help lives in its own directory and is looked up by modality.
+
+    2026-09-05: ``lang`` and ``subdir`` were both missing. Without ``lang`` the 3-D pages
+    **silently ignored the language the user picked**; without ``subdir`` the 494 ledger
+    help pages that ``opdocs.py html`` generates under ``op_help/<dim>/`` could not be
+    opened at all."""
+    base = os.path.join(_ASSETS, "op_help", subdir)
+    for fn in ("%s.%s.html" % (name, lang), "%s.html" % name):
+        p = os.path.join(base, fn)
+        if os.path.exists(p):
+            try:
+                with open(p, encoding="utf-8") as f:
+                    return f.read() + opassist_html(name)
+            except Exception:
+                pass
 
     def _e(s):
         return str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
@@ -7040,39 +7105,110 @@ def build_window(model=None):
             _help_entries[_disp] = ("3d", _n); _help_d3.append(_disp)
     except Exception:
         pass
-    help_pick.addItems(list(op_names) + _help_d3)
-    help_pick.setToolTip("Jump to any operator's help (2-D image ops + 3-D point/mesh/volume ops)")
+    # Ledger families (math / optics / imgmetrics / tomography / …) are **discovered from
+    # the generated help tree**, not from an import list: `tools/opdocs.py html` writes
+    # op_help/<dim>/<op>.html, so a new family shows up here with no change to studio.py.
+    #
+    # 2026-09-05: before this, the picker only knew 2-D and 3-D, so the 494 ledger help
+    # pages were generated and shipped but **could not be opened from Studio at all**.
+    _help_led = []
+    try:
+        _hroot = os.path.join(_ASSETS, "op_help")
+        for _dim in sorted(os.listdir(_hroot)):
+            if _dim == "3d" or not os.path.isdir(os.path.join(_hroot, _dim)):
+                continue
+            for _f in sorted(os.listdir(os.path.join(_hroot, _dim))):
+                # skip the per-language siblings (<op>.<lang>.html): their stem has a dot
+                if not _f.endswith(".html") or _f.count(".") != 1:
+                    continue
+                _n = _f[:-5]
+                _disp = "%s  (%s)" % (_n, _dim)
+                _help_entries[_disp] = (_dim, _n); _help_led.append(_disp)
+    except Exception:
+        pass
+    help_pick.addItems(list(op_names) + _help_d3 + _help_led)
+    help_pick.setToolTip("Jump to any operator's help (2-D image ops, 3-D point/mesh/volume ops, "
+                         "and the ledger families: math / optics / imgmetrics / …)")
     hd_copy = QtWidgets.QPushButton("Copy sig")
     hd_copy.setToolTip("Copy this operator's signature to the clipboard")
     _htop.addWidget(hd_back); _htop.addWidget(hd_fwd); _htop.addWidget(help_pick, 1); _htop.addWidget(hd_copy)
     _hdl.addLayout(_htop); _hdl.addWidget(help_browser, 1)
 
+    # ヘルプ側の言語。``None`` は UI の言語に追従する、という意味(既定)。ページ内の
+    # 言語リンクを押したときだけ固定され、UI の言語を切り替えると追従へ戻る。
+    _help_lang = {"code": None}
+    _help_cur = {"kind": "op", "name": None, "dim": "2d"}
+    win._help_lang = _help_lang
+
+    def _cur_help_lang():
+        return _help_lang["code"] or getattr(win, "_lang", "en")
+
     def show_op_help(name, dim="2d"):
         if not name:
             return
-        if dim == "3d":
-            try:
-                import ops3d as _o3
-                row = _o3.OPS3D.get(name)
-            except Exception:
-                row = None
-            help_browser.setHtml(op_help_html(name, dim="3d", meta=row))
-            disp = "%s  (3D)" % name
+        _lang = _cur_help_lang()
+        _help_cur.update(kind="op", name=name, dim=dim)
+        bar = help_lang_bar(name, dim, _lang, "op")
+        if dim != "2d":
+            row = None
+            if dim == "3d":
+                try:
+                    import ops3d as _o3
+                    row = _o3.OPS3D.get(name)
+                except Exception:
+                    row = None
+            help_browser.setHtml(bar + op_help_html(name, _lang, meta=row, dim=dim))
+            disp = "%s  (3D)" % name if dim == "3d" else "%s  (%s)" % (name, dim)
         else:
             row = _op_row(name) or {"in_sort": "?", "out_sort": "?"}
-            help_browser.setHtml(op_help_html(name, getattr(win, "_lang", "en"), row))
+            help_browser.setHtml(bar + op_help_html(name, _lang, row))
             disp = name
         i = help_pick.findText(disp)
         if i >= 0:
             help_pick.blockSignals(True); help_pick.setCurrentIndex(i); help_pick.blockSignals(False)
         help_dialog.show(); help_dialog.raise_(); help_dialog.activateWindow()
 
+    def show_guide_page(stem):
+        """族ガイド / 背景知識ガイドを開く(言語の切替リンクつき)。"""
+        lang = _cur_help_lang()
+        base = os.path.join(_ASSETS, "op_help")
+        for fn in ("guide_%s.%s.html" % (stem, lang), "guide_%s.html" % stem):
+            p = os.path.join(base, fn)
+            if not os.path.exists(p):
+                continue
+            try:
+                with open(p, encoding="utf-8") as f:
+                    body = f.read()
+            except Exception:
+                break
+            _help_cur.update(kind="guide", name=stem, dim="2d")
+            help_browser.setHtml(help_lang_bar(stem, "2d", lang, "guide") + body)
+            flash("opened guide: " + stem)
+            return
+        flash("guide not built: run `py -3.11 tools/opdocs.py html`")
+
     def _help_anchor(url):
         s = url.toString()
+        # 台帳(math / optics / imgmetrics / …)のページは兄弟 op / 次の op / 族ガイドへの
+        # リンクを ``op<dim>:`` / ``guide<dim>:`` で持つ。ここが ``op3d:`` と ``guide2d:``
+        # しか見ていなかったので、台帳ページ上のリンクは**どれも押しても何も起きなかった**
+        # (2026-09-05)。接頭辞から次元を切り出して一般化する。
         if s.startswith("op3d:"):              # related 3-D operator link
             show_op_help(s[5:], "3d")
         elif s.startswith("op:"):              # related-operator link (2-D)
             show_op_help(s[3:])
+        elif s.startswith("lang:"):            # 同じページを別の言語で開き直す
+            code = s.split(":", 1)[1]
+            _help_lang["code"] = code
+            if _help_cur["kind"] == "guide":
+                show_guide_page(_help_cur["name"])
+            elif _help_cur["name"]:
+                show_op_help(_help_cur["name"], _help_cur["dim"])
+        elif s.startswith("guide") and ":" in s:   # guide2d: / guidemath: / guideoptics: …
+            show_guide_page(s.split(":", 1)[1])
+        elif re.match(r"^op[a-z0-9]+:", s):        # opmath: / opoptics: / opimgmetrics: …
+            scheme, rest = s.split(":", 1)
+            show_op_help(rest, scheme[2:])
         elif s.startswith("sample:") or s.startswith("run:"):   # load a sample pipeline
             import urllib.parse as _up
             code = _up.unquote(s.split(":", 1)[1])
@@ -7085,18 +7221,6 @@ def build_window(model=None):
             except Exception:
                 pass
             flash("loaded sample pipeline from help")
-        elif s.startswith("guide2d:"):          # family usage guide (generated from docs/ops/2d/guides)
-            fam = s.split(":", 1)[1]
-            p = os.path.join(_ASSETS, "op_help", "guide_%s.html" % fam)
-            if os.path.exists(p):
-                try:
-                    with open(p, encoding="utf-8") as f:
-                        help_browser.setHtml(f.read())
-                    flash("opened family guide: " + fam)
-                except Exception:
-                    pass
-            else:
-                flash("guide not built: run `py -3.11 tools/opdocs.py html`")
         elif s.startswith("example2d:") or s.startswith("example3d:"):   # worked-example source
             scheme, ex = s.split(":", 1)
             sub = "examples_3d" if scheme == "example3d" else "examples"
@@ -8830,8 +8954,17 @@ def build_window(model=None):
     win._localize = localize
 
     def apply_language(lang):
-        win._lang = lang if lang in ("en", "ja", "zh") else "en"
+        # 受け付ける言語は i18n.json の 'languages' が決める —— ここに固定の許可リストを
+        # 置いていたあいだ、メニューには出るのに選ぶと英語に戻る言語があった(表に足す
+        # だけで増える、という i18n.json の約束をコード側が破っていた)。
+        win._lang = lang if lang in LANGUAGES else "en"
         _UI_LANG["code"] = win._lang
+        # ヘルプの言語はページ内リンクで一時的に固定できる。UI の言語を変えたら
+        # その固定を解いて追従へ戻す(片方だけ古い言語のまま残らないように)。
+        try:
+            win._help_lang["code"] = None
+        except Exception:
+            pass
         _apply_tooltips()
         _apply_labels()
         for code, a in win._lang_actions.items():
@@ -8864,7 +8997,7 @@ def build_window(model=None):
     try:                                     # restore the remembered language
         if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
             _lang = QtCore.QSettings("Fullseye", "Studio").value("lang")
-            if _lang in ("en", "ja", "zh"):
+            if _lang in LANGUAGES:
                 apply_language(_lang)
     except Exception:
         pass

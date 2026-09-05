@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fullseye"
-version = "0.1.6"
+version = "0.1.7"
 description = "Numpy-native operator library for vision, 3-D and measurement (1,500+ typed ops: imaging, point clouds, optics, tomography, metrology) with an evolutionary pipeline designer and honest holdout gating"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -115,6 +115,32 @@ py-modules = [
   "fscript", "fslib", "fsruntime", "fsi18n",
   # --- geometric / math / drawing op modules + 2-D examples gallery (対話で追加) ---
   "imagemorph", "fourierdesc", "imagedraw", "drawstyle", "drawlist", "signal1d", "examples2d",
+  # `color_pca` は **HALCON facade の 11 op の実体**(create_color_trans_lut /
+  # inpainting_ced / inpainting_mcf / inpainting_texture / exhaustive_match_mg /
+  # gen_principal_comp_trans / gen_canonical_variates_trans / …)。
+  # ops.REGISTRY には 1 つも登録されないので「どこからも使われていない」ように見えるが、
+  # unified.py の facade 層が data/halcon_facade_map.json 経由で import している。
+  # ここに無かったあいだ、pip install した wheel では **その 11 op が黙って消えていた**
+  # (_load_facade が import 失敗を `except: continue` で握るので、エラーも警告も出ない)。
+  # 2026-09-05: tests/test_unified.py が facade map の全参照の解決を検査する。
+  #
+  # --- HALCON facade(600 op)の実体モジュール ----------------------------------
+  # これらは **文字列参照でしか import されない**(unified._load_facade が
+  # data/halcon_facade_map.json の "<module>.<func>" を解決する)。したがって
+  # `import X` を探す test_every_runtime_root_module_is_in_py_modules には映らず、
+  # ここに書かれるまで **wheel から丸ごと落ちていた**。
+  # 実測 2026-09-05: 600 facade op のうち **321 op(54%)** が `pip install fullseye`
+  # では黙って消えていた(_load_facade が ImportError を握るので警告すら出ない)。
+  # 内訳の上位: matrix 46 / shapematch 32 / geometry2d 20 / image_channels 20 /
+  # contours_xld2 20 / final_genuine 20 / filters_freq 18 / regions_setops 17。
+  "color_pca", "matrix", "shapematch", "geometry2d", "image_channels",
+  "contours_xld2", "final_genuine", "final_genuine2", "filters_freq",
+  "filters_arith", "regions_setops", "regions_gen", "region_morph",
+  "morph_minkowski", "tools_geom", "misc_vision", "image_gen", "image_paint",
+  "caltab", "calibration3d", "segmentation", "metrology", "measuring1d",
+  "inspection", "scattered",
+  # shapematch が import する GPU twin(上の 24 件を足して初めて表に出た依存)。
+  "shapematch_gpu",
   # --- 3-D vision toolkit (ops3d registry + method modules) + examples gallery ---
   "examples3d", "ops3d", "measure3d", "pipeline3d", "pipeline_evolve", "evolve_params", "metrics3d", "match3d", "bspline_surf", "bundle3d", "curvature3d", "curve3d", "deform3d", "depth_bilateral", "descriptors3d", "edges3d", "feat_fpfh", "feat_harris", "feat_shot", "feat_spin", "fringe", "fuse3d", "geodesic3d", "gicp", "medial", "moments3d", "motion_seg3d", "normals_orient", "pcl_augment", "pcl_filter", "photometric", "plane_sweep", "pnp3d", "pose_graph", "range_image", "ransac_fit", "recon3d", "regionprops3d", "registration_eval", "scene_flow3d", "sdf_ops", "segment3d", "spherical_proj", "superquadric", "symmetry3d", "tsdf_fusion", "twoview", "visualhull",
   # 3-D mesh / rendering support (imported by ops3d.py + render_beauty.py)
@@ -161,9 +187,20 @@ py-modules = [
 "studio_assets" = ["*.json", "op_help/*.html", "op_help/*.md",
                    "sample_images/*.png", "sample_images/*.json",
                    "sample_thumbs/*.png", "sample_thumbs/*.json",
-                   "sample_sources_ai/*.png", "sample_sources_ai/*.jpg",
+                   # `sample_sources_ai/`(AI 生成の記事用素材 26 枚)は **同梱しない**。
+                   # 出荷コードからは 1 箇所も読まれず(参照は tools/fops_article/ =
+                   # 記事生成の開発ツールと docs/ の仕様書だけ)、それでいて
+                   # **wheel の 58%(圧縮後 42.1 MB / 全体 72.0 MB)** を占めていた。
+                   # 読まないものを配らない ―― これを外すと wheel は 30 MB になる。
+                   # リポジトリには残るので記事の再生成には支障しない。
                    "sample_3d/*.npy", "sample_3d/*.md",
-                   "op_help/3d/*.html"]
+                   # 3-D **と全ての台帳族**(math / optics / imgmetrics / …)の help。
+                   # ここが `op_help/3d/*.html` だけを挙げていたあいだ、
+                   # `tools/opdocs.py html` が生成してリポジトリにコミットされていた
+                   # 494 枚の台帳ヘルプは **wheel に 1 枚も入っていなかった**
+                   # (2026-09-05 実測)。族が増えても落ちないようワイルドカードにする。
+                   # `<op>.<lang>.html`(en / zh / tw / ko / de)も同じ glob に入る。
+                   "op_help/*/*.html"]
 
 [tool.coverage.run]
 # ライブラリ本体のカバレッジを測る(テスト・開発ツール・研究スクラッチは対象外)。

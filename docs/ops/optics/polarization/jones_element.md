@@ -7,12 +7,12 @@ out: cimage
 examples: [optics_imaging]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # jones_element — OPTICS `polarization` op
 
-- **データ種**: `` → `cimage`
+- **データ種**: `なし` → `cimage`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import optics; optics.jones_element(kind='polarizer', angle_deg=0.0, retardance_deg=90.0)` (または `opsoptics.get("jones_element")`)
 
 ## 使い方

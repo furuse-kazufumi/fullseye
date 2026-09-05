@@ -1,0 +1,34 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vol_label_legend — VOLCOLOR <code style="color:#22d3bf">measure</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import volcolor; volcolor.vol_label_legend(labels, props=None, seed: &#x27;int&#x27; = 0, spacing=None, measure: &#x27;str&#x27; = &#x27;volume&#x27;, top=None)</code>(或 <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_legend&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>「どの色がどの成分で、その計測値は幾つか」の凡例表を返す。</p>
+<p>色だけを出して意味の読めない図を作らないための op。返りは `<code style="color:#22d3bf">list[dict]</code>`:</p>
+<p>`<code style="color:#22d3bf">label</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">rgb</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(r, g, b)</code><code style="color:#22d3bf"> float </code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">hex</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">&quot;#rrggbb&quot;</code>` ·</p>
+<p>`<code style="color:#22d3bf">voxel_count</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">volume</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">measure</code>` 並べ替えに使った量の名前 ·</p>
+<p>`<code style="color:#22d3bf">value</code><code style="color:#22d3bf"> その値 · </code><code style="color:#22d3bf">rank</code><code style="color:#22d3bf"> 1 始まりの順位 · </code><code style="color:#22d3bf">share</code>` 全成分の</p>
+<p>*measure* 合計に対する割合。</p>
+<p>*measure* は props に載っている数値キーなら何でもよい(`<code style="color:#22d3bf">&quot;volume&quot;</code>`</p>
+<p>`<code style="color:#22d3bf">&quot;voxel_count&quot;</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">&quot;equivalent_diameter&quot;</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">volops.vol_region_props</code>` を</p>
+<p>渡したなら `<code style="color:#22d3bf">&quot;sphericity&quot;</code>` も)。降順に並べ、同点はラベル番号の昇順で割る</p>
+<p>(<b>決定的</b>)。*top* を与えると上位 N 件だけ返す。</p>
+<p>実在するラベルは `<code style="color:#22d3bf">np.bincount</code><code style="color:#22d3bf"> の非ゼロから取る。</code><code style="color:#22d3bf">labels.max()</code>` を成分数と</p>
+<p>見なさないので、番号に欠番があっても件数も順位も狂わない</p>
+<p>(`<code style="color:#22d3bf">tests/test_volcolor.py::test_stats_do_not_invent_the_component_count_from_max</code>`)。</p>
+<p>Raises `<code style="color:#22d3bf">ValueError</code>` when *measure* is not a numeric key of *props*, when</p>
+<p>*props* does not cover the labels present, or on a bad *top*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:voxel_labels_color">voxel_labels_color</a> — <code style="color:#22d3bf">py -3.11 examples/voxel_labels_color.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">measure</code>)</h3>
+<p><a style="color:#22d3bf" href="opvolcolor:vol_label_shape_stats">vol_label_shape_stats</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: volcolor.py — VOLCOLOR 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

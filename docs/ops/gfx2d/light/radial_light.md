@@ -7,12 +7,12 @@ out: rgb
 examples: [gfx2d_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # radial_light — GFX2D `light` op
 
-- **データ種**: `` → `rgb`
+- **データ種**: `なし` → `rgb`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import gfx2d; gfx2d.radial_light(height, width, x, y, radius, intensity=1.0, falloff='smooth', color='emphasis', scheme='okabe_ito')` (または `opsgfx2d.get("radial_light")`)
 
 ## 使い方

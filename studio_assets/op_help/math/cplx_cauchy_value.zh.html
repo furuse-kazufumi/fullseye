@@ -1,0 +1,49 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cplx_cauchy_value — MATH <code style="color:#22d3bf">complex</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">cpoints × cpoints</code> → <code style="color:#22d3bf">cscalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import mathops; mathops.cplx_cauchy_value(z, fz, w)</code>(或 <code style="color:#22d3bf">opsmath.get(&quot;cplx_cauchy_value&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>柯西积分公式:由围道<b>上</b>的值还原围道<b>内</b>的 `<code style="color:#22d3bf">f(w)</code>`。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>`<code style="color:#22d3bf">f(w) = 1/(2*pi*i*n) ∮ f(zeta)/(zeta - w) dzeta</code><code style="color:#22d3bf"> where </code><code style="color:#22d3bf">n</code>` is the</p>
+<p>winding number of the contour around *w* (Cauchy 1831; the division by</p>
+<p>`<code style="color:#22d3bf">n</code>` is what makes a doubly-wound contour give the same answer). Valid</p>
+<p>only if `<code style="color:#22d3bf">f</code>` is holomorphic on and inside the contour — nothing here can</p>
+<p>check that, and this is the honest limit of the op: fed values of a</p>
+<p>non-holomorphic `<code style="color:#22d3bf">f</code>` (or of one with a pole inside) it returns the</p>
+<p>integral, which is then simply *not* `<code style="color:#22d3bf">f(w)</code>`.</p>
+<p>Accuracy inherits the `<code style="color:#22d3bf">O(n^-2)</code>` chordal quadrature of</p>
+<p>:func:<code style="color:#22d3bf">cplx_contour_integral</code> and degrades as *w* approaches the path</p>
+<p>(the integrand&#x27;s peak sharpens): measured for `<code style="color:#22d3bf">f(z) = z**2</code>` on a</p>
+<p>256-point unit circle, the absolute error is 9.0e-6 at `<code style="color:#22d3bf">w = 0.3</code>` and</p>
+<p>8.1e-5 at `<code style="color:#22d3bf">w = 0.9</code>` — 9x worse for a point 7x closer to the path</p>
+<p>(0.7 -&gt; 0.1 of clearance). The blow-up is real but gradual; what it does</p>
+<p>*not* survive is clearance below one sampling step, which is refused.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *w* outside the contour (winding 0 — the</p>
+<p>integral is then 0 and returning it as &quot;f(w)&quot; would be a lie), *w* closer</p>
+<p>to the contour than one sampling step (the quadrature is meaningless</p>
+<p>there — refine the contour), plus everything</p>
+<p>:func:<code style="color:#22d3bf">cplx_winding_number</code> and :func:<code style="color:#22d3bf">cplx_contour_integral</code> refuse.</p>
+<p>HALCON: no operator.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
+<p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
+<p style="margin:2px 0 2px 12px">• **complex 输入一律 <code style="color:#22d3bf">ValueError</code>** —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>
+<p style="margin:2px 0 2px 12px">• **含被掩元素的 masked array 一律 <code style="color:#22d3bf">ValueError</code>** —— 拒绝「剥掉掩码直接使用下面原值」的隐式转换。请显式选择填充还是丢弃。</p>
+<p style="margin:2px 0 2px 12px">• **所有输入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code>**(明确给出个数后拒绝 —— 它会污染整个结果)。</p>
+<p style="margin:2px 0 2px 12px">• <b>形状严格</b>:不对 1-D 与 2-D 做隐式提升或广播(向量槽位收到矩阵、矩阵槽位收到向量都是 <code style="color:#22d3bf">ValueError</code>;请显式 reshape)。</p>
+<p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:接受矩阵的算子与 <code style="color:#22d3bf">stat_histogram</code> 的 bins,超过 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 万个元素)即 <code style="color:#22d3bf">ValueError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:math_complex">math_complex</a> — <code style="color:#22d3bf">py -3.11 examples/math_complex.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">cscalar</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">complex</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:cplx_contour_circle">cplx_contour_circle</a> · <a style="color:#22d3bf" href="opmath:cplx_poly_eval">cplx_poly_eval</a> · <a style="color:#22d3bf" href="opmath:cplx_contour_integral">cplx_contour_integral</a> · <a style="color:#22d3bf" href="opmath:cplx_winding_number">cplx_winding_number</a> · <a style="color:#22d3bf" href="opmath:cplx_argument_principle">cplx_argument_principle</a> · <a style="color:#22d3bf" href="opmath:cplx_laurent_coeffs">cplx_laurent_coeffs</a> · <a style="color:#22d3bf" href="opmath:cplx_joukowski">cplx_joukowski</a> · <a style="color:#22d3bf" href="opmath:cplx_mobius">cplx_mobius</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

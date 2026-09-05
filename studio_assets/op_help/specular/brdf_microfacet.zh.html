@@ -1,0 +1,53 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">brdf_microfacet — SPECULAR <code style="color:#22d3bf">reflectance</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import specularity; specularity.brdf_microfacet(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), roughness=0.3, f0=0.04)</code>(或 <code style="color:#22d3bf">opsspecular.get(&quot;brdf_microfacet&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>GGX / Trowbridge-Reitz microfacet specular BRDF. → (H, W), units 1/sr.</p>
+<p>`<code style="color:#22d3bf">f_s = D * G * F / (4 (n.l) (n.v))</code>` with</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">D</code>` the Trowbridge-Reitz (1975) / GGX normal distribution,</p>
+<p>`<code style="color:#22d3bf">a^2 / (pi * ((n.h)^2 (a^2 - 1) + 1)^2)</code><code style="color:#22d3bf"> for </code><code style="color:#22d3bf">a = roughness^2</code>`, which</p>
+<p>integrates to 1 against `<code style="color:#22d3bf">(n.h) dw</code>` over the hemisphere — measured by</p>
+<p>20000-point midpoint quadrature in `<code style="color:#22d3bf">tests/test_specularity.py</code>` at</p>
+<p>relative errors 3.2e-07, 6.3e-08 and 4.0e-09 for roughness 0.2, 0.3 and</p>
+<p>0.6, all of it quadrature error (the 200000-point rule gives 3.2e-09,</p>
+<p>6.3e-10, 4.0e-11, exactly the 100x a midpoint rule predicts);</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">G</code>` the separable Smith (1967) masking-shadowing term with the GGX</p>
+<p>lambda;</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">F</code>` Schlick&#x27;s (1994) Fresnel approximation,</p>
+<p>`<code style="color:#22d3bf">f0 + (1 - f0) (1 - v.h)^5</code>`. *f0* is the normal-incidence reflectance:</p>
+<p>about 0.04 for common dielectrics, 0.5 to 1.0 for metals. When the exact</p>
+<p>Fresnel curve matters, use `<code style="color:#22d3bf">match3d.fresnel_reflectance</code>` instead — this</p>
+<p>is the approximation the microfacet literature specifies, and it is named</p>
+<p>rather than hidden.</p>
+<p>Exact ground truth it reproduces: at normal incidence with light, view and</p>
+<p>normal aligned, every geometric factor is 1 and the value collapses to</p>
+<p>`<code style="color:#22d3bf">f0 / (4 pi roughness^4)</code>` in closed form — reproduced <b>bit for bit</b> at</p>
+<p>roughness 0.3, 0.5 and 1.0 and to 3.3e-16 relative at roughness 0.1, which</p>
+<p>took rewriting the GGX denominator to avoid a cancellation (see the comment</p>
+<p>at the code; the textbook arrangement was off by 2.2e-13 relative at the</p>
+<p>peak). The lobe is reciprocal in light and view to machine precision</p>
+<p>(measured 1.7e-16), and its maximum sits at the half-vector.</p>
+<p>`<code style="color:#22d3bf">roughness</code>` is the perceptual parameter, squared once to reach the GGX</p>
+<p>`<code style="color:#22d3bf">alpha</code>` — the convention that makes a linear slider feel linear. A</p>
+<p>perfectly smooth surface (`<code style="color:#22d3bf">roughness = 0</code>`) is a delta function, not a</p>
+<p>finite BRDF, so it is refused rather than returned as an infinity.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: geometry problems as in</p>
+<p>:func:<code style="color:#22d3bf">brdf_blinn_phong</code>; *roughness* outside `<code style="color:#22d3bf">(0, 1]</code>`; *f0* outside</p>
+<p>`<code style="color:#22d3bf">[0, 1]</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:specular_photometric">specular_photometric</a> — <code style="color:#22d3bf">py -3.11 examples/specular_photometric.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">image2d</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opspecular:polarization_render">polarization_render</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">reflectance</code>)</h3>
+<p><a style="color:#22d3bf" href="opspecular:brdf_blinn_phong">brdf_blinn_phong</a> · <a style="color:#22d3bf" href="opspecular:dichromatic_render">dichromatic_render</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: specularity.py — SPECULAR 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

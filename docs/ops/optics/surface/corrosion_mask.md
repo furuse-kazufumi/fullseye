@@ -7,12 +7,12 @@ out: image2d
 examples: [machined_metal_and_materials]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # corrosion_mask — OPTICS `surface` op
 
-- **データ種**: `` → `image2d`
+- **データ種**: `なし` → `image2d`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import surfacelib; surfacelib.corrosion_mask(shape, coverage=0.3, scale_px=24.0, seed=0) -> 'np.ndarray'` (または `opsoptics.get("corrosion_mask")`)
 
 ## 使い方

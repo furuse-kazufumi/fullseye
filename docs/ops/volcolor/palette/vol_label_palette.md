@@ -7,12 +7,12 @@ out: matrix
 examples: [voxel_labels_color]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # vol_label_palette — VOLCOLOR `palette` op
 
-- **データ種**: `` → `matrix`
+- **データ種**: `なし` → `matrix`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import volcolor; volcolor.vol_label_palette(n_labels, seed: 'int' = 0, background=(0.0, 0.0, 0.0))` (または `opsvolcolor.get("vol_label_palette")`)
 
 ## 使い方

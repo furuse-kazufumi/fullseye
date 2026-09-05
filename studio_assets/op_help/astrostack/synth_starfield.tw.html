@@ -1,0 +1,65 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">synth_starfield — ASTROSTACK <code style="color:#22d3bf">synth</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">image2d</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import astrostack; astrostack.synth_starfield(shape=(128, 128), n_stars=30, flux_min=400.0, flux_max=9000.0, fwhm_px=3.2, psf=&#x27;gaussian&#x27;, moffat_beta=2.5, sky=60.0, read_sigma=6.0, shift_row=0.0, shift_col=0.0, n_cosmic=0, cosmic_flux=4000.0, margin_px=6.0, seed=0, field_seed=None, noise=True)</code>(或 <code style="color:#22d3bf">opsastrostack.get(&quot;synth_starfield&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>既知の星野を 1 枚合成する —— <b>この族の正解の供給源</b>。</p>
+<p>星は `<code style="color:#22d3bf">flux_min</code><code style="color:#22d3bf">〜</code><code style="color:#22d3bf">flux_max</code>` の対数一様分布から総フラックス(電子)を引き、</p>
+<p>画像の縁から `<code style="color:#22d3bf">margin_px</code><code style="color:#22d3bf"> 以上内側に一様に置く。*psf* が </code><code style="color:#22d3bf">&quot;gaussian&quot;</code>` の</p>
+<p>ときは :func:<code style="color:#22d3bf">scipy.special.erf</code> による<b>画素の厳密な積分</b>なので、星 1 個の</p>
+<p>総和は与えたフラックスに(画像の外へ出た分を除いて)厳密に一致する。</p>
+<p>`<code style="color:#22d3bf">&quot;moffat&quot;</code>` は Moffat, *A Theoretical Investigation of Focal Stellar Images*,</p>
+<p>A&amp;A 3, 455 (1969) の `<code style="color:#22d3bf">(1 + (r/alpha)^2)^(-beta)</code>` で、地上の<b>大気</b>が支配する</p>
+<p>星像の標準モデル(回折限界の兄弟は :func:<code style="color:#22d3bf">optics.airy_pattern</code>)。</p>
+<p>ノイズは 1 つの理論しか持たない ——</p>
+<p>`<code style="color:#22d3bf">Poisson(星 + sky)</code><code style="color:#22d3bf">(:func:</code>photoncount.photon_sample` を</p>
+<p>`<code style="color:#22d3bf">photons_per_unit=1.0</code>` で呼ぶ)に、<b>その後</b>で宇宙線を足し、<b>最後</b>に</p>
+<p>加法ガウスの読み出しノイズ `<code style="color:#22d3bf">read_sigma</code>` を足す。順序は物理どおりで、</p>
+<p>宇宙線は光子ではない(Poisson 標本化を通さない)。宇宙線の<b>位置</b>は</p>
+<p>:func:<code style="color:#22d3bf">defectgen.defect_pits</code> の一様点過程に任せる —— 「稀で小さく鋭い、</p>
+<p>位置がランダムな付着」は孔食と同じ確率幾何であって、二つ目のモデルを</p>
+<p>書く理由が無い。</p>
+<p>*shift_row* / *shift_col* は星野全体を副画素で動かす(ディザ)。合成した</p>
+<p>真値の座標もその分だけ動くので、位置合わせと drizzle の検算に使える。</p>
+<p>Returns `<code style="color:#22d3bf">(frame, truth)</code>`:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">frame</code><code style="color:#22d3bf"> —— </code><code style="color:#22d3bf">(H, W)</code>` float64、単位は<b>電子</b>。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">truth</code><code style="color:#22d3bf"> —— dict。</code><code style="color:#22d3bf">rows</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cols</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(N,)</code>` は星の真の中心(整数座標が</p>
+<p>画素中心の規約)、`<code style="color:#22d3bf">fluxes</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(N,)</code><code style="color:#22d3bf"> は真の総フラックス、</code><code style="color:#22d3bf">fwhm_px</code>` /</p>
+<p>`<code style="color:#22d3bf">sigma_px</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">alpha_px</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">beta</code><code style="color:#22d3bf"> は PSF、</code><code style="color:#22d3bf">sky</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">read_sigma</code>` は</p>
+<p>雑音、`<code style="color:#22d3bf">cosmic_mask</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> bool は宇宙線の画素、</code><code style="color:#22d3bf">noiseless</code>`</p>
+<p>`<code style="color:#22d3bf">(H, W)</code>` はノイズを載せる前の期待値(検算用)。</p>
+<p><b>seed は 2 本ある。</b> `<code style="color:#22d3bf">field_seed</code>` が<b>星野</b>(座標とフラックス)を、</p>
+<p>`<code style="color:#22d3bf">seed</code>` が<b>その回の観測</b>(ショットノイズ・読み出しノイズ・宇宙線の位置)を</p>
+<p>決める。`<code style="color:#22d3bf">field_seed=None</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">seed</code>` と同じ値になる。分けてある理由は</p>
+<p>実測で見つけた事故で、1 本にしていた最初の版では</p>
+<p>:func:<code style="color:#22d3bf">synth_frame_series</code> がフレームごとに `<code style="color:#22d3bf">seed</code>` を変えた結果</p>
+<p><b>星野そのものが毎フレーム別物</b>になり、位置合わせが 1 対応しか見つけられず</p>
+<p>(`<code style="color:#22d3bf">frame_align</code>` が正しく fail-closed した)、フレーム間の宇宙線除去は</p>
+<p>「全画素が外れ値」を返した。同じ空を撮り直すのと、別の空を撮るのは、</p>
+<p>引数 1 つで取り違えられる —— だから型ではなく名前で分ける。</p>
+<p>乱数はどちらも `<code style="color:#22d3bf">numpy.random.default_rng</code>` なので、同じ seed 対なら</p>
+<p>どの機械でも同じフレーム。</p>
+<p>Ground truth it reproduces(`<code style="color:#22d3bf">tests/test_astrostack.py</code>` で固定):</p>
+<p>`<code style="color:#22d3bf">noise=False</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">sky=0</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">fwhm_px=3.0</code>` の 1 星フレーム(64x64、</p>
+<p>フラックス 5000 e-)では、画像全体の総和と与えたフラックスの相対誤差が</p>
+<p><b>1.8e-16</b> —— float64 の丸め 1 回ぶんで、「ほぼ保存」ではなく保存。</p>
+<p>半径 `<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> の円形開口が拾う割合は </code><code style="color:#22d3bf">1 - exp(-r^2/(2 sigma^2))</code>` で、</p>
+<p>`<code style="color:#22d3bf">r = 2 sigma</code><code style="color:#22d3bf"> なら 0.8647、</code><code style="color:#22d3bf">r = 3 sigma</code>` なら 0.98889。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *shape* が小さすぎる / *n_stars* が非負整数でない /</p>
+<p>`<code style="color:#22d3bf">flux_min &gt; flux_max</code><code style="color:#22d3bf"> / *psf* が :data:</code>PSF_MODELS` にない /</p>
+<p>`<code style="color:#22d3bf">moffat_beta &lt;= 1</code><code style="color:#22d3bf">(積分が発散する)/ </code><code style="color:#22d3bf">margin_px</code>` が画像より大きい /</p>
+<p>*seed* が非負整数でない場合。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:astro_stacking">astro_stacking</a> — <code style="color:#22d3bf">py -3.11 examples/astro_stacking.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image2d</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:frame_quality">frame_quality</a> · <a style="color:#22d3bf" href="opastrostack:noise_sigma">noise_sigma</a> · <a style="color:#22d3bf" href="opastrostack:cosmic_ray_reject">cosmic_ray_reject</a> · <a style="color:#22d3bf" href="opastrostack:star_detect">star_detect</a> · <a style="color:#22d3bf" href="opastrostack:psf_fit">psf_fit</a> · <a style="color:#22d3bf" href="opastrostack:aperture_photometry">aperture_photometry</a> · <a style="color:#22d3bf" href="opastrostack:frame_align">frame_align</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">synth</code>)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:synth_frame_series">synth_frame_series</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: astrostack.py — ASTROSTACK 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

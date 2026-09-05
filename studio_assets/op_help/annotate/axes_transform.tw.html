@@ -1,0 +1,50 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">axes_transform — ANNOTATE <code style="color:#22d3bf">plot</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">axes</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import annotate; annotate.axes_transform(rect, xlim, ylim, invert_y=True, xscale=&#x27;linear&#x27;, yscale=&#x27;linear&#x27;)</code>(或 <code style="color:#22d3bf">opsannotate.get(&quot;axes_transform&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>データ座標 → 画素座標の対応(<b>閉形式</b>)を作る。</p>
+<p>`<code style="color:#22d3bf">row は下向き</code><code style="color:#22d3bf"> という画像の事実と、</code><code style="color:#22d3bf">y は上向き</code>` というグラフの慣習の</p>
+<p>ずれを、<b>この 1 か所だけ</b>で吸収する。図のコードはこの辞書を持ち回る。</p>
+<p>px = x0 + (x - xmin)/(xmax - xmin) * (w - 1)</p>
+<p>py = y0 + (h - 1) - (y - ymin)/(ymax - ymin) * (h - 1)     # invert_y</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>rect : (x, y, w, h)</p>
+<p>描画域(左上基準、画素)。</p>
+<p>xlim, ylim : (lo, hi)</p>
+<p>データ範囲。lo == hi は<b>傾きが無限大</b>になるので ValueError。</p>
+<p><b>lo &gt; hi(反転軸)も許す</b> ―― 深度やランクを上下逆に描くため。</p>
+<p>invert_y : bool</p>
+<p>True(既定)なら `<code style="color:#22d3bf">ylim[0]</code>` が<b>下端</b>に来る = 普通のグラフ。</p>
+<p>False なら画像そのままの向き(上端が `<code style="color:#22d3bf">ylim[0]</code>`)。</p>
+<p>xscale, yscale : {&#x27;linear&#x27;,&#x27;log&#x27;}</p>
+<p>`<code style="color:#22d3bf">&#x27;log&#x27;</code>` は常用対数。範囲に 0 以下が入れば ValueError</p>
+<p>(log 軸に 0 を渡して -inf を「端」として描く図は嘘になる)。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>dict</p>
+<p>`<code style="color:#22d3bf">{&quot;rect&quot;, &quot;xlim&quot;, &quot;ylim&quot;, &quot;invert_y&quot;, &quot;xscale&quot;, &quot;yscale&quot;}</code>`。</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>矩形が不正、範囲が非有限か幅ゼロ、w か h が 2 未満、</p>
+<p>未知の scale、log 軸で範囲に 0 以下。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_gallery">annotate_gallery</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_gallery.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">axes</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opannotate:data_to_pixel">data_to_pixel</a> · <a style="color:#22d3bf" href="opannotate:axes_frame">axes_frame</a> · <a style="color:#22d3bf" href="opannotate:grid_lines">grid_lines</a> · <a style="color:#22d3bf" href="opannotate:ticks">ticks</a> · <a style="color:#22d3bf" href="opannotate:plot_series">plot_series</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">plot</code>)</h3>
+<p><a style="color:#22d3bf" href="opannotate:data_to_pixel">data_to_pixel</a> · <a style="color:#22d3bf" href="opannotate:nice_ticks">nice_ticks</a> · <a style="color:#22d3bf" href="opannotate:axes_frame">axes_frame</a> · <a style="color:#22d3bf" href="opannotate:grid_lines">grid_lines</a> · <a style="color:#22d3bf" href="opannotate:ticks">ticks</a> · <a style="color:#22d3bf" href="opannotate:plot_series">plot_series</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: annotate.py — ANNOTATE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

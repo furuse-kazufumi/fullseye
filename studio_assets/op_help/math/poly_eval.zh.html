@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">poly_eval — MATH <code style="color:#22d3bf">interp_poly</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import mathops; mathops.poly_eval(coeffs, x)</code>(或 <code style="color:#22d3bf">opsmath.get(&quot;poly_eval&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>在 *x* 处求多项式的值(系数按最高次在前)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>*coeffs* is the 1-D array :func:<code style="color:#22d3bf">poly_fit</code> returns in `<code style="color:#22d3bf">&quot;coeffs&quot;</code>` (or any</p>
+<p>hand-written one, `<code style="color:#22d3bf">[c_d, ..., c_1, c_0]</code>`); *x* is a finite scalar or 1-D</p>
+<p>array. A scalar returns a Python float, an array returns float64.</p>
+<p>Evaluation is by Horner&#x27;s scheme (`<code style="color:#22d3bf">np.polyval</code>`) — numerically the right</p>
+<p>way to evaluate, though it cannot repair a badly-conditioned *fit* (see</p>
+<p>:func:<code style="color:#22d3bf">poly_fit</code>&#x27;s `<code style="color:#22d3bf">cond</code>`).</p>
+<p>HALCON: no polynomial tuple operator (compose `<code style="color:#22d3bf">tuple_pow</code>` + arithmetic).</p>
+<p>Raises ValueError when a finite input overflows float64 — a degree-*d*</p>
+<p>polynomial at `<code style="color:#22d3bf">|x|</code><code style="color:#22d3bf"> well above 1 grows like </code><code style="color:#22d3bf">|x|**d</code>`, so mixing up the</p>
+<p>two arguments (a long signal used as coefficients) silently produced `<code style="color:#22d3bf">inf</code>`</p>
+<p>before this guard (chain fuzzer wave-7: 256 coefficients evaluated at</p>
+<p>`<code style="color:#22d3bf">|x|&lt;=22</code><code style="color:#22d3bf"> -&gt; </code><code style="color:#22d3bf">22**255</code><code style="color:#22d3bf">). An unusable </code><code style="color:#22d3bf">inf</code>` must not flow downstream.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
+<p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
+<p style="margin:2px 0 2px 12px">• **complex 输入一律 <code style="color:#22d3bf">ValueError</code>** —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>
+<p style="margin:2px 0 2px 12px">• **含被掩元素的 masked array 一律 <code style="color:#22d3bf">ValueError</code>** —— 拒绝「剥掉掩码直接使用下面原值」的隐式转换。请显式选择填充还是丢弃。</p>
+<p style="margin:2px 0 2px 12px">• **所有输入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code>**(明确给出个数后拒绝 —— 它会污染整个结果)。</p>
+<p style="margin:2px 0 2px 12px">• <b>形状严格</b>:不对 1-D 与 2-D 做隐式提升或广播(向量槽位收到矩阵、矩阵槽位收到向量都是 <code style="color:#22d3bf">ValueError</code>;请显式 reshape)。</p>
+<p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:接受矩阵的算子与 <code style="color:#22d3bf">stat_histogram</code> 的 bins,超过 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 万个元素)即 <code style="color:#22d3bf">ValueError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:math_metrology">math_metrology</a> — <code style="color:#22d3bf">py -3.11 examples/math_metrology.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:signal_filter">signal_filter</a> — <code style="color:#22d3bf">py -3.11 examples/signal_filter.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">signal</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opmath:mat_solve">mat_solve</a> · <a style="color:#22d3bf" href="opmath:mat_lstsq">mat_lstsq</a> · <a style="color:#22d3bf" href="opmath:stat_describe">stat_describe</a> · <a style="color:#22d3bf" href="opmath:stat_histogram">stat_histogram</a> · <a style="color:#22d3bf" href="opmath:stat_zscore">stat_zscore</a> · <a style="color:#22d3bf" href="opmath:interp_linear">interp_linear</a> · <a style="color:#22d3bf" href="opmath:interp_cubic">interp_cubic</a> · <a style="color:#22d3bf" href="opmath:poly_fit">poly_fit</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">interp_poly</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:interp_linear">interp_linear</a> · <a style="color:#22d3bf" href="opmath:interp_cubic">interp_cubic</a> · <a style="color:#22d3bf" href="opmath:poly_fit">poly_fit</a> · <a style="color:#22d3bf" href="opmath:poly_roots">poly_roots</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">specular_free_transform — SPECULAR <code style="color:#22d3bf">dichromatic</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import specularity; specularity.specular_free_transform(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0))</code>(或 <code style="color:#22d3bf">opsspecular.get(&quot;specular_free_transform&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Project out the illuminant direction: the part of the image a highlight cannot touch. → (H, W, 3).</p>
+<p>`<code style="color:#22d3bf">I - (I.G) G</code><code style="color:#22d3bf"> for the unit illuminant colour </code><code style="color:#22d3bf">G</code>`. Under the dichromatic</p>
+<p>model the interface term is `<code style="color:#22d3bf">m_s * G</code>`, so it lies entirely in the removed</p>
+<p>direction and the result is <b>invariant to any specular term whatsoever</b> —</p>
+<p>exactly, for any lobe shape, any strength, any spatial pattern. That is the</p>
+<p>specular-invariant subspace of Mallick et al. (2005); this operator is the</p>
+<p>projection itself, with no rotation into named channels, so it stays in RGB</p>
+<p>and composes with the rest of the family.</p>
+<p>Use it when the *shape* of the specular lobe is unknown or the surface is</p>
+<p>textured — feature matching, edge detection and correlation all work in this</p>
+<p>subspace without any of the assumptions</p>
+<p>:func:<code style="color:#22d3bf">specular_diffuse_split</code> needs.</p>
+<p><b>This is a projection, not a picture.</b> The result loses one of three</p>
+<p>degrees of freedom (its component along `<code style="color:#22d3bf">G</code>` is exactly zero everywhere)</p>
+<p>and, for an image with negative values after black-level subtraction, keeps</p>
+<p>them. It is not a displayable &quot;highlight-removed photo&quot; and does not claim</p>
+<p>to be; for that, use :func:<code style="color:#22d3bf">specular_diffuse_split</code>.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *image_rgb* is not a valid </code><code style="color:#22d3bf">(H, W, 3)</code>` linear</p>
+<p>RGB image (see :func:<code style="color:#22d3bf">specular_diffuse_split</code>); *illuminant_rgb* is not a</p>
+<p>non-zero 3-vector.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:specular_photometric">specular_photometric</a> — <code style="color:#22d3bf">py -3.11 examples/specular_photometric.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">rgbimage</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opspecular:specular_diffuse_split">specular_diffuse_split</a> · <a style="color:#22d3bf" href="opspecular:specular_coefficient_map">specular_coefficient_map</a> · <a style="color:#22d3bf" href="opspecular:illuminant_from_dichromatic_planes">illuminant_from_dichromatic_planes</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">dichromatic</code>)</h3>
+<p><a style="color:#22d3bf" href="opspecular:specular_diffuse_split">specular_diffuse_split</a> · <a style="color:#22d3bf" href="opspecular:specular_coefficient_map">specular_coefficient_map</a> · <a style="color:#22d3bf" href="opspecular:illuminant_from_dichromatic_planes">illuminant_from_dichromatic_planes</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: specularity.py — SPECULAR 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

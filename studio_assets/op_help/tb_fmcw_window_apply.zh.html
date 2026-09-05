@@ -1,0 +1,18 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tb_fmcw_window_apply — 2D <code style="color:#22d3bf">typed</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">beatcube</code> → <code style="color:#22d3bf">beatcube</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_fmcw_window_apply&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>类型契约为 <code style="color:#22d3bf">beatcube → beatcube</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">beatcube</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_range_doppler_map">tb_range_doppler_map</a> · <a style="color:#22d3bf" href="op:tb_fmcw_range_profile">tb_fmcw_range_profile</a> · <a style="color:#22d3bf" href="op:tb_beamform_delay_sum">tb_beamform_delay_sum</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">typed</code>)</h3>
+<p><a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_angle_3points">tb_angle_3points</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">annotate_text_path_layout — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">text</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import annotate; annotate.annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=1.0, start=0.0)</code>(或 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_text_path_layout&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>table(dict)を返す: 折れ線に沿って 1 文字ずつ置く位置と傾き(弧長で決める)。</p>
+<p>文字 i の中心は弧長 `<code style="color:#22d3bf">s_i = start + Σ_{j&lt;i} w_j*spacing + w_i/2</code>`、傾きは</p>
+<p>その位置の線分の接線角(画面座標、度)。経路より長い文字列は ValueError。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>dict</p>
+<p>``{&quot;chars&quot;: [{&quot;char&quot;,&quot;s&quot;,&quot;xy&quot;,&quot;angle_deg&quot;,&quot;width&quot;}], &quot;length&quot;: 経路長,</p>
+<p>&quot;used&quot;: 文字が占める弧長}``。</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>文字が空、経路が 2 点未満か長さゼロ、非有限、文字列が経路より長い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• (尚無)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">paper</code>)</h3>
+<p><a style="color:#22d3bf" href="opannotate:annotate_leader_layout">annotate_leader_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_leader">annotate_leader</a> · <a style="color:#22d3bf" href="opannotate:annotate_markers">annotate_markers</a> · <a style="color:#22d3bf" href="opannotate:annotate_legend">annotate_legend</a> · <a style="color:#22d3bf" href="opannotate:annotate_dimension_layout">annotate_dimension_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_dimension">annotate_dimension</a> · <a style="color:#22d3bf" href="opannotate:annotate_angle_layout">annotate_angle_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_angle">annotate_angle</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: annotate.py — ANNOTATE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

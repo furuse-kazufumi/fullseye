@@ -1,6 +1,6 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">chromatic_confocal_simulate — INTERFEROMETRY <code style="color:#22d3bf">simulate</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>sweep`</p>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">sweep</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import interferometry; interferometry.chromatic_confocal_simulate(surface_um=0.0, wavelength_start_nm=500.0, wavelength_step_nm=0.5, n_bins=401, dispersion_um_per_nm=0.2, reference_wavelength_nm=600.0, peak_fwhm_nm=4.0, peak_counts=1000.0, background=10.0, noise=0.0, seed=0)</code> (または <code style="color:#22d3bf">opsinterferometry.get(&quot;chromatic_confocal_simulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Synthesise the confocal return spectrum of a surface at a known height.</p>

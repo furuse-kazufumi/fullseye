@@ -7,12 +7,12 @@ out: table
 examples: [lightfield_depth]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # lf_plenoptic_design — LIGHTFIELD `depth` op
 
-- **データ種**: `` → `table`
+- **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import lightfield; lightfield.lf_plenoptic_design(focal_mm=50.0, f_number=8.0, object_mm=300.0, pixel_um=3.45, mla_pitch_um=27.6, sensor_px=(2048, 2448), *, subpixel_px=0.1)` (または `opslightfield.get("lf_plenoptic_design")`)
 
 ## 使い方

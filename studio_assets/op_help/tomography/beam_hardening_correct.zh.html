@@ -1,0 +1,46 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">beam_hardening_correct — TOMOGRAPHY <code style="color:#22d3bf">artifact</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">sinogram</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import tomography; tomography.beam_hardening_correct(sinogram, high_energy_fraction=0.5, attenuation_ratio=0.4, poly_coeffs=None, n_table=4096)</code>(或 <code style="color:#22d3bf">opstomography.get(&quot;beam_hardening_correct&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Undo cupping — either the exact model inverse, or a calibrated polynomial.</p>
+<p>Two routes, and the difference between them is what you are allowed to claim:</p>
+<p style="margin:2px 0 2px 12px">• <b>Model inverse</b> (default). :func:<code style="color:#22d3bf">beam_hardening_apply</code> is a monotone</p>
+<p>scalar function of the line integral, so it has an exact inverse; this</p>
+<p>builds it by interpolating the forward curve on *n_table* nodes. Round-trip</p>
+<p>error on the disc phantom: <b>1.6e-08</b> absolute and <b>8.0e-09</b> relative to</p>
+<p>the peak line integral — the table resolution and nothing else.</p>
+<p>This is a *simulation* tool — it needs the same `<code style="color:#22d3bf">w</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">k</code>` the</p>
+<p>hardening used, which on real data nobody has.</p>
+<p style="margin:2px 0 2px 12px">• <b>Polynomial</b> (*poly_coeffs*). `<code style="color:#22d3bf">p_corr = c1 p + c2 p^2 + ...</code>`, the</p>
+<p>water-correction of every clinical scanner, whose coefficients come from</p>
+<p>scanning a uniform water phantom and fitting for a flat reconstruction.</p>
+<p>This is what applies to real data, and it is only as good as the assumption</p>
+<p>that everything in the field of view attenuates like water.</p>
+<p>The honest limitation is the same one every scanner has: the correction is</p>
+<p><b>material-specific</b>. A water calibration applied to a slice containing bone</p>
+<p>or metal over-corrects the dense material and leaves dark bands between dense</p>
+<p>objects, and nothing in the sinogram says which case you are in.</p>
+<p>:param sinogram: `<code style="color:#22d3bf">(n_angles, n_detectors)</code>` hardened line integrals.</p>
+<p>:param high_energy_fraction: *w* used by the forward model.</p>
+<p>:param attenuation_ratio: *k* used by the forward model.</p>
+<p>:param poly_coeffs: `<code style="color:#22d3bf">(c1, c2, ...)</code>`; when given, the polynomial route is</p>
+<p>used and *w* / *k* are ignored.</p>
+<p>:param n_table: nodes of the inverse table, `<code style="color:#22d3bf">64 .. 1048576</code>`.</p>
+<p>:returns: `<code style="color:#22d3bf">(n_angles, n_detectors)</code>` float64 corrected sinogram.</p>
+<p>:raises ValueError: as :func:<code style="color:#22d3bf">beam_hardening_apply</code>, plus an empty or</p>
+<p>non-finite *poly_coeffs*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:ct_reconstruction">ct_reconstruction</a> — <code style="color:#22d3bf">py -3.11 examples/ct_reconstruction.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">sinogram</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="optomography:backproject_sinogram">backproject_sinogram</a> · <a style="color:#22d3bf" href="optomography:filtered_backprojection">filtered_backprojection</a> · <a style="color:#22d3bf" href="optomography:sart_reconstruct">sart_reconstruct</a> · <a style="color:#22d3bf" href="optomography:beam_hardening_apply">beam_hardening_apply</a> · <a style="color:#22d3bf" href="optomography:ring_artifact_apply">ring_artifact_apply</a> · <a style="color:#22d3bf" href="optomography:ring_artifact_remove">ring_artifact_remove</a> · <a style="color:#22d3bf" href="optomography:metal_trace_interpolate">metal_trace_interpolate</a> · <a style="color:#22d3bf" href="optomography:sinogram_center_of_rotation">sinogram_center_of_rotation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">artifact</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:beam_hardening_apply">beam_hardening_apply</a> · <a style="color:#22d3bf" href="optomography:ring_artifact_apply">ring_artifact_apply</a> · <a style="color:#22d3bf" href="optomography:ring_artifact_remove">ring_artifact_remove</a> · <a style="color:#22d3bf" href="optomography:metal_trace_interpolate">metal_trace_interpolate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tomography.py — TOMOGRAPHY 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

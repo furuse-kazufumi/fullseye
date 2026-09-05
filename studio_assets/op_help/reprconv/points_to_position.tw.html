@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">points_to_position — REPRCONV <code style="color:#22d3bf">keypoint</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">position</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import reprconv; reprconv.points_to_position(points)</code>(或 <code style="color:#22d3bf">opsreprconv.get(&quot;points_to_position&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>点群 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> → 重心 </code><code style="color:#22d3bf">(z, y, x)</code>`。<b>不可逆</b>(分布を捨てる)。</p>
+<p>捨てた量は測れる: 重心まわりの RMS 距離が「1 点に潰したときに失った広がり」</p>
+<p>そのもので、`<code style="color:#22d3bf">selftest</code>` はこれを数字で出す。N = 1 のときだけ</p>
+<p>:func:<code style="color:#22d3bf">position_to_points</code> との往復が bit 一致する。</p>
+<p>Args:</p>
+<p>points: (N, 3) の (z, y, x)。</p>
+<p>Returns:</p>
+<p>3-tuple の float (z, y, x)。</p>
+<p>Raises:</p>
+<p>ValueError: 形状不正 / 非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_roundtrip">representation_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/representation_roundtrip.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">position</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:position_to_points">position_to_points</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">keypoint</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:keypoints_uv_to_points">keypoints_uv_to_points</a> · <a style="color:#22d3bf" href="opreprconv:points_zyx_to_keypoints_uv">points_zyx_to_keypoints_uv</a> · <a style="color:#22d3bf" href="opreprconv:keypoints_to_image2d">keypoints_to_image2d</a> · <a style="color:#22d3bf" href="opreprconv:keypoints_from_image2d">keypoints_from_image2d</a> · <a style="color:#22d3bf" href="opreprconv:position_to_points">position_to_points</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

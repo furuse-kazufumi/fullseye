@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mesh_select_lod — 3D <code style="color:#22d3bf">resolution</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import meshres; meshres.mesh_select_lod(lod, distance, focal_px, pixel_tolerance=0.5, use=&#x27;max_error&#x27;)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;mesh_select_lod&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>The coarsest LOD level whose geometric error projects below *pixel_tolerance* (`<code style="color:#22d3bf">table</code>`).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:mesh_resolution_demo">mesh_resolution_demo</a> — <code style="color:#22d3bf">py -3.11 examples_3d/mesh_resolution_demo.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">resolution</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:mesh_edge_stats">mesh_edge_stats</a> · <a style="color:#22d3bf" href="op3d:mesh_detail_map">mesh_detail_map</a> · <a style="color:#22d3bf" href="op3d:mesh_split_long_edges">mesh_split_long_edges</a> · <a style="color:#22d3bf" href="op3d:mesh_isotropic_remesh">mesh_isotropic_remesh</a> · <a style="color:#22d3bf" href="op3d:mesh_sample_points">mesh_sample_points</a> · <a style="color:#22d3bf" href="op3d:mesh_lod_chain">mesh_lod_chain</a> · <a style="color:#22d3bf" href="op3d:mesh_reduction_report">mesh_reduction_report</a> · <a style="color:#22d3bf" href="op3d:mesh_decimate_preserving">mesh_decimate_preserving</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: meshres.py — 3D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

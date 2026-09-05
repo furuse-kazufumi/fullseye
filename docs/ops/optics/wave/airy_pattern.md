@@ -7,12 +7,12 @@ out: image2d
 examples: [optics_imaging]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # airy_pattern — OPTICS `wave` op
 
-- **データ種**: `` → `image2d`
+- **データ種**: `なし` → `image2d`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import optics; optics.airy_pattern(size=64, wavelength_um=0.55, f_number=5.6, pixel_pitch_um=0.5)` (または `opsoptics.get("airy_pattern")`)
 
 ## 使い方

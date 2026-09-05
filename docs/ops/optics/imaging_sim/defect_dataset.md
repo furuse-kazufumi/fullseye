@@ -7,12 +7,12 @@ out: table
 examples: [lens_defect_dataset_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # defect_dataset — OPTICS `imaging_sim` op
 
-- **データ種**: `` → `table`
+- **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import lensimage; lensimage.defect_dataset(n=8, system=None, size=(256, 256), kinds=('scratch', 'pits', 'crack', 'blob'), pixel_pitch_um=5.5, noise=True, seed=0, out_dir=None, zones=3, field_of_view=None, texture='orange_peel', max_defects=2)` (または `opsoptics.get("defect_dataset")`)
 
 ## 使い方

@@ -1,0 +1,60 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sart_reconstruct — TOMOGRAPHY <code style="color:#22d3bf">reconstruct</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import tomography; tomography.sart_reconstruct(sinogram, angles_deg=None, size=None, n_iter=10, relaxation=0.3, initial=None, nonnegative=True)</code> (oder <code style="color:#22d3bf">opstomography.get(&quot;sart_reconstruct&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>SART — simultaneous algebraic reconstruction, one angle at a time.</p>
+<p>An iterative solver for `<code style="color:#22d3bf">A x = p</code><code style="color:#22d3bf"> where </code><code style="color:#22d3bf">A</code>` is the projector: for each</p>
+<p>view in turn, project the current estimate, take the residual, and</p>
+<p>back-project it with the row and column sums of `<code style="color:#22d3bf">A</code>` as normalisers::</p>
+<p>x &lt;- x + lambda * BP_theta( (p_theta - FP_theta(x)) / rowsum_theta )</p>
+<p>/ colsum_theta</p>
+<p>*rowsum* is the length of each ray through the grid and *colsum* is how many</p>
+<p>rays touched each pixel, so the update is dimensionally a density and does not</p>
+<p>depend on the grid size. One &quot;iteration&quot; is one pass over all views.</p>
+<p>Why it exists next to :func:<code style="color:#22d3bf">filtered_backprojection</code>: FBP inverts an integral</p>
+<p>transform and therefore *needs* the transform to have been sampled; SART</p>
+<p>solves a linear system and merely does worse when the system is</p>
+<p>underdetermined. Measured, it is better at every view count tested (the table</p>
+<p>in :func:<code style="color:#22d3bf">filtered_backprojection</code>), by 1.43x at 180 views and 2.9x at 8.</p>
+<p>The cost is honest and it is the reason this is not the default: 10 sweeps</p>
+<p>over 180 views is 1800 forward *and* 1800 back-projections against FBP&#x27;s 180</p>
+<p>back-projections, measured at <b>37.7 s</b> against <b>0.12 s</b> for a 256-px</p>
+<p>reconstruction — a factor of <b>312</b>. At 8 views it is 2.14 s against 0.01 s,</p>
+<p>the same ratio applied to a much smaller number.</p>
+<p>`<code style="color:#22d3bf">nonnegative=True</code>` clips the estimate at zero after every sweep. Attenuation</p>
+<p>coefficients cannot be negative, so this is a genuine constraint and not a</p>
+<p>cosmetic clip, and it carries a large part of the advantage above — measured</p>
+<p>on the analytic Shepp-Logan sinogram, normalised RMS with the constraint</p>
+<p>against without:</p>
+<p>views     with     without</p>
+<p>180    0.0175    0.0300</p>
+<p>45    0.0353    0.0626</p>
+<p>8    0.1257    0.1428</p>
+<p>so at 180 views the constraint alone is worth 1.7x, and it is the *only*</p>
+<p>reason SART leads FBP there at all (FBP scores 0.0250, between the two).</p>
+<p>:param sinogram: `<code style="color:#22d3bf">(n_angles, n_detectors)</code>`, rows = angles.</p>
+<p>:param angles_deg: view angles; `<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> -&gt; uniform </code><code style="color:#22d3bf">[0, 180)</code>`.</p>
+<p>:param size: output side; `<code style="color:#22d3bf">None</code>` -&gt; the inscribed square.</p>
+<p>:param n_iter: sweeps over the full angle set, `<code style="color:#22d3bf">1 .. 500</code>`.</p>
+<p>:param relaxation: step size `<code style="color:#22d3bf">lambda</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">(0, 2)</code>`. Over 1 the iteration can</p>
+<p>oscillate; over 2 it provably diverges, and is refused.</p>
+<p>:param initial: starting estimate, `<code style="color:#22d3bf">(size, size)</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">None</code>` -&gt; zeros.</p>
+<p>:param nonnegative: clip to `<code style="color:#22d3bf">&gt;= 0</code>` after each sweep.</p>
+<p>:returns: `<code style="color:#22d3bf">(size, size)</code>` float64 image.</p>
+<p>:raises ValueError: as :func:<code style="color:#22d3bf">filtered_backprojection</code>, plus a relaxation</p>
+<p>outside `<code style="color:#22d3bf">(0, 2)</code><code style="color:#22d3bf"> and an *initial* whose shape is not </code><code style="color:#22d3bf">(size, size)</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:ct_reconstruction">ct_reconstruction</a> — <code style="color:#22d3bf">py -3.11 examples/ct_reconstruction.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="optomography:radon_transform">radon_transform</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">reconstruct</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:backproject_sinogram">backproject_sinogram</a> · <a style="color:#22d3bf" href="optomography:filtered_backprojection">filtered_backprojection</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tomography.py — TOMOGRAPHY Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

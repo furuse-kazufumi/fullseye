@@ -1,0 +1,45 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">stokes_from_jones — OPTICS <code style="color:#22d3bf">polarization</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">jones</code> → <code style="color:#22d3bf">stokes</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import optics; optics.stokes_from_jones(state)</code> (oder <code style="color:#22d3bf">opsoptics.get(&quot;stokes_from_jones&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Jones vector -&gt; Stokes vector (the four measurable intensities).</p>
+<p>`<code style="color:#22d3bf">S0 = |Ex|^2 + |Ey|^2</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">S1 = |Ex|^2 - |Ey|^2</code>` ·</p>
+<p>`<code style="color:#22d3bf">S2 = 2*Re(Ex*conj(Ey))</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">S3 = 2*Im(Ex*conj(Ey))</code>`.</p>
+<p>In this convention (`<code style="color:#22d3bf">exp(-i*omega*t)</code><code style="color:#22d3bf"> time dependence) </code><code style="color:#22d3bf">S3 &gt; 0</code>` is</p>
+<p><b>right-circular</b>: the Jones vector `<code style="color:#22d3bf">[1, -i]/sqrt(2)</code>` maps to</p>
+<p>`<code style="color:#22d3bf">[1, 0, 0, +1]</code>`. The convention is pinned by a test rather than left to</p>
+<p>the reader, because every textbook picks a different one and a sign slip</p>
+<p>here is invisible in intensity measurements.</p>
+<p>Returns a `<code style="color:#22d3bf">(4,)</code>` float64 vector. A Jones vector always describes fully</p>
+<p>polarised light, so the result always satisfies `<code style="color:#22d3bf">S0^2 = S1^2+S2^2+S3^2</code>`</p>
+<p>exactly (degree of polarisation 1) — verified to 1e-15 in the tests. That</p>
+<p>identity is also the reason Jones cannot represent a partially polarised</p>
+<p>beam: for that, start from :func:<code style="color:#22d3bf">mueller_element</code> instead.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *state* is not a 1-D 2-vector, is masked, or is</p>
+<p>non-finite.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
+<p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
+<p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>
+<p style="margin:2px 0 2px 12px">• **Strings lösen <code style="color:#22d3bf">ValueError</code> aus** — <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> gelingt, sodass ein ungeparster Konfigurationswert als Länge durchrutschen würde (gemessen: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> lieferte plausible 66,667 mm). bool wird als implizite Hochstufung <code style="color:#22d3bf">True == 1</code> ebenfalls abgelehnt.</p>
+<p style="margin:2px 0 2px 12px">• **complex / Masked Arrays lösen <code style="color:#22d3bf">ValueError</code> aus<b> (nur reelle Slots; das stille Verwerfen des Imaginärteils bzw. Abstreifen der Maske wird abgelehnt). </b>NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus.**</p>
+<p style="margin:2px 0 2px 12px">• <b>Division durch null und Verwandtes wird namentlich abgelehnt</b>: Brennweite 0, Krümmungsradius 0, Brechzahl &lt;= 0, undurchlässige Blende (alles 0, die Normierung wird 0/0), PSF mit Summe &lt;= 0, Stokes-Vektor mit S0 = 0 und ein Objekt im vorderen Brennpunkt (Bild im Unendlichen).</p>
+<p style="margin:2px 0 2px 12px">• <b>Nur zwei Operatoren liefern einen nicht-endlichen Wert, und beide halten das vertraglich fest</b>: <code style="color:#22d3bf">depth_of_field</code> liefert jenseits der hyperfokalen Distanz <code style="color:#22d3bf">far_mm = inf</code> (genau das bedeutet die hyperfokale Distanz), und <code style="color:#22d3bf">gaussian_beam</code> liefert an der Taille <code style="color:#22d3bf">wavefront_radius_mm = inf</code> (der Krümmungsradius einer ebenen Wellenfront). Beide liefern zusätzlich einen endlichen Partner (<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>). **Jedes andere stille NaN/Inf wird intern erkannt und löst <code style="color:#22d3bf">ValueError</code> aus** — &quot;float64 ist übergelaufen&quot; und &quot;die Antwort ist unendlich&quot; sind verschiedene Aussagen; die erste wird nie im Gewand der zweiten geliefert.</p>
+<p style="margin:2px 0 2px 12px">• <b>Größenobergrenzen</b>: erzeugte Gitter durch <code style="color:#22d3bf">optics.MAX_GRID</code> (4096), übergebene Felder/PSFs/Blenden durch <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code> (2^24), ABCD-Elementketten durch <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code> (1024), Zernike durch <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code> (512) / <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code> (40) / <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code> (2^25). Damit werden Pfade fail-closed geschlossen, in denen ein kleines Argument eine riesige interne Allokation auslöst (gemessen: n_max=40 × 4096² braucht 108 GB).</p>
+<p style="margin:2px 0 2px 12px">• <b>Physikalisch unmögliche Zustände werden ebenfalls abgelehnt</b>: Stokes-Vektor mit Polarisationsgrad &gt; 1, negative Transmission, negative Intensität und ungültige Zernike-Indizes wie ungerades n-|m|.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">Leitfaden zur Familie optics_imaging</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:optics_imaging">optics_imaging</a> — <code style="color:#22d3bf">py -3.11 examples/optics_imaging.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">stokes</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opoptics:mueller_apply">mueller_apply</a> · <a style="color:#22d3bf" href="opoptics:stokes_analyze">stokes_analyze</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">polarization</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:jones_element">jones_element</a> · <a style="color:#22d3bf" href="opoptics:jones_apply">jones_apply</a> · <a style="color:#22d3bf" href="opoptics:mueller_element">mueller_element</a> · <a style="color:#22d3bf" href="opoptics:mueller_apply">mueller_apply</a> · <a style="color:#22d3bf" href="opoptics:stokes_analyze">stokes_analyze</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: optics.py — OPTICS Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

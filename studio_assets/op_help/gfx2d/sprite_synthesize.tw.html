@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sprite_synthesize — GFX2D <code style="color:#22d3bf">sprite</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">rgba</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import gfx2d; gfx2d.sprite_synthesize(kind=&#x27;disc&#x27;, size=32, color=&#x27;emphasis&#x27;, thickness=0.25, scheme=&#x27;okabe_ito&#x27;)</code>(或 <code style="color:#22d3bf">opsgfx2d.get(&quot;sprite_synthesize&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>A deterministic anti-aliased test sprite, `<code style="color:#22d3bf">rgba</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(size, size, 4)</code>`.</p>
+<p>The entry point of the sprite sort: it needs no asset on disk, and because</p>
+<p>the silhouette comes from an implicit equation the alpha channel *is* the</p>
+<p>ground-truth coverage mask — which is the whole reason this family belongs</p>
+<p>in a vision library.</p>
+<p>`<code style="color:#22d3bf">kind</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">&quot;disc&quot;</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">&quot;ring&quot;</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">&quot;box&quot;</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">&quot;diamond&quot;</code><code style="color:#22d3bf"> or </code><code style="color:#22d3bf">&quot;star&quot;</code>`.</p>
+<p>`<code style="color:#22d3bf">color</code><code style="color:#22d3bf"> is a :mod:</code>palette` role name (default) or an explicit 3/4-tuple.</p>
+<p>`<code style="color:#22d3bf">thickness</code>` is the ring&#x27;s wall as a fraction of the radius.</p>
+<p>Coverage is computed by 4x4 regular supersampling, so alpha takes values on</p>
+<p>the exact lattice `<code style="color:#22d3bf">k/16</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gfx2d_scene">gfx2d_scene</a> — <code style="color:#22d3bf">py -3.11 examples/gfx2d_scene.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">rgba</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:premultiply">premultiply</a> · <a style="color:#22d3bf" href="opgfx2d:alpha_composite">alpha_composite</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_blit">sprite_blit</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_transform">sprite_transform</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_sheet_slice">sprite_sheet_slice</a> · <a style="color:#22d3bf" href="opgfx2d:nine_slice">nine_slice</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">sprite</code>)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:sprite_blit">sprite_blit</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_transform">sprite_transform</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_sheet_slice">sprite_sheet_slice</a> · <a style="color:#22d3bf" href="opgfx2d:nine_slice">nine_slice</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gfx2d.py — GFX2D 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

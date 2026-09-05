@@ -1,0 +1,51 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cplx_contour_integral — MATH <code style="color:#22d3bf">complex</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">cpoints × cpoints</code> → <code style="color:#22d3bf">cscalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import mathops; mathops.cplx_contour_integral(z, fz)</code>(或 <code style="color:#22d3bf">opsmath.get(&quot;cplx_contour_integral&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>用弦梯形法計算閉合圍道積分 `<code style="color:#22d3bf">∮ f(z) dz</code>`。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>*z* are the contour vertices (closing segment implicit, see</p>
+<p>:func:<code style="color:#22d3bf">cplx_contour_circle</code>) and *fz* the function sampled at exactly those</p>
+<p>points — the op never calls back into Python, so any `<code style="color:#22d3bf">f</code>` is allowed as</p>
+<p>long as you can sample it. The quadrature is</p>
+<p>`<code style="color:#22d3bf">sum_k (f_k + f_{k+1})/2 * (z_{k+1} - z_k)</code>`, i.e. the trapezoidal rule</p>
+<p>along the *chords*; it is exact for a piecewise-linear integrand and second</p>
+<p>order otherwise.</p>
+<p>Ground truth it reproduces: `<code style="color:#22d3bf">f = 1/(z - a)</code>` around a circle enclosing</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> integrates to </code><code style="color:#22d3bf">2*pi*i</code>` (Cauchy); measured on the unit circle with</p>
+<p>`<code style="color:#22d3bf">a = 0</code><code style="color:#22d3bf">, the relative error is 1.0e-4 at </code><code style="color:#22d3bf">n = 256</code>` and</p>
+<p>6.3e-6 at `<code style="color:#22d3bf">n = 1024</code>` — a factor 16.0 for 4x</p>
+<p>refinement, i.e. the `<code style="color:#22d3bf">O(n^-2)</code>` rate, *not* the spectral accuracy the</p>
+<p>trapezoid rule enjoys when applied in the angle parameter. That difference</p>
+<p>is the honest price of accepting an arbitrary point list instead of a</p>
+<p>parametrisation.</p>
+<p>Orientation follows the sample order: a clockwise contour returns the</p>
+<p>negative of the counter-clockwise one.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: fewer than 3 points, </code><code style="color:#22d3bf">len(z) != len(fz)</code>`, a</p>
+<p>degenerate contour (all points coincide), non-finite/masked input, or a sum</p>
+<p>that overflowed (`<code style="color:#22d3bf">|f|</code>` near a pole *on* the path).</p>
+<p>HALCON: no operator (contour integration is not part of its tuple/XLD API).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
+<p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
+<p style="margin:2px 0 2px 12px">• **complex 輸入一律 <code style="color:#22d3bf">ValueError</code>** —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>
+<p style="margin:2px 0 2px 12px">• **含被遮罩元素的 masked array 一律 <code style="color:#22d3bf">ValueError</code>** —— 拒絕「剝掉遮罩直接使用下面原值」的隱式轉換。請明確選擇填補還是丟棄。</p>
+<p style="margin:2px 0 2px 12px">• **所有輸入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code>**(明確給出個數後拒絕 —— 它會汙染整個結果)。</p>
+<p style="margin:2px 0 2px 12px">• <b>形狀嚴格</b>:不對 1-D 與 2-D 做隱式提升或廣播(向量槽位收到矩陣、矩陣槽位收到向量都是 <code style="color:#22d3bf">ValueError</code>;請明確 reshape)。</p>
+<p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:接受矩陣的運算子與 <code style="color:#22d3bf">stat_histogram</code> 的 bins,超過 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 萬個元素)即 <code style="color:#22d3bf">ValueError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:math_complex">math_complex</a> — <code style="color:#22d3bf">py -3.11 examples/math_complex.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">cscalar</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">complex</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:cplx_contour_circle">cplx_contour_circle</a> · <a style="color:#22d3bf" href="opmath:cplx_poly_eval">cplx_poly_eval</a> · <a style="color:#22d3bf" href="opmath:cplx_winding_number">cplx_winding_number</a> · <a style="color:#22d3bf" href="opmath:cplx_cauchy_value">cplx_cauchy_value</a> · <a style="color:#22d3bf" href="opmath:cplx_argument_principle">cplx_argument_principle</a> · <a style="color:#22d3bf" href="opmath:cplx_laurent_coeffs">cplx_laurent_coeffs</a> · <a style="color:#22d3bf" href="opmath:cplx_joukowski">cplx_joukowski</a> · <a style="color:#22d3bf" href="opmath:cplx_mobius">cplx_mobius</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

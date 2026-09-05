@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">glass — OPTICS <code style="color:#22d3bf">design</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import raytrace; raytrace.glass(nd, vd)</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;glass&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>A dispersive medium from its d-line index *nd* and Abbe number *vd*.</p>
+<p>Returns `<code style="color:#22d3bf">{&quot;nd&quot;: nd, &quot;vd&quot;: vd, &quot;A&quot;: A, &quot;B&quot;: B}</code>` — the two-term Cauchy model</p>
+<p>`<code style="color:#22d3bf">n(λ) = A + B/λ²</code><code style="color:#22d3bf"> (λ in µm) fitted so that </code><code style="color:#22d3bf">n(λ_d) = n_d</code>` and</p>
+<p>`<code style="color:#22d3bf">n(λ_F) − n(λ_C) = (n_d − 1)/V_d</code>`. Good to ~1e-4 over the visible for</p>
+<p>ordinary crowns and flints; it is a *model*, not a catalogue.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
+<p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
+<p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>
+<p style="margin:2px 0 2px 12px">• **字符串一律 <code style="color:#22d3bf">ValueError</code>** —— <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> 会成功,于是未解析的配置值会被当成长度混进来(实测:<code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> 曾返回看着合理的 66.667 mm)。bool 也按 <code style="color:#22d3bf">True == 1</code> 的隐式提升拒绝。</p>
+<p style="margin:2px 0 2px 12px">• **complex / masked array 一律 <code style="color:#22d3bf">ValueError</code><b>(仅接受实数槽位;拒绝无声丢弃虚部或剥掉掩码)。</b>所有输入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code>**。</p>
+<p style="margin:2px 0 2px 12px">• <b>逐项点名拒绝除零及其近亲</b>:焦距 0、曲率半径 0、折射率 &lt;= 0、全不透明光阑(全为 0,归一化变成 0/0)、总和 &lt;= 0 的 PSF、S0 = 0 的 Stokes 矢量、物体位于前焦点(像在无穷远)。</p>
+<p style="margin:2px 0 2px 12px">• <b>只有两个算子会返回非有限值,而且都写进了契约</b>:<code style="color:#22d3bf">depth_of_field</code> 在超焦距以外返回 <code style="color:#22d3bf">far_mm = inf</code>(这正是超焦距的定义),<code style="color:#22d3bf">gaussian_beam</code> 在束腰处返回 <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(平面波前的曲率半径)。两者都同时返回一个有限的搭档(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)。**除此之外的无声 NaN/Inf 都在内部检出并 <code style="color:#22d3bf">ValueError</code>** ——「float64 溢出了」和「答案是无穷大」是两种不同的主张,不能拿后者的脸去交付前者。</p>
+<p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:生成网格受 <code style="color:#22d3bf">optics.MAX_GRID</code>(4096)限制,传入的场/PSF/光阑受 <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24),ABCD 元件序列受 <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024),Zernike 受 <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25)。以 fail-closed 堵住「小参数引发巨大内部分配」的路径(实测:n_max=40 × 4096² 需要 108 GB)。</p>
+<p style="margin:2px 0 2px 12px">• <b>物理上不可能的状态同样拒绝</b>:偏振度 &gt; 1 的 Stokes 矢量、负透过率、负强度、n-|m| 为奇数等非法 Zernike 指标。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lens_design_demo">lens_design_demo</a> — <code style="color:#22d3bf">py -3.11 examples/lens_design_demo.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lens_optimize_demo">lens_optimize_demo</a> — <code style="color:#22d3bf">py -3.11 examples/lens_optimize_demo.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a> · <a style="color:#22d3bf" href="opoptics:spot_diagram">spot_diagram</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">design</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:lens_system">lens_system</a> · <a style="color:#22d3bf" href="opoptics:thick_lens">thick_lens</a> · <a style="color:#22d3bf" href="opoptics:example_system">example_system</a> · <a style="color:#22d3bf" href="opoptics:glass_catalog">glass_catalog</a> · <a style="color:#22d3bf" href="opoptics:sellmeier">sellmeier</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: raytrace.py — OPTICS 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

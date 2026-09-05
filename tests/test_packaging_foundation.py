@@ -85,9 +85,19 @@ def test_facade_all_covers_api_all():
     assert not missing, f"api.__all__ names missing from fullseye.__all__: {missing}"
 
 
+#: 意図的に**同梱しない** studio_assets のサブディレクトリ。ここに足すときは
+#: 「出荷コードが読まないこと」を test_article_source_images_do_not_ship で示すこと。
+_DELIBERATELY_UNSHIPPED = ("sample_sources_ai/",)
+
+
 def test_studio_assets_are_shipped_by_package_data():
     """studio_assets must be a declared package and every tracked asset must match a
-    package-data glob (else the installed Studio loses i18n / help / sample images)."""
+    package-data glob (else the installed Studio loses i18n / help / sample images).
+
+    例外は :data:`_DELIBERATELY_UNSHIPPED` だけ —— 「全部入れる」を素の不変条件に
+    すると、読まない 42 MB を配り続ける理由になってしまう(実測 2026-09-05:
+    記事生成用の AI 素材が wheel の 58% を占めていた)。
+    """
     txt = _read("pyproject.toml")
     assert re.search(r'packages\s*=\s*\[[^\]]*"studio_assets"', txt), \
         "studio_assets is not a declared package in pyproject.toml"
@@ -99,6 +109,34 @@ def test_studio_assets_are_shipped_by_package_data():
         for p in glob.glob(os.path.join(ROOT, "studio_assets", "**", "*"), recursive=True)
         if os.path.isfile(p) and not p.endswith("__init__.py")
     ]
+    tracked = [f for f in tracked if not f.startswith(_DELIBERATELY_UNSHIPPED)]
     assert tracked, "no studio_assets files found"
     unshipped = [f for f in tracked if not any(fnmatch.fnmatch(f, g) for g in globs)]
     assert not unshipped, f"studio_assets files not covered by any package-data glob: {unshipped}"
+
+
+def test_article_source_images_do_not_ship():
+    """記事生成用の AI 素材(`sample_sources_ai/`)を wheel に入れないこと。
+
+    2026-09-05 実測: 出荷コードからは 1 箇所も読まれない(参照は
+    `tools/fops_article/` = 記事生成の開発ツールと docs/ の仕様書だけ)のに、
+    **圧縮後 42.1 MB = wheel 全体 72.0 MB の 58%** を占めていた。
+    読まないものを配らない。Studio が実際に使うサンプルは `sample_images/` と
+    `sample_thumbs/` で、そちらは同梱を続ける。
+    """
+    toml = _read("pyproject.toml")
+    pkg_data = toml.split("[tool.setuptools.package-data]", 1)[1]
+    assert '"sample_sources_ai/' not in pkg_data.replace(" ", ""), (
+        "sample_sources_ai が package-data に戻っている —— 出荷コードは読まないのに "
+        "wheel を 42 MB 太らせる")
+    # 読み手がいないことを実際に確かめる(コメントの主張と実装をずらさない)
+    import glob as _glob
+    shipped = ([os.path.join(ROOT, p) for p in ("studio.py", "api.py", "sample_images.py",
+                                                "sample_data.py", "imgevolve.py")]
+               + _glob.glob(os.path.join(ROOT, "fullseye", "*.py"))
+               + _glob.glob(os.path.join(ROOT, "examples", "*.py"))
+               + _glob.glob(os.path.join(ROOT, "examples_3d", "*.py")))
+    users = [os.path.relpath(p, ROOT) for p in shipped
+             if os.path.exists(p) and "sample_sources_ai" in open(p, encoding="utf-8").read()]
+    assert not users, ("出荷コードが sample_sources_ai を読んでいる: %s "
+                       "—— 読むなら同梱に戻すこと(この検査を消すのではなく)" % users)

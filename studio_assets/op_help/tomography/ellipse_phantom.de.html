@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ellipse_phantom — TOMOGRAPHY <code style="color:#22d3bf">forward</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">image2d</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import tomography; tomography.ellipse_phantom(size=256, ellipses=None, supersample=4)</code> (oder <code style="color:#22d3bf">opstomography.get(&quot;ellipse_phantom&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Rasterise a sum of uniform ellipses onto a *size* x *size* slice.</p>
+<p>The default is :data:<code style="color:#22d3bf">SHEPP_LOGAN</code>. The normalised square `<code style="color:#22d3bf">[-1, 1]^2</code>` maps</p>
+<p>onto the grid, so `<code style="color:#22d3bf">x = (col - (size-1)/2) / (size/2)</code>`; the same mapping is</p>
+<p>used by :func:<code style="color:#22d3bf">ellipse_sinogram</code>, which is what makes the two comparable</p>
+<p>without a fudge factor.</p>
+<p>*supersample* is the anti-aliasing factor: each pixel is the mean of</p>
+<p>`<code style="color:#22d3bf">supersample^2</code>` sub-samples, so an edge pixel carries its true area</p>
+<p>fraction. This is not cosmetic — a hard 0/1 rasterisation projects to a</p>
+<p>sinogram that disagrees with the closed form by <b>0.276 % interior RMS</b> of</p>
+<p>the peak, against <b>0.073 %</b> anti-aliased (measured), and the</p>
+<p>difference is entirely the partial-volume edge.</p>
+<p>:param size: side of the square grid, `<code style="color:#22d3bf">2 .. 16384</code>`.</p>
+<p>:param ellipses: `<code style="color:#22d3bf">(N, 6)</code><code style="color:#22d3bf"> rows </code><code style="color:#22d3bf">(x0, y0, a, b, phi_deg, rho)</code>` in</p>
+<p>normalised coordinates; `<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> -&gt; :data:</code>SHEPP_LOGAN`.</p>
+<p>:param supersample: anti-alias factor per axis, `<code style="color:#22d3bf">1 .. 16</code>`.</p>
+<p>:returns: `<code style="color:#22d3bf">(size, size)</code>` float64 image; the Shepp-Logan default spans</p>
+<p>`<code style="color:#22d3bf">[0.0, 1.0]</code>`.</p>
+<p>:raises ValueError: on a non-int size, a degenerate ellipse, or a grid over</p>
+<p>:data:<code style="color:#22d3bf">MAX_IMAGE_ELEMENTS</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:ct_reconstruction">ct_reconstruction</a> — <code style="color:#22d3bf">py -3.11 examples/ct_reconstruction.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:tomography_reconstruct">tomography_reconstruct</a> — <code style="color:#22d3bf">py -3.11 examples/tomography_reconstruct.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="optomography:radon_transform">radon_transform</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">forward</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:ellipse_sinogram">ellipse_sinogram</a> · <a style="color:#22d3bf" href="optomography:radon_transform">radon_transform</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tomography.py — TOMOGRAPHY Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

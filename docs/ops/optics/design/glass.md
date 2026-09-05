@@ -7,12 +7,12 @@ out: table
 examples: [lens_design_demo, lens_optimize_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # glass — OPTICS `design` op
 
-- **データ種**: `` → `table`
+- **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import raytrace; raytrace.glass(nd, vd)` (または `opsoptics.get("glass")`)
 
 ## 使い方

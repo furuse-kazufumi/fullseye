@@ -1,6 +1,6 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">sensor_spec — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>table`</p>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import optscene; optscene.sensor_spec(pixel_um: &#x27;float&#x27; = 3.45, resolution=(1024, 1024), quantum_efficiency: &#x27;float&#x27; = 0.6, full_well_e: &#x27;float&#x27; = 10000.0, read_noise_e: &#x27;float&#x27; = 2.5, dark_e_per_s: &#x27;float&#x27; = 5.0, bit_depth: &#x27;int&#x27; = 8, gain_e_per_unit: &#x27;float&#x27; = 50000.0, shutter: &#x27;str&#x27; = &#x27;global&#x27;, model: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;sensor_spec&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>イメージセンサの諸元。<b>電子の数</b>まで決める側の値だけを持つ。</p>

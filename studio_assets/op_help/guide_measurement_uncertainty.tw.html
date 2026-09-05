@@ -1,0 +1,129 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">本指南僅有日文版(它是人寫的散文,這裡不做機械替換)。</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">計測の不確かさと校正の知識 — 「測れている」を主張するために</h2>
+<p>fullseye には測る op がある（<code style="color:#22d3bf">measure3d</code> / <code style="color:#22d3bf">math_metrology</code> / <code style="color:#22d3bf">measure1d</code> / <code style="color:#22d3bf">contour</code>）。</p>
+<p>だが<b>測った値に意味があると言えるかどうか</b>は、op の外側で決まる。</p>
+<p>この文書は op の説明ではなく、寸法を数字で報告するときに要る規約 —— 用語・校正・</p>
+<p>不確かさの積み上げ方 —— を書く教材である。用語の定義は VIM（JCGM 200:2012）、</p>
+<p>不確かさの評価は GUM（JCGM 100:2008）が正本。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">1. 用語を厳密に（ここを混ぜると議論が成立しない）</h3>
+<p>VIM の定義（節番号つき、原文は英仏対訳）:</p>
+<p>| 用語 | VIM | 定義（要旨） |</p>
+<p>| --- | --- | --- |</p>
+<p>| <b>確度</b>（measurement accuracy） | 2.13 | 測定値と<b>真値</b>との一致の近さ。<b>NOTE 1: これは量ではなく、数値では表さない</b> |</p>
+<p>| <b>真度</b>（measurement trueness） | 2.14 | <b>無限回</b>の反復測定値の<b>平均</b>と参照値との一致の近さ。<b>系統誤差と逆相関し、偶然誤差とは無関係</b> |</p>
+<p>| <b>精度</b>（measurement precision） | 2.15 | 指定条件下の反復測定における<b>測定値どうし</b>の一致の近さ。標準偏差・分散・変動係数で数値表現する |</p>
+<p>| 誤差 | 2.16 | 測定値 − 参照値 |</p>
+<p>| 系統誤差 | 2.17 | 反復測定で一定、または予測可能に変わる成分 |</p>
+<p>| 偶然誤差 | 2.19 | 反復測定で予測不能に変わる成分 |</p>
+<p>| 繰り返し条件 | 2.20 | 同一手順・同一操作者・同一測定系・同一条件・同一場所、<b>短時間</b>での反復 |</p>
+<p>| 再現条件 | 2.24 | <b>場所・操作者・測定系が異なる</b>条件での反復 |</p>
+<p>| 不確かさ | 2.26 | 測定量に帰属される値の<b>ばらつきを特徴づける非負のパラメータ</b> |</p>
+<p>| 校正 | 2.39 | <b>2 段階の操作</b>（§2） |</p>
+<p>| 計量トレーサビリティ | 2.41 | <b>文書化された切れ目のない校正の連鎖</b>によって参照に結びつけられる性質 |</p>
+<p>VIM 2.13 NOTE 2 は名指しで釘を刺している ——</p>
+<p><b>「accuracy」を trueness の意味で使うな、「precision」を accuracy の意味で使うな。</b></p>
+<p>これが実務で効く場面:</p>
+<p>&gt; センサのカタログに「<b>繰り返し精度 0.4 µm</b>」とある。これは precision（2.15）であって</p>
+<p>&gt; accuracy でも trueness でもない。**同じ値が繰り返し出ることと、その値が正しいことは</p>
+<p>&gt; 無関係**である。絶対寸法を主張するなら真度と、その根拠（校正）が別に要る。</p>
+<p>（同じ話が <code style="color:#22d3bf">3d/guides/depth_sensors.md</code> §2.2–2.3 にある。真度を書くメーカーと、</p>
+<p>精度しか書かないメーカーがある。）</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">不確かさの評価は 2 種類（GUM）</h3>
+<p style="margin:2px 0 2px 12px">• <b>Type A</b> —— 測定系列の<b>統計分布</b>から評価する（標準偏差で特徴づけられる）。</p>
+<p style="margin:2px 0 2px 12px">• <b>Type B</b> —— 経験その他の情報に基づく<b>確率密度関数</b>から評価する。</p>
+<p>どちらも同じ土俵（標準不確かさ）に載せてから合成する。</p>
+<p><b>拡張不確かさ</b>は合成標準不確かさに <b>1 より大きい係数（包含係数 k）</b> を掛けたもので、</p>
+<p>k は出力量の確率分布と選んだ包含確率で決まる。慣行として k = 2（およそ 95%）が多いが、</p>
+<p><b>k を書かない拡張不確かさは意味が確定しない。</b></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">2. 校正は 2 段階である（1 段階だと思われがち）</h3>
+<p>VIM 2.39 は明示的に 2 ステップと書いている:</p>
+<p>1. <b>標準器が与える量の値</b>（不確かさつき）と、<b>対応する指示値</b>（不確かさつき）との</p>
+<p>関係を確立する。</p>
+<p>2. その情報を使って、<b>指示値から測定結果を得る関係</b>を確立する。</p>
+<p>つまり ——</p>
+<p>&gt; <b>「校正した」＝ ズレが分かった、であって、直った、ではない。</b></p>
+<p>&gt; ステップ 2（補正の適用）まで行って初めて測定値が変わる。</p>
+<p>そして校正証明書には<b>必ず不確かさが付いている</b>。その不確かさは自分の測定の</p>
+<p>不確かさに<b>足される</b>（VIM 2.41 の「連鎖の各段が不確かさに寄与する」）。</p>
+<p>標準器より良い不確かさは原理的に出せない。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">3. 画像計測の不確かさバジェット（実務の中身）</h3>
+<p>寸法 1 つを報告するのに、実際に積み上がる項:</p>
+<p>| 種別 | 項 | 備考 |</p>
+<p>| --- | --- | --- |</p>
+<p>| Type A | 同一視野・同一部品の<b>反復撮像</b>のばらつき | まずこれを測る。10 回では足りないことが多い |</p>
+<p>| Type A | <b>ワークを置き直した</b>ときのばらつき | 上と分けて測る。ここが支配的なことが多い |</p>
+<p>| Type B | 校正ターゲットの<b>校正証明書の不確かさ</b> | 連鎖の上流 |</p>
+<p>| Type B | <b>画素量子化</b>（分解能／√12 が一様分布の標準偏差） | 下限であって実力ではない |</p>
+<p>| Type B | <b>レンズ歪曲の残差</b> | 校正後の再投影残差から見積もる |</p>
+<p>| Type B | <b>温度ドリフト</b> | 暖機前後で差を測る。金属は 10⁻⁵/K オーダー |</p>
+<p>| Type B | <b>照明の変動とエッジのバイアス</b> | ★ 画像計測に固有かつ最大級 |</p>
+<p>★ <b>画像計測では照明が不確かさ源として最大級</b>なのに、機械や光学の話だけで済まされる</p>
+<p>ことが多い。照明が変わるとエッジの見かけの位置が動く —— 閾値法なら閾値の位置で、</p>
+<p>サブピクセル法でも輝度勾配の非対称で動く。**同じ部品を、照明だけ変えて測り、</p>
+<p>値が動くかを見る**のが最短の確認である。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">4. 分解能 ≠ 精度 ≠ 確度</h3>
+<p style="margin:2px 0 2px 12px">• 1 画素 = 10 µm でも、10 µm で測れるわけではない。</p>
+<p>エッジのコントラストが高ければサブピクセルで 1/10 まで行くこともあるし、</p>
+<p>低ければ 1 画素以上ばらつく。<b>画素サイズは分解能の目安であって精度ではない。</b></p>
+<p style="margin:2px 0 2px 12px">• 逆に、<b>表示桁数を精度と混同しない</b>。0.001 mm 表示は 0.001 mm の確度を意味しない。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">optical_budget</code> が返す回折限界（Airy 半径）と画素限界は、</p>
+<p><b>これ以上は分けられないという上限</b>であって、達成値ではない。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">5. Gage R&amp;R（測定システム解析）</h3>
+<p>測定のばらつきを <b>繰り返し性</b>（同じ人・同じ機械 = VIM 2.20 の条件）と</p>
+<p><b>再現性</b>（人・機械が変わる = VIM 2.24 の条件）に分けて分散に分解する手法。</p>
+<p>慣行として、公差に対する %GRR を <b>&lt; 10% 可 / 10–30% 条件付き / &gt; 30% 不可</b> と判定する</p>
+<p>（AIAG MSA の慣例であって、この閾値を国際規格が定めているわけではない）。</p>
+<p><b>画像計測では「人」が居ないと思われがちだが、実際には人の寄与が残る</b>:</p>
+<p>ワークの置き方、照明の角度と強度の調整、閾値やパラメータの設定 —— これらが</p>
+<p>「操作者」の分散である。自動機でも段取り替えのたびに入る。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">6. 校正ターゲット（画像計測）</h3>
+<p>| ターゲット | 長所 | 罠 |</p>
+<p>| --- | --- | --- |</p>
+<p>| チェッカーボード | 角の局在が良い。歪曲推定に効く | 端の角が入らないと歪曲が決まらない。平面度が要る |</p>
+<p>| 円グリッド | 重心が安定して求まる | <b>射影で「円の重心」と「円の中心」がずれる</b>（透視投影下の系統誤差）。テレセントリックでないと効く |</p>
+<p>| リング／同心円 | 中心推定が強い | 同上のずれは残る |</p>
+<p style="margin:2px 0 2px 12px">• <b>平面ターゲット 1 姿勢では焦点距離と距離が縮退する。</b> 姿勢を振って複数枚撮る。</p>
+<p style="margin:2px 0 2px 12px">• ターゲット自体に<b>平面度と目盛の校正証明</b>が要る（§2 の連鎖）。</p>
+<p>印刷したチェッカーボードは校正器物ではない。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">7. fullseye での現在地（正直に）</h3>
+<p>| 要素 | 今あるもの | 足りないもの |</p>
+<p>| --- | --- | --- |</p>
+<p>| 測る | <code style="color:#22d3bf">measure3d</code> / <code style="color:#22d3bf">math_metrology</code> / <code style="color:#22d3bf">measure1d</code> / <code style="color:#22d3bf">contour</code> | <b>不確かさを返さない</b>（値だけ返す） |</p>
+<p>| 分解能の上限 | <code style="color:#22d3bf">optical_budget</code>（Airy 半径・画素限界） | Type B の一項としては使える |</p>
+<p>| 校正ターゲット | 無し | チェッカー／円グリッドの<b>生成</b>（<code style="color:#22d3bf">optscene</code> で真値つきに作れるはず） |</p>
+<p>| 不確かさバジェット | 無し | Type A / Type B を積み上げて拡張不確かさを出す op |</p>
+<p>| Gage R&amp;R | 無し | 分散分解の op |</p>
+<p><b>次に作るなら</b>: <code style="color:#22d3bf">optscene</code> で校正ターゲットを真値つきに生成し、校正 → 補正 →</p>
+<p>残差、という閉ループを回せるようにするのが筋が良い。合成なら<b>真値が既知</b>なので、</p>
+<p>校正手順そのものの真度を検証できる（実機ではできない）。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">8. 診断表 —— 症状から原因へ</h3>
+<p>| 症状 | まず疑う | 確かめ方 |</p>
+<p>| --- | --- | --- |</p>
+<p>| 同じ部品なのに測るたび値が動く | precision の問題（Type A） | 置き直さずに 30 回撮って σ を出す。次に置き直して 30 回。<b>分けて</b>比べる |</p>
+<p>| 値は安定しているが他の測定器と合わない | trueness の問題（系統誤差） | 校正済みゲージを測る。差が一定なら補正で消える |</p>
+<p>| 午前と午後で値が違う | 温度ドリフト | 暖機時間を変えて測る。装置と部屋の温度を記録する |</p>
+<p>| 照明を調整したら寸法が変わった | エッジのバイアス | 照明だけを振って値の変化量を測り、バジェットの Type B に入れる |</p>
+<p>| 視野の端だけ寸法が合わない | 歪曲の残差／校正時に端の点が入っていない | 再投影残差を<b>画面位置ごと</b>に描く |</p>
+<p>| 円の中心がわずかに外側へずれる | 透視投影下の円の重心ずれ | テレセントリックで撮るか、円の<b>輪郭</b>から中心を推定する |</p>
+<p>| 表示は 0.1 µm 刻みなのに再現しない | 表示桁数と精度の混同 | 分解能・精度・確度を分けて書き直す |</p>
+<p>| 自動機なのに Gage R&amp;R が悪い | 段取り・置き方・パラメータ設定の人的寄与 | 作業者を変えて反復し、再現性成分を分離する |</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">出典（一次情報）</h3>
+<p style="margin:2px 0 2px 12px">• JCGM 200:2012 *International vocabulary of metrology (VIM), 3rd edition* ——</p>
+<p>2.13 accuracy / 2.14 trueness / 2.15 precision / 2.16 error / 2.17 systematic /</p>
+<p>2.19 random / 2.20 repeatability condition / 2.24 reproducibility condition /</p>
+<p>2.26 uncertainty（Type A・Type B の NOTE）/ 拡張不確かさと包含係数 /</p>
+<p>2.39 calibration（2 段階）/ 2.41 metrological traceability —</p>
+<p>&lt;https://www.bipm.org/documents/20126/2071204/JCGM_200_2012.pdf&gt;</p>
+<p style="margin:2px 0 2px 12px">• JCGM 100:2008 *Evaluation of measurement data — Guide to the expression of</p>
+<p>uncertainty in measurement (GUM)* —</p>
+<p>&lt;https://www.bipm.org/documents/20126/2071204/JCGM_100_2008_E.pdf&gt;</p>

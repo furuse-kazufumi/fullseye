@@ -7,12 +7,12 @@ out: pairs
 examples: [illumination_design_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # lighting_sweep — OPTICS `illumination` op
 
-- **データ種**: `` → `pairs`
+- **データ種**: `なし` → `pairs`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import illumdesign; illumdesign.lighting_sweep(surface='glossy', slope_deg=10.0, elevations_deg=None, radius_mm=60.0, n=24, camera_height_mm=300.0, kind='ring')` (または `opsoptics.get("lighting_sweep")`)
 
 ## 使い方

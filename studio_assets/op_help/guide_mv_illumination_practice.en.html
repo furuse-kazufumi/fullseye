@@ -1,0 +1,138 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">This guide is available in Japanese only (it is human-written prose, so nothing here is machine-substituted).</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">照明の実務知識 — 波長・偏光・点灯方式・外光・安全</h2>
+<p><b>レンズは欠陥をどれだけ鮮明に写すかを決め、照明は欠陥にコントラストがあるかを決める。</b></p>
+<p>コントラストが無いものは、どんな高級レンズでも、どんな AI でも見えない。</p>
+<p>外観検査でいちばん効く技能はここにある。</p>
+<p>幾何（同軸／リング／ドーム／暗視野／バックライト）の<b>数値的な選定</b>は</p>
+<p><code style="color:#22d3bf">optics/guides/optics_imaging.md</code> の「照明設計」節が扱う（<code style="color:#22d3bf">illumination_design</code> /</p>
+<p><code style="color:#22d3bf">defect_contrast</code> / <code style="color:#22d3bf">lighting_sweep</code> が第一原理でコントラストを計算する）。</p>
+<p>この文書はその外側 —— <b>機器と現場の実務</b> —— を書く教材である。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">1. 幾何の早見（詳細は <code style="color:#22d3bf">optics_imaging.md</code> へ）</h3>
+<p>| 欠陥・目的 | 効く照明 | 理屈 |</p>
+<p>| --- | --- | --- |</p>
+<p>| 鏡面の凹凸・刻印 | <b>同軸</b> | 正反射をそのままカメラへ返し、傾いた面だけ暗くする |</p>
+<p>| 一般的な表面 | 高角リング | 汎用。まずここから試す |</p>
+<p>| 荒れた欠陥（欠け・ピット・微細傷）・異物 | <b>低角リング（暗視野）</b> | 散乱成分だけを拾う。平面は暗く、荒れた所だけ光る |</p>
+<p>| 光沢のある曲面・顔料の色 | ドーム | 全方位から照らして正反射のムラを消す |</p>
+<p>| 輪郭・寸法・穴 | <b>バックライト</b> | 形だけを見る。表面の模様に邪魔されない |</p>
+<p>| 方向性のあるテクスチャ | バー（斜め） | 影で凹凸を強調する |</p>
+<p><b>注意</b>: 「暗視野なら傷が光る」は<b>荒れた側面を持つ傷</b>の話。</p>
+<p>なめらかに傾いただけの面（例: 10°）は暗視野では光らない —— 低い光をカメラの外へ</p>
+<p>鏡面反射するだけだからである（<code style="color:#22d3bf">defect_contrast</code> が数で示す）。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">2. 波長の選択 —— 実務でいちばん効く自由度</h3>
+<p style="margin:2px 0 2px 12px">• <b>短波長ほど微細に有利。</b> 回折限界は λ に比例する（Airy 半径 = 1.22 λ N）。</p>
+<p>同じレンズでも青（450 nm）は赤（630 nm）より約 3 割細かく分けられる。</p>
+<p>微細欠陥を狙うなら短波長。</p>
+<p style="margin:2px 0 2px 12px">• <b>赤外は透ける。</b> 多くの樹脂は近赤外を透過するので、袋や樹脂カバー越しに中身を見る、</p>
+<p>接着層の内部を見る、といった使い方ができる。シリコンセンサ自体は <b>約 1100 nm</b></p>
+<p>（Si のバンドギャップ）まで感度があるので、そこまでは普通のカメラで撮れる。</p>
+<p style="margin:2px 0 2px 12px">• <b>UV 励起の蛍光</b>で「可視では見えないもの」を見る —— 接着剤の塗布ムラ、油分、</p>
+<p>異物の残留。<b>光っているのは反射ではなく被写体自身</b>なので、露光は桁違いに長くなる。</p>
+<p style="margin:2px 0 2px 12px">• <b>色でコントラストを作る。</b> 対象の補色の光を当てるとその部分が暗くなる。</p>
+<p>緑の異物を赤色照明で撮れば黒く沈む。カラーカメラより<b>単色照明 + モノクロカメラ</b>の</p>
+<p>ほうが感度も分解能も良いことが多い。</p>
+<p style="margin:2px 0 2px 12px">• ★ <b>狭帯域 LED + バンドパスフィルタが外光対策の定番。</b></p>
+<p>照明の波長だけを通すフィルタをレンズに付ければ、蛍光灯も日光もほとんど落ちる。</p>
+<p>遮光カバーを作る前に、まずこれを試す価値がある。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">3. 偏光</h3>
+<p style="margin:2px 0 2px 12px">• <b>直交偏光でテカリを消す。</b> 光源側と受光側に偏光板を入れ、直交させる。</p>
+<p>金属や透明層での<b>正反射は偏光をよく保つ</b>ので消える。一方、内部で散乱してから</p>
+<p>出てくる<b>拡散反射は偏光が解消</b>されているので残る。</p>
+<p>→ 塗装面のクリア層のテカリを消して下地を見る、といった使い方。</p>
+<p style="margin:2px 0 2px 12px">• <b>応力複屈折</b>で透明体（ガラス・樹脂）の内部応力を可視化できる。</p>
+<p>成形品の残留応力、強化ガラスの検査。</p>
+<p style="margin:2px 0 2px 12px">• 代償は<b>光量が落ちる</b>こと（偏光板 2 枚で 1/4 以下）。§4 の点灯方式と組で考える。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">4. 点灯方式 —— 連続 / ストロボ / オーバードライブ</h3>
+<p>| 方式 | 光量 | 使いどころ |</p>
+<p>| --- | --- | --- |</p>
+<p>| <b>連続点灯</b> | 定格どおり | 静止物、単純な構成。熱が定常に達するまで明るさが動く（§6） |</p>
+<p>| <b>ストロボ（パルス）</b> | 連続と<b>同程度</b> | 動体ブレを止める。露光と同期して短く光らせる |</p>
+<p>| <b>オーバードライブ</b> | <b>大きく増える（条件により定格の 10 倍程度）</b> | 光量が足りない・高速搬送・偏光で暗い、を一度に解く |</p>
+<p><b>オーバードライブの要点</b>（一次情報は照明メーカーのアプリケーションノート）:</p>
+<p style="margin:2px 0 2px 12px">• パルス幅は数 ms から <b>1 µs</b> まで、デューティは 1% 未満まで下げられる。</p>
+<p style="margin:2px 0 2px 12px">• 発熱の制約から<b>デューティは 10% 程度が上限</b>とされる。</p>
+<p style="margin:2px 0 2px 12px">• 低デューティなので <b>LED 接合部の発熱はむしろ減り、寿命に有利</b>。</p>
+<p>放熱器を小さく、あるいは不要にできる設計上の余地も生まれる。</p>
+<p style="margin:2px 0 2px 12px">• <b>カメラの露光とのトリガ同期が必須</b>。ずれると「たまに暗い画像」が混じり、</p>
+<p>原因が照明だと気づきにくい（学習データにこれが混ざると質が落ちる）。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">5. フリッカとビート —— ラインスキャンで致命的</h3>
+<p style="margin:2px 0 2px 12px">• <b>PWM 調光の周波数とラインレートがビートを起こすと、画像に横縞が出る。</b></p>
+<p>調光を絞るほどデューティが下がって目立つ。<b>調光は PWM でなく定電流で</b>、</p>
+<p>が原則。</p>
+<p style="margin:2px 0 2px 12px">• 外光も同じ。商用電源由来の 100 / 120 Hz、インバータ蛍光灯の数十 kHz。</p>
+<p style="margin:2px 0 2px 12px">• 対策の順: ①遮光する ②バンドパスで落とす（§2）③露光時間を明滅周期の整数倍にする</p>
+<p>④定電流調光に替える。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">6. 経時変化と保守</h3>
+<p style="margin:2px 0 2px 12px">• <b>LED の光束は経時低下する。</b> 定電流で駆動していても、接合温度が上がれば光量は下がる。</p>
+<p style="margin:2px 0 2px 12px">• だから <b>熱定常で測る</b>。電源投入直後は明るく、数十分後に落ち着く。</p>
+<p>立ち上げ直後に決めた露光値は、定常状態では暗すぎる。</p>
+<p style="margin:2px 0 2px 12px">• 判定の閾値を絶対輝度で持つ装置は、<b>定期的に標準板（白色拡散板）で校正する</b>か、</p>
+<p>光量フィードバック付きの電源を使う。</p>
+<p style="margin:2px 0 2px 12px">• 合成データを作るときも同じ —— 実機の明るさが動くなら、その変動幅を</p>
+<p><code style="color:#22d3bf">inspection_dataset(intensity_jitter=...)</code> に入れておく。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">7. 安全（IEC 62471）</h3>
+<p>ランプとランプシステムを 4 つのリスクグループに分類する規格。</p>
+<p>| RG | 意味 | 目安 |</p>
+<p>| --- | --- | --- |</p>
+<p>| <b>RG0</b>（免除） | 危険なし。長時間見ても害はない | 連続被ばく ~10,000 s まで |</p>
+<p>| <b>RG1</b>（低リスク） | 限られた時間なら害はない | ~100 s |</p>
+<p>| <b>RG2</b>（中リスク） | <b>瞬目反射など自然な回避反応があるため通常は傷害に至らない</b>が、短時間でも不快 | ~0.25 s |</p>
+<p>| <b>RG3</b>（高リスク） | <b>短時間でも危険</b>。特に近距離 | — |</p>
+<p style="margin:2px 0 2px 12px">• <b>RG2 / RG3 は警告表示と使用上の注意が要る。</b> 産業用の強い照明は RG2 に入ることが</p>
+<p>普通にある（例: Zivid 2+ のプロジェクタは IEC 62471-5 の RG2）。</p>
+<p style="margin:2px 0 2px 12px">• 検査装置は<b>人が覗き込む作業が必ず発生する</b>（段取り、清掃、トラブル対応）。</p>
+<p>設計時に RG を確認し、覗き込む姿勢で被ばくしない構造にする。</p>
+<p style="margin:2px 0 2px 12px">• <b>UV と青色は特に注意</b>（青色光網膜傷害）。UV 蛍光検査は遮光筐体が前提。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">8. 外光と迷光の実務</h3>
+<p style="margin:2px 0 2px 12px">• 遮光カバー、開口を小さく、内側は<b>艶消し黒</b>（黒アルマイト、植毛シート）。</p>
+<p style="margin:2px 0 2px 12px">• <b>迷光は「見ていないところ」から来る</b>。白い床、作業者の白衣、隣の装置のモニタ。</p>
+<p>カメラ位置から部屋を見回して、明るいものを探す。</p>
+<p style="margin:2px 0 2px 12px">• 遮光しきれないなら §2 のバンドパス。<b>照明を強くして相対的に外光を無視する</b>のも</p>
+<p>一手で、そのときオーバードライブ（§4）が効く。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">9. fullseye での現在地（正直に）</h3>
+<p>| 要素 | 今あるもの | 足りないもの |</p>
+<p>| --- | --- | --- |</p>
+<p>| 幾何 | <code style="color:#22d3bf">light_source</code> / <code style="color:#22d3bf">light_spec</code>（ring / dome / bar / coaxial / backlight）、<code style="color:#22d3bf">illumination_design</code> | — |</p>
+<p>| 波長 | <code style="color:#22d3bf">light_spec(wavelength_nm, bandwidth_nm)</code>、<code style="color:#22d3bf">light_wavelengths</code> | 実分光分布、蛍光（励起 → 発光の波長変換） |</p>
+<p>| 偏光 | <code style="color:#22d3bf">light_spec(polarization=)</code>、<code style="color:#22d3bf">jones_*</code> / <code style="color:#22d3bf">mueller_*</code> op | 照明 → 表面 → 受光の<b>偏光を通した</b>レンダリング |</p>
+<p>| 点灯方式 | 無し | ストロボ／オーバードライブ、露光との同期ずれ |</p>
+<p>| フリッカ | 無し | ラインスキャンのビート縞（実機の主要な故障モード） |</p>
+<p>| 経時変化 | <code style="color:#22d3bf">inspection_dataset(intensity_jitter=)</code> で振れる | 熱による系統的なドリフト（ランダムでなく単調） |</p>
+<p>| 安全 | 無し | リスクグループの計算 |</p>
+<p>| レンダリング | <code style="color:#22d3bf">illumdesign</code> は点光源の和 | 多重反射・相互反射なし、異方性 BRDF 未対応 |</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">10. 診断表 —— 症状から原因へ</h3>
+<p>| 症状 | まず疑う | 確かめ方 |</p>
+<p>| --- | --- | --- |</p>
+<p>| 欠陥がまったく見えない | 照明の幾何が合っていない | <code style="color:#22d3bf">illumination_design(surface, defect)</code> で候補を出し、上位から実機で試す |</p>
+<p>| 傷は見えるが平面もギラつく | 正反射がカメラに入っている | 偏光板を直交に入れる、または仰角を変える（<code style="color:#22d3bf">lighting_sweep</code>） |</p>
+<p>| なめらかな傾き欠陥が暗視野で光らない | それは正常。暗視野は<b>荒れ</b>に効く | <code style="color:#22d3bf">defect_contrast</code> の <code style="color:#22d3bf">regime</code> を見る。<code style="color:#22d3bf">topographic</code> なら暗視野は不適 |</p>
+<p>| 画像に横縞が出る（ラインスキャン） | PWM 調光と外光のビート | 調光を定電流に、遮光、露光を周期の整数倍に |</p>
+<p>| たまに暗い画像が混じる | ストロボとカメラ露光の同期ずれ | トリガ信号をオシロで見る。連続点灯にして再現するか確認 |</p>
+<p>| 朝と夕方で判定が変わる | 外光の混入 | 遮光して再現するか。バンドパスフィルタを入れて比較 |</p>
+<p>| 立ち上げ直後だけ合格率が高い | LED が熱定常に達していない | 電源投入から 60 分、10 分おきに標準板を撮って輝度を記録 |</p>
+<p>| 数か月で徐々に閾値を外れる | LED の経時低下 | 標準板の輝度を履歴で見る。定期校正を運用に入れる |</p>
+<p>| 露光を伸ばせず光量が足りない | 連続点灯の上限 | オーバードライブ対応の電源に替える（デューティ 10% 以内） |</p>
+<p>| 作業者が眩しいと言う | リスクグループ | RG を確認し、覗き込み位置での被ばくを見直す |</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">出典</h3>
+<p style="margin:2px 0 2px 12px">• Advanced Illumination — *The Mechanics of Strobe Overdriving LED Lights for Machine</p>
+<p>Vision Applications*（連続 / ストロボ / オーバードライブの区別、低デューティ化、</p>
+<p>接合部発熱の低減） — &lt;https://advancedillumination.com/the-mechanics-of-strobe-overdriving-led-lights-for-machine-vision-applications/&gt;</p>
+<p style="margin:2px 0 2px 12px">• Smart Vision Lights — *OverDrive Driver*（パルス幅 数 ms〜1 µs、デューティ 1% 未満、</p>
+<p>デューティ上限 10%、定格比 10 倍級の電流） — &lt;https://machinevisiondirect.com/blogs/news/svl-overdrive&gt;</p>
+<p style="margin:2px 0 2px 12px">• Opto Engineering — *LED pulsing and strobing* — &lt;https://www.opto-e.com/basics/led-pulsing-and-strobing&gt;</p>
+<p style="margin:2px 0 2px 12px">• Advanced Illumination — *IEC 62471 Photobiological Safety of Lamps and Lamp Systems*</p>
+<p>（RG0–RG3 の分類） — &lt;https://www.advancedillumination.com/wp-content/uploads/2023/04/IEC-040119-Photobiological-Safety-of-Lamps-and-Lamp-Systems_042723.pdf&gt;</p>
+<p style="margin:2px 0 2px 12px">• Luminus Devices — *Understanding IEC 62471 and IEC 62778 Eye Safety Risk Groups* —</p>
+<p>&lt;https://luminusdevices.zendesk.com/hc/en-us/articles/10532958752397-Safety-Understanding-IEC-62471-and-IEC-62778-Eye-Safety-Risk-Groups-visible-and-nonvisible-light-sources&gt;</p>

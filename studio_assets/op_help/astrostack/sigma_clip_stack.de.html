@@ -1,0 +1,52 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sigma_clip_stack — ASTROSTACK <code style="color:#22d3bf">stack</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import astrostack; astrostack.sigma_clip_stack(frames, mode=&#x27;sigma_clip&#x27;, kappa=3.0, iters=5, center=&#x27;median&#x27;, scale=&#x27;mad&#x27;)</code> (oder <code style="color:#22d3bf">opsastrostack.get(&quot;sigma_clip_stack&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>フレーム列を合成する(平均 / 中央値 / κ-σ クリップ)。採否マスクつき。</p>
+<p>*mode*:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;mean&quot;</code><code style="color:#22d3bf"> —— 単純平均。雑音は </code><code style="color:#22d3bf">sqrt(N)</code>` で下がるが、外れ値(宇宙線・</p>
+<p>人工衛星の航跡)は `<code style="color:#22d3bf">1/N</code>` しか薄まらず<b>必ず残る</b>。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;median&quot;</code>` —— 中央値。外れ値に強い代わりに、正規分布のとき雑音は</p>
+<p>平均の `<code style="color:#22d3bf">sqrt(pi/2) = 1.2533</code>` 倍しか下がらない(= 実効的に 36 % 枚数を</p>
+<p>捨てている)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;sigma_clip&quot;</code><code style="color:#22d3bf"> —— 中央値を中心、</code><code style="color:#22d3bf">scale</code>` を尺度として</p>
+<p>`<code style="color:#22d3bf">|x - center| &gt; kappa * scale</code>` を落とし、残りで平均を取る。これを</p>
+<p>`<code style="color:#22d3bf">iters</code>` 回。外れ値に強く、かつ生き残った画素は平均されるので雑音も</p>
+<p>`<code style="color:#22d3bf">sqrt(N_accepted)</code>` で下がる —— 実用の既定。</p>
+<p><b>破綻点は 50 %。</b> 中心を中央値、尺度を MAD で取る以上、汚染フレームが</p>
+<p>半数を超えた画素では中央値そのものが汚染側に乗り、クリップは<b>正しい方</b>を</p>
+<p>捨てる。これはこの実装の不具合ではなく中央値の定義そのもので、</p>
+<p>`<code style="color:#22d3bf">center=&quot;mean&quot;</code>` にすればもっと早く(汚染 1 枚でも)壊れる。テストは</p>
+<p>0〜60 % の汚染率で誤差を測り、<b>壊れる側もそのまま残してある</b>。</p>
+<p>**`<code style="color:#22d3bf">scale</code><code style="color:#22d3bf"> の既定が </code><code style="color:#22d3bf">&quot;mad&quot;</code><code style="color:#22d3bf"> なのは実測の結果。** </code><code style="color:#22d3bf">scale=&quot;std&quot;</code>` は</p>
+<p>「外れ値を見つけるための尺度を、その外れ値自身が膨らませる」ので、汚染が</p>
+<p>増えるとむしろ<b>何も落とさなくなる</b> —— 24x24 の平坦場(真値 100、</p>
+<p>σ=2)20 枚のうち 4 枚(20 %)に +500 の汚染を入れた実測では、</p>
+<p>`<code style="color:#22d3bf">scale=&quot;std&quot;</code>` は棄却率 <b>0.0 %</b> で誤差 <b>+99.9975</b>(= 単純平均と</p>
+<p>小数点以下まで完全に同じ)、`<code style="color:#22d3bf">scale=&quot;mad&quot;</code>` は棄却率 <b>22.0 %</b> で誤差</p>
+<p><b>-0.019</b>。破綻点は `<code style="color:#22d3bf">std</code><code style="color:#22d3bf"> が 10〜20 % の間、</code><code style="color:#22d3bf">mad</code>` がちょうど 50 % で、</p>
+<p>5 倍近く違う。</p>
+<p>Returns `<code style="color:#22d3bf">(stack, accepted)</code>`:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">stack</code><code style="color:#22d3bf"> —— </code><code style="color:#22d3bf">(H, W)</code>` float64。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">accepted</code><code style="color:#22d3bf"> —— </code><code style="color:#22d3bf">(N, H, W)</code><code style="color:#22d3bf"> bool、</code><code style="color:#22d3bf">True</code>` = <b>採用</b>した画素。</p>
+<p>`<code style="color:#22d3bf">mode=&quot;mean&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;median&quot;</code><code style="color:#22d3bf"> では全 </code><code style="color:#22d3bf">True</code>`(どちらもクリップしない</p>
+<p>ので、「採否」の概念が無いことを `<code style="color:#22d3bf">False</code>` が 1 つも無いことで示す)。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *frames* が list / tuple でない / 枚数が 2 未満 /</p>
+<p>形が揃っていない / *mode* が :data:<code style="color:#22d3bf">STACK_MODES</code> にない / *kappa* が非正 /</p>
+<p>*center* が `<code style="color:#22d3bf">&quot;median&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;mean&quot;</code><code style="color:#22d3bf"> 以外 / *scale* が </code><code style="color:#22d3bf">&quot;std&quot;</code>` /</p>
+<p>`<code style="color:#22d3bf">&quot;mad&quot;</code>` 以外の場合。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:astro_stacking">astro_stacking</a> — <code style="color:#22d3bf">py -3.11 examples/astro_stacking.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:frame_quality">frame_quality</a> · <a style="color:#22d3bf" href="opastrostack:noise_sigma">noise_sigma</a> · <a style="color:#22d3bf" href="opastrostack:cosmic_ray_reject">cosmic_ray_reject</a> · <a style="color:#22d3bf" href="opastrostack:star_detect">star_detect</a> · <a style="color:#22d3bf" href="opastrostack:psf_fit">psf_fit</a> · <a style="color:#22d3bf" href="opastrostack:aperture_photometry">aperture_photometry</a> · <a style="color:#22d3bf" href="opastrostack:frame_align">frame_align</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">stack</code>)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:drizzle_resample">drizzle_resample</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: astrostack.py — ASTROSTACK Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

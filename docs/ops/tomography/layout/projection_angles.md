@@ -7,12 +7,12 @@ out: signal
 examples: [ct_reconstruction, tomography_reconstruct]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # projection_angles — TOMOGRAPHY `layout` op
 
-- **データ種**: `` → `signal`
+- **データ種**: `なし` → `signal`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import tomography; tomography.projection_angles(n_angles=180, span_deg=180.0, scheme='uniform', start_deg=0.0)` (または `opstomography.get("projection_angles")`)
 
 ## 使い方

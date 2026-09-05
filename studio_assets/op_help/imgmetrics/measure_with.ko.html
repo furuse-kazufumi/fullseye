@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">measure_with — IMGMETRICS <code style="color:#22d3bf">report</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">metrics × image2d × image2d</code> → <code style="color:#22d3bf">metrics</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import imgmetrics; imgmetrics.measure_with(report, a, b, ms=False)</code>(또는 <code style="color:#22d3bf">opsimgmetrics.get(&quot;measure_with&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p><b>직전 측정과 정확히 같은 조건으로</b> 다른 한 쌍을 잽니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>:func:<code style="color:#22d3bf">compare_images</code> の返り値(`<code style="color:#22d3bf">contract</code>` を含む)を受け取り、そこに</p>
+<p>記録された `<code style="color:#22d3bf">data_range</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">bins</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">ncd_levels</code>` をそのまま使って測り直す。</p>
+<p>これが要るのは、この repo で実際に起きた事故の型があるから ―― **数値だけを</p>
+<p>図注や表に写して、条件が消える**。別々に測った 2 つの PSNR を並べたとき、</p>
+<p>片方が `<code style="color:#22d3bf">data_range=1.0</code><code style="color:#22d3bf">、もう片方が </code><code style="color:#22d3bf">255</code>` なら **48.13 dB の差が「改善」に</p>
+<p>見える**。条件を持ち回れば、そもそも比べられない組合せは作れない。</p>
+<p>同時に、これが `<code style="color:#22d3bf">metrics</code><code style="color:#22d3bf"> 型の**消費側**でもある。</code><code style="color:#22d3bf">compare_images</code>` だけが</p>
+<p>`<code style="color:#22d3bf">metrics</code>` を産んで誰も食わない状態は、この repo が繰り返し踏んできた</p>
+<p>「入口はあるが消費 op が無い型」そのものだった(2026-09-02 の点検で検出)。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>report : dict</p>
+<p>:func:<code style="color:#22d3bf">compare_images</code> の返り値、または `<code style="color:#22d3bf">contract</code>` そのもの。</p>
+<p>a, b : array_like</p>
+<p>測り直す 2 枚。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>dict</p>
+<p>同じ形の報告。`<code style="color:#22d3bf">contract</code>` は受け取ったものと<b>同一</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_quality_metrics">image_quality_metrics</a> — <code style="color:#22d3bf">py -3.11 examples/image_quality_metrics.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">metrics</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:metrics_table">metrics_table</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">report</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:compare_images">compare_images</a> · <a style="color:#22d3bf" href="opimgmetrics:metrics_table">metrics_table</a> · <a style="color:#22d3bf" href="opimgmetrics:data_range_of">data_range_of</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgmetrics.py — IMGMETRICS 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

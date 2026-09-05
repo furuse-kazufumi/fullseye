@@ -1,0 +1,43 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">em_skeleton — 2D <code style="color:#22d3bf">region</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;em_skeleton&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Eckhardt–Maderlechner 型の不変細線化(HALCON <code style="color:#22d3bf">skeleton</code> と同系統)。</p>
+<p>出典: U. Eckhardt, G. Maderlechner, &quot;Invariant Thinning&quot;,</p>
+<p>Int. J. Pattern Recognition and AI 7:1115-1144 (1993)。実装規則は</p>
+<p>M. Couprie &quot;Note on fifteen 2D parallel thinning algorithms&quot; の EM93</p>
+<p>定義に従うクリーンルーム実装。**同ノートが公表する EM93 の参照出力と</p>
+<p>突き合わせ済み**: 形状 1 は骨格の画素集合がビット単位で一致(724/724)、</p>
+<p>形状 2/3 は画素数が公表値と一致(2434 / 3895)。</p>
+<p>tests/test_regions2.py::test_em_skeleton_matches_published_em93_reference。</p>
+<p>(HALCON 実機との直接照合は未実施だが、HALCON が拠る同じ公表アルゴリズムの</p>
+<p>参照出力と一致している):</p>
+<p>interior = 4 近傍がすべて前景の画素</p>
+<p>simple   = (8,4) 単純点(前景 8 連結成分 1 個 ∧ 接する背景 4 連結成分 1 個)</p>
+<p>perfect  = ある 4 方向の隣が interior で、その反対方向が背景</p>
+<p>「simple かつ perfect な画素を全部同時に消す」を不動点まで反復</p>
+<p>注: ノートの転記を字義どおり「強(4)連結成分のみで simple を数える」と</p>
+<p>実装すると並列削除が斜め橋を同時に落とし位相が壊れる(反例で実測)。</p>
+<p>simple を標準の (8,4) 単純点にした本実装が参照出力とビット単位で</p>
+<p>一致したので、これが EM93 の正しい読みだと裏付けられている。</p>
+<p>完全並列・対称(90 度回転/鏡映と可換)・位相保存・冪等。Zhang–Suen 系の</p>
+<p><code style="color:#22d3bf">sk_skeleton</code> より枝を多く残す(実測 1.4〜1.5 倍の画素数 = Couprie の</p>
+<p>比較表で EM が対称・枝多である性格と整合)。ヒゲは <code style="color:#22d3bf">pruning</code> で後処理する</p>
+<p>流儀も HALCON と同じ。つまみ a, b は未使用。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_region">gallery2d_region</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_region.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">region</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:reg_erode">reg_erode</a> · <a style="color:#22d3bf" href="op:reg_dilate">reg_dilate</a> · <a style="color:#22d3bf" href="op:reg_open">reg_open</a> · <a style="color:#22d3bf" href="op:reg_close">reg_close</a> · <a style="color:#22d3bf" href="op:fill_holes">fill_holes</a> · <a style="color:#22d3bf" href="op:select_largest">select_largest</a> · <a style="color:#22d3bf" href="op:remove_small">remove_small</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">region</code>)</h3>
+<p><a style="color:#22d3bf" href="op:reg_erode">reg_erode</a> · <a style="color:#22d3bf" href="op:reg_dilate">reg_dilate</a> · <a style="color:#22d3bf" href="op:reg_open">reg_open</a> · <a style="color:#22d3bf" href="op:reg_close">reg_close</a> · <a style="color:#22d3bf" href="op:fill_holes">fill_holes</a> · <a style="color:#22d3bf" href="op:select_largest">select_largest</a> · <a style="color:#22d3bf" href="op:remove_small">remove_small</a> · <a style="color:#22d3bf" href="op:invert_region">invert_region</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,34 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lf_stats — LIGHTFIELD <code style="color:#22d3bf">decode</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import lightfield; lightfield.lf_stats(lf)</code>(或 <code style="color:#22d3bf">opslightfield.get(&quot;lf_stats&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>Describe a light field: shape, angular centre, and the slope range it can carry.</p>
+<p>Returns a dict — `<code style="color:#22d3bf">angular_v</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">angular_u</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">height</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">width</code>` ·</p>
+<p>`<code style="color:#22d3bf">n_views = V*U</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">center_v</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">center_u</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">(N-1)/2</code>`, a half-integer</p>
+<p>when the axis is even, so `<code style="color:#22d3bf">center_is_a_view</code>` says whether a single view</p>
+<p>actually sits at the centre) · `<code style="color:#22d3bf">min</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">max</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mean</code>` of the samples ·</p>
+<p>`<code style="color:#22d3bf">max_slope_px</code><code style="color:#22d3bf">, the largest </code><code style="color:#22d3bf">|s|</code>` for which the extreme view is still</p>
+<p>displaced by less than half the frame, i.e. the honest limit of what this</p>
+<p>array can measure (`<code style="color:#22d3bf">min(H, W) / max(V-1, U-1, 1)</code>`; reported as</p>
+<p>`<code style="color:#22d3bf">float(min(H, W))</code>` when the array has a single view in both directions,</p>
+<p>since then no shift happens at all) · `<code style="color:#22d3bf">baseline_views</code>`, the angular span</p>
+<p>`<code style="color:#22d3bf">(V-1, U-1)</code>` that any disparity is measured over.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *lf* is not a finite 4-D array within the shape</p>
+<p>and element caps.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">lightfield_depth 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">decode</code>)</h3>
+<p><a style="color:#22d3bf" href="oplightfield:lf_from_mla">lf_from_mla</a> · <a style="color:#22d3bf" href="oplightfield:lf_to_mla">lf_to_mla</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: lightfield.py — LIGHTFIELD 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,51 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cplx_winding_number — MATH <code style="color:#22d3bf">complex</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">cpoints</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import mathops; mathops.cplx_winding_number(z, w=0.0)</code> (oder <code style="color:#22d3bf">opsmath.get(&quot;cplx_winding_number&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Windungszahl einer geschlossenen Kontur um einen Punkt (Umlaufzahl).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>How many times the polygon `<code style="color:#22d3bf">z</code>` (closing segment implicit) travels</p>
+<p>counter-clockwise around *w*: `<code style="color:#22d3bf">+1</code>` for a simple positively-oriented loop</p>
+<p>containing it, `<code style="color:#22d3bf">-1</code><code style="color:#22d3bf"> clockwise, </code><code style="color:#22d3bf">0</code><code style="color:#22d3bf"> outside, </code><code style="color:#22d3bf">±k</code><code style="color:#22d3bf"> for a </code><code style="color:#22d3bf">k</code>`-fold</p>
+<p>loop. Computed as the sum of the principal-value argument increments of</p>
+<p>`<code style="color:#22d3bf">z_k - w</code><code style="color:#22d3bf"> divided by </code><code style="color:#22d3bf">2*pi</code>` and rounded — for a *polygon* that sum is an</p>
+<p>exact multiple of `<code style="color:#22d3bf">2*pi</code>`, so the result is an exact integer, not an</p>
+<p>estimate (the rounding merely removes ~1e-14 of accumulated float error).</p>
+<p>Honest limitation — **the count can alias low, and no local check can stop</p>
+<p>it**: this is the winding number of the polygon *through the samples*,</p>
+<p>which equals that of the underlying curve only if the sampling resolves it.</p>
+<p>A segment that turns the ray to *w* by `<code style="color:#22d3bf">&gt;= pi</code>` is ambiguous (which side</p>
+<p>did it pass?) and raises. Below that there is no contradiction to detect:</p>
+<p>`<code style="color:#22d3bf">z**5</code><code style="color:#22d3bf"> sampled on a 4-point circle turns exactly </code><code style="color:#22d3bf">pi/2</code>` per step and</p>
+<p>counts <b>1</b> instead of 5 (measured). From `<code style="color:#22d3bf">pi/2</code>` up, a</p>
+<p>`<code style="color:#22d3bf">RuntimeWarning</code><code style="color:#22d3bf"> says so (</code><code style="color:#22d3bf">WIND_ALIAS_WARN</code>`); the only real remedy is</p>
+<p>the classical one — refine until the count stops changing.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *w* coincides with a vertex or lies on a segment</p>
+<p>(the winding number is undefined on the contour), a segment subtends</p>
+<p>`<code style="color:#22d3bf">&gt;= pi</code>` as seen from *w* (undersampled — refine the contour), fewer than</p>
+<p>3 points, degenerate contour, non-finite/masked input.</p>
+<p>HALCON: no operator (`<code style="color:#22d3bf">test_region_point</code>` answers the related but weaker</p>
+<p>inside/outside question for regions).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
+<p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
+<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
+<p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">Leitfaden zur Familie math_metrology</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:math_complex">math_complex</a> — <code style="color:#22d3bf">py -3.11 examples/math_complex.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">measurement</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">complex</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:cplx_contour_circle">cplx_contour_circle</a> · <a style="color:#22d3bf" href="opmath:cplx_poly_eval">cplx_poly_eval</a> · <a style="color:#22d3bf" href="opmath:cplx_contour_integral">cplx_contour_integral</a> · <a style="color:#22d3bf" href="opmath:cplx_cauchy_value">cplx_cauchy_value</a> · <a style="color:#22d3bf" href="opmath:cplx_argument_principle">cplx_argument_principle</a> · <a style="color:#22d3bf" href="opmath:cplx_laurent_coeffs">cplx_laurent_coeffs</a> · <a style="color:#22d3bf" href="opmath:cplx_joukowski">cplx_joukowski</a> · <a style="color:#22d3bf" href="opmath:cplx_mobius">cplx_mobius</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

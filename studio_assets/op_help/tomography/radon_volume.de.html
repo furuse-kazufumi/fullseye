@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">radon_volume — TOMOGRAPHY <code style="color:#22d3bf">volume</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">sinostack</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import tomography; tomography.radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1)</code> (oder <code style="color:#22d3bf">opstomography.get(&quot;radon_volume&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Project every slice of a `<code style="color:#22d3bf">(Z, H, W)</code><code style="color:#22d3bf"> volume -&gt; a </code><code style="color:#22d3bf">(Z, A, D)</code>` stack.</p>
+<p>Parallel-beam geometry with the rotation axis along `<code style="color:#22d3bf">Z</code>`, which is the case</p>
+<p>where the 3-D problem really is a stack of independent 2-D ones — each slice</p>
+<p>projects into its own sinogram and nothing crosses between them. (A cone beam</p>
+<p>does not have this property and is not implemented; saying so is cheaper than</p>
+<p>a wrong `<code style="color:#22d3bf">FDK</code>`.)</p>
+<p>The output&#x27;s axis order is `<code style="color:#22d3bf">(slice, angle, detector)</code><code style="color:#22d3bf"> so that </code><code style="color:#22d3bf">stack[k]</code>`</p>
+<p>is a sinogram in this module&#x27;s own convention and every 2-D operator here</p>
+<p>applies to it unchanged.</p>
+<p>:param volume: `<code style="color:#22d3bf">(Z, H, W)</code><code style="color:#22d3bf"> float volume, </code><code style="color:#22d3bf">Z &gt;= 1</code>`.</p>
+<p>:param angles_deg: view angles; `<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> -&gt; uniform </code><code style="color:#22d3bf">[0, 180)</code>`, 180 views.</p>
+<p>:param n_detectors: bins; `<code style="color:#22d3bf">None</code>` -&gt; covers the in-plane diagonal.</p>
+<p>:param oversample: ray samples per pixel, `<code style="color:#22d3bf">1 .. 8</code>`.</p>
+<p>:returns: `<code style="color:#22d3bf">(Z, n_angles, n_detectors)</code>` float64 stack.</p>
+<p>:raises ValueError: on a non-3-D input or a stack over</p>
+<p>:data:<code style="color:#22d3bf">MAX_STACK_ELEMENTS</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:tomography_reconstruct">tomography_reconstruct</a> — <code style="color:#22d3bf">py -3.11 examples/tomography_reconstruct.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">sinostack</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="optomography:fbp_volume">fbp_volume</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">volume</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:fbp_volume">fbp_volume</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tomography.py — TOMOGRAPHY Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

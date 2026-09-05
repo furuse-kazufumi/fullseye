@@ -1,0 +1,63 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">calibration_views — OPTICS <code style="color:#22d3bf">imaging_sim</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import lensimage; lensimage.calibration_views(system, image_size=(1024, 1024), pixel_pitch_um=5.5, target=(9, 7, 5.0), poses=None, distance_mm=None, noise_px=0.0, seed=0, order=2)</code> (oder <code style="color:#22d3bf">opsoptics.get(&quot;calibration_views&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Synthetic camera-calibration views of a planar target through the designed lens (`<code style="color:#22d3bf">table</code>`).</p>
+<p>A chessboard-like grid of *target* = (cols, rows, pitch_mm) corner points</p>
+<p>on the plane z = 0 is placed at each of *poses* — ``(rx_deg, ry_deg,</p>
+<p>rz_deg, tx_mm, ty_mm, tz_mm)`` in the camera frame (camera at the origin</p>
+<p>looking along +z; default: five poses, frontal and ±20° about x and y, at</p>
+<p>*distance_mm* — default the distance at which the target spans 60 % of</p>
+<p>the sensor width) — projected by a pinhole of the prescription&#x27;s EFL and</p>
+<p>then displaced by the lens&#x27;s <b>real radial distortion</b> (the polynomial</p>
+<p>:func:<code style="color:#22d3bf">distortion_map</code> fits from traced chief rays), and expressed as</p>
+<p>`<code style="color:#22d3bf">(row, col)</code>` pixels on an *image_size* sensor of *pixel_pitch_um*.</p>
+<p>Optional Gaussian corner-detection noise *noise_px* (deterministic for</p>
+<p>*seed*).</p>
+<p>Returns `<code style="color:#22d3bf">object_points</code><code style="color:#22d3bf"> (N,2) mm on the target plane, </code><code style="color:#22d3bf">image_points</code>`</p>
+<p>(a list of (N,2) `<code style="color:#22d3bf">(row, col)</code>` arrays — exactly what</p>
+<p>`<code style="color:#22d3bf">calib.camera_calibration</code><code style="color:#22d3bf"> consumes), </code><code style="color:#22d3bf">K_true</code>` (fx = fy = EFL/pitch</p>
+<p>px, cx, cy at the sensor centre), the distortion polynomial, the poses,</p>
+<p>and per view the fraction of points that landed on the sensor. Views with</p>
+<p>fewer than four visible points, a target behind the camera, or an afocal</p>
+<p>prescription are `<code style="color:#22d3bf">ValueError</code>`.</p>
+<p>The point of the op is the <b>closed loop</b>: feed the output to</p>
+<p>`<code style="color:#22d3bf">calib.camera_calibration</code>` and compare the recovered intrinsics with</p>
+<p>`<code style="color:#22d3bf">K_true</code>` — for a distortion-free lens (the paraboloid) Zhang&#x27;s method</p>
+<p>returns the EFL to 1e-6, and the singlet&#x27;s barrel distortion shows up as a</p>
+<p>focal-length bias and a non-zero reprojection RMS, so the calibration</p>
+<p>module is checked end to end against a lens whose truth is known, and a</p>
+<p>real chart can be judged against the same numbers.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
+<p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
+<p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>
+<p style="margin:2px 0 2px 12px">• **Strings lösen <code style="color:#22d3bf">ValueError</code> aus** — <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> gelingt, sodass ein ungeparster Konfigurationswert als Länge durchrutschen würde (gemessen: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> lieferte plausible 66,667 mm). bool wird als implizite Hochstufung <code style="color:#22d3bf">True == 1</code> ebenfalls abgelehnt.</p>
+<p style="margin:2px 0 2px 12px">• **complex / Masked Arrays lösen <code style="color:#22d3bf">ValueError</code> aus<b> (nur reelle Slots; das stille Verwerfen des Imaginärteils bzw. Abstreifen der Maske wird abgelehnt). </b>NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus.**</p>
+<p style="margin:2px 0 2px 12px">• <b>Division durch null und Verwandtes wird namentlich abgelehnt</b>: Brennweite 0, Krümmungsradius 0, Brechzahl &lt;= 0, undurchlässige Blende (alles 0, die Normierung wird 0/0), PSF mit Summe &lt;= 0, Stokes-Vektor mit S0 = 0 und ein Objekt im vorderen Brennpunkt (Bild im Unendlichen).</p>
+<p style="margin:2px 0 2px 12px">• <b>Nur zwei Operatoren liefern einen nicht-endlichen Wert, und beide halten das vertraglich fest</b>: <code style="color:#22d3bf">depth_of_field</code> liefert jenseits der hyperfokalen Distanz <code style="color:#22d3bf">far_mm = inf</code> (genau das bedeutet die hyperfokale Distanz), und <code style="color:#22d3bf">gaussian_beam</code> liefert an der Taille <code style="color:#22d3bf">wavefront_radius_mm = inf</code> (der Krümmungsradius einer ebenen Wellenfront). Beide liefern zusätzlich einen endlichen Partner (<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>). **Jedes andere stille NaN/Inf wird intern erkannt und löst <code style="color:#22d3bf">ValueError</code> aus** — &quot;float64 ist übergelaufen&quot; und &quot;die Antwort ist unendlich&quot; sind verschiedene Aussagen; die erste wird nie im Gewand der zweiten geliefert.</p>
+<p style="margin:2px 0 2px 12px">• <b>Größenobergrenzen</b>: erzeugte Gitter durch <code style="color:#22d3bf">optics.MAX_GRID</code> (4096), übergebene Felder/PSFs/Blenden durch <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code> (2^24), ABCD-Elementketten durch <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code> (1024), Zernike durch <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code> (512) / <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code> (40) / <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code> (2^25). Damit werden Pfade fail-closed geschlossen, in denen ein kleines Argument eine riesige interne Allokation auslöst (gemessen: n_max=40 × 4096² braucht 108 GB).</p>
+<p style="margin:2px 0 2px 12px">• <b>Physikalisch unmögliche Zustände werden ebenfalls abgelehnt</b>: Stokes-Vektor mit Polarisationsgrad &gt; 1, negative Transmission, negative Intensität und ungültige Zernike-Indizes wie ungerades n-|m|.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">Leitfaden zur Familie optics_imaging</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:mv_cables">mv_cables</a> — ケーブル（規格・速度・給電・ロボットケーブル）</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:mv_cameras">mv_cameras</a> — 産業用カメラメーカー（センサとの紐付け・ラインスキャン / TDI）</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:mv_frame_grabbers">mv_frame_grabbers</a> — フレームグラバーボード（光学系ではないが、撮れるかを決める）</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:mv_image_sensors">mv_image_sensors</a> — 産業用イメージセンサ（現行品中心）</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:mv_standards">mv_standards</a> — カメラインターフェースの規格と団体</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:virtual_machine_vision">virtual_machine_vision</a> — 仮想マシンビジョン — パラメータの洗い出しとオブジェクト模型</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lens_calibration_loop_demo">lens_calibration_loop_demo</a> — <code style="color:#22d3bf">py -3.11 examples/lens_calibration_loop_demo.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a> · <a style="color:#22d3bf" href="opoptics:spot_diagram">spot_diagram</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">imaging_sim</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:psf_from_opd">psf_from_opd</a> · <a style="color:#22d3bf" href="opoptics:distortion_map">distortion_map</a> · <a style="color:#22d3bf" href="opoptics:render_through_lens">render_through_lens</a> · <a style="color:#22d3bf" href="opoptics:defect_dataset">defect_dataset</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: lensimage.py — OPTICS Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

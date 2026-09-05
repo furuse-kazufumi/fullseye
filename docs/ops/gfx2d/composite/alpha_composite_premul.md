@@ -7,7 +7,7 @@ out: rgba_premul
 examples: [gfx2d_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # alpha_composite_premul — GFX2D `composite` op

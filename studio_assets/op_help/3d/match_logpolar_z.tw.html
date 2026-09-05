@@ -1,0 +1,20 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">match_logpolar_z — 3D <code style="color:#22d3bf">match_pose</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">rot_scale</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import match3d; match3d.match_logpolar_z(a, b, device=&#x27;cpu&#x27;, project=&#x27;mip&#x27;, nt=360, nr=192)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;match_logpolar_z&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:該運算子有 GPU 路徑(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>log-polar × 位相相関(Fourier-Mellin)で <b>z 軸回転 + 等方スケール</b>を復元。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:shape_desc_pose">shape_desc_pose</a> — <code style="color:#22d3bf">py -3.11 examples_3d/shape_desc_pose.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">rot_scale</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">match_pose</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:match_phase_3d">match_phase_3d</a> · <a style="color:#22d3bf" href="op3d:match_pca">match_pca</a> · <a style="color:#22d3bf" href="op3d:moment_axes">moment_axes</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: match3d.py — 3D 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

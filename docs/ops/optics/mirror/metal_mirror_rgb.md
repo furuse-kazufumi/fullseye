@@ -7,12 +7,12 @@ out: vector
 examples: [glass_and_mirror_optics]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # metal_mirror_rgb — OPTICS `mirror` op
 
-- **データ種**: `` → `vector`
+- **データ種**: `なし` → `vector`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import glassmirror; glassmirror.metal_mirror_rgb(metal='ag', cos_i=1.0, samples=61) -> 'np.ndarray'` (または `opsoptics.get("metal_mirror_rgb")`)
 
 ## 使い方

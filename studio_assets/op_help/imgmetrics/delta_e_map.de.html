@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">delta_e_map — IMGMETRICS <code style="color:#22d3bf">colordiff</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">rgbimage × rgbimage</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import imgmetrics; imgmetrics.delta_e_map(rgb1, rgb2, kind=&#x27;2000&#x27;, white=(0.95047, 1.0, 1.08883))</code> (oder <code style="color:#22d3bf">opsimgmetrics.get(&quot;delta_e_map&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Farbabstandskarte zweier <b>sRGB-Bilder</b>, Pixel für Pixel.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>RGB の平均二乗誤差ではなく<b>知覚的な色差</b>で見るための入口。</p>
+<p>`<code style="color:#22d3bf">kind</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">&quot;2000&quot;</code><code style="color:#22d3bf">(既定)または </code><code style="color:#22d3bf">&quot;76&quot;</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">Leitfaden zur Familie image_difference_metrics</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:colorimetry">colorimetry</a> — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:color_transport">color_transport</a> — <code style="color:#22d3bf">py -3.11 examples/color_transport.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_quality_metrics">image_quality_metrics</a> — <code style="color:#22d3bf">py -3.11 examples/image_quality_metrics.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:mse">mse</a> · <a style="color:#22d3bf" href="opimgmetrics:rmse">rmse</a> · <a style="color:#22d3bf" href="opimgmetrics:psnr">psnr</a> · <a style="color:#22d3bf" href="opimgmetrics:ssim">ssim</a> · <a style="color:#22d3bf" href="opimgmetrics:ms_ssim">ms_ssim</a> · <a style="color:#22d3bf" href="opimgmetrics:ssim_map">ssim_map</a> · <a style="color:#22d3bf" href="opimgmetrics:image_entropy">image_entropy</a> · <a style="color:#22d3bf" href="opimgmetrics:joint_entropy">joint_entropy</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">colordiff</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:delta_e_2000">delta_e_2000</a> · <a style="color:#22d3bf" href="opimgmetrics:delta_e_76">delta_e_76</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgmetrics.py — IMGMETRICS Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

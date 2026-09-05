@@ -1,0 +1,46 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">align_frames — ASTROSTACK <code style="color:#22d3bf">align</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">images</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import astrostack; astrostack.align_frames(frames, reference=0, order=3, **align_kw)</code>(또는 <code style="color:#22d3bf">opsastrostack.get(&quot;align_frames&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
+<p>フレーム列を 1 枚の基準へ重ね合わせる。</p>
+<p>各フレームについて :func:<code style="color:#22d3bf">frame_align</code> で変換を推定し、</p>
+<p>:func:<code style="color:#22d3bf">scipy.ndimage.affine_transform</code> で逆写像・再標本化する。</p>
+<p><b>正直な注意</b>: 補間は像を保存しない。ノイズ無しの 64x64 / 12 星を</p>
+<p>`<code style="color:#22d3bf">(0.5, 0.5)</code>` px だけずらして戻した実測::</p>
+<p>order=1 (双一次)   総フラックス -0.016 %   星のピーク -11.437 %</p>
+<p>order=3 (スプライン) 総フラックス -0.016 %   星のピーク  -0.312 %</p>
+<p>総フラックスはどちらでもほぼ保たれるのに、**星のピークは双一次だと 1 割</p>
+<p>以上落ちる** —— 0.5 px ずらしは双一次にとって最悪の位相で、隣り合う</p>
+<p>4 画素の単純平均になるからである。既定を `<code style="color:#22d3bf">order=3</code>` にしてあるのはこの</p>
+<p>実測による(`<code style="color:#22d3bf">order=3</code>` は星の周りに極小の負の縁を作るが、上の測定では</p>
+<p>最小値 -0.0000 で目に見える量ではなかった)。</p>
+<p><b>フラックスもピークも厳密に保ちたいなら補間せず</b> :func:<code style="color:#22d3bf">drizzle_resample</code></p>
+<p>へ渡すこと —— 補間しないことが drizzle の存在理由そのもの。ただし</p>
+<p><b>推定シフトをそのまま渡してはいけない</b>: ここで返す `<code style="color:#22d3bf">matrices</code>` の並進は</p>
+<p>「基準へ戻す」向きで、drizzle が要る向きとは符号が逆。</p>
+<p>:func:<code style="color:#22d3bf">drizzle_shifts</code> を通すこと::</p>
+<p>aligned, mats = align_frames(frames)</p>
+<p>sci, wht = drizzle_resample(frames, drizzle_shifts(mats), scale=2.0)</p>
+<p>Returns `<code style="color:#22d3bf">(aligned, matrices)</code>`:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">aligned</code><code style="color:#22d3bf"> —— 長さ </code><code style="color:#22d3bf">N</code><code style="color:#22d3bf"> の list、各 </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> float64(</code><code style="color:#22d3bf">images</code>` 語彙)。</p>
+<p>基準フレームは<b>変換を通さずそのまま</b>返す(恒等変換でも補間は像を鈍らせる</p>
+<p>ので、通す理由が無い)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">matrices</code><code style="color:#22d3bf"> —— 長さ </code><code style="color:#22d3bf">N</code><code style="color:#22d3bf"> の list、各 </code><code style="color:#22d3bf">(3, 3)</code>`。基準は単位行列。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *frames* が list / tuple でない / 枚数が 2 未満 /</p>
+<p>*reference* が範囲外 / *order* が 0〜5 の外 / :func:<code style="color:#22d3bf">frame_align</code> が</p>
+<p>どれか 1 枚で失敗した場合(<b>失敗を黙って恒等変換に落とさない</b>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:astro_stacking">astro_stacking</a> — <code style="color:#22d3bf">py -3.11 examples/astro_stacking.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">images</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:lucky_select">lucky_select</a> · <a style="color:#22d3bf" href="opastrostack:sigma_clip_stack">sigma_clip_stack</a> · <a style="color:#22d3bf" href="opastrostack:drizzle_resample">drizzle_resample</a> · <a style="color:#22d3bf" href="opastrostack:cosmic_ray_reject_stack">cosmic_ray_reject_stack</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">align</code>)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:frame_align">frame_align</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: astrostack.py — ASTROSTACK 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

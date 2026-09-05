@@ -1,0 +1,20 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fit_sphere3 — 3D <code style="color:#22d3bf">geometry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import measure3d; measure3d.fit_sphere3(points) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;fit_sphere3&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>Algebraic (Kåsa) least-squares sphere fit to `<code style="color:#22d3bf">(depth, row, col)</code>` points:</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:primitive_fitting_3d">primitive_fitting_3d</a> — <code style="color:#22d3bf">py -3.11 examples_3d/primitive_fitting_3d.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:roi_domain_boundary">roi_domain_boundary</a> — <code style="color:#22d3bf">py -3.11 examples_3d/roi_domain_boundary.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">primitive</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:angle_between_lines">angle_between_lines</a> · <a style="color:#22d3bf" href="op3d:angle_between_planes">angle_between_planes</a> · <a style="color:#22d3bf" href="op3d:angle_line_plane">angle_line_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_plane">distance_point_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_line">distance_point_line</a> · <a style="color:#22d3bf" href="op3d:distance_line_line">distance_line_line</a> · <a style="color:#22d3bf" href="op3d:intersect_line_plane">intersect_line_plane</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">geometry</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:line_from_2points">line_from_2points</a> · <a style="color:#22d3bf" href="op3d:plane_from_3points">plane_from_3points</a> · <a style="color:#22d3bf" href="op3d:angle_3points">angle_3points</a> · <a style="color:#22d3bf" href="op3d:angle_between_lines">angle_between_lines</a> · <a style="color:#22d3bf" href="op3d:angle_between_planes">angle_between_planes</a> · <a style="color:#22d3bf" href="op3d:angle_line_plane">angle_line_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_plane">distance_point_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_line">distance_point_line</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: measure3d.py — 3D 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

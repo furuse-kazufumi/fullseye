@@ -1,0 +1,19 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fit_superquadric — 3D <code style="color:#22d3bf">superquadric</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import superquadric; superquadric.fit_superquadric(points) -&gt; &#x27;dict&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;fit_superquadric&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>点群にスーパー2次曲面を least_squares で当てはめ dict{a,eps,R,t,residual} を返す。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:superquadric_fit">superquadric_fit</a> — <code style="color:#22d3bf">py -3.11 examples_3d/superquadric_fit.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">primitive</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:angle_between_lines">angle_between_lines</a> · <a style="color:#22d3bf" href="op3d:angle_between_planes">angle_between_planes</a> · <a style="color:#22d3bf" href="op3d:angle_line_plane">angle_line_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_plane">distance_point_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_line">distance_point_line</a> · <a style="color:#22d3bf" href="op3d:distance_line_line">distance_line_line</a> · <a style="color:#22d3bf" href="op3d:intersect_line_plane">intersect_line_plane</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">superquadric</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:sample_surface">sample_surface</a> · <a style="color:#22d3bf" href="op3d:inside_outside">inside_outside</a> · <a style="color:#22d3bf" href="op3d:superquadric_residual">superquadric_residual</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: superquadric.py — 3D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

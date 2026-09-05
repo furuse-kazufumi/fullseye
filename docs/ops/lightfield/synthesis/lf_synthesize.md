@@ -7,12 +7,12 @@ out: lightfield
 examples: [lightfield_depth]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # lf_synthesize — LIGHTFIELD `synthesis` op
 
-- **データ種**: `` → `lightfield`
+- **データ種**: `なし` → `lightfield`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import lightfield; lightfield.lf_synthesize(slopes=(0.0,), angular=(5, 5), shape=(64, 64), *, occlusion=True, coverage=0.55, texture_sigma=2.0, interp='linear', edge='wrap', seed=0)` (または `opslightfield.get("lf_synthesize")`)
 
 ## 使い方

@@ -7,12 +7,12 @@ out: table
 examples: [vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # sensor_catalog — OPTICS `scene` op
 
-- **データ種**: `` → `table`
+- **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import optscene; optscene.sensor_catalog(status: 'str' = None, maker: 'str' = None) -> 'dict'` (または `opsoptics.get("sensor_catalog")`)
 
 ## 使い方

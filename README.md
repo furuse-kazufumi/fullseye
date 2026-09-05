@@ -197,7 +197,8 @@ Everything below lives in the repo — start at the guide that matches what you 
 | Use Fullseye as an AI/RAG knowledge base | `docs/AI_RAG_GUIDE.md` (+ `fullseye-rag`) |
 | Drive the Studio IDE | `docs/STUDIO_GUIDE.md` · `docs/HDEVELOP_DEV_OPS.md` (dev_* window ops) |
 | Add an operator | `docs/ADDING_OPS.md` · `CONTRIBUTING.md` |
-| Understand the language policy (en/ja) | `docs/I18N.md` |
+| Read the Studio and its operator help in your language | Studio ▸ Tools ▸ Language — **日本語 / English / 简体中文 / 繁體中文 / 한국어 / Deutsch** |
+| Understand the language policy and what is *not* translated | `docs/I18N.md` |
 | Update a checkout safely | `tools/update_fullseye.py --check` |
 | Cite Fullseye | `CITATION.cff` |
 

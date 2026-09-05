@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">leader_line — ANNOTATE <code style="color:#22d3bf">pointer</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × text</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import annotate; annotate.leader_line(img, anchor_xy, target_xy, text=None, color=&#x27;emphasis&#x27;, width=2, cap=&#x27;dot&#x27;, cap_size=4, elbow=True, scheme=&#x27;okabe_ito&#x27;, style=None, **text_kw)</code>(或 <code style="color:#22d3bf">opsannotate.get(&quot;leader_line&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>引き出し線 —— 注記の位置(`<code style="color:#22d3bf">anchor_xy</code><code style="color:#22d3bf">)から対象(</code><code style="color:#22d3bf">target_xy</code>`)へ。</p>
+<p>`<code style="color:#22d3bf">elbow=True</code>` なら水平 → 斜めの 2 折れで引く(注記が本体に被りにくい)。</p>
+<p>端点には `<code style="color:#22d3bf">cap</code><code style="color:#22d3bf"> の印(</code><code style="color:#22d3bf">&#x27;dot&#x27;</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">&#x27;arrow&#x27;</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">&#x27;cross&#x27;</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">&#x27;none&#x27;</code>`)を置く。</p>
+<p>`<code style="color:#22d3bf">text</code><code style="color:#22d3bf"> を渡すと </code><code style="color:#22d3bf">anchor_xy</code><code style="color:#22d3bf"> 側に :func:</code>text_box` を置く。</p>
+<p>追加の `<code style="color:#22d3bf">**text_kw</code><code style="color:#22d3bf"> は :func:</code>text_box` へそのまま渡す。</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>未知の `<code style="color:#22d3bf">cap</code>`、非有限な座標、線が画像の外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_gallery">annotate_gallery</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_gallery.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">image2d</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opannotate:text_box">text_box</a> · <a style="color:#22d3bf" href="opannotate:arrow">arrow</a> · <a style="color:#22d3bf" href="opannotate:label_points">label_points</a> · <a style="color:#22d3bf" href="opannotate:crosshair">crosshair</a> · <a style="color:#22d3bf" href="opannotate:legend_box">legend_box</a> · <a style="color:#22d3bf" href="opannotate:color_bar">color_bar</a> · <a style="color:#22d3bf" href="opannotate:scale_bar">scale_bar</a> · <a style="color:#22d3bf" href="opannotate:axes_frame">axes_frame</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">pointer</code>)</h3>
+<p><a style="color:#22d3bf" href="opannotate:arrow">arrow</a> · <a style="color:#22d3bf" href="opannotate:label_points">label_points</a> · <a style="color:#22d3bf" href="opannotate:crosshair">crosshair</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: annotate.py — ANNOTATE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

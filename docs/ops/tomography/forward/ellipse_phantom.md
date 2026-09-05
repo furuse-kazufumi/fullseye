@@ -7,12 +7,12 @@ out: image2d
 examples: [ct_reconstruction, tomography_reconstruct]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # ellipse_phantom — TOMOGRAPHY `forward` op
 
-- **データ種**: `` → `image2d`
+- **データ種**: `なし` → `image2d`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import tomography; tomography.ellipse_phantom(size=256, ellipses=None, supersample=4)` (または `opstomography.get("ellipse_phantom")`)
 
 ## 使い方

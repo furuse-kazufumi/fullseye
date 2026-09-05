@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">wasserstein_1d — COLORTRANSPORT <code style="color:#22d3bf">transport</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import colortransport; colortransport.wasserstein_1d(u_values, v_values, p=1, u_weights=None, v_weights=None)</code>(또는 <code style="color:#22d3bf">opscolortransport.get(&quot;wasserstein_1d&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
+<p>1 次元の p-Wasserstein 距離。<b>厳密解</b>。</p>
+<p>1 次元では最適輸送に閉じた形があり、累積分布の逆関数どうしの</p>
+<p>`<code style="color:#22d3bf">L^p</code>` 距離になる ―― 反復も近似も要らない。総当たりの割当問題</p>
+<p>(`<code style="color:#22d3bf">scipy.optimize.linear_sum_assignment</code>`)と厳密に一致することを</p>
+<p>テストで固定してある。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>u_values, v_values : array_like</p>
+<p>標本(1 次元に潰される)。長さは違ってよい。</p>
+<p>p : float</p>
+<p>次数。`<code style="color:#22d3bf">p=1</code><code style="color:#22d3bf"> が Earth Mover 距離、</code><code style="color:#22d3bf">p=2</code>` が 2-Wasserstein。</p>
+<p>u_weights, v_weights : array_like, optional</p>
+<p>標本ごとの重み(和は内部で 1 に正規化する)。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>float</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:color_transport">color_transport</a> — <code style="color:#22d3bf">py -3.11 examples/color_transport.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">scalar</code> 를 입력으로 받는 것)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">transport</code>)</h3>
+<p><a style="color:#22d3bf" href="opcolortransport:transport_plan_1d">transport_plan_1d</a> · <a style="color:#22d3bf" href="opcolortransport:sinkhorn">sinkhorn</a> · <a style="color:#22d3bf" href="opcolortransport:sinkhorn_distance">sinkhorn_distance</a> · <a style="color:#22d3bf" href="opcolortransport:sinkhorn_divergence">sinkhorn_divergence</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: colortransport.py — COLORTRANSPORT 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">alpha_composite_premul — GFX2D <code style="color:#22d3bf">composite</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">rgba_premul × rgba_premul</code> → <code style="color:#22d3bf">rgba_premul</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.alpha_composite_premul(src, dst)</code> (oder <code style="color:#22d3bf">opsgfx2d.get(&quot;alpha_composite_premul&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Porter–Duff <b>over</b> on premultiplied colour: `<code style="color:#22d3bf">src + dst*(1 - src.a)</code>`.</p>
+<p>This is the operator; :func:<code style="color:#22d3bf">alpha_composite</code> is this one with a conversion</p>
+<p>on each side. Being affine in `<code style="color:#22d3bf">dst</code>`, it is <b>exactly associative</b> —</p>
+<p>`<code style="color:#22d3bf">over(over(A, B), C) == over(A, over(B, C))</code>` to float64 rounding, which the</p>
+<p>test suite checks as an equality rather than a tolerance.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gfx2d_scene">gfx2d_scene</a> — <code style="color:#22d3bf">py -3.11 examples/gfx2d_scene.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">rgba_premul</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:unpremultiply">unpremultiply</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">composite</code>)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:premultiply">premultiply</a> · <a style="color:#22d3bf" href="opgfx2d:unpremultiply">unpremultiply</a> · <a style="color:#22d3bf" href="opgfx2d:alpha_composite">alpha_composite</a> · <a style="color:#22d3bf" href="opgfx2d:blend_mode">blend_mode</a> · <a style="color:#22d3bf" href="opgfx2d:layer_stack">layer_stack</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gfx2d.py — GFX2D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

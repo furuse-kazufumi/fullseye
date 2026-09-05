@@ -1,0 +1,44 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vol_select_labels — VOLCOLOR <code style="color:#22d3bf">select</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">labels</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import volcolor; volcolor.vol_select_labels(labels, props=None, spacing=None, relabel: &#x27;bool&#x27; = False, exclude_border: &#x27;bool&#x27; = False, keep=None, **criteria)</code> (oder <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_select_labels&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>3-D の特徴で成分をふるいにかける(2-D のブロブ選別の 3-D 版)。</p>
+<p>`<code style="color:#22d3bf">(labels_out, kept_ids)</code>` を返す。落ちた成分のボクセルは 0(背景)になる。</p>
+<p>*props* は :func:<code style="color:#22d3bf">vol_label_shape_stats</code> か :func:<code style="color:#22d3bf">volops.vol_region_props</code> の</p>
+<p>返り値。`<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> なら :func:</code>vol_label_shape_stats` をその場で呼ぶ。</p>
+<p>条件(すべて省略可・与えたものは AND):`<code style="color:#22d3bf">min_volume</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">max_volume</code>`</p>
+<p>`<code style="color:#22d3bf">min_voxels</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">max_voxels</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">min_sphericity</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">max_sphericity</code>`</p>
+<p>`<code style="color:#22d3bf">min_elongation</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">max_elongation</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">min_isotropy</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">max_isotropy</code>`</p>
+<p>`<code style="color:#22d3bf">min_equivalent_diameter</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">max_equivalent_diameter</code>`。加えて</p>
+<p>`<code style="color:#22d3bf">exclude_border=True</code>` で<b>ボリューム端に接する成分を落とす</b>(CT の視野で</p>
+<p>切れている粒子を計測から外す標準手順)、`<code style="color:#22d3bf">keep=[...]</code>` で残す id を直接指定。</p>
+<p><b>必要なキーが props に無ければ ValueError</b>。たとえば `<code style="color:#22d3bf">min_sphericity</code>` を</p>
+<p>:func:<code style="color:#22d3bf">vol_label_shape_stats</code> の結果に対して指定すると、`<code style="color:#22d3bf">sphericity</code>` は</p>
+<p>そちらが出さない量なので拒否する ―― 欠けたキーを既定値で埋めると「条件を</p>
+<p>書いたのに一件も落ちない」フィルタが黙って出来上がる。</p>
+<p>`<code style="color:#22d3bf">relabel</code>`:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">False</code>`(既定)―― <b>元の id をそのまま残す</b>。ゆえに</p>
+<p>:func:<code style="color:#22d3bf">vol_colorize_labels</code> を前後で呼んでも<b>残った成分の色は変わらない</b>。</p>
+<p>「ふるいにかけて色が残っていく」図が成立するのはこの既定のおかげである。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">True</code><code style="color:#22d3bf"> ―― 残った成分を </code><code style="color:#22d3bf">1..k</code>` へ振り直す。<b>色は総取り替えになる</b></p>
+<p>(ラベル番号がパレットの行番号だから)。下流が連番を要求する場合だけ使う。</p>
+<p>この 1 引数がこの族の売りを壊せる唯一の場所なので、明示的にした。</p>
+<p>Returns `<code style="color:#22d3bf">(labels_out int32 (D, H, W), kept_ids np.ndarray int64)</code>`.</p>
+<p>Raises `<code style="color:#22d3bf">ValueError</code>` for an unknown criterion, a criterion whose key is absent</p>
+<p>from *props*, a *props* that does not cover the labels present, or a *keep*</p>
+<p>containing a label that is not in the volume.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:voxel_labels_color">voxel_labels_color</a> — <code style="color:#22d3bf">py -3.11 examples/voxel_labels_color.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">labels</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opvolcolor:vol_colorize_labels">vol_colorize_labels</a> · <a style="color:#22d3bf" href="opvolcolor:vol_label_overlay">vol_label_overlay</a> · <a style="color:#22d3bf" href="opvolcolor:vol_label_shape_stats">vol_label_shape_stats</a> · <a style="color:#22d3bf" href="opvolcolor:vol_label_legend">vol_label_legend</a> · <a style="color:#22d3bf" href="opvolcolor:vol_labels_to_meshes">vol_labels_to_meshes</a> · <a style="color:#22d3bf" href="opvolcolor:vol_label_volume_render">vol_label_volume_render</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">select</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: volcolor.py — VOLCOLOR Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

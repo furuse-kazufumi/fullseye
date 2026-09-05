@@ -1,0 +1,53 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">panel_grid — ANNOTATE <code style="color:#22d3bf">compose</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import annotate; annotate.panel_grid(panels, labels=None, ncols=3, pad=10, label_h=32, background=0.05, title=None, title_h=0, font_size=15, min_font_size=9, font_path=None, text_color=None, border=0, border_color=&#x27;neutral&#x27;, scheme=&#x27;okabe_ito&#x27;, style=None)</code> (oder <code style="color:#22d3bf">opsannotate.get(&quot;panel_grid&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>パネルを格子に並べ、各枠の下にラベルを敷く(montage / contact sheet)。</p>
+<p>生成器 6 本がそれぞれ別実装を持っていた、**この repo で最も重複していた図の</p>
+<p>部品**。ここでの流儀:</p>
+<p style="margin:2px 0 2px 12px">• <b>拡大しない</b> ―― 小さいパネルは中央に置いて余白で埋める。引き伸ばすと</p>
+<p>「無い解像度がある」ように見える。</p>
+<p style="margin:2px 0 2px 12px">• <b>ラベルは測ってから描く</b> ―― 入らなければ縮め、駄目なら例外</p>
+<p>(:func:<code style="color:#22d3bf">text_box</code> の境界検査に載る)。</p>
+<p style="margin:2px 0 2px 12px">• セルの大きさは全パネルの最大寸で、<b>格子は常に矩形</b>。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>panels : sequence of ndarray</p>
+<p>並べる画像(`<code style="color:#22d3bf">(H,W)</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">(H,W,C)</code>`、大きさはばらばらでよい)。</p>
+<p>チャンネルの並びは揃っていること。</p>
+<p>labels : sequence of str or None</p>
+<p>各パネルの見出し。`<code style="color:#22d3bf">label_h</code>` が 0 なら描かない。</p>
+<p>ncols : int</p>
+<p>列数。行数は `<code style="color:#22d3bf">ceil(n/ncols)</code>`。</p>
+<p>title : str or None</p>
+<p>全体の表題(`<code style="color:#22d3bf">title_h</code><code style="color:#22d3bf"> が 0 なら </code><code style="color:#22d3bf">font_size+14</code>` を自動で確保)。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>ndarray</p>
+<p>新しい合成画像(float [0,1])。大きさは</p>
+<p>`<code style="color:#22d3bf">W = 2*pad + ncols*cw + (ncols-1)*pad</code>`、</p>
+<p>`<code style="color:#22d3bf">H = title_h + 2*pad + nrows*(ch+label_h) + (nrows-1)*pad</code>`。</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>panels が空 / チャンネル不一致 / ncols &lt; 1 / 負の余白 /</p>
+<p>labels の数が合わない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_gallery">annotate_gallery</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_gallery.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opannotate:text_box">text_box</a> · <a style="color:#22d3bf" href="opannotate:arrow">arrow</a> · <a style="color:#22d3bf" href="opannotate:leader_line">leader_line</a> · <a style="color:#22d3bf" href="opannotate:label_points">label_points</a> · <a style="color:#22d3bf" href="opannotate:crosshair">crosshair</a> · <a style="color:#22d3bf" href="opannotate:legend_box">legend_box</a> · <a style="color:#22d3bf" href="opannotate:color_bar">color_bar</a> · <a style="color:#22d3bf" href="opannotate:scale_bar">scale_bar</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">compose</code>)</h3>
+<p><a style="color:#22d3bf" href="opannotate:zoom_inset">zoom_inset</a> · <a style="color:#22d3bf" href="opannotate:compare_frame">compare_frame</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: annotate.py — ANNOTATE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

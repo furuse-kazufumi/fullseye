@@ -7,12 +7,12 @@ out: normalmap
 examples: [machined_metal_and_materials]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # tangent_field — OPTICS `finish` op
 
-- **データ種**: `` → `normalmap`
+- **データ種**: `なし` → `normalmap`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import metalfinish; metalfinish.tangent_field(shape, kind='linear', angle_deg=0.0, center=None) -> 'np.ndarray'` (または `opsoptics.get("tangent_field")`)
 
 ## 使い方

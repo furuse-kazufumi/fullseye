@@ -7,12 +7,12 @@ out: image2d
 examples: [lightfield_depth]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.6  # fullseye lib version this note was generated for
+version: 0.1.7  # fullseye lib version this note was generated for
 ---
 
 # lf_aperture_mask — LIGHTFIELD `refocus` op
 
-- **データ種**: `` → `image2d`
+- **データ種**: `なし` → `image2d`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import lightfield; lightfield.lf_aperture_mask(angular=(5, 5), shape='circle', *, radius=None, inner=0.0, sigma=None, normalize=True)` (または `opslightfield.get("lf_aperture_mask")`)
 
 ## 使い方

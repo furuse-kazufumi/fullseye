@@ -1,0 +1,38 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lf_refocus — LIGHTFIELD <code style="color:#22d3bf">refocus</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import lightfield; lightfield.lf_refocus(lf, slope=0.0, *, interp=&#x27;linear&#x27;, edge=&#x27;nearest&#x27;)</code>(或 <code style="color:#22d3bf">opslightfield.get(&quot;lf_refocus&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Shift-and-add refocus: the synthetic-aperture image focused at *slope*.</p>
+<p>Every view `<code style="color:#22d3bf">(v, u)</code><code style="color:#22d3bf"> is shifted by </code><code style="color:#22d3bf">(-s*(v - v_c), -s*(u - u_c))</code>` — the</p>
+<p><b>minus</b> undoes the parallax of a point at slope `<code style="color:#22d3bf">s</code>` — and the shifted</p>
+<p>views are averaged. Points at that slope add coherently and stay sharp;</p>
+<p>everything else is smeared by an amount proportional to its slope</p>
+<p>difference times the angular baseline. `<code style="color:#22d3bf">slope=0</code>` is the plane the array</p>
+<p>was already focused on and returns the plain average of the views.</p>
+<p>Ground truth it reproduces exactly (pinned in `<code style="color:#22d3bf">tests/test_lightfield.py</code>`):</p>
+<p>a single-layer field synthesised at slope `<code style="color:#22d3bf">s0</code><code style="color:#22d3bf"> and refocused at </code><code style="color:#22d3bf">s0</code>`</p>
+<p>with `<code style="color:#22d3bf">edge=&quot;wrap&quot;</code><code style="color:#22d3bf"> and an integer </code><code style="color:#22d3bf">s0</code>` returns the original texture to</p>
+<p>5.6e-16; sweeping the slope, the variance of the result peaks at `<code style="color:#22d3bf">s0</code>`</p>
+<p>(measured exactly on the sweep grid in all 18 texture/slope combinations</p>
+<p>listed in the module docstring), and refocusing at `<code style="color:#22d3bf">-s0</code>` does *not* —</p>
+<p>which is the check that catches a flipped shift sign.</p>
+<p>Returns a `<code style="color:#22d3bf">(H, W)</code>` 2-D image.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *lf* not a valid light field, a non-finite or</p>
+<p>over-large *slope* (:data:<code style="color:#22d3bf">MAX_ABS_SLOPE</code>), unknown *interp* / *edge*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">lightfield_depth 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">image2d</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="oplightfield:lf_from_mla">lf_from_mla</a> · <a style="color:#22d3bf" href="oplightfield:lf_disparity_to_depth">lf_disparity_to_depth</a> · <a style="color:#22d3bf" href="oplightfield:lf_all_in_focus">lf_all_in_focus</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">refocus</code>)</h3>
+<p><a style="color:#22d3bf" href="oplightfield:lf_focal_stack">lf_focal_stack</a> · <a style="color:#22d3bf" href="oplightfield:lf_aperture_mask">lf_aperture_mask</a> · <a style="color:#22d3bf" href="oplightfield:lf_synthetic_aperture">lf_synthetic_aperture</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: lightfield.py — LIGHTFIELD 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

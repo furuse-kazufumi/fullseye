@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">watermark_capacity — IMGFORENSICS <code style="color:#22d3bf">watermark</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × phash</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import imgforensics; imgforensics.watermark_capacity(image, bits, strengths=(0.02, 0.05, 0.1, 0.2, 0.4), wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1, jpeg_quality=None) -&gt; &#x27;dict&#x27;</code> (oder <code style="color:#22d3bf">opsimgforensics.get(&quot;watermark_capacity&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>埋め込み強度と <b>PSNR / BER</b> のトレードオフを掃引して返す。`<code style="color:#22d3bf">table</code>`。</p>
+<p>各 `<code style="color:#22d3bf">strength</code>` について埋め込み → 抽出を実際に走らせ、</p>
+<p>`<code style="color:#22d3bf">psnr_db</code><code style="color:#22d3bf">  原画像と透かし入り画像の PSNR(値域 [0, 1] 基準、</code><code style="color:#22d3bf">MAX=1</code>`)</p>
+<p>`<code style="color:#22d3bf">ber</code><code style="color:#22d3bf">      抽出のビット誤り率(:func:</code>hash_distance` で数える)</p>
+<p>`<code style="color:#22d3bf">clipped</code>`  透かし入り画像が [0, 1] からはみ出した画素の割合。</p>
+<p><b>はみ出しは保存時に必ず失われる</b>ので、PSNR だけ見て強度を</p>
+<p>上げると「測っていない劣化」が増える</p>
+<p>`<code style="color:#22d3bf">jpeg_quality</code>` に品質を渡すと、透かし入り画像を <b>本物の JPEG</b> に通してから</p>
+<p>抽出した `<code style="color:#22d3bf">ber_jpeg</code>` も入る(Pillow 必須。省略時は列ごと入らない ——</p>
+<p>環境によって返る列が変わらないようにするため、既定では走らせない)。</p>
+<p>返りは `<code style="color:#22d3bf">{&quot;capacity_bits&quot;: int, &quot;n_bits&quot;: int, &quot;rows&quot;: [...], &quot;caveats&quot;: [...]}</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_forensics_audit">image_forensics_audit</a> — <code style="color:#22d3bf">py -3.11 examples/image_forensics_audit.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:evidence_quantile">evidence_quantile</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">watermark</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:watermark_embed">watermark_embed</a> · <a style="color:#22d3bf" href="opimgforensics:watermark_extract">watermark_extract</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgforensics.py — IMGFORENSICS Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

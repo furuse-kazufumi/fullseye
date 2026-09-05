@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">histogram_match — COLORTRANSPORT <code style="color:#22d3bf">matching</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import colortransport; colortransport.histogram_match(src, ref, bins=None, ties=&#x27;average&#x27;)</code> (oder <code style="color:#22d3bf">opscolortransport.get(&quot;histogram_match&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>`<code style="color:#22d3bf">src</code><code style="color:#22d3bf"> の値分布を </code><code style="color:#22d3bf">ref</code>` に合わせる(1 次元の厳密な最適輸送)。</p>
+<p>順位を保ったまま参照の分位点に置き換える。`<code style="color:#22d3bf">bins</code>` を指定すると、その段数の</p>
+<p>累積分布で近似する ―― 速いが<b>厳密ではなくなる</b>ので、既定は `<code style="color:#22d3bf">None</code>`</p>
+<p>(厳密)にしてある。</p>
+<p><b>同じ値の画素をどう扱うかで、絵の意味が変わる。</b> 単調写像なら「等しい入力</p>
+<p>は等しい出力に写る」はずだが、素朴に順位で置き換えると<b>同値が引き裂かれる</b>。</p>
+<p>実測(値 2 が 4 画素ある整数画像):出力は ``0.2222 / 0.3333 / 0.4444 /</p>
+<p>0.5556`` の 4 つに分かれた。つまり**平坦だった領域に、元の絵に無い濃淡が</p>
+<p>生える**。整数画像は同値だらけなので、これは例外ではなく常態。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">ties=&quot;average&quot;</code>`(既定)—— 同値の画素には、そこに割り当たった参照値の</p>
+<p><b>平均</b>を与える。等しい入力は等しい出力に写り、単調性が保たれる。</p>
+<p>その代わり<b>出力の分布は参照と厳密には一致しなくなる</b>(同値の塊のぶん、</p>
+<p>分布が階段状に丸まる)。連続な入力(同値が無い)なら厳密一致のまま。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">ties=&quot;break&quot;</code>` —— 順位そのままで引き裂く。**出力の分布は参照と厳密に</p>
+<p>一致する**が、平坦部に偽の濃淡が出る。分布を厳密に合わせることが目的で、</p>
+<p>絵として見ないと分かっているときだけ。</p>
+<p>どちらを選んでも失うものがある(分布の厳密さ か 平坦部の平坦さ)ので、</p>
+<p><b>黙って片方に決めず引数にした</b>。</p>
+<p>多チャネルの絵に<b>そのまま掛けるとチャネル間の相関を壊す</b>。</p>
+<p>各軸の周辺分布は合うのに、色の組合せが元に無かったものになりうる。</p>
+<p>相関ごと運びたいときは :func:<code style="color:#22d3bf">color_transfer</code> の `<code style="color:#22d3bf">method=&quot;gaussian&quot;</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:color_transport">color_transport</a> — <code style="color:#22d3bf">py -3.11 examples/color_transport.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opcolortransport:poisson_blend">poisson_blend</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">matching</code>)</h3>
+<p><a style="color:#22d3bf" href="opcolortransport:color_transfer">color_transfer</a> · <a style="color:#22d3bf" href="opcolortransport:gaussian_transport_map">gaussian_transport_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: colortransport.py — COLORTRANSPORT Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
