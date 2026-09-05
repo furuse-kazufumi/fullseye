@@ -21,6 +21,7 @@ import fnmatch
 import glob
 import os
 import re
+import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -170,3 +171,50 @@ def test_citation_metadata_matches_the_released_version():
         assert rel.group(1) == head.group(2), (
             "CITATION.cff の date-released %s が CHANGELOG の %s と違う"
             % (rel.group(1), head.group(2)))
+
+
+#: レジストリを組み上げる子プロセスで走らせる断片。**静的な `import X` 探索では
+#: 見えない**動的読み込みまで拾うのが目的。
+_LOADED_ROOTS_SNIPPET = """
+import json, os, sys, warnings
+warnings.filterwarnings("ignore")
+ROOT = sys.argv[1]
+sys.path.insert(0, ROOT)
+import fullseye, ops, ops3d          # noqa: F401  ← ここでレジストリが組み上がる
+out = []
+for name, m in list(sys.modules.items()):
+    f = getattr(m, "__file__", None)
+    if not f or "." in name:
+        continue
+    f = os.path.abspath(f)
+    if os.path.dirname(f) == os.path.abspath(ROOT) and f.endswith(".py"):
+        out.append(name)
+print(json.dumps(sorted(set(out))))
+"""
+
+
+def test_every_module_the_registry_actually_loads_is_shipped():
+    """レジストリを**実際に組み上げて**、読み込まれた root モジュールが全部 ship
+    されるかを見る。
+
+    ★上の静的チェック(`import X` を正規表現で探す)には**動的読み込みが映らない**。
+    2026-09-05 実測: `backends_halcon_ext` と `backends_typed` が py-modules に無く、
+    `pip install fullseye` した環境で op が **855 → 631**、つまり
+    **224 op(26%)が黙って消えていた**(`_load_facade` が ImportError を握るので
+    警告も出ない)。0.1.6 で 321 op を失ったのと同じバグ族で、
+    「仕組みはあるが全経路は通っていない」形。
+
+    仕組みを足すのではなく**測り方を変える**: import 文を探すのをやめ、
+    Python 自身に「何を読んだか」を聞く。動的だろうが条件付きだろうが漏れない。
+    """
+    import json
+    import subprocess
+    r = subprocess.run([sys.executable, "-c", _LOADED_ROOTS_SNIPPET, ROOT],
+                       capture_output=True, text=True, timeout=600)
+    assert r.returncode == 0, "レジストリ構築が失敗した:\n%s" % r.stderr[-2000:]
+    loaded = set(json.loads(r.stdout.strip().splitlines()[-1]))
+    assert len(loaded) > 100, "読み込まれた root モジュールが少なすぎる(%d)" % len(loaded)
+    missing = sorted(loaded - _py_modules() - _DEV_TOOLS)
+    assert not missing, (
+        "レジストリが読み込むのに py-modules に無い root モジュール "
+        "(非 editable な wheel から丸ごと消える): %s" % missing)

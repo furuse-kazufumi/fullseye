@@ -39,6 +39,23 @@ jobs:
           assert set(np.unique(out)) <= {0.0, 1.0}
           print("bare-install pipeline smoke ok")
           PY
+      # ★**checkout でしか検査していない不変条件は packaging に対して盲目**。
+      # 2026-09-05: `FAILED_BACKENDS == []` を見るテストも、editable と wheel の
+      # op 数を保証する仕組みも、どちらも既にあった —— **門が事故の起きない場所に
+      # だけ立っていた**。editable install は source dir を path に足すので
+      # 全 root モジュールが見えてしまい、開発機では絶対に再現しない。
+      # 実測: `backends_halcon_ext` / `backends_typed` が py-modules に無く、
+      # wheel から **224 op(26%)** が消えていた(0.1.6 の 321 op 消失と同じ族)。
+      # だからここでは**実際に wheel を建てて、入れて、配布物の側で数える**。
+      - name: Wheel completeness (配布物の側で数える)
+        run: |
+          python tools/ci_wheel_check.py --dump ops_editable.json
+          pip install -q build
+          python -m build --wheel -o dist_check
+          python -m venv .wheelenv
+          .wheelenv/bin/pip install -q numpy scipy dist_check/*.whl
+          .wheelenv/bin/python tools/ci_wheel_check.py --dump ops_wheel.json
+          python tools/ci_wheel_check.py --compare ops_editable.json ops_wheel.json
       - name: Packaging invariants
         run: |
           pip install pytest
@@ -91,6 +108,10 @@ jobs:
         run: |
           sudo apt-get update -q
           sudo apt-get install -y -q libegl1 libgl1 libxkbcommon-x11-0 libdbus-1-3
+      # ★hypothesis / pytest-timeout は**テストを走らせるのに必須**。入れ忘れると
+      # `tests/test_op_contract_property.py` の import が collection error になり、
+      # pytest は残りを 1 件も走らせずに中断する —— 2026-09-05 に実際に踏んだ
+      # (0.1.8 の CI が 2 分で死に、テストがゼロ件だった)。
       # torch/kornia は CI では入れない(サイズと時間 — 対応テストは graceful skip)。
       # GPU 系の数字は実機で測る(CPU の数字を GPU の数字と偽らない、の CI 版)。
       - name: Install with optional backends (no torch)
@@ -100,7 +121,7 @@ jobs:
         # format tests. torch/mujoco stay out (their tests skip honestly).
         run: >
           pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd]"
-          pytest pytest-cov matplotlib sympy ziglang
+          pytest pytest-cov matplotlib sympy ziglang hypothesis pytest-timeout
       - name: Run tests with coverage
         run: pytest -q -rs --cov --cov-report=xml --cov-report=term
       - name: Coverage summary (job summary page)

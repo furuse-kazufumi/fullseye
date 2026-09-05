@@ -185,6 +185,15 @@ def find_marks_and_pose(image, cam_par, caltab, thresh=0.5, max_reproj_rms=3.0):
     world3 = np.column_stack([world_xy[ii], np.zeros(len(ii))])
     pose, residuals = _refine_pose(world3, marks[jj], K, pose)
     rms = float(np.sqrt(np.mean(residuals ** 2)))
+    # ★このゲートが**捕まえないもの**: 一枚の平面ターゲットに対する内部パラメータの
+    # 誤り(特に fx/fy の比)。平面 1 枚の homography は内部パラメータに 2 つしか
+    # 拘束を与えない(Zhang 2000)ので、誤った fy はここで解いている姿勢 6 自由度に
+    # ほとんど吸収され、残差はしきい値の下に留まりうる。
+    # 実測 2026-09-05: fy を 500 → 300 と誤らせても Linux/scipy 1.18 では RMS 0.90 px
+    # (正しい K なら 0.14 px)。同じ入力が Windows/旧 scipy では 6.39 px になり、
+    # **最適化の収束先の違いだけで「検出できたりできなかったり」する**。
+    # 内部パラメータを検証したいなら、視点を 3 枚以上取るか非平面のターゲットを使う。
+    # ここが効くのは「姿勢では吸収できない」不整合(対応付けの誤り、非平面の板)。
     if max_reproj_rms is not None and rms > max_reproj_rms:
         raise ValueError(f"find_marks_and_pose: pose reprojection RMS {rms:.2f} px > "
                          f"{max_reproj_rms} px — correspondence or calibration is wrong")

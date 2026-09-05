@@ -5,6 +5,96 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ("Versioning") — the minor slot is our breaking signal.
 
+## 0.1.9 — 2026-09-05
+
+**Linux で実際に動かしてみた回。** 0.1.8 を出した直後に PyPI から落として
+Linux(Ubuntu 24.04 / Python 3.12 / numpy 2.5.2 / scipy 1.18.1)で回したら、
+**Windows では 1 件も再現しないものが 5 件**出た。開発機が緑であることは、
+配布先が無事であることの根拠にならない。
+
+### ★配布した wheel から 224 op(26%)が消えていた
+
+`pip install fullseye` した Linux で op を数えたら **855 → 631**。
+`backends_halcon_ext`(hx_* 81 本)と `backends_typed`(tb_* 143 本)が
+`pyproject.toml` の `py-modules` に無く、**wheel から丸ごと落ちていた**。
+`_load_facade` が ImportError を握るので警告すら出ない。
+
+これは 0.1.6 で 321 op を失ったのと**同じバグ族の再発**である。当時の記録は
+`pyproject.toml` のコメントに残っていたのに、**検出器の作りが同じままだった** ——
+`import X` を正規表現で探す静的チェックは、**動的に読み込まれるモジュールを見ない**。
+
+仕組みを足すのではなく**測り方を変えた**。子プロセスでレジストリを実際に組み上げ、
+`sys.modules` から root モジュールを数えて `py-modules` と突き合わせる。
+import 文の書き方に依存しないので、動的だろうが条件付きだろうが漏れない
+(この検査は、モジュールを 1 本外すと落ちることを確認済み)。
+
+### ★退化入力でプロセスごと死ぬ op が 3 本(Linux のみ)
+
+| op | 入力 | 症状 |
+|---|---|---|
+| `cv_cc_count` | 0 サイズ | SIGSEGV(OpenCV の connectedComponents) |
+| `xsitk_minmax_curv_flow` | NaN / ±Inf / **一部だけ NaN** | SIGSEGV(SimpleITK) |
+| `xsk3_h_minima` | 全 NaN | SIGSEGV(skimage の reconstruction) |
+
+**Windows では同じ入力で 1 件も落ちない。** ネイティブのビルドが違えば境界の
+壊れ方も違う。だから「この種類の入力なら大丈夫」という細かい線引きは信用できず、
+**退化入力はまとめて拒否する**方針にした(`ops.NATIVE_CRASHES_ON_DEGENERATE`)。
+
+3 本目が痛い —— 同じ族の `xsk2_reconstruction` / `xsk2_h_maxima` は **0.1.8 で
+塞いだばかり**で、`xsk3_h_minima` という兄弟を見落としていた。
+「1 件直したら同クラスを兄弟コードで一掃する」を、その日のうちにまた怠っている。
+`xsitk_minmax_curv_flow` が**一部だけ NaN の画像でも落ちる**のは特に悪い ——
+欠測を含む実データで普通に起こる形だから。
+
+### ★0/0 を「無限に卓越したピーク」と報告していた
+
+`envelope_spectrum` / 次数スペクトルの `peak_prominence` が
+`(peak / med) if med > 0 else inf` で、**`peak` も 0 のとき(無音・帯域に何も無い)
+まで `inf`** を返していた。この数は docstring のとおり「何も無くてもピーク周波数を
+返してしまう」ことへの**正直さの指標**なのに、いちばん嘘になる向きに振れていた。
+
+0/0 は 0.0。雑音床ゼロの上に立つ単一線(`peak > 0, med == 0`)だけが `inf` で、
+そちらは本当に無限に卓越しているので潰さない。
+
+**版差はこの不具合を作ったのではなく、露出させた。** 旧い scipy ではフィルタの
+残差がわずかに残って `med > 0` になっていただけで、条件は前から間違っていた。
+
+### ★「誤った内部パラメータを検出できる」は思い込みだった
+
+`find_marks_and_pose` の再投影 RMS ゲートが、誤った `fy`(500 → 300)を
+検出できるとテストが主張していた。測ると:
+
+* Windows / 旧 scipy → RMS **6.39 px** → 発火する
+* Linux / scipy 1.18 → RMS **0.90 px** → **発火しない**(正しい K なら 0.14 px)
+
+**Linux 側が正しい。** 新しい `least_squares` がより良い最適解を見つけている。
+平面 1 枚の homography は内部パラメータに 2 つしか拘束を与えない(Zhang 2000)ので、
+`fy` の誤りは姿勢 6 自由度にほとんど吸収される —— 原理的に検出できない。
+
+つまり **Windows の「検出できていた」は最適化が悪い解に留まっていた偶然**で、
+テストはその偶然を仕様として固定していた。テストを書き直し、移植できる主張
+(「正しい K のときより残差が明確に悪化する」)だけを残して、
+**px の絶対しきい値で捕まえられるかは断言しない**ようにした。
+`caltab` 側にも「このゲートが捕まえないもの」を書いた。
+
+### CI が 2 分で死んでいた(0.1.8 の CI はテストを 1 件も走らせていない)
+
+`tests/test_op_contract_property.py` が hypothesis を import するのに、
+CI の install 行に hypothesis が無かった。**collection error は pytest 全体を
+中断させる**ので、3 バージョンとも 0 件実行で即死していた ——
+0.1.7(26 件失敗でも 10,808 件は走った)より悪化させていた。
+
+install 行に `hypothesis` と `pytest-timeout` を足し、加えて
+`pytest.importorskip` を置いて、**1 ファイルの import 失敗が全体を巻き込まない**
+ようにした。
+
+### まだ残っている CI の赤(分類済み)
+
+Linux CI の 26〜28 件を分類した結果: **A(torch 不在)14 件 / B(フォント等の環境)
+2 件 / C(本物)2 件 / D(判定不能)0 件**。C の 2 件が上の acoustics と caltab で、
+この版で直した。A/B の扱い(開発機のレジストリを前提にした不変条件を、
+「いまここに在る op について正しいか」を見る形へ変える)は次版で行う。
+
 ## 0.1.8 — 2026-09-05
 
 **動かしてみないと分からない不具合を、道具で捕まえる回。** 0.1.7 は「全 op が

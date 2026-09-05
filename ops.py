@@ -1330,6 +1330,64 @@ def _wrap_unguarded() -> int:
 
 
 GUARD_WRAPPED_AT_REGISTRATION = _wrap_unguarded()
+
+#: ★**ネイティブ側が退化入力でプロセスごと落ちる op の台帳**(2026-09-05)。
+#:
+#: `guard` は Python の例外しか捕まえられない。C/C++ の中で境界の外へ書き込まれたら
+#: そこで終わりで、利用者のパイプラインごと消える —— fail-soft の最悪の破れ方。
+#: 入口で弾く以外に手が無いので、**理由つきでここに載せて登録時に関門を掛ける**。
+#:
+#: **プラットフォームで挙動が違う**のがこの台帳の存在理由。下の 3 本は
+#: Linux(Ubuntu 24.04 / Python 3.12 / PyPI の wheel)では落ちるが、
+#: **Windows では同じ入力で 1 件も再現しなかった**。ネイティブのビルドが違えば
+#: 境界の壊れ方も違うということなので、「この種類の入力なら大丈夫」という
+#: 細かい線引きは信用できない —— **退化入力はまとめて拒否する**。
+#:
+#: 直したら消す、ではなく**上流が直ったことを確認できたら**消す(こちらは
+#: 自分のコードではないので、消す条件が違う)。
+NATIVE_CRASHES_ON_DEGENERATE = {
+    "cv_cc_count":
+        "OpenCV の connectedComponents に 0 サイズを渡すと Linux ビルドで SIGSEGV。",
+    "xsitk_minmax_curv_flow":
+        "SimpleITK の MinMaxCurvatureFlow は非有限で SIGSEGV。**一部だけ NaN の"
+        "画像でも落ちる**(欠測を含む実データで普通に起こる形)。",
+    "xsk3_h_minima":
+        "skimage の h_minima(内部で morphology.reconstruction)は全 NaN で SIGSEGV。"
+        "同じ族の xsk2_reconstruction / xsk2_h_maxima は 0.1.8 で塞いだのに、"
+        "**この兄弟を見落としていた**。",
+}
+
+
+def _wrap_native_crash_guards() -> int:
+    """`NATIVE_CRASHES_ON_DEGENERATE` の op に、入口の関門を掛ける。
+
+    既にガード済みの op も対象なので、``_wrap_unguarded`` とは別の走査にする。
+    弾いた入力は ``ValueError`` になり、外側の ``guard`` が台帳に記録して
+    sort に合う値へ落とす —— **落ちない**という約束は守られる。
+    """
+    import backend_safe as _bs
+    n = 0
+    for _op in REGISTRY:
+        why = NATIVE_CRASHES_ON_DEGENERATE.get(_op.name)
+        if not why:
+            continue
+
+        def _pre(v, a, b, _inner=_op.fn, _name=_op.name, _why=why):
+            arr = None if isinstance(v, dict) else np.asarray(v)
+            if arr is not None:
+                if arr.size == 0:
+                    raise ValueError("%s: 0 サイズ入力は拒否(%s)" % (_name, _why))
+                if arr.dtype.kind in "fc" and not np.all(np.isfinite(arr)):
+                    raise ValueError("%s: 非有限を含む入力は拒否(%s)" % (_name, _why))
+            return _inner(v, a, b)
+
+        _pre.__doc__ = getattr(_op.fn, "__doc__", None)
+        _op.fn = _bs.guard(_pre, _op.out_sort, name=_op.name)
+        n += 1
+    return n
+
+
+NATIVE_CRASH_GUARDS = _wrap_native_crash_guards()
 RT = {op.name: op.fn for op in REGISTRY}
 _BY_NAME = {op.name: op for op in REGISTRY}
 OPS = tuple((op.name, op.fn) for op in REGISTRY)

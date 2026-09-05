@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fullseye"
-version = "0.1.8"
+version = "0.1.9"
 description = "Numpy-native operator library for vision, 3-D and measurement (1,500+ typed ops: imaging, point clouds, optics, tomography, metrology) with an evolutionary pipeline designer and honest holdout gating"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -110,6 +110,14 @@ py-modules = [
   "backends", "backends_auto", "backends_color", "backends_cv2b", "backends_dl",
   "backends_extra", "backends_kornia", "backends_pil", "backends_r3",
   "backends_scipy", "backends_ski2",
+  # ★2026-09-05: この 2 本が py-modules に無く、**wheel から丸ごと落ちていた**。
+  # `pip install fullseye` した Linux で op が 855 → 631 になり、
+  # **224 op(26%)が黙って消えていた**(hx_* 81 / tb_* 143)。
+  # 動的に読み込まれるので `import X` を探す静的チェックには映らない ——
+  # 0.1.6 で 321 op を失ったのと**同じバグ族の再発**。検出器の方を
+  # 「レジストリ構築で実際に読み込まれた root モジュール」を数える形に変えた
+  # (tests/test_packaging_foundation.py)。
+  "backends_halcon_ext", "backends_typed",
   "backends_decomp", "backends_filters2", "backends_imgtools", "backends_inverse",
   "backends_measure1d", "backends_physics", "backends_regions2", "backends_regions3",
   "backends_segment2", "backends_subpix", "backends_tomo", "backends_transform2",

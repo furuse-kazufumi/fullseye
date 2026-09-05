@@ -28,6 +28,11 @@ import sys
 
 import numpy as np
 import pytest
+
+# ★hypothesis が無い環境では**この 1 ファイルの import 失敗が全体を止める** ——
+# pytest は collection error で残りを走らせずに中断する(2026-09-05、CI が 2 分で
+# 死んでテストが 1 件も走らなかった)。skip に落として他を巻き込まない。
+pytest.importorskip("hypothesis", reason="hypothesis 未導入(dev extra に入っている)")
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 from hypothesis.extra import numpy as hnp

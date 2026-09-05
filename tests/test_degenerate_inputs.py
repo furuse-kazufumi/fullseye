@@ -245,3 +245,67 @@ def test_no_op_returns_a_non_finite_value_for_a_non_finite_input(registry, kind,
             bad.append(op.name)
     assert not bad, "%s 入力で非有限を返す op が %d 本: %s" % (kind, len(bad), bad[:20])
     assert n > 700, "通した op が少なすぎる(%d) —— 検査の前提が違う" % n
+
+
+# --------------------------------------------------------------------------- #
+# ネイティブ側のクラッシュ台帳(`ops.NATIVE_CRASHES_ON_DEGENERATE`)
+#
+# ★ここが厄介なのは、**このテストが守っている不具合は Windows では再現しない**こと。
+# 2026-09-05 実測: Linux(Ubuntu 24.04 / py3.12 / PyPI wheel)で 3 op が退化入力に
+# 対して SIGSEGV。同じ入力を Windows に流しても 1 件も落ちなかった。
+# だから「ローカルが緑」は根拠にならず、**台帳が正しく効いているか**を
+# 両方の環境で確かめられる形にしておく必要がある。
+# --------------------------------------------------------------------------- #
+
+def test_the_native_crash_ledger_names_ops_that_exist(registry):
+    """台帳に居ない op が残っていないこと(改名・削除で静かに無効化されるのを防ぐ)。"""
+    import ops as _o
+    live = {op.name for op in registry}
+    stale = sorted(set(_o.NATIVE_CRASHES_ON_DEGENERATE) - live)
+    assert not stale, "居ない op が台帳に残っている: %s" % stale
+    assert _o.NATIVE_CRASH_GUARDS == len(
+        [n for n in _o.NATIVE_CRASHES_ON_DEGENERATE if n in live]), (
+        "台帳の件数と実際に掛けた関門の数が合わない")
+
+
+def test_every_ledgered_op_rejects_degenerate_input_and_still_returns(registry):
+    """関門が効いていること —— 退化入力で**例外を外に出さず、有限を返す**。
+
+    弾いた入力は `ValueError` になり、外側の `guard` が台帳に記録して sort に合う
+    値へ落とす。利用者から見れば「落ちない」が保たれる。
+    """
+    import ops as _o
+    by = {op.name: op for op in registry}
+    checked = 0
+    for name in _o.NATIVE_CRASHES_ON_DEGENERATE:
+        op = by.get(name)
+        if op is None:
+            continue
+        for v in (np.zeros((0, 0)),
+                  np.full((16, 16), np.nan),
+                  np.full((16, 16), np.inf),
+                  np.where(np.eye(16) > 0, np.nan, 0.5)):    # 一部だけ NaN
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                out = op.fn(v.copy(), 0.5, 0.5)              # 例外を投げてはいけない
+            assert _finite_and_sort_valid(out, op.out_sort), \
+                "%s: 退化入力の戻り値が契約外" % name
+            checked += 1
+    assert checked >= 8, "検査した組み合わせが少なすぎる(%d)" % checked
+
+
+def test_the_guard_does_not_touch_a_normal_input(registry):
+    """関門は**まともな入力には一切触らない** —— 同じ入力で同じ値が返る。"""
+    import ops as _o
+    by = {op.name: op for op in registry}
+    good = np.linspace(0, 1, 32 * 32).reshape(32, 32)
+    for name in _o.NATIVE_CRASHES_ON_DEGENERATE:
+        op = by.get(name)
+        if op is None:
+            continue
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            a = np.asarray(op.fn(good.copy(), 0.5, 0.5), dtype=object)
+            b = np.asarray(op.fn(good.copy(), 0.5, 0.5), dtype=object)
+        assert np.array_equal(np.asarray(a, float), np.asarray(b, float)), \
+            "%s: 通常入力の結果が再現しない" % name

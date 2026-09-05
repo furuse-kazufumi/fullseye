@@ -970,6 +970,21 @@ def synthesize_speed_ramp(rate=5000.0, duration=4.0, rpm_start=600.0,
 # --------------------------------------------------------------------------- #
 # 3. Bearing / rotating machinery diagnostics                                   #
 # --------------------------------------------------------------------------- #
+
+def _prominence(peak: float, med: float) -> float:
+    """ピークの卓越度 ``peak / med``。分母 0 を**意味で場合分け**する。
+
+    * ``med > 0``           -> 比をそのまま
+    * ``med == 0, peak == 0`` -> **0.0**。帯域に何も無い(無音・全帯域除去)。
+      ここを ``inf`` にすると「何も無い」が「最強の共振」に化ける
+    * ``med == 0, peak > 0``  -> ``inf``。**雑音床ゼロの上に立つ単一線スペクトル**で、
+      これは本当に無限に卓越している。もっともらしい有限値に潰さない
+      (``ops.NONFINITE_IS_MEANINGFUL`` と同じ考え方)
+    """
+    if med > 0.0:
+        return peak / med
+    return float("inf") if peak > 0.0 else 0.0
+
 def envelope_spectrum(x, rate, low, high, order=4, n_peaks=5):
     """Band-pass, demodulate, transform — where a bearing defect actually shows.
 
@@ -1080,7 +1095,13 @@ def envelope_spectrum(x, rate, low, high, order=4, n_peaks=5):
         "magnitude": mag,
         "peak_freq": float(freqs[int(np.argmax(body))]),
         "peak_amplitude": peak,
-        "peak_prominence": (peak / med) if med > 0.0 else float("inf"),
+        # ★``med == 0`` を一律 inf にしていた —— **``peak`` も 0 のとき(無音・帯域に
+        # 何も無い)まで「無限に卓越したピーク」と報告していた**。この 2 つの数は
+        # docstring のとおり「何も無くてもピーク周波数を返してしまう」ことへの
+        # 正直さの指標なのに、いちばん嘘になる向きに振れていた。0/0 は 0.0 が答え。
+        # (2026-09-05: Linux / numpy 2.5.2 で表面化。旧版はフィルタの残差が
+        #  わずかに残って med > 0 になっていただけで、**不具合は前からあった**。)
+        "peak_prominence": _prominence(peak, med),
         "noise_floor": med,
         "band_rms": band_rms,
         "signal_rms": sig_rms,
@@ -1680,7 +1701,13 @@ def order_spectrum(x, rate, rpm, samples_per_rev=64, revolutions=None,
         "orders": orders, "magnitude": mag,
         "peak_order": float(orders[int(np.argmax(body))]) if body.size else 0.0,
         "peak_amplitude": peak,
-        "peak_prominence": (peak / med) if med > 0.0 else float("inf"),
+        # ★``med == 0`` を一律 inf にしていた —— **``peak`` も 0 のとき(無音・帯域に
+        # 何も無い)まで「無限に卓越したピーク」と報告していた**。この 2 つの数は
+        # docstring のとおり「何も無くてもピーク周波数を返してしまう」ことへの
+        # 正直さの指標なのに、いちばん嘘になる向きに振れていた。0/0 は 0.0 が答え。
+        # (2026-09-05: Linux / numpy 2.5.2 で表面化。旧版はフィルタの残差が
+        #  わずかに残って med > 0 になっていただけで、**不具合は前からあった**。)
+        "peak_prominence": _prominence(peak, med),
         "noise_floor": med,
         "peak_orders": orders[idx].copy(), "peak_amplitudes": body[idx].copy(),
         "resolution_order": 1.0 / float(whole),
