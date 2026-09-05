@@ -105,6 +105,15 @@ def _trans_from_rgb(v, a, b):                     # color -> color : RGB -> {HSV
 
 
 def _trans_to_rgb(v, a, b):                       # color -> color : HSV -> RGB (inverse transform)
+    """色空間から RGB へ戻す逆変換。HALCON の ``trans_to_rgb``（任意の色空間から
+    RGB 色空間への変換）に相当するとされるが、**実装は HSV→RGB の 1 方向だけ**
+    しか持たない。
+
+    ``trans_from_rgb`` は a で 4 色空間（HSV/Lab/YUV/XYZ）を選べるのに対し、
+    この逆変換は常に入力を HSV とみなして ``cv2.COLOR_HSV2RGB`` を掛ける。
+    Lab/YUV/XYZ から呼んだ場合は色空間の解釈を誤ったまま変換するため、
+    出力は破綻した色になる。a, b は未使用。
+    """
     c = (_to_color(v) * 255).astype(np.uint8)
     return cv2.cvtColor(c, cv2.COLOR_HSV2RGB).astype(np.float64) / 255.0
 
