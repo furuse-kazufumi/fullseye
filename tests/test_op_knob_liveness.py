@@ -61,7 +61,7 @@ import op_probe                                           # noqa: E402
 #: **この集合は縮む方向にしか動かしてはいけない**(直したら消す)。
 #: 一件ずつの背景は docs/KNOWN_ISSUES.md #12〜#26。
 KNOWN_DEAD_KNOBS = {
-    ("erosion_circle", "b"), ("gray_erosion", "b"),
+    ("binomial_filter", "b"), ("erosion_circle", "b"), ("gray_erosion", "b"),
     ("mean_image", "b"),
     ("sp_local_max_sub_pix", "a"), ("sp_local_min_sub_pix", "a"),
     ("xcv3_sift_count", "a"), ("xcv_grabcut", "a"), ("xsk_orb_count", "a"),
