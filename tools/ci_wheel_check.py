@@ -31,7 +31,19 @@ warnings.filterwarnings("ignore")
 _HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path[:] = [p for p in sys.path
                if os.path.abspath(p or os.getcwd()) not in (_HERE, os.path.dirname(_HERE))]
+# ★cwd を移す**前に**元の cwd を覚え、以後すべての引数パスをここへ解決する。
+# 2026-09-05 実測: preflight は絶対パスで渡すので手元では通り、ci.yml は相対パスで
+# 渡すので dump が一時 dir に書き捨てられ、compare が FileNotFoundError で落ちた
+# —— **門が本番の呼び出し経路では一度も比較を実行していなかった**。
+# 「門は事故の起きる場所に立てる」の 3 度目。呼ぶ側を直すのではなく、
+# 相対パスで呼ばれても正しく動くようにして、この型ごと閉じる。
+_ORIG_CWD = os.getcwd()
 os.chdir(tempfile.mkdtemp(prefix="fs_wheelcheck_"))
+
+
+def _at_orig(path: str) -> str:
+    """引数で渡されたパスを、chdir する前の作業ディレクトリ基準で解決する。"""
+    return path if os.path.isabs(path) else os.path.join(_ORIG_CWD, path)
 
 
 def _loaded_root_modules() -> list:
