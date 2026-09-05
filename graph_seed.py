@@ -8,9 +8,20 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+
+
+def _default_workdir() -> str:
+    """work-graph の作業 dir。**配布物にローカル絶対パスを焼き込まない**ため環境変数から。
+
+    2026-09-05 の監査で、非公開の兄弟ツリーのパスが PyPI の wheel に載っていた。
+    手元の使い勝手は `$RAPTOR_DIR` で保ち、未設定なら `--workdir` を要求する。
+    """
+    root = os.environ.get("RAPTOR_DIR", "")
+    return os.path.join(root, "out", "worklog", "imgevolve") if root else ""
 PROBLEMS = ("denoise", "edge", "binarize")
 
 
