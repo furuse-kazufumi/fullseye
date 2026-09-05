@@ -311,7 +311,7 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             return cv2.inpaint(x, mask, 3, cv2.INPAINT_TELEA).astype(np.float64) / 255
 
         def _grabcut(v, a, b):
-            """GrabCut による前景抽出。
+            """GrabCut(反復グラフカット)による前景/背景の自動分離。
 
             画像中央 70%×70%の固定矩形を「たぶん前景」の初期領域として与え、
             色分布の GMM とグラフカットで前景/背景を反復的に分離する
