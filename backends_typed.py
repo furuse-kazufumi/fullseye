@@ -141,7 +141,7 @@ TYPE_TO_SORT = {
 _OP_BRIDGE_SKIP = {
     "fresnel_dielectric", "fresnel_conductor", "beer_lambert_transmittance",
     "slab_transmittance", "thin_film_reflectance", "prism_min_deviation_deg",
-    "cie_xyz_from_wavelength", "spectrum_to_srgb",
+    "cie_xyz_from_wavelength", "spectrum_to_srgb", "nonexistent_op_zzz_mutation",
 }
 
 
