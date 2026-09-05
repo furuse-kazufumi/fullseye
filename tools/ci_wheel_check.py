@@ -63,6 +63,7 @@ def _loaded_root_modules() -> list:
 
 
 def _dump(path: str) -> int:
+    path = _at_orig(path)
     import fullseye
     import ops
     try:
