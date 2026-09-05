@@ -342,21 +342,46 @@ def _se_radius(a):
 
 
 def _erosion1(v, a, b):
+    """円板構造要素で region を収縮(erosion)する。HALCON の ``erosion1``
+    (region を収縮する)に相当。
+
+    半径 ``r = 1 + int(a*4)`` の円板を構造要素として
+    ``scipy.ndimage.binary_erosion`` を呼ぶ。``b`` は未使用。境界の外側画素を
+    削り、細い突起やノイズ画素を消す。
+    """
     from scipy.ndimage import binary_erosion
     return binary_erosion(v > 0.5, structure=_disc_bool(_se_radius(a))).astype(np.float64)
 
 
 def _dilation1(v, a, b):
+    """円板構造要素で region を膨張(dilation)する。HALCON の ``dilation1``
+    (region を膨張する)に相当。
+
+    半径 ``r = 1 + int(a*4)`` の円板構造要素で ``scipy.ndimage.binary_dilation``
+    を呼ぶ。``b`` は未使用。隙間を埋めたり領域を太らせたりするのに使う。
+    """
     from scipy.ndimage import binary_dilation
     return binary_dilation(v > 0.5, structure=_disc_bool(_se_radius(a))).astype(np.float64)
 
 
 def _opening(v, a, b):
+    """円板構造要素で region をオープニング(収縮→膨張)する。HALCON の
+    ``opening``(region をオープンする)に相当。
+
+    半径 ``r = 1 + int(a*4)`` の円板で ``scipy.ndimage.binary_opening`` を呼ぶ。
+    ``b`` は未使用。細い突起や小さな孤立点を除去しつつ全体形状を保つ。
+    """
     from scipy.ndimage import binary_opening
     return binary_opening(v > 0.5, structure=_disc_bool(_se_radius(a))).astype(np.float64)
 
 
 def _closing(v, a, b):
+    """円板構造要素で region をクロージング(膨張→収縮)する。HALCON の
+    ``closing``(region をクローズする)に相当。
+
+    半径 ``r = 1 + int(a*4)`` の円板で ``scipy.ndimage.binary_closing`` を呼ぶ。
+    ``b`` は未使用。小さな穴や切れ目を埋めつつ全体形状を保つ。
+    """
     from scipy.ndimage import binary_closing
     return binary_closing(v > 0.5, structure=_disc_bool(_se_radius(a))).astype(np.float64)
 
