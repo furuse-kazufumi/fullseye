@@ -107,6 +107,12 @@ def _compare(a_path: str, b_path: str) -> int:
     3. numpy/scipy だけで成立する族(``tb_*`` / ``hx_*``)が wheel に**床の数**だけ在る
        (``backends_typed`` が黙って [] を返す型の再発をここで止める)
     """
+    a_path, b_path = _at_orig(a_path), _at_orig(b_path)
+    for p in (a_path, b_path):
+        if not os.path.exists(p):
+            print("NG: 集計ファイルが無い: %s —— --dump が書けていない"
+                  "(相対パスは %s 基準で解決している)" % (p, _ORIG_CWD))
+            return 1
     a = json.load(open(a_path, encoding="utf-8"))
     b = json.load(open(b_path, encoding="utf-8"))
     problems = []
