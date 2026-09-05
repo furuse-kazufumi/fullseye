@@ -104,6 +104,40 @@ def _feat(*attrs):
     raise AttributeError("kornia.feature has none of %s" % (attrs,))
 
 
+#: lambda で定義された op の説明（lambda に docstring は書けない）。
+#: ops.py の登録ループが Op.doc に積む。キーは op 名。
+DOCS = {
+    "xkor_harris": (
+        "Harris コーナー応答。``kornia.feature.harris_response`` を呼び、符号付き"
+        "応答を ``signed01`` で [0,1] に写像する（コーナーは正、エッジは負に出る"
+        "Harris 応答の符号情報を保ったまま可視化域に収める）。\n\n"
+        "a が Harris のスコア係数 k（``0.04 + 0.02 * a``、経験的に 0.04〜0.06 の"
+        "範囲で使われる値）を振る。b は未使用。"
+    ),
+    "xkor_gftt": (
+        "GFTT（Good Features To Track、Shi-Tomasi）コーナー応答。"
+        "``kornia.feature.gftt_response`` を既定パラメータで呼び、絶対値を取って"
+        "最大絶対値で正規化する。\n\n"
+        "**a, b は未使用**（共通ヘルパー ``_resp`` が a, b を受け取るだけで捨てる）。"
+    ),
+    "xkor_hessian": (
+        "ヘシアン行列に基づくブロブ・コーナー応答。"
+        "``kornia.feature.hessian_response`` を既定パラメータで呼び、絶対値を"
+        "取って最大絶対値で正規化する。\n\n"
+        "**a, b は未使用**（共通ヘルパー ``_resp`` が a, b を受け取るだけで捨てる）。"
+    ),
+    "xkor_dog": (
+        "DoG（Difference of Gaussians）ブロブ応答。"
+        "``kornia.feature.dog_response_single``（無ければ ``dog_response`` に"
+        "フォールバック）を既定パラメータで呼び、絶対値を取って最大絶対値で"
+        "正規化する。\n\n"
+        "**a, b は未使用**。使用する kornia のバージョンによって"
+        "``dog_response_single`` が無い場合は古い ``dog_response`` へ自動で"
+        "切り替わる。"
+    ),
+}
+
+
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     if not _HAS:
         return []
