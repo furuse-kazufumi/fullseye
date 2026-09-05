@@ -17,7 +17,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ラプラシアン（2 階微分）によるエッジ・ブロブ応答。
+``kornia.filters.laplacian`` を呼び、絶対値を取ってから最大絶対値で
+正規化する。
+
+a でカーネルサイズを 3/5/7/9 の 4 段階から選ぶ（``_k(a)``、``_median``
+と同じ量子化）。b は未使用。
 
 ## 詳しい使い方ガイド
 

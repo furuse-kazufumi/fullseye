@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+外接矩形の縦横比 ``min(1, 高さ/幅)``。高さが幅以下のときだけ正しい
+比率を返し、高さが幅を超える(縦長の)領域では 1.0 に飽和してしまう
+(実装の非対称性 ―― 真のアスペクト比ではなく「横長方向の扁平さ」しか
+表現できない近似)。HALCON の ``height_width_ratio``（Compute the width,
+height, and aspect ratio of the surrounding rectangle parallel to the
+coordinate axes.）の代役。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

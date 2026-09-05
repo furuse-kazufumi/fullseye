@@ -3,7 +3,12 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_rolling_shutter&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → image</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>Rolling-shutter skew. A CMOS rolling shutter exposes rows sequentially, so</p>
+<p>a scene (or camera) panning horizontally shifts each row by an amount linear</p>
+<p>in its row index -- a pure horizontal shear. `<code style="color:#22d3bf">a</code>` sets the peak shift</p>
+<p>`<code style="color:#22d3bf">0.25*W*a</code>` px (the shear is centred so the middle row is unmoved),</p>
+<p>`<code style="color:#22d3bf">b</code>` sets the pan direction (b &lt; 0.5 -&gt; shift right with increasing row,</p>
+<p>otherwise left). Resampled bilinearly with reflecting borders.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Pillow のアンシャープマスク。``PIL.ImageFilter.UnsharpMask`` を呼ぶ（kornia 版 ``xkor_unsharp`` に対応する CPU 実装）。
+
+a がぼかし半径（``radius = 1 + 4*a``、範囲 1〜5）、b が強調量（``percent = int(50 + 200*b)``、範囲 50〜250%）を振る。しきい値は 0固定（すべての差分を強調対象にする）。
 
 ## 詳しい使い方ガイド
 

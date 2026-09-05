@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `contour → contour`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+輪郭の各点に、列位置に応じた疑似的な遠近収縮(``d = 1 + 0.3*a*(col -
+中心)/幅``で各点の座標を割る)を適用する。真の 3x3 ホモグラフィ行列による
+射影変換ではなく、片方向だけの簡易な縮尺変化で近似している点に注意。
+HALCON の ``projective_trans_contour_xld``（Apply a projective
+transformation to an XLD contour.）の代役。
+
+``a`` が収縮の強さを振る。``b`` は未使用(画像版の
+``projective_trans_image`` とは異なり、この輪郭版は ``b`` を使わない)。
 
 ## 詳しい使い方ガイド
 

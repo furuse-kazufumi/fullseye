@@ -17,7 +17,50 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `qimage → qimage`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Keep or remove one colour direction, exactly. → (H, W, 4).
+
+    ``mode="remove"`` returns ``v - (v.g) g`` for the unit RGB direction ``g``:
+    the component along ``g`` is **exactly zero everywhere afterwards**, to
+    machine precision (measured max residual 5.8e-16 and 6.5e-16 on two random
+    colour images — seed-dependent only at the 1e-16 level),
+    and ``remove + keep`` reproduces the input to **0.0** exactly.
+    ``mode="keep"`` returns the complementary ``(v.g) g``. The scalar part is
+    passed through untouched in both.
+
+    **There is no default mode.** The two are opposites, both return a valid
+    picture, and neither raises — so choosing for the caller would be a coin flip
+    that never announces itself.
+
+    Not a new algorithm, and this docstring will not pretend otherwise
+    -----------------------------------------------------------------
+    The ``remove`` branch **is** the specular-invariant projection of Mallick et
+    al. (2005), which this repository already implements as
+    ``specularity.specular_free_transform`` for the ``rgbimage`` sort. Rather
+    than write the same three lines twice, this operator *delegates* to it — so
+    agreement between the two sorts is by construction rather than by luck, and a
+    future fix in one is a fix in both. What is added here is the ``keep``
+    branch (which has no counterpart there) and the ``qimage`` sort, so the
+    projection composes with :func:`quat_color_rotate` and :func:`qft2`.
+
+    What this can do that a channelwise pipeline cannot
+    ---------------------------------------------------
+    A per-channel filter applies a diagonal matrix, and ``I - g g^T`` is diagonal
+    only when ``g`` is a coordinate axis. For ``g = (1,1,1)/sqrt(3)`` — remove
+    the grey axis, i.e. keep only chromatic content — the *best possible*
+    diagonal approximation is off by ``||P - diag(P)||_2 = 0.666667`` in operator
+    norm. Concretely, a pure red pixel ``(1, 0, 0)`` must become
+    ``(0.666667, -0.333333, -0.333333)``; the best diagonal filter can only reach
+    ``(0.666667, 0, 0)``, an error of ``0.471405`` — it cannot put anything into
+    the green and blue channels, because it multiplies each channel by a number
+    and both start at zero. The impossibility is structural, not a tuning gap.
+    (A full 3x3 colour matrix, of course, does it exactly; see
+    :func:`quat_color_rotate` for that half of the accounting.)
+
+    **Raises** ``ValueError``: *qimage* is not a valid ``(H, W, 4)`` field;
+    *direction_rgb* is not a finite non-zero 3-vector; *mode* is not
+    ``'remove'`` / ``'keep'``.
+
+Typed bridge of the quat op ``quat_color_filter`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

@@ -17,7 +17,19 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `points → matrix`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+点群の慣性テンソル (3,3)(中心 2 次モーメントから、等質量・総質量 1)。
+
+    I_xx = mean(y²+z²), I_yy = mean(x²+z²), I_zz = mean(x²+y²),
+    I_xy = -mean(xy), I_xz = -mean(xz), I_yz = -mean(yz)。
+    共分散 C を使うと I = tr(C)·E₃ − C(E₃ は単位行列)と等価。対称・半正定値。
+    重心中心化のため並進不変。
+
+    Returns
+    -------
+    np.ndarray, shape (3, 3)
+        対称な慣性テンソル。
+
+2-D 進化レジストリへ橋渡しした 3d の op ``inertia_tensor``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 
 ## 参考(サンプルデータ・文献)
 

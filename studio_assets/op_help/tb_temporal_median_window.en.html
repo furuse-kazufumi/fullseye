@@ -3,7 +3,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_temporal_median_window&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">video → video</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>Causal per-pixel median over the last *window* frames → `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">video</code>`).</p>
+<p>Frame `<code style="color:#22d3bf">t</code><code style="color:#22d3bf"> uses frames </code><code style="color:#22d3bf">max(0, t−window+1) .. t</code>`. The streaming</p>
+<p>:class:<code style="color:#22d3bf">TemporalMedianWindow</code> gives the same frames one at a time with a</p>
+<p>ring of *window* frames instead of the whole clip in memory.</p>
+<p>Typed bridge of the videostream op `<code style="color:#22d3bf">temporal_median_window</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">window</code><code style="color:#22d3bf"> (default 5); </code><code style="color:#22d3bf">b</code>` is unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+領域の太さの近似値 ``2 × 最大内接円半径 / 最大辺長``
+(``distance_transform_edt`` の最大値の 2 倍を画像サイズで正規化)。HALCON
+の ``get_region_thickness``（Access the thickness of a region along the
+main axis.）が定義する「主軸に沿った太さのプロファイル」とは異なり、
+方向を問わないグローバルな最大内接半径だけを見る単純化(主軸方向の情報は
+失われる)。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

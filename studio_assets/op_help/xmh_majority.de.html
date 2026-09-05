@@ -3,7 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xmh_majority&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">region → region</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>多数決フィルタ(`<code style="color:#22d3bf">mahotas.majority_filter</code>`)。二値領域に対し、正方近傍内で 1 が過半数を占める画素だけを 1 に残す平滑化。孤立ノイズの除去や領域境界のギザギザ均しに使う。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は窓サイズ(</code><code style="color:#22d3bf">2*int(1+a*4)+1</code><code style="color:#22d3bf"> で 3〜17 の奇数)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

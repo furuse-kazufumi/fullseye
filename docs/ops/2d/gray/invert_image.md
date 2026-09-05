@@ -19,7 +19,10 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+階調を反転する ``1.0 - x``(ネガポジ反転)。HALCON の ``invert_image``
+（Invert an image.）にそのまま対応する、近似ではなく厳密に等価な演算。
+
+``a``, ``b`` は未使用 ―― 調整点のない固定変換。
 
 ## 詳しい使い方ガイド
 

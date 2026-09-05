@@ -17,7 +17,26 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `beatcube → signal`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Range-only profile: the fast-time FFT magnitude, averaged over the rest.
+
+    The 1-D marginal of :func:`range_doppler_map` — what a static scene needs,
+    and what a single chirp can give. Magnitudes are averaged (never the complex
+    values) over chirps and antennas, so the average is independent of the
+    target's velocity and angle: ``|FFT|`` does not rotate with the Doppler
+    phase, only the phase does.
+
+    Bin ``j`` is ``j * c*f_s/(2*S*N_s)`` metres. With ``normalize=True`` a
+    bin-centred target of amplitude ``a`` peaks at exactly ``a``.
+
+    *chirp* / *antenna* select one slice instead of averaging. Returns a 1-D
+    float64 array of length ``n_samples`` — a plain signal, so :mod:`dsp` and
+    :mod:`funct1d` (``find_peaks``, ``smooth_funct_1d_gauss``, ``spectrum``)
+    apply to it directly.
+
+    **Raises** ``ValueError``: as :func:`range_doppler_map`, plus an
+    out-of-bounds *chirp* index.
+
+Typed bridge of the rangedoppler op ``fmcw_range_profile`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

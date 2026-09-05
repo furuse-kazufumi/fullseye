@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Kirsch コンパスフィルタで最も強く応答した方向のインデックス(8 方向中の
+``argmax``)を [0,1] に正規化して返す。``kirsch_amp`` と対になる方向成分。
+HALCON の ``kirsch_dir``（Detect edges (amplitude and direction) using the
+Kirsch operator.）に相当。
+
+``a``, ``b`` は未使用。方向は 8 段階の離散値しか取れない(Sobel/Prewitt の
+連続角度とは分解能が異なる)。
 
 ## 詳しい使い方ガイド
 

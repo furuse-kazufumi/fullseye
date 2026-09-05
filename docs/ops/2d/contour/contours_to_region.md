@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `contour → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+XLD 輪郭をラスタ化して region に変換する。HALCON の ``gen_region_contour_xld``（Create a region from an XLD contour.）に相当。
+
+``a`` が仕上げに掛ける膨張の反復回数を ``1〜3``（``1 + int(2a)``）に振る。``b`` は未使用。輪郭点の実数座標を最近傍の画素へ丸めてマスクを立て、点間が疎で線がつながらないぶんを膨張で補う（サブピクセル精度は失われる）。
 
 ## 詳しい使い方ガイド
 

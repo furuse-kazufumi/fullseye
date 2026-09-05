@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tb_specular_coefficient_map — 2D <code style="color:#22d3bf">typed</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_specular_coefficient_map&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>二色性反射モデル（dichromatic model）における、スカラー量の界面（鏡面）反射係数。→ (H, W)。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>The same decomposition as :func:<code style="color:#22d3bf">specular_diffuse_split</code>, returning the</p>
+<p>scalar `<code style="color:#22d3bf">m_s(x)</code><code style="color:#22d3bf"> instead of the coloured image </code><code style="color:#22d3bf">m_s(x) * G</code>`. That scalar</p>
+<p>is what an inspection routine thresholds: it is the amount of light the</p>
+<p>surface reflected *as a mirror does*, in the units of the input radiance,</p>
+<p>and it is zero wherever the surface behaved as a Lambertian body.</p>
+<p>`<code style="color:#22d3bf">specular_coefficient_map(...) * illuminant_unit</code>` equals the second return</p>
+<p>value of :func:<code style="color:#22d3bf">specular_diffuse_split</code> exactly, by construction — the two</p>
+<p>operators share one core.</p>
+<p>Arguments, guards and honest limits are identical to</p>
+<p>:func:<code style="color:#22d3bf">specular_diffuse_split</code> — including the fact that the two guards</p>
+<p>bound gross violations only.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: exactly the same conditions as</p>
+<p>:func:<code style="color:#22d3bf">specular_diffuse_split</code> (invalid image, invalid illuminant,</p>
+<p>identically zero image, body colour parallel to the illuminant, either</p>
+<p>guard firing, fewer than 3 pixels on the uniform-body route, invalid</p>
+<p>*body_rgb*).</p>
+<p>Typed bridge of the specular op `<code style="color:#22d3bf">specular_coefficient_map</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">max_rank_ratio</code><code style="color:#22d3bf"> (default 0.1) and </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">max_negative_frac</code>` (default 0.02).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">typed</code>)</h3>
+<p><a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_angle_3points">tb_angle_3points</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

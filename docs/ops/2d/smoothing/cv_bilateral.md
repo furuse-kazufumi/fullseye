@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+バイラテラルフィルタ(OpenCV 実装)。空間的な近さと輝度値の近さの両方を重みにしたガウス的平滑化で、エッジ(輝度差の大きい境界)をぼかさずに平坦部だけを滑らかにする。
+
+HALCON の `bilateral_filter`(bilateral filtering of an image.)に相当。実装は ``cv2.bilateralFilter(v, d=5, sigmaColor=0.05+0.4*b, sigmaSpace=1.0+3.0*a)`` —— カーネル直径 d は 5 に固定、**a は空間方向の広がり sigmaSpace を 1.0〜4.0 に、b は輝度方向の許容差 sigmaColor を 0.05〜0.45 に振る**(引数の並びが sigmaColor, sigmaSpace の順なので a/b の対応がずれやすい点に注意)。
 
 ## 詳しい使い方ガイド
 

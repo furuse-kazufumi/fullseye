@@ -17,7 +17,16 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `qimage → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Per-pixel quaternion modulus ``|q| = sqrt(w^2+x^2+y^2+z^2)``. → (H, W).
+
+    **Raw / unnormalised**, following ``complexops.cx_magnitude``: a modulus is a
+    metric quantity and routinely exceeds one (a QFT spectrum's DC term is huge).
+    For a colour quaternion it is the colour *magnitude* — the length of the RGB
+    vector, i.e. luminance in the L2 sense; for a monogenic signal it is the
+    local amplitude and :func:`monogenic_amplitude` is the name that says so.
+    Use ``imgio.normalize`` for a displayable view.
+
+Typed bridge of the quat op ``quat_norm`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

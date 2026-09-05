@@ -17,7 +17,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+steerable_filter: oriented first-derivative-of-Gaussian response.
+
+The steerable G1 basis: the derivative of a Gaussian at orientation
+``theta = a*pi`` is ``cos(theta)*Gx + sin(theta)*Gy`` where Gx, Gy are the
+x/y partial derivatives of the Gaussian-smoothed image. ``b`` sets the
+Gaussian sigma. The signed response is mapped to [0,1] (0.5 = zero), so its
+deviation from 0.5 peaks on edges whose gradient matches ``theta``.
 
 ## 詳しい使い方ガイド
 

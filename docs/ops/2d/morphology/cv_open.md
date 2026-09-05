@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+グレー値モルフォロジー開処理(opening、OpenCV 実装)。収縮してから膨張することで、構造要素より小さい明るい突起・孤立点を消す。
+
+HALCON の `gray_opening`(Perform a gray value opening on an image.)に相当。実装は ``cv2.morphologyEx(v, MORPH_OPEN, se)``、楕円形の構造要素 se は``getStructuringElement(MORPH_ELLIPSE, (k,k))``、``k=3+2*int(a*3)`` —— a は構造要素のサイズを 3〜9 に振る。b は未使用。
 
 ## 詳しい使い方ガイド
 

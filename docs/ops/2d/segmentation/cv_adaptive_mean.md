@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+局所平均によるしきい値二値化(adaptive threshold、mean 版、OpenCV 実装)。各画素の周辺の単純平均から定数を引いた値をしきい値として使う —— 照明ムラのある画像で大域しきい値より安定する。
+
+HALCON の `dyn_threshold`(Segment an image using a local threshold.)に相当。実装は ``cv2.adaptiveThreshold(_u8(v), 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, blockSize=2*int(a*6)+3, C=int(b*10))`` —— a は局所窓のサイズ(blockSize)を 3〜15(奇数)に、b は局所平均から引く定数 C を 0〜10 に振る(C が大きいほど前景と判定される画素が減る)。
 
 ## 詳しい使い方ガイド
 

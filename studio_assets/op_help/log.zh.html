@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;log&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">laplace_of_gauss</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → image</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>ラプラシアン・オブ・ガウシアン（LoG）フィルタ。HALCON の `<code style="color:#22d3bf">laplace_of_gauss</code>`（LoG-Operator (Laplace of Gaussian).）に相当。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がガウシアンの標準偏差 σ を </code><code style="color:#22d3bf">0.5〜3.0</code><code style="color:#22d3bf"> に振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。</code><code style="color:#22d3bf">scipy.ndimage.gaussian_laplace</code><code style="color:#22d3bf"> の絶対値を </code><code style="color:#22d3bf">_norm</code>` で正規化する（符号を捨てているため、暗背景上の明斑点と明背景上の暗斑点を区別できない）。ブロブ（斑点状構造）検出やエッジ検出に使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

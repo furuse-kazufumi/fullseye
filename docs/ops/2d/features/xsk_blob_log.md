@@ -17,7 +17,20 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ブロブ(斑点状構造)の検出数(LoG/DoG/DoH のいずれかで検出)。
+
+skimage.feature の Laplacian of Gaussian(LoG)/ Difference of
+Gaussian(DoG)/ Determinant of Hessian(DoH)のいずれか(このコードは
+3 種を共通実装しており、どれを使うかは呼び出し元がどの op 名で
+登録したか —— ``xsk_blob_log`` / ``xsk_blob_dog`` / ``xsk_blob_doh``
+—— で決まる)を用いてブロブを検出し、その個数をそのまま返す
+(feature 出力)。
+
+``a`` が探索する最大スケール ``max_sigma`` を 5〜25 の範囲で振る
+(大きいほど大きなブロブまで拾う)。``b`` が検出しきい値
+``threshold`` を 0.02〜0.17 で振る(小さいほど弱いブロブまで拾い、
+検出数が増えやすい)。3 手法は速度・精度が異なる(LoG が最も正確
+だが遅く、DoH はエッジに強い一方、小さいブロブを苦手とする、等)。
 
 ## 詳しい使い方ガイド
 

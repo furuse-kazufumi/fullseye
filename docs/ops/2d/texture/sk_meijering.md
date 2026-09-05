@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Meijering の神経突起検出フィルタ(neuriteness filter)。Frangi と同じく Hessian の固有値から管状構造の類似度を計算するが、正規化の方法が異なる(神経突起画像向けにチューニングされた式)。
+
+HALCON の `lines_gauss` に相当(近似)。a, b は未使用 —— スケールは ``sigmas=range(1, 4)`` に固定。sk_frangi と並べて使い、どちらが対象の線構造に強く反応するか比較する用途を想定。既定で ``black_ridges=True``。
 
 ## 詳しい使い方ガイド
 

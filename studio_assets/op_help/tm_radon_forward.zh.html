@@ -3,7 +3,17 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tm_radon_forward&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → image</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Forward Radon projection: treat `<code style="color:#22d3bf">v</code>` as a slice image and integrate it</p>
+<p>along parallel rays to build a sinogram (rows = angles, cols = detector),</p>
+<p>refit to the original HxW. `<code style="color:#22d3bf">a</code>` sets how many angles are acquired</p>
+<p>(`<code style="color:#22d3bf">n = round(H*a)</code><code style="color:#22d3bf"> clamped to 8..360 -- the sparse-view knob), </code><code style="color:#22d3bf">b</code>` sets the</p>
+<p>angular span (`<code style="color:#22d3bf">span = 180*min(1, 0.5+b)</code>` deg: b &lt; 0.5 is limited-angle CT,</p>
+<p>b &gt;= 0.5 -- including the default b = 0.5 -- is the full [0,180) span that</p>
+<p>`<code style="color:#22d3bf">tm_fbp_reconstruct</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">tm_sart_reconstruct</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">tm_backproject_unfiltered</code>`</p>
+<p>assume, so the natural chain forward -&gt; inverse round-trips at default knobs).</p>
+<p>Uses `<code style="color:#22d3bf">skimage.transform.radon</code>` when available, else the NumPy</p>
+<p>rotate-and-sum Radon transform.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

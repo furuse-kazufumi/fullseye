@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;power_ln&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">power_ln</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>複素画像のパワースペクトルの代役。実装は fft_generic と同一で、入力画像に自前で FFT をかけてから振幅の対数 `<code style="color:#22d3bf">log1p(|F|)</code><code style="color:#22d3bf"> を最大値正規化して返す（</code><code style="color:#22d3bf">_sh_freq</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">fft_power</code>` 分岐を共有）。a, b は未使用。</p>
+<p>HALCON の `<code style="color:#22d3bf">power_ln</code>`（複素画像のパワースペクトルを返す演算、通常は fft_generic 等が出力した複素画像を入力に取る）とは異なり、この実装は複素入力を受け取らず実画像から自前で FFT を計算する簡略近似。fft_generic とは実装上区別がない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

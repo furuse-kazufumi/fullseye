@@ -17,7 +17,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `video → video`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Bobick–Davis Motion History Image per frame → ``(T, H, W)`` in ``[0, 1]`` (``video``).
+
+    Frame ``t`` is the MHI of frames ``0..t``: 1 where motion is happening,
+    decaying by ``1/tau`` per frame elsewhere. The last frame is the classic
+    single-image temporal template of the whole clip's motion.
+
+Typed bridge of the videostream op ``motion_history_image`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``tau`` (default 15) and ``b`` drives ``threshold`` (default 0.1).
 
 ## 参考(サンプルデータ・文献)
 

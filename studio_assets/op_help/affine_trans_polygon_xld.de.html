@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;affine_trans_polygon_xld&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">affine_trans_polygon_xld</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">contour → contour</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>XLD 輪郭（多角形/曲線の頂点列）にアフィン回転を掛ける。画像中心を基準に角度 `<code style="color:#22d3bf">-20°+40a</code>` で回転させる（せん断・平行移動は行わない、回転のみの部分アフィン）。b は未使用。</p>
+<p>HALCON の `<code style="color:#22d3bf">affine_trans_polygon_xld</code>`（XLD 多角形に任意のアフィン 2D 変換を適用する演算）とは異なり、この実装は回転成分だけを再現する近似で、拡大縮小やせん断は反映されない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">Leitfaden zur Familie gallery2d_contour_measure</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

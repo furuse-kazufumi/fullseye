@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Canny エッジ検出(``skimage.feature.canny``、シグマ ``0.5+2*a``)による
+領域抽出。ガウス平滑化→勾配→非極大抑制→ヒステリシスしきい値という多段の
+処理をまとめて行う、広く使われるエッジ検出法。HALCON の ``edges_image``
+（Detect edges using Deriche, Lanser, Shen, or Canny filters.）に相当
+(HALCON は Deriche/Lanser/Shen/Canny を選べるが、ここでは Canny 固定)。
+
+``a`` がガウス平滑化のシグマを振る。``b`` は未使用(内部のヒステリシス
+しきい値は skimage の既定値)。skimage が無い環境ではこの分岐は呼べない。
 
 ## 詳しい使い方ガイド
 

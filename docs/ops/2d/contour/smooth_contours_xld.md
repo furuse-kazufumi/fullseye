@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `contour → contour`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+輪郭の座標列を移動平均(窓幅 ``2*(1+3*a)+1``)で平滑化する。輪郭の
+ギザギザ(画素境界由来のジグザグ)を滑らかにする。HALCON の
+``smooth_contours_xld``（Smooth an XLD contour.）に相当。
+
+``a`` が平滑化窓の幅を振る。``b`` は未使用。点数が窓幅以下の短い輪郭は
+平滑化されずそのまま返る。
 
 ## 詳しい使い方ガイド
 

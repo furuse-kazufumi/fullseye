@@ -1,0 +1,45 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tb_tcspc_coates_correct — 2D <code style="color:#22d3bf">typed</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">counts</code> → <code style="color:#22d3bf">counts</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_tcspc_coates_correct&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>TCSPC（時間相関単一光子計数）のパイルアップ（pile-up）を Coates の推定量で厳密に補正する — 早着光子バイアスの解消。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>Classical TCSPC records <b>at most one photon per excitation cycle</b>: the</p>
+<p>first one. Late bins are therefore starved, because the cycles in which an</p>
+<p>early photon arrived never reach them, and the measured histogram is biased</p>
+<p>toward short arrival times — a dToF depth read straight off a piled-up</p>
+<p>histogram is *too close*, and a fluorescence lifetime is *too short*.</p>
+<p>Coates&#x27;s estimator inverts that exactly. With `<code style="color:#22d3bf">N_k</code>` the measured counts in</p>
+<p>bin `<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">C</code>` the number of excitation cycles, the number of cycles that</p>
+<p>survived to reach bin `<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">D_k = C - sum_{j&lt;k} N_j</code>`, the per-cycle</p>
+<p>detection probability in that bin is `<code style="color:#22d3bf">p_k = N_k / D_k</code>` and the pile-up-free</p>
+<p>per-cycle intensity is `<code style="color:#22d3bf">lambda_k = -ln(1 - p_k)</code>`. This op returns</p>
+<p>`<code style="color:#22d3bf">C * lambda_k</code>` — the histogram the same scene would have produced if the</p>
+<p>detector could record every photon — so it is directly comparable to the</p>
+<p>measured one.</p>
+<p>This is an <b>exact</b> inverse, not a linearisation: build a histogram from a</p>
+<p>known `<code style="color:#22d3bf">lambda</code><code style="color:#22d3bf"> through the forward model </code>`N_k = C * exp(-sum_{j&lt;k}</p>
+<p>lambda_j) * (1 - exp(-lambda_k))`<code style="color:#22d3bf"> and Coates returns </code><code style="color:#22d3bf">lambda</code>` to machine</p>
+<p>precision (measured max relative error 1.6e-15 in the tests, on a pile-up so</p>
+<p>severe that the last bin was suppressed to 14.8% of its true counts).</p>
+<p>*hist* is the 1-D measured histogram (counts per bin); *cycles* the number of</p>
+<p>excitation cycles (laser pulses) that produced it.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: negative, non-finite or non-1-D *hist*, a</p>
+<p>non-positive or non-integer *cycles*, a histogram whose total exceeds</p>
+<p>*cycles* (impossible: at most one photon per cycle — a sure sign that</p>
+<p>*cycles* is wrong or the data are not first-photon TCSPC), and any bin that</p>
+<p>consumed every remaining cycle (`<code style="color:#22d3bf">p_k = 1</code><code style="color:#22d3bf">, where </code><code style="color:#22d3bf">-ln(0)</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">inf</code>`).</p>
+<p>Typed bridge of the photon op `<code style="color:#22d3bf">tcspc_coates_correct</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">counts</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_spad_deadtime_apply">tb_spad_deadtime_apply</a> · <a style="color:#22d3bf" href="op:tb_spad_deadtime_correct">tb_spad_deadtime_correct</a> · <a style="color:#22d3bf" href="op:tb_tcspc_irf_convolve">tb_tcspc_irf_convolve</a> · <a style="color:#22d3bf" href="op:tb_tcspc_background_subtract">tb_tcspc_background_subtract</a> · <a style="color:#22d3bf" href="op:tb_dtof_depth">tb_dtof_depth</a> · <a style="color:#22d3bf" href="op:tb_countrate_to_counts">tb_countrate_to_counts</a> · <a style="color:#22d3bf" href="op:tb_counts_to_countrate">tb_counts_to_countrate</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">typed</code>)</h3>
+<p><a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_angle_3points">tb_angle_3points</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

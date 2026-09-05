@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `contour → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+最大の輪郭についてコンパクトさ ``周囲長²/(4π・面積)/10`` を計算する
+(``compactness`` の輪郭版で、``/10`` は値を [0,1] に収めるための便宜的な
+スケーリング、HALCON の定義そのものではない)。HALCON の
+``compactness_xld``（Shape factor for the compactness of contours or
+polygons.）に相当する近似。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

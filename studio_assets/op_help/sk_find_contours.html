@@ -3,7 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">contour</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sk_find_contours&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → contour</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>等高線抽出(marching squares)。グレースケール画像上で指定したレベル値と交差する曲線を辿り、サブピクセル精度の輪郭座標列の集合として返す —— 二値画像の外周だけでなく、連続値の等高線も扱える点が二値輪郭抽出と違う。</p>
+<p>HALCON に直接対応するものは無い(空欄)。実装は `<code style="color:#22d3bf">measure.find_contours(v, level=0.2+0.5*a)</code><code style="color:#22d3bf"> のうち頂点数 3 未満の断片を捨てたもの —— a は等高線のレベル(しきい値)を 0.2〜0.7 に振る。b は未使用。戻り値は画像形状と輪郭座標配列のリストを持つ辞書(</code><code style="color:#22d3bf">contour</code>` 型)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

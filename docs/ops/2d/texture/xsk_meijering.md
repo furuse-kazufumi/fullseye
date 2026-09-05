@@ -17,7 +17,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Meijering neuriteness フィルタ。skimage.filters.meijering をスケール
+sigma=1,2,3 の 3 段で適用し、細い曲線状構造(血管・神経突起など)を強調する
+(ヘッセ行列の固有値から尾根らしさを計算する点は Frangi 系と同様だが、
+Meijering は分岐点にも強く応答する)。
+
+``a``, ``b`` は未使用(sigma は固定)。出力は ``_norm`` で最大絶対値を 1 に
+正規化した符号なし強度画像。
 
 ## 詳しい使い方ガイド
 

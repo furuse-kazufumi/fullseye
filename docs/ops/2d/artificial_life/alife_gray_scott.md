@@ -17,7 +17,16 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Gray-Scott reaction-diffusion seeded by the image.
+
+Two coupled species on a torus,
+    u_t = Du*lap(u) - u v^2 + F (1 - u)
+    v_t = Dv*lap(v) + u v^2 - (F + K) v
+with Du=0.16, Dv=0.08. The image seeds v (the autocatalyst) while u starts
+from the depleted complement, so bright input pixels are the nuclei from
+which spots / stripes / labyrinths grow. ``a`` sets the feed rate
+F = 0.02 + 0.06a *and* the number of integration steps T = 8 + int(20a);
+``b`` sets the kill rate K = 0.05 + 0.02b. Returns the normalised v field.
 
 ## 詳しい使い方ガイド
 

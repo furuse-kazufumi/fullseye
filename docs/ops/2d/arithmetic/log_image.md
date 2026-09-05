@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+``log1p(x) / log(2)`` で [0,1] を [0,1] に写す対数圧縮(x=1 で 1 になる
+正規化つき)。明部を圧縮し暗部のディテールを持ち上げる、``exp_image`` と逆の
+トーンカーブ。HALCON の ``log_image``（Calculate the logarithm of an image.）
+の代役。
+
+``a``, ``b`` は未使用。ゲイン付き対数変換が欲しい場合は
+``lut`` の ``log_gain`` 分岐(``a`` でゲインを振れる、ただし SEED には未登録)
+に近い実装が別途ある。
 
 ## 詳しい使い方ガイド
 

@@ -1,0 +1,43 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tb_range_doppler_map — 2D <code style="color:#22d3bf">typed</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">beatcube</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_range_doppler_map&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>ビートキューブの2次元FFT -&gt; `<code style="color:#22d3bf">(n_doppler, n_range)</code>` の振幅マップ。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>Fast time transforms to <b>range</b> (last axis, not shifted: bin `<code style="color:#22d3bf">j</code>` is</p>
+<p>`<code style="color:#22d3bf">j * c*f_s/(2*S*N_s)</code>` metres, and a physical range is always positive so</p>
+<p>the whole `<code style="color:#22d3bf">[0, f_s)</code>` band is used). Slow time transforms to <b>velocity</b></p>
+<p>(middle axis, `<code style="color:#22d3bf">fftshift</code>`ed so the map is centred on zero velocity: bin</p>
+<p>`<code style="color:#22d3bf">i</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">(i - N_c//2) * lambda/(2*N_c*T_c)</code>` metres per second, positive =</p>
+<p>receding).</p>
+<p>The antenna axis is collapsed by *combine*: `<code style="color:#22d3bf">&quot;incoherent&quot;</code>` (default) is the</p>
+<p><b>mean of the magnitudes</b>, which is angle independent and therefore the</p>
+<p>right default for detection; `<code style="color:#22d3bf">&quot;coherent&quot;</code>` is the <b>magnitude of the mean</b>,</p>
+<p>i.e. a beam pointed at boresight, which attenuates an off-boresight target on</p>
+<p>purpose. `<code style="color:#22d3bf">antenna=k</code><code style="color:#22d3bf"> uses element </code><code style="color:#22d3bf">k</code>` alone. For a single-element cube</p>
+<p>all three agree exactly.</p>
+<p>`<code style="color:#22d3bf">normalize=True</code><code style="color:#22d3bf"> divides by </code><code style="color:#22d3bf">N_c * N_s</code>`, so a bin-centred target of</p>
+<p>amplitude `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> peaks at exactly </code><code style="color:#22d3bf">a</code>` (measured: 1.0 for a unit target,</p>
+<p>absolute error 0.0). The default `<code style="color:#22d3bf">False</code>` keeps the raw FFT magnitude.</p>
+<p>No window is applied — compose :func:<code style="color:#22d3bf">fmcw_window_apply</code> first if you want</p>
+<p>one. The output is a plain 2-D float64 array, so every 2-D operator in</p>
+<p>Fullseye (threshold, morphology, labelling, blob measurement — the pieces a</p>
+<p>CFAR detector is made of) applies to it directly.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a real-valued cube (it would put a mirror ghost of</p>
+<p>every target at a fabricated range), fewer than 2 chirps or 2 samples, an</p>
+<p>out-of-range *antenna* index, an unknown *combine*, a cube over the element</p>
+<p>cap, an FFT that overflows to NaN, or NaN/Inf on the way in.</p>
+<p>Typed bridge of the rangedoppler op `<code style="color:#22d3bf">range_doppler_map</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">typed</code>)</h3>
+<p><a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_angle_3points">tb_angle_3points</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

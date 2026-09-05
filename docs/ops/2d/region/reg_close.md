@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+領域（region）の二値クロージング（膨張してから侵食）。HALCON の ``closing_circle``（Close a region with a circular structuring element.）に相当。
+
+``a`` が反復回数を ``1〜4``（``_it(a)``）に振る。``b`` は未使用。細い切れ込みや小さな穴を埋める。``border_value=1`` を指定しているため画像端は前景として扱われる。
 
 ## 詳しい使い方ガイド
 

@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;fast_threshold&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">fast_threshold</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → region</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>固定しきい値による二値化。`<code style="color:#22d3bf">x</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">(a, a+0.5+0.5b)</code><code style="color:#22d3bf"> の帯域に入る画素を前景(1)とする（</code><code style="color:#22d3bf">threshold</code><code style="color:#22d3bf"> seed op と同じ </code><code style="color:#22d3bf">_sh_threshold</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">fixed</code>` 分岐）。a が下限、b が帯域幅（上限）を振る。</p>
+<p>HALCON の `<code style="color:#22d3bf">fast_threshold</code>`（大域しきい値による高速な二値化、通常は単純な閾値以上/以下の判定）に相当するが、この実装は下限・上限の両方を持つ帯域しきい値である点、および高速化のための整数近似などは行っていない点で近似。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ガウス平滑化(OpenCV 実装)。ガウスカーネルによる標準的なぼかしで、box filter よりリンギングが出にくい。
+
+HALCON の `gauss_filter`(Smooth using discrete Gauss functions.)に相当。実装は ``cv2.GaussianBlur(v, (0,0), sigmaX=0.3+2.7*a)`` —— カーネルサイズを指定せず ``(0,0)`` にすることで OpenCV に σ から自動算出させている。a は σ を0.3〜3.0 に振る。b は未使用。
 
 ## 詳しい使い方ガイド
 

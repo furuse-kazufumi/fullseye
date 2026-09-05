@@ -17,7 +17,31 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `signal → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+STFT magnitude spectrogram -> ``(freqs, times, S)`` with ``S`` shape
+    ``(n_freqs, n_frames)``. Hann-windowed; *hop* defaults to ``win//2``.
+
+    **Same raw convention as :func:`spectrum`, but a different divisor.** Each
+    column is the unnormalised ``|rfft(frame * hann(win))|``, so it is not an
+    amplitude either — and dividing by ``2/win`` is *wrong* here, because the
+    Hann window has already thrown away part of the signal. The correct one-sided
+    amplitude conversion divides by the window's coherent gain::
+
+        w = np.hanning(win)
+        amp = S * (2.0 / w.sum())        # bins 1 .. win/2-1; DC / Nyquist: 1/w.sum()
+
+    Measured on a unit sine at a bin centre (``rate = 16000`` Hz, 1000 Hz,
+    amplitude exactly 1.0, ``win = 256``): the raw column peak is
+    ``63.7497786196906``; ``* 2/win`` gives ``0.49804514546633283`` (too small by
+    exactly the Hann coherent gain ``sum(w)/win = 0.498046875``), while
+    ``* 2/sum(w)`` gives ``0.9999965273676957``. Only the second one is the
+    amplitude that was actually in the signal.
+
+    Peak *positions*, frame-to-frame ratios and any dB *difference* are unaffected
+    by either factor. This function returns magnitudes only — the phase is
+    discarded, so it cannot be inverted; use ``acoustics.stft`` / ``acoustics.istft``
+    for a round-trip.
+
+Typed bridge of the 1d op ``spectrogram`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``rate`` (default 1) and ``b`` drives ``win`` (default 256).
 
 ## 参考(サンプルデータ・文献)
 

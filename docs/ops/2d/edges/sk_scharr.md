@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Scharr 勾配の大きさ。skimage の ``filters.scharr`` をそのまま呼び、水平/垂直それぞれの Scharr カーネル(3x3)の応答を合成した勾配強度を返す。
+
+HALCON の `edges_image`(Extract edges using Deriche, Lanser, Shen, or Canny filters.)に相当(近似。アルゴリズムは異なる)。Sobel より回転対称性(方向によらず応答が均一)が良いとされるカーネル。a, b は未使用 —— スケールや閾値の調整点が無く、常に固定カーネルで一発計算する軽量なエッジ検出。
 
 ## 詳しい使い方ガイド
 

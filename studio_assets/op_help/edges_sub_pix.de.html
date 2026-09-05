@@ -4,7 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;edges_sub_pix&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">edges_sub_pix</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → contour</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>サブピクセル精度のエッジ点抽出。勾配とその法線方向(``gradient_</p>
+<p>normals`<code style="color:#22d3bf">)を求め、しきい値(</code><code style="color:#22d3bf">0.15+0.5*a</code>`)を超える画素を連結成分化した</p>
+<p>後、放物線当てはめで各点をサブピクセル位置へ精密化する(``subpixel_</p>
+<p>refine_edges`<code style="color:#22d3bf">、</code><code style="color:#22d3bf">ops</code>` 側の同名 op と共有する実装 ―― 2026-09-02 修正で</p>
+<p>真の意味でサブピクセルになった。旧実装は整数画素座標をそのまま返して</p>
+<p>いた)。HALCON の `<code style="color:#22d3bf">edges_sub_pix</code>`（Extract sub-pixel precise edges using</p>
+<p>Deriche, Lanser, Shen, or Canny filters.）に相当。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がエッジ強度のしきい値を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">Leitfaden zur Familie gallery2d_contour_measure</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

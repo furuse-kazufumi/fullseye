@@ -4,7 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;abs_image&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">abs_image</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → image</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>画素値の絶対値を取る(`<code style="color:#22d3bf">np.abs</code><code style="color:#22d3bf">)。fullseye の </code><code style="color:#22d3bf">image</code>` は既に [0,1] 契約</p>
+<p>(非負)なので、通常の画像に対しては何も変えない<b>恒等写像</b>として働く。差分</p>
+<p>画像など符号つきの中間結果を直接渡したときだけ意味を持つ。HALCON の</p>
+<p>`<code style="color:#22d3bf">abs_image</code>`（Calculate the absolute value (modulus) of an image.）の代役。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。clip 前の生値 </code><code style="color:#22d3bf">v</code><code style="color:#22d3bf"> にそのまま </code><code style="color:#22d3bf">abs</code>` を掛けている点に</p>
+<p>注意(他の pointwise 分岐は `<code style="color:#22d3bf">x = clip(v,0,1)</code><code style="color:#22d3bf"> を使うが、この分岐だけ </code><code style="color:#22d3bf">v</code>`</p>
+<p>を直接見る)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

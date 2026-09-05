@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;zoom_region&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">zoom_region</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">region → region</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>領域を等方（縦横同倍率）にズームする。倍率 `<code style="color:#22d3bf">s = 0.7+0.6a</code><code style="color:#22d3bf">（0.7〜1.3 倍）で中心基準に拡大縮小し、境界外は鏡映（reflect）で埋めたのち </code><code style="color:#22d3bf">_rebinarise</code>` で 0.5 しきい値により二値領域に戻す。b は未使用。</p>
+<p>HALCON の `<code style="color:#22d3bf">zoom_region</code><code style="color:#22d3bf">（領域を指定倍率でズームする演算）に相当する近似。縦横独立の倍率を持つ </code><code style="color:#22d3bf">zoom_image_factor</code>` とは異なり単一倍率のみ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">Leitfaden zur Familie gallery2d_geometry</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

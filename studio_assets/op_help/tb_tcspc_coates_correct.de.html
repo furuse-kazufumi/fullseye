@@ -3,7 +3,34 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">counts</code> → <code style="color:#22d3bf">counts</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_tcspc_coates_correct&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">counts → counts</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Undo TCSPC pile-up exactly (Coates&#x27;s estimator) — the early-photon bias.</p>
+<p>Classical TCSPC records <b>at most one photon per excitation cycle</b>: the</p>
+<p>first one. Late bins are therefore starved, because the cycles in which an</p>
+<p>early photon arrived never reach them, and the measured histogram is biased</p>
+<p>toward short arrival times — a dToF depth read straight off a piled-up</p>
+<p>histogram is *too close*, and a fluorescence lifetime is *too short*.</p>
+<p>Coates&#x27;s estimator inverts that exactly. With `<code style="color:#22d3bf">N_k</code>` the measured counts in</p>
+<p>bin `<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">C</code>` the number of excitation cycles, the number of cycles that</p>
+<p>survived to reach bin `<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">D_k = C - sum_{j&lt;k} N_j</code>`, the per-cycle</p>
+<p>detection probability in that bin is `<code style="color:#22d3bf">p_k = N_k / D_k</code>` and the pile-up-free</p>
+<p>per-cycle intensity is `<code style="color:#22d3bf">lambda_k = -ln(1 - p_k)</code>`. This op returns</p>
+<p>`<code style="color:#22d3bf">C * lambda_k</code>` — the histogram the same scene would have produced if the</p>
+<p>detector could record every photon — so it is directly comparable to the</p>
+<p>measured one.</p>
+<p>This is an <b>exact</b> inverse, not a linearisation: build a histogram from a</p>
+<p>known `<code style="color:#22d3bf">lambda</code><code style="color:#22d3bf"> through the forward model </code>`N_k = C * exp(-sum_{j&lt;k}</p>
+<p>lambda_j) * (1 - exp(-lambda_k))`<code style="color:#22d3bf"> and Coates returns </code><code style="color:#22d3bf">lambda</code>` to machine</p>
+<p>precision (measured max relative error 1.6e-15 in the tests, on a pile-up so</p>
+<p>severe that the last bin was suppressed to 14.8% of its true counts).</p>
+<p>*hist* is the 1-D measured histogram (counts per bin); *cycles* the number of</p>
+<p>excitation cycles (laser pulses) that produced it.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: negative, non-finite or non-1-D *hist*, a</p>
+<p>non-positive or non-integer *cycles*, a histogram whose total exceeds</p>
+<p>*cycles* (impossible: at most one photon per cycle — a sure sign that</p>
+<p>*cycles* is wrong or the data are not first-photon TCSPC), and any bin that</p>
+<p>consumed every remaining cycle (`<code style="color:#22d3bf">p_k = 1</code><code style="color:#22d3bf">, where </code><code style="color:#22d3bf">-ln(0)</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">inf</code>`).</p>
+<p>Typed bridge of the photon op `<code style="color:#22d3bf">tcspc_coates_correct</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

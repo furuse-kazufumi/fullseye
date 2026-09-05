@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Canny エッジ検出(領域版、OpenCV 実装)。sk_canny と同じアルゴリズムだが、OpenCV 版はガウス平滑化の σ ではなく 2 本のしきい値を直接指定する API になっている。
+
+HALCON の `edges_image` に相当。実装は ``cv2.Canny(_u8(v), threshold1=int(50+100*a), threshold2=int(100+150*b))`` の結果を真偽値化したもの —— a は下側しきい値(弱いエッジの採用ライン)を 50〜150 に、b は上側しきい値(強いエッジの確定ライン)を 100〜250 に振る。a を大きく b を小さく振ると下側が上側を上回ることがあり、その場合の挙動は OpenCV の実装依存になる点に注意。
 
 ## 詳しい使い方ガイド
 

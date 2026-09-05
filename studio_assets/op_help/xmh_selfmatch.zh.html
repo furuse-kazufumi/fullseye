@@ -3,7 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xmh_selfmatch&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → image</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>自己相似マップ(`<code style="color:#22d3bf">mahotas.template_match</code>` による自己テンプレートマッチング)。画像中心から切り出した小さなパッチを画像全体に対してテンプレートマッチングし、パッチに似た場所ほど 1 に近い値になるよう正規化して返す。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はパッチの半径(3+8 px 相当)を振る —— 大きくするほど広い範囲の類似度になる。</code><code style="color:#22d3bf">b</code>` は未使用。周期的なテクスチャや繰り返しパターンの検出に使える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

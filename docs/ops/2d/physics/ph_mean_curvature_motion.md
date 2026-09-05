@@ -17,7 +17,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Mean-curvature motion / curve-shortening flow (HALCON ``mean_curvature_flow``).
+
+Level-set curvature flow  I_t = |grad I| * div(grad I / |grad I|), discretised
+in the numerically stable form
+   I_t = (I_xx I_y^2 - 2 I_x I_y I_xy + I_yy I_x^2) / (I_x^2 + I_y^2 + eps).
+Each level curve moves inward proportionally to its curvature, so a bright disk
+shrinks and its boundary shortens (denoising / small-structure removal).
+``a`` sets the step count; ``b`` is unused.
 
 ## 詳しい使い方ガイド
 

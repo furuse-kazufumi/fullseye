@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+線形の階調スケーリング ``clip((0.5 + 1.5*a) * x + (b - 0.5), 0, 1)``。
+傾き(コントラスト)とオフセット(明るさ)を同時に動かすリニア LUT で、
+はみ出した値は [0,1] にクリップされる。HALCON の ``scale_image``（Scale the
+gray values of an image.）に相当。
+
+``a`` は傾き(Mult 相当)を 0.5〜2.0 の範囲で、``b`` はオフセット(Add 相当)を
+-0.5〜+0.5 の範囲で振る。両方が使われる。
 
 ## 詳しい使い方ガイド
 

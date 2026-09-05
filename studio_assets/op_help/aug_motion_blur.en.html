@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_motion_blur&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>Linear motion blur: convolution with a normalised LINE (box) kernel, the point-spread function of a constant-velocity camera/scene pan during the exposure. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> sets the streak length </code><code style="color:#22d3bf">L = 3 + 20*a</code><code style="color:#22d3bf"> px (forced odd and clamped so the kernel never exceeds the image), </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> sets the streak angle </code><code style="color:#22d3bf">b*180</code><code style="color:#22d3bf"> degrees. Border handling is </code><code style="color:#22d3bf">reflect</code>` so the frame edge does not darken. Energy-preserving (kernel sums to 1).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -17,7 +17,17 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `cimage → cimage`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Multiply a **centred** spectrum by a filter ``H`` -> ``(H, W)`` complex128.
+
+    The honest primitive under ``ops.lowpass`` / ``ops.highpass``, but
+    **complex-preserving**: the filtered spectrum is returned as a complex field
+    (not immediately inverted and real-cast), so it can be chained, inspected, or
+    handed to :func:`cx_ifft`. ``H`` is a same-shape transfer function laid out in
+    the *centred* convention of :func:`cx_fft` (DC at the centre); it may be real
+    (a magnitude mask) or complex (a phase-shifting filter). A real ``cx`` is
+    FFT'd first (module convenience).
+
+Typed bridge of the 2d op ``cx_apply_transfer_function`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

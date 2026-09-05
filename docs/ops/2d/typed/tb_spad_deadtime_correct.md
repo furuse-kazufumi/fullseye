@@ -17,7 +17,35 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `counts → counts`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Recover the true photon rate from a dead-time-distorted measured rate.
+
+    The exact inverse of the **non-paralysable** law of
+    :func:`spad_deadtime_apply`::
+
+        n = m / (1 - m*tau)
+
+    A round trip ``apply -> correct`` is exact to machine precision (measured max
+    elementwise relative error 6.0e-16 over 2000 rates spanning 1e3 to 5e7 Hz at
+    ``tau = 50 ns``, where the measured rate reaches 71.4% of the 20 MHz
+    saturation rate).
+
+    **There is deliberately no paralysable inverse.** ``m = n*exp(-n*tau)`` is not
+    injective — every measured rate below the maximum ``1/(e*tau)`` corresponds to
+    *two* true rates, one below and one above ``1/tau`` — so returning one of them
+    would be a fabrication dressed as a correction. Resolve the branch with an
+    independent measurement (e.g. an attenuator step) and invert it yourself.
+
+    *measured_hz* is a 1-D array of measured rates in counts per second;
+    *dead_time_ns* the dead time in nanoseconds (default 50, the same
+    placeholder :func:`spad_deadtime_apply` uses — replace it with the
+    datasheet value). Returns the corrected true rates as a float64 1-D array.
+
+    **Raises** ``ValueError``: negative, non-finite or non-1-D *measured_hz*, a
+    non-positive *dead_time_ns*, and — instead of returning ``inf`` or a negative
+    rate — any measured rate at or above the saturation rate ``1/tau``, which no
+    non-paralysable detector can ever produce.
+
+Typed bridge of the photon op ``spad_deadtime_correct`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``dead_time_ns`` (default 50); ``b`` is unused.
 
 ## 参考(サンプルデータ・文献)
 

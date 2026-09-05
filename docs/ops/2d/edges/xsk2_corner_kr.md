@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Kitchen-Rosenfeld コーナー検出応答。``skimage.feature.corner_kitchen_rosenfeld`` を呼び、NaN を 0 に置き換えてから ``signed01`` で符号付き応答を [0,1] に写像する。
+
+a, b は未使用。等高線の曲率とエッジ強度から求まる古典的なコーナー検出器で、平坦部やエッジ上では 0 付近、コーナーで大きな値になる。
 
 ## 詳しい使い方ガイド
 

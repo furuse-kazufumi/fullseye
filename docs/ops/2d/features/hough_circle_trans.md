@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+円検出のための Hough 変換。エッジマスクに対して半径 4〜19(3 刻み)の
+円テンプレート群で ``skimage.transform.hough_circle`` を計算し、全半径での
+最大応答を [0,1] に正規化して返す。HALCON の ``hough_circle_trans``
+（Return the Hough-Transform for circles with a given radius.）に相当
+(HALCON は半径を明示指定するが、ここでは固定レンジを総当たりする近似)。
+
+``a`` がエッジ抽出の閾値を振る。``b`` は未使用 ―― 探索する半径レンジは
+コード側に固定されており、``b`` で半径を選ぶことはできない。
 
 ## 詳しい使い方ガイド
 

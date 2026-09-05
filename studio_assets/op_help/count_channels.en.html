@@ -4,7 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;count_channels&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">count_channels</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">color → feature</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>画像のチャンネル数を数える。HALCON の `<code style="color:#22d3bf">count_channels</code>`（画像のチャンネル</p>
+<p>数を数える）に相当。</p>
+<p>`<code style="color:#22d3bf">ndim == 3</code>` ならその最後の軸の長さ（チャンネル数）、そうでなければ</p>
+<p>（グレースケール扱いで）1 を返す。a, b は未使用。出力は <code style="color:#22d3bf">feature</code></p>
+<p>（スカラー 1 個）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+検出直線分の本数(OpenCV ``cv2.createLineSegmentDetector`` による Line Segment Detector、LSD)。画像中から検出された直線セグメントの本数を feature として返す(検出 0 件のとき ``None`` が返る実装のため、その場合は 0 として扱う)。
+
+``a``, ``b`` は未使用。エッジの直線的な構造の多さ(建築物、部品の輪郭など)を数える指標になる。
 
 ## 詳しい使い方ガイド
 

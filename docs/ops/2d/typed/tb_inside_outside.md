@@ -17,7 +17,24 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `points → signal`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+スーパー2次曲面の内外関数 F(表面=1, 内部<1, 外部>1)。
+
+    ``F(X) = (|x/a1|^(2/eps2) + |y/a2|^(2/eps2))^(eps2/eps1) + |z/a3|^(2/eps1)``。
+    ``R, t`` で姿勢(``X_body = R.T @ (X - t)``)。
+
+    Parameters
+    ----------
+    points : array_like (N,3)
+    a : (a1,a2,a3) 半径(すべて正)
+    eps : (eps1,eps2) 形状指数(> 0)
+    R : (3,3) 回転(列 = body 軸の world 表現)、既定 = 単位
+    t : (3,) 平行移動(body 中心の world 位置)、既定 = 原点
+
+    Returns
+    -------
+    np.ndarray, shape (N,)
+
+2-D 進化レジストリへ橋渡しした 3d の op ``inside_outside``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 
 ## 参考(サンプルデータ・文献)
 

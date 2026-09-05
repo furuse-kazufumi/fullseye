@@ -21,9 +21,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 Number of connected components in the region (HALCON `count_obj`).
 
-    2026-08-30: 8 連結既定に修正(HALCON パリティ — `connection`/計数の既定は
-    8 連結。従来は scipy.ndimage.label の既定 = 4 連結で、対角接触した 2 画素を
-    2 個と数えていた: KNOWN_ISSUES #1)。旧 4 連結は connectivity=4 で。
+2026-08-30: 8 連結既定に修正(HALCON パリティ — `connection`/計数の既定は
+8 連結。従来は scipy.ndimage.label の既定 = 4 連結で、対角接触した 2 画素を
+2 個と数えていた: KNOWN_ISSUES #1)。旧 4 連結は connectivity=4 で。
 
 ## 詳しい使い方ガイド
 

@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+AGAST 特徴点数(OpenCV AGAST 検出器、FAST の適応的木構造版)。検出されたキーポイント数を feature として返す。
+
+``a`` は検出閾値(``int(5+40*a)`` で 5〜45。高いほど検出数が減る)を振る。``b`` は未使用。実装注記: cv2 5.0.0 で ``AgastFeatureDetector_create`` が ``cv2.xfeatures2d`` に移動したため、両方の場所を ``getattr`` で試す互換コードになっている(xcv3_brisk_count と同じ事情)。
 
 ## 詳しい使い方ガイド
 

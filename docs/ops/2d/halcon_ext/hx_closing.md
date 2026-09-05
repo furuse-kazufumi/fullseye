@@ -19,7 +19,11 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+円板構造要素で region をクロージング(膨張→収縮)する。HALCON の
+``closing``(region をクローズする)に相当。
+
+半径 ``r = 1 + int(a*4)`` の円板で ``scipy.ndimage.binary_closing`` を呼ぶ。
+``b`` は未使用。小さな穴や切れ目を埋めつつ全体形状を保つ。
 
 ## 詳しい使い方ガイド
 

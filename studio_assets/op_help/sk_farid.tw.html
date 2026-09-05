@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_farid&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">edges_image</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">image → image</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>Farid-Simoncelli 勾配の大きさ。skimage の `<code style="color:#22d3bf">filters.farid</code>` をそのまま呼ぶ。5 タップの最適化された微分カーネルによる勾配強度で、Sobel/Scharr よりさらに回転対称性(方向誤差)が小さいとされる。</p>
+<p>HALCON の <code style="color:#22d3bf">edges_image</code> に相当(近似)。a, b は未使用。sk_scharr と同系統の「まず試すエッジ検出」だが、こちらは 5x5 相当のより大きなサポートを使う分ノイズにやや強い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

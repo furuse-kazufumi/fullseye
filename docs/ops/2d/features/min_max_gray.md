@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+画像の最大階調値のみを返す(``x.max()``)。HALCON の ``min_max_gray``
+（Determine the minimum and maximum gray values within regions.）は本来
+最小値と最大値の**両方**を返す演算子だが、この代役では最大値のみを実装
+しており最小値の情報は失われる(データが欠落した近似 ―― 名前が示す
+「min_max」の半分しか計算していない点は正直に明記しておく)。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

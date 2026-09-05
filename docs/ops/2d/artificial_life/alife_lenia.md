@@ -17,7 +17,20 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Lenia continuous cellular automaton (Bert Chan, Complex Systems 2019).
+
+Lenia generalises Conway's Life to a *continuous* state space, a continuous
+neighbourhood and a continuous time step. The field u starts as the image.
+A normalised Gaussian ring kernel K of radius R (peaking at relative radius
+0.5) gives the potential U = K (*) u as a circular convolution; the growth
+mapping G(U) = 2 exp(-(U-mu)^2 / (2 sigma^2)) - 1 is in [-1, 1] and is
+integrated explicitly as u <- clip(u + dt * G(U), 0, 1).
+
+``a`` sets the growth centre mu = 0.08 + 0.25a, its width
+sigma = 0.03 + 0.05a and the time step dt = 0.10 + 0.15a; ``b`` sets the
+number of steps 1 + int(19b). The output is deliberately **not** binarised
+-- keeping intermediate values is exactly what separates Lenia from a
+discrete Life rule.
 
 ## 詳しい使い方ガイド
 

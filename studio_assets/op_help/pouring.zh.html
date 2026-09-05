@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;pouring&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">pouring</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → region</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>分水嶺法（watershed）による領域分割の境界抽出。勾配画像（Sobel 振幅）を地形とみなし、暗い領域（`<code style="color:#22d3bf">x &lt; 0.2+0.3a</code><code style="color:#22d3bf">）を種（マーカー）として分水嶺を計算、</code><code style="color:#22d3bf">skimage.segmentation.find_boundaries</code>` で境界を前景として返す。b は未使用。</p>
+<p>HALCON の `<code style="color:#22d3bf">pouring</code><code style="color:#22d3bf">（水を注ぐように画素値の低い場所から領域を満たしていく古典的な pouring アルゴリズムで分割する演算）に相当する近似 —— アルゴリズムの詳細は異なるが、低輝度領域を起点に領域を広げるという発想は共通。</code><code style="color:#22d3bf">watersheds</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">watersheds_threshold</code>` と実装を共有する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

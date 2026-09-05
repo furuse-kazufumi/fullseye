@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+SIFT 特徴点数(OpenCV ``cv2.SIFT_create().detect``)。画像から検出されたスケール不変特徴点(SIFT keypoints)の個数を feature として返す —— テクスチャの複雑さ/マッチングに使える特徴点の豊富さの指標になる。
+
+``a`` は検出上限数 ``nfeatures``(``int(50+450*a)`` で 50〜500)を振る —— 上限に達するまでは実際の検出数がそのまま返るので、上限に張り付いていないか確認が要る。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

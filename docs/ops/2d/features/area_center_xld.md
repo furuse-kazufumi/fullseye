@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `contour → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+最大の点数を持つ輪郭 1 本について、シューレース公式(靴紐公式)で
+多角形面積を求め、画像の全画素数で正規化して返す。HALCON の
+``area_center_xld``（Area and center of gravity (centroid) of contours and
+polygons.）は面積に加えて重心も返す演算子だが、この代役では面積のみを
+返す(重心情報は失われる近似 ―― ``feature`` ソートが 1 スカラーである
+契約上の制約)。
+
+``a``, ``b`` は未使用。輪郭が無ければ 0 を返す。
 
 ## 詳しい使い方ガイド
 

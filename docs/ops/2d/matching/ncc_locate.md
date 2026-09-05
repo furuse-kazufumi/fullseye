@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → match`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+正規化相互相関（NCC）によるテンプレートマッチングで最良位置を探す。HALCON の ``find_ncc_model``（Find the best matches of an NCC model in an image.）に相当。
+
+``a``, ``b`` は未使用——テンプレートは引数ではなく ``set_match_template`` でスレッドローカルな ``_MATCH_CTX`` に事前登録しておく（マッチング系 op 共通の作法、``_MatchCtx`` の docstring 参照）。``_ncc_map``（NCC 相関マップ、Lewis 1995 の定義で ``[-1,1]``）を計算し、その最大値の位置を ``[相関値, y, x]`` で返す。テンプレート未設定、または入力が 2 次元画像でない場合は ``[0,0,0]``（no-match）を返す——fail-closed。回転・スケール変化には非対応（``_shape_locate`` は回転を扱う）。
 
 ## 詳しい使い方ガイド
 

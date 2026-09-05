@@ -17,7 +17,18 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Thin-plate-spline warp over a 5x5 control grid (Bookstein, TPAMI 1989).
+
+The 3x3 interior control points are displaced by the deterministic smooth
+field ``d = amp * [sin(2 pi f gx), cos(2 pi f gy)]`` (gy, gx = the control
+point's normalised coordinates), the 16 border control points are pinned so
+the frame stays anchored. The backward map is the TPS interpolant fitted
+from the *displaced* control points back to the original ones -- the unique
+minimum-bending-energy interpolant, i.e. the surface a thin metal plate
+would take -- and it is evaluated at every destination pixel before bilinear
+resampling. ``a`` sets the amplitude ``amp = 0.15*a*min(H,W)``, ``b`` the
+spatial frequency ``f = 0.5 + 1.5b``. ``a = 0`` leaves the control points
+where they are, so the solved map is the identity (up to sub-pixel resampling error).
 
 ## 詳しい使い方ガイド
 

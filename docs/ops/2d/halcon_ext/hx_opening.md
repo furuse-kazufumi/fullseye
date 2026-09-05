@@ -19,7 +19,11 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+円板構造要素で region をオープニング(収縮→膨張)する。HALCON の
+``opening``(region をオープンする)に相当。
+
+半径 ``r = 1 + int(a*4)`` の円板で ``scipy.ndimage.binary_opening`` を呼ぶ。
+``b`` は未使用。細い突起や小さな孤立点を除去しつつ全体形状を保つ。
 
 ## 詳しい使い方ガイド
 

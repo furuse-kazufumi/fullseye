@@ -17,7 +17,10 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+full_domain: expand the domain of the image to the full rectangle. A plain
+numpy array already carries a full domain, so this is the identity -- the
+genuine, correct behaviour of full_domain for such images. ``a``/``b``
+ignored.
 
 ## 詳しい使い方ガイド
 

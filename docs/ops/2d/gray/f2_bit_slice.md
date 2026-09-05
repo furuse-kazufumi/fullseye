@@ -19,7 +19,8 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Extract one bit-plane of the image after 8-bit quantisation. ``a`` selects
+the plane (0 = LSB .. 7 = MSB); ``b`` is ignored. Returns a {0,1} image.
 
 ## 詳しい使い方ガイド
 

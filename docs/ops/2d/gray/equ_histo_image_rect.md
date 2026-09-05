@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ブロック単位のヒストグラム平坦化。画像を ``nb x nb``(``nb=2+4*a``)
+個のブロックに分割し、各ブロックごとに独立して(64 ビンの)ヒストグラム
+平坦化を行う ―― 局所的な照明ムラに対して ``equ_histo_image``(画像全体を
+一括処理)より頑健だが、ブロック境界に段差(ブロックアーティファクト)が
+出ることがある。HALCON の ``equ_histo_image_rect``（Histogram
+linearization within a rectangluar mask.）に相当。
+
+``a`` がブロック分割数を 2〜6 の範囲で振る。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+画像全体のヒストグラム平坦化(累積分布関数によるトーンカーブ生成、256
+ビン)。暗部・明部に偏った階調分布を均して見かけのコントラストを上げる古典的
+な手法。HALCON の ``equ_histo_image``（Histogram linearization of images）
+に相当。
+
+``a``, ``b`` は未使用。局所版(ブロックごとに平坦化)が欲しい場合は
+``equ_histo_image_rect`` を使う。
 
 ## 詳しい使い方ガイド
 

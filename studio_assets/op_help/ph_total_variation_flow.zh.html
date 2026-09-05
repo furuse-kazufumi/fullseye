@@ -3,7 +3,14 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;ph_total_variation_flow&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → image</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Total-variation (Rudin-Osher-Fatemi) denoising flow (no HALCON operator, &quot;&quot;).</p>
+<p>Gradient descent of the ROF energy TV(I) + (lam/2)||I - I0||^2:</p>
+<p>I_t = div(grad I / |grad I|) - lam (I - I0).</p>
+<p>The TV term (curvature of the level sets) flattens noise while preserving sharp</p>
+<p>edges; the fidelity term keeps the result anchored to the noisy input I0 so it</p>
+<p>denoises rather than collapsing to a constant. `<code style="color:#22d3bf">a</code>` sets the step count,</p>
+<p>`<code style="color:#22d3bf">b</code>` the fidelity weight lam.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

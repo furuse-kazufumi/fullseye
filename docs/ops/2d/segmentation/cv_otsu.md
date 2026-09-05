@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+大津の判別分析法による大域しきい値二値化(OpenCV 実装)。sk_otsu と同じアルゴリズムだが、内部で 8 bit に量子化してから計算する点が異なる(結果がわずかにずれ得る)。
+
+HALCON の `binary_threshold` に相当。実装は ``cv2.threshold(_u8(v), 0, 255, THRESH_BINARY+THRESH_OTSU)`` の結果を真偽値化したもの。a, b は未使用。
 
 ## 詳しい使い方ガイド
 

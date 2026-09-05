@@ -17,7 +17,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+radon_sinogram: the Radon transform rendered as an HxW sinogram image.
+
+Row ``i`` is the parallel-beam projection at angle ``theta_i`` (the image
+rotated by ``theta_i`` and summed down its columns); the W columns index the
+detector position. ``a`` sets the angular span (limited-angle tomography:
+span = 180deg * (0.25 + 0.75*a)); ``b`` is unused. The sinogram is rescaled
+to [0,1]. A rotationally symmetric object gives angle-independent (identical)
+rows; an off-centre point traces the classic sine wave.
 
 ## 詳しい使い方ガイド
 

@@ -19,7 +19,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+回転(``-20°〜+20°``、``a`` で決まる)とせん断(``b`` で決まる)を組み
+合わせた一般的なアフィン変換。中心を基準に ``ndimage.affine_transform`` を
+適用し、枠外は反射で埋める。HALCON の ``affine_trans_image``（Apply an
+arbitrary affine 2D transformation to images.）に相当(HALCON は任意の
+2x3/3x3 変換行列を直接渡せるが、ここでは回転+せん断の 2 パラメータ化に
+限定した近似)。
+
+``a`` が回転角、``b`` がせん断量を振る。両方が使われる。平行移動・独立な
+拡大縮小はこの op では表現できない。
 
 ## 詳しい使い方ガイド
 

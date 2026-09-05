@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;lines_facet&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">lines_facet</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">image → contour</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>線状構造（リッジ）を検出して輪郭（XLD contour）として返す。実装は Frangi フィルタ（`<code style="color:#22d3bf">skimage.filters.frangi</code><code style="color:#22d3bf">、多スケール σ=1..3 のリッジ強調）で線らしさを求め、閾値 </code><code style="color:#22d3bf">0.1+0.4a</code>` を超える連結成分の画素座標をそのまま輪郭点列として出力する。b は未使用。</p>
+<p>HALCON の `<code style="color:#22d3bf">lines_facet</code>`（局所多項式近似=ファセットモデルで線を検出する演算）とは検出原理が異なる近似 —— facet モデルによるサブピクセル位置推定は行わず、Frangi 応答の二値化領域を輪郭化しているだけなので、座標はサブピクセル精度を持たない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

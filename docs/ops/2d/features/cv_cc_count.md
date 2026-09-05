@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+連結成分数のカウント(1 スカラー特徴量、OpenCV 実装)。二値領域中の連結成分(前景の塊)の個数を数える —— 背景ラベル分の 1 を引いてから返す。
+
+HALCON の `connection`(Compute connected components of a region.)に相当(近似。分割結果ではなく個数のみを返す)。実装は ``cv2.connectedComponents(_u8(binm(v)))[0] - 1``。a, b は未使用。connectivity は OpenCV の既定(8 連結)のまま。
 
 ## 詳しい使い方ガイド
 

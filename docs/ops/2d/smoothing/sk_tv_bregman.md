@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+全変動ノイズ除去(TV denoising、Split-Bregman 法)。sk_tv と同じ TV正則化の考え方だが最適化アルゴリズムが異なり(Bregman 分割法)、収束が速いとされる。
+
+HALCON に直接対応するものは無い。実装は ``restoration.denoise_tv_bregman(v, weight=1.0+8.0*a)`` を ``[0,1]`` へ clip したもの —— a は weight を 1.0〜9.0 に振るが、この関数の weight は**小さいほど強く平滑化される**(sk_tv の weight とは符号の向きが逆 —— ``denoise_tv_chambolle`` は大きいほど強く、``denoise_tv_bregman`` は小さいほど強い。混同すると意図と逆方向に a を動かすことになるので注意)。b は未使用。
 
 ## 詳しい使い方ガイド
 

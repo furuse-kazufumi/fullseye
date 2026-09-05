@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+add_image_border: pad a reflected border of width ``w`` around the image
+and fit the bordered canvas back into the original HxW frame. ``a`` sets the
+border width w = 1 + round(a*6); ``b`` is ignored.
 
 ## 詳しい使い方ガイド
 

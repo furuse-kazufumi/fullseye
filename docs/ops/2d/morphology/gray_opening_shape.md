@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+円盤形(disk)構造要素を使うグレースケールオープニング。``gray_opening``
+との違いは構造要素の形だけで、演算そのもの(収縮→膨張)は同じ。HALCON の
+``gray_opening_shape``（Perform a gray value opening with a selected
+mask.）に相当(HALCON は矩形/円/八角形などから選べるが、ここでは円形に
+固定)。
+
+``a`` が構造要素の半径を 1〜4 の範囲(``_rad(a)``)で振る。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

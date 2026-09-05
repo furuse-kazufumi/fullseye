@@ -17,7 +17,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Gray-Scott reaction-diffusion (no HALCON operator, halcon="").
+
+Two coupled species u,v obeying
+   u_t = Du*lap(u) - u v^2 + F(1-u)
+   v_t = Dv*lap(v) + u v^2 - (F+kappa) v
+seeded from the input image. ``a`` -> feed F, ``b`` -> kill kappa (both mapped
+into the classic pattern-forming regime). Produces spots/stripes/labyrinth
+texture; u,v stay bounded so the returned (normalised v) is in [0,1].
 
 ## 詳しい使い方ガイド
 

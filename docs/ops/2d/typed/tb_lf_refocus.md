@@ -17,7 +17,29 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `lightfield → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Shift-and-add refocus: the synthetic-aperture image focused at *slope*.
+
+    Every view ``(v, u)`` is shifted by ``(-s*(v - v_c), -s*(u - u_c))`` — the
+    **minus** undoes the parallax of a point at slope ``s`` — and the shifted
+    views are averaged. Points at that slope add coherently and stay sharp;
+    everything else is smeared by an amount proportional to its slope
+    difference times the angular baseline. ``slope=0`` is the plane the array
+    was already focused on and returns the plain average of the views.
+
+    Ground truth it reproduces exactly (pinned in ``tests/test_lightfield.py``):
+    a single-layer field synthesised at slope ``s0`` and refocused at ``s0``
+    with ``edge="wrap"`` and an integer ``s0`` returns the original texture to
+    5.6e-16; sweeping the slope, the variance of the result peaks at ``s0``
+    (measured exactly on the sweep grid in all 18 texture/slope combinations
+    listed in the module docstring), and refocusing at ``-s0`` does *not* —
+    which is the check that catches a flipped shift sign.
+
+    Returns a ``(H, W)`` 2-D image.
+
+    **Raises** ``ValueError``: *lf* not a valid light field, a non-finite or
+    over-large *slope* (:data:`MAX_ABS_SLOPE`), unknown *interp* / *edge*.
+
+Typed bridge of the lightfield op ``lf_refocus`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

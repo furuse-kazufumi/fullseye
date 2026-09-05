@@ -19,7 +19,11 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+グレースケール膨張(``ndimage.grey_dilation``)。矩形構造要素内の最大値
+で画素を置き換え、暗い細部を埋める、``gray_erosion`` と対の演算。HALCON の
+``gray_dilation``（Perform a gray value dilation on an image.）に相当。
+
+``a`` が構造要素サイズを ``{3,5,7,9}`` で振る。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

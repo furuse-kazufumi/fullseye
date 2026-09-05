@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Farid-Simoncelli 勾配の大きさ。skimage の ``filters.farid`` をそのまま呼ぶ。5 タップの最適化された微分カーネルによる勾配強度で、Sobel/Scharr よりさらに回転対称性(方向誤差)が小さいとされる。
+
+HALCON の `edges_image` に相当(近似)。a, b は未使用。sk_scharr と同系統の「まず試すエッジ検出」だが、こちらは 5x5 相当のより大きなサポートを使う分ノイズにやや強い。
 
 ## 詳しい使い方ガイド
 

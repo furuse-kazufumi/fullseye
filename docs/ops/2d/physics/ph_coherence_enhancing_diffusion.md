@@ -17,7 +17,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Weickert coherence-enhancing diffusion (HALCON ``coherence_enhancing_diff``).
+
+Builds the structure tensor J_rho = G_rho * (grad I_sigma . grad I_sigma^T),
+eigendecomposes it, and diffuses with a tensor whose ALONG-structure eigenvalue
+grows with local coherence (mu1-mu2)^2 while the ACROSS-structure eigenvalue
+stays small — so noise is smoothed along coherent lines/flow without blurring
+across them. Update  I <- I + dt * div(D grad I). ``a`` sets the step count,
+``b`` the integration scale rho.
 
 ## 詳しい使い方ガイド
 

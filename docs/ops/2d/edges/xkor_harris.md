@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Harris コーナー応答。``kornia.feature.harris_response`` を呼び、符号付き応答を ``signed01`` で [0,1] に写像する（コーナーは正、エッジは負に出るHarris 応答の符号情報を保ったまま可視化域に収める）。
+
+a が Harris のスコア係数 k（``0.04 + 0.02 * a``、経験的に 0.04〜0.06 の範囲で使われる値）を振る。b は未使用。
 
 ## 詳しい使い方ガイド
 

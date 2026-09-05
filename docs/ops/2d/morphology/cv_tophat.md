@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+トップハット変換(top-hat、OpenCV 実装)。「元画像 − 開処理結果」を計算し、明るい背景の上にある、構造要素より小さい明るい特徴だけを抽出する。
+
+HALCON の `gray_tophat`(Perform a gray value top hat transformation on an image.)に相当。実装は ``cv2.morphologyEx(v, MORPH_TOPHAT, se)`` を正規化したもの、se は楕円形でサイズ ``3+2*int(a*3)`` —— a は構造要素サイズを 3〜9 に振る。b は未使用。
 
 ## 詳しい使い方ガイド
 

@@ -3,7 +3,14 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;ph_coherence_enhancing_diffusion&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → image</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Weickert coherence-enhancing diffusion (HALCON `<code style="color:#22d3bf">coherence_enhancing_diff</code>`).</p>
+<p>Builds the structure tensor J_rho = G_rho * (grad I_sigma . grad I_sigma^T),</p>
+<p>eigendecomposes it, and diffuses with a tensor whose ALONG-structure eigenvalue</p>
+<p>grows with local coherence (mu1-mu2)^2 while the ACROSS-structure eigenvalue</p>
+<p>stays small — so noise is smoothed along coherent lines/flow without blurring</p>
+<p>across them. Update  I &lt;- I + dt * div(D grad I). `<code style="color:#22d3bf">a</code>` sets the step count,</p>
+<p>`<code style="color:#22d3bf">b</code>` the integration scale rho.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

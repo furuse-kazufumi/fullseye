@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+局所ヒストグラム均等化(skimage ``filters.rank.equalize``)。円盤近傍ごとにヒストグラム均等化を行う適応的コントラスト強調で、大域的な ``equalize`` op より局所的な明暗ムラに強い。
+
+``a`` は円盤半径(``2+int(a*8)`` で 2〜10)を振る —— 大きいほど大域的な均等化に近づく。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

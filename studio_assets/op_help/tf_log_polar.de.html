@@ -3,7 +3,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tf_log_polar&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>log_polar: resample the image on a log-polar grid about its centre.</p>
+<p>Output row = log-radius (log-spaced from ~1px to `<code style="color:#22d3bf">rmax</code>`), output column =</p>
+<p>angle (0..2pi). A scaling of the source about the centre becomes a vertical</p>
+<p>(row) shift and a rotation becomes a horizontal (column) shift -- the defining</p>
+<p>property of the log-polar transform. `<code style="color:#22d3bf">a</code>` scales the maximum sampled radius;</p>
+<p>`<code style="color:#22d3bf">b</code>` adds a rotation offset (an angular shift) to demonstrate rotation -&gt;</p>
+<p>column-shift.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">Leitfaden zur Familie gallery2d_geometry</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

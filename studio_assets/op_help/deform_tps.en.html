@@ -3,7 +3,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;deform_tps&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>Thin-plate-spline warp over a 5x5 control grid (Bookstein, TPAMI 1989).</p>
+<p>The 3x3 interior control points are displaced by the deterministic smooth</p>
+<p>field `<code style="color:#22d3bf">d = amp * [sin(2 pi f gx), cos(2 pi f gy)]</code>` (gy, gx = the control</p>
+<p>point&#x27;s normalised coordinates), the 16 border control points are pinned so</p>
+<p>the frame stays anchored. The backward map is the TPS interpolant fitted</p>
+<p>from the *displaced* control points back to the original ones -- the unique</p>
+<p>minimum-bending-energy interpolant, i.e. the surface a thin metal plate</p>
+<p>would take -- and it is evaluated at every destination pixel before bilinear</p>
+<p>resampling. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> sets the amplitude </code><code style="color:#22d3bf">amp = 0.15*a*min(H,W)</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` the</p>
+<p>spatial frequency `<code style="color:#22d3bf">f = 0.5 + 1.5b</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">a = 0</code>` leaves the control points</p>
+<p>where they are, so the solved map is the identity (up to sub-pixel resampling error).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

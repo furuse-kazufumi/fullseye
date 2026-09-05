@@ -3,7 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;grad_dir&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → image</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>勾配方向（エッジの向き）を画像として返す。対応する HALCON op は指定されていない（fullseye 独自）。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。Sobel 応答から </code><code style="color:#22d3bf">atan2(Gy, Gx)</code><code style="color:#22d3bf"> で角度（</code><code style="color:#22d3bf">-π〜π</code><code style="color:#22d3bf">）を求め、</code><code style="color:#22d3bf">[0,1]</code><code style="color:#22d3bf"> へ線形に写す。</code><code style="color:#22d3bf">0</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">1</code><code style="color:#22d3bf"> はどちらも同じ角度（</code><code style="color:#22d3bf">-π</code><code style="color:#22d3bf">≡</code><code style="color:#22d3bf">π</code>`）に対応する周期量である点に注意——連続的に変化する向きでも出力が 0 と 1 の間で不連続にジャンプし得る。平坦な領域では勾配がほぼ 0 で方向が不定になり、ノイズの影響を受けやすい。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

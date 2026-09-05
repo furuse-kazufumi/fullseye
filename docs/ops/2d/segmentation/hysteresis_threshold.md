@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ヒステリシスしきい値処理(``skimage.filters.apply_hysteresis_
+threshold``)。低いしきい値(``0.2+0.3*a``)を超えた画素のうち、高い
+しきい値(``0.5+0.3*b``)を超えた画素につながっているものだけを前景として
+残す ―― Canny エッジ検出の後処理としても使われる、途切れにくいエッジ
+抽出手法。HALCON の ``hysteresis_threshold``（Perform a hysteresis
+threshold operation on an image.）に相当。
+
+``a`` が低いしきい値を、``b`` が高いしきい値を振る。両方が使われる。
 
 ## 詳しい使い方ガイド
 

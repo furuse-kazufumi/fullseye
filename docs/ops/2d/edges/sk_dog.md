@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+DoG(Difference of Gaussians、ガウス差分)フィルタ。2 つの異なる σ でぼかした画像の差分を取り、LoG(Laplacian of Gaussian)に近いバンドパス応答(特定の空間周波数帯だけを強調するエッジ/ブロブ検出)を安く得る。
+
+HALCON の `diff_of_gauss`(Approximate the LoG operator.)に相当。実装は ``filters.difference_of_gaussians(v, 1.0, 1.0+3.0*a)`` の絶対値を正規化したもの —— 小さい方の σ は 1.0 に固定し、a は大きい方の σ を 1.0〜4.0 に振る(σ の比が広がるほど検出する構造のスケール帯が広がる)。b は未使用。
 
 ## 詳しい使い方ガイド
 

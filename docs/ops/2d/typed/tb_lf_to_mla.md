@@ -17,7 +17,19 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `lightfield → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Re-interleave a light field into a microlens-array raw frame (exact inverse).
+
+    Inverse of :func:`lf_from_mla` with ``offset=(0, 0)``: the returned frame has
+    shape ``(H*V, W*U)`` and puts ``L[v, u, t, s]`` back at raw pixel
+    ``(t*V + v, s*U + u)``. ``lf_from_mla(lf_to_mla(L), (V, U))`` returns ``L``
+    bit-for-bit (verified with ``np.array_equal``), which is the cheapest
+    possible check that the decode's index arithmetic has no off-by-one.
+
+    **Raises** ``ValueError``: *lf* not 4-D / non-finite / over the shape and
+    element caps (see :func:`lf_from_mla`), and a raw frame whose side would
+    exceed ``MAX_SPATIAL * MAX_ANGULAR``.
+
+Typed bridge of the lightfield op ``lf_to_mla`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

@@ -17,7 +17,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Contact region of a tactile frame by pseudo-reference background
+subtraction: ``dev = |v - G_sigma(v)|`` with ``sigma = max(2, min(H,W)/6)``
+(the low-frequency envelope stands in for the undeformed reference frame),
+thresholded at ``thr = 0.005 + 0.145*a`` gray levels, then cleaned with
+``round(3*b)`` iterations of binary opening followed by binary closing
+(3x3, 8-connected). ``a`` = deviation threshold (sensitivity), ``b`` =
+morphological cleanup strength. Returns a BINARY 0/1 float64 region of the
+input HxW; a perfectly flat (constant) frame has zero deviation everywhere
+and therefore yields an EMPTY mask.
 
 ## 参考(サンプルデータ・文献)
 

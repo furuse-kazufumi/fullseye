@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+中央値フィルタ（median filter）。実装は eliminate_min_max/median_image と同じ ``_sh_rank`` の median 分岐で、円形・八角形などマスク形状ごとの重み付けは行わず、正方形窓の単純な中央値を返す。a が窓サイズを 3/5/7/9 に振り、b は未使用。
+
+HALCON の ``median_weighted``（円・矩形・八角形など複数のマスクで重み付き中央値フィルタを行う演算）の代役だが、実装は重みなしの通常の中央値フィルタで、マスク形状の違いは再現しない。
 
 ## 詳しい使い方ガイド
 

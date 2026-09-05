@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+領域境界の抽出。ラベル画像(ここでは真偽値領域)の中で、異なるラベル同士(前景/背景)が接する画素だけを True にした境界マスクを返す。
+
+HALCON の `boundary`(Reduce a region to its boundary.)に相当。実装は ``segmentation.find_boundaries(binm(v))``。a, b は未使用 —— connectivity は既定の 1、mode は既定の 'thick'(境界の両側 1 画素ずつを含む太めの境界)。
 
 ## 詳しい使い方ガイド
 

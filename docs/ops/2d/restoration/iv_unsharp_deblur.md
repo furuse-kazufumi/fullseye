@@ -17,7 +17,10 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Iterative unsharp masking as an approximate deblur. Each pass adds a scaled
+high-pass (image minus its Gaussian blur) back to the image. ``a`` sets the
+iteration count n = 1 + round(a*5) (1..6); ``b`` sets the per-pass amount
+amt = 0.4 + b (0.4..1.4). More iterations / larger amount -> sharper.
 
 ## 詳しい使い方ガイド
 

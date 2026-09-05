@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tb_rgb_to_quaternion — 2D <code style="color:#22d3bf">typed</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">qimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_rgb_to_quaternion&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>カラー画像を純虚四元数（quaternion）`<code style="color:#22d3bf">0 + R i + G j + B k</code>` として埋め込む。→ (H, W, 4)。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>Sangwine&#x27;s 1996 encoding, and the entry point of the whole colour half of</p>
+<p>this module: once a pixel is a quaternion, `<code style="color:#22d3bf">q x conj(q)</code>` rotates its colour</p>
+<p>and :func:<code style="color:#22d3bf">qft2</code> transforms the three channels as <b>one</b> hypercomplex signal</p>
+<p>instead of three unrelated real ones.</p>
+<p>The scalar (`<code style="color:#22d3bf">w</code>`) component is set to exactly zero — a *pure* quaternion —</p>
+<p>because that is what makes the conjugation a 3-D rotation. Values are not</p>
+<p>clamped: linear RGB after black-level subtraction legitimately goes negative,</p>
+<p>and clipping it would change the colour direction, which is the quantity</p>
+<p>every operator downstream reads.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *image_rgb* is not a finite </code><code style="color:#22d3bf">(H, W, 3)</code>` numeric</p>
+<p>array, is complex / bool / string-typed / masked, or exceeds</p>
+<p>:data:<code style="color:#22d3bf">MAX_PIXELS</code>.</p>
+<p>Typed bridge of the quat op `<code style="color:#22d3bf">rgb_to_quaternion</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">qimage</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_quaternion_to_rgb">tb_quaternion_to_rgb</a> · <a style="color:#22d3bf" href="op:tb_quat_norm">tb_quat_norm</a> · <a style="color:#22d3bf" href="op:tb_quat_conjugate_image">tb_quat_conjugate_image</a> · <a style="color:#22d3bf" href="op:tb_quat_normalize_image">tb_quat_normalize_image</a> · <a style="color:#22d3bf" href="op:tb_monogenic_amplitude">tb_monogenic_amplitude</a> · <a style="color:#22d3bf" href="op:tb_monogenic_phase">tb_monogenic_phase</a> · <a style="color:#22d3bf" href="op:tb_monogenic_orientation">tb_monogenic_orientation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">typed</code>)</h3>
+<p><a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_angle_3points">tb_angle_3points</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

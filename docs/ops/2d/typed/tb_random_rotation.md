@@ -17,7 +17,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `points → points`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ランダム回転を適用し ``(rotated, R)`` を返す(視点変化の模倣)。
+
+    ``R`` は正規直交・``det=+1``(``rotated = points @ R.T`` = 各点に ``R`` を左作用、
+    逆変換は ``rotated @ R``)。``max_angle=None`` なら Shoemake 法で一様ランダム回転、
+    ``max_angle`` 指定(ラジアン, 期待 ``[0, π]``)なら軸を球面一様・角を ``[0, max_angle]``
+    一様に取り、回転角を制限する(``arccos((tr R -1)/2) ≤ max_angle`` を厳密に保証)。
+
+2-D 進化レジストリへ橋渡しした 3d の op ``random_rotation``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 
 ## 参考(サンプルデータ・文献)
 

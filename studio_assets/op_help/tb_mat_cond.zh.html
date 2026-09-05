@@ -3,7 +3,23 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_mat_cond&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">matrix → feature</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Spectral (2-norm) condition number `<code style="color:#22d3bf">s_max / s_min</code>` — the numerical</p>
+<p>canary of the whole linalg family.</p>
+<p>`<code style="color:#22d3bf">cond == 1</code>` for an orthogonal/orthonormal matrix (the best possible);</p>
+<p>`<code style="color:#22d3bf">inf</code>` (returned, not raised — the question &quot;how conditioned is it?&quot; has</p>
+<p>that honest answer) for an exactly singular one. A solve against *A* loses</p>
+<p>roughly `<code style="color:#22d3bf">log10(cond(A))</code>` significant digits (Golub &amp; Van Loan §2.6):</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">cond ~ 1e3</code>`  — comfortable, ~13 digits survive.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">cond ~ 1e8</code>`  — half the digits are gone; residuals may still look</p>
+<p>small while parameters are off.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">cond &gt; 1e12</code><code style="color:#22d3bf"> — **do not trust** :func:</code>mat_solve` here: at best ~3</p>
+<p>digits remain. Rescale/centre the problem, or switch to</p>
+<p>:func:<code style="color:#22d3bf">mat_lstsq</code> / :func:<code style="color:#22d3bf">mat_pinv</code> with an honest `<code style="color:#22d3bf">rcond</code>`.</p>
+<p>Defined for any rectangular `<code style="color:#22d3bf">(m, n)</code>` matrix (via its singular values).</p>
+<p>HALCON: no direct operator (combine `<code style="color:#22d3bf">norm_matrix</code>` of *A* and of its</p>
+<p>inverse).</p>
+<p>Typed bridge of the math op `<code style="color:#22d3bf">mat_cond</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

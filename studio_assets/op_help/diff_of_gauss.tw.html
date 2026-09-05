@@ -4,7 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;diff_of_gauss&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">diff_of_gauss</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">image → image</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>DoG(Difference of Gaussians、2 段階の異なるシグマでぼかした画像の差)</p>
+<p>によるバンドパスエッジ/ブロブ検出。LoG の高速近似として知られる古典的手法。</p>
+<p>HALCON の `<code style="color:#22d3bf">diff_of_gauss</code>`（Approximate the LoG operator (Laplace of</p>
+<p>Gaussian).）に相当。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が狭い側のシグマ(0.5〜2.5)、</code><code style="color:#22d3bf">b</code>` が広い側のシグマ(1〜5)を振る ―― 両方</p>
+<p>が使われ、`<code style="color:#22d3bf">b</code>` の方を大きくとることで帯域幅が決まる。応答は絶対値を取って</p>
+<p>から正規化しているため符号情報は失われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

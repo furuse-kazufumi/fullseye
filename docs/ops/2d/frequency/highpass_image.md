@@ -19,7 +19,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+周波数領域で低域(半径 ``<= 0.02+0.3*a``)を遮断し、残りを逆 FFT で
+実空間に戻したハイパスフィルタ。零平均の**符号つき**応答になるため
+``signed01`` で [0,1] に写像している(0.5 がゼロ、つまり画素の約半分が
+0.5 未満になるのが正常)。HALCON の ``highpass_image``（Extract high
+frequency components from an image.）に相当。
+
+``a`` が遮断半径(カットオフ周波数)を振る。``b`` は未使用。単純に
+``> 0.5`` で二値化するとほぼ半分の画素が黒に潰れるので注意(詳細は
+``_sh_freq`` の docstring)。
 
 ## 詳しい使い方ガイド
 

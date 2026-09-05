@@ -17,7 +17,29 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `rgbimage → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+The scalar interface (specular) coefficient of the dichromatic model. → (H, W).
+
+    The same decomposition as :func:`specular_diffuse_split`, returning the
+    scalar ``m_s(x)`` instead of the coloured image ``m_s(x) * G``. That scalar
+    is what an inspection routine thresholds: it is the amount of light the
+    surface reflected *as a mirror does*, in the units of the input radiance,
+    and it is zero wherever the surface behaved as a Lambertian body.
+
+    ``specular_coefficient_map(...) * illuminant_unit`` equals the second return
+    value of :func:`specular_diffuse_split` exactly, by construction — the two
+    operators share one core.
+
+    Arguments, guards and honest limits are identical to
+    :func:`specular_diffuse_split` — including the fact that the two guards
+    bound gross violations only.
+
+    **Raises** ``ValueError``: exactly the same conditions as
+    :func:`specular_diffuse_split` (invalid image, invalid illuminant,
+    identically zero image, body colour parallel to the illuminant, either
+    guard firing, fewer than 3 pixels on the uniform-body route, invalid
+    *body_rgb*).
+
+Typed bridge of the specular op ``specular_coefficient_map`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``max_rank_ratio`` (default 0.1) and ``b`` drives ``max_negative_frac`` (default 0.02).
 
 ## 参考(サンプルデータ・文献)
 

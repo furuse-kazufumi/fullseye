@@ -315,6 +315,69 @@ def m1_fuzzy_measure_pos(v, a, b):
     return _points_dict(img.shape, pts)
 
 
+#: 各 ``m1_*`` 関数自身には一行の docstring があるが、実際に登録される ``op.fn`` は
+#: ``build()`` 内の ``_safe_feature`` / ``_safe_contour`` が返すクロージャ ``w`` で
+#: あり ``__doc__`` を転記しないため、素通しでは説明が消える。ここに Japanese の
+#: 説明を書き ops.py の登録ループで Op.doc に積ませる。キーは op 名。
+#: 共通の幾何: キャリパー線は画像を端から端まで貫く直線で、``a`` が向き
+#: （``theta = a*pi``）を振る。FEATURE を返す op はスカラー、CONTOUR を返す op は
+#: ``{"shape": (H, W), "cs": [1x2 の (row, col) 配列, ...]}``（単位は入力画像の
+#: ピクセル、小数値＝サブピクセル位置）。
+DOCS = {
+    "m1_measure_projection": (
+        "測定用のキャリパー線（直線）を画像に当て、垂直方向に平均した輝度"
+        "プロファイルの平均値を返す（HALCON ``measure_projection`` に相当:"
+        "矩形/円弧に垂直な 1 次元射影を抽出する）。\n\n"
+        "キャリパー線は画像の端から端まで引かれ、``a`` で向きを ``theta = a*pi``"
+        "に振る（0＝横方向、0.5＝斜め45度、1＝横方向の逆向き）。``b`` は線を法線"
+        "方向にずらす垂直オフセット（0〜1、0.5 が画像中心を通る）。線に沿って"
+        "幅 1px 分の帯を平均サンプリングし（真の「射影」）、その平均輝度"
+        "（[0,1]）を feature として返す。線が画像に掛からない/画像が小さすぎる"
+        "場合は 0.0 を返す。"
+    ),
+    "m1_measure_pos": (
+        "中心を通るキャリパー線上のサブピクセルエッジ位置を抽出する（HALCON"
+        "``measure_pos`` に相当: 矩形/円弧に垂直な直線エッジを検出する）。\n\n"
+        "線は画像中心を通り、``a`` で向きを ``theta = a*pi`` に振る。輝度"
+        "プロファイルをガウシアンで軽く平滑化してから ``|d/ds gray|`` のピーク"
+        "をサブピクセル（3 点放物線補間）で検出し、``b``（0〜1）を最大振幅に"
+        "対する相対しきい値として弱いエッジを捨てる。戻り値は CONTOUR"
+        "（``{\"shape\": (H,W), \"cs\": [1x2 の (row, col) 点, ...]}``）、座標"
+        "単位は入力画像のピクセル。主な使い道はエッジ数を ``count_contours``"
+        "で数えること。"
+    ),
+    "m1_measure_thresh": (
+        "中心を通るキャリパー線上で、輝度プロファイルが指定レベルを横切った"
+        "回数を数える（HALCON ``measure_thresh`` に相当: 矩形/円弧に沿って"
+        "特定のグレー値を持つ点を抽出する）。\n\n"
+        "``a`` は線の向き（``theta = a*pi``）、``b`` はグレー値のしきい値レベル"
+        "（0〜1、そのまま）。生のプロファイル（平滑化なし）がこのレベルをまたぐ"
+        "回数を feature（整数値）として返す。線が画像に掛からない場合は 0.0。"
+    ),
+    "m1_measure_pairs": (
+        "中心を通るキャリパー線上で、立ち上がり→立ち下がりのエッジ対（明るい"
+        "物体の両端）の個数を数える（HALCON ``measure_pairs`` に相当: 矩形/円弧"
+        "に垂直な直線エッジのペアを抽出する）。\n\n"
+        "``a`` は線の向き（``theta = a*pi``）。エッジ検出は ``m1_measure_pos``"
+        "と同じ（勾配ピークのサブピクセル検出）で、``b``（0〜1）は最大振幅に"
+        "対する相対しきい値。しきい値を超えたエッジを順に走査し、極性が"
+        "rising→falling と並ぶ組を 1 対として数える（feature、整数値）。エッジ"
+        "が 2 本未満なら 0.0。"
+    ),
+    "m1_fuzzy_measure_pos": (
+        "中心を通るキャリパー線上のエッジを、ファジィなメンバーシップスコアで"
+        "ふるいにかけて返す（HALCON ``fuzzy_measure_pos`` に相当: 矩形/円弧に"
+        "垂直な直線エッジをファジィ判定で検出する）。\n\n"
+        "エッジ検出は ``m1_measure_pos`` と同じ。各エッジの振幅を"
+        "``(amp - lo) / (gmax - lo)``（``lo = 0.05*gmax``）で [0,1] のファジィ"
+        "スコアに写像し、``b``（0〜1）以上のものだけを残す（0/1 のハードしきい値"
+        "ではなく振幅に応じた連続的な信頼度で選別する点が ``measure_pos`` と"
+        "違う）。``a`` は線の向き（``theta = a*pi``）。戻り値は CONTOUR、座標"
+        "単位はピクセル。"
+    ),
+}
+
+
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     """Return the 1-D caliper measurement ops (image -> feature / contour)."""
     def _safe_feature(fn):
@@ -331,6 +394,10 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
                     raise
                 _bs_record(None, _e, "feature")
                 return np.float64(0.0)
+        # ラッパは振る舞いを包むのであって説明を消してはいけない
+        # (backend_safe.guard と同じ穴。同型のラッパ族が 4 つあった)。
+        w.__name__ = getattr(fn, "__name__", "op")
+        w.__doc__ = getattr(fn, "__doc__", None)
         return w
 
     def _safe_contour(fn):
@@ -346,6 +413,10 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             if isinstance(out, dict) and "cs" in out and "shape" in out:
                 return out
             return _empty_contour(v)
+        # ラッパは振る舞いを包むのであって説明を消してはいけない
+        # (backend_safe.guard と同じ穴。同型のラッパ族が 4 つあった)。
+        w.__name__ = getattr(fn, "__name__", "op")
+        w.__doc__ = getattr(fn, "__doc__", None)
         return w
 
     return [

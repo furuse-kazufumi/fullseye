@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+領域を等方（縦横同倍率）にズームする。倍率 ``s = 0.7+0.6a``（0.7〜1.3 倍）で中心基準に拡大縮小し、境界外は鏡映（reflect）で埋めたのち ``_rebinarise`` で 0.5 しきい値により二値領域に戻す。b は未使用。
+
+HALCON の ``zoom_region``（領域を指定倍率でズームする演算）に相当する近似。縦横独立の倍率を持つ ``zoom_image_factor`` とは異なり単一倍率のみ。
 
 ## 詳しい使い方ガイド
 

@@ -4,7 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;pow_image&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">pow_image</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>実装は `<code style="color:#22d3bf">gamma_image</code><code style="color:#22d3bf"> と**まったく同じ関数**(</code><code style="color:#22d3bf">_sh_lut</code><code style="color:#22d3bf"> の </code>`kind:</p>
+<p>&quot;gamma&quot;`<code style="color:#22d3bf"> 分岐)を指す。つまり </code><code style="color:#22d3bf">pow_image</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">gamma_image</code>` は</p>
+<p>このバックエンド上では計算結果が一致する ―― HALCON では別の演算子(指数を</p>
+<p>明示的に指定する `<code style="color:#22d3bf">pow_image</code><code style="color:#22d3bf"> と符号化/復号を意図した </code><code style="color:#22d3bf">gamma_image</code>`)</p>
+<p>だが、ここでは代役の実体が重複している(近似の限界として明記)。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がべき指数を 0.3〜2.8 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。HALCON の</p>
+<p>`<code style="color:#22d3bf">pow_image</code>`（Raise an image to a power.）の代役。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">Leitfaden zur Familie gallery2d_gray_arith</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

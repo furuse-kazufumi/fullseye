@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+crop_rectangle1: cut out the centred rectangle spanning rows/cols
+[a .. 1-a] and resample it back to HxW. a=0 is (near) identity; larger a
+zooms further in. ``b`` is ignored.
 
 ## 詳しい使い方ガイド
 

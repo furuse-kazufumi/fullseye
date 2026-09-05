@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → contour`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+LoG(ガウス平滑化込みラプラシアン、シグマ ``0.5+2*a``)のゼロ交差を
+``find_contours`` でサブピクセル精度の輪郭として抽出する。領域版の
+``zero_crossing``(画素解像度)に対するサブピクセル精度版。HALCON の
+``zero_crossing_sub_pix``（Extract zero crossings from an image with
+subpixel accuracy.）に相当。
+
+``a`` がガウス平滑化のシグマを振る。``b`` は未使用。skimage が無い環境
+ではこの分岐は呼べない。
 
 ## 詳しい使い方ガイド
 

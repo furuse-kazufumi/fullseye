@@ -17,7 +17,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `cimage → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Per-pixel magnitude ``|cx|`` -> real ``(H, W)`` float64.
+
+    **Raw / unnormalised** (not clamped to ``[0, 1]``): the magnitude is a metric
+    quantity and, for a spectrum, spans many orders of magnitude. Pair it with
+    :func:`cx_from_mag_phase` to reconstruct the field exactly, or with
+    :func:`cx_log_magnitude` / ``imgio.normalize`` to view it.
+
+Typed bridge of the 2d op ``cx_magnitude`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

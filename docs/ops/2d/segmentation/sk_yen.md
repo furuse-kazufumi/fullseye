@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Yen の最大相関基準(maximum correlation criterion)による大域しきい値二値化。ヒストグラムのエントロピーベースの評価量を最大化してしきい値を選ぶ、大津法・Li 法とはまた別の自動しきい値法。
+
+HALCON の `binary_threshold` に相当(近似)。実装は ``v > filters.threshold_yen(v)`` —— a, b は未使用。同じ画像に大津/Li/Yen を並べて試し、しきい値が安定する方を選ぶ用途を想定。
 
 ## 詳しい使い方ガイド
 

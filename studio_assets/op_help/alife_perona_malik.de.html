@@ -3,7 +3,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;alife_perona_malik&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Perona-Malik anisotropic (edge-preserving) diffusion.</p>
+<p>Explicit 4-neighbour update I &lt;- I + lam * sum_dir g(|grad_dir I|) grad_dir I</p>
+<p>with the Perona-Malik conductance g(s) = 1/(1 + (s/kappa)^2): inside a flat</p>
+<p>region g -&gt; 1 and the field diffuses like the heat equation, across a strong</p>
+<p>edge g -&gt; 0 and the edge is preserved. Unlike a bilateral filter the</p>
+<p>conductance is recomputed from the *evolving* field at every iteration, which</p>
+<p>is what makes the edges sharpen rather than merely survive. `<code style="color:#22d3bf">a</code>` sets the</p>
+<p>edge scale kappa = 0.02 + 0.2a, `<code style="color:#22d3bf">b</code>` the iteration count 1 + int(15b);</p>
+<p>lambda is fixed at 0.2 (&lt;= 0.25, the explicit-scheme stability bound).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">Leitfaden zur Familie gallery2d_physics_alife_3d</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

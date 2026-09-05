@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `contour → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+輪郭（オブジェクト）の本数を返す特徴量。HALCON の ``count_obj``（Number of objects in a tuple.）に相当。
+
+``a``, ``b`` は未使用。輪郭リストの長さをそのまま返すだけ。
 
 ## 詳しい使い方ガイド
 

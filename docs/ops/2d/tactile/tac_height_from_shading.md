@@ -17,7 +17,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Height/relief map by Poisson integration of the shading gradients -- the
+integration stage of GelSight depth reconstruction (and of photometric
+stereo): the image gradients are read as surface slopes ``p = gain*gx``,
+``q = gain*gy`` and the Poisson equation ``lap(h) = div(p,q)`` is solved
+spectrally, ``h_hat = div_hat / lap_hat`` with the discrete Laplacian symbol
+``2cos(2*pi*u/W)+2cos(2*pi*v/H)-4`` and the (undetermined) DC mode pinned to
+zero. ``a`` = gradient gain (0.25..4.25x), ``b`` = pre-smoothing sigma of the
+gradient field (0..3). Output is min-max normalised to [0,1] and refit to
+HxW; a constant frame integrates to a flat (all-zero) relief.
 
 ## 参考(サンプルデータ・文献)
 

@@ -17,7 +17,20 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `matrix → matrix`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Sample covariance matrix of ``(N, D)`` observations → ``(D, D)``.
+
+    Rows are observations, columns are variables — the ``(N, D)`` orientation
+    every Fullseye point/sample API uses (note ``np.cov`` defaults to the
+    *transposed* convention). Uses the unbiased ``ddof=1`` estimator (divides
+    by ``N - 1``), hence the ``N >= 2`` requirement. The diagonal holds the
+    per-variable sample variances; the result is symmetric positive
+    semi-definite by construction, so it can go straight into
+    :func:`mat_eigh` for principal axes (the covariance-ellipse workflow).
+
+    HALCON: no public tuple/matrix operator — covariance lives inside HALCON's
+    calibration and matching internals only.
+
+Typed bridge of the math op ``stat_covariance`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

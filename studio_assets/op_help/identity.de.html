@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;identity&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">copy_image</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">any → any</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>恒等写像。HALCON の `<code style="color:#22d3bf">copy_image</code><code style="color:#22d3bf">（Copy an image and allocate new memory for it.）に対応付けられているが、実装は新しいメモリを確保して複製する </code><code style="color:#22d3bf">copy_image</code>` とは異なり、入力の配列をそのまま返すだけ（複製しない）。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。sort が </code><code style="color:#22d3bf">ANY</code>`（image/region/feature いずれの入力にも一致）なのはこの op だけの特別扱いで、パイプラインの型を変えずに「何もしない」スロットを置くために使う（進化がスロット数を埋めたいだけのとき等）。値を作り直さず入力をそのまま返すため、呼び出し側で戻り値を書き換えると入力の配列も一緒に変わる点に注意。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

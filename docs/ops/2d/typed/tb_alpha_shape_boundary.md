@@ -17,7 +17,24 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `points → signal`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+alpha shapes による**境界点インデックス**を返す(点群 → 境界点)。
+
+    Delaunay 四面体分割の外接球半径 < 1/alpha の四面体の表面三角形(境界面)を集め、その頂点
+    集合を境界点とする。中実(表面+内部)の点群から表面殻の点だけを抜き出す用途に向く。
+    alpha を大きくすると許す半径 1/alpha が小さくなり、より密着した(細部を拾う)境界になる。
+
+    Parameters
+    ----------
+    points : array_like (N,3)
+    alpha : float
+        正の実数。半径しきい値は 1/alpha。``estimate_alpha`` で目安を得られる。
+
+    Returns
+    -------
+    boundary_point_indices : numpy.ndarray (K,) int64
+        points に対する境界点の index(昇順・重複なし)。境界が無ければ空配列。
+
+2-D 進化レジストリへ橋渡しした 3d の op ``alpha_shape_boundary``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 
 ## 参考(サンプルデータ・文献)
 

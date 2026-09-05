@@ -3,7 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xcv2_warp_logpolar&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>타입 계약은 <code style="color:#22d3bf">image → image</code>. 동작의 언어 설명은 아래 패밀리 사용 가이드와 실행 가능한 샘플을 보세요(여기서는 추측을 쓰지 않습니다).</p>
+<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
+<p>対数極座標変換（ログポーラー変換）で画像を (半径, 角度) 平面に写像する。</p>
+<p>`<code style="color:#22d3bf">cv2.warpPolar</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">WARP_POLAR_LOG</code>` モードを使う。中心は画像中心、最大</p>
+<p>半径は `<code style="color:#22d3bf">min(H, W)/2</code>`。出力の行方向が対数半径、列方向が角度に対応する。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。拡大縮小・回転を新しい画像上の平行移動に変換できる</p>
+<p>ため、テンプレートマッチングの前処理（Fourier-Mellin 変換の要素技術）として</p>
+<p>使われる。HALCON に対応する単一オペレータは無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

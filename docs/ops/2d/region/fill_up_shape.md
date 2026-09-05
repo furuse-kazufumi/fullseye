@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+領域内の小さな穴を埋める。``area_threshold = 16+200a`` 画素以下の穴だけを埋める（skimage の ``remove_small_holes``）。b は未使用。
+
+HALCON の ``fill_up_shape``（面積・円形度など形状特徴で選んだ穴だけを埋める演算）とは異なり、この実装は面積の上限だけで穴を選別する単純化された近似 —— 円形度や凸性など他の形状特徴によるフィルタリングはできない。
 
 ## 詳しい使い方ガイド
 

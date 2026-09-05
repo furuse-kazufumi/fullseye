@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+領域の骨格化(skeletonization)。前景領域をトポロジー(連結関係・穴の数)を保ったまま 1 画素幅の線に細める。
+
+HALCON の `skeleton`(Compute the skeleton of a region.)に相当(近似。アルゴリズムは Zhang-Suen 系)。実装は ``morphology.skeletonize(binm(v))`` —— 入力はまず ``binm``(> 0.5 のしきい値)で真偽値化される。a, b は未使用。
 
 ## 詳しい使い方ガイド
 

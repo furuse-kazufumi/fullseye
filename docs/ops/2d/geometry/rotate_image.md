@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+画像を中心を軸に ``-45°〜+45°``(``a`` で決まる)回転する
+(``scipy.ndimage.rotate``、``reshape=False`` でキャンバスサイズを維持)。
+枠外にはみ出す部分は反射(``mode="reflect"``)で埋めるため、四隅には元画像が
+折り返して写り込む(帳票の傾き補正のように「枠外を背景色で埋めたい」用途
+にはそのままでは向かない、既知の設計上の制約)。HALCON の
+``rotate_image``（Rotate an image about its center.）に相当。
+
+``a`` が回転角を -45°〜+45° の範囲で振る。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

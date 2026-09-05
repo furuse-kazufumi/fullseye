@@ -17,7 +17,17 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `cimage → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Wrapped phase of ``cx`` -> real ``(H, W)`` float64.
+
+    ``display=True`` (default) maps the wrapped phase ``angle(cx)`` in
+    ``(-pi, pi]`` to ``[0, 1]`` for viewing, with **0.5 at zero phase**
+    (``(angle + pi) / (2*pi)``: ``-pi -> 0``, ``0 -> 0.5``, ``+pi -> 1``).
+    ``display=False`` returns the **raw wrapped radians** in ``(-pi, pi]`` — the
+    quantity :func:`cx_from_mag_phase` and :func:`phase_unwrap` consume. Note the
+    default output is *wrapped* and *display-scaled*; :func:`phase_unwrap` returns
+    raw, continuous, un-scaled radians instead.
+
+Typed bridge of the 2d op ``cx_phase`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

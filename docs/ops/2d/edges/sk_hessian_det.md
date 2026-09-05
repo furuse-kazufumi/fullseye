@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Hessian 行列式によるブロブ検出応答。2 階微分の行列(Hessian)の行列式は、ブロブ状の構造で正、鞍点状の構造で負になる符号付き応答。
+
+HALCON に直接対応するものは無い。実装は ``feature.hessian_matrix_det(v, sigma=0.5+2.5*a)`` を ``signed01`` で ``[0,1]`` へ写した値(符号を保つため 0.5 が「応答ゼロ」に対応)—— a はスケール σ を 0.5〜3.0 に振る。b は未使用。
 
 ## 詳しい使い方ガイド
 

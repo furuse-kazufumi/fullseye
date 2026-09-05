@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `contour → contour`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+点数（長さ）でフィルタして XLD 輪郭を選別する。HALCON の ``select_contours_xld``（Select XLD contours according to several features.）に相当。
+
+``a`` が残す最小点数のしきい値を ``3〜43``（``3 + int(40a)``）に振る。``b`` は未使用。輪郭を構成する点の数（≒長さ）がしきい値未満のものを丸ごと捨てる。HALCON 版は点数以外にも円形度・凸性などの特徴で選べるが、この実装は点数のみ。
 
 ## 詳しい使い方ガイド
 

@@ -19,7 +19,11 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `color → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+多チャンネル画像から 1 チャンネルを取り出す。HALCON の ``access_channel``
+（多チャンネル画像の 1 チャンネルにアクセスする）に相当。
+
+a でチャンネル番号を 0(R)/1(G)/2(B) の 3 通りから選ぶ
+（``min(2, int(a * 3))``）。b は未使用。
 
 ## 詳しい使い方ガイド
 

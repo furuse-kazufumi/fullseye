@@ -17,7 +17,22 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `matrix → matrix`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Pearson correlation matrix of ``(N, D)`` observations → ``(D, D)``.
+
+    Same orientation as :func:`stat_covariance` (rows = observations).
+    Entries are clipped to ``[-1, 1]`` (floating-point can overshoot by an
+    ulp), the diagonal is exactly ``1`` and the matrix exactly symmetric by
+    construction.
+
+    **A constant column raises ``ValueError``** (naming the column) instead of
+    yielding NaN: correlation with a zero-variance variable is mathematically
+    undefined (0/0), and a NaN that surfaces three ops downstream is the
+    classic zero-division bug family this module fails closed against. Drop or
+    perturb the constant column deliberately if that is what you mean.
+
+    HALCON: no public tuple operator (see :func:`stat_covariance`).
+
+Typed bridge of the math op ``stat_correlation`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

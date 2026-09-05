@@ -4,7 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;projective_trans_image_size&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">projective_trans_image_size</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>実装は `<code style="color:#22d3bf">projective_trans_image</code><code style="color:#22d3bf"> と同一(</code><code style="color:#22d3bf">kind: &quot;projective&quot;</code>`)。</p>
+<p>名前は出力サイズを指定できることを示唆するが、このバックエンドでは</p>
+<p>出力キャンバスサイズは変更されず、`<code style="color:#22d3bf">projective_trans_image</code>` と全く同じ</p>
+<p>台形歪みを返す(近似の限界、サイズ変更機能は再現されていない)。HALCON の</p>
+<p>`<code style="color:#22d3bf">projective_trans_image_size</code>`（Apply a projective transformation to an</p>
+<p>image and specify the output image size.）の代役。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が歪みの強さ、</code><code style="color:#22d3bf">b</code>` が非対称さを振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">Leitfaden zur Familie gallery2d_geometry</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

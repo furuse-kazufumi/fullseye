@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+モルフォロジー勾配(OpenCV 実装)。「膨張結果 − 収縮結果」で、領域の輪郭(縁取り)だけを取り出す —— 通常の微分ベースのエッジ検出とは別系統の輪郭抽出。
+
+HALCON の `gray_range_rect`(Determine the gray value range within a rectangle.)に相当(近似。矩形窓内の最大-最小レンジを取る点は同じ発想)。実装は ``cv2.morphologyEx(v, MORPH_GRADIENT, se)`` を正規化したもの、se は楕円形でサイズ ``3+2*int(a*3)`` —— a は構造要素サイズを 3〜9 に振る。b は未使用。
 
 ## 詳しい使い方ガイド
 

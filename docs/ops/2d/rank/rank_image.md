@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+窓内の画素値を昇順に並べて指定パーセンタイル位置の値を返す汎用ランク
+フィルタ(``ndimage.percentile_filter``)。パーセンタイル 0 で収縮相当、
+100 で膨張相当、50 でメディアン相当になる連続的な一般化。HALCON の
+``rank_image``（Compute a rank filter with arbitrary masks.）に相当
+(HALCON は任意形状マスクを取れるが、ここでは正方形マスクに固定)。
+
+``a`` が窓の一辺を ``{3,5,7,9}`` で、``b`` がパーセンタイルを 5〜95% の
+範囲で振る。両方が使われる。
 
 ## 詳しい使い方ガイド
 

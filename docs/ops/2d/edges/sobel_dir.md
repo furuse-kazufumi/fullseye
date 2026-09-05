@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Sobel 勾配の向き(``arctan2(dy, dx)`` を [0,1] に写像。0=−π, 1=+π)。
+振幅を返す ``sobel_amp`` と対になる、エッジの走る方向を求める演算。HALCON の
+``sobel_dir``（Detect edges (amplitude and direction) using the Sobel
+operator.）に相当(HALCON は振幅と方向を同時に返すが、ここでは方向のみの
+別 op として分離)。
+
+``a``, ``b`` は未使用。平坦な領域では勾配がほぼゼロベクトルになり、方向は
+ノイズに支配される点に注意。
 
 ## 詳しい使い方ガイド
 

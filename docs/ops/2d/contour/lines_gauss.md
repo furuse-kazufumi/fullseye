@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → contour`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+線状構造(リッジ)検出。``skimage.filters.frangi``(血管様のリッジ強調
+フィルタ)の応答をしきい値(``0.1+0.4*a``)で二値化し、連結成分を輪郭点群
+として返す。HALCON の ``lines_gauss``（Detect lines and their width.）が
+本来行う「線の中心線+幅の推定」ではなく、リッジ強調画像のしきい値化に
+単純化している(線幅の情報は返らない近似)。
+
+``a`` がリッジ検出のしきい値を振る。``b`` は未使用。skimage が無い環境
+ではこの分岐は呼べない。
 
 ## 詳しい使い方ガイド
 

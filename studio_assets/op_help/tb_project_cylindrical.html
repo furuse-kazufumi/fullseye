@@ -3,7 +3,12 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_project_cylindrical&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">points → image</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>円柱レンジ画像へ投影 (z_bins, h_res)。方位角(列)× z(行)、画素=水平半径 ρ=hypot(x,y)。</p>
+<p>球面投影が仰角で層を切るのに対し、円柱投影は<b>高さ z を等間隔に切る</b>(壁/柱/回廊の展開に向く)。</p>
+<p>画素値は z 軸からの水平距離 ρ(円柱上の点が一定になる自然な不変量)。空セル=0, 近い点優先(最小 ρ)。</p>
+<p>z_range=(z_min,z_max) 未指定なら点群の [z.min, z.max] を採用。z 幅ゼロは fail-closed(ValueError)。</p>
+<p>行 0 = 上端(z=z_max)。z_range 外、z 軸上(ρ=0)、非有限座標の点は落とす。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">project_cylindrical</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">h_res</code><code style="color:#22d3bf">(既定 1024)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">z_bins</code>`(既定 64)を振る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

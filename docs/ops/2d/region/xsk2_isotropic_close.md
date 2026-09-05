@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+等方閉じ（isotropic closing）。二値領域に対して``skimage.morphology.isotropic_closing`` を掛ける（`region` → `region`専用で、通常のモルフォロジー closing と違い距離変換ベースで等方的に働く）。
+
+a が半径（``1 + a*4``、範囲 1〜5）を振る。b は未使用。小さな穴やくびれを埋めて領域を滑らかにする。
 
 ## 詳しい使い方ガイド
 

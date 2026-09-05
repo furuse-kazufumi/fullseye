@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `color → color`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+色空間から RGB へ戻す逆変換。HALCON の ``trans_to_rgb``（任意の色空間から
+RGB 色空間への変換）に相当するとされるが、**実装は HSV→RGB の 1 方向だけ**
+しか持たない。
+
+``trans_from_rgb`` は a で 4 色空間（HSV/Lab/YUV/XYZ）を選べるのに対し、
+この逆変換は常に入力を HSV とみなして ``cv2.COLOR_HSV2RGB`` を掛ける。
+Lab/YUV/XYZ から呼んだ場合は色空間の解釈を誤ったまま変換するため、
+出力は破綻した色になる。a, b は未使用。
 
 ## 詳しい使い方ガイド
 

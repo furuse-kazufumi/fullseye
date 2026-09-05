@@ -3,7 +3,15 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk2_multiotsu&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → image</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>大津の判別分析法（Otsu&#x27;s method）を多値に拡張した多値大津法で階調を</p>
+<p>量子化する。`<code style="color:#22d3bf">skimage.filters.threshold_multiotsu</code>` を使う。</p>
+<p>a はクラス数を 3 または 4 に切り替える（`<code style="color:#22d3bf">3 + int(a &gt; 0.5)</code>`）。</p>
+<p><b>5 クラス以上は実装していない</b>——多値大津はしきい値の全探索コストが</p>
+<p>`<code style="color:#22d3bf">bins ** (classes - 1)</code>` で増えるため、実測（128x128）で 3 クラス</p>
+<p>0.0008 秒に対し 5 クラスは 2.435 秒（3239 倍）かかり、進化ループ 1 世代</p>
+<p>だけで実行が止まって見えるほど遅い（画像サイズにはほぼ依らない）。</p>
+<p>4 クラスなら 0.025 秒に収まる。b は未使用。しきい値で量子化した後</p>
+<p>`<code style="color:#22d3bf">(cls-1)</code>` で割って [0,1] に正規化する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

@@ -17,7 +17,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Radial lens distortion using the standard polynomial model
+``r_src = r*(1 + k*r^2)`` on normalised radius ``r`` (1 = image corner):
+BARREL (straight lines bow outwards) when ``b < 0.5``, PINCUSHION when
+``b >= 0.5``, with ``k = 0.6*a`` (a=0 -> undistorted). The destination grid is
+inverse-mapped and resampled bilinearly with ``ndimage.map_coordinates``
+(``mode="reflect"``), so no pixel is left undefined. Output keeps HxW.
 
 ## 詳しい使い方ガイド
 

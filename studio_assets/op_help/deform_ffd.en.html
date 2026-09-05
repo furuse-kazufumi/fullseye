@@ -3,7 +3,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;deform_ffd&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>Cubic B-spline free-form deformation (Rueckert et al., IEEE TMI 1999).</p>
+<p>A coarse control lattice of `<code style="color:#22d3bf">n x n</code><code style="color:#22d3bf"> spans (</code><code style="color:#22d3bf">n = 2 + int(6b)</code>`, one padding</p>
+<p>ring on each side) carries a deterministic smooth displacement pattern</p>
+<p>`<code style="color:#22d3bf">phi[i,j] = amp * [sin(2 pi j/n), cos(2 pi i/n)]</code>`; the dense displacement</p>
+<p>at a pixel is the tensor product of the four uniform cubic B-spline basis</p>
+<p>functions of its span coordinate with the surrounding 4x4 control</p>
+<p>displacements, so a control point only ever moves the 4 spans it supports.</p>
+<p>That field is used as the backward map and the image is bilinearly resampled.</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> sets the amplitude </code><code style="color:#22d3bf">amp = 0.45*a*min(sy,sx)</code>` -- kept under the</p>
+<p>`<code style="color:#22d3bf">0.48*spacing</code>` injectivity bound of Choi &amp; Lee (2000), so the deformation</p>
+<p>stays a fold-free bijection -- and `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> the lattice resolution. </code><code style="color:#22d3bf">a = 0</code>`</p>
+<p>gives a zero lattice, hence the identity (up to sub-pixel resampling error).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

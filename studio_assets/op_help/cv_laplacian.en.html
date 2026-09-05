@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;cv_laplacian&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">laplace</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>ラプラシアンフィルタ(OpenCV 実装)。2 階微分による等方的なエッジ/ブロブ検出で、輪郭のみならず孤立点にも強く反応する(ノイズにも敏感)。</p>
+<p>HALCON の <code style="color:#22d3bf">laplace</code>(Calculate the Laplace operator by using finite differences.)に相当。実装は `<code style="color:#22d3bf">|cv2.Laplacian(v, CV_64F)|</code>` を正規化したもの —— カーネルサイズは既定の 1(3x3 の基本 4 近傍ラプラシアンカーネル)に固定。a, b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+大域しきい値処理（グローバルスレッショルド）。HALCON の ``threshold``（Segment an image using global threshold.）に相当。
+
+``a`` がしきい値そのもの（``0〜1``）で、``v > a`` を満たす画素を前景（1）とする region を返す。``b`` は未使用。HALCON の ``threshold`` は下限・上限の 2 値を取れる帯域しきい値だが、この実装は下限のみの片側しきい値。
 
 ## 詳しい使い方ガイド
 

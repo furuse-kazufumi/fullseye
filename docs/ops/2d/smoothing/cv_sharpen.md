@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+アンシャープ的な鮮鋭化フィルタ(3x3 カーネル畳み込み、OpenCV 実装)。中心 ``1+4a``、上下左右 ``-a`` のカーネル(a=0 では単位カーネル=無変化、a が大きいほど離散ラプラシアン的な高域強調が強くかかる)を畳み込み、エッジ付近のコントラストを持ち上げる。
+
+HALCON の `emphasize`(Enhance contrast of the image.)に相当(近似)。実装は ``cv2.filter2D(v, kernel)`` を ``[0,1]`` へ clip したもの —— a はカーネルの強さ(鮮鋭化の度合い)を 0〜1 に振る。b は未使用。
 
 ## 詳しい使い方ガイド
 

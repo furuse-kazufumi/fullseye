@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+線形の動きぼけ(モーションブラー)をシミュレートする。角度
+``π*a``(0〜180°)方向に長さ ``5+10*b`` 画素の線分カーネルを作り畳み込む。
+HALCON の ``simulate_motion``（Simulation of (linearly) motion blur.）に
+相当。
+
+``a`` がぶれの方向角を、``b`` がぶれの長さを振る。両方が使われる。
 
 ## 詳しい使い方ガイド
 

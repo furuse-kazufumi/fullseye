@@ -3,7 +3,16 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_derivate_funct_1d&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">signal → signal</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>First derivative by central differences (HALCON `<code style="color:#22d3bf">derivate_funct_1d</code>`).</p>
+<p>Units are <b>y per sample</b> (the x-grid is the index): for a physical signal</p>
+<p>sampled every `<code style="color:#22d3bf">dt</code><code style="color:#22d3bf"> seconds, divide the result by </code><code style="color:#22d3bf">dt</code>`. Interior points</p>
+<p>use the second-order central difference; the two boundary points use one-sided</p>
+<p>differences (`<code style="color:#22d3bf">numpy.gradient</code>`).</p>
+<p>:param y: 1-D function, at least 2 samples (a derivative needs a neighbour).</p>
+<p>:returns: float64 array of the same length.</p>
+<p>:raises ValueError: non-1-D / NaN / Inf input, or fewer than 2 samples.</p>
+<p>Typed bridge of the 1d op `<code style="color:#22d3bf">derivate_funct_1d</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

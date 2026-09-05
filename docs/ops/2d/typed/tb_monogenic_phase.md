@@ -17,7 +17,30 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `qimage → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Local phase ``atan2(|R|, f)`` of a monogenic signal. → (H, W).
+
+    In ``[0, pi]`` — the monogenic phase is measured against the *magnitude* of
+    the Riesz vector, whose sign is carried by the orientation instead, so the
+    range is a half turn rather than a full one. That is the standard
+    convention (Felsberg & Sommer) and it is stated here because a caller
+    arriving from ``complexops.cx_phase`` (whose raw range is ``(-pi, pi]``) will
+    otherwise assume a full turn and see a "wrapped" map that is not wrapped.
+
+    ``display=True`` maps ``[0, pi]`` to ``[0, 1]`` for viewing; the default is
+    ``False`` — the **opposite** of ``cx_phase``'s default, deliberately,
+    because the consumers of this quantity in this module are numerical, and a
+    display scaling that arrives silently in a measurement is a factor of ``pi``
+    that nothing announces.
+
+    Phase is the quantity a translation shifts linearly, which is why the whole
+    motion half of this module reads it. For an edge, phase 0 means the peak of
+    a bright line, ``pi/2`` a step edge and ``pi`` the peak of a dark line — the
+    local *structure type*, independent of contrast.
+
+    **Raises** ``ValueError``: the input is not a valid quaternion field, or its
+    ``k`` component is non-zero; *display* is not a bool.
+
+Typed bridge of the quat op ``monogenic_phase`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

@@ -17,7 +17,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Cyclic cellular automaton (Fisch-Gravner-Griffeath) -> spiral waves.
+
+The image is quantised into N = 3 + int(9a) cyclically ordered states; a cell
+in state s advances to (s+1) mod N as soon as at least one of its 8 Moore
+neighbours already holds (s+1) mod N ("eat-the-next-colour"). Repeated on the
+torus this self-organises the initial field into rotating spiral waves and
+demons. ``a`` sets the state count N, ``b`` the step count 1 + int(15b).
+Returns state/(N-1) so the full [0,1] range is used.
 
 ## 詳しい使い方ガイド
 

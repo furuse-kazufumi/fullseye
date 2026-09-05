@@ -3,7 +3,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;alife_gray_scott&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Gray-Scott reaction-diffusion seeded by the image.</p>
+<p>Two coupled species on a torus,</p>
+<p>u_t = Du*lap(u) - u v^2 + F (1 - u)</p>
+<p>v_t = Dv*lap(v) + u v^2 - (F + K) v</p>
+<p>with Du=0.16, Dv=0.08. The image seeds v (the autocatalyst) while u starts</p>
+<p>from the depleted complement, so bright input pixels are the nuclei from</p>
+<p>which spots / stripes / labyrinths grow. `<code style="color:#22d3bf">a</code>` sets the feed rate</p>
+<p>F = 0.02 + 0.06a *and* the number of integration steps T = 8 + int(20a);</p>
+<p>`<code style="color:#22d3bf">b</code>` sets the kill rate K = 0.05 + 0.02b. Returns the normalised v field.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">Leitfaden zur Familie gallery2d_physics_alife_3d</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

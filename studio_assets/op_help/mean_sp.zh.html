@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;mean_sp&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">mean_sp</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → image</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>ロバスト平滑化フィルタ。窓内の 20 パーセンタイルと 80 パーセンタイルの平均を返す（トリム平均、trimmed mean）ことで、極端に明るい/暗い外れ値（ソルト&amp;ペッパー雑音など）の影響を抑える。a が窓サイズを 3/5/7/9 に振る（`<code style="color:#22d3bf">_k(a)</code>`）。b は未使用。</p>
+<p>HALCON の `<code style="color:#22d3bf">mean_sp</code>`（ソルト&amp;ペッパーノイズを抑制する平均化演算）に相当する近似 —— 上下 20% を除いた範囲の中点をとる点で単純平均よりノイズに強いが、HALCON 固有のアルゴリズムとは実装が異なる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

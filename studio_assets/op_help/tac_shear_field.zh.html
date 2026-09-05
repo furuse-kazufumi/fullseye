@@ -3,7 +3,18 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tac_shear_field&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → image</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>In-plane shear proxy from the 2-D structure tensor (Foerstner /</p>
+<p>Bigun-Granlund orientation coherence). The tensor</p>
+<p>`<code style="color:#22d3bf">J = G_sigma(grad v * grad v^T)</code>` has eigenvalues l1 &gt;= l2, and the</p>
+<p>coherence `<code style="color:#22d3bf">(l1-l2)/(l1+l2) = sqrt((J11-J22)^2 + 4*J12^2) / (J11+J22)</code>`</p>
+<p>is 1 where the gel texture is stretched into a single dominant orientation</p>
+<p>(as it is under tangential/shear load) and 0 where it is isotropic. The</p>
+<p>result is additionally weighted by the tensor trace (gradient energy) so</p>
+<p>that texture-free, un-contacted gel stays dark instead of amplifying noise</p>
+<p>orientation. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = tensor integration sigma (0.6..4.6), </code><code style="color:#22d3bf">b</code>` = output gain</p>
+<p>(0.5..2.5). Output clipped to [0,1], HxW; a constant frame has zero gradient</p>
+<p>energy and yields an all-zero shear field.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

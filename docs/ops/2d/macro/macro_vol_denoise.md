@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `volume → volume`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+進化探索が発見した固定パイプライン（3-D ボリューム版）: ``vol_threshold(a=0.52,b=0.76)`` → ``vol_gaussian(a=0.08,b=0.89)``（3-D しきい値処理をかけてからガウシアン平滑化する 2 段）。
+
+``a``, ``b`` は凍結済みで未使用。in_sort/out_sort は volume。volume の denoise 課題（PSNR）でロック済みホールドアウト 25.74dB、手作りベースライン20.94dB を上回る。HALCON に対応する単一オペレータは無い。
 
 ## 詳しい使い方ガイド
 

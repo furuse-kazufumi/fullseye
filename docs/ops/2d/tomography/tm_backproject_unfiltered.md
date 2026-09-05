@@ -17,7 +17,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Plain (UN-filtered) back-projection of the input sinogram -- the classic
+blurry reconstruction. No ramp filter is applied, so high frequencies are
+suppressed and every point spreads a 1/r blur: this deliberately shows why
+FBP's filter is needed. ``a``/``b`` are unused (this is the fixed naive
+baseline). Uses ``skimage.transform.iradon`` with ``filter_name=None`` when
+available, else the NumPy plain back-projection. Output refit to HxW.
 
 ## 詳しい使い方ガイド
 

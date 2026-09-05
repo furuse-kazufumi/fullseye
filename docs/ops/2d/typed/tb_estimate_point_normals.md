@@ -17,7 +17,16 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `points → points`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+点群 (N,3) → 単位法線(局所 k 近傍共分散の最小固有ベクトル=PCA)。
+
+    FPFH/SHOT/点-面 ICP が要る法線を raw 点群から生成。向きの規約は 2 面:
+    **viewpoint=None(既定)= 重心から外向き**(閉じた物体の全周点群向け)/
+    **viewpoint 指定 = 視点(センサ)向き**(Hoppe 1992 / PCL 規約。単一視点スキャンの
+    可視面はセンサ側を向くのが物理的に正しい。`pointcloud.estimate_normals` と同規約)。
+    旧版(〜2026-08-30)は viewpoint 指定でも「視点から遠ざける」符号で、単一視点
+    スキャンという本来用途で全点が裏返っていた。返り値 normals (N,3)。
+
+2-D 進化レジストリへ橋渡しした 3d の op ``estimate_point_normals``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。``a`` が ``k``(既定 16)を振る。``b`` は未使用。
 
 ## 参考(サンプルデータ・文献)
 

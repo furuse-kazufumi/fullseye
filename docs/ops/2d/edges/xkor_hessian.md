@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ヘシアン行列に基づくブロブ・コーナー応答。``kornia.feature.hessian_response`` を既定パラメータで呼び、絶対値を取って最大絶対値で正規化する。
+
+**a, b は未使用**（共通ヘルパー ``_resp`` が a, b を受け取るだけで捨てる）。
 
 ## 詳しい使い方ガイド
 

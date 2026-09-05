@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+エッジ保存平滑化（bilateral filter）。HALCON の ``bilateral_filter``（bilateral filtering of an image.）に相当。
+
+``a`` が空間方向の広がり ``σ_s = 1.0 + 3.0a`` を、``b`` が明るさ方向の許容差 ``σ_r = 0.05 + 0.4b`` を振る。近傍窓は半径 ``r=2``（5×5）固定で ``a`` では変わらない。近傍の重みは ``exp(-距離²/2σ_s²) × exp(-明度差²/2σ_r²)`` の積で、明度差が大きい（=エッジをまたぐ）画素は重みが小さくなるため、平滑化しつつ輪郭を保てる。窓内を Python の二重ループで回すため他の平滑化 op より遅い。
 
 ## 詳しい使い方ガイド
 

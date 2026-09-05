@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Hu の第 3 不変モーメント(``hu[2]``)の絶対値。名前(2nd_rel_invar)と
+実装(Hu の 3 番目の不変量)が厳密には対応していない点に注意 ―― HALCON
+独自の「2 次相対不変モーメント」ではなく、汎用の Hu 不変モーメント系列
+から割り当てただけの近似。HALCON の ``moments_region_2nd_rel_invar``
+（Geometric moments of regions.）の代役。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

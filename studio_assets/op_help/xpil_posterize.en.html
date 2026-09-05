@@ -3,7 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xpil_posterize&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>ポスタリゼーション（階調数の削減）。`<code style="color:#22d3bf">PIL.ImageOps.posterize</code>` を呼び、各チャンネルの有効ビット数を減らして色数を落とす。</p>
+<p>a が保持ビット数（`<code style="color:#22d3bf">bits = 1 + int(a*6)</code>`、範囲 1〜7）を振る。b は未使用。bits=1 では各チャンネルが 2 値化に近い極端な階調落ちになる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

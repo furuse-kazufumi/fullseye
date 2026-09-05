@@ -3,7 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_curv_aniso_diff&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>曲率異方性拡散(SimpleITK `<code style="color:#22d3bf">CurvatureAnisotropicDiffusion</code>`)。Perona-Malik 型の異方性拡散の一種で、エッジ(勾配が大きい場所)では拡散を抑え、平坦な場所ではよく拡散させることでエッジを保ったまま平滑化する。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は伝導度パラメータ(conductance、</code><code style="color:#22d3bf">0.5+4.5*a</code><code style="color:#22d3bf"> で 0.5〜5.0。大きいほどエッジ判定が緩くなり強く拡散する)、</code><code style="color:#22d3bf">b</code>` は反復回数(1〜9 回)を振る。時間刻みは 0.0625 固定。出力は [0,1] にクリップ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">Leitfaden zur Familie gallery2d_color_artistic</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

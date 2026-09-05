@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+矩形窓内の画素値の標準偏差(局所標準偏差、``E[x^2]-E[x]^2`` の平方根)
+を正規化した画像。テクスチャの局所的なばらつき(粗さ)を可視化する。HALCON
+の ``deviation_image``（Calculate the standard deviation of gray values
+within rectangular windows.）に相当。
+
+``a`` が窓の一辺を ``{3,5,7,9}`` で振る。``b`` は未使用。平坦な領域では
+0 に近く、テクスチャの激しい領域で値が大きくなる。
 
 ## 詳しい使い方ガイド
 

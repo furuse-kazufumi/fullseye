@@ -17,7 +17,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+phase_congruency: a simplified monogenic phase-congruency feature map.
+
+Multi-scale radial log-Gabor bandpass responses (even part) plus their Riesz
+(monogenic odd) components are accumulated; phase congruency is
+``|sum of the (even, odd1, odd2) energy vectors| / (sum of amplitudes)``.
+Because both numerator and denominator scale linearly with image gain and the
+log-Gabor filters carry no DC, the result is invariant to affine illumination
+change. ``a`` is a noise threshold (fraction of mean energy); ``b`` scales the
+base wavelength. Peaks at edges/lines where the phases align.
 
 ## 詳しい使い方ガイド
 

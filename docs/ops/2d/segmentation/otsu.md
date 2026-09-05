@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+大津の判別分析法（Otsu's method）による自動しきい値処理。HALCON の ``binary_threshold``（Segment an image using binary thresholding.）に相当。
+
+``a``, ``b`` は未使用（しきい値は入力から自動で決まる）。``[0,1]`` を 256 ビンのヒストグラムに分け、クラス間分散 ``ω(1-ω)`` を最大化するしきい値を全探索して選び、それより大きい画素を前景とする。前景・背景 2 クラスの分離を仮定するため、ヒストグラムが単峰（1 山）の画像では意図しない位置で切れることがある。
 
 ## 詳しい使い方ガイド
 

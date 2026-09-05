@@ -422,7 +422,10 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             if not isinstance(out, np.ndarray) or out.shape != shape:
                 return np.zeros(shape, np.float64)
             return _clip01(np.where(out > 0.5, 1.0, 0.0)).astype(np.float64)
+        # ラッパは振る舞いを包むのであって説明を消してはいけない
+        # (backend_safe.guard と同じ穴。同型のラッパ族が 4 つあった)。
         inner.__name__ = getattr(fn, "__name__", "op")
+        inner.__doc__ = getattr(fn, "__doc__", None)
         return inner
 
     return [Op(name, cat, halcon, isort, osort, _wrap(fn, osort))

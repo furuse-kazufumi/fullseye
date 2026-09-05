@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;get_region_contour&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">get_region_contour</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">region → region</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>領域の輪郭（境界線、1 画素幅）を抽出する。領域からその収縮版（1 回の二値収縮）を引くことで外周だけを残す。a, b は未使用。`<code style="color:#22d3bf">boundary</code>` seed op と同じ実装。</p>
+<p>HALCON の `<code style="color:#22d3bf">get_region_contour</code>`（領域の輪郭を取得する演算、本来は XLD 輪郭として座標列を返す）とは出力形式が異なる近似 —— この backend は輪郭を region（画素マスク）として返し、XLD の座標点列にはしていない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

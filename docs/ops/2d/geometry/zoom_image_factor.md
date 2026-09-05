@@ -19,7 +19,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+高さ方向・幅方向で独立な倍率(``0.7+0.6*a``, ``0.7+0.6*b``)を持つ等方
+でないズーム。中心を基準にアフィン変換で拡大縮小し、キャンバスサイズは
+変えない(はみ出す/余る部分は反射で埋める)。HALCON の
+``zoom_image_factor``（Zoom an image by a given factor.）に相当し、
+HALCON と同じく **2 つの倍率**(ScaleHeight/ScaleWidth)を取る。
+
+``a`` が縦方向の倍率、``b`` が横方向の倍率を振る。両方が使われる
+(2026-09-02 以前は ``zoom_image_size`` と実装が重複していたが、現在は
+別の ``kind`` に分離済み)。
 
 ## 詳しい使い方ガイド
 

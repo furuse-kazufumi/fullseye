@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Pillow のエンボス（浮き彫り）フィルタ。``PIL.ImageFilter.EMBOSS`` の固定3x3 カーネルを掛ける（斜め方向の勾配を検出し、平坦部を中間グレーに落とす古典的な NPR フィルタ）。
+
+a, b は未使用（Pillow の ``ImageFilter.EMBOSS`` はパラメータを持たない固定カーネル）。
 
 ## 詳しい使い方ガイド
 

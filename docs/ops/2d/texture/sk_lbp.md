@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+LBP(Local Binary Pattern、局所二値パターン)。各画素を中心に円周上の近傍画素と大小比較して 2 進コードを作る、照明変化に強いテクスチャ記述子。
+
+HALCON に直接対応するものは無い。実装は ``feature.local_binary_pattern(v, 8, 1+int(a*3))`` を正規化したもの —— 近傍点数 P=8 は固定、a は半径 R を 1〜4 に振る(半径が大きいほど粗いスケールのテクスチャを拾う)。b は未使用。method は既定の ``'default'``(回転不変ではない、最も基本的な符号化)。
 
 ## 詳しい使い方ガイド
 

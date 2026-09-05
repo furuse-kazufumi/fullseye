@@ -3,7 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sg_watershed_gradient&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → region</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>勾配画像の h-minima マーカーからのウォーターシェッド分割の境界を返す（`<code style="color:#22d3bf">skimage</code>`、HALCON に対応オペレータなし）。</p>
+<p>Sobel 勾配の大きさを正規化し、深さ `<code style="color:#22d3bf">h = 0.02 + a*0.3</code><code style="color:#22d3bf"> の h-minima 変換で生き残った領域極小をマーカーとして（</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が大きいほどマーカーが少なく・粗い分割になる）、その勾配画像に対するウォーターシェッドを計算する。</code><code style="color:#22d3bf">b</code>` は未使用。戻り値は集水域（catchment basin/物体）を分けるダムライン（境界）を表す region。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

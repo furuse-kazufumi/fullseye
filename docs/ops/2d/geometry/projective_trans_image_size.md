@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+実装は ``projective_trans_image`` と同一(``kind: "projective"``)。
+名前は出力サイズを指定できることを示唆するが、このバックエンドでは
+出力キャンバスサイズは変更されず、``projective_trans_image`` と全く同じ
+台形歪みを返す(近似の限界、サイズ変更機能は再現されていない)。HALCON の
+``projective_trans_image_size``（Apply a projective transformation to an
+image and specify the output image size.）の代役。
+
+``a`` が歪みの強さ、``b`` が非対称さを振る。両方が使われる。
 
 ## 詳しい使い方ガイド
 

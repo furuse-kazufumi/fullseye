@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Chan-Vese セグメンテーション。レベルセット(等位集合)を輝度の分散が領域内で最小になるように反復して動かす能動輪郭モデルで、エッジがはっきりしない対象でも領域を検出できる。
+
+HALCON に直接対応するものは無い。実装は ``segmentation.chan_vese(v, mu=0.1+0.4*a, max_num_iter=60)`` —— a は'edge length' 重み mu を 0.1〜0.5 に振る(大きいほど輪郭が丸く滑らかになり細部を無視しやすくなる)。反復回数は 60 に固定。b は未使用。初期レベルセットは既定の 'checkerboard'(チェッカーボード状)。
 
 ## 詳しい使い方ガイド
 

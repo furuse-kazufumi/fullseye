@@ -19,10 +19,10 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 骨格の端点(8 近傍にちょうど 1 個の骨格画素を持つ点)を抽出する。
 
-    HALCON の `junctions_skeleton` は EndPoints と JuncPoints の両方を返すが、
-    fullseye の `junctions_skeleton` は分岐点のみなので、端点側をこの op が担う。
-    入力が骨格でない場合は em_skeleton で細線化してから端点を取る。
-    孤立 1 画素(近傍 0)も端点に数える。つまみ a, b は未使用。
+HALCON の `junctions_skeleton` は EndPoints と JuncPoints の両方を返すが、
+fullseye の `junctions_skeleton` は分岐点のみなので、端点側をこの op が担う。
+入力が骨格でない場合は em_skeleton で細線化してから端点を取る。
+孤立 1 画素(近傍 0)も端点に数える。つまみ a, b は未使用。
 
 ## 詳しい使い方ガイド
 

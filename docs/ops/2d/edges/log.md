@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ラプラシアン・オブ・ガウシアン（LoG）フィルタ。HALCON の ``laplace_of_gauss``（LoG-Operator (Laplace of Gaussian).）に相当。
+
+``a`` がガウシアンの標準偏差 σ を ``0.5〜3.0`` に振る。``b`` は未使用。``scipy.ndimage.gaussian_laplace`` の絶対値を ``_norm`` で正規化する（符号を捨てているため、暗背景上の明斑点と明背景上の暗斑点を区別できない）。ブロブ（斑点状構造）検出やエッジ検出に使う。
 
 ## 詳しい使い方ガイド
 

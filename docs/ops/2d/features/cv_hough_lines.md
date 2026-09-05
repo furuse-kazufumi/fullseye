@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+確率的 Hough 変換による直線(線分)検出(1 スカラー特徴量、OpenCV 実装)。まず Canny でエッジ画像を作り、そこから直線状に並ぶエッジ画素の集合を投票方式で探して線分として検出する —— ここでは検出できた線分の本数だけを返す(0 本なら 0)。
+
+HALCON の `hough_lines`(Detect lines in edge images with the help of the Hough transform and returns it in HNF.)に相当(近似。線のパラメータではなく本数のみ)。実装は ``cv2.HoughLinesP(Canny(_u8(v),50,150), 1, pi/180, threshold=int(20+40*a), minLineLength=int(10+20*b), maxLineGap=5)`` —— a は投票数のしきい値(直線と認める最低票数)を 20〜60 に、b は最小線分長を 10〜30 に振る。Canny の内部しきい値(50, 150)と maxLineGap(5)は固定。
 
 ## 詳しい使い方ガイド
 

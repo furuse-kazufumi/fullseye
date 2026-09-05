@@ -19,7 +19,11 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Local reflective symmetry of gray values along a row. For each pixel the
+weighted asymmetry sum_d (1/d)|I(i,j-d) - I(i,j+d)| over d=1..r is measured;
+a low response means the neighbourhood is left-right symmetric about that
+column. ``a`` sets the radius r (1..6); ``b`` is ignored. Output is the
+asymmetry response normalised to [0,1].
 
 ## 詳しい使い方ガイド
 

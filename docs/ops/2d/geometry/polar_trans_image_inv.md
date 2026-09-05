@@ -19,7 +19,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+極座標→直交座標への逆変換(``cv2.warpPolar`` + ``WARP_INVERSE_MAP``)。
+``polar_trans_image`` の逆写像で、半径 ``min(H,W)/2`` の円盤の外側は 0 で
+埋める。2026-09-02 に「cv2 が書かなかった画素が未初期化のまま返る」バグを
+修正済み(戻り値でなく渡した ``dst`` を読んでいたため実行毎に値が変わって
+いた ―― 詳細はコード内コメント)。HALCON の
+``polar_trans_image_inv``（Transform an image in polar coordinates back
+to Cartesian coordinates）に相当。
+
+``a``, ``b`` は未使用 ―― 中心・半径は画像サイズから自動的に決まる。
 
 ## 詳しい使い方ガイド
 

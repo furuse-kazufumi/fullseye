@@ -17,7 +17,20 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Deterministic diffusion-limited-aggregation (DLA) growth proxy.
+
+Witten-Sander DLA grows a cluster by releasing random walkers that stick on
+contact; the walker density obeys a Laplace equation, so this op replaces the
+random walkers by their *deterministic* mean field: the unclaimed image
+brightness is diffused with a Gaussian Green's function to give a
+concentration u, and each generation the cluster's Moore boundary attaches
+exactly those cells whose concentration clears a stickiness threshold
+(with the single strongest boundary cell always attaching, so growth never
+stalls). Bright pixels (>= 0.75 of the image maximum, or the single brightest
+pixel) are the seed. ``a`` sets the number of growth generations
+1 + int(11a), ``b`` the stickiness: high b selects only the highest-
+concentration tips (dendritic, screened growth), low b attaches nearly the
+whole boundary (compact, Eden-like growth). Returns the 0/1 cluster.
 
 ## 詳しい使い方ガイド
 

@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ユークリッド距離変換。HALCON の ``distance_transform``（Compute the distance transformation of a region.）に相当。
+
+``a``, ``b`` は未使用。各前景画素について最も近い背景画素までのユークリッド距離を求め（``scipy.ndimage.distance_transform_edt``）、``_norm`` でその画像内の最大値を 1 に正規化する（画像間で絶対距離の比較はできない）。骨格化・粒の中心検出等の前処理に使う。
 
 ## 詳しい使い方ガイド
 

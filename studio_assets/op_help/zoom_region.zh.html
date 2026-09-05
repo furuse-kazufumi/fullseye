@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;zoom_region&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">zoom_region</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">region → region</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>領域を等方（縦横同倍率）にズームする。倍率 `<code style="color:#22d3bf">s = 0.7+0.6a</code><code style="color:#22d3bf">（0.7〜1.3 倍）で中心基準に拡大縮小し、境界外は鏡映（reflect）で埋めたのち </code><code style="color:#22d3bf">_rebinarise</code>` で 0.5 しきい値により二値領域に戻す。b は未使用。</p>
+<p>HALCON の `<code style="color:#22d3bf">zoom_region</code><code style="color:#22d3bf">（領域を指定倍率でズームする演算）に相当する近似。縦横独立の倍率を持つ </code><code style="color:#22d3bf">zoom_image_factor</code>` とは異なり単一倍率のみ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

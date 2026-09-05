@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `points → signal`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+測地距離での最遠点サンプリング(均等間引き)。→ 選択インデックス列 (n,) int。
+
+2-D 進化レジストリへ橋渡しした 3d の op ``farthest_point_sampling``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。``a`` が ``k``(既定 8)を振る。``b`` は未使用。
 
 ## 参考(サンプルデータ・文献)
 

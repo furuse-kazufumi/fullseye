@@ -3,7 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;aug_cutout&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">image → image</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>Cutout / random-erasing occlusion (DeVries &amp; Taylor 2017; Zhong et al.</p>
+<p>2020): a square patch of side `<code style="color:#22d3bf">max(1, a*min(H,W))</code>` is erased from the</p>
+<p>image, forcing a pipeline to survive partial occlusion instead of relying on</p>
+<p>one salient blob. `<code style="color:#22d3bf">b</code>` selects the (deterministic, seeded-from-b) patch</p>
+<p>position AND the fill value: b &lt;= 0.5 -&gt; black (0.0), b &gt; 0.5 -&gt; mid-gray</p>
+<p>(0.5). The patch is always fully inside the frame.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

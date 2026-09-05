@@ -3,7 +3,44 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">counts</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_dtof_depth&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">counts → feature</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Distance from a photon arrival-time histogram: `<code style="color:#22d3bf">d = c*t/2</code>`.</p>
+<p>Direct time-of-flight. The light travels to the target and back, so the</p>
+<p>one-way distance is <b>half</b> the round-trip time times the speed of light.</p>
+<p>*bin_ps* is the width of one time bin (a 100 ps bin is 1.50 cm of depth).</p>
+<p>Four estimators, from crudest to sharpest:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;peak&quot;</code>` — the centre of the fullest bin. Quantised to the bin grid;</p>
+<p>the error is uniform in `<code style="color:#22d3bf">+-half</code><code style="color:#22d3bf"> a bin (</code><code style="color:#22d3bf">+-0.75 cm</code>` at 100 ps).</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;centroid&quot;</code>` — the first moment of the whole histogram. Exact for a</p>
+<p>symmetric pulse *with no background*, and badly biased toward the middle</p>
+<p>of the window with one — pass `<code style="color:#22d3bf">subtract_background=True</code>`.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;parabolic&quot;</code>` — a parabola through the peak bin and its two neighbours.</p>
+<p>Sub-bin, cheap, and biased for a Gaussian pulse.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;gaussian&quot;</code>` — the same parabola fitted to the <b>log</b> of those three</p>
+<p>samples, which is the exact vertex for a Gaussian pulse.</p>
+<p>Measured on a <b>noiseless</b> simulated return at 2.4371 m (256 bins x 100 ps,</p>
+<p>500 ps IRF), absolute error: `<code style="color:#22d3bf">peak</code><code style="color:#22d3bf"> 1.29 mm, </code><code style="color:#22d3bf">centroid</code>` 4.4e-16 m,</p>
+<p>`<code style="color:#22d3bf">parabolic</code><code style="color:#22d3bf"> 0.067 mm, </code><code style="color:#22d3bf">gaussian</code>` 9.4e-9 m — three orders of magnitude</p>
+<p>between the crudest and the sharpest.</p>
+<p>With <b>Poisson noise</b> (200 signal + 200 ambient photons, seed 0) the same</p>
+<p>four give 13.7 mm, 146.5 mm (with `<code style="color:#22d3bf">subtract_background=True</code>`), 8.5 mm and</p>
+<p>8.0 mm. Two honest readings of that: once shot noise dominates the sub-bin</p>
+<p>estimators buy about 1.6x, not three orders of magnitude, and the centroid</p>
+<p><b>collapses</b> because a median-subtracted ambient floor still leaves noise</p>
+<p>across the whole window that drags the first moment toward the centre. Use</p>
+<p>`<code style="color:#22d3bf">&quot;gaussian&quot;</code><code style="color:#22d3bf"> or </code><code style="color:#22d3bf">&quot;parabolic&quot;</code><code style="color:#22d3bf"> on noisy data; use </code><code style="color:#22d3bf">&quot;centroid&quot;</code>` only when</p>
+<p>the background is genuinely gone.</p>
+<p>*offset_ps* is a <b>system delay to remove</b>: ``t_flight = t_measured -</p>
+<p>offset_ps``, so a positive offset makes the answer *closer*. Returns the</p>
+<p>distance in metres as a float.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: negative, non-finite, non-1-D or all-zero *hist*,</p>
+<p>a non-positive *bin_ps*, an unknown *mode*, a non-finite *offset_ps*, a</p>
+<p><b>flat</b> histogram in a peak-based mode (`<code style="color:#22d3bf">argmax</code>` would silently pick bin 0</p>
+<p>and report the first bin&#x27;s depth), a peak in the first or last bin with a</p>
+<p>sub-bin *mode* (there is no neighbour to fit to — use `<code style="color:#22d3bf">&quot;peak&quot;</code>`), a</p>
+<p>degenerate three-sample fit, and — instead of returning a negative distance —</p>
+<p>an *offset_ps* larger than the measured arrival time.</p>
+<p>Typed bridge of the photon op `<code style="color:#22d3bf">dtof_depth</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">bin_ps</code><code style="color:#22d3bf"> (default 100); </code><code style="color:#22d3bf">b</code>` is unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

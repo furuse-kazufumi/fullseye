@@ -4,7 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;lines_color&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">lines_color</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">color → contour</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>カラー画像の線（リッジ）を検出する。HALCON の `<code style="color:#22d3bf">lines_color</code>`（カラーの</p>
+<p>線とその幅を検出する）に相当するとされるが、<b>線幅は推定しない</b>——輝度</p>
+<p>画像上のガウシアン・ラプラシアン応答をしきい値二値化して連結成分を</p>
+<p>輪郭として返すだけで、線幅（HALCON 側が返す値）に相当する出力は持たない。</p>
+<p>`<code style="color:#22d3bf">_rgb_to_gray</code><code style="color:#22d3bf"> で輝度化した後、</code><code style="color:#22d3bf">scipy.ndimage.gaussian_laplace</code>` を</p>
+<p>シグマ `<code style="color:#22d3bf">0.5 + 2.5 * a</code>` でかけて絶対値を最大値正規化し、</p>
+<p>`<code style="color:#22d3bf">0.2 + 0.4 * b</code>` でしきい値二値化して 8 連結ラベリングする。</p>
+<p>a はリッジの太さ（LoG のスケール）、b は検出しきい値を振る。</p>
+<p>3 画素未満の成分は捨てる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

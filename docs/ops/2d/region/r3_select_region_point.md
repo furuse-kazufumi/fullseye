@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+指定した 1 点を含む連結成分だけを残す（HALCON ``select_region_point`` に相当）。
+
+``a``, ``b``（いずれも 0〜1）を画像の行・列に線形写像した座標``(round(a*(H-1)), round(b*(W-1)))`` の画素を指定点とし、その画素が属する連結成分だけを返す。指定点が背景なら結果は空。
 
 ## 詳しい使い方ガイド
 

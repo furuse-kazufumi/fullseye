@@ -3,7 +3,22 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">counts</code> → <code style="color:#22d3bf">counts</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_countrate_to_counts&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">counts → counts</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>計数レート `<code style="color:#22d3bf">[Hz]</code><code style="color:#22d3bf"> → 計数 </code><code style="color:#22d3bf">counts</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">countrate</code>` の出口(<b>可逆</b>)。</p>
+<p><b>単位が変換の全内容</b>: `<code style="color:#22d3bf">[1/s] * [s] = [1]</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">gate_s</code>` は積算窓の秒数で、</p>
+<p>既定 1 ms。`<code style="color:#22d3bf">counts</code>` は「時間 bin ごとの光子数」の型なので、レート列を</p>
+<p>そのまま counts と名乗らせると<b>桁が 7 つずれたまま黙って通る</b></p>
+<p>(`<code style="color:#22d3bf">TYPE_CHECKS</code>` はどちらも「非負の 1-D」としか見ていない)。</p>
+<p>:func:<code style="color:#22d3bf">counts_to_countrate</code> と往復して実測 max|Δ| = 9.3e-10(値域が 1e3-1e7 Hz なので</p>
+<p><b>相対</b> 1e-16 = 倍精度の丸め 1 単位ぶん。絶対値だけ見ると大きく見えるので、</p>
+<p>レートのように桁が広い量は相対で言う)。</p>
+<p>Args:</p>
+<p>countrate: (N,) の非負レート [Hz]。</p>
+<p>gate_s: 積算窓 [s]。&gt; 0。</p>
+<p>Returns:</p>
+<p>(N,) float64 の非負計数。</p>
+<p>Raises:</p>
+<p>ValueError: 負のレート / gate_s &lt;= 0 / 形状不正 / 非有限。</p>
+<p>2-D 進化レジストリへ橋渡しした reprconv の op `<code style="color:#22d3bf">countrate_to_counts</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">gate_s</code><code style="color:#22d3bf">(既定 0.001)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

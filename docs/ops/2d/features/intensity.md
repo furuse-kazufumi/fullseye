@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+画像の平均輝度(``x.mean()``)を返す。HALCON の ``intensity``
+（Calculate the mean and deviation of gray values.）は平均と標準偏差の
+組を返す演算子だが、この代役では平均のみを返す(標準偏差が欲しい場合は
+``gray_histo_abs``(標準偏差 std を返す)を併用する)。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

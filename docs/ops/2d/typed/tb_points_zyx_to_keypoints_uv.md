@@ -17,7 +17,20 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `points → keypoints`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+点群 ``(N,3) = (z, y, x)`` → 画像座標 ``(N,2) = (u, v)``。
+
+    :func:`keypoints_uv_to_points` の逆向き。**不可逆** —— z が落ちる。
+    落ちる量は測れる: 往復して戻ってこない値は z 列そのもので、
+    ``selftest`` は「z の RMS = 落とした情報量」として数字で出す。
+
+    Args:
+        points: (N, 3) の (z, y, x)。
+    Returns:
+        (N, 2) float64 の (u, v) = (x, y)。
+    Raises:
+        ValueError: 形状不正 / 非有限。
+
+2-D 進化レジストリへ橋渡しした reprconv の op ``points_zyx_to_keypoints_uv``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 
 ## 参考(サンプルデータ・文献)
 

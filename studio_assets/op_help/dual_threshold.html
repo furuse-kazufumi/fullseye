@@ -4,7 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;dual_threshold&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">dual_threshold</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → region</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>符号つき画像向けのしきい値処理。中央値 0.5 を「ゼロ」とみなし、</p>
+<p>`<code style="color:#22d3bf">|x - 0.5| &gt; 0.1+0.35*a</code>` を満たす画素(0.5 から十分離れた画素)を前景と</p>
+<p>する ―― 正負どちらの側にも対称に反応する。HALCON の `<code style="color:#22d3bf">dual_threshold</code>`</p>
+<p>（Threshold operator for signed images.）に相当(HALCON は正負で別々の</p>
+<p>しきい値を持てるが、ここでは 0.5 を中心とした対称な帯域に単純化)。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が除外帯域の半幅を振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。</code><code style="color:#22d3bf">highpass_image</code>` や</p>
+<p>`<code style="color:#22d3bf">bandpass_image</code>` のような符号つき応答(0.5=ゼロ)の後段でよく使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

@@ -19,7 +19,10 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Transform the image through a monotone (gamma-free) gray-value look-up
+table. The 256-entry table is a contrast sigmoid whose gain is set by ``a``
+and pivot by ``b``, endpoint-normalised to span [0,1]; the image is then a
+genuine table lookup on its 8-bit-quantised value.
 
 ## 詳しい使い方ガイド
 

@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;iv_richardson_lucy&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>Richardson-Lucy deconvolution assuming a small Gaussian PSF (sigma = `<code style="color:#22d3bf">RL_SIGMA</code><code style="color:#22d3bf">). </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> sets the iteration count n = 1 + round(a*14) (1..15); </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> is ignored. RL multiplicatively drives the estimate </code><code style="color:#22d3bf">u</code><code style="color:#22d3bf"> so that </code><code style="color:#22d3bf">u (*) psf</code>` matches the blurred measurement, sharpening real edges.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

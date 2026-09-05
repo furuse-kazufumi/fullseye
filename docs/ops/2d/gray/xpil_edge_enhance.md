@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Pillow のエッジ強調フィルタ（強め）。``PIL.ImageFilter.EDGE_ENHANCE_MORE``の固定カーネルでエッジ付近のコントラストを持ち上げる（``EDGE_ENHANCE`` より強い版）。
+
+a, b は未使用（固定カーネル）。
 
 ## 詳しい使い方ガイド
 

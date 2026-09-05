@@ -17,7 +17,16 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Forward Radon projection: treat ``v`` as a slice image and integrate it
+along parallel rays to build a sinogram (rows = angles, cols = detector),
+refit to the original HxW. ``a`` sets how many angles are acquired
+(``n = round(H*a)`` clamped to 8..360 -- the sparse-view knob), ``b`` sets the
+angular span (``span = 180*min(1, 0.5+b)`` deg: b < 0.5 is limited-angle CT,
+b >= 0.5 -- including the default b = 0.5 -- is the full [0,180) span that
+``tm_fbp_reconstruct`` / ``tm_sart_reconstruct`` / ``tm_backproject_unfiltered``
+assume, so the natural chain forward -> inverse round-trips at default knobs).
+Uses ``skimage.transform.radon`` when available, else the NumPy
+rotate-and-sum Radon transform.
 
 ## 詳しい使い方ガイド
 

@@ -4,7 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;derivate_gauss&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">derivate_gauss</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>ガウス微分(`<code style="color:#22d3bf">order=(1,0)</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">(0,1)</code><code style="color:#22d3bf">)の勾配強度 </code><code style="color:#22d3bf">hypot</code>` を [0,1]</p>
+<p>に正規化したもの。ガウシアンで平滑化してから微分するので、ノイズに強い</p>
+<p>エッジ検出器として働く。HALCON の `<code style="color:#22d3bf">derivate_gauss</code>`（Convolve an image</p>
+<p>with derivatives of the Gaussian.）に相当。</p>
+<p>`<code style="color:#22d3bf">a</code>` がガウス核のシグマを 0.5〜3.0 の範囲で振る(平滑化の強さとエッジの</p>
+<p>太さがトレードオフ)。`<code style="color:#22d3bf">b</code>` は未使用。方向別成分(dx, dy)ではなく振幅のみを</p>
+<p>返す点に注意。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">Leitfaden zur Familie gallery2d_edges</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

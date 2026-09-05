@@ -3,7 +3,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk2_reconstruction&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>モルフォロジー再構成（reconstruction by dilation）。</p>
+<p>`<code style="color:#22d3bf">skimage.morphology.reconstruction</code>` を method=&quot;dilation&quot; で呼ぶ。</p>
+<p>シード画像を「元画像から a に応じた深さだけ暗くしたもの」</p>
+<p>（`<code style="color:#22d3bf">x - (0.05 + 0.25*a)</code>`）として自動生成し、そのシードをマスク画像</p>
+<p>（元画像そのもの）まで測地学的に膨張させる。a はシードの深さ（大きい</p>
+<p>ほど多くの山が消える）を振る。b は未使用。小さな明るい斑点やノイズを</p>
+<p>消しつつ、大きな構造の輪郭は保つ（オープニングより形状の崩れが少ない）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

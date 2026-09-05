@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ゲインとオフセットによる線形階調変換。HALCON の ``scale_image``（Scale the gray values of an image.）に相当。
+
+``a`` がゲイン（コントラスト）を ``0.5〜2.0`` 倍に、``b`` がオフセット（明るさ）を ``-0.5〜+0.5`` に振る（``clip(gain*v + offset, 0, 1)``）。``b=0.5`` がオフセット 0（変化なし）に対応する点に注意。
 
 ## 詳しい使い方ガイド
 

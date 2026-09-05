@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+面積が閾値(``16+a*200`` 画素)未満の連結成分を除去する(小さなノイズ状
+領域の除去)。HALCON の ``select_shape``（Choose regions with the aid of
+shape features.）は面積・円形度・凸性など任意の形状特徴で選別できる
+汎用演算子だが、ここでは面積による足切り 1 種類に固定している(近似)。
+
+``a`` が面積の下限しきい値を振る。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

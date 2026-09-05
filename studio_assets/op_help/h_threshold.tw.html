@@ -4,7 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;h_threshold&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">threshold</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">image → region</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>帯域しきい値処理(`<code style="color:#22d3bf">a &lt; x &lt; a+0.5+0.5*b</code>` を満たす画素を前景とする)。</p>
+<p>HALCON の `<code style="color:#22d3bf">threshold</code>`(Segment an image using global threshold.)は</p>
+<p>Min/Max の 2 値を直接指定する演算子だが、この代役では下限を `<code style="color:#22d3bf">a</code>` から、</p>
+<p>帯域幅を `<code style="color:#22d3bf">b</code>` から導出する 1 パラメータ相当の簡略化になっている。登録名は</p>
+<p>`<code style="color:#22d3bf">threshold</code><code style="color:#22d3bf"> が Python 側で予約語的に扱われるため </code><code style="color:#22d3bf">h_threshold</code>` になる</p>
+<p>(spec の `<code style="color:#22d3bf">halcon</code><code style="color:#22d3bf"> フィールドは </code><code style="color:#22d3bf">threshold</code>` のまま)。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が下限しきい値(0〜1)を、</code><code style="color:#22d3bf">b</code>` が帯域幅(0〜0.5 の追加分)を振る。</p>
+<p>両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

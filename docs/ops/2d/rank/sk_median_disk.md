@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+円盤(disk)形の footprint によるメディアンフィルタ。通常の正方形カーネルと違い、円形に近い等方的な平滑化になる。
+
+HALCON の `median_image`(Compute a median filter with various masks.)に相当。実装は ``filters.median(v, footprint=disk(1+int(a*3)))`` —— a は円盤の半径を 1〜4 に振る(半径が大きいほど強く滑らかになるが細部も消える)。b は未使用。
 
 ## 詳しい使い方ガイド
 

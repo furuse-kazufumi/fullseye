@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+SLIC(Simple Linear Iterative Clustering)によるスーパーピクセル分割。色(ここではグレー値)と座標を合わせた空間で k-means クラスタリングを行い、ほぼ均等な大きさの領域に分割する。ここでは分割結果の境界線を領域として返す。
+
+HALCON に直接対応するものは無い。実装は ``segmentation.find_boundaries(segmentation.slic(v, n_segments=int(10+80*a), channel_axis=None))`` —— a はおおよそのセグメント数を 10〜90 に振る(大きいほど細かく分割される)。b は未使用。
 
 ## 詳しい使い方ガイド
 

@@ -3,7 +3,22 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;alife_langton_ant&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Langton&#x27;s ant (turmite) walking the thresholded image lattice.</p>
+<p>Reimplements the two-colour turmite of C. G. Langton, &quot;Studying artificial</p>
+<p>life with cellular automata&quot;, Physica D 22, 120-149 (1986). Cell colours are</p>
+<p>the 0.5-threshold of the image. A single ant starts at the grid centre and,</p>
+<p>at every step, applies the RL rule:</p>
+<p style="margin:2px 0 2px 12px">• on a <b>white</b> (0) cell: turn 90 degrees right, flip the cell to 1,</p>
+<p>step forward one cell;</p>
+<p style="margin:2px 0 2px 12px">• on a <b>black</b> (1) cell: turn 90 degrees left, flip the cell to 0,</p>
+<p>step forward one cell.</p>
+<p>Movement wraps toroidally. Because every visit flips the cell it stands on,</p>
+<p>starting from an all-white lattice a cell is black exactly when the ant has</p>
+<p>visited it an odd number of times.</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> sets the number of steps N = 1 + int(400a); </code><code style="color:#22d3bf">b</code>` selects the initial</p>
+<p>heading (up / right / down / left) which mirrors/rotates the whole</p>
+<p>trajectory. Returns the final {0,1} colour field.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">Leitfaden zur Familie gallery2d_physics_alife_3d</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

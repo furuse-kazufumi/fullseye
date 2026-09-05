@@ -19,7 +19,11 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+画像の定義域を全面に広げる。HALCON の ``full_domain``(画像の定義域を
+最大に拡張する)に相当。
+
+入力と同じ形状の全 1 の region(=画像全面)を返すだけの op。ROI を絞る他の
+op と対で使い、定義域をリセットするために使う。``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

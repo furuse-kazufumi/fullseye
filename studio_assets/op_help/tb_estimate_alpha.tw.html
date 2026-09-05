@@ -3,7 +3,19 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_estimate_alpha&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">points → feature</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>点群のスケールから推奨 alpha を返す(最近傍距離の中央値ベース)。</p>
+<p>各点の最近傍距離の中央値 `<code style="color:#22d3bf">m</code>` を求め、半径しきい値 1/alpha ≈ 2m(隣接間隔の約 2 倍まで</p>
+<p>許す)となるよう `<code style="color:#22d3bf">alpha = 1/(2m)</code>` を返す。これで表面付近の素性の良い四面体は残しつつ、</p>
+<p>大きく間延びした四面体(=凹み・外側)を切り落とせる。重複点は最近傍 0 になるため正の距離のみ使う。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>points : array_like (N,3)</p>
+<p>Returns</p>
+<p>-------</p>
+<p>alpha : float</p>
+<p>正の有限値。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">estimate_alpha</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

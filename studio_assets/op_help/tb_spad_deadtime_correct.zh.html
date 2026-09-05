@@ -3,7 +3,29 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">counts</code> → <code style="color:#22d3bf">counts</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_spad_deadtime_correct&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">counts → counts</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Recover the true photon rate from a dead-time-distorted measured rate.</p>
+<p>The exact inverse of the <b>non-paralysable</b> law of</p>
+<p>:func:<code style="color:#22d3bf">spad_deadtime_apply</code>::</p>
+<p>n = m / (1 - m*tau)</p>
+<p>A round trip `<code style="color:#22d3bf">apply -&gt; correct</code>` is exact to machine precision (measured max</p>
+<p>elementwise relative error 6.0e-16 over 2000 rates spanning 1e3 to 5e7 Hz at</p>
+<p>`<code style="color:#22d3bf">tau = 50 ns</code>`, where the measured rate reaches 71.4% of the 20 MHz</p>
+<p>saturation rate).</p>
+<p><b>There is deliberately no paralysable inverse.</b> `<code style="color:#22d3bf">m = n*exp(-n*tau)</code>` is not</p>
+<p>injective — every measured rate below the maximum `<code style="color:#22d3bf">1/(e*tau)</code>` corresponds to</p>
+<p>*two* true rates, one below and one above `<code style="color:#22d3bf">1/tau</code>` — so returning one of them</p>
+<p>would be a fabrication dressed as a correction. Resolve the branch with an</p>
+<p>independent measurement (e.g. an attenuator step) and invert it yourself.</p>
+<p>*measured_hz* is a 1-D array of measured rates in counts per second;</p>
+<p>*dead_time_ns* the dead time in nanoseconds (default 50, the same</p>
+<p>placeholder :func:<code style="color:#22d3bf">spad_deadtime_apply</code> uses — replace it with the</p>
+<p>datasheet value). Returns the corrected true rates as a float64 1-D array.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: negative, non-finite or non-1-D *measured_hz*, a</p>
+<p>non-positive *dead_time_ns*, and — instead of returning `<code style="color:#22d3bf">inf</code>` or a negative</p>
+<p>rate — any measured rate at or above the saturation rate `<code style="color:#22d3bf">1/tau</code>`, which no</p>
+<p>non-paralysable detector can ever produce.</p>
+<p>Typed bridge of the photon op `<code style="color:#22d3bf">spad_deadtime_correct</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">dead_time_ns</code><code style="color:#22d3bf"> (default 50); </code><code style="color:#22d3bf">b</code>` is unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

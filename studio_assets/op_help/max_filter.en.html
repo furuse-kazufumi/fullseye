@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;max_filter&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">gray_dilation_rect</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>矩形窓内の最大値フィルタ（グレースケール膨張に相当）。HALCON の `<code style="color:#22d3bf">gray_dilation_rect</code>`（Determine the maximum gray value within a rectangle.）に相当。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓サイズを </code><code style="color:#22d3bf">3,5,7,9</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">）に振る。</code><code style="color:#22d3bf">b</code>` は未使用。暗い小さな欠陥（ピンホール等）を消し、明るい領域を広げる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

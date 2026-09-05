@@ -17,7 +17,34 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `counts → counts`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Distort a true photon rate by the detector's dead time (counts lost).
+
+    After every detection a SPAD is blind for a recharge (dead) time ``tau``, so
+    the *measured* rate ``m`` is always below the *true* incident rate ``n``.
+    Two classical laws, and this op implements both:
+
+      * **non-paralysable** (default) — an arriving photon during the dead time is
+        simply lost: ``m = n / (1 + n*tau)``. Monotonic, saturating at ``1/tau``.
+      * **paralysable** (``paralyzable=True``) — an arriving photon *restarts* the
+        dead time: ``m = n * exp(-n*tau)``. This law **peaks** at ``n = 1/tau``
+        (where ``m = 1/(e*tau)``) and then falls, so a bright scene can read
+        *darker* than a dim one. That is why no inverse op exists for it (see
+        :func:`spad_deadtime_correct`).
+
+    *rate_hz* is a 1-D array of true rates in counts per second; *dead_time_ns*
+    is the dead time in nanoseconds, defaulting to 50 — the middle of the
+    10-100 ns range a passively quenched SPAD occupies, and a placeholder to be
+    replaced by the datasheet value, never a measurement of your detector.
+    Returns the measured rates as a float64 1-D array of the same length.
+
+    Ground truth (pinned in the tests): at ``n = 1/tau`` the non-paralysable law
+    gives exactly ``n/2``; the paralysable law's maximum is exactly
+    ``1/(e*tau)`` at ``n = 1/tau``; both reduce to ``m = n`` as ``n*tau -> 0``.
+
+    **Raises** ``ValueError``: negative, non-finite or non-1-D *rate_hz*, a
+    non-positive *dead_time_ns*, and a non-bool *paralyzable*.
+
+Typed bridge of the photon op ``spad_deadtime_apply`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``dead_time_ns`` (default 50); ``b`` is unused.
 
 ## 参考(サンプルデータ・文献)
 

@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+符号つき画像向けのしきい値処理。中央値 0.5 を「ゼロ」とみなし、
+``|x - 0.5| > 0.1+0.35*a`` を満たす画素(0.5 から十分離れた画素)を前景と
+する ―― 正負どちらの側にも対称に反応する。HALCON の ``dual_threshold``
+（Threshold operator for signed images.）に相当(HALCON は正負で別々の
+しきい値を持てるが、ここでは 0.5 を中心とした対称な帯域に単純化)。
+
+``a`` が除外帯域の半幅を振る。``b`` は未使用。``highpass_image`` や
+``bandpass_image`` のような符号つき応答(0.5=ゼロ)の後段でよく使う。
 
 ## 詳しい使い方ガイド
 

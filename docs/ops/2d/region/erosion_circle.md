@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+円盤形構造要素による二値収縮(``ndimage.binary_erosion``)。前景領域を
+外周から侵食して縮める、最も基本的な二値モルフォロジー演算。HALCON の
+``erosion_circle``（Erode a region with a circular structuring element.）
+に相当。
+
+``a`` が構造要素の半径を 1〜4 の範囲(``_rad(a)``)で振る。``b`` はこの
+バックエンドの二値モルフォロジー op(erosion/dilation/opening/closing の
+円形・矩形いずれも)に共通して**未使用**。
 
 ## 詳しい使い方ガイド
 

@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+局所極大点の検出。近傍のどの画素よりも真に大きい(プラトー=同値の連結領域も許容)画素の集合を領域として返す —— ピーク検出・特徴点抽出の下処理。
+
+HALCON の `local_max`(Detect all local maxima in an image.)に相当。実装は ``morphology.local_maxima(v)``。a, b は未使用 —— footprint は既定値(全方向 1 近傍)のまま。
 
 ## 詳しい使い方ガイド
 

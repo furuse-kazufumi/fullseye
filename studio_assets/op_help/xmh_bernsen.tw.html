@@ -3,7 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xmh_bernsen&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">image → region</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>Bernsen 局所二値化(`<code style="color:#22d3bf">mahotas.thresholding.bernsen</code>`)。近傍の最大輝度と最小輝度の中間値をローカル閾値とし、コントラストが低い領域だけ大域しきい値にフォールバックする。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は近傍半径(3〜15 px)、</code><code style="color:#22d3bf">b</code>` はコントラスト閾値(5〜55。これを下回る低コントラスト域はグローバル閾値 128 で代用)を振る。濃淡ムラのある照明下でのエッジ二値化に向く。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

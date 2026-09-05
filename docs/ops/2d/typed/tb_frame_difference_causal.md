@@ -17,7 +17,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `video → video`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+``|frame t − frame t−1|`` with a zero first frame → ``(T, H, W)`` (``video``).
+
+    Same length as the input (unlike :func:`videops.frame_difference`, ``T−1``),
+    so it composes frame-for-frame with the other stream ops.
+
+Typed bridge of the videostream op ``frame_difference_causal`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

@@ -3,7 +3,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tf_phase_congruency&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>phase_congruency: a simplified monogenic phase-congruency feature map.</p>
+<p>Multi-scale radial log-Gabor bandpass responses (even part) plus their Riesz</p>
+<p>(monogenic odd) components are accumulated; phase congruency is</p>
+<p>`<code style="color:#22d3bf">|sum of the (even, odd1, odd2) energy vectors| / (sum of amplitudes)</code>`.</p>
+<p>Because both numerator and denominator scale linearly with image gain and the</p>
+<p>log-Gabor filters carry no DC, the result is invariant to affine illumination</p>
+<p>change. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> is a noise threshold (fraction of mean energy); </code><code style="color:#22d3bf">b</code>` scales the</p>
+<p>base wavelength. Peaks at edges/lines where the phases align.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -3,7 +3,14 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xkor_motion_blur&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → image</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>モーションブラー。`<code style="color:#22d3bf">kornia.filters.motion_blur</code>` を呼ぶ。</p>
+<p>a がカーネル長とブラー角度の<b>両方</b>を振る</p>
+<p>（カーネルサイズ `<code style="color:#22d3bf">2*int(2+a*6)+1</code><code style="color:#22d3bf"> = 5〜17、角度 </code><code style="color:#22d3bf">360*a</code>` 度）ため、</p>
+<p>この 2 つは独立には制御できない。b はブラー方向のオフセット</p>
+<p>（`<code style="color:#22d3bf">2*b-1</code>`、範囲 -1〜1）を振る。kornia は float32 の畳み込みなので</p>
+<p>重み和の丸めで出力が 1 をわずかに超えることがある(実測 max=1+2e-7)。</p>
+<p><code style="color:#22d3bf">image</code> は [0,1] 契約なので出口で clip する（<code style="color:#22d3bf">ops._apply</code> が段間で</p>
+<p>掛けている clip と同じで、パイプライン全体の結果は変わらない）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

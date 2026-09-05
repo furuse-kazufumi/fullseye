@@ -3,7 +3,18 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_estimate_alpha&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">points → feature</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>点群のスケールから推奨 alpha を返す(最近傍距離の中央値ベース)。</p>
+<p>各点の最近傍距離の中央値 `<code style="color:#22d3bf">m</code>` を求め、半径しきい値 1/alpha ≈ 2m(隣接間隔の約 2 倍まで</p>
+<p>許す)となるよう `<code style="color:#22d3bf">alpha = 1/(2m)</code>` を返す。これで表面付近の素性の良い四面体は残しつつ、</p>
+<p>大きく間延びした四面体(=凹み・外側)を切り落とせる。重複点は最近傍 0 になるため正の距離のみ使う。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>points : array_like (N,3)</p>
+<p>Returns</p>
+<p>-------</p>
+<p>alpha : float</p>
+<p>正の有限値。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">estimate_alpha</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

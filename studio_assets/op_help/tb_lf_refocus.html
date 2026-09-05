@@ -3,7 +3,24 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_lf_refocus&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">lightfield → image</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>Shift-and-add refocus: the synthetic-aperture image focused at *slope*.</p>
+<p>Every view `<code style="color:#22d3bf">(v, u)</code><code style="color:#22d3bf"> is shifted by </code><code style="color:#22d3bf">(-s*(v - v_c), -s*(u - u_c))</code>` — the</p>
+<p><b>minus</b> undoes the parallax of a point at slope `<code style="color:#22d3bf">s</code>` — and the shifted</p>
+<p>views are averaged. Points at that slope add coherently and stay sharp;</p>
+<p>everything else is smeared by an amount proportional to its slope</p>
+<p>difference times the angular baseline. `<code style="color:#22d3bf">slope=0</code>` is the plane the array</p>
+<p>was already focused on and returns the plain average of the views.</p>
+<p>Ground truth it reproduces exactly (pinned in `<code style="color:#22d3bf">tests/test_lightfield.py</code>`):</p>
+<p>a single-layer field synthesised at slope `<code style="color:#22d3bf">s0</code><code style="color:#22d3bf"> and refocused at </code><code style="color:#22d3bf">s0</code>`</p>
+<p>with `<code style="color:#22d3bf">edge=&quot;wrap&quot;</code><code style="color:#22d3bf"> and an integer </code><code style="color:#22d3bf">s0</code>` returns the original texture to</p>
+<p>5.6e-16; sweeping the slope, the variance of the result peaks at `<code style="color:#22d3bf">s0</code>`</p>
+<p>(measured exactly on the sweep grid in all 18 texture/slope combinations</p>
+<p>listed in the module docstring), and refocusing at `<code style="color:#22d3bf">-s0</code>` does *not* —</p>
+<p>which is the check that catches a flipped shift sign.</p>
+<p>Returns a `<code style="color:#22d3bf">(H, W)</code>` 2-D image.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *lf* not a valid light field, a non-finite or</p>
+<p>over-large *slope* (:data:<code style="color:#22d3bf">MAX_ABS_SLOPE</code>), unknown *interp* / *edge*.</p>
+<p>Typed bridge of the lightfield op `<code style="color:#22d3bf">lf_refocus</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

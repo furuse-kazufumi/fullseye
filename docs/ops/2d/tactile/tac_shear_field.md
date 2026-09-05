@@ -17,7 +17,17 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+In-plane shear proxy from the 2-D structure tensor (Foerstner /
+Bigun-Granlund orientation coherence). The tensor
+``J = G_sigma(grad v * grad v^T)`` has eigenvalues l1 >= l2, and the
+coherence ``(l1-l2)/(l1+l2) = sqrt((J11-J22)^2 + 4*J12^2) / (J11+J22)``
+is 1 where the gel texture is stretched into a single dominant orientation
+(as it is under tangential/shear load) and 0 where it is isotropic. The
+result is additionally weighted by the tensor trace (gradient energy) so
+that texture-free, un-contacted gel stays dark instead of amplifying noise
+orientation. ``a`` = tensor integration sigma (0.6..4.6), ``b`` = output gain
+(0.5..2.5). Output clipped to [0,1], HxW; a constant frame has zero gradient
+energy and yields an all-zero shear field.
 
 ## 参考(サンプルデータ・文献)
 

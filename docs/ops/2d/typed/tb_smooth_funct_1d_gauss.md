@@ -17,7 +17,18 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `signal → signal`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Gaussian smoothing of a 1-D function (HALCON ``smooth_funct_1d_gauss``).
+
+    Convolves *y* with a Gaussian of standard deviation *sigma* (in samples),
+    ``reflect`` boundary handling (scipy default). The DC level is preserved;
+    zero-mean noise variance shrinks by roughly ``1 / (2 * sigma * sqrt(pi))``.
+
+    :param y: 1-D function, at least 1 sample.
+    :param sigma: Gaussian standard deviation in samples; must be finite and > 0.
+    :returns: smoothed float64 array, same length as *y*.
+    :raises ValueError: non-1-D / NaN / Inf input, empty input, or ``sigma <= 0``.
+
+Typed bridge of the 1d op ``smooth_funct_1d_gauss`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``sigma`` (default 1); ``b`` is unused.
 
 ## 参考(サンプルデータ・文献)
 

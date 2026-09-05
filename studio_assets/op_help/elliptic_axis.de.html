@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;elliptic_axis&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">elliptic_axis</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">region → feature</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>領域に等価な楕円（equivalent ellipse、慣性モーメントが一致する楕円）の長軸と短軸の比（アスペクト比）を返す。`<code style="color:#22d3bf">skimage.measure.regionprops</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">axis_major_length</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">axis_minor_length</code>` から計算し、/10 でおおよそ [0,1] 程度のスケールに収める（正規化ではないため、非常に細長い領域では 1 を超えうる）。a, b は未使用。</p>
+<p>HALCON の `<code style="color:#22d3bf">elliptic_axis</code><code style="color:#22d3bf">（等価楕円の長半径・短半径そのもの 2 つの長さを返す演算）とは異なり、この実装は長さではなく比（アニソメトリー、</code><code style="color:#22d3bf">anisometry</code>` と同じ metric）だけを 1 スカラーで返す近似。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

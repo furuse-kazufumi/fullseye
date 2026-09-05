@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+グレースケールオープニング（侵食してから膨張）。HALCON の ``gray_opening``（Perform a gray value opening on an image.）に相当。
+
+``a`` が構造要素の一辺を ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。明るい小さな突起（ノイズ状の輝点）を除去しつつ、大きな明域の形はほぼ保つ。
 
 ## 詳しい使い方ガイド
 

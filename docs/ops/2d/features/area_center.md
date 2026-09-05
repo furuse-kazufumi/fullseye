@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → match`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+領域の面積と重心を、解像度に依らない正規化済みの 3 成分ベクトル
+(面積比 = 面積/画像画素数、正規化重心行、正規化重心列)として返す。1
+スカラーでは (Area, Row, Column) を表せないため、``match`` ソート(1 次元
+ベクトル、``ncc_locate`` と同じ形)で返す点が他の region 特徴 op と異なる。
+領域が空のときは (0, 0.5, 0.5)(面積ゼロ・中心=画像中心)を返す fail-soft
+仕様。HALCON の ``area_center``（Area and center of regions.）に相当。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

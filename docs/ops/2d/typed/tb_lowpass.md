@@ -17,7 +17,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `signal → signal`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Butterworth low-pass (scipy, zero-phase filtfilt). *cutoff* must be inside
+    ``(0, rate/2)``; an out-of-Nyquist cutoff raises instead of passing the signal
+    through. A signal too short for zero-phase filtfilt also raises (the message
+    names the exact minimum) instead of silently coming back unfiltered.
+
+Typed bridge of the 1d op ``lowpass`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``order`` (default 4); ``b`` is unused.
 
 ## 参考(サンプルデータ・文献)
 

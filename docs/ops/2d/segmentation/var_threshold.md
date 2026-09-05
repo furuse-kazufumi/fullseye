@@ -19,7 +19,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Sauvola の局所適応的二値化(``skimage.filters.threshold_sauvola``、
+窓サイズ ``2*int(a*6)+3``)。局所平均と局所標準偏差の両方を使ってしきい値
+を決めるため、``dyn_threshold`` より照明ムラや低コントラスト文書に強い。
+HALCON の ``var_threshold``（Threshold an image by local mean and standard
+deviation analysis.）に相当する近似(定式化は似た発想だが Sauvola の式と
+HALCON の式は係数が異なる ―― 同一の数値結果にはならない)。
+
+``a`` が局所窓のサイズを振る。``b`` は未使用(Sauvola の k, r は skimage の
+既定値に固定)。
 
 ## 詳しい使い方ガイド
 

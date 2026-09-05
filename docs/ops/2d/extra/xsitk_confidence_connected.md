@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+信頼区間連結領域拡張(SimpleITK ``ConfidenceConnected``)。画像中心を種にし、現在の領域内の平均・標準偏差から「平均 ± multiplier * 標準偏差」の区間を作り、それを反復的に更新しながら連結領域を広げていく(xsitk_connected_threshold より統計的な閾値の決め方)。
+
+``a`` は反復回数(``1+int(a*5)`` で 1〜6)、``b`` は標準偏差の倍率(``1.0+3.0*b`` で 1〜4)を振る。初期近傍半径は 2 固定。画像中心付近に対象があることを前提とした op。
 
 ## 詳しい使い方ガイド
 

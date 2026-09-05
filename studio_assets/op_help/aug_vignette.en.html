@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_vignette&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>Radial lens vignetting following the natural cos^4 falloff law. With `<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> the normalised distance from the image centre and </code><code style="color:#22d3bf">R = 0.35 + 1.15*b</code><code style="color:#22d3bf"> the falloff radius, the transmission is </code><code style="color:#22d3bf">cos(atan(r/R))^4 = 1/(1 + (r/R)^2)^2</code><code style="color:#22d3bf"> -- the textbook cos^4 law. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> blends it in: </code><code style="color:#22d3bf">out = v * (1 - a + a*falloff)</code>`, so a=0 is a no-op and a=1 is full vignetting. Centre stays brightest; strictly darkening, never amplifying.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

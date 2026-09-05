@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+``projective_trans_image`` と同じ台形歪みを領域(2 値マスク)に適用する。
+``out_sort`` が ``region`` のため ``build()`` が ``_rebinarise`` で包み、
+補間で生じた小数値を ``>0.5`` で二値に戻してから返す(領域の {0,1} 契約を
+壊さないための後処理)。HALCON の ``projective_trans_region``（Apply a
+projective transformation to a region.）に相当。
+
+``a`` が歪みの強さ、``b`` が非対称さを振る。両方が使われる。
 
 ## 詳しい使い方ガイド
 

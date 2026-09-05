@@ -17,7 +17,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Smooth the input sinogram along the ANGLE direction (rows). Neighbouring
+projection angles view almost the same object, so angle-direction smoothing
+is a genuine consistency prior that suppresses per-angle detector noise while
+preserving the sinusoidal traces. ``a`` sets the angle-axis Gaussian sigma
+(``a*4``), ``b`` adds a gentle detector-axis sigma (``b*1.5``). Output stays
+a same-shape sinogram in [0,1].
 
 ## 詳しい使い方ガイド
 

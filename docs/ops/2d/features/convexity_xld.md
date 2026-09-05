@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `contour → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+最大の輪郭について凸性 ``輪郭の面積 / 凸包の面積`` を計算する
+(``cv2.convexHull`` + ``cv2.contourArea``)。cv2 が無い環境では常に 1.0
+(完全凸)を返すフォールバックになる点に注意。HALCON の ``convexity_xld``
+（Shape factor for the convexity of contours or polygons.）に相当。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

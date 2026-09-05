@@ -17,7 +17,17 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Belousov-Zhabotinsky-like excitable medium (Greenberg-Hastings automaton).
+
+A 3-state excitable lattice -- 0 = rest, 1 = excited, 2 = refractory -- with
+the Greenberg-Hastings rule: an excited cell becomes refractory, a refractory
+cell relaxes to rest, and a resting cell fires when at least ``thr`` of its 8
+Moore neighbours are excited. Because a refractory cell cannot be re-excited,
+excitation cannot back-propagate and the fronts organise into the travelling
+waves and rotating spirals of the BZ reaction. The image tertiles set the
+initial state (>2/3 excited, 1/3..2/3 refractory, else rest). ``a`` sets the
+excitation threshold thr = 1 + int(3a) neighbours, ``b`` the step count
+1 + int(20b). Returns state/2.
 
 ## 詳しい使い方ガイド
 

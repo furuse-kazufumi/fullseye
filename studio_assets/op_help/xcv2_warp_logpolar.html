@@ -3,7 +3,12 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xcv2_warp_logpolar&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → image</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>対数極座標変換（ログポーラー変換）で画像を (半径, 角度) 平面に写像する。</p>
+<p>`<code style="color:#22d3bf">cv2.warpPolar</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">WARP_POLAR_LOG</code>` モードを使う。中心は画像中心、最大</p>
+<p>半径は `<code style="color:#22d3bf">min(H, W)/2</code>`。出力の行方向が対数半径、列方向が角度に対応する。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。拡大縮小・回転を新しい画像上の平行移動に変換できる</p>
+<p>ため、テンプレートマッチングの前処理（Fourier-Mellin 変換の要素技術）として</p>
+<p>使われる。HALCON に対応する単一オペレータは無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

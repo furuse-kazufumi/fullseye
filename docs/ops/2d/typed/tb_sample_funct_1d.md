@@ -17,7 +17,17 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `signal → signal`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Every *step*-th sample (HALCON ``sample_funct_1d``).
+
+    Keeps samples ``0, step, 2*step, ...`` — decimation without an
+    anti-aliasing filter (smooth first if the signal has content above the new
+    Nyquist rate).
+
+    :param y: 1-D function (may be empty).
+    :param step: truncated to int, must be >= 1 (``step=1`` copies).
+    :raises ValueError: non-1-D / NaN / Inf input, or ``step < 1``.
+
+Typed bridge of the 1d op ``sample_funct_1d`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``step`` (default 2); ``b`` is unused.
 
 ## 参考(サンプルデータ・文献)
 

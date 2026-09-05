@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+領域の輪郭（境界線、1 画素幅）を抽出する。領域からその収縮版（1 回の二値収縮）を引くことで外周だけを残す。a, b は未使用。``boundary`` seed op と同じ実装。
+
+HALCON の ``get_region_contour``（領域の輪郭を取得する演算、本来は XLD 輪郭として座標列を返す）とは出力形式が異なる近似 —— この backend は輪郭を region（画素マスク）として返し、XLD の座標点列にはしていない。
 
 ## 詳しい使い方ガイド
 

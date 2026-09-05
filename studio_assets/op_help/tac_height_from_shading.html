@@ -3,7 +3,15 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tac_height_from_shading&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → image</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>Height/relief map by Poisson integration of the shading gradients -- the</p>
+<p>integration stage of GelSight depth reconstruction (and of photometric</p>
+<p>stereo): the image gradients are read as surface slopes `<code style="color:#22d3bf">p = gain*gx</code>`,</p>
+<p>`<code style="color:#22d3bf">q = gain*gy</code><code style="color:#22d3bf"> and the Poisson equation </code><code style="color:#22d3bf">lap(h) = div(p,q)</code>` is solved</p>
+<p>spectrally, `<code style="color:#22d3bf">h_hat = div_hat / lap_hat</code>` with the discrete Laplacian symbol</p>
+<p>`<code style="color:#22d3bf">2cos(2*pi*u/W)+2cos(2*pi*v/H)-4</code>` and the (undetermined) DC mode pinned to</p>
+<p>zero. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = gradient gain (0.25..4.25x), </code><code style="color:#22d3bf">b</code>` = pre-smoothing sigma of the</p>
+<p>gradient field (0..3). Output is min-max normalised to [0,1] and refit to</p>
+<p>HxW; a constant frame integrates to a flat (all-zero) relief.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

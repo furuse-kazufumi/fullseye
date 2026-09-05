@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ランクフィルタの一種、幾何平均フィルタ。``skimage.filters.rank.geometric_mean`` を 8bit 化した画像に円形構造要素（``skimage.morphology.disk``）で掛ける。
+
+a が構造要素の半径（``1 + int(a*3)``、範囲 1〜4）を振る。b は未使用。算術平均より暗い側（小さい値）に強く引っ張られるため、明るいスペックル状のノイズを抑えるのに向く。
 
 ## 詳しい使い方ガイド
 

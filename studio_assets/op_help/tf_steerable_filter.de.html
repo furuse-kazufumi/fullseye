@@ -3,7 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tf_steerable_filter&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>steerable_filter: oriented first-derivative-of-Gaussian response.</p>
+<p>The steerable G1 basis: the derivative of a Gaussian at orientation</p>
+<p>`<code style="color:#22d3bf">theta = a*pi</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">cos(theta)*Gx + sin(theta)*Gy</code>` where Gx, Gy are the</p>
+<p>x/y partial derivatives of the Gaussian-smoothed image. `<code style="color:#22d3bf">b</code>` sets the</p>
+<p>Gaussian sigma. The signed response is mapped to [0,1] (0.5 = zero), so its</p>
+<p>deviation from 0.5 peaks on edges whose gradient matches `<code style="color:#22d3bf">theta</code>`.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">Leitfaden zur Familie gallery2d_edges</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

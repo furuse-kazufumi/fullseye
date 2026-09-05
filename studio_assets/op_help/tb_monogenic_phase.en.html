@@ -3,7 +3,25 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">qimage</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_monogenic_phase&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">qimage → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>Local phase `<code style="color:#22d3bf">atan2(|R|, f)</code>` of a monogenic signal. → (H, W).</p>
+<p>In `<code style="color:#22d3bf">[0, pi]</code>` — the monogenic phase is measured against the *magnitude* of</p>
+<p>the Riesz vector, whose sign is carried by the orientation instead, so the</p>
+<p>range is a half turn rather than a full one. That is the standard</p>
+<p>convention (Felsberg &amp; Sommer) and it is stated here because a caller</p>
+<p>arriving from `<code style="color:#22d3bf">complexops.cx_phase</code><code style="color:#22d3bf"> (whose raw range is </code><code style="color:#22d3bf">(-pi, pi]</code>`) will</p>
+<p>otherwise assume a full turn and see a &quot;wrapped&quot; map that is not wrapped.</p>
+<p>`<code style="color:#22d3bf">display=True</code><code style="color:#22d3bf"> maps </code><code style="color:#22d3bf">[0, pi]</code><code style="color:#22d3bf"> to </code><code style="color:#22d3bf">[0, 1]</code>` for viewing; the default is</p>
+<p>`<code style="color:#22d3bf">False</code><code style="color:#22d3bf"> — the **opposite** of </code><code style="color:#22d3bf">cx_phase</code>`&#x27;s default, deliberately,</p>
+<p>because the consumers of this quantity in this module are numerical, and a</p>
+<p>display scaling that arrives silently in a measurement is a factor of `<code style="color:#22d3bf">pi</code>`</p>
+<p>that nothing announces.</p>
+<p>Phase is the quantity a translation shifts linearly, which is why the whole</p>
+<p>motion half of this module reads it. For an edge, phase 0 means the peak of</p>
+<p>a bright line, `<code style="color:#22d3bf">pi/2</code><code style="color:#22d3bf"> a step edge and </code><code style="color:#22d3bf">pi</code>` the peak of a dark line — the</p>
+<p>local *structure type*, independent of contrast.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: the input is not a valid quaternion field, or its</p>
+<p>`<code style="color:#22d3bf">k</code>` component is non-zero; *display* is not a bool.</p>
+<p>Typed bridge of the quat op `<code style="color:#22d3bf">monogenic_phase</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

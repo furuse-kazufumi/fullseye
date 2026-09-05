@@ -17,7 +17,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+log_polar: resample the image on a log-polar grid about its centre.
+
+Output row = log-radius (log-spaced from ~1px to ``rmax``), output column =
+angle (0..2pi). A scaling of the source about the centre becomes a vertical
+(row) shift and a rotation becomes a horizontal (column) shift -- the defining
+property of the log-polar transform. ``a`` scales the maximum sampled radius;
+``b`` adds a rotation offset (an angular shift) to demonstrate rotation ->
+column-shift.
 
 ## 詳しい使い方ガイド
 

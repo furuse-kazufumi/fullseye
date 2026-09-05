@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+中心軸変換(medial axis transform)。距離変換の尾根線を抽出する方式で骨格を求める、sk_skeleton とは別アルゴリズム。輪郭からの距離情報を保った骨格になりやすい。
+
+HALCON の `skeleton` に相当(近似)。実装は ``morphology.medial_axis(binm(v), rng=0)`` —— ``rng=0`` はタイ(同点)の崩し方を決める乱数シードを固定し、毎回同じ結果になるようにしている。a, b は未使用。distance 出力(``return_distance``)は使っておらず、骨格の真偽値マスクのみを返す。
 
 ## 詳しい使い方ガイド
 

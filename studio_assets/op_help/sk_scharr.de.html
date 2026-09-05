@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sk_scharr&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">edges_image</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Scharr 勾配の大きさ。skimage の `<code style="color:#22d3bf">filters.scharr</code>` をそのまま呼び、水平/垂直それぞれの Scharr カーネル(3x3)の応答を合成した勾配強度を返す。</p>
+<p>HALCON の <code style="color:#22d3bf">edges_image</code>(Extract edges using Deriche, Lanser, Shen, or Canny filters.)に相当(近似。アルゴリズムは異なる)。Sobel より回転対称性(方向によらず応答が均一)が良いとされるカーネル。a, b は未使用 —— スケールや閾値の調整点が無く、常に固定カーネルで一発計算する軽量なエッジ検出。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">Leitfaden zur Familie gallery2d_edges</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

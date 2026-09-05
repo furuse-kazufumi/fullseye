@@ -3,7 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;lowpass&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → image</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>FFT による低域通過フィルタ（ぼかし）。HALCON に対応する単体 op は指定されていない。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が遮断周波数 </code><code style="color:#22d3bf">cutoff = 0.05 + 0.4a</code><code style="color:#22d3bf">（正規化周波数、0〜0.5 がナイキストまでの範囲）を振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。2-D FFT で </code><code style="color:#22d3bf">rad &lt;= cutoff</code><code style="color:#22d3bf"> の低周波成分だけを残し、逆 FFT の実部を </code><code style="color:#22d3bf">[0,1]</code><code style="color:#22d3bf"> に clip する。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が小さいほど強くぼける。境界は周期的（FFT の性質上、画像端は反対側と隣接するとみなされる）に扱われ、</code><code style="color:#22d3bf">ndimage</code><code style="color:#22d3bf"> 系フィルタの </code><code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">edge</code>` とは境界処理が異なる点に注意。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

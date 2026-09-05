@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+領域の周囲長(``regionprops`` の ``perimeter``)を画像の外周長
+``2*(H+W)`` で正規化した値。HALCON の ``contlength``（Contour length of a
+region.）に相当。
+
+``a``, ``b`` は未使用。1.0 でクリップされるため、外周長より極端に長い
+複雑な境界(フラクタル的な形状など)では情報が飽和する。
 
 ## 詳しい使い方ガイド
 

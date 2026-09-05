@@ -3,7 +3,28 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_specular_free_transform&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">rgbimage → rgbimage</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Project out the illuminant direction: the part of the image a highlight cannot touch. → (H, W, 3).</p>
+<p>`<code style="color:#22d3bf">I - (I.G) G</code><code style="color:#22d3bf"> for the unit illuminant colour </code><code style="color:#22d3bf">G</code>`. Under the dichromatic</p>
+<p>model the interface term is `<code style="color:#22d3bf">m_s * G</code>`, so it lies entirely in the removed</p>
+<p>direction and the result is <b>invariant to any specular term whatsoever</b> —</p>
+<p>exactly, for any lobe shape, any strength, any spatial pattern. That is the</p>
+<p>specular-invariant subspace of Mallick et al. (2005); this operator is the</p>
+<p>projection itself, with no rotation into named channels, so it stays in RGB</p>
+<p>and composes with the rest of the family.</p>
+<p>Use it when the *shape* of the specular lobe is unknown or the surface is</p>
+<p>textured — feature matching, edge detection and correlation all work in this</p>
+<p>subspace without any of the assumptions</p>
+<p>:func:<code style="color:#22d3bf">specular_diffuse_split</code> needs.</p>
+<p><b>This is a projection, not a picture.</b> The result loses one of three</p>
+<p>degrees of freedom (its component along `<code style="color:#22d3bf">G</code>` is exactly zero everywhere)</p>
+<p>and, for an image with negative values after black-level subtraction, keeps</p>
+<p>them. It is not a displayable &quot;highlight-removed photo&quot; and does not claim</p>
+<p>to be; for that, use :func:<code style="color:#22d3bf">specular_diffuse_split</code>.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *image_rgb* is not a valid </code><code style="color:#22d3bf">(H, W, 3)</code>` linear</p>
+<p>RGB image (see :func:<code style="color:#22d3bf">specular_diffuse_split</code>); *illuminant_rgb* is not a</p>
+<p>non-zero 3-vector.</p>
+<p>Typed bridge of the specular op `<code style="color:#22d3bf">specular_free_transform</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

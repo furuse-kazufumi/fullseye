@@ -4,7 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hough_circle_trans&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">hough_circle_trans</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">image → image</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>円検出のための Hough 変換。エッジマスクに対して半径 4〜19(3 刻み)の</p>
+<p>円テンプレート群で `<code style="color:#22d3bf">skimage.transform.hough_circle</code>` を計算し、全半径での</p>
+<p>最大応答を [0,1] に正規化して返す。HALCON の `<code style="color:#22d3bf">hough_circle_trans</code>`</p>
+<p>（Return the Hough-Transform for circles with a given radius.）に相当</p>
+<p>(HALCON は半径を明示指定するが、ここでは固定レンジを総当たりする近似)。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がエッジ抽出の閾値を振る。</code><code style="color:#22d3bf">b</code>` は未使用 ―― 探索する半径レンジは</p>
+<p>コード側に固定されており、`<code style="color:#22d3bf">b</code>` で半径を選ぶことはできない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

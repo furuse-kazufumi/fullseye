@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;cv_box&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">mean_image</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → image</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>単純平均化フィルタ(box filter、OpenCV 実装)。正方形近傍内の単純平均を取るだけの最も基本的な平滑化 —— ガウス平滑化より計算は軽いが、リング状のアーティファクトが出やすい。</p>
+<p>HALCON の <code style="color:#22d3bf">mean_image</code>(Smooth by averaging.)に相当。実装は `<code style="color:#22d3bf">cv2.blur(v, (k,k))</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">k=3+2*int(a*3)</code>` —— a はカーネルサイズを 3, 5, 7, 9 に振る。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

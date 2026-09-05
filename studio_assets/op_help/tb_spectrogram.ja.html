@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tb_spectrogram — 2D <code style="color:#22d3bf">typed</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_spectrogram&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>STFT（短時間フーリエ変換）による振幅スペクトログラム → `<code style="color:#22d3bf">(freqs, times, S)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">S</code><code style="color:#22d3bf"> の形状は </code><code style="color:#22d3bf">(n_freqs, n_frames)</code><code style="color:#22d3bf">。ハン窓を使用し、*hop* の既定値は </code><code style="color:#22d3bf">win//2</code>`。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>**Same raw convention as :func:<code style="color:#22d3bf">spectrum</code>, but a different divisor.** Each</p>
+<p>column is the unnormalised `<code style="color:#22d3bf">|rfft(frame * hann(win))|</code>`, so it is not an</p>
+<p>amplitude either — and dividing by `<code style="color:#22d3bf">2/win</code>` is *wrong* here, because the</p>
+<p>Hann window has already thrown away part of the signal. The correct one-sided</p>
+<p>amplitude conversion divides by the window&#x27;s coherent gain::</p>
+<p>w = np.hanning(win)</p>
+<p>amp = S * (2.0 / w.sum())        # bins 1 .. win/2-1; DC / Nyquist: 1/w.sum()</p>
+<p>Measured on a unit sine at a bin centre (`<code style="color:#22d3bf">rate = 16000</code>` Hz, 1000 Hz,</p>
+<p>amplitude exactly 1.0, `<code style="color:#22d3bf">win = 256</code>`): the raw column peak is</p>
+<p>`<code style="color:#22d3bf">63.7497786196906</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">* 2/win</code><code style="color:#22d3bf"> gives </code><code style="color:#22d3bf">0.49804514546633283</code>` (too small by</p>
+<p>exactly the Hann coherent gain `<code style="color:#22d3bf">sum(w)/win = 0.498046875</code>`), while</p>
+<p>`<code style="color:#22d3bf">* 2/sum(w)</code><code style="color:#22d3bf"> gives </code><code style="color:#22d3bf">0.9999965273676957</code>`. Only the second one is the</p>
+<p>amplitude that was actually in the signal.</p>
+<p>Peak *positions*, frame-to-frame ratios and any dB *difference* are unaffected</p>
+<p>by either factor. This function returns magnitudes only — the phase is</p>
+<p>discarded, so it cannot be inverted; use `<code style="color:#22d3bf">acoustics.stft</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">acoustics.istft</code>`</p>
+<p>for a round-trip.</p>
+<p>Typed bridge of the 1d op `<code style="color:#22d3bf">spectrogram</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">rate</code><code style="color:#22d3bf"> (default 1) and </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">win</code>` (default 256).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">typed</code>)</h3>
+<p><a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_angle_3points">tb_angle_3points</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

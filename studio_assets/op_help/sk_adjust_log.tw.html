@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_adjust_log&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">log_image</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">image → image</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>対数階調変換(log transform)。`<code style="color:#22d3bf">out = gain * log(1 + in)</code>` 型の対数カーブで暗部を持ち上げる階調補正 —— ガンマ補正と似た用途だが、暗部だけをより強く持ち上げる非線形カーブになる。</p>
+<p>HALCON の <code style="color:#22d3bf">log_image</code>(Calculate the logarithm of an image.)に相当。実装は `<code style="color:#22d3bf">exposure.adjust_log(clip(v,0,1), gain=0.5+1.5*a)</code><code style="color:#22d3bf"> の結果を </code><code style="color:#22d3bf">[0,1]</code><code style="color:#22d3bf"> へ clip したもの —— a は gain を 0.5〜2.0 に振る。b は未使用。gain が 1 を超えると出力が 1 を僅かに超えることが実測されている(a=0.5 で max=1.1380)ため、</code><code style="color:#22d3bf">image</code><code style="color:#22d3bf"> 契約([0,1])を守るために出口で明示的に clip している —— パイプライン内では </code><code style="color:#22d3bf">ops._apply</code>` の段間 clip と同じ値になるためビット不変だが、直接呼び出した時の白飛びの見え方は clip 追加前と変わる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

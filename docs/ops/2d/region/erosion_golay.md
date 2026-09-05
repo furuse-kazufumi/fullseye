@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+円形構造要素（disk, 半径 ``_rad(a)``=1〜4）による二値の収縮（erosion）。b は未使用。
+
+HALCON の ``erosion_golay``（Golay アルファベット——形態学的画像解析の古典的な 14 種の定型構造要素集合——から選んだ要素で収縮する演算）とは異なり、この実装は Golay アルファベットの特定要素ではなく単純な円板構造要素で近似する。
 
 ## 詳しい使い方ガイド
 

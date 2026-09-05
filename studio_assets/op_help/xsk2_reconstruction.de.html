@@ -3,7 +3,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk2_reconstruction&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>モルフォロジー再構成（reconstruction by dilation）。</p>
+<p>`<code style="color:#22d3bf">skimage.morphology.reconstruction</code>` を method=&quot;dilation&quot; で呼ぶ。</p>
+<p>シード画像を「元画像から a に応じた深さだけ暗くしたもの」</p>
+<p>（`<code style="color:#22d3bf">x - (0.05 + 0.25*a)</code>`）として自動生成し、そのシードをマスク画像</p>
+<p>（元画像そのもの）まで測地学的に膨張させる。a はシードの深さ（大きい</p>
+<p>ほど多くの山が消える）を振る。b は未使用。小さな明るい斑点やノイズを</p>
+<p>消しつつ、大きな構造の輪郭は保つ（オープニングより形状の崩れが少ない）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">Leitfaden zur Familie gallery2d_morphology</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

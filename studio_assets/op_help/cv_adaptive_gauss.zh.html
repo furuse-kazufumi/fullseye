@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;cv_adaptive_gauss&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">local_threshold</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → region</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>局所ガウス重み付き平均によるしきい値二値化(adaptive threshold、Gaussian 版、OpenCV 実装)。cv_adaptive_mean と同じ枠組みだが、局所平均を単純平均ではなくガウス重み付き平均で取るため、窓の境界付近の急な変化が出にくい。</p>
+<p>HALCON の <code style="color:#22d3bf">local_threshold</code>(Segment an image using local thresholding.)に相当。実装は `<code style="color:#22d3bf">cv2.adaptiveThreshold(_u8(v), 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, blockSize=2*int(a*6)+3, C=int(b*10))</code>` —— a は blockSize を 3〜15(奇数)に、b は定数 C を 0〜10 に振る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

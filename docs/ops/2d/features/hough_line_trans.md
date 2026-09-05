@@ -19,7 +19,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+直線検出のための Hough 変換アキュムレータ。まず Sobel 勾配からエッジ
+マスクを作り、``skimage.transform.hough_line`` でアキュムレータ空間
+(角度×距離)を計算、正規化してから入力と同じ画素形状にリサイズして返す
+(アキュムレータそのものの座標系ではなく画像として可視化する形)。HALCON の
+``hough_line_trans``（Produce the Hough transform for lines within
+regions.）に相当。
+
+``a`` がエッジ抽出の閾値(0.2〜0.6)を振る。``b`` は未使用。半径・角度分解能
+は skimage の既定値に固定されている。
 
 ## 詳しい使い方ガイド
 

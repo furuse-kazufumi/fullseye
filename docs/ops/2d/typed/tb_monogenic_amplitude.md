@@ -17,7 +17,24 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `qimage → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Local amplitude ``sqrt(f^2 + R1^2 + R2^2)`` of a monogenic signal. → (H, W).
+
+    The local contrast at the signal's scale, and the confidence map for
+    :func:`monogenic_phase` / :func:`monogenic_orientation`, which mean nothing
+    where this is at the rounding floor. **Raw / unnormalised** (a contrast is a
+    metric quantity), in the same spirit as ``complexops.cx_magnitude``.
+
+    For a unit-contrast grating at the band centre it is exactly 1.0 (measured
+    spread 8.9e-16 over a 64x64 frame) and, unlike a squared oriented-filter
+    response, it is *isotropic*: rotating the grating does not change it.
+    Measured over eight grid-exact orientations the amplitude spans
+    ``[0.99999999999999911, 1.0000000000000011]`` — a total spread of 2.0e-15
+    across all of them, which is the isotropy claim as a number.
+
+    **Raises** ``ValueError``: the input is not a valid quaternion field, or its
+    ``k`` component is non-zero (see :func:`_require_monogenic`).
+
+Typed bridge of the quat op ``monogenic_amplitude`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `volume → volume`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+3D ボリュームの等方ガウシアン平滑化。対応する HALCON op は指定されていない。
+
+``a`` が標準偏差 σ を ``0.3〜3.0``（``0.3+2.7a``）に振る。``b`` は未使用。``scipy.ndimage`` は次元非依存（N-D）なので、2-D の ``_gaussian`` と全く同じ式をそのまま 3 軸（CT/MRI/深度スタック等）に適用する。
 
 ## 詳しい使い方ガイド
 

@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+FFT の位相 ``angle(F)`` をラジアンから [0,1] に線形写像したもの(0=−π,
+1=+π)。パワースペクトルが失う位相情報(構造の空間的な位置情報の大半を
+担う)を可視化する。HALCON の ``phase_rad``（Return the phase of a complex
+image in radians.）に相当。
+
+``a``, ``b`` は未使用。位相はノイズにきわめて敏感で、平坦な領域ではほぼ
+無意味な値になる点に注意。
 
 ## 詳しい使い方ガイド
 

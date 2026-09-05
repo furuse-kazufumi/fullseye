@@ -3,7 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xcv2_lap_var&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → feature</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>ラプラシアン分散によるフォーカス（ボケ）指標（`<code style="color:#22d3bf">cv2.Laplacian</code>` の分散）。</p>
+<p>画像全体に Laplacian を掛けた結果の分散を計算し、`<code style="color:#22d3bf">min(1.0, 分散*20)</code>` で</p>
+<p>[0,1] にクリップしたスカラーを返す。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。値が大きいほど</p>
+<p>エッジ/テクスチャが豊富＝合焦、小さいほどボケている可能性が高い、という</p>
+<p>古典的なオートフォーカス評価指標。倍率 20 は経験的なスケーリングで、</p>
+<p>絶対的なボケ量ではなく相対比較に向く。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

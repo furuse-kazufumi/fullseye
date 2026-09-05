@@ -3,7 +3,23 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">qimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_quaternion_to_rgb&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">qimage → rgbimage</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>Vector part of a quaternion image, as linear RGB. → (H, W, 3).</p>
+<p>The inverse of :func:<code style="color:#22d3bf">rgb_to_quaternion</code> — and, by default, a *checked*</p>
+<p>inverse. A quaternion image that picked up a scalar component somewhere (a</p>
+<p>Hamilton product with a non-pure quaternion, a monogenic signal handed here</p>
+<p>by mistake) is <b>refused</b> rather than silently truncated, because dropping</p>
+<p>the `<code style="color:#22d3bf">w</code>` component is exactly the kind of loss that produces a plausible</p>
+<p>picture from the wrong data. Pass `<code style="color:#22d3bf">allow_scalar=True</code>` to opt in to the</p>
+<p>truncation when it is what you meant.</p>
+<p>The tolerance is relative to the field&#x27;s own peak modulus</p>
+<p>(:data:<code style="color:#22d3bf">_MONOGENIC_K_TOL</code>, 1e-9): a quaternion image that really is pure</p>
+<p>carries `<code style="color:#22d3bf">|w|</code>` at the 1e-17 level after a round trip through two FFTs, and</p>
+<p>anything with a meaningful scalar part is many orders above that. Nothing</p>
+<p>real lives in between.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *qimage* is not a finite </code><code style="color:#22d3bf">(H, W, 4)</code>` array; or</p>
+<p>it has a non-negligible scalar part and `<code style="color:#22d3bf">allow_scalar</code>` is False.</p>
+<p>Typed bridge of the quat op `<code style="color:#22d3bf">quaternion_to_rgb</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

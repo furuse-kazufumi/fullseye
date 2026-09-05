@@ -4,7 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;mean_curvature_flow&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">mean_curvature_flow</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>小さなシグマ(0.6)のガウシアンぼかしを繰り返し適用することで平均曲率流を</p>
+<p><b>近似</b>したスムージング。真の平均曲率 PDE(`<code style="color:#22d3bf">ops</code>` 側の別実装が本来やる</p>
+<p>拡散方程式)ではなく、反復ぼかしという計算コストの軽い代用になっている点が</p>
+<p>このバックエンド固有の近似の限界。HALCON の `<code style="color:#22d3bf">mean_curvature_flow</code>`</p>
+<p>（Apply the mean curvature flow to an image.）の代役。</p>
+<p>`<code style="color:#22d3bf">a</code>` が反復回数を 1〜7 回の範囲で振る(回数が多いほど強く滑らかになる)。</p>
+<p>`<code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

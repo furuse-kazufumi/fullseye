@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+距離変換(distance transform、OpenCV 実装、L2/ユークリッド近似)。前景領域の各画素について、最も近い背景画素までの距離を計算し、画像として返す —— 領域の「太さ」や中心線抽出の下処理に使う。
+
+HALCON の `distance_transform`(Compute the distance transformation of a region.)に相当。実装は ``cv2.distanceTransform(_u8(binm(v)), DIST_L2, maskSize=3)`` を正規化したもの(cv2 は float32 で返すが、契約に合わせて float64 化 —— 2026-09-03 実測でベンチマーク済み)。maskSize=3 は 3x3 近傍での近似計算(厳密なユークリッド距離ではなく高速近似)。a, b は未使用。
 
 ## 詳しい使い方ガイド
 

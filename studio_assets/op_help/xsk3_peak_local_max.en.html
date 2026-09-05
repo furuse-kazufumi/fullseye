@@ -3,7 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk3_peak_local_max&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → region</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>局所極大点マップ(skimage `<code style="color:#22d3bf">feature.peak_local_max</code><code style="color:#22d3bf">)。互いに </code><code style="color:#22d3bf">min_distance</code>` 画素以上離れた局所輝度極大の座標を検出し、その座標だけを 1 にした疎な二値画像(1 画素ずつの点で、面としての領域ではない)を返す。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は最小距離(</code><code style="color:#22d3bf">2+int(a*8)</code><code style="color:#22d3bf"> で 2〜10)を振る —— 大きくするほど検出される点が減り、より支配的なピークだけが残る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

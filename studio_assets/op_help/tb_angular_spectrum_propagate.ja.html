@@ -1,0 +1,51 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tb_angular_spectrum_propagate — 2D <code style="color:#22d3bf">typed</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">cimage</code> → <code style="color:#22d3bf">cimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_angular_spectrum_propagate&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>複素場の厳密なスカラー自由空間伝搬（角スペクトル法）。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>`<code style="color:#22d3bf">U(z) = IFFT{ FFT{U(0)} * exp(i*2*pi*z*sqrt(1/lambda^2 - fx^2 - fy^2)) }</code>`</p>
+<p>in the `<code style="color:#22d3bf">exp(-i*omega*t)</code>` convention, so a positive *distance_um*</p>
+<p>propagates forward. Components beyond the propagating cone</p>
+<p>(`<code style="color:#22d3bf">fx^2 + fy^2 &gt; 1/lambda^2</code>`) are <b>attenuated</b> by</p>
+<p>`<code style="color:#22d3bf">exp(-2*pi*|z|*sqrt(fx^2 + fy^2 - 1/lambda^2))</code>`, which is the physical</p>
+<p>evanescent decay — not zeroed, so `<code style="color:#22d3bf">distance_um = 0</code>` is an *exact*</p>
+<p>identity and the transfer function is continuous through it.</p>
+<p>Unlike Fresnel propagation this makes no paraxial approximation: it is the</p>
+<p>exact solution of the Helmholtz equation for a band-limited field, valid</p>
+<p>from a fraction of a wavelength outward.</p>
+<p>Returns a complex128 array with the same shape as *field*.</p>
+<p>Ground truth it reproduces (measured): `<code style="color:#22d3bf">distance_um = 0</code>` returns the field</p>
+<p>bit-identically (it short-circuits the transform pair); propagating `<code style="color:#22d3bf">+z</code>`</p>
+<p>then `<code style="color:#22d3bf">-z</code>` returns the original to a relative L2 error of 4.3e-16 to</p>
+<p>5.3e-16 for a band-limited field (measured on three: 64x64 random at</p>
+<p>+/-50 um, a 64x64 Gaussian at +/-250 um, a 128x128 random at +/-500 um);</p>
+<p>total power is conserved to between 0 and 3.5e-16 relative on the same</p>
+<p>three. A field *with*</p>
+<p>evanescent content does <b>not</b> round-trip — those components are gone by</p>
+<p>construction, in both directions, because that is what physically happens.</p>
+<p>*field* is a field in the <b>space</b> domain, not a spectrum: do not hand it</p>
+<p>the fftshifted output of :func:<code style="color:#22d3bf">complexops.cx_fft</code>. Real input is promoted</p>
+<p>to complex, which loses nothing.</p>
+<p>Aliasing: the discrete transfer function is periodic, so a field that</p>
+<p>diffracts past the array edge wraps around. The practical guard is the</p>
+<p>usual one — pad the field so the propagated support stays inside, and keep</p>
+<p>`<code style="color:#22d3bf">pixel_pitch_um</code><code style="color:#22d3bf"> below </code><code style="color:#22d3bf">lambda/(2*NA)</code>`. No warning can detect this</p>
+<p>reliably from the array alone, so none is invented.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *field* is not 2-D, smaller than 2x2, larger than</p>
+<p>:data:<code style="color:#22d3bf">MAX_FIELD_ELEMENTS</code>, masked, or non-finite; non-positive or</p>
+<p>non-finite *wavelength_um* / *pixel_pitch_um*; non-finite *distance_um*.</p>
+<p>Typed bridge of the optics op `<code style="color:#22d3bf">angular_spectrum_propagate</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">wavelength_um</code><code style="color:#22d3bf"> (default 0.55) and </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">distance_um</code>` (default 100).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">cimage</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_cx_ifft">tb_cx_ifft</a> · <a style="color:#22d3bf" href="op:tb_cx_magnitude">tb_cx_magnitude</a> · <a style="color:#22d3bf" href="op:tb_cx_phase">tb_cx_phase</a> · <a style="color:#22d3bf" href="op:tb_cx_real">tb_cx_real</a> · <a style="color:#22d3bf" href="op:tb_cx_imag">tb_cx_imag</a> · <a style="color:#22d3bf" href="op:tb_cx_log_magnitude">tb_cx_log_magnitude</a> · <a style="color:#22d3bf" href="op:tb_cx_apply_transfer_function">tb_cx_apply_transfer_function</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">typed</code>)</h3>
+<p><a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_angle_3points">tb_angle_3points</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

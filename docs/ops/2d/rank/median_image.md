@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+メディアンフィルタ(``ndimage.median_filter``、正方窓)。窓内の中央値で
+置き換えるノイズ除去で、平均フィルタと違いエッジを保ったまま塩胡椒ノイズを
+除去できる。HALCON の ``median_image``（Compute a median filter with
+various masks.）に相当(HALCON は円形・八角形等の任意マスクを選べるが、
+ここでは正方形マスクに固定)。
+
+``a`` が窓の一辺を ``{3,5,7,9}``(``_k(a)``)で振る。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

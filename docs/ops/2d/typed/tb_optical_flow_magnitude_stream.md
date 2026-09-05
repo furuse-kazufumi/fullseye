@@ -17,7 +17,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `video → video`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Per-frame dense flow speed against the previous frame → ``(T, H, W)`` (``video``).
+
+    Zero first frame; frames ``1..T−1`` equal :func:`videops.optical_flow_sequence`
+    shifted by one, computed with one frame of state.
+
+Typed bridge of the videostream op ``optical_flow_magnitude_stream`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

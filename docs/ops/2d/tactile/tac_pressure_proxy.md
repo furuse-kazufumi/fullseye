@@ -17,7 +17,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Contact-pressure proxy map: the rectified deviation from the
+pseudo-reference background ``dev = |v - G_sigma(v)|`` is gated to the
+high-deviation (contact) area -- a relative gate at ``0.15 * max(dev)`` plus
+an absolute floor of 0.005 -- amplified by the sensitivity gain and
+Gaussian-smoothed, which is the standard "indentation depth is monotone in
+normal force" surrogate used when a tactile pad carries no force sensor.
+``a`` = sensitivity (gain 1..10x), ``b`` = smoothing radius (sigma 0.5..4.5).
+Output clipped to [0,1], HxW; a flat frame yields an all-zero pressure map
+(no contact, no force).
 
 ## 参考(サンプルデータ・文献)
 

@@ -3,7 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">contour</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sp_local_max_sub_pix&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → contour</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>グレー値曲面の極大点をサブピクセル精度で検出する（HALCON `<code style="color:#22d3bf">local_max_sub_pix</code><code style="color:#22d3bf"> の代替実装。</code><code style="color:#22d3bf">halcon=&quot;&quot;</code>`: 同名の座標は既存のcore op が既にカバー済みなので二重申告しない）。</p>
+<p>3x3 近傍に 2 次曲面 `<code style="color:#22d3bf">z = a0+a1 x+a2 y+a3 x^2+a4 y^2+a5 xy</code><code style="color:#22d3bf"> を最小二乗フィットし、勾配 0 の点へのオフセットを解いてサブピクセル位置を求める（ヘッセ行列が退化する場合は 1 次元放物線補間にフォールバック）。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">は極大の顕著さ（周囲の最小値からの深さ）のしきい値を 0.01〜0.31 に振る（</code><code style="color:#22d3bf">thr = 0.01 + 0.30*a</code><code style="color:#22d3bf">）。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。戻り値は CONTOUR、座標の単位は入力画像のピクセル（小数値＝サブピクセル）。検出点数は</code><code style="color:#22d3bf">count_contours</code>` で数えられる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+画像の最小値〜最大値を [0,1] いっぱいに引き伸ばす min-max 正規化
+(``(x - min) / (max - min)``、定数画像なら無変更)。HALCON の
+``scale_image_max``（Maximum gray value spreading in the value range 0 to
+255.）に相当(値域は 0〜255 ではなく [0,1] 契約)。
+
+``a``, ``b`` は未使用。画像全体の統計から自動的に決まるため調整の余地が
+ない。
 
 ## 詳しい使い方ガイド
 

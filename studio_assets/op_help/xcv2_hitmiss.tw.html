@@ -3,7 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xcv2_hitmiss&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">region → region</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>ヒットオアミス変換で「中心は背景・上下左右は前景」という十字パターンを</p>
+<p>検出する（`<code style="color:#22d3bf">cv2.MORPH_HITMISS</code>`）。</p>
+<p>固定カーネル `<code style="color:#22d3bf">[[0,1,0],[1,-1,1],[0,1,0]]</code>` を使う（1=前景必須、-1=背景必須、</p>
+<p>0=不問）。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。前景に囲まれた 1 画素の窪み（孤立した背景</p>
+<p>画素）を拾うので、細線化後の欠け検出や形状のノッチ検出に使える。入力は</p>
+<p>しきい値 0.5 で二値化してから判定する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

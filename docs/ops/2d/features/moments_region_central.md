@@ -19,7 +19,11 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+正規化中心モーメント(2 次まで)の和の絶対値 ``|μ20+μ11+μ02|``。
+HALCON の ``moments_region_central``（Geometric moments of regions.）に
+相当する、複数成分を 1 スカラーへ合成した近似。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

@@ -17,7 +17,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Total-variation (Rudin-Osher-Fatemi) denoising flow (no HALCON operator, "").
+
+Gradient descent of the ROF energy TV(I) + (lam/2)||I - I0||^2:
+   I_t = div(grad I / |grad I|) - lam (I - I0).
+The TV term (curvature of the level sets) flattens noise while preserving sharp
+edges; the fidelity term keeps the result anchored to the noisy input I0 so it
+denoises rather than collapsing to a constant. ``a`` sets the step count,
+``b`` the fidelity weight lam.
 
 ## 詳しい使い方ガイド
 

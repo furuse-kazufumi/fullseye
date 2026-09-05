@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+モーメント保存法による二値化(SimpleITK ``MomentsThreshold``、Tsai の方法)。二値化後のヒストグラムの統計モーメント(平均・分散など)が元のヒストグラムのものと一致するように閾値を選ぶ。
+
+``a`` はヒストグラムのビン数(64〜256)を振る。``b`` は未使用。xsitk_maxentropy_thresh・xsitk_huang_thresh とは閾値選択の基準が異なるだけで、同じ入出力形。
 
 ## 詳しい使い方ガイド
 

@@ -17,7 +17,10 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `signal → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+RMS level. Scalar for the whole signal, or a framewise array when *frame*
+    is given (a vibration/energy envelope over time).
+
+Typed bridge of the 1d op ``rms`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

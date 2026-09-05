@@ -3,7 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xcv_edge_preserving&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>OpenCV の edgePreservingFilter(エッジ保存平滑化、`<code style="color:#22d3bf">flags=1</code>` =</p>
+<p>RECURS_FILTER = 再帰フィルタ方式)。</p>
+<p>bilateral フィルタに近い効果をより高速に得る手法で、輪郭を保ちながら</p>
+<p>内部を滑らかにする。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が空間方向の平滑化範囲 </code><code style="color:#22d3bf">sigma_s</code><code style="color:#22d3bf"> を 20〜120 で振る。</code><code style="color:#22d3bf">b</code>` が</p>
+<p>色差の許容範囲 `<code style="color:#22d3bf">sigma_r</code>` を 0.1〜0.6 で振る(大きいほど強く均す)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

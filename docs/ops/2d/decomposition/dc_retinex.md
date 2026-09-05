@@ -17,7 +17,10 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Single-scale retinex reflectance: log(I) - log(Gauss_sigma(I)) -> [0,1].
+
+Fixed log-domain gain (b) about mid-gray, NOT per-image min-max (which would
+re-inflate an already-flat image); a sets the Gaussian scale.
 
 ## 詳しい使い方ガイド
 

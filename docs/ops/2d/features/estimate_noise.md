@@ -19,7 +19,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+加法性ノイズの標準偏差 σ をロバスト推定する(``_noise_sigma``:
+ラプラシアン応答の MAD を正規分布換算し、5 点ラプラシアン核のノイズ利得
+``sqrt(20)`` で割る)。エッジ由来の外れ値には鈍く、平坦部のノイズだけを
+拾う設計(2026-09-02 に旧実装の「σ が単位を持たず σ≈0.08 以上で 1.0 に
+張り付く」不具合を修正済み、詳細は ``_noise_sigma`` の docstring)。HALCON
+の ``estimate_noise``（Estimate the image noise from a single image.）に
+相当。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

@@ -3,7 +3,29 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">counts</code> → <code style="color:#22d3bf">counts</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_spad_deadtime_apply&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">counts → counts</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Distort a true photon rate by the detector&#x27;s dead time (counts lost).</p>
+<p>After every detection a SPAD is blind for a recharge (dead) time `<code style="color:#22d3bf">tau</code>`, so</p>
+<p>the *measured* rate `<code style="color:#22d3bf">m</code><code style="color:#22d3bf"> is always below the *true* incident rate </code><code style="color:#22d3bf">n</code>`.</p>
+<p>Two classical laws, and this op implements both:</p>
+<p style="margin:2px 0 2px 12px">• <b>non-paralysable</b> (default) — an arriving photon during the dead time is</p>
+<p>simply lost: `<code style="color:#22d3bf">m = n / (1 + n*tau)</code><code style="color:#22d3bf">. Monotonic, saturating at </code><code style="color:#22d3bf">1/tau</code>`.</p>
+<p style="margin:2px 0 2px 12px">• <b>paralysable</b> (`<code style="color:#22d3bf">paralyzable=True</code>`) — an arriving photon *restarts* the</p>
+<p>dead time: `<code style="color:#22d3bf">m = n * exp(-n*tau)</code><code style="color:#22d3bf">. This law **peaks** at </code><code style="color:#22d3bf">n = 1/tau</code>`</p>
+<p>(where `<code style="color:#22d3bf">m = 1/(e*tau)</code>`) and then falls, so a bright scene can read</p>
+<p>*darker* than a dim one. That is why no inverse op exists for it (see</p>
+<p>:func:<code style="color:#22d3bf">spad_deadtime_correct</code>).</p>
+<p>*rate_hz* is a 1-D array of true rates in counts per second; *dead_time_ns*</p>
+<p>is the dead time in nanoseconds, defaulting to 50 — the middle of the</p>
+<p>10-100 ns range a passively quenched SPAD occupies, and a placeholder to be</p>
+<p>replaced by the datasheet value, never a measurement of your detector.</p>
+<p>Returns the measured rates as a float64 1-D array of the same length.</p>
+<p>Ground truth (pinned in the tests): at `<code style="color:#22d3bf">n = 1/tau</code>` the non-paralysable law</p>
+<p>gives exactly `<code style="color:#22d3bf">n/2</code>`; the paralysable law&#x27;s maximum is exactly</p>
+<p>`<code style="color:#22d3bf">1/(e*tau)</code><code style="color:#22d3bf"> at </code><code style="color:#22d3bf">n = 1/tau</code><code style="color:#22d3bf">; both reduce to </code><code style="color:#22d3bf">m = n</code><code style="color:#22d3bf"> as </code><code style="color:#22d3bf">n*tau -&gt; 0</code>`.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: negative, non-finite or non-1-D *rate_hz*, a</p>
+<p>non-positive *dead_time_ns*, and a non-bool *paralyzable*.</p>
+<p>Typed bridge of the photon op `<code style="color:#22d3bf">spad_deadtime_apply</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">dead_time_ns</code><code style="color:#22d3bf"> (default 50); </code><code style="color:#22d3bf">b</code>` is unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -19,7 +19,11 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `contour → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+すべての輪郭の線分長(隣接点間のユークリッド距離)を合計した総延長。
+複数の輪郭がある場合はまとめて加算する。HALCON の ``length_xld``（Length
+of contours or polygons.）に相当。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

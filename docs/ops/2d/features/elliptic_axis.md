@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+領域に等価な楕円（equivalent ellipse、慣性モーメントが一致する楕円）の長軸と短軸の比（アスペクト比）を返す。``skimage.measure.regionprops`` の ``axis_major_length``/``axis_minor_length`` から計算し、/10 でおおよそ [0,1] 程度のスケールに収める（正規化ではないため、非常に細長い領域では 1 を超えうる）。a, b は未使用。
+
+HALCON の ``elliptic_axis``（等価楕円の長半径・短半径そのもの 2 つの長さを返す演算）とは異なり、この実装は長さではなく比（アニソメトリー、``anisometry`` と同じ metric）だけを 1 スカラーで返す近似。
 
 ## 詳しい使い方ガイド
 

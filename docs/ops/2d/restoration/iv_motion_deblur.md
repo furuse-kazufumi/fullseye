@@ -17,7 +17,10 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Wiener deconvolution of an assumed LINEAR MOTION blur. ``a`` sets the blur
+length L = 3 + round(a*10) (3..13 px); ``b`` sets the blur angle theta =
+b*180 deg (b=0 -> horizontal). The op builds that motion PSF and inverts it,
+narrowing a bar that was smeared along the motion direction.
 
 ## 詳しい使い方ガイド
 

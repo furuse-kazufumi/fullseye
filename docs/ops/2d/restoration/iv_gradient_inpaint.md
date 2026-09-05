@@ -17,7 +17,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Harmonic (Laplace) inpainting of a central masked window. The interior of a
+centred window (side fraction from ``a``) is discarded and refilled by solving
+nabla^2 u = 0 with Dirichlet boundary equal to the surrounding known pixels
+(Jacobi relaxation = repeatedly replacing each masked pixel by its 4-neighbour
+mean). The recovered interior is the smoothest (minimum-gradient) fill of the
+hole. ``a`` sets the window size; ``b`` is ignored.
 
 ## 詳しい使い方ガイド
 

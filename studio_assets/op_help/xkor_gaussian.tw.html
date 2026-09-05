@@ -3,7 +3,12 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xkor_gaussian&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">image → image</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>ガウシアンぼかし（kornia の GPU ネイティブ実装）。torch テンソル上で</p>
+<p>`<code style="color:#22d3bf">kornia.filters.gaussian_blur2d</code>` を 5x5 カーネル・シグマ可変で掛ける。</p>
+<p>a はシグマを 0.3〜3.0 の範囲で振る（`<code style="color:#22d3bf">0.3 + 2.7 * a</code>`）。b は未使用。</p>
+<p>CPU 実行では scipy 版と比べて速くはならない（GPU・バッチ実行時に効く</p>
+<p>実装。`<code style="color:#22d3bf">IMGEVOLVE_KORNIA_DEVICE=cuda</code>` で GPU に乗る）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `color → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+RGB 画像を輝度（グレースケール）に変換する。HALCON の ``rgb1_to_gray`` /
+``rgb3_to_gray``（RGB 画像をグレースケール画像に変換する）の両方が、
+このひとつの実装に割り当てられている。
+
+ITU-R BT.601 系の重み ``0.299 R + 0.587 G + 0.114 B`` で輝度を計算する
+固定式。a, b は未使用。
 
 ## 詳しい使い方ガイド
 

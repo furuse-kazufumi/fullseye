@@ -3,7 +3,20 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">volume</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_indices_to_labels&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">signal → volume</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>添字 `<code style="color:#22d3bf">(N,)</code><code style="color:#22d3bf"> → 選択マスク </code><code style="color:#22d3bf">labels</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">indices</code>` の出口(<b>可逆</b>)。</p>
+<p>`<code style="color:#22d3bf">max(indices) + 1</code>` 長の 1-D ラベル配列を作り、選ばれた位置に 1 を置く。</p>
+<p>`<code style="color:#22d3bf">indices -&gt; labels -&gt; indices</code>` は <b>bit 一致</b>(重複と順序を除く)。</p>
+<p>逆向き `<code style="color:#22d3bf">labels -&gt; indices -&gt; labels</code>` は<b>末尾の背景を落とす</b></p>
+<p>(長さが `<code style="color:#22d3bf">max_index + 1</code>` に切り詰まる)—— これは情報の損失であって</p>
+<p>バグではないので、:func:<code style="color:#22d3bf">labels_to_indices</code> の docstring に量を書いてある。</p>
+<p>Args:</p>
+<p>indices: (N,) の非負整数配列。</p>
+<p>Returns:</p>
+<p>(max + 1,) の int64 ラベル配列(選択 = 1、背景 = 0)。</p>
+<p>Raises:</p>
+<p>ValueError: 1-D でない / 負 / 空 / 上限超。</p>
+<p>2-D 進化レジストリへ橋渡しした reprconv の op `<code style="color:#22d3bf">indices_to_labels</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

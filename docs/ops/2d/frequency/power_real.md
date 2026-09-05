@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+FFT の実部の絶対値 ``|Re(F)|`` を正規化した画像(``fft_image`` の対数
+パワースペクトルとは異なり、対数を取らず実部だけを見る)。HALCON の
+``power_real``（Return the power spectrum of a complex image.）に相当する
+近似(HALCON の本来の定義は |F|² のパワーだが、ここでは実部絶対値で代用)。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+グレー値モルフォロジー膨張(dilation、OpenCV 実装)。近傍の最大値へ置き換える操作で、明るい領域を拡大・暗い領域を縮小する(cv_erode の逆)。
+
+HALCON の `gray_dilation`(Perform a gray value dilation on an image.)に相当。実装は ``cv2.dilate(v, se)``、se は楕円形でサイズ ``3+2*int(a*3)`` —— a は構造要素サイズを 3〜9 に振る。b は未使用。
 
 ## 詳しい使い方ガイド
 

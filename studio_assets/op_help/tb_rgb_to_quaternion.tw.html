@@ -3,7 +3,21 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">qimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_rgb_to_quaternion&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">rgbimage → qimage</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>Embed a colour image as pure quaternions `<code style="color:#22d3bf">0 + R i + G j + B k</code>`. → (H, W, 4).</p>
+<p>Sangwine&#x27;s 1996 encoding, and the entry point of the whole colour half of</p>
+<p>this module: once a pixel is a quaternion, `<code style="color:#22d3bf">q x conj(q)</code>` rotates its colour</p>
+<p>and :func:<code style="color:#22d3bf">qft2</code> transforms the three channels as <b>one</b> hypercomplex signal</p>
+<p>instead of three unrelated real ones.</p>
+<p>The scalar (`<code style="color:#22d3bf">w</code>`) component is set to exactly zero — a *pure* quaternion —</p>
+<p>because that is what makes the conjugation a 3-D rotation. Values are not</p>
+<p>clamped: linear RGB after black-level subtraction legitimately goes negative,</p>
+<p>and clipping it would change the colour direction, which is the quantity</p>
+<p>every operator downstream reads.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *image_rgb* is not a finite </code><code style="color:#22d3bf">(H, W, 3)</code>` numeric</p>
+<p>array, is complex / bool / string-typed / masked, or exceeds</p>
+<p>:data:<code style="color:#22d3bf">MAX_PIXELS</code>.</p>
+<p>Typed bridge of the quat op `<code style="color:#22d3bf">rgb_to_quaternion</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

@@ -4,7 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;simulate_motion&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">simulate_motion</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">image → image</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>線形の動きぼけ(モーションブラー)をシミュレートする。角度</p>
+<p>`<code style="color:#22d3bf">π*a</code><code style="color:#22d3bf">(0〜180°)方向に長さ </code><code style="color:#22d3bf">5+10*b</code>` 画素の線分カーネルを作り畳み込む。</p>
+<p>HALCON の `<code style="color:#22d3bf">simulate_motion</code>`（Simulation of (linearly) motion blur.）に</p>
+<p>相当。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がぶれの方向角を、</code><code style="color:#22d3bf">b</code>` がぶれの長さを振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

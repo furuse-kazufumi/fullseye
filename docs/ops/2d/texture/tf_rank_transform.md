@@ -17,7 +17,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+rank_transform: the local rank of each pixel among its neighbours.
+
+Each pixel's value is the fraction of neighbours in a ``(2r+1)x(2r+1)`` window
+that it strictly exceeds (``r = 1 + round(a*2)``; ``b`` unused), i.e. its
+ordinal rank normalized to [0,1]. Like the census transform it depends only on
+pixel ordering, so it is invariant to a global gain: multiplying the image by
+any positive constant leaves every rank unchanged (robust to illumination gain
+for stereo/texture).
 
 ## 詳しい使い方ガイド
 

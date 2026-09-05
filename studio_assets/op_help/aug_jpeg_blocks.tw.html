@@ -3,7 +3,15 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;aug_jpeg_blocks&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">image → image</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>JPEG blocking / ringing artefacts. The image (scaled to 0..255) is cut</p>
+<p>into 8x8 blocks, each transformed with an orthonormal 2-D DCT-II</p>
+<p>(`<code style="color:#22d3bf">scipy.fft.dctn</code>`), quantised with the STANDARD JPEG Annex-K luminance</p>
+<p>table scaled by `<code style="color:#22d3bf">(1 + 40*a)/16</code>` (a=0 -&gt; near-lossless, a=1 -&gt; heavy</p>
+<p>quantisation), then reconstructed with the inverse DCT. `<code style="color:#22d3bf">b</code>` shifts the 8x8</p>
+<p>block grid phase by `<code style="color:#22d3bf">int(7*b)</code>` px in both axes, i.e. moves where the block</p>
+<p>seams fall. Images that are not a multiple of 8 are edge-replicate padded and</p>
+<p>cropped back to HxW (so 4x4 inputs are handled).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

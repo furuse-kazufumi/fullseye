@@ -17,7 +17,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Linear motion blur: convolution with a normalised LINE (box) kernel, the
+point-spread function of a constant-velocity camera/scene pan during the
+exposure. ``a`` sets the streak length ``L = 3 + 20*a`` px (forced odd and
+clamped so the kernel never exceeds the image), ``b`` sets the streak angle
+``b*180`` degrees. Border handling is ``reflect`` so the frame edge does not
+darken. Energy-preserving (kernel sums to 1).
 
 ## 詳しい使い方ガイド
 

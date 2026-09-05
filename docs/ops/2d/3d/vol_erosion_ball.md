@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `volume → volume`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+球形構造要素による 3D 二値侵食。対応する HALCON op は指定されていない。
+
+``a`` が球の半径を ``1〜4``（``1+int(3a)``）に振る。``b`` は未使用。球の定義は ``_vol_dilation_ball`` と同じ。
 
 ## 詳しい使い方ガイド
 

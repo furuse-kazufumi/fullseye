@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Sobel フィルタによる勾配強度（エッジ検出）。HALCON の ``sobel_amp``（Detect edges (amplitude) using the Sobel operator.）に相当。
+
+縦横それぞれの Sobel 応答のユークリッドノルム ``hypot(Gx, Gy)`` を取り、``_norm`` で正規化する。``a``, ``b`` は未使用（カーネルサイズ・向きとも固定）。
 
 ## 詳しい使い方ガイド
 

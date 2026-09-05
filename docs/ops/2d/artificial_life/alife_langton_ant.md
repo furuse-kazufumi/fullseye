@@ -17,7 +17,25 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Langton's ant (turmite) walking the thresholded image lattice.
+
+Reimplements the two-colour turmite of C. G. Langton, "Studying artificial
+life with cellular automata", Physica D 22, 120-149 (1986). Cell colours are
+the 0.5-threshold of the image. A single ant starts at the grid centre and,
+at every step, applies the RL rule:
+
+  * on a **white** (0) cell: turn 90 degrees right, flip the cell to 1,
+    step forward one cell;
+  * on a **black** (1) cell: turn 90 degrees left, flip the cell to 0,
+    step forward one cell.
+
+Movement wraps toroidally. Because every visit flips the cell it stands on,
+starting from an all-white lattice a cell is black exactly when the ant has
+visited it an odd number of times.
+
+``a`` sets the number of steps N = 1 + int(400a); ``b`` selects the initial
+heading (up / right / down / left) which mirrors/rotates the whole
+trajectory. Returns the final {0,1} colour field.
 
 ## 詳しい使い方ガイド
 

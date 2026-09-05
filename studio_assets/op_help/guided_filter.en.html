@@ -4,7 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;guided_filter&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">guided_filter</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>実装は `<code style="color:#22d3bf">bilateral_filter</code><code style="color:#22d3bf"> と同一(</code><code style="color:#22d3bf">kind: &quot;bilateral&quot;</code>`)。本来の</p>
+<p>ガイド付きフィルタ(guided filter、局所線形モデルに基づくエッジ保存平滑化)</p>
+<p>とは数学的に別のアルゴリズムだが、この代役ではバイラテラルフィルタで</p>
+<p>代用している(似た用途=エッジ保存平滑化を満たすための近似、結果の数値は</p>
+<p>一致しない)。HALCON の `<code style="color:#22d3bf">guided_filter</code>`（Guided filtering of an image.）</p>
+<p>の代役。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が空間シグマ、</code><code style="color:#22d3bf">b</code>` が輝度シグマを振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

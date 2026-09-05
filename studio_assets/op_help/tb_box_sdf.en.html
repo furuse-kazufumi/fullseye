@@ -3,7 +3,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">volume</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_box_sdf&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">points → volume</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>軸平行直方体の<b>厳密</b>な符号付き距離場(内側負・外側正)。</p>
+<p>Inigo Quilez の box SDF: `<code style="color:#22d3bf">q = |p-center| - half_extents</code>` とし、</p>
+<p>`<code style="color:#22d3bf">outside = |max(q,0)|</code>` (角/辺/面の外はユークリッド距離),</p>
+<p>`<code style="color:#22d3bf">inside  = min(max(q_x,q_y,q_z), 0)</code>` (内側は最近面までの負値),</p>
+<p>`<code style="color:#22d3bf">sdf = outside + inside</code>`。</p>
+<p>`<code style="color:#22d3bf">half_extents</code>` は各軸の<b>半辺長</b>(中心から面まで)。外側は厳密距離(角では対角、面前は</p>
+<p>垂直距離)、内側も最近面までの厳密負距離を与える。</p>
+<p>Raises ValueError for any half_extent&lt;0 or malformed grid/center/half_extents。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">box_sdf</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

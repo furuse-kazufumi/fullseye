@@ -3,7 +3,17 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_mat_pinv&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">matrix → matrix</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>Moore-Penrose pseudo-inverse via SVD, with the cutoff <b>explicit</b>.</p>
+<p>Singular values below `<code style="color:#22d3bf">rcond * s_max</code>` are treated as zero — that cutoff</p>
+<p>*is* the regularisation, so it is a named, documented parameter here</p>
+<p>(default `<code style="color:#22d3bf">1e-12</code>`) rather than a hidden library default: raising it</p>
+<p>discards noisy directions (stabler, more biased), lowering it keeps them</p>
+<p>(exact for well-conditioned *A*, explosive near rank deficiency).</p>
+<p>Works for any `<code style="color:#22d3bf">(m, n)</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">pinv(A) @ b</code>` is the least-squares solution for</p>
+<p>`<code style="color:#22d3bf">m &gt; n</code><code style="color:#22d3bf"> and the minimum-norm solution for </code><code style="color:#22d3bf">m &lt; n</code>`.</p>
+<p>HALCON: no direct operator — HALCON reaches the same result through</p>
+<p>`<code style="color:#22d3bf">svd_matrix</code>` + reciprocal singular values.</p>
+<p>Typed bridge of the math op `<code style="color:#22d3bf">mat_pinv</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">rcond</code><code style="color:#22d3bf"> (default 1e-12); </code><code style="color:#22d3bf">b</code>` is unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

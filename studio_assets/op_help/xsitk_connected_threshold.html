@@ -3,7 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_connected_threshold&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → region</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>連結閾値領域拡張(SimpleITK `<code style="color:#22d3bf">ConnectedThreshold</code>`、region growing)。画像中心の画素を種(シード)にし、その画素値を中心とした強度区間内で中心と連結している画素だけを領域として拡張する。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は下限マージン(</code><code style="color:#22d3bf">0.1+0.3*a</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は上限マージン(</code><code style="color:#22d3bf">0.1+0.3*b</code>`)を振る —— 区間は [中心値-下限, 中心値+上限]。画像中心付近に対象があることを前提とした op。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ガンマ補正（べき乗変換）。HALCON の ``pow_image``（Raise an image to a power.）に相当。
+
+``a`` が指数 γ を ``0.5〜2.0`` に振る（``v**γ``、入力は先に ``[0,1]`` へ clip）。``b`` は未使用。γ<1 で暗部を持ち上げ（明るくする）、γ>1 で暗部をさらに沈める（コントラストを付ける）。
 
 ## 詳しい使い方ガイド
 

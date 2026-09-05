@@ -4,7 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;trans_to_rgb&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">trans_to_rgb</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">color → color</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>色空間から RGB へ戻す逆変換。HALCON の `<code style="color:#22d3bf">trans_to_rgb</code>`（任意の色空間から</p>
+<p>RGB 色空間への変換）に相当するとされるが、<b>実装は HSV→RGB の 1 方向だけ</b></p>
+<p>しか持たない。</p>
+<p>`<code style="color:#22d3bf">trans_from_rgb</code>` は a で 4 色空間（HSV/Lab/YUV/XYZ）を選べるのに対し、</p>
+<p>この逆変換は常に入力を HSV とみなして `<code style="color:#22d3bf">cv2.COLOR_HSV2RGB</code>` を掛ける。</p>
+<p>Lab/YUV/XYZ から呼んだ場合は色空間の解釈を誤ったまま変換するため、</p>
+<p>出力は破綻した色になる。a, b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

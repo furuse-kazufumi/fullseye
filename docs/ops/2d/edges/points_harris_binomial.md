@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+二項(ガウス)平滑化を前段に挟んだ Harris コーナー応答。まず ``b`` で
+決まるシグマで画像を平滑化し、その上で Harris 応答(skimage があれば
+``corner_harris``、無ければ構造テンソルを手計算、k=0.04)を求める。HALCON
+の ``points_harris_binomial``（Detect points of interest using the
+binomial approximation of the Harris operator.）に相当。
+
+``a`` が Harris 応答自体のシグマ(0.5〜2.5)を、``b`` が前段の平滑化シグマ
+(0.5〜2.0)を振る。両方が使われる。
 
 ## 詳しい使い方ガイド
 

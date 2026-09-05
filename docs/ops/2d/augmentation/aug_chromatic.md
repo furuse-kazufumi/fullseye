@@ -17,7 +17,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Lateral chromatic aberration proxy for a gray image. True lateral CA
+magnifies the colour channels differently, so edges gain a coloured fringe;
+on a single channel the observable signature is a SHIFTED copy of the edge
+(high-pass) energy superposed on the image. Here the high-pass
+``v - gaussian(v, 1)`` is shifted by ``s = 1 + int(4*a)`` px horizontally and
+added back with amplitude ``0.1 + 0.9*b``. Flat regions have zero high-pass,
+so only edges fringe -- exactly the real behaviour.
 
 ## 詳しい使い方ガイド
 

@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;dog&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">diff_of_gauss</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">image → image</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>差分ガウシアン（Difference of Gaussians, DoG）。HALCON の `<code style="color:#22d3bf">diff_of_gauss</code>`（Approximate the LoG operator (Laplace of Gaussian).）に相当。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が細かい方のぼかし σ₁ を </code><code style="color:#22d3bf">0.5〜2.5</code><code style="color:#22d3bf"> に、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が粗い方のぼかし σ₂ を </code><code style="color:#22d3bf">1.0〜5.0</code><code style="color:#22d3bf"> に振る（</code><code style="color:#22d3bf">|gauss(σ₁) - gauss(σ₂)|</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">_norm</code>` で正規化）。2 つのスケールの中間の大きさを持つ斑点・エッジを強調する、LoG の近似。σ₁ と σ₂ が近いほど応答は弱くなる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

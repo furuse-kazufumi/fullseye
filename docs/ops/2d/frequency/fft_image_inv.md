@@ -19,7 +19,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+入力画像をそのまま周波数領域の配列とみなして逆 FFT を掛け、実部を
+``signed01`` で [0,1] に写す(0.5 がゼロ)。本来 HALCON の
+``fft_image_inv``（Compute the inverse fast Fourier transform of an
+image.）は ``fft_image`` が作った複素スペクトル(実部・虚部の組)を戻す
+演算だが、この代役はグレー画像 1 枚しか扱えないパイプライン契約のため、
+画素値をそのまま(虚部 0 の)複素配列として逆変換する近似になっている
+(``fft_image`` の出力をそのまま渡しても意味的な往復にはならない点に注意)。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

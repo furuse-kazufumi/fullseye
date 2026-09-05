@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+DoG(Difference of Gaussians、2 段階の異なるシグマでぼかした画像の差)
+によるバンドパスエッジ/ブロブ検出。LoG の高速近似として知られる古典的手法。
+HALCON の ``diff_of_gauss``（Approximate the LoG operator (Laplace of
+Gaussian).）に相当。
+
+``a`` が狭い側のシグマ(0.5〜2.5)、``b`` が広い側のシグマ(1〜5)を振る ―― 両方
+が使われ、``b`` の方を大きくとることで帯域幅が決まる。応答は絶対値を取って
+から正規化しているため符号情報は失われる。
 
 ## 詳しい使い方ガイド
 

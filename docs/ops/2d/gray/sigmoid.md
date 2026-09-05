@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ロジスティック関数（シグモイド）による S 字型のコントラスト強調。HALCON の ``scale_image_max``（Maximum gray value spreading in the value range 0 to 255.）に対応付けられているが、ダイナミックレンジを最大まで引き伸ばす ``scale_image_max`` とは処理内容が異なる（近似というより別物に近い）。
+
+``a`` が S字の傾き ``k = 4 + 12a``（``4〜16``）を、``b`` が中心（変曲点）の位置 ``x0 = 0.2 + 0.6b``（``0.2〜0.8``）を振る（``1/(1+exp(-k*(v-x0)))``）。``x0`` 付近の階調差を強調し、両端の階調差は圧縮する。
 
 ## 詳しい使い方ガイド
 

@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Hu の第 2 不変モーメント(``hu[1]``)の絶対値。HALCON の
+``moments_region_central_invar``（Geometric moments of regions.）に相当
+する近似(``moments_region_2nd_invar`` が Hu[0] を使うのに対し、こちらは
+Hu[1] を使う ―― どちらも HALCON 独自の相対不変モーメントの厳密な代用では
+ない)。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

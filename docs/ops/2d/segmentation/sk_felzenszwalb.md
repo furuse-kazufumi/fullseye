@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Felzenszwalb のグラフベース領域分割。画素をノードとする最小全域木クラスタリングで、明確な境界が無くても画像を過分割(オーバーセグメンテーション)する高速な手法。ここでは分割結果の境界線を領域として返す。
+
+HALCON に直接対応するものは無い。実装は ``segmentation.find_boundaries(segmentation.felzenszwalb(v, scale=20+200*a, channel_axis=None))`` —— a は scale(観測レベル。大きいほどセグメントが少なく大きくなる)を 20〜220 に振る。sigma(前処理の平滑化)・min_size は既定値(0.8, 20)のまま固定。b は未使用。
 
 ## 詳しい使い方ガイド
 

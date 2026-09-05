@@ -3,7 +3,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk_hessian_eig&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>ヘッセ行列の最大固有値(絶対値)によるブロブ/リッジ強度。</p>
+<p>skimage.feature.hessian_matrix(ガウス微分によるヘッセ行列)から</p>
+<p>固有値を求め、絶対値が最大の成分 `<code style="color:#22d3bf">ev[0]</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">_norm</code>` で正規化して</p>
+<p>返す。曲率が強い箇所(ブロブの中心や稜線)ほど値が大きくなる。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が微分のスケール </code><code style="color:#22d3bf">sigma</code>` を 0.5〜3.0 に振る(大きいほど太い</p>
+<p>構造に反応)。`<code style="color:#22d3bf">b</code>` は未使用。符号は捨てているため、山(明るい</p>
+<p>blob)と谷(暗い blob)を区別しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

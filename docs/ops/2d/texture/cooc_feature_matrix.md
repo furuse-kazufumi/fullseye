@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+グレーレベル共起行列(GLCM、``skimage.feature.graycomatrix``、16 階調
+に量子化、距離 ``1+3*a``、角度 0°)から Haralick テクスチャ特徴量
+``energy``(角二次モーメント、行列の値の集中度=テクスチャの均一性)を計算
+する。HALCON の ``cooc_feature_matrix``（Calculate gray value features
+from a co-occurrence matrix.）に相当(HALCON は複数の特徴量・複数角度を
+同時に返せるが、ここでは energy・角度 0° 固定に単純化)。
+
+``a`` が共起を取る画素間距離を 1〜4 の範囲で振る。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

@@ -17,7 +17,37 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `counts → counts`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Blur an arrival-time histogram by the instrument response (timing jitter).
+
+    The temporal analogue of a PSF convolution: a detector's timing uncertainty
+    (SPAD jitter + TDC quantisation + laser pulse width) smears every arrival
+    time by the instrument response function, here a Gaussian of full width at
+    half maximum *irf_fwhm_ps*. The kernel is the **exact bin integral** of that
+    Gaussian (erf differences), normalised to sum 1, truncated at
+    ``+-truncate*sigma`` and forced to odd length so the convolution is centred.
+
+    Ground truth: convolving a unit spike in the middle of a 256-bin window with
+    ``irf_fwhm_ps = 500`` at ``bin_ps = 50`` leaves the centroid **exactly**
+    where it was (measured shift 0.0 ps — the kernel is symmetric) and gives a
+    profile whose measured FWHM is 501.22 ps. That 0.24% excess over 500 is the
+    *measurement*, not the kernel: :func:`tcspc_stats` finds the half-maximum
+    crossings by linear interpolation between bins, which slightly overestimates
+    the width of a Gaussian.
+
+    Total counts are preserved *except* at the window edges, where
+    ``mode='same'`` discards the tail that falls outside — measured loss exactly
+    0 for that centred spike, but a genuine loss for a pulse within a few sigma
+    of either end.
+
+    Returns a float64 1-D histogram of the same length as *hist*.
+
+    **Raises** ``ValueError``: negative, non-finite or non-1-D *hist*, a
+    non-positive *bin_ps* / *irf_fwhm_ps* / *truncate*, an IRF sigma below
+    1e-3 bins (the kernel would be a delta and the op a no-op — say so instead
+    of pretending to blur), and a kernel that would be longer than the
+    :data:`MAX_BINS` cap.
+
+Typed bridge of the photon op ``tcspc_irf_convolve`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``bin_ps`` (default 100) and ``b`` drives ``irf_fwhm_ps`` (default 200).
 
 ## 参考(サンプルデータ・文献)
 

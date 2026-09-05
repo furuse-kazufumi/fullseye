@@ -4,7 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;gray_histo_abs&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">gray_histo_abs</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → feature</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>画像の階調の標準偏差(`<code style="color:#22d3bf">x.std()</code><code style="color:#22d3bf">)を返す。HALCON の </code><code style="color:#22d3bf">gray_histo_abs</code>`</p>
+<p>（Calculate the gray value distribution.）は本来ヒストグラム全体</p>
+<p>(各階調のビン度数)を返す演算子だが、この代役ではヒストグラムそのものでは</p>
+<p>なく分布の広がりを表す標準偏差 1 個のスカラーに要約している(近似 ―― この</p>
+<p>パイプラインの `<code style="color:#22d3bf">feature</code>` ソートが 1 スカラーである契約上の制約)。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

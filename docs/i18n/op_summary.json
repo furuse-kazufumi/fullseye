@@ -8,6 +8,94 @@
   "de"
  ],
  "summaries": {
+  "2d/alife_curvature_flow": {
+   "fp": "cf0e81a3bef1",
+   "ja": "平均曲率フロー（mean-curvature motion）／レベルセット平滑化（level-set smoothing、曲線短縮フロー curve-shortening flow）。"
+  },
+  "2d/alife_cyclic_ca": {
+   "fp": "7b9047bb2490",
+   "ja": "巡回セルオートマトン（cyclic cellular automaton、Fisch-Gravner-Griffeath）→ 螺旋波（spiral waves）を生成する。"
+  },
+  "2d/alife_dla": {
+   "fp": "f7ddd098bc9a",
+   "ja": "決定論的な拡散律速凝集（diffusion-limited aggregation, DLA）成長の疑似モデル。"
+  },
+  "2d/alife_gray_scott": {
+   "fp": "20ac6ad0f1d9",
+   "ja": "画像をシードとする Gray-Scott 反応拡散系（reaction-diffusion）。"
+  },
+  "2d/alife_langton_ant": {
+   "fp": "0e1686c22fb9",
+   "ja": "ラングトンのアリ（Langton's ant、turmite）がしきい値処理した画像の格子上を歩く。"
+  },
+  "2d/alife_lenia": {
+   "fp": "df85bd8a862c",
+   "ja": "連続セルオートマトン Lenia（Bert Chan, Complex Systems 2019）。"
+  },
+  "2d/alife_life_step": {
+   "fp": "7089f54183fb",
+   "ja": "ライフゲーム型の全体和セルオートマトン（totalistic cellular automaton、コンウェイ系列の B/S ルール）。"
+  },
+  "2d/alife_perona_malik": {
+   "fp": "c25011aeb129",
+   "ja": "Perona-Malik の異方性拡散（anisotropic diffusion、エッジ保存拡散）。"
+  },
+  "2d/alife_reaction_bz": {
+   "fp": "5cdc1e697955",
+   "ja": "ベロウソフ・ジャボチンスキー反応（Belousov-Zhabotinsky reaction）に似た興奮性媒質（excitable medium、Greenberg-Hastings オートマトン）。"
+  },
+  "2d/alife_sandpile": {
+   "fp": "80900d6ee97d",
+   "ja": "アーベル砂山モデル（Abelian sandpile）／自己組織化臨界現象（self-organised criticality、Bak-Tang-Wiesenfeld 1987）。"
+  },
+  "2d/alife_turing": {
+   "fp": "e3d53a23f2fb",
+   "ja": "Gierer-Meinhardt の活性因子-抑制因子系（activator-inhibitor system）によるチューリング形態形成（Turing morphogenesis）。"
+  },
+  "2d/alife_wolfram1d": {
+   "fp": "8805f90bb5e5",
+   "ja": "Wolfram の初等 1 次元セルオートマトン（elementary cellular automaton）を時空図（spacetime diagram）として描画する。"
+  },
+  "2d/aug_barrel": {
+   "fp": "4edcf7d46bb5",
+   "ja": "標準的な多項式モデル ``r_src = r*(1 + k*r^2)``（正規化半径 ``r``、1 = 画像の角）を用いた放射状レンズ歪み: ``b < 0.5`` なら樽型歪み（barrel、直線が外側に膨らむ）、``b >= 0.5`` なら糸巻き型歪み（pincushion）、``k = 0.6*a``（a=0 で無歪み）。出力先グリッドを逆写像し、``ndimage.map_coordinates``（``mode=\"reflect\"``）でバイリニアにリサンプルするため、未定義画素は生じない。出力は HxW を保つ。"
+  },
+  "2d/aug_chromatic": {
+   "fp": "c7cb926423c7",
+   "ja": "グレースケール画像向けの倍率色収差（lateral chromatic aberration）の疑似再現。実際の倍率色収差は色チャンネルごとに拡大率が異なるため、エッジに色付きの縁取り（fringe）が生じる。単一チャンネルで観測できる特徴は、エッジ（ハイパス）成分のコピーがずれて画像に重なる形になる。ここではハイパス成分 ``v - gaussian(v, 1)`` を水平方向に ``s = 1 + int(4*a)`` px シフトし、振幅 ``0.1 + 0.9*b`` で元画像に加算し直す。平坦な領域はハイパス成分がゼロなので縁取りが生じるのはエッジのみ — 実際の挙動と一致する。"
+  },
+  "2d/aug_cutout": {
+   "fp": "942372d63ad1",
+   "ja": "Cutout／ランダム消去によるオクルージョン（DeVries & Taylor 2017; Zhong et al. 2020）: 辺の長さ ``max(1, a*min(H,W))`` の正方形パッチを画像から消去し、単一の顕著な塊に頼らず部分的な遮蔽（occlusion）にも耐えられるパイプラインを要求する。``b`` はパッチの位置（b からシードされる決定的な位置）と塗りつぶし値の両方を選ぶ: b <= 0.5 なら黒（0.0）、b > 0.5 なら中間グレー（0.5）。パッチは常に画面内に完全に収まる。"
+  },
+  "2d/aug_fixed_pattern": {
+   "fp": "c4064856d4ed",
+   "ja": "固定パターンノイズ（fixed-pattern noise, FPN／photo-response non-uniformity）。読み出しノイズと異なり、このパターンはフレーム間で静的（STATIC）である: 列ごとのオフセットと行ごとのオフセットをそれぞれ一度だけ生成して保持する。``a`` は振幅を決める（``0.02 + 0.2*a``）。``b`` はどのパターンかを選ぶ（生成器は b のみからシードされるため、a を振ってもパターンは変わらず強度だけが変わる）。CMOS の列並列 ADC と同様、列方向の FPN が支配的（重み 2/3）。"
+  },
+  "2d/aug_jpeg_blocks": {
+   "fp": "b5921ba72538",
+   "ja": "JPEG のブロックノイズ／リンギングアーティファクト。画像を 0..255 にスケールしたうえで 8x8 ブロックに分割し、それぞれを正規直交な 2 次元 DCT-II（``scipy.fft.dctn``）で変換、JPEG 標準の Annex-K 輝度量子化テーブルを ``(1 + 40*a)/16`` 倍したもので量子化し（a=0 でほぼ無損失、a=1 で強い量子化）、逆 DCT で再構成する。``b`` は 8x8 ブロック格子の位相を両軸方向に ``int(7*b)`` px ずらす、つまりブロックの継ぎ目の位置を移動させる。8 の倍数でない画像はエッジ複製パディングしてから HxW に切り出す（4x4 の入力にも対応）。"
+  },
+  "2d/aug_motion_blur": {
+   "fp": "46aab9a4ebf2",
+   "ja": "線形モーションブラー（linear motion blur）: 正規化した直線（ボックス）カーネルとの畳み込みで、露光中に等速でカメラ／シーンがパンした場合の点広がり関数（point-spread function, PSF）に相当する。``a`` は streak（ブレ跡）の長さを決める ``L = 3 + 20*a`` px（画像サイズを超えないよう奇数にクランプ）、``b`` は streak の角度を ``b*180`` 度で決める。境界処理は ``reflect`` のため画面端が暗くならない。エネルギー保存（カーネルの総和は 1）。"
+  },
+  "2d/aug_read_noise": {
+   "fp": "db4ac1664856",
+   "ja": "加法性ガウシアンの読み出しノイズ（read noise、アンプ＋ADC ノイズ）で、ショットノイズと異なり sigma は信号量に依存しない。``sigma = 0.005 + 0.15*a``。``b`` は行方向に相関したノイズ成分を混入させる: 行全体で共有される標準偏差 ``0.5*b*sigma`` の行単位バイアスで、これは共有型の行アンプ／行ごとの ADC が生む現象（水平方向の帯状ノイズとして見える）。(a, b) からシード（seed）される。"
+  },
+  "2d/aug_rolling_shutter": {
+   "fp": "12b61770a98f",
+   "ja": "ローリングシャッター歪み（rolling-shutter skew）。CMOS のローリングシャッターは行を順番に露光するため、シーン（またはカメラ）が水平方向にパンすると各行が行番号に比例した量だけずれる — 純粋な水平方向のせん断（shear）になる。``a`` はピークシフト量 ``0.25*W*a`` px を決める（せん断は中央を基準にするため中央の行は動かない）、``b`` はパン方向を決める（b < 0.5 なら行番号が増えるほど右へ、それ以外は左へ）。境界は反射（reflect）としてバイリニア（bilinear）でリサンプルする。"
+  },
+  "2d/aug_shot_noise": {
+   "fp": "c0e152b99d53",
+   "ja": "光子ショットノイズ（photon / Poisson shot noise） — あらゆるイメージセンサに存在する量子限界のノイズ。"
+  },
+  "2d/aug_vignette": {
+   "fp": "eb3af6d55c48",
+   "ja": "自然な cos^4 減光則（cos^4 falloff law）に従う放射状レンズ周辺減光（vignetting）。``r`` を画像中心からの正規化距離、``R = 0.35 + 1.15*b`` を減光半径とすると、透過率は ``cos(atan(r/R))^4 = 1/(1 + (r/R)^2)^2`` という教科書的な cos^4 則になる。``a`` は効果の混合率: ``out = v * (1 - a + a*falloff)`` なので a=0 は無変化、a=1 は完全な周辺減光。中心は常に最も明るく保たれ、暗くするだけで決して明るくはしない。"
+  },
   "2d/blob_count": {
    "fp": "0a5700cc8d64",
    "ja": "領域内の連結成分の個数(HALCON `count_obj`)。",
@@ -24,6 +112,46 @@
    "ko": "대비 제한 적응 히스토그램 평활화(타일 분할 + 이중선형으로 이음).",
    "de": "Kontrastbegrenzte adaptive Histogrammangleichung (gekachelt, bilinear überblendet)."
   },
+  "2d/dc_homomorphic": {
+   "fp": "f1fb3c4a3105",
+   "ja": "準同型フィルタ（homomorphic filter）: フーリエ領域（Fourier domain）で log(I) を高域強調し、[0,1] へ変換する。"
+  },
+  "2d/dc_local_contrast_norm": {
+   "fp": "5f4ef854c635",
+   "ja": "局所コントラスト正規化（local contrast normalisation）: (I - mean_w) / (std_w + eps)、0.5 を中心とする。"
+  },
+  "2d/dc_retinex": {
+   "fp": "3537ec3dcfc1",
+   "ja": "シングルスケール・レティネックス（single-scale retinex）の反射率: log(I) - log(Gauss_sigma(I)) を [0,1] へ変換する。"
+  },
+  "2d/dc_rpca_lowrank": {
+   "fp": "b3f04ccdce35",
+   "ja": "ロバスト主成分分析（Robust-PCA）の低ランク（背景）成分。"
+  },
+  "2d/dc_rpca_sparse": {
+   "fp": "b21f9a357511",
+   "ja": "ロバスト主成分分析（Robust-PCA）のスパース（欠陥／異常）残差 = 入力 - 低ランク成分、0.5 を基準とする。"
+  },
+  "2d/dc_structure_texture": {
+   "fp": "6b6c9a6d9c0b",
+   "ja": "画像の構造／カートゥーン成分（TV-L2、シャンボル（Chambolle）法）。"
+  },
+  "2d/dc_texture_residual": {
+   "fp": "9b09ec78b1e4",
+   "ja": "テクスチャ／ディテール層 = 入力 - 構造成分、0.5 を中心とする。"
+  },
+  "2d/deform_ffd": {
+   "fp": "348303993f41",
+   "ja": "3 次 B スプラインによる自由形状変形（free-form deformation, FFD）（Rueckert et al., IEEE TMI 1999）。"
+  },
+  "2d/deform_mls": {
+   "fp": "6cb4a4301274",
+   "ja": "移動最小二乗法（moving least squares, MLS）によるアフィン変種の画像変形（Schaefer 2006）。"
+  },
+  "2d/deform_tps": {
+   "fp": "3ddb9f37739f",
+   "ja": "5x5 の制御点グリッド上での薄板スプライン（thin-plate spline, TPS）変形（Bookstein, TPAMI 1989）。"
+  },
   "2d/em_skeleton": {
    "fp": "2386e20fa264",
    "en": "Eckhardt–Maderlechner-style invariant thinning (the same family as HALCON `skeleton`).",
@@ -31,6 +159,42 @@
    "tw": "Eckhardt–Maderlechner 型的不變細化(與 HALCON `skeleton` 同族)。",
    "ko": "Eckhardt–Maderlechner 형의 불변 세선화(HALCON `skeleton` 과 같은 계통).",
    "de": "Invariante Ausdünnung nach Eckhardt–Maderlechner (dieselbe Familie wie HALCON `skeleton`)."
+  },
+  "2d/f2_bit_slice": {
+   "fp": "d6e21d2bd24b",
+   "ja": "8 ビット量子化後の画像から 1 つのビットプレーン（bit-plane）を抽出する。``a`` はプレーン（0 = 最下位ビット（LSB）〜7 = 最上位ビット（MSB））を選択し、``b`` は無視される。{0,1} の画像を返す。"
+  },
+  "2d/f2_expand_domain": {
+   "fp": "546cefefd736",
+   "ja": "画像のドメイン（非ゼロ領域）を余白分だけ外側に拡張し、新たに追加された画素には最も近い既存のグレー値を設定する。``a`` は余白幅（1〜7 画素）を設定し、``b`` は無視される。"
+  },
+  "2d/f2_gauss_pyramid": {
+   "fp": "3d500c9a4dad",
+   "ja": "画像のガウスピラミッド（Gauss pyramid）の 1 レベルを返す。``level`` 回だけ 2 倍のダウンサンプリング（ぼかし＋間引き）を行った後、元の HxW にアップサンプリングし直すことで、解像度を落とした帯域制限（低域通過）版として結果を得る。``a`` はレベル（1〜4）を選択し、``b`` は無視される。"
+  },
+  "2d/f2_gray_inside": {
+   "fp": "66430fc37f5a",
+   "ja": "グレースケールの穴埋め（hole-fill）: 各画素について、画像端に至る任意の経路上で到達可能な最小のグレー値を求める。これは、画像端に固定したマーカーからの浸食（erosion）によるモルフォロジー再構成（morphological reconstruction）に等しい。明るい壁に囲まれた暗い盆地は壁の高さまで持ち上げられ、画像端とつながっている領域は暗いままとなる。``a`` は最大埋め深さ h（0 = 埋めない、1 = 完全に埋める）を設定し、``b`` は無視される。"
+  },
+  "2d/f2_gray_skeleton": {
+   "fp": "da736211ae90",
+   "ja": "グレースケール画像の細線化（thinning）: 明るい領域（しきい値は ``a`` で設定）を骨格化（skeletonise）し、1 画素幅の中心稜線を元のグレー値に戻して持ち上げる。``b`` は無視される。"
+  },
+  "2d/f2_lut_trans": {
+   "fp": "3d41ac605d18",
+   "ja": "単調（ガンマ補正を伴わない）なグレー値ルックアップテーブル（look-up table）を通して画像を変換する。256 エントリのテーブルはコントラスト用シグモイド曲線で、ゲインは ``a``、ピボットは ``b`` で設定され、両端が [0,1] に正規化される。画像は 8 ビット量子化された値に対して本物のテーブル参照（table lookup）が適用される。"
+  },
+  "2d/f2_shock": {
+   "fp": "09e6dacaeb1a",
+   "ja": "オッシャー・ルーディンのショックフィルタ（Osher-Rudin shock filter）: I_t = -sign(Lap I)*|grad I| という式のモルフォロジー形式。"
+  },
+  "2d/f2_symmetry": {
+   "fp": "232f0d6fbb31",
+   "ja": "行方向に沿ったグレー値の局所的な鏡映対称性（reflective symmetry）。各画素について、d=1..r の範囲で重み付き非対称度 sum_d (1/d)|I(i,j-d) - I(i,j+d)| を測定する。応答が低いほど、その列を中心に近傍が左右対称であることを意味する。``a`` は半径 r（1〜6）を設定し、``b`` は無視される。出力は [0,1] に正規化された非対称度の応答。"
+  },
+  "2d/f2_topographic": {
+   "fp": "89983e4ae9a5",
+   "ja": "ハラリックの地形プリミティブスケッチ（Haralick topographic primal sketch）: 各画素を勾配の大きさとヘッセ行列（Hessian）の 2 つの固有値の符号から、峰（peak）／窪地（pit）／稜線（ridge）／谷（ravine）／鞍点（saddle）／平坦（flat）／斜面（hillside）に分類し、そのクラスをグレーコード（gray code）として出力する。"
   },
   "2d/gabor": {
    "fp": "93d957599100",
@@ -568,6 +732,98 @@
    "ko": "끝점이 가까운(임계 a) contour 를 탐욕적으로 잇습니다.",
    "de": "Verbindet Konturen mit nahe beieinanderliegenden Endpunkten gierig (Schwelle a)."
   },
+  "2d/it_add_image_border": {
+   "fp": "78899dfdfef6",
+   "ja": "add_image_border: 幅 ``w`` の反射境界（reflected border）を画像の周囲に付加し、境界付きキャンバスを元の HxW フレームに収め直す。``a`` は境界幅 w = 1 + round(a*6) を設定し、``b`` は無視される。"
+  },
+  "2d/it_bit_lshift": {
+   "fp": "17f71f75afb8",
+   "ja": "bit_lshift: 8 ビット量子化した上で全画素を round(a*7) ビットだけ左シフトし、（HALCON と同様に）8 ビットでマスクして折り返し（wrap-around）させ、[0,1] へ写像し直す。``b`` は無視される。"
+  },
+  "2d/it_bit_mask": {
+   "fp": "24346ee1f59d",
+   "ja": "bit_mask: 8 ビット画像と定数ビットマスク round(a*255) との論理積（AND）をとる。``b`` は無視される。"
+  },
+  "2d/it_bit_rshift": {
+   "fp": "9603846ba26f",
+   "ja": "bit_rshift: 8 ビット量子化した上で全画素を round(a*7) ビットだけ右シフトする（2**shift による整数除算に相当し、より粗く暗い画像になる）。``b`` は無視される。"
+  },
+  "2d/it_change_format": {
+   "fp": "67e001ab5ece",
+   "ja": "change_format: （HALCON の change_format と全く同様に、再サンプリングは行わず）原点を基準にクロップ／パディングして、画像行列のサイズを最大寸法の正方形に変更する。正方形の画像はそのまま返され、正方形でない画像はゼロ拡張されて正方形になる。``a``/``b`` は無視される。"
+  },
+  "2d/it_convert_image_type": {
+   "fp": "72ce5c7534dd",
+   "ja": "convert_image_type: L = round(2 + a*254) 個の等間隔レベルに量子化することで、より低精度な画素型への変換（ビット深度の削減）をモデル化する。``b`` は無視される。"
+  },
+  "2d/it_crop_domain": {
+   "fp": "347b9f116ca4",
+   "ja": "crop_domain: 画像のドメインを中心の ``a`` 窓に制限し、その外側の全画素をゼロにする（ドメイン外の画素は未定義であるため 0 とする）。``a`` は保持する窓の割合を設定し、``b`` は無視される。"
+  },
+  "2d/it_crop_part": {
+   "fp": "96de8e4f459b",
+   "ja": "crop_part: 画像の中心から a の割合の部分を切り出し、HxW に再サンプリングし直す——中心への本物のズームイン（zoom-in）。``b`` は無視される。"
+  },
+  "2d/it_crop_rectangle1": {
+   "fp": "3bd361e46188",
+   "ja": "crop_rectangle1: 行・列とも [a .. 1-a] の範囲にまたがる中心の矩形を切り出し、HxW に再サンプリングし直す。a=0 は（ほぼ）恒等変換であり、a が大きいほどより深くズームインする。``b`` は無視される。"
+  },
+  "2d/it_full_domain": {
+   "fp": "5bcbf71a3208",
+   "ja": "full_domain: 画像のドメインを矩形全体に拡張する。素の numpy 配列はすでにドメイン全体を持っているため、この操作は恒等変換となる——このような画像に対する full_domain の本来の正しい挙動である。``a``/``b`` は無視される。"
+  },
+  "2d/it_region_to_bin": {
+   "fp": "74db64e3187e",
+   "ja": "region_to_bin: 画像を ``a`` でしきい値処理してリージョン（region）を得た後、そのリージョンを 2 階調の二値画像として描画する——前景画素には高いグレー値、背景画素には低いグレー値が割り当てられる。``b`` は 2 つのレベル lo = 0.5 - 0.5*b, hi = 0.5 + 0.5*b を設定する。"
+  },
+  "2d/iv_backproject_superres": {
+   "fp": "9f68ef8a5bf1",
+   "ja": "単一画像に対する反復逆投影型超解像（single-image iterative back-projection super-resolution、イラニ・ペレグ（Irani-Peleg）法）。より高解像度のグリッドへアップスケールし、ぼかしとダウンスケールで低解像度の観測をシミュレートし、その残差を高解像度グリッドへ逆投影（back-project）した上で、整合の取れた推定値を HxW へダウンスケールし直す。正味の効果として高周波のディテールが強調される（整合性による鮮鋭化）。``a`` は反復回数 n = 1 + round(a*4)（1〜5）を設定し、``b`` は逆投影ステップのゲイン g = 0.5 + b（0.5〜1.5）を設定する。"
+  },
+  "2d/iv_gradient_inpaint": {
+   "fp": "f724daa879cd",
+   "ja": "中心のマスク窓に対する調和（ラプラス）インペインティング（harmonic (Laplace) inpainting）。中心窓（辺の割合は ``a`` から決まる）の内部を破棄し、周囲の既知画素を境界値とするディリクレ境界条件（Dirichlet boundary）のもとで nabla^2 u = 0 を解くことで再充填する（ヤコビ緩和法（Jacobi relaxation）＝各マスク画素をその 4 近傍の平均値で繰り返し置き換える）。復元された内部は、その穴に対する最も滑らかな（勾配最小の）充填となる。``a`` は窓サイズを設定し、``b`` は無視される。"
+  },
+  "2d/iv_motion_deblur": {
+   "fp": "57d7092bf90a",
+   "ja": "直線運動ぼけ（linear motion blur）を仮定したウィーナー逆畳み込み（Wiener deconvolution）。``a`` はぼけの長さ L = 3 + round(a*10)（3〜13 画素）を設定し、``b`` はぼけの角度 theta = b*180 度（b=0 のとき水平方向）を設定する。この op はその運動 PSF を構築して反転し、運動方向ににじんだバーを細く戻す。"
+  },
+  "2d/iv_richardson_lucy": {
+   "fp": "95f45c94e03e",
+   "ja": "小さなガウス型点広がり関数（PSF、sigma = ``RL_SIGMA``）を仮定したリチャードソン・ルーシー逆畳み込み（Richardson-Lucy deconvolution）。``a`` は反復回数 n = 1 + round(a*14)（1〜15）を設定し、``b`` は無視される。RL 法は推定値 ``u`` を乗法的に更新し、``u (*) psf`` がぼけた観測値と一致するようにすることで、本物のエッジを鮮鋭化する。"
+  },
+  "2d/iv_unsharp_deblur": {
+   "fp": "9400f5c814ad",
+   "ja": "近似的なデブラー（deblur）としての反復アンシャープマスク（unsharp masking）。各パスで、スケーリングした高域成分（画像からガウスぼかしを差し引いたもの）を画像に加算し戻す。``a`` は反復回数 n = 1 + round(a*5)（1〜6）を設定し、``b`` は 1 パスあたりの適用量 amt = 0.4 + b（0.4〜1.4）を設定する。反復回数が多いほど、また適用量が大きいほど鮮鋭になる。"
+  },
+  "2d/iv_wiener_deconv_spatial": {
+   "fp": "a40ab897d23b",
+   "ja": "小さなガウス型 PSF を仮定した、空間領域で完結するウィーナー逆畳み込み（Wiener deconvolution）。``a`` は反転対象とする想定ぼけ幅 sigma を (0, ``WIENER_SIGMA_MAX``] の範囲で設定する（a が大きいほど鮮鋭化が強くなる）。``b`` はノイズ対信号比 nsr = 1e-3 + b*0.15 を設定する（b が大きいほど、より穏やかで正則化の効いた復元になる）。"
+  },
+  "2d/ph_coherence_enhancing_diffusion": {
+   "fp": "666a85d60e6f",
+   "ja": "ヴァイカートのコヒーレンス強調拡散（Weickert coherence-enhancing diffusion）（HALCON ``coherence_enhancing_diff``）。"
+  },
+  "2d/ph_heat_flow": {
+   "fp": "949715738d45",
+   "ja": "線形熱方程式／等方性拡散（isotropic diffusion）（HALCON ``isotropic_diffusion``）。"
+  },
+  "2d/ph_mean_curvature_motion": {
+   "fp": "c9e79d804a4c",
+   "ja": "平均曲率フロー（mean-curvature motion）／曲線短縮フロー（curve-shortening flow）（HALCON ``mean_curvature_flow``）。"
+  },
+  "2d/ph_perona_malik": {
+   "fp": "703dc5cebdec",
+   "ja": "ペロナ・マリクの異方性拡散（Perona-Malik anisotropic diffusion）（HALCON ``anisotropic_diffusion``）。"
+  },
+  "2d/ph_reaction_diffusion": {
+   "fp": "2eaeed187e4e",
+   "ja": "グレイ・スコットの反応拡散系（Gray-Scott reaction-diffusion）（対応する HALCON オペレータなし、halcon=\"\"）。"
+  },
+  "2d/ph_total_variation_flow": {
+   "fp": "565bc3dc6f3b",
+   "ja": "全変動（total variation、ルーディン・オッシャー・ファティミ（Rudin-Osher-Fatemi）法）によるノイズ除去フロー（対応する HALCON オペレータなし、\"\"）。"
+  },
   "2d/r2_endpoints_skeleton": {
    "fp": "ce1d0b689218",
    "en": "Extract the end points of a skeleton (the points with exactly one skeleton pixel in their 8-neighbourhood).",
@@ -672,6 +928,434 @@
    "ko": "이미지 중심 둘레로 ``-45° + 90°·a`` 회전(a=0.5 → 0°). ``b`` 는 미사용.",
    "de": "Dreht um die Bildmitte um ``-45° + 90°·a`` (a=0,5 → 0°). ``b`` unbenutzt."
   },
+  "2d/tac_contact_mask": {
+   "fp": "103a5a58e3de",
+   "ja": "擬似参照背景差分によるタクタイル（触覚）フレームの接触領域検出: ``sigma = max(2, min(H,W)/6)`` として ``dev = |v - G_sigma(v)|`` を求める（低周波成分の包絡線を無変形の参照フレームの代わりとして用いる）。これを ``thr = 0.005 + 0.145*a`` グレーレベルでしきい値処理し、二値の開処理（binary opening）に続けて閉処理（binary closing、いずれも 3x3・8 連結）を ``round(3*b)`` 回繰り返してクリーンアップする。``a`` = 偏差しきい値（感度）、``b`` = モルフォロジー処理によるクリーンアップの強さ。入力 HxW サイズの二値（0/1）float64 領域を返す。完全に平坦（一定値）なフレームはどこでも偏差がゼロになるため、空のマスクを返す。"
+  },
+  "2d/tac_height_from_shading": {
+   "fp": "d5ee11642f80",
+   "ja": "陰影勾配（shading gradients）のポアソン積分（Poisson integration）による高さ／凹凸マップ — GelSight の深度再構成（および photometric stereo（光度ステレオ法）)の積分段階に相当する: 画像の勾配を表面の傾き ``p = gain*gx``、``q = gain*gy`` として読み替え、ポアソン方程式 ``lap(h) = div(p,q)`` をスペクトル法で解く（``h_hat = div_hat / lap_hat``、離散ラプラシアンのシンボルは ``2cos(2*pi*u/W)+2cos(2*pi*v/H)-4``、不定な直流成分（DC mode）はゼロに固定）。``a`` = 勾配ゲイン（0.25〜4.25 倍）、``b`` = 勾配場の事前平滑化 sigma（0〜3）。出力は最小最大正規化で [0,1] にし、HxW に合わせ直す。一定値のフレームは積分すると平坦（全ゼロ）な凹凸マップになる。"
+  },
+  "2d/tac_pressure_proxy": {
+   "fp": "f8f0168188c5",
+   "ja": "接触圧力の疑似マップ: 擬似参照背景からの整流済み偏差 ``dev = |v - G_sigma(v)|`` を、偏差の大きい（接触している）領域に限定するゲート処理（相対ゲート ``0.15 * max(dev)`` に加え絶対下限 0.005）にかけ、感度ゲインで増幅してガウシアン平滑化する。これは、タクタイルパッドに力センサが無い場合に使う「圧痕の深さは法線方向力に対して単調」という標準的な代理指標である。``a`` = 感度（ゲイン 1〜10 倍）、``b`` = 平滑化半径（sigma 0.5〜4.5）。出力は [0,1] にクリップした HxW サイズ。平坦なフレームは全ゼロの圧力マップになる（接触も力も無し）。"
+  },
+  "2d/tac_shear_field": {
+   "fp": "b12595c1a01f",
+   "ja": "2 次元構造テンソル（Foerstner／Bigun-Granlund の方向コヒーレンス）による面内せん断（in-plane shear）の疑似指標。テンソル ``J = G_sigma(grad v * grad v^T)`` の固有値を l1 >= l2 とすると、コヒーレンス ``(l1-l2)/(l1+l2) = sqrt((J11-J22)^2 + 4*J12^2) / (J11+J22)`` は、ゲルのテクスチャが（接線方向／せん断荷重の下でそうなるように）単一の支配的な方向に引き伸ばされているところで 1 に、等方的なところで 0 になる。さらに結果にテンソルのトレース（勾配エネルギー）で重み付けすることで、テクスチャの無い未接触のゲルがノイズの方向を増幅するのではなく暗いままになるようにしている。``a`` = テンソル積分の sigma（0.6〜4.6）、``b`` = 出力ゲイン（0.5〜2.5）。出力は [0,1] にクリップした HxW サイズ。一定値のフレームは勾配エネルギーがゼロになるため、全ゼロのせん断場になる。"
+  },
+  "2d/tac_surface_normal": {
+   "fp": "8127157defd4",
+   "ja": "陰影勾配から求める法線ベクトルの z 成分（傾きマップ）。Horn の shape-from-shading（陰影からの形状復元）における法線のパラメータ化 ``n = (-p, -q, 1)/sqrt(1+p^2+q^2)`` を用い、``p = gain*gx``、``q = gain*gy`` として ``nz = 1/sqrt(1+p^2+q^2)`` を求める。平坦（未接触）なゲルでは nz = 1、急峻な圧痕の壁では 0 に近づくため、このマップはそのまま有効な [0,1] の符号化になる。``a`` = 勾配ゲイン（1〜21 倍、陰影をどれだけ急峻とみなすか）、``b`` = センサノイズを抑えるための画像の事前平滑化 sigma（0〜3）。一定値の入力 → 全て 1（完全に平坦なゲル）。"
+  },
+  "2d/tb_abs_funct_1d": {
+   "fp": "aa034a6277fd",
+   "ja": "y値の絶対値（HALCON ``abs_funct_1d``）。"
+  },
+  "2d/tb_angular_spectrum_propagate": {
+   "fp": "637b5f0dce9d",
+   "ja": "複素場の厳密なスカラー自由空間伝搬（角スペクトル法）。"
+  },
+  "2d/tb_apply_weighting": {
+   "fp": "6fa6db08c796",
+   "ja": "信号に A/C/Z 周波数重み付けをゼロ位相で適用する。"
+  },
+  "2d/tb_background_subtraction_window": {
+   "fp": "1710bfc7dfac",
+   "ja": "因果的な窓中央値背景モデルから、フレームごとに0/1の前景マスクを求める → ``(T, H, W)``（``video``）。"
+  },
+  "2d/tb_bandpass": {
+   "fp": "8760397dbd2c",
+   "ja": "*low* Hz から *high* Hz までのバターワース・バンドパスフィルタ。両端の周波数は ``(0, rate/2)`` の範囲内でなければならない。信号長に関する制約は :func:`lowpass` と同じ。"
+  },
+  "2d/tb_beamform_delay_sum": {
+   "fp": "805142e9fd90",
+   "ja": "1つのレンジ・ドップラーセルに対する、遅延加算（delay-and-sum、Bartlett法）角度スペクトル。"
+  },
+  "2d/tb_cplx_cr_residual": {
+   "fp": "47a406c97e41",
+   "ja": "サンプリングされた複素場のコーシー・リーマン残差 — 「この場は正則（holomorphic）か」を1つの数値で表したもの。"
+  },
+  "2d/tb_create_funct_1d_array": {
+   "fp": "cf07817de1af",
+   "ja": "等間隔サンプルから 1 次元関数を作成する（HALCON の ``create_funct_1d_array``）。"
+  },
+  "2d/tb_cx_apply_transfer_function": {
+   "fp": "7962f8c470d1",
+   "ja": "**中心化された**スペクトルにフィルタ ``H`` を乗じる → ``(H, W)`` complex128。"
+  },
+  "2d/tb_cx_ifft": {
+   "fp": "87f0dbe3186c",
+   "ja": ":func:`cx_fft` の逆変換: ``ifft2(ifftshift(cx))``。"
+  },
+  "2d/tb_cx_imag": {
+   "fp": "915e8740cd63",
+   "ja": "``cx`` の虚部 → 実数の ``(H, W)`` float64（クランプしない生の値）。"
+  },
+  "2d/tb_cx_log_magnitude": {
+   "fp": "5e530cd649f8",
+   "ja": "**表示用**の対数振幅スペクトル → ``[0, 1]`` に収まる実数の ``(H, W)`` float64。"
+  },
+  "2d/tb_cx_magnitude": {
+   "fp": "2d548898c3ea",
+   "ja": "画素ごとの振幅 ``|cx|`` → 実数の ``(H, W)`` float64。"
+  },
+  "2d/tb_cx_phase": {
+   "fp": "34753bd721db",
+   "ja": "``cx`` のラップされた位相 → 実数の ``(H, W)`` float64。"
+  },
+  "2d/tb_cx_real": {
+   "fp": "f13285b823b8",
+   "ja": "``cx`` の実部 → 実数の ``(H, W)`` float64（クランプしない生の値）。"
+  },
+  "2d/tb_deflicker": {
+   "fp": "09747002e7d8",
+   "ja": "フレームごとの輝度フリッカ除去（deflicker）→ ``(T, H, W)``（``video``）。"
+  },
+  "2d/tb_derivate_funct_1d": {
+   "fp": "b8ae40e96ee9",
+   "ja": "中心差分による1次微分（HALCON ``derivate_funct_1d``）。"
+  },
+  "2d/tb_dtof_depth": {
+   "fp": "426a5ded7780",
+   "ja": "光子到達時刻ヒストグラムから距離を求める: ``d = c*t/2``。"
+  },
+  "2d/tb_envelope": {
+   "fp": "ceccfeaa24f6",
+   "ja": "解析信号（ヒルベルト変換）による振幅エンベロープ — ノック音／衝撃／アコースティック・エミッション（AE）バーストの波形を捉える。"
+  },
+  "2d/tb_equivalent_level": {
+   "fp": "3937bb3ae909",
+   "ja": "記録のエネルギー等価レベル（``ref`` を基準とするdB値）。"
+  },
+  "2d/tb_exponential_background": {
+   "fp": "bf4cf53fc932",
+   "ja": "フレームごとの再帰的な背景更新 ``bg ← (1−α)·bg + α·frame`` → ``(T, H, W)``（``video``）。"
+  },
+  "2d/tb_exponential_foreground": {
+   "fp": "bab5920b7ea9",
+   "ja": "前景マスク ``|frame − exponential background| > threshold`` → 0/1 の ``(T, H, W)``（``video``）。"
+  },
+  "2d/tb_find_peaks": {
+   "fp": "6af0683861be",
+   "ja": "ピークのインデックス（scipy.signal.find_peaks） — 衝撃や欠陥エコーの検出に使う。"
+  },
+  "2d/tb_fmcw_range_profile": {
+   "fp": "6933a2fdfdb3",
+   "ja": "レンジのみのプロファイル: 高速時間（fast-time）方向のFFT振幅を、残りの軸について平均したもの。"
+  },
+  "2d/tb_fmcw_window_apply": {
+   "fp": "4549286bde12",
+   "ja": "ビートキューブ（beat cube）のレンジ軸および／またはドップラー軸に沿って周期的な窓関数を適用する。"
+  },
+  "2d/tb_frame_difference_causal": {
+   "fp": "f7ba0ac7ac76",
+   "ja": "``|frame t − frame t−1|``（先頭フレームはゼロ）→ ``(T, H, W)``（``video``）。"
+  },
+  "2d/tb_get_y_value_funct_1d": {
+   "fp": "550fbf126e6e",
+   "ja": "（小数を含む）位置 *x* におけるy値（HALCON ``get_y_value_funct_1d``）。"
+  },
+  "2d/tb_highpass": {
+   "fp": "e91dc922a2dd",
+   "ja": "バターワース・ハイパスフィルタ。ナイキスト周波数および信号長に関する制約は :func:`lowpass` と同じ。"
+  },
+  "2d/tb_integrate_funct_1d": {
+   "fp": "f6470b527a61",
+   "ja": "台形則による累積積分（HALCON ``integrate_funct_1d``）。"
+  },
+  "2d/tb_iqft2": {
+   "fp": "68ca723f61a3",
+   "ja": "**中心化された**スペクトルに対する四元数逆フーリエ変換。→ (H, W, 4)。"
+  },
+  "2d/tb_lf_center_view": {
+   "fp": "d7aa74b409db",
+   "ja": "中心視点の画像 — プレノプティックカメラも出力する通常の2次元画像に相当する。"
+  },
+  "2d/tb_lf_depth_from_focus": {
+   "fp": "e017da7a478b",
+   "ja": "リフォーカス走査における**シャープネスのピーク**から求めた画素ごとの傾き。"
+  },
+  "2d/tb_lf_epi": {
+   "fp": "9db01a4d0333",
+   "ja": "エピポーラ平面画像（EPI） — 直線の**傾きが視差**を表すスライス。"
+  },
+  "2d/tb_lf_epi_slope": {
+   "fp": "24fb316e75cd",
+   "ja": "**EPI直線の向き**から求めた画素ごとの傾き（構造テンソル、1パスで計算）。"
+  },
+  "2d/tb_lf_refocus": {
+   "fp": "7ce970fd37a2",
+   "ja": "シフト・アンド・アッド方式によるリフォーカス: *slope* に焦点を合わせた合成開口画像。"
+  },
+  "2d/tb_lf_subaperture": {
+   "fp": "3285d1e9d29e",
+   "ja": "1つのサブアパーチャ画像 — 瞳の1点を通して見た像。"
+  },
+  "2d/tb_lf_synthetic_aperture": {
+   "fp": "780d6beb7255",
+   "ja": "整形した開口を通したリフォーカス — ``reduce=\"median\"`` を指定すれば遮蔽物越しのリフォーカスも可能。"
+  },
+  "2d/tb_lf_to_mla": {
+   "fp": "94c7ace7f7ce",
+   "ja": "ライトフィールドをマイクロレンズアレイの生フレームへ再インターリーブする（厳密な逆変換）。"
+  },
+  "2d/tb_lowpass": {
+   "fp": "3ad5efd11b87",
+   "ja": "バターワース・ローパスフィルタ（scipy、ゼロ位相 filtfilt）。*cutoff* は ``(0, rate/2)`` の範囲内でなければならない。ナイキスト周波数の範囲外のカットオフを指定すると、信号をそのまま通過させるのではなく例外を送出する。ゼロ位相 filtfilt を行うには短すぎる信号についても、フィルタを適用しないまま無言で返すのではなく例外を送出する（メッセージ中に正確な最小長を明記）。"
+  },
+  "2d/tb_mat_cond": {
+   "fp": "23a52abfa3a6",
+   "ja": "スペクトル（2-ノルム）条件数 ``s_max / s_min`` — 線形代数（linalg）系全体にとっての数値的な炭鉱のカナリア（異常を真っ先に知らせる指標）。"
+  },
+  "2d/tb_mat_pinv": {
+   "fp": "c896b0f8621b",
+   "ja": "SVD（特異値分解）によるムーア・ペンローズ擬似逆行列。カットオフ値は**明示的**に指定する。"
+  },
+  "2d/tb_monogenic_amplitude": {
+   "fp": "c98fa1955279",
+   "ja": "モノジェニック信号（monogenic signal）の局所振幅 ``sqrt(f^2 + R1^2 + R2^2)``。→ (H, W)。"
+  },
+  "2d/tb_monogenic_orientation": {
+   "fp": "29f4add28947",
+   "ja": "モノジェニック信号の局所方位 ``atan2(R2, R1)``。→ (H, W)。"
+  },
+  "2d/tb_monogenic_phase": {
+   "fp": "e73dafca0d43",
+   "ja": "モノジェニック信号の局所位相 ``atan2(|R|, f)``。→ (H, W)。"
+  },
+  "2d/tb_motion_energy_image": {
+   "fp": "5f53c3aed118",
+   "ja": "フレームごとの Bobick–Davis Motion Energy Image（動作エネルギー画像）→ 0/1 の ``(T, H, W)``（``video``）。"
+  },
+  "2d/tb_motion_history_image": {
+   "fp": "6724aa013e8b",
+   "ja": "フレームごとの Bobick–Davis Motion History Image（動作履歴画像）→ ``[0, 1]`` の ``(T, H, W)``（``video``）。"
+  },
+  "2d/tb_moving_average_window": {
+   "fp": "b72eddfff0cd",
+   "ja": "直近 *window* フレームにわたる、画素ごとの因果的な平均値 → ``(T, H, W)``（``video``）。"
+  },
+  "2d/tb_negate_funct_1d": {
+   "fp": "eb39395fca66",
+   "ja": "符号を反転したy値（HALCON ``negate_funct_1d``）。"
+  },
+  "2d/tb_num_points_funct_1d": {
+   "fp": "44c9d0d3d9f8",
+   "ja": "サンプル数（HALCON ``num_points_funct_1d``）。"
+  },
+  "2d/tb_optical_flow_magnitude_stream": {
+   "fp": "96ac1f025871",
+   "ja": "直前フレームに対する、フレームごとの高密度オプティカルフロー（dense optical flow）速度 → ``(T, H, W)``（``video``）。"
+  },
+  "2d/tb_pc_density_equalize": {
+   "fp": "6ab8c971b6d5",
+   "ja": "疎な領域を埋めてから密な領域を間引き、間隔を均一化する（``points``）。"
+  },
+  "2d/tb_pc_fill_sparse": {
+   "fp": "0c4e5cac3cb8",
+   "ja": "局所間隔が *spacing* を超える箇所に、局所 PCA 平面上で点を追加する（``points``）。"
+  },
+  "2d/tb_pc_poisson_disk": {
+   "fp": "4d464a6876fb",
+   "ja": "ブルーノイズ間引き（blue-noise thinning）: どの 2 点も *radius* より近づかないよう貪欲法で点を残す（``points``）。"
+  },
+  "2d/tb_qft2": {
+   "fp": "bc455483fbd4",
+   "ja": "四元数（超複素数、hypercomplex）2次元フーリエ変換。→ (H, W, 4) の中心化されたスペクトル。"
+  },
+  "2d/tb_quat_color_filter": {
+   "fp": "13acc840fe45",
+   "ja": "特定の色方向だけを厳密に残す、または除去する。→ (H, W, 4)。"
+  },
+  "2d/tb_quat_color_rotate": {
+   "fp": "c32e646de0ef",
+   "ja": "各画素の色をRGB軸まわりに回転する: ``q x conj(q)``。→ (H, W, 4)。"
+  },
+  "2d/tb_quat_conjugate_image": {
+   "fp": "51b9b304b8e9",
+   "ja": "画素ごとの四元数共役（conjugate）``(w, -x, -y, -z)``。→ (H, W, 4)。"
+  },
+  "2d/tb_quat_norm": {
+   "fp": "2634cdccfb51",
+   "ja": "画素ごとの四元数ノルム（modulus）``|q| = sqrt(w^2+x^2+y^2+z^2)``。→ (H, W)。"
+  },
+  "2d/tb_quat_normalize_image": {
+   "fp": "84daf9b735f4",
+   "ja": "画素ごとに四元数をノルム1へ正規化する。→ (H, W, 4)。"
+  },
+  "2d/tb_quaternion_to_rgb": {
+   "fp": "5d164aa3c065",
+   "ja": "四元数画像のベクトル部を、線形RGBとして取り出す。→ (H, W, 3)。"
+  },
+  "2d/tb_range_doppler_map": {
+   "fp": "5199caace203",
+   "ja": "ビートキューブの2次元FFT -> ``(n_doppler, n_range)`` の振幅マップ。"
+  },
+  "2d/tb_resample": {
+   "fp": "d007dc2f0408",
+   "ja": "信号を *new_rate* にリサンプリングする（フーリエ法）。"
+  },
+  "2d/tb_rgb_to_quaternion": {
+   "fp": "1b74c961cc05",
+   "ja": "カラー画像を純虚四元数（quaternion）``0 + R i + G j + B k`` として埋め込む。→ (H, W, 4)。"
+  },
+  "2d/tb_rms": {
+   "fp": "c283ed572b29",
+   "ja": "RMSレベル。信号全体を対象にするとスカラー値、*frame* を指定するとフレームごとの配列になる（時間方向の振動／エネルギーの包絡線）。"
+  },
+  "2d/tb_running_gaussian_background": {
+   "fp": "62a28c1576cb",
+   "ja": "適応的な単一ガウス分布によるフレームごとの背景（逐次更新平均）→ ``(T, H, W)``（``video``）。"
+  },
+  "2d/tb_running_gaussian_foreground": {
+   "fp": "250a4750c4c7",
+   "ja": "適応的な単一ガウス分布によるフレームごとの前景マスク → 0/1 の ``(T, H, W)``（``video``）。"
+  },
+  "2d/tb_sample_funct_1d": {
+   "fp": "4903a80ffa34",
+   "ja": "*step* 個おきのサンプル抽出（HALCON ``sample_funct_1d``）。"
+  },
+  "2d/tb_scale_y_funct_1d": {
+   "fp": "4cbd70ed1613",
+   "ja": "y値の線形変換 ``mult * y + add``（HALCON ``scale_y_funct_1d``）。"
+  },
+  "2d/tb_smooth_funct_1d_gauss": {
+   "fp": "ec333b182f0b",
+   "ja": "1次元関数のガウシアン平滑化（HALCON ``smooth_funct_1d_gauss``）。"
+  },
+  "2d/tb_smooth_funct_1d_mean": {
+   "fp": "668c93edcc8f",
+   "ja": "反復移動平均による平滑化（HALCON ``smooth_funct_1d_mean``）。"
+  },
+  "2d/tb_spad_deadtime_apply": {
+   "fp": "37b20b84b436",
+   "ja": "検出器のデッドタイムによって真の光子レートを歪ませる（カウントの取りこぼし）。"
+  },
+  "2d/tb_spad_deadtime_correct": {
+   "fp": "97c9fc0f0c68",
+   "ja": "不感時間（dead time）で歪んだ測定光子レートから、真の光子レートを復元する。"
+  },
+  "2d/tb_spectrogram": {
+   "fp": "8d14f3e7aa28",
+   "ja": "STFT（短時間フーリエ変換）による振幅スペクトログラム → ``(freqs, times, S)``、``S`` の形状は ``(n_freqs, n_frames)``。ハン窓を使用し、*hop* の既定値は ``win//2``。"
+  },
+  "2d/tb_specular_coefficient_map": {
+   "fp": "49b4cfe79767",
+   "ja": "二色性反射モデル（dichromatic model）における、スカラー量の界面（鏡面）反射係数。→ (H, W)。"
+  },
+  "2d/tb_specular_diffuse_split": {
+   "fp": "75f722a31675",
+   "ja": "線形RGB画像を拡散反射（diffuse, body reflection）成分と鏡面反射（specular, interface reflection）成分に分離する。→ (diffuse, specular)、いずれも (H, W, 3)。"
+  },
+  "2d/tb_specular_free_transform": {
+   "fp": "ce1e2a8ced7c",
+   "ja": "照明方向の成分を画像から射影除去する: ハイライトが決して触れない部分を取り出す。→ (H, W, 3)。"
+  },
+  "2d/tb_stat_correlation": {
+   "fp": "bd33cd23f258",
+   "ja": "``(N, D)`` の観測データに対するピアソン相関行列 → ``(D, D)``。"
+  },
+  "2d/tb_stat_covariance": {
+   "fp": "c813d642e90a",
+   "ja": "``(N, D)`` の観測データに対する標本共分散行列 → ``(D, D)``。"
+  },
+  "2d/tb_stat_zscore": {
+   "fp": "8d1e753b1ffc",
+   "ja": "1次元サンプルの標準化: ``(x - mean) / std``（母集団、``ddof=0``）。"
+  },
+  "2d/tb_tcspc_background_subtract": {
+   "fp": "4761773e4b2d",
+   "ja": "到達時刻ヒストグラムから環境光／暗計数のフロアを除去する。"
+  },
+  "2d/tb_tcspc_coates_correct": {
+   "fp": "5b1cbddd674a",
+   "ja": "TCSPC（時間相関単一光子計数）のパイルアップ（pile-up）を Coates の推定量で厳密に補正する — 早着光子バイアスの解消。"
+  },
+  "2d/tb_tcspc_irf_convolve": {
+   "fp": "cf8c892b0a92",
+   "ja": "到達時刻ヒストグラムに装置応答（タイミングジッタ）を畳み込んでぼかす。"
+  },
+  "2d/tb_temporal_band_power": {
+   "fp": "eaaed14b9ef5",
+   "ja": "画素ごとに、指定した時間帯域内の平均二乗パワーを求める -> ``(H, W)`` マップ。"
+  },
+  "2d/tb_temporal_bandpass": {
+   "fp": "6d6160c2d17e",
+   "ja": "全画素の時系列に対する理想的な時間帯域通過（temporal band-pass）フィルタ -> ``(T, H, W)``。"
+  },
+  "2d/tb_temporal_bilateral": {
+   "fp": "a08d608c1c00",
+   "ja": "フレームごとの因果的な時間方向バイラテラルフィルタ（temporal bilateral filter）によるノイズ除去 → ``(T, H, W)``（``video``）。"
+  },
+  "2d/tb_temporal_median_window": {
+   "fp": "0c17f763f608",
+   "ja": "直近 *window* フレームにわたる、画素ごとの因果的（未来参照なし）中央値 → ``(T, H, W)``（``video``）。"
+  },
+  "2d/tb_three_frame_difference": {
+   "fp": "10687121affc",
+   "ja": "フレームごとの Collins 三フレーム差分（three-frame difference）による動きマスク → 0/1 の ``(T, H, W)``（``video``）。"
+  },
+  "2d/tb_weighting_response": {
+   "fp": "9dc0f205d205",
+   "ja": "指定した周波数における A/C/Z 周波数重み付け曲線（dB単位）。"
+  },
+  "2d/tb_zero_crossing_rate": {
+   "fp": "c081a4f906ad",
+   "ja": "符号が変化する隣接サンプルの割合 — ピッチ／ノイズっぽさを安価に測る手がかり。"
+  },
+  "2d/tb_zero_crossings_funct_1d": {
+   "fp": "7162f24b56c1",
+   "ja": "関数の符号が変化する位置のインデックス（HALCON ``zero_crossings_funct_1d``）。"
+  },
+  "2d/tf_census_transform": {
+   "fp": "466a875dfefa",
+   "ja": "census_transform: 3x3 のノンパラメトリックなセンサス変換（census transform）によるビット署名画像。"
+  },
+  "2d/tf_gradient_domain_reintegrate": {
+   "fp": "69269d44f303",
+   "ja": "gradient_domain_reintegrate: 勾配をしきい値処理してから、ポアソン方程式（Poisson equation）で再積分する。"
+  },
+  "2d/tf_log_polar": {
+   "fp": "3439e146b9bd",
+   "ja": "log_polar: 画像の中心を基準とした対数極座標（log-polar）グリッド上で再サンプリングする。"
+  },
+  "2d/tf_phase_congruency": {
+   "fp": "3ebfa71cbec1",
+   "ja": "phase_congruency: モノジェニック信号（monogenic signal）に基づく簡易版の位相整合性（phase congruency）特徴マップ。"
+  },
+  "2d/tf_radon_sinogram": {
+   "fp": "0d95f1153d45",
+   "ja": "radon_sinogram: ラドン変換（Radon transform）を HxW のサイノグラム（sinogram）画像として描画する。"
+  },
+  "2d/tf_rank_transform": {
+   "fp": "7d29b95780dd",
+   "ja": "rank_transform: 各画素の近傍内における局所順位（local rank）を求める。"
+  },
+  "2d/tf_steerable_filter": {
+   "fp": "cb22b3c55cba",
+   "ja": "steerable_filter: 方向付きガウス一次微分（first-derivative-of-Gaussian）フィルタの応答。"
+  },
+  "2d/tm_backproject_unfiltered": {
+   "fp": "87124241590e",
+   "ja": "入力サイノグラムに対する素の（フィルタなしの）逆投影 — 古典的なぼやけた再構成。ランプフィルタを適用しないため高周波成分が抑えられ、各点が 1/r のぼけとして広がる。これはあえて FBP のフィルタがなぜ必要かを示すためのもの。``a``／``b`` は使用しない（これは固定の素朴なベースラインである）。利用可能なら ``skimage.transform.iradon`` を ``filter_name=None`` で使用し、無ければ NumPy による素の逆投影にフォールバックする。出力は HxW に合わせ直す。"
+  },
+  "2d/tm_fbp_reconstruct": {
+   "fp": "e187653fbb01",
+   "ja": "フィルタ補正逆投影法（filtered back-projection, FBP）: ``v`` をサイノグラム（行=角度、列=検出器、角度は [0,180) に一様分布と仮定）とみなしてスライスを再構成する。``b`` は再構成フィルタを選ぶ — b < 0.5 なら Ram-Lak（ランプフィルタ）、b >= 0.5 なら Shepp-Logan。``a`` は使用しない（意味を持つのはフィルタの方）。利用可能なら ``skimage.transform.iradon`` を使用し、無ければ NumPy による FFT ランプフィルタ逆投影にフォールバックする。出力は HxW に合わせ直す。"
+  },
+  "2d/tm_radon_forward": {
+   "fp": "28db5b972c87",
+   "ja": "前方ラドン変換（forward Radon projection）: ``v`` をスライス画像とみなし、平行ビームに沿って積分してサイノグラム（sinogram、行=角度、列=検出器）を作り、元の HxW に合わせ直す。``a`` は取得する角度数を決める（``n = round(H*a)`` を 8..360 にクランプ — スパースビュー（sparse-view）の調整用）。``b`` は角度範囲を決める（``span = 180*min(1, 0.5+b)`` 度: b < 0.5 は limited-angle CT、b >= 0.5（既定値 b = 0.5 を含む）は ``tm_fbp_reconstruct``／``tm_sart_reconstruct``／``tm_backproject_unfiltered`` が前提とする [0,180) のフルレンジであり、既定パラメータでは forward → inverse が自然に往復一致する）。利用可能なら ``skimage.transform.radon`` を使用し、無ければ NumPy による回転総和方式のラドン変換にフォールバックする。"
+  },
+  "2d/tm_sart_reconstruct": {
+   "fp": "eb013c3cfa8d",
+   "ja": "代数的再構成法（algebraic reconstruction）: 入力サイノグラム（行=角度）に対して SART/SIRT を数回走らせる。``a`` は反復回数を決める（``round(1+a*4)`` → 1..5）、``b`` は緩和係数（relaxation factor）を決める（``0.05 + b*0.35``）。利用可能なら ``skimage.transform.iradon_sart`` を使用し、無ければ自己完結型の NumPy 版 SIRT（投影 → 残差 → 重み付き逆投影のループ）にフォールバックする。出力は HxW に合わせ直す。"
+  },
+  "2d/tm_sinogram_denoise": {
+   "fp": "f015760cc0e6",
+   "ja": "入力サイノグラムを角度方向（行方向）に沿って平滑化する。隣接する投影角度はほぼ同じ対象物を見ているため、角度方向の平滑化は正真正銘の整合性事前分布（consistency prior）として機能し、正弦波状の軌跡（sinusoidal traces）を保ったまま角度ごとの検出器ノイズを抑える。``a`` は角度軸方向のガウシアン sigma を決める（``a*4``）、``b`` は検出器軸方向に弱めの sigma を追加する（``b*1.5``）。出力は同じ形状のサイノグラムで [0,1] に収まる。"
+  },
   "2d/unsharp": {
    "fp": "26ac5582b61d",
    "en": "Unsharp mask. ★It clips to [0,1] on the way out (2026-09-02).",
@@ -759,6 +1443,10 @@
    "tw": "全最小平方直線殘差 RMS = sqrt(共變異數較小的特徵值)。",
    "ko": "전 최소제곱 직선 잔차 RMS = sqrt(공분산의 작은 쪽 고유값).",
    "de": "RMS-Residuum der Total-Least-Squares-Gerade = sqrt(kleinerer Kovarianz-Eigenwert)."
+  },
+  "2d/xsp_chamfer_dist": {
+   "fp": "e702af2f61af",
+   "ja": "最も近い背景画素までの市街地距離（チャンファー距離）を [0,1] に正規化して返す。"
   },
   "3d/a3_distribution": {
    "fp": "c1d634223e7f",

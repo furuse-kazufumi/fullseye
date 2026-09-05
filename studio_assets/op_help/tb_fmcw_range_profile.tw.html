@@ -3,7 +3,22 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">beatcube</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_fmcw_range_profile&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">beatcube → signal</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>Range-only profile: the fast-time FFT magnitude, averaged over the rest.</p>
+<p>The 1-D marginal of :func:<code style="color:#22d3bf">range_doppler_map</code> — what a static scene needs,</p>
+<p>and what a single chirp can give. Magnitudes are averaged (never the complex</p>
+<p>values) over chirps and antennas, so the average is independent of the</p>
+<p>target&#x27;s velocity and angle: `<code style="color:#22d3bf">|FFT|</code>` does not rotate with the Doppler</p>
+<p>phase, only the phase does.</p>
+<p>Bin `<code style="color:#22d3bf">j</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">j * c*f_s/(2*S*N_s)</code><code style="color:#22d3bf"> metres. With </code><code style="color:#22d3bf">normalize=True</code>` a</p>
+<p>bin-centred target of amplitude `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> peaks at exactly </code><code style="color:#22d3bf">a</code>`.</p>
+<p>*chirp* / *antenna* select one slice instead of averaging. Returns a 1-D</p>
+<p>float64 array of length `<code style="color:#22d3bf">n_samples</code><code style="color:#22d3bf"> — a plain signal, so :mod:</code>dsp` and</p>
+<p>:mod:<code style="color:#22d3bf">funct1d</code> (`<code style="color:#22d3bf">find_peaks</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">smooth_funct_1d_gauss</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">spectrum</code>`)</p>
+<p>apply to it directly.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: as :func:</code>range_doppler_map`, plus an</p>
+<p>out-of-bounds *chirp* index.</p>
+<p>Typed bridge of the rangedoppler op `<code style="color:#22d3bf">fmcw_range_profile</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

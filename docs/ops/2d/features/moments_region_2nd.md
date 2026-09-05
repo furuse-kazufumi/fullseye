@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+正規化中心 2 次モーメントの和の絶対値 ``|μ20 + μ02|``(``skimage.
+measure.moments_normalized`` 由来)。HALCON の ``moments_region_2nd``
+（Calculate the geometric moments of regions.）は本来 M20/M02/M11 を
+それぞれ返すが、この代役では 1 スカラーに単純化するため 2 成分を単純
+加算した合成値で近似している(個々の方向成分は失われる)。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

@@ -17,7 +17,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `video → video`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Causal per-pixel median over the last *window* frames → ``(T, H, W)`` (``video``).
+
+    Frame ``t`` uses frames ``max(0, t−window+1) .. t``. The streaming
+    :class:`TemporalMedianWindow` gives the same frames one at a time with a
+    ring of *window* frames instead of the whole clip in memory.
+
+Typed bridge of the videostream op ``temporal_median_window`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``window`` (default 5); ``b`` is unused.
 
 ## 参考(サンプルデータ・文献)
 

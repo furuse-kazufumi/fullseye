@@ -19,7 +19,11 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+領域からその 1 画素収縮版を引くことで外周境界線(輪郭の内側 1 画素の
+リング)を取り出す。塗りつぶされた領域を輪郭線に変換する。HALCON の
+``boundary``（Reduce a region to its boundary.）に相当。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

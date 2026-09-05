@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+LoG(Laplacian of Gaussian、ガウス平滑化後にラプラシアンを掛けた
+二階微分エッジ検出)。``signed01`` により符号つき応答を [0,1] へ写像し
+(0.5 がゼロ交差に相当)、ゼロ交差検出やブロブ検出の下地に使える。HALCON の
+``laplace_of_gauss``（LoG-Operator (Laplace of Gaussian).）に相当。
+
+``a`` がガウス核のシグマを 0.5〜3.0 の範囲で振る。``b`` は未使用。値が 0.5
+から離れるほど強いエッジ/ブロブ応答であることを示す。
 
 ## 詳しい使い方ガイド
 

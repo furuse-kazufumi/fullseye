@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `volume → volume`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+球形構造要素による 3D 二値膨張。対応する HALCON op は指定されていない。
+
+``a`` が球の半径を ``1〜4``（``1+int(3a)``）に振る。``b`` は未使用。球は ``x²+y²+z² <= r²`` で作る（``skimage.morphology.ball`` と同じ定義）。``_vol_reg_dilate``（6近傍固定）より広い近傍を扱え、``a`` で半径そのものを直接変えられる。
 
 ## 詳しい使い方ガイド
 

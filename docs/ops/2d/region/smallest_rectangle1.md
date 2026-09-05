@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+領域を囲む座標軸平行の外接矩形（axis-aligned bounding box）で塗りつぶした領域を返す。a, b は未使用。領域が空なら全ゼロを返す。
+
+HALCON の ``smallest_rectangle1``（座標軸に平行な最小外接矩形を求める演算）に相当する実装（回転を許す最小外接矩形の ``smallest_rectangle2`` とは別物）。
 
 ## 詳しい使い方ガイド
 

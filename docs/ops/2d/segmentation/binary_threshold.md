@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+大津の判別分析法(Otsu's method)による自動しきい値二値化
+(``skimage.filters.threshold_otsu``、無ければ平均値で代用)。クラス間分散
+を最大化するしきい値を画像のヒストグラムから自動決定する。HALCON の
+``binary_threshold``（Segment an image using binary thresholding.）に
+相当(HALCON は Otsu 以外の複数アルゴリズムを選べるが、ここでは Otsu 固定)。
+
+``a``, ``b`` は未使用 ―― ヒストグラムから自動決定されるため調整点は無い。
 
 ## 詳しい使い方ガイド
 

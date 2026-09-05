@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → contour`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+極大・極小・鞍点のサブピクセル位置をまとめて検出する（HALCON ``critical_points_sub_pix`` に相当）。
+
+``sp_local_max_sub_pix`` / ``sp_local_min_sub_pix`` / ``sp_saddle_points_sub_pix`` の 3 つを同じしきい値 ``a`` で実行し、検出点を極大→極小→鞍点の順で 1 つの CONTOUR に連結する。``b`` は未使用。戻り値の座標単位は入力画像のピクセル（サブピクセル小数値）。個々の種類を区別せず「臨界点がどこにあるか」だけを知りたい場合に使う。
 
 ## 詳しい使い方ガイド
 

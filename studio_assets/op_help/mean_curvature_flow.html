@@ -4,7 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;mean_curvature_flow&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">mean_curvature_flow</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → image</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>小さなシグマ(0.6)のガウシアンぼかしを繰り返し適用することで平均曲率流を</p>
+<p><b>近似</b>したスムージング。真の平均曲率 PDE(`<code style="color:#22d3bf">ops</code>` 側の別実装が本来やる</p>
+<p>拡散方程式)ではなく、反復ぼかしという計算コストの軽い代用になっている点が</p>
+<p>このバックエンド固有の近似の限界。HALCON の `<code style="color:#22d3bf">mean_curvature_flow</code>`</p>
+<p>（Apply the mean curvature flow to an image.）の代役。</p>
+<p>`<code style="color:#22d3bf">a</code>` が反復回数を 1〜7 回の範囲で振る(回数が多いほど強く滑らかになる)。</p>
+<p>`<code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

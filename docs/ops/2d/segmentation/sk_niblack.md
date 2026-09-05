@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Niblack の局所適応しきい値。Sauvola と同じく局所平均・標準偏差からしきい値を決めるが、係数の与え方がより単純(古典的)で、Sauvola より前景を広めに(=ノイズを拾いやすく)判定する傾向がある。
+
+HALCON の `var_threshold` に相当(近似)。実装は ``v > filters.threshold_niblack(v, window_size=2*int(a*6)+3)`` —— a は局所窓サイズを 3〜15(奇数)に振る。b は未使用。sk_sauvola と同じ入力・同じ a の振り方で並べ、結果を見比べる用途を想定。
 
 ## 詳しい使い方ガイド
 

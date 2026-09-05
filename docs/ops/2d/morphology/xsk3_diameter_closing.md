@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+直径クロージング(skimage ``morphology.diameter_closing``)。xsk3_area_closing の面積の代わりに、連結成分の外接矩形の対角線長(直径)で対象を選ぶクロージング —— 細長い構造には直径基準、丸い構造には面積基準が向く、と使い分けられる。
+
+``a`` は直径閾値(``4+int(a*30)`` で 4〜34 画素)を振る。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

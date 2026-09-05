@@ -3,7 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_random_rotation&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">points → points</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>ランダム回転を適用し `<code style="color:#22d3bf">(rotated, R)</code>` を返す(視点変化の模倣)。</p>
+<p>`<code style="color:#22d3bf">R</code><code style="color:#22d3bf"> は正規直交・</code><code style="color:#22d3bf">det=+1</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">rotated = points @ R.T</code><code style="color:#22d3bf"> = 各点に </code><code style="color:#22d3bf">R</code>` を左作用、</p>
+<p>逆変換は `<code style="color:#22d3bf">rotated @ R</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">max_angle=None</code>` なら Shoemake 法で一様ランダム回転、</p>
+<p>`<code style="color:#22d3bf">max_angle</code><code style="color:#22d3bf"> 指定(ラジアン, 期待 </code><code style="color:#22d3bf">[0, π]</code><code style="color:#22d3bf">)なら軸を球面一様・角を </code><code style="color:#22d3bf">[0, max_angle]</code>`</p>
+<p>一様に取り、回転角を制限する(`<code style="color:#22d3bf">arccos((tr R -1)/2) ≤ max_angle</code>` を厳密に保証)。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">random_rotation</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

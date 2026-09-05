@@ -3,7 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_sensor_capture&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">rgbimage → rgbimage</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>放射輝度 → 実センサの出力(ショット雑音・読み出し雑音・飽和・量子化)。</p>
+<p>光子数 = radiance · exposure_ms · gain_e_per_unit / 1000 を平均とする Poisson。</p>
+<p>そこへ読み出し雑音(正規)を足し、`<code style="color:#22d3bf">full_well_e</code><code style="color:#22d3bf"> で**飽和**させ、</code><code style="color:#22d3bf">bit_depth</code>`</p>
+<p>で量子化する。飽和は clip であって折り返さない(白飛びは白のまま)。</p>
+<p>返り値は 0..2^bit_depth−1 の整数配列。`<code style="color:#22d3bf">seed</code>` を固定すれば決定的。</p>
+<p>2-D 進化レジストリへ橋渡しした optics の op `<code style="color:#22d3bf">sensor_capture</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">exposure_ms</code><code style="color:#22d3bf">(既定 10)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">gain_e_per_unit</code>`(既定 50000)を振る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

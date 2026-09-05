@@ -17,7 +17,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `points → points`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+一様スケール ``s ~ U(lo, hi)`` を原点まわりに適用し ``(scaled, s)`` を返す。
+
+    ``scaled = points * s``。bbox 対角長はちょうど ``s`` 倍になる(``s > 0`` なので
+    ``max``/``min`` が共に ``s`` 倍 → 対角 ``‖max-min‖`` も ``s`` 倍)。物体スケールの
+    ばらつき(距離/センサ倍率)を学習に注入する。``0 < lo <= hi`` を要求(fail-closed)。
+
+2-D 進化レジストリへ橋渡しした 3d の op ``random_scale``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 
 ## 参考(サンプルデータ・文献)
 

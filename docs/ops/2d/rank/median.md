@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+メディアン（中央値）フィルタ。HALCON の ``median_image``（Compute a median filter with various masks.）に相当。
+
+``a`` が窓サイズを ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。塩胡椒ノイズなど外れ値に強く、ガウシアン平滑よりエッジを保ちやすい。
 
 ## 詳しい使い方ガイド
 

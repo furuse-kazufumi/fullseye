@@ -17,7 +17,32 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `rgbimage → rgbimage`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Project out the illuminant direction: the part of the image a highlight cannot touch. → (H, W, 3).
+
+    ``I - (I.G) G`` for the unit illuminant colour ``G``. Under the dichromatic
+    model the interface term is ``m_s * G``, so it lies entirely in the removed
+    direction and the result is **invariant to any specular term whatsoever** —
+    exactly, for any lobe shape, any strength, any spatial pattern. That is the
+    specular-invariant subspace of Mallick et al. (2005); this operator is the
+    projection itself, with no rotation into named channels, so it stays in RGB
+    and composes with the rest of the family.
+
+    Use it when the *shape* of the specular lobe is unknown or the surface is
+    textured — feature matching, edge detection and correlation all work in this
+    subspace without any of the assumptions
+    :func:`specular_diffuse_split` needs.
+
+    **This is a projection, not a picture.** The result loses one of three
+    degrees of freedom (its component along ``G`` is exactly zero everywhere)
+    and, for an image with negative values after black-level subtraction, keeps
+    them. It is not a displayable "highlight-removed photo" and does not claim
+    to be; for that, use :func:`specular_diffuse_split`.
+
+    **Raises** ``ValueError``: *image_rgb* is not a valid ``(H, W, 3)`` linear
+    RGB image (see :func:`specular_diffuse_split`); *illuminant_rgb* is not a
+    non-zero 3-vector.
+
+Typed bridge of the specular op ``specular_free_transform`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

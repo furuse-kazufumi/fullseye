@@ -4,7 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_gen_highpass&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">gen_highpass</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>理想ハイパスフィルタの周波数マスクを生成する。HALCON の `<code style="color:#22d3bf">gen_highpass</code>`</p>
+<p>(理想ハイパスフィルタを生成する)に相当。</p>
+<p>DC を中心に fftshift した正規化周波数半径 `<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> を計算し、</code><code style="color:#22d3bf">r &gt; cutoff</code>` の</p>
+<p>画素を 1 とする(`<code style="color:#22d3bf">cutoff = 0.05 + 0.45*a</code><code style="color:#22d3bf">)。兄弟 op </code><code style="color:#22d3bf">hx_gen_lowpass</code>` /</p>
+<p>`<code style="color:#22d3bf">hx_gen_bandpass</code><code style="color:#22d3bf"> と半径の計算式を共有する。</code><code style="color:#22d3bf">b</code>` は未使用。返り値は</p>
+<p>フィルタそのもの(周波数領域のマスク画像)で、画像に畳み込む前段にあたる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

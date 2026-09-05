@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+実装は ``median_image`` と同じ(``kind: "median"``、正方窓の 2 次元
+メディアン)。HALCON の ``median_separate``（Separated median filtering with
+rectangle masks.）は行方向・列方向に分離した 1 次元メディアンを 2 パス
+掛ける高速近似演算子だが、この代役では区別せず通常の 2 次元メディアンを
+返す(結果は近い場合が多いが厳密には別アルゴリズム ―― 近似の限界)。
+
+``a`` が窓の一辺を ``{3,5,7,9}`` で振る。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

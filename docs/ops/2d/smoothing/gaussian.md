@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+等方ガウシアン平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）に相当。
+
+``a`` が標準偏差 σ を ``0.3〜3.0`` に線形に振る（``σ = 0.3 + 2.7a``）。``b`` は未使用。実装は ``scipy.ndimage.gaussian_filter`` をそのまま呼ぶ（境界は scipy 既定の ``reflect``）。ノイズ除去や後段のエッジ検出前のぼかしに使う。σ が大きいほど細部が失われる。
 
 ## 詳しい使い方ガイド
 

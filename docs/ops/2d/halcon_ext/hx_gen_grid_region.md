@@ -19,7 +19,11 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+格子線 region を生成する。HALCON の ``gen_grid_region``(直線または画素から
+region を生成する)の格子パターンに相当する簡略版。
+
+``a`` が格子間隔(``min(h, w)`` の 5%〜25%)を振り、行・列インデックスが
+間隔の倍数の画素を前景とする。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

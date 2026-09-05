@@ -17,7 +17,20 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `qimage → qimage`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Per-pixel normalisation to unit modulus. → (H, W, 4).
+
+    **Fail-closed on a zero pixel.** A quaternion image routinely contains exact
+    zeros — a black pixel is ``(0,0,0,0)`` — so the case is not hypothetical, and
+    a zero quaternion has no direction to normalise towards. It is refused by
+    name, with the count and the first offending pixel's row and column in the
+    message, rather than divided by ``norm + eps``: that idiom returns zero, and
+    a zero used as a rotor becomes the **identity rotation** with no exception
+    and no NaN to mark it. (``pose_quat.quat_normalize`` did exactly that until
+    2026-09-01 and now fail-closes too; see :func:`quat_color_rotate`.)
+
+    **Raises** ``ValueError``: any pixel has modulus 0.
+
+Typed bridge of the quat op ``quat_normalize_image`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

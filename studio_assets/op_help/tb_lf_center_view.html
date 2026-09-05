@@ -3,7 +3,19 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_lf_center_view&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">lightfield → image</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>The centre viewpoint — the ordinary 2-D image a plenoptic camera also gives.</p>
+<p>For odd `<code style="color:#22d3bf">V</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">U</code>` the centre is a single view and both modes return it</p>
+<p>exactly. For an <b>even</b> axis the centre falls *between* two views, and this</p>
+<p>operator does not pretend otherwise:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">mode=&quot;average&quot;</code>` (default) returns the mean of the 2 (or 4) views</p>
+<p>straddling the centre — the correctly-centred estimate for a Lambertian</p>
+<p>scene, at the cost of a slight blur proportional to the disparity.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">mode=&quot;nearest&quot;</code><code style="color:#22d3bf"> returns the single view at </code><code style="color:#22d3bf">floor((N-1)/2)</code>`, which</p>
+<p>is sharp but sits half an angular step off centre; every disparity</p>
+<p>measured against it carries that half-step bias.</p>
+<p>Returns a `<code style="color:#22d3bf">(H, W)</code>` 2-D image.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *lf* not a valid light field, unknown *mode*.</p>
+<p>Typed bridge of the lightfield op `<code style="color:#22d3bf">lf_center_view</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

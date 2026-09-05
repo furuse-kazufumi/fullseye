@@ -21,9 +21,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 Normalized 2nd central moment of the point set: mu20 + mu02.
 
-    Each ``mu`` is the per-point mean of the squared centred coordinate
-    (HALCON's moments_points_xld normalizes central moments by point count).
-    The trace mu20+mu02 is a single rotation-invariant scalar.
+Each ``mu`` is the per-point mean of the squared centred coordinate
+(HALCON's moments_points_xld normalizes central moments by point count).
+The trace mu20+mu02 is a single rotation-invariant scalar.
 
 ## 詳しい使い方ガイド
 

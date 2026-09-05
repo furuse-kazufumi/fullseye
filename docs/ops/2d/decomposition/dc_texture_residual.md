@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Texture / detail layer = input - structure, centred at 0.5.
+
+``structure + (texture - 0.5) == input`` wherever neither layer saturates.
 
 ## 詳しい使い方ガイド
 

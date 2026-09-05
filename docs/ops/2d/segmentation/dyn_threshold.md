@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+局所しきい値処理。局所平均(窓一辺 ``_k(a)`` の ``uniform_filter``)に
+オフセット ``(b-0.5)*0.4`` を加えたものをしきい値として使う ―― 照明ムラの
+ある画像でも局所的なコントラストで前景を抽出できる。HALCON の
+``dyn_threshold``（Segment an image using a local threshold.）に相当。
+
+``a`` が局所平均の窓サイズを、``b`` がオフセット(しきい値を上下に振る量)
+を振る。両方が使われる。
 
 ## 詳しい使い方ガイド
 

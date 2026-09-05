@@ -3,7 +3,14 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk_hessian_eig&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → image</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>ヘッセ行列の最大固有値(絶対値)によるブロブ/リッジ強度。</p>
+<p>skimage.feature.hessian_matrix(ガウス微分によるヘッセ行列)から</p>
+<p>固有値を求め、絶対値が最大の成分 `<code style="color:#22d3bf">ev[0]</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">_norm</code>` で正規化して</p>
+<p>返す。曲率が強い箇所(ブロブの中心や稜線)ほど値が大きくなる。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が微分のスケール </code><code style="color:#22d3bf">sigma</code>` を 0.5〜3.0 に振る(大きいほど太い</p>
+<p>構造に反応)。`<code style="color:#22d3bf">b</code>` は未使用。符号は捨てているため、山(明るい</p>
+<p>blob)と谷(暗い blob)を区別しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

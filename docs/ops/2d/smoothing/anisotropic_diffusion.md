@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Perona-Malik 型の異方性拡散。上下左右 4 方向の画素差にガウス型の
+伝導度関数 ``exp(-(Δ/K)^2)`` を掛けて反復的に加算する ―― 差が閾値 K より
+大きい(=エッジ)方向には拡散させず、小さい(=平坦)方向だけ滑らかにする
+エッジ保存平滑化。HALCON の ``anisotropic_diffusion``（Perform an
+anisotropic diffusion of an image.）に相当。
+
+``a`` が反復回数を 2〜10 回の範囲で、``b`` が伝導度の閾値 K を 0.05〜0.3
+の範囲で振る。両方が使われる。K が小さいほどエッジを厳しく保護する。
 
 ## 詳しい使い方ガイド
 

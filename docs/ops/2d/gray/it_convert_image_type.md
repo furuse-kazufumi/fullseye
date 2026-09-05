@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+convert_image_type: model a conversion to a lower-precision pixel type by
+quantising to L = round(2 + a*254) evenly spaced levels (bit-depth
+reduction). ``b`` is ignored.
 
 ## 詳しい使い方ガイド
 

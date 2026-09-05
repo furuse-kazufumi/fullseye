@@ -3,7 +3,15 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;alife_curvature_flow&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → image</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Mean-curvature motion / level-set smoothing (curve-shortening flow).</p>
+<p>Integrates u_t = |grad u| * div(grad u / |grad u|) in the numerically stable</p>
+<p>algebraic form</p>
+<p>u_t = (u_xx u_y^2 - 2 u_x u_y u_xy + u_yy u_x^2) / (u_x^2 + u_y^2 + eps),</p>
+<p>i.e. every level curve of the image moves along its normal at a speed equal</p>
+<p>to its own curvature: small blobs and boundary wiggles vanish, straight edges</p>
+<p>stay put. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> sets the number of steps 1 + int(29a), </code><code style="color:#22d3bf">b</code>` the time step</p>
+<p>dt = 0.05 + 0.2b.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

@@ -4,7 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;points_harris_binomial&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">points_harris_binomial</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>二項(ガウス)平滑化を前段に挟んだ Harris コーナー応答。まず `<code style="color:#22d3bf">b</code>` で</p>
+<p>決まるシグマで画像を平滑化し、その上で Harris 応答(skimage があれば</p>
+<p>`<code style="color:#22d3bf">corner_harris</code>`、無ければ構造テンソルを手計算、k=0.04)を求める。HALCON</p>
+<p>の `<code style="color:#22d3bf">points_harris_binomial</code>`（Detect points of interest using the</p>
+<p>binomial approximation of the Harris operator.）に相当。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が Harris 応答自体のシグマ(0.5〜2.5)を、</code><code style="color:#22d3bf">b</code>` が前段の平滑化シグマ</p>
+<p>(0.5〜2.0)を振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

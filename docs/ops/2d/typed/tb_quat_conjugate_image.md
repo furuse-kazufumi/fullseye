@@ -17,7 +17,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `qimage → qimage`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Per-pixel quaternion conjugate ``(w, -x, -y, -z)``. → (H, W, 4).
+
+    Exact and involutive: ``quat_conjugate_image(quat_conjugate_image(q)) is q``
+    to the last bit (a sign flip is exact in IEEE 754). Agrees with
+    ``pose_quat.quat_conjugate`` per pixel, asserted in the tests.
+
+Typed bridge of the quat op ``quat_conjugate_image`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

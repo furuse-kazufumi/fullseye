@@ -17,7 +17,33 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `points → points`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+各点の k 近傍平均距離が大域的に外れる点を除去する(統計的外れ値除去)。
+
+    点ごとに「最も近い k 個(自分自身は除く)までの平均距離」を測り、その全点分布の
+    ``mean + std_ratio*std`` を超える点を飛び点とみなして落とす。まばらな飛び点の掃除に
+    有効で、密な面上の点は残る。
+
+    Parameters
+    ----------
+    points : array_like, shape (N, 3)
+        入力点群。
+    k : int
+        近傍数(既定 16)。点数が少なければ内部で ``n-1`` に丸める。
+    std_ratio : float
+        しきい値の緩さ。大きいほど残りやすい(除去が緩い)。
+
+    Returns
+    -------
+    filtered : ndarray, shape (M, 3)
+        生き残った点(元の順序を保持)。
+    keep_mask : ndarray of bool, shape (N,)
+        各入力点を残すか(True=残す)。``points[keep_mask]`` が ``filtered`` に等しい。
+
+    Notes
+    -----
+    点数 < 3 では統計が立たないため、全点を残す(graceful)。
+
+2-D 進化レジストリへ橋渡しした 3d の op ``statistical_outlier_removal``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。``a`` が ``k``(既定 16)、``b`` が ``std_ratio``(既定 2)を振る。
 
 ## 参考(サンプルデータ・文献)
 

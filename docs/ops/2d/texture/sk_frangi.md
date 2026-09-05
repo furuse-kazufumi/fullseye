@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Frangi の管状構造検出フィルタ(vesselness filter)。血管・しわ・川のような細長い管状構造を、Hessian 行列の固有値比から検出する。
+
+HALCON の `lines_gauss`(Detect lines and their width.)に相当(近似。線の幅や XLD 輪郭は返さず、応答強度の画像のみを返す)。2026-08-30 に a, b を配線した: a はスケール範囲(``sigmas=range(1, 2+round(a*4))`` —— 最大 σ を 1〜5 に振る。a=0.5 で旧来の固定範囲 ``range(1,4)`` とビット一致)、b は Frangi の blobness 感度 β を 0.15〜0.85 に振る(b=0.5 で skimage 既定の 0.5 と一致し、既定出力は変わらない)。既定で ``black_ridges=True``(明るい背景上の暗い管を検出する)ため、白い背景に黒い線が乗った画像でないと応答が弱く出る点に注意。
 
 ## 詳しい使い方ガイド
 

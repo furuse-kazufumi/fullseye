@@ -3,7 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;cv_clahe&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">image → image</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>CLAHE(コントラスト制限付き適応ヒストグラム均等化、OpenCV 実装)。sk_adapthist と同じ考え方の局所コントラスト強調だが、OpenCV の実装・タイル分割方式を使う。</p>
+<p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">cv2.createCLAHE(clipLimit=1.0+4.0*a).apply(_u8(v))</code>` を 255 で割ったもの —— a は clipLimit(コントラスト制限の強さ)を 1.0〜5.0 に振る。タイルグリッドサイズは既定の 8x8 のまま。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sk_dog&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">diff_of_gauss</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>DoG(Difference of Gaussians、ガウス差分)フィルタ。2 つの異なる σ でぼかした画像の差分を取り、LoG(Laplacian of Gaussian)に近いバンドパス応答(特定の空間周波数帯だけを強調するエッジ/ブロブ検出)を安く得る。</p>
+<p>HALCON の <code style="color:#22d3bf">diff_of_gauss</code>(Approximate the LoG operator.)に相当。実装は `<code style="color:#22d3bf">filters.difference_of_gaussians(v, 1.0, 1.0+3.0*a)</code>` の絶対値を正規化したもの —— 小さい方の σ は 1.0 に固定し、a は大きい方の σ を 1.0〜4.0 に振る(σ の比が広がるほど検出する構造のスケール帯が広がる)。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">Leitfaden zur Familie gallery2d_edges</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

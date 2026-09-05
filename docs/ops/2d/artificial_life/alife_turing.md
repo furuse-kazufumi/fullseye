@@ -17,7 +17,16 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Gierer-Meinhardt activator-inhibitor system (Turing morphogenesis).
+
+    A_t = Da*lap(A) + rho * A^2 / H - mu_a * A + rho0
+    H_t = Dh*lap(H) + rho * A^2      - mu_h * H
+Short-range self-activation (A) plus long-range lateral inhibition (H) is the
+classical Turing mechanism for spot/stripe morphogenesis. The image seeds the
+activator; the inhibitor starts at its homogeneous level. ``a`` sets the
+inhibitor range Dh = 0.15 + 1.05a (with Da fixed at 0.02, so a controls the
+diffusion-ratio that decides the pattern wavelength); ``b`` sets the number of
+steps T = 5 + int(25b). Returns the normalised activator field.
 
 ## 詳しい使い方ガイド
 

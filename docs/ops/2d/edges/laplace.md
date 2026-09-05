@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ラプラシアン(``ndimage.laplace``、有限差分による 2 階微分)の絶対値を
+正規化したもの。方向性を持たない二階微分エッジ検出で、Sobel 系より高周波
+ノイズに敏感。HALCON の ``laplace``（Calculate the Laplace operator by using
+finite differences.）に相当。
+
+``a``, ``b`` は未使用。ノイズを抑えたい場合は事前にぼかすか
+``laplace_of_gauss``(ガウス平滑化込み)を使う。
 
 ## 詳しい使い方ガイド
 

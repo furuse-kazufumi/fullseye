@@ -3,7 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk3_rank_equalize&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>局所ヒストグラム均等化(skimage `<code style="color:#22d3bf">filters.rank.equalize</code><code style="color:#22d3bf">)。円盤近傍ごとにヒストグラム均等化を行う適応的コントラスト強調で、大域的な </code><code style="color:#22d3bf">equalize</code>` op より局所的な明暗ムラに強い。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は円盤半径(</code><code style="color:#22d3bf">2+int(a*8)</code><code style="color:#22d3bf"> で 2〜10)を振る —— 大きいほど大域的な均等化に近づく。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">Leitfaden zur Familie gallery2d_gray_arith</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

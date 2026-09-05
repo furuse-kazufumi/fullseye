@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+``(exp(x) - 1) / (e - 1)`` という指数写像で [0,1] を [0,1] に写す(x=1 で
+ちょうど 1 になるよう正規化してある)。低い階調を圧縮し明部を強調する
+コントラスト強調で、``log_image`` とは逆向きのカーブ。HALCON の
+``exp_image``（Calculate the exponentiation of an image.）の代役。
+
+``a``, ``b`` は未使用。底(``e``)や倍率を変える調整点は無い —— 曲率を変えたい
+場合は ``gamma_image``(``a`` でべき指数を振れる)を使う。
 
 ## 詳しい使い方ガイド
 

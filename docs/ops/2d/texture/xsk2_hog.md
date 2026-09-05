@@ -17,7 +17,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+HOG（Histogram of Oriented Gradients）特徴量の可視化画像。
+``skimage.feature.hog`` を ``visualize=True`` で呼び、可視化画像側を
+返す（特徴ベクトル自体は捨てる）。
+
+a がセル 1 辺のピクセル数（``6 + 2*int(a*3)``、6/8/10/12 の 4 段階）を
+振る。方向数は 8、ブロックは 2x2 に固定。b は未使用。出力は最大値で
+正規化した勾配方向強度の可視化であり、HOG 特徴ベクトルそのものでは
+ない。
 
 ## 詳しい使い方ガイド
 

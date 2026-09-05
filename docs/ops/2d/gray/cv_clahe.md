@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+CLAHE(コントラスト制限付き適応ヒストグラム均等化、OpenCV 実装)。sk_adapthist と同じ考え方の局所コントラスト強調だが、OpenCV の実装・タイル分割方式を使う。
+
+HALCON に直接対応するものは無い。実装は ``cv2.createCLAHE(clipLimit=1.0+4.0*a).apply(_u8(v))`` を 255 で割ったもの —— a は clipLimit(コントラスト制限の強さ)を 1.0〜5.0 に振る。タイルグリッドサイズは既定の 8x8 のまま。b は未使用。
 
 ## 詳しい使い方ガイド
 

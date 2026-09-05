@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ヒステリシスしきい値処理。2 段のしきい値を使い、高い方を超える画素をまず確定させ、低い方を超えつつ確定画素と連結している画素も追加で採用する —— Canny のエッジ連結ステップと同じ考え方を汎用の応答画像に適用したもの。
+
+HALCON の `hysteresis_threshold`(Perform a hysteresis threshold operation on an image.)に相当。実装は ``filters.apply_hysteresis_threshold(v, 0.2+0.3*a, 0.5+0.3*b)`` —— a は低い方のしきい値を 0.2〜0.5 に、b は高い方のしきい値を 0.5〜0.8 に振る。a を大きく・b を小さくすると 2 つが逆転しうる(low > high)ので、極端な組み合わせでは skimage 側の挙動に委ねられる点に注意。
 
 ## 詳しい使い方ガイド
 

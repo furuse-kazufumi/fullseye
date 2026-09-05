@@ -17,7 +17,10 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Richardson-Lucy deconvolution assuming a small Gaussian PSF (sigma =
+``RL_SIGMA``). ``a`` sets the iteration count n = 1 + round(a*14) (1..15);
+``b`` is ignored. RL multiplicatively drives the estimate ``u`` so that
+``u (*) psf`` matches the blurred measurement, sharpening real edges.
 
 ## 詳しい使い方ガイド
 

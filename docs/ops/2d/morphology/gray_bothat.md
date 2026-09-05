@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ブラックトップハット(クロージング − 元画像)。周囲より暗い小さな構造
+(穴・くぼみ)だけを抽出する、``gray_tophat`` と明暗が逆の演算。HALCON の
+``gray_bothat``（Perform a gray value bottom hat transformation on an
+image.）に相当。
+
+``a`` が矩形構造要素のサイズを ``{3,5,7,9}`` で振る。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

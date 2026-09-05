@@ -3,7 +3,22 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">qimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_quaternion_to_rgb&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">qimage → rgbimage</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>Vector part of a quaternion image, as linear RGB. → (H, W, 3).</p>
+<p>The inverse of :func:<code style="color:#22d3bf">rgb_to_quaternion</code> — and, by default, a *checked*</p>
+<p>inverse. A quaternion image that picked up a scalar component somewhere (a</p>
+<p>Hamilton product with a non-pure quaternion, a monogenic signal handed here</p>
+<p>by mistake) is <b>refused</b> rather than silently truncated, because dropping</p>
+<p>the `<code style="color:#22d3bf">w</code>` component is exactly the kind of loss that produces a plausible</p>
+<p>picture from the wrong data. Pass `<code style="color:#22d3bf">allow_scalar=True</code>` to opt in to the</p>
+<p>truncation when it is what you meant.</p>
+<p>The tolerance is relative to the field&#x27;s own peak modulus</p>
+<p>(:data:<code style="color:#22d3bf">_MONOGENIC_K_TOL</code>, 1e-9): a quaternion image that really is pure</p>
+<p>carries `<code style="color:#22d3bf">|w|</code>` at the 1e-17 level after a round trip through two FFTs, and</p>
+<p>anything with a meaningful scalar part is many orders above that. Nothing</p>
+<p>real lives in between.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *qimage* is not a finite </code><code style="color:#22d3bf">(H, W, 4)</code>` array; or</p>
+<p>it has a non-negligible scalar part and `<code style="color:#22d3bf">allow_scalar</code>` is False.</p>
+<p>Typed bridge of the quat op `<code style="color:#22d3bf">quaternion_to_rgb</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

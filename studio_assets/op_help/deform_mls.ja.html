@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">deform_mls — 2D <code style="color:#22d3bf">deformation</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;deform_mls&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>移動最小二乗法（moving least squares, MLS）によるアフィン変種の画像変形（Schaefer 2006）。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>A 5x5 grid of control points `<code style="color:#22d3bf">p_i</code>` is displaced to</p>
+<p>`<code style="color:#22d3bf">q_i = p_i + amp*[sin(2 pi gx), cos(2 pi gy)]</code>` (gy, gx = normalised</p>
+<p>control coordinates). For every destination pixel the weighted</p>
+<p>least-squares affine map is re-solved with the weights</p>
+<p>`<code style="color:#22d3bf">w_i = 1/|p_i - v|^(2 alpha)</code>`, so the warp is a *different* affine at every</p>
+<p>pixel -- smooth, interpolating at the control points, and exact on affine</p>
+<p>data. The backward map is obtained by solving the same MLS problem with the</p>
+<p>roles of `<code style="color:#22d3bf">p</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">q</code>` swapped (the resampling formulation of the paper&#x27;s</p>
+<p>section 4), which is the exact inverse whenever the control data is affine</p>
+<p>and a smooth approximation of it otherwise. `<code style="color:#22d3bf">a</code>` sets the amplitude</p>
+<p>`<code style="color:#22d3bf">amp = 0.12*a*min(H,W)</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> the falloff </code><code style="color:#22d3bf">alpha = 0.5 + 1.5b</code>` (large</p>
+<p>alpha = tightly local deformation). `<code style="color:#22d3bf">a = 0</code><code style="color:#22d3bf"> gives </code><code style="color:#22d3bf">q = p</code>`, hence the</p>
+<p>identity (up to sub-pixel resampling error).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_geometry">gallery2d_geometry</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_geometry.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">deformation</code>)</h3>
+<p><a style="color:#22d3bf" href="op:deform_tps">deform_tps</a> · <a style="color:#22d3bf" href="op:deform_ffd">deform_ffd</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

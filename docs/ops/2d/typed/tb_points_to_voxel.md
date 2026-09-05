@@ -17,7 +17,11 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `points → volume`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+点群 (N,3) → 密度 voxel (size³)。scatter_add で splat、任意で gaussian 平滑。
+
+    bounds=(lo,hi) を与えれば複数雲を同一格子に載せられる(=マッチング前提)。
+
+2-D 進化レジストリへ橋渡しした 3d の op ``points_to_voxel``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 
 ## 参考(サンプルデータ・文献)
 

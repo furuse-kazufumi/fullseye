@@ -17,7 +17,18 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `signal → signal`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Cumulative integral by the trapezoidal rule (HALCON ``integrate_funct_1d``).
+
+    ``out[i]`` is the integral of *y* from x=0 to x=i in **y-units times
+    samples** (multiply by the physical sample spacing ``dt`` yourself);
+    ``out[0]`` is always 0. For smooth signals
+    ``integrate_funct_1d(derivate_funct_1d(y)) ~= y - y[0]`` to second order.
+
+    :param y: 1-D function, at least 1 sample (a single sample integrates to ``[0.]``).
+    :returns: float64 array of the same length.
+    :raises ValueError: non-1-D / NaN / Inf input, or empty input.
+
+Typed bridge of the 1d op ``integrate_funct_1d`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

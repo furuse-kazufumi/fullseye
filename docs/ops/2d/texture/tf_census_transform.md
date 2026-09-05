@@ -17,7 +17,16 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+census_transform: the 3x3 non-parametric census bit-signature image.
+
+For every pixel each of its 8 neighbours contributes one bit, set when the
+centre exceeds the neighbour by more than a *relative* tolerance
+``a * |centre|`` (``a`` defaults the tolerance; ``b`` unused). The 8 bits form
+a value 0..255 rendered as [0,1]. Because the tolerance is relative and the
+comparison is on ordering only, the signature is invariant to a global gain
+(multiplying the image by any positive constant leaves every bit unchanged) --
+the robustness-to-gain property that makes census matching useful for stereo.
+Uses the raw (non-luma-collapsed) reflected border.
 
 ## 詳しい使い方ガイド
 

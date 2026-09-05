@@ -4,7 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;bandpass_image&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">bandpass_image</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → image</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>周波数領域で指定した帯域だけを通すバンドパスフィルタ(低域と高域を</p>
+<p>遮断)、逆 FFT で実空間に戻す。`<code style="color:#22d3bf">highpass_image</code>` と同様に零平均の符号つき</p>
+<p>応答なので `<code style="color:#22d3bf">signed01</code><code style="color:#22d3bf"> で [0,1] に写像する。HALCON の </code><code style="color:#22d3bf">bandpass_image</code>`</p>
+<p>（Edge extraction using bandpass filters.）に相当。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が下限カットオフ、</code><code style="color:#22d3bf">b</code>` が上限カットオフを振る。両方が使われる。</p>
+<p>帯域(`<code style="color:#22d3bf">b</code>` 側の上限)を下限より下に設定すると通過域が空になり出力はほぼ</p>
+<p>0.5(ゼロ)一色になる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

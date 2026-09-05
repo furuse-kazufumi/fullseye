@@ -19,7 +19,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → contour`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+サブピクセル精度のエッジ点抽出。勾配とその法線方向(``gradient_
+normals``)を求め、しきい値(``0.15+0.5*a``)を超える画素を連結成分化した
+後、放物線当てはめで各点をサブピクセル位置へ精密化する(``subpixel_
+refine_edges``、``ops`` 側の同名 op と共有する実装 ―― 2026-09-02 修正で
+真の意味でサブピクセルになった。旧実装は整数画素座標をそのまま返して
+いた)。HALCON の ``edges_sub_pix``（Extract sub-pixel precise edges using
+Deriche, Lanser, Shen, or Canny filters.）に相当。
+
+``a`` がエッジ強度のしきい値を振る。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

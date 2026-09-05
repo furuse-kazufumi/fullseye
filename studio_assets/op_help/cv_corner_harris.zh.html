@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;cv_corner_harris&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">points_harris</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → image</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Harris コーナー応答(OpenCV 実装)。sk_corner_harris と同じ Harris の考え方だが、勾配計算・平滑化のブロックサイズなどを固定パラメータで計算するOpenCV 版。</p>
+<p>HALCON の <code style="color:#22d3bf">points_harris</code> に相当(近似)。実装は `<code style="color:#22d3bf">cv2.cornerHarris(v, blockSize=2, ksize=3, k=0.04)</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">signed01</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">[0,1]</code>` へ写した値 —— blockSize(近傍サイズ)・ksize(Sobel 開口)・k(Harris の自由パラメータ)はすべて固定。a, b は未使用 —— skimage 版と違いスケールを振る仕組みが無い、素の Harris 応答。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

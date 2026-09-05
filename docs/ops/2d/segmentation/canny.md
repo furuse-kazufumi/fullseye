@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+簡易 Canny 風エッジ検出（region を返す）。HALCON の ``edges_image``（Extract edges using Deriche, Lanser, Shen, or Canny filters.）に対応付けられているが、非極大抑制やヒステリシスしきい値処理は行わない簡略版（近似）。
+
+``a`` が事前平滑化のガウシアン σ を ``0.5〜2.0`` に、``b`` がしきい値を ``0.1〜0.6`` に振る。ガウシアンでぼかした画像に Sobel 勾配強度を掛け、正規化した値を ``b`` で二値化するだけ——本家 Canny の細線化（1画素幅への収束）は無いため、エッジは本来の Canny より太く、複数画素にまたがって残る。
 
 ## 詳しい使い方ガイド
 

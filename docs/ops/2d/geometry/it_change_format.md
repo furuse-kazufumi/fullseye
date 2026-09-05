@@ -19,7 +19,10 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+change_format: change the image matrix size to a square of the maximum
+dimension by cropping/padding at the origin (NO resampling, exactly as
+HALCON change_format does). A square image is returned unchanged; a
+non-square image is zero-expanded to the square. ``a``/``b`` are ignored.
 
 ## 詳しい使い方ガイド
 

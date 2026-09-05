@@ -17,7 +17,21 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `matrix → matrix`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Moore-Penrose pseudo-inverse via SVD, with the cutoff **explicit**.
+
+    Singular values below ``rcond * s_max`` are treated as zero — that cutoff
+    *is* the regularisation, so it is a named, documented parameter here
+    (default ``1e-12``) rather than a hidden library default: raising it
+    discards noisy directions (stabler, more biased), lowering it keeps them
+    (exact for well-conditioned *A*, explosive near rank deficiency).
+
+    Works for any ``(m, n)``: ``pinv(A) @ b`` is the least-squares solution for
+    ``m > n`` and the minimum-norm solution for ``m < n``.
+
+    HALCON: no direct operator — HALCON reaches the same result through
+    ``svd_matrix`` + reciprocal singular values.
+
+Typed bridge of the math op ``mat_pinv`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``rcond`` (default 1e-12); ``b`` is unused.
 
 ## 参考(サンプルデータ・文献)
 

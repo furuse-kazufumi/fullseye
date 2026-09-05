@@ -17,7 +17,38 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `qimage → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Local orientation ``atan2(R2, R1)`` of a monogenic signal. → (H, W).
+
+    Radians in ``[0, pi)``: an orientation is defined modulo ``pi`` (a grating at
+    10 degrees and one at 190 degrees are the same grating), and the value is
+    folded into that range rather than left in ``(-pi, pi]`` where the same
+    structure would read as two different numbers on either side of a contrast
+    reversal. ``display=True`` maps it to ``[0, 1]``.
+
+    **Continuous, not quantised** — the angle is read directly from two filters,
+    for any angle, where a steerable bank with ``K`` orientations interpolates
+    between its ``K``. Measured against eight grid-exact grating orientations the
+    error is at most **3.6e-15 rad**, including the obliques. (Whether that
+    buys anything downstream is a separate question, and the measured answer is
+    mostly *no* — see :func:`riesz_displacement`.)
+
+    **Where it is undefined, and the mask is not the one you expect.** The
+    orientation dies where the *Riesz vector* dies, which is at every
+    even-symmetric point — local phase 0 or pi, the crest of a bright or dark
+    line — and **the amplitude is at full strength there**. Measured on a 45-degree
+    grating, the worst orientation error over the whole frame is 0.2764 rad, at a
+    pixel where ``|R| = 6.8e-16`` and :func:`monogenic_amplitude` reads
+    ``1.0000``. So masking on the amplitude does not protect you; mask on
+    ``hypot(q[..., 1], q[..., 2])``, the Riesz magnitude. With that mask the
+    error over the same eight orientations is at most 3.6e-15 rad.
+
+    Where the Riesz vector is exactly zero, ``atan2(0, 0) = 0`` is returned —
+    a *value*, not a measurement.
+
+    **Raises** ``ValueError``: the input is not a valid quaternion field, or its
+    ``k`` component is non-zero; *display* is not a bool.
+
+Typed bridge of the quat op ``monogenic_orientation`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

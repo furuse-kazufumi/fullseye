@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+最大面積の連結領域だけを残す。HALCON の ``select_shape_std``（Select regions of a given shape.）に相当。
+
+``a``, ``b`` は未使用（常に「最大」を選ぶ）。連結成分ラベリング後、画素数が最大の 1 成分だけを 1、それ以外を 0 にする。入力に前景が無ければ全 0 を返す。HALCON の ``select_shape_std`` は面積以外の形状基準（円形度等）や複数選択にも対応するが、この実装は面積最大の単一選択のみ。
 
 ## 詳しい使い方ガイド
 

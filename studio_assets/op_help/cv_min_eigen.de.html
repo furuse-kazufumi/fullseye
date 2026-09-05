@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;cv_min_eigen&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">points_harris</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>最小固有値によるコーナー強度(Shi-Tomasi 系、OpenCV 実装)。勾配の構造テンソルの 2 つの固有値のうち小さい方を返す —— Harris のような重み付け(k 依存)が無く、より直接的に「良い特徴点」らしさを測る指標(cv_good_features の内部でも使われる基準と同種)。</p>
+<p>HALCON の <code style="color:#22d3bf">points_harris</code> に相当(近似。アルゴリズムは別物)。実装は `<code style="color:#22d3bf">cv2.cornerMinEigenVal(v, blockSize=3+2*int(a*2))</code>` を正規化したもの —— a は評価に使う近傍サイズ(blockSize)を 3, 5, 7 に振る。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">Leitfaden zur Familie gallery2d_edges</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

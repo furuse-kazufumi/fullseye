@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Felzenszwalb のグラフベース領域分割の境界を返す（``skimage.segmentation.felzenszwalb``、HALCON に対応オペレータなし）。
+
+``a`` はクラスタの粗さを決める ``scale`` を 40〜540 に振り（大きいほど大きな塊にまとまる）、``b`` は最小成分サイズを 15〜100 に振る（``min_size = round(15+b*85)``）。戻り値はラベル画像の外側境界（region）で、真の物体輪郭に沿いやすい。
 
 ## 詳しい使い方ガイド
 

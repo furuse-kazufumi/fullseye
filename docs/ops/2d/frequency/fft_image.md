@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+2 次元 FFT のパワースペクトルを ``log1p(|F|)`` で圧縮し正規化した画像。
+低周波(直流)成分が中心にくるよう ``fftshift`` 済み。周期的なノイズや
+テクスチャの空間周波数を可視化するのに使う。HALCON の ``fft_image``
+（Compute the fast Fourier transform of an image.）に相当。
+
+``a``, ``b`` は未使用 ―― 画像全体に対するグローバルな FFT で、窓関数や
+帯域選択のような調整点は無い。
 
 ## 詳しい使い方ガイド
 

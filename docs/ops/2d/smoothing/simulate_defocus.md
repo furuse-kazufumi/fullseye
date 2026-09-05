@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+一様なピンボケ（デフォーカス）をシミュレートする平滑化。実装は矩形窓の平均フィルタ（box filter, ``ndimage.uniform_filter``）で、円形絞りによる本来のボケ形状（circle-of-confusion）ではなく正方形窓で近似する。a が窓幅を 3/5/7/9 の 4 段階に振り（``_k(a)``）、b は未使用。
+
+HALCON の ``simulate_defocus``（一様なピンボケをシミュレートする演算）に相当するが、光学的に正しい円形ボケではなく矩形平均という粗い近似である点に注意。
 
 ## 詳しい使い方ガイド
 

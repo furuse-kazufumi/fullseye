@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ガウス微分(``order=(1,0)`` と ``(0,1)``)の勾配強度 ``hypot`` を [0,1]
+に正規化したもの。ガウシアンで平滑化してから微分するので、ノイズに強い
+エッジ検出器として働く。HALCON の ``derivate_gauss``（Convolve an image
+with derivatives of the Gaussian.）に相当。
+
+``a`` がガウス核のシグマを 0.5〜3.0 の範囲で振る(平滑化の強さとエッジの
+太さがトレードオフ)。``b`` は未使用。方向別成分(dx, dy)ではなく振幅のみを
+返す点に注意。
 
 ## 詳しい使い方ガイド
 

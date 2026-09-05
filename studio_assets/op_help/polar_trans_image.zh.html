@@ -4,7 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;polar_trans_image&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">polar_trans_image</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → image</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>直交座標→極座標変換(`<code style="color:#22d3bf">cv2.warpPolar</code>`)。画像中心を極の中心、</p>
+<p>`<code style="color:#22d3bf">min(H,W)/2</code>` を最大半径として、円環状の内容を横長の展開図に変換する。</p>
+<p>未マッピングの画素は 0 埋め(`<code style="color:#22d3bf">dst</code>` を事前ゼロクリアしてから、cv2 が返す</p>
+<p>戻り値を読む ―― `<code style="color:#22d3bf">dst</code>` バッファ自体を読むと空になることがある実装上の</p>
+<p>注意点がコードコメントに詳しい)。HALCON の `<code style="color:#22d3bf">polar_trans_image</code>`</p>
+<p>（Transform an image to polar coordinates）に相当。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用 ―― 中心と半径は画像サイズから自動的に決まり、</p>
+<p>調整点は無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

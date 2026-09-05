@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+差分ガウシアン（Difference of Gaussians, DoG）。HALCON の ``diff_of_gauss``（Approximate the LoG operator (Laplace of Gaussian).）に相当。
+
+``a`` が細かい方のぼかし σ₁ を ``0.5〜2.5`` に、``b`` が粗い方のぼかし σ₂ を ``1.0〜5.0`` に振る（``|gauss(σ₁) - gauss(σ₂)|`` を ``_norm`` で正規化）。2 つのスケールの中間の大きさを持つ斑点・エッジを強調する、LoG の近似。σ₁ と σ₂ が近いほど応答は弱くなる。
 
 ## 詳しい使い方ガイド
 

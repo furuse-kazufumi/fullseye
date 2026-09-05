@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Roberts クロス演算子。2x2 の対角差分(左上−右下、右上−左下)から
+``hypot`` で振幅を求める、最小サイズのエッジ検出カーネル。斜め方向の
+エッジに敏感だがノイズにも敏感。HALCON の ``roberts``（Detect edges using
+the Roberts filter.）に相当。
+
+``a``, ``b`` は未使用。境界は ``_shift_edge`` でエッジ複製(reflect 相当)
+して扱うため、画像端でも折り返しノイズは出ない。
 
 ## 詳しい使い方ガイド
 

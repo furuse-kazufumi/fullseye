@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `contour → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+最大の輪郭についてシューレース公式で面積、線分長の和で周囲長を求め、
+円形度 ``4π・面積/周囲長²`` を計算する(領域版の ``circularity`` の輪郭
+版)。HALCON の ``circularity_xld``（Shape factor for the circularity
+(similarity to a circle) of contours or polygons.）に相当。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+領域（region）の二値膨張。HALCON の ``dilation_circle``（Dilate a region with a circular structuring element.）に相当。
+
+``a`` が反復回数を ``1〜4``（``_it(a)``）に振る。``b`` は未使用。構造要素は scipy 既定の十字形（円形ではない、近似）。
 
 ## 詳しい使い方ガイド
 

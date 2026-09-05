@@ -19,7 +19,11 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+局所極小点(領域極小)検出。``x`` が窓内の最小値(``_k(a)``)に一致し、
+かつ ``x < 0.7-0.4*b`` を満たす画素を前景とする、``local_max`` の暗部版。
+HALCON の ``local_min``（Detect all local minima in an image.）に相当。
+
+``a`` が窓サイズを、``b`` が輝度の上限しきい値を振る。両方が使われる。
 
 ## 詳しい使い方ガイド
 

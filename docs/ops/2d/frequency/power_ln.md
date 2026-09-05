@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+複素画像のパワースペクトルの代役。実装は fft_generic と同一で、入力画像に自前で FFT をかけてから振幅の対数 ``log1p(|F|)`` を最大値正規化して返す（``_sh_freq`` の ``fft_power`` 分岐を共有）。a, b は未使用。
+
+HALCON の ``power_ln``（複素画像のパワースペクトルを返す演算、通常は fft_generic 等が出力した複素画像を入力に取る）とは異なり、この実装は複素入力を受け取らず実画像から自前で FFT を計算する簡略近似。fft_generic とは実装上区別がない。
 
 ## 詳しい使い方ガイド
 

@@ -17,7 +17,17 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+City-block (chamfer) distance to the nearest background pixel, normalised to [0,1].
+
+★2026-09-02: 縮退入力での **符号つきセンチネル** を潰す。
+``scipy.ndimage.distance_transform_cdt`` は「背景画素が 1 つも無い」入力に対して
+距離ではなく **-1 を全画素に**書く(実測: ``np.ones((8,8), bool)`` -> min=max=-1)。
+旧実装はそれをそのまま ``_norm`` に通していたので、**塗り潰された領域の距離マップが
+一様 -1 の「画像」**になっていた —— 例外も警告も出ないまま値域 [0,1] の image 契約を
+破り、保存・表示では全面が黒に潰れる。
+
+背景が無い = どの画素も「無限に遠い」ので、正規化後の正直な答えは **一様 1.0**。
+前景が無いときは距離 0 の一様 0.0。どちらも符号つきの値を返さない。
 
 ## 詳しい使い方ガイド
 

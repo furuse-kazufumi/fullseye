@@ -17,7 +17,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Life-like totalistic cellular automaton (Conway-family B/S rules).
+
+The image is thresholded at 0.5 to obtain the initial live/dead lattice, then
+a totalistic outer-neighbourhood rule is applied on the torus: a dead cell is
+born when its live Moore-neighbour count lies in the birth set B, a live cell
+survives when its count lies in the survival set S. ``a`` picks the rule
+preset -- Conway B3/S23, HighLife B36/S23, Day&Night B3678/S34678, Seeds B2/S
+-- and ``b`` sets the generation count 1 + int(9b). Returns the live-cell
+field as 0.0/1.0.
 
 ## 詳しい使い方ガイド
 

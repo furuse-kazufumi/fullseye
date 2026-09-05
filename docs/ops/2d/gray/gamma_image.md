@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ガンマ補正 ``x ** (0.3 + 2.5*a)``。``a`` が 0 に近いほど指数は 0.3 に
+近づき暗部を持ち上げ、``a`` が 1 に近いほど指数は 2.8 に近づき暗部を潰して
+コントラストを強める。HALCON の ``gamma_image``（Perform a gamma encoding or
+decoding of an image.）の代役。
+
+``a`` はガンマ指数を 0.3〜2.8 の範囲で振る。``b`` は未使用。HALCON の実装は
+Encode/Decode の切替や AmpFactor など複数パラメータを持つが、ここでは
+単純なべき乗写像 1 本に単純化している(近似)。
 
 ## 詳しい使い方ガイド
 

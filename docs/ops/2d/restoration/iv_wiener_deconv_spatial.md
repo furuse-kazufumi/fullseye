@@ -17,7 +17,10 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Self-contained spatial Wiener deconvolution of an assumed small Gaussian
+PSF. ``a`` sets the assumed blur sigma in (0, ``WIENER_SIGMA_MAX``] to invert
+(larger a -> stronger sharpening); ``b`` sets the noise-to-signal ratio nsr =
+1e-3 + b*0.15 (larger b -> gentler, more regularized restoration).
 
 ## 詳しい使い方ガイド
 

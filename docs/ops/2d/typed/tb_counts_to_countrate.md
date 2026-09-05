@@ -17,7 +17,17 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `counts → counts`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+計数 → 計数レート ``[Hz]``。:func:`countrate_to_counts` の逆。
+
+    Args:
+        counts: (N,) の非負計数。
+        gate_s: 積算窓 [s]。> 0。
+    Returns:
+        (N,) float64 の非負レート [Hz]。
+    Raises:
+        ValueError: 負の計数 / gate_s <= 0 / 形状不正 / 非有限。
+
+2-D 進化レジストリへ橋渡しした reprconv の op ``counts_to_countrate``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。``a`` が ``gate_s``(既定 0.001)を振る。``b`` は未使用。
 
 ## 参考(サンプルデータ・文献)
 

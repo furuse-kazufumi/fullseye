@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+小さい穴埋め。前景領域の内部にある背景の孔(穴)のうち、面積がしきい値未満のものだけを塗りつぶす —— 大きな孔(意図した開口部)は残す。
+
+HALCON の `fill_up`(Fill up holes in regions.)に相当(近似。HALCON 版は全ての孔を埋めるが、こちらは面積フィルタ付き)。実装は ``morphology.remove_small_holes(binm(v), area_threshold=int(8+a*60))`` —— a は埋める孔の面積上限を 8〜68 画素に振る。b は未使用。
 
 ## 詳しい使い方ガイド
 

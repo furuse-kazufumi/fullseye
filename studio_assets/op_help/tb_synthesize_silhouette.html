@@ -3,7 +3,25 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_synthesize_silhouette&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">points → image</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>3-D 点群を (K,R,t) カメラへ射影し占有画素 True のシルエット(H,W bool)を返す。</p>
+<p>GT 生成用。`<code style="color:#22d3bf">points</code><code style="color:#22d3bf"> (N,3) を </code><code style="color:#22d3bf">X_cam = R X + t</code>` で射影し、depth&gt;0 かつ画像内に</p>
+<p>落ちた画素を True にする。疎な点群では射影像に穴が空くため、既定で穴埋め</p>
+<p>(`<code style="color:#22d3bf">fill</code>`, scipy.ndimage.binary_fill_holes)して中身の詰まった前景マスクにする。</p>
+<p>さらに `<code style="color:#22d3bf">dilate</code>` 画素だけ膨張させ「pixel が少しでも物体に触れれば前景」という</p>
+<p>被覆(coverage)意味のシルエットにする — これが visual hull の recall(物体 voxel を</p>
+<p>取りこぼさない)を離散化誤差の下でも保証するための保守側の丸め。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>points : (N, 3) array_like  ワールド座標の点群(物体表面/内部のサンプル)。</p>
+<p>K : (3, 3)  内部パラメータ。</p>
+<p>R, t : (3, 3), (3,)  ワールド-&gt;カメラの回転・並進。</p>
+<p>size : (H, W)  出力画像サイズ。</p>
+<p>fill : bool  射影像の穴を埋めて solid にする(既定 True)。</p>
+<p>dilate : int  被覆マージンとして膨張させる画素数(既定 1、0 で無効)。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>(H, W) bool ndarray  前景 True のシルエット。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">synthesize_silhouette</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

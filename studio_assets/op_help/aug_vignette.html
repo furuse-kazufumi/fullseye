@@ -3,7 +3,12 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_vignette&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → image</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>Radial lens vignetting following the natural cos^4 falloff law. With</p>
+<p>`<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> the normalised distance from the image centre and </code><code style="color:#22d3bf">R = 0.35 + 1.15*b</code>`</p>
+<p>the falloff radius, the transmission is</p>
+<p>`<code style="color:#22d3bf">cos(atan(r/R))^4 = 1/(1 + (r/R)^2)^2</code><code style="color:#22d3bf"> -- the textbook cos^4 law. </code><code style="color:#22d3bf">a</code>`</p>
+<p>blends it in: `<code style="color:#22d3bf">out = v * (1 - a + a*falloff)</code>`, so a=0 is a no-op and a=1 is</p>
+<p>full vignetting. Centre stays brightest; strictly darkening, never amplifying.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

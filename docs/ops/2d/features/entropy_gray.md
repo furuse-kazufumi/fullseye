@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+グレースケール階調の Shannon エントロピー(64 ビンヒストグラムから計算
+し、最大値 ``log2(64)=6`` bit で正規化)。階調分布の「ばらつき/情報量」を
+表し、一様な画像ほど値は大きく、単一階調に偏るほど 0 に近づく。HALCON の
+``entropy_gray``（Determine the entropy and anisotropy of images.）は
+エントロピーと異方性の組を返すが、この代役ではエントロピーのみを実装
+している。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

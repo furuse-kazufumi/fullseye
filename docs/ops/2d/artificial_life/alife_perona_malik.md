@@ -17,7 +17,16 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Perona-Malik anisotropic (edge-preserving) diffusion.
+
+Explicit 4-neighbour update I <- I + lam * sum_dir g(|grad_dir I|) grad_dir I
+with the Perona-Malik conductance g(s) = 1/(1 + (s/kappa)^2): inside a flat
+region g -> 1 and the field diffuses like the heat equation, across a strong
+edge g -> 0 and the edge is preserved. Unlike a bilateral filter the
+conductance is recomputed from the *evolving* field at every iteration, which
+is what makes the edges sharpen rather than merely survive. ``a`` sets the
+edge scale kappa = 0.02 + 0.2a, ``b`` the iteration count 1 + int(15b);
+lambda is fixed at 0.2 (<= 0.25, the explicit-scheme stability bound).
 
 ## 詳しい使い方ガイド
 

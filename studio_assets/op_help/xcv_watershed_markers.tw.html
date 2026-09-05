@@ -4,7 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xcv_watershed_markers&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">watersheds</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">image → region</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>マーカー制御ウォーターシェッドによる境界線抽出。</p>
+<p>HALCON の `<code style="color:#22d3bf">watersheds</code>`(ウォーターシェッドと分水嶺盆地を抽出する)に</p>
+<p>相当するが、ここでは盆地のラベルではなく <b>分水嶺の境界線</b> だけを</p>
+<p>region として返す(近似)。</p>
+<p>手順は古典的な OpenCV レシピ: Otsu 二値化 -&gt; 膨張で「確実な背景」推定</p>
+<p>-&gt; 距離変換のしきい値で「確実な前景」推定 -&gt; 両者の差分を「不明」領域</p>
+<p>とし、確実な前景の連結成分をマーカーに `<code style="color:#22d3bf">cv2.watershed</code>` を実行。</p>
+<p>`<code style="color:#22d3bf">a</code>` が確実な前景を決めるしきい値を距離変換最大値の 30%〜70% の範囲</p>
+<p>で振る(大きいほど前景マーカーが小さく・保守的になり、過分割/過統合</p>
+<p>の傾向が変わる)。`<code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

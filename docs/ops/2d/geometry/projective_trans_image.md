@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+透視(射影)変換(``cv2.warpPerspective``)。4 隅のうち上 2 隅を
+``d=0.06+0.12*a`` の比率で内側に寄せることで台形(パースがかかった)歪みを
+作る。枠外は反射で埋める。HALCON の ``projective_trans_image``（Apply a
+projective transformation to an image.）に相当(HALCON は任意のホモグラフィ
+行列を渡せるが、ここでは台形歪み 1 パターンに限定した近似)。
+
+``a`` が歪みの強さを、``b`` が左右の非対称さ(どちら側をより歪ませるか)を
+振る。両方が使われる。
 
 ## 詳しい使い方ガイド
 

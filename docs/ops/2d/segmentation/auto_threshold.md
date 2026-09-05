@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+実装は ``binary_threshold`` と同一(Otsu の判別分析法による自動
+しきい値化)。HALCON の ``auto_threshold``（Segment an image using
+thresholds determined from its histogram.）は本来ヒストグラムの複数の谷
+から**複数のしきい値**(多クラス分割)を決める演算子だが、この代役では
+単一の Otsu しきい値による二値化に単純化している(近似の限界)。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

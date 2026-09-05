@@ -17,7 +17,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Surface-normal z-component (slope map) from the shading gradients, using
+Horn's shape-from-shading normal parameterisation
+``n = (-p, -q, 1)/sqrt(1+p^2+q^2)`` so that ``nz = 1/sqrt(1+p^2+q^2)`` with
+``p = gain*gx``, ``q = gain*gy``. Flat (uncontacted) gel gives nz = 1, steep
+indentation walls tend to 0, so the map is already a valid [0,1] encoding.
+``a`` = gradient gain (1..21x -- how steep the shading is taken to be),
+``b`` = pre-smoothing sigma of the image (0..3) to tame sensor noise.
+Constant input -> all-ones (perfectly flat gel).
 
 ## 参考(サンプルデータ・文献)
 

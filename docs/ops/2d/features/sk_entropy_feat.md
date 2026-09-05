@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+画像全体のシャノンエントロピー(1 スカラー特徴量)。輝度ヒストグラムの分布の広がり・情報量を 1 個の数値で要約する —— 値が高いほど輝度分布が均一に散らばっている(情報量が多い/コントラストが豊富)ことを示す。
+
+HALCON の `entropy_gray`(Determine the entropy and anisotropy of images.)に相当(近似。異方性は計算しない)。実装は ``measure.shannon_entropy(v)``(既定の底 2、単位はビット)。a, b は未使用。
 
 ## 詳しい使い方ガイド
 

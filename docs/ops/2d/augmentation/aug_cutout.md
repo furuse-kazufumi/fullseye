@@ -17,7 +17,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Cutout / random-erasing occlusion (DeVries & Taylor 2017; Zhong et al.
+2020): a square patch of side ``max(1, a*min(H,W))`` is erased from the
+image, forcing a pipeline to survive partial occlusion instead of relying on
+one salient blob. ``b`` selects the (deterministic, seeded-from-b) patch
+position AND the fill value: b <= 0.5 -> black (0.0), b > 0.5 -> mid-gray
+(0.5). The patch is always fully inside the frame.
 
 ## 詳しい使い方ガイド
 

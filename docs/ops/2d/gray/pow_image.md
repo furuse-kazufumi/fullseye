@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+実装は ``gamma_image`` と**まったく同じ関数**(``_sh_lut`` の ``kind:
+"gamma"`` 分岐)を指す。つまり ``pow_image`` と ``gamma_image`` は
+このバックエンド上では計算結果が一致する ―― HALCON では別の演算子(指数を
+明示的に指定する ``pow_image`` と符号化/復号を意図した ``gamma_image``)
+だが、ここでは代役の実体が重複している(近似の限界として明記)。
+
+``a`` がべき指数を 0.3〜2.8 の範囲で振る。``b`` は未使用。HALCON の
+``pow_image``（Raise an image to a power.）の代役。
 
 ## 詳しい使い方ガイド
 

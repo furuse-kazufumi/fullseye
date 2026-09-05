@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Frei-Chen 型カーネルによるエッジ方向（角度）マップ。水平カーネル ``_FREI[0]``（行/縦方向勾配）と垂直カーネル ``_FREI[1]``（列/横方向勾配）への畳み込み応答から ``arctan2(gy, gx)`` を計算し、``sobel_dir``/``prewitt_dir`` と同じ規約で [0,1] に写す（0/1 が -180°、0.5 が 0°）。a, b は未使用。
+
+HALCON の ``frei_dir``（Frei-Chen 演算子でエッジの振幅と方向を検出する演算）のうち方向成分に相当する近似。振幅は ``frei_amp`` 側が担当する。
 
 ## 詳しい使い方ガイド
 

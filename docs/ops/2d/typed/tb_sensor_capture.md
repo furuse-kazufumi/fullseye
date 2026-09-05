@@ -17,7 +17,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `rgbimage → rgbimage`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+放射輝度 → 実センサの出力(ショット雑音・読み出し雑音・飽和・量子化)。
+
+    光子数 = radiance · exposure_ms · gain_e_per_unit / 1000 を平均とする Poisson。
+    そこへ読み出し雑音(正規)を足し、``full_well_e`` で**飽和**させ、``bit_depth``
+    で量子化する。飽和は clip であって折り返さない(白飛びは白のまま)。
+
+    返り値は 0..2^bit_depth−1 の整数配列。``seed`` を固定すれば決定的。
+
+2-D 進化レジストリへ橋渡しした optics の op ``sensor_capture``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。``a`` が ``exposure_ms``(既定 10)、``b`` が ``gain_e_per_unit``(既定 50000)を振る。
 
 ## 参考(サンプルデータ・文献)
 

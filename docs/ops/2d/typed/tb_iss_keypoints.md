@@ -17,7 +17,11 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `points → signal`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ISS(Intrinsic Shape Signatures、3D Harris 相当)キーポイント検出。
+    局所共分散の最小固有値 λ3 を saliency とし、固有値が distinct(向きが
+    well-defined)な点のみ候補にして NMS で疎に選ぶ。回転不変。返り値=点 index 配列。
+
+2-D 進化レジストリへ橋渡しした 3d の op ``iss_keypoints``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。``a`` が ``gamma21``(既定 0.99)、``b`` が ``gamma32``(既定 0.99)を振る。
 
 ## 参考(サンプルデータ・文献)
 

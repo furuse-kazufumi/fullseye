@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+等価直径(面積が等しい円の直径)を領域の最大辺長で正規化した値
+(``regionprops`` の ``equivalent_diameter_area``)。HALCON の
+``diameter_region``（Maximal distance between two boundary points of a
+region.）が定義する「境界上の 2 点間の最大距離」とは厳密には異なる指標
+(等価円直径による近似)。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

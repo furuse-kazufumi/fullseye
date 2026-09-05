@@ -3,7 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sk_blur_effect&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → feature</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>ぼけ具合の推定(1 スカラー特徴量)。画像を意図的に少し再ぼかしして、元と再ぼかし後でどれだけエッジの鋭さが変わるかを比較する手法で、0(ぼけ無し)〜1(最大限ぼけている)のスコアを返す —— 参照画像なしでピント/ブレを定量化できる。</p>
+<p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">measure.blur_effect(v)</code>`。a, b は未使用 —— 再ぼかしフィルタのサイズは既定値(11)のまま。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

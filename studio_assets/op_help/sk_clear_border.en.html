@@ -3,7 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sk_clear_border&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">region → region</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>画像端に接する成分の除去。前景領域のうち画像の外周に触れている連結成分をすべて背景に落とす —— 視野の端で切れた(全体像が写っていない)物体を解析対象から除外する定番の前処理。</p>
+<p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">segmentation.clear_border(binm(v))</code>`。a, b は未使用 —— 除去判定に使う縁の幅(buffer_size)は既定の 0(画像端そのものに触れている成分のみ対象)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

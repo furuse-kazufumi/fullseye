@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `color → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+画像のチャンネル数を数える。HALCON の ``count_channels``（画像のチャンネル
+数を数える）に相当。
+
+``ndim == 3`` ならその最後の軸の長さ（チャンネル数）、そうでなければ
+（グレースケール扱いで）1 を返す。a, b は未使用。出力は `feature`
+（スカラー 1 個）。
 
 ## 詳しい使い方ガイド
 

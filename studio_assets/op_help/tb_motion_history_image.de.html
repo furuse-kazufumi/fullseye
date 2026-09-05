@@ -3,7 +3,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_motion_history_image&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">video → video</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Bobick–Davis Motion History Image per frame → `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> in </code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">video</code>`).</p>
+<p>Frame `<code style="color:#22d3bf">t</code><code style="color:#22d3bf"> is the MHI of frames </code><code style="color:#22d3bf">0..t</code>`: 1 where motion is happening,</p>
+<p>decaying by `<code style="color:#22d3bf">1/tau</code>` per frame elsewhere. The last frame is the classic</p>
+<p>single-image temporal template of the whole clip&#x27;s motion.</p>
+<p>Typed bridge of the videostream op `<code style="color:#22d3bf">motion_history_image</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">tau</code><code style="color:#22d3bf"> (default 15) and </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">threshold</code>` (default 0.1).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

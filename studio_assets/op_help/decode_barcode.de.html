@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;decode_barcode&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">find_bar_code</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → feature</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>中央走査線上の明暗の切り替わり回数を数える簡易バーコード風特徴量。HALCON の `<code style="color:#22d3bf">find_bar_code</code>`（Detect and read bar code symbols in an image.）とは似て非なるもので、シンボル体系の判定やデータのデコードは一切行わない（バー「数」を数えるだけ）。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が「暗い」とみなすしきい値を </code><code style="color:#22d3bf">0.3〜0.7</code><code style="color:#22d3bf"> に振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。画像中央の行（</code><code style="color:#22d3bf">v.shape[0]//2</code><code style="color:#22d3bf">）だけを見て、</code><code style="color:#22d3bf">v &lt; しきい値</code>` の画素を 1 とした列に対し、0→1 に立ち上がる回数（暗いバーの本数）を数える。実際のバーコードのデータ（数字・文字列）は得られない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">Leitfaden zur Familie gallery2d_physics_alife_3d</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

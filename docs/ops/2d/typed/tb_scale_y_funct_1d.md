@@ -17,7 +17,16 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `signal → signal`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Linear map of the y-values, ``mult * y + add`` (HALCON ``scale_y_funct_1d``).
+
+    The x-grid is untouched (use :func:`transform_funct_1d` to move x too).
+
+    :param y: 1-D function (may be empty).
+    :param mult: finite multiplier.
+    :param add: finite offset.
+    :raises ValueError: non-1-D / NaN / Inf input, or non-finite parameter.
+
+Typed bridge of the 1d op ``scale_y_funct_1d`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``mult`` (default 1); ``b`` is unused.
 
 ## 参考(サンプルデータ・文献)
 

@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `contour → contour`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+移動平均による XLD 輪郭の平滑化。HALCON の ``smooth_contours_xld``（Smooth an XLD contour.）に相当。
+
+``a`` が平滑化窓の半幅を ``1〜4``（窓長 ``2w+1 = 3,5,7,9``）に振る。``b`` は未使用。各輪郭の ``(row, col)`` 列を独立に等重み移動平均（``np.convolve`` の ``"same"`` モード）で均す。点数が窓長の 2 倍以下の短い輪郭はそのまま素通しする（平滑化されない）。
 
 ## 詳しい使い方ガイド
 

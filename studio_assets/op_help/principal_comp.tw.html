@@ -4,7 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;principal_comp&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">principal_comp</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">color → color</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>3 チャンネルの主成分分析（PCA）を行い、色空間を分散の大きい順に並べ替える。</p>
+<p>HALCON の `<code style="color:#22d3bf">principal_comp</code>`（多チャンネル画像の主成分を計算する）に相当。</p>
+<p>画素を (H*W, 3) の行列とみなして平均を引き、共分散行列の固有値分解</p>
+<p>（`<code style="color:#22d3bf">np.linalg.eigh</code>`）で固有ベクトルを求め、固有値の降順に射影する。</p>
+<p>各成分は画像内で min-max により個別に [0,1] へ正規化するため、</p>
+<p>出力の明るさは元画像のスケールと無関係になる（正規化後は毎回フルレンジ）。</p>
+<p>a, b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

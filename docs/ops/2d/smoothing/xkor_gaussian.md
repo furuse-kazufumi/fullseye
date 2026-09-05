@@ -17,7 +17,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ガウシアンぼかし（kornia の GPU ネイティブ実装）。torch テンソル上で
+``kornia.filters.gaussian_blur2d`` を 5x5 カーネル・シグマ可変で掛ける。
+
+a はシグマを 0.3〜3.0 の範囲で振る（``0.3 + 2.7 * a``）。b は未使用。
+CPU 実行では scipy 版と比べて速くはならない（GPU・バッチ実行時に効く
+実装。``IMGEVOLVE_KORNIA_DEVICE=cuda`` で GPU に乗る）。
 
 ## 詳しい使い方ガイド
 

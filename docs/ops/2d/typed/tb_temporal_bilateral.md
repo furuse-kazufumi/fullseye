@@ -17,7 +17,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `video → video`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Causal temporal bilateral denoise per frame → ``(T, H, W)`` (``video``).
+
+    Edge-preserving in time: averages recent frames but drops the weight of
+    frames that differ (moved), so it denoises static regions without ghosting
+    the motion the way :func:`moving_average_window` does.
+
+Typed bridge of the videostream op ``temporal_bilateral`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``window`` (default 5) and ``b`` drives ``sigma_t`` (default 2).
 
 ## 参考(サンプルデータ・文献)
 

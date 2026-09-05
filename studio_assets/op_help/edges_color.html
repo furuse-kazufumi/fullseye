@@ -4,7 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;edges_color&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">edges_color</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">color → image</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>カラーエッジの強度を検出する。HALCON の `<code style="color:#22d3bf">edges_color</code>`（Canny/Deriche/Shen</p>
+<p>フィルタでカラーエッジを抽出する）に相当するとされるが、**実装はフィルタ</p>
+<p>選択式ではなく Di Zenzo のマルチチャンネル勾配法に固定**されている。</p>
+<p>各チャンネルに Sobel 勾配 (gx, gy) をかけ、勾配テンソル</p>
+<p>`<code style="color:#22d3bf">[[gxx, gxy], [gxy, gyy]]</code>`（gxx=Σgx², gyy=Σgy², gxy=Σgx·gy）の最大</p>
+<p>固有値を画素ごとに求め、その平方根をエッジ強度として最大値で正規化する。</p>
+<p>a, b は未使用（HALCON 側にあるフィルタ種別・しきい値の選択はできない）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

@@ -4,7 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;mean_curvature_flow&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">mean_curvature_flow</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → image</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>小さなシグマ(0.6)のガウシアンぼかしを繰り返し適用することで平均曲率流を</p>
+<p><b>近似</b>したスムージング。真の平均曲率 PDE(`<code style="color:#22d3bf">ops</code>` 側の別実装が本来やる</p>
+<p>拡散方程式)ではなく、反復ぼかしという計算コストの軽い代用になっている点が</p>
+<p>このバックエンド固有の近似の限界。HALCON の `<code style="color:#22d3bf">mean_curvature_flow</code>`</p>
+<p>（Apply the mean curvature flow to an image.）の代役。</p>
+<p>`<code style="color:#22d3bf">a</code>` が反復回数を 1〜7 回の範囲で振る(回数が多いほど強く滑らかになる)。</p>
+<p>`<code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

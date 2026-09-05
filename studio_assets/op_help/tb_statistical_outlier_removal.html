@@ -3,7 +3,28 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_statistical_outlier_removal&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">points → points</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>各点の k 近傍平均距離が大域的に外れる点を除去する(統計的外れ値除去)。</p>
+<p>点ごとに「最も近い k 個(自分自身は除く)までの平均距離」を測り、その全点分布の</p>
+<p>`<code style="color:#22d3bf">mean + std_ratio*std</code>` を超える点を飛び点とみなして落とす。まばらな飛び点の掃除に</p>
+<p>有効で、密な面上の点は残る。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>points : array_like, shape (N, 3)</p>
+<p>入力点群。</p>
+<p>k : int</p>
+<p>近傍数(既定 16)。点数が少なければ内部で `<code style="color:#22d3bf">n-1</code>` に丸める。</p>
+<p>std_ratio : float</p>
+<p>しきい値の緩さ。大きいほど残りやすい(除去が緩い)。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>filtered : ndarray, shape (M, 3)</p>
+<p>生き残った点(元の順序を保持)。</p>
+<p>keep_mask : ndarray of bool, shape (N,)</p>
+<p>各入力点を残すか(True=残す)。`<code style="color:#22d3bf">points[keep_mask]</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">filtered</code>` に等しい。</p>
+<p>Notes</p>
+<p>-----</p>
+<p>点数 &lt; 3 では統計が立たないため、全点を残す(graceful)。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">statistical_outlier_removal</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">k</code><code style="color:#22d3bf">(既定 16)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">std_ratio</code>`(既定 2)を振る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

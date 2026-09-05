@@ -3,7 +3,37 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">cimage</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_cplx_cr_residual&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">cimage → feature</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>Cauchy-Riemann residual of a sampled complex field — &quot;is this field</p>
+<p>holomorphic?&quot; as a number.</p>
+<p>With `<code style="color:#22d3bf">f = u + i v</code>` sampled on a uniform grid, holomorphy means</p>
+<p>`<code style="color:#22d3bf">u_x = v_y</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">u_y = -v_x</code>` (Cauchy-Riemann). This returns the</p>
+<p><b>relative</b> residual `<code style="color:#22d3bf">max(|u_x - v_y|, |u_y + v_x|) / max|grad|</code>`</p>
+<p>(central differences, `<code style="color:#22d3bf">numpy.gradient</code><code style="color:#22d3bf">): </code><code style="color:#22d3bf">0</code>` = the samples satisfy CR to</p>
+<p>the discretisation limit, `<code style="color:#22d3bf">2</code>` = the field is the conjugate of a</p>
+<p>holomorphic one (`<code style="color:#22d3bf">conj(z)</code>` gives exactly 2), values in between = partly</p>
+<p>analytic or noisy.</p>
+<p><b>Grid convention (it decides the sign of the answer)</b>: `<code style="color:#22d3bf">f[i, j]</code>` is the</p>
+<p>field at `<code style="color:#22d3bf">z = x0 + j*spacing + i*spacing*1j</code>` — rows index the *increasing</p>
+<p>imaginary* axis, columns the real axis. Image arrays usually run rows</p>
+<p>*downward*; feeding one directly measures the conjugate field, whose</p>
+<p>residual is `<code style="color:#22d3bf">2</code><code style="color:#22d3bf">, not </code><code style="color:#22d3bf">0</code><code style="color:#22d3bf">. Flip rows (</code><code style="color:#22d3bf">f[::-1]</code>`) to use image data.</p>
+<p>Discretisation, honestly: central differences are exact for polynomials of</p>
+<p>degree &lt;= 2, so `<code style="color:#22d3bf">f = z**2</code>` returns exactly 0; for higher order the</p>
+<p>residual floors at `<code style="color:#22d3bf">O(h^2 * |f&#x27;&#x27;&#x27;|)</code><code style="color:#22d3bf"> (measured: </code><code style="color:#22d3bf">f = z**3</code>` on a</p>
+<p>`<code style="color:#22d3bf">[-1,1]^2</code><code style="color:#22d3bf"> grid returns 1.7e-3 at </code><code style="color:#22d3bf">h</code>` and 4.2e-4 at</p>
+<p>`<code style="color:#22d3bf">h/2</code>` — a factor 4.00, the expected second order). Read a</p>
+<p>small value as &quot;consistent with holomorphic at this resolution&quot;, never as</p>
+<p>proof.</p>
+<p>A constant field returns `<code style="color:#22d3bf">0.0</code><code style="color:#22d3bf"> (it is holomorphic; the </code><code style="color:#22d3bf">0/0</code>` of the</p>
+<p>normalisation is resolved by that limit, and stated here rather than left</p>
+<p>to numpy).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: not a 2-D array, either dimension below 3 (no</p>
+<p>central difference exists), non-finite/masked input, over-cap size,</p>
+<p>non-finite or non-positive *spacing*.</p>
+<p>HALCON: no operator (`<code style="color:#22d3bf">derivate_gauss</code>` supplies the real-valued</p>
+<p>derivatives one would build this from).</p>
+<p>Typed bridge of the math op `<code style="color:#22d3bf">cplx_cr_residual</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">spacing</code><code style="color:#22d3bf"> (default 1); </code><code style="color:#22d3bf">b</code>` is unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+局所オートレベル。各画素周辺の局所ヒストグラムの最小〜最大値を 0〜255 いっぱいに引き伸ばす —— グローバルな階調ではなく場所ごとにコントラストを最大化する適応的なレベル補正。
+
+HALCON の `scale_image_max`(Maximum gray value spreading in the value range 0 to 255.)に相当(近似。HALCON 版は画像全体、こちらは局所窓ごと)。実装は ``filters.rank.autolevel(_u8s(v), disk(1+int(a*3)))`` を 255 で割ったもの —— a は円盤半径を 1〜4 に振る。b は未使用。ほぼ一様な領域ではノイズまで強く引き伸ばされる点に注意。
 
 ## 詳しい使い方ガイド
 

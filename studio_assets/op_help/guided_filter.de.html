@@ -4,7 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;guided_filter&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">guided_filter</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>実装は `<code style="color:#22d3bf">bilateral_filter</code><code style="color:#22d3bf"> と同一(</code><code style="color:#22d3bf">kind: &quot;bilateral&quot;</code>`)。本来の</p>
+<p>ガイド付きフィルタ(guided filter、局所線形モデルに基づくエッジ保存平滑化)</p>
+<p>とは数学的に別のアルゴリズムだが、この代役ではバイラテラルフィルタで</p>
+<p>代用している(似た用途=エッジ保存平滑化を満たすための近似、結果の数値は</p>
+<p>一致しない)。HALCON の `<code style="color:#22d3bf">guided_filter</code>`（Guided filtering of an image.）</p>
+<p>の代役。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が空間シグマ、</code><code style="color:#22d3bf">b</code>` が輝度シグマを振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

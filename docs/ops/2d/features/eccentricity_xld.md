@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `contour → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+最大の輪郭(5 点以上)に ``cv2.fitEllipse`` で楕円をフィットし、その
+離心率 ``sqrt(1-(短軸/長軸)^2)`` を返す(0=真円、1に近いほど細長い)。
+HALCON の ``eccentricity_xld``（Shape features derived from the ellipse
+parameters of contours or polygons.）に相当。cv2 が無い、または点数不足
+の場合は 0 を返す。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

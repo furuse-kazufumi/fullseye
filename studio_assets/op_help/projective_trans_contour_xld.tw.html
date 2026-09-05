@@ -4,7 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;projective_trans_contour_xld&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">projective_trans_contour_xld</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">contour → contour</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>輪郭の各点に、列位置に応じた疑似的な遠近収縮(``d = 1 + 0.3*a*(col -</p>
+<p>中心)/幅``で各点の座標を割る)を適用する。真の 3x3 ホモグラフィ行列による</p>
+<p>射影変換ではなく、片方向だけの簡易な縮尺変化で近似している点に注意。</p>
+<p>HALCON の `<code style="color:#22d3bf">projective_trans_contour_xld</code>`（Apply a projective</p>
+<p>transformation to an XLD contour.）の代役。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が収縮の強さを振る。</code><code style="color:#22d3bf">b</code>` は未使用(画像版の</p>
+<p>`<code style="color:#22d3bf">projective_trans_image</code><code style="color:#22d3bf"> とは異なり、この輪郭版は </code><code style="color:#22d3bf">b</code>` を使わない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

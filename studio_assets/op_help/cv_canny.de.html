@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;cv_canny&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">edges_image</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → region</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Canny エッジ検出(領域版、OpenCV 実装)。sk_canny と同じアルゴリズムだが、OpenCV 版はガウス平滑化の σ ではなく 2 本のしきい値を直接指定する API になっている。</p>
+<p>HALCON の <code style="color:#22d3bf">edges_image</code> に相当。実装は `<code style="color:#22d3bf">cv2.Canny(_u8(v), threshold1=int(50+100*a), threshold2=int(100+150*b))</code>` の結果を真偽値化したもの —— a は下側しきい値(弱いエッジの採用ライン)を 50〜150 に、b は上側しきい値(強いエッジの確定ライン)を 100〜250 に振る。a を大きく b を小さく振ると下側が上側を上回ることがあり、その場合の挙動は OpenCV の実装依存になる点に注意。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

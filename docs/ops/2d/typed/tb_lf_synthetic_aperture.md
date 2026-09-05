@@ -17,7 +17,40 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `lightfield → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Refocus through a shaped aperture — and, with ``reduce="median"``, through occluders.
+
+    Same shift-and-add geometry as :func:`lf_refocus`, with two additions:
+
+      * *mask* — a ``(V, U)`` weight array from :func:`lf_aperture_mask` (or your
+        own). A small mask is a stopped-down aperture: less defocus blur, less
+        light. ``None`` weights every view equally.
+      * *reduce* — how the aligned views are combined. ``mean`` is the classical
+        (and linear) synthetic aperture. ``median`` is the interesting one: when
+        a foreground occluder covers a *minority* of the views at a pixel, the
+        median rejects it and the background behind it is reconstructed —
+        looking through a fence, or through a rack of parts. ``max`` / ``min``
+        are the order-statistic extremes, useful for specular / shadow work.
+        ``median``, ``max`` and ``min`` use the mask only to *select* views
+        (weight > 0), because an order statistic has no meaningful weighting;
+        that is stated here rather than silently ignoring the weights.
+
+    The see-through result is not a metaphor. When **fewer than half** the views
+    are blocked at a hidden pixel, more than half of them carry the identical
+    background sample and the median is that sample **exactly**. Measured
+    2026-09-01 on a 9x9x64x64 field with an occluder covering 25% of the centre
+    view at slope 3.0 (blocking at most 46% of the views at any hidden pixel):
+    RMS against the true, hidden background was **0.0** for ``median`` and
+    0.159 for ``mean``, with the centre view itself at 0.280. Push the coverage
+    to 35% (up to 60% of views blocked) and the guarantee is gone — the median
+    lands at 0.133, worse than nothing.
+
+    Returns a ``(H, W)`` 2-D image.
+
+    **Raises** ``ValueError``: *lf* not a valid light field, a *mask* whose
+    shape is not ``(V, U)`` or which is non-finite / negative / selects no view,
+    a non-finite or over-large *slope*, unknown *reduce* / *interp* / *edge*.
+
+Typed bridge of the lightfield op ``lf_synthetic_aperture`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

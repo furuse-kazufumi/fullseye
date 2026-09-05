@@ -3,7 +3,15 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_estimate_point_normals&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">points → points</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>点群 (N,3) → 単位法線(局所 k 近傍共分散の最小固有ベクトル=PCA)。</p>
+<p>FPFH/SHOT/点-面 ICP が要る法線を raw 点群から生成。向きの規約は 2 面:</p>
+<p><b>viewpoint=None(既定)= 重心から外向き</b>(閉じた物体の全周点群向け)/</p>
+<p><b>viewpoint 指定 = 視点(センサ)向き</b>(Hoppe 1992 / PCL 規約。単一視点スキャンの</p>
+<p>可視面はセンサ側を向くのが物理的に正しい。<code style="color:#22d3bf">pointcloud.estimate_normals</code> と同規約)。</p>
+<p>旧版(〜2026-08-30)は viewpoint 指定でも「視点から遠ざける」符号で、単一視点</p>
+<p>スキャンという本来用途で全点が裏返っていた。返り値 normals (N,3)。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">estimate_point_normals</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">k</code><code style="color:#22d3bf">(既定 16)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -4,7 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_gen_checker_region&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">gen_checker_region</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → region</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>市松模様(チェッカーボード)region を生成する。HALCON の</p>
+<p>`<code style="color:#22d3bf">gen_checker_region</code>`(チェッカー領域を生成する)に相当。</p>
+<p>セルサイズを `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">min(h, w)</code>` の 5%〜25% の範囲に振り、</p>
+<p>`<code style="color:#22d3bf">(row//cell + col//cell)</code><code style="color:#22d3bf"> が偶数のセルを前景(1)とする。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

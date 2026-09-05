@@ -3,7 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sg_region_growing_seeded&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → region</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>画像中心を種として、輝度が近い画素を繋げていく領域拡張（シードグロウイング）（HALCON `<code style="color:#22d3bf">regiongrowing</code><code style="color:#22d3bf"> は既に別 op でカバー済みのため、重複申告を避けて </code><code style="color:#22d3bf">halcon=&quot;&quot;</code>` としている）。</p>
+<p>種は画像中心の 1 画素。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">（0〜1）が同質性の許容差（種の輝度 ±a 以内なら繋がる）、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が連結性を切り替える（</code><code style="color:#22d3bf">b &gt; 0.5</code>` で 8 連結、それ以外は 4 連結）。結果は種を含む連結成分のみ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

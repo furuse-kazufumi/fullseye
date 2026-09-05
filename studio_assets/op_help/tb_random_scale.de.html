@@ -3,7 +3,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_random_scale&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">points → points</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>一様スケール `<code style="color:#22d3bf">s ~ U(lo, hi)</code><code style="color:#22d3bf"> を原点まわりに適用し </code><code style="color:#22d3bf">(scaled, s)</code>` を返す。</p>
+<p>`<code style="color:#22d3bf">scaled = points * s</code><code style="color:#22d3bf">。bbox 対角長はちょうど </code><code style="color:#22d3bf">s</code><code style="color:#22d3bf"> 倍になる(</code><code style="color:#22d3bf">s &gt; 0</code>` なので</p>
+<p>`<code style="color:#22d3bf">max</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">min</code><code style="color:#22d3bf"> が共に </code><code style="color:#22d3bf">s</code><code style="color:#22d3bf"> 倍 → 対角 </code><code style="color:#22d3bf">‖max-min‖</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">s</code>` 倍)。物体スケールの</p>
+<p>ばらつき(距離/センサ倍率)を学習に注入する。`<code style="color:#22d3bf">0 &lt; lo &lt;= hi</code>` を要求(fail-closed)。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">random_scale</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

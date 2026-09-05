@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+円形（disk, 半径 ``_rad(a)``=1〜4）構造要素によるグレースケール膨張（gray dilation）—— 窓内の最大値に置き換える。b は未使用。
+
+HALCON の ``gray_dilation_shape``（円・矩形など任意形状のマスクで窓内最大のグレー値を求める演算）に相当。矩形版は ``gray_dilation_rect`` が担当する。
 
 ## 詳しい使い方ガイド
 

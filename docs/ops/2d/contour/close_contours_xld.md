@@ -19,7 +19,11 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `contour → contour`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+各輪郭の始点を末尾に複製して追加し、開いた折れ線を閉じたループにする
+(点数 2 以上の輪郭のみ)。HALCON の ``close_contours_xld``（Close an XLD
+contour.）に相当。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

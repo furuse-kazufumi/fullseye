@@ -3,7 +3,26 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_voxel_grid_downsample&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">points → points</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>辺 voxel_size の格子で点群を間引き、各セルを重心 1 点に集約する(決定論的)。</p>
+<p>空間を一辺 `<code style="color:#22d3bf">voxel_size</code>` の立方体セルに区切り、同じセルに落ちた点をその重心</p>
+<p>1 点で代表させる。密度ムラを均し、下流(ICP・特徴量)の計算量を点数で抑える標準手法。</p>
+<p>出力順はボクセル座標の辞書順で固定(同じ入力なら常に同じ出力=決定論的)。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>points : array_like, shape (N, 3)</p>
+<p>入力点群。</p>
+<p>voxel_size : float</p>
+<p>セルの一辺(&gt; 0)。大きいほど強く間引く。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>ndarray, shape (M, 3)</p>
+<p>各占有セルの重心(M &lt;= N)。すべて入力の軸並行 bounding box 内に収まる。</p>
+<p>Notes</p>
+<p>-----</p>
+<p>`<code style="color:#22d3bf">voxel_size &lt;= 0</code>` は ValueError。空入力は空 (0,3) を返す(graceful)。</p>
+<p>重心はセル内の点の平均なので、必ず入力点の凸包(ゆえに bbox)内に入る。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">voxel_grid_downsample</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

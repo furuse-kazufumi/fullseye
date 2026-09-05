@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+領域の輪郭（境界リング）を抽出する。HALCON の ``boundary``（Reduce a region to its boundary.）に相当。
+
+``a``, ``b`` は未使用。二値化した領域から、1 回侵食した領域を差し引くことで、幅 1 画素の外周だけを残す。出力は region（0/1）のまま。
 
 ## 詳しい使い方ガイド
 

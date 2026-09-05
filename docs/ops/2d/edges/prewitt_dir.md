@@ -19,7 +19,11 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Prewitt 勾配の向き。``prewitt_amp`` と対になる方向成分
+(``arctan2`` を [0,1] に写像)。HALCON の ``prewitt_dir``（Detect edges
+(amplitude and direction) using the Prewitt operator.）に相当。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

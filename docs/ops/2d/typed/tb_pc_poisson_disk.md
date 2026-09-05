@@ -17,7 +17,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `points → points`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Blue-noise thinning: keep points greedily so that no two are closer than *radius* (``points``).
+
+    Points are visited in a seeded random order; a point is kept if no kept
+    point lies within *radius* (cKDTree ball query). Dense regions are thinned
+    to the radius, sparse regions (spacing already > radius) are kept whole —
+    unlike a voxel grid, which also moves points to cell centroids.
+
+Typed bridge of the 3d op ``pc_poisson_disk`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

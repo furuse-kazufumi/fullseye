@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+対数階調変換(log transform)。``out = gain * log(1 + in)`` 型の対数カーブで暗部を持ち上げる階調補正 —— ガンマ補正と似た用途だが、暗部だけをより強く持ち上げる非線形カーブになる。
+
+HALCON の `log_image`(Calculate the logarithm of an image.)に相当。実装は ``exposure.adjust_log(clip(v,0,1), gain=0.5+1.5*a)`` の結果を ``[0,1]`` へ clip したもの —— a は gain を 0.5〜2.0 に振る。b は未使用。gain が 1 を超えると出力が 1 を僅かに超えることが実測されている(a=0.5 で max=1.1380)ため、``image`` 契約([0,1])を守るために出口で明示的に clip している —— パイプライン内では ``ops._apply`` の段間 clip と同じ値になるためビット不変だが、直接呼び出した時の白飛びの見え方は clip 追加前と変わる。
 
 ## 詳しい使い方ガイド
 

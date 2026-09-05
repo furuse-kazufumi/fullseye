@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;cv_open&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">gray_opening</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>グレー値モルフォロジー開処理(opening、OpenCV 実装)。収縮してから膨張することで、構造要素より小さい明るい突起・孤立点を消す。</p>
+<p>HALCON の <code style="color:#22d3bf">gray_opening</code>(Perform a gray value opening on an image.)に相当。実装は `<code style="color:#22d3bf">cv2.morphologyEx(v, MORPH_OPEN, se)</code><code style="color:#22d3bf">、楕円形の構造要素 se は</code><code style="color:#22d3bf">getStructuringElement(MORPH_ELLIPSE, (k,k))</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">k=3+2*int(a*3)</code>` —— a は構造要素のサイズを 3〜9 に振る。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">Leitfaden zur Familie gallery2d_morphology</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

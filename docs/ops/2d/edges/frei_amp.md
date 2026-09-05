@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Frei-Chen 等方性エッジ検出。重み ``√2`` を持つ 2 本のカーネル対から
+``hypot`` で振幅を求める ―― Sobel より各方向への感度差が小さい(等方的)
+とされる古典的カーネル。HALCON の ``frei_amp``（Detect edges (amplitude)
+using the Frei-Chen operator.）に相当。
+
+``a``, ``b`` は未使用。固定カーネル 2 本のみ(Frei-Chen 本来の全 9 基底の
+一部だけを使った近似)。
 
 ## 詳しい使い方ガイド
 

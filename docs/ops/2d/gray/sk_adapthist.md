@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+CLAHE(Contrast Limited Adaptive Histogram Equalization、コントラスト制限付き適応ヒストグラム均等化)。画像を小領域に分けて局所的にヒストグラムを均等化し、明暗差の大きい画像でも局所コントラストを底上げする。
+
+HALCON に直接対応するものは無い。実装は ``exposure.equalize_adapthist(clip(v,0,1), clip_limit=0.01+0.05*a)`` —— a は clip_limit(コントラスト制限の強さ)を 0.01〜0.06 に振る(大きいほど強くコントラストが上がりノイズも増幅されやすい)。b は未使用。タイル分割数はskimage の既定値(8x8)のまま。
 
 ## 詳しい使い方ガイド
 

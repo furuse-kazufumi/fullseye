@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ガウシアン平滑化した局所平均を基準にした適応的しきい値処理。HALCON の ``local_threshold``（Segment an image using local thresholding.）に相当。
+
+``a`` が基準を作るガウシアンの σ を ``1.0〜4.0`` に、``b`` がオフセットを ``-0.15〜+0.15``（``(b-0.5)*0.3``）に振る。``v > gaussian_filter(v, σ) + offset`` を満たす画素を前景にする。照明ムラがある画像で大域しきい値（``_threshold``/``_otsu``）より安定する。近い op に ``_dyn_threshold`` があるが、そちらは箱型平均（``uniform_filter``）を基準にし、オフセット幅も異なる（``±0.2``）——同じ「適応的しきい値」でも基準の平滑化方式とパラメータ範囲が違う別実装。
 
 ## 詳しい使い方ガイド
 

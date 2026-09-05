@@ -4,7 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;frei_amp&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">frei_amp</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">image → image</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>Frei-Chen 等方性エッジ検出。重み `<code style="color:#22d3bf">√2</code>` を持つ 2 本のカーネル対から</p>
+<p>`<code style="color:#22d3bf">hypot</code>` で振幅を求める ―― Sobel より各方向への感度差が小さい(等方的)</p>
+<p>とされる古典的カーネル。HALCON の `<code style="color:#22d3bf">frei_amp</code>`（Detect edges (amplitude)</p>
+<p>using the Frei-Chen operator.）に相当。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。固定カーネル 2 本のみ(Frei-Chen 本来の全 9 基底の</p>
+<p>一部だけを使った近似)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

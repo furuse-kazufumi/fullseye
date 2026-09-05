@@ -17,7 +17,26 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `points → volume`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+反復 RANSAC で最大 max_planes 枚の平面を逐次抽出(残差点 -1)。
+
+    残り点集合に :func:`ransac_fit.ransac_plane` を掛け、その最大 consensus 平面の
+    inlier 数が ``min_inliers`` 以上なら新ラベルを与えて除去 → 残りで再検出、を繰り返す。
+    複数の床/壁/階段状の面を一度に分離する(単一平面適合の pcseg との差)。inlier が
+    ``min_inliers`` に満たなくなった時点で停止し、以降の点は残差 -1(球や複雑物体はここに残る)。
+
+    Args:
+        points: (N,3) 点群。
+        thresh: 点-平面距離の inlier しきい値(距離、要 > 0)。
+        min_inliers: 平面として採用する最小 inlier 数(要 >= 3)。
+        max_planes: 抽出する平面の最大枚数(要 >= 1)。
+        iters: 各 RANSAC 反復数。
+        seed: 乱数シード(決定論。各平面で seed+平面index を使う)。
+
+    Returns:
+        labels: (N,) int。検出順(=consensus 大きい順に近い)に 0,1,2,... を平面へ付与、
+        どの平面にも属さない残差点は -1。空入力は shape (0,)。
+
+2-D 進化レジストリへ橋渡しした 3d の op ``plane_segmentation``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。``a`` が ``max_planes``(既定 5)、``b`` が ``iters``(既定 300)を振る。
 
 ## 参考(サンプルデータ・文献)
 

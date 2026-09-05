@@ -17,7 +17,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `video → video`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Causal per-pixel mean over the last *window* frames → ``(T, H, W)`` (``video``).
+
+    Not the centred :func:`videops.moving_average`: this one never looks ahead,
+    which is what a live stream can do.
+
+Typed bridge of the videostream op ``moving_average_window`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``window`` (default 3); ``b`` is unused.
 
 ## 参考(サンプルデータ・文献)
 

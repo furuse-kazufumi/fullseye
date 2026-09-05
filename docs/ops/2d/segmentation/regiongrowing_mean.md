@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+実装は ``regiongrowing`` と同一(しきい値によるシード生成+膨張)。
+HALCON の ``regiongrowing_mean``（Perform a region growing using mean gray
+values.）は本来、各領域の平均輝度との近さを基準に成長させる演算子だが、
+この代役では平均輝度による判定を行わず ``regiongrowing`` と同じ処理を
+返す(近似の限界)。
+
+``a`` がシードのしきい値、``b`` が膨張の反復回数を振る。両方が使われる。
 
 ## 詳しい使い方ガイド
 

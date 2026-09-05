@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+連結成分の個数を数える(``ndimage.label``、既定 8 連結)。HALCON の
+``count_obj``/``connection`` の既定と同じ 8 連結を採用しており、斜めに
+接する 2 つの塊は 1 個として数える(4 連結にすると過剰カウントになる例
+=セルカウントで実測 342 個 vs 327 個、コード内コメント参照)。HALCON の
+``count_obj``（Number of objects in a tuple.）に相当。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

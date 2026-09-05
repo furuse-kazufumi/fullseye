@@ -17,7 +17,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Algebraic reconstruction: run a few SART/SIRT sweeps on the input
+sinogram (rows = angles). ``a`` sets the iteration count
+(``round(1+a*4)`` -> 1..5), ``b`` sets the relaxation factor
+(``0.05 + b*0.35``). Uses ``skimage.transform.iradon_sart`` when available,
+else a self-contained NumPy SIRT (project -> residual -> weighted
+back-projection) loop. Output refit to HxW.
 
 ## 詳しい使い方ガイド
 

@@ -21,7 +21,7 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 Thin the region to a skeleton, then break it at junctions (>=3 neighbours).
 
-    ``a`` drops resulting segments shorter than ``a*8`` pixels (a=0 keeps all).
+``a`` drops resulting segments shorter than ``a*8`` pixels (a=0 keeps all).
 
 ## 詳しい使い方ガイド
 

@@ -17,7 +17,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+OpenCV の edgePreservingFilter(エッジ保存平滑化、``flags=1`` =
+RECURS_FILTER = 再帰フィルタ方式)。
+
+bilateral フィルタに近い効果をより高速に得る手法で、輪郭を保ちながら
+内部を滑らかにする。
+
+``a`` が空間方向の平滑化範囲 ``sigma_s`` を 20〜120 で振る。``b`` が
+色差の許容範囲 ``sigma_r`` を 0.1〜0.6 で振る(大きいほど強く均す)。
 
 ## 詳しい使い方ガイド
 

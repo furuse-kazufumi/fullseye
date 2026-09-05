@@ -17,7 +17,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+モルフォロジー再構成（reconstruction by dilation）。
+``skimage.morphology.reconstruction`` を method="dilation" で呼ぶ。
+
+シード画像を「元画像から a に応じた深さだけ暗くしたもの」
+（``x - (0.05 + 0.25*a)``）として自動生成し、そのシードをマスク画像
+（元画像そのもの）まで測地学的に膨張させる。a はシードの深さ（大きい
+ほど多くの山が消える）を振る。b は未使用。小さな明るい斑点やノイズを
+消しつつ、大きな構造の輪郭は保つ（オープニングより形状の崩れが少ない）。
 
 ## 詳しい使い方ガイド
 

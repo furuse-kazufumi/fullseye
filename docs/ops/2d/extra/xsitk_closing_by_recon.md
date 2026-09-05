@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+再構成によるクロージング(SimpleITK ``ClosingByReconstruction``、xsitk_opening_by_recon の双対)。膨張後の収縮をマスク付き再構成で行い、輪郭を保ったまま小さな暗い窪みだけを埋める。
+
+``a`` は構造要素の半径(1〜5)を振る。``b`` は未使用。出力は [0,1] にクリップ。
 
 ## 詳しい使い方ガイド
 

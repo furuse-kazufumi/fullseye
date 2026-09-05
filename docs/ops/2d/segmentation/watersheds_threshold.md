@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+実装は ``watersheds`` と同一(``kind: "watershed"``)。HALCON の
+``watersheds_threshold``（Extract watershed basins from an image using a
+threshold.）は本来、隣接する集水域を統合する深さのしきい値を持つ演算子
+だが、この代役では統合しきい値を実装せず ``watersheds`` と同じ結果を返す
+(近似の限界)。
+
+``a`` がマーカーのしきい値を振る。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

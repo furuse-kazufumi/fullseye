@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+``skimage.morphology.thin``(Zhang-Suen 系の細線化アルゴリズム)による
+1 画素幅化。``skeleton`` と目的は似ているが内部アルゴリズムが異なるため、
+分岐点周辺などで結果がわずかに違うことがある。HALCON の ``thinning``
+（Remove the result of a hit-or-miss operation from a region.）の代役。
+
+``a``, ``b`` は未使用。skimage が無い環境ではこの分岐は呼べない。
 
 ## 詳しい使い方ガイド
 

@@ -4,7 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;mirror_image&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">mirror_image</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → image</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> の値で 3 通りの鏡映を切り替える(</code><code style="color:#22d3bf">a&lt;0.34</code>`: 上下反転、</p>
+<p>`<code style="color:#22d3bf">a&lt;0.67</code>`: 左右反転、それ以外: 転置)。連続的な鏡映変換ではなく離散的な</p>
+<p>モード選択である点に注意。HALCON の `<code style="color:#22d3bf">mirror_image</code>`（Mirror an image.）に</p>
+<p>相当(HALCON は上下/左右/対角を明示的なモード引数で選ぶが、ここでは `<code style="color:#22d3bf">a</code>`</p>
+<p>の値域で疑似的に選ぶ近似)。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が鏡映モードを 3 段階で選ぶ。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

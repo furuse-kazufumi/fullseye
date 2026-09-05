@@ -4,7 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;pruning&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">pruning</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">region → region</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>骨格化(`<code style="color:#22d3bf">skeletonize</code>`、無ければ入力をそのまま使用)の後、近傍数が</p>
+<p>1 以下の端点画素(スパー=枝毛)を繰り返し `<code style="color:#22d3bf">1+4*a</code>` 回削り取ることで、</p>
+<p>骨格から短い枝を除去する。HALCON の `<code style="color:#22d3bf">pruning</code>`（Prune the branches of a</p>
+<p>region.）に相当(HALCON は枝の長さを指定できるが、ここでは反復回数による</p>
+<p>近似)。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が削り取る反復回数を 1〜5 回の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。回数が</p>
+<p>多いほど主要な骨格まで削れてしまうことがある。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

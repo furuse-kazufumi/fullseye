@@ -17,7 +17,18 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `points → volume`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+軸平行直方体の**厳密**な符号付き距離場(内側負・外側正)。
+
+    Inigo Quilez の box SDF: ``q = |p-center| - half_extents`` とし、
+        ``outside = |max(q,0)|`` (角/辺/面の外はユークリッド距離),
+        ``inside  = min(max(q_x,q_y,q_z), 0)`` (内側は最近面までの負値),
+        ``sdf = outside + inside``。
+    ``half_extents`` は各軸の**半辺長**(中心から面まで)。外側は厳密距離(角では対角、面前は
+    垂直距離)、内側も最近面までの厳密負距離を与える。
+
+    Raises ValueError for any half_extent<0 or malformed grid/center/half_extents。
+
+2-D 進化レジストリへ橋渡しした 3d の op ``box_sdf``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 
 ## 参考(サンプルデータ・文献)
 

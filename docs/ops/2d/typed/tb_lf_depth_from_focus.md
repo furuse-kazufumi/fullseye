@@ -17,7 +17,37 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `lightfield → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Per-pixel slope from the **sharpness peak** across the refocus sweep.
+
+    Refocus at every slope in *slopes*, measure local sharpness (*measure*:
+    ``laplacian`` = summed modified Laplacian, the classical depth-from-focus
+    operator; ``variance`` = local variance; ``gradient`` = local gradient
+    energy) in a ``window x window`` neighbourhood, and take the slope at which
+    each pixel is sharpest. With ``subpixel=True`` (default) the peak is refined
+    by fitting a parabola through the winning sample and its two neighbours on a
+    **uniformly** spaced sweep — on a non-uniform sweep the refinement is
+    skipped rather than applied with the wrong spacing.
+
+    Unbiased where :func:`lf_epi_slope` is not: measured 2026-09-01 on a
+    5x5x64x64 synthetic field over a 121-point sweep from -3 to +3, the argmax
+    landed **exactly** on the true slope in 18 of 18 combinations (true slopes
+    0.0, +0.5, +1.0, +1.5, +2.0, -1.0 crossed with texture sigma 1.5 / 3.0 /
+    5.0 px), and the sub-pixel refinement left every one of them unmoved. Its
+    resolution, though, is whatever you put in *slopes* — it cannot see a plane
+    you never refocused on.
+
+    Returns ``(slope_map, sharpness)``: the ``(H, W)`` map of estimated slopes
+    (in px per angular step) and the ``(H, W)`` peak focus-measure value, which
+    is the honest confidence — a textureless pixel has no sharpness peak, gets
+    an essentially arbitrary slope, and its ``sharpness`` is ~0. Threshold on it
+    rather than trusting the map everywhere.
+
+    **Raises** ``ValueError``: *lf* not a valid light field, *slopes* empty /
+    over :data:`MAX_STACK_SLICES` / over :data:`MAX_STACK_ELEMENTS` / containing
+    a non-finite or over-large value, an even or non-positive *window*, unknown
+    *measure* / *interp* / *edge*.
+
+Typed bridge of the lightfield op ``lf_depth_from_focus`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

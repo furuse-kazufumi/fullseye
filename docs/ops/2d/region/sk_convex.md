@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+凸包(convex hull)による領域の変形。前景領域を包む最小の凸多角形を求め、その内部を塗りつぶした領域を返す —— くびれや凹みを全て埋める。
+
+HALCON の `shape_trans`(Transform the shape of a region.)に相当(近似。``shape_trans`` は他の変形モードも持つ汎用命令だが、ここでは凸包のみ)。実装は ``morphology.convex_hull_image(binm(v))``。a, b は未使用。
 
 ## 詳しい使い方ガイド
 

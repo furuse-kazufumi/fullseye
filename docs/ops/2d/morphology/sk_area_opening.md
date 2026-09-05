@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+面積オープニング(area opening)。通常のモルフォロジー的開処理が構造要素の形で小さい明部を削るのに対し、こちらは面積(連結画素数)だけで判定し、指定面積未満の明るい連結成分を消す —— 形状に依らず「小さい」ものを落とせる。
+
+HALCON に直接対応するものは無い。実装は ``morphology.area_opening(v, area_threshold=int(16+a*100))`` —— a は面積しきい値を 16〜116 画素に振る。b は未使用。connectivity は既定の 1(4 近傍)のまま。
 
 ## 詳しい使い方ガイド
 

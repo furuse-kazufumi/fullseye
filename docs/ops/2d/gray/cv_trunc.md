@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+階調の上側切り詰め(THRESH_TRUNC、OpenCV 実装)。指定値より明るい画素はすべてその値に丸め、それ以下の画素はそのまま —— ハイライトだけを潰す階調操作(暗部には触れない)。
+
+HALCON の `scale_image`(Scale the gray values of an image.)に相当(近似。線形スケーリングではなく片側クリップ)。実装は ``cv2.threshold(v, thresh=a, maxval=1.0, THRESH_TRUNC)`` —— a は切り詰めレベルを 0〜1 に振る。b は未使用。
 
 ## 詳しい使い方ガイド
 

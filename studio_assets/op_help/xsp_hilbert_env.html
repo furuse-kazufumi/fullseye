@@ -3,7 +3,12 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsp_hilbert_env&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → image</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>解析信号（ヒルベルト変換）の振幅包絡線を行方向に取り出す。</p>
+<p>画素値を [-0.5, 0.5] に平行移動してから各行に 1 次元ヒルベルト変換</p>
+<p>（`<code style="color:#22d3bf">scipy.signal.hilbert</code>`）を掛け、複素解析信号の絶対値（瞬時振幅）を</p>
+<p>正規化して返す。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。周期的な縞模様やテクスチャの</p>
+<p>「包絡線」を強調するのに向き、位相情報は捨てて振幅だけを残す。列方向</p>
+<p>には掛からないため、結果は水平方向の変化にのみ反応する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

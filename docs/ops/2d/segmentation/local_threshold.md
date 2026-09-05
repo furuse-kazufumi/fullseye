@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+局所ガウス平滑化+オフセットによるしきい値処理(``gaussian_filter(x,
+1+3*a)`` にオフセット ``(b-0.5)*0.3`` を加えたものがしきい値)。
+``dyn_threshold`` と似た発想だが、局所平均を矩形窓でなくガウシアンで
+求める点が異なる。HALCON の ``local_threshold``（Segment an image using
+local thresholding.）に相当。
+
+``a`` が平滑化のシグマを、``b`` がオフセットを振る。両方が使われる。
 
 ## 詳しい使い方ガイド
 

@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+領域内部の穴(背景に完全に囲まれた領域)を埋める
+(``ndimage.binary_fill_holes``)。外周とつながっていない背景の孔だけが
+埋まり、外周とつながった凹みは埋まらない。HALCON の ``fill_up``（Fill up
+holes in regions.）に相当。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

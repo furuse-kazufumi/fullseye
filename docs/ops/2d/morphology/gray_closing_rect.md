@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+正方形窓（一辺 ``_k(a)``=3/5/7/9）によるグレースケール・クロージング（gray closing、膨張の後に収縮）。小さな暗い穴・くぼみを埋めながら大まかな明るさは保つ。b は未使用。
+
+HALCON の ``gray_closing_rect``（矩形マスクによるグレー値クロージング演算）に相当。
 
 ## 詳しい使い方ガイド
 

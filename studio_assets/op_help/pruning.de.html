@@ -4,7 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;pruning&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">pruning</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">region → region</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>骨格化(`<code style="color:#22d3bf">skeletonize</code>`、無ければ入力をそのまま使用)の後、近傍数が</p>
+<p>1 以下の端点画素(スパー=枝毛)を繰り返し `<code style="color:#22d3bf">1+4*a</code>` 回削り取ることで、</p>
+<p>骨格から短い枝を除去する。HALCON の `<code style="color:#22d3bf">pruning</code>`（Prune the branches of a</p>
+<p>region.）に相当(HALCON は枝の長さを指定できるが、ここでは反復回数による</p>
+<p>近似)。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が削り取る反復回数を 1〜5 回の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。回数が</p>
+<p>多いほど主要な骨格まで削れてしまうことがある。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

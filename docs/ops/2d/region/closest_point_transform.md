@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+領域の**補集合**に対するユークリッド距離変換を正規化して返す ―― 各
+画素から最も近い領域(前景)画素までの距離を表す、``distance_transform``
+とは前景/背景が逆の距離場。出力は ``image`` 型。HALCON の
+``closest_point_transform``（Compute the closest-point transformation of
+a region.）に相当。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

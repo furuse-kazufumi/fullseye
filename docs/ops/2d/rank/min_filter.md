@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+矩形窓内の最小値フィルタ（グレースケール侵食に相当）。HALCON の ``gray_erosion_rect``（Determine the minimum gray value within a rectangle.）に相当。
+
+``a`` が窓サイズを ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。明るい小さな構造（点状の輝点等）を消し、暗い領域を広げる。
 
 ## 詳しい使い方ガイド
 

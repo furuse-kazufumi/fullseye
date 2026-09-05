@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+最小固有値によるコーナー強度(Shi-Tomasi 系、OpenCV 実装)。勾配の構造テンソルの 2 つの固有値のうち小さい方を返す —— Harris のような重み付け(k 依存)が無く、より直接的に「良い特徴点」らしさを測る指標(cv_good_features の内部でも使われる基準と同種)。
+
+HALCON の `points_harris` に相当(近似。アルゴリズムは別物)。実装は ``cv2.cornerMinEigenVal(v, blockSize=3+2*int(a*2))`` を正規化したもの —— a は評価に使う近傍サイズ(blockSize)を 3, 5, 7 に振る。b は未使用。
 
 ## 詳しい使い方ガイド
 

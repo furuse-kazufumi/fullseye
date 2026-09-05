@@ -3,7 +3,14 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_elastic_deform&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">points → points</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>滑らかな乱数変位場で弾性変形(相関距離 `<code style="color:#22d3bf">sigma</code><code style="color:#22d3bf">, RMS 振幅 </code><code style="color:#22d3bf">alpha</code>`)。</p>
+<p>各点に独立ガウス乱数ベクトルを置き、空間ガウス重み `<code style="color:#22d3bf">exp(-d²/2σ²)</code>` で平滑化した</p>
+<p>変位場を生成する(近接点は coherent に動く)。場は RMS を 1 に正規化してから</p>
+<p>`<code style="color:#22d3bf">alpha</code><code style="color:#22d3bf"> 倍するので、変位の RMS ノルムはちょうど </code><code style="color:#22d3bf">alpha</code><code style="color:#22d3bf"> になる(</code><code style="color:#22d3bf">σ→∞</code>` で場は</p>
+<p>定数=剛体並進, `<code style="color:#22d3bf">σ→0</code>` で各点独立)。非剛体な物体変形/柔軟物の学習に。</p>
+<p>注意(honest): 近傍探索は `<code style="color:#22d3bf">cKDTree.query_pairs(r=3σ)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">σ</code>` が雲の直径に近いほど</p>
+<p>ペア数は O(N²) に近づくため、大規模雲では `<code style="color:#22d3bf">σ</code>` を局所スケールに保つこと。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">elastic_deform</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

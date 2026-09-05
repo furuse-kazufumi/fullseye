@@ -3,7 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sk_tv_bregman&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>全変動ノイズ除去(TV denoising、Split-Bregman 法)。sk_tv と同じ TV正則化の考え方だが最適化アルゴリズムが異なり(Bregman 分割法)、収束が速いとされる。</p>
+<p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">restoration.denoise_tv_bregman(v, weight=1.0+8.0*a)</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">[0,1]</code><code style="color:#22d3bf"> へ clip したもの —— a は weight を 1.0〜9.0 に振るが、この関数の weight は**小さいほど強く平滑化される**(sk_tv の weight とは符号の向きが逆 —— </code><code style="color:#22d3bf">denoise_tv_chambolle</code><code style="color:#22d3bf"> は大きいほど強く、</code><code style="color:#22d3bf">denoise_tv_bregman</code>` は小さいほど強い。混同すると意図と逆方向に a を動かすことになるので注意)。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ノイズ標準偏差の推定(skimage ``restoration.estimate_sigma``、ウェーブレット係数の中央絶対偏差(MAD)に基づく Donoho の推定量)。推定値を 5 倍したのち 1.0 で頭打ちにして feature として返す。
+
+``a``, ``b`` は未使用。デノイズ強度(例えば閾値処理のパラメータ)を画像ごとに自動決定したい場合の目安に使える。
 
 ## 詳しい使い方ガイド
 

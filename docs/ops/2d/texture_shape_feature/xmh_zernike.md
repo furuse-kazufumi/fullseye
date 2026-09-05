@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ツェルニケモーメント(Zernike moments、``mahotas.features.zernike_moments``)の総和。単位円に写した画像の回転不変な形状/濃淡分布の特徴を 1 個の実数に潰して返す。
+
+半径は画像の短辺の半分に固定。``a`` は次数(degree、6〜12 の整数)を振る —— 次数を上げるほど高次のモーメントまで加算され値が変わる。``b`` は未使用。モーメント成分ごとの符号や大きさの分布は総和で相殺・情報が失われるため、形状の指紋として使うには弱い。個々の成分が要る場合は ``mahotas.features.zernike_moments`` を直接呼ぶこと。
 
 ## 詳しい使い方ガイド
 

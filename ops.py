@@ -1214,12 +1214,13 @@ if _os.environ.get("IMGEVOLVE_NO_BACKENDS", "") != "1":
         try:
             _b = __import__(_mod)
             _new = _b.build(Op, IMAGE, REGION, FEATURE, CONTOUR, _norm, _bin)
-            # backend が module-level DOCS を出していれば、docstring を持てない
-            # op(= lambda で書かれた表の行)の説明をここで積む。docstring が
-            # あるものは触らない —— 実装のそばに書いてある方が正しい。
+            # backend が module-level DOCS を出していれば積む。**op 名で引く
+            # 明示の指定**なので docstring より強い —— backends_r3 の 56 op は
+            # 汎用ファクトリが返す**同一の関数オブジェクト**を共有していて、
+            # その docstring を説明に使うと 56 本が同じ文言になる。
             _docs = getattr(_b, "DOCS", None) or {}
             for _op in _new:
-                if not _op.doc and not (getattr(_op.fn, "__doc__", None) or "").strip():
+                if not _op.doc:
                     _op.doc = (_docs.get(_op.name) or "").strip()
             _extra += _new
         except Exception as _e:  # noqa: BLE001 - optional backend; recorded, never silent

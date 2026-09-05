@@ -17,7 +17,26 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `matrix → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Spectral (2-norm) condition number ``s_max / s_min`` — the numerical
+    canary of the whole linalg family.
+
+    ``cond == 1`` for an orthogonal/orthonormal matrix (the best possible);
+    ``inf`` (returned, not raised — the question "how conditioned is it?" has
+    that honest answer) for an exactly singular one. A solve against *A* loses
+    roughly ``log10(cond(A))`` significant digits (Golub & Van Loan §2.6):
+
+      * ``cond ~ 1e3``  — comfortable, ~13 digits survive.
+      * ``cond ~ 1e8``  — half the digits are gone; residuals may still look
+        small while parameters are off.
+      * ``cond > 1e12`` — **do not trust** :func:`mat_solve` here: at best ~3
+        digits remain. Rescale/centre the problem, or switch to
+        :func:`mat_lstsq` / :func:`mat_pinv` with an honest ``rcond``.
+
+    Defined for any rectangular ``(m, n)`` matrix (via its singular values).
+    HALCON: no direct operator (combine ``norm_matrix`` of *A* and of its
+    inverse).
+
+Typed bridge of the math op ``mat_cond`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

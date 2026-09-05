@@ -3,7 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_sensor_capture&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">rgbimage → rgbimage</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>放射輝度 → 実センサの出力(ショット雑音・読み出し雑音・飽和・量子化)。</p>
+<p>光子数 = radiance · exposure_ms · gain_e_per_unit / 1000 を平均とする Poisson。</p>
+<p>そこへ読み出し雑音(正規)を足し、`<code style="color:#22d3bf">full_well_e</code><code style="color:#22d3bf"> で**飽和**させ、</code><code style="color:#22d3bf">bit_depth</code>`</p>
+<p>で量子化する。飽和は clip であって折り返さない(白飛びは白のまま)。</p>
+<p>返り値は 0..2^bit_depth−1 の整数配列。`<code style="color:#22d3bf">seed</code>` を固定すれば決定的。</p>
+<p>2-D 進化レジストリへ橋渡しした optics の op `<code style="color:#22d3bf">sensor_capture</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">exposure_ms</code><code style="color:#22d3bf">(既定 10)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">gain_e_per_unit</code>`(既定 50000)を振る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

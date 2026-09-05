@@ -17,7 +17,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+塗りつぶし(flood fill)領域抽出。
+
+画像中心の画素を種点とし、skimage.segmentation.flood でその画素値から
+``tolerance`` 以内の連結画素を region として広げる。
+
+``a`` が許容差 ``tolerance`` を 0.05〜0.35 の範囲で振る(大きいほど
+広く塗りつぶす)。``b`` は未使用。中心が背景か前景かで結果が大きく
+変わる(種点固定の単純な実装)。
 
 ## 詳しい使い方ガイド
 

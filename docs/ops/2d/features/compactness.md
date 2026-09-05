@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+コンパクトさ ``周囲長² / (4π・面積) / 10``(円形度の逆数に近い量を
+10 で正規化しただけの実装 ―― この ``/10`` は HALCON の定義に基づく係数
+ではなく、値を [0,1] に収めるための便宜的なスケーリングである点に注意)。
+HALCON の ``compactness``（Shape factor for the compactness of a region.）
+に相当する近似。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

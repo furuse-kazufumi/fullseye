@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+実装は単純なガウシアンぼかし(``gaussian_filter``、シグマ
+``0.5+2.5*a``)。等方拡散方程式の解はガウシアン核による畳み込みと数学的に
+等価なので、この近似は理論的にも妥当(異方性拡散のようなエッジ保存効果は
+無く、方向を問わず一様に滑らかになる)。HALCON の ``isotropic_diffusion``
+（Perform an isotropic diffusion of an image.）に相当。
+
+``a`` がシグマ(拡散時間に相当)を 0.5〜3.0 の範囲で振る。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

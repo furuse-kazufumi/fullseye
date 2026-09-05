@@ -17,7 +17,11 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Additive Gaussian READ noise (amplifier + ADC noise), sigma-independent of
+signal (unlike shot noise). ``sigma = 0.005 + 0.15*a``. ``b`` mixes in a
+row-correlated component: a per-row bias of std ``0.5*b*sigma`` shared by the
+whole row, which is what a shared row amplifier / row-wise ADC produces
+(visible as horizontal banding). Seeded from (a, b).
 
 ## 詳しい使い方ガイド
 

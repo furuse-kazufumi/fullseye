@@ -4,7 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_fit_surface1&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">fit_surface_first_order</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">image → image</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>gray 値を 1 次多項式面(平面)で最小二乗近似する。HALCON の</p>
+<p>`<code style="color:#22d3bf">fit_surface_first_order</code>`(gray 値モーメントを計算し 1 次曲面で近似する)</p>
+<p>に相当。</p>
+<p>座標を [-1, 1] に正規化してから `<code style="color:#22d3bf">[1, x, y]</code>` を基底に最小二乗回帰し、</p>
+<p>近似面を min-max で [0, 1] に正規化して返す(照明ムラ推定に使う)。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

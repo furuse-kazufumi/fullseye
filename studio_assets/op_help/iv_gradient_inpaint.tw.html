@@ -3,7 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;iv_gradient_inpaint&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">image → image</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>Harmonic (Laplace) inpainting of a central masked window. The interior of a</p>
+<p>centred window (side fraction from `<code style="color:#22d3bf">a</code>`) is discarded and refilled by solving</p>
+<p>nabla^2 u = 0 with Dirichlet boundary equal to the surrounding known pixels</p>
+<p>(Jacobi relaxation = repeatedly replacing each masked pixel by its 4-neighbour</p>
+<p>mean). The recovered interior is the smoothest (minimum-gradient) fill of the</p>
+<p>hole. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> sets the window size; </code><code style="color:#22d3bf">b</code>` is ignored.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

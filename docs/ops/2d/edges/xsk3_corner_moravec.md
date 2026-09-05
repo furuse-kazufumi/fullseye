@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Moravec コーナー検出(skimage ``feature.corner_moravec``)。各画素を中心とした小窓を上下左右斜めにずらしたときの画素値差の最小値をコーナー強度とする、最も古典的なコーナー検出の一つ(Harris/Shi-Tomasi の前身)。結果は最大絶対値で正規化。
+
+``a`` は窓サイズ(``1+2*int(a*2)`` で 1・3・5 のいずれか)を振る。``b`` は未使用。方向依存の格子模様に弱いという Moravec 法自体の既知の弱点を引き継ぐ。
 
 ## 詳しい使い方ガイド
 

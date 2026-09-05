@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+[0,1] に clip した画素値の平方根を取る。暗部を持ち上げるガンマ的な階調
+圧縮になる(√x は x=0.25 を 0.5 へ、x=0.04 を 0.2 へ押し上げる)。HALCON の
+``sqrt_image``（Calculate the square root of an image.）に相当。
+
+``a``, ``b`` は未使用 —— 固定の平方根写像で調整点はない。強さを変えたいなら
+``gamma_image``(exponent が ``a`` で振れる)を使う。
 
 ## 詳しい使い方ガイド
 

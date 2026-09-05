@@ -3,7 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_area_opening&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">image → image</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>面積オープニング(area opening)。通常のモルフォロジー的開処理が構造要素の形で小さい明部を削るのに対し、こちらは面積(連結画素数)だけで判定し、指定面積未満の明るい連結成分を消す —— 形状に依らず「小さい」ものを落とせる。</p>
+<p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">morphology.area_opening(v, area_threshold=int(16+a*100))</code>` —— a は面積しきい値を 16〜116 画素に振る。b は未使用。connectivity は既定の 1(4 近傍)のまま。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

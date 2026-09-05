@@ -4,7 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;median_rect&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">median_rect</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>矩形メディアンフィルタ。`<code style="color:#22d3bf">median_image</code><code style="color:#22d3bf"> と同じ </code><code style="color:#22d3bf">scipy</code>` 実装だが、</p>
+<p>高さと幅を独立に指定できる(`<code style="color:#22d3bf">size=(k_a, k_b)</code><code style="color:#22d3bf">)。HALCON の </code><code style="color:#22d3bf">median_rect</code>`</p>
+<p>（Compute a median filter with rectangular masks.）に相当。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の高さ、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が窓の幅を、それぞれ </code><code style="color:#22d3bf">{3,5,7,9}</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">_k</code>`)の 4 段階</p>
+<p>で振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

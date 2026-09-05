@@ -17,7 +17,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Photon (Poisson) shot noise -- the quantum floor of every image sensor.
+
+The image is interpreted as a normalised photon rate, scaled by the photon
+scale ``K = 5 + 250*(1-a)``, sampled from a Poisson distribution and scaled
+back: ``Poisson(v*K)/K``. High ``a`` = few photons = very noisy
+(SNR ~ sqrt(K); a=0 -> K=255 near-clean, a=1 -> K=5 photon-starved).
+``b`` adds a small dark-current pedestal (``0.05*b`` in rate units) before
+counting, so even a pure-black frame shows dark noise. The RNG is seeded from
+(a, b) -> the realisation is fixed per knob setting.
 
 ## 詳しい使い方ガイド
 

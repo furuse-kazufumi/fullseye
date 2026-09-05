@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;closing_golay&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">closing_golay</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">region → region</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>円形構造要素（disk, 半径 `<code style="color:#22d3bf">_rad(a)</code>`=1〜4）による二値クロージング（closing、膨張の後に収縮）。小さな穴やくびれを埋める。b は未使用。</p>
+<p>HALCON の `<code style="color:#22d3bf">closing_golay</code>`（Golay アルファベットから選んだ要素でクロージングする演算）とは異なり、この実装は Golay アルファベットの特定要素ではなく単純な円板構造要素で近似する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+局所中央値適応的二値化(skimage ``filters.threshold_local`` の ``method='median'``)。ブロックごとの中央値を局所閾値とし、画素値がそれを上回るかで二値化する。局所平均を使う版よりも外れ値(ノイズ画素)に強い。
+
+``a`` はブロックサイズ(``2*int(a*6)+3`` で 3〜15 の奇数)を振る。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

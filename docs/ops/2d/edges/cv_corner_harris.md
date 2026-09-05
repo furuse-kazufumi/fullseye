@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Harris コーナー応答(OpenCV 実装)。sk_corner_harris と同じ Harris の考え方だが、勾配計算・平滑化のブロックサイズなどを固定パラメータで計算するOpenCV 版。
+
+HALCON の `points_harris` に相当(近似)。実装は ``cv2.cornerHarris(v, blockSize=2, ksize=3, k=0.04)`` を ``signed01`` で ``[0,1]`` へ写した値 —— blockSize(近傍サイズ)・ksize(Sobel 開口)・k(Harris の自由パラメータ)はすべて固定。a, b は未使用 —— skimage 版と違いスケールを振る仕組みが無い、素の Harris 応答。
 
 ## 詳しい使い方ガイド
 

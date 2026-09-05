@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+二項係数(パスカルの三角形)を重みとする分離型平滑化フィルタ。
+``ndimage.correlate1d`` を縦・横に順に掛けることでガウシアンを離散二項核で
+近似する ―― HALCON の ``binomial_filter``（Smooth an image using the
+binomial filter.）が使う核と同じ発想の実装。
+
+``a`` が核サイズを ``{3,5,7,9}`` の 4 段階(``_k(a)``)で振る。``b`` は
+未使用。ガウシアンぼかしより計算が軽く、リンギングも出にくい。
 
 ## 詳しい使い方ガイド
 

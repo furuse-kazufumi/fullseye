@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+連結成分のうち最大の面積を持つものだけを残す(``_largest_label`` で
+選択)。HALCON の ``select_shape_std``（Select regions of a given shape.）
+は ``max_area`` を含む複数の標準基準を選べる演算子だが、ここでは
+「面積最大」1 種類に固定している(近似)。
+
+``a``, ``b`` は未使用。複数領域が同面積の場合は ``argmax`` の実装依存で
+どれか 1 つが選ばれる。
 
 ## 詳しい使い方ガイド
 

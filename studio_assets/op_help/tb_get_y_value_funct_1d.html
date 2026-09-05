@@ -3,7 +3,19 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_get_y_value_funct_1d&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">signal → feature</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>The y-value at (fractional) position *x* (HALCON `<code style="color:#22d3bf">get_y_value_funct_1d</code>`).</p>
+<p>With `<code style="color:#22d3bf">interpolate=True</code>` (default) the value is linearly interpolated</p>
+<p>between the two neighbouring samples; with `<code style="color:#22d3bf">interpolate=False</code>` the nearest</p>
+<p>sample is returned.</p>
+<p>Domain policy (documented, not extrapolated): *x* outside `<code style="color:#22d3bf">[0, n-1]</code>`</p>
+<p><b>clamps</b> to the boundary value (`<code style="color:#22d3bf">numpy.interp</code>` end-hold semantics /</p>
+<p>index clip). HALCON&#x27;s `<code style="color:#22d3bf">&#x27;zero&#x27;</code>`-border variant is not offered.</p>
+<p>:param y: 1-D function, at least 1 sample.</p>
+<p>:param x: finite scalar position in index units.</p>
+<p>:param interpolate: linear interpolation (True) or nearest sample (False).</p>
+<p>:returns: float.</p>
+<p>:raises ValueError: non-1-D / NaN / Inf input, empty input, or non-finite *x*.</p>
+<p>Typed bridge of the 1d op `<code style="color:#22d3bf">get_y_value_funct_1d</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

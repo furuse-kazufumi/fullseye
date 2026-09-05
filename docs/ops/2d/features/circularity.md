@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+円形度 ``4π・面積 / 周囲長²``(1 に近いほど真円に近い)。連結成分が
+複数ある場合は最大面積のものだけを評価する。HALCON の ``circularity``
+（Shape factor for the circularity (similarity to a circle) of a
+region.）に相当。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

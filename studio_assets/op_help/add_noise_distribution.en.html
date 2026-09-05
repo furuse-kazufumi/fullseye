@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;add_noise_distribution&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">add_noise_distribution</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>画像に加法性ノイズを加える。実装はガウス（正規分布）ノイズのみで、`<code style="color:#22d3bf">add_noise_white</code><code style="color:#22d3bf"> と同じ </code><code style="color:#22d3bf">_sh_noise</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">gaussian</code><code style="color:#22d3bf"> 分岐を共有する。乱数は a から決まる固定シード（</code><code style="color:#22d3bf">int(a*997)+7</code>`）で発生させるため同じ a なら毎回同じノイズになる（決定的）。b がノイズの標準偏差を 0.02〜0.22 に振る。</p>
+<p>HALCON の `<code style="color:#22d3bf">add_noise_distribution</code>`（任意の確率分布（ヒストグラム指定）に従うノイズを加える演算）とは異なり、この実装は常にガウス分布のノイズしか生成できない近似 —— 分布形状の指定は反映されない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

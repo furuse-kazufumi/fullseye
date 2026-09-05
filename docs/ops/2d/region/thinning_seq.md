@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+領域を細線化する。実装は thinning_golay と同一（skimage の ``thin``、収束するまで反復する Guo–Hall 型細線化）で、a, b は未使用。
+
+HALCON の ``thinning_seq``（構造要素を逐次適用して細線化していく演算）に相当する近似だが、この backend では thinning_golay と実装上の区別がない。
 
 ## 詳しい使い方ガイド
 

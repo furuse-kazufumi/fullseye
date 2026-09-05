@@ -17,7 +17,23 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `signal → signal`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Iterated moving-average smoothing (HALCON ``smooth_funct_1d_mean``).
+
+    Applies a length-*size* uniform (box) filter *iterations* times with
+    ``nearest`` (edge-replicating) boundary handling. Repeated box filtering
+    approaches a Gaussian (central limit theorem).
+
+    :param y: 1-D function, at least 1 sample.
+    :param size: window length in samples; truncated to int, must be >= 1.
+        **Even sizes are accepted but shift the window origin by half a sample**
+        (scipy's origin convention) — prefer odd sizes for a symmetric window.
+    :param iterations: number of passes; truncated to int, must be >= 0.
+        ``iterations=0`` returns the (float64-coerced) input unchanged.
+    :returns: smoothed float64 array, same length as *y*.
+    :raises ValueError: non-1-D / NaN / Inf input, empty input, ``size < 1``,
+        or ``iterations < 0``.
+
+Typed bridge of the 1d op ``smooth_funct_1d_mean`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``size`` (default 3) and ``b`` drives ``iterations`` (default 1).
 
 ## 参考(サンプルデータ・文献)
 

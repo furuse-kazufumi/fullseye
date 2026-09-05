@@ -17,7 +17,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Mean-curvature motion / level-set smoothing (curve-shortening flow).
+
+Integrates u_t = |grad u| * div(grad u / |grad u|) in the numerically stable
+algebraic form
+    u_t = (u_xx u_y^2 - 2 u_x u_y u_xy + u_yy u_x^2) / (u_x^2 + u_y^2 + eps),
+i.e. every level curve of the image moves along its normal at a speed equal
+to its own curvature: small blobs and boundary wiggles vanish, straight edges
+stay put. ``a`` sets the number of steps 1 + int(29a), ``b`` the time step
+dt = 0.05 + 0.2b.
 
 ## 詳しい使い方ガイド
 

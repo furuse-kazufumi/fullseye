@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ユークリッド距離変換(``ndimage.distance_transform_edt``)を最大値で
+正規化した画像。各前景画素について最も近い背景画素までの距離を表す ――
+値が大きいほど領域の「奥」にある画素。出力は ``region`` ではなく
+``image`` 型になる点に注意。HALCON の ``distance_transform``（Compute the
+distance transformation of a region.）に相当。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

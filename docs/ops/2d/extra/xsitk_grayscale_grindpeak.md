@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+グレースケール山削り(SimpleITK ``GrayscaleGrindPeak``、xsitk_grayscale_fillhole の双対)。モルフォロジー再構成により、周囲より明るい局所的な山(ピーク)を周囲の高さまで削り落とす。ハイライトのスパイク除去に使う。
+
+パラメータは無く、``a``, ``b`` は未使用。出力は [0,1] にクリップ。
 
 ## 詳しい使い方ガイド
 

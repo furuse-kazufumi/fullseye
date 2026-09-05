@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ガウシアンぼかし(シグマ ``0.5+2.0*a``)一本で近似した汎用スムージング。
+HALCON の ``smooth_image``（Smooth an image using various filters.）は
+Deriche/Gauss/Mean など複数のフィルタ種別を選べる万能演算子だが、ここでは
+ガウシアン 1 種類に単純化している(近似の限界)。
+
+``a`` がシグマを 0.5〜2.5 の範囲で振る。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

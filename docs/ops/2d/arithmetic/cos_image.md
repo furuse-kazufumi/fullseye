@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+``(cos(2πx) + 1) / 2`` による周期 LUT。``sin_image`` と位相が π/2 ずれた
+版で、x=0 で最大(1)、x=0.5 で最小(0)に達してから再び上がる。HALCON の
+``cos_image``（Calculate the cosine of an image.）の代役。
+
+``a``, ``b`` は未使用。``sin_image`` と同じく非単調・非可逆な周期写像なので、
+一般のコントラスト補正ではなく擬似的な等高線表現などに使う。
 
 ## 詳しい使い方ガイド
 

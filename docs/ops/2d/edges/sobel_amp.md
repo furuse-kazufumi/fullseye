@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Sobel 勾配の振幅(``hypot(sobel_x, sobel_y)`` を正規化)。縦横それぞれの
+1 次微分カーネルから勾配ベクトルの大きさを求める最も基本的なエッジ検出。
+HALCON の ``sobel_amp``（Detect edges (amplitude) using the Sobel
+operator.）に相当。
+
+``a``, ``b`` は未使用 ―― 固定カーネル 1 種類のみで、シグマや閾値のような
+調整点は無い(ぼかしてから使いたい場合は前段に ``gauss_filter`` 等を挟む)。
 
 ## 詳しい使い方ガイド
 

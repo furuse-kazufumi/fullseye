@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+円板構造要素で region を収縮(erosion)する。HALCON の ``erosion1``
+(region を収縮する)に相当。
+
+半径 ``r = 1 + int(a*4)`` の円板を構造要素として
+``scipy.ndimage.binary_erosion`` を呼ぶ。``b`` は未使用。境界の外側画素を
+削り、細い突起やノイズ画素を消す。
 
 ## 詳しい使い方ガイド
 

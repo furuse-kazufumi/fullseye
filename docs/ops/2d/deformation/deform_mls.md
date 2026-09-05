@@ -17,7 +17,21 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Moving-least-squares image deformation, affine variant (Schaefer 2006).
+
+A 5x5 grid of control points ``p_i`` is displaced to
+``q_i = p_i + amp*[sin(2 pi gx), cos(2 pi gy)]`` (gy, gx = normalised
+control coordinates). For every destination pixel the weighted
+least-squares affine map is re-solved with the weights
+``w_i = 1/|p_i - v|^(2 alpha)``, so the warp is a *different* affine at every
+pixel -- smooth, interpolating at the control points, and exact on affine
+data. The backward map is obtained by solving the same MLS problem with the
+roles of ``p`` and ``q`` swapped (the resampling formulation of the paper's
+section 4), which is the exact inverse whenever the control data is affine
+and a smooth approximation of it otherwise. ``a`` sets the amplitude
+``amp = 0.12*a*min(H,W)``, ``b`` the falloff ``alpha = 0.5 + 1.5b`` (large
+alpha = tightly local deformation). ``a = 0`` gives ``q = p``, hence the
+identity (up to sub-pixel resampling error).
 
 ## 詳しい使い方ガイド
 

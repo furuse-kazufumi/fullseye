@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Prewitt フィルタによる勾配強度（エッジ検出）。HALCON の ``prewitt_amp``（Detect edges (amplitude) using the Prewitt operator.）に相当。
+
+縦横それぞれの Prewitt 応答のユークリッドノルムを取り、``_norm`` で正規化する。``a``, ``b`` は未使用。Sobel と同系統だが平均カーネル（重み無し）を使うぶんノイズにはやや弱い。
 
 ## 詳しい使い方ガイド
 

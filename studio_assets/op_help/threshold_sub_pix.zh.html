@@ -4,7 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;threshold_sub_pix&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">threshold_sub_pix</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → contour</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>マーチングスクエア法(`<code style="color:#22d3bf">skimage.measure.find_contours</code>`)によるレベル</p>
+<p>クロッシング(等高線)抽出。指定した階調レベル(`<code style="color:#22d3bf">0.2+0.5*a</code>`)を横切る位置を</p>
+<p>サブピクセル精度で輪郭として返す。HALCON の `<code style="color:#22d3bf">threshold_sub_pix</code>`</p>
+<p>（Extract level crossings from an image with subpixel accuracy.）に相当。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がクロッシングを取るレベルを振る。</code><code style="color:#22d3bf">b</code>` は未使用。skimage が無い</p>
+<p>環境ではこの分岐は呼べない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

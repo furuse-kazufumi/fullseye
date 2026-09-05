@@ -3,7 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tf_log_polar&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>log_polar: resample the image on a log-polar grid about its centre.</p>
+<p>Output row = log-radius (log-spaced from ~1px to `<code style="color:#22d3bf">rmax</code>`), output column =</p>
+<p>angle (0..2pi). A scaling of the source about the centre becomes a vertical</p>
+<p>(row) shift and a rotation becomes a horizontal (column) shift -- the defining</p>
+<p>property of the log-polar transform. `<code style="color:#22d3bf">a</code>` scales the maximum sampled radius;</p>
+<p>`<code style="color:#22d3bf">b</code>` adds a rotation offset (an angular shift) to demonstrate rotation -&gt;</p>
+<p>column-shift.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

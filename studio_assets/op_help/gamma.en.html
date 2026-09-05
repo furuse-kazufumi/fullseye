@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;gamma&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">pow_image</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>ガンマ補正（べき乗変換）。HALCON の `<code style="color:#22d3bf">pow_image</code>`（Raise an image to a power.）に相当。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が指数 γ を </code><code style="color:#22d3bf">0.5〜2.0</code><code style="color:#22d3bf"> に振る（</code><code style="color:#22d3bf">v**γ</code><code style="color:#22d3bf">、入力は先に </code><code style="color:#22d3bf">[0,1]</code><code style="color:#22d3bf"> へ clip）。</code><code style="color:#22d3bf">b</code>` は未使用。γ&lt;1 で暗部を持ち上げ（明るくする）、γ&gt;1 で暗部をさらに沈める（コントラストを付ける）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+円形構造要素（disk, 半径 ``_rad(a)``=1〜4）による二値クロージング（closing、膨張の後に収縮）。小さな穴やくびれを埋める。b は未使用。
+
+HALCON の ``closing_golay``（Golay アルファベットから選んだ要素でクロージングする演算）とは異なり、この実装は Golay アルファベットの特定要素ではなく単純な円板構造要素で近似する。
 
 ## 詳しい使い方ガイド
 

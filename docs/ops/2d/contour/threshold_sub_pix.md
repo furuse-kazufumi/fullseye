@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → contour`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+マーチングスクエア法(``skimage.measure.find_contours``)によるレベル
+クロッシング(等高線)抽出。指定した階調レベル(``0.2+0.5*a``)を横切る位置を
+サブピクセル精度で輪郭として返す。HALCON の ``threshold_sub_pix``
+（Extract level crossings from an image with subpixel accuracy.）に相当。
+
+``a`` がクロッシングを取るレベルを振る。``b`` は未使用。skimage が無い
+環境ではこの分岐は呼べない。
 
 ## 詳しい使い方ガイド
 

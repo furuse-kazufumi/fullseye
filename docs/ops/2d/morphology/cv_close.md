@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+グレー値モルフォロジー閉処理(closing、OpenCV 実装)。膨張してから収縮することで、構造要素より小さい暗い穴・隙間を埋める(cv_open の逆の効果)。
+
+HALCON の `gray_closing`(Perform a gray value closing on an image.)に相当。実装は ``cv2.morphologyEx(v, MORPH_CLOSE, se)``(楕円形構造要素、サイズは cv_open と同じ ``3+2*int(a*3)``)—— a は構造要素サイズを 3〜9 に振る。b は未使用。
 
 ## 詳しい使い方ガイド
 

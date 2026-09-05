@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+矩形度(``skimage`` の ``extent`` = 面積 / 外接矩形の面積)。値が 1 に
+近いほど、領域が自身の外接矩形を隙間なく埋めていることを示す。HALCON の
+``rectangularity``（Shape factor for the rectangularity of a region.）に
+相当。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

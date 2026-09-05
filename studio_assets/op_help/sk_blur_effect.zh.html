@@ -3,7 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_blur_effect&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → feature</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>ぼけ具合の推定(1 スカラー特徴量)。画像を意図的に少し再ぼかしして、元と再ぼかし後でどれだけエッジの鋭さが変わるかを比較する手法で、0(ぼけ無し)〜1(最大限ぼけている)のスコアを返す —— 参照画像なしでピント/ブレを定量化できる。</p>
+<p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">measure.blur_effect(v)</code>`。a, b は未使用 —— 再ぼかしフィルタのサイズは既定値(11)のまま。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

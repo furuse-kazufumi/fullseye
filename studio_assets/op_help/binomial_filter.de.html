@@ -4,7 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;binomial_filter&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">binomial_filter</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>二項係数(パスカルの三角形)を重みとする分離型平滑化フィルタ。</p>
+<p>`<code style="color:#22d3bf">ndimage.correlate1d</code>` を縦・横に順に掛けることでガウシアンを離散二項核で</p>
+<p>近似する ―― HALCON の `<code style="color:#22d3bf">binomial_filter</code>`（Smooth an image using the</p>
+<p>binomial filter.）が使う核と同じ発想の実装。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が核サイズを </code><code style="color:#22d3bf">{3,5,7,9}</code><code style="color:#22d3bf"> の 4 段階(</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">)で振る。</code><code style="color:#22d3bf">b</code>` は</p>
+<p>未使用。ガウシアンぼかしより計算が軽く、リンギングも出にくい。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

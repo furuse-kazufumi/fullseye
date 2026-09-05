@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `points → signal`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+source から全点への測地距離(kNN グラフ上 Dijkstra)。→ (N,) float(不達は inf)。
+
+2-D 進化レジストリへ橋渡しした 3d の op ``geodesic_distances``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。``a`` が ``k``(既定 8)を振る。``b`` は未使用。
 
 ## 参考(サンプルデータ・文献)
 

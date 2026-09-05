@@ -19,7 +19,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+実装は ``anisotropic_diffusion`` と同一(``kind: "anisotropic"``)。
+本来の coherence-enhancing diffusion は構造テンソルの固有ベクトルに沿って
+拡散方向を制御する(線状構造をつなげる)手法だが、この代役ではその構造
+テンソル計算を行わず、単純な Perona-Malik 異方性拡散で代用している
+(近似の限界 ―― 線状構造の連結効果は再現されない)。HALCON の
+``coherence_enhancing_diff``（Perform a coherence enhancing diffusion of
+an image.）の代役。
+
+``a`` が反復回数、``b`` が伝導度閾値 K を振る。両方が使われる。
 
 ## 詳しい使い方ガイド
 

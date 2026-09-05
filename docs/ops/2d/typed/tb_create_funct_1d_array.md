@@ -17,7 +17,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `signal → signal`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+A 1-D function from equidistant samples (HALCON ``create_funct_1d_array``).
+
+    Pure validation + float64 coercion: the returned array *is* the function,
+    on the implicit index grid. Accepts an empty sequence (an empty function).
+
+    :param y: 1-D sample sequence.
+    :raises ValueError: non-1-D / NaN / Inf input.
+
+Typed bridge of the 1d op ``create_funct_1d_array`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

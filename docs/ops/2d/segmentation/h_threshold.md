@@ -19,7 +19,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+帯域しきい値処理(``a < x < a+0.5+0.5*b`` を満たす画素を前景とする)。
+HALCON の ``threshold``(Segment an image using global threshold.)は
+Min/Max の 2 値を直接指定する演算子だが、この代役では下限を ``a`` から、
+帯域幅を ``b`` から導出する 1 パラメータ相当の簡略化になっている。登録名は
+``threshold`` が Python 側で予約語的に扱われるため ``h_threshold`` になる
+(spec の ``halcon`` フィールドは ``threshold`` のまま)。
+
+``a`` が下限しきい値(0〜1)を、``b`` が帯域幅(0〜0.5 の追加分)を振る。
+両方が使われる。
 
 ## 詳しい使い方ガイド
 

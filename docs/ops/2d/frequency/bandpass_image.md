@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+周波数領域で指定した帯域だけを通すバンドパスフィルタ(低域と高域を
+遮断)、逆 FFT で実空間に戻す。``highpass_image`` と同様に零平均の符号つき
+応答なので ``signed01`` で [0,1] に写像する。HALCON の ``bandpass_image``
+（Edge extraction using bandpass filters.）に相当。
+
+``a`` が下限カットオフ、``b`` が上限カットオフを振る。両方が使われる。
+帯域(``b`` 側の上限)を下限より下に設定すると通過域が空になり出力はほぼ
+0.5(ゼロ)一色になる。
 
 ## 詳しい使い方ガイド
 

@@ -19,7 +19,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+領域(2 値マスク)を転置する(``x.T``、対角線に関する鏡映=行と列の
+入れ替え)。カテゴリは geometry だが in/out は ``region``。幾何変換の一種
+として ``_sh_geom`` で実装されているが、転置は補間を伴わないため
+``build()`` の ``_rebinarise`` を通しても値は変化しない(すでに {0,1} の
+まま)。HALCON の ``transpose_region``（Reflect a region about a point.）に
+相当(HALCON の「点に関する反転」とは厳密には別の変換で、行列の転置=
+対角線に関する反転という近似)。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

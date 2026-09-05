@@ -6,14 +6,21 @@
 1. ``backend_safe.guard`` が ``__doc__`` を転記していなかった(82 本)。実装は
    ちゃんと書いてあるのに、ガードで包んだ瞬間に消えていた。
 2. ``backends_typed`` の橋が、カタログ側の説明を捨てていた(143 本)。
-3. 残り 562 本は本当に誰も書いていなかった。
+3. ``backends_regions3`` / ``backends_segment2`` / ``backends_subpix`` /
+   ``backends_measure1d`` が ``build()`` 内に**自前のラッパ**を持っていて、
+   そこでも同じ握り潰しが起きていた(28 本)。
+4. 残りは本当に誰も書いていなかった(562 本)。
 
-1 と 2 は配管の穴で、直せば説明が**戻ってくる**。この 2 つには専用の回帰
-テストを置く —— 同じ握り潰しが再発したら「説明が減った」ではなく
-「ガードが説明を落とした」と名指しで落ちてほしいから。
+1〜3 は配管の穴で、直せば説明が**戻ってくる**。ここが本題:
+**「仕組みがある」は「全経路が通る」ではない**。guard を直した時点では
+直ったつもりだったが、同型のラッパ族はほかに 5 つあり、そのうち 4 つが
+同じ穴を持っていた。だから個別の回帰テストに加えて、
+:func:`test_no_wrapper_family_swallows_the_description` で**族を数える**。
 
-3 は書くしかない。ここで数えるのは**填め物ではなく説明があるか**で、
-``tools/opdocs.py`` が読むのと同じ経路(``fn.__doc__`` → ``Op.doc``)を見る。
+4 は書くしかない。ここで数えるのは**填め物ではなく説明があるか**で、
+``tools/opdocs.py`` が読むのと同じ経路(``Op.doc`` → ``fn.__doc__``)を見る。
+順番が ``Op.doc`` 優先なのは、汎用ファクトリが返す**共有の関数オブジェクト**
+の docstring を 56 op で使い回してしまうのを避けるため(``backends_r3``)。
 """
 from __future__ import annotations
 
@@ -31,7 +38,7 @@ if ROOT not in sys.path:
 
 def _desc(op) -> str:
     """opdocs が読むのと同じ順で op の説明を引く。"""
-    return ((getattr(op.fn, "__doc__", None) or "") or (getattr(op, "doc", "") or "")).strip()
+    return ((getattr(op, "doc", "") or "") or (getattr(op.fn, "__doc__", None) or "")).strip()
 
 
 def test_every_2d_op_says_what_it_does():
@@ -135,8 +142,7 @@ def test_backend_doc_tables_do_not_name_ops_that_do_not_exist():
     import ops
     live = {op.name for op in ops.REGISTRY}
     stale = {}
-    for mod in sorted({"backends", "backends_pil", "backends_color", "backends_kornia",
-                       "backends_ski2", "backends_scipy", "backends_extra"}):
+    for mod in _DOC_TABLE_MODULES:
         try:
             m = __import__(mod)
         except Exception:
@@ -146,3 +152,74 @@ def test_backend_doc_tables_do_not_name_ops_that_do_not_exist():
         if gone:
             stale[mod] = gone
     assert not stale, "DOCS に居ない op が残っている: %s" % stale
+
+
+#: ``DOCS`` 表を持ちうる backend。増えたらここに足す(足し忘れは
+#: :func:`test_every_doc_table_module_is_listed` が拾う)。
+_DOC_TABLE_MODULES = (
+    "backends", "backends_pil", "backends_color", "backends_kornia",
+    "backends_ski2", "backends_scipy", "backends_extra", "backends_r3",
+    "backends_regions3", "backends_segment2", "backends_subpix",
+    "backends_measure1d", "backends_macro",
+)
+
+
+def test_every_doc_table_module_is_listed():
+    """``DOCS`` を持つ backend が上の一覧から漏れていないこと。"""
+    import glob
+    import re
+    missing = []
+    for path in sorted(glob.glob(os.path.join(ROOT, "backends*.py"))):
+        mod = os.path.splitext(os.path.basename(path))[0]
+        if mod in _DOC_TABLE_MODULES:
+            continue
+        with open(path, encoding="utf-8") as f:
+            if re.search(r"^DOCS\s*[:=]", f.read(), re.M):
+                missing.append(mod)
+    assert not missing, "DOCS を持つのに一覧に無い backend: %s" % missing
+
+
+def test_no_wrapper_family_swallows_the_description():
+    """op を包むラッパ族が、どれも ``__doc__`` を落とさないこと。
+
+    2026-09-05 の教訓: ``guard`` を直しても足りなかった —— 同型のラッパは
+    ``backend_safe.guard`` / ``backends_typed._make_runner`` / ``backends_r3._make``
+    / regions3・segment2・subpix・measure1d の自前ラッパ、と**族が 6 つ**あり、
+    4 つが同じ穴を持っていた。**仕組みの有無ではなく族を数える**
+    (memory: 同型ラッパの家族数を数える。24 中 1 だった、の再来を防ぐ)。
+
+    検査のしかた: 説明を持つ実装関数を各族のラッパに通して、ラッパ越しに
+    説明が読めるかを見る。族の実体はレジストリから機械的に集めるので、
+    新しい族が増えたら**登録した瞬間にここへ現れる**。
+    """
+    import collections
+    import inspect
+    import ops
+
+    def impl(v, a, b):
+        """ラッパ越しでも読めるべき説明。"""
+        return v
+
+    fams = collections.defaultdict(list)
+    for op in ops.REGISTRY:
+        q = getattr(op.fn, "__qualname__", "")
+        if "<locals>" in q:
+            src = os.path.basename(inspect.getsourcefile(op.fn) or "?")
+            fams[(src, q.split(".<locals>")[0])].append(op)
+    # ラッパで包まれた op は全体の大半。族が数えられなくなったら検出が壊れている
+    assert len(fams) >= 6, "ラッパ族の検出が壊れている(%d 族しか見えない)" % len(fams)
+    assert sum(len(v) for v in fams.values()) > 500, "包まれた op が急に減った"
+
+    # **族の全員**を見る。代表 1 本だけだと、DOCS のキー打ち間違いで 2 本目以降が
+    # 空になっても素通りする(Codex の敵対レビューで指摘された穴、2026-09-05)。
+    blind = {}
+    for (src, key), members in sorted(fams.items()):
+        gone = [op.name for op in members if not _desc(op)]
+        if gone:
+            blind["%s:%s" % (src, key)] = "%d/%d 本が無説明 %s" % (
+                len(gone), len(members), gone[:6])
+    assert not blind, "説明を落としているラッパ族: %s" % blind
+
+    # guard は直接も検査する(族の代表が偶然 DOCS を持っていても見逃さない)
+    import backend_safe
+    assert (backend_safe.guard(impl, "image").__doc__ or "").strip().startswith("ラッパ越し")

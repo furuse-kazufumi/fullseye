@@ -17,7 +17,16 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+OpenCV 版 ORB(Oriented FAST and Rotated BRIEF)キーポイント検出数。
+
+``cv2.ORB_create`` で検出のみ行い(記述子は計算しない)、検出できた
+キーポイント数を返す(feature 出力)。``xsk_orb_count``(skimage 版)
+と同じ発想の別実装で、検出器の実装が異なるため件数が一致するとは
+限らない。
+
+``a`` が要求する最大特徴点数 ``nfeatures`` を 50〜500 の範囲で振る
+(上限であり、実際の検出数は画像内容に依存してそれより少なくなる)。
+``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

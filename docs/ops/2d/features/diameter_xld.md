@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `contour → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+輪郭を包含する最小外接円(``cv2.minEnclosingCircle``)の直径を画像の
+最大辺長で正規化した値。HALCON の ``diameter_xld``（Maximum distance
+between two contour or polygon points.）が定義する「輪郭上の 2 点間の
+最大距離」とは厳密には異なる指標(外接円の直径による近似、最小外接円は
+必ずしも最遠 2 点を結ぶ直径と一致しない)。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

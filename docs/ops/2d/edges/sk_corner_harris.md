@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Harris コーナー応答(skimage 実装)。勾配の構造テンソルから、平坦部/エッジ/コーナーを見分ける符号付きスコアを計算する古典的なコーナー検出器。
+
+HALCON の `points_harris`(Detect points of interest using the Harris operator.)に相当(近似。座標点ではなく応答画像を返す)。実装は ``feature.corner_harris(v, sigma=0.5+2.0*a)`` を ``signed01`` で ``[0,1]`` へ写した値 —— a は微分に使うガウス σ を 0.5〜2.5 に振る。b は未使用。Harris の自由パラメータ k は skimage の既定値(0.05)のまま固定。OpenCV 版のcv_corner_harris とはパラメータの振り方が異なるので同一結果にはならない。
 
 ## 詳しい使い方ガイド
 

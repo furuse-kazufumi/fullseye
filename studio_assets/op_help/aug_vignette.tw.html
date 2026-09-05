@@ -3,7 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;aug_vignette&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">image → image</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>Radial lens vignetting following the natural cos^4 falloff law. With</p>
+<p>`<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> the normalised distance from the image centre and </code><code style="color:#22d3bf">R = 0.35 + 1.15*b</code>`</p>
+<p>the falloff radius, the transmission is</p>
+<p>`<code style="color:#22d3bf">cos(atan(r/R))^4 = 1/(1 + (r/R)^2)^2</code><code style="color:#22d3bf"> -- the textbook cos^4 law. </code><code style="color:#22d3bf">a</code>`</p>
+<p>blends it in: `<code style="color:#22d3bf">out = v * (1 - a + a*falloff)</code>`, so a=0 is a no-op and a=1 is</p>
+<p>full vignetting. Centre stays brightest; strictly darkening, never amplifying.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

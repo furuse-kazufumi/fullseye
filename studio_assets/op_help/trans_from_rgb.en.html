@@ -4,7 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;trans_from_rgb&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">trans_from_rgb</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">color → color</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>RGB 画像を別の色空間（HSV / Lab / YUV / XYZ）へ変換する。HALCON の</p>
+<p>`<code style="color:#22d3bf">trans_from_rgb</code>`（RGB 色空間から任意の色空間への変換）に相当。</p>
+<p>内部は OpenCV の `<code style="color:#22d3bf">cv2.cvtColor</code>` を 8bit 経由で呼ぶだけで、変換先の</p>
+<p>色空間そのものの定義は OpenCV の実装に従う。</p>
+<p>a は変換先を 4 通り（HSV, Lab, YUV, XYZ の順）から選ぶ</p>
+<p>（`<code style="color:#22d3bf">min(3, int(a * 4))</code>`）。b は未使用。8bit 量子化を経由するため、</p>
+<p>逆変換（`<code style="color:#22d3bf">trans_to_rgb</code>`）と組み合わせても厳密には可逆でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

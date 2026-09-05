@@ -441,6 +441,10 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             except Exception:
                 shp = (1, 1)
             return {"shape": (int(shp[0]), int(shp[1])), "cs": []}
+        # ラッパは振る舞いを包むのであって説明を消してはいけない
+        # (backend_safe.guard と同じ穴。同型のラッパ族が 4 つあった)。
+        w.__name__ = getattr(fn, "__name__", "op")
+        w.__doc__ = getattr(fn, "__doc__", None)
         return w
 
     return [

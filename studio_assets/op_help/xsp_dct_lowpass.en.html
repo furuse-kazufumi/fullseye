@@ -3,7 +3,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsp_dct_lowpass&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>DCT 係数を低周波の正方ブロックだけ残してから逆変換するローパスフィルタ。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は残す低周波係数ブロックの一辺の長さを決める（</code>`keep = max(2,</p>
+<p>int((0.15 + 0.6*a) * min(H, W)))`<code style="color:#22d3bf">、</code><code style="color:#22d3bf">a</code>` が大きいほど高周波まで残り</p>
+<p>ぼけが弱くなる）。`<code style="color:#22d3bf">b</code>` は未使用。ガウシアンぼかしと違い矩形の周波数</p>
+<p>マスクを掛けるので、強くかけるとリンギング（波打ち）が出やすい。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

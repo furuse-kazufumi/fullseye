@@ -19,7 +19,11 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+領域内の穴が占める面積比 ``(穴埋め後面積 - 元面積) / 穴埋め後面積``。
+0 に近いほど穴が無く、1 に近いほど大半が穴という極端な形状を示す。HALCON
+の ``area_holes``（Compute the area of holes of regions.）に相当。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

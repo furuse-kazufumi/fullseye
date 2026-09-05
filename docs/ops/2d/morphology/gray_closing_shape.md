@@ -19,7 +19,11 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+円盤形構造要素を使うグレースケールクロージング。``gray_closing`` との
+違いは構造要素の形のみ。HALCON の ``gray_closing_shape``（Perform a gray
+value closing with a selected mask.）に相当(円形固定の近似)。
+
+``a`` が構造要素の半径を 1〜4 の範囲(``_rad(a)``)で振る。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `contour → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+輪郭(点列)を画素グリッドにラスタライズしてから、``1+2*a`` 回だけ
+二値膨張して太らせ、連結した領域マスクを作る(細い線のままだと ``region``
+の {0,1} 契約上「線が繋がって見えない」ことがあるための補強)。HALCON の
+``gen_region_contour_xld``（Create a region from an XLD contour.）に相当。
+
+``a`` が膨張の反復回数(=線の太さ)を振る。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Scharr 勾配の大きさ(OpenCV 実装)。水平・垂直それぞれの Scharr 微分の絶対値を足し合わせて勾配強度とする —— sk_scharr(skimage 版)と同種のエッジ検出だが、合成方法(平方和のノルムではなく絶対値の和)が異なるため同一結果にはならない。
+
+HALCON の `edges_image` に相当(近似)。実装は ``|cv2.Scharr(v,CV_64F,1,0)| + |cv2.Scharr(v,CV_64F,0,1)|`` を正規化したもの。a, b は未使用。
 
 ## 詳しい使い方ガイド
 

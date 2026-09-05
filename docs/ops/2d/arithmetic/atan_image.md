@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+``arctan(x) / (π/2)`` で [0,1] を [0,1] に写す逆正接 LUT。中心付近
+(x≈0.5)で傾きが最大、両端に近づくほど傾きが緩やかになる ―― ``asin_image``
+とは逆に**両端でなく中間のコントラストを強調する**S字カーブ。HALCON の
+``atan_image``（Calculate the arctangent of an image.）の代役。
+
+``a``, ``b`` は未使用。傾きの急峻さを変える調整点は無い固定カーブ。
 
 ## 詳しい使い方ガイド
 

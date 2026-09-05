@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;frei_dir&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">frei_dir</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>Frei-Chen 型カーネルによるエッジ方向（角度）マップ。水平カーネル `<code style="color:#22d3bf">_FREI[0]</code><code style="color:#22d3bf">（行/縦方向勾配）と垂直カーネル </code><code style="color:#22d3bf">_FREI[1]</code><code style="color:#22d3bf">（列/横方向勾配）への畳み込み応答から </code><code style="color:#22d3bf">arctan2(gy, gx)</code><code style="color:#22d3bf"> を計算し、</code><code style="color:#22d3bf">sobel_dir</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">prewitt_dir</code>` と同じ規約で [0,1] に写す（0/1 が -180°、0.5 が 0°）。a, b は未使用。</p>
+<p>HALCON の `<code style="color:#22d3bf">frei_dir</code><code style="color:#22d3bf">（Frei-Chen 演算子でエッジの振幅と方向を検出する演算）のうち方向成分に相当する近似。振幅は </code><code style="color:#22d3bf">frei_amp</code>` 側が担当する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

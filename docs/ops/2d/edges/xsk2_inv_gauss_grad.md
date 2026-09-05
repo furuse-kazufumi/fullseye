@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+逆ガウシアン勾配画像（Active Contour / GAC のエッジ停止関数）。``skimage.segmentation.inverse_gaussian_gradient`` を呼ぶ。
+
+a がエッジ感度 alpha（``50 + 150*a``、範囲 50〜200。大きいほど弱いエッジでも停止関数の値が下がる＝止まりやすくなる）を振る。b は未使用。値はエッジで小さく（0 に近く）平坦部で 1 に近い——geodesic activecontour 系のセグメンテーションでエッジ停止項として使うことを想定した出力で、そのまま見た目のエッジ画像として使うと通常のエッジ検出とは明暗が逆に見える。
 
 ## 詳しい使い方ガイド
 

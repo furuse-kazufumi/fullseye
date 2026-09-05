@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+実装は ``bilateral_filter`` と同一(``kind: "bilateral"``)。本来の
+ガイド付きフィルタ(guided filter、局所線形モデルに基づくエッジ保存平滑化)
+とは数学的に別のアルゴリズムだが、この代役ではバイラテラルフィルタで
+代用している(似た用途=エッジ保存平滑化を満たすための近似、結果の数値は
+一致しない)。HALCON の ``guided_filter``（Guided filtering of an image.）
+の代役。
+
+``a`` が空間シグマ、``b`` が輝度シグマを振る。両方が使われる。
 
 ## 詳しい使い方ガイド
 

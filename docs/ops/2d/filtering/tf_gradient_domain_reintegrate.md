@@ -17,7 +17,16 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+gradient_domain_reintegrate: threshold the gradient, then Poisson-reintegrate.
+
+The forward gradient (gx, gy) is computed, gradient vectors whose magnitude is
+below a threshold ``t = a * max|grad|`` are zeroed (small texture/noise
+gradients discarded, strong edges kept), and the image is reconstructed from
+the modified gradient field by solving the Poisson equation
+``lap f = div(g)`` with an FFT solver. With ``a == 0`` every gradient is kept
+and the original image is recovered (up to a constant); with ``a > 0`` flat
+regions are flattened while edges survive -- an edge-preserving gradient-domain
+filter. ``b`` is unused. Output rescaled to [0,1].
 
 ## 詳しい使い方ガイド
 

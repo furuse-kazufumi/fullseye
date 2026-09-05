@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ガウシアンぼかし(``scipy.ndimage.gaussian_filter``、シグマ ``0.3+2.7*a``)
+による平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss
+functions.）の代役 ―― HALCON は離散ガウス核(整数演算)、こちらは連続ガウス核
+の scipy 実装で、近似ではあるが結果は非常に近い。
+
+``a`` がシグマを 0.3〜3.0 の範囲で振る。``b`` は未使用。実装は
+``gauss_image`` と同一。
 
 ## 詳しい使い方ガイド
 

@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Non-local means ノイズ除去(OpenCV 実装、グレースケール版)。sk_nlm と同じ考え方(画像全体から似たパッチを探して平均する)を OpenCV の高速実装で行う。
+
+HALCON に直接対応するものは無い。実装は ``cv2.fastNlMeansDenoising(_u8(v), h=3+20*a, templateWindowSize=7, searchWindowSize=21)`` を 255 で割ったもの —— a はフィルタ強度 h を 3〜23 に振る(大きいほど強く除去されディテールも失われる)。パッチ/探索窓は既定サイズに固定。b は未使用。
 
 ## 詳しい使い方ガイド
 

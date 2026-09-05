@@ -17,7 +17,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+JPEG blocking / ringing artefacts. The image (scaled to 0..255) is cut
+into 8x8 blocks, each transformed with an orthonormal 2-D DCT-II
+(``scipy.fft.dctn``), quantised with the STANDARD JPEG Annex-K luminance
+table scaled by ``(1 + 40*a)/16`` (a=0 -> near-lossless, a=1 -> heavy
+quantisation), then reconstructed with the inverse DCT. ``b`` shifts the 8x8
+block grid phase by ``int(7*b)`` px in both axes, i.e. moves where the block
+seams fall. Images that are not a multiple of 8 are edge-replicate padded and
+cropped back to HxW (so 4x4 inputs are handled).
 
 ## 詳しい使い方ガイド
 

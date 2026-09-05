@@ -3,7 +3,18 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_stat_covariance&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">matrix → matrix</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>Sample covariance matrix of `<code style="color:#22d3bf">(N, D)</code><code style="color:#22d3bf"> observations → </code><code style="color:#22d3bf">(D, D)</code>`.</p>
+<p>Rows are observations, columns are variables — the `<code style="color:#22d3bf">(N, D)</code>` orientation</p>
+<p>every Fullseye point/sample API uses (note `<code style="color:#22d3bf">np.cov</code>` defaults to the</p>
+<p>*transposed* convention). Uses the unbiased `<code style="color:#22d3bf">ddof=1</code>` estimator (divides</p>
+<p>by `<code style="color:#22d3bf">N - 1</code><code style="color:#22d3bf">), hence the </code><code style="color:#22d3bf">N &gt;= 2</code>` requirement. The diagonal holds the</p>
+<p>per-variable sample variances; the result is symmetric positive</p>
+<p>semi-definite by construction, so it can go straight into</p>
+<p>:func:<code style="color:#22d3bf">mat_eigh</code> for principal axes (the covariance-ellipse workflow).</p>
+<p>HALCON: no public tuple/matrix operator — covariance lives inside HALCON&#x27;s</p>
+<p>calibration and matching internals only.</p>
+<p>Typed bridge of the math op `<code style="color:#22d3bf">stat_covariance</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

@@ -17,7 +17,26 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `video → video`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Ideal temporal band-pass of every pixel's time series -> ``(T, H, W)``.
+
+    Each pixel is transformed along time, every DFT bin whose frequency lies
+    outside ``[f_lo, f_hi]`` (in Hz, magnitude, DC always excluded) is zeroed,
+    and the result is transformed back. Frequency-selective where
+    ``videops.moving_average`` and ``videops.spatiotemporal_gaussian`` are
+    low-pass; this is the filter isolating "what is happening at 4 Hz".
+
+    Exact for a component sitting on a bin: with ``T`` frames at ``fps``, a
+    sinusoid at ``k*fps/T`` Hz passes with gain 1 and everything else in the band
+    passes untouched. Measured on a bin-centred 4 Hz unit sinusoid in a 64-frame
+    32 fps clip that also carries a DC offset of 0.5 and a 12 Hz component of
+    amplitude 0.3, the recovered waveform matches the 4 Hz term alone to
+    ``max|err| = 4.36e-15``.
+
+    A brick-wall filter rings in time; that is the price of an exact pass-band
+    and it is the same choice the 2012 Eulerian magnification paper makes. The
+    output is zero-mean along time by construction.
+
+Typed bridge of the motionmag op ``temporal_bandpass`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

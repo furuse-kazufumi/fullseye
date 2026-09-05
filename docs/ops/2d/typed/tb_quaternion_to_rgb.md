@@ -17,7 +17,26 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `qimage → rgbimage`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Vector part of a quaternion image, as linear RGB. → (H, W, 3).
+
+    The inverse of :func:`rgb_to_quaternion` — and, by default, a *checked*
+    inverse. A quaternion image that picked up a scalar component somewhere (a
+    Hamilton product with a non-pure quaternion, a monogenic signal handed here
+    by mistake) is **refused** rather than silently truncated, because dropping
+    the ``w`` component is exactly the kind of loss that produces a plausible
+    picture from the wrong data. Pass ``allow_scalar=True`` to opt in to the
+    truncation when it is what you meant.
+
+    The tolerance is relative to the field's own peak modulus
+    (:data:`_MONOGENIC_K_TOL`, 1e-9): a quaternion image that really is pure
+    carries ``|w|`` at the 1e-17 level after a round trip through two FFTs, and
+    anything with a meaningful scalar part is many orders above that. Nothing
+    real lives in between.
+
+    **Raises** ``ValueError``: *qimage* is not a finite ``(H, W, 4)`` array; or
+    it has a non-negligible scalar part and ``allow_scalar`` is False.
+
+Typed bridge of the quat op ``quaternion_to_rgb`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

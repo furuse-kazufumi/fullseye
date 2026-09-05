@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+小さい連結領域を面積で除去する。HALCON の ``select_shape``（Choose regions with the aid of shape features.）に相当。
+
+``a`` が除去のしきい値（画素数）を、画像全体の画素数に対する割合 ``0.01〜0.16``（``(0.01+0.15a) * 画素数``）として振る。``b`` は未使用。しきい値以上の面積を持つ連結成分だけを残す。連結性は scipy ``label`` の既定（4連結）。
 
 ## 詳しい使い方ガイド
 

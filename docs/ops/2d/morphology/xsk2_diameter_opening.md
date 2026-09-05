@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+直径オープニング（面積オープニングの直径版、微小な明るい構造の除去）。``skimage.morphology.diameter_opening`` を呼ぶ。
+
+a が直径しきい値（``4 + int(a*30)``、範囲 4〜34）を振る。この直径未満の明るい連結成分を潰す。b は未使用。
 
 ## 詳しい使い方ガイド
 

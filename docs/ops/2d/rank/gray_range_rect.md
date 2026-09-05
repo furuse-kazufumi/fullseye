@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+矩形窓内の最大値と最小値の差(局所レンジ)を正規化して返す。テクスチャの
+局所的な起伏の激しさ(コントラスト量)を可視化する。HALCON の
+``gray_range_rect``（Determine the gray value range within a rectangle.）
+に相当。
+
+``a`` が窓の一辺を ``{3,5,7,9}`` で振る。``b`` は未使用。平坦な領域では
+ほぼ 0、エッジやテクスチャの多い領域で値が大きくなる。
 
 ## 詳しい使い方ガイド
 

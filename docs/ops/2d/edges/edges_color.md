@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `color → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+カラーエッジの強度を検出する。HALCON の ``edges_color``（Canny/Deriche/Shen
+フィルタでカラーエッジを抽出する）に相当するとされるが、**実装はフィルタ
+選択式ではなく Di Zenzo のマルチチャンネル勾配法に固定**されている。
+
+各チャンネルに Sobel 勾配 (gx, gy) をかけ、勾配テンソル
+``[[gxx, gxy], [gxy, gyy]]``（gxx=Σgx², gyy=Σgy², gxy=Σgx·gy）の最大
+固有値を画素ごとに求め、その平方根をエッジ強度として最大値で正規化する。
+a, b は未使用（HALCON 側にあるフィルタ種別・しきい値の選択はできない）。
 
 ## 詳しい使い方ガイド
 

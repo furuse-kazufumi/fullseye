@@ -3,7 +3,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk_inpaint&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>欠損領域を推定して埋める修復(inpainting)。</p>
+<p>極端に明るい(&gt;0.92)/暗い(&lt;0.08)画素を「欠損」とみなして自動マスクし、</p>
+<p>skimage の biharmonic inpainting(調和方程式に基づく補間)で周囲から</p>
+<p>滑らかに埋める。</p>
+<p>マスクが無ければ(欠損が見当たらなければ)入力をそのまま返す。`<code style="color:#22d3bf">a</code>`,</p>
+<p>`<code style="color:#22d3bf">b</code>` は未使用。しきい値が固定なので、本来ハイライト/シャドウとして</p>
+<p>意味のある画素まで「欠損」扱いされ埋められてしまう場合がある。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

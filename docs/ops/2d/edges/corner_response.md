@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Harris コーナー検出の応答値（コーナーらしさ）を画像として返す。HALCON の ``points_harris``（Detect points of interest using the Harris operator.）に相当。
+
+``a`` が構造テンソルを平滑化するガウシアンの σ を ``0.5〜2.5`` に振る。``b`` は未使用（Harris の経験定数 ``k=0.04`` は固定）。Sobel 勾配 ``Gx, Gy`` から構造テンソル成分 ``Gx², Gy², Gx*Gy`` をガウシアンで平滑化し、``det - k*trace²`` を ``_signed01`` で ``[0,1]`` に写す（0.5 が応答ゼロ、大きいほどコーナーらしく、小さいほどエッジらしい）。座標リストではなく応答マップを返す点が HALCON の ``points_harris``（座標を返す）と異なる——極大点抽出は別途 ``_local_max`` 等と組み合わせる必要がある。
 
 ## 詳しい使い方ガイド
 

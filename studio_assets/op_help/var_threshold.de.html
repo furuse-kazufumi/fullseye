@@ -4,7 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;var_threshold&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">var_threshold</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → region</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Sauvola の局所適応的二値化(`<code style="color:#22d3bf">skimage.filters.threshold_sauvola</code>`、</p>
+<p>窓サイズ `<code style="color:#22d3bf">2*int(a*6)+3</code>`)。局所平均と局所標準偏差の両方を使ってしきい値</p>
+<p>を決めるため、`<code style="color:#22d3bf">dyn_threshold</code>` より照明ムラや低コントラスト文書に強い。</p>
+<p>HALCON の `<code style="color:#22d3bf">var_threshold</code>`（Threshold an image by local mean and standard</p>
+<p>deviation analysis.）に相当する近似(定式化は似た発想だが Sauvola の式と</p>
+<p>HALCON の式は係数が異なる ―― 同一の数値結果にはならない)。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が局所窓のサイズを振る。</code><code style="color:#22d3bf">b</code>` は未使用(Sauvola の k, r は skimage の</p>
+<p>既定値に固定)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

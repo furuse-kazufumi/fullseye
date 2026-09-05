@@ -4,7 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;cos_image&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">cos_image</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">image → image</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>`<code style="color:#22d3bf">(cos(2πx) + 1) / 2</code><code style="color:#22d3bf"> による周期 LUT。</code><code style="color:#22d3bf">sin_image</code>` と位相が π/2 ずれた</p>
+<p>版で、x=0 で最大(1)、x=0.5 で最小(0)に達してから再び上がる。HALCON の</p>
+<p>`<code style="color:#22d3bf">cos_image</code>`（Calculate the cosine of an image.）の代役。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。</code><code style="color:#22d3bf">sin_image</code>` と同じく非単調・非可逆な周期写像なので、</p>
+<p>一般のコントラスト補正ではなく擬似的な等高線表現などに使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

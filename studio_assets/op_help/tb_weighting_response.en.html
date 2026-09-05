@@ -3,7 +3,45 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_weighting_response&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">signal → signal</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>The A / C / Z frequency-weighting curve, in dB, at the given frequencies.</p>
+<p>Computed from the four pole frequencies that *define* the networks and</p>
+<p>normalised so that the response at 1 kHz is exactly 0 dB <b>by construction</b></p>
+<p>— the curve is divided by its own value at 1 kHz rather than having a</p>
+<p>published offset constant added to it. That is why the tests can assert</p>
+<p>equality at 1 kHz to 0.0 rather than to a tolerance, and why no standard&#x27;s</p>
+<p>table of attenuations appears anywhere in this repository.</p>
+<p>The response depends on `<code style="color:#22d3bf">f</code><code style="color:#22d3bf"> only through </code><code style="color:#22d3bf">f**2</code>`, so it is an even</p>
+<p>function and negative frequencies are evaluated at `<code style="color:#22d3bf">|f|</code>` — that is the</p>
+<p>definition, not a repair. `<code style="color:#22d3bf">f = 0</code>` has zero response (both curves have a</p>
+<p>zero at DC) and is reported as `<code style="color:#22d3bf">floor_db</code><code style="color:#22d3bf"> rather than </code><code style="color:#22d3bf">-inf</code>`.</p>
+<p>Measured (computed, then printed — these are outputs, not transcriptions):</p>
+<p>========  =========  =========</p>
+<p>f (Hz)    A (dB)     C (dB)</p>
+<p>========  =========  =========</p>
+<p>10        -70.4304   -14.3300</p>
+<p>31.5      -39.5250    -3.0305</p>
+<p>100       -19.1428    -0.2996</p>
+<p>1000        0.0000     0.0000</p>
+<p>4000        0.9633    -0.8260</p>
+<p>10000      -2.4918    -4.4055</p>
+<p>20000      -9.3469   -11.2786</p>
+<p>========  =========  =========</p>
+<p>`<code style="color:#22d3bf">A(1000)</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">C(1000)</code><code style="color:#22d3bf"> are exactly </code><code style="color:#22d3bf">0.0</code>` — the Python float, not a</p>
+<p>rounding — because of the construction. The low-frequency asymptote is a</p>
+<p>closed form and is asserted in the tests: `<code style="color:#22d3bf">A</code>` falls at exactly</p>
+<p>80 dB/decade as `<code style="color:#22d3bf">f -&gt; 0</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">f**4</code><code style="color:#22d3bf"> over three constants) and </code><code style="color:#22d3bf">C</code>` at</p>
+<p>exactly 40 dB/decade (`<code style="color:#22d3bf">f**2</code>`). Measured between 0.001 and 0.01 Hz with the</p>
+<p>floor lowered out of the way: <b>79.999998</b> and <b>39.999998</b> dB/decade.</p>
+<p>That last caveat is real and is why the floor is an argument: with the</p>
+<p>default `<code style="color:#22d3bf">floor_db = -200</code>` the A curve reaches the floor below about</p>
+<p>0.35 Hz (unfloored, `<code style="color:#22d3bf">A(0.1) = -228.55</code>` dB), so the asymptote measured</p>
+<p>against the default floor comes out as 0.0 dB/decade between 0.01 and</p>
+<p>0.1 Hz — a clamp, correctly reported, that would look like a bug if the</p>
+<p>floor were not visible.</p>
+<p>Returns a float64 array the same shape as *freqs*.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-1-D / non-finite / complex / masked</p>
+<p>`<code style="color:#22d3bf">freqs</code><code style="color:#22d3bf">, an unknown </code><code style="color:#22d3bf">kind</code>`.</p>
+<p>Typed bridge of the acoustics op `<code style="color:#22d3bf">weighting_response</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

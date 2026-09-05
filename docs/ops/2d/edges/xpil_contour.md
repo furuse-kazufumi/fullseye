@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Pillow の輪郭抽出フィルタ。``PIL.ImageFilter.CONTOUR`` の固定カーネルで輪郭線だけを白背景に黒線で残すような効果を作る（ペン画・線画調のエフェクト）。
+
+a, b は未使用（固定カーネル）。
 
 ## 詳しい使い方ガイド
 

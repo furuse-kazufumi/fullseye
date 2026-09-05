@@ -17,7 +17,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `video → video`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Luminance deflicker per frame → ``(T, H, W)`` (``video``).
+
+    Rescales each frame so its mean tracks a slow running reference, cancelling
+    one-frame brightness pumping while following genuine lighting changes.
+
+Typed bridge of the videostream op ``deflicker`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``alpha`` (default 0.1) and ``b`` drives ``max_gain`` (default 4).
 
 ## 参考(サンプルデータ・文献)
 

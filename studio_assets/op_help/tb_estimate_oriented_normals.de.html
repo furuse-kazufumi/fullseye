@@ -3,7 +3,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_estimate_oriented_normals&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">points → points</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>PCA 法線推定 + Hoppe 大域向き付けの合成。→ (N,3) の向き付き単位法線。</p>
+<p>:func:<code style="color:#22d3bf">estimate_normals</code>(向き未定)→ :func:<code style="color:#22d3bf">orient_normals</code>(MST 伝播)を通す。</p>
+<p>閉曲面なら全点外向き、平面なら全点同一半球にそろう。得た法線を</p>
+<p>`<code style="color:#22d3bf">curvature3d.shape_index</code>` に渡すと凹/凸符号が正しく出る。</p>
+<p>Args:</p>
+<p>points: (N,3) の点群。</p>
+<p>k: PCA 近傍数と kNN グラフ近傍数(共通)。</p>
+<p>seed_dir: 大域基準向き (3,)。None なら重心から外向き。</p>
+<p>Returns:</p>
+<p>(N,3) の大域一貫・向き付き単位法線。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">estimate_oriented_normals</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">k</code><code style="color:#22d3bf">(既定 20)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

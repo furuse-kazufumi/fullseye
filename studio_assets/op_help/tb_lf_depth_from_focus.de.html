@@ -3,7 +3,33 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_lf_depth_from_focus&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">lightfield → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Per-pixel slope from the <b>sharpness peak</b> across the refocus sweep.</p>
+<p>Refocus at every slope in *slopes*, measure local sharpness (*measure*:</p>
+<p>`<code style="color:#22d3bf">laplacian</code>` = summed modified Laplacian, the classical depth-from-focus</p>
+<p>operator; `<code style="color:#22d3bf">variance</code><code style="color:#22d3bf"> = local variance; </code><code style="color:#22d3bf">gradient</code>` = local gradient</p>
+<p>energy) in a `<code style="color:#22d3bf">window x window</code>` neighbourhood, and take the slope at which</p>
+<p>each pixel is sharpest. With `<code style="color:#22d3bf">subpixel=True</code>` (default) the peak is refined</p>
+<p>by fitting a parabola through the winning sample and its two neighbours on a</p>
+<p><b>uniformly</b> spaced sweep — on a non-uniform sweep the refinement is</p>
+<p>skipped rather than applied with the wrong spacing.</p>
+<p>Unbiased where :func:<code style="color:#22d3bf">lf_epi_slope</code> is not: measured 2026-09-01 on a</p>
+<p>5x5x64x64 synthetic field over a 121-point sweep from -3 to +3, the argmax</p>
+<p>landed <b>exactly</b> on the true slope in 18 of 18 combinations (true slopes</p>
+<p>0.0, +0.5, +1.0, +1.5, +2.0, -1.0 crossed with texture sigma 1.5 / 3.0 /</p>
+<p>5.0 px), and the sub-pixel refinement left every one of them unmoved. Its</p>
+<p>resolution, though, is whatever you put in *slopes* — it cannot see a plane</p>
+<p>you never refocused on.</p>
+<p>Returns `<code style="color:#22d3bf">(slope_map, sharpness)</code><code style="color:#22d3bf">: the </code><code style="color:#22d3bf">(H, W)</code>` map of estimated slopes</p>
+<p>(in px per angular step) and the `<code style="color:#22d3bf">(H, W)</code>` peak focus-measure value, which</p>
+<p>is the honest confidence — a textureless pixel has no sharpness peak, gets</p>
+<p>an essentially arbitrary slope, and its `<code style="color:#22d3bf">sharpness</code>` is ~0. Threshold on it</p>
+<p>rather than trusting the map everywhere.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *lf* not a valid light field, *slopes* empty /</p>
+<p>over :data:<code style="color:#22d3bf">MAX_STACK_SLICES</code> / over :data:<code style="color:#22d3bf">MAX_STACK_ELEMENTS</code> / containing</p>
+<p>a non-finite or over-large value, an even or non-positive *window*, unknown</p>
+<p>*measure* / *interp* / *edge*.</p>
+<p>Typed bridge of the lightfield op `<code style="color:#22d3bf">lf_depth_from_focus</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

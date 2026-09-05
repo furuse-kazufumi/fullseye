@@ -17,7 +17,18 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `points → points`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Insert points where the local spacing exceeds *spacing*, on the local PCA plane (``points``).
+
+    For every point whose distance to its *k*-th neighbour exceeds *spacing*,
+    the segments to those neighbours longer than *spacing* are subdivided at
+    *spacing* intervals; the new points are projected onto the plane fitted
+    (PCA) to the point's neighbourhood so they follow the surface rather than
+    cut chords across it. The original points are kept; the result is then a
+    cloud whose spacing is ≤ target almost everywhere (pass it to
+    :func:`pc_poisson_disk` to remove the duplicates a shared edge creates —
+    :func:`pc_density_equalize` does both).
+
+Typed bridge of the 3d op ``pc_fill_sparse`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``k`` (default 8); ``b`` is unused.
 
 ## 参考(サンプルデータ・文献)
 

@@ -3,7 +3,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xcv_inpaint&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>欠損領域を推定して埋める修復(inpainting)。</p>
+<p>8bit 変換後、極端に明るい(&gt;235)/暗い(&lt;20)画素を「欠損」とみなして</p>
+<p>自動マスクし、OpenCV の Telea 法(高速マーチング法ベース、</p>
+<p>`<code style="color:#22d3bf">cv2.INPAINT_TELEA</code><code style="color:#22d3bf">)で周囲から埋める。</code><code style="color:#22d3bf">xsk_inpaint</code>`</p>
+<p>(biharmonic 法)と同じ発想の別アルゴリズム版。</p>
+<p>半径 3 画素の近傍を使う(固定)。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。しきい値が</p>
+<p>固定のため、本来意味のある白飛び/黒つぶれ画素まで埋められてしまう</p>
+<p>場合がある。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

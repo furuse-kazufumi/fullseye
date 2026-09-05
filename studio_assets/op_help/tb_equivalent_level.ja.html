@@ -1,0 +1,58 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tb_equivalent_level — 2D <code style="color:#22d3bf">typed</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">feature</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_equivalent_level&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>記録のエネルギー等価レベル（`<code style="color:#22d3bf">ref</code>` を基準とするdB値）。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>`<code style="color:#22d3bf">L_eq = 10 log10(mean(x_w**2) / ref**2)</code><code style="color:#22d3bf"> where </code><code style="color:#22d3bf">x_w</code>` is the signal after</p>
+<p>the chosen weighting. Returns a plain float.</p>
+<p><b>The reference is yours to supply.</b> The default `<code style="color:#22d3bf">ref=1.0</code>` means dB</p>
+<p>relative to one unit of the signal&#x27;s own units; it is not dB SPL, because</p>
+<p>this library never sees your calibration. Pass `<code style="color:#22d3bf">ref=20e-6</code>` for pascals.</p>
+<p>Measured: a 1 kHz sine of amplitude 1.0 at 16 kHz over exactly 1000 periods</p>
+<p>gives `<code style="color:#22d3bf">L_eq = -3.010300</code>` dB with Z weighting, against the closed form</p>
+<p>`<code style="color:#22d3bf">10*log10(1/2) = -3.010300</code>` (difference 2.2e-15 dB), and the <b>same</b> value</p>
+<p>under A weighting (difference 8.9e-16 dB), because A is 0 dB at 1 kHz.</p>
+<p>Doubling the amplitude adds 6.020600 dB. Silence returns -200.0.</p>
+<p>Silence returns `<code style="color:#22d3bf">floor_db</code><code style="color:#22d3bf"> (default -200) rather than </code><code style="color:#22d3bf">-inf</code><code style="color:#22d3bf">; an </code><code style="color:#22d3bf">-inf</code>`</p>
+<p>in a list of levels destroys every average taken over it afterwards.</p>
+<p>**A weighted level is only as good as the weighting, and the weighting has a</p>
+<p>leakage limit this operator inherits in full.** A pure tone that is not a</p>
+<p>whole number of periods in the record comes back <b>too loud</b> — measured</p>
+<p><b>+7.7986 dB</b> at 31.5 Hz (a nominal one-third-octave centre) over 0.5 s at</p>
+<p>48 kHz, and up to <b>+17.2116 dB</b> at 20.5 Hz — with no exception, no NaN and</p>
+<p>no warning. `<code style="color:#22d3bf">weighting=&quot;Z&quot;</code><code style="color:#22d3bf"> is exempt (it does no filtering) and </code><code style="color:#22d3bf">&quot;C&quot;</code>` is</p>
+<p>nearly so (+0.0493 dB on the same tone); it is `<code style="color:#22d3bf">&quot;A&quot;</code>`, whose curve spans</p>
+<p>about 40 dB across the audio band, that is exposed.</p>
+<p>`<code style="color:#22d3bf">window=&quot;hann&quot;</code>` is the opt-in remedy: the record is multiplied by a Hann</p>
+<p>window and the mean square divided by the window&#x27;s own mean square, which</p>
+<p>suppresses the leakage almost entirely — the 31.5 Hz error goes from</p>
+<p><b>+7.7986</b> to <b>+0.0534</b> dB and the 20.5 Hz error from <b>+17.2116</b> to</p>
+<p><b>+0.1841</b> — while costing about <b>0.15 dB</b> on records that were exact</p>
+<p>before. It is <b>not</b> the default, and must not be used when a transient&#x27;s</p>
+<p>level is the point: a window makes the answer depend on *where in the</p>
+<p>record the sound happened*. Measured on a 50 ms burst inside a 0.5 s record</p>
+<p>(Z weighting, so only the window acts; unwindowed all three are -13.0103 dB</p>
+<p>as they must be): at the start <b>-36.0587</b>, at the centre <b>-8.8218</b>, at</p>
+<p>the end <b>-36.0587</b> — a 27 dB spread produced by nothing but position.</p>
+<p>Use `<code style="color:#22d3bf">&quot;hann&quot;</code>` for a stationary tonal record, which is exactly the case the</p>
+<p>leakage ruins, and `<code style="color:#22d3bf">&quot;none&quot;</code>` (the default, an honest energy average) for</p>
+<p>everything else. The full measurement is in :func:<code style="color:#22d3bf">apply_weighting</code>.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: everything :func:</code>_as_signal` refuses, an unknown</p>
+<p>`<code style="color:#22d3bf">weighting</code><code style="color:#22d3bf"> or </code><code style="color:#22d3bf">window</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">ref &lt;= 0</code>` (a decibel needs a positive reference; a zero</p>
+<p>reference makes every level `<code style="color:#22d3bf">+inf</code>` and a negative one makes the ratio</p>
+<p>negative), `<code style="color:#22d3bf">rate &lt;= 0</code>`.</p>
+<p>Typed bridge of the acoustics op `<code style="color:#22d3bf">equivalent_level</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">ref</code><code style="color:#22d3bf"> (default 1); </code><code style="color:#22d3bf">b</code>` is unused.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">feature</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">typed</code>)</h3>
+<p><a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_angle_3points">tb_angle_3points</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -3,7 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xpil_contrast&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → image</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>コントラスト調整（画像の平均輝度を軸にした線形伸縮）。`<code style="color:#22d3bf">PIL.ImageEnhance.Contrast</code>` を呼ぶ。</p>
+<p>a が強調係数（`<code style="color:#22d3bf">factor = 2*a</code>`、範囲 0〜2）を振る。a=0.5 で係数 1.0（元画像のまま）、a=0 に近づくほど平均輝度一色のグレーに潰れ、a=1 に近づくほどコントラストが 2 倍まで強調される。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

@@ -3,7 +3,20 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;alife_dla&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Deterministic diffusion-limited-aggregation (DLA) growth proxy.</p>
+<p>Witten-Sander DLA grows a cluster by releasing random walkers that stick on</p>
+<p>contact; the walker density obeys a Laplace equation, so this op replaces the</p>
+<p>random walkers by their *deterministic* mean field: the unclaimed image</p>
+<p>brightness is diffused with a Gaussian Green&#x27;s function to give a</p>
+<p>concentration u, and each generation the cluster&#x27;s Moore boundary attaches</p>
+<p>exactly those cells whose concentration clears a stickiness threshold</p>
+<p>(with the single strongest boundary cell always attaching, so growth never</p>
+<p>stalls). Bright pixels (&gt;= 0.75 of the image maximum, or the single brightest</p>
+<p>pixel) are the seed. `<code style="color:#22d3bf">a</code>` sets the number of growth generations</p>
+<p>1 + int(11a), `<code style="color:#22d3bf">b</code>` the stickiness: high b selects only the highest-</p>
+<p>concentration tips (dendritic, screened growth), low b attaches nearly the</p>
+<p>whole boundary (compact, Eden-like growth). Returns the 0/1 cluster.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">Leitfaden zur Familie gallery2d_physics_alife_3d</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

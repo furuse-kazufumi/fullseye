@@ -4,7 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;entropy_gray&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">entropy_gray</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → feature</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>グレースケール階調の Shannon エントロピー(64 ビンヒストグラムから計算</p>
+<p>し、最大値 `<code style="color:#22d3bf">log2(64)=6</code>` bit で正規化)。階調分布の「ばらつき/情報量」を</p>
+<p>表し、一様な画像ほど値は大きく、単一階調に偏るほど 0 に近づく。HALCON の</p>
+<p>`<code style="color:#22d3bf">entropy_gray</code>`（Determine the entropy and anisotropy of images.）は</p>
+<p>エントロピーと異方性の組を返すが、この代役ではエントロピーのみを実装</p>
+<p>している。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

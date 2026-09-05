@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ラプラシアンフィルタ(OpenCV 実装)。2 階微分による等方的なエッジ/ブロブ検出で、輪郭のみならず孤立点にも強く反応する(ノイズにも敏感)。
+
+HALCON の `laplace`(Calculate the Laplace operator by using finite differences.)に相当。実装は ``|cv2.Laplacian(v, CV_64F)|`` を正規化したもの —— カーネルサイズは既定の 1(3x3 の基本 4 近傍ラプラシアンカーネル)に固定。a, b は未使用。
 
 ## 詳しい使い方ガイド
 

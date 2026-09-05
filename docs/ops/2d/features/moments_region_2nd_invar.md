@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Hu の第 1 不変モーメント(``skimage.measure.moments_hu`` の
+``hu[0]``)の絶対値。回転・スケール・平行移動に対して不変な形状記述子。
+HALCON の ``moments_region_2nd_invar``（Geometric moments of regions.）
+に相当する近似(HALCON 独自の相対不変モーメント定義とは厳密には異なり、
+古典的な Hu モーメントで代用している)。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

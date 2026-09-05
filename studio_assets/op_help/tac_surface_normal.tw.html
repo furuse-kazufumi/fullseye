@@ -3,7 +3,15 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tac_surface_normal&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">image → image</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>Surface-normal z-component (slope map) from the shading gradients, using</p>
+<p>Horn&#x27;s shape-from-shading normal parameterisation</p>
+<p>`<code style="color:#22d3bf">n = (-p, -q, 1)/sqrt(1+p^2+q^2)</code><code style="color:#22d3bf"> so that </code><code style="color:#22d3bf">nz = 1/sqrt(1+p^2+q^2)</code>` with</p>
+<p>`<code style="color:#22d3bf">p = gain*gx</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">q = gain*gy</code>`. Flat (uncontacted) gel gives nz = 1, steep</p>
+<p>indentation walls tend to 0, so the map is already a valid [0,1] encoding.</p>
+<p>`<code style="color:#22d3bf">a</code>` = gradient gain (1..21x -- how steep the shading is taken to be),</p>
+<p>`<code style="color:#22d3bf">b</code>` = pre-smoothing sigma of the image (0..3) to tame sensor noise.</p>
+<p>Constant input -&gt; all-ones (perfectly flat gel).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

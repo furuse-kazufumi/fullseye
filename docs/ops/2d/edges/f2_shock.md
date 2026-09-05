@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Osher-Rudin shock filter: I_t = -sign(Lap I)*|grad I|, morphological form.
+
+Each step dilates where the Laplacian is negative (bright/convex side of an
+edge) and erodes where it is positive (dark/concave side); the two flows
+collide at the zero-crossing, forming a shock that sharpens blurred edges.
+``a`` sets the number of iterations; ``b`` is ignored.
 
 ## 詳しい使い方ガイド
 

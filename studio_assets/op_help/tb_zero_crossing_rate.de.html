@@ -3,7 +3,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_zero_crossing_rate&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">signal → feature</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Fraction of adjacent samples that change sign — a cheap pitch/noisiness cue.</p>
+<p>Exact zeros are neither a crossing nor a sign: a crossing is counted only when</p>
+<p>the sign changes between consecutive *non-zero* samples, and the rate divides</p>
+<p>by the number of adjacent sample pairs `<code style="color:#22d3bf">len(x) - 1</code><code style="color:#22d3bf">. So </code><code style="color:#22d3bf">[1, 0, 1, 0, 1]</code>` is</p>
+<p>`<code style="color:#22d3bf">0.0</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">[1, 0, -1]</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">0.5</code><code style="color:#22d3bf"> (before 2026-09-02 </code><code style="color:#22d3bf">diff(sign(x))</code>` counted</p>
+<p>every touch of zero as a crossing: `<code style="color:#22d3bf">1.0</code>` for both).</p>
+<p>Typed bridge of the 1d op `<code style="color:#22d3bf">zero_crossing_rate</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

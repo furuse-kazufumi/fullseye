@@ -3,7 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;ph_total_variation_flow&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>Total-variation (Rudin-Osher-Fatemi) denoising flow (no HALCON operator, &quot;&quot;).</p>
+<p>Gradient descent of the ROF energy TV(I) + (lam/2)||I - I0||^2:</p>
+<p>I_t = div(grad I / |grad I|) - lam (I - I0).</p>
+<p>The TV term (curvature of the level sets) flattens noise while preserving sharp</p>
+<p>edges; the fidelity term keeps the result anchored to the noisy input I0 so it</p>
+<p>denoises rather than collapsing to a constant. `<code style="color:#22d3bf">a</code>` sets the step count,</p>
+<p>`<code style="color:#22d3bf">b</code>` the fidelity weight lam.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

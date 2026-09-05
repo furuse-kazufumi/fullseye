@@ -4,7 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;entropy_image&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">entropy_image</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>타입 계약은 <code style="color:#22d3bf">image → image</code>. 동작의 언어 설명은 아래 패밀리 사용 가이드와 실행 가능한 샘플을 보세요(여기서는 추측을 쓰지 않습니다).</p>
+<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
+<p>円形窓内のグレースケール Shannon エントロピー(``skimage.filters.rank.</p>
+<p>entropy``、8bit 量子化)を正規化した画像。窓内の階調の「散らばり具合」を</p>
+<p>測るテクスチャ指標で、一様な領域では低く、雑多な階調が混在する領域では</p>
+<p>高くなる。HALCON の `<code style="color:#22d3bf">entropy_image</code>`（Calculate the entropy of gray values</p>
+<p>within a rectangular window.）に相当(HALCON は矩形窓、ここでは円形窓を</p>
+<p>使う近似)。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の半径を 1〜4 の範囲(</code><code style="color:#22d3bf">_rad(a)</code><code style="color:#22d3bf">)で振る。</code><code style="color:#22d3bf">b</code>` は未使用。skimage</p>
+<p>が無い環境ではこの分岐は呼べない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

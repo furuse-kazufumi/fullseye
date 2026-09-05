@@ -4,7 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;lines_gauss&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">lines_gauss</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → contour</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>線状構造(リッジ)検出。`<code style="color:#22d3bf">skimage.filters.frangi</code>`(血管様のリッジ強調</p>
+<p>フィルタ)の応答をしきい値(`<code style="color:#22d3bf">0.1+0.4*a</code>`)で二値化し、連結成分を輪郭点群</p>
+<p>として返す。HALCON の `<code style="color:#22d3bf">lines_gauss</code>`（Detect lines and their width.）が</p>
+<p>本来行う「線の中心線+幅の推定」ではなく、リッジ強調画像のしきい値化に</p>
+<p>単純化している(線幅の情報は返らない近似)。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がリッジ検出のしきい値を振る。</code><code style="color:#22d3bf">b</code>` は未使用。skimage が無い環境</p>
+<p>ではこの分岐は呼べない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

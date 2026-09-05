@@ -4,7 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_gen_ellipse_sector&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">gen_ellipse_sector</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → region</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>楕円の扇形(セクタ)region を生成する。HALCON の `<code style="color:#22d3bf">gen_ellipse_sector</code>`</p>
+<p>(楕円セクタを生成する)に相当。</p>
+<p>楕円の軸は画像幅の 42%・高さの 30%に固定。`<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が開始角(</code><code style="color:#22d3bf">b*2*pi</code>`)、</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が掃引角(</code><code style="color:#22d3bf">0.1 + a*(2*pi-0.1)</code><code style="color:#22d3bf">)を振る。</code><code style="color:#22d3bf">hx_gen_circle_sector</code>` の</p>
+<p>楕円版。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

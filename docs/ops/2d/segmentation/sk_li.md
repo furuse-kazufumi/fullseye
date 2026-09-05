@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Li の最小相互エントロピー法(Minimum Cross Entropy)による大域しきい値二値化。前景/背景の分布間の相互エントロピーを反復的に最小化してしきい値を決める、大津法とは別系統の自動しきい値法。
+
+HALCON の `binary_threshold` に相当(近似。アルゴリズムは別物)。実装は ``v > filters.threshold_li(v)`` —— a, b は未使用。大津法よりノイズや裾の重いヒストグラムに強いとされる場面がある。
 
 ## 詳しい使い方ガイド
 

@@ -467,12 +467,13 @@ def _records():
             "dim": "2d", "name": o.name, "category": o.category,
             "in": o.in_sort, "out": o.out_sort,
             "halcon": (o.halcon or "").strip(),
-            # 実装のそばの docstring が第一。lambda で書かれた op は docstring を
-            # 持てないので、登録時に積んだ ``Op.doc`` が受け皿になる(ops.Op 参照)。
+            # ``Op.doc``(登録時に op 名で指定したもの)が第一で、無ければ実装の
+            # docstring。逆にすると、汎用ファクトリが返す**共有の関数オブジェクト**
+            # の docstring が勝ってしまう(backends_r3 の 56 op は fn が同一)。
             # cleandoc: 関数 docstring の 2 行目以降には定義位置ぶんの字下げが
             # 付いていて、そのまま出すと Markdown が**コードブロックと読む**
             # (3-D / ledger 側は最初からこれを通していた)。
-            "doc": inspect.cleandoc(fn.__doc__ or getattr(o, "doc", "") or "").strip(),
+            "doc": inspect.cleandoc(getattr(o, "doc", "") or fn.__doc__ or "").strip(),
             "module": "ops", "sig": sig,
             "examples": sorted(idx2d.get(o.name, [])),
             "family": op_fam.get(o.name),

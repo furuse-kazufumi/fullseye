@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+アフィン変換（回転+シアー）を画像に掛ける。実装は ``affine_trans_image`` と同じ ``_sh_geom`` の ``affine`` 分岐を共有しており、a で回転角を -20°〜+20° に、b でシアー量を振る。枠外は鏡映（reflect）で埋める。
+
+HALCON の ``affine_trans_image_size``（アフィン変換を適用し、出力画像のキャンバスサイズを明示的に指定できる演算）とは異なり、この実装は出力サイズの指定を受け付けず、常に入力と同じキャンバスサイズを保つ近似（``affine_trans_image`` と実質同一の実装）。
 
 ## 詳しい使い方ガイド
 

@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+モルフォロジー勾配（膨張 − 侵食）。HALCON の ``gray_range_rect``（Determine the gray value range within a rectangle.）に相当。
+
+``a`` が構造要素の一辺を ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。窓内の最大値と最小値の差を返すため、エッジ検出フィルタ（Sobel 等）に似た働きをするが方向を持たない。結果は ``_norm`` で正規化される。
 
 ## 詳しい使い方ガイド
 

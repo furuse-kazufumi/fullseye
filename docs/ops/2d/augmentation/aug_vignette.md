@@ -17,7 +17,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Radial lens vignetting following the natural cos^4 falloff law. With
+``r`` the normalised distance from the image centre and ``R = 0.35 + 1.15*b``
+the falloff radius, the transmission is
+``cos(atan(r/R))^4 = 1/(1 + (r/R)^2)^2`` -- the textbook cos^4 law. ``a``
+blends it in: ``out = v * (1 - a + a*falloff)``, so a=0 is a no-op and a=1 is
+full vignetting. Centre stays brightest; strictly darkening, never amplifying.
 
 ## 詳しい使い方ガイド
 

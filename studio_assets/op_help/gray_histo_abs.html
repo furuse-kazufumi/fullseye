@@ -4,7 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;gray_histo_abs&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">gray_histo_abs</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → feature</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>画像の階調の標準偏差(`<code style="color:#22d3bf">x.std()</code><code style="color:#22d3bf">)を返す。HALCON の </code><code style="color:#22d3bf">gray_histo_abs</code>`</p>
+<p>（Calculate the gray value distribution.）は本来ヒストグラム全体</p>
+<p>(各階調のビン度数)を返す演算子だが、この代役ではヒストグラムそのものでは</p>
+<p>なく分布の広がりを表す標準偏差 1 個のスカラーに要約している(近似 ―― この</p>
+<p>パイプラインの `<code style="color:#22d3bf">feature</code>` ソートが 1 スカラーである契約上の制約)。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

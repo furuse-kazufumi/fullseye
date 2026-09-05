@@ -19,7 +19,10 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+円形の region を生成する。HALCON の ``gen_circle``(円を生成する)に相当。
+
+画布中心 ``(h/2, w/2)`` を中心とする円板を描き、内部を 1・外部を 0 として
+返す。``a`` が半径を ``min(h, w)`` の 10%〜50% の範囲で振る。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

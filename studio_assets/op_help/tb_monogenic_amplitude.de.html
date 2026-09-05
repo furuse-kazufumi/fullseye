@@ -3,7 +3,21 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">qimage</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_monogenic_amplitude&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">qimage → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Local amplitude `<code style="color:#22d3bf">sqrt(f^2 + R1^2 + R2^2)</code>` of a monogenic signal. → (H, W).</p>
+<p>The local contrast at the signal&#x27;s scale, and the confidence map for</p>
+<p>:func:<code style="color:#22d3bf">monogenic_phase</code> / :func:<code style="color:#22d3bf">monogenic_orientation</code>, which mean nothing</p>
+<p>where this is at the rounding floor. <b>Raw / unnormalised</b> (a contrast is a</p>
+<p>metric quantity), in the same spirit as `<code style="color:#22d3bf">complexops.cx_magnitude</code>`.</p>
+<p>For a unit-contrast grating at the band centre it is exactly 1.0 (measured</p>
+<p>spread 8.9e-16 over a 64x64 frame) and, unlike a squared oriented-filter</p>
+<p>response, it is *isotropic*: rotating the grating does not change it.</p>
+<p>Measured over eight grid-exact orientations the amplitude spans</p>
+<p>`<code style="color:#22d3bf">[0.99999999999999911, 1.0000000000000011]</code>` — a total spread of 2.0e-15</p>
+<p>across all of them, which is the isotropy claim as a number.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: the input is not a valid quaternion field, or its</p>
+<p>`<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> component is non-zero (see :func:</code>_require_monogenic`).</p>
+<p>Typed bridge of the quat op `<code style="color:#22d3bf">monogenic_amplitude</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

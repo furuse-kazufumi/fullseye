@@ -4,7 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;binary_threshold&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">binary_threshold</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → region</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>大津の判別分析法(Otsu&#x27;s method)による自動しきい値二値化</p>
+<p>(`<code style="color:#22d3bf">skimage.filters.threshold_otsu</code>`、無ければ平均値で代用)。クラス間分散</p>
+<p>を最大化するしきい値を画像のヒストグラムから自動決定する。HALCON の</p>
+<p>`<code style="color:#22d3bf">binary_threshold</code>`（Segment an image using binary thresholding.）に</p>
+<p>相当(HALCON は Otsu 以外の複数アルゴリズムを選べるが、ここでは Otsu 固定)。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用 ―― ヒストグラムから自動決定されるため調整点は無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

@@ -3,7 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sk_area_opening&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>面積オープニング(area opening)。通常のモルフォロジー的開処理が構造要素の形で小さい明部を削るのに対し、こちらは面積(連結画素数)だけで判定し、指定面積未満の明るい連結成分を消す —— 形状に依らず「小さい」ものを落とせる。</p>
+<p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">morphology.area_opening(v, area_threshold=int(16+a*100))</code>` —— a は面積しきい値を 16〜116 画素に振る。b は未使用。connectivity は既定の 1(4 近傍)のまま。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">Leitfaden zur Familie gallery2d_morphology</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

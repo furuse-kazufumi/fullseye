@@ -3,7 +3,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">cimage</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_cx_phase&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">cimage → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Wrapped phase of `<code style="color:#22d3bf">cx</code><code style="color:#22d3bf"> -&gt; real </code><code style="color:#22d3bf">(H, W)</code>` float64.</p>
+<p>`<code style="color:#22d3bf">display=True</code><code style="color:#22d3bf"> (default) maps the wrapped phase </code><code style="color:#22d3bf">angle(cx)</code>` in</p>
+<p>`<code style="color:#22d3bf">(-pi, pi]</code><code style="color:#22d3bf"> to </code><code style="color:#22d3bf">[0, 1]</code>` for viewing, with <b>0.5 at zero phase</b></p>
+<p>(`<code style="color:#22d3bf">(angle + pi) / (2*pi)</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">-pi -&gt; 0</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">0 -&gt; 0.5</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">+pi -&gt; 1</code>`).</p>
+<p>`<code style="color:#22d3bf">display=False</code><code style="color:#22d3bf"> returns the **raw wrapped radians** in </code><code style="color:#22d3bf">(-pi, pi]</code>` — the</p>
+<p>quantity :func:<code style="color:#22d3bf">cx_from_mag_phase</code> and :func:<code style="color:#22d3bf">phase_unwrap</code> consume. Note the</p>
+<p>default output is *wrapped* and *display-scaled*; :func:<code style="color:#22d3bf">phase_unwrap</code> returns</p>
+<p>raw, continuous, un-scaled radians instead.</p>
+<p>Typed bridge of the 2d op `<code style="color:#22d3bf">cx_phase</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

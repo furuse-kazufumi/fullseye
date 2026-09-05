@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;gen_contour_region_xld&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">gen_contour_region_xld</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">region → contour</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>region（画素マスク）の外周を、トレース順（輪郭に沿った順序）を保った XLD 輪郭として抽出する。skimage があれば `<code style="color:#22d3bf">find_contours</code>`（marching squares によるサブピクセル輪郭）、無ければ自前の Moore 近傍追跡（8 近傍、Jacob の停止条件）にフォールバックする。a, b は未使用。</p>
+<p>2026-08-30 の修正で、以前使っていた汎用の `<code style="color:#22d3bf">edges_sub_pix</code><code style="color:#22d3bf"> 経路は </code><code style="color:#22d3bf">np.where</code><code style="color:#22d3bf"> のラスタ順で点を返しており、順序に依存する後段処理（楕円フーリエ記述子など）を壊していた。HALCON の </code><code style="color:#22d3bf">gen_contour_region_xld</code>`（region から XLD 輪郭を生成する演算）に相当する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

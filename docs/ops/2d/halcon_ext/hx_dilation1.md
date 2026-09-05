@@ -19,7 +19,11 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+円板構造要素で region を膨張(dilation)する。HALCON の ``dilation1``
+(region を膨張する)に相当。
+
+半径 ``r = 1 + int(a*4)`` の円板構造要素で ``scipy.ndimage.binary_dilation``
+を呼ぶ。``b`` は未使用。隙間を埋めたり領域を太らせたりするのに使う。
 
 ## 詳しい使い方ガイド
 

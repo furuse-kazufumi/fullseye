@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `contour → contour`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+輪郭の各点を画像中心を軸に回転(``-20°〜+20°``、``a`` で決まる)する。
+HALCON の ``affine_trans_contour_xld``（Apply an arbitrary affine 2D
+transformation to XLD contours.）は任意のアフィン行列(平行移動・拡大縮小・
+せん断を含む)を取れるが、この代役では純粋な回転のみに単純化している
+(近似)。
+
+``a`` が回転角を振る。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+全変動ノイズ除去(TV denoising、Chambolle 法)。エッジを保ったまま平坦部のノイズを滑らかにする —— メディアン/ガウスぼかしと違い、輪郭のシャープさを崩しにくいのが特徴。
+
+HALCON に直接対応するものは無い。実装は ``restoration.denoise_tv_chambolle(v, weight=0.02+0.3*a)`` —— a は denoising weight を 0.02〜0.32 に振り、**大きいほど強く平滑化される**(この符号の向きは後述の sk_tv_bregman と逆なので混同注意)。b は未使用。
 
 ## 詳しい使い方ガイド
 

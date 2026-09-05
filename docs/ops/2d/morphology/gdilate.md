@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+グレースケール膨張（明るい側に広げる）。HALCON の ``gray_dilation``（Perform a gray value dilation on an image.）に相当。
+
+``a`` が構造要素（正方形）の一辺を ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。実装は矩形窓の最大値フィルタと同じ（``_max_filter`` と等価）。
 
 ## 詳しい使い方ガイド
 

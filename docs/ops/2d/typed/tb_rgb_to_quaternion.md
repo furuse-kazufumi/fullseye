@@ -17,7 +17,24 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `rgbimage → qimage`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Embed a colour image as pure quaternions ``0 + R i + G j + B k``. → (H, W, 4).
+
+    Sangwine's 1996 encoding, and the entry point of the whole colour half of
+    this module: once a pixel is a quaternion, ``q x conj(q)`` rotates its colour
+    and :func:`qft2` transforms the three channels as **one** hypercomplex signal
+    instead of three unrelated real ones.
+
+    The scalar (``w``) component is set to exactly zero — a *pure* quaternion —
+    because that is what makes the conjugation a 3-D rotation. Values are not
+    clamped: linear RGB after black-level subtraction legitimately goes negative,
+    and clipping it would change the colour direction, which is the quantity
+    every operator downstream reads.
+
+    **Raises** ``ValueError``: *image_rgb* is not a finite ``(H, W, 3)`` numeric
+    array, is complex / bool / string-typed / masked, or exceeds
+    :data:`MAX_PIXELS`.
+
+Typed bridge of the quat op ``rgb_to_quaternion`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

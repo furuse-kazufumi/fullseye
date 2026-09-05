@@ -4,7 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;dl_aniso_diffusion&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">anisotropic_diffusion</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Perona-Malik 型の異方性拡散フィルタ（torch 実装、GPU があれば GPU 上で実行）。</p>
+<p>上下左右 4 方向の差分にそれぞれ `<code style="color:#22d3bf">exp(-(差分/K)^2)</code>` の伝導度を掛けてから加算する</p>
+<p>反復拡散で、勾配が大きい（エッジらしい）場所ほど拡散が弱まり、エッジを保ったまま</p>
+<p>平滑化する。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はエッジ検出しきい値 </code><code style="color:#22d3bf">K</code><code style="color:#22d3bf"> を 0.02〜0.22 に振る（</code>`K = 0.02 +</p>
+<p>0.2*a`<code style="color:#22d3bf">、大きいほどエッジを跨いで拡散しやすくなる）。</code><code style="color:#22d3bf">b</code>` は反復回数を 5〜20 回に</p>
+<p>振る（`<code style="color:#22d3bf">iters = 5 + int(b*15)</code><code style="color:#22d3bf">）。ステップ幅 </code><code style="color:#22d3bf">lam=0.2</code>` は固定。ガウシアンぼかしと</p>
+<p>異なりエッジをぼかさずにノイズだけ均せるのが利点。HALCON の</p>
+<p>`<code style="color:#22d3bf">anisotropic_diffusion</code>`（画像の異方性拡散を行う）に相当するが、同じ結果になる</p>
+<p>とは限らない近似実装。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

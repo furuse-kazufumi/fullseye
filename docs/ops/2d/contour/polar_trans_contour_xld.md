@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `contour → contour`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+輪郭の各点を画像中心からの極座標(半径・角度)に変換し、疑似的な画素
+座標(半径を ``H`` or ``W`` の大きい方でスケール、角度を [0,1] に写像)へ
+詰め直す。HALCON の ``polar_trans_contour_xld``（Transform a contour in an
+annular arc to polar coordinates.）に相当する簡易な座標変換。
+
+``a``, ``b`` は未使用 ―― 中心・スケールは画像サイズから自動的に決まる。
 
 ## 詳しい使い方ガイド
 

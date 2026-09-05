@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `contour → contour`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+各 XLD 輪郭を 1 本の直線で近似する。HALCON の ``fit_line_contour_xld``（Approximate XLD contours by line segments.）に相当。
+
+``a``, ``b`` は未使用。輪郭点群の重心を通り、SVD（特異値分解）で求めた第一主成分方向を直線の向きとして採用し（全点との距離二乗和を最小化する直線）、元の点群の射影範囲に等間隔に打ち直した点列に置き換える。HALCON 版は折れ線（複数線分）に分割できるが、この実装は輪郭全体を 1 本の直線にする点が異なる。点が 2 点未満の輪郭はそのまま返す。
 
 ## 詳しい使い方ガイド
 

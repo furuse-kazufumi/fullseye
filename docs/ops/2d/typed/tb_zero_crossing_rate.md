@@ -17,7 +17,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `signal → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Fraction of adjacent samples that change sign — a cheap pitch/noisiness cue.
+
+    Exact zeros are neither a crossing nor a sign: a crossing is counted only when
+    the sign changes between consecutive *non-zero* samples, and the rate divides
+    by the number of adjacent sample pairs ``len(x) - 1``. So ``[1, 0, 1, 0, 1]`` is
+    ``0.0`` and ``[1, 0, -1]`` is ``0.5`` (before 2026-09-02 ``diff(sign(x))`` counted
+    every touch of zero as a crossing: ``1.0`` for both).
+
+Typed bridge of the 1d op ``zero_crossing_rate`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

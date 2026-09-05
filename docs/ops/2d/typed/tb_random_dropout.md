@@ -17,7 +17,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `points → points`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+点の ``ratio`` 割合をランダム除去し ``(kept, kept_idx)`` を返す(欠損の模倣)。
+
+    残す点数は ``round((1-ratio)*N)``。``kept_idx`` は元配列への昇順インデックスで、
+    ``kept == points[kept_idx]`` が厳密に成り立つ。オクルージョン/疎な視点による
+    点欠損を学習で再現する。``0 <= ratio <= 1`` を要求。
+
+2-D 進化レジストリへ橋渡しした 3d の op ``random_dropout``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 
 ## 参考(サンプルデータ・文献)
 

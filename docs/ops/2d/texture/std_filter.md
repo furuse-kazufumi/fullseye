@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+局所窓内の標準偏差（テクスチャの粗さの指標）。HALCON の ``deviation_image``（Calculate the standard deviation of gray values within rectangular windows.）に相当。
+
+``a`` が窓サイズを ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。``E[v²]-E[v]²`` を窓ごとに求めて平方根を取り（負の丸め誤差は 0 にクランプ）、``_norm`` で正規化する。値が大きいほどその窓内の階調が激しく変化している（テクスチャがある/エッジが多い）ことを示す。
 
 ## 詳しい使い方ガイド
 

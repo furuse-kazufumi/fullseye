@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Min/Max 曲率流平滑化(SimpleITK ``MinMaxCurvatureFlow``)。xsitk_curvature_flow と同じ曲率流に、近傍のミニマム/マキシマムに基づく判定を加えて小さな穴やスペックルノイズを埋めながら平滑化する変種。
+
+``a`` は反復回数(1〜9 回)、``b`` はステンシル半径(``1+int(b*2)`` で 1〜3、判定に使う近傍の広さ)を振る。時間刻みは 0.0625 固定。出力は [0,1] にクリップ。
 
 ## 詳しい使い方ガイド
 

@@ -17,7 +17,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Linear heat equation / isotropic diffusion (HALCON ``isotropic_diffusion``).
+
+Explicit FTCS integration of  I_t = lap(I)  for a few steps (dt=0.2, stable for
+the 2-D 5-point stencil). This is exactly linear isotropic diffusion, i.e. the
+Green's-function-equivalent of Gaussian smoothing; ``a`` sets the diffusion time
+(step count), so larger a blurs more. ``b`` is unused.
 
 ## 詳しい使い方ガイド
 

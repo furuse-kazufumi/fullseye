@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ガウシアン勾配の大きさ（``scipy.ndimage.gaussian_gradient_magnitude``）によるエッジ検出。
+
+``a`` はガウシアンの sigma を 0.5〜3.0 に振る（``sigma = 0.5 + 2.5*a``、大きいほど太い/滑らかなエッジになる）。``b`` は未使用。Sobel と違い先にガウシアンで平滑化してから勾配を取るのでノイズに強いが、sigma を大きくすると細部が失われる。
 
 ## 詳しい使い方ガイド
 

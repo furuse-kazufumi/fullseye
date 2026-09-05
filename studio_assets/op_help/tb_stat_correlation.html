@@ -3,7 +3,18 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_stat_correlation&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">matrix → matrix</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>Pearson correlation matrix of `<code style="color:#22d3bf">(N, D)</code><code style="color:#22d3bf"> observations → </code><code style="color:#22d3bf">(D, D)</code>`.</p>
+<p>Same orientation as :func:<code style="color:#22d3bf">stat_covariance</code> (rows = observations).</p>
+<p>Entries are clipped to `<code style="color:#22d3bf">[-1, 1]</code>` (floating-point can overshoot by an</p>
+<p>ulp), the diagonal is exactly `<code style="color:#22d3bf">1</code>` and the matrix exactly symmetric by</p>
+<p>construction.</p>
+<p>**A constant column raises `<code style="color:#22d3bf">ValueError</code>`** (naming the column) instead of</p>
+<p>yielding NaN: correlation with a zero-variance variable is mathematically</p>
+<p>undefined (0/0), and a NaN that surfaces three ops downstream is the</p>
+<p>classic zero-division bug family this module fails closed against. Drop or</p>
+<p>perturb the constant column deliberately if that is what you mean.</p>
+<p>HALCON: no public tuple operator (see :func:<code style="color:#22d3bf">stat_covariance</code>).</p>
+<p>Typed bridge of the math op `<code style="color:#22d3bf">stat_correlation</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -4,7 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;zoom_image_size&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">zoom_image_size</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → image</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>目標サイズ(高さ `<code style="color:#22d3bf">H*(0.5+a)</code><code style="color:#22d3bf">、幅 </code><code style="color:#22d3bf">W*(0.5+b)</code>`)へリサンプルする</p>
+<p>ズーム。`<code style="color:#22d3bf">zoom_image_factor</code>` が倍率を 2 つ取るのに対し、こちらは<b>サイズ</b></p>
+<p>そのものを縦横独立に指定する ―― HALCON の意味論としては別物。ただし</p>
+<p>このパイプラインの `<code style="color:#22d3bf">image</code>` は「入力と同じキャンバスサイズで返る」契約</p>
+<p>なので、リサンプル結果は元の解像度のキャンバス左上に置き、余白は 0、</p>
+<p>はみ出す分は切り捨てる(実際に画像が縮小/拡大されたことは見た目で分かる</p>
+<p>が、配列の shape 自体は変わらない)。HALCON の `<code style="color:#22d3bf">zoom_image_size</code>`</p>
+<p>（Zoom an image to a given size.）に相当。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が目標高さの比率、</code><code style="color:#22d3bf">b</code>` が目標幅の比率を振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

@@ -17,7 +17,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Filtered back-projection: treat ``v`` as a sinogram (rows = angles,
+cols = detector, angles assumed uniform over [0,180)) and reconstruct the
+slice. ``b`` picks the reconstruction filter -- b < 0.5 -> Ram-Lak (ramp),
+b >= 0.5 -> Shepp-Logan. ``a`` is unused (the filter is the meaningful knob).
+Uses ``skimage.transform.iradon`` when available, else the NumPy
+FFT-ramp-filtered back-projection. Output refit to HxW.
 
 ## 詳しい使い方ガイド
 

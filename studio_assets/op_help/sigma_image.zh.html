@@ -4,7 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sigma_image&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">sigma_image</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → image</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>シグマフィルタによる非線形平滑化。中心画素値に近い(`<code style="color:#22d3bf">|x-mean|&lt;σ</code>`)</p>
+<p>近傍画素だけを平均する ―― エッジ付近では反対側の階調が平均に混ざらないため、</p>
+<p>平均フィルタよりエッジを保ちやすいノイズ除去になる。HALCON の</p>
+<p>`<code style="color:#22d3bf">sigma_image</code>`（Non-linear smoothing with the sigma filter.）に相当。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の一辺を </code><code style="color:#22d3bf">{3,5,7,9}</code><code style="color:#22d3bf"> で振る(内部の平均計算にも使う)。</code><code style="color:#22d3bf">b</code>` が</p>
+<p>許容帯域(シグマ、0.05〜0.4)を振る。両方が使われる。近傍がすべて帯域外の</p>
+<p>画素は元の値のまま残る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

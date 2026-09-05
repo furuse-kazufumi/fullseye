@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+FFT による高域通過フィルタ（輪郭・高周波成分の抽出）。HALCON の ``highpass_image``（Extract high frequency components from an image.）に相当。
+
+``a`` が遮断周波数 ``cutoff = 0.02 + 0.3a`` を振る。``b`` は未使用。2-D FFT で ``rad > cutoff`` の高周波成分だけを残し、逆 FFT の実部を ``_signed01`` で ``[0,1]`` へ写す（0.5 が「変化なし」、それより明暗が高周波成分の符号を表す）。低域フィルタ同様、境界は周期的（FFT）に扱われる。
 
 ## 詳しい使い方ガイド
 

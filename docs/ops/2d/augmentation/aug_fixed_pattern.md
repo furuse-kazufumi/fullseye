@@ -17,7 +17,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Fixed-pattern noise (FPN / photo-response non-uniformity). Unlike read
+noise this pattern is STATIC across frames: a per-column offset plus a
+per-row offset, each drawn once and held. ``a`` sets the amplitude
+``0.02 + 0.2*a``; ``b`` selects WHICH fixed pattern (the generator is seeded
+from b alone, so sweeping a changes only the strength of one pattern).
+Column FPN dominates (2/3 weight) as it does in CMOS column-parallel ADCs.
 
 ## 詳しい使い方ガイド
 

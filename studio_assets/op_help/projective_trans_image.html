@@ -4,7 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;projective_trans_image&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">projective_trans_image</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → image</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>透視(射影)変換(`<code style="color:#22d3bf">cv2.warpPerspective</code>`)。4 隅のうち上 2 隅を</p>
+<p>`<code style="color:#22d3bf">d=0.06+0.12*a</code>` の比率で内側に寄せることで台形(パースがかかった)歪みを</p>
+<p>作る。枠外は反射で埋める。HALCON の `<code style="color:#22d3bf">projective_trans_image</code>`（Apply a</p>
+<p>projective transformation to an image.）に相当(HALCON は任意のホモグラフィ</p>
+<p>行列を渡せるが、ここでは台形歪み 1 パターンに限定した近似)。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が歪みの強さを、</code><code style="color:#22d3bf">b</code>` が左右の非対称さ(どちら側をより歪ませるか)を</p>
+<p>振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

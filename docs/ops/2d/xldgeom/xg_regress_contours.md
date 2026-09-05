@@ -19,9 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 Total-least-squares line residual RMS = sqrt(minor covariance eigenvalue).
 
-    The perpendicular (orthogonal-regression) residual variance of a point set
-    equals its smallest covariance eigenvalue; its square root is the RMS
-    perpendicular distance to the best-fit line.
+The perpendicular (orthogonal-regression) residual variance of a point set
+equals its smallest covariance eigenvalue; its square root is the RMS
+perpendicular distance to the best-fit line.
 
 ## 詳しい使い方ガイド
 

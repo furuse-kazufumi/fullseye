@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tb_cx_apply_transfer_function — 2D <code style="color:#22d3bf">typed</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">cimage</code> → <code style="color:#22d3bf">cimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_cx_apply_transfer_function&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p><b>中心化された</b>スペクトルにフィルタ `<code style="color:#22d3bf">H</code><code style="color:#22d3bf"> を乗じる → </code><code style="color:#22d3bf">(H, W)</code>` complex128。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>The honest primitive under `<code style="color:#22d3bf">ops.lowpass</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">ops.highpass</code>`, but</p>
+<p><b>complex-preserving</b>: the filtered spectrum is returned as a complex field</p>
+<p>(not immediately inverted and real-cast), so it can be chained, inspected, or</p>
+<p>handed to :func:<code style="color:#22d3bf">cx_ifft</code>. `<code style="color:#22d3bf">H</code>` is a same-shape transfer function laid out in</p>
+<p>the *centred* convention of :func:<code style="color:#22d3bf">cx_fft</code> (DC at the centre); it may be real</p>
+<p>(a magnitude mask) or complex (a phase-shifting filter). A real `<code style="color:#22d3bf">cx</code>` is</p>
+<p>FFT&#x27;d first (module convenience).</p>
+<p>Typed bridge of the 2d op `<code style="color:#22d3bf">cx_apply_transfer_function</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">cimage</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_cx_ifft">tb_cx_ifft</a> · <a style="color:#22d3bf" href="op:tb_cx_magnitude">tb_cx_magnitude</a> · <a style="color:#22d3bf" href="op:tb_cx_phase">tb_cx_phase</a> · <a style="color:#22d3bf" href="op:tb_cx_real">tb_cx_real</a> · <a style="color:#22d3bf" href="op:tb_cx_imag">tb_cx_imag</a> · <a style="color:#22d3bf" href="op:tb_cx_log_magnitude">tb_cx_log_magnitude</a> · <a style="color:#22d3bf" href="op:tb_cplx_cr_residual">tb_cplx_cr_residual</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">typed</code>)</h3>
+<p><a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_angle_3points">tb_angle_3points</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

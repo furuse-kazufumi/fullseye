@@ -19,7 +19,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+実装は局所分散(``deviation_image`` の分散版、窓内の
+``E[x^2]-E[x]^2``)。本来の Laws' テクスチャフィルタは L5/E5/S5/W5/R5 などの
+1 次元カーネル対から作る 25 種類の畳み込みバンク(エネルギー/エッジ/波状/
+斑点/波紋を捉える)だが、この代役ではその全カーネルバンクではなく単一の
+局所分散で代用している(近似の限界 ―― 方向別・周波数別の情報は失われる)。
+HALCON の ``texture_laws``（Filter an image using a Laws texture filter.）
+の代役。
+
+``a`` が窓の一辺を ``{3,5,7,9}`` で振る。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

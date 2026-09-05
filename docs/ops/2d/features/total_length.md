@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `contour → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+全 XLD 輪郭の合計弧長を返す特徴量。HALCON の ``length_xld``（Length of contours or polygons.）に相当。
+
+``a``, ``b`` は未使用。各輪郭について隣接点間のユークリッド距離を足し合わせたもの（折れ線の全長）を、全輪郭ぶん合算する。点が 2 点未満の輪郭は長さ 0 として扱われる。
 
 ## 詳しい使い方ガイド
 

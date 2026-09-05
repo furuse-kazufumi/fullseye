@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">deform_tps — 2D <code style="color:#22d3bf">deformation</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;deform_tps&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>5x5 の制御点グリッド上での薄板スプライン（thin-plate spline, TPS）変形（Bookstein, TPAMI 1989）。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>The 3x3 interior control points are displaced by the deterministic smooth</p>
+<p>field `<code style="color:#22d3bf">d = amp * [sin(2 pi f gx), cos(2 pi f gy)]</code>` (gy, gx = the control</p>
+<p>point&#x27;s normalised coordinates), the 16 border control points are pinned so</p>
+<p>the frame stays anchored. The backward map is the TPS interpolant fitted</p>
+<p>from the *displaced* control points back to the original ones -- the unique</p>
+<p>minimum-bending-energy interpolant, i.e. the surface a thin metal plate</p>
+<p>would take -- and it is evaluated at every destination pixel before bilinear</p>
+<p>resampling. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> sets the amplitude </code><code style="color:#22d3bf">amp = 0.15*a*min(H,W)</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` the</p>
+<p>spatial frequency `<code style="color:#22d3bf">f = 0.5 + 1.5b</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">a = 0</code>` leaves the control points</p>
+<p>where they are, so the solved map is the identity (up to sub-pixel resampling error).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_geometry">gallery2d_geometry</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_geometry.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">deformation</code>)</h3>
+<p><a style="color:#22d3bf" href="op:deform_ffd">deform_ffd</a> · <a style="color:#22d3bf" href="op:deform_mls">deform_mls</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

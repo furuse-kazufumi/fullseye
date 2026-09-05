@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+オイラー数(Euler number)。「連結成分の数 − 穴の数」で定義されるトポロジー的な特徴量で、領域の形そのもの(位置・大きさ)ではなく「繋がり方」だけを表す整数値になる。
+
+HALCON の `euler_number`(Calculate the Euler number.)に相当。実装は ``measure.euler_number(binm(v))``。a, b は未使用。出力は 1 個のスカラー(``feature`` 型)。
 
 ## 詳しい使い方ガイド
 

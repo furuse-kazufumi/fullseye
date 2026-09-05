@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+局所エントロピー。各画素の周辺(円盤状の近傍)にあるグレー値分布のシャノンエントロピー(2 進対数)を計算し、その場所を符号化するのに必要な最小ビット数として画像化する —— テクスチャの複雑さ・情報量の指標。
+
+HALCON の `entropy_image`(Calculate the entropy of gray values within a rectangular window.)に相当(近似。窓形状は矩形でなく円盤)。実装は ``filters.rank.entropy(_u8s(v), disk(1+int(a*3)))`` を正規化したもの —— a は円盤半径を 1〜4 に振る。b は未使用。入力は内部で 8 bit 化されるため、元画像の微妙な階調差は失われる。
 
 ## 詳しい使い方ガイド
 

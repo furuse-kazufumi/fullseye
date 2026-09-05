@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `contour → contour`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+輪郭の凸包(``cv2.convexHull``)を計算し、輪郭形式のまま返す
+(``shape_trans`` の輪郭版)。HALCON の ``shape_trans_xld``（Transform the
+shape of contours or polygons.）が持つ複数の変形モードのうち、凸包 1 種類
+のみを実装している(近似)。
+
+``a``, ``b`` は未使用。cv2 が無い環境ではこの分岐は呼べない。
 
 ## 詳しい使い方ガイド
 

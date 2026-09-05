@@ -3,7 +3,16 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsp_chamfer_dist&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">region → image</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>City-block (chamfer) distance to the nearest background pixel, normalised to [0,1].</p>
+<p>★2026-09-02: 縮退入力での <b>符号つきセンチネル</b> を潰す。</p>
+<p>`<code style="color:#22d3bf">scipy.ndimage.distance_transform_cdt</code>` は「背景画素が 1 つも無い」入力に対して</p>
+<p>距離ではなく <b>-1 を全画素に</b>書く(実測: `<code style="color:#22d3bf">np.ones((8,8), bool)</code>` -&gt; min=max=-1)。</p>
+<p>旧実装はそれをそのまま `<code style="color:#22d3bf">_norm</code>` に通していたので、**塗り潰された領域の距離マップが</p>
+<p>一様 -1 の「画像」**になっていた —— 例外も警告も出ないまま値域 [0,1] の image 契約を</p>
+<p>破り、保存・表示では全面が黒に潰れる。</p>
+<p>背景が無い = どの画素も「無限に遠い」ので、正規化後の正直な答えは <b>一様 1.0</b>。</p>
+<p>前景が無いときは距離 0 の一様 0.0。どちらも符号つきの値を返さない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

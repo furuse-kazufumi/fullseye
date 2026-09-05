@@ -3,7 +3,16 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;alife_reaction_bz&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → image</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>Belousov-Zhabotinsky-like excitable medium (Greenberg-Hastings automaton).</p>
+<p>A 3-state excitable lattice -- 0 = rest, 1 = excited, 2 = refractory -- with</p>
+<p>the Greenberg-Hastings rule: an excited cell becomes refractory, a refractory</p>
+<p>cell relaxes to rest, and a resting cell fires when at least `<code style="color:#22d3bf">thr</code>` of its 8</p>
+<p>Moore neighbours are excited. Because a refractory cell cannot be re-excited,</p>
+<p>excitation cannot back-propagate and the fronts organise into the travelling</p>
+<p>waves and rotating spirals of the BZ reaction. The image tertiles set the</p>
+<p>initial state (&gt;2/3 excited, 1/3..2/3 refractory, else rest). `<code style="color:#22d3bf">a</code>` sets the</p>
+<p>excitation threshold thr = 1 + int(3a) neighbours, `<code style="color:#22d3bf">b</code>` the step count</p>
+<p>1 + int(20b). Returns state/2.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

@@ -1,0 +1,52 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tb_fmcw_window_apply — 2D <code style="color:#22d3bf">typed</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">beatcube</code> → <code style="color:#22d3bf">beatcube</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_fmcw_window_apply&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>ビートキューブ（beat cube）のレンジ軸および／またはドップラー軸に沿って周期的な窓関数を適用する。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>The sidelobes of a rectangular (unwindowed) transform are -13.3 dB, so a</p>
+<p>strong target buries a weak one 20 dB down at a completely different range.</p>
+<p>Windowing trades main-lobe width for sidelobe level; the published figures</p>
+<p>(Harris 1978, Table 1) and the levels <b>measured</b> in this repository on a</p>
+<p>single bin-centred target are:</p>
+<p>==========  ==============  ==============  ==================</p>
+<p>window      published PSL   measured PSL    measured -3 dB lobe</p>
+<p>==========  ==============  ==============  ==================</p>
+<p>rect        -13.3 dB        -13.25 dB       0.885 bin</p>
+<p>hann        -31.5 dB        -31.47 dB       1.438 bin</p>
+<p>hamming     -42.7 dB        -42.45 dB       1.301 bin</p>
+<p>blackman    -58.1 dB        -58.11 dB       1.641 bin</p>
+<p>==========  ==============  ==============  ==================</p>
+<p>Measured by transforming each window on its own with 2^18-point zero padding</p>
+<p>and taking the highest lobe past the first null — that *is* the definition of</p>
+<p>peak sidelobe level, so these are the module&#x27;s own numbers, not copied ones.</p>
+<p>Hamming lands 0.25 dB off the published figure because the published one is</p>
+<p>for the optimal 0.53836/0.46164 pair; the 0.54/0.46 coefficients written here</p>
+<p>are the textbook ones and this is what they actually give.</p>
+<p>What it buys, measured end to end: a target 45 dB below a strong one, seven</p>
+<p>range bins away, is <b>undetectable</b> unwindowed (its cell sits 24.6 dB down</p>
+<p>in the leakage skirt and is not even a local maximum) and becomes a clean</p>
+<p>local maximum at -43.6 dB with `<code style="color:#22d3bf">hann</code>`. That comparison is step 4 of</p>
+<p>`<code style="color:#22d3bf">examples/fmcw_range_doppler.py</code>`.</p>
+<p>*axis* is named by <b>role</b> — `<code style="color:#22d3bf">&quot;range&quot;</code>` (fast time, the last axis),</p>
+<p>`<code style="color:#22d3bf">&quot;doppler&quot;</code><code style="color:#22d3bf"> (slow time, the middle axis) or </code><code style="color:#22d3bf">&quot;both&quot;</code>` — never by number,</p>
+<p>because a transposed cube is the mistake this naming is defending against.</p>
+<p>The window is *not* folded into :func:<code style="color:#22d3bf">range_doppler_map</code>: keeping it a</p>
+<p>separate op is what lets the sidelobe table above be measured as a</p>
+<p>difference, and keeps the transform op a pure 2-D FFT.</p>
+<p>Returns a new complex cube of the same shape. <b>Raises</b> `<code style="color:#22d3bf">ValueError</code>` on a</p>
+<p>real-valued or malformed cube, or an unknown *window* / *axis*.</p>
+<p>Typed bridge of the rangedoppler op `<code style="color:#22d3bf">fmcw_window_apply</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">beatcube</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_range_doppler_map">tb_range_doppler_map</a> · <a style="color:#22d3bf" href="op:tb_fmcw_range_profile">tb_fmcw_range_profile</a> · <a style="color:#22d3bf" href="op:tb_beamform_delay_sum">tb_beamform_delay_sum</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">typed</code>)</h3>
+<p><a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_angle_3points">tb_angle_3points</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

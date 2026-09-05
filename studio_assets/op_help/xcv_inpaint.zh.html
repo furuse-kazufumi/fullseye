@@ -3,7 +3,15 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xcv_inpaint&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → image</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>欠損領域を推定して埋める修復(inpainting)。</p>
+<p>8bit 変換後、極端に明るい(&gt;235)/暗い(&lt;20)画素を「欠損」とみなして</p>
+<p>自動マスクし、OpenCV の Telea 法(高速マーチング法ベース、</p>
+<p>`<code style="color:#22d3bf">cv2.INPAINT_TELEA</code><code style="color:#22d3bf">)で周囲から埋める。</code><code style="color:#22d3bf">xsk_inpaint</code>`</p>
+<p>(biharmonic 法)と同じ発想の別アルゴリズム版。</p>
+<p>半径 3 画素の近傍を使う(固定)。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。しきい値が</p>
+<p>固定のため、本来意味のある白飛び/黒つぶれ画素まで埋められてしまう</p>
+<p>場合がある。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

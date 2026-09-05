@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ポスタリゼーション（階調数の削減）。``PIL.ImageOps.posterize`` を呼び、各チャンネルの有効ビット数を減らして色数を落とす。
+
+a が保持ビット数（``bits = 1 + int(a*6)``、範囲 1〜7）を振る。b は未使用。bits=1 では各チャンネルが 2 値化に近い極端な階調落ちになる。
 
 ## 詳しい使い方ガイド
 

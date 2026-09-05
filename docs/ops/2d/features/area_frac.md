@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+領域が占める画素の割合（面積率）を返す特徴量。HALCON の ``area_center``（Area and center of regions.）とは異なり、面積のみを返し重心は計算しない（機能の一部だけの対応）。
+
+``a``, ``b`` は未使用。``v > 0.5`` で二値化した画素の平均値（= 前景画素数 / 全画素数）をスカラーで返す。値域は ``[0,1]``。
 
 ## 詳しい使い方ガイド
 

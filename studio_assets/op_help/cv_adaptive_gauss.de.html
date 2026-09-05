@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;cv_adaptive_gauss&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">local_threshold</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → region</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>局所ガウス重み付き平均によるしきい値二値化(adaptive threshold、Gaussian 版、OpenCV 実装)。cv_adaptive_mean と同じ枠組みだが、局所平均を単純平均ではなくガウス重み付き平均で取るため、窓の境界付近の急な変化が出にくい。</p>
+<p>HALCON の <code style="color:#22d3bf">local_threshold</code>(Segment an image using local thresholding.)に相当。実装は `<code style="color:#22d3bf">cv2.adaptiveThreshold(_u8(v), 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, blockSize=2*int(a*6)+3, C=int(b*10))</code>` —— a は blockSize を 3〜15(奇数)に、b は定数 C を 0〜10 に振る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

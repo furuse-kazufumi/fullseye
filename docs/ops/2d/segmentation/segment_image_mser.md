@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+MSER(Maximally Stable Extremal Regions、最大安定極値領域)検出
+(``cv2.MSER_create``)。しきい値を連続的に変化させても形が安定して残る
+領域を検出し、その境界線を返す(文字・ロゴなど照明変化に頑健な領域検出に
+使われる)。HALCON の ``segment_image_mser``（Segment image using Maximally
+Stable Extremal Regions (MSER).）に相当。
+
+``a`` が MSER の安定性パラメータ(delta、3〜11)を振る。``b`` は未使用。
+``cv2`` が無い環境ではこの分岐は呼べない。
 
 ## 詳しい使い方ガイド
 

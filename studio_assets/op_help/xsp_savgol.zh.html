@@ -3,7 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsp_savgol&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → image</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Savitzky-Golay フィルタで画像を平滑化する（列方向→行方向の順に 1 次元適用）。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は窓幅を 5, 7, 9, 11, 13 の奇数に振る（</code><code style="color:#22d3bf">w = 5 + 2*int(a*4)</code>`）。</p>
+<p>多項式次数は 2 に固定。`<code style="color:#22d3bf">b</code>` は未使用。窓内に 2 次多項式を最小二乗</p>
+<p>フィットして中心値を置き換える手法なので、単純な移動平均よりピークの</p>
+<p>高さや勾配を保ったまま平滑化できる。窓幅が画像サイズに対して大きすぎると</p>
+<p>境界の処理（`<code style="color:#22d3bf">scipy</code>` の既定の外挿）の影響が強く出る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

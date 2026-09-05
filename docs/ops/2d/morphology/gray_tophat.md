@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ホワイトトップハット(元画像 − オープニング)。周囲より明るい小さな
+構造(スポット・細線)だけを抽出する。``_norm`` で正規化して返すため、
+絶対的な明るさではなく相対的な突出度になる。HALCON の ``gray_tophat``
+（Perform a gray value top hat transformation on an image.）に相当。
+
+``a`` が矩形構造要素のサイズを ``{3,5,7,9}`` で振る。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+実装は ``fft_image`` と同じ(``kind: "fft_power"``、log1p パワース
+ペクトル)。HALCON では ``power_byte`` は 8bit 出力用のバイト量子化された
+パワースペクトルを指すが、この代役では ``power_real``/``fft_image`` と
+区別せず同じ処理を返す(近似の限界)。HALCON の ``power_byte``（Return the
+power spectrum of a complex image.）の代役。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ソラリゼーション（フィルム現像の中間反転効果）。``PIL.ImageOps.solarize``を呼び、しきい値を超える画素値を反転する。
+
+a がしきい値（``threshold = int(64 + 160*a)``、範囲 64〜224）を振る。b は未使用。しきい値が低いほど反転される範囲が広がる。
 
 ## 詳しい使い方ガイド
 

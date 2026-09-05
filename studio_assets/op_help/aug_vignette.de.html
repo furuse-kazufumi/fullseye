@@ -3,7 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_vignette&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Radial lens vignetting following the natural cos^4 falloff law. With</p>
+<p>`<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> the normalised distance from the image centre and </code><code style="color:#22d3bf">R = 0.35 + 1.15*b</code>`</p>
+<p>the falloff radius, the transmission is</p>
+<p>`<code style="color:#22d3bf">cos(atan(r/R))^4 = 1/(1 + (r/R)^2)^2</code><code style="color:#22d3bf"> -- the textbook cos^4 law. </code><code style="color:#22d3bf">a</code>`</p>
+<p>blends it in: `<code style="color:#22d3bf">out = v * (1 - a + a*falloff)</code>`, so a=0 is a no-op and a=1 is</p>
+<p>full vignetting. Centre stays brightest; strictly darkening, never amplifying.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">Leitfaden zur Familie gallery2d_color_artistic</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

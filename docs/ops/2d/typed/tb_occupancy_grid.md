@@ -17,7 +17,17 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `points → volume`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+点群 (N,3) → 3-D 占有ボクセル格子 (res,res,res) bool(点の落ちた voxel を占有)。
+
+    ``bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))`` が格子の張る体積、``res`` は各軸の
+    ボクセル数(立方 res³)。ボクセルは半開区間 [lo+i/res*span, lo+(i+1)/res*span) で、
+    上端 (frac==1) の点は最終ボクセルに含める。**bounds 外の点は落とす**(端セルへ
+    clamp すると境界に幻の障害物が積もるため)。match3d.points_to_voxel が密度(float)
+    を作るのに対し、これは planning 用の占有(bool)を作る点が固有。
+
+    Raises ValueError for res<=0, non-(N,3) points, or degenerate bounds.
+
+2-D 進化レジストリへ橋渡しした 3d の op ``occupancy_grid``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 
 ## 参考(サンプルデータ・文献)
 

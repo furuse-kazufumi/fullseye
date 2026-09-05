@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Shi-Tomasi 法による高品質コーナー検出(1 スカラー特徴量、OpenCV 実装)。cv_min_eigen と同じ最小固有値基準でコーナーらしさを評価し、非極大抑制と最小距離フィルタで間引いた上位のコーナーを検出する —— ここでは検出できた個数だけを返す(0 個なら 0)。
+
+HALCON に直接対応するものは無い。実装は ``cv2.goodFeaturesToTrack(v, maxCorners=int(10+40*a), qualityLevel=0.01+0.1*b, minDistance=5)`` —— a は検出上限数を 10〜50 に、b は品質しきい値(最強コーナーに対する相対比。大きいほど厳しく絞り込まれ検出数が減る)を 0.01〜0.11 に振る。最小距離は 5 画素に固定。
 
 ## 詳しい使い方ガイド
 

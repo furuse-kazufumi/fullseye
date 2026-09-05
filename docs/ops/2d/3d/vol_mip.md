@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `volume → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+最大値投影（Maximum Intensity Projection, MIP）で 3D ボリュームを 2D 画像に潰す。対応する HALCON op は指定されていない。
+
+``a``, ``b`` は未使用。先頭軸（``axis=0``、スライス/深さ方向）に沿った最大値を取り、``_norm`` でそのスライスの最大絶対値を 1 に正規化する。CT/MRI の読影でよく使う投影法。
 
 ## 詳しい使い方ガイド
 

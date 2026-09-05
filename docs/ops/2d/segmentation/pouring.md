@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+分水嶺法（watershed）による領域分割の境界抽出。勾配画像（Sobel 振幅）を地形とみなし、暗い領域（``x < 0.2+0.3a``）を種（マーカー）として分水嶺を計算、``skimage.segmentation.find_boundaries`` で境界を前景として返す。b は未使用。
+
+HALCON の ``pouring``（水を注ぐように画素値の低い場所から領域を満たしていく古典的な pouring アルゴリズムで分割する演算）に相当する近似 —— アルゴリズムの詳細は異なるが、低輝度領域を起点に領域を広げるという発想は共通。``watersheds``/``watersheds_threshold`` と実装を共有する。
 
 ## 詳しい使い方ガイド
 

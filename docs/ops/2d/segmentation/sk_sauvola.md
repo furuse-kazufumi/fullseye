@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Sauvola の局所適応しきい値。各ピクセル周辺の局所平均・標準偏差からローカルにしきい値を決める手法で、照明ムラのある文書画像の二値化(文字抽出)向けに設計されている。
+
+HALCON の `var_threshold`(Threshold an image by local mean and standard deviation analysis.)に相当。実装は ``v > filters.threshold_sauvola(v, window_size=2*int(a*6)+3)`` —— a は局所窓のサイズを 3〜15(奇数)に振る(小さいほど照明ムラに強いが計算が細かくノイズにも敏感)。b は未使用。k, r パラメータは skimage の既定値のまま。
 
 ## 詳しい使い方ガイド
 

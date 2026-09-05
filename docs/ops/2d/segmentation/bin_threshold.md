@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+大津の判別分析法（Otsu's method）による自動しきい値二値化。``binary_threshold``/``auto_threshold`` と同じ ``_sh_threshold`` の ``otsu`` 分岐を共有し、a, b は未使用。しきい値より明るい画素を前景(1)とする。skimage が無い環境では画像平均値をしきい値とするフォールバックになる。
+
+HALCON の ``bin_threshold``（複数の自動しきい値決定アルゴリズムから選んで二値化する演算、既定は最大分離度=大津法相当）に相当する近似で、大津法のみをサポートし他のアルゴリズム選択肢は無い。
 
 ## 詳しい使い方ガイド
 

@@ -17,7 +17,25 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Abelian sandpile / self-organised criticality (Bak-Tang-Wiesenfeld 1987).
+
+The image is quantised to integer grain heights h = round(K * image) with
+K = 4 + int(12a), then relaxed by the BTW toppling rule: a cell with 4 or
+more grains gives one grain to each orthogonal neighbour and keeps the rest.
+The boundary is dissipative (grains leaving the grid are lost), which is what
+lets the pile settle into the self-organised critical state where every cell
+holds at most 3 grains.
+
+``a`` sets the initial grain scale K (how supercritical the pile starts);
+``b`` sets the number of parallel relaxation sweeps 1 + int(50b). For
+b >= 0.9 the pile relaxes *toward* stability with early termination, but the
+sweep count is bounded by a total-work budget (``_SANDPILE_BUDGET`` grain-
+updates) so the op stays fast on any image size: a small or varied pile
+reaches the stable critical state (every cell <= 3), while a very large
+maximally-supercritical pile is only partially relaxed (full BTW
+stabilisation is O(L^2) sweeps). Returns h / max(h) in [0, 1]; a fully
+relaxed pile (max 3) takes values in {0, 1/3, 2/3, 1} (or {0, 1/2, 1} when
+the stable maximum is 2).
 
 ## 詳しい使い方ガイド
 

@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Roberts クロス勾配による勾配強度（エッジ検出）。HALCON の ``roberts``（Detect edges using the Roberts filter.）に相当。
+
+2×2 の対角差分（``v - shift(-1,-1)`` と ``shift(0,-1) - shift(-1,0)``）のユークリッドノルムを ``_norm`` で正規化する。``a``, ``b`` は未使用。カーネルが小さい（2×2）ためノイズに敏感だが応答の局在性は高い。境界は ``_shift_edge`` によりレプリケート（折り返しなし）。
 
 ## 詳しい使い方ガイド
 

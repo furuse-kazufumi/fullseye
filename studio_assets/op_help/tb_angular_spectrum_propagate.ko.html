@@ -3,7 +3,40 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">cimage</code> → <code style="color:#22d3bf">cimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_angular_spectrum_propagate&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>타입 계약은 <code style="color:#22d3bf">cimage → cimage</code>. 동작의 언어 설명은 아래 패밀리 사용 가이드와 실행 가능한 샘플을 보세요(여기서는 추측을 쓰지 않습니다).</p>
+<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
+<p>Exact scalar free-space propagation of a complex field (angular spectrum).</p>
+<p>`<code style="color:#22d3bf">U(z) = IFFT{ FFT{U(0)} * exp(i*2*pi*z*sqrt(1/lambda^2 - fx^2 - fy^2)) }</code>`</p>
+<p>in the `<code style="color:#22d3bf">exp(-i*omega*t)</code>` convention, so a positive *distance_um*</p>
+<p>propagates forward. Components beyond the propagating cone</p>
+<p>(`<code style="color:#22d3bf">fx^2 + fy^2 &gt; 1/lambda^2</code>`) are <b>attenuated</b> by</p>
+<p>`<code style="color:#22d3bf">exp(-2*pi*|z|*sqrt(fx^2 + fy^2 - 1/lambda^2))</code>`, which is the physical</p>
+<p>evanescent decay — not zeroed, so `<code style="color:#22d3bf">distance_um = 0</code>` is an *exact*</p>
+<p>identity and the transfer function is continuous through it.</p>
+<p>Unlike Fresnel propagation this makes no paraxial approximation: it is the</p>
+<p>exact solution of the Helmholtz equation for a band-limited field, valid</p>
+<p>from a fraction of a wavelength outward.</p>
+<p>Returns a complex128 array with the same shape as *field*.</p>
+<p>Ground truth it reproduces (measured): `<code style="color:#22d3bf">distance_um = 0</code>` returns the field</p>
+<p>bit-identically (it short-circuits the transform pair); propagating `<code style="color:#22d3bf">+z</code>`</p>
+<p>then `<code style="color:#22d3bf">-z</code>` returns the original to a relative L2 error of 4.3e-16 to</p>
+<p>5.3e-16 for a band-limited field (measured on three: 64x64 random at</p>
+<p>+/-50 um, a 64x64 Gaussian at +/-250 um, a 128x128 random at +/-500 um);</p>
+<p>total power is conserved to between 0 and 3.5e-16 relative on the same</p>
+<p>three. A field *with*</p>
+<p>evanescent content does <b>not</b> round-trip — those components are gone by</p>
+<p>construction, in both directions, because that is what physically happens.</p>
+<p>*field* is a field in the <b>space</b> domain, not a spectrum: do not hand it</p>
+<p>the fftshifted output of :func:<code style="color:#22d3bf">complexops.cx_fft</code>. Real input is promoted</p>
+<p>to complex, which loses nothing.</p>
+<p>Aliasing: the discrete transfer function is periodic, so a field that</p>
+<p>diffracts past the array edge wraps around. The practical guard is the</p>
+<p>usual one — pad the field so the propagated support stays inside, and keep</p>
+<p>`<code style="color:#22d3bf">pixel_pitch_um</code><code style="color:#22d3bf"> below </code><code style="color:#22d3bf">lambda/(2*NA)</code>`. No warning can detect this</p>
+<p>reliably from the array alone, so none is invented.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *field* is not 2-D, smaller than 2x2, larger than</p>
+<p>:data:<code style="color:#22d3bf">MAX_FIELD_ELEMENTS</code>, masked, or non-finite; non-positive or</p>
+<p>non-finite *wavelength_um* / *pixel_pitch_um*; non-finite *distance_um*.</p>
+<p>Typed bridge of the optics op `<code style="color:#22d3bf">angular_spectrum_propagate</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">wavelength_um</code><code style="color:#22d3bf"> (default 0.55) and </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">distance_um</code>` (default 100).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -3,7 +3,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_stat_covariance&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">matrix → matrix</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>Sample covariance matrix of `<code style="color:#22d3bf">(N, D)</code><code style="color:#22d3bf"> observations → </code><code style="color:#22d3bf">(D, D)</code>`.</p>
+<p>Rows are observations, columns are variables — the `<code style="color:#22d3bf">(N, D)</code>` orientation</p>
+<p>every Fullseye point/sample API uses (note `<code style="color:#22d3bf">np.cov</code>` defaults to the</p>
+<p>*transposed* convention). Uses the unbiased `<code style="color:#22d3bf">ddof=1</code>` estimator (divides</p>
+<p>by `<code style="color:#22d3bf">N - 1</code><code style="color:#22d3bf">), hence the </code><code style="color:#22d3bf">N &gt;= 2</code>` requirement. The diagonal holds the</p>
+<p>per-variable sample variances; the result is symmetric positive</p>
+<p>semi-definite by construction, so it can go straight into</p>
+<p>:func:<code style="color:#22d3bf">mat_eigh</code> for principal axes (the covariance-ellipse workflow).</p>
+<p>HALCON: no public tuple/matrix operator — covariance lives inside HALCON&#x27;s</p>
+<p>calibration and matching internals only.</p>
+<p>Typed bridge of the math op `<code style="color:#22d3bf">stat_covariance</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

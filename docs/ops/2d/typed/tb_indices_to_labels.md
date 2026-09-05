@@ -17,7 +17,22 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `signal → volume`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+添字 ``(N,)`` → 選択マスク ``labels``。``indices`` の出口(**可逆**)。
+
+    ``max(indices) + 1`` 長の 1-D ラベル配列を作り、選ばれた位置に 1 を置く。
+    ``indices -> labels -> indices`` は **bit 一致**(重複と順序を除く)。
+    逆向き ``labels -> indices -> labels`` は**末尾の背景を落とす**
+    (長さが ``max_index + 1`` に切り詰まる)—— これは情報の損失であって
+    バグではないので、:func:`labels_to_indices` の docstring に量を書いてある。
+
+    Args:
+        indices: (N,) の非負整数配列。
+    Returns:
+        (max + 1,) の int64 ラベル配列(選択 = 1、背景 = 0)。
+    Raises:
+        ValueError: 1-D でない / 負 / 空 / 上限超。
+
+2-D 進化レジストリへ橋渡しした reprconv の op ``indices_to_labels``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 
 ## 参考(サンプルデータ・文献)
 

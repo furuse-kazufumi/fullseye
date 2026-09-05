@@ -4,7 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;affine_trans_polygon_xld&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">affine_trans_polygon_xld</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">contour → contour</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>XLD 輪郭（多角形/曲線の頂点列）にアフィン回転を掛ける。画像中心を基準に角度 `<code style="color:#22d3bf">-20°+40a</code>` で回転させる（せん断・平行移動は行わない、回転のみの部分アフィン）。b は未使用。</p>
+<p>HALCON の `<code style="color:#22d3bf">affine_trans_polygon_xld</code>`（XLD 多角形に任意のアフィン 2D 変換を適用する演算）とは異なり、この実装は回転成分だけを再現する近似で、拡大縮小やせん断は反映されない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

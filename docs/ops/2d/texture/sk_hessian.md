@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Hybrid Hessian フィルタ。Frangi とほぼ同じ管状構造検出だが、平滑化の方法が異なる(近似的に Frangi の代替として使える)。
+
+HALCON の `lines_gauss` に相当(近似)。a, b は未使用 —— スケールは ``sigmas=range(1, 4)`` に固定。sk_frangi / sk_meijering と 3 兄弟で、同じ入力に対する応答の違いを見比べる目的で並べてある。
 
 ## 詳しい使い方ガイド
 

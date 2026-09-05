@@ -4,7 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;local_min&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">local_min</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">image → region</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>局所極小点(領域極小)検出。`<code style="color:#22d3bf">x</code><code style="color:#22d3bf"> が窓内の最小値(</code><code style="color:#22d3bf">_k(a)</code>`)に一致し、</p>
+<p>かつ `<code style="color:#22d3bf">x &lt; 0.7-0.4*b</code><code style="color:#22d3bf"> を満たす画素を前景とする、</code><code style="color:#22d3bf">local_max</code>` の暗部版。</p>
+<p>HALCON の `<code style="color:#22d3bf">local_min</code>`（Detect all local minima in an image.）に相当。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓サイズを、</code><code style="color:#22d3bf">b</code>` が輝度の上限しきい値を振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

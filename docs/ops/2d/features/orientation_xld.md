@@ -19,7 +19,11 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `contour → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+楕円フィットした輪郭の傾き角(``cv2.fitEllipse`` の角度を 180° で
+折り返して [0,1] に正規化)。HALCON の ``orientation_xld``（Calculate the
+orientation of contours or polygons.）に相当。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

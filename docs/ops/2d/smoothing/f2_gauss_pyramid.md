@@ -19,7 +19,10 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Return one level of the image's Gauss pyramid, down-sampled by 2 ``level``
+times (blur + decimate) and then up-sampled back to the original HxW so the
+result is a band-limited (low-pass) version at reduced resolution. ``a``
+selects the level (1..4); ``b`` is ignored.
 
 ## 詳しい使い方ガイド
 

@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+領域にアフィン変換（回転+シアー）を掛ける。``affine_trans_image`` と同じ ``_sh_geom`` の ``affine`` 分岐で連続値として変換したのち、``_rebinarise`` により 0.5 で二値化し直して {0,1} の領域として返す（幾何変換の補間で生じる中間値を除去するため）。a が回転角（-20°〜+20°）、b がシアー量を振る。
+
+HALCON の ``affine_trans_region``（領域に任意のアフィン 2D 変換を適用する演算）に相当する近似。
 
 ## 詳しい使い方ガイド
 

@@ -3,7 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_confidence_connected&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → region</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>信頼区間連結領域拡張(SimpleITK `<code style="color:#22d3bf">ConfidenceConnected</code>`)。画像中心を種にし、現在の領域内の平均・標準偏差から「平均 ± multiplier * 標準偏差」の区間を作り、それを反復的に更新しながら連結領域を広げていく(xsitk_connected_threshold より統計的な閾値の決め方)。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は反復回数(</code><code style="color:#22d3bf">1+int(a*5)</code><code style="color:#22d3bf"> で 1〜6)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は標準偏差の倍率(</code><code style="color:#22d3bf">1.0+3.0*b</code>` で 1〜4)を振る。初期近傍半径は 2 固定。画像中心付近に対象があることを前提とした op。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

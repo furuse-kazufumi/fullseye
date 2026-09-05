@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;cv_gradient&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">gray_range_rect</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">image → image</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>モルフォロジー勾配(OpenCV 実装)。「膨張結果 − 収縮結果」で、領域の輪郭(縁取り)だけを取り出す —— 通常の微分ベースのエッジ検出とは別系統の輪郭抽出。</p>
+<p>HALCON の <code style="color:#22d3bf">gray_range_rect</code>(Determine the gray value range within a rectangle.)に相当(近似。矩形窓内の最大-最小レンジを取る点は同じ発想)。実装は `<code style="color:#22d3bf">cv2.morphologyEx(v, MORPH_GRADIENT, se)</code><code style="color:#22d3bf"> を正規化したもの、se は楕円形でサイズ </code><code style="color:#22d3bf">3+2*int(a*3)</code>` —— a は構造要素サイズを 3〜9 に振る。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

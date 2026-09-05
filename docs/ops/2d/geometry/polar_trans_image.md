@@ -19,7 +19,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+直交座標→極座標変換(``cv2.warpPolar``)。画像中心を極の中心、
+``min(H,W)/2`` を最大半径として、円環状の内容を横長の展開図に変換する。
+未マッピングの画素は 0 埋め(``dst`` を事前ゼロクリアしてから、cv2 が返す
+戻り値を読む ―― ``dst`` バッファ自体を読むと空になることがある実装上の
+注意点がコードコメントに詳しい)。HALCON の ``polar_trans_image``
+（Transform an image to polar coordinates）に相当。
+
+``a``, ``b`` は未使用 ―― 中心と半径は画像サイズから自動的に決まり、
+調整点は無い。
 
 ## 詳しい使い方ガイド
 

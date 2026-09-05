@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+実装は ``rank_image`` と同一(``kind: "rank"``、正方窓のパーセンタイル
+フィルタ)。HALCON では ``rank_image``(任意マスク)と ``rank_rect``(矩形
+マスク限定)は別演算子だが、この代役ではどちらも同じ正方窓実装を指す。
+HALCON の ``rank_rect``（Compute a rank filter with rectangular masks.）
+の代役。
+
+``a`` が窓の一辺、``b`` がパーセンタイル(5〜95%)を振る。両方が使われる。
 
 ## 詳しい使い方ガイド
 

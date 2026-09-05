@@ -3,7 +3,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;alife_wolfram1d&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">image → image</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Wolfram elementary 1-D cellular automaton, drawn as a spacetime diagram.</p>
+<p>Reimplements the elementary (radius-1, two-state) cellular automata of</p>
+<p>S. Wolfram, Rev. Mod. Phys. 55, 601 (1983) / *A New Kind of Science* (2002).</p>
+<p>The initial row is the top row of the image thresholded at 0.5; if that row</p>
+<p>is empty a single central seed is used instead, which is the classical</p>
+<p>initial condition (rule 90 from a single seed is Pascal&#x27;s triangle mod 2,</p>
+<p>i.e. the Sierpinski gasket). The lattice is circular, one generation is</p>
+<p>written per output row, and row 0 is generation 0, so the output is the H x W</p>
+<p>{0,1} spacetime diagram.</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> picks the rule from the curated table </code><code style="color:#22d3bf">_ELEMENTARY_RULES</code>`;</p>
+<p>`<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> sets the initial density by adding </code><code style="color:#22d3bf">int(b * W/2)</code>` evenly spaced extra</p>
+<p>seed cells to row 0 (b = 0 leaves the thresholded row untouched).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">Leitfaden zur Familie gallery2d_physics_alife_3d</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

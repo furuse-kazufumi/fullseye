@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Hough 変換による円検出(1 スカラー特徴量、OpenCV 実装)。エッジの勾配情報を使う HOUGH_GRADIENT 法で円の中心・半径を投票検出する —— ここでは検出できた円の個数だけを返す(0 個なら 0)。
+
+HALCON の `hough_circles`(Detect centers of circles for a specific radius using the Hough transform.)に相当(近似。中心座標ではなく本数のみ)。実装は ``cv2.HoughCircles(_u8(v), HOUGH_GRADIENT, dp=1, minDist=10+int(a*20), param1=100, param2=20+int(b*20), minRadius=3, maxRadius=20)`` —— a は検出する円同士の最小中心間距離を 10〜30 に、b は中心検出の投票しきい値 param2(小さいほど誤検出が増える)を 20〜40 に振る。param1(内部の Canny 高しきい値)と半径範囲(3〜20)は固定。
 
 ## 詳しい使い方ガイド
 

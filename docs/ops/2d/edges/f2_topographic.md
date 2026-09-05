@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Haralick topographic primal sketch: classify every pixel from its gradient
+magnitude and the two Hessian eigenvalue signs into peak / pit / ridge /
+ravine / saddle / flat / hillside and emit the class as a gray code.
+
+``a`` sets the derivative smoothing scale; ``b`` sets the "flat gradient"
+tolerance. Codes: flat=0.0, pit=0.14, ravine=0.30, saddle=0.45,
+hillside=0.55, ridge=0.75, peak=1.0.
 
 ## 詳しい使い方ガイド
 

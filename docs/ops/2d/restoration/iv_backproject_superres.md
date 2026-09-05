@@ -17,7 +17,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Single-image iterative back-projection super-resolution (Irani-Peleg).
+Upscale to a higher grid, simulate the low-res observation by blurring and
+downscaling, back-project the residual into the high grid, then downscale the
+consistent estimate back to HxW. Net effect: high-frequency detail is boosted
+(sharpening-by-consistency). ``a`` sets iterations n = 1 + round(a*4) (1..5);
+``b`` sets the back-projection step gain g = 0.5 + b (0.5..1.5).
 
 ## 詳しい使い方ガイド
 

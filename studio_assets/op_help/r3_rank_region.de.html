@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;r3_rank_region&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">rank_region</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">region → region</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>領域の形態学的ランクオペレータ（HALCON 正真正銘の `<code style="color:#22d3bf">rank_region</code>`: 収縮でも膨張でもない一般化）。</p>
+<p>`<code style="color:#22d3bf">sz x sz</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">sz</code><code style="color:#22d3bf"> は 3, 5, 7 のいずれかを </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> で選ぶ）の窓の中で、領域に属する画素が </code><code style="color:#22d3bf">number</code><code style="color:#22d3bf"> 個以上あれば出力を立てる。</code><code style="color:#22d3bf">number</code><code style="color:#22d3bf"> は</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf">（0〜1）を窓面積に対する割合として決める（</code><code style="color:#22d3bf">number = sz*sz</code><code style="color:#22d3bf"> で収縮相当、</code><code style="color:#22d3bf">number = 1</code>` で膨張相当、中間ではランク/メディアンフィルタ相当の挙動になる）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

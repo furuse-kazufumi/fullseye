@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+メディアンフィルタ(OpenCV 実装)。正方形近傍内の中央値に置き換える定番のノイズ除去(特に胡椒塩ノイズに強く、エッジも比較的保たれる)。
+
+HALCON の `median_image` に相当。実装は ``cv2.medianBlur(_u8(v), ksize=3+2*int(a*3))`` —— a はカーネルサイズを 3, 5, 7, 9(奇数)に振る。b は未使用。8 bit に量子化してから処理するため、元画像の微妙な階調は失われる。sk_median_disk と違い正方形カーネル。
 
 ## 詳しい使い方ガイド
 

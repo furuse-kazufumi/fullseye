@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Kirsch コンパスフィルタの振幅。8 方向に回転させたカーネル群それぞれで
+畳み込み、絶対値の最大値を取ることで方向に依らない強いエッジ応答を得る。
+HALCON の ``kirsch_amp``（Detect edges (amplitude) using the Kirsch
+operator.）に相当。
+
+``a``, ``b`` は未使用。8 方向を総当たりするため Sobel/Prewitt より計算量は
+多いが、斜め方向のエッジも同等の感度で拾える。
 
 ## 詳しい使い方ガイド
 

@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+極座標表現を通常の直交座標（デカルト座標）へ逆変換する（``cv2.warpPolar`` の逆写像モード）。中心から半径 ``min(h,w)/2`` の円盤の外側は 0 で埋め、``_rebinarise`` により 0.5 しきい値で二値領域に戻す。a, b は未使用（``polar_trans_image_inv`` と同じ ``_sh_geom`` の ``polar_inv`` 分岐を共有）。
+
+HALCON の ``polar_trans_region_inv``（極座標領域を元のデカルト座標系の領域に戻す演算）に相当。実装上、円盤境界付近 1 画素程度は補間の丸めで非決定的になりうるため外側を明示的に 0 で塗って安全側に倒している（2026-09-02 修正済み、詳細は ``_sh_geom`` の ``polar_inv`` 分岐のコメント参照）。
 
 ## 詳しい使い方ガイド
 

@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tb_iqft2 — 2D <code style="color:#22d3bf">typed</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">qimage</code> → <code style="color:#22d3bf">qimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_iqft2&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p><b>中心化された</b>スペクトルに対する四元数逆フーリエ変換。→ (H, W, 4)。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>The exact inverse of :func:<code style="color:#22d3bf">qft2</code> <b>for the same side and the same mu</b>:</p>
+<p>measured round-trip error `<code style="color:#22d3bf">2.22e-15</code>` for both sides on a standard-normal</p>
+<p>`<code style="color:#22d3bf">(32, 32, 4)</code><code style="color:#22d3bf"> field. The kernel is </code><code style="color:#22d3bf">exp(+mu * 2*pi*(...))</code>` applied on the</p>
+<p>side named, and the `<code style="color:#22d3bf">1/(H*W)</code>` normalisation is carried here, as in</p>
+<p>`<code style="color:#22d3bf">numpy.fft.ifft2</code>`.</p>
+<p><b>Using the wrong side does not raise.</b> `<code style="color:#22d3bf">iqft2(qft2(q, &quot;left&quot;), &quot;right&quot;)</code>`</p>
+<p>returns a finite, plausible quaternion image that is simply not `<code style="color:#22d3bf">q</code>`:</p>
+<p>measured `<code style="color:#22d3bf">max|err| = 1.113</code>` on a random colour image whose own range is</p>
+<p>`<code style="color:#22d3bf">0.9994</code><code style="color:#22d3bf"> (another seed: 1.063 against 1.0), and — the dangerous case — only </code><code style="color:#22d3bf">0.054</code>` against a range of</p>
+<p>`<code style="color:#22d3bf">1.076</code>` on a grey-axis-dominated one, which is small enough to survive a</p>
+<p>look at the picture. The `<code style="color:#22d3bf">side</code>` argument is required at both ends for</p>
+<p>exactly this reason, and the two calls must agree: nothing in the data</p>
+<p>records which transform produced it, so nothing downstream can catch the</p>
+<p>mismatch for you.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *spectrum* is not a valid </code><code style="color:#22d3bf">(H, W, 4)</code>` field;</p>
+<p>*side* is not `<code style="color:#22d3bf">&#x27;left&#x27;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&#x27;right&#x27;</code>`; *mu* is not a finite non-zero</p>
+<p>3-vector.</p>
+<p>Typed bridge of the quat op `<code style="color:#22d3bf">iqft2</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">qimage</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_quaternion_to_rgb">tb_quaternion_to_rgb</a> · <a style="color:#22d3bf" href="op:tb_quat_norm">tb_quat_norm</a> · <a style="color:#22d3bf" href="op:tb_quat_conjugate_image">tb_quat_conjugate_image</a> · <a style="color:#22d3bf" href="op:tb_quat_normalize_image">tb_quat_normalize_image</a> · <a style="color:#22d3bf" href="op:tb_monogenic_amplitude">tb_monogenic_amplitude</a> · <a style="color:#22d3bf" href="op:tb_monogenic_phase">tb_monogenic_phase</a> · <a style="color:#22d3bf" href="op:tb_monogenic_orientation">tb_monogenic_orientation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">typed</code>)</h3>
+<p><a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_angle_3points">tb_angle_3points</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

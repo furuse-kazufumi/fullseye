@@ -3,7 +3,14 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tf_radon_sinogram&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → image</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>radon_sinogram: the Radon transform rendered as an HxW sinogram image.</p>
+<p>Row `<code style="color:#22d3bf">i</code><code style="color:#22d3bf"> is the parallel-beam projection at angle </code><code style="color:#22d3bf">theta_i</code>` (the image</p>
+<p>rotated by `<code style="color:#22d3bf">theta_i</code>` and summed down its columns); the W columns index the</p>
+<p>detector position. `<code style="color:#22d3bf">a</code>` sets the angular span (limited-angle tomography:</p>
+<p>span = 180deg * (0.25 + 0.75*a)); `<code style="color:#22d3bf">b</code>` is unused. The sinogram is rescaled</p>
+<p>to [0,1]. A rotationally symmetric object gives angle-independent (identical)</p>
+<p>rows; an off-centre point traces the classic sine wave.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

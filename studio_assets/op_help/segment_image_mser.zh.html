@@ -4,7 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;segment_image_mser&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">segment_image_mser</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → region</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>MSER(Maximally Stable Extremal Regions、最大安定極値領域)検出</p>
+<p>(`<code style="color:#22d3bf">cv2.MSER_create</code>`)。しきい値を連続的に変化させても形が安定して残る</p>
+<p>領域を検出し、その境界線を返す(文字・ロゴなど照明変化に頑健な領域検出に</p>
+<p>使われる)。HALCON の `<code style="color:#22d3bf">segment_image_mser</code>`（Segment image using Maximally</p>
+<p>Stable Extremal Regions (MSER).）に相当。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が MSER の安定性パラメータ(delta、3〜11)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>`<code style="color:#22d3bf">cv2</code>` が無い環境ではこの分岐は呼べない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

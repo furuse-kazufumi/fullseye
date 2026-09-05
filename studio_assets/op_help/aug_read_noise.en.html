@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_read_noise&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>Additive Gaussian READ noise (amplifier + ADC noise), sigma-independent of signal (unlike shot noise). `<code style="color:#22d3bf">sigma = 0.005 + 0.15*a</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> mixes in a row-correlated component: a per-row bias of std </code><code style="color:#22d3bf">0.5*b*sigma</code>` shared by the whole row, which is what a shared row amplifier / row-wise ADC produces (visible as horizontal banding). Seeded from (a, b).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

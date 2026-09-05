@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+分水嶺(watershed)セグメンテーション。勾配画像を地形とみなし、
+暗い領域(``x < 0.2+0.3*a``)をマーカーとして分水嶺線を求め、その境界線を
+返す。HALCON の ``watersheds``（Extract watersheds and basins from an
+image.）に相当。
+
+``a`` がマーカーを決める暗さのしきい値を振る。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

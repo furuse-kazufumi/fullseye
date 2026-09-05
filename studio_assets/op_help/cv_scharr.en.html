@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;cv_scharr&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">edges_image</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>Scharr 勾配の大きさ(OpenCV 実装)。水平・垂直それぞれの Scharr 微分の絶対値を足し合わせて勾配強度とする —— sk_scharr(skimage 版)と同種のエッジ検出だが、合成方法(平方和のノルムではなく絶対値の和)が異なるため同一結果にはならない。</p>
+<p>HALCON の <code style="color:#22d3bf">edges_image</code> に相当(近似)。実装は `<code style="color:#22d3bf">|cv2.Scharr(v,CV_64F,1,0)| + |cv2.Scharr(v,CV_64F,0,1)|</code>` を正規化したもの。a, b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

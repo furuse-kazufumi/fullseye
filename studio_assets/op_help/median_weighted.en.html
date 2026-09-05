@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;median_weighted&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">median_weighted</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>中央値フィルタ（median filter）。実装は eliminate_min_max/median_image と同じ `<code style="color:#22d3bf">_sh_rank</code>` の median 分岐で、円形・八角形などマスク形状ごとの重み付けは行わず、正方形窓の単純な中央値を返す。a が窓サイズを 3/5/7/9 に振り、b は未使用。</p>
+<p>HALCON の `<code style="color:#22d3bf">median_weighted</code>`（円・矩形・八角形など複数のマスクで重み付き中央値フィルタを行う演算）の代役だが、実装は重みなしの通常の中央値フィルタで、マスク形状の違いは再現しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

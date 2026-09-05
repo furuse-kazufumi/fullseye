@@ -19,7 +19,11 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+空(全画素 0)の region を生成する。HALCON の ``gen_empty_region``
+(空 region を生成する)に相当。
+
+入力と同じ形状の全 0 配列を返すだけ。``a``, ``b`` は未使用。初期値や
+プレースホルダとして使う。
 
 ## 詳しい使い方ガイド
 

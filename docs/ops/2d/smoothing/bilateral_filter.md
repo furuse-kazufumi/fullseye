@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+OpenCV のバイラテラルフィルタ(``cv2.bilateralFilter``)。近傍画素を
+空間距離と輝度差の両方で重み付けして平均する、エッジを保ったまま平滑化する
+定番手法。HALCON の ``bilateral_filter``（bilateral filtering of an
+image.）に相当。
+
+``a`` が空間方向のシグマ(1〜4)を、``b`` が輝度(色)方向のシグマ(0.05〜0.45)
+を振る。両方が使われる。``cv2`` が無い環境ではこの分岐は呼べない。
 
 ## 詳しい使い方ガイド
 

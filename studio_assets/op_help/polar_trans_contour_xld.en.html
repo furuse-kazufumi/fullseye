@@ -4,7 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;polar_trans_contour_xld&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">polar_trans_contour_xld</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">contour → contour</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>輪郭の各点を画像中心からの極座標(半径・角度)に変換し、疑似的な画素</p>
+<p>座標(半径を `<code style="color:#22d3bf">H</code><code style="color:#22d3bf"> or </code><code style="color:#22d3bf">W</code>` の大きい方でスケール、角度を [0,1] に写像)へ</p>
+<p>詰め直す。HALCON の `<code style="color:#22d3bf">polar_trans_contour_xld</code>`（Transform a contour in an</p>
+<p>annular arc to polar coordinates.）に相当する簡易な座標変換。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用 ―― 中心・スケールは画像サイズから自動的に決まる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

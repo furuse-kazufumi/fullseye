@@ -3,7 +3,24 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_normals_to_egi&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">points → image</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>法線 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> → 拡張ガウス像 </code><code style="color:#22d3bf">(n_el, n_az)</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">image2d</code>`。</p>
+<p>方向の 2-D ヒストグラム(Horn, *Extended Gaussian Images*, Proc. IEEE 72(12)</p>
+<p>1984)。「どの向きの面がどれだけあるか」の地図で、平面が支配的な物体では</p>
+<p>1 つの bin に山が立つ。<b>不可逆</b> —— bin 幅ぶんの方向解像度を捨てる。</p>
+<p>捨てた量は測れる: 最頻 bin の中心方向と入力の平均方向の角度差が量子化誤差で、</p>
+<p>既定 (36, 18) では bin 幅 10 度に対し実測 3.7 度(`<code style="color:#22d3bf">selftest</code>` が出す)。</p>
+<p>仰角の bin は `<code style="color:#22d3bf">sin(el)</code>` で等分する(等立体角)。度で等分すると極が過剰に</p>
+<p>細かくなり、「北極に面が集中している」という嘘の山が立つ。</p>
+<p>Args:</p>
+<p>normals: (N, 3)。</p>
+<p>n_az: 方位の bin 数(既定 36 = 10 度刻み)。</p>
+<p>n_el: 仰角の bin 数(既定 18)。</p>
+<p>Returns:</p>
+<p>(n_el, n_az) float64 の計数マップ(行 = 仰角、列 = 方位)。</p>
+<p>Raises:</p>
+<p>ValueError: bin 数が 1 未満 / 上限超 / 入力不正。</p>
+<p>2-D 進化レジストリへ橋渡しした reprconv の op `<code style="color:#22d3bf">normals_to_egi</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">n_az</code><code style="color:#22d3bf">(既定 36)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">n_el</code>`(既定 18)を振る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

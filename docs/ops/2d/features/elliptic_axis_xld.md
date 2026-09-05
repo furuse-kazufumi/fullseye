@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `contour → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+楕円フィットした輪郭の短軸/長軸の比。値が 1 に近いほど真円に近く、
+0 に近いほど細長い。HALCON の ``elliptic_axis_xld``（Parameters of the
+equivalent ellipse of contours or polygons.）が返す(長軸, 短軸, 角度)の
+組のうち、比 1 個のスカラーだけを返す近似。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

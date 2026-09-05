@@ -19,7 +19,11 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+グレースケールクロージング(膨張の後に同じ構造要素で収縮)。暗い小さな
+穴・くぼみを埋める、``gray_opening`` と対の演算。HALCON の
+``gray_closing``（Perform a gray value closing on an image.）に相当。
+
+``a`` が矩形構造要素のサイズを ``{3,5,7,9}`` で振る。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

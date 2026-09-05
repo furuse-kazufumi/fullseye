@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_rolling_shutter&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>Rolling-shutter skew. A CMOS rolling shutter exposes rows sequentially, so a scene (or camera) panning horizontally shifts each row by an amount linear in its row index -- a pure horizontal shear. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> sets the peak shift </code><code style="color:#22d3bf">0.25*W*a</code><code style="color:#22d3bf"> px (the shear is centred so the middle row is unmoved), </code><code style="color:#22d3bf">b</code>` sets the pan direction (b &lt; 0.5 -&gt; shift right with increasing row, otherwise left). Resampled bilinearly with reflecting borders.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

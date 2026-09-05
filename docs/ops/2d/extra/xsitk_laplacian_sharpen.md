@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ラプラシアン鮮鋭化(SimpleITK ``LaplacianSharpening``)。画像からラプラシアン(2 階微分)を引くことでエッジを強調するアンシャープマスクの一種。結果を min-max 正規化して返す。
+
+パラメータは無く、``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

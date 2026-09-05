@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+コーナー候補検出(preCornerDetect、OpenCV 実装)。1 次・2 次微分を組み合わせた特殊な式でコーナーらしさを符号付きスコア化する —— 本来は ``cv2.cornerSubPix`` によるサブピクセル精密化の前段候補検出として使う関数。
+
+HALCON の `corner_response`(Searching corners in images.)に相当(近似)。実装は ``|cv2.preCornerDetect(v, ksize=3)|`` を正規化したもの。a, b は未使用 —— ksize(Sobel 開口)は 3 に固定。
 
 ## 詳しい使い方ガイド
 

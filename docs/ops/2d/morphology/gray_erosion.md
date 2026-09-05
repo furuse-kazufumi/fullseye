@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+グレースケール収縮(``ndimage.grey_erosion``)。矩形構造要素(既定
+shape="rect")内の最小値で画素を置き換え、明るい細部を侵食する。HALCON の
+``gray_erosion``（Perform a gray value erosion on an image.）に相当。
+
+``a`` が構造要素のサイズを ``{3,5,7,9}``(``_k(a)``、矩形)で振る。``b`` は
+このバックエンドの全グレーモルフォロジー op に共通して**未使用**。円形
+構造要素が欲しい場合は ``gray_erosion`` ではなく形状指定つきの派生
+(``*_shape``)を使う。
 
 ## 詳しい使い方ガイド
 

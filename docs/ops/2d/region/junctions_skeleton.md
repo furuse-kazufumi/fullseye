@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+骨格化した領域のうち、3x3 近傍に 3 つ以上の骨格画素を持つ画素(分岐点・
+交差点)だけを残す。骨格の端点(``pruning`` が削る対象)ではなく、枝分かれ
+する結節点を検出する。HALCON の ``junctions_skeleton``（Find junctions and
+end points in a skeleton.）に相当(HALCON は端点も同時に返すが、ここでは
+分岐点のみを検出する近似)。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

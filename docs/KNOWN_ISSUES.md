@@ -256,26 +256,28 @@ core op(ops.py)の例外も facade 境界で記録→型に合う fallback(`rais
 いない** —— 挙動が変わる修正で、既に公開した生成画像の再現性に触れるため、
 `sk_frangi` のときと同じく「既定値でビット一致」を保証した上で 0.1.8 で入れる。
 
-検証状態の凡例は上と同じ。すべて ⚠(発見エージェント報告、実装読解ベース)。
+検証状態の凡例は上と同じ。**15 件すべてを最小再現つきで追試した**(2026-09-05、別エージェントによる敵対的検証)——
+13 件がそのまま確認、2 件(#19 / #23)は列挙の一部が誤りで上のとおり訂正、完全な誤りは 0 件。
+ノブが効かない系は **0.0 と 1.0 を含めて端から端まで**振って確かめている(中間 2 点だけだと丸めで一致することがある)。
 
-## 12. ⚠ `_trans_to_rgb`(color)は HSV からの逆変換に固定
+## 12. ✅ `_trans_to_rgb`(color)は HSV からの逆変換に固定
 名前と HALCON 対応(`trans_from_rgb` の逆)は「任意の色空間 → RGB」を示唆するが、
 実装は `cv2.COLOR_HSV2RGB` 固定で、Lab / YUV / XYZ からの逆変換が無い。
 **対処案**: 色空間を `a` で選ぶ(既定 = HSV でビット一致)か、op 名を
 `hsv_to_rgb` に寄せる。
 
-## 13. ⚠ `_edges_color`(color)は Di Zenzo 1 種類、`a`/`b` が未使用
+## 13. ✅ `_edges_color`(color)は Di Zenzo 1 種類、`a`/`b` が未使用
 HALCON の `edges_color` は Canny / Deriche / Shen を選べるが、実装は Di Zenzo
 法のみ。ノブが 2 つとも効かない(`sk_frangi` #2 と同じ型の不具合)。
 
-## 14. ⚠ `_edges_color_sub_pix`(color)にサブピクセル補間が無い
+## 14. ✅ `_edges_color_sub_pix`(color)にサブピクセル補間が無い
 名前は「サブピクセル精度」だが、実装は整数格子上のラベリングまで。
 **対処案**: 勾配のパラボラ当てはめを入れるか、名前から `_sub_pix` を外す。
 
-## 15. ⚠ `_lines_color`(color)は線幅を返さない
+## 15. ✅ `_lines_color`(color)は線幅を返さない
 HALCON の `lines_color` は線の幅を出すが、実装は輪郭点だけ。
 
-## 16. ⚠ kornia 系のノブが一部死んでいる
+## 16. ✅ kornia 系のノブが一部死んでいる
 `xkor_gftt` / `xkor_hessian` / `xkor_dog`(共通ヘルパー `_resp`)と `xkor_unsharp`
 で `a`/`b` の一部または全部が実質未使用。`xkor_motion` は `a` が
 **カーネル長と角度の両方**を同時に振っており、独立に指定できない。
@@ -284,32 +286,56 @@ HALCON の `lines_color` は線の幅を出すが、実装は輪郭点だけ。
 これらは「ヘルプが実装より立派なことを言う」状態を作る種でもある。
 説明を書く作業が検出器として働いた、という記録として残す。
 
-## 17. ⚠ 別名で登録されているが実装が同一の op が 4 件
+## 17. ✅ 別名で登録されているが実装が同一の op が 4 件
 `power_ln` と `fft_generic`、`thinning_golay` と `thinning_seq` は spec 上は別の
 HALCON 名だが、`backends_auto.py` 内では**同じ shape / 同じ kind** に落ちる
 = 実装が完全に同一。抽選の二重取り(`ops.DROPPED_DUPLICATES` で潰した同名衝突と
 違い、名前が違うので de-dup に掛からない)になっている。説明には同一である旨を
 明記した。**対処案**: 一方を本来の演算に寄せるか、別名であることを台帳に出す。
 
-## 18. ⚠ `robinson_dir` だけ返り値の意味が違う
+## 18. ✅ `robinson_dir` だけ返り値の意味が違う
 `sobel_dir` / `frei_dir` は `arctan2` の連続角度を返すが、`robinson_dir` は
 8 方向カーネルの argmax インデックス(離散)を返す。名前が揃っているぶん
 見落としやすい非対称。説明に明記した。
 
-## 19. ⚠ 多値を返す HALCON 演算を 1 スカラーに潰している
-`fill_up_shape` / `connect_and_holes` / `elliptic_axis` などは HALCON 側が複数値
-(ベクトル)を返すが、この backend の `feature` sort は 1 スカラーしか運べないため
-情報が落ちている。**対処案**: `reprconv` の型を使うか、成分ごとに op を分ける
+## 19. ✅ 多値を返す HALCON 演算を 1 スカラーに潰している
+`connect_and_holes` / `elliptic_axis` は HALCON 側が複数値(ベクトル)を返すが、
+この backend の `feature` sort は 1 スカラーしか運べないため情報が落ちている。
+**訂正**: 最初の報告は `fill_up_shape` も同列に挙げていたが、これは誤り ——
+`fill_up_shape` の `out_sort` は `region` でスカラーではない。この op の限界は
+別種で、「面積の上限だけで穴を選別し、円形度など他の形状特徴が使えない」。**対処案**: `reprconv` の型を使うか、成分ごとに op を分ける
 (memory: 混ぜると例外でなくもっともらしく間違う型は分ける)。
 
-## 20. ⚠ `vol_erode` / `vol_dilate` の `a` が実質 2 値スイッチ
+## 20. ✅ `vol_erode` / `vol_dilate` の `a` が実質 2 値スイッチ
 サイズ式が `1 + 2*(1 + int(a))` で、`decode()` が `a` を [0,1] にクリップするため
 **`a == 1.0` のときだけ 1 段階変わる**。連続パラメータとして機能していない
 (`vol_dilation_ball` 系は `int(a*3)` を使っていて正しく効く)。#2 と同じ型。
 
-## 21. ⚠ `vol_median` は `a`/`b` を完全に無視(窓サイズ 3 固定)
+## 21. ✅ `vol_median` は `a`/`b` を完全に無視(窓サイズ 3 固定)
 2-D 版 `median` が `_k(a)` で窓を振るのに対し、3-D 側は固定。
 
-## 22. ⚠ `identity` は複製しない
+## 22. ✅ `identity` は複製しない
 HALCON の `copy_image` はメモリを複製するが、実装は入力配列をそのまま返す。
 下流が破壊的に書き換えると呼び出し元の配列まで変わる。
+
+## 23. ✅ 同一実装に落ちる HALCON 別名がもっとあった(#17 の続き)
+SEED 表の実装読解で追加判明: `pow_image`/`gamma_image`、`median_separate`/`median_image`、
+`rank_rect`/`rank_image`、`watersheds_threshold`/`watersheds`、
+`regiongrowing_mean`/`regiongrowing`、`anisotropic_diffusion`/`coherence_enhancing_diff`、
+`bilateral_filter`/`guided_filter`、`power_byte`/`fft_image` が、この backend では
+**同じ shape/kind に落ちて区別されない**(実測でビット一致)。HALCON 上は別演算子。
+**訂正**: 最初の報告は相方を `isotropic_diffusion` と書いていたが誤りで、正しくは
+`anisotropic_diffusion`。`isotropic_diffusion` との差は実測 max|Δ| = 0.614 で別実装。
+(この書き間違いは報告を書き写した側 —— 出荷される op の説明の方は正しかった。)
+
+## 24. ✅ `min_max_gray` は最大値しか返さない
+名前に反して最小値を計算していない。`feature` sort が 1 スカラーしか運べない
+制約(#19)の現れでもある。
+
+## 25. ✅ `height_width_ratio` が `min(1, height/width)` で飽和する
+高さ > 幅 の領域では常に 1.0。縦長を区別できない非対称な実装。
+
+## 26. ✅ `a`/`b` が完全に未使用の op(固定変換)
+`polar_trans_image` / `polar_trans_image_inv` / `transpose_region` /
+`polar_trans_contour_xld` ほか。#2・#13・#16・#20・#21 と同じ型で、
+**ノブがあるのに効かない**。0.1.8 でまとめて棚卸しする。

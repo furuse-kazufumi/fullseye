@@ -17,7 +17,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ORB(Oriented FAST and Rotated BRIEF)キーポイント検出数。
+
+skimage.feature.ORB で検出・記述を行い、実際に検出できたキーポイント
+数を返す(feature 出力)。
+
+``a`` が要求する最大キーポイント数 ``n_keypoints`` を 50〜450 の範囲で
+振る(上限であり、画像のコントラストや構造が乏しいと実際の検出数は
+それより少なくなる)。``b`` は未使用。テクスチャの豊富さ・特徴点密度の
+目安として使える。
 
 ## 詳しい使い方ガイド
 

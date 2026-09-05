@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ブラックトップハット（クロージング − 原画像）。HALCON の ``gray_bothat``（Perform a gray value bottom hat transformation on an image.）に相当。
+
+``a`` が構造要素の一辺を ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。背景より暗く、構造要素より小さい局所的な暗点だけを浮き上がらせる。結果は ``_norm`` で正規化される。
 
 ## 詳しい使い方ガイド
 

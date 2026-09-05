@@ -19,7 +19,11 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+オイラー数(``skimage.measure.euler_number``、連結成分数から穴の数を
+引いた位相不変量)。値が小さい(負に近い)ほど穴が多いことを示す。HALCON の
+``euler_number``（Calculate the Euler number.）に相当。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

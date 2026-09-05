@@ -17,7 +17,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+進化探索（``evolve.py`` / ``robust.py``）が発見した固定パイプライン: ``bilateral(a=0.10,b=0.76)`` → ``bilateral(a=0.12,b=0.27)`` → ``bilateral(a=0.73,b=0.11)``（既存 op のバイラテラルフィルタを、強さの違うパラメータで 3 段連ねたもの）。
+
+``a``, ``b`` は凍結済みで未使用 —— このパイプライン自体が進化で選ばれた1 つの固定構成である。denoise 課題（PSNR）でロック済みホールドアウト26.28dB、手作りベースライン 22.83dB を上回る（train/holdout/locked_holdoutのどれで測っても手作りベースラインに勝っている）。HALCON に対応する単一オペレータは無い（``halcon=""``）。
 
 ## 詳しい使い方ガイド
 

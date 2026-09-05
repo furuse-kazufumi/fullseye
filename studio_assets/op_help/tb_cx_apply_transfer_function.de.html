@@ -3,7 +3,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">cimage</code> → <code style="color:#22d3bf">cimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_cx_apply_transfer_function&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Typvertrag lautet <code style="color:#22d3bf">cimage → cimage</code>. Was der Operator in Worten tut, steht im Familienleitfaden und in den ausführbaren Beispielen unten (hier wird nichts geraten).</p>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Multiply a <b>centred</b> spectrum by a filter `<code style="color:#22d3bf">H</code><code style="color:#22d3bf"> -&gt; </code><code style="color:#22d3bf">(H, W)</code>` complex128.</p>
+<p>The honest primitive under `<code style="color:#22d3bf">ops.lowpass</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">ops.highpass</code>`, but</p>
+<p><b>complex-preserving</b>: the filtered spectrum is returned as a complex field</p>
+<p>(not immediately inverted and real-cast), so it can be chained, inspected, or</p>
+<p>handed to :func:<code style="color:#22d3bf">cx_ifft</code>. `<code style="color:#22d3bf">H</code>` is a same-shape transfer function laid out in</p>
+<p>the *centred* convention of :func:<code style="color:#22d3bf">cx_fft</code> (DC at the centre); it may be real</p>
+<p>(a magnitude mask) or complex (a phase-shifting filter). A real `<code style="color:#22d3bf">cx</code>` is</p>
+<p>FFT&#x27;d first (module convenience).</p>
+<p>Typed bridge of the 2d op `<code style="color:#22d3bf">cx_apply_transfer_function</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

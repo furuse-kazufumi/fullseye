@@ -17,7 +17,48 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `beatcube → beatcube`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Apply a periodic window along the range and/or Doppler axis of a beat cube.
+
+    The sidelobes of a rectangular (unwindowed) transform are -13.3 dB, so a
+    strong target buries a weak one 20 dB down at a completely different range.
+    Windowing trades main-lobe width for sidelobe level; the published figures
+    (Harris 1978, Table 1) and the levels **measured** in this repository on a
+    single bin-centred target are:
+
+    ==========  ==============  ==============  ==================
+    window      published PSL   measured PSL    measured -3 dB lobe
+    ==========  ==============  ==============  ==================
+    rect        -13.3 dB        -13.25 dB       0.885 bin
+    hann        -31.5 dB        -31.47 dB       1.438 bin
+    hamming     -42.7 dB        -42.45 dB       1.301 bin
+    blackman    -58.1 dB        -58.11 dB       1.641 bin
+    ==========  ==============  ==============  ==================
+
+    Measured by transforming each window on its own with 2^18-point zero padding
+    and taking the highest lobe past the first null — that *is* the definition of
+    peak sidelobe level, so these are the module's own numbers, not copied ones.
+    Hamming lands 0.25 dB off the published figure because the published one is
+    for the optimal 0.53836/0.46164 pair; the 0.54/0.46 coefficients written here
+    are the textbook ones and this is what they actually give.
+
+    What it buys, measured end to end: a target 45 dB below a strong one, seven
+    range bins away, is **undetectable** unwindowed (its cell sits 24.6 dB down
+    in the leakage skirt and is not even a local maximum) and becomes a clean
+    local maximum at -43.6 dB with ``hann``. That comparison is step 4 of
+    ``examples/fmcw_range_doppler.py``.
+
+    *axis* is named by **role** — ``"range"`` (fast time, the last axis),
+    ``"doppler"`` (slow time, the middle axis) or ``"both"`` — never by number,
+    because a transposed cube is the mistake this naming is defending against.
+
+    The window is *not* folded into :func:`range_doppler_map`: keeping it a
+    separate op is what lets the sidelobe table above be measured as a
+    difference, and keeps the transform op a pure 2-D FFT.
+
+    Returns a new complex cube of the same shape. **Raises** ``ValueError`` on a
+    real-valued or malformed cube, or an unknown *window* / *axis*.
+
+Typed bridge of the rangedoppler op ``fmcw_window_apply`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

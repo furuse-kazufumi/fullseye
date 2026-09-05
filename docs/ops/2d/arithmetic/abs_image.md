@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+画素値の絶対値を取る(``np.abs``)。fullseye の ``image`` は既に [0,1] 契約
+(非負)なので、通常の画像に対しては何も変えない**恒等写像**として働く。差分
+画像など符号つきの中間結果を直接渡したときだけ意味を持つ。HALCON の
+``abs_image``（Calculate the absolute value (modulus) of an image.）の代役。
+
+``a``, ``b`` は未使用。clip 前の生値 ``v`` にそのまま ``abs`` を掛けている点に
+注意(他の pointwise 分岐は ``x = clip(v,0,1)`` を使うが、この分岐だけ ``v``
+を直接見る)。
 
 ## 詳しい使い方ガイド
 

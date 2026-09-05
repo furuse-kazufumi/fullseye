@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+位相を保ったまま領域を 1 画素幅の骨格線に細める
+(``skimage.morphology.skeletonize``)。分岐や端点の位置は保存されるため、
+枝分かれした形状の解析(指の本数を数える等)によく使われる。HALCON の
+``skeleton``（Compute the skeleton of a region.）に相当。
+
+``a``, ``b`` は未使用。skimage が無い環境ではこの分岐は呼べない。
 
 ## 詳しい使い方ガイド
 

@@ -17,7 +17,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `video → video`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Bobick–Davis Motion Energy Image per frame → 0/1 ``(T, H, W)`` (``video``).
+
+    The binary companion of :func:`motion_history_image`: *where* motion has
+    occurred within the last ``tau`` frames (``MHI > 0``), regardless of when.
+
+Typed bridge of the videostream op ``motion_energy_image`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``tau`` (default 15) and ``b`` drives ``threshold`` (default 0.1).
 
 ## 参考(サンプルデータ・文献)
 

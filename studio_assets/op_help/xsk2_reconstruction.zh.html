@@ -3,7 +3,14 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk2_reconstruction&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → image</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>モルフォロジー再構成（reconstruction by dilation）。</p>
+<p>`<code style="color:#22d3bf">skimage.morphology.reconstruction</code>` を method=&quot;dilation&quot; で呼ぶ。</p>
+<p>シード画像を「元画像から a に応じた深さだけ暗くしたもの」</p>
+<p>（`<code style="color:#22d3bf">x - (0.05 + 0.25*a)</code>`）として自動生成し、そのシードをマスク画像</p>
+<p>（元画像そのもの）まで測地学的に膨張させる。a はシードの深さ（大きい</p>
+<p>ほど多くの山が消える）を振る。b は未使用。小さな明るい斑点やノイズを</p>
+<p>消しつつ、大きな構造の輪郭は保つ（オープニングより形状の崩れが少ない）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

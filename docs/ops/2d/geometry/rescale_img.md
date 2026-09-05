@@ -21,20 +21,20 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 Isotropic centre-preserving rescale by ``s = 0.7 + 0.6·a``, canvas kept.
 
-    ``b`` = **補間の次数** — ``(0, 1, 3, 3)[min(3, int(4b))]``(0 = 最近傍、
-    1 = 双一次、3 = 三次スプライン)。``b=0.5`` は 3 次で、``b`` が死んでいた頃の
-    既定(``ndimage`` の order=3)と **ビット一致**する。
+``b`` = **補間の次数** — ``(0, 1, 3, 3)[min(3, int(4b))]``(0 = 最近傍、
+1 = 双一次、3 = 三次スプライン)。``b=0.5`` は 3 次で、``b`` が死んでいた頃の
+既定(``ndimage`` の order=3)と **ビット一致**する。
 
-    ★2026-09-02: それまで ``rescale_img`` / ``zoom_image_factor`` /
-    ``zoom_image_size`` は **3 つとも同じ実装**(実測: 相互の最大差 0.0 と
-    4.9e-14)で、3 つとも ``b`` を使っていなかった。3 つの役割を分けた:
+★2026-09-02: それまで ``rescale_img`` / ``zoom_image_factor`` /
+``zoom_image_size`` は **3 つとも同じ実装**(実測: 相互の最大差 0.0 と
+4.9e-14)で、3 つとも ``b`` を使っていなかった。3 つの役割を分けた:
 
-    * ``rescale_img``      — 等方倍率 1 つ + **補間次数**(この関数)
-    * ``zoom_image_factor``— 縦横 **2 つの倍率**(HALCON の ScaleHeight/ScaleWidth)
-    * ``zoom_image_size``  — **目標サイズ**指定(出力 shape が変わる)
+* ``rescale_img``      — 等方倍率 1 つ + **補間次数**(この関数)
+* ``zoom_image_factor``— 縦横 **2 つの倍率**(HALCON の ScaleHeight/ScaleWidth)
+* ``zoom_image_size``  — **目標サイズ**指定(出力 shape が変わる)
 
-    HALCON 名も実態に合わせて ``zoom_image_size`` → ``zoom_image_factor`` へ
-    付け替えた(この op はサイズではなく倍率で駆動するため)。
+HALCON 名も実態に合わせて ``zoom_image_size`` → ``zoom_image_factor`` へ
+付け替えた(この op はサイズではなく倍率で駆動するため)。
 
 ## 詳しい使い方ガイド
 

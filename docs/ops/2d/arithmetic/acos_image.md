@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+``arccos(x) / π`` で [0,1] を [0,1] に写す逆余弦 LUT。``asin_image`` を
+反転させた形(単調減少)で、x=0 で最大(1)、x=1 で最小(0)になる。HALCON の
+``acos_image``（Calculate the arccosine of an image.）の代役。
+
+``a``, ``b`` は未使用。``asin_image`` と同様に端点近傍で傾きが急峻になる
+(数値的に敏感)。単純な階調反転がしたいだけなら ``invert_image`` の方が
+挙動が読みやすい。
 
 ## 詳しい使い方ガイド
 

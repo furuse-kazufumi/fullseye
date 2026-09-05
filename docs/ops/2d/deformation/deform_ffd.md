@@ -17,7 +17,19 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Cubic B-spline free-form deformation (Rueckert et al., IEEE TMI 1999).
+
+A coarse control lattice of ``n x n`` spans (``n = 2 + int(6b)``, one padding
+ring on each side) carries a deterministic smooth displacement pattern
+``phi[i,j] = amp * [sin(2 pi j/n), cos(2 pi i/n)]``; the dense displacement
+at a pixel is the tensor product of the four uniform cubic B-spline basis
+functions of its span coordinate with the surrounding 4x4 control
+displacements, so a control point only ever moves the 4 spans it supports.
+That field is used as the backward map and the image is bilinearly resampled.
+``a`` sets the amplitude ``amp = 0.45*a*min(sy,sx)`` -- kept under the
+``0.48*spacing`` injectivity bound of Choi & Lee (2000), so the deformation
+stays a fold-free bijection -- and ``b`` the lattice resolution. ``a = 0``
+gives a zero lattice, hence the identity (up to sub-pixel resampling error).
 
 ## 詳しい使い方ガイド
 

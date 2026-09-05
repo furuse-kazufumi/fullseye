@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+円盤形構造要素による二値クロージング(膨張の後に収縮)。小さな穴や
+くびれを埋める、``opening_circle`` と対の演算。HALCON の
+``closing_circle``（Close a region with a circular structuring
+element.）に相当。
+
+``a`` が構造要素の半径を 1〜4 の範囲で振る。``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

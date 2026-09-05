@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sp_critical_points_sub_pix&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">critical_points_sub_pix</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>타입 계약은 <code style="color:#22d3bf">image → contour</code>. 동작의 언어 설명은 아래 패밀리 사용 가이드와 실행 가능한 샘플을 보세요(여기서는 추측을 쓰지 않습니다).</p>
+<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
+<p>極大・極小・鞍点のサブピクセル位置をまとめて検出する（HALCON `<code style="color:#22d3bf">critical_points_sub_pix</code>` に相当）。</p>
+<p>`<code style="color:#22d3bf">sp_local_max_sub_pix</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">sp_local_min_sub_pix</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">sp_saddle_points_sub_pix</code><code style="color:#22d3bf"> の 3 つを同じしきい値 </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> で実行し、検出点を極大→極小→鞍点の順で 1 つの CONTOUR に連結する。</code><code style="color:#22d3bf">b</code>` は未使用。戻り値の座標単位は入力画像のピクセル（サブピクセル小数値）。個々の種類を区別せず「臨界点がどこにあるか」だけを知りたい場合に使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

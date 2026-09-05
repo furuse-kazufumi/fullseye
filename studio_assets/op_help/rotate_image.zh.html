@@ -4,7 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;rotate_image&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">rotate_image</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → image</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>画像を中心を軸に `<code style="color:#22d3bf">-45°〜+45°</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">a</code>` で決まる)回転する</p>
+<p>(`<code style="color:#22d3bf">scipy.ndimage.rotate</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">reshape=False</code>` でキャンバスサイズを維持)。</p>
+<p>枠外にはみ出す部分は反射(`<code style="color:#22d3bf">mode=&quot;reflect&quot;</code>`)で埋めるため、四隅には元画像が</p>
+<p>折り返して写り込む(帳票の傾き補正のように「枠外を背景色で埋めたい」用途</p>
+<p>にはそのままでは向かない、既知の設計上の制約)。HALCON の</p>
+<p>`<code style="color:#22d3bf">rotate_image</code>`（Rotate an image about its center.）に相当。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が回転角を -45°〜+45° の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+ブラックハット変換(black-hat、OpenCV 実装)。「閉処理結果 − 元画像」を計算し、暗い背景の上にある、構造要素より小さい暗い特徴だけを抽出する(cv_tophat の暗版)。
+
+HALCON の `gray_bothat`(Perform a gray value bottom hat transformation on an image.)に相当。実装は ``cv2.morphologyEx(v, MORPH_BLACKHAT, se)`` を正規化したもの、se は楕円形でサイズ ``3+2*int(a*3)`` —— a は構造要素サイズを 3〜9 に振る。b は未使用。
 
 ## 詳しい使い方ガイド
 

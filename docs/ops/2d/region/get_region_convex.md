@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+領域の凸包（convex hull）を塗りつぶした領域として返す（``skimage.morphology.convex_hull_image``）。a, b は未使用。``shape_trans``（凸包への形状変換 seed op）と同じ実装。
+
+HALCON の ``get_region_convex``（領域の凸包を XLD 輪郭として取得する演算）とは出力形式が異なる近似 —— 輪郭の座標列ではなく塗りつぶした region を返す。
 
 ## 詳しい使い方ガイド
 

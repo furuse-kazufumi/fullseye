@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tm_sart_reconstruct&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The type contract is <code style="color:#22d3bf">image → image</code>. For what it does in words, see the family usage guide and the runnable samples below (nothing is guessed here).</p>
+<p>Algebraic reconstruction: run a few SART/SIRT sweeps on the input sinogram (rows = angles). `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> sets the iteration count (</code><code style="color:#22d3bf">round(1+a*4)</code><code style="color:#22d3bf"> -&gt; 1..5), </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> sets the relaxation factor (</code><code style="color:#22d3bf">0.05 + b*0.35</code><code style="color:#22d3bf">). Uses </code><code style="color:#22d3bf">skimage.transform.iradon_sart</code>` when available, else a self-contained NumPy SIRT (project -&gt; residual -&gt; weighted back-projection) loop. Output refit to HxW.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -17,7 +17,20 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Wolfram elementary 1-D cellular automaton, drawn as a spacetime diagram.
+
+Reimplements the elementary (radius-1, two-state) cellular automata of
+S. Wolfram, Rev. Mod. Phys. 55, 601 (1983) / *A New Kind of Science* (2002).
+The initial row is the top row of the image thresholded at 0.5; if that row
+is empty a single central seed is used instead, which is the classical
+initial condition (rule 90 from a single seed is Pascal's triangle mod 2,
+i.e. the Sierpinski gasket). The lattice is circular, one generation is
+written per output row, and row 0 is generation 0, so the output is the H x W
+{0,1} spacetime diagram.
+
+``a`` picks the rule from the curated table ``_ELEMENTARY_RULES``;
+``b`` sets the initial density by adding ``int(b * W/2)`` evenly spaced extra
+seed cells to row 0 (b = 0 leaves the thresholded row untouched).
 
 ## 詳しい使い方ガイド
 

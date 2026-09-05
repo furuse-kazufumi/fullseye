@@ -3,7 +3,16 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;alife_gray_scott&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">image → image</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>Gray-Scott reaction-diffusion seeded by the image.</p>
+<p>Two coupled species on a torus,</p>
+<p>u_t = Du*lap(u) - u v^2 + F (1 - u)</p>
+<p>v_t = Dv*lap(v) + u v^2 - (F + K) v</p>
+<p>with Du=0.16, Dv=0.08. The image seeds v (the autocatalyst) while u starts</p>
+<p>from the depleted complement, so bright input pixels are the nuclei from</p>
+<p>which spots / stripes / labyrinths grow. `<code style="color:#22d3bf">a</code>` sets the feed rate</p>
+<p>F = 0.02 + 0.06a *and* the number of integration steps T = 8 + int(20a);</p>
+<p>`<code style="color:#22d3bf">b</code>` sets the kill rate K = 0.05 + 0.02b. Returns the normalised v field.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

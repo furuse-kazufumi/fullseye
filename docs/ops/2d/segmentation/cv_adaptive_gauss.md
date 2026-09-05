@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+局所ガウス重み付き平均によるしきい値二値化(adaptive threshold、Gaussian 版、OpenCV 実装)。cv_adaptive_mean と同じ枠組みだが、局所平均を単純平均ではなくガウス重み付き平均で取るため、窓の境界付近の急な変化が出にくい。
+
+HALCON の `local_threshold`(Segment an image using local thresholding.)に相当。実装は ``cv2.adaptiveThreshold(_u8(v), 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, blockSize=2*int(a*6)+3, C=int(b*10))`` —— a は blockSize を 3〜15(奇数)に、b は定数 C を 0〜10 に振る。
 
 ## 詳しい使い方ガイド
 

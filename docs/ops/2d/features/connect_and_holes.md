@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+領域の連結成分数を数える（8 連結、``count_obj`` と同じ ``_sh_region_feat`` の ``count`` 分岐）。a, b は未使用。
+
+HALCON の ``connect_and_holes``（連結成分数と穴の数の 2 つを同時に返す演算）のうち**連結成分数だけ**を返す近似 —— feature sort は 1 スカラーしか運べないため、穴の数は含まれない（``area_holes`` が穴の面積比を別途計算する）。
 
 ## 詳しい使い方ガイド
 

@@ -19,7 +19,14 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Förstner 演算子によるコーナー強度マップ(``skimage.feature.
+corner_foerstner`` の重み ``w`` とロバスト形状指標 ``q`` の積、NaN は 0 に
+置換)。誤差楕円の大きさ(w)と円形度(q)を組み合わせて点特徴らしさを評価する。
+HALCON の ``points_foerstner``（Detect points of interest using the
+Förstner operator.）に相当。
+
+``a`` が勾配計算のガウス窓シグマを 0.5〜2.5 の範囲で振る。``b`` は未使用。
+skimage が無い環境ではこの分岐自体が呼べない(``_HAS_SK`` ガード)。
 
 ## 詳しい使い方ガイド
 

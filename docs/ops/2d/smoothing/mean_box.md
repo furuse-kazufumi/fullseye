@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+矩形窓の単純平均（box）フィルタ。HALCON の ``mean_image``（Smooth by averaging.）に相当。
+
+``a`` が窓の一辺を ``3,5,7,9`` の4段階（``_k(a)``、``a`` を4分割して丸める）に切り替える。``b`` は未使用。ガウシアンより計算は軽いがリンギングが出やすく、エッジがぼやける。
 
 ## 詳しい使い方ガイド
 

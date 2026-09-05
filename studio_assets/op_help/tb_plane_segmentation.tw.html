@@ -3,7 +3,23 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">volume</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_plane_segmentation&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">points → volume</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>反復 RANSAC で最大 max_planes 枚の平面を逐次抽出(残差点 -1)。</p>
+<p>残り点集合に :func:<code style="color:#22d3bf">ransac_fit.ransac_plane</code> を掛け、その最大 consensus 平面の</p>
+<p>inlier 数が `<code style="color:#22d3bf">min_inliers</code>` 以上なら新ラベルを与えて除去 → 残りで再検出、を繰り返す。</p>
+<p>複数の床/壁/階段状の面を一度に分離する(単一平面適合の pcseg との差)。inlier が</p>
+<p>`<code style="color:#22d3bf">min_inliers</code>` に満たなくなった時点で停止し、以降の点は残差 -1(球や複雑物体はここに残る)。</p>
+<p>Args:</p>
+<p>points: (N,3) 点群。</p>
+<p>thresh: 点-平面距離の inlier しきい値(距離、要 &gt; 0)。</p>
+<p>min_inliers: 平面として採用する最小 inlier 数(要 &gt;= 3)。</p>
+<p>max_planes: 抽出する平面の最大枚数(要 &gt;= 1)。</p>
+<p>iters: 各 RANSAC 反復数。</p>
+<p>seed: 乱数シード(決定論。各平面で seed+平面index を使う)。</p>
+<p>Returns:</p>
+<p>labels: (N,) int。検出順(=consensus 大きい順に近い)に 0,1,2,... を平面へ付与、</p>
+<p>どの平面にも属さない残差点は -1。空入力は shape (0,)。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">plane_segmentation</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">max_planes</code><code style="color:#22d3bf">(既定 5)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">iters</code>`(既定 300)を振る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

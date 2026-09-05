@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+領域の骨格線（スケルトン）を抽出する。実装は skimage の ``skeletonize``（Zhang–Suen 型の反復細線化アルゴリズム）で、a, b は未使用。
+
+HALCON の ``morph_skeleton``（構造要素による反復収縮とその差分から求める形態学的スケルトン）とはアルゴリズムが異なる近似 —— 同じ「1 画素幅の骨格」という結果を目指すが、生成過程・端点の扱いなどが morph_skeleton の定義と一致するとは限らない。
 
 ## 詳しい使い方ガイド
 

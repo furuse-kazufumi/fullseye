@@ -19,7 +19,15 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+円形窓内のグレースケール Shannon エントロピー(``skimage.filters.rank.
+entropy``、8bit 量子化)を正規化した画像。窓内の階調の「散らばり具合」を
+測るテクスチャ指標で、一様な領域では低く、雑多な階調が混在する領域では
+高くなる。HALCON の ``entropy_image``（Calculate the entropy of gray values
+within a rectangular window.）に相当(HALCON は矩形窓、ここでは円形窓を
+使う近似)。
+
+``a`` が窓の半径を 1〜4 の範囲(``_rad(a)``)で振る。``b`` は未使用。skimage
+が無い環境ではこの分岐は呼べない。
 
 ## 詳しい使い方ガイド
 

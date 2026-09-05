@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+単純平均化フィルタ(box filter、OpenCV 実装)。正方形近傍内の単純平均を取るだけの最も基本的な平滑化 —— ガウス平滑化より計算は軽いが、リング状のアーティファクトが出やすい。
+
+HALCON の `mean_image`(Smooth by averaging.)に相当。実装は ``cv2.blur(v, (k,k))``、``k=3+2*int(a*3)`` —— a はカーネルサイズを 3, 5, 7, 9 に振る。b は未使用。
 
 ## 詳しい使い方ガイド
 

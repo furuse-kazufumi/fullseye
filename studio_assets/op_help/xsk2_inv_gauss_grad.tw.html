@@ -3,7 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk2_inv_gauss_grad&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>型別契約為 <code style="color:#22d3bf">image → image</code>。行為的文字說明請見下面的族使用指南與可執行樣例(這裡不做臆測)。</p>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>逆ガウシアン勾配画像（Active Contour / GAC のエッジ停止関数）。`<code style="color:#22d3bf">skimage.segmentation.inverse_gaussian_gradient</code>` を呼ぶ。</p>
+<p>a がエッジ感度 alpha（`<code style="color:#22d3bf">50 + 150*a</code>`、範囲 50〜200。大きいほど弱いエッジでも停止関数の値が下がる＝止まりやすくなる）を振る。b は未使用。値はエッジで小さく（0 に近く）平坦部で 1 に近い——geodesic activecontour 系のセグメンテーションでエッジ停止項として使うことを想定した出力で、そのまま見た目のエッジ画像として使うと通常のエッジ検出とは明暗が逆に見える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

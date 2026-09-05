@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+モルフォロジー的細線化(thinning)。sk_skeleton と似た 1 画素幅化だが、アルゴリズムが異なりヒット・オア・ミス変換ベースで、骨格の枝(スパー)が出にくい傾向がある。
+
+HALCON の `thinning`(Remove the result of a hit-or-miss operation from a region.)に相当。実装は ``morphology.thin(binm(v))``。a, b は未使用。sk_skeleton / sk_medial と 3 通りの細線化を並べ、対象形状に合うものを選べるようにしてある。
 
 ## 詳しい使い方ガイド
 

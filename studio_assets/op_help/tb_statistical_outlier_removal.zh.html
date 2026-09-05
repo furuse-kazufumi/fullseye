@@ -3,7 +3,29 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_statistical_outlier_removal&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">points → points</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>各点の k 近傍平均距離が大域的に外れる点を除去する(統計的外れ値除去)。</p>
+<p>点ごとに「最も近い k 個(自分自身は除く)までの平均距離」を測り、その全点分布の</p>
+<p>`<code style="color:#22d3bf">mean + std_ratio*std</code>` を超える点を飛び点とみなして落とす。まばらな飛び点の掃除に</p>
+<p>有効で、密な面上の点は残る。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>points : array_like, shape (N, 3)</p>
+<p>入力点群。</p>
+<p>k : int</p>
+<p>近傍数(既定 16)。点数が少なければ内部で `<code style="color:#22d3bf">n-1</code>` に丸める。</p>
+<p>std_ratio : float</p>
+<p>しきい値の緩さ。大きいほど残りやすい(除去が緩い)。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>filtered : ndarray, shape (M, 3)</p>
+<p>生き残った点(元の順序を保持)。</p>
+<p>keep_mask : ndarray of bool, shape (N,)</p>
+<p>各入力点を残すか(True=残す)。`<code style="color:#22d3bf">points[keep_mask]</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">filtered</code>` に等しい。</p>
+<p>Notes</p>
+<p>-----</p>
+<p>点数 &lt; 3 では統計が立たないため、全点を残す(graceful)。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">statistical_outlier_removal</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">k</code><code style="color:#22d3bf">(既定 16)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">std_ratio</code>`(既定 2)を振る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

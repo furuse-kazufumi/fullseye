@@ -17,7 +17,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Sato tubeness フィルタ。skimage.filters.sato をスケール sigma=1,2,3 の 3 段で
+適用し、管状構造(血管など)を強調する。ヘッセ行列の固有値比から線状/管状
+らしさを計算する点は ``xsk_meijering`` と同系だが、応答の重み付けが異なり
+分岐点には Meijering ほど強く応答しない。
+
+``a``, ``b`` は未使用(sigma は固定)。出力は ``_norm`` で正規化した符号なし
+強度画像。
 
 ## 詳しい使い方ガイド
 

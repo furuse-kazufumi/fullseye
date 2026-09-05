@@ -3,7 +3,19 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">volume</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_euclidean_cluster&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">points → volume</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>半径 tol の近接グラフの連結成分で距離クラスタリング(-1=ノイズ)。</p>
+<p>互いに `<code style="color:#22d3bf">tol</code>` 以内の点を(推移的に)同一クラスタへ束ねる。空間的に離れた物体が</p>
+<p>別クラスタになる(接地面除去後の「どの塊が掴める物か」の分離に使う)。連結成分のうち</p>
+<p>`<code style="color:#22d3bf">min_size</code>` 未満のものはノイズとして -1。ラベルはクラスタサイズ降順で 0,1,2,...</p>
+<p>(決定論)。</p>
+<p>Args:</p>
+<p>points: (N,3) 点群。</p>
+<p>tol: 同一クラスタとみなす近接半径(距離、要 &gt; 0)。</p>
+<p>min_size: これ未満の連結成分はノイズ(-1)。</p>
+<p>Returns:</p>
+<p>labels: (N,) int。0..(n_clusters-1) がクラスタ、-1 がノイズ。空入力は shape (0,)。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">euclidean_cluster</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">min_size</code><code style="color:#22d3bf">(既定 10)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

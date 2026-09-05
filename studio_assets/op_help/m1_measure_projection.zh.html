@@ -4,7 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;m1_measure_projection&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">measure_projection</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → feature</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>測定用のキャリパー線（直線）を画像に当て、垂直方向に平均した輝度プロファイルの平均値を返す（HALCON `<code style="color:#22d3bf">measure_projection</code>` に相当:矩形/円弧に垂直な 1 次元射影を抽出する）。</p>
+<p>キャリパー線は画像の端から端まで引かれ、`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> で向きを </code><code style="color:#22d3bf">theta = a*pi</code><code style="color:#22d3bf">に振る（0＝横方向、0.5＝斜め45度、1＝横方向の逆向き）。</code><code style="color:#22d3bf">b</code>` は線を法線方向にずらす垂直オフセット（0〜1、0.5 が画像中心を通る）。線に沿って幅 1px 分の帯を平均サンプリングし（真の「射影」）、その平均輝度（[0,1]）を feature として返す。線が画像に掛からない/画像が小さすぎる場合は 0.0 を返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

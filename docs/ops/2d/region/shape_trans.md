@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → region`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+領域の凸包(``skimage.morphology.convex_hull_image``)を返す。HALCON の
+``shape_trans``（Transform the shape of a region.）は本来 convex/
+rectangle1/ellipse など複数の変形モードを ``Type`` 引数で選べる演算子
+だが、この代役では凸包 1 種類に固定している(近似の限界)。
+
+``a``, ``b`` は未使用。skimage が無い環境ではこの分岐は呼べない。
 
 ## 詳しい使い方ガイド
 

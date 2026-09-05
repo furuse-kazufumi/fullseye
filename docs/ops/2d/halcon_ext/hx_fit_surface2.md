@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+gray 値を 2 次多項式面で最小二乗近似する。HALCON の
+``fit_surface_second_order``(gray 値モーメントを計算し 2 次曲面で近似する)
+に相当。
+
+基底を ``[1, x, y, x^2, y^2, xy]`` に拡張したこと以外は ``hx_fit_surface1``
+と同じ(座標 [-1,1] 正規化 -> 最小二乗 -> [0,1] 正規化)。曲がった照明ムラや
+緩い凹凸の背景推定に使う。``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

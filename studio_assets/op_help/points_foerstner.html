@@ -4,7 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;points_foerstner&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">points_foerstner</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → image</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>Förstner 演算子によるコーナー強度マップ(``skimage.feature.</p>
+<p>corner_foerstner`<code style="color:#22d3bf"> の重み </code><code style="color:#22d3bf">w</code><code style="color:#22d3bf"> とロバスト形状指標 </code><code style="color:#22d3bf">q</code>` の積、NaN は 0 に</p>
+<p>置換)。誤差楕円の大きさ(w)と円形度(q)を組み合わせて点特徴らしさを評価する。</p>
+<p>HALCON の `<code style="color:#22d3bf">points_foerstner</code>`（Detect points of interest using the</p>
+<p>Förstner operator.）に相当。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が勾配計算のガウス窓シグマを 0.5〜2.5 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>skimage が無い環境ではこの分岐自体が呼べない(`<code style="color:#22d3bf">_HAS_SK</code>` ガード)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

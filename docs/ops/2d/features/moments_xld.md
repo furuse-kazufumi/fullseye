@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `contour → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+輪郭の生モーメント(``cv2.moments``)から ``(mu20+mu02)/面積²`` という
+単一スカラーを計算する ―― HALCON の ``moments_xld``（Geometric moments
+M20, M02, and M11 of contours or polygons.）が返す M20/M02/M11 の 3 成分を
+1 つに合成した近似(個々の方向成分・M11 は失われる)。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

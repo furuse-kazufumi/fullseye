@@ -19,7 +19,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+理想ハイパスフィルタの周波数マスクを生成する。HALCON の ``gen_highpass``
+(理想ハイパスフィルタを生成する)に相当。
+
+DC を中心に fftshift した正規化周波数半径 ``r`` を計算し、``r > cutoff`` の
+画素を 1 とする(``cutoff = 0.05 + 0.45*a``)。兄弟 op ``hx_gen_lowpass`` /
+``hx_gen_bandpass`` と半径の計算式を共有する。``b`` は未使用。返り値は
+フィルタそのもの(周波数領域のマスク画像)で、画像に畳み込む前段にあたる。
 
 ## 詳しい使い方ガイド
 

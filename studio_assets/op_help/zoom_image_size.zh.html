@@ -4,7 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;zoom_image_size&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">zoom_image_size</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>类型契约为 <code style="color:#22d3bf">image → image</code>。行为的文字说明请见下面的族使用指南与可运行样例(这里不做臆测)。</p>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>目標サイズ(高さ `<code style="color:#22d3bf">H*(0.5+a)</code><code style="color:#22d3bf">、幅 </code><code style="color:#22d3bf">W*(0.5+b)</code>`)へリサンプルする</p>
+<p>ズーム。`<code style="color:#22d3bf">zoom_image_factor</code>` が倍率を 2 つ取るのに対し、こちらは<b>サイズ</b></p>
+<p>そのものを縦横独立に指定する ―― HALCON の意味論としては別物。ただし</p>
+<p>このパイプラインの `<code style="color:#22d3bf">image</code>` は「入力と同じキャンバスサイズで返る」契約</p>
+<p>なので、リサンプル結果は元の解像度のキャンバス左上に置き、余白は 0、</p>
+<p>はみ出す分は切り捨てる(実際に画像が縮小/拡大されたことは見た目で分かる</p>
+<p>が、配列の shape 自体は変わらない)。HALCON の `<code style="color:#22d3bf">zoom_image_size</code>`</p>
+<p>（Zoom an image to a given size.）に相当。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が目標高さの比率、</code><code style="color:#22d3bf">b</code>` が目標幅の比率を振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

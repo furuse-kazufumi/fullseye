@@ -17,7 +17,13 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Perona-Malik anisotropic diffusion (HALCON ``anisotropic_diffusion``).
+
+Explicit update  I <- I + lam * sum_dir g(|grad_dir|) * grad_dir  with the
+Perona-Malik conductance ``g(s) = 1/(1+(s/k)^2)``: on a strong edge (|grad|>>k)
+g->0 so the edge is preserved, while inside a flat noisy region (|grad|<<k)
+g->1 so it diffuses like the heat equation. ``a`` sets the number of steps,
+``b`` the edge threshold ``k``.
 
 ## 詳しい使い方ガイド
 

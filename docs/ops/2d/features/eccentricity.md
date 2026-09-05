@@ -19,7 +19,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `region → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+楕円近似による離心率(``skimage.measure.regionprops`` の
+``eccentricity``、0=真円、1に近いほど細長い線分状)。領域を等価な楕円に
+フィットしたときの形状指標。HALCON の ``eccentricity``（Shape features
+derived from the ellipse parameters.）に相当。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 

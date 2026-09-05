@@ -17,7 +17,12 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+CLAHE（コントラスト制限適応ヒストグラム均等化）。
+``kornia.enhance.equalize_clahe`` を呼ぶ。
+
+a がクリップ制限（``1.0 + 4.0 * a``、範囲 1.0〜5.0）を振る。値が大きい
+ほどコントラストが強く持ち上がる代わりにノイズも強調されやすい。
+b は未使用。
 
 ## 詳しい使い方ガイド
 

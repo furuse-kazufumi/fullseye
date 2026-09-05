@@ -17,7 +17,17 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `video → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Per-pixel mean-square power inside a temporal band -> ``(H, W)`` map.
+
+    "Where in the frame is something moving at this frequency?" — a resonance
+    map. The value at a pixel is the mean over time of the squared band-passed
+    signal, so a pure sinusoid of amplitude ``a`` inside the band reads exactly
+    ``a^2/2`` (Parseval; measured relative error ``3.08e-16`` for ``a = 0.3``).
+
+    This is an *analysis map*, not a displayable image: it is a power and is not
+    bounded by 1. Pixels with no in-band content read 0.
+
+Typed bridge of the motionmag op ``temporal_band_power`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)
 

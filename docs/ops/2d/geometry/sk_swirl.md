@@ -19,7 +19,9 @@ version: 0.1.7  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+渦巻き変形(swirl warp)。画像中心の周りで、中心に近いほど大きく回転させる非線形な幾何変換 —— 極座標変換を応用した歪みエフェクト。
+
+HALCON の `polar_trans_image`(Transform an image to polar coordinates)に相当(近似。極座標画像そのものではなく、渦状に歪ませた直交座標画像を返す)。実装は ``transform.swirl(v, strength=1+4*a, radius=30)`` を ``[0,1]`` へ clip したもの —— a は渦の強さを 1〜5 に振る。渦の半径は 30 画素に固定。b は未使用。
 
 ## 詳しい使い方ガイド
 
