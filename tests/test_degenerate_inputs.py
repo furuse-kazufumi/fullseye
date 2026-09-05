@@ -60,7 +60,7 @@ EMPTY = {
 #: ハングはクラッシュより厄介 —— CI では「遅い」としか見えない。
 #: 2026-09-05 に ``xsk_unwrap_phase`` を直して**空になった**。空であること自体を
 #: 主張はしない(次に見つけたらここに書いて、直したら消す)。
-KNOWN_HANGS_ON_NONFINITE: dict = {}
+KNOWN_HANGS_ON_NONFINITE: dict = {"zz_not_a_real_op": "MUTATION TEST"}
 
 
 def _empty_for(sort):
