@@ -272,6 +272,6 @@ def render_gi(V, F, *, pose=None, intrinsics=None, size: int = 256, spp: int = 6
     depth[~hit] = 0.0
 
     import render_tonemap
-    image = np.clip(render_tonemap.tonemap(radiance, mode="reinhard"), 0.0, 1.0)
+    image = np.clip(render_tonemap.tonemap_reinhard(radiance), 0.0, 1.0)
     return {"image": image, "radiance": radiance, "depth": depth,
             "normals": normals, "silhouette": hit}
