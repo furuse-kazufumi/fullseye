@@ -2026,7 +2026,9 @@ def test_window_title_and_recent_files(tmp_path):
     from PySide6 import QtWidgets, QtCore
     import imgio, api
     _app()
-    S = QtCore.QSettings("Fullseye", "Studio")
+    # ★`QSettings("Fullseye", "Studio")` を直に組むと隔離を迂回して**利用者の
+    # レジストリ**に書く(2026-09-05 の監査で実害を確認)。設定入口は 1 つに保つ。
+    S = studio._settings()
     saved = S.value("recent_files", []); S.setValue("recent_files", [])
     try:
         win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
