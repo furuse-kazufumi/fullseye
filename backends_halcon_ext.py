@@ -416,6 +416,13 @@ def _gen_circle_sector(v, a, b):
 
 
 def _gen_ellipse_sector(v, a, b):
+    """楕円の扇形(セクタ)region を生成する。HALCON の ``gen_ellipse_sector``
+    (楕円セクタを生成する)に相当。
+
+    楕円の軸は画像幅の 42%・高さの 30%に固定。``b`` が開始角(``b*2*pi``)、
+    ``a`` が掃引角(``0.1 + a*(2*pi-0.1)``)を振る。``hx_gen_circle_sector`` の
+    楕円版。
+    """
     h, w, Y, X = _grid(v.shape)
     cy, cx = (h - 1) / 2, (w - 1) / 2
     ra, rb = 0.42 * w, 0.30 * h
@@ -426,6 +433,12 @@ def _gen_ellipse_sector(v, a, b):
 
 
 def _gen_empty_region(v, a, b):
+    """空(全画素 0)の region を生成する。HALCON の ``gen_empty_region``
+    (空 region を生成する)に相当。
+
+    入力と同じ形状の全 0 配列を返すだけ。``a``, ``b`` は未使用。初期値や
+    プレースホルダとして使う。
+    """
     return np.zeros_like(v, dtype=np.float64)
 
 
