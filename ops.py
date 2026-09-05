@@ -1305,7 +1305,6 @@ NONFINITE_IS_MEANINGFUL = {
     "tb_mat_cond": "スペクトル条件数 s_max/s_min。厳密に特異な行列は s_min=0 なので"
                    "inf が正しい答え(mathops.mat_cond は例外を投げず inf を返す)。"
                    "有限に潰すと『十分に良条件』と読めてしまう。",
-    "zz_not_a_real_op": "MUTATION TEST: fake entry, should not exist in REGISTRY",
 }
 
 
