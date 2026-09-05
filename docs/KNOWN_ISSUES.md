@@ -283,3 +283,21 @@ HALCON の `lines_color` は線の幅を出すが、実装は輪郭点だけ。
 
 これらは「ヘルプが実装より立派なことを言う」状態を作る種でもある。
 説明を書く作業が検出器として働いた、という記録として残す。
+
+## 17. ⚠ 別名で登録されているが実装が同一の op が 4 件
+`power_ln` と `fft_generic`、`thinning_golay` と `thinning_seq` は spec 上は別の
+HALCON 名だが、`backends_auto.py` 内では**同じ shape / 同じ kind** に落ちる
+= 実装が完全に同一。抽選の二重取り(`ops.DROPPED_DUPLICATES` で潰した同名衝突と
+違い、名前が違うので de-dup に掛からない)になっている。説明には同一である旨を
+明記した。**対処案**: 一方を本来の演算に寄せるか、別名であることを台帳に出す。
+
+## 18. ⚠ `robinson_dir` だけ返り値の意味が違う
+`sobel_dir` / `frei_dir` は `arctan2` の連続角度を返すが、`robinson_dir` は
+8 方向カーネルの argmax インデックス(離散)を返す。名前が揃っているぶん
+見落としやすい非対称。説明に明記した。
+
+## 19. ⚠ 多値を返す HALCON 演算を 1 スカラーに潰している
+`fill_up_shape` / `connect_and_holes` / `elliptic_axis` などは HALCON 側が複数値
+(ベクトル)を返すが、この backend の `feature` sort は 1 スカラーしか運べないため
+情報が落ちている。**対処案**: `reprconv` の型を使うか、成分ごとに op を分ける
+(memory: 混ぜると例外でなくもっともらしく間違う型は分ける)。
