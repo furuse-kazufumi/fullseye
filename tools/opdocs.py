@@ -469,7 +469,10 @@ def _records():
             "halcon": (o.halcon or "").strip(),
             # 実装のそばの docstring が第一。lambda で書かれた op は docstring を
             # 持てないので、登録時に積んだ ``Op.doc`` が受け皿になる(ops.Op 参照)。
-            "doc": (fn.__doc__ or getattr(o, "doc", "") or "").strip(),
+            # cleandoc: 関数 docstring の 2 行目以降には定義位置ぶんの字下げが
+            # 付いていて、そのまま出すと Markdown が**コードブロックと読む**
+            # (3-D / ledger 側は最初からこれを通していた)。
+            "doc": inspect.cleandoc(fn.__doc__ or getattr(o, "doc", "") or "").strip(),
             "module": "ops", "sig": sig,
             "examples": sorted(idx2d.get(o.name, [])),
             "family": op_fam.get(o.name),

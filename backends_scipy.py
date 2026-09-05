@@ -107,10 +107,24 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         from scipy import fft as sfft
 
         def _dct(v, a, b):
+            """2 次元離散コサイン変換（DCT-II, ortho 正規化）のパワースペクトルを対数圧縮して表示する。
+
+            ``scipy.fft.dctn`` で周波数領域に変換し、``log1p(|係数|)`` を [0,1] に
+            正規化する。``a``, ``b`` は未使用。低周波成分（出力の左上）ほど値が
+            大きく、DFT のパワースペクトルに近いが実数のみを扱う DCT なので対称な
+            折り返しは出ない。周波数成分の可視化・診断用。
+            """
             x = np.clip(np.asarray(v, np.float64), 0, 1)
             return _norm(np.log1p(np.abs(sfft.dctn(x, norm="ortho"))))
 
         def _dct_lowpass(v, a, b):
+            """DCT 係数を低周波の正方ブロックだけ残してから逆変換するローパスフィルタ。
+
+            ``a`` は残す低周波係数ブロックの一辺の長さを決める（``keep = max(2,
+            int((0.15 + 0.6*a) * min(H, W)))``、``a`` が大きいほど高周波まで残り
+            ぼけが弱くなる）。``b`` は未使用。ガウシアンぼかしと違い矩形の周波数
+            マスクを掛けるので、強くかけるとリンギング（波打ち）が出やすい。
+            """
             x = np.clip(np.asarray(v, np.float64), 0, 1)
             C = sfft.dctn(x, norm="ortho")
             keep = max(2, int((0.15 + 0.6 * a) * min(x.shape)))
@@ -119,6 +133,13 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             return np.clip(sfft.idctn(M, norm="ortho"), 0, 1)
 
         def _dct_denoise(v, a, b):
+            """DCT 係数のハード閾値処理によるノイズ除去（ウェーブレット縮退の DCT 版）。
+
+            しきい値は最大係数に対する相対値で決める（``thr = (0.01 + 0.2*a) *
+            max(|C|)``）。``a`` が大きいほど強く間引かれ、``b`` は未使用。しきい値
+            未満の DCT 係数を 0 にしてから逆変換するので、弱いテクスチャごと消え
+            やすい代わりに広い平坦領域のノイズはよく落ちる。
+            """
             x = np.clip(np.asarray(v, np.float64), 0, 1)
             C = sfft.dctn(x, norm="ortho")
             thr = (0.01 + 0.2 * a) * np.abs(C).max()
