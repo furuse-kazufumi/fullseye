@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × phash</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import imgforensics; imgforensics.watermark_embed(image, bits, strength: &#x27;float&#x27; = 0.1, wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">opsimgforensics.get(&quot;watermark_embed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>DWT-DCT <b>電子透かし</b>の埋め込み。透かし入り画像 `<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> を返す。</code><code style="color:#22d3bf">image2d</code>`。</p>
+<p>DWT-DCT-<b>Wasserzeichen</b>-Einbettung. Liefert das markierte Bild `<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">image2d</code>`.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>1 段 DWT(既定 haar)の LL 副帯域を 8x8 に切り、各ブロックの直交 DCT-II の</p>
 <p><b>中帯域係数の対</b> `<code style="color:#22d3bf">(3,1)</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">(1,3)</code>` の大小関係で 1 ビットを表す</p>
 <p>(Hsu &amp; Wu 1999 の中帯域係数対法)。差が `<code style="color:#22d3bf">strength</code>` 未満なら差が</p>

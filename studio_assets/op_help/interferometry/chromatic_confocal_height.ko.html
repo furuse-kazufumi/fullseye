@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">sweep</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import interferometry; interferometry.chromatic_confocal_height(spectrum, wavelength_start_nm=500.0, wavelength_step_nm=0.5, dispersion_um_per_nm=0.2, reference_wavelength_nm=600.0, mode=&#x27;gaussian&#x27;, subtract_background=True, min_visibility=0.3, min_peak_bins=2.0, max_carrier_fraction=0.1)</code>(또는 <code style="color:#22d3bf">opsinterferometry.get(&quot;chromatic_confocal_height&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Surface height from one confocal return spectrum — the wavelength *is* the height.</p>
+<p>공초점 반사 스펙트럼 하나로부터 표면 높이를 —— 파장이 <b>곧</b> 높이입니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>The inverse of :func:<code style="color:#22d3bf">chromatic_confocal_simulate</code>. Find the peak wavelength</p>
 <p>of the spectrum, then::</p>
 <p>height = (lambda_peak - reference_wavelength_nm) * dispersion_um_per_nm</p>

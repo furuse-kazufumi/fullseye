@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">cimage</code> → <code style="color:#22d3bf">cimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import optics; optics.angular_spectrum_propagate(field, wavelength_um=0.55, distance_um=100.0, pixel_pitch_um=1.0)</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;angular_spectrum_propagate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Exact scalar free-space propagation of a complex field (angular spectrum).</p>
+<p>複場的純量自由空間傳播,精確解(角譜法)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">U(z) = IFFT{ FFT{U(0)} * exp(i*2*pi*z*sqrt(1/lambda^2 - fx^2 - fy^2)) }</code>`</p>
 <p>in the `<code style="color:#22d3bf">exp(-i*omega*t)</code>` convention, so a positive *distance_um*</p>
 <p>propagates forward. Components beyond the propagating cone</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import reprconv; reprconv.keypoints_uv_to_points(keypoints, z=0.0)</code> (or <code style="color:#22d3bf">opsreprconv.get(&quot;keypoints_uv_to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>画像座標 `<code style="color:#22d3bf">(N,2) = (u, v)</code><code style="color:#22d3bf"> → 点群 </code><code style="color:#22d3bf">(N,3) = (z, y, x)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">keypoints</code>` の出口。</p>
+<p>Image coordinates `<code style="color:#22d3bf">(N,2) = (u, v)</code><code style="color:#22d3bf"> → a point set </code><code style="color:#22d3bf">(N,3) = (z, y, x)</code><code style="color:#22d3bf">. The exit from </code><code style="color:#22d3bf">keypoints</code>`.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><b>op 名に軸の約束が書いてある</b>のは、この repo で `<code style="color:#22d3bf">keypoints</code>` を産む</p>
 <p>`<code style="color:#22d3bf">match3d.project_points</code><code style="color:#22d3bf"> が **(u, v) = (列, 行)** を返し、</code><code style="color:#22d3bf">points</code>` を産む</p>
 <p>`<code style="color:#22d3bf">fuse3d.to_points(voxel)</code>` が <b>(z, y, x)</b> を返すから —— 素直に「先頭 2 列」</p>

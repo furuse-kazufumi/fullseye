@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;unsharp&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">emphasize</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Unsharp mask. ★出口で [0,1] に clip する(2026-09-02)。</p>
+<p>非銳化遮罩。★出口處 clip 到 <a style="color:#22d3bf" href="2026-09-02">0,1</a>。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">v + k*(v - blur)</code>` は定義上オーバーシュートする(実測 min=-0.1499 /</p>
 <p>max=+1.1499)。<code style="color:#22d3bf">_apply</code> は段間で同じ clip を掛けるので **パイプライン結果は</p>
 <p>ビット不変**だが、<code style="color:#22d3bf">fullseye.apply</code> を単発で呼ぶ経路だけは生値が出ていて、</p>

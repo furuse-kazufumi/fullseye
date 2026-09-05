@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import spherical_proj; spherical_proj.unproject_spherical(range_img, v_fov=(-25.0, 15.0)) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;unproject_spherical&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>球面レンジ画像 → 3D 点 (M, 3)。range&gt;0 のセルのみをビン中心角で逆投影。</p>
+<p>球面距离图像 → 3D 点 (M, 3)。只对 range&gt;0 的格按 bin 中心角反投影。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

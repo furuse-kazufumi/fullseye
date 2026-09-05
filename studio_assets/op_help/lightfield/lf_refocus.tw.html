@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import lightfield; lightfield.lf_refocus(lf, slope=0.0, *, interp=&#x27;linear&#x27;, edge=&#x27;nearest&#x27;)</code>(或 <code style="color:#22d3bf">opslightfield.get(&quot;lf_refocus&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Shift-and-add refocus: the synthetic-aperture image focused at *slope*.</p>
+<p>移位相加重聚焦:聚焦在 *slope* 上的合成孔徑影像。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Every view `<code style="color:#22d3bf">(v, u)</code><code style="color:#22d3bf"> is shifted by </code><code style="color:#22d3bf">(-s*(v - v_c), -s*(u - u_c))</code>` — the</p>
 <p><b>minus</b> undoes the parallax of a point at slope `<code style="color:#22d3bf">s</code>` — and the shifted</p>
 <p>views are averaged. Points at that slope add coherently and stay sharp;</p>

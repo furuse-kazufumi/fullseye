@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.shadow_cast_2d(occluder, x, y, steps=None, softness=0.0)</code>(또는 <code style="color:#22d3bf">opsgfx2d.get(&quot;shadow_cast_2d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Visibility of every pixel from a point light at `<code style="color:#22d3bf">(x, y)</code><code style="color:#22d3bf">, as </code><code style="color:#22d3bf">image2d</code>`.</p>
+<p>`<code style="color:#22d3bf">(x, y)</code><code style="color:#22d3bf"> 의 점광원에서 본 각 화소의 가시성을 </code><code style="color:#22d3bf">image2d</code>` 로.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Ray-marches the segment from each pixel to the light, sampling `<code style="color:#22d3bf">occluder</code>`</p>
 <p>(2-D, `<code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf">, 1 = fully blocking) at </code><code style="color:#22d3bf">steps</code>` points with nearest</p>
 <p>lookup, and returns `<code style="color:#22d3bf">1 - max(occluder along the ray)</code>`. For a binary</p>

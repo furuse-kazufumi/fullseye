@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">lut</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import gfx2d; gfx2d.color_lut(size=17, gain=(1.0, 1.0, 1.0), lift=(0.0, 0.0, 0.0), gamma=(1.0, 1.0, 1.0), saturation=1.0)</code>(或 <code style="color:#22d3bf">opsgfx2d.get(&quot;color_lut&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Build a 3-D colour LUT, `<code style="color:#22d3bf">(n, n, n, 3)</code><code style="color:#22d3bf"> indexed </code><code style="color:#22d3bf">[r, g, b]</code>`.</p>
+<p>构建 3-D 色彩 LUT `<code style="color:#22d3bf">(n, n, n, 3)</code><code style="color:#22d3bf">,索引为 </code><code style="color:#22d3bf">[r, g, b]</code>`。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">out = clip(lift + gain * in**gamma)</code>` per channel, then saturation is</p>
 <p>applied about the Rec. 709 luma. With all defaults this is the **identity</p>
 <p>LUT**, and because trilinear interpolation is exact for a function that is</p>

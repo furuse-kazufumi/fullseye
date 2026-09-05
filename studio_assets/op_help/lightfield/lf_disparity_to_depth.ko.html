@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">depth</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import lightfield; lightfield.lf_disparity_to_depth(slope, focal_px=1000.0, baseline=1.0, *, far_depth=None, min_slope=1e-06)</code>(또는 <code style="color:#22d3bf">opslightfield.get(&quot;lf_disparity_to_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Slope (px per angular step) -&gt; metric depth, the camera-array model.</p>
+<p>기울기(각도 한 단계당 화소) -&gt; 실제 깊이. 카메라 어레이 모델.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>For a rectified array of viewpoints spaced *baseline* apart with focal</p>
 <p>length *focal_px* expressed <b>in pixels of the sub-aperture image</b>, a point</p>
 <p>at distance `<code style="color:#22d3bf">Z</code><code style="color:#22d3bf"> shifts by </code><code style="color:#22d3bf">|s| = focal_px * baseline / Z</code>` pixels per</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import acoustics; acoustics.stft_cola_check(window=&#x27;hann&#x27;, win=256, hop=None)</code>(或 <code style="color:#22d3bf">opsacoustics.get(&quot;stft_cola_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Does this (window, hop) pair satisfy COLA, and how exactly?</p>
+<p>这组(窗, 跳距)是否满足 COLA,以及满足得有多精确。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>COLA — the analysis windows summing to a constant over the hop lattice — is</p>
 <p>what lets plain overlap-add work without a division. It is *not* required by</p>
 <p>:func:<code style="color:#22d3bf">istft</code>, which is weighted, but it is required by anything that</p>

@@ -1,0 +1,78 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">filtered_backprojection — TOMOGRAPHY <code style="color:#22d3bf">reconstruct</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import tomography; tomography.filtered_backprojection(sinogram, angles_deg=None, size=None, filter_name=&#x27;ramp&#x27;, cutoff=1.0, span_deg=None, _op=&#x27;filtered_backprojection&#x27;)</code> (または <code style="color:#22d3bf">opstomography.get(&quot;filtered_backprojection&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>フィルタ補正逆投影(FBP)—— CT 再構成の標準。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>Filter each projection along the detector axis with the ramp `<code style="color:#22d3bf">|f|</code>` (times an</p>
+<p>optional apodisation window), then back-project. This is the discretised</p>
+<p>inverse Radon transform, and with enough samples it is exact: reconstructing a</p>
+<p>uniform disc of density 1.0 from its <b>analytic</b> sinogram returns an interior</p>
+<p>mean of <b>0.9954</b> with 363 detector bins and <b>0.9997</b> with 727, converging</p>
+<p>on the truth as the *detector* is refined and not as the view count is (180,</p>
+<p>360 and 720 views give the same 0.9954 to six figures). That absolute value is</p>
+<p>what pins the ordinary-versus-angular frequency convention in the ramp: the</p>
+<p>other convention, equally defensible and printed in the same textbooks, would</p>
+<p>return `<code style="color:#22d3bf">2*pi</code>` times this, and a CT slice has no absolute grey level for</p>
+<p>anyone to notice against.</p>
+<p>Where it breaks, measured on the Shepp-Logan phantom (256 px, <b>analytic</b></p>
+<p>sinogram so the projector contributes no error of its own; normalised RMS</p>
+<p>error against the truth):</p>
+<p>views     FBP (ramp)    SART (10 sweeps)    FBP/SART</p>
+<p>180        0.0250          0.0175           1.43</p>
+<p>90        0.0454          0.0195           2.33</p>
+<p>45        0.1039          0.0353           2.95</p>
+<p>32        0.1362          0.0497           2.74</p>
+<p>16        0.2341          0.0859           2.72</p>
+<p>8        0.3635          0.1257           2.89</p>
+<p>**There is no crossing point, and the expectation that there would be one was</p>
+<p>wrong.** The received story is that FBP wins when the data is complete and</p>
+<p>loses only in the sparse regime; measured here, SART with a non-negativity</p>
+<p>constraint is better at *every* view count — by 1.43x at 180 views and by</p>
+<p>about 2.9x once the scan is sparse. What changes with the view count is the</p>
+<p>price, not the ranking: at 180 views SART costs <b>312x</b> the wall clock</p>
+<p>(37.7 s against 0.12 s for a 256-px slice) to buy that 1.43x, which is why</p>
+<p>filtered back-projection is what production scanners run. At the sparse end</p>
+<p>the same 2.9x comes nearly free, because both methods scale with the views.</p>
+<p>With noise the ranking holds but the margins change, and the apodisation</p>
+<p>windows stop being decoration (Poisson counts at `<code style="color:#22d3bf">I0 = 2e4</code>`, same phantom):</p>
+<p>views    FBP ramp    FBP hann    SART (10 sweeps)</p>
+<p>180      0.0360      0.0371         0.0291</p>
+<p>45      0.1159      0.0766         0.0385</p>
+<p>16      0.2481      0.1921         0.0864</p>
+<p>8      0.3813      0.3093         0.1259</p>
+<p>At 180 views the exact ramp beats Hann — the data is complete and the roll-off</p>
+<p>only blurs. At 45 views and below Hann beats the exact inverse by up to 1.5x,</p>
+<p>because the frequencies the ramp is busy amplifying were never measured.</p>
+<p>Filters, and what they trade: `<code style="color:#22d3bf">&quot;ramp&quot;</code>` is the exact inverse and therefore</p>
+<p>the sharpest and the noisiest; `<code style="color:#22d3bf">&quot;shepp-logan&quot;</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">&quot;cosine&quot;</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">&quot;hann&quot;</code>` and</p>
+<p>`<code style="color:#22d3bf">&quot;hamming&quot;</code>` roll the high frequencies off, in that order of aggressiveness.</p>
+<p>`<code style="color:#22d3bf">&quot;none&quot;</code><code style="color:#22d3bf"> skips the filter entirely and gives :func:</code>backproject_sinogram`.</p>
+<p>:param sinogram: `<code style="color:#22d3bf">(n_angles, n_detectors)</code>`, rows = angles.</p>
+<p>:param angles_deg: view angles in degrees; `<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> -&gt; uniform </code><code style="color:#22d3bf">[0, 180)</code>`</p>
+<p>with one view per row.</p>
+<p>:param size: output side; `<code style="color:#22d3bf">None</code>` -&gt; the inscribed square.</p>
+<p>:param filter_name: one of :data:<code style="color:#22d3bf">FILTERS</code>.</p>
+<p>:param cutoff: fraction of Nyquist to keep, `<code style="color:#22d3bf">(0, 1]</code>`.</p>
+<p>:param span_deg: angular range for the `<code style="color:#22d3bf">d(theta)</code><code style="color:#22d3bf"> weight; </code><code style="color:#22d3bf">None</code>` -&gt; the</p>
+<p>range the views actually cover, inferred from the angle list (exact for</p>
+<p>a uniform grid over any span and for any full-coverage irregular set</p>
+<p>such as golden angle; see :func:<code style="color:#22d3bf">_span_weight</code>).</p>
+<p>:returns: `<code style="color:#22d3bf">(size, size)</code>` float64 image.</p>
+<p>:raises ValueError: on a non-2-D or non-finite sinogram, an angle count that</p>
+<p>disagrees with the row count, an unknown filter, a cutoff outside</p>
+<p>`<code style="color:#22d3bf">(0, 1]</code><code style="color:#22d3bf">, or an output over :data:</code>MAX_IMAGE_ELEMENTS`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:ct_reconstruction">ct_reconstruction</a> — <code style="color:#22d3bf">py -3.11 examples/ct_reconstruction.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="optomography:radon_transform">radon_transform</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">reconstruct</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:backproject_sinogram">backproject_sinogram</a> · <a style="color:#22d3bf" href="optomography:sart_reconstruct">sart_reconstruct</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tomography.py — TOMOGRAPHY operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

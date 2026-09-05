@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">gaussians</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import reprconv; reprconv.points_to_gaussians(points, k=6, scale=1.0)</code> (or <code style="color:#22d3bf">opsreprconv.get(&quot;points_to_gaussians&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>点群 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> → 等方ガウシアン </code><code style="color:#22d3bf">gaussians</code>`。<b>この型の唯一の入口</b>。</p>
+<p>A point set `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> → isotropic </code><code style="color:#22d3bf">gaussians</code>`. <b>The only entry into this type.</b></p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">gaussians</code><code style="color:#22d3bf"> は台帳で </code><code style="color:#22d3bf">fuse3d.to_points</code>` が食う型だが、**産む op が</p>
 <p>1 つも無かった**(実測)—— 消費側だけがある型は、生成器を種として置かない限り</p>
 <p>一度も実行されない。ここでは 3D Gaussian Splatting の初期化と同じやり方で</p>

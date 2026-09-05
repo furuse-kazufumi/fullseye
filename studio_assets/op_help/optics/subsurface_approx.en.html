@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import surfacelib; surfacelib.subsurface_approx(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), thickness=0.5, wrap=0.5) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;subsurface_approx&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>半透明の回り込み(葉・肌・大理石・プラ乳白)の近似。</p>
+<p>An approximation of translucent wrap-around light (leaves, skin, marble, milky plastic).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>thickness: 透け具合(0–1、大きいほど裏から回り込む)。wrap: 影側への回り込みの広さ。</p>
 <p>返り値: (H, W)。<b>光源が裏にあるほど明るい</b>成分(back-scatter)と、影側へ</p>
 <p>回り込む成分(wrap lighting)の和。Lambert では 0 になる領域に光が残るのが要点。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">fingerprint</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import imgforensics; imgforensics.sensor_fingerprint(images, denoiser: &#x27;str&#x27; = &#x27;wiener&#x27;, sigma: &#x27;float&#x27; = 0.02, zero_mean: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">opsimgforensics.get(&quot;sensor_fingerprint&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>複数枚から <b>PRNU センサ指紋</b> K を最尤推定する(Chen et al. 2008)。</p>
+<p>Maximum-likelihood estimate of the <b>PRNU sensor fingerprint</b> K from several frames (Chen et al. 2008).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">K = Σ_i W_i I_i / Σ_i I_i²</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">W_i = I_i - denoise(I_i)</code>`)。撮像モデル</p>
 <p>`<code style="color:#22d3bf">I = I⁰ + I⁰·K + Θ</code>` の下で、これが K の最尤推定量になる —— 明るい画素ほど</p>
 <p>PRNU が強く出る(乗法的な欠陥だから)ので、<b>明るさで重み付けした平均</b>である。</p>

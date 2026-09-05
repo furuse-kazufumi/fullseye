@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d × mask</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import colortransport; colortransport.poisson_blend(src, dst, mask, offset=(0, 0))</code>(또는 <code style="color:#22d3bf">opscolortransport.get(&quot;poisson_blend&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>勾配場を運ぶ継ぎ目なし合成(Pérez, Gangnet &amp; Blake, SIGGRAPH 2003)。</p>
+<p>기울기장을 옮기는 이음매 없는 합성(Pérez, Gangnet &amp; Blake, SIGGRAPH 2003).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">mask</code><code style="color:#22d3bf"> の内部で **</code><code style="color:#22d3bf">src</code><code style="color:#22d3bf"> の勾配**を保ちつつ、**境界で </code><code style="color:#22d3bf">dst</code>` の値**に</p>
 <p>一致する像を解く。よって出力は次の 2 つを<b>構成上</b>満たし、</p>
 <p>それが正しさの検算になる:</p>

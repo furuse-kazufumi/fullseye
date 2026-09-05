@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import specularity; specularity.dichromatic_render(normals, albedo_rgb=(0.8, 0.55, 0.35), light=(0.3, 0.2, 1.0), illuminant_rgb=(1.0, 1.0, 1.0), view=(0.0, 0.0, 1.0), specular=0.25, model=&#x27;blinn_phong&#x27;, shininess=32.0, roughness=0.3, f0=0.04, ambient=0.0)</code>(或 <code style="color:#22d3bf">opsspecular.get(&quot;dichromatic_render&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Forward dichromatic model: render a known highlight so a separation can be checked against it. → (H, W, 3).</p>
+<p>二色性模型的正向:算繪一個已知高光,以便據此檢驗分離結果。→ (H, W, 3)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">I = albedo_rgb * max(n.l, 0) + specular * lobe(n) * illuminant_unit</code>`, the</p>
 <p>body term coming straight from :func:<code style="color:#22d3bf">photometric.render_lambertian</code> (called,</p>
 <p>not re-implemented, so the two modules cannot drift apart in convention) and</p>

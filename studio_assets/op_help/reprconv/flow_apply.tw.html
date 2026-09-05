@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points × flow_scattered</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import reprconv; reprconv.flow_apply(points, flow)</code>(或 <code style="color:#22d3bf">opsreprconv.get(&quot;flow_apply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>点群 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> に散在フロー </code><code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> を足す → </code><code style="color:#22d3bf">points</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">flow</code>` の消費側。</p>
+<p>把散在流 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> 加到點群 </code><code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> 上 → </code><code style="color:#22d3bf">points</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">flow</code>` 的消費側。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">estimate_flow(a, b)</code>` が「a の各点から b の最近傍への変位」を返すので、</p>
 <p>`<code style="color:#22d3bf">flow_apply(a, estimate_flow(a, b))</code>` は **b の点のうち a から最近傍として</p>
 <p>選ばれたもの**へ移る。往復が厳密になるのは対応が全単射のときだけで、</p>

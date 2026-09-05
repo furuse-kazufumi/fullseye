@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">normalmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import metalfinish; metalfinish.micro_normals(normals, kind=&#x27;linear&#x27;, pitch_px=9.0, depth=0.06, angle_deg=0.0, center=None) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;micro_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>加工痕そのものを<b>法線に刻む</b>(旋盤の送りマーク・ローレットの山)。</p>
+<p>Cut the machining marks themselves <b>into the normals</b> (lathe feed marks, the ridges of a knurl).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>normals: (H, W, 3) の法線マップ。kind / angle_deg / center: <code style="color:#22d3bf">tangent_field</code> と同じ。</p>
 <p>pitch_px: 痕の間隔 [px]。depth: 傾ける強さ(0 で無加工)。</p>
 <p>返り値: 摂動後の単位法線マップ。背景(長さ 0)はそのまま 0。</p>

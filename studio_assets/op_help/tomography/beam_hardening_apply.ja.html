@@ -1,0 +1,49 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">beam_hardening_apply — TOMOGRAPHY <code style="color:#22d3bf">artifact</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">sinogram</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import tomography; tomography.beam_hardening_apply(sinogram, high_energy_fraction=0.5, attenuation_ratio=0.4)</code> (または <code style="color:#22d3bf">opstomography.get(&quot;beam_hardening_apply&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>単色サイノグラムを<b>多色</b>にする —— カッピングの発生源。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>A real X-ray tube emits a spectrum, and low-energy photons are absorbed more,</p>
+<p>so the beam that survives a thick path is *harder* (higher mean energy) and</p>
+<p>therefore attenuated less per unit length than the beam that survives a thin</p>
+<p>one. The line integral stops being linear in path length, and the</p>
+<p>reconstruction of a uniform object comes back with a depressed centre: the</p>
+<p>cupping artefact.</p>
+<p>The two-spectrum model used here is the smallest one that is physics and not a</p>
+<p>curve::</p>
+<p>I/I0    = (1-w) exp(-p) + w exp(-k p)</p>
+<p>p_meas  = -ln(I/I0)</p>
+<p>with *w* the fraction of the beam at the high energy and *k &lt; 1* its relative</p>
+<p>attenuation. It is exact at `<code style="color:#22d3bf">p = 0</code>`, concave everywhere, and monotone — so</p>
+<p>it is invertible, which is what :func:<code style="color:#22d3bf">beam_hardening_correct</code> inverts.</p>
+<p>Measured on a uniform disc (radius 60 px in 256 px, density 1/60 so the peak</p>
+<p>line integral is 2.0) at `<code style="color:#22d3bf">w = 0.5, k = 0.4</code>`: the FBP reconstruction&#x27;s</p>
+<p>centre-to-rim ratio drops to <b>0.9312</b>, against <b>0.9981</b> before hardening,</p>
+<p>and :func:<code style="color:#22d3bf">beam_hardening_correct</code> returns it to <b>0.9981</b> — the clean value</p>
+<p>in all four digits. (The clean ratio is 0.9981 rather than exactly 1 because</p>
+<p>of the detector sampling discussed in :func:<code style="color:#22d3bf">filtered_backprojection</code>. The</p>
+<p>cupping is the 6.7-point drop, not the 0.2-point one.)</p>
+<p>:param sinogram: `<code style="color:#22d3bf">(n_angles, n_detectors)</code>` monochromatic line integrals,</p>
+<p>which must be `<code style="color:#22d3bf">&gt;= 0</code>`.</p>
+<p>:param high_energy_fraction: *w*, in `<code style="color:#22d3bf">[0, 1)</code>`. 0 is a monochromatic beam and</p>
+<p>the operator is then the identity.</p>
+<p>:param attenuation_ratio: *k*, in `<code style="color:#22d3bf">(0, 1)</code>`. 1 is again monochromatic.</p>
+<p>:returns: `<code style="color:#22d3bf">(n_angles, n_detectors)</code>` float64 hardened sinogram.</p>
+<p>:raises ValueError: on a negative sinogram (a negative line integral is not a</p>
+<p>measurement this model can harden — the logarithm of the transmitted</p>
+<p>intensity has already gone wrong upstream), or parameters outside range.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:ct_reconstruction">ct_reconstruction</a> — <code style="color:#22d3bf">py -3.11 examples/ct_reconstruction.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">sinogram</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="optomography:backproject_sinogram">backproject_sinogram</a> · <a style="color:#22d3bf" href="optomography:filtered_backprojection">filtered_backprojection</a> · <a style="color:#22d3bf" href="optomography:sart_reconstruct">sart_reconstruct</a> · <a style="color:#22d3bf" href="optomography:beam_hardening_correct">beam_hardening_correct</a> · <a style="color:#22d3bf" href="optomography:ring_artifact_apply">ring_artifact_apply</a> · <a style="color:#22d3bf" href="optomography:ring_artifact_remove">ring_artifact_remove</a> · <a style="color:#22d3bf" href="optomography:metal_trace_interpolate">metal_trace_interpolate</a> · <a style="color:#22d3bf" href="optomography:sinogram_center_of_rotation">sinogram_center_of_rotation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">artifact</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:beam_hardening_correct">beam_hardening_correct</a> · <a style="color:#22d3bf" href="optomography:ring_artifact_apply">ring_artifact_apply</a> · <a style="color:#22d3bf" href="optomography:ring_artifact_remove">ring_artifact_remove</a> · <a style="color:#22d3bf" href="optomography:metal_trace_interpolate">metal_trace_interpolate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tomography.py — TOMOGRAPHY operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import glassmirror; glassmirror.slab_transmittance(cos_i, n1=1.0, n2=1.5, thickness_mm=3.0, sigma_per_mm=0.0) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">opsoptics.get(&quot;slab_transmittance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>平行平板(窓ガラス)の透過率。<b>両面での多重反射</b>と内部吸収を含む。</p>
+<p>Die Transmission einer planparallelen Platte (Fensterglas). Enthält <b>Mehrfachreflexion an beiden Flächen</b> und innere Absorption.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>cos_i / n1 / n2 / thickness_mm / sigma_per_mm は上記と同じ。</p>
 <p>返り値: 全透過率 T。式は T = (1−R)²·a / (1 − R²·a²)、a = 内部透過率</p>
 <p>(板内の斜め光路 L = d/cosθ_t を使う)。無限級数の和 = 多重反射を数え落とさない形。</p>

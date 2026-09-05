@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">keypoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import reprconv; reprconv.points_zyx_to_keypoints_uv(points)</code>(或 <code style="color:#22d3bf">opsreprconv.get(&quot;points_zyx_to_keypoints_uv&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>点群 `<code style="color:#22d3bf">(N,3) = (z, y, x)</code><code style="color:#22d3bf"> → 画像座標 </code><code style="color:#22d3bf">(N,2) = (u, v)</code>`。</p>
+<p>点群 `<code style="color:#22d3bf">(N,3) = (z, y, x)</code><code style="color:#22d3bf"> → 图像坐标 </code><code style="color:#22d3bf">(N,2) = (u, v)</code>`。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>:func:<code style="color:#22d3bf">keypoints_uv_to_points</code> の逆向き。<b>不可逆</b> —— z が落ちる。</p>
 <p>落ちる量は測れる: 往復して戻ってこない値は z 列そのもので、</p>
 <p>`<code style="color:#22d3bf">selftest</code>` は「z の RMS = 落とした情報量」として数字で出す。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import lightfield; lightfield.lf_to_mla(lf)</code>(또는 <code style="color:#22d3bf">opslightfield.get(&quot;lf_to_mla&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Re-interleave a light field into a microlens-array raw frame (exact inverse).</p>
+<p>라이트필드를 마이크로렌즈 어레이의 원본 프레임으로 재배열합니다(엄밀한 역변환).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Inverse of :func:<code style="color:#22d3bf">lf_from_mla</code> with `<code style="color:#22d3bf">offset=(0, 0)</code>`: the returned frame has</p>
 <p>shape `<code style="color:#22d3bf">(H*V, W*U)</code><code style="color:#22d3bf"> and puts </code><code style="color:#22d3bf">L[v, u, t, s]</code>` back at raw pixel</p>
 <p>`<code style="color:#22d3bf">(t*V + v, s*U + u)</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">lf_from_mla(lf_to_mla(L), (V, U))</code><code style="color:#22d3bf"> returns </code><code style="color:#22d3bf">L</code>`</p>

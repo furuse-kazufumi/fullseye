@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × points × points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import optscene; optscene.trace_rays(scene, origins, directions) -&gt; &#x27;dict&#x27;</code> (oder <code style="color:#22d3bf">opsoptics.get(&quot;trace_rays&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>光線束を撃って最初の交点を返す(レンダラの素になる公開 op)。</p>
+<p>Schießt ein Strahlenbündel und liefert den ersten Schnittpunkt (der öffentliche Operator, auf dem die Renderer aufbauen).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>返り値 dict: `<code style="color:#22d3bf">t</code><code style="color:#22d3bf"> 距離 [mm] (当たらなければ inf)、</code><code style="color:#22d3bf">index</code>` 当たった</p>
 <p>プリミティブの番号(-1 = 当たらず)、`<code style="color:#22d3bf">point</code><code style="color:#22d3bf"> 交点 [mm]、</code><code style="color:#22d3bf">normal</code>` 単位法線</p>
 <p>(当たらなかった行は 0)。当たり判定は fail-closed で、シーンが空なら例外。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">keypoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import astrostack; astrostack.star_detect(image, threshold_sigma=5.0, min_separation=3, max_stars=200, edge_margin=None, centroid_box=None, method=&#x27;mad&#x27;)</code>(或 <code style="color:#22d3bf">opsastrostack.get(&quot;star_detect&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>星を検出して `<code style="color:#22d3bf">(row, col)</code>` の重心列を返す。</p>
+<p>偵測恆星並回傳 `<code style="color:#22d3bf">(row, col)</code>` 重心列表。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>背景と雑音を :func:<code style="color:#22d3bf">noise_sigma</code> と同じ頑健推定で出し、</p>
 <p>`<code style="color:#22d3bf">background + threshold_sigma * sigma</code>` を超える<b>局所最大</b>を拾う</p>
 <p>(最大値フィルタとの一致で判定するので、`<code style="color:#22d3bf">min_separation</code>` 画素以内に</p>

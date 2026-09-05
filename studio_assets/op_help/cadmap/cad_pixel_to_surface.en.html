@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mesh × keypoints</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import cadmap; cadmap.cad_pixel_to_surface(mesh, pixels, K=None, R=None, t=None, cull_backfaces=True, image_size=None, strict=False)</code> (or <code style="color:#22d3bf">opscadmap.get(&quot;cad_pixel_to_surface&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>画素 (N,2) → CAD 面上の `<code style="color:#22d3bf">(face_id, 重心座標, 3-D 点)</code>`(閉形式)。</p>
+<p>Pixels (N,2) → `<code style="color:#22d3bf">(face_id, barycentric coordinates, 3-D point)</code>` on the CAD surface (closed form).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>画素ごとに視線を作り(`<code style="color:#22d3bf">camera.py</code><code style="color:#22d3bf"> 規約: 中心は整数座標、</code><code style="color:#22d3bf">u</code>` = 列、</p>
 <p>`<code style="color:#22d3bf">v</code>` = 行)、Möller-Trumbore で全三角形と交差させ、<b>最も手前の当たり</b>を</p>
 <p>採る。当たらない画素には `<code style="color:#22d3bf">face_id = -1</code>` を返し、**最寄りの面へは絶対に</p>

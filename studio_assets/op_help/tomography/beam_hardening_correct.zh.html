@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">sinogram</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import tomography; tomography.beam_hardening_correct(sinogram, high_energy_fraction=0.5, attenuation_ratio=0.4, poly_coeffs=None, n_table=4096)</code>(或 <code style="color:#22d3bf">opstomography.get(&quot;beam_hardening_correct&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Undo cupping — either the exact model inverse, or a calibrated polynomial.</p>
+<p>消除杯状伪影 —— 用模型的精确逆,或用标定过的多项式。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Two routes, and the difference between them is what you are allowed to claim:</p>
 <p style="margin:2px 0 2px 12px">• <b>Model inverse</b> (default). :func:<code style="color:#22d3bf">beam_hardening_apply</code> is a monotone</p>
 <p>scalar function of the line integral, so it has an exact inverse; this</p>

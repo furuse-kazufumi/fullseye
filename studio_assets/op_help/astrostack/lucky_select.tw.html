@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import astrostack; astrostack.lucky_select(frames, keep_fraction=0.3, min_keep=1, **quality_kw)</code>(或 <code style="color:#22d3bf">opsastrostack.get(&quot;lucky_select&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>品質点の上位 `<code style="color:#22d3bf">keep_fraction</code>` だけを採る —— lucky imaging の選別。</p>
+<p>只保留品質分前 `<code style="color:#22d3bf">keep_fraction</code>` 的影格 —— lucky imaging 的篩選。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>採用枚数は `<code style="color:#22d3bf">max(min_keep, ceil(keep_fraction * N))</code>`。<b>必ず 1 枚は残す</b></p>
 <p>ので、`<code style="color:#22d3bf">keep_fraction</code>` をいくら小さくしても空にはならない(空の合成を</p>
 <p>後段へ渡す方が事故が大きい)。並べ替えは点の降順で、同点は元の順序を保つ</p>

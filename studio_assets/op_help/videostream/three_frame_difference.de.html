@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import videostream; videostream.three_frame_difference(video, threshold: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">opsvideostream.get(&quot;three_frame_difference&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Collins three-frame-difference motion mask per frame → 0/1 `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">video</code>`).</p>
+<p>Collins&#x27; Drei-Bild-Differenz-Bewegungsmaske pro Bild → 0/1 `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">video</code>`).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">(|f_t−f_{t−1}|&gt;T) AND (|f_{t−1}−f_{t−2}|&gt;T)</code>`; zeros for the first two</p>
 <p>frames. Ghost-free compared with :func:<code style="color:#22d3bf">frame_difference_causal</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

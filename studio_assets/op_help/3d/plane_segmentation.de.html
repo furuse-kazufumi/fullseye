@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import segment3d; segment3d.plane_segmentation(points, thresh: &#x27;float&#x27;, min_inliers: &#x27;int&#x27;, max_planes: &#x27;int&#x27; = 5, iters: &#x27;int&#x27; = 300, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;plane_segmentation&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>反復 RANSAC で最大 max_planes 枚の平面を逐次抽出(残差点 -1)。</p>
+<p>Extrahiert per iteriertem RANSAC nacheinander bis zu max_planes Ebenen (übrige Punkte erhalten −1).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

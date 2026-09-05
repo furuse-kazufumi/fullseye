@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import gfx2d; gfx2d.chromatic_aberration(rgb, strength=0.003, interp=&#x27;bilinear&#x27;)</code>(或 <code style="color:#22d3bf">opsgfx2d.get(&quot;chromatic_aberration&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Scale the red and blue channels about the image centre, green fixed.</p>
+<p>以影像中心為基準縮放紅、藍通道,綠通道保持不變。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Lateral chromatic aberration: red is magnified by `<code style="color:#22d3bf">1 + strength</code>`, blue by</p>
 <p>`<code style="color:#22d3bf">1 - strength</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">strength=0</code>` samples the exact pixel centres and returns</p>
 <p>the input to within 1e-15, which the suite checks.</p>

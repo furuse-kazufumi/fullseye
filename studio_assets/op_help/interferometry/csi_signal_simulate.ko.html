@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">sweep</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import interferometry; interferometry.csi_signal_simulate(surface_um=6.0, z_start_um=0.0, z_step_um=0.05, n_planes=241, wavelength_um=0.6, envelope_fwhm_um=2.8, envelope_sigma_um=None, bias=0.5, amplitude=0.4, reflectivity=1.0, noise=0.0, seed=0)</code>(또는 <code style="color:#22d3bf">opsinterferometry.get(&quot;csi_signal_simulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Synthesise the z-scan interferogram of one pixel over a known surface height.</p>
+<p>알려진 표면 높이에 대한 화소 하나의 z 주사 인터페로그램을 합성합니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>The coherence-scanning forward model, and the reason every other operator here</p>
 <p>has an exact answer to be checked against::</p>
 <p>I(z) = bias + amplitude*reflectivity * exp(-(z-z0)^2 / 2 sigma^2)</p>

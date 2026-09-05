@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">image2d</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import surfacelib; surfacelib.corrosion_mask(shape, coverage=0.3, scale_px=24.0, seed=0) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;corrosion_mask&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>錆・緑青・汚れの<b>むら</b>(0–1 のマスク)。</p>
+<p>The <b>mottling</b> of rust, patina and grime (a 0–1 mask).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>shape: (H, W)。coverage: 覆われる面積の目安(0–1)。scale_px: 斑の大きさ [px]。</p>
 <p>返り値: (H, W) の 0–1 マスク。素材色の混合率として使う</p>
 <p>(<code style="color:#22d3bf">(1-m)*metal + m*rust</code>)。実測の面積率は <code style="color:#22d3bf">coverage</code> にほぼ一致する</p>

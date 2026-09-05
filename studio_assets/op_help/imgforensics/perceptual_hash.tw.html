@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">phash</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import imgforensics; imgforensics.perceptual_hash(image, mode: &#x27;str&#x27; = &#x27;dct&#x27;, hash_size: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsimgforensics.get(&quot;perceptual_hash&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>知覚ハッシュ(perceptual hash)。<b>bool の 1-D ビット列</b>を返す。</p>
+<p>感知雜湊。回傳 <b>bool 的一維位元串</b>。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">mode</code>`:</p>
 <p>`<code style="color:#22d3bf">&quot;dct&quot;</code><code style="color:#22d3bf">   縮小 </code><code style="color:#22d3bf">(hash_size * 4)</code>` 角 → 2-D DCT-II(直交)→ 左上</p>
 <p>`<code style="color:#22d3bf">hash_size x hash_size</code>` を取り、<b>DC を除いた中央値</b>と比較。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import optscene; optscene.optical_camera(focal_mm: &#x27;float&#x27; = 25.0, pixel_um: &#x27;float&#x27; = 3.45, resolution=(256, 256), working_distance_mm: &#x27;float&#x27; = 200.0, look_at_mm=(0.0, 0.0, 0.0), tilt_deg: &#x27;float&#x27; = 0.0, azimuth_deg: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;optical_camera&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>実在の諸元(焦点距離・画素ピッチ・解像度・作動距離)から理想ピンホールを組む。</p>
+<p>由實際諸元(焦距・像素間距・解析度・工作距離)組成理想針孔相機。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">tilt_deg</code><code style="color:#22d3bf"> は真上(0°)からの傾き、</code><code style="color:#22d3bf">azimuth_deg</code>` はその方位。カメラは</p>
 <p>`<code style="color:#22d3bf">look_at_mm</code>` を見下ろす。返り値には内部行列 K [px] と姿勢 (R, t) が入る</p>
 <p>―― `<code style="color:#22d3bf">calib</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">calibration3d</code>` 系の op と同じ規約なので、そのまま</p>

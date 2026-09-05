@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import imgforensics; imgforensics.jpeg_ghost_quality(ghosts, qualities=None) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsimgforensics.get(&quot;jpeg_ghost_quality&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>ゴースト地図の列 → 画素ごとに <b>残差が最小になる品質</b> の地図。`<code style="color:#22d3bf">image2d</code>`。</p>
+<p>幽靈圖序列 → 逐像素<b>殘差最小的品質</b>的地圖。`<code style="color:#22d3bf">image2d</code>`。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">qualities</code><code style="color:#22d3bf"> を省くと :func:</code>jpeg_ghost_map` の既定(40..95 step 5)を仮定する</p>
 <p>—— **枚数が合わなければ :class:<code style="color:#22d3bf">ValueError</code>**(添字と品質がずれた地図を返さない)。</p>
 <p>返りは品質そのものを画素値に持つ `<code style="color:#22d3bf">(H, W)</code>` なので、値域は [0, 1] ではない。</p>

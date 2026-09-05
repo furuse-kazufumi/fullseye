@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">vector</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import matappear; matappear.spectrum_to_srgb(nm, reflectance, illuminant=None) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;spectrum_to_srgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>分光反射率 → <b>線形 sRGB</b>(ガンマ前)。白い面(反射率 1)が (1,1,1) になる正規化。</p>
+<p>分光反射率 → <b>線性 sRGB</b>(伽瑪前)。正規化使白面(反射率 1)成為 (1,1,1)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>nm:           波長格子 (K,) [nm]。単調増加。</p>
 <p>reflectance:  (..., K) の分光反射率(0–1 想定、範囲外でも計算は通る)。</p>
 <p>illuminant:   (K,) の光源分光分布。既定は D65 の平滑近似。</p>

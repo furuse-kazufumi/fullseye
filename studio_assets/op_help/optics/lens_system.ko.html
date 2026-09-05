@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import raytrace; raytrace.lens_system(surfaces=None, stop=None, object_mm=inf, wavelength_um=0.58756, index_object=1.0, image_mm=None, field=None)</code>(또는 <code style="color:#22d3bf">opsoptics.get(&quot;lens_system&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Build a validated sequential prescription (the `<code style="color:#22d3bf">table</code>` every other op consumes).</p>
+<p>검증된 순차 렌즈 처방을 만듭니다(다른 모든 연산자가 먹는 `<code style="color:#22d3bf">table</code>`).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>*surfaces* is a list; each entry is a dict ``{&quot;R&quot;, &quot;t&quot;, &quot;n&quot;, &quot;k&quot;, &quot;ap&quot;,</p>
 <p>&quot;mirror&quot;, &quot;decenter&quot;, &quot;tilt&quot;, &quot;asph&quot;}`<code style="color:#22d3bf"> or a tuple </code><code style="color:#22d3bf">(R, t, n[, k[, ap]])</code>`:</p>
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">R</code><code style="color:#22d3bf"> radius (mm, </code><code style="color:#22d3bf">inf</code><code style="color:#22d3bf"> for flat), </code><code style="color:#22d3bf">t</code>` thickness to the next surface</p>

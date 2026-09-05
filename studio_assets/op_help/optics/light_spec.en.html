@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import optscene; optscene.light_spec(kind: &#x27;str&#x27; = &#x27;coaxial&#x27;, source: &#x27;str&#x27; = &#x27;led&#x27;, wavelength_nm: &#x27;float&#x27; = 550.0, bandwidth_nm: &#x27;float&#x27; = 30.0, radius_mm: &#x27;float&#x27; = 40.0, height_mm: &#x27;float&#x27; = 110.0, size_mm: &#x27;float&#x27; = None, n: &#x27;int&#x27; = 196, intensity: &#x27;float&#x27; = 1.0, cos_exponent: &#x27;float&#x27; = 1.0, polarization: &#x27;str&#x27; = None, model: &#x27;str&#x27; = None, maker: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;light_spec&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>照明の諸元。<b>幾何は illumdesign.light_source に委ね、光の性質をここで足す</b>。</p>
+<p>A light&#x27;s specification. <b>The geometry is left to illumdesign.light_source; the properties of the light are added here.</b></p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">kind</code>` は coaxial / ring / dome / bar / backlight(器具の形)。</p>
 <p>`<code style="color:#22d3bf">source</code><code style="color:#22d3bf"> は led / halogen / laser で、</code><code style="color:#22d3bf">wavelength_nm</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">bandwidth_nm</code>`</p>
 <p>が意味を変える ―― LED は狭帯域(~30 nm)、ハロゲンは広帯域(~300 nm)、</p>

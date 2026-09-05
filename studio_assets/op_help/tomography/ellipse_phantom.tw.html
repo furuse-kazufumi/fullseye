@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">image2d</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import tomography; tomography.ellipse_phantom(size=256, ellipses=None, supersample=4)</code>(或 <code style="color:#22d3bf">opstomography.get(&quot;ellipse_phantom&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Rasterise a sum of uniform ellipses onto a *size* x *size* slice.</p>
+<p>把若干均勻橢圓之和柵格化到 *size* x *size* 的切片上。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>The default is :data:<code style="color:#22d3bf">SHEPP_LOGAN</code>. The normalised square `<code style="color:#22d3bf">[-1, 1]^2</code>` maps</p>
 <p>onto the grid, so `<code style="color:#22d3bf">x = (col - (size-1)/2) / (size/2)</code>`; the same mapping is</p>
 <p>used by :func:<code style="color:#22d3bf">ellipse_sinogram</code>, which is what makes the two comparable</p>

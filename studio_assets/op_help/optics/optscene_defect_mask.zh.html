@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import optscene; optscene.optscene_defect_mask(scene, camera, index: &#x27;int&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;optscene_defect_mask&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p><b>欠陥画素の真値マスク</b> (H, W)。学習・評価のラベルはこれを使う。</p>
+<p><b>缺陷像素的真值掩码</b> (H, W)。训练与评测的标签用这个。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">index</code>` を省くとシーン中のすべての欠陥を合成する。画素完全で、レンダリングと</p>
 <p>同じ交差計算から出るので、検出結果との IoU をそのまま測れる。欠陥が</p>
 <p><b>その照明で見えるかどうかとは無関係</b>に真値を返す ―― 見えないのに正解が</p>

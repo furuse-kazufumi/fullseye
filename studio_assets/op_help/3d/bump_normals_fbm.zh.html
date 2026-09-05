@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">normalmap × pointmap</code> → <code style="color:#22d3bf">normalmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import render3d; render3d.bump_normals_fbm(normals, positions, wavelengths=(0.002, 0.001), amplitudes=(0.0002, 0.00012), *, seed: &#x27;int&#x27; = 0, rotation=None, step=None, local_edge=None, nyquist: &#x27;float&#x27; = 2.0, fade: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;bump_normals_fbm&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Perturb a normal map with the *gradient* of a seeded multi-octave height field</p>
+<p>用带 seed 的多倍频高度场的<b>梯度</b>扰动法线图。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

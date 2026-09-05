@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">sweep</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import interferometry; interferometry.chromatic_confocal_height(spectrum, wavelength_start_nm=500.0, wavelength_step_nm=0.5, dispersion_um_per_nm=0.2, reference_wavelength_nm=600.0, mode=&#x27;gaussian&#x27;, subtract_background=True, min_visibility=0.3, min_peak_bins=2.0, max_carrier_fraction=0.1)</code> (oder <code style="color:#22d3bf">opsinterferometry.get(&quot;chromatic_confocal_height&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Surface height from one confocal return spectrum — the wavelength *is* the height.</p>
+<p>Oberflächenhöhe aus einem konfokalen Rückkehrspektrum — die Wellenlänge <b>ist</b> die Höhe.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>The inverse of :func:<code style="color:#22d3bf">chromatic_confocal_simulate</code>. Find the peak wavelength</p>
 <p>of the spectrum, then::</p>
 <p>height = (lambda_peak - reference_wavelength_nm) * dispersion_um_per_nm</p>

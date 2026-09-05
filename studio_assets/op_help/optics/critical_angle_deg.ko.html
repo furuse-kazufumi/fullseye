@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">measurement</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import glassmirror; glassmirror.critical_angle_deg(n1=1.5, n2=1.0) -&gt; &#x27;float&#x27;</code>(또는 <code style="color:#22d3bf">opsoptics.get(&quot;critical_angle_deg&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>全反射の臨界角 [deg] = asin(n2/n1)。n1 &gt; n2 でなければ ValueError(存在しない)。</p>
+<p>전반사 임계각 [deg] = asin(n2/n1). n1 &gt; n2 가 아니면 ValueError(존재하지 않음).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>ガラスから空気へ出るときだけ起きる。光ファイバ・プリズムの全反射面の設計値。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>

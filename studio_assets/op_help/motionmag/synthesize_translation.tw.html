@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">video</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import motionmag; motionmag.synthesize_translation(shape=(64, 64), frames: &#x27;int&#x27; = 32, amplitude_px=0.5, frequency_hz=4.0, fps=32.0, direction_deg=0.0, wavelength_px=(8.0, 16.0), contrast=0.4, offset=0.5, noise_sigma=0.0, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsmotionmag.get(&quot;synthesize_translation&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>A clip whose displacement is known in closed form -&gt; `<code style="color:#22d3bf">(T, H, W)</code>` video.</p>
+<p>位移有閉合解的片段 -&gt; `<code style="color:#22d3bf">(T, H, W)</code>` 影片。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>The scene is a stationary two-axis sinusoidal grating that is translated,</p>
 <p>frame by frame, by</p>
 <p>`<code style="color:#22d3bf">d(t) = amplitude_px * sin(2*pi * frequency_hz * t / fps)</code>`</p>

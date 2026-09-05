@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import lightfield; lightfield.lf_to_mla(lf)</code>(或 <code style="color:#22d3bf">opslightfield.get(&quot;lf_to_mla&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Re-interleave a light field into a microlens-array raw frame (exact inverse).</p>
+<p>把光場重新交織成微透鏡陣列的原始影格(精確逆變換)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Inverse of :func:<code style="color:#22d3bf">lf_from_mla</code> with `<code style="color:#22d3bf">offset=(0, 0)</code>`: the returned frame has</p>
 <p>shape `<code style="color:#22d3bf">(H*V, W*U)</code><code style="color:#22d3bf"> and puts </code><code style="color:#22d3bf">L[v, u, t, s]</code>` back at raw pixel</p>
 <p>`<code style="color:#22d3bf">(t*V + v, s*U + u)</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">lf_from_mla(lf_to_mla(L), (V, U))</code><code style="color:#22d3bf"> returns </code><code style="color:#22d3bf">L</code>`</p>

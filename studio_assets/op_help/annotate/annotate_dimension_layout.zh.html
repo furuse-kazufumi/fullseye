@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import annotate; annotate.annotate_dimension_layout(p0, p1, offset=20.0, extension=6.0, text_gap=8.0)</code>(或 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_dimension_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>table(dict)を返す: 寸法線の幾何(寸法線・補助線・文字位置)を閉形式で決める。</p>
+<p>返回表(dict):以闭式确定尺寸线的几何(尺寸线・界线・文字位置)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> を p0→p1 の左法線(画面座標)として、寸法線は </code><code style="color:#22d3bf">p + n*offset</code>`、補助線は</p>
 <p>`<code style="color:#22d3bf">p</code><code style="color:#22d3bf"> から </code><code style="color:#22d3bf">p + n*(offset+extension)</code><code style="color:#22d3bf">、文字は寸法線の中点から </code><code style="color:#22d3bf">n*text_gap</code>`。</p>
 <p>`<code style="color:#22d3bf">offset</code>` の符号で側を選ぶ。</p>

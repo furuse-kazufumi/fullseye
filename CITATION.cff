@@ -6,10 +6,10 @@ authors:
   - family-names: "Furuse"
     given-names: "Kazufumi"
 license: Apache-2.0
-version: 0.1.2
-date-released: "2026-08-30"
+version: 0.1.7
+date-released: "2026-09-05"
 abstract: >-
-  Fullseye is a numpy-native library of ~1000 typed classical image-processing and
+  Fullseye is a numpy-native library of 1,500+ typed classical image-processing and
   geometric-vision operators (2-D and 3-D), with an evolutionary pipeline-design mode
   evaluated under honest held-out gates, a Physical-AI perception stack
   (stereo -> depth -> point cloud -> 6-DoF pose), and an HDevelop-style IDE

@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import optscene; optscene.scene_sphere(center_mm, radius_mm: &#x27;float&#x27;, material=None) -&gt; &#x27;dict&#x27;</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;scene_sphere&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>球の部品。`<code style="color:#22d3bf">center_mm</code><code style="color:#22d3bf"> は (x, y, z) [mm]、</code><code style="color:#22d3bf">radius_mm</code>` &gt; 0。</p>
+<p>A sphere part. `<code style="color:#22d3bf">center_mm</code><code style="color:#22d3bf"> is (x, y, z) [mm] and </code><code style="color:#22d3bf">radius_mm</code>` &gt; 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

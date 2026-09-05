@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">zscan</code> → <code style="color:#22d3bf">depth</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import interferometry; interferometry.csi_height_map(stack, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6, mode=&#x27;gaussian&#x27;, remove_bias=True, min_visibility=0.3, max_edge_envelope=0.05, carrier_tolerance=2.0, on_invalid=&#x27;raise&#x27;, fill_value=nan)</code>(或 <code style="color:#22d3bf">opsinterferometry.get(&quot;csi_height_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Height map from a `<code style="color:#22d3bf">(Z, H, W)</code>` coherence-scanning stack — the CSI inversion.</p>
+<p>由 `<code style="color:#22d3bf">(Z, H, W)</code>` 同調掃描堆疊得到高度圖 —— CSI 的逆問題。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>The per-pixel :func:<code style="color:#22d3bf">csi_peak_position</code>, vectorised. **The scan axis is</p>
 <p>first**; see :func:<code style="color:#22d3bf">csi_stack_simulate</code> for why that is checked rather than</p>
 <p>inferred.</p>

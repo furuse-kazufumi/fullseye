@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import optscene; optscene.sensor_capture(radiance, exposure_ms: &#x27;float&#x27; = 10.0, gain_e_per_unit: &#x27;float&#x27; = 50000.0, read_noise_e: &#x27;float&#x27; = 2.5, full_well_e: &#x27;float&#x27; = 10000.0, bit_depth: &#x27;int&#x27; = 8, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;sensor_capture&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>放射輝度 → 実センサの出力(ショット雑音・読み出し雑音・飽和・量子化)。</p>
+<p>輻亮度 → 真實感測器的輸出(散粒雜訊・讀出雜訊・飽和・量化)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>光子数 = radiance · exposure_ms · gain_e_per_unit / 1000 を平均とする Poisson。</p>
 <p>そこへ読み出し雑音(正規)を足し、`<code style="color:#22d3bf">full_well_e</code><code style="color:#22d3bf"> で**飽和**させ、</code><code style="color:#22d3bf">bit_depth</code>`</p>
 <p>で量子化する。飽和は clip であって折り返さない(白飛びは白のまま)。</p>

@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">pose</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import fuse3d; fuse3d.register_cross(src, src_kind, dst, dst_kind, method=&#x27;fpfh&#x27;, samples=15000, **kw)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;register_cross&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>異種構造間の剛体登録。両者を点群へ変換 → 登録器(fpfh=大回転/icp=要 coarse init)。</p>
+<p>異構結構間的剛體配準。兩者轉為點雲 → 配準器(fpfh=大旋轉 / icp=需 coarse init)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import acoustics; acoustics.transfer_function(x, y, rate, win=None, hop=None, window=&#x27;hann&#x27;, estimator=&#x27;h1&#x27;, ref=1.0, floor_db=-200.0)</code>(或 <code style="color:#22d3bf">opsacoustics.get(&quot;transfer_function&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Estimate `<code style="color:#22d3bf">H(f)</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">x</code><code style="color:#22d3bf"> in and </code><code style="color:#22d3bf">y</code>` out, with its coherence.</p>
+<p>以 `<code style="color:#22d3bf">x</code><code style="color:#22d3bf"> 为输入、</code><code style="color:#22d3bf">y</code><code style="color:#22d3bf"> 为输出估计 </code><code style="color:#22d3bf">H(f)</code>`,并给出相干。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">estimator</code>`:</p>
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;h1&quot;</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">Pxy / Pxx</code>`. Unbiased when the noise is on the <b>output</b>.</p>
 <p>The usual default and the right one for a driven test.</p>

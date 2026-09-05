@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × keypoints</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import astrostack; astrostack.psf_fit(image, centers, model=&#x27;gaussian&#x27;, box=11, max_iter=200)</code>(或 <code style="color:#22d3bf">opsastrostack.get(&quot;psf_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>星像に PSF を当てはめて中心と FWHM を出す。</p>
+<p>对星像拟合 PSF,得到中心与 FWHM。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>*model* `<code style="color:#22d3bf">&quot;gaussian&quot;</code>` は<b>楕円</b>ガウシアン</p>
 <p>`<code style="color:#22d3bf">bkg + amp * exp(-((dr/sr)^2 + (dc/sc)^2)/2)</code>` の 6 パラメータ当てはめで、</p>
 <p>真円度(`<code style="color:#22d3bf">roundness = min(sr,sc)/max(sr,sc)</code>`)が副産物として出る ——</p>

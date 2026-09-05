@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import optscene; optscene.sensor_spec(pixel_um: &#x27;float&#x27; = 3.45, resolution=(1024, 1024), quantum_efficiency: &#x27;float&#x27; = 0.6, full_well_e: &#x27;float&#x27; = 10000.0, read_noise_e: &#x27;float&#x27; = 2.5, dark_e_per_s: &#x27;float&#x27; = 5.0, bit_depth: &#x27;int&#x27; = 8, gain_e_per_unit: &#x27;float&#x27; = 50000.0, shutter: &#x27;str&#x27; = &#x27;global&#x27;, model: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code> (oder <code style="color:#22d3bf">opsoptics.get(&quot;sensor_spec&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>イメージセンサの諸元。<b>電子の数</b>まで決める側の値だけを持つ。</p>
+<p>Die Spezifikation eines Bildsensors. Sie hält nur die Werte der Seite, die <b>die Elektronenzahl</b> bestimmt.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">quantum_efficiency</code><code style="color:#22d3bf"> は光子 -&gt; 電子の変換効率、</code><code style="color:#22d3bf">dark_e_per_s</code>` は暗電流</p>
 <p>(暗視野は露光が長いのでここが効く)、`<code style="color:#22d3bf">shutter</code>` は global / rolling</p>
 <p>(コンベア上の部品では rolling の歪みが出る)。</p>

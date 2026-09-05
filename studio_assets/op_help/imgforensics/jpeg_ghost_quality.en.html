@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import imgforensics; imgforensics.jpeg_ghost_quality(ghosts, qualities=None) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">opsimgforensics.get(&quot;jpeg_ghost_quality&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>ゴースト地図の列 → 画素ごとに <b>残差が最小になる品質</b> の地図。`<code style="color:#22d3bf">image2d</code>`。</p>
+<p>A series of ghost maps → a map of <b>the quality at which each pixel&#x27;s residual is smallest</b>. `<code style="color:#22d3bf">image2d</code>`.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">qualities</code><code style="color:#22d3bf"> を省くと :func:</code>jpeg_ghost_map` の既定(40..95 step 5)を仮定する</p>
 <p>—— **枚数が合わなければ :class:<code style="color:#22d3bf">ValueError</code>**(添字と品質がずれた地図を返さない)。</p>
 <p>返りは品質そのものを画素値に持つ `<code style="color:#22d3bf">(H, W)</code>` なので、値域は [0, 1] ではない。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">axes</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import annotate; annotate.axes_transform(rect, xlim, ylim, invert_y=True, xscale=&#x27;linear&#x27;, yscale=&#x27;linear&#x27;)</code> (oder <code style="color:#22d3bf">opsannotate.get(&quot;axes_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>データ座標 → 画素座標の対応(<b>閉形式</b>)を作る。</p>
+<p>Erzeugt die (<b>geschlossene</b>) Abbildung von Datenkoordinaten auf Pixelkoordinaten.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">row は下向き</code><code style="color:#22d3bf"> という画像の事実と、</code><code style="color:#22d3bf">y は上向き</code>` というグラフの慣習の</p>
 <p>ずれを、<b>この 1 か所だけ</b>で吸収する。図のコードはこの辞書を持ち回る。</p>
 <p>px = x0 + (x - xmin)/(xmax - xmin) * (w - 1)</p>

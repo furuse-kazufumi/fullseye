@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import optscene; optscene.optical_budget(focal_mm: &#x27;float&#x27; = 25.0, working_distance_mm: &#x27;float&#x27; = 200.0, f_number: &#x27;float&#x27; = None, na: &#x27;float&#x27; = None, pixel_um: &#x27;float&#x27; = 3.45, wavelength_nm: &#x27;float&#x27; = 550.0, coc_um: &#x27;float&#x27; = None) -&gt; &#x27;dict&#x27;</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;optical_budget&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>観察光学系の<b>分解能バジェット</b>を閉じた式で出す(撮る前に成立するかを見る)。</p>
+<p>Work out the <b>resolution budget</b> of an observation optic in closed form (see whether it holds up before you shoot).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>NA と F 値はどちらで与えてもよい(N = 1/(2·NA))。倍率は薄肉近似</p>
 <p>m = f / (WD − f)、実効(作動)F 値は N_w = (1 + |m|)·N。返す量:</p>
 <p>`<code style="color:#22d3bf">magnification</code><code style="color:#22d3bf"> 倍率 m / </code><code style="color:#22d3bf">f_number_working</code>` N_w /</p>

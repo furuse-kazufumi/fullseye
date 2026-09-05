@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import specularity; specularity.brdf_blinn_phong(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), shininess=32.0)</code> (oder <code style="color:#22d3bf">opsspecular.get(&quot;brdf_blinn_phong&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Blinn&#x27;s half-vector specular lobe. → (H, W) in [0, 1].</p>
+<p>Blinns Halbvektor-Glanzlappen. → (H, W) in [0, 1].</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">max(n.h, 0) ** shininess</code><code style="color:#22d3bf"> where </code><code style="color:#22d3bf">h</code>` is the unit bisector of the light</p>
 <p>and view directions (Blinn 1977), zeroed wherever the surface faces away</p>
 <p>from either. Exactly 1 where the normal *is* the half-vector — the mirror</p>

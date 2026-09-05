@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">voxel × labels</code> → <code style="color:#22d3bf">rgbvolume</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import volcolor; volcolor.vol_label_overlay(vol, labels, seed: &#x27;int&#x27; = 0, alpha: &#x27;float&#x27; = 0.5, vmin=None, vmax=None, mode: &#x27;str&#x27; = &#x27;fill&#x27;)</code>(或 <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_overlay&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>元のグレーボリュームに色ラベルを重ねた `<code style="color:#22d3bf">(D, H, W, 3)</code>` を返す。</p>
+<p>在原灰階體上疊加彩色標籤,回傳 `<code style="color:#22d3bf">(D, H, W, 3)</code>`。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>医用 CT / 産業 CT で実際に使う形 ―― 「セグメンテーションだけの絵」は</p>
 <p>どこを切り出したのかが分からず、「元画像だけの絵」は何を測ったのかが分からない。</p>
 <p>*vol* は `<code style="color:#22d3bf">(D, H, W)</code><code style="color:#22d3bf">。表示窓は </code><code style="color:#22d3bf">vmin</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">vmax</code>` で<b>明示</b>する</p>

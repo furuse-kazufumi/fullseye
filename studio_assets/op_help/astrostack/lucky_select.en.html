@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import astrostack; astrostack.lucky_select(frames, keep_fraction=0.3, min_keep=1, **quality_kw)</code> (or <code style="color:#22d3bf">opsastrostack.get(&quot;lucky_select&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>品質点の上位 `<code style="color:#22d3bf">keep_fraction</code>` だけを採る —— lucky imaging の選別。</p>
+<p>Keep only the top `<code style="color:#22d3bf">keep_fraction</code>` by quality score — the lucky-imaging cut.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>採用枚数は `<code style="color:#22d3bf">max(min_keep, ceil(keep_fraction * N))</code>`。<b>必ず 1 枚は残す</b></p>
 <p>ので、`<code style="color:#22d3bf">keep_fraction</code>` をいくら小さくしても空にはならない(空の合成を</p>
 <p>後段へ渡す方が事故が大きい)。並べ替えは点の降順で、同点は元の順序を保つ</p>

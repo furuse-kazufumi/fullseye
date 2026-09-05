@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">lightfield</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import lightfield; lightfield.lf_synthesize(slopes=(0.0,), angular=(5, 5), shape=(64, 64), *, occlusion=True, coverage=0.55, texture_sigma=2.0, interp=&#x27;linear&#x27;, edge=&#x27;wrap&#x27;, seed=0)</code>(或 <code style="color:#22d3bf">opslightfield.get(&quot;lf_synthesize&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Build a light field of textured layers at <b>known</b> slopes (the test bed).</p>
+<p>用<b>已知</b>斜率的紋理層構建光場(試驗台)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Each entry of *slopes* is one fronto-parallel layer, given as its slope</p>
 <p>`<code style="color:#22d3bf">s = dx/du</code>` in <b>pixels of image shift per angular step</b>; the layer&#x27;s</p>
 <p>texture is band-limited noise (Gaussian-smoothed, `<code style="color:#22d3bf">texture_sigma</code>` px) and</p>

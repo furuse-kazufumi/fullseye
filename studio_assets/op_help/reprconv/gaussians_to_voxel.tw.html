@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">gaussians</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import reprconv; reprconv.gaussians_to_voxel(gaussians, shape=(32, 32, 32), origin=(0.0, 0.0, 0.0), spacing=(1.0, 1.0, 1.0), truncate=3.0)</code>(或 <code style="color:#22d3bf">opsreprconv.get(&quot;gaussians_to_voxel&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>`<code style="color:#22d3bf">gaussians</code><code style="color:#22d3bf"> → 密度 </code><code style="color:#22d3bf">voxel (D,H,W)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">gaussians</code>` の 2 つ目の出口。</p>
+<p>`<code style="color:#22d3bf">gaussians</code><code style="color:#22d3bf"> → 密度 </code><code style="color:#22d3bf">voxel (D,H,W)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">gaussians</code>` 的第二個出口。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>各ガウシアンを `<code style="color:#22d3bf">truncate * sigma</code>` で打ち切って加算する。**格子の原点と</p>
 <p>刻みを明示引数にしてある**のが要点で、既定の `<code style="color:#22d3bf">spacing=(1,1,1)</code>` を</p>
 <p>そのまま使うと「世界座標をそのまま添字にする」ことになり、実データでは</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import matappear; matappear.thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33, n_sub=1.0, strength=1.0) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;thin_film_rgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>法線マップ + 視線 → <b>薄膜干渉の色</b> (H, W, 3) の線形 sRGB。</p>
+<p>Normal map + view → the <b>colour of thin-film interference</b>, (H, W, 3) in linear sRGB.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>面が視線に対して寝ているほど膜内の光路が伸び、色が短波長側へ動く ―― シャボン玉や</p>
 <p>焼けたチタンの色が縁で変わるのはこれ。角度依存は cosθ = |n·v| から出す。</p>
 <p>normals / view: (H,W,3) 法線マップ / 面から視点への方向。</p>

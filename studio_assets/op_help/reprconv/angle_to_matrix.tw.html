@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">angle</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import reprconv; reprconv.angle_to_matrix(angle)</code>(或 <code style="color:#22d3bf">opsreprconv.get(&quot;angle_to_matrix&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>角度 <b>[度]</b> → z 軸まわりの回転行列 `<code style="color:#22d3bf">matrix (3,3)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">angle</code>` の出口。</p>
+<p>角度 <b>[度]</b> → 繞 z 軸的旋轉矩陣 `<code style="color:#22d3bf">matrix (3,3)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">angle</code>` 的出口。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">angle_to_matrix(90)</code>` は軸1(y)を軸2(x)へ送り、軸2(x)を <b>−軸1</b>(−y)へ</p>
 <p>送る(`<code style="color:#22d3bf">R @ [0,1,0] = [0,0,1]</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">R @ [0,0,1] = [0,-1,0]</code>`、実測)。</p>
 <p>2-D の :func:<code style="color:#22d3bf">rot_scale_to_matrix</code> と同じ `<code style="color:#22d3bf">[[c,-s],[s,c]]</code>` の向き</p>

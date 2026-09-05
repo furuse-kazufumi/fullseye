@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">countrate</code> → <code style="color:#22d3bf">countrate</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import photoncount; photoncount.spad_deadtime_apply(rate_hz, dead_time_ns=50.0, paralyzable=False)</code>(或 <code style="color:#22d3bf">opsphoton.get(&quot;spad_deadtime_apply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Distort a true photon rate by the detector&#x27;s dead time (counts lost).</p>
+<p>用偵測器的死時間扭曲真實光子率(計數遺失)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>After every detection a SPAD is blind for a recharge (dead) time `<code style="color:#22d3bf">tau</code>`, so</p>
 <p>the *measured* rate `<code style="color:#22d3bf">m</code><code style="color:#22d3bf"> is always below the *true* incident rate </code><code style="color:#22d3bf">n</code>`.</p>
 <p>Two classical laws, and this op implements both:</p>

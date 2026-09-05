@@ -3,13 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import raytrace; raytrace.example_system(name=&#x27;singlet&#x27;)</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;example_system&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>A named example: `<code style="color:#22d3bf">&quot;singlet&quot;</code><code style="color:#22d3bf"> (plano-convex BK7, f≈100), </code><code style="color:#22d3bf">&quot;doublet&quot;</code>`</p>
-<p>(a cemented achromat, BK7/SF2, f≈100), `<code style="color:#22d3bf">&quot;paraboloid&quot;</code>` (f/2 paraboloid</p>
-<p>mirror — stigmatic on axis), `<code style="color:#22d3bf">&quot;sphere_mirror&quot;</code>` (same radius, spherical),</p>
-<p>`<code style="color:#22d3bf">&quot;asphere&quot;</code>` (plano-hyperbolic N-BK7 singlet, flat toward the object, exit</p>
-<p>conic `<code style="color:#22d3bf">k = −n²</code>` — Descartes&#x27; stigmatic lens, f≈100 at f/4),</p>
-<p>`<code style="color:#22d3bf">&quot;catalog_doublet&quot;</code>` (the doublet with real N-BK7 / N-SF2 Sellmeier glass).</p>
+<p>具名範例:`<code style="color:#22d3bf">&quot;singlet&quot;</code><code style="color:#22d3bf">(平凸 BK7,f≈100)、</code><code style="color:#22d3bf">&quot;doublet&quot;</code><code style="color:#22d3bf">(膠合消色差,BK7/SF2,f≈100)、</code><code style="color:#22d3bf">&quot;paraboloid&quot;</code><code style="color:#22d3bf">(f/2 拋物面鏡 —— 軸上無像差)、</code><code style="color:#22d3bf">&quot;sphere_mirror&quot;</code><code style="color:#22d3bf">(同曲率半徑的球面)、</code><code style="color:#22d3bf">&quot;asphere&quot;</code><code style="color:#22d3bf">(平-雙曲面 N-BK7 單透鏡,朝物側為平面,出射面圓錐係數 </code><code style="color:#22d3bf">k = −n²</code><code style="color:#22d3bf"> —— 笛卡兒的無像差透鏡,f/4 時 f≈100)、</code><code style="color:#22d3bf">&quot;catalog_doublet&quot;</code>`(用真實 N-BK7 / N-SF2 Sellmeier 玻璃的雙膠合)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">rgbimage × image2d × table</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import optscene; optscene.defocus_blur(image, depth_mm, camera, f_number: &#x27;float&#x27; = 5.6, focus_mm: &#x27;float&#x27; = None, layers: &#x27;int&#x27; = 7) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">opsoptics.get(&quot;defocus_blur&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>深度の真値から<b>被写界深度のぼけ</b>を掛ける(理想ピンホール像 -&gt; 実レンズの像)。</p>
+<p>Legt aus der Ground-Truth-Tiefe die <b>Schärfentiefe-Unschärfe</b> auf (ideales Lochkamerabild → Bild eines realen Objektivs).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>名前が optics.depth_of_field と紛らわしいので分けてある: あちらは被写界深度の</p>
 <p><b>数値</b>を返し、こちらは<b>画像にぼけを掛ける</b>(2026-09-05 に台帳で同名衝突を</p>
 <p>起こして発覚。同名 op は後勝ちで静かに上書きされるので、名前で区別する)。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">qimage</code> → <code style="color:#22d3bf">qimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import quatimage; quatimage.quat_normalize_image(qimage) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">opsquat.get(&quot;quat_normalize_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Per-pixel normalisation to unit modulus. → (H, W, 4).</p>
+<p>Normierung pro Pixel auf Einheitsbetrag. → (H, W, 4).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><b>Fail-closed on a zero pixel.</b> A quaternion image routinely contains exact</p>
 <p>zeros — a black pixel is `<code style="color:#22d3bf">(0,0,0,0)</code>` — so the case is not hypothetical, and</p>
 <p>a zero quaternion has no direction to normalise towards. It is refused by</p>

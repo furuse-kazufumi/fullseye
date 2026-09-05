@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import optscene; optscene.optscene_mask(scene, camera, index: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;optscene_mask&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>`<code style="color:#22d3bf">index</code>` 番のプリミティブが見えている画素の<b>真値マスク</b> (H, W) の bool。</p>
+<p>A bool <b>ground-truth mask</b> (H, W) of the pixels where primitive number `<code style="color:#22d3bf">index</code>` is visible.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>画素完全(アンチエイリアスしない)。検出結果との IoU をそのまま測れる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>

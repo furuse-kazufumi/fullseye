@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import optscene; optscene.surface_defect(primitive: &#x27;dict&#x27;, field, mask=None, uv_size_mm=(20.0, 20.0), centre_mm=(0.0, 0.0), height_um: &#x27;float&#x27; = 0.0, height_field=None, roughness_um: &#x27;float&#x27; = 0.6) -&gt; &#x27;dict&#x27;</code> (oder <code style="color:#22d3bf">opsoptics.get(&quot;surface_defect&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>2-D の欠陥図を<b>部品の面に貼る</b>(`<code style="color:#22d3bf">defectgen</code>` の出力をそのまま食う)。</p>
+<p><b>Klebt eine 2-D-Defektkarte auf die Oberfläche eines Teils</b> (frisst die Ausgabe von `<code style="color:#22d3bf">defectgen</code>` direkt).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">field</code>` は明るさの変調 (H, W)(0 = 変化なし、−0.3 = 30% 暗い傷)。</p>
 <p>`<code style="color:#22d3bf">height_um</code>` を与えると同じ図を<b>高さ</b>とも解釈し、勾配から法線を傾ける</p>
 <p>―― これがあると、同じ傷がドーム照明では消え暗視野照明で光る、という</p>

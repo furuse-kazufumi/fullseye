@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import illumdesign; illumdesign.illumination_design(surface=&#x27;glossy&#x27;, defect=&#x27;topographic&#x27;, slope_deg=10.0, part_size_mm=50.0, camera_height_mm=300.0)</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;illumination_design&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Rank the standard light families for a surface / defect pairing (`<code style="color:#22d3bf">table</code>`).</p>
+<p>针对某个「表面 / 缺陷」组合给标准照明族排序(`<code style="color:#22d3bf">table</code>`)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Candidates: low-angle ring (dark field, elevation 20°), high-angle ring</p>
 <p>(bright field, 70°), the elevation that :func:<code style="color:#22d3bf">lighting_sweep</code> finds best,</p>
 <p>dome, coaxial and (for `<code style="color:#22d3bf">defect=&quot;edge&quot;</code>`) backlight. Each is scored by the</p>

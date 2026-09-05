@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import optscene; optscene.optscene_depth(scene, camera, supersample: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;optscene_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>深度の<b>真値</b> (H, W) [mm]。<b>光軸方向の z</b> であって視点からの斜距離ではない。</p>
+<p>The <b>ground-truth depth</b> (H, W) [mm]. It is <b>z along the optical axis</b>, not the slant range from the viewpoint.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>深度カメラ・ステレオ・光切断が返すのはどれも光軸方向の z なので、それに合わせる</p>
 <p>(斜距離と混ぜると、視野の端ほど系統的にずれた真値で採点することになり、</p>
 <p>しかも中心では一致するので気づけない)。生の光線距離が要るなら</p>

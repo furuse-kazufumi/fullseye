@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import render3d; render3d.displacement_band_weights(V, F, wavelengths=(0.06, 0.03, 0.015, 0.0075, 0.00375), *, nyquist: &#x27;float&#x27; = 2.0, fade: &#x27;float&#x27; = 1.0, local_edge=None) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;displacement_band_weights&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Per-octave, per-vertex band gate `<code style="color:#22d3bf">(K, N)</code>` in [0,1]: 1 where the mesh can carry the</p>
+<p>逐倍频、逐顶点的频带门 `<code style="color:#22d3bf">(K, N)</code>`,取值 [0,1]:网格能承载该频带处为 1。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

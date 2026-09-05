@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import videostream; videostream.deflicker(video, alpha: &#x27;float&#x27; = 0.1, max_gain: &#x27;float&#x27; = 4.0) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsvideostream.get(&quot;deflicker&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Luminance deflicker per frame → `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">video</code>`).</p>
+<p>逐帧的亮度去闪烁 → `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">video</code>`)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Rescales each frame so its mean tracks a slow running reference, cancelling</p>
 <p>one-frame brightness pumping while following genuine lighting changes.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

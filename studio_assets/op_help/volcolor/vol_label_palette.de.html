@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">matrix</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import volcolor; volcolor.vol_label_palette(n_labels, seed: &#x27;int&#x27; = 0, background=(0.0, 0.0, 0.0))</code> (oder <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_palette&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>ラベル `<code style="color:#22d3bf">0..n_labels</code><code style="color:#22d3bf"> の RGB パレット </code><code style="color:#22d3bf">(n_labels + 1, 3)</code>` float64。</p>
+<p>Eine RGB-Palette für die Labels `<code style="color:#22d3bf">0..n_labels</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(n_labels + 1, 3)</code>` float64.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>:func:<code style="color:#22d3bf">imgio.colorize_labels</code> と<b>同じ乱数列</b>である ――</p>
 <p>`<code style="color:#22d3bf">np.random.default_rng(seed).random((n + 1, 3))</code><code style="color:#22d3bf"> の行 </code><code style="color:#22d3bf">k</code><code style="color:#22d3bf"> がラベル </code><code style="color:#22d3bf">k</code>` の</p>
 <p>色、行 0 は *background*(既定は黒 = 2-D 側と同一)。PCG64 の標本列は逐次</p>

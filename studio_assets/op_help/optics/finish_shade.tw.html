@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import metalfinish; metalfinish.finish_shade(normals, kind=&#x27;linear&#x27;, metal=&#x27;al&#x27;, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), angle_deg=0.0, center=None, scale=1.0, patchiness=0.0, strength=1.0, seed=0) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;finish_shade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p><b>材質 × 仕上げ</b>で金属面を陰影付けする → 線形 sRGB (H, W, 3)。</p>
+<p>按<b>材質 × 表面處理</b>為金屬面著色 → 線性 sRGB (H, W, 3)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>材質は複素屈折率から色を作り(<code style="color:#22d3bf">glassmirror.metal_mirror_rgb</code>)、仕上げは</p>
 <p>接線場と異方性粗さから微小面の分布を作る(<code style="color:#22d3bf">matappear.ward_anisotropic</code>)。</p>
 <p>さらに角度依存の Fresnel を掛けるので、<b>縁ほど明るくなる</b>(金属でも起きる)。</p>

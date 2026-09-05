@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import videostream; videostream.scene_cut_detection(video, bins: &#x27;int&#x27; = 64, threshold: &#x27;float&#x27; = 0.3) -&gt; &#x27;dict&#x27;</code> (oder <code style="color:#22d3bf">opsvideostream.get(&quot;scene_cut_detection&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Shot-boundary chi-square histogram distance over a clip → `<code style="color:#22d3bf">{&quot;distance&quot;, &quot;cut&quot;, &quot;n&quot;}</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">table</code>`).</p>
+<p>Chi-Quadrat-Histogrammabstand für Schnittgrenzen über einen Clip → `<code style="color:#22d3bf">{&quot;distance&quot;, &quot;cut&quot;, &quot;n&quot;}</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">table</code>`).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">distance[t]</code><code style="color:#22d3bf"> is the chi-square distance of frame </code><code style="color:#22d3bf">t</code>`&#x27;s histogram to</p>
 <p>frame `<code style="color:#22d3bf">t−1</code><code style="color:#22d3bf">&#x27;s (</code><code style="color:#22d3bf">distance[0] = 0</code><code style="color:#22d3bf">); </code><code style="color:#22d3bf">cut[t]</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">distance[t] &gt; threshold</code>`.</p>
 <p>Streaming form: one histogram of state, no frames kept.</p>

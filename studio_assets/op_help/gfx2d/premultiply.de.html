@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">rgba</code> → <code style="color:#22d3bf">rgba_premul</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.premultiply(rgba)</code> (oder <code style="color:#22d3bf">opsgfx2d.get(&quot;premultiply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Straight-alpha `<code style="color:#22d3bf">rgba</code><code style="color:#22d3bf"> to **premultiplied** </code><code style="color:#22d3bf">rgba</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(C*A, A)</code>`.</p>
+<p>`<code style="color:#22d3bf">rgba</code><code style="color:#22d3bf"> mit gerader Alpha → **vormultipliziertes** </code><code style="color:#22d3bf">rgba</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(C*A, A)</code>`.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>Lossy in one place, on purpose: the colour of a fully transparent pixel is</p>
 <p>multiplied to zero and cannot be recovered. That colour never affects a</p>
 <p>composite, so nothing downstream needs it — but a round trip through this</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × indices</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import reprconv; reprconv.select_points(points, indices)</code> (or <code style="color:#22d3bf">opsreprconv.get(&quot;select_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>点群 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> と添字 </code><code style="color:#22d3bf">(M,)</code><code style="color:#22d3bf"> → 部分点群 </code><code style="color:#22d3bf">(M,3)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">indices</code>` の消費側。</p>
+<p>A point set `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> and indices </code><code style="color:#22d3bf">(M,)</code><code style="color:#22d3bf"> → the sub-set </code><code style="color:#22d3bf">(M,3)</code><code style="color:#22d3bf">. The consuming side of </code><code style="color:#22d3bf">indices</code>`.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">indices</code><code style="color:#22d3bf"> を産む op は 6 つあるのに(</code><code style="color:#22d3bf">iss_keypoints</code>` /</p>
 <p>`<code style="color:#22d3bf">farthest_point_sampling</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">alpha_shape_boundary</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">find_peaks</code>` /</p>
 <p>`<code style="color:#22d3bf">zero_crossings_funct_1d</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cad_visible_faces</code>`)、**添字を食う単入力 op が</p>

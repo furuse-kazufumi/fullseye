@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import raytrace; raytrace.glass(nd, vd)</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;glass&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>A dispersive medium from its d-line index *nd* and Abbe number *vd*.</p>
+<p>由 d 線折射率 *nd* 與阿貝數 *vd* 構造色散介質。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Returns `<code style="color:#22d3bf">{&quot;nd&quot;: nd, &quot;vd&quot;: vd, &quot;A&quot;: A, &quot;B&quot;: B}</code>` — the two-term Cauchy model</p>
 <p>`<code style="color:#22d3bf">n(λ) = A + B/λ²</code><code style="color:#22d3bf"> (λ in µm) fitted so that </code><code style="color:#22d3bf">n(λ_d) = n_d</code>` and</p>
 <p>`<code style="color:#22d3bf">n(λ_F) − n(λ_C) = (n_d − 1)/V_d</code>`. Good to ~1e-4 over the visible for</p>

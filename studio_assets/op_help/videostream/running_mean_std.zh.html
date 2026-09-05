@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import videostream; videostream.running_mean_std(video) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">opsvideostream.get(&quot;running_mean_std&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Welford per-pixel mean / population std over the clip → `<code style="color:#22d3bf">{&quot;mean&quot;, &quot;std&quot;, &quot;n&quot;}</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">table</code>`).</p>
+<p>整段片段的 Welford 逐像素均值 / 总体标准差 → `<code style="color:#22d3bf">{&quot;mean&quot;, &quot;std&quot;, &quot;n&quot;}</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">table</code>`)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Equals `<code style="color:#22d3bf">video.mean(0)</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">video.std(0)</code>` but needs two images of state,</p>
 <p>not the clip — the streaming form for a recording that never ends.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

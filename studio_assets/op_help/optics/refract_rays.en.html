@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import glassmirror; glassmirror.refract_rays(directions, normals, n1=1.0, n2=1.5)</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;refract_rays&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>Snell 屈折のベクトル版。<b>光線ごとに全反射を判定</b>して (方向, TIR マスク) を返す。</p>
+<p>The vector form of Snell refraction. <b>Total internal reflection is decided per ray</b>; returns (direction, TIR mask).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>directions: (..., 3) 入射方向(面へ向かう)。normals: (..., 3) 入射側の外向き法線。</p>
 <p>n1 / n2: 入射側 / 透過側の屈折率。</p>
 <p>返り値: (refracted (...,3), tir (...,)) —— TIR の光線は方向を<b>鏡面反射</b>で埋め、</p>

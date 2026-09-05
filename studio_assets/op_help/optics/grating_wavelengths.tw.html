@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">vector</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import matappear; matappear.grating_wavelengths(pitch_um, sin_in, sin_out, orders=(1, 2, 3)) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;grating_wavelengths&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>回折格子の式 d(sinθ_out − sinθ_in) = mλ を λ について解く。</p>
+<p>對 λ 求解光柵方程 d(sinθ_out − sinθ_in) = mλ。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>pitch_um: 溝間隔 d [µm]。CD は 1.6、DVD は 0.74(公開規格値)。</p>
 <p>sin_in / sin_out: 入射 / 出射方向の格子面内成分の sin(配列可、ブロードキャスト)。</p>
 <p>orders:   次数 m のシーケンス(0 は無限大になるので除外する)。</p>

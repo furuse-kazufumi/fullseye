@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_gabor&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">convol_gabor</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Gabor フィルタ(方位 theta=a*pi、周波数 freq=0.08+0.35b)。応答の大きさを返す。</p>
+<p>Gabor 濾波(方位 theta=a*pi,頻率 freq=0.08+0.35b)。回傳響應的振幅。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>向きの規約は core の `<code style="color:#22d3bf">gabor</code><code style="color:#22d3bf"> と同じ: </code><code style="color:#22d3bf">a=0</code><code style="color:#22d3bf"> (θ=0) が **縦縞**、</code><code style="color:#22d3bf">a=0.5</code>`</p>
 <p>(θ=90°) が横縞に最も応答する。</p>
 <p>★正規化(2026-09-02 の修正): <b>カーネルの L1 ノルムで割る固定スケール</b>。</p>

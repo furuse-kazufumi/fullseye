@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import optscene; optscene.scene_material(kind: &#x27;str&#x27; = &#x27;lambert&#x27;, albedo=0.6, metal: &#x27;str&#x27; = &#x27;al&#x27;, finish: &#x27;str&#x27; = &#x27;random&#x27;, glass: &#x27;str&#x27; = &#x27;N-BK7&#x27;, sigma_per_mm: &#x27;float&#x27; = 0.0, roughness_um: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code> (oder <code style="color:#22d3bf">opsoptics.get(&quot;scene_material&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>材質を 1 つ作る。`<code style="color:#22d3bf">kind</code>` は lambert / conductor / dielectric の 3 種。</p>
+<p>Erzeugt ein Material. `<code style="color:#22d3bf">kind</code>` ist eines von dreien: lambert / conductor / dielectric.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>3 種しか無いのは<b>混ぜると黙って間違う</b>からで、増やすなら型を分ける</p>
 <p>(拡散か・金属か・透明か で光線の行き先が根本的に変わる)。</p>
 <p>lambert: `<code style="color:#22d3bf">albedo</code>`(スカラまたは RGB 3 要素)だけを使う完全拡散。</p>

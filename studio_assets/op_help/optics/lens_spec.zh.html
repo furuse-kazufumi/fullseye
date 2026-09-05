@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import optscene; optscene.lens_spec(focal_mm: &#x27;float&#x27; = 25.0, f_number: &#x27;float&#x27; = None, na: &#x27;float&#x27; = None, working_distance_mm: &#x27;float&#x27; = 200.0, coc_um: &#x27;float&#x27; = None, telecentric: &#x27;bool&#x27; = False, transmission: &#x27;float&#x27; = 0.9, model: &#x27;str&#x27; = None, maker: &#x27;str&#x27; = None, image_circle_mm: &#x27;float&#x27; = None) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;lens_spec&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>レンズの諸元。NA と F 値は<b>どちらで与えてもよい</b>(N = 1/(2·NA))。</p>
+<p>镜头诸元。NA 与 F 值<b>给哪一个都行</b>(N = 1/(2·NA))。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">coc_um</code>` を省くと画素ピッチを許容錯乱円に使う(レイアウトが束ねるときに解決)。</p>
 <p>`<code style="color:#22d3bf">telecentric=True</code>` は倍率が距離で変わらない前提 ―― 寸法測定ではここが効く。</p>
 <p>`<code style="color:#22d3bf">model</code><code style="color:#22d3bf"> に実在の型番を渡すと(</code><code style="color:#22d3bf">lens_catalog()</code>` のキー &quot;Kowa LM6HC&quot; でも、</p>

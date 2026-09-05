@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">image2d</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import astrostack; astrostack.synth_starfield(shape=(128, 128), n_stars=30, flux_min=400.0, flux_max=9000.0, fwhm_px=3.2, psf=&#x27;gaussian&#x27;, moffat_beta=2.5, sky=60.0, read_sigma=6.0, shift_row=0.0, shift_col=0.0, n_cosmic=0, cosmic_flux=4000.0, margin_px=6.0, seed=0, field_seed=None, noise=True)</code>(또는 <code style="color:#22d3bf">opsastrostack.get(&quot;synth_starfield&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>既知の星野を 1 枚合成する —— <b>この族の正解の供給源</b>。</p>
+<p>알려진 성야를 한 장 합성합니다 —— <b>이 족의 정답 공급원</b>.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>星は `<code style="color:#22d3bf">flux_min</code><code style="color:#22d3bf">〜</code><code style="color:#22d3bf">flux_max</code>` の対数一様分布から総フラックス(電子)を引き、</p>
 <p>画像の縁から `<code style="color:#22d3bf">margin_px</code><code style="color:#22d3bf"> 以上内側に一様に置く。*psf* が </code><code style="color:#22d3bf">&quot;gaussian&quot;</code>` の</p>
 <p>ときは :func:<code style="color:#22d3bf">scipy.special.erf</code> による<b>画素の厳密な積分</b>なので、星 1 個の</p>

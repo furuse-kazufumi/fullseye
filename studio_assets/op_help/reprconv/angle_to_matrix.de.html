@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">angle</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import reprconv; reprconv.angle_to_matrix(angle)</code> (oder <code style="color:#22d3bf">opsreprconv.get(&quot;angle_to_matrix&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>角度 <b>[度]</b> → z 軸まわりの回転行列 `<code style="color:#22d3bf">matrix (3,3)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">angle</code>` の出口。</p>
+<p>Winkel <b>[Grad]</b> → die Rotations-`<code style="color:#22d3bf">matrix (3,3)</code><code style="color:#22d3bf"> um die z-Achse. Der Ausgang aus </code><code style="color:#22d3bf">angle</code>`.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">angle_to_matrix(90)</code>` は軸1(y)を軸2(x)へ送り、軸2(x)を <b>−軸1</b>(−y)へ</p>
 <p>送る(`<code style="color:#22d3bf">R @ [0,1,0] = [0,0,1]</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">R @ [0,0,1] = [0,-1,0]</code>`、実測)。</p>
 <p>2-D の :func:<code style="color:#22d3bf">rot_scale_to_matrix</code> と同じ `<code style="color:#22d3bf">[[c,-s],[s,c]]</code>` の向き</p>

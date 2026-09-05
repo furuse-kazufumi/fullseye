@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import tomography; tomography.filtered_backprojection(sinogram, angles_deg=None, size=None, filter_name=&#x27;ramp&#x27;, cutoff=1.0, span_deg=None, _op=&#x27;filtered_backprojection&#x27;)</code>(或 <code style="color:#22d3bf">opstomography.get(&quot;filtered_backprojection&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Filtered back-projection (FBP) — the standard CT reconstruction.</p>
+<p>濾波反投影(FBP)—— CT 重建的標準方法。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Filter each projection along the detector axis with the ramp `<code style="color:#22d3bf">|f|</code>` (times an</p>
 <p>optional apodisation window), then back-project. This is the discretised</p>
 <p>inverse Radon transform, and with enough samples it is exact: reconstructing a</p>

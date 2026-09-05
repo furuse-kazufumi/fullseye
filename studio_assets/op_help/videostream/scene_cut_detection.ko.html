@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import videostream; videostream.scene_cut_detection(video, bins: &#x27;int&#x27; = 64, threshold: &#x27;float&#x27; = 0.3) -&gt; &#x27;dict&#x27;</code>(또는 <code style="color:#22d3bf">opsvideostream.get(&quot;scene_cut_detection&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Shot-boundary chi-square histogram distance over a clip → `<code style="color:#22d3bf">{&quot;distance&quot;, &quot;cut&quot;, &quot;n&quot;}</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">table</code>`).</p>
+<p>클립 전체의 숏 경계를 히스토그램 카이제곱 거리로 → `<code style="color:#22d3bf">{&quot;distance&quot;, &quot;cut&quot;, &quot;n&quot;}</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">table</code>`).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">distance[t]</code><code style="color:#22d3bf"> is the chi-square distance of frame </code><code style="color:#22d3bf">t</code>`&#x27;s histogram to</p>
 <p>frame `<code style="color:#22d3bf">t−1</code><code style="color:#22d3bf">&#x27;s (</code><code style="color:#22d3bf">distance[0] = 0</code><code style="color:#22d3bf">); </code><code style="color:#22d3bf">cut[t]</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">distance[t] &gt; threshold</code>`.</p>
 <p>Streaming form: one histogram of state, no frames kept.</p>

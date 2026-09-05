@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import annotate; annotate.annotate_scale_bar_layout(shape, units_per_pixel, unit=&#x27;µm&#x27;, corner=&#x27;rb&#x27;, target_fraction=0.2, margin=14, thickness=5)</code>(或 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_scale_bar_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>table(dict)を返す: 画像幅の `<code style="color:#22d3bf">target_fraction</code>` 以下で<b>切りのよい</b>長さのバー。</p>
+<p>回傳表(dict):不超過影像寬度 `<code style="color:#22d3bf">target_fraction</code>` 的<b>取整</b>長度比例尺。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>長さは `<code style="color:#22d3bf">1/2/5 × 10^k</code><code style="color:#22d3bf"> のうち </code><code style="color:#22d3bf">target_fraction * W * units_per_pixel</code>` 以下の</p>
 <p>最大値。画素長 = `<code style="color:#22d3bf">round(length / units_per_pixel)</code>`。</p>
 <p>Returns</p>

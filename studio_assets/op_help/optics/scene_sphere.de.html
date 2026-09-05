@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import optscene; optscene.scene_sphere(center_mm, radius_mm: &#x27;float&#x27;, material=None) -&gt; &#x27;dict&#x27;</code> (oder <code style="color:#22d3bf">opsoptics.get(&quot;scene_sphere&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>球の部品。`<code style="color:#22d3bf">center_mm</code><code style="color:#22d3bf"> は (x, y, z) [mm]、</code><code style="color:#22d3bf">radius_mm</code>` &gt; 0。</p>
+<p>Ein Kugelteil. `<code style="color:#22d3bf">center_mm</code><code style="color:#22d3bf"> ist (x, y, z) [mm] und </code><code style="color:#22d3bf">radius_mm</code>` &gt; 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

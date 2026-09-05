@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow_dense</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import reprconv; reprconv.flow_to_rgbimage(flow, index=None, scale=None)</code> (or <code style="color:#22d3bf">opsreprconv.get(&quot;flow_to_rgbimage&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>密なシーンフローの 1 スライス → 色相=向き・明度=速さの `<code style="color:#22d3bf">rgbimage</code>`。</p>
+<p>One slice of a dense scene flow → an `<code style="color:#22d3bf">rgbimage</code>` with hue = direction and value = speed.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>光学フローの標準的な可視化(色相環)を 3-D フローの z スライスに当てる:</p>
 <p>`<code style="color:#22d3bf">hue = atan2(dy, dx)</code><code style="color:#22d3bf">(度で 0-360)、</code><code style="color:#22d3bf">value = |(dy, dx)| / scale</code>`、</p>
 <p>彩度は 1。<b>dz は捨てる</b> —— 面内成分だけの図であることを明示する</p>

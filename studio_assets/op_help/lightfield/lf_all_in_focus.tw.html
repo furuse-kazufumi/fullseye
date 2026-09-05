@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">lightfield × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import lightfield; lightfield.lf_all_in_focus(lf, slope_map, levels=None, *, n_levels=16, interp=&#x27;linear&#x27;, edge=&#x27;nearest&#x27;)</code>(或 <code style="color:#22d3bf">opslightfield.get(&quot;lf_all_in_focus&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Composite one everywhere-sharp image by refocusing each pixel at its own slope.</p>
+<p>讓每個像素按各自的斜率重聚焦,合成一張處處清晰的圖。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Builds a focal stack at *levels* and, for every pixel, takes the slice whose</p>
 <p>level is closest to `<code style="color:#22d3bf">slope_map</code>` there. This is the &quot;2-D image&quot; half of what</p>
 <p>a plenoptic camera delivers, at the full depth range rather than the depth of</p>

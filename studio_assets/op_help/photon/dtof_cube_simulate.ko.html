@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">histcube</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import photoncount; photoncount.dtof_cube_simulate(depth, bins=256, bin_ps=100.0, reflectivity=None, signal_photons=20.0, ambient_photons=5.0, irf_fwhm_ps=200.0, seed=0, noise=True)</code>(또는 <code style="color:#22d3bf">opsphoton.get(&quot;dtof_cube_simulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Synthesise the `<code style="color:#22d3bf">(H, W, T)</code>` photon histogram cube a SPAD array produces.</p>
+<p>SPAD 어레이가 만드는 `<code style="color:#22d3bf">(H, W, T)</code>` 광자 히스토그램 큐브를 합성합니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>The per-pixel version of :func:<code style="color:#22d3bf">tcspc_simulate</code>: every pixel of the *depth*</p>
 <p>map (metres, one-way distance) gets a Gaussian return at its own round-trip</p>
 <p>time `<code style="color:#22d3bf">2d/c</code>`, scaled by *signal_photons* times that pixel&#x27;s *reflectivity*,</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">fingerprint</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import imgforensics; imgforensics.fingerprint_strength_map(fingerprint, block: &#x27;int&#x27; = 16) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">opsimgforensics.get(&quot;fingerprint_strength_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>指紋の <b>ブロックごとの実効強度</b>(標準偏差)を並べた地図。`<code style="color:#22d3bf">image2d</code>`。</p>
+<p>A map of the fingerprint&#x27;s <b>effective strength per block</b> (its standard deviation). `<code style="color:#22d3bf">image2d</code>`.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>PRNU は飽和した画素と真っ暗な画素では出ない(乗法的な欠陥なので信号が要る)。</p>
 <p>この地図は「<b>指紋がどこで何も言えないか</b>」を見るためのもので、値が低い領域の</p>
 <p>照合結果は弱い。`<code style="color:#22d3bf">block</code><code style="color:#22d3bf"> 角の非重複ブロックごとの標準偏差を、元の </code><code style="color:#22d3bf">(H, W)</code>` へ</p>

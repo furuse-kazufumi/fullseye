@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import tomography; tomography.sart_reconstruct(sinogram, angles_deg=None, size=None, n_iter=10, relaxation=0.3, initial=None, nonnegative=True)</code> (oder <code style="color:#22d3bf">opstomography.get(&quot;sart_reconstruct&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>SART — simultaneous algebraic reconstruction, one angle at a time.</p>
+<p>SART — simultane algebraische Rekonstruktion, Winkel für Winkel.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>An iterative solver for `<code style="color:#22d3bf">A x = p</code><code style="color:#22d3bf"> where </code><code style="color:#22d3bf">A</code>` is the projector: for each</p>
 <p>view in turn, project the current estimate, take the residual, and</p>
 <p>back-project it with the row and column sums of `<code style="color:#22d3bf">A</code>` as normalisers::</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import raytrace; raytrace.wavefront_from_opd(system, field=None, size=64, n_max=6, wavelength_um=None, image_mm=None)</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;wavefront_from_opd&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>OPD map → Zernike coefficients (waves) → RMS / PV / Strehl, in one call (`<code style="color:#22d3bf">table</code>`).</p>
+<p>OPD 图 → Zernike 系数(波)→ RMS / PV / Strehl,一次完成(`<code style="color:#22d3bf">table</code>`)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Convenience chain: :func:<code style="color:#22d3bf">opd_map</code> → `<code style="color:#22d3bf">match3d.fit_zernike</code>` →</p>
 <p>`<code style="color:#22d3bf">optics.wavefront_stats</code>`. Returns the stats dict extended with</p>
 <p>`<code style="color:#22d3bf">zernike</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">{(n, m): coef}</code><code style="color:#22d3bf">), </code><code style="color:#22d3bf">rms_opd_direct</code>` (RMS of the sampled OPD,</p>

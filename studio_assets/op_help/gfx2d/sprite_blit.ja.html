@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sprite_blit — GFX2D <code style="color:#22d3bf">sprite</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgba × rgba</code> → <code style="color:#22d3bf">rgba</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.sprite_blit(dst, sprite, x=0, y=0, anchor=&#x27;top_left&#x27;, flip_x=False, flip_y=False, opacity=1.0)</code> (または <code style="color:#22d3bf">opsgfx2d.get(&quot;sprite_blit&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>`<code style="color:#22d3bf">dst</code><code style="color:#22d3bf"> の複製の整数座標 </code><code style="color:#22d3bf">(x, y)</code><code style="color:#22d3bf"> に </code><code style="color:#22d3bf">sprite</code>` を合成する。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>`<code style="color:#22d3bf">x</code><code style="color:#22d3bf"> is the column and </code><code style="color:#22d3bf">y</code><code style="color:#22d3bf"> the row of the sprite&#x27;s </code><code style="color:#22d3bf">anchor</code>` point;</p>
+<p>`<code style="color:#22d3bf">anchor</code><code style="color:#22d3bf"> is one of </code><code style="color:#22d3bf">&quot;top_left&quot;</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">&quot;top_right&quot;</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">&quot;bottom_left&quot;</code>`,</p>
+<p>`<code style="color:#22d3bf">&quot;bottom_right&quot;</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">&quot;center&quot;</code>`.</p>
+<p>**Out-of-bounds behaviour is to clip silently, and that is a decision, not</p>
+<p>an oversight.** Half a sprite hanging off the edge of the screen is the</p>
+<p>normal case in this family, and raising there would make the common path the</p>
+<p>exceptional one. A sprite entirely outside returns `<code style="color:#22d3bf">dst</code>` unchanged. The</p>
+<p>contrast with :func:<code style="color:#22d3bf">viewport</code> — which raises for the same situation — is</p>
+<p>deliberate: a camera asking for pixels that do not exist is a bug in the</p>
+<p>caller&#x27;s arithmetic, a sprite walking off screen is not.</p>
+<p>`<code style="color:#22d3bf">x</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">y</code>` must be <b>integers</b>. Sub-pixel placement changes the picture</p>
+<p>(it resamples), so it is :func:<code style="color:#22d3bf">sprite_transform</code>&#x27;s job and not a silent</p>
+<p>rounding here.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gfx2d_scene">gfx2d_scene</a> — <code style="color:#22d3bf">py -3.11 examples/gfx2d_scene.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">rgba</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:premultiply">premultiply</a> · <a style="color:#22d3bf" href="opgfx2d:alpha_composite">alpha_composite</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_transform">sprite_transform</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_sheet_slice">sprite_sheet_slice</a> · <a style="color:#22d3bf" href="opgfx2d:nine_slice">nine_slice</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">sprite</code>)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:sprite_synthesize">sprite_synthesize</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_transform">sprite_transform</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_sheet_slice">sprite_sheet_slice</a> · <a style="color:#22d3bf" href="opgfx2d:nine_slice">nine_slice</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gfx2d.py — GFX2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

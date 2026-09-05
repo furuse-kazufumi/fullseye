@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">counts</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import photoncount; photoncount.lifetime_fit(decay, bin_ps=100.0, background=None, min_counts=1.0, start_bin=None)</code> (oder <code style="color:#22d3bf">opsphoton.get(&quot;lifetime_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Mono-exponential fluorescence lifetime from a TCSPC decay histogram.</p>
+<p>Monoexponentielle Fluoreszenzlebensdauer aus einem TCSPC-Abklinghistogramm.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>Fits `<code style="color:#22d3bf">I(t) = A*exp(-t/tau) + b</code>` by a **Poisson-weighted log-linear least</p>
 <p>squares**: the background is removed, the logarithm of the remaining counts</p>
 <p>is linear in `<code style="color:#22d3bf">t</code><code style="color:#22d3bf"> with slope </code><code style="color:#22d3bf">-1/tau</code>`, and each bin is weighted by its own</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import optscene; optscene.linescan_capture(scene, camera, lights, velocity_mm_s: &#x27;float&#x27; = 100.0, line_rate_hz: &#x27;float&#x27; = 10000.0, lines: &#x27;int&#x27; = 512, tdi_stages: &#x27;int&#x27; = 1, sync_error: &#x27;float&#x27; = 0.0, scan_axis=(1.0, 0.0, 0.0), ambient: &#x27;float&#x27; = 0.0, depth: &#x27;int&#x27; = 1, light_samples: &#x27;int&#x27; = None) -&gt; &#x27;dict&#x27;</code> (oder <code style="color:#22d3bf">opsoptics.get(&quot;linescan_capture&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p><b>ラインスキャン / TDI</b> で撮る(搬送しながら 1 ラインずつ積む)。</p>
+<p>Nimmt mit einer <b>Zeilen- / TDI-Kamera</b> auf (Zeile für Zeile, während das Teil transportiert wird).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>エリアセンサの模型では表せない領域。`<code style="color:#22d3bf">camera</code>` は高さ 1 のラインセンサ</p>
 <p>(`<code style="color:#22d3bf">sensor_spec(resolution=(N, 1))</code><code style="color:#22d3bf"> → :func:</code>vision_layout`)を想定するが、</p>
 <p>高さ h のカメラを渡した場合は<b>先頭ラインだけ</b>を使う。</p>

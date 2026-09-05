@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import surfacelib; surfacelib.sheen_shade(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), sheen=1.0, exponent=4.0) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;sheen_shade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>布の<b>縁の光沢</b>(ベルベット・サテン)。視線に対して寝た所ほど明るい。</p>
+<p>布料的<b>邊緣光澤</b>(天鵝絨・緞)。相對視線越掠射越亮。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>normals / light / view: 上記と同じ。sheen: 強さ。exponent: 縁への集中度。</p>
 <p>返り値: (H, W)。<b>鏡面反射とは逆</b>に、正面(n·v = 1)で 0 に近く、縁(n·v → 0)で</p>
 <p>最大になる ―― ベルベットの縁が白く光るのはこれで、Phong では絶対に出せない。</p>

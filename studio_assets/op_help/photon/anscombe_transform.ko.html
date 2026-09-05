@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import photoncount; photoncount.anscombe_transform(image, gain=1.0, read_sigma=0.0, offset=0.0, clip=False)</code>(또는 <code style="color:#22d3bf">opsphoton.get(&quot;anscombe_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Anscombe variance-stabilising transform: Poisson counts -&gt; ~unit-variance.</p>
+<p>Anscombe 분산 안정화 변환: 푸아송 계수 -&gt; 분산 약 1.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Photon-limited data has signal-dependent noise, which every classical</p>
 <p>denoiser (Gaussian, bilateral, NLM, wavelet, BM3D) assumes away. The Anscombe</p>
 <p>transform `<code style="color:#22d3bf">A(x) = 2*sqrt(x + 3/8)</code>` makes the variance approximately 1</p>

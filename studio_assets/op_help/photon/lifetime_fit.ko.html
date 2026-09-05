@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">counts</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import photoncount; photoncount.lifetime_fit(decay, bin_ps=100.0, background=None, min_counts=1.0, start_bin=None)</code>(또는 <code style="color:#22d3bf">opsphoton.get(&quot;lifetime_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Mono-exponential fluorescence lifetime from a TCSPC decay histogram.</p>
+<p>TCSPC 감쇠 히스토그램으로부터의 단일 지수 형광 수명.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Fits `<code style="color:#22d3bf">I(t) = A*exp(-t/tau) + b</code>` by a **Poisson-weighted log-linear least</p>
 <p>squares**: the background is removed, the logarithm of the remaining counts</p>
 <p>is linear in `<code style="color:#22d3bf">t</code><code style="color:#22d3bf"> with slope </code><code style="color:#22d3bf">-1/tau</code>`, and each bin is weighted by its own</p>

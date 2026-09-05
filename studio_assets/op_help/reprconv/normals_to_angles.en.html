@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normals</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import reprconv; reprconv.normals_to_angles(normals)</code> (or <code style="color:#22d3bf">opsreprconv.get(&quot;normals_to_angles&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>法線 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> → 方位・仰角の対 </code><code style="color:#22d3bf">(N,2)</code><code style="color:#22d3bf"> **[度]**。</code><code style="color:#22d3bf">normals</code>` の出口。</p>
+<p>Normals `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> → azimuth/elevation pairs </code><code style="color:#22d3bf">(N,2)</code><code style="color:#22d3bf"> **[deg]**. The exit from </code><code style="color:#22d3bf">normals</code>`.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">az = atan2(c1, c0)</code><code style="color:#22d3bf"> を軸0-軸1 平面内の方位、</code><code style="color:#22d3bf">el = asin(c2/|v|)</code>` を</p>
 <p>軸2 からの仰角とする。<b>x/y/z でなく「軸0/1/2」で定義する</b>のは、この repo に</p>
 <p>(z,y,x) 順の点群と (x,y,z) 順の点群が両方いるため —— 名前で書くと、渡された</p>

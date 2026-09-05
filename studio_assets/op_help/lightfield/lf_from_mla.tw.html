@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">lightfield</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import lightfield; lightfield.lf_from_mla(raw, angular=(5, 5), *, offset=(0, 0), crop=False)</code>(或 <code style="color:#22d3bf">opslightfield.get(&quot;lf_from_mla&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Decode a microlens-array raw frame into a `<code style="color:#22d3bf">(V, U, H, W)</code>` light field.</p>
+<p>把微透鏡陣列的原始影格解碼成 `<code style="color:#22d3bf">(V, U, H, W)</code>` 光場。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>The plenoptic sensor stores, for microlens `<code style="color:#22d3bf">(t, s)</code><code style="color:#22d3bf">, a </code><code style="color:#22d3bf">V x U</code>` block of</p>
 <p>pixels — one per direction through the main lens&#x27; exit pupil. So raw pixel</p>
 <p>`<code style="color:#22d3bf">(offset_y + t*V + v, offset_x + s*U + u)</code><code style="color:#22d3bf"> is exactly </code><code style="color:#22d3bf">L[v, u, t, s]</code>`:</p>

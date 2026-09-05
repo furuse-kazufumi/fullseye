@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">depth</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import depth_bilateral; depth_bilateral.fill_holes(depth: &#x27;np.ndarray&#x27;, max_radius: &#x27;float&#x27;, *, invalid: &#x27;float | None&#x27; = 0.0, max_iter: &#x27;int | None&#x27; = None, rel_tol: &#x27;float&#x27; = 1e-06) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;fill_holes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>無効画素(穴)を近傍有効画素から調和(ラプラス)緩和で補間。→ float64 (H,W)。</p>
+<p>用調和(拉普拉斯)鬆弛由鄰近有效像素插補無效像素(空洞)。→ float64 (H,W)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

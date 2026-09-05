@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">measurement</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import glassmirror; glassmirror.critical_angle_deg(n1=1.5, n2=1.0) -&gt; &#x27;float&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;critical_angle_deg&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>全反射の臨界角 [deg] = asin(n2/n1)。n1 &gt; n2 でなければ ValueError(存在しない)。</p>
+<p>全反射临界角 [deg] = asin(n2/n1)。若非 n1 &gt; n2 则 ValueError(不存在)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>ガラスから空気へ出るときだけ起きる。光ファイバ・プリズムの全反射面の設計値。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>

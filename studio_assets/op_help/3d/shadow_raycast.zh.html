@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">mesh × vector</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import render_shadow; render_shadow.shadow_raycast(V, F, light, *, pose=None, intrinsics=None, width: &#x27;int&#x27; = 256, height: &#x27;int&#x27; = 256, angular_diameter_deg: &#x27;float&#x27; = 0.0, samples: &#x27;int&#x27; = 1, grid=None, bias=None) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;shadow_raycast&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>メッシュへ直接レイを飛ばして太陽光の可視性 (H,W) ∈ [0,1] を返す(shadow map 不使用)。</p>
+<p>直接向网格投射光线,返回太阳光可见性 (H,W) ∈ <a style="color:#22d3bf" href="不使用 shadow map">0,1</a>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

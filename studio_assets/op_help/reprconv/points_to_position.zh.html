@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import reprconv; reprconv.points_to_position(points)</code>(或 <code style="color:#22d3bf">opsreprconv.get(&quot;points_to_position&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>点群 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> → 重心 </code><code style="color:#22d3bf">(z, y, x)</code>`。<b>不可逆</b>(分布を捨てる)。</p>
+<p>点群 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> → 重心 </code><code style="color:#22d3bf">(z, y, x)</code>`。<b>不可逆</b>(丢弃了分布)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>捨てた量は測れる: 重心まわりの RMS 距離が「1 点に潰したときに失った広がり」</p>
 <p>そのもので、`<code style="color:#22d3bf">selftest</code>` はこれを数字で出す。N = 1 のときだけ</p>
 <p>:func:<code style="color:#22d3bf">position_to_points</code> との往復が bit 一致する。</p>

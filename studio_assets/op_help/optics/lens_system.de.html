@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import raytrace; raytrace.lens_system(surfaces=None, stop=None, object_mm=inf, wavelength_um=0.58756, index_object=1.0, image_mm=None, field=None)</code> (oder <code style="color:#22d3bf">opsoptics.get(&quot;lens_system&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Build a validated sequential prescription (the `<code style="color:#22d3bf">table</code>` every other op consumes).</p>
+<p>Baut eine validierte sequentielle Vorschrift (die `<code style="color:#22d3bf">table</code>`, die jeder andere Operator konsumiert).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>*surfaces* is a list; each entry is a dict ``{&quot;R&quot;, &quot;t&quot;, &quot;n&quot;, &quot;k&quot;, &quot;ap&quot;,</p>
 <p>&quot;mirror&quot;, &quot;decenter&quot;, &quot;tilt&quot;, &quot;asph&quot;}`<code style="color:#22d3bf"> or a tuple </code><code style="color:#22d3bf">(R, t, n[, k[, ap]])</code>`:</p>
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">R</code><code style="color:#22d3bf"> radius (mm, </code><code style="color:#22d3bf">inf</code><code style="color:#22d3bf"> for flat), </code><code style="color:#22d3bf">t</code>` thickness to the next surface</p>

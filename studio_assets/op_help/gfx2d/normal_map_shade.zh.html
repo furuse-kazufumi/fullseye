@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import gfx2d; gfx2d.normal_map_shade(normals, light_dir=(0.0, 0.0, 1.0), ambient=0.1, diffuse=&#x27;reference&#x27;, specular=0.0, shininess=32.0, view_dir=(0.0, 0.0, 1.0), scheme=&#x27;okabe_ito&#x27;)</code>(或 <code style="color:#22d3bf">opsgfx2d.get(&quot;normal_map_shade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Shade a 2-D normal map with one directional light (Lambert + Blinn 1977).</p>
+<p>用一盏平行光给 2-D 法线贴图着色(Lambert + Blinn 1977)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">normals</code><code style="color:#22d3bf"> is a </code><code style="color:#22d3bf">normalmap</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(H, W, 3)</code>` <b>unit</b> vectors, as</p>
 <p>:func:<code style="color:#22d3bf">normal_map_decode</code> returns. Non-unit input raises rather than being</p>
 <p>normalised for you — a normal map that is not normalised is usually a map</p>

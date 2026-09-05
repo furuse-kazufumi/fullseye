@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × table × table</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import optscene; optscene.render_optscene(scene, camera, lights, ambient: &#x27;float&#x27; = 0.0, depth: &#x27;int&#x27; = 2, shadows: &#x27;bool&#x27; = True, supersample: &#x27;int&#x27; = 1, adaptive: &#x27;bool&#x27; = False, light_samples: &#x27;int&#x27; = None, edge_threshold: &#x27;float&#x27; = 0.06, saturate_at: &#x27;float&#x27; = None, wavelength_nm: &#x27;float&#x27; = 550.0, environment=None, environment_gain: &#x27;float&#x27; = 1.0, environment_samples: &#x27;int&#x27; = 12) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">opsoptics.get(&quot;render_optscene&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p><b>検査用</b>に撮る: 実在の照明器具を物理単位で置き直接光を数える(真値つき)。</p>
+<p>Aufnahme <b>für die Prüfung</b>: reale Leuchten in physikalischen Einheiten platzieren und das direkte Licht zählen (mit Ground Truth).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>見た目を作るための多重反射・環境光は入れない。きれいな絵が要るなら</p>
 <p>:func:<code style="color:#22d3bf">render_studio</code> ―― <b>作り方が違う別の op</b> で、取り違えると測光の</p>
 <p>根拠が濁る。返り値は線形 RGB の放射輝度 (H, W, 3)、トーンマップ前。</p>

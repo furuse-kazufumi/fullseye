@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × keypoints</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import astrostack; astrostack.aperture_photometry(image, centers, r_aperture=5.0, r_inner=8.0, r_outer=12.0, read_sigma=0.0, gain=1.0, supersample=8)</code> (or <code style="color:#22d3bf">opsastrostack.get(&quot;aperture_photometry&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>円形開口 + 環状背景の測光(古典的な CCD 測光)。</p>
+<p>Photometry with a circular aperture and an annular background (classical CCD photometry).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>開口内の画素は<b>副画素で重み付け</b>する(`<code style="color:#22d3bf">supersample^2</code>` 点の標本化)ので、</p>
 <p>半径が整数でなくても面積が階段状に飛ばない。背景は `<code style="color:#22d3bf">r_inner</code><code style="color:#22d3bf">〜</code><code style="color:#22d3bf">r_outer</code>`</p>
 <p>の環の<b>中央値</b>(隣の星が環に入っても引きずられない)。</p>

@@ -1,0 +1,43 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">irradiance_map — OPTICS <code style="color:#22d3bf">illumination</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import illumdesign; illumdesign.irradiance_map(light, size_mm=(50.0, 50.0), shape=(128, 128), height=None, z_mm=0.0, facing=&#x27;up&#x27;)</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;irradiance_map&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>部品面上の放射照度(`<code style="color:#22d3bf">image2d</code>`、単位は intensity / mm²)。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>The plane is centred on the axis, *size_mm* = (height, width) in mm sampled</p>
+<p>on *shape* = (rows, cols); +y is up (row 0 is the top). *height* (optional,</p>
+<p>same shape as the map, mm) tilts each pixel&#x27;s normal to that of a relief</p>
+<p>surface — a dent or a bump then shows as the irradiance it actually</p>
+<p>receives. *z_mm* shifts the plane (a thick part&#x27;s top face). *facing*</p>
+<p>`<code style="color:#22d3bf">&quot;up&quot;</code><code style="color:#22d3bf"> (+z, toward the camera) or </code><code style="color:#22d3bf">&quot;down&quot;</code>` — the face a backlight</p>
+<p>illuminates (what the camera sees through the part&#x27;s apertures).</p>
+<p>Closed forms: an isotropic point source (`<code style="color:#22d3bf">cos_exponent=0</code>`) at height h</p>
+<p>gives `<code style="color:#22d3bf">E = I0 cos³θ / h²</code><code style="color:#22d3bf">; a Lambertian emitter (</code><code style="color:#22d3bf">cos_exponent=1</code>`)</p>
+<p>pointing down gives the cos⁴ law `<code style="color:#22d3bf">E = I0 cos⁴θ / h²</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
+<p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
+<p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>
+<p style="margin:2px 0 2px 12px">• **文字列は <code style="color:#22d3bf">ValueError</code>** — <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> は成功してしまうため、未パースの設定値が長さとして通り抜ける(実測: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> がもっともらしい 66.667 mm を返していた)。bool も <code style="color:#22d3bf">True == 1</code> の暗黙昇格として拒否。</p>
+<p style="margin:2px 0 2px 12px">• **complex / masked array は <code style="color:#22d3bf">ValueError</code><b>(実数枠のみ。虚部の無言切り捨て・マスク剥がしを拒否)。</b>NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code>**。</p>
+<p style="margin:2px 0 2px 12px">• <b>0 除算とその親戚を名指しで拒否</b>: 焦点距離 0・曲率半径 0・屈折率 &lt;= 0・不透明な開口(全 0 なので正規化が 0/0)・総和 &lt;= 0 の PSF・S0 = 0 の Stokes ベクトル・物体が前側焦点にある(像が無限遠)。</p>
+<p style="margin:2px 0 2px 12px">• <b>非有限を返すのは 2 op だけ、しかも契約として明記</b>: <code style="color:#22d3bf">depth_of_field</code> の過焦点距離以遠の <code style="color:#22d3bf">far_mm = inf</code>(それが過焦点距離の定義)と <code style="color:#22d3bf">gaussian_beam</code> のウエストでの <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(平面波面の曲率半径)。どちらも有限の相棒(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)を併せて返す。**それ以外の無言 NaN/Inf は内部で検出して <code style="color:#22d3bf">ValueError</code>** —「float64 が溢れた」と「答えが無限大」は別の主張なので、後者の顔で前者を返さない。</p>
+<p style="margin:2px 0 2px 12px">• <b>サイズ上限</b>: 生成格子は <code style="color:#22d3bf">optics.MAX_GRID</code>(4096)、供給された場/PSF/開口は <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24)、ABCD 素子列は <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024)、Zernike は <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25)。小さな引数から巨大な内部確保が起きる経路(実測: n_max=40 × 4096² で 108 GB)を fail-closed で塞ぐ。</p>
+<p style="margin:2px 0 2px 12px">• <b>物理的に不可能な状態も拒否</b>: 偏光度 &gt; 1 の Stokes ベクトル、負の透過率、負の強度、n-|m| が奇数などの不正な Zernike 添字。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:mv_illumination_practice">mv_illumination_practice</a> — 照明の実務知識 — 波長・偏光・点灯方式・外光・安全</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:illumination_design_demo">illumination_design_demo</a> — <code style="color:#22d3bf">py -3.11 examples/illumination_design_demo.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opoptics:fraunhofer_pattern">fraunhofer_pattern</a> · <a style="color:#22d3bf" href="opoptics:psf_to_mtf">psf_to_mtf</a> · <a style="color:#22d3bf" href="opoptics:illumination_uniformity">illumination_uniformity</a> · <a style="color:#22d3bf" href="opoptics:render_through_lens">render_through_lens</a> · <a style="color:#22d3bf" href="opoptics:surface_defect">surface_defect</a> · <a style="color:#22d3bf" href="opoptics:defocus_blur">defocus_blur</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">illumination</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:light_source">light_source</a> · <a style="color:#22d3bf" href="opoptics:illumination_uniformity">illumination_uniformity</a> · <a style="color:#22d3bf" href="opoptics:defect_contrast">defect_contrast</a> · <a style="color:#22d3bf" href="opoptics:lighting_sweep">lighting_sweep</a> · <a style="color:#22d3bf" href="opoptics:illumination_design">illumination_design</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: illumdesign.py — OPTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

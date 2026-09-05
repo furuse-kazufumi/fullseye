@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">axes</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import annotate; annotate.axes_transform(rect, xlim, ylim, invert_y=True, xscale=&#x27;linear&#x27;, yscale=&#x27;linear&#x27;)</code>(或 <code style="color:#22d3bf">opsannotate.get(&quot;axes_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>データ座標 → 画素座標の対応(<b>閉形式</b>)を作る。</p>
+<p>构建数据坐标 → 像素坐标的(<b>闭式</b>)映射。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">row は下向き</code><code style="color:#22d3bf"> という画像の事実と、</code><code style="color:#22d3bf">y は上向き</code>` というグラフの慣習の</p>
 <p>ずれを、<b>この 1 か所だけ</b>で吸収する。図のコードはこの辞書を持ち回る。</p>
 <p>px = x0 + (x - xmin)/(xmax - xmin) * (w - 1)</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import annotate; annotate.annotate_leader_layout(shape, points, labels=None, font_size=12, pad=4, gap=22, side=&#x27;auto&#x27;, font_path=None, min_font_size=9)</code> (oder <code style="color:#22d3bf">opsannotate.get(&quot;annotate_leader_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>table(dict)を返す: 引き出し線の配置(肘・文字位置・板の矩形)を閉形式で決める。</p>
+<p>Liefert eine Tabelle (dict): die Anordnung der Hinweislinien (Knick, Textposition, Plattenrechteck) in geschlossener Form.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>各点について候補側を固定順に試し、**板が画像に収まり・他の板と重ならず・</p>
 <p>他の点を覆わない**最初の候補を採る。どの候補も駄目なら肘を 1.6 倍、2.4 倍に</p>
 <p>伸ばして再試行し、それでも駄目なら <b>ValueError</b>(黙って重ねない)。</p>

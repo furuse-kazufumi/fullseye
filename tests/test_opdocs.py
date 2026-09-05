@@ -800,6 +800,28 @@ def test_translated_help_is_generated_from_the_generator_no_drift(lang):
     assert not bad, ("翻訳ヘルプが生成器とずれている(%s): %s" % (lang, ", ".join(bad)))
 
 
+def rec_is_japanese_body(rec):
+    """詳細説明の本文が日本語か(= どの読み手にとっても原文のままになる op)。"""
+    return OD.has_japanese(OD.summary_and_rest(rec.get("doc"))[1])
+
+
+def test_notice_when_nothing_is_translated():
+    """要約の訳が**無い**op には「まだ訳がありません」が出ること。
+
+    いまは 935/935 が訳済みなので実データでは起きない。起きたときに黙って
+    日本語が出ないことを、生成器を直接呼んで固定する(将来 op を足した瞬間に
+    通る道なので、実データが無いからと検査ごと消さない)。
+    """
+    by = {(r["dim"], r["name"]): r for r in _RECS}
+    rec = dict(next(r for r in _RECS if OD.summary_and_rest(r.get("doc"))[0]))
+    rec["name"] = "_untranslated_probe_"          # 対訳表に載っていない名前
+    md = OD._op_md(rec, OD._op_path(rec), by, lang="en", verbatim_doc=False)
+    with open(os.path.join(ROOT, "docs", "i18n", "opdocs.json"), encoding="utf-8") as f:
+        tbl = json.load(f)["strings"]
+    head = tbl["> この op の説明はまだ訳がありません。原文をそのまま載せます。"]["en"]
+    assert head.lstrip("> ")[:30] in md
+
+
 def test_translated_pages_say_plainly_what_is_not_translated():
     """訳の無い散文を**訳したふりで**出さないこと。
 
@@ -808,10 +830,15 @@ def test_translated_pages_say_plainly_what_is_not_translated():
     """
     with open(os.path.join(ROOT, "docs", "i18n", "opdocs.json"), encoding="utf-8") as f:
         tbl = json.load(f)["strings"]
-    notice = tbl["> この op の説明はまだ訳がありません。原文をそのまま載せます。"]
+    # 要約は全 935 本が 6 言語そろったが、**詳細説明の本文は原文のまま**。
+    # 「要約と見出しは訳した、以下は原文」と頁が自分で言うことを固定する
+    # (要約すら無い場合の断り書きは下の test_notice_when_nothing_is_translated)。
+    notice = tbl["> 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。"]
     root = os.path.join(ROOT, "studio_assets", "op_help")
     rec = next(r for r in _RECS
-               if (r.get("doc") or "").strip() and not OD.op_summary(r, "en")[1])
+               if OD.summary_and_rest(r.get("doc"))[1]          # 本文がある
+               and OD.op_summary(r, "en")[1]                    # 要約は訳済み
+               and rec_is_japanese_body(r))
     d = root if rec["dim"] == "2d" else os.path.join(root, rec["dim"])
     for lang in _TARGET_LANGS:
         with open(os.path.join(d, "%s.%s.html" % (rec["name"], lang)), encoding="utf-8") as f:
@@ -905,3 +932,60 @@ def test_locale_tags_map_to_the_shipped_language_codes():
     assert OD.normalize_lang("fr") == "en"             # 未対応は英語へ
     for code in OD.LANGS:
         assert OD.normalize_lang(code) == code
+
+
+def test_japanese_is_a_translation_target_too():
+    """原文が英語の op に**日本語のヘルプ**があること。
+
+    2026-09-05 実測: 要約 935 本のうち **349 本は原文が英語**で、日本語のヘルプを
+    開いても英語のままだった。``ja`` を「原文だから常に OK」と数えていたのが誤りで、
+    内訳は ja 586 / en 373 / 他 各 50 だった。``ja`` も翻訳先の 1 つとして数える。
+    """
+    root = os.path.join(ROOT, "studio_assets", "op_help")
+    missing, extra = [], []
+    for rec in _RECS:
+        src = OD.summary_and_rest(rec.get("doc"))[0]
+        if not src or rec["name"] in _HAND_AUTHORED_HELP:
+            continue
+        d = root if rec["dim"] == "2d" else os.path.join(root, rec["dim"])
+        p = os.path.join(d, "%s.ja.html" % rec["name"])
+        if OD.has_japanese(src):
+            # 原文が日本語 —— ノートと同じ中身の兄弟を並べても情報は増えない
+            if os.path.exists(p):
+                extra.append("%s/%s" % (rec["dim"], rec["name"]))
+        elif not os.path.exists(p):
+            missing.append("%s/%s" % (rec["dim"], rec["name"]))
+    assert not missing, ("原文が英語なのに日本語ヘルプが無い(%d 件) 例: %s"
+                         % (len(missing), ", ".join(missing[:8])))
+    assert not extra, ("原文が日本語なのに冗長な ja 兄弟がある(%d 件) 例: %s"
+                       % (len(extra), ", ".join(extra[:8])))
+
+
+def test_every_summary_is_readable_in_japanese():
+    """全 op の要約が**日本語で読める**こと(原文が日本語か、訳があるか)。
+
+    ここが赤いときは `docs/i18n/op_summary.json` に ``ja`` を足す。数字ではなく
+    op を名指しで出すので、どれが残っているかがそのまま作業リストになる。
+    """
+    unreadable = [("%s/%s" % (r["dim"], r["name"]))
+                  for r in _RECS
+                  if OD.summary_and_rest(r.get("doc"))[0] and not OD.op_summary(r, "ja")[1]]
+    assert not unreadable, ("要約が日本語で読めない op が %d 件: %s"
+                            % (len(unreadable), ", ".join(unreadable[:12])))
+
+
+def test_summary_translations_stay_the_readers_language():
+    """要約の訳が、その言語で書かれていること(原文をそのまま貼っていないか)。
+
+    「訳した」と表に書いてあるのに中身が原文のままだと、指紋も一致するので
+    永久に気づけない。日本語訳に日本語が 1 文字も無い、といった取り違えを弾く。
+    """
+    bad = []
+    for r in _RECS:
+        src = OD.summary_and_rest(r.get("doc"))[0]
+        if not src or OD.has_japanese(src):
+            continue
+        tr, ok = OD.op_summary(r, "ja")
+        if ok and not OD.has_japanese(tr):
+            bad.append("%s/%s" % (r["dim"], r["name"]))
+    assert not bad, ("日本語訳のはずが日本語を含まない: " + ", ".join(bad[:12]))

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import volcolor; volcolor.vol_label_legend(labels, props=None, seed: &#x27;int&#x27; = 0, spacing=None, measure: &#x27;str&#x27; = &#x27;volume&#x27;, top=None)</code>(或 <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_legend&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>「どの色がどの成分で、その計測値は幾つか」の凡例表を返す。</p>
+<p>图例表:哪个颜色对应哪个成分,以及它的测量值。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>色だけを出して意味の読めない図を作らないための op。返りは `<code style="color:#22d3bf">list[dict]</code>`:</p>
 <p>`<code style="color:#22d3bf">label</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">rgb</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(r, g, b)</code><code style="color:#22d3bf"> float </code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">hex</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">&quot;#rrggbb&quot;</code>` ·</p>
 <p>`<code style="color:#22d3bf">voxel_count</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">volume</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">measure</code>` 並べ替えに使った量の名前 ·</p>

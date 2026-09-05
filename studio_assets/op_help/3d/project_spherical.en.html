@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import spherical_proj; spherical_proj.project_spherical(points, h_res: &#x27;int&#x27; = 1024, v_res: &#x27;int&#x27; = 64, v_fov=(-25.0, 15.0)) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">ops3d.get(&quot;project_spherical&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>回転式 LiDAR の球面レンジ画像へ投影 (v_res, h_res)。空セル=0, 近い点優先(最小 range)。</p>
+<p>Project into the spherical range image of a spinning LiDAR (v_res, h_res). Empty cells are 0; nearer points win (minimum range).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

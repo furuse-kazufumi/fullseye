@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import volcolor; volcolor.vol_labels_to_meshes(labels, ids=None, spacing=None, seed: &#x27;int&#x27; = 0, level: &#x27;float&#x27; = 0.5, axes: &#x27;str&#x27; = &#x27;xyz&#x27;)</code>(또는 <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_labels_to_meshes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>成分ごとに marching cubes をかけ、<b>色付きメッシュの集合</b>にする。</p>
+<p>성분마다 marching cubes 를 걸어 <b>색이 입혀진 메시의 집합</b>으로 만듭니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>返りは `<code style="color:#22d3bf">list[dict]</code><code style="color:#22d3bf">、各要素が </code>`{&quot;label&quot;, &quot;vertices&quot; (nv, 3) float64,</p>
 <p>&quot;faces&quot; (nf, 3) int64, &quot;color&quot; (r, g, b)}``。色は</p>
 <p>:func:<code style="color:#22d3bf">vol_colorize_labels</code> と同じパレットなので、**断面図と 3-D 表示で同じ</p>

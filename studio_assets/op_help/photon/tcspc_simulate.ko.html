@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">counts</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import photoncount; photoncount.tcspc_simulate(distance_m=3.0, bins=256, bin_ps=100.0, signal_photons=50.0, ambient_photons=20.0, irf_fwhm_ps=200.0, seed=0, noise=True)</code>(또는 <code style="color:#22d3bf">opsphoton.get(&quot;tcspc_simulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Synthesise a single-pixel photon arrival-time histogram with a known answer.</p>
+<p>답을 아는 단일 화소 광자 도달 시각 히스토그램을 합성합니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>The generative model of a direct time-of-flight (dToF) / TCSPC measurement::</p>
 <p>lambda_k = signal_photons * P(pulse in bin k) + ambient_photons / bins</p>
 <p>N_k      ~ Poisson(lambda_k)</p>

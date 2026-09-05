@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import optscene; optscene.vision_layout(sensor: &#x27;dict&#x27;, lens: &#x27;dict&#x27;, lights, scene=None, tilt_deg: &#x27;float&#x27; = 0.0, azimuth_deg: &#x27;float&#x27; = 0.0, look_at_mm=(0.0, 0.0, 0.0)) -&gt; &#x27;dict&#x27;</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;vision_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>センサー・レンズ・照明・シーンを束ね、<b>導出量を閉じた式で</b>返す。</p>
+<p>Bundle sensor, lens, light and scene, and return the <b>derived quantities in closed form</b>.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>返り値 dict: `<code style="color:#22d3bf">camera</code><code style="color:#22d3bf">(:func:</code>optical_camera<code style="color:#22d3bf"> と同じ規約)/ </code><code style="color:#22d3bf">sensor</code>` /</p>
 <p>`<code style="color:#22d3bf">lens</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">lights</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">scene</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">budget</code><code style="color:#22d3bf">(:func:</code>optical_budget`)。</p>
 <p>撮る前にここを見れば、視野に部品が収まるか・欠陥が分解できるか・被写界深度が</p>

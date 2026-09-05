@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">clahe — 2D <code style="color:#22d3bf">gray</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;clahe&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>コントラスト制限つき適応ヒストグラム平坦化(タイル分割 + 双線形でつなぐ)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> — タイル数 </code><code style="color:#22d3bf">nb = 2 + int(3a)</code>` (画像を nb×nb に分割)</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> — **clip limit**。ビン平均カウントに対する倍率 </code><code style="color:#22d3bf">256**b</code>` で与える</p>
+<p>(`<code style="color:#22d3bf">b=0</code>` → 1 倍 = 完全に平坦化されたヒストグラム = トーンマップ直線 =</p>
+<p>強調ゼロ、`<code style="color:#22d3bf">b=1</code>` → 256 倍 = 1 ビンが取り得る最大値なので切り取りが</p>
+<p>効かない = 素の AHE、`<code style="color:#22d3bf">b=0.5</code><code style="color:#22d3bf"> → 16 倍。OpenCV の既定 </code><code style="color:#22d3bf">clipLimit=40</code>` は</p>
+<p>おおよそ `<code style="color:#22d3bf">b=0.665</code>`)。</p>
+<p>★2026-09-02(この修正): それまで `<code style="color:#22d3bf">b</code>` は <b>完全に死んでいた</b>(実測:</p>
+<p>`<code style="color:#22d3bf">max|clahe(x,0.5,0.0) - clahe(x,0.5,1.0)| == 0.0</code>` きっかり)。CLAHE の</p>
+<p>&quot;C&quot; は contrast <b>limited</b> の C であり、clip limit こそが AHE と CLAHE を</p>
+<p>分ける当のものなので、<b>実装は AHE であって CLAHE ではなかった</b> ——</p>
+<p>名前が嘘をついていた。ここで clip limit を実装して `<code style="color:#22d3bf">b</code>` に割り当て、</p>
+<p>`<code style="color:#22d3bf">b=1</code>` が旧実装とビット一致する端になるよう倍率を選んである</p>
+<p>(切り取りが起きない上限 = ビン数 256 倍)。</p>
+<p>Tiles PARTITION the image (linspace boundaries, so the last tile absorbs the</p>
+<p>H % nb / W % nb remainder), each tile&#x27;s clip-limited CDF is its local tone map,</p>
+<p>and every pixel blends the maps of its (up to) 4 nearest tile centres with</p>
+<p>bilinear weights — the standard CLAHE interpolation (Zuiderveld 1994).</p>
+<p>2026-08-30: 補間を追加(KNOWN_ISSUES #4 — 旧実装はタイルごとに独立に平坦化</p>
+<p>しており、タイル境界に不連続(肉眼で見える格子)が出ていた)。タイル中心の</p>
+<p>近傍領域ではそのタイルの CDF がそのまま支配的なので、旧実装と同じ写像族の</p>
+<p>連続版になっている。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_gray_arith">gallery2d_gray_arith</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_gray_arith.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">gray</code>)</h3>
+<p><a style="color:#22d3bf" href="op:gamma">gamma</a> · <a style="color:#22d3bf" href="op:invert">invert</a> · <a style="color:#22d3bf" href="op:scale_clip">scale_clip</a> · <a style="color:#22d3bf" href="op:equalize">equalize</a> · <a style="color:#22d3bf" href="op:sigmoid">sigmoid</a> · <a style="color:#22d3bf" href="op:sk_adapthist">sk_adapthist</a> · <a style="color:#22d3bf" href="op:sk_enhance_contrast">sk_enhance_contrast</a> · <a style="color:#22d3bf" href="op:sk_autolevel">sk_autolevel</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

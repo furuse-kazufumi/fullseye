@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import specularity; specularity.photometric_residual(images, lights, normals=None, albedo=None, normalize=True)</code>(或 <code style="color:#22d3bf">opsspecular.get(&quot;photometric_residual&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>How badly the Lambertian model fails, per pixel. → (H, W) RMS residual.</p>
+<p>Lambert 模型逐像素的失配程度。→ (H, W) 的 RMS 残差。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">sqrt(mean_n (albedo * (n.L_n) - I_n)^2)</code>` — the root-mean-square</p>
 <p>disagreement between the linear model and the measurements, in the units of</p>
 <p>the input radiance. On a synthetic Lambertian surface with the true</p>

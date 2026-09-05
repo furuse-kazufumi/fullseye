@@ -140,3 +140,33 @@ def test_article_source_images_do_not_ship():
              if os.path.exists(p) and "sample_sources_ai" in open(p, encoding="utf-8").read()]
     assert not users, ("出荷コードが sample_sources_ai を読んでいる: %s "
                        "—— 読むなら同梱に戻すこと(この検査を消すのではなく)" % users)
+
+
+def test_citation_metadata_matches_the_released_version():
+    """``CITATION.cff`` の版が ``pyproject.toml`` と一致すること。
+
+    2026-09-05 実測: `version: 0.1.2` のまま 5 版ぶん取り残されていた。リリース手順に
+    出てこないファイルは黙って古びる —— 引用した人には**間違った版**が伝わり、
+    しかも誰も気づかない(ビルドもテストも読まないので)。
+
+    ``date-released`` は CHANGELOG の最新見出しの日付と揃える。
+    """
+    import datetime
+    cff = _read("CITATION.cff")
+    ver = re.search(r"^version:\s*([0-9][^\s#]*)", cff, re.M)
+    assert ver, "CITATION.cff に version が無い"
+    proj = re.search(r'^version\s*=\s*"([^"]+)"', _read("pyproject.toml"), re.M)
+    assert proj, "pyproject.toml に version が無い"
+    assert ver.group(1) == proj.group(1), (
+        "CITATION.cff の version %s が pyproject の %s と違う "
+        "(リリース時に両方あげること)" % (ver.group(1), proj.group(1)))
+
+    rel = re.search(r'^date-released:\s*"?([0-9]{4}-[0-9]{2}-[0-9]{2})"?', cff, re.M)
+    assert rel, "CITATION.cff に date-released が無い"
+    datetime.date.fromisoformat(rel.group(1))          # 形式が壊れていないこと
+    head = re.search(r"^##\s*([0-9][^\s]*)\s*—\s*([0-9]{4}-[0-9]{2}-[0-9]{2})",
+                     _read("CHANGELOG.md"), re.M)
+    if head and head.group(1) == proj.group(1):        # 未リリース見出しのときは日付を問わない
+        assert rel.group(1) == head.group(2), (
+            "CITATION.cff の date-released %s が CHANGELOG の %s と違う"
+            % (rel.group(1), head.group(2)))

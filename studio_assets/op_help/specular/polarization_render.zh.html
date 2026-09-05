@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">polsweep</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import specularity; specularity.polarization_render(diffuse, specular, angles_deg=(0.0, 45.0, 90.0, 135.0), azimuth_deg=0.0)</code>(或 <code style="color:#22d3bf">opsspecular.get(&quot;polarization_render&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Forward model of a polariser sweep: turn a known split into the frames a polarisation camera would record. → (N, H, W).</p>
+<p>偏振片旋转的正向模型:把已知的分离变成偏振相机会记录到的帧序列。→ (N, H, W)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">I(t) = 0.5 * diffuse + specular * cos^2(t - azimuth)</code>`. The diffuse term is</p>
 <p>treated as completely unpolarised, so it contributes half its radiance at</p>
 <p>every analyser angle; the specular term is treated as completely linearly</p>

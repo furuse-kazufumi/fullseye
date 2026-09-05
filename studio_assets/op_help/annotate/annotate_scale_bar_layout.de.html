@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import annotate; annotate.annotate_scale_bar_layout(shape, units_per_pixel, unit=&#x27;µm&#x27;, corner=&#x27;rb&#x27;, target_fraction=0.2, margin=14, thickness=5)</code> (oder <code style="color:#22d3bf">opsannotate.get(&quot;annotate_scale_bar_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>table(dict)を返す: 画像幅の `<code style="color:#22d3bf">target_fraction</code>` 以下で<b>切りのよい</b>長さのバー。</p>
+<p>Liefert eine Tabelle (dict): einen Balken <b>runder</b> Länge, höchstens `<code style="color:#22d3bf">target_fraction</code>` der Bildbreite.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>長さは `<code style="color:#22d3bf">1/2/5 × 10^k</code><code style="color:#22d3bf"> のうち </code><code style="color:#22d3bf">target_fraction * W * units_per_pixel</code>` 以下の</p>
 <p>最大値。画素長 = `<code style="color:#22d3bf">round(length / units_per_pixel)</code>`。</p>
 <p>Returns</p>

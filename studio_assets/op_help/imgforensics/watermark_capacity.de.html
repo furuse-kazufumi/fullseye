@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × phash</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import imgforensics; imgforensics.watermark_capacity(image, bits, strengths=(0.02, 0.05, 0.1, 0.2, 0.4), wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1, jpeg_quality=None) -&gt; &#x27;dict&#x27;</code> (oder <code style="color:#22d3bf">opsimgforensics.get(&quot;watermark_capacity&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>埋め込み強度と <b>PSNR / BER</b> のトレードオフを掃引して返す。`<code style="color:#22d3bf">table</code>`。</p>
+<p>Durchläuft den Kompromiss zwischen Einbettungsstärke und <b>PSNR / BER</b>. `<code style="color:#22d3bf">table</code>`.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>各 `<code style="color:#22d3bf">strength</code>` について埋め込み → 抽出を実際に走らせ、</p>
 <p>`<code style="color:#22d3bf">psnr_db</code><code style="color:#22d3bf">  原画像と透かし入り画像の PSNR(値域 [0, 1] 基準、</code><code style="color:#22d3bf">MAX=1</code>`)</p>
 <p>`<code style="color:#22d3bf">ber</code><code style="color:#22d3bf">      抽出のビット誤り率(:func:</code>hash_distance` で数える)</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">normalmap</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import surfacelib; surfacelib.weave_normals(shape, warp_px=8.0, weft_px=8.0, depth=0.25, angle_deg=0.0) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;weave_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>織り目の法線場(布・カーボンファイバー・金網)。直交する 2 周期の畝。</p>
+<p>织纹的法线场(布・碳纤维・金属网)。两组正交周期的隆起。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>shape: (H, W)。warp_px / weft_px: 経糸 / 緯糸の間隔 [px]。depth: 畝の深さ。</p>
 <p>angle_deg: 織りの向き [deg]。</p>
 <p>返り値: (H, W, 3) の単位法線場。<b>2 方向に周期がある</b>のが要点(FFT に 2 本の</p>

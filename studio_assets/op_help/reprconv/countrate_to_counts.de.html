@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">countrate</code> → <code style="color:#22d3bf">counts</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import reprconv; reprconv.countrate_to_counts(countrate, gate_s=0.001)</code> (oder <code style="color:#22d3bf">opsreprconv.get(&quot;countrate_to_counts&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>計数レート `<code style="color:#22d3bf">[Hz]</code><code style="color:#22d3bf"> → 計数 </code><code style="color:#22d3bf">counts</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">countrate</code>` の出口(<b>可逆</b>)。</p>
+<p>Zählrate `<code style="color:#22d3bf">[Hz]</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">counts</code><code style="color:#22d3bf">. Der Ausgang aus </code><code style="color:#22d3bf">countrate</code>` (<b>invertierbar</b>).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><b>単位が変換の全内容</b>: `<code style="color:#22d3bf">[1/s] * [s] = [1]</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">gate_s</code>` は積算窓の秒数で、</p>
 <p>既定 1 ms。`<code style="color:#22d3bf">counts</code>` は「時間 bin ごとの光子数」の型なので、レート列を</p>
 <p>そのまま counts と名乗らせると<b>桁が 7 つずれたまま黙って通る</b></p>

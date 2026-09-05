@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import reprconv; reprconv.keypoints_to_image2d(keypoints, shape=(64, 64))</code> (or <code style="color:#22d3bf">opsreprconv.get(&quot;keypoints_to_image2d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>画像座標 `<code style="color:#22d3bf">(N,2) = (u, v)</code><code style="color:#22d3bf"> → 計数画像 </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">keypoints</code>` の 2 つ目の出口。</p>
+<p>Image coordinates `<code style="color:#22d3bf">(N,2) = (u, v)</code><code style="color:#22d3bf"> → a count image </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf">. The second exit from </code><code style="color:#22d3bf">keypoints</code>`.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">round(v)</code><code style="color:#22d3bf"> を行、</code><code style="color:#22d3bf">round(u)</code>` を列として 1 ずつ加算する。**画素格子への</p>
 <p>量子化が損失**で、:func:<code style="color:#22d3bf">keypoints_from_image2d</code> と往復すると位置が</p>
 <p>最大 0.5 画素ずれる(よく離れた 225 点での実測: <b>軸あたり</b> RMS 0.2835 px =</p>

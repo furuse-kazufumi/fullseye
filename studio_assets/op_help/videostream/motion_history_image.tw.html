@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import videostream; videostream.motion_history_image(video, tau: &#x27;int&#x27; = 15, threshold: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsvideostream.get(&quot;motion_history_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Bobick–Davis Motion History Image per frame → `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> in </code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">video</code>`).</p>
+<p>Bobick–Davis 的 Motion History Image 逐影格 → `<code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> 的 </code><code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">video</code>`)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Frame `<code style="color:#22d3bf">t</code><code style="color:#22d3bf"> is the MHI of frames </code><code style="color:#22d3bf">0..t</code>`: 1 where motion is happening,</p>
 <p>decaying by `<code style="color:#22d3bf">1/tau</code>` per frame elsewhere. The last frame is the classic</p>
 <p>single-image temporal template of the whole clip&#x27;s motion.</p>

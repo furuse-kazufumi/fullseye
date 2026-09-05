@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import tomography; tomography.sart_reconstruct(sinogram, angles_deg=None, size=None, n_iter=10, relaxation=0.3, initial=None, nonnegative=True)</code>(或 <code style="color:#22d3bf">opstomography.get(&quot;sart_reconstruct&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>SART — simultaneous algebraic reconstruction, one angle at a time.</p>
+<p>SART —— 同時代數重建,一次一個角度。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>An iterative solver for `<code style="color:#22d3bf">A x = p</code><code style="color:#22d3bf"> where </code><code style="color:#22d3bf">A</code>` is the projector: for each</p>
 <p>view in turn, project the current estimate, take the residual, and</p>
 <p>back-project it with the row and column sums of `<code style="color:#22d3bf">A</code>` as normalisers::</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import reprconv; reprconv.keypoints_uv_to_points(keypoints, z=0.0)</code>(또는 <code style="color:#22d3bf">opsreprconv.get(&quot;keypoints_uv_to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>画像座標 `<code style="color:#22d3bf">(N,2) = (u, v)</code><code style="color:#22d3bf"> → 点群 </code><code style="color:#22d3bf">(N,3) = (z, y, x)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">keypoints</code>` の出口。</p>
+<p>이미지 좌표 `<code style="color:#22d3bf">(N,2) = (u, v)</code><code style="color:#22d3bf"> → 점군 </code><code style="color:#22d3bf">(N,3) = (z, y, x)</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">keypoints</code>` 의 출구.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><b>op 名に軸の約束が書いてある</b>のは、この repo で `<code style="color:#22d3bf">keypoints</code>` を産む</p>
 <p>`<code style="color:#22d3bf">match3d.project_points</code><code style="color:#22d3bf"> が **(u, v) = (列, 行)** を返し、</code><code style="color:#22d3bf">points</code>` を産む</p>
 <p>`<code style="color:#22d3bf">fuse3d.to_points(voxel)</code>` が <b>(z, y, x)</b> を返すから —— 素直に「先頭 2 列」</p>

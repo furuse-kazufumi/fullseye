@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × fingerprint</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import imgforensics; imgforensics.fingerprint_correlate(image, fingerprint, denoiser: &#x27;str&#x27; = &#x27;wiener&#x27;, sigma: &#x27;float&#x27; = 0.02, exclude: &#x27;int&#x27; = 11) -&gt; &#x27;dict&#x27;</code> (oder <code style="color:#22d3bf">opsimgforensics.get(&quot;fingerprint_correlate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>1 枚の画像を指紋に照合する。<b>判定は返さない</b> —— 証拠量と注意書きを返す。</p>
+<p>Vergleicht ein Bild mit einem Fingerabdruck. <b>Kein Urteil</b> — eine Beweisstatistik und ihre Vorbehalte.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>残差 `<code style="color:#22d3bf">W = I - denoise(I)</code><code style="color:#22d3bf"> と参照信号 </code><code style="color:#22d3bf">I·K</code>` の巡回相互相関を FFT で取り、</p>
 <p>正規化相互相関のピークと <b>PCE</b>(peak-to-correlation energy)を返す。</p>
 <p>返り(`<code style="color:#22d3bf">table</code>` 語彙の dict):</p>

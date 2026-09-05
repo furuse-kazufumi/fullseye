@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import lensimage; lensimage.psf_from_opd(system, field=None, size=None, wavelength_um=None, pixel_pitch_um=None, oversample=4)</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;psf_from_opd&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Diffraction PSF of the real, aberrated pupil (`<code style="color:#22d3bf">image2d</code>`, sums to 1).</p>
+<p>帶真實像差的光瞳的繞射 PSF(`<code style="color:#22d3bf">image2d</code>`,總和為 1)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>The pupil function `<code style="color:#22d3bf">P = mask · exp(i·2π·W)</code>` comes from</p>
 <p>:func:<code style="color:#22d3bf">raytrace.opd_samples</code> (*W* in waves on a `<code style="color:#22d3bf">size × size</code>` grid over the</p>
 <p>exit pupil; `<code style="color:#22d3bf">size=None</code>` picks a grid that keeps the phase below 0.4 waves</p>

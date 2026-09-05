@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">beatcube</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import rangedoppler; rangedoppler.fmcw_beat_simulate(ranges_m=(10.0,), velocities_ms=(0.0,), angles_deg=None, amplitudes=None, n_samples=64, n_chirps=32, n_antennas=1, sample_rate_hz=10000000.0, slope_hz_per_s=20000000000000.0, chirp_period_s=5e-05, wavelength_m=0.0038934, element_spacing_m=None, phase_deg=0.0, noise_sigma=0.0, seed=0)</code>(또는 <code style="color:#22d3bf">opsrangedoppler.get(&quot;fmcw_beat_simulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Synthesise the complex `<code style="color:#22d3bf">(A, C, S)</code>` beat cube for known targets.</p>
+<p>알려진 표적에 대한 복소 `<code style="color:#22d3bf">(A, C, S)</code>` 비트 큐브를 합성합니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>The forward model. Every target `<code style="color:#22d3bf">t</code>` contributes</p>
 <p>`<code style="color:#22d3bf">a_t * exp(1j*(2*pi*f_b_t*n/f_s + 2*pi*f_d_t*m*T_c + 2*pi*d*k*sin(th_t)/lam + phi))</code>`</p>
 <p>over fast-time sample `<code style="color:#22d3bf">n</code><code style="color:#22d3bf">, chirp </code><code style="color:#22d3bf">m</code><code style="color:#22d3bf"> and antenna </code><code style="color:#22d3bf">k</code>`, with</p>

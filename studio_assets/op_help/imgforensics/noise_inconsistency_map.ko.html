@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import imgforensics; imgforensics.noise_inconsistency_map(image, block: &#x27;int&#x27; = 16) -&gt; &#x27;np.ndarray&#x27;</code>(또는 <code style="color:#22d3bf">opsimgforensics.get(&quot;noise_inconsistency_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>ブロックごとの <b>雑音標準偏差</b> を並べた地図。`<code style="color:#22d3bf">image2d</code>`。</p>
+<p>블록별 <b>잡음 표준편차</b>를 늘어놓은 지도. `<code style="color:#22d3bf">image2d</code>`.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Immerkær 1996 の 3x3 マスクで高周波成分を取り、`<code style="color:#22d3bf">block</code>` 角の非重複ブロックごとに</p>
 <p>`<code style="color:#22d3bf">sigma = sqrt(pi/2) / 6 * mean(|conv|)</code>` を出してブロック定数で戻す。</p>
 <p>貼り付けた領域が別の露出・別の圧縮率・別のカメラから来ていれば、この値が</p>

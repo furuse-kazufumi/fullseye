@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import optscene; optscene.layout_capture(layout: &#x27;dict&#x27;, exposure_ms: &#x27;float&#x27; = 10.0, supersample: &#x27;int&#x27; = 2, spectral_samples: &#x27;int&#x27; = 1, apply_diffraction: &#x27;bool&#x27; = True, apply_defocus: &#x27;bool&#x27; = False, raw: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;layout_capture&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>レイアウトのとおりに撮る(スペクトル -&gt; 回折 -&gt; 被写界深度 -&gt; センサー)。</p>
+<p>按佈局如實拍攝(光譜 → 繞射 → 景深 → 感測器)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">spectral_samples</code>` &gt; 1 で光源のスペクトルを重ね合わせる(ハロゲンのような</p>
 <p>広帯域はこれが要る。LED は 1-3 本、レーザーは 1 本で足りる)。</p>
 <p>`<code style="color:#22d3bf">raw=True</code>` なら量子化前の放射輝度も返す。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">fingerprint</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import imgforensics; imgforensics.fingerprint_strength_map(fingerprint, block: &#x27;int&#x27; = 16) -&gt; &#x27;np.ndarray&#x27;</code>(또는 <code style="color:#22d3bf">opsimgforensics.get(&quot;fingerprint_strength_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>指紋の <b>ブロックごとの実効強度</b>(標準偏差)を並べた地図。`<code style="color:#22d3bf">image2d</code>`。</p>
+<p>지문의 <b>블록별 실효 강도</b>(표준편차)를 늘어놓은 지도. `<code style="color:#22d3bf">image2d</code>`.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>PRNU は飽和した画素と真っ暗な画素では出ない(乗法的な欠陥なので信号が要る)。</p>
 <p>この地図は「<b>指紋がどこで何も言えないか</b>」を見るためのもので、値が低い領域の</p>
 <p>照合結果は弱い。`<code style="color:#22d3bf">block</code><code style="color:#22d3bf"> 角の非重複ブロックごとの標準偏差を、元の </code><code style="color:#22d3bf">(H, W)</code>` へ</p>

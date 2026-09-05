@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">beatcube</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import rangedoppler; rangedoppler.fmcw_beat_simulate(ranges_m=(10.0,), velocities_ms=(0.0,), angles_deg=None, amplitudes=None, n_samples=64, n_chirps=32, n_antennas=1, sample_rate_hz=10000000.0, slope_hz_per_s=20000000000000.0, chirp_period_s=5e-05, wavelength_m=0.0038934, element_spacing_m=None, phase_deg=0.0, noise_sigma=0.0, seed=0)</code> (oder <code style="color:#22d3bf">opsrangedoppler.get(&quot;fmcw_beat_simulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Synthesise the complex `<code style="color:#22d3bf">(A, C, S)</code>` beat cube for known targets.</p>
+<p>Synthetisiert den komplexen `<code style="color:#22d3bf">(A, C, S)</code>`-Beat-Würfel für bekannte Ziele.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>The forward model. Every target `<code style="color:#22d3bf">t</code>` contributes</p>
 <p>`<code style="color:#22d3bf">a_t * exp(1j*(2*pi*f_b_t*n/f_s + 2*pi*f_d_t*m*T_c + 2*pi*d*k*sin(th_t)/lam + phi))</code>`</p>
 <p>over fast-time sample `<code style="color:#22d3bf">n</code><code style="color:#22d3bf">, chirp </code><code style="color:#22d3bf">m</code><code style="color:#22d3bf"> and antenna </code><code style="color:#22d3bf">k</code>`, with</p>

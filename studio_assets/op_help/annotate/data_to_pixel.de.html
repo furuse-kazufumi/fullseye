@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">axes × signal × signal</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import annotate; annotate.data_to_pixel(axes, x, y)</code> (oder <code style="color:#22d3bf">opsannotate.get(&quot;data_to_pixel&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>:func:<code style="color:#22d3bf">axes_transform</code> の対応でデータ点を画素 (x,y) に写す。</p>
+<p>Bildet Datenpunkte über eine :func:<code style="color:#22d3bf">axes_transform</code>-Abbildung auf Pixel `<code style="color:#22d3bf">(x, y)</code>` ab.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><b>クリップしない</b> ―― `<code style="color:#22d3bf">np.clip(v, lo, hi)</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">lo &gt; hi</code>`(反転軸)の</p>
 <p>とき黙って `<code style="color:#22d3bf">hi</code>` を返し、全点が端に貼り付いた「もっともらしい嘘の図」に</p>
 <p>なる(この repo の生成器で実際に一度騙されている)。範囲外を弾くのは</p>

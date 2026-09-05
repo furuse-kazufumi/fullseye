@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import imgforensics; imgforensics.copy_move_regions(image, method: &#x27;str&#x27; = &#x27;keypoint&#x27;, min_matches: &#x27;int&#x27; = 4, min_offset: &#x27;float&#x27; = 16.0, offset_tol: &#x27;float&#x27; = 2.0, ratio: &#x27;float&#x27; = 0.6, patch: &#x27;int&#x27; = 11, block: &#x27;int&#x27; = 8, step: &#x27;int&#x27; = 1, n_dct: &#x27;int&#x27; = 10, min_variance: &#x27;float&#x27; = 0.0001, max_feature_dist: &#x27;float&#x27; = 0.02, neighbours: &#x27;int&#x27; = 2, ransac_thresh: &#x27;float&#x27; = 3.0, ransac_iters: &#x27;int&#x27; = 300, seed: &#x27;int&#x27; = 0) -&gt; &#x27;list&#x27;</code> (or <code style="color:#22d3bf">opsimgforensics.get(&quot;copy_move_regions&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>1 枚の画像の中の <b>コピー&amp;ムーブ</b>(自己複製)領域の対を返す。`<code style="color:#22d3bf">table</code>`。</p>
+<p>Pairs of <b>copy-move</b> (self-duplicated) regions within one image. `<code style="color:#22d3bf">table</code>`.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">method=&quot;keypoint&quot;</code>`(既定)</p>
 <p>:func:<code style="color:#22d3bf">features.harris_corners</code> でコーナーを取り、</p>
 <p>:func:<code style="color:#22d3bf">features.describe_patches</code> で正規化パッチ記述子を作り、</p>

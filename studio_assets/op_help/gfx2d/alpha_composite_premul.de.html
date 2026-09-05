@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">rgba_premul × rgba_premul</code> → <code style="color:#22d3bf">rgba_premul</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.alpha_composite_premul(src, dst)</code> (oder <code style="color:#22d3bf">opsgfx2d.get(&quot;alpha_composite_premul&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Porter–Duff <b>over</b> on premultiplied colour: `<code style="color:#22d3bf">src + dst*(1 - src.a)</code>`.</p>
+<p>Porter–Duff-<b>over</b> auf vormultiplizierter Farbe: `<code style="color:#22d3bf">src + dst*(1 - src.a)</code>`.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>This is the operator; :func:<code style="color:#22d3bf">alpha_composite</code> is this one with a conversion</p>
 <p>on each side. Being affine in `<code style="color:#22d3bf">dst</code>`, it is <b>exactly associative</b> —</p>
 <p>`<code style="color:#22d3bf">over(over(A, B), C) == over(A, over(B, C))</code>` to float64 rounding, which the</p>

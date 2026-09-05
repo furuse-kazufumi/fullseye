@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import volcolor; volcolor.vol_labels_to_meshes(labels, ids=None, spacing=None, seed: &#x27;int&#x27; = 0, level: &#x27;float&#x27; = 0.5, axes: &#x27;str&#x27; = &#x27;xyz&#x27;)</code> (oder <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_labels_to_meshes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>成分ごとに marching cubes をかけ、<b>色付きメッシュの集合</b>にする。</p>
+<p>Führt Marching Cubes pro Komponente aus und liefert eine <b>Menge eingefärbter Meshes</b>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>返りは `<code style="color:#22d3bf">list[dict]</code><code style="color:#22d3bf">、各要素が </code>`{&quot;label&quot;, &quot;vertices&quot; (nv, 3) float64,</p>
 <p>&quot;faces&quot; (nf, 3) int64, &quot;color&quot; (r, g, b)}``。色は</p>
 <p>:func:<code style="color:#22d3bf">vol_colorize_labels</code> と同じパレットなので、**断面図と 3-D 表示で同じ</p>

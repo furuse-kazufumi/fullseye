@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import reprconv; reprconv.keypoints_to_image2d(keypoints, shape=(64, 64))</code>(또는 <code style="color:#22d3bf">opsreprconv.get(&quot;keypoints_to_image2d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>画像座標 `<code style="color:#22d3bf">(N,2) = (u, v)</code><code style="color:#22d3bf"> → 計数画像 </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">keypoints</code>` の 2 つ目の出口。</p>
+<p>이미지 좌표 `<code style="color:#22d3bf">(N,2) = (u, v)</code><code style="color:#22d3bf"> → 계수 이미지 </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">keypoints</code>` 의 두 번째 출구.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">round(v)</code><code style="color:#22d3bf"> を行、</code><code style="color:#22d3bf">round(u)</code>` を列として 1 ずつ加算する。**画素格子への</p>
 <p>量子化が損失**で、:func:<code style="color:#22d3bf">keypoints_from_image2d</code> と往復すると位置が</p>
 <p>最大 0.5 画素ずれる(よく離れた 225 点での実測: <b>軸あたり</b> RMS 0.2835 px =</p>

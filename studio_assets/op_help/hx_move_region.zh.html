@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_move_region&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">move_region</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>region を平行移動(dy=a, dx=b を中心 0 のオフセットに)。</p>
+<p>平移 region(dy=a, dx=b,视为以 0 为中心的偏移)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>np.roll ゆえ<b>端は循環</b>(はみ出た region が反対側から現れる)。HALCON の</p>
 <p>move_region は端で消える(クリップ)なので端に触れる移動では挙動が異なる —</p>
 <p>進化 op の特徴量用途では循環で一様性を保つ設計を維持し、差異はここに開示する。</p>

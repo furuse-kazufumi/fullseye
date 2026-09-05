@@ -1,0 +1,20 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mesh_select_lod — 3D <code style="color:#22d3bf">resolution</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import meshres; meshres.mesh_select_lod(lod, distance, focal_px, pixel_tolerance=0.5, use=&#x27;max_error&#x27;)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;mesh_select_lod&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>幾何誤差の投影量が *pixel_tolerance* を下回る、最も粗い LOD 段(`<code style="color:#22d3bf">table</code>`)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:mesh_resolution_demo">mesh_resolution_demo</a> — <code style="color:#22d3bf">py -3.11 examples_3d/mesh_resolution_demo.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">resolution</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:mesh_edge_stats">mesh_edge_stats</a> · <a style="color:#22d3bf" href="op3d:mesh_detail_map">mesh_detail_map</a> · <a style="color:#22d3bf" href="op3d:mesh_split_long_edges">mesh_split_long_edges</a> · <a style="color:#22d3bf" href="op3d:mesh_isotropic_remesh">mesh_isotropic_remesh</a> · <a style="color:#22d3bf" href="op3d:mesh_sample_points">mesh_sample_points</a> · <a style="color:#22d3bf" href="op3d:mesh_lod_chain">mesh_lod_chain</a> · <a style="color:#22d3bf" href="op3d:mesh_reduction_report">mesh_reduction_report</a> · <a style="color:#22d3bf" href="op3d:mesh_decimate_preserving">mesh_decimate_preserving</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: meshres.py — 3D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

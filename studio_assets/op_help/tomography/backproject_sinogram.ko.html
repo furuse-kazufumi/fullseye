@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import tomography; tomography.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None)</code>(또는 <code style="color:#22d3bf">opstomography.get(&quot;backproject_sinogram&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Plain, <b>un-filtered</b> back-projection — the blurred baseline.</p>
+<p><b>필터 없는</b> 소박한 역투영 —— 흐린 베이스라인.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Smear each projection back along the rays it came from and sum. The result is</p>
 <p>the true slice convolved with `<code style="color:#22d3bf">1/|r|</code>`, so it is correct in the large and</p>
 <p>wrong everywhere in detail.</p>

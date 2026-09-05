@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import raytrace; raytrace.lens_system(surfaces=None, stop=None, object_mm=inf, wavelength_um=0.58756, index_object=1.0, image_mm=None, field=None)</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;lens_system&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Build a validated sequential prescription (the `<code style="color:#22d3bf">table</code>` every other op consumes).</p>
+<p>建構經過檢驗的逐面處方(其他所有運算子消費的那個 `<code style="color:#22d3bf">table</code>`)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>*surfaces* is a list; each entry is a dict ``{&quot;R&quot;, &quot;t&quot;, &quot;n&quot;, &quot;k&quot;, &quot;ap&quot;,</p>
 <p>&quot;mirror&quot;, &quot;decenter&quot;, &quot;tilt&quot;, &quot;asph&quot;}`<code style="color:#22d3bf"> or a tuple </code><code style="color:#22d3bf">(R, t, n[, k[, ap]])</code>`:</p>
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">R</code><code style="color:#22d3bf"> radius (mm, </code><code style="color:#22d3bf">inf</code><code style="color:#22d3bf"> for flat), </code><code style="color:#22d3bf">t</code>` thickness to the next surface</p>

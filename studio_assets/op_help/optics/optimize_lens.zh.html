@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import lensopt; lensopt.optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4, efl_target=None, efl_weight=None, field_weights=None, iterations=30, damping=0.001, tolerance=1e-07, min_thickness=0.5, max_thickness=None, min_radius=1.0, pupil_fill=0.98)</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;optimize_lens&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Damped-least-squares (Levenberg–Marquardt) optimisation of a prescription (`<code style="color:#22d3bf">table</code>`).</p>
+<p>对处方做阻尼最小二乘(Levenberg–Marquardt)优化(`<code style="color:#22d3bf">table</code>`)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>*variables*: surface parameters to move — strings `<code style="color:#22d3bf">&quot;R&lt;i&gt;&quot;</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">&quot;c&lt;i&gt;&quot;</code>`</p>
 <p>(curvature; a radius may pass through flat), `<code style="color:#22d3bf">&quot;t&lt;i&gt;&quot;</code>` (thickness),</p>
 <p>`<code style="color:#22d3bf">&quot;k&lt;i&gt;&quot;</code><code style="color:#22d3bf"> (conic), </code><code style="color:#22d3bf">&quot;A4_&lt;i&gt;&quot;</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">&quot;A6_&lt;i&gt;&quot;</code>` … (even aspheric</p>

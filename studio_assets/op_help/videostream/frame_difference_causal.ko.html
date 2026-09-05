@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import videostream; videostream.frame_difference_causal(video) -&gt; &#x27;np.ndarray&#x27;</code>(또는 <code style="color:#22d3bf">opsvideostream.get(&quot;frame_difference_causal&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>`<code style="color:#22d3bf">|frame t − frame t−1|</code><code style="color:#22d3bf"> with a zero first frame → </code><code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">video</code>`).</p>
+<p>`<code style="color:#22d3bf">|frame t − frame t−1|</code><code style="color:#22d3bf">(첫 프레임은 0) → </code><code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">video</code>`).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Same length as the input (unlike :func:<code style="color:#22d3bf">videops.frame_difference</code>, `<code style="color:#22d3bf">T−1</code>`),</p>
 <p>so it composes frame-for-frame with the other stream ops.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

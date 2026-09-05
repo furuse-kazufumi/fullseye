@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import optscene; optscene.scene_plane(z_mm: &#x27;float&#x27; = 0.0, material=None, half_size_mm=None) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;scene_plane&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>z = `<code style="color:#22d3bf">z_mm</code><code style="color:#22d3bf"> の水平面(ステージ/コンベア)。</code><code style="color:#22d3bf">half_size_mm</code>` で有限の板にできる。</p>
+<p>z = `<code style="color:#22d3bf">z_mm</code><code style="color:#22d3bf"> 的水平面(載台/輸送帶)。用 </code><code style="color:#22d3bf">half_size_mm</code>` 可做成有限的板。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>有限板は (hx, hy) の半サイズ [mm]。省略すると無限平面(背景として使う)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>

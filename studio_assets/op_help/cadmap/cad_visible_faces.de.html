@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import cadmap; cadmap.cad_visible_faces(mesh, K=None, R=None, t=None, width=64, height=64, cull_backfaces=True, strict=True)</code> (oder <code style="color:#22d3bf">opscadmap.get(&quot;cad_visible_faces&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>このカメラから<b>実際に見えている</b>面の ID(昇順、`<code style="color:#22d3bf">indices</code>` sort)。</p>
+<p>IDs der von dieser Kamera <b>tatsächlich sichtbaren</b> Flächen (aufsteigend, `<code style="color:#22d3bf">indices</code>`-Sort).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>画像格子(`<code style="color:#22d3bf">width</code><code style="color:#22d3bf"> x </code><code style="color:#22d3bf">height</code>`、画素中心は整数座標)へ光線を撃ち、最も</p>
 <p>手前に来た面を集める。裏面(法線がカメラを向いていない)と、手前の面に</p>
 <p>完全に隠れた面は入らない。検査カバレッジ — 「この視点で CAD のどの面を</p>

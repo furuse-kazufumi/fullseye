@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">histcube</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import photoncount; photoncount.dtof_cube_simulate(depth, bins=256, bin_ps=100.0, reflectivity=None, signal_photons=20.0, ambient_photons=5.0, irf_fwhm_ps=200.0, seed=0, noise=True)</code>(或 <code style="color:#22d3bf">opsphoton.get(&quot;dtof_cube_simulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Synthesise the `<code style="color:#22d3bf">(H, W, T)</code>` photon histogram cube a SPAD array produces.</p>
+<p>合成 SPAD 陣列產生的 `<code style="color:#22d3bf">(H, W, T)</code>` 光子直方圖立方體。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>The per-pixel version of :func:<code style="color:#22d3bf">tcspc_simulate</code>: every pixel of the *depth*</p>
 <p>map (metres, one-way distance) gets a Gaussian return at its own round-trip</p>
 <p>time `<code style="color:#22d3bf">2d/c</code>`, scaled by *signal_photons* times that pixel&#x27;s *reflectivity*,</p>

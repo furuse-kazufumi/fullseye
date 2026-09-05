@@ -1,0 +1,61 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ring_artifact_remove — TOMOGRAPHY <code style="color:#22d3bf">artifact</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">sinogram</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import tomography; tomography.ring_artifact_remove(sinogram, window=5, mode=&#x27;median&#x27;)</code> (または <code style="color:#22d3bf">opstomography.get(&quot;ring_artifact_remove&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>角度平均プロファイルを平坦化して、検出器ビンごとのオフセットを取り除く。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>The mean of a sinogram column over all angles is a smooth function of the</p>
+<p>detector position for any object that stays inside the field of view — it is</p>
+<p>essentially the object&#x27;s mass seen from every side. A gain error adds a</p>
+<p>*constant* to one column, so it appears in that mean as a spike on a smooth</p>
+<p>curve. Smoothing the mean profile and subtracting the difference removes the</p>
+<p>spike and leaves the object.</p>
+<p>Measured on the Shepp-Logan phantom scaled to a peak line integral of 1.18</p>
+<p>(i.e. CT-realistic, see the note below) with `<code style="color:#22d3bf">gain_sigma=0.02</code>`: the</p>
+<p>reconstruction&#x27;s normalised RMS error against the truth goes 0.0250 (clean)</p>
+<p>-&gt; 0.0643 (with rings) -&gt; <b>0.0358</b> (removed at the default window), so</p>
+<p><b>72 %</b> of the damage is undone.</p>
+<p>The window is the whole argument, and it was chosen by measurement rather</p>
+<p>than by taste. Removed fraction, against the damage the same call does to an</p>
+<p>already-clean sinogram:</p>
+<p>window   median: undone / damage    mean: undone / damage</p>
+<p>3       61.0 % / +0.0000           70.4 % / +0.0004</p>
+<p>5       72.3 % / +0.0002           82.6 % / +0.0019</p>
+<p>7       74.3 % / +0.0017           82.4 % / +0.0042</p>
+<p>11       73.6 % / +0.0025           74.0 % / +0.0091</p>
+<p>31       73.3 % / +0.0043           37.4 % / +0.0244</p>
+<p>61       58.2 % / +0.0109            9.0 % / +0.0356</p>
+<p>The default is `<code style="color:#22d3bf">window=5, mode=&quot;median&quot;</code>` because it is the setting that</p>
+<p>removes most of the rings while doing almost nothing to a sinogram that did</p>
+<p>not need it — and *that* is the property that matters, because this operator</p>
+<p>will be run on scans whose rings nobody has measured. `<code style="color:#22d3bf">mean</code>` at the same</p>
+<p>window removes 10 points more and costs 10x the collateral damage; wide</p>
+<p>windows are worse at both.</p>
+<p>Two failure modes are stated rather than hidden. This <b>cannot</b> separate a</p>
+<p>real object feature that is thin in the detector direction and present at</p>
+<p>every angle — the axis of rotation itself is the extreme case — from a gain</p>
+<p>error. And *gain_sigma is in line-integral units*, so how much a given gain</p>
+<p>error matters depends entirely on how large the line integrals are: on the</p>
+<p>same phantom left in raw pixel units (peak line integral 70.9 rather than</p>
+<p>1.18) the identical 2 % gain error changes the reconstruction&#x27;s error by less</p>
+<p>than 0.0001 and this operator has nothing to do. That is not a bug in either</p>
+<p>place — it is what &quot;2 % of the signal&quot; means when the signal is 60x larger.</p>
+<p>:param sinogram: `<code style="color:#22d3bf">(n_angles, n_detectors)</code>`.</p>
+<p>:param window: smoothing width in detector bins, an <b>odd</b> int `<code style="color:#22d3bf">3 .. n_det</code>`.</p>
+<p>:param mode: `<code style="color:#22d3bf">&quot;median&quot;</code><code style="color:#22d3bf"> (robust, the default) or </code><code style="color:#22d3bf">&quot;mean&quot;</code>`.</p>
+<p>:returns: `<code style="color:#22d3bf">(n_angles, n_detectors)</code>` float64 sinogram.</p>
+<p>:raises ValueError: on an even or out-of-range window, or an unknown mode.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:ct_reconstruction">ct_reconstruction</a> — <code style="color:#22d3bf">py -3.11 examples/ct_reconstruction.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">sinogram</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="optomography:backproject_sinogram">backproject_sinogram</a> · <a style="color:#22d3bf" href="optomography:filtered_backprojection">filtered_backprojection</a> · <a style="color:#22d3bf" href="optomography:sart_reconstruct">sart_reconstruct</a> · <a style="color:#22d3bf" href="optomography:beam_hardening_apply">beam_hardening_apply</a> · <a style="color:#22d3bf" href="optomography:beam_hardening_correct">beam_hardening_correct</a> · <a style="color:#22d3bf" href="optomography:ring_artifact_apply">ring_artifact_apply</a> · <a style="color:#22d3bf" href="optomography:metal_trace_interpolate">metal_trace_interpolate</a> · <a style="color:#22d3bf" href="optomography:sinogram_center_of_rotation">sinogram_center_of_rotation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">artifact</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:beam_hardening_apply">beam_hardening_apply</a> · <a style="color:#22d3bf" href="optomography:beam_hardening_correct">beam_hardening_correct</a> · <a style="color:#22d3bf" href="optomography:ring_artifact_apply">ring_artifact_apply</a> · <a style="color:#22d3bf" href="optomography:metal_trace_interpolate">metal_trace_interpolate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tomography.py — TOMOGRAPHY operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

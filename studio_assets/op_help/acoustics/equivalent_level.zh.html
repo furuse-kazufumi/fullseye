@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import acoustics; acoustics.equivalent_level(x, rate, weighting=&#x27;A&#x27;, ref=1.0, floor_db=-200.0, window=&#x27;none&#x27;)</code>(或 <code style="color:#22d3bf">opsacoustics.get(&quot;equivalent_level&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>The energy-equivalent level of a record, in dB relative to `<code style="color:#22d3bf">ref</code>`.</p>
+<p>记录的能量等效级,以 `<code style="color:#22d3bf">ref</code>` 为基准的 dB。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">L_eq = 10 log10(mean(x_w**2) / ref**2)</code><code style="color:#22d3bf"> where </code><code style="color:#22d3bf">x_w</code>` is the signal after</p>
 <p>the chosen weighting. Returns a plain float.</p>
 <p><b>The reference is yours to supply.</b> The default `<code style="color:#22d3bf">ref=1.0</code>` means dB</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">sinogram</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import tomography; tomography.ring_artifact_apply(sinogram, gain_sigma=0.02, seed=0, offsets=None)</code> (oder <code style="color:#22d3bf">opstomography.get(&quot;ring_artifact_apply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Give the detector a per-bin gain error — the source of ring artefacts.</p>
+<p>Gibt dem Detektor einen Verstärkungsfehler pro Bin — die Quelle von Ringartefakten.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>A detector bin whose gain is `<code style="color:#22d3bf">g</code><code style="color:#22d3bf"> reports </code><code style="color:#22d3bf">I = g I_true</code>`, so after the</p>
 <p>logarithm the line integral picks up a <b>constant offset</b> `<code style="color:#22d3bf">-ln g</code>` at that</p>
 <p>bin, the same at every angle. Back-projecting a constant column smears it</p>

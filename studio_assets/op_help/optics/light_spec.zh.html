@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import optscene; optscene.light_spec(kind: &#x27;str&#x27; = &#x27;coaxial&#x27;, source: &#x27;str&#x27; = &#x27;led&#x27;, wavelength_nm: &#x27;float&#x27; = 550.0, bandwidth_nm: &#x27;float&#x27; = 30.0, radius_mm: &#x27;float&#x27; = 40.0, height_mm: &#x27;float&#x27; = 110.0, size_mm: &#x27;float&#x27; = None, n: &#x27;int&#x27; = 196, intensity: &#x27;float&#x27; = 1.0, cos_exponent: &#x27;float&#x27; = 1.0, polarization: &#x27;str&#x27; = None, model: &#x27;str&#x27; = None, maker: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;light_spec&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>照明の諸元。<b>幾何は illumdesign.light_source に委ね、光の性質をここで足す</b>。</p>
+<p>照明诸元。<b>几何交给 illumdesign.light_source,光的性质在这里补上</b>。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">kind</code>` は coaxial / ring / dome / bar / backlight(器具の形)。</p>
 <p>`<code style="color:#22d3bf">source</code><code style="color:#22d3bf"> は led / halogen / laser で、</code><code style="color:#22d3bf">wavelength_nm</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">bandwidth_nm</code>`</p>
 <p>が意味を変える ―― LED は狭帯域(~30 nm)、ハロゲンは広帯域(~300 nm)、</p>

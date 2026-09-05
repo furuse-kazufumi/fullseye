@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import specularity; specularity.specular_diffuse_split(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0), body_rgb=None, max_rank_ratio=0.1, max_negative_frac=0.02)</code>(또는 <code style="color:#22d3bf">opsspecular.get(&quot;specular_diffuse_split&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Split a linear-RGB image into its diffuse (body) and specular (interface) parts. → (diffuse, specular), both (H, W, 3).</p>
+<p>선형 RGB 이미지를 확산(체적) 성분과 정반사(계면) 성분으로 나눕니다. → (diffuse, specular), 둘 다 (H, W, 3).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Shafer&#x27;s dichromatic reflection model writes the radiance of a dielectric as</p>
 <p>`<code style="color:#22d3bf">I(x) = m_d(x) * L(x) + m_s(x) * G</code>`: a body term carrying the surface</p>
 <p>colour `<code style="color:#22d3bf">L</code><code style="color:#22d3bf"> and an interface term carrying the **illuminant** colour </code><code style="color:#22d3bf">G</code>`.</p>

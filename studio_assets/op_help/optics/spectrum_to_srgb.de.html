@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">vector</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import matappear; matappear.spectrum_to_srgb(nm, reflectance, illuminant=None) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">opsoptics.get(&quot;spectrum_to_srgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>分光反射率 → <b>線形 sRGB</b>(ガンマ前)。白い面(反射率 1)が (1,1,1) になる正規化。</p>
+<p>Spektraler Reflexionsgrad → <b>lineares sRGB</b> (vor Gamma). So normiert, dass eine weiße Fläche (Reflexionsgrad 1) zu (1,1,1) wird.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>nm:           波長格子 (K,) [nm]。単調増加。</p>
 <p>reflectance:  (..., K) の分光反射率(0–1 想定、範囲外でも計算は通る)。</p>
 <p>illuminant:   (K,) の光源分光分布。既定は D65 の平滑近似。</p>

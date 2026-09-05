@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">sinogram</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import tomography; tomography.ring_artifact_apply(sinogram, gain_sigma=0.02, seed=0, offsets=None)</code>(또는 <code style="color:#22d3bf">opstomography.get(&quot;ring_artifact_apply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Give the detector a per-bin gain error — the source of ring artefacts.</p>
+<p>검출기에 빈별 게인 오차를 줍니다 —— 링 아티팩트의 원천.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>A detector bin whose gain is `<code style="color:#22d3bf">g</code><code style="color:#22d3bf"> reports </code><code style="color:#22d3bf">I = g I_true</code>`, so after the</p>
 <p>logarithm the line integral picks up a <b>constant offset</b> `<code style="color:#22d3bf">-ln g</code>` at that</p>
 <p>bin, the same at every angle. Back-projecting a constant column smears it</p>

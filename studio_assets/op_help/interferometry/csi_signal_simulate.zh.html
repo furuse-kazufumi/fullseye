@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">sweep</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import interferometry; interferometry.csi_signal_simulate(surface_um=6.0, z_start_um=0.0, z_step_um=0.05, n_planes=241, wavelength_um=0.6, envelope_fwhm_um=2.8, envelope_sigma_um=None, bias=0.5, amplitude=0.4, reflectivity=1.0, noise=0.0, seed=0)</code>(或 <code style="color:#22d3bf">opsinterferometry.get(&quot;csi_signal_simulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Synthesise the z-scan interferogram of one pixel over a known surface height.</p>
+<p>合成已知表面高度处一个像素的 z 扫描干涉图。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>The coherence-scanning forward model, and the reason every other operator here</p>
 <p>has an exact answer to be checked against::</p>
 <p>I(z) = bias + amplitude*reflectivity * exp(-(z-z0)^2 / 2 sigma^2)</p>

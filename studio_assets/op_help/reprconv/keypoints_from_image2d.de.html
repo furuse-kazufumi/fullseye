@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">keypoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import reprconv; reprconv.keypoints_from_image2d(image2d, threshold=0.0)</code> (oder <code style="color:#22d3bf">opsreprconv.get(&quot;keypoints_from_image2d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>計数/応答画像 `<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> → 画像座標 </code><code style="color:#22d3bf">(N,2) = (u, v)</code>`。往復の戻り路。</p>
+<p>Ein Zähl-/Antwortbild `<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> → Bildkoordinaten </code><code style="color:#22d3bf">(N,2) = (u, v)</code>`. Der Rückweg des Roundtrips.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">&gt; threshold</code>` の画素を 8 近傍で連結成分に分け、各成分の**強度重み付き</p>
 <p>重心**を返す。重み付きにするのは、副画素の情報が残っている応答画像</p>
 <p>(相関ピーク等)で往復誤差を量子化以下へ落とせるようにするため。</p>

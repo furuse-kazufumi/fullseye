@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import matappear; matappear.grating_rgb(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), pitch_um=1.6, orders=(1, 2), strength=1.0, width_nm=60.0) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;grating_rgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>法線マップ + 光源 + 視線 → <b>回折による虹色</b> (H, W, 3) の線形 sRGB。</p>
+<p>法線圖 + 光源 + 視線 → <b>繞射產生的虹彩</b> (H, W, 3) 線性 sRGB。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>CD/DVD の記録トラックは等間隔の溝 = 反射型回折格子である。溝に直交する方向の</p>
 <p>「入射と出射の sin の差」が波長を選ぶので、面の向きが変わると色が変わる。</p>
 <p>normals: (H, W, 3) 法線マップ(長さ 0 = 背景 → 0 を返す)。</p>

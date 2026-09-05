@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × flow_scattered</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import reprconv; reprconv.flow_apply(points, flow)</code> (or <code style="color:#22d3bf">opsreprconv.get(&quot;flow_apply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>点群 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> に散在フロー </code><code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> を足す → </code><code style="color:#22d3bf">points</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">flow</code>` の消費側。</p>
+<p>Add a scattered flow `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> to a point set </code><code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">points</code><code style="color:#22d3bf">. The consuming side of </code><code style="color:#22d3bf">flow</code>`.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">estimate_flow(a, b)</code>` が「a の各点から b の最近傍への変位」を返すので、</p>
 <p>`<code style="color:#22d3bf">flow_apply(a, estimate_flow(a, b))</code>` は **b の点のうち a から最近傍として</p>
 <p>選ばれたもの**へ移る。往復が厳密になるのは対応が全単射のときだけで、</p>

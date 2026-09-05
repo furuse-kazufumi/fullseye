@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">mesh × labels</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import cadmap; cadmap.cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True, min_pixels=1, background=0, strict=False)</code> (oder <code style="color:#22d3bf">opscadmap.get(&quot;cad_defect_to_cad&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>2-D の欠陥ラベル画像 → <b>CAD 面上の表</b>(面 ID / 面上の面積 / 3-D 重心)。</p>
+<p>2-D-Defektlabelbild → eine <b>Tabelle auf der CAD-Fläche</b> (Flächen-ID / Fläche darauf / 3-D-Schwerpunkt).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">labels</code><code style="color:#22d3bf"> は (H, W) の整数ラベル画像(</code><code style="color:#22d3bf">background</code>` は無視、bool マスクも</p>
 <p>可)。ラベルごとに全画素の視線を撃ち、当たった面と、その画素が**面の上で</p>
 <p>占める実面積**を積む。面積は画素数ではなく</p>

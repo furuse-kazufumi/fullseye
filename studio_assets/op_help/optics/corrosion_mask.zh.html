@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">image2d</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import surfacelib; surfacelib.corrosion_mask(shape, coverage=0.3, scale_px=24.0, seed=0) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;corrosion_mask&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>錆・緑青・汚れの<b>むら</b>(0–1 のマスク)。</p>
+<p>锈、铜绿与污渍的<b>斑驳</b>(0–1 掩码)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>shape: (H, W)。coverage: 覆われる面積の目安(0–1)。scale_px: 斑の大きさ [px]。</p>
 <p>返り値: (H, W) の 0–1 マスク。素材色の混合率として使う</p>
 <p>(<code style="color:#22d3bf">(1-m)*metal + m*rust</code>)。実測の面積率は <code style="color:#22d3bf">coverage</code> にほぼ一致する</p>

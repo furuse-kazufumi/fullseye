@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import motionmag; motionmag.motion_magnify(video, alpha, f_lo, f_hi, fps, scales: &#x27;int&#x27; = 4, orientations: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">opsmotionmag.get(&quot;motion_magnify&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Scale the in-band motion of a clip by *alpha* -&gt; `<code style="color:#22d3bf">dict</code>`.</p>
+<p>把片段带内的运动放大 *alpha* 倍 -&gt; `<code style="color:#22d3bf">dict</code>`。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>For every oriented sub-band of every frame the local phase is taken relative</p>
 <p>to that band&#x27;s temporal mean as the <b>wrapped</b> deviation</p>
 <p>`<code style="color:#22d3bf">angle(z * conj(z_mean))</code><code style="color:#22d3bf"> in </code><code style="color:#22d3bf">(-pi, pi]</code>` — it is deliberately <b>not</b></p>

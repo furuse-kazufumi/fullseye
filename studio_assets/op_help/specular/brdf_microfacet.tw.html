@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import specularity; specularity.brdf_microfacet(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), roughness=0.3, f0=0.04)</code>(或 <code style="color:#22d3bf">opsspecular.get(&quot;brdf_microfacet&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>GGX / Trowbridge-Reitz microfacet specular BRDF. → (H, W), units 1/sr.</p>
+<p>GGX / Trowbridge-Reitz 微面元鏡面 BRDF。→ (H, W),單位 1/sr。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">f_s = D * G * F / (4 (n.l) (n.v))</code>` with</p>
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">D</code>` the Trowbridge-Reitz (1975) / GGX normal distribution,</p>
 <p>`<code style="color:#22d3bf">a^2 / (pi * ((n.h)^2 (a^2 - 1) + 1)^2)</code><code style="color:#22d3bf"> for </code><code style="color:#22d3bf">a = roughness^2</code>`, which</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import photoncount; photoncount.photon_sample(image, photons_per_unit=100.0, dark_rate=0.0, seed=0)</code>(또는 <code style="color:#22d3bf">opsphoton.get(&quot;photon_sample&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Poisson-sample an expected-photon image into an actual photon count image.</p>
+<p>기대 광자 수 이미지를 푸아송 표본화해 실제 광자 계수 이미지로 만듭니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>*image* is a non-negative 2-D map of scene radiance in arbitrary units;</p>
 <p>`<code style="color:#22d3bf">lambda = image * photons_per_unit + dark_rate</code>` is the expected number of</p>
 <p>photons in each pixel over the exposure, and the result is one Poisson</p>

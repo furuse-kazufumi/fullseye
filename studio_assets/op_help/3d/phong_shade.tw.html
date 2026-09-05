@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import render_shade; render_shade.phong_shade(normals, view=(0.0, 0.0, 1.0), light=(0.0, 0.0, 1.0), ambient: &#x27;float&#x27; = 0.1, diffuse: &#x27;float&#x27; = 0.8, specular: &#x27;float&#x27; = 0.5, shininess: &#x27;float&#x27; = 32.0, clip: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;phong_shade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Phong 反射モデルで法線マップを陰影付け(環境光 + 拡散 + <b>鏡面</b>)。→ `<code style="color:#22d3bf">(H, W)</code>`。</p>
+<p>用 Phong 反射模型給法線圖著色(環境光 + 漫反射 + <b>鏡面</b>)。→ `<code style="color:#22d3bf">(H, W)</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

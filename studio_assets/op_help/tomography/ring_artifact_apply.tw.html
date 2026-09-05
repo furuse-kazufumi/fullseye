@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">sinogram</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import tomography; tomography.ring_artifact_apply(sinogram, gain_sigma=0.02, seed=0, offsets=None)</code>(或 <code style="color:#22d3bf">opstomography.get(&quot;ring_artifact_apply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Give the detector a per-bin gain error — the source of ring artefacts.</p>
+<p>給偵測器加上逐 bin 的增益誤差 —— 環狀偽影之源。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>A detector bin whose gain is `<code style="color:#22d3bf">g</code><code style="color:#22d3bf"> reports </code><code style="color:#22d3bf">I = g I_true</code>`, so after the</p>
 <p>logarithm the line integral picks up a <b>constant offset</b> `<code style="color:#22d3bf">-ln g</code>` at that</p>
 <p>bin, the same at every angle. Back-projecting a constant column smears it</p>

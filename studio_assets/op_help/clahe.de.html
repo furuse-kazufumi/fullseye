@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;clahe&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Contrast-Limited Adaptive Histogram Equalization (tiled, bilinearly blended).</p>
+<p>Kontrastbegrenzte adaptive Histogrammangleichung (gekachelt, bilinear überblendet).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> — タイル数 </code><code style="color:#22d3bf">nb = 2 + int(3a)</code>` (画像を nb×nb に分割)</p>
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> — **clip limit**。ビン平均カウントに対する倍率 </code><code style="color:#22d3bf">256**b</code>` で与える</p>
 <p>(`<code style="color:#22d3bf">b=0</code>` → 1 倍 = 完全に平坦化されたヒストグラム = トーンマップ直線 =</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d × mask</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import colortransport; colortransport.poisson_blend(src, dst, mask, offset=(0, 0))</code> (or <code style="color:#22d3bf">opscolortransport.get(&quot;poisson_blend&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>勾配場を運ぶ継ぎ目なし合成(Pérez, Gangnet &amp; Blake, SIGGRAPH 2003)。</p>
+<p>Seamless compositing that carries the gradient field (Pérez, Gangnet &amp; Blake, SIGGRAPH 2003).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">mask</code><code style="color:#22d3bf"> の内部で **</code><code style="color:#22d3bf">src</code><code style="color:#22d3bf"> の勾配**を保ちつつ、**境界で </code><code style="color:#22d3bf">dst</code>` の値**に</p>
 <p>一致する像を解く。よって出力は次の 2 つを<b>構成上</b>満たし、</p>
 <p>それが正しさの検算になる:</p>

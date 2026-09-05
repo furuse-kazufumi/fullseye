@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">lightfield</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import lightfield; lightfield.lf_from_mla(raw, angular=(5, 5), *, offset=(0, 0), crop=False)</code>(또는 <code style="color:#22d3bf">opslightfield.get(&quot;lf_from_mla&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Decode a microlens-array raw frame into a `<code style="color:#22d3bf">(V, U, H, W)</code>` light field.</p>
+<p>마이크로렌즈 어레이의 원본 프레임을 `<code style="color:#22d3bf">(V, U, H, W)</code>` 라이트필드로 디코딩합니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>The plenoptic sensor stores, for microlens `<code style="color:#22d3bf">(t, s)</code><code style="color:#22d3bf">, a </code><code style="color:#22d3bf">V x U</code>` block of</p>
 <p>pixels — one per direction through the main lens&#x27; exit pupil. So raw pixel</p>
 <p>`<code style="color:#22d3bf">(offset_y + t*V + v, offset_x + s*U + u)</code><code style="color:#22d3bf"> is exactly </code><code style="color:#22d3bf">L[v, u, t, s]</code>`:</p>

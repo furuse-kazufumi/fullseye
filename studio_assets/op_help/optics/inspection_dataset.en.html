@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import optscene; optscene.inspection_dataset(scene, camera, lights, n: &#x27;int&#x27; = 8, seed: &#x27;int&#x27; = 0, exposure_ms: &#x27;float&#x27; = 10.0, bit_depth: &#x27;int&#x27; = 8, jitter_mm: &#x27;float&#x27; = 0.0, tilt_jitter_deg: &#x27;float&#x27; = 0.0, intensity_jitter: &#x27;float&#x27; = 0.0, depth: &#x27;int&#x27; = 1, defects: &#x27;dict&#x27; = None, supersample: &#x27;int&#x27; = 1, adaptive: &#x27;bool&#x27; = False, light_samples: &#x27;int&#x27; = None, environment=None, environment_gain: &#x27;float&#x27; = 1.0) -&gt; &#x27;list&#x27;</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;inspection_dataset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>外観検査 AI の<b>学習画像を n 枚</b>、画素完全なラベル付きで生成する(検査用)。</p>
+<p>Generate <b>n training images</b> for a visual-inspection AI, with pixel-perfect labels.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>同じ部品を、照明(`<code style="color:#22d3bf">lights</code>` に複数渡すと 1 枚ごとに巡回)・置き方</p>
 <p>(`<code style="color:#22d3bf">jitter_mm</code><code style="color:#22d3bf"> の並進、</code><code style="color:#22d3bf">tilt_jitter_deg</code>` のカメラ傾き)・明るさ</p>
 <p>(`<code style="color:#22d3bf">intensity_jitter</code>` の相対ゆらぎ)を振って撮る = ドメインランダム化。</p>

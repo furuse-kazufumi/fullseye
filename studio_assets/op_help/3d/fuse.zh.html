@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">sdf</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import tsdf_fusion; tsdf_fusion.fuse(depths: &#x27;Sequence[np.ndarray]&#x27;, Ks: &#x27;Sequence&#x27;, Rs: &#x27;Sequence&#x27;, ts: &#x27;Sequence&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;, trunc: &#x27;float&#x27;) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;fuse&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>深度列を new_volume + integrate で 1 つの TSDF volume に融合。返り値 (tsdf, weight)。</p>
+<p>用 new_volume + integrate 把深度序列融合成一个 TSDF 体。返回 (tsdf, weight)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

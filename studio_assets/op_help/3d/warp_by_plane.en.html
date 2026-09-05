@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import plane_sweep; plane_sweep.warp_by_plane(img: &#x27;np.ndarray&#x27;, H: &#x27;np.ndarray&#x27;, order: &#x27;int&#x27; = 1, cval: &#x27;float&#x27; = nan) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">ops3d.get(&quot;warp_by_plane&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>homography H で img を逆ワープ。→ out[y,x] = img(H·(x,y,1))(bilinear)。</p>
+<p>Inverse-warp img by the homography H. → out[y,x] = img(H·(x,y,1)) (bilinear).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

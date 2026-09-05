@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">vector</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import matappear; matappear.grating_wavelengths(pitch_um, sin_in, sin_out, orders=(1, 2, 3)) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;grating_wavelengths&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>回折格子の式 d(sinθ_out − sinθ_in) = mλ を λ について解く。</p>
+<p>Solve the grating equation d(sinθ_out − sinθ_in) = mλ for λ.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>pitch_um: 溝間隔 d [µm]。CD は 1.6、DVD は 0.74(公開規格値)。</p>
 <p>sin_in / sin_out: 入射 / 出射方向の格子面内成分の sin(配列可、ブロードキャスト)。</p>
 <p>orders:   次数 m のシーケンス(0 は無限大になるので除外する)。</p>

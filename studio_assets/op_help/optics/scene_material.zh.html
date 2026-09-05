@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import optscene; optscene.scene_material(kind: &#x27;str&#x27; = &#x27;lambert&#x27;, albedo=0.6, metal: &#x27;str&#x27; = &#x27;al&#x27;, finish: &#x27;str&#x27; = &#x27;random&#x27;, glass: &#x27;str&#x27; = &#x27;N-BK7&#x27;, sigma_per_mm: &#x27;float&#x27; = 0.0, roughness_um: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;scene_material&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>材質を 1 つ作る。`<code style="color:#22d3bf">kind</code>` は lambert / conductor / dielectric の 3 種。</p>
+<p>创建一种材质。`<code style="color:#22d3bf">kind</code>` 为 lambert / conductor / dielectric 三选一。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>3 種しか無いのは<b>混ぜると黙って間違う</b>からで、増やすなら型を分ける</p>
 <p>(拡散か・金属か・透明か で光線の行き先が根本的に変わる)。</p>
 <p>lambert: `<code style="color:#22d3bf">albedo</code>`(スカラまたは RGB 3 要素)だけを使う完全拡散。</p>

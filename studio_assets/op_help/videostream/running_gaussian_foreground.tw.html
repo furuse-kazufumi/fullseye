@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import videostream; videostream.running_gaussian_foreground(video, alpha: &#x27;float&#x27; = 0.02, k: &#x27;float&#x27; = 2.5, var_init: &#x27;float&#x27; = 0.01, selective: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsvideostream.get(&quot;running_gaussian_foreground&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Adaptive single-Gaussian foreground masks per frame → 0/1 `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">video</code>`).</p>
+<p>自適應單高斯前景遮罩逐影格 → 0/1 `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">video</code>`)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Per-pixel mean/variance background (Wren *Pfinder*); foreground is</p>
 <p>`<code style="color:#22d3bf">&gt; k</code>` standard deviations from the mean. The first frame is all background.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

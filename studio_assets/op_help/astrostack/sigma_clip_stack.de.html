@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import astrostack; astrostack.sigma_clip_stack(frames, mode=&#x27;sigma_clip&#x27;, kappa=3.0, iters=5, center=&#x27;median&#x27;, scale=&#x27;mad&#x27;)</code> (oder <code style="color:#22d3bf">opsastrostack.get(&quot;sigma_clip_stack&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>フレーム列を合成する(平均 / 中央値 / κ-σ クリップ)。採否マスクつき。</p>
+<p>Kombiniert eine Bildfolge (Mittelwert / Median / κ-σ-Clipping), mit Annahme-/Verwerfungsmaske.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>*mode*:</p>
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;mean&quot;</code><code style="color:#22d3bf"> —— 単純平均。雑音は </code><code style="color:#22d3bf">sqrt(N)</code>` で下がるが、外れ値(宇宙線・</p>
 <p>人工衛星の航跡)は `<code style="color:#22d3bf">1/N</code>` しか薄まらず<b>必ず残る</b>。</p>

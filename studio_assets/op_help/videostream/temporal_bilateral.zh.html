@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import videostream; videostream.temporal_bilateral(video, window: &#x27;int&#x27; = 5, sigma_t: &#x27;float&#x27; = 2.0, sigma_r: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsvideostream.get(&quot;temporal_bilateral&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Causal temporal bilateral denoise per frame → `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">video</code>`).</p>
+<p>因果的时间双边去噪,逐帧 → `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">video</code>`)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Edge-preserving in time: averages recent frames but drops the weight of</p>
 <p>frames that differ (moved), so it denoises static regions without ghosting</p>
 <p>the motion the way :func:<code style="color:#22d3bf">moving_average_window</code> does.</p>

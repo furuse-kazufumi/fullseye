@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import annotate; annotate.annotate_dimension_layout(p0, p1, offset=20.0, extension=6.0, text_gap=8.0)</code> (or <code style="color:#22d3bf">opsannotate.get(&quot;annotate_dimension_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>table(dict)を返す: 寸法線の幾何(寸法線・補助線・文字位置)を閉形式で決める。</p>
+<p>Returns a table (dict): the geometry of a dimension line (line, extension lines, text position) in closed form.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> を p0→p1 の左法線(画面座標)として、寸法線は </code><code style="color:#22d3bf">p + n*offset</code>`、補助線は</p>
 <p>`<code style="color:#22d3bf">p</code><code style="color:#22d3bf"> から </code><code style="color:#22d3bf">p + n*(offset+extension)</code><code style="color:#22d3bf">、文字は寸法線の中点から </code><code style="color:#22d3bf">n*text_gap</code>`。</p>
 <p>`<code style="color:#22d3bf">offset</code>` の符号で側を選ぶ。</p>

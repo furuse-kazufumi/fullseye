@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import specularity; specularity.photometric_residual(images, lights, normals=None, albedo=None, normalize=True)</code> (oder <code style="color:#22d3bf">opsspecular.get(&quot;photometric_residual&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>How badly the Lambertian model fails, per pixel. → (H, W) RMS residual.</p>
+<p>Wie stark das Lambert-Modell pro Pixel versagt. → (H, W) RMS-Residuum.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">sqrt(mean_n (albedo * (n.L_n) - I_n)^2)</code>` — the root-mean-square</p>
 <p>disagreement between the linear model and the measurements, in the units of</p>
 <p>the input radiance. On a synthetic Lambertian surface with the true</p>

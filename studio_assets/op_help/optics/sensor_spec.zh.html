@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import optscene; optscene.sensor_spec(pixel_um: &#x27;float&#x27; = 3.45, resolution=(1024, 1024), quantum_efficiency: &#x27;float&#x27; = 0.6, full_well_e: &#x27;float&#x27; = 10000.0, read_noise_e: &#x27;float&#x27; = 2.5, dark_e_per_s: &#x27;float&#x27; = 5.0, bit_depth: &#x27;int&#x27; = 8, gain_e_per_unit: &#x27;float&#x27; = 50000.0, shutter: &#x27;str&#x27; = &#x27;global&#x27;, model: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;sensor_spec&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>イメージセンサの諸元。<b>電子の数</b>まで決める側の値だけを持つ。</p>
+<p>图像传感器的诸元。只持有决定<b>电子数</b>那一侧的数值。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">quantum_efficiency</code><code style="color:#22d3bf"> は光子 -&gt; 電子の変換効率、</code><code style="color:#22d3bf">dark_e_per_s</code>` は暗電流</p>
 <p>(暗視野は露光が長いのでここが効く)、`<code style="color:#22d3bf">shutter</code>` は global / rolling</p>
 <p>(コンベア上の部品では rolling の歪みが出る)。</p>

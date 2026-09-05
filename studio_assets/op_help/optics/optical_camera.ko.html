@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import optscene; optscene.optical_camera(focal_mm: &#x27;float&#x27; = 25.0, pixel_um: &#x27;float&#x27; = 3.45, resolution=(256, 256), working_distance_mm: &#x27;float&#x27; = 200.0, look_at_mm=(0.0, 0.0, 0.0), tilt_deg: &#x27;float&#x27; = 0.0, azimuth_deg: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>(또는 <code style="color:#22d3bf">opsoptics.get(&quot;optical_camera&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>実在の諸元(焦点距離・画素ピッチ・解像度・作動距離)から理想ピンホールを組む。</p>
+<p>실제 제원(초점거리·화소 피치·해상도·작동거리)으로 이상적 핀홀을 만듭니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">tilt_deg</code><code style="color:#22d3bf"> は真上(0°)からの傾き、</code><code style="color:#22d3bf">azimuth_deg</code>` はその方位。カメラは</p>
 <p>`<code style="color:#22d3bf">look_at_mm</code>` を見下ろす。返り値には内部行列 K [px] と姿勢 (R, t) が入る</p>
 <p>―― `<code style="color:#22d3bf">calib</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">calibration3d</code>` 系の op と同じ規約なので、そのまま</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import volcolor; volcolor.vol_labels_to_meshes(labels, ids=None, spacing=None, seed: &#x27;int&#x27; = 0, level: &#x27;float&#x27; = 0.5, axes: &#x27;str&#x27; = &#x27;xyz&#x27;)</code>(或 <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_labels_to_meshes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>成分ごとに marching cubes をかけ、<b>色付きメッシュの集合</b>にする。</p>
+<p>對每個成分做 marching cubes,得到<b>一組彩色網格</b>。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>返りは `<code style="color:#22d3bf">list[dict]</code><code style="color:#22d3bf">、各要素が </code>`{&quot;label&quot;, &quot;vertices&quot; (nv, 3) float64,</p>
 <p>&quot;faces&quot; (nf, 3) int64, &quot;color&quot; (r, g, b)}``。色は</p>
 <p>:func:<code style="color:#22d3bf">vol_colorize_labels</code> と同じパレットなので、**断面図と 3-D 表示で同じ</p>

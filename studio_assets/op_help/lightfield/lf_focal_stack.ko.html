@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">images</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import lightfield; lightfield.lf_focal_stack(lf, slopes=(-2.0, -1.0, 0.0, 1.0, 2.0), *, interp=&#x27;linear&#x27;, edge=&#x27;nearest&#x27;)</code>(또는 <code style="color:#22d3bf">opslightfield.get(&quot;lf_focal_stack&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Refocus at every slope in *slopes* — a focal stack from one exposure.</p>
+<p>*slopes* 의 모든 기울기에서 재초점 —— 한 번의 노출로 포컬 스택을 만듭니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Returns a `<code style="color:#22d3bf">list</code><code style="color:#22d3bf"> of </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> images (the </code><code style="color:#22d3bf">images</code>` type), in the order</p>
 <p>given, so :mod:<code style="color:#22d3bf">focus_stack</code>&#x27;s fusion and any multi-image operator applies</p>
 <p>unchanged. The physical camera equivalent is racking the focus N times; here</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import specularity; specularity.specular_free_transform(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0))</code>(또는 <code style="color:#22d3bf">opsspecular.get(&quot;specular_free_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Project out the illuminant direction: the part of the image a highlight cannot touch. → (H, W, 3).</p>
+<p>광원 방향을 사영으로 빼냅니다: 하이라이트가 건드릴 수 없는 부분의 이미지. → (H, W, 3).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">I - (I.G) G</code><code style="color:#22d3bf"> for the unit illuminant colour </code><code style="color:#22d3bf">G</code>`. Under the dichromatic</p>
 <p>model the interface term is `<code style="color:#22d3bf">m_s * G</code>`, so it lies entirely in the removed</p>
 <p>direction and the result is <b>invariant to any specular term whatsoever</b> —</p>

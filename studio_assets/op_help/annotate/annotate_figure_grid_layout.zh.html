@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import annotate; annotate.annotate_figure_grid_layout(shapes, ncols=2, pad=10, caption_h=32, title_h=0, letter_style=&#x27;paren&#x27;)</code>(或 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_figure_grid_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>table(dict)を返す: 多パネル図の組版(セル・パネル・見出し帯の矩形)を閉形式で。</p>
+<p>返回表(dict):以闭式给出多面板图的排版(单元格・面板・标题带的矩形)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>:func:<code style="color:#22d3bf">panel_grid</code> と同じ式: `<code style="color:#22d3bf">cw/ch</code>` は最大パネル寸、</p>
 <p>`<code style="color:#22d3bf">W = 2*pad + ncols*cw + (ncols-1)*pad</code>`、</p>
 <p>`<code style="color:#22d3bf">H = title_h + 2*pad + nrows*(ch+caption_h) + (nrows-1)*pad</code>`。</p>

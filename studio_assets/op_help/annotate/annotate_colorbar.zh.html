@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import annotate; annotate.annotate_colorbar(img, field, rect, lut=None, vmin=None, vmax=None, alpha=0.6, mask=None, unit=&#x27;&#x27;, label_fmt=&#x27;{:.3g}&#x27;, orientation=&#x27;vertical&#x27;, font_size=12, scheme=&#x27;okabe_ito&#x27;, font_path=None, text_color=None, nan_transparent=False)</code>(或 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_colorbar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>画像(image2d)を返す: スカラ場を LUT で色分けして重ね、カラーバーを添える。</p>
+<p>返回图像(image2d):用 LUT 给标量场上色并叠加,附上色条。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">t = (field - vmin)/(vmax - vmin)</code><code style="color:#22d3bf"> を [0,1] に**クリップ**し </code><code style="color:#22d3bf">lut[round(t*(n-1))]</code>`</p>
 <p>で色にする(範囲外の値は端の色 —— カラーバーの端と同じなので嘘にならない)。</p>
 <p>重ねは `<code style="color:#22d3bf">alpha</code><code style="color:#22d3bf"> の α 合成、</code><code style="color:#22d3bf">mask</code>` を渡せばその画素だけ。</p>

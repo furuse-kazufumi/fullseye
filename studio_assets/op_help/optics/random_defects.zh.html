@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import optscene; optscene.random_defects(primitive: &#x27;dict&#x27;, count: &#x27;int&#x27; = 2, kinds=(&#x27;scratch&#x27;, &#x27;crack&#x27;, &#x27;pits&#x27;, &#x27;blob&#x27;, &#x27;stain&#x27;, &#x27;foreign&#x27;), seed: &#x27;int&#x27; = 0, uv_size_mm=(20.0, 20.0), height_um=(5.0, 40.0), albedo_defects: &#x27;bool&#x27; = True, shape=(192, 192), defect_roughness_um: &#x27;float&#x27; = 0.6) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;random_defects&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>部品に<b>ランダムな欠陥</b>を作る(傷・割れ・ピット・しみ・打痕・異物)。</p>
+<p>在零件上制造<b>随机缺陷</b>(划痕・裂纹・凹坑・污渍・压痕・异物)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>外観検査 AI の学習データはこれが本体。1 回の呼び出しで `<code style="color:#22d3bf">count</code>` 件を引き、</p>
 <p>種類・位置・向き・大きさ・コントラスト・深さをすべて振る。`<code style="color:#22d3bf">seed</code>` を固定すれば</p>
 <p>決定的なので、同じデータセットを再現できる。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">rgba × rgba</code> → <code style="color:#22d3bf">rgba</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.alpha_composite(src, dst)</code>(또는 <code style="color:#22d3bf">opsgfx2d.get(&quot;alpha_composite&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Porter–Duff <b>over</b> on straight-alpha `<code style="color:#22d3bf">rgba</code>` (Porter &amp; Duff 1984).</p>
+<p>스트레이트 알파의 `<code style="color:#22d3bf">rgba</code>` 에 Porter–Duff 의 <b>over</b> 를 적용(Porter &amp; Duff 1984).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a_o = a_s + a_d (1 - a_s)</code>` and</p>
 <p>`<code style="color:#22d3bf">C_o = (C_s a_s + C_d a_d (1 - a_s)) / a_o</code><code style="color:#22d3bf">, with </code><code style="color:#22d3bf">C_o = 0</code>` where</p>
 <p>`<code style="color:#22d3bf">a_o == 0</code>`.</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgbvolume</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import volcolor; volcolor.vol_label_slice_rgb(rgbvol, index: &#x27;int&#x27;, axis=&#x27;z&#x27;)</code> (or <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_slice_rgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>色付きボリュームから 1 枚の断面 RGB を取り出す(axial / coronal / sagittal)。</p>
+<p>Take one RGB cross-section out of a coloured volume (axial / coronal / sagittal).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>*axis* は `<code style="color:#22d3bf">&quot;z&quot;</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">&quot;axial&quot;</code><code style="color:#22d3bf">/0(</code><code style="color:#22d3bf">(H, W, 3)</code><code style="color:#22d3bf"> が返る)、</code><code style="color:#22d3bf">&quot;y&quot;</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">&quot;coronal&quot;</code>`/1</p>
 <p>(`<code style="color:#22d3bf">(D, W, 3)</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">&quot;x&quot;</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">&quot;sagittal&quot;</code><code style="color:#22d3bf">/2(</code><code style="color:#22d3bf">(D, H, 3)</code>`)。**返る 2 軸が</p>
 <p>軸ごとに違う**のは `<code style="color:#22d3bf">(D, H, W)</code><code style="color:#22d3bf"> から 1 軸抜くのだから当然だが、</code><code style="color:#22d3bf">(H, W)</code>` を</p>

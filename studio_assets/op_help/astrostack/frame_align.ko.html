@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import astrostack; astrostack.frame_align(reference, frame, model=&#x27;similarity&#x27;, threshold_sigma=5.0, max_stars=60, tolerance_px=2.0, max_shift_px=None, ransac_iters=500, seed=0, min_inliers=3)</code>(또는 <code style="color:#22d3bf">opsastrostack.get(&quot;frame_align&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>星の対応から `<code style="color:#22d3bf">frame</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">reference</code>` の 2-D 変換を推定する。</p>
+<p>별의 대응으로부터 `<code style="color:#22d3bf">frame</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">reference</code>` 의 2-D 변환을 추정합니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>工程は 3 段で、<b>推定の本体はどれも既存 op</b>:</p>
 <p>1. :func:<code style="color:#22d3bf">star_detect</code> で両方の星を取る。</p>
 <p>2. 粗い平行移動を<b>オフセット投票</b>で出す(`<code style="color:#22d3bf">_vote_translation</code>`)。</p>

@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import optscene; optscene.scene_sphere(center_mm, radius_mm: &#x27;float&#x27;, material=None) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;scene_sphere&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>球の部品。`<code style="color:#22d3bf">center_mm</code><code style="color:#22d3bf"> は (x, y, z) [mm]、</code><code style="color:#22d3bf">radius_mm</code>` &gt; 0。</p>
+<p>球体零件。`<code style="color:#22d3bf">center_mm</code><code style="color:#22d3bf"> 为 (x, y, z) [mm],</code><code style="color:#22d3bf">radius_mm</code>` &gt; 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

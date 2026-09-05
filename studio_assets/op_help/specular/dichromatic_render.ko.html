@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import specularity; specularity.dichromatic_render(normals, albedo_rgb=(0.8, 0.55, 0.35), light=(0.3, 0.2, 1.0), illuminant_rgb=(1.0, 1.0, 1.0), view=(0.0, 0.0, 1.0), specular=0.25, model=&#x27;blinn_phong&#x27;, shininess=32.0, roughness=0.3, f0=0.04, ambient=0.0)</code>(또는 <code style="color:#22d3bf">opsspecular.get(&quot;dichromatic_render&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Forward dichromatic model: render a known highlight so a separation can be checked against it. → (H, W, 3).</p>
+<p>이색성 모델의 순방향: 알려진 하이라이트를 렌더링해 분리 결과를 대조할 수 있게 합니다. → (H, W, 3).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">I = albedo_rgb * max(n.l, 0) + specular * lobe(n) * illuminant_unit</code>`, the</p>
 <p>body term coming straight from :func:<code style="color:#22d3bf">photometric.render_lambertian</code> (called,</p>
 <p>not re-implemented, so the two modules cannot drift apart in convention) and</p>

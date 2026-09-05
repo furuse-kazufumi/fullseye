@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">measurement</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import glassmirror; glassmirror.critical_angle_deg(n1=1.5, n2=1.0) -&gt; &#x27;float&#x27;</code> (oder <code style="color:#22d3bf">opsoptics.get(&quot;critical_angle_deg&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>全反射の臨界角 [deg] = asin(n2/n1)。n1 &gt; n2 でなければ ValueError(存在しない)。</p>
+<p>Grenzwinkel der Totalreflexion [Grad] = asin(n2/n1). Ohne n1 &gt; n2 ein ValueError (er existiert dann nicht).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>ガラスから空気へ出るときだけ起きる。光ファイバ・プリズムの全反射面の設計値。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>

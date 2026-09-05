@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">signal</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import annotate; annotate.nice_ticks(lo, hi, n=5, scale=&#x27;linear&#x27;)</code>(或 <code style="color:#22d3bf">opsannotate.get(&quot;nice_ticks&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>[lo, hi] を覆う「切りのよい」目盛り値(1/2/5 × 10^k、<b>閉形式</b>)。</p>
+<p>覆盖 [lo, hi] 的「取整」刻度值(1/2/5 × 10^k,<b>闭式</b>)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>端は<b>含める</b>(`<code style="color:#22d3bf">lo</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">hi</code>` がちょうど目盛りに乗るなら必ず出る)。</p>
 <p>浮動小数の丸めで端が 1 個落ちる off-by-one を避けるため、判定には</p>
 <p>`<code style="color:#22d3bf">step*1e-9</code>` の許容を使う。</p>

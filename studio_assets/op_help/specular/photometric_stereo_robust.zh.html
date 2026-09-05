@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">normalmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import specularity; specularity.photometric_stereo_robust(images, lights, method=&#x27;ransac&#x27;, threshold=0.05, max_subsets=512, normalize=True, seed=0, min_inliers=3)</code>(或 <code style="color:#22d3bf">opsspecular.get(&quot;photometric_stereo_robust&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Photometric stereo that survives shadows and highlights. → (normals, albedo, inliers).</p>
+<p>能扛住阴影与高光的光度立体。→ (法线, 反照率, 内点)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Woodham&#x27;s (1980) linear model `<code style="color:#22d3bf">I_n = albedo * max(n.L_n, 0)</code>` is exact only</p>
 <p>where every light reaches the pixel and the surface is Lambertian. A cast</p>
 <p>shadow zeroes one measurement, a highlight inflates another, and least</p>

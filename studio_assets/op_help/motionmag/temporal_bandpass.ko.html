@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import motionmag; motionmag.temporal_bandpass(video, f_lo, f_hi, fps) -&gt; &#x27;np.ndarray&#x27;</code>(또는 <code style="color:#22d3bf">opsmotionmag.get(&quot;temporal_bandpass&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Ideal temporal band-pass of every pixel&#x27;s time series -&gt; `<code style="color:#22d3bf">(T, H, W)</code>`.</p>
+<p>모든 화소 시계열에 대한 이상적 시간 대역통과 -&gt; `<code style="color:#22d3bf">(T, H, W)</code>`.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Each pixel is transformed along time, every DFT bin whose frequency lies</p>
 <p>outside `<code style="color:#22d3bf">[f_lo, f_hi]</code>` (in Hz, magnitude, DC always excluded) is zeroed,</p>
 <p>and the result is transformed back. Frequency-selective where</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points × indices</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import reprconv; reprconv.select_points(points, indices)</code>(或 <code style="color:#22d3bf">opsreprconv.get(&quot;select_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>点群 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> と添字 </code><code style="color:#22d3bf">(M,)</code><code style="color:#22d3bf"> → 部分点群 </code><code style="color:#22d3bf">(M,3)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">indices</code>` の消費側。</p>
+<p>点群 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> 与索引 </code><code style="color:#22d3bf">(M,)</code><code style="color:#22d3bf"> → 子点群 </code><code style="color:#22d3bf">(M,3)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">indices</code>` 的消费侧。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">indices</code><code style="color:#22d3bf"> を産む op は 6 つあるのに(</code><code style="color:#22d3bf">iss_keypoints</code>` /</p>
 <p>`<code style="color:#22d3bf">farthest_point_sampling</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">alpha_shape_boundary</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">find_peaks</code>` /</p>
 <p>`<code style="color:#22d3bf">zero_crossings_funct_1d</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cad_visible_faces</code>`)、**添字を食う単入力 op が</p>

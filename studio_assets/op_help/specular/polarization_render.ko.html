@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">polsweep</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import specularity; specularity.polarization_render(diffuse, specular, angles_deg=(0.0, 45.0, 90.0, 135.0), azimuth_deg=0.0)</code>(또는 <code style="color:#22d3bf">opsspecular.get(&quot;polarization_render&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Forward model of a polariser sweep: turn a known split into the frames a polarisation camera would record. → (N, H, W).</p>
+<p>편광판 회전의 순방향 모델: 알려진 분리를 편광 카메라가 기록할 프레임들로 만듭니다. → (N, H, W).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">I(t) = 0.5 * diffuse + specular * cos^2(t - azimuth)</code>`. The diffuse term is</p>
 <p>treated as completely unpolarised, so it contributes half its radiance at</p>
 <p>every analyser angle; the specular term is treated as completely linearly</p>

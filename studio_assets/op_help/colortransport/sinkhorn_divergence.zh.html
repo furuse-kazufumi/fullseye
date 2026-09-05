@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal × matrix</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import colortransport; colortransport.sinkhorn_divergence(a, b, cost, cost_aa=None, cost_bb=None, reg=0.05, **kw)</code>(或 <code style="color:#22d3bf">opscolortransport.get(&quot;sinkhorn_divergence&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p><b>偏りを打ち消した</b> Sinkhorn 距離(Genevay, Peyré &amp; Cuturi, AISTATS 2018)。</p>
+<p><b>去偏</b>的 Sinkhorn 距离(Genevay, Peyré &amp; Cuturi, AISTATS 2018)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">S(a,b) - (S(a,a) + S(b,b)) / 2</code><code style="color:#22d3bf">。:func:</code>sinkhorn_distance` は正則化のぶん</p>
 <p>系統的に上振れし、<b>自分自身との「距離」が 0 にならない</b>(実測 reg=0.2 で</p>
 <p>0.05 超)。同じ偏りを自分自身との距離から引くと相殺され、**自分自身との値が</p>

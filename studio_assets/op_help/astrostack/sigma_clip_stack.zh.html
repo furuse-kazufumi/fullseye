@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import astrostack; astrostack.sigma_clip_stack(frames, mode=&#x27;sigma_clip&#x27;, kappa=3.0, iters=5, center=&#x27;median&#x27;, scale=&#x27;mad&#x27;)</code>(或 <code style="color:#22d3bf">opsastrostack.get(&quot;sigma_clip_stack&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>フレーム列を合成する(平均 / 中央値 / κ-σ クリップ)。採否マスクつき。</p>
+<p>合成一串帧(均值 / 中位数 / κ-σ 剪裁),并给出采纳掩码。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>*mode*:</p>
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;mean&quot;</code><code style="color:#22d3bf"> —— 単純平均。雑音は </code><code style="color:#22d3bf">sqrt(N)</code>` で下がるが、外れ値(宇宙線・</p>
 <p>人工衛星の航跡)は `<code style="color:#22d3bf">1/N</code>` しか薄まらず<b>必ず残る</b>。</p>

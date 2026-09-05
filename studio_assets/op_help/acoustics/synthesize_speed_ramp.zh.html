@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import acoustics; acoustics.synthesize_speed_ramp(rate=5000.0, duration=4.0, rpm_start=600.0, rpm_end=1800.0, orders=(1.0, 3.5), amplitudes=None, resonance_hz=None, noise_sigma=0.0, seed=None)</code>(或 <code style="color:#22d3bf">opsacoustics.get(&quot;synthesize_speed_ramp&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>A run-up: components locked to shaft *order*, optionally one fixed in Hz.</p>
+<p>升速过程:成分锁定在轴<b>阶次</b>上(可选一条固定在 Hz)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Order tracking has no meaning at constant speed, so its ground truth needs a</p>
 <p>signal whose shaft rate moves. Here the shaft rate ramps linearly from</p>
 <p>`<code style="color:#22d3bf">rpm_start</code><code style="color:#22d3bf"> to </code><code style="color:#22d3bf">rpm_end</code>` and each component&#x27;s instantaneous phase is</p>

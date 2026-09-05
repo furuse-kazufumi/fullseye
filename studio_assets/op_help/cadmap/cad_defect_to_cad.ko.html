@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">mesh × labels</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import cadmap; cadmap.cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True, min_pixels=1, background=0, strict=False)</code>(또는 <code style="color:#22d3bf">opscadmap.get(&quot;cad_defect_to_cad&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>2-D の欠陥ラベル画像 → <b>CAD 面上の表</b>(面 ID / 面上の面積 / 3-D 重心)。</p>
+<p>2-D 결함 레이블 이미지 → <b>CAD 면 위의 표</b>(면 ID / 면 위 면적 / 3-D 무게중심).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">labels</code><code style="color:#22d3bf"> は (H, W) の整数ラベル画像(</code><code style="color:#22d3bf">background</code>` は無視、bool マスクも</p>
 <p>可)。ラベルごとに全画素の視線を撃ち、当たった面と、その画素が**面の上で</p>
 <p>占める実面積**を積む。面積は画素数ではなく</p>

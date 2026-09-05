@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import imgforensics; imgforensics.jpeg_quality_estimate(image, max_step: &#x27;int&#x27; = 64, n_coeff: &#x27;int&#x27; = 21) -&gt; &#x27;dict&#x27;</code> (oder <code style="color:#22d3bf">opsimgforensics.get(&quot;jpeg_quality_estimate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>デコード済み画像から <b>量子化表と JPEG 品質をブラインド推定</b>する。`<code style="color:#22d3bf">table</code>`。</p>
+<p><b>Blinde Schätzung der Quantisierungstabelle und der JPEG-Qualität</b> aus einem decodierten Bild. `<code style="color:#22d3bf">table</code>`.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>ファイルの DQT を読むのではなく、<b>画素だけ</b>から推定する(そこが要点で、</p>
 <p>PNG に保存し直された / 貼り付けられた画像でも「元は JPEG 品質 N だった」が</p>
 <p>見える)。8x8 ブロック DCT を取り、係数ごとに櫛の間隔を推定して</p>

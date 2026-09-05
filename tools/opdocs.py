@@ -343,16 +343,36 @@ def summary_and_rest(doc):
     return " ".join(l.strip() for l in head.strip().split("\n")), tail.strip()
 
 
+def not_in_language(text, lang) -> bool:
+    """``text`` が読み手の言語で書かれて**いない**か(断り書きを出すかの判定)。
+
+    原文は日本語か英語のどちらかしかないので、``zh`` / ``tw`` / ``ko`` / ``de``
+    の読者にとっては常に別言語。``ja`` と ``en`` だけ中身を見て決める。
+    """
+    if lang == "ja":
+        return not has_japanese(text)
+    if lang == "en":
+        return has_japanese(text)
+    return True
+
+
 def op_summary(rec, lang):
     """op 要約(先頭段落)の訳。``(text, in_readers_language)``。
 
-    docstring は**もともと英語のものが混じっている**(2-D の 94 本のうち 30 本ほど)。
+    docstring は**もともと英語のものが混じっている**(要約 935 本のうち **349 本**)。
     それを英語の読者に出すとき「まだ訳がありません」と断るのは嘘なので、日本語を
     含まない原文は英語版では**訳済みとして扱う**(英語がこのリポジトリのベース言語)。
+
+    ★逆向きも同じで、**``ja`` も翻訳先の 1 つ**である。原文が英語の 349 本は、
+    日本語のヘルプを開いても英語のままだった —— 「原文だから ja は常に OK」と
+    数えていたのが誤りで、実測の内訳は ja 586 / en 373 / 他 各 50(2026-09-05)。
+    原文が日本語のときだけ ``ja`` は素通しにする。
     """
     src = summary_and_rest(rec.get("doc"))[0]
-    if not src or lang == "ja":
+    if not src:
         return src, True
+    if lang == "ja" and has_japanese(src):
+        return src, True                                 # もともと日本語 —— 訳す物が無い
     if lang == "en" and not has_japanese(src):
         return src, True                                 # もともと英語 —— 訳す物が無い
     ent = summary_i18n().get("%s/%s" % (rec["dim"], rec["name"])) or {}
@@ -523,15 +543,22 @@ def _rel(from_file: str, to_file: str) -> str:
     return r
 
 
-def _op_md(rec, path, by_name, lang="ja"):
+def _op_md(rec, path, by_name, lang="ja", verbatim_doc=None):
     """1 op 分のノート(Markdown)。``lang`` は**枠**の言語。
 
     枠(見出し・ラベル・契約の説明)は :func:`T` の対訳表で差し替わる。本文の散文
     (op の docstring)は原文が日本語で、要約 1 行だけ :func:`op_summary` の表を持つ
     —— 訳が無い部分は**訳したふりをせず**、その旨を明示した 1 行を添えて原文を出す。
+
+    ``verbatim_doc`` は「docstring を 1 文字も動かさずに写すか」。既定は ``lang == "ja"``
+    ―― ``docs/ops/**`` のノートは docstring の**単一真実源としての写し**なので、
+    段落を詰め直すことも要約を差し替えることもしない(drift テストが写しを固定する)。
+    ``ja`` のヘルプ頁だけは ``False`` で呼び、原文が英語の 349 本に日本語の要約を出す。
     """
     dim, name, cat = rec["dim"], rec["name"], rec["category"]
     ins, out = rec["in"], rec["out"]
+    if verbatim_doc is None:
+        verbatim_doc = (lang == "ja")
     lines = []
     # frontmatter: machine-readable, stable field order
     fm = [
@@ -585,7 +612,7 @@ def _op_md(rec, path, by_name, lang="ja"):
         # 訳が抜けているのか原文がそうなのかを読者が区別できない)。
         _src_summary, rest = summary_and_rest(rec["doc"])
         summ, translated = op_summary(rec, lang)
-        if lang == "ja":
+        if verbatim_doc:
             lines.append(rec["doc"])
         # 断り書きを出すかは「読み手の言語で書かれているか」で決める —— 表を引けたかでは
         # ない。原文が英語の op を英語の読者に出すとき「未訳です」と断るのは嘘になる。
@@ -593,7 +620,7 @@ def _op_md(rec, path, by_name, lang="ja"):
             lines.append(summ)
             if rest:
                 lines.append("")
-                if lang != "en" or has_japanese(rest):
+                if not_in_language(rest, lang):
                     lines.append(T("> 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。", lang))
                     lines.append("")
                 lines.append(rest)
@@ -1134,7 +1161,25 @@ def _help_pages_for_dim(dim, recs_by_name, langs):
                 if _write_generated(os.path.join(out, "%s.%s.html" % (op, lang)),
                                     _anchor_rewrite(body, dim)):
                     tr += 1
+            # **日本語も翻訳先**。原文が英語の 349 本は、日本語のヘルプを開いても
+            # 英語のままだった(「原文だから ja は常に OK」と数えていたのが誤り)。
+            # 訳があるものだけ ``<op>.ja.html`` を生やす —— 原文が日本語の op に
+            # ノートと同じ中身の兄弟を並べても情報は増えず、枚数だけ増える。
+            if _ja_help_differs(rec):
+                body = md_to_html(_op_md(rec, npath, recs_by_name,
+                                         lang="ja", verbatim_doc=False))
+                if _write_generated(os.path.join(out, "%s.ja.html" % op),
+                                    _anchor_rewrite(body, dim)):
+                    tr += 1
     return n, skipped, tr
+
+
+def _ja_help_differs(rec) -> bool:
+    """``<op>.ja.html`` を出す価値があるか(= 原文が英語で、日本語の要約が在る)。"""
+    src = summary_and_rest(rec.get("doc"))[0]
+    if not src or has_japanese(src):
+        return False
+    return op_summary(rec, "ja")[1]
 
 
 def cmd_html():
@@ -1182,8 +1227,12 @@ def cmd_html():
     print(f"opdocs html: wrote {n} 2-D op pages ({skipped} hand-authored preserved) "
           f"+ {n3} 3-D op pages + {nm} ledger op pages ({'/'.join(LEDGER_DIMS)}) "
           f"+ {g} guides to {HELP_ROOT}")
+    # 日本語も翻訳先(原文が英語の 349 本)。数だけ出して「5 言語」と書くと、
+    # ja 版が出ていることが報告から消える。
+    ja_pages = sum(1 for r in recs if _ja_help_differs(r))
     print(f"  translated op pages: {tr + tr3 + trm} "
-          f"({len(langs)} languages: {', '.join(langs)})")
+          f"({len(langs) + 1} languages: ja, {', '.join(langs)}"
+          f" — ja は原文が英語の {ja_pages} 本にだけ出る)")
     missing = untranslated_strings()
     for lang, miss in sorted(missing.items()):
         print(f"  ({lang}: 枠の対訳が {len(miss)} 件未訳 — 原文のまま出ます)", file=sys.stderr)

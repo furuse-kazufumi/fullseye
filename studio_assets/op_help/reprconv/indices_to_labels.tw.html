@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">indices</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import reprconv; reprconv.indices_to_labels(indices)</code>(或 <code style="color:#22d3bf">opsreprconv.get(&quot;indices_to_labels&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>添字 `<code style="color:#22d3bf">(N,)</code><code style="color:#22d3bf"> → 選択マスク </code><code style="color:#22d3bf">labels</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">indices</code>` の出口(<b>可逆</b>)。</p>
+<p>索引 `<code style="color:#22d3bf">(N,)</code><code style="color:#22d3bf"> → 選擇遮罩 </code><code style="color:#22d3bf">labels</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">indices</code>` 的出口(<b>可逆</b>)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">max(indices) + 1</code>` 長の 1-D ラベル配列を作り、選ばれた位置に 1 を置く。</p>
 <p>`<code style="color:#22d3bf">indices -&gt; labels -&gt; indices</code>` は <b>bit 一致</b>(重複と順序を除く)。</p>
 <p>逆向き `<code style="color:#22d3bf">labels -&gt; indices -&gt; labels</code>` は<b>末尾の背景を落とす</b></p>

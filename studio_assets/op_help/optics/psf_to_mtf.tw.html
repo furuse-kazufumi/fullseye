@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import optics; optics.psf_to_mtf(psf, pixel_pitch_um=1.0)</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;psf_to_mtf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Radially-averaged MTF of a measured point-spread function.</p>
+<p>由實測點擴散函數得到徑向平均的 MTF。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">OTF = FFT{PSF}</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">MTF = |OTF| / |OTF(0)|</code>`, then averaged over annuli of</p>
 <p>constant spatial frequency out to the Nyquist limit `<code style="color:#22d3bf">1/(2*pitch)</code>`. This</p>
 <p>is the measurement side of resolution: image a point source (or a slit, or</p>

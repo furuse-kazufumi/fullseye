@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">rgba</code> → <code style="color:#22d3bf">rgba_premul</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import gfx2d; gfx2d.premultiply(rgba)</code>(或 <code style="color:#22d3bf">opsgfx2d.get(&quot;premultiply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Straight-alpha `<code style="color:#22d3bf">rgba</code><code style="color:#22d3bf"> to **premultiplied** </code><code style="color:#22d3bf">rgba</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(C*A, A)</code>`.</p>
+<p>直通 alpha 的 `<code style="color:#22d3bf">rgba</code><code style="color:#22d3bf"> → **预乘** </code><code style="color:#22d3bf">rgba</code><code style="color:#22d3bf">:</code><code style="color:#22d3bf">(C*A, A)</code>`。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Lossy in one place, on purpose: the colour of a fully transparent pixel is</p>
 <p>multiplied to zero and cannot be recovered. That colour never affects a</p>
 <p>composite, so nothing downstream needs it — but a round trip through this</p>

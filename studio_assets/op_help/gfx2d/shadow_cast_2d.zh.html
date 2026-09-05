@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import gfx2d; gfx2d.shadow_cast_2d(occluder, x, y, steps=None, softness=0.0)</code>(或 <code style="color:#22d3bf">opsgfx2d.get(&quot;shadow_cast_2d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Visibility of every pixel from a point light at `<code style="color:#22d3bf">(x, y)</code><code style="color:#22d3bf">, as </code><code style="color:#22d3bf">image2d</code>`.</p>
+<p>每个像素相对 `<code style="color:#22d3bf">(x, y)</code><code style="color:#22d3bf"> 点光源的可见性,作为 </code><code style="color:#22d3bf">image2d</code>`。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Ray-marches the segment from each pixel to the light, sampling `<code style="color:#22d3bf">occluder</code>`</p>
 <p>(2-D, `<code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf">, 1 = fully blocking) at </code><code style="color:#22d3bf">steps</code>` points with nearest</p>
 <p>lookup, and returns `<code style="color:#22d3bf">1 - max(occluder along the ray)</code>`. For a binary</p>

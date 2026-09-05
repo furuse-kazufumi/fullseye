@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">video</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import motionmag; motionmag.synthesize_translation(shape=(64, 64), frames: &#x27;int&#x27; = 32, amplitude_px=0.5, frequency_hz=4.0, fps=32.0, direction_deg=0.0, wavelength_px=(8.0, 16.0), contrast=0.4, offset=0.5, noise_sigma=0.0, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(또는 <code style="color:#22d3bf">opsmotionmag.get(&quot;synthesize_translation&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>A clip whose displacement is known in closed form -&gt; `<code style="color:#22d3bf">(T, H, W)</code>` video.</p>
+<p>변위가 닫힌 식으로 알려진 클립 -&gt; `<code style="color:#22d3bf">(T, H, W)</code>` 비디오.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>The scene is a stationary two-axis sinusoidal grating that is translated,</p>
 <p>frame by frame, by</p>
 <p>`<code style="color:#22d3bf">d(t) = amplitude_px * sin(2*pi * frequency_hz * t / fps)</code>`</p>

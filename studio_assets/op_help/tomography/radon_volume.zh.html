@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">sinostack</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import tomography; tomography.radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1)</code>(或 <code style="color:#22d3bf">opstomography.get(&quot;radon_volume&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Project every slice of a `<code style="color:#22d3bf">(Z, H, W)</code><code style="color:#22d3bf"> volume -&gt; a </code><code style="color:#22d3bf">(Z, A, D)</code>` stack.</p>
+<p>投影 `<code style="color:#22d3bf">(Z, H, W)</code><code style="color:#22d3bf"> 体的每一张切片 -&gt; </code><code style="color:#22d3bf">(Z, A, D)</code>` 堆栈。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Parallel-beam geometry with the rotation axis along `<code style="color:#22d3bf">Z</code>`, which is the case</p>
 <p>where the 3-D problem really is a stack of independent 2-D ones — each slice</p>
 <p>projects into its own sinogram and nothing crosses between them. (A cone beam</p>

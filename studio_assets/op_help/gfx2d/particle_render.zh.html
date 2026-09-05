@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">rgba</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import gfx2d; gfx2d.particle_render(state, height, width, mode=&#x27;add&#x27;, fade=True)</code>(或 <code style="color:#22d3bf">opsgfx2d.get(&quot;particle_render&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Splat a particle state into an `<code style="color:#22d3bf">rgba</code>` image.</p>
+<p>把粒子状态 splat 到 `<code style="color:#22d3bf">rgba</code>` 图像上。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Each particle is a radially symmetric `<code style="color:#22d3bf">(1 - (r/R)^2)^2</code>` kernel of radius</p>
 <p>`<code style="color:#22d3bf">size</code><code style="color:#22d3bf">, weighted by its alpha and, when </code><code style="color:#22d3bf">fade</code>` is set, by the remaining</p>
 <p>fraction of its life `<code style="color:#22d3bf">(1 - age/life)</code>`. Particles past their lifetime</p>

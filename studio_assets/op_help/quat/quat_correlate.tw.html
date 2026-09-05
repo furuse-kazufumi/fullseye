@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">qimage × qimage</code> → <code style="color:#22d3bf">qimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import quatimage; quatimage.quat_correlate(qimage, template) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsquat.get(&quot;quat_correlate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Quaternion cross-correlation `<code style="color:#22d3bf">sum_s conj(a(s)) * b(s+t)</code>`. → (H, W, 4).</p>
+<p>四元數互相關 `<code style="color:#22d3bf">sum_s conj(a(s)) * b(s+t)</code>`。→ (H, W, 4)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Colour template matching that keeps the <b>colour geometry</b>, not just the</p>
 <p>colour magnitude. The scalar part of the result is</p>
 <p>`<code style="color:#22d3bf">sum (a_R b_R + a_G b_G + a_B b_B)</code>` — exactly the sum of the three</p>

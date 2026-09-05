@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import motionmag; motionmag.temporal_bandpass(video, f_lo, f_hi, fps) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsmotionmag.get(&quot;temporal_bandpass&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Ideal temporal band-pass of every pixel&#x27;s time series -&gt; `<code style="color:#22d3bf">(T, H, W)</code>`.</p>
+<p>對每個像素時間序列的理想時間帶通 -&gt; `<code style="color:#22d3bf">(T, H, W)</code>`。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Each pixel is transformed along time, every DFT bin whose frequency lies</p>
 <p>outside `<code style="color:#22d3bf">[f_lo, f_hi]</code>` (in Hz, magnitude, DC always excluded) is zeroed,</p>
 <p>and the result is transformed back. Frequency-selective where</p>

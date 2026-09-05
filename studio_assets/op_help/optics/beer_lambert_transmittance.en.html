@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import glassmirror; glassmirror.beer_lambert_transmittance(path_mm, sigma_per_mm=0.01) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;beer_lambert_transmittance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>Beer–Lambert の内部透過率 T = exp(−σ·L)。色ガラス・厚いガラスの緑かぶり。</p>
+<p>Beer–Lambert internal transmittance T = exp(−σ·L). The green cast of coloured and thick glass.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>path_mm: 媒質中の光路長 [mm] (配列可、非負)。</p>
 <p>sigma_per_mm: 吸収係数 [1/mm] (配列可 — 波長ごとに変えれば<b>色</b>になる)。</p>
 <p>返り値: 内部透過率(0–1)。界面の反射は含まない(それは <code style="color:#22d3bf">slab_transmittance</code>)。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import astrostack; astrostack.noise_sigma(image, method=&#x27;mad&#x27;, kappa=3.0, iters=5)</code>(或 <code style="color:#22d3bf">opsastrostack.get(&quot;noise_sigma&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>背景の雑音 sigma を頑健に推定する(星に汚されない一つの実数)。</p>
+<p>穩健估計背景雜訊 sigma(一個不被恆星汙染的實數)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>*method* `<code style="color:#22d3bf">&quot;mad&quot;</code><code style="color:#22d3bf"> は中央絶対偏差の </code><code style="color:#22d3bf">1.4826</code>` 倍(正規分布のときに標準偏差と</p>
 <p>一致する定数)。`<code style="color:#22d3bf">&quot;clip&quot;</code><code style="color:#22d3bf"> は対称な κ-σ クリップを </code><code style="color:#22d3bf">iters</code>` 回。星は上側だけの</p>
 <p>外れ値なので、素の `<code style="color:#22d3bf">std</code>` を使うと<b>星が明るいほど「雑音」が大きく</b>なる</p>

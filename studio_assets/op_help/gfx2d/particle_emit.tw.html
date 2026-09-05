@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import gfx2d; gfx2d.particle_emit(count, seed, origin=(0.0, 0.0), spread=0.0, speed=(10.0, 40.0), direction=(0.0, 360.0), life=(0.5, 1.5), size=(1.0, 3.0), color=&#x27;emphasis&#x27;, scheme=&#x27;okabe_ito&#x27;)</code>(或 <code style="color:#22d3bf">opsgfx2d.get(&quot;particle_emit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Emit `<code style="color:#22d3bf">count</code><code style="color:#22d3bf"> particles from </code><code style="color:#22d3bf">origin</code><code style="color:#22d3bf">, deterministically from </code><code style="color:#22d3bf">seed</code>`.</p>
+<p>從 `<code style="color:#22d3bf">origin</code><code style="color:#22d3bf"> 發射 </code><code style="color:#22d3bf">count</code><code style="color:#22d3bf"> 個粒子,由 </code><code style="color:#22d3bf">seed</code>` 決定性生成。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Returns the particle state as a dict of arrays::</p>
 <p>{&quot;pos&quot;: (N,2) as (x, y), &quot;vel&quot;: (N,2) px/s, &quot;age&quot;: (N,), &quot;life&quot;: (N,),</p>
 <p>&quot;size&quot;: (N,) radius in px, &quot;color&quot;: (N,4) straight rgba}</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import optscene; optscene.optscene_instances(scene, camera, min_area_px: &#x27;int&#x27; = 1) -&gt; &#x27;list&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;optscene_instances&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>欠陥を<b>個体ごと</b>に返す(クラス・画素マスク・bounding box・面積)。</p>
+<p>把缺陷按<b>个体</b>返回(类别・像素掩码・bounding box・面积)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>1 枚の合成マスクだけでは個体を分けられず、検出や計数の学習には使えない。</p>
 <p>連結成分で分け、`<code style="color:#22d3bf">min_area_px</code>` 未満は落とす(1 画素の粒までは数えない)。</p>
 <p>返り値は 1 個体あたり dict: `<code style="color:#22d3bf">kind</code><code style="color:#22d3bf">(クラス)/ </code><code style="color:#22d3bf">mask</code>`(H, W の bool)/</p>

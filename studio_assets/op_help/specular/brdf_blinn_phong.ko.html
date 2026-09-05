@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import specularity; specularity.brdf_blinn_phong(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), shininess=32.0)</code>(또는 <code style="color:#22d3bf">opsspecular.get(&quot;brdf_blinn_phong&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Blinn&#x27;s half-vector specular lobe. → (H, W) in [0, 1].</p>
+<p>Blinn 의 하프벡터 정반사 로브. → [0, 1] 의 (H, W).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">max(n.h, 0) ** shininess</code><code style="color:#22d3bf"> where </code><code style="color:#22d3bf">h</code>` is the unit bisector of the light</p>
 <p>and view directions (Blinn 1977), zeroed wherever the surface faces away</p>
 <p>from either. Exactly 1 where the normal *is* the half-vector — the mirror</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">polsweep</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import specularity; specularity.polarization_separate(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)</code>(또는 <code style="color:#22d3bf">opsspecular.get(&quot;polarization_separate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Split a polariser sweep into its unpolarised and linearly polarised radiance. → (diffuse, specular), both (H, W).</p>
+<p>편광판 회전 시퀀스를 무편광 성분과 직선 편광 성분의 복사휘도로 나눕니다. → (diffuse, specular), 둘 다 (H, W).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Fitting `<code style="color:#22d3bf">I(t) = 0.5 (S0 + S1 cos 2t + S2 sin 2t)</code>` per pixel gives</p>
 <p>`<code style="color:#22d3bf">I_min</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">I_max</code>` in closed form, and the classical separation</p>
 <p>(Wolff &amp; Boult 1991; Nayar, Fang &amp; Boult 1997) reads</p>

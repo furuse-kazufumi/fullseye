@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">background_subtraction_window — VIDEOSTREAM <code style="color:#22d3bf">window</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import videostream; videostream.background_subtraction_window(video, window: &#x27;int&#x27; = 5, threshold: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">opsvideostream.get(&quot;background_subtraction_window&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>因果的な窓中央値の背景 → フレームごとの 0/1 前景マスク `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">video</code>`)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:video_streaming">video_streaming ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_cables">mv_cables</a> — ケーブル（規格・速度・給電・ロボットケーブル）</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_frame_grabbers">mv_frame_grabbers</a> — フレームグラバーボード（光学系ではないが、撮れるかを決める）</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_standards">mv_standards</a> — カメラインターフェースの規格と団体</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:video_streaming">video_streaming</a> — <code style="color:#22d3bf">py -3.11 examples/video_streaming.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">video</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opvideostream:temporal_median_window">temporal_median_window</a> · <a style="color:#22d3bf" href="opvideostream:moving_average_window">moving_average_window</a> · <a style="color:#22d3bf" href="opvideostream:frame_difference_causal">frame_difference_causal</a> · <a style="color:#22d3bf" href="opvideostream:exponential_background">exponential_background</a> · <a style="color:#22d3bf" href="opvideostream:exponential_foreground">exponential_foreground</a> · <a style="color:#22d3bf" href="opvideostream:running_mean_std">running_mean_std</a> · <a style="color:#22d3bf" href="opvideostream:optical_flow_magnitude_stream">optical_flow_magnitude_stream</a> · <a style="color:#22d3bf" href="opvideostream:motion_history_image">motion_history_image</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">window</code>)</h3>
+<p><a style="color:#22d3bf" href="opvideostream:temporal_median_window">temporal_median_window</a> · <a style="color:#22d3bf" href="opvideostream:moving_average_window">moving_average_window</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: videostream.py — VIDEOSTREAM operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import acoustics; acoustics.percentile_level(x, rate, percentiles=(10.0, 50.0, 90.0), weighting=&#x27;A&#x27;, ref=1.0, window_s=0.125, floor_db=-200.0)</code> (oder <code style="color:#22d3bf">opsacoustics.get(&quot;percentile_level&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Statistical levels: `<code style="color:#22d3bf">L_N</code><code style="color:#22d3bf"> is the level exceeded </code><code style="color:#22d3bf">N</code>` % of the time.</p>
+<p>Statistische Pegel: `<code style="color:#22d3bf">L_N</code><code style="color:#22d3bf"> ist der Pegel, der </code><code style="color:#22d3bf">N</code>` % der Zeit überschritten wird.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>The record is cut into non-overlapping blocks of `<code style="color:#22d3bf">window_s</code>` seconds, each</p>
 <p>block&#x27;s equivalent level is computed, and `<code style="color:#22d3bf">L_N</code><code style="color:#22d3bf"> is the </code><code style="color:#22d3bf">(100-N)</code>`-th</p>
 <p>percentile of those levels. Non-overlapping rectangular blocks are used</p>

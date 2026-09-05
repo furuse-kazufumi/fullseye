@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;rescale_img&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">zoom_image_factor</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Isotropic centre-preserving rescale by `<code style="color:#22d3bf">s = 0.7 + 0.6·a</code>`, canvas kept.</p>
+<p>Isotrope, mittenerhaltende Skalierung um `<code style="color:#22d3bf">s = 0,7 + 0,6·a</code>`, Leinwand bleibt.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> = **補間の次数** — </code><code style="color:#22d3bf">(0, 1, 3, 3)[min(3, int(4b))]</code>`(0 = 最近傍、</p>
 <p>1 = 双一次、3 = 三次スプライン)。`<code style="color:#22d3bf">b=0.5</code><code style="color:#22d3bf"> は 3 次で、</code><code style="color:#22d3bf">b</code>` が死んでいた頃の</p>
 <p>既定(`<code style="color:#22d3bf">ndimage</code>` の order=3)と <b>ビット一致</b>する。</p>

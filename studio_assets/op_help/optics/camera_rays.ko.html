@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import optscene; optscene.camera_rays(camera: &#x27;dict&#x27;) -&gt; &#x27;tuple&#x27;</code>(또는 <code style="color:#22d3bf">opsoptics.get(&quot;camera_rays&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>カメラ dict → 全画素の光線 (origins (H·W, 3), directions (H·W, 3))。</p>
+<p>카메라 dict → 모든 화소의 광선: origins (H·W, 3), directions (H·W, 3).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>方向は単位ベクトル、原点はすべて視点。画素 (u, v) は行優先で並ぶので</p>
 <p>`<code style="color:#22d3bf">reshape(height, width, 3)</code>` で像に戻せる。K の逆写像で作っているため、</p>
 <p>交点を K で再投影すると元の画素に<b>厳密に</b>戻る(往復誤差 &lt; 1e-9)。</p>

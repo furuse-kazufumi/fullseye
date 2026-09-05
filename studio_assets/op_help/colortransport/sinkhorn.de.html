@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal × matrix</code> → <code style="color:#22d3bf">transport_plan</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import colortransport; colortransport.sinkhorn(a, b, cost, reg=0.05, n_iter=2000, tol=1e-09)</code> (oder <code style="color:#22d3bf">opscolortransport.get(&quot;sinkhorn&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>エントロピー正則化つき最適輸送の計画(Cuturi, NIPS 2013)。</p>
+<p>Der entropisch regularisierte Optimaltransportplan (Cuturi, NIPS 2013).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><b>厳密解ではない。</b> `<code style="color:#22d3bf">reg</code>` を小さくすると厳密解に近づくが、同時に</p>
 <p>数値的に不安定になる(指数がアンダーフローする)。`<code style="color:#22d3bf">reg</code>` を下げると</p>
 <p>厳密解との差が縮むこと自体をテストで固定してある。</p>

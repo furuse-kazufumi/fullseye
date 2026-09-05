@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import acoustics; acoustics.octave_spectrum(x, rate, fraction=3, f_min=22.0, f_max=None, ref=1.0, weighting=&#x27;Z&#x27;, floor_db=-200.0)</code>(或 <code style="color:#22d3bf">opsacoustics.get(&quot;octave_spectrum&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Band levels in dB, summed over fractional-octave bands by Parseval.</p>
+<p>按 Parseval 在 1/N 倍频程带内求和的 dB 带级。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Energy is accumulated from the single-sided periodogram into the bands</p>
 <p>:func:<code style="color:#22d3bf">octave_bands</code> defines, so the band powers sum to the signal&#x27;s</p>
 <p>mean-square exactly (up to the bins outside the requested range). That</p>

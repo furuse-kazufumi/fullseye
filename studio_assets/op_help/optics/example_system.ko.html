@@ -3,13 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import raytrace; raytrace.example_system(name=&#x27;singlet&#x27;)</code>(또는 <code style="color:#22d3bf">opsoptics.get(&quot;example_system&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>A named example: `<code style="color:#22d3bf">&quot;singlet&quot;</code><code style="color:#22d3bf"> (plano-convex BK7, f≈100), </code><code style="color:#22d3bf">&quot;doublet&quot;</code>`</p>
-<p>(a cemented achromat, BK7/SF2, f≈100), `<code style="color:#22d3bf">&quot;paraboloid&quot;</code>` (f/2 paraboloid</p>
-<p>mirror — stigmatic on axis), `<code style="color:#22d3bf">&quot;sphere_mirror&quot;</code>` (same radius, spherical),</p>
-<p>`<code style="color:#22d3bf">&quot;asphere&quot;</code>` (plano-hyperbolic N-BK7 singlet, flat toward the object, exit</p>
-<p>conic `<code style="color:#22d3bf">k = −n²</code>` — Descartes&#x27; stigmatic lens, f≈100 at f/4),</p>
-<p>`<code style="color:#22d3bf">&quot;catalog_doublet&quot;</code>` (the doublet with real N-BK7 / N-SF2 Sellmeier glass).</p>
+<p>이름 붙은 예: `<code style="color:#22d3bf">&quot;singlet&quot;</code><code style="color:#22d3bf">(평볼록 BK7, f≈100), </code><code style="color:#22d3bf">&quot;doublet&quot;</code><code style="color:#22d3bf">(접합 색지움, BK7/SF2, f≈100), </code><code style="color:#22d3bf">&quot;paraboloid&quot;</code><code style="color:#22d3bf">(f/2 포물면경 —— 축상 무수차), </code><code style="color:#22d3bf">&quot;sphere_mirror&quot;</code><code style="color:#22d3bf">(같은 곡률반경의 구면), </code><code style="color:#22d3bf">&quot;asphere&quot;</code><code style="color:#22d3bf">(평-쌍곡면 N-BK7 단렌즈. 물체 쪽이 평면, 출사면 원뿔상수 </code><code style="color:#22d3bf">k = −n²</code><code style="color:#22d3bf"> —— 데카르트의 무수차 렌즈, f/4 에서 f≈100), </code><code style="color:#22d3bf">&quot;catalog_doublet&quot;</code>`(실제 N-BK7 / N-SF2 Sellmeier 유리의 더블릿).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">normalmap</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import surfacelib; surfacelib.metallic_flake_normals(shape, density=0.06, size_px=2.0, tilt=0.35, seed=0) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;metallic_flake_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>メタリック塗装のフレーク(アルミ片)の法線場を作る。</p>
+<p>Build the normal field of the flakes (aluminium platelets) in metallic paint.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>shape: (H, W)。density: 面積あたりのフレーク率(0–1)。size_px: フレークの大きさ。</p>
 <p>tilt: 傾きの強さ(0–1)。seed: 乱数種。</p>
 <p>返り値: (H, W, 3) の単位法線場(フレークの無い所は (0,0,1))。上塗りの下に置くと</p>
