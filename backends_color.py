@@ -172,6 +172,12 @@ def _rgb_to_gray(v, a, b):                        # color -> image : luminance
 
 
 def _access_channel(v, a, b):                     # color -> image : pick one channel
+    """多チャンネル画像から 1 チャンネルを取り出す。HALCON の ``access_channel``
+    （多チャンネル画像の 1 チャンネルにアクセスする）に相当。
+
+    a でチャンネル番号を 0(R)/1(G)/2(B) の 3 通りから選ぶ
+    （``min(2, int(a * 3))``）。b は未使用。
+    """
     return _to_color(v)[..., min(2, int(a * 3))]
 
 
