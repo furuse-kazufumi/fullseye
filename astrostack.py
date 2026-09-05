@@ -139,6 +139,69 @@ _MAD_SMALL_SAMPLE = {2: 1.196, 3: 1.495, 4: 1.363, 5: 1.206, 6: 1.200,
                      7: 1.140, 8: 1.129, 9: 1.107}
 
 
+
+#: 枚数がこれ以上なら、分位を取る前に**連続軸へ移す**。
+#:
+#: ``cube[:, y, x]`` は K 個の要素が H*W おきに並ぶ飛び飛びの列で、
+#: partition は画素ごとにこの列を触る。K が増えるほど飛び飛びの取り出しが効いてきて、
+#: あるところで「一度並べ替えてから連続に読む」ほうが安くなる。
+#:
+#: 実測 2026-09-06 (384x384、その場 partition 対 軸移動+partition の比):
+#:
+#:   float32  K= 9 1.04 / K=15 1.09 / K=17 1.18 / K=19 1.35 / K=25 1.57 / K=31 1.62
+#:   float64  K= 5 0.71 / K= 9 0.81 / K=17 1.07 / K=19 1.21 / K=25 1.40 / K=31 1.62
+#:
+#: ★仮説の検定: 「1 キャッシュライン(64B)に収まるあいだは移す価値が無い」を
+#: 予想したが **外れた**。float32 は境目 K≈17-19 で 64B(K=16)に近いものの、
+#: float64 は予測 K=8 に対し実際は K≈23-25(約 200B)。バイト数ではなく
+#: **要素数**で決まっている —— 1 要素あたりの取り出し費用が支配している。
+#: 枚数が少ないうちに移すと**逆に遅い**(float64 K=5 で 1.4 倍遅い)ので、
+#: 境目は必ず要る。
+_MOVE_AXIS_FRAMES = 20
+
+
+def _median_over_frames(cube):
+    """``np.median(cube, axis=0)`` と**同じ値**を、より速く返す。
+
+    ``np.median`` は内部で partition を使うが、NaN 検査・軸の一般化・
+    マスク配列対応などの経路を通る。ここは (K, H, W) の実数 cube に限れば
+    やることが決まっているので、その分だけ短くできる。
+
+    実測 2026-09-06 (float32、np.median との比):
+      (9, 512, 512)  23.9ms -> 12.9ms (1.9 倍)
+      (25, 512, 512) 80.4ms -> 28.2ms (2.9 倍、軸移動あり)
+      (101, 256, 256) 104.9ms -> 37.5ms (2.8 倍、軸移動あり)
+
+    **結果は bitwise 一致する** —— 中央値の定義どおり、奇数なら中央の要素、
+    偶数なら中央 2 つの平均という同じ算術をしているため。17 通りの (K,H,W) と
+    dtype で確認済み(``tests/test_astrostack.py``)。
+
+    NaN が混じる場合は :func:`numpy.median` へ委ねる。partition は NaN を
+    末尾へ寄せるので中央の位置がずれ、**例外にならず違う値**を返してしまう
+    —— この repo がいちばん嫌う壊れ方なので、ここで分岐する
+    (NaN を無視したいなら ``np.nanmedian`` が別にある)。
+    """
+    a = np.asarray(cube)
+    if a.shape[0] == 0:
+        return np.median(a, axis=0)                 # 空は numpy の作法に委ねる
+    if not np.all(np.isfinite(a)):
+        return np.median(a, axis=0)                 # NaN/inf があれば安全側へ
+    # 中央の切片に np.mean を掛ける。**自分で足して 2 で割らない**:
+    # uint8 だと割る前に加算が巻き戻り(200+129 -> 73)、例外にならず
+    # 「もっともらしく違う値」(36.5 対 164.5)を返す。np.mean なら値も
+    # 返り値の dtype も numpy の規則どおりになる(整数 -> float64、
+    # float32 -> float32)。奇数枚でも同じ形にして経路を 1 本に保つ。
+    n = a.shape[0]
+    k = n // 2
+    lo = k if n % 2 else k - 1
+    if n >= _MOVE_AXIS_FRAMES:
+        a = np.ascontiguousarray(np.moveaxis(a, 0, -1))
+        p = np.partition(a, k if n % 2 else (k - 1, k), axis=-1)
+        return np.mean(p[..., lo:k + 1], axis=-1)
+    p = np.partition(a, k if n % 2 else (k - 1, k), axis=0)
+    return np.mean(p[lo:k + 1], axis=0)
+
+
 def _mad_correction(n):
     """標本数 *n* の MAD 一致性補正係数(``n >= 10`` は ``n / (n - 0.8)``)。"""
     if n in _MAD_SMALL_SAMPLE:
@@ -1130,7 +1193,7 @@ def sigma_clip_stack(frames, mode="sigma_clip", kappa=3.0, iters=5,
     if mode == "mean":
         return cube.mean(axis=0), np.ones(cube.shape, dtype=bool)
     if mode == "median":
-        return np.median(cube, axis=0), np.ones(cube.shape, dtype=bool)
+        return _median_over_frames(cube), np.ones(cube.shape, dtype=bool)
 
     accepted = np.ones(cube.shape, dtype=bool)
     for _ in range(it):
@@ -1449,8 +1512,8 @@ def cosmic_ray_reject_stack(frames, kappa=5.0, min_frames=3, read_sigma=None,
     rs = _num(read_sigma, "read_sigma", sign="non_negative") \
         if read_sigma is not None else None
     n = cube.shape[0]
-    med = np.median(cube, axis=0)
-    mad = np.median(np.abs(cube - med), axis=0) * MAD_TO_SIGMA * _mad_correction(n)
+    med = _median_over_frames(cube)
+    mad = _median_over_frames(np.abs(cube - med)) * MAD_TO_SIGMA * _mad_correction(n)
     # MAD が 0 に潰れる(同じ値が並ぶ)画素は、全体の雑音で下支えする
     _, global_sigma = _robust_background(med, "mad")
     scale = np.where(mad > 0.0, mad, max(global_sigma, 1e-12))
