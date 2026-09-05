@@ -449,7 +449,7 @@ def _registry_adapters():
     d.update(opscadmap.RESULT_ADAPTERS)          # 空(意図的): 素の返りが宣言型
     for _mod in ("opstomography", "opsvolcolor", "opsreprconv", "opsannotate",
                  "opsgfx2d", "opsimgmetrics", "opscolortransport",
-                 "opsimgforensics", "opsastrostack"):
+                 "opsimgforensics", "opsastrostack", "opsdem"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
         except Exception as _e:                       # 台帳が無い環境でも動く
