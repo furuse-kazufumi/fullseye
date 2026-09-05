@@ -64,7 +64,14 @@ def test_compare_accepts_the_relative_paths_ci_actually_passes(tmp_path):
     assert "FileNotFoundError" not in r.stderr, (
         "相対パスの --compare がファイルを見つけられていない: " + r.stderr[-400:]
     )
-    assert r.returncode == 0, r.stdout + r.stderr
+    assert "Traceback" not in r.stderr, "例外で落ちている: " + r.stderr[-400:]
+    # ★returncode は**見ない**。この検査の対象は引数の解決であって、
+    # wheel の中身ではない。中身の判定は環境に依存する —— 実測 2026-09-05:
+    # PYTHONPATH でソースを見せている環境だと、スクリプトが repo 直下を
+    # sys.path から外す仕様のせいで一部モジュールが import できず NG になる
+    # (pip install した環境では起きない)。ここで returncode を見ていたため、
+    # Linux でこの検査が「パス解決の問題」に見える形で落ちていた。
+    assert "集計ファイルが無い" not in r.stdout, r.stdout
 
 
 def test_a_missing_dump_is_reported_as_a_verdict_not_a_traceback(tmp_path):

@@ -82,7 +82,13 @@ def _pairwise_dist(a, b):
 TPS_MAX_CTRL = 10_000
 
 #: tps_warp のチャンク幅(点数)。カーネル評価 (M,K) を M 方向に分割して
-#: メモリを チャンク×K に有界化する(結果は一括評価とビット一致)。
+#: メモリを チャンク×K に有界化する。
+#:
+#: ★**ビット一致は保証しない**(2026-09-05 に訂正)。数学は行ごとに独立だが、
+#: ``U @ w`` は BLAS の GEMM なので、行数 M によって縮約の分割やベクトル化
+#: 経路が変わり、丸めが変わりうる。実測: CI の py3.11 ジョブに torch を入れた
+#: 途端(= 別の OpenMP 実行時が載った途端)にチャンク有無で結果が食い違った。
+#: 保証するのは**数値的な一致**(数 ULP)であって bit 一致ではない。
 _TPS_WARP_CHUNK = 65_536
 
 #: register_cpd_rigid の N×M 上限(密な責務行列を EM 毎反復で組むため)。
@@ -191,7 +197,8 @@ def tps_warp(model, points):
     x = _as_points(points, "points")
 
     # (M,K) カーネルを一括で組むと M×K×8 バイト(M=数百万 × K=数千で数百 GB)に
-    # なるため、M 方向にチャンクして評価する。数学は同一(行ごとに独立)。
+    # なるため、M 方向にチャンクして評価する。数学は行ごとに独立だが、
+    # BLAS の GEMM は行数で縮約の分割が変わるので**丸めまでは同じにならない**。
     out = np.empty((x.shape[0], 3), dtype=np.float64)
     for s in range(0, x.shape[0], _TPS_WARP_CHUNK):
         blk = x[s:s + _TPS_WARP_CHUNK]

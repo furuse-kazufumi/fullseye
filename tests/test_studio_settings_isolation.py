@@ -91,6 +91,9 @@ def test_the_session_isolation_is_actually_in_force():
     ini = os.environ.get("FULLSEYE_STUDIO_SETTINGS", "")
     assert ini, "セッション autouse の隔離が効いていない(tests/conftest.py を見ること)"
     assert ini.endswith(".ini")
+    # `studio` 自体は Qt を遅延 import するので import は通る。_settings() が
+    # Qt を要るので、**PySide6 の側**を確かめないと skip にならない(実測 2026-09-05)。
+    pytest.importorskip("PySide6", reason="PySide6 未導入(gui extra)")
     studio = pytest.importorskip("studio")
     got = studio._settings().fileName()
     assert os.path.abspath(got) == os.path.abspath(ini), (

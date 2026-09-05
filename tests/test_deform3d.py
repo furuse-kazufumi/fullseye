@@ -303,8 +303,17 @@ def test_register_cpd_rigid_rejects_too_many_pairs(monkeypatch):
         d3.register_cpd_rigid(rng.random((11, 3)), rng.random((11, 3)))
 
 
-def test_tps_warp_chunked_bitwise_equals_unchunked(monkeypatch):
-    """チャンク評価は一括評価とビット一致(数学は行独立)。"""
+def test_tps_warp_chunking_does_not_change_the_result(monkeypatch):
+    """チャンク幅を変えても結果が変わらない(数 ULP 以内)。
+
+    ★2026-09-05 訂正: 以前は **bit 一致**を主張していたが、それは保証できない。
+    数学は行ごとに独立でも ``U @ w`` は BLAS の GEMM なので、行数によって
+    縮約の分割やベクトル化経路が変わり丸めが変わる。実測: CI の py3.11 ジョブに
+    torch を入れた途端(= 別の OpenMP 実行時が載った途端)に bit 一致が崩れた。
+
+    守るべき性質は「利用者の結果が**内部定数のチャンク幅に依存しない**」こと。
+    チャンク境界の実装ミスなら O(1) の食い違いになるので、1e-12 で十分に捕まる。
+    """
     rng = np.random.default_rng(1)
     src = rng.random((30, 3))
     dst = src + 0.05 * rng.standard_normal((30, 3))
@@ -313,7 +322,9 @@ def test_tps_warp_chunked_bitwise_equals_unchunked(monkeypatch):
     full = d3.tps_warp(model, q)                    # 既定チャンク(一括相当)
     monkeypatch.setattr(d3, "_TPS_WARP_CHUNK", 7)   # わざと細切れに
     chunked = d3.tps_warp(model, q)
-    assert np.array_equal(full, chunked)
+    assert chunked.shape == full.shape
+    err = float(np.abs(chunked - full).max())
+    assert err <= 1e-12, f"チャンク幅で結果が変わった: 最大差 {err:.3e}"
 
 
 if __name__ == "__main__":

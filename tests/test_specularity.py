@@ -842,10 +842,23 @@ def test_dolp_is_exposure_invariant(scale):
     assert np.abs(a - b).max() < 1e-15           # measured <= 3.9e-16
 
 
-def test_dolp_reaches_its_two_limits_exactly():
+def test_dolp_reaches_its_two_limits():
+    """完全非偏光で 0、完全偏光で 1 に**到達する**(丸めの残差まで)。
+
+    ★2026-09-05 訂正: 0 の側だけ ``== 0.0`` と厳密一致を要求していたが、
+    DoLP は最小二乗フィットから出るので厳密 0 は保証できない —— 実装の docstring
+    自身が「最小二乗の丸めで bit 一致はしない」と書いている。実際 CI の py3.11
+    ジョブで 5.551115123125781e-17(= 2^-54)が出て落ちた。1 の側は元から
+    ``abs=1e-15`` の許容差を認めていたので、0 の側も同じ扱いに揃える。
+
+    ここで守るのは「限界に**到達する**」であって「浮動小数の等値」ではない。
+    本物の欠陥(例えば DoLP が 0.3 で頭打ち)なら 1e-15 では到底通らない。
+    """
     ones = np.ones((4, 4))
     zeros = np.zeros((4, 4))
-    assert S.polarization_dolp_map(S.polarization_render(ones, zeros)).max() == 0.0
+    unpolarised = S.polarization_dolp_map(S.polarization_render(ones, zeros))
+    assert unpolarised.max() == pytest.approx(0.0, abs=1e-15)
+    assert unpolarised.min() >= 0.0
     fully = S.polarization_dolp_map(S.polarization_render(zeros, ones))
     assert fully.min() == pytest.approx(1.0, abs=1e-15)
 
