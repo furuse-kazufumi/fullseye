@@ -45,7 +45,7 @@ import ops as _ops                                         # noqa: E402
 #: 非有限が**答え**である op(``ops.NONFINITE_IS_MEANINGFUL`` が唯一の正本)。
 #: 到達不能を inf で表す測地距離、特異行列の条件数 —— もっともらしい有限値に
 #: 潰すと「届かない」が「近い」に化ける。台帳を各テストで書き写さないこと。
-MEANINGFUL_NONFINITE = frozenset(getattr(_ops, "NONFINITE_IS_MEANINGFUL", {})) - {"tb_geodesic_distances"}
+MEANINGFUL_NONFINITE = frozenset(getattr(_ops, "NONFINITE_IS_MEANINGFUL", {}))
 
 #: 各 in_sort の「0 要素」の形。``None`` = その sort には空の代表が無い。
 EMPTY = {
