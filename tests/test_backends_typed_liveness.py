@@ -702,7 +702,8 @@ def test_every_ledger_entry_names_a_live_bridge_op():
     live = {o.name for o in _bridge_ops()}
     ledgers = {
         "KNOWN_DEAD_BRIDGES": KNOWN_DEAD_BRIDGES,
-        "KNOWN_BROKEN_TYPE_TO_SORT": KNOWN_BROKEN_TYPE_TO_SORT,
+        # KNOWN_BROKEN_TYPE_TO_SORT は (type, sort) の組が鍵で op 名ではない ——
+        # 陳腐化は test_broken_type_to_sort_ledger_is_current が別に見ている
         "KNOWN_CROSS_SORT_PASS_THROUGH": KNOWN_CROSS_SORT_PASS_THROUGH,
         "KNOWN_DEGENERATE_BRIDGES": KNOWN_DEGENERATE_BRIDGES,
         "KNOWN_NONFINITE_BY_CONTRACT": KNOWN_NONFINITE_BY_CONTRACT,
