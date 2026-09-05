@@ -205,6 +205,32 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             ev = feature.hessian_matrix_eigvals(H)
             return _norm(np.abs(ev[0]))
 
+        def _unwrap_phase(v, a, b):
+            """位相の 2π 折返しをつないで連続位相に戻し、``signed01`` で [0,1] へ。
+
+            入力 [0,1] を位相 [-π, π] と読み替えて
+            ``skimage.restoration.unwrap_phase`` に渡す。``a`` / ``b`` は未使用。
+
+            非有限(NaN / Inf)の画素は**測れなかった点**として扱い、マスクして
+            アンラップの経路から外す(skimage はマスク配列を受け取れる)。
+            2026-09-05 の退化入力スイープで、**全 NaN の位相を渡すと 5 分以上
+            返ってこない**ことが分かった —— 品質誘導のアンラップは有効画素を
+            起点に伸びていくので、起点が 1 つも無いと止まらない。クラッシュと
+            違って CI では「遅い」としか見えず、fail-soft のガードも効かない。
+            有効画素がゼロなら「つなぐものが無い」ので、そのまま 0.5(位相 0)を返す。
+            """
+            x = np.asarray(v, np.float64)
+            ok = np.isfinite(x)
+            if not ok.any():
+                return np.full(x.shape, 0.5, np.float64)
+            ph = (np.clip(np.where(ok, x, 0.0), 0, 1) - 0.5) * 2 * np.pi
+            if ok.all():
+                return signed01(restoration.unwrap_phase(ph))
+            out = restoration.unwrap_phase(np.ma.masked_array(ph, mask=~ok))
+            # マスクされた画素は「不明」。位相 0 で埋めてから [0,1] に写す
+            # (有効画素の連続性は保たれる)。
+            return signed01(np.ma.filled(out, 0.0))
+
         sk = [
             ("xsk_inpaint", "restoration", "", IMAGE, IMAGE, _inpaint),
             ("xsk_richardson_lucy", "restoration", "", IMAGE, IMAGE,
