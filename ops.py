@@ -800,6 +800,12 @@ class Op:
     out_sort: str
     fn: Callable
     c_stmt: Optional[Callable[[float, float], str]] = None
+    #: op の説明。**関数の docstring が第一の置き場**で、これはその代わりが要る
+    #: ときの受け皿 —— backend の op 表は lambda で書かれているものが多く、
+    #: lambda に docstring は書けない。各 backend が module-level ``DOCS``
+    #: (op 名 -> 説明)を出すと、下の登録ループがここへ入れる。
+    #: 読む側(``tools/opdocs.py`` / Studio ヘルプ)は ``fn.__doc__ or op.doc``。
+    doc: str = ""
 
 
 def _c(name):
