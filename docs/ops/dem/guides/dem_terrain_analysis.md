@@ -22,6 +22,65 @@ version: 0.1.0
 
 **新しい依存は 1 つも要りません。** DEM は深度画像そのもの(メートルの高さ格子)なので、この repo にとって新しい対象ではなく、既存の `depth` と同じ格子を地形の語彙で扱っているだけです。
 
+## 使う順序
+
+```mermaid
+flowchart TD
+    D["標高格子 (H, W) [m]<br/>+ cell_size [m]"]
+    D --> S["dem_slope / dem_aspect<br/>傾斜[度]・方位[度]"]
+    D --> C["dem_curvature<br/>断面/平面/全曲率 [1/m]"]
+    D --> R["dem_roughness / dem_tpi<br/>起伏 TRI[m]・地形位置 TPI[m]"]
+    D --> H["dem_hillshade<br/>陰影 [0,1]"]
+    D --> F["dem_fill_sinks<br/>窪地を埋めた標高格子"]
+    F --> FD["dem_flow_direction<br/>D8 の符号 0-7 / -1"]
+    FD --> FA["dem_flow_accumulation<br/>集水セル数"]
+    FA --> SN["dem_stream_network<br/>河道マスク"]
+    D --> HA["dem_horizon_angle<br/>方位別の地平線仰角[度]"]
+    HA --> SVF["dem_sky_view_factor<br/>天空率 [0,1]"]
+    D --> VS["dem_viewshed<br/>可視領域 (1 = 見える)"]
+    S --> USE["適地判定・災害リスク・日射<br/>2-D op(閾値・morphology・疑似カラー・図注)へ"]
+    C --> USE
+    R --> USE
+    H --> USE
+    SN --> USE
+    SVF --> USE
+    VS --> USE
+```
+
+水文だけが**直列**です(埋める → 流向 → 集水 → 河道)。残りは標高格子から独立に出ます。`dem_flow_accumulation` は既定で内部から `dem_fill_sinks` を呼ぶので、埋めた格子を別用途にも使うのでなければ 1 行で済みます。
+
+## 最小の例(そのまま動きます)
+
+```python
+import numpy as np
+
+import demops
+
+# 東へ 5 %、北へ 12 % 下る平面に、ガウス丘を 1 つ載せる
+h, w, cell = 64, 64, 2.0                      # セル 2 m
+row, col = np.mgrid[0:h, 0:w]
+x, y = col * cell, (h - 1 - row) * cell       # 行 0 が北 = y は北向き
+dem = -0.05 * x - 0.12 * y \
+    + 30.0 * np.exp(-((x - 60.0) ** 2 + (y - 70.0) ** 2) / (2 * 20.0 ** 2))
+
+slope = demops.dem_slope(dem, cell)                    # [度]
+aspect = demops.dem_aspect(dem, cell)                  # 北 0 度・東回り
+shade = demops.dem_hillshade(dem, cell, azimuth_deg=315.0, altitude_deg=45.0)
+acc = demops.dem_flow_accumulation(dem, cell)          # 集水セル数
+streams = demops.dem_stream_network(dem, cell, threshold_cells=100.0)
+svf = demops.dem_sky_view_factor(dem, cell, n_azimuth=8)
+
+# 丘から離れた縁では平面の傾斜に一致する: atan(sqrt(0.05^2 + 0.12^2)) = 7.41 度
+assert abs(slope[0, 0] - np.degrees(np.arctan(np.hypot(0.05, 0.12)))) < 1e-6
+# その斜面は南西を向く(東へも北へも下るので、下り方向は南西 = 180+67.4 度)
+assert abs(aspect[0, 0] - (180.0 + np.degrees(np.arctan2(0.05, 0.12)))) < 1e-6
+assert 0.0 <= shade.min() and shade.max() <= 1.0
+assert acc.max() > 100.0 and streams.sum() > 0        # 谷筋に水が集まる
+assert 0.0 <= svf.min() and svf.max() <= 1.0
+```
+
+`assert` を飾りで置いていません —— **この 6 行は平面の閉形式から出る値**で、規約(北 0 度・東回り、行 0 が北)を 1 つでも取り違えると落ちます。
+
 ## いちばん大事な規約(取り違えると静かに間違う)
 
 | 規約 | 値 | 破ったときに何が起きるか |
