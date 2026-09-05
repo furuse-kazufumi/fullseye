@@ -401,7 +401,7 @@ def test_label_volume_helper_rejects_mismatched_lengths():
 #: ``IMGEVOLVE_WIDE_VOCAB=1`` では ``tb_lf_from_mla``(image → lightfield)が
 #: 6/6 で素通し(lightfield / histcube に ``_EMPTY_OF`` の行が無い)— 既定語彙の
 #: 外なのでここでは数えない。表に行を足す判断は sort の所有者に委ねる。
-KNOWN_CROSS_SORT_PASS_THROUGH = {"zz_not_a_real_op": "MUTATION TEST: fabricated ledger entry."}
+KNOWN_CROSS_SORT_PASS_THROUGH = {}
 
 #: **設計上**入力をそのまま返す型変換 op(恒等 = 故障ではない)。空。
 CROSS_SORT_IDENTITY_BY_CONTRACT = {}
