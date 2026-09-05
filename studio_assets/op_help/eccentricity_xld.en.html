@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;eccentricity_xld&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">eccentricity_xld</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>最大の輪郭(5 点以上)に `<code style="color:#22d3bf">cv2.fitEllipse</code>` で楕円をフィットし、その</p>
-<p>離心率 `<code style="color:#22d3bf">sqrt(1-(短軸/長軸)^2)</code>` を返す(0=真円、1に近いほど細長い)。</p>
-<p>HALCON の `<code style="color:#22d3bf">eccentricity_xld</code>`（Shape features derived from the ellipse</p>
-<p>parameters of contours or polygons.）に相当。cv2 が無い、または点数不足</p>
-<p>の場合は 0 を返す。</p>
+<p>Fits an ellipse to the largest contour (with 5 or more points) using `<code style="color:#22d3bf">cv2.fitEllipse</code><code style="color:#22d3bf"> and returns its eccentricity </code><code style="color:#22d3bf">sqrt(1-(minor axis/major axis)^2)</code><code style="color:#22d3bf"> (0 = perfect circle, closer to 1 = more elongated). Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">eccentricity_xld</code>` (Shape features derived from the ellipse parameters of contours or polygons.). Returns 0 if cv2 is unavailable or there are too few points.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>

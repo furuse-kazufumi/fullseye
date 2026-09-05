@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk3_rank_otsu&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>局所大津二値化(skimage `<code style="color:#22d3bf">filters.rank.otsu</code>`)。近傍円盤内だけで大津の判別分析法(Otsu&#x27;s method)の閾値を求め、画素値がその局所閾値を上回るかで二値化する —— 大域大津と違い、照明ムラのある画像でも局所的に妥当な閾値が選べる。</p>
+<p>국소 오츠 이진화(skimage `<code style="color:#22d3bf">filters.rank.otsu</code>`). 이웃 원판 내에서만 오츠의 판별분석법(Otsu&#x27;s method) 임계값을 구하고, 화소값이 그 국소 임계값을 넘는지로 이진화한다 —— 전역 오츠와 달리, 조명이 고르지 않은 이미지에서도 국소적으로 타당한 임계값을 선택할 수 있다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は円盤半径(</code><code style="color:#22d3bf">2+int(a*8)</code><code style="color:#22d3bf"> で 2〜10)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>

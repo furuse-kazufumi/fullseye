@@ -3,10 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk_unwrap_phase&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>位相アンラップ(phase unwrapping)。入力 [0,1] を位相 [-pi, pi] とみなし、</p>
-<p>skimage.restoration.unwrap_phase で 2*pi の折返し(ラップ)を取り除いてから、</p>
-<p>`<code style="color:#22d3bf">signed01</code>` で符号を保ったまま [0,1] へ戻す(0 -&gt; 0.5)。</p>
+<p>Phasen-Unwrapping. Betrachtet die Eingabe [0,1] als Phase [-pi, pi], entfernt 2*pi-Umbrüche mit `<code style="color:#22d3bf">skimage.restoration.unwrap_phase</code><code style="color:#22d3bf"> und wandelt sie anschließend mit </code><code style="color:#22d3bf">signed01</code>` unter Beibehaltung des Vorzeichens zurück in [0,1] (0 -&gt; 0.5).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。干渉縞など周期的にラップした位相画像の連続化に使う op で、</p>
 <p>一様なグラデーションやランダムノイズなど元々位相らしくない入力では意味のある</p>
 <p>結果にならないことがある。</p>

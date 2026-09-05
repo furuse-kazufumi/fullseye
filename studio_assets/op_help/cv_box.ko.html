@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;cv_box&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">mean_image</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>単純平均化フィルタ(box filter、OpenCV 実装)。正方形近傍内の単純平均を取るだけの最も基本的な平滑化 —— ガウス平滑化より計算は軽いが、リング状のアーティファクトが出やすい。</p>
+<p>단순 평균화 필터(box filter, OpenCV 구현). 정사각형 이웃 내의 단순 평균을 취하는 가장 기본적인 평활화이다 —— 가우시안 평활화보다 연산은 가볍지만 고리 모양의 아티팩트가 생기기 쉽다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>HALCON の <code style="color:#22d3bf">mean_image</code>(Smooth by averaging.)に相当。実装は `<code style="color:#22d3bf">cv2.blur(v, (k,k))</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">k=3+2*int(a*3)</code>` —— a はカーネルサイズを 3, 5, 7, 9 に振る。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>

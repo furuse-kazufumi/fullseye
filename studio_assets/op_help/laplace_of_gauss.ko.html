@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;laplace_of_gauss&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">laplace_of_gauss</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>LoG(Laplacian of Gaussian、ガウス平滑化後にラプラシアンを掛けた</p>
-<p>二階微分エッジ検出)。`<code style="color:#22d3bf">signed01</code>` により符号つき応答を [0,1] へ写像し</p>
-<p>(0.5 がゼロ交差に相当)、ゼロ交差検出やブロブ検出の下地に使える。HALCON の</p>
-<p>`<code style="color:#22d3bf">laplace_of_gauss</code>`（LoG-Operator (Laplace of Gaussian).）に相当。</p>
+<p>LoG(Laplacian of Gaussian, 가우시안 평활화 후 라플라시안을 적용한 2차 미분 에지 검출). `<code style="color:#22d3bf">signed01</code><code style="color:#22d3bf">로 부호 있는 응답을 [0,1]로 매핑하며(0.5가 제로 교차에 해당), 제로 교차 검출이나 블롭 검출의 토대로 쓸 수 있다. HALCON의 </code><code style="color:#22d3bf">laplace_of_gauss</code>`(LoG-Operator (Laplace of Gaussian).)에 해당한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がガウス核のシグマを 0.5〜3.0 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。値が 0.5</p>
 <p>から離れるほど強いエッジ/ブロブ応答であることを示す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

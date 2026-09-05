@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk3_rank_subtract_mean&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>局所平均差分(skimage `<code style="color:#22d3bf">filters.rank.subtract_mean</code>`)。各画素からその円盤近傍の平均輝度を引いた差分を返す。skimage の実装はアンダーフロー防止のため差分を 1/2 に縮小しレンジ中央へシフトする仕様になっている。大域的な明暗ムラを打ち消しローカルコントラストを強調する。</p>
+<p>Lokale Mittelwertsubtraktion (skimage `<code style="color:#22d3bf">filters.rank.subtract_mean</code>`). Gibt die Differenz zurück, die entsteht, wenn von jedem Pixel die mittlere Helligkeit seiner Kreisscheiben-Nachbarschaft abgezogen wird. Die skimage-Implementierung skaliert die Differenz zur Vermeidung von Unterlauf auf 1/2 und verschiebt sie in die Mitte des Wertebereichs. Sie hebt globale Hell-Dunkel-Ungleichmäßigkeiten auf und verstärkt den lokalen Kontrast.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は円盤半径(</code><code style="color:#22d3bf">1+int(a*4)</code><code style="color:#22d3bf"> で 1〜5)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。8bit 量子化を経由するため元の float64 精度は失われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">Leitfaden zur Familie gallery2d_gray_arith</a></p>

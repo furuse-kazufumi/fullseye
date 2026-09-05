@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sk_adjust_log&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">log_image</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>対数階調変換(log transform)。`<code style="color:#22d3bf">out = gain * log(1 + in)</code>` 型の対数カーブで暗部を持ち上げる階調補正 —— ガンマ補正と似た用途だが、暗部だけをより強く持ち上げる非線形カーブになる。</p>
+<p>로그 계조 변환(log transform). `<code style="color:#22d3bf">out = gain * log(1 + in)</code>` 형태의 로그 곡선으로 어두운 부분을 밝게 올리는 계조 보정이다 —— 감마 보정과 용도는 비슷하지만, 어두운 부분만 더 강하게 끌어올리는 비선형 곡선이 된다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>HALCON の <code style="color:#22d3bf">log_image</code>(Calculate the logarithm of an image.)に相当。実装は `<code style="color:#22d3bf">exposure.adjust_log(clip(v,0,1), gain=0.5+1.5*a)</code><code style="color:#22d3bf"> の結果を </code><code style="color:#22d3bf">[0,1]</code><code style="color:#22d3bf"> へ clip したもの —— a は gain を 0.5〜2.0 に振る。b は未使用。gain が 1 を超えると出力が 1 を僅かに超えることが実測されている(a=0.5 で max=1.1380)ため、</code><code style="color:#22d3bf">image</code><code style="color:#22d3bf"> 契約([0,1])を守るために出口で明示的に clip している —— パイプライン内では </code><code style="color:#22d3bf">ops._apply</code>` の段間 clip と同じ値になるためビット不変だが、直接呼び出した時の白飛びの見え方は clip 追加前と変わる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 패밀리 가이드</a></p>

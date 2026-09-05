@@ -4,14 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;fft_image_inv&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">fft_image_inv</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>入力画像をそのまま周波数領域の配列とみなして逆 FFT を掛け、実部を</p>
-<p>`<code style="color:#22d3bf">signed01</code>` で [0,1] に写す(0.5 がゼロ)。本来 HALCON の</p>
-<p>`<code style="color:#22d3bf">fft_image_inv</code>`（Compute the inverse fast Fourier transform of an</p>
-<p>image.）は `<code style="color:#22d3bf">fft_image</code>` が作った複素スペクトル(実部・虚部の組)を戻す</p>
-<p>演算だが、この代役はグレー画像 1 枚しか扱えないパイプライン契約のため、</p>
-<p>画素値をそのまま(虚部 0 の)複素配列として逆変換する近似になっている</p>
-<p>(`<code style="color:#22d3bf">fft_image</code>` の出力をそのまま渡しても意味的な往復にはならない点に注意)。</p>
+<p>입력 이미지를 그대로 주파수 영역 배열로 간주하여 역 FFT를 적용하고, 실수부를 `<code style="color:#22d3bf">signed01</code><code style="color:#22d3bf">로 [0,1]에 매핑한다(0.5가 영). 본래 HALCON의 </code><code style="color:#22d3bf">fft_image_inv</code><code style="color:#22d3bf">(Compute the inverse fast Fourier transform of an image.)는 </code><code style="color:#22d3bf">fft_image</code><code style="color:#22d3bf">가 만든 복소 스펙트럼(실수부·허수부 쌍)을 되돌리는 연산이지만, 이 대역은 그레이 이미지 한 장만 다룰 수 있는 파이프라인 계약 때문에 화소값을 그대로(허수부 0인) 복소 배열로 간주해 역변환하는 근사가 되었다(</code><code style="color:#22d3bf">fft_image</code>`의 출력을 그대로 넘겨도 의미적으로 유효한 왕복이 되지 않는다는 점에 주의).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 패밀리 가이드</a></p>

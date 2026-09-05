@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xpil_autocontrast&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>オートコントラスト（ヒストグラムの両端を切ってフルレンジに引き伸ばす）。`<code style="color:#22d3bf">PIL.ImageOps.autocontrast</code>` を呼ぶ。</p>
+<p>自動對比度（裁切直方圖兩端並拉伸至全範圍）。呼叫 `<code style="color:#22d3bf">PIL.ImageOps.autocontrast</code>`。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>a がカットオフ率（`<code style="color:#22d3bf">cutoff = int(a*10)</code>`、範囲 0〜10%。ヒストグラムの最暗・最明側からそれぞれ何 % を外れ値として無視するか）を振る。b は未使用。外れ値の影響を抑えつつコントラストを最大限に引き伸ばせる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>

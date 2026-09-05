@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;illuminate&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">illuminate</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>アンシャープマスク型の局所コントラスト強調。`<code style="color:#22d3bf">sm</code>` = ガウシアンぼかし</p>
-<p>(半径 `<code style="color:#22d3bf">3+12*a</code><code style="color:#22d3bf">)を引いた差分 </code><code style="color:#22d3bf">x - sm</code>` を元画像に足し戻すことで、</p>
-<p>低周波の照明ムラを残しつつ局所的なエッジ・テクスチャを持ち上げる。HALCON の</p>
-<p>`<code style="color:#22d3bf">illuminate</code>`（Illuminate image.）の代役。</p>
+<p>언샤프 마스크 방식의 국소 대비 강조. 가우시안 블러(반경 `<code style="color:#22d3bf">3+12*a</code><code style="color:#22d3bf">)인 </code><code style="color:#22d3bf">sm</code><code style="color:#22d3bf">을 뺀 차분 </code><code style="color:#22d3bf">x - sm</code><code style="color:#22d3bf">을 원본 이미지에 다시 더함으로써, 저주파 조명 불균일은 남긴 채 국소적인 에지·텍스처를 끌어올린다. HALCON의 </code><code style="color:#22d3bf">illuminate</code>`(Illuminate image.)의 대역이다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はぼかしの強さ(構造とみなすスケール、シグマ 3〜15)を、</code><code style="color:#22d3bf">b</code>` は強調の</p>
 <p>強さ(0.3〜1.0)を振る。両方が使われる。強すぎるとハローアーティファクトが</p>
 <p>出る。</p>

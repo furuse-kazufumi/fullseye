@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;cv_min_eigen&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">points_harris</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>最小固有値によるコーナー強度(Shi-Tomasi 系、OpenCV 実装)。勾配の構造テンソルの 2 つの固有値のうち小さい方を返す —— Harris のような重み付け(k 依存)が無く、より直接的に「良い特徴点」らしさを測る指標(cv_good_features の内部でも使われる基準と同種)。</p>
+<p>최소 고유값에 의한 코너 강도(Shi-Tomasi 계열, OpenCV 구현). 그래디언트 구조 텐서의 두 고유값 중 작은 쪽을 반환한다 —— Harris와 같은 가중치(k 의존)가 없어, &quot;좋은 특징점&quot;다움을 더 직접적으로 측정하는 지표이다(cv_good_features 내부에서도 사용되는 기준과 같은 종류).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>HALCON の <code style="color:#22d3bf">points_harris</code> に相当(近似。アルゴリズムは別物)。実装は `<code style="color:#22d3bf">cv2.cornerMinEigenVal(v, blockSize=3+2*int(a*2))</code>` を正規化したもの —— a は評価に使う近傍サイズ(blockSize)を 3, 5, 7 に振る。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 패밀리 가이드</a></p>

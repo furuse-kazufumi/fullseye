@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_stat_covariance&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Sample covariance matrix of `<code style="color:#22d3bf">(N, D)</code><code style="color:#22d3bf"> observations → </code><code style="color:#22d3bf">(D, D)</code>`.</p>
+<p>`<code style="color:#22d3bf">(N, D)</code><code style="color:#22d3bf"> 觀測資料的樣本共變異數矩陣 → </code><code style="color:#22d3bf">(D, D)</code>`。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Rows are observations, columns are variables — the `<code style="color:#22d3bf">(N, D)</code>` orientation</p>
 <p>every Fullseye point/sample API uses (note `<code style="color:#22d3bf">np.cov</code>` defaults to the</p>
 <p>*transposed* convention). Uses the unbiased `<code style="color:#22d3bf">ddof=1</code>` estimator (divides</p>

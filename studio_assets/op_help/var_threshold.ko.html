@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;var_threshold&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">var_threshold</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Sauvola の局所適応的二値化(`<code style="color:#22d3bf">skimage.filters.threshold_sauvola</code>`、</p>
-<p>窓サイズ `<code style="color:#22d3bf">2*int(a*6)+3</code>`)。局所平均と局所標準偏差の両方を使ってしきい値</p>
-<p>を決めるため、`<code style="color:#22d3bf">dyn_threshold</code>` より照明ムラや低コントラスト文書に強い。</p>
-<p>HALCON の `<code style="color:#22d3bf">var_threshold</code>`（Threshold an image by local mean and standard</p>
-<p>deviation analysis.）に相当する近似(定式化は似た発想だが Sauvola の式と</p>
-<p>HALCON の式は係数が異なる ―― 同一の数値結果にはならない)。</p>
+<p>Sauvola의 국소 적응적 이진화(`<code style="color:#22d3bf">skimage.filters.threshold_sauvola</code><code style="color:#22d3bf">, 창 크기 </code><code style="color:#22d3bf">2*int(a*6)+3</code><code style="color:#22d3bf">). 국소 평균과 국소 표준편차를 모두 사용해 임계값을 결정하므로, </code><code style="color:#22d3bf">dyn_threshold</code><code style="color:#22d3bf">보다 조명 불균일이나 저대비 문서에 강하다. HALCON의 </code><code style="color:#22d3bf">var_threshold</code>`(Threshold an image by local mean and standard deviation analysis.)에 해당하는 근사이다(공식화 발상은 비슷하지만 Sauvola의 식과 HALCON의 식은 계수가 다르다 —— 동일한 수치 결과가 나오지는 않는다).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が局所窓のサイズを振る。</code><code style="color:#22d3bf">b</code>` は未使用(Sauvola の k, r は skimage の</p>
 <p>既定値に固定)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

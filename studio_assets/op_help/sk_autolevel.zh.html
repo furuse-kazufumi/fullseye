@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_autolevel&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">scale_image_max</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>局所オートレベル。各画素周辺の局所ヒストグラムの最小〜最大値を 0〜255 いっぱいに引き伸ばす —— グローバルな階調ではなく場所ごとにコントラストを最大化する適応的なレベル補正。</p>
+<p>局部自动色阶。将每个像素周围局部直方图的最小值〜最大值拉伸至完整的 0〜255 范围 —— 这是一种按位置(而非全局阶调)最大化对比度的自适应色阶校正。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>HALCON の <code style="color:#22d3bf">scale_image_max</code>(Maximum gray value spreading in the value range 0 to 255.)に相当(近似。HALCON 版は画像全体、こちらは局所窓ごと)。実装は `<code style="color:#22d3bf">filters.rank.autolevel(_u8s(v), disk(1+int(a*3)))</code>` を 255 で割ったもの —— a は円盤半径を 1〜4 に振る。b は未使用。ほぼ一様な領域ではノイズまで強く引き伸ばされる点に注意。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>

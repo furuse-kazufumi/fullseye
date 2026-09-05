@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;thinning_golay&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">thinning_golay</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>領域を細線化する。実装は skimage の `<code style="color:#22d3bf">thin</code>`（Guo–Hall 型の反復細線化）で完全に 1 画素幅になるまで繰り返し、a, b は未使用。</p>
+<p>對區域進行細線化（thinning）。實作使用 skimage 的 `<code style="color:#22d3bf">thin</code>`（Guo–Hall 型的疊代細線化），反覆處理直到完全變為 1 像素寬，a、b 未使用。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の `<code style="color:#22d3bf">thinning_golay</code>`（Golay アルファベットの構造要素を使ったヒット・オア・ミス変換で 1 ステップぶんだけ細線化する演算、通常は反復して使う）とはアルゴリズムも粒度も異なる近似 —— 単一ステップではなく収束するまで細線化してしまう。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

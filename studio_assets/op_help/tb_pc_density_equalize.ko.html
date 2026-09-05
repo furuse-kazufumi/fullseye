@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_pc_density_equalize&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Fill the sparse regions, then thin the dense ones: uniform spacing (`<code style="color:#22d3bf">points</code>`).</p>
+<p>희소한 영역을 채운 뒤 밀집한 영역을 솎아내어 균일한 간격을 만듦(`<code style="color:#22d3bf">points</code>`).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>:func:<code style="color:#22d3bf">pc_fill_sparse</code> followed by :func:<code style="color:#22d3bf">pc_poisson_disk</code> with radius</p>
 <p>`<code style="color:#22d3bf">0.8 × spacing</code>` (the Poisson radius is a minimum, the k-NN spacing a</p>
 <p>typical value; 0.8 keeps the median spacing at the target). Measured on a</p>

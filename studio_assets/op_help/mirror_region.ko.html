@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;mirror_region&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">mirror_region</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>領域を反転（ミラー）する。a の値で軸を切り替える: a&lt;0.34 で上下反転（`<code style="color:#22d3bf">flipud</code><code style="color:#22d3bf">）、0.34≤a&lt;0.67 で左右反転（</code><code style="color:#22d3bf">fliplr</code><code style="color:#22d3bf">）、それ以外で転置（対角線反転、</code><code style="color:#22d3bf">x.T</code><code style="color:#22d3bf">）。b は未使用。フリップは値を変えない演算なので </code><code style="color:#22d3bf">_rebinarise</code>` は実質何もしない。</p>
+<p>영역을 뒤집는다(미러). a 값에 따라 축을 전환한다: a&lt;0.34이면 상하 반전(`<code style="color:#22d3bf">flipud</code><code style="color:#22d3bf">), 0.34≤a&lt;0.67이면 좌우 반전(</code><code style="color:#22d3bf">fliplr</code><code style="color:#22d3bf">), 그 외에는 전치(대각선 반전, </code><code style="color:#22d3bf">x.T</code><code style="color:#22d3bf">). b는 사용되지 않는다. 뒤집기는 값을 바꾸지 않는 연산이므로 </code><code style="color:#22d3bf">_rebinarise</code>`는 사실상 아무 일도 하지 않는다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>HALCON の `<code style="color:#22d3bf">mirror_region</code>`（軸を指定して領域を反射する演算）に相当。HALCON は軸位置を任意に指定できるが、この実装は画像中心を通る 3 種類の軸（縦/横/対角）に固定されている近似。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 패밀리 가이드</a></p>

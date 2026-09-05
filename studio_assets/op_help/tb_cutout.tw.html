@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_cutout&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>空間的な軸平行ボックス領域を除去し `<code style="color:#22d3bf">(kept, kept_idx)</code>` を返す(局所欠損の模倣)。</p>
+<p>移除一個空間上的軸對齊方塊區域，並回傳 `<code style="color:#22d3bf">(kept, kept_idx)</code>`（模擬局部資料缺失）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>既存の点を 1 つ一様サンプルして中心とし、辺長 `<code style="color:#22d3bf">extent</code>`(スカラ=立方体, または</p>
 <p>`<code style="color:#22d3bf">(3,)</code>`=各軸辺長)のボックス内の点をすべて除去する。中心点自身が必ず入るため</p>
 <p>最低 1 点は除去される。除去点は必ず辺長 `<code style="color:#22d3bf">extent</code>` のボックスに収まる(空間的に</p>

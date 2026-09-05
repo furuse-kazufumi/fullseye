@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;cos_image&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">cos_image</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>`<code style="color:#22d3bf">(cos(2πx) + 1) / 2</code><code style="color:#22d3bf"> による周期 LUT。</code><code style="color:#22d3bf">sin_image</code>` と位相が π/2 ずれた</p>
-<p>版で、x=0 で最大(1)、x=0.5 で最小(0)に達してから再び上がる。HALCON の</p>
-<p>`<code style="color:#22d3bf">cos_image</code>`（Calculate the cosine of an image.）の代役。</p>
+<p>`<code style="color:#22d3bf">(cos(2πx) + 1) / 2</code><code style="color:#22d3bf">에 의한 주기 LUT. </code><code style="color:#22d3bf">sin_image</code><code style="color:#22d3bf">와 위상이 π/2만큼 어긋난 버전으로, x=0에서 최댓값(1), x=0.5에서 최솟값(0)에 도달한 뒤 다시 상승한다. HALCON의 </code><code style="color:#22d3bf">cos_image</code>`(Calculate the cosine of an image.)의 대역.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。</code><code style="color:#22d3bf">sin_image</code>` と同じく非単調・非可逆な周期写像なので、</p>
 <p>一般のコントラスト補正ではなく擬似的な等高線表現などに使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

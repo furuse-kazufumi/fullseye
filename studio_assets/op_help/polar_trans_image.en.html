@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;polar_trans_image&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">polar_trans_image</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>直交座標→極座標変換(`<code style="color:#22d3bf">cv2.warpPolar</code>`)。画像中心を極の中心、</p>
-<p>`<code style="color:#22d3bf">min(H,W)/2</code>` を最大半径として、円環状の内容を横長の展開図に変換する。</p>
-<p>未マッピングの画素は 0 埋め(`<code style="color:#22d3bf">dst</code>` を事前ゼロクリアしてから、cv2 が返す</p>
-<p>戻り値を読む ―― `<code style="color:#22d3bf">dst</code>` バッファ自体を読むと空になることがある実装上の</p>
-<p>注意点がコードコメントに詳しい)。HALCON の `<code style="color:#22d3bf">polar_trans_image</code>`</p>
-<p>（Transform an image to polar coordinates）に相当。</p>
+<p>A Cartesian-to-polar coordinate transform (`<code style="color:#22d3bf">cv2.warpPolar</code><code style="color:#22d3bf">). Using the image center as the pole and </code><code style="color:#22d3bf">min(H,W)/2</code><code style="color:#22d3bf"> as the maximum radius, it converts ring-shaped content into a wide, unrolled representation. Unmapped pixels are filled with 0 (</code><code style="color:#22d3bf">dst</code><code style="color:#22d3bf"> is zero-cleared beforehand, and the return value from cv2 is read -- an implementation note detailed in the code comments explains that reading the </code><code style="color:#22d3bf">dst</code><code style="color:#22d3bf"> buffer itself can sometimes come back empty). Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">polar_trans_image</code>` (Transform an image to polar coordinates).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用 ―― 中心と半径は画像サイズから自動的に決まり、</p>
 <p>調整点は無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

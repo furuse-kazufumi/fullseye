@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;gamma_image&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">gamma_image</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>ガンマ補正 `<code style="color:#22d3bf">x ** (0.3 + 2.5*a)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">a</code>` が 0 に近いほど指数は 0.3 に</p>
-<p>近づき暗部を持ち上げ、`<code style="color:#22d3bf">a</code>` が 1 に近いほど指数は 2.8 に近づき暗部を潰して</p>
-<p>コントラストを強める。HALCON の `<code style="color:#22d3bf">gamma_image</code>`（Perform a gamma encoding or</p>
-<p>decoding of an image.）の代役。</p>
+<p>伽玛校正 `<code style="color:#22d3bf">x ** (0.3 + 2.5*a)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 越接近 0，指数越接近 0.3，会提升暗部；</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 越接近 1，指数越接近 2.8，会压暗暗部、增强对比度。用作 HALCON </code><code style="color:#22d3bf">gamma_image</code>`（Perform a gamma encoding or decoding of an image.）的替代。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はガンマ指数を 0.3〜2.8 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。HALCON の実装は</p>
 <p>Encode/Decode の切替や AmpFactor など複数パラメータを持つが、ここでは</p>
 <p>単純なべき乗写像 1 本に単純化している(近似)。</p>

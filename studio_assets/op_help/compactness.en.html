@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;compactness&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">compactness</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>コンパクトさ `<code style="color:#22d3bf">周囲長² / (4π・面積) / 10</code>`(円形度の逆数に近い量を</p>
-<p>10 で正規化しただけの実装 ―― この `<code style="color:#22d3bf">/10</code>` は HALCON の定義に基づく係数</p>
-<p>ではなく、値を [0,1] に収めるための便宜的なスケーリングである点に注意)。</p>
-<p>HALCON の `<code style="color:#22d3bf">compactness</code>`（Shape factor for the compactness of a region.）</p>
-<p>に相当する近似。</p>
+<p>Compactness `<code style="color:#22d3bf">perimeter^2 / (4pi * area) / 10</code><code style="color:#22d3bf"> -- an implementation that simply normalizes a quantity close to the reciprocal of circularity by dividing by 10. Note that this </code><code style="color:#22d3bf">/10</code><code style="color:#22d3bf"> is not a coefficient based on HALCON&#x27;s definition, but a convenience scaling to keep the value within [0,1]. An approximation of HALCON&#x27;s </code><code style="color:#22d3bf">compactness</code>` (Shape factor for the compactness of a region.).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>

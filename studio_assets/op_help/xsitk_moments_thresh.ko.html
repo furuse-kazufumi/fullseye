@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_moments_thresh&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>モーメント保存法による二値化(SimpleITK `<code style="color:#22d3bf">MomentsThreshold</code>`、Tsai の方法)。二値化後のヒストグラムの統計モーメント(平均・分散など)が元のヒストグラムのものと一致するように閾値を選ぶ。</p>
+<p>모멘트 보존법에 의한 이진화(SimpleITK `<code style="color:#22d3bf">MomentsThreshold</code>`, Tsai 방법). 이진화 후 히스토그램의 통계적 모멘트(평균・분산 등)가 원본 히스토그램의 것과 일치하도록 임계값을 선택한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はヒストグラムのビン数(64〜256)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。xsitk_maxentropy_thresh・xsitk_huang_thresh とは閾値選択の基準が異なるだけで、同じ入出力形。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 패밀리 가이드</a></p>

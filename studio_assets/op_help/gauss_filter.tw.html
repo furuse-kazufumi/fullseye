@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;gauss_filter&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">gauss_filter</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>ガウシアンぼかし(`<code style="color:#22d3bf">scipy.ndimage.gaussian_filter</code><code style="color:#22d3bf">、シグマ </code><code style="color:#22d3bf">0.3+2.7*a</code>`)</p>
-<p>による平滑化。HALCON の `<code style="color:#22d3bf">gauss_filter</code>`（Smooth using discrete Gauss</p>
-<p>functions.）の代役 ―― HALCON は離散ガウス核(整数演算)、こちらは連続ガウス核</p>
-<p>の scipy 実装で、近似ではあるが結果は非常に近い。</p>
+<p>透過高斯模糊(`<code style="color:#22d3bf">scipy.ndimage.gaussian_filter</code><code style="color:#22d3bf">,sigma 為 </code><code style="color:#22d3bf">0.3+2.7*a</code><code style="color:#22d3bf">)進行的平滑處理。是 HALCON 的 </code><code style="color:#22d3bf">gauss_filter</code>`(Smooth using discrete Gauss functions.)的替代實作 —— HALCON 使用離散高斯核(整數運算),這裡則是連續高斯核的 scipy 實作,雖屬近似,但結果非常接近。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がシグマを 0.3〜3.0 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。実装は</p>
 <p>`<code style="color:#22d3bf">gauss_image</code>` と同一。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

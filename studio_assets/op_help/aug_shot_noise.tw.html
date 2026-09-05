@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;aug_shot_noise&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Photon (Poisson) shot noise -- the quantum floor of every image sensor.</p>
+<p>光子（泊松）散粒雜訊 —— 每個影像感測器固有的量子雜訊底限。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>The image is interpreted as a normalised photon rate, scaled by the photon</p>
 <p>scale `<code style="color:#22d3bf">K = 5 + 250*(1-a)</code>`, sampled from a Poisson distribution and scaled</p>
 <p>back: `<code style="color:#22d3bf">Poisson(v*K)/K</code><code style="color:#22d3bf">. High </code><code style="color:#22d3bf">a</code>` = few photons = very noisy</p>

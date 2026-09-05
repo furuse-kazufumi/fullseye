@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;zoom_image_factor&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">zoom_image_factor</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>高さ方向・幅方向で独立な倍率(`<code style="color:#22d3bf">0.7+0.6*a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">0.7+0.6*b</code>`)を持つ等方</p>
-<p>でないズーム。中心を基準にアフィン変換で拡大縮小し、キャンバスサイズは</p>
-<p>変えない(はみ出す/余る部分は反射で埋める)。HALCON の</p>
-<p>`<code style="color:#22d3bf">zoom_image_factor</code>`（Zoom an image by a given factor.）に相当し、</p>
-<p>HALCON と同じく <b>2 つの倍率</b>(ScaleHeight/ScaleWidth)を取る。</p>
+<p>높이 방향과 너비 방향에 독립적인 배율(`<code style="color:#22d3bf">0.7+0.6*a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">0.7+0.6*b</code><code style="color:#22d3bf">)을 갖는 비등방 줌이다. 중심을 기준으로 아핀 변환으로 확대·축소하며, 캔버스 크기는 바뀌지 않는다(넘치거나 남는 부분은 반사로 채운다). HALCON의 </code><code style="color:#22d3bf">zoom_image_factor</code>`(Zoom an image by a given factor.)에 해당하며, HALCON과 마찬가지로 <b>두 개의 배율</b>(ScaleHeight/ScaleWidth)을 취한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が縦方向の倍率、</code><code style="color:#22d3bf">b</code>` が横方向の倍率を振る。両方が使われる</p>
 <p>(2026-09-02 以前は `<code style="color:#22d3bf">zoom_image_size</code>` と実装が重複していたが、現在は</p>
 <p>別の `<code style="color:#22d3bf">kind</code>` に分離済み)。</p>

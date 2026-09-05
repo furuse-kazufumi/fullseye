@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_thin&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">thinning</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>モルフォロジー的細線化(thinning)。sk_skeleton と似た 1 画素幅化だが、アルゴリズムが異なりヒット・オア・ミス変換ベースで、骨格の枝(スパー)が出にくい傾向がある。</p>
+<p>形態學細化(thinning)。與 sk_skeleton 一樣都是變成 1 像素寬,但演算法不同,基於擊中或擊不中變換(hit-or-miss transform),較不容易產生骨架分支(毛刺)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の <code style="color:#22d3bf">thinning</code>(Remove the result of a hit-or-miss operation from a region.)に相当。実装は `<code style="color:#22d3bf">morphology.thin(binm(v))</code>`。a, b は未使用。sk_skeleton / sk_medial と 3 通りの細線化を並べ、対象形状に合うものを選べるようにしてある。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

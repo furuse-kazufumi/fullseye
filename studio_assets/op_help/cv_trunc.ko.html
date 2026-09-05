@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;cv_trunc&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">scale_image</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>階調の上側切り詰め(THRESH_TRUNC、OpenCV 実装)。指定値より明るい画素はすべてその値に丸め、それ以下の画素はそのまま —— ハイライトだけを潰す階調操作(暗部には触れない)。</p>
+<p>상위 계조 절단(THRESH_TRUNC, OpenCV 구현). 지정한 값보다 밝은 화소는 모두 그 값으로 잘라내고, 그 이하의 화소는 그대로 둔다 —— 하이라이트만을 뭉개는 계조 조작(어두운 부분은 건드리지 않는다).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>HALCON の <code style="color:#22d3bf">scale_image</code>(Scale the gray values of an image.)に相当(近似。線形スケーリングではなく片側クリップ)。実装は `<code style="color:#22d3bf">cv2.threshold(v, thresh=a, maxval=1.0, THRESH_TRUNC)</code>` —— a は切り詰めレベルを 0〜1 に振る。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 패밀리 가이드</a></p>

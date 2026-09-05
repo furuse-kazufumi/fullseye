@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">contour</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sp_local_max_sub_pix&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>グレー値曲面の極大点をサブピクセル精度で検出する（HALCON `<code style="color:#22d3bf">local_max_sub_pix</code><code style="color:#22d3bf"> の代替実装。</code><code style="color:#22d3bf">halcon=&quot;&quot;</code>`: 同名の座標は既存のcore op が既にカバー済みなので二重申告しない）。</p>
+<p>以子像素精度偵測灰階曲面的局部極大值(HALCON `<code style="color:#22d3bf">local_max_sub_pix</code><code style="color:#22d3bf"> 的替代實作。</code><code style="color:#22d3bf">halcon=&quot;&quot;</code>`:因為同名座標已由既有的 core op 涵蓋,故不重複申報)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>3x3 近傍に 2 次曲面 `<code style="color:#22d3bf">z = a0+a1 x+a2 y+a3 x^2+a4 y^2+a5 xy</code><code style="color:#22d3bf"> を最小二乗フィットし、勾配 0 の点へのオフセットを解いてサブピクセル位置を求める（ヘッセ行列が退化する場合は 1 次元放物線補間にフォールバック）。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">は極大の顕著さ（周囲の最小値からの深さ）のしきい値を 0.01〜0.31 に振る（</code><code style="color:#22d3bf">thr = 0.01 + 0.30*a</code><code style="color:#22d3bf">）。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。戻り値は CONTOUR、座標の単位は入力画像のピクセル（小数値＝サブピクセル）。検出点数は</code><code style="color:#22d3bf">count_contours</code>` で数えられる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>

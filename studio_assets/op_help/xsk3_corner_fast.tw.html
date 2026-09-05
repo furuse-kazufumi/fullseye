@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk3_corner_fast&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>FAST コーナー検出(skimage `<code style="color:#22d3bf">feature.corner_fast</code>`)。中心画素の周囲の円周上の画素と比較し、連続して明るい/暗い画素が一定数以上続く場所をコーナーとして検出する高速な手法。結果は最大絶対値で正規化した応答マップ。</p>
+<p>FAST 角點偵測(skimage `<code style="color:#22d3bf">feature.corner_fast</code>`)。與中心像素周圍圓周上的像素比較，將連續較亮/較暗的像素達到一定數目以上的位置偵測為角點的快速方法。結果為依最大絕對值正規化後的響應圖。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は連続画素数のしきい値 </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">9+int(a*3)</code><code style="color:#22d3bf"> で 9〜12)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は輝度差のしきい値(</code><code style="color:#22d3bf">0.05+0.2*b</code>` で 0.05〜0.25)を振る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>

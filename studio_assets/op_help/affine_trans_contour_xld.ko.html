@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;affine_trans_contour_xld&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">affine_trans_contour_xld</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>輪郭の各点を画像中心を軸に回転(`<code style="color:#22d3bf">-20°〜+20°</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">a</code>` で決まる)する。</p>
-<p>HALCON の `<code style="color:#22d3bf">affine_trans_contour_xld</code>`（Apply an arbitrary affine 2D</p>
-<p>transformation to XLD contours.）は任意のアフィン行列(平行移動・拡大縮小・</p>
-<p>せん断を含む)を取れるが、この代役では純粋な回転のみに単純化している</p>
-<p>(近似)。</p>
+<p>윤곽선의 각 점을 이미지 중심을 축으로 회전한다(-20°~+20°, `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">로 결정). HALCON의 </code><code style="color:#22d3bf">affine_trans_contour_xld</code>`(Apply an arbitrary affine 2D transformation to XLD contours.)는 임의의 아핀 행렬(평행이동·확대축소·전단 포함)을 받을 수 있지만, 이 대역은 순수 회전만으로 단순화했다(근사).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が回転角を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 패밀리 가이드</a></p>

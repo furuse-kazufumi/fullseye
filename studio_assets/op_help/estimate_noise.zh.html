@@ -4,14 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;estimate_noise&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">estimate_noise</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>加法性ノイズの標準偏差 σ をロバスト推定する(`<code style="color:#22d3bf">_noise_sigma</code>`:</p>
-<p>ラプラシアン応答の MAD を正規分布換算し、5 点ラプラシアン核のノイズ利得</p>
-<p>`<code style="color:#22d3bf">sqrt(20)</code>` で割る)。エッジ由来の外れ値には鈍く、平坦部のノイズだけを</p>
-<p>拾う設計(2026-09-02 に旧実装の「σ が単位を持たず σ≈0.08 以上で 1.0 に</p>
-<p>張り付く」不具合を修正済み、詳細は `<code style="color:#22d3bf">_noise_sigma</code>` の docstring)。HALCON</p>
-<p>の `<code style="color:#22d3bf">estimate_noise</code>`（Estimate the image noise from a single image.）に</p>
-<p>相当。</p>
+<p>稳健地估计加性噪声的标准差 σ（`<code style="color:#22d3bf">_noise_sigma</code><code style="color:#22d3bf">：把拉普拉斯响应的 MAD 换算为正态分布等效尺度，再除以 5 点拉普拉斯核的噪声增益 </code><code style="color:#22d3bf">sqrt(20)</code><code style="color:#22d3bf">）。设计上对边缘产生的离群值不敏感，只拾取平坦区域的噪声（2026-09-02 已修复旧实现中“σ 没有单位、在 σ≈0.08 以上会饱和到 1.0”的缺陷，详见 </code><code style="color:#22d3bf">_noise_sigma</code><code style="color:#22d3bf"> 的 docstring）。相当于 HALCON 的 </code><code style="color:#22d3bf">estimate_noise</code>`（Estimate the image noise from a single image.）。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

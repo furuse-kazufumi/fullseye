@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;smooth_image&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">smooth_image</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>ガウシアンぼかし(シグマ `<code style="color:#22d3bf">0.5+2.0*a</code>`)一本で近似した汎用スムージング。</p>
-<p>HALCON の `<code style="color:#22d3bf">smooth_image</code>`（Smooth an image using various filters.）は</p>
-<p>Deriche/Gauss/Mean など複数のフィルタ種別を選べる万能演算子だが、ここでは</p>
-<p>ガウシアン 1 種類に単純化している(近似の限界)。</p>
+<p>用单一高斯模糊(sigma 为 `<code style="color:#22d3bf">0.5+2.0*a</code><code style="color:#22d3bf">)近似的通用平滑处理。HALCON 的 </code><code style="color:#22d3bf">smooth_image</code>`(Smooth an image using various filters.)是可在 Deriche/Gauss/Mean 等多种滤波器类型中选择的万能算子,但这里简化为仅高斯一种(此近似的局限)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がシグマを 0.5〜2.5 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk2_corner_kr&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Kitchen-Rosenfeld コーナー検出応答。`<code style="color:#22d3bf">skimage.feature.corner_kitchen_rosenfeld</code><code style="color:#22d3bf"> を呼び、NaN を 0 に置き換えてから </code><code style="color:#22d3bf">signed01</code>` で符号付き応答を [0,1] に写像する。</p>
+<p>Kitchen-Rosenfeld 角点检测响应。调用 `<code style="color:#22d3bf">skimage.feature.corner_kitchen_rosenfeld</code><code style="color:#22d3bf">，将 NaN 替换为 0 后，通过 </code><code style="color:#22d3bf">signed01</code>` 将带符号响应映射到 [0,1]。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>a, b は未使用。等高線の曲率とエッジ強度から求まる古典的なコーナー検出器で、平坦部やエッジ上では 0 付近、コーナーで大きな値になる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sg_region_growing_seeded&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>画像中心を種として、輝度が近い画素を繋げていく領域拡張（シードグロウイング）（HALCON `<code style="color:#22d3bf">regiongrowing</code><code style="color:#22d3bf"> は既に別 op でカバー済みのため、重複申告を避けて </code><code style="color:#22d3bf">halcon=&quot;&quot;</code>` としている）。</p>
+<p>以图像中心为种子，连接亮度相近像素的种子区域生长（区域扩张）（HALCON `<code style="color:#22d3bf">regiongrowing</code><code style="color:#22d3bf"> 已由另一个 op 覆盖，为避免重复申报，此处使用 </code><code style="color:#22d3bf">halcon=&quot;&quot;</code>`）。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>種は画像中心の 1 画素。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">（0〜1）が同質性の許容差（種の輝度 ±a 以内なら繋がる）、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が連結性を切り替える（</code><code style="color:#22d3bf">b &gt; 0.5</code>` で 8 連結、それ以外は 4 連結）。結果は種を含む連結成分のみ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>

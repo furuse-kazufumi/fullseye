@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;r3_polar_trans_region&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">polar_trans_region</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>領域を重心中心の極座標へリマップする（HALCON `<code style="color:#22d3bf">polar_trans_region</code>` に相当）。</p>
+<p>Bildet die Region in Polarkoordinaten um ihren Schwerpunkt ab (entspricht HALCON `<code style="color:#22d3bf">polar_trans_region</code>`).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>出力の行が半径軸（0〜`<code style="color:#22d3bf">rmax</code><code style="color:#22d3bf">）、列が角度軸（0〜</code><code style="color:#22d3bf">angle_end</code><code style="color:#22d3bf">）にあたる。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">（0〜1）は半径方向の広がり（</code><code style="color:#22d3bf">rmax</code><code style="color:#22d3bf"> は重心から最遠画素までの距離に </code><code style="color:#22d3bf">0.25+0.75*a</code><code style="color:#22d3bf"> を掛けたもの）、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf">（0〜1）は角度方向の掃引幅（</code><code style="color:#22d3bf">angle_end = 2*pi*(0.25+0.75*b)</code>`）を振る。最近傍サンプリング。出力の形状は入力と同じ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>

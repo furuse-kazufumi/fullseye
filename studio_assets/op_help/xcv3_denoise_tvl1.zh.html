@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xcv3_denoise_tvl1&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>全変動 L1 ノイズ除去(OpenCV `<code style="color:#22d3bf">cv2.denoise_TVL1</code>`、Primal-Dual アルゴリズム)。エッジを保ちながらノイズを除去する全変動最小化に基づく手法で、通常のガウシアン平滑化よりエッジがシャープに残る。</p>
+<p>全变分 L1 去噪(OpenCV `<code style="color:#22d3bf">cv2.denoise_TVL1</code>`，Primal-Dual 算法)。一种基于全变分最小化、在去除噪声的同时保留边缘的方法，相比普通高斯平滑，边缘保留得更锐利。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は正則化項の重み </code><code style="color:#22d3bf">lambda</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">0.3+2.7*a</code><code style="color:#22d3bf"> で 0.3〜3.0。小さいほど強く平滑化される)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は反復回数(</code><code style="color:#22d3bf">int(10+40*b)</code>` で 10〜50)を振る。8bit 量子化を経由するため入力の float64 精度は失われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

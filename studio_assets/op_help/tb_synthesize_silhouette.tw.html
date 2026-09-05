@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_synthesize_silhouette&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>3-D 点群を (K,R,t) カメラへ射影し占有画素 True のシルエット(H,W bool)を返す。</p>
+<p>將 3-D 點雲投影到 (K,R,t) 相機上，回傳被佔用像素為 True 的輪廓圖（H,W bool）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>GT 生成用。`<code style="color:#22d3bf">points</code><code style="color:#22d3bf"> (N,3) を </code><code style="color:#22d3bf">X_cam = R X + t</code>` で射影し、depth&gt;0 かつ画像内に</p>
 <p>落ちた画素を True にする。疎な点群では射影像に穴が空くため、既定で穴埋め</p>
 <p>(`<code style="color:#22d3bf">fill</code>`, scipy.ndimage.binary_fill_holes)して中身の詰まった前景マスクにする。</p>

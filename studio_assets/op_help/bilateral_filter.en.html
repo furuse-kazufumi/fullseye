@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;bilateral_filter&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">bilateral_filter</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>OpenCV のバイラテラルフィルタ(`<code style="color:#22d3bf">cv2.bilateralFilter</code>`)。近傍画素を</p>
-<p>空間距離と輝度差の両方で重み付けして平均する、エッジを保ったまま平滑化する</p>
-<p>定番手法。HALCON の `<code style="color:#22d3bf">bilateral_filter</code>`（bilateral filtering of an</p>
-<p>image.）に相当。</p>
+<p>OpenCV&#x27;s bilateral filter (`<code style="color:#22d3bf">cv2.bilateralFilter</code><code style="color:#22d3bf">). A standard method that averages neighboring pixels weighted by both spatial distance and intensity difference, smoothing while preserving edges. Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">bilateral_filter</code>` (bilateral filtering of an image).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が空間方向のシグマ(1〜4)を、</code><code style="color:#22d3bf">b</code>` が輝度(色)方向のシグマ(0.05〜0.45)</p>
 <p>を振る。両方が使われる。`<code style="color:#22d3bf">cv2</code>` が無い環境ではこの分岐は呼べない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

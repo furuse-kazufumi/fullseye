@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_curv_aniso_diff&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>曲率異方性拡散(SimpleITK `<code style="color:#22d3bf">CurvatureAnisotropicDiffusion</code>`)。Perona-Malik 型の異方性拡散の一種で、エッジ(勾配が大きい場所)では拡散を抑え、平坦な場所ではよく拡散させることでエッジを保ったまま平滑化する。</p>
+<p>曲率各向異性擴散（SimpleITK `<code style="color:#22d3bf">CurvatureAnisotropicDiffusion</code>`）。屬於Perona-Malik型各向異性擴散的一種，在邊緣（梯度大的位置）抑制擴散，在平坦處充分擴散，藉此在保留邊緣的同時進行平滑。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は伝導度パラメータ(conductance、</code><code style="color:#22d3bf">0.5+4.5*a</code><code style="color:#22d3bf"> で 0.5〜5.0。大きいほどエッジ判定が緩くなり強く拡散する)、</code><code style="color:#22d3bf">b</code>` は反復回数(1〜9 回)を振る。時間刻みは 0.0625 固定。出力は [0,1] にクリップ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>

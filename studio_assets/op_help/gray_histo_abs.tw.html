@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;gray_histo_abs&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">gray_histo_abs</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>画像の階調の標準偏差(`<code style="color:#22d3bf">x.std()</code><code style="color:#22d3bf">)を返す。HALCON の </code><code style="color:#22d3bf">gray_histo_abs</code>`</p>
-<p>（Calculate the gray value distribution.）は本来ヒストグラム全体</p>
-<p>(各階調のビン度数)を返す演算子だが、この代役ではヒストグラムそのものでは</p>
-<p>なく分布の広がりを表す標準偏差 1 個のスカラーに要約している(近似 ―― この</p>
-<p>パイプラインの `<code style="color:#22d3bf">feature</code>` ソートが 1 スカラーである契約上の制約)。</p>
+<p>回傳影像灰階的標準差(`<code style="color:#22d3bf">x.std()</code><code style="color:#22d3bf">)。HALCON 的 </code><code style="color:#22d3bf">gray_histo_abs</code><code style="color:#22d3bf">(Calculate the gray value distribution.)原本是回傳整個直方圖(各灰階的柱狀計數)的運算子,但此替代實作並非直方圖本身,而是概括為代表分佈離散程度的標準差這一個純量(近似——這是因為此流水線的 </code><code style="color:#22d3bf">feature</code>` 排序必須是單一純量的契約限制)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

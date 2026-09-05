@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;gen_gabor&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">gen_gabor</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>単一の Gabor カーネル(向き `<code style="color:#22d3bf">θ=π*a</code><code style="color:#22d3bf">、周波数 </code><code style="color:#22d3bf">0.1+0.3*b</code>`)による</p>
-<p>畳み込み応答の絶対値を、カーネルの L1 ノルムで正規化して返す。DC 成分を</p>
-<p>除いた(平均を引いた)実部のみのカーネルで、指定方向・周波数の縞模様に</p>
-<p>選択的に反応するバンドパステクスチャフィルタ。HALCON の `<code style="color:#22d3bf">gen_gabor</code>`</p>
-<p>（Generate a Gabor filter.）に相当(虚部/位相は持たない実カーネルのみの</p>
-<p>簡易版)。</p>
+<p>Returns the absolute value of the convolution response from a single Gabor kernel (orientation `<code style="color:#22d3bf">theta=pi*a</code><code style="color:#22d3bf">, frequency </code><code style="color:#22d3bf">0.1+0.3*b</code><code style="color:#22d3bf">), normalized by the kernel&#x27;s L1 norm. A real-part-only kernel with the DC component removed (mean subtracted), acting as a band-pass texture filter that responds selectively to stripe patterns of the specified direction and frequency. Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">gen_gabor</code>` (Generate a Gabor filter) -- a simplified version using only a real kernel with no imaginary part / phase.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が向き θ(0〜180°)を、</code><code style="color:#22d3bf">b</code>` が空間周波数(0.1〜0.4)を振る。両方が</p>
 <p>使われる。`<code style="color:#22d3bf">a=0</code><code style="color:#22d3bf"> が縦縞、</code><code style="color:#22d3bf">a=0.5</code>`(90°)が横縞に応答する規約。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

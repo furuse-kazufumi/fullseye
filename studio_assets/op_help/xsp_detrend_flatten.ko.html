@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsp_detrend_flatten&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>画像全体の一次トレンド（傾き）を縦横それぞれ除去してから正規化するフラット化フィルタ。</p>
+<p>이미지 전체의 1차 트렌드(기울기)를 세로·가로 각각 제거한 뒤 정규화하는 평탄화 필터.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">scipy.signal.detrend</code><code style="color:#22d3bf"> を列方向・行方向の順に適用し、各行/各列の線形回帰成分を差し引く。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。照明ムラなど画像全体に乗った緩やかな傾斜を除去し、局所コントラストを見やすくする用途。結果は符号付きなので</code><code style="color:#22d3bf">*0.5+0.5</code>` で [0,1] に写像し直している。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 패밀리 가이드</a></p>

@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;get_region_thickness&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">get_region_thickness</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>領域の太さの近似値 `<code style="color:#22d3bf">2 × 最大内接円半径 / 最大辺長</code>`</p>
-<p>(`<code style="color:#22d3bf">distance_transform_edt</code>` の最大値の 2 倍を画像サイズで正規化)。HALCON</p>
-<p>の `<code style="color:#22d3bf">get_region_thickness</code>`（Access the thickness of a region along the</p>
-<p>main axis.）が定義する「主軸に沿った太さのプロファイル」とは異なり、</p>
-<p>方向を問わないグローバルな最大内接半径だけを見る単純化(主軸方向の情報は</p>
-<p>失われる)。</p>
+<p>Eine Näherung der Bereichsdicke: `<code style="color:#22d3bf">2 x maximaler Inkreisradius / maximale Seitenlänge</code><code style="color:#22d3bf"> (das Doppelte des Maximums von </code><code style="color:#22d3bf">distance_transform_edt</code><code style="color:#22d3bf">, normiert auf die Bildgröße). Im Unterschied zu HALCONs </code><code style="color:#22d3bf">get_region_thickness</code>` (Access the thickness of a region along the main axis.), das ein &#x27;Dickenprofil entlang der Hauptachse&#x27; definiert, handelt es sich hier um eine Vereinfachung, die nur den richtungsunabhängigen, globalen maximalen Inkreisradius betrachtet (Informationen zur Hauptachsenrichtung gehen verloren).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>

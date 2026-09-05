@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;guided_filter&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">guided_filter</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>実装は `<code style="color:#22d3bf">bilateral_filter</code><code style="color:#22d3bf"> と同一(</code><code style="color:#22d3bf">kind: &quot;bilateral&quot;</code>`)。本来の</p>
-<p>ガイド付きフィルタ(guided filter、局所線形モデルに基づくエッジ保存平滑化)</p>
-<p>とは数学的に別のアルゴリズムだが、この代役ではバイラテラルフィルタで</p>
-<p>代用している(似た用途=エッジ保存平滑化を満たすための近似、結果の数値は</p>
-<p>一致しない)。HALCON の `<code style="color:#22d3bf">guided_filter</code>`（Guided filtering of an image.）</p>
-<p>の代役。</p>
+<p>實作與`<code style="color:#22d3bf">bilateral_filter</code><code style="color:#22d3bf">完全相同(</code><code style="color:#22d3bf">kind: &quot;bilateral&quot;</code><code style="color:#22d3bf">)。真正的引導濾波(guided filter,基於局部線性模型的保邊平滑)在數學上是不同的演算法,但此替代實作以雙邊濾波代替(為滿足相似用途=保邊平滑的近似,結果數值並不一致)。屬於HALCON</code><code style="color:#22d3bf">guided_filter</code>`(Guided filtering of an image.)的代用。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が空間シグマ、</code><code style="color:#22d3bf">b</code>` が輝度シグマを振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

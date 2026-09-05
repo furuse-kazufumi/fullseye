@@ -3,11 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;iv_wiener_deconv_spatial&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Self-contained spatial Wiener deconvolution of an assumed small Gaussian</p>
-<p>PSF. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> sets the assumed blur sigma in (0, </code><code style="color:#22d3bf">WIENER_SIGMA_MAX</code>`] to invert</p>
-<p>(larger a -&gt; stronger sharpening); `<code style="color:#22d3bf">b</code>` sets the noise-to-signal ratio nsr =</p>
-<p>1e-3 + b*0.15 (larger b -&gt; gentler, more regularized restoration).</p>
+<p>针对假设的小型高斯 PSF 进行的自包含空间域维纳（Wiener）反卷积。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 设定要反演的假设模糊 sigma，范围在 (0, </code><code style="color:#22d3bf">WIENER_SIGMA_MAX</code><code style="color:#22d3bf">]（a 越大锐化越强）；</code><code style="color:#22d3bf">b</code>` 设定噪声信号比 nsr = 1e-3 + b*0.15（b 越大恢复越温和、正则化程度越高）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">volume</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_occupancy_grid&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>点群 (N,3) → 3-D 占有ボクセル格子 (res,res,res) bool(点の落ちた voxel を占有)。</p>
+<p>점군 (N,3) → 3-D 점유 복셀 격자 (res,res,res) bool(점이 속한 복셀을 점유로 표시).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code><code style="color:#22d3bf"> が格子の張る体積、</code><code style="color:#22d3bf">res</code>` は各軸の</p>
 <p>ボクセル数(立方 res³)。ボクセルは半開区間 [lo+i/res*span, lo+(i+1)/res*span) で、</p>
 <p>上端 (frac==1) の点は最終ボクセルに含める。<b>bounds 外の点は落とす</b>(端セルへ</p>

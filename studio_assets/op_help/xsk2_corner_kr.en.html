@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk2_corner_kr&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>Kitchen-Rosenfeld コーナー検出応答。`<code style="color:#22d3bf">skimage.feature.corner_kitchen_rosenfeld</code><code style="color:#22d3bf"> を呼び、NaN を 0 に置き換えてから </code><code style="color:#22d3bf">signed01</code>` で符号付き応答を [0,1] に写像する。</p>
+<p>Kitchen-Rosenfeld corner detection response. Calls `<code style="color:#22d3bf">skimage.feature.corner_kitchen_rosenfeld</code><code style="color:#22d3bf">, replaces NaN with 0, then maps the signed response to [0,1] via </code><code style="color:#22d3bf">signed01</code>`.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>a, b は未使用。等高線の曲率とエッジ強度から求まる古典的なコーナー検出器で、平坦部やエッジ上では 0 付近、コーナーで大きな値になる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>

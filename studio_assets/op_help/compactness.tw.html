@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;compactness&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">compactness</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>コンパクトさ `<code style="color:#22d3bf">周囲長² / (4π・面積) / 10</code>`(円形度の逆数に近い量を</p>
-<p>10 で正規化しただけの実装 ―― この `<code style="color:#22d3bf">/10</code>` は HALCON の定義に基づく係数</p>
-<p>ではなく、値を [0,1] に収めるための便宜的なスケーリングである点に注意)。</p>
-<p>HALCON の `<code style="color:#22d3bf">compactness</code>`（Shape factor for the compactness of a region.）</p>
-<p>に相当する近似。</p>
+<p>緊湊度 `<code style="color:#22d3bf">周長² / (4π・面積) / 10</code><code style="color:#22d3bf">(只是把接近圓形度倒數的量除以 10 做正規化的實作——請注意這個 </code><code style="color:#22d3bf">/10</code><code style="color:#22d3bf"> 並非基於 HALCON 定義的係數,只是為了讓數值落在 [0,1] 而做的權宜縮放)。相當於 HALCON 的 </code><code style="color:#22d3bf">compactness</code>`(Shape factor for the compactness of a region.)的近似。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

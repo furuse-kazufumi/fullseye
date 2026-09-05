@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;pouring&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">pouring</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>分水嶺法（watershed）による領域分割の境界抽出。勾配画像（Sobel 振幅）を地形とみなし、暗い領域（`<code style="color:#22d3bf">x &lt; 0.2+0.3a</code><code style="color:#22d3bf">）を種（マーカー）として分水嶺を計算、</code><code style="color:#22d3bf">skimage.segmentation.find_boundaries</code>` で境界を前景として返す。b は未使用。</p>
+<p>분수계 분할(watershed)에 의한 영역 분할 경계 추출. 경사 이미지(Sobel 진폭)를 지형으로 간주하고, 어두운 영역(`<code style="color:#22d3bf">x &lt; 0.2+0.3a</code><code style="color:#22d3bf">)을 씨앗(마커)으로 분수계를 계산, </code><code style="color:#22d3bf">skimage.segmentation.find_boundaries</code>`로 경계를 전경으로 반환한다. b는 사용되지 않는다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>HALCON の `<code style="color:#22d3bf">pouring</code><code style="color:#22d3bf">（水を注ぐように画素値の低い場所から領域を満たしていく古典的な pouring アルゴリズムで分割する演算）に相当する近似 —— アルゴリズムの詳細は異なるが、低輝度領域を起点に領域を広げるという発想は共通。</code><code style="color:#22d3bf">watersheds</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">watersheds_threshold</code>` と実装を共有する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>

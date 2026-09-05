@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xwt_directional_detail&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>方向別エッジ検出。1 段の `<code style="color:#22d3bf">db2</code><code style="color:#22d3bf"> 分解から水平(cH)・垂直(cV)・対角(cD)のいずれか 1 つの詳細サブバンドを選び、絶対値を正規化してから元の解像度までブロック拡大(</code><code style="color:#22d3bf">kron</code>` で 2x2 複製)して返す。</p>
+<p>Richtungsabhängige Kantendetektion. Wählt eines der Detail-Subbänder horizontal (cH), vertikal (cV) oder diagonal (cD) aus einer einstufigen `<code style="color:#22d3bf">db2</code><code style="color:#22d3bf">-Zerlegung aus, normalisiert dessen Absolutwert und skaliert es dann per Blockvergrößerung (2x2-Replikation mit </code><code style="color:#22d3bf">kron</code>`) zurück auf die ursprüngliche Auflösung.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> でどの方向を見るか選ぶ(</code><code style="color:#22d3bf">min(2,int(b*3))</code><code style="color:#22d3bf"> で cH→cV→cD の 3 択)。</code><code style="color:#22d3bf">a</code>` は未使用。サブバンドは元画像の半分の解像度なのでブロック状に拡大されることに注意(滑らかな拡大ではない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">Leitfaden zur Familie gallery2d_edges</a></p>

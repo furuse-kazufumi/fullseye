@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xpil_mode_filter&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>最頻値フィルタ。`<code style="color:#22d3bf">PIL.ImageFilter.ModeFilter</code>` で窓内の最頻出画素値に置き換える（中央値でなく最頻値を取る点がメディアンフィルタと異なる）。</p>
+<p>眾數濾鏡。使用 `<code style="color:#22d3bf">PIL.ImageFilter.ModeFilter</code>`，將每個像素替換為視窗內出現頻率最高的像素值（取眾數而非中位數這點與中值濾波不同）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>a が窓サイズを 3/5/7/9 の 4 段階（`<code style="color:#22d3bf">3 + 2*int(a*3)</code>`）で振る。b は未使用。単色の塗りつぶし領域が多い画像（ラベル画像・漫画調画像）のノイズ除去に向き、階調が滑らかな自然画像では効果が薄い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

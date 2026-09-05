@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;median_image&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">median_image</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>メディアンフィルタ(`<code style="color:#22d3bf">ndimage.median_filter</code>`、正方窓)。窓内の中央値で</p>
-<p>置き換えるノイズ除去で、平均フィルタと違いエッジを保ったまま塩胡椒ノイズを</p>
-<p>除去できる。HALCON の `<code style="color:#22d3bf">median_image</code>`（Compute a median filter with</p>
-<p>various masks.）に相当(HALCON は円形・八角形等の任意マスクを選べるが、</p>
-<p>ここでは正方形マスクに固定)。</p>
+<p>中值濾波(`<code style="color:#22d3bf">ndimage.median_filter</code><code style="color:#22d3bf">,方形視窗)。這是一種以視窗內中位數取代像素的降噪方法,與均值濾波不同,能在保留邊緣的同時去除胡椒鹽雜訊。相當於 HALCON 的 </code><code style="color:#22d3bf">median_image</code>`(Compute a median filter with various masks.)(HALCON 可選擇圓形、八邊形等任意遮罩,這裡固定為方形遮罩)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の一辺を </code><code style="color:#22d3bf">{3,5,7,9}</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">)で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

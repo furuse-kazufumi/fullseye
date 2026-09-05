@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sg_watershed_gradient&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>勾配画像の h-minima マーカーからのウォーターシェッド分割の境界を返す（`<code style="color:#22d3bf">skimage</code>`、HALCON に対応オペレータなし）。</p>
+<p>Gibt die Grenzen einer Wasserscheiden-(Watershed-)Segmentierung zurück, die von h-Minima-Markern im Gradientenbild ausgeht (`<code style="color:#22d3bf">skimage</code>`; kein entsprechender HALCON-Operator).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>Sobel 勾配の大きさを正規化し、深さ `<code style="color:#22d3bf">h = 0.02 + a*0.3</code><code style="color:#22d3bf"> の h-minima 変換で生き残った領域極小をマーカーとして（</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が大きいほどマーカーが少なく・粗い分割になる）、その勾配画像に対するウォーターシェッドを計算する。</code><code style="color:#22d3bf">b</code>` は未使用。戻り値は集水域（catchment basin/物体）を分けるダムライン（境界）を表す region。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>

@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;polar_trans_image&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">polar_trans_image</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>直交座標→極座標変換(`<code style="color:#22d3bf">cv2.warpPolar</code>`)。画像中心を極の中心、</p>
-<p>`<code style="color:#22d3bf">min(H,W)/2</code>` を最大半径として、円環状の内容を横長の展開図に変換する。</p>
-<p>未マッピングの画素は 0 埋め(`<code style="color:#22d3bf">dst</code>` を事前ゼロクリアしてから、cv2 が返す</p>
-<p>戻り値を読む ―― `<code style="color:#22d3bf">dst</code>` バッファ自体を読むと空になることがある実装上の</p>
-<p>注意点がコードコメントに詳しい)。HALCON の `<code style="color:#22d3bf">polar_trans_image</code>`</p>
-<p>（Transform an image to polar coordinates）に相当。</p>
+<p>직교좌표→극좌표 변환(`<code style="color:#22d3bf">cv2.warpPolar</code><code style="color:#22d3bf">). 이미지 중심을 극(pole)으로, </code><code style="color:#22d3bf">min(H,W)/2</code><code style="color:#22d3bf">를 최대 반지름으로 하여, 고리 모양의 내용을 가로로 긴 전개도로 변환한다. 매핑되지 않은 화소는 0으로 채운다(</code><code style="color:#22d3bf">dst</code><code style="color:#22d3bf">를 미리 0으로 클리어한 뒤 cv2가 반환하는 값을 읽는다 —— </code><code style="color:#22d3bf">dst</code><code style="color:#22d3bf"> 버퍼 자체를 읽으면 비어 있을 수 있다는 구현상의 주의점이 코드 주석에 자세히 설명되어 있다). HALCON의 </code><code style="color:#22d3bf">polar_trans_image</code>`(Transform an image to polar coordinates)에 해당한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用 ―― 中心と半径は画像サイズから自動的に決まり、</p>
 <p>調整点は無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

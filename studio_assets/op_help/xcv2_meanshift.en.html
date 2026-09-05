@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xcv2_meanshift&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>平均値シフト（mean-shift）フィルタリングで色/輝度を領域ごとに均す</p>
-<p>（`<code style="color:#22d3bf">cv2.pyrMeanShiftFiltering</code>`）。</p>
+<p>Smooths color/brightness region by region using mean-shift filtering (`<code style="color:#22d3bf">cv2.pyrMeanShiftFiltering</code>`).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は空間窓半径 </code><code style="color:#22d3bf">sp</code><code style="color:#22d3bf"> を 5〜30 に振り（</code><code style="color:#22d3bf">sp = 5 + 25*a</code><code style="color:#22d3bf">）、</code><code style="color:#22d3bf">b</code>` は</p>
 <p>輝度（色）レンジ `<code style="color:#22d3bf">sr</code><code style="color:#22d3bf"> を 10〜50 に振る（</code><code style="color:#22d3bf">sr = 10 + 40*b</code>`）。グレースケール</p>
 <p>画像を内部で 3ch BGR に複製してから処理し、結果を再びグレースケールへ</p>

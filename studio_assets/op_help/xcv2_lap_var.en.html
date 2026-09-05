@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xcv2_lap_var&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>ラプラシアン分散によるフォーカス（ボケ）指標（`<code style="color:#22d3bf">cv2.Laplacian</code>` の分散）。</p>
+<p>Focus (blur) metric based on Laplacian variance (variance of `<code style="color:#22d3bf">cv2.Laplacian</code>`).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>画像全体に Laplacian を掛けた結果の分散を計算し、`<code style="color:#22d3bf">min(1.0, 分散*20)</code>` で</p>
 <p>[0,1] にクリップしたスカラーを返す。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。値が大きいほど</p>
 <p>エッジ/テクスチャが豊富＝合焦、小さいほどボケている可能性が高い、という</p>

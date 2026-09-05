@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;erosion_seq&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">erosion_seq</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>既定の十字形構造要素（4 近傍）で、a に応じて 1〜4 回反復して収縮（erosion）する逐次的収縮。b は未使用。反復回数を増やすほど収縮量が大きくなる（1 回あたり半径 1 画素相当）。</p>
+<p>고정된 십자형 구조 요소(4-이웃)로, a에 따라 1~4회 반복하여 침식(erosion)하는 순차적 침식. b는 사용되지 않는다. 반복 횟수가 많을수록 침식량이 커진다(1회당 반지름 1화소에 상당).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>HALCON の `<code style="color:#22d3bf">erosion_seq</code>`（構造要素を繰り返し適用して逐次的に収縮する演算）に相当する近似。円形やユーザー定義の構造要素ではなく scipy 既定の十字形要素を使う点が簡略化されている。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 패밀리 가이드</a></p>

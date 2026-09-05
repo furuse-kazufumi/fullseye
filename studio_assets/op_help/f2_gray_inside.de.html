@@ -4,12 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;f2_gray_inside&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">gray_inside</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Grayscale hole-fill: for each pixel, the lowest gray value attainable on</p>
-<p>any path to the image border == morphological reconstruction of the image by</p>
-<p>erosion from a border-anchored marker. Dark basins enclosed by brighter walls</p>
-<p>are raised toward the wall height; regions connected to the border stay dark.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> sets the maximum fill depth h (0 = none, 1 = full); </code><code style="color:#22d3bf">b</code>` is ignored.</p>
+<p>Grauwert-Lochfüllung: Für jedes Pixel wird der niedrigste auf irgendeinem Pfad zum Bildrand erreichbare Grauwert bestimmt == morphologische Rekonstruktion des Bildes durch Erosion von einem randverankerten Marker aus. Dunkle, von helleren Wänden umschlossene Becken werden bis zur Wandhöhe angehoben; mit dem Rand verbundene Regionen bleiben dunkel. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> legt die maximale Fülltiefe h fest (0 = keine, 1 = vollständig); </code><code style="color:#22d3bf">b</code>` wird ignoriert.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">Leitfaden zur Familie gallery2d_morphology</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

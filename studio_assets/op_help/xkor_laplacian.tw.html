@@ -3,10 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xkor_laplacian&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>ラプラシアン（2 階微分）によるエッジ・ブロブ応答。</p>
-<p>`<code style="color:#22d3bf">kornia.filters.laplacian</code>` を呼び、絶対値を取ってから最大絶対値で</p>
-<p>正規化する。</p>
+<p>基於拉普拉斯運算子(二階導數)的邊緣/斑點響應。呼叫 `<code style="color:#22d3bf">kornia.filters.laplacian</code>`，取絕對值後依最大絕對值正規化。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>a でカーネルサイズを 3/5/7/9 の 4 段階から選ぶ（`<code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">_median</code>`</p>
 <p>と同じ量子化）。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

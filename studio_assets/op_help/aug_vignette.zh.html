@@ -3,13 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;aug_vignette&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Radial lens vignetting following the natural cos^4 falloff law. With</p>
-<p>`<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> the normalised distance from the image centre and </code><code style="color:#22d3bf">R = 0.35 + 1.15*b</code>`</p>
-<p>the falloff radius, the transmission is</p>
-<p>`<code style="color:#22d3bf">cos(atan(r/R))^4 = 1/(1 + (r/R)^2)^2</code><code style="color:#22d3bf"> -- the textbook cos^4 law. </code><code style="color:#22d3bf">a</code>`</p>
-<p>blends it in: `<code style="color:#22d3bf">out = v * (1 - a + a*falloff)</code>`, so a=0 is a no-op and a=1 is</p>
-<p>full vignetting. Centre stays brightest; strictly darkening, never amplifying.</p>
+<p>遵循自然 cos^4 衰减定律的径向镜头渐晕（暗角）。设 `<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> 为到图像中心的归一化距离，</code><code style="color:#22d3bf">R = 0.35 + 1.15*b</code><code style="color:#22d3bf"> 为衰减半径，则透过率为 </code><code style="color:#22d3bf">cos(atan(r/R))^4 = 1/(1 + (r/R)^2)^2</code><code style="color:#22d3bf"> —— 即教科书式的 cos^4 定律。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 用于混合强度：</code><code style="color:#22d3bf">out = v * (1 - a + a*falloff)</code>`，因此 a=0 时无操作，a=1 时为完全渐晕。中心始终最亮；效果严格为变暗，绝不放大。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

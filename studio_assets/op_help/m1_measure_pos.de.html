@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;m1_measure_pos&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">measure_pos</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>中心を通るキャリパー線上のサブピクセルエッジ位置を抽出する（HALCON`<code style="color:#22d3bf">measure_pos</code>` に相当: 矩形/円弧に垂直な直線エッジを検出する）。</p>
+<p>Extrahiert Subpixel-Kantenpositionen entlang einer durch die Mitte verlaufenden Kalipergeraden (entspricht HALCON `<code style="color:#22d3bf">measure_pos</code>`: erkennt gerade Kanten senkrecht zu einem Rechteck/Bogen).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>線は画像中心を通り、`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> で向きを </code><code style="color:#22d3bf">theta = a*pi</code><code style="color:#22d3bf"> に振る。輝度プロファイルをガウシアンで軽く平滑化してから </code><code style="color:#22d3bf">|d/ds gray|</code><code style="color:#22d3bf"> のピークをサブピクセル（3 点放物線補間）で検出し、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf">（0〜1）を最大振幅に対する相対しきい値として弱いエッジを捨てる。戻り値は CONTOUR（</code><code style="color:#22d3bf">{&quot;shape&quot;: (H,W), &quot;cs&quot;: [1x2 の (row, col) 点, ...]}</code><code style="color:#22d3bf">）、座標単位は入力画像のピクセル。主な使い道はエッジ数を </code><code style="color:#22d3bf">count_contours</code>`で数えること。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">Leitfaden zur Familie gallery2d_contour_measure</a></p>

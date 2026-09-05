@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;moments_region_2nd&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">moments_region_2nd</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>正規化中心 2 次モーメントの和の絶対値 `<code style="color:#22d3bf">|μ20 + μ02|</code><code style="color:#22d3bf">(</code>`skimage.</p>
-<p>measure.moments_normalized`<code style="color:#22d3bf"> 由来)。HALCON の </code><code style="color:#22d3bf">moments_region_2nd</code>`</p>
-<p>（Calculate the geometric moments of regions.）は本来 M20/M02/M11 を</p>
-<p>それぞれ返すが、この代役では 1 スカラーに単純化するため 2 成分を単純</p>
-<p>加算した合成値で近似している(個々の方向成分は失われる)。</p>
+<p>The absolute value of the sum of the normalized central second-order moments, `<code style="color:#22d3bf">|mu20 + mu02|</code><code style="color:#22d3bf"> (derived from </code><code style="color:#22d3bf">skimage.measure.moments_normalized</code><code style="color:#22d3bf">). HALCON&#x27;s </code><code style="color:#22d3bf">moments_region_2nd</code>` (Calculate the geometric moments of regions.) originally returns M20/M02/M11 separately, but this stand-in approximates them with a composite value obtained by simply adding the two components to reduce them to a single scalar (the individual directional components are lost).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>

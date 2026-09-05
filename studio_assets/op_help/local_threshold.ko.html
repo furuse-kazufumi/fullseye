@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;local_threshold&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">local_threshold</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>局所ガウス平滑化+オフセットによるしきい値処理(``gaussian_filter(x,</p>
-<p>1+3*a)`<code style="color:#22d3bf"> にオフセット </code><code style="color:#22d3bf">(b-0.5)*0.3</code>` を加えたものがしきい値)。</p>
-<p>`<code style="color:#22d3bf">dyn_threshold</code>` と似た発想だが、局所平均を矩形窓でなくガウシアンで</p>
-<p>求める点が異なる。HALCON の `<code style="color:#22d3bf">local_threshold</code>`（Segment an image using</p>
-<p>local thresholding.）に相当。</p>
+<p>국소 가우시안 평활화 + 오프셋에 의한 임계값 처리(임계값은 `<code style="color:#22d3bf">gaussian_filter(x, 1+3*a)</code><code style="color:#22d3bf">에 오프셋 </code><code style="color:#22d3bf">(b-0.5)*0.3</code><code style="color:#22d3bf">을 더한 것). </code><code style="color:#22d3bf">dyn_threshold</code><code style="color:#22d3bf">와 비슷한 발상이지만, 국소 평균을 사각형 창이 아닌 가우시안으로 구한다는 점이 다르다. HALCON의 </code><code style="color:#22d3bf">local_threshold</code>`(Segment an image using local thresholding.)에 해당한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が平滑化のシグマを、</code><code style="color:#22d3bf">b</code>` がオフセットを振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>

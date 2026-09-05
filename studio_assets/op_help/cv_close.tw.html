@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;cv_close&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">gray_closing</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>グレー値モルフォロジー閉処理(closing、OpenCV 実装)。膨張してから収縮することで、構造要素より小さい暗い穴・隙間を埋める(cv_open の逆の効果)。</p>
+<p>灰階形態學閉運算（closing，OpenCV 實作）。先膨脹後侵蝕，填補比結構元素更小的暗孔與縫隙（與 cv_open 的效果相反）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の <code style="color:#22d3bf">gray_closing</code>(Perform a gray value closing on an image.)に相当。実装は `<code style="color:#22d3bf">cv2.morphologyEx(v, MORPH_CLOSE, se)</code><code style="color:#22d3bf">(楕円形構造要素、サイズは cv_open と同じ </code><code style="color:#22d3bf">3+2*int(a*3)</code>`)—— a は構造要素サイズを 3〜9 に振る。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>

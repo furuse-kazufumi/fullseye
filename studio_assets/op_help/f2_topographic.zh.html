@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;f2_topographic&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">topographic_sketch</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Haralick topographic primal sketch: classify every pixel from its gradient</p>
-<p>magnitude and the two Hessian eigenvalue signs into peak / pit / ridge /</p>
-<p>ravine / saddle / flat / hillside and emit the class as a gray code.</p>
+<p>Haralick 地形基元素描：根据每个像素的梯度幅值和两个 Hessian 特征值的符号，将其分类为峰(peak)/坑(pit)/脊(ridge)/谷(ravine)/鞍(saddle)/平坦(flat)/坡(hillside)之一，并将该类别以灰度码形式输出。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> sets the derivative smoothing scale; </code><code style="color:#22d3bf">b</code>` sets the &quot;flat gradient&quot;</p>
 <p>tolerance. Codes: flat=0.0, pit=0.14, ravine=0.30, saddle=0.45,</p>
 <p>hillside=0.55, ridge=0.75, peak=1.0.</p>

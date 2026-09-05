@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;area_center_xld&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">area_center_xld</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>最大の点数を持つ輪郭 1 本について、シューレース公式(靴紐公式)で</p>
-<p>多角形面積を求め、画像の全画素数で正規化して返す。HALCON の</p>
-<p>`<code style="color:#22d3bf">area_center_xld</code>`（Area and center of gravity (centroid) of contours and</p>
-<p>polygons.）は面積に加えて重心も返す演算子だが、この代役では面積のみを</p>
-<p>返す(重心情報は失われる近似 ―― `<code style="color:#22d3bf">feature</code>` ソートが 1 スカラーである</p>
-<p>契約上の制約)。</p>
+<p>For the single contour with the largest number of points, computes the polygon area using the shoelace formula and returns it normalized by the total pixel count of the image. HALCON&#x27;s `<code style="color:#22d3bf">area_center_xld</code><code style="color:#22d3bf"> (Area and center of gravity (centroid) of contours and polygons.) is an operator that returns the centroid in addition to the area, but this stand-in returns only the area (the centroid information is lost in this approximation — a contractual constraint arising from the </code><code style="color:#22d3bf">feature</code>` sort being a single scalar).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。輪郭が無ければ 0 を返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>

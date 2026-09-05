@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsp_dct_lowpass&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>DCT 係数を低周波の正方ブロックだけ残してから逆変換するローパスフィルタ。</p>
+<p>DCT 계수 중 저주파 정사각 블록만 남긴 뒤 역변환하는 저역통과 필터.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は残す低周波係数ブロックの一辺の長さを決める（</code>`keep = max(2,</p>
 <p>int((0.15 + 0.6*a) * min(H, W)))`<code style="color:#22d3bf">、</code><code style="color:#22d3bf">a</code>` が大きいほど高周波まで残り</p>
 <p>ぼけが弱くなる）。`<code style="color:#22d3bf">b</code>` は未使用。ガウシアンぼかしと違い矩形の周波数</p>

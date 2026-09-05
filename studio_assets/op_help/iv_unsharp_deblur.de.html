@@ -3,11 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;iv_unsharp_deblur&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Iterative unsharp masking as an approximate deblur. Each pass adds a scaled</p>
-<p>high-pass (image minus its Gaussian blur) back to the image. `<code style="color:#22d3bf">a</code>` sets the</p>
-<p>iteration count n = 1 + round(a*5) (1..6); `<code style="color:#22d3bf">b</code>` sets the per-pass amount</p>
-<p>amt = 0.4 + b (0.4..1.4). More iterations / larger amount -&gt; sharper.</p>
+<p>Iteratives Unscharf-Maskieren (Unsharp Masking) als näherungsweise Entschärfung. Jeder Durchgang addiert einen skalierten Hochpassanteil (Bild minus seiner Gaußschen Unschärfe) zurück zum Bild. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> legt die Iterationsanzahl n = 1 + round(a*5) (1..6) fest; </code><code style="color:#22d3bf">b</code>` legt die Stärke pro Durchgang amt = 0,4 + b (0,4..1,4) fest. Mehr Iterationen / größere Stärke -&gt; schärfer.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

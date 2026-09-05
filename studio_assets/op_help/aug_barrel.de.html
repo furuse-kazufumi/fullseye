@@ -3,13 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_barrel&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Radial lens distortion using the standard polynomial model</p>
-<p>`<code style="color:#22d3bf">r_src = r*(1 + k*r^2)</code><code style="color:#22d3bf"> on normalised radius </code><code style="color:#22d3bf">r</code>` (1 = image corner):</p>
-<p>BARREL (straight lines bow outwards) when `<code style="color:#22d3bf">b &lt; 0.5</code>`, PINCUSHION when</p>
-<p>`<code style="color:#22d3bf">b &gt;= 0.5</code><code style="color:#22d3bf">, with </code><code style="color:#22d3bf">k = 0.6*a</code>` (a=0 -&gt; undistorted). The destination grid is</p>
-<p>inverse-mapped and resampled bilinearly with `<code style="color:#22d3bf">ndimage.map_coordinates</code>`</p>
-<p>(`<code style="color:#22d3bf">mode=&quot;reflect&quot;</code>`), so no pixel is left undefined. Output keeps HxW.</p>
+<p>Radiale Objektivverzerrung mit dem Standard-Polynommodell `<code style="color:#22d3bf">r_src = r*(1 + k*r^2)</code><code style="color:#22d3bf"> auf dem normierten Radius </code><code style="color:#22d3bf">r</code><code style="color:#22d3bf"> (1 = Bildecke): TONNENFÖRMIG (gerade Linien wölben sich nach außen), wenn </code><code style="color:#22d3bf">b &lt; 0.5</code><code style="color:#22d3bf">, KISSENFÖRMIG, wenn </code><code style="color:#22d3bf">b &gt;= 0.5</code><code style="color:#22d3bf">, mit </code><code style="color:#22d3bf">k = 0.6*a</code><code style="color:#22d3bf"> (a=0 -&gt; unverzerrt). Das Zielraster wird invers abgebildet und mit </code><code style="color:#22d3bf">ndimage.map_coordinates</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">mode=&quot;reflect&quot;</code>`) bilinear resampled, sodass kein Pixel undefiniert bleibt. Die Ausgabe behält HxW bei.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">Leitfaden zur Familie gallery2d_color_artistic</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

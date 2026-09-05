@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;dual_threshold&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">dual_threshold</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>符号つき画像向けのしきい値処理。中央値 0.5 を「ゼロ」とみなし、</p>
-<p>`<code style="color:#22d3bf">|x - 0.5| &gt; 0.1+0.35*a</code>` を満たす画素(0.5 から十分離れた画素)を前景と</p>
-<p>する ―― 正負どちらの側にも対称に反応する。HALCON の `<code style="color:#22d3bf">dual_threshold</code>`</p>
-<p>（Threshold operator for signed images.）に相当(HALCON は正負で別々の</p>
-<p>しきい値を持てるが、ここでは 0.5 を中心とした対称な帯域に単純化)。</p>
+<p>A thresholding operation for signed images. Treats the median value 0.5 as &quot;zero&quot; and takes pixels satisfying `<code style="color:#22d3bf">|x - 0.5| &gt; 0.1+0.35*a</code><code style="color:#22d3bf"> (pixels sufficiently far from 0.5) as foreground — responding symmetrically to both the positive and negative side. Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">dual_threshold</code>` (Threshold operator for signed images.) (HALCON can have separate thresholds for positive and negative, but this is simplified to a symmetric band centered on 0.5).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が除外帯域の半幅を振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。</code><code style="color:#22d3bf">highpass_image</code>` や</p>
 <p>`<code style="color:#22d3bf">bandpass_image</code>` のような符号つき応答(0.5=ゼロ)の後段でよく使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

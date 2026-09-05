@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sigma_image&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">sigma_image</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>シグマフィルタによる非線形平滑化。中心画素値に近い(`<code style="color:#22d3bf">|x-mean|&lt;σ</code>`)</p>
-<p>近傍画素だけを平均する ―― エッジ付近では反対側の階調が平均に混ざらないため、</p>
-<p>平均フィルタよりエッジを保ちやすいノイズ除去になる。HALCON の</p>
-<p>`<code style="color:#22d3bf">sigma_image</code>`（Non-linear smoothing with the sigma filter.）に相当。</p>
+<p>Non-linear smoothing via a sigma filter. It averages only the neighboring pixels close to the center pixel value (`<code style="color:#22d3bf">|x-mean|&lt;σ</code><code style="color:#22d3bf">) -- near edges, tones from the opposite side are not mixed into the average, so this results in noise removal that preserves edges better than a mean filter. Equivalent to HALCON&#x27;s </code><code style="color:#22d3bf">sigma_image</code>` (Non-linear smoothing with the sigma filter.).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の一辺を </code><code style="color:#22d3bf">{3,5,7,9}</code><code style="color:#22d3bf"> で振る(内部の平均計算にも使う)。</code><code style="color:#22d3bf">b</code>` が</p>
 <p>許容帯域(シグマ、0.05〜0.4)を振る。両方が使われる。近傍がすべて帯域外の</p>
 <p>画素は元の値のまま残る。</p>

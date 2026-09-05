@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_canny&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">edges_image</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Canny エッジ検出(領域版)。ガウス平滑化 → 勾配計算 → 非極大抑制 → ヒステリシスしきい値、という古典的な多段パイプラインでエッジ画素を求め、真偽値の領域として返す。</p>
+<p>Canny 邊緣偵測(區域版)。透過高斯平滑 -&gt; 梯度計算 -&gt; 非極大值抑制 -&gt; 遲滯閾值這一經典多階段流程求出邊緣像素,並以布林值區域的形式回傳。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の <code style="color:#22d3bf">edges_image</code> に相当。実装は `<code style="color:#22d3bf">feature.canny(v, sigma=0.5+2.0*a)</code>` —— a は前段のガウス平滑化の σ を 0.5〜2.5 に振る(大きいほど細かいノイズ由来のエッジが消え、太い輪郭だけ残る)。b は未使用 —— ヒステリシスの低/高しきい値は skimage が画像から自動推定した値のまま(明示指定していない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>

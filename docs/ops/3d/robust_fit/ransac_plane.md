@@ -7,7 +7,7 @@ out: primitive
 examples: [ransac_prim]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.7  # fullseye lib version this note was generated for
+version: 0.1.8  # fullseye lib version this note was generated for
 ---
 
 # ransac_plane — 3D `robust_fit` op

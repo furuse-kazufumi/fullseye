@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;cv_min_eigen&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">points_harris</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>最小固有値によるコーナー強度(Shi-Tomasi 系、OpenCV 実装)。勾配の構造テンソルの 2 つの固有値のうち小さい方を返す —— Harris のような重み付け(k 依存)が無く、より直接的に「良い特徴点」らしさを測る指標(cv_good_features の内部でも使われる基準と同種)。</p>
+<p>基於最小特徵值的角點強度（Shi-Tomasi 系列，OpenCV 實作）。回傳梯度結構張量兩個特徵值中較小的一個 —— 不像 Harris 那樣帶有權重（依賴 k），能更直接地衡量「良好特徵點」的程度（與 cv_good_features 內部使用的判斷基準同類）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の <code style="color:#22d3bf">points_harris</code> に相当(近似。アルゴリズムは別物)。実装は `<code style="color:#22d3bf">cv2.cornerMinEigenVal(v, blockSize=3+2*int(a*2))</code>` を正規化したもの —— a は評価に使う近傍サイズ(blockSize)を 3, 5, 7 に振る。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>

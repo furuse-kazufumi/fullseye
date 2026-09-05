@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk3_peak_local_max&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>局所極大点マップ(skimage `<code style="color:#22d3bf">feature.peak_local_max</code><code style="color:#22d3bf">)。互いに </code><code style="color:#22d3bf">min_distance</code>` 画素以上離れた局所輝度極大の座標を検出し、その座標だけを 1 にした疎な二値画像(1 画素ずつの点で、面としての領域ではない)を返す。</p>
+<p>국소 극댓값 맵(skimage `<code style="color:#22d3bf">feature.peak_local_max</code><code style="color:#22d3bf">). 서로 </code><code style="color:#22d3bf">min_distance</code>` 화소 이상 떨어진 국소 밝기 극댓값의 좌표를 검출하여, 그 좌표만 1로 설정한 희소 이진 이미지(면적 영역이 아니라 화소 단위의 점)를 반환한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は最小距離(</code><code style="color:#22d3bf">2+int(a*8)</code><code style="color:#22d3bf"> で 2〜10)を振る —— 大きくするほど検出される点が減り、より支配的なピークだけが残る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>

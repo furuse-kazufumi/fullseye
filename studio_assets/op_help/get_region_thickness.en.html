@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;get_region_thickness&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">get_region_thickness</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>領域の太さの近似値 `<code style="color:#22d3bf">2 × 最大内接円半径 / 最大辺長</code>`</p>
-<p>(`<code style="color:#22d3bf">distance_transform_edt</code>` の最大値の 2 倍を画像サイズで正規化)。HALCON</p>
-<p>の `<code style="color:#22d3bf">get_region_thickness</code>`（Access the thickness of a region along the</p>
-<p>main axis.）が定義する「主軸に沿った太さのプロファイル」とは異なり、</p>
-<p>方向を問わないグローバルな最大内接半径だけを見る単純化(主軸方向の情報は</p>
-<p>失われる)。</p>
+<p>An approximation of region thickness: `<code style="color:#22d3bf">2 x max inscribed circle radius / max side length</code><code style="color:#22d3bf"> (twice the maximum of </code><code style="color:#22d3bf">distance_transform_edt</code><code style="color:#22d3bf">, normalized by the image size). Unlike HALCON&#x27;s </code><code style="color:#22d3bf">get_region_thickness</code>` (Access the thickness of a region along the main axis.), which defines a &#x27;thickness profile along the main axis,&#x27; this is a simplification that only looks at the direction-independent, global maximum inscribed radius (information about the main-axis direction is lost).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>

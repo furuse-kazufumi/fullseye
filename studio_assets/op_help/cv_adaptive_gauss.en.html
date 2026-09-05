@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;cv_adaptive_gauss&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">local_threshold</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>局所ガウス重み付き平均によるしきい値二値化(adaptive threshold、Gaussian 版、OpenCV 実装)。cv_adaptive_mean と同じ枠組みだが、局所平均を単純平均ではなくガウス重み付き平均で取るため、窓の境界付近の急な変化が出にくい。</p>
+<p>Thresholding based on a locally Gaussian-weighted average (adaptive threshold, Gaussian variant, OpenCV implementation). Same framework as cv_adaptive_mean, but since the local average is taken as a Gaussian-weighted average rather than a simple average, abrupt changes near the window boundary are less likely to appear.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>HALCON の <code style="color:#22d3bf">local_threshold</code>(Segment an image using local thresholding.)に相当。実装は `<code style="color:#22d3bf">cv2.adaptiveThreshold(_u8(v), 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, blockSize=2*int(a*6)+3, C=int(b*10))</code>` —— a は blockSize を 3〜15(奇数)に、b は定数 C を 0〜10 に振る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>

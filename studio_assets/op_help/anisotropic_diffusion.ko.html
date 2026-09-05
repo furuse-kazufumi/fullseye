@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;anisotropic_diffusion&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">anisotropic_diffusion</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Perona-Malik 型の異方性拡散。上下左右 4 方向の画素差にガウス型の</p>
-<p>伝導度関数 `<code style="color:#22d3bf">exp(-(Δ/K)^2)</code>` を掛けて反復的に加算する ―― 差が閾値 K より</p>
-<p>大きい(=エッジ)方向には拡散させず、小さい(=平坦)方向だけ滑らかにする</p>
-<p>エッジ保存平滑化。HALCON の `<code style="color:#22d3bf">anisotropic_diffusion</code>`（Perform an</p>
-<p>anisotropic diffusion of an image.）に相当。</p>
+<p>Perona-Malik 방식의 이방성 확산. 상하좌우 4방향의 화소 차이에 가우시안형 전도도 함수 `<code style="color:#22d3bf">exp(-(Δ/K)^2)</code><code style="color:#22d3bf">를 곱해 반복적으로 더한다 —— 차이가 임계값 K보다 큰(=에지) 방향으로는 확산시키지 않고, 작은(=평탄) 방향만 매끄럽게 하는 에지 보존 평활화이다. HALCON의 </code><code style="color:#22d3bf">anisotropic_diffusion</code>`(Perform an anisotropic diffusion of an image.)에 해당한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が反復回数を 2〜10 回の範囲で、</code><code style="color:#22d3bf">b</code>` が伝導度の閾値 K を 0.05〜0.3</p>
 <p>の範囲で振る。両方が使われる。K が小さいほどエッジを厳しく保護する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

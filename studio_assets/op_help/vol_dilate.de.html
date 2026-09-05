@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">volume</code> → <code style="color:#22d3bf">volume</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;vol_dilate&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>3D ボリュームのグレースケール膨張。対応する HALCON op は指定されていない。</p>
+<p>Graustufen-Dilatation eines 3D-Volumens. Es ist kein entsprechender HALCON-Operator angegeben.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">_vol_erode</code><code style="color:#22d3bf"> と同じ式 </code><code style="color:#22d3bf">size = 1 + 2*(1 + int(a))</code><code style="color:#22d3bf"> を使うため、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はほぼ効かない（</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">[0,1)</code><code style="color:#22d3bf"> の間は </code><code style="color:#22d3bf">int(a)</code><code style="color:#22d3bf"> が常に 0 で実質サイズ </code><code style="color:#22d3bf">3</code><code style="color:#22d3bf"> 固定、</code><code style="color:#22d3bf">a=1.0</code><code style="color:#22d3bf"> のときだけ </code><code style="color:#22d3bf">5</code><code style="color:#22d3bf">）。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> も未使用。半径を連続的に振りたい場合は球形構造要素版（</code><code style="color:#22d3bf">_vol_dilation_ball</code><code style="color:#22d3bf"> 等、</code><code style="color:#22d3bf">int(a*3)</code><code style="color:#22d3bf"> を使い </code><code style="color:#22d3bf">a</code>` が実際に効く）を使うこと。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">Leitfaden zur Familie gallery2d_physics_alife_3d</a></p>

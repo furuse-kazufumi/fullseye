@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;kirsch_dir&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">kirsch_dir</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Kirsch コンパスフィルタで最も強く応答した方向のインデックス(8 方向中の</p>
-<p>`<code style="color:#22d3bf">argmax</code><code style="color:#22d3bf">)を [0,1] に正規化して返す。</code><code style="color:#22d3bf">kirsch_amp</code>` と対になる方向成分。</p>
-<p>HALCON の `<code style="color:#22d3bf">kirsch_dir</code>`（Detect edges (amplitude and direction) using the</p>
-<p>Kirsch operator.）に相当。</p>
+<p>Kirsch 컴퍼스 필터에서 가장 강하게 응답한 방향의 인덱스(8방향 중 `<code style="color:#22d3bf">argmax</code><code style="color:#22d3bf">)를 [0,1]로 정규화하여 반환한다. </code><code style="color:#22d3bf">kirsch_amp</code><code style="color:#22d3bf">와 짝을 이루는 방향 성분이다. HALCON의 </code><code style="color:#22d3bf">kirsch_dir</code>`(Detect edges (amplitude and direction) using the Kirsch operator.)에 해당한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。方向は 8 段階の離散値しか取れない(Sobel/Prewitt の</p>
 <p>連続角度とは分解能が異なる)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

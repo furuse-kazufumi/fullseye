@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;r3_polar_trans_region&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">polar_trans_region</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>領域を重心中心の極座標へリマップする（HALCON `<code style="color:#22d3bf">polar_trans_region</code>` に相当）。</p>
+<p>将区域重映射到以其重心为中心的极坐标(相当于 HALCON `<code style="color:#22d3bf">polar_trans_region</code>`)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>出力の行が半径軸（0〜`<code style="color:#22d3bf">rmax</code><code style="color:#22d3bf">）、列が角度軸（0〜</code><code style="color:#22d3bf">angle_end</code><code style="color:#22d3bf">）にあたる。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">（0〜1）は半径方向の広がり（</code><code style="color:#22d3bf">rmax</code><code style="color:#22d3bf"> は重心から最遠画素までの距離に </code><code style="color:#22d3bf">0.25+0.75*a</code><code style="color:#22d3bf"> を掛けたもの）、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf">（0〜1）は角度方向の掃引幅（</code><code style="color:#22d3bf">angle_end = 2*pi*(0.25+0.75*b)</code>`）を振る。最近傍サンプリング。出力の形状は入力と同じ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

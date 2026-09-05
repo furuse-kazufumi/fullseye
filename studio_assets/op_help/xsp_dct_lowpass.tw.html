@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsp_dct_lowpass&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>DCT 係数を低周波の正方ブロックだけ残してから逆変換するローパスフィルタ。</p>
+<p>一種低通濾波器，僅保留 DCT 係數中低頻的正方形區塊後再做逆轉換。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は残す低周波係数ブロックの一辺の長さを決める（</code>`keep = max(2,</p>
 <p>int((0.15 + 0.6*a) * min(H, W)))`<code style="color:#22d3bf">、</code><code style="color:#22d3bf">a</code>` が大きいほど高周波まで残り</p>
 <p>ぼけが弱くなる）。`<code style="color:#22d3bf">b</code>` は未使用。ガウシアンぼかしと違い矩形の周波数</p>

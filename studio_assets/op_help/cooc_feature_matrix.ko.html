@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;cooc_feature_matrix&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">cooc_feature_matrix</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>グレーレベル共起行列(GLCM、`<code style="color:#22d3bf">skimage.feature.graycomatrix</code>`、16 階調</p>
-<p>に量子化、距離 `<code style="color:#22d3bf">1+3*a</code>`、角度 0°)から Haralick テクスチャ特徴量</p>
-<p>`<code style="color:#22d3bf">energy</code>`(角二次モーメント、行列の値の集中度=テクスチャの均一性)を計算</p>
-<p>する。HALCON の `<code style="color:#22d3bf">cooc_feature_matrix</code>`（Calculate gray value features</p>
-<p>from a co-occurrence matrix.）に相当(HALCON は複数の特徴量・複数角度を</p>
-<p>同時に返せるが、ここでは energy・角度 0° 固定に単純化)。</p>
+<p>그레이레벨 동시발생 행렬(GLCM, `<code style="color:#22d3bf">skimage.feature.graycomatrix</code><code style="color:#22d3bf">, 16계조로 양자화, 거리 </code><code style="color:#22d3bf">1+3*a</code><code style="color:#22d3bf">, 각도 0°)로부터 Haralick 텍스처 특징 </code><code style="color:#22d3bf">energy</code><code style="color:#22d3bf">(각 2차 모멘트, 행렬 값의 집중도=텍스처의 균일성)를 계산한다. HALCON의 </code><code style="color:#22d3bf">cooc_feature_matrix</code>`(Calculate gray value features from a co-occurrence matrix.)에 해당(HALCON은 여러 특징·여러 각도를 동시에 반환할 수 있지만, 여기서는 energy·각도 0° 고정으로 단순화).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が共起を取る画素間距離を 1〜4 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 패밀리 가이드</a></p>

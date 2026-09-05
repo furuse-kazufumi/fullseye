@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;fill_up&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">fill_up</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>領域内部の穴(背景に完全に囲まれた領域)を埋める</p>
-<p>(`<code style="color:#22d3bf">ndimage.binary_fill_holes</code>`)。外周とつながっていない背景の孔だけが</p>
-<p>埋まり、外周とつながった凹みは埋まらない。HALCON の `<code style="color:#22d3bf">fill_up</code>`（Fill up</p>
-<p>holes in regions.）に相当。</p>
+<p>Füllt Löcher im Inneren einer Region (Bereiche, die vollständig vom Hintergrund umschlossen sind) mit `<code style="color:#22d3bf">ndimage.binary_fill_holes</code><code style="color:#22d3bf">. Nur Hintergrundlöcher, die nicht mit dem äußeren Rand verbunden sind, werden gefüllt; Einbuchtungen, die mit dem äußeren Rand verbunden sind, bleiben ungefüllt. Entspricht HALCONs </code><code style="color:#22d3bf">fill_up</code>` (Fill up holes in regions.).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>

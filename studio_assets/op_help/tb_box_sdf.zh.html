@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">volume</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_box_sdf&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>軸平行直方体の<b>厳密</b>な符号付き距離場(内側負・外側正)。</p>
+<p>轴对齐长方体的<b>精确</b>有符号距离场(内部为负,外部为正)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Inigo Quilez の box SDF: `<code style="color:#22d3bf">q = |p-center| - half_extents</code>` とし、</p>
 <p>`<code style="color:#22d3bf">outside = |max(q,0)|</code>` (角/辺/面の外はユークリッド距離),</p>
 <p>`<code style="color:#22d3bf">inside  = min(max(q_x,q_y,q_z), 0)</code>` (内側は最近面までの負値),</p>

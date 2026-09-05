@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk2_multiotsu&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>大津の判別分析法（Otsu&#x27;s method）を多値に拡張した多値大津法で階調を</p>
-<p>量子化する。`<code style="color:#22d3bf">skimage.filters.threshold_multiotsu</code>` を使う。</p>
+<p>Quantizes tonal levels using multi-level Otsu&#x27;s method, an extension of Otsu&#x27;s discriminant analysis method to multiple thresholds. Uses `<code style="color:#22d3bf">skimage.filters.threshold_multiotsu</code>`.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>a はクラス数を 3 または 4 に切り替える（`<code style="color:#22d3bf">3 + int(a &gt; 0.5)</code>`）。</p>
 <p><b>5 クラス以上は実装していない</b>——多値大津はしきい値の全探索コストが</p>
 <p>`<code style="color:#22d3bf">bins ** (classes - 1)</code>` で増えるため、実測（128x128）で 3 クラス</p>

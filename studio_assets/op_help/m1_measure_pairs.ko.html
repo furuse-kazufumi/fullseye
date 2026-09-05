@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;m1_measure_pairs&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">measure_pairs</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>中心を通るキャリパー線上で、立ち上がり→立ち下がりのエッジ対（明るい物体の両端）の個数を数える（HALCON `<code style="color:#22d3bf">measure_pairs</code>` に相当: 矩形/円弧に垂直な直線エッジのペアを抽出する）。</p>
+<p>중심을 지나는 캘리퍼 선에서 상승→하강 에지 쌍(밝은 물체의 양 끝)의 개수를 센다(HALCON `<code style="color:#22d3bf">measure_pairs</code>`에 해당: 사각형/원호에 수직인 직선 에지 쌍을 추출).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は線の向き（</code><code style="color:#22d3bf">theta = a*pi</code><code style="color:#22d3bf">）。エッジ検出は </code><code style="color:#22d3bf">m1_measure_pos</code><code style="color:#22d3bf">と同じ（勾配ピークのサブピクセル検出）で、</code><code style="color:#22d3bf">b</code>`（0〜1）は最大振幅に対する相対しきい値。しきい値を超えたエッジを順に走査し、極性がrising→falling と並ぶ組を 1 対として数える（feature、整数値）。エッジが 2 本未満なら 0.0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 패밀리 가이드</a></p>

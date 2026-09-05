@@ -3,13 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;aug_barrel&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Radial lens distortion using the standard polynomial model</p>
-<p>`<code style="color:#22d3bf">r_src = r*(1 + k*r^2)</code><code style="color:#22d3bf"> on normalised radius </code><code style="color:#22d3bf">r</code>` (1 = image corner):</p>
-<p>BARREL (straight lines bow outwards) when `<code style="color:#22d3bf">b &lt; 0.5</code>`, PINCUSHION when</p>
-<p>`<code style="color:#22d3bf">b &gt;= 0.5</code><code style="color:#22d3bf">, with </code><code style="color:#22d3bf">k = 0.6*a</code>` (a=0 -&gt; undistorted). The destination grid is</p>
-<p>inverse-mapped and resampled bilinearly with `<code style="color:#22d3bf">ndimage.map_coordinates</code>`</p>
-<p>(`<code style="color:#22d3bf">mode=&quot;reflect&quot;</code>`), so no pixel is left undefined. Output keeps HxW.</p>
+<p>使用标准多项式模型 `<code style="color:#22d3bf">r_src = r*(1 + k*r^2)</code><code style="color:#22d3bf"> 对归一化半径 </code><code style="color:#22d3bf">r</code><code style="color:#22d3bf">(1 = 图像角点)施加径向镜头畸变:当 </code><code style="color:#22d3bf">b &lt; 0.5</code><code style="color:#22d3bf"> 时为桶形畸变(直线向外弯曲),</code><code style="color:#22d3bf">b &gt;= 0.5</code><code style="color:#22d3bf"> 时为枕形畸变,其中 </code><code style="color:#22d3bf">k = 0.6*a</code><code style="color:#22d3bf">(a=0 时无畸变)。目标网格通过逆映射并用 </code><code style="color:#22d3bf">ndimage.map_coordinates</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">mode=&quot;reflect&quot;</code>`)做双线性重采样,因此不会出现未定义的像素。输出保持 HxW。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

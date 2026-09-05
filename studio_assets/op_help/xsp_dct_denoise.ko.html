@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsp_dct_denoise&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>DCT 係数のハード閾値処理によるノイズ除去（ウェーブレット縮退の DCT 版）。</p>
+<p>DCT 계수에 하드 임계값 처리를 적용한 노이즈 제거(웨이블릿 축소의 DCT판).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>しきい値は最大係数に対する相対値で決める（``thr = (0.01 + 0.2*a) *</p>
 <p>max(|C|)`<code style="color:#22d3bf">）。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が大きいほど強く間引かれ、</code><code style="color:#22d3bf">b</code>` は未使用。しきい値</p>
 <p>未満の DCT 係数を 0 にしてから逆変換するので、弱いテクスチャごと消え</p>

@@ -3,16 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tac_height_from_shading&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Height/relief map by Poisson integration of the shading gradients -- the</p>
-<p>integration stage of GelSight depth reconstruction (and of photometric</p>
-<p>stereo): the image gradients are read as surface slopes `<code style="color:#22d3bf">p = gain*gx</code>`,</p>
-<p>`<code style="color:#22d3bf">q = gain*gy</code><code style="color:#22d3bf"> and the Poisson equation </code><code style="color:#22d3bf">lap(h) = div(p,q)</code>` is solved</p>
-<p>spectrally, `<code style="color:#22d3bf">h_hat = div_hat / lap_hat</code>` with the discrete Laplacian symbol</p>
-<p>`<code style="color:#22d3bf">2cos(2*pi*u/W)+2cos(2*pi*v/H)-4</code>` and the (undetermined) DC mode pinned to</p>
-<p>zero. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = gradient gain (0.25..4.25x), </code><code style="color:#22d3bf">b</code>` = pre-smoothing sigma of the</p>
-<p>gradient field (0..3). Output is min-max normalised to [0,1] and refit to</p>
-<p>HxW; a constant frame integrates to a flat (all-zero) relief.</p>
+<p>对明暗梯度做泊松积分(Poisson integration)以求高度/浮雕图——这正是 GelSight 深度重建(以及光度立体视,photometric stereo)中的积分阶段:图像梯度被解读为表面斜率 `<code style="color:#22d3bf">p = gain*gx</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">q = gain*gy</code><code style="color:#22d3bf">,并以频谱方法求解泊松方程 </code><code style="color:#22d3bf">lap(h) = div(p,q)</code><code style="color:#22d3bf">,即 </code><code style="color:#22d3bf">h_hat = div_hat / lap_hat</code><code style="color:#22d3bf">,其中离散拉普拉斯算子的符号为 </code><code style="color:#22d3bf">2cos(2*pi*u/W)+2cos(2*pi*v/H)-4</code><code style="color:#22d3bf">,(不确定的)直流(DC)分量被固定为零。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = 梯度增益(0.25~4.25 倍),</code><code style="color:#22d3bf">b</code>` = 梯度场的预平滑 sigma(0~3)。输出经最小-最大归一化到 [0,1] 并重整回 HxW;常数帧积分后得到平坦(全零)的浮雕。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

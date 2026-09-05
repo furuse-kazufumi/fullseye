@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xmh_selfmatch&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>自己相似マップ(`<code style="color:#22d3bf">mahotas.template_match</code>` による自己テンプレートマッチング)。画像中心から切り出した小さなパッチを画像全体に対してテンプレートマッチングし、パッチに似た場所ほど 1 に近い値になるよう正規化して返す。</p>
+<p>자기 유사도 맵(`<code style="color:#22d3bf">mahotas.template_match</code>`를 이용한 자기 템플릿 매칭). 이미지 중심에서 잘라낸 작은 패치를 이미지 전체에 대해 템플릿 매칭하고, 패치와 비슷한 위치일수록 1에 가까운 값이 되도록 정규화하여 반환한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はパッチの半径(3+8 px 相当)を振る —— 大きくするほど広い範囲の類似度になる。</code><code style="color:#22d3bf">b</code>` は未使用。周期的なテクスチャや繰り返しパターンの検出に使える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>

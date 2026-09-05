@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk3_rank_subtract_mean&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>局所平均差分(skimage `<code style="color:#22d3bf">filters.rank.subtract_mean</code>`)。各画素からその円盤近傍の平均輝度を引いた差分を返す。skimage の実装はアンダーフロー防止のため差分を 1/2 に縮小しレンジ中央へシフトする仕様になっている。大域的な明暗ムラを打ち消しローカルコントラストを強調する。</p>
+<p>국소 평균 차분(skimage `<code style="color:#22d3bf">filters.rank.subtract_mean</code>`). 각 화소에서 그 원판 이웃의 평균 밝기를 뺀 차분을 반환한다. skimage 구현은 언더플로 방지를 위해 차분을 1/2로 축소하고 범위 중앙으로 이동시키는 사양으로 되어 있다. 전역적인 명암 불균일을 상쇄하고 국소 대비를 강조한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は円盤半径(</code><code style="color:#22d3bf">1+int(a*4)</code><code style="color:#22d3bf"> で 1〜5)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。8bit 量子化を経由するため元の float64 精度は失われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 패밀리 가이드</a></p>

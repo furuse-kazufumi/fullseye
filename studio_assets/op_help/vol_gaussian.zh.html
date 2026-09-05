@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">volume</code> → <code style="color:#22d3bf">volume</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;vol_gaussian&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>3D ボリュームの等方ガウシアン平滑化。対応する HALCON op は指定されていない。</p>
+<p>3D 体数据的各向同性高斯平滑。未指定对应的 HALCON op。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が標準偏差 σ を </code><code style="color:#22d3bf">0.3〜3.0</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">0.3+2.7a</code><code style="color:#22d3bf">）に振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。</code><code style="color:#22d3bf">scipy.ndimage</code><code style="color:#22d3bf"> は次元非依存（N-D）なので、2-D の </code><code style="color:#22d3bf">_gaussian</code>` と全く同じ式をそのまま 3 軸（CT/MRI/深度スタック等）に適用する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d 族使用指南</a></p>

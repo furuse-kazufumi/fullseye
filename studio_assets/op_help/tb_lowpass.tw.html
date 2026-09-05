@@ -3,11 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_lowpass&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Butterworth low-pass (scipy, zero-phase filtfilt). *cutoff* must be inside</p>
-<p>`<code style="color:#22d3bf">(0, rate/2)</code>`; an out-of-Nyquist cutoff raises instead of passing the signal</p>
-<p>through. A signal too short for zero-phase filtfilt also raises (the message</p>
-<p>names the exact minimum) instead of silently coming back unfiltered.</p>
+<p>巴特沃斯低通濾波(scipy,零相位 filtfilt)。*cutoff* 必須在 `<code style="color:#22d3bf">(0, rate/2)</code>` 範圍內;超出奈奎斯特(Nyquist)頻率的 cutoff 會拋出例外,而不是直接放行訊號。訊號長度不足以進行零相位 filtfilt 時同樣會拋出例外(錯誤訊息會給出確切的最小長度),而不是悄悄傳回未濾波的原始訊號。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Typed bridge of the 1d op `<code style="color:#22d3bf">lowpass</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">order</code><code style="color:#22d3bf"> (default 4); </code><code style="color:#22d3bf">b</code>` is unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

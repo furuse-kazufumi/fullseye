@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;polar_trans_contour_xld&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">polar_trans_contour_xld</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>輪郭の各点を画像中心からの極座標(半径・角度)に変換し、疑似的な画素</p>
-<p>座標(半径を `<code style="color:#22d3bf">H</code><code style="color:#22d3bf"> or </code><code style="color:#22d3bf">W</code>` の大きい方でスケール、角度を [0,1] に写像)へ</p>
-<p>詰め直す。HALCON の `<code style="color:#22d3bf">polar_trans_contour_xld</code>`（Transform a contour in an</p>
-<p>annular arc to polar coordinates.）に相当する簡易な座標変換。</p>
+<p>将轮廓的各点从图像中心转换为极坐标（半径、角度），再重新打包为伪像素坐标（半径以 H、W 中较大者缩放，角度映射到 [0,1]）。是对应 HALCON `<code style="color:#22d3bf">polar_trans_contour_xld</code>`（Transform a contour in an annular arc to polar coordinates.）的简化坐标变换。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用 ―― 中心・スケールは画像サイズから自動的に決まる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>

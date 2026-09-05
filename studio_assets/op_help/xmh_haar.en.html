@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xmh_haar&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>Haar ウェーブレット変換(`<code style="color:#22d3bf">mahotas.haar</code>`)。画像を偶数サイズに切り詰めてから変換し、結果の係数配列(近似/水平/垂直/対角の各サブバンドが元画像と同じ大きさの配列に詰め込まれた、Matlab 風の in-place レイアウト)をそのまま min-max 正規化して画像として見せる。</p>
+<p>Haar wavelet transform (`<code style="color:#22d3bf">mahotas.haar</code>`). Truncates the image to an even size before transforming, then displays the resulting coefficient array -- a Matlab-style in-place layout where the approximation/horizontal/vertical/diagonal subbands are packed into an array the same size as the original image -- directly as an image after min-max normalization.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>分解レベルは 1 段固定。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。値そのものは復元可能な画像ではなく係数の可視化であることに注意。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>

@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;adaptive_gauss_thresh&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">local_threshold</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>ガウシアン平滑化した局所平均を基準にした適応的しきい値処理。HALCON の `<code style="color:#22d3bf">local_threshold</code>`（Segment an image using local thresholding.）に相当。</p>
+<p>가우시안 평활화한 국소 평균을 기준으로 하는 적응형 임계값 처리. HALCON의 `<code style="color:#22d3bf">local_threshold</code>`(Segment an image using local thresholding.)에 해당한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が基準を作るガウシアンの σ を </code><code style="color:#22d3bf">1.0〜4.0</code><code style="color:#22d3bf"> に、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> がオフセットを </code><code style="color:#22d3bf">-0.15〜+0.15</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">(b-0.5)*0.3</code><code style="color:#22d3bf">）に振る。</code><code style="color:#22d3bf">v &gt; gaussian_filter(v, σ) + offset</code><code style="color:#22d3bf"> を満たす画素を前景にする。照明ムラがある画像で大域しきい値（</code><code style="color:#22d3bf">_threshold</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">_otsu</code><code style="color:#22d3bf">）より安定する。近い op に </code><code style="color:#22d3bf">_dyn_threshold</code><code style="color:#22d3bf"> があるが、そちらは箱型平均（</code><code style="color:#22d3bf">uniform_filter</code><code style="color:#22d3bf">）を基準にし、オフセット幅も異なる（</code><code style="color:#22d3bf">±0.2</code>`）——同じ「適応的しきい値」でも基準の平滑化方式とパラメータ範囲が違う別実装。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>

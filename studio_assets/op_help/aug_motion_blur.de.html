@@ -3,13 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_motion_blur&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Linear motion blur: convolution with a normalised LINE (box) kernel, the</p>
-<p>point-spread function of a constant-velocity camera/scene pan during the</p>
-<p>exposure. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> sets the streak length </code><code style="color:#22d3bf">L = 3 + 20*a</code>` px (forced odd and</p>
-<p>clamped so the kernel never exceeds the image), `<code style="color:#22d3bf">b</code>` sets the streak angle</p>
-<p>`<code style="color:#22d3bf">b*180</code><code style="color:#22d3bf"> degrees. Border handling is </code><code style="color:#22d3bf">reflect</code>` so the frame edge does not</p>
-<p>darken. Energy-preserving (kernel sums to 1).</p>
+<p>Lineare Bewegungsunschärfe: Faltung mit einem normalisierten LINIEN-(Box-)Kernel, der Punktverwaschungsfunktion einer Kamera-/Szenenschwenkung mit konstanter Geschwindigkeit während der Belichtung. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> legt die Schlierenlänge </code><code style="color:#22d3bf">L = 3 + 20*a</code><code style="color:#22d3bf"> px fest (auf ungerade erzwungen und begrenzt, damit der Kernel das Bild nie überschreitet), </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> legt den Schlierenwinkel </code><code style="color:#22d3bf">b*180</code><code style="color:#22d3bf"> Grad fest. Die Randbehandlung erfolgt per </code><code style="color:#22d3bf">reflect</code>`, sodass der Bildrand nicht dunkler wird. Energieerhaltend (Kernel summiert sich zu 1).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">Leitfaden zur Familie gallery2d_color_artistic</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;bit_not&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">bit_not</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>階調の反転（ネガポジ反転）。実装は `<code style="color:#22d3bf">1 - x</code>`（[0,1] の連続値としての反転）で、a, b は未使用。</p>
+<p>灰階反轉（負片/正片反轉）。實作為 `<code style="color:#22d3bf">1 - x</code>`（作為 [0,1] 連續值的反轉），a、b 未使用。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の `<code style="color:#22d3bf">bit_not</code>`（画素の全ビットを反転するビット単位演算）とは動作原理が異なる近似 —— 8bit 整数のビット補数ではなく浮動小数の線形反転なので、量子化された画像でのビットパターンは再現しない。明るい/暗いを単純に入れ替えたい用途には使える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>

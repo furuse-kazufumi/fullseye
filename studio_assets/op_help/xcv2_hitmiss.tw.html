@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xcv2_hitmiss&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>ヒットオアミス変換で「中心は背景・上下左右は前景」という十字パターンを</p>
-<p>検出する（`<code style="color:#22d3bf">cv2.MORPH_HITMISS</code>`）。</p>
+<p>使用擊中擊不中變換（hit-or-miss transform）偵測「中心為背景、上下左右為前景」的十字形圖樣（`<code style="color:#22d3bf">cv2.MORPH_HITMISS</code>`）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>固定カーネル `<code style="color:#22d3bf">[[0,1,0],[1,-1,1],[0,1,0]]</code>` を使う（1=前景必須、-1=背景必須、</p>
 <p>0=不問）。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。前景に囲まれた 1 画素の窪み（孤立した背景</p>
 <p>画素）を拾うので、細線化後の欠け検出や形状のノッチ検出に使える。入力は</p>

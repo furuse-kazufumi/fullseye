@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xwt_firm_denoise&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>ファーム閾値処理(firm/semisoft thresholding、`<code style="color:#22d3bf">pywt.threshold_firm</code><code style="color:#22d3bf">)によるウェーブレットノイズ除去。ソフト閾値とハード閾値の中間の特性を持ち、</code><code style="color:#22d3bf">sym4</code>` で 2 段分解した各詳細係数に適用してから再構成する。</p>
+<p>펌 임계값 처리(firm/semisoft thresholding, `<code style="color:#22d3bf">pywt.threshold_firm</code><code style="color:#22d3bf">)를 이용한 웨이블릿 노이즈 제거. 소프트 임계값과 하드 임계값의 중간 특성을 가지며, </code><code style="color:#22d3bf">sym4</code>`로 2단계 분해한 각 상세 계수에 적용한 뒤 재구성한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は下側閾値(0.03〜0.23)、</code><code style="color:#22d3bf">b</code>` は上側閾値(下側+ε 以上、0.15〜0.55)を振る —— 下側未満は 0、上側以上はそのまま、中間は緩やかに減衰させる。xwt_visushrink よりディテールの急な打ち切りを避けたい場合に向く。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>

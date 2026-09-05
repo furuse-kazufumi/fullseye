@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">volume</code> → <code style="color:#22d3bf">volume</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;vol_erode&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>3D ボリュームのグレースケール侵食。対応する HALCON op は指定されていない。</p>
+<p>3D 体数据的灰度腐蚀。未指定对应的 HALCON op。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>構造要素の一辺は `<code style="color:#22d3bf">size = 1 + 2*(1 + int(a))</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">[0,1)</code><code style="color:#22d3bf"> の範囲では </code><code style="color:#22d3bf">int(a)</code><code style="color:#22d3bf"> が常に 0 になるため実質サイズ </code><code style="color:#22d3bf">3</code><code style="color:#22d3bf"> 固定で、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">1.0</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">decode</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">np.clip</code><code style="color:#22d3bf"> で上限に張り付いたとき）になったときだけ </code><code style="color:#22d3bf">5</code><code style="color:#22d3bf"> に切り替わる、実質 2 値スイッチにしかなっていない（</code><code style="color:#22d3bf">_vol_dilate</code><code style="color:#22d3bf"> も同じ式で同じ性質）。</code><code style="color:#22d3bf">b</code>` も未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d 族使用指南</a></p>

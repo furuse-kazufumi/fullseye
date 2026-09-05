@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;local_max&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">local_max</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>局所極大点検出。`<code style="color:#22d3bf">x</code><code style="color:#22d3bf"> が窓内の最大値(</code><code style="color:#22d3bf">_k(a)</code>`)に一致し、かつ</p>
-<p>`<code style="color:#22d3bf">x &gt; 0.3+0.4*b</code>` を満たす画素だけを前景とする ―― 平坦な高原状の領域では</p>
-<p>複数の隣接画素が同時に「極大」として残る点に注意(真の孤立点ピークだけを</p>
-<p>残す保証はない)。HALCON の `<code style="color:#22d3bf">local_max</code>`（Detect all local maxima in an</p>
-<p>image.）に相当。</p>
+<p>국소 극대점 검출. `<code style="color:#22d3bf">x</code><code style="color:#22d3bf">가 창 내 최댓값(</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">)과 일치하고, 또한 </code><code style="color:#22d3bf">x &gt; 0.3+0.4*b</code><code style="color:#22d3bf">를 만족하는 화소만을 전경으로 한다 —— 평탄한 고원 형태의 영역에서는 여러 인접 화소가 동시에 &quot;극대&quot;로 남을 수 있다는 점에 주의한다(진정한 고립점 피크만 남는다는 보장은 없다). HALCON의 </code><code style="color:#22d3bf">local_max</code>`(Detect all local maxima in an image.)에 해당한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓サイズを、</code><code style="color:#22d3bf">b</code>` が輝度の下限しきい値を振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>

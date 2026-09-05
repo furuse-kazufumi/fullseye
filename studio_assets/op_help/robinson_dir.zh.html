@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;robinson_dir&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">robinson_dir</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Robinson コンパス演算子によるエッジ方向マップ。8 方向（45° ずつ回転させた `<code style="color:#22d3bf">_ROBINSON[0]</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">_ROBINSON[1]</code>` カーネル計 8 個）それぞれへの畳み込み応答のうち最大のものを選び、そのカーネル番号を 0〜1 に正規化して返す。a, b は未使用。</p>
+<p>使用 Robinson 罗盘算子的边缘方向图。在 8 个方向（每 45° 旋转一次的 `<code style="color:#22d3bf">_ROBINSON[0]</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">_ROBINSON[1]</code>` 核，共 8 个）的卷积响应中选出最大者，并将该核的编号归一化到 0〜1 返回。a、b 未使用。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">frei_dir</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">sobel_dir</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">arctan2</code><code style="color:#22d3bf"> による連続角度なのに対し、こちらは 8 方向のうち最も強く反応したカーネルの**インデックス**を返す離散近似である点に注意（8 段階の量子化角度）。HALCON の </code><code style="color:#22d3bf">robinson_dir</code><code style="color:#22d3bf">（Robinson 演算子でエッジの振幅と方向を検出する演算）の方向成分に相当。振幅は </code><code style="color:#22d3bf">robinson_amp</code>` が担当する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>

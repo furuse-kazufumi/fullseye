@@ -3,18 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tac_shear_field&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>In-plane shear proxy from the 2-D structure tensor (Foerstner /</p>
-<p>Bigun-Granlund orientation coherence). The tensor</p>
-<p>`<code style="color:#22d3bf">J = G_sigma(grad v * grad v^T)</code>` has eigenvalues l1 &gt;= l2, and the</p>
-<p>coherence `<code style="color:#22d3bf">(l1-l2)/(l1+l2) = sqrt((J11-J22)^2 + 4*J12^2) / (J11+J22)</code>`</p>
-<p>is 1 where the gel texture is stretched into a single dominant orientation</p>
-<p>(as it is under tangential/shear load) and 0 where it is isotropic. The</p>
-<p>result is additionally weighted by the tensor trace (gradient energy) so</p>
-<p>that texture-free, un-contacted gel stays dark instead of amplifying noise</p>
-<p>orientation. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = tensor integration sigma (0.6..4.6), </code><code style="color:#22d3bf">b</code>` = output gain</p>
-<p>(0.5..2.5). Output clipped to [0,1], HxW; a constant frame has zero gradient</p>
-<p>energy and yields an all-zero shear field.</p>
+<p>由二維結構張量(Foerstner / Bigun-Granlund 方向一致性)求取平面內剪切(in-plane shear)近似。張量 `<code style="color:#22d3bf">J = G_sigma(grad v * grad v^T)</code><code style="color:#22d3bf"> 的特徵值為 l1 &gt;= l2,一致性 </code><code style="color:#22d3bf">(l1-l2)/(l1+l2) = sqrt((J11-J22)^2 + 4*J12^2) / (J11+J22)</code><code style="color:#22d3bf"> 在凝膠紋理被拉伸成單一主方向時(如在切向/剪切負載下)為 1,在等向性時為 0。結果另外會乘上張量跡(梯度能量)作為權重,使無紋理、未接觸的凝膠保持暗色,而不會放大雜訊方向。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = 張量積分 sigma(0.6~4.6),</code><code style="color:#22d3bf">b</code>` = 輸出增益(0.5~2.5)。輸出裁剪到 [0,1],尺寸為 HxW;常數幀的梯度能量為零,會得到全零的剪切場。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;mean_sp&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">mean_sp</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>ロバスト平滑化フィルタ。窓内の 20 パーセンタイルと 80 パーセンタイルの平均を返す（トリム平均、trimmed mean）ことで、極端に明るい/暗い外れ値（ソルト&amp;ペッパー雑音など）の影響を抑える。a が窓サイズを 3/5/7/9 に振る（`<code style="color:#22d3bf">_k(a)</code>`）。b は未使用。</p>
+<p>穩健平滑濾波器。回傳視窗內 20 百分位與 80 百分位的平均值（截尾平均，trimmed mean），藉此抑制極端明暗離群值（如胡椒鹽雜訊）的影響。a 將視窗大小分為 3/5/7/9（`<code style="color:#22d3bf">_k(a)</code>`）。b 未使用。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の `<code style="color:#22d3bf">mean_sp</code>`（ソルト&amp;ペッパーノイズを抑制する平均化演算）に相当する近似 —— 上下 20% を除いた範囲の中点をとる点で単純平均よりノイズに強いが、HALCON 固有のアルゴリズムとは実装が異なる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

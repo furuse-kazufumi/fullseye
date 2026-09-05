@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">cimage</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_cplx_cr_residual&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Cauchy-Riemann residual of a sampled complex field — &quot;is this field</p>
-<p>holomorphic?&quot; as a number.</p>
+<p>표본화된 복소수 장의 코시-리만 잔차 — &quot;이 장은 정칙(holomorphic)인가?&quot;를 하나의 수치로 나타낸 것.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>With `<code style="color:#22d3bf">f = u + i v</code>` sampled on a uniform grid, holomorphy means</p>
 <p>`<code style="color:#22d3bf">u_x = v_y</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">u_y = -v_x</code>` (Cauchy-Riemann). This returns the</p>
 <p><b>relative</b> residual `<code style="color:#22d3bf">max(|u_x - v_y|, |u_y + v_x|) / max|grad|</code>`</p>

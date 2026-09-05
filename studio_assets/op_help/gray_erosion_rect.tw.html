@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;gray_erosion_rect&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">gray_erosion_rect</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>矩形窓内の最小値を返すグレースケール収縮(`<code style="color:#22d3bf">ndimage.minimum_filter</code>`)。</p>
-<p>明るい細線・小突起を暗部側から侵食して消す。HALCON の</p>
-<p>`<code style="color:#22d3bf">gray_erosion_rect</code>`（Determine the minimum gray value within a</p>
-<p>rectangle.）に相当。</p>
+<p>回傳矩形視窗內最小值的灰階侵蝕(`<code style="color:#22d3bf">ndimage.minimum_filter</code><code style="color:#22d3bf">)。從暗部一側侵蝕明亮的細線、小突起,將其消除。相當於 HALCON 的 </code><code style="color:#22d3bf">gray_erosion_rect</code>`(Determine the minimum gray value within a rectangle.)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の一辺を </code><code style="color:#22d3bf">{3,5,7,9}</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">)で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

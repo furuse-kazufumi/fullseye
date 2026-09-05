@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;r3_label_to_region&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">label_to_region</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>ラベル画像から 1 つのグレー値（ラベル）を持つ画素だけを抽出する（HALCON`<code style="color:#22d3bf">label_to_region</code>` に相当）。</p>
+<p>從標籤影像中僅擷取具有某一個灰階值(標籤)的像素(相當於 HALCON `<code style="color:#22d3bf">label_to_region</code>`)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>入力を 3 桁に丸めた上で 0 より大きい値をラベルとみなし、昇順に並べた`<code style="color:#22d3bf">round(a * (ラベル数-1))</code><code style="color:#22d3bf"> 番目のラベルを選んで、その値を持つ画素を領域として返す。</code><code style="color:#22d3bf">b</code>` は未使用。単純な 0/1 マスクはラベルが 1 つしか無いので常にその前景が返る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

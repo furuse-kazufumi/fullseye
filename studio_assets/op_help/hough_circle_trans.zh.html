@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hough_circle_trans&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">hough_circle_trans</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>円検出のための Hough 変換。エッジマスクに対して半径 4〜19(3 刻み)の</p>
-<p>円テンプレート群で `<code style="color:#22d3bf">skimage.transform.hough_circle</code>` を計算し、全半径での</p>
-<p>最大応答を [0,1] に正規化して返す。HALCON の `<code style="color:#22d3bf">hough_circle_trans</code>`</p>
-<p>（Return the Hough-Transform for circles with a given radius.）に相当</p>
-<p>(HALCON は半径を明示指定するが、ここでは固定レンジを総当たりする近似)。</p>
+<p>用于圆检测的 Hough 变换。对边缘掩膜使用半径 4〜19（步长 3）的一组圆模板计算 `<code style="color:#22d3bf">skimage.transform.hough_circle</code><code style="color:#22d3bf">，并把所有半径中的最大响应归一化到 [0,1] 后返回。相当于 HALCON 的 </code><code style="color:#22d3bf">hough_circle_trans</code>`（Return the Hough-Transform for circles with a given radius.）（HALCON 会明确指定半径，此处则用固定范围做穷举的近似）。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がエッジ抽出の閾値を振る。</code><code style="color:#22d3bf">b</code>` は未使用 ―― 探索する半径レンジは</p>
 <p>コード側に固定されており、`<code style="color:#22d3bf">b</code>` で半径を選ぶことはできない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

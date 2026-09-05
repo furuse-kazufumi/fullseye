@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;auto_threshold&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">auto_threshold</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>実装は `<code style="color:#22d3bf">binary_threshold</code>` と同一(Otsu の判別分析法による自動</p>
-<p>しきい値化)。HALCON の `<code style="color:#22d3bf">auto_threshold</code>`（Segment an image using</p>
-<p>thresholds determined from its histogram.）は本来ヒストグラムの複数の谷</p>
-<p>から<b>複数のしきい値</b>(多クラス分割)を決める演算子だが、この代役では</p>
-<p>単一の Otsu しきい値による二値化に単純化している(近似の限界)。</p>
+<p>Die Implementierung ist identisch mit `<code style="color:#22d3bf">binary_threshold</code><code style="color:#22d3bf"> (automatische Schwellenwertbildung mittels Otsus Diskriminanzanalyse). HALCONs </code><code style="color:#22d3bf">auto_threshold</code>` (Segment an image using thresholds determined from its histogram.) ist ursprünglich ein Operator, der aus mehreren Tälern des Histogramms <b>mehrere Schwellenwerte</b> bestimmt (Mehrklassensegmentierung), aber dieser Ersatz ist auf eine Binarisierung mit einem einzigen Otsu-Schwellenwert vereinfacht (eine Grenze der Annäherung).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>

@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_fit_surface1&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">fit_surface_first_order</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>gray 値を 1 次多項式面(平面)で最小二乗近似する。HALCON の</p>
-<p>`<code style="color:#22d3bf">fit_surface_first_order</code>`(gray 値モーメントを計算し 1 次曲面で近似する)</p>
-<p>に相当。</p>
+<p>Passt die Grauwerte durch kleinste Quadrate an eine Polynomfläche erster Ordnung (eine Ebene) an. Entspricht HALCONs `<code style="color:#22d3bf">fit_surface_first_order</code>` (berechnet Grauwertmomente und passt eine Fläche erster Ordnung an).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>座標を [-1, 1] に正規化してから `<code style="color:#22d3bf">[1, x, y]</code>` を基底に最小二乗回帰し、</p>
 <p>近似面を min-max で [0, 1] に正規化して返す(照明ムラ推定に使う)。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>

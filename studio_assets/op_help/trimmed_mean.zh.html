@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;trimmed_mean&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">trimmed_mean</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>20 パーセンタイルと 80 パーセンタイルのフィルタ結果の平均を返すことで</p>
-<p>トリム平均を近似する。外れ値(最小・最大側)の影響を除いた平均に近い値になる</p>
-<p>が、真の「中央 60% を平均する」トリム平均とは計算方法が異なる近似である点に</p>
-<p>注意。HALCON の `<code style="color:#22d3bf">trimmed_mean</code>`（Smooth an image with an arbitrary rank</p>
-<p>mask.）の代役。</p>
+<p>通过返回 20 百分位与 80 百分位滤波结果的平均值来近似修剪均值。得到的值接近于排除了(最小、最大侧)离群值影响的平均值,但需注意,这与真正&quot;对中间 60% 取平均&quot;的修剪均值在计算方法上是不同的近似。是 HALCON 的 `<code style="color:#22d3bf">trimmed_mean</code>`(Smooth an image with an arbitrary rank mask.)的替代实现。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の一辺を </code><code style="color:#22d3bf">{3,5,7,9}</code><code style="color:#22d3bf"> で振る。</code><code style="color:#22d3bf">b</code>` は未使用(トリム比率は 20/80</p>
 <p>に固定)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

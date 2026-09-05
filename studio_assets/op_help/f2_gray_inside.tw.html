@@ -4,12 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;f2_gray_inside&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">gray_inside</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Grayscale hole-fill: for each pixel, the lowest gray value attainable on</p>
-<p>any path to the image border == morphological reconstruction of the image by</p>
-<p>erosion from a border-anchored marker. Dark basins enclosed by brighter walls</p>
-<p>are raised toward the wall height; regions connected to the border stay dark.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> sets the maximum fill depth h (0 = none, 1 = full); </code><code style="color:#22d3bf">b</code>` is ignored.</p>
+<p>灰階孔洞填補:對每個像素,取其到影像邊界任一路徑上可達的最低灰階值 —— 相當於以邊界錨定的標記對影像做侵蝕式形態學重建。被較亮牆面包圍的暗盆地會被抬升至牆面高度;與邊界相連的區域維持暗部。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 設定最大填補深度 h(0 = 不填補,1 = 完全填補);</code><code style="color:#22d3bf">b</code>` 被忽略。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

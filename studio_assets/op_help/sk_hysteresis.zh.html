@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_hysteresis&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">hysteresis_threshold</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>ヒステリシスしきい値処理。2 段のしきい値を使い、高い方を超える画素をまず確定させ、低い方を超えつつ確定画素と連結している画素も追加で採用する —— Canny のエッジ連結ステップと同じ考え方を汎用の応答画像に適用したもの。</p>
+<p>滞后阈值处理。使用两级阈值,先确定超过高阈值的像素,再追加采用超过低阈值且与已确定像素相连通的像素 —— 这是将 Canny 边缘连接步骤的相同思路应用于通用响应图像的方法。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>HALCON の <code style="color:#22d3bf">hysteresis_threshold</code>(Perform a hysteresis threshold operation on an image.)に相当。実装は `<code style="color:#22d3bf">filters.apply_hysteresis_threshold(v, 0.2+0.3*a, 0.5+0.3*b)</code>` —— a は低い方のしきい値を 0.2〜0.5 に、b は高い方のしきい値を 0.5〜0.8 に振る。a を大きく・b を小さくすると 2 つが逆転しうる(low &gt; high)ので、極端な組み合わせでは skimage 側の挙動に委ねられる点に注意。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>

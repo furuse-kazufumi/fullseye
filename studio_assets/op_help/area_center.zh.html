@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;area_center&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">area_center</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>領域の面積と重心を、解像度に依らない正規化済みの 3 成分ベクトル</p>
-<p>(面積比 = 面積/画像画素数、正規化重心行、正規化重心列)として返す。1</p>
-<p>スカラーでは (Area, Row, Column) を表せないため、`<code style="color:#22d3bf">match</code>` ソート(1 次元</p>
-<p>ベクトル、`<code style="color:#22d3bf">ncc_locate</code>` と同じ形)で返す点が他の region 特徴 op と異なる。</p>
-<p>領域が空のときは (0, 0.5, 0.5)(面積ゼロ・中心=画像中心)を返す fail-soft</p>
-<p>仕様。HALCON の `<code style="color:#22d3bf">area_center</code>`（Area and center of regions.）に相当。</p>
+<p>以与分辨率无关的归一化 3 分量向量(面积比 = 面积/图像像素数、归一化重心行、归一化重心列)返回区域的面积和重心。由于单个标量无法表示 (Area, Row, Column),因此与其他区域特征 op 不同,它以 `<code style="color:#22d3bf">match</code><code style="color:#22d3bf"> 排序(一维向量,与 </code><code style="color:#22d3bf">ncc_locate</code><code style="color:#22d3bf"> 相同的形式)返回。区域为空时返回 (0, 0.5, 0.5)(面积为零、中心=图像中心)的 fail-soft 规格。相当于 HALCON 的 </code><code style="color:#22d3bf">area_center</code>`(Area and center of regions.)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

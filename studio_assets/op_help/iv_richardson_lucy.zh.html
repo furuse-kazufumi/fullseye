@@ -3,11 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;iv_richardson_lucy&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Richardson-Lucy deconvolution assuming a small Gaussian PSF (sigma =</p>
-<p>`<code style="color:#22d3bf">RL_SIGMA</code><code style="color:#22d3bf">). </code><code style="color:#22d3bf">a</code>` sets the iteration count n = 1 + round(a*14) (1..15);</p>
-<p>`<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> is ignored. RL multiplicatively drives the estimate </code><code style="color:#22d3bf">u</code>` so that</p>
-<p>`<code style="color:#22d3bf">u (*) psf</code>` matches the blurred measurement, sharpening real edges.</p>
+<p>假设点扩散函数（PSF）为小型高斯核（sigma = `<code style="color:#22d3bf">RL_SIGMA</code><code style="color:#22d3bf">）的 Richardson-Lucy 反卷积。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 设定迭代次数 n = 1 + round(a*14)（1..15）；</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> 被忽略。RL 以乘法方式驱动估计值 </code><code style="color:#22d3bf">u</code><code style="color:#22d3bf">，使 </code><code style="color:#22d3bf">u (*) psf</code>` 逼近模糊后的观测值，从而锐化真实边缘。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

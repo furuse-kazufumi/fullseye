@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_voxel_grid_downsample&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>辺 voxel_size の格子で点群を間引き、各セルを重心 1 点に集約する(決定論的)。</p>
+<p>변의 길이가 voxel_size인 격자로 점군을 솎아내고, 각 셀을 무게중심 1점으로 집약한다(결정론적).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>空間を一辺 `<code style="color:#22d3bf">voxel_size</code>` の立方体セルに区切り、同じセルに落ちた点をその重心</p>
 <p>1 点で代表させる。密度ムラを均し、下流(ICP・特徴量)の計算量を点数で抑える標準手法。</p>
 <p>出力順はボクセル座標の辞書順で固定(同じ入力なら常に同じ出力=決定論的)。</p>

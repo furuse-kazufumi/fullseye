@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;entropy_gray&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">entropy_gray</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>グレースケール階調の Shannon エントロピー(64 ビンヒストグラムから計算</p>
-<p>し、最大値 `<code style="color:#22d3bf">log2(64)=6</code>` bit で正規化)。階調分布の「ばらつき/情報量」を</p>
-<p>表し、一様な画像ほど値は大きく、単一階調に偏るほど 0 に近づく。HALCON の</p>
-<p>`<code style="color:#22d3bf">entropy_gray</code>`（Determine the entropy and anisotropy of images.）は</p>
-<p>エントロピーと異方性の組を返すが、この代役ではエントロピーのみを実装</p>
-<p>している。</p>
+<p>The Shannon entropy of grayscale levels (computed from a 64-bin histogram and normalized by its maximum value, `<code style="color:#22d3bf">log2(64)=6</code><code style="color:#22d3bf"> bits). Represents the &quot;spread/information content&quot; of the gray-level distribution -- the value is larger for more uniform images and approaches 0 as the image is biased toward a single gray level. HALCON&#x27;s </code><code style="color:#22d3bf">entropy_gray</code>` (Determine the entropy and anisotropy of images.) returns a pair of entropy and anisotropy, but this stand-in implements only the entropy.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>

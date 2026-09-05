@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hysteresis_threshold&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">hysteresis_threshold</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>ヒステリシスしきい値処理(``skimage.filters.apply_hysteresis_</p>
-<p>threshold`<code style="color:#22d3bf">)。低いしきい値(</code><code style="color:#22d3bf">0.2+0.3*a</code>`)を超えた画素のうち、高い</p>
-<p>しきい値(`<code style="color:#22d3bf">0.5+0.3*b</code>`)を超えた画素につながっているものだけを前景として</p>
-<p>残す ―― Canny エッジ検出の後処理としても使われる、途切れにくいエッジ</p>
-<p>抽出手法。HALCON の `<code style="color:#22d3bf">hysteresis_threshold</code>`（Perform a hysteresis</p>
-<p>threshold operation on an image.）に相当。</p>
+<p>히스테리시스 임계값 처리(`<code style="color:#22d3bf">skimage.filters.apply_hysteresis_threshold</code><code style="color:#22d3bf">). 낮은 임계값(</code><code style="color:#22d3bf">0.2+0.3*a</code><code style="color:#22d3bf">)을 넘은 화소 중, 높은 임계값(</code><code style="color:#22d3bf">0.5+0.3*b</code><code style="color:#22d3bf">)을 넘은 화소와 연결된 것만 전경으로 남긴다 —— Canny 에지 검출의 후처리로도 사용되는, 끊기기 어려운 에지 추출 기법이다. HALCON의 </code><code style="color:#22d3bf">hysteresis_threshold</code>`(Perform a hysteresis threshold operation on an image.)에 해당한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が低いしきい値を、</code><code style="color:#22d3bf">b</code>` が高いしきい値を振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>

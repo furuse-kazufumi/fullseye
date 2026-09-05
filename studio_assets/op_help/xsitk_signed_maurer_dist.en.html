@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_signed_maurer_dist&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>符号付き距離マップ(SimpleITK `<code style="color:#22d3bf">SignedMaurerDistanceMap</code>`)を tanh で [0,1] に押し込んだもの。二値領域の境界からの距離(内側/外側とも)を、境界付近ほど 0.5 から離れる連続値の画像として表す。</p>
+<p>The signed distance map (SimpleITK `<code style="color:#22d3bf">SignedMaurerDistanceMap</code>`) compressed into [0,1] using tanh. Represents the distance from the boundary of a binary region (both inside and outside) as an image of continuous values where positions closer to the boundary move further from 0.5.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は tanh のスケール(</code><code style="color:#22d3bf">1.0+9.0*a</code><code style="color:#22d3bf"> で 1〜10。大きいほど遷移が緩やかで広い範囲がグレーになる)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。距離を画素座標のスケールで解釈する点、符号(内側/外側どちらが正か)は SimpleITK のデフォルト規約に従う点に注意。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;trans_from_rgb&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">trans_from_rgb</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>RGB 画像を別の色空間（HSV / Lab / YUV / XYZ）へ変換する。HALCON の</p>
-<p>`<code style="color:#22d3bf">trans_from_rgb</code>`（RGB 色空間から任意の色空間への変換）に相当。</p>
+<p>Wandelt ein RGB-Bild in einen anderen Farbraum um (HSV / Lab / YUV / XYZ). Entspricht HALCONs `<code style="color:#22d3bf">trans_from_rgb</code>` (Umwandlung vom RGB-Farbraum in einen beliebigen Farbraum).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>内部は OpenCV の `<code style="color:#22d3bf">cv2.cvtColor</code>` を 8bit 経由で呼ぶだけで、変換先の</p>
 <p>色空間そのものの定義は OpenCV の実装に従う。</p>
 <p>a は変換先を 4 通り（HSV, Lab, YUV, XYZ の順）から選ぶ</p>

@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;median_separate&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">median_separate</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>実装は `<code style="color:#22d3bf">median_image</code><code style="color:#22d3bf"> と同じ(</code><code style="color:#22d3bf">kind: &quot;median&quot;</code>`、正方窓の 2 次元</p>
-<p>メディアン)。HALCON の `<code style="color:#22d3bf">median_separate</code>`（Separated median filtering with</p>
-<p>rectangle masks.）は行方向・列方向に分離した 1 次元メディアンを 2 パス</p>
-<p>掛ける高速近似演算子だが、この代役では区別せず通常の 2 次元メディアンを</p>
-<p>返す(結果は近い場合が多いが厳密には別アルゴリズム ―― 近似の限界)。</p>
+<p>구현은 `<code style="color:#22d3bf">median_image</code><code style="color:#22d3bf">와 동일하다(</code><code style="color:#22d3bf">kind: &quot;median&quot;</code><code style="color:#22d3bf">, 정사각형 창의 2차원 미디언). HALCON의 </code><code style="color:#22d3bf">median_separate</code>`(Separated median filtering with rectangle masks.)는 행 방향·열 방향으로 분리한 1차원 미디언을 2패스로 적용하는 고속 근사 연산자이지만, 이 대역에서는 구분하지 않고 통상의 2차원 미디언을 반환한다(결과는 비슷한 경우가 많지만 엄밀히는 다른 알고리즘이다 -- 근사의 한계).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の一辺を </code><code style="color:#22d3bf">{3,5,7,9}</code><code style="color:#22d3bf"> で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>

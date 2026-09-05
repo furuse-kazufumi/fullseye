@@ -3,13 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tm_fbp_reconstruct&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Filtered back-projection: treat `<code style="color:#22d3bf">v</code>` as a sinogram (rows = angles,</p>
-<p>cols = detector, angles assumed uniform over [0,180)) and reconstruct the</p>
-<p>slice. `<code style="color:#22d3bf">b</code>` picks the reconstruction filter -- b &lt; 0.5 -&gt; Ram-Lak (ramp),</p>
-<p>b &gt;= 0.5 -&gt; Shepp-Logan. `<code style="color:#22d3bf">a</code>` is unused (the filter is the meaningful knob).</p>
-<p>Uses `<code style="color:#22d3bf">skimage.transform.iradon</code>` when available, else the NumPy</p>
-<p>FFT-ramp-filtered back-projection. Output refit to HxW.</p>
+<p>滤波反投影（FBP）：将 `<code style="color:#22d3bf">v</code><code style="color:#22d3bf"> 视为正弦图（行 = 角度，列 = 探测器，假定角度在 [0,180) 上均匀分布）并重建切片。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> 选择重建滤波器 —— b &lt; 0.5 -&gt; Ram-Lak（斜坡滤波器），b &gt;= 0.5 -&gt; Shepp-Logan。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 未被使用（滤波器才是有意义的旋钮）。若可用则使用 </code><code style="color:#22d3bf">skimage.transform.iradon</code>`，否则使用 NumPy 的 FFT 斜坡滤波反投影。输出重新拟合为 HxW。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

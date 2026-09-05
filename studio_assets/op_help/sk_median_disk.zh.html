@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_median_disk&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">median_image</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>円盤(disk)形の footprint によるメディアンフィルタ。通常の正方形カーネルと違い、円形に近い等方的な平滑化になる。</p>
+<p>使用圆盘(disk)形 footprint 的中值滤波。与普通的正方形核不同,得到的是接近圆形的各向同性平滑效果。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>HALCON の <code style="color:#22d3bf">median_image</code>(Compute a median filter with various masks.)に相当。実装は `<code style="color:#22d3bf">filters.median(v, footprint=disk(1+int(a*3)))</code>` —— a は円盤の半径を 1〜4 に振る(半径が大きいほど強く滑らかになるが細部も消える)。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

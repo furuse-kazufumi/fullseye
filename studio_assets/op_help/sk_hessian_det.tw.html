@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_hessian_det&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Hessian 行列式によるブロブ検出応答。2 階微分の行列(Hessian)の行列式は、ブロブ状の構造で正、鞍点状の構造で負になる符号付き応答。</p>
+<p>基於 Hessian 行列式的斑點(blob)偵測響應。二階導數矩陣(Hessian)的行列式是一種帶符號的響應值,在斑點狀結構處為正,在鞍點狀結構處為負。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">feature.hessian_matrix_det(v, sigma=0.5+2.5*a)</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">signed01</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">[0,1]</code>` へ写した値(符号を保つため 0.5 が「応答ゼロ」に対応)—— a はスケール σ を 0.5〜3.0 に振る。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>

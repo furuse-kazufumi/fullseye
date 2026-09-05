@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_random_scale&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>一様スケール `<code style="color:#22d3bf">s ~ U(lo, hi)</code><code style="color:#22d3bf"> を原点まわりに適用し </code><code style="color:#22d3bf">(scaled, s)</code>` を返す。</p>
+<p>원점을 중심으로 균등 스케일 `<code style="color:#22d3bf">s ~ U(lo, hi)</code><code style="color:#22d3bf">를 적용하고 </code><code style="color:#22d3bf">(scaled, s)</code>`를 반환한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">scaled = points * s</code><code style="color:#22d3bf">。bbox 対角長はちょうど </code><code style="color:#22d3bf">s</code><code style="color:#22d3bf"> 倍になる(</code><code style="color:#22d3bf">s &gt; 0</code>` なので</p>
 <p>`<code style="color:#22d3bf">max</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">min</code><code style="color:#22d3bf"> が共に </code><code style="color:#22d3bf">s</code><code style="color:#22d3bf"> 倍 → 対角 </code><code style="color:#22d3bf">‖max-min‖</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">s</code>` 倍)。物体スケールの</p>
 <p>ばらつき(距離/センサ倍率)を学習に注入する。`<code style="color:#22d3bf">0 &lt; lo &lt;= hi</code>` を要求(fail-closed)。</p>

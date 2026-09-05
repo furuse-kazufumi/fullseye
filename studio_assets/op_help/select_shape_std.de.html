@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;select_shape_std&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">select_shape_std</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>連結成分のうち最大の面積を持つものだけを残す(`<code style="color:#22d3bf">_largest_label</code>` で</p>
-<p>選択)。HALCON の `<code style="color:#22d3bf">select_shape_std</code>`（Select regions of a given shape.）</p>
-<p>は `<code style="color:#22d3bf">max_area</code>` を含む複数の標準基準を選べる演算子だが、ここでは</p>
-<p>「面積最大」1 種類に固定している(近似)。</p>
+<p>Behält nur die zusammenhängende Komponente mit der größten Fläche (ausgewählt über `<code style="color:#22d3bf">_largest_label</code><code style="color:#22d3bf">). HALCONs </code><code style="color:#22d3bf">select_shape_std</code><code style="color:#22d3bf"> (Select regions of a given shape.) ist ein Operator, bei dem unter mehreren Standardkriterien einschließlich </code><code style="color:#22d3bf">max_area</code>` gewählt werden kann, hier jedoch fest auf das eine Kriterium &#x27;größte Fläche&#x27; festgelegt ist (eine Approximation).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。複数領域が同面積の場合は </code><code style="color:#22d3bf">argmax</code>` の実装依存で</p>
 <p>どれか 1 つが選ばれる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk_richardson_lucy&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Richardson-Lucy デコンボリューション。ぼけを 3x3 の平均カーネル(box PSF)と</p>
-<p>仮定して反復的に鮮鋭化する(skimage.restoration.richardson_lucy をそのまま呼ぶ)。</p>
+<p>Richardson-Lucy 反卷積。假設模糊為 3x3 平均核（box PSF），進行反覆銳化（直接呼叫 `<code style="color:#22d3bf">skimage.restoration.richardson_lucy</code>`）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code>` が反復回数を 2〜17 回の範囲で振る(回数が多いほど強く先鋭化するが、</p>
 <p>ノイズ増幅やリンギングも増える)。`<code style="color:#22d3bf">b</code>` は未使用。PSF は実際のぼけ量に関わらず</p>
 <p>固定の 3x3 box を仮定するため、真の劣化過程と一致しない画像では改善が限定的、</p>

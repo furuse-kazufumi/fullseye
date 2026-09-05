@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">volume</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_region_growing&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>法線類似で領域成長し連結した平滑領域へ同ラベルを付す(曲率ゲート無し変種)。</p>
+<p>법선 유사도로 영역을 성장시켜 연결된 매끄러운 영역에 동일 라벨을 부여한다(곡률 게이트 없는 변형).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>各点を k 近傍グラフ上で BFS 成長させ、隣接点 q を「法線 n_p と n_q の成す角が</p>
 <p>`<code style="color:#22d3bf">angle_thresh_deg</code>` 未満」のときだけ同領域に加える。平面内の法線はほぼ平行なので</p>
 <p>同一領域に連結し、向きの違う面の境界では角度が開いて連結が切れる → 面ごとに別領域。</p>

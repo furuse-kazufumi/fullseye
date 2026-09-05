@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;h_threshold&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">threshold</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>帯域しきい値処理(`<code style="color:#22d3bf">a &lt; x &lt; a+0.5+0.5*b</code>` を満たす画素を前景とする)。</p>
-<p>HALCON の `<code style="color:#22d3bf">threshold</code>`(Segment an image using global threshold.)は</p>
-<p>Min/Max の 2 値を直接指定する演算子だが、この代役では下限を `<code style="color:#22d3bf">a</code>` から、</p>
-<p>帯域幅を `<code style="color:#22d3bf">b</code>` から導出する 1 パラメータ相当の簡略化になっている。登録名は</p>
-<p>`<code style="color:#22d3bf">threshold</code><code style="color:#22d3bf"> が Python 側で予約語的に扱われるため </code><code style="color:#22d3bf">h_threshold</code>` になる</p>
-<p>(spec の `<code style="color:#22d3bf">halcon</code><code style="color:#22d3bf"> フィールドは </code><code style="color:#22d3bf">threshold</code>` のまま)。</p>
+<p>带状阈值处理(满足`<code style="color:#22d3bf">a &lt; x &lt; a+0.5+0.5*b</code><code style="color:#22d3bf">的像素视为前景)。HALCON的</code><code style="color:#22d3bf">threshold</code><code style="color:#22d3bf">(Segment an image using global threshold.)是直接指定Min/Max两个数值的运算符,但此替代实现是从</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">推导下限、从</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf">推导带宽的简化版,相当于1个参数。由于</code><code style="color:#22d3bf">threshold</code><code style="color:#22d3bf">在Python端被当作类似保留字处理,注册名称改为</code><code style="color:#22d3bf">h_threshold</code><code style="color:#22d3bf">(spec的</code><code style="color:#22d3bf">halcon</code><code style="color:#22d3bf">字段仍保持</code><code style="color:#22d3bf">threshold</code>`)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が下限しきい値(0〜1)を、</code><code style="color:#22d3bf">b</code>` が帯域幅(0〜0.5 の追加分)を振る。</p>
 <p>両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

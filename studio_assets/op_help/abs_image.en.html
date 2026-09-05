@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;abs_image&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">abs_image</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>画素値の絶対値を取る(`<code style="color:#22d3bf">np.abs</code><code style="color:#22d3bf">)。fullseye の </code><code style="color:#22d3bf">image</code>` は既に [0,1] 契約</p>
-<p>(非負)なので、通常の画像に対しては何も変えない<b>恒等写像</b>として働く。差分</p>
-<p>画像など符号つきの中間結果を直接渡したときだけ意味を持つ。HALCON の</p>
-<p>`<code style="color:#22d3bf">abs_image</code>`（Calculate the absolute value (modulus) of an image.）の代役。</p>
+<p>Takes the absolute value of pixel values (`<code style="color:#22d3bf">np.abs</code><code style="color:#22d3bf">). Since fullseye&#x27;s </code><code style="color:#22d3bf">image</code><code style="color:#22d3bf"> already follows the [0,1] contract (non-negative), this acts as an identity mapping that changes nothing for a normal image. It only has an effect when a signed intermediate result, such as a difference image, is passed in directly. Stands in for HALCON&#x27;s </code><code style="color:#22d3bf">abs_image</code>` (Calculate the absolute value (modulus) of an image.).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。clip 前の生値 </code><code style="color:#22d3bf">v</code><code style="color:#22d3bf"> にそのまま </code><code style="color:#22d3bf">abs</code>` を掛けている点に</p>
 <p>注意(他の pointwise 分岐は `<code style="color:#22d3bf">x = clip(v,0,1)</code><code style="color:#22d3bf"> を使うが、この分岐だけ </code><code style="color:#22d3bf">v</code>`</p>
 <p>を直接見る)。</p>

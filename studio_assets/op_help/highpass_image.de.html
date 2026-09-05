@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;highpass_image&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">highpass_image</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>周波数領域で低域(半径 `<code style="color:#22d3bf">&lt;= 0.02+0.3*a</code>`)を遮断し、残りを逆 FFT で</p>
-<p>実空間に戻したハイパスフィルタ。零平均の<b>符号つき</b>応答になるため</p>
-<p>`<code style="color:#22d3bf">signed01</code>` で [0,1] に写像している(0.5 がゼロ、つまり画素の約半分が</p>
-<p>0.5 未満になるのが正常)。HALCON の `<code style="color:#22d3bf">highpass_image</code>`（Extract high</p>
-<p>frequency components from an image.）に相当。</p>
+<p>Ein Hochpassfilter, der im Frequenzbereich die niedrigen Frequenzen (Radius `<code style="color:#22d3bf">&lt;= 0.02+0.3*a</code><code style="color:#22d3bf">) blockiert und den Rest über eine inverse FFT in den Realraum zurücktransformiert. Da das Ergebnis eine mittelwertfreie, **vorzeichenbehaftete** Antwort ist, wird es mit </code><code style="color:#22d3bf">signed01</code><code style="color:#22d3bf"> auf [0,1] abgebildet (0,5 entspricht Null, d. h. es ist normal, dass etwa die Hälfte der Pixel unter 0,5 liegt). Entspricht HALCONs </code><code style="color:#22d3bf">highpass_image</code>` (Extract high frequency components from an image.).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が遮断半径(カットオフ周波数)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。単純に</p>
 <p>`<code style="color:#22d3bf">&gt; 0.5</code>` で二値化するとほぼ半分の画素が黒に潰れるので注意(詳細は</p>
 <p>`<code style="color:#22d3bf">_sh_freq</code>` の docstring)。</p>

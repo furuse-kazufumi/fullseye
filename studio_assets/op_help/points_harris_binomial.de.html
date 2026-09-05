@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;points_harris_binomial&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">points_harris_binomial</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>二項(ガウス)平滑化を前段に挟んだ Harris コーナー応答。まず `<code style="color:#22d3bf">b</code>` で</p>
-<p>決まるシグマで画像を平滑化し、その上で Harris 応答(skimage があれば</p>
-<p>`<code style="color:#22d3bf">corner_harris</code>`、無ければ構造テンソルを手計算、k=0.04)を求める。HALCON</p>
-<p>の `<code style="color:#22d3bf">points_harris_binomial</code>`（Detect points of interest using the</p>
-<p>binomial approximation of the Harris operator.）に相当。</p>
+<p>Harris-Eckenantwort mit vorgeschalteter binomialer (Gauß-)Glättung. Zunächst wird das Bild mit einem durch `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> bestimmten Sigma geglättet, anschließend wird darauf die Harris-Antwort berechnet (mit </code><code style="color:#22d3bf">corner_harris</code><code style="color:#22d3bf">, falls skimage verfügbar ist, andernfalls durch manuelle Berechnung des Strukturtensors, k=0,04). Entspricht HALCONs </code><code style="color:#22d3bf">points_harris_binomial</code>` (Detect points of interest using the binomial approximation of the Harris operator.).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が Harris 応答自体のシグマ(0.5〜2.5)を、</code><code style="color:#22d3bf">b</code>` が前段の平滑化シグマ</p>
 <p>(0.5〜2.0)を振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

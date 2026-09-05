@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_fit_surface2&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">fit_surface_second_order</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>gray 値を 2 次多項式面で最小二乗近似する。HALCON の</p>
-<p>`<code style="color:#22d3bf">fit_surface_second_order</code>`(gray 値モーメントを計算し 2 次曲面で近似する)</p>
-<p>に相当。</p>
+<p>Fits the gray values with a second-order polynomial surface by least squares. Corresponds to HALCON&#x27;s `<code style="color:#22d3bf">fit_surface_second_order</code>` (computes gray-value moments and fits a second-order surface).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>基底を `<code style="color:#22d3bf">[1, x, y, x^2, y^2, xy]</code><code style="color:#22d3bf"> に拡張したこと以外は </code><code style="color:#22d3bf">hx_fit_surface1</code>`</p>
 <p>と同じ(座標 [-1,1] 正規化 -&gt; 最小二乗 -&gt; [0,1] 正規化)。曲がった照明ムラや</p>
 <p>緩い凹凸の背景推定に使う。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>

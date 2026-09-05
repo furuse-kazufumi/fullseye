@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;select_shape&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">select_shape</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>面積が閾値(`<code style="color:#22d3bf">16+a*200</code>` 画素)未満の連結成分を除去する(小さなノイズ状</p>
-<p>領域の除去)。HALCON の `<code style="color:#22d3bf">select_shape</code>`（Choose regions with the aid of</p>
-<p>shape features.）は面積・円形度・凸性など任意の形状特徴で選別できる</p>
-<p>汎用演算子だが、ここでは面積による足切り 1 種類に固定している(近似)。</p>
+<p>去除面積低於閾值(`<code style="color:#22d3bf">16+a*200</code><code style="color:#22d3bf"> 像素)的連通成分(去除類似雜訊的小區域)。HALCON 的 </code><code style="color:#22d3bf">select_shape</code>`(Choose regions with the aid of shape features.)是可用面積、圓形度、凸性等任意形狀特徵篩選的通用運算子,但這裡固定為以面積截斷這一種(近似)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が面積の下限しきい値を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

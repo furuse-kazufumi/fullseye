@@ -3,13 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tm_sart_reconstruct&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Algebraic reconstruction: run a few SART/SIRT sweeps on the input</p>
-<p>sinogram (rows = angles). `<code style="color:#22d3bf">a</code>` sets the iteration count</p>
-<p>(`<code style="color:#22d3bf">round(1+a*4)</code><code style="color:#22d3bf"> -&gt; 1..5), </code><code style="color:#22d3bf">b</code>` sets the relaxation factor</p>
-<p>(`<code style="color:#22d3bf">0.05 + b*0.35</code><code style="color:#22d3bf">). Uses </code><code style="color:#22d3bf">skimage.transform.iradon_sart</code>` when available,</p>
-<p>else a self-contained NumPy SIRT (project -&gt; residual -&gt; weighted</p>
-<p>back-projection) loop. Output refit to HxW.</p>
+<p>대수적 재구성: 입력 사이노그램(행 = 각도)에 대해 SART/SIRT 스윕을 몇 차례 수행한다. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">는 반복 횟수(</code><code style="color:#22d3bf">round(1+a*4)</code><code style="color:#22d3bf"> -&gt; 1..5)를 설정하고, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf">는 완화 계수(</code><code style="color:#22d3bf">0.05 + b*0.35</code><code style="color:#22d3bf">)를 설정한다. 가능하면 </code><code style="color:#22d3bf">skimage.transform.iradon_sart</code>`를 사용하고, 그렇지 않으면 자체 구현한 NumPy SIRT 루프(투영 -&gt; 잔차 -&gt; 가중 역투영)를 사용한다. 출력은 HxW로 다시 맞춰진다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

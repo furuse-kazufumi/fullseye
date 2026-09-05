@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xpil_mode_filter&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>最頻値フィルタ。`<code style="color:#22d3bf">PIL.ImageFilter.ModeFilter</code>` で窓内の最頻出画素値に置き換える（中央値でなく最頻値を取る点がメディアンフィルタと異なる）。</p>
+<p>최빈값 필터. `<code style="color:#22d3bf">PIL.ImageFilter.ModeFilter</code>`로 창 내에서 가장 자주 나타나는 화소값으로 치환한다(중앙값이 아니라 최빈값을 취한다는 점이 중앙값 필터와 다르다).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>a が窓サイズを 3/5/7/9 の 4 段階（`<code style="color:#22d3bf">3 + 2*int(a*3)</code>`）で振る。b は未使用。単色の塗りつぶし領域が多い画像（ラベル画像・漫画調画像）のノイズ除去に向き、階調が滑らかな自然画像では効果が薄い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>

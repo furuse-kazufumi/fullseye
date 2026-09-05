@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;area_center&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">area_center</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>領域の面積と重心を、解像度に依らない正規化済みの 3 成分ベクトル</p>
-<p>(面積比 = 面積/画像画素数、正規化重心行、正規化重心列)として返す。1</p>
-<p>スカラーでは (Area, Row, Column) を表せないため、`<code style="color:#22d3bf">match</code>` ソート(1 次元</p>
-<p>ベクトル、`<code style="color:#22d3bf">ncc_locate</code>` と同じ形)で返す点が他の region 特徴 op と異なる。</p>
-<p>領域が空のときは (0, 0.5, 0.5)(面積ゼロ・中心=画像中心)を返す fail-soft</p>
-<p>仕様。HALCON の `<code style="color:#22d3bf">area_center</code>`（Area and center of regions.）に相当。</p>
+<p>영역의 면적과 무게중심을 해상도에 무관한 정규화된 3성분 벡터(면적비 = 면적/이미지 픽셀 수, 정규화된 무게중심 행, 정규화된 무게중심 열)로 반환한다. 스칼라 하나로는 (Area, Row, Column)을 표현할 수 없으므로, `<code style="color:#22d3bf">match</code><code style="color:#22d3bf"> 정렬(1차원 벡터, </code><code style="color:#22d3bf">ncc_locate</code><code style="color:#22d3bf">와 같은 형태)로 반환한다는 점이 다른 영역 특징 op와 다르다. 영역이 비어 있을 때는 (0, 0.5, 0.5)(면적 0, 중심=이미지 중심)를 반환하는 fail-soft 사양이다. HALCON의 </code><code style="color:#22d3bf">area_center</code>`(Area and center of regions.)에 해당.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>

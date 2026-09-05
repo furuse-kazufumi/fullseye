@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">qimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_rgb_to_quaternion&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Embed a colour image as pure quaternions `<code style="color:#22d3bf">0 + R i + G j + B k</code>`. → (H, W, 4).</p>
+<p>将彩色图像嵌入为纯四元数 `<code style="color:#22d3bf">0 + R i + G j + B k</code>`。→ (H, W, 4)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Sangwine&#x27;s 1996 encoding, and the entry point of the whole colour half of</p>
 <p>this module: once a pixel is a quaternion, `<code style="color:#22d3bf">q x conj(q)</code>` rotates its colour</p>
 <p>and :func:<code style="color:#22d3bf">qft2</code> transforms the three channels as <b>one</b> hypercomplex signal</p>

@@ -3,10 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_iss_keypoints&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>ISS(Intrinsic Shape Signatures、3D Harris 相当)キーポイント検出。</p>
-<p>局所共分散の最小固有値 λ3 を saliency とし、固有値が distinct(向きが</p>
-<p>well-defined)な点のみ候補にして NMS で疎に選ぶ。回転不変。返り値=点 index 配列。</p>
+<p>ISS-Keypoint-Detektor (Intrinsic Shape Signatures, entspricht einem 3D-Harris). Der kleinste Eigenwert λ3 der lokalen Kovarianz dient als Saliency; nur Punkte mit distinct Eigenwerten (also well-defined Orientierung) werden als Kandidaten zugelassen und per NMS spärlich ausgewählt. Rotationsinvariant. Rückgabe = Array der Punktindizes.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">iss_keypoints</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">gamma21</code><code style="color:#22d3bf">(既定 0.99)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">gamma32</code>`(既定 0.99)を振る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

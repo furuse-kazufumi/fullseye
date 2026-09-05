@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;simulate_motion&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">simulate_motion</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>線形の動きぼけ(モーションブラー)をシミュレートする。角度</p>
-<p>`<code style="color:#22d3bf">π*a</code><code style="color:#22d3bf">(0〜180°)方向に長さ </code><code style="color:#22d3bf">5+10*b</code>` 画素の線分カーネルを作り畳み込む。</p>
-<p>HALCON の `<code style="color:#22d3bf">simulate_motion</code>`（Simulation of (linearly) motion blur.）に</p>
-<p>相当。</p>
+<p>선형 모션 블러(움직임 흐림)를 시뮬레이션한다. 각도 `<code style="color:#22d3bf">π*a</code><code style="color:#22d3bf">(0~180°) 방향으로 길이 </code><code style="color:#22d3bf">5+10*b</code><code style="color:#22d3bf"> 픽셀의 선분 커널을 만들어 합성곱한다. HALCON의 </code><code style="color:#22d3bf">simulate_motion</code>`(Simulation of (linearly) motion blur.)에 해당.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がぶれの方向角を、</code><code style="color:#22d3bf">b</code>` がぶれの長さを振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>

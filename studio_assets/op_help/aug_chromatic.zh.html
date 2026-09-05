@@ -3,14 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;aug_chromatic&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Lateral chromatic aberration proxy for a gray image. True lateral CA</p>
-<p>magnifies the colour channels differently, so edges gain a coloured fringe;</p>
-<p>on a single channel the observable signature is a SHIFTED copy of the edge</p>
-<p>(high-pass) energy superposed on the image. Here the high-pass</p>
-<p>`<code style="color:#22d3bf">v - gaussian(v, 1)</code><code style="color:#22d3bf"> is shifted by </code><code style="color:#22d3bf">s = 1 + int(4*a)</code>` px horizontally and</p>
-<p>added back with amplitude `<code style="color:#22d3bf">0.1 + 0.9*b</code>`. Flat regions have zero high-pass,</p>
-<p>so only edges fringe -- exactly the real behaviour.</p>
+<p>灰度图像的侧向色差(lateral chromatic aberration)近似。真实的侧向色差会以不同倍率放大各颜色通道,使边缘产生彩色镶边;在单通道上,可观察到的特征是边缘(高通)能量的一份*偏移*副本叠加在图像上。这里将高通分量 `<code style="color:#22d3bf">v - gaussian(v, 1)</code><code style="color:#22d3bf"> 沿水平方向偏移 </code><code style="color:#22d3bf">s = 1 + int(4*a)</code><code style="color:#22d3bf"> 像素,再以振幅 </code><code style="color:#22d3bf">0.1 + 0.9*b</code>` 叠加回原图。平坦区域的高通值为零,因此只有边缘会出现镶边——这正是真实行为。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

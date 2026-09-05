@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;kirsch_amp&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">kirsch_amp</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>Kirsch コンパスフィルタの振幅。8 方向に回転させたカーネル群それぞれで</p>
-<p>畳み込み、絶対値の最大値を取ることで方向に依らない強いエッジ応答を得る。</p>
-<p>HALCON の `<code style="color:#22d3bf">kirsch_amp</code>`（Detect edges (amplitude) using the Kirsch</p>
-<p>operator.）に相当。</p>
+<p>The magnitude of the Kirsch compass filter. It convolves with a set of kernels rotated in 8 directions and takes the maximum absolute value, yielding a strong edge response independent of direction. Equivalent to HALCON&#x27;s `<code style="color:#22d3bf">kirsch_amp</code>` (Detect edges (amplitude) using the Kirsch operator.).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。8 方向を総当たりするため Sobel/Prewitt より計算量は</p>
 <p>多いが、斜め方向のエッジも同等の感度で拾える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

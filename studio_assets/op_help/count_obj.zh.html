@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;count_obj&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">count_obj</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>連結成分の個数を数える(`<code style="color:#22d3bf">ndimage.label</code>`、既定 8 連結)。HALCON の</p>
-<p>`<code style="color:#22d3bf">count_obj</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">connection</code>` の既定と同じ 8 連結を採用しており、斜めに</p>
-<p>接する 2 つの塊は 1 個として数える(4 連結にすると過剰カウントになる例</p>
-<p>=セルカウントで実測 342 個 vs 327 個、コード内コメント参照)。HALCON の</p>
-<p>`<code style="color:#22d3bf">count_obj</code>`（Number of objects in a tuple.）に相当。</p>
+<p>统计连通成分的个数(`<code style="color:#22d3bf">ndimage.label</code><code style="color:#22d3bf">,默认 8 连通)。采用与 HALCON 的 </code><code style="color:#22d3bf">count_obj</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">connection</code><code style="color:#22d3bf"> 默认相同的 8 连通,因此对角相接的两个团块会被计为 1 个(若改为 4 连通会导致计数过多的例子——细胞计数实测为 342 个 vs 327 个,参见代码内注释)。相当于 HALCON 的 </code><code style="color:#22d3bf">count_obj</code>`(Number of objects in a tuple.)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

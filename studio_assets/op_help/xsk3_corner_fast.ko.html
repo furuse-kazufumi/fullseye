@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk3_corner_fast&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>FAST コーナー検出(skimage `<code style="color:#22d3bf">feature.corner_fast</code>`)。中心画素の周囲の円周上の画素と比較し、連続して明るい/暗い画素が一定数以上続く場所をコーナーとして検出する高速な手法。結果は最大絶対値で正規化した応答マップ。</p>
+<p>FAST 코너 검출(skimage `<code style="color:#22d3bf">feature.corner_fast</code>`). 중심 화소 주변 원주 위의 화소와 비교하여, 연속으로 더 밝거나 더 어두운 화소가 일정 개수 이상 이어지는 위치를 코너로 검출하는 고속 기법. 결과는 최대 절댓값으로 정규화한 응답 맵이다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は連続画素数のしきい値 </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">9+int(a*3)</code><code style="color:#22d3bf"> で 9〜12)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は輝度差のしきい値(</code><code style="color:#22d3bf">0.05+0.2*b</code>` で 0.05〜0.25)を振る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 패밀리 가이드</a></p>

@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;select_contours_xld&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">select_contours_xld</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>既存の輪郭(XLD contour)集合から、点数が閾値(`<code style="color:#22d3bf">3+40*a</code>`)以上のものだけ</p>
-<p>を残すフィルタ。HALCON の `<code style="color:#22d3bf">select_contours_xld</code>`（Select XLD contours</p>
-<p>according to several features.）は面積・円形度など任意の特徴で選別できる</p>
-<p>汎用演算子だが、この代役では点数(長さの代理指標)による足切り 1 種類に</p>
-<p>固定している(近似)。</p>
+<p>A filter that, from an existing set of contours (XLD contours), keeps only those whose point count is at or above a threshold (`<code style="color:#22d3bf">3+40*a</code><code style="color:#22d3bf">). HALCON&#x27;s </code><code style="color:#22d3bf">select_contours_xld</code>` (Select XLD contours according to several features.) is a general-purpose operator that can select by any feature such as area or circularity, but here it is fixed to a single cutoff by point count (a proxy for length) (an approximation).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が点数のしきい値を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>

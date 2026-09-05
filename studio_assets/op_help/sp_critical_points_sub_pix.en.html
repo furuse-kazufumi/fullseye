@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sp_critical_points_sub_pix&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">critical_points_sub_pix</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>極大・極小・鞍点のサブピクセル位置をまとめて検出する（HALCON `<code style="color:#22d3bf">critical_points_sub_pix</code>` に相当）。</p>
+<p>Detects the sub-pixel positions of maxima, minima, and saddle points together (equivalent to HALCON `<code style="color:#22d3bf">critical_points_sub_pix</code>`).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">sp_local_max_sub_pix</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">sp_local_min_sub_pix</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">sp_saddle_points_sub_pix</code><code style="color:#22d3bf"> の 3 つを同じしきい値 </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> で実行し、検出点を極大→極小→鞍点の順で 1 つの CONTOUR に連結する。</code><code style="color:#22d3bf">b</code>` は未使用。戻り値の座標単位は入力画像のピクセル（サブピクセル小数値）。個々の種類を区別せず「臨界点がどこにあるか」だけを知りたい場合に使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>

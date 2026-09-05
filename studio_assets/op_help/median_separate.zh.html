@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;median_separate&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">median_separate</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>実装は `<code style="color:#22d3bf">median_image</code><code style="color:#22d3bf"> と同じ(</code><code style="color:#22d3bf">kind: &quot;median&quot;</code>`、正方窓の 2 次元</p>
-<p>メディアン)。HALCON の `<code style="color:#22d3bf">median_separate</code>`（Separated median filtering with</p>
-<p>rectangle masks.）は行方向・列方向に分離した 1 次元メディアンを 2 パス</p>
-<p>掛ける高速近似演算子だが、この代役では区別せず通常の 2 次元メディアンを</p>
-<p>返す(結果は近い場合が多いが厳密には別アルゴリズム ―― 近似の限界)。</p>
+<p>实现与 `<code style="color:#22d3bf">median_image</code><code style="color:#22d3bf"> 相同(</code><code style="color:#22d3bf">kind: &quot;median&quot;</code><code style="color:#22d3bf">,方形窗的二维中值)。HALCON 的 </code><code style="color:#22d3bf">median_separate</code>`(Separated median filtering with rectangle masks.)是一种快速近似算子,将行方向和列方向分离的一维中值分两个通道执行,但此替代实现不作区分,直接返回普通的二维中值(结果多数情况下相近,但严格来说是不同的算法 —— 此近似的局限)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の一辺を </code><code style="color:#22d3bf">{3,5,7,9}</code><code style="color:#22d3bf"> で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

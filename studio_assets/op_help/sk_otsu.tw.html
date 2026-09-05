@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_otsu&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">binary_threshold</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>大津の判別分析法(Otsu&#x27;s method)による大域しきい値二値化。クラス間分散を最大化するしきい値を自動で選び、画像全体を前景/背景に二分する。</p>
+<p>基於大津判別分析法(Otsu&#x27;s method)的全域閾值二值化。自動選擇使類別間變異數最大化的閾值,將整張影像二分為前景/背景。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の <code style="color:#22d3bf">binary_threshold</code>(Segment an image using binary thresholding.)に相当。実装は `<code style="color:#22d3bf">v &gt; filters.threshold_otsu(v)</code>` —— a, b は未使用(しきい値は完全自動)。双峰性(2 山)のヒストグラムを持つ画像で最もうまく働き、コントラストが低い/単峰の画像では境界がずれやすい。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>

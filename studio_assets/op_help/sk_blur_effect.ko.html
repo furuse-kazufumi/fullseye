@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sk_blur_effect&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>ぼけ具合の推定(1 スカラー特徴量)。画像を意図的に少し再ぼかしして、元と再ぼかし後でどれだけエッジの鋭さが変わるかを比較する手法で、0(ぼけ無し)〜1(最大限ぼけている)のスコアを返す —— 参照画像なしでピント/ブレを定量化できる。</p>
+<p>흐림 정도 추정(스칼라 특징량 1개). 이미지를 의도적으로 약간 다시 흐리게 만든 뒤, 원본과 재흐림 후 사이에 에지 선명도가 얼마나 변하는지 비교하는 방법으로, 0(흐림 없음)~1(최대로 흐림)의 점수를 반환한다 —— 참조 이미지 없이 초점/흔들림을 정량화할 수 있다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">measure.blur_effect(v)</code>`。a, b は未使用 —— 再ぼかしフィルタのサイズは既定値(11)のまま。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>

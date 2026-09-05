@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;contour_point_num_xld&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">contour_point_num_xld</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>XLD 輪郭群のうち最も点数の多い輪郭を選び、その頂点数を 500 点で正規化して [0,1] で返す（500 点以上は 1.0 に飽和）。a, b は未使用。輪郭が無ければ 0 を返す。</p>
+<p>从一组 XLD 轮廓中选出点数最多的轮廓，将其顶点数以 500 点为基准归一化后以 [0,1] 返回（500 点以上饱和为 1.0）。a、b 未使用。若没有轮廓则返回 0。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>HALCON の `<code style="color:#22d3bf">contour_point_num_xld</code>`（XLD 輪郭に含まれる点の実数をそのまま返す演算）とは異なり、この実装は点数そのものではなく 500 点でスケーリングした比率を返す近似（feature sort が [0,1] 想定の値を運ぶ契約のため）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>

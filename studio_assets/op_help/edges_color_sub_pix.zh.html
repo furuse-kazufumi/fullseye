@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;edges_color_sub_pix&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">edges_color_sub_pix</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>カラーエッジ上の連結成分を輪郭（contour）として取り出す。HALCON の</p>
-<p>`<code style="color:#22d3bf">edges_color_sub_pix</code>`（Deriche/Shen/Canny でサブピクセル精度のカラー</p>
-<p>エッジを抽出する）に相当するとされるが、**実装はサブピクセル精度では</p>
-<p>ない**——`<code style="color:#22d3bf">_edges_color</code>` の勾配強度をしきい値二値化し、8 連結の</p>
-<p>ラベリング（`<code style="color:#22d3bf">scipy.ndimage.label</code>`）でつないだ画素座標をそのまま</p>
-<p>輪郭点として返す（座標はすべて整数格子上）。3 画素未満の成分は捨てる。</p>
+<p>提取彩色边缘上的连通分量作为轮廓（contour）。据称相当于 HALCON 的 `<code style="color:#22d3bf">edges_color_sub_pix</code><code style="color:#22d3bf">（以 Deriche/Shen/Canny 提取亚像素精度的彩色边缘），但**实现并非亚像素精度**——将 </code><code style="color:#22d3bf">_edges_color</code><code style="color:#22d3bf"> 的梯度强度阈值化为二值图像，用 8 连通标记（</code><code style="color:#22d3bf">scipy.ndimage.label</code>`）连接后，将得到的像素坐标直接作为轮廓点返回（坐标全部位于整数网格上）。舍弃 3 像素以下的分量。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>a はしきい値 `<code style="color:#22d3bf">0.15 + 0.5 * a</code>` を振る（大きいほど輪郭が減る）。b は</p>
 <p>未使用。戻り値は `<code style="color:#22d3bf">{&quot;shape&quot;:..., &quot;cs&quot;: [輪郭ごとの (N,2) 座標配列]}</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

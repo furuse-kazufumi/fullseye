@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">qimage</code> → <code style="color:#22d3bf">qimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_quat_color_rotate&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Rotate every pixel&#x27;s colour about an RGB axis: `<code style="color:#22d3bf">q x conj(q)</code>`. → (H, W, 4).</p>
+<p>绕某个 RGB 轴旋转每个像素的颜色：`<code style="color:#22d3bf">q x conj(q)</code>`。→ (H, W, 4)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>The operation a complex pixel cannot express. `<code style="color:#22d3bf">axis_rgb</code>` is a direction in</p>
 <p>RGB space and `<code style="color:#22d3bf">angle_rad</code>` the rotation about it; the rotor</p>
 <p>`<code style="color:#22d3bf">q = cos(a/2) + sin(a/2) * axis</code>` is built with</p>

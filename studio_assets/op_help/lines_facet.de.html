@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;lines_facet&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">lines_facet</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>線状構造（リッジ）を検出して輪郭（XLD contour）として返す。実装は Frangi フィルタ（`<code style="color:#22d3bf">skimage.filters.frangi</code><code style="color:#22d3bf">、多スケール σ=1..3 のリッジ強調）で線らしさを求め、閾値 </code><code style="color:#22d3bf">0.1+0.4a</code>` を超える連結成分の画素座標をそのまま輪郭点列として出力する。b は未使用。</p>
+<p>Erkennt linienförmige Strukturen (Ridges) und gibt sie als Kontur (XLD contour) zurück. Die Implementierung berechnet die &#x27;Linienartigkeit&#x27; mit einem Frangi-Filter (`<code style="color:#22d3bf">skimage.filters.frangi</code><code style="color:#22d3bf">, mehrskalige Ridge-Verstärkung mit sigma=1..3) und gibt die Pixelkoordinaten der zusammenhängenden Komponenten, die den Schwellenwert </code><code style="color:#22d3bf">0.1+0.4a</code>` überschreiten, direkt als Konturpunktfolge aus. b wird nicht verwendet.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON の `<code style="color:#22d3bf">lines_facet</code>`（局所多項式近似=ファセットモデルで線を検出する演算）とは検出原理が異なる近似 —— facet モデルによるサブピクセル位置推定は行わず、Frangi 応答の二値化領域を輪郭化しているだけなので、座標はサブピクセル精度を持たない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">Leitfaden zur Familie gallery2d_contour_measure</a></p>

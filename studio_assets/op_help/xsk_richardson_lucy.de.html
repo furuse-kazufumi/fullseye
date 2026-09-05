@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk_richardson_lucy&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Richardson-Lucy デコンボリューション。ぼけを 3x3 の平均カーネル(box PSF)と</p>
-<p>仮定して反復的に鮮鋭化する(skimage.restoration.richardson_lucy をそのまま呼ぶ)。</p>
+<p>Richardson-Lucy-Entfaltung. Schärft das Bild iterativ unter der Annahme, dass die Unschärfe ein 3x3-Mittelwertkernel (Box-PSF) ist (ruft direkt `<code style="color:#22d3bf">skimage.restoration.richardson_lucy</code>` auf).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code>` が反復回数を 2〜17 回の範囲で振る(回数が多いほど強く先鋭化するが、</p>
 <p>ノイズ増幅やリンギングも増える)。`<code style="color:#22d3bf">b</code>` は未使用。PSF は実際のぼけ量に関わらず</p>
 <p>固定の 3x3 box を仮定するため、真の劣化過程と一致しない画像では改善が限定的、</p>

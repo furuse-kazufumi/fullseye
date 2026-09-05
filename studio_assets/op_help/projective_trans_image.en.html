@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;projective_trans_image&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">projective_trans_image</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>透視(射影)変換(`<code style="color:#22d3bf">cv2.warpPerspective</code>`)。4 隅のうち上 2 隅を</p>
-<p>`<code style="color:#22d3bf">d=0.06+0.12*a</code>` の比率で内側に寄せることで台形(パースがかかった)歪みを</p>
-<p>作る。枠外は反射で埋める。HALCON の `<code style="color:#22d3bf">projective_trans_image</code>`（Apply a</p>
-<p>projective transformation to an image.）に相当(HALCON は任意のホモグラフィ</p>
-<p>行列を渡せるが、ここでは台形歪み 1 パターンに限定した近似)。</p>
+<p>Perspective (projective) transformation (`<code style="color:#22d3bf">cv2.warpPerspective</code><code style="color:#22d3bf">). Creates a trapezoidal (perspective-distorted) warp by pulling the top two of the four corners inward by a ratio of </code><code style="color:#22d3bf">d=0.06+0.12*a</code><code style="color:#22d3bf">. Areas outside the frame are filled by reflection. Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">projective_trans_image</code>` (Apply a projective transformation to an image.) (HALCON can take an arbitrary homography matrix, but this is an approximation limited to a single trapezoidal-distortion pattern).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が歪みの強さを、</code><code style="color:#22d3bf">b</code>` が左右の非対称さ(どちら側をより歪ませるか)を</p>
 <p>振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

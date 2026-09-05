@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xcv_grabcut&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>GrabCut(反復グラフカット)による前景/背景の自動分離。</p>
+<p>Automatic foreground/background separation via GrabCut (iterative graph cut).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>画像中央 70%×70%の固定矩形を「たぶん前景」の初期領域として与え、</p>
 <p>色分布の GMM とグラフカットで前景/背景を反復的に分離する</p>
 <p>(`<code style="color:#22d3bf">cv2.GC_INIT_WITH_RECT</code>`)。「確実な前景」と「たぶん前景」の画素を</p>

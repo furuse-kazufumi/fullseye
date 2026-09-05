@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;gen_region_contour_xld&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">gen_region_contour_xld</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>輪郭(点列)を画素グリッドにラスタライズしてから、`<code style="color:#22d3bf">1+2*a</code>` 回だけ</p>
-<p>二値膨張して太らせ、連結した領域マスクを作る(細い線のままだと `<code style="color:#22d3bf">region</code>`</p>
-<p>の {0,1} 契約上「線が繋がって見えない」ことがあるための補強)。HALCON の</p>
-<p>`<code style="color:#22d3bf">gen_region_contour_xld</code>`（Create a region from an XLD contour.）に相当。</p>
+<p>윤곽(점열)을 픽셀 그리드에 래스터화한 뒤, `<code style="color:#22d3bf">1+2*a</code><code style="color:#22d3bf"> 회 이진 팽창시켜 두껍게 만들어 연결된 영역 마스크를 생성한다(가는 선인 채로 두면 </code><code style="color:#22d3bf">region</code><code style="color:#22d3bf">의 {0,1} 계약상 &#x27;선이 이어져 보이지 않는&#x27; 경우가 있어 이를 보강하기 위함). HALCON의 </code><code style="color:#22d3bf">gen_region_contour_xld</code>`(Create a region from an XLD contour.)에 해당.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が膨張の反復回数(=線の太さ)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 패밀리 가이드</a></p>

@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;scale_clip&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">scale_image</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>ゲインとオフセットによる線形階調変換。HALCON の `<code style="color:#22d3bf">scale_image</code>`（Scale the gray values of an image.）に相当。</p>
+<p>Lineare Tonwerttransformation mittels Verstärkung (Gain) und Offset. Entspricht HALCONs `<code style="color:#22d3bf">scale_image</code>` (Scale the gray values of an image.).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がゲイン（コントラスト）を </code><code style="color:#22d3bf">0.5〜2.0</code><code style="color:#22d3bf"> 倍に、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> がオフセット（明るさ）を </code><code style="color:#22d3bf">-0.5〜+0.5</code><code style="color:#22d3bf"> に振る（</code><code style="color:#22d3bf">clip(gain*v + offset, 0, 1)</code><code style="color:#22d3bf">）。</code><code style="color:#22d3bf">b=0.5</code>` がオフセット 0（変化なし）に対応する点に注意。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">Leitfaden zur Familie gallery2d_gray_arith</a></p>

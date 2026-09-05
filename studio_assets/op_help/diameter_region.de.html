@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;diameter_region&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">diameter_region</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>等価直径(面積が等しい円の直径)を領域の最大辺長で正規化した値</p>
-<p>(`<code style="color:#22d3bf">regionprops</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">equivalent_diameter_area</code>`)。HALCON の</p>
-<p>`<code style="color:#22d3bf">diameter_region</code>`（Maximal distance between two boundary points of a</p>
-<p>region.）が定義する「境界上の 2 点間の最大距離」とは厳密には異なる指標</p>
-<p>(等価円直径による近似)。</p>
+<p>Der äquivalente Durchmesser (der Durchmesser eines Kreises mit gleicher Fläche), normiert auf die längste Seitenlänge der Region (`<code style="color:#22d3bf">equivalent_diameter_area</code><code style="color:#22d3bf"> von </code><code style="color:#22d3bf">regionprops</code><code style="color:#22d3bf">). Streng genommen ein anderes Maß als der von HALCONs </code><code style="color:#22d3bf">diameter_region</code>` (Maximal distance between two boundary points of a region.) definierte &#x27;maximale Abstand zwischen zwei Randpunkten&#x27; -- eine Approximation über den Durchmesser des äquivalenten Kreises.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>

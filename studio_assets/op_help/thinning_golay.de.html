@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;thinning_golay&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">thinning_golay</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>領域を細線化する。実装は skimage の `<code style="color:#22d3bf">thin</code>`（Guo–Hall 型の反復細線化）で完全に 1 画素幅になるまで繰り返し、a, b は未使用。</p>
+<p>Dünnt einen Bereich aus (thinning). Die Implementierung verwendet skimages `<code style="color:#22d3bf">thin</code>` (iteratives Thinning vom Guo-Hall-Typ), wiederholt, bis der Bereich vollständig 1 Pixel breit ist; a und b werden nicht verwendet.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON の `<code style="color:#22d3bf">thinning_golay</code>`（Golay アルファベットの構造要素を使ったヒット・オア・ミス変換で 1 ステップぶんだけ細線化する演算、通常は反復して使う）とはアルゴリズムも粒度も異なる近似 —— 単一ステップではなく収束するまで細線化してしまう。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>

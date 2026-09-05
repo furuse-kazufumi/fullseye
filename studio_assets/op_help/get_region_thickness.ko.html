@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;get_region_thickness&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">get_region_thickness</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>領域の太さの近似値 `<code style="color:#22d3bf">2 × 最大内接円半径 / 最大辺長</code>`</p>
-<p>(`<code style="color:#22d3bf">distance_transform_edt</code>` の最大値の 2 倍を画像サイズで正規化)。HALCON</p>
-<p>の `<code style="color:#22d3bf">get_region_thickness</code>`（Access the thickness of a region along the</p>
-<p>main axis.）が定義する「主軸に沿った太さのプロファイル」とは異なり、</p>
-<p>方向を問わないグローバルな最大内接半径だけを見る単純化(主軸方向の情報は</p>
-<p>失われる)。</p>
+<p>영역 두께의 근사값 `<code style="color:#22d3bf">2 × 최대 내접원 반지름 / 최대 변 길이</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">distance_transform_edt</code><code style="color:#22d3bf"> 최댓값의 2배를 이미지 크기로 정규화). HALCON의 </code><code style="color:#22d3bf">get_region_thickness</code>`(Access the thickness of a region along the main axis.)가 정의하는 &quot;주축을 따른 두께 프로파일&quot;과는 달리, 방향에 무관한 전역 최대 내접 반지름만 보는 단순화(주축 방향 정보는 손실됨).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>

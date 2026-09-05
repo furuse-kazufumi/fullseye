@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xcv3_agast_count&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>AGAST 特徴点数(OpenCV AGAST 検出器、FAST の適応的木構造版)。検出されたキーポイント数を feature として返す。</p>
+<p>AGAST 特征点数(OpenCV AGAST 检测器，FAST 的自适应树结构版本)。将检测到的关键点数量作为 feature 返回。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は検出閾値(</code><code style="color:#22d3bf">int(5+40*a)</code><code style="color:#22d3bf"> で 5〜45。高いほど検出数が減る)を振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。実装注記: cv2 5.0.0 で </code><code style="color:#22d3bf">AgastFeatureDetector_create</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">cv2.xfeatures2d</code><code style="color:#22d3bf"> に移動したため、両方の場所を </code><code style="color:#22d3bf">getattr</code>` で試す互換コードになっている(xcv3_brisk_count と同じ事情)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

@@ -4,11 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;f2_lut_trans&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">lut_trans</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Transform the image through a monotone (gamma-free) gray-value look-up</p>
-<p>table. The 256-entry table is a contrast sigmoid whose gain is set by `<code style="color:#22d3bf">a</code>`</p>
-<p>and pivot by `<code style="color:#22d3bf">b</code>`, endpoint-normalised to span [0,1]; the image is then a</p>
-<p>genuine table lookup on its 8-bit-quantised value.</p>
+<p>透過單調(無 gamma)灰階值查找表對影像進行變換。該 256 項表是一條對比度 sigmoid 曲線，其增益由 `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 設定、拐點由 </code><code style="color:#22d3bf">b</code>` 設定，並依端點正規化使其涵蓋 [0,1]；影像隨後在其 8 位元量化值上進行真正的查表操作。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

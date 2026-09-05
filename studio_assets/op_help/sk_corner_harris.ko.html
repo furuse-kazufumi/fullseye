@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sk_corner_harris&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">points_harris</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Harris コーナー応答(skimage 実装)。勾配の構造テンソルから、平坦部/エッジ/コーナーを見分ける符号付きスコアを計算する古典的なコーナー検出器。</p>
+<p>Harris 코너 응답(skimage 구현). 그래디언트의 구조 텐서로부터 평탄부/에지/코너를 구별하는 부호 있는 점수를 계산하는 고전적인 코너 검출기이다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>HALCON の <code style="color:#22d3bf">points_harris</code>(Detect points of interest using the Harris operator.)に相当(近似。座標点ではなく応答画像を返す)。実装は `<code style="color:#22d3bf">feature.corner_harris(v, sigma=0.5+2.0*a)</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">signed01</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">[0,1]</code>` へ写した値 —— a は微分に使うガウス σ を 0.5〜2.5 に振る。b は未使用。Harris の自由パラメータ k は skimage の既定値(0.05)のまま固定。OpenCV 版のcv_corner_harris とはパラメータの振り方が異なるので同一結果にはならない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 패밀리 가이드</a></p>

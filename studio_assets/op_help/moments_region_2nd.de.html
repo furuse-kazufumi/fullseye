@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;moments_region_2nd&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">moments_region_2nd</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>正規化中心 2 次モーメントの和の絶対値 `<code style="color:#22d3bf">|μ20 + μ02|</code><code style="color:#22d3bf">(</code>`skimage.</p>
-<p>measure.moments_normalized`<code style="color:#22d3bf"> 由来)。HALCON の </code><code style="color:#22d3bf">moments_region_2nd</code>`</p>
-<p>（Calculate the geometric moments of regions.）は本来 M20/M02/M11 を</p>
-<p>それぞれ返すが、この代役では 1 スカラーに単純化するため 2 成分を単純</p>
-<p>加算した合成値で近似している(個々の方向成分は失われる)。</p>
+<p>Der Absolutwert der Summe der normierten zentralen Momente zweiter Ordnung, `<code style="color:#22d3bf">|mu20 + mu02|</code><code style="color:#22d3bf"> (abgeleitet aus </code><code style="color:#22d3bf">skimage.measure.moments_normalized</code><code style="color:#22d3bf">). HALCONs </code><code style="color:#22d3bf">moments_region_2nd</code>` (Calculate the geometric moments of regions.) gibt ursprünglich M20/M02/M11 einzeln zurück, aber dieser Ersatz approximiert sie durch einen zusammengesetzten Wert, der durch einfache Addition der beiden Komponenten auf einen einzigen Skalar reduziert wird (die einzelnen Richtungskomponenten gehen verloren).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>

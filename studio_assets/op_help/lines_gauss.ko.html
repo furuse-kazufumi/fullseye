@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;lines_gauss&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">lines_gauss</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>線状構造(リッジ)検出。`<code style="color:#22d3bf">skimage.filters.frangi</code>`(血管様のリッジ強調</p>
-<p>フィルタ)の応答をしきい値(`<code style="color:#22d3bf">0.1+0.4*a</code>`)で二値化し、連結成分を輪郭点群</p>
-<p>として返す。HALCON の `<code style="color:#22d3bf">lines_gauss</code>`（Detect lines and their width.）が</p>
-<p>本来行う「線の中心線+幅の推定」ではなく、リッジ強調画像のしきい値化に</p>
-<p>単純化している(線幅の情報は返らない近似)。</p>
+<p>선형 구조(리지) 검출. `<code style="color:#22d3bf">skimage.filters.frangi</code><code style="color:#22d3bf">(혈관 유사 리지 강조 필터)의 응답을 임계값(</code><code style="color:#22d3bf">0.1+0.4*a</code><code style="color:#22d3bf">)으로 이진화하고, 연결 성분을 윤곽 점군으로 반환한다. HALCON의 </code><code style="color:#22d3bf">lines_gauss</code>`(Detect lines and their width.)가 본래 수행하는 &#x27;선의 중심선+폭 추정&#x27;이 아니라, 리지 강조 이미지의 임계값화로 단순화한 것이다(선 폭 정보는 반환되지 않는 근사).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がリッジ検出のしきい値を振る。</code><code style="color:#22d3bf">b</code>` は未使用。skimage が無い環境</p>
 <p>ではこの分岐は呼べない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

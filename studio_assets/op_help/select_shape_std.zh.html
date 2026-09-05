@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;select_shape_std&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">select_shape_std</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>連結成分のうち最大の面積を持つものだけを残す(`<code style="color:#22d3bf">_largest_label</code>` で</p>
-<p>選択)。HALCON の `<code style="color:#22d3bf">select_shape_std</code>`（Select regions of a given shape.）</p>
-<p>は `<code style="color:#22d3bf">max_area</code>` を含む複数の標準基準を選べる演算子だが、ここでは</p>
-<p>「面積最大」1 種類に固定している(近似)。</p>
+<p>只保留连通成分中面积最大的那一个(通过 `<code style="color:#22d3bf">_largest_label</code><code style="color:#22d3bf"> 选取)。HALCON 的 </code><code style="color:#22d3bf">select_shape_std</code><code style="color:#22d3bf">(Select regions of a given shape.)是可以选择包括 </code><code style="color:#22d3bf">max_area</code>` 在内的多种标准基准的算子,但这里固定为&quot;面积最大&quot;这一种(近似)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。複数領域が同面積の場合は </code><code style="color:#22d3bf">argmax</code>` の実装依存で</p>
 <p>どれか 1 つが選ばれる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

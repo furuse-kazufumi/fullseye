@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fullseye"
-version = "0.1.7"
+version = "0.1.8"
 description = "Numpy-native operator library for vision, 3-D and measurement (1,500+ typed ops: imaging, point clouds, optics, tomography, metrology) with an evolutionary pipeline designer and honest holdout gating"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -55,6 +55,14 @@ raster = ["imageio>=2.28", "tifffile>=2023.1"]    # bit-depth-preserving raster 
 gltf = ["pygltflib>=1.16"]                        # glTF 2.0 / GLB object import
 lidar = ["laspy>=2.5", "lazrs>=0.5"]              # LAS / LAZ LiDAR point clouds
 pcd = ["pypcd4>=1.4"]                             # PCD binary / binary_compressed point clouds
+# 2026-09-05: deptry(依存の宣言漏れ検査)で見つけた —— 出荷モジュール
+# contours_xld / regions_gen が `matplotlib.path.Path` を**関数内で遅延 import**
+# しており、どの extra にも宣言が無かった。import は通るので clean install の
+# smoke でも気づけず、**呼んだときに黙って fallback へ落ちる**だけだった
+# (fail-soft が「機能が入っていない」を隠す典型)。宣言して利用者が選べるようにする。
+# より良い直しは自前の `point_in_polygon`(厳密述語、既に公開 API にある)へ
+# 置き換えること —— 境界の扱いが変わりうるので 0.1.9 で検証してから。
+polygon = ["matplotlib>=3.5"]                     # 多角形の塗りつぶし(点の内外判定)
 threed = ["torch>=2.0", "scikit-image>=0.20", "SimpleITK>=2.2"]   # 3-D toolkit: GPU descriptors (feat_*), marching cubes, DICOM/volume I/O
 # --- connectivity (device control / industrial + Physical-AI comms) ---
 # The native transports (TCP/UDP/Modbus-TCP/HTTP) need nothing beyond stdlib;
@@ -63,7 +71,11 @@ serial = ["pyserial>=3.5"]
 modbus = ["pymodbus>=3.0"]            # Modbus RTU (Modbus TCP is built-in)
 mqtt = ["paho-mqtt>=1.6"]
 opcua = ["asyncua>=1.0"]
-dev = ["pytest>=7", "pytest-cov>=4", "ruff>=0.4"]   # contributor toolchain (CI mirror)
+# contributor toolchain (CI mirror)。道具は「今日踏んだ失敗の型」で選んでいる ——
+# timeout=ハング、hypothesis=退化入力の性質検査、randomly=状態漏れ、
+# pip-audit=依存の既知脆弱性、ruff=黙って消える定義(F601 で実害を 1 件検出)。
+dev = ["pytest>=7", "pytest-cov>=4", "ruff>=0.4", "pytest-timeout>=2.3",
+       "hypothesis>=6.100", "pytest-randomly>=3.15", "pip-audit>=2.7"]
 # `all` = the full desktop app (image libs + GPU + GUI + video). Industrial/robotics
 # adapters stay opt-in (a desktop user does not need pymodbus/asyncua by default).
 all = [
@@ -202,6 +214,25 @@ py-modules = [
                    # `<op>.<lang>.html`(en / zh / tw / ko / de)も同じ glob に入る。
                    "op_help/*/*.html"]
 
+[tool.pytest.ini_options]
+# 2026-09-05 に追加。**今日実際に踏んだ 2 つの失敗の型**に効かせるための設定:
+#
+# 1. ネイティブ側のクラッシュ —— `xpil_offset` に 0x0 画像を渡すと Pillow の中で
+#    プロセスごと死に(exit 127)、Python の例外にならないので try/except でも
+#    backend_safe.guard でも捕まらなかった。`faulthandler` は落ちた瞬間の
+#    C/Python スタックを吐くので、「どこで死んだか分からない」状態を避けられる。
+# 2. ハング —— `xsk_unwrap_phase` に全 NaN を渡すと 5 分以上返ってこなかった。
+#    クラッシュより厄介で、CI では「遅い」としか見えない。時間で切って
+#    **どのテストで止まったか**を出す。
+faulthandler_timeout = 180
+timeout = 900
+timeout_method = "thread"     # Windows には signal 方式が無い
+testpaths = ["tests"]
+# 実行順のランダム化(pytest-randomly)は既定では切る —— この repo は
+# レジストリや台帳をモジュール大域に持つので、順序依存が出た瞬間に
+# 本題と無関係な赤が出る。専用ジョブで意図的に走らせて、出た漏れを潰す。
+addopts = "-p no:randomly"
+
 [tool.ruff]
 # 静的解析は**様式を揃えるためではなく、実害のあるバグを止めるために**入れている。
 # 2026-09-05 に導入。きっかけは、11,254 件のテストが全部緑のまま
@@ -235,6 +266,18 @@ ignore = [
     "F401",   # 未使用 import(optional backend の存在確認に使う形がある)
     "F541",   # プレースホルダの無い f-string
     "F841",   # 未使用のローカル変数(実測の途中結果を残す書き方がある)
+    # B023(ループ変数を閉じ込めた関数)= 66 件を実地で確認したところ、**全部が
+    # 「同じ反復の中で定義して即使う」補助関数**だった(render3d の mid、
+    # evolve_params の pick 等)。この形は安全で、B023 には区別できない。
+    # 本当に危ないのは「クロージャを表に溜めて後で呼ぶ」形だが、backend の op 表は
+    # `_f=fn` の既定束縛で対処済みで、**しかもそれは実行時に測れる** ——
+    # 束縛を間違えれば複数の op が同じ出力を返すので、
+    # tests/test_op_knob_liveness.py が名指しで落とす。静的な近似より実測を採る。
+    "B023",
+    # RUF012 / RUF013 は型注釈の作法(ClassVar 注釈・暗黙 Optional)。
+    # 実地で確認した 48 件はすべて「変更しない定数表」と「既定 None」で、
+    # 実行時の不具合ではない。型チェッカを入れる日に一緒に片づける。
+    "RUF012", "RUF013",
 ]
 
 [tool.ruff.lint.per-file-ignores]

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sk_slic&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>SLIC(Simple Linear Iterative Clustering)によるスーパーピクセル分割。色(ここではグレー値)と座標を合わせた空間で k-means クラスタリングを行い、ほぼ均等な大きさの領域に分割する。ここでは分割結果の境界線を領域として返す。</p>
+<p>Superpixel segmentation by SLIC (Simple Linear Iterative Clustering). Performs k-means clustering in a combined color (here, gray value) and coordinate space, dividing the image into regions of roughly equal size. Here it returns the boundaries of the segmentation result as a region.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">segmentation.find_boundaries(segmentation.slic(v, n_segments=int(10+80*a), channel_axis=None))</code>` —— a はおおよそのセグメント数を 10〜90 に振る(大きいほど細かく分割される)。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>

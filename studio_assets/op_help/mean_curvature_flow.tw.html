@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;mean_curvature_flow&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">mean_curvature_flow</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>小さなシグマ(0.6)のガウシアンぼかしを繰り返し適用することで平均曲率流を</p>
-<p><b>近似</b>したスムージング。真の平均曲率 PDE(`<code style="color:#22d3bf">ops</code>` 側の別実装が本来やる</p>
-<p>拡散方程式)ではなく、反復ぼかしという計算コストの軽い代用になっている点が</p>
-<p>このバックエンド固有の近似の限界。HALCON の `<code style="color:#22d3bf">mean_curvature_flow</code>`</p>
-<p>（Apply the mean curvature flow to an image.）の代役。</p>
+<p>透過反覆套用小 sigma(0.6)的高斯模糊來<b>近似</b>平均曲率流的平滑處理。它並非真正的平均曲率 PDE(`<code style="color:#22d3bf">ops</code><code style="color:#22d3bf"> 端的另一個實作本應求解的擴散方程式),而是以計算成本較低的反覆模糊來替代 —— 這是此後端特有的近似侷限。是 HALCON 的 </code><code style="color:#22d3bf">mean_curvature_flow</code>`(Apply the mean curvature flow to an image.)的替代實作。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code>` が反復回数を 1〜7 回の範囲で振る(回数が多いほど強く滑らかになる)。</p>
 <p>`<code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

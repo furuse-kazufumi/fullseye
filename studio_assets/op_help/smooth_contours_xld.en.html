@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;smooth_contours_xld&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">smooth_contours_xld</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>輪郭の座標列を移動平均(窓幅 `<code style="color:#22d3bf">2*(1+3*a)+1</code>`)で平滑化する。輪郭の</p>
-<p>ギザギザ(画素境界由来のジグザグ)を滑らかにする。HALCON の</p>
-<p>`<code style="color:#22d3bf">smooth_contours_xld</code>`（Smooth an XLD contour.）に相当。</p>
+<p>Smooths a contour&#x27;s coordinate sequence with a moving average (window width `<code style="color:#22d3bf">2*(1+3*a)+1</code><code style="color:#22d3bf">). Smooths out the jaggedness of the contour (zigzag caused by pixel boundaries). Equivalent to HALCON&#x27;s </code><code style="color:#22d3bf">smooth_contours_xld</code>` (Smooth an XLD contour.).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が平滑化窓の幅を振る。</code><code style="color:#22d3bf">b</code>` は未使用。点数が窓幅以下の短い輪郭は</p>
 <p>平滑化されずそのまま返る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

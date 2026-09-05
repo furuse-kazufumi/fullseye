@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;fft_image&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">fft_image</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>2 次元 FFT のパワースペクトルを `<code style="color:#22d3bf">log1p(|F|)</code>` で圧縮し正規化した画像。</p>
-<p>低周波(直流)成分が中心にくるよう `<code style="color:#22d3bf">fftshift</code>` 済み。周期的なノイズや</p>
-<p>テクスチャの空間周波数を可視化するのに使う。HALCON の `<code style="color:#22d3bf">fft_image</code>`</p>
-<p>（Compute the fast Fourier transform of an image.）に相当。</p>
+<p>2차원 FFT의 파워 스펙트럼을 `<code style="color:#22d3bf">log1p(|F|)</code><code style="color:#22d3bf">로 압축하고 정규화한 이미지. 저주파(직류) 성분이 중심에 오도록 </code><code style="color:#22d3bf">fftshift</code><code style="color:#22d3bf">가 적용되어 있다. 주기적인 노이즈나 텍스처의 공간 주파수를 시각화하는 데 사용한다. HALCON의 </code><code style="color:#22d3bf">fft_image</code>`(Compute the fast Fourier transform of an image.)에 해당한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用 ―― 画像全体に対するグローバルな FFT で、窓関数や</p>
 <p>帯域選択のような調整点は無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

@@ -3,13 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tm_sinogram_denoise&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Smooth the input sinogram along the ANGLE direction (rows). Neighbouring</p>
-<p>projection angles view almost the same object, so angle-direction smoothing</p>
-<p>is a genuine consistency prior that suppresses per-angle detector noise while</p>
-<p>preserving the sinusoidal traces. `<code style="color:#22d3bf">a</code>` sets the angle-axis Gaussian sigma</p>
-<p>(`<code style="color:#22d3bf">a*4</code><code style="color:#22d3bf">), </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> adds a gentle detector-axis sigma (</code><code style="color:#22d3bf">b*1.5</code>`). Output stays</p>
-<p>a same-shape sinogram in [0,1].</p>
+<p>沿角度方向（行）对输入正弦图进行平滑。相邻投影角度所观察到的几乎是同一物体，因此角度方向的平滑是一种真正的一致性先验，能在保留正弦轨迹的同时抑制逐角度的探测器噪声。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 设定角度轴的高斯 sigma（</code><code style="color:#22d3bf">a*4</code><code style="color:#22d3bf">），</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> 附加一个温和的探测器轴 sigma（</code><code style="color:#22d3bf">b*1.5</code>`）。输出仍为同形状、值域 [0,1] 的正弦图。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

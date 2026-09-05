@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;gray_opening_shape&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">gray_opening_shape</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>円盤形(disk)構造要素を使うグレースケールオープニング。`<code style="color:#22d3bf">gray_opening</code>`</p>
-<p>との違いは構造要素の形だけで、演算そのもの(収縮→膨張)は同じ。HALCON の</p>
-<p>`<code style="color:#22d3bf">gray_opening_shape</code>`（Perform a gray value opening with a selected</p>
-<p>mask.）に相当(HALCON は矩形/円/八角形などから選べるが、ここでは円形に</p>
-<p>固定)。</p>
+<p>使用圆盘形(disk)结构元素的灰度开运算。与 `<code style="color:#22d3bf">gray_opening</code><code style="color:#22d3bf"> 的差异仅在于结构元素的形状,运算本身(先腐蚀后膨胀)相同。相当于 HALCON 的 </code><code style="color:#22d3bf">gray_opening_shape</code>`(Perform a gray value opening with a selected mask.)(HALCON 可从矩形/圆形/八边形等中选择,这里固定为圆形)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が構造要素の半径を 1〜4 の範囲(</code><code style="color:#22d3bf">_rad(a)</code><code style="color:#22d3bf">)で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>

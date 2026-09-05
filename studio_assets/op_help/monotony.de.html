@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;monotony&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">monotony</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>画素値がその 8 近傍の中で何番目に大きいか（単調性、monotony）を [0,1] で返す。中心より小さい近傍の数を数えて 8 で割るので、値 1.0 は中心が近傍全てより大きい局所最大、0.0 は局所最小に近いことを示す。a, b は未使用。</p>
+<p>Gibt in [0,1] zurück, wie groß ein Pixelwert im Vergleich zu seinen 8 Nachbarn eingestuft ist (Monotonie, monotony). Es wird die Anzahl der Nachbarn gezählt, die kleiner als das Zentrum sind, geteilt durch 8; ein Wert von 1,0 zeigt somit ein lokales Maximum an, bei dem das Zentrum größer als alle Nachbarn ist, und 0,0 deutet auf ein lokales Minimum hin.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>エッジの向き（明→暗か暗→明か）を区別できる非対称なエッジ検出に使う。HALCON の `<code style="color:#22d3bf">monotony</code>`（単調性演算の計算）に相当。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">Leitfaden zur Familie gallery2d_gray_arith</a></p>

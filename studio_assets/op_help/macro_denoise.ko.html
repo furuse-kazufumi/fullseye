@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;macro_denoise&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>進化探索（`<code style="color:#22d3bf">evolve.py</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">robust.py</code><code style="color:#22d3bf">）が発見した固定パイプライン: </code><code style="color:#22d3bf">bilateral(a=0.10,b=0.76)</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">bilateral(a=0.12,b=0.27)</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">bilateral(a=0.73,b=0.11)</code>`（既存 op のバイラテラルフィルタを、強さの違うパラメータで 3 段連ねたもの）。</p>
+<p>진화 탐색(`<code style="color:#22d3bf">evolve.py</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">robust.py</code><code style="color:#22d3bf">)이 발견한 고정 파이프라인: </code><code style="color:#22d3bf">bilateral(a=0.10,b=0.76)</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">bilateral(a=0.12,b=0.27)</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">bilateral(a=0.73,b=0.11)</code>`(기존 op의 양방향 필터를 강도가 다른 파라미터로 3단 연결한 것).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は凍結済みで未使用 —— このパイプライン自体が進化で選ばれた1 つの固定構成である。denoise 課題（PSNR）でロック済みホールドアウト26.28dB、手作りベースライン 22.83dB を上回る（train/holdout/locked_holdoutのどれで測っても手作りベースラインに勝っている）。HALCON に対応する単一オペレータは無い（</code><code style="color:#22d3bf">halcon=&quot;&quot;</code>`）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d 패밀리 가이드</a></p>

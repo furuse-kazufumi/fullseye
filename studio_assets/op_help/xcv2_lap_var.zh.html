@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xcv2_lap_var&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>ラプラシアン分散によるフォーカス（ボケ）指標（`<code style="color:#22d3bf">cv2.Laplacian</code>` の分散）。</p>
+<p>基于拉普拉斯方差的对焦（模糊）指标（`<code style="color:#22d3bf">cv2.Laplacian</code>`的方差）。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>画像全体に Laplacian を掛けた結果の分散を計算し、`<code style="color:#22d3bf">min(1.0, 分散*20)</code>` で</p>
 <p>[0,1] にクリップしたスカラーを返す。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。値が大きいほど</p>
 <p>エッジ/テクスチャが豊富＝合焦、小さいほどボケている可能性が高い、という</p>

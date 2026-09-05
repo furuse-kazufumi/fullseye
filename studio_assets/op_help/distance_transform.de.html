@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;distance_transform&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">distance_transform</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>ユークリッド距離変換(`<code style="color:#22d3bf">ndimage.distance_transform_edt</code>`)を最大値で</p>
-<p>正規化した画像。各前景画素について最も近い背景画素までの距離を表す ――</p>
-<p>値が大きいほど領域の「奥」にある画素。出力は `<code style="color:#22d3bf">region</code>` ではなく</p>
-<p>`<code style="color:#22d3bf">image</code><code style="color:#22d3bf"> 型になる点に注意。HALCON の </code><code style="color:#22d3bf">distance_transform</code>`（Compute the</p>
-<p>distance transformation of a region.）に相当。</p>
+<p>Ein Bild, das durch Normierung der euklidischen Distanztransformation (`<code style="color:#22d3bf">ndimage.distance_transform_edt</code><code style="color:#22d3bf">) auf ihren Maximalwert entsteht. Es gibt für jedes Vordergrundpixel den Abstand zum nächstgelegenen Hintergrundpixel an -- je größer der Wert, desto &#x27;tiefer&#x27; liegt das Pixel im Inneren der Region. Zu beachten: Der Ausgabetyp ist </code><code style="color:#22d3bf">image</code><code style="color:#22d3bf">, nicht </code><code style="color:#22d3bf">region</code><code style="color:#22d3bf">. Entspricht HALCONs </code><code style="color:#22d3bf">distance_transform</code>` (Compute the distance transformation of a region.).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>

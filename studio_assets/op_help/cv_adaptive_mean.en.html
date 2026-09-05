@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;cv_adaptive_mean&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">dyn_threshold</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>局所平均によるしきい値二値化(adaptive threshold、mean 版、OpenCV 実装)。各画素の周辺の単純平均から定数を引いた値をしきい値として使う —— 照明ムラのある画像で大域しきい値より安定する。</p>
+<p>Thresholding based on the local mean (adaptive threshold, mean variant, OpenCV implementation). Uses, as the threshold, the simple average of each pixel&#x27;s neighborhood minus a constant - more stable than a global threshold on images with uneven illumination.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>HALCON の <code style="color:#22d3bf">dyn_threshold</code>(Segment an image using a local threshold.)に相当。実装は `<code style="color:#22d3bf">cv2.adaptiveThreshold(_u8(v), 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, blockSize=2*int(a*6)+3, C=int(b*10))</code>` —— a は局所窓のサイズ(blockSize)を 3〜15(奇数)に、b は局所平均から引く定数 C を 0〜10 に振る(C が大きいほど前景と判定される画素が減る)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>

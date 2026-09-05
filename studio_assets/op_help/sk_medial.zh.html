@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_medial&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">skeleton</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>中心軸変換(medial axis transform)。距離変換の尾根線を抽出する方式で骨格を求める、sk_skeleton とは別アルゴリズム。輪郭からの距離情報を保った骨格になりやすい。</p>
+<p>中心轴变换(medial axis transform)。这是一种与 sk_skeleton 不同的算法,通过提取距离变换的脊线来求得骨架,得到的骨架往往保留了距轮廓的距离信息。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>HALCON の <code style="color:#22d3bf">skeleton</code> に相当(近似)。実装は `<code style="color:#22d3bf">morphology.medial_axis(binm(v), rng=0)</code><code style="color:#22d3bf"> —— </code><code style="color:#22d3bf">rng=0</code><code style="color:#22d3bf"> はタイ(同点)の崩し方を決める乱数シードを固定し、毎回同じ結果になるようにしている。a, b は未使用。distance 出力(</code><code style="color:#22d3bf">return_distance</code>`)は使っておらず、骨格の真偽値マスクのみを返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

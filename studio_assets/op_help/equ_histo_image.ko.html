@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;equ_histo_image&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">equ_histo_image</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>画像全体のヒストグラム平坦化(累積分布関数によるトーンカーブ生成、256</p>
-<p>ビン)。暗部・明部に偏った階調分布を均して見かけのコントラストを上げる古典的</p>
-<p>な手法。HALCON の `<code style="color:#22d3bf">equ_histo_image</code>`（Histogram linearization of images）</p>
-<p>に相当。</p>
+<p>이미지 전체의 히스토그램 평활화(누적분포함수로 톤 커브를 생성, 256 빈). 어두운 부분·밝은 부분으로 치우친 계조 분포를 고르게 하여 겉보기 대비를 높이는 고전적 기법이다. HALCON의 `<code style="color:#22d3bf">equ_histo_image</code>`(Histogram linearization of images)에 해당한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。局所版(ブロックごとに平坦化)が欲しい場合は</p>
 <p>`<code style="color:#22d3bf">equ_histo_image_rect</code>` を使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

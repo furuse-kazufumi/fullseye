@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;erosion_circle&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">erosion_circle</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>円盤形構造要素による二値収縮(`<code style="color:#22d3bf">ndimage.binary_erosion</code>`)。前景領域を</p>
-<p>外周から侵食して縮める、最も基本的な二値モルフォロジー演算。HALCON の</p>
-<p>`<code style="color:#22d3bf">erosion_circle</code>`（Erode a region with a circular structuring element.）</p>
-<p>に相当。</p>
+<p>Binäre Erosion mit einem scheibenförmigen Strukturelement (`<code style="color:#22d3bf">ndimage.binary_erosion</code><code style="color:#22d3bf">). Die grundlegendste binäre morphologische Operation, die den Vordergrundbereich von seiner äußeren Grenze her erodiert und schrumpfen lässt. Entspricht HALCONs </code><code style="color:#22d3bf">erosion_circle</code>` (Erode a region with a circular structuring element.).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が構造要素の半径を 1〜4 の範囲(</code><code style="color:#22d3bf">_rad(a)</code><code style="color:#22d3bf">)で振る。</code><code style="color:#22d3bf">b</code>` はこの</p>
 <p>バックエンドの二値モルフォロジー op(erosion/dilation/opening/closing の</p>
 <p>円形・矩形いずれも)に共通して<b>未使用</b>。</p>

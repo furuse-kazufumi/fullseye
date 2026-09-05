@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;rectangularity_xld&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">rectangularity_xld</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>輪郭面積を最小外接回転矩形(`<code style="color:#22d3bf">cv2.minAreaRect</code>`)の面積で割った充填率。</p>
-<p>値が 1 に近いほど輪郭が自身の外接矩形を隙間なく埋めていることを示す。</p>
-<p>HALCON の `<code style="color:#22d3bf">rectangularity_xld</code>`（Shape factor for the rectangularity of</p>
-<p>contours or polygons.）に相当。</p>
+<p>用輪廓面積除以最小外接旋轉矩形（`<code style="color:#22d3bf">cv2.minAreaRect</code><code style="color:#22d3bf">）面積得到的填充率。數值越接近 1，表示輪廓越能幾乎無縫地填滿其外接矩形。相當於 HALCON 的 </code><code style="color:#22d3bf">rectangularity_xld</code>`（Shape factor for the rectangularity of contours or polygons.）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

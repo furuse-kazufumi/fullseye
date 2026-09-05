@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;power_byte&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">power_byte</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>実装は `<code style="color:#22d3bf">fft_image</code><code style="color:#22d3bf"> と同じ(</code><code style="color:#22d3bf">kind: &quot;fft_power&quot;</code>`、log1p パワース</p>
-<p>ペクトル)。HALCON では `<code style="color:#22d3bf">power_byte</code>` は 8bit 出力用のバイト量子化された</p>
-<p>パワースペクトルを指すが、この代役では `<code style="color:#22d3bf">power_real</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">fft_image</code>` と</p>
-<p>区別せず同じ処理を返す(近似の限界)。HALCON の `<code style="color:#22d3bf">power_byte</code>`（Return the</p>
-<p>power spectrum of a complex image.）の代役。</p>
+<p>구현은 `<code style="color:#22d3bf">fft_image</code><code style="color:#22d3bf">와 동일하다(</code><code style="color:#22d3bf">kind: &quot;fft_power&quot;</code><code style="color:#22d3bf">, log1p 파워 스펙트럼). HALCON에서 </code><code style="color:#22d3bf">power_byte</code><code style="color:#22d3bf">는 8비트 출력용으로 바이트 양자화된 파워 스펙트럼을 가리키지만, 이 대체 구현은 </code><code style="color:#22d3bf">power_real</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">fft_image</code><code style="color:#22d3bf">와 구별하지 않고 동일한 처리를 반환한다(근사의 한계). HALCON의 </code><code style="color:#22d3bf">power_byte</code>`(Return the power spectrum of a complex image.)의 대역이다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 패밀리 가이드</a></p>

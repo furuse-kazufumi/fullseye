@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xcv2_hitmiss&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>ヒットオアミス変換で「中心は背景・上下左右は前景」という十字パターンを</p>
-<p>検出する（`<code style="color:#22d3bf">cv2.MORPH_HITMISS</code>`）。</p>
+<p>히트 오어 미스 변환(hit-or-miss transform)으로 &#x27;중심은 배경, 상하좌우는 전경&#x27;인 십자 패턴을 검출한다(`<code style="color:#22d3bf">cv2.MORPH_HITMISS</code>`).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>固定カーネル `<code style="color:#22d3bf">[[0,1,0],[1,-1,1],[0,1,0]]</code>` を使う（1=前景必須、-1=背景必須、</p>
 <p>0=不問）。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。前景に囲まれた 1 画素の窪み（孤立した背景</p>
 <p>画素）を拾うので、細線化後の欠け検出や形状のノッチ検出に使える。入力は</p>

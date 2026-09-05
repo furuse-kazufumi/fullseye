@@ -1269,6 +1269,73 @@ if _os.environ.get("IMGEVOLVE_NO_BACKENDS", "") != "1":
         N_OPS = len(REGISTRY)
 
 
+# --------------------------------------------------------------------------- #
+# 契約は**全 op に掛ける**(2026-09-05)                                          #
+# --------------------------------------------------------------------------- #
+# `backend_safe.guard` は「例外は台帳に記録して sort に合う値へ落とす / 返り値は
+# 有限で sort として妥当」を約束する。ところが実測すると **881 op のうち 395 本
+# (45%)がガードを一度も通っていなかった** —— ガードを使うのは backend の裁量で、
+# 使わない family がそのぶんだけ契約の外にいた。
+#
+# 実害: 0 サイズの入力で 14 op が NaN / Inf を返し、`fullseye.apply()` 経由でも
+# そのまま出ていた(0 除算。空配列の平均・分散・比)。ガードを通っていれば
+# `sanitize` が拾って sort の fallback に落とし、台帳にも残る。
+#
+# 「仕組みがある ≠ 全経路が通る」の 4 度目なので、**backend の裁量ではなく
+# 登録の側で一律に掛ける**。既にガード済みの op は二重に包まない。
+# `sanitize` は有限で契約内の出力には**触らない**ので、正常な op の出力は
+# 1 ビットも変わらない(tests/test_ops_guard_coverage.py が指紋で固定)。
+#: **非有限値がその op の意味を運んでいる** op。ここに載せた op は例外の
+#: 記録だけガードし、返り値には触らない。
+#:
+#: 実測 2026-09-05: ``tb_geodesic_distances`` は「不達 = inf」と docstring に
+#: 明記している。sanitize を通すと ``nan_to_num(posinf=1.0)`` で **inf が 1.0**
+#: になり、到達可能な点の最大距離 1.70 より**小さい**値に化けた ——
+#: 「届かない」が「近い」に見える。例外にならず**もっともらしく間違う**ので、
+#: 数字を見ても誰も気づけない。有限性の契約は [0,1] の画像を想定していて、
+#: 距離を運ぶ signal には素直に当てはまらない。
+#: **この表は tests/test_backends_typed_liveness.py の KNOWN_NONFINITE_BY_CONTRACT と
+#: 一致していなければならない**(test_op_descriptions 系がそれを検査する)。
+#: 2026-09-05 の実測: 一律ガードを入れたとき、自分の probe では特異行列を
+#: 作っていなかったので `tb_mat_cond` を取りこぼし、既存のテストに拾われた ——
+#: **「自分が思いついた入力で確かめた」は「確かめた」ではない**。
+NONFINITE_IS_MEANINGFUL = {
+    "tb_geodesic_distances": "不達を inf で表す(docstring に明記)。1.0 に潰すと"
+                             "『届かない』が『近い』に化ける。",
+    "tb_mat_cond": "スペクトル条件数 s_max/s_min。厳密に特異な行列は s_min=0 なので"
+                   "inf が正しい答え(mathops.mat_cond は例外を投げず inf を返す)。"
+                   "有限に潰すと『十分に良条件』と読めてしまう。",
+}
+
+
+def _wrap_unguarded() -> int:
+    """登録済みで未ガードの op を ``guard`` で包む。包んだ数を返す。"""
+    import backend_safe as _bs
+    n = 0
+    for _op in REGISTRY:
+        if getattr(_op.fn, "__fullseye_guarded__", False):
+            continue
+        if _op.name in NONFINITE_IS_MEANINGFUL:
+            # 例外の記録は掛けるが、返り値は書き換えない
+            _sort = _op.out_sort
+
+            def _keep(out, v, _s=_sort, _bs=_bs):
+                return _bs.fallback(v, _s) if out is None else out
+
+            _op.fn = _bs.guard(_op.fn, _sort, name=_op.name, finish=_keep)
+        else:
+            _op.fn = _bs.guard(_op.fn, _op.out_sort, name=_op.name)
+        n += 1
+    return n
+
+
+GUARD_WRAPPED_AT_REGISTRATION = _wrap_unguarded()
+RT = {op.name: op.fn for op in REGISTRY}
+_BY_NAME = {op.name: op for op in REGISTRY}
+OPS = tuple((op.name, op.fn) for op in REGISTRY)
+N_OPS = len(REGISTRY)
+
+
 def categories() -> dict[str, list[str]]:
     out: dict[str, list[str]] = {}
     for op in REGISTRY:

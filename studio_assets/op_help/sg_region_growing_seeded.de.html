@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sg_region_growing_seeded&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>画像中心を種として、輝度が近い画素を繋げていく領域拡張（シードグロウイング）（HALCON `<code style="color:#22d3bf">regiongrowing</code><code style="color:#22d3bf"> は既に別 op でカバー済みのため、重複申告を避けて </code><code style="color:#22d3bf">halcon=&quot;&quot;</code>` としている）。</p>
+<p>Seed-basiertes Region Growing, das vom Bildzentrum ausgeht und Pixel mit ähnlicher Helligkeit verbindet (HALCON `<code style="color:#22d3bf">regiongrowing</code><code style="color:#22d3bf"> wird bereits von einer anderen Operation abgedeckt, daher wird hier </code><code style="color:#22d3bf">halcon=&quot;&quot;</code>` verwendet, um eine doppelte Meldung zu vermeiden).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>種は画像中心の 1 画素。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">（0〜1）が同質性の許容差（種の輝度 ±a 以内なら繋がる）、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が連結性を切り替える（</code><code style="color:#22d3bf">b &gt; 0.5</code>` で 8 連結、それ以外は 4 連結）。結果は種を含む連結成分のみ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>

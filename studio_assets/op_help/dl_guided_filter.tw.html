@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;dl_guided_filter&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">guided_filter</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>自己ガイド付きフィルタ（guided filter、ガイド画像=入力自身、torch 実装）。</p>
+<p>自引導濾波器（guided filter，引導影像＝輸入自身，torch 實作）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>局所窓内の線形回帰 `<code style="color:#22d3bf">q = a_lin*I + b_lin</code>` を箱フィルタで解くエッジ保存平滑化。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は窓半径 </code><code style="color:#22d3bf">r</code><code style="color:#22d3bf"> を 1〜5 に振り（</code><code style="color:#22d3bf">r = 1 + int(a*4)</code><code style="color:#22d3bf">）、</code><code style="color:#22d3bf">b</code>` は正則化項</p>
 <p>`<code style="color:#22d3bf">eps</code><code style="color:#22d3bf"> を 0.001〜0.051 に振る（</code><code style="color:#22d3bf">eps = 0.001 + 0.05*b</code>`、大きいほど強く平滑化</p>

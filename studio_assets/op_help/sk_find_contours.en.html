@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">contour</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sk_find_contours&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>等高線抽出(marching squares)。グレースケール画像上で指定したレベル値と交差する曲線を辿り、サブピクセル精度の輪郭座標列の集合として返す —— 二値画像の外周だけでなく、連続値の等高線も扱える点が二値輪郭抽出と違う。</p>
+<p>Contour extraction (marching squares). Traces curves that cross a specified level value on a grayscale image and returns them as a set of sub-pixel-accuracy contour coordinate sequences -- unlike binary contour extraction, this can handle continuous-valued contours, not just the outer boundary of a binary image.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>HALCON に直接対応するものは無い(空欄)。実装は `<code style="color:#22d3bf">measure.find_contours(v, level=0.2+0.5*a)</code><code style="color:#22d3bf"> のうち頂点数 3 未満の断片を捨てたもの —— a は等高線のレベル(しきい値)を 0.2〜0.7 に振る。b は未使用。戻り値は画像形状と輪郭座標配列のリストを持つ辞書(</code><code style="color:#22d3bf">contour</code>` 型)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>

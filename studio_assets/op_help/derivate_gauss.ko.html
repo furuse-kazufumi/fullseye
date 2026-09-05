@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;derivate_gauss&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">derivate_gauss</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>ガウス微分(`<code style="color:#22d3bf">order=(1,0)</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">(0,1)</code><code style="color:#22d3bf">)の勾配強度 </code><code style="color:#22d3bf">hypot</code>` を [0,1]</p>
-<p>に正規化したもの。ガウシアンで平滑化してから微分するので、ノイズに強い</p>
-<p>エッジ検出器として働く。HALCON の `<code style="color:#22d3bf">derivate_gauss</code>`（Convolve an image</p>
-<p>with derivatives of the Gaussian.）に相当。</p>
+<p>가우시안 미분(`<code style="color:#22d3bf">order=(1,0)</code><code style="color:#22d3bf">과 </code><code style="color:#22d3bf">(0,1)</code><code style="color:#22d3bf">)의 그래디언트 크기(</code><code style="color:#22d3bf">hypot</code><code style="color:#22d3bf">)를 [0,1]로 정규화한 것. 가우시안으로 평활화한 뒤 미분하므로 노이즈에 강한 에지 검출기로 작동한다. HALCON의 </code><code style="color:#22d3bf">derivate_gauss</code>`(Convolve an image with derivatives of the Gaussian.)에 해당한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code>` がガウス核のシグマを 0.5〜3.0 の範囲で振る(平滑化の強さとエッジの</p>
 <p>太さがトレードオフ)。`<code style="color:#22d3bf">b</code>` は未使用。方向別成分(dx, dy)ではなく振幅のみを</p>
 <p>返す点に注意。</p>

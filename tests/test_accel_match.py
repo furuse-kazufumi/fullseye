@@ -24,6 +24,25 @@ HAS = M._HAS_TORCH
 skip = pytest.mark.skipif(not HAS, reason="torch 不在")
 
 
+@pytest.fixture(autouse=True)
+def _restore_match_template():
+    """``_locate_imgs()`` が書き換える ops のモジュール大域を、テストごとに戻す。
+
+    2026-09-05 に pytest-xdist(24 並列)で見つけた漏れ —— このファイルは
+    ``ops.set_match_template(T)`` を呼んだまま後始末をしておらず、テンプレートが
+    **セッションの残りに漏れて**いた。直列実行ではアルファベット順のおかげで
+    たまたま隔離されていたが、xdist はワーカーを使い回すので順序が崩れ、
+    ``test_op_probe_ledger.py::test_allowlist_has_no_stale_entries`` が落ちた
+    (2 ファイルだけを特定の順で流すと直列でも 100% 再現する)。
+
+    テストが**自分の後始末をしない**のは、順序依存の中でもいちばん見つけにくい形。
+    並列で初めて出るので、直列の CI が緑でも安心できない。
+    """
+    before = ops._MATCH_CTX.get("template")
+    yield
+    ops._MATCH_CTX["template"] = before
+
+
 def _template(n=11):
     from problems import _template as t
     return t(n)

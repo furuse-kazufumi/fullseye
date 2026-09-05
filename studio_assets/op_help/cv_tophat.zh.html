@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;cv_tophat&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">gray_tophat</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>トップハット変換(top-hat、OpenCV 実装)。「元画像 − 開処理結果」を計算し、明るい背景の上にある、構造要素より小さい明るい特徴だけを抽出する。</p>
+<p>顶帽变换（top-hat，OpenCV 实现）。计算「原图 − 开运算结果」，只提取位于明亮背景之上、比结构元素更小的明亮特征。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>HALCON の <code style="color:#22d3bf">gray_tophat</code>(Perform a gray value top hat transformation on an image.)に相当。実装は `<code style="color:#22d3bf">cv2.morphologyEx(v, MORPH_TOPHAT, se)</code><code style="color:#22d3bf"> を正規化したもの、se は楕円形でサイズ </code><code style="color:#22d3bf">3+2*int(a*3)</code>` —— a は構造要素サイズを 3〜9 に振る。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>

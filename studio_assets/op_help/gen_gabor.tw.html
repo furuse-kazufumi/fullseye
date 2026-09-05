@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;gen_gabor&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">gen_gabor</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>単一の Gabor カーネル(向き `<code style="color:#22d3bf">θ=π*a</code><code style="color:#22d3bf">、周波数 </code><code style="color:#22d3bf">0.1+0.3*b</code>`)による</p>
-<p>畳み込み応答の絶対値を、カーネルの L1 ノルムで正規化して返す。DC 成分を</p>
-<p>除いた(平均を引いた)実部のみのカーネルで、指定方向・周波数の縞模様に</p>
-<p>選択的に反応するバンドパステクスチャフィルタ。HALCON の `<code style="color:#22d3bf">gen_gabor</code>`</p>
-<p>（Generate a Gabor filter.）に相当(虚部/位相は持たない実カーネルのみの</p>
-<p>簡易版)。</p>
+<p>回傳單一Gabor核(方向`<code style="color:#22d3bf">θ=π*a</code><code style="color:#22d3bf">,頻率</code><code style="color:#22d3bf">0.1+0.3*b</code><code style="color:#22d3bf">)卷積響應的絕對值,並以核的L1範數正規化。這是去除直流分量(減去平均值)的純實部核,對指定方向、頻率的條紋圖案有選擇性反應的帶通紋理濾波器。相當於HALCON的</code><code style="color:#22d3bf">gen_gabor</code>`(Generate a Gabor filter.)(不含虛部/相位的純實數核簡化版)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が向き θ(0〜180°)を、</code><code style="color:#22d3bf">b</code>` が空間周波数(0.1〜0.4)を振る。両方が</p>
 <p>使われる。`<code style="color:#22d3bf">a=0</code><code style="color:#22d3bf"> が縦縞、</code><code style="color:#22d3bf">a=0.5</code>`(90°)が横縞に応答する規約。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

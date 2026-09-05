@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_estimate_point_normals&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>点群 (N,3) → 単位法線(局所 k 近傍共分散の最小固有ベクトル=PCA)。</p>
+<p>Point cloud (N,3) → unit normals (the smallest eigenvector of the local k-nearest-neighbor covariance = PCA).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>FPFH/SHOT/点-面 ICP が要る法線を raw 点群から生成。向きの規約は 2 面:</p>
 <p><b>viewpoint=None(既定)= 重心から外向き</b>(閉じた物体の全周点群向け)/</p>
 <p><b>viewpoint 指定 = 視点(センサ)向き</b>(Hoppe 1992 / PCL 規約。単一視点スキャンの</p>

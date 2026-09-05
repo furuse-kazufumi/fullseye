@@ -4,14 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;transpose_region&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">transpose_region</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>領域(2 値マスク)を転置する(`<code style="color:#22d3bf">x.T</code>`、対角線に関する鏡映=行と列の</p>
-<p>入れ替え)。カテゴリは geometry だが in/out は `<code style="color:#22d3bf">region</code>`。幾何変換の一種</p>
-<p>として `<code style="color:#22d3bf">_sh_geom</code>` で実装されているが、転置は補間を伴わないため</p>
-<p>`<code style="color:#22d3bf">build()</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">_rebinarise</code>` を通しても値は変化しない(すでに {0,1} の</p>
-<p>まま)。HALCON の `<code style="color:#22d3bf">transpose_region</code>`（Reflect a region about a point.）に</p>
-<p>相当(HALCON の「点に関する反転」とは厳密には別の変換で、行列の転置=</p>
-<p>対角線に関する反転という近似)。</p>
+<p>Transposes a region (binary mask) (`<code style="color:#22d3bf">x.T</code><code style="color:#22d3bf">, a reflection about the diagonal = swapping rows and columns). The category is geometry, but the in/out type is </code><code style="color:#22d3bf">region</code><code style="color:#22d3bf">. Implemented as a kind of geometric transform via </code><code style="color:#22d3bf">_sh_geom</code><code style="color:#22d3bf">, but since transposition involves no interpolation, the value does not change even after passing through </code><code style="color:#22d3bf">build()</code><code style="color:#22d3bf">&#x27;s </code><code style="color:#22d3bf">_rebinarise</code><code style="color:#22d3bf"> (it is already {0,1}). Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">transpose_region</code>` (Reflect a region about a point) -- strictly a different transform from HALCON&#x27;s &quot;reflection about a point,&quot; approximated here as a matrix transpose = reflection about the diagonal.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>

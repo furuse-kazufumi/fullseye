@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;cooc_feature_matrix&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">cooc_feature_matrix</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>グレーレベル共起行列(GLCM、`<code style="color:#22d3bf">skimage.feature.graycomatrix</code>`、16 階調</p>
-<p>に量子化、距離 `<code style="color:#22d3bf">1+3*a</code>`、角度 0°)から Haralick テクスチャ特徴量</p>
-<p>`<code style="color:#22d3bf">energy</code>`(角二次モーメント、行列の値の集中度=テクスチャの均一性)を計算</p>
-<p>する。HALCON の `<code style="color:#22d3bf">cooc_feature_matrix</code>`（Calculate gray value features</p>
-<p>from a co-occurrence matrix.）に相当(HALCON は複数の特徴量・複数角度を</p>
-<p>同時に返せるが、ここでは energy・角度 0° 固定に単純化)。</p>
+<p>从灰度共生矩阵(GLCM,`<code style="color:#22d3bf">skimage.feature.graycomatrix</code><code style="color:#22d3bf">,量化为 16 阶,距离 </code><code style="color:#22d3bf">1+3*a</code><code style="color:#22d3bf">,角度 0°)计算 Haralick 纹理特征 </code><code style="color:#22d3bf">energy</code><code style="color:#22d3bf">(角二阶矩,即矩阵值的集中程度=纹理均匀性)。相当于 HALCON 的 </code><code style="color:#22d3bf">cooc_feature_matrix</code>`(Calculate gray value features from a co-occurrence matrix.)(HALCON 可同时返回多个特征、多个角度,但这里简化为固定 energy、角度 0°)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が共起を取る画素間距離を 1〜4 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>

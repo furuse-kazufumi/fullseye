@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_fit_surface2&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">fit_surface_second_order</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>gray 値を 2 次多項式面で最小二乗近似する。HALCON の</p>
-<p>`<code style="color:#22d3bf">fit_surface_second_order</code>`(gray 値モーメントを計算し 2 次曲面で近似する)</p>
-<p>に相当。</p>
+<p>以最小平方法將灰階值擬合為二次多項式曲面。相當於 HALCON 的 `<code style="color:#22d3bf">fit_surface_second_order</code>`(計算灰階值動差並擬合二次曲面)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>基底を `<code style="color:#22d3bf">[1, x, y, x^2, y^2, xy]</code><code style="color:#22d3bf"> に拡張したこと以外は </code><code style="color:#22d3bf">hx_fit_surface1</code>`</p>
 <p>と同じ(座標 [-1,1] 正規化 -&gt; 最小二乗 -&gt; [0,1] 正規化)。曲がった照明ムラや</p>
 <p>緩い凹凸の背景推定に使う。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>

@@ -4,14 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;edges_sub_pix&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">edges_sub_pix</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>サブピクセル精度のエッジ点抽出。勾配とその法線方向(``gradient_</p>
-<p>normals`<code style="color:#22d3bf">)を求め、しきい値(</code><code style="color:#22d3bf">0.15+0.5*a</code>`)を超える画素を連結成分化した</p>
-<p>後、放物線当てはめで各点をサブピクセル位置へ精密化する(``subpixel_</p>
-<p>refine_edges`<code style="color:#22d3bf">、</code><code style="color:#22d3bf">ops</code>` 側の同名 op と共有する実装 ―― 2026-09-02 修正で</p>
-<p>真の意味でサブピクセルになった。旧実装は整数画素座標をそのまま返して</p>
-<p>いた)。HALCON の `<code style="color:#22d3bf">edges_sub_pix</code>`（Extract sub-pixel precise edges using</p>
-<p>Deriche, Lanser, Shen, or Canny filters.）に相当。</p>
+<p>亚像素精度的边缘点提取。求出梯度及其法线方向(`<code style="color:#22d3bf">gradient_normals</code><code style="color:#22d3bf">),将超过阈值(</code><code style="color:#22d3bf">0.15+0.5*a</code><code style="color:#22d3bf">)的像素连通成分化,然后通过抛物线拟合将各点精细化到亚像素位置(</code><code style="color:#22d3bf">subpixel_refine_edges</code><code style="color:#22d3bf">,与 </code><code style="color:#22d3bf">ops</code><code style="color:#22d3bf"> 侧同名 op 共享的实现——经 2026-09-02 的修复才成为真正意义上的亚像素;旧实现只是原样返回整数像素坐标)。相当于 HALCON 的 </code><code style="color:#22d3bf">edges_sub_pix</code>`(Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がエッジ強度のしきい値を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>

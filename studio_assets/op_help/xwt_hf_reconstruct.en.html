@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xwt_hf_reconstruct&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>高周波再構成画像。`<code style="color:#22d3bf">db2</code>` で 2 段分解し、近似係数(低周波成分)だけを 0 に潰してから逆変換で再構成する —— 結果はハイパスフィルタをかけたような、エッジとテクスチャだけが残る画像になる。再構成後に min-max 正規化する。</p>
+<p>High-frequency reconstructed image. Decomposes with `<code style="color:#22d3bf">db2</code>` over 2 levels, zeroes out only the approximation coefficients (the low-frequency component), then reconstructs via inverse transform -- the result resembles a high-pass-filtered image, leaving only edges and texture. Min-max normalized after reconstruction.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>

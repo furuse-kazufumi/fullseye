@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">volume</code> → <code style="color:#22d3bf">volume</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;macro_vol_denoise&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>進化探索が発見した固定パイプライン（3-D ボリューム版）: `<code style="color:#22d3bf">vol_threshold(a=0.52,b=0.76)</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">vol_gaussian(a=0.08,b=0.89)</code>`（3-D しきい値処理をかけてからガウシアン平滑化する 2 段）。</p>
+<p>Eine von der evolutionären Suche gefundene feste Pipeline (3-D-Volumen-Version): `<code style="color:#22d3bf">vol_threshold(a=0.52,b=0.76)</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">vol_gaussian(a=0.08,b=0.89)</code>` (2 Stufen: zuerst 3-D-Schwellenwertbildung, dann Gauß-Glättung).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は凍結済みで未使用。in_sort/out_sort は volume。volume の denoise 課題（PSNR）でロック済みホールドアウト 25.74dB、手作りベースライン20.94dB を上回る。HALCON に対応する単一オペレータは無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">Leitfaden zur Familie gallery2d_physics_alife_3d</a></p>

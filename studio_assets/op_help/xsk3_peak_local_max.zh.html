@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk3_peak_local_max&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>局所極大点マップ(skimage `<code style="color:#22d3bf">feature.peak_local_max</code><code style="color:#22d3bf">)。互いに </code><code style="color:#22d3bf">min_distance</code>` 画素以上離れた局所輝度極大の座標を検出し、その座標だけを 1 にした疎な二値画像(1 画素ずつの点で、面としての領域ではない)を返す。</p>
+<p>局部极大值点图(skimage `<code style="color:#22d3bf">feature.peak_local_max</code><code style="color:#22d3bf">)。检测彼此相距 </code><code style="color:#22d3bf">min_distance</code>` 像素以上的局部亮度极大值坐标，并返回仅将这些坐标置为 1 的稀疏二值图像(逐像素的点，而非作为面的区域)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は最小距離(</code><code style="color:#22d3bf">2+int(a*8)</code><code style="color:#22d3bf"> で 2〜10)を振る —— 大きくするほど検出される点が減り、より支配的なピークだけが残る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>

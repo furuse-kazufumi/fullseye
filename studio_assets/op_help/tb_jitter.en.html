@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_jitter&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>各点に等方ガウスノイズ `<code style="color:#22d3bf">N(0, sigma)</code>` を付加(センサ位置ノイズの模倣)。</p>
+<p>Adds isotropic Gaussian noise `<code style="color:#22d3bf">N(0, sigma)</code>` to each point (mimicking sensor position noise).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">sigma</code><code style="color:#22d3bf"> はワールド単位の標準偏差(ユーザ指定パラメータ)。</code><code style="color:#22d3bf">clip</code>` を与えると</p>
 <p>各成分の変位を `<code style="color:#22d3bf">[-clip, clip]</code>` に切り詰める(外れ変位の抑制)。大 N ではノイズの</p>
 <p>平均≈0・標準偏差≈sigma となる。返り値は入力と同形状 `<code style="color:#22d3bf">(N,3)</code>`。</p>

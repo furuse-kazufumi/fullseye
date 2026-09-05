@@ -3,15 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tac_surface_normal&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Surface-normal z-component (slope map) from the shading gradients, using</p>
-<p>Horn&#x27;s shape-from-shading normal parameterisation</p>
-<p>`<code style="color:#22d3bf">n = (-p, -q, 1)/sqrt(1+p^2+q^2)</code><code style="color:#22d3bf"> so that </code><code style="color:#22d3bf">nz = 1/sqrt(1+p^2+q^2)</code>` with</p>
-<p>`<code style="color:#22d3bf">p = gain*gx</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">q = gain*gy</code>`. Flat (uncontacted) gel gives nz = 1, steep</p>
-<p>indentation walls tend to 0, so the map is already a valid [0,1] encoding.</p>
-<p>`<code style="color:#22d3bf">a</code>` = gradient gain (1..21x -- how steep the shading is taken to be),</p>
-<p>`<code style="color:#22d3bf">b</code>` = pre-smoothing sigma of the image (0..3) to tame sensor noise.</p>
-<p>Constant input -&gt; all-ones (perfectly flat gel).</p>
+<p>由明暗梯度求表面法线(surface normal)的 z 分量(斜率图),使用 Horn 的明暗恢复形状(shape-from-shading)法线参数化 `<code style="color:#22d3bf">n = (-p, -q, 1)/sqrt(1+p^2+q^2)</code><code style="color:#22d3bf">,因此 </code><code style="color:#22d3bf">nz = 1/sqrt(1+p^2+q^2)</code><code style="color:#22d3bf">,其中 </code><code style="color:#22d3bf">p = gain*gx</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">q = gain*gy</code><code style="color:#22d3bf">。平坦(未接触)的凝胶给出 nz = 1,陡峭的凹陷壁趋于 0,因此该图本身就已经是合法的 [0,1] 编码。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = 梯度增益(1~21 倍——假定明暗有多陡),</code><code style="color:#22d3bf">b</code>` = 图像的预平滑 sigma(0~3),用于抑制传感器噪声。常数输入 → 全 1(完全平坦的凝胶)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -3,13 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;aug_rolling_shutter&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Rolling-shutter skew. A CMOS rolling shutter exposes rows sequentially, so</p>
-<p>a scene (or camera) panning horizontally shifts each row by an amount linear</p>
-<p>in its row index -- a pure horizontal shear. `<code style="color:#22d3bf">a</code>` sets the peak shift</p>
-<p>`<code style="color:#22d3bf">0.25*W*a</code>` px (the shear is centred so the middle row is unmoved),</p>
-<p>`<code style="color:#22d3bf">b</code>` sets the pan direction (b &lt; 0.5 -&gt; shift right with increasing row,</p>
-<p>otherwise left). Resampled bilinearly with reflecting borders.</p>
+<p>捲簾快門(rolling shutter)歪斜。CMOS 捲簾快門逐行依序曝光,因此當場景(或相機)水平平移時,每一行會依其行索引線性偏移——也就是純粹的水平剪切(shear)。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 設定最大偏移量 </code><code style="color:#22d3bf">0.25*W*a</code><code style="color:#22d3bf"> 像素(剪切以中間行為中心,中間行不動),</code><code style="color:#22d3bf">b</code>` 設定平移方向(b &lt; 0.5 時隨行數增加向右偏移,否則向左)。以反射邊界進行雙線性重採樣。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

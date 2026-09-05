@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk2_wiener&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>ウィーナー逆畳み込み（既知の点拡がり関数を使ったデブラー）。</p>
-<p>`<code style="color:#22d3bf">skimage.restoration.wiener</code>` を呼ぶ。</p>
+<p>위너 역컨볼루션(알려진 점 확산 함수를 사용한 디블러). `<code style="color:#22d3bf">skimage.restoration.wiener</code>`를 호출한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>PSF はガウシアン形状を仮定して自前生成し、a が PSF の広がり</p>
 <p>（標準偏差 `<code style="color:#22d3bf">0.5 + 1.5*a</code>`、5x5 窓）を振る。b がバランス項</p>
 <p>（`<code style="color:#22d3bf">0.05 + 0.5*b</code>`。ノイズ対信号比の逆数に相当し、大きいほどノイズ</p>

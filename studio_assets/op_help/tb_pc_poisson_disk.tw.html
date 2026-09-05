@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_pc_poisson_disk&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Blue-noise thinning: keep points greedily so that no two are closer than *radius* (`<code style="color:#22d3bf">points</code>`).</p>
+<p>藍雜訊稀疏化:貪婪地保留點,使任兩點間距離不小於 *radius*(`<code style="color:#22d3bf">points</code>`)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Points are visited in a seeded random order; a point is kept if no kept</p>
 <p>point lies within *radius* (cKDTree ball query). Dense regions are thinned</p>
 <p>to the radius, sparse regions (spacing already &gt; radius) are kept whole —</p>

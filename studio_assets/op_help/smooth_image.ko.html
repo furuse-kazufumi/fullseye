@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;smooth_image&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">smooth_image</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>ガウシアンぼかし(シグマ `<code style="color:#22d3bf">0.5+2.0*a</code>`)一本で近似した汎用スムージング。</p>
-<p>HALCON の `<code style="color:#22d3bf">smooth_image</code>`（Smooth an image using various filters.）は</p>
-<p>Deriche/Gauss/Mean など複数のフィルタ種別を選べる万能演算子だが、ここでは</p>
-<p>ガウシアン 1 種類に単純化している(近似の限界)。</p>
+<p>가우시안 블러(시그마 `<code style="color:#22d3bf">0.5+2.0*a</code><code style="color:#22d3bf">) 한 가지로 근사한 범용 스무딩. HALCON의 </code><code style="color:#22d3bf">smooth_image</code>`(Smooth an image using various filters.)는 Deriche/Gauss/Mean 등 여러 필터 종류를 선택할 수 있는 만능 연산자이지만, 여기서는 가우시안 한 종류로 단순화했다(근사의 한계).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がシグマを 0.5〜2.5 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>

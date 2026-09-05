@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;cv_blackhat&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">gray_bothat</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>ブラックハット変換(black-hat、OpenCV 実装)。「閉処理結果 − 元画像」を計算し、暗い背景の上にある、構造要素より小さい暗い特徴だけを抽出する(cv_tophat の暗版)。</p>
+<p>Black-hat transform (OpenCV implementation). Computes &quot;closing result minus original image&quot; to extract only the dark features, smaller than the structuring element, that sit on a dark background (the dark counterpart of cv_tophat).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>HALCON の <code style="color:#22d3bf">gray_bothat</code>(Perform a gray value bottom hat transformation on an image.)に相当。実装は `<code style="color:#22d3bf">cv2.morphologyEx(v, MORPH_BLACKHAT, se)</code><code style="color:#22d3bf"> を正規化したもの、se は楕円形でサイズ </code><code style="color:#22d3bf">3+2*int(a*3)</code>` —— a は構造要素サイズを 3〜9 に振る。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology family guide</a></p>

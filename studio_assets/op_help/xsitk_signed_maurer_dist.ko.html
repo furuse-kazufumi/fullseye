@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_signed_maurer_dist&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>符号付き距離マップ(SimpleITK `<code style="color:#22d3bf">SignedMaurerDistanceMap</code>`)を tanh で [0,1] に押し込んだもの。二値領域の境界からの距離(内側/外側とも)を、境界付近ほど 0.5 から離れる連続値の画像として表す。</p>
+<p>부호 있는 거리 맵(SimpleITK `<code style="color:#22d3bf">SignedMaurerDistanceMap</code>`)을 tanh로 [0,1]에 눌러 담은 것. 이진 영역 경계로부터의 거리(안쪽/바깥쪽 모두)를, 경계에 가까울수록 0.5에서 멀어지는 연속값 이미지로 나타낸다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は tanh のスケール(</code><code style="color:#22d3bf">1.0+9.0*a</code><code style="color:#22d3bf"> で 1〜10。大きいほど遷移が緩やかで広い範囲がグレーになる)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。距離を画素座標のスケールで解釈する点、符号(内側/外側どちらが正か)は SimpleITK のデフォルト規約に従う点に注意。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 패밀리 가이드</a></p>

@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;simulate_defocus&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">simulate_defocus</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>一様なピンボケ（デフォーカス）をシミュレートする平滑化。実装は矩形窓の平均フィルタ（box filter, `<code style="color:#22d3bf">ndimage.uniform_filter</code><code style="color:#22d3bf">）で、円形絞りによる本来のボケ形状（circle-of-confusion）ではなく正方形窓で近似する。a が窓幅を 3/5/7/9 の 4 段階に振り（</code><code style="color:#22d3bf">_k(a)</code>`）、b は未使用。</p>
+<p>模擬均勻失焦（去焦）模糊的平滑化。實作為矩形視窗的均值濾波器（box filter，`<code style="color:#22d3bf">ndimage.uniform_filter</code><code style="color:#22d3bf">），以正方形視窗近似，而非圓形光圈所形成的真實模糊形狀（模糊圈，circle-of-confusion）。a 將視窗寬度分為 3/5/7/9 四階（</code><code style="color:#22d3bf">_k(a)</code>`），b 未使用。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の `<code style="color:#22d3bf">simulate_defocus</code>`（一様なピンボケをシミュレートする演算）に相当するが、光学的に正しい円形ボケではなく矩形平均という粗い近似である点に注意。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

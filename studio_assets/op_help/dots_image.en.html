@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;dots_image&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">dots_image</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>ガウシアンラプラシアン（Laplacian of Gaussian, LoG）フィルタ。σ = 0.5+2.5a のガウス核でラプラシアンを取り、signed01（符号つき値を [0,1]、0.5=応答ゼロ）で正規化する。b は未使用。円形の点状パターン（ドット）はガウシアンの等方性からくる強い LoG 応答を示すため、円形ドットの強調に使われる。</p>
+<p>A Laplacian of Gaussian (LoG) filter. Takes the Laplacian of a Gaussian kernel with sigma = 0.5+2.5a, normalized as signed01 (a signed value mapped to [0,1], with 0.5 = zero response). b is unused. Because circular dot-like patterns produce a strong LoG response due to the isotropy of the Gaussian, this is used to enhance circular dots.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>HALCON の `<code style="color:#22d3bf">dots_image</code>`（画像中の円形ドットを強調する演算）に相当する近似で、専用のドット検出カーネルではなく一般的な LoG フィルタで代用している。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>

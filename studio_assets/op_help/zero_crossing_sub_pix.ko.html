@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;zero_crossing_sub_pix&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">zero_crossing_sub_pix</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>LoG(ガウス平滑化込みラプラシアン、シグマ `<code style="color:#22d3bf">0.5+2*a</code>`)のゼロ交差を</p>
-<p>`<code style="color:#22d3bf">find_contours</code>` でサブピクセル精度の輪郭として抽出する。領域版の</p>
-<p>`<code style="color:#22d3bf">zero_crossing</code>`(画素解像度)に対するサブピクセル精度版。HALCON の</p>
-<p>`<code style="color:#22d3bf">zero_crossing_sub_pix</code>`（Extract zero crossings from an image with</p>
-<p>subpixel accuracy.）に相当。</p>
+<p>`<code style="color:#22d3bf">find_contours</code><code style="color:#22d3bf">로 LoG(가우스 평활화 포함 라플라시안, 시그마 </code><code style="color:#22d3bf">0.5+2*a</code><code style="color:#22d3bf">)의 제로 크로싱을 서브픽셀 정밀도의 윤곽선으로 추출한다. 영역 버전 </code><code style="color:#22d3bf">zero_crossing</code><code style="color:#22d3bf">(화소 해상도)에 대응하는 서브픽셀 정밀도 버전. HALCON의 </code><code style="color:#22d3bf">zero_crossing_sub_pix</code>`(Extract zero crossings from an image with subpixel accuracy.)에 해당.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がガウス平滑化のシグマを振る。</code><code style="color:#22d3bf">b</code>` は未使用。skimage が無い環境</p>
 <p>ではこの分岐は呼べない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

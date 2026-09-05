@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;gray_histo_abs&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">gray_histo_abs</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>画像の階調の標準偏差(`<code style="color:#22d3bf">x.std()</code><code style="color:#22d3bf">)を返す。HALCON の </code><code style="color:#22d3bf">gray_histo_abs</code>`</p>
-<p>（Calculate the gray value distribution.）は本来ヒストグラム全体</p>
-<p>(各階調のビン度数)を返す演算子だが、この代役ではヒストグラムそのものでは</p>
-<p>なく分布の広がりを表す標準偏差 1 個のスカラーに要約している(近似 ―― この</p>
-<p>パイプラインの `<code style="color:#22d3bf">feature</code>` ソートが 1 スカラーである契約上の制約)。</p>
+<p>이미지 계조의 표준편차(`<code style="color:#22d3bf">x.std()</code><code style="color:#22d3bf">)를 반환한다. HALCON의 </code><code style="color:#22d3bf">gray_histo_abs</code><code style="color:#22d3bf">(Calculate the gray value distribution.)는 본래 히스토그램 전체(각 계조의 빈도수)를 반환하는 연산자지만, 이 대역에서는 히스토그램 자체가 아니라 분포의 퍼짐을 나타내는 표준편차 하나의 스칼라로 요약하고 있다(근사 -- 이 파이프라인의 </code><code style="color:#22d3bf">feature</code>` 정렬이 스칼라 하나여야 한다는 계약상의 제약 때문).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>

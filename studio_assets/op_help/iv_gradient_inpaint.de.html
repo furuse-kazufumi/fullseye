@@ -3,13 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;iv_gradient_inpaint&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Harmonic (Laplace) inpainting of a central masked window. The interior of a</p>
-<p>centred window (side fraction from `<code style="color:#22d3bf">a</code>`) is discarded and refilled by solving</p>
-<p>nabla^2 u = 0 with Dirichlet boundary equal to the surrounding known pixels</p>
-<p>(Jacobi relaxation = repeatedly replacing each masked pixel by its 4-neighbour</p>
-<p>mean). The recovered interior is the smoothest (minimum-gradient) fill of the</p>
-<p>hole. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> sets the window size; </code><code style="color:#22d3bf">b</code>` is ignored.</p>
+<p>Harmonisches (Laplace-)Inpainting eines zentralen maskierten Fensters. Das Innere eines zentrierten Fensters (Seitenanteil durch `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> bestimmt) wird verworfen und durch Lösen von nabla^2 u = 0 mit Dirichlet-Randbedingung gleich den umgebenden bekannten Pixeln neu aufgefüllt (Jacobi-Relaxation = wiederholtes Ersetzen jedes maskierten Pixels durch den Mittelwert seiner 4 Nachbarn). Das wiederhergestellte Innere ist die glatteste (gradientenminimale) Füllung des Lochs. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> legt die Fenstergröße fest; </code><code style="color:#22d3bf">b</code>` wird ignoriert.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

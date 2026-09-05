@@ -4,14 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;texture_laws&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">texture_laws</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>実装は局所分散(`<code style="color:#22d3bf">deviation_image</code>` の分散版、窓内の</p>
-<p>`<code style="color:#22d3bf">E[x^2]-E[x]^2</code>`)。本来の Laws&#x27; テクスチャフィルタは L5/E5/S5/W5/R5 などの</p>
-<p>1 次元カーネル対から作る 25 種類の畳み込みバンク(エネルギー/エッジ/波状/</p>
-<p>斑点/波紋を捉える)だが、この代役ではその全カーネルバンクではなく単一の</p>
-<p>局所分散で代用している(近似の限界 ―― 方向別・周波数別の情報は失われる)。</p>
-<p>HALCON の `<code style="color:#22d3bf">texture_laws</code>`（Filter an image using a Laws texture filter.）</p>
-<p>の代役。</p>
+<p>구현은 국소 분산(`<code style="color:#22d3bf">deviation_image</code><code style="color:#22d3bf">의 분산 버전, 창 내의 </code><code style="color:#22d3bf">E[x^2]-E[x]^2</code><code style="color:#22d3bf">)이다. 본래의 Laws 텍스처 필터는 L5/E5/S5/W5/R5 등 1차원 커널 쌍으로 만드는 25종의 컨볼루션 뱅크(에너지/에지/파형/반점/잔물결을 포착)이지만, 이 대체 구현은 전체 커널 뱅크가 아닌 단일 국소 분산으로 대신한다(근사의 한계 —— 방향별·주파수별 정보는 소실된다). HALCON의 </code><code style="color:#22d3bf">texture_laws</code>`(Filter an image using a Laws texture filter.)의 대역이다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の一辺を </code><code style="color:#22d3bf">{3,5,7,9}</code><code style="color:#22d3bf"> で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 패밀리 가이드</a></p>

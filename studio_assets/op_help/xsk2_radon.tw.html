@@ -3,11 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk2_radon&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>ラドン変換によるサイノグラム（投影データ）。</p>
-<p>`<code style="color:#22d3bf">skimage.transform.radon</code>` を、画像の長辺に合わせた本数の角度</p>
-<p>（0〜180 度、`<code style="color:#22d3bf">linspace</code>` で等間隔）で呼び、結果を元の画像サイズに</p>
-<p>リサイズしてから最大値で正規化する。</p>
+<p>利用拉東變換（Radon transform）得到的正弦圖（投影資料）。以與影像長邊一致的角度數量（0~180度，以`<code style="color:#22d3bf">linspace</code><code style="color:#22d3bf">等間隔）呼叫</code><code style="color:#22d3bf">skimage.transform.radon</code>`，將結果縮放回原始影像尺寸後，依最大值做正規化。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>a, b は未使用（角度本数は画像サイズから自動で決まる）。CT 再構成の</p>
 <p>順投影に相当する処理で、直線状の構造ほどサイノグラム上に強いパターン</p>
 <p>が出る。</p>

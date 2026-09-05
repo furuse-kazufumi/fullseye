@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_estimate_alpha&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>点群のスケールから推奨 alpha を返す(最近傍距離の中央値ベース)。</p>
+<p>점군의 스케일로부터 권장 alpha를 반환한다(최근접 거리의 중앙값 기반).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>各点の最近傍距離の中央値 `<code style="color:#22d3bf">m</code>` を求め、半径しきい値 1/alpha ≈ 2m(隣接間隔の約 2 倍まで</p>
 <p>許す)となるよう `<code style="color:#22d3bf">alpha = 1/(2m)</code>` を返す。これで表面付近の素性の良い四面体は残しつつ、</p>
 <p>大きく間延びした四面体(=凹み・外側)を切り落とせる。重複点は最近傍 0 になるため正の距離のみ使う。</p>

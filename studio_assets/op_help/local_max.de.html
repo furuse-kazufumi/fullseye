@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;local_max&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">local_max</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>局所極大点検出。`<code style="color:#22d3bf">x</code><code style="color:#22d3bf"> が窓内の最大値(</code><code style="color:#22d3bf">_k(a)</code>`)に一致し、かつ</p>
-<p>`<code style="color:#22d3bf">x &gt; 0.3+0.4*b</code>` を満たす画素だけを前景とする ―― 平坦な高原状の領域では</p>
-<p>複数の隣接画素が同時に「極大」として残る点に注意(真の孤立点ピークだけを</p>
-<p>残す保証はない)。HALCON の `<code style="color:#22d3bf">local_max</code>`（Detect all local maxima in an</p>
-<p>image.）に相当。</p>
+<p>Erkennung lokaler Maxima. Nur Pixel, bei denen `<code style="color:#22d3bf">x</code><code style="color:#22d3bf"> dem Maximalwert innerhalb des Fensters (</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">) entspricht und zusätzlich </code><code style="color:#22d3bf">x &gt; 0.3+0.4*b</code><code style="color:#22d3bf"> erfüllen, gelten als Vordergrund -- zu beachten ist, dass in flachen, plateauartigen Bereichen mehrere benachbarte Pixel gleichzeitig als „Maximum&quot; bestehen bleiben können (es gibt keine Garantie, dass nur echte isolierte Spitzenpunkte übrig bleiben). Entspricht HALCONs </code><code style="color:#22d3bf">local_max</code>` (Detect all local maxima in an image.).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓サイズを、</code><code style="color:#22d3bf">b</code>` が輝度の下限しきい値を振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>

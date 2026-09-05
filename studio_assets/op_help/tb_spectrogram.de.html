@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_spectrogram&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>STFT magnitude spectrogram -&gt; `<code style="color:#22d3bf">(freqs, times, S)</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">S</code>` shape</p>
-<p>`<code style="color:#22d3bf">(n_freqs, n_frames)</code><code style="color:#22d3bf">. Hann-windowed; *hop* defaults to </code><code style="color:#22d3bf">win//2</code>`.</p>
+<p>STFT-Betragsspektrogramm -&gt; `<code style="color:#22d3bf">(freqs, times, S)</code><code style="color:#22d3bf"> mit </code><code style="color:#22d3bf">S</code><code style="color:#22d3bf"> der Form </code><code style="color:#22d3bf">(n_freqs, n_frames)</code><code style="color:#22d3bf">. Hann-gefenstert; *hop* ist standardmäßig </code><code style="color:#22d3bf">win//2</code>`.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>**Same raw convention as :func:<code style="color:#22d3bf">spectrum</code>, but a different divisor.** Each</p>
 <p>column is the unnormalised `<code style="color:#22d3bf">|rfft(frame * hann(win))|</code>`, so it is not an</p>
 <p>amplitude either — and dividing by `<code style="color:#22d3bf">2/win</code>` is *wrong* here, because the</p>

@@ -3,11 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;iv_richardson_lucy&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Richardson-Lucy deconvolution assuming a small Gaussian PSF (sigma =</p>
-<p>`<code style="color:#22d3bf">RL_SIGMA</code><code style="color:#22d3bf">). </code><code style="color:#22d3bf">a</code>` sets the iteration count n = 1 + round(a*14) (1..15);</p>
-<p>`<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> is ignored. RL multiplicatively drives the estimate </code><code style="color:#22d3bf">u</code>` so that</p>
-<p>`<code style="color:#22d3bf">u (*) psf</code>` matches the blurred measurement, sharpening real edges.</p>
+<p>Richardson-Lucy-Entfaltung unter Annahme einer kleinen Gauß-PSF (sigma = `<code style="color:#22d3bf">RL_SIGMA</code><code style="color:#22d3bf">). </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> legt die Iterationsanzahl n = 1 + round(a*14) (1..15) fest; </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> wird ignoriert. RL treibt die Schätzung </code><code style="color:#22d3bf">u</code><code style="color:#22d3bf"> multiplikativ so an, dass </code><code style="color:#22d3bf">u (*) psf</code>` der unscharfen Messung entspricht, wodurch echte Kanten geschärft werden.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

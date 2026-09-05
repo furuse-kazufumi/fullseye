@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;anisotropic_diffusion&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">anisotropic_diffusion</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Perona-Malik 型の異方性拡散。上下左右 4 方向の画素差にガウス型の</p>
-<p>伝導度関数 `<code style="color:#22d3bf">exp(-(Δ/K)^2)</code>` を掛けて反復的に加算する ―― 差が閾値 K より</p>
-<p>大きい(=エッジ)方向には拡散させず、小さい(=平坦)方向だけ滑らかにする</p>
-<p>エッジ保存平滑化。HALCON の `<code style="color:#22d3bf">anisotropic_diffusion</code>`（Perform an</p>
-<p>anisotropic diffusion of an image.）に相当。</p>
+<p>Anisotrope Diffusion vom Perona-Malik-Typ. Die Pixeldifferenzen in den vier Richtungen (oben/unten/links/rechts) werden mit einer gaußförmigen Leitfähigkeitsfunktion `<code style="color:#22d3bf">exp(-(delta/K)^2)</code><code style="color:#22d3bf"> multipliziert und iterativ addiert -- eine kantenerhaltende Glättung, die in Richtungen mit einer Differenz größer als Schwellenwert K (= eine Kante) nicht diffundiert und nur in Richtungen mit kleiner Differenz (= flach) glättet. Entspricht HALCONs </code><code style="color:#22d3bf">anisotropic_diffusion</code>` (Perform an anisotropic diffusion of an image.).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が反復回数を 2〜10 回の範囲で、</code><code style="color:#22d3bf">b</code>` が伝導度の閾値 K を 0.05〜0.3</p>
 <p>の範囲で振る。両方が使われる。K が小さいほどエッジを厳しく保護する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

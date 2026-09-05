@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;principal_comp&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">principal_comp</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>3 チャンネルの主成分分析（PCA）を行い、色空間を分散の大きい順に並べ替える。</p>
-<p>HALCON の `<code style="color:#22d3bf">principal_comp</code>`（多チャンネル画像の主成分を計算する）に相当。</p>
+<p>Performs principal component analysis (PCA) on 3 channels and reorders the color space in descending order of variance. Corresponds to HALCON&#x27;s `<code style="color:#22d3bf">principal_comp</code>` (computes the principal components of a multichannel image).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>画素を (H*W, 3) の行列とみなして平均を引き、共分散行列の固有値分解</p>
 <p>（`<code style="color:#22d3bf">np.linalg.eigh</code>`）で固有ベクトルを求め、固有値の降順に射影する。</p>
 <p>各成分は画像内で min-max により個別に [0,1] へ正規化するため、</p>

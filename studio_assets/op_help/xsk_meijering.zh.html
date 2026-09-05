@@ -3,11 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk_meijering&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Meijering neuriteness フィルタ。skimage.filters.meijering をスケール</p>
-<p>sigma=1,2,3 の 3 段で適用し、細い曲線状構造(血管・神経突起など)を強調する</p>
-<p>(ヘッセ行列の固有値から尾根らしさを計算する点は Frangi 系と同様だが、</p>
-<p>Meijering は分岐点にも強く応答する)。</p>
+<p>Meijering neuriteness 滤波器。以 sigma=1,2,3 三个尺度应用 `<code style="color:#22d3bf">skimage.filters.meijering</code>`，增强细长曲线状结构（如血管、神经突起等）（与 Frangi 系相同，都是从 Hessian 矩阵的特征值计算脊线似然度，但 Meijering 对分支点也有很强的响应）。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用(sigma は固定)。出力は </code><code style="color:#22d3bf">_norm</code>` で最大絶対値を 1 に</p>
 <p>正規化した符号なし強度画像。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

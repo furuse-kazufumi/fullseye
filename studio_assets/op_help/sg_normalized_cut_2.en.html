@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sg_normalized_cut_2&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>輝度グラフの正規化カット（スペクトラル 2 分割、Shi &amp; Malik）で画像を明暗 2 領域に分ける（HALCON に対応オペレータなし）。</p>
+<p>Splits the image into two regions (bright / dark) using normalized cut on the intensity graph (spectral 2-way partitioning, Shi &amp; Malik; no corresponding HALCON operator).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>計算量を抑えるため画像を `<code style="color:#22d3bf">sdim = round(10+b*14)</code><code style="color:#22d3bf"> 程度まで間引いてから、輝度差と距離で重みを決めたアフィニティグラフを作り、一般化固有値問題 </code><code style="color:#22d3bf">(D-W)y = lambda*D*y</code><code style="color:#22d3bf"> の第 2 固有ベクトル（Fiedler ベクトル）を中央値でしきい値化して 2 群に分ける。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">（0〜1）は輝度方向の帯域幅</code><code style="color:#22d3bf">sig_i = 0.05 + a*0.5</code><code style="color:#22d3bf"> を振り、</code><code style="color:#22d3bf">b</code>`（0〜1）は間引きの解像度を振る。明るい方の群を最近傍で元解像度に拡大して region として返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>

@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;pow_image&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">pow_image</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>実装は `<code style="color:#22d3bf">gamma_image</code><code style="color:#22d3bf"> と**まったく同じ関数**(</code><code style="color:#22d3bf">_sh_lut</code><code style="color:#22d3bf"> の </code>`kind:</p>
-<p>&quot;gamma&quot;`<code style="color:#22d3bf"> 分岐)を指す。つまり </code><code style="color:#22d3bf">pow_image</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">gamma_image</code>` は</p>
-<p>このバックエンド上では計算結果が一致する ―― HALCON では別の演算子(指数を</p>
-<p>明示的に指定する `<code style="color:#22d3bf">pow_image</code><code style="color:#22d3bf"> と符号化/復号を意図した </code><code style="color:#22d3bf">gamma_image</code>`)</p>
-<p>だが、ここでは代役の実体が重複している(近似の限界として明記)。</p>
+<p>该实现指向与 `<code style="color:#22d3bf">gamma_image</code><code style="color:#22d3bf"> 完全相同的函数（</code><code style="color:#22d3bf">_sh_lut</code><code style="color:#22d3bf"> 中 </code><code style="color:#22d3bf">kind: &quot;gamma&quot;</code><code style="color:#22d3bf"> 的分支）。也就是说，</code><code style="color:#22d3bf">pow_image</code><code style="color:#22d3bf"> 与 </code><code style="color:#22d3bf">gamma_image</code><code style="color:#22d3bf"> 在此后端上的计算结果是一致的 —— 在 HALCON 中它们是不同的算子（明确指定指数的 </code><code style="color:#22d3bf">pow_image</code><code style="color:#22d3bf"> 与用于编码/解码的 </code><code style="color:#22d3bf">gamma_image</code>`），但在此处这两个替代实现的实体是重复的（明确记为近似的局限）。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がべき指数を 0.3〜2.8 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。HALCON の</p>
 <p>`<code style="color:#22d3bf">pow_image</code>`（Raise an image to a power.）の代役。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

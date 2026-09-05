@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;dl_aniso_diffusion&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">anisotropic_diffusion</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>Perona-Malik 型の異方性拡散フィルタ（torch 実装、GPU があれば GPU 上で実行）。</p>
+<p>A Perona-Malik-type anisotropic diffusion filter (torch implementation; runs on the GPU if one is available).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>上下左右 4 方向の差分にそれぞれ `<code style="color:#22d3bf">exp(-(差分/K)^2)</code>` の伝導度を掛けてから加算する</p>
 <p>反復拡散で、勾配が大きい（エッジらしい）場所ほど拡散が弱まり、エッジを保ったまま</p>
 <p>平滑化する。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はエッジ検出しきい値 </code><code style="color:#22d3bf">K</code><code style="color:#22d3bf"> を 0.02〜0.22 に振る（</code>`K = 0.02 +</p>

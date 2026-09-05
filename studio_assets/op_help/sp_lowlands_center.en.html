@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sp_lowlands_center&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">lowlands_center</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>極小の「盆地」（周囲より低い平坦領域）の重心を返す（HALCON `<code style="color:#22d3bf">lowlands_center</code>` に相当）。</p>
+<p>Returns the centroid of minimum &#x27;basins&#x27; (flat regions lower than their surroundings) (equivalent to HALCON `<code style="color:#22d3bf">lowlands_center</code>`).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">sp_plateaus</code><code style="color:#22d3bf"> と同じ量子化による平坦領域抽出を行った上で、外周の画素がすべて厳密に高い（領域極小である）ものだけを残し、さらに深さ（外周の最小値との差）が </code><code style="color:#22d3bf">min_depth = 0.01 + 0.40*a</code><code style="color:#22d3bf"> 以上のものだけを採用する。</code><code style="color:#22d3bf">b</code>` は未使用。戻り値は CONTOUR、各盆地につき 1 点（重心座標、単位はピクセル）。入力が 200,000 画素を超える場合は安全側で空集合を返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>

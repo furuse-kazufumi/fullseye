@@ -3,13 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;aug_cutout&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Cutout / random-erasing occlusion (DeVries &amp; Taylor 2017; Zhong et al.</p>
-<p>2020): a square patch of side `<code style="color:#22d3bf">max(1, a*min(H,W))</code>` is erased from the</p>
-<p>image, forcing a pipeline to survive partial occlusion instead of relying on</p>
-<p>one salient blob. `<code style="color:#22d3bf">b</code>` selects the (deterministic, seeded-from-b) patch</p>
-<p>position AND the fill value: b &lt;= 0.5 -&gt; black (0.0), b &gt; 0.5 -&gt; mid-gray</p>
-<p>(0.5). The patch is always fully inside the frame.</p>
+<p>Cutout / 随机擦除(random-erasing)遮挡(DeVries &amp; Taylor 2017;Zhong 等 2020):从图像中擦除一个边长为 `<code style="color:#22d3bf">max(1, a*min(H,W))</code><code style="color:#22d3bf"> 的正方形色块,迫使处理流程在部分遮挡下仍能存活,而不是依赖单一显著区块。</code><code style="color:#22d3bf">b</code>` 同时决定(以 b 为种子、确定性的)色块位置和填充值:b &lt;= 0.5 时为黑色(0.0),b &gt; 0.5 时为中灰(0.5)。色块始终完全位于画面内。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

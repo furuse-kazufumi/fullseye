@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;roberts&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">roberts</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Roberts クロス演算子。2x2 の対角差分(左上−右下、右上−左下)から</p>
-<p>`<code style="color:#22d3bf">hypot</code>` で振幅を求める、最小サイズのエッジ検出カーネル。斜め方向の</p>
-<p>エッジに敏感だがノイズにも敏感。HALCON の `<code style="color:#22d3bf">roberts</code>`（Detect edges using</p>
-<p>the Roberts filter.）に相当。</p>
+<p>Roberts 交叉算子。这是尺寸最小的边缘检测核,通过 2x2 的对角差分(左上−右下、右上−左下)以 `<code style="color:#22d3bf">hypot</code><code style="color:#22d3bf"> 求出振幅。对斜向边缘敏感,但对噪声也敏感。相当于 HALCON 的 </code><code style="color:#22d3bf">roberts</code>`(Detect edges using the Roberts filter.)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。境界は </code><code style="color:#22d3bf">_shift_edge</code>` でエッジ複製(reflect 相当)</p>
 <p>して扱うため、画像端でも折り返しノイズは出ない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;dots_image&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">dots_image</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>ガウシアンラプラシアン（Laplacian of Gaussian, LoG）フィルタ。σ = 0.5+2.5a のガウス核でラプラシアンを取り、signed01（符号つき値を [0,1]、0.5=応答ゼロ）で正規化する。b は未使用。円形の点状パターン（ドット）はガウシアンの等方性からくる強い LoG 応答を示すため、円形ドットの強調に使われる。</p>
+<p>高斯拉普拉斯（Laplacian of Gaussian, LoG）濾波器。以 σ = 0.5+2.5a 的高斯核取拉普拉斯，並以 signed01（將帶符號的值映射到 [0,1]，0.5 表示零響應）正規化。b 未使用。由於圓形點狀圖案（點）會因高斯核的等向性而產生強烈的 LoG 響應，因此可用於強化圓形點。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の `<code style="color:#22d3bf">dots_image</code>`（画像中の円形ドットを強調する演算）に相当する近似で、専用のドット検出カーネルではなく一般的な LoG フィルタで代用している。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>

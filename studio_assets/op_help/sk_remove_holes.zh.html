@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_remove_holes&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">fill_up</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>小さい穴埋め。前景領域の内部にある背景の孔(穴)のうち、面積がしきい値未満のものだけを塗りつぶす —— 大きな孔(意図した開口部)は残す。</p>
+<p>小孔洞填充。仅将前景区域内部背景孔(洞)中面积小于阈值的部分填平 —— 较大的孔洞(有意的开口)则保留。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>HALCON の <code style="color:#22d3bf">fill_up</code>(Fill up holes in regions.)に相当(近似。HALCON 版は全ての孔を埋めるが、こちらは面積フィルタ付き)。実装は `<code style="color:#22d3bf">morphology.remove_small_holes(binm(v), area_threshold=int(8+a*60))</code>` —— a は埋める孔の面積上限を 8〜68 画素に振る。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

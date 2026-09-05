@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_closing_by_recon&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>再構成によるクロージング(SimpleITK `<code style="color:#22d3bf">ClosingByReconstruction</code>`、xsitk_opening_by_recon の双対)。膨張後の収縮をマスク付き再構成で行い、輪郭を保ったまま小さな暗い窪みだけを埋める。</p>
+<p>重建閉運算（SimpleITK `<code style="color:#22d3bf">ClosingByReconstruction</code>`，xsitk_opening_by_recon的對偶）。膨脹後的侵蝕改以帶遮罩的重建來進行，在保持輪廓的同時只填補小的暗色凹陷。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は構造要素の半径(1〜5)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。出力は [0,1] にクリップ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>

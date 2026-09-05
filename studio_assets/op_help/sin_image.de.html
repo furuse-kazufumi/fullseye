@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sin_image&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">sin_image</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>`<code style="color:#22d3bf">(sin(2πx) + 1) / 2</code>` で階調を正弦波状に折り返す周期 LUT。x=0 と x=1 で</p>
-<p>0.5 に戻り、x=0.25/0.75 付近で 0/1 に達する ―― 単調増加ではなく**同じ出力を</p>
-<p>複数の入力階調が共有する**非可逆変換になる。HALCON の `<code style="color:#22d3bf">sin_image</code>`</p>
-<p>（Calculate the sine of an image.）の代役。</p>
+<p>Eine periodische LUT, die Tonwerte über `<code style="color:#22d3bf">(sin(2*pi*x) + 1) / 2</code><code style="color:#22d3bf"> sinusförmig faltet. Sie kehrt bei x=0 und x=1 zu 0,5 zurück und erreicht nahe x=0,25/0,75 die Werte 0/1 - statt monoton zu steigen, ist dies eine irreversible Transformation, bei der mehrere Eingangstonwerte denselben Ausgabewert teilen. Ersatz für HALCONs </code><code style="color:#22d3bf">sin_image</code>` (Calculate the sine of an image.).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。周期や位相を変える調整点は無い。等高線状の疑似カラー</p>
 <p>効果や階調の折返しを作る用途向けで、通常のコントラスト調整には向かない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

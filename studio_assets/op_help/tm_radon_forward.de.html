@@ -3,17 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tm_radon_forward&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Forward Radon projection: treat `<code style="color:#22d3bf">v</code>` as a slice image and integrate it</p>
-<p>along parallel rays to build a sinogram (rows = angles, cols = detector),</p>
-<p>refit to the original HxW. `<code style="color:#22d3bf">a</code>` sets how many angles are acquired</p>
-<p>(`<code style="color:#22d3bf">n = round(H*a)</code><code style="color:#22d3bf"> clamped to 8..360 -- the sparse-view knob), </code><code style="color:#22d3bf">b</code>` sets the</p>
-<p>angular span (`<code style="color:#22d3bf">span = 180*min(1, 0.5+b)</code>` deg: b &lt; 0.5 is limited-angle CT,</p>
-<p>b &gt;= 0.5 -- including the default b = 0.5 -- is the full [0,180) span that</p>
-<p>`<code style="color:#22d3bf">tm_fbp_reconstruct</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">tm_sart_reconstruct</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">tm_backproject_unfiltered</code>`</p>
-<p>assume, so the natural chain forward -&gt; inverse round-trips at default knobs).</p>
-<p>Uses `<code style="color:#22d3bf">skimage.transform.radon</code>` when available, else the NumPy</p>
-<p>rotate-and-sum Radon transform.</p>
+<p>Vorwärts-Radon-Projektion: `<code style="color:#22d3bf">v</code><code style="color:#22d3bf"> wird als Schichtbild behandelt und entlang paralleler Strahlen integriert, um ein Sinogramm zu erstellen (Zeilen = Winkel, Spalten = Detektor), das anschließend wieder auf das ursprüngliche HxW angepasst wird. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> legt fest, wie viele Winkel erfasst werden (</code><code style="color:#22d3bf">n = round(H*a)</code><code style="color:#22d3bf">, begrenzt auf 8..360 — der Sparse-View-Regler); </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> legt die Winkelspanne fest (</code><code style="color:#22d3bf">span = 180*min(1, 0.5+b)</code><code style="color:#22d3bf"> Grad: b &lt; 0,5 ist Limited-Angle-CT, b &gt;= 0,5 — einschließlich des Standardwerts b = 0,5 — ist die volle Spanne [0,180), die </code><code style="color:#22d3bf">tm_fbp_reconstruct</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">tm_sart_reconstruct</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">tm_backproject_unfiltered</code><code style="color:#22d3bf"> annehmen, sodass die natürliche Kette Vorwärts -&gt; Rückwärts bei den Standardreglern verlustfrei hin- und zurückläuft). Verwendet </code><code style="color:#22d3bf">skimage.transform.radon</code>`, falls verfügbar, andernfalls die NumPy-basierte Rotate-and-Sum-Radon-Transformation.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">Leitfaden zur Familie gallery2d_physics_alife_3d</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xkor_bilateral&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>バイラテラルフィルタ（エッジ保存平滑化）。`<code style="color:#22d3bf">kornia.filters.bilateral_blur</code>`</p>
-<p>を 5x5 カーネルで呼ぶ。</p>
+<p>양방향 필터(에지 보존 평활화). 5x5 커널로 `<code style="color:#22d3bf">kornia.filters.bilateral_blur</code>`를 호출한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>a は空間方向のシグマ（`<code style="color:#22d3bf">1.0 + 3.0 * a</code>`、範囲 1.0〜4.0）、b は明度方向の</p>
 <p>シグマ（`<code style="color:#22d3bf">0.05 + 0.4 * b</code>`、範囲 0.05〜0.45）を振る。値が近い画素だけを</p>
 <p>混ぜるため、平滑化しつつエッジは保たれる。</p>

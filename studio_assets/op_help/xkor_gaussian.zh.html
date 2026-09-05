@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xkor_gaussian&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>ガウシアンぼかし（kornia の GPU ネイティブ実装）。torch テンソル上で</p>
-<p>`<code style="color:#22d3bf">kornia.filters.gaussian_blur2d</code>` を 5x5 カーネル・シグマ可変で掛ける。</p>
+<p>高斯模糊(kornia 的 GPU 原生实现)。在 torch 张量上以 5x5 核、可变 sigma 应用 `<code style="color:#22d3bf">kornia.filters.gaussian_blur2d</code>`。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>a はシグマを 0.3〜3.0 の範囲で振る（`<code style="color:#22d3bf">0.3 + 2.7 * a</code>`）。b は未使用。</p>
 <p>CPU 実行では scipy 版と比べて速くはならない（GPU・バッチ実行時に効く</p>
 <p>実装。`<code style="color:#22d3bf">IMGEVOLVE_KORNIA_DEVICE=cuda</code>` で GPU に乗る）。</p>

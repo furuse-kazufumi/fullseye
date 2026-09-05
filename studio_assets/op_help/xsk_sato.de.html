@@ -3,11 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk_sato&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Sato tubeness フィルタ。skimage.filters.sato をスケール sigma=1,2,3 の 3 段で</p>
-<p>適用し、管状構造(血管など)を強調する。ヘッセ行列の固有値比から線状/管状</p>
-<p>らしさを計算する点は `<code style="color:#22d3bf">xsk_meijering</code>` と同系だが、応答の重み付けが異なり</p>
-<p>分岐点には Meijering ほど強く応答しない。</p>
+<p>Sato-Tubeness-Filter. Wendet `<code style="color:#22d3bf">skimage.filters.sato</code><code style="color:#22d3bf"> in drei Skalenstufen (sigma=1,2,3) an, um röhrenförmige Strukturen (z. B. Blutgefäße) hervorzuheben. Die Berechnung der Linien-/Röhrenähnlichkeit aus dem Eigenwertverhältnis der Hesse-Matrix gehört zur selben Familie wie </code><code style="color:#22d3bf">xsk_meijering</code>`, jedoch mit anderer Gewichtung der Antwort, und reagiert an Verzweigungspunkten nicht so stark wie Meijering.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用(sigma は固定)。出力は </code><code style="color:#22d3bf">_norm</code>` で正規化した符号なし</p>
 <p>強度画像。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

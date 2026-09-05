@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_moving_average_window&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Causal per-pixel mean over the last *window* frames → `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">video</code>`).</p>
+<p>對最近 *window* 幀逐像素取因果平均值 → `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">video</code>`）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Not the centred :func:<code style="color:#22d3bf">videops.moving_average</code>: this one never looks ahead,</p>
 <p>which is what a live stream can do.</p>
 <p>Typed bridge of the videostream op `<code style="color:#22d3bf">moving_average_window</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">window</code><code style="color:#22d3bf"> (default 3); </code><code style="color:#22d3bf">b</code>` is unused.</p>

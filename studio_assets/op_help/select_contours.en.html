@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;select_contours&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">select_contours_xld</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>点数（長さ）でフィルタして XLD 輪郭を選別する。HALCON の `<code style="color:#22d3bf">select_contours_xld</code>`（Select XLD contours according to several features.）に相当。</p>
+<p>Selects XLD contours by filtering on point count (length). Equivalent to HALCON&#x27;s `<code style="color:#22d3bf">select_contours_xld</code>` (Select XLD contours according to several features.).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が残す最小点数のしきい値を </code><code style="color:#22d3bf">3〜43</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">3 + int(40a)</code><code style="color:#22d3bf">）に振る。</code><code style="color:#22d3bf">b</code>` は未使用。輪郭を構成する点の数（≒長さ）がしきい値未満のものを丸ごと捨てる。HALCON 版は点数以外にも円形度・凸性などの特徴で選べるが、この実装は点数のみ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>

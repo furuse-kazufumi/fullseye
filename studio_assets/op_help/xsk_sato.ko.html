@@ -3,11 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk_sato&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Sato tubeness フィルタ。skimage.filters.sato をスケール sigma=1,2,3 の 3 段で</p>
-<p>適用し、管状構造(血管など)を強調する。ヘッセ行列の固有値比から線状/管状</p>
-<p>らしさを計算する点は `<code style="color:#22d3bf">xsk_meijering</code>` と同系だが、応答の重み付けが異なり</p>
-<p>分岐点には Meijering ほど強く応答しない。</p>
+<p>Sato tubeness 필터. sigma=1,2,3의 3단계 스케일로 `<code style="color:#22d3bf">skimage.filters.sato</code><code style="color:#22d3bf">를 적용하여 관 형태 구조(혈관 등)를 강조한다. Hessian 행렬의 고유값 비로부터 선형/관형다움을 계산하는 점은 </code><code style="color:#22d3bf">xsk_meijering</code>`과 같은 계열이지만, 응답 가중치가 다르며 분기점에서는 Meijering만큼 강하게 반응하지 않는다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用(sigma は固定)。出力は </code><code style="color:#22d3bf">_norm</code>` で正規化した符号なし</p>
 <p>強度画像。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

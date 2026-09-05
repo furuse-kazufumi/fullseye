@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;deviation_image&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">deviation_image</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>矩形窓内の画素値の標準偏差(局所標準偏差、`<code style="color:#22d3bf">E[x^2]-E[x]^2</code>` の平方根)</p>
-<p>を正規化した画像。テクスチャの局所的なばらつき(粗さ)を可視化する。HALCON</p>
-<p>の `<code style="color:#22d3bf">deviation_image</code>`（Calculate the standard deviation of gray values</p>
-<p>within rectangular windows.）に相当。</p>
+<p>将矩形窗口内像素值的标准差(局部标准差,即`<code style="color:#22d3bf">E[x^2]-E[x]^2</code><code style="color:#22d3bf">的平方根)归一化后得到的图像。用于可视化纹理的局部离散程度(粗糙度)。相当于HALCON的</code><code style="color:#22d3bf">deviation_image</code>`(Calculate the standard deviation of gray values within rectangular windows.)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の一辺を </code><code style="color:#22d3bf">{3,5,7,9}</code><code style="color:#22d3bf"> で振る。</code><code style="color:#22d3bf">b</code>` は未使用。平坦な領域では</p>
 <p>0 に近く、テクスチャの激しい領域で値が大きくなる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

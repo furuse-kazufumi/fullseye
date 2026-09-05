@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_fit_surface1&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">fit_surface_first_order</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>gray 値を 1 次多項式面(平面)で最小二乗近似する。HALCON の</p>
-<p>`<code style="color:#22d3bf">fit_surface_first_order</code>`(gray 値モーメントを計算し 1 次曲面で近似する)</p>
-<p>に相当。</p>
+<p>以最小平方法將灰階值擬合為一次多項式曲面(平面)。相當於 HALCON 的 `<code style="color:#22d3bf">fit_surface_first_order</code>`(計算灰階值動差並擬合一次曲面)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>座標を [-1, 1] に正規化してから `<code style="color:#22d3bf">[1, x, y]</code>` を基底に最小二乗回帰し、</p>
 <p>近似面を min-max で [0, 1] に正規化して返す(照明ムラ推定に使う)。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>

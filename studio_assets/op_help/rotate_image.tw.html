@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;rotate_image&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">rotate_image</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>画像を中心を軸に `<code style="color:#22d3bf">-45°〜+45°</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">a</code>` で決まる)回転する</p>
-<p>(`<code style="color:#22d3bf">scipy.ndimage.rotate</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">reshape=False</code>` でキャンバスサイズを維持)。</p>
-<p>枠外にはみ出す部分は反射(`<code style="color:#22d3bf">mode=&quot;reflect&quot;</code>`)で埋めるため、四隅には元画像が</p>
-<p>折り返して写り込む(帳票の傾き補正のように「枠外を背景色で埋めたい」用途</p>
-<p>にはそのままでは向かない、既知の設計上の制約)。HALCON の</p>
-<p>`<code style="color:#22d3bf">rotate_image</code>`（Rotate an image about its center.）に相当。</p>
+<p>以中心為軸將影像旋轉-45°〜+45°(由`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">決定)(</code><code style="color:#22d3bf">scipy.ndimage.rotate</code><code style="color:#22d3bf">,以</code><code style="color:#22d3bf">reshape=False</code><code style="color:#22d3bf">保持畫布尺寸不變)。超出邊框的部分以反射(</code><code style="color:#22d3bf">mode=&quot;reflect&quot;</code><code style="color:#22d3bf">)方式填補,因此四個角落會出現原圖折返映入的現象(這是已知的設計限制,像表單傾斜校正那種想以背景色填補邊框外的用途並不適合直接使用)。相當於HALCON的</code><code style="color:#22d3bf">rotate_image</code>`(Rotate an image about its center.)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が回転角を -45°〜+45° の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>

@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;fft_image&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">fft_image</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>2 次元 FFT のパワースペクトルを `<code style="color:#22d3bf">log1p(|F|)</code>` で圧縮し正規化した画像。</p>
-<p>低周波(直流)成分が中心にくるよう `<code style="color:#22d3bf">fftshift</code>` 済み。周期的なノイズや</p>
-<p>テクスチャの空間周波数を可視化するのに使う。HALCON の `<code style="color:#22d3bf">fft_image</code>`</p>
-<p>（Compute the fast Fourier transform of an image.）に相当。</p>
+<p>An image obtained by compressing the power spectrum of the 2D FFT with `<code style="color:#22d3bf">log1p(|F|)</code><code style="color:#22d3bf"> and normalizing it. Already </code><code style="color:#22d3bf">fftshift</code><code style="color:#22d3bf">-ed so the low-frequency (DC) component sits at the center. Used to visualize the spatial frequency of periodic noise or texture. Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">fft_image</code>` (Compute the fast Fourier transform of an image).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用 ―― 画像全体に対するグローバルな FFT で、窓関数や</p>
 <p>帯域選択のような調整点は無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

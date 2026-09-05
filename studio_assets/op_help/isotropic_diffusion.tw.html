@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;isotropic_diffusion&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">isotropic_diffusion</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>実装は単純なガウシアンぼかし(`<code style="color:#22d3bf">gaussian_filter</code>`、シグマ</p>
-<p>`<code style="color:#22d3bf">0.5+2.5*a</code>`)。等方拡散方程式の解はガウシアン核による畳み込みと数学的に</p>
-<p>等価なので、この近似は理論的にも妥当(異方性拡散のようなエッジ保存効果は</p>
-<p>無く、方向を問わず一様に滑らかになる)。HALCON の `<code style="color:#22d3bf">isotropic_diffusion</code>`</p>
-<p>（Perform an isotropic diffusion of an image.）に相当。</p>
+<p>實作是單純的高斯模糊(`<code style="color:#22d3bf">gaussian_filter</code><code style="color:#22d3bf">,sigma為</code><code style="color:#22d3bf">0.5+2.5*a</code><code style="color:#22d3bf">)。由於等向性擴散方程式的解在數學上等價於高斯核卷積,此近似在理論上也成立(不具備各向異性擴散那樣的保邊效果,而是無論方向為何都均勻平滑)。相當於HALCON的</code><code style="color:#22d3bf">isotropic_diffusion</code>`(Perform an isotropic diffusion of an image.)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がシグマ(拡散時間に相当)を 0.5〜3.0 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

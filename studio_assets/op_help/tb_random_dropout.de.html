@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_random_dropout&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>点の `<code style="color:#22d3bf">ratio</code><code style="color:#22d3bf"> 割合をランダム除去し </code><code style="color:#22d3bf">(kept, kept_idx)</code>` を返す(欠損の模倣)。</p>
+<p>Entfernt zufällig einen Anteil `<code style="color:#22d3bf">ratio</code><code style="color:#22d3bf"> der Punkte und gibt </code><code style="color:#22d3bf">(kept, kept_idx)</code>` zurück (Nachbildung fehlender Daten).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>残す点数は `<code style="color:#22d3bf">round((1-ratio)*N)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">kept_idx</code>` は元配列への昇順インデックスで、</p>
 <p>`<code style="color:#22d3bf">kept == points[kept_idx]</code>` が厳密に成り立つ。オクルージョン/疎な視点による</p>
 <p>点欠損を学習で再現する。`<code style="color:#22d3bf">0 &lt;= ratio &lt;= 1</code>` を要求。</p>

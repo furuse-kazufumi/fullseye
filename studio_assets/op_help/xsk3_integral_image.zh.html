@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk3_integral_image&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>積分画像(summed-area table、skimage `<code style="color:#22d3bf">transform.integral_image</code>`)。原点から各画素までの累積和を格納した画像で、任意矩形領域の合計をたった 4 点の参照で計算できるようにする、Haar 特徴量や矩形フィルタの高速化に使う古典的な下ごしらえ。最大値で正規化して表示用に潰している。</p>
+<p>积分图(summed-area table，skimage `<code style="color:#22d3bf">transform.integral_image</code>`)。存储从原点到各像素累计和的图像，使得任意矩形区域的总和只需参照 4 个点即可计算——用于加速 Haar 特征和矩形滤波器的经典预处理。为便于显示，按最大值归一化后压缩。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。値そのものは単調非減少で、右下に行くほど明るくなる見た目になる(画像としての意味は薄く、内部データ構造の可視化に近い)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>

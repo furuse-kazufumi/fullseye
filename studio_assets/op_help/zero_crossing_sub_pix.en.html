@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;zero_crossing_sub_pix&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">zero_crossing_sub_pix</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>LoG(ガウス平滑化込みラプラシアン、シグマ `<code style="color:#22d3bf">0.5+2*a</code>`)のゼロ交差を</p>
-<p>`<code style="color:#22d3bf">find_contours</code>` でサブピクセル精度の輪郭として抽出する。領域版の</p>
-<p>`<code style="color:#22d3bf">zero_crossing</code>`(画素解像度)に対するサブピクセル精度版。HALCON の</p>
-<p>`<code style="color:#22d3bf">zero_crossing_sub_pix</code>`（Extract zero crossings from an image with</p>
-<p>subpixel accuracy.）に相当。</p>
+<p>Extracts the zero crossings of LoG (Laplacian with built-in Gaussian smoothing, sigma `<code style="color:#22d3bf">0.5+2*a</code><code style="color:#22d3bf">) as a sub-pixel-accuracy contour using </code><code style="color:#22d3bf">find_contours</code><code style="color:#22d3bf">. The sub-pixel-accuracy version of the region-based </code><code style="color:#22d3bf">zero_crossing</code><code style="color:#22d3bf"> (pixel resolution). Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">zero_crossing_sub_pix</code>` (Extract zero crossings from an image with subpixel accuracy.).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がガウス平滑化のシグマを振る。</code><code style="color:#22d3bf">b</code>` は未使用。skimage が無い環境</p>
 <p>ではこの分岐は呼べない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

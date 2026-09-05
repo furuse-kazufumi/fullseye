@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xwt_visushrink&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>VisuShrink 風のウェーブレットノイズ除去。`<code style="color:#22d3bf">db4</code><code style="color:#22d3bf"> で 2 段分解し、各段の詳細係数をソフト閾値処理してから逆変換で再構成する(VisuShrink はこの閾値をノイズ量から自動決定する手法だが、ここでは </code><code style="color:#22d3bf">a</code>` で直接与える簡略版)。</p>
+<p>VisuShrink-style wavelet denoising. Decomposes with `<code style="color:#22d3bf">db4</code><code style="color:#22d3bf"> over 2 levels, applies soft thresholding to each level&#x27;s detail coefficients, then reconstructs via inverse transform (VisuShrink normally derives this threshold automatically from the noise level, but here it is a simplified version given directly via </code><code style="color:#22d3bf">a</code>`).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は閾値(</code><code style="color:#22d3bf">0.05+0.5*a</code><code style="color:#22d3bf"> で 0.05〜0.55)を振る —— 大きいほど強く平滑化されディテールが失われる。</code><code style="color:#22d3bf">b</code>` は未使用。出力は元画像サイズに切り詰めて [0,1] にクリップ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>

@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sobel_dir&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">sobel_dir</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Sobel 勾配の向き(`<code style="color:#22d3bf">arctan2(dy, dx)</code>` を [0,1] に写像。0=−π, 1=+π)。</p>
-<p>振幅を返す `<code style="color:#22d3bf">sobel_amp</code>` と対になる、エッジの走る方向を求める演算。HALCON の</p>
-<p>`<code style="color:#22d3bf">sobel_dir</code>`（Detect edges (amplitude and direction) using the Sobel</p>
-<p>operator.）に相当(HALCON は振幅と方向を同時に返すが、ここでは方向のみの</p>
-<p>別 op として分離)。</p>
+<p>Sobel 梯度的方向(`<code style="color:#22d3bf">arctan2(dy, dx)</code><code style="color:#22d3bf"> 映射到 [0,1],0=-π,1=+π)。與回傳振幅的 </code><code style="color:#22d3bf">sobel_amp</code><code style="color:#22d3bf"> 成對,用於求邊緣走向的運算。相當於 HALCON 的 </code><code style="color:#22d3bf">sobel_dir</code>`(Detect edges (amplitude and direction) using the Sobel operator.)(HALCON 同時回傳振幅與方向,這裡則將方向拆分為獨立的 op)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。平坦な領域では勾配がほぼゼロベクトルになり、方向は</p>
 <p>ノイズに支配される点に注意。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;equ_histo_image_rect&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">equ_histo_image_rect</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>ブロック単位のヒストグラム平坦化。画像を `<code style="color:#22d3bf">nb x nb</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">nb=2+4*a</code>`)</p>
-<p>個のブロックに分割し、各ブロックごとに独立して(64 ビンの)ヒストグラム</p>
-<p>平坦化を行う ―― 局所的な照明ムラに対して `<code style="color:#22d3bf">equ_histo_image</code>`(画像全体を</p>
-<p>一括処理)より頑健だが、ブロック境界に段差(ブロックアーティファクト)が</p>
-<p>出ることがある。HALCON の `<code style="color:#22d3bf">equ_histo_image_rect</code>`（Histogram</p>
-<p>linearization within a rectangluar mask.）に相当。</p>
+<p>分块直方图均衡化。将图像分割为 `<code style="color:#22d3bf">nb x nb</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">nb=2+4*a</code><code style="color:#22d3bf">)个区块,并对每个区块独立进行(64 分箱的)直方图均衡化——相较于一次性处理整幅图像的 </code><code style="color:#22d3bf">equ_histo_image</code><code style="color:#22d3bf">,对局部光照不均更为稳健,但区块边界处可能出现阶跃(区块伪影)。相当于 HALCON 的 </code><code style="color:#22d3bf">equ_histo_image_rect</code>`(Histogram linearization within a rectangular mask.)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がブロック分割数を 2〜6 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>

@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;distance_transform&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">distance_transform</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>ユークリッド距離変換(`<code style="color:#22d3bf">ndimage.distance_transform_edt</code>`)を最大値で</p>
-<p>正規化した画像。各前景画素について最も近い背景画素までの距離を表す ――</p>
-<p>値が大きいほど領域の「奥」にある画素。出力は `<code style="color:#22d3bf">region</code>` ではなく</p>
-<p>`<code style="color:#22d3bf">image</code><code style="color:#22d3bf"> 型になる点に注意。HALCON の </code><code style="color:#22d3bf">distance_transform</code>`（Compute the</p>
-<p>distance transformation of a region.）に相当。</p>
+<p>최댓값으로 정규화한 유클리드 거리 변환(`<code style="color:#22d3bf">ndimage.distance_transform_edt</code><code style="color:#22d3bf">) 이미지. 각 전경 픽셀에 대해 가장 가까운 배경 픽셀까지의 거리를 나타낸다 -- 값이 클수록 영역의 &#x27;안쪽 깊이&#x27;에 있는 픽셀이다. 출력이 </code><code style="color:#22d3bf">region</code><code style="color:#22d3bf">이 아니라 </code><code style="color:#22d3bf">image</code><code style="color:#22d3bf"> 타입이 되는 점에 주의. HALCON의 </code><code style="color:#22d3bf">distance_transform</code>`(Compute the distance transformation of a region.)에 해당.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 패밀리 가이드</a></p>

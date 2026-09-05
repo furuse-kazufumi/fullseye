@@ -7,7 +7,7 @@ out: table
 examples: [lens_calibration_loop_demo, lens_defect_dataset_demo, lens_design_demo, lens_optimize_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.7  # fullseye lib version this note was generated for
+version: 0.1.8  # fullseye lib version this note was generated for
 ---
 
 # example_system — OPTICS `design` op

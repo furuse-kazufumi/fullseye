@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">qimage</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_quat_norm&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Per-pixel quaternion modulus `<code style="color:#22d3bf">|q| = sqrt(w^2+x^2+y^2+z^2)</code>`. → (H, W).</p>
+<p>逐像素四元數模：`<code style="color:#22d3bf">|q| = sqrt(w^2+x^2+y^2+z^2)</code>`。→ (H, W)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><b>Raw / unnormalised</b>, following `<code style="color:#22d3bf">complexops.cx_magnitude</code>`: a modulus is a</p>
 <p>metric quantity and routinely exceeds one (a QFT spectrum&#x27;s DC term is huge).</p>
 <p>For a colour quaternion it is the colour *magnitude* — the length of the RGB</p>

@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sk_entropy&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">entropy_image</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>局所エントロピー。各画素の周辺(円盤状の近傍)にあるグレー値分布のシャノンエントロピー(2 進対数)を計算し、その場所を符号化するのに必要な最小ビット数として画像化する —— テクスチャの複雑さ・情報量の指標。</p>
+<p>Local entropy. Computes the Shannon entropy (base-2 logarithm) of the gray-value distribution in the neighborhood (disk-shaped) around each pixel, and images it as the minimum number of bits needed to encode that location -- a measure of texture complexity/information content.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>HALCON の <code style="color:#22d3bf">entropy_image</code>(Calculate the entropy of gray values within a rectangular window.)に相当(近似。窓形状は矩形でなく円盤)。実装は `<code style="color:#22d3bf">filters.rank.entropy(_u8s(v), disk(1+int(a*3)))</code>` を正規化したもの —— a は円盤半径を 1〜4 に振る。b は未使用。入力は内部で 8 bit 化されるため、元画像の微妙な階調差は失われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq family guide</a></p>

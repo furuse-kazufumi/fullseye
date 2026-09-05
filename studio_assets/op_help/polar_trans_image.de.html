@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;polar_trans_image&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">polar_trans_image</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>直交座標→極座標変換(`<code style="color:#22d3bf">cv2.warpPolar</code>`)。画像中心を極の中心、</p>
-<p>`<code style="color:#22d3bf">min(H,W)/2</code>` を最大半径として、円環状の内容を横長の展開図に変換する。</p>
-<p>未マッピングの画素は 0 埋め(`<code style="color:#22d3bf">dst</code>` を事前ゼロクリアしてから、cv2 が返す</p>
-<p>戻り値を読む ―― `<code style="color:#22d3bf">dst</code>` バッファ自体を読むと空になることがある実装上の</p>
-<p>注意点がコードコメントに詳しい)。HALCON の `<code style="color:#22d3bf">polar_trans_image</code>`</p>
-<p>（Transform an image to polar coordinates）に相当。</p>
+<p>Eine Transformation von kartesischen in Polarkoordinaten (`<code style="color:#22d3bf">cv2.warpPolar</code><code style="color:#22d3bf">). Mit dem Bildmittelpunkt als Pol und </code><code style="color:#22d3bf">min(H,W)/2</code><code style="color:#22d3bf"> als maximalem Radius wird ringförmiger Inhalt in eine breite, abgerollte Darstellung umgewandelt. Nicht zugeordnete Pixel werden mit 0 aufgefüllt (</code><code style="color:#22d3bf">dst</code><code style="color:#22d3bf"> wird vorab auf Null gesetzt, und der von cv2 zurückgegebene Wert wird gelesen -- ein Implementierungshinweis in den Codekommentaren erklärt ausführlich, dass das direkte Lesen des </code><code style="color:#22d3bf">dst</code><code style="color:#22d3bf">-Puffers manchmal leer zurückkommen kann). Entspricht HALCONs </code><code style="color:#22d3bf">polar_trans_image</code>` (Transform an image to polar coordinates).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用 ―― 中心と半径は画像サイズから自動的に決まり、</p>
 <p>調整点は無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

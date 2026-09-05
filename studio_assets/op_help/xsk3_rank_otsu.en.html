@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk3_rank_otsu&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>局所大津二値化(skimage `<code style="color:#22d3bf">filters.rank.otsu</code>`)。近傍円盤内だけで大津の判別分析法(Otsu&#x27;s method)の閾値を求め、画素値がその局所閾値を上回るかで二値化する —— 大域大津と違い、照明ムラのある画像でも局所的に妥当な閾値が選べる。</p>
+<p>Local Otsu binarization (skimage `<code style="color:#22d3bf">filters.rank.otsu</code>`). Computes an Otsu&#x27;s-method (discriminant analysis) threshold within a local disk neighborhood only, and binarizes by whether the pixel value exceeds that local threshold - unlike global Otsu, this can select a locally appropriate threshold even on images with uneven illumination.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は円盤半径(</code><code style="color:#22d3bf">2+int(a*8)</code><code style="color:#22d3bf"> で 2〜10)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>

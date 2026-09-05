@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;select_contours_xld&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">select_contours_xld</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>既存の輪郭(XLD contour)集合から、点数が閾値(`<code style="color:#22d3bf">3+40*a</code>`)以上のものだけ</p>
-<p>を残すフィルタ。HALCON の `<code style="color:#22d3bf">select_contours_xld</code>`（Select XLD contours</p>
-<p>according to several features.）は面積・円形度など任意の特徴で選別できる</p>
-<p>汎用演算子だが、この代役では点数(長さの代理指標)による足切り 1 種類に</p>
-<p>固定している(近似)。</p>
+<p>從現有的輪廓(XLD contour)集合中,只保留點數達到閾值(`<code style="color:#22d3bf">3+40*a</code><code style="color:#22d3bf">)以上的過濾器。HALCON 的 </code><code style="color:#22d3bf">select_contours_xld</code>`(Select XLD contours according to several features.)是可用面積、圓形度等任意特徵篩選的通用運算子,但此替代實作固定為以點數(作為長度的替代指標)截斷這一種(近似)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が点数のしきい値を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_sensor_capture&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>放射輝度 → 実センサの出力(ショット雑音・読み出し雑音・飽和・量子化)。</p>
+<p>Strahldichte → Ausgabe eines realen Sensors (Schrotrauschen, Ausleserauschen, Sättigung, Quantisierung).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>光子数 = radiance · exposure_ms · gain_e_per_unit / 1000 を平均とする Poisson。</p>
 <p>そこへ読み出し雑音(正規)を足し、`<code style="color:#22d3bf">full_well_e</code><code style="color:#22d3bf"> で**飽和**させ、</code><code style="color:#22d3bf">bit_depth</code>`</p>
 <p>で量子化する。飽和は clip であって折り返さない(白飛びは白のまま)。</p>

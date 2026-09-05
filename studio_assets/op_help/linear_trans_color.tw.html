@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;linear_trans_color&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">linear_trans_color</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>3x3 の混合行列でチャンネル間を線形変換する（アフィン色変換）。HALCON の</p>
-<p>`<code style="color:#22d3bf">linear_trans_color</code>`（多チャンネル画像の色値のアフィン変換を計算する）</p>
-<p>に相当（本実装はオフセット項なしの純粋な線形変換）。</p>
+<p>使用 3x3 混合矩陣在通道之間進行線性變換（仿射色彩變換）。相當於 HALCON 的 `<code style="color:#22d3bf">linear_trans_color</code>`（計算多通道影像色值的仿射變換）（本實作為不含偏移項的純線性變換）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>対角成分 0.6 + 非対角 0.2 を基本形とし、a で位相 `<code style="color:#22d3bf">theta = pi * a</code>` を</p>
 <p>振って対角成分の一部を `<code style="color:#22d3bf">cos(theta)</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">sin(theta)</code>` で回転的に変化させた</p>
 <p>行列を作り、各行を合計 1 に正規化してから `<code style="color:#22d3bf">c @ M.T</code>` を掛ける。</p>

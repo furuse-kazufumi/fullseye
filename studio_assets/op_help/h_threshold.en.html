@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;h_threshold&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">threshold</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>帯域しきい値処理(`<code style="color:#22d3bf">a &lt; x &lt; a+0.5+0.5*b</code>` を満たす画素を前景とする)。</p>
-<p>HALCON の `<code style="color:#22d3bf">threshold</code>`(Segment an image using global threshold.)は</p>
-<p>Min/Max の 2 値を直接指定する演算子だが、この代役では下限を `<code style="color:#22d3bf">a</code>` から、</p>
-<p>帯域幅を `<code style="color:#22d3bf">b</code>` から導出する 1 パラメータ相当の簡略化になっている。登録名は</p>
-<p>`<code style="color:#22d3bf">threshold</code><code style="color:#22d3bf"> が Python 側で予約語的に扱われるため </code><code style="color:#22d3bf">h_threshold</code>` になる</p>
-<p>(spec の `<code style="color:#22d3bf">halcon</code><code style="color:#22d3bf"> フィールドは </code><code style="color:#22d3bf">threshold</code>` のまま)。</p>
+<p>Band thresholding (pixels satisfying `<code style="color:#22d3bf">a &lt; x &lt; a+0.5+0.5*b</code><code style="color:#22d3bf"> are treated as foreground). HALCON&#x27;s </code><code style="color:#22d3bf">threshold</code><code style="color:#22d3bf"> (Segment an image using global threshold) is an operator that directly specifies Min/Max values, but this substitute is a simplification roughly equivalent to a single parameter, deriving the lower bound from </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and the band width from </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf">. The registered name becomes </code><code style="color:#22d3bf">h_threshold</code><code style="color:#22d3bf"> because </code><code style="color:#22d3bf">threshold</code><code style="color:#22d3bf"> is treated as a reserved-word-like name on the Python side (the spec&#x27;s </code><code style="color:#22d3bf">halcon</code><code style="color:#22d3bf"> field remains </code><code style="color:#22d3bf">threshold</code>`).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が下限しきい値(0〜1)を、</code><code style="color:#22d3bf">b</code>` が帯域幅(0〜0.5 の追加分)を振る。</p>
 <p>両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

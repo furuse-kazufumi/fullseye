@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;lines_gauss&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">lines_gauss</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>線状構造(リッジ)検出。`<code style="color:#22d3bf">skimage.filters.frangi</code>`(血管様のリッジ強調</p>
-<p>フィルタ)の応答をしきい値(`<code style="color:#22d3bf">0.1+0.4*a</code>`)で二値化し、連結成分を輪郭点群</p>
-<p>として返す。HALCON の `<code style="color:#22d3bf">lines_gauss</code>`（Detect lines and their width.）が</p>
-<p>本来行う「線の中心線+幅の推定」ではなく、リッジ強調画像のしきい値化に</p>
-<p>単純化している(線幅の情報は返らない近似)。</p>
+<p>线状结构(脊线)检测。将 `<code style="color:#22d3bf">skimage.filters.frangi</code><code style="color:#22d3bf">(类血管脊线增强滤波器)的响应用阈值(</code><code style="color:#22d3bf">0.1+0.4*a</code><code style="color:#22d3bf">)二值化,并将连通成分作为轮廓点集返回。这是简化为对脊线增强图像做阈值化,而非 HALCON 的 </code><code style="color:#22d3bf">lines_gauss</code>`(Detect lines and their width.)本来所做的&quot;线的中心线+宽度估计&quot;(不返回线宽信息的近似)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がリッジ検出のしきい値を振る。</code><code style="color:#22d3bf">b</code>` は未使用。skimage が無い環境</p>
 <p>ではこの分岐は呼べない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

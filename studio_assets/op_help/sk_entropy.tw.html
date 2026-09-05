@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_entropy&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">entropy_image</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>局所エントロピー。各画素の周辺(円盤状の近傍)にあるグレー値分布のシャノンエントロピー(2 進対数)を計算し、その場所を符号化するのに必要な最小ビット数として画像化する —— テクスチャの複雑さ・情報量の指標。</p>
+<p>局部熵。計算每個像素周圍(圓盤狀鄰域)灰階值分佈的夏農熵(以 2 為底的對數),並將其成像為編碼該位置所需的最小位元數 —— 是紋理複雜度、資訊量的度量指標。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の <code style="color:#22d3bf">entropy_image</code>(Calculate the entropy of gray values within a rectangular window.)に相当(近似。窓形状は矩形でなく円盤)。実装は `<code style="color:#22d3bf">filters.rank.entropy(_u8s(v), disk(1+int(a*3)))</code>` を正規化したもの —— a は円盤半径を 1〜4 に振る。b は未使用。入力は内部で 8 bit 化されるため、元画像の微妙な階調差は失われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>

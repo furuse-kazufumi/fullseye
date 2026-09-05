@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;rank_image&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">rank_image</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>窓内の画素値を昇順に並べて指定パーセンタイル位置の値を返す汎用ランク</p>
-<p>フィルタ(`<code style="color:#22d3bf">ndimage.percentile_filter</code>`)。パーセンタイル 0 で収縮相当、</p>
-<p>100 で膨張相当、50 でメディアン相当になる連続的な一般化。HALCON の</p>
-<p>`<code style="color:#22d3bf">rank_image</code>`（Compute a rank filter with arbitrary masks.）に相当</p>
-<p>(HALCON は任意形状マスクを取れるが、ここでは正方形マスクに固定)。</p>
+<p>通用秩滤波器(`<code style="color:#22d3bf">ndimage.percentile_filter</code><code style="color:#22d3bf">),将窗口内像素值按升序排列,返回指定百分位位置的值。这是一种连续的推广:百分位为 0 相当于腐蚀,100 相当于膨胀,50 相当于中值。相当于 HALCON 的 </code><code style="color:#22d3bf">rank_image</code>`(Compute a rank filter with arbitrary masks.)(HALCON 可采用任意形状的遮罩,这里固定为方形遮罩)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の一辺を </code><code style="color:#22d3bf">{3,5,7,9}</code><code style="color:#22d3bf"> で、</code><code style="color:#22d3bf">b</code>` がパーセンタイルを 5〜95% の</p>
 <p>範囲で振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

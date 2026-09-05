@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;area_frac&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">area_center</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>領域が占める画素の割合（面積率）を返す特徴量。HALCON の `<code style="color:#22d3bf">area_center</code>`（Area and center of regions.）とは異なり、面積のみを返し重心は計算しない（機能の一部だけの対応）。</p>
+<p>傳回區域所佔像素比例（面積佔比）的特徵量。與 HALCON 的 `<code style="color:#22d3bf">area_center</code>`（Area and center of regions.）不同，只傳回面積而不計算重心（僅對應其部分功能）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。</code><code style="color:#22d3bf">v &gt; 0.5</code><code style="color:#22d3bf"> で二値化した画素の平均値（= 前景画素数 / 全画素数）をスカラーで返す。値域は </code><code style="color:#22d3bf">[0,1]</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

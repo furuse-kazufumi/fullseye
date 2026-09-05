@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sk_median_disk&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">median_image</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>円盤(disk)形の footprint によるメディアンフィルタ。通常の正方形カーネルと違い、円形に近い等方的な平滑化になる。</p>
+<p>원판(disk) 모양 footprint를 사용하는 미디언 필터. 일반적인 정사각형 커널과 달리 원형에 가까운 등방성 평활화가 이루어진다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>HALCON の <code style="color:#22d3bf">median_image</code>(Compute a median filter with various masks.)に相当。実装は `<code style="color:#22d3bf">filters.median(v, footprint=disk(1+int(a*3)))</code>` —— a は円盤の半径を 1〜4 に振る(半径が大きいほど強く滑らかになるが細部も消える)。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>

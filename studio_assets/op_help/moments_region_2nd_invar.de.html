@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;moments_region_2nd_invar&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">moments_region_2nd_invar</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Hu の第 1 不変モーメント(`<code style="color:#22d3bf">skimage.measure.moments_hu</code>` の</p>
-<p>`<code style="color:#22d3bf">hu[0]</code>`)の絶対値。回転・スケール・平行移動に対して不変な形状記述子。</p>
-<p>HALCON の `<code style="color:#22d3bf">moments_region_2nd_invar</code>`（Geometric moments of regions.）</p>
-<p>に相当する近似(HALCON 独自の相対不変モーメント定義とは厳密には異なり、</p>
-<p>古典的な Hu モーメントで代用している)。</p>
+<p>Der Absolutwert von Hus erstem invarianten Moment (`<code style="color:#22d3bf">hu[0]</code><code style="color:#22d3bf"> aus </code><code style="color:#22d3bf">skimage.measure.moments_hu</code><code style="color:#22d3bf">). Ein Formdeskriptor, der invariant gegenüber Rotation, Skalierung und Translation ist. Eine Approximation von HALCONs </code><code style="color:#22d3bf">moments_region_2nd_invar</code>` (Geometric moments of regions.) -- streng genommen unterscheidet sie sich von HALCONs eigener Definition relativer invarianter Momente und ersetzt diese durch die klassischen Hu-Momente.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>

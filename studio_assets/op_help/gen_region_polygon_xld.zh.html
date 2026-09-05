@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;gen_region_polygon_xld&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">gen_region_polygon_xld</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>XLD 輪郭（多角形の頂点列）を region（画素マスク）へ変換する。輪郭点を最近傍画素に打点したのち、`<code style="color:#22d3bf">1+2a</code>` 回の二値膨張（dilation）で線を太らせて連結させる。b は未使用。</p>
+<p>将 XLD 轮廓（多边形的顶点序列）转换为 region（像素掩膜）。将轮廓点标记到最近的像素后，通过 `<code style="color:#22d3bf">1+2a</code>` 次二值膨胀（dilation）使线条变粗并连接起来。b 未使用。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>HALCON の `<code style="color:#22d3bf">gen_region_polygon_xld</code>`（XLD 多角形の内部を塗りつぶした region を生成する演算）とは異なり、この実装は多角形の内部を塗りつぶすのではなく、輪郭線そのものを膨張させて太らせるだけの近似 —— 閉じていない輪郭や自己交差する輪郭では本来の内部塗りつぶしと結果が食い違う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>

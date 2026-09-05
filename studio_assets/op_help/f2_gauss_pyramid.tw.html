@@ -4,11 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;f2_gauss_pyramid&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">gen_gauss_pyramid</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Return one level of the image&#x27;s Gauss pyramid, down-sampled by 2 `<code style="color:#22d3bf">level</code>`</p>
-<p>times (blur + decimate) and then up-sampled back to the original HxW so the</p>
-<p>result is a band-limited (low-pass) version at reduced resolution. `<code style="color:#22d3bf">a</code>`</p>
-<p>selects the level (1..4); `<code style="color:#22d3bf">b</code>` is ignored.</p>
+<p>傳回影像高斯金字塔的其中一層:先以 2 的 `<code style="color:#22d3bf">level</code><code style="color:#22d3bf"> 次方降取樣(模糊+抽取),再放大回原始 HxW,得到解析度降低的頻寬受限(低通)版本。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 選擇層級(1..4);</code><code style="color:#22d3bf">b</code>` 被忽略。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

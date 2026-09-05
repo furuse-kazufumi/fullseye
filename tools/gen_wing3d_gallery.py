@@ -1799,8 +1799,9 @@ def ex_visual_hull(log) -> dict:
         for i in range(min(m, 8)):
             gx = sx + (i % 4) * (tile + 8)
             gy = sy + (i // 4) * (tile + 24)
-            im = Image.fromarray(_to_u8(_gray_rgb(sils[i].astype(np.float64)))) \
-                if False else None
+            # ここに `Image.fromarray(...) if False else None` が残っていた ——
+            # 常に偽の枝で、参照している Image は未 import(ruff F821)。
+            # 実際に使うのは次の行から import する _Im の方。
             from PIL import Image as _Im
             im = _Im.fromarray(_to_u8(_gray_rgb(sils[i].astype(np.float64)))).resize(
                 (tile, tile), _Im.NEAREST)

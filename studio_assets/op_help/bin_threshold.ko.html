@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;bin_threshold&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">bin_threshold</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>大津の判別分析法（Otsu&#x27;s method）による自動しきい値二値化。`<code style="color:#22d3bf">binary_threshold</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">auto_threshold</code><code style="color:#22d3bf"> と同じ </code><code style="color:#22d3bf">_sh_threshold</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">otsu</code>` 分岐を共有し、a, b は未使用。しきい値より明るい画素を前景(1)とする。skimage が無い環境では画像平均値をしきい値とするフォールバックになる。</p>
+<p>오츠 판별분석법(Otsu&#x27;s method)에 의한 자동 임계값 이진화. `<code style="color:#22d3bf">binary_threshold</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">auto_threshold</code><code style="color:#22d3bf">와 동일한 </code><code style="color:#22d3bf">_sh_threshold</code><code style="color:#22d3bf">의 </code><code style="color:#22d3bf">otsu</code>` 분기를 공유하며, a, b는 사용되지 않는다. 임계값보다 밝은 화소를 전경(1)으로 한다. skimage가 없는 환경에서는 이미지 평균값을 임계값으로 하는 폴백이 된다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>HALCON の `<code style="color:#22d3bf">bin_threshold</code>`（複数の自動しきい値決定アルゴリズムから選んで二値化する演算、既定は最大分離度=大津法相当）に相当する近似で、大津法のみをサポートし他のアルゴリズム選択肢は無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>

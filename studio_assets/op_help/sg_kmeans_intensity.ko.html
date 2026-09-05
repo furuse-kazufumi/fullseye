@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sg_kmeans_intensity&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>輝度値の k-means クラスタリングで最も明るいクラスタを領域として返す（自前の Lloyd 法実装、HALCON に対応オペレータなし）。</p>
+<p>밝기값에 대해 k-평균(k-means) 군집화를 수행하여 가장 밝은 클러스터를 영역으로 반환한다(자체 구현한 Lloyd 알고리즘, 대응하는 HALCON 연산자 없음).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">（0〜1）からクラスタ数 </code><code style="color:#22d3bf">k = 2 + round(4*a)</code><code style="color:#22d3bf">（2〜6）を決める。初期値はパーセンタイルから決定論的に置くので乱数は使わない。</code><code style="color:#22d3bf">b</code>` は未使用。重心が最も高いクラスタに属する画素を領域として返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>

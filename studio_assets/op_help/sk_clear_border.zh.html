@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_clear_border&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>画像端に接する成分の除去。前景領域のうち画像の外周に触れている連結成分をすべて背景に落とす —— 視野の端で切れた(全体像が写っていない)物体を解析対象から除外する定番の前処理。</p>
+<p>去除接触图像边缘的连通分量。将前景区域中所有与图像外周相接触的连通分量全部归为背景 —— 这是排除在视野边缘被截断(未拍到完整图像)的物体使其不参与分析的常规前处理。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">segmentation.clear_border(binm(v))</code>`。a, b は未使用 —— 除去判定に使う縁の幅(buffer_size)は既定の 0(画像端そのものに触れている成分のみ対象)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

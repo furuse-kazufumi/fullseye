@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;dual_threshold&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">dual_threshold</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>符号つき画像向けのしきい値処理。中央値 0.5 を「ゼロ」とみなし、</p>
-<p>`<code style="color:#22d3bf">|x - 0.5| &gt; 0.1+0.35*a</code>` を満たす画素(0.5 から十分離れた画素)を前景と</p>
-<p>する ―― 正負どちらの側にも対称に反応する。HALCON の `<code style="color:#22d3bf">dual_threshold</code>`</p>
-<p>（Threshold operator for signed images.）に相当(HALCON は正負で別々の</p>
-<p>しきい値を持てるが、ここでは 0.5 を中心とした対称な帯域に単純化)。</p>
+<p>Eine Schwellwertoperation für vorzeichenbehaftete Bilder. Der Medianwert 0,5 wird als &quot;Null&quot; behandelt, und Pixel, die `<code style="color:#22d3bf">|x - 0,5| &gt; 0,1+0,35*a</code><code style="color:#22d3bf"> erfüllen (Pixel, die ausreichend weit von 0,5 entfernt sind), werden als Vordergrund betrachtet — symmetrisch reagierend auf beide Seiten, positiv wie negativ. Entspricht HALCONs </code><code style="color:#22d3bf">dual_threshold</code>` (Threshold operator for signed images.) (HALCON kann getrennte Schwellwerte für positiv und negativ verwenden, hier ist dies jedoch auf ein symmetrisches Band um 0,5 vereinfacht).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が除外帯域の半幅を振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。</code><code style="color:#22d3bf">highpass_image</code>` や</p>
 <p>`<code style="color:#22d3bf">bandpass_image</code>` のような符号つき応答(0.5=ゼロ)の後段でよく使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

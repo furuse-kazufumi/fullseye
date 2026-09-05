@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;affine_trans_region&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">affine_trans_region</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>領域にアフィン変換（回転+シアー）を掛ける。`<code style="color:#22d3bf">affine_trans_image</code><code style="color:#22d3bf"> と同じ </code><code style="color:#22d3bf">_sh_geom</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">affine</code><code style="color:#22d3bf"> 分岐で連続値として変換したのち、</code><code style="color:#22d3bf">_rebinarise</code>` により 0.5 で二値化し直して {0,1} の領域として返す（幾何変換の補間で生じる中間値を除去するため）。a が回転角（-20°〜+20°）、b がシアー量を振る。</p>
+<p>對區域施加仿射變換（旋轉+剪切）。使用與 `<code style="color:#22d3bf">affine_trans_image</code><code style="color:#22d3bf"> 相同的 </code><code style="color:#22d3bf">_sh_geom</code><code style="color:#22d3bf"> 中的 </code><code style="color:#22d3bf">affine</code><code style="color:#22d3bf"> 分支將其作為連續值變換，再透過 </code><code style="color:#22d3bf">_rebinarise</code>` 以 0.5 重新二值化，回傳 {0,1} 的區域（以消除幾何變換內插產生的中間值）。a 調整旋轉角（-20°〜+20°），b 調整剪切量。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の `<code style="color:#22d3bf">affine_trans_region</code>`（領域に任意のアフィン 2D 変換を適用する演算）に相当する近似。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>

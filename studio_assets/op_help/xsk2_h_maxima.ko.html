@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk2_h_maxima&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>h-maxima 変換（局所極大のうち高さ h 未満のものを消す）。</p>
-<p>`<code style="color:#22d3bf">skimage.morphology.h_maxima</code>` を呼ぶ。</p>
+<p>h-maxima 변환(높이가 h 미만인 국소 극댓값을 제거). `<code style="color:#22d3bf">skimage.morphology.h_maxima</code>`를 호출한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>a が高さのしきい値 h（`<code style="color:#22d3bf">0.05 + 0.3 * a</code>`、範囲 0.05〜0.35）を振る。</p>
 <p>b は未使用。出力は極大が残った画素を 1 とする二値画像（<code style="color:#22d3bf">region</code>）。</p>
 <p>h が小さいほど微小なノイズ状の極大まで拾い、大きいほど際立った山だけ</p>

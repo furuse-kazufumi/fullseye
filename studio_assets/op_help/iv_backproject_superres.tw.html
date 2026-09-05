@@ -3,13 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;iv_backproject_superres&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Single-image iterative back-projection super-resolution (Irani-Peleg).</p>
-<p>Upscale to a higher grid, simulate the low-res observation by blurring and</p>
-<p>downscaling, back-project the residual into the high grid, then downscale the</p>
-<p>consistent estimate back to HxW. Net effect: high-frequency detail is boosted</p>
-<p>(sharpening-by-consistency). `<code style="color:#22d3bf">a</code>` sets iterations n = 1 + round(a*4) (1..5);</p>
-<p>`<code style="color:#22d3bf">b</code>` sets the back-projection step gain g = 0.5 + b (0.5..1.5).</p>
+<p>單張影像的疊代反投影超解析度（Irani-Peleg 方法）。先放大到更高解析度網格，透過模糊與降取樣模擬低解析度觀測，將殘差反投影回高解析度網格，再將所得一致估計降取樣回 HxW。淨效果是高頻細節被增強（透過一致性達成銳化）。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 設定疊代次數 n = 1 + round(a*4)（1..5）；</code><code style="color:#22d3bf">b</code>` 設定反投影步長增益 g = 0.5 + b（0.5..1.5）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

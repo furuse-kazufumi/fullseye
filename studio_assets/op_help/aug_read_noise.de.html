@@ -3,12 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_read_noise&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Additive Gaussian READ noise (amplifier + ADC noise), sigma-independent of</p>
-<p>signal (unlike shot noise). `<code style="color:#22d3bf">sigma = 0.005 + 0.15*a</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">b</code>` mixes in a</p>
-<p>row-correlated component: a per-row bias of std `<code style="color:#22d3bf">0.5*b*sigma</code>` shared by the</p>
-<p>whole row, which is what a shared row amplifier / row-wise ADC produces</p>
-<p>(visible as horizontal banding). Seeded from (a, b).</p>
+<p>Additives Gaußsches READ-Rauschen (Verstärker- + ADC-Rauschen), dessen Sigma unabhängig vom Signal ist (im Gegensatz zum Schrotrauschen). `<code style="color:#22d3bf">sigma = 0,005 + 0,15*a</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> mischt eine zeilenkorrelierte Komponente hinzu: einen von der gesamten Zeile geteilten Bias mit Standardabweichung </code><code style="color:#22d3bf">0,5*b*sigma</code>`, wie ihn ein gemeinsamer Zeilenverstärker / zeilenweiser ADC erzeugt (sichtbar als horizontale Streifenbildung). Wird aus (a, b) geseedet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">Leitfaden zur Familie gallery2d_color_artistic</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

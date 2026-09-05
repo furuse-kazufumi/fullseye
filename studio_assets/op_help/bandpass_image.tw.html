@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;bandpass_image&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">bandpass_image</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>周波数領域で指定した帯域だけを通すバンドパスフィルタ(低域と高域を</p>
-<p>遮断)、逆 FFT で実空間に戻す。`<code style="color:#22d3bf">highpass_image</code>` と同様に零平均の符号つき</p>
-<p>応答なので `<code style="color:#22d3bf">signed01</code><code style="color:#22d3bf"> で [0,1] に写像する。HALCON の </code><code style="color:#22d3bf">bandpass_image</code>`</p>
-<p>（Edge extraction using bandpass filters.）に相当。</p>
+<p>在頻域中只讓指定頻帶通過的帶通濾波器(截斷低頻與高頻),再以逆FFT轉換回實空間。與`<code style="color:#22d3bf">highpass_image</code><code style="color:#22d3bf">相同,結果是零均值的帶符號響應,因此以</code><code style="color:#22d3bf">signed01</code><code style="color:#22d3bf">對應到[0,1]。相當於HALCON的</code><code style="color:#22d3bf">bandpass_image</code>`(Edge extraction using bandpass filters.)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が下限カットオフ、</code><code style="color:#22d3bf">b</code>` が上限カットオフを振る。両方が使われる。</p>
 <p>帯域(`<code style="color:#22d3bf">b</code>` 側の上限)を下限より下に設定すると通過域が空になり出力はほぼ</p>
 <p>0.5(ゼロ)一色になる。</p>

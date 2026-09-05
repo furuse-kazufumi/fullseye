@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;points_harris_binomial&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">points_harris_binomial</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>二項(ガウス)平滑化を前段に挟んだ Harris コーナー応答。まず `<code style="color:#22d3bf">b</code>` で</p>
-<p>決まるシグマで画像を平滑化し、その上で Harris 応答(skimage があれば</p>
-<p>`<code style="color:#22d3bf">corner_harris</code>`、無ければ構造テンソルを手計算、k=0.04)を求める。HALCON</p>
-<p>の `<code style="color:#22d3bf">points_harris_binomial</code>`（Detect points of interest using the</p>
-<p>binomial approximation of the Harris operator.）に相当。</p>
+<p>在前段插入二项式（高斯）平滑的 Harris 角点响应。先用由 `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> 决定的 sigma 对图像平滑，再在此基础上求 Harris 响应（若有 skimage 则用 </code><code style="color:#22d3bf">corner_harris</code><code style="color:#22d3bf">，否则手动计算结构张量，k=0.04）。相当于 HALCON 的 </code><code style="color:#22d3bf">points_harris_binomial</code>`（Detect points of interest using the binomial approximation of the Harris operator.）。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が Harris 応答自体のシグマ(0.5〜2.5)を、</code><code style="color:#22d3bf">b</code>` が前段の平滑化シグマ</p>
 <p>(0.5〜2.0)を振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

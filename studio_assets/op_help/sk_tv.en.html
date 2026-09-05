@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sk_tv&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>全変動ノイズ除去(TV denoising、Chambolle 法)。エッジを保ったまま平坦部のノイズを滑らかにする —— メディアン/ガウスぼかしと違い、輪郭のシャープさを崩しにくいのが特徴。</p>
+<p>Total variation denoising (TV denoising, Chambolle&#x27;s method). Smooths noise in flat regions while preserving edges - unlike median/Gaussian blur, it is characterized by not easily degrading the sharpness of contours.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">restoration.denoise_tv_chambolle(v, weight=0.02+0.3*a)</code>` —— a は denoising weight を 0.02〜0.32 に振り、<b>大きいほど強く平滑化される</b>(この符号の向きは後述の sk_tv_bregman と逆なので混同注意)。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_voxel_grid_downsample&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>辺 voxel_size の格子で点群を間引き、各セルを重心 1 点に集約する(決定論的)。</p>
+<p>Dünnt die Punktwolke mit einem Gitter der Zellgröße <code style="color:#22d3bf">voxel_size</code> aus und fasst jede Zelle zu einem einzigen Schwerpunktpunkt zusammen (deterministisch).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>空間を一辺 `<code style="color:#22d3bf">voxel_size</code>` の立方体セルに区切り、同じセルに落ちた点をその重心</p>
 <p>1 点で代表させる。密度ムラを均し、下流(ICP・特徴量)の計算量を点数で抑える標準手法。</p>
 <p>出力順はボクセル座標の辞書順で固定(同じ入力なら常に同じ出力=決定論的)。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xmh_regmin&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>領域極小点の抽出(`<code style="color:#22d3bf">mahotas.regmin</code>`)。ガウシアン平滑化した画像に対し、局所的に最も暗い谷を領域としてマークする。分水嶺分割(watershed)のマーカー生成に使う典型的な前処理。</p>
+<p>영역 극소점 추출(`<code style="color:#22d3bf">mahotas.regmin</code>`). 가우시안으로 평활화한 이미지에서 국소적으로 가장 어두운 골짜기를 영역으로 표시한다. 워터셰드(watershed) 분할의 마커 생성에 쓰이는 전형적인 전처리다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は平滑化の強さ(σ、0.15〜3.15)を振る —— 大きくするほど微小なノイズ谷が消え、大きな谷だけが残る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>

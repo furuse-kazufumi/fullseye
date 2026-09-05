@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sk_medial&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">skeleton</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>中心軸変換(medial axis transform)。距離変換の尾根線を抽出する方式で骨格を求める、sk_skeleton とは別アルゴリズム。輪郭からの距離情報を保った骨格になりやすい。</p>
+<p>Medial axis transform. A different algorithm from sk_skeleton that finds the skeleton by extracting the ridge lines of the distance transform, tending to produce a skeleton that retains distance-from-contour information.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>HALCON の <code style="color:#22d3bf">skeleton</code> に相当(近似)。実装は `<code style="color:#22d3bf">morphology.medial_axis(binm(v), rng=0)</code><code style="color:#22d3bf"> —— </code><code style="color:#22d3bf">rng=0</code><code style="color:#22d3bf"> はタイ(同点)の崩し方を決める乱数シードを固定し、毎回同じ結果になるようにしている。a, b は未使用。distance 出力(</code><code style="color:#22d3bf">return_distance</code>`)は使っておらず、骨格の真偽値マスクのみを返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>

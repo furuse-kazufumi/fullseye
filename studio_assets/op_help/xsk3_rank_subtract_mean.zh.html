@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk3_rank_subtract_mean&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>局所平均差分(skimage `<code style="color:#22d3bf">filters.rank.subtract_mean</code>`)。各画素からその円盤近傍の平均輝度を引いた差分を返す。skimage の実装はアンダーフロー防止のため差分を 1/2 に縮小しレンジ中央へシフトする仕様になっている。大域的な明暗ムラを打ち消しローカルコントラストを強調する。</p>
+<p>局部均值差分(skimage `<code style="color:#22d3bf">filters.rank.subtract_mean</code>`)。返回每个像素减去其圆盘邻域平均亮度后得到的差值。skimage 的实现为防止下溢，将差值缩小为 1/2 并平移到取值范围的中央。用于抵消全局明暗不均并增强局部对比度。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は円盤半径(</code><code style="color:#22d3bf">1+int(a*4)</code><code style="color:#22d3bf"> で 1〜5)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。8bit 量子化を経由するため元の float64 精度は失われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>

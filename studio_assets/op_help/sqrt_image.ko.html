@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sqrt_image&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">sqrt_image</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>[0,1] に clip した画素値の平方根を取る。暗部を持ち上げるガンマ的な階調</p>
-<p>圧縮になる(√x は x=0.25 を 0.5 へ、x=0.04 を 0.2 へ押し上げる)。HALCON の</p>
-<p>`<code style="color:#22d3bf">sqrt_image</code>`（Calculate the square root of an image.）に相当。</p>
+<p>[0,1]로 클리핑한 화소값의 제곱근을 취한다. 어두운 부분을 끌어올리는 감마 방식의 계조 압축이 된다(제곱근은 x=0.25를 0.5로, x=0.04를 0.2로 끌어올린다). HALCON의 `<code style="color:#22d3bf">sqrt_image</code>`(Calculate the square root of an image.)에 해당한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用 —— 固定の平方根写像で調整点はない。強さを変えたいなら</p>
 <p>`<code style="color:#22d3bf">gamma_image</code><code style="color:#22d3bf">(exponent が </code><code style="color:#22d3bf">a</code>` で振れる)を使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

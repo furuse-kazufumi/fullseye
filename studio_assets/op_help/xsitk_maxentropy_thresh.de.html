@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_maxentropy_thresh&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>最大エントロピー法による二値化(SimpleITK `<code style="color:#22d3bf">MaximumEntropyThreshold</code>`、Kapur の方法)。ヒストグラムを前景/背景の 2 クラスに分けたときのエントロピー和が最大になる閾値を選ぶ大域二値化。</p>
+<p>Binarisierung nach der Maximum-Entropie-Methode (SimpleITK `<code style="color:#22d3bf">MaximumEntropyThreshold</code>`, Kapur-Verfahren). Ein globales Schwellenwertverfahren, das den Schwellenwert wählt, der die Summe der Entropien maximiert, wenn das Histogramm in Vordergrund-/Hintergrundklassen aufgeteilt wird.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はヒストグラムのビン数(</code><code style="color:#22d3bf">int(64+192*a)</code><code style="color:#22d3bf"> で 64〜256)を振る —— 粗いほど閾値が安定するが微妙な階調差は無視される。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">Leitfaden zur Familie gallery2d_color_artistic</a></p>

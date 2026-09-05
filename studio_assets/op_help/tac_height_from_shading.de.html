@@ -3,16 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tac_height_from_shading&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Height/relief map by Poisson integration of the shading gradients -- the</p>
-<p>integration stage of GelSight depth reconstruction (and of photometric</p>
-<p>stereo): the image gradients are read as surface slopes `<code style="color:#22d3bf">p = gain*gx</code>`,</p>
-<p>`<code style="color:#22d3bf">q = gain*gy</code><code style="color:#22d3bf"> and the Poisson equation </code><code style="color:#22d3bf">lap(h) = div(p,q)</code>` is solved</p>
-<p>spectrally, `<code style="color:#22d3bf">h_hat = div_hat / lap_hat</code>` with the discrete Laplacian symbol</p>
-<p>`<code style="color:#22d3bf">2cos(2*pi*u/W)+2cos(2*pi*v/H)-4</code>` and the (undetermined) DC mode pinned to</p>
-<p>zero. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = gradient gain (0.25..4.25x), </code><code style="color:#22d3bf">b</code>` = pre-smoothing sigma of the</p>
-<p>gradient field (0..3). Output is min-max normalised to [0,1] and refit to</p>
-<p>HxW; a constant frame integrates to a flat (all-zero) relief.</p>
+<p>Höhen-/Reliefkarte durch Poisson-Integration der Schattierungsgradienten -- die Integrationsstufe der GelSight-Tiefenrekonstruktion (und des photometrischen Stereos): Die Bildgradienten werden als Oberflächenneigungen `<code style="color:#22d3bf">p = gain*gx</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">q = gain*gy</code><code style="color:#22d3bf"> interpretiert, und die Poisson-Gleichung </code><code style="color:#22d3bf">lap(h) = div(p,q)</code><code style="color:#22d3bf"> wird spektral gelöst, </code><code style="color:#22d3bf">h_hat = div_hat / lap_hat</code><code style="color:#22d3bf">, mit dem diskreten Laplace-Symbol </code><code style="color:#22d3bf">2cos(2*pi*u/W)+2cos(2*pi*v/H)-4</code><code style="color:#22d3bf"> und dem (unbestimmten) Gleichanteil (DC-Modus), der auf null festgelegt wird. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = Gradientenverstärkung (0,25..4,25-fach), </code><code style="color:#22d3bf">b</code>` = Vorglättungs-Sigma des Gradientenfelds (0..3). Die Ausgabe wird min-max-normiert auf [0,1] und auf HxW zurückgeführt; ein konstanter Frame integriert sich zu einem flachen (durchweg nullwertigen) Relief.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

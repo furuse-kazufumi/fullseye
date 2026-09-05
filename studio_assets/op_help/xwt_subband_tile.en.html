@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xwt_subband_tile&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>1 段ウェーブレット分解(`<code style="color:#22d3bf">pywt.dwt2</code>`、Haar)の 4 サブバンド(近似 cA・水平 cH・垂直 cV・対角 cD)を 2x2 に敷き詰めて 1 枚の画像にし、min-max 正規化したもの。ウェーブレットピラミッド表示そのもの。</p>
+<p>The 4 subbands of a single-level wavelet decomposition (`<code style="color:#22d3bf">pywt.dwt2</code>`, Haar) -- approximation cA, horizontal cH, vertical cV, diagonal cD -- tiled 2x2 into one image and min-max normalized. Literally a wavelet pyramid display.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用(分解は 1 段固定)。左上が低周波成分、右下が高周波成分になる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq family guide</a></p>

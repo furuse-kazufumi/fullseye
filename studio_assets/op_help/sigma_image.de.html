@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sigma_image&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">sigma_image</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>シグマフィルタによる非線形平滑化。中心画素値に近い(`<code style="color:#22d3bf">|x-mean|&lt;σ</code>`)</p>
-<p>近傍画素だけを平均する ―― エッジ付近では反対側の階調が平均に混ざらないため、</p>
-<p>平均フィルタよりエッジを保ちやすいノイズ除去になる。HALCON の</p>
-<p>`<code style="color:#22d3bf">sigma_image</code>`（Non-linear smoothing with the sigma filter.）に相当。</p>
+<p>Nichtlineare Glättung durch einen Sigma-Filter. Es wird nur über benachbarte Pixel gemittelt, die dem Wert des Zentralpixels nahe sind (`<code style="color:#22d3bf">|x-mean|&lt;σ</code><code style="color:#22d3bf">) -- in der Nähe von Kanten mischen sich Tonwerte der gegenüberliegenden Seite nicht in den Mittelwert, wodurch eine Rauschunterdrückung entsteht, die Kanten besser erhält als ein Mittelwertfilter. Entspricht HALCONs </code><code style="color:#22d3bf">sigma_image</code>` (Non-linear smoothing with the sigma filter.).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の一辺を </code><code style="color:#22d3bf">{3,5,7,9}</code><code style="color:#22d3bf"> で振る(内部の平均計算にも使う)。</code><code style="color:#22d3bf">b</code>` が</p>
 <p>許容帯域(シグマ、0.05〜0.4)を振る。両方が使われる。近傍がすべて帯域外の</p>
 <p>画素は元の値のまま残る。</p>

@@ -3,16 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tac_contact_mask&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Contact region of a tactile frame by pseudo-reference background</p>
-<p>subtraction: `<code style="color:#22d3bf">dev = |v - G_sigma(v)|</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">sigma = max(2, min(H,W)/6)</code>`</p>
-<p>(the low-frequency envelope stands in for the undeformed reference frame),</p>
-<p>thresholded at `<code style="color:#22d3bf">thr = 0.005 + 0.145*a</code>` gray levels, then cleaned with</p>
-<p>`<code style="color:#22d3bf">round(3*b)</code>` iterations of binary opening followed by binary closing</p>
-<p>(3x3, 8-connected). `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = deviation threshold (sensitivity), </code><code style="color:#22d3bf">b</code>` =</p>
-<p>morphological cleanup strength. Returns a BINARY 0/1 float64 region of the</p>
-<p>input HxW; a perfectly flat (constant) frame has zero deviation everywhere</p>
-<p>and therefore yields an EMPTY mask.</p>
+<p>通过伪参考背景减除来求触觉帧的接触区域:`<code style="color:#22d3bf">dev = |v - G_sigma(v)|</code><code style="color:#22d3bf">,其中 </code><code style="color:#22d3bf">sigma = max(2, min(H,W)/6)</code><code style="color:#22d3bf">(低频包络代替未形变的参考帧),以 </code><code style="color:#22d3bf">thr = 0.005 + 0.145*a</code><code style="color:#22d3bf"> 灰度级阈值化,再经 </code><code style="color:#22d3bf">round(3*b)</code><code style="color:#22d3bf"> 次二值开运算(opening)后接二值闭运算(closing)(3x3、8 连通)清理。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = 偏差阈值(灵敏度),</code><code style="color:#22d3bf">b</code>` = 形态学清理强度。返回输入 HxW 大小的二值(BINARY)0/1 float64 区域;完全平坦(常数)的帧在各处偏差均为零,因此得到空掩膜。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;exp_image&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">exp_image</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>`<code style="color:#22d3bf">(exp(x) - 1) / (e - 1)</code>` という指数写像で [0,1] を [0,1] に写す(x=1 で</p>
-<p>ちょうど 1 になるよう正規化してある)。低い階調を圧縮し明部を強調する</p>
-<p>コントラスト強調で、`<code style="color:#22d3bf">log_image</code>` とは逆向きのカーブ。HALCON の</p>
-<p>`<code style="color:#22d3bf">exp_image</code>`（Calculate the exponentiation of an image.）の代役。</p>
+<p>Maps [0,1] to [0,1] with the exponential mapping `<code style="color:#22d3bf">(exp(x) - 1) / (e - 1)</code><code style="color:#22d3bf"> (normalized so that x=1 gives exactly 1). This is a contrast enhancement that compresses low tones and emphasizes the highlights, a curve running opposite to </code><code style="color:#22d3bf">log_image</code><code style="color:#22d3bf">. Stands in for HALCON&#x27;s </code><code style="color:#22d3bf">exp_image</code>` (Calculate the exponentiation of an image.).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。底(</code><code style="color:#22d3bf">e</code>`)や倍率を変える調整点は無い —— 曲率を変えたい</p>
 <p>場合は `<code style="color:#22d3bf">gamma_image</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">a</code>` でべき指数を振れる)を使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

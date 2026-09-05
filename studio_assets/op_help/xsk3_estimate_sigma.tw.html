@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk3_estimate_sigma&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>ノイズ標準偏差の推定(skimage `<code style="color:#22d3bf">restoration.estimate_sigma</code>`、ウェーブレット係数の中央絶対偏差(MAD)に基づく Donoho の推定量)。推定値を 5 倍したのち 1.0 で頭打ちにして feature として返す。</p>
+<p>雜訊標準差估計(skimage `<code style="color:#22d3bf">restoration.estimate_sigma</code>`，基於小波係數中位數絕對偏差(MAD)的 Donoho 估計量)。將估計值乘以 5 後以 1.0 封頂，作為 feature 回傳。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。デノイズ強度(例えば閾値処理のパラメータ)を画像ごとに自動決定したい場合の目安に使える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

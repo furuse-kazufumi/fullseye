@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;rank_image&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">rank_image</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>窓内の画素値を昇順に並べて指定パーセンタイル位置の値を返す汎用ランク</p>
-<p>フィルタ(`<code style="color:#22d3bf">ndimage.percentile_filter</code>`)。パーセンタイル 0 で収縮相当、</p>
-<p>100 で膨張相当、50 でメディアン相当になる連続的な一般化。HALCON の</p>
-<p>`<code style="color:#22d3bf">rank_image</code>`（Compute a rank filter with arbitrary masks.）に相当</p>
-<p>(HALCON は任意形状マスクを取れるが、ここでは正方形マスクに固定)。</p>
+<p>A general-purpose rank filter (`<code style="color:#22d3bf">ndimage.percentile_filter</code><code style="color:#22d3bf">) that sorts the pixel values in a window in ascending order and returns the value at the specified percentile position. It is a continuous generalization: percentile 0 corresponds to erosion, 100 to dilation, and 50 to median. Equivalent to HALCON&#x27;s </code><code style="color:#22d3bf">rank_image</code>` (Compute a rank filter with arbitrary masks.) (HALCON can take an arbitrarily shaped mask, but here it is fixed to a square mask).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の一辺を </code><code style="color:#22d3bf">{3,5,7,9}</code><code style="color:#22d3bf"> で、</code><code style="color:#22d3bf">b</code>` がパーセンタイルを 5〜95% の</p>
 <p>範囲で振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

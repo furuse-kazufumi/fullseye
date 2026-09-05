@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk2_isotropic_close&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>等方閉じ（isotropic closing）。二値領域に対して`<code style="color:#22d3bf">skimage.morphology.isotropic_closing</code><code style="color:#22d3bf"> を掛ける（</code>region<code style="color:#22d3bf"> → </code>region`専用で、通常のモルフォロジー closing と違い距離変換ベースで等方的に働く）。</p>
+<p>Isotropic closing. Applies `<code style="color:#22d3bf">skimage.morphology.isotropic_closing</code><code style="color:#22d3bf"> to a binary region (dedicated to </code>region<code style="color:#22d3bf"> -&gt; </code>region`; unlike ordinary morphological closing, it works isotropically based on a distance transform).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>a が半径（`<code style="color:#22d3bf">1 + a*4</code>`、範囲 1〜5）を振る。b は未使用。小さな穴やくびれを埋めて領域を滑らかにする。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>

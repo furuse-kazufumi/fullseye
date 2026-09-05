@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_synthesize_silhouette&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>3-D 点群を (K,R,t) カメラへ射影し占有画素 True のシルエット(H,W bool)を返す。</p>
+<p>3-D 점군을 (K,R,t) 카메라에 투영하여 점유 픽셀이 True인 실루엣(H,W bool)을 반환한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>GT 生成用。`<code style="color:#22d3bf">points</code><code style="color:#22d3bf"> (N,3) を </code><code style="color:#22d3bf">X_cam = R X + t</code>` で射影し、depth&gt;0 かつ画像内に</p>
 <p>落ちた画素を True にする。疎な点群では射影像に穴が空くため、既定で穴埋め</p>
 <p>(`<code style="color:#22d3bf">fill</code>`, scipy.ndimage.binary_fill_holes)して中身の詰まった前景マスクにする。</p>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;mean_image&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">mean_image</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>矩形平均フィルタ(box filter)。HALCON の `<code style="color:#22d3bf">mean_image</code>`（Smooth by</p>
-<p>averaging.）に相当する近似で、注目画素を一辺 k の窓の平均で置き換える。</p>
+<p>矩形均值滤波(box filter)。这是相当于 HALCON 的 `<code style="color:#22d3bf">mean_image</code>`(Smooth by averaging.)的一种近似,用边长为 k 的窗口的均值来替换目标像素。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の一辺 k を </code><code style="color:#22d3bf">{3,5,7,9}</code><code style="color:#22d3bf"> の 4 段階(</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">)で振る。</code><code style="color:#22d3bf">b</code>` は</p>
 <p>未使用。ガウシアンより速いが、エッジがぼやけずに角ばったブロック状の</p>
 <p>アーティファクトを残しやすい。</p>

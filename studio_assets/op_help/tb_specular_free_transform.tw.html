@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_specular_free_transform&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Project out the illuminant direction: the part of the image a highlight cannot touch. → (H, W, 3).</p>
+<p>投影去除光源方向：影像中反光無法觸及的部分。→ (H, W, 3)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">I - (I.G) G</code><code style="color:#22d3bf"> for the unit illuminant colour </code><code style="color:#22d3bf">G</code>`. Under the dichromatic</p>
 <p>model the interface term is `<code style="color:#22d3bf">m_s * G</code>`, so it lies entirely in the removed</p>
 <p>direction and the result is <b>invariant to any specular term whatsoever</b> —</p>

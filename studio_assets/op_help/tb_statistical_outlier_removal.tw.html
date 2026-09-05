@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_statistical_outlier_removal&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>各点の k 近傍平均距離が大域的に外れる点を除去する(統計的外れ値除去)。</p>
+<p>去除各點的 k 近鄰平均距離在全域上偏離過大的點（統計離群點移除）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>点ごとに「最も近い k 個(自分自身は除く)までの平均距離」を測り、その全点分布の</p>
 <p>`<code style="color:#22d3bf">mean + std_ratio*std</code>` を超える点を飛び点とみなして落とす。まばらな飛び点の掃除に</p>
 <p>有効で、密な面上の点は残る。</p>

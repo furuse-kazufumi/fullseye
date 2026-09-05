@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_curv_aniso_diff&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>曲率異方性拡散(SimpleITK `<code style="color:#22d3bf">CurvatureAnisotropicDiffusion</code>`)。Perona-Malik 型の異方性拡散の一種で、エッジ(勾配が大きい場所)では拡散を抑え、平坦な場所ではよく拡散させることでエッジを保ったまま平滑化する。</p>
+<p>곡률 이방성 확산(SimpleITK `<code style="color:#22d3bf">CurvatureAnisotropicDiffusion</code>`). Perona-Malik형 이방성 확산의 일종으로, 엣지(그래디언트가 큰 곳)에서는 확산을 억제하고 평탄한 곳에서는 충분히 확산시켜 엣지를 보존하면서 평활화한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は伝導度パラメータ(conductance、</code><code style="color:#22d3bf">0.5+4.5*a</code><code style="color:#22d3bf"> で 0.5〜5.0。大きいほどエッジ判定が緩くなり強く拡散する)、</code><code style="color:#22d3bf">b</code>` は反復回数(1〜9 回)を振る。時間刻みは 0.0625 固定。出力は [0,1] にクリップ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 패밀리 가이드</a></p>

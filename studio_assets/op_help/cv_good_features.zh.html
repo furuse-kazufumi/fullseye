@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;cv_good_features&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Shi-Tomasi 法による高品質コーナー検出(1 スカラー特徴量、OpenCV 実装)。cv_min_eigen と同じ最小固有値基準でコーナーらしさを評価し、非極大抑制と最小距離フィルタで間引いた上位のコーナーを検出する —— ここでは検出できた個数だけを返す(0 個なら 0)。</p>
+<p>基于 Shi-Tomasi 方法的高品质角点检测（单一标量特征，OpenCV 实现）。以与 cv_min_eigen 相同的最小特征值标准评估角点程度，并以非极大值抑制与最小距离过滤筛选出排名靠前的角点 —— 这里只返回检测到的数量（若为 0 个则返回 0）。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">cv2.goodFeaturesToTrack(v, maxCorners=int(10+40*a), qualityLevel=0.01+0.1*b, minDistance=5)</code>` —— a は検出上限数を 10〜50 に、b は品質しきい値(最強コーナーに対する相対比。大きいほど厳しく絞り込まれ検出数が減る)を 0.01〜0.11 に振る。最小距離は 5 画素に固定。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;thinning_seq&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">thinning_seq</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>領域を細線化する。実装は thinning_golay と同一（skimage の `<code style="color:#22d3bf">thin</code>`、収束するまで反復する Guo–Hall 型細線化）で、a, b は未使用。</p>
+<p>对区域进行细化（thinning）。实现与 thinning_golay 完全相同（skimage 的 `<code style="color:#22d3bf">thin</code>`，反复迭代至收敛的 Guo–Hall 型细化），a、b 未使用。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>HALCON の `<code style="color:#22d3bf">thinning_seq</code>`（構造要素を逐次適用して細線化していく演算）に相当する近似だが、この backend では thinning_golay と実装上の区別がない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

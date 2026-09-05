@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sobel_dir&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">sobel_dir</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Sobel 勾配の向き(`<code style="color:#22d3bf">arctan2(dy, dx)</code>` を [0,1] に写像。0=−π, 1=+π)。</p>
-<p>振幅を返す `<code style="color:#22d3bf">sobel_amp</code>` と対になる、エッジの走る方向を求める演算。HALCON の</p>
-<p>`<code style="color:#22d3bf">sobel_dir</code>`（Detect edges (amplitude and direction) using the Sobel</p>
-<p>operator.）に相当(HALCON は振幅と方向を同時に返すが、ここでは方向のみの</p>
-<p>別 op として分離)。</p>
+<p>Sobel 그래디언트의 방향(`<code style="color:#22d3bf">arctan2(dy, dx)</code><code style="color:#22d3bf">를 [0,1]로 매핑. 0=-π, 1=+π). 진폭을 반환하는 </code><code style="color:#22d3bf">sobel_amp</code><code style="color:#22d3bf">와 짝을 이루는, 에지가 뻗는 방향을 구하는 연산이다. HALCON의 </code><code style="color:#22d3bf">sobel_dir</code>`(Detect edges (amplitude and direction) using the Sobel operator.)에 해당한다(HALCON은 진폭과 방향을 동시에 반환하지만, 여기서는 방향만을 별도의 op로 분리한다).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。平坦な領域では勾配がほぼゼロベクトルになり、方向は</p>
 <p>ノイズに支配される点に注意。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

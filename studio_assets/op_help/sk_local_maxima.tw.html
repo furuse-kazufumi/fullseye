@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_local_maxima&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">local_max</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>局所極大点の検出。近傍のどの画素よりも真に大きい(プラトー=同値の連結領域も許容)画素の集合を領域として返す —— ピーク検出・特徴点抽出の下処理。</p>
+<p>局部極大點偵測。回傳確實大於所有鄰域像素(允許高原=數值相同的連通區域)的像素集合作為區域 —— 是峰值偵測、特徵點擷取的前處理步驟。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の <code style="color:#22d3bf">local_max</code>(Detect all local maxima in an image.)に相当。実装は `<code style="color:#22d3bf">morphology.local_maxima(v)</code>`。a, b は未使用 —— footprint は既定値(全方向 1 近傍)のまま。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>

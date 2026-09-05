@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xwt_packet_entropy&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>ウェーブレットパケットのエネルギー分散度(Shannon エントロピー)。`<code style="color:#22d3bf">db1</code><code style="color:#22d3bf"> で深さ 2 のウェーブレットパケット分解を行い、16 個の葉サブバンドそれぞれのエネルギー(係数二乗和)を正規化した分布とみなし、そのシャノンエントロピーを </code><code style="color:#22d3bf">log2(16)</code>` で割って [0,1] に正規化する。</p>
+<p>小波包能量分散度（香农熵）。用`<code style="color:#22d3bf">db1</code><code style="color:#22d3bf">做深度为2的小波包分解，将16个叶子子带各自的能量（系数平方和）归一化后视为一个分布，计算其香农熵，再除以</code><code style="color:#22d3bf">log2(16)</code>`归一化到[0,1]。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。値が 1 に近いほどエネルギーが全周波数帯に均等に分散(テクスチャが複雑)、0 に近いほど特定の帯域に集中(単純なパターンや平坦な領域)していることを示す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

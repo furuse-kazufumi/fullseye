@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;cv_gaussian&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">gauss_filter</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>ガウス平滑化(OpenCV 実装)。ガウスカーネルによる標準的なぼかしで、box filter よりリンギングが出にくい。</p>
+<p>Gaußsche Glättung (OpenCV-Implementierung). Standardmäßige Unschärfe mit einem Gauß-Kernel, die weniger zu Ringing neigt als ein Box-Filter.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON の <code style="color:#22d3bf">gauss_filter</code>(Smooth using discrete Gauss functions.)に相当。実装は `<code style="color:#22d3bf">cv2.GaussianBlur(v, (0,0), sigmaX=0.3+2.7*a)</code><code style="color:#22d3bf"> —— カーネルサイズを指定せず </code><code style="color:#22d3bf">(0,0)</code>` にすることで OpenCV に σ から自動算出させている。a は σ を0.3〜3.0 に振る。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>

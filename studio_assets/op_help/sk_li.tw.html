@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_li&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">binary_threshold</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Li の最小相互エントロピー法(Minimum Cross Entropy)による大域しきい値二値化。前景/背景の分布間の相互エントロピーを反復的に最小化してしきい値を決める、大津法とは別系統の自動しきい値法。</p>
+<p>基於 Li 的最小交叉熵法(Minimum Cross Entropy)的全域閾值二值化。透過反覆最小化前景/背景分佈之間的交叉熵來決定閾值,是與大津法屬於不同系統的自動閾值法。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の <code style="color:#22d3bf">binary_threshold</code> に相当(近似。アルゴリズムは別物)。実装は `<code style="color:#22d3bf">v &gt; filters.threshold_li(v)</code>` —— a, b は未使用。大津法よりノイズや裾の重いヒストグラムに強いとされる場面がある。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>

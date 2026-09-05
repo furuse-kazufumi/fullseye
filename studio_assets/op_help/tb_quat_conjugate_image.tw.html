@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">qimage</code> → <code style="color:#22d3bf">qimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_quat_conjugate_image&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Per-pixel quaternion conjugate `<code style="color:#22d3bf">(w, -x, -y, -z)</code>`. → (H, W, 4).</p>
+<p>逐像素四元數共軛：`<code style="color:#22d3bf">(w, -x, -y, -z)</code>`。→ (H, W, 4)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Exact and involutive: `<code style="color:#22d3bf">quat_conjugate_image(quat_conjugate_image(q)) is q</code>`</p>
 <p>to the last bit (a sign flip is exact in IEEE 754). Agrees with</p>
 <p>`<code style="color:#22d3bf">pose_quat.quat_conjugate</code>` per pixel, asserted in the tests.</p>

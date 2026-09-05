@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;edges_color_sub_pix&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">edges_color_sub_pix</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>カラーエッジ上の連結成分を輪郭（contour）として取り出す。HALCON の</p>
-<p>`<code style="color:#22d3bf">edges_color_sub_pix</code>`（Deriche/Shen/Canny でサブピクセル精度のカラー</p>
-<p>エッジを抽出する）に相当するとされるが、**実装はサブピクセル精度では</p>
-<p>ない**——`<code style="color:#22d3bf">_edges_color</code>` の勾配強度をしきい値二値化し、8 連結の</p>
-<p>ラベリング（`<code style="color:#22d3bf">scipy.ndimage.label</code>`）でつないだ画素座標をそのまま</p>
-<p>輪郭点として返す（座標はすべて整数格子上）。3 画素未満の成分は捨てる。</p>
+<p>Extracts connected components on color edges as contours. Claimed to correspond to HALCON&#x27;s `<code style="color:#22d3bf">edges_color_sub_pix</code><code style="color:#22d3bf"> (extracts subpixel-accurate color edges with Deriche/Shen/Canny), but **the implementation is not subpixel-accurate** -- it thresholds the gradient magnitude from </code><code style="color:#22d3bf">_edges_color</code><code style="color:#22d3bf"> into a binary image, connects it with 8-connectivity labeling (</code><code style="color:#22d3bf">scipy.ndimage.label</code>`), and returns the resulting pixel coordinates directly as contour points (all coordinates lie on the integer grid). Components with fewer than 3 pixels are discarded.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>a はしきい値 `<code style="color:#22d3bf">0.15 + 0.5 * a</code>` を振る（大きいほど輪郭が減る）。b は</p>
 <p>未使用。戻り値は `<code style="color:#22d3bf">{&quot;shape&quot;:..., &quot;cs&quot;: [輪郭ごとの (N,2) 座標配列]}</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

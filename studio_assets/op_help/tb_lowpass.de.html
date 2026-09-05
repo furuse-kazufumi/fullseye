@@ -3,11 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_lowpass&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Butterworth low-pass (scipy, zero-phase filtfilt). *cutoff* must be inside</p>
-<p>`<code style="color:#22d3bf">(0, rate/2)</code>`; an out-of-Nyquist cutoff raises instead of passing the signal</p>
-<p>through. A signal too short for zero-phase filtfilt also raises (the message</p>
-<p>names the exact minimum) instead of silently coming back unfiltered.</p>
+<p>Butterworth-Tiefpass (scipy, Zero-Phase-Filtfilt). *cutoff* muss innerhalb von `<code style="color:#22d3bf">(0, rate/2)</code>` liegen; ein Cutoff außerhalb des Nyquist-Bereichs löst eine Exception aus, statt das Signal unverändert durchzulassen. Ein für Zero-Phase-Filtfilt zu kurzes Signal löst ebenfalls eine Exception aus (die Meldung nennt die exakte Mindestlänge), statt stillschweigend ungefiltert zurückzukommen.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>Typed bridge of the 1d op `<code style="color:#22d3bf">lowpass</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">order</code><code style="color:#22d3bf"> (default 4); </code><code style="color:#22d3bf">b</code>` is unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

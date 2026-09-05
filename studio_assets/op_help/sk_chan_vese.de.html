@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sk_chan_vese&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Chan-Vese セグメンテーション。レベルセット(等位集合)を輝度の分散が領域内で最小になるように反復して動かす能動輪郭モデルで、エッジがはっきりしない対象でも領域を検出できる。</p>
+<p>Chan-Vese-Segmentierung. Ein aktives Konturmodell, das eine Levelset (Niveaumenge) iterativ so bewegt, dass die Helligkeitsvarianz innerhalb der Region minimiert wird, wodurch sich Regionen auch bei Objekten ohne scharfe Kanten erkennen lassen.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">segmentation.chan_vese(v, mu=0.1+0.4*a, max_num_iter=60)</code>` —— a は&#x27;edge length&#x27; 重み mu を 0.1〜0.5 に振る(大きいほど輪郭が丸く滑らかになり細部を無視しやすくなる)。反復回数は 60 に固定。b は未使用。初期レベルセットは既定の &#x27;checkerboard&#x27;(チェッカーボード状)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>

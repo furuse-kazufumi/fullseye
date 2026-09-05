@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;rank_image&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">rank_image</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>窓内の画素値を昇順に並べて指定パーセンタイル位置の値を返す汎用ランク</p>
-<p>フィルタ(`<code style="color:#22d3bf">ndimage.percentile_filter</code>`)。パーセンタイル 0 で収縮相当、</p>
-<p>100 で膨張相当、50 でメディアン相当になる連続的な一般化。HALCON の</p>
-<p>`<code style="color:#22d3bf">rank_image</code>`（Compute a rank filter with arbitrary masks.）に相当</p>
-<p>(HALCON は任意形状マスクを取れるが、ここでは正方形マスクに固定)。</p>
+<p>창 내의 화소값을 오름차순으로 정렬하여 지정된 백분위수 위치의 값을 반환하는 범용 랭크 필터(`<code style="color:#22d3bf">ndimage.percentile_filter</code><code style="color:#22d3bf">). 백분위수 0에서 침식에 해당하고, 100에서 팽창에 해당하며, 50에서 미디언에 해당하는 연속적인 일반화이다. HALCON의 </code><code style="color:#22d3bf">rank_image</code>`(Compute a rank filter with arbitrary masks.)에 해당한다(HALCON은 임의 형상의 마스크를 취할 수 있지만, 여기서는 정사각형 마스크로 고정한다).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の一辺を </code><code style="color:#22d3bf">{3,5,7,9}</code><code style="color:#22d3bf"> で、</code><code style="color:#22d3bf">b</code>` がパーセンタイルを 5〜95% の</p>
 <p>範囲で振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

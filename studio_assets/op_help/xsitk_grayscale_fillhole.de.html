@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_grayscale_fillhole&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>グレースケール穴埋め(SimpleITK `<code style="color:#22d3bf">GrayscaleFillhole</code>`)。モルフォロジー再構成により、画像の暗い孔(周囲より暗い局所的な窪み)を周囲の明るさまで埋める。二値の穴埋めのグレースケール版で、しみ抜きや欠損補完の前処理に使う。</p>
+<p>Graustufen-Löcherfüllung (SimpleITK `<code style="color:#22d3bf">GrayscaleFillhole</code>`). Füllt mittels morphologischer Rekonstruktion dunkle Löcher im Bild (lokale Vertiefungen, die dunkler sind als ihre Umgebung) bis auf die Helligkeit der Umgebung auf. Das Graustufen-Pendant zur binären Löcherfüllung, eingesetzt als Vorverarbeitung zur Fleckenentfernung und Defektergänzung.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>パラメータは無く、`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。出力は [0,1] にクリップ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">Leitfaden zur Familie gallery2d_color_artistic</a></p>

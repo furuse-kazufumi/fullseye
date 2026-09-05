@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_erosion1&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">erosion1</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>円板構造要素で region を収縮(erosion)する。HALCON の `<code style="color:#22d3bf">erosion1</code>`</p>
-<p>(region を収縮する)に相当。</p>
+<p>Erodiert eine Region mit einem scheibenförmigen Strukturelement. Entspricht HALCONs `<code style="color:#22d3bf">erosion1</code>` (erodiert eine Region).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>半径 `<code style="color:#22d3bf">r = 1 + int(a*4)</code>` の円板を構造要素として</p>
 <p>`<code style="color:#22d3bf">scipy.ndimage.binary_erosion</code><code style="color:#22d3bf"> を呼ぶ。</code><code style="color:#22d3bf">b</code>` は未使用。境界の外側画素を</p>
 <p>削り、細い突起やノイズ画素を消す。</p>

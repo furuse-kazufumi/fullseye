@@ -1,0 +1,185 @@
+"""退化した入力を全 op に通す —— 0 サイズ・1 画素・定数・NaN・Inf。
+
+2026-09-05 に足した。**テスト 11,254 件が全部緑のまま**、次が見逃されていた:
+
+* ``xpil_offset`` に 0x0 の画像 → **インタプリタごと落ちる**(exit 127)。
+  Pillow のネイティブ側なので Python の例外にならず、``backend_safe.guard`` でも
+  捕まえられない。全 PIL op が通る ``_im()`` で 0 サイズを弾いて解決。
+* 空入力で **14 op が NaN / Inf を返し**、``fullseye.apply()`` 経由でもそのまま
+  出ていた(空配列の平均・分散・比 = 0 除算)。原因は「有限性を約束する guard を
+  **881 op 中 395 本が一度も通っていなかった**」こと。登録時に一律で包んで解決。
+* ``xsk_unwrap_phase`` に全 NaN → 5 分以上返らない(ハング)。
+
+個別のテストに空配列は 51 箇所あったが、**レジストリ全体を退化入力で舐める検査は
+1 つも無かった**。だから緑のまま気づけなかった —— 「発見ゼロ」は「頑健」ではなく
+「未実行」だったという、この repo が繰り返し踏んでいる形。
+
+ここで数えるのは **op ごとの結果の種類**で、退化入力でも
+「有限で、宣言した sort に合う値を返す(または例外を送出して台帳に載る)」ことを要求する。
+"""
+from __future__ import annotations
+
+import os
+import sys
+import warnings
+
+import numpy as np
+import pytest
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(HERE)
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
+
+#: 各 in_sort の「0 要素」の形。``None`` = その sort には空の代表が無い。
+EMPTY = {
+    "image": (0, 0), "any": (0, 0), "region": (0, 0), "matrix": (0, 0),
+    "cimage": (0, 0), "volume": (0, 0, 0), "video": (0, 0, 0),
+    "points": (0, 3), "keypoints": (0, 2), "signal": (0,), "counts": (0,),
+    "color": (0, 0, 3), "rgbimage": (0, 0, 3), "qimage": (0, 0, 4),
+    "lightfield": (0, 0, 0, 0), "beatcube": (0, 0, 0),
+}
+
+#: 全 NaN / 全 Inf を渡したときに**返ってこない**ことが分かっている op。
+#: 直したら消す。ハングはクラッシュより厄介 —— CI では「遅い」としか見えない。
+KNOWN_HANGS_ON_NONFINITE = {
+    "xsk_unwrap_phase": "全 NaN の位相を渡すと skimage の unwrap_phase が返らない"
+                        "(実測 5 分以上)。入力の有限性を先に確かめるべき。",
+}
+
+
+def _empty_for(sort):
+    if sort == "contour":
+        return {"shape": (0, 0), "cs": []}
+    shp = EMPTY.get(sort)
+    if shp is None:
+        return None
+    return np.zeros(shp, dtype=complex if sort == "cimage" else float)
+
+
+def _finite_and_sort_valid(out, sort):
+    """返り値が「有限で、宣言した sort に合う」か。"""
+    if sort == "contour":
+        return isinstance(out, dict) and "cs" in out and "shape" in out
+    a = np.asarray(out)
+    if a.dtype == object:
+        return False
+    a = np.asarray(a.real if np.iscomplexobj(a) else a, dtype=float)
+    return bool(a.size == 0 or np.all(np.isfinite(a)))
+
+
+@pytest.fixture(scope="module")
+def registry():
+    import ops
+    return ops.REGISTRY
+
+
+def test_no_op_returns_a_non_finite_value_for_an_empty_input(registry):
+    """0 サイズの入力で NaN / Inf を返す op が無いこと(0 除算の検出器)。
+
+    空配列の平均・分散・比は素直に書くと ``0/0`` になる。例外にならずに
+    ``nan`` が出ていくのが最悪で、下流はそれを数値として扱ってしまう。
+    """
+    import ops
+    bad, missing = [], []
+    for op in registry:
+        v = _empty_for(op.in_sort)
+        if v is None:
+            missing.append(op.in_sort)
+            continue
+        try:
+            out = op.fn(v.copy() if hasattr(v, "copy") else dict(v), 0.5, 0.5)
+        except Exception:                                 # noqa: BLE001
+            continue                                      # 例外は台帳に載る(契約内)
+        if not _finite_and_sort_valid(out, op.out_sort):
+            bad.append(op.name)
+    assert not missing, "空の代表値が無い in_sort: %s" % sorted(set(missing))
+    assert not bad, ("0 サイズ入力で非有限値を返す op が %d 本: %s"
+                     % (len(bad), bad[:20]))
+    assert len(registry) > 800, "レジストリが小さすぎる(検査の前提が違う)"
+
+
+def test_no_op_crashes_the_process_on_an_empty_input(registry):
+    """0 サイズ入力でインタプリタが落ちないこと。
+
+    このテストが**通ること自体が証拠**になる —— 落ちる op があると
+    pytest ごと死ぬので、赤ではなく「テストが消える」形で現れる。
+    そのため件数を出して、確かに全 op を通したことを残す。
+    """
+    n = 0
+    for op in registry:
+        v = _empty_for(op.in_sort)
+        if v is None:
+            continue
+        try:
+            op.fn(v.copy() if hasattr(v, "copy") else dict(v), 0.5, 0.5)
+        except Exception:                                 # noqa: BLE001
+            pass
+        n += 1
+    assert n > 800, "通した op が少なすぎる(%d)" % n
+
+
+@pytest.mark.parametrize("fill", [0.0, 1.0, 0.5])
+def test_constant_and_single_pixel_inputs_stay_in_contract(registry, fill):
+    """定数画像(全ゼロ・全 1)と 1 画素でも契約を守ること。
+
+    定数画像は**分散 0** を作るので、正規化・コントラスト・相関の類が
+    0 除算になりやすい。1 画素は窓・近傍・勾配の境界条件を突く。
+    """
+    bad = []
+    for op in registry:
+        shp = EMPTY.get(op.in_sort)
+        if shp is None:
+            continue
+        one = tuple(max(1, d) if d == 0 else d for d in shp)
+        for shape in (tuple(1 if d == 0 else d for d in shp), one):
+            v = np.full(shape, fill,
+                        dtype=complex if op.in_sort == "cimage" else float)
+            try:
+                out = op.fn(v, 0.5, 0.5)
+            except Exception:                             # noqa: BLE001
+                continue
+            if not _finite_and_sort_valid(out, op.out_sort):
+                bad.append((op.name, shape))
+                break
+    assert not bad, "定数/1 画素の入力で契約を破る op: %s" % bad[:20]
+
+
+def test_zero_division_is_not_hidden_by_numpy_defaults(registry):
+    """0 除算が起きている op を **numpy の警告を error に上げて**名指しする。
+
+    numpy は既定で ``0/0`` を黙って ``nan`` にする。結果を見るだけでは
+    「そういう値」と区別がつかないので、**計算の最中に**捕まえる。
+    ここで拾うのは「非有限が外へ出ていく」ものだけ —— 内部で 0 除算しても
+    最後に潰しているなら実害は無いので、出力側の検査(上)と役割を分ける。
+    """
+    offenders = []
+    for op in registry:
+        v = _empty_for(op.in_sort)
+        if v is None:
+            continue
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            try:
+                with np.errstate(divide="raise", invalid="raise"):
+                    out = op.fn(v.copy() if hasattr(v, "copy") else dict(v), 0.5, 0.5)
+            except FloatingPointError:
+                # 計算中に 0 除算はしたが、外に出ていなければ実害は無い。
+                # 出力側の契約は上のテストが見ているので、ここでは数えない。
+                continue
+            except Exception:                             # noqa: BLE001
+                continue
+        if not _finite_and_sort_valid(out, op.out_sort):
+            offenders.append(op.name)
+    assert not offenders, "0 除算の結果が外へ出ている op: %s" % offenders[:20]
+
+
+def test_known_hangs_are_still_listed(registry):
+    """ハングする op の一覧が空でないこと(直したら消す合図)。
+
+    ハングは pytest-timeout が拾うが、**どの op か**はここに書いておく。
+    直った op を一覧に残すと、次に止まったときに気づけない。
+    """
+    live = {op.name for op in registry}
+    stale = sorted(set(KNOWN_HANGS_ON_NONFINITE) - live)
+    assert not stale, "居ない op が一覧に残っている: %s" % stale

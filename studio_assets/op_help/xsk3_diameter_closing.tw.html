@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk3_diameter_closing&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>直径クロージング(skimage `<code style="color:#22d3bf">morphology.diameter_closing</code>`)。xsk3_area_closing の面積の代わりに、連結成分の外接矩形の対角線長(直径)で対象を選ぶクロージング —— 細長い構造には直径基準、丸い構造には面積基準が向く、と使い分けられる。</p>
+<p>直徑閉運算(skimage `<code style="color:#22d3bf">morphology.diameter_closing</code>`)。與 xsk3_area_closing 使用面積不同，本運算以連通元件外接矩形的對角線長度(直徑)來選取對象——細長結構適合用直徑基準，圓形結構適合用面積基準，可視情況區分使用。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は直径閾値(</code><code style="color:#22d3bf">4+int(a*30)</code><code style="color:#22d3bf"> で 4〜34 画素)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>

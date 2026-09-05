@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;height_width_ratio&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">height_width_ratio</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>外接矩形の縦横比 `<code style="color:#22d3bf">min(1, 高さ/幅)</code>`。高さが幅以下のときだけ正しい</p>
-<p>比率を返し、高さが幅を超える(縦長の)領域では 1.0 に飽和してしまう</p>
-<p>(実装の非対称性 ―― 真のアスペクト比ではなく「横長方向の扁平さ」しか</p>
-<p>表現できない近似)。HALCON の `<code style="color:#22d3bf">height_width_ratio</code>`（Compute the width,</p>
-<p>height, and aspect ratio of the surrounding rectangle parallel to the</p>
-<p>coordinate axes.）の代役。</p>
+<p>Das Seitenverhältnis des umschreibenden Rechtecks, `<code style="color:#22d3bf">min(1, Höhe/Breite)</code><code style="color:#22d3bf">. Es liefert nur dann das korrekte Verhältnis, wenn die Höhe kleiner oder gleich der Breite ist, und sättigt bei 1,0 für Regionen, die höher als breit sind (eine Asymmetrie der Implementierung -- eine Approximation, die nur &#x27;Flachheit in horizontaler Richtung&#x27; ausdrücken kann, nicht das wahre Seitenverhältnis). Ein Ersatz für HALCONs </code><code style="color:#22d3bf">height_width_ratio</code>` (Compute the width, height, and aspect ratio of the surrounding rectangle parallel to the coordinate axes.).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>

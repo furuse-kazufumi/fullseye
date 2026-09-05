@@ -3,13 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_cutout&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Cutout / random-erasing occlusion (DeVries &amp; Taylor 2017; Zhong et al.</p>
-<p>2020): a square patch of side `<code style="color:#22d3bf">max(1, a*min(H,W))</code>` is erased from the</p>
-<p>image, forcing a pipeline to survive partial occlusion instead of relying on</p>
-<p>one salient blob. `<code style="color:#22d3bf">b</code>` selects the (deterministic, seeded-from-b) patch</p>
-<p>position AND the fill value: b &lt;= 0.5 -&gt; black (0.0), b &gt; 0.5 -&gt; mid-gray</p>
-<p>(0.5). The patch is always fully inside the frame.</p>
+<p>Cutout / Random-Erasing-Verdeckung (DeVries &amp; Taylor 2017; Zhong et al. 2020): Ein quadratischer Fleck mit Seitenlänge `<code style="color:#22d3bf">max(1, a*min(H,W))</code><code style="color:#22d3bf"> wird aus dem Bild gelöscht, sodass eine Pipeline eine teilweise Verdeckung überstehen muss, statt sich auf einen einzelnen markanten Fleck zu verlassen. </code><code style="color:#22d3bf">b</code>` bestimmt sowohl die (deterministische, aus b abgeleitete) Position des Flecks als auch den Füllwert: b &lt;= 0.5 -&gt; schwarz (0.0), b &gt; 0.5 -&gt; mittleres Grau (0.5). Der Fleck liegt stets vollständig innerhalb des Bildes.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">Leitfaden zur Familie gallery2d_color_artistic</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

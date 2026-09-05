@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;it_bit_lshift&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">bit_lshift</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>bit_lshift: 8-bit quantise, left-shift every pixel by round(a*7), mask to</p>
-<p>8 bits (wrap-around, as HALCON does), and map back to [0,1]. `<code style="color:#22d3bf">b</code>` ignored.</p>
+<p>bit_lshift:先做 8 位量化,再将每个像素左移 round(a*7) 位,按 8 位掩码取回(如 HALCON 一样发生环绕),最后映射回 [0,1]。`<code style="color:#22d3bf">b</code>` 被忽略。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

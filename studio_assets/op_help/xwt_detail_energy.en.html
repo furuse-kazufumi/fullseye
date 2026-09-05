@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xwt_detail_energy&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>ウェーブレット詳細成分のエネルギー比。`<code style="color:#22d3bf">db2</code>` で 3 段分解し、全詳細係数(各段の水平/垂直/対角)の二乗平均の合計を、それに近似成分の二乗平均を足した全エネルギーで割った値を返す —— 高周波(テクスチャ/ノイズ/エッジ)が画像全体に占める割合の指標で、値域はおおむね [0,1)。</p>
+<p>Energy ratio of the wavelet detail components. Decomposes with `<code style="color:#22d3bf">db2</code>` over 3 levels and returns the sum of mean squares of all detail coefficients (horizontal/vertical/diagonal at each level) divided by the total energy -- that sum plus the mean square of the approximation component. A measure of how much of the image&#x27;s total energy is high-frequency (texture/noise/edges); the range is roughly [0,1).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。値が大きいほどざらついた/エッジの多い画像、小さいほど滑らかな画像であることを示す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>

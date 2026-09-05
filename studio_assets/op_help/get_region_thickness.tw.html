@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;get_region_thickness&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">get_region_thickness</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>領域の太さの近似値 `<code style="color:#22d3bf">2 × 最大内接円半径 / 最大辺長</code>`</p>
-<p>(`<code style="color:#22d3bf">distance_transform_edt</code>` の最大値の 2 倍を画像サイズで正規化)。HALCON</p>
-<p>の `<code style="color:#22d3bf">get_region_thickness</code>`（Access the thickness of a region along the</p>
-<p>main axis.）が定義する「主軸に沿った太さのプロファイル」とは異なり、</p>
-<p>方向を問わないグローバルな最大内接半径だけを見る単純化(主軸方向の情報は</p>
-<p>失われる)。</p>
+<p>區域粗細的近似值：`<code style="color:#22d3bf">2 × 最大內切圓半徑 / 最大邊長</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">distance_transform_edt</code><code style="color:#22d3bf"> 最大值的 2 倍，以影像尺寸正規化）。與 HALCON 的 </code><code style="color:#22d3bf">get_region_thickness</code>`（Access the thickness of a region along the main axis.）所定義的「沿主軸方向的粗細剖面」不同，此處是一種簡化：只看與方向無關的全域最大內切半徑（主軸方向的資訊會遺失）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

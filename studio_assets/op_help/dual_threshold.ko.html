@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;dual_threshold&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">dual_threshold</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>符号つき画像向けのしきい値処理。中央値 0.5 を「ゼロ」とみなし、</p>
-<p>`<code style="color:#22d3bf">|x - 0.5| &gt; 0.1+0.35*a</code>` を満たす画素(0.5 から十分離れた画素)を前景と</p>
-<p>する ―― 正負どちらの側にも対称に反応する。HALCON の `<code style="color:#22d3bf">dual_threshold</code>`</p>
-<p>（Threshold operator for signed images.）に相当(HALCON は正負で別々の</p>
-<p>しきい値を持てるが、ここでは 0.5 を中心とした対称な帯域に単純化)。</p>
+<p>부호 있는 이미지를 위한 임계값 처리. 중앙값 0.5를 &quot;영&quot;으로 간주하고, `<code style="color:#22d3bf">|x - 0.5| &gt; 0.1+0.35*a</code><code style="color:#22d3bf">를 만족하는 화소(0.5에서 충분히 먼 화소)를 전경으로 삼는다 — 양쪽(양/음) 어느 방향에도 대칭으로 반응한다. HALCON의 </code><code style="color:#22d3bf">dual_threshold</code>`(Threshold operator for signed images.)에 해당(HALCON은 양/음에 각각 다른 임계값을 둘 수 있지만, 여기서는 0.5를 중심으로 한 대칭 대역으로 단순화했다).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が除外帯域の半幅を振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。</code><code style="color:#22d3bf">highpass_image</code>` や</p>
 <p>`<code style="color:#22d3bf">bandpass_image</code>` のような符号つき応答(0.5=ゼロ)の後段でよく使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

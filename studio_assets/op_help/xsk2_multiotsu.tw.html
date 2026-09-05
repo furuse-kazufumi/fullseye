@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk2_multiotsu&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>大津の判別分析法（Otsu&#x27;s method）を多値に拡張した多値大津法で階調を</p>
-<p>量子化する。`<code style="color:#22d3bf">skimage.filters.threshold_multiotsu</code>` を使う。</p>
+<p>使用將大津判別分析法（Otsu&#x27;s method）擴展為多值的多值大津法對灰階進行量化。使用 `<code style="color:#22d3bf">skimage.filters.threshold_multiotsu</code>`。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>a はクラス数を 3 または 4 に切り替える（`<code style="color:#22d3bf">3 + int(a &gt; 0.5)</code>`）。</p>
 <p><b>5 クラス以上は実装していない</b>——多値大津はしきい値の全探索コストが</p>
 <p>`<code style="color:#22d3bf">bins ** (classes - 1)</code>` で増えるため、実測（128x128）で 3 クラス</p>

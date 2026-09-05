@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_random_rotation&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>ランダム回転を適用し `<code style="color:#22d3bf">(rotated, R)</code>` を返す(視点変化の模倣)。</p>
+<p>Wendet eine zufällige Rotation an und gibt `<code style="color:#22d3bf">(rotated, R)</code>` zurück (Nachbildung eines Blickwinkelwechsels).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">R</code><code style="color:#22d3bf"> は正規直交・</code><code style="color:#22d3bf">det=+1</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">rotated = points @ R.T</code><code style="color:#22d3bf"> = 各点に </code><code style="color:#22d3bf">R</code>` を左作用、</p>
 <p>逆変換は `<code style="color:#22d3bf">rotated @ R</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">max_angle=None</code>` なら Shoemake 法で一様ランダム回転、</p>
 <p>`<code style="color:#22d3bf">max_angle</code><code style="color:#22d3bf"> 指定(ラジアン, 期待 </code><code style="color:#22d3bf">[0, π]</code><code style="color:#22d3bf">)なら軸を球面一様・角を </code><code style="color:#22d3bf">[0, max_angle]</code>`</p>

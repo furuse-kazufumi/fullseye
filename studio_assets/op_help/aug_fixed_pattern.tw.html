@@ -3,13 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;aug_fixed_pattern&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Fixed-pattern noise (FPN / photo-response non-uniformity). Unlike read</p>
-<p>noise this pattern is STATIC across frames: a per-column offset plus a</p>
-<p>per-row offset, each drawn once and held. `<code style="color:#22d3bf">a</code>` sets the amplitude</p>
-<p>`<code style="color:#22d3bf">0.02 + 0.2*a</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">b</code>` selects WHICH fixed pattern (the generator is seeded</p>
-<p>from b alone, so sweeping a changes only the strength of one pattern).</p>
-<p>Column FPN dominates (2/3 weight) as it does in CMOS column-parallel ADCs.</p>
+<p>固定圖案雜訊（FPN／光響應不均勻性）。與讀出雜訊不同，此圖案在各影格間是靜態的：由逐欄偏移加逐列偏移構成，各自僅抽取一次並保持不變。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 設定振幅 </code><code style="color:#22d3bf">0.02 + 0.2*a</code><code style="color:#22d3bf">；</code><code style="color:#22d3bf">b</code>` 選擇使用哪一種固定圖案（產生器僅由 b 播種，因此掃描 a 只會改變某一種圖案的強度）。欄方向的 FPN 佔主導（權重 2/3），這與 CMOS 欄平行 ADC 中的情形一致。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

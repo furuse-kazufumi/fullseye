@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;power_real&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">power_real</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>FFT の実部の絶対値 `<code style="color:#22d3bf">|Re(F)|</code><code style="color:#22d3bf"> を正規化した画像(</code><code style="color:#22d3bf">fft_image</code>` の対数</p>
-<p>パワースペクトルとは異なり、対数を取らず実部だけを見る)。HALCON の</p>
-<p>`<code style="color:#22d3bf">power_real</code>`（Return the power spectrum of a complex image.）に相当する</p>
-<p>近似(HALCON の本来の定義は |F|² のパワーだが、ここでは実部絶対値で代用)。</p>
+<p>將FFT實部的絕對值`<code style="color:#22d3bf">|Re(F)|</code><code style="color:#22d3bf">正規化後得到的影像(與</code><code style="color:#22d3bf">fft_image</code><code style="color:#22d3bf">的對數功率譜不同,這裡不取對數,只觀察實部)。屬於相當於HALCON</code><code style="color:#22d3bf">power_real</code>`(Return the power spectrum of a complex image.)的近似(HALCON原本的定義是功率|F|²,但這裡以實部絕對值代替)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>

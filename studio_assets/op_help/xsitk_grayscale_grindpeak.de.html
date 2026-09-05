@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_grayscale_grindpeak&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>グレースケール山削り(SimpleITK `<code style="color:#22d3bf">GrayscaleGrindPeak</code>`、xsitk_grayscale_fillhole の双対)。モルフォロジー再構成により、周囲より明るい局所的な山(ピーク)を周囲の高さまで削り落とす。ハイライトのスパイク除去に使う。</p>
+<p>Graustufen-Spitzenabtragung (SimpleITK `<code style="color:#22d3bf">GrayscaleGrindPeak</code>`, das duale Gegenstück zu xsitk_grayscale_fillhole). Trägt mittels morphologischer Rekonstruktion lokale Spitzen, die heller sind als ihre Umgebung, bis auf die Umgebungshöhe ab. Wird zur Entfernung von Highlight-Spitzen verwendet.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>パラメータは無く、`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。出力は [0,1] にクリップ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">Leitfaden zur Familie gallery2d_color_artistic</a></p>

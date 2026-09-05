@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;frei_dir&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">frei_dir</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Frei-Chen 型カーネルによるエッジ方向（角度）マップ。水平カーネル `<code style="color:#22d3bf">_FREI[0]</code><code style="color:#22d3bf">（行/縦方向勾配）と垂直カーネル </code><code style="color:#22d3bf">_FREI[1]</code><code style="color:#22d3bf">（列/横方向勾配）への畳み込み応答から </code><code style="color:#22d3bf">arctan2(gy, gx)</code><code style="color:#22d3bf"> を計算し、</code><code style="color:#22d3bf">sobel_dir</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">prewitt_dir</code>` と同じ規約で [0,1] に写す（0/1 が -180°、0.5 が 0°）。a, b は未使用。</p>
+<p>使用 Frei-Chen 型核的边缘方向（角度）图。由水平核 `<code style="color:#22d3bf">_FREI[0]</code><code style="color:#22d3bf">（行/纵向梯度）与垂直核 </code><code style="color:#22d3bf">_FREI[1]</code><code style="color:#22d3bf">（列/横向梯度）的卷积响应计算 </code><code style="color:#22d3bf">arctan2(gy, gx)</code><code style="color:#22d3bf">，并按照与 </code><code style="color:#22d3bf">sobel_dir</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">prewitt_dir</code>` 相同的约定映射到 [0,1]（0/1 对应 -180°，0.5 对应 0°）。a、b 未使用。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>HALCON の `<code style="color:#22d3bf">frei_dir</code><code style="color:#22d3bf">（Frei-Chen 演算子でエッジの振幅と方向を検出する演算）のうち方向成分に相当する近似。振幅は </code><code style="color:#22d3bf">frei_amp</code>` 側が担当する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>

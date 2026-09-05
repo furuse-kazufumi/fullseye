@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;f2_shock&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">shock_filter</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Osher-Rudin shock filter: I_t = -sign(Lap I)*|grad I|, morphological form.</p>
+<p>Osher-Rudin 震波濾波器：I_t = -sign(Lap I)*|grad I|，形態學形式。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Each step dilates where the Laplacian is negative (bright/convex side of an</p>
 <p>edge) and erodes where it is positive (dark/concave side); the two flows</p>
 <p>collide at the zero-crossing, forming a shock that sharpens blurred edges.</p>

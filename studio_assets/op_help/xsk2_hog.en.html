@@ -3,10 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk2_hog&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>HOG（Histogram of Oriented Gradients）特徴量の可視化画像。</p>
-<p>`<code style="color:#22d3bf">skimage.feature.hog</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">visualize=True</code>` で呼び、可視化画像側を</p>
-<p>返す（特徴ベクトル自体は捨てる）。</p>
+<p>A visualization image of HOG (Histogram of Oriented Gradients) features. Calls `<code style="color:#22d3bf">skimage.feature.hog</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">visualize=True</code>` and returns the visualization image (discarding the feature vector itself).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>a がセル 1 辺のピクセル数（`<code style="color:#22d3bf">6 + 2*int(a*3)</code>`、6/8/10/12 の 4 段階）を</p>
 <p>振る。方向数は 8、ブロックは 2x2 に固定。b は未使用。出力は最大値で</p>
 <p>正規化した勾配方向強度の可視化であり、HOG 特徴ベクトルそのものでは</p>

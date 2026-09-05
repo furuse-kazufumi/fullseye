@@ -8,7 +8,7 @@ halcon: trans_from_rgb
 examples: [gallery2d_color_artistic]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.7  # fullseye lib version this note was generated for
+version: 0.1.8  # fullseye lib version this note was generated for
 ---
 
 # trans_from_rgb — 2D `color` op

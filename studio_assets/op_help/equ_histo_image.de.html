@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;equ_histo_image&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">equ_histo_image</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>画像全体のヒストグラム平坦化(累積分布関数によるトーンカーブ生成、256</p>
-<p>ビン)。暗部・明部に偏った階調分布を均して見かけのコントラストを上げる古典的</p>
-<p>な手法。HALCON の `<code style="color:#22d3bf">equ_histo_image</code>`（Histogram linearization of images）</p>
-<p>に相当。</p>
+<p>Globale Histogrammausgleichung des gesamten Bildes (Tonkurve aus der kumulativen Verteilungsfunktion erzeugt, 256 Bins). Ein klassisches Verfahren, das eine zu Schatten oder Lichtern hin verschobene Tonwertverteilung ausgleicht, um den scheinbaren Kontrast zu erhöhen. Entspricht HALCONs `<code style="color:#22d3bf">equ_histo_image</code>` (Histogram linearization of images).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。局所版(ブロックごとに平坦化)が欲しい場合は</p>
 <p>`<code style="color:#22d3bf">equ_histo_image_rect</code>` を使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

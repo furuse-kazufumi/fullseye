@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk3_estimate_sigma&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>ノイズ標準偏差の推定(skimage `<code style="color:#22d3bf">restoration.estimate_sigma</code>`、ウェーブレット係数の中央絶対偏差(MAD)に基づく Donoho の推定量)。推定値を 5 倍したのち 1.0 で頭打ちにして feature として返す。</p>
+<p>Schätzung der Rausch-Standardabweichung (skimage `<code style="color:#22d3bf">restoration.estimate_sigma</code>`, Donoho-Schätzer basierend auf der medianen absoluten Abweichung (MAD) der Wavelet-Koeffizienten). Gibt den mit 5 multiplizierten und bei 1.0 gedeckelten Schätzwert als Feature zurück.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。デノイズ強度(例えば閾値処理のパラメータ)を画像ごとに自動決定したい場合の目安に使える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>

@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;h_threshold&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">threshold</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>帯域しきい値処理(`<code style="color:#22d3bf">a &lt; x &lt; a+0.5+0.5*b</code>` を満たす画素を前景とする)。</p>
-<p>HALCON の `<code style="color:#22d3bf">threshold</code>`(Segment an image using global threshold.)は</p>
-<p>Min/Max の 2 値を直接指定する演算子だが、この代役では下限を `<code style="color:#22d3bf">a</code>` から、</p>
-<p>帯域幅を `<code style="color:#22d3bf">b</code>` から導出する 1 パラメータ相当の簡略化になっている。登録名は</p>
-<p>`<code style="color:#22d3bf">threshold</code><code style="color:#22d3bf"> が Python 側で予約語的に扱われるため </code><code style="color:#22d3bf">h_threshold</code>` になる</p>
-<p>(spec の `<code style="color:#22d3bf">halcon</code><code style="color:#22d3bf"> フィールドは </code><code style="color:#22d3bf">threshold</code>` のまま)。</p>
+<p>대역 임계값 처리(`<code style="color:#22d3bf">a &lt; x &lt; a+0.5+0.5*b</code><code style="color:#22d3bf">를 만족하는 화소를 전경으로 한다). HALCON의 </code><code style="color:#22d3bf">threshold</code><code style="color:#22d3bf">(Segment an image using global threshold.)는 Min/Max 두 값을 직접 지정하는 연산자이지만, 이 대체 구현은 하한을 </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">에서, 대역폭을 </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf">에서 도출하는 파라미터 1개 상당의 단순화이다. </code><code style="color:#22d3bf">threshold</code><code style="color:#22d3bf">가 파이썬 쪽에서 예약어처럼 취급되기 때문에 등록명은 </code><code style="color:#22d3bf">h_threshold</code><code style="color:#22d3bf">가 된다(spec의 </code><code style="color:#22d3bf">halcon</code><code style="color:#22d3bf"> 필드는 </code><code style="color:#22d3bf">threshold</code>` 그대로이다).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が下限しきい値(0〜1)を、</code><code style="color:#22d3bf">b</code>` が帯域幅(0〜0.5 の追加分)を振る。</p>
 <p>両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

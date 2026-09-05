@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sk_skeleton&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">skeleton</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>領域の骨格化(skeletonization)。前景領域をトポロジー(連結関係・穴の数)を保ったまま 1 画素幅の線に細める。</p>
+<p>Skelettierung einer Region (skeletonization). Verdünnt die Vordergrundregion auf eine ein Pixel breite Linie, während die Topologie (Zusammenhang und Anzahl der Löcher) erhalten bleibt.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON の <code style="color:#22d3bf">skeleton</code>(Compute the skeleton of a region.)に相当(近似。アルゴリズムは Zhang-Suen 系)。実装は `<code style="color:#22d3bf">morphology.skeletonize(binm(v))</code><code style="color:#22d3bf"> —— 入力はまず </code><code style="color:#22d3bf">binm</code>`(&gt; 0.5 のしきい値)で真偽値化される。a, b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>

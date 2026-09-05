@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sqrt_image&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">sqrt_image</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>[0,1] に clip した画素値の平方根を取る。暗部を持ち上げるガンマ的な階調</p>
-<p>圧縮になる(√x は x=0.25 を 0.5 へ、x=0.04 を 0.2 へ押し上げる)。HALCON の</p>
-<p>`<code style="color:#22d3bf">sqrt_image</code>`（Calculate the square root of an image.）に相当。</p>
+<p>Bildet die Quadratwurzel der auf [0,1] begrenzten Pixelwerte. Dies ergibt eine gammaartige Tonwertkompression, die die Schatten anhebt (die Quadratwurzel hebt x=0,25 auf 0,5 und x=0,04 auf 0,2 an). Entspricht HALCONs `<code style="color:#22d3bf">sqrt_image</code>` (Calculate the square root of an image.).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用 —— 固定の平方根写像で調整点はない。強さを変えたいなら</p>
 <p>`<code style="color:#22d3bf">gamma_image</code><code style="color:#22d3bf">(exponent が </code><code style="color:#22d3bf">a</code>` で振れる)を使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_opening&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">opening</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>円板構造要素で region をオープニング(収縮→膨張)する。HALCON の</p>
-<p>`<code style="color:#22d3bf">opening</code>`(region をオープンする)に相当。</p>
+<p>Öffnet eine Region mit einem scheibenförmigen Strukturelement (Erosion gefolgt von Dilatation). Entspricht HALCONs `<code style="color:#22d3bf">opening</code>` (öffnet eine Region).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>半径 `<code style="color:#22d3bf">r = 1 + int(a*4)</code><code style="color:#22d3bf"> の円板で </code><code style="color:#22d3bf">scipy.ndimage.binary_opening</code>` を呼ぶ。</p>
 <p>`<code style="color:#22d3bf">b</code>` は未使用。細い突起や小さな孤立点を除去しつつ全体形状を保つ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

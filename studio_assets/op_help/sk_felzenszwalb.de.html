@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sk_felzenszwalb&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Felzenszwalb のグラフベース領域分割。画素をノードとする最小全域木クラスタリングで、明確な境界が無くても画像を過分割(オーバーセグメンテーション)する高速な手法。ここでは分割結果の境界線を領域として返す。</p>
+<p>Felzenszwalbs graphbasierte Segmentierung. Ein schnelles Verfahren, das mit einem minimalen Spannbaum über Pixel als Knoten clustert und das Bild auch ohne klare Grenzen übersegmentiert. Hier werden die Grenzlinien des Segmentierungsergebnisses als Region zurückgegeben.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">segmentation.find_boundaries(segmentation.felzenszwalb(v, scale=20+200*a, channel_axis=None))</code>` —— a は scale(観測レベル。大きいほどセグメントが少なく大きくなる)を 20〜220 に振る。sigma(前処理の平滑化)・min_size は既定値(0.8, 20)のまま固定。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>

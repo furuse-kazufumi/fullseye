@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hough_line_trans&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">hough_line_trans</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>直線検出のための Hough 変換アキュムレータ。まず Sobel 勾配からエッジ</p>
-<p>マスクを作り、`<code style="color:#22d3bf">skimage.transform.hough_line</code>` でアキュムレータ空間</p>
-<p>(角度×距離)を計算、正規化してから入力と同じ画素形状にリサイズして返す</p>
-<p>(アキュムレータそのものの座標系ではなく画像として可視化する形)。HALCON の</p>
-<p>`<code style="color:#22d3bf">hough_line_trans</code>`（Produce the Hough transform for lines within</p>
-<p>regions.）に相当。</p>
+<p>Der Hough-Transformations-Akkumulator zur Linienerkennung. Erstellt zunächst aus dem Sobel-Gradienten eine Kantenmaske, berechnet den Akkumulatorraum (Winkel x Distanz) mit `<code style="color:#22d3bf">skimage.transform.hough_line</code><code style="color:#22d3bf">, normiert ihn und skaliert ihn dann auf dieselbe Pixelform wie die Eingabe, bevor er zurückgegeben wird (als Bild visualisiert statt im eigenen Koordinatensystem des Akkumulators). Entspricht HALCONs </code><code style="color:#22d3bf">hough_line_trans</code>` (Produce the Hough transform for lines within regions.).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がエッジ抽出の閾値(0.2〜0.6)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。半径・角度分解能</p>
 <p>は skimage の既定値に固定されている。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

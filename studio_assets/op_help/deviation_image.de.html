@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;deviation_image&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">deviation_image</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>矩形窓内の画素値の標準偏差(局所標準偏差、`<code style="color:#22d3bf">E[x^2]-E[x]^2</code>` の平方根)</p>
-<p>を正規化した画像。テクスチャの局所的なばらつき(粗さ)を可視化する。HALCON</p>
-<p>の `<code style="color:#22d3bf">deviation_image</code>`（Calculate the standard deviation of gray values</p>
-<p>within rectangular windows.）に相当。</p>
+<p>Ein Bild, das durch Normalisieren der Standardabweichung der Pixelwerte innerhalb eines rechteckigen Fensters entsteht (lokale Standardabweichung, die Quadratwurzel von `<code style="color:#22d3bf">E[x^2]-E[x]^2</code><code style="color:#22d3bf">). Visualisiert die lokale Streuung (Rauheit) der Textur. Entspricht HALCONs </code><code style="color:#22d3bf">deviation_image</code>` (Calculate the standard deviation of gray values within rectangular windows.).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の一辺を </code><code style="color:#22d3bf">{3,5,7,9}</code><code style="color:#22d3bf"> で振る。</code><code style="color:#22d3bf">b</code>` は未使用。平坦な領域では</p>
 <p>0 に近く、テクスチャの激しい領域で値が大きくなる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

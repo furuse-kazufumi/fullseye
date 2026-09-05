@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xwt_detail_energy&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>ウェーブレット詳細成分のエネルギー比。`<code style="color:#22d3bf">db2</code>` で 3 段分解し、全詳細係数(各段の水平/垂直/対角)の二乗平均の合計を、それに近似成分の二乗平均を足した全エネルギーで割った値を返す —— 高周波(テクスチャ/ノイズ/エッジ)が画像全体に占める割合の指標で、値域はおおむね [0,1)。</p>
+<p>小波细节成分的能量比。用`<code style="color:#22d3bf">db2</code>`做3层分解，返回所有细节系数（各层的水平/垂直/对角）均方和，除以该值加上近似成分均方后的总能量 —— 用于衡量高频（纹理/噪声/边缘）在图像整体中所占比例的指标，取值范围大致为[0,1)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。値が大きいほどざらついた/エッジの多い画像、小さいほど滑らかな画像であることを示す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

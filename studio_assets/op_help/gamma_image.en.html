@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;gamma_image&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">gamma_image</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>ガンマ補正 `<code style="color:#22d3bf">x ** (0.3 + 2.5*a)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">a</code>` が 0 に近いほど指数は 0.3 に</p>
-<p>近づき暗部を持ち上げ、`<code style="color:#22d3bf">a</code>` が 1 に近いほど指数は 2.8 に近づき暗部を潰して</p>
-<p>コントラストを強める。HALCON の `<code style="color:#22d3bf">gamma_image</code>`（Perform a gamma encoding or</p>
-<p>decoding of an image.）の代役。</p>
+<p>Gamma correction `<code style="color:#22d3bf">x ** (0.3 + 2.5*a)</code><code style="color:#22d3bf">. The closer </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> is to 0, the closer the exponent is to 0.3, lifting the shadows; the closer </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> is to 1, the closer the exponent is to 2.8, crushing the shadows and increasing contrast. Stands in for HALCON&#x27;s </code><code style="color:#22d3bf">gamma_image</code>` (Perform a gamma encoding or decoding of an image.).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はガンマ指数を 0.3〜2.8 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。HALCON の実装は</p>
 <p>Encode/Decode の切替や AmpFactor など複数パラメータを持つが、ここでは</p>
 <p>単純なべき乗写像 1 本に単純化している(近似)。</p>

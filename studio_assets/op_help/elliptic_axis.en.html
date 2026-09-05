@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;elliptic_axis&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">elliptic_axis</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>領域に等価な楕円（equivalent ellipse、慣性モーメントが一致する楕円）の長軸と短軸の比（アスペクト比）を返す。`<code style="color:#22d3bf">skimage.measure.regionprops</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">axis_major_length</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">axis_minor_length</code>` から計算し、/10 でおおよそ [0,1] 程度のスケールに収める（正規化ではないため、非常に細長い領域では 1 を超えうる）。a, b は未使用。</p>
+<p>Returns the ratio (aspect ratio) of the major to minor axis of the equivalent ellipse (the ellipse with matching moment of inertia) of the region. Computed from `<code style="color:#22d3bf">skimage.measure.regionprops</code><code style="color:#22d3bf">&#x27;s </code><code style="color:#22d3bf">axis_major_length</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">axis_minor_length</code>`, then divided by 10 to bring it roughly into the [0,1] scale (this is not true normalization, so it can exceed 1 for very elongated regions). a and b are unused.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>HALCON の `<code style="color:#22d3bf">elliptic_axis</code><code style="color:#22d3bf">（等価楕円の長半径・短半径そのもの 2 つの長さを返す演算）とは異なり、この実装は長さではなく比（アニソメトリー、</code><code style="color:#22d3bf">anisometry</code>` と同じ metric）だけを 1 スカラーで返す近似。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>

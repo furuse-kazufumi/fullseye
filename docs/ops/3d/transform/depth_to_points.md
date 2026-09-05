@@ -7,7 +7,7 @@ out: points
 examples: [structured_light_scan, transforms_repr]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.7  # fullseye lib version this note was generated for
+version: 0.1.8  # fullseye lib version this note was generated for
 ---
 
 # depth_to_points — 3D `transform` op

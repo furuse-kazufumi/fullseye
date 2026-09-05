@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;dual_rank&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">dual_rank</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>パーセンタイル（順位統計）フィルタ。窓内画素を昇順に並べ、b で指定した百分位（5〜95%、`<code style="color:#22d3bf">rank_image</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">rank_rect</code><code style="color:#22d3bf"> と同じ </code><code style="color:#22d3bf">_sh_rank</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">rank</code>` 分岐）の値を返す。a が窓サイズを 3/5/7/9 に振る。</p>
+<p>百分位數（順序統計量）濾波器。將視窗內像素依升序排列，回傳由 b 指定百分位（5〜95%，與 `<code style="color:#22d3bf">rank_image</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">rank_rect</code><code style="color:#22d3bf"> 共用 </code><code style="color:#22d3bf">_sh_rank</code><code style="color:#22d3bf"> 中的 </code><code style="color:#22d3bf">rank</code>` 分支）的值。a 將視窗大小分為 3/5/7/9。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の `<code style="color:#22d3bf">dual_rank</code>`（円形または矩形マスクでオープニング・中央値・クロージングを組み合わせて行う演算）とは異なり、この実装は単一の順位フィルタのみで、開閉処理の組み合わせは再現しない簡略近似。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

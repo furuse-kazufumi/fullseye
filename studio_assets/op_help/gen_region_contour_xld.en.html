@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;gen_region_contour_xld&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">gen_region_contour_xld</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>輪郭(点列)を画素グリッドにラスタライズしてから、`<code style="color:#22d3bf">1+2*a</code>` 回だけ</p>
-<p>二値膨張して太らせ、連結した領域マスクを作る(細い線のままだと `<code style="color:#22d3bf">region</code>`</p>
-<p>の {0,1} 契約上「線が繋がって見えない」ことがあるための補強)。HALCON の</p>
-<p>`<code style="color:#22d3bf">gen_region_contour_xld</code>`（Create a region from an XLD contour.）に相当。</p>
+<p>Rasterizes a contour (point sequence) onto the pixel grid, then thickens it with `<code style="color:#22d3bf">1+2*a</code><code style="color:#22d3bf"> rounds of binary dilation to produce a connected region mask (a reinforcement because, when left as a thin line, the </code><code style="color:#22d3bf">region</code><code style="color:#22d3bf"> {0,1} contract can make the &quot;line appear disconnected&quot;). Equivalent to HALCON&#x27;s </code><code style="color:#22d3bf">gen_region_contour_xld</code>` (Create a region from an XLD contour.).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が膨張の反復回数(=線の太さ)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>

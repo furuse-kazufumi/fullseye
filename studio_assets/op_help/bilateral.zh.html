@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;bilateral&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">bilateral_filter</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>エッジ保存平滑化（bilateral filter）。HALCON の `<code style="color:#22d3bf">bilateral_filter</code>`（bilateral filtering of an image.）に相当。</p>
+<p>保边平滑（双边滤波器）。相当于 HALCON 的 `<code style="color:#22d3bf">bilateral_filter</code>`（bilateral filtering of an image.）。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が空間方向の広がり </code><code style="color:#22d3bf">σ_s = 1.0 + 3.0a</code><code style="color:#22d3bf"> を、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が明るさ方向の許容差 </code><code style="color:#22d3bf">σ_r = 0.05 + 0.4b</code><code style="color:#22d3bf"> を振る。近傍窓は半径 </code><code style="color:#22d3bf">r=2</code><code style="color:#22d3bf">（5×5）固定で </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> では変わらない。近傍の重みは </code><code style="color:#22d3bf">exp(-距離²/2σ_s²) × exp(-明度差²/2σ_r²)</code>` の積で、明度差が大きい（=エッジをまたぐ）画素は重みが小さくなるため、平滑化しつつ輪郭を保てる。窓内を Python の二重ループで回すため他の平滑化 op より遅い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

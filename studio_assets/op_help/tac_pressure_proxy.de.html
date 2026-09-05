@@ -3,16 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tac_pressure_proxy&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Contact-pressure proxy map: the rectified deviation from the</p>
-<p>pseudo-reference background `<code style="color:#22d3bf">dev = |v - G_sigma(v)|</code>` is gated to the</p>
-<p>high-deviation (contact) area -- a relative gate at `<code style="color:#22d3bf">0.15 * max(dev)</code>` plus</p>
-<p>an absolute floor of 0.005 -- amplified by the sensitivity gain and</p>
-<p>Gaussian-smoothed, which is the standard &quot;indentation depth is monotone in</p>
-<p>normal force&quot; surrogate used when a tactile pad carries no force sensor.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = sensitivity (gain 1..10x), </code><code style="color:#22d3bf">b</code>` = smoothing radius (sigma 0.5..4.5).</p>
-<p>Output clipped to [0,1], HxW; a flat frame yields an all-zero pressure map</p>
-<p>(no contact, no force).</p>
+<p>Kontaktdruck-Näherungskarte: Die gleichgerichtete Abweichung vom Pseudo-Referenz-Hintergrund `<code style="color:#22d3bf">dev = |v - G_sigma(v)|</code><code style="color:#22d3bf"> wird auf den Bereich hoher Abweichung (Kontakt) begrenzt -- ein relatives Gate bei </code><code style="color:#22d3bf">0.15 * max(dev)</code><code style="color:#22d3bf"> plus eine absolute Untergrenze von 0,005 --, mit der Empfindlichkeitsverstärkung verstärkt und gaußgeglättet; dies ist der Standard-Ersatzwert „Eindrucktiefe ist monoton zur Normalkraft“, der verwendet wird, wenn ein taktiles Pad keinen Kraftsensor besitzt. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = Empfindlichkeit (Verstärkung 1..10-fach), </code><code style="color:#22d3bf">b</code>` = Glättungsradius (Sigma 0,5..4,5). Ausgabe auf [0,1] begrenzt, HxW; ein flacher Frame ergibt eine durchweg nullwertige Druckkarte (kein Kontakt, keine Kraft).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

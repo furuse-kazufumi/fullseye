@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;trans_to_rgb&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">trans_to_rgb</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>色空間から RGB へ戻す逆変換。HALCON の `<code style="color:#22d3bf">trans_to_rgb</code>`（任意の色空間から</p>
-<p>RGB 色空間への変換）に相当するとされるが、<b>実装は HSV→RGB の 1 方向だけ</b></p>
-<p>しか持たない。</p>
+<p>The inverse transform from a color space back to RGB. Claimed to correspond to HALCON&#x27;s `<code style="color:#22d3bf">trans_to_rgb</code>` (conversion from an arbitrary color space to RGB color space), but <b>the implementation only supports the single direction HSV to RGB</b>.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">trans_from_rgb</code>` は a で 4 色空間（HSV/Lab/YUV/XYZ）を選べるのに対し、</p>
 <p>この逆変換は常に入力を HSV とみなして `<code style="color:#22d3bf">cv2.COLOR_HSV2RGB</code>` を掛ける。</p>
 <p>Lab/YUV/XYZ から呼んだ場合は色空間の解釈を誤ったまま変換するため、</p>

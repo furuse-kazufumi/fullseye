@@ -4,14 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;polar_trans_image_inv&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">polar_trans_image_inv</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>極座標→直交座標への逆変換(`<code style="color:#22d3bf">cv2.warpPolar</code><code style="color:#22d3bf"> + </code><code style="color:#22d3bf">WARP_INVERSE_MAP</code>`)。</p>
-<p>`<code style="color:#22d3bf">polar_trans_image</code><code style="color:#22d3bf"> の逆写像で、半径 </code><code style="color:#22d3bf">min(H,W)/2</code>` の円盤の外側は 0 で</p>
-<p>埋める。2026-09-02 に「cv2 が書かなかった画素が未初期化のまま返る」バグを</p>
-<p>修正済み(戻り値でなく渡した `<code style="color:#22d3bf">dst</code>` を読んでいたため実行毎に値が変わって</p>
-<p>いた ―― 詳細はコード内コメント)。HALCON の</p>
-<p>`<code style="color:#22d3bf">polar_trans_image_inv</code>`（Transform an image in polar coordinates back</p>
-<p>to Cartesian coordinates）に相当。</p>
+<p>从极坐标到直角坐标的逆变换（`<code style="color:#22d3bf">cv2.warpPolar</code><code style="color:#22d3bf"> + </code><code style="color:#22d3bf">WARP_INVERSE_MAP</code><code style="color:#22d3bf">）。是 </code><code style="color:#22d3bf">polar_trans_image</code><code style="color:#22d3bf"> 的逆映射，半径为 </code><code style="color:#22d3bf">min(H,W)/2</code><code style="color:#22d3bf"> 的圆盘外侧以 0 填充。2026-09-02 已修复“cv2 未写入的像素以未初始化状态返回”的缺陷（原因是读取了传入的 </code><code style="color:#22d3bf">dst</code><code style="color:#22d3bf"> 而非返回值，导致每次执行结果都不同——详见代码内注释）。相当于 HALCON 的 </code><code style="color:#22d3bf">polar_trans_image_inv</code>`（Transform an image in polar coordinates back to Cartesian coordinates）。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用 ―― 中心・半径は画像サイズから自動的に決まる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>

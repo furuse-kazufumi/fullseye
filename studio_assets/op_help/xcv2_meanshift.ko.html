@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xcv2_meanshift&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>平均値シフト（mean-shift）フィルタリングで色/輝度を領域ごとに均す</p>
-<p>（`<code style="color:#22d3bf">cv2.pyrMeanShiftFiltering</code>`）。</p>
+<p>평균 이동(mean-shift) 필터링으로 색상/밝기를 영역별로 균일하게 만든다(`<code style="color:#22d3bf">cv2.pyrMeanShiftFiltering</code>`).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は空間窓半径 </code><code style="color:#22d3bf">sp</code><code style="color:#22d3bf"> を 5〜30 に振り（</code><code style="color:#22d3bf">sp = 5 + 25*a</code><code style="color:#22d3bf">）、</code><code style="color:#22d3bf">b</code>` は</p>
 <p>輝度（色）レンジ `<code style="color:#22d3bf">sr</code><code style="color:#22d3bf"> を 10〜50 に振る（</code><code style="color:#22d3bf">sr = 10 + 40*b</code>`）。グレースケール</p>
 <p>画像を内部で 3ch BGR に複製してから処理し、結果を再びグレースケールへ</p>

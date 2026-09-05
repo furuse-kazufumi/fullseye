@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sp_saddle_points_sub_pix&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">saddle_points_sub_pix</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>グレー値曲面の鞍点（サドルポイント）をサブピクセル精度で検出する（HALCON `<code style="color:#22d3bf">saddle_points_sub_pix</code>` に相当）。</p>
+<p>그레이 값 곡면의 안장점(새들 포인트)을 서브픽셀 정밀도로 검출한다(HALCON `<code style="color:#22d3bf">saddle_points_sub_pix</code>`에 해당).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>3x3 の 2 次曲面フィットのヘッセ行列が不定符号（`<code style="color:#22d3bf">det H &lt; 0</code><code style="color:#22d3bf">、両主曲率の符号が逆）になる画素を鞍点候補とし、勾配 0 点がセル内（</code><code style="color:#22d3bf">|dx|,|dy| &lt;= 0.5</code><code style="color:#22d3bf">）に収まるものだけを残す。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は鞍点の強さ（より小さい方の主曲率の絶対値）のしきい値を 1e-4〜0.0201 に振る（</code><code style="color:#22d3bf">thr = 1e-4 + 0.02*a</code><code style="color:#22d3bf">）。</code><code style="color:#22d3bf">b</code>` は未使用。戻り値は CONTOUR、座標の単位は入力画像のピクセル。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 패밀리 가이드</a></p>

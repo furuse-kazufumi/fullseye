@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;illuminate&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">illuminate</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>アンシャープマスク型の局所コントラスト強調。`<code style="color:#22d3bf">sm</code>` = ガウシアンぼかし</p>
-<p>(半径 `<code style="color:#22d3bf">3+12*a</code><code style="color:#22d3bf">)を引いた差分 </code><code style="color:#22d3bf">x - sm</code>` を元画像に足し戻すことで、</p>
-<p>低周波の照明ムラを残しつつ局所的なエッジ・テクスチャを持ち上げる。HALCON の</p>
-<p>`<code style="color:#22d3bf">illuminate</code>`（Illuminate image.）の代役。</p>
+<p>Lokale Kontrastverstärkung nach Art einer Unscharfmaskierung. Indem die Differenz `<code style="color:#22d3bf">x - sm</code><code style="color:#22d3bf"> - wobei </code><code style="color:#22d3bf">sm</code><code style="color:#22d3bf"> ein von </code><code style="color:#22d3bf">x</code><code style="color:#22d3bf"> subtrahierter Gauß-Weichzeichner (Radius </code><code style="color:#22d3bf">3+12*a</code><code style="color:#22d3bf">) ist - zum Originalbild zurückaddiert wird, werden lokale Kanten und Texturen angehoben, während niederfrequente Beleuchtungsunterschiede erhalten bleiben. Ein Ersatz für HALCONs </code><code style="color:#22d3bf">illuminate</code>` (Illuminate image.).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はぼかしの強さ(構造とみなすスケール、シグマ 3〜15)を、</code><code style="color:#22d3bf">b</code>` は強調の</p>
 <p>強さ(0.3〜1.0)を振る。両方が使われる。強すぎるとハローアーティファクトが</p>
 <p>出る。</p>

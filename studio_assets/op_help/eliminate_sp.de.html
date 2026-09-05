@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;eliminate_sp&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">eliminate_sp</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>シグマフィルタ（sigma filter, Lee 型）によるノイズ抑制。窓内平均値との差が閾値（0.05〜0.4、b で振る）未満の画素だけを使って再平均化し、極端に外れた画素（ソルト&amp;ペッパー雑音など）の影響を除く。該当画素が窓内に無ければ元の値をそのまま返す。a が窓サイズを 3/5/7/9 に振る。</p>
+<p>Rauschunterdrückung durch einen Sigmafilter (sigma filter, Lee-Typ). Es wird erneut gemittelt, wobei nur Pixel im Fenster verwendet werden, deren Abweichung vom Fenstermittelwert unter einem Schwellenwert liegt (0,05-0,4, eingestellt durch b), wodurch der Einfluss extremer Ausreißerpixel (z. B. Salt-and-Pepper-Rauschen) entfernt wird. Gibt es im Fenster kein passendes Pixel, wird der ursprüngliche Wert unverändert zurückgegeben. a stellt die Fenstergröße auf 3/5/7/9 ein.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON の `<code style="color:#22d3bf">eliminate_sp</code>`（閾値外の値を周辺の平均値で置き換えてソルト&amp;ペッパーノイズを除去する演算）に相当する近似実装。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>

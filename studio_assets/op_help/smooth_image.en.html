@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;smooth_image&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">smooth_image</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>ガウシアンぼかし(シグマ `<code style="color:#22d3bf">0.5+2.0*a</code>`)一本で近似した汎用スムージング。</p>
-<p>HALCON の `<code style="color:#22d3bf">smooth_image</code>`（Smooth an image using various filters.）は</p>
-<p>Deriche/Gauss/Mean など複数のフィルタ種別を選べる万能演算子だが、ここでは</p>
-<p>ガウシアン 1 種類に単純化している(近似の限界)。</p>
+<p>General-purpose smoothing approximated by a single Gaussian blur (sigma `<code style="color:#22d3bf">0.5+2.0*a</code><code style="color:#22d3bf">). HALCON&#x27;s </code><code style="color:#22d3bf">smooth_image</code>` (Smooth an image using various filters.) is a versatile operator that lets you choose among several filter types such as Deriche/Gauss/Mean, but here it is simplified to a single Gaussian type (a limitation of this approximation).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がシグマを 0.5〜2.5 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>

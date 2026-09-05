@@ -4,14 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;estimate_noise&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">estimate_noise</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>加法性ノイズの標準偏差 σ をロバスト推定する(`<code style="color:#22d3bf">_noise_sigma</code>`:</p>
-<p>ラプラシアン応答の MAD を正規分布換算し、5 点ラプラシアン核のノイズ利得</p>
-<p>`<code style="color:#22d3bf">sqrt(20)</code>` で割る)。エッジ由来の外れ値には鈍く、平坦部のノイズだけを</p>
-<p>拾う設計(2026-09-02 に旧実装の「σ が単位を持たず σ≈0.08 以上で 1.0 に</p>
-<p>張り付く」不具合を修正済み、詳細は `<code style="color:#22d3bf">_noise_sigma</code>` の docstring)。HALCON</p>
-<p>の `<code style="color:#22d3bf">estimate_noise</code>`（Estimate the image noise from a single image.）に</p>
-<p>相当。</p>
+<p>Schätzt robust die Standardabweichung σ von additivem Rauschen (`<code style="color:#22d3bf">_noise_sigma</code><code style="color:#22d3bf">: rechnet die MAD der Laplace-Antwort in eine Gauß-äquivalente Skala um und teilt dann durch den Rauschgewinn </code><code style="color:#22d3bf">sqrt(20)</code><code style="color:#22d3bf"> des 5-Punkt-Laplace-Kernels). So ausgelegt, dass es unempfindlich gegenüber von Kanten stammenden Ausreißern ist und nur das Rauschen in flachen Bereichen erfasst (ein Fehler der alten Implementierung, bei dem &quot;σ keine richtige Einheit hatte und oberhalb von σ≈0,08 bei 1,0 sättigte&quot;, wurde am 02.09.2026 behoben — Details siehe Docstring von </code><code style="color:#22d3bf">_noise_sigma</code><code style="color:#22d3bf">). Entspricht HALCONs </code><code style="color:#22d3bf">estimate_noise</code>` (Estimate the image noise from a single image.).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_random_dropout&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>点の `<code style="color:#22d3bf">ratio</code><code style="color:#22d3bf"> 割合をランダム除去し </code><code style="color:#22d3bf">(kept, kept_idx)</code>` を返す(欠損の模倣)。</p>
+<p>점의 `<code style="color:#22d3bf">ratio</code><code style="color:#22d3bf"> 비율을 무작위로 제거하고 </code><code style="color:#22d3bf">(kept, kept_idx)</code>`를 반환한다(결측 모사).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>残す点数は `<code style="color:#22d3bf">round((1-ratio)*N)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">kept_idx</code>` は元配列への昇順インデックスで、</p>
 <p>`<code style="color:#22d3bf">kept == points[kept_idx]</code>` が厳密に成り立つ。オクルージョン/疎な視点による</p>
 <p>点欠損を学習で再現する。`<code style="color:#22d3bf">0 &lt;= ratio &lt;= 1</code>` を要求。</p>

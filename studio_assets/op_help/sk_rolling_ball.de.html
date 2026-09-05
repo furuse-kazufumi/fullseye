@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sk_rolling_ball&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>ローリングボール法による背景差し引き。画像の輝度を地形と見立て、指定半径の球をその下から転がして得られる包絡面を背景と推定し、元画像から引き算する—— 照明ムラ(緩やかな輝度勾配)の除去に使う。</p>
+<p>Hintergrundsubtraktion nach der Rolling-Ball-Methode. Betrachtet die Bildhelligkeit als Relief, rollt eine Kugel mit angegebenem Radius darunter hindurch, schätzt die resultierende Hüllfläche als Hintergrund und subtrahiert sie vom Originalbild -- dient zur Beseitigung ungleichmäßiger Beleuchtung (allmähliche Helligkeitsgradienten).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">v - restoration.rolling_ball(v, radius=5+int(a*20))</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">[0,1]</code>` へ clip したもの —— a は球の半径を 5〜25 に振る(大きいほど緩やかな照明ムラしか背景とみなさず、細かい構造は残る)。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>

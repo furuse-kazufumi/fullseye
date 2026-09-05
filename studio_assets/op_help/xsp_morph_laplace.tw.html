@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsp_morph_laplace&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>形態学的ラプラシアン（`<code style="color:#22d3bf">scipy.ndimage.morphological_laplace</code>`）によるエッジ強調。</p>
+<p>透過形態學拉普拉斯運算子（`<code style="color:#22d3bf">scipy.ndimage.morphological_laplace</code>`）進行邊緣增強。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は構造要素のサイズを 3, 5, 7, 9 に振る（</code><code style="color:#22d3bf">size = 3 + 2*int(a*3)</code><code style="color:#22d3bf">）。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。グレースケール膨張と収縮の差の差というべき演算で、通常の（線形）ラプラシアンよりノイズに敏感な代わりに輪郭を鋭く拾う。符号付きの結果を </code><code style="color:#22d3bf">signed01</code>` で [0,1] に写像するので 0.5 が無変化（ゼロ交差）にあたる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>

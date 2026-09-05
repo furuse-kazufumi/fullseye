@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;nonmax_suppression_amp&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">nonmax_suppression_amp</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>極大点（ローカルマキシマム）を抽出する非極大値抑制。窓内最大値と一致し、かつ閾値 `<code style="color:#22d3bf">0.3+0.4b</code>` を超える画素だけを前景として残す。a が窓サイズを 3/5/7/9 に振る。</p>
+<p>Nicht-Maximum-Unterdrückung (non-maximum suppression), die lokale Maxima extrahiert. Nur Pixel, die dem Maximalwert in ihrem Fenster entsprechen und den Schwellenwert `<code style="color:#22d3bf">0.3+0.4b</code>` überschreiten, bleiben als Vordergrund erhalten. a stellt die Fenstergröße auf 3/5/7/9 ein.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON の `<code style="color:#22d3bf">nonmax_suppression_amp</code>`（エッジ振幅画像上で法線方向に非極大点を抑制し、稜線を 1 画素幅に絞る演算）とは異なり、この実装は方向を考慮しない単純な局所最大値判定で、エッジ法線方向のサブピクセル抑制は行わない近似。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>

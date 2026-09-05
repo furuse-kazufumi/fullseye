@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;thinning&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">thinning</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>`<code style="color:#22d3bf">skimage.morphology.thin</code>`(Zhang-Suen 系の細線化アルゴリズム)による</p>
-<p>1 画素幅化。`<code style="color:#22d3bf">skeleton</code>` と目的は似ているが内部アルゴリズムが異なるため、</p>
-<p>分岐点周辺などで結果がわずかに違うことがある。HALCON の `<code style="color:#22d3bf">thinning</code>`</p>
-<p>（Remove the result of a hit-or-miss operation from a region.）の代役。</p>
+<p>使用 `<code style="color:#22d3bf">skimage.morphology.thin</code><code style="color:#22d3bf">(Zhang-Suen 系细化算法)将区域细化为 1 像素宽。目的与 </code><code style="color:#22d3bf">skeleton</code><code style="color:#22d3bf"> 相似,但内部算法不同,因此在分支点附近等处结果可能略有差异。作为 HALCON 的 </code><code style="color:#22d3bf">thinning</code>`(Remove the result of a hit-or-miss operation from a region.)的代替。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。skimage が無い環境ではこの分岐は呼べない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

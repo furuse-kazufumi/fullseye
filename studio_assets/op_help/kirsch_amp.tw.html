@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;kirsch_amp&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">kirsch_amp</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Kirsch コンパスフィルタの振幅。8 方向に回転させたカーネル群それぞれで</p>
-<p>畳み込み、絶対値の最大値を取ることで方向に依らない強いエッジ応答を得る。</p>
-<p>HALCON の `<code style="color:#22d3bf">kirsch_amp</code>`（Detect edges (amplitude) using the Kirsch</p>
-<p>operator.）に相当。</p>
+<p>Kirsch 羅盤濾波器的振幅。以旋轉至 8 個方向的一組核分別進行卷積,取絕對值的最大值,藉此獲得與方向無關的強邊緣響應。相當於 HALCON 的 `<code style="color:#22d3bf">kirsch_amp</code>`(Detect edges (amplitude) using the Kirsch operator.)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。8 方向を総当たりするため Sobel/Prewitt より計算量は</p>
 <p>多いが、斜め方向のエッジも同等の感度で拾える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

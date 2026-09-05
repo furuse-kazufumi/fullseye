@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tan_image&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">tan_image</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>画素値の正接（tangent）をとる逐点（pointwise）変換。HALCON の `<code style="color:#22d3bf">tan_image</code>`（画像の正接を計算）に相当するが正規化規約が異なる近似。</p>
+<p>A pointwise transform that takes the tangent of pixel values. Corresponds to HALCON&#x27;s `<code style="color:#22d3bf">tan_image</code>` (computes the tangent of an image), but is an approximation with a different normalization convention.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>実装は x を [0,1] にクリップし、(x-0.5) を ±0.45π の範囲へ写してから tan を掛け、結果を signed01（符号つき値を [0,1] に写す、0.5 が 0 に対応）で戻す。a, b は未使用。角度域を ±0.45π に抑えているため tan の発散（±90° 付近）には達しない。中間輝度付近で傾きが最大になり、コントラストを強めたい局所帯域を狙うのに使える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>

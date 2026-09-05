@@ -4,14 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;edges_sub_pix&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">edges_sub_pix</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>サブピクセル精度のエッジ点抽出。勾配とその法線方向(``gradient_</p>
-<p>normals`<code style="color:#22d3bf">)を求め、しきい値(</code><code style="color:#22d3bf">0.15+0.5*a</code>`)を超える画素を連結成分化した</p>
-<p>後、放物線当てはめで各点をサブピクセル位置へ精密化する(``subpixel_</p>
-<p>refine_edges`<code style="color:#22d3bf">、</code><code style="color:#22d3bf">ops</code>` 側の同名 op と共有する実装 ―― 2026-09-02 修正で</p>
-<p>真の意味でサブピクセルになった。旧実装は整数画素座標をそのまま返して</p>
-<p>いた)。HALCON の `<code style="color:#22d3bf">edges_sub_pix</code>`（Extract sub-pixel precise edges using</p>
-<p>Deriche, Lanser, Shen, or Canny filters.）に相当。</p>
+<p>서브픽셀 정밀도의 에지 점 추출. 기울기와 그 법선 방향(`<code style="color:#22d3bf">gradient_normals</code><code style="color:#22d3bf">)을 구하고, 임계값(</code><code style="color:#22d3bf">0.15+0.5*a</code><code style="color:#22d3bf">)을 넘는 픽셀을 연결 성분화한 후, 포물선 피팅으로 각 점을 서브픽셀 위치로 정밀화한다(</code><code style="color:#22d3bf">subpixel_refine_edges</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">ops</code><code style="color:#22d3bf"> 쪽 동명 op와 공유하는 구현 -- 2026-09-02 수정으로 진정한 의미의 서브픽셀이 되었다. 이전 구현은 정수 픽셀 좌표를 그대로 반환했다). HALCON의 </code><code style="color:#22d3bf">edges_sub_pix</code>`(Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.)에 해당.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がエッジ強度のしきい値を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 패밀리 가이드</a></p>

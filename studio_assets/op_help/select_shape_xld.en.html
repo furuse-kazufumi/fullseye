@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;select_shape_xld&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">select_shape_xld</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>点数の少ない XLD 輪郭を足切りするフィルタ。輪郭の頂点数が `<code style="color:#22d3bf">3+40a</code>` 点未満のものを除去する。b は未使用。</p>
+<p>A filter that discards XLD contours with too few points. Removes contours whose vertex count is fewer than `<code style="color:#22d3bf">3+40a</code>` points. b is unused.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>HALCON の `<code style="color:#22d3bf">select_shape_xld</code>`（面積・円形度・凸性など多様な形状特徴で XLD 輪郭を選別する演算）とは異なり、この実装は頂点数（≈輪郭の長さ）という単一の特徴でしか選別できない簡略近似。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>

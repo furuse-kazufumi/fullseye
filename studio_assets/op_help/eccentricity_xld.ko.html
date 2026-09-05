@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;eccentricity_xld&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">eccentricity_xld</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>最大の輪郭(5 点以上)に `<code style="color:#22d3bf">cv2.fitEllipse</code>` で楕円をフィットし、その</p>
-<p>離心率 `<code style="color:#22d3bf">sqrt(1-(短軸/長軸)^2)</code>` を返す(0=真円、1に近いほど細長い)。</p>
-<p>HALCON の `<code style="color:#22d3bf">eccentricity_xld</code>`（Shape features derived from the ellipse</p>
-<p>parameters of contours or polygons.）に相当。cv2 が無い、または点数不足</p>
-<p>の場合は 0 を返す。</p>
+<p>가장 큰 윤곽선(점 5개 이상)에 `<code style="color:#22d3bf">cv2.fitEllipse</code><code style="color:#22d3bf">로 타원을 맞추고, 그 이심률 </code><code style="color:#22d3bf">sqrt(1-(단축/장축)^2)</code><code style="color:#22d3bf">을 반환한다(0=진원, 1에 가까울수록 가늘고 길다). HALCON의 </code><code style="color:#22d3bf">eccentricity_xld</code>`(Shape features derived from the ellipse parameters of contours or polygons.)에 해당. cv2가 없거나 점 수가 부족하면 0을 반환한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>

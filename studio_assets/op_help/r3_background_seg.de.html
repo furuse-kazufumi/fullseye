@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;r3_background_seg&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">background_seg</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>領域の背景（前景の補集合）を連結成分に分け、小さすぎる成分を捨てて返す（HALCON `<code style="color:#22d3bf">background_seg</code>` に相当）。</p>
+<p>Zerlegt den Hintergrund der Region (das Komplement des Vordergrunds) in zusammenhängende Komponenten, verwirft zu kleine Komponenten und gibt den Rest zurück (entspricht HALCON `<code style="color:#22d3bf">background_seg</code>`).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>背景を連結成分ラベリングし、`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">（0〜1）を「最大背景成分の面積に対する相対しきい値」としてそれ未満の成分を除去する（</code><code style="color:#22d3bf">a=0</code><code style="color:#22d3bf"> で全背景＝正真正銘の</code><code style="color:#22d3bf">background_seg</code><code style="color:#22d3bf"> 結果）。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>

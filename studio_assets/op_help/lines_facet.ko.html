@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;lines_facet&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">lines_facet</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>線状構造（リッジ）を検出して輪郭（XLD contour）として返す。実装は Frangi フィルタ（`<code style="color:#22d3bf">skimage.filters.frangi</code><code style="color:#22d3bf">、多スケール σ=1..3 のリッジ強調）で線らしさを求め、閾値 </code><code style="color:#22d3bf">0.1+0.4a</code>` を超える連結成分の画素座標をそのまま輪郭点列として出力する。b は未使用。</p>
+<p>선형 구조(리지)를 검출하여 윤곽(XLD contour)으로 반환한다. 구현은 Frangi 필터(`<code style="color:#22d3bf">skimage.filters.frangi</code><code style="color:#22d3bf">, 다중 스케일 σ=1..3 리지 강조)로 &quot;선다움&quot;을 구하고, 임계값 </code><code style="color:#22d3bf">0.1+0.4a</code>`를 초과하는 연결 성분의 화소 좌표를 그대로 윤곽점 열로 출력한다. b는 사용되지 않는다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>HALCON の `<code style="color:#22d3bf">lines_facet</code>`（局所多項式近似=ファセットモデルで線を検出する演算）とは検出原理が異なる近似 —— facet モデルによるサブピクセル位置推定は行わず、Frangi 応答の二値化領域を輪郭化しているだけなので、座標はサブピクセル精度を持たない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 패밀리 가이드</a></p>

@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;simulate_motion&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">simulate_motion</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>線形の動きぼけ(モーションブラー)をシミュレートする。角度</p>
-<p>`<code style="color:#22d3bf">π*a</code><code style="color:#22d3bf">(0〜180°)方向に長さ </code><code style="color:#22d3bf">5+10*b</code>` 画素の線分カーネルを作り畳み込む。</p>
-<p>HALCON の `<code style="color:#22d3bf">simulate_motion</code>`（Simulation of (linearly) motion blur.）に</p>
-<p>相当。</p>
+<p>Simuliert linear bewegungsunscharfe Effekte (Motion Blur). Erzeugt einen Liniensegment-Kernel der Länge `<code style="color:#22d3bf">5+10*b</code><code style="color:#22d3bf"> Pixel in Richtung des Winkels </code><code style="color:#22d3bf">pi*a</code><code style="color:#22d3bf"> (0-180 Grad) und faltet damit. Entspricht HALCONs </code><code style="color:#22d3bf">simulate_motion</code>` (Simulation of (linearly) motion blur.).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がぶれの方向角を、</code><code style="color:#22d3bf">b</code>` がぶれの長さを振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>

@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;zoom_image_factor&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">zoom_image_factor</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>高さ方向・幅方向で独立な倍率(`<code style="color:#22d3bf">0.7+0.6*a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">0.7+0.6*b</code>`)を持つ等方</p>
-<p>でないズーム。中心を基準にアフィン変換で拡大縮小し、キャンバスサイズは</p>
-<p>変えない(はみ出す/余る部分は反射で埋める)。HALCON の</p>
-<p>`<code style="color:#22d3bf">zoom_image_factor</code>`（Zoom an image by a given factor.）に相当し、</p>
-<p>HALCON と同じく <b>2 つの倍率</b>(ScaleHeight/ScaleWidth)を取る。</p>
+<p>A non-isotropic zoom with independent scale factors for the height and width directions (`<code style="color:#22d3bf">0.7+0.6*a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">0.7+0.6*b</code><code style="color:#22d3bf">). Scales via an affine transform relative to the center, keeping the canvas size unchanged (areas that overflow or remain are filled by reflection). Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">zoom_image_factor</code>` (Zoom an image by a given factor), and like HALCON, takes <b>two scale factors</b> (ScaleHeight/ScaleWidth).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が縦方向の倍率、</code><code style="color:#22d3bf">b</code>` が横方向の倍率を振る。両方が使われる</p>
 <p>(2026-09-02 以前は `<code style="color:#22d3bf">zoom_image_size</code>` と実装が重複していたが、現在は</p>
 <p>別の `<code style="color:#22d3bf">kind</code>` に分離済み)。</p>

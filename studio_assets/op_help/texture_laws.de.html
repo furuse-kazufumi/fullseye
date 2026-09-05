@@ -4,14 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;texture_laws&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">texture_laws</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>実装は局所分散(`<code style="color:#22d3bf">deviation_image</code>` の分散版、窓内の</p>
-<p>`<code style="color:#22d3bf">E[x^2]-E[x]^2</code>`)。本来の Laws&#x27; テクスチャフィルタは L5/E5/S5/W5/R5 などの</p>
-<p>1 次元カーネル対から作る 25 種類の畳み込みバンク(エネルギー/エッジ/波状/</p>
-<p>斑点/波紋を捉える)だが、この代役ではその全カーネルバンクではなく単一の</p>
-<p>局所分散で代用している(近似の限界 ―― 方向別・周波数別の情報は失われる)。</p>
-<p>HALCON の `<code style="color:#22d3bf">texture_laws</code>`（Filter an image using a Laws texture filter.）</p>
-<p>の代役。</p>
+<p>Die Implementierung ist die lokale Varianz (die Varianzversion von `<code style="color:#22d3bf">deviation_image</code><code style="color:#22d3bf">, d. h. </code><code style="color:#22d3bf">E[x^2]-E[x]^2</code><code style="color:#22d3bf"> innerhalb des Fensters). Der echte Laws-Texturfilter ist eine Bank aus 25 Faltungen, die aus 1D-Kernelpaaren wie L5/E5/S5/W5/R5 gebildet wird (erfasst Energie/Kanten/Wellen/Flecken/Riffel), aber dieser Ersatz verwendet anstelle der vollständigen Kernelbank eine einzelne lokale Varianz (eine Grenze der Annäherung -- richtungs- und frequenzspezifische Information geht verloren). Ein Platzhalter für HALCONs </code><code style="color:#22d3bf">texture_laws</code>` (Filter an image using a Laws texture filter.).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の一辺を </code><code style="color:#22d3bf">{3,5,7,9}</code><code style="color:#22d3bf"> で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">Leitfaden zur Familie gallery2d_texture_freq</a></p>

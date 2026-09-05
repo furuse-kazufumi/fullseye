@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;cv_precorner&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">corner_response</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>コーナー候補検出(preCornerDetect、OpenCV 実装)。1 次・2 次微分を組み合わせた特殊な式でコーナーらしさを符号付きスコア化する —— 本来は `<code style="color:#22d3bf">cv2.cornerSubPix</code>` によるサブピクセル精密化の前段候補検出として使う関数。</p>
+<p>Erkennung von Eckenkandidaten (preCornerDetect, OpenCV-Implementierung). Bewertet die &quot;Eckenhaftigkeit&quot; mit einer vorzeichenbehafteten Punktzahl anhand einer speziellen Formel, die Ableitungen erster und zweiter Ordnung kombiniert - ursprünglich eine Funktion, die als vorgelagerte Kandidatenerkennung für die Subpixel-Verfeinerung mittels `<code style="color:#22d3bf">cv2.cornerSubPix</code>` gedacht ist.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON の <code style="color:#22d3bf">corner_response</code>(Searching corners in images.)に相当(近似)。実装は `<code style="color:#22d3bf">|cv2.preCornerDetect(v, ksize=3)|</code>` を正規化したもの。a, b は未使用 —— ksize(Sobel 開口)は 3 に固定。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">Leitfaden zur Familie gallery2d_edges</a></p>

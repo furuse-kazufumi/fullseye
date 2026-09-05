@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xcv3_sift_count&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>SIFT 特徴点数(OpenCV `<code style="color:#22d3bf">cv2.SIFT_create().detect</code>`)。画像から検出されたスケール不変特徴点(SIFT keypoints)の個数を feature として返す —— テクスチャの複雑さ/マッチングに使える特徴点の豊富さの指標になる。</p>
+<p>SIFT 특징점 수(OpenCV `<code style="color:#22d3bf">cv2.SIFT_create().detect</code>`). 이미지에서 검출된 스케일 불변 특징점(SIFT keypoints)의 개수를 feature로 반환한다 —— 텍스처의 복잡함/매칭에 쓸 수 있는 특징점의 풍부함을 나타내는 지표가 된다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は検出上限数 </code><code style="color:#22d3bf">nfeatures</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">int(50+450*a)</code><code style="color:#22d3bf"> で 50〜500)を振る —— 上限に達するまでは実際の検出数がそのまま返るので、上限に張り付いていないか確認が要る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>

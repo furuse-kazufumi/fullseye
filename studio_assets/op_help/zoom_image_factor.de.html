@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;zoom_image_factor&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">zoom_image_factor</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>高さ方向・幅方向で独立な倍率(`<code style="color:#22d3bf">0.7+0.6*a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">0.7+0.6*b</code>`)を持つ等方</p>
-<p>でないズーム。中心を基準にアフィン変換で拡大縮小し、キャンバスサイズは</p>
-<p>変えない(はみ出す/余る部分は反射で埋める)。HALCON の</p>
-<p>`<code style="color:#22d3bf">zoom_image_factor</code>`（Zoom an image by a given factor.）に相当し、</p>
-<p>HALCON と同じく <b>2 つの倍率</b>(ScaleHeight/ScaleWidth)を取る。</p>
+<p>Ein nicht-isotroper Zoom mit unabhängigen Skalierungsfaktoren für Höhen- und Breitenrichtung (`<code style="color:#22d3bf">0.7+0.6*a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">0.7+0.6*b</code><code style="color:#22d3bf">). Skaliert relativ zur Mitte über eine affine Transformation, wobei die Leinwandgröße unverändert bleibt (überstehende oder verbleibende Bereiche werden durch Spiegelung aufgefüllt). Entspricht HALCONs </code><code style="color:#22d3bf">zoom_image_factor</code>` (Zoom an image by a given factor.) und nimmt wie HALCON <b>zwei Skalierungsfaktoren</b> (ScaleHeight/ScaleWidth) entgegen.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が縦方向の倍率、</code><code style="color:#22d3bf">b</code>` が横方向の倍率を振る。両方が使われる</p>
 <p>(2026-09-02 以前は `<code style="color:#22d3bf">zoom_image_size</code>` と実装が重複していたが、現在は</p>
 <p>別の `<code style="color:#22d3bf">kind</code>` に分離済み)。</p>

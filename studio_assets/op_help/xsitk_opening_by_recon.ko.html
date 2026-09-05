@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_opening_by_recon&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>再構成によるオープニング(SimpleITK `<code style="color:#22d3bf">OpeningByReconstruction</code>`)。通常のグレースケールオープニング(収縮→膨張)と異なり、収縮後の膨張をマスク付き再構成で行うため、残った領域の輪郭を歪めずに小さな明るい突起だけを除去できる。</p>
+<p>재구성에 의한 오프닝(SimpleITK `<code style="color:#22d3bf">OpeningByReconstruction</code>`). 일반적인 그레이스케일 오프닝(침식→팽창)과 달리, 침식 후의 팽창을 마스크가 있는 재구성으로 수행하기 때문에 남은 영역의 윤곽을 왜곡하지 않고 작은 밝은 돌기만 제거할 수 있다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は構造要素の半径(</code><code style="color:#22d3bf">1+int(a*4)</code><code style="color:#22d3bf"> で両軸とも 1〜5)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。出力は [0,1] にクリップ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 패밀리 가이드</a></p>

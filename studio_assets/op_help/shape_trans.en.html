@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;shape_trans&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">shape_trans</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>領域の凸包(`<code style="color:#22d3bf">skimage.morphology.convex_hull_image</code>`)を返す。HALCON の</p>
-<p>`<code style="color:#22d3bf">shape_trans</code>`（Transform the shape of a region.）は本来 convex/</p>
-<p>rectangle1/ellipse など複数の変形モードを `<code style="color:#22d3bf">Type</code>` 引数で選べる演算子</p>
-<p>だが、この代役では凸包 1 種類に固定している(近似の限界)。</p>
+<p>Returns the convex hull of a region (`<code style="color:#22d3bf">skimage.morphology.convex_hull_image</code><code style="color:#22d3bf">). HALCON&#x27;s </code><code style="color:#22d3bf">shape_trans</code><code style="color:#22d3bf"> (Transform the shape of a region.) is originally an operator that lets you choose among several transform modes -- convex, rectangle1, ellipse, etc. -- via the </code><code style="color:#22d3bf">Type</code>` argument, but this stand-in is fixed to the single convex-hull mode (a limitation of the approximation).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。skimage が無い環境ではこの分岐は呼べない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>

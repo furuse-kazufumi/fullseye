@@ -4,14 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;estimate_noise&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">estimate_noise</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>加法性ノイズの標準偏差 σ をロバスト推定する(`<code style="color:#22d3bf">_noise_sigma</code>`:</p>
-<p>ラプラシアン応答の MAD を正規分布換算し、5 点ラプラシアン核のノイズ利得</p>
-<p>`<code style="color:#22d3bf">sqrt(20)</code>` で割る)。エッジ由来の外れ値には鈍く、平坦部のノイズだけを</p>
-<p>拾う設計(2026-09-02 に旧実装の「σ が単位を持たず σ≈0.08 以上で 1.0 に</p>
-<p>張り付く」不具合を修正済み、詳細は `<code style="color:#22d3bf">_noise_sigma</code>` の docstring)。HALCON</p>
-<p>の `<code style="color:#22d3bf">estimate_noise</code>`（Estimate the image noise from a single image.）に</p>
-<p>相当。</p>
+<p>가산성 잡음의 표준편차 σ를 로버스트하게 추정한다(`<code style="color:#22d3bf">_noise_sigma</code><code style="color:#22d3bf">: 라플라시안 응답의 MAD를 정규분포 환산치로 바꾸고, 5점 라플라시안 커널의 잡음 이득 </code><code style="color:#22d3bf">sqrt(20)</code><code style="color:#22d3bf">으로 나눈다). 에지에서 비롯된 이상치에는 둔감하고 평탄한 부분의 잡음만 포착하도록 설계됨(2026-09-02에 구 구현의 &quot;σ가 단위를 갖지 않고 σ≈0.08 이상에서 1.0에 들러붙는&quot; 결함을 수정함, 자세한 내용은 </code><code style="color:#22d3bf">_noise_sigma</code><code style="color:#22d3bf">의 docstring 참고). HALCON의 </code><code style="color:#22d3bf">estimate_noise</code>`(Estimate the image noise from a single image.)에 해당.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>

@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;cv_dist&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">distance_transform</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>距離変換(distance transform、OpenCV 実装、L2/ユークリッド近似)。前景領域の各画素について、最も近い背景画素までの距離を計算し、画像として返す —— 領域の「太さ」や中心線抽出の下処理に使う。</p>
+<p>Distanztransformation (distance transform, OpenCV-Implementierung, L2-/euklidische Approximation). Berechnet für jeden Pixel im Vordergrundbereich den Abstand zum nächstgelegenen Hintergrundpixel und gibt ihn als Bild zurück - dient als Vorverarbeitung zur Extraktion der &quot;Dicke&quot; einer Region oder ihrer Mittellinie.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON の <code style="color:#22d3bf">distance_transform</code>(Compute the distance transformation of a region.)に相当。実装は `<code style="color:#22d3bf">cv2.distanceTransform(_u8(binm(v)), DIST_L2, maskSize=3)</code>` を正規化したもの(cv2 は float32 で返すが、契約に合わせて float64 化 —— 2026-09-03 実測でベンチマーク済み)。maskSize=3 は 3x3 近傍での近似計算(厳密なユークリッド距離ではなく高速近似)。a, b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>

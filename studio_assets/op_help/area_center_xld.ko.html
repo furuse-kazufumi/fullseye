@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;area_center_xld&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">area_center_xld</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>最大の点数を持つ輪郭 1 本について、シューレース公式(靴紐公式)で</p>
-<p>多角形面積を求め、画像の全画素数で正規化して返す。HALCON の</p>
-<p>`<code style="color:#22d3bf">area_center_xld</code>`（Area and center of gravity (centroid) of contours and</p>
-<p>polygons.）は面積に加えて重心も返す演算子だが、この代役では面積のみを</p>
-<p>返す(重心情報は失われる近似 ―― `<code style="color:#22d3bf">feature</code>` ソートが 1 スカラーである</p>
-<p>契約上の制約)。</p>
+<p>점 개수가 가장 많은 윤곽선 하나에 대해 신발끈 공식(슈레이스 공식)으로 다각형 면적을 구하고, 이미지 전체 화소 수로 정규화하여 반환한다. HALCON의 `<code style="color:#22d3bf">area_center_xld</code><code style="color:#22d3bf">(Area and center of gravity (centroid) of contours and polygons.)는 면적에 더해 무게중심도 반환하는 연산자이지만, 이 대역은 면적만 반환한다(무게중심 정보는 손실되는 근사 — </code><code style="color:#22d3bf">feature</code>` 정렬이 스칼라 하나라는 계약상의 제약).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。輪郭が無ければ 0 を返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>

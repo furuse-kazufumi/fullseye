@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;binomial_filter&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">binomial_filter</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>二項係数(パスカルの三角形)を重みとする分離型平滑化フィルタ。</p>
-<p>`<code style="color:#22d3bf">ndimage.correlate1d</code>` を縦・横に順に掛けることでガウシアンを離散二項核で</p>
-<p>近似する ―― HALCON の `<code style="color:#22d3bf">binomial_filter</code>`（Smooth an image using the</p>
-<p>binomial filter.）が使う核と同じ発想の実装。</p>
+<p>以二項式係數(帕斯卡三角形)為權重的可分離平滑濾波器。透過依序沿縱向、橫向套用 `<code style="color:#22d3bf">ndimage.correlate1d</code><code style="color:#22d3bf">,以離散二項核來近似高斯核 —— 這與 HALCON 的 </code><code style="color:#22d3bf">binomial_filter</code>`(Smooth an image using the binomial filter.)所用核的構想相同。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が核サイズを </code><code style="color:#22d3bf">{3,5,7,9}</code><code style="color:#22d3bf"> の 4 段階(</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">)で振る。</code><code style="color:#22d3bf">b</code>` は</p>
 <p>未使用。ガウシアンぼかしより計算が軽く、リンギングも出にくい。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

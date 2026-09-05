@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">volume</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_sphere_sdf&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>球の符号付き距離場: `<code style="color:#22d3bf">|p - center| - R</code>`(内側負・外側正)。</p>
+<p>구의 부호 있는 거리장: `<code style="color:#22d3bf">|p - center| - R</code>`(내부는 음수, 외부는 양수).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">grid</code><code style="color:#22d3bf"> は最終軸が 3 の座標配列 (..., 3)(</code><code style="color:#22d3bf">grid_coords</code>` の出力や (N,3) 点群)。</p>
 <p>`<code style="color:#22d3bf">center</code><code style="color:#22d3bf"> は長さ3、</code><code style="color:#22d3bf">R&gt;=0</code><code style="color:#22d3bf"> は半径。返り値の shape は </code><code style="color:#22d3bf">grid.shape[:-1]</code>`。厳密な SDF</p>
 <p>(勾配ノルム 1)。`<code style="color:#22d3bf">sdf_offset(sphere_sdf(g,c,R), r) == sphere_sdf(g,c,R+r)</code>`。</p>

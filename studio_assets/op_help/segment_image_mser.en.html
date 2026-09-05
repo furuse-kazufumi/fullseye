@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;segment_image_mser&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">segment_image_mser</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>MSER(Maximally Stable Extremal Regions、最大安定極値領域)検出</p>
-<p>(`<code style="color:#22d3bf">cv2.MSER_create</code>`)。しきい値を連続的に変化させても形が安定して残る</p>
-<p>領域を検出し、その境界線を返す(文字・ロゴなど照明変化に頑健な領域検出に</p>
-<p>使われる)。HALCON の `<code style="color:#22d3bf">segment_image_mser</code>`（Segment image using Maximally</p>
-<p>Stable Extremal Regions (MSER).）に相当。</p>
+<p>MSER (Maximally Stable Extremal Regions) detection (`<code style="color:#22d3bf">cv2.MSER_create</code><code style="color:#22d3bf">). Detects regions whose shape remains stable even as the threshold is continuously varied, and returns their boundaries (used for detecting regions such as text and logos robustly against illumination changes). Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">segment_image_mser</code>` (Segment image using Maximally Stable Extremal Regions (MSER).).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が MSER の安定性パラメータ(delta、3〜11)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <p>`<code style="color:#22d3bf">cv2</code>` が無い環境ではこの分岐は呼べない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

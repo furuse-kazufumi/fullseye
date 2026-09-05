@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_confidence_connected&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>信頼区間連結領域拡張(SimpleITK `<code style="color:#22d3bf">ConfidenceConnected</code>`)。画像中心を種にし、現在の領域内の平均・標準偏差から「平均 ± multiplier * 標準偏差」の区間を作り、それを反復的に更新しながら連結領域を広げていく(xsitk_connected_threshold より統計的な閾値の決め方)。</p>
+<p>신뢰구간 연결 영역 확장(SimpleITK `<code style="color:#22d3bf">ConfidenceConnected</code>`). 이미지 중심을 씨앗으로 삼아, 현재 영역 내의 평균・표준편차로부터 &#x27;평균±multiplier*표준편차&#x27; 구간을 만들고, 이를 반복적으로 갱신하며 연결 영역을 넓혀 간다(xsitk_connected_threshold보다 통계적인 임계값 결정 방식).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は反復回数(</code><code style="color:#22d3bf">1+int(a*5)</code><code style="color:#22d3bf"> で 1〜6)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は標準偏差の倍率(</code><code style="color:#22d3bf">1.0+3.0*b</code>` で 1〜4)を振る。初期近傍半径は 2 固定。画像中心付近に対象があることを前提とした op。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 패밀리 가이드</a></p>

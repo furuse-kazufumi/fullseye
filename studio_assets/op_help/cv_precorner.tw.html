@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;cv_precorner&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">corner_response</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>コーナー候補検出(preCornerDetect、OpenCV 実装)。1 次・2 次微分を組み合わせた特殊な式でコーナーらしさを符号付きスコア化する —— 本来は `<code style="color:#22d3bf">cv2.cornerSubPix</code>` によるサブピクセル精密化の前段候補検出として使う関数。</p>
+<p>角點候選偵測（preCornerDetect，OpenCV 實作）。用結合一階與二階微分的特殊公式，將角點程度打成帶符號的分數 —— 原本是作為 `<code style="color:#22d3bf">cv2.cornerSubPix</code>` 次像素精細化前置候選偵測的函數。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の <code style="color:#22d3bf">corner_response</code>(Searching corners in images.)に相当(近似)。実装は `<code style="color:#22d3bf">|cv2.preCornerDetect(v, ksize=3)|</code>` を正規化したもの。a, b は未使用 —— ksize(Sobel 開口)は 3 に固定。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>

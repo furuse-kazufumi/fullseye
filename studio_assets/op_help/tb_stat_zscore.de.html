@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_stat_zscore&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Standardise a 1-D sample: `<code style="color:#22d3bf">(x - mean) / std</code><code style="color:#22d3bf"> (population </code><code style="color:#22d3bf">ddof=0</code>`).</p>
+<p>Standardisierung einer 1-D-Stichprobe: `<code style="color:#22d3bf">(x - mean) / std</code><code style="color:#22d3bf"> (Grundgesamtheit, </code><code style="color:#22d3bf">ddof=0</code>`).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>The result has mean 0 and standard deviation 1 — the common currency for</p>
 <p>comparing residuals across scales and flagging outliers (`<code style="color:#22d3bf">|z| &gt; 3</code>`).</p>
 <p>**A constant input raises `<code style="color:#22d3bf">ValueError</code>`** — the decision, stated: with</p>

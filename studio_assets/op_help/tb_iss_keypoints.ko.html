@@ -3,10 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_iss_keypoints&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>ISS(Intrinsic Shape Signatures、3D Harris 相当)キーポイント検出。</p>
-<p>局所共分散の最小固有値 λ3 を saliency とし、固有値が distinct(向きが</p>
-<p>well-defined)な点のみ候補にして NMS で疎に選ぶ。回転不変。返り値=点 index 配列。</p>
+<p>ISS(Intrinsic Shape Signatures, 3D Harris에 해당) 키포인트 검출. 국소 공분산의 최소 고유값 λ3을 saliency로 사용하고, 고유값이 distinct(방향이 well-defined)한 점만 후보로 삼아 NMS로 성기게 선택한다. 회전 불변. 반환값 = 점 인덱스 배열.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">iss_keypoints</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">gamma21</code><code style="color:#22d3bf">(既定 0.99)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">gamma32</code>`(既定 0.99)を振る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>

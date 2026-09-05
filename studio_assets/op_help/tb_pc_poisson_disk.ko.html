@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_pc_poisson_disk&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Blue-noise thinning: keep points greedily so that no two are closer than *radius* (`<code style="color:#22d3bf">points</code>`).</p>
+<p>블루 노이즈 씨닝: 어떤 두 점도 *radius*보다 가깝지 않도록 탐욕적으로 점을 유지(`<code style="color:#22d3bf">points</code>`).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Points are visited in a seeded random order; a point is kept if no kept</p>
 <p>point lies within *radius* (cKDTree ball query). Dense regions are thinned</p>
 <p>to the radius, sparse regions (spacing already &gt; radius) are kept whole —</p>

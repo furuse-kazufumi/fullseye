@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;abs_image&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">abs_image</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>画素値の絶対値を取る(`<code style="color:#22d3bf">np.abs</code><code style="color:#22d3bf">)。fullseye の </code><code style="color:#22d3bf">image</code>` は既に [0,1] 契約</p>
-<p>(非負)なので、通常の画像に対しては何も変えない<b>恒等写像</b>として働く。差分</p>
-<p>画像など符号つきの中間結果を直接渡したときだけ意味を持つ。HALCON の</p>
-<p>`<code style="color:#22d3bf">abs_image</code>`（Calculate the absolute value (modulus) of an image.）の代役。</p>
+<p>화소값의 절댓값을 취한다(`<code style="color:#22d3bf">np.abs</code><code style="color:#22d3bf">). fullseye의 </code><code style="color:#22d3bf">image</code><code style="color:#22d3bf">는 이미 [0,1] 계약(음이 아님)을 따르므로, 일반적인 이미지에 대해서는 아무것도 바꾸지 않는 항등 사상으로 작동한다. 차분 이미지처럼 부호가 있는 중간 결과를 직접 전달했을 때만 의미를 가진다. HALCON의 </code><code style="color:#22d3bf">abs_image</code>`(Calculate the absolute value (modulus) of an image.)의 대역.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。clip 前の生値 </code><code style="color:#22d3bf">v</code><code style="color:#22d3bf"> にそのまま </code><code style="color:#22d3bf">abs</code>` を掛けている点に</p>
 <p>注意(他の pointwise 分岐は `<code style="color:#22d3bf">x = clip(v,0,1)</code><code style="color:#22d3bf"> を使うが、この分岐だけ </code><code style="color:#22d3bf">v</code>`</p>
 <p>を直接見る)。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_optical_flow_magnitude_stream&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Per-frame dense flow speed against the previous frame → `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">video</code>`).</p>
+<p>逐帧相对于前一帧的稠密光流速度 → `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">video</code>`）。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Zero first frame; frames `<code style="color:#22d3bf">1..T−1</code><code style="color:#22d3bf"> equal :func:</code>videops.optical_flow_sequence`</p>
 <p>shifted by one, computed with one frame of state.</p>
 <p>Typed bridge of the videostream op `<code style="color:#22d3bf">optical_flow_magnitude_stream</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>

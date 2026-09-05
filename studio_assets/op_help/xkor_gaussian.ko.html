@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xkor_gaussian&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>ガウシアンぼかし（kornia の GPU ネイティブ実装）。torch テンソル上で</p>
-<p>`<code style="color:#22d3bf">kornia.filters.gaussian_blur2d</code>` を 5x5 カーネル・シグマ可変で掛ける。</p>
+<p>가우시안 블러(kornia의 GPU 네이티브 구현). torch 텐서 상에서 5x5 커널·가변 시그마로 `<code style="color:#22d3bf">kornia.filters.gaussian_blur2d</code>`를 적용한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>a はシグマを 0.3〜3.0 の範囲で振る（`<code style="color:#22d3bf">0.3 + 2.7 * a</code>`）。b は未使用。</p>
 <p>CPU 実行では scipy 版と比べて速くはならない（GPU・バッチ実行時に効く</p>
 <p>実装。`<code style="color:#22d3bf">IMGEVOLVE_KORNIA_DEVICE=cuda</code>` で GPU に乗る）。</p>

@@ -4,14 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;coherence_enhancing_diff&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">coherence_enhancing_diff</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>実装は `<code style="color:#22d3bf">anisotropic_diffusion</code><code style="color:#22d3bf"> と同一(</code><code style="color:#22d3bf">kind: &quot;anisotropic&quot;</code>`)。</p>
-<p>本来の coherence-enhancing diffusion は構造テンソルの固有ベクトルに沿って</p>
-<p>拡散方向を制御する(線状構造をつなげる)手法だが、この代役ではその構造</p>
-<p>テンソル計算を行わず、単純な Perona-Malik 異方性拡散で代用している</p>
-<p>(近似の限界 ―― 線状構造の連結効果は再現されない)。HALCON の</p>
-<p>`<code style="color:#22d3bf">coherence_enhancing_diff</code>`（Perform a coherence enhancing diffusion of</p>
-<p>an image.）の代役。</p>
+<p>The implementation is identical to `<code style="color:#22d3bf">anisotropic_diffusion</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">kind: &quot;anisotropic&quot;</code><code style="color:#22d3bf">). True coherence-enhancing diffusion is a method that controls the diffusion direction along the eigenvectors of the structure tensor (connecting linear structures), but this substitute does not compute the structure tensor and instead uses plain Perona-Malik anisotropic diffusion (a limitation of the approximation -- the effect of connecting linear structures is not reproduced). A stand-in for HALCON&#x27;s </code><code style="color:#22d3bf">coherence_enhancing_diff</code>` (Perform a coherence enhancing diffusion of an image).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が反復回数、</code><code style="color:#22d3bf">b</code>` が伝導度閾値 K を振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>

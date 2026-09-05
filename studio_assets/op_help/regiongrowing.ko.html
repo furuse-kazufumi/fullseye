@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;regiongrowing&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">regiongrowing</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>領域成長の簡易近似。まず高いしきい値(`<code style="color:#22d3bf">x &gt; 0.5+0.3*a</code>`)でシード</p>
-<p>(種)領域を作り、それを `<code style="color:#22d3bf">1+4*b</code>` 回だけ二値膨張して広げる ―― 真の領域成長</p>
-<p>(隣接画素との類似度を逐次判定しながら広げる)ではなく、しきい値+膨張という</p>
-<p>軽量な代用になっている(近似の限界)。HALCON の `<code style="color:#22d3bf">regiongrowing</code>`</p>
-<p>（Segment an image using region growing.）の代役。</p>
+<p>영역 성장의 간이 근사. 먼저 높은 임계값(`<code style="color:#22d3bf">x &gt; 0.5+0.3*a</code><code style="color:#22d3bf">)으로 씨앗(seed) 영역을 만들고, 이를 </code><code style="color:#22d3bf">1+4*b</code><code style="color:#22d3bf">회만큼 이진 팽창시켜 확장한다 —— 인접 화소와의 유사도를 순차적으로 판정하며 넓혀가는 진정한 영역 성장이 아니라, 임계값+팽창이라는 경량 대체 방식이다(근사의 한계). HALCON의 </code><code style="color:#22d3bf">regiongrowing</code>`(Segment an image using region growing.)의 대역이다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がシードのしきい値を、</code><code style="color:#22d3bf">b</code>` が膨張の反復回数を振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>

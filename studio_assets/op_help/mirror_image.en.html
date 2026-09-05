@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;mirror_image&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">mirror_image</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> の値で 3 通りの鏡映を切り替える(</code><code style="color:#22d3bf">a&lt;0.34</code>`: 上下反転、</p>
-<p>`<code style="color:#22d3bf">a&lt;0.67</code>`: 左右反転、それ以外: 転置)。連続的な鏡映変換ではなく離散的な</p>
-<p>モード選択である点に注意。HALCON の `<code style="color:#22d3bf">mirror_image</code>`（Mirror an image.）に</p>
-<p>相当(HALCON は上下/左右/対角を明示的なモード引数で選ぶが、ここでは `<code style="color:#22d3bf">a</code>`</p>
-<p>の値域で疑似的に選ぶ近似)。</p>
+<p>Switches between three types of mirroring based on the value of `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">a&lt;0.34</code><code style="color:#22d3bf">: vertical flip, </code><code style="color:#22d3bf">a&lt;0.67</code><code style="color:#22d3bf">: horizontal flip, otherwise: transpose). Note that this is a discrete mode selection rather than a continuous mirroring transformation. Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">mirror_image</code><code style="color:#22d3bf"> (Mirror an image) -- HALCON selects vertical/horizontal/diagonal via an explicit mode argument, whereas this is an approximation that pseudo-selects based on the value range of </code><code style="color:#22d3bf">a</code>`.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が鏡映モードを 3 段階で選ぶ。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>

@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;laplace&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">laplace</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>ラプラシアン(`<code style="color:#22d3bf">ndimage.laplace</code>`、有限差分による 2 階微分)の絶対値を</p>
-<p>正規化したもの。方向性を持たない二階微分エッジ検出で、Sobel 系より高周波</p>
-<p>ノイズに敏感。HALCON の `<code style="color:#22d3bf">laplace</code>`（Calculate the Laplace operator by using</p>
-<p>finite differences.）に相当。</p>
+<p>The normalized absolute value of the Laplacian (`<code style="color:#22d3bf">ndimage.laplace</code><code style="color:#22d3bf">, a second derivative via finite differences). A non-directional second-derivative edge detector, more sensitive to high-frequency noise than Sobel-type filters. Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">laplace</code>` (Calculate the Laplace operator by using finite differences).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。ノイズを抑えたい場合は事前にぼかすか</p>
 <p>`<code style="color:#22d3bf">laplace_of_gauss</code>`(ガウス平滑化込み)を使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

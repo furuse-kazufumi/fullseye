@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_alpha_shape_boundary&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>alpha shapes による<b>境界点インデックス</b>を返す(点群 → 境界点)。</p>
+<p>透過 alpha shapes 回傳<b>邊界點索引</b>（點雲 → 邊界點）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Delaunay 四面体分割の外接球半径 &lt; 1/alpha の四面体の表面三角形(境界面)を集め、その頂点</p>
 <p>集合を境界点とする。中実(表面+内部)の点群から表面殻の点だけを抜き出す用途に向く。</p>
 <p>alpha を大きくすると許す半径 1/alpha が小さくなり、より密着した(細部を拾う)境界になる。</p>

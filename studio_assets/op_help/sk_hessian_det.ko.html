@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sk_hessian_det&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Hessian 行列式によるブロブ検出応答。2 階微分の行列(Hessian)の行列式は、ブロブ状の構造で正、鞍点状の構造で負になる符号付き応答。</p>
+<p>헤시안 행렬식에 의한 블롭(blob) 검출 응답. 2계 미분 행렬(Hessian)의 행렬식은 블롭 형태의 구조에서는 양수, 안장점 형태의 구조에서는 음수가 되는 부호 있는 응답값이다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">feature.hessian_matrix_det(v, sigma=0.5+2.5*a)</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">signed01</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">[0,1]</code>` へ写した値(符号を保つため 0.5 が「応答ゼロ」に対応)—— a はスケール σ を 0.5〜3.0 に振る。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 패밀리 가이드</a></p>

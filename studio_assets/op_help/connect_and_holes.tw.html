@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;connect_and_holes&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">connect_and_holes</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>領域の連結成分数を数える（8 連結、`<code style="color:#22d3bf">count_obj</code><code style="color:#22d3bf"> と同じ </code><code style="color:#22d3bf">_sh_region_feat</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">count</code>` 分岐）。a, b は未使用。</p>
+<p>計算區域的連通元件數（8 連通，與 `<code style="color:#22d3bf">count_obj</code><code style="color:#22d3bf"> 相同的 </code><code style="color:#22d3bf">_sh_region_feat</code><code style="color:#22d3bf"> 的 </code><code style="color:#22d3bf">count</code>` 分支）。a、b 未使用。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の `<code style="color:#22d3bf">connect_and_holes</code><code style="color:#22d3bf">（連結成分数と穴の数の 2 つを同時に返す演算）のうち**連結成分数だけ**を返す近似 —— feature sort は 1 スカラーしか運べないため、穴の数は含まれない（</code><code style="color:#22d3bf">area_holes</code>` が穴の面積比を別途計算する）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

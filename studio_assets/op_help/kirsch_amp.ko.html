@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;kirsch_amp&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">kirsch_amp</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Kirsch コンパスフィルタの振幅。8 方向に回転させたカーネル群それぞれで</p>
-<p>畳み込み、絶対値の最大値を取ることで方向に依らない強いエッジ応答を得る。</p>
-<p>HALCON の `<code style="color:#22d3bf">kirsch_amp</code>`（Detect edges (amplitude) using the Kirsch</p>
-<p>operator.）に相当。</p>
+<p>Kirsch 컴퍼스 필터의 진폭. 8방향으로 회전시킨 커널군 각각으로 합성곱을 수행하고 절댓값의 최댓값을 취함으로써 방향에 의존하지 않는 강한 에지 응답을 얻는다. HALCON의 `<code style="color:#22d3bf">kirsch_amp</code>`(Detect edges (amplitude) using the Kirsch operator.)에 해당한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。8 方向を総当たりするため Sobel/Prewitt より計算量は</p>
 <p>多いが、斜め方向のエッジも同等の感度で拾える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

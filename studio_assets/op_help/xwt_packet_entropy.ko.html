@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xwt_packet_entropy&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>ウェーブレットパケットのエネルギー分散度(Shannon エントロピー)。`<code style="color:#22d3bf">db1</code><code style="color:#22d3bf"> で深さ 2 のウェーブレットパケット分解を行い、16 個の葉サブバンドそれぞれのエネルギー(係数二乗和)を正規化した分布とみなし、そのシャノンエントロピーを </code><code style="color:#22d3bf">log2(16)</code>` で割って [0,1] に正規化する。</p>
+<p>웨이블릿 패킷의 에너지 분산도(섀넌 엔트로피). `<code style="color:#22d3bf">db1</code><code style="color:#22d3bf">로 깊이 2의 웨이블릿 패킷 분해를 수행하고, 16개 리프 서브밴드 각각의 에너지(계수 제곱합)를 정규화한 분포로 간주하여 그 섀넌 엔트로피를 </code><code style="color:#22d3bf">log2(16)</code>`으로 나누어 [0,1]로 정규화한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。値が 1 に近いほどエネルギーが全周波数帯に均等に分散(テクスチャが複雑)、0 に近いほど特定の帯域に集中(単純なパターンや平坦な領域)していることを示す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>

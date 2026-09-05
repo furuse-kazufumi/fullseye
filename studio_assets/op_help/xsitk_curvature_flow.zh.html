@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_curvature_flow&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>曲率流平滑化(SimpleITK `<code style="color:#22d3bf">CurvatureFlow</code>`)。等高線の曲率に比例した速度で画像をぼかす非線形拡散で、直線的なエッジは保たれやすく、丸まった細部から先に消えていく。</p>
+<p>曲率流平滑（SimpleITK `<code style="color:#22d3bf">CurvatureFlow</code>`）。一种以等高线曲率成比例的速度模糊图像的非线性扩散，直线状边缘容易被保留，而弯曲的细节会先消失。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は反復回数(</code><code style="color:#22d3bf">1+int(a*8)</code><code style="color:#22d3bf"> で 1〜9 回)を振る —— 増やすほど強く平滑化される。時間刻みは 0.0625 固定。</code><code style="color:#22d3bf">b</code>` は未使用。出力は [0,1] にクリップ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>

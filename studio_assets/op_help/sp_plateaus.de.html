@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sp_plateaus&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">plateaus</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>同じ（量子化した）グレー値が連結した平坦領域（プラトー）の重心をサブピクセル位置として返す（HALCON `<code style="color:#22d3bf">plateaus</code>` に相当）。</p>
+<p>Gibt den Schwerpunkt zusammenhängender flacher Regionen (Plateaus) mit gleichem (quantisiertem) Grauwert als Subpixel-Position zurück (entspricht HALCON `<code style="color:#22d3bf">plateaus</code>`).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>隣接画素同士がしきい値 `<code style="color:#22d3bf">q = 1e-6 + 0.05*a</code><code style="color:#22d3bf"> 以内で等しければ同じ平坦領域とみなす（Union-Find で連結成分化）。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はこの許容量子化幅と最小面積（</code><code style="color:#22d3bf">min_area = 2 + round(6*a)</code><code style="color:#22d3bf">、これ未満の領域は無視）の両方を振る。</code><code style="color:#22d3bf">b</code>` は未使用。戻り値は CONTOUR で、各プラトーにつき 1 点（その領域の画素座標の平均、単位はピクセル）。入力が 200,000 画素を超える場合は安全側で空集合を返す（計算量ガード）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">Leitfaden zur Familie gallery2d_geometry</a></p>

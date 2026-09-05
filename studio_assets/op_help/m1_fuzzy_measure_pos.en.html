@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;m1_fuzzy_measure_pos&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">fuzzy_measure_pos</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>中心を通るキャリパー線上のエッジを、ファジィなメンバーシップスコアでふるいにかけて返す（HALCON `<code style="color:#22d3bf">fuzzy_measure_pos</code>` に相当: 矩形/円弧に垂直な直線エッジをファジィ判定で検出する）。</p>
+<p>Sieves edges along a caliper line through the centre by a fuzzy membership score and returns them (equivalent to HALCON `<code style="color:#22d3bf">fuzzy_measure_pos</code>`: detects straight edges perpendicular to a rectangle/arc using fuzzy judgement).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>エッジ検出は `<code style="color:#22d3bf">m1_measure_pos</code><code style="color:#22d3bf"> と同じ。各エッジの振幅を</code><code style="color:#22d3bf">(amp - lo) / (gmax - lo)</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">lo = 0.05*gmax</code><code style="color:#22d3bf">）で [0,1] のファジィスコアに写像し、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf">（0〜1）以上のものだけを残す（0/1 のハードしきい値ではなく振幅に応じた連続的な信頼度で選別する点が </code><code style="color:#22d3bf">measure_pos</code><code style="color:#22d3bf"> と違う）。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は線の向き（</code><code style="color:#22d3bf">theta = a*pi</code>`）。戻り値は CONTOUR、座標単位はピクセル。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>

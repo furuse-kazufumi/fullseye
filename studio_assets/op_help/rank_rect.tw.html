@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;rank_rect&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">rank_rect</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>実装は `<code style="color:#22d3bf">rank_image</code><code style="color:#22d3bf"> と同一(</code><code style="color:#22d3bf">kind: &quot;rank&quot;</code>`、正方窓のパーセンタイル</p>
-<p>フィルタ)。HALCON では `<code style="color:#22d3bf">rank_image</code><code style="color:#22d3bf">(任意マスク)と </code><code style="color:#22d3bf">rank_rect</code>`(矩形</p>
-<p>マスク限定)は別演算子だが、この代役ではどちらも同じ正方窓実装を指す。</p>
-<p>HALCON の `<code style="color:#22d3bf">rank_rect</code>`（Compute a rank filter with rectangular masks.）</p>
-<p>の代役。</p>
+<p>實作與 `<code style="color:#22d3bf">rank_image</code><code style="color:#22d3bf"> 完全相同(</code><code style="color:#22d3bf">kind: &quot;rank&quot;</code><code style="color:#22d3bf">,方形視窗的百分位濾波器)。在 HALCON 中,</code><code style="color:#22d3bf">rank_image</code><code style="color:#22d3bf">(任意遮罩)與 </code><code style="color:#22d3bf">rank_rect</code><code style="color:#22d3bf">(僅限矩形遮罩)是不同的運算子,但此替代實作兩者皆指向同一個方形視窗實作。是 HALCON 的 </code><code style="color:#22d3bf">rank_rect</code>`(Compute a rank filter with rectangular masks.)的替代實作。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の一辺、</code><code style="color:#22d3bf">b</code>` がパーセンタイル(5〜95%)を振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

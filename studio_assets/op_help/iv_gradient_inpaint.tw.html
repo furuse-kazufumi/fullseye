@@ -3,13 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;iv_gradient_inpaint&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Harmonic (Laplace) inpainting of a central masked window. The interior of a</p>
-<p>centred window (side fraction from `<code style="color:#22d3bf">a</code>`) is discarded and refilled by solving</p>
-<p>nabla^2 u = 0 with Dirichlet boundary equal to the surrounding known pixels</p>
-<p>(Jacobi relaxation = repeatedly replacing each masked pixel by its 4-neighbour</p>
-<p>mean). The recovered interior is the smoothest (minimum-gradient) fill of the</p>
-<p>hole. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> sets the window size; </code><code style="color:#22d3bf">b</code>` is ignored.</p>
+<p>對中央被遮罩視窗進行調和（拉普拉斯）影像修復（inpainting）。以 `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 決定邊長比例的居中視窗，其內部被捨棄，並透過求解 nabla^2 u = 0（Dirichlet 邊界條件等於周圍已知像素）來重新填補（Jacobi 鬆弛法 = 反覆以每個被遮罩像素的 4 鄰域平均值取代該像素）。復原出的內部是該空洞的最平滑（最小梯度）填補結果。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 設定視窗大小；</code><code style="color:#22d3bf">b</code>` 被忽略。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

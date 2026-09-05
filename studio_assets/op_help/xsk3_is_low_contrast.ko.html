@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk3_is_low_contrast&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>低コントラスト画像判定(skimage `<code style="color:#22d3bf">exposure.is_low_contrast</code><code style="color:#22d3bf">)。画像の輝度レンジが取りうる全レンジの </code><code style="color:#22d3bf">fraction_threshold</code>` 未満しか使っていないかを判定する真偽値を、0.0/1.0 の feature として返す。</p>
+<p>저대비 이미지 판정(skimage `<code style="color:#22d3bf">exposure.is_low_contrast</code><code style="color:#22d3bf">). 이미지의 밝기 범위가 가능한 전체 범위의 </code><code style="color:#22d3bf">fraction_threshold</code>` 미만만 사용하고 있는지를 판정하는 불리언 값을 0.0/1.0의 feature로 반환한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は判定基準の割合(</code><code style="color:#22d3bf">0.05+0.4*a</code><code style="color:#22d3bf"> で 0.05〜0.45)を振る —— 大きくするほど低コントラストと判定されやすくなる。</code><code style="color:#22d3bf">b</code>` は未使用。露出不足/白飛びの自動検知に使える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>

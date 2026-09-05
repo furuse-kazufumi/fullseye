@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">cimage</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_cplx_cr_residual&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Cauchy-Riemann residual of a sampled complex field — &quot;is this field</p>
-<p>holomorphic?&quot; as a number.</p>
+<p>采样复数场的 Cauchy-Riemann 残差——将“这个场是否全纯？”量化为一个数值。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>With `<code style="color:#22d3bf">f = u + i v</code>` sampled on a uniform grid, holomorphy means</p>
 <p>`<code style="color:#22d3bf">u_x = v_y</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">u_y = -v_x</code>` (Cauchy-Riemann). This returns the</p>
 <p><b>relative</b> residual `<code style="color:#22d3bf">max(|u_x - v_y|, |u_y + v_x|) / max|grad|</code>`</p>

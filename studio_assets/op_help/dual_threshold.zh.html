@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;dual_threshold&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">dual_threshold</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>符号つき画像向けのしきい値処理。中央値 0.5 を「ゼロ」とみなし、</p>
-<p>`<code style="color:#22d3bf">|x - 0.5| &gt; 0.1+0.35*a</code>` を満たす画素(0.5 から十分離れた画素)を前景と</p>
-<p>する ―― 正負どちらの側にも対称に反応する。HALCON の `<code style="color:#22d3bf">dual_threshold</code>`</p>
-<p>（Threshold operator for signed images.）に相当(HALCON は正負で別々の</p>
-<p>しきい値を持てるが、ここでは 0.5 を中心とした対称な帯域に単純化)。</p>
+<p>面向带符号图像的阈值处理。将中间值 0.5 视为“零”，把满足 `<code style="color:#22d3bf">|x - 0.5| &gt; 0.1+0.35*a</code><code style="color:#22d3bf">（离 0.5 足够远）的像素判定为前景——对正负两侧都对称地作出反应。相当于 HALCON 的 </code><code style="color:#22d3bf">dual_threshold</code>`（Threshold operator for signed images.）（HALCON 可以为正负分别设置阈值，这里简化为以 0.5 为中心的对称带）。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が除外帯域の半幅を振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。</code><code style="color:#22d3bf">highpass_image</code>` や</p>
 <p>`<code style="color:#22d3bf">bandpass_image</code>` のような符号つき応答(0.5=ゼロ)の後段でよく使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

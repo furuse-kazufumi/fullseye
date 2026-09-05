@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xmh_soft&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>ソフト閾値処理(`<code style="color:#22d3bf">mahotas.thresholding.soft_threshold</code>`、シュリンケージ)。閾値未満の絶対値を持つ画素を 0 に潰し、それ以外は閾値分だけ 0 に近づける。ウェーブレット/スパース信号のノイズ除去でよく使う処理を画素値に直接適用する。</p>
+<p>软阈值处理（`<code style="color:#22d3bf">mahotas.thresholding.soft_threshold</code>`，收缩）。将绝对值小于阈值的像素归零，其余像素则朝0方向平移阈值大小。把小波/稀疏信号去噪中常用的处理直接应用到像素值上。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は閾値(</code><code style="color:#22d3bf">a*0.5</code><code style="color:#22d3bf"> で 0〜0.5)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>

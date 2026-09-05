@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;fft_image&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">fft_image</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>2 次元 FFT のパワースペクトルを `<code style="color:#22d3bf">log1p(|F|)</code>` で圧縮し正規化した画像。</p>
-<p>低周波(直流)成分が中心にくるよう `<code style="color:#22d3bf">fftshift</code>` 済み。周期的なノイズや</p>
-<p>テクスチャの空間周波数を可視化するのに使う。HALCON の `<code style="color:#22d3bf">fft_image</code>`</p>
-<p>（Compute the fast Fourier transform of an image.）に相当。</p>
+<p>將二維FFT的功率譜以`<code style="color:#22d3bf">log1p(|F|)</code><code style="color:#22d3bf">壓縮並正規化後得到的影像。已經過</code><code style="color:#22d3bf">fftshift</code><code style="color:#22d3bf">處理,使低頻(直流)分量位於中心。用於可視化週期性雜訊或紋理的空間頻率。相當於HALCON的</code><code style="color:#22d3bf">fft_image</code>`(Compute the fast Fourier transform of an image.)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用 ―― 画像全体に対するグローバルな FFT で、窓関数や</p>
 <p>帯域選択のような調整点は無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

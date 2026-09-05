@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sk_butterworth&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>Butterworth フィルタ(周波数領域)。画像を FFT した上で、指定したカットオフ周波数より高い成分だけを通すハイパスフィルタとして働く(既定 `<code style="color:#22d3bf">high_pass=True</code>` のまま呼んでいる)。輪郭やテクスチャの高周波成分を強調する。</p>
+<p>Butterworth filter (frequency domain). Applies an FFT to the image and acts as a high-pass filter that passes only components above a specified cutoff frequency (called with the default `<code style="color:#22d3bf">high_pass=True</code>`). Emphasizes high-frequency components of contours and texture.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>HALCON に直接対応するものは無い(空欄)。実装は `<code style="color:#22d3bf">filters.butterworth(v, cutoff_frequency_ratio=0.05+0.3*a)</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">[0,1]</code>` に clip しただけ —— a はカットオフ比を 0.05〜0.35 に振る(小さいほど低周波まで削られ、応答が強く/広く出る)。b は未使用。ハイパスなので低コントラストな平坦領域は 0 付近に落ち、直流成分(平均輝度)の情報は失われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq family guide</a></p>

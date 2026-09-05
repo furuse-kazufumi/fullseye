@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;cv_median&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">median_image</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>メディアンフィルタ(OpenCV 実装)。正方形近傍内の中央値に置き換える定番のノイズ除去(特に胡椒塩ノイズに強く、エッジも比較的保たれる)。</p>
+<p>中值滤波器(OpenCV 实现)。用正方形邻域内的中位数进行替换的经典去噪方法(尤其对椒盐噪声效果好,边缘也相对能得到保留)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>HALCON の <code style="color:#22d3bf">median_image</code> に相当。実装は `<code style="color:#22d3bf">cv2.medianBlur(_u8(v), ksize=3+2*int(a*3))</code>` —— a はカーネルサイズを 3, 5, 7, 9(奇数)に振る。b は未使用。8 bit に量子化してから処理するため、元画像の微妙な階調は失われる。sk_median_disk と違い正方形カーネル。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

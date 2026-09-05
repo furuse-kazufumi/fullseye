@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;cv_canny&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">edges_image</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Canny エッジ検出(領域版、OpenCV 実装)。sk_canny と同じアルゴリズムだが、OpenCV 版はガウス平滑化の σ ではなく 2 本のしきい値を直接指定する API になっている。</p>
+<p>Canny 에지 검출(영역 버전, OpenCV 구현). sk_canny와 같은 알고리즘이지만, OpenCV 버전은 가우시안 평활화의 σ가 아니라 두 개의 임계값을 직접 지정하는 API로 되어 있다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>HALCON の <code style="color:#22d3bf">edges_image</code> に相当。実装は `<code style="color:#22d3bf">cv2.Canny(_u8(v), threshold1=int(50+100*a), threshold2=int(100+150*b))</code>` の結果を真偽値化したもの —— a は下側しきい値(弱いエッジの採用ライン)を 50〜150 に、b は上側しきい値(強いエッジの確定ライン)を 100〜250 に振る。a を大きく b を小さく振ると下側が上側を上回ることがあり、その場合の挙動は OpenCV の実装依存になる点に注意。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>

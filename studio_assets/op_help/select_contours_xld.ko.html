@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;select_contours_xld&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">select_contours_xld</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>既存の輪郭(XLD contour)集合から、点数が閾値(`<code style="color:#22d3bf">3+40*a</code>`)以上のものだけ</p>
-<p>を残すフィルタ。HALCON の `<code style="color:#22d3bf">select_contours_xld</code>`（Select XLD contours</p>
-<p>according to several features.）は面積・円形度など任意の特徴で選別できる</p>
-<p>汎用演算子だが、この代役では点数(長さの代理指標)による足切り 1 種類に</p>
-<p>固定している(近似)。</p>
+<p>기존 윤곽(XLD contour) 집합에서 점 개수가 임계값(`<code style="color:#22d3bf">3+40*a</code><code style="color:#22d3bf">) 이상인 것만 남기는 필터. HALCON의 </code><code style="color:#22d3bf">select_contours_xld</code>`(Select XLD contours according to several features.)는 면적, 원형도 등 임의의 특징으로 선별할 수 있는 범용 연산자지만, 이 대역에서는 점 개수(길이의 대리 지표)에 의한 컷오프 한 종류로 고정되어 있다(근사).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が点数のしきい値を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 패밀리 가이드</a></p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_moments_thresh&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>モーメント保存法による二値化(SimpleITK `<code style="color:#22d3bf">MomentsThreshold</code>`、Tsai の方法)。二値化後のヒストグラムの統計モーメント(平均・分散など)が元のヒストグラムのものと一致するように閾値を選ぶ。</p>
+<p>矩保持法二值化（SimpleITK `<code style="color:#22d3bf">MomentsThreshold</code>`，Tsai方法）。选取阈值使二值化后直方图的统计矩（均值、方差等）与原始直方图的统计矩一致。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はヒストグラムのビン数(64〜256)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。xsitk_maxentropy_thresh・xsitk_huang_thresh とは閾値選択の基準が異なるだけで、同じ入出力形。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>

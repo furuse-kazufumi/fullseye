@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;highpass_image&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">highpass_image</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>周波数領域で低域(半径 `<code style="color:#22d3bf">&lt;= 0.02+0.3*a</code>`)を遮断し、残りを逆 FFT で</p>
-<p>実空間に戻したハイパスフィルタ。零平均の<b>符号つき</b>応答になるため</p>
-<p>`<code style="color:#22d3bf">signed01</code>` で [0,1] に写像している(0.5 がゼロ、つまり画素の約半分が</p>
-<p>0.5 未満になるのが正常)。HALCON の `<code style="color:#22d3bf">highpass_image</code>`（Extract high</p>
-<p>frequency components from an image.）に相当。</p>
+<p>在频域中截断低频(半径`<code style="color:#22d3bf">&lt;= 0.02+0.3*a</code><code style="color:#22d3bf">),将剩余部分通过逆FFT变换回实空间的高通滤波器。由于结果是零均值的**带符号**响应,因此用</code><code style="color:#22d3bf">signed01</code><code style="color:#22d3bf">映射到[0,1](0.5表示零,也就是说约有一半像素小于0.5属于正常现象)。相当于HALCON的</code><code style="color:#22d3bf">highpass_image</code>`(Extract high frequency components from an image.)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が遮断半径(カットオフ周波数)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。単純に</p>
 <p>`<code style="color:#22d3bf">&gt; 0.5</code>` で二値化するとほぼ半分の画素が黒に潰れるので注意(詳細は</p>
 <p>`<code style="color:#22d3bf">_sh_freq</code>` の docstring)。</p>

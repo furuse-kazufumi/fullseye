@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;gray_bothat&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">gray_bothat</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>ブラックトップハット(クロージング − 元画像)。周囲より暗い小さな構造</p>
-<p>(穴・くぼみ)だけを抽出する、`<code style="color:#22d3bf">gray_tophat</code>` と明暗が逆の演算。HALCON の</p>
-<p>`<code style="color:#22d3bf">gray_bothat</code>`（Perform a gray value bottom hat transformation on an</p>
-<p>image.）に相当。</p>
+<p>黑頂帽(閉運算 − 原圖)。僅擷取比周圍更暗的小結構(孔洞、凹陷),是與 `<code style="color:#22d3bf">gray_tophat</code><code style="color:#22d3bf"> 明暗相反的運算。相當於 HALCON 的 </code><code style="color:#22d3bf">gray_bothat</code>`(Perform a gray value bottom hat transformation on an image.)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が矩形構造要素のサイズを </code><code style="color:#22d3bf">{3,5,7,9}</code><code style="color:#22d3bf"> で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>

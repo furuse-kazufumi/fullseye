@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;cv_sharpen&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">emphasize</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>アンシャープ的な鮮鋭化フィルタ(3x3 カーネル畳み込み、OpenCV 実装)。中心 `<code style="color:#22d3bf">1+4a</code><code style="color:#22d3bf">、上下左右 </code><code style="color:#22d3bf">-a</code>` のカーネル(a=0 では単位カーネル=無変化、a が大きいほど離散ラプラシアン的な高域強調が強くかかる)を畳み込み、エッジ付近のコントラストを持ち上げる。</p>
+<p>언샤프 마스크 방식의 선명화 필터(3x3 커널 컨볼루션, OpenCV 구현). 중심이 `<code style="color:#22d3bf">1+4a</code><code style="color:#22d3bf">, 상하좌우가 </code><code style="color:#22d3bf">-a</code>`인 커널(a=0이면 항등 커널=변화 없음, a가 클수록 이산 라플라시안적인 고역 강조가 강하게 걸린다)을 컨볼루션하여 에지 부근의 대비를 끌어올린다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>HALCON の <code style="color:#22d3bf">emphasize</code>(Enhance contrast of the image.)に相当(近似)。実装は `<code style="color:#22d3bf">cv2.filter2D(v, kernel)</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">[0,1]</code>` へ clip したもの —— a はカーネルの強さ(鮮鋭化の度合い)を 0〜1 に振る。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>

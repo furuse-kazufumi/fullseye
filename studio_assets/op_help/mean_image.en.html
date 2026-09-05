@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;mean_image&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">mean_image</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>矩形平均フィルタ(box filter)。HALCON の `<code style="color:#22d3bf">mean_image</code>`（Smooth by</p>
-<p>averaging.）に相当する近似で、注目画素を一辺 k の窓の平均で置き換える。</p>
+<p>Rectangular mean filter (box filter). An approximation equivalent to HALCON&#x27;s `<code style="color:#22d3bf">mean_image</code>` (Smooth by averaging.) that replaces the pixel of interest with the average over a window of side length k.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の一辺 k を </code><code style="color:#22d3bf">{3,5,7,9}</code><code style="color:#22d3bf"> の 4 段階(</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">)で振る。</code><code style="color:#22d3bf">b</code>` は</p>
 <p>未使用。ガウシアンより速いが、エッジがぼやけずに角ばったブロック状の</p>
 <p>アーティファクトを残しやすい。</p>

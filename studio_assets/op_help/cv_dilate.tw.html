@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;cv_dilate&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">gray_dilation</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>グレー値モルフォロジー膨張(dilation、OpenCV 実装)。近傍の最大値へ置き換える操作で、明るい領域を拡大・暗い領域を縮小する(cv_erode の逆)。</p>
+<p>灰階形態學膨脹（dilation，OpenCV 實作）。將像素替換為其鄰域的最大值，藉此擴大明亮區域、縮小暗色區域（與 cv_erode 相反）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の <code style="color:#22d3bf">gray_dilation</code>(Perform a gray value dilation on an image.)に相当。実装は `<code style="color:#22d3bf">cv2.dilate(v, se)</code><code style="color:#22d3bf">、se は楕円形でサイズ </code><code style="color:#22d3bf">3+2*int(a*3)</code>` —— a は構造要素サイズを 3〜9 に振る。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>

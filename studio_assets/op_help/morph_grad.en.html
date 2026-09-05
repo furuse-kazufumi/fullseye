@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;morph_grad&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">gray_range_rect</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>モルフォロジー勾配（膨張 − 侵食）。HALCON の `<code style="color:#22d3bf">gray_range_rect</code>`（Determine the gray value range within a rectangle.）に相当。</p>
+<p>Morphological gradient (dilation minus erosion). Equivalent to HALCON&#x27;s `<code style="color:#22d3bf">gray_range_rect</code>` (Determine the gray value range within a rectangle.).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が構造要素の一辺を </code><code style="color:#22d3bf">3,5,7,9</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">）に振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。窓内の最大値と最小値の差を返すため、エッジ検出フィルタ（Sobel 等）に似た働きをするが方向を持たない。結果は </code><code style="color:#22d3bf">_norm</code>` で正規化される。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology family guide</a></p>

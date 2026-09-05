@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sg_gmm_segment&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>輝度値に対する 2 クラス・ガウス混合モデル（EM 法）で明るい方のクラスタを領域として返す（`<code style="color:#22d3bf">skimage</code>` 非依存の自前 EM 実装、HALCON に対応オペレータなし）。</p>
+<p>对亮度值拟合 2 类高斯混合模型（EM 算法），并将较亮的簇作为区域返回（不依赖 `<code style="color:#22d3bf">skimage</code>` 的自实现 EM，HALCON 无对应算子）。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>25/75 パーセンタイルで初期化した決定論的 EM で 1 次元 2 成分ガウス混合をフィットし、平均が高い方を「明るいクラス」とする。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">（0〜1）は事後確率のしきい値 </code><code style="color:#22d3bf">t = 0.25 + 0.5*a</code><code style="color:#22d3bf"> を振り、大きいほど「確実に明るい」と判定された画素だけを拾うようになる。</code><code style="color:#22d3bf">b</code>` は未使用。乱数を使わないので再現性がある。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>

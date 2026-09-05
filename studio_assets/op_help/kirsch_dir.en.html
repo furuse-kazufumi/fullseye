@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;kirsch_dir&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">kirsch_dir</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>Kirsch コンパスフィルタで最も強く応答した方向のインデックス(8 方向中の</p>
-<p>`<code style="color:#22d3bf">argmax</code><code style="color:#22d3bf">)を [0,1] に正規化して返す。</code><code style="color:#22d3bf">kirsch_amp</code>` と対になる方向成分。</p>
-<p>HALCON の `<code style="color:#22d3bf">kirsch_dir</code>`（Detect edges (amplitude and direction) using the</p>
-<p>Kirsch operator.）に相当。</p>
+<p>Returns the index of the direction with the strongest response from the Kirsch compass filter (`<code style="color:#22d3bf">argmax</code><code style="color:#22d3bf"> among the 8 directions), normalized to [0,1]. The directional component paired with </code><code style="color:#22d3bf">kirsch_amp</code><code style="color:#22d3bf">. Equivalent to HALCON&#x27;s </code><code style="color:#22d3bf">kirsch_dir</code>` (Detect edges (amplitude and direction) using the Kirsch operator.).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。方向は 8 段階の離散値しか取れない(Sobel/Prewitt の</p>
 <p>連続角度とは分解能が異なる)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

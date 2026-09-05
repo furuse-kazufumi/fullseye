@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;connect_and_holes&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">connect_and_holes</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>領域の連結成分数を数える（8 連結、`<code style="color:#22d3bf">count_obj</code><code style="color:#22d3bf"> と同じ </code><code style="color:#22d3bf">_sh_region_feat</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">count</code>` 分岐）。a, b は未使用。</p>
+<p>Counts the number of connected components in the region (8-connectivity, the same `<code style="color:#22d3bf">count</code><code style="color:#22d3bf"> branch of </code><code style="color:#22d3bf">_sh_region_feat</code><code style="color:#22d3bf"> used by </code><code style="color:#22d3bf">count_obj</code>`). a and b are unused.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>HALCON の `<code style="color:#22d3bf">connect_and_holes</code><code style="color:#22d3bf">（連結成分数と穴の数の 2 つを同時に返す演算）のうち**連結成分数だけ**を返す近似 —— feature sort は 1 スカラーしか運べないため、穴の数は含まれない（</code><code style="color:#22d3bf">area_holes</code>` が穴の面積比を別途計算する）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>

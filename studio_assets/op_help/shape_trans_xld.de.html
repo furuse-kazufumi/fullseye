@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;shape_trans_xld&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">shape_trans_xld</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>輪郭の凸包(`<code style="color:#22d3bf">cv2.convexHull</code>`)を計算し、輪郭形式のまま返す</p>
-<p>(`<code style="color:#22d3bf">shape_trans</code><code style="color:#22d3bf"> の輪郭版)。HALCON の </code><code style="color:#22d3bf">shape_trans_xld</code>`（Transform the</p>
-<p>shape of contours or polygons.）が持つ複数の変形モードのうち、凸包 1 種類</p>
-<p>のみを実装している(近似)。</p>
+<p>Berechnet die konvexe Hülle der Kontur (`<code style="color:#22d3bf">cv2.convexHull</code><code style="color:#22d3bf">) und gibt sie weiterhin in Konturform zurück (die Konturversion von </code><code style="color:#22d3bf">shape_trans</code><code style="color:#22d3bf">). Implementiert nur die konvexe Hülle, einen von mehreren Verformungsmodi, die HALCONs </code><code style="color:#22d3bf">shape_trans_xld</code>` (Transform the shape of contours or polygons.) besitzt (eine Annäherung).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。cv2 が無い環境ではこの分岐は呼べない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">Leitfaden zur Familie gallery2d_contour_measure</a></p>

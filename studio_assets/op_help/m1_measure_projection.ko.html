@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;m1_measure_projection&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">measure_projection</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>測定用のキャリパー線（直線）を画像に当て、垂直方向に平均した輝度プロファイルの平均値を返す（HALCON `<code style="color:#22d3bf">measure_projection</code>` に相当:矩形/円弧に垂直な 1 次元射影を抽出する）。</p>
+<p>측정용 캘리퍼 선(직선)을 이미지에 대고, 수직 방향으로 평균한 밝기 프로파일의 평균값을 반환한다(HALCON `<code style="color:#22d3bf">measure_projection</code>`에 해당: 사각형/원호에 수직인 1차원 투영을 추출).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>キャリパー線は画像の端から端まで引かれ、`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> で向きを </code><code style="color:#22d3bf">theta = a*pi</code><code style="color:#22d3bf">に振る（0＝横方向、0.5＝斜め45度、1＝横方向の逆向き）。</code><code style="color:#22d3bf">b</code>` は線を法線方向にずらす垂直オフセット（0〜1、0.5 が画像中心を通る）。線に沿って幅 1px 分の帯を平均サンプリングし（真の「射影」）、その平均輝度（[0,1]）を feature として返す。線が画像に掛からない/画像が小さすぎる場合は 0.0 を返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 패밀리 가이드</a></p>

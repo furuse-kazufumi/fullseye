@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_temporal_bilateral&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Causal temporal bilateral denoise per frame → `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">video</code>`).</p>
+<p>逐幀因果時域雙邊降噪 → `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">video</code>`）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Edge-preserving in time: averages recent frames but drops the weight of</p>
 <p>frames that differ (moved), so it denoises static regions without ghosting</p>
 <p>the motion the way :func:<code style="color:#22d3bf">moving_average_window</code> does.</p>

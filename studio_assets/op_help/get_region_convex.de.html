@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;get_region_convex&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">get_region_convex</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>領域の凸包（convex hull）を塗りつぶした領域として返す（`<code style="color:#22d3bf">skimage.morphology.convex_hull_image</code><code style="color:#22d3bf">）。a, b は未使用。</code><code style="color:#22d3bf">shape_trans</code>`（凸包への形状変換 seed op）と同じ実装。</p>
+<p>Gibt die konvexe Hülle (convex hull) der Region als gefüllte Region zurück (`<code style="color:#22d3bf">skimage.morphology.convex_hull_image</code><code style="color:#22d3bf">). a und b werden nicht verwendet. Gleiche Implementierung wie </code><code style="color:#22d3bf">shape_trans</code>` (der Seed-Op zur Umwandlung der Form in ihre konvexe Hülle).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON の `<code style="color:#22d3bf">get_region_convex</code>`（領域の凸包を XLD 輪郭として取得する演算）とは出力形式が異なる近似 —— 輪郭の座標列ではなく塗りつぶした region を返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>

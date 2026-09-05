@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;power_ln&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">power_ln</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>複素画像のパワースペクトルの代役。実装は fft_generic と同一で、入力画像に自前で FFT をかけてから振幅の対数 `<code style="color:#22d3bf">log1p(|F|)</code><code style="color:#22d3bf"> を最大値正規化して返す（</code><code style="color:#22d3bf">_sh_freq</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">fft_power</code>` 分岐を共有）。a, b は未使用。</p>
+<p>複數影像功率頻譜的替代實作。實作與 fft_generic 完全相同：對輸入影像自行做 FFT，再取振幅的對數 `<code style="color:#22d3bf">log1p(|F|)</code><code style="color:#22d3bf"> 並依最大值正規化回傳（共用 </code><code style="color:#22d3bf">_sh_freq</code><code style="color:#22d3bf"> 的 </code><code style="color:#22d3bf">fft_power</code>` 分支）。a、b 未使用。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の `<code style="color:#22d3bf">power_ln</code>`（複素画像のパワースペクトルを返す演算、通常は fft_generic 等が出力した複素画像を入力に取る）とは異なり、この実装は複素入力を受け取らず実画像から自前で FFT を計算する簡略近似。fft_generic とは実装上区別がない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>

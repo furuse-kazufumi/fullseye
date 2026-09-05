@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;gray_histo_abs&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">gray_histo_abs</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>画像の階調の標準偏差(`<code style="color:#22d3bf">x.std()</code><code style="color:#22d3bf">)を返す。HALCON の </code><code style="color:#22d3bf">gray_histo_abs</code>`</p>
-<p>（Calculate the gray value distribution.）は本来ヒストグラム全体</p>
-<p>(各階調のビン度数)を返す演算子だが、この代役ではヒストグラムそのものでは</p>
-<p>なく分布の広がりを表す標準偏差 1 個のスカラーに要約している(近似 ―― この</p>
-<p>パイプラインの `<code style="color:#22d3bf">feature</code>` ソートが 1 スカラーである契約上の制約)。</p>
+<p>Gibt die Standardabweichung der Grauwerte des Bildes zurück (`<code style="color:#22d3bf">x.std()</code><code style="color:#22d3bf">). HALCONs </code><code style="color:#22d3bf">gray_histo_abs</code><code style="color:#22d3bf"> (Calculate the gray value distribution.) ist eigentlich ein Operator, der das gesamte Histogramm zurückgibt (Bin-Häufigkeiten für jeden Grauwert), aber dieser Ersatz fasst es nicht als Histogramm selbst zusammen, sondern als einen einzelnen Skalar -- die Standardabweichung, die die Streuung der Verteilung repräsentiert (eine Approximation aufgrund der vertraglichen Einschränkung, dass die </code><code style="color:#22d3bf">feature</code>`-Sortierung dieser Pipeline ein einzelner Skalar sein muss).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>

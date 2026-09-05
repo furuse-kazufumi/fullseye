@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;frei_amp&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">frei_amp</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>Frei-Chen 等方性エッジ検出。重み `<code style="color:#22d3bf">√2</code>` を持つ 2 本のカーネル対から</p>
-<p>`<code style="color:#22d3bf">hypot</code>` で振幅を求める ―― Sobel より各方向への感度差が小さい(等方的)</p>
-<p>とされる古典的カーネル。HALCON の `<code style="color:#22d3bf">frei_amp</code>`（Detect edges (amplitude)</p>
-<p>using the Frei-Chen operator.）に相当。</p>
+<p>Frei-Chen isotropic edge detection. It computes the magnitude via `<code style="color:#22d3bf">hypot</code><code style="color:#22d3bf"> from a pair of two kernels weighted by </code><code style="color:#22d3bf">√2</code><code style="color:#22d3bf"> -- a classic kernel said to have smaller sensitivity differences across directions (i.e., more isotropic) than Sobel. Equivalent to HALCON&#x27;s </code><code style="color:#22d3bf">frei_amp</code>` (Detect edges (amplitude) using the Frei-Chen operator.).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。固定カーネル 2 本のみ(Frei-Chen 本来の全 9 基底の</p>
 <p>一部だけを使った近似)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

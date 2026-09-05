@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_huang_thresh&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Huang のファジィエントロピー法による二値化(SimpleITK `<code style="color:#22d3bf">HuangThreshold</code>`)。ファジィ集合として見た前景/背景のあいまいさ(ファジィエントロピー)が最小になる閾値を選ぶ。</p>
+<p>以 Huang 模糊熵法進行二值化(SimpleITK `<code style="color:#22d3bf">HuangThreshold</code>`)。將前景/背景視為模糊集合，選取使其模糊性(模糊熵)最小的閾值。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はヒストグラムのビン数(64〜256)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。xsitk_maxentropy_thresh・xsitk_moments_thresh の姉妹 op。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>

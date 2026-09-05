@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xcv3_brisk_count&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>BRISK 特徴点数(OpenCV BRISK 検出器)。二値記述子ベースの高速特徴点検出器で検出されたキーポイント数を feature として返す。</p>
+<p>BRISK 特徵點數(OpenCV BRISK 偵測器)。將以二值描述符為基礎的高速特徵點偵測器所偵測到的關鍵點數量作為 feature 回傳。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は検出閾値 </code><code style="color:#22d3bf">thresh</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">int(10+60*a)</code><code style="color:#22d3bf"> で 10〜70。高いほど検出数が減る)を振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。実装注記: cv2 5.0.0 で </code><code style="color:#22d3bf">BRISK_create</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">cv2.xfeatures2d</code><code style="color:#22d3bf"> に移動したため、両方の場所を </code><code style="color:#22d3bf">getattr</code>` で試す互換コードになっている。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

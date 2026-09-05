@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">volume</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_plane_segmentation&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>反復 RANSAC で最大 max_planes 枚の平面を逐次抽出(残差点 -1)。</p>
+<p>通过迭代 RANSAC 依次提取最多 max_planes 个平面（剩余残差点标为 -1）。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>残り点集合に :func:<code style="color:#22d3bf">ransac_fit.ransac_plane</code> を掛け、その最大 consensus 平面の</p>
 <p>inlier 数が `<code style="color:#22d3bf">min_inliers</code>` 以上なら新ラベルを与えて除去 → 残りで再検出、を繰り返す。</p>
 <p>複数の床/壁/階段状の面を一度に分離する(単一平面適合の pcseg との差)。inlier が</p>

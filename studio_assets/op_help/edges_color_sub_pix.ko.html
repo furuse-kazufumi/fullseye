@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;edges_color_sub_pix&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">edges_color_sub_pix</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>カラーエッジ上の連結成分を輪郭（contour）として取り出す。HALCON の</p>
-<p>`<code style="color:#22d3bf">edges_color_sub_pix</code>`（Deriche/Shen/Canny でサブピクセル精度のカラー</p>
-<p>エッジを抽出する）に相当するとされるが、**実装はサブピクセル精度では</p>
-<p>ない**——`<code style="color:#22d3bf">_edges_color</code>` の勾配強度をしきい値二値化し、8 連結の</p>
-<p>ラベリング（`<code style="color:#22d3bf">scipy.ndimage.label</code>`）でつないだ画素座標をそのまま</p>
-<p>輪郭点として返す（座標はすべて整数格子上）。3 画素未満の成分は捨てる。</p>
+<p>컬러 에지 상의 연결 성분을 윤곽(contour)으로 추출한다. HALCON의 `<code style="color:#22d3bf">edges_color_sub_pix</code><code style="color:#22d3bf">(Deriche/Shen/Canny로 서브픽셀 정밀도의 컬러 에지를 추출)에 해당한다고 되어 있으나, **구현은 서브픽셀 정밀도가 아니다**——</code><code style="color:#22d3bf">_edges_color</code><code style="color:#22d3bf">의 그래디언트 강도를 임계값으로 이진화하고, 8-연결 라벨링(</code><code style="color:#22d3bf">scipy.ndimage.label</code>`)으로 연결한 픽셀 좌표를 그대로 윤곽점으로 반환한다(좌표는 모두 정수 격자 위에 있다). 3픽셀 미만인 성분은 버린다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>a はしきい値 `<code style="color:#22d3bf">0.15 + 0.5 * a</code>` を振る（大きいほど輪郭が減る）。b は</p>
 <p>未使用。戻り値は `<code style="color:#22d3bf">{&quot;shape&quot;:..., &quot;cs&quot;: [輪郭ごとの (N,2) 座標配列]}</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

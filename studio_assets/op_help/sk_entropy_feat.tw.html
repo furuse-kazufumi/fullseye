@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_entropy_feat&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">entropy_gray</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>画像全体のシャノンエントロピー(1 スカラー特徴量)。輝度ヒストグラムの分布の広がり・情報量を 1 個の数値で要約する —— 値が高いほど輝度分布が均一に散らばっている(情報量が多い/コントラストが豊富)ことを示す。</p>
+<p>整張影像的夏農熵(1 個純量特徵量)。用一個數值概括亮度直方圖分佈的離散程度、資訊量 —— 數值越高,代表亮度分佈越均勻分散(資訊量越多/對比度越豐富)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の <code style="color:#22d3bf">entropy_gray</code>(Determine the entropy and anisotropy of images.)に相当(近似。異方性は計算しない)。実装は `<code style="color:#22d3bf">measure.shannon_entropy(v)</code>`(既定の底 2、単位はビット)。a, b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

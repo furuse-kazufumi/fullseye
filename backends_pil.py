@@ -119,7 +119,16 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         return []
 
     def _im(v):
-        return Image.fromarray((np.clip(np.asarray(v, np.float64), 0, 1) * 255).astype(np.uint8), "L")
+        # 0 サイズは**ここで弾く**。Pillow の一部(ImageChops.offset)は 0x0 の
+        # 画像でネイティブ側から落ち、**インタプリタごと死ぬ** —— Python 例外に
+        # ならないので backend_safe.guard でも捕まえられない(2026-09-05 実測:
+        # `xpil_offset` に (0,0) を渡すと exit 127)。全 PIL op がこの入口を
+        # 通るので、ここ 1 箇所で族ごと塞ぐ。ValueError にすればガードが記録して
+        # sort に合う fallback へ落とす。
+        a = np.asarray(v, np.float64)
+        if a.size == 0 or min(a.shape[:2] or (0,)) == 0:
+            raise ValueError("PIL backend: 0 サイズの画像は扱えない (shape=%r)" % (a.shape,))
+        return Image.fromarray((np.clip(a, 0, 1) * 255).astype(np.uint8), "L")
 
     def _arr(im):
         return np.asarray(im, np.float64) / 255.0

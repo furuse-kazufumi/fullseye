@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;projective_trans_image&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">projective_trans_image</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>透視(射影)変換(`<code style="color:#22d3bf">cv2.warpPerspective</code>`)。4 隅のうち上 2 隅を</p>
-<p>`<code style="color:#22d3bf">d=0.06+0.12*a</code>` の比率で内側に寄せることで台形(パースがかかった)歪みを</p>
-<p>作る。枠外は反射で埋める。HALCON の `<code style="color:#22d3bf">projective_trans_image</code>`（Apply a</p>
-<p>projective transformation to an image.）に相当(HALCON は任意のホモグラフィ</p>
-<p>行列を渡せるが、ここでは台形歪み 1 パターンに限定した近似)。</p>
+<p>透視（射影）變換（`<code style="color:#22d3bf">cv2.warpPerspective</code><code style="color:#22d3bf">）。將四個角中的上方兩個角以 </code><code style="color:#22d3bf">d=0.06+0.12*a</code><code style="color:#22d3bf"> 的比例向內收攏，藉此製造梯形（帶透視感）的變形。畫面外的區域以反射方式填補。相當於 HALCON 的 </code><code style="color:#22d3bf">projective_trans_image</code>`（Apply a projective transformation to an image.）（HALCON 可傳入任意的單應矩陣，此處則簡化為僅限一種梯形變形的近似）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が歪みの強さを、</code><code style="color:#22d3bf">b</code>` が左右の非対称さ(どちら側をより歪ませるか)を</p>
 <p>振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

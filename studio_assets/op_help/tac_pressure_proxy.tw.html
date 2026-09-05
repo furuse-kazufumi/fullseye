@@ -3,16 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tac_pressure_proxy&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Contact-pressure proxy map: the rectified deviation from the</p>
-<p>pseudo-reference background `<code style="color:#22d3bf">dev = |v - G_sigma(v)|</code>` is gated to the</p>
-<p>high-deviation (contact) area -- a relative gate at `<code style="color:#22d3bf">0.15 * max(dev)</code>` plus</p>
-<p>an absolute floor of 0.005 -- amplified by the sensitivity gain and</p>
-<p>Gaussian-smoothed, which is the standard &quot;indentation depth is monotone in</p>
-<p>normal force&quot; surrogate used when a tactile pad carries no force sensor.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = sensitivity (gain 1..10x), </code><code style="color:#22d3bf">b</code>` = smoothing radius (sigma 0.5..4.5).</p>
-<p>Output clipped to [0,1], HxW; a flat frame yields an all-zero pressure map</p>
-<p>(no contact, no force).</p>
+<p>接觸壓力近似圖:對偽參考背景的整流偏差 `<code style="color:#22d3bf">dev = |v - G_sigma(v)|</code><code style="color:#22d3bf"> 只保留高偏差(接觸)區域——相對閾值為 </code><code style="color:#22d3bf">0.15 * max(dev)</code><code style="color:#22d3bf"> 再加絕對下限 0.005——經靈敏度增益放大並做高斯平滑,這是觸覺墊沒有力感測器時常用的「壓痕深度與法向力單調相關」標準代理量。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = 靈敏度(增益 1~10 倍),</code><code style="color:#22d3bf">b</code>` = 平滑半徑(sigma 0.5~4.5)。輸出裁剪到 [0,1],尺寸為 HxW;平坦幀會得到全零的壓力圖(無接觸、無力)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

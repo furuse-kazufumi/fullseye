@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;lowpass&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>FFT による低域通過フィルタ（ぼかし）。HALCON に対応する単体 op は指定されていない。</p>
+<p>Tiefpassfilter mittels FFT (Weichzeichnung). Es ist keine entsprechende einzelne HALCON-Operation angegeben.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が遮断周波数 </code><code style="color:#22d3bf">cutoff = 0.05 + 0.4a</code><code style="color:#22d3bf">（正規化周波数、0〜0.5 がナイキストまでの範囲）を振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。2-D FFT で </code><code style="color:#22d3bf">rad &lt;= cutoff</code><code style="color:#22d3bf"> の低周波成分だけを残し、逆 FFT の実部を </code><code style="color:#22d3bf">[0,1]</code><code style="color:#22d3bf"> に clip する。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が小さいほど強くぼける。境界は周期的（FFT の性質上、画像端は反対側と隣接するとみなされる）に扱われ、</code><code style="color:#22d3bf">ndimage</code><code style="color:#22d3bf"> 系フィルタの </code><code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">edge</code>` とは境界処理が異なる点に注意。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">Leitfaden zur Familie gallery2d_texture_freq</a></p>

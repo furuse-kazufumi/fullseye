@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hough_line_trans&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">hough_line_trans</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>直線検出のための Hough 変換アキュムレータ。まず Sobel 勾配からエッジ</p>
-<p>マスクを作り、`<code style="color:#22d3bf">skimage.transform.hough_line</code>` でアキュムレータ空間</p>
-<p>(角度×距離)を計算、正規化してから入力と同じ画素形状にリサイズして返す</p>
-<p>(アキュムレータそのものの座標系ではなく画像として可視化する形)。HALCON の</p>
-<p>`<code style="color:#22d3bf">hough_line_trans</code>`（Produce the Hough transform for lines within</p>
-<p>regions.）に相当。</p>
+<p>用于直线检测的 Hough 变换累加器。先由 Sobel 梯度生成边缘掩膜，用 `<code style="color:#22d3bf">skimage.transform.hough_line</code><code style="color:#22d3bf"> 计算累加器空间（角度×距离），归一化后再缩放到与输入相同的像素形状后返回（以图像的形式可视化，而非累加器本身的坐标系）。相当于 HALCON 的 </code><code style="color:#22d3bf">hough_line_trans</code>`（Produce the Hough transform for lines within regions.）。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がエッジ抽出の閾値(0.2〜0.6)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。半径・角度分解能</p>
 <p>は skimage の既定値に固定されている。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

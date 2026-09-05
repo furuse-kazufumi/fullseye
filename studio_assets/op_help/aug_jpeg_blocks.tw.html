@@ -3,15 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;aug_jpeg_blocks&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>JPEG blocking / ringing artefacts. The image (scaled to 0..255) is cut</p>
-<p>into 8x8 blocks, each transformed with an orthonormal 2-D DCT-II</p>
-<p>(`<code style="color:#22d3bf">scipy.fft.dctn</code>`), quantised with the STANDARD JPEG Annex-K luminance</p>
-<p>table scaled by `<code style="color:#22d3bf">(1 + 40*a)/16</code>` (a=0 -&gt; near-lossless, a=1 -&gt; heavy</p>
-<p>quantisation), then reconstructed with the inverse DCT. `<code style="color:#22d3bf">b</code>` shifts the 8x8</p>
-<p>block grid phase by `<code style="color:#22d3bf">int(7*b)</code>` px in both axes, i.e. moves where the block</p>
-<p>seams fall. Images that are not a multiple of 8 are edge-replicate padded and</p>
-<p>cropped back to HxW (so 4x4 inputs are handled).</p>
+<p>JPEG 區塊化(blocking)/振鈴(ringing)瑕疵。影像(縮放到 0..255)先被切成 8x8 的區塊,每個區塊經過正交歸一化的二維 DCT-II(`<code style="color:#22d3bf">scipy.fft.dctn</code><code style="color:#22d3bf">)轉換,以標準 JPEG Annex-K 亮度量化表乘上 </code><code style="color:#22d3bf">(1 + 40*a)/16</code><code style="color:#22d3bf"> 進行量化(a=0 時接近無損,a=1 時量化很重),再用反 DCT 重建。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> 會在兩個軸上把 8x8 區塊網格的相位偏移 </code><code style="color:#22d3bf">int(7*b)</code>` 像素,也就是移動區塊接縫的位置。不是 8 的倍數的影像會先以邊緣複製方式填補,再裁切回 HxW(因此可處理 4x4 的輸入)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

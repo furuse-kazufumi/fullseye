@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;roberts_mag&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">roberts</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Roberts クロス勾配による勾配強度（エッジ検出）。HALCON の `<code style="color:#22d3bf">roberts</code>`（Detect edges using the Roberts filter.）に相当。</p>
+<p>通过 Roberts 交叉梯度计算梯度幅值（边缘检测）。相当于 HALCON 的 `<code style="color:#22d3bf">roberts</code>`（Detect edges using the Roberts filter.）。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>2×2 の対角差分（`<code style="color:#22d3bf">v - shift(-1,-1)</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">shift(0,-1) - shift(-1,0)</code><code style="color:#22d3bf">）のユークリッドノルムを </code><code style="color:#22d3bf">_norm</code><code style="color:#22d3bf"> で正規化する。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。カーネルが小さい（2×2）ためノイズに敏感だが応答の局在性は高い。境界は </code><code style="color:#22d3bf">_shift_edge</code>` によりレプリケート（折り返しなし）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>

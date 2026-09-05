@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;equalize&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">equ_histo_image</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>ヒストグラム均等化（線形化）。HALCON の `<code style="color:#22d3bf">equ_histo_image</code>`（Histogram linearization of images）に相当。</p>
+<p>直方圖均化（線性化）。相當於 HALCON 的 `<code style="color:#22d3bf">equ_histo_image</code>`（Histogram linearization of images）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。</code><code style="color:#22d3bf">[0,1]</code><code style="color:#22d3bf"> を 256 ビンに分けたヒストグラムの累積分布関数（CDF）を求め、各画素値をその CDF で置き換えることで、出力のヒストグラムがほぼ一様になるよう引き伸ばす。コントラストが低い（値域が狭い）画像を見やすくするのに使う。全画素が同一値だと CDF が定義できず </code><code style="color:#22d3bf">cdf[-1]</code>` が 0 になり、変換は事実上恒等（変化なし）になる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>

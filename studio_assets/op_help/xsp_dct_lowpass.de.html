@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsp_dct_lowpass&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>DCT 係数を低周波の正方ブロックだけ残してから逆変換するローパスフィルタ。</p>
+<p>Ein Tiefpassfilter, der von den DCT-Koeffizienten nur einen quadratischen Niederfrequenzblock beibehält, bevor die Rücktransformation angewendet wird.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は残す低周波係数ブロックの一辺の長さを決める（</code>`keep = max(2,</p>
 <p>int((0.15 + 0.6*a) * min(H, W)))`<code style="color:#22d3bf">、</code><code style="color:#22d3bf">a</code>` が大きいほど高周波まで残り</p>
 <p>ぼけが弱くなる）。`<code style="color:#22d3bf">b</code>` は未使用。ガウシアンぼかしと違い矩形の周波数</p>

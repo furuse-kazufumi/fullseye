@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sg_gmm_segment&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>輝度値に対する 2 クラス・ガウス混合モデル（EM 法）で明るい方のクラスタを領域として返す（`<code style="color:#22d3bf">skimage</code>` 非依存の自前 EM 実装、HALCON に対応オペレータなし）。</p>
+<p>Passt ein 2-Klassen-Gaußsches Mischmodell (EM-Algorithmus) an die Intensitätswerte an und gibt das hellere Cluster als Region zurück (eine eigenständige, von `<code style="color:#22d3bf">skimage</code>` unabhängige EM-Implementierung; kein entsprechender HALCON-Operator).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>25/75 パーセンタイルで初期化した決定論的 EM で 1 次元 2 成分ガウス混合をフィットし、平均が高い方を「明るいクラス」とする。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">（0〜1）は事後確率のしきい値 </code><code style="color:#22d3bf">t = 0.25 + 0.5*a</code><code style="color:#22d3bf"> を振り、大きいほど「確実に明るい」と判定された画素だけを拾うようになる。</code><code style="color:#22d3bf">b</code>` は未使用。乱数を使わないので再現性がある。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>

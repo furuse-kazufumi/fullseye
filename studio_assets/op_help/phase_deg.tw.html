@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;phase_deg&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">phase_deg</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>複素画像の位相角マップ。`<code style="color:#22d3bf">np.angle(F)</code><code style="color:#22d3bf">（-π〜π）を </code><code style="color:#22d3bf">(angle+π)/(2π)</code>` で [0,1] に線形写像する。a, b は未使用。</p>
+<p>複數影像的相位角圖。將 `<code style="color:#22d3bf">np.angle(F)</code><code style="color:#22d3bf">（-π〜π）透過 </code><code style="color:#22d3bf">(angle+π)/(2π)</code>` 線性映射到 [0,1]。a、b 未使用。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>名称は「度（degree）」を示唆するが、実装は phase_rad と同じ `<code style="color:#22d3bf">_sh_freq</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">fft_phase</code><code style="color:#22d3bf"> 分岐を共有しており、度数法への変換は行っていない —— 返るのは [0,1] に正規化された角度で、実際の度数（0-360°）ではない。HALCON の </code><code style="color:#22d3bf">phase_deg</code>`（複素画像の位相を度単位で返す演算）の代役としては単位が違う近似である点に注意。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>

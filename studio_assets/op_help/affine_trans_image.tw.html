@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;affine_trans_image&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">affine_trans_image</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>回転(`<code style="color:#22d3bf">-20°〜+20°</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> で決まる)とせん断(</code><code style="color:#22d3bf">b</code>` で決まる)を組み</p>
-<p>合わせた一般的なアフィン変換。中心を基準に `<code style="color:#22d3bf">ndimage.affine_transform</code>` を</p>
-<p>適用し、枠外は反射で埋める。HALCON の `<code style="color:#22d3bf">affine_trans_image</code>`（Apply an</p>
-<p>arbitrary affine 2D transformation to images.）に相当(HALCON は任意の</p>
-<p>2x3/3x3 変換行列を直接渡せるが、ここでは回転+せん断の 2 パラメータ化に</p>
-<p>限定した近似)。</p>
+<p>結合旋轉(-20°〜+20°,由`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">決定)與剪切(由</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf">決定)的一般性仿射變換。以中心為基準套用</code><code style="color:#22d3bf">ndimage.affine_transform</code><code style="color:#22d3bf">,超出邊框以反射填補。相當於HALCON的</code><code style="color:#22d3bf">affine_trans_image</code>`(Apply an arbitrary affine 2D transformation to images.)(HALCON可直接傳入任意的2x3/3x3變換矩陣,此處則限定為旋轉+剪切兩個參數的近似)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が回転角、</code><code style="color:#22d3bf">b</code>` がせん断量を振る。両方が使われる。平行移動・独立な</p>
 <p>拡大縮小はこの op では表現できない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

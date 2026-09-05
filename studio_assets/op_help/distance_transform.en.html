@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;distance_transform&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">distance_transform</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>ユークリッド距離変換(`<code style="color:#22d3bf">ndimage.distance_transform_edt</code>`)を最大値で</p>
-<p>正規化した画像。各前景画素について最も近い背景画素までの距離を表す ――</p>
-<p>値が大きいほど領域の「奥」にある画素。出力は `<code style="color:#22d3bf">region</code>` ではなく</p>
-<p>`<code style="color:#22d3bf">image</code><code style="color:#22d3bf"> 型になる点に注意。HALCON の </code><code style="color:#22d3bf">distance_transform</code>`（Compute the</p>
-<p>distance transformation of a region.）に相当。</p>
+<p>An image obtained by normalizing the Euclidean distance transform (`<code style="color:#22d3bf">ndimage.distance_transform_edt</code><code style="color:#22d3bf">) by its maximum value. It represents, for each foreground pixel, the distance to the nearest background pixel -- the larger the value, the &quot;deeper&quot; the pixel is inside the region. Note that the output type is </code><code style="color:#22d3bf">image</code><code style="color:#22d3bf">, not </code><code style="color:#22d3bf">region</code><code style="color:#22d3bf">. Equivalent to HALCON&#x27;s </code><code style="color:#22d3bf">distance_transform</code>` (Compute the distance transformation of a region.).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>

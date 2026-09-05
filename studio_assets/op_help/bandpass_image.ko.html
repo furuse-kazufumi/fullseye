@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;bandpass_image&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">bandpass_image</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>周波数領域で指定した帯域だけを通すバンドパスフィルタ(低域と高域を</p>
-<p>遮断)、逆 FFT で実空間に戻す。`<code style="color:#22d3bf">highpass_image</code>` と同様に零平均の符号つき</p>
-<p>応答なので `<code style="color:#22d3bf">signed01</code><code style="color:#22d3bf"> で [0,1] に写像する。HALCON の </code><code style="color:#22d3bf">bandpass_image</code>`</p>
-<p>（Edge extraction using bandpass filters.）に相当。</p>
+<p>주파수 영역에서 지정한 대역만 통과시키는 밴드패스 필터(저주파와 고주파를 차단), 역FFT로 실공간으로 되돌린다. `<code style="color:#22d3bf">highpass_image</code><code style="color:#22d3bf">와 마찬가지로 평균이 0인 부호 있는 응답이므로 </code><code style="color:#22d3bf">signed01</code><code style="color:#22d3bf">로 [0,1]에 매핑한다. HALCON의 </code><code style="color:#22d3bf">bandpass_image</code>`(Edge extraction using bandpass filters.)에 해당한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が下限カットオフ、</code><code style="color:#22d3bf">b</code>` が上限カットオフを振る。両方が使われる。</p>
 <p>帯域(`<code style="color:#22d3bf">b</code>` 側の上限)を下限より下に設定すると通過域が空になり出力はほぼ</p>
 <p>0.5(ゼロ)一色になる。</p>

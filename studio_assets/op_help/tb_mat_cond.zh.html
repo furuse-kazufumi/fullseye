@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_mat_cond&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Spectral (2-norm) condition number `<code style="color:#22d3bf">s_max / s_min</code>` — the numerical</p>
-<p>canary of the whole linalg family.</p>
+<p>谱(2-范数)条件数 `<code style="color:#22d3bf">s_max / s_min</code>`——整个线性代数(linalg)算子族的数值健康指标(canary)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">cond == 1</code>` for an orthogonal/orthonormal matrix (the best possible);</p>
 <p>`<code style="color:#22d3bf">inf</code>` (returned, not raised — the question &quot;how conditioned is it?&quot; has</p>
 <p>that honest answer) for an exactly singular one. A solve against *A* loses</p>

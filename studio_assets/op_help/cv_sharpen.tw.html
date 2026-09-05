@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;cv_sharpen&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">emphasize</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>アンシャープ的な鮮鋭化フィルタ(3x3 カーネル畳み込み、OpenCV 実装)。中心 `<code style="color:#22d3bf">1+4a</code><code style="color:#22d3bf">、上下左右 </code><code style="color:#22d3bf">-a</code>` のカーネル(a=0 では単位カーネル=無変化、a が大きいほど離散ラプラシアン的な高域強調が強くかかる)を畳み込み、エッジ付近のコントラストを持ち上げる。</p>
+<p>類似非銳化遮罩的銳化濾波器（3x3 核卷積，OpenCV 實作）。以中心為 `<code style="color:#22d3bf">1+4a</code><code style="color:#22d3bf">、上下左右為 </code><code style="color:#22d3bf">-a</code>` 的核（a=0 時為單位核＝不改變；a 越大，類離散拉普拉斯的高頻強化越強）進行卷積，提升邊緣附近的對比度。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の <code style="color:#22d3bf">emphasize</code>(Enhance contrast of the image.)に相当(近似)。実装は `<code style="color:#22d3bf">cv2.filter2D(v, kernel)</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">[0,1]</code>` へ clip したもの —— a はカーネルの強さ(鮮鋭化の度合い)を 0〜1 に振る。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

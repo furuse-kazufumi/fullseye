@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sobel_amp&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">sobel_amp</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Sobel 勾配の振幅(`<code style="color:#22d3bf">hypot(sobel_x, sobel_y)</code>` を正規化)。縦横それぞれの</p>
-<p>1 次微分カーネルから勾配ベクトルの大きさを求める最も基本的なエッジ検出。</p>
-<p>HALCON の `<code style="color:#22d3bf">sobel_amp</code>`（Detect edges (amplitude) using the Sobel</p>
-<p>operator.）に相当。</p>
+<p>Sobel 그래디언트의 진폭(`<code style="color:#22d3bf">hypot(sobel_x, sobel_y)</code><code style="color:#22d3bf">를 정규화). 세로·가로 각각의 1차 미분 커널로부터 그래디언트 벡터의 크기를 구하는 가장 기본적인 에지 검출. HALCON의 </code><code style="color:#22d3bf">sobel_amp</code>`(Detect edges (amplitude) using the Sobel operator.)에 해당한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用 ―― 固定カーネル 1 種類のみで、シグマや閾値のような</p>
 <p>調整点は無い(ぼかしてから使いたい場合は前段に `<code style="color:#22d3bf">gauss_filter</code>` 等を挟む)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

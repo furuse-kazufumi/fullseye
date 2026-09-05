@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk2_h_maxima&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>h-maxima 変換（局所極大のうち高さ h 未満のものを消す）。</p>
-<p>`<code style="color:#22d3bf">skimage.morphology.h_maxima</code>` を呼ぶ。</p>
+<p>h-maxima 变换（去除高度小于 h 的局部极大值）。调用 `<code style="color:#22d3bf">skimage.morphology.h_maxima</code>`。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>a が高さのしきい値 h（`<code style="color:#22d3bf">0.05 + 0.3 * a</code>`、範囲 0.05〜0.35）を振る。</p>
 <p>b は未使用。出力は極大が残った画素を 1 とする二値画像（<code style="color:#22d3bf">region</code>）。</p>
 <p>h が小さいほど微小なノイズ状の極大まで拾い、大きいほど際立った山だけ</p>

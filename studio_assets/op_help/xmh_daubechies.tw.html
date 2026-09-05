@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xmh_daubechies&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Daubechies ウェーブレット変換(`<code style="color:#22d3bf">mahotas.daubechies</code>`)。xmh_haar と同じ配置(1 段、係数を元画像サイズの配列に詰めて min-max 正規化)で、基底を Daubechies 系に変えたもの。</p>
+<p>Daubechies小波變換（`<code style="color:#22d3bf">mahotas.daubechies</code>`）。與xmh_haar採用相同的排列方式（單層，將係數塞入原始影像尺寸的陣列後做min-max正規化），只是把基底換成了Daubechies系。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はウェーブレットの種類を </code><code style="color:#22d3bf">D2</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">D4</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">D6</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">D8</code><code style="color:#22d3bf"> の 4 択で切り替える(タップ数が増えるほど滑らかで長いフィルタになる)。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>

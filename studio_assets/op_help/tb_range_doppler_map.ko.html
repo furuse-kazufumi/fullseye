@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">beatcube</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_range_doppler_map&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>The 2-D FFT of a beat cube -&gt; a `<code style="color:#22d3bf">(n_doppler, n_range)</code>` magnitude map.</p>
+<p>비트 큐브(beat cube)의 2차원 FFT -&gt; `<code style="color:#22d3bf">(n_doppler, n_range)</code>` 크기(magnitude) 맵.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Fast time transforms to <b>range</b> (last axis, not shifted: bin `<code style="color:#22d3bf">j</code>` is</p>
 <p>`<code style="color:#22d3bf">j * c*f_s/(2*S*N_s)</code>` metres, and a physical range is always positive so</p>
 <p>the whole `<code style="color:#22d3bf">[0, f_s)</code>` band is used). Slow time transforms to <b>velocity</b></p>

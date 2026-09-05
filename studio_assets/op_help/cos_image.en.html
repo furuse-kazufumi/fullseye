@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;cos_image&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">cos_image</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>`<code style="color:#22d3bf">(cos(2πx) + 1) / 2</code><code style="color:#22d3bf"> による周期 LUT。</code><code style="color:#22d3bf">sin_image</code>` と位相が π/2 ずれた</p>
-<p>版で、x=0 で最大(1)、x=0.5 で最小(0)に達してから再び上がる。HALCON の</p>
-<p>`<code style="color:#22d3bf">cos_image</code>`（Calculate the cosine of an image.）の代役。</p>
+<p>A periodic LUT based on `<code style="color:#22d3bf">(cos(2*pi*x) + 1) / 2</code><code style="color:#22d3bf">. A version phase-shifted by pi/2 relative to </code><code style="color:#22d3bf">sin_image</code><code style="color:#22d3bf">: it reaches its maximum (1) at x=0, its minimum (0) at x=0.5, and then rises again. Stands in for HALCON&#x27;s </code><code style="color:#22d3bf">cos_image</code>` (Calculate the cosine of an image.).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。</code><code style="color:#22d3bf">sin_image</code>` と同じく非単調・非可逆な周期写像なので、</p>
 <p>一般のコントラスト補正ではなく擬似的な等高線表現などに使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

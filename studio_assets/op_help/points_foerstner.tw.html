@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;points_foerstner&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">points_foerstner</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Förstner 演算子によるコーナー強度マップ(``skimage.feature.</p>
-<p>corner_foerstner`<code style="color:#22d3bf"> の重み </code><code style="color:#22d3bf">w</code><code style="color:#22d3bf"> とロバスト形状指標 </code><code style="color:#22d3bf">q</code>` の積、NaN は 0 に</p>
-<p>置換)。誤差楕円の大きさ(w)と円形度(q)を組み合わせて点特徴らしさを評価する。</p>
-<p>HALCON の `<code style="color:#22d3bf">points_foerstner</code>`（Detect points of interest using the</p>
-<p>Förstner operator.）に相当。</p>
+<p>基於 Förstner 運算子的角點強度圖（`<code style="color:#22d3bf">skimage.feature.corner_foerstner</code><code style="color:#22d3bf"> 的權重 </code><code style="color:#22d3bf">w</code><code style="color:#22d3bf"> 與穩健形狀指標 </code><code style="color:#22d3bf">q</code><code style="color:#22d3bf"> 之積，NaN 替換為 0）。透過結合誤差橢圓的大小（w）與其圓度（q）來評估某位置的點特徵程度。相當於 HALCON 的 </code><code style="color:#22d3bf">points_foerstner</code>`（Detect points of interest using the Förstner operator.）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が勾配計算のガウス窓シグマを 0.5〜2.5 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <p>skimage が無い環境ではこの分岐自体が呼べない(`<code style="color:#22d3bf">_HAS_SK</code>` ガード)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

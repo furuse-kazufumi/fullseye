@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;shape_locate&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">find_shape_model</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>回転を考慮したテンプレートマッチング（shape-based matching）。HALCON の `<code style="color:#22d3bf">find_shape_model</code>`（Find the best matches of a shape model in an image.）に相当。</p>
+<p>考虑旋转的模板匹配（基于形状的匹配）。相当于 HALCON 的 `<code style="color:#22d3bf">find_shape_model</code>`（Find the best matches of a shape model in an image.）。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用——テンプレートは </code><code style="color:#22d3bf">_ncc_locate</code><code style="color:#22d3bf"> と同じく </code><code style="color:#22d3bf">set_match_template</code><code style="color:#22d3bf"> で事前登録する。テンプレートを </code><code style="color:#22d3bf">0°〜330°</code><code style="color:#22d3bf"> まで </code><code style="color:#22d3bf">30°</code><code style="color:#22d3bf"> 刻みで回転させながらそれぞれ </code><code style="color:#22d3bf">_ncc_map</code><code style="color:#22d3bf">（NCC）を計算し、全位置・全角度を通じて最良の相関を </code><code style="color:#22d3bf">[相関値, y, x, 角度]</code><code style="color:#22d3bf"> で返す。角度の刻みが粗い（30°）ぶん、HALCON の </code><code style="color:#22d3bf">find_shape_model</code><code style="color:#22d3bf"> のような連続的な角度精度は出ない——大まかな向き検出用。テンプレート未設定時は </code><code style="color:#22d3bf">[0,0,0,0]</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>

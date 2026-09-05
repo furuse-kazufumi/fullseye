@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;m1_measure_pairs&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">measure_pairs</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>中心を通るキャリパー線上で、立ち上がり→立ち下がりのエッジ対（明るい物体の両端）の個数を数える（HALCON `<code style="color:#22d3bf">measure_pairs</code>` に相当: 矩形/円弧に垂直な直線エッジのペアを抽出する）。</p>
+<p>统计穿过中心的卡尺线上&quot;上升沿→下降沿&quot;边缘对(明亮物体的两端)的数量(相当于 HALCON `<code style="color:#22d3bf">measure_pairs</code>`:提取垂直于矩形/圆弧的直线边缘对)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は線の向き（</code><code style="color:#22d3bf">theta = a*pi</code><code style="color:#22d3bf">）。エッジ検出は </code><code style="color:#22d3bf">m1_measure_pos</code><code style="color:#22d3bf">と同じ（勾配ピークのサブピクセル検出）で、</code><code style="color:#22d3bf">b</code>`（0〜1）は最大振幅に対する相対しきい値。しきい値を超えたエッジを順に走査し、極性がrising→falling と並ぶ組を 1 対として数える（feature、整数値）。エッジが 2 本未満なら 0.0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>

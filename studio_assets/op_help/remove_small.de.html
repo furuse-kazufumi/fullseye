@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;remove_small&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">select_shape</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>小さい連結領域を面積で除去する。HALCON の `<code style="color:#22d3bf">select_shape</code>`（Choose regions with the aid of shape features.）に相当。</p>
+<p>Entfernt kleine zusammenhängende Regionen anhand der Fläche. Entspricht HALCONs `<code style="color:#22d3bf">select_shape</code>` (Choose regions with the aid of shape features.).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が除去のしきい値（画素数）を、画像全体の画素数に対する割合 </code><code style="color:#22d3bf">0.01〜0.16</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">(0.01+0.15a) * 画素数</code><code style="color:#22d3bf">）として振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。しきい値以上の面積を持つ連結成分だけを残す。連結性は scipy </code><code style="color:#22d3bf">label</code>` の既定（4連結）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;grad_dir&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>勾配方向（エッジの向き）を画像として返す。対応する HALCON op は指定されていない（fullseye 独自）。</p>
+<p>Gibt die Gradientenrichtung (Kantenausrichtung) als Bild zurück. Es ist keine entsprechende HALCON-Operation angegeben (spezifisch für fullseye).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。Sobel 応答から </code><code style="color:#22d3bf">atan2(Gy, Gx)</code><code style="color:#22d3bf"> で角度（</code><code style="color:#22d3bf">-π〜π</code><code style="color:#22d3bf">）を求め、</code><code style="color:#22d3bf">[0,1]</code><code style="color:#22d3bf"> へ線形に写す。</code><code style="color:#22d3bf">0</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">1</code><code style="color:#22d3bf"> はどちらも同じ角度（</code><code style="color:#22d3bf">-π</code><code style="color:#22d3bf">≡</code><code style="color:#22d3bf">π</code>`）に対応する周期量である点に注意——連続的に変化する向きでも出力が 0 と 1 の間で不連続にジャンプし得る。平坦な領域では勾配がほぼ 0 で方向が不定になり、ノイズの影響を受けやすい。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">Leitfaden zur Familie gallery2d_edges</a></p>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;cfa_to_rgb&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">cfa_to_rgb</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Bayer 配列（CFA: Color Filter Array）から RGB 画像へのデモザイク処理。HALCON の</p>
-<p>`<code style="color:#22d3bf">cfa_to_rgb</code>`（単板カラーフィルタアレイ画像を RGB 画像に変換する）に近似。</p>
+<p>從拜爾陣列（CFA：Color Filter Array）到 RGB 影像的去馬賽克（demosaic）處理。近似於 HALCON 的 `<code style="color:#22d3bf">cfa_to_rgb</code>`（將單板彩色濾鏡陣列影像轉換為 RGB 影像）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>単一チャンネルのグレースケール画像を Bayer パターンの生データとみなし、</p>
 <p>OpenCV の `<code style="color:#22d3bf">cv2.cvtColor</code>` でデモザイクして 3 チャンネル RGB に復元する。</p>
 <p><code style="color:#22d3bf">image</code> から <code style="color:#22d3bf">color</code> への橋渡し op（進化がカラー系統に入る唯一の入口）。</p>

@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_find_boundaries&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">boundary</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>領域境界の抽出。ラベル画像(ここでは真偽値領域)の中で、異なるラベル同士(前景/背景)が接する画素だけを True にした境界マスクを返す。</p>
+<p>区域边界提取。在标签图像(此处为布尔值区域)中,只将不同标签(前景/背景)相接触的像素设为 True,返回这样一个边界掩膜。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>HALCON の <code style="color:#22d3bf">boundary</code>(Reduce a region to its boundary.)に相当。実装は `<code style="color:#22d3bf">segmentation.find_boundaries(binm(v))</code>`。a, b は未使用 —— connectivity は既定の 1、mode は既定の &#x27;thick&#x27;(境界の両側 1 画素ずつを含む太めの境界)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

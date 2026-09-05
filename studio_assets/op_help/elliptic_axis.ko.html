@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;elliptic_axis&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">elliptic_axis</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>領域に等価な楕円（equivalent ellipse、慣性モーメントが一致する楕円）の長軸と短軸の比（アスペクト比）を返す。`<code style="color:#22d3bf">skimage.measure.regionprops</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">axis_major_length</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">axis_minor_length</code>` から計算し、/10 でおおよそ [0,1] 程度のスケールに収める（正規化ではないため、非常に細長い領域では 1 を超えうる）。a, b は未使用。</p>
+<p>영역에 대응하는 등가 타원(equivalent ellipse, 관성 모멘트가 일치하는 타원)의 장축과 단축의 비(종횡비)를 반환한다. `<code style="color:#22d3bf">skimage.measure.regionprops</code><code style="color:#22d3bf">의 </code><code style="color:#22d3bf">axis_major_length</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">axis_minor_length</code>`로부터 계산하고, 10으로 나누어 대략 [0,1] 정도의 스케일로 맞춘다(정규화가 아니므로 매우 가늘고 긴 영역에서는 1을 넘을 수 있다). a, b는 사용되지 않는다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>HALCON の `<code style="color:#22d3bf">elliptic_axis</code><code style="color:#22d3bf">（等価楕円の長半径・短半径そのもの 2 つの長さを返す演算）とは異なり、この実装は長さではなく比（アニソメトリー、</code><code style="color:#22d3bf">anisometry</code>` と同じ metric）だけを 1 スカラーで返す近似。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>

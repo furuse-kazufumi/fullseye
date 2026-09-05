@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk3_h_minima&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>h-極小変換(skimage `<code style="color:#22d3bf">morphology.h_minima</code><code style="color:#22d3bf">)。深さが </code><code style="color:#22d3bf">h</code>` 未満の浅い谷(局所極小)を平坦化してから残った極小点を二値マークする —— xmh_regmin と似た谷を拾う処理だが、深さでノイズ由来の浅い谷を明示的に除外できる。</p>
+<p>h-極小值變換(skimage `<code style="color:#22d3bf">morphology.h_minima</code><code style="color:#22d3bf">)。先將深度小於 </code><code style="color:#22d3bf">h</code>` 的淺谷(局部極小值)拉平，再對剩下的極小點做二值標記——與 xmh_regmin 類似的谷點拾取處理，但可透過深度明確排除源自雜訊的淺谷。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は深さしきい値 </code><code style="color:#22d3bf">h</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">0.05+0.3*a</code><code style="color:#22d3bf"> で 0.05〜0.35)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xpil_posterize&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>ポスタリゼーション（階調数の削減）。`<code style="color:#22d3bf">PIL.ImageOps.posterize</code>` を呼び、各チャンネルの有効ビット数を減らして色数を落とす。</p>
+<p>色調分離（減少灰階數）。呼叫 `<code style="color:#22d3bf">PIL.ImageOps.posterize</code>`，透過減少各色版的有效位元數來降低顏色數量。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>a が保持ビット数（`<code style="color:#22d3bf">bits = 1 + int(a*6)</code>`、範囲 1〜7）を振る。b は未使用。bits=1 では各チャンネルが 2 値化に近い極端な階調落ちになる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>

@@ -223,3 +223,28 @@ def test_no_wrapper_family_swallows_the_description():
     # guard は直接も検査する(族の代表が偶然 DOCS を持っていても見逃さない)
     import backend_safe
     assert (backend_safe.guard(impl, "image").__doc__ or "").strip().startswith("ラッパ越し")
+
+
+def test_the_two_nonfinite_ledgers_agree():
+    """「非有限が正しい」op の一覧が、本体とテストで一致していること。
+
+    2026-09-05: 全 op を ``guard`` で包んだとき、``sanitize`` が
+    **非有限を有限に潰す**ので、「inf が正解」の op を除外する必要が出た。
+    ところが除外表を 2 箇所(``ops.NONFINITE_IS_MEANINGFUL`` と
+    ``tests/test_backends_typed_liveness.KNOWN_NONFINITE_BY_CONTRACT``)に
+    分けて持つと、**片方だけ更新して静かにずれる**。
+    実際に `tb_mat_cond` を取りこぼし、既存のテストに拾われた。
+    """
+    import importlib.util
+    import ops
+    path = os.path.join(HERE, "test_backends_typed_liveness.py")
+    spec = importlib.util.spec_from_file_location("_liveness", path)
+    mod = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(mod)
+    except Exception as exc:                              # noqa: BLE001
+        pytest.skip("liveness テストが読めない: %s" % exc)
+    a = set(ops.NONFINITE_IS_MEANINGFUL)
+    b = set(mod.KNOWN_NONFINITE_BY_CONTRACT)
+    assert a == b, ("非有限の除外表がずれている —— ops 側だけ: %s / テスト側だけ: %s"
+                    % (sorted(a - b), sorted(b - a)))

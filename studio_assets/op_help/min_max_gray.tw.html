@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;min_max_gray&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">min_max_gray</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>画像の最大階調値のみを返す(`<code style="color:#22d3bf">x.max()</code><code style="color:#22d3bf">)。HALCON の </code><code style="color:#22d3bf">min_max_gray</code>`</p>
-<p>（Determine the minimum and maximum gray values within regions.）は本来</p>
-<p>最小値と最大値の<b>両方</b>を返す演算子だが、この代役では最大値のみを実装</p>
-<p>しており最小値の情報は失われる(データが欠落した近似 ―― 名前が示す</p>
-<p>「min_max」の半分しか計算していない点は正直に明記しておく)。</p>
+<p>只回傳影像的最大灰階值(`<code style="color:#22d3bf">x.max()</code><code style="color:#22d3bf">)。HALCON 的 </code><code style="color:#22d3bf">min_max_gray</code>`(Determine the minimum and maximum gray values within regions.)原本是同時回傳最小值與最大值的運算子,但此替代實作只實作了最大值,最小值的資訊因此遺失(資料缺失的近似——老實說,它只計算了名稱「min_max」所暗示內容的一半)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

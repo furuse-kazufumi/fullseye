@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xcv3_inpaint_ns&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Navier-Stokes 法によるインペインティング(OpenCV `<code style="color:#22d3bf">cv2.inpaint</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">INPAINT_NS</code>`)。周辺画素から流体力学的に情報を伝搬させて欠損領域を埋める修復アルゴリズム。</p>
+<p>基于 Navier-Stokes 方法的图像修复(OpenCV `<code style="color:#22d3bf">cv2.inpaint</code><code style="color:#22d3bf">，</code><code style="color:#22d3bf">INPAINT_NS</code>`)。一种通过流体力学方式从周边像素传播信息来填补缺损区域的修复算法。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>このレシピはマスクを外部から受け取らず、画像自身の中で輝度が 235 超(白飛び)または 20 未満(黒つぶれ)の画素を自動的に欠損とみなして半径 3 px でインペイントする。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。任意のマスクで穴埋めしたい用途には使えない点に注意。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

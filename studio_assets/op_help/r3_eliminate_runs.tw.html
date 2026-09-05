@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;r3_eliminate_runs&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">eliminate_runs</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>水平方向の連結ラン（連続する前景画素の並び）のうち、指定長未満のものを消す（HALCON `<code style="color:#22d3bf">eliminate_runs</code>` に相当）。</p>
+<p>消除水平方向連通遊程(連續前景像素序列)中長度小於指定值的部分(相當於 HALCON `<code style="color:#22d3bf">eliminate_runs</code>`)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">（0〜1）から最小ラン長 </code><code style="color:#22d3bf">min_len = 1 + max(1, round(8*a))</code><code style="color:#22d3bf"> を決め、これに満たない水平ランを除去する（</code><code style="color:#22d3bf">a=0</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">min_len=2</code><code style="color:#22d3bf">、すなわち1 画素だけの細い橋を切る）。</code><code style="color:#22d3bf">b</code>` は未使用。走査は行ごと・水平方向のみ（縦方向のランは対象外）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

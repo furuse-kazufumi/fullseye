@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;pruning&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">pruning</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>骨格化(`<code style="color:#22d3bf">skeletonize</code>`、無ければ入力をそのまま使用)の後、近傍数が</p>
-<p>1 以下の端点画素(スパー=枝毛)を繰り返し `<code style="color:#22d3bf">1+4*a</code>` 回削り取ることで、</p>
-<p>骨格から短い枝を除去する。HALCON の `<code style="color:#22d3bf">pruning</code>`（Prune the branches of a</p>
-<p>region.）に相当(HALCON は枝の長さを指定できるが、ここでは反復回数による</p>
-<p>近似)。</p>
+<p>在骨架化（`<code style="color:#22d3bf">skeletonize</code><code style="color:#22d3bf">，若不可用则直接使用输入）之后，反复（</code><code style="color:#22d3bf">1+4*a</code><code style="color:#22d3bf"> 次）削去邻居数为 1 以下的端点像素（毛刺=杂散分支），从骨架上去除短分支。相当于 HALCON 的 </code><code style="color:#22d3bf">pruning</code>`（Prune the branches of a region.）（HALCON 可指定分支长度，此处则用迭代次数做近似）。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が削り取る反復回数を 1〜5 回の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。回数が</p>
 <p>多いほど主要な骨格まで削れてしまうことがある。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

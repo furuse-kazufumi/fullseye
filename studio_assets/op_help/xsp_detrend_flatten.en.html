@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsp_detrend_flatten&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>画像全体の一次トレンド（傾き）を縦横それぞれ除去してから正規化するフラット化フィルタ。</p>
+<p>A flattening filter that removes the linear trend (slope) of the whole image separately along the vertical and horizontal directions, then normalizes.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">scipy.signal.detrend</code><code style="color:#22d3bf"> を列方向・行方向の順に適用し、各行/各列の線形回帰成分を差し引く。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。照明ムラなど画像全体に乗った緩やかな傾斜を除去し、局所コントラストを見やすくする用途。結果は符号付きなので</code><code style="color:#22d3bf">*0.5+0.5</code>` で [0,1] に写像し直している。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>

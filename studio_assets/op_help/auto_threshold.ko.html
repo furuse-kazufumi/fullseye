@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;auto_threshold&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">auto_threshold</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>実装は `<code style="color:#22d3bf">binary_threshold</code>` と同一(Otsu の判別分析法による自動</p>
-<p>しきい値化)。HALCON の `<code style="color:#22d3bf">auto_threshold</code>`（Segment an image using</p>
-<p>thresholds determined from its histogram.）は本来ヒストグラムの複数の谷</p>
-<p>から<b>複数のしきい値</b>(多クラス分割)を決める演算子だが、この代役では</p>
-<p>単一の Otsu しきい値による二値化に単純化している(近似の限界)。</p>
+<p>구현은 `<code style="color:#22d3bf">binary_threshold</code><code style="color:#22d3bf">와 동일하다(Otsu의 판별분석법에 의한 자동 임계값화). HALCON의 </code><code style="color:#22d3bf">auto_threshold</code>`(Segment an image using thresholds determined from its histogram.)는 본래 히스토그램의 여러 골짜기로부터 <b>여러 개의 임계값</b>(다중 클래스 분할)을 결정하는 연산자이지만, 이 대체 구현은 단일 Otsu 임계값에 의한 이진화로 단순화되어 있다(근사의 한계).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>

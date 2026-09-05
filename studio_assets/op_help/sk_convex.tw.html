@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_convex&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">shape_trans</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>凸包(convex hull)による領域の変形。前景領域を包む最小の凸多角形を求め、その内部を塗りつぶした領域を返す —— くびれや凹みを全て埋める。</p>
+<p>基於凸包(convex hull)的區域變形。求出包圍前景區域的最小凸多邊形,並回傳其內部填滿後的區域 —— 會填平所有的束縮與凹陷。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の <code style="color:#22d3bf">shape_trans</code>(Transform the shape of a region.)に相当(近似。`<code style="color:#22d3bf">shape_trans</code><code style="color:#22d3bf"> は他の変形モードも持つ汎用命令だが、ここでは凸包のみ)。実装は </code><code style="color:#22d3bf">morphology.convex_hull_image(binm(v))</code>`。a, b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;eccentricity_xld&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">eccentricity_xld</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>最大の輪郭(5 点以上)に `<code style="color:#22d3bf">cv2.fitEllipse</code>` で楕円をフィットし、その</p>
-<p>離心率 `<code style="color:#22d3bf">sqrt(1-(短軸/長軸)^2)</code>` を返す(0=真円、1に近いほど細長い)。</p>
-<p>HALCON の `<code style="color:#22d3bf">eccentricity_xld</code>`（Shape features derived from the ellipse</p>
-<p>parameters of contours or polygons.）に相当。cv2 が無い、または点数不足</p>
-<p>の場合は 0 を返す。</p>
+<p>Passt mit `<code style="color:#22d3bf">cv2.fitEllipse</code><code style="color:#22d3bf"> eine Ellipse an die größte Kontur (mit 5 oder mehr Punkten) an und gibt deren Exzentrizität </code><code style="color:#22d3bf">sqrt(1-(kleine Achse/große Achse)^2)</code><code style="color:#22d3bf"> zurück (0 = perfekter Kreis, näher an 1 = länglicher). Entspricht HALCONs </code><code style="color:#22d3bf">eccentricity_xld</code>` (Shape features derived from the ellipse parameters of contours or polygons.). Gibt 0 zurück, wenn cv2 nicht verfügbar ist oder zu wenige Punkte vorhanden sind.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>

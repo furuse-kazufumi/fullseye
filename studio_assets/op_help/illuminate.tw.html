@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;illuminate&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">illuminate</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>アンシャープマスク型の局所コントラスト強調。`<code style="color:#22d3bf">sm</code>` = ガウシアンぼかし</p>
-<p>(半径 `<code style="color:#22d3bf">3+12*a</code><code style="color:#22d3bf">)を引いた差分 </code><code style="color:#22d3bf">x - sm</code>` を元画像に足し戻すことで、</p>
-<p>低周波の照明ムラを残しつつ局所的なエッジ・テクスチャを持ち上げる。HALCON の</p>
-<p>`<code style="color:#22d3bf">illuminate</code>`（Illuminate image.）の代役。</p>
+<p>反銳化遮罩式的局部對比度增強。將高斯模糊(半徑 `<code style="color:#22d3bf">3+12*a</code><code style="color:#22d3bf">)得到的 </code><code style="color:#22d3bf">sm</code><code style="color:#22d3bf"> 與原圖相減得到差值 </code><code style="color:#22d3bf">x - sm</code><code style="color:#22d3bf">,再加回原圖,藉此在保留低頻照明不均的同時,拉升局部邊緣與紋理。是 HALCON 的 </code><code style="color:#22d3bf">illuminate</code>`(Illuminate image.)的替代實作。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はぼかしの強さ(構造とみなすスケール、シグマ 3〜15)を、</code><code style="color:#22d3bf">b</code>` は強調の</p>
 <p>強さ(0.3〜1.0)を振る。両方が使われる。強すぎるとハローアーティファクトが</p>
 <p>出る。</p>

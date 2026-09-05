@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;binary_threshold&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">binary_threshold</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>大津の判別分析法(Otsu&#x27;s method)による自動しきい値二値化</p>
-<p>(`<code style="color:#22d3bf">skimage.filters.threshold_otsu</code>`、無ければ平均値で代用)。クラス間分散</p>
-<p>を最大化するしきい値を画像のヒストグラムから自動決定する。HALCON の</p>
-<p>`<code style="color:#22d3bf">binary_threshold</code>`（Segment an image using binary thresholding.）に</p>
-<p>相当(HALCON は Otsu 以外の複数アルゴリズムを選べるが、ここでは Otsu 固定)。</p>
+<p>使用大津判别分析法(Otsu&#x27;s method)进行自动阈值二值化(`<code style="color:#22d3bf">skimage.filters.threshold_otsu</code><code style="color:#22d3bf">,若不可用则以平均值代替)。从图像直方图自动确定能使类间方差最大化的阈值。相当于HALCON的</code><code style="color:#22d3bf">binary_threshold</code>`(Segment an image using binary thresholding.)(HALCON可在Otsu之外选择多种算法,此处固定使用Otsu)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用 ―― ヒストグラムから自動決定されるため調整点は無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>

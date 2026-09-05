@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xkor_gaussian&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>ガウシアンぼかし（kornia の GPU ネイティブ実装）。torch テンソル上で</p>
-<p>`<code style="color:#22d3bf">kornia.filters.gaussian_blur2d</code>` を 5x5 カーネル・シグマ可変で掛ける。</p>
+<p>Gaußsche Unschärfe (GPU-native Implementierung von kornia). Wendet `<code style="color:#22d3bf">kornia.filters.gaussian_blur2d</code>` auf einem Torch-Tensor mit einem 5x5-Kernel und variablem Sigma an.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>a はシグマを 0.3〜3.0 の範囲で振る（`<code style="color:#22d3bf">0.3 + 2.7 * a</code>`）。b は未使用。</p>
 <p>CPU 実行では scipy 版と比べて速くはならない（GPU・バッチ実行時に効く</p>
 <p>実装。`<code style="color:#22d3bf">IMGEVOLVE_KORNIA_DEVICE=cuda</code>` で GPU に乗る）。</p>

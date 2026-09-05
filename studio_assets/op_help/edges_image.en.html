@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;edges_image&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">edges_image</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>Canny エッジ検出(`<code style="color:#22d3bf">skimage.feature.canny</code><code style="color:#22d3bf">、シグマ </code><code style="color:#22d3bf">0.5+2*a</code>`)による</p>
-<p>領域抽出。ガウス平滑化→勾配→非極大抑制→ヒステリシスしきい値という多段の</p>
-<p>処理をまとめて行う、広く使われるエッジ検出法。HALCON の `<code style="color:#22d3bf">edges_image</code>`</p>
-<p>（Detect edges using Deriche, Lanser, Shen, or Canny filters.）に相当</p>
-<p>(HALCON は Deriche/Lanser/Shen/Canny を選べるが、ここでは Canny 固定)。</p>
+<p>Region extraction via Canny edge detection (`<code style="color:#22d3bf">skimage.feature.canny</code><code style="color:#22d3bf">, sigma </code><code style="color:#22d3bf">0.5+2*a</code><code style="color:#22d3bf">). A widely used edge detection method that combines multiple stages: Gaussian smoothing -&gt; gradient -&gt; non-maximum suppression -&gt; hysteresis thresholding. Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">edges_image</code>` (Detect edges using Deriche, Lanser, Shen, or Canny filters) -- HALCON allows choosing among Deriche/Lanser/Shen/Canny, but here Canny is fixed.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がガウス平滑化のシグマを振る。</code><code style="color:#22d3bf">b</code>` は未使用(内部のヒステリシス</p>
 <p>しきい値は skimage の既定値)。skimage が無い環境ではこの分岐は呼べない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

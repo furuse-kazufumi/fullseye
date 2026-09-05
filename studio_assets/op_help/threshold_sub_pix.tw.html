@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;threshold_sub_pix&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">threshold_sub_pix</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>マーチングスクエア法(`<code style="color:#22d3bf">skimage.measure.find_contours</code>`)によるレベル</p>
-<p>クロッシング(等高線)抽出。指定した階調レベル(`<code style="color:#22d3bf">0.2+0.5*a</code>`)を横切る位置を</p>
-<p>サブピクセル精度で輪郭として返す。HALCON の `<code style="color:#22d3bf">threshold_sub_pix</code>`</p>
-<p>（Extract level crossings from an image with subpixel accuracy.）に相当。</p>
+<p>用行進方塊法（marching squares，`<code style="color:#22d3bf">skimage.measure.find_contours</code><code style="color:#22d3bf">）萃取水平交叉（等值線）。以子像素精度回傳穿過指定灰階等級（</code><code style="color:#22d3bf">0.2+0.5*a</code><code style="color:#22d3bf">）位置的輪廓。相當於 HALCON 的 </code><code style="color:#22d3bf">threshold_sub_pix</code>`（Extract level crossings from an image with subpixel accuracy.）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がクロッシングを取るレベルを振る。</code><code style="color:#22d3bf">b</code>` は未使用。skimage が無い</p>
 <p>環境ではこの分岐は呼べない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

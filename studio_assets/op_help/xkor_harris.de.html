@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xkor_harris&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Harris コーナー応答。`<code style="color:#22d3bf">kornia.feature.harris_response</code><code style="color:#22d3bf"> を呼び、符号付き応答を </code><code style="color:#22d3bf">signed01</code>` で [0,1] に写像する（コーナーは正、エッジは負に出るHarris 応答の符号情報を保ったまま可視化域に収める）。</p>
+<p>Harris-Eckenantwort. Ruft `<code style="color:#22d3bf">kornia.feature.harris_response</code><code style="color:#22d3bf"> auf und bildet die vorzeichenbehaftete Antwort mit </code><code style="color:#22d3bf">signed01</code>` auf [0,1] ab (dabei bleibt die Vorzeicheninformation der Harris-Antwort erhalten — positiv bei Ecken, negativ bei Kanten — während sie in einen visualisierbaren Bereich gebracht wird).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>a が Harris のスコア係数 k（`<code style="color:#22d3bf">0.04 + 0.02 * a</code>`、経験的に 0.04〜0.06 の範囲で使われる値）を振る。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">Leitfaden zur Familie gallery2d_edges</a></p>

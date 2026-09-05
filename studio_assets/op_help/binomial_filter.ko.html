@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;binomial_filter&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">binomial_filter</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>二項係数(パスカルの三角形)を重みとする分離型平滑化フィルタ。</p>
-<p>`<code style="color:#22d3bf">ndimage.correlate1d</code>` を縦・横に順に掛けることでガウシアンを離散二項核で</p>
-<p>近似する ―― HALCON の `<code style="color:#22d3bf">binomial_filter</code>`（Smooth an image using the</p>
-<p>binomial filter.）が使う核と同じ発想の実装。</p>
+<p>이항계수(파스칼의 삼각형)를 가중치로 하는 분리형 평활화 필터. `<code style="color:#22d3bf">ndimage.correlate1d</code><code style="color:#22d3bf">를 세로·가로 순서로 적용함으로써 가우시안을 이산 이항 커널로 근사한다 -- HALCON의 </code><code style="color:#22d3bf">binomial_filter</code>`(Smooth an image using the binomial filter.)가 사용하는 커널과 같은 발상의 구현이다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が核サイズを </code><code style="color:#22d3bf">{3,5,7,9}</code><code style="color:#22d3bf"> の 4 段階(</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">)で振る。</code><code style="color:#22d3bf">b</code>` は</p>
 <p>未使用。ガウシアンぼかしより計算が軽く、リンギングも出にくい。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

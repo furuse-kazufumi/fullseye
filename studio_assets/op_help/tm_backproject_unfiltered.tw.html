@@ -3,13 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tm_backproject_unfiltered&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Plain (UN-filtered) back-projection of the input sinogram -- the classic</p>
-<p>blurry reconstruction. No ramp filter is applied, so high frequencies are</p>
-<p>suppressed and every point spreads a 1/r blur: this deliberately shows why</p>
-<p>FBP&#x27;s filter is needed. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">b</code>` are unused (this is the fixed naive</p>
-<p>baseline). Uses `<code style="color:#22d3bf">skimage.transform.iradon</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">filter_name=None</code>` when</p>
-<p>available, else the NumPy plain back-projection. Output refit to HxW.</p>
+<p>對輸入正弦圖進行普通（未濾波）反投影 —— 經典的模糊重建。由於未套用斜坡濾波器，高頻被抑制，每個點都會擴散出 1/r 形式的模糊：這是刻意展示為何 FBP 需要濾波器。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">／</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> 均未被使用（這是固定的樸素基線）。若可用則使用帶 </code><code style="color:#22d3bf">filter_name=None</code><code style="color:#22d3bf"> 的 </code><code style="color:#22d3bf">skimage.transform.iradon</code>`，否則使用 NumPy 的普通反投影。輸出重新擬合為 HxW。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

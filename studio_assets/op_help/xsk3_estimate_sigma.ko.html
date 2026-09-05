@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk3_estimate_sigma&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>ノイズ標準偏差の推定(skimage `<code style="color:#22d3bf">restoration.estimate_sigma</code>`、ウェーブレット係数の中央絶対偏差(MAD)に基づく Donoho の推定量)。推定値を 5 倍したのち 1.0 で頭打ちにして feature として返す。</p>
+<p>노이즈 표준편차 추정(skimage `<code style="color:#22d3bf">restoration.estimate_sigma</code>`, 웨이블릿 계수의 중앙절대편차(MAD)에 기반한 Donoho 추정량). 추정값을 5배 한 뒤 1.0으로 상한을 두어 feature로 반환한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。デノイズ強度(例えば閾値処理のパラメータ)を画像ごとに自動決定したい場合の目安に使える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>

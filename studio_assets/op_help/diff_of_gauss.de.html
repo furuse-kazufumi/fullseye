@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;diff_of_gauss&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">diff_of_gauss</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>DoG(Difference of Gaussians、2 段階の異なるシグマでぼかした画像の差)</p>
-<p>によるバンドパスエッジ/ブロブ検出。LoG の高速近似として知られる古典的手法。</p>
-<p>HALCON の `<code style="color:#22d3bf">diff_of_gauss</code>`（Approximate the LoG operator (Laplace of</p>
-<p>Gaussian).）に相当。</p>
+<p>Bandpass-Kanten-/Blob-Erkennung mittels DoG (Difference of Gaussians; die Differenz von mit zwei unterschiedlichen Sigma-Werten weichgezeichneten Bildern). Ein klassisches Verfahren, bekannt als schnelle Näherung von LoG. Entspricht HALCONs `<code style="color:#22d3bf">diff_of_gauss</code>` (Approximate the LoG operator (Laplace of Gaussian).).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が狭い側のシグマ(0.5〜2.5)、</code><code style="color:#22d3bf">b</code>` が広い側のシグマ(1〜5)を振る ―― 両方</p>
 <p>が使われ、`<code style="color:#22d3bf">b</code>` の方を大きくとることで帯域幅が決まる。応答は絶対値を取って</p>
 <p>から正規化しているため符号情報は失われる。</p>

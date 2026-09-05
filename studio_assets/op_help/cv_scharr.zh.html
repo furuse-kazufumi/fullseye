@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;cv_scharr&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">edges_image</code>(其含义与参数可参考 HALCON 手册)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Scharr 勾配の大きさ(OpenCV 実装)。水平・垂直それぞれの Scharr 微分の絶対値を足し合わせて勾配強度とする —— sk_scharr(skimage 版)と同種のエッジ検出だが、合成方法(平方和のノルムではなく絶対値の和)が異なるため同一結果にはならない。</p>
+<p>Scharr 梯度幅值（OpenCV 实现）。将水平方向与垂直方向的 Scharr 微分的绝对值相加得到梯度强度 —— 与 sk_scharr（skimage 版本）属于同类边缘检测，但合成方式不同（是绝对值之和，而不是平方和的范数），因此结果不会完全一致。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>HALCON の <code style="color:#22d3bf">edges_image</code> に相当(近似)。実装は `<code style="color:#22d3bf">|cv2.Scharr(v,CV_64F,1,0)| + |cv2.Scharr(v,CV_64F,0,1)|</code>` を正規化したもの。a, b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>

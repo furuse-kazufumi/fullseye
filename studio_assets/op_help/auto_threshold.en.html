@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;auto_threshold&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">auto_threshold</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>実装は `<code style="color:#22d3bf">binary_threshold</code>` と同一(Otsu の判別分析法による自動</p>
-<p>しきい値化)。HALCON の `<code style="color:#22d3bf">auto_threshold</code>`（Segment an image using</p>
-<p>thresholds determined from its histogram.）は本来ヒストグラムの複数の谷</p>
-<p>から<b>複数のしきい値</b>(多クラス分割)を決める演算子だが、この代役では</p>
-<p>単一の Otsu しきい値による二値化に単純化している(近似の限界)。</p>
+<p>The implementation is identical to `<code style="color:#22d3bf">binary_threshold</code><code style="color:#22d3bf"> (automatic thresholding via Otsu&#x27;s discriminant analysis method). HALCON&#x27;s </code><code style="color:#22d3bf">auto_threshold</code>` (Segment an image using thresholds determined from its histogram) is originally an operator that determines <b>multiple thresholds</b> (multi-class segmentation) from multiple valleys in the histogram, but this substitute is simplified to binarization with a single Otsu threshold (a limitation of the approximation).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>

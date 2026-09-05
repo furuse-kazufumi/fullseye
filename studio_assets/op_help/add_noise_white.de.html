@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;add_noise_white&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">add_noise_white</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>ガウス性ホワイトノイズを加える(`<code style="color:#22d3bf">np.random.default_rng</code>` で生成、</p>
-<p>標準偏差 `<code style="color:#22d3bf">0.02+0.2*b</code><code style="color:#22d3bf">)。乱数シードは </code><code style="color:#22d3bf">int(a*997)+7</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">a</code>` から</p>
-<p>決定的に導出されるため、**同じ `<code style="color:#22d3bf">a</code>` なら常に同じノイズパターンが再現</p>
-<p>される**(真にランダムではなく、`<code style="color:#22d3bf">a</code>` を「ノイズの見え方の型」を選ぶ</p>
-<p>擬似的なノブとして使っている点に注意)。HALCON の `<code style="color:#22d3bf">add_noise_white</code>`</p>
-<p>（Add noise to an image.）に相当。</p>
+<p>Fügt gaußsches weißes Rauschen hinzu (erzeugt mit `<code style="color:#22d3bf">np.random.default_rng</code><code style="color:#22d3bf">, Standardabweichung </code><code style="color:#22d3bf">0.02+0.2*b</code><code style="color:#22d3bf">). Der Zufallsseed wird deterministisch aus </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> über </code><code style="color:#22d3bf">int(a*997)+7</code><code style="color:#22d3bf"> abgeleitet, sodass dasselbe </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> immer dasselbe Rauschmuster reproduziert (zu beachten: dies ist nicht wirklich zufällig — </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> wird als pseudo-Regler verwendet, der einen &quot;Rauscherscheinungstyp&quot; auswählt). Entspricht HALCONs </code><code style="color:#22d3bf">add_noise_white</code>` (Add noise to an image.).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は乱数シード(=ノイズパターン)を、</code><code style="color:#22d3bf">b</code>` はノイズの強さ(標準偏差)</p>
 <p>を振る。両方が使われるが、`<code style="color:#22d3bf">a</code>` の意味は「強さ」ではなく「パターン」で</p>
 <p>ある点が他の op と異なる。</p>

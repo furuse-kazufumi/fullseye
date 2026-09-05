@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;monotony&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">monotony</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>画素値がその 8 近傍の中で何番目に大きいか（単調性、monotony）を [0,1] で返す。中心より小さい近傍の数を数えて 8 で割るので、値 1.0 は中心が近傍全てより大きい局所最大、0.0 は局所最小に近いことを示す。a, b は未使用。</p>
+<p>以 [0,1] 回傳像素值在其 8 鄰域中排第幾大（單調性，monotony）。計算比中心小的鄰居數量並除以 8，因此值為 1.0 表示中心大於所有鄰居的局部最大值，0.0 表示接近局部最小值。a、b 未使用。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>エッジの向き（明→暗か暗→明か）を区別できる非対称なエッジ検出に使う。HALCON の `<code style="color:#22d3bf">monotony</code>`（単調性演算の計算）に相当。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>

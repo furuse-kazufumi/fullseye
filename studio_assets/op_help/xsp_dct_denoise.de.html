@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsp_dct_denoise&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>DCT 係数のハード閾値処理によるノイズ除去（ウェーブレット縮退の DCT 版）。</p>
+<p>Rauschunterdrückung durch harte Schwellenwertbildung der DCT-Koeffizienten (eine DCT-Version der Wavelet-Shrinkage).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>しきい値は最大係数に対する相対値で決める（``thr = (0.01 + 0.2*a) *</p>
 <p>max(|C|)`<code style="color:#22d3bf">）。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が大きいほど強く間引かれ、</code><code style="color:#22d3bf">b</code>` は未使用。しきい値</p>
 <p>未満の DCT 係数を 0 にしてから逆変換するので、弱いテクスチャごと消え</p>

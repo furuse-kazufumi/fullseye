@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;mirror_image&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">mirror_image</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> の値で 3 通りの鏡映を切り替える(</code><code style="color:#22d3bf">a&lt;0.34</code>`: 上下反転、</p>
-<p>`<code style="color:#22d3bf">a&lt;0.67</code>`: 左右反転、それ以外: 転置)。連続的な鏡映変換ではなく離散的な</p>
-<p>モード選択である点に注意。HALCON の `<code style="color:#22d3bf">mirror_image</code>`（Mirror an image.）に</p>
-<p>相当(HALCON は上下/左右/対角を明示的なモード引数で選ぶが、ここでは `<code style="color:#22d3bf">a</code>`</p>
-<p>の値域で疑似的に選ぶ近似)。</p>
+<p>Wechselt je nach Wert von `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> zwischen drei Spiegelungsarten (</code><code style="color:#22d3bf">a&lt;0.34</code><code style="color:#22d3bf">: vertikales Spiegeln, </code><code style="color:#22d3bf">a&lt;0.67</code><code style="color:#22d3bf">: horizontales Spiegeln, sonst: Transponieren). Zu beachten ist, dass dies eine diskrete Modusauswahl und keine kontinuierliche Spiegelungstransformation ist. Entspricht HALCONs </code><code style="color:#22d3bf">mirror_image</code><code style="color:#22d3bf"> (Mirror an image.) -- HALCON wählt vertikal/horizontal/diagonal über ein explizites Modusargument, während dies hier eine Annäherung ist, die anhand des Wertebereichs von </code><code style="color:#22d3bf">a</code>` pseudo-auswählt.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が鏡映モードを 3 段階で選ぶ。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">Leitfaden zur Familie gallery2d_geometry</a></p>

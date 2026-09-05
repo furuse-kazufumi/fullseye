@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">qimage</code> → <code style="color:#22d3bf">qimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_quat_color_filter&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Keep or remove one colour direction, exactly. → (H, W, 4).</p>
+<p>精確地保留或去除某一顏色方向。→ (H, W, 4)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">mode=&quot;remove&quot;</code><code style="color:#22d3bf"> returns </code><code style="color:#22d3bf">v - (v.g) g</code><code style="color:#22d3bf"> for the unit RGB direction </code><code style="color:#22d3bf">g</code>`:</p>
 <p>the component along `<code style="color:#22d3bf">g</code>` is <b>exactly zero everywhere afterwards</b>, to</p>
 <p>machine precision (measured max residual 5.8e-16 and 6.5e-16 on two random</p>

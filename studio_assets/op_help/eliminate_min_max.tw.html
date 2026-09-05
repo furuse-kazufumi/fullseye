@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;eliminate_min_max&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">eliminate_min_max</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>中央値フィルタ（median filter）による平滑化。実装は `<code style="color:#22d3bf">median_image</code><code style="color:#22d3bf"> などと同じ </code><code style="color:#22d3bf">_sh_rank</code><code style="color:#22d3bf"> の median 分岐で、窓内画素の中央値に置き換えるだけ。a は窓サイズを 3/5/7/9 の 4 段階に振る（</code><code style="color:#22d3bf">_k(a)</code>`）。b は未使用。</p>
+<p>透過中值濾波器（median filter）進行平滑化。實作與 `<code style="color:#22d3bf">median_image</code><code style="color:#22d3bf"> 等共用 </code><code style="color:#22d3bf">_sh_rank</code><code style="color:#22d3bf"> 中的 median 分支，僅將視窗內像素替換為其中值。a 將視窗大小分為 3/5/7/9 四階（</code><code style="color:#22d3bf">_k(a)</code>`）。b 未使用。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の `<code style="color:#22d3bf">eliminate_min_max</code>`（最小値・最大値の画素だけを周辺の平均値等で置き換えてノイズを抑える演算）とは異なり、この実装は最小・最大画素を選別せず窓全体を単純な中央値フィルタにかけているだけの近似（本来の「外れ値だけを直す」性質は再現しない）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

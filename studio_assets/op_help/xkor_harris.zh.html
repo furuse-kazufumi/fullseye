@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xkor_harris&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Harris コーナー応答。`<code style="color:#22d3bf">kornia.feature.harris_response</code><code style="color:#22d3bf"> を呼び、符号付き応答を </code><code style="color:#22d3bf">signed01</code>` で [0,1] に写像する（コーナーは正、エッジは負に出るHarris 応答の符号情報を保ったまま可視化域に収める）。</p>
+<p>Harris 角点响应。调用 `<code style="color:#22d3bf">kornia.feature.harris_response</code><code style="color:#22d3bf">，用 </code><code style="color:#22d3bf">signed01</code>` 将带符号的响应映射到 <a style="color:#22d3bf" href="在保留 Harris 响应符号信息——角点为正、边缘为负——的同时将其收入可视化范围">0,1</a>。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>a が Harris のスコア係数 k（`<code style="color:#22d3bf">0.04 + 0.02 * a</code>`、経験的に 0.04〜0.06 の範囲で使われる値）を振る。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>

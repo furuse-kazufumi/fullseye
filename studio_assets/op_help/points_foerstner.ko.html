@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;points_foerstner&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">points_foerstner</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Förstner 演算子によるコーナー強度マップ(``skimage.feature.</p>
-<p>corner_foerstner`<code style="color:#22d3bf"> の重み </code><code style="color:#22d3bf">w</code><code style="color:#22d3bf"> とロバスト形状指標 </code><code style="color:#22d3bf">q</code>` の積、NaN は 0 に</p>
-<p>置換)。誤差楕円の大きさ(w)と円形度(q)を組み合わせて点特徴らしさを評価する。</p>
-<p>HALCON の `<code style="color:#22d3bf">points_foerstner</code>`（Detect points of interest using the</p>
-<p>Förstner operator.）に相当。</p>
+<p>Förstner 연산자에 의한 코너 강도 맵(`<code style="color:#22d3bf">skimage.feature.corner_foerstner</code><code style="color:#22d3bf">의 가중치 </code><code style="color:#22d3bf">w</code><code style="color:#22d3bf">와 로버스트 형상 지표 </code><code style="color:#22d3bf">q</code><code style="color:#22d3bf">의 곱, NaN은 0으로 치환). 오차 타원의 크기(w)와 원형도(q)를 조합해 점 특징다움을 평가한다. HALCON의 </code><code style="color:#22d3bf">points_foerstner</code>`(Detect points of interest using the Förstner operator.)에 해당.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が勾配計算のガウス窓シグマを 0.5〜2.5 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <p>skimage が無い環境ではこの分岐自体が呼べない(`<code style="color:#22d3bf">_HAS_SK</code>` ガード)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

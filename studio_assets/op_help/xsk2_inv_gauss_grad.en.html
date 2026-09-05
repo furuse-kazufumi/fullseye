@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk2_inv_gauss_grad&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>逆ガウシアン勾配画像（Active Contour / GAC のエッジ停止関数）。`<code style="color:#22d3bf">skimage.segmentation.inverse_gaussian_gradient</code>` を呼ぶ。</p>
+<p>Inverse Gaussian gradient image (the edge-stopping function for Active Contour / GAC). Calls `<code style="color:#22d3bf">skimage.segmentation.inverse_gaussian_gradient</code>`.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>a がエッジ感度 alpha（`<code style="color:#22d3bf">50 + 150*a</code>`、範囲 50〜200。大きいほど弱いエッジでも停止関数の値が下がる＝止まりやすくなる）を振る。b は未使用。値はエッジで小さく（0 に近く）平坦部で 1 に近い——geodesic activecontour 系のセグメンテーションでエッジ停止項として使うことを想定した出力で、そのまま見た目のエッジ画像として使うと通常のエッジ検出とは明暗が逆に見える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>

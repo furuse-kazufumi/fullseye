@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;gray_histo_abs&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">gray_histo_abs</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>画像の階調の標準偏差(`<code style="color:#22d3bf">x.std()</code><code style="color:#22d3bf">)を返す。HALCON の </code><code style="color:#22d3bf">gray_histo_abs</code>`</p>
-<p>（Calculate the gray value distribution.）は本来ヒストグラム全体</p>
-<p>(各階調のビン度数)を返す演算子だが、この代役ではヒストグラムそのものでは</p>
-<p>なく分布の広がりを表す標準偏差 1 個のスカラーに要約している(近似 ―― この</p>
-<p>パイプラインの `<code style="color:#22d3bf">feature</code>` ソートが 1 スカラーである契約上の制約)。</p>
+<p>Returns the standard deviation of the image&#x27;s gray levels (`<code style="color:#22d3bf">x.std()</code><code style="color:#22d3bf">). HALCON&#x27;s </code><code style="color:#22d3bf">gray_histo_abs</code><code style="color:#22d3bf"> (Calculate the gray value distribution.) is originally an operator that returns the entire histogram (bin counts for each gray level), but this stand-in summarizes it not as the histogram itself but as a single scalar -- the standard deviation representing the spread of the distribution (an approximation, due to the contractual constraint that this pipeline&#x27;s </code><code style="color:#22d3bf">feature</code>` sort must be a single scalar).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>

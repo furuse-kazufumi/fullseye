@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_grayscale_grindpeak&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>グレースケール山削り(SimpleITK `<code style="color:#22d3bf">GrayscaleGrindPeak</code>`、xsitk_grayscale_fillhole の双対)。モルフォロジー再構成により、周囲より明るい局所的な山(ピーク)を周囲の高さまで削り落とす。ハイライトのスパイク除去に使う。</p>
+<p>灰度削峰（SimpleITK `<code style="color:#22d3bf">GrayscaleGrindPeak</code>`，xsitk_grayscale_fillhole的对偶）。通过形态学重建，将比周围亮的局部峰值削低到周围高度。用于去除高光尖峰。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>パラメータは無く、`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。出力は [0,1] にクリップ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>

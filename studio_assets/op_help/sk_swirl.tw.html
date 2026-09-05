@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_swirl&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">polar_trans_image</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>渦巻き変形(swirl warp)。画像中心の周りで、中心に近いほど大きく回転させる非線形な幾何変換 —— 極座標変換を応用した歪みエフェクト。</p>
+<p>漩渦變形(swirl warp)。以影像中心為軸,越靠近中心旋轉幅度越大的非線性幾何變換 —— 一種應用極座標變換的扭曲效果。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の <code style="color:#22d3bf">polar_trans_image</code>(Transform an image to polar coordinates)に相当(近似。極座標画像そのものではなく、渦状に歪ませた直交座標画像を返す)。実装は `<code style="color:#22d3bf">transform.swirl(v, strength=1+4*a, radius=30)</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">[0,1]</code>` へ clip したもの —— a は渦の強さを 1〜5 に振る。渦の半径は 30 画素に固定。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>

@@ -3,12 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;aug_read_noise&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Additive Gaussian READ noise (amplifier + ADC noise), sigma-independent of</p>
-<p>signal (unlike shot noise). `<code style="color:#22d3bf">sigma = 0.005 + 0.15*a</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">b</code>` mixes in a</p>
-<p>row-correlated component: a per-row bias of std `<code style="color:#22d3bf">0.5*b*sigma</code>` shared by the</p>
-<p>whole row, which is what a shared row amplifier / row-wise ADC produces</p>
-<p>(visible as horizontal banding). Seeded from (a, b).</p>
+<p>加性高斯讀出（READ）雜訊（放大器 + ADC 雜訊），其 sigma 與訊號無關（不同於散粒雜訊）。`<code style="color:#22d3bf">sigma = 0.005 + 0.15*a</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> 混入一個列相關分量：整列共用的、標準差為 </code><code style="color:#22d3bf">0.5*b*sigma</code>` 的逐列偏移，這正是共用列放大器／逐列 ADC 所產生的效果（表現為水平條紋）。由 (a, b) 播種（seed）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

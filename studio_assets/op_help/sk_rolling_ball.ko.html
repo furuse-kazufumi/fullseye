@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sk_rolling_ball&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>ローリングボール法による背景差し引き。画像の輝度を地形と見立て、指定半径の球をその下から転がして得られる包絡面を背景と推定し、元画像から引き算する—— 照明ムラ(緩やかな輝度勾配)の除去に使う。</p>
+<p>롤링볼(rolling ball)법에 의한 배경 차감. 이미지의 밝기를 지형으로 간주하여, 지정한 반지름의 공을 그 아래에서 굴려 얻어지는 포락면을 배경으로 추정하고 원본 이미지에서 빼는 방식이다 —— 조명 불균일(완만한 밝기 구배)의 제거에 사용한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">v - restoration.rolling_ball(v, radius=5+int(a*20))</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">[0,1]</code>` へ clip したもの —— a は球の半径を 5〜25 に振る(大きいほど緩やかな照明ムラしか背景とみなさず、細かい構造は残る)。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>

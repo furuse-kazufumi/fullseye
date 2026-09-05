@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xcv3_lsd_count&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>検出直線分の本数(OpenCV `<code style="color:#22d3bf">cv2.createLineSegmentDetector</code><code style="color:#22d3bf"> による Line Segment Detector、LSD)。画像中から検出された直線セグメントの本数を feature として返す(検出 0 件のとき </code><code style="color:#22d3bf">None</code>` が返る実装のため、その場合は 0 として扱う)。</p>
+<p>Anzahl erkannter Liniensegmente (Line Segment Detector, LSD, via OpenCV `<code style="color:#22d3bf">cv2.createLineSegmentDetector</code><code style="color:#22d3bf">). Gibt als Feature die Anzahl der im Bild erkannten geraden Liniensegmente zurück (da die Implementierung bei null Erkennungen </code><code style="color:#22d3bf">None</code>` zurückgibt, wird dieser Fall als 0 behandelt).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。エッジの直線的な構造の多さ(建築物、部品の輪郭など)を数える指標になる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>

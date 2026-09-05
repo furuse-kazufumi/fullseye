@@ -4,14 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;polar_trans_image_inv&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">polar_trans_image_inv</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>極座標→直交座標への逆変換(`<code style="color:#22d3bf">cv2.warpPolar</code><code style="color:#22d3bf"> + </code><code style="color:#22d3bf">WARP_INVERSE_MAP</code>`)。</p>
-<p>`<code style="color:#22d3bf">polar_trans_image</code><code style="color:#22d3bf"> の逆写像で、半径 </code><code style="color:#22d3bf">min(H,W)/2</code>` の円盤の外側は 0 で</p>
-<p>埋める。2026-09-02 に「cv2 が書かなかった画素が未初期化のまま返る」バグを</p>
-<p>修正済み(戻り値でなく渡した `<code style="color:#22d3bf">dst</code>` を読んでいたため実行毎に値が変わって</p>
-<p>いた ―― 詳細はコード内コメント)。HALCON の</p>
-<p>`<code style="color:#22d3bf">polar_trans_image_inv</code>`（Transform an image in polar coordinates back</p>
-<p>to Cartesian coordinates）に相当。</p>
+<p>Inverse Transformation von Polar- zu kartesischen Koordinaten (`<code style="color:#22d3bf">cv2.warpPolar</code><code style="color:#22d3bf"> + </code><code style="color:#22d3bf">WARP_INVERSE_MAP</code><code style="color:#22d3bf">). Die inverse Abbildung von </code><code style="color:#22d3bf">polar_trans_image</code><code style="color:#22d3bf">; der Bereich außerhalb der Scheibe mit Radius </code><code style="color:#22d3bf">min(H,W)/2</code><code style="color:#22d3bf"> wird mit 0 gefüllt. Am 02.09.2026 wurde ein Fehler behoben, bei dem &quot;von cv2 nicht geschriebene Pixel uninitialisiert zurückgegeben wurden&quot; (es wurde das übergebene </code><code style="color:#22d3bf">dst</code><code style="color:#22d3bf"> statt des Rückgabewerts gelesen, wodurch sich die Werte bei jedem Lauf änderten — Details siehe Code-Kommentare). Entspricht HALCONs </code><code style="color:#22d3bf">polar_trans_image_inv</code>` (Transform an image in polar coordinates back to Cartesian coordinates).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用 ―― 中心・半径は画像サイズから自動的に決まる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">Leitfaden zur Familie gallery2d_geometry</a></p>

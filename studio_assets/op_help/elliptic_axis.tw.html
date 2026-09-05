@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;elliptic_axis&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">elliptic_axis</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>領域に等価な楕円（equivalent ellipse、慣性モーメントが一致する楕円）の長軸と短軸の比（アスペクト比）を返す。`<code style="color:#22d3bf">skimage.measure.regionprops</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">axis_major_length</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">axis_minor_length</code>` から計算し、/10 でおおよそ [0,1] 程度のスケールに収める（正規化ではないため、非常に細長い領域では 1 を超えうる）。a, b は未使用。</p>
+<p>回傳區域的等價橢圓（equivalent ellipse，慣性矩相同的橢圓）的長軸與短軸之比（長寬比）。依 `<code style="color:#22d3bf">skimage.measure.regionprops</code><code style="color:#22d3bf"> 的 </code><code style="color:#22d3bf">axis_major_length</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">axis_minor_length</code>` 計算，並除以 10 使其大致落在 [0,1] 範圍內（並非正規化，因此對非常細長的區域可能超過 1）。a、b 未使用。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の `<code style="color:#22d3bf">elliptic_axis</code><code style="color:#22d3bf">（等価楕円の長半径・短半径そのもの 2 つの長さを返す演算）とは異なり、この実装は長さではなく比（アニソメトリー、</code><code style="color:#22d3bf">anisometry</code>` と同じ metric）だけを 1 スカラーで返す近似。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

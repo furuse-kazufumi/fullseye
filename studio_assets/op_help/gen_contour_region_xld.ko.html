@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;gen_contour_region_xld&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">gen_contour_region_xld</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>region（画素マスク）の外周を、トレース順（輪郭に沿った順序）を保った XLD 輪郭として抽出する。skimage があれば `<code style="color:#22d3bf">find_contours</code>`（marching squares によるサブピクセル輪郭）、無ければ自前の Moore 近傍追跡（8 近傍、Jacob の停止条件）にフォールバックする。a, b は未使用。</p>
+<p>region(픽셀 마스크)의 외곽을 추적 순서(윤곽을 따라가는 순서)를 유지한 XLD 윤곽으로 추출한다. skimage가 있으면 `<code style="color:#22d3bf">find_contours</code>`(marching squares에 의한 서브픽셀 윤곽), 없으면 자체 구현한 Moore 근방 추적(8-근방, Jacob의 정지 조건)으로 폴백한다. a, b는 사용되지 않는다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>2026-08-30 の修正で、以前使っていた汎用の `<code style="color:#22d3bf">edges_sub_pix</code><code style="color:#22d3bf"> 経路は </code><code style="color:#22d3bf">np.where</code><code style="color:#22d3bf"> のラスタ順で点を返しており、順序に依存する後段処理（楕円フーリエ記述子など）を壊していた。HALCON の </code><code style="color:#22d3bf">gen_contour_region_xld</code>`（region から XLD 輪郭を生成する演算）に相当する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 패밀리 가이드</a></p>

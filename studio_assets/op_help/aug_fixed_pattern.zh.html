@@ -3,13 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;aug_fixed_pattern&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Fixed-pattern noise (FPN / photo-response non-uniformity). Unlike read</p>
-<p>noise this pattern is STATIC across frames: a per-column offset plus a</p>
-<p>per-row offset, each drawn once and held. `<code style="color:#22d3bf">a</code>` sets the amplitude</p>
-<p>`<code style="color:#22d3bf">0.02 + 0.2*a</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">b</code>` selects WHICH fixed pattern (the generator is seeded</p>
-<p>from b alone, so sweeping a changes only the strength of one pattern).</p>
-<p>Column FPN dominates (2/3 weight) as it does in CMOS column-parallel ADCs.</p>
+<p>固定图案噪声（FPN／光响应非均匀性）。与读出噪声不同，此图案在各帧间是静态的：由逐列偏移加逐行偏移构成，各自只抽取一次并保持不变。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 设定幅度 </code><code style="color:#22d3bf">0.02 + 0.2*a</code><code style="color:#22d3bf">；</code><code style="color:#22d3bf">b</code>` 选择使用哪一种固定图案（生成器仅由 b 播种，因此扫描 a 只会改变某一种图案的强度）。列方向的 FPN 占主导（权重 2/3），这与 CMOS 列并行 ADC 中的情形一致。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
