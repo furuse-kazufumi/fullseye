@@ -7,7 +7,7 @@ out: mesh
 examples: [poisson_surface_recon]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.8  # fullseye lib version this note was generated for
+version: 0.1.9  # fullseye lib version this note was generated for
 ---
 
 # poisson_lite — 3D `reconstruct` op
@@ -18,6 +18,10 @@ version: 0.1.8  # fullseye lib version this note was generated for
 ## 使い方
 
 点群 (N,3) → (vertices(V,3), faces(F,3)) の表面メッシュ(スクリーンド Poisson 軽量近似)。
+
+## 背景知識ガイド(この op の手前にある物理・規約)
+
+- [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)
 
 ## 参考(サンプルデータ・文献)
 

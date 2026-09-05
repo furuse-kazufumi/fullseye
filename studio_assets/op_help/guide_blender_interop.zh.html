@@ -1,0 +1,164 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">本指南仅有日文版(它是人写的散文,这里不做机械替换)。</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</h2>
+<p>fullseye は Blender を<b>取り込まない</b>(<code style="color:#22d3bf">import bpy</code> しない・同梱しない・依存にも入れない)。</p>
+<p>この文書は、<b>手元に Blender があるなら</b>どう組み合わせると寸法の真値つきの 3-D データが</p>
+<p>作れるか、そのとき<b>例外が出ずにもっともらしく間違う</b>箇所はどこか、を書いた教材である。</p>
+<p>併用するかどうかは利用者の自由で、Blender が無くても fullseye は完全に動く。</p>
+<p>書いてあることは全部、Blender 4.5.10 LTS(Windows 11)で<b>実際に走らせて数字を突き合わせた</b></p>
+<p>結果である(2026-09-05)。版が変われば数字も変わりうる。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">0. 分担 —— Blender は「作る」、物理は fullseye</h3>
+<p>| Blender が向く | Blender に<b>やらせない</b> |</p>
+<p>|---|---|</p>
+<p>| ジオメトリの作成・シーン配置・カメラ姿勢・被写界深度・配光 | 分光光学(Cycles は RGB 三刺激値。波長ごとの屈折率は扱えない) |</p>
+<p>| 正解パス(深度・法線・オブジェクト ID) | センサ物理(QE・フルウェル・読出雑音・ダーク電流) |</p>
+<p>| 形式変換(STL/OBJ/PLY/FBX/USD → GLB) | <b>ビット一致の基準</b>(レンダは版・GPU・サンプル数で変わる) |</p>
+<p><b>ジオメトリの書き出しは決定的、レンダは非決定的。</b> 真値はジオメトリから取り、</p>
+<p>レンダ画像は一度作ったものを固定資産として配る側に置く。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    A[Blender: 寸法既知の部品を生成] --&gt;|GLB export_yup=False| B[read_gltf_merged]
+    A --&gt;|EXR: Z/Normal/IndexOB パス| C[depth_to_points / estimate_point_normals]
+    B --&gt; D[mesh_area / mesh_edge_stats / convex_hull / inner_box3]
+    C --&gt; D
+    D --&gt; E[真値 JSON と突き合わせ = 寸法ごとの誤差]</pre>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">1. 罠 1 — 既定で書き出すと Y と Z が入れ替わり、符号が反転する</h3>
+<p>軸ごとに<b>寸法も位置も違う</b>箱で測った(立方体を原点に置くと軸の入れ替わりに気づけない):</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">bpy.ops.mesh.primitive_cube_add(size=2.0, location=(10.0, 20.0, 30.0))
+ob.scale = (1.0, 0.5, 0.25)      # 真値: X=2.0  Y=1.0  Z=0.5 [m]、中心 (10, 20, 30)</pre>
+<p>| 書き出し | <code style="color:#22d3bf">read_gltf_merged</code> が読む寸法 | 中心 |</p>
+<p>|---|---|---|</p>
+<p>| <code style="color:#22d3bf">export_scene.gltf(...)</code> <b>既定</b> | <code style="color:#22d3bf">(2.0, 0.5, 1.0)</code> | <code style="color:#22d3bf">(10, 30, −20)</code> |</p>
+<p>| <code style="color:#22d3bf">export_scene.gltf(..., export_yup=False)</code> | <code style="color:#22d3bf">(2.0, 1.0, 0.5)</code> | <code style="color:#22d3bf">(10, 20, 30)</code> |</p>
+<p>Blender は Z-up、glTF の規格は Y-up。エクスポータの <code style="color:#22d3bf">export_yup</code> は既定 <code style="color:#22d3bf">True</code> なので</p>
+<p><b>何も指定しないと X 軸まわりに −90° 回る</b>:</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">(x, y, z)_glTF = ( x,  z, −y )_Blender        逆: (x, −z, y)</pre>
+<p>これは<b>例外にならない</b>。寸法 <code style="color:#22d3bf">2.0 / 1.0 / 0.5</code> が <code style="color:#22d3bf">2.0 / 0.5 / 1.0</code> として返るだけで、</p>
+<p>型も形も正しい。計測値を読んだ人は気づけない。</p>
+<p><b>判断</b>: 自分で作って自分で読むなら **<code style="color:#22d3bf">export_yup=False</code> を必ず付ける**。</p>
+<p>外部に配る GLB は規格どおり Y-up にし、どちらなのかをファイル名か側の JSON に書く。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">2. 罠 2 — 単位はメートルだが、<code style="color:#22d3bf">scale_length</code> は形状に何もしない</h3>
+<p><code style="color:#22d3bf">unit_settings.system=&#x27;METRIC&#x27;</code>、<code style="color:#22d3bf">scale_length=1.0</code>(既定)で、glTF もメートル。</p>
+<p>既定同士なら <b>1.0 = 1 m で素通し</b>する。</p>
+<p><code style="color:#22d3bf">scale_length</code> を 1.0 → 0.001 に変えても、**頂点座標・<code style="color:#22d3bf">obj.dimensions</code>・glTF/OBJ の</p>
+<p>出力座標は 1 つも変わらなかった<b>。これは UI の数値表示にしか効かない</b>表示専用**の設定で、</p>
+<p>「mm で作業するつもりで scale_length を 0.001 にした」人の期待どおりには動かない。</p>
+<p>mm の部品が欲しければ、座標を mm の数値で作る(そして GLB は &quot;mm を m と読む&quot; と側に書く)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">3. 罠 3 — 立方体の頂点は 8 でなく 24 になる</h3>
+<p>glTF は頂点あたり 1 組の法線/UV しか持てないので、面ごとに法線が違う角では頂点が複製される。</p>
+<p>立方体は 6 面 × 4 = 24。UV 球(segments=8, ring_count=6)は 42 → 176。</p>
+<p><b>頂点数が変わった = 形が変わった、ではない。</b></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">4. 罠 4 — モディファイアは既定で適用されず、適用すると寸法が変わる</h3>
+<p><code style="color:#22d3bf">export_apply</code> の宣言された既定は **<code style="color:#22d3bf">False</code>**。半径 0.5 の UV 球に Subdivision(1 段)を付けて:</p>
+<p>| | 頂点 | 読み出した寸法 |</p>
+<p>|---|---:|---|</p>
+<p>| <code style="color:#22d3bf">export_apply=False</code>(既定) | 176 | <code style="color:#22d3bf">(1.000, 1.000, 1.000)</code> |</p>
+<p>| <code style="color:#22d3bf">export_apply=True</code> | 704 | **<code style="color:#22d3bf">(0.862, 0.952, 0.862)</code>** |</p>
+<p>Catmull-Clark の極限曲面は制御点を<b>内挿しない</b>ので、細分化を適用すると <b>14% 縮む</b>。</p>
+<p>しかも<b>方向で縮み方が違う</b>(極の軸だけ 0.952)ので、係数を掛けて戻すこともできない。</p>
+<p><b>判断</b>: 計測の真値に使う部品に Subdivision を掛けない。滑らかさが要るなら分割数を上げた</p>
+<p>プリミティブ(頂点が理論面の上に乗る)。掛けたなら、真値は<b>書き出したメッシュから測り直す</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">5. 罠 5 — 分割数が真値の誤差の下限を決める</h3>
+<p>プリミティブの <code style="color:#22d3bf">size</code> / <code style="color:#22d3bf">radius</code> / <code style="color:#22d3bf">depth</code> は<b>外接</b>基準で頂点座標に正確に一致する。</p>
+<p>誤差源は多角形近似だけで、円柱・球で実測:</p>
+<p>| 分割数 | 外接と内接の差 |</p>
+<p>|---:|---:|</p>
+<p>| 8 | 7.61 % |</p>
+<p>| 32 | 0.48 % |</p>
+<p>| 128 | 0.03 % |</p>
+<p>「半径 5.000 の円柱」を 8 分割で作って <code style="color:#22d3bf">fit_cylinder_ransac</code> に掛けると、**アルゴリズムが</p>
+<p>完璧でも 7.6 % ずれる**。真値の側の誤差を先に決めてから、計測の誤差を語ること。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">6. 罠 6 — スクリプトが例外で落ちても Blender の exit code は 0</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">blender --background --factory-startup --python-exit-code 1 --python gen.py -- out.glb</pre>
+<p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">--python-exit-code 1</code> を付けないと、未処理の例外もファイル未存在も exit 0 で終わる**。</p>
+<p>無人運用の門番にならない</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sys.argv</code> には <b>Blender 自身のコマンドライン全部</b>が入る。<code style="color:#22d3bf">sys.argv[sys.argv.index(&quot;--&quot;)+1:]</code> で切る</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">--factory-startup</code> は利用者の設定ファイル(startup.blend)を読まない。アドオンの有効化までは止めない</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bpy.ops.*</code> はウィンドウ・選択状態という暗黙のコンテキストに依存し、無人だと壊れる。</p>
+<p><code style="color:#22d3bf">bpy.data</code> と <code style="color:#22d3bf">obj.evaluated_get(depsgraph)</code> を主経路にする。<code style="color:#22d3bf">matrix_world</code> は</p>
+<p><code style="color:#22d3bf">view_layer.update()</code> を呼ぶまで<b>古い値</b>を返す</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">7. 正解データ(レンダパス)—— 何が真値で、何が真値でないか</h3>
+<p>| パス | 実測で分かったこと |</p>
+<p>|---|---|</p>
+<p>| Z(深度) | <b>視線軸方向の距離</b>。カメラから 10 m の平面は中央も隅も <code style="color:#22d3bf">10.000000</code>(放射距離なら隅が大きい) |</p>
+<p>| Z / IndexOB の縁 | <b>中間値は出ない</b>(サンプル数 1/64、フィルタ幅 1.5/0.01 のどれでも硬い縁)。ただし部分被覆の情報は丸ごと失う。Combined(見た目)は滑らかに混ざる |</p>
+<p>| Normal | <b>ワールド空間</b>(カメラの向きを変えても同じベクトル) |</p>
+<p>| PNG 書き出し | 0..1 に<b>潰れる</b>(16 bit でも)。メートルの深度は往復しない → <b>OpenEXR</b> |</p>
+<p>| 色管理 | 既定 AgX のままだと線形 0.18 が 117/255 に写る。<b>測光には View Transform = Raw/Standard + EXR</b> |</p>
+<p>| <code style="color:#22d3bf">Image.pixels</code>(Python) | colorspace 設定を<b>無視</b>して生の格納値を返す |</p>
+<p>深度パスから点群を作って fullseye の <code style="color:#22d3bf">(depth, row, col)</code> 規約へ写す<b>半画素の原点</b>は、</p>
+<p>まだ実測していない(§10)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">8. カメラと照明 —— 実機の諸元を写すときの罠</h3>
+<p style="margin:2px 0 2px 12px">• <b>mm/px</b> = <code style="color:#22d3bf">(作動距離[mm] × センサ幅[mm] / 焦点距離[mm]) / 横画素数</code> は検算と 0.25 % で一致</p>
+<p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">sensor_fit=&#x27;AUTO&#x27;</code> は解像度の縦横比で基準軸を勝手に変える**。同じ 36×24 mm / 50 mm を</p>
+<p>横長 128×64 と縦長 64×128 で描くと、視野が変わって 7 個中 6 個のマーカーが画面外に出た。</p>
+<p>固定実機の模倣では <b>HORIZONTAL / VERTICAL を明示</b>する</p>
+<p style="margin:2px 0 2px 12px">• 被写界深度は方向は合うが<b>絶対量は薄肉レンズの錯乱円の式と合わない</b>(f/1.4 vs f/22 の</p>
+<p>ぼけ幅比: 式 15.7 倍、実測 1.69 倍)。使うなら実測で較正する</p>
+<p style="margin:2px 0 2px 12px">• 標準カメラに<b>歪曲パラメータは無い</b>。入れるなら fullseye の側で</p>
+<p style="margin:2px 0 2px 12px">• **既定の GI(<code style="color:#22d3bf">diffuse_bounces=4</code>)が影のコントラストを潰す**(白い床で影の底が 0.31)。</p>
+<p>暗視野・リング照明の再現では <code style="color:#22d3bf">diffuse_bounces=0</code> か床を暗く</p>
+<p style="margin:2px 0 2px 12px">• POINT の逆二乗、SUN の距離非依存は正確。同軸落射で正反射 vs 斜め照明のコントラスト比は 10⁸ 倍</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">9. fullseye が読めない形式は Blender に変換させる</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">&gt;&gt;&gt; fullseye.formats_available()
+{&#x27;gltf&#x27;: True, &#x27;las&#x27;: True, &#x27;laz&#x27;: True, &#x27;pcd&#x27;: True}</pre>
+<p>メッシュは <b>glTF/GLB のみ</b>。STL / OBJ / PLY を Blender で読み直して GLB にすると、</p>
+<p>寸法は 3 経路とも完全に保たれた(<code style="color:#22d3bf">export_yup=False</code> の場合)。**逆向き(fullseye → Blender)は</p>
+<p>書き出し口が無い** —— 座標を <code style="color:#22d3bf">.npy</code>/JSON で渡して Blender 側で <code style="color:#22d3bf">bmesh</code> で組む。</p>
+<p><code style="color:#22d3bf">read_gltf</code> が読むのはジオメトリだけ(材質・テクスチャ・法線・カメラ・アニメーションは読まない)。</p>
+<p>法線が要るなら <code style="color:#22d3bf">estimate_point_normals</code> で作る。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">10. 現状の穴(正直に)</h3>
+<p style="margin:2px 0 2px 12px">• Blender → 深度 EXR → <code style="color:#22d3bf">depth_to_points</code> → <code style="color:#22d3bf">measure3d</code> の<b>閉ループ</b>は未実証。</p>
+<p>ここが通って初めて「寸法ごとの誤差」を数字で言える</p>
+<p style="margin:2px 0 2px 12px">• 深度パスの画素中心が <code style="color:#22d3bf">(0,0)</code> か <code style="color:#22d3bf">(0.5,0.5)</code> か —— fullseye 側の半画素規約と合わせて要実測</p>
+<p style="margin:2px 0 2px 12px">• Cryptomatte の復号、EEVEE の縁の挙動、DOF の較正は未</p>
+<p style="margin:2px 0 2px 12px">• Blender 5.x での差分は未測(この文書は 4.5 LTS)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">11. 診断表 —— 症状から原因へ</h3>
+<p>| 症状 | まず疑う原因 | 確かめ方 |</p>
+<p>|---|---|---|</p>
+<p>| 寸法の Y と Z が入れ替わり、片方の符号が負 | glTF 既定の Y-up 変換(§1) | <code style="color:#22d3bf">export_yup=False</code> で書き直して比べる |</p>
+<p>| 頂点数が Blender の 3 倍 | 角での頂点複製(§3) | 面数は変わっていないはず |</p>
+<p>| 球が 14 % 小さい、しかも軸で違う | Subdivision を <code style="color:#22d3bf">export_apply=True</code> で焼き込んだ(§4) | モディファイア無しで書き出す |</p>
+<p>| 円柱の半径が数 % 小さい | 分割数の多角形近似(§5) | 分割数を上げて差が縮むか |</p>
+<p>| 無人ジョブが「成功」なのに出力が無い | exit code 0 で例外が隠れた(§6) | <code style="color:#22d3bf">--python-exit-code 1</code> |</p>
+<p>| 深度が 0..1 に潰れている | PNG で書き出した(§7) | EXR に |</p>
+<p>| 深度が隅で大きく見えない | 正常。Z は視線軸方向(§7) | 放射距離が要るなら自分で換算 |</p>
+<p>| レンダの絵が測光と合わない | AgX の見た目変換(§7) | Raw/Standard + EXR |</p>
+<p>| 視野が縦横で変わる | <code style="color:#22d3bf">sensor_fit=AUTO</code>(§8) | HORIZONTAL/VERTICAL を明示 |</p>
+<p>| 影が薄く、暗視野で背景が浮く | 既定 GI の bounce(§8) | <code style="color:#22d3bf">diffuse_bounces=0</code> |</p>
+<p>| STL/OBJ を fullseye が読めない | 読み手は glTF のみ(§9) | Blender で GLB に変換 |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">12. ライセンスの境界</h3>
+<p>Blender は GPL、生成物(GLB / EXR / JSON)は縛られない。fullseye(Apache-2.0)は</p>
+<p><code style="color:#22d3bf">import bpy</code> を<b>しない</b>。Blender は <code style="color:#22d3bf">--background</code> で別プロセスとして呼び、</p>
+<p><code style="color:#22d3bf">bpy</code> を使うスクリプトを配るなら GPL のヘッダを付けて fullseye パッケージの<b>外</b>に置く。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">13. 最小手順(コピーして使える)</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf"># gen_gauge.py  —— Blender 側(GPL-2.0-or-later。bpy を import するため)
+# blender --background --factory-startup --python-exit-code 1 --python gen_gauge.py -- out.glb
+import json, sys, bpy
+out = sys.argv[sys.argv.index(&quot;--&quot;) + 1]
+bpy.ops.wm.read_factory_settings(use_empty=True)
+bpy.ops.mesh.primitive_cube_add(size=2.0, location=(10.0, 20.0, 30.0))
+ob = bpy.context.active_object; ob.scale = (1.0, 0.5, 0.25)
+bpy.ops.object.transform_apply(scale=True)
+bpy.ops.export_scene.gltf(filepath=out, export_format=&quot;GLB&quot;, export_yup=False)
+json.dump({&quot;extent&quot;: [2.0, 1.0, 0.5], &quot;center&quot;: [10, 20, 30], &quot;unit&quot;: &quot;m&quot;,
+           &quot;axes&quot;: &quot;blender-zup (export_yup=False)&quot;}, open(out + &quot;.truth.json&quot;, &quot;w&quot;))</pre>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf"># fullseye 側(Apache-2.0)
+import json, numpy as np, fullseye as F
+V, Fc = F.read_gltf_merged(&quot;out.glb&quot;)
+truth = json.load(open(&quot;out.glb.truth.json&quot;))
+lo, hi = V.min(0), V.max(0)
+print(&quot;extent&quot;, np.round(hi - lo, 4), &quot;truth&quot;, truth[&quot;extent&quot;])     # → [2. 1. 0.5]
+print(&quot;center&quot;, np.round((hi + lo) / 2, 4), &quot;truth&quot;, truth[&quot;center&quot;])  # → [10. 20. 30.]</pre>
+<p>真値を GLB の<b>隣に JSON で置く</b>。後から検算できないデータは、真値つきとは言えない。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">出典</h3>
+<p style="margin:2px 0 2px 12px">• 実測: Blender 4.5.10 LTS(&lt;https://download.blender.org/release/Blender4.5/&gt; の</p>
+<p><code style="color:#22d3bf">blender-4.5.10-windows-x64.msi</code>、winget 経由で導入)/ Windows 11 / fullseye 0.1.9(2026-09-05)。</p>
+<p>同梱の <code style="color:#22d3bf">license/license.md</code> と <code style="color:#22d3bf">copyright.txt</code> を実読</p>
+<p style="margin:2px 0 2px 12px">• glTF 2.0 仕様(Khronos Group)&lt;https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html&gt;:</p>
+<p>座標系は Y-up・右手系・メートル</p>
+<p style="margin:2px 0 2px 12px">• Collins らの三フレーム差分、Zhang(2000)のカメラ校正 —— 本文で引いた式の出どころ</p>
+<p style="margin:2px 0 2px 12px">• blender.org の License / FAQ ページは自動取得できなかったため(403)、本文の引用は</p>
+<p>検索結果の要約経由。<b>一次確認は未</b></p>

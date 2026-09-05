@@ -7,7 +7,7 @@ out: image2d
 examples: [render_tonemap]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.8  # fullseye lib version this note was generated for
+version: 0.1.9  # fullseye lib version this note was generated for
 ---
 
 # tonemap_aces — 3D `render` op
@@ -18,6 +18,10 @@ version: 0.1.8  # fullseye lib version this note was generated for
 ## 使い方
 
 ACES filmic 近似(Narkowicz 2015)で HDR を ``[0, 1]`` の LDR へ圧縮。→ float64。
+
+## 背景知識ガイド(この op の手前にある物理・規約)
+
+- [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)
 
 ## 参考(サンプルデータ・文献)
 

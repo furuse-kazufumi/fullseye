@@ -7,7 +7,7 @@ out: image2d
 examples: [range_image]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.8  # fullseye lib version this note was generated for
+version: 0.1.9  # fullseye lib version this note was generated for
 ---
 
 # occlusion_edges — 3D `range_image` op
@@ -21,6 +21,7 @@ version: 0.1.8  # fullseye lib version this note was generated for
 
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
+- [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方
 
 ## 参考(サンプルデータ・文献)

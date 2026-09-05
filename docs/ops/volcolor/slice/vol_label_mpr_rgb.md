@@ -7,7 +7,7 @@ out: rgbimage
 examples: [voxel_labels_color]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.8  # fullseye lib version this note was generated for
+version: 0.1.9  # fullseye lib version this note was generated for
 ---
 
 # vol_label_mpr_rgb — VOLCOLOR `slice` op

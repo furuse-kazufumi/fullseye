@@ -118,6 +118,9 @@ py-modules = [
   # 「レジストリ構築で実際に読み込まれた root モジュール」を数える形に変えた
   # (tests/test_packaging_foundation.py)。
   "backends_halcon_ext", "backends_typed",
+  # typed_catalog: backends_typed が読む型付きカタログ(2026-09-05 に tools/chain_fuzz から
+  # 移した。出荷コードが非同梱の開発道具に依存していた —— wheel で tb_* 143 op が消えていた)
+  "typed_catalog",
   "backends_decomp", "backends_filters2", "backends_imgtools", "backends_inverse",
   "backends_measure1d", "backends_physics", "backends_regions2", "backends_regions3",
   "backends_segment2", "backends_subpix", "backends_tomo", "backends_transform2",

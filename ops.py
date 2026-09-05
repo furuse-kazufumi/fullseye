@@ -1355,6 +1355,11 @@ NATIVE_CRASHES_ON_DEGENERATE = {
         "skimage の h_minima(内部で morphology.reconstruction)は全 NaN で SIGSEGV。"
         "同じ族の xsk2_reconstruction / xsk2_h_maxima は 0.1.8 で塞いだのに、"
         "**この兄弟を見落としていた**。",
+    "xsk_random_walker":
+        "skimage の random_walker は**一部の NaN**でハングする(Fable レビュー実測: "
+        "512 px で 0.1% の NaN → 60 秒超、正常時 0.17 秒。128 px では 1.4 秒で返る = "
+        "規模で顕在化)。全 NaN は即 ValueError なので退化スイープには映らなかった。"
+        "クラッシュではなく**ハング**だが、利用者から見た害は同じ。",
 }
 
 

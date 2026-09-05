@@ -7,7 +7,7 @@ out: measurement
 examples: [dl_mesh_curvature, mesh_props]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.8  # fullseye lib version this note was generated for
+version: 0.1.9  # fullseye lib version this note was generated for
 ---
 
 # mesh_area — 3D `mesh_process` op
@@ -18,6 +18,10 @@ version: 0.1.8  # fullseye lib version this note was generated for
 ## 使い方
 
 三角形メッシュの**表面積**(全三角形面積の総和)。→ float。
+
+## 背景知識ガイド(この op の手前にある物理・規約)
+
+- [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)
 
 ## 参考(サンプルデータ・文献)
 

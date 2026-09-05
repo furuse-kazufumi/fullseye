@@ -917,10 +917,11 @@ def _hermetic_qsettings(tmp_path, monkeypatch):
     """Point QSettings at a throwaway INI: without this, offscreen tests write the USER'S
     real registry (measured residue: Fullseye/Studio/system/operator_timeout_ms=300) and a
     later real Studio start restores a timeout nobody chose."""
-    from PySide6 import QtCore
-    QtCore.QSettings.setDefaultFormat(QtCore.QSettings.IniFormat)
-    QtCore.QSettings.setPath(QtCore.QSettings.IniFormat, QtCore.QSettings.UserScope,
-                             str(tmp_path / "qsettings"))
+    # ★`setDefaultFormat` は引数なしコンストラクタにしか効かず、Studio の
+    # `QSettings("Fullseye", "Studio")` はレジストリ固定だった —— この fixture は
+    # 何も隔離していなかった(2026-09-05、レジストリに pytest のパスが残っていた)。
+    # 本体側の入口 `studio._settings()` を環境変数で ini に向ける。
+    monkeypatch.setenv("FULLSEYE_STUDIO_SETTINGS", str(tmp_path / "studio_settings.ini"))
     yield
 
 

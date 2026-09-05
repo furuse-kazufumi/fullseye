@@ -4,6 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import render_shadow; render_shadow.cast_shadow(V, F, light, *, pose=None, intrinsics=None, width: &#x27;int&#x27; = 256, height: &#x27;int&#x27; = 256, directional: &#x27;bool&#x27; = True, penumbra: &#x27;float&#x27; = 0.0, samples: &#x27;int&#x27; = 16, shadow_res: &#x27;int&#x27; = 512, bias=None, pcf: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;cast_shadow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>메시의 캐스트 그림자 / 소프트 섀도를 계산해 가시성 맵 (H,W) ∈ [0,1] 을 돌려줍니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

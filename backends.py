@@ -983,7 +983,16 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
              lambda v, a, b: np.float64(0 if (pp := cv2.goodFeaturesToTrack(
                  v.astype(np.float32), int(10 + 40 * a), 0.01 + 0.1 * b, 5)) is None else len(pp))),
         ]
-        ops_out += [Op(n, c, h, i, o, _safe(f, o)) for (n, c, h, i, o, f) in cv]
+        # ★cv2 に **bool 配列**を渡すと `cv2.Laplacian` がヒープを壊し、後続の無関係な
+        # op でプロセスが死ぬ(2026-09-05 Fable レビュー、Windows で 100 回中に SIGSEGV を
+        # 自分でも再現、exit 127)。facade は dtype を契約に揃えるが、`op.fn` 直接経路
+        # (テスト・coverage・進化ループ)は素通しだった。族の入口で float64 に揃える。
+        def _f64_first(f):
+            def _g(v, a, b, _f=f):
+                return _f(np.asarray(v, np.float64), a, b)
+            _g.__doc__ = getattr(f, "__doc__", None)
+            return _g
+        ops_out += [Op(n, c, h, i, o, _safe(_f64_first(f), o)) for (n, c, h, i, o, f) in cv]
     except ImportError:
         pass                                              # cv2 absent: documented optional
     except Exception as _e:                               # noqa: BLE001

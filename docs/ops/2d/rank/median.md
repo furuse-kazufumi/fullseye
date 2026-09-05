@@ -8,7 +8,7 @@ halcon: median_image
 examples: [astro_stacking, consumer_onocollo, ct_reconstruction, gallery2d_smoothing_rank, lightfield_depth, machined_metal_and_materials, perception_pipeline, photon_timeresolved, quickstart, representation_roundtrip, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.8  # fullseye lib version this note was generated for
+version: 0.1.9  # fullseye lib version this note was generated for
 ---
 
 # median — 2D `rank` op

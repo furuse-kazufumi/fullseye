@@ -7,7 +7,7 @@ out: keypoints
 examples: [pnp_pose_outliers, pose_estimation]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.8  # fullseye lib version this note was generated for
+version: 0.1.9  # fullseye lib version this note was generated for
 ---
 
 # project_points — 3D `render` op
@@ -18,6 +18,10 @@ version: 0.1.8  # fullseye lib version this note was generated for
 ## 使い方
 
 3D 点群 (N,3) → 画像座標 (u,v) と深度。ピンホール(depth_to_points の順方向)。
+
+## 背景知識ガイド(この op の手前にある物理・規約)
+
+- [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)
 
 ## 参考(サンプルデータ・文献)
 

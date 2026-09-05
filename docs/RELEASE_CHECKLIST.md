@@ -54,6 +54,11 @@ Linux に入れたら、**その場で 5 件見つかった**。
 | 台帳から本物を消しても落ちない(消えた op は検査対象からも消える) | テスト側の**対照**集合との等価(`EXPECTED_NATIVE_CRASH_LEDGER` / `test_the_two_nonfinite_ledgers_agree`) | 全数テスト |
 | 台帳に偽の op 名が残る(改名・タイポ) | `test_every_ledger_entry_names_a_live_bridge_op` ほか各台帳の陳腐化検査 | 全数テスト |
 | 別 repo の agent が実ツリーを直接書き換える(worktree 隔離は cwd の repo のみ) | 規律: 書き換える agent には自分で worktree を切って渡す。レビューは読み取り専用 | 人 |
+| 出荷コードが**非同梱の開発道具**に依存し、失敗を `return []` で握る(tb_* 143 op が一度も配布されていなかった) | `typed_catalog` を出荷側へ + `build()` は失敗を投げる + wheel 門の tb_/hx_ **床** | CI `core-minimal` / preflight `wheel` |
+| 門のスクリプト自身の置き場所が `sys.path[0]` に載り、checkout の `tools/` が wheel 側から見える | `ci_wheel_check.py` は自分の dir と cwd を捨ててから数える | 同上 |
+| `build/lib` の古い staging コピーが wheel に混入し、外したモジュールが入ったまま門が通る | preflight は建てる前に `build/lib` を捨てる(release.yml は clean checkout) | preflight `wheel` |
+| wrapper 族が内側で例外を握り潰し、外側の guard が何も見ない(5 族目 `backends_r3._make`) | `tests/test_backends_r3_wrapper.py`(必ず失敗するレシピで strict / 台帳を確認) | 全数テスト |
+| テストが**利用者の実レジストリ**に書く(隔離 fixture が効いていない) | Studio の設定入口を `_settings()` に集約 + `FULLSEYE_STUDIO_SETTINGS` で ini へ | 全数テスト(Studio) |
 
 
 ---
@@ -109,14 +114,21 @@ wsl -e bash -lc "PYTHONPATH=/mnt/c/dev/projects/imgevolve /tmp/fs018/bin/python 
 ## 5. 出す
 
 ```powershell
-py -3.11 tools/preflight.py --full         # 全部 PASS を確認
+# 1) 手元で全部見る(ci 以外)。ci は push 前には構造的に FAIL するので外す
+py -3.11 tools/preflight.py --full --only version,ruff,ledgers,wheel,degenerate,linux,suite
 git add -A ; git commit                    # CHANGELOG に節があること
 git push origin master
-# ★CI が緑になるまで待つ(タグを打つのはそのあと)
+# 2) CI が緑になるまで待つ(タグを打つのはそのあと)
 gh run list --limit 3 --workflow=ci.yml
+py -3.11 tools/preflight.py --only ci      # HEAD の CI 結論を機械で確認
+# 3) タグ
 git tag -a v0.1.9 -m "0.1.9 — <一行>"
 git push origin v0.1.9
 ```
+
+順序に理由がある: `ci` 項目は **push 済みの HEAD** の結論を見るので、push 前に
+`--full` に含めると必ず FAIL する(2026-09-05 レビューで実測)。
+`suite` は `--full` を付けたときだけ走る(`--only suite` 単独は 0 件で拒否される)。
 
 **CI が赤でも出さざるを得ないとき**は、タグの注釈に理由を書く。
 書いた場合だけ release ワークフローが通り、**迂回したことが警告として残る**。

@@ -8,7 +8,7 @@ halcon: background_seg
 examples: [gallery2d_region]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.8  # fullseye lib version this note was generated for
+version: 0.1.9  # fullseye lib version this note was generated for
 ---
 
 # r3_background_seg — 2D `region` op

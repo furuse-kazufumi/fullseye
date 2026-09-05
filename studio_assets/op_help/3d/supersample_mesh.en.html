@@ -4,6 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import render_ssaa; render_ssaa.supersample_mesh(V, F, pose=None, intrinsics=None, size=256, ss: &#x27;int&#x27; = 3, light=(0.0, 0.0, 1.0), ambient: &#x27;float&#x27; = 0.1, shade: &#x27;Optional[Callable[[dict], np.ndarray]]&#x27; = None, filter: &#x27;str&#x27; = &#x27;box&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">ops3d.get(&quot;supersample_mesh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Render a mesh anti-aliased by SSAA -&gt; a float image `<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> (or </code><code style="color:#22d3bf">(H, W, C)</code>`).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

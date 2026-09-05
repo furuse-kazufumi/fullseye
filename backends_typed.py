@@ -452,19 +452,17 @@ def _catalog_entries():
     ``tools/chain_fuzz`` の ``catalog()`` を単一の真実源として使う — カタログの
     定義が増えた(optics 等)ときに、こちらを直さなくても橋が伸びる。
     """
-    tools = os.path.join(_HERE, "tools")
-    if tools not in sys.path:
-        sys.path.insert(0, tools)
-    import chain_fuzz                                     # noqa: PLC0415
-    return chain_fuzz
+    # ★2026-09-05 まで ``tools/chain_fuzz``(非同梱)を sys.path 操作で読んでいた。
+    # wheel では失敗し、下の build() が黙って [] を返すので tb_* 143 op が消えていた。
+    import typed_catalog                                  # noqa: PLC0415
+    return typed_catalog
 
 
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, _norm, _bin):
-    """進化レジストリへ足す Op のリストを返す(見つからなければ空)。"""
-    try:
-        cf = _catalog_entries()
-    except Exception:                                     # noqa: BLE001 - optional
-        return []
+    """進化レジストリへ足す Op のリストを返す(カタログが読めなければ例外)。"""
+    # 失敗は**握らない**。ops.py の登録ループが例外を FAILED_BACKENDS に記録する ——
+    # ここで [] を返すと「backend は生きているが op が 0 本」に見え、台帳が沈黙する。
+    cf = _catalog_entries()
     wide = os.environ.get("IMGEVOLVE_WIDE_VOCAB", "") == "1"
     hint_names = set(cf.PARAM_HINTS)
     out = []

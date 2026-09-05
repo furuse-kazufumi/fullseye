@@ -65,6 +65,9 @@ fullseye.apply(frame, "otsu", on_error="raise")          # fail-closed (default:
 fullseye.fallbacks()                                     #   recorded + one warning per op)
 ```
 
+> Argument order is `apply(image, name, a, b)` — array first, op name second. Swapped
+> arguments raise `TypeError: ... arguments look swapped` (0.1.9+).
+
 `apply(image, name, a=0.5, b=0.5)` and `run_pipeline` take an operator name and two
 knobs in `[0, 1]`. Feature operators return a Python float; contour operators a dict.
 

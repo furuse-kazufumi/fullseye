@@ -7,7 +7,7 @@ out: points
 examples: [mesh_lod_download, superquadric_fit]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.8  # fullseye lib version this note was generated for
+version: 0.1.9  # fullseye lib version this note was generated for
 ---
 
 # sample_surface — 3D `superquadric` op

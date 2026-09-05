@@ -4,6 +4,7 @@
 
 ## 背景知識ガイド(op の手前にある物理・規約)
 
+- [blender_interop](guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)
 - [depth_sensors](guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方
 
 ## カテゴリ

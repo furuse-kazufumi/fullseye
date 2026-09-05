@@ -203,7 +203,11 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             x = np.clip(np.asarray(v, np.float64), 0, 1)
             H = feature.hessian_matrix(x, sigma=0.5 + 2.5 * a, order="rc", use_gaussian_derivatives=True)
             ev = feature.hessian_matrix_eigvals(H)
-            return _norm(np.abs(ev[0]))
+            # ★``ev[0]`` は**代数的**に最大の固有値であって、絶対値最大ではない。
+            # 明るい稜線では主曲率が負なので ev[0] は絶対値の小さい方になり、
+            # 稜線上で 0・両脇で 1 という**逆**の応答だった(2026-09-05 Fable レビュー、
+            # 実測 [1, .64, 0, 0, 0, 0, .64, 1])。説明どおり絶対値最大を取る。
+            return _norm(np.max(np.abs(ev), axis=0))
 
         def _unwrap_phase(v, a, b):
             """位相の 2π 折返しをつないで連続位相に戻し、``signed01`` で [0,1] へ。

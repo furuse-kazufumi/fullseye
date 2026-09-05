@@ -8,7 +8,7 @@ gpu: true
 examples: [ct_hand_radiograph]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.8  # fullseye lib version this note was generated for
+version: 0.1.9  # fullseye lib version this note was generated for
 ---
 
 # render_volume_projection — 3D `render` op
@@ -20,6 +20,10 @@ version: 0.1.8  # fullseye lib version this note was generated for
 ## 使い方
 
 voxel を任意視点で 2D 投影(mode=xray=減衰積算 / mip=最大値)。DRR(X線)・世界モデル観測。
+
+## 背景知識ガイド(この op の手前にある物理・規約)
+
+- [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)
 
 ## 参考(サンプルデータ・文献)
 

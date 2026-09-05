@@ -196,6 +196,30 @@ CONFIRM_HOOK = _default_confirm   # (parent, title, text) -> bool (True = go ahe
 KNOB_DEBOUNCE_MS = 160            # coalesce knob drags before re-running step_states
 
 
+
+# --------------------------------------------------------------------------- #
+# 設定ストアの**唯一の入口**(2026-09-05)。
+#
+# それまで 20 箇所が `_settings()` を直に作っていた。
+# この形は NativeFormat(= Windows ではレジストリ)に**固定**で、テスト側の
+# `QSettings.setDefaultFormat(IniFormat)` は引数なしコンストラクタにしか効かない。
+# つまり「隔離した」つもりの offscreen テストが**利用者の実レジストリ**
+# `HKCU\Software\Fullseye\Studio` に pytest の一時パス・timeout・watch 式を書き込み、
+# 次に本物の Studio がそれを復元していた(Fable レビューがレジストリ実測で確認)。
+#
+# ここを通せば、環境変数 `FULLSEYE_STUDIO_SETTINGS=<ini のパス>` で INI に切り替わる。
+# テストは `studio._settings` を monkeypatch するか、この環境変数を tmp に向ける。
+# --------------------------------------------------------------------------- #
+def _settings():
+    """Studio の QSettings。既定はネイティブ(レジストリ / plist / ini)、
+    `FULLSEYE_STUDIO_SETTINGS` が指す ini があればそちら。"""
+    from PySide6 import QtCore          # noqa: PLC0415  (Qt はこのモジュールでは遅延 import)
+    ini = os.environ.get("FULLSEYE_STUDIO_SETTINGS", "")
+    if ini:
+        return QtCore.QSettings(ini, QtCore.QSettings.IniFormat)
+    return QtCore.QSettings("Fullseye", "Studio")
+
+
 class PipelineModel:
     """An ordered list of (op, a, b) stages applied to a base image."""
 
@@ -3488,7 +3512,7 @@ def _code_editor_class(QtWidgets, QtGui, QtCore):
             super().__init__(parent)
             self.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
             try:                                   # System settings: editor font size
-                pt = int(QtCore.QSettings("Fullseye", "Studio").value("ui/mono_font_pt", 10))
+                pt = int(_settings().value("ui/mono_font_pt", 10))
             except (TypeError, ValueError):
                 pt = 10
             f = QtGui.QFont("Consolas"); f.setStyleHint(QtGui.QFont.Monospace)
@@ -3786,7 +3810,7 @@ def build_window(model=None):
                 return
             try:                              # remember window position + panel layout
                 if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
-                    s = QtCore.QSettings("Fullseye", "Studio")
+                    s = _settings()
                     s.setValue("geometry", self.saveGeometry())
                     s.setValue("windowState", self.saveState())
                     s.setValue("layout_version", "3")
@@ -5565,7 +5589,7 @@ def build_window(model=None):
         # (user spec — on multi-display setups the second screen placement must stick).
         # Same QSettings store as the main window; the test suite redirects it to a
         # temp INI, so this stays hermetic under pytest.
-        sset = QtCore.QSettings("Fullseye", "Studio")
+        sset = _settings()
         geo = sset.value("dialogs/%s_geometry" % key)
         if geo is not None:
             dlg.restoreGeometry(geo)
@@ -5586,7 +5610,7 @@ def build_window(model=None):
         orig_close = dlg.closeEvent
 
         def _close(ev):
-            QtCore.QSettings("Fullseye", "Studio").setValue(
+            _settings().setValue(
                 "dialogs/%s_geometry" % key, dlg.saveGeometry())
             orig_close(ev)
         dlg.closeEvent = _close
@@ -6313,7 +6337,7 @@ def build_window(model=None):
             # System settings can point Run at another interpreter (venv etc.);
             # a broken path is refused up-front (fail-closed) instead of a cryptic
             # QProcess failure.
-            interp = str(QtCore.QSettings("Fullseye", "Studio")
+            interp = str(_settings()
                          .value("pyedit/interpreter", "") or "").strip()
             if interp and not os.path.isfile(interp):
                 report_error("run", "configured interpreter not found: %s" % interp)
@@ -6897,7 +6921,7 @@ def build_window(model=None):
 
     def _save_watches():
         exprs = [watch_table.item(r, 0).text() for r in range(watch_table.rowCount())]
-        QtCore.QSettings("Fullseye", "Studio").setValue("watch/expressions", exprs)
+        _settings().setValue("watch/expressions", exprs)
 
     def refresh_watches():
         # every watch row is evaluated against the SELECTED variable; a failing
@@ -6947,7 +6971,7 @@ def build_window(model=None):
     w_add.clicked.connect(lambda _=False: add_watch())
     watch_input.returnPressed.connect(add_watch)
     w_del.clicked.connect(lambda _=False: del_watch())
-    _saved_watches = QtCore.QSettings("Fullseye", "Studio").value("watch/expressions") or []
+    _saved_watches = _settings().value("watch/expressions") or []
     if isinstance(_saved_watches, str):           # QSettings round-trips a 1-list as str
         _saved_watches = [_saved_watches]
     for _e in _saved_watches:
@@ -8154,7 +8178,7 @@ def build_window(model=None):
             return None
 
     def _persist_system():
-        s = QtCore.QSettings("Fullseye", "Studio"); s.beginGroup("system")
+        s = _settings(); s.beginGroup("system")
         s.setValue("threads", int(state["system"]["threads"]))
         s.setValue("operator_timeout_ms", int(state["system"]["operator_timeout_ms"]))
         s.setValue("max_graphics_windows", int(state["system"]["max_graphics_windows"]))
@@ -8208,7 +8232,7 @@ def build_window(model=None):
         pipeline program editor + open Python Editor tabs) and persist it; a new
         CodeEditor picks the persisted value up on construction."""
         pt = max(6, min(int(pt), 32))
-        QtCore.QSettings("Fullseye", "Studio").setValue("ui/mono_font_pt", pt)
+        _settings().setValue("ui/mono_font_pt", pt)
         for ed in [code_edit] + ([win._pyedit["tabs"].widget(i)
                                   for i in range(win._pyedit["tabs"].count())]
                                  if getattr(win, "_pyedit", None) else []):
@@ -8220,7 +8244,7 @@ def build_window(model=None):
         return pt
     win._apply_mono_font = _apply_mono_font
     try:        # apply the persisted size to the program editor at startup
-        _apply_mono_font(int(QtCore.QSettings("Fullseye", "Studio")
+        _apply_mono_font(int(_settings()
                              .value("ui/mono_font_pt", 10)))
     except (TypeError, ValueError):
         pass
@@ -8261,7 +8285,7 @@ def build_window(model=None):
         mw.setToolTip("set_system('max_graphics_windows'): cap on open graphics windows.\n"
                       "Guards every path (dev_open_window scripts, Ctrl+G, variable display) "
                       "so a looping program cannot flood the MDI.")
-        sset = QtCore.QSettings("Fullseye", "Studio")
+        sset = _settings()
         dmode = QtWidgets.QComboBox(); dmode.addItems(sorted(win._display_actions))
         cur_mode = next((m for m, a in win._display_actions.items() if a.isChecked()),
                         None)
@@ -8380,7 +8404,7 @@ def build_window(model=None):
     # restore persisted system settings. QSettings is NOT in-memory under offscreen —
     # it always hits the real user store; the test suite redirects QSettings to a
     # temporary INI (conftest fixture) so tests stay hermetic.
-    _s_sys = QtCore.QSettings("Fullseye", "Studio"); _s_sys.beginGroup("system")
+    _s_sys = _settings(); _s_sys.beginGroup("system")
     _sv_to, _sv_th = _s_sys.value("operator_timeout_ms"), _s_sys.value("threads")
     _sv_mw = _s_sys.value("max_graphics_windows")
     _s_sys.endGroup()
@@ -8400,7 +8424,7 @@ def build_window(model=None):
         except (TypeError, ValueError):
             pass
     # restore the display / draw preferences chosen in System settings
-    _s_pref = QtCore.QSettings("Fullseye", "Studio")
+    _s_pref = _settings()
     _pv_mode = _s_pref.value("display/default_mode")
     if _pv_mode and str(_pv_mode) in win._display_actions:
         win._set_display_mode(str(_pv_mode))
@@ -8524,11 +8548,11 @@ def build_window(model=None):
     _RECENT_MAX = 10
 
     def _recent_paths():
-        v = QtCore.QSettings("Fullseye", "Studio").value(_RECENT_KEY, [])
+        v = _settings().value(_RECENT_KEY, [])
         return [x for x in (v or []) if isinstance(x, str)]
 
     def _save_recent(paths):
-        QtCore.QSettings("Fullseye", "Studio").setValue(_RECENT_KEY, paths[:_RECENT_MAX])
+        _settings().setValue(_RECENT_KEY, paths[:_RECENT_MAX])
         _rebuild_recent_menu()
 
     def _push_recent(path):
@@ -8741,7 +8765,7 @@ def build_window(model=None):
         if os.environ.get("QT_QPA_PLATFORM") == "offscreen":
             return                                 # tests keep presets in-memory only
         try:
-            s = QtCore.QSettings("Fullseye", "Studio")
+            s = _settings()
             s.beginGroup("layout_presets"); s.remove("")
             for nm, (geo, st) in win._preset_store.items():
                 s.beginGroup(nm)
@@ -8872,7 +8896,7 @@ def build_window(model=None):
     # load persisted presets, then build the Layouts menu
     try:
         if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
-            s = QtCore.QSettings("Fullseye", "Studio"); s.beginGroup("layout_presets")
+            s = _settings(); s.beginGroup("layout_presets")
             for nm in s.childGroups():
                 s.beginGroup(nm); geo = s.value("geometry"); st = s.value("state"); s.endGroup()
                 if geo is not None or st is not None:
@@ -8970,7 +8994,7 @@ def build_window(model=None):
             a.setChecked(code == win._lang)
         try:
             if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
-                QtCore.QSettings("Fullseye", "Studio").setValue("lang", win._lang)
+                _settings().setValue("lang", win._lang)
         except Exception:
             pass
     win._apply_language = apply_language
@@ -8995,7 +9019,7 @@ def build_window(model=None):
 
     try:                                     # restore the remembered language
         if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
-            _lang = QtCore.QSettings("Fullseye", "Studio").value("lang")
+            _lang = _settings().value("lang")
             if _lang in LANGUAGES:
                 apply_language(_lang)
     except Exception:
@@ -9006,7 +9030,7 @@ def build_window(model=None):
     win._default_state = win.saveState()
     try:                                     # restore the user's remembered geometry + layout
         if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
-            s = QtCore.QSettings("Fullseye", "Studio")
+            s = _settings()
             geo = s.value("geometry")
             # Only reuse a saved dock layout from the SAME layout version. The current
             # default (v3: image-dominant central, Program tall on the right, op/var

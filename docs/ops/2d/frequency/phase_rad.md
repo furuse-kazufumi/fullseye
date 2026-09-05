@@ -8,7 +8,7 @@ halcon: phase_rad
 examples: [acoustic_condition_monitoring, gallery2d_texture_freq]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.8  # fullseye lib version this note was generated for
+version: 0.1.9  # fullseye lib version this note was generated for
 ---
 
 # phase_rad — 2D `frequency` op

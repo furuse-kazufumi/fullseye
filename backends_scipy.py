@@ -56,7 +56,7 @@ def _chamfer_dist(v, a, b):
 DOCS = {
     "xsp_cspline_smooth": (
         "3 次スプライン平滑化フィルタ（``scipy.signal.cspline2d``）。\n\n"
-        "``a`` は平滑化強度 lambda を 1.0〜41.0 に振る（``lambda = 1.0 + 40.0*a``、"
+        "``a`` は平滑化強度 lambda を 1.0〜11.0 に振る（``lambda = 1.0 + 10.0*a``、"
         "大きいほど強く均す）。``b`` は未使用。スプライン補間の平滑化項を直接使う"
         "フィルタで、ガウシアンぼかしに近い低域通過だが境界はミラー的に処理される。"
         "負の値を返しうる中間結果を最後に [0,1] にクリップしている。"
@@ -195,8 +195,11 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
 
         out += [
             Op("xsp_cspline_smooth", "smoothing", "", IMAGE, IMAGE, _safe(
+                # ★lambda >= ~12 で scipy が「boundary conditions did not converge」を投げ、
+                # guard の fallback = **恒等**になっていた(旧 1+40a は a>=0.3、既定 0.5 を
+                # 含む 7 割が恒等。2026-09-05 Fable レビュー)。説明も 1〜11 に合わせた。
                 lambda v, a, b: np.clip(_sig.cspline2d(np.clip(np.asarray(v, np.float64), 0, 1),
-                                                       1.0 + 40.0 * a), 0, 1))),
+                                                       1.0 + 10.0 * a), 0, 1))),
             Op("xsp_detrend_flatten", "gray", "", IMAGE, IMAGE, _safe(
                 lambda v, a, b: _norm(_sig.detrend(_sig.detrend(
                     np.clip(np.asarray(v, np.float64), 0, 1), axis=0), axis=1)) * 0.5 + 0.5)),

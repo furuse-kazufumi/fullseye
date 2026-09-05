@@ -7,7 +7,7 @@ out: scalar
 examples: [image_quality_metrics]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.8  # fullseye lib version this note was generated for
+version: 0.1.9  # fullseye lib version this note was generated for
 ---
 
 # mutual_information — IMGMETRICS `information` op

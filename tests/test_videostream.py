@@ -316,8 +316,11 @@ def test_three_frame_difference_zero_start_and_is_and_of_two_diffs():
     np.testing.assert_array_equal(out[1], 0.0)
     f = VS._to01(vid)
     for t in range(2, vid.shape[0]):
+        # ★Collins (VSAM 2000): **両方とも現フレーム基準**。2026-09-05 までこのテストは
+        # 連続ペア |f[t-1]-f[t-2]| を期待していて、実装の誤りを仕様として固定していた
+        # (等速で動く一様な物体で常に全ゼロ —— 下の回帰テスト)。
         d_now = np.abs(f[t] - f[t - 1]) > thr
-        d_prev = np.abs(f[t - 1] - f[t - 2]) > thr
+        d_prev = np.abs(f[t] - f[t - 2]) > thr
         np.testing.assert_array_equal(out[t], (d_now & d_prev).astype(np.float64))
     # ghost-free: a subset of the plain two-frame difference mask
     fd = VS.frame_difference_causal(vid) > thr
@@ -466,3 +469,19 @@ def test_iter_frames_uint8_pass_through(tmp_path):
     pipe = VS.VideoPipeline([VS.FrameDifference()])
     outs = list(pipe.run(video.iter_frames(path, dtype="uint8")))
     assert len(outs) == 4 and outs[0].max() == 0.0 and outs[1].dtype == np.float64
+
+
+def test_three_frame_difference_sees_a_uniform_rigid_body_moving_at_constant_speed():
+    """★連続ペアの AND だと**常に全ゼロ**になっていた場面(Fable レビュー 2026-09-05)。
+
+    幅 10 px の一様な矩形が 1〜3 px/frame で動く。変化帯は step 幅の細い帯なので、
+    連続ペアの帯どうしは交わらない。Collins 式(現フレーム基準)なら 200〜440 画素。
+    """
+    def clip(step, w=10, T=12, n=32):
+        vid = np.zeros((T, n, n))
+        for t in range(T):
+            vid[t, 10:20, 2 + step * t:2 + w + step * t] = 1.0
+        return vid
+    for step, floor in ((1, 150), (2, 300), (3, 350)):
+        n = int((VS.three_frame_difference(clip(step), 0.1) > 0).sum())
+        assert n >= floor, "step=%d で %d 画素しか検出しない(旧実装は 0)" % (step, n)

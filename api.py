@@ -1563,6 +1563,12 @@ def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
     ``fast.FAST``). Same answer (``fast.parity``), several times faster; a twin that
     fails is recorded with ``source="fast"`` and the core op runs instead.
 
+    **Caller errors are refused outright, whatever ``on_error`` is**: *name* not a
+    ``str`` (swapped arguments), *image* ``None``, *a*/*b* not numeric or non-finite
+    raise ``TypeError`` / ``ValueError``. *a*/*b* outside 0..1 are clamped and
+    recorded in the ledger (refused under ``on_error="raise"``). Fail-soft is for
+    runtime degradation, not for a wrong call — swallowing the latter used to hand
+    the caller their own input back as the "result".
     ``on_error``: ``"fallback"`` (default; sort-valid fallback, recorded, warns once
     per op), ``"warn"`` (warn on every fallback of this call) or ``"raise"``
     (fail-closed). ``None`` reads ``FULLSEYE_ON_ERROR``. See :func:`fallbacks`.
@@ -1604,7 +1610,53 @@ def _coerce_sort(v, sort: str):
     return a
 
 
+
+# ---- caller errors are not runtime degradation: refuse them outright ----------- #
+# 2026-09-05 実測: `apply(name, image)` と順を逆にすると numpy の「truth value is
+# ambiguous」、`a="big"` / `a=None` は op 内の TypeError を guard が拾って**利用者の
+# 入力画像がそのまま結果として返る**、`a=nan` は台帳記録すら無く入力が素通り、
+# `image=None` はスカラーが返る。fail-soft は**実行時の劣化**を吸収するためのもので、
+# 呼び出し側の型誤りまで吸収すると「もっともらしく間違う」だけになる。
+# ここは on_error に関係なく即座に拒否する(dtype 契約 `_contract_dtype` と同じ考え方で、
+# 値域だけは policy に従って「切り詰めて記録」か「拒否」)。
+_KNOB_NUMERIC = (int, float, np.integer, np.floating)
+
+
+def _check_call_args(image, name, a, b, policy):
+    """``apply`` の引数を呼び出し規約に照らす。返り値は (a, b)(値域を切り詰めたもの)。"""
+    if not isinstance(name, str):
+        if isinstance(image, str) and (isinstance(name, np.ndarray) or name is None):
+            raise TypeError(
+                "fullseye.apply(image, name, a, b): arguments look swapped -- "
+                "the first argument is the image, the second the op name (str); got name=%s"
+                % type(name).__name__)
+        raise TypeError("fullseye.apply(image, name, a, b): name must be str, got %s"
+                        % type(name).__name__)
+    if image is None:
+        raise TypeError("fullseye.apply(%r): image is None; pass a float64 array in [0,1]" % name)
+    out = []
+    for label, x in (("a", a), ("b", b)):
+        if isinstance(x, bool):
+            x = float(x)
+        if not isinstance(x, _KNOB_NUMERIC):
+            raise TypeError("fullseye.apply(%r): %s must be a number in 0..1, got %s"
+                            % (name, label, type(x).__name__))
+        x = float(x)
+        if not np.isfinite(x):
+            raise ValueError("fullseye.apply(%r): %s is non-finite (%r); knobs are finite values in 0..1"
+                             % (name, label, x))
+        if not 0.0 <= x <= 1.0:
+            err = ValueError("fullseye.apply(%r): %s=%r is outside 0..1 (clamped)"
+                             % (name, label, x))
+            if policy == "raise":
+                raise err
+            _bs.record(name, err, None, source="input")
+            x = min(1.0, max(0.0, x))
+        out.append(x)
+    return out[0], out[1]
+
 def _apply_impl(image, name, a, b, coerce, device, policy, fast=None):
+    a, b = _check_call_args(image, name, a, b, policy)
     nop = _nary_by_name().get(name) if find_op(name) is None else None
     if nop is not None:                                  # n-ary tier: needs a LIST of inputs
         if isinstance(image, np.ndarray) or not isinstance(image, (list, tuple)):

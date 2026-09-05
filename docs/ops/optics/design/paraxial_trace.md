@@ -7,7 +7,7 @@ out: table
 examples: [lens_defect_dataset_demo, lens_design_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.8  # fullseye lib version this note was generated for
+version: 0.1.9  # fullseye lib version this note was generated for
 ---
 
 # paraxial_trace — OPTICS `design` op

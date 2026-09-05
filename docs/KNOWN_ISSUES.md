@@ -481,3 +481,37 @@ WSL 側で測るか、`tracemalloc`(標準ライブラリ)で代替する。
 つまり **1 op の配線 = コード + 説明 + 訳 5 本**。
 だから配線は**まとめてやる** —— 全部直してから、触れた op だけを 1 度に訳し直す。
 1 件ずつ直して都度訳すと、6 言語 100% の状態が何度も崩れる。
+
+
+## 31. 持ち越し —— 「0.1.8 で直す」と書いた #12〜#27 は 0.1.9 でも未修正
+
+配線(#12〜#26)と O(n²)(#27)は **0.1.10** に送る。理由は #30(配線 1 op = コード +
+説明 + 訳 5 本、まとめてやる)。ここに書いておかないと「直す」と書いたまま消える。
+
+## 32. ⚠ 全域レビュー(2026-09-05、Fable)で確認したが 0.1.9 では直していないもの
+
+各行は**再現済み**(自分で走らせて数字を確認)。直し方の方向だけ書く。
+
+| # | 何が起きるか | 場所 | 方向 |
+|---|---|---|---|
+| 32-1 | 3-D 347 op の RAG ノートが docstring **1 行目のみ**(283 op が複数行、25 op は文の途中で切れる) | `ops3d.py` 786 付近 `splitlines()[0]` | 生成器を全文へ。指紋は 1 行目のままにするか要判断 |
+| 32-2 | wheel 同梱 `OP_CATALOG.md` に台帳 19 族 343 op + n-ary 16 op が無い | 生成器が 5 レジストリしか読まない | `typed_catalog.catalog()` を読ませる |
+| 32-3 | `docs/OP_INDEX.json` が 2026-08-12 で停止(538 vs 881)なのに「自動追従」と案内 | README / AI_RAG_GUIDE | 生成に組み込むか、案内を消す |
+| 32-4 | `_NDIM_OK` が image/region に 3-D を許し、RGB (H,W,3) を 2-D op に渡すと体積として処理して無警告で返す | `api.py` 1226 | `image` は ndim==2 を要求(色は rgbimage/color sort へ) |
+| 32-5 | `calib.camera_calibration` の縮退ゲートが近縮退+雑音を通し、fx が +16% でも RMS 0.13 px | `calib.py` 167-172 | RMS は K の誤りを反映しない(#caltab と同型)。条件数で見る |
+| 32-6 | 角度の符号が HALCON と鏡像(1-D measuring / XLD / geometry 系)、同 repo の `hom_mat2d_rotate` とも逆 | `backends_measure1d` / `backends_xldgeom` | 既定出力が変わる → 0.2.0 の候補。まず文書化 |
+| 32-7 | `fit_sphere3`(Kåsa)が浅いキャップで半径 −7%、rms は雑音レベルで無警告 | `measure3d` | 幾何フィット(Pratt/Taubin)へ、または docstring に限界を |
+| 32-8 | `measure3d` の縮退ゲート(相対 1e-9)が近平面で r=38096・rms=0 を通す | `measure3d` | 条件数ゲート |
+| 32-9 | `measure_pos(sigma=0)` が硬い段差を 0 本 | `measuring1d` | sigma=0 を最小 0.5 に |
+| 32-10 | `fit_cylinder_ransac` が最良仮説をリフィットしない | `pcseg` | inlier で再最小二乗 |
+| 32-11 | Studio の `for N` に上限が無く、Apply が O(N²) で GUI を凍らせる(停止手段なし) | `studio.py` 1537 / 269 | 上限 + 増分再計算 |
+| 32-12 | OpenCV の「楕円」構造要素が 5×5 以上で横長(cv_ morphology 7 op が説明と違い異方) | `backends.py` `_se` | 説明に書くか、自前 SE に |
+| 32-13 | 8bit 経路で 256 階調に落ちる 34 op のうち 19 本が説明に未記載 | xpil 11 / xcv 4 / 他 4 | 説明に「8bit を経由」を追加 |
+| 32-14 | 一部 NaN で `_norm` が正規化を諦め image sort が [0,1] を超える(16 op) | `_norm` | NaN を除いた最大で正規化 |
+| 32-15 | `wavefront_from_opd` の Zernike RMS が直接 RMS より 10% 低い(瞳半径 31.5 vs 32) | `raytrace` | 瞳半径の定義を揃える |
+| 32-16 | Linux CI の A 群(torch 不在 14 件)/ B 群(フォント 2 件) | `tests/` | A: `needs("torch")` マーカー + 定数判定の切り分け / B: Pillow の `load_default(size)` を conftest で固定 |
+
+**確かめて問題なかったこと**(レビューが数字つきで確認): 半画素の原点規約、Seidel 閉形式比
+1.00000、Sellmeier、Welzl、箱の軸規約、訳 1,722×6 で stale/欠落 0・繁簡混入 0・
+Umlaut 潰し 0、相対リンク 29,153 中不備 1、HTML href 149,664 全実在、入力の in-place
+改変 0、転置等変性で (x,y) 取り違え 0。

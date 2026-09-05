@@ -116,6 +116,11 @@ def check_wheel() -> Result:
         a = os.path.join(tmp, "ops_editable.json")
         if _run([PY, chk, "--dump", a]).returncode != 0:
             return Result("wheel", "FAIL", "editable 側の集計に失敗")
+        # ★`build/lib` に前回の staging コピーが残っていると、setuptools はそれを
+        # **そのまま wheel に詰める**(2026-09-05 実測: py-modules から外したモジュールが
+        # wheel に入ったままで、門の変異テストが通ってしまった)。release.yml が
+        # clean checkout から建てる理由と同じ。ここでも建てる前に必ず捨てる。
+        shutil.rmtree(os.path.join(ROOT, "build", "lib"), ignore_errors=True)
         b = _run([PY, "-m", "build", "--wheel", "-o", os.path.join(tmp, "dist")], timeout=1800)
         if b.returncode != 0:
             return Result("wheel", "FAIL", "wheel のビルドに失敗: " + b.stderr[-160:])
@@ -304,6 +309,11 @@ def main(argv=None) -> int:
         unknown = want - {k for k, _ in CHECKS} - {"suite"}
         if unknown:
             ap.error("知らない項目: %s" % sorted(unknown))
+        if not todo:
+            # ★`--only suite` を `--full` 無しで呼ぶと 0 項目になり、以前は
+            # 「すべて PASS」と言って rc=0 で帰っていた(2026-09-05 レビューで実測)。
+            # **何も検査していないのに通す門**は、無い門より悪い。
+            ap.error("実行する項目が 0 件(suite は --full と併用)。")
 
     results = []
     for key, fn in todo:
@@ -328,6 +338,9 @@ def main(argv=None) -> int:
     if fails:
         print("FAIL %d 件。リリースしない。" % len(fails))
         return 1
+    if skips:
+        print("FAIL は無いが SKIP がある —— 終了コード 2(「通った」とは言わない)。")
+        return 2
     print("すべて PASS。`docs/RELEASE_CHECKLIST.md` の**手でやる項目**を確認してから出す。")
     return 0
 

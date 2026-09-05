@@ -4,6 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import render_shadow; render_shadow.cast_shadow(V, F, light, *, pose=None, intrinsics=None, width: &#x27;int&#x27; = 256, height: &#x27;int&#x27; = 256, directional: &#x27;bool&#x27; = True, penumbra: &#x27;float&#x27; = 0.0, samples: &#x27;int&#x27; = 16, shadow_res: &#x27;int&#x27; = 512, bias=None, pcf: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;cast_shadow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>计算网格的投影 / 软阴影,返回可见性图 (H,W) ∈ [0,1]。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

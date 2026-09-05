@@ -7,7 +7,7 @@ out: video
 examples: [video_streaming]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.8  # fullseye lib version this note was generated for
+version: 0.1.9  # fullseye lib version this note was generated for
 ---
 
 # running_gaussian_foreground — VIDEOSTREAM `background` op

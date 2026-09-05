@@ -7,7 +7,7 @@ out: table
 examples: [astro_stacking]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.8  # fullseye lib version this note was generated for
+version: 0.1.9  # fullseye lib version this note was generated for
 ---
 
 # psf_fit — ASTROSTACK `photometry` op

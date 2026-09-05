@@ -499,11 +499,16 @@ class MotionHistoryImage(StatefulOp):
 class ThreeFrameDifference(StatefulOp):
     """Three-frame difference motion mask (Collins et al., VSAM 2000) → 0/1 float64 ``(H, W)``.
 
-    ``(|f_t − f_{t−1}| > threshold) AND (|f_{t−1} − f_{t−2}| > threshold)``. The
-    logical AND of two consecutive frame differences removes the *ghost* (the
-    trailing region a plain two-frame difference marks behind a moving object)
-    and fills the object's interior better than one difference alone. Zeros for
-    the first two frames (two differences are not available yet).
+    ``(|f_t − f_{t−1}| > threshold) AND (|f_t − f_{t−2}| > threshold)`` — both
+    differences are taken **against the current frame** (Collins' form). The AND
+    removes the *ghost* (the trailing region a plain two-frame difference marks
+    behind a moving object) and keeps the object where it is now. Zeros for the
+    first two frames (two differences are not available yet).
+
+    ★2026-09-05 まで第 2 項が ``|f_{t−1} − f_{t−2}|``(連続ペア)になっていた。
+    連続ペアの AND は、一様な剛体が等速で動くと変化帯が step 幅ずつずれて
+    交わらないので**常に全ゼロ**になる(Fable レビュー実測: 幅 10 px の矩形が
+    1〜3 px/frame で動く動画で実装 0 画素 / Collins 式 200〜440 画素)。
     """
     name = "three_frame_difference"
 
@@ -525,7 +530,7 @@ class ThreeFrameDifference(StatefulOp):
             out = np.zeros(f.shape, np.float64)
         else:
             d_now = np.abs(f - self.prev1) > self.threshold
-            d_prev = np.abs(self.prev1 - self.prev2) > self.threshold
+            d_prev = np.abs(f - self.prev2) > self.threshold      # 現フレーム基準(Collins)
             out = (d_now & d_prev).astype(np.float64)
         self.prev2 = self.prev1
         self.prev1 = f

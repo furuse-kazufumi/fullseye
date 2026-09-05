@@ -7,7 +7,7 @@ out: vector
 examples: [appearance_structural_colour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.8  # fullseye lib version this note was generated for
+version: 0.1.9  # fullseye lib version this note was generated for
 ---
 
 # spectrum_to_srgb — OPTICS `appearance` op

@@ -278,6 +278,7 @@ EXPECTED_NATIVE_CRASH_LEDGER = frozenset({
     "cv_cc_count",               # OpenCV connectedComponents, 0 サイズ(Linux SIGSEGV)
     "xsitk_minmax_curv_flow",    # SimpleITK, 非有限・一部 NaN(Linux SIGSEGV)
     "xsk3_h_minima",             # skimage reconstruction 族, 全 NaN(Linux SIGSEGV)
+    "xsk_random_walker",         # skimage random_walker, 一部 NaN でハング(規模依存)
 })
 
 

@@ -88,6 +88,85 @@ install 行に `hypothesis` と `pytest-timeout` を足し、加えて
 `pytest.importorskip` を置いて、**1 ファイルの import 失敗が全体を巻き込まない**
 ようにした。
 
+### ★呼び出しの誤りを fail-soft が吸収して「もっともらしい結果」にしていた
+
+自分で踏んだ。`fullseye.apply(name, image)` と**引数の順を逆**にしたら、numpy の
+「truth value of an array is ambiguous」が出て、原因に辿り着けなかった
+(`find_op` が `o.name == name` を配列と比較していた)。測り直すと、もっと悪かった:
+
+| 呼び出し | 0.1.8 までの挙動 |
+|---|---|
+| `apply(img, op, "big", 0.5)` | op 内で TypeError → guard が拾う → **利用者の入力画像がそのまま「結果」として返る**(台帳に 1 件) |
+| `apply(img, op, None, 0.5)` | 同上 |
+| `apply(img, op, nan, 0.5)` | 入力が素通り。**台帳記録すら無い** |
+| `apply(img, op, 5.0, 0.5)` | 設計値域 0..1 の外で走る。記録なし |
+| `apply(None, op, 0.5, 0.5)` | **スカラー**が返る |
+
+fail-soft は**実行時の劣化**(壊れた入力データ、backend の不在)を吸収するための
+ものであって、**呼び出し側の型誤り**まで吸収すると「例外でなく、もっともらしく
+間違う」しか残らない。`_check_call_args` を入口に置き、`on_error` に関係なく:
+
+* `name` が str でない → `TypeError`(順が逆のときはそう言う)
+* `image` が None → `TypeError`
+* `a` / `b` が数値でない / 非有限 → `TypeError` / `ValueError`
+* `a` / `b` が 0..1 の外 → 切り詰めて台帳に記録(`on_error="raise"` なら拒否)——
+  dtype 契約(`_contract_dtype`)と同じ扱い
+
+正しい呼び出しの結果は 1 ビットも変わらない(テストで固定)。
+
+### ★全域レビュー(Fable、8 領域並列)で出た本物 —— 全件を自分で再現してから直した
+
+外部 AI の指摘は鵜呑みにしない、を自分の部下にも適用した。**再現できたものだけ**書く。
+
+**配布物(いちばん重い)**
+- **`tb_*` 143 op は、どの版の `pip install fullseye` にも一度も存在していなかった。**
+  `backends_typed` がカタログを `tools/chain_fuzz.py`(2,800 行の開発用ファザー、
+  **非同梱**)から `sys.path` 操作で読み、失敗すると `build()` が `return []` で
+  黙っていた —— `FAILED_BACKENDS` にも残らない。0.1.8 で `backends_typed` を
+  py-modules に足しても、依存先が無いので同じだった。しかも私の wheel 門は
+  スクリプト自身のディレクトリが `sys.path[0]` に載るせいで checkout の `tools/` が
+  wheel 側からも見えてしまい、**事故が起きない場所で検査していた**(手順書に書いた
+  ばかりの罠を自分で踏んだ)。カタログを出荷モジュール `typed_catalog` に移し、
+  握り潰しを外し、門はスクリプトの置き場所と cwd を捨ててから数えるようにした。
+  **空の cwd から wheel を読んで tb_* 143 を確認**。門は「typed_catalog を外した
+  wheel」で NG になることを確認(ただし `build/lib` の古いコピーを掃除しないと
+  wheel に混入して門が通ってしまう —— preflight は建てる前に必ず捨てる)。
+- 門の比較は **op の数ではなく、同梱のはずのモジュールの有無 + wheel 側の
+  `FAILED_BACKENDS` + numpy/scipy だけで成立する族(tb_/hx_)の床**で見る。
+  数で比べると optional 依存(cv2 等)の無い venv で 208 op が「消えた」と出る。
+
+**fail-soft 契約の外に居た 5 族目**
+- `backends_r3._make`(33〜56 op)が `except Exception: out = None` で例外を握り潰し、
+  外側の `guard` が何も見なかった —— strict でも例外なし、台帳も空。
+  2026-09-02 の「24 族中 1 族」監査の取りこぼし。例外を外へ出す形にした。
+
+**説明と実装が逆・死んでいた op(全件、真値つきで再現)**
+- `tb_three_frame_difference`: Collins の式(両項とも現フレーム基準)でなく連続ペアの
+  AND だったため、**等速で動く一様な物体を一切検出しない**(実測 0 / 正 200〜440 画素)。
+  テストも旧式を仕様として固定していたので書き直し、回帰テストを足した。
+- `xsp_cspline_smooth`: λ 範囲 1〜41 のうち ≥12 で scipy が例外 → fallback で**恒等**。
+  **既定 a=0.5 を含む 7 割が何もしない op**だった。1〜11 に狭めた(要約の指紋は不変)。
+- `xsk_hessian_eig`: 「絶対値最大の固有値」と書いて代数的最大を取っていた。
+  明るい稜線で**稜線上 0・両脇 1** の逆応答。`np.max(np.abs(ev), axis=0)` に。
+- `xmh_selfmatch`: テンプレートが非連続ビューで mahotas が誤読、自己一致 0.57・角が 1.0。
+  `ascontiguousarray` で自己一致 1.000。
+
+**プロセス死・ハング(自分で再現)**
+- `cv2.Laplacian` に **bool 配列**を渡すとヒープを壊し、後続で死ぬ(Windows、exit 127)。
+  facade は dtype を揃えるが `op.fn` 直接経路は素通しだった。cv 族の入口で float64 に。
+- `xsk_random_walker` は**一部の NaN**でハング(512 px、0.1% で 60 秒超)。
+  `NATIVE_CRASHES_ON_DEGENERATE` に載せた。
+
+**Studio(利用者の環境を汚していた)**
+- テストの「隔離した QSettings」は効いておらず、**利用者の実レジストリ**
+  `HKCU\Software\Fullseye\Studio` に pytest の一時パス・timeout・watch 式を
+  書いていた(`setDefaultFormat` は引数なしコンストラクタにしか効かない)。
+  20 箇所の `QSettings("Fullseye","Studio")` を `_settings()` に集約し、
+  `FULLSEYE_STUDIO_SETTINGS` で ini に切替可能にした。レビューのプローブ自身が
+  書き換えた値は復元済み。
+
+**呼び出し規約の文言**: `CONTRIBUTING` の言語規約(例外メッセージは英語)に合わせた。
+
 ### 門を壊して確かめた —— 落ちない門が 3 つあった
 
 「検査が書いてある」と「壊したら落ちる」は別物なので、既知の不良を許す
@@ -98,6 +177,14 @@ install 行に `hypothesis` と `pytest-timeout` を足し、加えて
 | `KNOWN_CROSS_SORT_PASS_THROUGH` ほか `_params()` 経由の 4 台帳 | 実在しない op 名を足す | **落ちない**。実在 op を先に列挙してから台帳と突き合わせるので、台帳側の偽名はどの parametrize ノードにも結び付かない |
 | `NATIVE_CRASHES_ON_DEGENERATE` | 本物(`cv_cc_count`)を消す | **落ちない**。消えた op はループの対象からも消える。守っている SIGSEGV は Linux 専用で、Windows では偶然まともな値が返る |
 | `MEANINGFUL_NONFINITE`(テスト側の鏡) | 正本から切り離して偽名を足す | **落ちない**。鏡は独自の項目を持たないので陳腐化検査の対象外 |
+
+出荷コード側も同じだった: `backends_typed` の `_OP_BRIDGE_SKIP` /
+`_OP_SORT_OVERRIDE` / `OP_TUNABLE_OVERRIDE` は、橋渡しループがカタログを
+走査して台帳を**引くだけ**なので、台帳側の偽名はどの項目にも一致せず静かに
+無害化される(`tests/test_backends_typed_ledgers.py` で塞いだ)。
+`sample_data` の `_KNOWN_ARCHIVES` / `_KNOWN_ACCESS` と `precision_union` の
+`_ALLOWED_BITS` は**許容リスト**であって鏡ではない —— まだ使われていない形式を
+許しておくのは正しいので、逆方向の門は立てない(理由をここに残す)。
 
 直し方はそれぞれ違う: (1) op 名が鍵の 5 台帳をまとめて「実在する op か」を見る
 テストを 1 本足す、(2) テスト側に**対照**の集合を置いて本体との**等価**を要求する
@@ -884,7 +971,7 @@ has one, and the op docs (`docs/ops/**`) are generated from the registry with dr
 - **`imgio.save` は uint8 を彩色しない** / 切れた JPEG は `ValueError`(旧 黙って部分画像)/ 偶数線幅が 1px 細く / `to_float01(int16)` はアフィン / RGBA 保存の ABGR 入替を修正。
 - **`pnp3d`**: 完全平面入力は平面経路で解く / `bundle3d` は `scale_anchor` で尺度固定(×0.7〜213 に発散していた)/ `register(init="auto")` / PPF 投票の角度符号を修正。
 - **`raytrace`**: 数値引数に bool / 文字列を渡すと `ValueError`(旧 `"50"` → 50.0)、`stop` は整数のみ、`mirror` は bool のみ、零長の方向ベクトルは拒否、屈折率公差は硝材のみ(空気層には掛けない)、`n < 1` になる摂動は `ValueError`。`optimize_lens` は `status`(converged / stalled / iterations)を返し、bounds は初期値にも適用。
-- **`vol_resize`** が定数体積の隅を 0.42 にしていたのを修正 / `convol_image` は畳み込み(相関だった)/ `radon` の既定角 135°。
+- **`vol_resize`** が定数体積の隅を 0.42 にしていたのを修正 / `convol_image` は畳み込み(相関だった)〔**訂正 2026-09-05**: 実装は意図して `correlate` のまま —— HALCON の `convol_image` はマスクを反転しない相関で、scipy の `convolve` は反転する。この記述は逆だった〕/ `radon` の既定角 135°。
 - 進化エンジン: NaN fitness が champion になれない / RPCA の入力縮小で欠陥が消えない / pyramid の 1px ずれ修正。
 
 ### 構造・品質

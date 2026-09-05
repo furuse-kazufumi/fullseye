@@ -43,13 +43,15 @@ def _make(recipe, out_sort=None):
     code = compile(recipe, "<recipe>", "eval")
 
     def fn(v, a, b):
-        try:
-            g = dict(_NS)
-            g.update(v=v, a=float(a), b=float(b))
-            out = eval(code, g)
-        except Exception:
-            out = None
-        return sanitize(out, v, out_sort)
+        # ★2026-09-05 まで ``except Exception: out = None`` で**握り潰していた**。
+        # 登録時に外側へ ``backend_safe.guard`` が掛かるが、内側で例外を消すと外側は
+        # 何も見ない —— strict mode でも例外が出ず、台帳にも残らない。
+        # 2026-09-02 の「24 族中 1 族しか台帳に届いていなかった」監査の**取りこぼし**
+        # (Fable の敵対レビューが 5 族目として指摘)。例外はそのまま外へ出す:
+        # 外側の guard が記録し、sort に合う値へ落とし、strict なら再送出する。
+        g = dict(_NS)
+        g.update(v=v, a=float(a), b=float(b))
+        return sanitize(eval(code, g), v, out_sort)
     return fn
 
 
@@ -139,7 +141,7 @@ RECIPES = {
  "xmh_selfmatch": {
   "in": "image",
   "out": "image",
-  "recipe": "(lambda x,t:(lambda r:1.0-(r-r.min())/(np.ptp(r)+1e-12))(mahotas.template_match(x,t)))(np.clip(v,0,1).astype(float), np.clip(v,0,1).astype(float)[v.shape[0]//2-3-int(a*8):v.shape[0]//2+4+int(a*8), v.shape[1]//2-3-int(a*8):v.shape[1]//2+4+int(a*8)])",
+  "recipe": "(lambda x,t:(lambda r:1.0-(r-r.min())/(np.ptp(r)+1e-12))(mahotas.template_match(x,t)))(np.clip(v,0,1).astype(float), np.ascontiguousarray(np.clip(v,0,1).astype(float)[v.shape[0]//2-3-int(a*8):v.shape[0]//2+4+int(a*8), v.shape[1]//2-3-int(a*8):v.shape[1]//2+4+int(a*8)]))",
   "cat": "self-similarity"
  },
  "xwt_subband_tile": {

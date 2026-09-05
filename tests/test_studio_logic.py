@@ -17,10 +17,11 @@ import studio
 
 @pytest.fixture(scope="module")
 def app(tmp_path_factory):
-    from PySide6 import QtCore, QtWidgets
-    QtCore.QSettings.setDefaultFormat(QtCore.QSettings.IniFormat)
-    QtCore.QSettings.setPath(QtCore.QSettings.IniFormat, QtCore.QSettings.UserScope,
-                             str(tmp_path_factory.mktemp("qsettings")))
+    from PySide6 import QtWidgets
+    import os
+    # ★旧 setDefaultFormat 方式は Studio の QSettings(org, app) に効かなかった。
+    # 本体の入口 studio._settings() を ini に向ける(session 全体)。
+    os.environ["FULLSEYE_STUDIO_SETTINGS"] = str(tmp_path_factory.mktemp("qsettings") / "studio.ini")
     a = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
     studio.ERROR_HOOK = lambda *a: None
     studio.CONFIRM_HOOK = lambda *a: True

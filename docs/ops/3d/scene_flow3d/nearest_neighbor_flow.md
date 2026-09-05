@@ -7,7 +7,7 @@ out: flow_scattered
 examples: [scene_flow_rigid]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.8  # fullseye lib version this note was generated for
+version: 0.1.9  # fullseye lib version this note was generated for
 ---
 
 # nearest_neighbor_flow — 3D `scene_flow3d` op

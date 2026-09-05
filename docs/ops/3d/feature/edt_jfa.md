@@ -8,7 +8,7 @@ gpu: true
 examples: [diff_features]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.8  # fullseye lib version this note was generated for
+version: 0.1.9  # fullseye lib version this note was generated for
 ---
 
 # edt_jfa — 3D `feature` op

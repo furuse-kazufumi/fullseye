@@ -7,7 +7,7 @@ out: image
 examples: [gallery2d_smoothing_rank]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.8  # fullseye lib version this note was generated for
+version: 0.1.9  # fullseye lib version this note was generated for
 ---
 
 # xsp_cspline_smooth — 2D `smoothing` op
@@ -19,7 +19,7 @@ version: 0.1.8  # fullseye lib version this note was generated for
 
 3 次スプライン平滑化フィルタ（``scipy.signal.cspline2d``）。
 
-``a`` は平滑化強度 lambda を 1.0〜41.0 に振る（``lambda = 1.0 + 40.0*a``、大きいほど強く均す）。``b`` は未使用。スプライン補間の平滑化項を直接使うフィルタで、ガウシアンぼかしに近い低域通過だが境界はミラー的に処理される。負の値を返しうる中間結果を最後に [0,1] にクリップしている。
+``a`` は平滑化強度 lambda を 1.0〜11.0 に振る（``lambda = 1.0 + 10.0*a``、大きいほど強く均す）。``b`` は未使用。スプライン補間の平滑化項を直接使うフィルタで、ガウシアンぼかしに近い低域通過だが境界はミラー的に処理される。負の値を返しうる中間結果を最後に [0,1] にクリップしている。
 
 ## 詳しい使い方ガイド
 

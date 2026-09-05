@@ -8,7 +8,7 @@ halcon: convert_image_type
 examples: [gallery2d_gray_arith]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.8  # fullseye lib version this note was generated for
+version: 0.1.9  # fullseye lib version this note was generated for
 ---
 
 # it_convert_image_type — 2D `gray` op
