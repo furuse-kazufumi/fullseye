@@ -160,6 +160,13 @@ def _principal_comp(v, a, b):                     # color -> color : PCA over th
 
 
 def _rgb_to_gray(v, a, b):                        # color -> image : luminance
+    """RGB 画像を輝度（グレースケール）に変換する。HALCON の ``rgb1_to_gray`` /
+    ``rgb3_to_gray``（RGB 画像をグレースケール画像に変換する）の両方が、
+    このひとつの実装に割り当てられている。
+
+    ITU-R BT.601 系の重み ``0.299 R + 0.587 G + 0.114 B`` で輝度を計算する
+    固定式。a, b は未使用。
+    """
     c = _to_color(v)
     return c[..., 0] * 0.299 + c[..., 1] * 0.587 + c[..., 2] * 0.114
 
