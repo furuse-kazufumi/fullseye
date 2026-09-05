@@ -602,6 +602,11 @@ def catalog():
         # 2026-09-03: ストリーミング動画処理。入力は既存の `video` 種
         # (_motion_clip = (32,32,32) の並進格子)をそのまま使う
         ("opsvideostream", "OPSVIDEOSTREAM", "videostream"),
+        # 2026-09-06: DEM 解析。入力は既存の `depth` 種((32,32) の高さ格子)。
+        # 必須の `cell_size` / `azimuth_deg` / `observer_rc` は下の
+        # PARAM_HINTS / OP_PARAM_HINTS で束縛する —— 束縛できないと
+        # 「引数が組めない」で全 op が静かにスキップされる。
+        ("opsdem", "OPSDEM", "dem"),
     ):
         _m = __import__(_mod)
         for n, m in getattr(_m, _tbl).items():
