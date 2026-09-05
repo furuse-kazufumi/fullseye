@@ -319,6 +319,66 @@ def _font(size, font_path=None):
         return ImageFont.load_default()
 
 
+def _mask_signature(mask):
+    """グリフのビットマップを比較可能な値にする(小さいので全画素で足りる)。"""
+    w, h = mask.size
+    if w <= 0 or h <= 0:
+        return (0, 0, ())
+    return (w, h, tuple(mask[i] for i in range(w * h)))
+
+
+@functools.lru_cache(maxsize=256)
+def _missing_glyphs(font, text):
+    """``font`` が**描けない**文字を、出現順で重複なく返す。
+
+    ★なぜ要るか: フォントに無い文字は例外にならず、``.notdef``(いわゆる豆腐)が
+    黙って描かれる。**読めない絵が「成功」として出てくる**ので機械では気づけない
+    —— これは :data:`DEFAULT_MIN_CONTRAST` が防いでいる「背景と同化して消える文字」と
+    同じ種類の欠陥なので、同じく描画前に止める。
+
+    2026-09-05 実測(素の Ubuntu + DejaVuSans): ``日本語ラベル`` の 6 文字が
+    1 文字あたり 121 画素で**すべて同一**のインクになった = 全部同じ豆腐だった。
+
+    判定は私用領域の文字(まず定義されない)の ``.notdef`` と描画結果を突き合わせる。
+    fontTools のような追加依存を要らなくするため。
+    """
+    import unicodedata
+    try:
+        # 私用領域を 2 つ。**両方が同じ絵**になったときだけ .notdef と見なす
+        # (アイコンフォントのように私用領域を実際に使うフォントで誤判定しないため)。
+        ref = _mask_signature(font.getmask(""))
+        ref2 = _mask_signature(font.getmask(""))
+    except Exception:                                            # noqa: BLE001
+        return ()                                                # 判定できないなら黙る
+    if ref != ref2:
+        return ()                                                # 参照が取れない = 判定しない
+    out = []
+    for ch in dict.fromkeys(text):
+        # 空白と、そもそも絵を持たない種別(書式指定・結合文字)は対象外。
+        if ch.isspace() or unicodedata.category(ch) in ("Cf", "Mn", "Me", "Cc"):
+            continue
+        try:
+            if _mask_signature(font.getmask(ch)) == ref:
+                out.append(ch)
+        except Exception:                                        # noqa: BLE001
+            continue
+    return tuple(out)
+
+
+def _require_glyphs(font, text, font_path=None):
+    """``text`` が実際に描けることを確かめる。描けないなら**豆腐を出さずに例外**。"""
+    missing = _missing_glyphs(font, str(text))
+    if not missing:
+        return
+    shown = "".join(missing[:8])
+    where = font_path or getattr(font, "path", "the selected font")
+    raise ValueError(
+        f"the font has no glyph for {shown!r} ({len(missing)} distinct characters) — "
+        f"they would be drawn as blank/.notdef boxes, not as text. Font: {where}. "
+        "Install a CJK font (Debian/Ubuntu: apt-get install fonts-noto-cjk) or pass "
+        "font_path= pointing at one.")
+
+
 @functools.lru_cache(maxsize=8)
 def _measurer():
     Image, ImageDraw, _ = _pil()
@@ -417,6 +477,7 @@ def measure_text(text, font_size=14, font_path=None, max_width=None,
 
     for size in range(font_size, min_font_size - 1, -1):
         font = _font(size, font_path)
+        _require_glyphs(font, text, font_path)
         # 改行(``\n``)は max_width / wrap と**無関係に常に**効く。PIL の textlength
         # は複数行を測れないので、ここで分けないと "a\nb" は幅なしで例外になる。
         # 折り返し(幅で切る)だけが「幅あり かつ wrap=True」に限られる。
@@ -2240,6 +2301,7 @@ def _numbered_marker(a, xy, text, radius, color, text_color, font_size, font_pat
     # 文字の**インクの箱**(行送りではなく実際に塗られる範囲)が円に入るか。
     Image, ImageDraw, _ = _pil()
     font = _font(int(font_size), font_path)
+    _require_glyphs(font, text, font_path)
     l, t, r, b = font.getbbox(text)
     iw, ih = float(r - l), float(b - t)
     if math.hypot(iw, ih) / 2.0 > radius + 0.5:
@@ -2880,6 +2942,7 @@ def annotate_text_path(img, text, path, font_size=13, color="neutral", spacing=1
                                            font_path=font_path, spacing=spacing, start=start)
     Image, ImageDraw, _ = _pil()
     font = _font(int(font_size), font_path)
+    _require_glyphs(font, text, font_path)
     H, W = a.shape[:2]
     if _flag(draw_path, "draw_path"):
         a = _aa_polyline(a, _pts(path, "path", 2), color, width=width, scheme=scheme)

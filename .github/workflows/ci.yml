@@ -108,6 +108,11 @@ jobs:
         run: |
           sudo apt-get update -q
           sudo apt-get install -y -q libegl1 libgl1 libxkbcommon-x11-0 libdbus-1-3
+          # CJK フォント。素の ubuntu-latest には**日本語を描けるフォントが 1 つも無い**。
+          # 2026-09-05 実測: `fc-list :lang=ja` が空で DejaVuSans しか無く、annotate の
+          # 日本語ラベルが全部同じ豆腐(.notdef)になっていた —— それでもテストは緑だった。
+          # これを入れるだけで test_annotate.py の Linux 失敗 10 件が 0 件になる(実測)。
+          sudo apt-get install -y -q fonts-noto-cjk
       # ★hypothesis / pytest-timeout は**テストを走らせるのに必須**。入れ忘れると
       # `tests/test_op_contract_property.py` の import が collection error になり、
       # pytest は残りを 1 件も走らせずに中断する —— 2026-09-05 に実際に踏んだ
@@ -160,6 +165,11 @@ jobs:
         run: |
           sudo apt-get update -q
           sudo apt-get install -y -q libegl1 libgl1 libxkbcommon-x11-0 libdbus-1-3
+          # CJK フォント。素の ubuntu-latest には**日本語を描けるフォントが 1 つも無い**。
+          # 2026-09-05 実測: `fc-list :lang=ja` が空で DejaVuSans しか無く、annotate の
+          # 日本語ラベルが全部同じ豆腐(.notdef)になっていた —— それでもテストは緑だった。
+          # これを入れるだけで test_annotate.py の Linux 失敗 10 件が 0 件になる(実測)。
+          sudo apt-get install -y -q fonts-noto-cjk
       - name: Install with optional backends (no torch)
         run: >
           pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd]"
