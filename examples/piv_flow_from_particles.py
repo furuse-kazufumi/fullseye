@@ -74,8 +74,7 @@ def main():
     print(f"  単段 32: 格子 {tuple(flow.shape[1:])}  RMS {stats['rms']:.4f}")
     print(f"  多段 64→32: 格子 {tuple(mflow.shape[1:])}  RMS {ms['rms']:.4f}")
 
-    print("
-=== 4. 外れ値検定 —— ここでは**害になる**(正直に出す)===")
+    print("\n=== 4. 外れ値検定 —— ここでは**害になる**(正直に出す)===")
     for thr in (2.0, 3.0, 5.0):
         m = pivops.piv_outlier_mask(mflow, threshold=thr)
         rep = pivops.piv_replace_outliers(mflow, m, "median")
