@@ -20,8 +20,8 @@
 
 *↑ **欠陥周波数は生スペクトルに無い** ―― 共振 3000 Hz を欠陥率 107 Hz で振幅変調した軸受信号(25600 Hz × 1 s、変調度 0.5)。上の生スペクトルは 107 Hz に 4.292e-16 しか無く、エネルギーは搬送波 1.000000 と側帯波 0.250000 / 0.250000(= m/2 ちょうど)に居る。下の包絡線スペクトルは同じ記録から 107.000000 Hz に振幅 0.499677 = 変調度そのものを返す(band_fraction 0.999853)。 使用 op: `synthesize_bearing_signal`, `spectrum`, `envelope_spectrum`。*
 
-- PNG(原寸 1 枚): `docs/articles/assets/wing1d_defect_not_in_raw.png` (1120x800 px, 57 kB)
-- サムネ(記事はこちらを表示): `docs/articles/assets/wing1d_defect_not_in_raw_thumb.jpg` (41 kB)
+- PNG(原寸 1 枚): [`docs/articles/assets/wing1d_defect_not_in_raw.png`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing1d_defect_not_in_raw.png) (1120x800 px, 57 kB)
+- サムネ(記事はこちらを表示): [`docs/articles/assets/wing1d_defect_not_in_raw_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing1d_defect_not_in_raw_thumb.jpg) (41 kB)
 - 束ね方: still
 - SHA-256: `7767132cd2edab83b38d3bca9e247c2cacd471e3fac0ca424971b1f6a93b2990`
 
@@ -54,8 +54,8 @@
 
 *↑ **スペクトルカートシスが復調帯域を選ぶ** ―― 共振の位置を人が知らないとき、どの帯域で復調するかを機械に決めさせる。STFT 平面(129 bin × 199 内側フレーム、全 203 フレームのうち)にスペクトル尖度を重ね、幅 800 Hz の復調帯域を掃引した。SK の最大は 3.1037 @ 2400 Hz(窓 64 = 2.50 ms、bin 400 Hz、推定器の標準偏差 0.1001)で、その帯域の band_fraction は 0.4495。**帯域選びが効いていることが数で出ている**: 掃引した 24 帯域のうち欠陥率を返すのは 9 本だけで、残り 15 本は 6〜428 Hz のもっともらしい別の数を返す(例外も NaN も出ない)。ピーク周波数だけでは区別できず、分けるのは band_fraction である ―― 当たりは 0.1732〜0.6830、外れは 0.1473〜0.1645。 使用 op: `synthesize_bearing_signal`, `stft`, `spectral_kurtosis`, `envelope_spectrum`。*
 
-- GIF: `docs/articles/assets/media/wing1d_kurtosis_band.gif` (24 コマ, 1000x668 px, 2.00 MB, 220 ms/コマ・最終コマ 1400 ms)
-- サムネ: `docs/articles/assets/thumbs/wing1d_kurtosis_band_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_kurtosis_band.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_kurtosis_band.gif) (24 コマ, 1000x668 px, 2.00 MB, 220 ms/コマ・最終コマ 1400 ms)
+- サムネ: [`docs/articles/assets/thumbs/wing1d_kurtosis_band_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_kurtosis_band_thumb.jpg)
 - 束ね方: gif
 - SHA-256: `bdec35e49e13c06403e481762ebaa9056965efa0d086294372587df681d11144`
 
@@ -105,8 +105,8 @@
 
 *↑ **窓長を間違えると負の尖度が出る** ―― 衝撃が 9.346 ms ごとに来る軸受信号(真の共振 3000 Hz)で窓長を 16 から 512 まで掃引した。窓が衝撃の間隔より長くなるとどのフレームにも衝撃が 1 個ずつ入り、その帯域は構成上「定常」に見える。窓 256(10.00 ms)で最大 SK は -0.1269 ―― 負の値を、共振から 9200 Hz 離れた 12200 Hz で報告する。例外は出ない。窓を掃引することはこの op の使い方の一部であって最適化ではない。 使用 op: `synthesize_bearing_signal`, `spectral_kurtosis`。*
 
-- GIF: `docs/articles/assets/media/wing1d_window_sweep.gif` (22 コマ, 1000x668 px, 0.69 MB, 380 ms/コマ・最終コマ 1800 ms)
-- サムネ: `docs/articles/assets/thumbs/wing1d_window_sweep_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_window_sweep.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_window_sweep.gif) (22 コマ, 1000x668 px, 0.69 MB, 380 ms/コマ・最終コマ 1800 ms)
+- サムネ: [`docs/articles/assets/thumbs/wing1d_window_sweep_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_window_sweep_thumb.jpg)
 - 束ね方: gif
 - SHA-256: `3aba9675419b0a0c316a29575868e7913ddf552e21f0db4f5e69a8d445993713`
 
@@ -237,8 +237,8 @@
 
 *↑ **次数比分析 — 角度領域で立場が逆転する** ―― 600 → 1800 rpm の走行記録(4 s、5000 Hz、次数 1.0 と 3.5、固定共振 400 Hz、計 79.9940 回転)を 1.2 s の窓で滑らせる。素朴なスペクトルでは次数 3.5 が 0.070203(真値 1.0 の 7 %)まで潰れ、−3 dB 幅は 66.50 Hz に広がる。角度領域に置き直すと同じ成分が 0.999371、幅 0 bin (0.00000 次数)。逆に 400 Hz の固定共振は次数軸では平均回転数で次数 20.00 へ散る(振幅 0.025386)。この逆転が診断そのもの。 使用 op: `synthesize_speed_ramp`, `spectrum`, `angular_resample`, `order_spectrum`。*
 
-- GIF: `docs/articles/assets/media/wing1d_order_tracking.gif` (30 コマ, 1000x668 px, 1.08 MB, 220 ms/コマ・最終コマ 1400 ms)
-- サムネ: `docs/articles/assets/thumbs/wing1d_order_tracking_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_order_tracking.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_order_tracking.gif) (30 コマ, 1000x668 px, 1.08 MB, 220 ms/コマ・最終コマ 1400 ms)
+- サムネ: [`docs/articles/assets/thumbs/wing1d_order_tracking_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_order_tracking_thumb.jpg)
 - 束ね方: gif
 - SHA-256: `94ed62dd8cc62b6aea2b0e6a32e2eb5250a108c73777340166390ea10da71932`
 
@@ -274,8 +274,8 @@
 
 *↑ **軸受の幾何から欠陥周波数** ―― 1800 rpm、ピッチ径 40 mm の軸受で、転動体数 → 接触角 → 転動体径の順に掃引した(36 フレーム)。BPFO は 84.0000 → 177.8261 Hz、BPFI は 126.0000 → 270.3260 Hz まで動く。全フレームで `BPFO + BPFI − N·f_r` の最大絶対値は 0.000e+00、`BPFO − N·FTF` は 0.000e+00 ―― float64 で厳密にゼロで、これは d と D を取り違えると即座に壊れる恒等式である。数表からではなく幾何から再導出しているので、こう書ける。 使用 op: `bearing_defect_frequencies`。*
 
-- GIF: `docs/articles/assets/media/wing1d_bearing_geometry.gif` (36 コマ, 1000x668 px, 1.40 MB, 200 ms/コマ・最終コマ 1400 ms)
-- サムネ: `docs/articles/assets/thumbs/wing1d_bearing_geometry_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_bearing_geometry.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_bearing_geometry.gif) (36 コマ, 1000x668 px, 1.40 MB, 200 ms/コマ・最終コマ 1400 ms)
+- サムネ: [`docs/articles/assets/thumbs/wing1d_bearing_geometry_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_bearing_geometry_thumb.jpg)
 - 束ね方: gif
 - SHA-256: `d103e560a0874ab32633502199f072429b0e212941bcfd62da99b5403ed4e8c3`
 
@@ -329,8 +329,8 @@
 
 *↑ **A 特性・C 特性の重み付け ―― 1 kHz は構成上ちょうど 0 dB** ―― 重み付け曲線は公表オフセット定数を足すのではなく**自身の 1 kHz 値で割って**作ってあるので、A(1000) も C(1000) も丸めではなく Python の float として厳密に 0.0 になる(実測 `== 0.0` は True / True)。純音を 34 点掃引して `equivalent_level` の重み付き差 `L_A − L_Z` を曲線値 `A(f)` と突き合わせると、最大差は 7.11e-15 dB(C 特性は 4.88e-15 dB)。振幅 1 の正弦の `L_eq(Z)` は閉形式 10log10(A²/2) = -3.010300 dB で、実測もその値。**ただしこれは音が bin 中心(記録に整数周期入る)にある場合の話**で、同じ音を 1 Hz ずらすと同じ差が 21.0 Hz で 2.86 dB まで開く(図の下段、赤い曲線)。矩形窓の漏れ込みが 1 kHz 付近では 0 dB で重み付けされるため、A 特性が急峻な低域ほど**実際より大きい値が返る**。例外も NaN も出ない。 使用 op: `weighting_response`, `apply_weighting`, `equivalent_level`。*
 
-- GIF: `docs/articles/assets/media/wing1d_weighting_ac.gif` (34 コマ, 1000x668 px, 1.42 MB, 220 ms/コマ・最終コマ 1400 ms)
-- サムネ: `docs/articles/assets/thumbs/wing1d_weighting_ac_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_weighting_ac.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_weighting_ac.gif) (34 コマ, 1000x668 px, 1.42 MB, 220 ms/コマ・最終コマ 1400 ms)
+- サムネ: [`docs/articles/assets/thumbs/wing1d_weighting_ac_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_weighting_ac_thumb.jpg)
 - 束ね方: gif
 - SHA-256: `4a0d21838a07ff9682b8a19d68bc658780b48ef1cc35a660f07b7d1a5ad96872`
 
@@ -393,8 +393,8 @@
 
 *↑ **funct1d の解析真値** ―― 答えが先に分かっている入力だけで組んだ 1 枚。`derivate_funct_1d(sin)/dx` と cos の最大差は 1.008e-04(格子 dx = 0.024592、中心差分は 2 次なので残差は dx² で効く)。`zero_crossings_funct_1d` が返す 3 個の交差は、線形内挿すると 1.000000π, 2.000000π, 3.000000π ―― 整数倍からの最大ずれ 7.397e-08。減衰振動からは周期 0.199500 s(真値 0.200000)、半周期 0.100000 s(真値 0.100000)、時定数 0.406307 s(真値 0.4)、遅延 25 サンプル(真値 25、微分で白色化してから照合)が戻る。 使用 op: `derivate_funct_1d`, `integrate_funct_1d`, `zero_crossings_funct_1d`, `local_min_max_funct_1d`, `smooth_funct_1d_gauss`, `abs_funct_1d`, `get_pair_funct_1d`, `distance_funct_1d`, `match_funct_1d_trans`, `create_funct_1d_array`。*
 
-- PNG(原寸 1 枚): `docs/articles/assets/wing1d_funct1d_truth.png` (1160x786 px, 78 kB)
-- サムネ(記事はこちらを表示): `docs/articles/assets/wing1d_funct1d_truth_thumb.jpg` (60 kB)
+- PNG(原寸 1 枚): [`docs/articles/assets/wing1d_funct1d_truth.png`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing1d_funct1d_truth.png) (1160x786 px, 78 kB)
+- サムネ(記事はこちらを表示): [`docs/articles/assets/wing1d_funct1d_truth_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing1d_funct1d_truth_thumb.jpg) (60 kB)
 - 束ね方: still
 - SHA-256: `99ae8b3fff2af82965dbdb1341b2b9673d1f5a40917c214da746e2f2d26d0a27`
 
@@ -438,8 +438,8 @@
 
 *↑ **平滑化のトレードオフ** ―― 減衰 5 Hz 振動 + N(0, 0.06) にガウス平滑を掛け、σ を 31 段掃引した。生の信号は真値 6 個の極大に対して 196 個を報告する(`local_min_max_funct_1d` は狭義不等式で、雑音モデルを持たない)。RMS 誤差は σ = 3.219 で最小の 0.021952(生の 2.73 倍良い)になり、そのときピーク高さは真値から -2.77 %。掛けすぎると σ = 40.0 で RMS 誤差が 0.249561 まで悪化し、ピークは -59.56 % なまる。雑音は減るが極値はなまる ―― 最小点はあるが、無料ではない。 使用 op: `smooth_funct_1d_gauss`, `local_min_max_funct_1d`。*
 
-- GIF: `docs/articles/assets/media/wing1d_smoothing_tradeoff.gif` (32 コマ, 1000x668 px, 1.06 MB, 220 ms/コマ・最終コマ 1600 ms)
-- サムネ: `docs/articles/assets/thumbs/wing1d_smoothing_tradeoff_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_smoothing_tradeoff.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_smoothing_tradeoff.gif) (32 コマ, 1000x668 px, 1.06 MB, 220 ms/コマ・最終コマ 1600 ms)
+- サムネ: [`docs/articles/assets/thumbs/wing1d_smoothing_tradeoff_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_smoothing_tradeoff_thumb.jpg)
 - 束ね方: gif
 - SHA-256: `98a6eaff19a41a10f97d71410a577d5c54de58fd2574f66dc729f0aa38cd03da`
 
@@ -474,8 +474,8 @@
 
 *↑ **サンプリングとエイリアシング** ―― 300 Hz の純音は一度も変えず、サンプリング周波数だけを 1300 Hz から 340 Hz へ 31 段下げた(0.5 s 記録、bin 2 Hz)。fs = 596 Hz(Nyquist 298 Hz)から折り返しが始まり、最後は fs = 340 Hz で 40.00 Hz に振幅 1.000000 の線が立つ ―― 高さは満額のまま、周波数だけが嘘。全 31 段で実測ピークと折り返しの予測 |f − fs·k| の差は最大 0.000 Hz。Nyquist の線から右は、この記録に原理的に存在し得ない領域として焼いてある。 使用 op: `spectrum`。*
 
-- GIF: `docs/articles/assets/media/wing1d_aliasing.gif` (31 コマ, 1000x668 px, 1.14 MB, 260 ms/コマ・最終コマ 1800 ms)
-- サムネ: `docs/articles/assets/thumbs/wing1d_aliasing_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_aliasing.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_aliasing.gif) (31 コマ, 1000x668 px, 1.14 MB, 260 ms/コマ・最終コマ 1800 ms)
+- サムネ: [`docs/articles/assets/thumbs/wing1d_aliasing_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_aliasing_thumb.jpg)
 - 束ね方: gif
 - SHA-256: `221239e2f9d4e21e0f353b38e8621bf18b7c046d8d8b24f15bd0aa8c46d38176`
 
@@ -568,8 +568,8 @@
 
 *↑ **1D プロファイルはどこから来るか** ―― 2D 画像の測定線(実写真 coins、373 サンプル、最強エッジは添字 220.0)、3D ボリュームのプローブ(92 サンプル、壁厚 14.00 / 17.00 / 14.00 voxel)、センサー時系列(500 サンプル、rms 0.2687、スペクトル重心 387.0 Hz)。3 本とも素の 1-D float64 で届くので、`funct1d` はアダプタ無しでそのまま食える。1D ウィングに専用の型を作らなかったのはこのためで ―― 任意の実数 1-D はどの計器から来ても本当に正当なプロファイルであり、型を切ると接続を失うだけ。 使用 op: `line_profile`, `profile_stats`, `vol_profile_line`, `vol_wall_thickness`, `signal_features`, `create_funct_1d_array`, `num_points_funct_1d`, `x_range_funct_1d`, `y_range_funct_1d`, `zero_crossings_funct_1d`, `local_min_max_funct_1d`。*
 
-- PNG(原寸 1 枚): `docs/articles/assets/wing1d_profile_sources.png` (1200x980 px, 176 kB)
-- サムネ(記事はこちらを表示): `docs/articles/assets/wing1d_profile_sources_thumb.jpg` (85 kB)
+- PNG(原寸 1 枚): [`docs/articles/assets/wing1d_profile_sources.png`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing1d_profile_sources.png) (1200x980 px, 176 kB)
+- サムネ(記事はこちらを表示): [`docs/articles/assets/wing1d_profile_sources_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing1d_profile_sources_thumb.jpg) (85 kB)
 - 束ね方: still
 - SHA-256: `63ede6fea12f329925659543e61d942c94e337a620dc99ed0e22d1d8b852f328`
 
@@ -664,8 +664,8 @@
 
 *↑ **極値検出と照合** ―― 既知の 4 点(60, 150, 245, 330)に立てたガウスピークへ雑音を σ = 0 から 0.42 まで 30 段加えた。`local_min_max_funct_1d` は狭義不等式なので、生の波形では極大が 4 個から 132 個へ暴発する。σ = 3 のガウス平滑と高さ 0.45 の門を通すと最後まで 6 個([58, 149, 243, 254, 329, 337])に落ち着く。`match_funct_1d_trans` は同じ長さの窓とテンプレートを突き合わせるかぎり、30 段のうち 12 段(σ 0.159 まで)で 4 点すべて lag = 0 を厳密に返す。 使用 op: `smooth_funct_1d_gauss`, `local_min_max_funct_1d`, `match_funct_1d_trans`。*
 
-- GIF: `docs/articles/assets/media/wing1d_peak_match.gif` (30 コマ, 1000x668 px, 1.45 MB, 240 ms/コマ・最終コマ 1600 ms)
-- サムネ: `docs/articles/assets/thumbs/wing1d_peak_match_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_peak_match.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_peak_match.gif) (30 コマ, 1000x668 px, 1.45 MB, 240 ms/コマ・最終コマ 1600 ms)
+- サムネ: [`docs/articles/assets/thumbs/wing1d_peak_match_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_peak_match_thumb.jpg)
 - 束ね方: gif
 - SHA-256: `d14889843693fa5a0da90e3affd43d08409e16fb91c4990499b22e06b9238139`
 
@@ -709,8 +709,8 @@
 
 *↑ **包絡線の端が切れると 76 % 間違う** ―― 12 µm の走査(241 plane × 0.05 µm)の中で、表面を中央 6.0 µm から端の 0.30 µm まで 32 段歩かせた。中央では誤差 2.2e-14 µm。表面が 0.500 µm にあると `csi_peak_position` は 0.1190 µm を返す ―― 有限で、もっともらしく、76 % 間違っている。しかも包絡線の argmax は 241 plane 中の 2 番目、つまり**内部**なので「端に張り付いたら拒否」という素直な検査は発動しない(掃引の最悪点は 0.30 µm の 84 % で、そこでも argmax は plane 1)。中央値基準の端レベルが 0.0539 を超えた表面 2.69 µm から op は拒否に転じる(図の値は `max_edge_envelope=1.0` で強制的に取り出したもの)。 使用 op: `csi_signal_simulate`, `csi_envelope`, `csi_peak_position`。*
 
-- GIF: `docs/articles/assets/media/wing1d_envelope_truncation.gif` (32 コマ, 1000x668 px, 1.43 MB, 240 ms/コマ・最終コマ 2000 ms)
-- サムネ: `docs/articles/assets/thumbs/wing1d_envelope_truncation_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_envelope_truncation.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_envelope_truncation.gif) (32 コマ, 1000x668 px, 1.43 MB, 240 ms/コマ・最終コマ 2000 ms)
+- サムネ: [`docs/articles/assets/thumbs/wing1d_envelope_truncation_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_envelope_truncation_thumb.jpg)
 - 束ね方: gif
 - SHA-256: `ce035df03e06ff0c2e1b5ce485f16e45782ef8613f1475b1371d1d93c74e3612`
 
@@ -807,8 +807,8 @@
 
 *↑ **欠陥周波数が出てくるまで(工程)** ―― 幾何から出した外輪通過周波数 BPFO = 108.0000 Hz でわざと鳴らした軸受記録を、7 工程で診断まで持っていく。生スペクトルでは欠陥率の振幅は 1.19e-02 しか無く、目立つのは 3024 Hz の構造共振(0.1175)。スペクトル尖度(窓 64、最大 4.5956 @ 2000 Hz)が復調帯域 1600–2400 Hz を選び(真の共振 3000 Hz より 1000 Hz 低い ―― SK が返すのは帯域であって線ではない)、帯域通過 → 包絡線 → 変換で 108.0000 Hz。それが幾何の BPFO 108.0000 Hz と 0.0000 % で一致する。**正直な内訳**: この帯域の band_fraction は 0.2250 で、同じ帯域に通した白色雑音の 0.2348 と区別がつかない。分けるのは突出度のほうで、30582 対 2666 である(共振をまたぐ 2600–3400 Hz を人が選べば band_fraction は 0.8368 まで上がる)。`dsp.bandpass` + `dsp.envelope` + rfft で手組みした結果と op の返りは 0.0e+00 で一致した(作り直していない証拠)。 使用 op: `bearing_defect_frequencies`, `synthesize_bearing_signal`, `spectrum`, `spectral_kurtosis`, `bandpass`, `envelope`, `envelope_spectrum`。*
 
-- GIF: `docs/articles/assets/media/wing1d_envelope_flow.gif` (7 コマ, 940x522 px, 0.18 MB, 1500 ms/コマ・最終コマ 3000 ms)
-- サムネ: `docs/articles/assets/thumbs/wing1d_envelope_flow_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_envelope_flow.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_envelope_flow.gif) (7 コマ, 940x522 px, 0.18 MB, 1500 ms/コマ・最終コマ 3000 ms)
+- サムネ: [`docs/articles/assets/thumbs/wing1d_envelope_flow_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_envelope_flow_thumb.jpg)
 - 束ね方: gif
 - SHA-256: `b437cde7351aeaac59a4aed6f0a757a0cdd6f5d019d1a97f7ab392e2c141dc04`
 
@@ -869,8 +869,8 @@
 
 *↑ **分数オクターブ帯域 ―― 偶数分数には 1 kHz 帯域が無い** ―― 振幅 0.7 の 1000 Hz 純音を、1/1・1/2・1/3・1/6・1/12・1/24 オクターブで測った 6 枚。帯域レベルはどの分数でも閉形式 10log10(A²/2) = -6.108339 dB を返す(最大差 0.0e+00 dB)。違うのは**どの帯域が**それを報告するかで、fraction が奇数 [1, 3] では 1000.000 Hz ちょうどを中心とする帯域があるが、偶数 [2, 6, 12, 24] では指数のオフセットにより 1000 Hz が帯域**端**になり、同じエネルギーが 1188.50 Hz, 944.06 Hz, 971.63 Hz, 1014.50 Hz を中心とする半端な帯域から報告される。定義であって不具合ではないが、「1 kHz でのレベル」を引用するときに知っていないと嘘になる。空の帯域は −inf ではなく床(−200 dB)に落ちる。 使用 op: `octave_bands`, `octave_spectrum`。*
 
-- PNG(タイル): `docs/articles/assets/wing1d_octave_family.png` (1458x868 px, 54 kB, 6 パネル / 3 列)
-- サムネ(記事はこちらを表示): `docs/articles/assets/wing1d_octave_family_thumb.jpg` (47 kB)
+- PNG(タイル): [`docs/articles/assets/wing1d_octave_family.png`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing1d_octave_family.png) (1458x868 px, 54 kB, 6 パネル / 3 列)
+- サムネ(記事はこちらを表示): [`docs/articles/assets/wing1d_octave_family_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing1d_octave_family_thumb.jpg) (47 kB)
 - 束ね方: sheet
 - SHA-256: `986bd447a3a01fe7fb0ead8a50aea99bec869fb81a57752a74916f0ae4c83c72`
 

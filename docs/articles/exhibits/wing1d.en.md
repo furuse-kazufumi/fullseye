@@ -22,7 +22,7 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **The defect frequency is not in the raw spectrum** — a bearing signal whose 3000 Hz resonance is amplitude-modulated at the 107 Hz defect rate (25600 Hz × 1 s, modulation depth 0.5). The raw spectrum on top holds only 4.292e-16 at 107 Hz; the energy sits in the carrier at 1.000000 and the sidebands at 0.250000 / 0.250000 (exactly m/2). The envelope spectrum below, from the same record, returns amplitude 0.499677 at 107.000000 Hz — the modulation depth itself (band_fraction 0.999853). Ops used: `synthesize_bearing_signal`, `spectrum`, `envelope_spectrum`.*
 
-- PNG (full size, 1 sheet): `docs/articles/assets/wing1d_defect_not_in_raw.png` (1120x800 px, 57 kB)
+- PNG (full size, 1 sheet): [`docs/articles/assets/wing1d_defect_not_in_raw.png`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing1d_defect_not_in_raw.png) (1120x800 px, 57 kB)
 - Thumbnail (this is what the article shows): `docs/articles/assets/wing1d_defect_not_in_raw_thumb.jpg` (41 kB)
 - Bundling: still
 - SHA-256: `7767132cd2edab83b38d3bca9e247c2cacd471e3fac0ca424971b1f6a93b2990`
@@ -56,8 +56,8 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **Spectral kurtosis picks the demodulation band** — when nobody knows where the resonance is, let the machine decide which band to demodulate. Spectral kurtosis is laid over the STFT plane (129 bins × 199 interior frames, out of 203 in total) and a 800 Hz wide demodulation band is swept across it. The SK maximum is 3.1037 @ 2400 Hz (window 64 = 2.50 ms, bin 400 Hz, estimator standard deviation 0.1001), and that band's band_fraction is 0.4495. **The number says the band choice is doing work**: of the 24 bands swept, only 9 return the defect rate; the other 15 return some other plausible figure between 6 and 428 Hz (no exception, no NaN). The peak frequency alone cannot separate them — band_fraction is what does: the hits run 0.1732 to 0.6830, the misses 0.1473 to 0.1645. Ops used: `synthesize_bearing_signal`, `stft`, `spectral_kurtosis`, `envelope_spectrum`.*
 
-- GIF: `docs/articles/assets/media/wing1d_kurtosis_band.gif` (24 frames, 1000x668 px, 2.00 MB, 220 ms/frame, last frame 1400 ms)
-- Thumbnail: `docs/articles/assets/thumbs/wing1d_kurtosis_band_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_kurtosis_band.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_kurtosis_band.gif) (24 frames, 1000x668 px, 2.00 MB, 220 ms/frame, last frame 1400 ms)
+- Thumbnail: [`docs/articles/assets/thumbs/wing1d_kurtosis_band_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_kurtosis_band_thumb.jpg)
 - Bundling: gif
 - SHA-256: `c5d99ab9b37c33e0120328c4517e86d94cfe66402e7f17b069af75a4752b0e90`
 
@@ -107,8 +107,8 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **Get the window length wrong and the kurtosis goes negative** — the window is swept from 16 to 512 on a bearing signal whose impacts arrive every 9.346 ms (true resonance 3000 Hz). Once the window is longer than the interval between impacts, every frame contains exactly 1 impact, and the band looks "stationary" by construction. At window 256 (10.00 ms) the maximum SK is -0.1269 — a negative value, reported at 12200 Hz, 9200 Hz away from the resonance. No exception is raised. Sweeping the window is part of how this op is used, not an optimisation. Ops used: `synthesize_bearing_signal`, `spectral_kurtosis`.*
 
-- GIF: `docs/articles/assets/media/wing1d_window_sweep.gif` (22 frames, 1000x668 px, 0.69 MB, 380 ms/frame, last frame 1800 ms)
-- Thumbnail: `docs/articles/assets/thumbs/wing1d_window_sweep_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_window_sweep.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_window_sweep.gif) (22 frames, 1000x668 px, 0.69 MB, 380 ms/frame, last frame 1800 ms)
+- Thumbnail: [`docs/articles/assets/thumbs/wing1d_window_sweep_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_window_sweep_thumb.jpg)
 - Bundling: gif
 - SHA-256: `507eb1647e166c69a178c59880d785e0ef0baca7523f32ed8c8d7b5b1f0815c2`
 
@@ -239,8 +239,8 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **Order tracking — the two swap places in the angle domain** — a run-up record from 600 to 1800 rpm (4 s, 5000 Hz, orders 1.0 and 3.5, a fixed 400 Hz resonance, 79.9940 revolutions in total) slid through a 1.2 s window. In the plain spectrum order 3.5 is smeared down to 0.070203 (7 % of its true 1.0) and its −3 dB width spreads to 66.50 Hz. Resample into the angle domain and the same component comes back at 0.999371 with a width of 0 bins (0.00000 orders). The 400 Hz fixed resonance goes the other way: on the order axis it scatters to order 20.00 at the mean speed (amplitude 0.025386). That reversal *is* the diagnosis. Ops used: `synthesize_speed_ramp`, `spectrum`, `angular_resample`, `order_spectrum`.*
 
-- GIF: `docs/articles/assets/media/wing1d_order_tracking.gif` (30 frames, 1000x668 px, 1.08 MB, 220 ms/frame, last frame 1400 ms)
-- Thumbnail: `docs/articles/assets/thumbs/wing1d_order_tracking_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_order_tracking.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_order_tracking.gif) (30 frames, 1000x668 px, 1.08 MB, 220 ms/frame, last frame 1400 ms)
+- Thumbnail: [`docs/articles/assets/thumbs/wing1d_order_tracking_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_order_tracking_thumb.jpg)
 - Bundling: gif
 - SHA-256: `db0ab726f8e966c9517713b93d9f90a4d4bc6031dede54761c5e31fa685b1780`
 
@@ -276,8 +276,8 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **Defect frequencies from the bearing geometry** — for a bearing at 1800 rpm with a 40 mm pitch diameter, the rolling-element count, then the contact angle, then the element diameter are swept in turn (36 frames). BPFO moves from 84.0000 to 177.8261 Hz and BPFI from 126.0000 to 270.3260 Hz. Across every frame the largest absolute value of `BPFO + BPFI − N·f_r` is 0.000e+00 and of `BPFO − N·FTF` is 0.000e+00 — exactly zero in float64, and these are identities that break the moment d and D are swapped. That sentence is only writable because the frequencies are re-derived from the geometry rather than read off a table. Ops used: `bearing_defect_frequencies`.*
 
-- GIF: `docs/articles/assets/media/wing1d_bearing_geometry.gif` (36 frames, 1000x668 px, 1.40 MB, 200 ms/frame, last frame 1400 ms)
-- Thumbnail: `docs/articles/assets/thumbs/wing1d_bearing_geometry_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_bearing_geometry.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_bearing_geometry.gif) (36 frames, 1000x668 px, 1.40 MB, 200 ms/frame, last frame 1400 ms)
+- Thumbnail: [`docs/articles/assets/thumbs/wing1d_bearing_geometry_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_bearing_geometry_thumb.jpg)
 - Bundling: gif
 - SHA-256: `d103e560a0874ab32633502199f072429b0e212941bcfd62da99b5403ed4e8c3`
 
@@ -331,8 +331,8 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **A- and C-weighting — 1 kHz is exactly 0 dB by construction** — the weighting curves are built by **dividing by their own value at 1 kHz** rather than by adding a published offset constant, so A(1000) and C(1000) are exactly 0.0 as Python floats, not as a rounding (measured: `== 0.0` is True / True). Sweeping 34 pure tones and checking `equivalent_level`'s weighted difference `L_A − L_Z` against the curve value `A(f)`, the largest discrepancy is 7.11e-15 dB (4.88e-15 dB for C-weighting). The `L_eq(Z)` of a sine of amplitude 1 is the closed form 10log10(A²/2) = -3.010300 dB, and the measurement agrees. **But all of that holds only while the tone sits on a bin centre** (an integer number of periods in the record): shift the same tone by 1 Hz and the same difference opens to 2.86 dB at 21.0 Hz (the red curve, lower panel). Because the leakage of the rectangular window is weighted at about 0 dB near 1 kHz, the low end — where A-weighting is steep — **returns a value larger than the truth**. No exception, no NaN. Ops used: `weighting_response`, `apply_weighting`, `equivalent_level`.*
 
-- GIF: `docs/articles/assets/media/wing1d_weighting_ac.gif` (34 frames, 1000x668 px, 1.42 MB, 220 ms/frame, last frame 1400 ms)
-- Thumbnail: `docs/articles/assets/thumbs/wing1d_weighting_ac_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_weighting_ac.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_weighting_ac.gif) (34 frames, 1000x668 px, 1.42 MB, 220 ms/frame, last frame 1400 ms)
+- Thumbnail: [`docs/articles/assets/thumbs/wing1d_weighting_ac_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_weighting_ac_thumb.jpg)
 - Bundling: gif
 - SHA-256: `4a0d21838a07ff9682b8a19d68bc658780b48ef1cc35a660f07b7d1a5ad96872`
 
@@ -395,7 +395,7 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **The analytic ground truth of funct1d** — 1 sheet built only from inputs whose answer is known in advance. The largest difference between `derivate_funct_1d(sin)/dx` and cos is 1.008e-04 (grid dx = 0.024592; the central difference is 2nd order, so the residual goes as dx²). Interpolated linearly, the 3 crossings `zero_crossings_funct_1d` returns are 1.000000π, 2.000000π and 3.000000π — at most 7.397e-08 away from the integer multiples. From a damped oscillation come a period of 0.199500 s (true 0.200000), a half period of 0.100000 s (true 0.100000), a time constant of 0.406307 s (true 0.4) and a delay of 25 samples (true 25, matched after whitening by differentiation). Ops used: `derivate_funct_1d`, `integrate_funct_1d`, `zero_crossings_funct_1d`, `local_min_max_funct_1d`, `smooth_funct_1d_gauss`, `abs_funct_1d`, `get_pair_funct_1d`, `distance_funct_1d`, `match_funct_1d_trans`, `create_funct_1d_array`.*
 
-- PNG (full size, 1 sheet): `docs/articles/assets/wing1d_funct1d_truth.png` (1160x786 px, 78 kB)
+- PNG (full size, 1 sheet): [`docs/articles/assets/wing1d_funct1d_truth.png`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing1d_funct1d_truth.png) (1160x786 px, 78 kB)
 - Thumbnail (this is what the article shows): `docs/articles/assets/wing1d_funct1d_truth_thumb.jpg` (60 kB)
 - Bundling: still
 - SHA-256: `99ae8b3fff2af82965dbdb1341b2b9673d1f5a40917c214da746e2f2d26d0a27`
@@ -440,8 +440,8 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **The smoothing trade-off** — a damped 5 Hz oscillation plus N(0, 0.06), Gaussian-smoothed with σ swept over 31 steps. On the raw signal `local_min_max_funct_1d` reports 196 maxima against a true 6 (it uses strict inequalities and has no noise model). The RMS error bottoms out at 0.021952 for σ = 3.219 (2.73x better than raw), and at that point the peak height is -2.77 % off the truth. Overdo it and σ = 40.0 takes the RMS error up to 0.249561 with the peak blunted by -59.56 %. Noise falls but extrema blunt — there is a minimum, and it is not free. Ops used: `smooth_funct_1d_gauss`, `local_min_max_funct_1d`.*
 
-- GIF: `docs/articles/assets/media/wing1d_smoothing_tradeoff.gif` (32 frames, 1000x668 px, 1.06 MB, 220 ms/frame, last frame 1600 ms)
-- Thumbnail: `docs/articles/assets/thumbs/wing1d_smoothing_tradeoff_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_smoothing_tradeoff.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_smoothing_tradeoff.gif) (32 frames, 1000x668 px, 1.06 MB, 220 ms/frame, last frame 1600 ms)
+- Thumbnail: [`docs/articles/assets/thumbs/wing1d_smoothing_tradeoff_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_smoothing_tradeoff_thumb.jpg)
 - Bundling: gif
 - SHA-256: `98a6eaff19a41a10f97d71410a577d5c54de58fd2574f66dc729f0aa38cd03da`
 
@@ -476,8 +476,8 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **Sampling and aliasing** — the 300 Hz tone is never changed; only the sampling rate is lowered, from 1300 Hz to 340 Hz in 31 steps (0.5 s record, 2 Hz bins). Folding starts at fs = 596 Hz (Nyquist 298 Hz), and by the end, at fs = 340 Hz, a line of amplitude 1.000000 stands at 40.00 Hz — full height, and only the frequency is a lie. Across all 31 steps the measured peak differs from the folding prediction |f − fs·k| by at most 0.000 Hz. Everything to the right of the Nyquist line is burnt into the figure as a region that cannot exist in this record even in principle. Ops used: `spectrum`.*
 
-- GIF: `docs/articles/assets/media/wing1d_aliasing.gif` (31 frames, 1000x668 px, 1.14 MB, 260 ms/frame, last frame 1800 ms)
-- Thumbnail: `docs/articles/assets/thumbs/wing1d_aliasing_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_aliasing.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_aliasing.gif) (31 frames, 1000x668 px, 1.14 MB, 260 ms/frame, last frame 1800 ms)
+- Thumbnail: [`docs/articles/assets/thumbs/wing1d_aliasing_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_aliasing_thumb.jpg)
 - Bundling: gif
 - SHA-256: `221239e2f9d4e21e0f353b38e8621bf18b7c046d8d8b24f15bd0aa8c46d38176`
 
@@ -570,7 +570,7 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **Where a 1-D profile comes from** — a measurement line across a 2-D image (the real photograph coins, 373 samples, strongest edge at index 220.0), a probe through a 3-D volume (92 samples, wall thicknesses 14.00 / 17.00 / 14.00 voxels), and a sensor time series (500 samples, rms 0.2687, spectral centroid 387.0 Hz). All 3 arrive as plain 1-D float64, so `funct1d` eats them with no adapter. That is why the 1-D wing was given no type of its own — **any real 1-D array really is a legitimate profile whatever instrument it came from**, and carving out a type would only cost you the connection. Ops used: `line_profile`, `profile_stats`, `vol_profile_line`, `vol_wall_thickness`, `signal_features`, `create_funct_1d_array`, `num_points_funct_1d`, `x_range_funct_1d`, `y_range_funct_1d`, `zero_crossings_funct_1d`, `local_min_max_funct_1d`.*
 
-- PNG (full size, 1 sheet): `docs/articles/assets/wing1d_profile_sources.png` (1200x980 px, 176 kB)
+- PNG (full size, 1 sheet): [`docs/articles/assets/wing1d_profile_sources.png`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing1d_profile_sources.png) (1200x980 px, 176 kB)
 - Thumbnail (this is what the article shows): `docs/articles/assets/wing1d_profile_sources_thumb.jpg` (85 kB)
 - Bundling: still
 - SHA-256: `63ede6fea12f329925659543e61d942c94e337a620dc99ed0e22d1d8b852f328`
@@ -666,8 +666,8 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **Peak detection and matching** — Gaussian peaks are raised at 4 known positions (60, 150, 245, 330) and noise is added over 30 steps from σ = 0 to 0.42. Because `local_min_max_funct_1d` uses strict inequalities, the raw waveform's maxima blow up from 4 to 132. Put it through a σ = 3 Gaussian smoothing and a height gate of 0.45 and it settles at 6 to the very end ([58, 149, 243, 254, 329, 337]). As long as the window and the template are the same length, `match_funct_1d_trans` returns lag = 0 exactly for all 4 positions in 12 of the 30 steps (up to σ 0.159). Ops used: `smooth_funct_1d_gauss`, `local_min_max_funct_1d`, `match_funct_1d_trans`.*
 
-- GIF: `docs/articles/assets/media/wing1d_peak_match.gif` (30 frames, 1000x668 px, 1.45 MB, 240 ms/frame, last frame 1600 ms)
-- Thumbnail: `docs/articles/assets/thumbs/wing1d_peak_match_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_peak_match.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_peak_match.gif) (30 frames, 1000x668 px, 1.45 MB, 240 ms/frame, last frame 1600 ms)
+- Thumbnail: [`docs/articles/assets/thumbs/wing1d_peak_match_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_peak_match_thumb.jpg)
 - Bundling: gif
 - SHA-256: `d14889843693fa5a0da90e3affd43d08409e16fb91c4990499b22e06b9238139`
 
@@ -711,8 +711,8 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **Clip the end off the envelope and it is 76 % wrong** — within a 12 µm scan (241 planes × 0.05 µm), the surface is walked in 32 steps from 6.0 µm at the centre to 0.30 µm at the very end. Centred, the error is 2.2e-14 µm. With the surface at 0.500 µm, `csi_peak_position` returns 0.1190 µm — finite, plausible, and 76 % wrong. Worse, the envelope's argmax is the 2nd of the 241 planes, i.e. **interior**, so the obvious "refuse anything pinned to an edge" check never fires (the worst point of the sweep is 84 % at 0.30 µm, and even there the argmax is plane 1). The op does start refusing from a surface of 2.69 µm, where the median-referenced edge level passes 0.0539 (the values in the figure were forced out with `max_edge_envelope=1.0`). Ops used: `csi_signal_simulate`, `csi_envelope`, `csi_peak_position`.*
 
-- GIF: `docs/articles/assets/media/wing1d_envelope_truncation.gif` (32 frames, 1000x668 px, 1.43 MB, 240 ms/frame, last frame 2000 ms)
-- Thumbnail: `docs/articles/assets/thumbs/wing1d_envelope_truncation_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_envelope_truncation.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_envelope_truncation.gif) (32 frames, 1000x668 px, 1.43 MB, 240 ms/frame, last frame 2000 ms)
+- Thumbnail: [`docs/articles/assets/thumbs/wing1d_envelope_truncation_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_envelope_truncation_thumb.jpg)
 - Bundling: gif
 - SHA-256: `ce035df03e06ff0c2e1b5ce485f16e45782ef8613f1475b1371d1d93c74e3612`
 
@@ -809,8 +809,8 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **How the defect frequency comes out (the process)** — a bearing record deliberately excited at the outer-race pass frequency the geometry gives, BPFO = 108.0000 Hz, is taken to a diagnosis in 7 steps. In the raw spectrum the defect rate carries an amplitude of only 1.19e-02; what stands out is the 3024 Hz structural resonance (0.1175). Spectral kurtosis (window 64, maximum 4.5956 @ 2000 Hz) picks the demodulation band 1600–2400 Hz — 1000 Hz below the true 3000 Hz resonance, because **SK returns a band, not a line** — and band-pass → envelope → transform gives 108.0000 Hz, which matches the geometric BPFO of 108.0000 Hz to 0.0000 %. **The honest breakdown**: that band's band_fraction is 0.2250, indistinguishable from the 0.2348 of white noise put through the same band. What separates them is the prominence instead, 30582 against 2666 (a human picking 2600–3400 Hz, straddling the resonance, raises band_fraction to 0.8368). Hand-assembling the same thing from `dsp.bandpass` + `dsp.envelope` + rfft agrees with the op's return to 0.0e+00 — the proof that nothing was rebuilt. Ops used: `bearing_defect_frequencies`, `synthesize_bearing_signal`, `spectrum`, `spectral_kurtosis`, `bandpass`, `envelope`, `envelope_spectrum`.*
 
-- GIF: `docs/articles/assets/media/wing1d_envelope_flow.gif` (7 frames, 940x522 px, 0.18 MB, 1500 ms/frame, last frame 3000 ms)
-- Thumbnail: `docs/articles/assets/thumbs/wing1d_envelope_flow_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_envelope_flow.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_envelope_flow.gif) (7 frames, 940x522 px, 0.18 MB, 1500 ms/frame, last frame 3000 ms)
+- Thumbnail: [`docs/articles/assets/thumbs/wing1d_envelope_flow_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_envelope_flow_thumb.jpg)
 - Bundling: gif
 - SHA-256: `b437cde7351aeaac59a4aed6f0a757a0cdd6f5d019d1a97f7ab392e2c141dc04`
 
@@ -871,7 +871,7 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **Fractional-octave bands — the even fractions have no 1 kHz band** — 6 sheets measuring a 1000 Hz pure tone of amplitude 0.7 in 1/1, 1/2, 1/3, 1/6, 1/12 and 1/24 octaves. Every fraction returns the closed form 10log10(A²/2) = -6.108339 dB for the band level (largest difference 0.0e+00 dB). What differs is **which band** reports it: for the odd fractions [1, 3] there is a band centred on exactly 1000.000 Hz, while for the even ones [2, 6, 12, 24] the exponent offset puts 1000 Hz on a band **edge**, so the same energy is reported from an awkward band centred at 1188.50 Hz, 944.06 Hz, 971.63 Hz or 1014.50 Hz. That is a definition and not a defect, but quoting "the level at 1 kHz" without knowing it makes the quote a lie. Empty bands fall to the floor (−200 dB) rather than to −inf. Ops used: `octave_bands`, `octave_spectrum`.*
 
-- PNG (tile): `docs/articles/assets/wing1d_octave_family.png` (1458x868 px, 54 kB, 6 panels / 3  columns)
+- PNG (tile): [`docs/articles/assets/wing1d_octave_family.png`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing1d_octave_family.png) (1458x868 px, 54 kB, 6 panels / 3  columns)
 - Thumbnail (this is what the article shows): `docs/articles/assets/wing1d_octave_family_thumb.jpg` (47 kB)
 - Bundling: sheet
 - SHA-256: `986bd447a3a01fe7fb0ead8a50aea99bec869fb81a57752a74916f0ae4c83c72`

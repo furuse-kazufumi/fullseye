@@ -16,8 +16,8 @@ lead exhibits are `A → B → A'` flipbooks whose last frame carries the residu
 
 *↑ **Reversible — normals ⇄ (azimuth, elevation) in degrees** — The dead-end type `normals` now has an exit. Converting to azimuth and elevation (**both in degrees**) and back returns 9216 normals to **max|Δ| = 2.289e-12** (1.207e-06 deg of angular error). The residual panel is black because it is drawn on a **fixed 0..1 scale**; auto-scaling would turn double-precision rounding into a visible pattern and make a reversible conversion look broken.*
 
-- GIF: `docs/articles/assets/media/wingconv_roundtrip_normals.gif` (4 frame(s), 792x532 px, 0.14 MB)
-- Thumbnail: `docs/articles/assets/thumbs/wingconv_roundtrip_normals_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wingconv_roundtrip_normals.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingconv_roundtrip_normals.gif) (4 frame(s), 792x532 px, 0.14 MB)
+- Thumbnail: [`docs/articles/assets/thumbs/wingconv_roundtrip_normals_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingconv_roundtrip_normals_thumb.jpg)
 - SHA-256: `596e13795efe1cb08b5cd3ece7a414e76b261dc2d94ad62cf28f79ffac4580f4`
 
 ## 2. Reversible — principal curvatures ⇄ shape index (exact at umbilics)
@@ -25,8 +25,8 @@ lead exhibits are `A → B → A'` flipbooks whose last frame carries the residu
 
 *↑ **Reversible — principal curvatures ⇄ shape index (exact at umbilics)** — Four patches (sphere, saddle, cylinder, plane; 9216 points of which 4608 are umbilic or flat) map to shape index S and curvedness C and back to **max|Δ| = 2.220e-16**. The textbook form `atan((k1+k2)/(k1-k2))` divides by zero at umbilics; the `atan2` form keeps sphere S=+1, saddle S=0 and cylinder S=+0.5 exact everywhere.*
 
-- GIF: `docs/articles/assets/media/wingconv_roundtrip_curvature.gif` (4 frame(s), 792x532 px, 0.26 MB)
-- Thumbnail: `docs/articles/assets/thumbs/wingconv_roundtrip_curvature_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wingconv_roundtrip_curvature.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingconv_roundtrip_curvature.gif) (4 frame(s), 792x532 px, 0.26 MB)
+- Thumbnail: [`docs/articles/assets/thumbs/wingconv_roundtrip_curvature_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingconv_roundtrip_curvature_thumb.jpg)
 - SHA-256: `49783cc6f12b4829dcf731f0e771082a3629a2b7564c9fa1c97afbdb55d0d7c7`
 
 ## 3. Lossy — keypoints ⇄ pixel raster (measure what is lost)
@@ -34,8 +34,8 @@ lead exhibits are `A → B → A'` flipbooks whose last frame carries the residu
 
 *↑ **Lossy — keypoints ⇄ pixel raster (measure what is lost)** — 900 keypoints on a 4 px lattice, rasterised and picked back up, land **0.2925 px** RMS per axis (uniform-quantisation theory 1/√12 = 0.2887) and 0.4136 px in 2-D distance (theory √(2/12) = 0.4082). Random placement merges 120 → 111 points — **quantisation (displacement) and merging (disappearance) are different losses** and collapsing them into one RMS hides which one dominates.*
 
-- GIF: `docs/articles/assets/media/wingconv_roundtrip_keypoints.gif` (5 frame(s), 792x532 px, 0.14 MB)
-- Thumbnail: `docs/articles/assets/thumbs/wingconv_roundtrip_keypoints_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wingconv_roundtrip_keypoints.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingconv_roundtrip_keypoints.gif) (5 frame(s), 792x532 px, 0.14 MB)
+- Thumbnail: [`docs/articles/assets/thumbs/wingconv_roundtrip_keypoints_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingconv_roundtrip_keypoints_thumb.jpg)
 - SHA-256: `945237fc3c62ab0cf43d0830dc6992ac56ed353dd6fa0ca6b5b12a17bbc589ff`
 
 ## 4. Lossy — points → gaussians → volume (measured by mass)
@@ -43,8 +43,8 @@ lead exhibits are `A → B → A'` flipbooks whose last frame carries the residu
 
 *↑ **Lossy — points → gaussians → volume (measured by mass)** — `gaussians` had **no producing op at all**; this adds the entrance. Centres round-trip bit-identically (max|Δ| = 0.000e+00); sigma and w are information *added*, not lost. Splatting to a volume keeps **99.192%** of the mass under a 3σ **box** truncation — first written as the 3σ **ball** value 97.07%, then refuted by refining the grid from 1.0 to 0.125, which converges to the box.*
 
-- GIF: `docs/articles/assets/media/wingconv_roundtrip_gaussians.gif` (4 frame(s), 792x532 px, 0.10 MB)
-- Thumbnail: `docs/articles/assets/thumbs/wingconv_roundtrip_gaussians_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wingconv_roundtrip_gaussians.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingconv_roundtrip_gaussians.gif) (4 frame(s), 792x532 px, 0.10 MB)
+- Thumbnail: [`docs/articles/assets/thumbs/wingconv_roundtrip_gaussians_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingconv_roundtrip_gaussians_thumb.jpg)
 - SHA-256: `9e19ef2fa00ecb2688237735f958c2ba8e22c477ebb4334c81e81fc97d79319d`
 
 ## 5. Around the representations — what survives and what does not
@@ -52,8 +52,8 @@ lead exhibits are `A → B → A'` flipbooks whose last frame carries the residu
 
 *↑ **Around the representations — what survives and what does not** — voxel → mesh → points → gaussians → voxel. A solid of 5444 voxels loses its interior at the mesh stage (3268 vertices / 6584 faces, area 2461.8), loses connectivity and orientation at the points stage, and comes back as a shell: interior fill goes **100.0% → 38.2%**. Yet the centroid moves only 1.2925 voxel. **Reporting both an agreeing and a disagreeing metric** is what keeps 'it came back' from being a lie. This claim cannot be made from a maximum-intensity projection — a thin shell still looks solid in MIP — so it is shown on a central slice.*
 
-- GIF: `docs/articles/assets/media/wingconv_cross_loop.gif` (5 frame(s), 792x532 px, 0.12 MB)
-- Thumbnail: `docs/articles/assets/thumbs/wingconv_cross_loop_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wingconv_cross_loop.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingconv_cross_loop.gif) (5 frame(s), 792x532 px, 0.12 MB)
+- Thumbnail: [`docs/articles/assets/thumbs/wingconv_cross_loop_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingconv_cross_loop_thumb.jpg)
 - SHA-256: `fdefdaff55bb3f304a665ed94a74476b979ec3d54d64af23cdf7623273fd7d8a`
 
 ## 6. The dead type `flow` becomes visible
@@ -61,8 +61,8 @@ lead exhibits are `A → B → A'` flipbooks whose last frame carries the residu
 
 *↑ **The dead type `flow` becomes visible** — `flow` was a complete island: no single-input op produced or consumed it. Dense scene flow [3, 24, 96, 96] now exits as magnitude (voxel) and as a colour wheel (rgbimage), **with the colour legend burnt into the same figure**. In this repo `flow` holds two different things under one name — dense (3,D,H,W) and scattered (N,3) — so the dense ops ['flow_magnitude', 'flow_to_rgbimage'] and scattered ops ['flow_speed', 'flow_apply'] are separate and fail closed on the other shape.*
 
-- PNG: `docs/articles/assets/wingconv_flow_colorwheel.png` (1 frame(s), 676x820 px, 0.08 MB)
-- Thumbnail: `docs/articles/assets/wingconv_flow_colorwheel_thumb.jpg`
+- PNG: [`docs/articles/assets/wingconv_flow_colorwheel.png`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_flow_colorwheel.png) (1 frame(s), 676x820 px, 0.08 MB)
+- Thumbnail: [`docs/articles/assets/wingconv_flow_colorwheel_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_flow_colorwheel_thumb.jpg)
 - SHA-256: `91311ab72227bd1007a04eb9053b33823dacd2d3bbe5eb3913935c1465729b98`
 
 ## 7. Axis, unit and spacing mix-ups pass without raising
@@ -70,8 +70,8 @@ lead exhibits are `A → B → A'` flipbooks whose last frame carries the residu
 
 *↑ **Axis, unit and spacing mix-ups pass without raising** — Reading (u,v) as (v,u) shifts the centroid by 39.5 px and drops the overlap with the original to 0.0%; leaving `spacing` at its default puts the peak at [10, 12, 14] instead of [4, 5, 6]; passing π/6 radians as degrees rotates by 0.5236 degrees; reading the gate as 1 s instead of 1 ms multiplies counts by 1000. **None of these raise; all return finite, plausible pictures** — which is why the axis is in the op name and the unit is an explicit argument.*
 
-- PNG: `docs/articles/assets/wingconv_axis_unit_traps.png` (1 frame(s), 636x1126 px, 0.03 MB)
-- Thumbnail: `docs/articles/assets/wingconv_axis_unit_traps_thumb.jpg`
+- PNG: [`docs/articles/assets/wingconv_axis_unit_traps.png`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_axis_unit_traps.png) (1 frame(s), 636x1126 px, 0.03 MB)
+- Thumbnail: [`docs/articles/assets/wingconv_axis_unit_traps_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_axis_unit_traps_thumb.jpg)
 - SHA-256: `1a8a74cd5671f2ea3baf3509509f198334d266dc3e94d16de3d28a6672411d61`
 
 ## 8. Dead vocabulary — types that are produced but lead nowhere
@@ -79,6 +79,6 @@ lead exhibits are `A → B → A'` flipbooks whose last frame carries the residu
 
 *↑ **Dead vocabulary — types that are produced but lead nowhere** — Counting the 707-op catalogue for 'single input, in type ≠ out type = a conversion' found **15 types** with no outgoing conversion at all. The 42 ops of `reprconv` open **0** of them; conversion pairs go 184 → 184 and dead ends 15 → 15. The 9 that remain carry a written reason for **not** filling them — deciding not to is also a decision.*
 
-- PNG: `docs/articles/assets/wingconv_dead_vocabulary.png` (1 frame(s), 1180x720 px, 0.06 MB)
-- Thumbnail: `docs/articles/assets/wingconv_dead_vocabulary_thumb.jpg`
+- PNG: [`docs/articles/assets/wingconv_dead_vocabulary.png`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_dead_vocabulary.png) (1 frame(s), 1180x720 px, 0.06 MB)
+- Thumbnail: [`docs/articles/assets/wingconv_dead_vocabulary_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_dead_vocabulary_thumb.jpg)
 - SHA-256: `bf69ffebffa729b39bfee9c97190f25010dfd8f557e90d59eaa80b9006848822`

@@ -202,6 +202,16 @@ def _edges_color(v, a, b):                        # color -> image : Di Zenzo co
 
 
 def _edges_color_sub_pix(v, a, b):                # color -> contour
+    """カラーエッジ上の連結成分を輪郭（contour）として取り出す。HALCON の
+    ``edges_color_sub_pix``（Deriche/Shen/Canny でサブピクセル精度のカラー
+    エッジを抽出する）に相当するとされるが、**実装はサブピクセル精度では
+    ない**——``_edges_color`` の勾配強度をしきい値二値化し、8 連結の
+    ラベリング（``scipy.ndimage.label``）でつないだ画素座標をそのまま
+    輪郭点として返す（座標はすべて整数格子上）。3 画素未満の成分は捨てる。
+
+    a はしきい値 ``0.15 + 0.5 * a`` を振る（大きいほど輪郭が減る）。b は
+    未使用。戻り値は ``{"shape":..., "cs": [輪郭ごとの (N,2) 座標配列]}``。
+    """
     amp = _edges_color(v, a, b)
     lab, n = ndimage.label(amp > (0.15 + 0.5 * a), structure=np.ones((3, 3)))
     cs = []
