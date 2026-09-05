@@ -38,14 +38,6 @@ import backends_typed as bt  # noqa: E402
 #: **どんな入力でも定数しか返せない**ことが分かっていて、まだ直していない op。
 #: 黙って許すのではなく、op 名と「なぜ直せないか」を書いて数を固定する。
 KNOWN_DEAD_BRIDGES = {
-    "tb_indices_to_labels":
-        "reprconv の 'labels' は **1 次元**(indices_to_labels((5,)) -> (3,))なのに、"
-        "TYPE_TO_SORT は 'labels' を 3-D の volume へ写す。実測 0/60。"
-        "点群セグメンテーション 3 op と違って**点が手元に無い**ので体積へ焼く材料が"
-        "無く、1-D を 3-D に仕立てるのは捏造になる。正しい直し方は台帳の型語彙を"
-        "『体積のラベル』と『列のラベル』に分けることだが、新しい型に消費 op が"
-        "無いと袋小路の型が増える(この repo が繰り返し踏んできた形)ので"
-        "単独では入れない。",
 }
 
 # 2026-09-05: ``tb_specular_coefficient_map`` と ``tb_specular_diffuse_split`` を
