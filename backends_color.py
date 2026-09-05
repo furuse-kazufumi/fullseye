@@ -119,6 +119,15 @@ def _trans_to_rgb(v, a, b):                       # color -> color : HSV -> RGB 
 
 
 def _linear_trans_color(v, a, b):                 # color -> color : 3x3 channel mixing matrix
+    """3x3 の混合行列でチャンネル間を線形変換する（アフィン色変換）。HALCON の
+    ``linear_trans_color``（多チャンネル画像の色値のアフィン変換を計算する）
+    に相当（本実装はオフセット項なしの純粋な線形変換）。
+
+    対角成分 0.6 + 非対角 0.2 を基本形とし、a で位相 ``theta = pi * a`` を
+    振って対角成分の一部を ``cos(theta)``/``sin(theta)`` で回転的に変化させた
+    行列を作り、各行を合計 1 に正規化してから ``c @ M.T`` を掛ける。
+    a が 0→1 で R/G 寄りの重みづけが周期的に入れ替わる。b は未使用。
+    """
     c = _to_color(v)
     th = np.pi * a
     M = np.array([[0.6 + 0.4 * np.cos(th), 0.2, 0.2],
