@@ -86,7 +86,7 @@ def main():
     print()
     img = np.random.default_rng(0).random((24, 24))
     smooth_name = ops.list(namespace="smooth")[0]
-    sm = getattr(vision, "smooth")
+    sm = vision.smooth
     out = getattr(sm, smooth_name)(img, 0.5, 0.5)          # 進化 op(a/b ノブ)
     print(f"  [evolution] vision.smooth.{smooth_name}(img, 0.5, 0.5)  -> {out.shape}")
     if "intrinsic_matrix" in ops:

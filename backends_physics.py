@@ -320,7 +320,6 @@ def _safe(fn):
     """
     from backend_safe import guard
     return guard(fn, "image", on_fail=_img, finish=_finish_clip01)
-    return w
 
 
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):

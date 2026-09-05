@@ -140,7 +140,10 @@ def main() -> int:
                "traceback": "".join(traceback.format_exception(t, v, tb))}
         log._emit(rec)
         log.n_fail += 1
-        log.findings.append({"step": "slot:" + _cur_phase["name"],
+        # _cur_phase は log の属性で、しかも**文字列**(log._cur_phase = name)。
+        # ここは未定義名かつ dict 添字で、この経路が走った瞬間に NameError に
+        # なっていた —— 例外を記録するためのフックが例外で死ぬ(ruff F821)。
+        log.findings.append({"step": "slot:" + rec["during_phase"],
                              "detail": rec["slot_exception"] + "\n" + rec["traceback"]})
         sys.__excepthook__(t, v, tb)
     sys.excepthook = _slot_hook

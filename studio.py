@@ -1916,8 +1916,7 @@ def _build_surface3d_series(heightmap):
         grad.setColorAt(0.65, QtGui.QColor(228, 198, 92))
         grad.setColorAt(1.0, QtGui.QColor(248, 248, 248))
         series.setBaseGradient(grad)
-        style = getattr(getattr(Q3DTheme, "ColorStyle", Q3DTheme),
-                        "ColorStyleRangeGradient")
+        style = getattr(Q3DTheme, "ColorStyle", Q3DTheme).ColorStyleRangeGradient
         series.setColorStyle(style)
     except Exception:
         pass

@@ -381,7 +381,10 @@ def make_generators():
         "mask": lambda rng: (lambda m: (m.__setitem__(
             (slice(6, 26), slice(8, 24)), True), m)[1])(np.zeros((32, 32), bool)),
         "rgb": lambda rng: rng.random((24, 32, 3)),
-        "rgbimage": lambda rng: rng.random((24, 32, 3)),
+        # ここに二度目の "rgbimage" があった —— 上の二色性レンダ(意図つき)を
+        # 一様乱数で**黙って上書き**しており、鏡面分離系の op が
+        # 「ランク 1 の条件を満たさない」で永久に拒否されていた。
+        # 辞書は後勝ちなので、先に書いた意図が消える(ruff F601 が検出)。
         "rgba": lambda rng: rng.random((24, 32, 4)),
         "rgba_premul": lambda rng: (lambda a: np.concatenate(
             [rng.random((24, 32, 3)) * a, a], axis=-1))(rng.random((24, 32, 1))),
@@ -429,7 +432,8 @@ PARAM_HINTS = {
     "rect": lambda rng: (4, 4, 60, 40),
     "xlim": lambda rng: (0.0, 10.0), "ylim": lambda rng: (0.0, 5.0),
     "font_size": lambda rng: 12,
-    "radius": lambda rng: 6.0,
+    # ここに "radius": 6.0 があったが、下の 1.5 に上書きされて死んでいた。
+    # 現行の挙動は 1.5 なので、死んでいる側を消す(ruff F601)。
     "offset": lambda rng: (2, 2),
     "reg": lambda rng: 0.1,
     "levels": lambda rng: 256,
@@ -1240,7 +1244,6 @@ OP_ARG_BUILDERS = {
     "query_distance": _b_query_distance,
     "integrate": _b_integrate,
     "shot_descriptor": _b_shot,
-    "leader_line": _b_leader_line,
     "tilemap_render": _b_tilemap,
     "parallax_layers": _b_parallax,
     "abcd_matrix": _b_abcd,
@@ -1471,7 +1474,8 @@ OP_PARAM_HINTS = {
     # いたおかげで壊れた値が下流へ流れずに済んでいたが、この op は一度も
     # 仕事をしていなかった(進化側の tb_sphere_sdf は 40/40 で定数ゼロ)。
     ("sphere_sdf", "center"): lambda rng: np.array([5.0, 5.0, 5.0]),
-    ("sphere_sdf", "R"): lambda rng: 3.0,
+    # ("sphere_sdf","R"): 3.0 はここにあったが下の 2.0 に上書きされて死んでいた
+
     ("render_lambertian", "albedo"): lambda rng: 0.7,
     ("render_lambertian", "light"): lambda rng: (lambda v: v / np.linalg.norm(v))(
         np.array([0.3, 0.3, 1.0])),

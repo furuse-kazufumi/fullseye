@@ -202,6 +202,45 @@ py-modules = [
                    # `<op>.<lang>.html`(en / zh / tw / ko / de)も同じ glob に入る。
                    "op_help/*/*.html"]
 
+[tool.ruff]
+# 静的解析は**様式を揃えるためではなく、実害のあるバグを止めるために**入れている。
+# 2026-09-05 に導入。きっかけは、11,254 件のテストが全部緑のまま
+# `tools/chain_fuzz.py` の辞書キー重複(F601)が見逃されていたこと ——
+# `"rgbimage"` が二重定義され、**後勝ちの一様乱数が、意図をもって書かれた
+# 二色性反射レンダを黙って殺していた**。そのせいで鏡面分離 op 2 本が
+# 「物理条件を満たす絵が一度も来ない」ため永久に拒否され、「死んだ op」として
+# 台帳に載っていた。同じ重複があと 3 組(radius / leader_line / sphere_sdf.R)。
+line-length = 100
+target-version = "py310"
+extend-exclude = ["experiments", "out", ".out", "docs"]
+
+[tool.ruff.lint]
+# **絞る**。この repo の書き方(printf 形式の書式・fail-soft の裸 except)を
+# 様式違反として大量に出すルールは、信号を雑音に埋めるので入れない。
+# 残すのは「実行時に壊れる/黙って消える」クラスだけ。
+select = [
+    "F",      # pyflakes: 未定義名・未使用 import・**辞書キーの重複**
+    "E9",     # 構文/IO エラー
+    "B",      # bugbear: ループ変数を閉じ込めた関数、except からの raise など
+    "PLE",    # pylint error: 実行時に確実に壊れるもの
+    "RUF012", # ミュータブルなクラス属性の既定値
+    "RUF013", # 暗黙の Optional
+]
+ignore = [
+    # この repo の設計・書き方として意図的なもの(理由つきで無効化する)
+    "B905",   # zip(strict=) —— 呼び出し側で長さを保証している箇所が多い
+    "B007",   # 使わないループ変数(_ 命名を強制しない)
+    "B904",   # except 内の raise ... from —— fail-soft 台帳が出所を持つ
+    "B008",   # 引数既定での関数呼び出し
+    "F401",   # 未使用 import(optional backend の存在確認に使う形がある)
+    "F541",   # プレースホルダの無い f-string
+    "F841",   # 未使用のローカル変数(実測の途中結果を残す書き方がある)
+]
+
+[tool.ruff.lint.per-file-ignores]
+# テストは「わざと壊す」コードを書く場所なので、そこだけ緩める
+"tests/*" = ["B017", "F811"]
+
 [tool.coverage.run]
 # ライブラリ本体のカバレッジを測る(テスト・開発ツール・研究スクラッチは対象外)。
 omit = ["tests/*", "tools/*", "spikes/*", "setup.py", "conftest.py",
