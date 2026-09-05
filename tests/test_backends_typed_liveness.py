@@ -723,6 +723,8 @@ def test_every_ledger_entry_names_a_live_bridge_op():
         "KNOWN_DEGENERATE_BRIDGES": KNOWN_DEGENERATE_BRIDGES,
         "KNOWN_NONFINITE_BY_CONTRACT": KNOWN_NONFINITE_BY_CONTRACT,
         "KNOWN_IDENTITY_BRIDGES": KNOWN_IDENTITY_BRIDGES,
+        # 2026-09-05 追加。台帳を足したら陳腐化検査も**同時に**足す(規律 4)。
+        "TORCH_BACKED_BRIDGES": TORCH_BACKED_BRIDGES,
     }
     stale = {k: sorted(set(v) - live) for k, v in ledgers.items() if set(v) - live}
     assert not stale, "台帳に居ない op 名が残っている(改名・削除・タイポ): %s" % stale
