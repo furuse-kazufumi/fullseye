@@ -30,6 +30,11 @@ def _norm01(v):
 
 # ── Regions 生成(fn(v,a,b) -> 二値 region。v.shape を画布に、a/b を幾何パラメータに)──── #
 def _gen_circle(v, a, b):
+    """円形の region を生成する。HALCON の ``gen_circle``(円を生成する)に相当。
+
+    画布中心 ``(h/2, w/2)`` を中心とする円板を描き、内部を 1・外部を 0 として
+    返す。``a`` が半径を ``min(h, w)`` の 10%〜50% の範囲で振る。``b`` は未使用。
+    """
     h, w, Y, X = _grid(v.shape)
     cy, cx = (h - 1) / 2, (w - 1) / 2
     r = (0.1 + 0.4 * a) * min(h, w)
@@ -37,6 +42,12 @@ def _gen_circle(v, a, b):
 
 
 def _gen_ellipse(v, a, b):
+    """軸並行の楕円 region を生成する。HALCON の ``gen_ellipse``(楕円を生成する)
+    に相当(向き固定の近似 —— 本家は回転角パラメータも取る)。
+
+    ``a`` が横半径(画像幅の 10%〜50%)、``b`` が縦半径(画像高さの 10%〜50%)を
+    振る。
+    """
     h, w, Y, X = _grid(v.shape)
     cy, cx = (h - 1) / 2, (w - 1) / 2
     ra = (0.1 + 0.4 * a) * w / 2 + 1e-6
@@ -45,6 +56,12 @@ def _gen_ellipse(v, a, b):
 
 
 def _gen_rectangle2(v, a, b):
+    """任意角度の矩形 region を生成する。HALCON の ``gen_rectangle2``
+    (任意方向の矩形を生成する)に相当。
+
+    中心を画布中心に固定し、``b`` が回転角(``b*pi`` ラジアン、0〜180°)、``a``
+    が半幅(画像幅の 10%〜50%)と半高さ(連動して画像高さの 6%〜30%)を振る。
+    """
     h, w, Y, X = _grid(v.shape)
     cy, cx = (h - 1) / 2, (w - 1) / 2
     th = b * np.pi
@@ -57,12 +74,24 @@ def _gen_rectangle2(v, a, b):
 
 
 def _gen_checker_region(v, a, b):
+    """市松模様(チェッカーボード)region を生成する。HALCON の
+    ``gen_checker_region``(チェッカー領域を生成する)に相当。
+
+    セルサイズを ``a`` で ``min(h, w)`` の 5%〜25% の範囲に振り、
+    ``(row//cell + col//cell)`` が偶数のセルを前景(1)とする。``b`` は未使用。
+    """
     h, w, Y, X = _grid(v.shape)
     cell = max(2, int((0.05 + 0.2 * a) * min(h, w)))
     return (((X.astype(int) // cell) + (Y.astype(int) // cell)) % 2 == 0).astype(np.float64)
 
 
 def _gen_grid_region(v, a, b):
+    """格子線 region を生成する。HALCON の ``gen_grid_region``(直線または画素から
+    region を生成する)の格子パターンに相当する簡略版。
+
+    ``a`` が格子間隔(``min(h, w)`` の 5%〜25%)を振り、行・列インデックスが
+    間隔の倍数の画素を前景とする。``b`` は未使用。
+    """
     h, w, Y, X = _grid(v.shape)
     step = max(2, int((0.05 + 0.2 * a) * min(h, w)))
     return ((X.astype(int) % step == 0) | (Y.astype(int) % step == 0)).astype(np.float64)
