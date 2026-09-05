@@ -25,6 +25,37 @@ warnings.filterwarnings("ignore")
 
 
 # --------------------------------------------------------------------------- #
+# ★Studio の設定を**セッション全体で**使い捨て ini へ逃がす。                  #
+# --------------------------------------------------------------------------- #
+# `QSettings("Fullseye", "Studio")` はネイティブ格納庫(Windows ならレジストリ
+# HKCU\Software\Fullseye\Studio)に書く。隔離を**個々のテストファイル**に置いて
+# いたので、置き忘れたファイルから利用者の実レジストリが汚れていた。
+#
+# 2026-09-05 の監査で実害を確認: `recent_files` 10 件のうち 8 件が pytest の
+# 一時パス、`system\operator_timeout_ms` などの実値も残っていた。
+# (隔離は 3 ファイル中 2 つにしかなく、`test_studio_params.py` が素通しだった。)
+#
+# 個別に足すのをやめ、**セッション autouse でここに 1 つだけ**置く。
+# 環境変数は `studio._settings()` が見る唯一の入口なので、これで全テストが覆われる。
+_STUDIO_SETTINGS_ENV = "FULLSEYE_STUDIO_SETTINGS"
+
+
+@pytest.fixture(scope="session", autouse=True)
+def _isolate_studio_settings(tmp_path_factory):
+    """テストが利用者のレジストリ / plist / 設定 ini に触れないようにする。"""
+    prev = os.environ.get(_STUDIO_SETTINGS_ENV)
+    ini = tmp_path_factory.mktemp("studio_settings") / "studio.ini"
+    os.environ[_STUDIO_SETTINGS_ENV] = str(ini)
+    try:
+        yield ini
+    finally:
+        if prev is None:
+            os.environ.pop(_STUDIO_SETTINGS_ENV, None)
+        else:
+            os.environ[_STUDIO_SETTINGS_ENV] = prev
+
+
+# --------------------------------------------------------------------------- #
 # Deterministic input battery, one bank per sort.                             #
 # --------------------------------------------------------------------------- #
 def _rng():
