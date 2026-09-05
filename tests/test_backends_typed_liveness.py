@@ -410,7 +410,6 @@ CROSS_SORT_IDENTITY_BY_CONTRACT = {}
 #: op。``KNOWN_DEAD_BRIDGES``(fallback の指紋 = 小さい形の全ゼロ)は自動で含める。
 #: ここに書くのは、fallback ではなく **op 自身が走った上で**定数になるもの。
 KNOWN_DEGENERATE_BRIDGES = {
-    "zz_not_a_real_op": "MUTATION TEST: fabricated ledger entry.",
     "tb_euclidean_cluster":
         "op は走っている(16^3 のラベル体積が返る)が、中身が**全ゼロ** —— 種の点群"
         "(160 点、一辺 ~10 の箱、点間隔 ~0.4)に対して束縛 ``tol=0.5``(PARAM_HINTS)"
