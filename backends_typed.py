@@ -139,7 +139,7 @@ TYPE_TO_SORT = {
 #: 単位に合う種を渡す仕組みができたら外してよい(その時は `opassist` の
 #: 単位ベース種と同じ考え方で `chain_fuzz` 側に種を足すのが筋)。
 _OP_BRIDGE_SKIP = {
-    "fresnel_dielectric", "fresnel_conductor", "beer_lambert_transmittance",
+    "fresnel_conductor", "beer_lambert_transmittance",
     "slab_transmittance", "thin_film_reflectance", "prism_min_deviation_deg",
     "cie_xyz_from_wavelength", "spectrum_to_srgb",
 }
