@@ -3,18 +3,18 @@
 Grounded in the scraped MVTec reference (2313 real operators, v2605). Counts
 below are real numpy/scipy/skimage/cv2 implementations that run: core ops
 are regression-tested; auto ops must pass the functional gate (which rejects
-anything not returning the declared sort — 1 gate-failing auto op(s) are
+anything not returning the declared sort — 2 gate-failing auto op(s) are
 excluded here, not counted).
 
 ## Headline
-- **323 / 2313 distinct real HALCON operators implemented (14.0%)**
-  = 306 evolvable registry ops + 17 n-ary capability ops (disjoint).
+- **979 / 2313 distinct real HALCON operators implemented (42.3%)**
+  = 979 evolvable registry ops + 17 n-ary capability ops (disjoint).
 - dangling registry `Op.halcon` (fake names): **0** (fail-closed).
 
 ## Evolvable registry (single-image pipeline, coverage-counted)
-- registry ops: 654 ; distinct real HALCON ops covered: **307**
-- auto-generated ops passing the functional gate: 226 / 227
-- auto ops counted in coverage but FAILING the gate: 1 ['abs_image']
+- registry ops: 881 ; distinct real HALCON ops covered: **981**
+- auto-generated ops passing the functional gate: 225 / 227
+- auto ops counted in coverage but FAILING the gate: 2 ['abs_image', 'area_center']
 
 ## N-ary capability tier (multi-input; genuine, not evolvable)
 - ops: 17 (all pass functional gate) — abs_diff_image, add_image, bit_and, bit_or, convol_image, difference, div_image, intersection, max_image, min_image, mult_image, overpaint_region, paint_gray, reduce_domain, sub_image, symm_difference, union2
