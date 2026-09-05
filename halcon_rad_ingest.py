@@ -9,7 +9,7 @@ like the other `.claude/skills/corpus/` sources; `rad-research` greps it directl
 stdlib only — no sklearn/anthropic needed (the taxonomy replaces clustering, the
 official descriptions replace LLM summarization).
 
-    py -3.11 halcon_rad_ingest.py --out C:/dev/docs/halcon_operators_corpus
+    py -3.11 halcon_rad_ingest.py --out <your>/halcon_operators_corpus
 """
 from __future__ import annotations
 
@@ -92,7 +92,8 @@ def chapter_skill(chapter, ops, n_cov):
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     # _corpus_v2 suffix + root SKILL.md => discoverable by `raptor-rad-ingest --reindex`
-    ap.add_argument("--out", default="C:/dev/docs/halcon_operators_corpus_v2")
+    ap.add_argument("--out", default=os.environ.get("HALCON_CORPUS_OUT", ""),
+                    help="出力先(既定は $HALCON_CORPUS_OUT)。必須")
     ap.add_argument("--operators", default=os.path.join(DATA, "halcon_operators.json"))
     a = ap.parse_args()
 

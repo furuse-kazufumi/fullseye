@@ -26,8 +26,10 @@ def _spec(cmd_tail, workdir, timeout, ext):
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--round", type=int, required=True)
-    ap.add_argument("--raptor", default="C:/dev/tools/raptor")
-    ap.add_argument("--workdir", default="C:/dev/tools/raptor/out/worklog/imgevolve")
+    ap.add_argument("--raptor", default=os.environ.get("RAPTOR_DIR", ""),
+                    help="raptor の repo dir(既定は $RAPTOR_DIR)")
+    ap.add_argument("--workdir", default=_default_workdir(),
+                    help="work-graph の作業 dir(既定は $RAPTOR_DIR/out/worklog/imgevolve)")
     ap.add_argument("--gens", type=int, default=40)
     a = ap.parse_args()
     n = a.round

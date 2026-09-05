@@ -514,6 +514,10 @@ def perceive_g1_real(qpos_npy, xml, out_gif="out/g1_real_sensors.gif", *, height
 
 if __name__ == "__main__":
     import sys
+    import os
     q = sys.argv[1] if len(sys.argv) > 1 else "out/evis_v2_walk_qpos.npy"
-    x = sys.argv[2] if len(sys.argv) > 2 else "C:/dev/projects/ms_human_700_jaw/scene_full_mjx.xml"
+    x = sys.argv[2] if len(sys.argv) > 2 else os.environ.get("FULLSEYE_EVIS_SCENE_XML", "")
+    if not x:
+        raise SystemExit("usage: evis_fullseye_bridge.py <qpos.npy> <scene.xml>  "
+                         "(or set FULLSEYE_EVIS_SCENE_XML)")
     print(perceive_evis_walk(q, x, log=lambda s: print(s, flush=True)))

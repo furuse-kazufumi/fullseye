@@ -26,7 +26,8 @@ def spec(cmd_tail: list[str], workdir: str, timeout: int, out_ext: str) -> dict:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--workdir", default="C:/dev/tools/raptor/out/worklog/imgevolve")
+    ap.add_argument("--workdir", default=_default_workdir(),
+                    help="work-graph の作業 dir(既定は $RAPTOR_DIR/out/worklog/imgevolve)")
     a = ap.parse_args()
     sd = HERE / "specs"; sd.mkdir(exist_ok=True)
     w = a.workdir
