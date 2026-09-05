@@ -7,7 +7,8 @@
   "shape": "geom",
   "params": {
    "kind": "affine"
-  }
+  },
+  "doc": "領域にアフィン変換（回転+シアー）を掛ける。``affine_trans_image`` と同じ ``_sh_geom`` の ``affine`` 分岐で連続値として変換したのち、``_rebinarise`` により 0.5 で二値化し直して {0,1} の領域として返す（幾何変換の補間で生じる中間値を除去するため）。a が回転角（-20°〜+20°）、b がシアー量を振る。\n\nHALCON の ``affine_trans_region``（領域に任意のアフィン 2D 変換を適用する演算）に相当する近似。"
  },
  {
   "halcon": "mirror_region",
@@ -17,7 +18,8 @@
   "shape": "geom",
   "params": {
    "kind": "mirror"
-  }
+  },
+  "doc": "領域を反転（ミラー）する。a の値で軸を切り替える: a<0.34 で上下反転（``flipud``）、0.34≤a<0.67 で左右反転（``fliplr``）、それ以外で転置（対角線反転、``x.T``）。b は未使用。フリップは値を変えない演算なので ``_rebinarise`` は実質何もしない。\n\nHALCON の ``mirror_region``（軸を指定して領域を反射する演算）に相当。HALCON は軸位置を任意に指定できるが、この実装は画像中心を通る 3 種類の軸（縦/横/対角）に固定されている近似。"
  },
  {
   "halcon": "zoom_region",
@@ -27,7 +29,8 @@
   "shape": "geom",
   "params": {
    "kind": "zoom"
-  }
+  },
+  "doc": "領域を等方（縦横同倍率）にズームする。倍率 ``s = 0.7+0.6a``（0.7〜1.3 倍）で中心基準に拡大縮小し、境界外は鏡映（reflect）で埋めたのち ``_rebinarise`` で 0.5 しきい値により二値領域に戻す。b は未使用。\n\nHALCON の ``zoom_region``（領域を指定倍率でズームする演算）に相当する近似。縦横独立の倍率を持つ ``zoom_image_factor`` とは異なり単一倍率のみ。"
  },
  {
   "halcon": "fill_up_shape",
@@ -37,7 +40,8 @@
   "shape": "region_trans",
   "params": {
    "kind": "remove_holes"
-  }
+  },
+  "doc": "領域内の小さな穴を埋める。``area_threshold = 16+200a`` 画素以下の穴だけを埋める（skimage の ``remove_small_holes``）。b は未使用。\n\nHALCON の ``fill_up_shape``（面積・円形度など形状特徴で選んだ穴だけを埋める演算）とは異なり、この実装は面積の上限だけで穴を選別する単純化された近似 —— 円形度や凸性など他の形状特徴によるフィルタリングはできない。"
  },
  {
   "halcon": "remove_noise_region",
@@ -48,7 +52,8 @@
   "params": {
    "op": "opening",
    "shape": "disk"
-  }
+  },
+  "doc": "円形構造要素（半径 ``_rad(a)``=1〜4）による二値オープニング（opening、収縮の後に膨張）で、孤立した小さな点状ノイズを除去する。b は未使用。\n\nHALCON の ``remove_noise_region``（小さな孤立領域=ノイズをフィルタ処理で除去する演算）に相当。円形構造要素のサイズだけがノイズ除去の強さを決める近似。"
  },
  {
   "halcon": "smallest_rectangle1",
@@ -58,7 +63,8 @@
   "shape": "region_trans",
   "params": {
    "kind": "shape_bbox"
-  }
+  },
+  "doc": "領域を囲む座標軸平行の外接矩形（axis-aligned bounding box）で塗りつぶした領域を返す。a, b は未使用。領域が空なら全ゼロを返す。\n\nHALCON の ``smallest_rectangle1``（座標軸に平行な最小外接矩形を求める演算）に相当する実装（回転を許す最小外接矩形の ``smallest_rectangle2`` とは別物）。"
  },
  {
   "halcon": "get_region_contour",
@@ -68,7 +74,8 @@
   "shape": "region_trans",
   "params": {
    "kind": "boundary"
-  }
+  },
+  "doc": "領域の輪郭（境界線、1 画素幅）を抽出する。領域からその収縮版（1 回の二値収縮）を引くことで外周だけを残す。a, b は未使用。``boundary`` seed op と同じ実装。\n\nHALCON の ``get_region_contour``（領域の輪郭を取得する演算、本来は XLD 輪郭として座標列を返す）とは出力形式が異なる近似 —— この backend は輪郭を region（画素マスク）として返し、XLD の座標点列にはしていない。"
  },
  {
   "halcon": "get_region_convex",
@@ -78,7 +85,8 @@
   "shape": "region_trans",
   "params": {
    "kind": "convex"
-  }
+  },
+  "doc": "領域の凸包（convex hull）を塗りつぶした領域として返す（``skimage.morphology.convex_hull_image``）。a, b は未使用。``shape_trans``（凸包への形状変換 seed op）と同じ実装。\n\nHALCON の ``get_region_convex``（領域の凸包を XLD 輪郭として取得する演算）とは出力形式が異なる近似 —— 輪郭の座標列ではなく塗りつぶした region を返す。"
  },
  {
   "halcon": "gen_region_polygon_xld",
@@ -88,7 +96,8 @@
   "shape": "xld",
   "params": {
    "kind": "to_region"
-  }
+  },
+  "doc": "XLD 輪郭（多角形の頂点列）を region（画素マスク）へ変換する。輪郭点を最近傍画素に打点したのち、``1+2a`` 回の二値膨張（dilation）で線を太らせて連結させる。b は未使用。\n\nHALCON の ``gen_region_polygon_xld``（XLD 多角形の内部を塗りつぶした region を生成する演算）とは異なり、この実装は多角形の内部を塗りつぶすのではなく、輪郭線そのものを膨張させて太らせるだけの近似 —— 閉じていない輪郭や自己交差する輪郭では本来の内部塗りつぶしと結果が食い違う。"
  },
  {
   "halcon": "connect_and_holes",
@@ -98,7 +107,8 @@
   "shape": "region_feat",
   "params": {
    "metric": "count"
-  }
+  },
+  "doc": "領域の連結成分数を数える（8 連結、``count_obj`` と同じ ``_sh_region_feat`` の ``count`` 分岐）。a, b は未使用。\n\nHALCON の ``connect_and_holes``（連結成分数と穴の数の 2 つを同時に返す演算）のうち**連結成分数だけ**を返す近似 —— feature sort は 1 スカラーしか運べないため、穴の数は含まれない（``area_holes`` が穴の面積比を別途計算する）。"
  },
  {
   "halcon": "elliptic_axis",
@@ -108,6 +118,7 @@
   "shape": "region_feat",
   "params": {
    "metric": "anisometry"
-  }
+  },
+  "doc": "領域に等価な楕円（equivalent ellipse、慣性モーメントが一致する楕円）の長軸と短軸の比（アスペクト比）を返す。``skimage.measure.regionprops`` の ``axis_major_length``/``axis_minor_length`` から計算し、/10 でおおよそ [0,1] 程度のスケールに収める（正規化ではないため、非常に細長い領域では 1 を超えうる）。a, b は未使用。\n\nHALCON の ``elliptic_axis``（等価楕円の長半径・短半径そのもの 2 つの長さを返す演算）とは異なり、この実装は長さではなく比（アニソメトリー、``anisometry`` と同じ metric）だけを 1 スカラーで返す近似。"
  }
 ]

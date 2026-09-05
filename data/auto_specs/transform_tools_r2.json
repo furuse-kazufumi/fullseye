@@ -1,3 +1,13 @@
 [
-  {"halcon": "affine_trans_polygon_xld", "category": "contour", "in_sort": "contour", "out_sort": "contour", "shape": "xld", "params": {"kind": "affine"}}
+ {
+  "halcon": "affine_trans_polygon_xld",
+  "category": "contour",
+  "in_sort": "contour",
+  "out_sort": "contour",
+  "shape": "xld",
+  "params": {
+   "kind": "affine"
+  },
+  "doc": "XLD 輪郭（多角形/曲線の頂点列）にアフィン回転を掛ける。画像中心を基準に角度 ``-20°+40a`` で回転させる（せん断・平行移動は行わない、回転のみの部分アフィン）。b は未使用。\n\nHALCON の ``affine_trans_polygon_xld``（XLD 多角形に任意のアフィン 2D 変換を適用する演算）とは異なり、この実装は回転成分だけを再現する近似で、拡大縮小やせん断は反映されない。"
+ }
 ]

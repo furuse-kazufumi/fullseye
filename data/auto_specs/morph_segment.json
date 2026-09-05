@@ -1,10 +1,94 @@
 [
-  {"halcon": "gray_erosion_shape", "category": "morphology", "in_sort": "image", "out_sort": "image", "shape": "graymorph", "params": {"op": "erosion", "shape": "disk"}},
-  {"halcon": "gray_dilation_shape", "category": "morphology", "in_sort": "image", "out_sort": "image", "shape": "graymorph", "params": {"op": "dilation", "shape": "disk"}},
-  {"halcon": "gray_opening_rect", "category": "morphology", "in_sort": "image", "out_sort": "image", "shape": "graymorph", "params": {"op": "opening", "shape": "rect"}},
-  {"halcon": "gray_closing_rect", "category": "morphology", "in_sort": "image", "out_sort": "image", "shape": "graymorph", "params": {"op": "closing", "shape": "rect"}},
-  {"halcon": "dual_rank", "category": "rank", "in_sort": "image", "out_sort": "image", "shape": "rank", "params": {"kind": "rank"}},
-  {"halcon": "fast_threshold", "category": "segmentation", "in_sort": "image", "out_sort": "region", "shape": "threshold", "params": {"method": "fixed"}},
-  {"halcon": "nonmax_suppression_amp", "category": "segmentation", "in_sort": "image", "out_sort": "region", "shape": "segment", "params": {"kind": "local_max"}},
-  {"halcon": "pouring", "category": "segmentation", "in_sort": "image", "out_sort": "region", "shape": "segment", "params": {"kind": "watershed"}}
+ {
+  "halcon": "gray_erosion_shape",
+  "category": "morphology",
+  "in_sort": "image",
+  "out_sort": "image",
+  "shape": "graymorph",
+  "params": {
+   "op": "erosion",
+   "shape": "disk"
+  },
+  "doc": "円形（disk, 半径 ``_rad(a)``=1〜4）構造要素によるグレースケール収縮（gray erosion）—— 窓内の最小値に置き換える。b は未使用。\n\nHALCON の ``gray_erosion_shape``（円・矩形など任意形状のマスクで窓内最小のグレー値を求める演算）に相当。矩形版は ``gray_erosion_rect`` が担当する。"
+ },
+ {
+  "halcon": "gray_dilation_shape",
+  "category": "morphology",
+  "in_sort": "image",
+  "out_sort": "image",
+  "shape": "graymorph",
+  "params": {
+   "op": "dilation",
+   "shape": "disk"
+  },
+  "doc": "円形（disk, 半径 ``_rad(a)``=1〜4）構造要素によるグレースケール膨張（gray dilation）—— 窓内の最大値に置き換える。b は未使用。\n\nHALCON の ``gray_dilation_shape``（円・矩形など任意形状のマスクで窓内最大のグレー値を求める演算）に相当。矩形版は ``gray_dilation_rect`` が担当する。"
+ },
+ {
+  "halcon": "gray_opening_rect",
+  "category": "morphology",
+  "in_sort": "image",
+  "out_sort": "image",
+  "shape": "graymorph",
+  "params": {
+   "op": "opening",
+   "shape": "rect"
+  },
+  "doc": "正方形窓（一辺 ``_k(a)``=3/5/7/9）によるグレースケール・オープニング（gray opening、収縮の後に膨張）。小さな明るい突起・ノイズを除去しながら大まかな明るさは保つ。b は未使用。\n\nHALCON の ``gray_opening_rect``（矩形マスクによるグレー値オープニング演算）に相当。"
+ },
+ {
+  "halcon": "gray_closing_rect",
+  "category": "morphology",
+  "in_sort": "image",
+  "out_sort": "image",
+  "shape": "graymorph",
+  "params": {
+   "op": "closing",
+   "shape": "rect"
+  },
+  "doc": "正方形窓（一辺 ``_k(a)``=3/5/7/9）によるグレースケール・クロージング（gray closing、膨張の後に収縮）。小さな暗い穴・くぼみを埋めながら大まかな明るさは保つ。b は未使用。\n\nHALCON の ``gray_closing_rect``（矩形マスクによるグレー値クロージング演算）に相当。"
+ },
+ {
+  "halcon": "dual_rank",
+  "category": "rank",
+  "in_sort": "image",
+  "out_sort": "image",
+  "shape": "rank",
+  "params": {
+   "kind": "rank"
+  },
+  "doc": "パーセンタイル（順位統計）フィルタ。窓内画素を昇順に並べ、b で指定した百分位（5〜95%、``rank_image``/``rank_rect`` と同じ ``_sh_rank`` の ``rank`` 分岐）の値を返す。a が窓サイズを 3/5/7/9 に振る。\n\nHALCON の ``dual_rank``（円形または矩形マスクでオープニング・中央値・クロージングを組み合わせて行う演算）とは異なり、この実装は単一の順位フィルタのみで、開閉処理の組み合わせは再現しない簡略近似。"
+ },
+ {
+  "halcon": "fast_threshold",
+  "category": "segmentation",
+  "in_sort": "image",
+  "out_sort": "region",
+  "shape": "threshold",
+  "params": {
+   "method": "fixed"
+  },
+  "doc": "固定しきい値による二値化。``x`` が ``(a, a+0.5+0.5b)`` の帯域に入る画素を前景(1)とする（``threshold`` seed op と同じ ``_sh_threshold`` の ``fixed`` 分岐）。a が下限、b が帯域幅（上限）を振る。\n\nHALCON の ``fast_threshold``（大域しきい値による高速な二値化、通常は単純な閾値以上/以下の判定）に相当するが、この実装は下限・上限の両方を持つ帯域しきい値である点、および高速化のための整数近似などは行っていない点で近似。"
+ },
+ {
+  "halcon": "nonmax_suppression_amp",
+  "category": "segmentation",
+  "in_sort": "image",
+  "out_sort": "region",
+  "shape": "segment",
+  "params": {
+   "kind": "local_max"
+  },
+  "doc": "極大点（ローカルマキシマム）を抽出する非極大値抑制。窓内最大値と一致し、かつ閾値 ``0.3+0.4b`` を超える画素だけを前景として残す。a が窓サイズを 3/5/7/9 に振る。\n\nHALCON の ``nonmax_suppression_amp``（エッジ振幅画像上で法線方向に非極大点を抑制し、稜線を 1 画素幅に絞る演算）とは異なり、この実装は方向を考慮しない単純な局所最大値判定で、エッジ法線方向のサブピクセル抑制は行わない近似。"
+ },
+ {
+  "halcon": "pouring",
+  "category": "segmentation",
+  "in_sort": "image",
+  "out_sort": "region",
+  "shape": "segment",
+  "params": {
+   "kind": "watershed"
+  },
+  "doc": "分水嶺法（watershed）による領域分割の境界抽出。勾配画像（Sobel 振幅）を地形とみなし、暗い領域（``x < 0.2+0.3a``）を種（マーカー）として分水嶺を計算、``skimage.segmentation.find_boundaries`` で境界を前景として返す。b は未使用。\n\nHALCON の ``pouring``（水を注ぐように画素値の低い場所から領域を満たしていく古典的な pouring アルゴリズムで分割する演算）に相当する近似 —— アルゴリズムの詳細は異なるが、低輝度領域を起点に領域を広げるという発想は共通。``watersheds``/``watersheds_threshold`` と実装を共有する。"
+ }
 ]

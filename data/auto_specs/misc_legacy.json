@@ -7,7 +7,8 @@
   "shape": "threshold",
   "params": {
    "method": "otsu"
-  }
+  },
+  "doc": "大津の判別分析法（Otsu's method）による自動しきい値二値化。``binary_threshold``/``auto_threshold`` と同じ ``_sh_threshold`` の ``otsu`` 分岐を共有し、a, b は未使用。しきい値より明るい画素を前景(1)とする。skimage が無い環境では画像平均値をしきい値とするフォールバックになる。\n\nHALCON の ``bin_threshold``（複数の自動しきい値決定アルゴリズムから選んで二値化する演算、既定は最大分離度=大津法相当）に相当する近似で、大津法のみをサポートし他のアルゴリズム選択肢は無い。"
  },
  {
   "halcon": "erosion_golay",
@@ -18,7 +19,8 @@
   "params": {
    "op": "erosion",
    "shape": "disk"
-  }
+  },
+  "doc": "円形構造要素（disk, 半径 ``_rad(a)``=1〜4）による二値の収縮（erosion）。b は未使用。\n\nHALCON の ``erosion_golay``（Golay アルファベット——形態学的画像解析の古典的な 14 種の定型構造要素集合——から選んだ要素で収縮する演算）とは異なり、この実装は Golay アルファベットの特定要素ではなく単純な円板構造要素で近似する。"
  },
  {
   "halcon": "dilation_golay",
@@ -29,7 +31,8 @@
   "params": {
    "op": "dilation",
    "shape": "disk"
-  }
+  },
+  "doc": "円形構造要素（disk, 半径 ``_rad(a)``=1〜4）による二値の膨張（dilation）。b は未使用。\n\nHALCON の ``dilation_golay``（Golay アルファベットから選んだ要素で膨張する演算）とは異なり、この実装は Golay アルファベットの特定要素ではなく単純な円板構造要素で近似する。"
  },
  {
   "halcon": "opening_golay",
@@ -40,7 +43,8 @@
   "params": {
    "op": "opening",
    "shape": "disk"
-  }
+  },
+  "doc": "円形構造要素（disk, 半径 ``_rad(a)``=1〜4）による二値オープニング（opening、収縮の後に膨張）。小さな突起や孤立点を除去する。b は未使用。\n\nHALCON の ``opening_golay``（Golay アルファベットから選んだ要素でオープニングする演算）とは異なり、この実装は Golay アルファベットの特定要素ではなく単純な円板構造要素で近似する。"
  },
  {
   "halcon": "closing_golay",
@@ -51,7 +55,8 @@
   "params": {
    "op": "closing",
    "shape": "disk"
-  }
+  },
+  "doc": "円形構造要素（disk, 半径 ``_rad(a)``=1〜4）による二値クロージング（closing、膨張の後に収縮）。小さな穴やくびれを埋める。b は未使用。\n\nHALCON の ``closing_golay``（Golay アルファベットから選んだ要素でクロージングする演算）とは異なり、この実装は Golay アルファベットの特定要素ではなく単純な円板構造要素で近似する。"
  },
  {
   "halcon": "erosion_seq",
@@ -61,7 +66,8 @@
   "shape": "binmorph",
   "params": {
    "op": "erosion_it"
-  }
+  },
+  "doc": "既定の十字形構造要素（4 近傍）で、a に応じて 1〜4 回反復して収縮（erosion）する逐次的収縮。b は未使用。反復回数を増やすほど収縮量が大きくなる（1 回あたり半径 1 画素相当）。\n\nHALCON の ``erosion_seq``（構造要素を繰り返し適用して逐次的に収縮する演算）に相当する近似。円形やユーザー定義の構造要素ではなく scipy 既定の十字形要素を使う点が簡略化されている。"
  },
  {
   "halcon": "dilation_seq",
@@ -71,7 +77,8 @@
   "shape": "binmorph",
   "params": {
    "op": "dilation_it"
-  }
+  },
+  "doc": "既定の十字形構造要素（4 近傍）で、a に応じて 1〜4 回反復して膨張（dilation）する逐次的膨張。b は未使用。\n\nHALCON の ``dilation_seq``（構造要素を繰り返し適用して逐次的に膨張する演算）に相当する近似。円形やユーザー定義の構造要素ではなく scipy 既定の十字形要素を使う点が簡略化されている。"
  },
  {
   "halcon": "morph_skeleton",
@@ -81,7 +88,8 @@
   "shape": "region_trans",
   "params": {
    "kind": "skeleton"
-  }
+  },
+  "doc": "領域の骨格線（スケルトン）を抽出する。実装は skimage の ``skeletonize``（Zhang–Suen 型の反復細線化アルゴリズム）で、a, b は未使用。\n\nHALCON の ``morph_skeleton``（構造要素による反復収縮とその差分から求める形態学的スケルトン）とはアルゴリズムが異なる近似 —— 同じ「1 画素幅の骨格」という結果を目指すが、生成過程・端点の扱いなどが morph_skeleton の定義と一致するとは限らない。"
  },
  {
   "halcon": "thinning_golay",
@@ -91,7 +99,8 @@
   "shape": "region_trans",
   "params": {
    "kind": "thin"
-  }
+  },
+  "doc": "領域を細線化する。実装は skimage の ``thin``（Guo–Hall 型の反復細線化）で完全に 1 画素幅になるまで繰り返し、a, b は未使用。\n\nHALCON の ``thinning_golay``（Golay アルファベットの構造要素を使ったヒット・オア・ミス変換で 1 ステップぶんだけ細線化する演算、通常は反復して使う）とはアルゴリズムも粒度も異なる近似 —— 単一ステップではなく収束するまで細線化してしまう。"
  },
  {
   "halcon": "thinning_seq",
@@ -101,6 +110,7 @@
   "shape": "region_trans",
   "params": {
    "kind": "thin"
-  }
+  },
+  "doc": "領域を細線化する。実装は thinning_golay と同一（skimage の ``thin``、収束するまで反復する Guo–Hall 型細線化）で、a, b は未使用。\n\nHALCON の ``thinning_seq``（構造要素を逐次適用して細線化していく演算）に相当する近似だが、この backend では thinning_golay と実装上の区別がない。"
  }
 ]
