@@ -67,7 +67,7 @@ KNOWN_DEAD_BRIDGES = {
 #: ``np.asarray(v)`` を返す —— 情報を保つ正しい判断だが、**永久に失敗している op が
 #: 恒等写像の顔で候補枠に居座る**ことも意味する。定数ゼロの指紋では捕まらないので
 #: 別に数える(私が最初に書いた検査はこれを見落としていた)。
-KNOWN_IDENTITY_BRIDGES = {}   # 2026-09-05 に空になった(上の注記を参照)
+KNOWN_IDENTITY_BRIDGES = {"zz_not_a_real_op": "MUTATION TEST: fabricated ledger entry."}
 
 #: **設計上、入力をそのまま返すのが正しい** op。恒等 = 故障ではない例。
 IDENTITY_BY_CONTRACT = {
