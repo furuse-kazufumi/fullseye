@@ -84,6 +84,16 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         from skimage import restoration, feature, segmentation, filters
 
         def _inpaint(v, a, b):
+            """欠損領域を推定して埋める修復(inpainting)。
+
+            極端に明るい(>0.92)/暗い(<0.08)画素を「欠損」とみなして自動マスクし、
+            skimage の biharmonic inpainting(調和方程式に基づく補間)で周囲から
+            滑らかに埋める。
+
+            マスクが無ければ(欠損が見当たらなければ)入力をそのまま返す。``a``,
+            ``b`` は未使用。しきい値が固定なので、本来ハイライト/シャドウとして
+            意味のある画素まで「欠損」扱いされ埋められてしまう場合がある。
+            """
             x = np.clip(np.asarray(v, np.float64), 0, 1)
             mask = (x > 0.92) | (x < 0.08)
             if not mask.any():
@@ -92,6 +102,21 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
 
         def _blob(kind):
             def fn(v, a, b):
+                """ブロブ(斑点状構造)の検出数。
+
+                skimage.feature の Laplacian of Gaussian(LoG)/ Difference of
+                Gaussian(DoG)/ Determinant of Hessian(DoH)のいずれか(このコードは
+                3 種を共通実装しており、どれを使うかは呼び出し元がどの op 名で
+                登録したか —— ``xsk_blob_log`` / ``xsk_blob_dog`` / ``xsk_blob_doh``
+                —— で決まる)を用いてブロブを検出し、その個数をそのまま返す
+                (feature 出力)。
+
+                ``a`` が探索する最大スケール ``max_sigma`` を 5〜25 の範囲で振る
+                (大きいほど大きなブロブまで拾う)。``b`` が検出しきい値
+                ``threshold`` を 0.02〜0.17 で振る(小さいほど弱いブロブまで拾い、
+                検出数が増えやすい)。3 手法は速度・精度が異なる(LoG が最も正確
+                だが遅く、DoH はエッジに強い一方、小さいブロブを苦手とする、等)。
+                """
                 x = np.clip(np.asarray(v, np.float64), 0, 1)
                 f = {"log": feature.blob_log, "dog": feature.blob_dog, "doh": feature.blob_doh}[kind]
                 bl = f(x, max_sigma=5 + 20 * a, threshold=0.02 + 0.15 * b)
@@ -99,11 +124,33 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             return fn
 
         def _orb_count(v, a, b):
+            """ORB(Oriented FAST and Rotated BRIEF)キーポイント検出数。
+
+            skimage.feature.ORB で検出・記述を行い、実際に検出できたキーポイント
+            数を返す(feature 出力)。
+
+            ``a`` が要求する最大キーポイント数 ``n_keypoints`` を 50〜450 の範囲で
+            振る(上限であり、画像のコントラストや構造が乏しいと実際の検出数は
+            それより少なくなる)。``b`` は未使用。テクスチャの豊富さ・特徴点密度の
+            目安として使える。
+            """
             orb = feature.ORB(n_keypoints=int(50 + 400 * a))
             orb.detect_and_extract(np.clip(np.asarray(v, np.float64), 0, 1))
             return np.float64(len(orb.keypoints))
 
         def _random_walker(v, a, b):
+            """ランダムウォーカー法によるグラフベース領域分割。
+
+            skimage.segmentation.random_walker で、明暗の閾値から自動生成した
+            2 クラスのシード(marker)を出発点に、各画素がどちらのシードへ拡散
+            伝播しやすいかを解いて 2 値ラベルに分割し、そのラベル境界を返す
+            (返り値は領域そのものではなく、領域の境界線 region)。
+
+            ``a`` がシードの閾値幅を振る(暗側シード ``< 0.3+0.2a``、明側シード
+            ``> 0.7-0.2a``。``a`` が大きいほどシードが広がり不定領域が減る)。
+            ``b`` は拡散のしやすさを決める ``beta``(10〜210)を振り、大きいほど
+            エッジをまたいだ伝播が抑えられ境界がシャープになる。
+            """
             x = np.clip(np.asarray(v, np.float64), 0, 1)
             markers = np.zeros(x.shape, np.int32)
             markers[x < (0.3 + 0.2 * a)] = 1
@@ -112,17 +159,47 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             return segmentation.find_boundaries(lab).astype(np.float64)
 
         def _flood(v, a, b):
+            """塗りつぶし(flood fill)領域抽出。
+
+            画像中心の画素を種点とし、skimage.segmentation.flood でその画素値から
+            ``tolerance`` 以内の連結画素を region として広げる。
+
+            ``a`` が許容差 ``tolerance`` を 0.05〜0.35 の範囲で振る(大きいほど
+            広く塗りつぶす)。``b`` は未使用。中心が背景か前景かで結果が大きく
+            変わる(種点固定の単純な実装)。
+            """
             x = np.clip(np.asarray(v, np.float64), 0, 1)
             c = (x.shape[0] // 2, x.shape[1] // 2)
             return segmentation.flood(x, c, tolerance=0.05 + 0.3 * a).astype(np.float64)
 
         def _struct_coh(v, a, b):
+            """構造テンソルのコヒーレンス(方位の一貫性)。
+
+            skimage.feature.structure_tensor で勾配の 2 次モーメント行列を計算し、
+            その固有値 ``l1>=l2`` から ``(l1-l2)/(l1+l2)`` を求める。値は 1 に
+            近いほど局所的に強い一方向の構造(エッジ・線状パターン)、0 に近い
+            ほど等方(平坦またはコーナー状)であることを示す。
+
+            ``a`` が構造テンソルの平滑化スケール ``sigma`` を 0.5〜2.5 に振る。
+            ``b`` は未使用。テクスチャの方向性の強さを測る特徴として使う
+            (向き自体は返さない)。
+            """
             x = np.clip(np.asarray(v, np.float64), 0, 1)
             axx, axy, ayy = feature.structure_tensor(x, sigma=0.5 + 2 * a, order="rc")
             l1, l2 = feature.structure_tensor_eigenvalues([axx, axy, ayy])
             return _norm(np.nan_to_num((l1 - l2) / (l1 + l2 + 1e-8)))
 
         def _hessian_eig(v, a, b):
+            """ヘッセ行列の最大固有値(絶対値)によるブロブ/リッジ強度。
+
+            skimage.feature.hessian_matrix(ガウス微分によるヘッセ行列)から
+            固有値を求め、絶対値が最大の成分 ``ev[0]`` を ``_norm`` で正規化して
+            返す。曲率が強い箇所(ブロブの中心や稜線)ほど値が大きくなる。
+
+            ``a`` が微分のスケール ``sigma`` を 0.5〜3.0 に振る(大きいほど太い
+            構造に反応)。``b`` は未使用。符号は捨てているため、山(明るい
+            blob)と谷(暗い blob)を区別しない。
+            """
             x = np.clip(np.asarray(v, np.float64), 0, 1)
             H = feature.hessian_matrix(x, sigma=0.5 + 2.5 * a, order="rc", use_gaussian_derivatives=True)
             ev = feature.hessian_matrix_eigvals(H)
