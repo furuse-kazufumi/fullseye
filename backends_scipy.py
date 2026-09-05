@@ -51,6 +51,44 @@ def _chamfer_dist(v, a, b):
     return _norm(ndimage.distance_transform_cdt(m).astype(np.float64))
 
 
+#: lambda で定義された op の説明（lambda に docstring は書けない）。
+#: ops.py の登録ループが Op.doc に積む。キーは op 名。
+DOCS = {
+    "xsp_cspline_smooth": (
+        "3 次スプライン平滑化フィルタ（``scipy.signal.cspline2d``）。\n\n"
+        "``a`` は平滑化強度 lambda を 1.0〜41.0 に振る（``lambda = 1.0 + 40.0*a``、"
+        "大きいほど強く均す）。``b`` は未使用。スプライン補間の平滑化項を直接使う"
+        "フィルタで、ガウシアンぼかしに近い低域通過だが境界はミラー的に処理される。"
+        "負の値を返しうる中間結果を最後に [0,1] にクリップしている。"
+    ),
+    "xsp_detrend_flatten": (
+        "画像全体の一次トレンド（傾き）を縦横それぞれ除去してから正規化するフラット化"
+        "フィルタ。\n\n"
+        "``scipy.signal.detrend`` を列方向・行方向の順に適用し、各行/各列の線形回帰"
+        "成分を差し引く。``a``, ``b`` は未使用。照明ムラなど画像全体に乗った緩やかな"
+        "傾斜を除去し、局所コントラストを見やすくする用途。結果は符号付きなので"
+        "``*0.5+0.5`` で [0,1] に写像し直している。"
+    ),
+    "xsp_morph_laplace": (
+        "形態学的ラプラシアン（``scipy.ndimage.morphological_laplace``）によるエッジ"
+        "強調。\n\n"
+        "``a`` は構造要素のサイズを 3, 5, 7, 9 に振る（``size = 3 + 2*int(a*3)``）。"
+        "``b`` は未使用。グレースケール膨張と収縮の差の差というべき演算で、通常の"
+        "（線形）ラプラシアンよりノイズに敏感な代わりに輪郭を鋭く拾う。符号付きの"
+        "結果を ``signed01`` で [0,1] に写像するので 0.5 が無変化（ゼロ交差）に"
+        "あたる。"
+    ),
+    "xsp_gauss_grad_mag": (
+        "ガウシアン勾配の大きさ（``scipy.ndimage.gaussian_gradient_magnitude``）に"
+        "よるエッジ検出。\n\n"
+        "``a`` はガウシアンの sigma を 0.5〜3.0 に振る（``sigma = 0.5 + 2.5*a``、"
+        "大きいほど太い/滑らかなエッジになる）。``b`` は未使用。Sobel と違い先に"
+        "ガウシアンで平滑化してから勾配を取るのでノイズに強いが、sigma を大きくすると"
+        "細部が失われる。"
+    ),
+}
+
+
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     out = []
     try:
