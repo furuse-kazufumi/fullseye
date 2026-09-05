@@ -1607,9 +1607,14 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         if shape == "geom" and out_sort == "region":
             fn = _rebinarise(fn)            # geometry interpolates; a region must stay {0,1}
         opname = name if name not in ("threshold", "identity") else "h_" + name
-        ops_out.append(Op(opname, s.get("category", "misc"), name,
-                          s.get("in_sort", "image"), out_sort,
-                          _safe(fn, out_sort)))
+        _op = Op(opname, s.get("category", "misc"), name,
+                 s.get("in_sort", "image"), out_sort,
+                 _safe(fn, out_sort))
+        # spec が説明の置き場 —— この backend の op は generic な shape から
+        # 組み立てられるので、実装のそばに書ける docstring が存在しない。
+        # 空のまま登録すると「説明なし」の op になる(tests が数えている)。
+        _op.doc = (s.get("doc") or "").strip()
+        ops_out.append(_op)
     build.dropped = dropped                 # introspectable for honest reporting
     return ops_out
 
