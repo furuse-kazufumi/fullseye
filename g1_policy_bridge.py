@@ -88,7 +88,7 @@ class _CkptUnpickler:
                     raise pickle.UnpicklingError(
                         "refusing to resolve %s.%s while loading a checkpoint: "
                         "module %r is not in the numeric allow-list %s. A pickle can run "
-                        "arbitrary code, so only array/、training container modules are "
+                        "arbitrary code, so only array and training-container modules are "
                         "resolved. Add the module to _CKPT_ALLOWED_MODULES if it is "
                         "genuinely part of a checkpoint payload."
                         % (module, name, root, sorted(_CKPT_ALLOWED_MODULES)))
