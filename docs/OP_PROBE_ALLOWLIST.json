@@ -1,32 +1,53 @@
 {
-  "_about": "Ops that return their input unchanged (identity) or a constant on the structured probe of tests/test_op_probe_ledger.py at knobs a=b=0.5. Each entry was re-checked with other knobs/inputs on 2026-09-03; the reason says why the degenerate output is CORRECT for that probe. A new degenerate op fails the test until it is fixed or listed here with a verified reason.",
-  "ops": {
-    "fill_holes":      {"kind": "identity", "reason": "probe mask has no enclosed holes; fills a hole when one exists (sum 360 on a mask with a hole)"},
-    "fill_up":         {"kind": "identity", "reason": "same as fill_holes (HALCON alias family); fills holes on a holed mask"},
-    "sk_remove_holes": {"kind": "identity", "reason": "skimage remove_small_holes; probe mask has no holes, fills them on a holed mask"},
-    "fill_up_shape":   {"kind": "identity", "reason": "shape-filtered fill; probe mask has no holes"},
-    "select_shape":    {"kind": "identity", "reason": "a=0.5 keeps every blob of the probe; a=0.9 removes small ones (sum 216)"},
-    "affine_trans_region": {"kind": "identity", "reason": "a=0.5 is the zero transform (a=0.15/0.9 move the region)"},
-    "zoom_region":     {"kind": "identity", "reason": "a=0.5 is zoom factor 1 (other knobs change the area 250/529)"},
-    "zoom_image_size": {"kind": "identity", "reason": "a=0.5 is the original size (other knobs resample)"},
-    "hx_move_region":  {"kind": "identity", "reason": "a=0.5 is displacement 0 (other knobs move it)"},
-    "abs_image":       {"kind": "identity", "reason": "input is already non-negative; |x| == x by contract"},
-    "it_change_format": {"kind": "identity", "reason": "HALCON change_format on an image already of the target size; values unchanged by contract"},
-    "it_full_domain":  {"kind": "identity", "reason": "HALCON full_domain: pixel values unchanged, only the (implicit) domain changes"},
-    "f2_expand_domain": {"kind": "identity", "reason": "expand_domain_gray copies nearest valid gray into the border; with a full domain nothing to fill"},
-    "xsk_inpaint":     {"kind": "identity", "reason": "auto-mask = saturated pixels (>0.92 or <0.08); the probe image has none so there is nothing to repair (verified: a saturated patch is inpainted)"},
-    "sk_clear_border": {"kind": "identity", "reason": "probe blobs on the second mask do not touch the border; on the sinusoid mask everything touches it and is cleared"},
-    "r2_union1":       {"kind": "identity", "reason": "union of a single region is that region"},
-    "r3_label_to_region": {"kind": "identity", "reason": "label-reading op; a binary mask has one label so the selection is the whole foreground (fixed 2026-09-02 for multi-label input)"},
-    "ncc_locate":      {"kind": "constant", "reason": "no template set in the probe -> documented no-match vector [0,0,0]; pass template= via the facade"},
-    "shape_locate":    {"kind": "constant", "reason": "no template set in the probe -> documented no-match vector; pass template= via the facade"},
-    "hx_full_domain":  {"kind": "constant", "reason": "image -> region: the full domain is all ones by contract"},
-    "hx_get_domain":   {"kind": "constant", "reason": "image -> region: an image with a full domain yields all ones by contract"},
-    "hx_gen_empty_region": {"kind": "constant", "reason": "generates the empty region by contract"},
-    "hx_gen_image_proto": {"kind": "constant", "reason": "gen_image_proto fills a constant image by contract (value from a)"},
-    "hx_split_skeleton_region": {"kind": "constant", "reason": "probe mask is not a skeleton so nothing is split; on a cross skeleton it returns the 60-px branch set"},
-    "r2_smallest_circle": {"kind": "constant", "reason": "on the sinusoid mask the enclosing circle covers the frame (all ones); on two blobs it varies (sum 1958-2292)"},
-    "xcv2_hitmiss":    {"kind": "constant", "reason": "hit-miss with the fixed 4-neighbour kernel detects isolated 1-px holes only; the probe masks have none. Knobs a,b are unused (narrow op, not broken)"},
-    "xcv_stylization": {"kind": "constant", "reason": "cv2.stylization itself returns all-zero on smooth low-texture input (verified by calling cv2 directly on the uint8 BGR probe); on a noise image the op returns values up to 0.83 — input-sensitive, not dead"}
+ "_about": "Ops that return their input unchanged (identity) or a constant on the structured probe of tests/test_op_probe_ledger.py. The probe uses TWO structurally different images (sin/cos and gradient+disk+checker) at TWO knob settings; an op counts as degenerate only when it is degenerate on ALL of them. 2026-09-05: widening the probe from one image to two shrank this waiver list from 27 to 12 — the removed entries were not broken, their single probe input simply had nothing for them to do (no holes in the mask, and so on). The same widening caught xsitk_huang_thresh, which failed on EVERY knob of the second image and on none of the first. Each remaining entry was re-checked by a reviewer with other knobs and inputs; a new degenerate op fails the test rather than being added silently.",
+ "ops": {
+  "select_shape": {
+   "kind": "identity",
+   "reason": "a=0.5 keeps every blob of the probe; a=0.9 removes small ones (sum 216)"
+  },
+  "abs_image": {
+   "kind": "identity",
+   "reason": "input is already non-negative; |x| == x by contract"
+  },
+  "it_change_format": {
+   "kind": "identity",
+   "reason": "HALCON change_format on an image already of the target size; values unchanged by contract"
+  },
+  "it_full_domain": {
+   "kind": "identity",
+   "reason": "HALCON full_domain: pixel values unchanged, only the (implicit) domain changes"
+  },
+  "r2_union1": {
+   "kind": "identity",
+   "reason": "union of a single region is that region"
+  },
+  "r3_label_to_region": {
+   "kind": "identity",
+   "reason": "label-reading op; a binary mask has one label so the selection is the whole foreground (fixed 2026-09-02 for multi-label input)"
+  },
+  "ncc_locate": {
+   "kind": "constant",
+   "reason": "no template set in the probe -> documented no-match vector [0,0,0]; pass template= via the facade"
+  },
+  "shape_locate": {
+   "kind": "constant",
+   "reason": "no template set in the probe -> documented no-match vector; pass template= via the facade"
+  },
+  "hx_full_domain": {
+   "kind": "constant",
+   "reason": "image -> region: the full domain is all ones by contract"
+  },
+  "hx_get_domain": {
+   "kind": "constant",
+   "reason": "image -> region: an image with a full domain yields all ones by contract"
+  },
+  "hx_gen_empty_region": {
+   "kind": "constant",
+   "reason": "generates the empty region by contract"
+  },
+  "hx_gen_image_proto": {
+   "kind": "constant",
+   "reason": "gen_image_proto fills a constant image by contract (value from a)"
   }
+ }
 }

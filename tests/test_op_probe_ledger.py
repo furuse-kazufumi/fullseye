@@ -40,43 +40,91 @@ def _img(n=48):
     return g
 
 
-def _inputs():
-    g = _img()
+def _img_bank(n=48):
+    """スイート全体が使っている ``conftest.image_bank()['normal']`` と同じ式。
+
+    ★2 枚目を足した理由(2026-09-05 実測): この門は**正しい場所に立っていた**のに、
+    探針が 1 枚だったせいで ``xsitk_huang_thresh`` が**どのノブでも必ず失敗する**
+    状態を 1 度も報告しなかった。実測:
+
+    ==================  ================  ==================
+    入力                相異なる値        Huang(全ノブ)
+    ==================  ================  ==================
+    sin/cos(元の探針)   1,989             4/4 成功
+    勾配+円+市松        2,260             **4/4 失敗**
+    ==================  ================  ==================
+
+    値の個数はほぼ同じで、違うのは**構造**だけ。
+    「自分が思いついた入力で確かめた」は「確かめた」ではない(規律 2)。
+    """
+    yy, xx = np.mgrid[0:n, 0:n].astype(np.float64)
+    grad = xx / (n - 1)
+    disk = ((yy - n * 0.35) ** 2 + (xx - n * 0.4) ** 2) < (n * 0.18) ** 2
+    checker = ((xx.astype(int) // 6 + yy.astype(int) // 6) % 2) * 0.15
+    noise = 0.03 * np.random.default_rng(20260812).standard_normal((n, n))
+    return np.clip(0.35 * grad + 0.45 * disk + checker + noise, 0.0, 1.0)
+
+
+#: 構造の違う探針。**どれか 1 つでも失敗したら失敗**として扱う。
+_IMAGE_MAKERS = (("sincos", _img), ("bank", _img_bank))
+
+#: ノブも 1 点では足りない(範囲の端で初めて壊れる op がある)。
+_KNOBS = ((0.5, 0.5), (0.15, 0.85))
+
+
+def _inputs(maker):
+    g = maker()
     return {
         "image": g,
         "region": (g > 0.55).astype(np.float64),
         "color": np.stack([g, np.roll(g, 5, 0), np.roll(g, 9, 1)], -1),
-        "volume": np.stack([np.roll(_img(24), k, 0) for k in range(10)], 0),
+        "volume": np.stack([np.roll(maker(24), k, 0) for k in range(10)], 0),
     }
 
 
 def _probe():
-    ins = _inputs()
+    banks = [(label, _inputs(maker)) for label, maker in _IMAGE_MAKERS]
     out = {}
     for op in ops.REGISTRY:
-        v = ins.get(op.in_sort)
-        if v is None:
+        if banks[0][1].get(op.in_sort) is None:
             out[op.name] = ("uncallable", op.in_sort)
             continue
-        bs.clear_fallbacks()
-        try:
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
-                res = api.apply(v, op.name, 0.5, 0.5, on_error="fallback")
-        except Exception as e:                      # noqa: BLE001 - core op without a guard
-            out[op.name] = ("raised", "%s: %s" % (type(e).__name__, e))
+        verdicts = []
+        failure = None
+        for label, ins in banks:
+            v = ins[op.in_sort]
+            for a, b in _KNOBS:
+                bs.clear_fallbacks()
+                try:
+                    with warnings.catch_warnings():
+                        warnings.simplefilter("ignore")
+                        res = api.apply(v, op.name, a, b, on_error="fallback")
+                except Exception as e:              # noqa: BLE001 - guard の無い core op
+                    failure = failure or ("raised", "[%s a=%s b=%s] %s: %s"
+                                          % (label, a, b, type(e).__name__, e))
+                    continue
+                fb = bs.fallbacks()
+                if fb:
+                    failure = failure or ("fallback", "[%s a=%s b=%s] %s"
+                                          % (label, a, b, fb[0]["error"]))
+                    continue
+                tag = "ok"
+                if isinstance(res, np.ndarray) and res.size > 1:
+                    if res.shape == v.shape and np.array_equal(res, v):
+                        tag = "identity"
+                    elif np.all(res == res.flat[0]):
+                        tag = "constant"
+                verdicts.append(tag)
+        if failure is not None:
+            out[op.name] = failure
             continue
-        fb = bs.fallbacks()
-        if fb:
-            out[op.name] = ("fallback", fb[0]["error"])
-            continue
-        tag = "ok"
-        if isinstance(res, np.ndarray) and res.size > 1:
-            if res.shape == v.shape and np.array_equal(res, v):
-                tag = "identity"
-            elif np.all(res == res.flat[0]):
-                tag = "constant"
-        out[op.name] = (tag, op.in_sort)
+        # 退化の判定は**全探針で退化**のときだけ(1 枚でまともに動くなら退化ではない)。
+        if verdicts and all(t == "identity" for t in verdicts):
+            out[op.name] = ("identity", op.in_sort)
+        elif verdicts and all(t == "constant" for t in verdicts):
+            out[op.name] = ("constant", op.in_sort)
+        else:
+            out[op.name] = ("ok", op.in_sort)
     return out
 
 
