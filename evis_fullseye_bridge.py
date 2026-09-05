@@ -9,8 +9,10 @@ it's that once evis exists as a physics rollout, **Fullseye can see it with any 
 exactly the unified-vision role Fullseye is for.
 
     import evis_fullseye_bridge as B
-    B.perceive_evis_walk("out/evis_v2_walk_qpos.npy",
-                         "C:/dev/projects/ms_human_700_jaw/scene_full_mjx.xml")
+    B.perceive_evis_walk("out/evis_v2_walk_qpos.npy", "<your>/scene_full_mjx.xml")
+
+The MuJoCo scene path has no baked-in default: pass it, or set
+``FULLSEYE_EVIS_SCENE_XML``. (Distributions must not carry local absolute paths.)
 """
 from __future__ import annotations
 
