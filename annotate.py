@@ -108,9 +108,20 @@ FONT_CANDIDATES = (
     r"C:\Windows\Fonts\meiryo.ttc",
     r"C:\Windows\Fonts\YuGothM.ttc",
     r"C:\Windows\Fonts\msgothic.ttc",
+    # Linux: CJK を持つものを**先に**並べる。素の ubuntu には CJK フォントが
+    # 1 つも入っていないことがある(2026-09-05 実測: `fc-list :lang=ja` が空で、
+    # DejaVuSans しか無かった)。パッケージ名は fonts-noto-cjk / fonts-ipafont-gothic /
+    # fonts-vlgothic / fonts-takao-gothic。
     "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
-    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    "/usr/share/fonts/opentype/noto/NotoSansCJKjp-Regular.otf",
+    "/usr/share/fonts/truetype/fonts-japanese-gothic.ttf",
+    "/usr/share/fonts/opentype/ipafont-gothic/ipagp.ttf",
+    "/usr/share/fonts/truetype/vlgothic/VL-Gothic-Regular.ttf",
+    "/usr/share/fonts/truetype/takao-gothic/TakaoPGothic.ttf",
     "/System/Library/Fonts/Hiragino Sans GB.ttc",
+    # CJK を持たない最後の受け皿。ここに落ちると日本語は**豆腐**になるので、
+    # `_require_glyphs` が描画前に止める。
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
 )
 
 #: :func:`text_box` の既定の下敷き色(暗い板)と文字色。役割色ではないのは、
