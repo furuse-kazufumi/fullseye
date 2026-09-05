@@ -30,6 +30,51 @@ def _norm(x):
     return x / mx if mx > 1e-8 else x
 
 
+#: lambda で定義された op の説明（lambda に docstring は書けない）。
+#: ops.py の登録ループが Op.doc に積む。キーは op 名。
+DOCS = {
+    "xsk2_rank_geomean": (
+        "ランクフィルタの一種、幾何平均フィルタ。"
+        "``skimage.filters.rank.geometric_mean`` を 8bit 化した画像に円形構造"
+        "要素（``skimage.morphology.disk``）で掛ける。\n\n"
+        "a が構造要素の半径（``1 + int(a*3)``、範囲 1〜4）を振る。b は未使用。"
+        "算術平均より暗い側（小さい値）に強く引っ張られるため、明るいスペックル"
+        "状のノイズを抑えるのに向く。"
+    ),
+    "xsk2_diameter_opening": (
+        "直径オープニング（面積オープニングの直径版、微小な明るい構造の除去）。"
+        "``skimage.morphology.diameter_opening`` を呼ぶ。\n\n"
+        "a が直径しきい値（``4 + int(a*30)``、範囲 4〜34）を振る。この直径未満"
+        "の明るい連結成分を潰す。b は未使用。"
+    ),
+    "xsk2_isotropic_close": (
+        "等方閉じ（isotropic closing）。二値領域に対して"
+        "``skimage.morphology.isotropic_closing`` を掛ける（`region` → `region`"
+        "専用で、通常のモルフォロジー closing と違い距離変換ベースで等方的に"
+        "働く）。\n\n"
+        "a が半径（``1 + a*4``、範囲 1〜5）を振る。b は未使用。小さな穴や"
+        "くびれを埋めて領域を滑らかにする。"
+    ),
+    "xsk2_corner_kr": (
+        "Kitchen-Rosenfeld コーナー検出応答。"
+        "``skimage.feature.corner_kitchen_rosenfeld`` を呼び、NaN を 0 に"
+        "置き換えてから ``signed01`` で符号付き応答を [0,1] に写像する。\n\n"
+        "a, b は未使用。等高線の曲率とエッジ強度から求まる古典的なコーナー"
+        "検出器で、平坦部やエッジ上では 0 付近、コーナーで大きな値になる。"
+    ),
+    "xsk2_inv_gauss_grad": (
+        "逆ガウシアン勾配画像（Active Contour / GAC のエッジ停止関数）。"
+        "``skimage.segmentation.inverse_gaussian_gradient`` を呼ぶ。\n\n"
+        "a がエッジ感度 alpha（``50 + 150*a``、範囲 50〜200。大きいほど弱い"
+        "エッジでも停止関数の値が下がる＝止まりやすくなる）を振る。b は未使用。"
+        "値はエッジで小さく（0 に近く）平坦部で 1 に近い——geodesic active"
+        "contour 系のセグメンテーションでエッジ停止項として使うことを想定した"
+        "出力で、そのまま見た目のエッジ画像として使うと通常のエッジ検出とは"
+        "明暗が逆に見える。"
+    ),
+}
+
+
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     try:
         from skimage import filters, morphology, feature, segmentation, transform, restoration
