@@ -353,7 +353,6 @@ EXCLUDED = {
                           "mediapipe extra and a downloaded hand_landmarker.task model",
     "perception_staged": "needs FULLSEYE_G1_QPOS / FULLSEYE_MENAGERIE_XML pointing at "
                          "external MuJoCo Menagerie assets (not shipped)",
-    "nonexistent_example_zzz_mutation": "requires a fictional dependency that cannot exist",
 }
 
 _BY_ID = {e["id"]: e for e in EXAMPLES}
