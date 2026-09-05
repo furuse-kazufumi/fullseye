@@ -245,3 +245,41 @@ core op(ops.py)の例外も facade 境界で記録→型に合う fallback(`rais
 
 回帰テスト: `tests/test_fallback_policy.py`(28 件)。`tests/test_backends.py` の
 旧 API(`swallowed_errors` / `last_error` / `strict_mode`)は別名として維持。
+
+---
+
+# 2026-09-05 — 全 op に説明を書く作業で見つかった「名前と実装のずれ」
+
+説明が無い 787 op に説明を書く過程で、**実装を読んだら名前や HALCON 対応が
+約束していることをしていない** op が出てきた。説明の側は実装に合わせて正直に
+書いた(近似は近似と書く)ので、ヘルプは嘘をつかない。**コードの側はまだ直して
+いない** —— 挙動が変わる修正で、既に公開した生成画像の再現性に触れるため、
+`sk_frangi` のときと同じく「既定値でビット一致」を保証した上で 0.1.8 で入れる。
+
+検証状態の凡例は上と同じ。すべて ⚠(発見エージェント報告、実装読解ベース)。
+
+## 12. ⚠ `_trans_to_rgb`(color)は HSV からの逆変換に固定
+名前と HALCON 対応(`trans_from_rgb` の逆)は「任意の色空間 → RGB」を示唆するが、
+実装は `cv2.COLOR_HSV2RGB` 固定で、Lab / YUV / XYZ からの逆変換が無い。
+**対処案**: 色空間を `a` で選ぶ(既定 = HSV でビット一致)か、op 名を
+`hsv_to_rgb` に寄せる。
+
+## 13. ⚠ `_edges_color`(color)は Di Zenzo 1 種類、`a`/`b` が未使用
+HALCON の `edges_color` は Canny / Deriche / Shen を選べるが、実装は Di Zenzo
+法のみ。ノブが 2 つとも効かない(`sk_frangi` #2 と同じ型の不具合)。
+
+## 14. ⚠ `_edges_color_sub_pix`(color)にサブピクセル補間が無い
+名前は「サブピクセル精度」だが、実装は整数格子上のラベリングまで。
+**対処案**: 勾配のパラボラ当てはめを入れるか、名前から `_sub_pix` を外す。
+
+## 15. ⚠ `_lines_color`(color)は線幅を返さない
+HALCON の `lines_color` は線の幅を出すが、実装は輪郭点だけ。
+
+## 16. ⚠ kornia 系のノブが一部死んでいる
+`xkor_gftt` / `xkor_hessian` / `xkor_dog`(共通ヘルパー `_resp`)と `xkor_unsharp`
+で `a`/`b` の一部または全部が実質未使用。`xkor_motion` は `a` が
+**カーネル長と角度の両方**を同時に振っており、独立に指定できない。
+**対処案**: #2 と同じ手当て(既定でビット一致を保った配線)。
+
+これらは「ヘルプが実装より立派なことを言う」状態を作る種でもある。
+説明を書く作業が検出器として働いた、という記録として残す。

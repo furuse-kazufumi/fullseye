@@ -85,6 +85,58 @@ def _make_runner(stages_spec, out_sort):
     return guard(body, out_sort)
 
 
+#: lambda で定義された op の説明ではなく、``_make_runner`` が返す汎用クロージャ
+#: ``body`` に docstring を書いても全マクロ op で同じ文字列になってしまう(``a,b`` と
+#: 違い、繋いだ op の並びは名前ごとに異なる)ため、ここで名前ごとに書く。
+#: ops.py の登録ループが Op.doc に積む。キーは op 名。内容は
+#: ``data/macro_champions.json`` / ``macro_champions_data.py`` の ``pipeline`` /
+#: ``provenance`` をそのまま反映しており、op の並びを変えたら追記が必要。
+DOCS = {
+    "macro_denoise": (
+        "進化探索（``evolve.py`` / ``robust.py``）が発見した固定パイプライン: "
+        "``bilateral(a=0.10,b=0.76)`` → ``bilateral(a=0.12,b=0.27)`` → "
+        "``bilateral(a=0.73,b=0.11)``（既存 op のバイラテラルフィルタを、強さの違う"
+        "パラメータで 3 段連ねたもの）。\n\n"
+        "``a``, ``b`` は凍結済みで未使用 —— このパイプライン自体が進化で選ばれた"
+        "1 つの固定構成である。denoise 課題（PSNR）でロック済みホールドアウト"
+        "26.28dB、手作りベースライン 22.83dB を上回る（train/holdout/locked_holdout"
+        "のどれで測っても手作りベースラインに勝っている）。HALCON に対応する単一"
+        "オペレータは無い（``halcon=\"\"``）。"
+    ),
+    "macro_edge": (
+        "進化探索が発見した固定パイプライン: ``gamma(a=0.39,b=0.94)`` → "
+        "``bilateral(a=0.22,b=0.08)`` → ``sobel_mag(a=0.81,b=0.80)`` → "
+        "``scale_clip(a=1.00,b=0.90)`` → ``otsu(a=0.78,b=0.93)``（ガンマ補正 → "
+        "平滑化 → 勾配強度 → スケーリング → 大津の判別分析法（Otsu's method）による"
+        "二値化、の 5 段）。\n\n"
+        "``a``, ``b`` は凍結済みで未使用。edge 課題（F1）でロック済みホールドアウト"
+        "0.91、手作りベースライン 0.77 を上回る。出力は image ではなく region（二値"
+        "マスク）。HALCON に対応する単一オペレータは無い。"
+    ),
+    "macro_binarize": (
+        "進化探索が発見した固定パイプライン: ``bilateral(a=0.06,b=0.89)`` → "
+        "``unsharp(a=0.51,b=0.34)`` → ``bilateral(a=0.04,b=0.24)`` → "
+        "``lowpass(a=0.75,b=0.59)`` → ``gopen(a=0.38,b=1.00)`` → "
+        "``unsharp(a=0.78,b=0.68)``（平滑化とアンシャープマスクを交互に重ね、"
+        "ローパスとグレースケールオープニングで整えてから再度シャープ化する 6 段）。"
+        "\n\n"
+        "``a``, ``b`` は凍結済みで未使用。binarize 課題（IoU）でロック済みホール"
+        "ドアウト 0.75、手作りベースライン 0.62 を上回るが、train 0.91 / holdout"
+        "0.95 に対し locked_holdout は 0.75 まで落ちる —— 分割ごとの差を隠さず"
+        "書く（feedback_benchmark_honest_disclosure）。HALCON に対応する単一"
+        "オペレータは無い。"
+    ),
+    "macro_vol_denoise": (
+        "進化探索が発見した固定パイプライン（3-D ボリューム版）: "
+        "``vol_threshold(a=0.52,b=0.76)`` → ``vol_gaussian(a=0.08,b=0.89)``（3-D "
+        "しきい値処理をかけてからガウシアン平滑化する 2 段）。\n\n"
+        "``a``, ``b`` は凍結済みで未使用。in_sort/out_sort は volume。volume の "
+        "denoise 課題（PSNR）でロック済みホールドアウト 25.74dB、手作りベースライン"
+        "20.94dB を上回る。HALCON に対応する単一オペレータは無い。"
+    ),
+}
+
+
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     """Construct one ``Op`` per DNA entry. Malformed entries are skipped
     individually (a single bad row never suppresses the rest). Sorts are plain

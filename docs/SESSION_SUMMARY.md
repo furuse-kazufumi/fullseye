@@ -3,50 +3,51 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-05 12:10:49
+- **最終更新**: 2026-09-05 12:12:10
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+d992293f9 auto: backends_macro.py 編集前 (2026-09-05 12:11)
+4b46c6d5d auto: backends_cv2b.py 編集前 (2026-09-05 12:11)
+ee22f66d3 auto: backends_r3.py 編集前 (2026-09-05 12:11)
+1496904ad auto: backends_dl.py 編集前 (2026-09-05 12:11)
+ceb0b0b71 auto: backends_dl.py 編集前 (2026-09-05 12:11)
+600b53418 auto: backends_scipy.py 編集前 (2026-09-05 12:10)
 9cc410385 auto: backends_scipy.py 編集前 (2026-09-05 12:10)
 5614842fc auto: backends_scipy.py 編集前 (2026-09-05 12:10)
 c8579f599 auto: backends.py 編集前 (2026-09-05 12:10)
 19bca6771 auto: backends_ski2.py 編集前 (2026-09-05 12:10)
-9f5429bb9 auto: backends_ski2.py 編集前 (2026-09-05 12:09)
-d35c3d19e auto: backends_extra.py 編集前 (2026-09-05 12:09)
-205b06309 auto: backends_extra.py 編集前 (2026-09-05 12:09)
-400b1e128 auto: backends_ski2.py 編集前 (2026-09-05 12:09)
-adc5ed5d5 auto: backends_kornia.py 編集前 (2026-09-05 12:09)
-5f06f8d2c auto: backends_kornia.py 編集前 (2026-09-05 12:09)
 ```
 
 ## 現在の git status
 
 ```
-M backends_scipy.py
- M tools/opdocs.py
+M backends_macro.py
+ M docs/KNOWN_ISSUES.md
+ M ops.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-12:10 .pytest_cache/v/cache/nodeids
-12:10 tools/opdocs.py
-12:10 backends_scipy.py
-12:10 backends.py
-12:10 docs/SESSION_SUMMARY.md
-12:10 backends_ski2.py
-12:09 backends_extra.py
-12:09 CHANGELOG.md
-12:09 backends_kornia.py
-12:09 .pytest_cache/v/cache/lastfailed
-12:09 backends_halcon_ext.py
-12:08 backends_pil.py
-12:08 backends_color.py
-12:07 docs/articles/exhibits/wingvox.ja.md
-12:07 docs/articles/exhibits/wingvox.en.md
+12:12 docs/KNOWN_ISSUES.md
+12:12 .pytest_cache/v/cache/nodeids
+12:11 ops.py
+12:11 backends_macro.py
+12:11 backends_cv2b.py
+12:11 auto_specs_data.py
+12:11 backends_r3.py
+12:11 data/auto_specs/xld_r2.json
+12:11 data/auto_specs/xld.json
+12:11 data/auto_specs/transform_tools_r2.json
+12:11 data/auto_specs/regions_r2.json
+12:11 data/auto_specs/regions.json
+12:11 data/auto_specs/morph_segment.json
+12:11 data/auto_specs/misc_legacy.json
+12:11 data/auto_specs/filters_r2.json
 ```
 
 ---

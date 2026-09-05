@@ -159,48 +159,140 @@ def _bin(v):
 
 
 # --- image -> image ---------------------------------------------------------- #
-def _identity(v, a, b): return v
-def _gaussian(v, a, b): return ndimage.gaussian_filter(v, sigma=0.3 + 2.7 * a)
-def _mean_box(v, a, b): return ndimage.uniform_filter(v, size=_k(a))
-def _median(v, a, b): return ndimage.median_filter(v, size=_k(a))
-def _min_filter(v, a, b): return ndimage.minimum_filter(v, size=_k(a))
-def _max_filter(v, a, b): return ndimage.maximum_filter(v, size=_k(a))
-def _percentile(v, a, b): return ndimage.percentile_filter(v, percentile=int(5 + 90 * b), size=_k(a))
-def _erode_g(v, a, b): return ndimage.grey_erosion(v, size=_k(a))
-def _dilate_g(v, a, b): return ndimage.grey_dilation(v, size=_k(a))
-def _open_g(v, a, b): return ndimage.grey_opening(v, size=_k(a))
-def _close_g(v, a, b): return ndimage.grey_closing(v, size=_k(a))
-def _tophat(v, a, b): return _norm(ndimage.white_tophat(v, size=_k(a)))
-def _bothat(v, a, b): return _norm(ndimage.black_tophat(v, size=_k(a)))
-def _morph_grad(v, a, b): return _norm(ndimage.morphological_gradient(v, size=_k(a)))
-def _sobel_mag(v, a, b): return _norm(np.hypot(ndimage.sobel(v, 1), ndimage.sobel(v, 0)))
+def _identity(v, a, b):
+    """恒等写像。HALCON の ``copy_image``（Copy an image and allocate new memory for it.）に対応付けられているが、実装は新しいメモリを確保して複製する ``copy_image`` とは異なり、入力の配列をそのまま返すだけ（複製しない）。
+
+``a``, ``b`` は未使用。sort が ``ANY``（image/region/feature いずれの入力にも一致）なのはこの op だけの特別扱いで、パイプラインの型を変えずに「何もしない」スロットを置くために使う（進化がスロット数を埋めたいだけのとき等）。値を作り直さず入力をそのまま返すため、呼び出し側で戻り値を書き換えると入力の配列も一緒に変わる点に注意。"""
+    return v
+def _gaussian(v, a, b):
+    """等方ガウシアン平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）に相当。
+
+``a`` が標準偏差 σ を ``0.3〜3.0`` に線形に振る（``σ = 0.3 + 2.7a``）。``b`` は未使用。実装は ``scipy.ndimage.gaussian_filter`` をそのまま呼ぶ（境界は scipy 既定の ``reflect``）。ノイズ除去や後段のエッジ検出前のぼかしに使う。σ が大きいほど細部が失われる。"""
+    return ndimage.gaussian_filter(v, sigma=0.3 + 2.7 * a)
+def _mean_box(v, a, b):
+    """矩形窓の単純平均（box）フィルタ。HALCON の ``mean_image``（Smooth by averaging.）に相当。
+
+``a`` が窓の一辺を ``3,5,7,9`` の4段階（``_k(a)``、``a`` を4分割して丸める）に切り替える。``b`` は未使用。ガウシアンより計算は軽いがリンギングが出やすく、エッジがぼやける。"""
+    return ndimage.uniform_filter(v, size=_k(a))
+def _median(v, a, b):
+    """メディアン（中央値）フィルタ。HALCON の ``median_image``（Compute a median filter with various masks.）に相当。
+
+``a`` が窓サイズを ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。塩胡椒ノイズなど外れ値に強く、ガウシアン平滑よりエッジを保ちやすい。"""
+    return ndimage.median_filter(v, size=_k(a))
+def _min_filter(v, a, b):
+    """矩形窓内の最小値フィルタ（グレースケール侵食に相当）。HALCON の ``gray_erosion_rect``（Determine the minimum gray value within a rectangle.）に相当。
+
+``a`` が窓サイズを ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。明るい小さな構造（点状の輝点等）を消し、暗い領域を広げる。"""
+    return ndimage.minimum_filter(v, size=_k(a))
+def _max_filter(v, a, b):
+    """矩形窓内の最大値フィルタ（グレースケール膨張に相当）。HALCON の ``gray_dilation_rect``（Determine the maximum gray value within a rectangle.）に相当。
+
+``a`` が窓サイズを ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。暗い小さな欠陥（ピンホール等）を消し、明るい領域を広げる。"""
+    return ndimage.maximum_filter(v, size=_k(a))
+def _percentile(v, a, b):
+    """任意パーセンタイルのランクフィルタ。HALCON の ``rank_image``（Compute a rank filter with arbitrary masks.）に相当。
+
+``a`` が窓サイズを ``3,5,7,9``（``_k(a)``）に、``b`` が抽出するパーセンタイルを ``5〜95%``（``int(5+90b)``）に振る。``b`` が 0 に近いほど ``_min_filter``、1 に近いほど ``_max_filter``、中間で ``_median`` に近づく——3 op を 1 つに統合した一般形。"""
+    return ndimage.percentile_filter(v, percentile=int(5 + 90 * b), size=_k(a))
+def _erode_g(v, a, b):
+    """グレースケール侵食（暗い側に広げる）。HALCON の ``gray_erosion``（Perform a gray value erosion on an image.）に相当。
+
+``a`` が構造要素（正方形）の一辺を ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。実装は矩形窓の最小値フィルタと同じ（``_min_filter`` と等価）で、HALCON の任意形状構造要素とは異なり常に正方形。"""
+    return ndimage.grey_erosion(v, size=_k(a))
+def _dilate_g(v, a, b):
+    """グレースケール膨張（明るい側に広げる）。HALCON の ``gray_dilation``（Perform a gray value dilation on an image.）に相当。
+
+``a`` が構造要素（正方形）の一辺を ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。実装は矩形窓の最大値フィルタと同じ（``_max_filter`` と等価）。"""
+    return ndimage.grey_dilation(v, size=_k(a))
+def _open_g(v, a, b):
+    """グレースケールオープニング（侵食してから膨張）。HALCON の ``gray_opening``（Perform a gray value opening on an image.）に相当。
+
+``a`` が構造要素の一辺を ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。明るい小さな突起（ノイズ状の輝点）を除去しつつ、大きな明域の形はほぼ保つ。"""
+    return ndimage.grey_opening(v, size=_k(a))
+def _close_g(v, a, b):
+    """グレースケールクロージング（膨張してから侵食）。HALCON の ``gray_closing``（Perform a gray value closing on an image.）に相当。
+
+``a`` が構造要素の一辺を ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。暗い小さな欠け（ノイズ状の暗点）を埋めつつ、大きな暗域の形はほぼ保つ。"""
+    return ndimage.grey_closing(v, size=_k(a))
+def _tophat(v, a, b):
+    """ホワイトトップハット（原画像 − オープニング）。HALCON の ``gray_tophat``（Perform a gray value top hat transformation on an image.）に相当。
+
+``a`` が構造要素の一辺を ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。背景より明るく、構造要素より小さい局所的な輝点だけを浮き上がらせる（照明ムラを消して欠陥だけ残す用途）。結果は ``_norm`` で最大絶対値 1 に正規化される。"""
+    return _norm(ndimage.white_tophat(v, size=_k(a)))
+def _bothat(v, a, b):
+    """ブラックトップハット（クロージング − 原画像）。HALCON の ``gray_bothat``（Perform a gray value bottom hat transformation on an image.）に相当。
+
+``a`` が構造要素の一辺を ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。背景より暗く、構造要素より小さい局所的な暗点だけを浮き上がらせる。結果は ``_norm`` で正規化される。"""
+    return _norm(ndimage.black_tophat(v, size=_k(a)))
+def _morph_grad(v, a, b):
+    """モルフォロジー勾配（膨張 − 侵食）。HALCON の ``gray_range_rect``（Determine the gray value range within a rectangle.）に相当。
+
+``a`` が構造要素の一辺を ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。窓内の最大値と最小値の差を返すため、エッジ検出フィルタ（Sobel 等）に似た働きをするが方向を持たない。結果は ``_norm`` で正規化される。"""
+    return _norm(ndimage.morphological_gradient(v, size=_k(a)))
+def _sobel_mag(v, a, b):
+    """Sobel フィルタによる勾配強度（エッジ検出）。HALCON の ``sobel_amp``（Detect edges (amplitude) using the Sobel operator.）に相当。
+
+縦横それぞれの Sobel 応答のユークリッドノルム ``hypot(Gx, Gy)`` を取り、``_norm`` で正規化する。``a``, ``b`` は未使用（カーネルサイズ・向きとも固定）。"""
+    return _norm(np.hypot(ndimage.sobel(v, 1), ndimage.sobel(v, 0)))
 def _laplace(v, a, b): return _norm(np.abs(ndimage.laplace(v)))
-def _prewitt_mag(v, a, b): return _norm(np.hypot(ndimage.prewitt(v, 1), ndimage.prewitt(v, 0)))
+def _prewitt_mag(v, a, b):
+    """Prewitt フィルタによる勾配強度（エッジ検出）。HALCON の ``prewitt_amp``（Detect edges (amplitude) using the Prewitt operator.）に相当。
+
+縦横それぞれの Prewitt 応答のユークリッドノルムを取り、``_norm`` で正規化する。``a``, ``b`` は未使用。Sobel と同系統だが平均カーネル（重み無し）を使うぶんノイズにはやや弱い。"""
+    return _norm(np.hypot(ndimage.prewitt(v, 1), ndimage.prewitt(v, 0)))
 
 
 def _roberts_mag(v, a, b):
+    """Roberts クロス勾配による勾配強度（エッジ検出）。HALCON の ``roberts``（Detect edges using the Roberts filter.）に相当。
+
+2×2 の対角差分（``v - shift(-1,-1)`` と ``shift(0,-1) - shift(-1,0)``）のユークリッドノルムを ``_norm`` で正規化する。``a``, ``b`` は未使用。カーネルが小さい（2×2）ためノイズに敏感だが応答の局在性は高い。境界は ``_shift_edge`` によりレプリケート（折り返しなし）。"""
     return _norm(np.hypot(v - _shift_edge(v, -1, -1), _shift_edge(v, 0, -1) - _shift_edge(v, -1, 0)))
 
 
 def _dog(v, a, b):
+    """差分ガウシアン（Difference of Gaussians, DoG）。HALCON の ``diff_of_gauss``（Approximate the LoG operator (Laplace of Gaussian).）に相当。
+
+``a`` が細かい方のぼかし σ₁ を ``0.5〜2.5`` に、``b`` が粗い方のぼかし σ₂ を ``1.0〜5.0`` に振る（``|gauss(σ₁) - gauss(σ₂)|`` を ``_norm`` で正規化）。2 つのスケールの中間の大きさを持つ斑点・エッジを強調する、LoG の近似。σ₁ と σ₂ が近いほど応答は弱くなる。"""
     return _norm(np.abs(ndimage.gaussian_filter(v, 0.5 + 2.0 * a) - ndimage.gaussian_filter(v, 1.0 + 4.0 * b)))
 
 
-def _gamma(v, a, b): return np.clip(v, 0, 1) ** (0.5 + 1.5 * a)
-def _invert(v, a, b): return 1.0 - np.clip(v, 0, 1)
-def _scale_clip(v, a, b): return np.clip((0.5 + 1.5 * a) * v + (b - 0.5), 0, 1)
+def _gamma(v, a, b):
+    """ガンマ補正（べき乗変換）。HALCON の ``pow_image``（Raise an image to a power.）に相当。
+
+``a`` が指数 γ を ``0.5〜2.0`` に振る（``v**γ``、入力は先に ``[0,1]`` へ clip）。``b`` は未使用。γ<1 で暗部を持ち上げ（明るくする）、γ>1 で暗部をさらに沈める（コントラストを付ける）。"""
+    return np.clip(v, 0, 1) ** (0.5 + 1.5 * a)
+def _invert(v, a, b):
+    """階調反転（ネガポジ反転）。HALCON の ``invert_image``（Invert an image.）に相当。
+
+``1 - clip(v,0,1)`` を返すだけ。``a``, ``b`` は未使用。"""
+    return 1.0 - np.clip(v, 0, 1)
+def _scale_clip(v, a, b):
+    """ゲインとオフセットによる線形階調変換。HALCON の ``scale_image``（Scale the gray values of an image.）に相当。
+
+``a`` がゲイン（コントラスト）を ``0.5〜2.0`` 倍に、``b`` がオフセット（明るさ）を ``-0.5〜+0.5`` に振る（``clip(gain*v + offset, 0, 1)``）。``b=0.5`` がオフセット 0（変化なし）に対応する点に注意。"""
+    return np.clip((0.5 + 1.5 * a) * v + (b - 0.5), 0, 1)
 
 
 def _equalize(v, a, b):
+    """ヒストグラム均等化（線形化）。HALCON の ``equ_histo_image``（Histogram linearization of images）に相当。
+
+``a``, ``b`` は未使用。``[0,1]`` を 256 ビンに分けたヒストグラムの累積分布関数（CDF）を求め、各画素値をその CDF で置き換えることで、出力のヒストグラムがほぼ一様になるよう引き伸ばす。コントラストが低い（値域が狭い）画像を見やすくするのに使う。全画素が同一値だと CDF が定義できず ``cdf[-1]`` が 0 になり、変換は事実上恒等（変化なし）になる。"""
     x = np.clip(v, 0, 1); hist, edges = np.histogram(x, 256, (0, 1))
     cdf = np.cumsum(hist).astype(np.float64); cdf = cdf / cdf[-1] if cdf[-1] > 0 else cdf
     return np.interp(x.ravel(), (edges[:-1] + edges[1:]) / 2, cdf).reshape(x.shape)
 
 
-def _sigmoid(v, a, b): return 1.0 / (1.0 + np.exp(-(4.0 + 12.0 * a) * (np.clip(v, 0, 1) - (0.2 + 0.6 * b))))
+def _sigmoid(v, a, b):
+    """ロジスティック関数（シグモイド）による S 字型のコントラスト強調。HALCON の ``scale_image_max``（Maximum gray value spreading in the value range 0 to 255.）に対応付けられているが、ダイナミックレンジを最大まで引き伸ばす ``scale_image_max`` とは処理内容が異なる（近似というより別物に近い）。
+
+``a`` が S字の傾き ``k = 4 + 12a``（``4〜16``）を、``b`` が中心（変曲点）の位置 ``x0 = 0.2 + 0.6b``（``0.2〜0.8``）を振る（``1/(1+exp(-k*(v-x0)))``）。``x0`` 付近の階調差を強調し、両端の階調差は圧縮する。"""
+    return 1.0 / (1.0 + np.exp(-(4.0 + 12.0 * a) * (np.clip(v, 0, 1) - (0.2 + 0.6 * b))))
 
 
 def _bilateral(v, a, b):
+    """エッジ保存平滑化（bilateral filter）。HALCON の ``bilateral_filter``（bilateral filtering of an image.）に相当。
+
+``a`` が空間方向の広がり ``σ_s = 1.0 + 3.0a`` を、``b`` が明るさ方向の許容差 ``σ_r = 0.05 + 0.4b`` を振る。近傍窓は半径 ``r=2``（5×5）固定で ``a`` では変わらない。近傍の重みは ``exp(-距離²/2σ_s²) × exp(-明度差²/2σ_r²)`` の積で、明度差が大きい（=エッジをまたぐ）画素は重みが小さくなるため、平滑化しつつ輪郭を保てる。窓内を Python の二重ループで回すため他の平滑化 op より遅い。"""
     ss, sr, r = 1.0 + 3.0 * a, 0.05 + 0.4 * b, 2
     out = np.zeros_like(v, np.float64); wsum = np.zeros_like(v, np.float64)
     for dy in range(-r, r + 1):
@@ -212,6 +304,9 @@ def _bilateral(v, a, b):
 
 
 def _std_filter(v, a, b):
+    """局所窓内の標準偏差（テクスチャの粗さの指標）。HALCON の ``deviation_image``（Calculate the standard deviation of gray values within rectangular windows.）に相当。
+
+``a`` が窓サイズを ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。``E[v²]-E[v]²`` を窓ごとに求めて平方根を取り（負の丸め誤差は 0 にクランプ）、``_norm`` で正規化する。値が大きいほどその窓内の階調が激しく変化している（テクスチャがある/エッジが多い）ことを示す。"""
     k = _k(a); m = ndimage.uniform_filter(v, k); m2 = ndimage.uniform_filter(v * v, k)
     return _norm(np.sqrt(np.maximum(m2 - m * m, 0.0)))
 
@@ -223,8 +318,16 @@ def _fft_mask(v, cutoff, high):
     return np.real(np.fft.ifft2(np.fft.fft2(v) * mask))
 
 
-def _lowpass(v, a, b): return np.clip(_fft_mask(v, 0.05 + 0.4 * a, False), 0, 1)
-def _highpass(v, a, b): return _signed01(_fft_mask(v, 0.02 + 0.3 * a, True))
+def _lowpass(v, a, b):
+    """FFT による低域通過フィルタ（ぼかし）。HALCON に対応する単体 op は指定されていない。
+
+``a`` が遮断周波数 ``cutoff = 0.05 + 0.4a``（正規化周波数、0〜0.5 がナイキストまでの範囲）を振る。``b`` は未使用。2-D FFT で ``rad <= cutoff`` の低周波成分だけを残し、逆 FFT の実部を ``[0,1]`` に clip する。``a`` が小さいほど強くぼける。境界は周期的（FFT の性質上、画像端は反対側と隣接するとみなされる）に扱われ、``ndimage`` 系フィルタの ``reflect``/``edge`` とは境界処理が異なる点に注意。"""
+    return np.clip(_fft_mask(v, 0.05 + 0.4 * a, False), 0, 1)
+def _highpass(v, a, b):
+    """FFT による高域通過フィルタ（輪郭・高周波成分の抽出）。HALCON の ``highpass_image``（Extract high frequency components from an image.）に相当。
+
+``a`` が遮断周波数 ``cutoff = 0.02 + 0.3a`` を振る。``b`` は未使用。2-D FFT で ``rad > cutoff`` の高周波成分だけを残し、逆 FFT の実部を ``_signed01`` で ``[0,1]`` へ写す（0.5 が「変化なし」、それより明暗が高周波成分の符号を表す）。低域フィルタ同様、境界は周期的（FFT）に扱われる。"""
+    return _signed01(_fft_mask(v, 0.02 + 0.3 * a, True))
 def _unsharp(v, a, b):
     """Unsharp mask. ★出口で [0,1] に clip する(2026-09-02)。
 
@@ -237,10 +340,17 @@ def _unsharp(v, a, b):
 
 
 # --- image -> region (segmentation) ------------------------------------------ #
-def _threshold(v, a, b): return (v > a).astype(np.float64)
+def _threshold(v, a, b):
+    """大域しきい値処理（グローバルスレッショルド）。HALCON の ``threshold``（Segment an image using global threshold.）に相当。
+
+``a`` がしきい値そのもの（``0〜1``）で、``v > a`` を満たす画素を前景（1）とする region を返す。``b`` は未使用。HALCON の ``threshold`` は下限・上限の 2 値を取れる帯域しきい値だが、この実装は下限のみの片側しきい値。"""
+    return (v > a).astype(np.float64)
 
 
 def _otsu(v, a, b):
+    """大津の判別分析法（Otsu's method）による自動しきい値処理。HALCON の ``binary_threshold``（Segment an image using binary thresholding.）に相当。
+
+``a``, ``b`` は未使用（しきい値は入力から自動で決まる）。``[0,1]`` を 256 ビンのヒストグラムに分け、クラス間分散 ``ω(1-ω)`` を最大化するしきい値を全探索して選び、それより大きい画素を前景とする。前景・背景 2 クラスの分離を仮定するため、ヒストグラムが単峰（1 山）の画像では意図しない位置で切れることがある。"""
     x = np.clip(v, 0, 1); hist, edges = np.histogram(x, 256, (0, 1))
     p = hist.astype(np.float64) / max(1, hist.sum()); omega = np.cumsum(p)
     mids = (edges[:-1] + edges[1:]) / 2; mu = np.cumsum(p * mids); mu_t = mu[-1]
@@ -253,14 +363,37 @@ def _dyn_threshold(v, a, b):
 
 
 # --- region -> region -------------------------------------------------------- #
-def _reg_erode(v, a, b): return ndimage.binary_erosion(_bin(v), iterations=_it(a)).astype(np.float64)
-def _reg_dilate(v, a, b): return ndimage.binary_dilation(_bin(v), iterations=_it(a)).astype(np.float64)
-def _reg_open(v, a, b): return ndimage.binary_opening(_bin(v), iterations=_it(a)).astype(np.float64)
-def _reg_close(v, a, b): return ndimage.binary_closing(_bin(v), iterations=_it(a), border_value=1).astype(np.float64)
-def _fill_holes(v, a, b): return ndimage.binary_fill_holes(_bin(v)).astype(np.float64)
+def _reg_erode(v, a, b):
+    """領域（region）の二値侵食。HALCON の ``erosion_circle``（Erode a region with a circular structuring element.）に相当。
+
+``a`` が反復回数を ``1〜4``（``_it(a)``）に振る。``b`` は未使用。構造要素は ``scipy.ndimage.binary_erosion`` の既定（十字形、4近傍相当）で、HALCON の円形構造要素とは形が異なる（近似）。入力は ``v > 0.5`` で二値化してから処理する。"""
+    return ndimage.binary_erosion(_bin(v), iterations=_it(a)).astype(np.float64)
+def _reg_dilate(v, a, b):
+    """領域（region）の二値膨張。HALCON の ``dilation_circle``（Dilate a region with a circular structuring element.）に相当。
+
+``a`` が反復回数を ``1〜4``（``_it(a)``）に振る。``b`` は未使用。構造要素は scipy 既定の十字形（円形ではない、近似）。"""
+    return ndimage.binary_dilation(_bin(v), iterations=_it(a)).astype(np.float64)
+def _reg_open(v, a, b):
+    """領域（region）の二値オープニング（侵食してから膨張）。HALCON の ``opening_circle``（Open a region with a circular structuring element.）に相当。
+
+``a`` が反復回数を ``1〜4``（``_it(a)``）に振る。``b`` は未使用。細い突起や小さな孤立領域を除去する。構造要素は scipy 既定の十字形。"""
+    return ndimage.binary_opening(_bin(v), iterations=_it(a)).astype(np.float64)
+def _reg_close(v, a, b):
+    """領域（region）の二値クロージング（膨張してから侵食）。HALCON の ``closing_circle``（Close a region with a circular structuring element.）に相当。
+
+``a`` が反復回数を ``1〜4``（``_it(a)``）に振る。``b`` は未使用。細い切れ込みや小さな穴を埋める。``border_value=1`` を指定しているため画像端は前景として扱われる。"""
+    return ndimage.binary_closing(_bin(v), iterations=_it(a), border_value=1).astype(np.float64)
+def _fill_holes(v, a, b):
+    """領域内の穴埋め。HALCON の ``fill_up``（Fill up holes in regions.）に相当。
+
+``a``, ``b`` は未使用。前景に完全に囲まれた背景画素（穴）をすべて前景に変える（``scipy.ndimage.binary_fill_holes``）。画像端に接する背景は穴とみなされないため埋まらない。"""
+    return ndimage.binary_fill_holes(_bin(v)).astype(np.float64)
 
 
 def _select_largest(v, a, b):
+    """最大面積の連結領域だけを残す。HALCON の ``select_shape_std``（Select regions of a given shape.）に相当。
+
+``a``, ``b`` は未使用（常に「最大」を選ぶ）。連結成分ラベリング後、画素数が最大の 1 成分だけを 1、それ以外を 0 にする。入力に前景が無ければ全 0 を返す。HALCON の ``select_shape_std`` は面積以外の形状基準（円形度等）や複数選択にも対応するが、この実装は面積最大の単一選択のみ。"""
     lab, n = ndimage.label(_bin(v))
     if n == 0:
         return np.zeros_like(v, np.float64)
@@ -269,6 +402,9 @@ def _select_largest(v, a, b):
 
 
 def _remove_small(v, a, b):
+    """小さい連結領域を面積で除去する。HALCON の ``select_shape``（Choose regions with the aid of shape features.）に相当。
+
+``a`` が除去のしきい値（画素数）を、画像全体の画素数に対する割合 ``0.01〜0.16``（``(0.01+0.15a) * 画素数``）として振る。``b`` は未使用。しきい値以上の面積を持つ連結成分だけを残す。連結性は scipy ``label`` の既定（4連結）。"""
     lab, n = ndimage.label(_bin(v))
     if n == 0:
         return np.zeros_like(v, np.float64)
@@ -281,7 +417,11 @@ def _remove_small(v, a, b):
     return keep
 
 
-def _invert_region(v, a, b): return 1.0 - _bin(v).astype(np.float64)
+def _invert_region(v, a, b):
+    """領域の補集合（前景/背景の反転）。HALCON の ``complement``（Return the complement of a region.）に相当。
+
+``a``, ``b`` は未使用。``v > 0.5`` で二値化してから 1 から引くだけ（前景と背景を入れ替える）。"""
+    return 1.0 - _bin(v).astype(np.float64)
 
 
 # --- region -> feature (measurement) ----------------------------------------- #
@@ -298,20 +438,32 @@ def _blob_count(v, a, b, connectivity=8):
 
 
 def _area_frac(v, a, b):
+    """領域が占める画素の割合（面積率）を返す特徴量。HALCON の ``area_center``（Area and center of regions.）とは異なり、面積のみを返し重心は計算しない（機能の一部だけの対応）。
+
+``a``, ``b`` は未使用。``v > 0.5`` で二値化した画素の平均値（= 前景画素数 / 全画素数）をスカラーで返す。値域は ``[0,1]``。"""
     return np.float64(np.mean(_bin(v)))
 
 
 # --- more image -> image ----------------------------------------------------- #
 def _grad_dir(v, a, b):
+    """勾配方向（エッジの向き）を画像として返す。対応する HALCON op は指定されていない（fullseye 独自）。
+
+``a``, ``b`` は未使用。Sobel 応答から ``atan2(Gy, Gx)`` で角度（``-π〜π``）を求め、``[0,1]`` へ線形に写す。``0`` と ``1`` はどちらも同じ角度（``-π``≡``π``）に対応する周期量である点に注意——連続的に変化する向きでも出力が 0 と 1 の間で不連続にジャンプし得る。平坦な領域では勾配がほぼ 0 で方向が不定になり、ノイズの影響を受けやすい。"""
     return (np.arctan2(ndimage.sobel(v, 0), ndimage.sobel(v, 1)) + np.pi) / (2 * np.pi)
 
 
 def _log(v, a, b):
+    """ラプラシアン・オブ・ガウシアン（LoG）フィルタ。HALCON の ``laplace_of_gauss``（LoG-Operator (Laplace of Gaussian).）に相当。
+
+``a`` がガウシアンの標準偏差 σ を ``0.5〜3.0`` に振る。``b`` は未使用。``scipy.ndimage.gaussian_laplace`` の絶対値を ``_norm`` で正規化する（符号を捨てているため、暗背景上の明斑点と明背景上の暗斑点を区別できない）。ブロブ（斑点状構造）検出やエッジ検出に使う。"""
     return _norm(np.abs(ndimage.gaussian_laplace(v, sigma=0.5 + 2.5 * a)))
 
 
 # --- more image -> region ---------------------------------------------------- #
 def _canny(v, a, b):
+    """簡易 Canny 風エッジ検出（region を返す）。HALCON の ``edges_image``（Extract edges using Deriche, Lanser, Shen, or Canny filters.）に対応付けられているが、非極大抑制やヒステリシスしきい値処理は行わない簡略版（近似）。
+
+``a`` が事前平滑化のガウシアン σ を ``0.5〜2.0`` に、``b`` がしきい値を ``0.1〜0.6`` に振る。ガウシアンでぼかした画像に Sobel 勾配強度を掛け、正規化した値を ``b`` で二値化するだけ——本家 Canny の細線化（1画素幅への収束）は無いため、エッジは本来の Canny より太く、複数画素にまたがって残る。"""
     g = ndimage.gaussian_filter(v, 0.5 + 1.5 * a)
     m = _norm(np.hypot(ndimage.sobel(g, 1), ndimage.sobel(g, 0)))
     return (m > (0.1 + 0.5 * b)).astype(np.float64)
@@ -323,14 +475,23 @@ def _local_max(v, a, b):
 
 # --- more region ops --------------------------------------------------------- #
 def _dist_transform(v, a, b):
+    """ユークリッド距離変換。HALCON の ``distance_transform``（Compute the distance transformation of a region.）に相当。
+
+``a``, ``b`` は未使用。各前景画素について最も近い背景画素までのユークリッド距離を求め（``scipy.ndimage.distance_transform_edt``）、``_norm`` でその画像内の最大値を 1 に正規化する（画像間で絶対距離の比較はできない）。骨格化・粒の中心検出等の前処理に使う。"""
     return _norm(ndimage.distance_transform_edt(_bin(v)))
 
 
 def _region_boundary(v, a, b):
+    """領域の輪郭（境界リング）を抽出する。HALCON の ``boundary``（Reduce a region to its boundary.）に相当。
+
+``a``, ``b`` は未使用。二値化した領域から、1 回侵食した領域を差し引くことで、幅 1 画素の外周だけを残す。出力は region（0/1）のまま。"""
     return (_bin(v).astype(np.float64) - ndimage.binary_erosion(_bin(v)).astype(np.float64)).clip(0, 1)
 
 
 def _convex_fill(v, a, b):
+    """凸包に近い形へ穴・くびれを埋める（クロージングによる近似）。HALCON の ``shape_trans``（Transform the shape of a region.）の凸包変換に相当することを意図しているが、実装は反復回数の多いクロージングであり、厳密な凸包計算ではない（近似）。
+
+``a`` が反復回数を ``3〜6``（``_it(a)+2``）に振る。``b`` は未使用。``border_value=1`` の二値クロージングを掛けるだけなので、反復回数を超える大きさのくびれ・穴は埋まらない（真の凸包なら必ず埋まる）。"""
     return ndimage.binary_closing(_bin(v), iterations=_it(a) + 2, border_value=1).astype(np.float64)
 
 
@@ -373,11 +534,17 @@ def _edges_sub_pix(v, a, b):
 
 # --- contour -> contour ------------------------------------------------------ #
 def _select_contours(cv, a, b):
+    """点数（長さ）でフィルタして XLD 輪郭を選別する。HALCON の ``select_contours_xld``（Select XLD contours according to several features.）に相当。
+
+``a`` が残す最小点数のしきい値を ``3〜43``（``3 + int(40a)``）に振る。``b`` は未使用。輪郭を構成する点の数（≒長さ）がしきい値未満のものを丸ごと捨てる。HALCON 版は点数以外にも円形度・凸性などの特徴で選べるが、この実装は点数のみ。"""
     thr = 3 + int(a * 40)
     return {"shape": cv["shape"], "cs": [c for c in cv["cs"] if len(c) >= thr]}
 
 
 def _smooth_contours(cv, a, b):
+    """移動平均による XLD 輪郭の平滑化。HALCON の ``smooth_contours_xld``（Smooth an XLD contour.）に相当。
+
+``a`` が平滑化窓の半幅を ``1〜4``（窓長 ``2w+1 = 3,5,7,9``）に振る。``b`` は未使用。各輪郭の ``(row, col)`` 列を独立に等重み移動平均（``np.convolve`` の ``"same"`` モード）で均す。点数が窓長の 2 倍以下の短い輪郭はそのまま素通しする（平滑化されない）。"""
     w = 1 + int(a * 3); out = []
     for c in cv["cs"]:
         if len(c) > 2 * w + 1:
@@ -389,6 +556,9 @@ def _smooth_contours(cv, a, b):
 
 
 def _fit_line_contours(cv, a, b):
+    """各 XLD 輪郭を 1 本の直線で近似する。HALCON の ``fit_line_contour_xld``（Approximate XLD contours by line segments.）に相当。
+
+``a``, ``b`` は未使用。輪郭点群の重心を通り、SVD（特異値分解）で求めた第一主成分方向を直線の向きとして採用し（全点との距離二乗和を最小化する直線）、元の点群の射影範囲に等間隔に打ち直した点列に置き換える。HALCON 版は折れ線（複数線分）に分割できるが、この実装は輪郭全体を 1 本の直線にする点が異なる。点が 2 点未満の輪郭はそのまま返す。"""
     out = []
     for c in cv["cs"]:
         if len(c) >= 2:
@@ -402,6 +572,9 @@ def _fit_line_contours(cv, a, b):
 
 # --- contour -> region ------------------------------------------------------- #
 def _contours_to_region(cv, a, b):
+    """XLD 輪郭をラスタ化して region に変換する。HALCON の ``gen_region_contour_xld``（Create a region from an XLD contour.）に相当。
+
+``a`` が仕上げに掛ける膨張の反復回数を ``1〜3``（``1 + int(2a)``）に振る。``b`` は未使用。輪郭点の実数座標を最近傍の画素へ丸めてマスクを立て、点間が疎で線がつながらないぶんを膨張で補う（サブピクセル精度は失われる）。"""
     H, W = cv["shape"]; mask = np.zeros((H, W), np.float64)
     for c in cv["cs"]:
         idx = np.clip(np.round(c).astype(int), [0, 0], [H - 1, W - 1])
@@ -411,10 +584,16 @@ def _contours_to_region(cv, a, b):
 
 # --- contour -> feature ------------------------------------------------------ #
 def _count_contours(cv, a, b):
+    """輪郭（オブジェクト）の本数を返す特徴量。HALCON の ``count_obj``（Number of objects in a tuple.）に相当。
+
+``a``, ``b`` は未使用。輪郭リストの長さをそのまま返すだけ。"""
     return np.float64(len(cv["cs"]))
 
 
 def _total_length(cv, a, b):
+    """全 XLD 輪郭の合計弧長を返す特徴量。HALCON の ``length_xld``（Length of contours or polygons.）に相当。
+
+``a``, ``b`` は未使用。各輪郭について隣接点間のユークリッド距離を足し合わせたもの（折れ線の全長）を、全輪郭ぶん合算する。点が 2 点未満の輪郭は長さ 0 として扱われる。"""
     tot = 0.0
     for c in cv["cs"]:
         if len(c) >= 2:
@@ -460,6 +639,9 @@ def _ncc_map(v, T):
 
 
 def _ncc_locate(v, a, b):
+    """正規化相互相関（NCC）によるテンプレートマッチングで最良位置を探す。HALCON の ``find_ncc_model``（Find the best matches of an NCC model in an image.）に相当。
+
+``a``, ``b`` は未使用——テンプレートは引数ではなく ``set_match_template`` でスレッドローカルな ``_MATCH_CTX`` に事前登録しておく（マッチング系 op 共通の作法、``_MatchCtx`` の docstring 参照）。``_ncc_map``（NCC 相関マップ、Lewis 1995 の定義で ``[-1,1]``）を計算し、その最大値の位置を ``[相関値, y, x]`` で返す。テンプレート未設定、または入力が 2 次元画像でない場合は ``[0,0,0]``（no-match）を返す——fail-closed。回転・スケール変化には非対応（``_shape_locate`` は回転を扱う）。"""
     T = _MATCH_CTX.get("template")
     if T is None or not (isinstance(v, np.ndarray) and v.ndim == 2):
         return np.array([0.0, 0.0, 0.0])
@@ -521,6 +703,9 @@ def _rescale_img(v, a, b):
 
 
 def _affine_warp(v, a, b):
+    """任意のアフィン変換（回転+せん断）を画像に適用する。HALCON の ``affine_trans_image``（Apply an arbitrary affine 2D transformation to images.）に相当。
+
+``a`` が回転角を ``-20°〜+20°`` に、``b`` がせん断量を ``-0.2〜+0.2`` に振る。回転中心は画像の中心、境界は ``reflect``（鏡映）で埋め、結果を ``[0,1]`` に clip する。平行移動・拡大縮小は含まない（``_rescale_img``/``_rotate_img`` が別 op として存在）。"""
     ang = np.deg2rad(-20 + 40 * a); sh = (b - 0.5) * 0.4
     M = np.array([[np.cos(ang), -np.sin(ang) + sh], [np.sin(ang), np.cos(ang)]])
     c = np.array(v.shape) / 2
@@ -678,6 +863,9 @@ def _clahe(v, a, b):
 
 
 def _corner_response(v, a, b):
+    """Harris コーナー検出の応答値（コーナーらしさ）を画像として返す。HALCON の ``points_harris``（Detect points of interest using the Harris operator.）に相当。
+
+``a`` が構造テンソルを平滑化するガウシアンの σ を ``0.5〜2.5`` に振る。``b`` は未使用（Harris の経験定数 ``k=0.04`` は固定）。Sobel 勾配 ``Gx, Gy`` から構造テンソル成分 ``Gx², Gy², Gx*Gy`` をガウシアンで平滑化し、``det - k*trace²`` を ``_signed01`` で ``[0,1]`` に写す（0.5 が応答ゼロ、大きいほどコーナーらしく、小さいほどエッジらしい）。座標リストではなく応答マップを返す点が HALCON の ``points_harris``（座標を返す）と異なる——極大点抽出は別途 ``_local_max`` 等と組み合わせる必要がある。"""
     gx = ndimage.sobel(v, 1); gy = ndimage.sobel(v, 0); s = 0.5 + 2.0 * a
     axx = ndimage.gaussian_filter(gx * gx, s); ayy = ndimage.gaussian_filter(gy * gy, s)
     axy = ndimage.gaussian_filter(gx * gy, s)
@@ -685,11 +873,17 @@ def _corner_response(v, a, b):
 
 
 def _adaptive_gauss_thresh(v, a, b):
+    """ガウシアン平滑化した局所平均を基準にした適応的しきい値処理。HALCON の ``local_threshold``（Segment an image using local thresholding.）に相当。
+
+``a`` が基準を作るガウシアンの σ を ``1.0〜4.0`` に、``b`` がオフセットを ``-0.15〜+0.15``（``(b-0.5)*0.3``）に振る。``v > gaussian_filter(v, σ) + offset`` を満たす画素を前景にする。照明ムラがある画像で大域しきい値（``_threshold``/``_otsu``）より安定する。近い op に ``_dyn_threshold`` があるが、そちらは箱型平均（``uniform_filter``）を基準にし、オフセット幅も異なる（``±0.2``）——同じ「適応的しきい値」でも基準の平滑化方式とパラメータ範囲が違う別実装。"""
     return (v > ndimage.gaussian_filter(v, 1.0 + 3.0 * a) + (b - 0.5) * 0.3).astype(np.float64)
 
 
 # --- shape-based matching (rotation invariant; image -> match) --------------- #
 def _shape_locate(v, a, b):
+    """回転を考慮したテンプレートマッチング（shape-based matching）。HALCON の ``find_shape_model``（Find the best matches of a shape model in an image.）に相当。
+
+``a``, ``b`` は未使用——テンプレートは ``_ncc_locate`` と同じく ``set_match_template`` で事前登録する。テンプレートを ``0°〜330°`` まで ``30°`` 刻みで回転させながらそれぞれ ``_ncc_map``（NCC）を計算し、全位置・全角度を通じて最良の相関を ``[相関値, y, x, 角度]`` で返す。角度の刻みが粗い（30°）ぶん、HALCON の ``find_shape_model`` のような連続的な角度精度は出ない——大まかな向き検出用。テンプレート未設定時は ``[0,0,0,0]``。"""
     T = _MATCH_CTX.get("template")
     if T is None or not (isinstance(v, np.ndarray) and v.ndim == 2):
         return np.array([0.0, 0.0, 0.0, 0.0])
@@ -705,6 +899,9 @@ def _shape_locate(v, a, b):
 
 # --- classification (region -> feature; OCR/decision basis) ------------------ #
 def _classify_shape(v, a, b):
+    """最大の連結領域について円形度（circularity）を計算する形状分類の基礎特徴量。対応する単体の HALCON op は指定されていない。
+
+``a``, ``b`` は未使用。最大面積の連結成分について ``4π×面積 / 周長²`` を計算し、理想円で 1 になるよう ``min(1.0, ...)`` で頭打ちにする（数値誤差で 1 をわずかに超えるのを防ぐ）。周長は領域からその侵食を引いた境界画素数（``_region_boundary`` と同じ考え方）で近似するため、輪郭ベースの周長より粗い。前景が無ければ 0 を返す。コード中のコメントの通り、OCR・良否判定など「形状で分類する」処理の土台として使うことを想定している。"""
     lab, n = ndimage.label(_bin(v))
     if n == 0:
         return np.float64(0.0)
@@ -717,28 +914,46 @@ def _classify_shape(v, a, b):
 
 # --- barcode-lite (image -> feature; count dark bars on the mid scanline) ---- #
 def _decode_barcode(v, a, b):
+    """中央走査線上の明暗の切り替わり回数を数える簡易バーコード風特徴量。HALCON の ``find_bar_code``（Detect and read bar code symbols in an image.）とは似て非なるもので、シンボル体系の判定やデータのデコードは一切行わない（バー「数」を数えるだけ）。
+
+``a`` が「暗い」とみなすしきい値を ``0.3〜0.7`` に振る。``b`` は未使用。画像中央の行（``v.shape[0]//2``）だけを見て、``v < しきい値`` の画素を 1 とした列に対し、0→1 に立ち上がる回数（暗いバーの本数）を数える。実際のバーコードのデータ（数字・文字列）は得られない。"""
     row = (v[v.shape[0] // 2] < (0.3 + 0.4 * a)).astype(int)
     return np.float64(int((np.diff(np.concatenate([[0], row, [0]])) == 1).sum()))
 
 
 # --- 3D volume ops (scipy.ndimage is N-D; CT/MRI/depth stacks) --------------- #
 def _vol_gaussian(v, a, b):
+    """3D ボリュームの等方ガウシアン平滑化。対応する HALCON op は指定されていない。
+
+``a`` が標準偏差 σ を ``0.3〜3.0``（``0.3+2.7a``）に振る。``b`` は未使用。``scipy.ndimage`` は次元非依存（N-D）なので、2-D の ``_gaussian`` と全く同じ式をそのまま 3 軸（CT/MRI/深度スタック等）に適用する。"""
     return ndimage.gaussian_filter(v, sigma=0.3 + 2.7 * a)
 
 
 def _vol_median(v, a, b):
+    """3D ボリュームのメディアンフィルタ。対応する HALCON op は指定されていない。
+
+窓サイズは ``3``（3×3×3）に固定——``a``, ``b`` はどちらも未使用（2-D 版 ``_median`` と異なり ``_k(a)`` を使っていないため、進化パラメータで強さを変えられない）。"""
     return ndimage.median_filter(v, size=3)
 
 
 def _vol_erode(v, a, b):
+    """3D ボリュームのグレースケール侵食。対応する HALCON op は指定されていない。
+
+構造要素の一辺は ``size = 1 + 2*(1 + int(a))``。``a`` は ``[0,1)`` の範囲では ``int(a)`` が常に 0 になるため実質サイズ ``3`` 固定で、``a`` が ``1.0``（``decode`` の ``np.clip`` で上限に張り付いたとき）になったときだけ ``5`` に切り替わる、実質 2 値スイッチにしかなっていない（``_vol_dilate`` も同じ式で同じ性質）。``b`` も未使用。"""
     return ndimage.grey_erosion(v, size=1 + 2 * (1 + int(a)))
 
 
 def _vol_dilate(v, a, b):
+    """3D ボリュームのグレースケール膨張。対応する HALCON op は指定されていない。
+
+``_vol_erode`` と同じ式 ``size = 1 + 2*(1 + int(a))`` を使うため、``a`` はほぼ効かない（``a`` が ``[0,1)`` の間は ``int(a)`` が常に 0 で実質サイズ ``3`` 固定、``a=1.0`` のときだけ ``5``）。``b`` も未使用。半径を連続的に振りたい場合は球形構造要素版（``_vol_dilation_ball`` 等、``int(a*3)`` を使い ``a`` が実際に効く）を使うこと。"""
     return ndimage.grey_dilation(v, size=1 + 2 * (1 + int(a)))
 
 
 def _vol_threshold(v, a, b):
+    """3D ボリュームの大域しきい値処理（2-D の ``_threshold`` の 3D 版）。対応する HALCON op は指定されていない。
+
+``a`` がしきい値そのもの（``0〜1``）で、``v > a`` を満たすボクセルを 1 にする。``b`` は未使用。出力は二値ボリューム（0/1 の float64）。"""
     return (v > a).astype(np.float64)                    # volume -> binary volume
 
 
@@ -754,6 +969,9 @@ def _vol_ball_fp(r):
 
 
 def _vol_reg_dilate(v, a, b):
+    """3D 二値領域の膨張（region ボリュームの膨張）。対応する HALCON op は指定されていない。
+
+``a`` が反復回数を ``1〜4``（``max(1, 1+int(3a))``）に振る。``b`` は未使用。構造要素は 6 近傍（``generate_binary_structure(3,1)``、十字形）。反復回数を明示的に ``1`` 以上へクランプしているのは、scipy が ``iterations<1`` を「収束するまで反復」と解釈し、``a`` が小さい側で全充填・全消去に発散するのを防ぐため（敵対的レビューで見つかった不具合の修正、D3）。"""
     # iterations は 1 以上へクランプ。scipy は iterations<1 を「収束まで反復」と
     # 解釈するため、a<0 を渡すと全充填/全消去に発散する(敵対レビュー D3)
     st = ndimage.generate_binary_structure(3, 1)
@@ -761,33 +979,54 @@ def _vol_reg_dilate(v, a, b):
 
 
 def _vol_reg_erode(v, a, b):
+    """3D 二値領域の侵食（region ボリュームの侵食）。対応する HALCON op は指定されていない。
+
+``a`` が反復回数を ``1〜4``（``max(1, 1+int(3a))``）に振る。``b`` は未使用。構造要素は 6 近傍（十字形）。``_vol_reg_dilate`` と同じ理由で反復回数を ``1`` 以上にクランプしている。"""
     st = ndimage.generate_binary_structure(3, 1)
     return ndimage.binary_erosion(_bin(v), st, iterations=max(1, 1 + int(a * 3))).astype(np.float64)
 
 
 def _vol_dilation_ball(v, a, b):
+    """球形構造要素による 3D 二値膨張。対応する HALCON op は指定されていない。
+
+``a`` が球の半径を ``1〜4``（``1+int(3a)``）に振る。``b`` は未使用。球は ``x²+y²+z² <= r²`` で作る（``skimage.morphology.ball`` と同じ定義）。``_vol_reg_dilate``（6近傍固定）より広い近傍を扱え、``a`` で半径そのものを直接変えられる。"""
     return ndimage.binary_dilation(_bin(v), _vol_ball_fp(1 + int(a * 3))).astype(np.float64)
 
 
 def _vol_erosion_ball(v, a, b):
+    """球形構造要素による 3D 二値侵食。対応する HALCON op は指定されていない。
+
+``a`` が球の半径を ``1〜4``（``1+int(3a)``）に振る。``b`` は未使用。球の定義は ``_vol_dilation_ball`` と同じ。"""
     return ndimage.binary_erosion(_bin(v), _vol_ball_fp(1 + int(a * 3))).astype(np.float64)
 
 
 def _vol_opening_ball(v, a, b):
+    """球形構造要素による 3D 二値オープニング（侵食してから同じ球で膨張）。対応する HALCON op は指定されていない。
+
+``a`` が球の半径を ``1〜4``（``1+int(3a)``）に振る。``b`` は未使用。侵食と膨張に同じ半径の球を使うため、球より小さい突起・細い連結だけを選択的に除去する。"""
     fp = _vol_ball_fp(1 + int(a * 3))
     return ndimage.binary_dilation(
         ndimage.binary_erosion(_bin(v), fp), fp).astype(np.float64)
 
 
 def _vol_mip(v, a, b):
+    """最大値投影（Maximum Intensity Projection, MIP）で 3D ボリュームを 2D 画像に潰す。対応する HALCON op は指定されていない。
+
+``a``, ``b`` は未使用。先頭軸（``axis=0``、スライス/深さ方向）に沿った最大値を取り、``_norm`` でそのスライスの最大絶対値を 1 に正規化する。CT/MRI の読影でよく使う投影法。"""
     return _norm(np.max(v, axis=0))                      # volume -> image (max-intensity projection)
 
 
 def _vol_slice(v, a, b):
+    """3D ボリュームから 1 枚の 2D スライスを取り出す。対応する HALCON op は指定されていない。
+
+``a`` が取り出すスライス番号を先頭軸（``axis=0``）に沿って ``0`` から ``shape[0]-1`` まで線形に振る（``int(a * shape[0])`` を範囲内にクランプ）。``b`` は未使用。値は ``[0,1]`` に clip して返す（3D フィルタ後に生じ得るオーバーシュートの後始末）。"""
     return np.clip(v[min(v.shape[0] - 1, int(a * v.shape[0]))], 0, 1)  # volume -> image
 
 
 def _vol_count(v, a, b):
+    """3D ボリューム中の連結成分（ブロブ）の個数を返す特徴量。対応する HALCON op は指定されていない。
+
+``a``, ``b`` は未使用。しきい値は ``0.5`` に固定（``v > 0.5`` で二値化してから ``scipy.ndimage.label``）。連結性は scipy の既定構造要素（面で接する 6 近傍相当）で、稜・頂点だけで接する（26 近傍でしか繋がらない）ボクセルは別ブロブとして数えられる——2-D の ``_blob_count`` が HALCON パリティのため 8 連結を明示指定しているのとは対照的に、こちらは既定のまま連結性を明示していない。"""
     return np.float64(ndimage.label(np.asarray(v) > 0.5)[1])          # volume -> feature (3D blobs)
 
 
