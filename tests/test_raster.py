@@ -23,6 +23,9 @@ ROOT = os.path.dirname(HERE)
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
+# ★素の import だと不在環境で収集ごと中断する(2026-09-05 実測)。
+pytest.importorskip("imageio", reason="imageio 未導入(raster extra)")
+pytest.importorskip("tifffile", reason="tifffile 未導入(raster extra)")
 import imageio.v2 as iio
 import tifffile
 

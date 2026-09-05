@@ -18,6 +18,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "tools"))
 import op_example_index as OEI  # noqa: E402
 
+from conftest import requires_full_registry
+
 
 def test_no_3d_op_lacks_an_example():
     idx3d, _ = OEI.build_index(split=True)
@@ -40,6 +42,9 @@ _GALLERIES = sorted(
 @pytest.mark.parametrize("gallery", _GALLERIES)
 def test_coverage_gallery_runs(gallery):
     """Each 2-D category gallery runs to a passing self-check (exit 0, PASS line)."""
+    # ギャラリーは op 名を文字列で直書きするので、optional backend が欠けると
+    # 「OPS に余分」で落ちる。op 集合が環境で変わる以上、満杯でないと意味が無い。
+    requires_full_registry()
     env = dict(os.environ, PYTHONPATH=ROOT, PYTHONUTF8="1")
     r = subprocess.run(
         [sys.executable, os.path.join(ROOT, "examples", f"{gallery}.py")],

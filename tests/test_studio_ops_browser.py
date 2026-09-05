@@ -8,6 +8,9 @@ import pytest
 
 warnings.simplefilter("ignore")
 
+# ★素の import だと matplotlib 不在の環境で**収集ごと中断**する
+# (pytest は 1 本の import 失敗で残り全部を走らせない)。2026-09-05 実測。
+pytest.importorskip("matplotlib", reason="matplotlib 未導入(polygon extra)")
 import matplotlib
 matplotlib.use("Agg")
 from matplotlib.figure import Figure  # noqa: E402

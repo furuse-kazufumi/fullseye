@@ -163,7 +163,9 @@ jobs:
           # py3.11 は全 backend を持っている前提。`requires_backend` の skip は
           # 「不変条件が実行されなかった」ことなので、ここでは**失敗**にする。
           FULLSEYE_REQUIRE_OPTIONAL: ${{ matrix.python-version == '3.11' && '1' || '0' }}
-        run: pytest -q -rs --cov --cov-report=xml --cov-report=term
+        # `-ra` = 合格以外を全部要約に出す。`-rs`(skip だけ)だと**どのテストが
+        # 失敗したのか要約に出ず**、生ログを掘る羽目になる(2026-09-05 に実際に踏んだ)。
+        run: pytest -q -ra --cov --cov-report=xml --cov-report=term
       - name: Coverage summary (job summary page)
         if: matrix.python-version == '3.11'
         run: |
@@ -211,6 +213,6 @@ jobs:
           pytest pytest-xdist pytest-randomly matplotlib sympy ziglang
       # 種を出力に残す —— 落ちたら `-p randomly --randomly-seed=<種>` で再現できる。
       - name: Shuffled, serial (順序依存だけを見る)
-        run: pytest -q -p randomly -rs
+        run: pytest -q -p randomly -ra
       - name: Shuffled, parallel (ワーカー使い回しで崩れる順序を見る)
-        run: pytest -q -p randomly -n auto -rs
+        run: pytest -q -p randomly -n auto -ra

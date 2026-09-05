@@ -4,8 +4,11 @@ from __future__ import annotations
 import warnings
 
 import numpy as np
+import pytest
 
 warnings.simplefilter("ignore")
+# spikes 側が matplotlib を引くので、ここで守らないと収集が中断する。
+pytest.importorskip("matplotlib", reason="matplotlib 未導入(polygon extra)")
 import spikes.evis_walk_perception as W  # noqa: E402
 
 

@@ -21,6 +21,8 @@ sys.path.insert(0, os.path.join(ROOT, "tools"))
 sys.path.insert(0, ROOT)
 import opdocs as OD  # noqa: E402
 
+from conftest import requires_full_registry
+
 _RECS, _IDX2D, _OP_FAM, _FAM_OPS = OD._records()
 _BY_NAME = {(r["dim"], r["name"]): r for r in _RECS}
 # last-writer-wins per path (matches cmd_md, which overwrites on duplicate op names)
@@ -38,6 +40,10 @@ def test_every_op_has_a_note():
 
 def test_notes_match_generator_no_drift():
     """Committed per-op note == generator output for the current registry (version linkage)."""
+    # docs の指紋は**生きたレジストリ**から取る。optional backend が欠けると
+    # op 集合が縮み、生成物と一致しなくなる(2026-09-05: mahotas 不在だけで
+    # xmh_* が消えて drift 判定になった)。満杯の環境でだけ意味を持つ検査。
+    requires_full_registry()
     drift = []
     for path, rec in _PATH_REC.items():
         if not os.path.exists(path):
@@ -97,6 +103,10 @@ def test_index_fingerprint_matches_the_live_registry():
     主張だけあって実装が無い検査は、無い検査より悪い —— 「守られている」と
     読める文言が残るぶん、誰も見に行かなくなる。
     """
+    # docs の指紋は**生きたレジストリ**から取る。optional backend が欠けると
+    # op 集合が縮み、生成物と一致しなくなる(2026-09-05: mahotas 不在だけで
+    # xmh_* が消えて drift 判定になった)。満杯の環境でだけ意味を持つ検査。
+    requires_full_registry()
     import re as _re
     fp_live = OD._registry_fingerprint(_RECS)
     m = _re.search(r"op-registry fingerprint ([0-9a-f]+)", top_index_text())
@@ -480,6 +490,10 @@ def _assert_no_drift(md: str, rel_paths, regen_cmd: str):
 def test_op_catalog_matches_generator_no_drift():
     """docs/OP_CATALOG.md drifted from tools/gen_op_catalog.py (2026-09-02 audit: 4 op names
     listed twice, tb_* out-types stale, a removed op still listed). This pins it."""
+    # docs の指紋は**生きたレジストリ**から取る。optional backend が欠けると
+    # op 集合が縮み、生成物と一致しなくなる(2026-09-05: mahotas 不在だけで
+    # xmh_* が消えて drift 判定になった)。満杯の環境でだけ意味を持つ検査。
+    requires_full_registry()
     import gen_op_catalog as GC
     _assert_no_drift(GC.build_catalog(), ("docs/OP_CATALOG.md", "fullseye/OP_CATALOG.md"),
                      "py -3.11 tools/gen_op_catalog.py")
@@ -854,6 +868,10 @@ def test_no_stale_summary_translation_is_shipped():
     古い訳が黙って残るのが翻訳で一番たちが悪い。ここが赤いときは訳を更新するか
     該当行を消す —— 指紋だけ合わせる更新は禁止(それは訳の更新ではない)。
     """
+    # docs の指紋は**生きたレジストリ**から取る。optional backend が欠けると
+    # op 集合が縮み、生成物と一致しなくなる(2026-09-05: mahotas 不在だけで
+    # xmh_* が消えて drift 判定になった)。満杯の環境でだけ意味を持つ検査。
+    requires_full_registry()
     stale = OD.op_summary_stale()
     assert not stale, ("原文と指紋が合わない要約訳(古い訳): " + ", ".join(stale[:12]))
 

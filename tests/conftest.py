@@ -75,6 +75,20 @@ def _have_backend(name: str) -> bool:
         return False
 
 
+#: レジストリの**中身そのもの**に依存する検査が要求する backend 一式。
+#:
+#: 2026-09-05 実測: mahotas が無いだけで `xmh_bwperim` / `xmh_majority` が
+#: レジストリから消え、op 名を直書きしたギャラリーと、レジストリから指紋を取る
+#: docs の drift 検査が落ちた。**op 集合が環境で変わる**のに、不変条件の側が
+#: 固定を仮定していた形。揃っていないなら skip、揃っている CI の py3.11 では実行。
+FULL_REGISTRY_BACKENDS = ("torch", "kornia", "mahotas", "cv2.xfeatures2d")
+
+
+def requires_full_registry() -> None:
+    """レジストリの op 集合が**満杯**であることを要求する検査で呼ぶ。"""
+    requires_backend(*FULL_REGISTRY_BACKENDS)
+
+
 def requires_backend(*names: str) -> None:
     """optional backend を要求する。無ければ skip、完全環境なら失敗。
 

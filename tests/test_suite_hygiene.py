@@ -43,6 +43,10 @@ NEEDS_GUARD = {
     "laspy": "optional backend(lidar extra)",
     "pypcd4": "optional backend(pcd extra)",
     "pygltflib": "optional backend(gltf extra)",
+    "matplotlib": "polygon extra。CI は明示 install するが最小構成には無い",
+    "imageio": "optional backend(video / raster extra)",
+    "tifffile": "optional backend(volume / raster extra)",
+    "sympy": "algo-difftest 用。CI は明示 install するが最小構成には無い",
 }
 
 
