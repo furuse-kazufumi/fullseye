@@ -1,0 +1,43 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">piv_synth_sequence — PIV <code style="color:#22d3bf">synth</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">images</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import pivops; pivops.piv_synth_sequence(shape, displacement, n_frames=8, density=0.02, diameter_px=2.5, seed=0, noise_sigma=0.0, intensity=(0.6, 1.0), background=0.0, jitter=0.0)</code> (oder <code style="color:#22d3bf">opspiv.get(&quot;piv_synth_sequence&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>同じ粒子を繰り返し動かした画像列。返りは `<code style="color:#22d3bf">(frames, truth)</code>`。</p>
+<p>:func:<code style="color:#22d3bf">piv_synth_pair</code> が 2 枚なのに対し、こちらは **1 つの流れを追い続けた</p>
+<p>列**を作る。アンサンブル相関と時間統計はこれでないと確かめられない ——</p>
+<p>独立な対を並べたものを列と呼ぶと、隣り合う 2 枚に対応関係が無く、</p>
+<p>統計が無意味になる(実測: 平均 0.73 px に対して変動の RMS が 4.05 px という、</p>
+<p>流れではなく作り方を測った数字が出た)。</p>
+<p>Args:</p>
+<p>shape: `<code style="color:#22d3bf">(H, W)</code>`。</p>
+<p>displacement: 1 コマあたりの変位(:func:<code style="color:#22d3bf">piv_synth_pair</code> と同じ形式)。</p>
+<p>n_frames: コマ数(2 以上)。</p>
+<p>jitter: コマごとに<b>場全体へ</b>加える乱れの標準偏差 [px]。0 なら定常流。</p>
+<p>時間統計(変動・レイノルズ応力)を試すにはここを 0 より大きくする。</p>
+<p>★ 粒子ごとに独立な乱れではなく<b>コマごとに一つ</b>の乱れにしてある。</p>
+<p>粒子ごとに振ると、窓の中で平均されて N の平方根ぶん小さくなり、</p>
+<p>仕込んだ値と測った値が合わない(実測: 仕込み 0.3 に対して 0.15)。</p>
+<p>それは PIV の性質であって間違いではないが、**時間統計の検証には</p>
+<p>使えない**ので、ここは非定常な流れそのものを模す形にした。</p>
+<p>density / diameter_px / seed / noise_sigma / intensity / background:</p>
+<p>:func:<code style="color:#22d3bf">piv_synth_pair</code> と同じ。</p>
+<p>Returns:</p>
+<p>`<code style="color:#22d3bf">(frames: list of (H, W), truth: (2, H, W))</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">truth</code>` は</p>
+<p><b>1 コマあたり</b>の平均変位。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">Leitfaden zur Familie piv_displacement</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">images</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_ensemble_correlate">piv_ensemble_correlate</a> · <a style="color:#22d3bf" href="oppiv:piv_time_statistics">piv_time_statistics</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">synth</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_synth_particles">piv_synth_particles</a> · <a style="color:#22d3bf" href="oppiv:piv_synth_pair">piv_synth_pair</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pivops.py — PIV Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

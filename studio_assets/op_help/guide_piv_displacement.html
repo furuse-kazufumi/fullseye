@@ -2,12 +2,13 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">粒子画像流速測定(画像対から密な変位を測る) — 使い方ガイド</h2>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
 <p><b>2 枚の画像から、どこがどれだけ動いたかを測る</b>層です。入力はトレーサ粒子を写した画像対、出力は窓ごとの変位ベクトル場 <code style="color:#22d3bf">(2, h, w)</code>(成分 <code style="color:#22d3bf">(dy, dx)</code>、単位は画素/フレーム)。流体計測(PIV)が本来の用途ですが、原理は相互相関なので、模様があるものなら粒子でなくても動きが取れます。</p>
-<p>13 op / 5 カテゴリ(numpy のみ。台帳は <code style="color:#22d3bf">opspiv.py</code>、実体は <code style="color:#22d3bf">pivops.py</code>):</p>
-<p style="margin:2px 0 2px 12px">• <b>synth(2)</b> — <code style="color:#22d3bf">piv_synth_particles</code> / <code style="color:#22d3bf">piv_synth_pair</code>: 既知の変位場を持つ画像対を作る。<b>この族の全テストの真値の供給源</b>。</p>
-<p style="margin:2px 0 2px 12px">• <b>estimate(2)</b> — <code style="color:#22d3bf">piv_cross_correlate</code> / <code style="color:#22d3bf">piv_multipass</code>: 本体。窓ごとの FFT 相互相関と、粗→細の多段。</p>
+<p>23 op / 6 カテゴリ(numpy と scipy のみ。台帳は <code style="color:#22d3bf">opspiv.py</code>、実体は <code style="color:#22d3bf">pivops.py</code>):</p>
+<p style="margin:2px 0 2px 12px">• <b>synth(3)</b> — <code style="color:#22d3bf">piv_synth_particles</code> / <code style="color:#22d3bf">piv_synth_pair</code> / <code style="color:#22d3bf">piv_synth_sequence</code>: 既知の変位場を持つ画像対と画像列を作る。<b>この族の全テストの真値の供給源</b>。</p>
+<p style="margin:2px 0 2px 12px">• <b>estimate(4)</b> — <code style="color:#22d3bf">piv_cross_correlate</code> / <code style="color:#22d3bf">piv_multipass</code> / <code style="color:#22d3bf">piv_deform_pass</code> / <code style="color:#22d3bf">piv_ensemble_correlate</code>: 本体。窓ごとの FFT 相互相関、粗→細の多段、窓変形、相関の合算。</p>
 <p style="margin:2px 0 2px 12px">• <b>validate(2)</b> — <code style="color:#22d3bf">piv_outlier_mask</code> / <code style="color:#22d3bf">piv_replace_outliers</code>: 正規化中央値検定と穴埋め。</p>
-<p style="margin:2px 0 2px 12px">• <b>field(4)</b> — <code style="color:#22d3bf">piv_vorticity</code> / <code style="color:#22d3bf">piv_divergence</code> / <code style="color:#22d3bf">piv_flow_magnitude</code> / <code style="color:#22d3bf">piv_to_velocity</code>: 場の微分と単位変換。</p>
-<p style="margin:2px 0 2px 12px">• <b>assess(3)</b> — <code style="color:#22d3bf">piv_sample_at_windows</code> / <code style="color:#22d3bf">piv_error_stats</code> / <code style="color:#22d3bf">piv_peak_locking</code>: 真値との突き合わせと系統誤差の測定。</p>
+<p style="margin:2px 0 2px 12px">• <b>field(8)</b> — <code style="color:#22d3bf">piv_vorticity</code> / <code style="color:#22d3bf">piv_divergence</code> / <code style="color:#22d3bf">piv_flow_magnitude</code> / <code style="color:#22d3bf">piv_to_velocity</code> / <code style="color:#22d3bf">piv_velocity_gradient</code> / <code style="color:#22d3bf">piv_q_criterion</code> / <code style="color:#22d3bf">piv_swirling_strength</code> / <code style="color:#22d3bf">piv_strain_rate</code>: 場の微分・不変量・単位変換。</p>
+<p style="margin:2px 0 2px 12px">• <b>visualise(2)</b> — <code style="color:#22d3bf">piv_flow_to_rgbimage</code> / <code style="color:#22d3bf">piv_line_integral_convolution</code>: 出口。これが無いと <code style="color:#22d3bf">flow2d</code> は「作れるが見られない」型になる。</p>
+<p style="margin:2px 0 2px 12px">• <b>assess(4)</b> — <code style="color:#22d3bf">piv_sample_at_windows</code> / <code style="color:#22d3bf">piv_error_stats</code> / <code style="color:#22d3bf">piv_peak_locking</code> / <code style="color:#22d3bf">piv_time_statistics</code>: 真値との突き合わせ、系統誤差、時間統計。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">なぜ足したか —— 在庫を数えた結果</h3>
 <p>2026-09-06 に型付きカタログ全体(900 op)を走査したところ、<b>画像対から密な変位を出す op が 1 つも無い</b>ことが分かりました。近いものはあります:</p>
 <p>| 既にあるもの | 何をするか | なぜ代わりにならないか |</p>
@@ -117,7 +118,7 @@ assert np.isfinite(v).all()</pre>
 <p><b>回転の渦度が負</b>なのは規約どおりです。テストを書いたとき最初に <code style="color:#22d3bf">+2ω</code> と書いて落ちましたが、間違っていたのは<b>テストの側</b>でした(<code style="color:#22d3bf">(ω(c-cx), -ω(r-cy))</code> は画面上では時計回りに見える場)。規約を使って書いたテストでは規約の反転を捕まえられないので、向きが分かる最小の場で別に固定してあります。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型を 1 つだけ新設した理由 —— <code style="color:#22d3bf">flow2d</code></h3>
 <p><code style="color:#22d3bf">flow_dense</code> の述語は <code style="color:#22d3bf">(3, D, H, W)</code> 限定なので、2 成分の平面フローは<b>そもそも該当しません</b>。名前を借りると台帳が「3 成分を返す」と宣言しながら 2 成分を返すことになります。</p>
-<p>型を増やすときの本 repo の条件(<b>種を持つ op が無ければ永久に未実行になる</b>)は満たしています —— 生成が 5 op、消費が 9 op、族の中で閉じています。両方向の fail-closed も実測済み:</p>
+<p>型を増やすときの本 repo の条件(<b>種を持つ op が無ければ永久に未実行になる</b>)は満たしています —— 生成が 7 op、消費が 13 op、族の中で閉じています。<b>出口(可視化 2 op)も必ず持たせています</b> —— 作れるが見られない型は連鎖の途中で行き止まりになります。両方向の fail-closed も実測済み:</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">reprconv.flow_magnitude(2-D flow)</code> → <code style="color:#22d3bf">ValueError: this op takes DENSE scene flow (3, D, H, W) …</code></p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">piv_vorticity(3-D scene flow)</code> → <code style="color:#22d3bf">ValueError: flow must be (2, h, w) …</code></p>
 <p><b>型では守れないもの</b>も正直に書いておきます。<code style="color:#22d3bf">piv_to_velocity</code> の出力は単位が m/s に変わりますが**型は同じ <code style="color:#22d3bf">flow2d</code><b> です。単位を型で分ける案は、m/s を作る op が 1 本・消費する op が 0 本の型を生むので採りませんでした(「証拠が出てから増やす」の順序に反する)。代わりに画素寸法と時間差を</b>必須引数**にしてあります。</p>
@@ -135,6 +136,40 @@ assert np.isfinite(v).all()</pre>
 <p style="margin:2px 0 2px 12px">• <b>多段</b> —— 格子を密にしたいときに効く。実測では窓 64 単段(格子 7x7、RMS 0.038)に対して 64→32(格子 15x15、RMS 0.060)。<b>密度と精度は交換関係</b>であって、多段は精度を上げる道具ではなく、精度をあまり落とさずに密度を上げる道具。</p>
 <p style="margin:2px 0 2px 12px">• <b>窓関数</b> —— <code style="color:#22d3bf">hann</code> は縁のリークを減らすが有効粒子も減らす。実測(補正なし・窓 32)で RMS 0.154(hann)対 0.213(none)なので既定は hann。</p>
 <p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">peak_ratio</code>** —— 第 1 ピーク / 第 2 ピーク。1 に近い窓は当てにならない。雑音を足すと下がることを実測で固定してある。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">渦とせん断を分ける(派生 op)</h3>
+<p>渦度だけを見ると<b>せん断層も光ります</b>。層流の壁近傍が渦のように見えるのはそのためで、渦を取り出したいときは速度勾配テンソルの不変量を使います。3 つとも同じ 4 つの微分から出るので、<code style="color:#22d3bf">piv_velocity_gradient</code> が一度にまとめて返します。</p>
+<p>解析場を直接置いた実測(PIV を通さない、定義そのものの検算):</p>
+<p>| 場 | 渦度 | Q 基準 | 渦回転強度 λ_ci | ひずみ速度 |</p>
+<p>|---|---:|---:|---:|---:|</p>
+<p>| 剛体回転 ω=0.01 | -0.020000 | <b>+1.0e-4</b> (= ω²) | <b>0.010000</b> (= ω) | 0.000000 |</p>
+<p>| 一様膨張 s=0.01 | 0.000000 | -1.0e-4 (= -s²) | 0.000000 | <b>0.020000</b> (= 2s) |</p>
+<p>| 単純せん断 g=0.02 | <b>+0.020000</b> | <b>0.000000</b> | <b>0.000000</b> | 0.020000 (= g) |</p>
+<p>最下行が要点です。<b>せん断の渦度は回転と同じ大きさなのに、Q も λ_ci も 0</b>。この差がこの 2 つを足した理由そのものです。</p>
+<p>&gt; Q も λ_ci も<b>閾値を必要とする</b>量です。<code style="color:#22d3bf">Q &gt; 0</code> だけでは薄い領域まで拾うので、閾値をどう決めたかを書かない渦可視化は、絵の美しさが閾値の産物である可能性を隠しています。閾値を振ったときの面積変化を併記してください。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">見せ方(可視化の 2 つ)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">piv_flow_to_rgbimage</code> — 色相 = 向き、明度 = 速さ。<code style="color:#22d3bf">reprconv.flow_to_rgbimage</code> の 2 次元版(あちらは 3-D シーンフロー専用)。**<code style="color:#22d3bf">scale</code> を省くと図ごとに色の意味が変わる**ので、複数の図を並べるなら固定すること。色相環の凡例は図の側で必ず一緒に焼く。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">piv_line_integral_convolution</code> — 流れに沿って白色雑音を平均した模様。矢印は密にすると潰れ、疎にすると構造を見落としますが、LIC は画素ごとに積分するので密度の選択が要りません。<b>向きの情報は落ちる</b>(前後を区別しない)ので、回転の向きを見たいときは矢印か色相図と併用します。積分長を伸ばすと滑らかになりますが、渦の芯のように曲率が大きい場所では<b>構造が伸びて嘘になります</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">精度を上げる 2 つの道(実測つき)</h3>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">窓変形 —— 窓の中で変位が変わる場に効く</h3>
+<p>整数ずらしは「窓の中で変位が一定」を仮定します。回転やせん断ではこれが崩れて相関ピークが潰れるので、予測の半分ずつ 2 枚を逆向きに歪めてから相関します(中央差分の変形)。</p>
+<p>| 手順 | RMS | 偏り (dy, dx) |</p>
+<p>|---|---:|---|</p>
+<p>| 多段 64→32 のみ | 0.0576 | (-0.0055, -0.0014) |</p>
+<p>| <b>+ 窓変形 1 段</b> | <b>0.0272</b> | (+0.0012, -0.0003) |</p>
+<p>回転場(ω=0.01、256x256)で <b>2.1 倍</b>。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">アンサンブル相関 —— 疎で雑音の多いデータに効く</h3>
+<p>1 対ずつ測って平均すると「外れたベクトルの平均」になります。<b>相関マップの段階で足す</b>と、弱いピークが同じ場所に積み上がって立ち上がります(定常流が前提)。</p>
+<p>| 手順 | RMS | 1 px 超の外れ |</p>
+<p>|---|---:|---:|</p>
+<p>| 1 対のみ | 4.21 | 47 / 81 |</p>
+<p>| <b>10 対を合算</b> | <b>1.55</b> | <b>9 / 81</b> |</p>
+<p>密度 0.004(窓 32 あたり約 4 個)+ 雑音 0.25 という厳しい条件での実測です。<b>完全には直りません</b> —— 2.7 倍良くなるが、9 本はまだ外れたまま。そう書いておきます。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">時間統計 —— 平均・変動・レイノルズ応力</h3>
+<p><code style="color:#22d3bf">piv_time_statistics</code> は画像列から、時間平均・変動の RMS・レイノルズ応力 ⟨u&#x27;v&#x27;⟩ を返します。乱流の記述はこの 3 つが出発点で、⟨u&#x27;v&#x27;⟩ の符号と大きさが運動量輸送そのものになります。</p>
+<p>検証は <code style="color:#22d3bf">piv_synth_sequence</code> に<b>既知の乱れ</b>を仕込んで行います。実測: 仕込み 0.3 px → 測定 0.287 px、定常流(乱れ 0)なら 0.013 px。</p>
+<p>&gt; ★ ここで一度失敗しています。最初は<b>独立な画像対を並べたもの</b>を「列」として渡し、平均 0.73 px に対して変動の RMS が 4.05 px という数字を得ました。隣り合う 2 枚に対応関係が無いので、流れではなく<b>列の作り方</b>を測っていたのです。<code style="color:#22d3bf">piv_synth_sequence</code> は同じ粒子を追い続けます。</p>
+<p>&gt;</p>
+<p>&gt; もう一つ。乱れを<b>粒子ごとに独立</b>に振ると、窓の中で平均されて粒子数の平方根ぶん小さくなり、仕込み 0.3 に対して 0.15 しか出ませんでした。これは PIV の性質であって誤りではありませんが、時間統計の検証には使えないので、<code style="color:#22d3bf">jitter</code> は<b>コマごとに場全体を揺らす</b>形にしてあります。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">次にどこへ繋がるか</h3>
 <p style="margin:2px 0 2px 12px">• <b>公開データ</b> —— 合成で閉じたら RSPID(合成粒子画像 + 真値)、円柱後流の時間分解 PIV(ストローハル数 0.2 前後という独立検算が効く)、タービン翼列。RAD コーパス <code style="color:#22d3bf">fullseye_poc_datasets_corpus_v2</code> のノート 060-064 に URL の実測結果とライセンスの注意がある。</p>
 <p style="margin:2px 0 2px 12px">• <b>航空・流体</b> —— 渦度から Q 基準・λ2 へ(速度勾配テンソルの不変量)。同コーパスのノート 036。</p>

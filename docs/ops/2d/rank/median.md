@@ -5,7 +5,7 @@ category: rank
 in: image
 out: image
 halcon: median_image
-examples: [astro_stacking, blas_thread_budget, consumer_onocollo, ct_reconstruction, gallery2d_smoothing_rank, lightfield_depth, machined_metal_and_materials, perception_pipeline, photon_timeresolved, quickstart, representation_roundtrip, specular_photometric]
+examples: [astro_stacking, blas_thread_budget, consumer_onocollo, ct_reconstruction, gallery2d_smoothing_rank, lightfield_depth, machined_metal_and_materials, perception_pipeline, photon_timeresolved, piv_flow_from_particles, quickstart, representation_roundtrip, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.9  # fullseye lib version this note was generated for
@@ -44,6 +44,7 @@ version: 0.1.9  # fullseye lib version this note was generated for
 - [machined_metal_and_materials](../../../../examples/machined_metal_and_materials.py) — `py -3.11 examples/machined_metal_and_materials.py`
 - [perception_pipeline](../../../../examples/perception_pipeline.py) — `py -3.11 examples/perception_pipeline.py`
 - [photon_timeresolved](../../../../examples/photon_timeresolved.py) — `py -3.11 examples/photon_timeresolved.py`
+- [piv_flow_from_particles](../../../../examples/piv_flow_from_particles.py) — `py -3.11 examples/piv_flow_from_particles.py`
 - [quickstart](../../../../examples/quickstart.py) — `py -3.11 examples/quickstart.py`
 - [representation_roundtrip](../../../../examples/representation_roundtrip.py) — `py -3.11 examples/representation_roundtrip.py`
 - [specular_photometric](../../../../examples/specular_photometric.py) — `py -3.11 examples/specular_photometric.py`

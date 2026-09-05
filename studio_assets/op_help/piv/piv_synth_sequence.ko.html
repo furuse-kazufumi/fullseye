@@ -1,0 +1,43 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">piv_synth_sequence — PIV <code style="color:#22d3bf">synth</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">images</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import pivops; pivops.piv_synth_sequence(shape, displacement, n_frames=8, density=0.02, diameter_px=2.5, seed=0, noise_sigma=0.0, intensity=(0.6, 1.0), background=0.0, jitter=0.0)</code>(또는 <code style="color:#22d3bf">opspiv.get(&quot;piv_synth_sequence&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
+<p>同じ粒子を繰り返し動かした画像列。返りは `<code style="color:#22d3bf">(frames, truth)</code>`。</p>
+<p>:func:<code style="color:#22d3bf">piv_synth_pair</code> が 2 枚なのに対し、こちらは **1 つの流れを追い続けた</p>
+<p>列**を作る。アンサンブル相関と時間統計はこれでないと確かめられない ——</p>
+<p>独立な対を並べたものを列と呼ぶと、隣り合う 2 枚に対応関係が無く、</p>
+<p>統計が無意味になる(実測: 平均 0.73 px に対して変動の RMS が 4.05 px という、</p>
+<p>流れではなく作り方を測った数字が出た)。</p>
+<p>Args:</p>
+<p>shape: `<code style="color:#22d3bf">(H, W)</code>`。</p>
+<p>displacement: 1 コマあたりの変位(:func:<code style="color:#22d3bf">piv_synth_pair</code> と同じ形式)。</p>
+<p>n_frames: コマ数(2 以上)。</p>
+<p>jitter: コマごとに<b>場全体へ</b>加える乱れの標準偏差 [px]。0 なら定常流。</p>
+<p>時間統計(変動・レイノルズ応力)を試すにはここを 0 より大きくする。</p>
+<p>★ 粒子ごとに独立な乱れではなく<b>コマごとに一つ</b>の乱れにしてある。</p>
+<p>粒子ごとに振ると、窓の中で平均されて N の平方根ぶん小さくなり、</p>
+<p>仕込んだ値と測った値が合わない(実測: 仕込み 0.3 に対して 0.15)。</p>
+<p>それは PIV の性質であって間違いではないが、**時間統計の検証には</p>
+<p>使えない**ので、ここは非定常な流れそのものを模す形にした。</p>
+<p>density / diameter_px / seed / noise_sigma / intensity / background:</p>
+<p>:func:<code style="color:#22d3bf">piv_synth_pair</code> と同じ。</p>
+<p>Returns:</p>
+<p>`<code style="color:#22d3bf">(frames: list of (H, W), truth: (2, H, W))</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">truth</code>` は</p>
+<p><b>1 コマあたり</b>の平均変位。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• (아직 없음)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">images</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_ensemble_correlate">piv_ensemble_correlate</a> · <a style="color:#22d3bf" href="oppiv:piv_time_statistics">piv_time_statistics</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">synth</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_synth_particles">piv_synth_particles</a> · <a style="color:#22d3bf" href="oppiv:piv_synth_pair">piv_synth_pair</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pivops.py — PIV 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

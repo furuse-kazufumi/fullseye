@@ -75,7 +75,7 @@ Returns:
 
 ## 同カテゴリ(`assess`)
 
-[piv_sample_at_windows](piv_sample_at_windows.md) · [piv_error_stats](piv_error_stats.md)
+[piv_sample_at_windows](piv_sample_at_windows.md) · [piv_error_stats](piv_error_stats.md) · [piv_time_statistics](piv_time_statistics.md)
 
 ---
 *Provenance: pivops.py — PIV operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

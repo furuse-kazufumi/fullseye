@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">piv_q_criterion — PIV <code style="color:#22d3bf">field</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import pivops; pivops.piv_q_criterion(flow, spacing=1.0)</code> (または <code style="color:#22d3bf">opspiv.get(&quot;piv_q_criterion&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Q 基準 `<code style="color:#22d3bf">-tr(J^2)/2</code>`。<b>回転がひずみを上回る</b>場所が正になる。</p>
+<p>渦度だけを見るとせん断層も光る(層流の壁近傍が渦に見える)ので、渦の抽出には</p>
+<p>こちらを使う。閉形式(解析場を直接与えた実測):</p>
+<p style="margin:2px 0 2px 12px">• 剛体回転 ω=0.01 → `<code style="color:#22d3bf">+1.0e-4</code>` (= ω^2)</p>
+<p style="margin:2px 0 2px 12px">• 一様膨張 s=0.01 → `<code style="color:#22d3bf">-1.0e-4</code>` (= -s^2)</p>
+<p style="margin:2px 0 2px 12px">• 単純せん断 g=0.02 → `<code style="color:#22d3bf">0.0</code>`(<b>せん断は渦ではない</b>、が要点)</p>
+<p>★ 閾値を必要とする量である。`<code style="color:#22d3bf">Q &gt; 0</code>` だけでは薄い領域まで拾うので、</p>
+<p>閾値をどう決めたかを書かない渦可視化は、絵の美しさが閾値の産物である</p>
+<p>可能性を隠している。閾値を振ったときの面積変化を併記すること。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_cross_correlate">piv_cross_correlate</a> · <a style="color:#22d3bf" href="oppiv:piv_multipass">piv_multipass</a> · <a style="color:#22d3bf" href="oppiv:piv_deform_pass">piv_deform_pass</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">field</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_vorticity">piv_vorticity</a> · <a style="color:#22d3bf" href="oppiv:piv_divergence">piv_divergence</a> · <a style="color:#22d3bf" href="oppiv:piv_flow_magnitude">piv_flow_magnitude</a> · <a style="color:#22d3bf" href="oppiv:piv_to_velocity">piv_to_velocity</a> · <a style="color:#22d3bf" href="oppiv:piv_velocity_gradient">piv_velocity_gradient</a> · <a style="color:#22d3bf" href="oppiv:piv_swirling_strength">piv_swirling_strength</a> · <a style="color:#22d3bf" href="oppiv:piv_strain_rate">piv_strain_rate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pivops.py — PIV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

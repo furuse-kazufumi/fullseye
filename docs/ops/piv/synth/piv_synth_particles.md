@@ -53,11 +53,11 @@ Returns:
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[piv_cross_correlate](../estimate/piv_cross_correlate.md) · [piv_multipass](../estimate/piv_multipass.md)
+[piv_cross_correlate](../estimate/piv_cross_correlate.md) · [piv_multipass](../estimate/piv_multipass.md) · [piv_deform_pass](../estimate/piv_deform_pass.md)
 
 ## 同カテゴリ(`synth`)
 
-[piv_synth_pair](piv_synth_pair.md)
+[piv_synth_pair](piv_synth_pair.md) · [piv_synth_sequence](piv_synth_sequence.md)
 
 ---
 *Provenance: pivops.py — PIV operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

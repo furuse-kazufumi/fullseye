@@ -72,12 +72,16 @@ import numpy as np
 __all__ = [
     "FLOW2D_SHAPE", "PEAK_MODES", "WINDOW_FUNCS", "OUTLIER_FILL",
     "NORMALIZE_MODES",
-    "piv_synth_particles", "piv_synth_pair",
+    "piv_synth_particles", "piv_synth_pair", "piv_synth_sequence",
     "piv_cross_correlate", "piv_multipass",
     "piv_outlier_mask", "piv_replace_outliers",
     "piv_vorticity", "piv_divergence", "piv_flow_magnitude",
     "piv_sample_at_windows", "piv_error_stats", "piv_peak_locking",
     "piv_to_velocity",
+    # --- 派生(2026-09-06 追加)---
+    "piv_velocity_gradient", "piv_q_criterion", "piv_swirling_strength",
+    "piv_strain_rate", "piv_flow_to_rgbimage", "piv_line_integral_convolution",
+    "piv_deform_pass", "piv_ensemble_correlate", "piv_time_statistics",
 ]
 
 #: 変位場の形の約束。``(2, h, w)`` で成分は ``(dy, dx)``、単位は画素/フレーム。
@@ -271,6 +275,68 @@ def piv_synth_pair(shape, displacement, density=0.02, diameter_px=2.5, seed=0,
     return a, b, truth
 
 
+def piv_synth_sequence(shape, displacement, n_frames=8, density=0.02,
+                       diameter_px=2.5, seed=0, noise_sigma=0.0,
+                       intensity=(0.6, 1.0), background=0.0, jitter=0.0):
+    """同じ粒子を繰り返し動かした画像列。返りは ``(frames, truth)``。
+
+    :func:`piv_synth_pair` が 2 枚なのに対し、こちらは **1 つの流れを追い続けた
+    列**を作る。アンサンブル相関と時間統計はこれでないと確かめられない ——
+    独立な対を並べたものを列と呼ぶと、隣り合う 2 枚に対応関係が無く、
+    統計が無意味になる(実測: 平均 0.73 px に対して変動の RMS が 4.05 px という、
+    流れではなく作り方を測った数字が出た)。
+
+    Args:
+        shape: ``(H, W)``。
+        displacement: 1 コマあたりの変位(:func:`piv_synth_pair` と同じ形式)。
+        n_frames: コマ数(2 以上)。
+        jitter: コマごとに**場全体へ**加える乱れの標準偏差 [px]。0 なら定常流。
+            時間統計(変動・レイノルズ応力)を試すにはここを 0 より大きくする。
+
+            ★ 粒子ごとに独立な乱れではなく**コマごとに一つ**の乱れにしてある。
+            粒子ごとに振ると、窓の中で平均されて N の平方根ぶん小さくなり、
+            仕込んだ値と測った値が合わない(実測: 仕込み 0.3 に対して 0.15)。
+            それは PIV の性質であって間違いではないが、**時間統計の検証には
+            使えない**ので、ここは非定常な流れそのものを模す形にした。
+        density / diameter_px / seed / noise_sigma / intensity / background:
+            :func:`piv_synth_pair` と同じ。
+    Returns:
+        ``(frames: list of (H, W), truth: (2, H, W))``。``truth`` は
+        **1 コマあたり**の平均変位。
+    """
+    h, w = (int(shape[0]), int(shape[1]))
+    n = int(n_frames)
+    if n < 2:
+        raise ValueError(f"n_frames must be >= 2, got {n_frames}")
+    jit = float(jitter)
+    if jit < 0:
+        raise ValueError(f"jitter must be >= 0, got {jitter}")
+    ns = float(noise_sigma)
+    if ns < 0:
+        raise ValueError(f"noise_sigma must be >= 0, got {noise_sigma}")
+    _, pos = piv_synth_particles((h, w), density, diameter_px, seed,
+                                 intensity, background)
+    rng = np.random.default_rng(int(seed) + 1)
+    amp = rng.uniform(float(intensity[0]), float(intensity[1]), len(pos))
+    frames = []
+    for k in range(n):
+        img = _render_particles((h, w), pos, amp, diameter_px) + float(background)
+        if ns > 0:
+            img = img + rng.normal(0.0, ns, img.shape)
+        frames.append(img)
+        if k == n - 1:
+            break
+        dy, dx = _displacement_at(displacement, pos[:, 0], pos[:, 1])
+        if jit > 0:                       # コマごとに一つ(場全体が揺れる)
+            dy = dy + rng.normal(0.0, jit)
+            dx = dx + rng.normal(0.0, jit)
+        pos = np.column_stack([pos[:, 0] + dy, pos[:, 1] + dx])
+    gy, gx = np.mgrid[0:h, 0:w].astype(np.float64)
+    ty, tx = _displacement_at(displacement, gy.ravel(), gx.ravel())
+    truth = np.stack([np.reshape(ty, (h, w)), np.reshape(tx, (h, w))])
+    return frames, truth
+
+
 def _displacement_at(displacement, rows, cols):
     """変位の指定を ``(dy, dx)`` の配列に正規化する。"""
     if callable(displacement):
@@ -434,8 +500,8 @@ def _search_mask(n, frac):
     return keep
 
 
-def _correlate_window(wa, wb, taper, subtract_mean, peak, weight=None, keep=None):
-    """1 組の窓の相互相関 → ``(dy, dx, peak_ratio)``。"""
+def _corr_map(wa, wb, taper, subtract_mean, weight=None):
+    """1 組の窓の相互相関マップ(零変位が中央)。アンサンブル相関と共用する。"""
     x, y = wa, wb
     if subtract_mean:
         x = x - x.mean()
@@ -444,12 +510,15 @@ def _correlate_window(wa, wb, taper, subtract_mean, peak, weight=None, keep=None
         x = x * taper
         y = y * taper
     n = x.shape[0]
-    fx = np.fft.rfft2(x)
-    fy = np.fft.rfft2(y)
-    corr = np.fft.irfft2(np.conj(fx) * fy, s=(n, n))
-    corr = np.fft.fftshift(corr)          # 零変位を中央へ
-    if weight is not None:
-        corr = corr / weight
+    corr = np.fft.fftshift(
+        np.fft.irfft2(np.conj(np.fft.rfft2(x)) * np.fft.rfft2(y), s=(n, n)))
+    return corr if weight is None else corr / weight
+
+
+def _correlate_window(wa, wb, taper, subtract_mean, peak, weight=None, keep=None):
+    """1 組の窓の相互相関 → ``(dy, dx, peak_ratio)``。"""
+    corr = _corr_map(wa, wb, taper, subtract_mean, weight)
+    n = corr.shape[0]
     search = corr if keep is None else np.where(keep, corr, -np.inf)
     k = int(np.argmax(search))
     pi, pj = divmod(k, n)
@@ -652,6 +721,20 @@ def _needs_a_grid(f, name):
             "overlap so piv_cross_correlate returns more than one vector")
 
 
+def _gradients(f, s):
+    """速度勾配テンソルの 4 成分 ``(dudx, dudy, dvdx, dvdy)``。
+
+    ``u`` は列方向の速度(``dx`` 成分)、``v`` は行方向の速度(``dy`` 成分)。
+    ``x`` は列、``y`` は行。**行は下向き**なので、数学の xy 座標とは上下が
+    逆になる —— 渦度の符号がここで決まる。
+    """
+    dudx = np.gradient(f[1], s, axis=1)
+    dudy = np.gradient(f[1], s, axis=0)
+    dvdx = np.gradient(f[0], s, axis=1)
+    dvdy = np.gradient(f[0], s, axis=0)
+    return dudx, dudy, dvdx, dvdy
+
+
 def piv_vorticity(flow, spacing=1.0):
     """渦度 ``d(dx)/dy - d(dy)/dx``。**反時計回りが正**(画像座標での定義)。
 
@@ -824,3 +907,344 @@ def piv_peak_locking(flow, bins=20):
     return {"c0": c0, "hist": hist, "bins": n,
             "frac_mean": float(np.nanmean(frac[ok])),
             "frac_std": float(np.nanstd(frac[ok]))}
+
+
+
+# =========================================================================
+# 6. 派生 —— 渦の識別・可視化・時間統計・窓変形
+# =========================================================================
+
+def piv_velocity_gradient(flow, spacing=1.0):
+    """速度勾配テンソルの成分と、そこから出る量をまとめて返す。
+
+    渦度・発散・Q 基準・渦回転強度・ひずみ速度は**すべて同じ 4 つの微分**から
+    出るので、勾配を 4 回計算し直さずに済むようにここへまとめる。個々の op
+    (:func:`piv_vorticity` など)は単独でも使えるが、複数要るならこちら。
+
+    Returns:
+        dict: ``dudx`` / ``dudy`` / ``dvdx`` / ``dvdy``(各 ``(h, w)``)、
+        ``vorticity`` / ``divergence`` / ``q`` / ``swirl`` / ``strain_rate``、
+        ``spacing``。
+    """
+    f = _flow(flow)
+    _needs_a_grid(f, "piv_velocity_gradient")
+    sp = _positive(spacing, "spacing")
+    a, b, c, d = _gradients(f, sp)
+    tr, det = a + d, a * d - b * c
+    disc = 0.25 * tr * tr - det
+    exy = 0.5 * (b + c)
+    return {
+        "dudx": a, "dudy": b, "dvdx": c, "dvdy": d,
+        "vorticity": b - c,                       # d(dx)/dy - d(dy)/dx
+        "divergence": d + a,
+        "q": -0.5 * (a * a + 2.0 * b * c + d * d),
+        "swirl": np.where(disc < 0, np.sqrt(np.maximum(-disc, 0.0)), 0.0),
+        "strain_rate": np.sqrt(2.0 * (a * a + d * d + 2.0 * exy * exy)),
+        "spacing": sp,
+    }
+
+
+def piv_q_criterion(flow, spacing=1.0):
+    """Q 基準 ``-tr(J^2)/2``。**回転がひずみを上回る**場所が正になる。
+
+    渦度だけを見るとせん断層も光る(層流の壁近傍が渦に見える)ので、渦の抽出には
+    こちらを使う。閉形式(解析場を直接与えた実測):
+
+    * 剛体回転 ω=0.01 → ``+1.0e-4`` (= ω^2)
+    * 一様膨張 s=0.01 → ``-1.0e-4`` (= -s^2)
+    * 単純せん断 g=0.02 → ``0.0``(**せん断は渦ではない**、が要点)
+
+    ★ 閾値を必要とする量である。``Q > 0`` だけでは薄い領域まで拾うので、
+    閾値をどう決めたかを書かない渦可視化は、絵の美しさが閾値の産物である
+    可能性を隠している。閾値を振ったときの面積変化を併記すること。
+    """
+    _needs_a_grid(_flow(flow), "piv_q_criterion")   # 内部ヘルパの名前で断らない
+    return piv_velocity_gradient(flow, spacing)["q"]
+
+
+def piv_swirling_strength(flow, spacing=1.0):
+    """渦回転強度 λ_ci —— 速度勾配テンソルの複素固有値の虚部の大きさ。
+
+    Q 基準と同じく「せん断と渦を区別する」量だが、こちらは**回転の角速度に
+    等しい単位**を持つ(1/フレーム)。実測: 剛体回転 ω=0.01 で ``0.01``、
+    一様膨張とせん断で ``0.0``。
+
+    固有値が実数(= 回転していない)の場所は 0 を返す。各点で独立な 2x2 の
+    固有値なので、格子全体をベクトル化して一度に解いている。
+    """
+    _needs_a_grid(_flow(flow), "piv_swirling_strength")   # 内部ヘルパの名前で断らない
+    return piv_velocity_gradient(flow, spacing)["swirl"]
+
+
+def piv_strain_rate(flow, spacing=1.0):
+    """ひずみ速度の大きさ ``sqrt(2 e_ij e_ij)``。剛体回転では 0 になる。
+
+    実測: 剛体回転 0.0 / 一様膨張 s=0.01 で 0.02 (= 2s) / 単純せん断 g=0.02 で
+    0.02 (= g)。**回転だけを取り除いた変形の強さ**なので、Q 基準や λ_ci と
+    合わせて見ると「渦かせん断か」が分かれる。
+    """
+    _needs_a_grid(_flow(flow), "piv_strain_rate")   # 内部ヘルパの名前で断らない
+    return piv_velocity_gradient(flow, spacing)["strain_rate"]
+
+
+def piv_flow_to_rgbimage(flow, scale=None):
+    """色相 = 向き、明度 = 速さの標準的なフロー可視化。返りは ``(h, w, 3)``。
+
+    ``reprconv.flow_to_rgbimage`` の 2 次元版(あちらは ``(3, D, H, W)`` の
+    3-D シーンフロー専用で、平面フローは形で弾かれる)。
+
+    **色相環の凡例を図の側で必ず一緒に焼くこと** —— 色の意味が書いていない
+    フロー図は綺麗なだけで読めない。``scale`` を省くと最大の速さで正規化する
+    ので、**図ごとに色の意味が変わる**。複数の図を並べるなら明示的に固定する。
+
+    Args:
+        flow: ``(2, h, w)``。
+        scale: 明度 1.0 に対応する速さ [px]。``None`` で最大値。
+    Returns:
+        ``(h, w, 3)`` float64、値域 [0, 1]。
+    """
+    f = _flow(flow)
+    mag = np.hypot(f[0], f[1])
+    top = float(np.nanmax(mag)) if scale is None else _positive(scale, "scale")
+    if not np.isfinite(top) or top <= 0:
+        top = 1.0
+    v = np.clip(np.nan_to_num(mag) / top, 0.0, 1.0)
+    # 画面上の向き。行が下向きなので、上向きを 90 度にするには dy の符号を反転
+    hue = (np.degrees(np.arctan2(-np.nan_to_num(f[0]), np.nan_to_num(f[1]))) % 360.0) / 60.0
+    i = np.floor(hue).astype(np.int64) % 6
+    frac = hue - np.floor(hue)
+    p, q, t = np.zeros_like(v), v * (1.0 - frac), v * frac
+    r = np.select([i == 0, i == 1, i == 2, i == 3, i == 4, i == 5], [v, q, p, p, t, v])
+    g = np.select([i == 0, i == 1, i == 2, i == 3, i == 4, i == 5], [t, v, v, q, p, p])
+    b = np.select([i == 0, i == 1, i == 2, i == 3, i == 4, i == 5], [p, p, t, v, v, q])
+    return np.stack([r, g, b], axis=-1)
+
+
+def piv_line_integral_convolution(flow, length=12, upsample=4, seed=0):
+    """線積分畳み込み(LIC)—— 流れに沿って白色雑音をぼかした模様の画像。
+
+    ベクトルの矢印は密にすると潰れ、疎にすると構造を見落とす。LIC は**画素ごと**
+    に流線に沿って雑音を平均するので、密度の選択が要らない。向きの情報は落ちる
+    (前後を区別しない)ので、**回転の向きを見たいときは矢印か色相図と併用する**。
+
+    Args:
+        flow: ``(2, h, w)``。
+        length: 流線に沿って積分する片側の歩数。長いほど滑らかになるが、
+            渦の芯のような曲率の大きい場所では**構造が伸びて嘘になる**。
+        upsample: 出力の解像度倍率(格子は粗いので拡大してから積分する)。
+        seed: 白色雑音の種。
+    Returns:
+        ``(h * upsample, w * upsample)`` float64、値域 [0, 1]。
+    """
+    f = _flow(flow)
+    _needs_a_grid(f, "piv_line_integral_convolution")
+    L = int(length)
+    up = int(upsample)
+    if L < 1:
+        raise ValueError(f"length must be >= 1, got {length}")
+    if up < 1:
+        raise ValueError(f"upsample must be >= 1, got {upsample}")
+    h, w = f.shape[1] * up, f.shape[2] * up
+    rr = (np.arange(h) + 0.5) / up - 0.5
+    cc = (np.arange(w) + 0.5) / up - 0.5
+    fy = _bilinear(np.nan_to_num(f[0]), rr, cc)
+    fx = _bilinear(np.nan_to_num(f[1]), rr, cc)
+    mag = np.hypot(fy, fx)
+    ok = mag > _EPS
+    uy = np.where(ok, fy / np.where(ok, mag, 1.0), 0.0)
+    ux = np.where(ok, fx / np.where(ok, mag, 1.0), 0.0)
+    rng = np.random.default_rng(int(seed))
+    noise = rng.random((h, w))
+    gy, gx = np.mgrid[0:h, 0:w].astype(np.float64)
+    acc = np.array(noise, copy=True)
+    for sign in (1.0, -1.0):
+        py, px = gy.copy(), gx.copy()
+        for _ in range(L):
+            py = np.clip(py + sign * uy * up * 0.5, 0, h - 1)
+            px = np.clip(px + sign * ux * up * 0.5, 0, w - 1)
+            acc += noise[np.rint(py).astype(np.int64), np.rint(px).astype(np.int64)]
+    out = acc / (2.0 * L + 1.0)
+    lo, hi = float(out.min()), float(out.max())
+    return (out - lo) / (hi - lo) if hi > lo else np.zeros_like(out)
+
+
+def _bilinear(a, rows, cols):
+    """``a`` を ``rows`` x ``cols`` の格子で双一次補間(端は複製)。"""
+    h, w = a.shape
+    r = np.clip(rows, 0, h - 1)
+    c = np.clip(cols, 0, w - 1)
+    r0 = np.floor(r).astype(np.int64)
+    c0 = np.floor(c).astype(np.int64)
+    r1 = np.minimum(r0 + 1, h - 1)
+    c1 = np.minimum(c0 + 1, w - 1)
+    wr = (r - r0)[:, None]
+    wc = (c - c0)[None, :]
+    top = a[np.ix_(r0, c0)] * (1 - wc) + a[np.ix_(r0, c1)] * wc
+    bot = a[np.ix_(r1, c0)] * (1 - wc) + a[np.ix_(r1, c1)] * wc
+    return top * (1 - wr) + bot * wr
+
+
+def piv_deform_pass(a, b, flow, info, window=32, overlap=0.5, peak="gauss3",
+                    window_func="hann", order=3):
+    """窓変形つきの 1 段。予測変位で**画像そのものを歪めてから**相関を取る。
+
+    整数ずらし(:func:`piv_cross_correlate` の ``shift``)は、窓の中で変位が
+    一定という仮定を置く。回転やせん断のように**窓の中で変位が変わる**場では
+    相関ピークが潰れるので、2 枚を予測の半分ずつ逆向きに歪めてから相関する
+    (中央差分の変形)。
+
+    Args:
+        a, b: 画像対。
+        flow: 予測変位 ``(2, h, w)``(``piv_multipass`` などの出力)。
+        info: その ``info``(窓中心の座標が要る)。
+        window / overlap / peak / window_func: 新しい段の設定。
+        order: 変形に使う補間の次数(3 = 3 次スプライン)。
+    Returns:
+        ``(flow (2, h', w'), info)``。返る変位は**元の画像座標での総変位**。
+    """
+    from scipy import ndimage                     # core 依存(numpy と scipy)
+
+    A, B = _img(a, "a"), _img(b, "b")
+    if A.shape != B.shape:
+        raise ValueError(f"a and b must have the same shape, got {A.shape} and {B.shape}")
+    pred = _flow(flow, "flow")
+    rows_n = len(np.atleast_1d(info["rows"]))
+    cols_n = len(np.atleast_1d(info["cols"]))
+    if pred.shape[1:] != (rows_n, cols_n):
+        raise ValueError(
+            f"flow is {pred.shape[1:]} but info describes a {rows_n}x{cols_n} grid; "
+            "pass the info that came back with this flow")
+    h, w = A.shape
+    gy, gx = np.mgrid[0:h, 0:w].astype(np.float64)
+    # 粗い格子の予測を画素格子へ広げる
+    rows = np.asarray(info["rows"], np.float64)
+    cols = np.asarray(info["cols"], np.float64)
+    py = _resample_to_pixels(np.nan_to_num(pred[0]), rows, cols, h, w)
+    px = _resample_to_pixels(np.nan_to_num(pred[1]), rows, cols, h, w)
+    # 中央差分の変形: a を -d/2、b を +d/2 だけ戻す
+    wa = ndimage.map_coordinates(A, [gy - 0.5 * py, gx - 0.5 * px], order=order,
+                                 mode="nearest")
+    wb = ndimage.map_coordinates(B, [gy + 0.5 * py, gx + 0.5 * px], order=order,
+                                 mode="nearest")
+    residual, out_info = piv_cross_correlate(wa, wb, window, overlap, peak, window_func)
+    base = np.stack([
+        _sample_grid(py, out_info), _sample_grid(px, out_info)])
+    out_info = dict(out_info)
+    out_info["deformed"] = True
+    return residual + base, out_info
+
+
+def _resample_to_pixels(g, rows, cols, h, w):
+    """粗い格子 ``g``(``rows`` x ``cols`` に載る)を画素格子へ双一次で広げる。"""
+    if g.shape[0] < 2 or g.shape[1] < 2:
+        return np.full((h, w), float(np.mean(g)))
+    ri = np.interp(np.arange(h), rows, np.arange(g.shape[0]))
+    ci = np.interp(np.arange(w), cols, np.arange(g.shape[1]))
+    return _bilinear(g, ri, ci)
+
+
+def _sample_grid(pixels, info):
+    """画素格子の場を窓中心で拾う。"""
+    r = np.clip(np.rint(np.asarray(info["rows"])).astype(np.int64), 0, pixels.shape[0] - 1)
+    c = np.clip(np.rint(np.asarray(info["cols"])).astype(np.int64), 0, pixels.shape[1] - 1)
+    return pixels[np.ix_(r, c)]
+
+
+def piv_ensemble_correlate(images, window=32, overlap=0.5, peak="gauss3",
+                           window_func="hann", normalize="overlap",
+                           search_limit=0.25):
+    """相関マップを**足してから**ピークを探す(アンサンブル相関)。
+
+    粒子が少ない・雑音が多い場合、1 対ずつ測って平均すると**外れたベクトルの
+    平均**になる。相関の段階で足すと、弱いピークが同じ場所に積み上がって
+    立ち上がる。定常流(全対で変位が同じ)が前提。
+
+    Args:
+        images: 2 枚以上の画像の列。連続する対 ``(k, k+1)`` を使う。
+        window / overlap / peak / window_func / normalize / search_limit:
+            :func:`piv_cross_correlate` と同じ。
+    Returns:
+        ``(flow (2, h, w), info)``。``info["pairs"]`` に使った対の数。
+    """
+    seq = list(images)
+    if len(seq) < 2:
+        raise ValueError(f"images must hold at least 2 frames, got {len(seq)}")
+    frames = [_img(x, f"images[{i}]") for i, x in enumerate(seq)]
+    shape = frames[0].shape
+    for i, x in enumerate(frames):
+        if x.shape != shape:
+            raise ValueError(f"images[{i}] has shape {x.shape} but images[0] has {shape}")
+    win = _window(window, shape)
+    ov = float(overlap)
+    if not (0.0 <= ov < 1.0):
+        raise ValueError(f"overlap must be in [0, 1), got {overlap}")
+    _choice(peak, "peak", PEAK_MODES)
+    _choice(window_func, "window_func", WINDOW_FUNCS)
+    _choice(normalize, "normalize", NORMALIZE_MODES)
+    step = max(1, int(round(win * (1.0 - ov))))
+    h, w = shape
+    rows = np.arange(0, h - win + 1, step)
+    cols = np.arange(0, w - win + 1, step)
+    if rows.size == 0 or cols.size == 0:
+        raise ValueError(f"window={win} with overlap={ov} leaves no window in shape {shape}")
+    taper = _taper(win, window_func)
+    weight = _overlap_weight(win, taper) if normalize == "overlap" else None
+    keep = _search_mask(win, None if search_limit is None else float(search_limit))
+    c0 = win // 2
+    flow = np.zeros((2, rows.size, cols.size))
+    ratio = np.zeros((rows.size, cols.size))
+    for i, r in enumerate(rows):
+        for j, c in enumerate(cols):
+            acc = np.zeros((win, win))
+            for k in range(len(frames) - 1):
+                acc += _corr_map(frames[k][r:r + win, c:c + win],
+                                 frames[k + 1][r:r + win, c:c + win],
+                                 taper, True, weight)
+            search = acc if keep is None else np.where(keep, acc, -np.inf)
+            idx = int(np.argmax(search))
+            pi, pj = divmod(idx, win)
+            flow[0, i, j] = (pi - c0) + _subpixel(acc, pi, pj, 0, peak)
+            flow[1, i, j] = (pj - c0) + _subpixel(acc, pi, pj, 1, peak)
+            ratio[i, j] = _peak_ratio(search, pi, pj, acc[pi, pj])
+    info = {"rows": rows + (win - 1) / 2.0, "cols": cols + (win - 1) / 2.0,
+            "peak_ratio": ratio, "window": win, "overlap": ov, "peak": peak,
+            "window_func": window_func, "step": step, "normalize": normalize,
+            "search_limit": search_limit, "pairs": len(frames) - 1}
+    return flow, info
+
+
+def piv_time_statistics(images, window=32, overlap=0.5, **kw):
+    """画像列 → 時間平均・変動の RMS・レイノルズ応力。
+
+    連続する対ごとに変位を測り、時間方向の統計を取る。乱流の記述はこの 3 つが
+    出発点で、``u'v'`` の符号と大きさが運動量輸送そのものになる。
+
+    **1 対だけでは意味が無い**(変動が定義できない)ので 3 枚以上を要求する。
+
+    Args:
+        images: 3 枚以上の画像列。
+        window / overlap / kw: :func:`piv_cross_correlate` へ渡す。
+    Returns:
+        dict: ``mean``(``(2, h, w)``)、``rms``(同)、``reynolds``
+        (``<u'v'>``、``(h, w)``)、``turbulence_intensity``、``n_pairs``、
+        ``rows`` / ``cols`` / ``step``。
+    """
+    seq = list(images)
+    if len(seq) < 3:
+        raise ValueError(
+            f"images must hold at least 3 frames to define a fluctuation, got {len(seq)}")
+    flows, info = [], None
+    for k in range(len(seq) - 1):
+        f, info = piv_cross_correlate(seq[k], seq[k + 1], window, overlap, **kw)
+        flows.append(f)
+    stack = np.stack(flows)                       # (n, 2, h, w)
+    mean = np.nanmean(stack, axis=0)
+    fluct = stack - mean
+    rms = np.sqrt(np.nanmean(fluct ** 2, axis=0))
+    reynolds = np.nanmean(fluct[:, 0] * fluct[:, 1], axis=0)
+    speed = np.hypot(mean[0], mean[1])
+    with np.errstate(invalid="ignore", divide="ignore"):
+        ti = np.where(speed > _EPS, np.hypot(rms[0], rms[1]) / speed, np.nan)
+    return {"mean": mean, "rms": rms, "reynolds": reynolds,
+            "turbulence_intensity": ti, "n_pairs": len(flows),
+            "rows": info["rows"], "cols": info["cols"], "step": info["step"]}

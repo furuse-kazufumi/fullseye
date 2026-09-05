@@ -4,7 +4,7 @@ dim: piv
 category: assess
 in: flow2d × flow2d
 out: table
-examples: []
+examples: [piv_flow_from_particles]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.9  # fullseye lib version this note was generated for
@@ -44,7 +44,7 @@ Returns:
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [piv_flow_from_particles](../../../../examples/piv_flow_from_particles.py) — `py -3.11 examples/piv_flow_from_particles.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
@@ -52,7 +52,7 @@ Returns:
 
 ## 同カテゴリ(`assess`)
 
-[piv_sample_at_windows](piv_sample_at_windows.md) · [piv_peak_locking](piv_peak_locking.md)
+[piv_sample_at_windows](piv_sample_at_windows.md) · [piv_peak_locking](piv_peak_locking.md) · [piv_time_statistics](piv_time_statistics.md)
 
 ---
 *Provenance: pivops.py — PIV operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

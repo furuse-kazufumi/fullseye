@@ -1,7 +1,7 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """opspiv —— 粒子画像流速測定(PIV)op の統一レジストリ。
 
-実体は ``pivops.py``(13 op / 5 カテゴリ)。台帳の役目は 3 つ:
+実体は ``pivops.py``(23 op / 6 カテゴリ)。台帳の役目は 3 つ:
 docs/ops へノートを出す・連鎖ファザーに食わせる・宣言型と素の返りを橋渡しする。
 
 使い方::
@@ -26,12 +26,12 @@ _MOD = {"pivops": pivops}
 #     「3 成分を返す」と宣言しながら 2 成分を返すことになり、宣言が嘘になる。
 #
 #     型を増やすときの本 repo の条件(「種を持つ op が無ければ永久に未実行に
-#     なる」)は満たしている: 生成側が ``piv_cross_correlate`` /
-#     ``piv_multipass`` / ``piv_replace_outliers``、消費側が
-#     ``piv_vorticity`` / ``piv_divergence`` / ``piv_flow_magnitude`` /
-#     ``piv_outlier_mask`` / ``piv_error_stats`` / ``piv_peak_locking`` /
-#     ``piv_to_velocity`` / ``piv_sample_at_windows`` で、**族の中で閉じた
-#     生成と消費がある**。加えて ``images`` から入る入口(合成 2 op)がある。
+#     なる」)は満たしている: **生成が 7 op**(cross_correlate / multipass /
+#     deform_pass / ensemble_correlate / replace_outliers / to_velocity /
+#     sample_at_windows)、**消費が 13 op**(場の量 8・可視化 2・検定 2・評価 3
+#     の重なりを含む)で、族の中で生成と消費が閉じている。
+#     ★ 出口(``visualise`` の 2 op)を必ず持たせている —— 作れるが見られない
+#     型は、連鎖の途中で行き止まりになり「狭い sort」を生む。
 #
 #     両方向の fail-closed も実測で確認済み: ``reprconv.flow_magnitude`` に
 #     2-D フローを渡すと ValueError(「(3, D, H, W) を取る」と名指しで拒否)、
@@ -59,11 +59,19 @@ _CATALOG = {
     "synth": [
         ("piv_synth_particles", "pivops", [], "image2d"),
         ("piv_synth_pair", "pivops", [], "image2d"),
+        # 列は `images`(2-D 配列の list)。アンサンブル相関と時間統計は
+        # **独立な対を並べたもの**では確かめられない(隣り合う 2 枚に対応が
+        # 無いので統計が作り方を測ってしまう)ので、入口をここに置く。
+        ("piv_synth_sequence", "pivops", [], "images"),
     ],
     # 推定 —— 本体
     "estimate": [
         ("piv_cross_correlate", "pivops", ["image2d", "image2d"], "flow2d"),
         ("piv_multipass", "pivops", ["image2d", "image2d"], "flow2d"),
+        # 窓変形。予測で画像そのものを歪めてから相関する(回転場で実測 2.1 倍)
+        ("piv_deform_pass", "pivops", ["image2d", "image2d", "flow2d"], "flow2d"),
+        # 相関マップを足してからピークを探す(疎・雑音で実測 2.7 倍)
+        ("piv_ensemble_correlate", "pivops", ["images"], "flow2d"),
     ],
     # 検定 —— 外れ値
     "validate": [
@@ -76,12 +84,25 @@ _CATALOG = {
         ("piv_divergence", "pivops", ["flow2d"], "image2d"),
         ("piv_flow_magnitude", "pivops", ["flow2d"], "image2d"),
         ("piv_to_velocity", "pivops", ["flow2d"], "flow2d"),
+        # 速度勾配テンソルと、そこから出る量をまとめて返す(table)
+        ("piv_velocity_gradient", "pivops", ["flow2d"], "table"),
+        # 渦とせん断を分ける 2 つ。渦度だけ見るとせん断層も光る
+        ("piv_q_criterion", "pivops", ["flow2d"], "image2d"),
+        ("piv_swirling_strength", "pivops", ["flow2d"], "image2d"),
+        ("piv_strain_rate", "pivops", ["flow2d"], "image2d"),
+    ],
+    # 可視化 —— 出口。ここを持たないと flow2d は「作れるが見られない」型になる
+    "visualise": [
+        ("piv_flow_to_rgbimage", "pivops", ["flow2d"], "rgb"),
+        ("piv_line_integral_convolution", "pivops", ["flow2d"], "image2d"),
     ],
     # 評価 —— 真値との突き合わせと系統誤差
     "assess": [
         ("piv_sample_at_windows", "pivops", ["flow2d"], "flow2d"),
         ("piv_error_stats", "pivops", ["flow2d", "flow2d"], "table"),
         ("piv_peak_locking", "pivops", ["flow2d"], "table"),
+        # 時間平均・変動・レイノルズ応力(3 枚以上の列が要る)
+        ("piv_time_statistics", "pivops", ["images"], "table"),
     ],
 }
 
@@ -111,8 +132,11 @@ _first = (lambda r: r[0])
 RESULT_ADAPTERS = {
     "piv_synth_particles": _first,   # (image, positions)   -> image2d
     "piv_synth_pair": _first,        # (a, b, truth)        -> image2d
+    "piv_synth_sequence": _first,    # (frames, truth)      -> images
     "piv_cross_correlate": _first,   # (flow, info)         -> flow2d
     "piv_multipass": _first,         # (flow, info)         -> flow2d
+    "piv_deform_pass": _first,       # (flow, info)         -> flow2d
+    "piv_ensemble_correlate": _first,  # (flow, info)       -> flow2d
 }
 
 

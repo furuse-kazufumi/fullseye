@@ -9,6 +9,13 @@
 <p>分母に `<code style="color:#22d3bf">epsilon</code>`(既定 0.1 px、PIV の測定不確かさの目安)を足すのは、</p>
 <p>一様な場で分母が 0 になって全部が外れ値になるのを防ぐため —— この項が</p>
 <p>無いと、<b>理想的な入力ほど検定が壊れる</b>。</p>
+<p>★<b>勾配の急な場では害になる</b>(2026-09-06 実測)。Rankine 型の渦</p>
+<p>(芯の半径 28 px)で多段 PIV を掛けたところ、閾値 2 が拾った 5 本は</p>
+<p>すべて<b>芯の縁</b>(中心から 32 px)に並び、実際の誤差は 0.07-0.45 px ——</p>
+<p>外れ値ではなく<b>速度分布が折れている場所</b>だった。近傍中央値で均すと</p>
+<p>RMS が 0.134 から 0.230 へ<b>悪化</b>する(閾値 5 では 1 本も拾わず 0.134 のまま)。</p>
+<p>検定は「近傍と違う = 間違い」という仮定に立つので、**本物の不連続を</p>
+<p>間違いと呼ぶ**。掛けるかどうかは場の性質を見て決めること。</p>
 <p>Args:</p>
 <p>flow: `<code style="color:#22d3bf">(2, h, w)</code>`。</p>
 <p>threshold: この値を超えたら外れ値。慣行は 2。</p>
@@ -22,7 +29,7 @@
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
 <p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
-<p style="margin:2px 0 2px 12px">• (아직 없음)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:piv_flow_from_particles">piv_flow_from_particles</a> — <code style="color:#22d3bf">py -3.11 examples/piv_flow_from_particles.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">mask</code> 를 입력으로 받는 것)</h3>
 <p><a style="color:#22d3bf" href="oppiv:piv_replace_outliers">piv_replace_outliers</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">validate</code>)</h3>

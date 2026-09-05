@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">piv_velocity_gradient — PIV <code style="color:#22d3bf">field</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import pivops; pivops.piv_velocity_gradient(flow, spacing=1.0)</code> (または <code style="color:#22d3bf">opspiv.get(&quot;piv_velocity_gradient&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>速度勾配テンソルの成分と、そこから出る量をまとめて返す。</p>
+<p>渦度・発散・Q 基準・渦回転強度・ひずみ速度は<b>すべて同じ 4 つの微分</b>から</p>
+<p>出るので、勾配を 4 回計算し直さずに済むようにここへまとめる。個々の op</p>
+<p>(:func:<code style="color:#22d3bf">piv_vorticity</code> など)は単独でも使えるが、複数要るならこちら。</p>
+<p>Returns:</p>
+<p>dict: `<code style="color:#22d3bf">dudx</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">dudy</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">dvdx</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">dvdy</code><code style="color:#22d3bf">(各 </code><code style="color:#22d3bf">(h, w)</code>`)、</p>
+<p>`<code style="color:#22d3bf">vorticity</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">divergence</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">q</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">swirl</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">strain_rate</code>`、</p>
+<p>`<code style="color:#22d3bf">spacing</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">field</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_vorticity">piv_vorticity</a> · <a style="color:#22d3bf" href="oppiv:piv_divergence">piv_divergence</a> · <a style="color:#22d3bf" href="oppiv:piv_flow_magnitude">piv_flow_magnitude</a> · <a style="color:#22d3bf" href="oppiv:piv_to_velocity">piv_to_velocity</a> · <a style="color:#22d3bf" href="oppiv:piv_q_criterion">piv_q_criterion</a> · <a style="color:#22d3bf" href="oppiv:piv_swirling_strength">piv_swirling_strength</a> · <a style="color:#22d3bf" href="oppiv:piv_strain_rate">piv_strain_rate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pivops.py — PIV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

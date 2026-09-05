@@ -390,6 +390,194 @@ def test_the_truth_field_is_pixelwise_and_matches_the_displacement():
 
 
 # =========================================================================
+# 9.5 派生 —— 渦の識別・可視化・時間統計・窓変形
+# =========================================================================
+
+def _analytic(field, n=64):
+    """PIV を通さず、解析場を直接置く(**定義そのもの**の検算)。"""
+    r, c = np.mgrid[0:n, 0:n].astype(np.float64)
+    dy, dx = field(r, c)
+    return np.stack([np.broadcast_to(dy, (n, n)).astype(np.float64),
+                     np.broadcast_to(dx, (n, n)).astype(np.float64)])
+
+
+def _rot(w):
+    return lambda r, c: (w * (c - 31.5), -w * (r - 31.5))
+
+
+def _exp(sc):
+    return lambda r, c: (sc * (r - 31.5), sc * (c - 31.5))
+
+
+def _shear(g):
+    return lambda r, c: (np.zeros_like(r), g * (r - 31.5))
+
+
+@pytest.mark.parametrize("name,field,q,swirl,strain", [
+    # 剛体回転 w: Q = +w^2、渦回転強度 = w、ひずみ 0
+    ("rotation", _rot(0.01), 1e-4, 0.01, 0.0),
+    # 一様膨張 s: Q = -s^2、渦回転強度 0、ひずみ = 2s
+    ("expansion", _exp(0.01), -1e-4, 0.0, 0.02),
+    # 単純せん断 g: Q = 0、渦回転強度 0、ひずみ = g。**せん断は渦ではない**
+    ("shear", _shear(0.02), 0.0, 0.0, 0.02),
+])
+def test_the_invariants_match_their_closed_forms(name, field, q, swirl, strain):
+    f = _analytic(field)
+    k = (slice(2, -2), slice(2, -2))
+    g = P.piv_velocity_gradient(f)
+    assert np.mean(g["q"][k]) == pytest.approx(q, abs=1e-8), (name, "q")
+    assert np.mean(g["swirl"][k]) == pytest.approx(swirl, abs=1e-8), (name, "swirl")
+    assert np.mean(g["strain_rate"][k]) == pytest.approx(strain, abs=1e-8), (name, "strain")
+    # 単独 op も同じ値を返す(まとめ版とばらばら版が食い違わないこと)
+    assert np.allclose(P.piv_q_criterion(f), g["q"])
+    assert np.allclose(P.piv_swirling_strength(f), g["swirl"])
+    assert np.allclose(P.piv_strain_rate(f), g["strain_rate"])
+
+
+def test_shear_is_told_apart_from_a_vortex():
+    """渦度だけ見るとせん断層も光る —— Q と渦回転強度はそこを分ける。
+
+    実測: せん断 g=0.02 の渦度は 0.02(回転と同じ大きさ)だが、Q も
+    渦回転強度も 0。この差がこの 2 つを足した理由そのもの。
+    """
+    k = (slice(2, -2), slice(2, -2))
+    vortex, shear = _analytic(_rot(0.01)), _analytic(_shear(0.02))
+    assert abs(np.mean(P.piv_vorticity(shear)[k])) > 0.015      # 渦度は大きい
+    assert abs(np.mean(P.piv_swirling_strength(shear)[k])) < 1e-9   # だが渦ではない
+    assert np.mean(P.piv_swirling_strength(vortex)[k]) > 0.009
+
+
+def test_the_rgb_visualisation_is_bounded_and_direction_dependent():
+    up = _analytic(lambda r, c: (np.full_like(r, -2.0), np.zeros_like(c)))
+    right = _analytic(lambda r, c: (np.zeros_like(r), np.full_like(c, 2.0)))
+    ru, rr = P.piv_flow_to_rgbimage(up), P.piv_flow_to_rgbimage(right)
+    for img in (ru, rr):
+        assert img.shape == (64, 64, 3)
+        assert 0.0 <= img.min() and img.max() <= 1.0
+    assert not np.allclose(ru[32, 32], rr[32, 32]), "向きが違うのに同じ色になった"
+
+
+def test_the_rgb_scale_can_be_pinned_across_figures():
+    """``scale`` を省くと**図ごとに色の意味が変わる**。固定できることを確かめる。"""
+    slow = _analytic(lambda r, c: (np.zeros_like(r), np.full_like(c, 1.0)))
+    fast = _analytic(lambda r, c: (np.zeros_like(r), np.full_like(c, 4.0)))
+    assert np.allclose(P.piv_flow_to_rgbimage(slow), P.piv_flow_to_rgbimage(fast))
+    a = P.piv_flow_to_rgbimage(slow, scale=4.0)
+    b = P.piv_flow_to_rgbimage(fast, scale=4.0)
+    assert not np.allclose(a, b), "scale を固定したのに明度が同じになった"
+
+
+def test_line_integral_convolution_smears_along_the_flow():
+    """LIC は流れに沿ってぼける —— 沿う向きの自己相関が横切る向きより高い。"""
+    flow = _analytic(lambda r, c: (np.zeros_like(r), np.ones_like(c)))   # 右向き
+    img = P.piv_line_integral_convolution(flow, length=10, upsample=3, seed=0)
+    x = img - img.mean()
+    along = float(np.mean(x[:, :-4] * x[:, 4:]))       # 列方向 = 流れに沿う
+    across = float(np.mean(x[:-4, :] * x[4:, :]))      # 行方向 = 横切る
+    assert along > 3.0 * across, (along, across)
+    assert 0.0 <= img.min() and img.max() <= 1.0
+
+
+def test_window_deformation_beats_an_integer_shift_on_a_rotating_field():
+    """窓の中で変位が変わる場では、整数ずらしより画像を歪めるほうが良い。
+
+    実測(回転 ω=0.01、256x256): 多段のみ RMS 0.0576 → 窓変形 1 段 0.0272。
+    """
+    a, b, truth = P.piv_synth_pair((256, 256), rotation(0.01), density=0.02, seed=7)
+    f1, i1 = P.piv_multipass(a, b, (64, 32), 0.5)
+    s1 = P.piv_error_stats(f1, P.piv_sample_at_windows(truth, i1))
+    f2, i2 = P.piv_deform_pass(a, b, f1, i1, window=32, overlap=0.5)
+    s2 = P.piv_error_stats(f2, P.piv_sample_at_windows(truth, i2))
+    assert s2["rms"] < 0.7 * s1["rms"], (s1["rms"], s2["rms"])
+    assert i2["deformed"] is True
+
+
+def test_a_deform_pass_refuses_a_flow_that_does_not_match_its_info():
+    a, b, _ = P.piv_synth_pair((128, 128), (1.0, 1.0), seed=2)
+    f, i = P.piv_cross_correlate(a, b, 32, 0.5)
+    with pytest.raises(ValueError, match="info describes"):
+        P.piv_deform_pass(a, b, f[:, :2, :2], i)
+
+
+def test_ensemble_correlation_beats_a_single_pair_when_seeding_is_sparse():
+    """疎で雑音の多い列では、相関を**足してから**探すほうが当たる。
+
+    実測(密度 0.004、雑音 0.25、10 対): 1 対 RMS 4.21 / 合算 1.55、
+    1 px 超の外れが 47/81 → 9/81。**完全には直らない**ことも含めて固定する。
+    """
+    frames, truth = P.piv_synth_sequence((160, 160), (0.0, 2.4), n_frames=11,
+                                         density=0.004, seed=3, noise_sigma=0.25)
+    f1, i1 = P.piv_cross_correlate(frames[0], frames[1], 32, 0.5)
+    fe, ie = P.piv_ensemble_correlate(frames, 32, 0.5)
+    s1 = P.piv_error_stats(f1, P.piv_sample_at_windows(truth, i1))
+    se = P.piv_error_stats(fe, P.piv_sample_at_windows(truth, ie))
+    assert se["rms"] < 0.6 * s1["rms"], (s1["rms"], se["rms"])
+    assert ie["pairs"] == 10
+
+
+def test_ensemble_correlation_needs_at_least_two_frames():
+    with pytest.raises(ValueError, match="at least 2 frames"):
+        P.piv_ensemble_correlate([np.zeros((64, 64))])
+
+
+def test_time_statistics_recovers_the_injected_unsteadiness():
+    """コマごとに場全体を揺らし、その大きさが変動の RMS として戻るか。
+
+    実測: 仕込み 0.3 px → 測定 0.287 px。定常流(揺れ 0)なら 0.013 px。
+    """
+    frames, _ = P.piv_synth_sequence((192, 192), (0.0, 3.0), n_frames=13,
+                                     density=0.02, seed=5, jitter=0.3)
+    st = P.piv_time_statistics(frames, 32, 0.5)
+    assert st["n_pairs"] == 12
+    assert np.nanmean(st["mean"][1]) == pytest.approx(3.0, abs=0.15)
+    assert 0.2 < np.nanmean(st["rms"][1]) < 0.45
+    # 独立に揺らしたので、レイノルズ応力は 0 の近く
+    assert abs(np.nanmean(st["reynolds"])) < 0.1
+
+
+def test_a_steady_flow_has_almost_no_fluctuation():
+    frames, _ = P.piv_synth_sequence((192, 192), (0.0, 3.0), n_frames=9,
+                                     density=0.02, seed=5)
+    st = P.piv_time_statistics(frames, 32, 0.5)
+    assert np.nanmean(st["rms"][1]) < 0.05
+    assert np.nanmedian(st["turbulence_intensity"]) < 0.02
+
+
+def test_time_statistics_needs_three_frames_to_define_a_fluctuation():
+    a = np.zeros((64, 64))
+    with pytest.raises(ValueError, match="at least 3 frames"):
+        P.piv_time_statistics([a, a])
+
+
+def test_the_sequence_moves_the_same_particles_rather_than_pairing_strangers():
+    """独立な対を並べたものを「列」と呼ぶと、統計が作り方を測ってしまう。
+
+    同じ粒子を追っているなら、隣り合う 2 枚の相関は高く、離れた 2 枚では
+    落ちる(粒子が窓から出ていくため)。
+    """
+    frames, _ = P.piv_synth_sequence((128, 128), (0.0, 3.0), n_frames=6,
+                                     density=0.02, seed=4)
+    near = np.corrcoef(frames[0].ravel(), frames[1].ravel())[0, 1]
+    far = np.corrcoef(frames[0].ravel(), frames[5].ravel())[0, 1]
+    assert near > far, (near, far)
+
+
+def test_the_sequence_arguments_are_validated():
+    with pytest.raises(ValueError, match="n_frames"):
+        P.piv_synth_sequence((64, 64), (1.0, 1.0), n_frames=1)
+    with pytest.raises(ValueError, match="jitter"):
+        P.piv_synth_sequence((64, 64), (1.0, 1.0), jitter=-1.0)
+
+
+def test_the_derived_field_ops_also_refuse_a_one_by_one_grid():
+    tiny = np.zeros((2, 1, 1))
+    for fn in (P.piv_velocity_gradient, P.piv_q_criterion, P.piv_swirling_strength,
+               P.piv_strain_rate, P.piv_line_integral_convolution):
+        with pytest.raises(ValueError, match="at least 2x2 vectors"):
+            fn(tiny)
+
+
+# =========================================================================
 # 9. 台帳とガイド
 # =========================================================================
 
@@ -424,7 +612,13 @@ def test_the_fuzzer_can_build_arguments_for_every_piv_op():
     unbindable = []
     for name, meta in opspiv.OPSPIV.items():
         sig = inspect.signature(meta["func"])
-        for p in list(sig.parameters.values())[len(meta["in"]):]:
+        # ファザーの _bind_args と**同じ種類**だけを見る —— *args / **kwargs は
+        # 束縛の対象ではないので、ここで数えると門が実態より厳しくなる
+        kinds = (inspect.Parameter.POSITIONAL_ONLY,
+                 inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                 inspect.Parameter.KEYWORD_ONLY)
+        params = [p for p in sig.parameters.values() if p.kind in kinds]
+        for p in params[len(meta["in"]):]:
             if p.default is inspect.Parameter.empty and p.name not in PARAM_HINTS:
                 unbindable.append(f"{name}.{p.name}")
     assert not unbindable, f"ファザーが束縛できない必須引数: {unbindable}"

@@ -4,7 +4,7 @@ dim: piv
 category: estimate
 in: image2d × image2d
 out: flow2d
-examples: []
+examples: [piv_flow_from_particles]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.9  # fullseye lib version this note was generated for
@@ -73,15 +73,15 @@ Returns:
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [piv_flow_from_particles](../../../../examples/piv_flow_from_particles.py) — `py -3.11 examples/piv_flow_from_particles.py`
 
 ## 型が繋がる次の op(`flow2d` を入力に取れる)
 
-[piv_outlier_mask](../validate/piv_outlier_mask.md) · [piv_replace_outliers](../validate/piv_replace_outliers.md) · [piv_vorticity](../field/piv_vorticity.md) · [piv_divergence](../field/piv_divergence.md) · [piv_flow_magnitude](../field/piv_flow_magnitude.md) · [piv_to_velocity](../field/piv_to_velocity.md) · [piv_sample_at_windows](../assess/piv_sample_at_windows.md) · [piv_error_stats](../assess/piv_error_stats.md)
+[piv_deform_pass](piv_deform_pass.md) · [piv_outlier_mask](../validate/piv_outlier_mask.md) · [piv_replace_outliers](../validate/piv_replace_outliers.md) · [piv_vorticity](../field/piv_vorticity.md) · [piv_divergence](../field/piv_divergence.md) · [piv_flow_magnitude](../field/piv_flow_magnitude.md) · [piv_to_velocity](../field/piv_to_velocity.md) · [piv_velocity_gradient](../field/piv_velocity_gradient.md)
 
 ## 同カテゴリ(`estimate`)
 
-[piv_multipass](piv_multipass.md)
+[piv_multipass](piv_multipass.md) · [piv_deform_pass](piv_deform_pass.md) · [piv_ensemble_correlate](piv_ensemble_correlate.md)
 
 ---
 *Provenance: pivops.py — PIV operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

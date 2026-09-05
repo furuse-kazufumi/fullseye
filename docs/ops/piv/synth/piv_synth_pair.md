@@ -4,7 +4,7 @@ dim: piv
 category: synth
 in: 
 out: image2d
-examples: []
+examples: [piv_flow_from_particles]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.9  # fullseye lib version this note was generated for
@@ -48,15 +48,15 @@ Returns:
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [piv_flow_from_particles](../../../../examples/piv_flow_from_particles.py) — `py -3.11 examples/piv_flow_from_particles.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[piv_cross_correlate](../estimate/piv_cross_correlate.md) · [piv_multipass](../estimate/piv_multipass.md)
+[piv_cross_correlate](../estimate/piv_cross_correlate.md) · [piv_multipass](../estimate/piv_multipass.md) · [piv_deform_pass](../estimate/piv_deform_pass.md)
 
 ## 同カテゴリ(`synth`)
 
-[piv_synth_particles](piv_synth_particles.md)
+[piv_synth_particles](piv_synth_particles.md) · [piv_synth_sequence](piv_synth_sequence.md)
 
 ---
 *Provenance: pivops.py — PIV operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
