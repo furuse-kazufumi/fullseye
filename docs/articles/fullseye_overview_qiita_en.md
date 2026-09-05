@@ -1326,8 +1326,8 @@ lead exhibits are `A → B → A'` flipbooks whose last frame carries the residu
 
 *↑ **Reversible — normals ⇄ (azimuth, elevation) in degrees** — The dead-end type `normals` now has an exit. Converting to azimuth and elevation (**both in degrees**) and back returns 9216 normals to **max|Δ| = 2.289e-12** (1.207e-06 deg of angular error). The residual panel is black because it is drawn on a **fixed 0..1 scale**; auto-scaling would turn double-precision rounding into a visible pattern and make a reversible conversion look broken.*
 
-- GIF: `docs/articles/assets/media/wingconv_roundtrip_normals.gif` (4 frame(s), 792x532 px, 0.14 MB)
-- Thumbnail: `docs/articles/assets/thumbs/wingconv_roundtrip_normals_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wingconv_roundtrip_normals.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingconv_roundtrip_normals.gif) (4 frame(s), 792x532 px, 0.14 MB)
+- Thumbnail: [`docs/articles/assets/thumbs/wingconv_roundtrip_normals_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingconv_roundtrip_normals_thumb.jpg)
 - SHA-256: `596e13795efe1cb08b5cd3ece7a414e76b261dc2d94ad62cf28f79ffac4580f4`
 
 ## 2. Reversible — principal curvatures ⇄ shape index (exact at umbilics)
@@ -1335,8 +1335,8 @@ lead exhibits are `A → B → A'` flipbooks whose last frame carries the residu
 
 *↑ **Reversible — principal curvatures ⇄ shape index (exact at umbilics)** — Four patches (sphere, saddle, cylinder, plane; 9216 points of which 4608 are umbilic or flat) map to shape index S and curvedness C and back to **max|Δ| = 2.220e-16**. The textbook form `atan((k1+k2)/(k1-k2))` divides by zero at umbilics; the `atan2` form keeps sphere S=+1, saddle S=0 and cylinder S=+0.5 exact everywhere.*
 
-- GIF: `docs/articles/assets/media/wingconv_roundtrip_curvature.gif` (4 frame(s), 792x532 px, 0.26 MB)
-- Thumbnail: `docs/articles/assets/thumbs/wingconv_roundtrip_curvature_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wingconv_roundtrip_curvature.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingconv_roundtrip_curvature.gif) (4 frame(s), 792x532 px, 0.26 MB)
+- Thumbnail: [`docs/articles/assets/thumbs/wingconv_roundtrip_curvature_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingconv_roundtrip_curvature_thumb.jpg)
 - SHA-256: `49783cc6f12b4829dcf731f0e771082a3629a2b7564c9fa1c97afbdb55d0d7c7`
 
 ## 3. Lossy — keypoints ⇄ pixel raster (measure what is lost)
@@ -1344,8 +1344,8 @@ lead exhibits are `A → B → A'` flipbooks whose last frame carries the residu
 
 *↑ **Lossy — keypoints ⇄ pixel raster (measure what is lost)** — 900 keypoints on a 4 px lattice, rasterised and picked back up, land **0.2925 px** RMS per axis (uniform-quantisation theory 1/√12 = 0.2887) and 0.4136 px in 2-D distance (theory √(2/12) = 0.4082). Random placement merges 120 → 111 points — **quantisation (displacement) and merging (disappearance) are different losses** and collapsing them into one RMS hides which one dominates.*
 
-- GIF: `docs/articles/assets/media/wingconv_roundtrip_keypoints.gif` (5 frame(s), 792x532 px, 0.14 MB)
-- Thumbnail: `docs/articles/assets/thumbs/wingconv_roundtrip_keypoints_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wingconv_roundtrip_keypoints.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingconv_roundtrip_keypoints.gif) (5 frame(s), 792x532 px, 0.14 MB)
+- Thumbnail: [`docs/articles/assets/thumbs/wingconv_roundtrip_keypoints_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingconv_roundtrip_keypoints_thumb.jpg)
 - SHA-256: `945237fc3c62ab0cf43d0830dc6992ac56ed353dd6fa0ca6b5b12a17bbc589ff`
 
 ## 4. Lossy — points → gaussians → volume (measured by mass)
@@ -1353,8 +1353,8 @@ lead exhibits are `A → B → A'` flipbooks whose last frame carries the residu
 
 *↑ **Lossy — points → gaussians → volume (measured by mass)** — `gaussians` had **no producing op at all**; this adds the entrance. Centres round-trip bit-identically (max|Δ| = 0.000e+00); sigma and w are information *added*, not lost. Splatting to a volume keeps **99.192%** of the mass under a 3σ **box** truncation — first written as the 3σ **ball** value 97.07%, then refuted by refining the grid from 1.0 to 0.125, which converges to the box.*
 
-- GIF: `docs/articles/assets/media/wingconv_roundtrip_gaussians.gif` (4 frame(s), 792x532 px, 0.10 MB)
-- Thumbnail: `docs/articles/assets/thumbs/wingconv_roundtrip_gaussians_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wingconv_roundtrip_gaussians.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingconv_roundtrip_gaussians.gif) (4 frame(s), 792x532 px, 0.10 MB)
+- Thumbnail: [`docs/articles/assets/thumbs/wingconv_roundtrip_gaussians_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingconv_roundtrip_gaussians_thumb.jpg)
 - SHA-256: `9e19ef2fa00ecb2688237735f958c2ba8e22c477ebb4334c81e81fc97d79319d`
 
 ## 5. Around the representations — what survives and what does not
@@ -1362,8 +1362,8 @@ lead exhibits are `A → B → A'` flipbooks whose last frame carries the residu
 
 *↑ **Around the representations — what survives and what does not** — voxel → mesh → points → gaussians → voxel. A solid of 5444 voxels loses its interior at the mesh stage (3268 vertices / 6584 faces, area 2461.8), loses connectivity and orientation at the points stage, and comes back as a shell: interior fill goes **100.0% → 38.2%**. Yet the centroid moves only 1.2925 voxel. **Reporting both an agreeing and a disagreeing metric** is what keeps 'it came back' from being a lie. This claim cannot be made from a maximum-intensity projection — a thin shell still looks solid in MIP — so it is shown on a central slice.*
 
-- GIF: `docs/articles/assets/media/wingconv_cross_loop.gif` (5 frame(s), 792x532 px, 0.12 MB)
-- Thumbnail: `docs/articles/assets/thumbs/wingconv_cross_loop_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wingconv_cross_loop.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingconv_cross_loop.gif) (5 frame(s), 792x532 px, 0.12 MB)
+- Thumbnail: [`docs/articles/assets/thumbs/wingconv_cross_loop_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingconv_cross_loop_thumb.jpg)
 - SHA-256: `fdefdaff55bb3f304a665ed94a74476b979ec3d54d64af23cdf7623273fd7d8a`
 
 ## 6. The dead type `flow` becomes visible
@@ -1371,8 +1371,8 @@ lead exhibits are `A → B → A'` flipbooks whose last frame carries the residu
 
 *↑ **The dead type `flow` becomes visible** — `flow` was a complete island: no single-input op produced or consumed it. Dense scene flow [3, 24, 96, 96] now exits as magnitude (voxel) and as a colour wheel (rgbimage), **with the colour legend burnt into the same figure**. In this repo `flow` holds two different things under one name — dense (3,D,H,W) and scattered (N,3) — so the dense ops ['flow_magnitude', 'flow_to_rgbimage'] and scattered ops ['flow_speed', 'flow_apply'] are separate and fail closed on the other shape.*
 
-- PNG: `docs/articles/assets/wingconv_flow_colorwheel.png` (1 frame(s), 676x820 px, 0.08 MB)
-- Thumbnail: `docs/articles/assets/wingconv_flow_colorwheel_thumb.jpg`
+- PNG: [`docs/articles/assets/wingconv_flow_colorwheel.png`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_flow_colorwheel.png) (1 frame(s), 676x820 px, 0.08 MB)
+- Thumbnail: [`docs/articles/assets/wingconv_flow_colorwheel_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_flow_colorwheel_thumb.jpg)
 - SHA-256: `91311ab72227bd1007a04eb9053b33823dacd2d3bbe5eb3913935c1465729b98`
 
 ## 7. Axis, unit and spacing mix-ups pass without raising
@@ -1380,8 +1380,8 @@ lead exhibits are `A → B → A'` flipbooks whose last frame carries the residu
 
 *↑ **Axis, unit and spacing mix-ups pass without raising** — Reading (u,v) as (v,u) shifts the centroid by 39.5 px and drops the overlap with the original to 0.0%; leaving `spacing` at its default puts the peak at [10, 12, 14] instead of [4, 5, 6]; passing π/6 radians as degrees rotates by 0.5236 degrees; reading the gate as 1 s instead of 1 ms multiplies counts by 1000. **None of these raise; all return finite, plausible pictures** — which is why the axis is in the op name and the unit is an explicit argument.*
 
-- PNG: `docs/articles/assets/wingconv_axis_unit_traps.png` (1 frame(s), 636x1126 px, 0.03 MB)
-- Thumbnail: `docs/articles/assets/wingconv_axis_unit_traps_thumb.jpg`
+- PNG: [`docs/articles/assets/wingconv_axis_unit_traps.png`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_axis_unit_traps.png) (1 frame(s), 636x1126 px, 0.03 MB)
+- Thumbnail: [`docs/articles/assets/wingconv_axis_unit_traps_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_axis_unit_traps_thumb.jpg)
 - SHA-256: `1a8a74cd5671f2ea3baf3509509f198334d266dc3e94d16de3d28a6672411d61`
 
 ## 8. Dead vocabulary — types that are produced but lead nowhere
@@ -1389,8 +1389,8 @@ lead exhibits are `A → B → A'` flipbooks whose last frame carries the residu
 
 *↑ **Dead vocabulary — types that are produced but lead nowhere** — Counting the 707-op catalogue for 'single input, in type ≠ out type = a conversion' found **15 types** with no outgoing conversion at all. The 42 ops of `reprconv` open **0** of them; conversion pairs go 184 → 184 and dead ends 15 → 15. The 9 that remain carry a written reason for **not** filling them — deciding not to is also a decision.*
 
-- PNG: `docs/articles/assets/wingconv_dead_vocabulary.png` (1 frame(s), 1180x720 px, 0.06 MB)
-- Thumbnail: `docs/articles/assets/wingconv_dead_vocabulary_thumb.jpg`
+- PNG: [`docs/articles/assets/wingconv_dead_vocabulary.png`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_dead_vocabulary.png) (1 frame(s), 1180x720 px, 0.06 MB)
+- Thumbnail: [`docs/articles/assets/wingconv_dead_vocabulary_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_dead_vocabulary_thumb.jpg)
 - SHA-256: `bf69ffebffa729b39bfee9c97190f25010dfd8f557e90d59eaa80b9006848822`
 
 ### The Studio and 3-D Display Wing — Noticing by Looking
@@ -1892,7 +1892,7 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **The defect frequency is not in the raw spectrum** — a bearing signal whose 3000 Hz resonance is amplitude-modulated at the 107 Hz defect rate (25600 Hz × 1 s, modulation depth 0.5). The raw spectrum on top holds only 4.292e-16 at 107 Hz; the energy sits in the carrier at 1.000000 and the sidebands at 0.250000 / 0.250000 (exactly m/2). The envelope spectrum below, from the same record, returns amplitude 0.499677 at 107.000000 Hz — the modulation depth itself (band_fraction 0.999853). Ops used: `synthesize_bearing_signal`, `spectrum`, `envelope_spectrum`.*
 
-- PNG (full size, 1 sheet): `docs/articles/assets/wing1d_defect_not_in_raw.png` (1120x800 px, 57 kB)
+- PNG (full size, 1 sheet): [`docs/articles/assets/wing1d_defect_not_in_raw.png`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing1d_defect_not_in_raw.png) (1120x800 px, 57 kB)
 - Thumbnail (this is what the article shows): `docs/articles/assets/wing1d_defect_not_in_raw_thumb.jpg` (41 kB)
 - Bundling: still
 - SHA-256: `7767132cd2edab83b38d3bca9e247c2cacd471e3fac0ca424971b1f6a93b2990`
@@ -1926,8 +1926,8 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **Spectral kurtosis picks the demodulation band** — when nobody knows where the resonance is, let the machine decide which band to demodulate. Spectral kurtosis is laid over the STFT plane (129 bins × 199 interior frames, out of 203 in total) and a 800 Hz wide demodulation band is swept across it. The SK maximum is 3.1037 @ 2400 Hz (window 64 = 2.50 ms, bin 400 Hz, estimator standard deviation 0.1001), and that band's band_fraction is 0.4495. **The number says the band choice is doing work**: of the 24 bands swept, only 9 return the defect rate; the other 15 return some other plausible figure between 6 and 428 Hz (no exception, no NaN). The peak frequency alone cannot separate them — band_fraction is what does: the hits run 0.1732 to 0.6830, the misses 0.1473 to 0.1645. Ops used: `synthesize_bearing_signal`, `stft`, `spectral_kurtosis`, `envelope_spectrum`.*
 
-- GIF: `docs/articles/assets/media/wing1d_kurtosis_band.gif` (24 frames, 1000x668 px, 2.00 MB, 220 ms/frame, last frame 1400 ms)
-- Thumbnail: `docs/articles/assets/thumbs/wing1d_kurtosis_band_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_kurtosis_band.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_kurtosis_band.gif) (24 frames, 1000x668 px, 2.00 MB, 220 ms/frame, last frame 1400 ms)
+- Thumbnail: [`docs/articles/assets/thumbs/wing1d_kurtosis_band_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_kurtosis_band_thumb.jpg)
 - Bundling: gif
 - SHA-256: `c5d99ab9b37c33e0120328c4517e86d94cfe66402e7f17b069af75a4752b0e90`
 
@@ -1977,8 +1977,8 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **Get the window length wrong and the kurtosis goes negative** — the window is swept from 16 to 512 on a bearing signal whose impacts arrive every 9.346 ms (true resonance 3000 Hz). Once the window is longer than the interval between impacts, every frame contains exactly 1 impact, and the band looks "stationary" by construction. At window 256 (10.00 ms) the maximum SK is -0.1269 — a negative value, reported at 12200 Hz, 9200 Hz away from the resonance. No exception is raised. Sweeping the window is part of how this op is used, not an optimisation. Ops used: `synthesize_bearing_signal`, `spectral_kurtosis`.*
 
-- GIF: `docs/articles/assets/media/wing1d_window_sweep.gif` (22 frames, 1000x668 px, 0.69 MB, 380 ms/frame, last frame 1800 ms)
-- Thumbnail: `docs/articles/assets/thumbs/wing1d_window_sweep_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_window_sweep.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_window_sweep.gif) (22 frames, 1000x668 px, 0.69 MB, 380 ms/frame, last frame 1800 ms)
+- Thumbnail: [`docs/articles/assets/thumbs/wing1d_window_sweep_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_window_sweep_thumb.jpg)
 - Bundling: gif
 - SHA-256: `507eb1647e166c69a178c59880d785e0ef0baca7523f32ed8c8d7b5b1f0815c2`
 
@@ -2109,8 +2109,8 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **Order tracking — the two swap places in the angle domain** — a run-up record from 600 to 1800 rpm (4 s, 5000 Hz, orders 1.0 and 3.5, a fixed 400 Hz resonance, 79.9940 revolutions in total) slid through a 1.2 s window. In the plain spectrum order 3.5 is smeared down to 0.070203 (7 % of its true 1.0) and its −3 dB width spreads to 66.50 Hz. Resample into the angle domain and the same component comes back at 0.999371 with a width of 0 bins (0.00000 orders). The 400 Hz fixed resonance goes the other way: on the order axis it scatters to order 20.00 at the mean speed (amplitude 0.025386). That reversal *is* the diagnosis. Ops used: `synthesize_speed_ramp`, `spectrum`, `angular_resample`, `order_spectrum`.*
 
-- GIF: `docs/articles/assets/media/wing1d_order_tracking.gif` (30 frames, 1000x668 px, 1.08 MB, 220 ms/frame, last frame 1400 ms)
-- Thumbnail: `docs/articles/assets/thumbs/wing1d_order_tracking_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_order_tracking.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_order_tracking.gif) (30 frames, 1000x668 px, 1.08 MB, 220 ms/frame, last frame 1400 ms)
+- Thumbnail: [`docs/articles/assets/thumbs/wing1d_order_tracking_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_order_tracking_thumb.jpg)
 - Bundling: gif
 - SHA-256: `db0ab726f8e966c9517713b93d9f90a4d4bc6031dede54761c5e31fa685b1780`
 
@@ -2146,8 +2146,8 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **Defect frequencies from the bearing geometry** — for a bearing at 1800 rpm with a 40 mm pitch diameter, the rolling-element count, then the contact angle, then the element diameter are swept in turn (36 frames). BPFO moves from 84.0000 to 177.8261 Hz and BPFI from 126.0000 to 270.3260 Hz. Across every frame the largest absolute value of `BPFO + BPFI − N·f_r` is 0.000e+00 and of `BPFO − N·FTF` is 0.000e+00 — exactly zero in float64, and these are identities that break the moment d and D are swapped. That sentence is only writable because the frequencies are re-derived from the geometry rather than read off a table. Ops used: `bearing_defect_frequencies`.*
 
-- GIF: `docs/articles/assets/media/wing1d_bearing_geometry.gif` (36 frames, 1000x668 px, 1.40 MB, 200 ms/frame, last frame 1400 ms)
-- Thumbnail: `docs/articles/assets/thumbs/wing1d_bearing_geometry_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_bearing_geometry.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_bearing_geometry.gif) (36 frames, 1000x668 px, 1.40 MB, 200 ms/frame, last frame 1400 ms)
+- Thumbnail: [`docs/articles/assets/thumbs/wing1d_bearing_geometry_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_bearing_geometry_thumb.jpg)
 - Bundling: gif
 - SHA-256: `d103e560a0874ab32633502199f072429b0e212941bcfd62da99b5403ed4e8c3`
 
@@ -2201,8 +2201,8 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **A- and C-weighting — 1 kHz is exactly 0 dB by construction** — the weighting curves are built by **dividing by their own value at 1 kHz** rather than by adding a published offset constant, so A(1000) and C(1000) are exactly 0.0 as Python floats, not as a rounding (measured: `== 0.0` is True / True). Sweeping 34 pure tones and checking `equivalent_level`'s weighted difference `L_A − L_Z` against the curve value `A(f)`, the largest discrepancy is 7.11e-15 dB (4.88e-15 dB for C-weighting). The `L_eq(Z)` of a sine of amplitude 1 is the closed form 10log10(A²/2) = -3.010300 dB, and the measurement agrees. **But all of that holds only while the tone sits on a bin centre** (an integer number of periods in the record): shift the same tone by 1 Hz and the same difference opens to 2.86 dB at 21.0 Hz (the red curve, lower panel). Because the leakage of the rectangular window is weighted at about 0 dB near 1 kHz, the low end — where A-weighting is steep — **returns a value larger than the truth**. No exception, no NaN. Ops used: `weighting_response`, `apply_weighting`, `equivalent_level`.*
 
-- GIF: `docs/articles/assets/media/wing1d_weighting_ac.gif` (34 frames, 1000x668 px, 1.42 MB, 220 ms/frame, last frame 1400 ms)
-- Thumbnail: `docs/articles/assets/thumbs/wing1d_weighting_ac_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_weighting_ac.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_weighting_ac.gif) (34 frames, 1000x668 px, 1.42 MB, 220 ms/frame, last frame 1400 ms)
+- Thumbnail: [`docs/articles/assets/thumbs/wing1d_weighting_ac_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_weighting_ac_thumb.jpg)
 - Bundling: gif
 - SHA-256: `4a0d21838a07ff9682b8a19d68bc658780b48ef1cc35a660f07b7d1a5ad96872`
 
@@ -2265,7 +2265,7 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **The analytic ground truth of funct1d** — 1 sheet built only from inputs whose answer is known in advance. The largest difference between `derivate_funct_1d(sin)/dx` and cos is 1.008e-04 (grid dx = 0.024592; the central difference is 2nd order, so the residual goes as dx²). Interpolated linearly, the 3 crossings `zero_crossings_funct_1d` returns are 1.000000π, 2.000000π and 3.000000π — at most 7.397e-08 away from the integer multiples. From a damped oscillation come a period of 0.199500 s (true 0.200000), a half period of 0.100000 s (true 0.100000), a time constant of 0.406307 s (true 0.4) and a delay of 25 samples (true 25, matched after whitening by differentiation). Ops used: `derivate_funct_1d`, `integrate_funct_1d`, `zero_crossings_funct_1d`, `local_min_max_funct_1d`, `smooth_funct_1d_gauss`, `abs_funct_1d`, `get_pair_funct_1d`, `distance_funct_1d`, `match_funct_1d_trans`, `create_funct_1d_array`.*
 
-- PNG (full size, 1 sheet): `docs/articles/assets/wing1d_funct1d_truth.png` (1160x786 px, 78 kB)
+- PNG (full size, 1 sheet): [`docs/articles/assets/wing1d_funct1d_truth.png`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing1d_funct1d_truth.png) (1160x786 px, 78 kB)
 - Thumbnail (this is what the article shows): `docs/articles/assets/wing1d_funct1d_truth_thumb.jpg` (60 kB)
 - Bundling: still
 - SHA-256: `99ae8b3fff2af82965dbdb1341b2b9673d1f5a40917c214da746e2f2d26d0a27`
@@ -2310,8 +2310,8 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **The smoothing trade-off** — a damped 5 Hz oscillation plus N(0, 0.06), Gaussian-smoothed with σ swept over 31 steps. On the raw signal `local_min_max_funct_1d` reports 196 maxima against a true 6 (it uses strict inequalities and has no noise model). The RMS error bottoms out at 0.021952 for σ = 3.219 (2.73x better than raw), and at that point the peak height is -2.77 % off the truth. Overdo it and σ = 40.0 takes the RMS error up to 0.249561 with the peak blunted by -59.56 %. Noise falls but extrema blunt — there is a minimum, and it is not free. Ops used: `smooth_funct_1d_gauss`, `local_min_max_funct_1d`.*
 
-- GIF: `docs/articles/assets/media/wing1d_smoothing_tradeoff.gif` (32 frames, 1000x668 px, 1.06 MB, 220 ms/frame, last frame 1600 ms)
-- Thumbnail: `docs/articles/assets/thumbs/wing1d_smoothing_tradeoff_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_smoothing_tradeoff.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_smoothing_tradeoff.gif) (32 frames, 1000x668 px, 1.06 MB, 220 ms/frame, last frame 1600 ms)
+- Thumbnail: [`docs/articles/assets/thumbs/wing1d_smoothing_tradeoff_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_smoothing_tradeoff_thumb.jpg)
 - Bundling: gif
 - SHA-256: `98a6eaff19a41a10f97d71410a577d5c54de58fd2574f66dc729f0aa38cd03da`
 
@@ -2346,8 +2346,8 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **Sampling and aliasing** — the 300 Hz tone is never changed; only the sampling rate is lowered, from 1300 Hz to 340 Hz in 31 steps (0.5 s record, 2 Hz bins). Folding starts at fs = 596 Hz (Nyquist 298 Hz), and by the end, at fs = 340 Hz, a line of amplitude 1.000000 stands at 40.00 Hz — full height, and only the frequency is a lie. Across all 31 steps the measured peak differs from the folding prediction |f − fs·k| by at most 0.000 Hz. Everything to the right of the Nyquist line is burnt into the figure as a region that cannot exist in this record even in principle. Ops used: `spectrum`.*
 
-- GIF: `docs/articles/assets/media/wing1d_aliasing.gif` (31 frames, 1000x668 px, 1.14 MB, 260 ms/frame, last frame 1800 ms)
-- Thumbnail: `docs/articles/assets/thumbs/wing1d_aliasing_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_aliasing.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_aliasing.gif) (31 frames, 1000x668 px, 1.14 MB, 260 ms/frame, last frame 1800 ms)
+- Thumbnail: [`docs/articles/assets/thumbs/wing1d_aliasing_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_aliasing_thumb.jpg)
 - Bundling: gif
 - SHA-256: `221239e2f9d4e21e0f353b38e8621bf18b7c046d8d8b24f15bd0aa8c46d38176`
 
@@ -2440,7 +2440,7 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **Where a 1-D profile comes from** — a measurement line across a 2-D image (the real photograph coins, 373 samples, strongest edge at index 220.0), a probe through a 3-D volume (92 samples, wall thicknesses 14.00 / 17.00 / 14.00 voxels), and a sensor time series (500 samples, rms 0.2687, spectral centroid 387.0 Hz). All 3 arrive as plain 1-D float64, so `funct1d` eats them with no adapter. That is why the 1-D wing was given no type of its own — **any real 1-D array really is a legitimate profile whatever instrument it came from**, and carving out a type would only cost you the connection. Ops used: `line_profile`, `profile_stats`, `vol_profile_line`, `vol_wall_thickness`, `signal_features`, `create_funct_1d_array`, `num_points_funct_1d`, `x_range_funct_1d`, `y_range_funct_1d`, `zero_crossings_funct_1d`, `local_min_max_funct_1d`.*
 
-- PNG (full size, 1 sheet): `docs/articles/assets/wing1d_profile_sources.png` (1200x980 px, 176 kB)
+- PNG (full size, 1 sheet): [`docs/articles/assets/wing1d_profile_sources.png`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing1d_profile_sources.png) (1200x980 px, 176 kB)
 - Thumbnail (this is what the article shows): `docs/articles/assets/wing1d_profile_sources_thumb.jpg` (85 kB)
 - Bundling: still
 - SHA-256: `63ede6fea12f329925659543e61d942c94e337a620dc99ed0e22d1d8b852f328`
@@ -2536,8 +2536,8 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **Peak detection and matching** — Gaussian peaks are raised at 4 known positions (60, 150, 245, 330) and noise is added over 30 steps from σ = 0 to 0.42. Because `local_min_max_funct_1d` uses strict inequalities, the raw waveform's maxima blow up from 4 to 132. Put it through a σ = 3 Gaussian smoothing and a height gate of 0.45 and it settles at 6 to the very end ([58, 149, 243, 254, 329, 337]). As long as the window and the template are the same length, `match_funct_1d_trans` returns lag = 0 exactly for all 4 positions in 12 of the 30 steps (up to σ 0.159). Ops used: `smooth_funct_1d_gauss`, `local_min_max_funct_1d`, `match_funct_1d_trans`.*
 
-- GIF: `docs/articles/assets/media/wing1d_peak_match.gif` (30 frames, 1000x668 px, 1.45 MB, 240 ms/frame, last frame 1600 ms)
-- Thumbnail: `docs/articles/assets/thumbs/wing1d_peak_match_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_peak_match.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_peak_match.gif) (30 frames, 1000x668 px, 1.45 MB, 240 ms/frame, last frame 1600 ms)
+- Thumbnail: [`docs/articles/assets/thumbs/wing1d_peak_match_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_peak_match_thumb.jpg)
 - Bundling: gif
 - SHA-256: `d14889843693fa5a0da90e3affd43d08409e16fb91c4990499b22e06b9238139`
 
@@ -2581,8 +2581,8 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **Clip the end off the envelope and it is 76 % wrong** — within a 12 µm scan (241 planes × 0.05 µm), the surface is walked in 32 steps from 6.0 µm at the centre to 0.30 µm at the very end. Centred, the error is 2.2e-14 µm. With the surface at 0.500 µm, `csi_peak_position` returns 0.1190 µm — finite, plausible, and 76 % wrong. Worse, the envelope's argmax is the 2nd of the 241 planes, i.e. **interior**, so the obvious "refuse anything pinned to an edge" check never fires (the worst point of the sweep is 84 % at 0.30 µm, and even there the argmax is plane 1). The op does start refusing from a surface of 2.69 µm, where the median-referenced edge level passes 0.0539 (the values in the figure were forced out with `max_edge_envelope=1.0`). Ops used: `csi_signal_simulate`, `csi_envelope`, `csi_peak_position`.*
 
-- GIF: `docs/articles/assets/media/wing1d_envelope_truncation.gif` (32 frames, 1000x668 px, 1.43 MB, 240 ms/frame, last frame 2000 ms)
-- Thumbnail: `docs/articles/assets/thumbs/wing1d_envelope_truncation_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_envelope_truncation.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_envelope_truncation.gif) (32 frames, 1000x668 px, 1.43 MB, 240 ms/frame, last frame 2000 ms)
+- Thumbnail: [`docs/articles/assets/thumbs/wing1d_envelope_truncation_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_envelope_truncation_thumb.jpg)
 - Bundling: gif
 - SHA-256: `ce035df03e06ff0c2e1b5ce485f16e45782ef8613f1475b1371d1d93c74e3612`
 
@@ -2679,8 +2679,8 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **How the defect frequency comes out (the process)** — a bearing record deliberately excited at the outer-race pass frequency the geometry gives, BPFO = 108.0000 Hz, is taken to a diagnosis in 7 steps. In the raw spectrum the defect rate carries an amplitude of only 1.19e-02; what stands out is the 3024 Hz structural resonance (0.1175). Spectral kurtosis (window 64, maximum 4.5956 @ 2000 Hz) picks the demodulation band 1600–2400 Hz — 1000 Hz below the true 3000 Hz resonance, because **SK returns a band, not a line** — and band-pass → envelope → transform gives 108.0000 Hz, which matches the geometric BPFO of 108.0000 Hz to 0.0000 %. **The honest breakdown**: that band's band_fraction is 0.2250, indistinguishable from the 0.2348 of white noise put through the same band. What separates them is the prominence instead, 30582 against 2666 (a human picking 2600–3400 Hz, straddling the resonance, raises band_fraction to 0.8368). Hand-assembling the same thing from `dsp.bandpass` + `dsp.envelope` + rfft agrees with the op's return to 0.0e+00 — the proof that nothing was rebuilt. Ops used: `bearing_defect_frequencies`, `synthesize_bearing_signal`, `spectrum`, `spectral_kurtosis`, `bandpass`, `envelope`, `envelope_spectrum`.*
 
-- GIF: `docs/articles/assets/media/wing1d_envelope_flow.gif` (7 frames, 940x522 px, 0.18 MB, 1500 ms/frame, last frame 3000 ms)
-- Thumbnail: `docs/articles/assets/thumbs/wing1d_envelope_flow_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wing1d_envelope_flow.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_envelope_flow.gif) (7 frames, 940x522 px, 0.18 MB, 1500 ms/frame, last frame 3000 ms)
+- Thumbnail: [`docs/articles/assets/thumbs/wing1d_envelope_flow_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing1d_envelope_flow_thumb.jpg)
 - Bundling: gif
 - SHA-256: `b437cde7351aeaac59a4aed6f0a757a0cdd6f5d019d1a97f7ab392e2c141dc04`
 
@@ -2741,7 +2741,7 @@ figure is pointless unless the axes and the numbers can be read). Stills are all
 
 *↑ **Fractional-octave bands — the even fractions have no 1 kHz band** — 6 sheets measuring a 1000 Hz pure tone of amplitude 0.7 in 1/1, 1/2, 1/3, 1/6, 1/12 and 1/24 octaves. Every fraction returns the closed form 10log10(A²/2) = -6.108339 dB for the band level (largest difference 0.0e+00 dB). What differs is **which band** reports it: for the odd fractions [1, 3] there is a band centred on exactly 1000.000 Hz, while for the even ones [2, 6, 12, 24] the exponent offset puts 1000 Hz on a band **edge**, so the same energy is reported from an awkward band centred at 1188.50 Hz, 944.06 Hz, 971.63 Hz or 1014.50 Hz. That is a definition and not a defect, but quoting "the level at 1 kHz" without knowing it makes the quote a lie. Empty bands fall to the floor (−200 dB) rather than to −inf. Ops used: `octave_bands`, `octave_spectrum`.*
 
-- PNG (tile): `docs/articles/assets/wing1d_octave_family.png` (1458x868 px, 54 kB, 6 panels / 3  columns)
+- PNG (tile): [`docs/articles/assets/wing1d_octave_family.png`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing1d_octave_family.png) (1458x868 px, 54 kB, 6 panels / 3  columns)
 - Thumbnail (this is what the article shows): `docs/articles/assets/wing1d_octave_family_thumb.jpg` (47 kB)
 - Bundling: sheet
 - SHA-256: `986bd447a3a01fe7fb0ead8a50aea99bec869fb81a57752a74916f0ae4c83c72`
@@ -2870,8 +2870,8 @@ as **a thumbnail linking to the full-size PNG**.
 
 *↑ **Flipping through colour-coded voxel slices** — 16 particles labelled with 26-connectivity, coloured **as a volume** and only then cut into 24 slices. Each particle keeps one colour from first slice to last (measured: all 16 components have exactly one colour). At a spacing of (0.50, 0.20, 0.20) mm they total 62.560 mm3. Ops used: `vol_label`, `vol_colorize_labels`, `vol_label_slice_rgb`, `vol_label_shape_stats`, `vol_label_palette`.*
 
-- GIF: `docs/articles/assets/media/wingvox_slice_flow.gif` (24 frames, 432x616 px, 0.33 MB)
-- Thumbnail: `docs/articles/assets/thumbs/wingvox_slice_flow_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wingvox_slice_flow.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingvox_slice_flow.gif) (24 frames, 432x616 px, 0.33 MB)
+- Thumbnail: [`docs/articles/assets/thumbs/wingvox_slice_flow_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingvox_slice_flow_thumb.jpg)
 - Bundling: Flipbook GIF (a process advancing at one fixed size)
 - SHA-256: `769ad42caa6786932daf625bafa14a34686fc299dc96b23a11404564b9343228`
 
@@ -2904,8 +2904,8 @@ as **a thumbnail linking to the full-size PNG**.
 
 *↑ **Flicker, side by side — the only difference is the order** — On the left each slice is labelled in 2-D and coloured on its own, so the numbering is redrawn every slice: on **20 of 24 slices** at least one particle changes colour (62 of 108 (particle, slice) pairs = 57.4 %, and all 16 particles change at least once). On the right the volume is coloured first and cut afterwards: **0 slices, 0 pairs**. Same palette, same seed — only the order differs. Ops used: `vol_label`, `vol_label_color_flicker`, `vol_colorize_labels`, `vol_label_slice_rgb`, `colorize_labels`.*
 
-- GIF: `docs/articles/assets/media/wingvox_flicker.gif` (24 frames, 596x468 px, 0.37 MB)
-- Thumbnail: `docs/articles/assets/thumbs/wingvox_flicker_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wingvox_flicker.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingvox_flicker.gif) (24 frames, 596x468 px, 0.37 MB)
+- Thumbnail: [`docs/articles/assets/thumbs/wingvox_flicker_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingvox_flicker_thumb.jpg)
 - Bundling: Flipbook GIF (both halves composited into one frame so they advance together)
 - SHA-256: `b22e88054154f9ce33e1504ed9e4b109955e2e7f86d24227cdff77f8fd732a41`
 
@@ -2934,7 +2934,7 @@ as **a thumbnail linking to the full-size PNG**.
 
 *↑ **6 / 18 / 26 connectivity — the neighbourhood decides the count** — The same two cubes: touching at a single corner they are 2 components under 6-connectivity, 2 under 18 and **1** under 26; touching along an edge, 2 / **1** / 1. The number of colours follows the number of components exactly — merge two blobs and one colour disappears. Ops used: `vol_label`, `vol_label_volume_render`, `vol_label_palette`.*
 
-- PNG (contact sheet): `docs/articles/assets/wingvox_connectivity.png` (774x692 px, 31 kB, 6 panels / 3 columns)
+- PNG (contact sheet): [`docs/articles/assets/wingvox_connectivity.png`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingvox_connectivity.png) (774x692 px, 31 kB, 6 panels / 3 columns)
 - Thumbnail (shown in the article): `docs/articles/assets/wingvox_connectivity_thumb.jpg` (57 kB)
 - Bundling: Contact sheet (6 panels comparing neighbourhood definitions on the same body)
 - SHA-256: `1e71d481fec54a3b648163520a0c954e2077d102f7859d1b9da06e36196a01d6`
@@ -2964,8 +2964,8 @@ as **a thumbnail linking to the full-size PNG**.
 
 *↑ **Sieving by volume without moving a single colour** — ``min_volume`` rises from 0 to 9.320 mm3 in 17 steps, dropping the particles one at a time. Those that fall out become background, but **the survivors do not change colour by a single pixel** (checked on all 17 frames). That holds because the labels are not renumbered (``relabel=False``); renumbering shifts the palette rows and repaints everything. Ops used: `vol_label`, `vol_label_shape_stats`, `vol_select_labels`, `vol_label_volume_render`, `vol_colorize_labels`.*
 
-- GIF: `docs/articles/assets/media/wingvox_sieve.gif` (17 frames, 432x616 px, 0.30 MB)
-- Thumbnail: `docs/articles/assets/thumbs/wingvox_sieve_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wingvox_sieve.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingvox_sieve.gif) (17 frames, 432x616 px, 0.30 MB)
+- Thumbnail: [`docs/articles/assets/thumbs/wingvox_sieve_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingvox_sieve_thumb.jpg)
 - Bundling: Flipbook GIF (the threshold advances)
 - SHA-256: `ed2622bdcb2dbbd98d792fb9c4e15c65ef20c0c688f4e3f272345affcfc97bd6`
 
@@ -3092,8 +3092,8 @@ as **a thumbnail linking to the full-size PNG**.
 
 *↑ **Overlaying colour labels on the original CT — sweeping alpha** — At slice z=8 alpha sweeps from 0 to 1 and back. The mean change over the foreground runs 0.0000 -> 0.0262, **linear** in alpha, while the **background never moves at any alpha (0.0000)** — colour only lands on labelled voxels. In ``mode='boundary'`` only 1648 of the 3128 foreground voxels (52.7 %) are painted, so the structure underneath stays visible. Ops used: `vol_label`, `vol_label_overlay`, `vol_label_slice_rgb`.*
 
-- GIF: `docs/articles/assets/media/wingvox_overlay_alpha.gif` (20 frames, 432x616 px, 0.99 MB)
-- Thumbnail: `docs/articles/assets/thumbs/wingvox_overlay_alpha_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wingvox_overlay_alpha.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingvox_overlay_alpha.gif) (20 frames, 432x616 px, 0.99 MB)
+- Thumbnail: [`docs/articles/assets/thumbs/wingvox_overlay_alpha_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingvox_overlay_alpha_thumb.jpg)
 - Bundling: Flipbook GIF (alpha swept up and back)
 - SHA-256: `fcb879348b2dcf66cdf37bc2aad03a7cc786499ee3c358d304a6d6f6636c1ca7`
 
@@ -3221,8 +3221,8 @@ as **a thumbnail linking to the full-size PNG**.
 
 *↑ **A turntable of colour-coded meshes** — Marching cubes runs on each component's padded bounding box, giving 16 meshes and 7088 triangles for the 16 components. Vertices are in physical coordinates (spacing (0.50, 0.20, 0.20) mm) and the frames are composited through ``render3d.render_mesh``'s z-buffer. The grains look stretched along z because they **are** — the slice pitch is 2.5x the in-plane pitch, the same point exhibit 4 makes. **The colours are the same palette rows as the slice views**, so the same particle can be followed between the cut and the rotation. Ops used: `vol_label`, `vol_labels_to_meshes`, `look_at`, `intrinsics_from_fov`, `render_mesh`.*
 
-- GIF: `docs/articles/assets/media/wingvox_mesh_turntable.gif` (24 frames, 380x538 px, 0.45 MB)
-- Thumbnail: `docs/articles/assets/thumbs/wingvox_mesh_turntable_thumb.jpg`
+- GIF: [`docs/articles/assets/media/wingvox_mesh_turntable.gif`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingvox_mesh_turntable.gif) (24 frames, 380x538 px, 0.45 MB)
+- Thumbnail: [`docs/articles/assets/thumbs/wingvox_mesh_turntable_thumb.jpg`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingvox_mesh_turntable_thumb.jpg)
 - Bundling: Flipbook GIF (the azimuth advances)
 - SHA-256: `4a2ba556d6751c838b4b68264026913f89e33a444e67eb73fc2606ec9d344240`
 
@@ -3252,7 +3252,7 @@ as **a thumbnail linking to the full-size PNG**.
 
 *↑ **A measurement table with its legend — which colour is which particle** — A colour-coded figure without a legend is merely decorative. This table lists all 16 particles: swatch, volume in mm3, share of the total, equivalent diameter, sphericity, elongation and whether the particle touches the field of view. Total 62.5600 mm3, shares summing to 1.000000, one voxel = 0.020000 mm3. The largest is #2ddc8a at 9.3200 mm3, the smallest #15d4c9 at 0.5600 mm3. Ops used: `vol_label`, `vol_region_props`, `vol_label_shape_stats`, `vol_label_legend`, `vol_label_palette`.*
 
-- PNG (full size): `docs/articles/assets/wingvox_legend.png` (900x626 px, 104 kB)
+- PNG (full size): [`docs/articles/assets/wingvox_legend.png`](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingvox_legend.png) (900x626 px, 104 kB)
 - Thumbnail (shown in the article): `docs/articles/assets/wingvox_legend_thumb.jpg` (79 kB)
 - Bundling: Full size (the numbers are the point — shrinking makes them unreadable)
 - SHA-256: `996d79e05286f61b29e5add295e2a5519b6e7b87a2eede1d8e5fdec023a2e504`
@@ -4126,6 +4126,8 @@ This article was the "map." Next, I'll walk its regions. Candidates:
 This ran much longer than originally planned. From Layer 1's type contracts through the six sensors, Studio's working workflow, AI-as-RAG operation, and the mines CI dug up — the reason for packing it all into one article is that I wanted to show, without carving it apart, that **inside the single library called Fullseye, all of these rest on the same design decisions**. Each topic alone is a pile of unglamorous craft; lined up together, one thread runs through them — "make honesty structural." If that came through, I'm glad.
 
 Thank you for reading. If there's a "tell me more about this part," that will become the next article.
+
+If you enjoyed it, please click the ♡ — it is what keeps the next one coming.
 
 ---
 

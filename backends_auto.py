@@ -1506,8 +1506,11 @@ def _real_ops() -> set:
 
 def load_specs() -> list[tuple]:
     """SEED + every spec in data/auto_specs/*.json (agent-authored breadth)."""
-    specs = [dict(zip(("halcon", "category", "in_sort", "out_sort", "shape", "params"), s))
-             for s in SEED]
+    # SEED の行は 7 要素 (…, params, doc)。6 要素のままの行は「説明がまだ無い」
+    # として通す —— zip が短い方で止まるので doc が落ちるだけ。数えるのは
+    # tests/test_op_descriptions.py の役目で、ここで填め物を作らない。
+    _cols = ("halcon", "category", "in_sort", "out_sort", "shape", "params", "doc")
+    specs = [dict(zip(_cols, s)) for s in SEED]
     d = os.path.join(HERE, "data", "auto_specs")
     loaded = False
     if os.path.isdir(d):
