@@ -509,7 +509,8 @@ WSL 側で測るか、`tracemalloc`(標準ライブラリ)で代替する。
 | 32-13 | 8bit 経路で 256 階調に落ちる 34 op のうち 19 本が説明に未記載 | xpil 11 / xcv 4 / 他 4 | 説明に「8bit を経由」を追加 |
 | 32-14 | 一部 NaN で `_norm` が正規化を諦め image sort が [0,1] を超える(16 op) | `_norm` | NaN を除いた最大で正規化 |
 | 32-15 | `wavefront_from_opd` の Zernike RMS が直接 RMS より 10% 低い(瞳半径 31.5 vs 32) | `raytrace` | 瞳半径の定義を揃える |
-| 32-16 | Linux CI の A 群(torch 不在 14 件)/ B 群(フォント 2 件) | `tests/` | A: `needs("torch")` マーカー + 定数判定の切り分け / B: Pillow の `load_default(size)` を conftest で固定 |
+| 32-16 | ~~Linux CI の A 群 / B 群~~ **2026-09-05 に両方解消**。A = `requires_backend` 宣言 + py3.11 に実 backend 投入 + `FULLSEYE_REQUIRE_OPTIONAL` / B = 原因は「機械をまたぐフォント差」ではなく **CI に CJK フォントが 1 つも無かった**こと。`fonts-noto-cjk` を入れて Linux 124/124 緑 | — | 解消済み |
+| 32-17 | **多コア機で SVD 系 op が遅い**(BLAS のスレッド過剰割り当て)。実測(WSL / 24 論理 CPU、`np.linalg.svd(full_matrices=False)`、**他の負荷を止めた状態**): 48x48 = 1 スレッド 0.0002s / 4 スレッド 0.0002s / **24 スレッド 0.0054s(27 倍)**、96x96 = 24 倍、192x192 = 13 倍、384x384 = 3.5 倍、768x768 = 0.135s / 0.093s / 0.398s(2.9 倍)。**4 スレッドまでは無害**(768 では 1.5 倍速い)。`dc_rpca_lowrank` は 1 回で 39 SVD を回すので、Linux で進化系テストが**タイムアウトした**。GitHub runner は 4 コアなので顕在化せず、**開発機とワークステーションだけが遅い**。★正直な注記: 最初の測定は自分が放置した探針プロセス 3 本が 3 コアを占有した状態で取ったもので、比率を 2〜3 倍過大に出していた(48x48 で 83 倍 → 実際は 27 倍)。負荷を止めて測り直した値が上記 | `backends_decomp.py` ほか `np.linalg` を使う op 全般 | 未修正。ライブラリが利用者の BLAS スレッド数を勝手に変えるのは筋が悪いので、(a) `set_system` 系の明示ノブ (b) 小行列ループの間だけ絞る、の設計判断が要る。回避策は `OPENBLAS_NUM_THREADS=4` |
 
 **確かめて問題なかったこと**(レビューが数字つきで確認): 半画素の原点規約、Seidel 閉形式比
 1.00000、Sellmeier、Welzl、箱の軸規約、訳 1,722×6 で stale/欠落 0・繁簡混入 0・

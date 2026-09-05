@@ -29,12 +29,17 @@ _REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
 
-# match3d.render_volume_projection の所在を確認(存在すれば言及するため)。
-# 実際の投影は torch 非依存の np.sum で行う。
+# 投影の本体は torch 非依存の np.sum で行う(この例は最小構成でも動く)。
+# そのうえで、レジストリ側の match3d.render_volume_projection が**同じ絵を出すか**を
+# 実際に呼んで確かめる。★2026-09-05 まで、この例は「azimuth=elevation=0 なら
+# np.sum(axis=0) と一致」と書きながら**一度も確かめていなかった**。しかも
+# op → example の索引が hasattr の文字列を呼び出しと誤認していたため、
+# 「例が 1 つも無い op」が 100% カバレッジの中に隠れていた。
 try:
-    import match3d  # noqa: F401  (render_volume_projection を提供するモジュール)
+    import match3d
     _HAS_RENDER = hasattr(match3d, "render_volume_projection")
 except Exception:  # pragma: no cover - torch 不在などでも本例は動く
+    match3d = None
     _HAS_RENDER = False
 
 
@@ -54,15 +59,40 @@ def synthesize_radiograph(vol: np.ndarray) -> np.ndarray:
     return vol.sum(axis=0)
 
 
+def cross_check_registry_op(vol: np.ndarray, drr: np.ndarray) -> None:
+    """レジストリの ``render_volume_projection`` を**実際に呼び**、np.sum と突き合わせる。
+
+    正面(azimuth=elevation=0)の X線投影は厚み軸の総和そのものなので、
+    両者は一致しなければならない。一致を**測る**ことで、この例は
+    「op を持っている」ではなく「op が正しい」を主張できる。
+
+    実測(2026-09-05、studio_assets/sample_3d/skeleton_ct.npy = (20,97,28)):
+      絶対差 最大 1.9e-05 / 中央 1.8e-07(op 内部が float32 を経由するため)
+    """
+    if not _HAS_RENDER:
+        print("[SKIP] match3d.render_volume_projection が無い(torch 不在)ため突き合わせを省略")
+        return
+    got = np.asarray(
+        match3d.render_volume_projection(vol, azimuth=0.0, elevation=0.0, mode="xray"),
+        dtype=np.float64)
+    assert got.shape == drr.shape, f"形が違う: op {got.shape} vs np.sum {drr.shape}"
+    err = float(np.abs(got - drr).max())
+    tol = 1e-3 * float(drr.max())
+    assert err <= tol, (
+        f"op と np.sum(axis=0) が一致しない: 最大差 {err:.3e} > 許容 {tol:.3e}")
+    print(f"[GT] render_volume_projection == np.sum(axis=0): 最大差 {err:.3e} "
+          f"(許容 {tol:.3e}、op は内部で float32 を経由する)")
+
+
 def main() -> int:
     vol = load_volume()
     print(f"[GT] volume shape (z,y,x) = {vol.shape}, "
           f"density range [{vol.min():.3f}, {vol.max():.3f}]")
-    print(f"[GT] match3d.render_volume_projection available = {_HAS_RENDER} "
-          f"(azimuth=elevation=0 なら np.sum(axis=0) と一致)")
+    print(f"[GT] match3d.render_volume_projection available = {_HAS_RENDER}")
 
     z, y, x = vol.shape
     drr = synthesize_radiograph(vol)
+    cross_check_registry_op(vol, drr)
 
     # --- 期待される Ground Truth ---
     # (1) 厚み軸 z を潰したので 2D 形状は (y, x)。

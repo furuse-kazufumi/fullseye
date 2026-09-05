@@ -411,6 +411,8 @@ EXAMPLES = [
      "name": "小惑星イトカワを物理ベースで描く(Hapke 反射則・太陽視直径 0.53° のレイキャスト影・解像度を意識した地形レリーフ)",
      "summary": "実形状モデル(49,152 面、辺長 2.6〜14 m と不均一。間引きなし)を mesh_edge_lengths で測り、mesh_subdivide(target 1.5 m の適応テッセレーション、面積体積不変)→ displacement_band_weights(元データが持つ波長の補集合 = 合成重み)→ mesh_displace_spectrum(3 m@60 m〜0.2 m@1.9 m、頂点ごとに 2×局所辺長で帯域制限)→ terrain_region_mask / mesh_scatter_boulders(shape='hull': 角張った凸包、べき則 D^-3.1、30–60 % 埋没、変位後の面に置く)→ render_regolith(Hapke + shadow_raycast + 環境光 0 + bump_normals_fbm の補集合 + exposure='median')。縁の明るさ、対向効果、硬い影、辺長ヒストグラム、帯域ゲート、岩の個数/埋没、露出中央値 0.45、AMICA 実画像に対するレリーフコントラストを GT で実測。"},
     {"id": "render_beauty", "task": "rendering", "data": "synthetic",
+     "budget_s": 1200,
+     "budget_note": "hero は 1280px を ss=2(= 2560px 相当)でレンダし、AO 32 サンプル・影 12 サンプルを全画素に積む。実測 645.6 秒(2026-09-05、24 コア機。ただし他プロセスが3 コアを占有していたので上振れしている)。既定 240 秒だと validate() が中身は PASS なのに timeout と報告する —— それが 2026-09-05 まで起きていた。速くしたいなら size か ss か サンプル数を落とす話であって、予算を伸ばす話ではない。",
      "name": "レンダリング品質: hero レンダラ render_beauty(全層合成の映える静止3D)",
      "summary": "ラスタライズ/Phong鏡面/AO/接地影/SSAA/トーンマップを1本に合成。sphere-on-groundで各層を実測: AOは接触凹部を0.07→0.02と選択的に暗化(露出頂部0.01は不変)、鏡面は小面積ハイライト(frac0.018)、接地影はwith-mesh993px vs null0px、reinhardは単調(clip34段潰しを回避)、SSAAはedge0.040→0.026。sdf_ops生成メッシュでhero画像を出力。"},
     {"id": "anatomical_hand", "task": "rendering", "data": "download",
@@ -490,7 +492,20 @@ def discover() -> list[str]:
                   if f.endswith(".py") and not f.startswith("_"))
 
 
-def run(example_id: str, timeout: int = 240, inject_path: bool = False) -> tuple[bool, str]:
+#: 例 1 本あたりの既定の時間予算(秒)。これを超える例は metadata に ``budget_s`` を
+#: **明示して理由を書く**。黙って伸ばすと「遅い」が「壊れている」を隠す。
+DEFAULT_BUDGET_S = 240
+
+
+def budget(example_id: str) -> int:
+    """その例に許された秒数。metadata の ``budget_s``、無ければ既定。"""
+    for e in EXAMPLES:
+        if e.get("id") == example_id:
+            return int(e.get("budget_s") or DEFAULT_BUDGET_S)
+    return DEFAULT_BUDGET_S
+
+
+def run(example_id: str, timeout=None, inject_path: bool = False) -> tuple[bool, str]:
     """Run one example as a subprocess. -> (ok, tail_output).
 
     **``PYTHONPATH`` は既定で注入しない。** 各スクリプトは自前で
@@ -504,7 +519,14 @@ def run(example_id: str, timeout: int = 240, inject_path: bool = False) -> tuple
     緑のままだった(利用者側だけが壊れる形)。
 
     *inject_path* は「install 済み環境での挙動」を別途確かめたいとき用の opt-in。
+
+    *timeout* を省くと、その例が**宣言している時間予算**(:func:`budget`)を使う。
+    ★2026-09-05 まで全例に一律 240 秒を課していたため、単独で 12 分かかる
+    ``render_beauty`` は :func:`validate` から**必ず timeout**として返っていた。
+    CI は代表 3 本しか走らせないので、この状態が誰にも見えていなかった。
     """
+    if timeout is None:
+        timeout = budget(example_id)
     env = dict(os.environ)
     if inject_path:
         env["PYTHONPATH"] = _ROOT + os.pathsep + env.get("PYTHONPATH", "")

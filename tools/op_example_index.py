@@ -185,9 +185,31 @@ def _called(name: str, src: str) -> bool:
         return True
     if re.search(r"\." + esc + r"\s*\(", src):              # .name(
         return True
-    if re.search(r"""['"]""" + esc + r"""['"]""", src):     # "name" / 'name' (apply/pipeline)
-        return True
+    # 引用符つきの op 名は `apply("name")` / `run_pipeline([...])` / ギャラリーの
+    # OPS 一覧のような**振り分け**を拾うためのもの。ただし
+    # `hasattr(mod, "name")` / `getattr(mod, "name", None)` は**存在確認**であって
+    # 呼び出しではない。2026-09-05 実測: `examples_3d/ct_hand_radiograph.py` は
+    # `render_volume_projection` を hasattr で確認して有無を印字するだけなのに、
+    # 索引が「例あり」と数え、**例ゼロの op が 100% カバレッジの中に隠れていた**。
+    for m in re.finditer(r"""['"]""" + esc + r"""['"]""", src):
+        if not _is_presence_check(src, m.start()):
+            return True
     return False
+
+
+#: 存在確認の関数。ここの引数に現れる op 名は「呼んだ」に数えない。
+_PRESENCE = re.compile(r"(?:has|get)attr\s*\(\s*[^()]*$")
+
+
+def _is_presence_check(src: str, pos: int) -> bool:
+    """``src[pos]`` の引用符が ``hasattr(`` / ``getattr(`` の引数かどうか。
+
+    直前 120 文字だけを見る(引数リストはそれより長くならない)。入れ子の括弧は
+    ``[^()]*`` で弾いているので、``hasattr(f(x), "name")`` のような形は
+    保守的に「存在確認ではない」= 呼び出し扱いになる。**見逃す側ではなく
+    数え過ぎる側に倒す**のは、カバレッジを甘く見せないため。
+    """
+    return bool(_PRESENCE.search(src[max(0, pos - 120):pos]))
 
 
 def _index_for(names: list, subdir: str) -> dict:
