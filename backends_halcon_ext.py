@@ -188,6 +188,12 @@ def _cooc_feature_image(v, a, b):
 
 # ── Image: 定義域を全面へ(image -> full region)────────────────────────────── #
 def _full_domain(v, a, b):
+    """画像の定義域を全面に広げる。HALCON の ``full_domain``(画像の定義域を
+    最大に拡張する)に相当。
+
+    入力と同じ形状の全 1 の region(=画像全面)を返すだけの op。ROI を絞る他の
+    op と対で使い、定義域をリセットするために使う。``a``, ``b`` は未使用。
+    """
     return np.ones_like(v, dtype=np.float64)
 
 
