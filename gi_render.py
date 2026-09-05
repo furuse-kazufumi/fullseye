@@ -134,9 +134,18 @@ def _camera(mi, pose, K, size):
     }
 
 
-def _shape(mi, v, f):
-    mesh = mi.Mesh("mesh", vertex_count=int(v.shape[0]), face_count=int(f.shape[0]),
-                   has_vertex_normals=False, has_vertex_texcoords=False)
+def _shape(mi, v, f, albedo):
+    """メッシュを**メモリ上で**組む(中間ファイルを作らない)。
+
+    反射率は :class:`mitsuba.Properties` 経由で BSDF ごと渡す。既定の BSDF は
+    グレースケール(``UniformSpectrum``)なので、後から ``traverse`` で色を差すと
+    ``bad cast`` になる —— 2026-09-05 に踏んだ。色が要るなら**作るときに**渡す。
+    """
+    props = mi.Properties()
+    props["bsdf"] = mi.load_dict({
+        "type": "diffuse",
+        "reflectance": {"type": "rgb", "value": [float(x) for x in albedo]}})
+    mesh = mi.Mesh("mesh", int(v.shape[0]), int(f.shape[0]), props, False, False)
     params = mi.traverse(mesh)
     params["vertex_positions"] = np.ravel(v.astype(np.float32))
     params["faces"] = np.ravel(f.astype(np.uint32))
@@ -242,18 +251,11 @@ def render_gi(V, F, *, pose=None, intrinsics=None, size: int = 256, spp: int = 6
 
     centre = v.mean(axis=0)
     radius = float(np.linalg.norm(v - centre, axis=1).max()) or 1.0
-    shape = _shape(mi, v, f)
+    shape = _shape(mi, v, f, alb)
 
     scene = {"type": "scene", "sensor": sensor, "gi_mesh": shape}
     scene.update(_enclosure(mi, enclosure, centre, radius, wall, light_power))
 
-    # 対象メッシュの反射率。`mi.Mesh` は既定の BSDF を持つので、あれば差し替える。
-    shape_params = mi.traverse(shape)
-    for key in ("bsdf.reflectance.value", "bsdf.reflectance"):
-        if key in shape_params:
-            shape_params[key] = mi.Color3f(*alb.tolist())
-            shape_params.update()
-            break
 
     beauty_scene = mi.load_dict(
         dict(scene, integrator={"type": "path", "max_depth": max_depth}))

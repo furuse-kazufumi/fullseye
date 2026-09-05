@@ -45,6 +45,9 @@ skimage = ["scikit-image>=0.20"]
 pil = ["Pillow>=9"]
 wavelets = ["PyWavelets>=1.4"]
 gpu = ["torch>=2.0", "kornia>=0.7"]
+# 大域照明つきレンダリング(gi_render)。Mitsuba 3 は BSD-3-Clause、公式 wheel が
+# あるのでビルド不要。**必須にはしない** —— 内蔵ラスタライザだけでも動く設計を保つ。
+gi = ["mitsuba>=3.5"]
 extra = ["mahotas>=1.4", "SimpleITK>=2.2"]
 gui = ["PySide6>=6.5"]
 handpose = ["mediapipe>=0.10"]
@@ -176,7 +179,7 @@ py-modules = [
   "fit_primitives_ext", "hull3d", "mesh_props", "mesh_smooth", "render_ao", "render_beauty", "render_shade", "render_shadow", "render_ssaa", "render_tonemap",
   # imported by shipped examples/examples_3d (release audit 2026-08-30: these were
   # missing, so the corresponding samples ImportError'd on a pip install)
-  "mesh_decimate", "watershed3d", "g1_policy_bridge", "evis_fullseye_bridge",
+  "mesh_decimate", "watershed3d", "gi_render", "g1_policy_bridge", "evis_fullseye_bridge",
   # imported by studio.py (gray_features dev ops, 2026-08-30) — must ship in the wheel
   "image_gray",
   # `fit_transform` (point-correspondence -> affine/rigid/similarity, Umeyama) has been
