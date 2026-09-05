@@ -69,6 +69,18 @@ def _safe(fn, out_sort=None):
 # color operator implementations                                              #
 # --------------------------------------------------------------------------- #
 def _cfa_to_rgb(v, a, b):                         # image -> color : Bayer demosaic (the bridge)
+    """Bayer 配列（CFA: Color Filter Array）から RGB 画像へのデモザイク処理。HALCON の
+    ``cfa_to_rgb``（単板カラーフィルタアレイ画像を RGB 画像に変換する）に近似。
+
+    単一チャンネルのグレースケール画像を Bayer パターンの生データとみなし、
+    OpenCV の ``cv2.cvtColor`` でデモザイクして 3 チャンネル RGB に復元する。
+    `image` から `color` への橋渡し op（進化がカラー系統に入る唯一の入口）。
+
+    a は Bayer パターンの並び順を 4 通り（BG/GB/RG/GR の並び）から選ぶ
+    （``min(3, int(a * 4))`` で 0〜3 に量子化）。b は未使用。
+    パターンが実際の入力と合わない場合、色ズレ・モアレが出る（本来の Bayer
+    配置が分からない合成画像に対してはどれも「それらしい」RGB化でしかない）。
+    """
     u = (_gray(v) * 255).astype(np.uint8)
     code = (cv2.COLOR_BayerBG2RGB, cv2.COLOR_BayerGB2RGB,
             cv2.COLOR_BayerRG2RGB, cv2.COLOR_BayerGR2RGB)[min(3, int(a * 4))]
