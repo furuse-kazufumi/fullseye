@@ -244,6 +244,10 @@ def guard(fn, out_sort=None, *, name=None, on_fail=None, finish=None):
         return sanitize(out, v, out_sort)
     w.__wrapped__ = fn
     w.__name__ = getattr(fn, "__name__", "op")
+    # ガードは**振る舞いの装飾**であって説明の差し替えではない。``__doc__`` を
+    # 転記しないと、実装がちゃんと書いた説明が「説明なし」に化ける —— 2026-09-05
+    # 実測で 82 op がこれで消えていた(`tools/opdocs.py` は `fn.__doc__` を読む)。
+    w.__doc__ = getattr(fn, "__doc__", None)
     # Keep "_safe" in the qualname: the registry-integrity tests identify a guarded
     # op that way, and `__fullseye_guarded__` is the structured form of the same fact.
     w.__qualname__ = "_safe(%s)" % getattr(fn, "__qualname__", w.__name__)
