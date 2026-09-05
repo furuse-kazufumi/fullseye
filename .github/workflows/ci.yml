@@ -14,6 +14,13 @@ on:
     - cron: "0 3 * * 1"
   workflow_dispatch:
 
+# 同じ枝で新しい push が来たら、走っている古い run を打ち切る。
+# 2026-09-05: 連続で直して push した結果、35 分かかる全数スイートが 5 本同時に
+# 積み上がった。古い commit の結果はもう誰も見ないので、待ち時間と資源の無駄。
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   core-minimal:
     name: core (numpy+scipy only)
