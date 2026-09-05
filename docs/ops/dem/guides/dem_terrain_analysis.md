@@ -56,27 +56,32 @@ import numpy as np
 
 import demops
 
-# 東へ 5 %、北へ 12 % 下る平面に、ガウス丘を 1 つ載せる
+# 東へ 5 %、北へ 12 % 下る平面と、そこにガウス丘を 1 つ載せた地形
 h, w, cell = 64, 64, 2.0                      # セル 2 m
 row, col = np.mgrid[0:h, 0:w]
 x, y = col * cell, (h - 1 - row) * cell       # 行 0 が北 = y は北向き
-dem = -0.05 * x - 0.12 * y \
-    + 30.0 * np.exp(-((x - 60.0) ** 2 + (y - 70.0) ** 2) / (2 * 20.0 ** 2))
+plane = -0.05 * x - 0.12 * y
+dem = plane + 30.0 * np.exp(-((x - 60.0) ** 2 + (y - 70.0) ** 2) / (2 * 20.0 ** 2))
 
-slope = demops.dem_slope(dem, cell)                    # [度]
-aspect = demops.dem_aspect(dem, cell)                  # 北 0 度・東回り
+slope = demops.dem_slope(plane, cell)                  # [度]
+aspect = demops.dem_aspect(plane, cell)                # 北 0 度・東回り
 shade = demops.dem_hillshade(dem, cell, azimuth_deg=315.0, altitude_deg=45.0)
 acc = demops.dem_flow_accumulation(dem, cell)          # 集水セル数
 streams = demops.dem_stream_network(dem, cell, threshold_cells=100.0)
 svf = demops.dem_sky_view_factor(dem, cell, n_azimuth=8)
 
-# 丘から離れた縁では平面の傾斜に一致する: atan(sqrt(0.05^2 + 0.12^2)) = 7.41 度
-assert abs(slope[0, 0] - np.degrees(np.arctan(np.hypot(0.05, 0.12)))) < 1e-6
-# その斜面は南西を向く(東へも北へも下るので、下り方向は南西 = 180+67.4 度)
-assert abs(aspect[0, 0] - (180.0 + np.degrees(np.arctan2(0.05, 0.12)))) < 1e-6
+# 平面の傾斜は閉形式に一致する: atan(sqrt(0.05^2 + 0.12^2)) = 7.4069 度
+assert abs(slope[32, 32] - np.degrees(np.arctan(np.hypot(0.05, 0.12)))) < 1e-9
+# 東へも北へも下るので、下り(= 方位)は**北東**。atan2(東成分, 北成分) = 22.62 度
+assert abs(aspect[32, 32] - np.degrees(np.arctan2(0.05, 0.12))) < 1e-9
 assert 0.0 <= shade.min() and shade.max() <= 1.0
-assert acc.max() > 100.0 and streams.sum() > 0        # 谷筋に水が集まる
+assert acc.max() > 100.0 and np.nansum(streams) > 0    # 谷筋に水が集まる
 assert 0.0 <= svf.min() and svf.max() <= 1.0
+
+# ★ slope / aspect を **plane** で見ているのは意図。Horn の 3x3 は格子の縁で
+#   打ち切られるので、角のセル (0, 0) の傾斜は 3.72 度 —— 閉形式の**半分**に
+#   なる。「端は端」であって実装の誤りではないが、閉形式と突き合わせるなら
+#   内側のセルを見ること。
 ```
 
 `assert` を飾りで置いていません —— **この 6 行は平面の閉形式から出る値**で、規約(北 0 度・東回り、行 0 が北)を 1 つでも取り違えると落ちます。
