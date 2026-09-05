@@ -3,23 +3,23 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-05 20:25:11
+- **最終更新**: 2026-09-05 20:50:39
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-78b3eb4f5 wheel 門が本番の呼び出し経路では一度も比較していなかったのを直す
-e74f6ce39 auto: ci_wheel_check.py 編集前 (2026-09-05 20:19)
-e1211ca13 auto: ci_wheel_check.py 編集前 (2026-09-05 20:19)
-c687e5b08 auto: ci_wheel_check.py 編集前 (2026-09-05 20:19)
-ce2572d56 0.1.9: Linux で実際に動かし、全域レビュー(Fable 8 領域)で出た本物を直した回
-9967ac0a6 auto: examples2d.py 編集前 (2026-09-05 16:32)
-473369414 auto: examples2d.py 編集前 (2026-09-05 16:32)
-b241a41cb auto: examples2d.py 編集前 (2026-09-05 16:32)
-b246c0ee6 auto: examples2d.py 編集前 (2026-09-05 16:32)
-62fd80d71 auto: precision_union.py 編集前 (2026-09-05 16:32)
+3cf58baf4 セキュリティ監査の高 3 件と、Linux で日本語が豆腐になる問題を直す
+aee38ff14 auto: anatomical_hand.py 編集前 (2026-09-05 20:48)
+ad1bb169a auto: annotate.py 編集前 (2026-09-05 20:43)
+2e5555647 auto: annotate.py 編集前 (2026-09-05 20:43)
+4519e0e4b auto: sweep.py 編集前 (2026-09-05 20:40)
+2cbafd437 auto: sweep.py 編集前 (2026-09-05 20:40)
+ed0e998f1 auto: graph_seed.py 編集前 (2026-09-05 20:39)
+8c21f6971 auto: evis_fullseye_bridge.py 編集前 (2026-09-05 20:39)
+4f4a8150b auto: evis_fullseye_bridge.py 編集前 (2026-09-05 20:39)
+fa193f448 auto: g1_policy_bridge.py 編集前 (2026-09-05 20:38)
 ```
 
 ## 現在の git status
@@ -31,21 +31,21 @@ b246c0ee6 auto: examples2d.py 編集前 (2026-09-05 16:32)
 ## 直近 2 時間に変更されたファイル
 
 ```
-20:22 fullseye.egg-info/SOURCES.txt
-20:22 fullseye.egg-info/top_level.txt
-20:22 fullseye.egg-info/requires.txt
-20:22 fullseye.egg-info/entry_points.txt
-20:22 fullseye.egg-info/dependency_links.txt
-20:22 fullseye.egg-info/PKG-INFO
-20:22 .ruff_cache/0.16.0/15909418622661858597
-20:22 .ruff_cache/0.16.0/15563442506313268617
-20:21 tools/ci_wheel_check.py
-20:21 .pytest_cache/v/cache/nodeids
-20:21 .pytest_cache/v/cache/lastfailed
-20:20 tests/test_ci_wheel_check_paths.py
-20:04 docs/SESSION_SUMMARY.md
-20:04 .ruff_cache/0.16.0/12943517194686254008
-20:03 studio_assets/op_help/guide_video_streaming.zh.html
+20:48 .ruff_cache/0.16.0/9851346804524619435
+20:48 examples_3d/anatomical_hand.py
+20:47 .pytest_cache/v/cache/nodeids
+20:47 .pytest_cache/v/cache/lastfailed
+20:47 .ruff_cache/0.16.0/15563442506313268617
+20:47 .ruff_cache/0.16.0/12943517194686254008
+20:47 tests/test_no_local_paths_in_shipped_code.py
+20:46 .github/workflows/ci.yml
+20:45 annotate.py
+20:40 sweep.py
+20:40 halcon_rad_ingest.py
+20:40 graph_seed.py
+20:39 evis_fullseye_bridge.py
+20:38 g1_policy_bridge.py
+20:34 tests/test_studio_settings_isolation.py
 ```
 
 ---
