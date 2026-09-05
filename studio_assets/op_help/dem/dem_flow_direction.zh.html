@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dem_flow_direction — DEM <code style="color:#22d3bf">hydrology</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">labels</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import demops; demops.dem_flow_direction(dem, cell_size, nodata=&#x27;error&#x27;)</code>(或 <code style="color:#22d3bf">opsdem.get(&quot;dem_flow_direction&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>D8 流向。O&#x27;Callaghan &amp; Mark (1984)。</p>
+<p>返り値は `<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> の整数で、0-7 が :data:</code>_D8<code style="color:#22d3bf"> の並び、</code><code style="color:#22d3bf">-1</code>` が</p>
+<p>「流出先なし」(周囲より低い = 窪地、または境界外へ出る)。</p>
+<p>`<code style="color:#22d3bf">nodata=&quot;outlet&quot;</code>` なら、欠測セルへ向かう流れを<b>許す</b>(そこで系を出る)。</p>
+<p>`<code style="color:#22d3bf">&quot;barrier&quot;</code><code style="color:#22d3bf"> なら欠測へは流れない。欠測セル自身は常に </code><code style="color:#22d3bf">-1</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">labels</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">hydrology</code>)</h3>
+<p><a style="color:#22d3bf" href="opdem:dem_fill_sinks">dem_fill_sinks</a> · <a style="color:#22d3bf" href="opdem:dem_flow_accumulation">dem_flow_accumulation</a> · <a style="color:#22d3bf" href="opdem:dem_stream_network">dem_stream_network</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: demops.py — DEM 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

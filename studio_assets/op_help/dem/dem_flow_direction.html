@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dem_flow_direction — DEM <code style="color:#22d3bf">hydrology</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">labels</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import demops; demops.dem_flow_direction(dem, cell_size, nodata=&#x27;error&#x27;)</code> (または <code style="color:#22d3bf">opsdem.get(&quot;dem_flow_direction&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>D8 流向。O&#x27;Callaghan &amp; Mark (1984)。</p>
+<p>返り値は `<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> の整数で、0-7 が :data:</code>_D8<code style="color:#22d3bf"> の並び、</code><code style="color:#22d3bf">-1</code>` が</p>
+<p>「流出先なし」(周囲より低い = 窪地、または境界外へ出る)。</p>
+<p>`<code style="color:#22d3bf">nodata=&quot;outlet&quot;</code>` なら、欠測セルへ向かう流れを<b>許す</b>(そこで系を出る)。</p>
+<p>`<code style="color:#22d3bf">&quot;barrier&quot;</code><code style="color:#22d3bf"> なら欠測へは流れない。欠測セル自身は常に </code><code style="color:#22d3bf">-1</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">labels</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">hydrology</code>)</h3>
+<p><a style="color:#22d3bf" href="opdem:dem_fill_sinks">dem_fill_sinks</a> · <a style="color:#22d3bf" href="opdem:dem_flow_accumulation">dem_flow_accumulation</a> · <a style="color:#22d3bf" href="opdem:dem_stream_network">dem_stream_network</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: demops.py — DEM operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
