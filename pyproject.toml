@@ -75,7 +75,13 @@ opcua = ["asyncua>=1.0"]
 # timeout=ハング、hypothesis=退化入力の性質検査、randomly=状態漏れ、
 # pip-audit=依存の既知脆弱性、ruff=黙って消える定義(F601 で実害を 1 件検出)。
 dev = ["pytest>=7", "pytest-cov>=4", "ruff>=0.4", "pytest-timeout>=2.3",
-       "hypothesis>=6.100", "pytest-randomly>=3.15", "pip-audit>=2.7"]
+       "hypothesis>=6.100", "pytest-randomly>=3.15", "pytest-xdist>=3.5",
+       "pip-audit>=2.7"]
+# pytest-xdist は速さのためではなく**順序依存を出すため**に入れている ——
+# ワーカーの使い回しでテストの並びが崩れ、モジュール大域の漏れが顕在化する
+# (2026-09-05 実測で 1 件)。`pytest -p randomly -n auto` が週次 CI の
+# `order-shuffle` ジョブと同じ走らせ方。
+# ★`flaky` は入れない —— 失敗を握り潰す道具であって、見つける道具ではない。
 # `all` = the full desktop app (image libs + GPU + GUI + video). Industrial/robotics
 # adapters stay opt-in (a desktop user does not need pymodbus/asyncua by default).
 all = [

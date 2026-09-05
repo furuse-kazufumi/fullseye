@@ -9,6 +9,10 @@ on:
   push:
     branches: [master]
   pull_request:
+  # 順序シャッフル + 並列は毎回やると遅いので週次(月曜 03:00 UTC = 12:00 JST)。
+  schedule:
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
 
 jobs:
   core-minimal:
@@ -111,3 +115,36 @@ jobs:
         with:
           name: coverage-xml
           path: coverage.xml
+
+  # 順序依存 —— 直列の CI が緑でも並列で初めて出る型のバグを狙う専用ジョブ。
+  # 2026-09-05 実測: `tests/test_accel_match.py` が `ops.set_match_template()` を
+  # 呼びっぱなしでモジュール大域を汚し、`pytest-xdist`(24 並列)でワーカーの
+  # 順序が崩れた瞬間に別ファイルが落ちた。既定の pytest 設定は再現性のために
+  # ランダム化を切っている(`addopts = "-p no:randomly"`)ので、**切った分を
+  # ここで払う**。週次 + 手動。落ちても本流は止めない(調査は人がやる)。
+  order-shuffle:
+    name: order shuffle + parallel (nightly)
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    env:
+      QT_QPA_PLATFORM: offscreen
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5
+        with:
+          python-version: "3.11"
+      - name: Qt offscreen system libraries
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q libegl1 libgl1 libxkbcommon-x11-0 libdbus-1-3
+      - name: Install with optional backends (no torch)
+        run: >
+          pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd]"
+          pytest pytest-xdist pytest-randomly matplotlib sympy ziglang
+      # 種を出力に残す —— 落ちたら `-p randomly --randomly-seed=<種>` で再現できる。
+      - name: Shuffled, serial (順序依存だけを見る)
+        run: pytest -q -p randomly -rs
+      - name: Shuffled, parallel (ワーカー使い回しで崩れる順序を見る)
+        run: pytest -q -p randomly -n auto -rs

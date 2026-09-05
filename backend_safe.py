@@ -256,6 +256,26 @@ def guard(fn, out_sort=None, *, name=None, on_fail=None, finish=None):
 
 
 
+def require_finite(x, what):
+    """非有限(NaN / Inf)を含む入力を**入口で拒否**する。
+
+    ネイティブ実装のいくつかは NaN を渡されると比較がすべて偽になり、
+    境界の外へ書き込む。Python の例外にならないので `guard` でも捕まらず、
+    **プロセスごと死ぬ**(2026-09-05 実測: `skimage.morphology.reconstruction`
+    と `h_maxima` を NaN 画像で交互に呼ぶと SIGSEGV。単独では落ちず、
+    交互に呼んだときだけ落ちるのでヒープ破壊と見られる)。
+
+    ここで `ValueError` にしておけば `guard` が台帳に記録して sort に合う値へ
+    落とす —— **落ちない**という約束を守れる。NaN を 0 に読み替えて計算を
+    続けることはしない: 「測れなかった点」を「値 0 の点」に化けさせると、
+    数字を見ても気づけない。
+    """
+    a = np.asarray(x)
+    if a.dtype.kind in "fc" and not np.all(np.isfinite(a)):
+        raise ValueError("%s: 非有限(NaN/Inf)を含む入力は扱えない" % what)
+    return x
+
+
 def signed01(x):
     """Map a SIGNED filter response to [0,1] with the zero-crossing at 0.5.
 
@@ -323,6 +343,23 @@ def _as_arr(v):
     return v if isinstance(v, np.ndarray) else None
 
 
+def _clip01_finite(arr):
+    """``np.clip(arr, 0, 1)`` の**非有限を残さない**版。
+
+    ★`np.clip` は NaN を通す —— `np.clip(np.nan, 0, 1)` は `nan`。
+    入力そのものが非有限のとき(空配列の 0/0、センサの欠測、NaN を弾いた op が
+    投げた例外)、`fallback` は「入力を切り詰めたもの」を返すので、
+    **非有限がそのまま外へ出ていた**。「返り値は有限」という `guard` の約束は
+    そこだけ守られていなかった(2026-09-05、`require_finite` を入れて発覚)。
+    `_finite` と同じ換算(NaN→0 / +Inf→1 / -Inf→0)で潰してから切り詰める。
+    """
+    a = np.asarray(arr)
+    if a.dtype.kind in "fc":
+        a = np.nan_to_num(a.real if a.dtype.kind == "c" else a,
+                          nan=0.0, posinf=1.0, neginf=0.0)
+    return np.clip(a, 0, 1)
+
+
 def fallback(v, out_sort):
     """A valid, benign value of `out_sort`, derived from the input `v`."""
     vv = _as_arr(v)
@@ -335,14 +372,14 @@ def fallback(v, out_sort):
         return np.zeros(vv.shape[:2], np.float64) if vv is not None and vv.ndim >= 2 else np.zeros((1, 1))
     if out_sort == "color":
         if vv is not None and vv.ndim == 3 and vv.shape[-1] == 3:
-            return np.clip(vv, 0, 1)
+            return _clip01_finite(vv)
         if vv is not None and vv.ndim == 2:
-            return np.clip(np.stack([vv] * 3, -1), 0, 1)
+            return _clip01_finite(np.stack([vv] * 3, -1))
         return np.zeros((1, 1, 3))
     if out_sort == "match":
         return np.array([0.0, 0.0, 0.0])
     # image / volume / any / unknown -> the clipped input if it is an array
-    return np.clip(vv, 0, 1) if vv is not None else v
+    return _clip01_finite(vv) if vv is not None else v
 
 
 def region01(out):

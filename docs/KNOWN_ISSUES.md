@@ -387,6 +387,17 @@ KNOWN_ISSUES 側が引き続きその一覧になる。
 - **ファザーの種の二重定義**(`"rgbimage"` ほか 3 組)—— 意図のある生成器が
   黙って死に、鏡面分離 op 2 本が「永久に失敗」と誤認されていた
 - 到達不能な**未定義名 5 件**(1 件は走れば `NameError`)
+- ★**全 NaN でのプロセス死(2 本目)** —— `xsk2_reconstruction` /
+  `xsk2_h_maxima`(`skimage.morphology` のネイティブ側で SIGSEGV)。
+  **単独では落ちず、交互に呼んだときだけ落ちる**(ヒープ破壊)。
+  `backend_safe.require_finite()` で入口に関門を置いた
+- ★**退避値そのものが非有限だった** —— `fallback()` の image/color 系は
+  `np.clip(入力, 0, 1)` で、`np.clip` は NaN を通す。**入力が非有限のときだけ**
+  「返り値は有限」の約束が破れていた(`_clip01_finite()` に集約)
+- ★**全 NaN の位相でハング** —— `xsk_unwrap_phase`(実測 5 分以上)。
+  非有限をマスクして解決。有限入力に対する出力はビット単位で不変
+- **順序依存 1 件** —— `tests/test_accel_match.py` がテンプレートを大域に残していた。
+  直列では 100% 緑、`-n auto` で落ちる。週次 `order-shuffle` ジョブを追加
 
 ## まだ直していない(0.1.9 以降)
 

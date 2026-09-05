@@ -8,7 +8,15 @@
 * 空入力で **14 op が NaN / Inf を返し**、``fullseye.apply()`` 経由でもそのまま
   出ていた(空配列の平均・分散・比 = 0 除算)。原因は「有限性を約束する guard を
   **881 op 中 395 本が一度も通っていなかった**」こと。登録時に一律で包んで解決。
-* ``xsk_unwrap_phase`` に全 NaN → 5 分以上返らない(ハング)。
+* ``xsk_unwrap_phase`` に全 NaN → 5 分以上返らない(ハング)。品質誘導の
+  アンラップは有効画素を起点に伸びるので、起点が 1 つも無いと止まらない。
+  非有限をマスクして解決。
+* ★``xsk2_reconstruction`` / ``xsk2_h_maxima`` に全 NaN → **SIGSEGV**。
+  単独では落ちず、2 つを交互に呼んだところで落ちるのでヒープ破壊と見られる
+  (`skimage.morphology` のネイティブ側)。入口で非有限を弾いて解決。
+* ★退避値そのものが非有限だった。``fallback`` の image/color 系は「入力を
+  [0,1] に切り詰めたもの」で、**``np.clip`` は NaN を通す** —— 入力が非有限の
+  ときだけ「返り値は有限」という約束が破れていた(`tests/test_backend_safe.py`)。
 
 個別のテストに空配列は 51 箇所あったが、**レジストリ全体を退化入力で舐める検査は
 1 つも無かった**。だから緑のまま気づけなかった —— 「発見ゼロ」は「頑健」ではなく
@@ -31,6 +39,14 @@ ROOT = os.path.dirname(HERE)
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
+import op_probe                                            # noqa: E402
+import ops as _ops                                         # noqa: E402
+
+#: 非有限が**答え**である op(``ops.NONFINITE_IS_MEANINGFUL`` が唯一の正本)。
+#: 到達不能を inf で表す測地距離、特異行列の条件数 —— もっともらしい有限値に
+#: 潰すと「届かない」が「近い」に化ける。台帳を各テストで書き写さないこと。
+MEANINGFUL_NONFINITE = frozenset(getattr(_ops, "NONFINITE_IS_MEANINGFUL", {}))
+
 #: 各 in_sort の「0 要素」の形。``None`` = その sort には空の代表が無い。
 EMPTY = {
     "image": (0, 0), "any": (0, 0), "region": (0, 0), "matrix": (0, 0),
@@ -41,11 +57,10 @@ EMPTY = {
 }
 
 #: 全 NaN / 全 Inf を渡したときに**返ってこない**ことが分かっている op。
-#: 直したら消す。ハングはクラッシュより厄介 —— CI では「遅い」としか見えない。
-KNOWN_HANGS_ON_NONFINITE = {
-    "xsk_unwrap_phase": "全 NaN の位相を渡すと skimage の unwrap_phase が返らない"
-                        "(実測 5 分以上)。入力の有限性を先に確かめるべき。",
-}
+#: ハングはクラッシュより厄介 —— CI では「遅い」としか見えない。
+#: 2026-09-05 に ``xsk_unwrap_phase`` を直して**空になった**。空であること自体を
+#: 主張はしない(次に見つけたらここに書いて、直したら消す)。
+KNOWN_HANGS_ON_NONFINITE: dict = {}
 
 
 def _empty_for(sort):
@@ -91,6 +106,8 @@ def test_no_op_returns_a_non_finite_value_for_an_empty_input(registry):
             out = op.fn(v.copy() if hasattr(v, "copy") else dict(v), 0.5, 0.5)
         except Exception:                                 # noqa: BLE001
             continue                                      # 例外は台帳に載る(契約内)
+        if op.name in MEANINGFUL_NONFINITE:
+            continue
         if not _finite_and_sort_valid(out, op.out_sort):
             bad.append(op.name)
     assert not missing, "空の代表値が無い in_sort: %s" % sorted(set(missing))
@@ -139,6 +156,8 @@ def test_constant_and_single_pixel_inputs_stay_in_contract(registry, fill):
                 out = op.fn(v, 0.5, 0.5)
             except Exception:                             # noqa: BLE001
                 continue
+            if op.name in MEANINGFUL_NONFINITE:
+                continue
             if not _finite_and_sort_valid(out, op.out_sort):
                 bad.append((op.name, shape))
                 break
@@ -175,11 +194,54 @@ def test_zero_division_is_not_hidden_by_numpy_defaults(registry):
 
 
 def test_known_hangs_are_still_listed(registry):
-    """ハングする op の一覧が空でないこと(直したら消す合図)。
+    """ハング台帳に「もう居ない op」が残っていないこと。
 
-    ハングは pytest-timeout が拾うが、**どの op か**はここに書いておく。
+    ハングそのものは pytest-timeout が拾うが、**どの op か**はここに書いておく。
     直った op を一覧に残すと、次に止まったときに気づけない。
     """
     live = {op.name for op in registry}
     stale = sorted(set(KNOWN_HANGS_ON_NONFINITE) - live)
     assert not stale, "居ない op が一覧に残っている: %s" % stale
+
+
+def _nonfinite_like(base, fill):
+    dt = base.dtype if base.dtype.kind == "c" else np.float64
+    return np.full(base.shape, fill, dtype=dt)
+
+
+@pytest.mark.parametrize("kind,fill", [("nan", np.nan), ("+inf", np.inf), ("-inf", -np.inf)])
+def test_no_op_returns_a_non_finite_value_for_a_non_finite_input(registry, kind, fill):
+    """全 NaN / 全 ±Inf を入れても、返り値は有限で sort に合うこと。
+
+    **0 サイズ入力の検査(上)とは別の穴**だった —— 空配列は「計算の結果」
+    非有限になるが、こちらは「入力そのもの」が非有限で、退避値の側
+    (``backend_safe.fallback``)に抜け道があった。
+
+    このテストが**通ること自体がクラッシュしていない証拠**でもある。落ちる op が
+    あると pytest ごと死に、赤ではなく「テストが消える」形で現れるので、
+    通した本数を併せて主張する。
+    """
+    bad, n = [], 0
+    for op in registry:
+        if op.name in KNOWN_HANGS_ON_NONFINITE:
+            continue
+        probes = op_probe.sample_probes(op.in_sort, op.name, n=1)
+        if not probes:
+            continue
+        base = probes[0]
+        if not isinstance(base, np.ndarray) or base.dtype == object:
+            continue
+        n += 1
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            try:
+                with np.errstate(all="ignore"):
+                    out = op.fn(_nonfinite_like(base, fill), 0.5, 0.5)
+            except Exception:                             # noqa: BLE001
+                continue                                  # 例外は契約内(台帳に載る)
+        if op.name in MEANINGFUL_NONFINITE:
+            continue                                      # 非有限が答えの op
+        if not _finite_and_sort_valid(out, op.out_sort):
+            bad.append(op.name)
+    assert not bad, "%s 入力で非有限を返す op が %d 本: %s" % (kind, len(bad), bad[:20])
+    assert n > 700, "通した op が少なすぎる(%d) —— 検査の前提が違う" % n

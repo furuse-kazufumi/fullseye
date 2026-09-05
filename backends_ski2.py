@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from backend_safe import signed01
+from backend_safe import require_finite, signed01
 
 
 def _safe(fn, out_sort=None):
@@ -118,7 +118,9 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         ほど多くの山が消える）を振る。b は未使用。小さな明るい斑点やノイズを
         消しつつ、大きな構造の輪郭は保つ（オープニングより形状の崩れが少ない）。
         """
-        x = np.clip(np.asarray(v, np.float64), 0, 1)
+        # NaN を渡すとネイティブ側でヒープを壊してプロセスごと落ちる
+        # (2026-09-05 実測、`h_maxima` と交互に呼ぶと SIGSEGV)。入口で弾く。
+        x = np.clip(require_finite(np.asarray(v, np.float64), "xsk2_reconstruction"), 0, 1)
         seed = np.clip(x - (0.05 + 0.25 * a), 0, 1)
         return morphology.reconstruction(seed, x, method="dilation")
 
@@ -131,7 +133,8 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         h が小さいほど微小なノイズ状の極大まで拾い、大きいほど際立った山だけ
         残る。
         """
-        x = np.clip(np.asarray(v, np.float64), 0, 1)
+        # `h_maxima` は内部で `reconstruction` を呼ぶ。同じ理由で入口で弾く。
+        x = np.clip(require_finite(np.asarray(v, np.float64), "xsk2_h_maxima"), 0, 1)
         return morphology.h_maxima(x, 0.05 + 0.3 * a).astype(np.float64)
 
     def _radon(v, a, b):
