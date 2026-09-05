@@ -1302,6 +1302,9 @@ if _os.environ.get("IMGEVOLVE_NO_BACKENDS", "") != "1":
 NONFINITE_IS_MEANINGFUL = {
     "tb_geodesic_distances": "不達を inf で表す(docstring に明記)。1.0 に潰すと"
                              "『届かない』が『近い』に化ける。",
+    "tb_mat_cond": "スペクトル条件数 s_max/s_min。厳密に特異な行列は s_min=0 なので"
+                   "inf が正しい答え(mathops.mat_cond は例外を投げず inf を返す)。"
+                   "有限に潰すと『十分に良条件』と読めてしまう。",
 }
 
 
