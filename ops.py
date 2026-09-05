@@ -1355,6 +1355,7 @@ NATIVE_CRASHES_ON_DEGENERATE = {
         "skimage の h_minima(内部で morphology.reconstruction)は全 NaN で SIGSEGV。"
         "同じ族の xsk2_reconstruction / xsk2_h_maxima は 0.1.8 で塞いだのに、"
         "**この兄弟を見落としていた**。",
+    "zz_not_a_real_op": "MUTATION TEST: fake entry",
 }
 
 
