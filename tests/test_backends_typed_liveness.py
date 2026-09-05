@@ -38,7 +38,6 @@ import backends_typed as bt  # noqa: E402
 #: **どんな入力でも定数しか返せない**ことが分かっていて、まだ直していない op。
 #: 黙って許すのではなく、op 名と「なぜ直せないか」を書いて数を固定する。
 KNOWN_DEAD_BRIDGES = {
-    "zz_not_a_real_op": "MUTATION TEST: fabricated ledger entry.",
     "tb_indices_to_labels":
         "reprconv の 'labels' は **1 次元**(indices_to_labels((5,)) -> (3,))なのに、"
         "TYPE_TO_SORT は 'labels' を 3-D の volume へ写す。実測 0/60。"
