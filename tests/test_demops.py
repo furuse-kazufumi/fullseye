@@ -12,6 +12,7 @@
 from __future__ import annotations
 
 import math
+import os
 
 import numpy as np
 import pytest
@@ -309,3 +310,70 @@ def test_the_module_states_the_conventions_that_silently_break_things():
     doc = D.__doc__ or ""
     for probe in ("北を 0 度", "行 0 が北", "メートル", "terrain"):
         assert probe in doc, f"規約の記述 {probe!r} が docstring から消えている"
+
+
+# =========================================================================
+# 9. 台帳とガイド —— 「載っているが走っていない」を防ぐ
+# =========================================================================
+
+def test_the_ledger_lists_every_op_and_finds_its_implementation():
+    """``opsdem`` が ``demops`` の全 op を持ち、実体が全部見つかること。
+
+    台帳に載っていない op は docs/ops にも Studio ヘルプにも 1 枚も出ず、
+    連鎖ファザーも一度も呼ばない(この repo が 2026-09-02 に 192 op で
+    踏んだ形)。数を突き合わせるのは、片方だけ足したときに気づくため。
+    """
+    import opsdem
+    public = {n for n in D.__all__ if callable(getattr(D, n))}
+    assert set(opsdem.OPSDEM) == public
+    assert opsdem.missing() == []
+
+
+def test_the_ledger_declares_a_chainable_output_for_fill_sinks():
+    """埋めた結果は**まだ標高格子**。ここを image2d と宣言すると、族内の
+    連鎖(埋める → 流す)が型で切れて、水文の 3 op が到達しなくなる。"""
+    import opsdem
+    assert opsdem.OPSDEM["dem_fill_sinks"]["out"] == "depth"
+    assert opsdem.OPSDEM["dem_fill_sinks"]["in"] == ["depth"]
+    # 実際に繋がることを型宣言と別に確かめる(宣言だけでは繋がらない)
+    z = -_gauss_hill(2.0, half_extent=24.0, amp=6.0, sigma=8.0)[0]  # 窪地を作る
+    filled = opsdem.call("dem_fill_sinks", z, 1e-6)
+    d = opsdem.call("dem_flow_direction", filled, 2.0)
+    assert d.shape == z.shape
+
+
+def test_the_fuzzer_can_build_arguments_for_every_dem_op():
+    """必須引数(``cell_size`` / ``azimuth_deg`` / ``observer_rc``)が
+    ``PARAM_HINTS`` に無いと、13 op すべてが「引数が組めない」で静かに
+    スキップされる —— 台帳に載せる作業とは**別の作業**なので別に固定する。"""
+    import inspect
+    import sys as _sys
+
+    ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if os.path.join(ROOT, "tools") not in _sys.path:
+        _sys.path.insert(0, os.path.join(ROOT, "tools"))
+    from typed_catalog import PARAM_HINTS
+
+    import opsdem
+    unbindable = []
+    for name, meta in opsdem.OPSDEM.items():
+        sig = inspect.signature(meta["func"])
+        data = len(meta["in"])
+        for p in list(sig.parameters.values())[data:]:
+            if p.default is inspect.Parameter.empty and p.name not in PARAM_HINTS:
+                unbindable.append(f"{name}.{p.name}")
+    assert not unbindable, f"ファザーが束縛できない必須引数: {unbindable}"
+
+
+def test_the_family_guide_python_snippet_actually_runs():
+    """ガイドの最小例を**実行**する。読めるだけの例は、規約(北 0 度・東回り、
+    行 0 が北)を取り違えたまま記事へコピーされる。"""
+    import re
+    guide = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                         "docs", "ops", "dem", "guides", "dem_terrain_analysis.md")
+    with open(guide, encoding="utf-8") as f:
+        blocks = re.findall(r"```python\n(.*?)```", f.read(), re.S)
+    runnable = [b for b in blocks if "import demops" in b]
+    assert runnable, "dem ガイドから実行できる例が消えている"
+    for src in runnable:
+        exec(compile(src, guide, "exec"), {"__name__": "__guide__"})

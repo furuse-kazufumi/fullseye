@@ -123,7 +123,7 @@ py-modules = [
   "fsthreads",
   # demops: DEM(数値標高モデル)の解析。terrain.py は地形を**作る**側で、
   # こちらは与えられた地形を**測る**側(2026-09-06 追加)。
-  "demops",
+  "demops", "opsdem",
   "backends", "backends_auto", "backends_color", "backends_cv2b", "backends_dl",
   "backends_extra", "backends_kornia", "backends_pil", "backends_r3",
   "backends_scipy", "backends_ski2",

@@ -8,6 +8,61 @@
 <p style="margin:2px 0 2px 12px">• <b>hydrology(4)</b> — <code style="color:#22d3bf">dem_fill_sinks</code> / <code style="color:#22d3bf">dem_flow_direction</code> / <code style="color:#22d3bf">dem_flow_accumulation</code> / <code style="color:#22d3bf">dem_stream_network</code>: 格子<b>全体</b>に及ぶ大域演算。窪地を埋め(優先度キュー)、最急降下 1 方向を決め、上流セル数を数え(トポロジカル順)、閾値で河道を切ります。</p>
 <p style="margin:2px 0 2px 12px">• <b>visibility(3)</b> — <code style="color:#22d3bf">dem_horizon_angle</code> / <code style="color:#22d3bf">dem_sky_view_factor</code> / <code style="color:#22d3bf">dem_viewshed</code>: 視線が地形に遮られるか。日射・眺望・電波見通し・都市の放射冷却に効きます。</p>
 <p><b>新しい依存は 1 つも要りません。</b> DEM は深度画像そのもの(メートルの高さ格子)なので、この repo にとって新しい対象ではなく、既存の <code style="color:#22d3bf">depth</code> と同じ格子を地形の語彙で扱っているだけです。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使う順序</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TD
+    D[&quot;標高格子 (H, W) [m]&lt;br/&gt;+ cell_size [m]&quot;]
+    D --&gt; S[&quot;dem_slope / dem_aspect&lt;br/&gt;傾斜[度]・方位[度]&quot;]
+    D --&gt; C[&quot;dem_curvature&lt;br/&gt;断面/平面/全曲率 [1/m]&quot;]
+    D --&gt; R[&quot;dem_roughness / dem_tpi&lt;br/&gt;起伏 TRI[m]・地形位置 TPI[m]&quot;]
+    D --&gt; H[&quot;dem_hillshade&lt;br/&gt;陰影 [0,1]&quot;]
+    D --&gt; F[&quot;dem_fill_sinks&lt;br/&gt;窪地を埋めた標高格子&quot;]
+    F --&gt; FD[&quot;dem_flow_direction&lt;br/&gt;D8 の符号 0-7 / -1&quot;]
+    FD --&gt; FA[&quot;dem_flow_accumulation&lt;br/&gt;集水セル数&quot;]
+    FA --&gt; SN[&quot;dem_stream_network&lt;br/&gt;河道マスク&quot;]
+    D --&gt; HA[&quot;dem_horizon_angle&lt;br/&gt;方位別の地平線仰角[度]&quot;]
+    HA --&gt; SVF[&quot;dem_sky_view_factor&lt;br/&gt;天空率 [0,1]&quot;]
+    D --&gt; VS[&quot;dem_viewshed&lt;br/&gt;可視領域 (1 = 見える)&quot;]
+    S --&gt; USE[&quot;適地判定・災害リスク・日射&lt;br/&gt;2-D op(閾値・morphology・疑似カラー・図注)へ&quot;]
+    C --&gt; USE
+    R --&gt; USE
+    H --&gt; USE
+    SN --&gt; USE
+    SVF --&gt; USE
+    VS --&gt; USE</pre>
+<p>水文だけが<b>直列</b>です(埋める → 流向 → 集水 → 河道)。残りは標高格子から独立に出ます。<code style="color:#22d3bf">dem_flow_accumulation</code> は既定で内部から <code style="color:#22d3bf">dem_fill_sinks</code> を呼ぶので、埋めた格子を別用途にも使うのでなければ 1 行で済みます。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">最小の例(そのまま動きます)</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+
+import demops
+
+# 東へ 5 %、北へ 12 % 下る平面と、そこにガウス丘を 1 つ載せた地形
+h, w, cell = 64, 64, 2.0                      # セル 2 m
+row, col = np.mgrid[0:h, 0:w]
+x, y = col * cell, (h - 1 - row) * cell       # 行 0 が北 = y は北向き
+plane = -0.05 * x - 0.12 * y
+dem = plane + 30.0 * np.exp(-((x - 60.0) ** 2 + (y - 70.0) ** 2) / (2 * 20.0 ** 2))
+
+slope = demops.dem_slope(plane, cell)                  # [度]
+aspect = demops.dem_aspect(plane, cell)                # 北 0 度・東回り
+shade = demops.dem_hillshade(dem, cell, azimuth_deg=315.0, altitude_deg=45.0)
+acc = demops.dem_flow_accumulation(dem, cell)          # 集水セル数
+streams = demops.dem_stream_network(dem, cell, threshold_cells=100.0)
+svf = demops.dem_sky_view_factor(dem, cell, n_azimuth=8)
+
+# 平面の傾斜は閉形式に一致する: atan(sqrt(0.05^2 + 0.12^2)) = 7.4069 度
+assert abs(slope[32, 32] - np.degrees(np.arctan(np.hypot(0.05, 0.12)))) &lt; 1e-9
+# 東へも北へも下るので、下り(= 方位)は**北東**。atan2(東成分, 北成分) = 22.62 度
+assert abs(aspect[32, 32] - np.degrees(np.arctan2(0.05, 0.12))) &lt; 1e-9
+assert 0.0 &lt;= shade.min() and shade.max() &lt;= 1.0
+assert acc.max() &gt; 100.0 and np.nansum(streams) &gt; 0    # 谷筋に水が集まる
+assert 0.0 &lt;= svf.min() and svf.max() &lt;= 1.0
+
+# ★ slope / aspect を **plane** で見ているのは意図。Horn の 3x3 は格子の縁で
+#   打ち切られるので、角のセル (0, 0) では**勾配が半分**になり、傾斜は
+#   atan(hypot(0.025, 0.06)) = 3.72 度 になる(角度が半分になるのではない)。
+#   「端は端」であって実装の誤りではないが、閉形式と突き合わせるなら
+#   内側のセルを見ること。</pre>
+<p><code style="color:#22d3bf">assert</code> を飾りで置いていません —— <b>この 6 行は平面の閉形式から出る値</b>で、規約(北 0 度・東回り、行 0 が北)を 1 つでも取り違えると落ちます。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">いちばん大事な規約(取り違えると静かに間違う)</h3>
 <p>| 規約 | 値 | 破ったときに何が起きるか |</p>
 <p>|---|---|---|</p>
