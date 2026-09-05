@@ -156,7 +156,6 @@ _OP_BRIDGE_SKIP = {
 _OP_SORT_OVERRIDE = {
     "sphere_sdf": ("points", "volume"),
     "box_sdf": ("points", "volume"),
-    "nonexistent_op_zzz_mutation": ("points", "volume"),
 }
 
 
