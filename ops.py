@@ -974,7 +974,15 @@ if _os.environ.get("IMGEVOLVE_NO_BACKENDS", "") != "1":
                  "backends_typed"):
         try:
             _b = __import__(_mod)
-            _extra += _b.build(Op, IMAGE, REGION, FEATURE, CONTOUR, _norm, _bin)
+            _new = _b.build(Op, IMAGE, REGION, FEATURE, CONTOUR, _norm, _bin)
+            # backend が module-level DOCS を出していれば、docstring を持てない
+            # op(= lambda で書かれた表の行)の説明をここで積む。docstring が
+            # あるものは触らない —— 実装のそばに書いてある方が正しい。
+            _docs = getattr(_b, "DOCS", None) or {}
+            for _op in _new:
+                if not _op.doc and not (getattr(_op.fn, "__doc__", None) or "").strip():
+                    _op.doc = (_docs.get(_op.name) or "").strip()
+            _extra += _new
         except Exception as _e:  # noqa: BLE001 - optional backend; recorded, never silent
             # A backend that fails to import used to VANISH: every op it defines
             # silently missing from the registry, evolution / coverage none the

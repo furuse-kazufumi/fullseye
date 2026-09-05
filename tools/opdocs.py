@@ -467,7 +467,9 @@ def _records():
             "dim": "2d", "name": o.name, "category": o.category,
             "in": o.in_sort, "out": o.out_sort,
             "halcon": (o.halcon or "").strip(),
-            "doc": (fn.__doc__ or "").strip(),
+            # 実装のそばの docstring が第一。lambda で書かれた op は docstring を
+            # 持てないので、登録時に積んだ ``Op.doc`` が受け皿になる(ops.Op 参照)。
+            "doc": (fn.__doc__ or getattr(o, "doc", "") or "").strip(),
             "module": "ops", "sig": sig,
             "examples": sorted(idx2d.get(o.name, [])),
             "family": op_fam.get(o.name),
