@@ -429,6 +429,16 @@ KNOWN_DEGENERATE_BRIDGES = {
 #: 配列を返すのに定数が正解の op だけ。空。
 REDUCERS_BY_CONTRACT = {}
 
+#: torch が要る橋渡し op。**torch 不在の写しであって、op の欠陥ではない**。
+#:
+#: torch が無いと `torch_lazy` が ImportError を投げ、fail-soft が全ゼロを返す。
+#: 「毎回定数」判定はそれを掴むが、それは環境の話なので、torch 不在なら skip する。
+#: 逆に torch が**在る**環境では必ず実行される(`requires_backend` は
+#: `FULLSEYE_REQUIRE_OPTIONAL=1` の CI で skip を失敗に変える)。
+#:
+#: 2026-09-05 実測: Linux(torch 不在)でこの検査に引っかかったのはこの 1 本だけ。
+TORCH_BACKED_BRIDGES = {"tb_points_to_voxel"}
+
 _GENS = None
 
 
