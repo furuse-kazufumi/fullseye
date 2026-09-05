@@ -242,6 +242,13 @@ def _lines_color(v, a, b):                        # color -> contour : ridges on
 
 
 def _count_channels(v, a, b):                     # color -> feature
+    """画像のチャンネル数を数える。HALCON の ``count_channels``（画像のチャンネル
+    数を数える）に相当。
+
+    ``ndim == 3`` ならその最後の軸の長さ（チャンネル数）、そうでなければ
+    （グレースケール扱いで）1 を返す。a, b は未使用。出力は `feature`
+    （スカラー 1 個）。
+    """
     c = np.asarray(v)
     return np.float64(c.shape[-1] if c.ndim == 3 else 1)
 
