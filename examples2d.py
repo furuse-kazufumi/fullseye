@@ -351,8 +351,6 @@ EXCLUDED = {
                         "no checkpoint ships with the repo, so it cannot self-run",
     "hand_tracking_demo": "needs a photo/webcam argument plus the optional "
                           "mediapipe extra and a downloaded hand_landmarker.task model",
-    "perception_staged": "needs FULLSEYE_G1_QPOS / FULLSEYE_MENAGERIE_XML pointing at "
-                         "external MuJoCo Menagerie assets (not shipped)",
 }
 
 _BY_ID = {e["id"]: e for e in EXAMPLES}
