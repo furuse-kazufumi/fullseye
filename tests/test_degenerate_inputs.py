@@ -264,6 +264,32 @@ def test_no_op_returns_a_non_finite_value_for_a_non_finite_input(registry, kind,
 # 両方の環境で確かめられる形にしておく必要がある。
 # --------------------------------------------------------------------------- #
 
+#: ★``ops.NATIVE_CRASHES_ON_DEGENERATE`` の**対照**。本体と 1:1 で一致していなければ
+#: ならない。片方だけ変えると落ちる —— 本体から消すのも、本体に足すのも、
+#: **ここを同時に書き換える(= 人が意図を確認する)**ことを要求する。
+#:
+#: なぜ対照が要るか: 門の変異テスト(2026-09-05)で、本体から `cv_cc_count` を消しても
+#: 「台帳の op はみな関門を持つ」を見るテストは**そのまま通った**。台帳から消えた op は
+#: ループの対象からも消えるので、検査経路ごと無くなる。守っている SIGSEGV は
+#: Linux 専用で、Windows では偶然まともな値が返るから最後の砦も働かない。
+#: 独立した情報源(このセット)との**等価**だけが、両方向を Windows でも捕まえる。
+#: `test_the_two_nonfinite_ledgers_agree` と同じ形。
+EXPECTED_NATIVE_CRASH_LEDGER = frozenset({
+    "cv_cc_count",               # OpenCV connectedComponents, 0 サイズ(Linux SIGSEGV)
+    "xsitk_minmax_curv_flow",    # SimpleITK, 非有限・一部 NaN(Linux SIGSEGV)
+    "xsk3_h_minima",             # skimage reconstruction 族, 全 NaN(Linux SIGSEGV)
+})
+
+
+def test_the_native_crash_ledger_matches_its_control(registry):
+    """本体の台帳と、このファイルの対照が**一致**すること(両方向の門)。"""
+    import ops as _o
+    body = frozenset(_o.NATIVE_CRASHES_ON_DEGENERATE)
+    assert body == EXPECTED_NATIVE_CRASH_LEDGER, (
+        "台帳と対照がずれている。本体だけ %s / 対照だけ %s —— 意図した変更なら両方を直す"
+        % (sorted(body - EXPECTED_NATIVE_CRASH_LEDGER), sorted(EXPECTED_NATIVE_CRASH_LEDGER - body)))
+
+
 def test_the_native_crash_ledger_names_ops_that_exist(registry):
     """台帳に居ない op が残っていないこと(改名・削除で静かに無効化されるのを防ぐ)。"""
     import ops as _o
