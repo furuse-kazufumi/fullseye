@@ -34,6 +34,8 @@ import ops  # noqa: E402
 cf = pytest.importorskip("chain_fuzz", reason="tools/chain_fuzz.py が読めない")
 import backends_typed as bt  # noqa: E402
 
+from conftest import requires_backend
+
 
 #: **どんな入力でも定数しか返せない**ことが分かっていて、まだ直していない op。
 #: 黙って許すのではなく、op 名と「なぜ直せないか」を書いて数を固定する。
@@ -130,6 +132,7 @@ def test_no_new_bridge_op_is_a_constant_fallback():
     ためのものではない。ここで数を固定しておかないと、台帳に型を足すたびに
     静かに増えていく。
     """
+    requires_backend('torch')
     live, dead, skipped = _live_report()
     assert live, "橋渡し op が 1 つも生きていない(検査の前提が壊れている)"
     new = sorted(set(dead) - set(KNOWN_DEAD_BRIDGES))

@@ -40,6 +40,59 @@ warnings.filterwarnings("ignore")
 _STUDIO_SETTINGS_ENV = "FULLSEYE_STUDIO_SETTINGS"
 
 
+# --------------------------------------------------------------------------- #
+# ★optional backend が要るテストの宣言。                                       #
+# --------------------------------------------------------------------------- #
+# CI の注記には長らく「torch/kornia は入れない(**対応テストは graceful skip**)」と
+# 書いてあったが、2026-09-05 の実測でそれは**事実ではなかった** —— 対象テストは
+# skip せず `ImportError: this operator needs the optional 'torch' backend` で
+# 落ちていた(14 件)。注記だけがあって、それを機械で確かめる仕組みが無かった。
+#
+# ここで宣言を 1 つの入口にまとめる。狙いは **両方向**:
+#   * backend が無い環境 → skip(注記を事実にする)
+#   * backend が**在るはず**の環境 → skip を許さず失敗させる
+#     (`FULLSEYE_REQUIRE_OPTIONAL=1`。CI の py3.11 ジョブがこれを立てる)
+# 片方向だけだと、本物の回帰が静かに skip へ化ける
+# (`feedback_failsoft_hides_permanently_dead_ops` と同じ形)。
+_REQUIRE_OPTIONAL = os.environ.get("FULLSEYE_REQUIRE_OPTIONAL", "") not in ("", "0")
+
+
+def _have_backend(name: str) -> bool:
+    """``"torch"`` のようなモジュール名、``"cv2.xfeatures2d"`` のような属性も見る。"""
+    import importlib
+    import importlib.util
+    root, _, attr = name.partition(".")
+    try:
+        if importlib.util.find_spec(root) is None:
+            return False
+    except (ImportError, ValueError):
+        return False
+    if not attr:
+        return True
+    try:
+        return hasattr(importlib.import_module(root), attr)
+    except Exception:                                            # noqa: BLE001
+        return False
+
+
+def requires_backend(*names: str) -> None:
+    """optional backend を要求する。無ければ skip、完全環境なら失敗。
+
+    テスト本体の**先頭**で呼ぶ。grep できる形にしてあるのは、
+    「どのテストが何に依存しているか」を人が数えられるようにするため。
+    """
+    missing = [n for n in names if not _have_backend(n)]
+    if not missing:
+        return
+    what = ", ".join(missing)
+    if _REQUIRE_OPTIONAL:
+        raise AssertionError(
+            "optional backend が無い: %s —— しかし FULLSEYE_REQUIRE_OPTIONAL が立って "
+            "いる(この環境は全 backend を持っている前提)。**不変条件が実行されて "
+            "いない**。CI の install 行か、この宣言のどちらかが間違っている。" % what)
+    pytest.skip("optional backend not installed: %s" % what)
+
+
 @pytest.fixture(scope="session", autouse=True)
 def _isolate_studio_settings(tmp_path_factory):
     """テストが利用者のレジストリ / plist / 設定 ini に触れないようにする。"""

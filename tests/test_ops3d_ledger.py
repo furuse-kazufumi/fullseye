@@ -36,6 +36,8 @@ for _p in (ROOT, os.path.join(ROOT, "tools")):
 
 import ops3d  # noqa: E402
 
+from conftest import requires_backend
+
 cf = pytest.importorskip(
     "chain_fuzz",
     reason="tools/chain_fuzz.py が読めない(型判定の正本 TYPE_CHECKS がそこにある)")
@@ -209,6 +211,7 @@ def test_position_canon_is_three_components():
     4 成分を返すのに out 宣言が "position" のままで、後段の精緻化 op へ流すと
     全滅していた(述語が無いあいだ TYPEMISS にならなかった)。
     """
+    requires_backend('torch')
     import match3d
     scene, tpl = _vol(0), _vol(1)[4:12, 4:12, 4:12].copy()
     # 消費側 2 つが「3 成分ちょうど」を名指しで要求する = これが正典の根拠
@@ -232,6 +235,7 @@ def test_position_canon_is_three_components():
 
 def test_refine_rotation_z_adapter_yields_scalar_angle():
     """angle の正典はスカラ角。**op 自身の fail-closed がそう書いている**。"""
+    requires_backend('torch')
     scene, tpl = _vol(0), _vol(2)
     raw = ops3d.get("refine_rotation_z")(scene, tpl, 0.0)
     assert isinstance(raw, tuple) and len(raw) == 2          # (angle_deg, n_iters)
@@ -248,6 +252,7 @@ def test_sobel3d_adapter_drops_conv_batch_axes():
 
     sobel3d だけ conv3d の出力を squeeze せず (1,1,D,H,W) を返していた。
     """
+    requires_backend('torch')
     vol = _vol(0)
     raw = ops3d.get("sobel3d")(vol)
     assert all(tuple(g.shape) == (1, 1) + vol.shape for g in raw)
@@ -266,6 +271,7 @@ def test_dict_shape_descriptors_declare_table_not_descriptor():
     descriptor の唯一の消費側 shape_distance は dict を fail-closed し、
     fit_zernike の実際の消費側 wavefront_stats は in を 'table' と宣言している。
     """
+    requires_backend('torch')
     import match3d
     import medial
     import moments3d
@@ -341,6 +347,7 @@ def test_flow_is_two_types_because_its_consumers_are_exclusive():
     flow_speed / flow_apply は SCATTERED を名指しで要求し、互いの形を拒否する。
     どの 1 つの値も両方を満たせないので型を分けた。
     """
+    requires_backend('torch')
     assert ops3d.info("scene_flow_lk")["out"] == "flow_dense"
     for name in ("estimate_flow", "nearest_neighbor_flow", "smooth_flow"):
         assert ops3d.info(name)["out"] == "flow_scattered", name

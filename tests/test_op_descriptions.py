@@ -30,6 +30,8 @@ import sys
 
 import pytest
 
+from conftest import requires_backend
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 if ROOT not in sys.path:
@@ -139,6 +141,7 @@ def test_backend_doc_tables_do_not_name_ops_that_do_not_exist():
     op の名前を変えたのに ``DOCS`` を直し忘れると、**説明が黙って外れる**
     (キーが一致しないだけなので誰も落ちない)。
     """
+    requires_backend('torch', 'kornia', 'mahotas', 'cv2.xfeatures2d')
     import ops
     live = {op.name for op in ops.REGISTRY}
     stale = {}

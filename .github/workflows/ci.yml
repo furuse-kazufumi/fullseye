@@ -127,7 +127,35 @@ jobs:
         run: >
           pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd]"
           pytest pytest-cov matplotlib sympy ziglang hypothesis pytest-timeout
+      # ★py3.11 **だけ** optional backend を実際に入れる。
+      #
+      # 2026-09-05 まで、この workflow の注記には「torch/kornia は入れない
+      # (対応テストは graceful skip)」と書いてあった。**それは事実ではなかった** ——
+      # 対象テストは skip せず `ImportError: this operator needs the optional
+      # 'torch' backend` で落ちており、Linux CI の赤 14 件がこれだった。
+      # 注記だけがあって、確かめる仕組みが無かった。
+      #
+      # 直し方を 2 つに分けている:
+      #   * テスト側 = `requires_backend(...)` の宣言(無ければ skip。注記を事実にする)
+      #   * ここ     = 3 つの matrix のうち 1 つに**全部入れて実際に走らせる**
+      #     さらに `FULLSEYE_REQUIRE_OPTIONAL=1` で **skip を失敗に変える** ので、
+      #     「入れたつもりで入っていない」も「宣言の付け間違い」も落ちる(両方向)。
+      #
+      # torch は CPU 版(約 200MB / 1〜2 分)。opencv は contrib 版に差し替える
+      # (`cv2.xfeatures2d` を使う op があり、plain の opencv-python には無い)。
+      - name: Optional backends (py3.11 only — 不変条件を実際に走らせる)
+        if: matrix.python-version == '3.11'
+        run: |
+          pip install --index-url https://download.pytorch.org/whl/cpu "torch>=2.0"
+          pip install "kornia>=0.7" "mahotas>=1.4"
+          pip uninstall -y opencv-python
+          pip install "opencv-contrib-python>=4.6"
+          python -c "import torch, kornia, mahotas, cv2; print(torch.__version__, cv2.__version__); assert hasattr(cv2, 'xfeatures2d')"
       - name: Run tests with coverage
+        env:
+          # py3.11 は全 backend を持っている前提。`requires_backend` の skip は
+          # 「不変条件が実行されなかった」ことなので、ここでは**失敗**にする。
+          FULLSEYE_REQUIRE_OPTIONAL: ${{ matrix.python-version == '3.11' && '1' || '0' }}
         run: pytest -q -rs --cov --cov-report=xml --cov-report=term
       - name: Coverage summary (job summary page)
         if: matrix.python-version == '3.11'

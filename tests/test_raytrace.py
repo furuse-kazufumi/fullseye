@@ -34,6 +34,8 @@ if ROOT not in sys.path:
 import raytrace as RT  # noqa: E402
 import opsoptics  # noqa: E402
 
+from conftest import requires_backend
+
 INF = float("inf")
 DESIGN_OPS = ["lens_system", "thick_lens", "glass", "example_system",
               "glass_catalog", "sellmeier",
@@ -192,6 +194,7 @@ def test_seidel_per_surface_rows_sum_to_the_total():
 
 
 def test_wavefront_from_opd_chains_zernike_fit_and_stats():
+    requires_backend('torch')
     w = RT.wavefront_from_opd(_singlet())
     assert (4, 0) in w["zernike"]
     assert w["zernike"][(4, 0)] > 0.0
@@ -308,6 +311,7 @@ def test_design_category_is_registered_with_the_declared_types():
 
 
 def test_design_ops_return_their_declared_type_and_reach_the_fuzzer():
+    requires_backend('torch')
     sys.path.insert(0, os.path.join(ROOT, "tools"))
     import chain_fuzz
     sg = RT.lens_system()

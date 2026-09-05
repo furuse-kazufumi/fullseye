@@ -30,6 +30,8 @@ if ROOT not in sys.path:
 import optics as O  # noqa: E402
 import opsoptics  # noqa: E402
 
+from conftest import requires_backend
+
 
 # --------------------------------------------------------------------------- #
 # geometric: thin lens                                                         #
@@ -492,6 +494,7 @@ def test_wavefront_stats_piston_is_not_an_aberration_and_rms_is_linear():
 
 def test_wavefront_stats_consumes_fit_zernike_output():
     """The dict contract really is match3d.fit_zernike's — no adapter needed."""
+    requires_backend('torch')
     from match3d import fit_zernike
     yy, xx = np.mgrid[0:64, 0:64]
     rho2 = ((yy - 31.5) ** 2 + (xx - 31.5) ** 2) / 31.0 ** 2

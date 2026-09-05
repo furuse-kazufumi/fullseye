@@ -9,6 +9,8 @@ import pytest
 
 import match3d as X
 
+from conftest import requires_backend
+
 HAS = X._HAS_TORCH
 skip = pytest.mark.skipif(not HAS, reason="torch 不在")
 
@@ -680,6 +682,7 @@ def test_curvature_maps_curvedness_absolute_calibration():
 def test_fuse_to_voxel_rejects_raw_data_with_clear_error():
     """Regression (chain fuzz): a bare structure instead of (data, kind, params)
     triples used to die deep inside with a raw TypeError."""
+    requires_backend('torch')
     import pytest
     import fuse3d
     with pytest.raises(ValueError, match="triples"):
@@ -794,6 +797,7 @@ def test_icp_point2plane_rejects_normals_mismatch():
 
 
 def test_float32_overflow_rejected_not_silent_nan():
+    requires_backend('torch')
     # 連鎖ファザー第 3〜5 波の実測: float64 では有限な 1e39 級の入力が float32
     # キャストで inf に化け、grid_sample/lstsq の下流が NaN を無言で返していた
     # (第 3 波から追っていたグレー NONFINITE fit_zernike の根本原因)。
@@ -822,6 +826,7 @@ def test_polar_unwrap_rejects_degenerate_shape():
     """幅 or 高さ 1 の画像は正規化格子の (W-1)/(H-1) が 0 除算になり、
     grid_sample が全 NaN を無言で返す(連鎖ファザー wave-8 実測: spectrogram の
     (129,1) 産物)。fit_zernike と同クラスで、そちらだけ塞いでいた取りこぼし。"""
+    requires_backend('torch')
     import pytest
     rng = np.random.default_rng(0)
     for shape in ((129, 1), (1, 32), (1, 1)):
