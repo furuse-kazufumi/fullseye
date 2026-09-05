@@ -530,5 +530,6 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, _norm, _bin):
         if post is not None:
             base = (lambda v, *a, _f=base, _post=post, **k: _post(v, _f(v, *a, **k)))
         out.append(Op("tb_" + name, "typed", "", in_sort, out_sort,
-                      _make_runner(base, kwargs, tunable, in_sort, out_sort)))
+                      _make_runner(base, kwargs, tunable, in_sort, out_sort,
+                                   doc=_bridge_doc(fn, name, dim, tunable))))
     return out
