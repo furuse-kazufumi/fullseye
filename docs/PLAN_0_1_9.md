@@ -13,6 +13,33 @@
 4. `matplotlib` への隠れ依存が無くなる(deptry の唯一の実害)
 5. `backend_safe.fallback()` の未検査の枝にテストが付く(変異テストの生き残り)
 
+## 段 -1(最優先)— CI の赤を落とす
+
+**0.1.6 / 0.1.7 / 0.1.8 と、Linux CI は赤のまま出している**(26〜28 失敗 /
+10,808 通過)。ローカル Windows が緑なのを門にしていたのが誤りで、
+**赤い CI の下では他のどのゲートも信用できない**。ここを最初に直す。
+
+失敗の大半は 1 つの原因に集まっている —— **CI は torch / kornia を入れない方針**
+(サイズと時間。GPU の数字は実機で測る)なので、そこで組み上がるレジストリは
+Windows 開発機のものより小さい。ところが台帳・指紋・ギャラリーの不変条件は
+**開発機のレジストリを前提に書かれている**。
+
+| 群 | 失敗 | 中身 |
+|---|---|---|
+| レジストリ差 | 約 12 | `test_index_fingerprint_matches_the_live_registry` / `test_notes_match_generator_no_drift` / `test_op_catalog_matches_generator_no_drift` / `test_backend_doc_tables_do_not_name_ops_that_do_not_exist` / `test_coverage_gallery_runs[...]` 5 件 / `test_example_gallery_runs` |
+| kornia アダプタ | 約 6 | `test_sobel3d_adapter_drops_conv_batch_axes` / `test_refine_rotation_z_adapter_yields_scalar_angle` / `test_position_canon_is_three_components` ほか |
+| Windows 前提 | 1 | `test_read_image_cannot_leave_base_dir` が `C:/Windows/win.ini` を使っている |
+| 要調査 | 約 8 | `test_polar_unwrap_rejects_degenerate_shape` / `test_float32_overflow_rejected_not_silent_nan` / `test_nothing_leaks_a_nonfinite_number` / `test_text_that_cannot_fit_raises_instead_of_being_clipped`(Linux のフォント?)ほか |
+
+**方針**: torch を CI に入れて誤魔化さない(方針を曲げることになる)。
+不変条件の側を**「いまここに在る op について正しいか」**を見る形に変える ——
+文書は開発機の全レジストリから生成し、CI では**存在する op の部分集合**として
+突き合わせる。指紋も「生成時のレジストリ」を刻んで比較する。
+最後の「要調査」群は 1 件ずつ実測してから分類する(まとめて environment のせいに
+しない —— 本物の不具合が混ざっている可能性がある)。
+
+**ゲート**: `gh run list --workflow=ci.yml` が緑。以後、**赤い CI でタグを打たない**。
+
 ## 順番と、その順番にした理由
 
 配線 → 説明 → 訳、の順は動かせない。**訳は原文の指紋で紐づいている**ので、
