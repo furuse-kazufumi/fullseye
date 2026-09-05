@@ -41,6 +41,41 @@ def _norm(x):
     return x / mx if mx > 1e-8 else x
 
 
+#: lambda で定義された op の説明(lambda に docstring は書けないため)。
+#: ops.py の登録ループが fn.__doc__ が無い op について ここから Op.doc に積む。
+#: キーは op 名。
+DOCS = {
+    "xsk_richardson_lucy":
+        "Richardson-Lucy デコンボリューション。ぼけを 3x3 の平均カーネル(box PSF)と\n"
+        "仮定して反復的に鮮鋭化する(skimage.restoration.richardson_lucy をそのまま呼ぶ)。\n\n"
+        "``a`` が反復回数を 2〜17 回の範囲で振る(回数が多いほど強く先鋭化するが、\n"
+        "ノイズ増幅やリンギングも増える)。``b`` は未使用。PSF は実際のぼけ量に関わらず\n"
+        "固定の 3x3 box を仮定するため、真の劣化過程と一致しない画像では改善が限定的、\n"
+        "または悪化することがある。",
+    "xsk_unwrap_phase":
+        "位相アンラップ(phase unwrapping)。入力 [0,1] を位相 [-pi, pi] とみなし、\n"
+        "skimage.restoration.unwrap_phase で 2*pi の折返し(ラップ)を取り除いてから、\n"
+        "``signed01`` で符号を保ったまま [0,1] へ戻す(0 -> 0.5)。\n\n"
+        "``a``, ``b`` は未使用。干渉縞など周期的にラップした位相画像の連続化に使う op で、\n"
+        "一様なグラデーションやランダムノイズなど元々位相らしくない入力では意味のある\n"
+        "結果にならないことがある。",
+    "xsk_meijering":
+        "Meijering neuriteness フィルタ。skimage.filters.meijering をスケール\n"
+        "sigma=1,2,3 の 3 段で適用し、細い曲線状構造(血管・神経突起など)を強調する\n"
+        "(ヘッセ行列の固有値から尾根らしさを計算する点は Frangi 系と同様だが、\n"
+        "Meijering は分岐点にも強く応答する)。\n\n"
+        "``a``, ``b`` は未使用(sigma は固定)。出力は ``_norm`` で最大絶対値を 1 に\n"
+        "正規化した符号なし強度画像。",
+    "xsk_sato":
+        "Sato tubeness フィルタ。skimage.filters.sato をスケール sigma=1,2,3 の 3 段で\n"
+        "適用し、管状構造(血管など)を強調する。ヘッセ行列の固有値比から線状/管状\n"
+        "らしさを計算する点は ``xsk_meijering`` と同系だが、応答の重み付けが異なり\n"
+        "分岐点には Meijering ほど強く応答しない。\n\n"
+        "``a``, ``b`` は未使用(sigma は固定)。出力は ``_norm`` で正規化した符号なし\n"
+        "強度画像。",
+}
+
+
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     out = []
 
