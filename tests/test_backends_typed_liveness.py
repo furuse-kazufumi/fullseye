@@ -684,3 +684,30 @@ def test_bridge_ops_are_deterministic():
                 continue
             break
     assert not nondet, "nondeterministic bridge ops: %s" % sorted(set(nondet))
+
+
+def test_every_ledger_entry_names_a_live_bridge_op():
+    """★台帳に**居ない op 名**が残っていないこと(4 台帳まとめて)。
+
+    2026-09-05 の門の変異テストで判明: `_params()` 経由の台帳
+    (`KNOWN_DEAD_BRIDGES` / `KNOWN_BROKEN_TYPE_TO_SORT` /
+    `KNOWN_CROSS_SORT_PASS_THROUGH` / `KNOWN_DEGENERATE_BRIDGES`)は
+    **実在する op を先に列挙してから台帳と突き合わせる**ので、台帳側の
+    タイポ・改名後の残骸・出鱈目な名前は**どの parametrize ノードにも結び付かず**、
+    検証経路そのものが存在しなかった。「本物を消す」方向は strict xfail が拾うが、
+    「偽物が残る」方向は誰も見ていなかった。
+
+    ここで両方向が揃う。
+    """
+    live = {o.name for o in _bridge_ops()}
+    ledgers = {
+        "KNOWN_DEAD_BRIDGES": KNOWN_DEAD_BRIDGES,
+        "KNOWN_BROKEN_TYPE_TO_SORT": KNOWN_BROKEN_TYPE_TO_SORT,
+        "KNOWN_CROSS_SORT_PASS_THROUGH": KNOWN_CROSS_SORT_PASS_THROUGH,
+        "KNOWN_DEGENERATE_BRIDGES": KNOWN_DEGENERATE_BRIDGES,
+        "KNOWN_NONFINITE_BY_CONTRACT": KNOWN_NONFINITE_BY_CONTRACT,
+        "KNOWN_IDENTITY_BRIDGES": KNOWN_IDENTITY_BRIDGES,
+    }
+    stale = {k: sorted(set(v) - live) for k, v in ledgers.items() if set(v) - live}
+    assert not stale, "台帳に居ない op 名が残っている(改名・削除・タイポ): %s" % stale
+    assert len(live) > 100, "橋渡し op が少なすぎる(%d) —— 検査の前提が違う" % len(live)

@@ -154,6 +154,7 @@ _OP_BRIDGE_SKIP = {
 #: 型ごとに畳むと嘘になり、落とすと points 候補の長さが変わって既存 champion を
 #: 黙って書き換える(docs/WAVE0_STABLE_SLOTS.md)。op 単位の上書きが両方を避ける。
 _OP_SORT_OVERRIDE = {
+    "sphere_sdf": ("points", "volume"),
     "box_sdf": ("points", "volume"),
 }
 
