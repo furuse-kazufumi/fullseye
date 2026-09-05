@@ -182,6 +182,15 @@ def _access_channel(v, a, b):                     # color -> image : pick one ch
 
 
 def _edges_color(v, a, b):                        # color -> image : Di Zenzo color-gradient amplitude
+    """カラーエッジの強度を検出する。HALCON の ``edges_color``（Canny/Deriche/Shen
+    フィルタでカラーエッジを抽出する）に相当するとされるが、**実装はフィルタ
+    選択式ではなく Di Zenzo のマルチチャンネル勾配法に固定**されている。
+
+    各チャンネルに Sobel 勾配 (gx, gy) をかけ、勾配テンソル
+    ``[[gxx, gxy], [gxy, gyy]]``（gxx=Σgx², gyy=Σgy², gxy=Σgx·gy）の最大
+    固有値を画素ごとに求め、その平方根をエッジ強度として最大値で正規化する。
+    a, b は未使用（HALCON 側にあるフィルタ種別・しきい値の選択はできない）。
+    """
     c = _to_color(v)
     gx = np.stack([ndimage.sobel(c[..., k], 1) for k in range(3)], -1)
     gy = np.stack([ndimage.sobel(c[..., k], 0) for k in range(3)], -1)
