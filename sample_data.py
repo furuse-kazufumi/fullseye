@@ -156,7 +156,7 @@ MANIFEST = [
 
 _BY_ID = {e["id"]: e for e in MANIFEST}
 
-_KNOWN_ARCHIVES = {None, "gz", "tar.gz", "zip", "rar_mutation_fake"}
+_KNOWN_ARCHIVES = {None, "gz", "tar.gz", "zip"}
 _KNOWN_ACCESS = {"direct", "gated", "info"}
 _MAX_BYTES = 512 * 1024 * 1024  # 512 MB hard cap per file (transfer)
 #: Cap on the DECOMPRESSED size of an archive member (4x the transfer cap): a
