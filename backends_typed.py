@@ -372,11 +372,47 @@ def _scaled(default, knob):
     return val
 
 
-def _make_runner(fn, kwargs, tunable, in_sort, out_sort):
+#: 橋渡しした op の説明文。**原文の言語に合わせて**足す —— 英語の docstring に
+#: 日本語の段落を継ぐと、``tools/opdocs.py`` の「訳が無い」判定(本文に日本語が
+#: あるか)が誤って満たされ、未訳の英語本文に注意書きが出なくなる。
+_BRIDGE_JA = ("2-D 進化レジストリへ橋渡しした {dim} の op ``{name}``。実装は同じで、"
+              "呼び出し規約だけ ``op(v, a, b)`` に合わせてある。{knobs}")
+_BRIDGE_EN = ("Typed bridge of the {dim} op ``{name}`` into the 2-D evolution registry: "
+              "the same implementation, called under the ``op(v, a, b)`` convention. {knobs}")
+_KNOB_JA = {0: "この op に調整点は無く、``a`` も ``b`` も使われない。",
+            1: "``a`` が ``{p0}``(既定 {d0})を振る。``b`` は未使用。",
+            2: "``a`` が ``{p0}``(既定 {d0})、``b`` が ``{p1}``(既定 {d1})を振る。"}
+_KNOB_EN = {0: "This op has no tunable parameter; ``a`` and ``b`` are unused.",
+            1: "``a`` drives ``{p0}`` (default {d0}); ``b`` is unused.",
+            2: "``a`` drives ``{p0}`` (default {d0}) and ``b`` drives ``{p1}`` (default {d1})."}
+
+
+def _bridge_doc(fn, name, dim, tunable):
+    """橋の op の説明 —— 元の docstring に、``a``/``b`` が何を振るかを継ぐ。
+
+    元が無説明なら ``None``(嘘の説明を捏造するより「説明なし」の方が正しい)。
+    """
+    base = (getattr(fn, "__doc__", None) or "").strip()
+    if not base:
+        return None
+    ja = any("぀" <= ch <= "ヿ" or "一" <= ch <= "鿿" for ch in base)
+    kn = (_KNOB_JA if ja else _KNOB_EN)[len(tunable)]
+    slot = {}
+    for i, (pname, default) in enumerate(tunable):
+        slot["p%d" % i] = pname
+        slot["d%d" % i] = ("%g" % default) if isinstance(default, float) else str(default)
+    note = (_BRIDGE_JA if ja else _BRIDGE_EN).format(
+        dim=dim, name=name, knobs=kn.format(**slot))
+    return "%s\n\n%s" % (base, note)
+
+
+def _make_runner(fn, kwargs, tunable, in_sort, out_sort, doc=None):
     """``fn(v, a, b)`` 規約のランナー。
 
     *tunable* は ``[(param 名, 既定値), ...]`` を最大 2 個(a に第 1、b に第 2)。
     空なら a, b は未使用(その op には調整点が無い)。
+    *doc* は橋渡し元の説明(:func:`_bridge_doc`)—— 渡さないと、カタログ側が
+    ちゃんと書いた説明がラッパで消えて「説明なし」の op が 143 本できる。
     """
     def _run(v, a, b):
         kw = dict(kwargs)
