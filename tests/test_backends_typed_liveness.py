@@ -304,6 +304,7 @@ def test_label_volume_helper_keeps_unassigned_distinct_from_empty():
 #: ``TYPE_TO_SORT`` の写像のうち、**その型の代表値が写り先 sort の形の契約を
 #: 満たさない**もの。症状(死んだ橋渡し op)ではなく**原因**を直接固定する。
 KNOWN_BROKEN_TYPE_TO_SORT = {
+    ("zz_not_a_real_type", "volume"): "MUTATION TEST: fabricated ledger entry.",
     ("keypoints", "points"):
         "keypoints は像面上の **(N,2)** だが points sort は ``ndim==2 and "
         "shape[1]==3`` を要求する(``_sort_ok``)。代表値の時点で必ず False。"
