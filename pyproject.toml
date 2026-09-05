@@ -28,7 +28,15 @@ classifiers = [
 ]
 # The core (75 ops) runs on numpy + scipy alone. Everything else is optional and
 # only its own operators are affected when a backend is absent (graceful degradation).
-dependencies = ["numpy>=1.23", "scipy>=1.9"]
+#
+# threadpoolctl (BSD-3, pure Python, no dependencies of its own, ~40 KB) is the one
+# addition: it is the only portable way to cap BLAS threads around a decomposition.
+# Without it fullseye still works — fsthreads degrades to a no-op — but every
+# many-core machine pays for OpenBLAS oversubscription: a 64x64 SVD is 3.9x slower
+# on 24 threads than on 1, and dc_rpca_* measured 4.0x slower end to end.
+# Probing the loaded OpenBLAS handle by hand is exactly the fragile thing this
+# library exists to solve, so we depend on it rather than reimplement it.
+dependencies = ["numpy>=1.23", "scipy>=1.9", "threadpoolctl>=3.1"]
 
 # PyPI ⇄ GitHub の相互リンク(PyPI プロジェクトページのサイドバーに出る)。
 # 公開リポジトリ名は公開名 fullseye(リネーム時はここを追従させる)。
@@ -110,6 +118,9 @@ py-modules = [
   # accel_match / match3d / feat_* — it MUST ship or those modules ImportError
   # on a pip install (it keeps `import torch`, ~700 ms, off every start-up).
   "api", "param_specs", "ops", "backend_safe", "torch_lazy",
+  # fsthreads: 分解のあいだだけ BLAS のスレッド数を絞る層。出荷モジュールが
+  # import するので、落とすと ImportError になる(2026-09-06 追加)。
+  "fsthreads",
   "backends", "backends_auto", "backends_color", "backends_cv2b", "backends_dl",
   "backends_extra", "backends_kornia", "backends_pil", "backends_r3",
   "backends_scipy", "backends_ski2",

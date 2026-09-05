@@ -93,7 +93,11 @@ def test_load_policy_real_checkpoint_shapes():
 
 @needs_ckpt
 def test_session_smoke_rollout_short():
-    s = G.G1PolicySession(_CKPT, _REF)
+    # xml を明示して渡す。2026-09-05 に配布物からローカル絶対パスを外したので、
+    # モジュール既定の G1_XML は環境変数が無ければ空になる。ここで渡さないと
+    # 「シーンが無い」の ValueError で落ちる —— CI は資産が無くて skip するため
+    # **この失敗は手元でしか見えなかった**(実測 2026-09-06)。
+    s = G.G1PolicySession(_CKPT, _REF, xml=_XML)
     obs = s.reset(0)
     assert obs.shape == (100,)
     for _ in range(25):                                     # 0.5 s で十分(スモーク)
@@ -108,4 +112,4 @@ def test_session_smoke_rollout_short():
 @needs_ckpt
 def test_session_rejects_mismatched_vision_flag():
     with pytest.raises(ValueError):
-        G.G1PolicySession(_CKPT, _REF, vision=True)         # mimic ckpt に vision 環境
+        G.G1PolicySession(_CKPT, _REF, xml=_XML, vision=True)   # mimic ckpt に vision 環境

@@ -19,6 +19,10 @@ version: 0.1.9  # fullseye lib version this note was generated for
 
 Koenderink の shape index s∈[-1,1] (凸球+1・円柱+0.5・鞍点0・凹球-1)。→ (N,)。
 
+## 背景知識ガイド(この op の手前にある物理・規約)
+
+- [blas_threads_and_memory](../../math/guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

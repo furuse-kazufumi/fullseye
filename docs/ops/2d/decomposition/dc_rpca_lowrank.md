@@ -4,7 +4,7 @@ dim: 2d
 category: decomposition
 in: image
 out: image
-examples: [gallery2d_texture_freq]
+examples: [blas_thread_budget, gallery2d_texture_freq]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.9  # fullseye lib version this note was generated for
@@ -23,6 +23,10 @@ Robust-PCA low-rank (background) part.
 
 - [gallery2d_texture_freq ファミリ ガイド](../guides/gallery2d_texture_freq.md)
 
+## 背景知識ガイド(この op の手前にある物理・規約)
+
+- [blas_threads_and_memory](../../math/guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
@@ -31,6 +35,7 @@ Robust-PCA low-rank (background) part.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [blas_thread_budget](../../../../examples/blas_thread_budget.py) — `py -3.11 examples/blas_thread_budget.py`
 - [gallery2d_texture_freq](../../../../examples/gallery2d_texture_freq.py) — `py -3.11 examples/gallery2d_texture_freq.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)

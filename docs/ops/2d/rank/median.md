@@ -5,7 +5,7 @@ category: rank
 in: image
 out: image
 halcon: median_image
-examples: [astro_stacking, consumer_onocollo, ct_reconstruction, gallery2d_smoothing_rank, lightfield_depth, machined_metal_and_materials, perception_pipeline, photon_timeresolved, quickstart, representation_roundtrip, specular_photometric]
+examples: [astro_stacking, blas_thread_budget, consumer_onocollo, ct_reconstruction, gallery2d_smoothing_rank, lightfield_depth, machined_metal_and_materials, perception_pipeline, photon_timeresolved, quickstart, representation_roundtrip, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.9  # fullseye lib version this note was generated for
@@ -36,6 +36,7 @@ version: 0.1.9  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [astro_stacking](../../../../examples/astro_stacking.py) — `py -3.11 examples/astro_stacking.py`
+- [blas_thread_budget](../../../../examples/blas_thread_budget.py) — `py -3.11 examples/blas_thread_budget.py`
 - [consumer_onocollo](../../../../examples/consumer_onocollo.py) — `py -3.11 examples/consumer_onocollo.py`
 - [ct_reconstruction](../../../../examples/ct_reconstruction.py) — `py -3.11 examples/ct_reconstruction.py`
 - [gallery2d_smoothing_rank](../../../../examples/gallery2d_smoothing_rank.py) — `py -3.11 examples/gallery2d_smoothing_rank.py`

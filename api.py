@@ -499,6 +499,10 @@ from astrostack import (  # noqa: E402,F401
 # システムパラメータは contextvars 実装で、**厳しくする方向にしか動かせない**。
 import metriccontract  # noqa: E402  (strict vs tolerant measurement contracts)
 import fssystem  # noqa: E402  (set_system / get_system, contextvar-scoped)
+# BLAS のスレッド上限。**fssystem の表には載せられない** —— あの表は
+# 「厳しくする方向のみ」か「数値に影響しない」パラメータ専用で、スレッド数は
+# 下位ビットを動かすため。理由と実測は fsthreads の docstring。
+import fsthreads  # noqa: E402  (BLAS thread caps around decompositions)
 from metriccontract import (  # noqa: E402,F401
     MetricContractError, Attempt, attempt, attempt_all,
     DIRECTIONS, worst_case, value_or_worst, best_of, rank_attempts,
@@ -506,6 +510,7 @@ from metriccontract import (  # noqa: E402,F401
 from fssystem import (  # noqa: E402,F401
     set_system, get_system, query_system, system, reset_system, system_snapshot,
 )
+from fsthreads import blas_threads  # noqa: E402,F401
 import annotate  # noqa: E402  (text plates, arrows, legends, colour bars, axes)
 import opsannotate  # noqa: E402  (the annotate op ledger)
 from annotate import (  # noqa: E402,F401
@@ -860,6 +865,7 @@ __all__ = [
     "DIRECTIONS", "worst_case", "value_or_worst", "best_of", "rank_attempts",
     "fssystem", "set_system", "get_system", "query_system", "system",
     "reset_system", "system_snapshot",
+    "fsthreads", "blas_threads",
     "annotate", "opsannotate", "measure_text", "text_box", "arrow", "leader_line",
     "label_points", "crosshair", "legend_box", "color_bar", "scale_bar",
     "axes_transform", "data_to_pixel", "nice_ticks", "axes_frame", "grid_lines",

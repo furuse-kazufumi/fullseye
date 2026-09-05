@@ -4,6 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import feat_fpfh; feat_fpfh.register_fpfh(src, dst, src_normals=None, dst_normals=None, voxel_size=None, normal_k=16, feature_k=60, n_bins=11, ransac_iters=8000, inlier_thr=None, edge_sim=0.9, mutual=True, ratio=0.95, seed=0, device=&#x27;cpu&#x27;)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;register_fpfh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>FPFH 記述子 + RANSAC で <b>初期推定なし</b> の剛体位置合わせ (R,t) を推定する。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

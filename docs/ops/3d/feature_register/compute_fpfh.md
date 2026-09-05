@@ -19,6 +19,10 @@ version: 0.1.9  # fullseye lib version this note was generated for
 
 FPFH 記述子 (N, 3*n_bins) を計算(Rusu 2009)。
 
+## 背景知識ガイド(この op の手前にある物理・規約)
+
+- [blas_threads_and_memory](../../math/guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

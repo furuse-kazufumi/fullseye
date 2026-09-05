@@ -4,6 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import feat_spin; feat_spin.register_spin(src, dst, device=&#x27;cpu&#x27;, n_keypoints=220, normal_k=18, support_radius=None, n_alpha=16, n_beta=16, support_angle_deg=60.0, lowe_ratio=0.85, ransac_iters=4000, inlier_thr=None, min_inliers=8, seed=0)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;register_spin&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Starre Ausrichtung über spärliche Merkmale ohne Startschätzung, mit Spin-Image-Deskriptoren und RANSAC.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

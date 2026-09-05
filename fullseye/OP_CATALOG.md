@@ -13,10 +13,15 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(71 例)
+### 2-D 画像/信号/幾何(72 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
+
+**math**
+- **分解が遅いのはアルゴリズムのせいではない(BLAS スレッド上限)** — 多コア機で SVD 系が遅くなる原因(スレッド過剰割り当て)を自分の機械で測り、op 側と自前 numpy 側の両方で上限の効果を出す。行列積は逆に遅くなること、上限は短辺で決まることまで含めて、速さを assert せず印字する。 `py -3.11 examples/blas_thread_budget.py`
+- **視覚計測を支える数学 op(mathops)を計測ワークフローで一巡** — 平面フィット→残差統計→共分散楕円の主軸化→較正曲線の多項式フィット(条件数監視)→補間で逆引き。mathops 16 op を実データ風に通し閉形式 GT と照合。 `py -3.11 examples/math_metrology.py`
+- **複素解析 op(mathops tier2)を閉形式の真値と突き合わせる** — 偏角原理で零点数、コーシー積分で内部値復元、等角性・正則性判定を点列として持つ閉曲線から numpy 演算で答える。 `py -3.11 examples/math_complex.py`
 
 **shape_descriptors**
 - **輪郭の楕円フーリエ記述子(平滑化・不変マッチング)** — 閉輪郭をフーリエ級数で表し、高調波打ち切りで平滑化、回転/拡大/移動/始点に不変な記述子で形状検索する(EFD, Kuhl-Giardina)。 `py -3.11 examples/contour_fourier.py`
@@ -54,10 +59,6 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **workflow**
 - **精度ユニオン型ストレージ(PrecisionUnion)を N-D の実データ様式で使う** — ラベルボリューム(無損失)と深度ボリューム(atol 量子化)をタイル別最小ビット深さで保持し、メモリ比・save/load のファイル比・遅延アフィン連鎖の一致を数値で確かめる。高エントロピー画像では勝たないことも同じ場で示す(honest な境界)。 `py -3.11 examples/precision_union_volume.py`
 - **imgevolve quickstart — 全ワークフローを 1 ファイルで** — レジストリ→型付き手組みパイプライン→ゲノム復号→タスク採点→進化ドライバ→codegen + 差分テスト(約 1.5 分、repo root から実行)。 `py -3.11 examples/quickstart.py`
-
-**math**
-- **視覚計測を支える数学 op(mathops)を計測ワークフローで一巡** — 平面フィット→残差統計→共分散楕円の主軸化→較正曲線の多項式フィット(条件数監視)→補間で逆引き。mathops 16 op を実データ風に通し閉形式 GT と照合。 `py -3.11 examples/math_metrology.py`
-- **複素解析 op(mathops tier2)を閉形式の真値と突き合わせる** — 偏角原理で零点数、コーシー積分で内部値復元、等角性・正則性判定を点列として持つ閉曲線から numpy 演算で答える。 `py -3.11 examples/math_complex.py`
 
 **optics_sensing**
 - **光学 op(optics)で検査機を 1 台、紙の上で設計する** — 倍率→焦点距離/物体距離、ABCD 行列で結像確認、回折限界・被写界深度・MTF を要求分解能に対して合否判定する。 `py -3.11 examples/optics_imaging.py`
@@ -933,7 +934,7 @@ _計 881 ops / 47 categories。_
 ### decomposition(7)
 - `dc_structure_texture` `image → image` · 例: `gallery2d_texture_freq`
 - `dc_texture_residual` `image → image` · 例: `gallery2d_texture_freq`
-- `dc_rpca_lowrank` `image → image` · 例: `gallery2d_texture_freq`
+- `dc_rpca_lowrank` `image → image` · 例: `blas_thread_budget`, `gallery2d_texture_freq`
 - `dc_rpca_sparse` `image → image` · 例: `gallery2d_texture_freq`
 - `dc_retinex` `image → image` · 例: `gallery2d_texture_freq`
 - `dc_local_contrast_norm` `image → image` · 例: `gallery2d_texture_freq`
@@ -1349,7 +1350,7 @@ _計 881 ops / 47 categories。_
 - `ph_total_variation_flow` `image → image` · 例: `gallery2d_physics_alife_3d`
 
 ### rank(23)
-- `median` (halcon: `median_image`) `image → image` · 例: `astro_stacking`, `consumer_onocollo`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `lightfield_depth`, `machined_metal_and_materials`, `perception_pipeline`, `photon_timeresolved`, `quickstart`, `representation_roundtrip`, `specular_photometric`
+- `median` (halcon: `median_image`) `image → image` · 例: `astro_stacking`, `blas_thread_budget`, `consumer_onocollo`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `lightfield_depth`, `machined_metal_and_materials`, `perception_pipeline`, `photon_timeresolved`, `quickstart`, `representation_roundtrip`, `specular_photometric`
 - `min_filter` (halcon: `gray_erosion_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `max_filter` (halcon: `gray_dilation_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `percentile` (halcon: `rank_image`) `image → image` · 例: `color_transport`, `gallery2d_smoothing_rank`, `image_quality_metrics`, `representation_roundtrip`, `vision_layout_from_catalog`

@@ -19,6 +19,10 @@ version: 0.1.9  # fullseye lib version this note was generated for
 
 ガウス曲率 K=k1·k2(法線の反転に不変)。→ (N,)。
 
+## 背景知識ガイド(この op の手前にある物理・規約)
+
+- [blas_threads_and_memory](../../math/guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

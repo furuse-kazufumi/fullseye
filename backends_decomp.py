@@ -32,6 +32,8 @@ from __future__ import annotations
 import numpy as np
 from scipy import ndimage
 
+import fsthreads
+
 _EPS = 1e-3
 
 
@@ -137,30 +139,37 @@ def _rpca(img, a, max_iter=60, work_max=64):
     m, n = M.shape
     if m == 0 or n == 0:
         return M0.copy(), np.zeros_like(M0)
-    sv = np.linalg.svd(M, compute_uv=False)
-    nrm2 = float(sv[0]) if sv.size else 0.0
-    lam = (0.5 + 1.5 * float(a)) / np.sqrt(max(m, n))
-    if nrm2 < 1e-12:                       # constant / empty image -> all low-rank
-        return M0.copy(), np.zeros_like(M0)
-    nrm_inf = float(np.max(np.abs(M))) / lam
-    Y = M / max(nrm2, nrm_inf)
-    mu = 1.25 / nrm2
-    rho = 1.5
-    mu_max = mu * 1e7
-    S = np.zeros_like(M)
-    L = np.zeros_like(M)
-    normM = float(np.linalg.norm(M, "fro"))
-    for _ in range(max_iter):
-        U, s, Vt = np.linalg.svd(M - S + Y / mu, full_matrices=False)
-        s_t = _soft(s, 1.0 / mu)
-        rank = int((s_t > 0).sum())
-        L = (U[:, :rank] * s_t[:rank]) @ Vt[:rank]
-        S = _soft(M - L + Y / mu, lam / mu)
-        Z = M - L - S
-        Y = Y + mu * Z
-        mu = min(mu * rho, mu_max)
-        if float(np.linalg.norm(Z, "fro")) <= 1e-7 * (normM + 1e-12):
-            break
+    # ★BLAS のスレッド上限をループの**外に 1 回**掛ける。ここは work_max=64 に
+    # 抑えた正方行列を最大 60 回 SVD する場所で、この repo で分解時間の大半を
+    # 使う(スイート 1 回で 30.7 秒 / 分解合計 31.4 秒、svd 23,987 回 = 98%)。
+    # 64x64 の SVD は 24 スレッドだと 1 スレッドの 3.9 倍遅い —— 分解の中の GEMM が
+    # 小さすぎて同期の費用が計算量を上回るため(表は fsthreads の docstring)。
+    # 1 回ごとに囲むと仕掛けの 2.4us を 60 回払うので、ループの外に置く。
+    with fsthreads.for_decomposition(min(m, n)):
+        sv = np.linalg.svd(M, compute_uv=False)
+        nrm2 = float(sv[0]) if sv.size else 0.0
+        lam = (0.5 + 1.5 * float(a)) / np.sqrt(max(m, n))
+        if nrm2 < 1e-12:                   # constant / empty image -> all low-rank
+            return M0.copy(), np.zeros_like(M0)
+        nrm_inf = float(np.max(np.abs(M))) / lam
+        Y = M / max(nrm2, nrm_inf)
+        mu = 1.25 / nrm2
+        rho = 1.5
+        mu_max = mu * 1e7
+        S = np.zeros_like(M)
+        L = np.zeros_like(M)
+        normM = float(np.linalg.norm(M, "fro"))
+        for _ in range(max_iter):
+            U, s, Vt = np.linalg.svd(M - S + Y / mu, full_matrices=False)
+            s_t = _soft(s, 1.0 / mu)
+            rank = int((s_t > 0).sum())
+            L = (U[:, :rank] * s_t[:rank]) @ Vt[:rank]
+            S = _soft(M - L + Y / mu, lam / mu)
+            Z = M - L - S
+            Y = Y + mu * Z
+            mu = min(mu * rho, mu_max)
+            if float(np.linalg.norm(Z, "fro")) <= 1e-7 * (normM + 1e-12):
+                break
     if scaled:
         L = ndimage.zoom(L, (H / L.shape[0], W / L.shape[1]), order=1)
         L = L[:H, :W]

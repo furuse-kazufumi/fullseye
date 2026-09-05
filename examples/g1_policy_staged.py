@@ -23,14 +23,16 @@ Fullseye の方策実行には 2 つの入口がある(知覚サンプル percep
 拡張ポイントは EXTEND コメントで明示している。
 
 外部アセット要件 / External asset requirement:
-  このサンプルはリポジトリに同梱されていない外部アセット(RL 学習済み
-  チェックポイント .pkl と参照モーション .npy)を必要とする。環境変数
-  ``FULLSEYE_G1_ASSETS_DIR`` にその両方を含むディレクトリを指定するか、
-  このファイル内の CKPT / REF を直接書き換えること。
-  This example requires external assets not bundled with this repo: an
-  RL-trained checkpoint (.pkl) and a reference motion (.npy). Point the
-  environment variable ``FULLSEYE_G1_ASSETS_DIR`` at a directory containing
-  both files, or edit CKPT / REF directly in this script.
+  このサンプルはリポジトリに同梱されていない外部アセットを **3 つ**必要とする:
+  RL 学習済みチェックポイント .pkl / 参照モーション .npy / MuJoCo Menagerie の
+  G1 シーン ``unitree_g1/scene.xml``。前 2 つは ``FULLSEYE_G1_ASSETS_DIR`` に
+  両方を含むディレクトリを、シーンは ``FULLSEYE_G1_SCENE_XML`` にファイルを指定する
+  (下の CKPT / REF / SCENE_XML を直接書いてもよい)。
+  This example requires three external assets not bundled with this repo: an
+  RL-trained checkpoint (.pkl), a reference motion (.npy), and the MuJoCo
+  Menagerie G1 scene (``unitree_g1/scene.xml``). Point
+  ``FULLSEYE_G1_ASSETS_DIR`` at a directory containing the first two and
+  ``FULLSEYE_G1_SCENE_XML`` at the scene file.
 """
 from __future__ import annotations
 
@@ -47,26 +49,36 @@ from g1_policy_bridge import G1PolicySession  # noqa: E402
 OUT_HUM = os.environ.get("FULLSEYE_G1_ASSETS_DIR")        # directory containing ckpt + ref motion
 CKPT = os.path.join(OUT_HUM, "mjx_g1_walk12c_ckpt_15728640.pkl") if OUT_HUM else None  # 直進歩行(操舵観測つき)
 REF = os.path.join(OUT_HUM, "g1_walk_cycle_straight.npy") if OUT_HUM else None         # 直進化した LAFAN1 歩行 1 周期
+# EXTEND: MuJoCo Menagerie の G1 シーン。配布物にローカルパスを焼き込まない方針なので
+# (2026-09-05 に出荷 7 ファイルから除去)、環境変数が唯一の既定になっている。
+SCENE_XML = os.environ.get("FULLSEYE_G1_SCENE_XML", "")
 SECS = 8.0                                                # 最大ロールアウト秒数
 
 # EXTEND: 疑似 LiDAR+障害物版を試すなら vision 系 ckpt(walk13c 系)に替えて
 # vision=True にする。obs 次元が合わない組合せはロード時に明示エラーで拒否される。
 VISION = False
 
-if not CKPT or not REF or not (os.path.exists(CKPT) and os.path.exists(REF)):
+# 足りない物は**まとめて 1 度に**言う。2 つ直してから 3 つ目で落ちるのは案内として
+# 不親切で、実際 2026-09-06 にシーン XML だけが抜けた状態で ValueError になった。
+_missing = [label for label, path in (
+    ("RL checkpoint (.pkl)", CKPT),
+    ("reference motion (.npy)", REF),
+    ("MuJoCo Menagerie scene unitree_g1/scene.xml", SCENE_XML),
+) if not path or not os.path.exists(path)]
+if _missing:
     raise SystemExit(
-        "This staged example requires external assets not included in this repo:\n"
-        "  - an RL checkpoint (.pkl) trained with the G1 walk policy\n"
-        "  - a reference motion (.npy), e.g. a straightened LAFAN1 walk cycle\n"
-        "Set FULLSEYE_G1_ASSETS_DIR to a directory containing both files, or edit "
-        "CKPT / REF in this script directly.\n"
-        f"CKPT={CKPT}\nREF={REF}"
+        "This staged example requires external assets not included in this repo.\n"
+        "Missing:\n  - " + "\n  - ".join(_missing) + "\n"
+        "Set FULLSEYE_G1_ASSETS_DIR to a directory holding the checkpoint and the "
+        "reference motion, and FULLSEYE_G1_SCENE_XML to the scene file (or edit "
+        "CKPT / REF / SCENE_XML in this script directly).\n"
+        f"CKPT={CKPT}\nREF={REF}\nSCENE_XML={SCENE_XML}"
     )
 
 # ---------------------------------------------------------------------------
 # 1) ロード — ckpt(numpy 化)と参照モーション(制御 dt へ再サンプル)を 1 回だけ準備
 # ---------------------------------------------------------------------------
-s = G1PolicySession(CKPT, REF, vision=VISION)
+s = G1PolicySession(CKPT, REF, xml=SCENE_XML, vision=VISION)
 print(f"policy obs={s.pol['obs_size']} act={s.pol['act_size']} "
       f"ref={s.ref_n} frames @ dt={s.dt:.3f}s")
 
