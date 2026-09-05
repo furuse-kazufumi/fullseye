@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">piv_outlier_mask — PIV <code style="color:#22d3bf">validate</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">mask</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import pivops; pivops.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)</code> (oder <code style="color:#22d3bf">opspiv.get(&quot;piv_outlier_mask&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>正規化中央値検定(Westerweel &amp; Scarano 2005)で外れベクトルを見つける。</p>
+<p>各ベクトルについて、8 近傍の中央値からの残差を<b>近傍残差の中央値</b>で割る。</p>
+<p>分母に `<code style="color:#22d3bf">epsilon</code>`(既定 0.1 px、PIV の測定不確かさの目安)を足すのは、</p>
+<p>一様な場で分母が 0 になって全部が外れ値になるのを防ぐため —— この項が</p>
+<p>無いと、<b>理想的な入力ほど検定が壊れる</b>。</p>
+<p>Args:</p>
+<p>flow: `<code style="color:#22d3bf">(2, h, w)</code>`。</p>
+<p>threshold: この値を超えたら外れ値。慣行は 2。</p>
+<p>epsilon: 分母の下駄 [px]。</p>
+<p>Returns:</p>
+<p>`<code style="color:#22d3bf">(h, w)</code><code style="color:#22d3bf"> の bool。</code><code style="color:#22d3bf">True</code><code style="color:#22d3bf"> が外れ値(</code><code style="color:#22d3bf">nan</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">True</code>`)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">Leitfaden zur Familie piv_displacement</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">mask</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_replace_outliers">piv_replace_outliers</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">validate</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_replace_outliers">piv_replace_outliers</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pivops.py — PIV Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

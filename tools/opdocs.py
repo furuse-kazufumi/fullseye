@@ -107,6 +107,9 @@ LEDGER_DIMS = {
     # 2026-09-03: ストリーミング動画処理(リング/状態つき op/パイプライン)
     "videostream": {"registry": "opsvideostream", "table": "OPSVIDEOSTREAM",
                     "module": "videostream", "family": "video_streaming"},
+    # 2026-09-06: PIV(画像対 → 密な変位)。新語 flow2d を 1 つだけ持ち込む。
+    "piv": {"registry": "opspiv", "table": "OPSPIV",
+            "module": "pivops", "family": "piv_displacement"},
     # 2026-09-06: 数値標高モデルの解析。DEM は深度画像そのものなので新しい
     # 依存は無く、入力は既存の `depth` 種をそのまま使う。
     "dem": {"registry": "opsdem", "table": "OPSDEM",

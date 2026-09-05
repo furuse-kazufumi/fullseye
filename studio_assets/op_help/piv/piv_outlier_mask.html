@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">piv_outlier_mask — PIV <code style="color:#22d3bf">validate</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">mask</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import pivops; pivops.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)</code> (または <code style="color:#22d3bf">opspiv.get(&quot;piv_outlier_mask&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>正規化中央値検定(Westerweel &amp; Scarano 2005)で外れベクトルを見つける。</p>
+<p>各ベクトルについて、8 近傍の中央値からの残差を<b>近傍残差の中央値</b>で割る。</p>
+<p>分母に `<code style="color:#22d3bf">epsilon</code>`(既定 0.1 px、PIV の測定不確かさの目安)を足すのは、</p>
+<p>一様な場で分母が 0 になって全部が外れ値になるのを防ぐため —— この項が</p>
+<p>無いと、<b>理想的な入力ほど検定が壊れる</b>。</p>
+<p>Args:</p>
+<p>flow: `<code style="color:#22d3bf">(2, h, w)</code>`。</p>
+<p>threshold: この値を超えたら外れ値。慣行は 2。</p>
+<p>epsilon: 分母の下駄 [px]。</p>
+<p>Returns:</p>
+<p>`<code style="color:#22d3bf">(h, w)</code><code style="color:#22d3bf"> の bool。</code><code style="color:#22d3bf">True</code><code style="color:#22d3bf"> が外れ値(</code><code style="color:#22d3bf">nan</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">True</code>`)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">mask</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_replace_outliers">piv_replace_outliers</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">validate</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_replace_outliers">piv_replace_outliers</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pivops.py — PIV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">piv_sample_at_windows — PIV <code style="color:#22d3bf">assess</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">flow2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import pivops; pivops.piv_sample_at_windows(field, info)</code> (または <code style="color:#22d3bf">opspiv.get(&quot;piv_sample_at_windows&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>画素ごとの場 `<code style="color:#22d3bf">(2, H, W)</code>` を窓中心の格子へ落とす(最近傍)。</p>
+<p>真値は画素解像度で作られるが、PIV の出力は窓の格子に載る。**比べる前に</p>
+<p>同じ格子へ持ってくる**必要があり、その持ってき方(最近傍か窓内平均か)で</p>
+<p>誤差が変わる。ここは最近傍 —— 窓内平均にすると、勾配のある場で PIV 自身の</p>
+<p>平滑化と区別がつかなくなる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">flow2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_outlier_mask">piv_outlier_mask</a> · <a style="color:#22d3bf" href="oppiv:piv_replace_outliers">piv_replace_outliers</a> · <a style="color:#22d3bf" href="oppiv:piv_vorticity">piv_vorticity</a> · <a style="color:#22d3bf" href="oppiv:piv_divergence">piv_divergence</a> · <a style="color:#22d3bf" href="oppiv:piv_flow_magnitude">piv_flow_magnitude</a> · <a style="color:#22d3bf" href="oppiv:piv_to_velocity">piv_to_velocity</a> · <a style="color:#22d3bf" href="oppiv:piv_error_stats">piv_error_stats</a> · <a style="color:#22d3bf" href="oppiv:piv_peak_locking">piv_peak_locking</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">assess</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_error_stats">piv_error_stats</a> · <a style="color:#22d3bf" href="oppiv:piv_peak_locking">piv_peak_locking</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pivops.py — PIV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

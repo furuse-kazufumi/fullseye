@@ -28,17 +28,22 @@ PIV は「それらしいベクトル図」が必ず出ます。目視は検証�
 **変位場を先に決めて画像を作る**ので、真値が定義そのものです
 (``tests/test_pivops.py``):
 
-===================  ==========================================  ==================
-変位場               閉形式                                      実測の一致
-===================  ==========================================  ==================
-一様並進             どの窓でも同じ (dy, dx)                     中央値誤差 0.01 px 台
-剛体回転             渦度 = 2ω(一定)、発散 = 0                  下の実測値を参照
-一様膨張             発散 = 2s(一定)、渦度 = 0                  同上
-単純せん断           渦度と発散が閉形式                          同上
-===================  ==========================================  ==================
+=================  ==============================  ==========================
+変位場             閉形式                          実測(多段 64→32、320x320)
+=================  ==============================  ==========================
+一様並進           どの窓でも同じ (dy, dx)         偏り 0.003 px 以下、RMS 0.06
+剛体回転 ω=0.01    渦度 = -2ω、発散 = 0            渦度 -0.01997、発散 -0.00006
+一様膨張 s=0.01    発散 = 2s、渦度 = 0             発散 +0.01985、渦度 +0.00009
+単純せん断 g=0.02  渦度 = g、発散 = 0              渦度 +0.01996、発散 -0.00003
+=================  ==============================  ==========================
+
+回転の渦度が**負**なのは規約どおりです。``(dy, dx) = (ω(c-cx), -ω(r-cy))`` は
+画面上では時計回りに見える場で、この定義では負になります。テストを書いたとき
+最初に符号を取り違えたのは**テストの側**でした(実装ではなく)。
 
 さらに **独立な検算**を 1 本持ちます —— 非圧縮の流れなら発散が 0 のはずで、
-真値と比べる評価とは別の経路で誤差の大きさが分かります。
+真値と比べる評価とは別の経路で誤差の大きさが分かります(上の表の回転・せん断で
+発散が 1e-4 台に収まっていることが、その検算が働いている証拠)。
 
 ## 既知の系統誤差(出るはずのものが出るか)
 
@@ -66,6 +71,7 @@ import numpy as np
 
 __all__ = [
     "FLOW2D_SHAPE", "PEAK_MODES", "WINDOW_FUNCS", "OUTLIER_FILL",
+    "NORMALIZE_MODES",
     "piv_synth_particles", "piv_synth_pair",
     "piv_cross_correlate", "piv_multipass",
     "piv_outlier_mask", "piv_replace_outliers",
@@ -90,6 +96,12 @@ FLOW2D_SHAPE = "(2, h, w) with components (dy, dx) in pixels per frame"
 #: 3 つ並べてあるのは選択肢を増やすためではなく、**系統誤差の違いを測れる**
 #: ようにするため(``piv_peak_locking`` で比較する)。
 PEAK_MODES = ("gauss3", "parabolic", "centroid")
+
+#: 相関の正規化。``"overlap"`` は窓関数の自己相関で割って、窓のずれに伴う
+#: 重なり減少ぶんを打ち消す(零方向への偏りが消える)。``search_limit`` と
+#: **必ず対で使う** —— 単独だと縁で 0 に近い値で割ることになり、実測で誤差が
+#: 23 倍に悪化した(``piv_cross_correlate`` の表)。
+NORMALIZE_MODES = ("overlap", "none")
 
 #: 窓関数。``"hann"`` は窓の縁の不連続が相関に持ち込むリークを減らすが、
 #: 有効な粒子数も減らす(縁の粒子の寄与が落ちる)ので万能ではない。
@@ -168,7 +180,7 @@ def piv_synth_particles(shape, density=0.02, diameter_px=2.5, seed=0,
     Args:
         shape: ``(H, W)``。
         density: 画素あたりの粒子数(> 0)。
-        diameter_px: 粒子像の直径 [px](> 0)。
+        diameter_px: 粒子像の直径 [px] (> 0)。
         seed: 乱数種。
         intensity: 粒子の明るさの範囲 ``(lo, hi)``。
         background: 一様な下駄。
@@ -279,11 +291,32 @@ def _displacement_at(displacement, rows, cols):
 # =========================================================================
 
 def piv_cross_correlate(a, b, window=32, overlap=0.5, peak="gauss3",
-                        window_func="hann", subtract_mean=True, shift=None):
+                        window_func="hann", subtract_mean=True, shift=None,
+                        normalize="overlap", search_limit=0.25):
     """窓ごとの相互相関で変位場を出す。返りは ``(flow, info)``。
 
     各窓で ``FFT`` を 2 回とって共役積の逆変換を取り(循環相関)、最大値の
     位置を整数変位、その周りの 3 点でサブピクセル変位を決める。
+
+    **零方向への偏りとその補正(実測)**: 素の相互相関は変位を**零へ引き寄せる**。
+    窓をずらすと重なる領域が減り、相関の値そのものが変位とともに落ちるからで、
+    実測でも偏りは変位に比例した(win=32・Hann、``dx`` を 0.5 から 6 px まで
+    振って偏り / (d/N) が 1.30, 1.29, 1.28, 1.28, 1.28 —— **傾き一定**)。
+
+    ``normalize="overlap"`` はこれを、**窓関数の自己相関で割る**ことで補正する
+    (重なり面積で正規化するのと同じ)。ただし縁では割る量が 0 に近づくので、
+    ``search_limit`` で探索範囲を窓の 1/4 に絞るのと**必ず対にする**。実測:
+
+    ===============  ==========  ==========  ==========
+    dx [px]          補正なし    補正 + 1/4  補正のみ
+    ===============  ==========  ==========  ==========
+    1.0 の偏り       -0.0402     -0.0020     -0.2659
+    5.0 の偏り       -0.2001     -0.0128     -0.9210
+    5.0 の RMS       0.2081      0.0301      4.8881
+    ===============  ==========  ==========  ==========
+
+    右端が「探索を絞らずに正規化だけした」場合で、**補正が誤差を 23 倍に悪化
+    させる**。片方だけ入れてはいけない、という測定結果をそのまま既定にしてある。
 
     Args:
         a, b: 画像対 ``(H, W)``。
@@ -295,6 +328,10 @@ def piv_cross_correlate(a, b, window=32, overlap=0.5, peak="gauss3",
             ピークを作るのを防ぐ)。**切ると零変位に張り付く**。
         shift: 予測変位 ``(2, h, w)``(多段用)。2 枚目の窓をこの整数量だけ
             ずらして切り出し、残差を測る。
+        normalize: ``"overlap"``(既定)か ``"none"``。
+        search_limit: 探索する変位の上限を窓の比で与える(既定 0.25 = PIV の
+            「1/4 則」)。``None`` で無制限 —— ``normalize="overlap"`` との
+            併用は上の表のとおり**悪化する**。
     Returns:
         ``(flow (2, h, w), info)``。``info`` は ``rows`` / ``cols``(窓中心の
         画像座標)、``peak_ratio``(第 1 ピーク / 第 2 ピーク。1 に近いほど
@@ -309,6 +346,14 @@ def piv_cross_correlate(a, b, window=32, overlap=0.5, peak="gauss3",
         raise ValueError(f"overlap must be in [0, 1), got {overlap}")
     _choice(peak, "peak", PEAK_MODES)
     _choice(window_func, "window_func", WINDOW_FUNCS)
+    _choice(normalize, "normalize", NORMALIZE_MODES)
+    if search_limit is not None:
+        lim_frac = float(search_limit)
+        if not (0.0 < lim_frac <= 0.5):
+            raise ValueError(
+                f"search_limit must be in (0, 0.5] or None, got {search_limit}")
+    else:
+        lim_frac = None
 
     step = max(1, int(round(win * (1.0 - ov))))
     h, w = A.shape
@@ -327,6 +372,8 @@ def piv_cross_correlate(a, b, window=32, overlap=0.5, peak="gauss3",
         pred = np.rint(pred).astype(np.int64)
 
     taper = _taper(win, window_func)
+    weight = _overlap_weight(win, taper) if normalize == "overlap" else None
+    keep = _search_mask(win, lim_frac)
     flow = np.zeros((2, rows.size, cols.size))
     ratio = np.zeros((rows.size, cols.size))
     for i, r in enumerate(rows):
@@ -336,20 +383,24 @@ def piv_cross_correlate(a, b, window=32, overlap=0.5, peak="gauss3",
                 sr = sc = 0
             else:
                 sr, sc = int(pred[0, i, j]), int(pred[1, i, j])
-            r2, c2 = r + sr, c + sc
-            if not (0 <= r2 <= h - win and 0 <= c2 <= w - win):
-                flow[:, i, j] = np.nan       # 予測がはみ出した窓は測れない
-                ratio[i, j] = np.nan
-                continue
+            # 予測が画像の外を指したら**切り詰める**(nan にしない)。切り詰めた
+            # ぶんは残差として測り直されるので測定は成立する。縁の窓を丸ごと
+            # 欠測にすると、渦度・発散が縁から内側へ nan で伝播して**場全体が
+            # 消える**(実測でそうなった)。
+            r2 = min(max(r + sr, 0), h - win)
+            c2 = min(max(c + sc, 0), w - win)
+            sr, sc = r2 - r, c2 - c
             wb = B[r2:r2 + win, c2:c2 + win]
-            dy, dx, pr = _correlate_window(wa, wb, taper, subtract_mean, peak)
+            dy, dx, pr = _correlate_window(wa, wb, taper, subtract_mean, peak,
+                                           weight, keep)
             flow[0, i, j] = dy + sr
             flow[1, i, j] = dx + sc
             ratio[i, j] = pr
 
     info = {"rows": rows + (win - 1) / 2.0, "cols": cols + (win - 1) / 2.0,
             "peak_ratio": ratio, "window": win, "overlap": ov, "peak": peak,
-            "window_func": window_func, "step": step}
+            "window_func": window_func, "step": step,
+            "normalize": normalize, "search_limit": search_limit}
     return flow, info
 
 
@@ -360,7 +411,30 @@ def _taper(n, kind):
     return np.outer(w, w)
 
 
-def _correlate_window(wa, wb, taper, subtract_mean, peak):
+def _overlap_weight(n, taper):
+    """窓の重み(``taper``、無ければ 1)の自己相関 = ずらしたときの重なり量。
+
+    これで割ると、相関の値が変位とともに落ちるぶんが打ち消され、ピーク位置の
+    零方向への偏りが消える。**縁では 0 に近づくので探索範囲の制限と対**。
+    """
+    m = np.ones((n, n)) if taper is None else taper
+    fm = np.fft.rfft2(m)
+    w = np.fft.fftshift(np.fft.irfft2(np.conj(fm) * fm, s=(n, n)))
+    return w / w.max()
+
+
+def _search_mask(n, frac):
+    """探索する変位の範囲(中央からの正方領域)。``frac`` が None なら全域。"""
+    if frac is None:
+        return None
+    c0 = n // 2
+    lim = max(1, int(n * frac))
+    keep = np.zeros((n, n), bool)
+    keep[c0 - lim:c0 + lim + 1, c0 - lim:c0 + lim + 1] = True
+    return keep
+
+
+def _correlate_window(wa, wb, taper, subtract_mean, peak, weight=None, keep=None):
     """1 組の窓の相互相関 → ``(dy, dx, peak_ratio)``。"""
     x, y = wa, wb
     if subtract_mean:
@@ -374,14 +448,17 @@ def _correlate_window(wa, wb, taper, subtract_mean, peak):
     fy = np.fft.rfft2(y)
     corr = np.fft.irfft2(np.conj(fx) * fy, s=(n, n))
     corr = np.fft.fftshift(corr)          # 零変位を中央へ
-    k = int(np.argmax(corr))
+    if weight is not None:
+        corr = corr / weight
+    search = corr if keep is None else np.where(keep, corr, -np.inf)
+    k = int(np.argmax(search))
     pi, pj = divmod(k, n)
     top = corr[pi, pj]
     if not np.isfinite(top) or top <= 0:
         return np.nan, np.nan, np.nan
     dy = _subpixel(corr, pi, pj, 0, peak)
     dx = _subpixel(corr, pi, pj, 1, peak)
-    ratio = _peak_ratio(corr, pi, pj, top)
+    ratio = _peak_ratio(search, pi, pj, top)
     c0 = n // 2
     return (pi - c0) + dy, (pj - c0) + dx, ratio
 
@@ -418,7 +495,7 @@ def _peak_ratio(corr, pi, pj, top):
     n = corr.shape[0]
     y0, y1 = max(0, pi - 1), min(n, pi + 2)
     x0, x1 = max(0, pj - 1), min(n, pj + 2)
-    masked = corr.copy()
+    masked = np.array(corr, dtype=np.float64, copy=True)
     masked[y0:y1, x0:x1] = -np.inf
     second = float(np.max(masked))
     if not np.isfinite(second) or second <= 0:
@@ -427,7 +504,8 @@ def _peak_ratio(corr, pi, pj, top):
 
 
 def piv_multipass(a, b, windows=(64, 32), overlap=0.5, peak="gauss3",
-                  window_func="hann", outlier_threshold=2.0):
+                  window_func="hann", outlier_threshold=2.0,
+                  normalize="overlap", search_limit=0.25):
     """粗い窓から細かい窓へ段を下げる多段 PIV。返りは ``(flow, info)``。
 
     各段の結果を**次の段の予測変位**として使う(整数量だけ 2 枚目の窓をずらす)。
@@ -454,7 +532,8 @@ def piv_multipass(a, b, windows=(64, 32), overlap=0.5, peak="gauss3",
         if flow is not None:
             pred = _regrid(flow, info, win, overlap, np.asarray(a).shape)
         flow, info = piv_cross_correlate(a, b, win, overlap, peak, window_func,
-                                         shift=pred)
+                                         shift=pred, normalize=normalize,
+                                         search_limit=search_limit)
         if outlier_threshold is not None and k < len(wins) - 1:
             mask = piv_outlier_mask(flow, outlier_threshold)
             flow = piv_replace_outliers(flow, mask, "median")
@@ -487,6 +566,15 @@ def piv_outlier_mask(flow, threshold=2.0, epsilon=0.1):
     一様な場で分母が 0 になって全部が外れ値になるのを防ぐため —— この項が
     無いと、**理想的な入力ほど検定が壊れる**。
 
+    ★**勾配の急な場では害になる**(2026-09-06 実測)。Rankine 型の渦
+    (芯の半径 28 px)で多段 PIV を掛けたところ、閾値 2 が拾った 5 本は
+    すべて**芯の縁**(中心から 32 px)に並び、実際の誤差は 0.07-0.45 px ——
+    外れ値ではなく**速度分布が折れている場所**だった。近傍中央値で均すと
+    RMS が 0.134 から 0.230 へ**悪化**する(閾値 5 では 1 本も拾わず 0.134 のまま)。
+
+    検定は「近傍と違う = 間違い」という仮定に立つので、**本物の不連続を
+    間違いと呼ぶ**。掛けるかどうかは場の性質を見て決めること。
+
     Args:
         flow: ``(2, h, w)``。
         threshold: この値を超えたら外れ値。慣行は 2。
@@ -508,10 +596,10 @@ def piv_outlier_mask(flow, threshold=2.0, epsilon=0.1):
                 continue
             neigh.append(pad[:, 1 + dy:1 + dy + h, 1 + dx:1 + dx + w])
     nb = np.stack(neigh)                              # (8, 2, h, w)
-    with np.errstate(invalid="ignore"):
+    with np.errstate(invalid="ignore", divide="ignore"):
         med = np.nanmedian(nb, axis=0)
         res = np.nanmedian(np.abs(nb - med), axis=0)
-        norm = np.abs(f - med) / (res + eps)
+        norm = np.abs(f - med) / (res + eps)      # eps=0 かつ完全一様なら 0/0=nan
     bad = np.any(norm > thr, axis=0) | np.any(~np.isfinite(f), axis=0)
     return bad
 
@@ -548,6 +636,22 @@ def piv_replace_outliers(flow, mask, method="median"):
 # 4. 場の量 —— 渦度・発散・大きさ
 # =========================================================================
 
+def _needs_a_grid(f, name):
+    """微分できる大きさか。**numpy の内部メッセージを外に出さない**。
+
+    連鎖ファザーが 32x32 の画像に窓 32 を当てて 1x1 の格子を作り、そこで
+    ``np.gradient`` の "Shape of array too small to calculate a numerical
+    gradient" が漏れた(2026-09-06 実測)。例外が出ること自体は正しいが、
+    **どの op がなぜ拒否したのかが分からないメッセージ**は fail-closed の
+    片肺になる。
+    """
+    if f.shape[1] < 2 or f.shape[2] < 2:
+        raise ValueError(
+            f"{name} needs a grid of at least 2x2 vectors to differentiate, "
+            f"got {f.shape[1]}x{f.shape[2]}. Use a smaller window or more "
+            "overlap so piv_cross_correlate returns more than one vector")
+
+
 def piv_vorticity(flow, spacing=1.0):
     """渦度 ``d(dx)/dy - d(dy)/dx``。**反時計回りが正**(画像座標での定義)。
 
@@ -556,11 +660,12 @@ def piv_vorticity(flow, spacing=1.0):
 
     Args:
         flow: ``(2, h, w)``。
-        spacing: 隣り合うベクトルの間隔 [px](``info["step"]``)。
+        spacing: 隣り合うベクトルの間隔 [px] (``info["step"]``)。
     Returns:
         ``(h, w)``。単位は 1/フレーム(``spacing`` が画素なら)。
     """
     f = _flow(flow)
+    _needs_a_grid(f, "piv_vorticity")
     s = _positive(spacing, "spacing")
     d_dx_dy = np.gradient(f[1], s, axis=0)       # dx 成分の行方向微分
     d_dy_dx = np.gradient(f[0], s, axis=1)       # dy 成分の列方向微分
@@ -570,6 +675,7 @@ def piv_vorticity(flow, spacing=1.0):
 def piv_divergence(flow, spacing=1.0):
     """発散 ``d(dy)/dy + d(dx)/dx``。**非圧縮なら 0** —— 独立な検算に使える。"""
     f = _flow(flow)
+    _needs_a_grid(f, "piv_divergence")
     s = _positive(spacing, "spacing")
     return np.gradient(f[0], s, axis=0) + np.gradient(f[1], s, axis=1)
 
@@ -668,8 +774,29 @@ def piv_peak_locking(flow, bins=20):
     教科書的な系統誤差)。**流れが一様でなければ小数部は一様分布に近いはず**で、
     そこからのずれを測る。
 
-    指標 ``c0`` は Chi-square 型の一様性からのずれ:
-    ``sum((n_i - n_bar)^2) / sum(n_i)``。0 が完全に一様。
+    指標 ``c0`` は**標本数に依らない**カイ二乗型のずれ:
+    ``sum((n_i - n_bar)^2 / n_bar) / (bins - 1)``。一様分布から標本を取ると
+    期待値 1 になるので、**1 前後なら一様と区別できない**、大きいほど偏っている。
+
+    ★ ただしこの指標は「真の変位の小数部が一様である」ことを仮定する。窓の数が
+    少ない場や、変位がゆっくり変わる場では**真値そのものの c0 も大きくなる**
+    (実測: 線形ランプの真値で 82 —— 窓格子が 19 列しか無く小数部が離散的に
+    しか現れないため)。したがって c0 は**同じ入力の真値と比べて**読むこと。
+
+    **決定的な診断は別にある** —— 一様並進の小数部を 0 から 0.9 まで振り、
+    推定値が対角線に乗るかを見る。実測(win=32、density 0.02):
+
+    ==========  =================  ==================
+    推定法      小数部誤差の RMS   最大絶対誤差
+    ==========  =================  ==================
+    gauss3      0.0037 px          0.0088 px
+    parabolic   0.0104 px          0.0151 px
+    centroid    0.2259 px          0.3701 px
+    ==========  =================  ==================
+
+    ``centroid`` は真値 0.1 を 0.02、0.9 を 0.98 と答える —— 整数へ引き寄せる
+    教科書どおりの S 字。**出るはずのものが出た**ことの確認であって、
+    実装の不具合ではない(だから 3 つとも残してある)。
 
     Args:
         flow: ``(2, h, w)``。
@@ -692,7 +819,8 @@ def piv_peak_locking(flow, bins=20):
         hist[i] = np.histogram(v, bins=n, range=(0.0, 1.0))[0]
     total = hist.sum()
     mean = total / (2.0 * n)
-    c0 = float(np.sum((hist - mean) ** 2) / total) if total else float("nan")
+    c0 = (float(np.sum((hist - mean) ** 2) / mean) / (2.0 * n - 1.0)
+          if total else float("nan"))
     return {"c0": c0, "hist": hist, "bins": n,
             "frac_mean": float(np.nanmean(frac[ok])),
             "frac_std": float(np.nanstd(frac[ok]))}

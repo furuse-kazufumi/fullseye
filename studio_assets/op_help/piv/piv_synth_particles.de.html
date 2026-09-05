@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">piv_synth_particles — PIV <code style="color:#22d3bf">synth</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">image2d</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import pivops; pivops.piv_synth_particles(shape, density=0.02, diameter_px=2.5, seed=0, intensity=(0.6, 1.0), background=0.0)</code> (oder <code style="color:#22d3bf">opspiv.get(&quot;piv_synth_particles&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>トレーサ粒子を撒いた 1 枚を作る。返りは `<code style="color:#22d3bf">(image, positions)</code>`。</p>
+<p>粒子はガウス輝点(直径 = 1/e^2 幅ではなく<b>標準偏差の 2 倍</b>を</p>
+<p>`<code style="color:#22d3bf">diameter_px</code>` と呼ぶ、PIV の慣行)。位置は連続値なので、サブピクセルの</p>
+<p>真値を持つ画像が作れる。</p>
+<p>`<code style="color:#22d3bf">density</code>` は 1 画素あたりの粒子数。PIV の経験則では<b>窓あたり 5-10 個</b>が</p>
+<p>目安で、32x32 窓なら 0.005-0.01 に当たる。少なすぎると相関ピークが立たず、</p>
+<p>多すぎると粒子像が重なって個々の対応が失われる。</p>
+<p>Args:</p>
+<p>shape: `<code style="color:#22d3bf">(H, W)</code>`。</p>
+<p>density: 画素あたりの粒子数(&gt; 0)。</p>
+<p>diameter_px: 粒子像の直径 [px] (&gt; 0)。</p>
+<p>seed: 乱数種。</p>
+<p>intensity: 粒子の明るさの範囲 `<code style="color:#22d3bf">(lo, hi)</code>`。</p>
+<p>background: 一様な下駄。</p>
+<p>Returns:</p>
+<p>`<code style="color:#22d3bf">(image (H, W) float64, positions (N, 2) の (row, col))</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">Leitfaden zur Familie piv_displacement</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_cross_correlate">piv_cross_correlate</a> · <a style="color:#22d3bf" href="oppiv:piv_multipass">piv_multipass</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">synth</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_synth_pair">piv_synth_pair</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pivops.py — PIV Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">piv_vorticity — PIV <code style="color:#22d3bf">field</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import pivops; pivops.piv_vorticity(flow, spacing=1.0)</code> (oder <code style="color:#22d3bf">opspiv.get(&quot;piv_vorticity&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>渦度 `<code style="color:#22d3bf">d(dx)/dy - d(dy)/dx</code>`。<b>反時計回りが正</b>(画像座標での定義)。</p>
+<p>行が下向きに増える画像座標では、数学の xy 座標と上下が逆になる。この符号を</p>
+<p>決めずに書くと渦の向きが黙って反転するので、定義を docstring に固定する。</p>
+<p>Args:</p>
+<p>flow: `<code style="color:#22d3bf">(2, h, w)</code>`。</p>
+<p>spacing: 隣り合うベクトルの間隔 [px] (`<code style="color:#22d3bf">info[&quot;step&quot;]</code>`)。</p>
+<p>Returns:</p>
+<p>`<code style="color:#22d3bf">(h, w)</code><code style="color:#22d3bf">。単位は 1/フレーム(</code><code style="color:#22d3bf">spacing</code>` が画素なら)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">Leitfaden zur Familie piv_displacement</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_cross_correlate">piv_cross_correlate</a> · <a style="color:#22d3bf" href="oppiv:piv_multipass">piv_multipass</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">field</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_divergence">piv_divergence</a> · <a style="color:#22d3bf" href="oppiv:piv_flow_magnitude">piv_flow_magnitude</a> · <a style="color:#22d3bf" href="oppiv:piv_to_velocity">piv_to_velocity</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pivops.py — PIV Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

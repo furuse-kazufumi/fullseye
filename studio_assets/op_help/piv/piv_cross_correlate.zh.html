@@ -1,0 +1,58 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">piv_cross_correlate — PIV <code style="color:#22d3bf">estimate</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">flow2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import pivops; pivops.piv_cross_correlate(a, b, window=32, overlap=0.5, peak=&#x27;gauss3&#x27;, window_func=&#x27;hann&#x27;, subtract_mean=True, shift=None, normalize=&#x27;overlap&#x27;, search_limit=0.25)</code>(或 <code style="color:#22d3bf">opspiv.get(&quot;piv_cross_correlate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>窓ごとの相互相関で変位場を出す。返りは `<code style="color:#22d3bf">(flow, info)</code>`。</p>
+<p>各窓で `<code style="color:#22d3bf">FFT</code>` を 2 回とって共役積の逆変換を取り(循環相関)、最大値の</p>
+<p>位置を整数変位、その周りの 3 点でサブピクセル変位を決める。</p>
+<p><b>零方向への偏りとその補正(実測)</b>: 素の相互相関は変位を<b>零へ引き寄せる</b>。</p>
+<p>窓をずらすと重なる領域が減り、相関の値そのものが変位とともに落ちるからで、</p>
+<p>実測でも偏りは変位に比例した(win=32・Hann、`<code style="color:#22d3bf">dx</code>` を 0.5 から 6 px まで</p>
+<p>振って偏り / (d/N) が 1.30, 1.29, 1.28, 1.28, 1.28 —— <b>傾き一定</b>)。</p>
+<p>`<code style="color:#22d3bf">normalize=&quot;overlap&quot;</code>` はこれを、<b>窓関数の自己相関で割る</b>ことで補正する</p>
+<p>(重なり面積で正規化するのと同じ)。ただし縁では割る量が 0 に近づくので、</p>
+<p>`<code style="color:#22d3bf">search_limit</code>` で探索範囲を窓の 1/4 に絞るのと<b>必ず対にする</b>。実測:</p>
+<p>===============  ==========  ==========  ==========</p>
+<p>dx [px]          補正なし    補正 + 1/4  補正のみ</p>
+<p>===============  ==========  ==========  ==========</p>
+<p>1.0 の偏り       -0.0402     -0.0020     -0.2659</p>
+<p>5.0 の偏り       -0.2001     -0.0128     -0.9210</p>
+<p>5.0 の RMS       0.2081      0.0301      4.8881</p>
+<p>===============  ==========  ==========  ==========</p>
+<p>右端が「探索を絞らずに正規化だけした」場合で、**補正が誤差を 23 倍に悪化</p>
+<p>させる**。片方だけ入れてはいけない、という測定結果をそのまま既定にしてある。</p>
+<p>Args:</p>
+<p>a, b: 画像対 `<code style="color:#22d3bf">(H, W)</code>`。</p>
+<p>window: 窓の一辺 [px]。偶数・8 以上。</p>
+<p>overlap: 窓の重なり率 `<code style="color:#22d3bf">[0, 1)</code>`。0.5 が慣行。</p>
+<p>peak: :data:<code style="color:#22d3bf">PEAK_MODES</code>。</p>
+<p>window_func: :data:<code style="color:#22d3bf">WINDOW_FUNCS</code>。</p>
+<p>subtract_mean: 窓ごとに平均を引く(背景の直流成分が中央に巨大な</p>
+<p>ピークを作るのを防ぐ)。<b>切ると零変位に張り付く</b>。</p>
+<p>shift: 予測変位 `<code style="color:#22d3bf">(2, h, w)</code>`(多段用)。2 枚目の窓をこの整数量だけ</p>
+<p>ずらして切り出し、残差を測る。</p>
+<p>normalize: `<code style="color:#22d3bf">&quot;overlap&quot;</code><code style="color:#22d3bf">(既定)か </code><code style="color:#22d3bf">&quot;none&quot;</code>`。</p>
+<p>search_limit: 探索する変位の上限を窓の比で与える(既定 0.25 = PIV の</p>
+<p>「1/4 則」)。`<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> で無制限 —— </code><code style="color:#22d3bf">normalize=&quot;overlap&quot;</code>` との</p>
+<p>併用は上の表のとおり<b>悪化する</b>。</p>
+<p>Returns:</p>
+<p>`<code style="color:#22d3bf">(flow (2, h, w), info)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">info</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">rows</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cols</code>`(窓中心の</p>
+<p>画像座標)、`<code style="color:#22d3bf">peak_ratio</code>`(第 1 ピーク / 第 2 ピーク。1 に近いほど</p>
+<p>当てにならない)、`<code style="color:#22d3bf">window</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">overlap</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">peak</code>` を持つ dict。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">flow2d</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_outlier_mask">piv_outlier_mask</a> · <a style="color:#22d3bf" href="oppiv:piv_replace_outliers">piv_replace_outliers</a> · <a style="color:#22d3bf" href="oppiv:piv_vorticity">piv_vorticity</a> · <a style="color:#22d3bf" href="oppiv:piv_divergence">piv_divergence</a> · <a style="color:#22d3bf" href="oppiv:piv_flow_magnitude">piv_flow_magnitude</a> · <a style="color:#22d3bf" href="oppiv:piv_to_velocity">piv_to_velocity</a> · <a style="color:#22d3bf" href="oppiv:piv_sample_at_windows">piv_sample_at_windows</a> · <a style="color:#22d3bf" href="oppiv:piv_error_stats">piv_error_stats</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">estimate</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_multipass">piv_multipass</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pivops.py — PIV 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

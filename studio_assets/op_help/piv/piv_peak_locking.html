@@ -1,0 +1,50 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">piv_peak_locking — PIV <code style="color:#22d3bf">assess</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import pivops; pivops.piv_peak_locking(flow, bins=20)</code> (または <code style="color:#22d3bf">opspiv.get(&quot;piv_peak_locking&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>ピークロッキングの強さ。小数部の分布が一様からどれだけ外れているか。</p>
+<p>サブピクセル推定は、真の変位の小数部が 0 や 0.5 のときにそこへ引き寄せられる</p>
+<p>偏りを持つ(相関ピークの形と当てはめる関数の形が違うことから来る、PIV の</p>
+<p>教科書的な系統誤差)。<b>流れが一様でなければ小数部は一様分布に近いはず</b>で、</p>
+<p>そこからのずれを測る。</p>
+<p>指標 `<code style="color:#22d3bf">c0</code>` は<b>標本数に依らない</b>カイ二乗型のずれ:</p>
+<p>`<code style="color:#22d3bf">sum((n_i - n_bar)^2 / n_bar) / (bins - 1)</code>`。一様分布から標本を取ると</p>
+<p>期待値 1 になるので、<b>1 前後なら一様と区別できない</b>、大きいほど偏っている。</p>
+<p>★ ただしこの指標は「真の変位の小数部が一様である」ことを仮定する。窓の数が</p>
+<p>少ない場や、変位がゆっくり変わる場では<b>真値そのものの c0 も大きくなる</b></p>
+<p>(実測: 線形ランプの真値で 82 —— 窓格子が 19 列しか無く小数部が離散的に</p>
+<p>しか現れないため)。したがって c0 は<b>同じ入力の真値と比べて</b>読むこと。</p>
+<p><b>決定的な診断は別にある</b> —— 一様並進の小数部を 0 から 0.9 まで振り、</p>
+<p>推定値が対角線に乗るかを見る。実測(win=32、density 0.02):</p>
+<p>==========  =================  ==================</p>
+<p>推定法      小数部誤差の RMS   最大絶対誤差</p>
+<p>==========  =================  ==================</p>
+<p>gauss3      0.0037 px          0.0088 px</p>
+<p>parabolic   0.0104 px          0.0151 px</p>
+<p>centroid    0.2259 px          0.3701 px</p>
+<p>==========  =================  ==================</p>
+<p>`<code style="color:#22d3bf">centroid</code>` は真値 0.1 を 0.02、0.9 を 0.98 と答える —— 整数へ引き寄せる</p>
+<p>教科書どおりの S 字。<b>出るはずのものが出た</b>ことの確認であって、</p>
+<p>実装の不具合ではない(だから 3 つとも残してある)。</p>
+<p>Args:</p>
+<p>flow: `<code style="color:#22d3bf">(2, h, w)</code>`。</p>
+<p>bins: 小数部のヒストグラムの階級数。</p>
+<p>Returns:</p>
+<p>dict: `<code style="color:#22d3bf">c0</code><code style="color:#22d3bf">(両成分合わせた指標)、</code><code style="color:#22d3bf">hist</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">(2, bins)</code>`)、</p>
+<p>`<code style="color:#22d3bf">frac_mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">frac_std</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">bins</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">assess</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_sample_at_windows">piv_sample_at_windows</a> · <a style="color:#22d3bf" href="oppiv:piv_error_stats">piv_error_stats</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pivops.py — PIV operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

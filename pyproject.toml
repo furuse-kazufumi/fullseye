@@ -124,6 +124,9 @@ py-modules = [
   # demops: DEM(数値標高モデル)の解析。terrain.py は地形を**作る**側で、
   # こちらは与えられた地形を**測る**側(2026-09-06 追加)。
   "demops", "opsdem",
+  # pivops: 粒子画像流速測定。画像対から密な変位を出す op がこの repo に 1 つも
+  # 無かった(scene_flow_lk は 3-D 体積用)ため新設(2026-09-06)。
+  "pivops", "opspiv",
   "backends", "backends_auto", "backends_color", "backends_cv2b", "backends_dl",
   "backends_extra", "backends_kornia", "backends_pil", "backends_r3",
   "backends_scipy", "backends_ski2",

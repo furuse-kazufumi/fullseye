@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">piv_to_velocity — PIV <code style="color:#22d3bf">field</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">flow2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import pivops; pivops.piv_to_velocity(flow, pixel_size_m, dt_s)</code>(或 <code style="color:#22d3bf">opspiv.get(&quot;piv_to_velocity&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>画素/フレーム → m/s。<b>両方とも必須引数</b>(既定値を置かない)。</p>
+<p>単位の取り違えは例外を出さずに桁を変えるので、既定値を置くと事故が既定に</p>
+<p>なる —— `<code style="color:#22d3bf">demops</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">cell_size</code>` と同じ判断。</p>
+<p>Returns:</p>
+<p>`<code style="color:#22d3bf">(2, h, w)</code>` [m/s]。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• (尚無)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">flow2d</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_outlier_mask">piv_outlier_mask</a> · <a style="color:#22d3bf" href="oppiv:piv_replace_outliers">piv_replace_outliers</a> · <a style="color:#22d3bf" href="oppiv:piv_vorticity">piv_vorticity</a> · <a style="color:#22d3bf" href="oppiv:piv_divergence">piv_divergence</a> · <a style="color:#22d3bf" href="oppiv:piv_flow_magnitude">piv_flow_magnitude</a> · <a style="color:#22d3bf" href="oppiv:piv_sample_at_windows">piv_sample_at_windows</a> · <a style="color:#22d3bf" href="oppiv:piv_error_stats">piv_error_stats</a> · <a style="color:#22d3bf" href="oppiv:piv_peak_locking">piv_peak_locking</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">field</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_vorticity">piv_vorticity</a> · <a style="color:#22d3bf" href="oppiv:piv_divergence">piv_divergence</a> · <a style="color:#22d3bf" href="oppiv:piv_flow_magnitude">piv_flow_magnitude</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pivops.py — PIV 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -164,6 +164,17 @@ PARAM_HINTS = {
     # 値は `depth` 種(1.0 + rng.random((32,32)) = 起伏 1 m)に対して、
     # 傾斜が飽和も消失もしない 1 m を採る。
     "cell_size": lambda rng: 1.0,
+    # --- PIV(2026-09-06) --------------------------------------------------
+    # 合成 op は入力型を持たない(引数だけの源)ので、必須引数が全部ここに
+    # 無いと **1 度も走らない**。`shape` はプールの 2-D 画像と揃えて 32x32。
+    "shape": lambda rng: (32, 32),
+    "displacement": lambda rng: (1.3, -2.1),      # 整数でない = 小数部を踏む
+    # 窓中心の格子。`piv_sample_at_windows` は添字を配列内へ丸め込むので、
+    # 場の大きさが違っても成立する(小さすぎる場では同じ点を複数回引く)。
+    "info": lambda rng: {"rows": np.array([8.0, 16.0, 24.0]),
+                         "cols": np.array([8.0, 16.0, 24.0])},
+    "pixel_size_m": lambda rng: 1e-5,             # 10 um/px
+    "dt_s": lambda rng: 2e-4,                     # 200 us
     "azimuth_deg": lambda rng: 135.0,     # 南東。0/90/180/270 の軸に乗せない
     # 視点。32x32 の種に対して内側で、かつ**中心でも角でもない**位置
     # (中心対称・角対称の取りこぼしを避ける)
@@ -460,7 +471,7 @@ def _registry_adapters():
     d.update(opscadmap.RESULT_ADAPTERS)          # 空(意図的): 素の返りが宣言型
     for _mod in ("opstomography", "opsvolcolor", "opsreprconv", "opsannotate",
                  "opsgfx2d", "opsimgmetrics", "opscolortransport",
-                 "opsimgforensics", "opsastrostack", "opsdem"):
+                 "opsimgforensics", "opsastrostack", "opsdem", "opspiv"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
         except Exception as _e:                       # 台帳が無い環境でも動く
@@ -613,6 +624,11 @@ def catalog():
         # 2026-09-03: ストリーミング動画処理。入力は既存の `video` 種
         # (_motion_clip = (32,32,32) の並進格子)をそのまま使う
         ("opsvideostream", "OPSVIDEOSTREAM", "videostream"),
+        # 2026-09-06: PIV。**画像対から密な変位を出す op がこの repo に 1 つも
+        # 無かった**(scene_flow_lk は 3-D 体積用、estimate_flow は点群用)。
+        # 新語 `flow2d` を 1 つだけ足す —— flow_dense の述語は
+        # (3, D, H, W) 限定で、2 成分の平面フローは該当しない。
+        ("opspiv", "OPSPIV", "piv"),
         # 2026-09-06: DEM 解析。入力は既存の `depth` 種((32,32) の高さ格子)。
         # 必須の `cell_size` / `azimuth_deg` / `observer_rc` は下の
         # PARAM_HINTS / OP_PARAM_HINTS で束縛する —— 束縛できないと

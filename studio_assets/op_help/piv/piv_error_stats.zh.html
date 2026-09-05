@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">piv_error_stats — PIV <code style="color:#22d3bf">assess</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">flow2d × flow2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import pivops; pivops.piv_error_stats(flow, truth, trim=1)</code>(或 <code style="color:#22d3bf">opspiv.get(&quot;piv_error_stats&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>真値との差の内訳。<b>偏りと散らばりを分けて</b>返す。</p>
+<p>どちらか一方だけを出すと、系統的にずれている実装が「誤差 0.3 px」として</p>
+<p>通ってしまう。偏り(平均誤差)と散らばり(標準偏差)は別の原因を指す。</p>
+<p>Args:</p>
+<p>flow: 推定 `<code style="color:#22d3bf">(2, h, w)</code>`。</p>
+<p>truth: 同じ格子の真値 `<code style="color:#22d3bf">(2, h, w)</code><code style="color:#22d3bf">(:func:</code>piv_sample_at_windows` の返り)。</p>
+<p>trim: 外周から除く格子数。窓が画像の縁にかかると相関が落ちるので、</p>
+<p>既定で 1 列ぶん落とす。0 で全格子。</p>
+<p>Returns:</p>
+<p>dict: `<code style="color:#22d3bf">bias_dy</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">bias_dx</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">std_dy</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">std_dx</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">rms</code>`</p>
+<p>(2 成分合わせた二乗平均平方根) / `<code style="color:#22d3bf">median_abs</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">p95_abs</code>` /</p>
+<p>`<code style="color:#22d3bf">n_valid</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_total</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">assess</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_sample_at_windows">piv_sample_at_windows</a> · <a style="color:#22d3bf" href="oppiv:piv_peak_locking">piv_peak_locking</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pivops.py — PIV 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

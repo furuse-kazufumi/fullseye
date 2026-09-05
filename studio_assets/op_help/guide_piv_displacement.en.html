@@ -1,0 +1,142 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">This guide is available in Japanese only (it is human-written prose, so nothing here is machine-substituted).</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">粒子画像流速測定(画像対から密な変位を測る) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p><b>2 枚の画像から、どこがどれだけ動いたかを測る</b>層です。入力はトレーサ粒子を写した画像対、出力は窓ごとの変位ベクトル場 <code style="color:#22d3bf">(2, h, w)</code>(成分 <code style="color:#22d3bf">(dy, dx)</code>、単位は画素/フレーム)。流体計測(PIV)が本来の用途ですが、原理は相互相関なので、模様があるものなら粒子でなくても動きが取れます。</p>
+<p>13 op / 5 カテゴリ(numpy のみ。台帳は <code style="color:#22d3bf">opspiv.py</code>、実体は <code style="color:#22d3bf">pivops.py</code>):</p>
+<p style="margin:2px 0 2px 12px">• <b>synth(2)</b> — <code style="color:#22d3bf">piv_synth_particles</code> / <code style="color:#22d3bf">piv_synth_pair</code>: 既知の変位場を持つ画像対を作る。<b>この族の全テストの真値の供給源</b>。</p>
+<p style="margin:2px 0 2px 12px">• <b>estimate(2)</b> — <code style="color:#22d3bf">piv_cross_correlate</code> / <code style="color:#22d3bf">piv_multipass</code>: 本体。窓ごとの FFT 相互相関と、粗→細の多段。</p>
+<p style="margin:2px 0 2px 12px">• <b>validate(2)</b> — <code style="color:#22d3bf">piv_outlier_mask</code> / <code style="color:#22d3bf">piv_replace_outliers</code>: 正規化中央値検定と穴埋め。</p>
+<p style="margin:2px 0 2px 12px">• <b>field(4)</b> — <code style="color:#22d3bf">piv_vorticity</code> / <code style="color:#22d3bf">piv_divergence</code> / <code style="color:#22d3bf">piv_flow_magnitude</code> / <code style="color:#22d3bf">piv_to_velocity</code>: 場の微分と単位変換。</p>
+<p style="margin:2px 0 2px 12px">• <b>assess(3)</b> — <code style="color:#22d3bf">piv_sample_at_windows</code> / <code style="color:#22d3bf">piv_error_stats</code> / <code style="color:#22d3bf">piv_peak_locking</code>: 真値との突き合わせと系統誤差の測定。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">なぜ足したか —— 在庫を数えた結果</h3>
+<p>2026-09-06 に型付きカタログ全体(900 op)を走査したところ、<b>画像対から密な変位を出す op が 1 つも無い</b>ことが分かりました。近いものはあります:</p>
+<p>| 既にあるもの | 何をするか | なぜ代わりにならないか |</p>
+<p>|---|---|---|</p>
+<p>| <code style="color:#22d3bf">scene_flow_lk</code> | Lucas-Kanade の密なフロー | <b>3 次元の体積用</b>(<code style="color:#22d3bf">(3,D,H,W)</code>)。平面の画像対は入らない |</p>
+<p>| <code style="color:#22d3bf">estimate_flow</code> / <code style="color:#22d3bf">nearest_neighbor_flow</code> | シーンフロー | <b>点群同士</b>。画像を食わない |</p>
+<p>| <code style="color:#22d3bf">correlation_score</code> | 相関 | 体積同士の<b>スカラ 1 個</b>。場を返さない |</p>
+<p>| <code style="color:#22d3bf">match_keypoints</code> | 対応点 | <b>疎</b>。窓ごとの密な場ではない |</p>
+<p>| <code style="color:#22d3bf">optical_flow_magnitude_stream</code> | 動画の流れの大きさ | 大きさのみ。ベクトルを返さない |</p>
+<p><code style="color:#22d3bf">flow_dense</code> 型は存在しますが、述語が <code style="color:#22d3bf">ndim == 4 and shape[0] == 3</code> で、作る op は <code style="color:#22d3bf">scene_flow_lk</code> の 1 本だけでした。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使う順序</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TD
+    S[&quot;piv_synth_pair&lt;br/&gt;既知の変位場 → 画像対 + 真値&quot;]
+    IMG[&quot;粒子画像 a, b&lt;br/&gt;(H, W)&quot;]
+    S --&gt; IMG
+    REAL[&quot;実験・公開データ&lt;br/&gt;(RSPID, 円柱後流 …)&quot;] --&gt; IMG
+    IMG --&gt; CC[&quot;piv_cross_correlate&lt;br/&gt;窓ごとの FFT 相互相関&quot;]
+    IMG --&gt; MP[&quot;piv_multipass&lt;br/&gt;粗→細(予測変位つき)&quot;]
+    CC --&gt; F[&quot;flow2d (2, h, w)&lt;br/&gt;(dy, dx) [px/frame]&quot;]
+    MP --&gt; F
+    F --&gt; OM[&quot;piv_outlier_mask&lt;br/&gt;正規化中央値検定&quot;]
+    OM --&gt; RO[&quot;piv_replace_outliers&quot;]
+    RO --&gt; F2[&quot;整えた flow2d&quot;]
+    F2 --&gt; VO[&quot;piv_vorticity&lt;br/&gt;渦度&quot;]
+    F2 --&gt; DI[&quot;piv_divergence&lt;br/&gt;発散(非圧縮なら 0 = 独立検算)&quot;]
+    F2 --&gt; MG[&quot;piv_flow_magnitude&quot;]
+    F2 --&gt; VE[&quot;piv_to_velocity&lt;br/&gt;m/s(画素寸法と Δt が必須)&quot;]
+    S --&gt; TR[&quot;真値 (2, H, W)&quot;]
+    TR --&gt; SA[&quot;piv_sample_at_windows&lt;br/&gt;窓格子へ落とす&quot;]
+    SA --&gt; ES[&quot;piv_error_stats&lt;br/&gt;偏りと散らばりを分ける&quot;]
+    F2 --&gt; ES
+    F2 --&gt; PL[&quot;piv_peak_locking&lt;br/&gt;系統誤差の強さ&quot;]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">最小の例(そのまま動きます)</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+
+import pivops
+
+# 1) 既知の変位場を決めて画像対を作る —— 真値は定義そのもの
+cy, cx = 127.5, 127.5
+
+
+def rigid_rotation(rows, cols):
+    &quot;&quot;&quot;画面上で時計回りに回る場。渦度は -2w になる(下の assert 参照)。&quot;&quot;&quot;
+    w = 0.01
+    return w * (cols - cx), -w * (rows - cy)
+
+
+a, b, truth = pivops.piv_synth_pair((256, 256), rigid_rotation,
+                                    density=0.02, diameter_px=2.5, seed=7)
+
+# 2) 粗い窓から細かい窓へ(多段)
+flow, info = pivops.piv_multipass(a, b, windows=(64, 32), overlap=0.5)
+
+# 3) 外れ値を見つけて埋める
+bad = pivops.piv_outlier_mask(flow, threshold=2.0)
+flow = pivops.piv_replace_outliers(flow, bad, &quot;median&quot;)
+
+# 4) 場の量
+vort = pivops.piv_vorticity(flow, info[&quot;step&quot;])
+div = pivops.piv_divergence(flow, info[&quot;step&quot;])
+
+# 5) 真値と突き合わせる(格子を揃えてから)
+t = pivops.piv_sample_at_windows(truth, info)
+stats = pivops.piv_error_stats(flow, t)
+
+assert stats[&quot;rms&quot;] &lt; 0.12                       # 実測 0.05 前後
+assert abs(stats[&quot;bias_dy&quot;]) &lt; 0.02              # 零方向への偏りは補正済み
+# 渦度は閉形式 -2w = -0.02 に一致する(**負**なのが規約どおり)
+assert abs(np.mean(vort[1:-1, 1:-1]) - (-0.02)) &lt; 0.0015
+# 発散は 0 —— 真値と比べるのとは**別経路**の検算
+assert abs(np.mean(div[1:-1, 1:-1])) &lt; 5e-4
+
+# 6) 物理速度へ。画素寸法と時間差は**必須引数**(既定値を置いていない)
+v = pivops.piv_to_velocity(flow, pixel_size_m=1e-5, dt_s=2e-4)   # 10 um/px, 200 us
+assert np.isfinite(v).all()</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">零方向への偏りと、その補正(この族でいちばん大事な実測)</h3>
+<p>素の相互相関は<b>変位を零へ引き寄せます</b>。窓をずらすと重なる領域が減り、相関の値そのものが変位とともに落ちるからです。実測(窓 32、Hann、<code style="color:#22d3bf">dx</code> を振る):</p>
+<p>| 真の dx [px] | 偏り(補正なし) | 偏り / (d/N) |</p>
+<p>|---:|---:|---:|</p>
+<p>| 0.5 | -0.0203 | 1.30 |</p>
+<p>| 1.0 | -0.0402 | 1.29 |</p>
+<p>| 2.0 | -0.0802 | 1.28 |</p>
+<p>| 4.0 | -0.1600 | 1.28 |</p>
+<p>| 6.0 | -0.2406 | 1.28 |</p>
+<p><b>比が一定</b>であることが、原因の説明(重なり面積)が合っている証拠です。値が小さいことではありません。</p>
+<p>補正は 2 つを<b>必ず対で</b>入れます: (a) 窓関数の自己相関で割る(<code style="color:#22d3bf">normalize=&quot;overlap&quot;</code>)、(b) 探索を窓の 1/4 に絞る(<code style="color:#22d3bf">search_limit=0.25</code>、PIV の「1/4 則」)。片方だけだと悪化します:</p>
+<p>| 設定 | 偏り dy | 偏り dx | RMS |</p>
+<p>|---|---:|---:|---:|</p>
+<p>| 両方あり(既定) | -0.0045 | +0.0039 | <b>0.0648</b> |</p>
+<p>| 正規化なし | -0.0867 | +0.1030 | 0.1535 |</p>
+<p>| <b>正規化だけ(探索無制限)</b> | -0.1910 | +0.2329 | <b>2.9094</b> |</p>
+<p>正規化だけを入れると RMS が <b>45 倍</b>に悪化します。縁では割る量が 0 に近づき、そこに偽のピークが立つためです。「補正を足したのだから良くなったはず」を測らずに信じない、という戒めがそのまま設定の既定になっています。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">既知の系統誤差 —— 出るはずのものが出るか</h3>
+<p>サブピクセル推定は、真の変位の小数部を整数へ引き寄せる偏り(<b>ピークロッキング</b>)を持ちます。小数部を 0 から 0.9 まで振った実測:</p>
+<p>| 推定法 | 小数部誤差の RMS | 最大絶対誤差 | 0.1 の答え | 0.9 の答え |</p>
+<p>|---|---:|---:|---:|---:|</p>
+<p>| <code style="color:#22d3bf">gauss3</code>(既定) | 0.0037 px | 0.0088 px | 0.099 | 0.896 |</p>
+<p>| <code style="color:#22d3bf">parabolic</code> | 0.0104 px | 0.0151 px | 0.091 | 0.904 |</p>
+<p>| <code style="color:#22d3bf">centroid</code> | 0.2259 px | 0.3701 px | <b>0.021</b> | <b>0.978</b> |</p>
+<p><code style="color:#22d3bf">centroid</code> の S 字は教科書どおりで、<b>出ないほうがおかしい</b>。3 つを残しているのは選択肢のためではなく、系統誤差の違いを測れるようにするためです。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">閉形式との一致(320x320、多段 64→32)</h3>
+<p>| 変位場 | 閉形式 | 渦度の実測 | 発散の実測 |</p>
+<p>|---|---|---:|---:|</p>
+<p>| 剛体回転 ω=0.01 | 渦度 -2ω = -0.02、発散 0 | -0.01997 | -0.00006 |</p>
+<p>| 一様膨張 s=0.01 | 発散 2s = 0.02、渦度 0 | +0.00009 | +0.01985 |</p>
+<p>| 単純せん断 g=0.02 | 渦度 g = 0.02、発散 0 | +0.01996 | -0.00003 |</p>
+<p><b>回転の渦度が負</b>なのは規約どおりです。テストを書いたとき最初に <code style="color:#22d3bf">+2ω</code> と書いて落ちましたが、間違っていたのは<b>テストの側</b>でした(<code style="color:#22d3bf">(ω(c-cx), -ω(r-cy))</code> は画面上では時計回りに見える場)。規約を使って書いたテストでは規約の反転を捕まえられないので、向きが分かる最小の場で別に固定してあります。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型を 1 つだけ新設した理由 —— <code style="color:#22d3bf">flow2d</code></h3>
+<p><code style="color:#22d3bf">flow_dense</code> の述語は <code style="color:#22d3bf">(3, D, H, W)</code> 限定なので、2 成分の平面フローは<b>そもそも該当しません</b>。名前を借りると台帳が「3 成分を返す」と宣言しながら 2 成分を返すことになります。</p>
+<p>型を増やすときの本 repo の条件(<b>種を持つ op が無ければ永久に未実行になる</b>)は満たしています —— 生成が 5 op、消費が 9 op、族の中で閉じています。両方向の fail-closed も実測済み:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">reprconv.flow_magnitude(2-D flow)</code> → <code style="color:#22d3bf">ValueError: this op takes DENSE scene flow (3, D, H, W) …</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">piv_vorticity(3-D scene flow)</code> → <code style="color:#22d3bf">ValueError: flow must be (2, h, w) …</code></p>
+<p><b>型では守れないもの</b>も正直に書いておきます。<code style="color:#22d3bf">piv_to_velocity</code> の出力は単位が m/s に変わりますが**型は同じ <code style="color:#22d3bf">flow2d</code><b> です。単位を型で分ける案は、m/s を作る op が 1 本・消費する op が 0 本の型を生むので採りませんでした(「証拠が出てから増やす」の順序に反する)。代わりに画素寸法と時間差を</b>必須引数**にしてあります。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">規約(取り違えると静かに間違う)</h3>
+<p>| 規約 | 値 | 破ったときに何が起きるか |</p>
+<p>|---|---|---|</p>
+<p>| 変位の単位 | <b>画素/フレーム</b> | m/s と混ぜると桁が変わる。例外は出ない |</p>
+<p>| 成分順 | <b>(dy, dx)</b> | 転置した場が出る。絵は自然に見える |</p>
+<p>| <code style="color:#22d3bf">dy</code> の正の向き | <b>行が増える向き</b>(画像の下) | 上下反転 |</p>
+<p>| 渦度の定義 | <code style="color:#22d3bf">d(dx)/dy - d(dy)/dx</code> | <b>反時計回りが正</b>。符号を決めずに書くと渦の向きが黙って反転する |</p>
+<p>| ベクトルの位置 | 窓の中心(<code style="color:#22d3bf">info[&quot;rows&quot;]</code> / <code style="color:#22d3bf">[&quot;cols&quot;]</code>) | 真値と半窓ずれて比較され、勾配のある場で誤差が水増しされる |</p>
+<p>| <code style="color:#22d3bf">piv_to_velocity</code> の 2 引数 | <b>既定値なし</b> | 既定値を置くと単位事故が既定になる |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い分けの目安(実測に基づく)</h3>
+<p style="margin:2px 0 2px 12px">• <b>窓の大きさ</b> —— 粒子が窓あたり 5-10 個になるように選ぶ。密度 0.02 なら 32x32 で約 20 個。窓 16 まで下げると 5 個になり、実測で RMS が 0.060 → 0.113 と悪化した(多段 64→32→16)。<b>細かくすれば良くなるわけではない</b>。</p>
+<p style="margin:2px 0 2px 12px">• <b>多段</b> —— 格子を密にしたいときに効く。実測では窓 64 単段(格子 7x7、RMS 0.038)に対して 64→32(格子 15x15、RMS 0.060)。<b>密度と精度は交換関係</b>であって、多段は精度を上げる道具ではなく、精度をあまり落とさずに密度を上げる道具。</p>
+<p style="margin:2px 0 2px 12px">• <b>窓関数</b> —— <code style="color:#22d3bf">hann</code> は縁のリークを減らすが有効粒子も減らす。実測(補正なし・窓 32)で RMS 0.154(hann)対 0.213(none)なので既定は hann。</p>
+<p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">peak_ratio</code>** —— 第 1 ピーク / 第 2 ピーク。1 に近い窓は当てにならない。雑音を足すと下がることを実測で固定してある。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">次にどこへ繋がるか</h3>
+<p style="margin:2px 0 2px 12px">• <b>公開データ</b> —— 合成で閉じたら RSPID(合成粒子画像 + 真値)、円柱後流の時間分解 PIV(ストローハル数 0.2 前後という独立検算が効く)、タービン翼列。RAD コーパス <code style="color:#22d3bf">fullseye_poc_datasets_corpus_v2</code> のノート 060-064 に URL の実測結果とライセンスの注意がある。</p>
+<p style="margin:2px 0 2px 12px">• <b>航空・流体</b> —— 渦度から Q 基準・λ2 へ(速度勾配テンソルの不変量)。同コーパスのノート 036。</p>
+<p style="margin:2px 0 2px 12px">• <b>既存の族</b> —— 出力の <code style="color:#22d3bf">image2d</code> は 2-D op 一式(閾値・morphology・疑似カラー・図注)へそのまま渡せる。時系列にすれば <code style="color:#22d3bf">videostream</code> 族。</p>
