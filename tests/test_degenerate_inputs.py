@@ -42,10 +42,17 @@ if ROOT not in sys.path:
 import op_probe                                            # noqa: E402
 import ops as _ops                                         # noqa: E402
 
-#: 非有限が**答え**である op(``ops.NONFINITE_IS_MEANINGFUL`` が唯一の正本)。
-#: 到達不能を inf で表す測地距離、特異行列の条件数 —— もっともらしい有限値に
-#: 潰すと「届かない」が「近い」に化ける。台帳を各テストで書き写さないこと。
-MEANINGFUL_NONFINITE = frozenset(getattr(_ops, "NONFINITE_IS_MEANINGFUL", {}))
+
+def _meaningful_nonfinite() -> frozenset:
+    """非有限が**答え**である op。``ops.NONFINITE_IS_MEANINGFUL`` が唯一の正本。
+
+    ★以前はモジュール大域に frozenset の**鏡**を置いていた。門の変異テスト
+    (2026-09-05)で、鏡を正本から切り離して偽の項目を足しても**どのテストも
+    落ちない**ことが分かった —— 鏡は独自の項目を持たないので陳腐化検査の対象に
+    なっておらず、切り離された瞬間に誰も見なくなる。鏡を持たず、使うたびに
+    正本を読む。ずれる余地そのものを消す。
+    """
+    return frozenset(getattr(_ops, "NONFINITE_IS_MEANINGFUL", {}))
 
 #: 各 in_sort の「0 要素」の形。``None`` = その sort には空の代表が無い。
 EMPTY = {
@@ -106,7 +113,7 @@ def test_no_op_returns_a_non_finite_value_for_an_empty_input(registry):
             out = op.fn(v.copy() if hasattr(v, "copy") else dict(v), 0.5, 0.5)
         except Exception:                                 # noqa: BLE001
             continue                                      # 例外は台帳に載る(契約内)
-        if op.name in MEANINGFUL_NONFINITE:
+        if op.name in _meaningful_nonfinite():
             continue
         if not _finite_and_sort_valid(out, op.out_sort):
             bad.append(op.name)
@@ -156,7 +163,7 @@ def test_constant_and_single_pixel_inputs_stay_in_contract(registry, fill):
                 out = op.fn(v, 0.5, 0.5)
             except Exception:                             # noqa: BLE001
                 continue
-            if op.name in MEANINGFUL_NONFINITE:
+            if op.name in _meaningful_nonfinite():
                 continue
             if not _finite_and_sort_valid(out, op.out_sort):
                 bad.append((op.name, shape))
@@ -239,7 +246,7 @@ def test_no_op_returns_a_non_finite_value_for_a_non_finite_input(registry, kind,
                     out = op.fn(_nonfinite_like(base, fill), 0.5, 0.5)
             except Exception:                             # noqa: BLE001
                 continue                                  # 例外は契約内(台帳に載る)
-        if op.name in MEANINGFUL_NONFINITE:
+        if op.name in _meaningful_nonfinite():
             continue                                      # 非有限が答えの op
         if not _finite_and_sort_valid(out, op.out_sort):
             bad.append(op.name)
@@ -309,3 +316,30 @@ def test_the_guard_does_not_touch_a_normal_input(registry):
             b = np.asarray(op.fn(good.copy(), 0.5, 0.5), dtype=object)
         assert np.array_equal(np.asarray(a, float), np.asarray(b, float)), \
             "%s: 通常入力の結果が再現しない" % name
+
+
+def test_every_ledgered_op_actually_has_the_gate_not_just_luck(registry):
+    """★関門が**掛かっている**ことを、結果の有限性ではなく**拒否そのもの**で確かめる。
+
+    門の変異テスト(2026-09-05)で判明: 台帳から `cv_cc_count` を消しても
+    Windows では何も落ちなかった。守っている SIGSEGV は Linux 専用で、
+    Windows では退化入力を渡しても偶然まともな値が返るからだ ——
+    「有限を返す」は「関門がある」の証拠にならない。
+
+    strict mode では `guard` が例外を再送出するので、関門が掛かっていれば
+    退化入力で **ValueError(拒否)** が外に出る。掛かっていなければ出ない。
+    これは Windows でも Linux でも同じに振る舞う。
+    """
+    import backend_safe as _bs
+    import ops as _o
+    by = {op.name: op for op in registry}
+    for name in _o.NATIVE_CRASHES_ON_DEGENERATE:
+        op = by.get(name)
+        if op is None:
+            continue
+        with _bs.strict_mode(True), warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            with pytest.raises(ValueError, match="拒否"):
+                op.fn(np.zeros((0, 0)), 0.5, 0.5)
+            with pytest.raises(ValueError, match="拒否"):
+                op.fn(np.full((16, 16), np.nan), 0.5, 0.5)
