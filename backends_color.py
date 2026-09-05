@@ -88,6 +88,16 @@ def _cfa_to_rgb(v, a, b):                         # image -> color : Bayer demos
 
 
 def _trans_from_rgb(v, a, b):                     # color -> color : RGB -> {HSV,Lab,YUV,XYZ}
+    """RGB 画像を別の色空間（HSV / Lab / YUV / XYZ）へ変換する。HALCON の
+    ``trans_from_rgb``（RGB 色空間から任意の色空間への変換）に相当。
+
+    内部は OpenCV の ``cv2.cvtColor`` を 8bit 経由で呼ぶだけで、変換先の
+    色空間そのものの定義は OpenCV の実装に従う。
+
+    a は変換先を 4 通り（HSV, Lab, YUV, XYZ の順）から選ぶ
+    （``min(3, int(a * 4))``）。b は未使用。8bit 量子化を経由するため、
+    逆変換（``trans_to_rgb``）と組み合わせても厳密には可逆でない。
+    """
     c = (_to_color(v) * 255).astype(np.uint8)
     code, denom = ((cv2.COLOR_RGB2HSV, 255.0), (cv2.COLOR_RGB2Lab, 255.0),
                    (cv2.COLOR_RGB2YUV, 255.0), (cv2.COLOR_RGB2XYZ, 255.0))[min(3, int(a * 4))]
