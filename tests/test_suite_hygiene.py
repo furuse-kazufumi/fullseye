@@ -97,10 +97,15 @@ def test_no_test_module_imports_a_guarded_dependency_at_top_level():
                 offenders.append("%s: 構文エラー %s" % (name, exc))
                 continue
         scanned += 1
+        guarded = _guarded_before(tree)
         for mod, lineno in _toplevel_imports(tree):
-            if mod in NEEDS_GUARD:
-                offenders.append("%s:%d  import %s  (%s)" % (name, lineno, mod,
-                                                             NEEDS_GUARD[mod]))
+            if mod not in NEEDS_GUARD:
+                continue
+            g = guarded.get(mod)
+            if g is not None and g < lineno:
+                continue                                      # 先に importorskip がある
+            offenders.append("%s:%d  import %s  (%s)" % (name, lineno, mod,
+                                                         NEEDS_GUARD[mod]))
     assert scanned > 50, "テストファイルの列挙に失敗している(母数 %d)" % scanned
     assert not offenders, (
         "収集を中断させうる top-level import がある(%d 件)。"
