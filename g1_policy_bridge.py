@@ -171,6 +171,15 @@ class G1PolicySession:
                  n_obst=8, obst_r=0.30, rays=16, ray_fov=180.0, ray_max=4.0,
                  obst_x=(2.5, 16.0), obst_y=1.2, hit_dist=0.45, seed=0):
         import mujoco
+        if not xml:
+            raise ValueError(
+                "no G1 scene XML: pass xml=... or set FULLSEYE_G1_SCENE_XML to the "
+                "MuJoCo Menagerie file 'unitree_g1/scene.xml'. No local path is baked "
+                "into the distribution.")
+        if not ref_npy:
+            raise ValueError(
+                "no reference trajectory: pass ref_npy=... or set FULLSEYE_G1_REF_NPY "
+                "to the mocap walk cycle produced by the training side (.npy).")
         self._mujoco = mujoco
         self.pol = load_policy(params_pkl)
         self.vision = bool(vision)
