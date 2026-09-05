@@ -417,13 +417,34 @@ def test_condition_header_is_one_expression_up_to_end_of_line():
 
 # F13: read_image is confined to base_dir
 def test_read_image_cannot_leave_base_dir(tmp_path):
-    for p in ("../../x.png", "../../../../Windows/win.ini", "C:/Windows/win.ini",
-              str(tmp_path.parent / "x.png")):
+    """脱出を試みるパスは base_dir の外を読めない。
+
+    ★2026-09-05 修正: 以前は `"C:/Windows/win.ini"` を脱出例に入れていたが、
+    POSIX では `os.path.isabs("C:/...")` が False なので**相対パスとして
+    base_dir の中に閉じ込められる**(= 安全側)。「outside」が出ないのは
+    実装の穴ではなくテストの Windows 前提であり、Linux CI ではこれが赤に
+    なっていた。脱出例は**どの OS でも脱出になる形**で書く。
+    """
+    escapes = ["../../x.png", "../../../../etc/passwd", str(tmp_path.parent / "x.png")]
+    escapes.append("C:/Windows/win.ini" if os.name == "nt" else "/etc/passwd")
+    for p in escapes:
         e = _err_with_base("I := read_image(%r)" % p, str(tmp_path))
-        assert "outside" in e.msg and e.line == 1
+        assert "outside" in e.msg and e.line == 1, f"{p!r} が拒否されていない: {e.msg}"
     inside = tmp_path / "sub"; inside.mkdir()
     e = _err_with_base("I := read_image('sub/missing.png')", str(tmp_path))
     assert "outside" not in e.msg                    # resolved inside, then a decode error
+
+
+def test_a_windows_drive_path_stays_inside_the_sandbox_on_posix(tmp_path):
+    """POSIX で `"C:/..."` は絶対パスではないので、**中に閉じ込められる**。
+
+    脱出しないことが要点。エラー文言は「外に出ようとした」ではなく
+    「そんなファイルは無い」側になる —— それが正しい。
+    """
+    if os.name == "nt":
+        pytest.skip("Windows では C:/ は本物の絶対パス(上のテストが見ている)")
+    e = _err_with_base("I := read_image('C:/Windows/win.ini')", str(tmp_path))
+    assert "outside" not in e.msg, "POSIX で脱出扱いになっている: " + e.msg
 
 
 def _err_with_base(src, base_dir):
