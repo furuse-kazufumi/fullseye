@@ -241,26 +241,87 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             return cv2.cvtColor(im, cv2.COLOR_BGR2GRAY).astype(np.float64) / 255
 
         def _stylize(v, a, b):
+            """OpenCV の stylization(絵画風/カートゥーン風のノンフォトリアリスティック・
+            レンダリング)。
+
+            エッジ保存平滑化を使って細部を均しつつ主要な輪郭を残し、平坦な色面と
+            目立つ輪郭からなるイラスト調の画像を作る(内部で 3ch に変換して処理し、
+            結果をグレースケールへ戻す)。
+
+            ``a`` が空間方向の平滑化範囲 ``sigma_s`` を 20〜120 で振る(大きいほど
+            広い範囲を均す)。``b`` が色(輝度)差の許容範囲 ``sigma_r`` を 0.1〜0.5
+            で振る(大きいほどエッジをまたいで均しやすくなり、平坦化が強まる)。
+            """
             return _gray(cv2.stylization(_to3(v), sigma_s=20 + 100 * a, sigma_r=0.1 + 0.4 * b))
 
         def _pencil(v, a, b):
+            """OpenCV の pencilSketch(鉛筆画風レンダリング)。
+
+            エッジ保存平滑化とドッジ合成で鉛筆デッサン風の白黒スケッチを作る
+            (返り値のうちグレースケール版のみ使用し、カラー版は捨てている)。
+
+            ``a`` が平滑化の空間範囲 ``sigma_s`` を 20〜100 で振る。``b`` は
+            色差許容 ``sigma_r``(0.05〜0.2)と陰影の濃さ ``shade_factor``
+            (0.02〜0.08)の両方を同時に振る(2 つのパラメータを 1 つのノブに
+            まとめている)。
+            """
             g, _ = cv2.pencilSketch(_to3(v), sigma_s=20 + 80 * a, sigma_r=0.05 + 0.15 * b,
                                     shade_factor=0.02 + 0.06 * b)
             return g.astype(np.float64) / 255
 
         def _edge_preserve(v, a, b):
+            """OpenCV の edgePreservingFilter(エッジ保存平滑化、``flags=1`` =
+            RECURS_FILTER = 再帰フィルタ方式)。
+
+            bilateral フィルタに近い効果をより高速に得る手法で、輪郭を保ちながら
+            内部を滑らかにする。
+
+            ``a`` が空間方向の平滑化範囲 ``sigma_s`` を 20〜120 で振る。``b`` が
+            色差の許容範囲 ``sigma_r`` を 0.1〜0.6 で振る(大きいほど強く均す)。
+            """
             return _gray(cv2.edgePreservingFilter(_to3(v), flags=1, sigma_s=20 + 100 * a,
                                                   sigma_r=0.1 + 0.5 * b))
 
         def _detail(v, a, b):
+            """OpenCV の detailEnhance(細部強調)。
+
+            エッジ保存平滑化をベースに、平坦部は滑らかに保ったまま微細な
+            ディテール(テクスチャ)のコントラストを持ち上げる。
+
+            ``a`` が空間範囲 ``sigma_s`` を 10〜50 で振る。``b`` が色差許容
+            ``sigma_r`` を 0.1〜0.4 で振る。``xcv_edge_preserving`` と同系の
+            処理だが、こちらは細部を「消す」のではなく「強調する」方向のフィルタ。
+            """
             return _gray(cv2.detailEnhance(_to3(v), sigma_s=10 + 40 * a, sigma_r=0.1 + 0.3 * b))
 
         def _inpaint_cv(v, a, b):
+            """欠損領域を推定して埋める修復(inpainting)。
+
+            8bit 変換後、極端に明るい(>235)/暗い(<20)画素を「欠損」とみなして
+            自動マスクし、OpenCV の Telea 法(高速マーチング法ベース、
+            ``cv2.INPAINT_TELEA``)で周囲から埋める。``xsk_inpaint``
+            (biharmonic 法)と同じ発想の別アルゴリズム版。
+
+            半径 3 画素の近傍を使う(固定)。``a``, ``b`` は未使用。しきい値が
+            固定のため、本来意味のある白飛び/黒つぶれ画素まで埋められてしまう
+            場合がある。
+            """
             x = _u8(v)
             mask = (((x > 235) | (x < 20)) * 255).astype(np.uint8)
             return cv2.inpaint(x, mask, 3, cv2.INPAINT_TELEA).astype(np.float64) / 255
 
         def _grabcut(v, a, b):
+            """GrabCut による前景抽出。
+
+            画像中央 70%×70%の固定矩形を「たぶん前景」の初期領域として与え、
+            色分布の GMM とグラフカットで前景/背景を反復的に分離する
+            (``cv2.GC_INIT_WITH_RECT``)。「確実な前景」と「たぶん前景」の画素を
+            合わせて前景 region として返す。
+
+            ``a`` が反復回数を 2〜5 回の範囲で振る(多いほど収束するが遅い)。
+            ``b`` は未使用。矩形が画像中央固定のため、被写体が縁に寄っている
+            画像では抽出に失敗しやすい。
+            """
             img = _to3(v)
             h, w = img.shape[:2]
             mask = np.zeros((h, w), np.uint8)
@@ -270,6 +331,20 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             return ((mask == 1) | (mask == 3)).astype(np.float64)
 
         def _watershed_markers(v, a, b):
+            """マーカー制御ウォーターシェッドによる境界線抽出。
+
+            HALCON の ``watersheds``(ウォーターシェッドと分水嶺盆地を抽出する)に
+            相当するが、ここでは盆地のラベルではなく **分水嶺の境界線** だけを
+            region として返す(近似)。
+
+            手順は古典的な OpenCV レシピ: Otsu 二値化 -> 膨張で「確実な背景」推定
+            -> 距離変換のしきい値で「確実な前景」推定 -> 両者の差分を「不明」領域
+            とし、確実な前景の連結成分をマーカーに ``cv2.watershed`` を実行。
+
+            ``a`` が確実な前景を決めるしきい値を距離変換最大値の 30%〜70% の範囲
+            で振る(大きいほど前景マーカーが小さく・保守的になり、過分割/過統合
+            の傾向が変わる)。``b`` は未使用。
+            """
             img = _to3(v)
             x = _u8(v)
             _, thr = cv2.threshold(x, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
@@ -284,6 +359,17 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             return (markers == -1).astype(np.float64)
 
         def _orb_cv(v, a, b):
+            """OpenCV 版 ORB(Oriented FAST and Rotated BRIEF)キーポイント検出数。
+
+            ``cv2.ORB_create`` で検出のみ行い(記述子は計算しない)、検出できた
+            キーポイント数を返す(feature 出力)。``xsk_orb_count``(skimage 版)
+            と同じ発想の別実装で、検出器の実装が異なるため件数が一致するとは
+            限らない。
+
+            ``a`` が要求する最大特徴点数 ``nfeatures`` を 50〜500 の範囲で振る
+            (上限であり、実際の検出数は画像内容に依存してそれより少なくなる)。
+            ``b`` は未使用。
+            """
             orb = cv2.ORB_create(nfeatures=int(50 + 450 * a))
             kp = orb.detect(_u8(v), None)
             return np.float64(len(kp))
