@@ -51,6 +51,10 @@ Linux に入れたら、**その場で 5 件見つかった**。
 | CI が壊れているのに気づかない | preflight `ci`(HEAD の CI 結論を見る) | preflight |
 | テストの import 失敗が全体を中断させる | `pytest.importorskip` + CI の install に依存を明記 | CI |
 | 版がずれたままタグを打つ | preflight `version` | preflight |
+| 台帳から本物を消しても落ちない(消えた op は検査対象からも消える) | テスト側の**対照**集合との等価(`EXPECTED_NATIVE_CRASH_LEDGER` / `test_the_two_nonfinite_ledgers_agree`) | 全数テスト |
+| 台帳に偽の op 名が残る(改名・タイポ) | `test_every_ledger_entry_names_a_live_bridge_op` ほか各台帳の陳腐化検査 | 全数テスト |
+| 別 repo の agent が実ツリーを直接書き換える(worktree 隔離は cwd の repo のみ) | 規律: 書き換える agent には自分で worktree を切って渡す。レビューは読み取り専用 | 人 |
+
 
 ---
 
