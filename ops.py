@@ -1392,7 +1392,44 @@ def _wrap_native_crash_guards() -> int:
     return n
 
 
+def _label_guarded_functions_with_their_op_name() -> int:
+    """劣化を記録するとき、**どの op か**が分かるようにする。
+
+    ★2026-09-05 の実測でぶつかった: `backend_safe.guard` は記録名を
+    ``name`` → ファサードが実行中の op(``current_op``) → 関数の ``__qualname__``
+    の順で決める。ギャラリーや進化ループのように **ファサードを通さず
+    ``op.fn(...)`` を直に呼ぶ**経路では最初の 2 つが無いので、
+    ``build.<locals>._hog`` のようなクロージャ名が記録される。
+    同じ工場関数から作られた op は**全部同じ名前に潰れ**、
+    実測で 473 op が 161 キーになっていた —— 劣化しても犯人が分からない。
+
+    直し方: `_safe` は 24 のバックエンドに重複定義された同型ラッパ族なので、
+    呼び出し側 30 箇所を触らない。`guard` が ``w.__wrapped__`` を残しているので、
+    **登録が済んだあとに内側の関数へ本名を書き込む**。記録は
+    ``getattr(fn, "__qualname__")`` を読むだけなので、**実行時コストはゼロ**。
+
+    ラッパが多段(``_f64_first`` → ``_safe`` → native 関門)のこともあるので、
+    ``__wrapped__`` の鎖を辿って全部に書く。書けない相手(builtin, partial)は飛ばす。
+    """
+    n = 0
+    for _op in REGISTRY:
+        fn = getattr(_op.fn, "__wrapped__", None)
+        depth = 0
+        while fn is not None and depth < 8:
+            try:
+                if getattr(fn, "__qualname__", None) != _op.name:
+                    fn.__qualname__ = _op.name
+                    n += 1
+            except (AttributeError, TypeError):        # builtin / partial 等
+                pass
+            fn = getattr(fn, "__wrapped__", None)
+            depth += 1
+    return n
+
+
 NATIVE_CRASH_GUARDS = _wrap_native_crash_guards()
+#: 記録名を本名にした関数の数(潰れたキーの再発をここで数える)。
+OP_NAME_LABELS = _label_guarded_functions_with_their_op_name()
 RT = {op.name: op.fn for op in REGISTRY}
 _BY_NAME = {op.name: op for op in REGISTRY}
 OPS = tuple((op.name, op.fn) for op in REGISTRY)

@@ -414,6 +414,9 @@ def _make_runner(fn, kwargs, tunable, in_sort, out_sort, doc=None):
     *doc* は橋渡し元の説明(:func:`_bridge_doc`)—— 渡さないと、カタログ側が
     ちゃんと書いた説明がラッパで消えて「説明なし」の op が 143 本できる。
     """
+    # 記録名は `_run.__qualname__` を見る。`ops._label_guarded_functions_with_their_op_name`
+    # が登録時に本名を書き込むので、ファサードを通さない直接呼び出しでも
+    # 「どの op が劣化したか」が残る(素の None だと `?` に潰れる)。
     def _run(v, a, b):
         kw = dict(kwargs)
         for (pname, default), knob in zip(tunable, (a, b)):
@@ -424,7 +427,7 @@ def _make_runner(fn, kwargs, tunable, in_sort, out_sort, doc=None):
             from backend_safe import is_strict, record
             if is_strict():
                 raise
-            record(None, _e, out_sort)
+            record(getattr(_run, "__qualname__", None), _e, out_sort)
             return _fallback(v, in_sort, out_sort)
         # 型の嘘も fail-soft と同じ扱い。**形まで検証する**のが要点で、
         # 「ndarray かどうか」では足りない: 宣言 volume の op が 2-D を返すと、
@@ -439,7 +442,7 @@ def _make_runner(fn, kwargs, tunable, in_sort, out_sort, doc=None):
                             % (getattr(got, "shape", type(got).__name__), out_sort))
             if is_strict():
                 raise err
-            record(None, err, out_sort)
+            record(getattr(_run, "__qualname__", None), err, out_sort)
             return _fallback(v, in_sort, out_sort)
         return got
     _run.__doc__ = doc
