@@ -210,9 +210,8 @@ def finger_lengths(bones) -> dict:
 def main() -> int:
     myo_dir = os.environ.get("MYO_SIM_DIR", "")
     if not myo_dir:
-        print("SKIP: set MYO_SIM_DIR to a myo_sim checkout
-"
-              "  git clone https://github.com/MyoHub/myo_sim  (Apache-2.0)")
+        print("SKIP: set MYO_SIM_DIR to a myo_sim checkout")
+        print("  git clone https://github.com/MyoHub/myo_sim  (Apache-2.0)")
         return 0
     myo = Path(myo_dir)
     xml = myo / "hand" / "myohand.xml"
