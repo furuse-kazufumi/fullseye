@@ -26,6 +26,8 @@ def _default_workdir() -> str:
     """
     root = os.environ.get("RAPTOR_DIR", "")
     return os.path.join(root, "out", "worklog", "imgevolve") if root else ""
+
+
 PROBLEMS = ("denoise", "edge", "binarize")
 
 

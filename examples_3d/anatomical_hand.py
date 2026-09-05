@@ -17,7 +17,8 @@
     4. 解剖学的サニティ: 中指 > 示指 > 薬指 > 小指 の指長順(遠位端までの長さ)を実測で確認。
 
 データ
-    同梱しない(fail-closed)。環境変数 ``MYO_SIM_DIR``、無ければ ``C:/dev/projects/myo_sim``。
+    同梱しない(fail-closed)。取得先は環境変数 ``MYO_SIM_DIR`` で指す(既定は無い —— 
+    配布物にローカル絶対パスを焼き込まないため)。
     取得: ``git clone https://github.com/MyoHub/myo_sim``(Apache-2.0)。
 
 Run: py -3.11 examples_3d/anatomical_hand.py
@@ -207,7 +208,13 @@ def finger_lengths(bones) -> dict:
 
 
 def main() -> int:
-    myo = Path(os.environ.get("MYO_SIM_DIR", r"C:/dev/projects/myo_sim"))
+    myo_dir = os.environ.get("MYO_SIM_DIR", "")
+    if not myo_dir:
+        print("SKIP: set MYO_SIM_DIR to a myo_sim checkout
+"
+              "  git clone https://github.com/MyoHub/myo_sim  (Apache-2.0)")
+        return 0
+    myo = Path(myo_dir)
     xml = myo / "hand" / "myohand.xml"
     if not xml.exists():
         # examples3d の "download" 系の作法: データ未取得は SKIP(exit 0)。捏造はしない。
