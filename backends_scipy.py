@@ -57,16 +57,41 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         from scipy import signal
 
         def _wiener(v, a, b):
+            """Wiener 適応フィルタ（``scipy.signal.wiener``）でノイズを抑える。
+
+            ``a`` は近傍窓のサイズを 3, 5, 7, 9 の奇数に振る（``k = 3 + 2*int(a*3)``、
+            a=0 で 3、a に近い 1 で 9）。``b`` は未使用。局所分散からノイズ分散を
+            自動推定する適応フィルタで、一様な強さで均すガウシアン/ミーンボックスと
+            違い平坦な領域ほど強く均し、分散の大きい（エッジ/テクスチャの多い）領域は
+            保存されやすい。ガウス性ノイズを仮定するので塩胡椒ノイズには不向き。
+            出力は [0,1] にクリップする。
+            """
             k = 3 + 2 * int(a * 3)
             return np.clip(signal.wiener(np.clip(v, 0, 1), (k, k)), 0, 1)
 
         def _savgol(v, a, b):
+            """Savitzky-Golay フィルタで画像を平滑化する（列方向→行方向の順に 1 次元適用）。
+
+            ``a`` は窓幅を 5, 7, 9, 11, 13 の奇数に振る（``w = 5 + 2*int(a*4)``）。
+            多項式次数は 2 に固定。``b`` は未使用。窓内に 2 次多項式を最小二乗
+            フィットして中心値を置き換える手法なので、単純な移動平均よりピークの
+            高さや勾配を保ったまま平滑化できる。窓幅が画像サイズに対して大きすぎると
+            境界の処理（``scipy`` の既定の外挿）の影響が強く出る。
+            """
             x = np.clip(np.asarray(v, np.float64), 0, 1)
             w = 5 + 2 * int(a * 4)
             y = signal.savgol_filter(x, w, 2, axis=1)
             return np.clip(signal.savgol_filter(y, w, 2, axis=0), 0, 1)
 
         def _hilbert_env(v, a, b):
+            """解析信号（ヒルベルト変換）の振幅包絡線を行方向に取り出す。
+
+            画素値を [-0.5, 0.5] に平行移動してから各行に 1 次元ヒルベルト変換
+            （``scipy.signal.hilbert``）を掛け、複素解析信号の絶対値（瞬時振幅）を
+            正規化して返す。``a``, ``b`` は未使用。周期的な縞模様やテクスチャの
+            「包絡線」を強調するのに向き、位相情報は捨てて振幅だけを残す。列方向
+            には掛からないため、結果は水平方向の変化にのみ反応する。
+            """
             x = np.clip(np.asarray(v, np.float64), 0, 1) - 0.5
             return _norm(np.abs(signal.hilbert(x, axis=1)))
 
