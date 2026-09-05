@@ -244,18 +244,16 @@ def render_gi(V, F, *, pose=None, intrinsics=None, size: int = 256, spp: int = 6
     radius = float(np.linalg.norm(v - centre, axis=1).max()) or 1.0
     shape = _shape(mi, v, f)
 
-    scene = {"type": "scene", "sensor": sensor, "gi_mesh": shape,
-             "gi_mesh_bsdf": None}
-    scene.pop("gi_mesh_bsdf")
-    scene["gi_mesh"] = {"type": "ply", "filename": ""} if False else shape
+    scene = {"type": "scene", "sensor": sensor, "gi_mesh": shape}
     scene.update(_enclosure(mi, enclosure, centre, radius, wall, light_power))
 
-    # 対象メッシュの反射率。mi.Mesh は BSDF を後から差せないので、辞書側で包む。
-    scene["gi_mesh"] = shape
+    # 対象メッシュの反射率。`mi.Mesh` は既定の BSDF を持つので、あれば差し替える。
     shape_params = mi.traverse(shape)
-    if "bsdf.reflectance.value" in shape_params:
-        shape_params["bsdf.reflectance.value"] = mi.Color3f(*alb.tolist())
-        shape_params.update()
+    for key in ("bsdf.reflectance.value", "bsdf.reflectance"):
+        if key in shape_params:
+            shape_params[key] = mi.Color3f(*alb.tolist())
+            shape_params.update()
+            break
 
     beauty_scene = mi.load_dict(
         dict(scene, integrator={"type": "path", "max_depth": max_depth}))
