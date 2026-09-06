@@ -506,6 +506,7 @@ def section_crossover() -> dict:
                     ("2 値化 経路平均 RMS", sigmas,
                      [b if np.isfinite(b) else 0.0 for b in bin_mean_rms])],
                    xlabel="ざらつき σ", ylabel="幅の誤差 RMS [mm]",
+                   ylim=(-0.02, 0.92),
                    title="ざらつきに対する壊れ方(幅 0.60 mm)",
                    caption="点ごとでは 2 値化が下に見えるが、経路平均に直すと"
                            "積分法の散らばりは消え、2 値化の偏りは残る。"
