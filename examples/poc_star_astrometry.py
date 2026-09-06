@@ -259,6 +259,63 @@ def main():
           f"0.01 px = {0.01 * PLATE_ARCSEC_PX * 1000:.0f} ミリ秒角")
     timing["0 真値"] = time.perf_counter() - t0
 
+    # --------------------------------------------------------------- #
+    # 1) S/N を振る —— 4 手法はどこで床に当たるか。理論限界と比べる      #
+    # --------------------------------------------------------------- #
+    t0 = time.perf_counter()
+    grid = np.arange(16, SHAPE[0] - 12, 32.0)
+    gr, gc = np.meshgrid(grid, grid)
+    base_r, base_c = gr.ravel(), gc.ravel()
+    n_grid, n_rep = base_r.size, 6
+    fluxes = (300.0, 1000.0, 3000.0, 10000.0, 30000.0, 100000.0)
+    print(f"\n【1】S/N を振る —— 孤立星 {n_grid} 個 x {n_rep} 実現 = "
+          f"{n_grid * n_rep} 標本 / 明るさ。FWHM {3.2} px、"
+          f"位相は毎回一様乱数(画素位相を平均化する)。初期値は全手法で同じ"
+          f"(真値の四捨五入)なので、検出のずれは混ざらない")
+    print("     flux[e-]  S/N   理論下限     " + "".join(
+        f"{lab:>21s}" for lab, _ in METHODS))
+    print(" " * 25 + "sigma[px]  " + "".join(
+        f"{'偏り':>9s}{'散らばり':>12s}" for _ in METHODS))
+    sn_tab = {}
+    for flux in fluxes:
+        crlb = crlb_px(flux, 3.2)
+        errs = {lab: [] for lab, _ in METHODS}
+        for rep in range(n_rep):
+            rg = np.random.default_rng(1000 + rep)
+            dr = rg.uniform(-0.5, 0.5, n_grid)
+            dc = rg.uniform(-0.5, 0.5, n_grid)
+            tr, tc = base_r + dr, base_c + dc
+            img = render(SHAPE, tr, tc, np.full(n_grid, flux), 3.2, seed=500 + rep)
+            guess = np.stack([np.round(tr), np.round(tc)], axis=1)
+            for lab, fn in METHODS:
+                got = fn(img, guess, box=11, fwhm_px=3.2)
+                errs[lab].append(np.stack([got[:, 0] - tr, got[:, 1] - tc], axis=1))
+        row = f"    {flux:9.0f}"
+        snr = flux / np.sqrt(flux + 121.0 * (SKY + READ ** 2))
+        row += f" {snr:6.1f} {crlb:9.4f}   "
+        cells = {}
+        for lab, _ in METHODS:
+            e = np.concatenate(errs[lab]).ravel()
+            b, s = bias_scatter(e)
+            cells[lab] = (b, s, crlb)
+            row += f"{b:+9.4f}{s:12.4f}"
+        sn_tab[flux] = cells
+        print(row)
+    best = min(METHODS, key=lambda m: sn_tab[10000.0][m[0]][1])[0]
+    ratios = {lab: sn_tab[100000.0][lab][1] / sn_tab[100000.0][lab][2]
+              for lab, _ in METHODS}
+    print(f"   → 明るい端(flux 1e5)で理論下限に対する比: " + "  ".join(
+        f"{lab} {ratios[lab]:.2f}x" for lab, _ in METHODS))
+    print(f"   暗い端(flux 300)では **素の重心が使い物にならない** —— "
+          f"散らばり {sn_tab[300.0]['重心(ゼロ点)'][1]:.3f} px は "
+          f"理論下限 {sn_tab[300.0]['重心(ゼロ点)'][2]:.3f} px の "
+          f"{sn_tab[300.0]['重心(ゼロ点)'][1] / sn_tab[300.0]['重心(ゼロ点)'][2]:.0f} 倍。"
+          f"11x11 の箱に入る空 {121 * SKY:.0f} e- が星 300 e- を圧倒し、"
+          f"**測っているのは箱の中心**であって星ではない")
+    assert ratios["ガウシアン当てはめ"] < 2.0
+    assert sn_tab[300.0]["重心(ゼロ点)"][1] > 3.0 * sn_tab[300.0]["背景引き重心"][1]
+    timing["1 S/N"] = time.perf_counter() - t0
+
     print("\nPASS(執筆中)")
     return True
 
