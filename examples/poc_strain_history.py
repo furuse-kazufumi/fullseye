@@ -265,14 +265,18 @@ def section3_crossover(frames):
     print()
     # 散らばりが sqrt(T) で伸びるか —— 累積の教科書的な予想
     sc = out["cum"]["scatter"]
-    k1, k2 = 4, 24
-    print("  累積の散らばり: t=%d で %.1f µε → t=%d で %.1f µε(比 %.2f)。"
-          % (k1, 1e6 * sc[k1], k2, 1e6 * sc[k2], sc[k2] / max(sc[k1], 1e-15)))
-    print("  歩数の比の平方根 sqrt(%d/%d) = %.2f。**ランダムウォークの予想**と"
-          % (k2, k1, np.sqrt(k2 / k1)))
-    print("  比べると %s。"
-          % ("よく合う" if abs(sc[k2] / max(sc[k1], 1e-15) - np.sqrt(k2 / k1)) < 0.6
-             else "**合わない**(揺らぎ以外の何かが効いている)"))
+    kk = np.arange(2, T)
+    p = np.polyfit(np.log(kk.astype(float)), np.log(sc[2:]), 1)[0]
+    print("  累積の散らばりの伸び方: log-log の傾き %.2f(ランダムウォークなら"
+          " 0.50)。" % p)
+    print("  t=4 で %.1f µε → t=24 で %.1f µε(比 %.2f、sqrt(6) = 2.45)。"
+          % (1e6 * sc[4], 1e6 * sc[24], sc[24] / max(sc[4], 1e-15)))
+    print("  ★実現 %d 通りでは散らばりの推定自体が ±%.0f %% 揺れるので、"
+          % (n_real, 100 / np.sqrt(2 * (n_real - 1))))
+    print("  この傾きは**桁の話としてしか**読めない。断定はしない。")
+    print("  はっきりしているのは、**散らばり(%.0f µε)より偏り(%.0f µε)の"
+          % (1e6 * sc[24], abs(1e6 * out["cum"]["bias"][24])))
+    print("  ほうが大きい**こと —— 累積の問題は揺らぎではない(4 節で確かめる)。")
     # 交点
     cross = None
     for k in range(1, T):
