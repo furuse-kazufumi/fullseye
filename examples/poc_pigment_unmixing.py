@@ -678,8 +678,8 @@ def main():
     print("   光量は有限なので、同じ帯域を B 本に割ると 1 本あたりの光子は 1/B、")
     print("   反射率換算の雑音は sqrt(B) 倍になる。3 つの前提で並べる:")
     print("     [十分光量] sigma = %.4f * sqrt(B)" % SIGMA0)
-    print("     [低照度]   sigma = %.4f * sqrt(B)(露光を 25 分の 1 に切り詰めた場合)"
-          % (SIGMA0 * 5))
+    print("     [低照度]   sigma = %.4f * sqrt(B)(露光を 225 分の 1 に切り詰めた場合)"
+          % (SIGMA0 * 15))
     print("     [雑音固定] sigma = %.4f(バンドを増やしても増えない、都合のよい仮定)"
           % (SIGMA0 * np.sqrt(NB0)))
     rows_b = []
