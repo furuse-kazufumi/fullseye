@@ -90,7 +90,10 @@ def _figure_for(ex):
         raise BuildError("%s: figures.json が空" % ex["id"])
     want = ex.get("figure")
     if want is None:
-        pick = figs[0]
+        # 見た目重視: 「場面」の図(scene / input / overlay / montage …)があればそれを
+        # 看板にし、測定のグラフは 2 枚目に回す。無ければ 1 枚目。
+        scene = [g for g in figs if _SCENE.search(g["name"])]
+        pick = scene[0] if scene else figs[0]
     elif isinstance(want, int):
         pick = figs[want]
     else:
