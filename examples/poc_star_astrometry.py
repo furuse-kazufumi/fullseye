@@ -199,6 +199,41 @@ def m_psfcorr(img, centers, box=11, fwhm_px=3.2, bkg=None, **_):
     return np.array(out, float)
 
 
+def m_gaussfit_w(img, centers, box=11, read=READ, **_):
+    """**重み付き**ガウシアン当てはめ(比較用に自前で書いた)。
+
+    ``astrostack.psf_fit`` は残差を ``model - vals`` のまま最小化する ——
+    つまり全画素の分散が等しいと仮定している。実際の分散は Poisson なので
+    ``var = mu + read^2`` で重みを付けるのが最尤に近い。段 2b でこの差が
+    理論下限への到達度をどれだけ変えるかを測る。
+    """
+    from scipy.optimize import least_squares
+    out = []
+    for r0, c0 in centers:
+        st, r_off, c_off = _stamp(img, r0, c0, box)
+        rr, cc = np.indices(st.shape)
+        vals = st.ravel().astype(float)
+        w = 1.0 / np.sqrt(np.maximum(vals, 1.0) + read ** 2)
+        b0 = float(np.median(vals))
+        pos = np.maximum(vals - b0, 0.0)
+        tot = max(pos.sum(), 1e-12)
+        mr = float((pos * rr.ravel()).sum() / tot)
+        mc = float((pos * cc.ravel()).sum() / tot)
+
+        def resid(p, rr=rr.ravel(), cc=cc.ravel(), vals=vals, w=w):
+            amp, pr, pc, s, bkg = p
+            m = bkg + amp * np.exp(-0.5 * (((rr - pr) ** 2 + (cc - pc) ** 2) / s ** 2))
+            return (m - vals) * w
+
+        p0 = [max(vals.max() - b0, 1.0), mr, mc, 1.4, b0]
+        try:
+            res = least_squares(resid, p0, method="lm", max_nfev=500)
+            out.append((res.x[1] + r_off, res.x[2] + c_off))
+        except Exception:
+            out.append((np.nan, np.nan))
+    return np.array(out, float)
+
+
 METHODS = (("重心(ゼロ点)", m_centroid),
            ("背景引き重心", m_centroid_bg),
            ("ガウシアン当てはめ", m_gaussfit),
