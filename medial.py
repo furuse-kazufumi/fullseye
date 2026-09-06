@@ -189,6 +189,22 @@ def skeleton_junctions3d(vol):
 
     注意(honest): 26 近傍次数は分岐近傍の対角隣接で過大に出うる(離散骨格の
     既知の性質)。分岐 *個数* を数えるときはこのマスクを連結成分でまとめること。
+
+    手順: ``_ensure_skeleton`` — 入力を bool 化し、6 近傍(面隣接)がすべて前景の
+    interior voxel が 1 つでもあれば「骨格ではない」とみなして ``skeletonize_vol``
+    (skimage Lee 法)を先に掛ける。その後、3x3x3 の全 1 カーネル(中心 0)の畳み込み
+    (``mode="constant"``、外側は 0)で各 voxel の 26 近傍にある骨格 voxel 数(次数)を
+    数え、``skel & (次数 >= 3)`` を返す。
+
+    返り値: 入力と同形の bool 配列。前景が無ければ全 False。骨格 voxel 以外は
+    必ず False。座標は ``np.argwhere`` で ``(z, y, x)`` 順に取れる。
+
+    検証(``ValueError``): 3-D でない・空配列・float で NaN/Inf を含む入力。
+    scikit-image が無い環境で細線化が必要になると ``ImportError``。
+
+    注意: 既に骨格の入力でも interior 判定は毎回走る(細い骨格なら細線化は
+    skip される)。個数を数えるなら ``vol_label(mask, 26)`` の成分数を使う。
+    枝に分けるのは ``skeleton_branches3d``、端点は ``skeleton_endpoints3d``。
     """
     skel = _ensure_skeleton(vol)
     if not skel.any():
