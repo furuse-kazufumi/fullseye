@@ -524,8 +524,12 @@ def section_night() -> dict:
         print("   %5.3f    %+9.4f        %9.4f          %4d / %d" % (
             sig, float(np.mean(errs)), float(np.std(errs)),
             int(np.mean(ncol)), len(_detect_cols())))
-    print("\n  偏りはほぼ動かず、ばらつきが σ とともに増える —— 夜間の弱点は"
-          "「ずれ」ではなく「揺れ」。")
+    e0, e1 = np.asarray(out[0.0]), np.asarray(out[0.06])
+    print("\n  偏りは %.1f -> %.1f mm とほとんど動かず、ばらつきが %.1f -> %.1f mm。"
+          % (1000 * e0.mean(), 1000 * e1.mean(), 1000 * e0.std(), 1000 * e1.std()))
+    print("  代わりに**検出できる列が減る**(歯抜けになる)。夜間の弱点は「ずれ」")
+    print("  ではなく「揺れと歯抜け」でした —— 150 列を束ねているので、雑音は")
+    print("  平均で消え、消えないのは**列ごと落ちること**のほうです。")
     return out
 
 
