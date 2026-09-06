@@ -391,15 +391,20 @@ def section_period() -> dict:
 
     sc = make_scene(period=PERIOD_EST, which=[])
     peaks = poc_peak_table(sc["img"])
-    print("\n  (a) 位相限定相関のピーク上位 %d 個(基線 96 px):" % len(peaks))
+    print("\n  (a) 位相限定相関のピーク上位 %d 個(基線 96 px、ずれの順):"
+          % len(peaks))
     for lag, val in peaks:
         print("      ずれ %+4d px   高さ %.4f" % (lag, val))
-    spread = (max(v for _, v in peaks) - min(v for _, v in peaks)) \
-        / max(v for _, v in peaks)
-    print("      ★ずれはすべて周期 %.1f px の整数倍近辺で、高さの差は %.1f %% "
-          "しかない。" % (PERIOD_EST, 100 * spread))
-    print("      **周期信号は自分自身と周期ずらしでも一致する**ので、"
-          "ピーク位置からは周期を決められない。")
+    gaps = np.diff([lag for lag, _ in peaks])
+    hs = sorted((v for _, v in peaks), reverse=True)
+    print("      ★ピークの間隔は %s px(中央値 %.1f)—— 真の周期 %.1f px と同じ。"
+          % (", ".join(str(int(g)) for g in gaps), float(np.median(gaps)),
+             PERIOD_EST))
+    print("      つまり POC が返すのは**基線を周期で割った余り**であって"
+          "周期そのものではない。")
+    print("      どのピークを選ぶかで推定は周期の整数倍だけ飛ぶ。高さは"
+          "教えてくれない(1 位は 2 位の %.2f 倍しかなく、窓の重なりで決まる)。"
+          % (hs[0] / hs[1]))
 
     print("\n  (b) 決められるのは位相の**傾き**のほう(粗い周波数で復調する):")
     est = estimate_period(sc["img"])
