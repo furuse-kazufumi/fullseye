@@ -141,6 +141,14 @@ def label_components(vol, connectivity: int = 26):
         vol と同形状。背景 0、各連結成分に 1..n のラベル。
     n : int
         連結成分数。
+
+    補足:
+    - 入力は ``astype(bool)`` で二値化する。0 以外はすべて前景で、float の NaN も True(前景)になる点に注意。
+    - 軸順は (z, y, x) = numpy の配列軸順。``labels`` の dtype は ``scipy.ndimage.label`` の返す整数型(通常 int32)。前景が無い/空配列なら int32 のゼロ配列と 0 を返す。
+    - ラベル番号の付与順は scipy の走査順で、体積順ではない。
+    - Raises ``ValueError``: 3 次元でない入力、``connectivity`` が 6/18/26 以外。
+    - 接触している物体は 1 成分に融合する。分離が要るなら前段で ``morph_erode3d`` / ``morph_open3d`` や ``vol_watershed`` で切る。
+    - 後段: ``region_props``(計測)、``largest_component`` / ``filter_by_volume``(選別)、``vol_select_labels``(特徴でふるい)、``vol_colorize_labels``(可視化)。
     """
     arr = _as_binary_3d(vol)
     struct = _structure(connectivity)
@@ -176,6 +184,13 @@ def region_props(vol, connectivity: int = 26) -> list[dict]:
           - ``sphericity``      : 等体積球表面積 / 実表面積(球=1 に近い、離散のため <1)
 
         前景ボクセルが無い(または空入力)場合は空リスト。
+
+    補足:
+    - 全量はボクセル単位(スペーシング補正なし)。実寸が要るなら ``volume`` に voxel 体積、``centroid`` / ``bbox`` / ``principal_lengths`` に各軸のスペーシングを掛ける(非等方だと主軸方向は歪む)。
+    - ``principal_lengths`` は座標の母共分散(N で割る)の固有値の平方根で、成分の半径ではなく座標の標準偏差。1 ボクセルの成分は ``principal_axes`` が単位行列、``principal_lengths`` が全 0。
+    - ``surface_area`` は配列端に接する面も数える(ゼロ padding)。``sphericity`` は離散化のため球でも約 0.66 が上限(モジュール docstring 参照)。
+    - ラベルは 1..n の順(``label_components`` と同じ scipy の走査順)で、体積順ではない。並べ替えは呼び手で行う。
+    - 入力は 0 以外を前景として bool 化する(NaN も前景)。Raises ``ValueError``: 3 次元でない入力、``connectivity`` が 6/18/26 以外。
     """
     arr = _as_binary_3d(vol)
     if arr.size == 0 or not arr.any():
@@ -238,6 +253,13 @@ def largest_component(vol, connectivity: int = 26) -> np.ndarray:
     """最大(最多ボクセル)連結成分の bool マスクを返す。
 
     前景が無い場合は全 False マスク(vol と同形状)。
+
+    補足:
+    - 内部で ``label_components`` を呼び、``bincount`` でラベルごとのボクセル数を数えて最大を選ぶ。**同数のときは番号の小さいラベル**(scipy の走査順で先)が勝つ。
+    - 入力は 0 以外を前景として ``bool`` 化する(NaN も前景)。軸順は (z, y, x)。
+    - 返り値は入力と同形状の bool。前景が無ければ全 False(例外にはしない)。
+    - Raises ``ValueError``: 3 次元でない入力、``connectivity`` が 6/18/26 以外。
+    - 典型: 閾値処理で出た二値ボリュームからノイズ塊を捨てて主対象だけ残す。複数を残したいなら ``filter_by_volume``、特徴で選ぶなら ``vol_select_labels``。
     """
     arr = _as_binary_3d(vol)
     labels, n = label_components(arr, connectivity=connectivity)
@@ -266,6 +288,13 @@ def filter_by_volume(vol, min_voxels: int, connectivity: int = 26) -> np.ndarray
     -------
     ndarray(bool)
         条件を満たす成分のみ True。前景無しや全成分除去なら全 False。
+
+    補足:
+    - ``min_voxels`` は ``int()`` で丸めてから比較する。1 以下ならすべての成分が残る。
+    - 内部で ``label_components`` → ``bincount`` → ``counts >= min_voxels`` のラベルを残す。ラベルの再番号付けは行わず bool マスクだけ返すので、番号が要るなら結果をもう一度 ``label_components`` に通す。
+    - 入力は 0 以外を前景として bool 化する(NaN も前景)。軸順 (z, y, x)。
+    - Raises ``ValueError``: 3 次元でない入力、``connectivity`` が 6/18/26 以外。
+    - ボクセル数はスペーシング未補正なので、実寸で閾値を切るなら voxel 体積で割ってから渡す。
     """
     arr = _as_binary_3d(vol)
     labels, n = label_components(arr, connectivity=connectivity)
@@ -328,6 +357,13 @@ def inner_box3(vol) -> dict:
     ------
     ValueError
         非 3-D 入力、または前景ゼロの領域(内接ボックス無し)。
+
+    補足:
+    - ``min`` / ``max`` は **両端を含む** ボクセル添字(float 配列)。``size = max - min + 1``、``volume = prod(size)``。``center`` は ``(min + max) / 2`` で .5 が付き得る。2-D 側の登録名は ``r2_inner_rectangle1``。
+    - 深さ区間ごとに Python ループで最大長方形を探す O(D²·H·W)。積が空になった時点でその z0 の探索は打ち切る。大きなボリュームでは遅い。
+    - 同体積の候補が複数あるときは先に見つかったもの(z0 が小さく、その中で z1 が小さい)を返す。
+    - 入力は 0 以外を前景として bool 化する(NaN も前景)。軸順は (depth, row, col)。
+    - 典型: ``largest_component`` で対象を 1 つに絞ってから呼ぶ(複数成分が混ざると最大成分のボックスとは限らない)。
     """
     m = _as_binary_3d(vol)
     D = m.shape[0]

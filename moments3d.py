@@ -105,6 +105,13 @@ def central_moments(points, max_order: int = 3) -> dict:
     -------
     dict[tuple[int, int, int], float]
         (p, q, r) -> μ_{pqr}。
+
+    補足:
+    - 返る dict のキー数は p+q+r <= max_order の全組合せ(``max_order=3`` で 20 個)。値は float(平均なので点数で割ってある)。
+    - 単位は長さ^(p+q+r)。並進不変だが回転・スケールには不変でない(回転不変量は ``moment_invariants`` / ``principal_moments``)。
+    - 2 次モーメント ``(2,0,0)``, ``(1,1,0)`` などは母共分散(N で割る)そのもので、``inertia_tensor`` の素材と同じ。
+    - 高次は重心から遠い点が支配するので外れ値に弱い。前段で ``statistical_outlier_removal`` などを検討する。
+    - 入力は (N,3)、N >= 1。``max_order < 0``、形状不正、非有限は ``ValueError``。決定論的。
     """
     if max_order < 0:
         raise ValueError(f"max_order must be at least 0: {max_order}")
@@ -137,6 +144,12 @@ def inertia_tensor(points) -> np.ndarray:
     -------
     np.ndarray, shape (3, 3)
         対称な慣性テンソル。
+
+    補足:
+    - 単位は長さ²(質量 1 の等質量点とみなすので密度は入らない)。点群を回転で回すと ``R I Rᵀ`` に写り、固有値(``principal_moments``)が回転不変量、固有ベクトルが主軸(``moment_axes``)。
+    - 入力は (N,3)、N >= 1(1 点なら零行列)。形状不正・非有限は ``ValueError``。
+    - 共分散 C とは ``I = tr(C)·E₃ - C`` の関係で、C と I の固有ベクトルは同じ、固有値は ``tr(C) - c_i``。
+    - 実体(体積)のモーメントではなく **サンプル点** のモーメントなので、同じ形でも点密度の偏りで値が変わる。密度を均すなら前段で ``voxel_grid_downsample``。決定論的。
     """
     p = _check_points(points, min_points=1)
     centered = p - p.mean(axis=0, keepdims=True)
@@ -156,6 +169,12 @@ def principal_moments(points) -> np.ndarray:
     -------
     np.ndarray, shape (3,)
         降順の主慣性モーメント λ1 >= λ2 >= λ3 >= 0。
+
+    補足:
+    - ``inertia_tensor`` の固有値で、共分散の固有値 c_i とは ``λ_i = (c_1 + c_2 + c_3) - c_i`` の関係。細長い棒では最小固有値(棒の軸まわり)が 0 に近づき、球では 3 つが等しい。
+    - 単位は長さ²。並進と回転には不変だが **スケールには不変でない**(s 倍で s² 倍)。スケール不変が要るなら ``moment_invariants``。
+    - 入力は (N,3)、N >= 1(1 点なら全て 0)。形状不正・非有限は ``ValueError``。
+    - 主軸ベクトル(固有ベクトル)が要るなら ``moment_axes``。決定論的。
     """
     i_tensor = inertia_tensor(points)
     # eigvalsh は対称行列専用で昇順。降順に反転して姿勢に依らない正準順序に。
@@ -201,6 +220,12 @@ def moment_invariants(points) -> np.ndarray:
     -------
     np.ndarray, shape (6,)
         並進・回転・スケール不変な特徴ベクトル。
+
+    補足:
+    - 入力は (N,3)、N >= 2。形状不正・非有限・全点一致(中心化後の広がりが 0)は ``ValueError``。縮退判定はスケール相対(``rms <= 1e-12 × max|centered|``)なので、座標が極小なだけの点群は弾かない。
+    - 返り値は float64 (6,)。``λ̂`` は 0 でクリップ済み、``Σλ̂ = 1``。
+    - 不変なのは並進・回転・一様スケールのみ。鏡映(反転)にも不変(固有値と半径分布は反転で変わらない)ので鏡像体は区別できない。非一様スケールや点密度の偏り(サンプリングの粗密)は値を変える。
+    - 点密度に敏感な用途では前段で ``voxel_grid_downsample`` で密度を均す。比較は ``shape_distance``(台帳 op、同じ長さの記述子ベクトル同士の距離)。
     """
     p = _check_points(points, min_points=2)
     centered = p - p.mean(axis=0, keepdims=True)

@@ -56,6 +56,13 @@ def reprojection_error(points_3d, points_2d, K, R, t):
     """再投影誤差(RMS ピクセル)。姿勢の当てはまり評価。→ scalar。
 
     Raises ValueError: points_2d が (N,2) でない / 点数不一致 / 非有限。
+
+    計算: 各 3D 点を ``x = K (R X + t)`` で投影して ``u = x0/x2``, ``v = x1/x2`` を取り、観測 2D 点とのユークリッド距離 d_i [px] の RMS ``sqrt(mean(d_i²))`` を返す。
+
+    - ``points_3d`` (N,3)、``points_2d`` (N,2)(画素座標、``project_points`` と同じ規約)、``K`` (3,3)、``R`` (3,3)、``t`` (3,)。R, t は world → camera(``Xc = R X + t``)。
+    - 深度 ``x2`` が負の点(カメラ後方)もそのまま割って投影するので、誤った姿勢では前後反転した点が「近く」に見えることがある。``x2 = 0`` は除算で inf/NaN になり検査しない。
+    - 単位は画素。対応が正しく K が合っていれば画素ノイズ程度(サブピクセル)。
+    - 典型: ``dlt_pose`` / ``pnp_ransac`` の結果を評価する。``pnp_ransac`` の ``info["rms"]`` は同じ量(inlier 集合上)。GT 姿勢との比較は ``pose_error``。
     """
     x = _as_image_points(points_2d)
     proj = _project(points_3d, K, R, t)
@@ -321,6 +328,17 @@ def dlt_pose(points_3d, points_2d, K):
     :func:`pnp_pose` の (R, t) 部分(正規化 DLT + 平面 PnP 分岐 + LM 精密化)。再投影
     RMS も要るなら :func:`pnp_pose` を使う。共平面入力(チェッカーボード等)は平面 PnP へ
     自動で振り分ける(旧実装は fail-closed で拒否していたが、正しく解けるので解く)。
+
+    手順(モジュール関数 ``pnp3d.pnp_pose`` を ``refine=True`` で呼ぶ):
+    - 画素を ``K⁻¹`` で正規化画像座標へ、3D 点は Hartley 正規化(重心を原点、平均距離 √3)して DLT(12 未知数の SVD)を解く。
+    - 共平面度(共分散の最小/最大固有値比の平方根)が 0.05 未満なら平面 PnP(ホモグラフィ分解)も候補に加え、厳密に平面(3 番目の広がりが 0)なら DLT を省く。
+    - 各候補を再投影誤差の Levenberg-Marquardt(最大 30 反復)で精密化し、前方点(深度 > 0)の割合が最大、同点なら再投影 RMS が最小の候補を採る。
+
+    返り値: ``R`` (3,3) 回転(det=+1)、``t`` (3,)(世界座標と同じ単位)。規約 ``Xc = R X + t``、``x ≅ K Xc``。
+
+    Raises ``ValueError``: ``points_2d`` が (N,2) でない(画像を渡した場合は名指しで拒否)/ ``points_3d`` が (N,3) でない / 非有限 / 6 点未満 / 点数不一致 / 全点が一直線か一点。
+
+    注意: 外れ値には無防備(全点を等しく使う)。誤対応があるなら ``pnp_ransac``。決定論的(乱数なし)。評価は ``reprojection_error``、GT との比較は ``pose_error``。
     """
     R, t, _ = pnp_pose(points_3d, points_2d, K, refine=True)
     return R, t
@@ -334,6 +352,20 @@ def pnp_ransac(points_3d, points_2d, K, thresh=2.0, iters=300, seed=0):
 
     Raises ValueError: points_2d が (N,2) でない / points_3d が (N,3) でない /
         点数不一致 / 6 点未満 / 非有限。
+
+    引数:
+    - ``thresh``: 再投影誤差のしきい値 [px](ユークリッド距離、既定 2.0)。これ未満を inlier とする。
+    - ``iters``: 反復数(既定 300)。早期終了はせず必ずこの回数回す。各反復は 6 点を非復元抽出し初期姿勢だけを解く(縮退した標本は捨てて次へ)。
+    - ``seed``: ``numpy.random.default_rng(seed)`` に渡す。同じ入力と seed なら結果は再現する。
+
+    返り値: ``R`` (3,3)、``t`` (3,)(規約 ``Xc = R X + t``)、``inlier_mask`` bool (N,)、``info`` dict。
+    ``info`` のキーは ``n_inliers`` / ``inlier_ratio`` / ``iters`` / ``rms``(最終姿勢の再投影 RMS [px]、inlier 集合上)。
+
+    - 最良標本の inlier が 6 未満のときは全点で解き直す fallback に入り、``info["fallback"] = True`` が付く。このとき ``inlier_mask`` は fallback 姿勢で数え直した実測値なので、``inlier_ratio`` が小さいまま返ることがある(合意を捏造しない)。fallback も失敗すれば ``ValueError``。
+    - inlier 数の比較は「より多い」だけを更新するので、同数なら先に見つかった標本が残る。
+    - 最終姿勢は inlier 全体でのリフィット(LM 精密化あり)。
+    - Raises ``ValueError``: 形状不正 / 6 点未満 / 点数不一致 / 非有限(``dlt_pose`` と同じ入口検査)。
+    - 評価は ``reprojection_error``、GT 比較は ``pose_error``。
     """
     X, x = _check_inputs(points_3d, points_2d, "PnP")
     n = len(X)

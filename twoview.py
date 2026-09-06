@@ -55,7 +55,16 @@ def _normalize_points(pts):
 def fundamental_8point(pts1, pts2):
     """正規化 8 点法で基礎行列 F を推定(rank-2 強制)。→ F (3,3)。8 点以上必要。
 
-    Raises ValueError: 点が (N,2) でない/非有限/8 点未満/対応数不一致。"""
+    Raises ValueError: 点が (N,2) でない/非有限/8 点未満/対応数不一致。
+
+    手順: 両画像の点を Hartley 正規化(重心を原点、平均距離 √2)→ 9 列の係数行列の最小特異ベクトルを F とする → 特異値の 3 番目を 0 にして rank-2 に強制 → ``T2ᵀ F T1`` で逆正規化 → ``F[2,2]`` で割って正規化(それがほぼ 0 なら Frobenius ノルムで割る)。
+
+    - 対応点は画素座標 (x, y) の (N,2)。規約は ``x2ᵀ F x1 = 0``(x1 が pts1、x2 が pts2)。
+    - F はスケール不定(定数倍しても同じ幾何)で符号も一意ではない。
+    - 全点を等しく使う最小二乗で、外れ値には無防備。誤対応が混じる対応は本 op の前に除くか、``sampson_distance`` で残差を見て選別してから再フィットする。
+    - 平面シーンや純回転では対応点が 1 つのホモグラフィで説明でき F は一意に決まらない(それでも何かは返る)。この退化は ``recover_pose`` が入口で検出して拒否する。
+    - 決定論的。後段は ``essential_8point`` / ``recover_pose`` / ``sampson_distance``。
+    """
     p1 = _require_pts2d(pts1, "pts1")
     p2 = _require_pts2d(pts2, "pts2")
     if len(p1) < 8 or len(p2) < 8:
@@ -84,7 +93,16 @@ def fundamental_8point(pts1, pts2):
 def sampson_distance(F, pts1, pts2):
     """エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。
 
-    Raises ValueError: 点が (N,2) でない/非有限/対応数不一致。"""
+    Raises ValueError: 点が (N,2) でない/非有限/対応数不一致。
+
+    計算: 同次座標 x1=(u1,v1,1)、x2=(u2,v2,1) で ``(x2ᵀ F x1)² / ((F x1)_0² + (F x1)_1² + (Fᵀ x2)_0² + (Fᵀ x2)_1² + 1e-12)``。
+
+    - **単位は画素の 2 乗**(距離の 2 乗)。画素で閾値を切るなら ``sqrt`` を取るか、閾値側を 2 乗する。
+    - F は ``fundamental_8point`` の規約 ``x2ᵀ F x1 = 0``(pts1 → x1、pts2 → x2)。順序を入れ替えるなら F を転置する。
+    - 分母に 1e-12 を足しているので F=0 でも例外にはならず 0 を返す(F の検査は行わない)。
+    - 返り値は float64 (N,)。決定論的。(N,2) でない・非有限・点数不一致は ``ValueError``。
+    - 典型: ``fundamental_8point`` の当てはまり確認、誤対応(大きい値)の選別、``recover_pose`` 前の前処理。
+    """
     F = np.asarray(F, float)
     p1 = _require_pts2d(pts1, "pts1")
     p2 = _require_pts2d(pts2, "pts2")
@@ -109,7 +127,15 @@ def essential_from_fundamental(F, K1, K2=None):
 
 
 def essential_8point(pts1, pts2, K1, K2=None):
-    """対応点 + K から本質行列 E を直接。→ E (3,3)。"""
+    """対応点 + K から本質行列 E を直接。→ E (3,3)。
+
+    手順: ``fundamental_8point(pts1, pts2)`` で F を推定し、``E = K2ᵀ F K1`` を作ってから SVD で特異値を (1, 1, 0) に置き換える(本質行列の性質。結果の Frobenius ノルムは √2 に固定される)。
+
+    - ``K1`` (3,3) は画像 1 の内部行列、``K2`` を省略すると ``K1`` を両画像に使う(同一カメラの前提)。
+    - 対応点は画素座標 (N,2)。検証と例外は ``fundamental_8point`` と同じ(8 点未満・点数不一致・非有限・(N,2) でない入力は ``ValueError``)。
+    - E の符号は不定で、(R, t) は 4 候補に分かれる。分解と cheirality による一意化までまとめて行うのが ``recover_pose``。
+    - 外れ値に無防備。平面・純回転の退化も本 op では検出しない(``recover_pose`` が検出する)。決定論的。
+    """
     F = fundamental_8point(pts1, pts2)
     return essential_from_fundamental(F, K1, K2)
 
@@ -142,7 +168,15 @@ def triangulate(pts1, pts2, P1, P2):
     ほぼ平行だが厳密には平行でない対応は、**大きな有限値**として返る。これは
     NaN では拾えないので、呼び手側で距離の妥当性を見る必要がある。
 
-    Raises ValueError: 点が (N,2) でない/非有限/対応数不一致。"""
+    Raises ValueError: 点が (N,2) でない/非有限/対応数不一致。
+
+    補足:
+    - ``P1``, ``P2`` は (3,4) の射影行列(``K[R|t]``)。対応点はその P と同じ画素座標系の (N,2)。cam1 を基準にするなら ``P1 = K1[I|0]``。
+    - 各点ごとに 4×4 の係数行列を SVD する Python ループ(点数に比例)。返り値は float64 (N,3)。
+    - 深度の正負(cheirality)は検査しない。前後判定が要るなら結果の z と ``R X + t`` の z を見る(``recover_pose`` が内部で行う)。
+    - 解の単位は P の並進 t と同じ。``recover_pose`` 由来の P なら |t|=1 のスケール。
+    - 決定論的。(N,2) でない・非有限・点数不一致は ``ValueError``。
+    """
     p1 = _require_pts2d(pts1, "pts1")
     p2 = _require_pts2d(pts2, "pts2")
     if len(p1) != len(p2):
@@ -241,6 +275,17 @@ def recover_pose(pts1, pts2, K1, K2=None, planar_tol=1e-2):
     まま並進方向を誤って返す(見かけは完璧)。そうした入力は姿勢を復元できないため ValueError で
     明示拒否する(ホモグラフィ分解を使うこと)。`planar_tol` はスケール不変な平面度しきい値
     (`_planar_degeneracy_ratio` の戻り値がこれ未満なら退化と判定)。
+
+    手順:
+    - 入口検査(8 点以上、点数一致、(N,2) かつ有限)。
+    - 平面度: 正規化 DLT でホモグラフィ H を当て、対称転送残差の中央値を両画像の点の広がり(重心からの平均距離の和)で割った比を出す。これが ``planar_tol``(既定 1e-2)未満なら ``ValueError``。H が特異なら比 0 として同じく拒否。
+    - ``essential_8point`` → 4 候補 ``(R, ±t)`` へ分解 → 各候補で ``triangulate`` し、両カメラで深度 > 0 の点数が最大の候補を採る(同数なら先の候補)。
+
+    返り値: ``R`` (3,3)、``t`` (3,) 単位ベクトル、``points3d`` (N,3)。規約は cam1 = K1[I|0]、cam2 = K2[R|t] で ``X2 = R X1 + t``。``points3d`` は cam1 座標系で |t|=1 のスケール。視線が平行な対応は NaN 行になる。
+
+    - ``K2`` 省略時は ``K1`` を両画像に使う。
+    - 外れ値に無防備(RANSAC は行わない)。前段で誤対応を除く。
+    - 決定論的。GT 検証は ``pose_error``、残差は ``sampson_distance``。
     """
     K1 = np.asarray(K1, float)
     K2 = K1 if K2 is None else np.asarray(K2, float)

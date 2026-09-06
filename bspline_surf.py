@@ -101,6 +101,14 @@ def fit_bspline_surface(x, y, z, kx=3, ky=3, smooth=None):
     ValueError
         点数が線形曲面にすら足りない(m<4)、x/y/z の長さ不一致、非有限値、
         あるいは共線・重複による FITPACK 縮退で近似が得られない場合。
+
+    補足(実装の裏取り):
+    - 座標系は自由: x, y は任意の平面座標(row/col でも実寸でも可)、z は高さ。3 配列は ``ravel`` で 1 次元化するので格子入力でも散布入力でも同じに扱う。
+    - 次数の自動降格は ``(kx+1)*(ky+1) > m`` の間、大きい方(同点なら kx)を 1 ずつ下げ、両方 1 になったら止まる。降格は例外でなく無言で行われるので、実際の次数は返り値 ``tck[3]``, ``tck[4]`` で確認できる。
+    - ``smooth=None`` の自動値は ``max(0, m - sqrt(2m))``(FITPACK の推奨)。z のノイズ分散が 1 相当という前提の式なので、z の単位が小さく残差二乗和が小さいデータでは過平滑になりやすい。その場合は明示的に小さい ``smooth`` を渡す。
+    - FITPACK の警告(反復打ち切り等)は握り潰して tck を返す。例外はすべて ``ValueError`` に翻訳し、係数が空のときも ``ValueError``。
+    - 決定論的(乱数なし)。
+    - 後段は ``eval_bspline_surface``(評価)と ``surface_residual``(逸脱量)。大域的な低次のうねりだけで良ければ ``fit_poly_surface`` / ``eval_poly_surface`` があるが、tck と多項式 dict は互換でない。
     """
     from scipy.interpolate import bisplrep
 
@@ -178,6 +186,13 @@ def eval_bspline_surface(tck, x, y, grid=False):
     ValueError
         tck が曲面モデル([tx,ty,c,kx,ky])でない(曲線 tck / 多項式 dict を含む)、
         または x, y の shape 不一致・空。
+
+    補足:
+    - grid=True では x, y を内部で昇順に並べ替えて ``bisplev`` を呼び、結果を **入力の順序** に戻して返す。したがって ``out[i, j]`` は常に ``(x[i], y[j])`` の値で、軸を降順で渡しても壊れない。
+    - grid=False は点ごとに ``bisplev`` を呼ぶ Python ループなので点数に比例して遅い。大量点の評価は可能なら grid=True に寄せる。
+    - 節点範囲(フィットに使った x, y の範囲)の外側は外挿になり、その値は保証しない。
+    - 返り値は float64。grid=False なら x と同じ shape(スカラーを渡せば 0 次元配列)。
+    - 典型: ``fit_bspline_surface`` → 本 op(再サンプリング・可視化)。残差評価は ``surface_residual`` がこれを内部で呼ぶ。
     """
     from scipy.interpolate import bisplev
 
@@ -221,6 +236,12 @@ def surface_residual(x, y, z, tck):
     dict
         ``{"rms": float, "max": float, "pv": float}``。max は最大絶対残差、
         pv は符号付き残差の最大 - 最小(片側だけの凸/凹も捉える)。
+
+    補足:
+    - 残差の符号は ``resid = z - zhat``(観測 − 曲面)。正 = 曲面より高い(盛り上がり)、負 = 低い(欠肉)。``max`` は絶対値なので向きは分からず、向きが要るなら ``eval_bspline_surface`` で ``zhat`` を取り自分で差を取る。
+    - x, y, z は任意 shape を受け、内部で ``eval_bspline_surface(tck, x, y, grid=False)`` を通す(tck の種類検査もそこで行われ、曲線 tck や多項式 dict は ``ValueError``)。z と x の要素数が違うと numpy の形状エラーになる(専用の検査は無く、z が 1 要素だと黙って broadcast される)。
+    - 単位は z と同じ。``rms`` は全点の二乗平均平方根なので局所的な打痕は平均で薄まる。局所欠陥は ``max`` か ``pv`` で見る。
+    - 典型: ``fit_bspline_surface`` → 本 op。フィットに使った点で評価すると smooth が小さいほど残差は 0 に近づく(過適合の指標にもなる)。
     """
     zr = np.asarray(z, float).ravel()
     zhat = eval_bspline_surface(tck, x, y, grid=False).ravel()
@@ -263,6 +284,13 @@ def fit_bspline_curve(points, smooth=0.0, k=3, nest=None):
     ValueError
         点数が 2 未満、次元不整合、非有限値、または重複/縮退で splprep が
         曲線を返せない場合。
+
+    補足:
+    - 既定 ``smooth=0.0`` は補間(全点通過)。曲面側の既定(点数からの自動値)と違うので、ノイズ点列は明示的に ``smooth`` を与える。パラメータ u は ``splprep`` の既定(弦長に比例して [0,1] に正規化)。
+    - 次数 k は ``k >= m`` のとき ``m-1`` に無言で下げる(2 点なら直線)。
+    - 連続する重複点があると ``splprep`` が失敗し ``ValueError`` になる。前段で重複を除くか ``resample_uniform`` で等間隔化する。
+    - 返す tck は ``[t, c, k]`` の list(c は D 本の係数配列のリスト)。``eval_bspline_curve`` に渡す。閉曲線としては扱わない(端点は開いたまま)。
+    - 決定論的(乱数なし)。
     """
     from scipy.interpolate import splprep
 
@@ -314,6 +342,12 @@ def eval_bspline_curve(tck, n=200):
     -------
     numpy.ndarray, shape (n, D)
         曲線上の点列。D は fit 時の入力次元(3D 入力なら (n, 3))。
+
+    補足:
+    - u は ``linspace(0, 1, n)`` なので **パラメータ等間隔** であって弧長等間隔ではない。点の密度は元の点列の疎密に依存する。弧長で等間隔にしたければ本 op の出力を ``resample_uniform`` に通す。
+    - 両端点 u=0, u=1 を含む。
+    - Raises ``ValueError``: tck が曲線モデル ``(t, c, k)`` でない(曲面 tck / 多項式 dict を名指しで拒否)、または n < 2。
+    - 返り値は float64 の ``(n, D)``。決定論的。
     """
     from scipy.interpolate import splev
 
