@@ -468,12 +468,12 @@ def main():
     dt = time.perf_counter() - t0
     cm_scores = np.asarray(cm_scores)
     cm_labels = np.asarray(cm_labels)
-    a, t, f = auc_and_tpr(cm_scores, cm_labels, fpr_target=0.01)
-    a0, t0f, f0 = auc_and_tpr(cm_scores, cm_labels, fpr_target=0.0)
+    cm_auc = auc_and_tpr(cm_scores, cm_labels, fpr_target=0.01)[0]
+    tpr_at0 = auc_and_tpr(cm_scores, cm_labels, fpr_target=0.0)[1]
     print(f"  改竄 {n_cm} 枚 / 清浄 {n_cm} 枚、スコア = 第 1 群の対応数(群が無ければ 0)")
-    print(f"  AUC {a:.3f} / 清浄側の最大スコア {cm_scores[~cm_labels].max():.0f}"
+    print(f"  AUC {cm_auc:.3f} / 清浄側の最大スコア {cm_scores[~cm_labels].max():.0f}"
           f" / 改竄側の中央値 {np.median(cm_scores[cm_labels]):.0f}")
-    print(f"  偽陽性率 0 % での検出率 {t0f:.3f}(清浄 {n_cm} 枚では 1 % は刻めない ——")
+    print(f"  偽陽性率 0 % での検出率 {tpr_at0:.3f}(清浄 {n_cm} 枚では 1 % は刻めない ——")
     print(f"  1 枚が {100.0 / n_cm:.1f} % なので、1 % を主張するには清浄が 100 枚以上要る)")
     print(f"  所要 {dt:.2f} 秒 / {2 * n_cm} 枚 = {1e3 * dt / (2 * n_cm):.1f} ms/枚")
 
@@ -495,53 +495,78 @@ def main():
     print("     掃引 12 本なら符号化 12 回。効き目は上の表のとおり乏しい。")
 
     print("\n=== 7. まとめ ===")
-    print(f"  最良は ELA(AUC {res_pos['ELA'][0]:.3f}、偽陽性率 1 % での検出率"
-          f" {res_pos['ELA'][1]:.3f})。ただしこれは")
-    print("  『背景が JPEG・貼付素材が別品質・後処理なし・領域 64x64』という、")
-    print("  検出側にいちばん都合のよい条件での数字である。上の 4-b のとおり、")
-    print(f"  全体を q60 で再圧縮しただけで ELA は AUC {post_rows['全体を q60 で再圧縮']['ELA'][0]:.3f} まで落ちる。")
-    print("  **ゼロ点と後処理を置かずに『検出できた』と書くのは、この差を隠すこと**")
-    print("  **に等しい**。")
+    print(f"  この条件でいちばん強いのは ゴーストV(AUC {res_pos['ゴーストV'][0]:.3f}、"
+          f"FPR 1 % の検出率 {res_pos['ゴーストV'][1]:.3f})、")
+    print(f"  次が ELA(AUC {res_pos['ELA'][0]:.3f} / {res_pos['ELA'][1]:.3f})。ただし ゴーストV は")
+    print("  **op の読み出しではなく PoC 側で書いた読み出し**で、op が提供する")
+    print(f"  argmin の読み出し(ゴーストA)は AUC {res_pos['ゴーストA'][0]:.3f} = 乱数と同じである。")
+    print("  そして上の数字はすべて『背景が JPEG・素材が別品質・後処理なし・64x64』")
+    print("  という、検出側にいちばん都合のよい条件のもの。境界は下のとおり:")
+    print("  " + pad("崩れる条件", 26, right=False) + pad("ELA", 10) + pad("ゴーストV", 12))
+    for label, key in (("後処理なし", post_rows["後処理なし"]),
+                       ("全体を q75 で再圧縮", post_rows["全体を q75 で再圧縮"]),
+                       ("全体を q60 で再圧縮", post_rows["全体を q60 で再圧縮"]),
+                       ("0.75 倍に縮小して戻す", post_rows["0.75 倍に縮小して戻す"]),
+                       ("ぼかし sigma=1.0", post_rows["ぼかし sigma=1.0"]),
+                       ("16x16 の小さい改竄", size_rows[16]),
+                       ("平坦な帯(痕跡が無い)", flat_rows["平坦"]),
+                       ("素材も背景と同じ q92", same_rows)):
+        print("  " + pad(label, 26, right=False)
+              + pad(f"{key['ELA'][0]:.3f}", 10) + pad(f"{key['ゴーストV'][0]:.3f}", 12))
+    print("  **ゼロ点と後処理を置かずに『検出できた』と書くのは、この差を隠すことに**")
+    print("  **等しい**。実運用で相手が保存ボタンを 1 回押せば、上の表の 3 行目まで")
+    print("  落ちる。それが画像フォレンジックの正直な現在地である。")
 
     # ---- 自己検査(速さは assert しない)------------------------------------
     # (1) 測り方に偏りが無い:乱数検出器は改竄ありでもゼロ点でも 0.5 付近
     assert abs(res_pos["乱数"][0] - 0.5) < 0.01, res_pos["乱数"]
     assert abs(res_null["乱数"][0] - 0.5) < 0.01, res_null["乱数"]
-    # (2) ゼロ点はどの検出器でも 0.5 付近(改竄が無いのだから当たってはいけない)
+    # (2) ゼロ点はどの検出器でも 0.5 付近(改竄が無いのだから当たってはいけない)。
+    #     許容 0.10 は緩いが、雑音 σ が縁の偽陽性で 0.45 付近に座るのを **通す**
+    #     ためではなく **記録する**ため。締めると穴 (c) が assert で潰れて見えなくなる。
     for name, _ in DETECTORS:
         assert abs(res_null[name][0] - 0.5) < 0.10, (name, res_null[name])
     # (3) 効いている検出器は零点を上回る
     assert res_pos["ELA"][0] > 0.80, res_pos["ELA"]
-    assert res_pos["雑音 σ"][0] > 0.65, res_pos["雑音 σ"]
-    # (4) op の argmin 読み出しは、再保存した画像では定数地図 = ちょうど 0.5
-    assert abs(res_pos["ゴースト(op の argmin)"][0] - 0.5) < 1e-9, \
-        res_pos["ゴースト(op の argmin)"]
+    assert res_pos["雑音σ"][0] > 0.65, res_pos["雑音σ"]
+    assert res_pos["ゴーストV"][0] > 0.90, res_pos["ゴーストV"]
+    # (4) ★穴 (a): op の argmin 読み出しは、再保存した画像では実質定数地図。
+    #     AUC はちょうど 0.5 = 乱数と区別できない。
+    assert abs(res_pos["ゴーストA"][0] - 0.5) < 1e-3, res_pos["ゴーストA"]
     q = F.jpeg_ghost_quality(F.jpeg_ghost_map(build_case(0)[0], GHOST_QS, block=BLOCK),
                              GHOST_QS)
-    assert np.unique(q).size == 1, f"再保存後も定数でない: {np.unique(q)}"
-    # (5) 大きさを下げると落ちる(単調とまでは言わない。端どうしを比べる)
-    assert size_rows[16]["ELA"][0] < size_rows[96]["ELA"][0], (
+    assert float(np.mean(q == _mode(q))) > 0.999, (np.unique(q), np.mean(q == _mode(q)))
+    # (5) 大きさを下げると FPR 1 % の検出率が落ちる(AUC は面積に鈍いのでそちらでは
+    #     assert しない —— 実測で AUC は 0.97 → 0.85 としか動かない)
+    assert size_rows[16]["ELA"][1] < size_rows[96]["ELA"][1] - 0.05, (
         size_rows[16]["ELA"], size_rows[96]["ELA"])
     # (6) 後処理で落ちる —— これがこの PoC のいちばんの主張
     assert post_rows["全体を q60 で再圧縮"]["ELA"][0] < post_rows["後処理なし"]["ELA"][0] - 0.10
     assert post_rows["0.75 倍に縮小して戻す"]["ELA"][0] < post_rows["後処理なし"]["ELA"][0] - 0.10
-    # (7) 平坦な帯では落ちる
-    assert flat_rows["平坦"]["ELA"][0] < flat_rows["通常"]["ELA"][0]
-    # (8) 8 画素格子:差が 8 の倍数のときだけ言い当てる(再保存なし)
+    assert post_rows["全体を q60 で再圧縮"]["ゴーストV"][0] < 0.60
+    assert post_rows["ぼかし sigma=1.0"]["ゴーストV"][0] < 0.60
+    # (7) 平坦な帯は貼っても画素が変わらない = どの検出器も 0.5 付近に落ちるのが正しい
+    assert changed == 0, f"平坦な帯で {changed} 画素が変わっている(対照が成立していない)"
+    for name, _ in DETECTORS:
+        assert abs(flat_rows["平坦"][name][0] - 0.5) < 0.12, (name, flat_rows["平坦"][name])
+    # (8) 品質差が無ければ、圧縮履歴を見る検出器は落ちる
+    assert same_rows["ゴーストV"][0] < res_pos["ゴーストV"][0] - 0.05, (
+        same_rows["ゴーストV"], res_pos["ゴーストV"])
+    # (9) ★穴 (b): 8 画素格子。差が 8 の倍数のときだけ言い当てる(再保存なし)
     im_a, _ = build_case(0, src=(40, 40), dst=(96, 96), save_q=None)
     im_b, _ = build_case(0, src=(40, 40), dst=(99, 99), save_q=None)
     qa = F.jpeg_ghost_quality(F.jpeg_ghost_map(im_a, GHOST_QS, block=BLOCK), GHOST_QS)
     qb = F.jpeg_ghost_quality(F.jpeg_ghost_map(im_b, GHOST_QS, block=BLOCK), GHOST_QS)
-    assert int(_mode(qa[104:152, 104:152])) == 60
-    assert int(_mode(qb[107:155, 107:155])) == max(GHOST_QS)
-    # (9) ROC の実装が端で正しい:完全分離は 1.0、逆向きは 0.0
+    assert int(_mode(qa[104:152, 104:152])) == 60, _mode(qa[104:152, 104:152])
+    assert int(_mode(qb[107:155, 107:155])) == max(GHOST_QS), _mode(qb[107:155, 107:155])
+    # (10) ROC の実装が端で正しい:完全分離は 1.0、逆向きは 0.0、全同点は 0.5
     lab = np.r_[np.ones(50, bool), np.zeros(50, bool)]
     assert auc_and_tpr(np.r_[np.ones(50), np.zeros(50)], lab)[0] == 1.0
     assert auc_and_tpr(np.r_[np.zeros(50), np.ones(50)], lab)[0] == 0.0
-    assert auc_and_tpr(np.zeros(100), lab)[0] == 0.5          # 全同点 = 0.5
-    # (10) コピー&ムーブは清浄画像で群を作らない(偽陽性 0)
+    assert auc_and_tpr(np.zeros(100), lab)[0] == 0.5
+    # (11) コピー&ムーブは清浄画像で群を作らない(偽陽性 0)
     assert cm_scores[~cm_labels].max() == 0.0, cm_scores[~cm_labels]
-    assert a > 0.9, a
+    assert cm_auc > 0.9, cm_auc
     print("\nPASS")
 
 

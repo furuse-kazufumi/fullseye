@@ -161,7 +161,8 @@ def calibrate(obj, obs, fit_dist: bool = True, fit_pp: bool = True):
 
     初期値は Zhang 法(``calib.camera_calibration``、歪み無視の閉形式)+ 視点ごとの
     ``fs.solve_pnp``。残差は ``distort_points(project_points(...))`` の順方向モデル。
-    fail-closed: Zhang が退化を検出したら例外文字列をそのまま返して打ち切る。"""
+    Zhang が拒否した配置では「焦点距離 ~ 画像幅」という経験則の初期値に落として
+    先へ進む(第 6 章 a の退化配置がこの経路。最適化は止まらず答えを返す)。"""
     n = len(obs)
     try:
         # ★ 穴 (d): camera_calibration の画像点は (row, col)。project_points は (x, y)。
@@ -361,8 +362,8 @@ def main():
     print(f"  再投影 RMS の幅 {min(rms):.4f}〜{max(rms):.4f} px(比 {max(rms) / min(rms):.2f} 倍)")
     print(f"  fx 誤差の幅 {min(dfx):.4f}〜{max(dfx):.4f} %(比 {max(dfx) / min(dfx):.0f} 倍)")
     print("  → **同じ数字を見ている限り区別できない**。再投影 RMS はどれも雑音の")
-    print("     大きさ 0.05 px にほぼ張り付く —— 当然で、最小二乗は残差を雑音まで")
-    print("     落とすのが仕事だから。落ちた先が真値かどうかは別の話。")
+    print("     大きさ(成分 0.05 px = 1 点あたり 0.0707 px)にほぼ張り付く —— 当然で、")
+    print("     最小二乗は残差を雑音まで落とすのが仕事だから。落ちた先が真値かは別の話。")
     print("  → 区別できる数字は sigma_fx(ヤコビアンの逆行列)の方。上の列を見よ。")
 
     print("\n=== 5. なぜ相殺するのか —— fx と Z の比は保存される ===")
@@ -394,7 +395,7 @@ def main():
                     else "K が非有限/非正")
             print(f"  {tilt:>9.1f}{ratio:>15.2e}{'—':>13}{'—':>10}  {gate}")
     print("      → ★ **退化検出の門が一度も発火しない**。傾き 0 度(教科書どおりの")
-    print("         退化)でも sv[-2]/sv[0] は 1.7e-06 で、しきい値 1e-8 の 170 倍。")
+    print("         退化)でも sv[-2]/sv[0] は 1.8e-06 で、しきい値 1e-8 の 180 倍。")
     print("         原因は V を**正規化していないホモグラフィ**から組むこと —— H の")
     print("         列は画素尺度(1e4)と 1(最終行)が混在し、V の特異値は 10 桁に")
     print("         またがる。この上で相対しきい値 1e-8 を課しても到達しない。実際に")
@@ -420,7 +421,7 @@ def main():
               f"{100 * abs(r['fx'] - TRUE_FX) / TRUE_FX:>10.3f}"
               f"{abs(r['cx'] - TRUE_CX):>10.2f}{abs(r['dist'][0] - TRUE_DIST[0]):>10.4f}"
               f"{r['sigma_fx']:>11.2f}")
-    print("      → 再投影 RMS はどの行でも 0.05 px 前後。歪み係数と主点は視野を")
+    print("      → 再投影 RMS はどの行でも 0.067 px(= 0.05 x sqrt2)。歪み係数と主点は視野を")
     print("         占めなくなると決まらなくなる(歪みは半径の 2 乗以上でしか効かず、")
     print("         中央にはその信号が無い)。")
 
@@ -494,8 +495,16 @@ def main():
     try:
         calib.camera_calibration(obj[:, :2], [o[:, ::-1] for o in ob_])
         raise AssertionError("退化配置が素通りした")
-    except ValueError:
-        pass
+    except ValueError as exc:
+        # ★ 穴 (c): 止めたのは退化検出の門ではなく後段の非有限 K の門
+        assert "degenerate calibration views" not in exc.args[0], (
+            "退化検出の門が発火した —— 直ったなら docstring の穴 (c) を削除せよ")
+    assert zhang_null_ratio(obj, ob_) > 1e-8, (
+        "退化検出のしきい値に到達した —— docstring の穴 (c) を更新せよ")
+    # 5b. ★ 穴 (c3): 閉形式は歪みのぶんだけ系統的に外れる(初期値専用)
+    z_good = calib.camera_calibration(obj[:, :2], [o[:, ::-1] for o in obs_g])
+    assert abs(z_good["fx"] - TRUE_FX) / TRUE_FX > 0.01, (
+        "閉形式が歪み込みで当たった —— 前提が変わった")
     # 6. ★ 穴 (b): reprojection_error は歪みを知らない -> 真値を渡しても大きい
     e_true = float(np.sqrt(np.mean(fs.reprojection_error(obj, obs0[0], K_TRUE, *good[0]) ** 2)))
     assert e_true > 1.0, "歪みがあるのに reprojection_error が小さい(前提が変わった)"
