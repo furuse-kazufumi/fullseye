@@ -464,16 +464,20 @@ def section_headway() -> dict:
     print("\n" + "=" * 78)
     print("5) 車間を詰める —— 帯が融合する閾値は headway = L/V [frame]")
     print("=" * 78)
-    print("  近い車線だけを等間隔で流す(L, V は 1 台目の値で代表)。")
-    print("   headway   L/V     真値   スリット   予測(融合後の群数)   ゼロ点最大")
+    print("  近い車線だけを**同じ速度・同じ車長**で等間隔に流す(隊列)。")
+    print("  速度をばらすと帯が計数列の外で交差して融合し、車間の効果と混ざる")
+    print("  —— それは下の対照群で別に測る。")
+    print("\n   headway   真値   スリット   仮想ループ   予測(融合後の群数)  ゼロ点最大")
 
-    rows, hs, got, pred = [], [], [], []
-    for hw in (4.0, 6.0, 8.0, 10.0, 13.0, 17.0, 22.0):
-        veh = [v for v in make_vehicles(seed=7, n_far=0, n_near=7,
-                                        headway=hw, truck_p=0.0)]
+    rows, hs, got, pred, loops = [], [], [], [], []
+    lv = None
+    for hw in (5.0, 7.0, 8.0, 9.0, 11.0, 14.0, 18.0, 24.0):
+        veh = make_vehicles(seed=7, n_far=0, n_near=7, headway=hw,
+                            n_truck=0, same_speed=True)
         vid = render_sequence(veh, np.arange(T_FRAMES, dtype=np.float64))
         mask = foreground(vid)
         s = slit_count(kymograph(mask, LANES["near"]["slit"]))
+        loop = virtual_loop(mask, LANES["near"]["slit"])
         cc = per_frame_counts(mask)
         # 予測: 隣り合う 2 台の車体が計数線上で重なる(空隙 < 1 px)なら融合。
         groups = 1
@@ -481,21 +485,42 @@ def section_headway() -> dict:
             gap = b["v"] * (b["cross"] - a["cross"]) - 0.5 * (a["len"] + b["len"])
             if gap >= 1.0:
                 groups += 1
-        lv = float(np.mean([v["len"] / v["v"] for v in veh]))
-        rows.append(["%.0f" % hw, "%.1f" % lv, str(len(veh)), str(s["n_ref"]),
+        lv = float(veh[0]["len"] / veh[0]["v"])
+        rows.append(["%.0f" % hw, str(len(veh)), str(s["n_ref"]), str(loop),
                      str(groups), str(int(cc.max()))])
         hs.append(hw)
         got.append(s["n_ref"])
         pred.append(groups)
-        print("    %5.0f   %5.1f    %4d   %6d      %10d          %6d"
-              % (hw, lv, len(veh), s["n_ref"], groups, cc.max()))
+        loops.append(loop)
+        print("    %5.0f    %4d   %6d      %6d      %10d        %6d"
+              % (hw, len(veh), s["n_ref"], loop, groups, cc.max()))
 
     agree = sum(1 for g, p in zip(got, pred) if g == p)
-    print("\n  ★予測(空隙 1 px の幾何)と実測が %d/%d 条件で一致。"
-          % (agree, len(got)))
-    print("     融合は headway が L/V(平均 %.1f frame)を切るあたりから始まる。"
-          % np.mean([float(r[1]) for r in rows]))
-    return {"hs": hs, "got": got, "pred": pred, "rows": rows}
+    print("\n  ★L/V = %.2f frame。予測(空隙 1 px の幾何)と実測が %d/%d 条件で一致。"
+          % (lv, agree, len(got)))
+    first_ok = next((h for h, g in zip(hs, got) if g == 7), None)
+    print("     全 7 台に分かれたのは headway >= %s から —— L/V = %.1f の"
+          "すぐ上。" % (first_ok, lv))
+
+    # --- 対照群: 速度をばらす(帯が交差する) ------------------------------- #
+    print("\n  対照群 —— 同じ headway で速度・車長をばらす")
+    print("   headway   同速度のスリット   ばらつきありのスリット   仮想ループ")
+    for hw in (14.0, 18.0, 24.0):
+        veh = make_vehicles(seed=7, n_far=0, n_near=7, headway=hw,
+                            n_truck=0, same_speed=False)
+        vid = render_sequence(veh, np.arange(T_FRAMES, dtype=np.float64))
+        mask = foreground(vid)
+        s = slit_count(kymograph(mask, LANES["near"]["slit"]))
+        loop = virtual_loop(mask, LANES["near"]["slit"])
+        base = got[hs.index(hw)]
+        print("    %5.0f        %8d              %8d           %6d"
+              % (hw, base, s["n_ref"], loop))
+    print("  ★速度がばらつくと、帯は**計数列から離れた場所で交差して融合する**。")
+    print("     2-D の連結は画像全体で効くので、計数列とは無関係な場所の交差が")
+    print("     計数を壊す。1-D の仮想ループはこの壊れ方をしない —— "
+          "**2-D にしたことの代償**。")
+    return {"hs": hs, "got": got, "pred": pred, "loops": loops, "rows": rows,
+            "lv": lv}
 
 
 # --------------------------------------------------------------------------- #
