@@ -503,7 +503,8 @@ def section7_design():
     for k in cands:
         bs = [abs(fj) for _m, fj, _fi, _p, _a in beat_frequencies(k)]
         am = [abs(stripe_amplitude(m, k, 0.0, 0.0)) for m in HARMONICS]
-        bad = [(b <= band and a >= thr) for b, a in zip(bs, am)]
+        # 厳密に 0 のうなり(= 直流)は一様な明るさになるだけなので害が無い。
+        bad = [(0.25 / L < b <= band and a >= thr) for b, a in zip(bs, am)]
         print("  %7.4f %8.5f %8.5f %8.5f %9.5f %9.5f %9.5f %8s %10s"
               % (k, bs[0], bs[1], bs[2], am[0], am[1], am[2],
                  "危険" if bad[0] else "安全", "★危険" if any(bad) else "安全"))
