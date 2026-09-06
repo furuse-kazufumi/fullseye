@@ -1,0 +1,117 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">surface_params — ROUGHNESS <code style="color:#22d3bf">measure</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import roughness; roughness.surface_params(z, dx=1.0, dy=None, assume_filtered=False)</code>(或 <code style="color:#22d3bf">opsroughness.get(&quot;surface_params&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>面の粗さパラメータ Sa/Sq/Sp/Sv/Sz/Ssk/Sku/Sdq/Sdr(ISO 25178-2)。</p>
+<p>引数</p>
+<p>z               帯域処理済みの高さ場(形状とうねりを除いたもの)。</p>
+<p>dx, dy          標本間隔。`<code style="color:#22d3bf">dy=None</code>` は正方画素。</p>
+<p>assume_filtered `<code style="color:#22d3bf">True</code><code style="color:#22d3bf"> で帯域の検査を飛ばす。既定は </code><code style="color:#22d3bf">False</code>` = <b>検査する</b>。</p>
+<p>戻り値は `<code style="color:#22d3bf">dict</code>`。パラメータ 9 個に加えて、判断の根拠を数字で残すため</p>
+<p>`<code style="color:#22d3bf">band_long_wave_fraction</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">band_form_ptv_over_sq</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_points</code>` /</p>
+<p>`<code style="color:#22d3bf">assume_filtered</code>` を入れる。</p>
+<p>★ なぜ既定で拒否するのか(実測)</p>
+<p>512x512, dx=1 µm の合成面(自己アフィン PSD + 加工目 λ=32 µm + 深い傷</p>
+<p>4 本 + うねり λ=256 µm + 傾き 0.050/-0.025)を、手順を変えて評価した。</p>
+<p>真値は「傷と加工目と PSD を λc=80 µm で切ったもの」:</p>
+<p>手順                        Sq        Sq 誤差      Sa       Ssk     Sku</p>
+<p>生の高さ場そのまま        8.3057   +1931.4 %   6.9089   +0.05    2.26</p>
+<p>最小二乗平面だけ除去      0.7520     +83.9 %   0.5273   -2.04   10.21</p>
+<p>平面 + λc=80µm ハイパス   0.4104      +0.4 %   0.2501   -2.88   18.76</p>
+<p>真値                      0.4089          —    0.2502   -2.80   18.52</p>
+<p><b>生の rms を Sq と呼ぶと 20.3 倍</b>。Ssk は -2.80 が **+0.05 になって</p>
+<p>符号ごと消え**、Sku は 18.5 が 2.26(ガウスの 3 より下)になる。うねりと</p>
+<p>傾きが分布を支配すると、深い傷の情報が跡形もなく無くなる。</p>
+<p>平面だけ除いてもまだ 1.8 倍ずれる。「どのパラメータなら安全か」という</p>
+<p>逃げ道は無い —— 帯域を宣言しないまま出した数字は、パラメータの</p>
+<p>選び方では救えない。</p>
+<p>★ 検査の中身と、しきい値の根拠(実測)</p>
+<p>証拠は 2 つ。<b>長波長比</b> = 評価長さの 1/4 より長い波が持つ分散の割合。</p>
+<p><b>形状 PTV/Sq</b> = 最小二乗平面そのものの高低差を rms で割ったもの。</p>
+<p>面                                  長波長比   形状PTV/Sq   判定</p>
+<p>生の高さ場                            0.9714      4.62      拒否</p>
+<p>最小二乗平面だけ除去                  0.4415      0.00      拒否</p>
+<p>うねりだけ残した面(別の面)          0.5539      0.15      拒否</p>
+<p>平面 + λc=80µm ハイパス               0.0086      0.00      通す</p>
+<p>真値(λc=80µm)                       0.0042      0.00      通す</p>
+<p>純正弦波 λ=32(256 角)                0.0038      0.03      通す</p>
+<p>通す側の余裕は λc をどこまで上げても保たれるか —— **正当な運用で誤って</p>
+<p>拒否されないこと**を確かめるほうが大事なので、λc を振って測った</p>
+<p>(512², 加工目 + 傷 1 個を含む面):</p>
+<p>λc         16     32     64     80    128    170    256(=L/2)</p>
+<p>長波長比  0.0005 0.0011 0.0044 0.0085 0.0306 0.0563  0.1056</p>
+<p><b>λc を評価長さの半分まで上げても 0.106 までしか上がらない。</b></p>
+<p>拒否したい面の最小は 0.4415。しきい値 0.25 はその間(通す側の 2.4 倍上、</p>
+<p>拒否側の 1.8 倍下)に置いた。形状 PTV/Sq のほうは、帯域処理済みの面では</p>
+<p>実測 0.001〜0.03 にしかならず、傾きが残った面では 3.46 / 4.62。</p>
+<p>しきい値 1.0 はその間(通す側の 33 倍上、拒否側の 3.5 倍下)。</p>
+<p>なおこの 2 つは <b>or</b> で判定する —— 傾きは無いがうねりが残っている面</p>
+<p>(上の表の「うねりだけ残した面」)は形状 PTV では捕まらず、長波長比だけが</p>
+<p>鳴る。片方だけでは穴が開く。</p>
+<p>それでも判断を機械に預けきらないよう、`<code style="color:#22d3bf">assume_filtered=True</code>` で</p>
+<p>明示的に外せる(黙って外れはしない)。証拠の数値そのものも</p>
+<p>`<code style="color:#22d3bf">band_long_wave_fraction</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">band_form_ptv_over_sq</code>` で返す。</p>
+<p>★ 落とし穴 (a) —— Sz は「表面の性質」ではなく「どれだけ長く見たか」を測る</p>
+<p>同じ標本間隔(1 µm)のまま評価窓だけ広げると、Sz は頭打ちにならず</p>
+<p>単調に増える(実測、傷を抜いた面):</p>
+<p>窓          32²     64²    128²    256²    512²</p>
+<p>窓の数      256      64      16       4       1</p>
+<p>Sz平均   0.7112  0.8011  0.8693  0.9248  1.0058</p>
+<p>実測/予測 0.5204  0.5295  0.5314  0.5287  0.5420</p>
+<p>面積 256 倍で <b>+41.4 %</b>。予測はガウス極値の `<code style="color:#22d3bf">2√(2 ln M) · Sq</code>`。</p>
+<p>比が窓によらずほぼ一定(0.520〜0.542、平均のまわり ±2.0 %)なので</p>
+<p><b>増え方の形(領域の対数)は当たっている</b>が、絶対値は 1.9 倍外す ——</p>
+<p>面に相関があり、独立な標本の数が点数 M より少ないため。</p>
+<p>**頭打ちにならないので「真の Sz」は存在しない。Sz を報告するときは</p>
+<p>窓の大きさと窓の数を必ず添える。**</p>
+<p>★ 落とし穴 (b) —— 標本間隔に対していちばん強いのは Sa ではなく <b>Sq</b></p>
+<p>同じ面を点標本化で間引き、毎回同じ手順(傾き除去 → λc=80 µm ハイパス)</p>
+<p>で評価した、真値に対する相対誤差(実測):</p>
+<p>dx        Sa       Sq       Sz      Ssk      Sku</p>
+<p>1 µm   -0.0 %   +0.4 %   +0.2 %   +2.8 %   +1.3 %</p>
+<p>2 µm   -0.1 %   +0.4 %   -0.2 %   +3.0 %   +1.4 %</p>
+<p>4 µm   -0.3 %   +0.4 %   -1.3 %   +3.4 %   +1.7 %</p>
+<p>8 µm   -3.4 %   +0.6 %  -19.8 %   +2.3 %   -3.9 %</p>
+<p>16 µm  +23.5 %   +1.6 %  -29.1 %  -38.4 %  -40.8 %</p>
+<p>10 % を最初に超えるのは <b>Sz が dx=8 µm</b>、Sa / Ssk / Sku が dx=16 µm、</p>
+<p><b>Sq は最後まで超えない</b>(最大 1.6 %)。Sq が残るのは、エイリアシングが</p>
+<p>エネルギーを折り返すだけで <b>2 次モーメントを保つ</b>から。Sa は分布の形が</p>
+<p>変わると動き、Sz は「傷の底がたまたま標本点に乗るか」で決まる極値。</p>
+<p>dx=8 µm では <b>Sa は ±5 % 合格・Sz は不合格</b> —— 同じデータで、</p>
+<p>どちらの数字を見たかだけで結論が反転する。</p>
+<p>★ 落とし穴 (c) —— Sdq / Sdr は標本間隔にも単位にも効かれる</p>
+<p>Sdq は勾配の rms、Sdr は展開面積比 `<code style="color:#22d3bf">mean(√(1+|∇z|²)) - 1</code>`。どちらも</p>
+<p>中心差分で計算するので、波長 λ の正弦では `<code style="color:#22d3bf">sinc(2 dx/λ)</code>` の分だけ</p>
+<p><b>過小</b>に出る(実測、λ=32 µm、振幅 1、解析値 Sdq=0.138840):</p>
+<p>dx      Sdq 実測    実測の誤差   sinc(2dx/λ) の予想</p>
+<p>1 µm    0.138471      -0.27 %        -0.64 %</p>
+<p>2 µm    0.136212      -1.89 %        -2.55 %</p>
+<p>4 µm    0.126004      -9.25 %        -9.97 %</p>
+<p>8 µm    0.088388     -36.34 %       -36.34 %</p>
+<p><b>粗く測るほど面は滑らかに見える。</b> Sdr のほうは形自体は正しく、</p>
+<p>十分細かく測れば解析値と +0.116 % で一致する(λ=32、dx=0.25 で実測)。</p>
+<p>高さと `<code style="color:#22d3bf">dx</code>` の単位が違うと <b>ここだけが静かに壊れる</b>(Sa/Sq は</p>
+<p>高さの単位しか使わないので気づけない)。</p>
+<p>端の 1 行 1 列は片側差分になるので<b>評価から外している</b>。</p>
+<p>fail-closed</p>
+<p style="margin:2px 0 2px 12px">• 2 次元でない / 8x8 未満 / NaN・Inf を含む。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">dx</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">dy</code>` が非正・非有限。</p>
+<p style="margin:2px 0 2px 12px">• 帯域処理済みに見えない(`<code style="color:#22d3bf">assume_filtered=False</code>` のとき)。</p>
+<p style="margin:2px 0 2px 12px">• 全点が同じ高さ(Sq=0 で Ssk/Sku が定義できない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">surface_roughness 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_surface_roughness">poc_surface_roughness</a> — <code style="color:#22d3bf">py -3.11 examples/poc_surface_roughness.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">measure</code>)</h3>
+<p><a style="color:#22d3bf" href="oproughness:profile_params">profile_params</a> · <a style="color:#22d3bf" href="oproughness:surface_psd">surface_psd</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: roughness.py — ROUGHNESS 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

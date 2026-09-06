@@ -1,0 +1,74 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">surface_form_remove — ROUGHNESS <code style="color:#22d3bf">prepare</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">depth</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import roughness; roughness.surface_form_remove(z, dx, order=1, method=&#x27;ls&#x27;, thresh=None, dy=None, iters=200, seed=0)</code> (or <code style="color:#22d3bf">opsroughness.get(&quot;surface_form_remove&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>格子のまま平面 / 二次曲面を除く。`<code style="color:#22d3bf">(residual, coeffs)</code>` を返す。</p>
+<p>引数</p>
+<p>z       高さ場。</p>
+<p>dx, dy  標本間隔。`<code style="color:#22d3bf">dy=None</code>` は正方画素。</p>
+<p>order   1 = 平面、2 = 二次曲面。</p>
+<p>method  `<code style="color:#22d3bf">&quot;ls&quot;</code><code style="color:#22d3bf">(最小二乗)または </code><code style="color:#22d3bf">&quot;ransac&quot;</code>`(ロバスト)。</p>
+<p>thresh  RANSAC の内点しきい値(高さの単位)。`<code style="color:#22d3bf">None</code>` なら最小二乗残差の</p>
+<p>ロバストな散らばり `<code style="color:#22d3bf">2.5 x 1.4826 x MAD</code>` を使う。</p>
+<p>iters   RANSAC の試行回数。`<code style="color:#22d3bf">seed</code>` で決定的。</p>
+<p>`<code style="color:#22d3bf">coeffs</code>` は <b>場の中心を原点とする物理座標の単項式係数</b>。</p>
+<p>`<code style="color:#22d3bf">order=1</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">[c0, gx, gy]</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">gx</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">gy</code>` がそのまま勾配、</p>
+<p>`<code style="color:#22d3bf">order=2</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">[c0, gx, gy, cxx, cxy, cyy]</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">x^2, xy, y^2</code>` の順)。</p>
+<p>★ なぜ格子のまま受けるのか</p>
+<p>既存の <code style="color:#22d3bf">fit_plane</code> / <code style="color:#22d3bf">fit_plane_ransac</code> は (N,3) 点群しか受けない。</p>
+<p>512² の高さ場を渡すには毎回 `<code style="color:#22d3bf">column_stack</code>` で 262144x3 = <b>6.3 MB</b> に</p>
+<p>展開する必要がある(実測)。ここは格子を格子のまま受け、基底も</p>
+<p>1 次元ベクトルの外積で作るので展開が要らない。</p>
+<p>★ 費用(実測、1024x1024、`<code style="color:#22d3bf">iters=200</code>`)</p>
+<p>`<code style="color:#22d3bf">method=&quot;ls&quot;</code><code style="color:#22d3bf"> 47 ms に対し </code><code style="color:#22d3bf">method=&quot;ransac&quot;</code>` は <b>1.8 秒</b>(38 倍)。</p>
+<p>RANSAC は毎回 1024² 点の残差を数え直すので、`<code style="color:#22d3bf">iters</code>` に線形に効く。</p>
+<p>粗さだけを見るなら「LS + λc ハイパス」で同じ答えが 40 分の 1 で出る</p>
+<p>(下の実測を参照)—— <b>RANSAC を既定にしない理由がこれ。</b></p>
+<p>★ 落とし穴 —— ロバストが要るのは「深い傷」ではなく「<b>広い</b>外れ値」。</p>
+<p>ただし外れ値が多数派になると RANSAC も同時に壊れる。</p>
+<p>深さ 3 µm の傷 4 本を片側に寄せた 512x512 の面で、傷の<b>幅だけ</b>を</p>
+<p>変えた実測(傾き 0.050/-0.025 を仕込んで除く。真値は傷を含む面そのもの):</p>
+<p>傷の半値半幅   面積比    LS の Sq 誤差   RANSAC の Sq 誤差   改善</p>
+<p>4 µm         5.6 %      -1.94 %          -0.39 %        5.0 倍</p>
+<p>12 µm        16.3 %      -6.47 %          -3.03 %        2.1 倍</p>
+<p>24 µm        31.0 %     -13.79 %         -11.53 %        1.2 倍</p>
+<p>40 µm        46.0 %     -23.80 %         -23.56 %        1.0 倍</p>
+<p>3 つ読める:</p>
+<p style="margin:2px 0 2px 12px">• 効くのは深さではなく<b>面積比</b>。「深い傷 = ロバスト必須」は早合点で、</p>
+<p>正しくは「<b>広い</b>外れ値 = ロバスト必須」。</p>
+<p style="margin:2px 0 2px 12px">• 誤差は必ず<b>過小側</b>に出る —— 最小二乗が「傷が片側に寄っている</p>
+<p>ことによる本物の非対称」まで平面として吸い上げるから。</p>
+<p><b>合否判定では危険な向きに壊れる。</b></p>
+<p style="margin:2px 0 2px 12px">• <b>面積比 46 % では RANSAC も助けにならない</b>(改善 1.0 倍)。</p>
+<p>外れ値が半分近くを占めると、RANSAC の多数決そのものが傷を選ぶ。</p>
+<p>ロバスト当てはめは「外れ値が少数派である」という前提の道具で、</p>
+<p>その前提が切れる所は表で示すしかない。</p>
+<p>★ 落とし穴 —— λc を後段に置くと LS と RANSAC の差は消える</p>
+<p>同じ面(半値半幅 4 µm)に λc=80 µm のハイパスを後から掛けると、</p>
+<p>Sq 誤差は <b>LS +0.00 % / RANSAC -0.00 %</b>(上の表では 5.0 倍差)。</p>
+<p>余計に除いた平面は純粋な長波長なので、ハイパスが同じものをもう一度</p>
+<p>捨てるだけ。**当てはめのロバスト性が効くのは λc を掛けない運用</p>
+<p>(平面度・形状偏差)のとき。** 粗さだけを見るなら順序で救える。</p>
+<p>なお平面そのものの回復は LS でも良く、上の面で仕込んだ勾配</p>
+<p>0.050 / -0.025 に対し 0.050006 / -0.025127 が返る(実測)。</p>
+<p>fail-closed</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">order</code><code style="color:#22d3bf"> が 1 か 2 以外 / </code><code style="color:#22d3bf">method</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">&quot;ls&quot;</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">&quot;ransac&quot;</code>` 以外。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">thresh</code>` が非正・非有限。</p>
+<p style="margin:2px 0 2px 12px">• RANSAC が内点を規定数集められない(退化した面)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">surface_roughness family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_surface_roughness">poc_surface_roughness</a> — <code style="color:#22d3bf">py -3.11 examples/poc_surface_roughness.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">depth</code> as input)</h3>
+<p><a style="color:#22d3bf" href="oproughness:surface_filter">surface_filter</a> · <a style="color:#22d3bf" href="oproughness:surface_params">surface_params</a> · <a style="color:#22d3bf" href="oproughness:surface_psd">surface_psd</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">prepare</code>)</h3>
+<p><a style="color:#22d3bf" href="oproughness:surface_filter">surface_filter</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: roughness.py — ROUGHNESS operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

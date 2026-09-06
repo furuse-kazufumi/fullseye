@@ -1,0 +1,72 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">surface_psd — ROUGHNESS <code style="color:#22d3bf">measure</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import roughness; roughness.surface_psd(z, dx, kind=&#x27;areal&#x27;, dy=None)</code> (oder <code style="color:#22d3bf">opsroughness.get(&quot;surface_psd&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>高さ場のパワースペクトル密度。`<code style="color:#22d3bf">(q, C)</code>` を返す。<b>規約を引数で明示する。</b></p>
+<p>引数</p>
+<p>z       高さ場(平均は内部で引く。DC ビンは返さない)。</p>
+<p>dx, dy  標本間隔。`<code style="color:#22d3bf">dy=None</code>` は正方画素。</p>
+<p>kind    `<code style="color:#22d3bf">&quot;areal&quot;</code><code style="color:#22d3bf"> … 2 次元 PSD </code><code style="color:#22d3bf">C_2D(q)</code>` の環平均。</p>
+<p>`<code style="color:#22d3bf">&quot;radial&quot;</code><code style="color:#22d3bf"> … 1 次元動径 PSD </code><code style="color:#22d3bf">C_1D(q) = 2π q C_2D(q)</code>`。</p>
+<p>規約(ここを書かないと較正なしでは読めない ―― 既存の</p>
+<p><code style="color:#22d3bf">radial_power_spectrum</code> はこれが docstring に無い)</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">q</code><code style="color:#22d3bf"> は **cycles / length**(角周波数 </code><code style="color:#22d3bf">2π/λ</code><code style="color:#22d3bf"> ではない)。</code><code style="color:#22d3bf">q = 1/λ</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">C_2D(q) = dx dy |F|² / (ny nx)</code>`。規格化は Parseval に合わせてある:</p>
+<p>`<code style="color:#22d3bf">∫ C_2D d²q = &lt;h²&gt;</code><code style="color:#22d3bf"> かつ </code><code style="color:#22d3bf">∫ C_1D dq = &lt;h²&gt;</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 自己アフィン面 `<code style="color:#22d3bf">H</code><code style="color:#22d3bf"> に対する傾きは **面 PSD で </code><code style="color:#22d3bf">-2(H+1)</code>`、</p>
+<p>動径 PSD で `<code style="color:#22d3bf">-2H-1</code>`**(ちょうど 1 だけ違う)。</p>
+<p>★ 実測 —— どちらの規約でも H は較正なしで戻る</p>
+<p><code style="color:#22d3bf">surface_synth_psd</code> で H を仕込み、q ∈ [2/λ_hi, 0.4/dx] で対数対数の</p>
+<p>直線を当てはめて H を戻した(512², 帯域 2-64 µm):</p>
+<p>仕込んだ H   面 PSD の傾き   戻した H   動径の傾き   戻した H   傾き差</p>
+<p>0.30        -2.600        0.300      -1.600       0.300     1.0000</p>
+<p>0.50        -3.000        0.500      -2.000       0.500     1.0000</p>
+<p>0.80        -3.600        0.800      -2.600       0.800     1.0000</p>
+<p>0.95        -3.901        0.950      -2.901       0.950     1.0000</p>
+<p>誤差は 4 例とも <b>±0.0003 以内</b>、二つの規約の傾き差はどの H でも</p>
+<p>厳密に 1.0000。<b>較正なしで読める。</b></p>
+<p>★ ここは PoC の測り直しで結論が変わった箇所。PoC は既存</p>
+<p><code style="color:#22d3bf">radial_power_spectrum</code> で <b>一律 -0.013(H の 1.6 %)の系統誤差</b>を</p>
+<p>見つけ、「環平均の離散化による系統誤差」と結論した。同じ検算をこの</p>
+<p>実装でやると誤差が消える。原因を切り分けたところ、**環の代表 `<code style="color:#22d3bf">q</code>` に</p>
+<p>ビン番号 `<code style="color:#22d3bf">i·Δq</code><code style="color:#22d3bf"> を使うか、環内の </code><code style="color:#22d3bf">q</code>` の平均を使うかの差**だった</p>
+<p>—— ビン番号だと -0.0007〜-0.0010 の負のずれが出る(実測、同じ面・同じ</p>
+<p>当てはめ帯域)。向きは PoC の観測と同じだが大きさは 1/15 なので、</p>
+<p>-0.013 の残りは環平均の離散化ではなく、その関数の他の実装差に由来する。</p>
+<p>**この関数は環内の `<code style="color:#22d3bf">q</code>` の平均を返す。**</p>
+<p>★ 落とし穴 —— Nyquist を超える環は「角だけ」で出来ている</p>
+<p>正方格子の最大 `<code style="color:#22d3bf">|q|</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">√2/(2 dx)</code><code style="color:#22d3bf"> だが、</code><code style="color:#22d3bf">q &gt; 1/(2 dx)</code>` の環は</p>
+<p>周波数平面の四隅しか含まない。実測(512²): 全 362 ビンのうち上位</p>
+<p>107 ビン(29.6 %)が Nyquist 超。環内の点数が理想値 `<code style="color:#22d3bf">2πq/Δq</code>` に対して</p>
+<p>どれだけ欠けるかは、Nyquist 以下でも最小 0.838 倍まで落ちる</p>
+<p>(格子の離散化)が、Nyquist 超では 0 まで落ちる。</p>
+<p><b>傾きの当てはめには Nyquist 超を使わないこと。</b></p>
+<p>★ Parseval の検算をどこまで信じてよいか(実測、512²、Sq²=6.400e-03)</p>
+<p style="margin:2px 0 2px 12px">• 2 次元の全格子で `<code style="color:#22d3bf">Σ C_2D Δqx Δqy</code>` を取ると <b>+0.0000 %</b>(厳密)。</p>
+<p style="margin:2px 0 2px 12px">• 返した動径 PSD を台形積分すると <b>-0.55 %</b>。環ごとに平均して</p>
+<p>1 次元に潰した時点でこの分は失われる —— **環平均は要約であって</p>
+<p>可逆ではない。** 0.5 % を超える精度が要る用途では 2 次元の</p>
+<p>`<code style="color:#22d3bf">C_2D</code>` を自分で積分すること。</p>
+<p style="margin:2px 0 2px 12px">• この面は帯域上端が Nyquist なので、Nyquist で打ち切っても -0.55 %</p>
+<p>のまま変わらない(角の分に中身が無い)。角に中身がある面</p>
+<p>(帯域が Nyquist を超える面)では、打ち切ると欠ける。</p>
+<p>fail-closed</p>
+<p style="margin:2px 0 2px 12px">• 2 次元でない / 8x8 未満 / NaN・Inf を含む / `<code style="color:#22d3bf">dx</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">dy</code>` が非正。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">kind</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">&quot;areal&quot;</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">&quot;radial&quot;</code>` 以外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">Leitfaden zur Familie surface_roughness</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_surface_roughness">poc_surface_roughness</a> — <code style="color:#22d3bf">py -3.11 examples/poc_surface_roughness.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">pairs</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">measure</code>)</h3>
+<p><a style="color:#22d3bf" href="oproughness:surface_params">surface_params</a> · <a style="color:#22d3bf" href="oproughness:profile_params">profile_params</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: roughness.py — ROUGHNESS Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -65,6 +65,18 @@ PoC そのものは `examples/poc_*.py` にあり、どれも `PASS` で終わ�
   だった。門を `tests/test_public_reachability.py` に立て(3 通りの壊し方で
   発火を確認)、まず `fourierdesc` + `imagemorph` を台帳に載せた。
 
+* ★**カラー画像を「3 本目の空間軸」として扱う op が 89 本**(image 78 + region 11)。
+  `_NDIM_OK["image"] = (2, 3)` が 3-D をわざと通しているのに、中の実装は
+  `ndimage.*` を素通しするので `(H, W, 3)` が「高さ 3 の体積」として畳み込まれ、
+  **近傍演算が色を跨ぐ**。882 op を因果の形で全数計測した(R と G は両方の入力で
+  0 と 1 を含むよう固定し、**B の中身だけ**を (0,1) の内側で変えて R の出力が
+  動くかを見る —— 正規化が全体の最大で割るので min/max を動かさないのが要)。
+  **既定の数値は 1 つも変えていない**: `on_error="raise"` のときだけ拒否し、
+  既定では台帳に記録して見えるようにした。カラーに対して**正しい呼び方が
+  現時点で存在しない**(まとめると混ざり、チャネルごとだと自己正規化が比を壊す)
+  ので、契約の 3 択を `docs/KNOWN_ISSUES.md` §34 に置いた。
+  門は `tests/test_channel_axis.py`(台帳を信じず毎回測り直す)。
+
 ### 増えたもの
 
 * **`fullseye.op`** —— 進化する 2-D op 882 個を属性で呼ぶ入口。それまで
@@ -76,6 +88,12 @@ PoC そのものは `examples/poc_*.py` にあり、どれも `PASS` で終わ�
   Procrustes / 平均形状 / 形態 PCA / Mahalanobis / 正中面 / 符号つき面距離。
   比較形態学(頭蓋・骨・歯)と「設計 CAD の無い部品を個体群と比べる」検査の
   両方に効く。
+* **`roughness` 族(6 op)** —— 表面粗さ。Sa/Sq/Sp/Sv/Sz/Ssk/Sku/Sdq/Sdr と
+  1-D の Ra/Rq/Rz/Rt、ISO 16610-21 のガウスフィルタ、格子のままの形状除去、
+  規約を引数で明示した PSD、そして**解析 Sq を一緒に返す合成器**。
+  粗さ検査に真値を用意する手段がこれまで無かった(実測で `|std/analytic - 1|`
+  最大 2.2e-16)。`surface_params` は帯域未処理の配列を fail-closed で拒否する
+  —— 生の rms を Sq と呼ぶと 20 倍間違うため。ファザー到達 6/6。
 * **`shape2d` 族(13 op)** —— 2-D の形を記述して写す層。楕円フーリエ記述子
   7 本(`elliptic_fourier` / `invariants` / `reconstruct` / `normalize` /
   `descriptor_distance` / `fourier_smooth` / `from_xld`)と、ランドマーク駆動の

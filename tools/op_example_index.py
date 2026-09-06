@@ -183,8 +183,16 @@ def _called(name: str, src: str) -> bool:
     esc = re.escape(name)
     if re.search(r"(?<![\w.])" + esc + r"\s*\(", src):      # name(
         return True
-    if re.search(r"\." + esc + r"\s*\(", src):              # .name(
-        return True
+    # ``.name(`` は fullseye 側の呼び出しを拾うためのもの。**受け手が外部
+    # ライブラリなら op ではない** —— 2026-09-06 実測: `np.median(` が op
+    # `median` に、`np.percentile(` が `percentile` に、`np.log(` が `log` に
+    # 当たり、(op, 例) 896 組のうち **75 組(8.4 %)が偽リンク**だった
+    # (median 45 / percentile 15 / log 11)。op ノートに「使っていない例」が
+    # 載る。カバレッジ自体は水増しされていない(偽リンクでしか届かない op は
+    # **0 本**で、どれも別の例で本当に呼ばれている)が、索引としては嘘。
+    for m in re.finditer(r"([\w\]\)]+)\." + esc + r"\s*\(", src):
+        if not _FOREIGN_RECEIVER.fullmatch(m.group(1)):
+            return True
     # 引用符つきの op 名は `apply("name")` / `run_pipeline([...])` / ギャラリーの
     # OPS 一覧のような**振り分け**を拾うためのもの。ただし
     # `hasattr(mod, "name")` / `getattr(mod, "name", None)` は**存在確認**であって
@@ -196,6 +204,18 @@ def _called(name: str, src: str) -> bool:
             return True
     return False
 
+
+#: ``<受け手>.<op 名>(`` の受け手がこれなら fullseye の op ではない。
+#: 数値ライブラリと標準ライブラリの別名を並べる。ここに無い受け手は
+#: **op 扱い(数え過ぎる側)** に倒す —— カバレッジを甘く見せないため。
+#: **曖昧な短い別名は入れない**。2026-09-06 に `re` を入れたところ、
+#: `examples_3d/reg_eval.py` が fullseye の評価モジュールを `re` という別名で
+#: import していて、3-D op 3 本(`rmse_inliers` / `registration_recall` /
+#: `rotation_translation_error`)が例を失った。`io` / `signal` / `fft` /
+#: `linalg` / `nd` / `time` も同じ理由で外してある —— **数え漏らすより
+#: 数え過ぎるほうに倒す**。
+_FOREIGN_RECEIVER = re.compile(
+    r"np|numpy|scipy|ndimage|math|os|sys|plt|cv2|ski|skimage|PIL|Path|self")
 
 #: 存在確認の関数。ここの引数に現れる op 名は「呼んだ」に数えない。
 _PRESENCE = re.compile(r"(?:has|get)attr\s*\(\s*[^()]*$")

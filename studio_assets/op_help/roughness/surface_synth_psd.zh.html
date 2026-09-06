@@ -1,0 +1,67 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">surface_synth_psd — ROUGHNESS <code style="color:#22d3bf">synth</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">depth</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import roughness; roughness.surface_synth_psd(n, dx, hurst, lambda_lo, lambda_hi, sq, seed=0)</code>(或 <code style="color:#22d3bf">opsroughness.get(&quot;surface_synth_psd&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>指定した PSD から高さ場を合成する。`<code style="color:#22d3bf">(z, sq_analytic)</code>` を返す。</p>
+<p>帯域 `<code style="color:#22d3bf">lambda_lo &lt;= λ &lt;= lambda_hi</code>` の各モードに振幅</p>
+<p>`<code style="color:#22d3bf">A(q) ∝ q^-(H+1)</code><code style="color:#22d3bf">(= 面 PSD </code><code style="color:#22d3bf">C(q) ∝ q^-2(H+1)</code>`、自己アフィン)を置き、</p>
+<p><b>位相だけ</b>乱数にする。全体を `<code style="color:#22d3bf">sq</code>` に規格化して返す。</p>
+<p>引数</p>
+<p>n           格子の大きさ。整数なら `<code style="color:#22d3bf">n x n</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">(ny, nx)</code>` でも可。</p>
+<p>dx          標本間隔(正方画素)。</p>
+<p>hurst       Hurst 指数 H(0 &lt; H &lt; 1)。大きいほど滑らか。</p>
+<p>lambda_lo   帯域の<b>短い</b>側の波長。</p>
+<p>lambda_hi   帯域の<b>長い</b>側の波長。</p>
+<p>sq          目標 Sq(帯域内の rms 高さ)。</p>
+<p>seed        位相の乱数種。</p>
+<p>★ 解析 Sq を一緒に返すのが肝</p>
+<p>振幅を固定して位相だけ振るので、Parseval から</p>
+<p>`<code style="color:#22d3bf">&lt;h²&gt; = (1/(ny nx))² Σ_k A_k²</code>` が <b>位相の引き方によらず</b>決まる。</p>
+<p>つまり Sq の真値が乱数に依存しない。実測: `<code style="color:#22d3bf">z.std()</code>` と</p>
+<p>`<code style="color:#22d3bf">sq_analytic</code>` の相対差は seed・H・帯域・寸法を振っても</p>
+<p><b>最大 2.2e-16</b>(下の表)。ここを「乱数を振って rms を測る」で</p>
+<p>済ませると、真値そのものが実現ごとにばらついて後段の誤差と混ざる。</p>
+<p>n     H     λ帯域        sq      |std/analytic-1|   尖度   PTV/rms</p>
+<p>128  0.30    4-32     0.5000       2.2e-16         3.084    7.97</p>
+<p>256  0.50    4-64     0.0800       0.0e+00         3.005    7.85</p>
+<p>256  0.80    2-64     0.0800       2.2e-16         2.893    6.92</p>
+<p>512  0.80    2-64     0.0800       0.0e+00         3.113    8.25</p>
+<p>512  0.95   8-256     2.0000       0.0e+00         2.542    5.69</p>
+<p>★ PoC が踏んだ落とし穴を実装側に閉じ込めてある</p>
+<p>係数をエルミートにするために位相を `<code style="color:#22d3bf">phi = (u - u[-k]) / 2</code>` で</p>
+<p>反対称化すると、<b>確かに反対称にはなるが位相が一様でなくなる</b></p>
+<p>(三角分布になって 0 の近くに寄る)。すると全モードが原点で同位相に</p>
+<p>足され、高さ場に 1 本のスパイクが立つ。同じ種・同じ帯域で測った実測</p>
+<p>(512², H=0.8, 帯域 2-64):</p>
+<p>位相の作り方                 PTV/rms    尖度    |std/analytic-1|</p>
+<p>(u - u[-k])/2 で反対称化      55.00     71.81       0.0e+00</p>
+<p>共役対の片方だけに一様乱数     8.47      2.95       0.0e+00  ← 正しい</p>
+<p><b>どちらも Sq は解析値と厳密に一致する。</b> 分散だけ見ていたら</p>
+<p>気づけない壊れ方なので、この関数は共役対の片方だけに一様乱数を引く</p>
+<p>実装に固定し、テストで尖度と PTV/rms も見る。自己共役モード</p>
+<p>(k = -k、4 点)は係数が実でなければならないので、位相ではなく</p>
+<p>符号 ±1 を振る(位相 0 に固定すると全部 +A に偏るため)。</p>
+<p>fail-closed</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> が 8 未満 / </code><code style="color:#22d3bf">dx</code><code style="color:#22d3bf"> が非正 / </code><code style="color:#22d3bf">hurst</code>` が (0, 1) の外。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">lambda_lo &gt;= lambda_hi</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">lambda_lo</code><code style="color:#22d3bf"> が Nyquist 波長 </code><code style="color:#22d3bf">2*dx</code>` 未満(実現できない帯域)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">lambda_hi</code>` が評価長さ超(1 周期も入らない)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">sq</code>` が非正。</p>
+<p style="margin:2px 0 2px 12px">• 帯域に 1 モードも入らない(格子が粗すぎる / 帯域が狭すぎる)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">surface_roughness 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_surface_roughness">poc_surface_roughness</a> — <code style="color:#22d3bf">py -3.11 examples/poc_surface_roughness.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">depth</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="oproughness:surface_form_remove">surface_form_remove</a> · <a style="color:#22d3bf" href="oproughness:surface_filter">surface_filter</a> · <a style="color:#22d3bf" href="oproughness:surface_params">surface_params</a> · <a style="color:#22d3bf" href="oproughness:surface_psd">surface_psd</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">synth</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: roughness.py — ROUGHNESS 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

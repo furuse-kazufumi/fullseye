@@ -1,0 +1,62 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">profile_params — ROUGHNESS <code style="color:#22d3bf">measure</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import roughness; roughness.profile_params(p, dx=1.0, n_sampling=5)</code>(或 <code style="color:#22d3bf">opsroughness.get(&quot;profile_params&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>断面の粗さパラメータ Ra/Rq/Rz/Rt/Rp/Rv/Rsk/Rku(ISO 4287)。</p>
+<p>引数</p>
+<p>p           帯域処理済みの断面(1 次元)。</p>
+<p>dx          標本間隔。パラメータ自体には効かないが `<code style="color:#22d3bf">sampling_length</code>` の</p>
+<p>報告に要る(単位を持たせないと Rz の条件が書けない)。</p>
+<p>n_sampling  基準長さの分割数。ISO 4287 の既定は 5。</p>
+<p>★ Rz と Rt を<b>両方</b>返す —— 定義差をここで消す</p>
+<p>ISO 4287 の Rz は「評価長さを `<code style="color:#22d3bf">n_sampling</code>` 等分し、各区間の</p>
+<p>最大山高さ + 最大谷深さを平均したもの」。一方 Rt は評価長さ全体の</p>
+<p>最大高低差。同じ断面でも値が違い、しかも文献や装置によって</p>
+<p>「Rz」がどちらを指すか揺れる。<b>両方返せば取り違えようがない。</b></p>
+<p>実測(512 点、λc=80 µm で切った断面。深い傷を 1 本含む行を選んだ):</p>
+<p>Rz(5 区間の平均)    1.5076</p>
+<p>Rz_max(区間の最大)  5.4706</p>
+<p>Rt(評価長さ全体)    5.4706</p>
+<p>Rt / Rz               3.63</p>
+<p>傷が 1 区間にしか無いので、5 区間の平均が傷の寄与を 1/5 に薄める。</p>
+<p><b>同じ断面で 3.6 倍違う数字が、どちらも「Rz」と呼ばれている。</b></p>
+<p>同じ行から傷だけ抜くと Rt/Rz = 1.21 まで下がる ——</p>
+<p><b>差が開くのは孤立した特徴があるときだけ</b>なので、</p>
+<p>「うちの装置では一致するから同じ」は反例に当たっていないだけ。</p>
+<p>★ 落とし穴 —— 断面 1 本の Rz は面の Sz を代表しない</p>
+<p>加工目が行方向に走る面(512x512、深い傷 4 本、λc=80 µm)で、断面を</p>
+<p>171 本ずつ取った実測:</p>
+<p style="margin:2px 0 2px 12px">• 目に<b>直交</b>する列方向の Rq は、平行な行方向の <b>2.67 倍</b></p>
+<p>(0.1853 対 0.0694)。同じ表面・同じ装置で、向きが違うだけ。</p>
+<p style="margin:2px 0 2px 12px">• 行方向の Rt は最小 0.2765 / 最大 5.4706 で <b>19.8 倍</b>ばらつく。</p>
+<p style="margin:2px 0 2px 12px">• 面の Sz(5.9694)の 8 割に届く断面は <b>171 本中 6 本</b>(3.5 %)。</p>
+<p>Rq は数本で足りるが Rz は足りない —— **同じ 1 次元断面でも、</p>
+<p>パラメータごとに必要な本数が違う。** Rz を報告するなら本数と向きを</p>
+<p>必ず添えること。</p>
+<p>定義の細部(規格からの逸脱をここに明示する)</p>
+<p style="margin:2px 0 2px 12px">• 基準線は評価長さ全体の平均線(最小二乗直線ではない)。傾きは</p>
+<p><code style="color:#22d3bf">surface_form_remove</code> か <code style="color:#22d3bf">surface_filter</code> で先に除いておくこと。</p>
+<p style="margin:2px 0 2px 12px">• Rp / Rv / Rsk / Rku は評価長さ全体で計算する(区間平均ではない)。</p>
+<p style="margin:2px 0 2px 12px">• 評価長さが `<code style="color:#22d3bf">n_sampling</code>` で割り切れないときは余りを捨てる。捨てた</p>
+<p>点数は `<code style="color:#22d3bf">dropped_samples</code>` で返す。</p>
+<p>fail-closed</p>
+<p style="margin:2px 0 2px 12px">• 1 次元でない / 8 点未満 / NaN・Inf を含む。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">n_sampling</code>` が 1 未満、または区間あたり 4 点未満になる。</p>
+<p style="margin:2px 0 2px 12px">• 断面が完全に平坦(Rq=0)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">surface_roughness 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_surface_roughness">poc_surface_roughness</a> — <code style="color:#22d3bf">py -3.11 examples/poc_surface_roughness.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">measure</code>)</h3>
+<p><a style="color:#22d3bf" href="oproughness:surface_params">surface_params</a> · <a style="color:#22d3bf" href="oproughness:surface_psd">surface_psd</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: roughness.py — ROUGHNESS 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

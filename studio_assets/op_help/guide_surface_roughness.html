@@ -1,0 +1,98 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">表面粗さ(測る前に帯域を決める) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>高さ場から<b>粗さのパラメータを出す</b>層です。6 op / 3 カテゴリ(numpy と</p>
+<p><code style="color:#22d3bf">scipy.ndimage</code> のみ。台帳は <code style="color:#22d3bf">opsroughness.py</code>、実体は <code style="color:#22d3bf">roughness.py</code>):</p>
+<p style="margin:2px 0 2px 12px">• <b>synth(1)</b> — <code style="color:#22d3bf">surface_synth_psd</code>: 指定した PSD から高さ場を作り、</p>
+<p><b>解析 Sq を一緒に返す</b>。この族のテストの真値の供給源。</p>
+<p style="margin:2px 0 2px 12px">• <b>prepare(2)</b> — <code style="color:#22d3bf">surface_form_remove</code> / <code style="color:#22d3bf">surface_filter</code>:</p>
+<p>形状(傾き・曲がり)を除き、帯域を粗さとうねりに分ける。</p>
+<p style="margin:2px 0 2px 12px">• <b>measure(3)</b> — <code style="color:#22d3bf">surface_params</code> / <code style="color:#22d3bf">profile_params</code> / <code style="color:#22d3bf">surface_psd</code>:</p>
+<p>面の Sa/Sq/Sp/Sv/Sz/Ssk/Sku/Sdq/Sdr、断面の Ra/Rq/Rz/Rt/Rp/Rv/Rsk/Rku、</p>
+<p>パワースペクトル密度。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">なぜ足したか</h3>
+<p>2026-09-06、表面粗さの PoC(<code style="color:#22d3bf">examples/poc_surface_roughness.py</code>)が</p>
+<p>「<b>粗さパラメータの op が 1 つも無い</b>」と実測つきで報告しました。</p>
+<p>| 既にあったもの | なぜ代わりにならないか |</p>
+<p>|---|---|</p>
+<p>| <code style="color:#22d3bf">roughness_map(grid, window)</code> | 局所標準偏差の<b>画像</b>であってパラメータではない |</p>
+<p>| <code style="color:#22d3bf">opsprofile</code> の 12 op | 翼型断面の計測(厚み・キャンバー・前縁半径)で無関係 |</p>
+<p>| <code style="color:#22d3bf">vol_fft_lowpass</code> / <code style="color:#22d3bf">highpass</code> | 3-D 体積向け。2-D 高さ場に<b>カットオフ波長</b>を指定する口が無い |</p>
+<p>| <code style="color:#22d3bf">fs.fit_plane_ransac</code> | (N,3) 点群しか受けない(512² で毎回 26 万点へ展開) |</p>
+<p>| <code style="color:#22d3bf">fs.radial_power_spectrum</code> | 規約が docstring に無い(面 PSD なのか動径なのか) |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">全体の流れ</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    A[&quot;surface_synth_psd&lt;br/&gt;PSD 指定 → 高さ場 + 解析 Sq&quot;] --&gt; B
+    Z[&quot;実測の高さ場&quot;] --&gt; B[&quot;surface_form_remove&lt;br/&gt;傾き・曲がりを除く&quot;]
+    B --&gt; C[&quot;surface_filter&lt;br/&gt;λc で粗さ / うねりに分ける&quot;]
+    C --&gt; D[&quot;surface_params&lt;br/&gt;Sa Sq Sz Ssk Sku Sdq Sdr&quot;]
+    C --&gt; E[&quot;surface_psd&lt;br/&gt;(q, C) スペクトル&quot;]
+    C --&gt; F[&quot;断面を取る&quot;] --&gt; G[&quot;profile_params&lt;br/&gt;Ra Rq Rz Rt&quot;]
+    D -. &quot;帯域未処理は&lt;br/&gt;fail-closed で拒否&quot; .-&gt; B</pre>
+<p>**<code style="color:#22d3bf">surface_params</code> は既定で「うねりを含んで見える」配列を拒否します。**</p>
+<p>生の rms を Sq と呼ぶと実測で <b>20 倍</b>間違うためです。真値どおりに測るなら</p>
+<p>必ず <code style="color:#22d3bf">surface_form_remove</code> → <code style="color:#22d3bf">surface_filter</code> を通してください。急ぐときだけ</p>
+<p><code style="color:#22d3bf">assume_filtered=True</code> で門を外せます。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">いちばん短い例</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import roughness as R
+
+z, sq_true = R.surface_synth_psd(n=256, dx=1.0, hurst=0.8,
+                                 lambda_lo=4.0, lambda_hi=64.0, sq=0.5, seed=0)
+p = R.surface_params(z, dx=1.0, assume_filtered=True)
+print(sq_true, p[&quot;Sq&quot;])        # 0.5 と 0.5 —— 実測で相対差 0.00e+00</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">落とし穴 3 つ(このガイドの数値はすべて上の面での実測)</h3>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">1. パラメータごとに標本化への強さが違う</h3>
+<p>同じ面(256², H=0.8, λ 4〜64)を間引いたときの相対誤差 [%]:</p>
+<p>| 間引き | Sa | Sq | Sz | Ssk | Sku |</p>
+<p>|---|---|---|---|---|---|</p>
+<p>| ×2 | 0.0 | −0.0 | −1.4 | −0.1 | −0.0 |</p>
+<p>| ×4 | 0.2 | 0.1 | <b>−6.9</b> | <b>−6.5</b> | −0.9 |</p>
+<p>| ×8 | −0.4 | −0.5 | <b>−12.5</b> | −8.9 | −2.9 |</p>
+<p>| ×16 | −1.9 | −3.0 | <b>−30.0</b> | <b>−71.5</b> | −16.5 |</p>
+<p><b>Sz と Ssk がまず壊れ、Sa と Sq は最後まで持ちます</b>。×8 の時点で</p>
+<p><b>Sa は −0.4 %(合格)なのに Sz は −12.5 %(不合格)</b> —— 同じデータで</p>
+<p>結論が反転します。</p>
+<p>面に依らないのはこの「Sz・Ssk が先、Sa・Sq が後」という順序だけです。</p>
+<p><b>Sa と Sq のどちらが強いかは面によって入れ替わります</b>(この面では</p>
+<p>×16 で Sa −1.9 % / Sq −3.0 % と Sa のほうが良く、PoC の面では逆でした)。</p>
+<p>どちらか一方を「頑健」と覚えないでください。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">2. Sz は「どれだけ長く見たか」を測っている</h3>
+<p>同じ面から窓を切って Sz の平均を取ると:</p>
+<p>| 窓 | Sz 平均 | 枚数 |</p>
+<p>|---|---|---|</p>
+<p>| 32² | 2.1791 | 64 |</p>
+<p>| 64² | 2.6814 | 16 |</p>
+<p>| 128² | 3.2380 | 4 |</p>
+<p>| 256² | <b>3.8196</b> | 1 |</p>
+<p><b>頭打ちがありません</b>(32² から 256² で +75 %)。Sz は極値統計なので、</p>
+<p>評価領域を広げれば必ず増えます。**Sz で合否を決めるなら評価領域を</p>
+<p>先に固定しないと意味がありません**。Sq にはこの依存がありません。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">3. <code style="color:#22d3bf">surface_form_remove</code> のロバスト化が効くのは「広い外れ値」</h3>
+<p>深い傷ではなく<b>面積の広い</b>外れ値のときに最小二乗が壊れます。PoC の実測</p>
+<p>(傷の面積比 → 最小二乗 / RANSAC の Sq 誤差):</p>
+<p>| 面積比 | 最小二乗 | RANSAC | 改善 |</p>
+<p>|---|---|---|---|</p>
+<p>| 5.6 % | −1.94 % | −0.39 % | 5.0 倍 |</p>
+<p>| 16.3 % | −6.47 % | −3.03 % | 2.1 倍 |</p>
+<p>| 31.0 % | −13.79 % | −11.53 % | 1.2 倍 |</p>
+<p>| 46.0 % | −23.80 % | −23.56 % | <b>1.0 倍(改善ゼロ)</b> |</p>
+<p>外れ値が多数派になると、多数決が傷のほうを選びます。**しかも誤差は必ず</p>
+<p>過小側**(粗さを小さく見積もる)なので、検査では危険な向きです。</p>
+<p>なお <b>λc を後段に置くと最小二乗と RANSAC の差はほぼ消えます</b></p>
+<p>(+0.00 % / −0.00 %)。ロバスト性が要るのは λc を掛けない運用</p>
+<p>(平面度・形状偏差)のほうです。費用も違います —— 1024² で最小二乗 47 ms、</p>
+<p>RANSAC 1.8 秒(<b>38 倍</b>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">規約をはっきりさせてあるところ</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">surface_psd(z, dx, kind=&quot;areal&quot;|&quot;radial&quot;)</code> —— <b>規約を引数で明示</b>します。</p>
+<p>2 つの規約の傾きは厳密に 1.0 違います。面 PSD は Parseval を満たします</p>
+<p>(2-D 全格子和が Sq² と一致、実測 ±0.0000 %)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">profile_params</code> は <b>Rz(基準長さ 5 分割の平均)と Rt(全体)を両方返します</b>。</p>
+<p>孤立した傷があると 3.63 倍違うので、どちらの定義かを黙って選ばせません。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">surface_filter</code> の <code style="color:#22d3bf">end_effect=&quot;reject&quot;</code>(既定)は、循環畳み込みで汚れる</p>
+<p>±λc/2 の帯を<b>返しません</b>。返した領域は大きな面から切り出した真値と</p>
+<p>厳密に一致します(実測 0.0e+00)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">関連</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">examples/poc_surface_roughness.py</code> —— この族を作らせた PoC。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">docs/ops/profile/guides/profile_metrology.md</code> —— 1-D 断面の<b>形状</b>計測</p>
+<p>(こちらは粗さではなく厚みやキャンバー)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">docs/ops/interferometry/</code> —— 高さ場を実際に得るところ。</p>
