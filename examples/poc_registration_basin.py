@@ -3,8 +3,10 @@
 
 EXTEND: 実物の点群に差し替えるなら ``bracket`` を捨てて ``fs.read_points`` で読む。
 Stanford Bunny は同梱していないがダウンローダの入口があり、
-``py -3.11 -m sample_data download bunny --yes`` で原典(Stanford 3D Scanning
-Repository)から取得して ``fs.read_points(sample_data.local_path("bunny"))``。
+``fullseye samples download bunny --yes``(= ``py -3.11 imgevolve.py samples
+download bunny --yes``)で原典(Stanford 3D Scanning Repository)から取得して
+``fs.read_points(sample_data.local_path("bunny"))``。``--yes`` を付けないと
+取得するものを表示するだけで、勝手には落とさない。
 実物に替えるとき **必ず一緒に変えるもの** が 3 つある。(a) しきい値は形状の直径に
 対する比で書いてあるので直径さえ測れば移るが、**点間隔がしきい値より粗いと
 「成功不能」になる** —— 第 1 章が測る到達可能な下限を先に見ること。(b) 真値は
