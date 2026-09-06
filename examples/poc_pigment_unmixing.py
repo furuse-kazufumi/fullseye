@@ -236,6 +236,18 @@ def _table(header, rows, widths=None, aligns=None):
     print(line)
 
 
+def _zoom(a, k=3):
+    """図に載せるためだけの最近傍拡大(80x120 のままだとパネルの題が入らない)。"""
+    return np.repeat(np.repeat(np.asarray(a, float), k, axis=0), k, axis=1)
+
+
+def _clip_pct(a, lo=1.0, hi=99.0):
+    """図の塗り分けだけのための分位クリップ。**数値には一切使わない** ——
+    外れ値 1 画素で全体が真っ黒になるのを防ぐためだけの表示処理。"""
+    a = np.asarray(a, float)
+    return np.clip(a, np.percentile(a, lo), np.percentile(a, hi))
+
+
 def _sig(x, x0, k):
     return 1.0 / (1.0 + np.exp(-(np.asarray(x, float) - x0) / k))
 
