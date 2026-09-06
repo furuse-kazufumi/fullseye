@@ -82,7 +82,22 @@ def reprojection_residuals(cameras, points, obs_cam, obs_pt, obs_uv, K):
 
 
 def mean_reprojection_error(cameras, points, obs_cam, obs_pt, obs_uv, K):
-    """再投影 RMS 誤差(ピクセル)。"""
+    """再投影 RMS 誤差(ピクセル)。
+
+    全観測 k について ``project(points[obs_pt[k]], cameras[obs_cam[k]])`` と ``obs_uv[k]`` の差
+    (du, dv) を取り、``sqrt(mean_k(du² + dv²))`` = 観測ごとの再投影距離の 2 乗平均平方根を float で
+    返す(実装は ``r.reshape(-1,2)**2 * 2`` の平均の平方根で、同じ量)。単位は ``obs_uv`` と K に
+    従うピクセル。
+
+    - ``cameras``: (nc,6) の ``[rvec(3) | t(3)]``(``X_cam = R X + t``)。
+    - ``points``: (m,3) の 3D 点。
+    - ``obs_cam`` / ``obs_pt``: 各観測のカメラ添字・点添字(int)。``obs_uv``: (K,2) の観測画素。
+    - ``K``: 全カメラ共通の (3,3) 内部行列。
+
+    ``bundle_adjust`` の返り値 ``rmse`` と同じ計算で、最適化前後の比較に使う。観測が 0 件だと空の
+    平均で NaN になる(長さの検証は ``bundle_adjust`` 側にあり、この関数単体では行わない)。
+    カメラ後方の点も ``project`` がそのまま射影するので、可視性は呼び出し側で保証する。
+    """
     r = reprojection_residuals(cameras, points, obs_cam, obs_pt, obs_uv, K)
     return float(np.sqrt(np.mean(r.reshape(-1, 2) ** 2 * 2)))
 
