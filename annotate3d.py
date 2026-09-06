@@ -258,6 +258,32 @@ def annotate3d_arrow(img, p0, p1, pose, K, depth=None, color="emphasis", width=2
     ------
     ValueError
         端点がカメラの後ろ / 一致 / 両端とも画像の外、姿勢・K の不正。
+
+    手順: ``img`` を float64 ``[0, 1]`` の複製にし(``(H, W)`` / ``(H, W, C)``、C は
+    1/3/4。非有限・空は ``ValueError``)、``p0``, ``p1`` を ``annotate3d_project`` と
+    同じ射影で画素にして、``annotate.arrow`` で ``p0`` の画素から ``p1`` の画素へ
+    矢印を描く。矢じりは ``p1`` 側。
+
+    引数:
+    - ``p0``, ``p1``: object 座標 ``(3,)``(有限)。``pose`` は 4x4 object→camera か
+      ``(R, t)``、``K`` は 3x3(-Z を見る render3d 慣習)。
+    - ``depth``: ``(H, W)`` 前方距離画像(``render3d.render_mesh`` の ``depth``)。
+      画像と同じ形でなければ ``ValueError``。
+    - ``color``: 役割名(``"emphasis"`` など、``scheme`` のパレットで解決)か RGB。
+    - ``width``: 線幅 [px]、1 以上の整数(``1.5`` は拒否)。
+    - ``head_len`` / ``head_width``: 矢じりの長さ・幅 [px]。隠れ描画では矢印長の
+      80 % を超えないよう縮める。
+    - ``occlusion_tol``: ``[0, 1)``。
+
+    返り値: 描画済みの新しい画像(float64、入力と同じ形。入力は変更しない)。
+
+    エラーになる条件(実装どおり): どちらかの端点が ``z <= 1e-9``(カメラ面上/後ろ)/
+    2 点が同じ画素に射影される(視線上に並ぶ、長さ 1e-9 px 未満)/ 姿勢・``K`` の不正。
+    **画像の外に出た端点はエラーにしない**(``annotate.arrow`` が枠外まで線を引く
+    だけ。片方が枠内なら見た目は途中で切れる)。
+
+    使いどころ: ``render3d.render_mesh`` の画像に「この頂点がこれ」を示す。長さを
+    数値で示すなら ``annotate3d_measure``、文字を添えるなら ``annotate3d_label``。
     """
     a = A._prep(img)
     width = A._num(width, "width", lo=1, integer=True)
