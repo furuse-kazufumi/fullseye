@@ -377,21 +377,30 @@ def main():
     print(f"  推定した大気光: 暗チャネル法 {a_dcp}  上位 0.1 % 明画素 {a_bri}")
     d_a = scores["オラクル A(t は推定)"][0] - scores["暗チャネル p=15"][0]
     d_t = scores["オラクル t(A は推定)"][0] - scores["暗チャネル p=15"][0]
-    print(f"  → **透過率が律速**。A を真値にすると PSNR は {d_a:+.2f} dB しか動かないのに、")
-    print(f"     t を真値にすると {d_t:+.2f} dB 動く。伸びしろの {100 * d_t / (d_a + d_t):.0f} % は t 側にある。")
+    print(f"  → **透過率が律速**。A を真値に差し替えても PSNR は {d_a:+.2f} dB しか動かないのに、")
+    print(f"     t を真値にすると {d_t:+.2f} dB 動く。伸びしろの {100 * d_t / max(1e-9, d_a + d_t):.0f} % は t 側にある。")
+    print(f"  ただし **A が易しいのはこの場面に空が写っているから**(面積 {100 * masks[3][1].mean():.0f} %、")
+    print("     観測値がほぼ A そのもの)。空が無い場面では話が変わる —— 6 節で壊す。")
 
-    print("\n=== 4. 帯ごとの内訳 —— 全体 PSNR に埋もれる遠景の負け ===")
+    print("\n=== 4. 帯ごとの内訳 —— 全体 PSNR が打ち消し合わせているもの ===")
     print(f"  {'手法':<22}" + "".join(f"{n:>16}" for n, _ in masks))
     for name, _a, _t, out in methods:
         row = "".join(f"{psnr_masked(out, j_true, m):>16.2f}" for _n, m in masks)
         print(f"  {name:<22}{row}")
-    far_none = psnr_masked(img, j_true, masks[2][1])
-    far_dcp = psnr_masked(methods[2][3], j_true, masks[2][1])
-    sky_none = psnr_masked(img, j_true, masks[3][1])
-    sky_dcp = psnr_masked(methods[2][3], j_true, masks[3][1])
-    print(f"  → 遠景では暗チャネルが「何もしない」に {far_dcp - far_none:+.2f} dB、")
-    print(f"     空では {sky_dcp - sky_none:+.2f} dB。全体値 {scores['暗チャネル p=15'][0]:.2f} dB は")
-    print("     近景・中景の面積で買った数字であって、遠景の成績ではない。")
+    gains = [psnr_masked(methods[2][3], j_true, m) - psnr_masked(img, j_true, m)
+             for _n, m in masks]
+    total_gain = scores["暗チャネル p=15"][0] - scores["何もしない"][0]
+    print(f"  暗チャネルの利得 [dB]: " + " / ".join(
+        f"{n.split(' ')[0]} {g:+.2f}" for (n, _m), g in zip(masks, gains)))
+    print(f"  → 全体では {total_gain:+.2f} dB だが、その内訳は**近景 {gains[0]:+.2f} dB の劣化**を")
+    print(f"     中景 {gains[1]:+.2f} / 遠景 {gains[2]:+.2f} dB の改善が打ち消して出た数字。1 個の数字だと")
+    print("     「近景を壊した」ことが完全に見えない。近景は元々霞が薄く、除霞は")
+    print("     ほぼ雑音と透過率の誤差を足すだけになる(触らないのが正解の領域)。")
+    print(f"  空は誰も直せない —— オラクル(真の t と真の A)ですら "
+          f"{psnr_masked(methods[6][3], j_true, masks[3][1]):.2f} dB で、")
+    print(f"     何もしない {psnr_masked(img, j_true, masks[3][1]):.2f} dB とほぼ同じ。t の下限 "
+          f"{T_FLOOR} が効いていて、")
+    print("     真の t = 0.0003 を使えば復元式は 0/0 になる。**ここは推定の問題ではない**。")
 
     print("\n=== 5. 崖 (a) 霞の濃さ —— beta を薄いから濃いまで振る ===")
     print(f"  {'beta':>7}{'視程 m':>8}{'t 中央':>8}{'t MAE':>8}{'A 角度':>8}"
