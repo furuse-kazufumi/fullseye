@@ -523,13 +523,14 @@ def main():
         # ★この PoC の見出し。いちばん強い検出器の曲線が、保存ボタン 1 回で
         #   対角線まで(そして下まで)落ちる。
         figs.save_plot("roc_postprocess",
-                       [("%s AUC %.3f" % (lb, post_rows[lb]["ゴーストV"][0]),
+                       [("%s %.3f" % (lb.replace("全体を", "").replace("して戻す", ""),
+                                      post_rows[lb]["ゴーストV"][0]),
                          *roc_points(score_ghost_contrast, post_cases[lb]))
                         for lb in post_cases],
                        xlabel="偽陽性率", ylabel="検出率", xlim=(0.0, 1.0), ylim=(0.0, 1.0),
                        title="いちばん強い ゴーストV も後処理 1 回で消える",
-                       caption="対角線が乱数。q60 再圧縮とぼかしでは曲線が下側へ回り、"
-                               "符号が逆に読める状態になる。")
+                       caption="凡例の数字は AUC。対角線が乱数。q60 再圧縮とぼかしでは"
+                               "曲線が下側へ回り、符号が逆に読める状態になる。")
 
     print("\n=== 4-c. 効かなくなる境界:平坦な領域(貼っても画素が変わらない)===")
     FLAT_KW = dict(flat=True, src=(80, 80))     # 切り出し元も平坦帯 (64..191) の中
