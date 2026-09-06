@@ -331,6 +331,20 @@ def reflect_rays(directions, normals):
     """鏡面反射 d − 2(d·n)n。``glassmirror.refract_rays`` の相方(反射側が無かった)。
 
     入射・法線ともに (..., 3)。法線の向き(表裏)には依存しない。返り値は単位ベクトル。
+
+    手順: ``directions`` と ``normals`` をそれぞれ単位化してから
+    ``r = d - 2 (d·n) n`` を取り、もう一度単位化する。``n`` を ``-n`` にしても
+    ``(d·n) n`` は変わらないので、法線の符号を気にせず ``trace_rays(...)["normal"]``
+    をそのまま渡せる。
+
+    - ``directions``, ``normals``: 最後の軸が 3、有限。形が違えば numpy の規則で
+      ブロードキャスト(1 本の法線を全光線に、など)。
+    - 失敗(``ValueError``): 最後の軸が 3 でない / 非有限 / **長さ 0 のベクトル**を含む
+      (交差しなかった光線の法線 0 を混ぜると落ちる ―― ``index >= 0`` で絞ってから)。
+    - 返り値: ブロードキャスト後の形の float64 単位ベクトル。
+
+    ``trace_rays`` → ``reflect_rays`` → ``trace_rays`` で鏡面の 2 次反射を追える。
+    屈折側は ``refract_rays``。
     """
     d = _unit(_arr(directions, "directions", 3))
     n = _unit(_arr(normals, "normals", 3))
