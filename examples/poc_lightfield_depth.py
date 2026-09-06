@@ -424,6 +424,15 @@ def main():
         bm = float(np.median(null_block_match(lf)[i]))
         snap[s_true] = (lin, cub)
         print(f"  {s_true:>8.2f}{lin:>16.4f}{cub:>10.4f}{ep:>9.4f}{bm:>10.4f}")
+    s_axis = sorted(snap)
+    figs.save_plot("focus_snapping",
+                   [("真値(恒等)", s_axis, s_axis),
+                    ("linear(既定)", s_axis, [snap[s][0] for s in s_axis]),
+                    ("cubic", s_axis, [snap[s][1] for s in s_axis])],
+                   xlabel="真のスロープ [px/view]", ylabel="推定スロープ [px/view]",
+                   title="焦点度は整数スロープへ吸着する(既定 linear)",
+                   caption="linear は 1.08/1.15 を 1.0 へ、1.85 を 2.0 側へ引く。"
+                           "cubic は恒等線に乗る。生成側の補間はゼロ(Fourier シフト)。")
     worst = max(snap, key=lambda k: abs(snap[k][0] - k))
     lin, cub = snap[worst]
     print(f"  → 既定 linear は最悪 {abs(lin - worst):.4f} px/view ずれる"
