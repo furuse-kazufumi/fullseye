@@ -193,7 +193,7 @@ def main():
     print("   走査ステップ 0.04 µm(段差 100 nm は 2.5 ステップ = 格子に載らない):")
     for mode in ("peak", "parabolic", "gaussian", "centroid"):
         got, _ = measure_step(0.100, 0.0, 0, mode=mode, dz=0.04, n_planes=301)
-        print("      %-10s 雑音なし誤差 %+9.4f nm" % (mode, (got - 0.100) * 1000))
+        print("      %-10s 雑音なし誤差 %+11.3e nm" % (mode, (got - 0.100) * 1000))
     peak_err = (measure_step(0.100, 0.0, 0, "peak", dz=0.04, n_planes=301)[0]
                 - 0.100) * 1000
     gauss_err = (measure_step(0.100, 0.0, 0, "gaussian", dz=0.04, n_planes=301)[0]
