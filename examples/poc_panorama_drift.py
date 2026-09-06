@@ -772,7 +772,7 @@ with np.errstate(divide="ignore", invalid="ignore"):
 t_mos = (time.perf_counter() - t0) / 3.0
 _m1 = (mos_true != 0) & (mos_est != 0)
 _m2 = (mos_true != 0) & (mos_ba != 0)
-print(f"\n(5) gen_projective_mosaic(7 枚 60 度, {t_mos * 1e3:.0f} ms/枚組)")
+print(f"\n(5) gen_projective_mosaic(7 枚 60 度をモザイク 1 枚に, {t_mos * 1e3:.0f} ms)")
 print(f"    真の H で合成 vs 鎖の H で合成   平均|差| "
       f"{np.abs(mos_true - mos_est)[_m1].mean():.4f} / 最大 "
       f"{np.abs(mos_true - mos_est)[_m1].max():.3f}(輝度 0-1)")
