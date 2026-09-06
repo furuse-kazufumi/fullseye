@@ -285,18 +285,27 @@ def make_cases(n_img, **kw):
     return [build_case(seed, **kw) for seed in range(n_img)]
 
 
+W_LABEL = 24
+W_COL = 11
+
+
+def header():
+    print("  " + pad("条件", W_LABEL, right=False)
+          + "".join(pad(n, W_COL) for n, _ in DETECTORS))
+    print("  " + "-" * (W_LABEL + W_COL * len(DETECTORS)))
+
+
 def row(label, cases, detectors=DETECTORS):
-    out = {}
-    for name, fn in detectors:
-        out[name] = evaluate(fn, cases)
-    print(f"  {label:<22}" + "".join(f"{out[n][0]:>10.3f}" for n, _ in detectors))
+    """1 条件ぶんの AUC を全検出器で出して 1 行に印字する。"""
+    out = {name: evaluate(fn, cases) for name, fn in detectors}
+    print("  " + pad(label, W_LABEL, right=False)
+          + "".join(pad(f"{out[n][0]:.3f}", W_COL) for n, _ in detectors))
     return out
 
 
 # --------------------------------------------------------------------------- #
 def main():
     n_img = 10
-    hdr = f"  {'条件':<22}" + "".join(f"{n:>10}" for n, _ in DETECTORS)
 
     print("=== 1. 何を作ったか(真値は自分で入れたので分かっている)===")
     img, mask = build_case(0)
@@ -311,22 +320,25 @@ def main():
 
     print(f"\n=== 2. 画素ごとの ROC({n_img} 枚をまとめて 1 本)===")
     base = make_cases(n_img)
-    print(hdr)
-    print("  " + "-" * (22 + 10 * len(DETECTORS)))
+    header()
     res_pos = row("改竄あり AUC", base)
     null = make_cases(n_img, tampered=False)
     res_null = row("ゼロ点 AUC", null)
     print()
-    print(f"  {'検出器':<22}{'AUC':>10}{'FPR1% の検出率':>16}{'実 FPR':>10}{'ゼロ点 AUC':>12}")
+    print("  " + pad("検出器", W_LABEL, right=False) + pad("AUC", 10)
+          + pad("FPR 1% の検出率", 18) + pad("実 FPR", 10) + pad("ゼロ点 AUC", 12))
     for name, _ in DETECTORS:
         a, t, f = res_pos[name]
-        print(f"  {name:<22}{a:>10.3f}{t:>16.3f}{f:>10.4f}{res_null[name][0]:>12.3f}")
+        print("  " + pad(name, W_LABEL, right=False) + pad(f"{a:.3f}", 10)
+              + pad(f"{t:.3f}", 18) + pad(f"{f:.4f}", 10)
+              + pad(f"{res_null[name][0]:.3f}", 12))
     print("  → 乱数の AUC が 0.500 に乗ることで、この測り方自体に偏りが無いことが言える。")
     print("     ゼロ点(改竄していない画像に同じ場所の偽マスク)も 0.5 付近にいるべきで、")
     print("     ここが 0.5 から離れる検出器は『画像の構造』でなく『場所』に反応している。")
 
     print("\n=== 3. ゼロ点のスコア分布(改竄していない画像、偽マスクの内と外)===")
-    print(f"  {'検出器':<22}{'偽マスク内 平均':>16}{'外 平均':>12}{'内/外':>10}{'z':>8}")
+    print("  " + pad("検出器", W_LABEL, right=False) + pad("偽マスク内 平均", 18)
+          + pad("外 平均", 12) + pad("内/外", 10) + pad("z", 10))
     for name, fn in DETECTORS:
         ins, outs = [], []
         for im, mk in null:
@@ -337,13 +349,14 @@ def main():
         b = np.concatenate(outs)
         ratio = a.mean() / b.mean() if abs(b.mean()) > 1e-12 else float("nan")
         z = (a.mean() - b.mean()) / (b.std() / np.sqrt(a.size) + 1e-12)
-        print(f"  {name:<22}{a.mean():>16.4f}{b.mean():>12.4f}{ratio:>10.3f}{z:>8.1f}")
+        print("  " + pad(name, W_LABEL, right=False) + pad(f"{a.mean():.4f}", 18)
+              + pad(f"{b.mean():.4f}", 12) + pad(f"{ratio:.3f}", 10)
+              + pad(f"{z:.1f}", 10))
     print("  → 内/外の比は 1 付近だが、画素数が多いので z は大きく出る。**z が大きいこと**")
     print("     **と検出できることは別**で、それを分けて言えるのが AUC のほうである。")
 
     print("\n=== 4-a. 効かなくなる境界:改竄領域の大きさ ===")
-    print(hdr)
-    print("  " + "-" * (22 + 10 * len(DETECTORS)))
+    header()
     size_rows = {}
     for size in (96, 64, 48, 32, 16):
         size_rows[size] = row(f"{size}x{size}"
@@ -353,8 +366,7 @@ def main():
     print("     16x16 の改竄は 1 ブロックに収まり、まわりと混ざって消える。")
 
     print("\n=== 4-b. 効かなくなる境界:あとから全体にかけた後処理 ===")
-    print(hdr)
-    print("  " + "-" * (22 + 10 * len(DETECTORS)))
+    header()
     post_rows = {}
     for label, post in (("後処理なし", None),
                         ("全体を q75 で再圧縮", ("recompress", 75)),
@@ -367,23 +379,23 @@ def main():
     print("     格子そのものを壊す。どちらも『改竄を隠す意図』が無くても起きる。")
 
     print("\n=== 4-c. 効かなくなる境界:平坦な領域 ===")
-    print(hdr)
-    print("  " + "-" * (22 + 10 * len(DETECTORS)))
+    header()
     flat_rows = {"通常": row("通常(構造あり)", base),
                  "平坦": row("平坦な帯に貼る", make_cases(n_img, flat=True))}
     print("  → 平坦な所は圧縮しても誤差が出ず、雑音も乗らない。**手掛かりの素**が")
     print("     無いので、貼ってあっても言えることが無い。")
 
     print("\n=== 4-d. 効かなくなる境界:貼り付け位置の 8 画素格子 ===")
-    print(f"  {'配置':<28}{'差 mod 8':>10}{'貼付部の最頻品質':>18}{'背景':>8}")
+    print("  " + pad("配置", 20, right=False) + pad("差 mod 8", 12)
+          + pad("貼付部の最頻品質", 20) + pad("背景", 10))
     for (sr, dr) in ((40, 96), (40, 99), (43, 96), (43, 99)):
         im, mk = build_case(0, src=(sr, sr), dst=(dr, dr), save_q=None)
         q = F.jpeg_ghost_quality(F.jpeg_ghost_map(im, GHOST_QS, block=BLOCK), GHOST_QS)
         inner = np.zeros((N, N), bool)
         inner[dr + 8:dr + 56, dr + 8:dr + 56] = True
-        mi = int(np.bincount(q[inner].astype(int)).argmax())
-        mo = int(np.bincount(q[8:56, 8:56].astype(int)).argmax())
-        print(f"  src {sr} → dst {dr}{'':<12}{(dr - sr) % 8:>10}{mi:>18}{mo:>8}")
+        mi, mo = int(_mode(q[inner])), int(_mode(q[8:56, 8:56]))
+        print("  " + pad(f"src {sr} → dst {dr}", 20, right=False)
+              + pad((dr - sr) % 8, 12) + pad(mi, 20) + pad(mo, 10))
     print("  → 真値は 60。差が 8 の倍数のときだけ言い当てる。★道具の穴 (b)。")
     print("     しかも上は **合成後に保存していない**場合で、q95 で 1 度保存すると:")
     for (sr, dr) in ((40, 96), (43, 99)):
@@ -391,8 +403,8 @@ def main():
         q = F.jpeg_ghost_quality(F.jpeg_ghost_map(im, GHOST_QS, block=BLOCK), GHOST_QS)
         inner = np.zeros((N, N), bool)
         inner[dr + 8:dr + 56, dr + 8:dr + 56] = True
-        print(f"     src {sr} → dst {dr}: 貼付部 {int(np.bincount(q[inner].astype(int)).argmax())}"
-              f" / 背景 {int(np.bincount(q[8:56, 8:56].astype(int)).argmax())}"
+        print(f"     src {sr} → dst {dr}: 貼付部 {int(_mode(q[inner]))}"
+              f" / 背景 {int(_mode(q[8:56, 8:56]))}"
               f" / 地図の相異なる値 {np.unique(q).size} 個")
     print("     ★道具の穴 (a)。定数地図 = 何も言っていない(AUC もちょうど 0.500)。")
 
@@ -427,12 +439,13 @@ def main():
         t0 = time.perf_counter()
         for _ in range(5):
             fn(probe)
-        print(f"  {name:<22}{1e3 * (time.perf_counter() - t0) / 5:>9.2f} ms")
-    print(f"  {'コピー&ムーブ(keypoint)':<22}", end="")
+        print("  " + pad(name, W_LABEL, right=False)
+              + pad(f"{1e3 * (time.perf_counter() - t0) / 5:.2f}", 9) + " ms")
+    print("  " + pad("コピー&ムーブ(keypoint)", W_LABEL, right=False), end="")
     t0 = time.perf_counter()
     for _ in range(5):
         F.copy_move_regions(probe, method="keypoint")
-    print(f"{1e3 * (time.perf_counter() - t0) / 5:>9.2f} ms")
+    print(pad(f"{1e3 * (time.perf_counter() - t0) / 5:.2f}", 9) + " ms")
     print("  → ゴーストだけ 1 桁遅い。品質の本数ぶん JPEG 符号化を回すので、")
     print("     掃引 12 本なら符号化 12 回。効き目は上の表のとおり乏しい。")
 
@@ -474,8 +487,8 @@ def main():
     im_b, _ = build_case(0, src=(40, 40), dst=(99, 99), save_q=None)
     qa = F.jpeg_ghost_quality(F.jpeg_ghost_map(im_a, GHOST_QS, block=BLOCK), GHOST_QS)
     qb = F.jpeg_ghost_quality(F.jpeg_ghost_map(im_b, GHOST_QS, block=BLOCK), GHOST_QS)
-    assert int(np.bincount(qa[104:152, 104:152].astype(int)).argmax()) == 60
-    assert int(np.bincount(qb[107:155, 107:155].astype(int)).argmax()) == max(GHOST_QS)
+    assert int(_mode(qa[104:152, 104:152])) == 60
+    assert int(_mode(qb[107:155, 107:155])) == max(GHOST_QS)
     # (9) ROC の実装が端で正しい:完全分離は 1.0、逆向きは 0.0
     lab = np.r_[np.ones(50, bool), np.zeros(50, bool)]
     assert auc_and_tpr(np.r_[np.ones(50), np.zeros(50)], lab)[0] == 1.0
