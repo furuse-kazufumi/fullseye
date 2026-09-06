@@ -466,12 +466,15 @@ def section4_density(rows0, cols0):
         rec["greedy_d"].append(g / D_TRUE)
         rec["greedy_amb"].append(100 * bg["amb"])
         rec["greedy_miss"].append(100 * bg["miss"])
+        rec["gate_d"].append(gt / D_TRUE)
+        rec["gate_drift"].append(gtc / DRIFT[1])
     print()
-    print("  ドリフト(列)の真値比 —— **D ほどは壊れない**:")
-    print("  %6s %14s %14s" % ("粒子数", "検出+NN", "真値位置+NN"))
+    print("  ドリフト(列)の真値比 —— **D と壊れ方が違う**:")
+    print("  %6s %12s %12s %12s" % ("粒子数", "検出+NN", "真値位置+NN", "検出+ゲート"))
     for k, n_part in enumerate(rec["n"]):
-        print("  %6d %14.3f %14.3f"
-              % (n_part, rec["drift_det_nn"][k], rec["drift_tru_nn"][k]))
+        print("  %6d %12.3f %12.3f %12.3f"
+              % (n_part, rec["drift_det_nn"][k], rec["drift_tru_nn"][k],
+                 rec["gate_drift"][k]))
     print()
     print("  1 対 1 の貪欲リンク(近い対から確定、検出位置)にすると:")
     print("  %6s %10s %10s %10s" % ("粒子数", "曖昧 %", "欠測 %", "D 真値比"))
