@@ -399,8 +399,8 @@ def main():
     assert psnr(fused, tex) > psnr(stack.mean(axis=0), tex) + 10.0, "平均のゼロ点に勝てていない"
     # 2. 深度はテクスチャのある所でだけゼロ点に勝つ
     assert rms(err[plain]) < 0.5 * rms(depth - null_const), "有テクスチャでも定数に勝てていない"
-    assert rms(err[flat]) > 0.8 * rms(depth[flat] - null_const), \
-        "無テクスチャで定数より良く出た —— 真値が漏れている疑い"
+    assert rms(err[flat]) > 2.0 * float(depth[flat].std()), \
+        "無テクスチャで領域内定数のゼロ点に勝ってしまった —— 真値が漏れている疑い"
     # 3. 無テクスチャの答えは掃引全域にばらけている(= 乱数)
     assert np.ptp(dmap[flat]) > 0.9 * (focus_mm[-1] - focus_mm[0]), "無テクスチャの散らばりが小さすぎる"
     assert int((np.bincount(kmap[flat].ravel(), minlength=n_frames) > 0).sum()) == n_frames, \
