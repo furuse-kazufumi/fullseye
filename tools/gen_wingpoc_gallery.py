@@ -118,6 +118,46 @@ def _thumb(poc_id: str, file: str) -> str:
     return name
 
 
+_OP_URL = None
+
+
+def _op_url_table() -> dict:
+    """op 名 → docs サイトのノート URL(https://furuse.work/ops/<dim>/<cat>/<op>.html)。"""
+    global _OP_URL
+    if _OP_URL is not None:
+        return _OP_URL
+    sys.path.insert(0, os.path.join(_ROOT, "tools"))
+    import opdocs as OD
+    recs, _i, _f, _g = OD._records()
+    tbl = {}
+    for r in recs:
+        p = OD._op_path(r).replace("\\", "/")
+        rel = p[p.index("docs/ops/") + len("docs/"):-3] + ".html"
+        tbl.setdefault(r["name"], "https://furuse.work/" + rel)
+    _OP_URL = tbl
+    return tbl
+
+
+def _ops_used(poc_id: str) -> list:
+    """PoC スクリプトが実際に呼んでいる op(例索引と同じ検出規則)。手で書かない。"""
+    import op_example_index as OEI
+    src = io.open(os.path.join(_ROOT, "examples", poc_id + ".py"), encoding="utf-8").read()
+    tbl = _op_url_table()
+    return sorted(n for n in tbl if len(n) >= 4 and OEI._called(n, src))
+
+
+def _ops_line(poc_id: str, lang: str) -> str:
+    """「使用 op」行。細かい説明は書かず、ノート(ヘルプの目録)へのリンクに任せる
+    (ユーザー方針 2026-09-07「ヘルプの目録へのリンクを貼っておけば細かい説明はいらない」)。"""
+    tbl = _op_url_table()
+    names = _ops_used(poc_id)
+    if not names:
+        return ""
+    links = " · ".join("[`%s`](%s)" % (n, tbl[n]) for n in names[:24])
+    more = "" if len(names) <= 24 else (" …(他 %d)" % (len(names) - 24) if lang == "ja" else " … (+%d)" % (len(names) - 24))
+    return ("使用 op(ノートへ): " if lang == "ja" else "Ops used (notes): ") + links + more
+
+
 def _exhibit_md(n: int, ex: dict, lang: str, pick: dict, thumb: str, byid: dict) -> str:
     title = ex["title_" + lang]
     cap = ex["caption_" + lang]

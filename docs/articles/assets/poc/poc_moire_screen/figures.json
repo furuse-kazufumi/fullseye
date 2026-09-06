@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_failure_split_plot.png",
+  "name": "failure_split_plot",
+  "caption": "σ≈8 px で漏れと減衰が釣り合う。合計だけ見ると「良い測り方」に見える。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_methods.png",
+  "name": "methods",
+  "caption": "",
+  "shape": [
+   224,
+   485,
+   3
+  ],
+  "csv": "02_methods.csv",
+  "tsv": "02_methods.tsv"
+ },
+ {
+  "file": "03_separability.png",
+  "name": "separability",
+  "caption": "縦線がムラの周波数。素のノッチはビン位置で、平滑化は δ の小ささで壊れる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_moire_scene.png",
+  "name": "moire_scene",
+  "caption": "左上 256x256 px。(d) は (b)-(c)。周期 20 px のモアレがうっすら残り、同時にムラ自身も鈍っている。",
+  "shape": [
+   647,
+   542,
+   3
+  ]
+ }
+]

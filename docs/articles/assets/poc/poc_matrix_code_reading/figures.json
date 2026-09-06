@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_symbol_and_errors.png",
+  "name": "symbol_and_errors",
+  "caption": "誤り 41 モジュールのうち構造(位置検出・分離帯・タイミング・位置合わせ)は 7。1:1:3:1:1 はまだ読めるので、この段では定位が生き残る(落ちるのは sigma/m 0.60)。",
+  "shape": [
+   663,
+   558,
+   3
+  ]
+ },
+ {
+  "file": "02_blur_cliff.png",
+  "name": "blur_cliff",
+  "caption": "自力検出の線は sigma/m 0.50 を最後に途切れる(0.60 では位置検出パターンが見つからない)。標本化はそこでまだ BER 0.07 で読めている。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_threshold_window.png",
+  "name": "threshold_window",
+  "caption": "照明ムラ 0.9 固定。解像度を上げるだけで「ムラに強い op」が当てずっぽう(0.5)へ落ちる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_occlusion.png",
+  "name": "occlusion",
+  "caption": "位置検出パターンは一辺 2 モジュール(全体の 0.6 %)で致命的。誤り訂正はビットを救うが幾何は救わない。",
+  "shape": [
+   248,
+   437,
+   3
+  ],
+  "csv": "04_occlusion.csv",
+  "tsv": "04_occlusion.tsv"
+ }
+]

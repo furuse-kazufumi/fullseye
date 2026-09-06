@@ -9,3 +9,36 @@
    3
   ]
  },
+ {
+  "file": "02_focus_snapping.png",
+  "name": "focus_snapping",
+  "caption": "linear は 1.08/1.15 を 1.0 へ、1.85 を 2.0 側へ引く。cubic は恒等線に乗る。生成側の補間はゼロ(Fourier シフト)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_texture_breakdown.png",
+  "name": "texture_breakdown",
+  "caption": "EPI は SNR 20 で既に -35 %。焦点度は SNR 20 まで持ちこたえ、そこから整数 1.0 / 2.0 へ落ちる。",
+  "shape": [
+   224,
+   347,
+   3
+  ],
+  "csv": "03_texture_breakdown.csv",
+  "tsv": "03_texture_breakdown.tsv"
+ },
+ {
+  "file": "04_occlusion_bands.png",
+  "name": "occlusion_bands",
+  "caption": "境界から 5 px 離れれば内側の水準に戻る。影響半径は開口の見込み視差(最大 7.5 px)と同じ桁。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]
