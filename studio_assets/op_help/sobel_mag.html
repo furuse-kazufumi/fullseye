@@ -1,5 +1,6 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sobel_mag <span style="color:#8b91a0;font-size:11px">· edges · HALCON: sobel_amp</span></h2>
 <p style="color:#8b91a0;margin:2px 0"><b>image → image</b></p>
+<p style="color:#8b91a0;margin:2px 0">Call: <code style="color:#e2e5ec">fs.apply(img, "sobel_mag", a=0.5, b=0.5)</code> &nbsp;·&nbsp; <code style="color:#e2e5ec">fs.op.sobel_mag(img, a=0.5, b=0.5)</code> &nbsp;·&nbsp; Studio: <code style="color:#e2e5ec">sobel_mag a b</code></p>
 <p>Computes the <b>gradient magnitude</b> with the Sobel operator: it convolves the
 image with a horizontal and a vertical 3×3 derivative kernel and returns
 √(Gx² + Gy²). Bright pixels mark strong intensity transitions — i.e. <b>edges</b>.

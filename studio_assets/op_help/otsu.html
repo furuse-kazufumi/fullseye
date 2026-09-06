@@ -1,5 +1,6 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">otsu <span style="color:#8b91a0;font-size:11px">· segmentation · HALCON: binary_threshold</span></h2>
 <p style="color:#8b91a0;margin:2px 0"><b>image → region</b></p>
+<p style="color:#8b91a0;margin:2px 0">Call: <code style="color:#e2e5ec">fs.apply(img, "otsu", a=0.5, b=0.5)</code> &nbsp;·&nbsp; <code style="color:#e2e5ec">fs.op.otsu(img, a=0.5, b=0.5)</code> &nbsp;·&nbsp; Studio: <code style="color:#e2e5ec">otsu a b</code></p>
 <p>Global <b>automatic thresholding</b> by Otsu's method. It scans every possible
 threshold of the intensity histogram and picks the one that <b>maximises the
 between-class variance</b> of the foreground/background split. No manual threshold
