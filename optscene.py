@@ -195,7 +195,18 @@ def scene_plane(z_mm: float = 0.0, material=None, half_size_mm=None) -> dict:
 
 
 def scene_sphere(center_mm, radius_mm: float, material=None) -> dict:
-    """球の部品。``center_mm`` は (x, y, z) [mm]、``radius_mm`` > 0。"""
+    """球の部品。``center_mm`` は (x, y, z) [mm]、``radius_mm`` > 0。
+
+    - ``center_mm``: 長さ 3 の有限値 [mm]。右手系、z が上(``scene_plane`` と同じ)。
+    - ``radius_mm``: 正の有限値 [mm]。0 や負、NaN は ``ValueError``。
+    - ``material``: ``scene_material`` の結果。省略時は lambert、albedo 0.6。
+    - 返り値: ``{"kind": "sphere", "c": (3,) 配列, "r": float, "material"}`` の dict。
+
+    光線との交差は 2 次方程式の閉形式で、外から当たれば手前の交点、内側から
+    (屈折の射出側)なら奥の交点を取る。単体で置くほか、``scene_difference`` の
+    ``solid`` / ``cavity`` としても使える(球の空洞、球面座ぐり)。
+    ``optscene_mask`` の ``index`` はこの dict をシーン list に入れた位置。
+    """
     return {"kind": "sphere", "c": _arr(center_mm, "center_mm", 3),
             "r": _pos(radius_mm, "radius_mm"),
             "material": material or scene_material("lambert", 0.6)}
