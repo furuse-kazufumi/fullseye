@@ -289,26 +289,34 @@ def main():
           f"{abs(rg['fx'] - TRUE_FX) / rg['sigma_fx']:.1f} 倍 —— 統計と整合。")
 
     print("\n=== 3. ゼロ点 —— 手を抜いたモデルに勝てるか ===")
-    print("  ゼロ点 A: 歪みを無視する(k を 0 に固定)/ ゼロ点 B: 主点を画像中心に固定")
-    print(HEAD)
+    print("  ゼロ点 A: 歪みを無視する(k を 0 に固定)")
+    print(f"  ゼロ点 B: 主点を画像中心に固定する = 常に |dcx| {NULL_B_DCX:.2f} px の誤差")
+    print("  各行は種違い 3 回の平均(1 回の当たり外れで語らないため)")
+    print(f"  {'条件':<22}{'視野':>6}{'RMS':>8}{'fx%全部':>9}{'fx%ゼロA':>10}"
+          f"{'|dcx|全部':>10}{'sigma_cx':>10}  判定")
     narrow = make_poses(N_VIEWS, tilt_deg=32.0, offset_m=0.0, z_lo=1.80, z_hi=2.00)
-    for label, poses, sigma in (("広い視野", good, 0.05), ("狭い視野(中央のみ)", narrow, 0.05)):
-        ob = observe(obj, poses, sigma_px=sigma, seed=2)
-        full = calibrate(obj, ob, fit_dist=True, fit_pp=True)
-        nullA = calibrate(obj, ob, fit_dist=False, fit_pp=True)
-        nullB = calibrate(obj, ob, fit_dist=True, fit_pp=False)
-        print(f"  -- {label}(視野占有 {100 * frame_fill(ob):.0f} %)")
-        report("  全部推定", full, poses)
-        report("  ゼロ点A 歪み無視", nullA, poses)
-        report("  ゼロ点B 主点固定", nullB, poses)
-        win_a = abs(full["fx"] - TRUE_FX) < abs(nullA["fx"] - TRUE_FX)
-        win_b = abs(full["cx"] - TRUE_CX) < abs(CENTER[0] - TRUE_CX)
-        print(f"     歪みを推定して fx が改善したか: {win_a} / "
-              f"主点を推定して cx が改善したか: {win_b}")
-    print("  → 広い視野では歪みも主点も推定した方が良い。**狭い視野では主点の推定に")
-    print("     負ける** —— 中央だけを見ていると主点は観測から決まらず、推定すると")
-    print("     雑音を拾って画像中心に固定するより悪くなる。正直に書けば、視野が")
-    print("     狭いときは主点を固定するのが正しい。")
+    verdicts = {}
+    for label, poses, sigma in (("広い視野 雑音0.05px", good, 0.05),
+                                ("狭い視野 雑音0.05px", narrow, 0.05),
+                                ("狭い視野 雑音0.30px", narrow, 0.30)):
+        s = sweep_seeds(obj, poses, sigma)
+        fill = 100 * frame_fill(observe(obj, poses, 0.0))
+        if s["dcx_full"] < 0.5 * NULL_B_DCX and s["fx_full"] < 0.5 * s["fx_nodist"]:
+            v = "推定が勝つ"
+        elif s["dcx_full"] > NULL_B_DCX:
+            v = "★ ゼロ点 B が勝つ"
+        else:
+            v = "引き分け"
+        verdicts[label] = (s, v)
+        print(f"  {label:<22}{fill:>5.0f}%{s['rms']:>8.4f}{s['fx_full']:>9.3f}"
+              f"{s['fx_nodist']:>10.3f}{s['dcx_full']:>10.2f}{s['sigma_cx']:>10.2f}  {v}")
+    print("  → 広い視野では歪みも主点も推定した方が良い(ゼロ点 A の fx 誤差は 2 桁悪い)。")
+    print("  → **狭い視野では上回らない**。中央だけを見ていると歪みの信号(半径の")
+    print("     2 乗以上)も遠近の手がかりも入らず、推定した主点は雑音を拾うだけになる。")
+    print("     雑音 0.30 px では推定した主点の誤差が、画像中心に固定したときの")
+    print(f"     {NULL_B_DCX:.2f} px を**超える** —— 手を抜いた方が正しい。")
+    print("  → 見分ける規則は再投影誤差ではなく sigma_cx。sigma_cx が『画像中心から")
+    print("     の真のずれ』と同じ大きさになったら、その推定には情報が入っていない。")
 
     print("\n=== 4. ★ 再投影誤差はほぼ同じ、焦点距離の誤差は桁で違う ===")
     print(HEAD)
