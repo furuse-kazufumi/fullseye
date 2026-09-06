@@ -357,8 +357,22 @@ def section4_alternatives(both):
           % (F_MURA, np.exp(-2 * np.pi ** 2 * sig_opt ** 2 * F_MURA ** 2)))
     print("     後処理でこれをやろうとすると、モアレは**折り返した後**なので")
     print("     ムラと同じ低周波帯に来てしまい、同じ手が使えない。")
+    print()
+    print("  ★★ノッチが素のままでは効かない理由を測って突き止めた: うなり δ=%.2f は"
+          % (K_BASE - 3.0))
+    print("     %d 点の FFT で %.2f ビン目 —— **ビンの間**に立っている。非整数ビンの"
+          % (L, (K_BASE - 3.0) * L))
+    print("     正弦は漏れ(スペクトルリーケージ)の裾を全帯域に撒くので、半径 %.5f の"
+          % rho)
+    print("     ノッチでは取り切れない(漏れ %+.1f %%)。解析窓を Lc=%d に切ると"
+          % (100 * methods[2][1] / A_MURA, matched_length(K_BASE - 3.0)))
+    print("     δ·Lc = %.2f と整数になり、漏れは %+.1f %% まで落ちる。"
+          % ((K_BASE - 3.0) * matched_length(K_BASE - 3.0),
+             100 * methods[3][1] / A_MURA))
+    print("     **これは光学の問題ではなく解析窓の問題**で、撮り直さずに直せる。")
+    print()
     print("     2 次曲面フィットは 4 周期の余弦を表現できず、ムラの %.0f %% しか"
-          % (100 * methods[3][2] / A_MURA))
+          % (100 * methods[4][2] / A_MURA))
     print("     拾えない —— シェーディング補正の op を輝度ムラ計に流用してはいけない。")
     figs.save_table("methods", ["手法", "漏れ(縞のみ)", "減衰後(ムラのみ)",
                                 "合計", "合計 誤差"], rows,
