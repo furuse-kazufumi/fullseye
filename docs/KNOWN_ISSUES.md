@@ -935,3 +935,16 @@ $S = "$env:TEMP\nobackend"; New-Item -ItemType Directory -Force $S | Out-Null
 foreach ($m in "torch","kornia","mahotas") { 'raise ImportError("stub")' | Set-Content -Encoding ascii "$S\$m.py" }
 $env:PYTHONPATH = $S; py -3.11 -m pytest tests/test_op_figures.py tests/test_docs_index_reachable.py -q -rs
 ```
+
+2 回目の CI(540f74907)は py3.11 が緑、py3.10 と py3.12 が別々の理由で赤だった:
+
+* **py3.12: `faulthandler_timeout = 180` のスタックダンプが segfault を起こした**。
+  `test_param_coevolution…`(手元 87 秒)が共有ランナーで 180 秒を超え、
+  faulthandler が numpy/BLAS のスレッドが走っている最中にダンプを吐いて
+  プロセスごと落ちた(exit 139)。しきい値を 600 秒に(本物のハングは pytest の
+  timeout 900 秒が別に拾う)。
+* **py3.10: `poc_ct_fidelity.py` が exit 1、しかし理由が読めなかった** —— PoC の門は
+  失敗時に stderr の末尾しか出さず、PoC は所見を stdout に印字して `SystemExit(1)`
+  する。門を直して stdout の末尾も出すようにした。PoC 側で丸めに敏感なのは
+  「検出器の数で質量が動かない: |Δ| < 1e-9」だけで、同じ環境の前回は通っている
+  (スレッド BLAS の加算順で 1e-9 は揺れる)ので 1e-6 に。次に落ちれば理由が出る。

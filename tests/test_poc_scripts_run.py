@@ -62,7 +62,12 @@ def _run_one(path: Path) -> tuple[str, int, str]:
                            timeout=PER_SCRIPT_TIMEOUT)
     except subprocess.TimeoutExpired:
         return path.name, -1, "%d 秒で返ってこなかった" % PER_SCRIPT_TIMEOUT
-    tail = r.stderr.decode("utf-8", "replace")[-1800:]
+    # ★失敗時は stdout の末尾も返す。PoC は所見と「どの検査が落ちたか」を
+    # stdout に印字して SystemExit(1) するので、stderr だけだと**空のまま
+    # 「exit 1」しか分からない**(2026-09-07 の CI、py3.10 の poc_ct_fidelity)。
+    tail = (r.stderr.decode("utf-8", "replace")[-1200:]
+            + chr(10) + "--- stdout(末尾) ---" + chr(10)
+            + r.stdout.decode("utf-8", "replace")[-1200:])
     if r.returncode == 0:
         out = r.stdout.decode("utf-8", "replace")
         if "\nPASS" not in out:

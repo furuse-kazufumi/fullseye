@@ -277,7 +277,12 @@ py-modules = [
 # 2. ハング —— `xsk_unwrap_phase` に全 NaN を渡すと 5 分以上返ってこなかった。
 #    クラッシュより厄介で、CI では「遅い」としか見えない。時間で切って
 #    **どのテストで止まったか**を出す。
-faulthandler_timeout = 180
+# 2026-09-07: 180 → 600。共有ランナーでは 87 秒のテストが 180 秒を超え、
+# faulthandler のスタックダンプが numpy/BLAS のスレッドが走っている最中に走って
+# **プロセスごと segfault**(exit 139、py3.12)した。ダンプは「どこで固まったか」を
+# 見るためのもので、10 分あれば本物のハングは十分に拾える(pytest 自体の timeout は
+# 900 秒で別に効く)。
+faulthandler_timeout = 600
 timeout = 900
 timeout_method = "thread"     # Windows には signal 方式が無い
 testpaths = ["tests"]
