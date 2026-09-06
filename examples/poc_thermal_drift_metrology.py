@@ -503,11 +503,11 @@ def section8_tool_gaps():
     allnames = set(dir(fs)) | set(dir(fs.ledger)) | {o.name for o in _ops.REGISTRY}
 
     # (a) 熱モデルが無い
-    for kw in ("thermal", "temperature", "cte", "drift"):
+    for kw in ("thermal", "temperature", "thermo", "drift"):
         hit = [n for n in allnames if kw in n.lower()]
         assert not hit, (kw, hit)
     print("  (a) ★**カメラの熱モデルが 3 層のどこにも無い**('thermal'/'temperature'/")
-    print("      'cte'/'drift' で 0 件)。校正 op は「ある時点の K」を返すだけで、")
+    print("      'thermo'/'drift' で 0 件)。校正 op は「ある時点の K」を返すだけで、")
     print("      **K が時間とともに動く**ことを表す型が無い。")
     print("      `thermal_intrinsics(K0, dT, beta, gamma)` のような 1 本があれば、")
     print("      6 節の対策 C はそれを呼ぶだけになる。")
