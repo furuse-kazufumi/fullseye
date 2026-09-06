@@ -527,6 +527,15 @@ def main():
           f" {100 * rel_err(lam_c_tab[256.0]['Sq'], truth['Sq']):+.0f}%。")
     print("     **λc を 1 段(2 倍)動かすだけで合否が変わる。**"
           " どちら側にも壊れるので『安全側の λc』は存在しない。")
+    lams = sorted(lam_c_tab)
+    figs.save_plot("lambda_c_sweep",
+                   [(k, np.log2(lams),
+                     np.array([100 * rel_err(lam_c_tab[x][k], truth[k])
+                               for x in lams])) for k in ("Sa", "Sq", "Sz")],
+                   xlabel="log2 λc [µm]", ylabel="真値からの相対誤差 [%]",
+                   title="λc は両側に壊れる —— 谷は 64〜128 µm しかない",
+                   caption="左は加工目(λ=32µm)を落として過小、右はうねり"
+                           "(λ=256µm)が漏れて過大。安全側の λc は無い。")
 
     print("\n  [λs 掃引(高域カットオフ / ローパス、λc=80µm の後に掛ける)]")
     print("  ★ここは予想が外れた側。「λs は尖りの指標(Sz/Sku)だけを選択的に削る」"
