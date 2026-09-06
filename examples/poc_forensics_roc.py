@@ -635,6 +635,7 @@ def main():
     print("  そして上の数字はすべて『背景が JPEG・素材が別品質・後処理なし・64x64』")
     print("  という、検出側にいちばん都合のよい条件のもの。境界は下のとおり:")
     print("  " + pad("崩れる条件", 26, right=False) + pad("ELA", 10) + pad("ゴーストV", 12))
+    break_rows = []
     for label, key in (("後処理なし", post_rows["後処理なし"]),
                        ("全体を q75 で再圧縮", post_rows["全体を q75 で再圧縮"]),
                        ("全体を q60 で再圧縮", post_rows["全体を q60 で再圧縮"]),
