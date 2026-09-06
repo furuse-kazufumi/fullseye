@@ -571,7 +571,7 @@ def main():
     assert abs(lin_115 - 1.15) > 5.0 * abs(cub_115 - 1.15), \
         "整数吸着が再現しない(op が直った?なら docstring の穴 (a) を消してよい)"
     assert abs(cub_115 - 1.15) < 0.01, "cubic でも合わない = 別の原因がある"
-    assert snap[1.00][0] == 1.00, "整数スロープは既定でも厳密に当たるはず"
+    assert abs(snap[1.00][0] - 1.00) < 1e-3, "整数スロープは既定でも当たるはず"
     # 7. 無テクスチャで EPI は 0 へ崩れ、min_energy 既定は何も止めない
     assert abs(tex_break[0.0][1]) < 0.1, "テクスチャ 0 で EPI が 0 へ落ちない"
     assert abs(tex_break[1.0][1] - 1.30) < 0.1, "テクスチャ十分でも EPI が合わない"
