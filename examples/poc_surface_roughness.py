@@ -492,24 +492,31 @@ def main():
           " λs=8 µm より広い。**λs が効くのは λs と同じ大きさの特徴があるときだけ。**")
 
     print("\n  [λs 掃引・白色雑音(σ=0.05 µm)を足した面] —— λs 本来の用途")
+    print("  ここは **傷を抜いた面**で見る。傷があると Sz が最初から 6 µm あって"
+          "測定雑音の寄与が埋もれ、λs の役目が見えない。")
     rng_n = np.random.default_rng(4242)
-    noisy = rough80 + rng_n.normal(0.0, 0.05, rough80.shape)
+    clean = rough_without
+    noisy = clean + rng_n.normal(0.0, 0.05, clean.shape)
     print(head())
-    lam_s_noise = {}
-    for lam in (0.0, 2.0, 4.0, 8.0):
-        z = noisy if lam == 0.0 else areal_filter(noisy, DX, lam, "low")
-        d = areal_params(z)
+    lam_s_noise = {0.0: areal_params(noisy)}
+    print(fmt_row("参考: 雑音なし", areal_params(clean)))
+    print(fmt_row("λs = 無し(雑音入り)", lam_s_noise[0.0]))
+    for lam in (2.0, 4.0, 8.0):
+        d = areal_params(areal_filter(noisy, DX, lam, "low"))
         lam_s_noise[lam] = d
-        print(fmt_row("λs = 無し(雑音入り)" if lam == 0.0 else f"λs = {lam:>5.0f} µm", d))
-    print(fmt_row("参考: 雑音なし λs 無し", lam_s_tab[0.0]))
-    n_sq = rel_err(lam_s_noise[0.0]["Sq"], lam_s_tab[0.0]["Sq"])
-    n_sz = rel_err(lam_s_noise[0.0]["Sz"], lam_s_tab[0.0]["Sz"])
-    print(f"  → σ=0.05 µm(Sq の {100 * 0.05 / lam_s_tab[0.0]['Sq']:.0f}%)の白色雑音は "
-          f"Sq を {100 * n_sq:+.1f}% しか動かさないのに Sz を {100 * n_sz:+.1f}% 押し上げる。")
+        print(fmt_row(f"λs = {lam:>5.0f} µm", d))
+    base_clean = areal_params(clean)
+    n_sq = rel_err(lam_s_noise[0.0]["Sq"], base_clean["Sq"])
+    n_sz = rel_err(lam_s_noise[0.0]["Sz"], base_clean["Sz"])
+    print(f"  → σ=0.05 µm(Sq の {100 * 0.05 / base_clean['Sq']:.0f}%)の白色雑音は "
+          f"Sq を {100 * n_sq:+.1f}% しか動かさないのに Sz を {100 * n_sz:+.1f}% "
+          f"押し上げる({abs(n_sz / n_sq):.0f} 倍の選択性)。")
     print(f"     λs=4 µm を掛けると Sz は {100 * rel_err(lam_s_noise[4.0]['Sz'], lam_s_noise[0.0]['Sz']):+.1f}%、"
-          f"Sq は {100 * rel_err(lam_s_noise[4.0]['Sq'], lam_s_noise[0.0]['Sq']):+.1f}% 戻る。")
-    print("     **Sz は雑音を測る。λs はその雑音を落とすためにある** —— つまり"
-          "『λs を掛けるかどうか』は、Sz を報告するときだけ結論を変える。")
+          f"Sq は {100 * rel_err(lam_s_noise[4.0]['Sq'], lam_s_noise[0.0]['Sq']):+.1f}% 戻り、"
+          f"雑音なしとの Sz 差は {100 * abs(n_sz):.0f}% から "
+          f"{100 * abs(rel_err(lam_s_noise[4.0]['Sz'], base_clean['Sz'])):.0f}% になる。")
+    print("     **Sz は測定雑音を測る。λs はその雑音を落とすためにある** —— つまり"
+          "『λs を掛けたかどうか』は、Sz を報告するときだけ結論を変える。")
 
     # ---------------------------------------------------------------- 6 --- #
     print("\n=== 6. 傾き除去 —— 最小二乗平面 vs ロバスト(RANSAC)===")
