@@ -547,69 +547,83 @@ def section_framerate() -> dict:
     print("\n" + "=" * 78)
     print("6) フレームレートを落とす —— 台数と速度、どちらが先に壊れるか")
     print("=" * 78)
-    print("   Δt   実効 fps   真値  帯(全部)  帯(計数列)  予測 Σmin(1,L/VΔt)"
-          "   速度誤差")
+    print("  ★対照群つき —— Δt を広げるとフレーム数も減るので、時間中央値の")
+    print("    背景モデルまで一緒に劣化する。真の空き路面を背景に使った列を")
+    print("    並べて、**標本化の効果**と**背景モデルの劣化**を分ける。")
+    print("\n   Δt  実効fps  真値 帯(全部) 帯(計数列) 真背景の帯 予測Σmin(1,L/VΔt)"
+          " 速度誤差")
 
     veh = make_vehicles(seed=3)
     crossing = [v for v in veh if crosses_ref(v, T_FRAMES - 1)]
     total = len(crossing)
-    dts, n_all_l, n_ref_l, pred_l, verr_l = [], [], [], [], []
+    dts, n_all_l, n_ref_l, n_or_l, pred_l, verr_l = [], [], [], [], [], []
     rows = []
     for dt in (1, 2, 3, 4, 6, 8, 12, 16):
         times = np.arange(0.0, T_FRAMES, float(dt))
         vid = render_sequence(veh, times)
         mask = foreground(vid)
-        n_all = n_ref = 0
+        oracle = foreground_oracle(vid)
+        n_all = n_ref = n_or = 0
         errs = []
         for ln in LANES:
             s = slit_count(kymograph(mask, LANES[ln]["slit"]))
             n_all += s["n_all"]
             n_ref += s["n_ref"]
+            n_or += slit_count(kymograph(oracle, LANES[ln]["slit"]))["n_ref"]
             sp = band_speeds(s["labels"], s["ids"], dt=float(dt))
             mt = match_speeds(sp, [v for v in crossing if v["lane"] == ln],
                               tol=max(12.0, 2.0 * dt))
-            if np.isfinite(mt["fit"]):
-                errs.append(mt["fit"])
+            if np.isfinite(mt["fit_inner"]):
+                errs.append(mt["fit_inner"])
         pred = float(sum(min(1.0, v["len"] / (v["v"] * dt)) for v in crossing))
         verr = float(np.mean(errs)) if errs else np.nan
         dts.append(dt)
         n_all_l.append(n_all)
         n_ref_l.append(n_ref)
+        n_or_l.append(n_or)
         pred_l.append(pred)
         verr_l.append(verr)
         rows.append(["%d" % dt, "%.1f" % (FPS / dt), str(total), str(n_all),
-                     str(n_ref), "%.1f" % pred, "%.1f %%" % verr])
-        print("   %3d    %6.1f     %4d  %7d   %8d      %12.1f     %7.2f %%"
-              % (dt, FPS / dt, total, n_all, n_ref, pred, verr))
+                     str(n_ref), str(n_or), "%.1f" % pred, "%.1f %%" % verr])
+        print("   %3d %6.1f %6d %7d %9d %10d %14.1f %8.2f %%"
+              % (dt, FPS / dt, total, n_all, n_ref, n_or, pred, verr))
 
     lv = sorted(v["len"] / v["v"] for v in crossing)
+    d_med = float(np.median(lv))
     print("\n  ★L/V の分布: %.1f 〜 %.1f frame(中央値 %.1f)。"
-          % (lv[0], lv[-1], float(np.median(lv))))
+          % (lv[0], lv[-1], d_med))
     print("  ★**帯を全部数える**と Δt を広げたとき千切れて過大になる"
           "(%d -> %d)。" % (n_all_l[0], max(n_all_l)))
-    print("     **計数列と交わる帯だけ**を数えると過大は起きず、"
-          "見逃しだけになる(%d -> %d)。" % (n_ref_l[0], n_ref_l[-1]))
-    print("  ★予測 Σ min(1, L/(V·Δt)) との差は %+.1f 〜 %+.1f 台。"
-          % (min(g - p for g, p in zip(n_ref_l, pred_l)),
+    print("     **計数列と交わる帯だけ**を数えると過大は起きない"
+          "(最大 %d)。同じスリット画像から出る 2 つの数の壊れ方が逆向き。"
+          % max(n_ref_l))
+    print("  ★対照群(真の背景)と予測の差は %+.1f 〜 %+.1f 台、"
+          "時間中央値の背景だと %+.1f 〜 %+.1f 台。"
+          % (min(g - p for g, p in zip(n_or_l, pred_l)),
+             max(g - p for g, p in zip(n_or_l, pred_l)),
+             min(g - p for g, p in zip(n_ref_l, pred_l)),
              max(g - p for g, p in zip(n_ref_l, pred_l))))
-    first_count = next((d for d, g in zip(dts, n_ref_l) if g < total), None)
+    print("     Δt を広げたときのずれの一部は**標本化ではなく背景モデル**"
+          "(フレームが %d 枚まで減る)。分けないと閉形式が合わない。"
+          % int(np.ceil(T_FRAMES / dts[-1])))
+    first_count = next((d for d, g in zip(dts, n_or_l) if g < total), None)
     first_speed = next((d for d, e in zip(dts, verr_l) if e > 5.0), None)
-    print("  ★先に壊れたのは %s(台数は Δt=%s で欠け始め、速度誤差 5 %% 超は "
-          "Δt=%s)。"
+    print("  ★先に壊れたのは %s(対照群の台数は Δt=%s で欠け始め、"
+          "速度誤差 5 %% 超は Δt=%s)。"
           % ("速度" if (first_speed or 99) < (first_count or 99) else "台数",
              first_count, first_speed))
 
     figs.save_plot("framerate",
                    [("真値", dts, [total] * len(dts)),
-                    ("帯(計数列と交わる)", dts, n_ref_l),
+                    ("帯(計数列・真背景)", dts, n_or_l),
                     ("予測 Σmin(1, L/VΔt)", dts, pred_l),
-                    ("帯(全部)", dts, n_all_l)],
+                    ("帯(全部・中央値背景)", dts, n_all_l)],
                    xlabel="フレーム間隔 Δt [frame]", ylabel="台数",
                    title="フレームレートを落とすと数え方で壊れ方が逆になる",
                    caption="全部の帯を数えると千切れて過大に、計数列と交わる"
                            "帯だけなら見逃しだけ。予測は閉形式 Σmin(1, L/VΔt)。")
-    return {"dts": dts, "n_all": n_all_l, "n_ref": n_ref_l, "pred": pred_l,
-            "verr": verr_l, "total": total, "rows": rows}
+    return {"dts": dts, "n_all": n_all_l, "n_ref": n_ref_l, "n_oracle": n_or_l,
+            "pred": pred_l, "verr": verr_l, "total": total, "rows": rows}
 
 
 # --------------------------------------------------------------------------- #
