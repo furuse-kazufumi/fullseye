@@ -214,6 +214,24 @@ def dem_slope(dem, cell_size, method="horn", units="degrees"):
     """傾斜角。``units`` は ``"degrees"`` / ``"radians"`` / ``"percent"``。
 
     平面なら閉形式 ``atan(|grad|)`` と一致する(実測 1e-13 以下)。
+
+    手順: 3x3 近傍から ``dz/dx``(東向き)と ``dz/dy``(北向き = 行が減る向き)を
+    取り、``g = hypot(dz/dx, dz/dy)``。``"degrees"`` は ``atan(g)`` を度で、
+    ``"radians"`` はラジアン、``"percent"`` は ``100 g``(45 度 = 100 %)。
+    縁は端の値を複製して埋める(``pad mode="edge"``)ので、外周 1 セルは内側より
+    緩めに出る。
+
+    - ``dem``: ``(H, W)`` の標高 [m]、3x3 以上、実数、``inf`` 不可。欠測は ``nan`` で
+      渡す ―― ``-9999`` のような番兵値がそのまま入っている(``<= -9000`` があり
+      ``nan`` が無い)と拒否する。``nan`` は 3x3 の範囲に伝播する。
+    - ``cell_size``: セル辺長 [m]、正の有限値。bool / 文字列は拒否。緯度経度格子は
+      先に ``dem_geodetic_slope`` 側を使う。
+    - ``method``: ``"horn"``(Horn 1981 の 3x3 重み付き差分、既定)/ ``"central"``
+      (Zevenbergen–Thorne の中央差分)。
+    - 返り値: ``(H, W)`` float64。``degrees`` は ``[0, 90)``。
+    - 失敗はすべて ``ValueError``(形・番兵値・``cell_size``・選択肢)。
+
+    ``dem_aspect`` と対で使う。``dem_hillshade`` はこの 2 つから陰影を作る。
     """
     a = _dem(dem)
     c = _cell(cell_size)
