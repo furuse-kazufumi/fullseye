@@ -279,6 +279,13 @@ def main():
                      1.0 - float(accepted.mean())))
         print(f"     {label:<18s} 中央 {100 * rows[-1][1]:+8.4f} %   "
               f"最大 |{100 * rows[-1][2]:7.4f} %|   棄却率 {rows[-1][3]:.5f}")
+    figs.save_table("cosmic_ray",
+                    ["条件", "中央 [%]", "最大 |e| [%]", "棄却率"],
+                    [[lab, "%+.4f" % (100 * med), "%.4f" % (100 * mx),
+                      "%.5f" % rej] for lab, med, mx, rej in rows],
+                    title="宇宙線 12.5 %% 汚染(8 枚中 1 枚、開口 r=%.0f px)" % R_AP,
+                    caption="単純平均だけが 5.9 % 残る。κ-σ は汚染なしと区別できない"
+                            "ところまで戻すが、棄却率はほとんど動かない。")
     clean_mean, clean_clip, cr_mean, cr_med, cr_clip = rows
     assert cr_mean[1] > 0.04                        # 単純平均は 4 % 以上ずれる
     assert abs(cr_clip[1]) < 0.01                   # κ-σ は 1 % 未満まで戻す
