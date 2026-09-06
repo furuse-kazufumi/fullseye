@@ -264,7 +264,12 @@ def main():
     # 「粗さ」と呼ぶべき成分(真値の定義)。傾きとうねりは含めない。
     rough_true = psd + lay + scratch
     surface = rough_true + wav + tilt          # 測定器が実際に見る面
-    truth = areal_params(rough_true)
+    # ★真値は **帯域を宣言したうえで** 定義する。粗さ成分そのものではなく、
+    #   「λc で切ったあとの粗さ成分」が真値。ここを生の rough_true にすると、
+    #   正しい手順で測っても -23% ずれ、その 23% が標本化の誤差と混ざる。
+    #   帯域を含まない「粗さの真値」は存在しない —— これが 2 節の主張でもある。
+    rough_band = areal_filter(rough_true, DX, LAMBDA_C, "high")
+    truth = areal_params(rough_band)
 
     # ---------------------------------------------------------------- 1 --- #
     print("=== 1. 合成器の検算 —— PSD の積分と実現の rms は一致するか ===")
