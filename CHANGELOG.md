@@ -85,6 +85,43 @@ PoC そのものは `examples/poc_*.py` にあり、どれも `PASS` で終わ�
 
 ### 増えたもの
 
+* ★★**2-D の連結成分解析(blob analysis)を足した**(`blob2d.py` 7 op、台帳
+  `opsblob`、`fullseye.ledger.blob_*`)。しきい値のあとの定番の連鎖 ——
+  **物体に切る → 物体ごとに測る → 条件で選ぶ** —— が 3 層のどこにも無かった。
+  `label_components` / `region_props` / `vol_label` / `vol_region_props` は
+  **3-D 専用**で 2-D を例外で拒否し、`circularity` / `eccentricity` /
+  `area_center` / `select_shape` は**進化 op**(画像 1 枚 → スカラ 1 個)。
+  `ndimage.label` は op の実装の中に 20 か所以上あるが、どれも結果を画像か
+  スカラに畳んでから返すので**利用者からは存在しなかった**。
+  * `blob_label`(4/8 連結)/ `blob_features`(物体ごと 19 項目)/
+    `blob_select` / `blob_select_largest` / `blob_region` /
+    `blob_boundaries` / `blob_overlay`。
+  * **周長は数え方を 3 つ測ってから選んだ。** 半径 40 px の円板(真値
+    251.33 px)で、境界画素を数えると 316(+25.7 %)、Serra の重みは
+    263.8(+4.95 %、大きさによらず一定)、Crofton の 4 方向は 252.8
+    (+0.56 %)。円形度が 0.908 で頭打ちになるか 0.988 まで届くかがここで
+    決まる。**軸に平行な多角形では逆に −6.6 % 小さく出る**ことも書いてある。
+  * **`solidity` の分母は凸包を塗り直して数える。** 多角形の面積で出すと
+    凸な物体でも 0.977 か 1.025 になり 1 にならない。凸包は Qhull ではなく
+    monotone chain を自前で持つ(153 物体で 74.1 ms → 19.4 ms)。
+  * 新しい型語彙は `labels2d` の 1 つだけ。`mask` の述語には当たるが、
+    **マスクを `blob_features` に渡すと 2 個の細胞が 1 物体として測られ、
+    2 つの中心のあいだに重心が出る** —— 例外にならず静かに嘘をつくので、
+    bool は直し方つきで拒否する。
+  * ガイド `docs/ops/blob/guides/blob_analysis.md`、門 `tests/test_blob2d.py`
+    (47 件)。使った PoC = `examples/poc_particle_sizing.py`(粒度分布)。
+
+* ★★**PoC を実際に走らせる門を足した**(`tests/test_poc_scripts_run.py`)。
+  この日まで `examples/poc_*.py` を**実行するテストが 1 本も無かった** ——
+  登録と実体の一致(`test_examples2d`)と、図の配線の静的検査
+  (`test_example_figures`)しか無く、**看板作品が誰にも走らされないまま
+  置かれていた**。結果として **4 本が exit 1 のまま気づかれずにいた**。
+  4 本ともこの repo が自分で仕掛けた「記録した穴が塞がったら鳴る」assert で、
+  仕掛けは正しく鳴っていたのに鳴らす人がいなかった(fpfh の回転不変 /
+  `disparity_subpixel` の divide 警告 / measuring1d の到達性 / FBP の質量)。
+  31 本を直列に走らせると 425 秒、6 並列なら **85 秒**。セッション用
+  フィクスチャで一度に並列実行し、各 PoC はその結果を見るだけにしてある。
+
 * ★★**例が図を出せるようになった**(`examplefig` + Studio の Figures タブ)。
   ユーザーの指摘 3 連(2026-09-06)——「Studio 上で動くような PoC になってる?」
   「表は Excel にコピーできるといいね」「図を右クリックしてクリップボードに
