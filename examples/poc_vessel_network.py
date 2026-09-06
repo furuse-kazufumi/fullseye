@@ -250,14 +250,19 @@ def render(tree: dict, seed: int = SEED, noise: float = NOISE,
         cov[r0:r1, c0:c1] = np.maximum(cov[r0:r1, c0:c1],
                                        np.clip(r + 0.5 - dist, 0.0, 1.0))
     rng = np.random.default_rng(seed + 1000)
-    if rough > 0:
-        w = rng.normal(0.0, 1.0, cov.shape)
-        w = np.asarray(fs.apply(w, "gauss_filter", a=(1.4 - 0.3) / 2.7))
-        w = w / (w.std() + 1e-12)
-        cov = np.clip(cov + rough * w * (4.0 * cov * (1.0 - cov)), 0.0, 1.0)
     img = BG + (FG - BG) * cov
     if psf > 0:
         img = np.asarray(fs.apply(img, "gauss_filter", a=(psf - 0.3) / 2.7))
+    if rough > 0:
+        # ★揺らぎは **ぼけたあと** に足す。先に足すと PSF が均してしまい、
+        #   しきい値の境界はきれいなままになる(最初そう書いて、振幅を
+        #   3 倍にしてもヒゲが 1 本も出なかった)。
+        w = rng.normal(0.0, 1.0, cov.shape)
+        w = np.asarray(fs.apply(w, "gauss_filter", a=(1.0 - 0.3) / 2.7))
+        w = w / (w.std() + 1e-12)
+        bw = np.asarray(fs.apply(4.0 * cov * (1.0 - cov), "gauss_filter",
+                                 a=(1.0 - 0.3) / 2.7))
+        img = img + rough * (FG - BG) * w * bw / max(float(bw.max()), 1e-9)
     return np.clip(img + rng.normal(0.0, noise, img.shape), 0.0, 1.0)
 
 
@@ -457,7 +462,7 @@ def section_spurs(tree: dict, z: dict) -> dict:
           "その最長 [px]")
     rows = []
     keep = {}
-    for rough in (0.0, 0.15, 0.25, 0.35):
+    for rough in (0.0, 0.4, 0.8, 1.2):
         img = render(tree, rough=rough)
         sk = skeletonize(img >= 0.5 * (FG + BG))
         nd = junction_nodes(sk)
@@ -480,7 +485,7 @@ def section_spurs(tree: dict, z: dict) -> dict:
     out = {}
     for scale in (1.0, 0.5):
         tr = scale_tree(tree, scale) if scale != 1.0 else tree
-        img = render(tr, rough=0.30)
+        img = render(tr, rough=0.8)
         sk = skeletonize(img >= 0.5 * (FG + BG))
         t2 = np.asarray([b["pos"] for b in tr["bifs"]])
         lv = leaves_of(tr)
@@ -744,10 +749,10 @@ def section_crossing_and_thin(tree: dict, z: dict) -> dict:
     print("\n" + "=" * 78)
     print("7) ★解像度を落とすと、失われるのは細い枝から")
     print("=" * 78)
-    print("   直径の帯(原寸)[px]   本数    解像度 1.00   0.50   0.35")
+    print("   直径の帯(原寸)[px]   本数    解像度 1.00   0.50   0.35   0.25")
     bands = ((3.0, 4.0), (4.0, 5.5), (5.5, 7.5), (7.5, 99.0))
-    hits = {s: [] for s in (1.0, 0.5, 0.35)}
-    for s in (1.0, 0.5, 0.35):
+    hits = {s: [] for s in (1.0, 0.5, 0.35, 0.25)}
+    for s in (1.0, 0.5, 0.35, 0.25):
         tr = scale_tree(tree, s) if s != 1.0 else tree
         sk = skeletonize(render(tr) >= 0.5 * (FG + BG))
         pts = np.column_stack(np.nonzero(sk)).astype(np.float64)
@@ -763,9 +768,9 @@ def section_crossing_and_thin(tree: dict, z: dict) -> dict:
             hits[s].append((len(sel), ok))
     for k, (lo, hi) in enumerate(bands):
         n = hits[1.0][k][0]
-        print("      %4.1f - %4.1f          %3d      %5.0f %%  %5.0f %%  %5.0f %%"
+        print("      %4.1f - %4.1f          %3d      %5.0f %%  %5.0f %%  %5.0f %%  %5.0f %%"
               % (lo, hi, n, 100 * hits[1.0][k][1] / n, 100 * hits[0.5][k][1] / n,
-                 100 * hits[0.35][k][1] / n))
+                 100 * hits[0.35][k][1] / n, 100 * hits[0.25][k][1] / n))
     print("\n  ★いちばん細い帯は %.0f %% -> %.0f %% -> %.0f %% と落ちるのに、"
           "いちばん太い帯は %.0f %% のまま。"
           % (100 * hits[1.0][0][1] / hits[1.0][0][0],
@@ -902,7 +907,7 @@ def main() -> None:
           "解像度は「細い枝を消す」(%.0f %% -> %.0f %%)。"
           % (ct["cross"][0][5], ct["cross"][1][5],
              100 * ct["hits"][1.0][0][1] / ct["hits"][1.0][0][0],
-             100 * ct["hits"][0.35][0][1] / ct["hits"][1.0][0][0]))
+             100 * ct["hits"][0.25][0][1] / ct["hits"][1.0][0][0]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     if figs.errors():
