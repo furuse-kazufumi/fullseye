@@ -231,7 +231,7 @@ def _paint(acc, owner, best, cy, cx, ra, rb, th, bright, ident):
     f = (u / ra) ** 2 + (v / rb) ** 2
     inside = f <= 1.0
     if not inside.any():
-        return
+        return 0
     acc[y0:y1, x0:x1] += np.where(inside, bright * (1.0 - 0.22 * f), 0.0)
     if ident >= 0:
         sub_o = owner[y0:y1, x0:x1]
@@ -239,6 +239,7 @@ def _paint(acc, owner, best, cy, cx, ra, rb, th, bright, ident):
         take = inside & (f < sub_b)
         sub_o[take] = ident
         sub_b[take] = f[take]
+    return int(inside.sum())          # 他の細胞が無ければ見えたはずの副画素数
 
 
 def make_scene(seed, *, pack=0.88, size_ratio=2.0, bg_amp=BG_AMP, photons=PHOTONS,
