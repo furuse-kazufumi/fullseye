@@ -454,7 +454,25 @@ def srgb_to_linear(img):
 
 
 def linear_to_srgb(img):
-    """Linear light back to sRGB encoding. Exact inverse of :func:`srgb_to_linear`."""
+    """Linear light back to sRGB encoding. Exact inverse of :func:`srgb_to_linear`.
+
+    式(IEC 61966-2-1): ``c <= 0.0031308`` なら ``12.92 c``、それ以外は
+    ``1.055 c^(1/2.4) - 0.055``。チャネルごと・画素ごとに独立。
+
+    - ``img``: ``(H, W)`` / ``(H, W, 1)`` / ``(H, W, 3)`` / ``(H, W, 4)`` の float。
+      値は ``[0, 1]``(許容 1e-9)でなければ ``ValueError`` ―― 線形光の HDR 値
+      (1 超)は先に露光を掛けて収めること。整数配列は最大値が 1 以下のときだけ
+      通る(0〜255 のバッファは拒否)。bool は 0/1 として通る。NaN/Inf、複素数、
+      マスク配列は ``ValueError``。
+    - ``(H, W, 4)`` のアルファ(4 チャネル目)は**変換しない**(被覆率は元々線形)。
+    - 返り値: 同形の float64 の複製、``[0, 1]``。
+    - ``(3,)`` の 1 色や ``(N, 3)`` の色表はこの op では受けない(画像 API)。
+      任意の形に掛けたいときは ``imgmetrics`` 側の同名関数がここへ委譲している。
+
+    ``radial_light`` / ``light_mask`` / ``bloom`` など線形光で計算した結果を、
+    ファイルに書く・画面に出す直前に 1 回だけ掛ける。二度掛けると中間調が
+    浮く(例外は出ない)。
+    """
     return _transfer(img, "img",
                      lambda c: np.where(c <= 0.0031308, c * 12.92,
                                         1.055 * np.maximum(c, 0.0) ** (1.0 / 2.4) - 0.055))
