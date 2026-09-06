@@ -484,6 +484,19 @@ def delta_e_map(rgb1, rgb2, kind="2000", white=D65_WHITE):
 
     RGB の平均二乗誤差ではなく**知覚的な色差**で見るための入口。
     ``kind`` は ``"2000"``(既定)または ``"76"``。
+
+    手順: 2 枚を ``rgb_to_lab(·, white)`` で Lab にし、``kind="2000"`` なら
+    ``delta_e_2000``(CIEDE2000、kL = kC = kH = 1)、``"76"`` なら ``delta_e_76``
+    (Lab のユークリッド距離)を画素ごとに取る。
+
+    - ``rgb1``, ``rgb2``: 同じ形で ``ndim >= 3``、最後の軸が 3(``(H, W, 3)``)。
+      整数 dtype は dtype の最大値で正規化、float は ``[0, 1]`` 必須(``rgb_to_xyz``
+      の契約)。**線形 RGB ではなく sRGB** を渡す。
+    - ``white``: Lab の白色点(既定 D65)。
+    - 返り値: ``(H, W)`` の float64。0 が同一色。平均を取れば画像全体の指標になる
+      (``compare_images`` に ``channel_axis`` を渡すと ``delta_e_2000_mean`` として入る)。
+    - 失敗(``MetricContractError``): ``kind`` が上記以外 / 形が違う / 3 チャネルでない
+      / float が ``[0, 1]`` の外。グレー ``(H, W)`` は受けない。
     """
     if kind not in ("2000", "76"):
         raise MetricContractError(f"kind must be '2000' or '76', got {kind!r}")
