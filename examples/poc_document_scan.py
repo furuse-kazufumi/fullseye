@@ -554,13 +554,13 @@ def main():
         print(f"  {px:>22}{s}")
 
     print(f"\n  {'背景の明るさ':>14}{'紙との差':>10}{'4 隅 RMS [px]':>14}{'格子 RMS [px]':>14}")
-    for bg in (0.35, 0.55, 0.70, 0.80, 0.86, 0.90):
+    for bg in (0.30, 0.38, 0.44, 0.50, 0.65, 0.85):
         cr, lr, _, _ = run_case(bg=bg)
         s = f"{cr:>14.2f}{lr:>14.3f}" if cr is not None else f"{'検出できず':>28}"
         print(f"  {bg:>14.2f}{PAPER - bg:>10.2f}{s}")
 
     print(f"\n  {'影の強さ':>10}{'4 隅 RMS [px]':>14}{'格子 RMS [px]':>14}")
-    for sh in (0.0, 0.3, 0.5, 0.7, 0.85, 0.95):
+    for sh in (0.0, 0.20, 0.35, 0.45, 0.55, 0.75):
         cr, lr, _, _ = run_case(shadow=sh)
         s = f"{cr:>14.2f}{lr:>14.3f}" if cr is not None else f"{'検出できず':>28}"
         print(f"  {sh:>10.2f}{s}")
