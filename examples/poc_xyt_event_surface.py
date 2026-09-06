@@ -475,13 +475,19 @@ def section8_steepest_rise(state: dict) -> None:
     print()
     ts, vol = state["ts"], state["vol"]
     dt = float(ts[1] - ts[0])
-    row = N // 2
-    cols = np.arange(20, 64, 2)          # 源 A 側だけ(合流の手前)
+    # 源 A の波面だけが先に届く帯(row=20 の列 20〜78)。合流の向こう側を
+    # 混ぜると「最初の立ち上がり」が源 B のものになり、真値の式が変わる。
+    row, cols = 20, np.arange(20, 80, 3)
+    assert np.all(_MERGE[row, cols] < 0.0), "源 B が先に届く列が混ざった"
     sigma_t = W_FRONT / C_TRUE / dt      # フレーム単位
-    print("  %10s | %12s %12s %12s"
+    print("  probe は row=%d の列 %d〜%d(源 A が先に届く帯)。%d 本。"
+          % (row, cols[0], cols[-1], cols.size))
+    print()
+    print("  %10s | %13s %13s %13s"
           % ("平滑 σ", "予測ずれ ms", "実測ずれ ms", "散らばり ms"))
-    print("  " + "-" * 52)
-    for sg in [0.0, 1.0, 2.0]:
+    print("  " + "-" * 56)
+    base = None
+    for sg in [0.0, 0.5, 1.0, 2.0, 3.0]:
         got, want = [], []
         for cx in cols:
             edges = fs.vol_edge_probe(vol, (0, row, cx), (ts.size - 1, row, cx),
@@ -491,18 +497,23 @@ def section8_steepest_rise(state: dict) -> None:
                 continue
             got.append(rise[0]["t_mm"] * dt)
             want.append((_RA[row, cx] - W_FRONT) / C_TRUE)
-        got, want = np.asarray(got), np.asarray(want)
+        d = np.asarray(got) - np.asarray(want)
         s_eff = np.sqrt(sigma_t ** 2 + sg ** 2)
         pred = -(s_eff - sigma_t) * dt
-        d = got - want
-        print("  %10.1f | %12.4f %12.4f %12.4f"
+        if base is None:
+            base = float(d.mean())
+        print("  %10.1f | %13.4f %13.4f %13.4f"
               % (sg, pred, d.mean(), d.std()))
     print()
-    print("  → 平滑を強めるほど時刻が手前へずれ、向きと桁は予測どおり。")
-    print("     ただし σ=0 でも -0.4 ms 程度残る —— 3 点放物線をガウス微分の")
+    print("  → 平滑を強めるほど時刻が手前へずれ、**向きも桁も予測どおり**")
+    print("     (σ=2 で予測 -1.000 / 実測 -1.056)。")
+    print("     ただし σ=0 でも %+.3f ms 残る —— 3 点放物線をガウス微分の" % base)
     print("     ローブに当てているぶんの偏りで、これは平滑では説明できない。")
-    print("     ★**最急上昇の定義は較正が要る**(しきい値の定義はオフセットが")
-    print("     閉形式)。振幅不変と引き換えに、時刻の絶対値を捨てている。")
+    print("     この残差を引いてから比べても、σ=3 で予測 -1.854 / 実測 -1.570 と")
+    print("     15 %% ずれる。**式は当たりを付けるためのもので、較正の代わりに")
+    print("     はならない**。")
+    print("     ★しきい値の定義はオフセットが閉形式、最急上昇の定義は較正が要る。")
+    print("     振幅不変と引き換えに、時刻の絶対値を捨てている。")
 
 
 def section9_interference(state: dict, truth: np.ndarray) -> None:
