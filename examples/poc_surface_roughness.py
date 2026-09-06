@@ -464,6 +464,7 @@ def main():
             sqs = np.array([float(v.std()) for v in wins])
             pred = 2.0 * math.sqrt(2.0 * math.log(w * w)) * float(sqs.mean())
             ratios[tag].append(float(szs.mean() / pred))
+            sz_curve.setdefault(tag, []).append((w, float(szs.mean()), pred))
             print(f"  {'':8}{w:>8}{len(wins):>7}{szs.mean():>11.4f}{szs.min():>11.4f}"
                   f"{szs.max():>11.4f}{sqs.mean():>11.4f}{pred:>14.4f}"
                   f"{szs.mean() / pred:>11.3f}")
