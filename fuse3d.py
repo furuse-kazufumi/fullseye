@@ -93,6 +93,28 @@ def fuse_to_voxel(items, size=64, bounds=None, device="cpu", smooth=0.8):
     """複数構造を共通密度 voxel へ融合(TRIZ 統合)。items=[(data,kind,params_dict), ...]。
 
     mesh(topology)+ points(sample)+ depth(観測)等の相補的な構造を 1 表現に。返り値 (voxel, bounds)。
+
+    手順: 各 ``(data, kind, params)`` を ``to_points(data, kind, **params)`` で点群にして
+    縦に連結し、``match3d.points_to_voxel`` で ``size^3`` の密度 grid に splat する
+    (各点が落ちる cell を +1、``smooth > 0`` なら σ = ``smooth`` voxel の Gaussian で
+    平滑)。``bounds=None`` なら連結点群の ``(min, max)`` を格子範囲にする。
+
+    引数:
+    - ``items``: 空でない list/tuple で、各要素が長さ 3 の ``(data, kind, params_dict)``
+      (``params_dict`` は ``dict`` 必須)。``to_points`` の ``samples`` を変えたければ
+      ``params`` に ``samples=`` を入れる。
+    - ``size``: 1 軸の voxel 数(立方格子固定)。
+    - ``bounds``: ``(lo, hi)`` それぞれ長さ 3。複数の雲を同じ格子に載せるとき(比較・
+      ``voxel_iou``)は必ず明示する。
+    - ``device``: torch デバイス(``"cpu"`` / ``"cuda"``)。``smooth``: Gaussian σ [voxel]。
+
+    返り値: ``(voxel, bounds)`` — ``voxel`` は ``(size, size, size)`` float64 の
+    **点数密度**(合計 ≈ 総点数、確率ではない)、``bounds`` は実際に使った ``(lo, hi)``。
+    格子 index は ``points_to_voxel`` の ``floor((p - lo) / span * (size - 1))`` で、
+    軸 0 が点の x 成分に対応する(voxel の軸順 = 点の成分順)。
+
+    検証(``ValueError``): ``items`` が list/tuple でない・空・要素が 3 組でない・
+    ``params`` が dict でない(生データを直接渡す誤用を入口で止める)。
     """
     # fail-closed: items は [(data, kind, params), ...]。生データを渡す誤用は
     # 素の TypeError で深部から落ちる(連鎖ファザー実測)ので入口で明示拒否
