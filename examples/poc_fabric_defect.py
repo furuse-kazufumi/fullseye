@@ -233,7 +233,7 @@ def poc_1d(pa: np.ndarray, pb: np.ndarray) -> np.ndarray:
     return np.fft.irfft(r, n=pa.size)
 
 
-def poc_peak_table(img: np.ndarray, baseline: int = 96, top: int = 5):
+def poc_peak_table(img: np.ndarray, baseline: int = 96, top: int = 3):
     """POC のピーク上位 ``top`` 個。**周期信号ではどれも同じ高さになる**。"""
     p = img.mean(axis=0)
     a, b = p[:p.size - baseline], p[baseline:]
