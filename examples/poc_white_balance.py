@@ -687,9 +687,23 @@ def main():
     perch = np.stack([fs.op.sobel_amp(img_g[..., k]) for k in range(3)], axis=-1)
     est_whole = whole.reshape(-1, 3).mean(axis=0)
     est_perch = perch.reshape(-1, 3).mean(axis=0)
+    # 正規化とカーネルを切り分けるための対照 —— 自前の Sobel(正規化なし)。
+    kx = np.array([[-1.0, 0.0, 1.0], [-2.0, 0.0, 2.0], [-1.0, 0.0, 1.0]])
+    sob = np.zeros_like(img_g)
+    for dy in (-1, 0, 1):
+        for dx in (-1, 0, 1):
+            r = np.roll(np.roll(img_g, dy, 0), dx, 1)
+            sob[..., 0] += 0.0        # 使わない(下でまとめて作る)
+    gx_s = sum(kx[dy + 1, dx + 1] * np.roll(np.roll(img_g, -dy, 0), -dx, 1)
+               for dy in (-1, 0, 1) for dx in (-1, 0, 1))
+    gy_s = sum(kx.T[dy + 1, dx + 1] * np.roll(np.roll(img_g, -dy, 0), -dx, 1)
+               for dy in (-1, 0, 1) for dx in (-1, 0, 1))
+    est_sob = np.hypot(gx_s, gy_s).reshape(-1, 3).mean(axis=0)
     print(f"  {'勾配の取り方':<34}{'R':>10}{'G':>10}{'B':>10}{'角度誤差':>10}")
-    print(f"  {'自前(np.gradient)':<34}{own[0]:>10.5f}{own[1]:>10.5f}"
+    print(f"  {'自前 中心差分(np.gradient)':<34}{own[0]:>10.5f}{own[1]:>10.5f}"
           f"{own[2]:>10.5f}{angular_error(own, e_g):>10.2f}")
+    print(f"  {'自前 Sobel(正規化なし)':<34}{est_sob[0]:>10.5f}{est_sob[1]:>10.5f}"
+          f"{est_sob[2]:>10.5f}{angular_error(est_sob, e_g):>10.2f}")
     print(f"  {'fs.op.sobel_amp(rgb) 画像ごと':<34}{est_whole[0]:>10.5f}"
           f"{est_whole[1]:>10.5f}{est_whole[2]:>10.5f}"
           f"{angular_error(est_whole, e_g):>10.2f}")
