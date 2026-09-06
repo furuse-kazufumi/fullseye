@@ -304,7 +304,11 @@ def main():
                             ("取り付けの傾き", tilt, "形状(除く)")):
         print(f"  {name:<20}{arr.std():>12.4f}{arr.max() - arr.min():>12.4f}   {role}")
     print(f"  {'粗さ = 上 3 つの和':<20}{rough_true.std():>12.4f}"
-          f"{rough_true.max() - rough_true.min():>12.4f}   ← これが真値")
+          f"{rough_true.max() - rough_true.min():>12.4f}")
+    print(f"  {'  を λc=%.0fµm で切る' % LAMBDA_C:<20}{rough_band.std():>12.4f}"
+          f"{rough_band.max() - rough_band.min():>12.4f}   ← これが真値")
+    print("  ※ 帯域を宣言しない『粗さの真値』は存在しない。切る前と後で rms が"
+          f" {100 * (rough_band.std() / rough_true.std() - 1):+.0f}% 違う。")
 
     print("\n  真値(帯域を正しく切ったときの答え)")
     print(head())
