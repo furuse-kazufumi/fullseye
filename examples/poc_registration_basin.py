@@ -443,9 +443,7 @@ def main():
             rr.append(rd)
             res.append(rmse / dmm)
             # 「見かけ上収束」= 残差が点間隔の 2 倍未満。実務ではこれで OK を出す
-            sp = float(np.median(
-                __import__("scipy.spatial", fromlist=["cKDTree"]).cKDTree(dstc).query(dstc, k=2)[0][:, 1]))
-            if rmse < 2.0 * sp:
+            if rmse < 2.0 * spacing_of(dstc):
                 conv += 1
                 bad += int(rd > 5.0)
         sym_false[label] = (conv, bad)
