@@ -504,19 +504,31 @@ def main():
     # 8-(a) 雑音: 既定は fail-closed、σ が上がれば誤差も上がる(単調)
     assert noise_rows[0.0][0] == "通る", "雑音なしで拒否された"
     assert noise_rows[1e-1][0] == "拒否", "σ=0.1 でも拒否されない(fail-closed 破れ)"
-    errs = [noise_rows[s][2] for s in (1e-3, 3e-3, 1e-2, 3e-2, 1e-1)]
+    sig = (1e-4, 1e-3, 2e-3, 3e-3, 5e-3, 1e-2, 3e-2, 1e-1)
+    errs = [noise_rows[s][2] for s in sig]
     assert all(b > a for a, b in zip(errs, errs[1:])), "雑音で誤差が単調に増えない"
+    # 拒否の境界が実在する = どこかで「通る」→「拒否」に変わる
+    verdicts = [noise_rows[s][0] for s in sig]
+    assert "通る" in verdicts and "拒否" in verdicts, "雑音で境界が見えない"
+    assert verdicts.index("拒否") > verdicts.index("通る"), "拒否が先に来ている"
 
-    # 8-(b) 全体オフセットは無害 / 1 枚ずれは有害
-    assert cal_rows[5.0][0] < 1e-14, \
-        f"全体オフセットで分離が壊れた: {cal_rows[5.0][0]:.3e}"
-    assert cal_rows[1.0][1] > 30.0 * max(base70, 1e-16), \
+    # 8-(b) 全体オフセットは無害(方位だけ δ 狂う)/ 1 枚ずれは有害
+    for delta, (e_all, az_err, e_one) in cal_rows.items():
+        assert e_all < 1e-14, \
+            f"全体オフセット {delta} 度で分離が壊れた: {e_all:.3e}"
+        assert abs(az_err - delta) < 1e-6, \
+            f"全体オフセット {delta} 度で方位誤差が δ に一致しない: {az_err:.4f}"
+    assert cal_rows[1.0][2] > 1e3 * cal_rows[0.0][2] + 1e-4, \
         "1 枚だけの角度誤差が無害になっている(想定外)"
+    assert cal_rows[5.0][2] > cal_rows[1.0][2] > cal_rows[0.1][2], \
+        "1 枚ずれの誤差が δ で単調に増えない"
 
     # 8-(c) 飽和は例外なしで静かに悪化する
     assert sat_rows[1.0][0] == 0.0, "露光 1 倍で既に飽和している"
-    assert sat_rows[5.0][0] > 0.01, "露光 5 倍でも飽和しない(シーンが暗すぎる)"
-    assert sat_rows[5.0][1] > 5.0 * sat_rows[1.0][1], "飽和で悪化していない"
+    assert sat_rows[6.0][0] > 0.05, "露光 6 倍でも飽和しない(シーンが暗すぎる)"
+    assert all(v[1] == "無し" for v in sat_rows.values()), \
+        "飽和で例外が出た(所見 c の前提が変わった)"
+    assert sat_rows[6.0][2] > 1e3 * sat_rows[1.0][2], "飽和で悪化していない"
 
     # 9. ゼロ点の妥当性(そもそもゼロ点が真値そのものになっていないこと)
     assert rmse(null_no_separation(frames), d_true) > 1e-3
