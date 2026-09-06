@@ -200,9 +200,9 @@ def main():
                  - 0.100) * 1000
     print("   `peak` の誤差 %+.1f nm はちょうど走査ステップの半分(%.1f nm)。"
           % (peak_err, 0.04 * 1000 / 2))
-    print("   サブサンプル推定は同じ走査データから %+.4f nm を返す"
-          "(この PoC の測定床 %.4f nm 未満で、比を取る意味が無いところまで落ちている)。"
-          % (gauss_err, 0.05))
+    print("   サブサンプル推定は同じ走査データから %+.3e nm を返す = "
+          "ゼロ点に対して %.0f 桁の改善。"
+          % (gauss_err, np.log10(abs(peak_err) / max(abs(gauss_err), 1e-12))))
     assert abs(abs(peak_err) - 20.0) < 1e-6      # = dz/2 ちょうど
     assert abs(gauss_err) < 0.05
 
