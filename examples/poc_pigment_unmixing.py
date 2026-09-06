@@ -825,10 +825,13 @@ def main():
     # ---------------------------------------------------------------- 9 -----
     print("\n9. 顔料の存在量 —— 偏りと散らばりを分ける(既定条件)")
     painted = ~flake & neg_all
+    E_scene = scene_endmembers(scene, spec0)
+    A_scene = unmix_any(det0["_cube"], E_scene @ filt16.T)
     rows_f = []
     ab_summary = {}
-    for tag, akey in (("反射率で線形", "_abund"), ("K/S で線形", "_abund_ks")):
-        A = det0[akey]
+    for tag, A in (("masstone / R", det0["_abund"]),
+                   ("masstone / K,S", det0["_abund_ks"]),
+                   ("現場採取 / R", A_scene)):
         lay = A[..., :len(LAYER_KEYS)]
         lay = lay / np.maximum(lay.sum(axis=2, keepdims=True), 1e-12)
         for i, key in enumerate(LAYER_KEYS):
@@ -840,10 +843,27 @@ def main():
             rows_f.append([tag, PIGMENTS[key][2], str(int(fm.sum())),
                            "%.3f" % scene["conc"][..., i][fm].mean(),
                            "%+.3f" % b, "%.3f" % s])
-    _table(["空間", "顔料", "対象画素", "真の平均濃度", "偏り", "散らばり"], rows_f)
+    _table(["端成分 / 解く空間", "顔料", "対象画素", "真の平均濃度", "偏り", "散らばり"],
+           rows_f)
     print("   真値は上層の顔料濃度(和 1)。推定は 7 端成分のうち上層 5 種を和 1 に正規化。")
     print("   線形混合モデルは層構造(Kubelka–Munk)を知らないので、偏りは残って当然。")
     print("   見るべきは **偏りと散らばりのどちらが大きいか** —— 偏りなら補正できる。")
+    print("   「現場採取」は真値(どこが何か)を使って採っている **反則側の上限**。")
+
+    print("\n   どこを何と取り違えたか(いちばん大きい存在量の材料。単位 %)")
+    rows_g = []
+    for tag, A in (("masstone / R", det0["_abund"]), ("現場採取 / R", A_scene)):
+        for i, key in enumerate(LAYER_KEYS):
+            fm = painted & (scene["conc"][..., i] > 0.4) \
+                & (scene["conc"][..., i] == scene["conc"].max(axis=2))
+            if fm.sum() < 20:
+                continue
+            win = np.argmax(A[fm], axis=1)
+            share = np.bincount(win, minlength=A.shape[2]) / win.size * 100.0
+            top = np.argsort(share)[::-1][:2]
+            rows_g.append([tag, PIGMENTS[key][2], str(int(fm.sum()))]
+                          + ["%s %.0f%%" % (ENDMEMBER_NAMES[t], share[t]) for t in top])
+    _table(["端成分", "真の主材料", "画素数", "1 位", "2 位"], rows_g)
 
     # --------------------------------------------------------------- 10 -----
     print("\n10. まとめ —— 何が効いて、何が効かなかったか")
