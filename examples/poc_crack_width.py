@@ -327,12 +327,15 @@ def section_width_sweep() -> dict:
     print("  ★積分法の偏りは全幅で %+.2f 〜 %+.2f %%(0.05 mm = 0.25 px を含む)。"
           % (min(err), max(err)))
 
+    m = [i for i, t in enumerate(true_l) if t <= FIG_WMAX]
+    pick = (lambda v: [v[i] for i in m])
     figs.save_plot("width_sweep",
-                   [("積分法", true_l, int_l),
-                    ("2 値化 2·EDT", true_l, bin_l),
-                    ("2 値化 2·EDT-1", true_l, bin2_l),
-                    ("真値(y=x)", true_l, true_l)],
+                   [("真値(y=x)", pick(true_l), pick(true_l)),
+                    ("積分法", pick(true_l), pick(int_l)),
+                    ("2 値化 2·EDT", pick(true_l), pick(bin_l)),
+                    ("2 値化 2·EDT-1", pick(true_l), pick(bin2_l))],
                    xlabel="真の幅 [mm]", ylabel="推定した幅 [mm]",
+                   ylim=(-0.05, 1.55),
                    title="幅の掃引(きれいな場面)。0 は「何も返さなかった」",
                    caption="2 値化の 2 本は階段。0.20 mm(1 px)以下ではマスクが"
                            "空になり 0(= 未検出)へ落ちる。積分法は 0.05 mm "
