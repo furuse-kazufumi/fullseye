@@ -310,7 +310,7 @@ def _refine_center(dark, cx, cy, hx, hy=None, iters=6):
     return cx, cy
 
 
-def find_finders(dark, step=1):
+def find_finders(dark, n, step=1):
     """位置検出パターンの中心 3 点を (row, col) で返す。見つからなければ None。"""
     rows = [(y, x, m, 1.0, 0.0) for y, x, m in _scan(dark, step)]      # 横走査 -> m_x
     cols = [(x, y, m, 0.0, 1.0) for y, x, m in _scan(dark.T, step)]    # 縦走査 -> m_y
@@ -329,9 +329,13 @@ def find_finders(dark, step=1):
         wx, wy = pts[sel, 3], pts[sel, 4]
         mx = float((pts[sel, 2] * wx).sum() / wx.sum()) if wx.sum() else float("nan")
         my = float((pts[sel, 2] * wy).sum() / wy.sum()) if wy.sum() else float("nan")
-        clusters.append((sel.sum(), pts[sel, :2].mean(0), pts[sel, 2].mean(), mx, my))
+        clusters.append((sel.sum(), pts[sel, :2].mean(0), pts[sel, 2].mean(), mx, my,
+                         int(wx.sum()), int(wy.sum())))
     clusters.sort(key=lambda c: -c[0])
-    cand = [c for c in clusters if c[0] >= 2][:8]
+    # **横走査と縦走査の両方**で当たった塊だけを候補にする。本物の位置検出パターンは
+    # 核の 3 モジュール分の行と列の両方から当たるので、片方向だけの当たり(データ部が
+    # たまたま 1:1:3:1:1 に見えた場所)はここでほぼ落ちる。
+    cand = [c for c in clusters if c[5] >= 2 and c[6] >= 2][:8]
     if len(cand) < 3:
         return None
 
@@ -355,10 +359,19 @@ def find_finders(dark, step=1):
                         continue
                     if not 0.2 <= l1 / l2 <= 5.0:
                         continue
-                    err = abs(float(v1 @ v2)) / (l1 * l2)         # |cos| = 直角からのずれ
+                    # 直角からのずれ + 辺の長さがモジュール寸法から予想される値
+                    # ((n-7) モジュール)とどれだけ食い違うか
+                    lx, ly = (l1, l2) if abs(v1[1]) > abs(v2[1]) else (l2, l1)
+                    pred_x = (n - 7) * float(np.median(
+                        [c[3] for c in cand if np.isfinite(c[3])] or [m_all]))
+                    pred_y = (n - 7) * float(np.median(
+                        [c[4] for c in cand if np.isfinite(c[4])] or [m_all]))
+                    err = (abs(float(v1 @ v2)) / (l1 * l2)
+                           + 0.5 * abs(lx / pred_x - 1.0)
+                           + 0.5 * abs(ly / pred_y - 1.0))
                     if err < best_err:
                         best_err, best = err, (p, a)
-    if best is None or best_err > 0.25:
+    if best is None or best_err > 0.40:
         return None
     p, a = best
     # 走査の当たりは「核の 3 行」に偏るので、矩形窓の重心で中心へ寄せ直す
@@ -401,7 +414,7 @@ def estimate_homography(dark, n, step=1):
     与える前提は格子数 ``n`` だけ(規格の QR ならタイミングパターンの本数から
     数える所)。モジュール寸法は位置検出パターンの間隔から自分で出す。
     """
-    f = find_finders(dark, step)
+    f = find_finders(dark, n, step)
     if f is None:
         return None, "位置検出パターンを取れず"
     m_x = float(np.linalg.norm(f[1] - f[0])) / (n - 7)     # 上辺 = 横のモジュール寸法

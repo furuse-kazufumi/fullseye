@@ -37,10 +37,15 @@ EXTEND: 実際の顕微鏡 Z スタックに差し替えるには、``focal_stac
 ★ この PoC が出した道具の穴(op 本体は直していない。詳細は末尾の節を印字):
 
   (a) **per-pixel の焦点評価 op が公開 API に一つも無い**。``lightfield`` は
-      持っているが private ヘルパで、しかも 4-D ライトフィールド経由でしか
-      呼べない。``reconstruction.depth_from_focus`` は関数として実在するのに
-      **どの台帳にも登録されていない**(``fs.op`` / ``fs.ledger`` / ``fs.<名前>``
-      のどれからも到達不能)。
+      持っているが ``_focus_measure`` は private で ``__all__`` にも無く、
+      公開されている ``lf_depth_from_focus`` は 4-D ライトフィールドしか
+      受け取らない(素の (Z, H, W) 焦点スタックを渡すと明示的に拒否する ——
+      拒否そのものは正しい)。``reconstruction.depth_from_focus`` は関数として
+      実在するのに **25 族どの台帳にも登録されていない**(``fs.op`` /
+      ``fs.ledger`` / ``fs.<名前>`` のどれからも到達不能)。結果として、
+      焦点スタックから深度を出す経路は利用者側で書き直すしかない ——
+      この PoC の ``fm_laplacian`` / ``fm_tenengrad`` / ``fm_local_variance``
+      がそれで、fullseye 側から使えたのは局所プーリングの ``mean_image`` だけ。
   (b) **2-D op 層(``fs.op``)の微分系はフレームごとに自分の最大値で割る**
       (``ops._norm``)。同じ被写体でもフレームごとに割る数が違うので、
       **スタックを跨いで比較できない**。この場面での係数の振れ幅は 1.41 倍、
@@ -324,7 +329,7 @@ def main():
     for f_mm, v, rv in zip(focus_mm, af, ref):
         mark = "  <- 同点" if v >= 1.0 else ""
         print(f"  {f_mm:>14.2f}{v:>14.6f}{rv:>18.6f}{mark}")
-    print(f"  → 15 枚のうち {n_tied} 枚が厳密に 1.000000 で並ぶ"
+    print(f"  → 15 枚中 {n_tied} 枚が厳密に 1.000000 で並び、順位が付かない"
           "(``min(1.0, 分散 * 20)`` のクリップ)。")
     print(f"     クリップ前の分散なら最良は {focus_mm[int(np.argmax(ref))]:.2f} mm と一意に決まる。")
     print("     オートフォーカスで順位が要るのはまさに鮮鋭な側なので、そこで使えない。")
