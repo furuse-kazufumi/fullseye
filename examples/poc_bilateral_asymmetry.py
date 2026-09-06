@@ -99,6 +99,8 @@ from scipy.spatial import cKDTree
 
 import fullseye as fs
 
+import examplefig as figs   # ★fullseye の後(パスフックがリポジトリ直下を通す)
+
 POSE_EULER_DEG = (17.0, -9.0, 23.0)      # 実スキャンは軸に揃っていない。揃えると問題が易しくなる
 POSE_SHIFT = np.array([120.0, -40.0, 55.0])
 OBB_SUBSET = 4000                        # ★穴 J: fs.obb は点数の 2 乗で効くので部分点で呼ぶ
