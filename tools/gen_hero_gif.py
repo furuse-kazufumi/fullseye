@@ -587,8 +587,8 @@ def act_optics(nf):
         c = _place(c, target, 0)
         c = _place(c, np.clip(imgs[i] / vmax, 0.0, 1.0), 1)
         c, ax = _plot_panel(c, _wide_rect(2, 2), (-1.7, 1.7), (0.0, cmax * 1.12),
-                            "デフォーカス [mm]", "RMS コントラスト",
-                            caption="(c) 通し抜けのコントラスト")
+                            "デフォーカス [mm]", "std",
+                            caption="(c) 通し抜けの RMS コントラスト")
         order = np.argsort(dz[:i + 1])
         c = fs.plot_series(c, ax, dz[:i + 1][order],
                            np.asarray(contrast[:i + 1], float)[order],
