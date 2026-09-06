@@ -498,7 +498,7 @@ def section_reflection() -> dict:
           % (rate[0.0][1], rate[0.7][1]))
     print("     「静かに嘘をつく」のと「黙って落ちる」のは、運用上まったく別の")
     print("     故障です。前者は監視で気づけません。")
-    return out
+    return {"err": out, "rate": rate}
 
 
 # --------------------------------------------------------------------------- #
@@ -560,10 +560,13 @@ def section_figures(zp: dict, anc: dict, refl: dict) -> None:
                    xlabel="真の水位 [m]", ylabel="水位の誤差 [cm]",
                    title="較正に使う目盛りのペアで符号が変わる")
 
-    rows = [["%.2f" % r, "%+.1f" % (100 * v[0]), "%+.1f" % (100 * v[1])]
-            for r, v in refl.items()]
-    figs.save_table("reflection", ["反射率", "しきい値交差 [cm]", "キャリパー [cm]"],
-                    rows, title="反射があるときの水位誤差(負 = 低く読む / nan = 見失う)")
+    rows = [["%.2f" % r, "%+.1f" % (100 * v[0]), "%+.1f" % (100 * v[1]),
+             "%d" % refl["rate"][r][1]] for r, v in refl["err"].items()]
+    figs.save_table("reflection",
+                    ["反射率", "しきい値交差", "キャリパー", "検出列"], rows,
+                    title="反射時の水位誤差 [cm]",
+                    caption="負 = 低く読む。検出列はキャリパーが水面線を拾えた列数(全 %d 列)。"
+                            % len(_detect_cols()))
 
 
 # --------------------------------------------------------------------------- #

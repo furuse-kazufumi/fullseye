@@ -554,7 +554,7 @@ def section_max_vs_mean() -> dict:
               % (n, mn, mx, mx - mn, p, (mx - mn) / p if p else np.nan))
 
     # 予測が一貫して上振れする理由を測る: 隣り合う測点は独立でない。
-    # 断面は半長 %.0f px で、測点の間隔は 6 px —— 窓が重なるので相関が残る。
+    # 断面の半長は測点の間隔より大きいので、窓が重なって相関が残る。
     z = (allw - allw.mean(axis=1, keepdims=True))
     r1 = float(np.mean(np.sum(z[:, :-1] * z[:, 1:], axis=1)
                        / np.sum(z * z, axis=1)))
