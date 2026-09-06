@@ -399,7 +399,23 @@ def brdf_lommel_seeliger(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0),
 
     Lambert(``phong_shade`` の拡散項)は縁(μ→0)で 0 になるが、Lommel-Seeliger は
     μ0/(μ0+μ) なので縁でも μ0 のまま明るく、小惑星・月の「平坦な円盤」の見えになる。
-    ``w`` = 単一散乱アルベド。fail-closed(法線形状・w の範囲)。"""
+    ``w`` = 単一散乱アルベド。fail-closed(法線形状・w の範囲)。
+
+    計算は :func:`brdf_shade` の ``model='lommel_seeliger'`` と同一で、各画素について
+    ``μ0 = clip(N·L, 0, 1)``、``μ = clip(N·V, 0, 1)`` を取り、
+    ``I/F = π · (w/4π) · μ0/(μ0+μ)``(= ``(w/4)·μ0/(μ0+μ)``)を返す。μ0 か μ が 0 以下の画素
+    (光の当たらない面・視線に背く面)は 0。
+
+    - ``normals``: float ``(H, W, 3)``。長さ 0 のベクトルは背景とみなし出力 0
+      (``render3d.render_mesh`` の ``normals`` をそのまま渡せる)。単位化は内部で行う。
+    - ``light`` / ``view``: 面→光源、面→視点へ向かう方向ベクトル(内部で単位化)。カメラは
+      ``-Z`` を見る規約なので既定 ``view=(0,0,1)``。平行光・正射影近似で、方向は画面内で一定。
+    - ``w``: 単一散乱アルベド、``(0, 1]`` 以外は ``ValueError``。
+
+    返り値は float64 ``(H, W)`` の I/F。正射影で ``light == view``(位相角 0)なら
+    μ0 = μ で全前景が ``w/8`` の一様値になる。値は ``[0, w/4)`` に収まり ``[0,1]`` へ
+    正規化しない。ハイライトを扱いたければ ``phong_shade``、対向効果・粗さまで入れたければ
+    ``brdf_hapke`` を使う。"""
     return brdf_shade(normals, light=light, view=view, model="lommel_seeliger", w=w)
 
 
