@@ -363,8 +363,9 @@ def section_slit(sc: dict, zp: dict) -> dict:
     print("\n" + "=" * 78)
     print("3) スリット法 —— (t, x) 画像の帯を数え、傾きから速度を出す")
     print("=" * 78)
-    print("   車線    真値   帯(全部)  帯(計数列と交わる)  対応 速度誤差(重心当て)"
-          "  速度誤差(angle)")
+    print("  速度は 3 通りで出す: 行ごとの重心を線形当てはめ / 同じ当てはめから")
+    print("  **画面端で切れた行を落とした版** / 台帳の blob_features['angle']。")
+    print("\n   車線  真値  帯(全部)  帯(計数列)  対応   重心当て  端を除く  angle")
 
     out = {}
     for ln in LANES:
@@ -374,9 +375,9 @@ def section_slit(sc: dict, zp: dict) -> dict:
         cars = [v for v in sc["veh"] if v["lane"] == ln
                 and crosses_ref(v, T_FRAMES - 1)]
         mt = match_speeds(sp, cars)
-        print("   %-5s  %4d   %6d      %10d      %3d/%d      %8.2f %%     %8.2f %%"
+        print("   %-5s %4d  %7d  %9d   %3d/%d  %7.2f %% %7.2f %% %7.2f %%"
               % (ln, sc["truth"][ln], s["n_all"], s["n_ref"], mt["n"], len(cars),
-                 mt["fit"], mt["angle"]))
+                 mt["fit"], mt["fit_inner"], mt["angle"]))
         out[ln] = {"kym": kym, "slit": s, "speed": sp, "match": mt}
 
     tot_ref = sum(out[ln]["slit"]["n_ref"] for ln in LANES)
