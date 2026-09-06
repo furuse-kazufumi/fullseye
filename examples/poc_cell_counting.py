@@ -564,8 +564,9 @@ def evaluate(scene, pred, tau=TAU):
     pred = np.asarray(pred, np.int64)
     npred = int(pred.max())
     if npred == 0:
+        z = np.zeros(ng, int)
         return {"n_pred": 0, "split": 0, "merge": 0, "missed": ng, "spurious": 0,
-                "one2one": [], "n_gt": ng}
+                "one2one": [], "n_gt": ng, "per_gt": z, "per_pred": np.zeros(0, int)}
     O = np.bincount((gt.ravel().astype(np.int64) * (npred + 1) + pred.ravel()),
                     minlength=(ng + 1) * (npred + 1)).reshape(ng + 1, npred + 1)
     core = O[1:, 1:].astype(float)                      # 真値細胞 x 予測ラベル
@@ -576,13 +577,16 @@ def evaluate(scene, pred, tau=TAU):
     one2one = [(g, int(np.argmax(sig[g])) + 1)
                for g in range(ng)
                if per_gt[g] == 1 and per_pred[int(np.argmax(sig[g]))] == 1]
+    # 「この予測ラベルは主にどの真値細胞のものか」= 過統合を細胞の種別へ配りたいとき用
+    owner_of_pred = np.where(sig.any(0), np.argmax(core, 0), -1)
     return {
         "n_pred": npred, "n_gt": ng,
         "split": int(np.maximum(per_gt - 1, 0).sum()),
         "merge": int(np.maximum(per_pred - 1, 0).sum()),
         "missed": int((per_gt == 0).sum()),
         "spurious": int((per_pred == 0).sum()),
-        "one2one": one2one,
+        "one2one": one2one, "per_gt": per_gt, "per_pred": per_pred,
+        "sig": sig, "owner_of_pred": owner_of_pred,
     }
 
 
