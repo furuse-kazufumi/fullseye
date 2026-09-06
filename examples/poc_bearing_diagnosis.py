@@ -160,6 +160,20 @@ def main():
                  fr_peak, fr_peak / true_hz))
         # 正しさの assert: 読み取りは分解能 1 bin 以内(高調波に落ちてもいない)
         assert abs(err) <= resolution, (tag, true_hz, fe)
+        if tag == "BPFO" and figs.enabled():
+            # 生と包絡線は**同じ振幅の単位**(どちらも 2/N 済み)なので重ねてよい。
+            # 床は同じ高さで、峰の立ち方だけが違う —— それがこの節の主張。
+            sel_r = (fr >= LOW) & (fr <= HIGH)
+            ef = np.asarray(env["freqs"])
+            em = np.asarray(env["magnitude"])
+            sel_e = (ef >= LOW) & (ef <= HIGH)
+            figs.save_plot("envelope_vs_raw",
+                           [("生スペクトル(ゼロ点)", fr[sel_r], amp[sel_r]),
+                            ("包絡線スペクトル", ef[sel_e], em[sel_e])],
+                           xlabel="周波数 [Hz]", ylabel="片側振幅",
+                           title="BPFO %.1f Hz を仕込んだ記録(sigma=0.5)" % true_hz,
+                           caption="雑音の床は同じ高さ。包絡線だけが BPFO と"
+                                   "その高調波に峰を立てる。")
     print("   -> 3 タイプとも 1 bin(%.2f Hz)以内。**生スペクトル側の最大ピークは"
           " 4 次高調波に立つことがある**" % resolution)
     print("      (衝撃列の基本波は 4 次より弱い。cepstrum が 4/f_d を返すのと同じ現象で、")
