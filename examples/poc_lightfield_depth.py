@@ -385,7 +385,6 @@ def main():
                    signed=[False, False, False, True],
                    caption="差が立つのは深度不連続の縁だけ(5-b で距離ごとに数える)。")
 
-    print("DBG-FIGS", figs.errors(), figs.manifest())
     print("\n=== 3. 角度分解能 —— 基線が倍なら誤差は半分か ===")
     print(f"  {'角度':>8}{'基線 [step]':>12}{'EPI 傾き':>11}{'焦点度 cubic':>14}"
           f"{'BM 2 枚':>10}{'焦点度の改善比':>16}")
