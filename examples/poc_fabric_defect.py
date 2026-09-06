@@ -112,7 +112,7 @@ def _defect_field(name: str, n: int = N):
     else:
         r2 = (yy - d["row"]) ** 2 + (xx - d["col"]) ** 2
         field = d["amp"] * np.exp(-r2 / (2 * d["sigma"] ** 2))
-        mask = r2 <= (1.2 * d["sigma"]) ** 2
+        mask = r2 <= (1.0 * d["sigma"]) ** 2
     return field, mask
 
 
