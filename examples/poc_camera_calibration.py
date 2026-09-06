@@ -398,12 +398,15 @@ def main():
         rb2 = calibrate(obj, observe(obj, bad, sigma_px=sigma, seed=6))
         eg = 100 * abs(rg2["fx"] - TRUE_FX) / TRUE_FX
         eb = 100 * abs(rb2["fx"] - TRUE_FX) / TRUE_FX
-        ratio = eb / eg if eg > 1e-12 else float("inf")
+        ratio = f"{eb / eg:>8.0f}" if eg > 1e-9 else f"{'—':>8}"
         print(f"  {sigma:>9.2f}{rg2['rms']:>10.4f}{eg:>10.4f}"
-              f"{rb2['rms']:>10.4f}{eb:>10.4f}{ratio:>8.0f}")
-    print("      → 再投影 RMS はどちらも雑音そのもの。fx 誤差は雑音に比例して")
-    print("         伸びるが、伸びる**係数**が配置で決まる。悪い配置の増幅率は")
-    print("         2 桁。校正の質は雑音でなく配置で決まる。")
+              f"{rb2['rms']:>10.4f}{eb:>10.4f}{ratio}")
+    print("      → 雑音 0 ではどちらも真値を返す(モデルが完全に一致するから)。")
+    print("         再投影 RMS はどちらも雑音そのもの(sigma x sqrt2)。fx 誤差は")
+    print("         雑音に比例して伸びるが、伸びる**係数**が配置で決まる。悪い配置の")
+    print("         増幅率は 3 桁。校正の質は雑音でなく配置で決まる。")
+    print("         悪い配置の 0.5 px 以上の行は 100 % 近くで頭打ち —— 焦点距離が")
+    print("         もはや解かれておらず、初期値の近くに留まっているだけ。")
 
     print("\n=== 7. 速度(この機械での実測)===")
     big = np.tile(obj, (40, 1))
