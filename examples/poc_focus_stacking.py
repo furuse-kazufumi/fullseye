@@ -386,7 +386,7 @@ def main():
     assert rms(err[flat]) > 0.8 * rms(depth[flat] - null_const), \
         "無テクスチャで定数より良く出た —— 真値が漏れている疑い"
     # 3. 無テクスチャの答えは掃引全域にばらけている(= 乱数)
-    assert dmap[flat].ptp() > 0.9 * (focus_mm[-1] - focus_mm[0]), "無テクスチャの散らばりが小さすぎる"
+    assert np.ptp(dmap[flat]) > 0.9 * (focus_mm[-1] - focus_mm[0]), "無テクスチャの散らばりが小さすぎる"
     assert int((np.bincount(kmap[flat].ravel(), minlength=n_frames) > 0).sum()) == n_frames, \
         "無テクスチャで一部のフレームしか選ばれていない"
     # 4. 相対の突出度は無テクスチャで嘘をつき、絶対値は嘘をつかない
@@ -402,7 +402,7 @@ def main():
             f"fs.op.{name} が最大 1.0 に正規化されていない —— 穴 (b) が直った?"
     assert max(scale) / min(scale) > 1.2, "正規化係数がフレーム間で振れていない"
     # 7. 穴 (c): 非正規化の合焦指標は 1.0 で飽和する
-    assert float(fs.op.xcv2_lap_var(sharp)) == 1.0, "xcv2_lap_var が飽和しない —— 穴 (c) が直った?"
+    assert n_tied >= 3, "xcv2_lap_var が飽和しない —— 穴 (c) が直った?"
     # 8. 穴 (a): per-pixel の焦点評価 op は公開 API に無い
     assert "depth_from_focus" not in fs.ledger and "depth_from_focus" not in fs.op, \
         "depth_from_focus が登録された —— 穴 (a) が直った?"

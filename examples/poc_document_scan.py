@@ -572,11 +572,15 @@ def main():
         print(f"  {tilt:>10.0f}{s}   {occ:>5.1f} %")
 
     print(f"\n  {'枠外への食み出し [px]':>22}{'4 隅 RMS [px]':>14}{'格子 RMS [px]':>14}")
-    for px, sh in ((0, (0.0, 0.0)), (12, (0.0, -0.010)), (35, (0.0, -0.020)),
-                   (70, (0.0, -0.032)), (110, (0.0, -0.044))):
-        cr, lr, _, _ = run_case(shift=sh)
+    for dy in (0.0, -0.010, -0.020, -0.032, -0.044, -0.056):
+        q = camera_quad(shift=(0.0, dy))
+        out_px = max(0.0, float(np.max(np.maximum(-q[:, 1], q[:, 1] - (CAM_H - 1)))),
+                     float(np.max(np.maximum(-q[:, 0], q[:, 0] - (CAM_W - 1)))))
+        cr, lr, _, _ = run_case(shift=(0.0, dy))
         s = f"{cr:>14.2f}{lr:>14.3f}" if cr is not None else f"{'検出できず':>28}"
-        print(f"  {px:>22}{s}")
+        print(f"  {out_px:>22.0f}{s}")
+    print("  → 辺に直線を当てて交点を取る方式は、隅そのものが見えなくても外挿できる。")
+    print("     崩れるのは**辺が 1 本まるごと枠の外に出たとき**。")
 
     print(f"\n  {'背景の明るさ':>14}{'紙との差':>10}{'4 隅 RMS [px]':>14}{'格子 RMS [px]':>14}")
     for bg in (0.30, 0.38, 0.44, 0.50, 0.65, 0.85):
