@@ -293,9 +293,15 @@ def build(lang: str, cap: dict, byid: dict) -> tuple[str, str]:
     wing_md = head + "\n\n" + "\n".join(wing_parts)
     ent = cap["entrance"]
     other = "en" if lang == "ja" else "ja"
-    switch = ("> **言語 / Language**: **日本語** · [English](%s)" % (GH + "docs/articles/fullseye_poc_museum_qiita_en.md")
+    # 相方の言語版へのリンク: Qiita に投稿済み(exhibits/qiita_items.json)ならその URL、無ければ GitHub の md。
+    items = {}
+    qi = os.path.join(EXHIBITS, "qiita_items.json")
+    if os.path.exists(qi):
+        items = json.load(io.open(qi, encoding="utf-8"))
+    other_url = (items.get(other) or {}).get("url") or (GH + "docs/articles/fullseye_poc_museum_qiita_%s.md" % other)
+    switch = ("> **言語 / Language**: **日本語** · [English](%s)" % other_url
               if lang == "ja" else
-              "> **Language**: [日本語](%s) · **English**" % (GH + "docs/articles/fullseye_poc_museum_qiita_ja.md"))
+              "> **Language**: [日本語](%s) · **English**" % other_url)
     title = ent.get("title_" + lang) or cap["meta"]["title_" + lang]
     tldr = "\n".join("- " + t for t in ent["tldr_" + lang])
     gl = "\n".join("- **%s** —— %s" % (t, e) for t, e in ent["glossary_" + lang])

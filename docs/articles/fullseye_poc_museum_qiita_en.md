@@ -1,4 +1,4 @@
-> **Language**: [日本語](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_poc_museum_qiita_ja.md) · **English**
+> **Language**: [日本語](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6) · **English**
 
 # A Metrology Museum on Paper — Planting Your Own Ground Truth to Find Where Image Measurement Breaks
 

@@ -1,4 +1,4 @@
-> **言語 / Language**: **日本語** · [English](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_poc_museum_qiita_en.md)
+> **言語 / Language**: **日本語** · [English](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)
 
 # 紙面の計測館 ―― 真値を自分で仕込んで、画像計測の「壊れる場所」を先に知る
 
