@@ -411,6 +411,15 @@ def main():
     print("     雑音を入れると上限が一気に落ち、20 dB では取り分が 2 dB を切る。")
     print("     最良 nsr は理論値(雑音電力 / 信号電力)と同じ桁に並ぶ —— 雑音が")
     print("     大きいほど強く正則化する = 高周波を諦める、が最適解の中身。")
+    # 「上限が雑音で決まる」は 3 本の線の**縦の隙間**が縮む形なので、折れ線にする。
+    _sx = np.array([r[0] for r in snr_curve])
+    figs.save_plot("noise_ceiling",
+                   [("何もしない", _sx, np.array([r[1] for r in snr_curve])),
+                    ("アンシャープ(神託)", _sx, np.array([r[2] for r in snr_curve])),
+                    ("核既知の復元(神託)", _sx, np.array([r[3] for r in snr_curve]))],
+                   xlabel="観測の SNR [dB]", ylabel="PSNR [dB]",
+                   title="雑音が復元の上限を決める(核は厳密に既知)",
+                   caption="核が完全に分かっていても、SNR 20 dB では取り分が 2 dB を切る。")
 
     print("\n=== 4. 核の推定誤差 —— どれだけずれると破綻するか ===")
     obs40, _ = add_noise(blurred, 40.0, np.random.default_rng(SEED + 2))
