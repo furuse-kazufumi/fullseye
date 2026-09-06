@@ -236,8 +236,9 @@ def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str 
 #: 表の列幅の下限・上限[px](自動計算がどちらかへ振り切れないようにする)
 COL_W_MIN, COL_W_MAX = 56, 320
 
-#: 列と列のあいだの余白[px]。
-COL_GAP = 16
+#: 列と列のあいだの余白[px]。``text_box`` が左右に ``pad=5`` を取るので、
+#: 見た目の隙間はこれから 10 px 引いた分になる。
+COL_GAP = 22
 
 
 def _column_widths(header, rows, col_w=None) -> list[int]:

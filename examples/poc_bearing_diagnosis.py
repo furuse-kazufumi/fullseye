@@ -281,6 +281,7 @@ def main():
     print("   %6s %5s %8s %9s %17s %7s %7s %11s %s"
           % ("", "", "", "", "", "含むか", "の割合", "[Hz]", ""))
     sk_rows = []
+    sk_table = []                       # 図用。print している表をそのまま持ち出す
     for sigma in (0.2, 1.0, 2.0):
         for win in (32, 64, 128, 256):
             x = _record(defect_hz, sigma, seed=3)
