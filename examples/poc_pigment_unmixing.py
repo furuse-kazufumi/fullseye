@@ -720,7 +720,7 @@ def main():
                          np.random.default_rng(SEED + 9), sigma=0.0)
     E_unfaded = endmember_spectra(fade=1.0)
     im = LAYER_KEYS.index("madder")
-    f2 = (field == 2) & ~flake & neg_all
+    f2 = scene["lake"] & ~flake & neg_all
     rows_d = []
     cliff_d = {}
     for fade in (1.0, 0.7, 0.5, 0.3, 0.15):
