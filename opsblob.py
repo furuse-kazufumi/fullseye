@@ -17,7 +17,7 @@ docs/ops へノートを出す・連鎖ファザーに食わせる・宣言型�
 **「画像に散らばった n 個の物体」**で、生む型も消す型も違う。
 ``opsregions`` に当たるものは無い(``regions_setops`` / ``regions_gen`` は
 台帳を持たない)。混ぜると台帳のカテゴリが「形」と「個数」の二重帳簿に
-なるので、7 op で 1 族を立てた。
+なるので、独立した 1 族を立てた(2026-09-06 に 7 op で開始、同日 10 op)。
 
 ## 型語彙: **新語は 1 つだけ**(``labels2d``)。その判断の記録
 
@@ -31,8 +31,9 @@ docs/ops へノートを出す・連鎖ファザーに食わせる・宣言型�
   もっともらしく間違う。まさに型を分ける条件そのもの。
   そこで ``blob2d._as_labels`` は bool を**直し方つきで拒否**する
   (``blob_label(mask)`` を先に呼べ)。
-  生産者 3(``blob_label`` / ``blob_select`` / ``blob_select_largest``)、
-  消費者 5(``blob_features`` / ``blob_select`` / ``blob_select_largest`` /
+  生産者 5(``blob_label`` / ``blob_select`` / ``blob_select_largest`` /
+  ``blob_seeds`` / ``blob_split``)、消費者 7(``blob_features`` /
+  ``blob_select`` / ``blob_select_largest`` / ``blob_split`` /
   ``blob_region`` / ``blob_boundaries`` / ``blob_overlay``)で族の中に閉じる。
   **出口も持たせた**(``blob_overlay`` → ``rgb``)—— 作れるが見られない型は
   連鎖の行き止まりになる(``flow2d`` で学んだ形)。

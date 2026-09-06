@@ -470,3 +470,118 @@ def test_the_family_guide_python_snippets_actually_run():
     for i, block in enumerate(blocks, 1):
         exec(compile(block, "%s[%d]" % (guide.name, i), "exec"),
              {"__name__": "__guide__"})
+
+
+# --------------------------------------------------------------------------- #
+# 8. 割る —— 触れ合って 1 個になった塊を戻す                                    #
+# --------------------------------------------------------------------------- #
+def _two_touching_discs():
+    """半径 20 と 14 の円板を重ねて置く。**真値は重ねる前の面積**。"""
+    yy, xx = np.mgrid[0:100, 0:100]
+    a = (yy - 50) ** 2 + (xx - 36) ** 2 <= 20 * 20
+    b = (yy - 50) ** 2 + (xx - 66) ** 2 <= 14 * 14
+    return a | b, int(a.sum()), int(b.sum())
+
+
+def test_the_distance_transform_is_in_pixels_not_normalised():
+    """★進化 op の `distance_transform` は最大値で割る。こちらは割らない。"""
+    m = np.zeros((21, 21), bool)
+    m[5:16, 5:16] = True                       # 11x11 の正方形
+    d = B.blob_distance(m)
+    assert float(d.max()) == pytest.approx(6.0), float(d.max())
+    assert float(B.blob_distance(m, spacing=0.5).max()) == pytest.approx(3.0)
+
+
+def test_seeds_take_an_absolute_h_and_do_not_clip_the_input():
+    """★`xsk2_h_maxima` は入力を [0,1] に切り詰めるので生の距離では壊れる。
+
+    ここは切り詰めない —— 距離 20 px の山と 2 px の山が区別できること。
+    """
+    m, _, _ = _two_touching_discs()
+    d = B.blob_distance(m)
+    assert float(d.max()) > 19.0, "距離が [0,1] へ潰れている"
+    assert int(B.blob_seeds(d, 1.0).max()) == 2, "2 つの山が見つからない"
+    # h を山の高さより大きくすると、種は 1 つに融ける
+    assert int(B.blob_seeds(d, 30.0).max()) == 1
+
+
+def test_seeds_reject_a_non_positive_h():
+    d = B.blob_distance(_two_touching_discs()[0])
+    with pytest.raises(ValueError, match="h"):
+        B.blob_seeds(d, 0.0)
+
+
+def test_split_separates_two_touching_discs():
+    """★融合した塊が 2 つに戻ること。**面積の偏りも数字で押さえる**。
+
+    分水嶺は重なりの部分を距離で分けるので、大きいほうが損をして小さい
+    ほうが得をする。実測 1149 / 680(真値 1257 / 613)—— これは算法の
+    定義どおりで、誤差ではない。
+    """
+    m, area_a, area_b = _two_touching_discs()
+    lab = B.blob_label(m)
+    assert int(lab.max()) == 1, "そもそも融合していない試験になっている"
+
+    d = B.blob_distance(m)
+    parts = B.blob_split(lab, B.blob_seeds(d, 1.0), d)
+    f = B.blob_features(parts)
+    assert f["n"] == 2
+    got = np.sort(np.asarray(f["area"]))[::-1]
+    assert got[0] == pytest.approx(1149, abs=30), got
+    assert got[1] == pytest.approx(680, abs=30), got
+    # 総面積は保存する(割っただけで画素を捨てていない)
+    assert float(got.sum()) == float(m.sum())
+    # 大きい側が損をして小さい側が得をする向き
+    assert got[0] < area_a and got[1] > area_b
+
+
+def test_split_leaves_alone_a_blob_with_no_seed():
+    """種を持たない塊は**そのまま残す**(割る材料が無いのに消すのは嘘)。"""
+    m, _, _ = _two_touching_discs()
+    m2 = m.copy()
+    m2[5:9, 5:9] = True                        # 遠くに小さい塊を 1 つ
+    lab = B.blob_label(m2)
+    d = B.blob_distance(m2)
+    seeds = B.blob_seeds(d, 1.0)
+    parts = B.blob_split(lab, seeds, d)
+    f = B.blob_features(parts)
+    assert f["n"] >= 3, f["n"]
+    assert float(np.asarray(f["area"]).sum()) == float(m2.sum()), "画素が消えた"
+
+
+def test_split_ignores_seeds_that_fall_outside_the_region():
+    m, _, _ = _two_touching_discs()
+    lab = B.blob_label(m)
+    d = B.blob_distance(m)
+    seeds = B.blob_seeds(d, 1.0).copy()
+    seeds[2, 2] = int(seeds.max()) + 1         # 背景に置いた偽の種
+    parts = B.blob_split(lab, seeds, d)
+    assert not parts[2, 2], "領域の外の種が拾われた"
+    assert int(parts.max()) == 2
+
+
+def test_split_refuses_mismatched_shapes():
+    m, _, _ = _two_touching_discs()
+    lab = B.blob_label(m)
+    with pytest.raises(ValueError, match="same shape"):
+        B.blob_split(lab, B.blob_label(np.zeros((10, 10), bool) | True),
+                     B.blob_distance(m))
+
+
+def test_the_per_component_reconstruction_matches_the_global_one():
+    """★速さのために成分ごとに回している。**答えが変わっていないこと**。
+
+    512x512 に 200 個の円で 237.7 ms → 15.3 ms(15.5 倍)。速くするために
+    別の答えを返していたら意味が無いので、素朴な全体版と全画素で比べる。
+    """
+    rng = np.random.default_rng(3)
+    h, w = 160, 160
+    img = np.zeros((h, w), bool)
+    yy, xx = np.mgrid[0:h, 0:w]
+    for _ in range(40):
+        r0, c0 = rng.integers(8, h - 8), rng.integers(8, w - 8)
+        img |= (yy - r0) ** 2 + (xx - c0) ** 2 <= rng.integers(4, 9) ** 2
+    d = B.blob_distance(img)
+    mine = B.blob_seeds(d, 2.0) > 0
+    naive = (d - B._reconstruct_by_dilation(d - 2.0, d)) > 0
+    assert np.array_equal(mine, naive), int((mine != naive).sum())
