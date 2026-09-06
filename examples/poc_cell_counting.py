@@ -1178,8 +1178,9 @@ def main():
          f"疎なら足りる(偏り {zero[SPARSE]['bias']:+.1f})が、"
          f"密で {zero[DENSE]['bias']:+.1f} 個。失点は全部過統合"),
         ("分水嶺は何を直すか",
-         f"過統合を {zero[DENSE]['merge']:.0f} → "
-         f"{dens[(DENSE, ws_name)]['merge']:.0f} 件へ。代わりに過分割が出る"),
+         f"中密度なら過統合を {zero[MID]['merge']:.0f} → "
+         f"{dens[(MID, ws_name)]['merge']:.0f} 件へ。密では "
+         f"{zero[DENSE]['merge']:.0f} → {dens[(DENSE, ws_name)]['merge']:.0f} で直らない"),
         ("h をどう選ぶか",
          f"選べない。偏り基準の最適 h が密度で {hb_list} と動く"),
         ("大きさが 3 倍違うと",
