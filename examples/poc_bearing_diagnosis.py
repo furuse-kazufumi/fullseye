@@ -321,6 +321,13 @@ def main():
              min(r[4] for r in win32), max(r[4] for r in win32)))
     print("   顕著さと band_fraction を**両方**読めば、外した帯域は外したと分かる。")
     assert max(r[4] for r in bad_narrow) < min(r[4] for r in win32)
+    figs.save_table("sk_bands",
+                    ["sigma", "win", "枠 ms", "選ばれた帯域 Hz", "共振を含む",
+                     "帯域内割合", "顕著さ", "判定"],
+                    sk_table,
+                    title="spectral_kurtosis が選んだ帯域(真の共振 %.0f Hz)" % RESONANCE,
+                    caption="win=32 は毎回共振を含み、win=256 は毎回外す。"
+                            "枠長を衝撃間隔より短く取るかどうかで決まる。")
 
     # ------------------------------------------------------------------ #
     # 6) 正直な内訳                                                        #
