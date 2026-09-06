@@ -531,7 +531,25 @@ def blob_select_largest(labels: Any, count: int = 1) -> np.ndarray:
 # 4. 取り出す                                                                  #
 # --------------------------------------------------------------------------- #
 def blob_region(labels: Any, index: int) -> np.ndarray:
-    """物体 1 個を二値領域(bool)として抜く。``index`` は **1 起点**。"""
+    """物体 1 個を二値領域(bool)として抜く。``index`` は **1 起点**。
+
+    ``labels == index`` を返すだけの選択 op。番号は ``blob_label`` が付けた 1..n の
+    連番で、0 は背景。
+
+    - ``labels``: 2-D の整数ラベル画像(``blob_label`` / ``blob_select`` /
+      ``blob_split`` の出力)。**bool マスクは拒否**(「複数物体を 1 個として測る」
+      事故を防ぐため、先に ``blob_label`` を掛けるよう促す)。float も拒否
+      (``0.999`` がどの物体か決められない)。負の番号があれば ``ValueError``。
+    - ``index``: ``1 <= index <= labels.max()`` の int。0(背景)や範囲外は
+      ``ValueError``。``blob_features`` の ``label`` 列、``blob_select_largest`` の
+      結果(1 から振り直される)と同じ番号体系。
+    - 返り値: ``(H, W)`` の bool。空になることはない(番号は必ず存在する
+      ―― ただし ``blob_select`` で番号を振り直していない自作ラベルに欠番があれば
+      全 False が返りうる)。
+
+    抜いた領域は ``blob_distance``(距離変換)や ``blob_overlay`` の重ね描き、
+    ``annotate_outline`` の輪郭描画にそのまま渡せる。
+    """
     lab = _as_labels(labels, "blob_region")
     i = int(index)
     n = int(lab.max())
