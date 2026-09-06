@@ -779,16 +779,21 @@ def speckle_quality(img: Any) -> dict[str, float]:
     rmax = min(cy, cx)
     idx = np.rint(rr).astype(np.int64)
     keep = idx <= rmax
-    cnt = np.bincount(idx[keep], minlength=rmax + 1).astype(np.float64)
-    tot = np.bincount(idx[keep], weights=ac[keep], minlength=rmax + 1)
-    prof = tot[:rmax + 1] / np.maximum(cnt[:rmax + 1], 1.0) / peak
+    cnt = np.bincount(idx[keep], minlength=rmax + 1)[:rmax + 1].astype(np.float64)
+    tot = np.bincount(idx[keep], weights=ac[keep], minlength=rmax + 1)[:rmax + 1]
+    rsum = np.bincount(idx[keep], weights=rr[keep], minlength=rmax + 1)[:rmax + 1]
+    # 環の代表半径はビン番号ではなく**環内の半径の平均**。ビン番号を使うと
+    # 半径 1 の環に対角の √2 が混ざり、細かい斑点で径が 2 割小さく出る(実測)。
+    prof = tot / np.maximum(cnt, 1.0) / peak
+    rad = rsum / np.maximum(cnt, 1.0)
 
     diameter = float("nan")
     below = np.nonzero(prof < 0.5)[0]
     if below.size and below[0] >= 1:
         k = int(below[0])
         p0, p1 = float(prof[k - 1]), float(prof[k])
-        r_half = (k - 1) + (p0 - 0.5) / max(p0 - p1, 1e-30)
+        r0, r1 = float(rad[k - 1]), float(rad[k])
+        r_half = r0 + (r1 - r0) * (p0 - 0.5) / max(p0 - p1, 1e-30)
         diameter = float(math.sqrt(2.0) * r_half)
     return {
         "mean_blob_diameter_px": diameter,

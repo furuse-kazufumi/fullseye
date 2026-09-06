@@ -328,37 +328,67 @@ def section4_aspect(depth_map, ts, masks, d_hat, cube, sound):
     print("     (0.5mm, 2mm) の深さ推定は 600 % 以上ずれている。見えている ≠ 測れる。")
 
 
+def _cnr(mp, masks, sound):
+    """欠陥ごとの CNR = |欠陥平均 - 健全部平均| / 健全部の面内標準偏差。"""
+    sd, mu = float(np.nanstd(mp[sound])), float(np.nanmean(mp[sound]))
+    return [abs(float(np.nanmean(mp[m])) - mu) / max(sd, 1e-12) for m in masks.values()]
+
+
+def _method_maps(ts, cube, masks, sound):
+    """検出用の 2 次元マップを 5 通り作る。
+
+    ★1 枚モノの手法には**神の目でいちばん良いフレームを選ばせる**
+    (16 欠陥の CNR 中央値が最大になる時刻)。マスクを知っている前提なので
+    実運用では使えない選び方だが、**素朴な手法に最大限有利な条件を与えて
+    なお足りない**ことを示すためにこうする。時間方向の手法にはこの下駄が無い。
+    """
+    early = cube[:5].mean(axis=0).astype(np.float64)
+
+    def _best_frame(transform):
+        best, bk = -1.0, 0
+        for k in range(0, NFRAME, 5):
+            mp = transform(cube[k].astype(np.float64))
+            v = float(np.median(_cnr(mp, masks, sound)))
+            if v > best:
+                best, bk = v, k
+        return bk
+
+    k_raw = _best_frame(lambda f: f)
+    k_nrm = _best_frame(lambda f: f / np.maximum(early, 1e-6))
+    maps = {}
+    maps["生の 1 枚(神の目 %.2f s)" % ts[k_raw]] = cube[k_raw].astype(np.float64)
+    # 早期フレームで割る = 加熱強度の面内むらを 1 次で消す標準手法。
+    maps["早期正規化(神の目 %.2f s)" % ts[k_nrm]] = (
+        cube[k_nrm].astype(np.float64) / np.maximum(early, 1e-6))
+    maps["時間標準偏差 temporal_std"] = np.asarray(fs.temporal_std(cube), np.float64)
+    maps["TSR(ln-ln 2 階微分の最大)"] = tsr_depth(ts, cube)[1]
+    sub = cube[::4].transpose(1, 2, 0).astype(np.float64)
+    scores, _c, _e = fs.spec_pca(sub, n_components=3)
+    maps["PCT(spec_pca 第 2 主成分)"] = np.asarray(scores)[..., 1]
+    return maps
+
+
 def section5_methods(ts, cube, masks, sound):
     print()
     print("=" * 78)
-    print("5) 手法比較 —— どれが多くの欠陥を出すか")
+    print("5) 手法比較 —— どれが多くの欠陥を出すか(加熱は一様)")
     print("=" * 78)
-    print("  評価は『16 個それぞれの コントラスト / 健全部の面内ばらつき』。")
+    print("  評価は欠陥ごとの CNR = コントラスト / 健全部の面内ばらつき。")
+    print("  合格は CNR>=3(NDT で普通に使われるしきい)。")
     print()
-    maps = {}
-    k_best = int(np.argmax([abs(cube[k][~sound].mean() - cube[k][sound].mean())
-                            for k in range(NFRAME)]))
-    maps["生の差分(最良時刻 %.2f s)" % ts[k_best]] = cube[k_best].astype(np.float64)
-    maps["時間標準偏差 temporal_std"] = np.asarray(fs.temporal_std(cube))
-    _, d2max = tsr_depth(ts, cube)
-    maps["TSR(ln-ln 2 階微分の最大)"] = d2max
-    # PCT: 主成分サーモグラフィ。spec_pca は (H, W, B) を取る。
-    sub = cube[::4].transpose(1, 2, 0).astype(np.float64)
-    scores, _comps, _evr = fs.spec_pca(sub, n_components=3)
-    maps["PCT(spec_pca 第 2 主成分)"] = np.asarray(scores)[..., 1]
-    print("  %-30s | %s" % ("手法", "  ".join("%5.1f" % (k[1] / k[0]) for k in masks)))
-    print("  %-30s | %s" % ("(列 = 直径/深さ)", "  ".join("%5s" % "" for _ in masks)))
-    print("  " + "-" * 76)
-    for name, mp in maps.items():
-        sd = float(mp[sound].std())
-        mu = float(mp[sound].mean())
-        snrs = [abs(float(mp[m].mean()) - mu) / max(sd, 1e-12) for m in masks.values()]
-        n_ok = sum(s >= 3.0 for s in snrs)
-        print("  %-30s | %2d/16 が SNR>=3   中央値 SNR %.1f" % (name, n_ok, np.median(snrs)))
+    print("  %-32s %10s %10s %10s" % ("手法", "CNR>=3", "中央値", "最小"))
+    print("  " + "-" * 66)
+    for name, mp in _method_maps(ts, cube, masks, sound).items():
+        s = _cnr(mp, masks, sound)
+        print("  %-32s %7d/16 %10.2f %10.2f" % (name, sum(v >= 3 for v in s),
+                                                np.median(s), min(s)))
     print()
-    print("  → 生の 1 枚は健全部の面内ばらつき(加熱むらが無くても横拡散で出る)に")
-    print("     負ける。時間方向を使う 3 つは桁で強い。")
-    return maps
+    print("  → ★**加熱が一様なら、生の 1 枚がいちばん多く出す**。時間方向を使う")
+    print("     手法(temporal_std / TSR / PCT)は、ここでは勝てない —— 雑音が")
+    print("     20 mK しかなく、平均して得をする余地が小さいため。")
+    print("     TSR の 2 階微分の値は**深さの推定には効くが検出には向かない**")
+    print("     (3 節で深さは ±5 % なのに、ここでは CNR が 1 を切る)。")
+    print("     『同じ道具が両方に効く』とは限らない。7 節で条件を変えると順位が動く。")
 
 
 def section6_noise(depth_map, masks):
@@ -383,6 +413,7 @@ def section6_noise(depth_map, masks):
     print()
     print("  → TSR の多項式当てはめが雑音を強く落とすので、実用域(20〜50 mK)では")
     print("     深さ誤差はほとんど動かない。**律速は雑音ではなく横拡散**。")
+    print("     200 mK まで上げてようやく効き始める。")
 
 
 def section7_illumination(depth_map, masks, sound):
@@ -392,33 +423,28 @@ def section7_illumination(depth_map, masks, sound):
     print("=" * 78)
     yy, xx = np.mgrid[0:NPIX, 0:NPIX].astype(np.float64)
     r2 = ((xx - NPIX * 0.35) ** 2 + (yy - NPIX * 0.35) ** 2) / (NPIX * 0.55) ** 2
-    illum = 0.70 + 0.60 * np.exp(-r2)          # 端で 30 % 暗い
+    illum = 0.70 + 0.60 * np.exp(-r2)          # 端が暗い
     print("  フラッシュの当たり方に %.0f %% の面内むらを入れる(端が暗い)。"
           % (100 * (illum.max() / illum.min() - 1)))
-    ts, cube = synth_cube(depth_map, illum=illum)
+    ts, cube = synth_cube(depth_map, illum=illum, netd=NETD, seed=2)
     print()
-    print("  %-30s | %s" % ("手法", "SNR>=3 の欠陥数 / 中央値 SNR"))
+    print("  %-32s %10s %10s %10s" % ("手法", "CNR>=3", "中央値", "最小"))
     print("  " + "-" * 66)
-    k_best = int(NFRAME * 0.1)
-    cand = {
-        "生の 1 枚(t=%.2f s)" % ts[k_best]: cube[k_best].astype(np.float64),
-        "時間標準偏差 temporal_std": np.asarray(fs.temporal_std(cube)),
-        "TSR(ln-ln 2 階微分)": tsr_depth(ts, cube)[1],
-    }
-    for name, mp in cand.items():
-        sd, mu = float(mp[sound].std()), float(mp[sound].mean())
-        snrs = [abs(float(mp[m].mean()) - mu) / max(sd, 1e-12) for m in masks.values()]
-        print("  %-30s | %2d/16   中央値 %.2f"
-              % (name, sum(s >= 3.0 for s in snrs), np.median(snrs)))
+    for name, mp in _method_maps(ts, cube, masks, sound).items():
+        s = _cnr(mp, masks, sound)
+        print("  %-32s %7d/16 %10.2f %10.2f" % (name, sum(v >= 3 for v in s),
+                                                np.median(s), min(s)))
     d_hat, _ = tsr_depth(ts, cube)
     errs = [100 * (1e3 * float(np.median(d_hat[masks[(d, 16.0)]])) / d - 1)
             for d in DEPTHS_MM]
     print()
     print("  直径 16 mm の深さ誤差(加熱むらあり): " + " / ".join("%+.0f%%" % e for e in errs))
-    print("  → **TSR の深さは加熱むらでほとんど動かない**。ln T を取ると加熱強度は")
-    print("     定数の足し算になり、時間微分で消えるため。生の 1 枚は同じむらで")
-    print("     判定が壊れる。『どの手法か』ではなく『加熱強度が式のどこに入るか』が")
-    print("     効いている。")
+    print("  → ★**TSR の深さは加熱むらでほとんど動かない**(5 節の一様加熱と同じ値)。")
+    print("     ln T を取ると加熱強度は定数の足し算になり、時間微分で消えるため。")
+    print("     検出のほうは、生の 1 枚が加熱むらそのものを『コントラスト』として")
+    print("     数えるので数字だけは上がるが、**むらと欠陥を区別できていない**。")
+    print("     早期フレームで割る正規化はこの区別を回復させる 1 行の処置。")
+    print("     つまり効いているのは手法名ではなく『加熱強度が式のどこに入るか』。")
 
 
 def section8_findings():
