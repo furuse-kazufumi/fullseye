@@ -316,8 +316,7 @@ def main():
             b, s, r, c, sl = sn_tab[flux][lab]
             snr = flux / np.sqrt(flux + 121.0 * (SKY + READ ** 2))
             print("     " + pad(lab, 20) + f"{flux:8.0f}{snr:6.1f} {b:+9.4f}"
-                  f"{s:10.4f}{r:10.4f}{c:9.4f}{sl:10.2f}".replace(
-                      f"{sl:10.2f}", f"{r / c:10.2f}{sl:8.3f}"))
+                  f"{s:10.4f}{r:10.4f}{c:9.4f}{r / c:10.2f}{sl:8.3f}")
         print()
     zero = sn_tab[300.0]["重心(ゼロ点)"]
     print(f"   ★ 素の重心は暗い端で **散らばり {zero[1]:.4f} px が理論下限 "
