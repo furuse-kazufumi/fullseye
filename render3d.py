@@ -1205,7 +1205,19 @@ def mesh_edge_lengths(V, F, *, per: str = "vertex") -> np.ndarray:
     This is the resolution map of the mesh in its own units: the shortest wavelength a
     region can carry as *geometry* is about twice the local edge (Nyquist), which is what
     :func:`mesh_subdivide` (``target_edge``) and :func:`displacement_band_weights` use.
-    Deterministic; fail-closed on degenerate meshes / unknown ``per``."""
+    Deterministic; fail-closed on degenerate meshes / unknown ``per``.
+
+    無向の一意な辺 ``(E,2)`` を取り、各辺の長さ(メッシュ単位、float64)を集計する。
+
+    - ``per='vertex'``: 頂点に接する辺長の平均 ``(N,)``。どの面にも属さない孤立頂点は
+      辺を持たないので、無言で **全辺の平均値** が入る(ゼロにはならない)。
+    - ``per='face'``: 面の 3 辺の平均 ``(M,)``。
+    - ``per='edge'``: 一意辺そのものの長さ ``(E,)``。辺の並びは ``np.unique`` の辞書順
+      (頂点 index の小さい順)で、``F`` の順とは対応しない。
+
+    ``per`` が上記 3 つ以外、頂点/面が空、face index 範囲外、非有限座標は ``ValueError``。
+    ``displacement_band_weights`` の ``local_edge`` や ``mesh_subdivide`` の
+    ``target_edge`` を決める(例: 中央値の半分)ために使う。"""
     Vv, Ff = _mesh_check(V, F)
     if per not in ("vertex", "face", "edge"):
         raise ValueError("per must be vertex|face|edge, got %r" % (per,))
