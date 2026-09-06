@@ -945,7 +945,24 @@ def exponential_background(video, alpha: float = 0.05) -> np.ndarray:
 
 
 def exponential_foreground(video, alpha: float = 0.05, threshold: float = 0.1) -> np.ndarray:
-    """Foreground masks ``|frame − exponential background| > threshold`` → 0/1 ``(T, H, W)`` (``video``)."""
+    """Foreground masks ``|frame − exponential background| > threshold`` → 0/1 ``(T, H, W)`` (``video``).
+
+    ``exponential_background`` と同じ指数移動平均 ``bg += α (frame - bg)`` を回し、
+    各フレームで **更新後の** ``bg`` との差 ``|frame - bg| > threshold`` を 1 にする。
+    先頭フレームは ``bg`` の初期化に使われ差が 0 なので、``t = 0`` は全画素 0。
+
+    - ``video``: ``(T, H, W)`` 配列か 2-D フレームの list。整数 dtype は最大値で
+      ``[0, 1]`` に正規化、float はクリップ。NaN/Inf は ``ValueError``。
+    - ``alpha``: ``[0, 1]``。大きいほど背景が速く追従し、止まった物体は
+      約 ``1/α`` 枚で消える。1 だと ``bg == frame`` になり常に全画素 0。
+    - ``threshold``: ``[0, 1]`` の強度単位。**全画素共通の絶対閾**なので、暗部の
+      雑音と明部の雑音を同じ閾で切ることになる。
+    - 返り値: ``(T, H, W)`` float64 の 0 / 1。
+    - 失敗: ``ValueError``。
+
+    画素ごとの分散で閾を決めたいなら ``running_gaussian_foreground``。ゴーストの
+    無い動き検出なら ``three_frame_difference``。
+    """
     vid = _video(video)
     op = ExponentialBackground(alpha, threshold)
     out = np.empty(vid.shape, np.float64)
