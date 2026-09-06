@@ -749,6 +749,16 @@ def main():
           f"「平滑後もガウシアンだから対数は放物線」が成り立つのは連続の話で、"
           f"画素は箱で積分されているうえ ``gaussian_filter`` の核も離散 —— "
           f"標本化が粗いほどその 2 つのずれが効く")
+    # 図: 崖(FWHM 2 px)と、素の重心が FWHM に依らないこと。0 は対数に載らない
+    #     ので 1e-8 px で床を打つ(それ以下は「測れない」の意)。
+    figs.save_plot(
+        "phase_systematic",
+        [(lab, fwhms, [np.log10(max(phase_tab[lab][f][0], 1e-8)) for f in fwhms])
+         for lab, _ in METHODS],
+        xlabel="PSF の FWHM [px]", ylabel="log10 位相系統誤差の山谷差 [px]",
+        title="標本化不足の崖は FWHM 2 px(Nyquist)",
+        caption="素の重心だけ FWHM に依らない(空の希釈)。PSF 相関は FWHM 1.4 で"
+                "4 手法中いちばん悪い —— 予想が外れた点。")
     assert phase_tab["ガウシアン当てはめ"][2.5][0] < 1e-3
     assert phase_tab["PSF 相関"][1.4][0] > 10.0 * phase_tab["PSF 相関"][2.5][0]
 
