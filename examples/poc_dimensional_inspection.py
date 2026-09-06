@@ -481,6 +481,20 @@ def section_dimensions(img):
           f"l2={rr['params']['l2']:.3f}(真 {SLOT_W / 2:.2f}) "
           f"rms={rr['rms']:.5f} px, エッジ点 {len(rr['edge_points'])} 点")
 
+    # ★ rms を信じてよいか —— 敵対的に 1 点だけ外へ動かす
+    ep = np.array(rr["edge_points"], float)
+    f0 = fs.fit_rectangle2(ep)
+    ep2 = ep.copy()
+    k = int(np.argmax(ep2[:, 1]))                    # いちばん右のエッジ点
+    ep2[k, 1] += 1.5                                 # 1.5 px 外へ(1 点だけ)
+    f1 = fs.fit_rectangle2(ep2)
+    print(f"     ★ 外れ値 1 点(1.5 px 外)を混ぜると: l2 {f0['l2']:.4f} -> "
+          f"{f1['l2']:.4f}(幅 {2 * (f1['l2'] - f0['l2']):+.4f} px)、"
+          f"rms {f0['rms']:.5f} -> {f1['rms']:.5f}")
+    print("        `fit_rectangle2` は最小面積の**外接**矩形なので、全点が内側に入る。")
+    print("        よって残差は片側にしか出ず、**外へ飛んだ点は rms に現れない**。")
+    print("        rms を合否のゲートに使うと、外れ値のある当てはめを通してしまう。")
+
     # ---- (b2) 外形の平行 2 辺 ---- #
     sub("(b2) 外形の平行 2 辺(左半分 220.50 px / 右半分 190.50 px)")
     print(f"  {'測る量':<22}{'真値':>9}{'M':>10}{'誤差[px]':>10}{'誤差[um]':>10}")
