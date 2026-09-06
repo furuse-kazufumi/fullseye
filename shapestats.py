@@ -346,6 +346,22 @@ def shape_project(model, shape, align: bool = True):
 
     ``align=True`` なら先に平均形状へ Procrustes で合わせる。合わせずに投影すると
     位置と向きの違いがスコアに漏れ、**同じ形なのに別の個体に見える**。
+
+    式: ``scores = components @ (shape - mean).ravel()``(``components`` は
+    ``(k, N*3)`` の正規直交行、``mean`` は ``(N, 3)``)。``align=True`` のときは
+    ``procrustes_align(shape, mean)``(スケール込み・鏡像なし)を先に掛ける。
+
+    - ``model``: ``shape_pca`` の返り値(``mean`` / ``components`` / ``variance`` /
+      ``n_points`` を持つ dict)。欠けていれば ``ValueError``。
+    - ``shape``: ``(N, 3)``、``N == model["n_points"]``、有限。点の並びは学習に使った
+      ランドマークと同じ順であること(対応が違っても例外は出ない)。
+    - ``align``: 既定 True。``shape_pca(align=False)`` で作ったモデル(大きさを形質に
+      含める)に投影するときは、ここも ``False`` にしないとスケールが消える。
+    - 返り値: ``(k,)`` float64。各成分の単位は座標と同じ。``sqrt(variance)`` で割れば
+      標準偏差単位(何 σ 外れているか)になる。
+    - 失敗: ``ValueError``(モデルの形式、点数の不一致、非有限)。
+
+    逆写像は ``shape_reconstruct``、外れ具合の 1 数値は ``shape_mahalanobis``。
     """
     m = _as_model(model)
     p = _as_shape(shape)
