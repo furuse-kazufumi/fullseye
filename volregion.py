@@ -329,7 +329,20 @@ def _rle_boolean(a: "VolRLE", b: "VolRLE", keep) -> "VolRLE":
 def vol_rle_union(a, b):
     """Union of two RLE regions, computed on the runs (no decode). Cost scales
     with the run counts, not the voxel counts — merging two 512**3 masks never
-    touches 512**3 anything. Regions must share the same volume shape."""
+    touches 512**3 anything. Regions must share the same volume shape.
+
+    手順(``_rle_boolean`` 共通): 両 region の run を、平面行ごとに ``W + 1`` の
+    stride を取った 1 本の整数直線に写し(+1 の隙間で隣の行の run が結合しない)、
+    各 run の start/end をイベントとして並べ、区間ごとの被覆状態 ``(a の内側, b の内側)``
+    を掃引して ``ia | ib`` が真の区間を最大長の run にまとめ直す。計算量は run 数
+    ``n`` に対して O(n log n)(``np.unique`` のソート)。
+
+    返り値: 同じ ``shape`` の新しい ``VolRLE``(run は行順・x 昇順、隣接・重複する run は
+    1 本に併合済み)。両方が空なら run 0 本の region。
+    ``vol_rle_decode(union) == decode(a) | decode(b)`` が voxel 単位で成り立つ。
+
+    検証(``ValueError``): どちらかが ``VolRLE`` でない・整合性検査に失敗 /
+    ``a.shape != b.shape``(別の volume に住む region は合成できない)。"""
     return _rle_boolean(a, b, lambda ia, ib: ia | ib)
 
 

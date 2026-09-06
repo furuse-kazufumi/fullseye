@@ -1088,7 +1088,28 @@ def mesh_scatter_boulders(V, F, *, density: float, d_min: float, d_max=None,
     :func:`terrain_region_mask` keeps the seas smooth. The boulders are appended as real
     geometry, so they self-shadow, cast shadows and occlude through the same rasteriser /
     ray-cast path as the terrain. ``info`` = the sample dict plus ``faces_per_boulder``
-    and ``n_boulders``. Deterministic under ``seed``. Fail-closed."""
+    and ``n_boulders``. Deterministic under ``seed``. Fail-closed.
+
+    手順: :func:`sample_boulders` で位置(面上の一様点)・面法線・直径 ``D`` を引き、岩ごとに
+    小さなメッシュを作って入力メッシュの後ろに連結する(頂点は末尾に追加、面 index は
+    オフセット済み)。入力の頂点・面はそのまま残るので、``info['faces_per_boulder']`` と
+    元の面数から岩の面だけを切り出せる。
+
+    - ``density``: 単位面積(メッシュ単位²)あたりの ``D ≥ d_min`` の岩の期待個数。
+      実個数はポアソン分布で決まり 0 個もあり得る(そのときは入力のコピーを返す)。
+    - ``d_min`` < ``d_max``(``None`` = 10·d_min)、``exponent`` > 0、``aspect`` は正の 3 要素、
+      ``embed`` ∈ [0, 1]、``subdiv`` ∈ [0, 3](楕円体の icosphere 細分)、``hull_points`` は
+      [6, 200]。いずれも範囲外は ``ValueError``。
+    - ``shape='ellipsoid'``: 半軸 ``D/2·aspect`` の楕円体を最短軸が法線に沿う向きで置き、
+      中心を法線方向に ``semi_z·(1 − embed)`` 浮かせる。
+    - ``shape='hull'``: 楕円体上の乱数点の凸包。法線方向の高さ範囲のうち ``burial``
+      (0.3〜0.6 既定、小さい岩ほど深い)の割合が面の下に沈む。``embed`` は無視。
+    - ``orientation='random'`` は一様ランダム回転(4 元数)。``'normal'`` は法線まわりに
+      ランダム回転。回転の乱数は ``seed + 1`` の generator を使う。
+
+    岩は実ジオメトリなので ``ambient_occlusion`` / ``cast_shadow`` / ``shadow_raycast`` の
+    レイに普通に当たる。置く面は渡したメッシュそのものなので、``mesh_displace_spectrum`` や
+    ``mesh_subdivide`` の **後** に呼ぶこと(先に呼ぶと岩が地面から浮く/埋まる)。"""
     Vv, Ff = _mesh_check(V, F)
     asp = np.asarray(aspect, np.float64).reshape(-1)
     if asp.shape != (3,) or not np.all(np.isfinite(asp)) or np.any(asp <= 0.0):
