@@ -841,6 +841,14 @@ def _b_shot(pool, rng):
     if m < 8:
         return None
     p, n = p[:m], n[:m]
+    # ★ 非有限が混じった点群は **KD 木の構築そのものが生の ValueError で落ちる**
+    #   (scipy: "data must be finite")。プールは NONFINITE を記録したうえで値を
+    #   残す設計なので、汚れた点群がここへ来るのは想定内 —— 建てる側が防ぐ。
+    #   2026-09-06 に実際に踏んだ: 新しい族が増えて連鎖の歩き方が変わり、
+    #   seed 3_000_0xx でこの経路に当たってファザー自身が停止した(op の欠陥では
+    #   なく**道具の欠陥**。束縛できない入力は例外ではなくスキップが約束)。
+    if not (np.all(np.isfinite(p)) and np.all(np.isfinite(n))):
+        return None
     return ([p, n, [0, 1, 2], cKDTree(p)], {"radius": 2.0})
 
 
