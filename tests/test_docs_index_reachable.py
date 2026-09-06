@@ -102,17 +102,44 @@ def test_every_document_is_reachable_from_the_index():
         "どこかからリンクすること:\n  %s" % (len(rel), "\n  ".join(rel[:40])))
 
 
+#: リンク切れを見る拡張子。**画像も見る** —— 索引の扉絵が消えても
+#: 「文書は全部辿れます」で緑になってしまうため。
+_CHECKED = (".md", ".json", ".py", ".cff", ".toml", ".txt",
+            ".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".mp4")
+
+
 def test_the_index_has_no_broken_links():
     """★リンク切れは到達性より先に効く(切れた先はそもそも数えられない)。"""
     bad = []
     for md in _all_md():
         for t in _links(Path(md)):
-            if t.suffix in (".md", ".json", ".py", ".cff", ".toml", ".txt") \
-                    and not t.exists():
+            if t.suffix.lower() in _CHECKED and not t.exists():
                 bad.append("%s -> %s" % (
                     Path(md).relative_to(ROOT), t.relative_to(ROOT)
                     if str(t).startswith(str(ROOT)) else t))
     assert not bad, "リンク切れ %d 件:\n  %s" % (len(bad), "\n  ".join(bad[:40]))
+
+
+def test_link_targets_match_the_real_filename_case():
+    """★Windows では通り、Linux CI と GitHub Pages では 404 になるリンクを止める。
+
+    開発は Windows(大文字小文字を区別しない)、公開は Linux。`ops/2D/INDEX.md`
+    のような 1 文字違いは**手元でだけ**動く。この repo は「門は事故の起きる
+    場所に立てる」で一度痛い目を見ている(配布物と Linux で数える)ので、
+    ここでも**公開側の規則**で見る。
+    """
+    bad = []
+    for md in _all_md():
+        for t in _links(Path(md)):
+            if t.suffix.lower() not in _CHECKED or not t.exists():
+                continue
+            try:
+                if t.name not in os.listdir(t.parent):
+                    bad.append("%s -> %s" % (Path(md).relative_to(ROOT), t.name))
+            except OSError:
+                pass
+    assert not bad, ("大文字小文字が実ファイル名と違うリンク %d 件"
+                     "(Linux では 404):\n  %s" % (len(bad), "\n  ".join(bad[:20])))
 
 
 @pytest.mark.parametrize("lang", LANGS, ids=lambda x: x or "ja")
