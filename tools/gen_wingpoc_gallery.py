@@ -164,7 +164,8 @@ def _ops_line(poc_id: str, lang: str) -> str:
     return ("使用 op(ノートへ): " if lang == "ja" else "Ops used (notes): ") + links + more
 
 
-def _exhibit_md(n: int, ex: dict, lang: str, pick: dict, thumb: str, byid: dict) -> str:
+def _exhibit_md(n: int, ex: dict, lang: str, pick: dict, thumb: str, byid: dict,
+                second: dict | None = None, thumb2: str | None = None) -> str:
     title = ex["title_" + lang]
     cap = ex["caption_" + lang]
     full = RAW + ex["id"] + "/" + pick["file"]
@@ -178,6 +179,19 @@ def _exhibit_md(n: int, ex: dict, lang: str, pick: dict, thumb: str, byid: dict)
         "",
         "*↑ **%s** ―― %s*" % (title, cap),
         "",
+    ]
+    if second is not None and thumb2 is not None:
+        full2 = RAW + ex["id"] + "/" + second["file"]
+        th2 = RAW + ex["id"] + "/" + thumb2
+        sub = second.get("caption") or second["name"]
+        lines += [
+            "[![%s](%s)](%s)" % (sub.replace("]", ")")[:120], th2, full2),
+            "",
+            ("*↑ 測定の図 ―― %s*" % sub if lang == "ja"
+             else "*↑ The measurement ―― %s (figure labels are in Japanese; the numbers are the same)*" % sub),
+            "",
+        ]
+    lines += [
         "<!-- 静止サムネ: %s -->" % th,
         "<!-- 生成: examples/%s.py (FULLSEYE_FIGURE_DIR) / %s / %s / numbers: %s / added %s -->"
         % (ex["id"], pick["file"], pick.get("caption", "")[:80].replace("--", "—"),
