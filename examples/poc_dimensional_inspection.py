@@ -711,11 +711,15 @@ def section_cliff_blur():
     # 縦軸は log10。M の 0.01 px 台と F の 10 px 台を 1 枚に載せるため
     # (偏りはどちらも正なので、絶対値を取っても符号の情報は落ちない)。
     ratios = np.array([r[1] for r in rows])
-    lg = lambda v: np.log10(np.maximum(np.abs(np.array(v, float)), 1e-4))   # noqa: E731
+
+    def _lg(vals):
+        return np.log10(np.maximum(np.abs(np.array(vals, float)), 1e-4))
+
     figs.save_plot("blur_cliff",
-                   [("判定境界 0.05 px", ratios, np.full(ratios.size, math.log10(thr0))),
-                    ("M measuring1d", ratios, lg([r[2] for r in rows])),
-                    ("F 自前 50% 交差", ratios, lg([r[5] for r in rows]))],
+                   [("判定境界 0.05 px", ratios,
+                     np.full(ratios.size, math.log10(0.05))),
+                    ("M measuring1d", ratios, _lg([r[2] for r in rows])),
+                    ("F 自前 50% 交差", ratios, _lg([r[5] for r in rows]))],
                    xlabel="w/sigma", ylabel="log10|偏り| px",
                    title="崖は「ぼけ」ではなく「エッジ間距離 / PSF 幅」で立つ",
                    caption="偏りはどちらも正(対が互いを押し広げる)。"
