@@ -827,8 +827,16 @@ def main():
     # (l) 5-d の 2 つの穴が実在する(ここが直れば assert が落ちる = 直った合図になる)
     assert flip_unsigned < 1e-9, "法線が符号を無視しても一致しない(別の問題がある)"
     assert flip_signed > 0.1, "法線の符号が回転で変わらない(穴が塞がった?)"
-    assert d_fixed < 1e-6 < d_default, \
-        f"fpfh の非不変が法線の符号で説明できない(既定 {d_default:.2e} / 揃え {d_fixed:.2e})"
+    # ★2026-09-06 に穴 1 が塞がった。この assert は**塞がった状態を固定する**
+    #   側へ書き換えてある(以前は `d_fixed < 1e-6 < d_default` = 壊れている
+    #   ことを固定していた)。壊れ方が戻ってきたらここが落ちる。
+    assert d_default < 1e-9, \
+        f"fpfh が既定の法線で回転不変でなくなった(max|Δ| {d_default:.2e})"
+    assert d_fixed < 1e-9, f"向きを揃えても不変でない({d_fixed:.2e})"
+    # 残った穴: 利用者が estimate_normals を明示的に渡すと丸ごと壊れる。
+    # これが直ったら(= 1e-9 を下回ったら)ここが落ちるので、所見を書き換えること。
+    assert d_user > 1.0, \
+        f"estimate_normals を渡しても不変になった(穴が塞がった? {d_user:.2e})"
     assert len(ka2 & kb2) == len(ka2) == len(kb2), "dist_step を固定しても鍵が一致しない"
     assert len(ka & kb) < 0.9 * len(ka), "既定 dist_step が回転不変になっている(穴が塞がった?)"
     # (m) surface_match(refine=False) の rmse は nan(型は float のまま静かに比較を裏切る)
