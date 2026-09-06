@@ -489,6 +489,8 @@ def main():
     # 7) 道具の穴 (b) が再現していること。
     assert fell_back > g_cube.size // 4, \
         "立方体のサブビン落ちが再現しない(穴 (b) の主張を撤回すべき)"
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("\nPASS")
 
 
