@@ -448,9 +448,13 @@ def section_period() -> dict:
         print("        %4d    %+7.3f  %3d  %8.5f  %+9.5f      %.3f px"
               % (b, e["lag"], e["k"], e["period"],
                  e["period"] - PERIOD_EST, e["jump"]))
-    print("      ★POC は基線を伸ばすほど良くなる(余りの誤差が k で割られる)。"
-          "基線 200 px で誤差 %+.5f px。" % (pc["period"] - PERIOD_EST))
-    print("      ただし k を 1 つ取り違えると %.3f px 飛ぶ —— **誤差の %.0f 倍**。"
+    print("      ★POC は基線を伸ばすとおおむね良くなる(余りの誤差が k で"
+          "割られる)が、**単調ではない**")
+    print("         —— 152 px で悪化する。余りの測り方そのものが窓の重なりで"
+          "変わるから。最良でも誤差 %+.5f px で、位相勾配の %.0f 倍。"
+          % (pc["period"] - PERIOD_EST,
+             abs(pc["period"] - PERIOD_EST) / max(abs(est["fine"] - PERIOD_EST), 1e-12)))
+    print("      さらに k を 1 つ取り違えると %.3f px 飛ぶ —— **誤差の %.0f 倍**。"
           "粗い推定が要る手法の宿命。"
           % (pc["jump"], pc["jump"] / max(abs(pc["period"] - PERIOD_EST), 1e-9)))
     print("      位相勾配は k を要らない(粗い周波数で復調して残りを測るだけ)ので"
