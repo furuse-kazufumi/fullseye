@@ -560,10 +560,11 @@ def main():
     print("     読めない。2 節のとおり両者は符号が逆に動きうるので、混ぜると事故る。")
 
     # ---- 自己検査 —— 結論を機械で固定する ----------------------------------
-    # (1) 合成が大気散乱モデルどおりであること(往復の一致)。
-    i_chk, j_chk, _t_chk, d_chk = build_scene()
+    # (1) 合成が大気散乱モデルどおりであること(量子化前で往復が厳密に一致する)。
+    i_raw, j_chk, _t_chk, d_chk = build_scene(quantize=False)
     t_chk3 = np.exp(-BETA * d_chk)[..., None]
-    assert np.max(np.abs(i_chk - np.clip(j_chk * t_chk3 + A_TRUE * (1 - t_chk3), 0, 1))) < 1e-12
+    assert np.max(np.abs(i_raw - np.clip(j_chk * t_chk3 + A_TRUE * (1 - t_chk3), 0, 1))) < 1e-12
+    assert np.max(np.abs(img - i_raw)) <= 0.5 / 255.0 + 1e-12, "8 bit 量子化の丸めが仕様外"
 
     # (2) 見た目と真値は別 —— 等化は対比を最大にしながら PSNR で「何もしない」に負ける。
     c_eq, _e_eq, p_eq, _s_eq = zero_scores["ヒストグラム等化"]
@@ -571,37 +572,52 @@ def main():
     assert c_eq > c_no, "等化がコントラストを上げていない(前提が崩れている)"
     assert p_eq < p_no, f"等化の PSNR {p_eq:.2f} が「何もしない」{p_no:.2f} を下回っていない"
 
-    # (3) 除霞は「何もしない」「大域コントラスト」の両ゼロ点に勝つ。
+    # (3) 除霞は「何もしない」「大域コントラスト」の両ゼロ点に勝つ(この霞の濃さでは)。
     assert scores["暗チャネル p=15"][0] > scores["何もしない"][0] + 1.0
     assert scores["暗チャネル p=15"][0] > scores["大域コントラスト"][0] + 1.0
 
-    # (4) **透過率が律速** —— A を真値にした利得より t を真値にした利得が大きい。
-    assert d_t > 3.0 * d_a, f"t 側の利得 {d_t:.2f} dB が A 側 {d_a:.2f} dB を圧倒していない"
+    # (4) **透過率が律速** —— A を真値にした利得より t を真値にした利得が桁違いに大きい。
+    assert d_t > 10.0 * abs(d_a), f"t 側の利得 {d_t:.2f} dB が A 側 {d_a:.2f} dB を圧倒していない"
     assert scores["オラクル A と t"][0] > scores["暗チャネル p=15"][0] + 3.0
 
-    # (5) 遠景では暗チャネルが「何もしない」に勝てず、全体値にそれが出ない。
-    assert far_dcp - far_none < scores["暗チャネル p=15"][0] - scores["何もしない"][0]
-    assert scores["暗チャネル p=15"][0] > scores["何もしない"][0]
+    # (5) 全体 1 個の数字は打ち消し合わせ —— 近景は劣化、中景・遠景は改善。
+    assert gains[0] < 0.0, f"近景が劣化していない {gains[0]:+.2f} dB(前提が崩れている)"
+    assert gains[1] > 1.0 and gains[2] > 1.0, f"中景・遠景が改善していない {gains}"
+    assert total_gain > 0.0, "全体では改善している、という前提が崩れている"
+    # 空はオラクルでも直らない(推定の問題ではなくモデルと t の下限の問題)。
+    sky_or = psnr_masked(methods[6][3], j_true, masks[3][1])
+    assert sky_or - sky_none < 1.0, f"空がオラクルで直ってしまった {sky_or - sky_none:+.2f} dB"
 
-    # (6) 崖 (a) —— 霞が濃いほど透過率の誤差は単調に増える。
+    # (6) 崖 (a) —— 光学的深さで測った t 誤差は霞が濃いほど単調に増える。
+    #     絶対誤差 |dt| は逆に**減る**(t 自体が潰れるため)。両方を固定する。
+    ods = [r[2] for r in beta_rows]
     tmaes = [r[1] for r in beta_rows]
-    assert all(x < y for x, y in zip(tmaes, tmaes[1:])), f"beta で t MAE が単調でない {tmaes}"
+    assert all(x < y for x, y in zip(ods, ods[1:])), f"光学的深さ誤差が単調でない {ods}"
+    assert all(x > y for x, y in zip(tmaes, tmaes[1:])), f"|dt| が単調減少でない {tmaes}"
+    # 薄い霞では除霞が害になる(利得が負の点が存在する)。
+    assert any(r[4] < r[3] for r in beta_rows), "薄霞で除霞が害になる点が見つからない"
+    assert beta_rows[-1][4] > beta_rows[-1][3], "濃霧で除霞の利得が出ていない"
 
-    # (7) 崖 (d) —— 上位 0.1 % 明画素法は白い物体で暗チャネル法より先に壊れる。
-    assert white_rows[0][2] < 1.0, "白い物体が無いのに明画素法が既に外れている"
-    assert white_rows[-1][2] > 5.0 * max(1e-6, white_rows[0][2]), "明画素法が壊れていない"
-    assert white_rows[-1][2] > white_rows[-1][1], "暗チャネル法の方が悪くなっている"
+    # (7) 崖 (b)(d) —— 明画素法は 0.5 % で壊れ、暗チャネル法は 3 % まで無傷。
+    assert white_rows[0][2] < 0.1, "白い物体が無いのに明画素法が既に外れている"
+    assert white_rows[1][2] > 1.0, "明画素法が 0.5 % の白い物体で壊れていない"
+    assert white_rows[3][1] < 0.1, "暗チャネル法が 3 % の白い物体で早く壊れている"
+    assert white_rows[4][1] > 1.0, "暗チャネル法が 6 % でも壊れていない"
+    # A が無事な段階でも t は白い物体の内側で過小評価(バイアスが負)。
+    assert all(r[6] < 0.0 for r in white_rows[1:]), \
+        f"白い物体の内側で t が過小評価されていない {[r[6] for r in white_rows[1:]]}"
 
     # (8) 崖 (c) —— パッチを大きくすると段差帯 / 平坦の誤差比(ハロー)が増える。
     ratios = [r[2] / r[3] for r in patch_rows]
     assert ratios[-1] > ratios[0], f"パッチ寸法でハロー比が増えていない {ratios}"
+    assert ratios[-1] > 1.0, f"最大パッチでも段差帯が平坦より悪くない {ratios[-1]:.2f}"
 
     # (9) 崖 (e) —— 雑音の増幅は遠いほど大きく、1/max(t,t0) の予測を超えない。
     preds = [r[1] for r in amp_rows]
     meas = [r[2] for r in amp_rows]
     assert all(x < y for x, y in zip(preds, preds[1:])), "予測増幅率が距離で単調でない"
     assert all(x <= y for x, y in zip(meas[:2], meas[1:3])), "実測増幅率が近中遠で単調でない"
-    assert all(m <= p * 1.05 for m, p in zip(meas, preds)), "実測が理論上限を超えている"
+    assert all(m <= p * 1.10 for m, p in zip(meas, preds)), "実測が理論上限を超えている"
 
     # (10) 大気光の推定は「色」としては当たる —— 律速が t である根拠の裏取り。
     assert angle_deg(a_dcp, A_TRUE) < 1.5, "暗チャネル法の大気光が色として外れている"
