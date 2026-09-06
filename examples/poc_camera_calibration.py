@@ -387,12 +387,25 @@ def main():
 
     print("\n=== 5. なぜ相殺するのか —— fx と Z の比は保存される ===")
     print(f"  {'配置':<22}{'fx比':>10}{'Z比(平均)':>12}{'|差|':>10}")
-    for label, (r, poses) in keep.items():
+    tilt_ax, fx_ratio, z_ratio = [], [], []
+    for (label, (r, poses)), (_, tilt, _, _, _) in zip(keep.items(), cfgs):
         zt = np.array([t[2] for _, t in poses])
         ze = r["rt"][:, 5]
         fr = r["fx"] / TRUE_FX
         zr = float(np.mean(ze / zt))
+        tilt_ax.append(tilt)
+        fx_ratio.append(fr)
+        z_ratio.append(zr)
         print(f"  {label:<22}{fr:>10.5f}{zr:>12.5f}{abs(fr - zr):>10.2e}")
+    # 2 本が重なることが主張なので、片方を散布で描いて重なりを見せる。
+    figs.save_plot("fx_z_coupling",
+                   [("fx / 真の fx", np.array(tilt_ax), np.array(fx_ratio)),
+                    ("推定 Z / 真の Z(平均)", np.array(tilt_ax), np.array(z_ratio))],
+                   xlabel="板の傾き [度]", ylabel="真値に対する比",
+                   title="焦点距離の誤りは距離の誤りと同じ比で動く",
+                   kinds=["line", "scatter"],
+                   caption="2 本は重なる。画像上の大きさは fx·X/Z なので、"
+                           "同じ比で動く限り画素は 1 つも動かない。")
     print("  → 焦点距離を 1 % 大きく推定すると、板までの距離も 1 % 遠くに推定される。")
     print("     画像上の大きさは fx * X / Z で決まるので、この 2 つが同じ比で動く")
     print("     限り**画素は 1 つも動かない**。板を傾けると 1 枚の板の中で Z が")
