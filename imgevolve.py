@@ -273,22 +273,35 @@ def cmd_bench(a):
     return bench.main()
 
 
-def cmd_index(a):
+def build_op_index():
+    """`docs/OP_INDEX.json` の中身をそのまま返す(書き込みはしない)。
+
+    ★`cmd_index` から切り出した(2026-09-06)。以前は組み立てが `cmd_index` の
+    中にしか無く、鮮度を確かめる検査は `_all_ops()` を呼ぶしかなかった。すると
+    **tier の再分類(color)が検査から見えない**ので、検査は「ずれている」と
+    言い続けるか、tier を見ないよう緩めるかの二択になる。生成物そのものを
+    返す関数を 1 つ置けば、検査は**公開されるものと同じもの**と比べられる。
+    """
     rows = _all_ops()
-    # 同上 —— color 層が黙って空になると、tier の内訳だけが静かに縮む。
+    # 握り潰さない —— color 層が黙って空になると、tier の内訳だけが静かに縮む。
     import backends_color as CL
     col = set(CL.coverage()["halcon_names"])
     assert col, "color 層が空(backends_color.coverage が何も返さない)"
     for r in rows:
         if r["halcon"] in col:
             r["tier"] = "color"
-    out = {
+    return {
         "n_ops": len(rows),
         "tiers": {t: sum(1 for r in rows if r["tier"] == t) for t in
                   sorted({r["tier"] for r in rows})},
         "sorts": sorted({r["in_sort"] for r in rows} | {r["out_sort"] for r in rows}),
         "ops": sorted(rows, key=lambda r: (r["tier"], r["name"])),
     }
+
+
+def cmd_index(a):
+    out = build_op_index()
+    rows = out["ops"]
     p = a.out or os.path.join(HERE, "docs", "OP_INDEX.json")
     os.makedirs(os.path.dirname(p), exist_ok=True)
     json.dump(out, open(p, "w", encoding="utf-8"), ensure_ascii=False, indent=1)

@@ -273,15 +273,35 @@ def test_the_machine_readable_index_is_current():
 
     got = json.loads((DOCS / "OP_INDEX.json").read_text(encoding="utf-8"))
     live = IE._all_ops()
-    assert got["n_ops"] == len(live), (
-        "docs/OP_INDEX.json が古い: %d op しか無いが、いまは %d op —— "
+    assert got["n_ops"] == len(live) == len(got["ops"]), (
+        "docs/OP_INDEX.json が古い: n_ops=%d / 配列 %d 件 / いまは %d op —— "
         "`py -3.11 imgevolve.py index` で書き直すこと"
-        % (got["n_ops"], len(live)))
-    names_json = {r["name"] for r in got["ops"]}
-    names_live = {r["name"] for r in live}
-    assert names_json == names_live, (
+        % (got["n_ops"], len(got["ops"]), len(live)))
+
+    # ★件数と名前だけでは、型の契約(in_sort/out_sort)・カテゴリ・HALCON 対応・
+    # tier が丸ごと古いまま緑になる(Codex の敵対的レビュー、2026-09-06)。
+    # RAG は型が繋がる op を選ぶのに in_sort/out_sort を読むので、そこが古いと
+    # **繋がらない鎖を自信満々に提案する**。中身ごと突き合わせる。
+    names = [r["name"] for r in got["ops"]]
+    assert len(names) == len(set(names)), (
+        "OP_INDEX.json に同じ名前が 2 度出ている: %s"
+        % sorted({n for n in names if names.count(n) > 1})[:10])
+    by_name_json = {r["name"]: r for r in got["ops"]}
+    by_name_live = {r["name"]: r for r in live}
+    assert set(by_name_json) == set(by_name_live), (
         "OP_INDEX.json と登録の名前が食い違う(json のみ %s / 登録のみ %s)"
-        % (sorted(names_json - names_live)[:5], sorted(names_live - names_json)[:5]))
+        % (sorted(set(by_name_json) - set(by_name_live))[:5],
+           sorted(set(by_name_live) - set(by_name_json))[:5]))
+    diff = [n for n in sorted(by_name_live)
+            if by_name_json[n] != by_name_live[n]]
+    assert not diff, (
+        "OP_INDEX.json の中身が %d 件ずれている(型やカテゴリが古い)。例: %s "
+        "—— `py -3.11 imgevolve.py index`"
+        % (len(diff), [(n, by_name_json[n], by_name_live[n]) for n in diff[:2]]))
+    live_sorts = sorted({r["in_sort"] for r in live} | {r["out_sort"] for r in live})
+    assert got["sorts"] == live_sorts, (
+        "OP_INDEX.json の sort 一覧が古い: %s ではなく %s"
+        % (got["sorts"], live_sorts))
 
 
 def test_the_rag_guide_note_count_is_current():
