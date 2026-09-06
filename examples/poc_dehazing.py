@@ -429,39 +429,44 @@ def main():
     print("     絶対誤差 |dt| は beta とともに**減る**が、これは t が 0 に潰れるだけの見かけ。")
     print("     光学的深さで測ると単調に増えていて、そちらが実際の難しさに対応する。")
 
-    print("\n=== 6. 崖 (b)(d) 白い物体 —— 大気光の推定が壊れる条件 ===")
+    print("\n=== 6. 崖 (b)(d) 白い物体 —— 大気光と透過率が壊れる条件 ===")
     print("  白い車両(反射率 0.96、深度 18 m)の面積率を振る。空は常に画面内にある。")
-    print(f"  {'白面積率':>9}{'A角 暗ch':>10}{'A角 明画素':>12}{'|dA| 暗ch':>11}"
-          f"{'|dA| 明画素':>13}{'t MAE 暗ch':>12}{'PSNR 暗ch':>11}")
+    print("  全体の数字と**車両の内側だけ**の数字を並べる —— 壊れ方は局所だから。")
+    print(f"  {'白面積率':>9}{'A角 暗ch':>10}{'A角 明画素':>12}{'|dA| 明画素':>13}"
+          f"{'t MAE 全体':>12}{'t MAE 車内':>12}{'t バイアス':>12}{'PSNR 車内':>11}")
     white_rows = []
     for frac in (0.0, 0.005, 0.015, 0.03, 0.06, 0.12):
         i2, j2, t2, _d2 = build_scene(van_frac=frac)
         ad, ab = airlight_dcp(i2), airlight_brightest(i2)
         te = transmission_dcp(i2, ad)
+        rec = recover(i2, ad, te)
+        van = van_rect(frac)
+        if van is None:
+            inm = np.zeros((H, W), bool)
+            in_mae = in_bias = float("nan")
+            in_psnr = float("nan")
+        else:
+            inm = np.zeros((H, W), bool)
+            inm[van[0]:van[1], van[2]:van[3]] = True
+            in_mae = float(np.mean(np.abs(te[inm] - t2[inm])))
+            in_bias = float(np.mean(te[inm] - t2[inm]))
+            in_psnr = psnr_masked(rec, j2, inm)
         row = (frac, angle_deg(ad, A_TRUE), angle_deg(ab, A_TRUE),
-               float(np.linalg.norm(ad - A_TRUE)), float(np.linalg.norm(ab - A_TRUE)),
-               float(np.mean(np.abs(te - t2))), psnr_masked(recover(i2, ad, te), j2))
+               float(np.linalg.norm(ab - A_TRUE)),
+               float(np.mean(np.abs(te - t2))), in_mae, in_bias, in_psnr)
         white_rows.append(row)
-        print(f"  {100 * frac:>8.1f}%{row[1]:>10.3f}{row[2]:>12.3f}{row[3]:>11.4f}"
-              f"{row[4]:>13.4f}{row[5]:>12.4f}{row[6]:>11.2f}")
-    print("  → 上位 0.1 % 明画素法は白い車両が **0.5 % 出た時点で**角度誤差が")
-    print(f"     {white_rows[1][2]:.2f} 度・絶対誤差 {white_rows[1][4]:.3f} に跳ぶ。暗チャネル法は")
-    print("     「暗チャネルが明るい所」を先に絞るので、白い**近景**物体では壊れない")
-    print("     (白い車両の暗チャネルは霞の量しか反映しないため)。")
-    print("  白い物体を **遠景**(空と同じ明るさ)に置くと両方壊れる —— 次でそれを分離する。")
-    # 白い物体を空の直下(遠景 85 m の建物面)に置いた場合を 1 点だけ作る。
-    i3, j3, t3, d3 = build_scene(van_frac=0.0)
-    r0, r1, c0, c1 = 6, 30, 112, 150                    # 遠景建物の上部を白く塗る
-    j3w = j3.copy()
-    j3w[r0:r1, c0:c1] = np.array([0.97, 0.97, 0.96])
-    i3w, _ = haze(j3w, d3)
-    ad3, ab3 = airlight_dcp(i3w), airlight_brightest(i3w)
-    te3 = transmission_dcp(i3w, ad3)
-    print(f"  {'遠景の白壁 (5.0 %)':<22}A角 暗ch {angle_deg(ad3, A_TRUE):.3f} 度 / "
-          f"明画素 {angle_deg(ab3, A_TRUE):.3f} 度 / t MAE {np.mean(np.abs(te3 - t3)):.4f}")
-    print("  → 深度が同じでも**白いかどうか**でなく、**遠いかどうか**が効く。遠景の白壁は")
-    print("     観測上ほぼ大気光と同色になるので、どちらの推定も色としては外れない。")
-    print("     壊れるのは t の側 —— 白壁は暗チャネルが明るく、霞と区別できない。")
+        g = (lambda v, w, n: f"{v:>{w}.{n}f}" if v == v else f"{'—':>{w}}")
+        print(f"  {100 * frac:>8.1f}%{row[1]:>10.3f}{row[2]:>12.3f}{row[3]:>13.4f}"
+              f"{row[4]:>12.4f}{g(row[5], 12, 4)}{g(row[6], 12, 4)}{g(row[7], 11, 2)}")
+    print(f"  → 壊れ方が 2 段ある。**上位 0.1 % 明画素法は白い車両が 0.5 % 出た時点で**")
+    print(f"     角度誤差 {white_rows[1][2]:.2f} 度・絶対誤差 {white_rows[1][3]:.3f} に跳ぶ。暗チャネル法は")
+    print(f"     {100 * white_rows[3][0]:.0f} % まで無傷({white_rows[3][1]:.3f} 度)で、"
+          f"{100 * white_rows[4][0]:.0f} % で初めて {white_rows[4][1]:.2f} 度へ落ちる。")
+    print("     暗チャネルを先に取ることが白い物体への保険になっている(2 段構えの意味)。")
+    print("  → だが **t は最初から壊れている**。車両の内側の t バイアスは全域で負 = 透過率を")
+    print("     過小評価 = 過剰に除霞する。白い面の暗チャネルは 0 でなく、その分が霞と")
+    print("     誤認される。全体の t MAE には面積比でしか効かないので、1 つの数字だと")
+    print("     見えない。**A が無事でも t が壊れる**のがこの崖の本体。")
 
     print("\n=== 7. 崖 (c) パッチ寸法とハロー ===")
     eb = edge_band(d)
