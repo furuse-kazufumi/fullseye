@@ -289,9 +289,11 @@ def _convex_area(mask: np.ndarray) -> float:
 def _monotone_chain(pts: np.ndarray) -> np.ndarray:
     """Andrew の monotone chain による凸包(頂点を反時計回りで返す)。
 
-    Qhull を呼ばないのは速さのため —— 512x512 に 153 物体で
-    ``ConvexHull`` 版が 81.3 ms、これが 8.5 ms(**9.6 倍**、2026-09-06 実測)。
-    小さな点集合を何千回も包む用途では Qhull の起動費が支配的になる。
+    Qhull を呼ばないのは速さのため —— 512x512 に 153 物体を撒いて
+    ``_convex_area`` 全体を測ると ``ConvexHull`` 版 74.1 ms に対して
+    19.4 ms(**3.8 倍**、2026-09-06 実測)。小さな点集合を何千回も包む
+    用途では Qhull の起動費が支配的になる。``blob_features`` 全体では
+    100.4 ms → 33.6 ms。
     """
     p = np.unique(pts, axis=0)           # 辞書順に整列もされる
     if p.shape[0] < 3:
