@@ -161,21 +161,28 @@ def scene_radiance(van_frac=VAN_FRAC):
     return np.clip(j + grain, 0.0, 1.0)
 
 
-def haze(j, d, beta=BETA, a=A_TRUE):
+def haze(j, d, beta=BETA, a=A_TRUE, quantize=True):
     """大気散乱モデル ``I = J*t + A*(1-t)``、``t = exp(-beta*d)``。
 
     beta がスカラなら t は (H,W)、(3,) なら波長依存で t は (H,W,3)。
+
+    ``quantize=True`` で **8 bit に丸める**。これを入れないとオラクル(真の t と
+    真の A を与えた復元)が数値誤差まで完全一致して PSNR が 300 dB を超え、
+    「オラクルとの差」という物差しが意味を失う。実機は 8 bit で来るのだから、
+    丸めを入れる方が正直で、しかも 9 節の ``1/t`` 増幅の下限が量子化で決まる
+    ことまで見える。
     """
     beta = np.asarray(beta, float)
     t = np.exp(-beta * d[..., None]) if beta.ndim else np.exp(-beta * d)[..., None]
-    return np.clip(j * t + np.asarray(a) * (1.0 - t), 0.0, 1.0), t
+    i = np.clip(j * t + np.asarray(a) * (1.0 - t), 0.0, 1.0)
+    return (np.round(i * 255.0) / 255.0 if quantize else i), t
 
 
-def build_scene(van_frac=VAN_FRAC, beta=BETA, a=A_TRUE):
+def build_scene(van_frac=VAN_FRAC, beta=BETA, a=A_TRUE, quantize=True):
     """(観測 I, 真の J, 真の t (H,W), 深度 d) を返す。t は代表(平均)チャネル。"""
     d = depth_map(van_frac)
     j = scene_radiance(van_frac)
-    i, t3 = haze(j, d, beta, a)
+    i, t3 = haze(j, d, beta, a, quantize)
     return i, j, t3.mean(axis=2), d
 
 
