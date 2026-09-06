@@ -286,6 +286,72 @@ def crlb_px(flux, fwhm_px, sky=SKY, read=READ, box=21):
     return float(1.0 / np.sqrt(((flux * dp) ** 2 / var).sum()))
 
 
+def sharpness(img, r, c, bkg=None):
+    """中心画素 / 3x3 の和。1 画素スパイクは 1.0、点源は PSF で決まる値。"""
+    i, j = int(round(r)), int(round(c))
+    blk = img[i - 1:i + 2, j - 1:j + 2] - (np.median(img) if bkg is None else bkg)
+    return float(blk[1, 1] / max(blk.sum(), 1e-9))
+
+
+def build_field(seed=11, fwhm=3.2):
+    """構造のある星野の**真値**。一様 + 密集星団 + 二重星 + 飽和星 + 宇宙線。
+
+    乱数だけの星野は「どの手法でも同じくらい上手くいく」ので、失敗が
+    見えない。近接・飽和・偽の点源を混ぜて初めて、測位の弱点が出る。
+    座標は画素で設計してから :func:`plate_inverse` → :func:`standard_to_sky`
+    で天球へ戻す(段 0 で往復が倍精度の丸めまで一致することを確かめてある
+    ので、画素で設計しても天球で設計しても同じもの)。
+    """
+    rg = np.random.default_rng(seed)
+    row, col, flux, kind = [], [], [], []
+
+    def add(r, c, f, k):
+        row.append(r), col.append(c), flux.append(f), kind.append(k)
+
+    for _ in range(24):                                # 0 = 一様
+        add(rg.uniform(18, SHAPE[0] - 18), rg.uniform(18, SHAPE[1] - 18),
+            10 ** rg.uniform(np.log10(2000.0), np.log10(60000.0)), 0)
+    for _ in range(10):                                # 1 = 密集星団
+        add(68.0 + rg.normal(0, 5.0), 182.0 + rg.normal(0, 5.0),
+            10 ** rg.uniform(np.log10(1500.0), np.log10(20000.0)), 1)
+    for i, sf in enumerate((1.0, 1.8, 3.0)):           # 2 = 二重星
+        r0, c0 = 190.0 + 20.0 * i, 60.0 + 15.0 * i
+        d = sf * fwhm / 2.0
+        add(r0 - d * 0.8, c0 - d * 0.6, 40000.0, 2)
+        add(r0 + d * 0.8, c0 + d * 0.6, 10000.0, 2)
+    add(45.0, 45.0, 2.0e6, 3)                          # 3 = 飽和星
+    add(140.0, 210.0, 8.0e5, 3)
+    cat = {"row": np.array(row), "col": np.array(col),
+           "flux": np.array(flux), "kind": np.array(kind)}
+    xi, eta = plate_inverse(cat["row"], cat["col"])
+    cat["ra"], cat["dec"] = standard_to_sky(xi, eta)
+    crs = [(int(rg.integers(14, SHAPE[0] - 14)), int(rg.integers(14, SHAPE[1] - 14)),
+            float(rg.uniform(2000.0, 20000.0))) for _ in range(25)]
+    return cat, crs
+
+
+def plate_from_matrix(mat):
+    """相似変換行列 → ``(スケール[秒角/px], 回転[度], (原点 row, 原点 col))``。"""
+    s = np.hypot(mat[0, 0], mat[0, 1])
+    return (1.0 / s, float(np.degrees(np.arctan2(mat[1, 0], mat[0, 0]))),
+            (float(mat[0, 2]), float(mat[1, 2])))
+
+
+def apply_matrix(mat, src):
+    """``(N, 2)`` に 3x3 の相似変換を適用する(``fit_transform`` の規約)。"""
+    src = np.asarray(src, float)
+    h = np.concatenate([src, np.ones((len(src), 1))], axis=1)
+    return (mat @ h.T)[:2].T
+
+
+def rms_of(src, dst, mat=None):
+    """当てはめ後の残差 RMS [px]。*mat* を省くとその場で当てはめる。"""
+    if mat is None:
+        mat = FT.vector_to_similarity(src, dst)
+    d = apply_matrix(mat, src) - np.asarray(dst, float)
+    return float(np.sqrt((d ** 2).sum(axis=1).mean()))
+
+
 def pad(text, width, right=False):
     """全角を 2 桁と数えて表の桁を揃える(固定幅の表を日本語で書くため)。"""
     import unicodedata
