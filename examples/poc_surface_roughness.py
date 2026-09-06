@@ -69,6 +69,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import examplefig as figs                                        # noqa: E402
 import fullseye as fs                                            # noqa: E402
 
 # --- 合成表面の諸元(すべて µm)--------------------------------------------- #
