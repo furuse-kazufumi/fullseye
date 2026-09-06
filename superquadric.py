@@ -162,7 +162,8 @@ def superquadric_residual(points, a, eps, R, t) -> float:
     最小化しているのと同じ量で、返り dict の ``residual`` もこの値。
 
     - ``points``: (N,3) にリシェイプできる点群(world 座標)。
-    - ``a``: 半径 (a1,a2,a3)。``eps``: 形状指数 (eps1,eps2)(``eps1`` だけがべきに使われる)。
+    - ``a``: 半径 (a1,a2,a3)。``eps``: 形状指数 (eps1,eps2)(F の計算には両方、外側の ``F**eps1`` には
+      ``eps1`` だけを使う)。
     - ``R``/``t``: 姿勢(``X_body = R.T @ (X - t)``)。``None`` なら単位回転 / 原点。
 
     数値保護: F は [0, 1e12] にクリップし、``a1*a2*a3`` は 1e-12 以上に持ち上げてから sqrt を取る
