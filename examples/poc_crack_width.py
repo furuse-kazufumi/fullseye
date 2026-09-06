@@ -413,7 +413,8 @@ def section_crossover() -> dict:
     print("  ★**点ごと**と**経路平均**を分けて出す —— 畳むと『散らばり』と")
     print("    『偏り』が混ざって、直せる誤差と直せない誤差の区別が消える。")
     print("\n   σ      積分 点ごと  積分 平均   2値 点ごと  2値 平均   2値の偏り  未検出")
-    int_rms, bin_rms, int_mean_rms, bin_mean_rms, int_bias, miss = [], [], [], [], [], []
+    int_rms, bin_rms, int_mean_rms, bin_mean_rms = [], [], [], []
+    int_bias, bin_bias, miss = [], [], []
     for s in sigmas:
         ei, bi, em, bm, ms = [], [], [], [], []
         for sd in seeds:
