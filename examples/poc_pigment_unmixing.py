@@ -1079,6 +1079,17 @@ def main():
     print("   渡す(真値を使う反則)/ 「KS固定」= K/S 空間で解いて K/S 空間で組み直す /")
     print("   「現場」= 褪色後の画面から材料ごとに採った端成分(これも真値を使う反則)。")
     print("   ゼロ点は「何もしない」列。**それを下回れない復元は復元ではない**。")
+    # ★勝てなかったことを図でも残す。ゼロ点の線より下に来ている復元が 1 本も無い。
+    _f = np.array([1.0, 0.7, 0.5, 0.3, 0.15])
+    figs.save_plot("restoration_vs_null",
+                   [("何もしない(ゼロ点)", _f, np.array([cliff_d[v]["null"] for v in _f])),
+                    ("端成分 固定", _f, np.array([cliff_d[v]["固定"][2] for v in _f])),
+                    ("K/S 固定", _f, np.array([cliff_d[v]["KS固定"][2] for v in _f])),
+                    ("現場端成分", _f, np.array([cliff_d[v]["現場"][2] for v in _f]))],
+                   xlabel="褪色 f(1 = 未褪色)", ylabel="復元後の ΔE00(中央値)",
+                   title="褪色前の色の復元はゼロ点に勝てなかった",
+                   caption="ゼロ点の線より下に来た復元が 1 本も無い。f=1(褪色なし)"
+                           "ですら、分解して組み直すだけで ΔE00 が 2.7–3.3 乗る。")
 
     # 分光 -> ΔE の道に踏み台がある。spectrum_to_srgb は **線形** sRGB を返し、
     # delta_e_map / rgb_to_lab は **ガンマ後の** sRGB を期待する。間を linear_to_srgb で
