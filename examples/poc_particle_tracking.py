@@ -420,15 +420,16 @@ def section4_density(rows0, cols0):
     print("  粒子数を振る(視野は 192x192 px のまま)。平均最近接距離 ~ 0.5/sqrt(密度)。")
     print("  **欠測を含む列(検出位置)と含まない列(真値位置)を並べる**。")
     print()
-    header = ("  %6s %8s | %7s %7s %8s | %8s %7s | %8s"
+    header = ("  %6s %8s | %7s %7s %8s | %8s %7s | %8s %8s"
               % ("粒子数", "最近接px", "曖昧%", "欠測%", "D比 検出",
-                 "曖昧%", "D比 真値", "D比 真リンク"))
+                 "曖昧%", "D比 真値", "D比 真リンク", "D比 ゲート"))
     print(header)
     print("  " + "-" * (len(header) - 2))
     counts = [25, 50, 100, 200, 400]
     rec = {"n": [], "nnd": [], "amb_det": [], "miss_det": [], "d_det_nn": [],
            "amb_tru": [], "d_tru_nn": [], "d_det_true": [], "drift_det_nn": [],
-           "drift_tru_nn": [], "greedy_d": [], "greedy_amb": [], "greedy_miss": []}
+           "drift_tru_nn": [], "greedy_d": [], "greedy_amb": [], "greedy_miss": [],
+           "gate_d": [], "gate_drift": []}
     for n_part in counts:
         rows, cols = simulate(n_part, seed=SEED + n_part)
         movie = make_movie(rows, cols, seed=n_part)
