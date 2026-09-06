@@ -419,31 +419,44 @@ def section6_noise(depth_map, masks):
 def section7_illumination(depth_map, masks, sound):
     print()
     print("=" * 78)
-    print("7) ★不均一加熱 —— 現場でいちばん多い誤差源")
+    print("7) ★不均一加熱 —— 予想が外れたところ")
     print("=" * 78)
     yy, xx = np.mgrid[0:NPIX, 0:NPIX].astype(np.float64)
     r2 = ((xx - NPIX * 0.35) ** 2 + (yy - NPIX * 0.35) ** 2) / (NPIX * 0.55) ** 2
-    illum = 0.70 + 0.60 * np.exp(-r2)          # 端が暗い
-    print("  フラッシュの当たり方に %.0f %% の面内むらを入れる(端が暗い)。"
-          % (100 * (illum.max() / illum.min() - 1)))
-    ts, cube = synth_cube(depth_map, illum=illum, netd=NETD, seed=2)
+    smooth = 0.70 + 0.60 * np.exp(-r2)                      # なだらかに端が暗い
+    rng = np.random.default_rng(21)
+    # ★ランプの映り込み。**欠陥と同じスケール**の構造を持つのがこちら。
+    tex = gaussian_filter(rng.normal(0, 1, (NPIX, NPIX)), 6.0)
+    tex = 1.0 + 0.25 * tex / max(float(np.std(tex)), 1e-12)
+
+    cases = [("(a) 一様", None),
+             ("(b) なだらかな傾斜 %.0f %%" % (100 * (smooth.max() / smooth.min() - 1)), smooth),
+             ("(c) ランプの映り込み(相関長 6 px、±25 %)", tex)]
+    for label, illum in cases:
+        ts, cube = synth_cube(depth_map, illum=illum, netd=NETD, seed=2)
+        print()
+        print("  %s" % label)
+        print("  %-32s %10s %10s" % ("手法", "CNR>=3", "中央値"))
+        print("  " + "-" * 56)
+        for name, mp in _method_maps(ts, cube, masks, sound).items():
+            c = _cnr(mp, masks, sound)
+            print("  %-32s %7d/16 %10.2f" % (name, sum(v >= 3 for v in c), np.median(c)))
+        d_hat, _ = tsr_depth(ts, cube)
+        errs = [100 * (1e3 * float(np.median(d_hat[masks[(d, 16.0)]])) / d - 1)
+                for d in DEPTHS_MM]
+        print("  直径 16 mm の TSR 深さ誤差: " + " / ".join("%+.0f%%" % e for e in errs))
     print()
-    print("  %-32s %10s %10s %10s" % ("手法", "CNR>=3", "中央値", "最小"))
-    print("  " + "-" * 66)
-    for name, mp in _method_maps(ts, cube, masks, sound).items():
-        s = _cnr(mp, masks, sound)
-        print("  %-32s %7d/16 %10.2f %10.2f" % (name, sum(v >= 3 for v in s),
-                                                np.median(s), min(s)))
-    d_hat, _ = tsr_depth(ts, cube)
-    errs = [100 * (1e3 * float(np.median(d_hat[masks[(d, 16.0)]])) / d - 1)
-            for d in DEPTHS_MM]
+    print("  → ★**予想が 1 つ外れた**。「なだらかな加熱むらは生の 1 枚を壊す」と")
+    print("     見込んで組んだが、(b) では検出数がほとんど変わらない。むらの")
+    print("     空間スケール(視野の半分)が欠陥(4〜32 px)よりずっと大きく、")
+    print("     欠陥の周りだけ見れば局所的にはほぼ一様だからで、これは正しい挙動。")
     print()
-    print("  直径 16 mm の深さ誤差(加熱むらあり): " + " / ".join("%+.0f%%" % e for e in errs))
-    print("  → ★**TSR の深さは加熱むらでほとんど動かない**(5 節の一様加熱と同じ値)。")
-    print("     ln T を取ると加熱強度は定数の足し算になり、時間微分で消えるため。")
-    print("     検出のほうは、生の 1 枚が加熱むらそのものを『コントラスト』として")
-    print("     数えるので数字だけは上がるが、**むらと欠陥を区別できていない**。")
-    print("     早期フレームで割る正規化はこの区別を回復させる 1 行の処置。")
+    print("  → 壊れるのは (c)、**欠陥と同じスケールのむら**。生の 1 枚は")
+    print("     むらを欠陥と見分けられない。早期フレームで割る正規化は、")
+    print("     時間に依らない乗法的なむらを**代数的に**消すので生き残る。")
+    print()
+    print("  → ★**TSR の深さは (a)(b)(c) のどれでもほぼ同じ**。ln T を取ると")
+    print("     加熱強度は定数の足し算になり、時間の 2 階微分で消える。")
     print("     つまり効いているのは手法名ではなく『加熱強度が式のどこに入るか』。")
 
 
