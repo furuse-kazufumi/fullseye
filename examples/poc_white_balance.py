@@ -689,11 +689,6 @@ def main():
     est_perch = perch.reshape(-1, 3).mean(axis=0)
     # 正規化とカーネルを切り分けるための対照 —— 自前の Sobel(正規化なし)。
     kx = np.array([[-1.0, 0.0, 1.0], [-2.0, 0.0, 2.0], [-1.0, 0.0, 1.0]])
-    sob = np.zeros_like(img_g)
-    for dy in (-1, 0, 1):
-        for dx in (-1, 0, 1):
-            r = np.roll(np.roll(img_g, dy, 0), dx, 1)
-            sob[..., 0] += 0.0        # 使わない(下でまとめて作る)
     gx_s = sum(kx[dy + 1, dx + 1] * np.roll(np.roll(img_g, -dy, 0), -dx, 1)
                for dy in (-1, 0, 1) for dx in (-1, 0, 1))
     gy_s = sum(kx.T[dy + 1, dx + 1] * np.roll(np.roll(img_g, -dy, 0), -dx, 1)
