@@ -480,7 +480,8 @@ def unmix_any(cube, endm_bands, constrained=True):
 
 
 def detectors(scene, spectra, rng, n_bands=NB0, sigma=None, fixed_sigma=False,
-              endm_full=None, want=("rgb", "vis", "ms", "unmix", "ks", "nir", "sam")):
+              endm_full=None,
+              want=("rgb", "vis", "ms", "mnf", "unmix", "ks", "nir", "sam")):
     """全手法の検出マップを作って dict で返す。値が大きいほど「下絵あり」。"""
     out = {}
     if "rgb" in want:
