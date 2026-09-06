@@ -777,7 +777,6 @@ def main():
     # 5) カットオフ: λc を両側へ動かすと Sq が両側に壊れる
     assert lam_c_tab[16.0]["Sq"] < truth["Sq"] * 0.9, "λc=16µm で加工目が落ちていない"
     assert lam_c_tab[256.0]["Sq"] > truth["Sq"] * 1.1, "λc=256µm でうねりが漏れていない"
-    # 6) λs は Sq より Sz を強く動かす
     # 6) λs の選択性は「雑音のあるときだけ」出る(予想が外れた側を固定する)
     #    雑音なし: Sz の動きは Sq の 2 倍未満 = 選択性は無いに等しい
     assert abs(rel_err(lam_s_tab[8.0]["Sz"], lam_s_tab[0.0]["Sz"])) \
