@@ -19,7 +19,7 @@ EXTEND: 実データに差し替えるなら :func:`make_scene` だけを差し�
   * Stanford Light Field Archive(http://lightfield.stanford.edu/lfs.html)は
     17x17 の実写グリッドだが**真値深度が無い**ので、推定器どうしの比較には
     使えても本 PoC の 1 章(真値との突き合わせ)は成立しない。
-  * 生の plenoptic フレーム(Lytro 等)を通したい場合、
+  * 生の plenoptic フレーム(マイクロレンズアレイ式のカメラが出す生画像)を通したい場合、
     :func:`lightfield.lf_from_mla` は**整流済み**の生フレームしか受け取らない
     (マイクロレンズ中心のサブピクセル較正は同モジュールの範囲外だと明記されて
     いる)。白画像からの MLA 中心推定を自前で通してから渡すこと。

@@ -278,12 +278,12 @@ DETECTORS = (
     ("ゴーストV", score_ghost_contrast),
     ("乱数", score_random),
 )
-#: 表の見出しに使う名前 → 長い説明(末尾のまとめで使う)
-LONG = {"ELA": "ELA(誤差レベル解析)",
-        "雑音σ": "雑音 σ の不整合",
-        "ゴーストA": "JPEG ゴースト(op の argmin 読み出し)",
-        "ゴーストV": "JPEG ゴースト(PoC 側の谷の深さ読み出し)",
-        "乱数": "乱数(画像を見ない)"}
+#: 表の見出しは狭いので、意味は一度ここに書いておく。
+#:   ELA       = 誤差レベル解析(``error_level_map``)
+#:   雑音σ     = 雑音整合性(``noise_inconsistency_map``)
+#:   ゴーストA = JPEG ゴーストの **op の読み出し**(``jpeg_ghost_quality`` = argmin)
+#:   ゴーストV = JPEG ゴーストの **PoC 側の読み出し**(品質ごとに標準化して谷の深さ)
+#:   乱数      = 画像を見ない対照(零点の下限)
 
 
 def standardize(m):
