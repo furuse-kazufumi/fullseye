@@ -56,6 +56,7 @@ from __future__ import annotations
 
 import io
 import time
+import unicodedata
 
 import numpy as np
 from scipy import ndimage
