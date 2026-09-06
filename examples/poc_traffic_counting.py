@@ -190,26 +190,55 @@ def slit_count(kym: np.ndarray, x_ref: int = X_REF) -> dict:
     return {"labels": lab, "n_all": n_all, "n_ref": int(hit.size), "ids": hit}
 
 
-def band_speeds(kym: np.ndarray, lab: np.ndarray, ids, dt: float = 1.0) -> dict:
-    """帯の傾きから速度 [px/frame]。行ごとの重心の線形当てはめと、台帳の angle。"""
+def band_speeds(lab: np.ndarray, ids, dt: float = 1.0, x_ref: int = X_REF) -> dict:
+    """帯ごとに(通過時刻, 速度 2 通り, 行数)。速度は [px/frame]。
+
+    通過時刻は**その帯が計数列を覆っていた行の中央**。これで帯と実車を
+    1 対 1 に対応づけられる(数だけ揃えて並べ替えで比べると、融合や
+    見逃しがあるときに**別の車どうしを比べて**平気な顔で数字が出る)。
+    """
     feats = _LAB.blob_features(lab)
     ang = np.asarray(feats["angle"], np.float64)
-    fit, from_angle, npts = [], [], []
+    cross, fit, from_angle, npts = [], [], [], []
     for i in ids:
         rr, cc = np.nonzero(lab == i)
         rows = np.unique(rr)
+        at_ref = np.nonzero(lab[:, x_ref] == i)[0]
+        cross.append(float(np.median(at_ref)) * dt if at_ref.size else np.nan)
         if rows.size < 2:
+            fit.append(np.nan)
+            from_angle.append(np.nan)
+            npts.append(int(rows.size))
             continue
         cen = np.asarray([cc[rr == r].mean() for r in rows], np.float64)
-        slope = np.polyfit(rows.astype(np.float64), cen, 1)[0]
-        fit.append(slope / dt)
+        fit.append(float(np.polyfit(rows.astype(np.float64), cen, 1)[0]) / dt)
         # angle は +col -> +row(画面で時計回り)。帯の向きは (Δrow, Δcol) = (1, V·dt)
         # なので tan(angle) = 1/(V·dt) -> V = cot(angle)/dt。
-        a = ang[int(i) - 1]
-        from_angle.append((1.0 / np.tan(a) if abs(np.tan(a)) > 1e-9 else np.nan) / dt)
-        npts.append(rows.size)
-    return {"fit": np.asarray(fit), "angle": np.asarray(from_angle),
-            "rows": np.asarray(npts)}
+        a = float(ang[int(i) - 1])
+        t = np.tan(a)
+        from_angle.append((1.0 / t if abs(t) > 1e-9 else np.nan) / dt)
+        npts.append(int(rows.size))
+    return {"cross": np.asarray(cross), "fit": np.asarray(fit),
+            "angle": np.asarray(from_angle), "rows": np.asarray(npts)}
+
+
+def match_speeds(sp: dict, vehicles, tol: float = 12.0) -> dict:
+    """帯と実車を**通過時刻**で突き合わせ、速度の相対誤差 [%] を返す。"""
+    ef, ea, used = [], [], 0
+    for v in vehicles:
+        d = np.abs(sp["cross"] - v["cross"])
+        if d.size == 0 or not np.isfinite(d).any():
+            continue
+        k = int(np.nanargmin(d))
+        if not np.isfinite(d[k]) or d[k] > tol:
+            continue
+        used += 1
+        if np.isfinite(sp["fit"][k]):
+            ef.append(100 * abs(sp["fit"][k] - v["v"]) / v["v"])
+        if np.isfinite(sp["angle"][k]):
+            ea.append(100 * abs(sp["angle"][k] - v["v"]) / v["v"])
+    return {"n": used, "fit": float(np.mean(ef)) if ef else np.nan,
+            "angle": float(np.mean(ea)) if ea else np.nan}
 
 
 def virtual_loop(mask: np.ndarray, row: int, x_ref: int = X_REF) -> int:
