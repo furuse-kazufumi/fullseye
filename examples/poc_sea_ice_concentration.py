@@ -168,11 +168,11 @@ SEEDS = (0, 1, 2, 3, 4)
 
 def measure(fraction: float, corr_len: float, level: float = 0.5,
             endmembers=None, ice_rows=(0,), thin_fraction: float = 0.0,
-            truth_key: str = "c_true_all") -> dict:
+            truth_key: str = "c_true_all", noise: float = NOISE) -> dict:
     """5 つの乱数種で測って、偏り(平均)とばらつき(標準偏差)を分けて返す。"""
     hb, ub, samp, per = [], [], [], []
     for s in SEEDS:
-        sc = make_scene(fraction, corr_len, s, thin_fraction)
+        sc = make_scene(fraction, corr_len, s, thin_fraction, noise=noise)
         t = sc[truth_key]
         hb.append(hard_classify(sc["cube"], level) - t)
         ub.append(unmix(sc["cube"], endmembers, ice_rows) - t)
