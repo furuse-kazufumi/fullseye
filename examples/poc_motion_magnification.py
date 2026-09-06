@@ -300,7 +300,7 @@ def main():
 
         figs.save_grid("slit_scan",
                        [_zoom3(v05[:, H // 2, :].T), _zoom3(m25[:, H // 2, :].T)],
-                       ["生 0.5 px", "25 倍後"], ncols=1,
+                       ["生 0.5 px", "5 倍 2.5 px"], ncols=1,
                        title="行 %d のスリット像(横 = %d フレーム、3 倍表示)"
                              % (H // 2, T),
                        caption="拡大が買っているのは人間の目。縞のうねりが "

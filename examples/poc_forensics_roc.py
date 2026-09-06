@@ -392,6 +392,16 @@ def main():
     print("     説明されるが、それは無圧縮の素材を貼ったときの話で、強く圧縮された")
     print("     素材を貼ると逆に小さくなる。片側だけ見る検出器はここで取り逃がす。")
     print("     以下はすべて『画像中央値からの隔たり』= 両側で測る。")
+    if figs.enabled():
+        # ★穴 (a) は「定数地図」なので、絵にすれば数字を読むまでもない。
+        figs.save_grid("score_maps",
+                       [img, mask.astype(float), score_ela(img),
+                        score_ghost_contrast(img), score_ghost_argmin(img)],
+                       ["改竄画像(q95 保存後)", "真値マスク", "ELA", "ゴーストV",
+                        "ゴーストA(op の読み出し)"],
+                       title="同じ 1 枚に対する 3 つのスコア地図", ncols=3,
+                       caption="ゴーストA は全画素が同じ値 = 何も言っていない"
+                               "(AUC ちょうど 0.500)。ELA と ゴーストV は貼付部が立つ。")
 
     print(f"\n=== 2. 画素ごとの ROC({n_img} 枚をまとめて 1 本)===")
     base = make_cases(n_img)
