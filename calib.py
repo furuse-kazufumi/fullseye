@@ -198,9 +198,16 @@ def camera_calibration(object_points, image_points_list):
     if not np.all(np.isfinite(out)) or fx <= 0 or fy <= 0:
         raise ValueError("camera_calibration produced a non-finite or non-positive K "
                          f"(fx={fx}, fy={fy}, cx={cx}, cy={cy}); check the point "
-                         "correspondences ((x,y) object / (row,col) image) and view geometry")
+                         "correspondences ((x,y) object / (row,col) image) and view "
+                         "geometry — **the usual cause is that the target is not tilted "
+                         "enough between views**, which the degeneracy check above cannot "
+                         f"see once lens distortion is present (rank ratio {rank_ratio:.2e}; "
+                         "distortion pins it near 2e-06 whatever the tilt)")
     return {"fx": float(fx), "fy": float(fy), "cx": float(cx), "cy": float(cy),
-            "skew": float(skew), "homographies": Hs, "reproj_rms": reproj}
+            "skew": float(skew), "homographies": Hs, "reproj_rms": reproj,
+            # 視点の向きが内部パラメータをどれだけ拘束しているか(大きいほど良い)。
+            # **歪み補正前の点では意味を持たない** —— 上の注記の実測を見よ。
+            "orientation_rank_ratio": rank_ratio}
 
 
 def calibrate_cameras(object_points, image_points_list):
