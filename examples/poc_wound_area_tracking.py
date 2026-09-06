@@ -336,7 +336,7 @@ def section3_methods(mm_fixed):
     print("  %-22s %8s %9s %9s %9s %9s" % ("場面", "真値", "M0 %", "M1 %", "M2 %", "点誤差px"))
     print("  " + "-" * 72)
     rows, worst = [], {"M0": 0.0, "M1": 0.0, "M2": 0.0}
-    panels = {}
+    panels, last = {}, None
     for name, spec, area in SCENES:
         hw = scene_h(spec)
         img = render(hw, area)
@@ -347,22 +347,20 @@ def section3_methods(mm_fixed):
         rows.append([name, "%.0f" % area] + ["%+.2f" % e[k] for k in ("M0", "M1", "M2")])
         print("  %-22s %8.0f %+9.2f %+9.2f %+9.2f %9.3f" %
               (name, area, e["M0"], e["M1"], e["M2"], m["dot_err"]))
-        panels[name] = (img, hw)
+        panels[name] = img
+        last = e
     print()
     print("  → M1(毎回較正)は**距離のずれをほぼ完全に消す**が、傾きは直らない。")
     print("     M2(正対化)だけが両方に効く。最大 |誤差| は M0 %.1f %% / M1 %.1f %% / M2 %.1f %%。"
           % (worst["M0"], worst["M1"], worst["M2"]))
     print("  → ★予想が外れた: 「較正しなおせば必ずゼロ点に勝つ」は成り立たない。")
     print("     最後の場面(遠 + 傾き)は M0 %+.1f %% に対し M1 %+.1f %% —— **符号が逆なだけで"
-          % (100 * (measure_all(render(scene_h(SCENES[-1][1]), SCENES[-1][2]),
-                                LAYOUT_SIDE, mm_fixed)["M0"] / SCENES[-1][2] - 1),
-             100 * (measure_all(render(scene_h(SCENES[-1][1]), SCENES[-1][2]),
-                                LAYOUT_SIDE, mm_fixed)["M1"] / SCENES[-1][2] - 1)))
+          % (last["M0"], last["M1"]))
     print("     大きさは同程度**。長さ較正が効くのは距離だけが動くときだけ。")
 
     # 図: 正対 / 遠+傾き / それを正対化 / 正対化マスクと真のマスクの差
-    img_ref = panels["正対 450 mm"][0]
-    img_bad, hw_bad = panels["遠 + 傾き, A=500"]
+    img_ref = panels["正対 450 mm"]
+    img_bad = panels["遠 + 傾き, A=500"]
     rect = rectify(img_bad, homography_from_dots(dot_centroids(img_bad), LAYOUT_SIDE))
     yy, xx = np.mgrid[0:H_PX, 0:W_PX].astype(float)
     wx = (xx - OX) * S_MM
