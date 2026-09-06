@@ -5,7 +5,7 @@ category: rank
 in: image
 out: image
 halcon: rank_image
-examples: [color_transport, gallery2d_smoothing_rank, image_quality_metrics, poc_astro_photometry, poc_bilateral_asymmetry, poc_dehazing, poc_forensics_roc, poc_panorama_drift, poc_registration_basin, poc_white_balance, representation_roundtrip, vision_layout_from_catalog]
+examples: [color_transport, gallery2d_smoothing_rank, image_quality_metrics, poc_astro_photometry, poc_bilateral_asymmetry, poc_dehazing, poc_forensics_roc, poc_panorama_drift, poc_registration_basin, poc_star_astrometry, poc_white_balance, representation_roundtrip, vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -44,6 +44,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - [poc_forensics_roc](../../../../examples/poc_forensics_roc.py) — `py -3.11 examples/poc_forensics_roc.py`
 - [poc_panorama_drift](../../../../examples/poc_panorama_drift.py) — `py -3.11 examples/poc_panorama_drift.py`
 - [poc_registration_basin](../../../../examples/poc_registration_basin.py) — `py -3.11 examples/poc_registration_basin.py`
+- [poc_star_astrometry](../../../../examples/poc_star_astrometry.py) — `py -3.11 examples/poc_star_astrometry.py`
 - [poc_white_balance](../../../../examples/poc_white_balance.py) — `py -3.11 examples/poc_white_balance.py`
 - [representation_roundtrip](../../../../examples/representation_roundtrip.py) — `py -3.11 examples/representation_roundtrip.py`
 - [vision_layout_from_catalog](../../../../examples/vision_layout_from_catalog.py) — `py -3.11 examples/vision_layout_from_catalog.py`

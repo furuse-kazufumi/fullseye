@@ -712,7 +712,7 @@ def main():
 
     print(f"   ★ **崖は FWHM 2 px**(Nyquist)。当てはめ系は FWHM 2.0 以上で "
           f"{phase_tab['ガウシアン当てはめ'][2.0][0]:.5f} / "
-          f"{phase_tab['PSF 相関'][2.0][0]:.5f} px と実質ゼロなのに、1.4 で "
+          f"{phase_tab['PSF 相関'][2.0][0]:.5f} px と十分小さいのに、1.4 で "
           f"{phase_tab['ガウシアン当てはめ'][1.4][0]:.4f} / "
           f"{phase_tab['PSF 相関'][1.4][0]:.4f}、1.0 で "
           f"{phase_tab['ガウシアン当てはめ'][1.0][0]:.4f} / "
