@@ -328,6 +328,21 @@ def auc_and_tpr(scores, labels, fpr_target=0.01):
     return float(auc), float(tpr[i]), float(fpr[i])
 
 
+def roc_points(detector, cases, n_pts=240):
+    """図のための ROC 点列(``(fpr, tpr)``)。AUC の数字は :func:`auc_and_tpr` が正本。
+
+    65 万点をそのまま折れ線にはできないので **等間隔に間引く**。曲線の形を見る
+    ための道具で、面積を測り直すためのものではない。
+    """
+    sc = np.concatenate([standardize(detector(im)).ravel() for im, _ in cases])
+    lb = np.concatenate([np.asarray(mk, bool).ravel() for _, mk in cases])
+    y = lb[np.argsort(-sc, kind="mergesort")]
+    tpr = np.cumsum(y) / max(int(y.sum()), 1)
+    fpr = np.cumsum(~y) / max(int((~y).sum()), 1)
+    k = np.unique(np.linspace(0, y.size - 1, n_pts).astype(int))
+    return np.r_[0.0, fpr[k]], np.r_[0.0, tpr[k]]
+
+
 def evaluate(detector, cases):
     """画素をまとめて 1 本の ROC にする。``cases`` = [(画像, マスク), ...]。"""
     sc, lb = [], []
