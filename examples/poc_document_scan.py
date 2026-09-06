@@ -334,20 +334,29 @@ def landmark_error(H_est, H_true, n=9):
     return float(np.sqrt(np.mean(e ** 2))), float(np.max(e))
 
 
-def rule_bend(rect, half=8):
-    """補正後の罫線の残留曲がり(直線を当てた残差の最大値、書類画素)。"""
+def rule_bend(rect, half=8, contrast=0.06):
+    """補正後の罫線の残留曲がり(直線を当てた残差の最大値、書類画素)。
+
+    ★ この量は**射影の誤りを検出できない** —— ホモグラフィも相似もアフィンも
+    直線を直線へ写すため。曲がるのはレンズ歪みのような非射影の成分だけ。
+    窓の中に罫線が見つからない(補正が大きくずれている)場合は NaN を返す。
+    """
     worst = 0.0
+    found = False
     for r0 in (br + RULE_OFFSET for br in BAND_ROWS):
         cols = np.arange(TEXT_C0 + 10, TEXT_C1 - 10, 4)
-        band = rect[r0 - half:r0 + half + 1, cols]
-        if band.shape[0] < 3:
+        if r0 - half < 0 or r0 + half + 1 > rect.shape[0]:
             continue
+        band = rect[r0 - half:r0 + half + 1, cols]
         rows = r0 - half + np.argmin(band, axis=0).astype(float)
-        good = np.isfinite(rows)
+        good = (np.median(band, axis=0) - band.min(axis=0)) > contrast
+        if good.sum() < 0.6 * len(cols):
+            continue
         A = np.column_stack([cols[good], np.ones(good.sum())])
         coef, *_ = np.linalg.lstsq(A, rows[good], rcond=None)
         worst = max(worst, float(np.max(np.abs(A @ coef - rows[good]))))
-    return worst
+        found = True
+    return worst if found else float("nan")
 
 
 def band_heights(rect, dark=0.45):
