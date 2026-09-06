@@ -1382,6 +1382,11 @@ TYPE_CHECKS = {
     # 実測でキーは mu / sigma / w(最初 "mean" と推測して書いたら
     # points_to_gaussians が TYPEMISS になった —— op ではなく述語が誤り)
     "gaussians": lambda v: isinstance(v, dict) and {"mu", "sigma", "w"} <= set(v),
+    # 形態統計(2026-09-06): shapeset は形の群 (K, N, 3)、shapemodel は shape_pca の
+    # 返す辞書。voxel(3 次元配列)や table(list/dict)にも当たってしまうので、
+    # 述語をここで厳しくしないと、群の平均に濃度場を渡す連鎖が例外なしに通る。
+    "shapeset": lambda v: isinstance(v, np.ndarray) and v.ndim == 3                           and v.shape[2] == 3 and v.shape[0] >= 2,
+    "shapemodel": lambda v: isinstance(v, dict)                             and {"mean", "components", "variance", "n_points"} <= set(v),
     "points": _is_pts,
     "normals": _is_pts,
     "keypoints": lambda v: _is_pts(v) or (isinstance(v, np.ndarray) and v.ndim == 2),

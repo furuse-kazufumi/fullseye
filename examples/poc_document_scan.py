@@ -553,7 +553,7 @@ def main():
         ("var_threshold(2 値、窓 15)", lambda x: np.asarray(fs.op.var_threshold(x, a=1.0))),
     ]
     print(f"  {'手法':<32}{'地の平坦度':>11}{'濃い字':>8}{'薄い字':>8}{'紙の誤検出':>11}"
-          f"{'図の相関':>9}{'図の振幅':>9}")
+          f"{'図の相関':>9}{'図の段数':>9}")
     shadow_stats = {}
     for name, fn in methods:
         out = fn(rect_ideal)
@@ -561,16 +561,22 @@ def main():
         fl = flatness(out)
         rs = float(m[strong_ink].mean()); rw = float(m[faint_ink].mean())
         fp = float(m[paper].mean())
-        rc, rg = ramp_corr(out), ramp_range(out)
-        shadow_stats[name] = (fl, rs, rw, fp, rc, rg)
+        rc, lv = ramp_corr(out), ramp_levels(out)
+        shadow_stats[name] = (fl, rs, rw, fp, rc, lv)
         print(f"  {name:<32}{fl:>11.4f}{100 * rs:>7.0f}%{100 * rw:>7.0f}%{100 * fp:>10.1f}%"
-              f"{rc:>9.3f}{rg:>9.2f}")
-    print("  → 「濃い字」「薄い字」は真の字の画素のうち 2 値化後も字と判定された割合、")
-    print("     「紙の誤検出」は紙の地が字にされた割合。平坦度は小さいほど良い。")
-    print("     何もしないと影の中の紙が丸ごと字にされ(誤検出)、薄い字は影の外で消える。")
-    print("     窓を大きくするほど地は平らになるが、図の階調は局所平均と区別が付かず")
-    print("     相関が落ちる —— **ランプは照明そのものに見える**。2 値化は振幅を 0 にする。")
-    print("     ★ 窓 9(op で届く上限)と窓 61 の差が、a/b が小窓しか出せないことの代償。")
+              f"{rc:>9.3f}{lv:>9d}")
+    print(f"  (図の階調は真値で {ramp_levels(truth)} 段。「濃い字」「薄い字」は真の字の画素の")
+    print("   うち大域 2 値化のあとも字と判定された割合、「紙の誤検出」は紙の地が字に")
+    print("   された割合。平坦度は小さいほど良い。)")
+    print("  → 良いところ取りは無い。何もしなければ影の中の紙が丸ごと字にされ(誤検出")
+    print("     42 %)、薄い字は影の外で消える。地を割って平らにすると誤検出は 0 になるが")
+    print("     **薄い字も一緒に消える**(残り 0 %)—— 平らな地の上では大域しきい値が")
+    print("     濃い字の側に寄るため。局所コントラストを持ち上げる手(illuminate/tophat/")
+    print("     homomorphic)は薄い字を 99〜100 % 残すかわりに紙を 38〜99 % 字にする。")
+    print("     図の階調は**窓が小さいほど壊れる** —— 9 px の局所平均はランプそのものと")
+    print("     区別が付かず、割ると平らになって消える(相関 0.28、段数 1/3 以下)。")
+    print("     ★ その窓 9 が fs.op で届く上限。窓 61 なら相関 0.73 まで残るが、その窓は")
+    print("        a/b からは作れない —— 道具の穴 (d) の代償がここに出ている。")
 
     print("\n=== 5. 壊れる条件 ===")
 
