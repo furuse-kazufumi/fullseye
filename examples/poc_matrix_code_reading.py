@@ -270,6 +270,31 @@ def _scan(dark, step):
     return hits
 
 
+def _refine_center(dark, cx, cy, rad, iters=4):
+    """(cx, cy) のまわり半径 rad の円板にある暗画素の重心へ寄せる。
+
+    位置検出パターンも位置合わせパターンも 4 回対称なので、中心に置いた円板の
+    重心は(円板がパターンをはみ出しても)中心に一致する。まわり 1 モジュールが
+    明の分離帯なので、半径を 4 モジュール未満にしておけば隣のデータは入らない。
+    """
+    h, w = dark.shape
+    for _ in range(iters):
+        r0 = int(max(0, cy - rad)); r1 = int(min(h, cy + rad + 1))
+        c0 = int(max(0, cx - rad)); c1 = int(min(w, cx + rad + 1))
+        if r1 - r0 < 2 or c1 - c0 < 2:
+            return None
+        yy, xx = np.mgrid[r0:r1, c0:c1]
+        sel = (dark[r0:r1, c0:c1] > 0.5) & ((xx - cx) ** 2 + (yy - cy) ** 2 < rad * rad)
+        if sel.sum() < 4:
+            return None
+        nx, ny = float(xx[sel].mean()), float(yy[sel].mean())
+        if abs(nx - cx) < 1e-3 and abs(ny - cy) < 1e-3:
+            cx, cy = nx, ny
+            break
+        cx, cy = nx, ny
+    return cx, cy
+
+
 def find_finders(dark, step=1):
     """位置検出パターンの中心 3 点を (row, col) で返す。見つからなければ None。"""
     rows = [(y, x, m) for y, x, m in _scan(dark, step)]
