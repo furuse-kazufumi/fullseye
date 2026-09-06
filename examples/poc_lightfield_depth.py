@@ -376,12 +376,12 @@ def main():
     print("     のはデータではなく推定器の方 —— 少なくともランバートで十分に")
     print("     テクスチャのある面では。")
     # 図: 3 層シーンと、推定と、その差。差は評価域の外(境界)で大きい。
+    # パネルは 96 px しかないので、題は短く(長いと注釈 op が拒否する)。
     dff_cub = est["焦点度 cubic(81 枚)"]
     figs.save_grid("scene_and_depth",
                    [lf9[4, 4], gt, dff_cub, dff_cub - gt],
-                   ["中心視点(9x9 の真ん中)", "真値スロープ [px/view]",
-                    "焦点度 cubic の推定", "推定 − 真値"],
-                   title="3 層シーン(背景・傾いた面・手前平面)",
+                   ["中心視点", "真値 s", "焦点度 cubic", "推定−真値"],
+                   title="3 層シーンとスロープ地図 [px/view]",
                    signed=[False, False, False, True],
                    caption="差が立つのは深度不連続の縁だけ(5-b で距離ごとに数える)。")
 

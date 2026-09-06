@@ -824,6 +824,8 @@ def main():
         "surface_match(refine=False) の rmse が nan でない(穴が塞がった?)"
     assert (nan_out["rmse"] < 1.0) is False, "nan の比較が False にならない"
 
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print(f"\n  (所要 {time.perf_counter() - t_start:.1f} 秒)")
     print("\nPASS")
 
