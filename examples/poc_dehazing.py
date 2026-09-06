@@ -702,6 +702,11 @@ def main():
     assert bias_near < -0.05, f"近景で t が過小評価されていない {bias_near:+.4f}"
     assert bias_sky > 0.10, f"空で t が過大評価されていない {bias_sky:+.4f}"
 
+    # (7d) 波長依存はモデルの限界 —— オラクルでも色の偏りが同じ向きに増える。
+    assert wave_rows[2][4] > wave_rows[0][4] + 0.05, \
+        f"オラクルで色の偏りが増えていない {wave_rows[0][4]:+.4f} → {wave_rows[2][4]:+.4f}"
+    assert wave_rows[2][3] < wave_rows[0][3], "オラクルの PSNR が波長依存で落ちていない"
+
     # (8) 崖 (c) —— パッチを大きくすると段差帯 / 平坦の誤差比(ハロー)が増える。
     ratios = [r[2] / r[3] for r in patch_rows]
     assert ratios[-1] > ratios[0], f"パッチ寸法でハロー比が増えていない {ratios}"
