@@ -446,10 +446,19 @@ def main():
               + pad(f"{100 * truth_cover[s] + d['bias']:.1f}%", 10)
               + pad(f"{d['bias']:+.1f}", 12) + pad(f"{d['scatter']:.1f}", 11)
               + pad(f"{d['prec']:.3f}", 10) + pad(f"{d['rec']:.3f}", 10))
-    print("  → **繁茂期ならゼロ点で足りる**(偏り 1 pp 台)。指数を使う手法は、まず")
-    print("     ここに勝てるかどうかで測る。壊れているのは発芽期で、再現率は高いのに")
-    print("     適合率が 0.4 を切る = 土をまとめて植生と答えている。大津は 2 山を仮定")
-    print("     するが、被覆率が数 % の畑のヒストグラムは **土の 1 山**しかない。")
+    zb = [z[s]["bias"] for s in range(len(STAGES))]
+    print(f"  → ゼロ点はどの段階でも **同じ向きに** 上振れする(+{min(zb):.1f} 〜"
+          f" +{max(zb):.1f} pp)。散らばりは 0.5 pp 以下なので、")
+    print("     これは枚数を増やしても消えない **偏り**である。ここに勝てない手法は")
+    print("     採らない、というのがこの表の使い道。")
+    print(f"  → **どの指標を見るかで『壊れている段階』が変わる**。偏りの最悪は"
+          f" {STAGES[int(np.argmax(np.abs(zb)))][0]}"
+          f"({max(zb, key=abs):+.1f} pp)だが、")
+    print(f"     適合率の最悪は {STAGES[int(np.argmin([z[s]['prec'] for s in range(3)]))][0]}"
+          f"({min(z[s]['prec'] for s in range(3)):.3f})。低被覆率では再現率がほぼ 1 のまま")
+    print("     適合率だけが落ちる = **土をまとめて植生と答えている**。被覆率の偏りが")
+    print("     そこまで大きく見えないのは、そもそも植生が少なく分母が小さいためで、")
+    print("     『被覆率の誤差が小さい = 当たっている』ではない。")
 
     print("\n=== 3. 手法の比較 —— 生育段階ごとに、偏りと散らばりを分けて ===")
     res = {s: run(scenes[s], METHODS) for s in range(len(STAGES))}
