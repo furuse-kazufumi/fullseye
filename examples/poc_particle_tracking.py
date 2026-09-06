@@ -810,10 +810,11 @@ def section8_figures(rows, cols, movie, rec_density, rec_step, lags, curves):
                          "%.3f" % rec_density["d_det_nn"][k],
                          "%.3f" % rec_density["d_tru_nn"][k],
                          "%.3f" % rec_density["d_det_true"][k],
+                         "%.3f" % rec_density["gate_d"][k],
                          "%.3f" % rec_density["drift_det_nn"][k]])
     figs.save_table("density_table",
                     ["粒子数", "最近接 px", "曖昧 %", "欠測 %", "D比 検出+NN",
-                     "D比 真値+NN", "D比 真リンク", "ドリフト比"], rows_tbl,
+                     "D比 真値+NN", "D比 真リンク", "D比 ゲート", "ドリフト比"], rows_tbl,
                     title="密度掃引の実測",
                     caption="曖昧と欠測を分けて数えると、D の外れる向きが説明できる。")
 
