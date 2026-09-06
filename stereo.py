@@ -121,7 +121,14 @@ def disparity_subpixel(left, right, max_disp: int = 16, block: int = 7,
     cm = np.take_along_axis(vol, dm, 0)[0]
     cp = np.take_along_axis(vol, dp, 0)[0]
     denom = cm - 2.0 * c0 + cp                      # >0 at a convex minimum
-    offset = np.where(denom > 1e-12, 0.5 * (cm - cp) / denom, 0.0)
+    # ``np.where`` は**両方の枝を評価する**ので、平坦な領域(denom == 0)では
+    # 捨てられる側で 0/0 が起き、値は正しいまま RuntimeWarning だけが漏れていた
+    # (2026-09-06、ライトフィールドの PoC が拾った)。兄弟の
+    # ``lightfield.lf_epi_slope`` は最初から ``np.divide(..., where=)`` で書いて
+    # あり、族内で作法が食い違っていた。計算しない側は**計算しない**。
+    ok = denom > 1e-12
+    offset = np.zeros_like(denom, dtype=np.float64)
+    np.divide(0.5 * (cm - cp), denom, out=offset, where=ok)
     offset = np.clip(offset, -0.5, 0.5)
     interior = (d > 0) & (d < D - 1)
     return d.astype(np.float64) + np.where(interior, offset, 0.0)

@@ -363,7 +363,7 @@ def _pnp_planar(X: np.ndarray, uv: np.ndarray, K: np.ndarray):
     decompose it into (R, t). Returns an initial (R, t) for the LM refinement."""
     c = X.mean(0)
     Xc = X - c
-    _, _, Vt = np.linalg.svd(Xc)
+    _, _, Vt = np.linalg.svd(Xc, full_matrices=False)  # full_matrices=False: U は捨てるのに (N,N) を確保していた(2026-09-06 実測 20000 点で 3.73 s / 3.2 GB → 0.88 ms、Vt はビット一致)
     B = Vt.T                                        # columns: 2 in-plane axes + normal
     if np.linalg.det(B) < 0:                        # SVD basis may be a reflection;
         B[:, 2] = -B[:, 2]                          # flip the (unused) normal -> det +1

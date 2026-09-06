@@ -1087,3 +1087,31 @@ def test_jpeg_ghost_argmin_dies_after_one_more_save():
     # 機構: 残差は品質に対して単調減少する。だから argmin は上端に張り付く。
     resid = np.stack(F.jpeg_ghost_map(rt(comp, 95)), 0).mean(axis=(1, 2))
     assert np.all(np.diff(resid) < 0.0), resid
+
+
+def test_noise_map_has_a_border_bias_of_its_own():
+    """**改竄ゼロでも外周の σ が下がる**(reflect 折り返し)。docstring の表と対。
+
+    これを知らずに画素ごとの閾値を掛けると、縁が固定の偽陽性源になる。
+    """
+    n, b = 256, 16
+    rng = np.random.default_rng(0)
+    img = np.clip(0.5 + 0.035 * rng.standard_normal((n, n)), 0.0, 1.0)
+    m = F.noise_inconsistency_map(img, block=b)
+
+    ring = np.zeros(m.shape, bool)
+    ring[:b] = ring[-b:] = True
+    ring[:, :b] = ring[:, -b:] = True
+    cen = np.zeros(m.shape, bool)
+    cen[n // 2 - b:n // 2 + b, n // 2 - b:n // 2 + b] = True
+
+    assert m[ring].mean() < 0.96 * m[cen].mean(), "外周の低下が消えた"
+
+    # 対照: 生画像の局所 std には、その半分ほどの差しかない(= 推定器が作っている)
+    loc = np.empty(m.shape)
+    for i in range(0, n, b):
+        for j in range(0, n, b):
+            loc[i:i + b, j:j + b] = img[i:i + b, j:j + b].std()
+    est_drop = 1.0 - m[ring].mean() / m[cen].mean()
+    raw_drop = 1.0 - loc[ring].mean() / loc[cen].mean()
+    assert est_drop > 2.0 * raw_drop, (est_drop, raw_drop)
