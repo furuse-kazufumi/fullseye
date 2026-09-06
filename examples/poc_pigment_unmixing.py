@@ -684,8 +684,8 @@ def main():
           % (SIGMA0 * np.sqrt(NB0)))
     rows_b = []
     cliff_b = {}
-    panels = (("十分光量", None, False), ("低照度", None, True),
-              ("雑音固定", SIGMA0 * np.sqrt(NB0), False))
+    panels = (("十分光量", None, 1.0), ("低照度", None, 15.0),
+              ("雑音固定", SIGMA0 * np.sqrt(NB0), 1.0))
     for nb in (3, 8, 16, 31):
         row = [str(nb)]
         cliff_b[nb] = {}
