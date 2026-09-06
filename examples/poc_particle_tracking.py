@@ -398,7 +398,7 @@ def section3_factorial(rows, cols, movie):
 def section4_density(rows0, cols0):
     print()
     print("=" * 78)
-    print("4) ★★密度掃引 —— 誤リンクは D を**下げる**")
+    print("4) ★★密度掃引 —— 曖昧は D を下げ、欠測は D を上げる")
     print("=" * 78)
     print("  粒子数を振る(視野は 192x192 px のまま)。平均最近接距離 ~ 0.5/sqrt(密度)。")
     print("  **欠測を含む列(検出位置)と含まない列(真値位置)を並べる**。")
