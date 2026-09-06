@@ -128,6 +128,7 @@ import numpy as np
 from scipy import ndimage as ndi
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import examplefig as figs  # noqa: E402
 import lightfield as L  # noqa: E402
 import stereo as S  # noqa: E402
 

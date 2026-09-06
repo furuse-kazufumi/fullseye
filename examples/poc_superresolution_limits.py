@@ -81,11 +81,15 @@ EXTEND: 実写真でやるなら :class:`Scene` を差し替える。ただし**
 """
 from __future__ import annotations
 
+import sys
 import time
+from pathlib import Path
 
 import numpy as np
 
-import fullseye as fs
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import examplefig as figs                                        # noqa: E402
+import fullseye as fs                                            # noqa: E402
 
 # --------------------------------------------------------------------------- #
 # 真値の設計                                                                    #
