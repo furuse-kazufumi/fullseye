@@ -649,14 +649,21 @@ def section_tool_gaps() -> None:
     print("=" * 78)
 
     # (a) 2-D の構造テンソルが 3 層のどこにも無い
-    for name in ("structure_tensor", "structure_tensor2d", "coherence", "orientation_field"):
+    for name in ("structure_tensor", "structure_tensor2d", "orientation_field"):
         assert not hasattr(fs, name) and not hasattr(fs.ledger, name), name
     import ops
     reg = {o.name for o in ops.REGISTRY}
     assert "dc_structure_texture" in reg          # 名前は似ているが構造分解(別物)
+    # ★"coherence" という名前は在るが、信号処理の 2 信号コヒーレンス(別物)
+    import inspect as _insp
+    assert hasattr(fs, "coherence")
+    assert "Pxy" in (_insp.getdoc(fs.coherence) or ""), "中身が変わった"
     print("  (a) 2-D の構造テンソル(勾配の外積の局所平均)が facade にも台帳にも"
           "op にも無い。dc_structure_texture は名前が似ているが構造/テクスチャ"
           "分解で別物。この PoC は sobel_amp + sobel_dir から自前で組んだ。")
+    print("      ★紛らわしい: fs.coherence は **在る** が、これは信号処理の"
+          "2 信号コヒーレンス γ²(f)。構造テンソルのコヒーレンスとは無関係で、"
+          "名前で探すと取り違える。")
 
     # (b) 符号つきの 2-D 勾配 (gx, gy) を返す口が無い
     assert "sobel_amp" in reg and "sobel_dir" in reg
