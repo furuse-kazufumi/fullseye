@@ -347,6 +347,61 @@ def main():
     assert bright["ガウシアン当てはめ"] < 2.0 and bright["PSF 相関"] < 2.0
     timing["1 S/N"] = time.perf_counter() - t0
 
+    # --------------------------------------------------------------- #
+    # 2) 標本化不足 —— 画素位相に依存する系統誤差(偏り)                 #
+    # --------------------------------------------------------------- #
+    t0 = time.perf_counter()
+    print("\n【2】PSF の標本化不足 —— 真の位置を副画素でずらすと、偏りが位相で振れる")
+    print(f"   雑音を切った期待値画像(flux 1e5、空 {SKY:.0f} e-/px)。"
+          f"星 1 個を行方向に 0〜1 px ずらし、位相 16 点での誤差の"
+          f"**山谷差(peak-to-peak)= 系統誤差の大きさ**と、位相平均の偏りを出す")
+    phases = np.linspace(0.0, 1.0, 16, endpoint=False)
+    fwhms = (1.0, 1.4, 2.0, 2.5, 3.2, 4.0)
+    print("     " + pad("手法", 20) + "".join(f"  FWHM {f:.1f}" for f in fwhms))
+    print("     " + pad("", 20) + "".join("   山谷差" for _ in fwhms)
+          + "   ← 単位 px(1 px = %.1f 秒角)" % PLATE_ARCSEC_PX)
+    phase_tab = {}
+    for lab, fn in METHODS:
+        line = "     " + pad(lab, 20)
+        phase_tab[lab] = {}
+        for fw in fwhms:
+            e = []
+            for ph in phases:
+                r0, c0 = 32.0 + ph, 32.0
+                img = render((64, 64), [r0], [c0], [1e5], fw, seed=None)
+                got = fn(img, [(round(r0), round(c0))], box=11, fwhm_px=fw)
+                e.append(got[0, 0] - r0)
+            e = np.array(e)
+            phase_tab[lab][fw] = (float(e.max() - e.min()), float(e.mean()))
+            line += f"{e.max() - e.min():9.4f}"
+        print(line)
+    print("     " + pad("(位相平均の偏り)", 20) + "".join(
+        f"{phase_tab['背景引き重心'][f][1]:+9.4f}" for f in fwhms)
+        + "  ← 背景引き重心")
+    for lab, _ in METHODS:
+        pk = phase_tab[lab]
+        print(f"   {lab}: FWHM 4.0 で {pk[4.0][0]:.4f} px → FWHM 1.0 で "
+              f"{pk[1.0][0]:.4f} px({pk[1.0][0] / max(pk[4.0][0], 1e-9):.0f} 倍)")
+    print(f"   → **FWHM が 2 px を切ると崖**。背景引き重心の山谷差は "
+          f"FWHM 2.5 で {phase_tab['背景引き重心'][2.5][0]:.4f} px、"
+          f"2.0 で {phase_tab['背景引き重心'][2.0][0]:.4f} px、"
+          f"1.4 で {phase_tab['背景引き重心'][1.4][0]:.4f} px、"
+          f"1.0 で {phase_tab['背景引き重心'][1.0][0]:.4f} px "
+          f"= {PLATE_ARCSEC_PX * phase_tab['背景引き重心'][1.0][0]:.3f} 秒角。"
+          f"これは**雑音ではないので枚数を重ねても消えない**")
+    print(f"   PSF 相関(既知 PSF・対数放物線)は標本化不足に一番強い —— "
+          f"FWHM 1.0 でも {phase_tab['PSF 相関'][1.0][0]:.4f} px。"
+          f"平滑後もガウシアンなら対数は厳密に放物線、という構造を使っているため")
+    assert phase_tab["背景引き重心"][1.0][0] > 8.0 * phase_tab["背景引き重心"][3.2][0]
+    assert phase_tab["PSF 相関"][1.0][0] < phase_tab["背景引き重心"][1.0][0]
+    # 系統誤差が雑音と比べて効くのはどこか(段 1 の RMS と同じ土俵に載せる)
+    print(f"   段 1 と突き合わせる: FWHM 3.2 の系統誤差 "
+          f"{phase_tab['ガウシアン当てはめ'][3.2][0]:.4f} px は、flux 1e5 の"
+          f"雑音 RMS {sn_tab[100000.0]['ガウシアン当てはめ'][2]:.4f} px と同じ桁 —— "
+          f"**明るい端で理論下限に 1.2 倍で張り付いていたのはこの位相系統誤差**"
+          f"(位相を乱数にしたので散らばりに化けていた)")
+    timing["2 位相"] = time.perf_counter() - t0
+
     print("\nPASS(執筆中)")
     return True
 
