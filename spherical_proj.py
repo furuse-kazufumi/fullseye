@@ -78,6 +78,17 @@ def project_spherical(points, h_res: int = 1024, v_res: int = 64,
     各点を方位角(列)× 仰角(行)ビンへ落とし、センサ原点からの range(slant distance)を書く。
     v_fov=(v_min,v_max)[度] の仰角帯の外側、原点上(r=0)、非有限座標の点は落とす(honest drop)。
     空/全 drop の場合は全ゼロ画像を返す(=何も見えていない、honest)。
+
+    - ``points``: (N,3)、センサ原点基準で x=前, y=左, z=上。非 (N,3) は ``ValueError``。
+    - ``h_res`` / ``v_res``: 列数(方位角 360° の等分)・行数(仰角帯の等分)。正でなければ ``ValueError``。
+    - ``v_fov``: (v_min, v_max) [度]。``v_min < v_max`` でなければ ``ValueError``。
+
+    列は ``floor((atan2(y,x) + π) / 2π · h_res)`` で、列 0 が真後ろ(-x)、``h_res//2`` が正面(+x)、
+    反時計回りに増える。行は ``(v_res-1) - floor((θ - v_min)/(v_max - v_min) · v_res)``(θ は仰角
+    [度])で、行 0 が帯の上端(θ=v_max)。画素値は slant range ``sqrt(x²+y²+z²)``(座標の単位)。
+    同じセルに複数点が落ちたら ``np.minimum.at`` で最小 range を残す(奥の点は失われる)。
+    逆変換は ``unproject_spherical``(同じ ``v_fov`` を渡す)。高さで層を切る変種が
+    ``project_cylindrical``。
     """
     _validate_res(h_res, v_res)
     v_min, v_max = _validate_fov(v_fov)

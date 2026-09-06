@@ -618,7 +618,12 @@ def _contours_to_region(cv, a, b):
 def _count_contours(cv, a, b):
     """輪郭（オブジェクト）の本数を返す特徴量。HALCON の ``count_obj``（Number of objects in a tuple.）に相当。
 
-``a``, ``b`` は未使用。輪郭リストの長さをそのまま返すだけ。"""
+``a``, ``b`` は未使用。輪郭リストの長さをそのまま返すだけ。
+
+- 入力は XLD 輪郭 dict ``{"shape": (H, W), "cs": [(N_i, 2), ...]}``。数えるのは ``cs`` の要素数で、各輪郭の点数・長さ・閉じているかは見ない(点が 1 つの輪郭も 1 本)。
+- 返り値は ``np.float64``(sort ``feature``)。0 本なら 0.0。
+- 前段の輪郭抽出(``sk_find_contours`` / ``edges_sub_pix`` / ``hx_gen_contours_skeleton``)がどう分割するかで値が決まる —— 同じ形でも 1 画素の切れ目で本数が増える。本数を安定させたいなら ``select_contours``(長さでの選別)や ``hx_union_adjacent_contours`` を間に置く。
+- 「物体の数」として使うなら ``connection``(region の連結成分)+ ``count_regions`` 相当のほうが切れ目に強い。"""
     return np.float64(len(cv["cs"]))
 
 
@@ -1242,7 +1247,14 @@ if _os.environ.get("IMGEVOLVE_NO_BACKENDS", "") != "1":
                  # (macro ops included) is preserved. Registers only NEW in_sorts by
                  # default, which is what keeps decode byte-identical — see
                  # backends_typed's docstring and docs/WAVE0_STABLE_SLOTS.md.
-                 "backends_typed"):
+                 "backends_typed",
+                 # entry bridges: image -> points/signal/video/volume/lightfield/
+                 # rgbimage/cimage/counts/beatcube/matrix/keypoints. category
+                 # "bridge" — `_candidates` EXCLUDES it, so evolution's candidate
+                 # lists (and every genome -> op index) stay byte-identical while
+                 # the name path (apply / Studio / figures / docs) can reach the
+                 # 161 ops those sorts feed. See backends_bridge's docstring.
+                 "backends_bridge"):
         try:
             _b = __import__(_mod)
             _new = _b.build(Op, IMAGE, REGION, FEATURE, CONTOUR, _norm, _bin)
@@ -1475,8 +1487,19 @@ def categories() -> dict[str, list[str]]:
     return out
 
 
+#: 進化の候補から**除く** category。``bridge``(backends_bridge)は image を入力に
+#: 取る入口 op なので、候補に入れると image の候補リストが伸び、既存ゲノムが
+#: 別の op に写る(docs/WAVE0_STABLE_SLOTS.md)。名前で引く経路(``RT`` /
+#: ``_BY_NAME`` / ``fullseye.apply`` / Studio / 図)にはそのまま見える。
+#: ``tests/test_wave0.py`` が候補リストの不変を、``tests/test_backends_bridge.py``
+#: がこの除外を固定する。
+_NOT_A_CANDIDATE = frozenset({"bridge"})
+
+
 def _candidates(sort: str) -> list[Op]:
-    return [op for op in REGISTRY if op.in_sort == sort or op.in_sort == ANY]
+    return [op for op in REGISTRY
+            if (op.in_sort == sort or op.in_sort == ANY)
+            and op.category not in _NOT_A_CANDIDATE]
 
 
 @dataclass
