@@ -258,7 +258,7 @@ def corners_by_hough(mask, n_peaks=4):
     ang = fs.op.sobel_dir(m) * 2.0 * np.pi - np.pi              # [0,1] → [-pi, pi]
     dir_row, dir_col = np.sin(ang), np.cos(ang)
     bnd = np.asarray(fs.op.get_region_contour(m)) > 0.5
-    acc = tools_geom.hough_line_trans_dir(bnd, dir_row, dir_col, n_angle=180)
+    acc = tools_geom.hough_line_trans_dir(bnd, dir_row, dir_col, n_angle=540)
     rho_max = math.hypot(CAM_H, CAM_W)
     nr, na = acc.shape
     work = acc.copy()
