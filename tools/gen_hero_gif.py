@@ -157,6 +157,16 @@ def _plot_panel(canvas, rect, xlim, ylim, xlabel, ylabel):
     return canvas, axes
 
 
+def _series(canvas, axes, x, y, color="emphasis", width=2):
+    """伸びていく折れ線。点が 1 個のときは plot_series が line を拒むので scatter。"""
+    x = np.asarray(x, float)
+    y = np.asarray(y, float)
+    if len(x) < 2:
+        return fs.plot_series(canvas, axes, x, y, kind="scatter", color=color,
+                              marker_size=3)
+    return fs.plot_series(canvas, axes, x, y, kind="line", color=color, width=width)
+
+
 def _base_frame(title, ops):
     """上帯・下帯を焼いた台紙(幕ごとに 1 枚だけ作って使い回す)。"""
     f = np.full((H, W, 3), BG, float)
