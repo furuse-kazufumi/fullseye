@@ -533,10 +533,14 @@ def main():
         t0 = time.perf_counter()
         fs.op.unsharp(np.clip(bb, 0, 1), a=0.5, b=0.5)
         t_u = 1e3 * (time.perf_counter() - t0)
-        print(f"  {n}x{n:<8} Wiener(核既知) {t_w:>8.1f} ms   "
-              f"アンシャープ {t_u:>8.1f} ms")
-    print("  → 復元 1 回は FFT 2 回ぶんで、画素数に対してほぼ n log n。"
-          "高いのは復元でなく **核の探索**(4b の数百倍)。")
+        t0 = time.perf_counter()
+        estimate_line_kernel(bb)
+        t_e = 1e3 * (time.perf_counter() - t0)
+        print(f"  {f'{n}x{n}':<12}Wiener(核既知) {t_w:>7.1f} ms   "
+              f"アンシャープ {t_u:>7.1f} ms   核の推定 {t_e:>7.1f} ms")
+    print("  → 復元 1 回は FFT 2 回ぶんで、画素数に対してほぼ n log n。核の推定も")
+    print("     FFT 1 回ぶんなので、**核が直線だと仮定できるなら推定は無料に近い**。")
+    print("     高くつくのは仮定が置けないとき(形も含めた総当たり)。")
 
     # ---- 自己検査(速さは assert しない)-------------------------------------
     # (1) 核が完全に既知・無雑音・循環モデルなら、ほぼ完全に戻る
