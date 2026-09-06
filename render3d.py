@@ -1726,7 +1726,25 @@ def bump_normals_fbm(normals, positions, wavelengths=(0.002, 0.001),
     :func:`displacement_band_weights`'s rule with the same ``nyquist`` / ``fade`` — so an
     octave the geometry carried at a pixel is not added twice, and one it could not carry
     is fully supplied by the bump. Without it every octave is bumped at full amplitude.
-    Deterministic; fail-closed."""
+    Deterministic; fail-closed.
+
+    入出力はともに ``(H, W, 3)`` 画像。``positions`` に NaN を含む画素、または法線の長さが
+    ``1e-12`` 以下の画素は背景として **元の値のまま** 残す(``render3d.render_mesh`` の空画素)。
+    有効画素が一つも無ければ入力のコピーを返す。
+
+    - ``wavelengths`` / ``amplitudes``: メッシュ(= ``positions``)の単位で同じ長さ(1〜32)の
+      正の列。不一致・負は ``ValueError``。
+    - ``rotation``: 3×3(world → 法線の座標系)。与えると法線を ``N @ R`` で world に戻して
+      勾配を取り、``@ R.T`` で元の系に戻す。``render_mesh`` の法線はカメラ空間なので
+      ``pose[:3,:3]`` を渡す。非有限・形不正は ``ValueError``。
+    - ``step``: 中心差分の刻み(既定 ``min(wavelengths)/64``)。0 以下は ``ValueError``。
+    - ``local_edge``: ``(H, W)`` の辺長マップ。形が法線と違う、または有効画素の下に非正・
+      非有限があると ``ValueError``。
+
+    高さ場を 3 軸の中心差分で微分するので評価は 1 画素あたり 6 回。法線の傾きは
+    ``max |∇h| ≈ 2π A_k / λ_k`` 程度なので、振幅を波長の 1/10 より大きくすると法線が
+    大きく寝て陰影が破綻する。結果は ``phong_shade`` / ``brdf_hapke`` 等の
+    法線マップ入力へそのまま渡せる。"""
     N = np.asarray(normals, np.float64)
     P = np.asarray(positions, np.float64)
     if N.ndim != 3 or N.shape[2] != 3 or P.shape != N.shape:
