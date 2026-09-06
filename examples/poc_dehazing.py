@@ -499,18 +499,20 @@ def main():
     print("  空を画面から外す(消失線より下だけを切り出す)と、大気光の推定は何を掴むか:")
     print(f"  {'切り出し':<20}{'A角 暗ch':>10}{'|dA| 暗ch':>11}{'A角 明画素':>12}"
           f"{'|dA| 明画素':>13}{'t MAE':>9}{'PSNR':>8}")
+    rows_nosky = []
     for label, r0 in (("空あり(全体)", 0), ("空なし(y>=40)", 40), ("空なし + 白 3 %", 40)):
         frac = 0.03 if "白" in label else VAN_FRAC
         i2, j2, t2, _d2 = build_scene(van_frac=frac)
         i2, j2, t2 = i2[r0:], j2[r0:], t2[r0:]
         ad, ab = airlight_dcp(i2), airlight_brightest(i2)
         te = transmission_dcp(i2, ad)
+        p2 = psnr_masked(recover(i2, ad, te), j2)
         print(f"  {label:<20}{angle_deg(ad, A_TRUE):>10.3f}"
               f"{np.linalg.norm(ad - A_TRUE):>11.4f}{angle_deg(ab, A_TRUE):>12.3f}"
               f"{np.linalg.norm(ab - A_TRUE):>13.4f}{np.mean(np.abs(te - t2)):>9.4f}"
-              f"{psnr_masked(recover(i2, ad, te), j2):>8.2f}")
+              f"{p2:>8.2f}")
         rows_nosky.append((label, angle_deg(ad, A_TRUE), float(np.linalg.norm(ad - A_TRUE)),
-                           float(np.mean(np.abs(te - t2))), ad.copy()))
+                           float(np.mean(np.abs(te - t2))), ad.copy(), p2))
     print(f"  → 空を外すと暗チャネル法の大気光は**角度も絶対値も壊れる**"
           f"({rows_nosky[0][1]:.3f} 度 / {rows_nosky[0][2]:.4f} →")
     print(f"     {rows_nosky[1][1]:.3f} 度 / {rows_nosky[1][2]:.4f}、推定値 {rows_nosky[1][4]})。画面内の最遠点が")
