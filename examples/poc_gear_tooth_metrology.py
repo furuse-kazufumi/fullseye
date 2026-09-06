@@ -604,12 +604,17 @@ def section_missing_tooth() -> dict:
     sc_ms, prof_ms, amp_ms, rr_ms = figs_keep["miss"]
     n_show = 3 * Z_TEETH + 2
     k = np.arange(n_show)
+    # 歯の次数(24/48/72)は 2.6 mm あって縦軸を潰すので、**呼び手が 0.35 mm で
+    # 切ってから**渡す(切ったことは題に書く)。
+    cap = 0.35
     figs.save_plot("spectrum",
-                   [("歯欠け無し", k[1:], amp_ok[1:n_show]),
-                    ("歯欠け有り", k[1:], amp_ms[1:n_show])],
+                   [("歯欠け無し", k[1:], np.minimum(amp_ok[1:n_show], cap)),
+                    ("歯欠け有り", k[1:], np.minimum(amp_ms[1:n_show], cap))],
                    xlabel="次数(1 = 偏心、%d = 歯)" % Z_TEETH,
-                   ylabel="振幅 [mm]", ylim=(0.0, 0.35),
-                   title="1 枚の歯欠けは全次数に漏れる(0.35 mm で切って表示)")
+                   ylabel="振幅 [mm](%.2f mm で切って表示)" % cap,
+                   title="1 枚の歯欠けは全次数に漏れる(偏心 0.050 mm)",
+                   caption="歯の次数 24/48/72 は 2.6 mm あるので %.2f mm で切った"
+                           % cap)
     figs.save_grid("missing",
                    [sc_ok["img"], sc_ms["img"], sc_ms["img"] - sc_ok["img"]],
                    ["歯 24 枚", "1 枚欠け", "差"],
