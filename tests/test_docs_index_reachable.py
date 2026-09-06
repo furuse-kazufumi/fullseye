@@ -105,15 +105,23 @@ def _all_md() -> list:
     return sorted(p.resolve() for p in DOCS.rglob("*.md"))
 
 
-def test_every_document_is_reachable_from_the_index():
-    """★これが本体。`docs/**/*.md` が 1 本残らず索引から辿れること。"""
-    seen = _reachable()
+@pytest.mark.parametrize("lang", LANGS, ids=lambda x: x or "ja")
+def test_every_document_is_reachable_from_the_index(lang):
+    """★これが本体。`docs/**/*.md` が 1 本残らず索引から辿れること。
+
+    **6 言語すべてを出発点にして測る**(Codex の敵対的レビュー、2026-09-06)。
+    ja からだけ測ると、英語で来た人と英語で引く RAG には辿れない文書が
+    残っていても緑になる。生成ブロックは 6 言語に同じ相対リンクを入れるので、
+    差が出るのは**手書き部分の抜け**だけ —— それがまさに見たいもの。
+    """
+    root = _index_path(lang)
+    seen = _reachable(root)
     orphans = [p for p in _all_md() if p not in seen]
     rel = sorted(str(p.relative_to(ROOT)).replace("\\", "/") for p in orphans)
     assert not orphans, (
-        "索引 docs/README.md から辿れない文書が %d 本ある。入口が無い文書は "
-        "在っても無いのと同じ。`py -3.11 tools/gen_docs_index_ops.py` を走らせるか、"
-        "どこかからリンクすること:\n  %s" % (len(rel), "\n  ".join(rel[:40])))
+        "索引 %s から辿れない文書が %d 本ある。入口が無い文書は在っても無いのと"
+        "同じ。`py -3.11 tools/gen_docs_index_ops.py` を走らせるか、どこかから"
+        "リンクすること:\n  %s" % (root.name, len(rel), "\n  ".join(rel[:40])))
 
 
 #: リンク切れを見る拡張子。**画像も見る** —— 索引の扉絵が消えても
