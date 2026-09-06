@@ -270,7 +270,7 @@ def corners_by_hough(mask, n_peaks=4):
             break
         peaks.append((ri / (nr - 1) * 2 * rho_max - rho_max, ai / na * np.pi))
         r0, r1 = max(0, ri - 30), min(nr, ri + 31)
-        a0, a1 = max(0, ai - 12), min(na, ai + 13)
+        a0, a1 = max(0, ai - 36), min(na, ai + 37)
         work[r0:r1, a0:a1] = 0.0
     if len(peaks) < 4:
         return None
