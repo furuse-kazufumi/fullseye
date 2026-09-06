@@ -221,7 +221,7 @@ def _paint(acc, owner, best, cy, cx, ra, rb, th, bright, ident):
     y0, y1 = max(0, int(cy * SS) - r), min(n, int(cy * SS) + r + 1)
     x0, x1 = max(0, int(cx * SS) - r), min(n, int(cx * SS) + r + 1)
     if y1 <= y0 or x1 <= x0:
-        return
+        return 0
     yy, xx = np.mgrid[y0:y1, x0:x1]
     dy = yy / SS - cy
     dx = xx / SS - cx
