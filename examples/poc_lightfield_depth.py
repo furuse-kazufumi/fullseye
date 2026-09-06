@@ -631,7 +631,8 @@ def main():
     assert abs(b_in - 1.30) > 10.0 * abs(d_in - 1.30), "2 眼が鏡面で壊れない"
     assert abs(spec[(1.30, 1.0)][2] - 1.30) < 0.1, \
         "面と同じ速さで動くハイライトでも壊れる = 鏡面の効果ではない"
-    # 10. ★ 穴 (e): stereo.disparity_subpixel が平坦領域で RuntimeWarning を漏らす
+    # 10. ★ 穴 (e) は 2026-09-06 に塞がった。**塞がった状態を固定する**側へ
+    #     書き換えてある(以前は「警告が出ること」を assert していた)。
     step_a = np.zeros((16, 16))
     step_a[:, 8:] = 1.0
     step_b = np.zeros((16, 16))
