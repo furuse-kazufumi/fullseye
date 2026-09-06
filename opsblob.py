@@ -1,7 +1,7 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """opsblob —— 2-D の連結成分解析(blob analysis)op の統一レジストリ。
 
-実体は ``blob2d.py``(7 op / 4 カテゴリ)。台帳の役目は 3 つ:
+実体は ``blob2d.py``(10 op / 5 カテゴリ)。台帳の役目は 3 つ:
 docs/ops へノートを出す・連鎖ファザーに食わせる・宣言型と素の返りを橋渡しする。
 
 使い方::
@@ -62,6 +62,14 @@ _CATALOG = {
     "select": [
         ("blob_select", "blob2d", ["labels2d"], "labels2d"),
         ("blob_select_largest", "blob2d", ["labels2d"], "labels2d"),
+    ],
+    # 割る —— 触れ合って 1 個になった塊を戻す(距離 → 種 → 分水嶺)
+    # `poc_cell_counting` と `poc_particle_sizing` が**揃って**挙げた穴。
+    # 連結成分は「触れているか」しか見ないので、重なった細胞や粒子は割れない。
+    "split": [
+        ("blob_distance", "blob2d", ["mask"], "image2d"),
+        ("blob_seeds", "blob2d", ["image2d"], "labels2d"),
+        ("blob_split", "blob2d", ["labels2d", "labels2d", "image2d"], "labels2d"),
     ],
     # 取り出す/見る —— 1 個を領域として抜く、輪郭、重ね描き(出口)
     "extract": [

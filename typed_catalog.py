@@ -206,6 +206,10 @@ OP_PARAM_HINTS = {
     ("blob_select", "vmin"): lambda rng: 10.0,
     # 1 起点。0 は背景なので拒否される —— 既定の 0 に任せると毎回 ValueError。
     ("blob_region", "index"): lambda rng: 1,
+    # blob_seeds の `h` に既定は無い(絶対値でなければ意味を持たないので、
+    # 「正規化画像に対する比」を既定にするのは xsk2_h_maxima の穴そのもの)。
+    # 種の距離マップは最大 4 px 程度なので、1.0 なら種が 2 つ以上残る。
+    ("blob_seeds", "h"): lambda rng: 1.0,
     # optscene.observe_surface は既定 (256, 256) x supersample 2 で **117 秒**
     # かかる(2026-09-06 実測。32:0.25 / 64:0.69 / 128:2.40 / 256:19.1 秒
     # (supersample 1)、supersample 2 で更に 6 倍)。ファザーの仕事は型と契約の
