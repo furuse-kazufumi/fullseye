@@ -45,6 +45,7 @@ _LEDGERS = (
     ("opsshapestat", "OPSSHAPESTAT"),
     ("opsshape2d", "OPSSHAPE2D"),
     ("opsroughness", "OPSROUGHNESS"),
+    ("opsmeasure1d", "OPSMEASURE1D"),
 )
 
 #: 進化する 2-D op のレジストリ(``ops.REGISTRY``、882 op)。**台帳ではない** ——

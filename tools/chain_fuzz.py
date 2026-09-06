@@ -1393,6 +1393,12 @@ TYPE_CHECKS = {
     # 未実行になる(嘘を防ぐためでなく、実際に走らせるための型)。
     "efdmodel": lambda v: isinstance(v, dict)
                           and {"a0", "c0", "coeffs", "n_harmonics"} <= set(v),
+    # 測定線と計測モデル。どちらも dict なので table にも当たる。鍵で見ないと
+    # 族の 8 op が KeyError で終わり、検査面としては死ぬ(嘘を防ぐためでなく
+    # 実際に走らせるための型 —— efdmodel / shapemodel と同じ理由)。
+    "measurehandle": lambda v: isinstance(v, dict)
+                               and {"type", "rows", "cols", "spacing"} <= set(v),
+    "metrologymodel": lambda v: isinstance(v, dict) and isinstance(v.get("objects"), list),
     "points": _is_pts,
     "normals": _is_pts,
     "keypoints": lambda v: _is_pts(v) or (isinstance(v, np.ndarray) and v.ndim == 2),

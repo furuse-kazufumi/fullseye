@@ -116,6 +116,12 @@ LEDGER_DIMS = {
     # 左右対称性 / 符号つき面距離)が空いていた。新語は shapeset と shapemodel。
     "shapestat": {"registry": "opsshapestat", "table": "OPSSHAPESTAT",
                   "module": "shapestats", "family": "shape_statistics"},
+    # 2026-09-06: 測定線・測定モデルによるサブピクセル計測。**実装も動作も
+    # 問題なかったのに公開経路 0/14 だった 2 モジュール**を、PoC で実地評価
+    # (14/14 動作・ゼロ点比 41 倍)してから載せた。新語は measurehandle と
+    # metrologymodel の 2 つ。
+    "measure1d": {"registry": "opsmeasure1d", "table": "OPSMEASURE1D",
+                  "module": "measuring1d", "family": "subpixel_measuring"},
     # 2026-09-06: 表面粗さ。PoC が「粗さパラメータの op が 1 つも無い」と実測つきで
     # 報告して新設。新語は 1 つも作らない(高さ場は既存の depth)。
     "roughness": {"registry": "opsroughness", "table": "OPSROUGHNESS",

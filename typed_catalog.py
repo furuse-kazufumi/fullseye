@@ -205,6 +205,43 @@ OP_PARAM_HINTS = {
     # 「引数が組めない」で永久にスキップされ、カバレッジ表には未到達として
     # しか出ない(2026-09-06 の初回計測で 13 op 中この 1 本だけ落ちた)。
     # 表面粗さ。制約は 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8。
+    # サブピクセル計測。測定線の生成 op は入力を取らないので全引数にヒントが要る。
+    ("gen_measure_rectangle2", "row"): lambda rng: 16.0,
+    ("gen_measure_rectangle2", "col"): lambda rng: 16.0,
+    ("gen_measure_rectangle2", "phi"): lambda rng: 0.0,
+    ("gen_measure_rectangle2", "length1"): lambda rng: 12.0,
+    ("gen_measure_rectangle2", "length2"): lambda rng: 3.0,
+    ("gen_measure_rectangle2", "shape"): lambda rng: (32, 32),
+    ("gen_measure_arc", "center_row"): lambda rng: 16.0,
+    ("gen_measure_arc", "center_col"): lambda rng: 16.0,
+    ("gen_measure_arc", "radius"): lambda rng: 10.0,
+    ("gen_measure_arc", "angle_start"): lambda rng: 0.0,
+    ("gen_measure_arc", "angle_extent"): lambda rng: 1.5,
+    ("gen_measure_arc", "width"): lambda rng: 3.0,
+    ("gen_measure_arc", "shape"): lambda rng: (32, 32),
+    ("translate_measure", "drow"): lambda rng: 1.0,
+    ("translate_measure", "dcol"): lambda rng: 1.0,
+    ("align_metrology_model", "drow"): lambda rng: 1.0,
+    ("align_metrology_model", "dcol"): lambda rng: 1.0,
+    ("add_metrology_object_line_measure", "row1"): lambda rng: 4.0,
+    ("add_metrology_object_line_measure", "col1"): lambda rng: 4.0,
+    ("add_metrology_object_line_measure", "row2"): lambda rng: 28.0,
+    ("add_metrology_object_line_measure", "col2"): lambda rng: 28.0,
+    ("add_metrology_object_circle_measure", "row"): lambda rng: 16.0,
+    ("add_metrology_object_circle_measure", "col"): lambda rng: 16.0,
+    ("add_metrology_object_circle_measure", "radius"): lambda rng: 8.0,
+    ("add_metrology_object_rectangle2_measure", "row"): lambda rng: 16.0,
+    ("add_metrology_object_rectangle2_measure", "col"): lambda rng: 16.0,
+    ("add_metrology_object_rectangle2_measure", "phi"): lambda rng: 0.0,
+    ("add_metrology_object_rectangle2_measure", "length1"): lambda rng: 10.0,
+    ("add_metrology_object_rectangle2_measure", "length2"): lambda rng: 6.0,
+    ("add_metrology_object_ellipse_measure", "row"): lambda rng: 16.0,
+    ("add_metrology_object_ellipse_measure", "col"): lambda rng: 16.0,
+    ("add_metrology_object_ellipse_measure", "phi"): lambda rng: 0.0,
+    ("add_metrology_object_ellipse_measure", "radius1"): lambda rng: 10.0,
+    ("add_metrology_object_ellipse_measure", "radius2"): lambda rng: 6.0,
+    ("add_metrology_object_generic", "otype"): lambda rng: "circle",
+    ("add_metrology_object_generic", "params"): lambda rng: (16.0, 16.0, 8.0),
     ("surface_synth_psd", "n"): lambda rng: 64,
     ("surface_synth_psd", "dx"): lambda rng: 1.0,
     ("surface_synth_psd", "hurst"): lambda rng: 0.8,
@@ -510,7 +547,8 @@ def _registry_adapters():
     for _mod in ("opstomography", "opsvolcolor", "opsreprconv", "opsannotate",
                  "opsgfx2d", "opsimgmetrics", "opscolortransport",
                  "opsimgforensics", "opsastrostack", "opsdem", "opspiv",
-                 "opsprofile", "opsshapestat", "opsshape2d", "opsroughness"):
+                 "opsprofile", "opsshapestat", "opsshape2d", "opsroughness",
+                 "opsmeasure1d"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
         except Exception as _e:                       # 台帳が無い環境でも動く
@@ -681,6 +719,9 @@ def catalog():
         # surface_params は既定で「帯域未処理の配列」を fail-closed で拒否するため、
         # ヒントに assume_filtered=True を入れないと「呼べたが毎回拒否」になる。
         ("opsroughness", "OPSROUGHNESS", "roughness"),
+        # 2026-09-06: サブピクセル計測。生成 op(gen_measure_* / create_*)は
+        # 入力を取らないので OP_PARAM_HINTS だけが頼り。
+        ("opsmeasure1d", "OPSMEASURE1D", "measure1d"),
         # 2026-09-06: PIV。**画像対から密な変位を出す op がこの repo に 1 つも
         # 無かった**(scene_flow_lk は 3-D 体積用、estimate_flow は点群用)。
         # 新語 `flow2d` を 1 つだけ足す —— flow_dense の述語は
