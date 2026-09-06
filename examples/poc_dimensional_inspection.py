@@ -697,8 +697,11 @@ def section_cliff_blur():
     for ps, ratio, mb, mp, det, fb, fp in rows:
         if edge_ratio is None and np.isfinite(mb) and abs(mb) > thr:
             edge_ratio = ratio
-    print(f"\n  -> ``measuring1d`` の幅の偏りが {thr} px を超えるのは "
-          f"w/sigma = {edge_ratio:.2f} を切ってから。")
+    if edge_ratio is None:
+        print(f"\n  -> この掃引では偏りが {thr} px を超えなかった。")
+    else:
+        print(f"\n  -> ``measuring1d`` の幅の偏りが {thr} px を超えるのは "
+              f"w/sigma = {edge_ratio:.2f} を切ってから。")
     print("     つまり **PSF 幅の 3〜4 倍より近いエッジ同士は、互いを引き寄せる**")
     print("     (幅は必ず大きく出る側 = 対の外へ押し合う。符号が一定なのが厄介で、")
     print("      繰り返し測っても消えない)。")
