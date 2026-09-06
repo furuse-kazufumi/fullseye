@@ -336,7 +336,8 @@ def main() -> bool:
          ("零点 A", vs, np.full(vs.size, blank_rmse))],
         xlabel="log10 投影数(12 / 24 / 45 / 90 / 180)", ylabel="RMSE(密度そのまま)",
         title="FBP は零点と交差する",
-        caption="24 本までは FBP の勝ち。12 本では零点 B にも零点 A にも負ける —— "
+        caption="零点 A = 空白画像、零点 B = 無フィルタ逆投影(どちらも水平・ほぼ水平)。"
+                "24 本までは FBP の勝ちで、12 本では両方に負ける —— "
                 "ランプは測っていない高周波を増幅するため。")
 
     print()
