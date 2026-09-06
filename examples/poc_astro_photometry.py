@@ -390,6 +390,27 @@ def main():
         table[r_ap] = cells
         print(f"     {r_ap:4.0f} px ({r_ap / sigma_bad:.1f} σ) " + " ".join(
             f"中央 {100 * m:+8.3f} % rms {100 * sd:6.3f} %" for m, sd in cells))
+    # 図: 御利益が開口半径で 30 倍変わる、という段 4 の要点そのもの。
+    r_axis = [3.0, 6.0, 12.0]
+    figs.save_plot(
+        "aperture_tradeoff",
+        [("全 12 枚(混合)", r_axis, [100 * table[r][0][0] for r in r_axis]),
+         ("選別後 6 枚", r_axis, [100 * table[r][1][0] for r in r_axis]),
+         ("良い 12 枚", r_axis, [100 * table[r][2][0] for r in r_axis])],
+        xlabel="開口半径 [px]", ylabel="測光誤差 中央値 [%]",
+        title="lucky 選別の御利益は開口半径で決まる",
+        caption="開口を広く取れるなら、ぼけたフレームも同じ明るさを持っている"
+                "(r=12 では 3 本が重なる)。")
+    # 図: 良いフレームと悪いフレームの現物。対数で伸ばさないと空しか写らない。
+    figs.save_grid(
+        "lucky_frames",
+        [np.log10(np.maximum(good[0], 1.0)), np.log10(np.maximum(bad[0], 1.0)),
+         np.log10(np.maximum(lucky_stack, 1.0)),
+         np.log10(np.maximum(mixed_stack, 1.0))],
+        ["良 1 枚 FWHM %.1f px" % fw_good, "悪 1 枚 FWHM %.1f px" % fw_bad,
+         "選別後 6 枚の合成", "混合 12 枚の合成"],
+        title="lucky imaging(表示は log10 電子数)",
+        caption="悪いほうは星が広がっている。混合の合成は芯の周りに裾が残る。")
     # 開口が広いほど、混合の劣化は小さい(ぼけても総フラックスは残っているから)
     assert abs(table[12.0][0][0]) < abs(table[6.0][0][0]) < abs(table[3.0][0][0])
     assert abs(table[6.0][1][0]) < 0.01     # r=6 では選別が誤差を 1 % 未満に戻す
