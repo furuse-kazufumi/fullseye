@@ -953,38 +953,45 @@ def main():
     print("     同数なら **個数は元に戻る**。個数は分割の質の証拠にならない。")
 
     print("\n=== 8. 崖 (d) 雑音と背景ムラ ===")
-    print("  " + pad("条件", 26, right=False) + pad("前景率", 10)
-          + "".join(pad(n.split("(")[0][:10], 16) for n, _ in METHODS))
-    print("  " + pad("", 26, right=False) + pad("", 10)
-          + "".join(pad("偏り/過分割/過統合", 16) for _ in METHODS))
+    print("  ★**偽物(細胞でないものを 1 個と数えた)を分けて出す** —— これを個数に")
+    print("     混ぜると、雑音で前景が粒々になった場面が『過分割が増えた』に見える。")
+    NOISE_METHODS = (METHODS[0], METHODS[2], METHODS[3])
+    print("  " + pad("条件", 24, right=False) + pad("前景率", 9)
+          + "".join(pad(n.split("(")[0][:12], 22) for n, _ in NOISE_METHODS))
+    print("  " + pad("", 24, right=False) + pad("", 9)
+          + "".join(pad("偏り/過分割/過統合/偽物", 22) for _ in NOISE_METHODS))
     noise_tab = {}
     truth_fg = None
     for label, kw in (("基準", {}),
                       ("光子 1/4(雑音 2 倍)", {"photons": PHOTONS / 4}),
-                      ("光子 1/16(雑音 4 倍)", {"photons": PHOTONS / 16}),
+                      ("光子 1/9(雑音 3 倍)", {"photons": PHOTONS / 9}),
                       ("背景ムラ 2.5 倍", {"bg_amp": 2.5 * BG_AMP}),
                       ("背景ムラ 5 倍", {"bg_amp": 5.0 * BG_AMP}),
-                      ("両方(1/16 + 5 倍)", {"photons": PHOTONS / 16,
-                                              "bg_amp": 5.0 * BG_AMP})):
+                      ("両方(1/9 + 5 倍)", {"photons": PHOTONS / 9,
+                                             "bg_amp": 5.0 * BG_AMP})):
         scs = [make_scene(s, pack=BASE_PACK, **kw) for s in SEEDS]
         fgs = [foreground(s["img"]) for s in scs]
         fgr = float(np.mean([f.mean() for f in fgs]))
         if truth_fg is None:
             truth_fg = float(np.mean([(s["owner"] > 0).mean() for s in scs]))
         cells = []
-        for name, fn in METHODS:
+        for name, fn in NOISE_METHODS:
             r = summarize([evaluate(s, fn(s["img"], fg)) for s, fg in zip(scs, fgs)])
             noise_tab[(label, name)] = r
-            cells.append(pad(f"{r['bias']:+.0f}/{r['split']:.0f}/{r['merge']:.0f}", 16))
+            cells.append(pad(f"{r['bias']:+.0f}/{r['split']:.0f}/"
+                             f"{r['merge']:.0f}/{r['spurious']:.0f}", 22))
         noise_tab[(label, "fg")] = fgr
-        print("  " + pad(label, 26, right=False) + pad(f"{100 * fgr:.1f} %", 10)
+        print("  " + pad(label, 24, right=False) + pad(f"{100 * fgr:.1f} %", 9)
               + "".join(cells))
     print(f"  (真値の前景率 = 細胞が占める画素の割合 {100 * truth_fg:.1f} %)")
-    print("  → **雑音と背景ムラは効き方が違う**。雑音は距離変換の尾根を割るので")
-    print("     過分割を増やす。背景ムラは大津の閾値を動かして前景率そのものを")
-    print("     ずらすので、暗い側の細胞が消え(取りこぼし)、明るい側が膨らんで")
-    print("     くっつく(過統合)。**同じ『画質が悪い』でも直し方が逆**で、")
-    print("     前者は種の間引き、後者は背景補正(shading correction)が要る。")
+    print("  → **雑音と背景ムラは効き方が違う**。雑音は前景を粒々にするので")
+    print("     **偽物**が爆発する(過分割ではない —— 真値の細胞に触れていないので)。")
+    print("     背景ムラは大津の閾値を動かして前景率そのものを 3 倍にずらし、")
+    print("     細胞が膨らんでくっつくので **過統合**が増える。**同じ『画質が悪い』**")
+    print("     **でも直し方が逆**で、前者は面積による棄却か平滑化、後者は背景補正")
+    print("     (shading correction)が要る。")
+    print("  → 形の事前知識だけが雑音に強い。面積の下限で偽物を落としているからで、")
+    print("     分割の巧拙ではなく **棄却の規則を持っているかどうか** の差である。")
 
     print("\n=== 9. 崖 (e) 縁で切れた細胞をどう数えるか ===")
     print("  3 通りの規約: 全部数える / 縁に触れたものを捨てる / 半分に数える。")
