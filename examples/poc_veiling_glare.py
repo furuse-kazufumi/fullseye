@@ -520,16 +520,20 @@ def section7_where_is_the_tail():
     print("     **op ではなく窓が測定の限界を決めている**。")
     if figs.enabled():
         sel = f_px <= 0.30
-        series = [("PSF 全体 (g=0.20)", f_px[sel], pairs[sel, 1])]
+        series = [("PSF 全体", f_px[sel], pairs[sel, 1])]
         edge = edge_scene()
         for w in (16, 128):
             f, m, _, _ = sfr(esf_of(convolve(edge, 0.20)), w)
-            series.append(("刃のエッジ SFR ±%d" % w, f[f <= 0.30], m[f <= 0.30]))
+            series.append(("エッジ SFR ±%d" % w, f[f <= 0.30], m[f <= 0.30]))
+        if "f" in CHART:
+            s = CHART["f"] <= 0.30
+            series.append(("正弦チャート 絶対", CHART["f"][s], CHART["abs20"][s]))
         series.append(("1-g = 0.80", np.array([0.0, 0.30]), np.array([0.80, 0.80])))
         figs.save_plot("mtf_curves", series, xlabel="空間周波数 [cyc/px]", ylabel="MTF",
-                       title="裾は f<0.02 cyc/px に居る(窓が狭いと届かない)",
-                       caption="全 PSF の MTF だけが f→0 で 1.0 から 0.80 へ落ちる。"
-                               "窓 ±16 px の SFR は 0.031 cyc/px より下を持たない。")
+                       title="同じレンズ(g=0.20)を 4 通りに測る",
+                       caption="全 PSF の MTF と正弦チャートの絶対コントラストは "
+                               "0.80 の台地を見る。窓つき SFR は 1.0 から始まって"
+                               "裾を見落とす(±16 px は 0.031 cyc/px より下を持たない)。")
 
 
 def section_figures():
