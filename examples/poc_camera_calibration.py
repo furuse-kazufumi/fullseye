@@ -448,6 +448,15 @@ def main():
         assert abs(r_["fx"] / TRUE_FX - zr_) < 5e-3, "fx 比と Z 比が一致しない"
     # 4. 不確かさは真の誤差の桁を当てる(再投影 RMS は当てない)
     assert rb_["sigma_fx"] > 10.0 * rg_["sigma_fx"], "sigma_fx が配置の差を映さない"
+    # 4b. ★ 正直な負けの記録: 狭い視野 + 雑音 0.30 px では主点を推定するより
+    #     画像中心に固定するゼロ点 B の方が正しい(上回れない条件が実在する)
+    s_wide = verdicts["広い視野 雑音0.05px"][0]
+    s_narrow = verdicts["狭い視野 雑音0.30px"][0]
+    assert s_wide["dcx_full"] < NULL_B_DCX, "広い視野でゼロ点 B に負けた"
+    assert s_wide["fx_full"] < 0.2 * s_wide["fx_nodist"], "広い視野でゼロ点 A に勝てない"
+    assert s_narrow["dcx_full"] > NULL_B_DCX, (
+        "狭い視野 + 雑音でもゼロ点 B に勝ってしまった —— 章 3 の結論を書き直せ")
+    assert s_narrow["sigma_cx"] > NULL_B_DCX, "sigma_cx が情報の欠如を映さない"
     # 5. 完全退化(全視点正面平行)は閉形式が fail-closed で拒否する
     flat_ = make_poses(N_VIEWS, tilt_deg=0.0, offset_m=0.14, z_lo=0.55, z_hi=0.85)
     ob_ = observe(obj, flat_, sigma_px=0.0, seed=4)
