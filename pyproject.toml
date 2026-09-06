@@ -269,6 +269,16 @@ py-modules = [
                    # `<op>.<lang>.html`(en / zh / tw / ko / de)も同じ glob に入る。
                    "op_help/*/*.html"]
 
+[tool.setuptools.exclude-package-data]
+# ★2026-09-07: 手元の wheel が 96 MB(PyPI 上限 100 MB)になっていた。原因は setuptools の
+# 探索ではなく **古い build/lib/ のキャッシュ**(以前 package-data に載せていた頃の
+# sample_sources_ai/ が build/lib/studio_assets/ に残り、そのまま wheel に詰め直されていた)。
+# `build/` を消して組むと 56 MB。CI は毎回きれいな checkout なので影響していない。
+# 再発防止: ディレクトリ自体を package の外(tools/fops_article/sample_sources_ai/)へ移し、
+# この除外は保険。門 = tools/ci_wheel_check.py(wheel 側に在れば NG)+ ci.yml のサイズ上限。
+# 手元で wheel を組むときは **先に build/ を消す**(docs/RELEASE_CHECKLIST.md 参照)。
+"studio_assets" = ["sample_sources_ai/*"]
+
 [tool.pytest.ini_options]
 # 2026-09-05 に追加。**今日実際に踏んだ 2 つの失敗の型**に効かせるための設定:
 #

@@ -1177,3 +1177,11 @@ furuse.work へ誘導する」。
   (224 op)と同じバグ族の 3 度目。手元の門 `test_every_module_the_registry_actually_loads_is_shipped`
   は正しく落ちる(確認済み)が、backend を足した**後に**回していなかった。教訓: backend
   モジュールを 1 本足したら packaging テストと wheel 門を**その場で**回す。
+- **手元で組んだ wheel が 96 MB**(2026-09-07、PyPI 上限 100 MB)。中身は同梱を止めたはずの
+  `studio_assets/sample_sources_ai/` 42 MB。最初は「setuptools の探索が git 管理下を全部
+  拾う」と読んだが**誤り**で、実際は**古い `build/lib/` のキャッシュ**が詰め直されていた
+  (`build/` を消すと 56 MB)。CI はきれいな checkout なので PyPI の 0.1.10 は無事。
+  対策: ディレクトリを package の外 `tools/fops_article/sample_sources_ai/` へ移動、
+  `exclude-package-data` を保険で明示、`tools/ci_wheel_check.py` が wheel 側の存在を NG に、
+  ci.yml に wheel サイズ上限(70 MB)。手順書に「wheel を組む前に build/ を消す」。
+

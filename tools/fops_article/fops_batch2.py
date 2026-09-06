@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Batch 2 (photometric): smoothing / gray / arithmetic / color / Image /
 augmentation / Tools / restoration."""
+from pathlib import Path
 import numpy as np
 from scipy import ndimage
 
@@ -244,7 +245,7 @@ def demo_tools():
         if src == "mars":
             from PIL import Image
             import os
-            im = Image.open(r"C:\dev\projects\imgevolve\studio_assets\sample_sources_ai\mars_dunes.jpg").convert("L")
+            im = Image.open(str(Path(__file__).resolve().parent / "sample_sources_ai" / "mars_dunes.jpg")).convert("L")
             s = min(im.size)
             im = im.crop((0, 0, s, s)).resize((384, 384), Image.LANCZOS)
             img = np.asarray(im).astype(np.float64) / 255.0

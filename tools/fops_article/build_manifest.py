@@ -73,7 +73,7 @@ L.append("## 入力素材の出所一覧\n")
 L.append("- AI 生成(Gemini): parts_tray, gears, fruits, steel_balls, pcb, road, statue, bottle_caps, dark_workshop, "
          "chess_floor, beans_pile, cookies_tray, fundus_like, crack_concrete, dragonfly_wing, feather_macro, "
          "bga_xray_like, thin_section, leaf_veins, tree_rings, otolith, amber_ant, amber_mosquito, amber_beetle "
-         "(保存先: `imgevolve/studio_assets/sample_sources_ai/`。Studio サンプル素材として再利用可)")
+         "(保存先: `tools/fops_article/sample_sources_ai/`。Studio サンプル素材として再利用可)")
 L.append("- 定番(scikit-image 同梱・再配布実績): camera, coins, page, moon, checkerboard, retina, hubble_deep_field(NASA/ESA)")
 L.append("- 実画像: EHT M87*(EHT Collaboration, CC BY 4.0, Wikimedia 経由)/ 火星砂丘 PIA18244(NASA/JPL-Caltech, パブリックドメイン)")
 L.append("- 同梱サンプル(imgevolve): blobs, weave_synth, brick_quilt, grain_synth ほか")

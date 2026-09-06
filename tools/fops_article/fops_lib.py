@@ -8,6 +8,8 @@ All processing is real Fullseye code (ops registry / unified facade / modules).
 """
 from __future__ import annotations
 
+from pathlib import Path
+
 import json
 import os
 import sys
@@ -19,7 +21,7 @@ sys.path.insert(0, r"C:\dev\projects\imgevolve")
 os.chdir(r"C:\dev\projects\imgevolve")
 
 OUT = r"C:\dev\projects\onocollo-complete\docs\qiita\20260822_g1_evis\ops"
-AI_DIR = r"C:\dev\projects\imgevolve\studio_assets\sample_sources_ai"
+AI_DIR = str(Path(__file__).resolve().parent / "sample_sources_ai")   # 2026-09-07: wheel に乗らない場所へ移動
 SAMPLES = r"C:\dev\projects\imgevolve\studio_assets\sample_images"
 os.makedirs(OUT, exist_ok=True)
 

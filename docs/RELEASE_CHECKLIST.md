@@ -165,3 +165,18 @@ Linux 側も同じことをする(`wsl` の venv に `pip install fullseye==<版
 
 門を足したら、**その門を壊して落ちることを確かめる**(変異テスト)。
 落ちない門は、無い門より悪い。あると思い込ませるぶんだけ。
+
+## 手元で wheel を組むとき(2026-09-07 追記)
+
+**先に `build/` を消す。** setuptools は古い `build/lib/` を詰め直すので、package-data から
+外した資産(例: `sample_sources_ai/` 42 MB)が残っていると wheel が 96 MB(PyPI 上限 100 MB)
+になる。CI はきれいな checkout なので影響しないが、手元で大きさや中身を確かめるときは:
+
+```
+Remove-Item -Recurse -Force build
+py -3.11 -m build --wheel -o dist_check
+py -3.11 -c "import glob,os; w=glob.glob('dist_check/*.whl')[0]; print(w, round(os.path.getsize(w)/1e6,1), 'MB')"
+```
+
+CI の wheel 門(`core (numpy+scipy only)`)は 70 MB を超えると落ちる。
+

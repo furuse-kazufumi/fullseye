@@ -27,7 +27,7 @@
 
 - **3 系統を混ぜる**: 定番(読者が見慣れている=効果だけが際立つ)1 種+AI 生成/合成 2 種が理想。
 - **定番(ライセンス明確なもののみ)**: scikit-image 同梱(coins/camera/page/moon/checkerboard/retina/hubble_deep_field 等)、OpenCV samples。Lena 禁止。USC-SIPI 等はライセンス原文確認できた場合のみ。
-- **AI 生成(Gemini gemini-2.5-flash-image、REST)**: スクリプトは `gen_ai_inputs.py` 型(`GEMINI_API_KEY` は環境変数で渡す。**鍵の置き場所は公開文書に書かない**)。生成品は `imgevolve/studio_assets/sample_sources_ai/` に保存し Studio サンプル素材として再利用。写真調・処理効果が映える被写体。文字入りは避ける。IMAGE_RECITATION で拒否されることがある(実測 1/24)。
+- **AI 生成(Gemini gemini-2.5-flash-image、REST)**: スクリプトは `gen_ai_inputs.py` 型(`GEMINI_API_KEY` は環境変数で渡す。**鍵の置き場所は公開文書に書かない**)。生成品は `tools/fops_article/sample_sources_ai/`(2026-09-07 に studio_assets から移動。package の外なので wheel に乗らない) に保存し Studio サンプル素材として再利用。写真調・処理効果が映える被写体。文字入りは避ける。IMAGE_RECITATION で拒否されることがある(実測 1/24)。
 - **自前合成**: 真値が欲しいデモの本命(欠陥注入、既知ホモグラフィ、dt 既知の物理連番など)。
 - **実画像**: NASA(images-api.nasa.gov で検索→ images-assets.nasa.gov から取得、PD)、EHT(CC BY 4.0、クレジット必須)。photojournal.jpl.nasa.gov の直リンクは HTML を返すことがあるので注意。
 

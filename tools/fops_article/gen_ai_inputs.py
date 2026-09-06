@@ -11,7 +11,7 @@ if not key:
     )
 MODEL = "gemini-2.5-flash-image"
 REPO_ROOT = Path(__file__).resolve().parents[2]
-OUT = str(REPO_ROOT / "studio_assets" / "sample_sources_ai")
+OUT = str(Path(__file__).resolve().parent / "sample_sources_ai")   # 2026-09-07: package の外(wheel に乗らない)
 
 PROMPTS = {
     "parts_tray": "Top-down photograph of assorted small metal machine parts (bolts, nuts, washers, springs) scattered in a light gray plastic tray, even diffuse industrial lighting, sharp focus, realistic, no text, no watermark",

@@ -79,8 +79,20 @@ def _dump(path: str) -> int:
             declared = tomllib.load(open(pp, "rb"))["tool"]["setuptools"]["py-modules"]
         except Exception:                              # noqa: BLE001
             declared = []
+    # 「同梱しない」と決めた資産が wheel 側に在るか(package-data に書かなくても
+    # VCS 探索で乗る —— 2026-09-07 に 42 MB が 2 日間乗っていた)
+    unshipped_present = []
+    try:
+        import studio_assets                             # noqa: F401
+        base = os.path.dirname(studio_assets.__file__)
+        for d in ("sample_sources_ai",):
+            if os.path.isdir(os.path.join(base, d)):
+                unshipped_present.append("studio_assets/" + d)
+    except Exception:                                  # noqa: BLE001
+        pass
     payload = {
         "version": getattr(fullseye, "__version__", "?"),
+        "unshipped_present": unshipped_present,
         "ops": names,
         "failed_backends": [list(x) for x in getattr(ops, "FAILED_BACKENDS", [])],
         "root_modules": _loaded_root_modules(),
@@ -124,6 +136,9 @@ def _compare(a_path: str, b_path: str) -> int:
                         "(同梱漏れ、または上流 backend の失敗で読まれなかった): %s" % missing)
     if b["failed_backends"]:
         problems.append("wheel 側で backend が失敗: %s" % (b["failed_backends"],))
+    if b.get("unshipped_present"):
+        problems.append("同梱しないはずの資産が wheel に乗っている: %s "
+                        "(pyproject の exclude-package-data を見る)" % b["unshipped_present"])
     wo = set(b["ops"])
     for prefix, floor in (("tb_", 100), ("hx_", 50)):
         n = len([x for x in wo if x.startswith(prefix)])

@@ -125,11 +125,21 @@ def test_article_source_images_do_not_ship():
     読まないものを配らない。Studio が実際に使うサンプルは `sample_images/` と
     `sample_thumbs/` で、そちらは同梱を続ける。
     """
-    toml = _read("pyproject.toml")
-    pkg_data = toml.split("[tool.setuptools.package-data]", 1)[1]
-    assert '"sample_sources_ai/' not in pkg_data.replace(" ", ""), (
+    import tomllib
+    cfg = tomllib.loads(_read("pyproject.toml"))["tool"]["setuptools"]
+    pkg_data = cfg.get("package-data", {})
+    assert not any("sample_sources_ai" in g for gs in pkg_data.values() for g in gs), (
         "sample_sources_ai が package-data に戻っている —— 出荷コードは読まないのに "
         "wheel を 42 MB 太らせる")
+    # ★2026-09-07: 手元の wheel に sample_sources_ai が 42 MB 乗っていた(96 MB)。
+    # 原因は古い build/lib/ のキャッシュ(package-data から外す前の残骸が詰め直される)。
+    # 設定を読む検査では捕まらない事故なので、wheel 実物の側を tools/ci_wheel_check.py
+    # (unshipped_present)と ci.yml のサイズ上限が見る。ディレクトリも package の外へ
+    # 移した(tools/fops_article/)。ここでは除外の明示を要求する(保険)。
+    excl = cfg.get("exclude-package-data", {}).get("studio_assets", [])
+    assert any("sample_sources_ai" in g for g in excl), (
+        "exclude-package-data に sample_sources_ai が無い —— package-data に書かなくても "
+        "VCS 探索で wheel に乗る: %s" % excl)
     # 読み手がいないことを実際に確かめる(コメントの主張と実装をずらさない)
     import glob as _glob
     shipped = ([os.path.join(ROOT, p) for p in ("studio.py", "api.py", "sample_images.py",

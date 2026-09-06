@@ -2,6 +2,7 @@
 """Post-hoc quantitative evaluation for batch-1/2/3 figures.
 Re-runs each pipeline (same fixed params) and merges an `evaluation` list
 into the manifest entry of each figure."""
+from pathlib import Path
 import json
 import numpy as np
 from scipy import ndimage
@@ -259,7 +260,7 @@ def ev_tools():
                             ("AI 彫像 擦り傷", "statue", "scratch")]:
         if src == "mars":
             from PIL import Image
-            im = Image.open(r"C:\dev\projects\imgevolve\studio_assets\sample_sources_ai\mars_dunes.jpg").convert("L")
+            im = Image.open(str(Path(__file__).resolve().parent / "sample_sources_ai" / "mars_dunes.jpg")).convert("L")
             s = min(im.size)
             im = im.crop((0, 0, s, s)).resize((384, 384), Image.LANCZOS)
             img = np.asarray(im).astype(np.float64) / 255.0
