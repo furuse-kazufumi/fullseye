@@ -139,7 +139,22 @@ def fscore(a, b, tau):
 
 
 def rmse_correspondence(a, b):
-    """対応既知(同 index)の RMSE = sqrt(mean |a_i - b_i|^2)。→ scalar。登録残差の評価。"""
+    """対応既知(同 index)の RMSE = sqrt(mean |a_i - b_i|^2)。→ scalar。登録残差の評価。
+
+    計算: ``a``, ``b`` を float 配列にし、行ごとのユークリッド距離の 2 乗
+    ``sum((a - b)**2, axis=1)`` を平均して平方根を取る。**最近傍探索はしない** —
+    ``a[i]`` と ``b[i]`` が同じ点の対応であることを呼び手が保証する(登録で変換した
+    ``src @ R.T + t`` と、対応する ``dst`` の点列、合成データの GT 対応など)。
+
+    引数と検証: ``a.shape != b.shape`` なら ``ValueError``。それ以外の検査はない:
+    空の ``(0, 3)`` 同士は ``mean`` が空で NaN(警告付き)を返し、``(N, 3)`` 以外でも
+    ``axis=1`` で足せる形なら値を返す。3 列の点群を渡すこと。
+
+    返り値: Python ``float``、単位は座標の単位、``[0, inf)``。同一なら 0。
+
+    注意: 対応がずれている(index が並び替わった)雲に使うと、姿勢が正しくても
+    大きな値が出る。対応不明なら ``chamfer_distance`` / ``fscore``、姿勢そのものを
+    GT と比べるなら ``pose_error``。"""
     a = np.asarray(a, float)
     b = np.asarray(b, float)
     if a.shape != b.shape:

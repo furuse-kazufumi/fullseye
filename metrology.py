@@ -69,7 +69,7 @@ def add_metrology_object_circle_measure(model, row, col, radius, n: int = 40) ->
     参照円(中心 ``(row, col)``、半径 ``radius`` [px])を ``model["objects"]`` に積む
     (dict をその場で更新)。``apply_metrology_model`` は円周を ``n`` 等分した角度に
     点を置き、各点で **半径方向**(外向き法線)に測定線を張ってサブピクセルの
-    エッジを取り、``fit_circle`` で中心と半径を出し直す。
+    エッジを取り、最小二乗の円フィットで中心と半径を出し直す。
 
     - ``radius``: 参照半径 [px]。実物とのずれは ``apply`` の ``measure_length``
       (既定 ±6 px)以内に収まっている必要がある ―― それより外のエッジは見つからない。
