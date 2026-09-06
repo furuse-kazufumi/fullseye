@@ -570,6 +570,9 @@ def main():
     verdicts = [noise_rows[s][0] for s in sig]
     assert "通る" in verdicts and "拒否" in verdicts, "雑音で境界が見えない"
     assert verdicts.index("拒否") > verdicts.index("通る"), "拒否が先に来ている"
+    # 4 枚目は雑音のときだけ効く(3 枚でも未知数はちょうど決まる)
+    assert noise_3v4[0] > 1.05 * noise_3v4[1], \
+        f"雑音下で 4 枚目が効いていない: 3 枚 {noise_3v4[0]:.3e} / 4 枚 {noise_3v4[1]:.3e}"
 
     # 8-(b) 全体オフセットは無害(方位だけ δ 狂う)/ 1 枚ずれは有害だが小さい
     for delta, (e_all, az_err, e_one) in cal_rows.items():
