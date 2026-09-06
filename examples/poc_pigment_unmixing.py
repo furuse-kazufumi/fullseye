@@ -499,6 +499,7 @@ METHODS = (
     ("unmix", "線形アンミキシング", False),
     ("ks",    "K/S アンミキシング", False),
     ("nir",   "近赤外の単純差分", False),
+    ("nirb",  "近赤外 1 枚(反転)", False),
     ("sam",   "分光角マッパ", False),
 )
 
