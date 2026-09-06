@@ -156,9 +156,16 @@ def build_case(seed, *, tampered=True, size=64, dst=(96, 96), src=(40, 40),
 # 検出器 —— どれも「大きいほど怪しい」向きの画素ごとのスコア地図                  #
 # --------------------------------------------------------------------------- #
 def score_ela(img):
-    """ELA(誤差レベル解析)の絶対誤差を箱平均で領域化したもの。"""
-    return ndimage.uniform_filter(
+    """ELA(誤差レベル解析)を箱平均で領域化し、画像中央値からの隔たりを取る。
+
+    **絶対値を取る向きは意図的**。ELA は「貼付部のほうが誤差が大きい」と説明される
+    ことが多いが、それは貼った素材が無圧縮のときの話で、**強く圧縮された素材を
+    貼ると逆に貼付部のほうが誤差が小さくなる**(この PoC の既定 q60 の素材では
+    貼付部 / 背景 = 0.58 倍)。片側だけ見る検出器は、その半分を取り逃がす。
+    """
+    m = ndimage.uniform_filter(
         F.error_level_map(img, quality=90, normalize=False), BLOCK, mode="reflect")
+    return np.abs(m - float(np.median(m)))
 
 
 def score_noise(img):
