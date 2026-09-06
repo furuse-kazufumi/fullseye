@@ -638,8 +638,12 @@ def main():
         bend_est = rule_bend(rectify(c, calib.vector_to_hom_mat2d(src, e)))
         bend_ideal = rule_bend(rectify(c, Ht))
         print(f"  {kappa:>8.2f}{corner_rms(e, q):>14.2f}{bend_est:>24.2f}{bend_ideal:>18.2f}")
-    print("  → 4 隅の誤差が小さいままでも罫線は曲がる。ホモグラフィにレンズ歪みの")
-    print("     項が無いので、これはモデルの誤りであって推定の誤りではない。")
+    print("  → 右端の列は**真の 4 隅を手で与えた**場合の曲がり。隅が完全に正しくても")
+    print("     罫線は曲がったまま残る —— ホモグラフィにレンズ歪みの項が無いからで、")
+    print("     これは推定の誤りではなくモデルの誤り。歪みが乗ると 4 隅の推定自体も")
+    print("     悪化する(辺が直線でなくなり、直線当てが偏るため)。")
+    print("  (kappa=0 の推定で 0.90 px 出ているのは計測側の下限 —— 罫線の位置を整数行の")
+    print("   argmin で取っているので ±0.5 px の量子化と雑音がそのまま残差になる。)")
 
     print("\n=== 7. 速度(この機械での実測)===")
     for label, fn in (("紙マスク(2 値+穴埋め+最大成分)", lambda: page_mask(cam)),
