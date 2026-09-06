@@ -367,7 +367,23 @@ def vol_rle_intersect(a, b):
 
 
 def vol_rle_difference(a, b):
-    """Set difference ``a \ b`` on the runs (no decode)."""
+    """Set difference ``a \ b`` on the runs (no decode).
+
+    ``a`` に含まれ ``b`` に含まれない voxel の region。掃引エンジン(``_rle_boolean``)
+    で区間ごとの被覆状態が ``ia & ~ib`` の区間を run として残す。非可換
+    (``vol_rle_difference(a, b) != vol_rle_difference(b, a)``)。計算量は run 数に
+    対して O(n log n)。
+
+    返り値: 同じ ``shape`` の新しい ``VolRLE``。``a`` が ``b`` に完全に含まれていれば
+    run 0 本の region。``vol_rle_decode(result) == decode(a) & ~decode(b)`` が
+    voxel 単位で成り立つ。
+
+    検証(``ValueError``): どちらかが ``VolRLE`` でない・run 配列の整合性検査に失敗 /
+    ``a.shape != b.shape``。
+
+    使いどころ: 全体マスクから ROI 外や既知の成分(``vol_rle_components`` の 1 つ)を
+    取り除く、``vol_rle_encode(mask)`` と erode 結果の差で殻を作る、といった
+    「引き算」を密配列を作らずに行う。"""
     return _rle_boolean(a, b, lambda ia, ib: ia & ~ib)
 
 
