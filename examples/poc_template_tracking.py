@@ -430,6 +430,7 @@ def main():
     print("-" * 64)
     T0, F0 = {}, {}
     profile = {}
+    corr_maps = {}                      # 図用。第 1 章で既に作っている相関マップ
     for name, tg in TARGETS.items():
         f0 = render(world, tg, 0.0, 1.0)
         t0 = crop_template(f0, O_XY)
