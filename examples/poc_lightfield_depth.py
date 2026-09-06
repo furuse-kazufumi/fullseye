@@ -464,6 +464,14 @@ def main():
         tex_break[contrast] = (dff, ep, bm)
         print(f"  {contrast:>13.3f}{contrast / 0.005:>7.0f}{dff:>9.3f}{ep:>9.3f}"
               f"{bm:>10.3f}{float(np.median(energy[i])):>11.3g}{gated:>10.1f}%")
+    figs.save_table("texture_breakdown",
+                    ["コントラスト", "SNR", "焦点度", "EPI", "BM 2 枚"],
+                    [["%.3f" % c, "%.0f" % (c / 0.005)]
+                     + ["%.3f" % v for v in tex_break[c]]
+                     for c in (1.0, 0.3, 0.1, 0.03, 0.01, 0.0)],
+                    title="無テクスチャで壊れる順(真値 1.30 px/view)",
+                    caption="EPI は SNR 20 で既に -35 %。焦点度は SNR 20 まで"
+                            "持ちこたえ、そこから整数 1.0 / 2.0 へ落ちる。")
     print("  → 境界は SNR 20 と SNR 6 の間。EPI 傾きは SNR 20 で既に -35 %、")
     print("     SNR 6 で -85 %。ノイズは視点ごとに独立で視差 0 なので、構造")
     print("     テンソルの分母をノイズが埋めてスロープを 0 へ引く。焦点度は")
