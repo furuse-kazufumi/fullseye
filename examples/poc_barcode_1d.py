@@ -705,9 +705,9 @@ def section8_controls() -> None:
     print("8) 対照群 —— 低コントラストの何が効いているのか")
     print("=" * 78)
     print("  3 章の (c) は**コントラスト・明るさ・雑音を同時に**動かしている。")
-    print("  水準 0.5 で 1 つずつ止めて、原因を分ける。")
+    print("  水準 0.75 で 1 つずつ止めて、原因を分ける。")
     print()
-    lv = 0.5
+    lv = 0.75
     variants = [("3 つとも", True, True, True), ("コントラストのみ", True, False, False),
                 ("明るさのみ", False, True, False), ("雑音のみ", False, False, True)]
     print("  %-16s | %10s %10s %10s"
@@ -719,11 +719,11 @@ def section8_controls() -> None:
         for _ in range(TRIALS):
             msg = make_message(rng)
             img = render(msg, phase=rng.uniform(0, MODULE_PX))
-            amp = 1.0 - 0.9 * lv if use_amp else 1.0
-            ctr = 0.5 + 0.25 * lv if use_ctr else 0.5
+            amp = 1.0 - 0.6 * lv if use_amp else 1.0
+            ctr = 0.5 + 0.35 * lv if use_ctr else 0.5
             out = ctr + (img - 0.5) * amp
             if use_noise:
-                out = out + rng.normal(0.0, 0.12 * lv, img.shape)
+                out = out + rng.normal(0.0, 0.05 * lv, img.shape)
             out = np.clip(out, 0.0, 1.0)
             for i, fn in enumerate((m0_single, m3_adaptive, m4_subpixel)):
                 ok[i] += fn(out) == msg

@@ -489,27 +489,37 @@ def section7_design():
     print("7) ★★撮る前に決める —— 高調波まで含めた安全条件")
     print("=" * 78)
     band = 2.0 * F_MURA
+    thr = 0.1 * A_MURA
     print("  ムラを測りたい帯を [0, %.5f] cyc/px(= ムラ周波数の 2 倍)と決める。" % band)
-    print("  安全条件: **すべての高調波のうなりがこの帯の外**。")
+    print("  安全条件: **帯の中に落ちる高調波のうなりが、どれも振幅 %.4f 未満**。" % thr)
+    print("  (画素開口の sinc が高次を潰すので、周波数だけでなく振幅も見ないと")
+    print("   「危険」を過剰に数える。)")
     print()
-    print("  %8s %10s %10s %10s %10s %12s"
-          % ("k", "1 次", "3 次", "5 次", "1 次判定", "全高調波判定"))
-    print("  " + "-" * 64)
-    cands = (3.05, 3.02, 3.006, 3.0026, 3.25, 3.0)
+    print("  %7s %8s %8s %8s %9s %9s %9s %8s %10s"
+          % ("k", "1 次 f", "3 次 f", "5 次 f", "1 次 振幅", "3 次 振幅",
+             "5 次 振幅", "1 次判定", "全高調波"))
+    print("  " + "-" * 84)
+    cands = (3.05, 3.006, 0.67, 0.60, 3.25, 3.0)
     for k in cands:
         bs = [abs(fj) for _m, fj, _fi, _p, _a in beat_frequencies(k)]
-        ok1 = bs[0] > band
-        okall = all(b > band for b in bs)
-        print("  %8.4f %10.5f %10.5f %10.5f %10s %12s"
-              % (k, bs[0], bs[1], bs[2], "安全" if ok1 else "危険",
-                 "安全" if okall else "★危険"))
+        am = [abs(stripe_amplitude(m, k, 0.0, 0.0)) for m in HARMONICS]
+        bad = [(b <= band and a >= thr) for b, a in zip(bs, am)]
+        print("  %7.4f %8.5f %8.5f %8.5f %9.5f %9.5f %9.5f %8s %10s"
+              % (k, bs[0], bs[1], bs[2], am[0], am[1], am[2],
+                 "危険" if bad[0] else "安全", "★危険" if any(bad) else "安全"))
     print()
-    print("  → k=3.0026 は**基本波だけ見れば安全**(うなり %.5f > 帯 %.5f)なのに、"
-          % (abs(beat_frequencies(3.0026)[0][1]), band))
-    print("     3 次のうなり %.5f が帯の中に落ちる。実測で確かめる:"
-          % abs(beat_frequencies(3.0026)[1][1]))
+    b67 = [abs(fj) for _m, fj, _fi, _p, _a in beat_frequencies(0.67)]
+    print("  → ★k=0.67(表示 1 縞を 1.5 画素で撮る)は**基本波だけ見れば安全**")
+    print("     (うなり %.4f は帯 %.5f のはるか外)。ところが 3 次のうなりが"
+          % (b67[0], band))
+    print("     %.5f = 周期 %.0f px で帯の中に落ち、しかも振幅 %.4f(ムラの %.1f 倍)。"
+          % (b67[1], 1 / b67[1], abs(stripe_amplitude(3, 0.67, 0.0, 0.0)),
+             abs(stripe_amplitude(3, 0.67, 0.0, 0.0)) / A_MURA))
+    print("     k=3.05 で 3 次が無害だったのは、開口の sinc が 9 次相当の周波数を")
+    print("     潰していたから —— **k が小さいほど高調波の罠が効く**。実測:")
     print()
-    for k, label in ((3.05, "k=3.05(全高調波 安全)"), (3.0026, "k=3.0026(3 次が危険)")):
+    for k, label in ((3.05, "k=3.05(全高調波 安全)"), (0.60, "k=0.60(安全)"),
+                     (0.67, "k=0.67(3 次が危険)")):
         e = mura_amplitude(smooth(render(k=k, mura=False), 8.0))
         print("    %-26s 縞だけの像の漏れ = %.5f(真値の %+.1f %%)"
               % (label, e, 100 * e / A_MURA))

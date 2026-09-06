@@ -124,7 +124,8 @@ def _clip_len(c, d, half_len, n_pix):
 
 def make_scene(n_fibers: int = N_FIB, mu_deg: float = MU_DEG, kappa: float = KAPPA,
                seed: int = SEED, n_pix: int = N_PIX, bimodal: bool = False,
-               couple: bool = False, n_pool: int | None = None) -> dict:
+               couple: bool = False, n_pool: int | None = None,
+               noise: float = NOISE) -> dict:
     """線分としての繊維を撒いた画像と、その真値を返す。
 
     角度は **2 倍角の領域** でフォン・ミーゼス分布から引く(向きは 180 度
@@ -182,7 +183,7 @@ def make_scene(n_fibers: int = N_FIB, mu_deg: float = MU_DEG, kappa: float = KAP
         dist = np.hypot(px - t * dx, py - t * dy)
         img[r0:r1, c0:c1] = np.maximum(img[r0:r1, c0:c1],
                                        np.clip(hw + 0.5 - dist, 0.0, 1.0))
-    obs = BG + (FG - BG) * img + rng.normal(0.0, NOISE, img.shape)
+    obs = BG + (FG - BG) * img + rng.normal(0.0, noise, img.shape)
     return {"img": np.clip(obs, 0.0, 1.0), "angles": ang, "length": length,
             "len_vis": len_vis, "cx": cx, "cy": cy, "n_pix": n_pix,
             "mu_deg": mu_deg, "kappa": kappa}
@@ -461,7 +462,7 @@ def section_which_truth() -> dict:
 # --------------------------------------------------------------------------- #
 def section_weights() -> dict:
     print("\n" + "=" * 78)
-    print("4) ★★重みの選び方 —— 平均角度は動かないのに、配向度は 61 % 変わる")
+    print("4) ★★重みの選び方 —— 平均角度は動かないのに、配向度は 3 割変わる")
     print("=" * 78)
 
     sc = make_scene()
@@ -520,7 +521,7 @@ def section_weights() -> dict:
 # --------------------------------------------------------------------------- #
 def section_density() -> dict:
     print("\n" + "=" * 78)
-    print("5) ★繊維が交差すると配向度が落ちる(平均角度は動かない)")
+    print("5) ★★繊維の交差 —— 予想と逆に、配向度は **高め** にずれる")
     print("=" * 78)
     print("  **同じ繊維に本数を足していく**(400 本の池から先頭 n 本)—— こうしないと"
           "\n  本数を変えるたびに別の標本になり、密度の効果と標本のばらつきが混ざる。")
