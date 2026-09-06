@@ -196,7 +196,25 @@ def fuzzy_measure_pairing(image, measure, sigma=1.0, threshold=0.1, pair_size=No
 
 
 def translate_measure(measure, drow, dcol):
-    """測定オブジェクトを平行移動(translate_measure)。"""
+    """測定オブジェクトを平行移動(translate_measure)。
+
+    ``rows`` / ``cols`` に ``(drow, dcol)`` [px] を足した **浅い複製** を返す(入力の
+    dict は変えない)。``gen_measure_rectangle2`` の ``origin`` と ``gen_measure_arc``
+    の ``center`` も同じだけ動かすので、両端延長(``_extended_coords``)の幾何が
+    ずれない。``phi`` / ``dir`` / ``angles`` / ``radius`` / ``width`` / ``spacing`` は
+    そのまま ―― **回転や半径変更はしない**。
+
+    - ``measure``: ``gen_measure_rectangle2`` / ``gen_measure_arc`` の dict。
+      ``rows`` / ``cols`` を持つ任意の dict でも動く(他キーは素通し)。
+    - ``drow``, ``dcol``: 変位 [px]。小数可。
+    - ``shape``(画像サイズ)は再検査しないので、画像外へ出しても例外は出ず、
+      ``measure_pos`` が端の値で外挿するだけになる。
+    - 返り値: 同じ構造の dict(``measurehandle`` 型)。
+
+    典型: 位置合わせで得たワークのずれを測定線に反映してから ``measure_pos`` /
+    ``measure_pairs`` を掛ける。傾きが変わる場合は ``gen_measure_rectangle2`` を
+    新しい ``phi`` で作り直す。
+    """
     m = dict(measure)
     m["rows"] = np.asarray(measure["rows"], float) + drow
     m["cols"] = np.asarray(measure["cols"], float) + dcol
