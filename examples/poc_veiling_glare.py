@@ -498,14 +498,25 @@ def section7_where_is_the_tail():
     f_half = float(np.interp(half, [pairs[k, 1], pairs[k - 1, 1]], [f_px[k], f_px[k - 1]]))
     print()
     print("  裾の寄与が半分になる周波数: %.4f cyc/px(周期 %.0f px)" % (f_half, 1 / f_half))
-    for w in (16, 32, 64, 128):
-        print("    窓 ±%3d px の最低非零周波数 = 1/%d = %.4f cyc/px  → 裾の帯を %s"
-              % (w, 2 * w, 1.0 / (2 * w),
-                 "またぐ" if 1.0 / (2 * w) < f_half else "またがない(見えない)"))
     print()
-    print("  → ★窓 ±16 / ±32 px には、裾が居る周波数帯にビンが 1 本も無い。")
-    print("     ±64 px 以上でようやく届く —— 2 節で窓を広げると MTF50 が落ちたのは")
-    print("     これが理由。**op ではなく窓が測定の限界を決めている**。")
+    print("  %8s %14s %10s %14s" % ("窓 ±W", "最低非零 f", "裾を跨ぐ", "窓内の裾"))
+    print("  " + "-" * 50)
+    for w in (16, 32, 64, 128):
+        inside = float(TAIL[_R <= w].sum())
+        print("  %8d %14.4f %10s %13.0f %%"
+              % (w, 1.0 / (2 * w),
+                 "はい" if 1.0 / (2 * w) < f_half else "いいえ", 100 * inside))
+    need = R0_TAIL * np.sqrt(np.expm1(0.95 * np.log1p((R_PSF / R0_TAIL) ** 2)))
+    print()
+    print("  → ★どの窓も、裾が居る帯(f < %.4f cyc/px = 周期 %.0f px より粗い側)に"
+          % (f_half, 1 / f_half))
+    print("     ビンを 1 本も持たない。同じことを実空間で言えば、標準の ±16 px は")
+    print("     裾のエネルギーの %.0f %% しか窓の中に入れていない。裾の 95 %% を窓に"
+          % (100 * float(TAIL[_R <= 16].sum())))
+    print("     入れるには **±%.0f px** の窓が要る(標準の %.0f 倍)。"
+          % (need, need / 16))
+    print("     2 節で窓を広げるほど MTF50 が落ちたのは、窓に入る裾が増えたから。")
+    print("     **op ではなく窓が測定の限界を決めている**。")
     if figs.enabled():
         sel = f_px <= 0.30
         series = [("PSF 全体 (g=0.20)", f_px[sel], pairs[sel, 1])]
