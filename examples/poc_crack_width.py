@@ -702,7 +702,7 @@ def main() -> None:
     taper = section_taper()
     cross = section_crossover()
     mx = section_max_vs_mean()
-    section_detection()
+    det = section_detection()
     section_tool_gaps()
 
     print("\n" + "=" * 78)
