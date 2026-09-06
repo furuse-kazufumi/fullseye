@@ -553,7 +553,7 @@ def _registry_adapters():
                  "opsgfx2d", "opsimgmetrics", "opscolortransport",
                  "opsimgforensics", "opsastrostack", "opsdem", "opspiv",
                  "opsprofile", "opsshapestat", "opsshape2d", "opsroughness",
-                 "opsmeasure1d"):
+                 "opsmeasure1d", "opsblob"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
         except Exception as _e:                       # 台帳が無い環境でも動く
@@ -737,6 +737,14 @@ def catalog():
         # PARAM_HINTS / OP_PARAM_HINTS で束縛する —— 束縛できないと
         # 「引数が組めない」で全 op が静かにスキップされる。
         ("opsdem", "OPSDEM", "dem"),
+        # 2026-09-06: 2-D の連結成分解析。**閾値処理のあとの定番の連鎖**
+        # (物体に切る → 物体ごとに測る → 条件で選ぶ)が 3 層のどこにも
+        # 無かった(label_components / region_props は 3-D 専用で 2-D を
+        # 例外で拒否、circularity などは進化 op で画像 1 枚 → スカラ 1 個)。
+        # 新語 `labels2d` を 1 つだけ足す —— mask の述語には当たるが、
+        # mask を blob_features に渡すと 2 個の細胞が 1 物体として測られ
+        # 「2 つの中心のあいだ」に重心が出る = 静かに嘘をつく側。
+        ("opsblob", "OPSBLOB", "blob"),
     ):
         _m = __import__(_mod)
         for n, m in getattr(_m, _tbl).items():

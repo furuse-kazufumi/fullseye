@@ -1186,6 +1186,9 @@ def main():
     assert set(a[4] for a in ch6h) <= set(float(x) for x in range(0, 360, 30)), \
         "shape_locate が 30 度刻み以外を返した"
 
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
+
     el = time.perf_counter() - T_START
     print(f"\n  (所要 {el:.1f} 秒)")
     assert el < 90.0, f"90 秒を超えた ({el:.1f} 秒)"
