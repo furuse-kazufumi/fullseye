@@ -138,9 +138,6 @@ def _lowpass2(z: np.ndarray, lam: float, dx: float, dy: float, mode: str) -> np.
     return ndimage.correlate1d(out, _gauss_weights(lam, dx), axis=1, mode=mode)
 
 
-def _lowpass1(p: np.ndarray, lam: float, dx: float, mode: str) -> np.ndarray:
-    return ndimage.correlate1d(p, _gauss_weights(lam, dx), mode=mode)
-
 
 def surface_filter(z, dx, lambda_c=None, lambda_s=None, kind="gaussian",
                    end_effect="reject", dy=None):
@@ -558,10 +555,12 @@ def profile_params(p, dx=1.0, n_sampling=5):
 # 形状除去(格子のまま)                                                        #
 # --------------------------------------------------------------------------- #
 def _form_basis(ny: int, nx: int, fx: float, fy: float, order: int):
-    """中心を原点にした物理座標の単項式基底を返す ``(basis, names)``。
+    """``(A, scale)`` を返す。``A`` は正規化座標の単項式基底(列が項)、
+    ``scale`` は係数を物理単位へ戻す倍率。
 
     条件数を保つため内部では ``[-1, 1]`` に正規化した座標で解き、係数だけを
-    物理単位に戻す(``hx``/``hy`` も返す)。
+    物理単位に戻す。項の順は order=1 が ``[1, x, y]``、
+    order=2 が ``[1, x, y, x², xy, y²]``。
     """
     yy = (np.arange(ny, dtype=np.float64) - 0.5 * (ny - 1)) * fy
     xx = (np.arange(nx, dtype=np.float64) - 0.5 * (nx - 1)) * fx
@@ -572,19 +571,17 @@ def _form_basis(ny: int, nx: int, fx: float, fy: float, order: int):
     one = np.ones((ny, nx))
     if order == 1:
         basis = [one, u, v]
-        names = ["1", "x", "y"]
         scale = [1.0, 1.0 / hx, 1.0 / hy]
     else:
         basis = [one, u, v, u * u, u * v, v * v]
-        names = ["1", "x", "y", "x^2", "xy", "y^2"]
         scale = [1.0, 1.0 / hx, 1.0 / hy, 1.0 / hx ** 2, 1.0 / (hx * hy), 1.0 / hy ** 2]
-    return np.stack([b.ravel() for b in basis], axis=1), names, np.asarray(scale)
+    return np.stack([b.ravel() for b in basis], axis=1), np.asarray(scale)
 
 
 def _fit_form(a: np.ndarray, fx: float, fy: float, order: int):
     """最小二乗で形状を当てはめる。``(residual, coeffs_physical)``。"""
     ny, nx = a.shape
-    A, _, scale = _form_basis(ny, nx, fx, fy, order)
+    A, scale = _form_basis(ny, nx, fx, fy, order)
     c, *_ = np.linalg.lstsq(A, a.ravel(), rcond=None)
     resid = a - (A @ c).reshape(ny, nx)
     return resid, c * scale
@@ -678,7 +675,7 @@ def surface_form_remove(z, dx, order=1, method="ls", thresh=None, dy=None,
         raise ValueError(f"{op}: thresh must be a finite positive height, got {thresh!r}")
 
     ny, nx = a.shape
-    A, _, scale = _form_basis(ny, nx, fx, fy, order)
+    A, scale = _form_basis(ny, nx, fx, fy, order)
     b = a.ravel()
     ncoef = A.shape[1]
     msub = 3 * ncoef

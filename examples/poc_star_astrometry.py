@@ -973,66 +973,95 @@ def main():
 
     # --- 6b) 対応が未知のとき、間違った対応が「もっともらしく」出る確率 --- #
     t0 = time.perf_counter()
-    print(f"\n   6b) **対応が未知**のとき。k 個の星に**でたらめな**星表を"
-          f"割り当てて相似変換を当て、残差 RMS を見る(各 k で 3000 回)。"
-          f"正しい対応での残差は {rms_of(src_all, dst_all):.4f} px")
-    print("       " + pad("k", 5) + pad("残差の自由度", 14)
-          + pad("正しい対応", 13) + pad("でたらめな対応の残差 RMS [px]", 34)
-          + pad("0.5 px 未満に", 14))
-    print("       " + pad("", 5) + pad("2k-4", 14) + pad("[px]", 13)
-          + pad("中央      5 % 点     最小", 34) + pad("なる確率", 14))
+    M_all = FT.vector_to_similarity(src_all, dst_all)
+    resid_true = np.hypot(*(apply_matrix(M_all, src_all) - dst_all).T)
+    n_hit_true = int((np.hypot(*(apply_matrix(M_all, src_all)[:, None, :]
+                                 - dst_all[None, :, :]).T).min(axis=0) < 1.0).sum())
+    print(f"\n   6b) **対応が未知**のとき。k 個の像に**でたらめな**星表を"
+          f"割り当てて相似変換を当て、残差 RMS を見る(各 k で 4000 回)")
+    print(f"       正しい対応(孤立星 {n_clean} 個)での残差は 1 星あたり "
+          f"中央 {np.median(resid_true):.4f} px / 95 % 点 "
+          f"{np.percentile(resid_true, 95):.4f} px / 最大 "
+          f"{resid_true.max():.4f} px。**採否のしきい値はこの上に置く**")
+    print("       " + pad("k", 4) + pad("自由度", 8)
+          + pad("でたらめな対応の残差 RMS [px]", 34)
+          + pad("しきい値別 偽採択率", 30))
+    print("       " + pad("", 4) + pad("2k-4", 8)
+          + pad("最小       1 % 点      中央", 34)
+          + pad("< 0.5     < 1.0     < 3.0", 30))
     false_p = {}
     for k in (2, 3, 4, 5, 6):
         rg = np.random.default_rng(7000 + k)
         r = []
-        for _ in range(3000):
+        for _ in range(4000):
             a = rg.choice(n_clean, size=k, replace=False)
             b = rg.choice(n_clean, size=k, replace=False)
             if np.array_equal(a, b):
                 continue
-            M = FT.vector_to_similarity(src_all[b], dst_all[a])
-            r.append(rms_of(src_all[b], dst_all[a], M))
+            r.append(rms_of(src_all[b], dst_all[a]))
         r = np.array(r)
-        false_p[k] = (float(np.median(r)), float(np.percentile(r, 5)),
-                      float(r.min()), float((r < 0.5).mean()))
+        false_p[k] = (float(r.min()), float(np.percentile(r, 1)),
+                      float(np.median(r)), float((r < 0.5).mean()),
+                      float((r < 1.0).mean()), float((r < 3.0).mean()))
         v = false_p[k]
-        print("       " + pad(f"{k}", 5) + pad(f"{2 * k - 4}", 14)
-              + f"{rms_of(src_all[:k], dst_all[:k]):9.4f}    "
-              + f"{v[0]:9.2f}{v[1]:10.3f}{v[2]:10.4f}      {v[3]:9.1%}")
-    print(f"       → k=2 は **でたらめでも残差が厳密に 0** "
-          f"({false_p[2][0]:.1e})—— 自由度が 0 なので何を当てても合う。"
-          f"「残差が小さいから正しい」は k=2 では**情報が 1 ビットも無い**")
-    print(f"       k=3 で自由度 2、でたらめでも {false_p[3][3]:.1%} が 0.5 px を"
-          f"下回る。k=4 で {false_p[4][3]:.2%}、k=5 で {false_p[5][3]:.2%}、"
-          f"k=6 で {false_p[6][3]:.2%} —— 星 1 個増やすごとに約 "
-          f"{np.exp(np.mean(np.diff(np.log([max(false_p[k][3], 1e-4) for k in (3, 4, 5, 6)])))):.2f} 倍"
-          f"に減る(理論: 自由度が 2 増えるので確率は "
-          f"``(許容/視野)^(2k-4)`` の形で落ちる)")
-    # 検算 —— 通ってしまった偽解を、使わなかった星で検証する
+        print("       " + pad(f"{k}", 4) + pad(f"{2 * k - 4}", 8)
+              + f"{v[0]:9.2e}{v[1]:11.3f}{v[2]:11.2f}     "
+              + f"{v[3]:8.2%}{v[4]:10.2%}{v[5]:10.2%}")
+    print(f"       → k=2 は **でたらめでも残差が厳密に 0**"
+          f"({false_p[2][0]:.1e}、{false_p[2][3]:.0%} が採択される)—— "
+          f"自由度 0 なので何を当てても合う。「残差が小さいから正しい」は "
+          f"k=2 では**情報が 1 ビットも無い**。"
+          f"**プレート解が一意に決まるのは 3 個から**")
+    print(f"       k=3 でいきなり効く: 4000 回の最小残差が "
+          f"{false_p[3][0]:.2f} px、0.5 px を下回ったのは "
+          f"{false_p[3][3]:.2%}。3 px まで緩めても {false_p[3][5]:.2%} —— "
+          f"相似変換は 4 自由度しかないので、でたらめな 3 点が偶然そろう"
+          f"余地が小さい")
+    # ★ 「1 回あたり小さい」と「総当たりで小さい」は別の主張。
+    n_hyp = n_clean * (n_clean - 1) * (n_clean - 2)
+    rg = np.random.default_rng(9100)
+    trials, hit05, hit10 = 40000, 0, 0
+    for _ in range(trials):
+        a = rg.choice(n_clean, size=3, replace=False)
+        b = rg.choice(n_clean, size=3, replace=False)
+        if np.array_equal(a, b):
+            continue
+        v = rms_of(src_all[b], dst_all[a])
+        hit05 += v < 0.5
+        hit10 += v < 1.0
+    p05, p10 = hit05 / trials, hit10 / trials
+    print(f"       ★ ただし **1 回の確率と総当たりの期待値を混同しない**。"
+          f"k=3 の対応は {n_hyp} 通り(順列)あるので、期待偽解数 = "
+          f"通り数 x 1 回の確率。{trials} 回で測ると < 0.5 px が {hit05} 件"
+          f"(p = {p05:.1e})、< 1.0 px が {hit10} 件(p = {p10:.1e})→ "
+          f"期待偽解数 {n_hyp * p05:.2f} 件 / {n_hyp * p10:.2f} 件。"
+          f"しきい値を 0.5 から 1.0 px に緩めるだけで"
+          f"**総当たりでは偽解が出る側に回る**")
+    # 検算 —— 通った候補を、使わなかった星で検証する
     rg = np.random.default_rng(8080)
-    n_pass, n_survive = 0, 0
-    for _ in range(4000):
-        a = rg.choice(n_clean, size=4, replace=False)
-        b = rg.choice(n_clean, size=4, replace=False)
+    n_pass, n_survive, best_hit = 0, 0, 0
+    for _ in range(40000):
+        a = rg.choice(n_clean, size=3, replace=False)
+        b = rg.choice(n_clean, size=3, replace=False)
         if np.array_equal(a, b):
             continue
         M = FT.vector_to_similarity(src_all[b], dst_all[a])
-        if rms_of(src_all[b], dst_all[a], M) >= 0.5:
+        if rms_of(src_all[b], dst_all[a], M) >= 1.0:
             continue
         n_pass += 1
         pr = apply_matrix(M, src_all)
-        hit = (np.hypot(*(pr[:, None, :] - dst_all[None, :, :]).T).min(axis=0)
-               < 1.0).sum()
-        if hit >= 6:
-            n_survive += 1
-    print(f"       検算 —— k=4 で 0.5 px を通った偽解 {n_pass} 件を、"
-          f"**使わなかった星も含めた全 {n_clean} 個**で検証した: "
-          f"1 px 以内に 6 個以上を当てたのは {n_survive} 件 "
-          f"({n_survive / max(n_pass, 1):.1%})。"
-          f"★ **少数で当てて多数で検証する**のが、対応が未知のときに"
-          f"「もっともらしい嘘」を落とす唯一の手")
-    assert false_p[2][0] < 1e-9 and false_p[6][3] < false_p[3][3]
-    assert n_survive == 0
+        hit = int((np.hypot(*(pr[:, None, :] - dst_all[None, :, :]).T)
+                   .min(axis=0) < 1.0).sum())
+        best_hit = max(best_hit, hit)
+        n_survive += hit >= 6
+    print(f"       検算 —— しきい値 1.0 px を通った偽の候補 {n_pass} 件を、"
+          f"**使わなかった星も含めた全 {n_clean} 個**へ投影して数え直した: "
+          f"1 px 以内に当たった星は最大 {best_hit} 個で、6 個以上"
+          f"当てたのは {n_survive} 件。正しい解は {n_hit_true} 個当てる。"
+          f"★ **少数で当てて多数で検証する** —— 3 個で作った解を "
+          f"{n_clean} 個で数え直すだけで、偽解は 1 件も残らない")
+    assert false_p[2][0] < 1e-9 and false_p[2][3] == 1.0
+    assert false_p[3][3] == 0.0 and n_survive == 0 and n_hit_true == n_clean
     timing["6b 偽解"] = time.perf_counter() - t0
 
     print("\nPASS(執筆中)")
