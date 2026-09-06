@@ -837,8 +837,9 @@ def section_cliff_angle():
               f"{wm * math.cos(al) - w_true:+17.4f} | {wf * math.cos(al) - w_true:+13.4f}")
     print("\n  -> **cos 補正は入っていない**(測定/真 が 1/cos に一致)。設計どおりで、")
     print("     測定線の向きを知っているのは呼ぶ側だから正しい。ただし")
-    print("     cos を掛けて戻せるのは 30 度まで —— それ以上は、測定線に沿った")
-    print("     実効 PSF が sigma/cos に広がって干渉と補間誤差が効き始める。")
+    print("     cos を掛けて戻せば 60 度までは 0.04 px 以内。70 度で 0.14 px 残る")
+    print("     —— 測定線に沿った実効 PSF が sigma/cos に広がり、双一次補間で")
+    print("     斜めに標本化する誤差も効き始めるから。")
     return corr
 
 
@@ -1000,8 +1001,15 @@ def section_buried_api(img):
             print(f"  {i:3d}{w:10.4f}{w - arc_true:+11.4f}{um(w - arc_true):+11.2f}")
         print(f"  -> 偏り {e.mean():+.4f} px / 散らばり {e.std():.4f} px")
         arc_bias = float(e.mean())
+        pred = -1.2 ** 2 / BOLT_RAD
+        print(f"  3 節で出した曲率の偏り -sigma^2/rho = {pred:+.4f} px を引くと "
+              f"残り {arc_bias - pred:+.4f} px。")
+        print("  -> **円弧キャリパー自体はほぼ偏らない**。3% の縮みに見えたものは")
+        print("     『小さい丸穴はぼけで小さく出る』という光学側の偏りだった。")
+        print("     道具のせいにする前に、既知の物理を引く。")
     else:
         arc_bias = float("nan")
+        pred = float("nan")
     note("measuring1d", "gen_measure_arc", "OK" if len(pr) == BOLT_N else "要注意",
          "(center_row,center_col,radius,angle_start,angle_extent,width,shape) -> dict",
          f"rows=cr+R*sin(ang), cols=cc+R*cos(ang)。spacing={ms['spacing']:.4f} != 1")
@@ -1171,14 +1179,21 @@ def print_ledger():
 # --------------------------------------------------------------------------- #
 def section_findings():
     head(10, "所見 —— 道具の穴と、足すべき op")
-    print("""  (A) ``measuring1d`` / ``metrology`` は **公開経路のどこからも届かない**。
-      14 関数すべてを叩いて、寸法・直径・角度が実用精度で出ることは確認した。
-      「見えていなかった理由」は今回は見つからなかった —— 動く。ただし穴はある。
+    print("""  (A) ``measuring1d`` / ``metrology`` は **公開経路のどこからも届かない**
+      (fs. / fs.ledger / fs.op のいずれからも 0 / 14)。14 関数すべてを叩き、
+      寸法・直径・角度が実用精度(偏り 0.01-0.05 px)で出ることを確認した。
+      **「見えていなかった理由」= 壊れている、ではなかった。動く。**
+      ただし出すなら一緒に直したい点が 4 つある —— (B) 対の極性が選べない、
+      (C) 回転が無い、そして ``metrology`` 固有の 2 つ:
+        * 矩形の当てはめが**最小面積外接矩形**(3 節)。外れ値 1 点が幅を
+          そのぶん丸ごと動かす。名前から最小二乗を期待すると事故る。
+        * ``apply_metrology_model`` は **信頼度を返さない**。エッジ点数と rms は
+          返るが、「エッジ間距離 / PSF 幅」が危険域かどうかは呼ぶ側が見るしかない。
 
   (B) ★ ``measure_pairs`` に ``transition`` が無い。``measure_pos`` は
       "all"/"positive"/"negative" を取るのに、対を作る側は取らない。
       結果、暗い特徴(穴・溝)の幅を測るには測定窓の始点を部品の内側に
-      置いて偏光性の並びを合わせるしかない。引数を 1 つ通すだけで直る。
+      置いて極性の並びを合わせるしかない。引数を 1 つ通すだけで直る。
 
   (C) ★ 回転が無い。``translate_measure`` / ``align_metrology_model`` は
       平行移動だけ。2-D 計測の実務は「基準形状を見つけてモデルを姿勢ごと
@@ -1217,8 +1232,11 @@ def section_findings():
       1. 縁に面取り・丸みがあるなら、**定義を宣言してから** サブピクセルを語る。
          定義の差は 8 節で 8-16 px、サブピクセルの差は 0.01-0.05 px。3 桁違う。
       2. 偏りと散らばりを分ける。平均化(length2)で下がるのは散らばりだけ。
-      3. エッジ間距離 / PSF 幅 を見る。3 を切ったら幅は系統的に縮む。
-      4. 測定線が斜めなら cos を掛ける。掛けても戻るのは 30 度まで。""")
+      3. エッジ間距離 / PSF 幅 を見る。3 を切ると幅は系統的に **大きく** 出る
+         (エッジ対が互いを押し広げる)。しかも API は成功を返し続ける。
+      4. 測定線が斜めなら cos を掛ける。60 度までは 0.04 px 以内で戻るが、
+         70 度では 0.14 px 残る。
+      5. 丸い縁は「必ず小さく出る」(sigma^2/rho)。これは校正で引ける偏り。""")
 
 
 # --------------------------------------------------------------------------- #
@@ -1260,7 +1278,8 @@ def main():
     print(f"  自前 50% 交差             偏り {slot_bias['F']:+.4f} px")
     print(f"  円穴の直径(metrology)   誤差 {circ_err:+.4f} px")
     print(f"  角度(metrology/M)       誤差 {tilt_T:+.4f} / {tilt_M:+.4f} deg")
-    print(f"  円弧キャリパー            偏り {arc_bias:+.4f} px")
+    print(f"  円弧キャリパー            偏り {arc_bias:+.4f} px "
+          f"(曲率 -s^2/rho を引くと {arc_bias + 1.2 ** 2 / BOLT_RAD:+.4f})")
     print(f"  干渉の崖                  w/sigma <= {edge_ratio:.2f} で偏り > 0.05 px")
     print(f"  偏り 0.05 px を超える幅   w = {usable_at} px "
           f"(= {usable_at / 1.5:.2f} sigma, PSF sigma 1.5)")
@@ -1281,7 +1300,7 @@ def main():
     assert abs(circ_err) < 0.10, f"円穴の直径が合わない: {circ_err}"
     assert abs(tilt_T) < 0.05 and abs(tilt_M) < 0.05, \
         f"角度が合わない: {tilt_T} / {tilt_M}"
-    assert abs(arc_bias) < 0.20, f"円弧キャリパーの偏りが大きい: {arc_bias}"
+    assert abs(arc_bias + 1.2 ** 2 / BOLT_RAD) < 0.10, \n        f"円弧キャリパーが曲率の偏りだけでは説明できない: {arc_bias}"
     assert edge_ratio is not None and edge_ratio <= 6.0, \
         f"干渉の崖が見つからない / 早すぎる: {edge_ratio}"
     assert abs(ang_corr[0]) < 0.05 and abs(ang_corr[4]) < 0.10, \
