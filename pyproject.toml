@@ -170,6 +170,7 @@ py-modules = [
   "fscript", "fslib", "fsruntime", "fsi18n",
   # --- geometric / math / drawing op modules + 2-D examples gallery (対話で追加) ---
   "imagemorph", "fourierdesc", "imagedraw", "drawstyle", "drawlist", "signal1d", "examples2d",
+  "examplefig",
   # `color_pca` は **HALCON facade の 11 op の実体**(create_color_trans_lut /
   # inpainting_ced / inpainting_mcf / inpainting_texture / exhaustive_match_mg /
   # gen_principal_comp_trans / gen_canonical_variates_trans / …)。

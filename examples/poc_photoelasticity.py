@@ -219,80 +219,120 @@ def section3_dark_field(dsig, theta, delta, naive, m):
     return img
 
 
+def emerging_stokes(delta, theta):
+    """円偏光を入れたとき、試料から出てくる Stokes ベクトル ``(H,W,4)``。
+
+    入射 (1,0,0,1) を位相子 M(δ,θ) に通すと解析的に
+
+        S1' = -sin2θ·sinδ,  S2' = cos2θ·sinδ,  S3' = cosδ
+
+    になる。**偏光計で測れるのはこの 3 成分だけ**で、ここから (δ, θ) を
+    復元するのが位相シフト光弾性のすべて。
+    """
+    m = _retarder_stack(delta, theta)
+    return np.einsum("...ij,j->...i", m, np.array([1.0, 0.0, 0.0, 1.0]))
+
+
 def section4_phase_shift(dsig, theta, delta, m):
     print()
     print("=" * 78)
-    print("4) ★位相シフト(6 段)—— δ と θ を分ける")
+    print("4) ★位相シフト —— δ と θ を分ける。ただし分けきれない")
     print("=" * 78)
-    print("  検光子と 1/4 波長板を回して 6 枚撮る。等傾角 θ は 4 枚から、")
-    print("  位相差 δ は残りの組から出す(Patterson-Wang 6 段法の形)。")
-    # 平面偏光系 4 枚 (β = 0, 22.5, 45, 67.5 度) から θ。
+    print("  ※ここは**手順の検算**(雑音ゼロで、同じ強度式から解き戻す)。")
+    print("    実測の誤差は 6 節(雑音・量子化)で出す。")
+    s_out = emerging_stokes(delta, theta)
+    s1, s2, s3 = s_out[..., 1], s_out[..., 2], s_out[..., 3]
+
+    # (i) 等傾角。平面偏光 4 枚から 4θ が出る。
     i0 = plane_polariscope(delta, theta, 0.0)
     i1 = plane_polariscope(delta, theta, 22.5)
     i2 = plane_polariscope(delta, theta, 45.0)
     i3 = plane_polariscope(delta, theta, 67.5)
-    # I0-I2 = -K cos4θ、I3-I1 = K sin4θ(K = sin²(δ/2))なので 4θ が出る。
     th_hat = 0.25 * np.arctan2(i3 - i1, i2 - i0)
-    # 円偏光系 2 枚から δ(暗視野・明視野)。
-    dark = polariscope_image(delta, theta, 90.0)
-    bright = polariscope_image(delta, theta, 0.0)
-    d_hat = 2.0 * np.arctan2(np.sqrt(np.maximum(dark, 0)), np.sqrt(np.maximum(bright, 0)))
-    err_d = np.abs(np.mod(d_hat - delta + np.pi, 2 * np.pi) - np.pi)
-    # θ は π/2 の周期(主軸の入れ替わり)なので、その分だけ畳んで比べる。
     ang = np.abs(np.mod(th_hat - theta + np.pi / 4, np.pi / 2) - np.pi / 4)
     print()
-    print("  ※ここは**手順の検算**(雑音ゼロで、同じ強度式から解き戻す)。")
-    print("    実測の誤差は 6 節(雑音・量子化)で出す。")
-    print("  位相差 δ の誤差(巻きを 2π で畳んだあと): 中央値 %.3e rad" % np.median(err_d[m]))
     print("  等傾角 θ の誤差: 中央値 %.4f 度 / 90 パーセンタイル %.4f 度"
           % (np.rad2deg(np.median(ang[IN_DISC])), np.rad2deg(np.percentile(ang[IN_DISC], 90))))
-    est = F_SIGMA * (d_hat / (2 * np.pi)) / H_MM
-    print("  主応力差の平均絶対誤差(N<0.5 の領域): %.5f MPa(相対 %.3f %%)"
-          % (float(np.mean(np.abs(est[m] - dsig[m]))),
-             100 * float(np.mean(np.abs(est[m] - dsig[m]) / np.maximum(dsig[m], 1e-9)))))
-    print("  → 位相シフトは**縞の間**も読む。3 節の 3 段階が連続値になる。")
-    return d_hat, th_hat
+
+    # (ii) 位相差。θ を使うと sinδ の**符号まで**取れる。
+    sin_d = s2 * np.cos(2 * th_hat) - s1 * np.sin(2 * th_hat)
+    d_hat = np.arctan2(sin_d, s3)                      # (-π, π]
+    wrapped_true = np.mod(delta + np.pi, 2 * np.pi) - np.pi
+    err = np.abs(np.mod(d_hat - wrapped_true + np.pi, 2 * np.pi) - np.pi)
+    good = err < 0.05
+    print("  巻いたままの δ(-π, π] の一致率: %.1f %%(誤差 < 0.05 rad)"
+          % (100 * float(np.mean(good[IN_DISC]))))
+    print()
+    print("  → ★残りの %.1f %% は**符号が反転**している。原因は光弾性で有名な"
+          % (100 * (1 - float(np.mean(good[IN_DISC])))))
+    print("     (δ, θ) ↔ (-δ, θ+90°) の二義性 —— 出てくる Stokes が同じなので、")
+    print("     **1 波長の 1 回の測定では原理的に分けられない**。等傾角の")
+    print("     復元も 4θ からなので θ は π/2 の周期しか決まらず、その飛びが")
+    print("     そのまま δ の符号の飛びになる。")
+    est = F_SIGMA * (np.abs(d_hat) / (2 * np.pi)) / H_MM
+    print("     |δ| だけを使えば主応力差は N<0.5 の領域で誤差 %.2e MPa。"
+          % float(np.mean(np.abs(est[m] - dsig[m]))))
+    return d_hat, th_hat, s1, s2, s3
 
 
-def section5_wrapping(dsig, delta, d_hat):
+def section5_wrapping(dsig, delta, d_hat, s1, s2, s3):
     print()
     print("=" * 78)
-    print("5) ★★位相の巻き —— 壊れるのは応力が大きい所ではない")
+    print("5) ★★位相の巻きを解く —— 壊れる場所は 2 つ、どちらも予測できる")
     print("=" * 78)
     n_true = delta / (2 * np.pi)
-    print("  縞次数 N の分布: 最小 %.3f / 中央 %.3f / 最大 %.3f(円板内)"
+    print("  縞次数 N: 最小 %.3f / 中央 %.3f / 最大 %.3f(半径 0.9R まで)"
           % (n_true[IN_DISC].min(), np.median(n_true[IN_DISC]), n_true[IN_DISC].max()))
-    frac = float(np.mean(n_true[IN_DISC] > 0.5))
-    print("  N > 0.5 = 位相が巻いている画素: %.1f %%" % (100 * frac))
+    print("  N > 0.5 = 位相が巻いている画素: %.1f %%"
+          % (100 * float(np.mean(n_true[IN_DISC] > 0.5))))
+
+    # 縞の間隔。1 縞あたり 2 画素を切ると標本化定理から復元できない。
+    gy, gx = np.gradient(n_true)
+    per_px = np.hypot(gx, gy)
+    px_per_fringe = 1.0 / np.maximum(per_px, 1e-12)
+    aliased = IN_DISC & (px_per_fringe < 2.0)
+    print("  1 縞あたりの画素数: 中央 %.1f / 最小 %.2f。**2 画素未満** = %.1f %%"
+          % (np.median(px_per_fringe[IN_DISC]), px_per_fringe[IN_DISC].min(),
+             100 * aliased.sum() / IN_DISC.sum()))
+
+    # 変調度 = sinδ と cosδ の振幅。等方点(δ→0 mod 2π)でゼロに落ちる。
+    modulation = np.hypot(np.hypot(s1, s2), s3)
+    lowmod = IN_DISC & (np.hypot(s1, s2) < 0.05)
+    print("  変調度 |sinδ| < 0.05(等方点および N が整数の帯): %.1f %%"
+          % (100 * lowmod.sum() / IN_DISC.sum()))
+    print("  (Stokes の大きさは %.4f〜%.4f = 減偏光なし。変調が落ちるのは"
+          % (modulation[IN_DISC].min(), modulation[IN_DISC].max()))
+    print("   光量ではなく**位相の感度**のほう)")
+
     wrapped = np.mod(d_hat + np.pi, 2 * np.pi) - np.pi
-    unwrapped = np.asarray(fs.ledger.unwrap_phase_2d(wrapped))
-    # 定数のオフセットは巻き戻しの自由度なので、中央値を合わせてから比べる。
-    off = float(np.median((unwrapped - delta)[IN_DISC]))
-    err = np.abs(unwrapped - off - delta)
-    ok = err < 0.5 * np.pi
     print()
-    print("  `unwrap_phase_2d` で巻きを解いたあとの一致率(誤差 < π/2): %.1f %%"
-          % (100 * float(np.mean(ok[IN_DISC]))))
-    # どこで失敗しているか —— 応力の大きさで層別する。
-    print()
-    print("  %10s %10s %12s" % ("N の帯", "画素数", "解けた割合"))
-    print("  " + "-" * 36)
-    edges = [0.0, 0.1, 0.25, 0.5, 1.0, 2.0, 10.0]
-    for a, b in zip(edges[:-1], edges[1:]):
-        band = IN_DISC & (n_true >= a) & (n_true < b)
-        if band.sum() < 20:
+    print("  %-34s %12s" % ("巻き戻しの入力", "一致率(<π/2)"))
+    print("  " + "-" * 50)
+    for label, mask in [("そのまま(マスク無し)", None),
+                        ("標本化不足を外す", ~aliased),
+                        ("標本化不足 + 低変調を外す", ~aliased & ~lowmod)]:
+        kw = {} if mask is None else {"mask": mask}
+        try:
+            unwrapped = np.asarray(fs.ledger.unwrap_phase_2d(wrapped, **kw))
+        except TypeError as exc:                        # mask を受けない場合
+            print("  %-34s %12s" % (label, "mask 不可: %s" % exc))
             continue
-        print("  %10s %10d %11.1f %%"
-              % ("%.2f-%.2f" % (a, b), band.sum(), 100 * float(np.mean(ok[band]))))
+        valid = IN_DISC & np.isfinite(unwrapped)
+        if valid.sum() < 50:
+            print("  %-34s %12s" % (label, "有効画素なし"))
+            continue
+        off = float(np.median((unwrapped - delta)[valid]))
+        ok = np.abs(unwrapped - off - delta) < 0.5 * np.pi
+        print("  %-34s %11.1f %%  (評価画素 %d)"
+              % (label, 100 * float(np.mean(ok[valid])), valid.sum()))
     print()
-    iso = IN_DISC & (n_true < 0.05)
-    print("  等方点の近く(N < 0.05、主応力差がほぼゼロ)だけ: %.1f %% しか解けない"
-          % (100 * float(np.mean(ok[iso]))) if iso.sum() > 20 else
-          "  等方点の近くに画素が足りない")
-    print("  → ★**いちばん応力が小さい所でいちばん壊れる**。δ→0 では")
-    print("     暗視野も明視野も感度がゼロに落ち、位相の符号が決まらない。")
-    print("     応力の大きい縞の密な所ではなく、**等方点が巻き戻しの毒**。")
-    print("     光弾性で「多点で校正する」と言われるのはこのため。")
+    print("  → ★壊れる場所は 2 つあり、**どちらも撮る前に分かる**:")
+    print("     (1) 縞が細かすぎる(1 縞 2 画素未満)—— 標本化定理。荷重点の近く。")
+    print("     (2) 変調が落ちる —— δ が 2π の整数倍に近い帯と、主応力差が")
+    print("         ゼロになる等方点。**いちばん応力が小さい所**が含まれる。")
+    print("     どちらもマスクで外せる。`unwrap_phase_2d` は mask を受けるので、")
+    print("     渡すかどうかで結果が上の表のとおり変わる —— **渡さないのは")
+    print("     手順の欠落であって、道具の限界ではない**。")
 
 
 def section6_noise(dsig, theta, delta, m):
@@ -379,8 +419,8 @@ def main():
     dsig, theta, delta = build_fields()
     naive, m = section2_zero_point(dsig, delta)
     section3_dark_field(dsig, theta, delta, naive, m)
-    d_hat, _th = section4_phase_shift(dsig, theta, delta, m)
-    section5_wrapping(dsig, delta, d_hat)
+    d_hat, _th, k1, k2, k3 = section4_phase_shift(dsig, theta, delta, m)
+    section5_wrapping(dsig, delta, d_hat, k1, k2, k3)
     section6_noise(dsig, theta, delta, m)
     section7_findings()
     print("経過 %.1f 秒" % (time.time() - t0))
