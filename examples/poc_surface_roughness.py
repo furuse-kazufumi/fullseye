@@ -652,9 +652,9 @@ def main():
           f"{'λc':>12}{'λs':>12}   総合")
     rob = {}
     for k in PARAMS:
-        d_samp = abs(rel_err(samp["point"][4][k], truth[k]))                  # dx=4µm
+        d_samp = abs(rel_err(samp["point"][8][k], truth[k]))                  # dx=8µm
         d_lam_c = abs(rel_err(lam_c_tab[128.0][k], lam_c_tab[80.0][k]))       # λc 1 段
-        d_lam_s = abs(rel_err(lam_s_tab[8.0][k], lam_s_tab[0.0][k]))          # λs 8µm
+        d_lam_s = abs(rel_err(lam_s_noise[0.0][k], base_clean[k]))            # 雑音 σ0.05
         rob[k] = (d_samp, d_lam_c, d_lam_s)
     # 評価領域感度 = 窓 128 と 512 の差
     area_sens = {}
