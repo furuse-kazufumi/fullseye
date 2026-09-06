@@ -571,6 +571,7 @@ def main():
           f"10 % は {math.sqrt(4 * math.log(10) / (2 * math.pi ** 2)):.3f}。")
     print(f"  {'sigma/m':>9}{'sigma [px]':>12}{'BER 既知':>10}"
           f"{'BER 既知 (雑音 0.02)':>21}{'BER 検出 (雑音 0.02)':>21}")
+    blur_rows = []
     for br in (0.0, 0.15, 0.30, 0.40, 0.45, 0.50, 0.60, 0.75, 1.00):
         im, H = capture(bits, module_px=8, blur_ratio=br)
         bk, _ = read(im, n, 8, H_true=H)
@@ -580,6 +581,22 @@ def main():
         det = f"{ber(bits, bd2):.4f}" if bd2 is not None else f"読めず({why2})"
         print(f"  {br:>9.2f}{br * 8:>12.1f}{ber(bits, bk):>10.4f}"
               f"{ber(bits, bk2):>21.4f}{det:>21}")
+        blur_rows.append((br, ber(bits, bk2),
+                          ber(bits, bd2) if bd2 is not None else float("nan")))
+        if br == 0.50 and figs.enabled():
+            # 崖のちょうど上。ビット行列は 25x25 と小さいので 8 倍に拡大して
+            # 撮影像と並べる(拡大は表示のためだけで、読み取りは元寸で行った)。
+            big = np.ones((8, 8))
+            figs.save_grid(
+                "symbol_and_errors",
+                [np.kron(bits.astype(float), big), im2,
+                 np.kron(bk2.astype(float), big),
+                 np.kron((bits ^ bk2).astype(float), big)],
+                ["真のビット行列", "撮影像(sigma/m 0.50、雑音 0.02)",
+                 "読み返したビット行列", "誤ったモジュール(BER %.4f)" % ber(bits, bk2)],
+                title="崖のすぐ上で何が起きているか",
+                caption="誤りは黒白が隣り合う所に集まる —— 隣のモジュールが"
+                        "中心画素へ染み出すため。構造(3 隅・タイミング)は無傷。")
     print("  崖は sigma/m = 0.4 と 0.5 の間(0.40 で BER 0.003、0.50 で 0.066、")
     print("  0.60 で 0.29)。予想した帯 0.375〜0.68 のちょうど下端に来た。")
     print("  雑音 0.02 の有無で崖はほとんど動かない —— 効いているのはコントラストの")
