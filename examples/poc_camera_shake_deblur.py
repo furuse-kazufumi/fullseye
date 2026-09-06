@@ -61,11 +61,15 @@ EXTEND: 実写真に差し替えるなら ``scene()`` の戻り値を ``fs.to_fl
 from __future__ import annotations
 
 import math
+import sys
 import time
+from pathlib import Path
 
 import numpy as np
 
-import fullseye as fs
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import examplefig as figs                                        # noqa: E402
+import fullseye as fs                                            # noqa: E402
 
 SEED = 20260906
 DR = 1.0                      # data_range。真値も観測も [0, 1] に載せる
