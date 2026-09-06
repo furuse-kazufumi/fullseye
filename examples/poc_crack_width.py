@@ -542,16 +542,28 @@ def section_max_vs_mean() -> dict:
         print("     %3d    %.4f mm   %.4f mm    %+.4f mm     %.4f mm     %.2f"
               % (n, mn, mx, mx - mn, p, (mx - mn) / p if p else np.nan))
 
+    # 予測が一貫して上振れする理由を測る: 隣り合う測点は独立でない。
+    # 断面は半長 %.0f px で、測点の間隔は 6 px —— 窓が重なるので相関が残る。
+    z = (allw - allw.mean(axis=1, keepdims=True))
+    r1 = float(np.mean(np.sum(z[:, :-1] * z[:, 1:], axis=1)
+                       / np.sum(z * z, axis=1)))
+    n_eff = allw.shape[1] * (1.0 - r1) / (1.0 + r1)
+
     print("\n  ★測点を %d 点から %d 点へ増やすと、報告する「最大幅」は "
           "%.4f -> %.4f mm(%+.1f %%)。" % (
               ns[0], ns[-1], w_true + meas[0], w_true + meas[-1],
               100 * (meas[-1] - meas[0]) / w_true))
     print("     真の幅は 1 μm も変わっていない。**密に測るほど不合格に近づく**。")
-    print("  ★過大量は sqrt(2 ln N) の漸近式と比 %.2f 〜 %.2f で一致する。"
-          % (min(m / p for m, p in zip(meas, pred) if p),
-             max(m / p for m, p in zip(meas, pred) if p)))
-    print("     規格が「最大幅」で書かれている以上、**測点密度を書かない"
-          "報告は比較できない**。")
+    ratio = [m / p for m, p in zip(meas, pred) if p]
+    print("  ★過大量は sqrt(2 ln N) の漸近式と比 %.2f 〜 %.2f で一致する —— "
+          "**一貫して 1 を下回る**。" % (min(ratio), max(ratio)))
+    print("     理由は測ってある: 隣り合う測点は独立でない(1 次の自己相関 "
+          "%.2f、有効な独立点数 %.0f / %d)。"
+          % (r1, n_eff, allw.shape[1]))
+    print("     断面の半長 %.0f px に対して測点の間隔が 6 px なので窓が重なる。"
+          "iid を仮定した予測は**上振れ側の安全な見積り**になる。" % R_PROF)
+    print("  ★規格が「最大幅」で書かれている以上、**測点密度を書かない報告は"
+          "比較できない**。")
 
     figs.save_table("max_vs_mean",
                     ["測点 N", "平均 mm", "最大 mm", "過大量 mm", "予測 mm", "比"],
