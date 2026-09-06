@@ -39,20 +39,28 @@ version: 0.1.0
 
 ## 使う順序
 
+op は `fullseye.ledger.<名前>` から呼べます(この族の公開経路。実体を直に触るなら `import blob2d`)。
+
 ```python
 import numpy as np
 import fullseye as fs
 
-img = fs.read_image("parts.png")          # (H, W) の実数画像
-mask = img > fs.otsu_threshold(img)       # 前景を出す(この族の外)
+# 撮った絵の代わりに、丸い部品を 3 個と細長い切り粉を 1 本置いた場面
+img = np.zeros((120, 160))
+rr, cc = np.mgrid[0:120, 0:160]
+for r0, c0, rad in ((30, 40, 12), (30, 100, 9), (85, 70, 15)):
+    img[(rr - r0) ** 2 + (cc - c0) ** 2 <= rad * rad] = 0.9
+img[100:103, 20:60] = 0.9                 # 切り粉(細長い = 落としたい)
 
-lab = fs.blob_label(mask)                 # 1) 物体に切る(既定は 8 連結)
-f = fs.blob_features(lab, spacing=0.05)   # 2) 測る(1 px = 0.05 mm)
-big = fs.blob_select(lab, "area", vmin=0.5, spacing=0.05)   # 3) 0.5 mm^2 以上
-round_ = fs.blob_select(big, "circularity", vmin=0.85)      #    かつ丸いもの
+mask = img > 0.5                          # 前景を出す(この族の外)
 
-print("残った物体:", int(round_.max()))
-view = fs.blob_overlay(img, round_)       # 4) 見る
+lab = fs.ledger.blob_label(mask)          # 1) 物体に切る(既定は 8 連結)
+f = fs.ledger.blob_features(lab, spacing=0.05)     # 2) 測る(1 px = 0.05 mm)
+big = fs.ledger.blob_select(lab, "area", vmin=0.5, spacing=0.05)   # 3) 0.5 mm^2 以上
+parts = fs.ledger.blob_select(big, "circularity", vmin=0.85)       #    かつ丸いもの
+
+print("測った物体:", f["n"], "-> 残った部品:", int(parts.max()))
+view = fs.ledger.blob_overlay(img, parts)          # 4) 見る
 ```
 
 **選ぶ前に測る必要はありません** —— `blob_select` は中で `blob_features` を呼びます。ただし何度も選ぶなら、`blob_features` を 1 回だけ呼んで自分で `np.isin` する方が速い(下の「速さ」節)。
