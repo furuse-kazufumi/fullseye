@@ -760,6 +760,8 @@ def main():
     # 入口から見えないこと(道具の穴 (b))
     assert "vector_to_hom_mat2d" not in dir(fs) and "vector_to_hom_mat2d" not in dir(fs.ledger)
     assert "hough_lines_dir" not in dir(fs) and "hough_lines_dir" not in dir(fs.ledger)
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print(f"\n  (全体 {time.perf_counter() - t_start:.1f} s)")
     print("\nPASS")
 
