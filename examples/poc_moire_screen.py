@@ -328,7 +328,8 @@ def section4_alternatives(both):
 
     add("何もしない", lambda a: a)
     add("平滑化 σ=8", lambda a: smooth(a, 8.0))
-    add("ノッチ(予測位置)", lambda a: notch(a, freqs, rho))
+    add("ノッチ(素)", lambda a: notch(a, freqs, rho))
+    add("ノッチ+窓長合わせ", lambda a: notch_matched(a, freqs, K_BASE - 3.0)[0])
     add("2 次曲面フィット", lambda a: np.asarray(a) - np.asarray(
         fs.ledger.background_flatten(np.asarray(a), degree=2)))
     # 光学ローパス: 像を作り直す(後処理ではない)
