@@ -235,7 +235,7 @@ def section3_crossover(frames):
     print("=" * 78)
     print("3) ★★累積 vs 直接 —— 偏りと散らばりを分けて、交点を探す")
     print("=" * 78)
-    n_real = 6
+    n_real = 10
     print("  雑音の実現を %d 通り作り、**コマごとに**偏り(平均誤差)と" % n_real)
     print("  散らばり(実現間の標準偏差)を分けて数える。1 つの RMS に")
     print("  畳むと、系統的なずれと揺らぎのどちらが効いているか消える。")
