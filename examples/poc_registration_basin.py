@@ -505,7 +505,7 @@ def main():
     print(f"  {'形状':<14}{'残差 rmse/直径':>16}{'回転誤差 中央値[度]':>22}"
           f"{'見かけ上収束':>14}{'うち姿勢が誤り':>18}")
     sym = {}
-    for label, gen in (("非対称当て金", lambda k, r: bracket(k, r)),
+    for label, gen in (("非対称当て金", bracket),
                        ("素の直方体", lambda k, r: bracket(k, r, bump=0.0)),
                        ("球", sphere), ("円柱", cylinder)):
         rng_s = np.random.default_rng(24680)
