@@ -529,6 +529,8 @@ def section_missing_tooth() -> dict:
     print("4-5) ★★歯が 1 枚欠けると全周波数に漏れる / 外して測り直すと戻る")
     print("=" * 78)
 
+    print("   偏心 [mm]  歯欠け  検出した歯  外れ角度 [%]  FFT の 1 次    "
+          "中央値テンプレート後")
     rows = []
     figs_keep = {}
     for ecc in (0.000, 0.050):
@@ -537,44 +539,30 @@ def section_missing_tooth() -> dict:
             b = bore_centre(sc["img"])
             prof = radial_profile(sc["img"], (b["cy"], b["cx"]))
             amp = harmonics(prof)
-
-            # 欠けを見つける: 歯先半径の外れ値(中央値から 0.5 mm 以上低い歯)
             tt = tooth_table(prof, R_PITCH)
-            tip = tt["tip"]
-            bad = np.nonzero(tip < np.median(tip) - 0.5)[0]
-            th = np.arange(N_ANG) * (2.0 * np.pi / N_ANG)
-            keep = np.ones(N_ANG, bool)
-            # 欠けた歯の位置は「隣り合う歯の間隔が 2 ピッチ空いた場所」に出る
-            gap = np.nonzero(np.diff(np.append(tt["centre"],
-                                               tt["centre"][0] + 2 * np.pi))
-                             > 1.5 * PITCH_ANG)[0]
-            holes = list(tt["centre"][gap] + 0.5 * PITCH_ANG) + \
-                list(tt["centre"][bad]) if bad.size else list(
-                    tt["centre"][gap] + 0.5 * PITCH_ANG)
-            for c in holes:
-                keep &= np.abs(np.mod(th - c + np.pi, 2 * np.pi) - np.pi) > 0.6 * PITCH_ANG
-            orders = [1, 2] + [Z_TEETH * k for k in (1, 2, 3, 4)]
-            fit_all = fit_orders(prof, np.ones(N_ANG, bool), orders)
-            fit_cut = fit_orders(prof, keep, orders)
-
-            rows.append((ecc, bool(miss), tt["n"], len(holes), float(amp[1]),
-                         fit_all[1], fit_cut[1]))
-            print("  偏心 %.3f / 歯欠け %s : 検出した歯 %2d 枚、欠けと判定 %d 箇所"
-                  % (ecc, "有" if miss else "無", tt["n"], len(holes)))
-            print("      FFT の 1 次   %.4f mm   最小二乗(全周) %.4f mm   "
-                  "(欠けを外して) %.4f mm"
-                  % (amp[1], fit_all[1], fit_cut[1]))
+            rr = robust_runout(prof)
+            rows.append((ecc, bool(miss), tt["n"], float(amp[1]), rr["ecc"],
+                         1.0 - rr["kept"]))
+            print("     %.3f      %s       %2d 枚       %5.1f       %.4f mm     "
+                  "%.4f mm" % (ecc, "有" if miss else "無", tt["n"],
+                               100 * (1 - rr["kept"]), amp[1], rr["ecc"]))
             if ecc == 0.050:
-                figs_keep["miss" if miss else "ok"] = (sc, prof, amp)
+                figs_keep["miss" if miss else "ok"] = (sc, prof, amp, rr)
 
-    e0_miss = rows[1][4]
-    e5_ok, e5_miss, e5_cut = rows[2][4], rows[3][4], rows[3][6]
-    print("\n  ★★偏心ゼロの歯車から 1 枚落としただけで 1 次が %.4f mm 立つ"
+    e0_miss = rows[1][3]
+    e5_ok, e5_miss, e5_cut = rows[2][3], rows[3][3], rows[3][4]
+    print("\n  ★★偏心ゼロの歯車から 1 枚落としただけで、FFT の 1 次が %.4f mm 立つ"
           "(実在する偏心 0.050 mm の %.1f 倍)。" % (e0_miss, e0_miss / 0.050))
-    print("  ★偏心 0.050 mm の歯車: 欠け無し %.4f mm (%+.1f %%) -> 欠け有り %.4f mm "
-          "(%+.1f %%) -> 外して測り直すと %.4f mm (%+.1f %%)。"
+    print("     欠けは局所的な穴なので、周期 z の系列には収まらず **全次数へ漏れる**"
+          " —— その一部が 1 次に落ちる。")
+    print("  ★直し方: 24 個の扇形に折り畳んで **位相ごとの中央値** を歯形テンプレート"
+          "とし、残差から偏心を取る。")
+    print("     偏心 0.050 mm の歯車: 欠け無し %.4f mm (%+.1f %%) -> 欠け有り "
+          "FFT %.4f mm (%+.0f %%) -> テンプレート後 %.4f mm (%+.1f %%)。"
           % (e5_ok, 100 * (e5_ok - 0.05) / 0.05, e5_miss,
              100 * (e5_miss - 0.05) / 0.05, e5_cut, 100 * (e5_cut - 0.05) / 0.05))
+    print("     中央値が効くのは、24 個の等間隔な角度で中央値を取ると偏心 "
+          "e·cos(θ−φ) が打ち消えるから(歯形だけが残る)。")
 
     sc_ok, prof_ok, amp_ok = figs_keep["ok"]
     sc_ms, prof_ms, amp_ms = figs_keep["miss"]
