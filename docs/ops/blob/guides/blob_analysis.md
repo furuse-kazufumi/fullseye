@@ -76,8 +76,20 @@ view = fs.ledger.blob_overlay(img, parts)          # 4) 見る
 ### 2. 二値マスクは `blob_features` に渡せない
 
 ```python
-fs.blob_features(mask)         # ValueError: ... is a boolean mask, not a label image
-fs.blob_features(fs.blob_label(mask))   # 正しい
+import numpy as np
+import fullseye as fs
+
+mask = np.zeros((40, 40), bool)
+mask[5:15, 5:15] = True
+mask[25:35, 25:35] = True
+
+try:
+    fs.ledger.blob_features(mask)       # bool は受けない
+except ValueError as exc:
+    print("拒否された:", str(exc)[:60])
+
+f = fs.ledger.blob_features(fs.ledger.blob_label(mask))   # 正しい
+print("物体の数:", f["n"])               # -> 2(マスクのままなら 1 個として測る)
 ```
 
 拒否するのは意地悪ではありません。マスクをそのまま測ると**別々の 2 個の細胞が 1 個の物体として測られ、2 つの中心のあいだに重心が出ます**。例外にならず、それらしい数字が返る —— この repo が型を分ける基準そのものです。
