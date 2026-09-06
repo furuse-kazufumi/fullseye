@@ -143,7 +143,7 @@ def _undistort_uv(uv, kappa):
     return np.column_stack([cx + d[:, 0] * f, cy + d[:, 1] * f])
 
 
-def illumination_field(strength=0.45, shadow=0.45, edge=0.55, soft=45.0):
+def illumination_field(strength=0.30, shadow=0.22, edge=0.55, soft=45.0):
     """既知の照明ムラ: 左右の勾配 + 斜めの柔らかい影。"""
     rr, cc = np.mgrid[0:CAM_H, 0:CAM_W].astype(float)
     u = cc / (CAM_W - 1); v = rr / (CAM_H - 1)
