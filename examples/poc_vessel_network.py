@@ -528,10 +528,10 @@ def section_spurs(tree: dict, z: dict) -> dict:
           "。残りは **ヒゲより長い偽の枝** で、長さでは分けられない。"
           % (fa[1], min(r[1] for r in a["rec"]), a["rec"][
               int(np.argmin([r[1] for r in a["rec"]]))][0]))
-    print("     しかも刈る長さを %d px より大きくすると本物の末端が消え始める"
-          "(%d / %d 本)。" % (a["rec"][3][0], a["rec"][3][3] and
-                               a["n_leaf"] - a["rec"][3][3] or a["n_leaf"],
-                               a["n_leaf"]))
+    first_loss = next((r for r in a["rec"] if r[3] > 0), a["rec"][-1])
+    print("     しかも刈る長さ %d px で本物の末端が %d / %d 本まで減り始める ——"
+          " 偽陽性を削り切る前に本物を削る。"
+          % (first_loss[0], a["n_leaf"] - first_loss[3], a["n_leaf"]))
     print("  ★半分の解像度では、刈る長さをどう選んでも見落とし %d 個は動かない"
           " —— 分岐が潰れてしまったものは、骨格からは復元できない。"
           % min(r[2] for r in b["rec"]))
