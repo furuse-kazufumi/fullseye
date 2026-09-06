@@ -644,6 +644,8 @@ def main():
         raise AssertionError("総和 0 の核が素通りした")
     except ValueError:
         pass
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("\nPASS")
 
 
