@@ -1152,6 +1152,7 @@ def envelope_spectrum(x, rate, low, high, order=4, n_peaks=5):
     peak = float(body.max())
     sig_rms = float(np.sqrt(np.mean(arr * arr)))
     band_rms = float(np.sqrt(np.mean(band * band)))
+    loc_prom, loc_med = _local_prominence(mag, freqs, int(np.argmax(body)))
     return {
         "freqs": freqs,
         "magnitude": mag,
