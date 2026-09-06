@@ -777,6 +777,27 @@ def pc_lod_chain(points, spacing, levels=3, seed=0):
     Level 0 is the input; level *k* keeps no two points closer than
     ``spacing × 2^(k−1)``. Returns ``levels`` (list of clouds), ``spacings``,
     ``counts``.
+
+    手順: level 0 = 入力点群(検証後の float64 コピー)。level ``k``(1..``levels``)は
+    **直前の level** に ``pc_poisson_disk(prev, spacing * 2**(k-1), seed=seed + k - 1)``
+    を掛けたもの(累積的に間引くので、粗い level の点は必ず細かい level にも含まれる
+    = 入れ子)。点は動かさない(格子平均のような重心移動はしない)。
+
+    引数: ``points`` ``(N, 3)``(有限、``MAX_POINTS`` 以下)、``spacing > 0``(level 1
+    の最小点間距離、座標と同じ単位)、``levels`` は 1..16 の整数、``seed`` は
+    Poisson-disk の訪問順の乱数種(固定なら決定的)。
+
+    返り値(dict): ``levels``(``levels + 1`` 個の ``(n_k, 3)`` 配列のリスト)、
+    ``spacings``(``[0.0, spacing, 2*spacing, ...]``、level 0 は 0)、``counts``
+    (各 level の点数)、``n_levels``(``levels + 1``)。
+
+    検証(``ValueError``): 点群の形・非有限・点数超過 / ``spacing`` が非正 /
+    ``levels`` が整数でない・範囲外。
+
+    注意: 各 level の点数は ``~ 面積 / spacing_k^2`` の目安で 4 分の 1 ずつ減るが、
+    疎な領域(元の点間隔が ``spacing_k`` より大きい)は間引かれず残る。何を落としたかは
+    ``pc_thinning_report(points, levels[k])`` で数える。メッシュの LOD は
+    ``mesh_lod_chain``。
     """
     P = _points(points)
     sp = _num(spacing, "spacing", positive=True)
