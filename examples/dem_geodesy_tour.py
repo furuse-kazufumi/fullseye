@@ -230,8 +230,10 @@ def run() -> dict:
     assert abs(c15_tokyo / c16_tokyo - 2.0) < 1e-12
     assert abs(c15_tokyo / c15_eq - math.cos(math.radians(35.68))) < 1e-12
     # 赤道の値を東京で使うと傾斜が過小になる —— その割合を式で出す。
-    under = 1.0 - math.degrees(math.atan(math.tan(math.radians(20.0)) * c15_tokyo / c15_eq)) / 20.0
-    print(f"  赤道の寸法で東京の 20 度斜面を測ると {100 * under:.1f} % 過小(docstring「23 %」)")
+    naive20 = math.degrees(math.atan(math.tan(math.radians(20.0)) * c15_tokyo / c15_eq))
+    print(f"  赤道の寸法で東京の 20 度斜面を測ると {naive20:.2f} 度 = {100 * (1 - naive20 / 20.0):.1f} % 過小"
+          f"(真値は測った値の +{100 * (20.0 / naive20 - 1):.1f} %。docstring の「23 %」は後者の言い方で、"
+          f"勾配比 1/cosφ - 1 = {100 * (c15_eq / c15_tokyo - 1):.1f} % に近い)")
     out["webmercator_z15_tokyo_m"] = c15_tokyo
 
     # ------------------------------------------------------------------ 6
