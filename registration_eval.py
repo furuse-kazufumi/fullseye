@@ -210,8 +210,8 @@ def rotation_translation_error(gt, est):
     - ``rre_deg`` は [0, 180] の度(cos は [-1,1] にクリップしてから arccos)。``rte`` は並進列の差の
       ノルムで座標の単位。並進列は回転の原点に依存するので、同じ姿勢誤差でも原点が物体から遠い
       ほど RTE は大きく出る(比較は同じフレーム規約の変換どうしで行う)。
-    - 回転行列が直交でなくても検査しないので、``gicp`` 等の出力を ``make_transform`` で組んだ
-      正しい変換を渡す。``inlier_ratio`` / ``registration_recall`` が点群上の残差で測るのに対し、
+    - 回転行列が直交でなくても検査しないので、``gicp`` 等の出力 (R,t) を同モジュールの
+      ``make_transform`` で組んだ正しい変換を渡す。``inlier_ratio`` / ``registration_recall`` が点群上の残差で測るのに対し、
       こちらは変換パラメータそのものの差を測る。
     """
     G = _as_transform(gt, "gt")

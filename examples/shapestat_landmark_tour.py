@@ -27,7 +27,9 @@
    (honest: どちらを使うかで見える異常が違う)。
 6. 既知の正中面で鏡映した左右ランドマークから ``mirror_plane_from_pairs`` が面を
    1e-9 で復元し、``landmark_asymmetry`` は 0。右 1 点を法線方向に 0.3 動かすと
-   真の面で測れば 0.3 ちょうど、面を再当てはめすると少し縮む(印字)。
+   真の面で測れば 0.3 ちょうど。面を**同じ対から再当てはめ**すると縮む(10 対で利得 0.38、
+   60 対で 0.9 前後 —— 非対称量は「中点の面からの距離 x2」なので、ずれた中点が面を
+   引き寄せる。量を言うなら面は別の情報源か多数の対から決める。honest に印字)。
 7. 球面標本を法線方向に ±0.2 動かした問い合わせ点の ``signed_surface_distance`` が
    ±0.2 ちょうど(法線を与えた場合)。法線を省いた推定でも符号が一致する。
 
@@ -199,19 +201,23 @@ def section_pca(family):
             "ingroup_mahalanobis_max": in_mh}
 
 
+def _symmetric_landmarks(M, c_true, n_true, seed=5):
+    """正中面 (c_true, n_true) で厳密に鏡映した左右 M 対を「左を全部、次に右」で並べる。"""
+    rng = np.random.default_rng(seed)
+    left = rng.uniform(-3, 3, size=(M, 3))
+    sd = (left - c_true) @ n_true
+    left = left - (sd + 1.0 + np.abs(sd))[:, None] * n_true   # 全部を面の負側へ(距離 >= 1)
+    right = left - 2.0 * ((left - c_true) @ n_true)[:, None] * n_true
+    return np.vstack([left, right])
+
+
 def section_symmetry():
     """6. 左右対称性: 既知の正中面で作った対から面を戻し、非対称量を測る。"""
-    rng = np.random.default_rng(5)
     n_true = np.array([1.0, 0.3, -0.2])
     n_true /= np.linalg.norm(n_true)
     c_true = np.array([0.5, -0.2, 0.1])                 # 正中面: 点 c_true、法線 n_true
     M = 10
-    left = rng.uniform(-3, 3, size=(M, 3))
-    sd = (left - c_true) @ n_true
-    left = left - (sd + 1.0 + np.abs(sd))[:, None] * n_true   # 全部を面の負側へ(距離 >= 1)
-    reflect = lambda p: p - 2.0 * ((p - c_true) @ n_true)[:, None] * n_true   # noqa: E731
-    right = reflect(left)
-    lm = np.vstack([left, right])                       # 前半=左、後半=右(既定の対規約)
+    lm = _symmetric_landmarks(M, c_true, n_true)        # 前半=左、後半=右(既定の対規約)
     # ★EXTEND: 自分のランドマークを「左を全部、次に右を同じ順で」並べて lm に入れる
 
     plane = S.mirror_plane_from_pairs(lm)               # (2,3): 点と法線
@@ -230,14 +236,21 @@ def section_symmetry():
     a_true = S.landmark_asymmetry(lm2, plane=true_plane)
     a_fit = S.landmark_asymmetry(lm2)                   # 面も同じ対から再当てはめ
     others = np.delete(np.arange(M), j)
+    gain10 = float(a_fit[j] / delta)
+    # 対が多ければ 1 対のずれが面を引きずる力は弱まる(同じ検査を 60 対で)
+    lm60 = _symmetric_landmarks(60, c_true, n_true, seed=6)
+    lm60[60 + j] += delta * n_true
+    gain60 = float(S.landmark_asymmetry(lm60)[j] / delta)
     print(f"   右 {j} 番を +{delta} 張り出し: 真の面で測ると {a_true[j]:.9f}(他の対 最大 "
-          f"{float(np.abs(a_true[others]).max()):.1e})、面を再当てはめすると {a_fit[j]:.4f}"
-          f"(中点が delta/2 ずれるぶん縮む: 利得 {a_fit[j] / delta:.3f})")
+          f"{float(np.abs(a_true[others]).max()):.1e})")
+    print(f"   面を同じ対から再当てはめすると縮む: 利得 {gain10:.3f}(10 対)→ {gain60:.3f}(60 対)。"
+          f"非対称量 = 2 x(中点の面からの距離)なので、ずれた中点が面を引き寄せるぶん失う。"
+          f"量を言うときは面を別の情報源(または多数の対)から決めること")
     assert abs(a_true[j] - delta) < 1e-9 and float(np.abs(a_true[others]).max()) < 1e-9
-    assert abs(a_fit[j] - delta) < 0.25 * delta and a_fit[j] > 0.0
+    assert 0.0 < gain10 < 1.0 and gain10 < gain60 <= 1.0 + 1e-9
 
     # midline(対にならない正中線上の点)を足しても面は変わらない
-    mid_pts = c_true + np.array([[0.0, 1.0, 1.5], [0.0, -2.0, -3.0]]) @ np.eye(3)
+    mid_pts = c_true + np.array([[0.0, 1.0, 1.5], [0.0, -2.0, -3.0]])
     mid_pts = mid_pts - ((mid_pts - c_true) @ n_true)[:, None] * n_true   # 厳密に面上へ
     lm3 = np.vstack([lm, mid_pts])
     pairs = np.column_stack([np.arange(M), np.arange(M, 2 * M)])
@@ -253,7 +266,7 @@ def section_symmetry():
     print(f"   midline 2 点を足しても面は同じ(ずれ {off3:.1e})、奇数個の入力は拒否: {odd_rejected}")
     assert odd_rejected
     return {"plane_offset": off, "plane_cos": cosang, "asym_true_plane": float(a_true[j]),
-            "asym_refit_plane": float(a_fit[j]), "delta": delta}
+            "asym_refit_gain_10pairs": gain10, "asym_refit_gain_60pairs": gain60, "delta": delta}
 
 
 def section_surface_distance():
