@@ -293,13 +293,15 @@ def section4_separate(floors):
         both.append(t)
         print("  %8.0f %14.1f %14.1f %14.1f %12.1f" % (r, a, b, t, a + b))
     print()
-    print("  → ★**予想が外れた**。焦点距離ドリフトは半径にほとんど依らない")
-    print("     (%.1f → %.1f ppm)。主点ドリフトは中央で %.1f ppm、"
-          % (only_f[0], only_f[-1], only_c[0]))
-    print("     周辺で %.1f ppm と**半径に比例して増える**。予想は逆だった。"
+    print("  → ★**予想が外れた**。焦点距離ドリフトは半径にほぼ依らない")
+    print("     (%.1f → %.1f ppm、%.0f %% しか増えない)。主点ドリフトは中央で %.1f ppm、"
+          % (only_f[0], only_f[-1], 100 * (only_f[-1] / only_f[0] - 1), only_c[0]))
+    print("     周辺で %.1f ppm と**半径にほぼ比例して増える**。予想は逆だった。"
           % only_c[-1])
     print("     理由: 平行移動そのものは距離を変えない。効くのは**歪みを外すときに")
     print("     使う中心がずれる**ことで、その影響は半径の 1 次で入る。")
+    print("     和が「両方」と %.1f ppm 以内で一致する(重ね合わせが効いている)。"
+          % max(abs(a + b - t) for a, b, t in zip(only_f, only_c, both)))
     print()
     # 対照: 歪みを 0 にすると主点ドリフトは寸法に効かなくなるはず
     global DIST
