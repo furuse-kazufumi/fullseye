@@ -410,6 +410,10 @@ def section5_window():
     return meas
 
 
+#: 6 節が測った正弦チャートの絶対コントラスト(7 節の図で同じ軸に重ねる)
+CHART: dict[str, np.ndarray] = {}
+
+
 def section6_chart():
     print()
     print("=" * 78)
