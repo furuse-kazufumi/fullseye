@@ -37,6 +37,28 @@ version: 0.1.0
 
 `ndimage.label` 自体は op の実装の**中**に 20 か所以上あります。ただしどれも結果を画像かスカラに畳んでから返すので、利用者からは見えません。**実装が在ることと、公開経路が在ることは別**というのがこの repo で繰り返し出ている形です。
 
+## 流れ
+
+```mermaid
+flowchart TD
+    IMG["画像 (H, W)<br/>撮影 or 合成"]
+    IMG --> TH["しきい値・モルフォロジー<br/>(この族の外)"]
+    TH --> M["mask (H, W) bool<br/>前景かどうかだけ"]
+    M --> L["blob_label<br/>4 / 8 連結"]
+    L --> LB["labels2d (H, W) int32<br/>背景 0、物体 1..n"]
+    LB --> FE["blob_features<br/>物体ごとに 19 項目"]
+    FE --> T["table<br/>area / circularity / holes …"]
+    LB --> SE["blob_select<br/>特徴量の範囲で残す"]
+    LB --> SL["blob_select_largest<br/>面積の大きい順に n 個"]
+    SE --> LB2["labels2d(1..k に振り直し)"]
+    SL --> LB2
+    LB2 --> RG["blob_region<br/>1 個を領域として抜く"]
+    LB2 --> BD["blob_boundaries<br/>輪郭 1 画素幅"]
+    LB2 --> OV["blob_overlay<br/>元画像に重ねる(出口)"]
+    RG --> MK["mask<br/>既存の領域 op へ戻る"]
+    BD --> MK
+```
+
 ## 使う順序
 
 op は `fullseye.ledger.<名前>` から呼べます(この族の公開経路。実体を直に触るなら `import blob2d`)。

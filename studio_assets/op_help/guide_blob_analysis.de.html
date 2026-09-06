@@ -20,36 +20,79 @@
 <p>| <code style="color:#22d3bf">regions_setops</code> / <code style="color:#22d3bf">regions_gen</code> | 領域の集合演算と生成 | 領域を<b>分ける</b>口が無い |</p>
 <p>| <code style="color:#22d3bf">segmentation.watersheds_marker</code> | 分水嶺 | モジュールには在るが facade にも台帳にも出ていない(別件) |</p>
 <p><code style="color:#22d3bf">ndimage.label</code> 自体は op の実装の<b>中</b>に 20 か所以上あります。ただしどれも結果を画像かスカラに畳んでから返すので、利用者からは見えません。<b>実装が在ることと、公開経路が在ることは別</b>というのがこの repo で繰り返し出ている形です。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">流れ</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TD
+    IMG[&quot;画像 (H, W)&lt;br/&gt;撮影 or 合成&quot;]
+    IMG --&gt; TH[&quot;しきい値・モルフォロジー&lt;br/&gt;(この族の外)&quot;]
+    TH --&gt; M[&quot;mask (H, W) bool&lt;br/&gt;前景かどうかだけ&quot;]
+    M --&gt; L[&quot;blob_label&lt;br/&gt;4 / 8 連結&quot;]
+    L --&gt; LB[&quot;labels2d (H, W) int32&lt;br/&gt;背景 0、物体 1..n&quot;]
+    LB --&gt; FE[&quot;blob_features&lt;br/&gt;物体ごとに 19 項目&quot;]
+    FE --&gt; T[&quot;table&lt;br/&gt;area / circularity / holes …&quot;]
+    LB --&gt; SE[&quot;blob_select&lt;br/&gt;特徴量の範囲で残す&quot;]
+    LB --&gt; SL[&quot;blob_select_largest&lt;br/&gt;面積の大きい順に n 個&quot;]
+    SE --&gt; LB2[&quot;labels2d(1..k に振り直し)&quot;]
+    SL --&gt; LB2
+    LB2 --&gt; RG[&quot;blob_region&lt;br/&gt;1 個を領域として抜く&quot;]
+    LB2 --&gt; BD[&quot;blob_boundaries&lt;br/&gt;輪郭 1 画素幅&quot;]
+    LB2 --&gt; OV[&quot;blob_overlay&lt;br/&gt;元画像に重ねる(出口)&quot;]
+    RG --&gt; MK[&quot;mask&lt;br/&gt;既存の領域 op へ戻る&quot;]
+    BD --&gt; MK</pre>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使う順序</h3>
+<p>op は <code style="color:#22d3bf">fullseye.ledger.&lt;名前&gt;</code> から呼べます(この族の公開経路。実体を直に触るなら <code style="color:#22d3bf">import blob2d</code>)。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
 import fullseye as fs
 
-img = fs.read_image(&quot;parts.png&quot;)          # (H, W) の実数画像
-mask = img &gt; fs.otsu_threshold(img)       # 前景を出す(この族の外)
+# 撮った絵の代わりに、丸い部品を 3 個と細長い切り粉を 1 本置いた場面
+img = np.zeros((120, 160))
+rr, cc = np.mgrid[0:120, 0:160]
+for r0, c0, rad in ((30, 40, 12), (30, 100, 9), (85, 70, 15)):
+    img[(rr - r0) ** 2 + (cc - c0) ** 2 &lt;= rad * rad] = 0.9
+img[100:103, 20:60] = 0.9                 # 切り粉(細長い = 落としたい)
 
-lab = fs.blob_label(mask)                 # 1) 物体に切る(既定は 8 連結)
-f = fs.blob_features(lab, spacing=0.05)   # 2) 測る(1 px = 0.05 mm)
-big = fs.blob_select(lab, &quot;area&quot;, vmin=0.5, spacing=0.05)   # 3) 0.5 mm^2 以上
-round_ = fs.blob_select(big, &quot;circularity&quot;, vmin=0.85)      #    かつ丸いもの
+mask = img &gt; 0.5                          # 前景を出す(この族の外)
 
-print(&quot;残った物体:&quot;, int(round_.max()))
-view = fs.blob_overlay(img, round_)       # 4) 見る</pre>
+lab = fs.ledger.blob_label(mask)          # 1) 物体に切る(既定は 8 連結)
+f = fs.ledger.blob_features(lab, spacing=0.05)     # 2) 測る(1 px = 0.05 mm)
+big = fs.ledger.blob_select(lab, &quot;area&quot;, vmin=0.5, spacing=0.05)   # 3) 0.5 mm^2 以上
+parts = fs.ledger.blob_select(big, &quot;circularity&quot;, vmin=0.85)       #    かつ丸いもの
+
+print(&quot;測った物体:&quot;, f[&quot;n&quot;], &quot;-&gt; 残った部品:&quot;, int(parts.max()))
+view = fs.ledger.blob_overlay(img, parts)          # 4) 見る</pre>
 <p><b>選ぶ前に測る必要はありません</b> —— <code style="color:#22d3bf">blob_select</code> は中で <code style="color:#22d3bf">blob_features</code> を呼びます。ただし何度も選ぶなら、<code style="color:#22d3bf">blob_features</code> を 1 回だけ呼んで自分で <code style="color:#22d3bf">np.isin</code> する方が速い(下の「速さ」節)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">押さえておく約束</h3>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">1. ラベルは連番。穴を開けない</h3>
 <p><code style="color:#22d3bf">blob_select</code> は残った物体を <b>1..k に振り直します</b>。元の番号は消えるので、必要なら選ぶ前に <code style="color:#22d3bf">blob_features(lab)[&quot;label&quot;]</code> を取っておくこと。</p>
 <p>振り直す理由は、<code style="color:#22d3bf">features[&quot;area&quot;][k]</code> の <code style="color:#22d3bf">k</code> が何番の物体なのか呼び手が追えなくなるからです。歯抜けを許すと「ラベル番号」と「配列の添字」が別物になり、その食い違いは例外ではなく<b>もっともらしく間違った数値</b>として出ます。</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">2. 二値マスクは <code style="color:#22d3bf">blob_features</code> に渡せない</h3>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">fs.blob_features(mask)         # ValueError: ... is a boolean mask, not a label image
-fs.blob_features(fs.blob_label(mask))   # 正しい</pre>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import fullseye as fs
+
+mask = np.zeros((40, 40), bool)
+mask[5:15, 5:15] = True
+mask[25:35, 25:35] = True
+
+try:
+    fs.ledger.blob_features(mask)       # bool は受けない
+except ValueError as exc:
+    print(&quot;拒否された:&quot;, str(exc)[:60])
+
+f = fs.ledger.blob_features(fs.ledger.blob_label(mask))   # 正しい
+print(&quot;物体の数:&quot;, f[&quot;n&quot;])               # -&gt; 2(マスクのままなら 1 個として測る)</pre>
 <p>拒否するのは意地悪ではありません。マスクをそのまま測ると<b>別々の 2 個の細胞が 1 個の物体として測られ、2 つの中心のあいだに重心が出ます</b>。例外にならず、それらしい数字が返る —— この repo が型を分ける基準そのものです。</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">3. <code style="color:#22d3bf">spacing</code> は長さに 1 乗、面積に 2 乗。ただし添字は素通し</h3>
 <p><code style="color:#22d3bf">spacing</code> は画素 1 個の大きさです。<code style="color:#22d3bf">area</code> には 2 乗、<code style="color:#22d3bf">perimeter</code> / <code style="color:#22d3bf">major</code> / <code style="color:#22d3bf">minor</code> / <code style="color:#22d3bf">equiv_diameter</code> には 1 乗が掛かります。**<code style="color:#22d3bf">bbox_*</code> と <code style="color:#22d3bf">row</code> / <code style="color:#22d3bf">col</code> は画素のまま**です —— あれは長さではなく添字だからです。</p>
 <p>読み違いを防ぐため、<code style="color:#22d3bf">blob_features</code> の返り値には <code style="color:#22d3bf">units</code> が入っています:</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">f = fs.blob_features(lab, spacing=0.05)
-f[&quot;units&quot;][&quot;area&quot;]        # &#x27;unit^2&#x27;
-f[&quot;units&quot;][&quot;bbox_r0&quot;]     # &#x27;px index&#x27;
-f[&quot;units&quot;][&quot;angle&quot;]       # &#x27;rad (+col -&gt; +row, clockwise on screen)&#x27;</pre>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import fullseye as fs
+
+mask = np.zeros((40, 40), bool)
+mask[8:28, 10:18] = True
+f = fs.ledger.blob_features(fs.ledger.blob_label(mask), spacing=0.05)
+print(f[&quot;units&quot;][&quot;area&quot;])         # unit^2   (0.05 mm/px なら mm^2)
+print(f[&quot;units&quot;][&quot;bbox_r0&quot;])      # px index (spacing を掛けない)
+print(f[&quot;units&quot;][&quot;angle&quot;])        # rad (+col -&gt; +row, clockwise on screen)
+print(round(float(f[&quot;area&quot;][0]), 4), &quot;mm^2&quot;)      # 160 px * 0.05^2 = 0.4</pre>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">4. <code style="color:#22d3bf">angle</code> は画面では時計回りが正</h3>
 <p>行は下向き、列は右向きです。<code style="color:#22d3bf">angle</code> は <b>+列(右)から +行(下)へ</b>測るので、画面で見ると時計回りが正になります。数学の慣習と符号が逆なので、図に重ねるときは向きを 1 度確かめてください。</p>
 <p>検算は済んでいます: 長半径 40 px・短半径 15 px の楕円を 30 度に置くと、<code style="color:#22d3bf">major</code> 79.98(真値 80)、<code style="color:#22d3bf">minor</code> 29.94(真値 30)、<code style="color:#22d3bf">angle</code> 29.79 度、<code style="color:#22d3bf">eccentricity</code> 0.9273(真値 0.9270)。</p>
@@ -81,9 +124,19 @@ f[&quot;units&quot;][&quot;angle&quot;]       # &#x27;rad (+col -&gt; +row, cloc
 <p>| <code style="color:#22d3bf">blob_select(&quot;area&quot;, vmin=…)</code> | 中で <code style="color:#22d3bf">blob_features</code> を呼ぶので同程度 |</p>
 <p><code style="color:#22d3bf">blob_features</code> の内訳は凸包が 19.4 ms・周長 3.4 ms・穴の数 3.4 ms。凸包は Qhull を呼ばず monotone chain を自前で持っています(Qhull 版は 74.1 ms、<b>3.8 倍</b>遅い —— 小さな点集合を何千回も包む用途では起動費が支配的)。</p>
 <p>**何度も選ぶなら <code style="color:#22d3bf">blob_features</code> を 1 回だけ**:</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">f = fs.blob_features(lab)
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import fullseye as fs
+
+rr, cc = np.mgrid[0:80, 0:80]
+mask = np.zeros((80, 80), bool)
+for r0, c0, rad in ((20, 20, 10), (20, 60, 4), (60, 40, 12)):
+    mask |= (rr - r0) ** 2 + (cc - c0) ** 2 &lt;= rad * rad
+
+lab = fs.ledger.blob_label(mask)
+f = fs.ledger.blob_features(lab)                  # 1 回だけ測る
 keep = f[&quot;label&quot;][(f[&quot;area&quot;] &gt;= 50) &amp; (f[&quot;circularity&quot;] &gt;= 0.85)]
-sel = np.isin(lab, keep) * lab          # 番号を振り直さない版</pre>
+sel = np.isin(lab, keep) * lab                    # 番号を振り直さない版
+print(&quot;残した番号:&quot;, keep.tolist())</pre>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">この族で測れないこと(正直に)</h3>
 <p style="margin:2px 0 2px 12px">• <b>重なった物体は 1 個になります。</b> 連結成分は「触れているかどうか」しか見ないので、重なった細胞や部品は割れません。割るには距離変換 + 分水嶺が要りますが、<b>2-D の分水嶺は facade に出ていません</b>(<code style="color:#22d3bf">segmentation.watersheds_marker</code> はモジュールに在るだけ)。<code style="color:#22d3bf">poc_cell_counting</code> がこの穴を測っています。</p>
 <p style="margin:2px 0 2px 12px">• <b>縁で切れた物体</b>は面積も周長も切れた分だけ小さく出ます。<code style="color:#22d3bf">touches_border</code> で捨てるか、真値の側も同じ規約で数えてください。<b>危ないのは規約の選択ではなく、推定と真値で違う規約を使うこと</b>です。</p>
