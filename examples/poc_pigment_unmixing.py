@@ -498,6 +498,8 @@ def detectors(scene, spectra, rng, n_bands=NB0, sigma=None, fixed_sigma=False,
     out["_centers"] = centers
     if "ms" in want:
         out["ms"] = (own_pca(cube, 4)[0] if n_bands == 3 else fs.spec_pca(cube, 4)[0])
+    if "mnf" in want and n_bands > 3:
+        out["mnf"] = fs.spec_mnf(cube, 4)[0]
     _, filt = band_filters(n_bands)
     Eb = (endm_full if endm_full is not None else endmember_spectra()) @ filt.T
     if "unmix" in want:
