@@ -44,6 +44,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import acoustics as A
 import dsp
+import examplefig as figs
 
 # 記録の条件。すべてここに集める(あとで「どの条件での数字か」を言えるように)。
 RATE = 25600.0          # サンプリング周波数 [Hz]
