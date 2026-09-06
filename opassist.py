@@ -719,11 +719,141 @@ def accepted_sorts(op_name: str, extra_kwargs=None) -> dict:
 # --------------------------------------------------------------------------- #
 # 使いやすさ: 探す / すぐ動かす / 型を繋ぐ                                       #
 # --------------------------------------------------------------------------- #
+_WORD_RE = re.compile(r"[a-z0-9]+")
+
+#: 語幹一致とみなす共通接頭辞の長さ。★4 にすると "median"/"medial" や
+#: "contrast"/"contour" が繋がってしまい、5 で切ると
+#: "correlation"/"correlate"(8)・"segmentation"/"segment"(7)・
+#: "rotation"/"rotate"(5)・"gaussian"/"gauss"(5) は拾えて、上の 2 組は拾わない。
+_STEM_MIN = 5
+
+#: 語幹一致を採用する重み割合の下限(:func:`_stem_fraction` の注記)。
+_STEM_FLOOR = 0.15
+
+
+#: 共通接頭辞の**後ろに許す語尾**。★接頭辞の長さだけで判定すると
+#: "median"/"medial" が繋がる(共通 "media" が 5 文字ある)。語尾が
+#: 屈折語尾らしいかどうかを見ると、"correlation"/"correlate"(ion / e)は
+#: 通り、"median"/"medial"(n / l)と "corner"/"cornea"(r / a)は落ちる。
+_STEM_SUFFIXES = frozenset((
+    "", "s", "e", "es", "ed", "d", "ing", "ion", "tion", "ation", "sion",
+    "ate", "ated", "al", "ial", "ian", "ic", "ics", "y", "ly", "er", "or",
+    "ers", "ness", "ment", "ments", "able", "ible", "ive", "ity", "ise",
+    "ize", "izer", "izing", "ization", "isation",
+))
+
+
+def _stem_match(qt: str, ht: str) -> bool:
+    """2 つの語が同じ語幹か。
+
+    共通接頭辞が ``_STEM_MIN`` 以上あり、かつ**どちらかの残りが屈折語尾**
+    (:data:`_STEM_SUFFIXES`)であること。長さだけで見ないのは上の注記の理由。
+    """
+    if qt == ht:
+        return True
+    n = min(len(qt), len(ht))
+    if n < _STEM_MIN:
+        return False
+    k = 0
+    while k < n and qt[k] == ht[k]:
+        k += 1
+    if k < _STEM_MIN:
+        return False
+    return qt[k:] in _STEM_SUFFIXES or ht[k:] in _STEM_SUFFIXES
+
+
+#: 語 → その語を名前に含む op の数(1 度だけ数えて憶える)。
+_TOKEN_DF: dict[str, int] | None = None
+_N_OPS = 1
+
+
+def _token_df() -> dict[str, int]:
+    """全 op 名の語の出現数。語の**重み**(情報量)を決めるのに使う。"""
+    global _TOKEN_DF, _N_OPS
+    if _TOKEN_DF is None:
+        import collections
+        names = [op.name for op in _registry_ops()]
+        for mod_name, table in _LEDGERS:
+            try:
+                entries = getattr(importlib.import_module(mod_name), table, None)
+            except Exception:                            # noqa: BLE001
+                continue
+            if isinstance(entries, dict):
+                names.extend(entries)
+        cnt: collections.Counter = collections.Counter()
+        for nm in names:
+            cnt.update(set(_WORD_RE.findall(nm.lower())))
+        _TOKEN_DF, _N_OPS = dict(cnt), max(len(names), 1)
+    return _TOKEN_DF
+
+
+_WEIGHT_CACHE: dict[str, float] = {}
+
+
+def _token_weight(t: str) -> float:
+    """語の重み。**ありふれた語ほど軽い**。
+
+    ★これが無いと "digital image correlation" が `abs_image` / `acos_image` を
+    先に返す(実測)—— 3 語のうち 1 語が当たっただけなのは
+    `piv_cross_correlate` も同じで、素の割合では区別が付かないため。
+    "image" は 1829 op のうち 59 個の名前に出るが "correlation" は 2 個しかない。
+
+    ★数えるのは**語幹一致した数**であって、その語そのものの数ではない。
+    "measurement" は op 名に 1 度も出ないが、語幹一致する "measure" は
+    60 個以上に出る。素の出現数で重みを付けると "strain measurement" が
+    `add_metrology_object_*_measure` を `piv_strain_rate` より上に置く(実測)。
+    """
+    w = _WEIGHT_CACHE.get(t)
+    if w is None:
+        import math
+        df = _token_df()
+        n = sum(c for tok, c in df.items() if _stem_match(t, tok))
+        w = 1.0 / math.log2(2.0 + n)
+        _WEIGHT_CACHE[t] = w
+    return w
+
+
+def _stem_fraction(q_tokens: list[str], hay: str) -> float:
+    """``hay`` に語幹一致したクエリ語の**重み付き割合**(0.0〜1.0)。"""
+    if not q_tokens:
+        return 0.0
+    h_tokens = _WORD_RE.findall(hay.lower())
+    if not h_tokens:
+        return 0.0
+    tot = hit = 0.0
+    for qt in q_tokens:
+        w = _token_weight(qt)
+        tot += w
+        if any(_stem_match(qt, ht) for ht in h_tokens):
+            hit += w
+    frac = hit / tot if tot > 0 else 0.0
+    # ★床。無い状態だと "zzz-nothing-matches" が `histogram_match` を返す
+    #   ("matches" が `match_*` に語幹一致するため)。当たった語の重みが
+    #   クエリ全体の 15 % に満たなければ「当たっていない」とみなす。
+    #   実測: "digital image correlation" は 0.19(通す)、
+    #   "zzz-nothing-matches" は 0.10(落とす)。
+    return frac if frac >= _STEM_FLOOR else 0.0
+
+
 def find(query: str, limit: int = 20) -> list[dict]:
     """自由語で op を探す(名前・説明・カテゴリ・モジュールを横断)。
 
     「虹」「rust」「fresnel」「旋盤」のように**やりたいこと**で引ける入口。
     完全一致 > 名前の部分一致 > 説明の一致 の順に並べる。
+
+    ## 語幹と複数語(2026-09-06 追加)
+
+    部分一致だけだと **"correlation" が `piv_cross_correlate` を出さない**
+    (どちらも他方の部分文字列ではない)。実際にこれで既存の PIV 23 op を
+    見落として同じものを作りかけたので、語幹の段を足した:
+
+    * クエリを語に分け、**共通接頭辞 5 文字以上**を同じ語幹とみなす。
+    * 複数語のクエリは**当たった語の割合**で点を按分する
+      (以前は句全体が含まれないと 0 件だった —— "subpixel displacement" が
+      その例)。
+
+    点は部分一致より必ず下(名前 45 / 説明 22 を上限)なので、**既存の
+    並び順は変わらない**。語幹の段は「これまで 0 件だったもの」を拾うだけ。
 
     **台帳と 2-D レジストリの両方**を見る(:data:`_REGISTRY_LEDGER` の注記)。
     どちらから来たかは ``"ledger"`` で、**呼び方の違い**は ``"call"`` で分かる:
@@ -737,6 +867,7 @@ def find(query: str, limit: int = 20) -> list[dict]:
     q = str(query).strip().lower()
     if not q:
         raise ValueError("opassist.find: query must not be empty")
+    q_tokens = _WORD_RE.findall(q)
     hits = []
     for mod_name, table in _LEDGERS:
         try:
@@ -758,6 +889,13 @@ def find(query: str, limit: int = 20) -> list[dict]:
                 score = 30
             elif q in str(info.get("category", "")).lower() or q in str(info.get("module", "")).lower():
                 score = 20
+            else:
+                fr = _stem_fraction(q_tokens, hay_name)
+                if fr:
+                    score = int(round(45 * fr))
+                else:
+                    fr = _stem_fraction(q_tokens, doc)
+                    score = int(round(22 * fr)) if fr else 0
             if score:
                 hits.append({"op": name, "ledger": mod_name, "module": info.get("module"),
                              "category": info.get("category"), "doc": doc,
@@ -778,7 +916,14 @@ def find(query: str, limit: int = 20) -> list[dict]:
         elif q in str(op.category or "").lower() or q in str(op.halcon or "").lower():
             score = 19
         else:
-            continue
+            fr = _stem_fraction(q_tokens, hay_name)
+            if fr:
+                score = int(round(44 * fr))
+            else:
+                fr = _stem_fraction(q_tokens, doc)
+                score = int(round(21 * fr)) if fr else 0
+            if not score:
+                continue
         hits.append({"op": op.name, "ledger": _REGISTRY_LEDGER, "module": "ops",
                      "category": op.category, "doc": doc,
                      "call": "apply", "score": score})

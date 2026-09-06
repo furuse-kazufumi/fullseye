@@ -7,7 +7,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## 0.1.10 — 未リリース(開発中)
 
-**PoC シリーズが道具の穴を掘り当てた回。** 真値を作れる実問題を 18 本解いて、
+**PoC シリーズが道具の穴を掘り当てた回。** 真値を作れる実問題を 30 本解いて、
 誤差・ゼロ点・壊れる境界を数字で出した。その過程で出た不具合をここにまとめる。
 PoC そのものは `examples/poc_*.py` にあり、どれも `PASS` で終わる。
 
@@ -78,6 +78,26 @@ PoC そのものは `examples/poc_*.py` にあり、どれも `PASS` で終わ�
   門は `tests/test_channel_axis.py`(台帳を信じず毎回測り直す)。
 
 ### 増えたもの
+
+* ★**`op_find` が語幹と複数語で引けるようになった**(`opassist.find`)。
+  それまでは**素の部分一致**だったので、`op_find("correlation")` は 5 件返すのに
+  **`piv_cross_correlate` が入っていなかった** —— "correlation" は
+  "cross_correlate" の部分文字列でも、その逆でもないため。実害が出ている:
+  DIC の PoC を書くときこれで「相関の op は無い」と結論し、既にある
+  **PIV 23 op と同じものを作りかけた**。直した内容は 3 つ:
+  (1) 共通接頭辞 5 文字以上を同じ語幹とみなす。ただし**残りが屈折語尾**
+  (`ion`/`e`/`ing`…)であることを要求する —— 長さだけで見ると
+  "median"/"medial"(共通 "media" が 5 文字)が繋がってしまう。
+  (2) 複数語のクエリを語に分けて按分する(以前は句全体が含まれないと 0 件。
+  "subpixel displacement" がその例)。
+  (3) 語の重みを**語幹一致した op 数**の逆対数にする。素の出現数だと
+  "strain measurement" が `add_metrology_object_*_measure` を
+  `piv_strain_rate` より上に置く("measurement" は op 名に 1 度も出ないが、
+  語幹一致する "measure" は 60 以上に出る)。
+  点は部分一致より必ず下なので**既存の並び順は変わらない**。
+  当たらない問い合わせが空のままであることも門にしてある
+  (`tests/test_opassist.py` の 6 件)。
+
 
 * **`fullseye.op`** —— 進化する 2-D op 882 個を属性で呼ぶ入口。それまで
   `dir(fullseye)` の 1092 名前と**3 つしか重ならず**、補完でも `op_find` でも

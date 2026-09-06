@@ -1,166 +1,158 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""dic — デジタル画像相関(DIC)。スペックル画像から変位場とひずみ場を測る。
+"""dic — DIC(デジタル画像相関)で **pivops に無かったものだけ**を足す 3 op。
 
-動機(2026-09-06): `examples/poc_dic_strain.py` が実測つきで
-「DIC の中核が 1 つも無い」と報告した。サブセット相関(ZNCC)の op が無く、
-変位場からひずみ場を出す op が無く、相関品質のマップが無く、真値つきの
-スペックル合成器も、撮った画像が DIC に向いているかを測る指標も無い。
-代用できたのは `optical_flow_lk` / `optical_flow_hs` の 2 本だけで、どちらも
-**輝度不変を仮定する**(材料試験中に照明は必ず変わる)。ここはその穴を
-埋めた層である。
+動機と、**最初の設計を実測で捨てた経緯**(2026-09-06):
+`examples/poc_dic_strain.py` は「fullseye に DIC が無い」と結論し、
+ZNCC サブセット相関・ひずみ op・相関品質・真値つきスペックル合成器・
+スペックル品質指標の 5 つを新設せよと書いた。だが repo には既に
+`pivops.py`(23 op、``fullseye.ledger.piv_*``)がある。5 つを**実測で
+突き合わせた結果、3 つは既にあり、2 つ半だけが本当に無かった**。
+以下がその棚卸しで、この層が 3 op しかない理由そのものである。
 
-内容(6 op):
-  合成  `speckle_synth`   … 斑点の中心座標を持つ**スペックルモデル**を作る
-        `speckle_render`  … モデルを描く。変形写像を掛ければ真値つきの変形後画像
-  測定  `dic_correlate`   … 格子上のサブセット ZNCC 相関。変位と相関品質を返す
-        `dic_dense`       … 上を全画素に内挿(optical flow と同じ土俵に乗せる)
+  A. サブセット相関 + サブピクセル … **既にある。しかも自作より良い**
+     `piv_cross_correlate(window=32, overlap=0.75)` を PoC と同じ解析
+     スペックル(256², 斑点 3000, 1σ=1.6 px, seed 7、MARGIN 40 の内側)で
+     測ると、u を 0〜1 px まで 0.125 刻みで振って
+
+         最大 |偏り|  piv 0.0015 px / 自作 ZNCC 0.0014 px / optical_flow_lk 0.0088 px
+         最大 散らばり piv 0.0057 px / 自作 ZNCC 0.0093 px / optical_flow_lk 0.0212 px
+         時間          piv 0.053 s   / 自作 ZNCC 0.114 s
+
+     **偏りは互角、散らばりは piv が 1.6 倍良く、速さは 2 倍。**
+     いったん書いた ZNCC 相関器は測ってから捨てた。
+
+  B. 照明変化への強さ … **既にある。しかも自作より厳密**
+     ``cur → 0.7 cur + 0.15``(ゲインとオフセット)を掛けて変位の差を測ると
+
+         piv_cross_correlate   max|Δu| = 3.7e-15 px   ← 倍精度の丸め
+         自作 ZNCC             max|Δu| = 5.3e-14 px
+         optical_flow_lk       max|Δu| = 1.31 px      ← 全域で破綻
+
+     piv が不変な理由は 2 つ重なっている。``subtract_mean=True`` が
+     **オフセット**を消し、``peak="gauss3"`` の対数当てはめが
+     ``ln(a·c) = ln a + ln c`` の形で**ゲイン**を分子・分母の両方から
+     打ち消す。実際 ``subtract_mean=False`` にすると max|Δu| は 156 px に
+     壊れる(オフセットだけで破綻する)。
+     **「ZNCC でなければ照明に勝てない」は誤りだった。** この層を作る
+     いちばんの動機だと思っていたものが、測ったら既に満たされていた。
+
+  C. 真値つきスペックル合成器 … **既にある**
+     `piv_synth_pair(shape, displacement, ...)` は**粒子を動かしてから
+     描き直す**(補間で歪めない)。実測: 整数 3 px シフトの再現誤差 0.0、
+     ``displacement`` に callable を渡せるので剛体回転もひずみ集中も書ける、
+     同じ ``seed`` で 1 枚目が完全に再現する。そもそも**正規化を一切しない**
+     ので「像ごとに割り直して明るさが動く」問題自体が起きない。
+     自作の合成器は不要。
+
+  D. 変位場 → ひずみ場 … **半分ある。solid-mechanics 側が無い**
+     `piv_velocity_gradient` / `piv_strain_rate` はある。だが
+     **流体の rate-of-strain 規約しか無い**。厳密な剛体回転の変位場を
+     直接入れた実測(画像を使わない代数の検算):
+
+         θ [度]   cosθ-1 [µε]   piv dudx   piv strain_rate   dic green
+           0.5        -38.1       -38.1          76.2         5.3e-14
+           1.0       -152.3      -152.3         304.6         9.3e-14
+           2.0       -609.2      -609.2        1218.3         2.0e-13
+           5.0      -3805.3     -3805.3        7610.6         6.5e-13
+
+     `piv_velocity_gradient["dudx"]` は ``cosθ-1`` を**厳密に**返す ——
+     つまり微小ひずみの定義そのもので、**剛体回転の嘘をそのまま持つ**。
+     `piv_strain_rate` は ``2|cosθ-1|``、2 度で **+1218 µε** を返す。
+     真のひずみが 0 の運動に対してである。docstring の「剛体回転では 0」は
+     流体の**線形化した**回転 ``u=-ωy, v=ωx`` の話で、**有限回転では成り立た
+     ない**。DIC が扱うのは有限回転なので、ここは規約が違う。
+     → `strain_from_displacement` を足した(Green-Lagrange + ``method`` 必須)。
+
+     もう 1 つ、微分の**やり方**も違った。`piv_velocity_gradient` は
+     ``np.gradient``(隣り合う 2 節点の中心差分)。DIC の標準は窓の最小二乗。
+     同じ piv 変位場から一様ひずみを読み戻した実測(MARGIN 40 の内側):
+
+         真値 µε   piv_vgrad ± 散    LS w=3 ± 散    LS w=5 ± 散    LS w=9 ± 散
+             100   100.4 ± 21.8    100.4 ± 16.0   100.3 ±  6.4   100.3 ±  1.7
+             500   501.8 ± 107.2   502.0 ± 78.9   501.4 ± 31.3   501.2 ±  8.6
+            2000  1996.3 ± 342.0  1996.6 ± 259.5 1994.8 ± 99.3  1995.6 ± 25.9
+           20000 19768.8 ±2909.9 19768.9 ±2210.5 19742.7 ±790.9 19754.1 ± 209.6
+
+     平均はどれも同じ。**散らばりが w=9 で 13.9 倍小さい**(21.8 → 1.7 µε)。
+     費用は 0.000 秒。空間分解能を捨てて散らばりを買う取引なので、
+     ``window`` を既定にせず呼び手に選ばせる理由でもある。
+
+  E. 相関品質(点ごと)… **別物がある。測ったら肝心な失敗に盲目**
+     `piv_cross_correlate` の ``info["peak_ratio"]``(第 1 / 第 2 ピーク)は
+     PIV の標準的な SN 比で、**偽ベクトル**は捕まえる。だが「変形して
+     しまった / 隠れた / 別物になった」領域は捕まえない。実測:
+     u=0.37 px の対の 60x60 画素だけを無関係な模様に差し替えると
+
+         指標                     全域中央値    差し替え領域   健全領域
+         peak_ratio                  1.279         1.207        1.304
+         correlation_quality         0.9992        0.1101       0.9993
+
+     peak_ratio は健全部との差が 7.5 % しかなく分布が重なる。品質で切って
+     誤差がどれだけ減るかを測ると、差は決定的:
+
+         門                   残る割合   変位誤差 RMS [px]
+         なし                  100.0 %       1.8110
+         zncc >= 0.8            84.9 %       0.0031   ← 584 倍改善
+         peak_ratio >= 1.2      81.8 %       1.2183   ← 1.5 倍
+         peak_ratio >= 1.3      41.6 %       1.4471   ← 6 割捨てて**悪化**
+
+     → `correlation_quality` を足した。**相関器は作らない** ——
+     すでに得られた変位場を受け取り、その場の良し悪しだけを返す。
+     `piv_cross_correlate` でも `optical_flow_lk` でも同じ口で測れる。
+
+  F. スペックルの品質指標(平均輝度勾配 MIG など)… **どこにも無い**
+     `pivops` にも `fullseye` にも無い(``speckle_filter`` は SAR の
+     斑点雑音**除去**で無関係)。撮った画像が DIC に向いているかは
+     撮影時に判定したいので、3 行で出せる指標をまとめる口を足した。
+
+内容(3 op):
   変換  `strain_from_displacement` … 変位場 → ひずみ場。**window と method は必須**
-  検査  `speckle_quality` … 斑点径・被覆率・勾配 RMS・平均輝度勾配(MIG)
+  検査  `correlation_quality`      … 与えられた変位場の ZNCC 品質マップ
+        `speckle_quality`          … 斑点径・被覆率・勾配 RMS・MIG
 
 規約:
-  * 画像は 2 次元配列 ``img[i, j]``。``i`` が行 = y、``j`` が列 = x。
-  * 変位 ``u`` は x 方向(列)、``v`` は y 方向(行)。単位は画素。
-    向きは「基準画像の点が変形後画像でどこへ動いたか」= ``cur(x+u, y+v) ≈ ref(x, y)``。
-  * 「測れなかった」は 0 ではなく **NaN** で返す。相関の分母が立たない点に
-    数字を入れると、後段のひずみが平均で汚染されても誰も気づけない。
-
-**この層の一番大事な主張が 2 つある。**
-
-1. **ZNCC を採る理由は「平均が良いから」ではなく「照明で動かないから」。**
-   ゲインとオフセットの両方を割り引いた量なので、``cur → 0.7 cur + 0.15``
-   という露出変更に対して答えが **5e-14 px しか動かない**(下の (c))。
-   同じことをすると `optical_flow_lk` は偏り 0.0042 → -0.0950 px、
-   散らばり 0.0076 → 0.1745 px と 23 倍に壊れる。
-2. **ひずみの定義を既定にしてはいけない。** 2 度の剛体回転が微小ひずみでは
-   -700 µε の嘘を作る(`strain_from_displacement` の docstring に実測)。
-   だから ``window`` も ``method`` も既定値を持たない。
-
-★ 実測(256x256 の解析スペックル、斑点 3000 個、1σ 半径 1.6 px、seed 7、
-MARGIN 40 の内側だけで評価。zncc は `dic_dense(subset=31, step=8, search=8)`、
-lk は `optical_flow_lk(window=21, levels=3, iters=6)`)
-
-  (a) サブピクセル掃引 —— **ZNCC の勝ち**
-
-        u 真値    zncc 偏り  zncc 散らばり |  lk 偏り   lk 散らばり
-        0.000     -0.0012      0.0076      |  0.0000     0.0000
-        0.125     -0.0008      0.0073      |  0.0076     0.0033
-        0.250     -0.0005      0.0063      |  0.0078     0.0057
-        0.375     -0.0003      0.0045      |  0.0040     0.0076
-        0.500     -0.0003      0.0021      | -0.0015     0.0133
-        0.625     -0.0010      0.0044      | -0.0064     0.0158
-        0.750     -0.0014      0.0062      | -0.0088     0.0181
-        0.875     -0.0014      0.0072      | -0.0067     0.0206
-        1.000     -0.0012      0.0076      |  0.0004     0.0212
-
-      最大の偏り **zncc 0.0014 px / lk 0.0088 px**(6.3 倍)、最大の散らばり
-      **zncc 0.0076 px / lk 0.0212 px**(2.8 倍)。どちらも ZNCC が良い。
-      2 つの推定器は**壊れ方の形が逆**で、lk は u=0 で厳密に 0(同じ画像なら
-      反復が 1 度も動かない)から始まって u が増えるほど散らばりが増える
-      —— ピラミッドの各段で歪めた像を作り直すため。ZNCC は逆に整数の u で
-      散らばりが最大(0.0076)、u=0.5 で最小(0.0021)になる。3 点当てはめは
-      峰の左右が対称なとき最も安定するので、これは当てはめの性質。
-
-  (b) 一様ひずみ(window=31)—— **lk の勝ち。しかも大差**
-
-        ε 真値 µε  zncc 平均 µε  zncc 散 µε |  lk 平均 µε   lk 散 µε
-             100         85.4       396.4   |     109.1       16.2
-             500        486.2       383.2   |     529.6       74.6
-            2000       1984.5       328.3   |    1973.5      233.0
-           20000      19940.6      2024.0   |   19973.0      960.1
-
-      平均はどちらも真値の ±15 % 内(100 µε では zncc -15 % / lk +9 %)。
-      問題は散らばりで、**100 µε では ZNCC の散らばりが信号の 4 倍**ある。
-      原因ははっきりしていて、``step=8`` の格子は window=31 の中に
-      **独立な点を 4x4 しか置かない**。原因が格子の粗さであることは
-      ``step`` を振れば見える(ε=500 µε、window=31):
-
-          step        16       8       4       2      | lk
-          平均 µε   516.3   486.2   496.2   496.6     | 529.6
-          散 µε     375.2   383.2   257.3   129.2     |  74.6
-          時間 s     0.13    0.12    0.13    0.18     |  —
-
-      ``step=2`` まで詰めれば lk の 1.7 倍まで縮み、費用は 0.18 秒。
-      **「ZNCC はひずみが苦手」ではなく「既定の step が粗い」**。
-      それでも lk に届かないのは、lk が全画素でピラミッド平滑を掛けた
-      滑らかな場を返すため(その代わり (c) で全滅する)。
-
-  (c) ★★照明変化(u=0.37 px のまま ``cur = 0.7 cur + 0.15``)—— **ZNCC の圧勝**
-
-        推定器   条件            偏り px    散らばり px
-        zncc     そのまま       -0.0003      0.0046
-        zncc     0.7 g + 0.15   -0.0003      0.0046   ← 4 桁まで同じ
-        lk       そのまま        0.0042      0.0076
-        lk       0.7 g + 0.15   -0.0950      0.1745   ← 偏り 23 倍・散 23 倍
-
-      格子の生値どうしで引き算すると **max|Δu| = 5.3e-14 px、
-      max|Δzncc| = 3.1e-14** —— 倍精度の丸め誤差そのもので、
-      アフィンな輝度変換に対する代数的不変性が実装まで通っている。
-
-  (d) 剛体回転(window=31)—— ひずみの定義が作る嘘
-
-        θ 度   理論 µε |  zncc 微小   zncc green |   lk 微小    lk green
-         0.0      0.0  |    -14.8       -14.7    |     -0.0       -0.0
-         0.5    -38.1  |    -96.4       -56.8    |    -72.5      -34.7
-         1.0   -152.3  |   -140.8        12.6    |   -181.8      -28.6
-         2.0   -609.2  |   -705.0       -94.0    |   -698.8      -84.4
-
-      **2 度回っただけで微小ひずみは -700 µε を返す。鋼の降伏ひずみの 3 割
-      以上。** Green-Lagrange にすると -90 µε 台に落ちる(7 倍改善)。
-      残っている -90 µε は**定義の誤差ではなく推定器の誤差** —— 変位勾配
-      ``∂u/∂x`` 自体が -9e-5 ずれており、Green はその誤差をそのまま通す
-      (`test_dic.py` の解析テストが、**厳密な回転場を入れれば green は
-      1e-9 未満**であることを代数で押さえている)。
-
-  結論(正直に): **ZNCC は (a) サブピクセル精度と (c) 照明変化で勝ち、
-  (b) ひずみの散らばりで既定設定では 5〜24 倍負ける**(step を 2 に
-  詰めると 1.7 倍差まで縮む)。「(c) だけ勝ち」ではなかったが、
-  「無条件に勝ち」でもない。この層を出す理由は (c) の圧倒的な差と、
-  LK が持っていない相関品質マップ・ひずみ op・真値つき合成器のほうにある。
-
-★ 費用(実測、256x256、subset=31 / step=8 / search=8、27x27 = 729 点)
-  `dic_correlate` 0.113 秒 / `dic_dense` 0.118 秒。探索位置ごとに全画面の
-  箱平均を 1 回かけるので、費用は ``(2*search+1)²`` に比例する。
+  * 画像は ``img[i, j]``、``i`` = 行 = y、``j`` = 列 = x。
+  * **変位場は `pivops` の ``flow2d`` に合わせる**: ``(2, h, w)`` で成分は
+    ``(dy, dx)``、単位は画素。`correlation_quality` はこの形で受ける。
+    `strain_from_displacement` だけは成分を別々に ``(u, v)`` = ``(dx, dy)``
+    で受けるので、**``flow[0]`` を ``u`` に渡すと軸が入れ替わる** ——
+    例外にならずもっともらしく間違うので、3 次元配列を渡したら
+    直し方つきで拒否する(`_as_component`)。正しくは
+    ``strain_from_displacement(flow[1], flow[0], w, method, spacing=info["step"])``。
+  * 「測れなかった」は 0 ではなく **NaN**。
 
 来歴(公開文献のみ): Sutton, Orteu & Schreier, *Image Correlation for Shape,
 Motion and Deformation Measurements* (Springer, 2009) / Pan et al.,
 *Meas. Sci. Technol.* 20 (2009) 062001(2 次元 DIC の総説)/ Pan, Lu & Xie,
-*Opt. Lasers Eng.* 48 (2010) 469(平均輝度勾配 MIG によるスペックル品質)/
-Willert & Gharib, *Exp. Fluids* 10 (1991) 181(3 点ガウス当てはめ)/
-International DIC Society, *A Good Practices Guide for Digital Image
-Correlation* (2018)。
+*Opt. Lasers Eng.* 48 (2010) 469(平均輝度勾配 MIG)/ International DIC
+Society, *A Good Practices Guide for Digital Image Correlation* (2018) /
+Malvern, *Introduction to the Mechanics of a Continuous Medium* (1969)
+(Green-Lagrange ひずみ)。
 """
 from __future__ import annotations
 
 import math
-from typing import Any, Callable, Optional
+from typing import Any, Optional
 
 import numpy as np
 from scipy import ndimage
-from scipy.interpolate import RegularGridInterpolator
 
 __all__ = [
-    "speckle_synth", "speckle_render", "dic_correlate", "dic_dense",
-    "strain_from_displacement", "speckle_quality",
+    "strain_from_displacement", "correlation_quality", "speckle_quality",
     "STRAIN_METHODS",
 ]
 
 #: `strain_from_displacement` が受けるひずみの定義。既定は**無い**。
 STRAIN_METHODS: tuple[str, str] = ("infinitesimal", "green")
 
-#: 斑点を描くときの打ち切り半径(1σ 半径の何倍まで足すか)。
-#: 4σ で裾は exp(-8) = 3.4e-4。ここを狭めると整数シフトの厳密一致が崩れる。
-_BLOB_CUTOFF_SIGMA = 4.0
-
 #: 分散がこれ以下のサブセットは「測れなかった」とする(輝度が [0, 1] 規格の前提)。
-#: 実スペックルの窓分散は 0.02〜0.05 なので 10 桁の余裕がある。
 _VAR_EPS = 1e-12
 
 
 # --------------------------------------------------------------------------- #
 # 入力検証 — fail closed                                                       #
 # --------------------------------------------------------------------------- #
-def _as_image(img: Any, op: str, name: str = "img", min_side: int = 8) -> np.ndarray:
-    """画像を float64 の 2 次元配列にする。壊れた入力はここで止める。"""
+def _as_image(img: Any, op: str, name: str, min_side: int = 8) -> np.ndarray:
     a = np.asarray(img, dtype=np.float64)
     if a.ndim != 2:
         raise ValueError(f"{op}: {name} must be a 2-D image, got ndim={a.ndim}")
@@ -173,7 +165,7 @@ def _as_image(img: Any, op: str, name: str = "img", min_side: int = 8) -> np.nda
 
 
 def _odd_positive(value: Any, op: str, name: str, minimum: int = 3) -> int:
-    """奇数の窓サイズであることを確かめる。偶数は中心が半画素ずれるので拒否する。"""
+    """奇数の窓であることを確かめる。偶数は中心が半画素ずれるので拒否する。"""
     try:
         v = int(value)
     except (TypeError, ValueError):
@@ -184,445 +176,23 @@ def _odd_positive(value: Any, op: str, name: str, minimum: int = 3) -> int:
         raise ValueError(f"{op}: {name} must be at least {minimum}, got {v}")
     if v % 2 == 0:
         raise ValueError(
-            f"{op}: {name}={v} must be odd; an even window has no centre pixel and "
-            "would bias every displacement by half a pixel")
+            f"{op}: {name}={v} must be odd; an even window has no centre node and "
+            "would shift every result by half a step")
     return v
 
 
-# --------------------------------------------------------------------------- #
-# 合成スペックル(真値の根拠)                                                  #
-# --------------------------------------------------------------------------- #
-def speckle_synth(n: int = 256, n_blob: int = 3000, radius: float = 1.6,
-                  seed: int = 0) -> dict[str, Any]:
-    """スペックルの**モデル**を作る。画像はまだ作らない(`speckle_render` が描く)。
-
-    引数
-      n       画像の一辺 [px]。出力は ``n x n``。
-      n_blob  斑点の数。既定 3000 は ``n=256``, ``radius=1.6`` で輝度 0.2 超の
-              被覆率が約 29 % になる密度(DIC の推奨帯は 40〜60 % だが、
-              被覆率は輝度のしきい値の取り方に強く依るので数字だけ比べない)。
-      radius  斑点の 1σ 半径 [px]。直径(FWHM)は ``2.355 * radius``。
-      seed    位置と振幅の乱数種。
-
-    戻り値は ``{"cx", "cy", "amp", "radius", "n", "scale"}`` の ``dict``。
-    ``cx``/``cy``/``amp`` は ``(n_blob,)`` の float 配列、``scale`` は ``None``。
-
-    ★ 画像ではなく**モデル**を返す理由 —— これが真値の根拠そのもの
-      変形後の画像を「基準画像を補間で歪めたもの」として作ると、測っているのが
-      自分の補間器なのか推定器なのか分からなくなる。ここは**斑点の中心座標を
-      変形写像で移してから描き直す**ので、真の変位が丸め誤差まで厳密に分かる。
-      そのためには「斑点の集合」と「描画」が分かれていなければならない。
-
-    ★ 視野の外にも撒く
-      中心は ``[-m, n+m]`` に一様に撒く(``m = max(8, ceil(4*radius))``)。
-      撒かないと、変形で視野の中へ入ってくるはずの斑点が存在しないため、
-      **境界だけ相関が落ちるという合成側の都合**を測ってしまう。
-      ``m`` を打ち切り半径 ``4*radius`` 以上に取るのは、視野の縁の画素に
-      効く斑点をすべて持っておくため。
-
-    fail-closed
-      * ``n`` が 16 未満 / ``n_blob`` が 1 未満 / ``radius`` が非正・非有限。
-    """
-    op = "speckle_synth"
-    nn = int(n)
-    if nn < 16:
-        raise ValueError(f"{op}: n must be at least 16, got {n!r}")
-    nb = int(n_blob)
-    if nb < 1:
-        raise ValueError(f"{op}: n_blob must be at least 1, got {n_blob!r}")
-    r = float(radius)
-    if not math.isfinite(r) or r <= 0.0:
-        raise ValueError(f"{op}: radius must be a finite positive length, got {radius!r}")
-
-    margin = max(8.0, math.ceil(_BLOB_CUTOFF_SIGMA * r))
-    rng = np.random.default_rng(int(seed))
-    return {
-        "cx": rng.uniform(-margin, nn + margin, nb),
-        "cy": rng.uniform(-margin, nn + margin, nb),
-        "amp": rng.uniform(0.6, 1.0, nb),
-        "radius": r,
-        "n": nn,
-        "scale": None,
-    }
-
-
-def speckle_render(model: dict[str, Any],
-                   fx: Optional[Callable[[np.ndarray, np.ndarray], np.ndarray]] = None,
-                   fy: Optional[Callable[[np.ndarray, np.ndarray], np.ndarray]] = None,
-                   ) -> np.ndarray:
-    """モデルを描く。``fx`` / ``fy`` を渡すと**変形後**の像になる。
-
-    引数
-      model  `speckle_synth` が返した ``dict``。**この関数は ``model["scale"]`` を
-             書き換える**(下記)。
-      fx     ``fx(cx, cy) -> 新しい x``。``None`` は恒等。
-      fy     ``fy(cx, cy) -> 新しい y``。``None`` は恒等。
-
-    戻り値は ``(n, n)`` の float64 画像。斑点は
-    ``amp * exp(-((x-cx)² + (y-cy)²) / (2 radius²))`` の重ね合わせで、
-    中心から ``4 radius`` 画素で打ち切る。
-
-    ★ 正規化定数はモデルに 1 つだけ持つ —— ここがこの op の要点
-      像ごとに最大値で割ると、**変形で最大値がわずかに動くだけで全体の
-      明るさが変わる**。すると輝度不変を仮定する推定器(Lucas-Kanade /
-      Horn-Schunck)に、変形とは無関係な誤差が乗る。測りたいのは推定器の
-      サブピクセル精度であって、合成器が勝手に入れた輝度変化への応答ではない。
-      そこで **最初の(恒等の)描画で決めた 1 つの定数**を ``model["scale"]``
-      に書き戻し、以後の描画はそれで割る。2 回目以降は再計算しない。
-
-      副作用があるので、同じモデルを別の実験に使い回すときは
-      ``speckle_synth`` から作り直すか、``model["scale"] = None`` に戻すこと。
-
-    ★ 整数シフトは厳密に一致する
-      斑点ごとの描画窓を ``floor`` で切るので、整数の平行移動に対して窓の
-      位置も整数だけ動く。したがって重なる領域の画素値は**ビット単位で一致**
-      する(実測: 3 px シフト、MARGIN 40 の内側で最大差 0.0)。これが
-      「真値つきの変形画像」を名乗るための最低条件で、テストで固定してある。
-
-    fail-closed
-      * ``model`` に必要なキーが無い / 配列の長さが揃っていない。
-      * ``scale`` がまだ ``None`` なのに ``fx`` か ``fy`` が渡された
-        —— 基準画像で決めるべき正規化定数を**変形後の像で決めてしまう**ため。
-      * ``fx`` / ``fy`` が呼べない、または形の違う配列を返す。
-    """
-    op = "speckle_render"
-    if not isinstance(model, dict):
-        raise ValueError(f"{op}: model must be the dict returned by speckle_synth")
-    for key in ("cx", "cy", "amp", "radius", "n", "scale"):
-        if key not in model:
-            raise ValueError(f"{op}: model is missing key {key!r}; use speckle_synth")
-    cx = np.asarray(model["cx"], dtype=np.float64)
-    cy = np.asarray(model["cy"], dtype=np.float64)
-    amp = np.asarray(model["amp"], dtype=np.float64)
-    if cx.ndim != 1 or cx.shape != cy.shape or cx.shape != amp.shape:
+def _as_component(a: Any, op: str, name: str) -> np.ndarray:
+    """変位の 1 成分を受ける。``flow2d`` を丸ごと渡した事故をここで捕まえる。"""
+    arr = np.asarray(a, dtype=np.float64)
+    if arr.ndim == 3 and arr.shape[0] == 2:
         raise ValueError(
-            f"{op}: cx / cy / amp must be 1-D arrays of equal length, got "
-            f"{cx.shape} / {cy.shape} / {amp.shape}")
-    nn = int(model["n"])
-    r = float(model["radius"])
-    if nn < 16 or not math.isfinite(r) or r <= 0.0:
-        raise ValueError(f"{op}: model has an invalid n={nn!r} or radius={r!r}")
-
-    if model["scale"] is None and (fx is not None or fy is not None):
-        raise ValueError(
-            f"{op}: the reference (undeformed) image must be rendered first so that the "
-            "normalisation constant is fixed on it. Call speckle_render(model) with no "
-            "fx / fy before rendering a deformed frame; otherwise the deformed frame "
-            "gets its own brightness scale and every brightness-constancy estimator "
-            "picks up an error that has nothing to do with the deformation")
-
-    px = cx if fx is None else np.asarray(fx(cx, cy), dtype=np.float64)
-    py = cy if fy is None else np.asarray(fy(cx, cy), dtype=np.float64)
-    if px.shape != cx.shape or py.shape != cy.shape:
-        raise ValueError(
-            f"{op}: fx / fy must return arrays shaped like cx / cy {cx.shape}, "
-            f"got {px.shape} / {py.shape}")
-    if not (np.all(np.isfinite(px)) and np.all(np.isfinite(py))):
-        raise ValueError(f"{op}: fx / fy produced NaN or Inf coordinates")
-
-    img = np.zeros((nn, nn), dtype=np.float64)
-    yy, xx = np.mgrid[0:nn, 0:nn].astype(np.float64)
-    win = int(math.ceil(_BLOB_CUTOFF_SIGMA * r))
-    two_rr = 2.0 * r * r
-    for k in range(px.size):
-        x0 = float(px[k])
-        y0 = float(py[k])
-        # floor で切る。int() は負側で 0 方向へ丸めるので、整数シフトに対して
-        # 窓の位置が同じだけ動かず、厳密一致が崩れる。
-        i0 = max(0, int(math.floor(y0)) - win)
-        i1 = min(nn, int(math.floor(y0)) + win + 1)
-        j0 = max(0, int(math.floor(x0)) - win)
-        j1 = min(nn, int(math.floor(x0)) + win + 1)
-        if i0 >= i1 or j0 >= j1:
-            continue
-        dx = xx[i0:i1, j0:j1] - x0
-        dy = yy[i0:i1, j0:j1] - y0
-        img[i0:i1, j0:j1] += amp[k] * np.exp(-(dx * dx + dy * dy) / two_rr)
-
-    if model["scale"] is None:
-        peak = float(img.max())
-        if not math.isfinite(peak) or peak <= 0.0:
-            raise ValueError(
-                f"{op}: the reference image is empty (max={peak!r}); "
-                "no blob falls inside the field of view")
-        model["scale"] = peak
-    return img / float(model["scale"])
-
-
-# --------------------------------------------------------------------------- #
-# サブセット相関(ZNCC)                                                        #
-# --------------------------------------------------------------------------- #
-def _box_mean(a: np.ndarray, size: int) -> np.ndarray:
-    """``size x size`` の箱平均。窓が完全に内側にある点でのみ使う。"""
-    return ndimage.uniform_filter(a, size=size, mode="constant")
-
-
-def _peak_shift(c_minus: np.ndarray, c_zero: np.ndarray, c_plus: np.ndarray) -> np.ndarray:
-    """相関の峰の 3 点当てはめ。ガウス、駄目なら放物線。
-
-    ガウス当てはめ ``d = ½(ln c₋ - ln c₊) / (ln c₋ - 2 ln c₀ + ln c₊)`` は
-    3 点が**すべて正**でなければ定義できない(ZNCC は負になりうる)。
-    その場合は放物線当てはめ ``d = ½(c₋ - c₊) / (c₋ - 2c₀ + c₊)`` に落とす。
-    どちらも分母が立たない(峰が平ら)ときは 0 を返す。
-    ``|d| > 1`` は峰の外への外挿なので ±1 で切る。
-    """
-    tiny = 1e-300
-    lm = np.log(np.maximum(c_minus, tiny))
-    l0 = np.log(np.maximum(c_zero, tiny))
-    lp = np.log(np.maximum(c_plus, tiny))
-    den_g = lm - 2.0 * l0 + lp
-    den_p = c_minus - 2.0 * c_zero + c_plus
-    all_pos = (c_minus > 0.0) & (c_zero > 0.0) & (c_plus > 0.0)
-    use_g = all_pos & (np.abs(den_g) > 1e-15)
-    use_p = (~use_g) & (np.abs(den_p) > 1e-15)
-    d = np.zeros_like(c_zero)
-    d = np.where(use_g, 0.5 * (lm - lp) / np.where(use_g, den_g, 1.0), d)
-    d = np.where(use_p, 0.5 * (c_minus - c_plus) / np.where(use_p, den_p, 1.0), d)
-    return np.clip(d, -1.0, 1.0)
-
-
-def dic_correlate(ref: Any, cur: Any, subset: int = 31, step: int = 8,
-                  search: int = 8, quality: str = "zncc") -> dict[str, np.ndarray]:
-    """格子上のサブセット相関で変位を測る。DIC の中核。
-
-    引数
-      ref      基準画像(変形前)。
-      cur      変形後画像。``ref`` と同じ形。
-      subset   相関に使う正方サブセットの一辺 [px]。**奇数**。
-      step     格子の刻み [px]。
-      search   整数探索の片側幅 [px]。真の変位がこれを超えると測れない。
-      quality  ``"zncc"`` のみ。他は**黙って代用せず**例外にする。
-
-    戻り値は ``{"x", "y", "u", "v", "zncc"}``。5 つとも同じ形の 2 次元配列で、
-    ``x``/``y`` が格子点の中心座標 [px](float)、``u``/``v`` が変位 [px]、
-    ``zncc`` が峰での相関係数([-1, 1])。**測れなかった点は 3 つとも NaN**。
-
-    格子点は ``[subset//2 + search, n - 1 - subset//2 - search]`` の範囲に
-    ``step`` 刻みで置く。この内側なら、どの探索位置でもサブセットが画像の
-    中に完全に収まるので、境界処理が答えに混ざらない。
-
-    ★ ZNCC(zero-mean normalised cross-correlation)—— なぜ平均と標準偏差の両方か
-      ``ZNCC = Σ(f-f̄)(g-ḡ) / sqrt(Σ(f-f̄)² Σ(g-ḡ)²)``。平均を引くと**オフセット**に、
-      標準偏差で割ると**ゲイン**に不変になる。``g = a f + b`` (a>0) なら ZNCC は
-      f 自身との相関に厳密に等しい。実測: ``cur`` を ``0.7 cur + 0.15`` に変えると
-
-          max|Δu| = 5.3e-14 px      max|Δzncc| = 3.1e-14
-
-      —— 倍精度の丸め誤差だけ。同じ条件で `optical_flow_lk` は偏りが
-      0.0042 → -0.0950 px、散らばりが 0.0076 → 0.1745 px と 23 倍に壊れる。
-      **これがこの op を書いた理由。**
-
-    ★ サブピクセル —— 3 点ガウス当てはめ
-      ±``search`` の整数探索で峰を見つけ、その左右(上下)3 点で
-      ``d = ½(ln c₋ - ln c₊) / (ln c₋ - 2 ln c₀ + ln c₊)`` を解く。x と y を
-      独立に当てはめる、DIC / PIV の標準手法。ZNCC は負になりうるので、
-      3 点が正でなければ放物線当てはめに落とす(実装は `_peak_shift`)。
-
-      **残る誤差はサブピクセル位置に依存する**(実測、u を 0.125 刻みで掃引、
-      `dic_dense` で全画素へ内挿した場を MARGIN 40 の内側で評価):
-
-          u 真値   0.000  0.125  0.250  0.375  0.500  0.625  0.750  0.875  1.000
-          偏り px -0.0012 -.0008 -.0005 -.0003 -.0003 -.0010 -.0014 -.0014 -.0012
-          散 px    0.0076 0.0073 0.0063 0.0045 0.0021 0.0044 0.0062 0.0072 0.0076
-
-      **偏りは全域で 0.0014 px 以下**(同条件の `optical_flow_lk` は 0.0088 px)。
-      散らばりは **整数の u で最大 (0.0076)、u=0.5 で最小 (0.0021)** —— 峰の
-      左右が対称なときに 3 点当てはめが最も安定するため。教科書の peak
-      locking(整数へ吸い寄せられる)は**偏りには見えない**が、散らばりの
-      向きとしては残っている。0.001 px 台を主張するなら、この u 依存性を
-      承知したうえで平均する枚数を決めること。
-
-    ★ 落とし穴 —— **動いていない軸のほうが散らばる**
-      x と y は独立に当てはめる。つまり y の 3 点は「x の**整数**の峰を通る
-      断面」から取るので、x のサブピクセル分だけ峰の中心を外した所を見る。
-      その結果、動いていない軸の散らばりが動いている軸より大きくなる
-      (実測、格子の生値、真の v はどの行も 0):
-
-          真の u      0.25      0.37      0.50
-          u の散 px   0.0077    0.0057    0.0026
-          v の散 px   0.0249    0.0339    0.0456   ← u が 0.5 に近いほど悪い
-
-      **u が 0.5 に近づくほど v が悪くなる**ので、断面のずれが原因で間違いない
-      (u=0 なら両軸とも整数の峰を通る)。二軸同時に当てはめるか、
-      IC-GN のような反復サブセット当てはめに替えれば消える性質。
-      いまは**片方の軸しか動かない実験で v を信用しないこと**で足りている。
-
-    ★ 峰が探索窓の縁に来たとき
-      3 点が取れないのでサブピクセル補正を **0 のまま**にし、整数の値を返す。
-      値が ``±search`` に張り付いていたら ``search`` が足りていない合図。
-      実測(``search=8``、一様並進):
-
-          u 真値    2.0      4.0      8.0      9.0
-          偏り px  -0.0012  -0.0012   0.0000  -1.0000
-          散 px     0.0076   0.0076   0.0000   0.0000
-
-      ``u=8`` は探索窓のちょうど縁で、**偏りも散らばりも 0** —— 全点が整数
-      8 に張り付いているだけで、精度が上がったのではない。``u=9`` では
-      8 を返して 1 px 丸ごと落とす。**散らばり 0 は測れた証拠ではない。**
-
-    ★ 測れなかった点(fail-closed)
-      基準側サブセットの分散が ``1e-12`` 以下なら ``u = v = zncc = NaN``。
-      一様な背景・飽和した領域・マスクした穴がここに当たる。**0 を返すと
-      「動いていない」と区別がつかなくなる。** 変形後側の分散が立たない
-      探索位置は相関 -1(最悪)として扱い、峰の候補から外す。
-
-    ★ 費用(実測、256x256、subset=31, step=8, search=8、27x27 = 729 点)
-      **0.113 秒**。探索位置ごとに全画面の箱平均を 1 回かけるので、費用は
-      ``(2*search+1)²`` に比例する(``search`` を 8 から 16 にすると 4 倍)。
-      ``step`` にはほとんど依らない —— 相関面は全画面で作り、格子点で
-      拾い出すだけなので、``step=2`` にしても 0.18 秒(1.5 倍)にしかならない。
-      **ひずみの散らばりを縮めたいなら、まず ``step`` を詰めるのが安い。**
-
-    fail-closed
-      * 2 次元でない / 8x8 未満 / NaN・Inf を含む / ``ref`` と ``cur`` の形が違う。
-      * ``subset`` が偶数・3 未満 / ``step`` が 1 未満 / ``search`` が 1 未満。
-      * ``quality`` が ``"zncc"`` 以外。
-      * 格子点が 1 つも置けない(画像に対して ``subset + 2*search`` が大きすぎる)。
-    """
-    op = "dic_correlate"
-    a = _as_image(ref, op, "ref")
-    b = _as_image(cur, op, "cur")
-    if a.shape != b.shape:
-        raise ValueError(f"{op}: ref and cur must have the same shape, got {a.shape} / {b.shape}")
-    if quality != "zncc":
-        raise ValueError(
-            f"{op}: quality must be 'zncc'; got {quality!r}. No substitute criterion is "
-            "applied silently — plain NCC and SSD are not invariant to a brightness change")
-    sub = _odd_positive(subset, op, "subset")
-    st = int(step)
-    if st < 1:
-        raise ValueError(f"{op}: step must be at least 1, got {step!r}")
-    se = int(search)
-    if se < 1:
-        raise ValueError(f"{op}: search must be at least 1, got {search!r}")
-
-    ny, nx = a.shape
-    half = sub // 2
-    lo = half + se
-    hi_y, hi_x = ny - 1 - half - se, nx - 1 - half - se
-    if lo > hi_y or lo > hi_x:
-        raise ValueError(
-            f"{op}: no grid point fits — subset={sub} plus search={se} needs at least "
-            f"{2 * lo + 1} pixels per axis, image is {a.shape}")
-    gy = np.arange(lo, hi_y + 1, st, dtype=np.int64)
-    gx = np.arange(lo, hi_x + 1, st, dtype=np.int64)
-    yg, xg = np.meshgrid(gy, gx, indexing="ij")
-
-    mr_full = _box_mean(a, sub)
-    mrr_full = _box_mean(a * a, sub)
-    mr = mr_full[yg, xg]
-    var_r = mrr_full[yg, xg] - mr * mr
-    ok_ref = var_r > _VAR_EPS
-
-    mc_full = _box_mean(b, sub)
-    mcc_full = _box_mean(b * b, sub)
-
-    ns = 2 * se + 1
-    cpad = np.pad(b, se, mode="edge")
-    corr = np.empty((ns, ns, gy.size, gx.size), dtype=np.float64)
-    for i in range(ns):
-        dy = i - se
-        for j in range(ns):
-            dx = j - se
-            shifted = cpad[se + dy:se + dy + ny, se + dx:se + dx + nx]
-            mrc = _box_mean(a * shifted, sub)[yg, xg]
-            mc = mc_full[yg + dy, xg + dx]
-            var_c = mcc_full[yg + dy, xg + dx] - mc * mc
-            den = var_r * var_c
-            good = den > _VAR_EPS * _VAR_EPS
-            corr[i, j] = np.where(good, (mrc - mr * mc) / np.sqrt(np.where(good, den, 1.0)), -1.0)
-
-    flat = corr.reshape(ns * ns, -1)
-    kbest = np.argmax(flat, axis=0)
-    col = np.arange(flat.shape[1])
-    i0, j0 = np.divmod(kbest, ns)
-    c0 = flat[kbest, col]
-
-    # 峰の縁では 3 点が取れない。clip した添字で読み、内側でだけ補正を採る。
-    im, ip = np.clip(i0 - 1, 0, ns - 1), np.clip(i0 + 1, 0, ns - 1)
-    jm, jp = np.clip(j0 - 1, 0, ns - 1), np.clip(j0 + 1, 0, ns - 1)
-    inner_y = (i0 > 0) & (i0 < ns - 1)
-    inner_x = (j0 > 0) & (j0 < ns - 1)
-    dsub_y = np.where(inner_y, _peak_shift(corr[im, j0, col // gx.size, col % gx.size],
-                                           c0,
-                                           corr[ip, j0, col // gx.size, col % gx.size]), 0.0)
-    dsub_x = np.where(inner_x, _peak_shift(corr[i0, jm, col // gx.size, col % gx.size],
-                                           c0,
-                                           corr[i0, jp, col // gx.size, col % gx.size]), 0.0)
-
-    shape = (gy.size, gx.size)
-    u = (j0 - se + dsub_x).reshape(shape)
-    v = (i0 - se + dsub_y).reshape(shape)
-    zn = c0.reshape(shape)
-    bad = ~ok_ref
-    u = np.where(bad, np.nan, u)
-    v = np.where(bad, np.nan, v)
-    zn = np.where(bad, np.nan, zn)
-    return {
-        "x": xg.astype(np.float64),
-        "y": yg.astype(np.float64),
-        "u": u,
-        "v": v,
-        "zncc": zn,
-    }
-
-
-def dic_dense(ref: Any, cur: Any, **kw: Any) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """`dic_correlate` の格子を全画素へ内挿する。``(u, v, zncc)`` を返す。
-
-    引数は `dic_correlate` と同じ(``**kw`` でそのまま渡す)。戻り値は 3 つとも
-    入力画像と同じ形の 2 次元配列。
-
-    ★ 何のためにあるか
-      `optical_flow_lk` / `optical_flow_hs` は全画素の場を返す。同じ土俵で
-      比較する(同じ評価領域・同じひずみ窓を使う)には、格子の値を画素へ
-      戻す必要がある。**内挿は情報を増やさない** —— 実効的な独立点の数は
-      格子点の数のままで、`strain_from_displacement` の散らばりは ``step`` に
-      強く依存する。実測(一様ひずみ 500 µε、window=31、MARGIN 40 の内側):
-
-          step        16       8       4       2      | optical_flow_lk
-          平均 µε   516.3   486.2   496.2   496.6     | 529.6
-          散 µε     375.2   383.2   257.3   129.2     |  74.6
-
-      既定の ``step=8`` は LK に 5 倍負ける。``step=2`` で 1.7 倍差まで縮み、
-      費用は 0.12 → 0.18 秒。**「ZNCC はひずみが苦手」ではなく「既定の
-      格子が粗い」** —— 変位だけ見るなら ``step=8`` で LK より良い
-      (モジュール docstring の (a))。
-
-    ★ 内挿の規約
-      `scipy.interpolate.RegularGridInterpolator` の線形内挿。
-
-      * **格子の外は NaN**(外挿しない)。格子は画像の縁から
-        ``subset//2 + search`` 画素だけ内側にあるので、その帯は測っていない。
-        0 や縁の値で埋めると、測っていない帯が測った値の顔をする。
-      * **NaN は伝播する。** 線形内挿は 4 近傍の重み付き和なので、隣に NaN が
-        1 つでもあれば結果は NaN。重みが 0 の隣も NaN にする(``0 * NaN = NaN``)
-        ので、NaN の**格子点そのもの**に一致する画素も NaN になる。
-        測れなかった点の周りが 1 格子ぶん広く落ちる、安全側の伝播。
-
-    fail-closed
-      * `dic_correlate` の検査すべて。
-      * 格子が線形内挿に足りない(どちらかの軸が 2 点未満)。
-    """
-    op = "dic_dense"
-    a = _as_image(ref, op, "ref")
-    g = dic_correlate(a, cur, **kw)
-    gy = g["y"][:, 0]
-    gx = g["x"][0, :]
-    if gy.size < 2 or gx.size < 2:
-        raise ValueError(
-            f"{op}: the correlation grid is {gy.size}x{gx.size}; linear interpolation "
-            "needs at least 2 points per axis. Use a smaller step or a larger image")
-
-    ny, nx = a.shape
-    yy, xx = np.mgrid[0:ny, 0:nx]
-    pts = np.stack([yy.ravel().astype(np.float64), xx.ravel().astype(np.float64)], axis=-1)
-    out = []
-    for field in (g["u"], g["v"], g["zncc"]):
-        itp = RegularGridInterpolator((gy, gx), field, method="linear",
-                                      bounds_error=False, fill_value=np.nan)
-        out.append(itp(pts).reshape(ny, nx))
-    return out[0], out[1], out[2]
+            f"{op}: {name} looks like a pivops flow2d array {arr.shape}, not a single "
+            "component. pivops orders it (dy, dx), so pass u=flow[1], v=flow[0] — "
+            "passing flow[0] as u silently transposes the axes and returns a "
+            "plausible wrong answer instead of raising")
+    if arr.ndim != 2:
+        raise ValueError(f"{op}: {name} must be a 2-D field, got ndim={arr.ndim}")
+    return arr
 
 
 # --------------------------------------------------------------------------- #
@@ -644,14 +214,29 @@ def _local_slope(f: np.ndarray, coord: np.ndarray, w: int) -> np.ndarray:
 
 
 def strain_from_displacement(u: Any, v: Any, window: int, method: str,
+                             spacing: float = 1.0,
                              ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """変位場からひずみ場を出す。``(exx, eyy, exy)`` を返す。
 
     引数(``window`` と ``method`` に**既定値は無い**。理由は下記)
-      u       x 方向の変位場 [px]。2 次元。
-      v       y 方向の変位場 [px]。``u`` と同じ形。
-      window  勾配を出す局所最小二乗窓の一辺 [px]。**奇数**。
-      method  ``"infinitesimal"`` または ``"green"``。他は例外。
+      u        x 方向(列)の変位場 [px]。2 次元。
+      v        y 方向(行)の変位場 [px]。``u`` と同じ形。
+      window   局所最小二乗の窓の一辺。**単位は格子の節点数**(画素ではない)。
+               **奇数**。
+      method   ``"infinitesimal"`` または ``"green"``。他は例外。
+      spacing  節点の間隔 [px]。全画素の密な場なら 1.0(既定)。
+               `piv_cross_correlate` の格子なら ``info["step"]``。
+
+    ★ `pivops` から渡すとき —— **成分の順を間違えると静かに壊れる**
+      ``flow2d`` は ``(dy, dx)`` の順。正しくは::
+
+          flow, info = piv_cross_correlate(a, b, window=32, overlap=0.75)
+          exx, eyy, exy = strain_from_displacement(
+              flow[1], flow[0], 9, "green", spacing=info["step"])
+
+      ``flow[0]`` を ``u`` に渡すと x と y が入れ替わり、例外にならずに
+      もっともらしい別の答えが返る。3 次元配列をそのまま渡した場合だけは
+      直し方つきで拒否できるので、そこは検査してある。
 
     定義
       ``ux = ∂u/∂x`` などを ``window x window`` の平面当てはめで出し、
@@ -662,77 +247,96 @@ def strain_from_displacement(u: Any, v: Any, window: int, method: str,
         ``exx = ux + ½(ux² + vx²)``, ``eyy = vy + ½(uy² + vy²)``,
         ``exy = ½(uy + vx + ux·uy + vx·vy)``
 
-    ★★ なぜ ``method`` に既定値を置かないのか —— 剛体回転が作る嘘(実測)
+    ★★ なぜ ``method`` に既定値を置かないのか —— 剛体回転が作る嘘
       試験片が θ だけ回っただけで、**材料は 1 ミクロンも伸びていない**とする。
-      真のひずみは 0。しかし微小ひずみの ``∂u/∂x`` は ``cosθ - 1 ≈ -θ²/2`` を返す。
-      256x256 の解析スペックルに剛体回転を仕込み、``dic_dense`` と
-      `optical_flow_lk` の変位場から ``window=31`` で読み戻した実測
-      (MARGIN 40 の内側の平均、単位 µε = 1e-6):
+      真のひずみは 0。厳密な剛体回転の変位場
+      ``u = (cosθ-1)x - sinθ·y``, ``v = sinθ·x + (cosθ-1)y`` を**画像を通さず
+      直接**入れた実測(単位 µε = 1e-6):
 
-          θ [度]   理論 cosθ-1 | zncc 微小  zncc green | lk 微小   lk green
-            0.0        0.0     |   -14.8      -14.7    |   -0.0      -0.0
-            0.5      -38.1     |   -96.4      -56.8    |  -72.5     -34.7
-            1.0     -152.3     |  -140.8       12.6    | -181.8     -28.6
-            2.0     -609.2     |  -705.0      -94.0    | -698.8     -84.4
+          θ [度]   cosθ-1     infinitesimal   piv_velocity_gradient   green
+            0.5     -38.1        -38.1              -38.1           5.3e-14
+            1.0    -152.3       -152.3             -152.3           9.3e-14
+            2.0    -609.2       -609.2             -609.2           2.0e-13
+            5.0   -3805.3      -3805.3            -3805.3           6.5e-13
 
-      **2 度で -700 µε。鋼の降伏ひずみ(約 2000 µε)の 3 割**にあたる嘘が、
-      定義を選び間違えただけで乗る。Green-Lagrange にすると -90 µε 台まで
-      落ちる(7 倍改善)。
-
-      ただし **-90 µε は 0 ではない**。Green-Lagrange が剛体回転で 0 になるのは
-      代数的に厳密で(``exx = (cosθ-1) + ½((cosθ-1)² + sin²θ) = 0``、
-      `test_dic.py` が**厳密な回転場を入れて 1e-9 未満**で押さえている)、
-      残差は定義ではなく**推定器の変位勾配の誤差**が通ってきたもの。
-      実際 ``∂u/∂x`` の推定誤差は -9e-5 で、微小ひずみの残差 (-705 - (-609)
-      = -96 µε)とほぼ一致する。**Green にしても推定器の誤差は消えない。**
-      なお散らばりは両定義・両推定器とも 2100〜2200 µε あり(θ=2 度)、
-      平均でしか使えない。
+      **2 度で -609 µε。鋼の降伏ひずみ(約 2000 µε)の 3 割。** Green-Lagrange
+      は ``exx = (cosθ-1) + ½((cosθ-1)² + sin²θ) = 0`` が**代数的に厳密**なので
+      1e-13 に落ちる。既存の `piv_velocity_gradient` は微小ひずみと同じ値を
+      返す(= 同じ嘘を持つ)し、`piv_strain_rate` は 2 度で **+1218 µε**
+      (``2|cosθ-1|``)を返す —— 流体の線形化した回転 ``u=-ωy, v=ωx`` なら 0 に
+      なる量だが、**有限回転では 0 にならない**。
 
       逆に、材料試験の報告書・規格・ひずみゲージとの突き合わせでは
       微小ひずみが標準で、Green-Lagrange を黙って返すと数字が合わない。
       **どちらが正しいかは場面で反転する。だから選ばせる。**
-      ``window`` も同じで、大きくすると散らばりが減る代わりに、ひずみ集中の
-      尖頭を過小に読む(空間分解能が窓幅で決まる)。既定を置くと、選んだ
-      覚えのないトレードオフの上で数字が出る。
 
-    ★ 窓の大きさは空間分解能そのもの
-      対称窓の最小二乗は 1 次のひずみ場(ε が x の 1 次)なら厳密に返すが、
-      **曲率のある場**(切欠き先端の集中など)では尖頭を過小に読む。
-      集中の幅より狭い窓を取ること。
+    ★ ただし「green にすれば安全」ではない —— 推定の誤差はそのまま通る
+      Green の補正項 ``½(ux²+vx²)`` は**推定した勾配**から作るので、勾配の
+      推定が悪ければ補正も悪い。実測(解析スペックル 256²、剛体回転、
+      MARGIN 40 の内側の平均 ± 散らばり、単位 µε):
+
+          θ [度]  cosθ-1  |  piv+LS w=9 微小     green     | lk+LS w=31 微小     green
+            2.0   -609.2  |   -42.9 ±  428    564.7 ±  429 |  -698.8 ± 2122   -84.4 ± 2132
+            5.0  -3805.3  |   364.9 ± 9532   3843.4 ± 9638 | -1372.9 ±22909  2759.6 ±25685
+
+      ``lk`` の 2 度は教科書どおり(-699 ≒ -609 の嘘 → green で -84 に減る)。
+      だが ``piv`` の 2 度は微小ひずみですら -42.9 しか返さない —— 回転する
+      サブセットが相関を鈍らせて**勾配の推定自体が ±500 µε 揺れている**ため
+      で、そこへ +609 µε の Green 補正を足すと逆に +565 µε になる。
+      **5 度以上ではどちらの推定器も散らばりが 1e4 µε を超え、平均に意味が無い。**
+      定義の議論が効くのは、まず勾配がその精度で測れているときだけ。
+
+    ★ ``window`` は空間分解能そのもの
+      同じ piv 変位場から一様ひずみを読み戻した実測(µε):
+
+          真値      piv_velocity_gradient        w=3            w=5            w=9
+           100       100.4 ±   21.8      100.4 ±   16.0  100.3 ±   6.4  100.3 ±   1.7
+           500       501.8 ±  107.2      502.0 ±   78.9  501.4 ±  31.3  501.2 ±   8.6
+          2000      1996.3 ±  342.0     1996.6 ±  259.5 1994.8 ±  99.3 1995.6 ±  25.9
+         20000     19768.8 ± 2909.9    19768.9 ± 2210.5 19742.7 ± 790.9 19754.1 ± 209.6
+
+      平均は全部同じ。**散らばりだけが w とともに 13.9 倍まで縮む。**
+      その代わり ``w=9`` は 9 節点(step=8 なら 72 px)を平らとみなすので、
+      切欠き先端のような**曲率のあるひずみ場では尖頭を過小に読む**。
+      対称窓の最小二乗は 1 次のひずみ場なら厳密に返すが、曲がった場は鈍る。
+      既定を置くと、選んだ覚えのないトレードオフの上で数字が出る。
 
     ★ NaN の扱い —— 0 で埋めない
       ``u`` か ``v`` に NaN があると、その点を含む ``window x window`` の
-      当てはめは定義できない。ここでは **NaN を含む窓の出力をすべて NaN** に
-      する(``u``/``v`` 両方の欠測を合わせた 1 つのマスクを 3 成分に適用)。
+      当てはめは定義できない。**NaN を含む窓の出力をすべて NaN** にする
+      (``u``/``v`` 両方の欠測を合わせた 1 つのマスクを 3 成分に適用)。
       NaN を 0 と見なすと、測れなかった点が「変位 0 の点」として当てはめに
-      効いてしまい、**周囲に本物に見える偽のひずみ勾配**を作る。
+      効き、**周囲に本物に見える偽のひずみ勾配**を作る。
 
     fail-closed
-      * ``u`` / ``v`` が 2 次元でない、形が違う、8x8 未満。
-      * ``window`` が偶数・3 未満・画像より大きい。
+      * ``u`` / ``v`` が 2 次元でない、形が違う、4x4 未満。
+      * ``u`` に ``(2, h, w)`` の ``flow2d`` を丸ごと渡した(直し方つきで拒否)。
+      * ``window`` が偶数・3 未満・場より大きい。
+      * ``spacing`` が非正・非有限。
       * ``method`` が ``"infinitesimal"`` / ``"green"`` 以外。
-      * ``window`` と ``method`` を省略した呼び出しは ``TypeError``
-        (Python の引数機構でそのまま落ちる。既定値を置いていないので)。
+      * ``window`` と ``method`` を省いた呼び出しは ``TypeError``
+        (既定値を置いていないので Python の引数機構でそのまま落ちる)。
     """
     op = "strain_from_displacement"
-    au = np.asarray(u, dtype=np.float64)
-    av = np.asarray(v, dtype=np.float64)
-    if au.ndim != 2:
-        raise ValueError(f"{op}: u must be a 2-D displacement field, got ndim={au.ndim}")
+    au = _as_component(u, op, "u")
+    av = _as_component(v, op, "v")
     if au.shape != av.shape:
         raise ValueError(f"{op}: u and v must have the same shape, got {au.shape} / {av.shape}")
-    if min(au.shape) < 8:
-        raise ValueError(f"{op}: u / v must be at least 8x8, got {au.shape}")
+    if min(au.shape) < 4:
+        raise ValueError(f"{op}: u / v must be at least 4x4, got {au.shape}")
     if method not in STRAIN_METHODS:
         raise ValueError(
             f"{op}: method must be one of {STRAIN_METHODS}, got {method!r}. "
-            "There is no default: a 2 degree rigid rotation reads as about -600 "
-            "microstrain under 'infinitesimal' and as zero under 'green'")
+            "There is no default: a 2 degree rigid rotation reads as -609 microstrain "
+            "under 'infinitesimal' and as exactly zero under 'green'")
     w = _odd_positive(window, op, "window")
     if w > min(au.shape):
         raise ValueError(
             f"{op}: window={w} is larger than the field {au.shape}; "
             "the local fit would see only reflected data")
+    sp = float(spacing)
+    if not math.isfinite(sp) or sp <= 0.0:
+        raise ValueError(f"{op}: spacing must be a finite positive pitch, got {spacing!r}")
 
     valid = np.isfinite(au) & np.isfinite(av)
     if not valid.any():
@@ -742,6 +346,8 @@ def strain_from_displacement(u: Any, v: Any, window: int, method: str,
 
     ny, nx = au.shape
     yy, xx = np.mgrid[0:ny, 0:nx].astype(np.float64)
+    yy *= sp
+    xx *= sp
     ux = _local_slope(uf, xx, w)
     uy = _local_slope(uf, yy, w)
     vx = _local_slope(vf, xx, w)
@@ -765,10 +371,184 @@ def strain_from_displacement(u: Any, v: Any, window: int, method: str,
 
 
 # --------------------------------------------------------------------------- #
+# 相関品質(与えられた変位場に対する ZNCC)                                     #
+# --------------------------------------------------------------------------- #
+def _bilinear(img: np.ndarray, ry: np.ndarray, rx: np.ndarray) -> np.ndarray:
+    """``img`` を実数座標 ``(ry, rx)`` で双一次標本化。外は NaN。"""
+    ny, nx = img.shape
+    inside = (ry >= 0.0) & (ry <= ny - 1) & (rx >= 0.0) & (rx <= nx - 1)
+    cy = np.clip(np.nan_to_num(ry, nan=0.0), 0.0, ny - 1.0)
+    cx = np.clip(np.nan_to_num(rx, nan=0.0), 0.0, nx - 1.0)
+    y0 = np.floor(cy).astype(np.int64)
+    x0 = np.floor(cx).astype(np.int64)
+    y1 = np.minimum(y0 + 1, ny - 1)
+    x1 = np.minimum(x0 + 1, nx - 1)
+    fy = cy - y0
+    fx = cx - x0
+    out = ((1 - fy) * ((1 - fx) * img[y0, x0] + fx * img[y0, x1])
+           + fy * ((1 - fx) * img[y1, x0] + fx * img[y1, x1]))
+    return np.where(inside, out, np.nan)
+
+
+def _grid_to_pixels(g: np.ndarray, rows: np.ndarray, cols: np.ndarray,
+                    shape: tuple[int, int]) -> np.ndarray:
+    """窓格子の場を画素格子へ双一次で広げる。格子の外は端の値を保つ。"""
+    ny, nx = shape
+    ri = np.interp(np.arange(ny, dtype=np.float64), rows,
+                   np.arange(g.shape[0], dtype=np.float64))
+    ci = np.interp(np.arange(nx, dtype=np.float64), cols,
+                   np.arange(g.shape[1], dtype=np.float64))
+    return _bilinear(g, ri[:, None] * np.ones((1, nx)), ci[None, :] * np.ones((ny, 1)))
+
+
+def correlation_quality(ref: Any, cur: Any, flow: Any, info: Optional[dict] = None,
+                        subset: int = 31) -> np.ndarray:
+    """与えられた変位場が**どれだけ合っているか**を点ごとに返す ZNCC マップ。
+
+    引数
+      ref     基準画像。
+      cur     変形後画像。``ref`` と同じ形。
+      flow    `pivops` の ``flow2d`` ``(2, h, w)``、成分は ``(dy, dx)`` [px]。
+              ``info`` を渡さないなら ``(2, H, W)`` の**全画素**の場。
+      info    `piv_cross_correlate` が返した dict。渡すと窓格子の ``flow`` を
+              画素へ双一次で広げてから測る。
+      subset  相関を取る正方サブセットの一辺 [px]。**奇数**。
+
+    戻り値は入力画像と同じ形の float 配列。値は ``[-1, 1]`` の ZNCC で、
+    **測れなかった点は NaN**(サブセットが画像からはみ出す縁、変形後の
+    標本点が画像の外へ出る点、分散の無いサブセット)。
+
+    ★ これは相関器ではない —— **既にある変位場の採点係**
+      `piv_cross_correlate` も `optical_flow_lk` も `demons_register` も、
+      出した変位が正しいかは返さない。ここは ``cur`` を ``flow`` で基準側へ
+      引き戻し(双一次)、``ref`` との ZNCC を ``subset`` の箱で測るだけ。
+      **どの推定器の出力でも同じ口で採点できる**のが要点で、相関器を
+      もう 1 つ増やさずに品質だけを足せる。
+
+      平均と標準偏差の両方を割り引くので、**ゲインとオフセットには不変**。
+      露出が変わった対でも「合っているか」だけを見る。
+
+    ★★ 既存の ``info["peak_ratio"]`` では足りない場面がある(実測)
+      ``peak_ratio``(第 1 ピーク / 第 2 ピーク)は PIV の標準的な SN 比で、
+      **相関面に競合する峰が立つ**種類の失敗を捕まえる。捕まえないのは
+      「その場所が別物になった」種類の失敗。u=0.37 px の対のうち 60x60 画素
+      だけを無関係な模様に差し替えた実測:
+
+          指標                    差し替え領域   健全領域   区別
+          peak_ratio                 1.207        1.304    7.5 % 差(重なる)
+          correlation_quality        0.1101       0.9993   9 倍差
+
+      品質で切って変位誤差 RMS がどう変わるか:
+
+          門                  残る割合   誤差 RMS [px]
+          なし                 100.0 %      1.8110
+          zncc >= 0.8           84.9 %      0.0031    ← 584 倍改善
+          peak_ratio >= 1.2     81.8 %      1.2183    ← 1.5 倍
+          peak_ratio >= 1.3     41.6 %      1.4471    ← 6 割捨てて**悪化**
+
+      **両方見るのが正しい。** peak_ratio は競合ピークを、ZNCC は
+      デコリレーションを見る。片方だけでは穴が開く。
+
+    ★★ 落とし穴 —— **品質が高いことは精度が高いことではない**
+      ZNCC はサブピクセルの誤差にほとんど反応しない。真の変位 0.37 px の対に
+      わざと誤差を入れた場を採点した実測(斑点の直径 3.8 px):
+
+          変位の誤差 [px]   0.00     0.05     0.10     0.25     0.50    1.00    2.00
+          zncc 中央値      0.99945  0.99920  0.99845  0.99330  0.97615 0.90617 0.67655
+
+      **0.05 px 間違えても 0.9992** —— 完全に合っている 0.99945 との差は
+      2.5e-4 しかない。この指標が測れるのは「斑点の大きさに比べて大きな
+      ずれ・欠測・別物への置き換え」であって、0.01 px の精度ではない。
+      一様な雑音で全点が等しく劣化した場合(σ=0.15)も、門で切って残るのは
+      21.8 % で誤差 RMS は 0.1736 → 0.1292 の 1.34 倍改善にとどまる ——
+      **効くのは失敗が局所的なときだけ。**
+
+    ★ 引き戻しはサブセットごとの平行移動ではなく**場そのもの**
+      普通の DIC はサブセットを剛体的にずらして相関を取るが、ここは画素ごとの
+      ``flow`` で ``cur`` を歪めてから箱で相関を取る。``flow`` が滑らかなら
+      両者は一致し、そうでないなら**こちらのほうが正しい**(サブセット内の
+      変形も込みで残差を見るため)。費用も O(N) で済む(256² で 0.003 秒)。
+
+    fail-closed
+      * ``ref`` / ``cur`` が 2 次元でない、形が違う、NaN・Inf を含む。
+      * ``flow`` が ``(2, h, w)`` でない。
+      * ``info`` 無しで ``flow`` が画像と違う形(直し方つきで拒否)。
+      * ``info`` に ``rows`` / ``cols`` が無い、格子と ``flow`` の形が食い違う、
+        格子がどちらかの軸で 2 未満。
+      * ``subset`` が偶数・3 未満・画像より大きい。
+    """
+    op = "correlation_quality"
+    a = _as_image(ref, op, "ref")
+    b = _as_image(cur, op, "cur")
+    if a.shape != b.shape:
+        raise ValueError(f"{op}: ref and cur must have the same shape, got {a.shape} / {b.shape}")
+    sub = _odd_positive(subset, op, "subset")
+    if sub > min(a.shape):
+        raise ValueError(f"{op}: subset={sub} is larger than the image {a.shape}")
+
+    f = np.asarray(flow, dtype=np.float64)
+    if f.ndim != 3 or f.shape[0] != 2:
+        raise ValueError(
+            f"{op}: flow must be a pivops flow2d array (2, h, w) with components "
+            f"(dy, dx), got shape {f.shape}")
+    ny, nx = a.shape
+    if info is None:
+        if f.shape[1:] != a.shape:
+            raise ValueError(
+                f"{op}: flow is {f.shape[1:]} but the image is {a.shape}. Either pass a "
+                "dense per-pixel flow, or pass the info dict from piv_cross_correlate "
+                "so the window grid can be expanded to pixels")
+        dy, dx = f[0], f[1]
+    else:
+        for key in ("rows", "cols"):
+            if key not in info:
+                raise ValueError(f"{op}: info is missing {key!r}; pass the dict that "
+                                 "piv_cross_correlate returned")
+        rows = np.asarray(info["rows"], dtype=np.float64)
+        cols = np.asarray(info["cols"], dtype=np.float64)
+        if f.shape[1:] != (rows.size, cols.size):
+            raise ValueError(
+                f"{op}: flow is {f.shape[1:]} but info describes a "
+                f"{rows.size}x{cols.size} window grid")
+        if rows.size < 2 or cols.size < 2:
+            raise ValueError(
+                f"{op}: the window grid is {rows.size}x{cols.size}; expanding it to "
+                "pixels needs at least 2 windows per axis")
+        dy = _grid_to_pixels(f[0], rows, cols, a.shape)
+        dx = _grid_to_pixels(f[1], rows, cols, a.shape)
+
+    yy, xx = np.mgrid[0:ny, 0:nx].astype(np.float64)
+    warped = _bilinear(b, yy + dy, xx + dx)
+
+    ok = np.isfinite(warped)
+    g = np.where(ok, warped, 0.0)
+    cover = ndimage.uniform_filter(ok.astype(np.float64), sub, mode="constant")
+    mf = ndimage.uniform_filter(a, sub, mode="constant")
+    mg = ndimage.uniform_filter(g, sub, mode="constant")
+    mff = ndimage.uniform_filter(a * a, sub, mode="constant")
+    mgg = ndimage.uniform_filter(g * g, sub, mode="constant")
+    mfg = ndimage.uniform_filter(a * g, sub, mode="constant")
+    var_f = mff - mf * mf
+    var_g = mgg - mg * mg
+    den = var_f * var_g
+    good = (cover > 1.0 - 1e-9) & (var_f > _VAR_EPS) & (var_g > _VAR_EPS)
+    zncc = np.where(good, (mfg - mf * mg) / np.sqrt(np.where(good, den, 1.0)), np.nan)
+
+    # サブセットが画像の外へはみ出す縁は測っていない。
+    h = sub // 2
+    edge = np.ones((ny, nx), dtype=bool)
+    edge[h:ny - h, h:nx - h] = False
+    return np.where(edge, np.nan, zncc)
+
+
+# --------------------------------------------------------------------------- #
 # スペックルの品質                                                              #
 # --------------------------------------------------------------------------- #
 def speckle_quality(img: Any) -> dict[str, float]:
     """撮ったスペックルが DIC に向いているかを 4 つの数字で返す。
+
+    `pivops` にも `fullseye` にも無い(``speckle_filter`` は SAR の斑点雑音
+    **除去**で別物)。撮影の場で「この模様で測れるか」を判定するための口。
 
     引数
       img  スペックル画像(2 次元)。輝度の規格は問わないが、``coverage`` は
@@ -777,65 +557,60 @@ def speckle_quality(img: Any) -> dict[str, float]:
     戻り値は ``dict``:
 
       ``mig``                     平均輝度勾配 ``sqrt(mean(Ix² + Iy²))``。
-                                  Pan らの DIC 品質指標。**大きいほど良い**
-                                  (変位の分散の下限が ``σ_noise / (mig √N)`` で
-                                  決まるので、これが小さいと何をしても測れない)。
-      ``grad_rms``                ``mig`` と同じ量を x 方向だけで見たもの
-                                  ``sqrt(mean(Ix²))``。雑音下限の見積もりに使う。
+                                  Pan らの DIC 品質指標。変位の分散の下限が
+                                  ``σ_noise / (mig √N)`` で決まるので、これが
+                                  小さいと何をしても測れない。
+      ``grad_rms``                x 方向だけの ``sqrt(mean(Ix²))``。
       ``coverage``                ``0.2*(max-min) + min`` を超える画素の割合。
       ``mean_blob_diameter_px``   斑点の平均直径 [px] の**推定値**(下記)。
 
     ★ ``mean_blob_diameter_px`` は推定であって測定ではない
-      平均を引いた画像の自己相関を取り、動径平均が 0.5 に落ちる半径 ``R½`` を
-      線形内挿で求め、``diameter = √2 · R½`` を返す。``√2`` の根拠: 1σ 半径 ``r``
-      のガウス斑点をランダムに撒いた場に対して自己相関は 1σ が ``r√2`` の
-      ガウスになるので、``R½ = 2r√(ln2)``。斑点そのものの FWHM は ``2r√(2ln2)``
-      で、比がちょうど ``√2``。つまり**斑点がガウスで、位置が無相関である
-      という仮定の上でだけ**、返す値が FWHM に一致する。
+      平均を引いた画像の自己相関の動径平均が 0.5 に落ちる半径 ``R½`` を線形
+      内挿で求め、``diameter = √2 · R½`` を返す。``√2`` の根拠: 1σ 半径 ``r`` の
+      ガウス斑点をランダムに撒いた場の自己相関は 1σ が ``r√2`` のガウスなので
+      ``R½ = 2r√(ln2)``、斑点の FWHM は ``2r√(2ln2)``、比がちょうど ``√2``。
+      つまり**斑点がガウスで位置が無相関という仮定の上でだけ** FWHM に一致する。
 
-      **何に偏るか**:
+      実測(左: 解析スペックル、1σ 半径を振り被覆率が揃うよう個数を調整。
+      右: `piv_synth_particles`、``diameter_px`` は 2σ なので FWHM は
+      ``1.1774 × diameter_px``):
 
-      * 斑点の形がガウスでない(印刷・スプレーの実物は縁が立つ)と、
-        自己相関の裾の形が変わるので ``√2`` の換算そのものがずれる。
-      * 画像に低周波のむら(照明勾配・うねり)があると自己相関の裾が持ち上がり、
-        0.5 の交点が外へ動いて**過大**に出る。先に高域通過を掛けること。
+          1σ r   FWHM   推定   比   |  d_px   FWHM   推定   比    cov     mig
+          0.6    1.41   1.36  0.97  |   1.5   1.77   1.80  1.02  0.043  0.1351
+          1.0    2.35   2.39  1.01  |   2.5   2.94   2.93  1.00  0.106  0.1676
+          1.6    3.77   3.77  1.00  |   4.0   4.71   4.69  1.00  0.159  0.1775
+          2.5    5.89   5.77  0.98  |   6.0   7.06   7.01  0.99  0.286  0.1764
+          4.0    9.42   9.18  0.97  |
+
+      **ガウス斑点なら 3 % 以内**。実物のスペックル(印刷・スプレー)は
+      ガウスではないので、この表は換算の算数が合っていることの確認であって、
+      実写での精度ではない。**何に偏るか**:
+
+      * 斑点の形がガウスでないと ``√2`` の換算そのものがずれる。
+      * 低周波のむら(照明勾配)があると自己相関の裾が持ち上がり**過大**に出る。
+        先に高域通過を掛けること。
       * 自己相関は循環相関(FFT)なので、周期性のある背景があると乱れる。
-      * 動径平均の環の代表半径は、ビン番号ではなく**環内の半径の平均**を使う。
-        ビン番号だと半径 1 の環に対角の √2 が混ざり、1σ=0.6 px の細かい
-        スペックルで径が **0.80 倍**(2 割過小)に出た。この実装は環内平均を
-        使うので、同じ面で 0.97 倍まで戻る(下の表)。
+      * 環の代表半径は**環内の半径の平均**を使う。ビン番号を使うと半径 1 の環に
+        対角の √2 が混ざり、1σ=0.6 px で径が **0.80 倍**(2 割過小)に出た。
 
-      実測(`speckle_synth` の合成スペックル、256x256、seed 7、被覆率が
-      揃うよう斑点数を半径に合わせた ``n_blob = 3000 (1.6/r)²``):
-
-          1σ 半径 r  真の FWHM 2.355r  推定 diameter   比    coverage   mig
-             0.6          1.41            1.36       0.97     0.237   0.1127
-             1.0          2.35            2.39       1.01     0.242   0.0926
-             1.6          3.77            3.77       1.00     0.286   0.0732
-             2.5          5.89            5.79       0.98     0.354   0.0580
-             4.0          9.42            9.33       0.99     0.341   0.0378
-
-      **ガウス斑点なら 3 % 以内**(直径 1.4 px の、標本化が足りない極端な
-      場合でも 0.97)。実物のスペックルはガウスではないので、この表は
-      「換算の算数が合っている」ことの確認であって、実写での精度ではない。
-
-      同じ表の ``mig`` が **斑点が細かいほど大きい**(0.0378 → 0.1127、
-      3.0 倍)ことにも注意。MIG は「勾配が急なほど良い」としか言わないので、
-      **MIG を最大化すると標本化が足りない細かすぎるスペックルを選ぶ**。
-      `examples/poc_dic_strain.py` の 9 節が測ったとおり、直径 1.4 px の
-      スペックルは偏りも散らばりも最悪になる。MIG は下限を切るための指標で、
-      最大化する目的関数ではない。
+    ★ MIG は下限を切る指標であって、最大化する目的関数ではない
+      上の左表で ``mig`` は斑点が細かいほど大きい(1σ=4.0 の 0.0384 に対し
+      1σ=0.6 で 0.1127、2.9 倍)。だが直径 1.4 px のスペックルは標本化が
+      足りず、`examples/poc_dic_strain.py` の 9 節の実測では偏りも散らばりも
+      最悪になる。**MIG を最大化すると測れないスペックルを選ぶ。**
+      右表の粒子像では ``d=4.0`` で頭打ちになり ``d=6.0`` でわずかに下がる ——
+      同じ指標が入力の作り方で単調にも非単調にもなるので、
+      **絶対値ではなく同じ撮り方どうしの比較に使うこと。**
 
     ★ ``coverage`` のしきい値は Otsu ではない
-      ``0.2*(max-min) + min`` の固定しきい値。Otsu は「2 峰の分布」を仮定するが、
-      スペックルの輝度分布は斑点の重なりで単峰になることが多く、そこで Otsu を
-      使うと**しきい値が画像ごとに動いて比較できなくなる**。固定にすれば、
-      少なくとも同じ規格の画像どうしは比べられる。
-      絶対値としては意味が薄いので、**別々に撮った画像の比較にだけ使う**。
+      ``0.2*(max-min) + min`` の固定しきい値。Otsu は 2 峰の分布を仮定するが、
+      スペックルの輝度分布は斑点の重なりで単峰になることが多く、Otsu だと
+      **しきい値が画像ごとに動いて比較できなくなる**。固定なら少なくとも
+      同じ規格の画像どうしは比べられる。
 
     ★ MIG は単位を持つ
-      ``mig`` は「輝度 / px」。8 bit 整数のまま渡すか [0, 1] に規格化してから
-      渡すかで 255 倍違う。**同じ規格の画像どうしでしか比べられない。**
+      「輝度 / px」。8 bit 整数のまま渡すか [0, 1] に規格化してから渡すかで
+      255 倍違う。**同じ規格の画像どうしでしか比べられない。**
 
     fail-closed
       * 2 次元でない / 8x8 未満 / NaN・Inf を含む。
@@ -844,7 +619,7 @@ def speckle_quality(img: Any) -> dict[str, float]:
         ``mean_blob_diameter_px`` が ``nan``。他の 3 つは返す。
     """
     op = "speckle_quality"
-    a = _as_image(img, op)
+    a = _as_image(img, op, "img")
     lo, hi = float(a.min()), float(a.max())
     if hi <= lo:
         raise ValueError(f"{op}: img is uniform (min = max = {lo!r}); there is no speckle")

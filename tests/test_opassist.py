@@ -306,3 +306,69 @@ def test_path_finds_a_shortest_chain_between_types():
     assert longer[0][0] in ("box_sdf", "sphere_sdf")
     assert A.path("image2d", "image2d") == [[]]         # 同じ型は 0 段
     assert A.path("normalmap", "no_such_sort") == []
+
+
+# --------------------------------------------------------------------------- #
+# 語幹検索 —— 「あるのに見つからない」を止める門(2026-09-06)                    #
+# --------------------------------------------------------------------------- #
+# 実話: DIC(デジタル画像相関)の PoC を書くとき `op_find("correlation")` を引いて
+# 5 件返り、そのどれもが `piv_cross_correlate` ではなかった。「相関の op は無い」と
+# 結論して同じものを作りかけた —— 実際には PIV の 23 op が既にあった。
+# 原因は照合が**素の部分一致**だったこと: "correlation" は "cross_correlate" の
+# 部分文字列でも、その逆でもない。以下はその再発を止める。
+def test_find_matches_word_stems_not_only_substrings():
+    """"correlation" で `piv_cross_correlate` に辿り着けること。"""
+    names = [h["op"] for h in A.find("correlation", limit=30)]
+    assert "piv_cross_correlate" in names, (
+        "語幹一致が効いていない。実際にこれで既存 23 op を見落とした")
+
+
+def test_find_accepts_multi_word_queries():
+    """句で引ける。以前は句全体が含まれないと 0 件だった。"""
+    names = [h["op"] for h in A.find("digital image correlation", limit=30)]
+    assert "piv_cross_correlate" in names
+    # ありふれた語("image")に引きずられて `abs_image` 類が上位を占めない。
+    assert names.index("piv_cross_correlate") < 10, names[:10]
+
+
+def test_find_weights_rare_words_above_common_ones():
+    """"strain measurement" は `piv_strain_rate` を先に出す。
+
+    "measurement" は op 名に 1 度も出ないが、語幹一致する "measure" は
+    60 個以上の名前に出る。素の出現数で重みを付けると計測系の
+    `add_metrology_object_*_measure` が上に来てしまう(実測して直した)。
+    """
+    names = [h["op"] for h in A.find("strain measurement", limit=10)]
+    assert names[0] == "piv_strain_rate", names
+
+
+def test_find_still_rejects_a_query_that_matches_nothing():
+    """語幹段を入れても、当たらない問い合わせは空のままであること。"""
+    assert A.find("zzz-nothing-matches") == []
+    assert A.find("qqqqxxxx") == []
+
+
+def test_stem_match_does_not_join_unrelated_words():
+    """語幹判定が長さだけで決まっていないこと。
+
+    共通接頭辞の長さ 5 だけで判定すると **"median" と "medial" が繋がる**
+    (共通 "media" が 5 文字ある)。残りが屈折語尾かどうかを見ることで、
+    "correlation"/"correlate"(ion / e)は通り、"median"/"medial"(n / l)と
+    "corner"/"cornea"(r / a)は落ちる。
+    """
+    for a, b in [("correlation", "correlate"), ("segmentation", "segment"),
+                 ("rotation", "rotate"), ("gaussian", "gauss"),
+                 ("measurement", "measure"), ("interpolation", "interpolate"),
+                 ("displacement", "displace"), ("polarization", "polar")]:
+        assert A._stem_match(a, b), (a, b)
+    for a, b in [("median", "medial"), ("contrast", "contour"),
+                 ("corner", "cornea")]:
+        assert not A._stem_match(a, b), (a, b)
+
+
+def test_exact_and_substring_hits_still_outrank_stem_hits():
+    """既存の並び順が変わっていないこと —— 語幹段は下に足しただけ。"""
+    hits = A.find("erosion", limit=10)
+    assert hits[0]["op"].find("erosion") >= 0
+    top = [h for h in A.find("dem_slope", limit=5)]
+    assert top[0]["op"] == "dem_slope"

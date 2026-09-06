@@ -600,3 +600,41 @@ texture 8 —— つまり**近傍を見る族がまるごと**入っている�
 
 2 が本筋だが、`_norm` を op の外へ出す変更は 882 op すべての出力に触るので、
 **parity 門を先に用意してから**にする。
+
+## 35. py3.12 の CI が 1 度だけ segfault した(再現せず・原因未特定)
+
+**事実**: 2026-09-06 の run `34018149265`(第 6 波の push)で、**py3.12 の
+ジョブだけ**が exit 139 で落ちた。py3.10 / py3.11 / lint / core は同じ commit で
+通過している。
+
+進行 18 %(2160 テスト完了)で 5 分半止まり、`faulthandler_timeout=180` の
+ダンプが出たあと segfault。ダンプは**途中で切れている**:
+
+```
+Timeout (0:03:00)!
+Thread 0x...  (threading.Timer — pytest-timeout の見張り)
+Thread 0x...:
+  File "<string>", line 1 in <lambda>
+  File "<shim>", line ??? in <interpreter trampoline>
+Segmentation fault (core dumped) pytest -q -ra --cov ...
+```
+
+Python のフレームが 2 段しか出ていない(pytest 自身のスタックが無い)ので、
+**ダンプの途中で落ちた**と読める。
+
+**再現の試み(すべて陰性)**:
+
+| やったこと | 結果 |
+|---|---|
+| 次の commit の CI(run `34022627278`) | py3.12 **41 分で緑**。同じ範囲を通過 |
+| Windows に py3.12 を建てて全数実行 | 11252 passed。segfault 無し |
+| 18 % 付近のテストを特定(`test_d*`〜`test_e*`) | 特に重い C 拡張は見当たらず |
+
+**分かっていること**: `skimage.morphology.reconstruction` と `h_maxima` を
+NaN 画像で交互に呼ぶと SIGSEGV する(2026-09-05 実測)。これは
+`backend_safe.require_finite` で入口を塞いである。今回のダンプにその 2 op は
+出ていないので**同じものとは言えない**。
+
+**扱い**: 再現していないので原因を断定しない。**直したとは書かない**。
+再発したらこの節に run 番号を足すこと。2 度目が出たら決定的なので、
+`b5f8a86b9..4bb2e56ac` の範囲を二分探索する。
