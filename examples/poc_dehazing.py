@@ -604,11 +604,18 @@ def main():
         drop = psnr_masked(base_or, j_true, m) - psnr_masked(out_or, j_true, m)
         amp_rows.append((name, pred, meas, drop))
         print(f"  {name:<16}{pred:>18.2f}{meas:>14.2f}{meas / pred:>7.2f}{drop:>14.2f}")
-    print(f"  暗チャネルを雑音つきで回した場合の全体 PSNR: "
-          f"{psnr_masked(out_dcp, j_true):.2f} dB "
-          f"(雑音無し {scores['暗チャネル p=15'][0]:.2f} dB)")
     print("  → 増幅率は 1/max(t,t0) の予測とよく合う。実測が予測を下回るのは、復元後の")
     print("     [0,1] クリップが増幅された雑音を切り落とすため(誤差は消えず飽和に化ける)。")
+    a_n = airlight_dcp(noisy)
+    t_n = transmission_dcp(noisy, a_n)
+    p_noisy_dcp = psnr_masked(out_dcp, j_true)
+    bias_clean = float(np.mean(t_dcp - t_true))
+    bias_noisy = float(np.mean(t_n - t_true))
+    print(f"  暗チャネルを雑音つきで回すと全体 PSNR は {scores['暗チャネル p=15'][0]:.2f} → "
+          f"{p_noisy_dcp:.2f} dB と**上がる**。")
+    print(f"     改善ではない —— 最小値フィルタが雑音の下側だけを拾うので暗チャネルが下がり、")
+    print(f"     t の系統的な過小評価(平均バイアス {bias_clean:+.4f} → {bias_noisy:+.4f})を")
+    print("     偶然打ち消しているだけ。**雑音を足したら指標が良くなったら、指標を疑う。**")
 
     print(f"\n=== 10. 所要時間 {time.perf_counter() - t_start:.2f} 秒 ===")
 
