@@ -476,3 +476,30 @@ def test_the_index_tables_are_not_empty_anywhere():
                      if any(c.strip() == "" for c in l.strip("|").split("|"))]
             assert not empty, "%s の %s の表に空のセル: %s" % (
                 name, what, empty[:3])
+
+
+def test_underscore_directories_are_served_by_pages():
+    """★Jekyll は `_` で始まるディレクトリを配信しない。
+
+    op の図を `docs/ops/_fig/` に置いたら、手元のリンク検査は全部通り、公開
+    サイトでは 724 枚が **404** だった(2026-09-07 実測)。配信側の規則は
+    配信側でしか見えないので、`docs/_config.yml` の `include` に、リンクされて
+    いる `_` ディレクトリが**すべて**載っていることをここで確かめる。
+    """
+    cfg = DOCS / "_config.yml"
+    assert cfg.is_file(), "docs/_config.yml が無い(Jekyll の include 設定)"
+    included = set(re.findall(r"^\s*-\s*(_\S+)\s*$", cfg.read_text(encoding="utf-8"), re.M))
+    linked = set()
+    for md in _all_md():
+        for t in _links(Path(md)):
+            try:
+                rel = t.relative_to(DOCS)
+            except ValueError:
+                continue
+            for part in rel.parts[:-1]:
+                if part.startswith("_"):
+                    linked.add(part)
+    missing = sorted(linked - included)
+    assert not missing, (
+        "リンクされているのに Jekyll が配信しない `_` ディレクトリ: %s —— "
+        "docs/_config.yml の include に足すこと" % missing)
