@@ -1766,6 +1766,10 @@ def order_spectrum(x, rate, rpm, samples_per_rev=64, revolutions=None,
     idx = idx[body[idx] > 0.0]
     med = float(np.median(body[1:])) if body.size > 1 else 0.0
     peak = float(body.max()) if body.size else 0.0
+    _i = int(np.argmax(body)) if body.size else 0
+    loc_prom, loc_med = _local_prominence(mag, orders, _i,
+                                          half=_LOCAL_HALF_ORDER,
+                                          exclude=_LOCAL_EXCLUDE_ORDER)
     return {
         "orders": orders, "magnitude": mag,
         "peak_order": float(orders[int(np.argmax(body))]) if body.size else 0.0,
