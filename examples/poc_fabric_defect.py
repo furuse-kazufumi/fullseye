@@ -423,40 +423,45 @@ def section_period() -> dict:
 
     sc = make_scene(period=PERIOD_EST, which=[])
     peaks = poc_peak_table(sc["img"])
-    print("\n  (a) 位相限定相関のピーク上位 %d 個(基線 96 px、ずれの順):"
-          % len(peaks))
+    print("\n  (a) 位相限定相関のピーク(基線 96 px、ずれの順):")
     for lag, val in peaks:
         print("      ずれ %+4d px   高さ %.4f" % (lag, val))
     gaps = np.diff([lag for lag, _ in peaks])
-    hs = sorted((v for _, v in peaks), reverse=True)
-    print("      ★ピークの間隔は %s px(中央値 %.1f)—— 真の周期 %.1f px と同じ。"
-          % (", ".join(str(int(g)) for g in gaps), float(np.median(gaps)),
-             PERIOD_EST))
-    print("      つまり POC が返すのは**基線を周期で割った余り**であって"
-          "周期そのものではない。")
-    print("      どのピークを選ぶかで推定は周期の整数倍だけ飛ぶ。高さは"
-          "教えてくれない(1 位は 2 位の %.2f 倍しかなく、窓の重なりで決まる)。"
-          % (hs[0] / hs[1]))
+    print("      ★ピークの間隔 %s px。POC が返すのは**基線を周期で割った余り**"
+          % ", ".join(str(int(g)) for g in gaps))
+    print("      であって周期そのものではない —— 周期に直すには何周期ぶんか"
+          "(k)を別に知る必要がある。")
 
-    print("\n  (b) 決められるのは位相の**傾き**のほう(粗い周波数で復調する):")
     est = estimate_period(sc["img"])
-    print("      FFT のピーク %d ビン -> 周期 %.5f px(1 ビン刻みの分解能 %.4f px)"
-          % (est["bin"], est["coarse"], N / est["bin"] - N / (est["bin"] + 1)))
-    print("      位相の傾き %+.6f rad/px -> 周期 %.5f px" % (est["slope"], est["fine"]))
-    print("      真値 %.5f px。誤差 FFT %+.5f px / 位相勾配 %+.5f px(%.0f 倍改善)"
-          % (PERIOD_EST, est["coarse"] - PERIOD_EST, est["fine"] - PERIOD_EST,
-             abs(est["coarse"] - PERIOD_EST) / max(abs(est["fine"] - PERIOD_EST), 1e-12)))
+    pc = period_from_poc(sc["img"], 96, est["coarse"])
+    print("\n  (b) 3 通りで周期を出して比べる(真値 %.5f px):" % PERIOD_EST)
+    print("      FFT のピーク  %d ビン        -> %.5f px  (誤差 %+.5f)"
+          % (est["bin"], est["coarse"], est["coarse"] - PERIOD_EST))
+    print("      POC(サブピクセル) ずれ %+.3f px, k=%d -> %.5f px  (誤差 %+.5f)"
+          % (pc["lag"], pc["k"], pc["period"], pc["period"] - PERIOD_EST))
+    print("      位相の傾き   %+.6f rad/px  -> %.5f px  (誤差 %+.5f)"
+          % (est["slope"], est["fine"], est["fine"] - PERIOD_EST))
+    print("      ★POC も使えるが、k を 1 つ取り違えると推定は %.3f px 飛ぶ"
+          "(誤差の %.0f 倍)。" % (pc["jump"],
+                                   pc["jump"] / max(abs(pc["period"] - PERIOD_EST), 1e-9)))
+    print("      位相勾配は k を要らない(粗い周波数で復調して残りを測るだけ)ので"
+          "\n      その飛びが原理的に起きない。FFT の %.0f 倍の精度。"
+          % (abs(est["coarse"] - PERIOD_EST) / max(abs(est["fine"] - PERIOD_EST), 1e-12)))
 
-    print("\n   当てはめ長 [px]   周期の推定      誤差 [px]")
+    print("\n   当てはめ長 [px]   位相勾配の推定   誤差 [px]")
     rows = []
     for m in (96, 72, 48, 24, 8):
         e = estimate_period(sc["img"], margin=m)
         rows.append((e["span"], e["fine"]))
         print("        %4d        %10.5f     %+.5f"
               % (e["span"], e["fine"], e["fine"] - PERIOD_EST))
-    print("  ★当てはめを伸ばすほど良くなる —— ただし端は復調の過渡なので"
-          "落とさないと逆に悪くなる(いちばん下の行)。")
-    return {"est": est, "rows": rows, "peaks": peaks}
+    err = [abs(v - PERIOD_EST) for _, v in rows]
+    print("  ★当てはめ長は %d〜%d px で誤差 %.5f〜%.5f px。**単調ではない** ——"
+          % (rows[0][0], rows[-1][0], min(err), max(err)))
+    print("     長く取るほど傾きの当てはめは安定するが、端は復調の過渡なので"
+          "混ぜると悪くなる。両方が効いて最良は中ほど(%d px)に出た。"
+          % rows[int(np.argmin(err))][0])
+    return {"est": est, "rows": rows, "peaks": peaks, "poc": pc}
 
 
 # --------------------------------------------------------------------------- #
