@@ -12,10 +12,22 @@ pnp3d)。バグ 1 件を直したら同クラスを兄弟コードで一掃す�
 実施であり、次に誰かが `_, _, Vt = np.linalg.svd(X)` と書いたときに落ちる門を
 ここに置く。
 
-**判定の作り方**: 戻り値の 1 番目(U)を捨てている呼び出し —— ``_, _, Vt =``
-``_, s, vt =`` のように U を ``_`` で受けているもの —— は U が要らないと
-自分で言っているので、``full_matrices=False`` を必須にする。U を実際に使う
-呼び出しは名前で受けるので、この門に引っかからない。
+**一律には直せない。** ``full_matrices=False`` は **横長行列(m < n)で
+``Vt[-1]`` の意味を変える**。DLT は ``A v = 0`` の零空間を ``Vt[-1]`` で取るが、
+最小構成の 4 点ホモグラフィでは A が (8, 9) の横長になる。実測:
+
+  * ``full_matrices=True``  → Vt は (9, 9)、``|A Vt[-1]| = 6.8e-16``(零空間)
+  * ``full_matrices=False`` → Vt は (8, 9)、``|A Vt[-1]| = 3.2e-01``(**別物**)
+
+5 点以上なら (10, 9) で縦長になり両者は一致する。つまり「速くなるから全部
+付ける」をやると、**最小構成のときだけ静かに間違う**。この repo には DLT 系の
+呼び出しが 20 か所あり、そのすべてがこの危険側にある。
+
+**だからこの門が要求するのは「中心化した点群」の形だけ** —— SVD の引数が
+``X - c`` のような引き算(または引き算を並べた ``column_stack``)である
+呼び出しに限る。その形は「N 点 x 3 列」を意味するので m >= n が保証され、
+``full_matrices=False`` は速いだけで答えが変わらない。DLT 側は行列の作り方が
+違う(``append`` で組んだ係数行列)ので、この判定には入らない。
 """
 import ast
 import io
@@ -46,6 +58,22 @@ def _discards_u(node):
         return False
     first = tgt.elts[0]
     return isinstance(first, ast.Name) and first.id == "_"
+
+
+def _is_centred_cloud(call):
+    """SVD の引数が ``X - c`` 形か(= 中心化した点群、m >= n が保証される)。"""
+    if not call.args:
+        return False
+    a = call.args[0]
+    if isinstance(a, ast.BinOp) and isinstance(a.op, ast.Sub):
+        return True
+    # np.column_stack([x - mx, y - my]) も同じ形
+    if isinstance(a, ast.Call) and isinstance(a.func, ast.Attribute)             and a.func.attr == "column_stack" and a.args:
+        inner = a.args[0]
+        if isinstance(inner, (ast.List, ast.Tuple)):
+            return all(isinstance(e, ast.BinOp) and isinstance(e.op, ast.Sub)
+                       for e in inner.elts)
+    return False
 
 
 def _is_svd(call):
