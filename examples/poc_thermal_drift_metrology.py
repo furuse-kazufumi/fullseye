@@ -320,11 +320,19 @@ def section4_separate(floors):
     # 1 次式で分離
     A = np.stack([np.ones(len(radii)), np.array(radii)], axis=1)
     coef, *_ = np.linalg.lstsq(A, np.array(both), rcond=None)
+    sl_c = float(np.polyfit(radii, only_c, 1)[0])
+    sl_f = float(np.polyfit(radii, only_f, 1)[0])
     print("  「両方」の曲線を err(R) = a + b·R に当てはめる:")
-    print("    a = %+.1f ppm(真値 = f のみの平均 %+.1f ppm)"
-          % (coef[0], float(np.mean(only_f))))
-    print("    b = %+.4f ppm/px(真値 = 主点のみの傾き %+.4f ppm/px)"
-          % (coef[1], float(np.polyfit(radii, only_c, 1)[0])))
+    print("    a = %+.1f ppm      —— 真値(f のみ、R=0)は %+.1f ppm。差 %.1f %%"
+          % (coef[0], only_f[0], 100 * abs(coef[0] / only_f[0] - 1)))
+    print("    b = %+.4f ppm/px —— 真値(主点のみの傾き)は %+.4f ppm/px。差 %.0f %%"
+          % (coef[1], sl_c, 100 * abs(coef[1] / sl_c - 1)))
+    print("    ★この %.0f %% の食い違いは**取り違えではなく交絡**: f のみの曲線も"
+          % (100 * abs(coef[1] / sl_c - 1)))
+    print("      わずかに傾いていて(%+.4f ppm/px)、%.4f + %.4f = %.4f が当てはめの"
+          % (sl_f, sl_c, sl_f, sl_c + sl_f))
+    print("      傾き %.4f にぴたり一致する。分離は「厳密」ではなく「1 次で分かれる」。"
+          % coef[1])
     print("    → 定数項が焦点距離+架台、1 次項が主点。**1 台のカメラで、ワークを")
     print("      画面内で動かすだけで 2 つの原因を切り分けられる**。")
     print("      温度計もレーザ干渉計も要らない。")

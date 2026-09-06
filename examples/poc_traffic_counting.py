@@ -621,7 +621,7 @@ def section_framerate() -> dict:
 
     figs.save_plot("framerate",
                    [("真値", dts, [total] * len(dts)),
-                    ("帯(計数列・真背景)", dts, n_or_l),
+                    ("帯(計数列・位相平均)", dts, n_or_l),
                     ("予測 Σmin(1, L/VΔt)", dts, pred_l),
                     ("帯(全部・中央値背景)", dts, n_all_l)],
                    xlabel="フレーム間隔 Δt [frame]", ylabel="台数",
