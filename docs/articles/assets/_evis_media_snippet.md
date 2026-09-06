@@ -2,7 +2,7 @@
 
 生成: `tools/gen_evis_media.py`(再現可能、`--subjects stereo,track,legacy`)。
 入力は evis_chopstick プロジェクトの実験キャプチャ
-`C:\dev\projects\evis_chopstick\out\chop_vision_frames\`(241 フレーム、読み取りのみ・無改変)と、
+`<ローカルの作業パス>\dev\projects\evis_chopstick\out\chop_vision_frames\`(241 フレーム、読み取りのみ・無改変)と、
 onocollo-complete の既存 GIF 1 本。**動画 1・2 は「evis の実験映像を fullseye の登録 op で実処理した実出力」**、
 動画 3 は fullseye 処理なしの既存実験素材の再エンコードです(キャプションで明示)。
 

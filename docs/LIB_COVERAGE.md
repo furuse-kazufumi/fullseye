@@ -5,28 +5,28 @@ registry references counted via the cross-library catalog.
 
 | library | referenced by registry | in installed inventory | matched |
 |---|---|---|---|
-| OpenCV (cv2) | 98 | 484 public callables | 44 |
+| OpenCV (cv2) | 98 | 717 public callables | 44 |
 | scikit-image | 132 | 316 submodule functions | 84 |
 
 ## Registry ops by source library (10+ libraries incorporated)
 
 | library | ops |
 |---|---|
-| core (numpy/scipy) | 306 |
+| core (numpy/scipy) | 665 |
 | scikit-image | 86 |
 | OpenCV | 50 |
 | SimpleITK | 14 |
+| scipy (3-D) | 13 |
 | Pillow | 13 |
 | kornia (GPU) | 12 |
 | scipy | 11 |
 | mahotas | 10 |
 | PyWavelets | 9 |
-| scipy (3-D) | 8 |
 | torch | 2 |
-| **total** | **521** |
+| **total** | **885** |
 
 ## Honest reading
-- Inventories are ALL public callables (cv2 ~484, skimage ~316); most are not
+- Inventories are ALL public callables (cv2 ~717, skimage ~316); most are not
   image-transform operators (IO, drawing, math, GUI, ML), so raw ratios understate reach.
 - imgevolve wraps ecosystems rather than reimplementing them; adding an op with its
   catalog analogue extends this automatically. Distinctive incorporations live in

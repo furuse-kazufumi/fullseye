@@ -4,7 +4,7 @@
 **スケーラブルなオペレータ・レジストリ**を進化させ、holdout で正直にゲートし、多言語
 (Python/C)コードに codegen する。目標は **HALCON 級のオペレータ網羅**。
 
-設計の正本: `C:/dev/tools/raptor/docs/design/imgevolve_s0s1_workgraph.md`
+設計の正本: `<開発用の別リポジトリ>`
 
 **新トラックの正本(2026-08-25 追加)**: 高速ビジョン(1ms 視覚フィードバック)を物理シミュ上で = [`docs/HIGHSPEED_VISION.md`](HIGHSPEED_VISION.md)。ユーザー要望(石川グループ研究室のデモ一覧を物理シミュ上で)。軸 = **フレームレートではなく遅延**、シミュなら遅延を掃引して **関数 error(latency)** を出せる。最初の一手 = H1 `vloop.py`(遅延つき閉ループ台)。
 
@@ -385,7 +385,7 @@ edge/binarize は短予算で僅差未達(長予算で縮む見込み)。拡張 
 
 ## 自走のしかた(work-graph)
 ```powershell
-cd C:\dev\projects\imgevolve
+cd <このリポジトリを clone した場所>
 py -3.11 halcon_scrape.py --version 2605                 # 実リファレンス取得(最新)
 py -3.11 halcon_scrape.py --op-sets --versions 12,13,2311,2411,2505,2605   # 版横断スナップショット
 py -3.11 halcon_coverage.py                              # 被覆計測 → docs/HALCON_COVERAGE.md

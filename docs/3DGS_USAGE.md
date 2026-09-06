@@ -13,7 +13,7 @@ imgevolve フォルダで:
 これだけで go2(四足ロボ)を 3DGS 化し、完成した全周 GIF を自動で開きます。
 
 - シーンを変える: `3dgs cassie` / `3dgs apollo` / `3dgs anymal` / `3dgs spot`
-- 自分の MJCF: `3dgs C:\path\to\scene.xml`
+- 自分の MJCF: `3dgs <ローカルの作業パス>\path\to\scene.xml`
 - 一覧を見る: `3dgs --list`
 
 ## 品質プリセット

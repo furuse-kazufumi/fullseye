@@ -432,7 +432,7 @@ pin の更新を 1 件ずつ判断すること。
 失敗する(memray は `pkg-config` 不在、scalene は VS Build Tools はあるのに
 `distutils` の検出ロジックで別の失敗)。メモリのプロファイルが要るときは
 WSL 側で測るか、`tracemalloc`(標準ライブラリ)で代替する。
-詳細 = `C:/dev/docs/pydevtools_corpus_v2/profiling/docs/`。
+詳細 = `<ローカルの作業パス>`。
 
 
 ## 29. ⚠ 「配線できるのに固定している」箇所が 18(0.1.9 の作業表)
@@ -710,3 +710,37 @@ assert を消して通すのは、直すことでも記録することでもな�
 していない。1 本(`poc_dic_strain`)だけ `test_example_figures` が端から端まで
 見ている。全本でやると時間が倍になるので、**figures 経路の壊れは 1 本ぶんしか
 見張っていない**ことを承知の上で置いている。
+
+## 38. 「op → example 100 %」の門は**母集団が 3 層のうち 2 層しかない**
+
+**症状**: `tests/test_op_example_coverage.py` は `test_no_3d_op_lacks_an_example`
+と `test_no_2d_op_lacks_an_example` の 2 本で「100 %」を主張しているが、
+**数えている母集団が実際の公開 op より小さい**。2026-09-06 の実測:
+
+| 層 | op 数 | 例索引に入っている |
+|---|---|---|
+| 3-D op | 347 | **347(100 %)** |
+| 2-D 進化 op(`fullseye.op.*`) | **885** | **737** — 148 本が母集団の外 |
+| 型つき台帳(`fullseye.ledger.*`) | 1,002 | **349** — **653 本が母集団の外** |
+
+台帳側の内訳(例索引に 1 本も入っていない族): optics 124 / annotate 46 /
+reprconv 41 / gfx2d 32 / 1d 32 / piv 26 / math 26 / imgmetrics 24 / quat 19 /
+dem 19 / acoustics 19 / photon 17 / lightfield 17 / tomography 17 /
+imgforensics 16 / shapestat 16 / videostream 16 / measure1d 14 / astrostack 14 /
+shape2d 13 / specular 13 / profile 12 / 2d 12 / volcolor 11 /
+colortransport 11 / **blob 10** / interferometry 9 / motionmag 9 /
+rangedoppler 8 / roughness 6 / cadmap 4。
+
+**なぜ緑のままだったか**: これは
+[[feedback_registered_only_gates_miss_unregistered]] と同じ形 ——
+**門は「索引に載っている op」を数えており、載っていない op は分母に入らない**。
+だから族を足すたびに「100 %」の主張だけが自動で維持され、実際の被覆は下がる。
+ユーザーの「本当にサンプルコードを各 op 分用意してるのかな?」で数え直した。
+
+**いま言えること(正直に)**: 台帳 op には**族ガイド**(`docs/ops/<dim>/guides/`)
+と**per-op ノート**(`docs/ops/**`、1,839 本)があり、ガイドの python スニペットは
+テストで実行される。だが**「op 1 本ずつに動く例がある」わけではない**。
+
+**やっていないこと**: 653 本ぶんの例は作っていない。0.1.10 では
+**現状を数えて記録し、後戻りだけ止める**(`tests/test_op_example_coverage.py`
+の ratchet)。埋めるのは次の波。

@@ -23,7 +23,7 @@ Fullseye の設計方針は **「numpy + scipy だけで動くコア」+「重�
 
 ```powershell
 cd <path-to-fullseye>
-py -3.11 -m pip install -e .            # コアのみ（numpy + scipy、約 521 オペレータ）
+py -3.11 -m pip install -e .            # コアのみ（numpy + scipy、約 885 オペレータ）
 ```
 
 追加バックエンドは **extras** で選びます（`pyproject.toml` の `[project.optional-dependencies]` が実体）。
@@ -170,7 +170,7 @@ numpy 配列を直接渡す `apply` / `run_pipeline` / `FullseyeEngine.run` は�
 ## 動作確認
 
 ```powershell
-py -3.11 imgevolve.py coverage        # honest な被覆数（269/2313 HALCON op 実装）
+py -3.11 imgevolve.py coverage        # honest な被覆数（979/2313 HALCON op を genuine 実装）
 py -3.11 imgevolve.py ops --search edge
 py -3.11 -c "import fullseye; print(fullseye.version(), len(fullseye.op_names()), 'ops')"
 ```

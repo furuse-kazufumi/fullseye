@@ -502,13 +502,12 @@ def section_roc() -> dict:
     names = list(DEFECTS)
     print("\n   検出器                まとめ    " + "  ".join("%-14s" % n for n in names))
 
-    table, curves, rows = {}, {}, []
+    table, rows = {}, []
     for dn, fn in DETECTORS.items():
         s = fn(sc["img"])
         pooled = auc(s, sc["any"], neg)
         per = [auc(s, sc["masks"][n], neg) for n in names]
         table[dn] = (pooled, per)
-        curves[dn] = roc_points(s, sc["any"], neg)
         rows.append([dn, "%.4f" % pooled] + ["%.4f" % v for v in per])
         print("   %-20s %.4f    " % (dn, pooled)
               + "  ".join("%-14.4f" % v for v in per))

@@ -34,7 +34,7 @@ Windows 開発機のものより小さい。ところが台帳・指紋・ギャ
 |---|---|---|
 | レジストリ差 | 約 12 | `test_index_fingerprint_matches_the_live_registry` / `test_notes_match_generator_no_drift` / `test_op_catalog_matches_generator_no_drift` / `test_backend_doc_tables_do_not_name_ops_that_do_not_exist` / `test_coverage_gallery_runs[...]` 5 件 / `test_example_gallery_runs` |
 | kornia アダプタ | 約 6 | `test_sobel3d_adapter_drops_conv_batch_axes` / `test_refine_rotation_z_adapter_yields_scalar_angle` / `test_position_canon_is_three_components` ほか |
-| Windows 前提 | 1 | `test_read_image_cannot_leave_base_dir` が `C:/Windows/win.ini` を使っている |
+| Windows 前提 | 1 | `test_read_image_cannot_leave_base_dir` が `<ローカルの作業パス>` を使っている |
 | 要調査 | 約 8 | `test_polar_unwrap_rejects_degenerate_shape` / `test_float32_overflow_rejected_not_silent_nan` / `test_nothing_leaks_a_nonfinite_number` / `test_text_that_cannot_fit_raises_instead_of_being_clipped`(Linux のフォント?)ほか |
 
 **方針**: torch を CI に入れて誤魔化さない(方針を曲げることになる)。

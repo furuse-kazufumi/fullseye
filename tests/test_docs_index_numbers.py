@@ -106,3 +106,25 @@ def test_every_language_carries_the_same_numbers():
     ref = seen["README.md"]
     bad = {k: v for k, v in seen.items() if v != ref}
     assert not bad, "言語ごとに数字が食い違っている: 基準(ja)=%s / %s" % (ref, bad)
+
+
+# --------------------------------------------------------------------------- #
+# examples/README.md も生成物 —— 手書きのままだと増えた例が載らない              #
+# --------------------------------------------------------------------------- #
+def test_the_examples_readme_matches_the_registry():
+    """★索引が「サンプルスクリプト集」として指す先が、実際の一覧であること。
+
+    2026-09-06 まで手書きで、**131 本あるうち 5 本しか載っていなかった**
+    (2026-08-13 のまま止まっていた)。いまは `examples2d.EXAMPLES` から
+    生成する。落ちたら `py -3.11 tools/gen_examples_readme.py` を走らせる。
+    """
+    import sys
+
+    sys.path.insert(0, str(ROOT / "tools"))
+    import gen_examples_readme as G
+
+    want = G.build()
+    got = (ROOT / "examples" / "README.md").read_text(encoding="utf-8")
+    assert got == want, (
+        "examples/README.md が台帳とずれている —— "
+        "`py -3.11 tools/gen_examples_readme.py` で再生成すること")

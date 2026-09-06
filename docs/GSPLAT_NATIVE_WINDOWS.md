@@ -4,7 +4,7 @@
 
 ## 環境
 - GPU: RTX 5090 (Blackwell sm_120) / driver 610.74
-- venv: `C:\dev\projects\imgevolve\.venv-gsplat`(torch 2.11.0+cu128, gsplat 1.5.3)
+- venv: `<ローカルの作業パス>\dev\projects\imgevolve\.venv-gsplat`(torch 2.11.0+cu128, gsplat 1.5.3)
 - 共有 py -3.11 は非変更
 
 ## 必要ツールチェーン

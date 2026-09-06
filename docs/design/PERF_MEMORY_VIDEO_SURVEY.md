@@ -29,7 +29,7 @@
 | numpy / scipy | 2.4.6(OpenBLAS 0.3.31, 24 threads)/ 1.15.2 |
 | OpenCV | 5.0.0(FFMPEG YES avcodec 61.19、Intel IPP 2026.0、Parallel=Concurrency、`getNumThreads()=24`) |
 | scikit-image / kornia / PIL | 0.26.0 / 0.8.3 / 12.3.0 |
-| torch | グローバル: **2.11.0+cpu(CUDA 不可)**。GPU 実測は `C:/dev/venvs/loco/Scripts/python.exe`(2.11.0+cu128、numpy 1.24.4、scipy 1.15.2)で `accel.py` / `accel_vol.py` のみ実行 |
+| torch | グローバル: **2.11.0+cpu(CUDA 不可)**。GPU 実測は `<ローカルの作業パス>`(2.11.0+cu128、numpy 1.24.4、scipy 1.15.2)で `accel.py` / `accel_vol.py` のみ実行 |
 | 動画 I/O | imageio 2.37.4 + imageio-ffmpeg 0.6.0(同梱 ffmpeg 7.1 バイナリ)。**システム ffmpeg 無し**、`av` / `numba` / `cupy` / `pyfftw` **無し**、psutil 7.2.2 あり |
 | スレッド | threadpoolctl: openblas 24 / openmp 24、torch 24、cv2 24。**scipy.ndimage は常に単スレッド**(スレッドプールを持たない) |
 
@@ -365,7 +365,7 @@ tm× = tracemalloc ピーク ÷ 入力バイト(32 MB)、rss× = RSS ピーク�
 
 ### 5.2 再現
 
-- 使い捨てスクリプト(リポジトリ外): `%TEMP%\claude\…\scratchpad\prof_ops.py`(`PYTHONUTF8=1 py -3.11 prof_ops.py out.json`、~6 分)、`prof_accel.py`(`C:/dev/venvs/loco/Scripts/python.exe prof_accel.py --device cuda out.json`、~1 分)。(h) で `tools/bench_ops.py` として恒久化する。
+- 使い捨てスクリプト(リポジトリ外): `%TEMP%\claude\…\scratchpad\prof_ops.py`(`PYTHONUTF8=1 py -3.11 prof_ops.py out.json`、~6 分)、`prof_accel.py`(`<ローカルの作業パス> prof_accel.py --device cuda out.json`、~1 分)。(h) で `tools/bench_ops.py` として恒久化する。
 - 追加実測(§1.8)は `scale.process_tiled_mt` / `ThreadPoolExecutor` / `cv2` を直接呼ぶ 40 行の一発スクリプト。
 
 ### 5.3 本調査で見つけた「速度以外」の不具合候補(要別途対応)

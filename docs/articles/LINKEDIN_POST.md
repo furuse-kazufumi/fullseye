@@ -16,7 +16,7 @@
 
 ## なぜこの切り口にしたか(先に読む)
 
-**規模の数字を見出しにしない。** 「1,500 オペレータ」「45 本の PoC」は
+**規模の数字を見出しにしない。** 「1,500 オペレータ」「53 本の PoC」は
 書き手の都合であって、読み手が明日使えるものではありません。フィードで
 指が止まるのは**「自分もそれをやっているかもしれない」と思える失敗**です。
 
@@ -55,7 +55,7 @@ So: count failure modes separately, and distrust a metric that crosses zero.
 A monotone error is a bias you can correct. One that crosses zero is usually
 two things fighting.
 
-45 worked examples like this, each with a ground truth and a null model:
+53 worked examples like this, each with a ground truth and a null model:
 https://furuse.work
 ```
 
@@ -95,7 +95,7 @@ D50 の誤差は -4.9 % から +4.5 % へ動きます。
 単調な誤差は補正できる偏りですが、0 をまたぐ誤差はたいてい 2 つのものが
 押し合っています。
 
-こういう実例が 45 本、どれも真値とゼロ点つきで置いてあります:
+こういう実例が 53 本、どれも真値とゼロ点つきで置いてあります:
 https://furuse.work
 ```
 
@@ -107,7 +107,7 @@ https://furuse.work
       −4.9 % / +4.5 % / 13.8 % / +0.55 % / 28 件 / 19 件 / 140 個 / +6.5 % /
       −11.3 % が**いま出る値と一致**することを確認する。合わなければ**文章の
       ほうを直す**(数字を丸めて合わせない)。
-- [ ] **45 本という本数が合っている。** `ls examples/poc_*.py | wc -l`。
+- [ ] **53 本という本数が合っている。** `ls examples/poc_*.py | wc -l`。
 - [ ] **リンク先が英語で読めるか。** 本文のリンクは furuse.work 1 本だけなので、
       そこが日本語だけだと英語圏の読者はそこで止まる。索引は 6 言語
       (`docs/README.en.md` ほか)にしてあるが、**push 済みで実際に切り替わるか**を
@@ -119,7 +119,7 @@ https://furuse.work
 - [ ] 画像を添付した(`fullseye_mosaic.png`)。GIF を使うなら**投稿後に自分の
       フィードで再生されるか**を見る。
 - [ ] 誇張していない。「世界初」「最速」「HALCON を超えた」は書かない ——
-      この repo の HALCON 実装カバレッジは 269/2313 で、それが事実。
+      この repo の HALCON 実装カバレッジは 979/2313(42.3 %)で、それが事実。
 
 ## 出したあと
 

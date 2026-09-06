@@ -52,3 +52,52 @@ def test_coverage_gallery_runs(gallery):
     )
     assert r.returncode == 0, f"{gallery} exited {r.returncode}\nstderr tail:\n{r.stderr[-1500:]}"
     assert "PASS" in r.stdout, f"{gallery} produced no PASS line\nstdout tail:\n{r.stdout[-800:]}"
+
+
+# --------------------------------------------------------------------------- #
+# ★母集団を「配布物の側」から数える ratchet(2026-09-06)                        #
+# --------------------------------------------------------------------------- #
+#: 2026-09-06 の実測。**この数より悪くしない**ための歯止めで、目標値ではない。
+#: 台帳 op 1,002 本のうち例索引に入っているのは 349 本しかなく、上の 2 本の
+#: 「100 %」は母集団が 3 層のうち 2 層しか無いために成り立っていた。
+#: 経緯と族別の内訳 = docs/KNOWN_ISSUES.md §38。
+_LEDGER_COVERED_FLOOR = 349
+_REGISTRY_COVERED_FLOOR = 737
+
+
+def _covered_names():
+    idx3d, idx2d = OEI.build_index(split=True)
+    return {n for n, ex in idx3d.items() if ex} | {n for n, ex in idx2d.items() if ex}
+
+
+def test_ledger_example_coverage_does_not_regress():
+    """台帳 op のうち例を持つ本数が、記録した床を下回らないこと。
+
+    **緑でも「足りている」意味ではない** —— いま 349/1002。族を足したときに
+    ここが下がらない(= 新しい族が例ゼロのまま増え続けない)ことだけを守る。
+    増えたら床を上げること。
+    """
+    import typed_catalog as tc
+
+    led = {r[0] for r in tc.catalog()}
+    got = len(led & _covered_names())
+    assert got >= _LEDGER_COVERED_FLOOR, (
+        "台帳 op の例が %d → %d に減った。床を下げて通すのではなく、"
+        "例を足すか、なぜ減ったかを docs/KNOWN_ISSUES.md §38 に書くこと。"
+        % (_LEDGER_COVERED_FLOOR, got))
+
+
+def test_the_two_dimensional_gate_knows_how_much_it_is_not_counting():
+    """★「100 %」の分母が `ops.REGISTRY` より小さいことを**明示的に**固定する。
+
+    黙って分母が縮むと「100 %」だけが生き残る。ここが落ちたら、
+    増えたのか減ったのかを数字で見てから判断する。
+    """
+    import ops
+
+    _, idx2d = OEI.build_index(split=True)
+    outside = len(ops.REGISTRY) - len(idx2d)
+    assert outside >= 0
+    assert outside <= 148 + 20, (
+        "例索引の母集団に入らない 2-D op が %d 本に増えた(2026-09-06 は 148 本)。"
+        "新しい op を索引に載せるか、載せない理由を残すこと。" % outside)

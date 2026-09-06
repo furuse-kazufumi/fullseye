@@ -1,6 +1,6 @@
 # imgevolve — cross-library operator catalog
 
-521 operators across 31 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
+885 operators across 47 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
 
 | op | sort | category | halcon | opencv | skimage | matlab |
 |---|---|---|---|---|---|---|
@@ -21,7 +21,6 @@
 | `bothat` | image | morphology | gray_bothat | morphologyEx(BLACKHAT) | morphology.black_tophat | imbothat |
 | `morph_grad` | image | morphology | gray_range_rect | morphologyEx(GRADIENT) | - | - |
 | `sobel_mag` | image | edges | sobel_amp | Sobel | filters.sobel | edge(...,'sobel') |
-| `laplace` | image | edges | laplace | Laplacian | filters.laplace | fspecial('laplacian') |
 | `prewitt_mag` | image | edges | prewitt_amp | - | filters.prewitt | edge(...,'prewitt') |
 | `roberts_mag` | image | edges | roberts | - | filters.roberts | edge(...,'roberts') |
 | `dog` | image | edges | diff_of_gauss | - | filters.difference_of_gaussians | - |
@@ -35,7 +34,6 @@
 | `std_filter` | image | texture | deviation_image | - | filters.rank (std) | stdfilt |
 | `threshold` | image->region | segmentation | threshold | threshold | img>t | imbinarize |
 | `otsu` | image->region | segmentation | binary_threshold | threshold(OTSU) | filters.threshold_otsu | otsuthresh/graythresh |
-| `dyn_threshold` | image->region | segmentation | dyn_threshold | adaptiveThreshold | filters.threshold_local | adaptthresh |
 | `reg_erode` | region | region | erosion_circle | erode | morphology.binary_erosion | imerode |
 | `reg_dilate` | region | region | dilation_circle | dilate | morphology.binary_dilation | imdilate |
 | `reg_open` | region | region | opening_circle | morphologyEx(OPEN) | morphology.binary_opening | imopen |
@@ -49,11 +47,9 @@
 | `grad_dir` | image | edges |  | phase | - | imgradient |
 | `log` | image | edges | laplace_of_gauss | - | filters.laplace(gaussian) | fspecial('log') |
 | `canny` | image->region | segmentation | edges_image | Canny | feature.canny | edge(...,'canny') |
-| `local_max` | image->region | segmentation | local_max_sub_pix | - | feature.peak_local_max | imregionalmax |
 | `dist_transform` | region->image | region | distance_transform | distanceTransform | ndi.distance_transform_edt | bwdist |
 | `region_boundary` | region | region | boundary | findContours | segmentation.find_boundaries | bwperim |
 | `convex_fill` | region | region | shape_trans | convexHull | morphology.convex_hull_image | bwconvhull |
-| `edges_sub_pix` | image->contour | contour | edges_sub_pix | - | measure.find_contours | - |
 | `select_contours` | contour | contour | select_contours_xld | (filter contours) | - | - |
 | `smooth_contours` | contour | contour | smooth_contours_xld | approxPolyDP | - | - |
 | `fit_line_contours` | contour | contour | fit_line_contour_xld | fitLine | measure.LineModelND | polyfit |
@@ -62,7 +58,7 @@
 | `total_length` | contour->feature | features | length_xld | arcLength | - | - |
 | `ncc_locate` | image->match | matching | find_ncc_model | matchTemplate | feature.match_template | normxcorr2 |
 | `rotate_img` | image | geometry | rotate_image | warpAffine(rot) | transform.rotate | imrotate |
-| `rescale_img` | image | geometry | zoom_image_size | resize | transform.rescale | imresize |
+| `rescale_img` | image | geometry | zoom_image_factor | resize | transform.rescale | imresize |
 | `affine_warp` | image | geometry | affine_trans_image | warpAffine | transform.warp(Affine) | imwarp |
 | `gabor` | image | texture | gen_gabor | getGaborKernel+filter2D | filters.gabor | imgaborfilt |
 | `clahe` | image | gray |  | createCLAHE | exposure.equalize_adapthist | adapthisteq |
@@ -76,6 +72,11 @@
 | `vol_erode` | volume | 3d |  | - | scipy.ndimage (N-D) | - |
 | `vol_dilate` | volume | 3d |  | - | scipy.ndimage (N-D) | - |
 | `vol_threshold` | volume | 3d |  | - | scipy.ndimage (N-D) | - |
+| `vol_reg_dilate` | volume | 3d |  | - | scipy.ndimage (N-D) | - |
+| `vol_reg_erode` | volume | 3d |  | - | scipy.ndimage (N-D) | - |
+| `vol_dilation_ball` | volume | 3d |  | - | scipy.ndimage (N-D) | - |
+| `vol_erosion_ball` | volume | 3d |  | - | scipy.ndimage (N-D) | - |
+| `vol_opening_ball` | volume | 3d |  | - | scipy.ndimage (N-D) | - |
 | `vol_mip` | volume->image | 3d |  | - | scipy.ndimage (N-D) | - |
 | `vol_slice` | volume->image | 3d |  | - | scipy.ndimage (N-D) | - |
 | `vol_count` | volume->feature | features |  | - | scipy.ndimage (N-D) | - |
@@ -260,7 +261,7 @@
 | `select_shape_std` | region | region | select_shape_std | distanceTransform/findContours | morphology/segmentation | bwmorph |
 | `select_shape` | region | region | select_shape | distanceTransform/findContours | morphology/segmentation | bwmorph |
 | `distance_transform` | region->image | region | distance_transform | distanceTransform/findContours | morphology/segmentation | bwmorph |
-| `area_center` | region->feature | features | area_center | - | measure.regionprops | regionprops |
+| `area_center` | region->match | features | area_center | - | measure.regionprops | regionprops |
 | `count_obj` | region->feature | features | count_obj | - | measure.regionprops | regionprops |
 | `circularity` | region->feature | features | circularity | - | measure.regionprops | regionprops |
 | `compactness` | region->feature | features | compactness | - | measure.regionprops | regionprops |
@@ -525,11 +526,374 @@
 | `xkor_gftt` | image | edges |  | - | - | - |
 | `xkor_hessian` | image | edges |  | - | - | - |
 | `xkor_dog` | image | edges |  | - | - | - |
+| `f2_shock` | image | edges | shock_filter | - | - | - |
+| `f2_gray_skeleton` | image | morphology | gray_skeleton | - | - | - |
+| `f2_lut_trans` | image | gray | lut_trans | - | - | - |
+| `f2_topographic` | image | edges | topographic_sketch | - | - | - |
+| `f2_expand_domain` | image | gray | expand_domain_gray | - | - | - |
+| `f2_symmetry` | image | texture | symmetry | - | - | - |
+| `f2_gauss_pyramid` | image | smoothing | gen_gauss_pyramid | - | - | - |
+| `f2_gray_inside` | image | morphology | gray_inside | - | - | - |
+| `f2_bit_slice` | image | gray | bit_slice | - | - | - |
+| `r2_inner_circle` | region | region | inner_circle | - | - | - |
+| `r2_inner_rectangle1` | region | region | inner_rectangle1 | - | - | - |
+| `r2_smallest_rectangle1` | region | region |  | - | - | - |
+| `r2_smallest_circle` | region | region | smallest_circle | - | - | - |
+| `r2_smallest_rectangle2` | region | region | smallest_rectangle2 | - | - | - |
+| `r2_sort_region` | region | region | sort_region | - | - | - |
+| `r2_union1` | region | region | union1 | - | - | - |
+| `r2_partition_rectangle` | region | region | partition_rectangle | - | - | - |
+| `r2_runlength_features` | region->feature | region | runlength_features | - | - | - |
+| `r2_split_skeleton_lines` | region | region | split_skeleton_lines | - | - | - |
+| `em_skeleton` | region | region |  | - | - | - |
+| `r2_endpoints_skeleton` | region | region |  | - | - | - |
+| `sp_local_max_sub_pix` | image->contour | subpix |  | - | - | - |
+| `sp_local_min_sub_pix` | image->contour | subpix | local_min_sub_pix | - | - | - |
+| `sp_saddle_points_sub_pix` | image->contour | subpix | saddle_points_sub_pix | - | - | - |
+| `sp_critical_points_sub_pix` | image->contour | subpix | critical_points_sub_pix | - | - | - |
+| `sp_plateaus` | image->contour | subpix | plateaus | - | - | - |
+| `sp_lowlands_center` | image->contour | subpix | lowlands_center | - | - | - |
+| `xg_moments` | contour->feature | xldgeom | moments_points_xld | - | - | - |
+| `xg_area_center` | contour->feature | xldgeom | area_center_points_xld | - | - | - |
+| `xg_eccentricity` | contour->feature | xldgeom | eccentricity_points_xld | - | - | - |
+| `xg_orientation` | contour->feature | xldgeom | orientation_points_xld | - | - | - |
+| `xg_elliptic_axis` | contour->feature | xldgeom | elliptic_axis_points_xld | - | - | - |
+| `xg_height_width_ratio` | contour->feature | xldgeom | height_width_ratio_xld | - | - | - |
+| `xg_regress_contours` | contour->feature | xldgeom |  | - | - | - |
+| `xg_clip_contours` | contour | xldgeom |  | - | - | - |
+| `xg_gen_polygons` | contour | xldgeom | gen_polygons_xld | - | - | - |
+| `xg_crop_contours` | contour | xldgeom |  | - | - | - |
+| `r3_background_seg` | region | region | background_seg | - | - | - |
+| `r3_clip_region` | region | region | clip_region | - | - | - |
+| `r3_eliminate_runs` | region | region | eliminate_runs | - | - | - |
+| `r3_rank_region` | region | region | rank_region | - | - | - |
+| `r3_region_features` | region->feature | region | region_features | - | - | - |
+| `r3_runlength_distribution` | region->feature | region | runlength_distribution | - | - | - |
+| `r3_select_region_point` | region | region | select_region_point | - | - | - |
+| `r3_partition_dynamic` | region | region | partition_dynamic | - | - | - |
+| `r3_polar_trans_region` | region | region | polar_trans_region | - | - | - |
+| `r3_label_to_region` | region | region | label_to_region | - | - | - |
+| `it_add_image_border` | image | geometry | add_image_border | - | - | - |
+| `it_crop_part` | image | geometry | crop_part | - | - | - |
+| `it_crop_rectangle1` | image | geometry | crop_rectangle1 | - | - | - |
+| `it_bit_lshift` | image | gray | bit_lshift | - | - | - |
+| `it_bit_rshift` | image | gray | bit_rshift | - | - | - |
+| `it_bit_mask` | image | gray | bit_mask | - | - | - |
+| `it_convert_image_type` | image | gray | convert_image_type | - | - | - |
+| `it_change_format` | image | geometry | change_format | - | - | - |
+| `it_region_to_bin` | image | segmentation | region_to_bin | - | - | - |
+| `it_full_domain` | image | domain |  | - | - | - |
+| `it_crop_domain` | image | domain | crop_domain | - | - | - |
+| `m1_measure_projection` | image->feature | measure1d | measure_projection | - | - | - |
+| `m1_measure_pos` | image->contour | measure1d | measure_pos | - | - | - |
+| `m1_measure_thresh` | image->feature | measure1d | measure_thresh | - | - | - |
+| `m1_measure_pairs` | image->feature | measure1d | measure_pairs | - | - | - |
+| `m1_fuzzy_measure_pos` | image->contour | measure1d | fuzzy_measure_pos | - | - | - |
+| `ph_perona_malik` | image | physics |  | - | - | - |
+| `ph_coherence_enhancing_diffusion` | image | physics |  | - | - | - |
+| `ph_reaction_diffusion` | image | physics |  | - | - | - |
+| `ph_heat_flow` | image | physics |  | - | - | - |
+| `ph_mean_curvature_motion` | image | physics |  | - | - | - |
+| `ph_total_variation_flow` | image | physics |  | - | - | - |
+| `dc_structure_texture` | image | decomposition |  | - | - | - |
+| `dc_texture_residual` | image | decomposition |  | - | - | - |
+| `dc_rpca_lowrank` | image | decomposition |  | - | - | - |
+| `dc_rpca_sparse` | image | decomposition |  | - | - | - |
+| `dc_retinex` | image | decomposition |  | - | - | - |
+| `dc_local_contrast_norm` | image | decomposition |  | - | - | - |
+| `dc_homomorphic` | image | decomposition |  | - | - | - |
+| `iv_richardson_lucy` | image | restoration |  | - | - | - |
+| `iv_wiener_deconv_spatial` | image | restoration |  | - | - | - |
+| `iv_unsharp_deblur` | image | restoration |  | - | - | - |
+| `iv_motion_deblur` | image | restoration |  | - | - | - |
+| `iv_backproject_superres` | image | restoration |  | - | - | - |
+| `iv_gradient_inpaint` | image | restoration |  | - | - | - |
+| `tf_log_polar` | image | geometry |  | - | - | - |
+| `tf_radon_sinogram` | image | transform |  | - | - | - |
+| `tf_steerable_filter` | image | edges |  | - | - | - |
+| `tf_phase_congruency` | image | edges |  | - | - | - |
+| `tf_gradient_domain_reintegrate` | image | filtering |  | - | - | - |
+| `tf_census_transform` | image | texture |  | - | - | - |
+| `tf_rank_transform` | image | texture |  | - | - | - |
+| `sg_slic_superpixels` | image->region | segment |  | - | - | - |
+| `sg_felzenszwalb` | image->region | segment |  | - | - | - |
+| `sg_gmm_segment` | image->region | segment |  | - | - | - |
+| `sg_kmeans_intensity` | image->region | segment |  | - | - | - |
+| `sg_region_growing_seeded` | image->region | segment |  | - | - | - |
+| `sg_normalized_cut_2` | image->region | segment |  | - | - | - |
+| `sg_watershed_gradient` | image->region | segment |  | - | - | - |
+| `tm_radon_forward` | image | tomography |  | - | - | - |
+| `tm_fbp_reconstruct` | image | tomography |  | - | - | - |
+| `tm_sart_reconstruct` | image | tomography |  | - | - | - |
+| `tm_backproject_unfiltered` | image | tomography |  | - | - | - |
+| `tm_sinogram_denoise` | image | tomography |  | - | - | - |
+| `aug_shot_noise` | image | augmentation |  | - | - | - |
+| `aug_read_noise` | image | augmentation |  | - | - | - |
+| `aug_fixed_pattern` | image | augmentation |  | - | - | - |
+| `aug_motion_blur` | image | augmentation |  | - | - | - |
+| `aug_vignette` | image | augmentation |  | - | - | - |
+| `aug_chromatic` | image | augmentation |  | - | - | - |
+| `aug_rolling_shutter` | image | augmentation |  | - | - | - |
+| `aug_jpeg_blocks` | image | augmentation |  | - | - | - |
+| `aug_cutout` | image | augmentation |  | - | - | - |
+| `aug_barrel` | image | augmentation |  | - | - | - |
+| `alife_gray_scott` | image | artificial-life |  | - | - | - |
+| `alife_turing` | image | artificial-life |  | - | - | - |
+| `alife_life_step` | image | artificial-life |  | - | - | - |
+| `alife_cyclic_ca` | image | artificial-life |  | - | - | - |
+| `alife_perona_malik` | image | artificial-life |  | - | - | - |
+| `alife_curvature_flow` | image | artificial-life |  | - | - | - |
+| `alife_dla` | image | artificial-life |  | - | - | - |
+| `alife_reaction_bz` | image | artificial-life |  | - | - | - |
+| `tac_contact_mask` | image->region | tactile |  | - | - | - |
+| `tac_height_from_shading` | image | tactile |  | - | - | - |
+| `tac_surface_normal` | image | tactile |  | - | - | - |
+| `tac_pressure_proxy` | image | tactile |  | - | - | - |
+| `tac_shear_field` | image | tactile |  | - | - | - |
+| `alife_wolfram1d` | image | artificial-life |  | - | - | - |
+| `alife_langton_ant` | image | artificial-life |  | - | - | - |
+| `alife_lenia` | image | artificial-life |  | - | - | - |
+| `alife_sandpile` | image | artificial-life |  | - | - | - |
+| `deform_tps` | image | deformation |  | - | - | - |
+| `deform_ffd` | image | deformation |  | - | - | - |
+| `deform_mls` | image | deformation |  | - | - | - |
+| `hx_gen_circle` | image->region | halcon_ext | gen_circle | - | - | - |
+| `hx_gen_ellipse` | image->region | halcon_ext | gen_ellipse | - | - | - |
+| `hx_gen_rectangle2` | image->region | halcon_ext | gen_rectangle2 | - | - | - |
+| `hx_gen_checker_region` | image->region | halcon_ext | gen_checker_region | - | - | - |
+| `hx_gen_grid_region` | image->region | halcon_ext | gen_grid_region | - | - | - |
+| `hx_gabor` | image | halcon_ext | convol_gabor | - | - | - |
+| `hx_fit_surface1` | image | halcon_ext | fit_surface_first_order | - | - | - |
+| `hx_fit_surface2` | image | halcon_ext | fit_surface_second_order | - | - | - |
+| `hx_cooc_feature` | image->feature | halcon_ext | cooc_feature_image | - | - | - |
+| `hx_full_domain` | image->region | halcon_ext | full_domain | - | - | - |
+| `hx_mean_shape` | image | halcon_ext | mean_image_shape | - | - | - |
+| `hx_close_edges` | image | halcon_ext | close_edges | - | - | - |
+| `hx_close_edges_length` | image | halcon_ext | close_edges_length | - | - | - |
+| `hx_expand_region` | region | halcon_ext | expand_region | - | - | - |
+| `hx_region_to_mean` | image | halcon_ext | region_to_mean | - | - | - |
+| `hx_nonmax_dir` | image | halcon_ext | nonmax_suppression_dir | - | - | - |
+| `hx_char_threshold` | image->region | halcon_ext | char_threshold | - | - | - |
+| `hx_histo_to_thresh` | image->region | halcon_ext | histo_to_thresh | - | - | - |
+| `hx_gen_lowpass` | image | halcon_ext | gen_lowpass | - | - | - |
+| `hx_gen_highpass` | image | halcon_ext | gen_highpass | - | - | - |
+| `hx_gen_bandpass` | image | halcon_ext | gen_bandpass | - | - | - |
+| `hx_erosion1` | region | halcon_ext | erosion1 | - | - | - |
+| `hx_dilation1` | region | halcon_ext | dilation1 | - | - | - |
+| `hx_opening` | region | halcon_ext | opening | - | - | - |
+| `hx_closing` | region | halcon_ext | closing | - | - | - |
+| `hx_dilation2` | region | halcon_ext | dilation2 | - | - | - |
+| `hx_gen_disc_se` | image->region | halcon_ext | gen_disc_se | - | - | - |
+| `hx_gen_circle_sector` | image->region | halcon_ext | gen_circle_sector | - | - | - |
+| `hx_gen_ellipse_sector` | image->region | halcon_ext | gen_ellipse_sector | - | - | - |
+| `hx_gen_empty_region` | image->region | halcon_ext | gen_empty_region | - | - | - |
+| `hx_clip_region_rel` | region | halcon_ext | clip_region_rel | - | - | - |
+| `hx_gen_bandfilter` | image | halcon_ext | gen_bandfilter | - | - | - |
+| `hx_gen_derivative_filter` | image | halcon_ext | gen_derivative_filter | - | - | - |
+| `hx_fill_interlace` | image | halcon_ext | fill_interlace | - | - | - |
+| `hx_shade_height_field` | image | halcon_ext | shade_height_field | - | - | - |
+| `hx_plane_deviation` | image | halcon_ext | plane_deviation | - | - | - |
+| `hx_detect_edge_segments` | image->region | halcon_ext | detect_edge_segments | - | - | - |
+| `hx_gen_image_proto` | image | halcon_ext | gen_image_proto | - | - | - |
+| `hx_get_domain` | image->region | halcon_ext | get_domain | - | - | - |
+| `hx_region_to_label` | image | halcon_ext | region_to_label | - | - | - |
+| `hx_rectangle1_domain` | image->region | halcon_ext | rectangle1_domain | - | - | - |
+| `hx_lowlands` | image->region | halcon_ext | lowlands | - | - | - |
+| `hx_plateaus_center` | image->region | halcon_ext | plateaus_center | - | - | - |
+| `hx_move_region` | region | halcon_ext | move_region | - | - | - |
+| `hx_split_skeleton_region` | region | halcon_ext | split_skeleton_region | - | - | - |
+| `hx_test_region_point` | region->feature | halcon_ext | test_region_point | - | - | - |
+| `hx_test_region_points` | region->feature | halcon_ext | test_region_points | - | - | - |
+| `hx_sort_contours` | contour | halcon_ext | sort_contours_xld | - | - | - |
+| `hx_clip_contours` | contour | halcon_ext | clip_contours_xld | - | - | - |
+| `hx_clip_end_points` | contour | halcon_ext | clip_end_points_contours_xld | - | - | - |
+| `hx_smallest_circle_xld` | contour->feature | halcon_ext | smallest_circle_xld | - | - | - |
+| `hx_smallest_rect1_xld` | contour->feature | halcon_ext | smallest_rectangle1_xld | - | - | - |
+| `hx_test_closed_xld` | contour->feature | halcon_ext | test_closed_xld | - | - | - |
+| `hx_regress_contours` | contour->feature | halcon_ext | regress_contours_xld | - | - | - |
+| `hx_moments_any_xld` | contour->feature | halcon_ext | moments_any_xld | - | - | - |
+| `hx_split_contours` | contour | halcon_ext | split_contours_xld | - | - | - |
+| `hx_gen_parallel_contour` | contour | halcon_ext | gen_parallel_contour_xld | - | - | - |
+| `hx_fit_circle_contour` | contour->feature | halcon_ext | fit_circle_contour_xld | - | - | - |
+| `hx_fit_ellipse_contour` | contour->feature | halcon_ext | fit_ellipse_contour_xld | - | - | - |
+| `hx_fit_rectangle2_contour` | contour->feature | halcon_ext | fit_rectangle2_contour_xld | - | - | - |
+| `hx_smallest_rect2_xld` | contour->feature | halcon_ext | smallest_rectangle2_xld | - | - | - |
+| `hx_crop_contours` | contour | halcon_ext | crop_contours_xld | - | - | - |
+| `hx_dist_ellipse_contour` | contour->feature | halcon_ext | dist_ellipse_contour_xld | - | - | - |
+| `hx_test_self_intersect` | contour->feature | halcon_ext | test_self_intersection_xld | - | - | - |
+| `hx_union_adjacent` | contour | halcon_ext | union_adjacent_contours_xld | - | - | - |
+| `hx_polar_trans_inv` | contour | halcon_ext | polar_trans_contour_xld_inv | - | - | - |
+| `hx_select_xld_point` | contour | halcon_ext | select_xld_point | - | - | - |
+| `hx_estimate_tilt_lr` | image->feature | halcon_ext | estimate_tilt_lr | - | - | - |
+| `hx_estimate_tilt_zc` | image->feature | halcon_ext | estimate_tilt_zc | - | - | - |
+| `hx_estimate_sl_al_lr` | image->feature | halcon_ext | estimate_sl_al_lr | - | - | - |
+| `hx_estimate_sl_al_zc` | image->feature | halcon_ext | estimate_sl_al_zc | - | - | - |
+| `hx_estimate_al_am` | image->feature | halcon_ext | estimate_al_am | - | - | - |
+| `hx_add_noise_contour` | contour | halcon_ext | add_noise_white_contour_xld | - | - | - |
+| `hx_radial_distort_contour` | contour | halcon_ext | change_radial_distortion_contours_xld | - | - | - |
+| `hx_dist_ellipse_points` | contour->feature | halcon_ext | dist_ellipse_contour_points_xld | - | - | - |
+| `hx_dist_rect2_points` | contour->feature | halcon_ext | dist_rectangle2_contour_points_xld | - | - | - |
+| `hx_distance_pc` | contour->feature | halcon_ext | distance_pc | - | - | - |
+| `hx_disparity_to_xyz` | image | halcon_ext | disparity_image_to_xyz | - | - | - |
+| `hx_distance_pr` | region->feature | halcon_ext | distance_pr | - | - | - |
+| `hx_distance_sc` | contour->feature | halcon_ext | distance_sc | - | - | - |
+| `hx_fuzzy_measure_pairs` | image->feature | halcon_ext | fuzzy_measure_pairs | - | - | - |
+| `macro_denoise` | image | macro |  | - | - | - |
+| `macro_edge` | image->region | macro |  | - | - | - |
+| `macro_binarize` | image | macro |  | - | - | - |
+| `macro_vol_denoise` | volume | macro |  | - | - | - |
+| `tb_points_to_voxel` | points->volume | typed |  | - | - | - |
+| `tb_estimate_point_normals` | points | typed |  | - | - | - |
+| `tb_iss_keypoints` | points->signal | typed |  | - | - | - |
+| `tb_angle_3points` | points->feature | typed |  | - | - | - |
+| `tb_project_points` | points->keypoints | typed |  | - | - | - |
+| `tb_render_point_depth` | points->image | typed |  | - | - | - |
+| `tb_statistical_outlier_removal` | points | typed |  | - | - | - |
+| `tb_radius_outlier_removal` | points | typed |  | - | - | - |
+| `tb_voxel_grid_downsample` | points | typed |  | - | - | - |
+| `tb_mls_smooth` | points | typed |  | - | - | - |
+| `tb_alpha_shape_boundary` | points->signal | typed |  | - | - | - |
+| `tb_estimate_alpha` | points->feature | typed |  | - | - | - |
+| `tb_arc_length` | points->feature | typed |  | - | - | - |
+| `tb_resample_uniform` | points | typed |  | - | - | - |
+| `tb_fit_spline_curve` | points | typed |  | - | - | - |
+| `tb_mean_curvature` | points->signal | typed |  | - | - | - |
+| `tb_gaussian_curvature` | points->signal | typed |  | - | - | - |
+| `tb_estimate_normals` | points | typed |  | - | - | - |
+| `tb_inertia_tensor` | points->matrix | typed |  | - | - | - |
+| `tb_geodesic_distances` | points->signal | typed |  | - | - | - |
+| `tb_farthest_point_sampling` | points->signal | typed |  | - | - | - |
+| `tb_synthesize_silhouette` | points->image | typed |  | - | - | - |
+| `tb_inside_outside` | points->signal | typed |  | - | - | - |
+| `tb_superquadric_residual` | points->feature | typed |  | - | - | - |
+| `tb_project` | points->image | typed |  | - | - | - |
+| `tb_jitter` | points | typed |  | - | - | - |
+| `tb_random_rotation` | points | typed |  | - | - | - |
+| `tb_random_scale` | points | typed |  | - | - | - |
+| `tb_random_dropout` | points | typed |  | - | - | - |
+| `tb_elastic_deform` | points | typed |  | - | - | - |
+| `tb_cutout` | points | typed |  | - | - | - |
+| `tb_region_growing` | points->volume | typed |  | - | - | - |
+| `tb_euclidean_cluster` | points->volume | typed |  | - | - | - |
+| `tb_plane_segmentation` | points->volume | typed |  | - | - | - |
+| `tb_estimate_oriented_normals` | points | typed |  | - | - | - |
+| `tb_occupancy_grid` | points->volume | typed |  | - | - | - |
+| `tb_reflect_points` | points | typed |  | - | - | - |
+| `tb_reflection_symmetry_score` | points->feature | typed |  | - | - | - |
+| `tb_project_spherical` | points->image | typed |  | - | - | - |
+| `tb_project_cylindrical` | points->image | typed |  | - | - | - |
+| `tb_sphere_sdf` | points->volume | typed |  | - | - | - |
+| `tb_box_sdf` | points->volume | typed |  | - | - | - |
+| `tb_pc_poisson_disk` | points | typed |  | - | - | - |
+| `tb_pc_fill_sparse` | points | typed |  | - | - | - |
+| `tb_pc_density_equalize` | points | typed |  | - | - | - |
+| `tb_create_funct_1d_array` | signal | typed |  | - | - | - |
+| `tb_smooth_funct_1d_gauss` | signal | typed |  | - | - | - |
+| `tb_smooth_funct_1d_mean` | signal | typed |  | - | - | - |
+| `tb_derivate_funct_1d` | signal | typed |  | - | - | - |
+| `tb_integrate_funct_1d` | signal | typed |  | - | - | - |
+| `tb_zero_crossings_funct_1d` | signal | typed |  | - | - | - |
+| `tb_abs_funct_1d` | signal | typed |  | - | - | - |
+| `tb_negate_funct_1d` | signal | typed |  | - | - | - |
+| `tb_scale_y_funct_1d` | signal | typed |  | - | - | - |
+| `tb_sample_funct_1d` | signal | typed |  | - | - | - |
+| `tb_num_points_funct_1d` | signal->feature | typed |  | - | - | - |
+| `tb_get_y_value_funct_1d` | signal->feature | typed |  | - | - | - |
+| `tb_lowpass` | signal | typed |  | - | - | - |
+| `tb_highpass` | signal | typed |  | - | - | - |
+| `tb_bandpass` | signal | typed |  | - | - | - |
+| `tb_envelope` | signal | typed |  | - | - | - |
+| `tb_rms` | signal->feature | typed |  | - | - | - |
+| `tb_resample` | signal | typed |  | - | - | - |
+| `tb_spectrogram` | signal->image | typed |  | - | - | - |
+| `tb_zero_crossing_rate` | signal->feature | typed |  | - | - | - |
+| `tb_find_peaks` | signal | typed |  | - | - | - |
+| `tb_cx_ifft` | cimage->image | typed |  | - | - | - |
+| `tb_cx_magnitude` | cimage->image | typed |  | - | - | - |
+| `tb_cx_phase` | cimage->image | typed |  | - | - | - |
+| `tb_cx_real` | cimage->image | typed |  | - | - | - |
+| `tb_cx_imag` | cimage->image | typed |  | - | - | - |
+| `tb_cx_log_magnitude` | cimage->image | typed |  | - | - | - |
+| `tb_cx_apply_transfer_function` | cimage | typed |  | - | - | - |
+| `tb_mat_pinv` | matrix | typed |  | - | - | - |
+| `tb_mat_cond` | matrix->feature | typed |  | - | - | - |
+| `tb_stat_covariance` | matrix | typed |  | - | - | - |
+| `tb_stat_correlation` | matrix | typed |  | - | - | - |
+| `tb_stat_zscore` | signal | typed |  | - | - | - |
+| `tb_cplx_cr_residual` | cimage->feature | typed |  | - | - | - |
+| `tb_angular_spectrum_propagate` | cimage | typed |  | - | - | - |
+| `tb_wetness` | rgbimage | typed |  | - | - | - |
+| `tb_env_studio` | points->signal | typed |  | - | - | - |
+| `tb_env_lightbox` | points->signal | typed |  | - | - | - |
+| `tb_sensor_capture` | rgbimage | typed |  | - | - | - |
+| `tb_lf_to_mla` | lightfield->image | typed |  | - | - | - |
+| `tb_lf_subaperture` | lightfield->image | typed |  | - | - | - |
+| `tb_lf_center_view` | lightfield->image | typed |  | - | - | - |
+| `tb_lf_epi` | lightfield->image | typed |  | - | - | - |
+| `tb_lf_refocus` | lightfield->image | typed |  | - | - | - |
+| `tb_lf_synthetic_aperture` | lightfield->image | typed |  | - | - | - |
+| `tb_lf_depth_from_focus` | lightfield->image | typed |  | - | - | - |
+| `tb_lf_epi_slope` | lightfield->image | typed |  | - | - | - |
+| `tb_spad_deadtime_apply` | counts | typed |  | - | - | - |
+| `tb_spad_deadtime_correct` | counts | typed |  | - | - | - |
+| `tb_tcspc_coates_correct` | counts | typed |  | - | - | - |
+| `tb_tcspc_irf_convolve` | counts | typed |  | - | - | - |
+| `tb_tcspc_background_subtract` | counts | typed |  | - | - | - |
+| `tb_dtof_depth` | counts->feature | typed |  | - | - | - |
+| `tb_specular_diffuse_split` | rgbimage | typed |  | - | - | - |
+| `tb_specular_coefficient_map` | rgbimage->image | typed |  | - | - | - |
+| `tb_specular_free_transform` | rgbimage | typed |  | - | - | - |
+| `tb_temporal_bandpass` | video | typed |  | - | - | - |
+| `tb_temporal_band_power` | video->image | typed |  | - | - | - |
+| `tb_rgb_to_quaternion` | rgbimage->qimage | typed |  | - | - | - |
+| `tb_quaternion_to_rgb` | qimage->rgbimage | typed |  | - | - | - |
+| `tb_quat_norm` | qimage->image | typed |  | - | - | - |
+| `tb_quat_conjugate_image` | qimage | typed |  | - | - | - |
+| `tb_quat_normalize_image` | qimage | typed |  | - | - | - |
+| `tb_monogenic_amplitude` | qimage->image | typed |  | - | - | - |
+| `tb_monogenic_phase` | qimage->image | typed |  | - | - | - |
+| `tb_monogenic_orientation` | qimage->image | typed |  | - | - | - |
+| `tb_quat_color_rotate` | qimage | typed |  | - | - | - |
+| `tb_quat_color_filter` | qimage | typed |  | - | - | - |
+| `tb_qft2` | qimage | typed |  | - | - | - |
+| `tb_iqft2` | qimage | typed |  | - | - | - |
+| `tb_fmcw_window_apply` | beatcube | typed |  | - | - | - |
+| `tb_range_doppler_map` | beatcube->image | typed |  | - | - | - |
+| `tb_fmcw_range_profile` | beatcube->signal | typed |  | - | - | - |
+| `tb_beamform_delay_sum` | beatcube->signal | typed |  | - | - | - |
+| `tb_weighting_response` | signal | typed |  | - | - | - |
+| `tb_apply_weighting` | signal | typed |  | - | - | - |
+| `tb_equivalent_level` | signal->feature | typed |  | - | - | - |
+| `tb_normals_to_egi` | points->image | typed |  | - | - | - |
+| `tb_keypoints_uv_to_points` | keypoints->points | typed |  | - | - | - |
+| `tb_points_zyx_to_keypoints_uv` | points->keypoints | typed |  | - | - | - |
+| `tb_keypoints_to_image2d` | keypoints->image | typed |  | - | - | - |
+| `tb_indices_to_labels` | signal->volume | typed |  | - | - | - |
+| `tb_countrate_to_counts` | counts | typed |  | - | - | - |
+| `tb_counts_to_countrate` | counts | typed |  | - | - | - |
+| `tb_temporal_median_window` | video | typed |  | - | - | - |
+| `tb_moving_average_window` | video | typed |  | - | - | - |
+| `tb_background_subtraction_window` | video | typed |  | - | - | - |
+| `tb_frame_difference_causal` | video | typed |  | - | - | - |
+| `tb_exponential_background` | video | typed |  | - | - | - |
+| `tb_exponential_foreground` | video | typed |  | - | - | - |
+| `tb_optical_flow_magnitude_stream` | video | typed |  | - | - | - |
+| `tb_motion_history_image` | video | typed |  | - | - | - |
+| `tb_motion_energy_image` | video | typed |  | - | - | - |
+| `tb_three_frame_difference` | video | typed |  | - | - | - |
+| `tb_running_gaussian_foreground` | video | typed |  | - | - | - |
+| `tb_running_gaussian_background` | video | typed |  | - | - | - |
+| `tb_temporal_bilateral` | video | typed |  | - | - | - |
+| `tb_deflicker` | video | typed |  | - | - | - |
+| `tb_shape_perturb` | points | typed |  | - | - | - |
+| `tb_mirror_plane_from_pairs` | points->matrix | typed |  | - | - | - |
+| `tb_landmark_asymmetry` | points->signal | typed |  | - | - | - |
+| `tb_dem_ecef_to_geodetic` | points | typed |  | - | - | - |
 
 ## Coverage (ops with a direct analog)
-- opencv: 312/521
-- skimage: 382/521
-- matlab: 262/521
+- opencv: 310/885
+- skimage: 383/885
+- matlab: 259/885
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.

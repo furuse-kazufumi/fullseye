@@ -107,8 +107,8 @@ CPU 側は既にピラミッド最適化済み。それでも:
 
 再現:
 ```powershell
-$loco = "C:\dev\venvs\loco\Scripts\python.exe"   # torch cu128 / RTX 5090
-& $loco C:\Users\...\scratchpad\sm_gpu_bench.py   # or tests/test_shapematch_gpu.py
+$loco = "<ローカルの作業パス>\dev\venvs\loco\Scripts\python.exe"   # torch cu128 / RTX 5090
+& $loco <ローカルの作業パス>\Users\...\scratchpad\sm_gpu_bench.py   # or tests/test_shapematch_gpu.py
 ```
 
 ---

@@ -141,7 +141,9 @@ imgevolve 側に禁止規約は無い(raptor の CLAUDE.md にある規約で、
   TypeError)。「修正済みのバグ」として書き直すか、別の実例に差し替えるか。
 - 掃引 GIF の**1 コマ目のグラフが空**(点が 1 個だと線を引かない)。
   「止まった 1 コマでも意味が分かる」方針に反する。3 展示で共通。
-- `docs/OP_CATALOG.md:1626` の文言 / `docs/OPERATORS.md` の 521 op 表記(以前から stale)。
+- ~~`docs/OPERATORS.md` の 521 op 表記(以前から stale)~~ → **2026-09-06 に解消**。
+  `catalog.py` / `lib_coverage.py` / `tools/gen_op_catalog.py` を再生成し 885 op / 47 カテゴリへ。
+  索引 6 言語の該当行も追従。
 
 ## E. 反映の順番
 

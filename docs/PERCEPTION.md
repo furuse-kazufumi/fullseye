@@ -13,7 +13,7 @@ reached through `import fullseye`. Pipeline shape:
 Install: `pip install -e <path-to-fullseye>` (or add the dir to `sys.path`).
 Frames are float64 grayscale in `[0,1]` (H×W), or H×W×3 for colour ops.
 
-## Operators (521)
+## Operators (885)
 `fullseye.apply(img, name, a, b)` / `run_pipeline(img, [(name,a,b), …])`. Discover
 with `list_ops(sort=…)`, `op_names()`, the CLI `imgevolve.py ops --search …`, or
 `docs/OP_INDEX.json`. Sorts: image · color · region · feature · contour · volume.
