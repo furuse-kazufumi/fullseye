@@ -472,6 +472,7 @@ def main():
     print("  (c) 雑音 —— 良い配置と悪い配置で感度がどれだけ違うか")
     print(f"  {'雑音 px':>9}{'良: RMS':>10}{'良: fx%':>10}{'悪: RMS':>10}{'悪: fx%':>10}{'比':>8}")
     bad = make_poses(N_VIEWS, tilt_deg=2.0, offset_m=0.14, z_lo=0.55, z_hi=0.85)
+    nz_ax, nz_good, nz_bad = [], [], []
     for sigma in (0.0, 0.05, 0.20, 0.50, 1.00):
         rg2 = calibrate(obj, observe(obj, good, sigma_px=sigma, seed=6))
         rb2 = calibrate(obj, observe(obj, bad, sigma_px=sigma, seed=6))
