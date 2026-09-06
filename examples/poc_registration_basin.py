@@ -225,8 +225,7 @@ def main():
     dst_base = bracket(DST_N, rng)                  # 同じ面から独立に取った標本 B
     diam = diameter(dst_base)
     dst_n_base = fs.estimate_normals(dst_base, k=16)
-    spacing = float(np.median(
-        __import__("scipy.spatial", fromlist=["cKDTree"]).cKDTree(dst_base).query(dst_base, k=2)[0][:, 1]))
+    spacing = spacing_of(dst_base)
 
     print("=== 0. 舞台 ===")
     print(f"  形状 = 非対称な当て金(直方体 {BRACKET_MAIN[0]} + 隅の出っ張り {BRACKET_BUMP[0]})")
