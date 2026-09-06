@@ -187,28 +187,55 @@ def _detect_cols() -> np.ndarray:
     return cols[keep]
 
 
-def detect_waterline(img: np.ndarray) -> np.ndarray:
-    """列ごとの水面線の (row, col)。**fullseye のキャリパー**で拾う。
+def detect_caliper(img: np.ndarray) -> np.ndarray:
+    """★fullseye の**キャリパー**で水面線を拾う -> (row, col)。
 
     ``fs.ledger.gen_measure_rectangle2`` で列ごとに鉛直な測定矩形を立て、
     ``fs.ledger.measure_pos`` の**負極性エッジ**(下へ向かって暗くなる = 壁 -> 水)の
     うち上から最初のものを採る。振幅のしきい値は画像の分位点から決める
-    (真値を見ない)。目地(振幅 0.10)は落ち、壁 -> 水(0.42)は残る。
+    (真値を見ない)。目地(振幅 0.10)は落ち、壁 -> 水(0.38)は残る。
     """
     lo, hi = np.percentile(img, [15.0, 85.0])
-    thr = max(0.30 * float(hi - lo), 1e-3)
-    n = H_PIX - 8
+    thr = max(0.45 * float(hi - lo), 1e-4)
     pts = []
     for c in _detect_cols():
         m = fs.ledger.gen_measure_rectangle2(H_PIX / 2.0, float(c), np.pi / 2.0,
-                                             n / 2.0, 3, (H_PIX, W_PIX))
+                                             (H_PIX - 8) / 2.0, 3, (H_PIX, W_PIX))
         edges = fs.ledger.measure_pos(img, m, sigma=1.2, threshold=thr,
                                       transition="negative")
         edges = [e for e in edges if e["row"] > 8.0]
         if not edges:
             continue
         pts.append((float(edges[0]["row"]), float(c)))
-    return np.asarray(pts, np.float64)
+    return np.asarray(pts, np.float64).reshape(-1, 2)
+
+
+def detect_threshold(img: np.ndarray) -> np.ndarray:
+    """対照の検出器 —— 現場でまず書かれる「明るさが半分を切った行」。
+
+    キャリパーが**勾配のピーク**を探すのに対し、こちらは**しきい値の交差**を
+    探す。反射があるとこの違いが効きます(5 節)。
+    """
+    lo, hi = np.percentile(img, [15.0, 85.0])
+    thr = 0.5 * float(lo + hi)
+    k = np.ones(5) / 5.0
+    cols = _detect_cols()
+    sm = np.apply_along_axis(lambda a: np.convolve(a, k, mode="same"), 0, img[:, cols])
+    below = sm < thr
+    trans = below[1:] & ~below[:-1]
+    trans[:9] = False
+    has = trans.any(axis=0)
+    r = trans.argmax(axis=0)
+    j = np.arange(len(cols))
+    a, b = sm[r, j], sm[r + 1, j]
+    frac = np.where(np.abs(a - b) < 1e-9, 0.0, (a - thr) / (a - b + 1e-12))
+    row = r + np.clip(frac, 0.0, 1.0)
+    return np.column_stack([row[has], cols[has]]).astype(np.float64)
+
+
+def detect_waterline(img: np.ndarray, how: str = "caliper") -> np.ndarray:
+    """水面線の点列 (row, col)。``how`` = caliper(既定)/ threshold。"""
+    return detect_caliper(img) if how == "caliper" else detect_threshold(img)
 
 
 def _line_from_two(p, q):

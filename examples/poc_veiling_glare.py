@@ -211,7 +211,7 @@ def section1_check():
     print("  総和 = %.15f(1 との差 %.2e)" % (p.sum(), abs(p.sum() - 1.0)))
     print("  裾のエネルギー比 = %.6f(仕込み 0.200000、構成上ここは厳密)"
           % float((0.20 * TAIL).sum()))
-    dev = float(np.abs(convolve(np.ones((N, N)), p) - 1.0).max())
+    dev = float(np.abs(convolve(np.ones((N, N)), 0.20) - 1.0).max())
     print("  一様な白地を通すと %.2e しか動かない(単位分解の確認)" % dev)
 
     # 裾の半径内エネルギー(対数則の検算)
@@ -238,7 +238,7 @@ def section1_check():
 
     # 理論 MTF50(ガウスコアだけ)との突き合わせ
     theo = float(np.sqrt(np.log(2.0) / (2.0 * np.pi ** 2 * SIG_CORE ** 2)))
-    f, m, _, _ = sfr(esf_of(convolve(edge_scene(), psf(0.0))), 16)
+    f, m, _, _ = sfr(esf_of(convolve(edge_scene(), 0.0)), 16)
     print("  裾ゼロの MTF50: 実測 %.4f / 理論 exp(-2π²σ²f²) から %.4f cyc/px(差 %.1f %%)"
           % (mtf50(f, m), theo, 100 * abs(mtf50(f, m) - theo) / theo))
     return p
@@ -268,7 +268,7 @@ def section2_zero_point():
     print("  " + "-" * (9 + 11 * len(widths) + 13))
     table = {}
     for g in G_LIST:
-        out = convolve(edge, psf(g))
+        out = convolve(edge, g)
         e = esf_of(out)
         print("  %6.2f |" % g, end="")
         row = []
@@ -305,7 +305,7 @@ def section3_verdict(mtf_table):
     rows = []
     for g in G_LIST:
         m50 = mtf_table[g][0]
-        out = convolve(black_square_scene(64), psf(g))
+        out = convolve(black_square_scene(64), g)
         bl = black_level(out, 64)
         ok_m = m50 >= SPEC_MTF50
         ok_b = bl <= SPEC_GLARE
@@ -338,7 +338,7 @@ def section4_black_level():
     print("  %6s %12s %12s %12s" % ("g", "結像 FFT", "PSF 直接和", "対数閉形式"))
     print("  " + "-" * 46)
     for g in G_LIST:
-        out = convolve(black_square_scene(64), psf(g))
+        out = convolve(black_square_scene(64), g)
         print("  %6.2f %12.5f %12.5f %12.5f"
               % (g, black_level(out, 64), black_level_predicted(g, 64),
                  black_level_logform(g, 64)))
@@ -361,7 +361,7 @@ def section5_window():
     sides = (16, 32, 64, 128, 192, 256)
     meas = []
     for D in sides:
-        out = convolve(black_square_scene(D), psf(g))
+        out = convolve(black_square_scene(D), g)
         bl = black_level(out, D)
         meas.append(bl)
         print("  %6d %12.5f %12.5f %12.2f" % (D, bl, black_level_logform(g, D),
@@ -424,7 +424,7 @@ def section6_chart():
         chart = 0.5 + 0.5 * np.cos(2.0 * np.pi * xs / per)[None, :] * np.ones((N, 1))
         print("  %8d |" % per, end="")
         for g in (0.0, 0.10, 0.20):
-            o = convolve(chart, psf(g))
+            o = convolve(chart, g)
             seg = o[_C, _C - 2 * per:_C + 2 * per]
             mich = (seg.max() - seg.min()) / (seg.max() + seg.min())
             pred = (1.0 - g) * np.exp(-2.0 * np.pi ** 2 * SIG_CORE ** 2 / per ** 2)
@@ -499,7 +499,7 @@ def section7_where_is_the_tail():
         series = [("PSF 全体 (g=0.20)", f_px[sel], pairs[sel, 1])]
         edge = edge_scene()
         for w in (16, 128):
-            f, m, _, _ = sfr(esf_of(convolve(edge, psf(0.20))), w)
+            f, m, _, _ = sfr(esf_of(convolve(edge, 0.20)), w)
             series.append(("刃のエッジ SFR ±%d" % w, f[f <= 0.30], m[f <= 0.30]))
         series.append(("1-g = 0.80", np.array([0.0, 0.30]), np.array([0.80, 0.80])))
         figs.save_plot("mtf_curves", series, xlabel="空間周波数 [cyc/px]", ylabel="MTF",
@@ -513,8 +513,8 @@ def section_figures():
     if not figs.enabled():
         return
     scene = black_square_scene(128)
-    o0 = convolve(scene, psf(0.0))
-    o2 = convolve(scene, psf(0.20))
+    o0 = convolve(scene, 0.0)
+    o2 = convolve(scene, 0.20)
     s = np.s_[::2, ::2]
     figs.save_grid("glare_scene", [scene[s], o0[s], o2[s], (o2 - o0)[s]],
                    ["入力 白地+黒四角", "裾なし g=0", "裾あり g=0.20", "差 (g=0.20 - 0)"],
@@ -544,7 +544,7 @@ def section8_tool_gaps():
     print("      3 本があれば、この PoC の 2〜5 節は op の呼び出しだけで書ける。")
 
     # (b) derivate_funct_1d は中心差分 —— MTF が sinc 倍に潰れる
-    e = esf_of(convolve(edge_scene(), psf(0.0)))
+    e = esf_of(convolve(edge_scene(), 0.0))
     seg = e[_C - 16:_C + 17]
     seg = (seg - seg[:3].mean()) / (seg[-3:].mean() - seg[:3].mean())
     lsf_c = np.asarray(fs.derivate_funct_1d(seg))
