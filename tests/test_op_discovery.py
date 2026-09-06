@@ -140,3 +140,61 @@ def test_find_prefers_the_ledger_when_a_name_exists_on_both_sides():
     assert names[0] == "fill_holes"
     # 同名は 1 件だけ(台帳側)。二重に出すと利用者はどちらを呼ぶか決められない。
     assert names.count("fill_holes") == 1
+
+
+# --------------------------------------------------------------------------- #
+# 4. fullseye.ledger —— 型つき台帳 894 op への属性アクセス
+# --------------------------------------------------------------------------- #
+def _ledger_names():
+    names = set()
+    for mod_name, table in A._LEDGERS:
+        mod = importlib.import_module(mod_name)
+        names.update(getattr(mod, table, {}))
+    return names
+
+
+def test_ledger_namespace_covers_every_ledger_op():
+    """台帳に載っている op は 1 つ残らず ``fs.ledger`` から呼べること。
+
+    2026-09-06 実測: 894 op のうち ``fullseye`` 直下に名前が出ているのは
+    **499 個だけ**で、残り 395 個は ``op_run`` からしか届かなかった。左右
+    非対称性の PoC が ``fs.reflect_points`` で AttributeError を踏んで露見。
+    """
+    names = _ledger_names()
+    assert len(names) > 800, len(names)
+    assert set(dir(fs.ledger)) == names
+    for probe in ("reflect_points", "reflection_symmetry_score", "chamfer_distance",
+                  "hausdorff_distance", "dem_slope", "piv_cross_correlate"):
+        assert probe in fs.ledger, probe
+
+
+def test_ledger_namespace_applies_the_result_adapters():
+    """宣言 out 型どおりの値が返ること(素の返りではなく ``call`` を通す)。"""
+    import numpy as np
+    import opspiv
+    adapted = [n for n in opspiv.RESULT_ADAPTERS if n in fs.ledger]
+    assert adapted, "adapter つきの op が無い —— 前提が変わった"
+    a = np.zeros((64, 64))
+    a[24:40, 24:40] = 1.0
+    b = np.roll(a, 2, axis=1)
+    got = fs.ledger.piv_cross_correlate(a, b, window=16)
+    raw = opspiv.get("piv_cross_correlate")(a, b, window=16)
+    assert isinstance(raw, tuple) and len(raw) == 2, type(raw)
+    assert isinstance(got, np.ndarray) and got.shape[0] == 2, (type(got), got.shape)
+
+
+def test_ledger_namespace_is_fail_closed_and_points_at_the_other_tier():
+    with pytest.raises(AttributeError, match="fullseye.op"):
+        _ = fs.ledger.definitely_not_a_ledger_op
+
+
+def test_the_two_namespaces_overlap_in_exactly_one_name():
+    """台帳 894 と 2-D レジストリ 882 で同名は ``fill_holes`` の **1 つだけ**。
+
+    そしてそれは別物である(``fs.ledger.fill_holes`` は網の境界ループを閉じ、
+    ``fs.op.fill_holes`` は 2-D 領域の穴を埋める)。1 つに増減したら、名前空間を
+    分けている前提が変わったということなので、ここで気づく。
+    """
+    both = _ledger_names() & {o.name for o in ops.REGISTRY}
+    assert both == {"fill_holes"}, sorted(both)
+    assert fs.ledger.fill_holes is not fs.op.fill_holes

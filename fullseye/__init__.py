@@ -435,8 +435,106 @@ class _OpNamespace:
 #: 2-D op の属性アクセス入口(:class:`_OpNamespace`)。
 op = _OpNamespace()
 
+
+class _LedgerNamespace:
+    """**型つき台帳の op すべて**(894 個)を属性で呼ぶ入口。
+
+        import fullseye as fs
+        fs.ledger.reflect_points(pts, plane_point, plane_normal)
+        fs.ledger.dem_slope(dem, cell_size=5.0)
+
+    なぜ要るか —— 台帳には 25 族 894 op が載っているのに、``fullseye`` の
+    直下に名前が出ているのは **499 個だけ**だった(2026-09-06 実測)。残り
+    **395 個**は ``op_run`` からしか呼べず、補完にも出ない。左右非対称性の
+    PoC が ``fs.reflect_points`` で ``AttributeError`` を踏んだのがきっかけで、
+    ``symmetry3d`` の 4 op も ``metrics3d`` の距離 5 op も、台帳には載って
+    いるのに consumer から呼べない状態だった。
+
+    ここは**台帳の宣言 out 型どおりの値**を返す(各族の ``call`` を通すので
+    ``RESULT_ADAPTERS`` が適用される)。入力の自動生成・プリセット・前提
+    チェックが要るなら :func:`fullseye.op_run`、進化する 2-D op なら
+    :data:`fullseye.op` を使う。
+
+    ``fullseye`` 直下に既にある 499 個は**そのまま**にしてある。名前を消すのは
+    利用者のコードを壊すし、ここに全部あるので探すには困らない。台帳をまたぐ
+    同名は ``gaussians_to_voxel`` の 1 つだけで(``ops3d`` と ``opsreprconv``)、
+    :data:`_LEDGER_ORDER` の先頭にある族が勝つ。2-D レジストリの 882 名前とは
+    **1 つも衝突しない**(実測)。
+    """
+
+    __slots__ = ()
+
+    @staticmethod
+    def _tables():
+        import importlib
+
+        import opassist
+        out = []
+        for mod_name, table in opassist._LEDGERS:
+            try:
+                mod = importlib.import_module(mod_name)
+            except Exception:                    # noqa: BLE001 — 任意依存の族
+                continue
+            entries = getattr(mod, table, None)
+            if isinstance(entries, dict):
+                out.append((mod, entries))
+        return out
+
+    def _lookup(self, name):
+        for mod, entries in self._tables():
+            if name in entries:
+                return mod, entries[name]
+        return None, None
+
+    def __dir__(self):
+        names = set()
+        for _mod, entries in self._tables():
+            names.update(entries)
+        return sorted(names)
+
+    def __getattr__(self, name):
+        if name.startswith("_"):
+            raise AttributeError(name)
+        mod, entry = self._lookup(name)
+        if mod is None:
+            raise AttributeError(
+                "fullseye.ledger: '%s' という台帳 op は無い。"
+                "2-D の進化 op なら fullseye.op.%s、探すなら fullseye.op_find('%s')"
+                % (name, name, name))
+
+        def _call(*args, **kw):
+            return mod.call(name, *args, **kw)
+
+        _call.__name__ = name
+        _call.__qualname__ = "fullseye.ledger." + name
+        fn = entry.get("func")
+        _call.__doc__ = "%s\n\n(台帳 %s / %s: %s -> %s)" % (
+            (getattr(fn, "__doc__", None) or entry.get("doc") or ""),
+            mod.__name__, entry.get("category"),
+            entry.get("in"), entry.get("out"))
+        return _call
+
+    def __getitem__(self, name):
+        return getattr(self, name)
+
+    def __contains__(self, name):
+        return self._lookup(name)[0] is not None
+
+    def __iter__(self):
+        return iter(self.__dir__())
+
+    def __len__(self):
+        return len(self.__dir__())
+
+    def __repr__(self):
+        return "<fullseye.ledger: %d 個の台帳 op(fs.ledger.<名前>(...) で呼ぶ)>" % len(self)
+
+
+#: 型つき台帳 op の属性アクセス入口(:class:`_LedgerNamespace`)。
+ledger = _LedgerNamespace()
+
 __all__ = [
-    "op",
+    "op", "ledger",
     "orient2d", "orient3d", "incircle", "insphere",
     "orient2d_exact", "orient3d_exact", "incircle_exact", "insphere_exact",
     "point_in_polygon", "point_in_convex_polygon", "is_convex_polygon",
