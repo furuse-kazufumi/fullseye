@@ -182,6 +182,8 @@ def _exhibit_md(n: int, ex: dict, lang: str, pick: dict, thumb: str, byid: dict)
         ("ソース: [%s](%s)" % ("examples/%s.py" % ex["id"], src)) if lang == "ja"
         else ("Source: [%s](%s)" % ("examples/%s.py" % ex["id"], src)),
         "",
+        _ops_line(ex["id"], lang),
+        "",
     ]
     return "\n".join(lines)
 
