@@ -113,67 +113,97 @@ def _hex_points(k, step, rng):
     return pts + rng.normal(0.0, 0.09 * step, pts.shape)
 
 
-def layout(seed, *, pack=0.88, size_ratio=2.0, n_colony=3, k_colony=12,
-           n_chain=5, k_chain=3, n_large=10, n_single=26, n_edge=8):
+def layout(seed, *, pack=1.05, size_ratio=2.0, n_colony=3, k_colony=10,
+           n_chain=4, k_chain=3, n_large=8, n_single=20, n_edge=8):
     """細胞の一覧 ``(cy, cx, ra, rb, theta, bright, kind)`` を作る。
 
-    ``pack`` が **重なりの強さ**(コロニー内の中心間距離 / 2ra)。1.05 で「ちょうど
-    接する」、0.6 で「深く重なる」。**個数は ``pack`` に依らない**ので、この 1 つの
-    ノブで「重なりだけ」を振れる。``size_ratio`` は大型集団の線寸法の倍率。
+    ``pack`` が **重なりの強さ**(コロニー内の中心間距離 / 2ra)。1.5 で明らかに
+    離れ、1.0 で接し、0.65 で深く重なる。**個数は ``pack`` に依らない**ので、
+    この 1 つのノブで「重なりだけ」を振れる。``size_ratio`` は大型集団の線寸法。
+
+    集団(コロニー / 鎖 / 大型 / 孤立)はそれぞれ **縄張りの円**を予約してから
+    置く。乱数で撒くと、疎に設定したつもりでも集団どうしが偶然重なり、
+    「pack を大きくしても重なりが減らない」という測れない場面になってしまう。
     """
     rng = np.random.default_rng(20260906 + 977 * seed)
     cells = []
+    discs = []                      # 予約済みの縄張り (cy, cx, 半径)
 
-    def add(cy, cx, ra, rb, th, kind, bright=None):
-        cells.append((cy, cx, ra, rb, th,
-                      float(rng.uniform(0.55, 0.70)) if bright is None else bright,
-                      kind))
+    def reserve(rad, lo=0.05, hi=0.95, gap=3.0, tries=400, near_edge=False):
+        """半径 ``rad`` の縄張りが空いている場所を探す。見つからなければ None。"""
+        for _ in range(tries):
+            if near_edge:
+                side = int(rng.integers(4))
+                t = rng.uniform(0.08 * IMG, 0.92 * IMG)
+                off = rng.uniform(-0.55 * rad, 0.75 * rad)
+                p = np.array(((off, t), (IMG - 1.0 - off, t),
+                              (t, off), (t, IMG - 1.0 - off))[side])
+            else:
+                p = rng.uniform(lo * IMG, hi * IMG, 2)
+            if all(np.hypot(p[0] - d[0], p[1] - d[1]) > rad + d[2] + gap for d in discs):
+                discs.append((p[0], p[1], rad))
+                return p
+        return None
+
+    def add(cy, cx, ra, rb, th, kind):
+        cells.append((cy, cx, ra, rb, th, float(rng.uniform(0.55, 0.70)), kind))
 
     # (1) コロニー —— 六方格子に密集。pack で重なりが決まる。
+    step = 2.0 * R_BASE * pack
     for _ in range(n_colony):
-        cy0, cx0 = rng.uniform(0.22 * IMG, 0.78 * IMG, 2)
-        for dy, dx in _hex_points(k_colony, 2.0 * R_BASE * pack, rng):
-            r = R_BASE * rng.uniform(0.88, 1.12)
-            add(cy0 + dy, cx0 + dx, r, r * AXIS_RATIO, rng.uniform(0, np.pi),
-                KIND_COLONY)
+        offs = _hex_points(k_colony, step, rng)
+        radii = R_BASE * rng.uniform(0.88, 1.12, len(offs))
+        rad = float(np.max(np.hypot(offs[:, 0], offs[:, 1]) + radii))
+        p = reserve(rad)
+        if p is None:
+            continue
+        for (dy, dx), r in zip(offs, radii):
+            add(p[0] + dy, p[1] + dx, r, r * AXIS_RATIO,
+                rng.uniform(0, np.pi), KIND_COLONY)
 
     # (2) 分裂中の鎖 —— 中心間 1.05ra の亜鈴形。pack に依らず **常に重なっている**
     #     構造を 1 つ残しておく(疎な条件でも「重なりのある場面」が消えないように)。
     for _ in range(n_chain):
-        cy0, cx0 = rng.uniform(0.15 * IMG, 0.85 * IMG, 2)
         th = rng.uniform(0, 2 * np.pi)
         r = R_BASE * rng.uniform(0.85, 1.05)
+        offs, bends = [], []
         for j in range(k_chain):
-            d = 1.05 * r * j
             bend = 0.18 * rng.normal() * j
-            add(cy0 + d * np.sin(th + bend), cx0 + d * np.cos(th + bend),
-                r, r * AXIS_RATIO, th + bend + np.pi / 2, KIND_CHAIN)
+            d = 1.05 * r * j
+            offs.append((d * np.sin(th + bend), d * np.cos(th + bend)))
+            bends.append(bend)
+        offs = np.asarray(offs) - np.mean(offs, 0)
+        rad = float(np.max(np.hypot(offs[:, 0], offs[:, 1])) + r)
+        p = reserve(rad)
+        if p is None:
+            continue
+        for (dy, dx), bend in zip(offs, bends):
+            add(p[0] + dy, p[1] + dx, r, r * AXIS_RATIO,
+                th + bend + np.pi / 2, KIND_CHAIN)
 
     # (3) 大型集団 —— 線寸法 size_ratio 倍(面積は 2 乗倍)。単一スケールの前提を壊す。
     for _ in range(n_large):
         r = R_BASE * size_ratio * rng.uniform(0.9, 1.1)
-        add(*rng.uniform(0.15 * IMG, 0.85 * IMG, 2), r, r * AXIS_RATIO,
-            rng.uniform(0, np.pi), KIND_LARGE)
+        p = reserve(r)
+        if p is None:
+            continue
+        add(p[0], p[1], r, r * AXIS_RATIO, rng.uniform(0, np.pi), KIND_LARGE)
 
-    # (4) 孤立細胞 —— 既存から十分離す(「易しい」対照が必ず残るように)。
-    placed = np.asarray([[c[0], c[1]] for c in cells], float)
+    # (4) 孤立細胞 —— 縄張りを取るので「易しい」対照が必ず残る。
     for _ in range(n_single):
-        for _try in range(40):
-            p = rng.uniform(0.08 * IMG, 0.92 * IMG, 2)
-            if placed.size == 0 or np.min(np.hypot(*(placed - p).T)) > 3.0 * R_BASE:
-                r = R_BASE * rng.uniform(0.85, 1.15)
-                add(p[0], p[1], r, r * AXIS_RATIO, rng.uniform(0, np.pi), KIND_SINGLE)
-                placed = np.vstack([placed, p])
-                break
+        r = R_BASE * rng.uniform(0.85, 1.15)
+        p = reserve(r)
+        if p is None:
+            continue
+        add(p[0], p[1], r, r * AXIS_RATIO, rng.uniform(0, np.pi), KIND_SINGLE)
 
     # (5) 縁で切れる細胞 —— 中心を画像の外側寄りに置き、**わざと半分だけ写す**。
     for _ in range(n_edge):
         r = R_BASE * rng.uniform(0.85, 1.15)
-        side = rng.integers(4)
-        t = rng.uniform(0.1 * IMG, 0.9 * IMG)
-        off = rng.uniform(-0.55 * r, 0.75 * r)
-        cy, cx = ((off, t), (IMG - 1 - off, t), (t, off), (t, IMG - 1 - off))[int(side)]
-        add(cy, cx, r, r * AXIS_RATIO, rng.uniform(0, np.pi), KIND_EDGE)
+        p = reserve(r, near_edge=True)
+        if p is None:
+            continue
+        add(p[0], p[1], r, r * AXIS_RATIO, rng.uniform(0, np.pi), KIND_EDGE)
 
     return cells, rng
 
