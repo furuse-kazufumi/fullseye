@@ -297,13 +297,12 @@ def make_scene(seed, *, pack=0.88, size_ratio=2.0, bg_amp=BG_AMP, photons=PHOTON
     on_edge = np.asarray([
         (c[0] - c[2] < 0) or (c[0] + c[2] > IMG - 1) or
         (c[1] - c[2] < 0) or (c[1] + c[2] > IMG - 1) for c in cells])
-    # 縁の細胞の「真の面積」は画像外に出ているぶん観測できない。混ぜないよう印を持つ。
-    occ = 1.0 - area_vis / np.maximum(area_true, 1e-9)
+    occ = 1.0 - area_vis / np.maximum(alone, 1e-9)
     return {
         "img": img, "owner": own_px, "cells": cells, "n": ncell,
-        "area_true": area_true, "area_vis": area_vis, "occ": occ,
-        "on_edge": on_edge, "kind": np.asarray([c[6] for c in cells]),
-        "seed": seed,
+        "area_true": area_true, "area_alone": alone, "area_vis": area_vis,
+        "occ": occ, "on_edge": on_edge,
+        "kind": np.asarray([c[6] for c in cells]), "seed": seed,
     }
 
 

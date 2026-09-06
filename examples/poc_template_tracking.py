@@ -683,13 +683,13 @@ def main():
           f"{'壊れ':>8}")
     print("-" * 48)
     ch6s = {}
-    for z in (1.0, 1.05, 1.10, 1.20, 1.35, 1.50, 1.80):
-        fr, tr, _, sc = make_sequence(world, TARGETS["一意"], n=24, step=2.0, zoom=z)
+    for zf in (1.0, 1.05, 1.10, 1.20, 1.35, 1.50, 1.80):
+        fr, tr, _, sc = make_sequence(world, TARGETS["一意"], n=24, step=2.0, zoom=zf)
         t0 = crop_template(fr[0], tr[0])
         est, pk, pr = run_tracker(fr, t0, tr[0], "static")
         e = err_of(est, tr)
-        ch6s[z] = (e, pk)
-        print(f"{z:>10.2f}{e.mean():>10.2f}{e.max():>8.2f}{pk[-1]:>12.3f}"
+        ch6s[zf] = (e, pk)
+        print(f"{zf:>10.2f}{e.mean():>10.2f}{e.max():>8.2f}{pk[-1]:>12.3f}"
               f"{int((e > LOST_PX).sum()):>6} /24")
     print("-" * 48)
     print(f"\n{'総回転度':>10}{'平均誤差':>10}{'最悪':>8}{'最終ピーク':>12}{'壊れ':>8}")
@@ -704,7 +704,7 @@ def main():
         print(f"{rd:>10.0f}{e.mean():>10.2f}{e.max():>8.2f}{pk[-1]:>12.3f}"
               f"{int((e > LOST_PX).sum()):>6} /24")
     print("-" * 48)
-    z_cliff = next((z for z in sorted(ch6s) if (ch6s[z][0] > LOST_PX).any()), None)
+    z_cliff = next((q for q in sorted(ch6s) if (ch6s[q][0] > LOST_PX).any()), None)
     r_cliff = next((r for r in sorted(ch6r) if (ch6r[r][0] > LOST_PX).any()), None)
     print(f"→ 拡大の崖は {z_cliff} 倍(それ未満では壊れない)。"
           f"回転の崖は {r_cliff} 度。")
@@ -872,8 +872,8 @@ def main():
     bundles["繰り返し模様"] = (np.concatenate(p_rep), np.concatenate(r_rep),
                           np.concatenate(l_rep))
 
-    p_sc = np.concatenate([ch6s[z][1][1:] for z in ch6s] + [ch6r[r][1][1:] for r in ch6r])
-    l_sc = np.concatenate([(ch6s[z][0][1:] > LOST_PX) for z in ch6s]
+    p_sc = np.concatenate([ch6s[q][1][1:] for q in ch6s] + [ch6r[r][1][1:] for r in ch6r])
+    l_sc = np.concatenate([(ch6s[q][0][1:] > LOST_PX) for q in ch6s]
                           + [(ch6r[r][0][1:] > LOST_PX) for r in ch6r])
     bundles["拡大・回転"] = (p_sc, None, l_sc)
 
