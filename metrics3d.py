@@ -74,7 +74,24 @@ def chamfer_distance(a, b, squared=False):
 
 
 def hausdorff_distance(a, b):
-    """対称 Hausdorff 距離 = max(max_a min_b, max_b min_a)。→ scalar。最悪ケースの乖離。"""
+    """対称 Hausdorff 距離 = max(max_a min_b, max_b min_a)。→ scalar。最悪ケースの乖離。
+
+    計算: ``cKDTree`` で ``a`` の各点から ``b`` への最近傍距離と、``b`` から ``a`` への
+    最近傍距離を取り、両方向の **最大値** のうち大きい方を返す。「一方の雲のどの点も、
+    相手の雲からこの距離以内にある」を保証する最小の半径。単位は座標の単位。
+
+    入力: ``a``, ``b`` は ``(N, 3)`` / ``(M, 3)`` の点群(点数は異なってよい、対応不要)。
+    **この op は入口検査を持たない**(``_require_cloud`` を通らない): 空の点群を渡すと
+    ``max()`` が numpy の ``ValueError``("zero-size array")で落ち、``(N, 2)`` など
+    3 列でない入力は cKDTree の次元不一致で ``ValueError`` になる — いずれも
+    メッセージはこの op のものではない。呼ぶ前に空でないことを確かめること。
+
+    返り値: Python ``float``、``[0, inf)``。同一点群なら 0。正規化はしない。
+
+    注意: 1 点の外れ値で値が決まる(平均ではなく最大)。ノイズを含むスキャンの
+    評価には ``chamfer_distance`` か ``fscore``(閾値 ``tau`` 以内の割合)の方が
+    安定で、Hausdorff は「最悪でもこの精度」を主張したいとき(公差検証、
+    LOD の ``max_error`` と同じ性格)に使う。"""
     return float(max(_nn_dist(a, b).max(), _nn_dist(b, a).max()))
 
 
