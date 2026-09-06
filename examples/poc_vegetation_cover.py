@@ -514,8 +514,10 @@ def main():
               + "".join(pad(f"{v[idx == i].mean():.3f}", 10) for i in range(len(lbls))))
     print("  → 二値手法(上 2 行)はビンの中で 0 か 1 しか返せないので、この行は")
     print("     『そのビンの何割を植生と答えたか』になる。0.5 を跨ぐ位置が真値の 0.5 から")
-    print("     ずれていれば、それが被覆率の系統偏差の正体である。アンミックスの行だけが")
-    print("     f に沿って連続に上がる = **分数のまま答えられているのはここだけ**。")
+    print("     ずれていれば、それが被覆率の系統偏差の正体である。分数のまま答えられて")
+    print("     いるのは下 3 行(NDVI 線形換算とアンミックス 2 つ)だけで、そのうち真値の")
+    print("     行にいちばん近いのはアンミックス3。ExG + 大津は 0.5-0.7 のビンで 0.471 =")
+    print("     半分しか拾えていないが、その手前と奥ではほぼ完全に振り切れている。")
     lin = np.concatenate([m.ravel() for m, _ in allmaps["NDVI 線形換算"]])
     mid = (tcat > 0.05) & (tcat < 0.95)
     lin_bias = 100.0 * float((lin[mid] - tcat[mid]).mean())
@@ -938,6 +940,13 @@ def main():
         raise AssertionError("B=3 が通ってしまった(この PoC の前提が変わっている)")
     except ValueError:
         pass
+    # (12b) ★被覆率の数字だけが合っていて画素が 1 つも当たっていない場面が実在する。
+    #       この 1 行が「1 つの数字に丸めない」のいちばん強い根拠。
+    lw = cond_rows[(0, "湿った土(暗い)")][1]["大津・緑(ゼロ点)"]
+    assert abs(lw["bias"]) < 2.0, lw["bias"]
+    assert lw["prec"] < 0.05 and lw["rec"] < 0.05, (lw["prec"], lw["rec"])
+    # (12c) 崖 (d) の機序: 乾いた土の ExG は構成上ちょうど 0 = 固定閾値 0 は境目の上
+    assert abs(soil_exg) < 0.01, soil_exg
     # (13) NDVI 線形換算は原理どおり上振れし、**混合画素だけで見ると全体より大きい**
     assert lin_bias > 0.0, lin_bias
     assert lin_bias > 100.0 * abs(float((lin - tcat).mean())), lin_bias

@@ -688,11 +688,13 @@ print("相対回転で一周したときに戻れない量。系 3-5 は鎖を�
 r_chain, r_cyc = RESULT["1 鎖(回転・ゼロ点)"], RESULT["3 閉ループ拘束(厳密)"]
 r_spr, r_all = RESULT["2 閉ループ誤差を等分"], RESULT[f"4 全ペア(距離<={MAX_GAP})"]
 r_gn = RESULT["5 大域最適化(GN)"]
-print(f"\n→ 系 2(log を等分に配る素朴なやり方)は 1 次近似で、閉ループ誤差が "
-      f"{r_spr['loop']:.2f} px 残る")
-print(f"   (回転は可換でないので等分では厳密に閉じない)。しかも **姿勢はかえって**")
-print(f"   **悪くなる**: 最悪 {r_chain['pose_max']:.2f} → {r_spr['pose_max']:.2f} px。")
-print(f"   閉ループ誤差という 1 つの数字だけ見て「良くなった」と言うと嘘になる。")
+print(f"\n→ 系 2(log を等分に配る素朴なやり方)は閉ループ誤差を "
+      f"{r_chain['loop']:.2f} → {r_spr['loop']:.3f} px まで下げる。**しかし姿勢は**")
+print(f"   **かえって悪くなる**: 最悪 {r_chain['pose_max']:.2f} → "
+      f"{r_spr['pose_max']:.2f} px。閉ループ誤差という 1 つの数字だけ見て")
+print(f"   「良くなった」と言うと嘘になる。しかも 1 次近似なので厳密解の "
+      f"{r_spr['loop'] / r_cyc['loop']:.1f} 倍の誤差が残る")
+print(f"   (回転は可換でないので、log を等分に配っても厳密には閉じない)。")
 print(f"→ 系 3 は同じ辺だけで閉ループ誤差を {r_cyc['loop']:.3f} px まで落とす。")
 print(f"   **新しい観測を 1 つも足さずに** 姿勢最悪が "
       f"{r_chain['pose_max']:.2f} → {r_cyc['pose_max']:.2f} px。")
