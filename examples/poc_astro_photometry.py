@@ -447,6 +447,9 @@ def main():
         f"{k} {v:.2f} s" for k, v in timing.items())
         + f"  合計 {sum(timing.values()):.2f} s")
 
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
+
     print(f"PASS: 孤立星 {n_iso} 個 x 反復 {N_POOL}/N 回 x 3 星野で、"
           f"測光誤差は 1 枚 {100 * stats[1][0]:.4f} % → 16 枚 {100 * stats[16][0]:.4f} %"
           f"(1/√N から最大 {100 * worst:.1f} % のずれ)。宇宙線 12.5 % 汚染で"
