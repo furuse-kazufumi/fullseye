@@ -364,16 +364,27 @@ def main():
     print("\n=== 8. フレーム間隔を粗くすると ===")
     print(f"  {'枚数':>5}{'間隔 [mm]':>11}{'量子化下限':>12}{'テクスチャ有RMS':>15}"
           f"{'全体RMS':>10}{'AIF PSNR':>10}")
+    nf_rows = []
     for nf in (5, 9, 17, 33):
         fmm = np.linspace(depth.min(), depth.max(), nf)
         st = focal_stack(tex, depth, fmm)
         fu, dm, _pk, _k = fuse(st, measure_stack(st, fm_laplacian), fmm)
         e = dm - depth
         step = fmm[1] - fmm[0]
+        nf_rows.append((nf, step / np.sqrt(12), rms(e[plain])))
         print(f"  {nf:>5}{step:>11.3f}{step / np.sqrt(12):>12.3f}{rms(e[plain]):>15.3f}"
               f"{rms(e):>10.3f}{psnr(fu, tex):>10.2f}")
     print("  → 量子化下限は 8 倍下がるのに RMS は 9 枚から先ほぼ動かない。")
     print("     つまり残りは標本化ではなく、焦点評価そのものが持っている誤差。")
+    _nf = np.array([r[0] for r in nf_rows], float)
+    figs.save_plot("frames_floor",
+                   [("量子化下限(標本化で決まる分)", _nf,
+                     np.array([r[1] for r in nf_rows])),
+                    ("実測 RMS(テクスチャ有)", _nf,
+                     np.array([r[2] for r in nf_rows]))],
+                   xlabel="フレーム枚数", ylabel="深度誤差 [mm]",
+                   title="細かく撮っても、ある所から良くならない",
+                   caption="2 本が離れていく = 残りの誤差は標本化ではなく焦点評価が持っている。")
 
     print("\n=== 9. 雑音 ===")
     print(f"  {'雑音 σ':>8}{'テクスチャ有RMS':>15}{'全体RMS':>10}{'無テクスチャ σ':>15}{'AIF PSNR':>10}")
