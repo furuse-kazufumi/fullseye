@@ -644,7 +644,11 @@ def dem_geodetic_to_ecef(lat_deg, lon_deg, height_m=0.0):
     x = (n + h) * cp * np.cos(lam)
     y = (n + h) * cp * np.sin(lam)
     z = (n * (1.0 - e2) + h) * sp
-    return np.stack(np.broadcast_arrays(x, y, z), axis=-1)
+    # ★ 台帳の宣言は ``points`` = (N, 3)。スカラを渡すと (3,) になって宣言と
+    #   食い違うので、常に (N, 3) へ畳む(2026-09-06 にファザーの TYPEMISS で
+    #   露見。地心座標 6 op を足したあとファザーを回していなかった)。
+    #   格子のまま (H, W, 3) が欲しいときは :func:`dem_geocentric_grid` を使う。
+    return np.stack(np.broadcast_arrays(x, y, z), axis=-1).reshape(-1, 3)
 
 
 def dem_ecef_to_geodetic(xyz):

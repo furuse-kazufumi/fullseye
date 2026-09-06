@@ -90,7 +90,10 @@ _CATALOG = {
     "geodesy": [
         ("dem_geodetic_to_ecef", "demops", [], "points"),
         ("dem_ecef_to_geodetic", "demops", ["points"], "points"),
-        ("dem_geocentric_grid", "demops", ["depth"], "coordgrid"),
+        # 返りは (H, W, 3) の**組織化された点** = pointmap。coordgrid は
+        # (D, H, W, 3) の 4 次元で、こちらは該当しない(2026-09-06 に
+        # ファザーの TYPEMISS が指摘。宣言のほうが誤っていた)。
+        ("dem_geocentric_grid", "demops", ["depth"], "pointmap"),
         ("dem_earth_curvature_drop", "demops", [], "measurement"),
         ("dem_cell_size_webmercator", "demops", [], "measurement"),
         ("dem_geodetic_slope", "demops", ["depth"], "image2d"),

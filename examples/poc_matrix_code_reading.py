@@ -617,19 +617,26 @@ def main():
     print("     照明ムラに強い op」だった。撮像の解像度を上げると静かに壊れる。")
 
     print("\n=== 6. 雑音 ===")
-    print(f"  {'sigma':>8}{'SN':>8}{'BER 既知':>10}{'BER 検出':>10}{'検出の可否':>12}")
-    for nz in (0.0, 0.05, 0.10, 0.20, 0.30, 0.45):
+    print("  幾何は 1 モジュール 8 px、ぼけ無し。3 種の種で平均(検出は成功分だけ平均)。")
+    print(f"  {'sigma':>8}{'SN':>8}{'BER 既知':>10}{'BER 検出':>10}{'定位成功':>10}")
+    for nz in (0.0, 0.05, 0.10, 0.20, 0.25, 0.30, 0.45):
         es, ed, okc = [], [], 0
         for s in (11, 12, 13):
             im, H = capture(bits, module_px=8, noise=nz, seed=s)
             bk, _ = read(im, n, 8, H_true=H)
             bd, _ = detect(im, 8)
-            es.append(ber(bits, bk)); ed.append(ber(bits, bd)); okc += bd is not None
+            es.append(ber(bits, bk))
+            if bd is not None:
+                ed.append(ber(bits, bd)); okc += 1
         sn = float("inf") if nz == 0 else 1.0 / nz
-        print(f"  {nz:>8.2f}{sn:>8.1f}{np.mean(es):>10.4f}{np.mean(ed):>10.4f}"
-              f"{okc:>9}/3")
-    print("  3 回の平均。標本化(既知)は 1 画素しか見ないので雑音にそのまま負け、")
-    print("  sigma 0.3(SN 3.3)で BER が数 % に乗る。定位の方が先には壊れない。")
+        det = f"{np.mean(ed):.4f}" if ed else "読めず"
+        print(f"  {nz:>8.2f}{sn:>8.1f}{np.mean(es):>10.4f}{det:>10}{okc:>7}/3")
+    print("  標本化(既知)はモジュール中心の 1 画素しか見ないので雑音にそのまま負け、")
+    print("  sigma 0.20(SN 5)で BER 0.008、0.30(SN 3.3)で 0.05 まで上がる。")
+    print("  定位は sigma 0.25 と 0.30 の間で全滅する —— 二値化した run 長がちぎれて")
+    print("  1:1:3:1:1 に見えなくなるため。ここでも先に落ちるのは幾何の方。")
+    print("  1 画素ではなくモジュール中央の数画素を平均すれば標本化側は伸びるはずで、")
+    print("  それをしていないのは「1 画素で読む」を素の基準として置いているから。")
 
     print("\n=== 7. 部分遮蔽 —— どこを隠したかで壊れ方が違う ===")
     print("  白い光沢で一辺 k モジュールの正方形を覆う。幾何既知の BER と自力検出の可否。")
