@@ -399,9 +399,9 @@ def section_resolution() -> dict:
     print("\n" + "=" * 78)
     print("7) ★予想が外れた —— 画素を細かくしても融合は減らない")
     print("=" * 78)
-    print("  画素 [µm]  視野 [px]   塊    融合   縁切れ   D50 誤差   単独だけの誤差")
+    print("  画素 [µm]  視野 [px]   塊    融合  飲まれた  縁切れ   D50 誤差   単独の誤差")
 
-    px_list, merged, errs, ctrl = [], [], [], []
+    px_list, merged, errs, ctrl, swal = [], [], [], [], []
     for scale in (0.5, 1.0, 2.0):
         # 同じ**物理的な**場面を、粗い画素・標準・細かい画素で見る
         sc = make_scene(240, scale=scale)
@@ -432,20 +432,33 @@ def section_resolution() -> dict:
         tru = np.asarray([2.0 * sc["radii"][seed_of[i + 1][0]] * px_um for i in idx])
         err_c = 100 * float(np.median((est - tru) / tru))
 
+        # 融合に**飲まれた粒子の数**(塊の数ではなく)。塊 1 個に 2 個入るのと
+        # 5 個入るのとでは D50 への効き方が違うので、こちらも数える。
+        swallowed = int(np.count_nonzero(inside) - len(idx) - e)
+
         px_list.append(px_um)
         merged.append(m)
         errs.append(err)
         ctrl.append(err_c)
-        print("   %6.2f     %5d    %4d   %4d    %4d    %+6.2f %%    %+6.2f %%" % (
-            px_um, sc["n_pix"], f["n"], m, e, err, err_c))
-    print("\n  融合の件数はほとんど動かない(%d → %d → %d)—— 触れているかどうかは"
-          "\n  幾何の問題で、標本化の問題ではない。**予想したとおりに動かなかった**。"
-          % tuple(merged))
-    print("  ただし D50 の誤差は %.2f → %.2f %% と縮む。対照群(融合も縁切れも"
-          "\n  していない塊だけ)が %.2f → %.2f %% と同じ向きに動くので、"
-          "\n  縮んだ分の出どころは融合ではなく**画素で塗った面積の偏り**。"
-          % (errs[0], errs[-1], ctrl[0], ctrl[-1]))
-    return {"px": px_list, "merged": merged, "err": errs, "clean_err": ctrl}
+        swal.append(swallowed)
+        print("   %6.2f     %5d    %4d   %4d   %5d    %4d    %+6.2f %%    %+6.2f %%" % (
+            px_um, sc["n_pix"], f["n"], m, swallowed, e, err, err_c))
+
+    print("\n  ★予想は 2 段で外れた。")
+    print("   1) 融合した**塊の数**は画素の細かさでほとんど動かない"
+          "(%d → %d → %d)。" % tuple(merged))
+    print("   2) それでも D50 の誤差は %.2f → %.2f %% と縮む。最初は"
+          "「画素で塗った面積の偏り」だと思ったが、**対照群がそれを否定した**:"
+          % (errs[0], errs[-1]))
+    print("      融合も縁切れもしていない塊を、写している粒子と 1 対 1 で"
+          "突き合わせると\n      誤差は %.2f / %.2f / %.2f %% で、"
+          "**どの画素の細かさでも当たっている**。" % tuple(ctrl))
+    print("   3) 効いていたのは**融合に飲まれた粒子の数**(%d → %d → %d)。"
+          % tuple(swal))
+    print("      粗い画素は粒子を少し太らせるので、同じ塊の数でも"
+          "**1 塊に飲む粒子が増える**。")
+    return {"px": px_list, "merged": merged, "err": errs, "clean_err": ctrl,
+            "swallowed": swal}
 
 
 # --------------------------------------------------------------------------- #
