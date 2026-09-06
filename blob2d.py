@@ -203,12 +203,17 @@ def _perimeter(mask: np.ndarray) -> float:
     4 割超)。近傍の並び方で 1 / √2 / (1+√2)/2 を配る古典的な推定
     (Serra 1982)なら同じ円板で 1 % 未満に収まる。
     """
-    pad = np.pad(mask.astype(np.int32), 1)
-    code = ndimage.convolve(pad, _PERIM_KERNEL, mode="constant", cval=0)
-    vals = code[pad.astype(bool)]
-    if vals.size == 0:
+    img = np.pad(mask, 1).astype(np.int32)
+    if not img.any():
         return 0.0
-    hist = np.bincount(vals.ravel(), minlength=50)
+    # ★重みを掛けるのは **縁の画像**(元画像ではない)。元画像に畳み込んで
+    #   前景だけ拾う書き方にすると内部の画素まで符号に混ざり、実測で真値の
+    #   半分(円板 40 px で 132.8 / 251.3)になる。2026-09-06 に踏んだ。
+    eroded = ndimage.binary_erosion(
+        img, structure=ndimage.generate_binary_structure(2, 1), border_value=0)
+    border = img - eroded.astype(np.int32)
+    code = ndimage.convolve(border, _PERIM_KERNEL, mode="constant", cval=0)
+    hist = np.bincount(code.ravel(), minlength=50)
     w = np.zeros(50, np.float64)
     w[[5, 7, 15, 17, 25, 27]] = 1.0
     w[[21, 33]] = math.sqrt(2.0)
