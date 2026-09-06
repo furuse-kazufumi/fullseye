@@ -907,35 +907,50 @@ def main():
     print("     疎な場面で決めた h をそのまま密な場面へ持っていくと壊れる。")
 
     print("\n=== 7. ★計数が合っていて分割が全部外れている点を探す ===")
-    print("  過分割と過統合は逆向きに動くので、**どこかで打ち消し合う**。その点では")
-    print("  個数の偏りがほぼゼロになるのに、分割の誤りは最悪付近のまま残る。")
-    print("  " + pad("重なり pack", 12, right=False) + pad("h", 8) + pad("偏り", 9)
-          + pad("過分割", 9) + pad("過統合", 9) + pad("誤り合計", 12)
-          + pad("誤り合計の最小", 16) + pad("1対1 / 細胞数", 16))
+    print("  過分割と過統合は逆向きに動くので、**どこかで打ち消し合う**。h の下限に")
+    print("  阻まれてその点を跨げないので、ここでは種を **空間的な間隔** で間引く")
+    print("  ノブ(``vol_local_maxima`` の min_distance)を使って細かく刻む。")
+    MDS = (1, 2, 3, 4, 5, 6, 8)
     cancel = {}
-    for p in (SPARSE, MID, DENSE):
-        hb = best_h[p][0]
-        r = hcurve[(p, hb)]
-        tot_min = min(hcurve[(p, h)]["split"] + hcurve[(p, h)]["merge"] for h in HS)
-        cancel[p] = (hb, r, tot_min)
-        print("  " + pad(f"{p:.2f}", 12, right=False) + pad(f"{hb:.1f}", 8)
-              + pad(f"{r['bias']:+.1f}", 9) + pad(f"{r['split']:.1f}", 9)
-              + pad(f"{r['merge']:.1f}", 9)
-              + pad(f"{r['split'] + r['merge']:.1f}", 12)
-              + pad(f"{tot_min:.1f}", 16)
-              + pad(f"{r['one2one']:.0f} / {r['n_gt']:.0f}", 16))
-    worst = max((DENSE, MID, SPARSE), key=lambda p: cancel[p][1]["split"]
-                + cancel[p][1]["merge"])
+    for p in (MID, DENSE):
+        print(f"  — 重なり pack {p:.2f}(真の個数 {base[p][0]['n']})—")
+        print("  " + pad("種の最小間隔 [px]", 20, right=False) + pad("偏り", 9)
+              + pad("散らばり", 11) + pad("過分割", 9) + pad("過統合", 9)
+              + pad("誤り合計", 12) + pad("1対1", 8))
+        fgs = [foreground(s["img"]) for s in base[p]]
+        rows = {}
+        for md in MDS:
+            r = summarize([evaluate(s, m_ws_md(s["img"], fg, min_distance=md))
+                           for s, fg in zip(base[p], fgs)])
+            rows[md] = r
+            print("  " + pad(f"{md}", 20, right=False) + pad(f"{r['bias']:+.1f}", 9)
+                  + pad(f"{r['scatter']:.1f}", 11) + pad(f"{r['split']:.1f}", 9)
+                  + pad(f"{r['merge']:.1f}", 9)
+                  + pad(f"{r['split'] + r['merge']:.1f}", 12)
+                  + pad(f"{r['one2one']:.0f}", 8))
+        mdb = min(MDS, key=lambda m: abs(rows[m]["bias"]))
+        tot_min = min(rows[m]["split"] + rows[m]["merge"] for m in MDS)
+        o2o_max = max(rows[m]["one2one"] for m in MDS)
+        cancel[p] = (mdb, rows[mdb], tot_min, o2o_max, rows)
+        r = rows[mdb]
+        print(f"    |偏り| が最小なのは間隔 {mdb}(偏り {r['bias']:+.1f} = "
+              f"真値の {100 * abs(r['bias']) / r['n_gt']:.1f} %)。そのときの")
+        print(f"    分割誤りは {r['split'] + r['merge']:.1f} 件で、"
+              f"誤り合計の最小 {tot_min:.1f} 件より多く、")
+        print(f"    1 対 1 対応は {r['one2one']:.0f} / {r['n_gt']:.0f} 個"
+              f"(最大 {o2o_max:.0f} 個)。")
+    worst = max((MID, DENSE), key=lambda p: cancel[p][1]["split"] + cancel[p][1]["merge"])
     cw = cancel[worst][1]
-    print(f"  → いちばん危ないのは pack {worst:.2f} / h {cancel[worst][0]:.1f} の行:")
-    print(f"     **個数の偏りは {cw['bias']:+.1f} 個**(真値 {cw['n_gt']:.0f} 個に対して"
-          f" {100 * abs(cw['bias']) / cw['n_gt']:.1f} %)なのに、")
+    print(f"  → ★いちばん危ないのは pack {worst:.2f} / 間隔 {cancel[worst][0]} の行:")
+    print(f"     **個数の偏りは {cw['bias']:+.1f} 個**(真値 {cw['n_gt']:.0f} 個の"
+          f" {100 * abs(cw['bias']) / cw['n_gt']:.1f} %)= ほぼ完璧に見えるのに、")
     print(f"     過分割 {cw['split']:.1f} 件 + 過統合 {cw['merge']:.1f} 件 ="
-          f" {cw['split'] + cw['merge']:.1f} 件の分割誤りがあり、")
-    print(f"     1 対 1 に正しく対応した細胞は {cw['one2one']:.0f} / {cw['n_gt']:.0f} 個")
-    print(f"     しかない。**個数だけを報告していたら最良の設定として通る**。")
-    print("     打ち消し合いが起きる理由もはっきりしている: 過分割は個数を +1 に、")
-    print("     過統合は -1 に動かすので、両者が同数なら **個数は元に戻る**。")
+          f" {cw['split'] + cw['merge']:.1f} 件の分割誤りが残り、")
+    print(f"     1 対 1 に正しく対応した細胞は {cw['one2one']:.0f} / {cw['n_gt']:.0f} 個"
+          f"({100 * cw['one2one'] / cw['n_gt']:.0f} %)しかない。")
+    print("     **個数だけを報告していたら最良の設定として通る**。打ち消し合いの機序も")
+    print("     はっきりしている: 過分割は個数を +1、過統合は -1 に動かすので、両者が")
+    print("     同数なら **個数は元に戻る**。個数は分割の質の証拠にならない。")
 
     print("\n=== 8. 崖 (d) 雑音と背景ムラ ===")
     print("  " + pad("条件", 26, right=False) + pad("前景率", 10)
