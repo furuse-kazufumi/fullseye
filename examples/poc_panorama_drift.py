@@ -675,6 +675,7 @@ def main():
           f"{'継ぎ目平均':>12}{'閉じ目':>9}{'閉ループ':>10}")
     print("-" * 79)
     RESULT = {}
+    seam_by_sys, pose_by_sys = {}, {}         # 図用(表に出す前の生の並び)
     for name, Q, n_edge in SYSTEMS:
         if Q is None:
             print(f"{name:<24}{n_edge:>4}{'—':>10}{'—':>10}{'—':>12}{'—':>9}"

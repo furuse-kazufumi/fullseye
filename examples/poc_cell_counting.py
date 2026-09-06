@@ -778,6 +778,20 @@ def main():
     print("  → 面積割りは **分割を一切しないのに個数の偏りが小さい**。個数だけが")
     print("     欲しいなら分割は要らない、という当たり前の事実がここに出る。逆に")
     print("     言えば **個数が合っていることは分割が合っている証拠にならない**。")
+    if figs.enabled():
+        # 過統合は「数字が減る」のではなく「塊になる」欠陥なので、絵にすると
+        # どこで起きているかが 1 目で分かる。いちばん密な条件を 1 枚だけ。
+        sd = base[DENSE][0]
+        fgd = foreground(sd["img"])
+        figs.save_grid("scene_dense",
+                       [sd["img"], label_paint(sd["owner"]),
+                        label_paint(m_cc(sd["img"], fgd)),
+                        label_paint(m_ws_h(sd["img"], fgd, h_px=H_DEF))],
+                       ["観測画像", "真値 %d 個" % sd["n"],
+                        "ゼロ点 大津+連結成分", "h-maxima 分水嶺 h=%.1f" % H_DEF],
+                       title="重なり pack %.2f —— 同じ場面を 4 通りに" % DENSE, ncols=4,
+                       caption="ゼロ点はコロニーが 1 色の大きな塊になる(過統合)。"
+                               "分水嶺はそこを割るが、代わりに過分割を出す。")
 
     print("\n=== 4. 崖 (a) 重なり —— 過分割と過統合のどちらが先に来るか ===")
     print("  " + pad("重なり pack", 12, right=False)
