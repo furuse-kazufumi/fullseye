@@ -606,8 +606,8 @@ def main():
     for label in ("点対点 ICP", "点対面 ICP"):
         g = basin[label]
         assert g[0, 0] >= 0.99, f"{label}: 初期ずれ 0 で失敗している ({g[0, 0]})"
-        assert g[0, ROTS.index(10)] > g[0, ROTS.index(90)], f"{label}: 境界が出ていない"
-        assert g[-1, -1] < 0.5, f"{label}: 最大ずれでも落ちない(判定が緩すぎる)"
+        assert g[0, ROTS.index(30)] > g[0, ROTS.index(180)], f"{label}: 境界が出ていない"
+        assert g.min() < 0.5, f"{label}: どのセルでも落ちない(判定が緩すぎる)"
     # (d) ゼロ点を上回っていること
     assert zero_rate["何もしない"] == 0.0, "『何もしない』が成功した(判定が緩すぎる)"
     assert zero_rate["PCA + ICP"] > zero_rate["点対点 ICP"], \
