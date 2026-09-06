@@ -544,8 +544,8 @@ def main():
     print("     とたん、残差が同じまま別の姿勢を返す。**残差を成功判定に使うとこの嘘は")
     print("     原理的に検出できない** —— 真値を持つか、形状の対称群を知っている必要がある。")
     rng_c = np.random.default_rng(1357)
-    a = cylinder(800, rng_c)
-    b = cylinder(1100, rng_c)
+    a = cylinder(500, rng_c)
+    b = cylinder(700, rng_c)
     bn = fs.estimate_normals(b, k=16)
     axis_err, full_err = [], []
     for _ in range(12):
