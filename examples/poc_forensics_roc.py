@@ -315,13 +315,17 @@ def main():
     print("=== 1. 何を作ったか(真値は自分で入れたので分かっている)===")
     img, mask = build_case(0)
     print(f"  画像 {N}x{N} / 背景は JPEG q92 / 貼付素材は別画像を JPEG q60 で圧縮したもの")
-    print(f"  貼付 64x64 を (96, 96) へ(素材の切り出しは (40, 40) = 差 56 で 8 の倍数)")
-    print(f"  合成後にもう一度 q95 で保存(**実際の改竄は必ず保存を経る**)")
+    print("  貼付 64x64 を (96, 96) へ(素材の切り出しは (40, 40) = 差 56 で 8 の倍数)")
+    print("  合成後にもう一度 q95 で保存(**実際の改竄は必ず保存を経る**)")
     print(f"  改竄画素は {int(mask.sum())} / {mask.size} = {100 * mask.mean():.2f} %")
-    print(f"  ELA の平均 貼付部 {score_ela(img)[mask].mean():.4f} / 背景 {score_ela(img)[~mask].mean():.4f}"
-          f" = {score_ela(img)[mask].mean() / score_ela(img)[~mask].mean():.2f} 倍")
-    print("  → この『2〜3 倍』が、1 枚の閾値で成功例を作れてしまう数字である。")
-    print("     以下はこの数字を信用せず、偽陽性率を固定して測り直す。")
+    raw = ndimage.uniform_filter(
+        F.error_level_map(img, quality=90, normalize=False), BLOCK, mode="reflect")
+    print(f"  片側の ELA 平均 貼付部 {raw[mask].mean():.4f} / 背景 {raw[~mask].mean():.4f}"
+          f" = {raw[mask].mean() / raw[~mask].mean():.2f} 倍")
+    print("  → **向きが教科書と逆である**。ELA は「貼付部のほうが誤差が大きい」と")
+    print("     説明されるが、それは無圧縮の素材を貼ったときの話で、強く圧縮された")
+    print("     素材を貼ると逆に小さくなる。片側だけ見る検出器はここで取り逃がす。")
+    print("     以下はすべて『画像中央値からの隔たり』= 両側で測る。")
 
     print(f"\n=== 2. 画素ごとの ROC({n_img} 枚をまとめて 1 本)===")
     base = make_cases(n_img)
