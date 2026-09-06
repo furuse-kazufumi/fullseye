@@ -402,50 +402,59 @@ def section5_sampling(base_merge):
     print("=" * 78)
     print("5) ★★標本化 —— 時間を粗くするのと空間を粗くするのは、どちらが先に効くか")
     print("=" * 78)
-    print("  フレーム間引き ``stride`` と画素サイズ ``pixel`` を独立に振り、")
-    print("  **同じ単位(フレーム)で**合体時刻の誤差を比べる。")
-    print("  換算の勘所: 接触の直前 d(r_i+r_j)/dt = %.3f 長さ単位/フレーム なので、"
-          % sum(COLONIES[i][2] for i in PAIRS[1]) / (2 * np.sqrt(
-              true_merge_time(*PAIRS[1]) + T0)))
-    print("  半径を 1 画素ぶん読み違えると時刻は数フレームずれる。")
+    print("  フレーム間引き ``stride`` と画素サイズ ``pixel`` を**独立に**振り、")
+    print("  4 節の分解に従って**同じ単位(フレーム)で**比べる。")
+    for i, j in PAIRS:
+        tm = true_merge_time(i, j)
+        v = (COLONIES[i][2] + COLONIES[j][2]) / (2.0 * np.sqrt(tm + T0))
+        print("    組 %d-%d: 接触の直前 d(r_i+r_j)/dt = %.3f 長さ単位/フレーム"
+              " → 1 画素 = %.2f フレーム" % (i, j, v, 1.0 / v))
+    print("  この換算があるので、**空間の粗さは時間の誤差に化ける**。")
     print()
     strides = [1, 2, 4, 8]
     pixels = [1.0, 2.0, 3.0, 4.0]
     rec = {"stride": strides, "pixel": pixels, "err_stride": {}, "err_pixel": {}}
     for i, j in PAIRS:
         tm = true_merge_time(i, j)
-        es, ep = [], []
+        # 空間だけ: 時間を連続とみなして画素サイズを振る
+        rec["err_pixel"][(i, j)] = [merge_time_continuous(i, j, p, 4) - tm
+                                    for p in pixels]
+        # 時間だけ: 画素 1 のまま、フレーム格子への丸めぶん
+        tc = merge_time_continuous(i, j, 1.0, 4)
+        es = []
         for s in strides:
             vol, times = render_volume(stride=s, pixel=1.0)
             lab, _, fam = spacetime_families(vol, 6)
-            es.append(merge_frame_from_volume(lab, fam[i], times, 4) - tm)
-        for p in pixels:
-            vol, times = render_volume(stride=1, pixel=p)
-            lab, _, fam = spacetime_families(vol, 6)
-            ep.append(merge_frame_from_volume(lab, fam[i], times, 4) - tm)
+            es.append(merge_frame_from_volume(lab, fam[i], times, 4) - tc)
         rec["err_stride"][(i, j)] = es
-        rec["err_pixel"][(i, j)] = ep
-    print("  合体時刻の誤差 [フレーム] —— 時間を粗くする(画素は 1 のまま):")
-    print("  %8s" % "stride", end="")
+    print("  ★時間だけを粗くしたときの誤差 [フレーム](画素は 1 のまま):")
+    print("  %10s" % "stride", end="")
     for s in strides:
         print(" %10d" % s, end="")
     print()
     for key in rec["err_stride"]:
-        print("  %8s" % ("組 %d-%d" % key), end="")
+        print("  %10s" % ("組 %d-%d" % key), end="")
         for v in rec["err_stride"][key]:
             print(" %10.2f" % v, end="")
         print()
     print()
-    print("  合体時刻の誤差 [フレーム] —— 空間を粗くする(stride は 1 のまま):")
-    print("  %8s" % "pixel", end="")
+    print("  ★空間だけを粗くしたときの誤差 [フレーム](時間は連続):")
+    print("  %10s" % "pixel", end="")
     for p in pixels:
         print(" %10.1f" % p, end="")
     print()
     for key in rec["err_pixel"]:
-        print("  %8s" % ("組 %d-%d" % key), end="")
+        print("  %10s" % ("組 %d-%d" % key), end="")
         for v in rec["err_pixel"][key]:
             print(" %10.2f" % v, end="")
         print()
+    print()
+    for key in PAIRS:
+        s4 = abs(rec["err_stride"][key][2])
+        p4 = abs(rec["err_pixel"][key][3])
+        who = "空間" if p4 > s4 else "時間"
+        print("  組 %d-%d を 4 倍粗くすると 時間 %.2f / 空間 %.2f フレーム"
+              " → **%s のほうが先に効く**" % (key[0], key[1], s4, p4, who))
     return rec
 
 
