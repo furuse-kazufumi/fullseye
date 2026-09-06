@@ -309,14 +309,15 @@ def main():
             slope = float(np.polyfit(frac, frac + e, 1)[0])
             sn_tab[flux][lab] = (b, s, float(np.sqrt(np.nanmean(e ** 2))),
                                  crlb_px(flux, 3.2), slope)
-    print("     手法                flux[e-]   S/N     偏り     散らばり     RMS   "
-          "  理論下限   RMS/下限   感度")
+    print("     " + pad("手法", 20) + "flux[e-]   S/N      偏り   散らばり"
+          "       RMS  理論下限  RMS/下限    感度")
     for lab, _ in METHODS:
         for flux in fluxes:
             b, s, r, c, sl = sn_tab[flux][lab]
             snr = flux / np.sqrt(flux + 121.0 * (SKY + READ ** 2))
-            print(f"     {lab:<18s}{flux:9.0f}{snr:7.1f} {b:+9.4f}{s:10.4f}"
-                  f"{r:9.4f}{c:10.4f}{r / c:10.2f}{sl:8.3f}")
+            print("     " + pad(lab, 20) + f"{flux:8.0f}{snr:6.1f} {b:+9.4f}"
+                  f"{s:10.4f}{r:10.4f}{c:9.4f}{sl:10.2f}".replace(
+                      f"{sl:10.2f}", f"{r / c:10.2f}{sl:8.3f}"))
         print()
     zero = sn_tab[300.0]["重心(ゼロ点)"]
     print(f"   ★ 素の重心は暗い端で **散らばり {zero[1]:.4f} px が理論下限 "
