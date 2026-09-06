@@ -604,16 +604,15 @@ def section_framerate() -> dict:
     print("     **計数列と交わる帯だけ**を数えると過大は起きない"
           "(最大 %d)。同じスリット画像から出る 2 つの数の壊れ方が逆向き。"
           % max(n_ref_l))
-    print("  ★対照群(真の背景)と予測の差は %+.1f 〜 %+.1f 台、"
-          "時間中央値の背景だと %+.1f 〜 %+.1f 台。"
+    print("  ★閉形式との差: 位相平均だと %+.2f 〜 %+.2f 台、"
+          "1 つの位相だけだと %+.1f 〜 %+.1f 台。"
           % (min(g - p for g, p in zip(n_or_l, pred_l)),
              max(g - p for g, p in zip(n_or_l, pred_l)),
              min(g - p for g, p in zip(n_ref_l, pred_l)),
              max(g - p for g, p in zip(n_ref_l, pred_l))))
-    print("     Δt を広げたときのずれの一部は**標本化ではなく背景モデル**"
-          "(フレームが %d 枚まで減る)。分けないと閉形式が合わない。"
-          % int(np.ceil(T_FRAMES / dts[-1])))
-    first_count = next((d for d, g in zip(dts, n_or_l) if g < total), None)
+    print("     **1 本の実験で閉形式を検証してはいけない** —— 予測は位相に"
+          "ついての期待値で、1 つの位相の実現値はその周りに散らばる。")
+    first_count = next((d for d, g in zip(dts, n_or_l) if g < total - 0.05), None)
     first_speed = next((d for d, e in zip(dts, verr_l) if e > 5.0), None)
     print("  ★先に壊れたのは %s(対照群の台数は Δt=%s で欠け始め、"
           "速度誤差 5 %% 超は Δt=%s)。"

@@ -27,109 +27,77 @@
 
 ---
 
-## 本文(English / 主)
+## 本文(English / 主)—— 130 語
 
-> Last week I measured the same thing two ways and got the "best" answer from
-> the worst setup.
->
-> I was sizing particles from images — the standard chain: threshold, connected
-> components, report D10/D50/D90. I swept the area fraction from 2 % to 28 % and
-> watched the D50 error go from −4.9 % to +4.5 %.
->
-> Somewhere in the middle it crossed zero. At 13.8 % area fraction the D50 error
-> was +0.55 %. If I had reported that single number, this would have been my
-> "optimal" operating point.
->
-> It wasn't optimal. It was two failures cancelling.
->
-> Touching particles merge into one blob, which pulls the size distribution up.
-> Particles clipped by the frame edge get measured short, which pulls it down.
-> At 13.8 % there were 28 merged blobs and 19 clipped ones out of 140. The two
-> errors happened to be the same size. The summary number had no idea.
->
-> The thinnest condition I tested — 1.9 % area fraction, almost nothing touching —
-> reported a *larger* error (−4.9 %). By D50 alone, the crowded slide beats the
-> clean one.
->
-> Two things I now do differently:
->
-> 1. Count the failure modes separately, not just the error. Merged blobs and
->    clipped blobs are different defects with different fixes; a single RMSE or
->    bias number folds them together and hides both.
-> 2. Be suspicious of a metric that crosses zero. Monotone error is a bias you
->    can correct. Error that crosses zero is usually two things fighting.
->
-> The obvious fix — detect merged blobs by their low solidity and drop them —
-> made it worse, by the way. It moved D50 from +6.5 % to −11.3 %, because merged
-> blobs also contain the genuinely large particles. Overcorrection is a failure
-> mode too.
->
-> This is one of 45 worked examples in Fullseye, an Apache-2.0 image-processing
-> and 3-D measurement toolkit I build in the open. Every example ships with a
-> closed-form or synthetic ground truth and a null model, because "our method
-> scored 0.9" means nothing until you know what doing nothing scores.
->
-> Docs (now in Japanese, English, 简体中文, 繁體中文, 한국어 and Deutsch):
-> furuse.work · `pip install fullseye`
->
-> What is the metric in your field that everyone quotes and nobody decomposes?
+**★長さについて(2026-09-06 にユーザーから2 点の指摘 —— 「長い文だな、誰も
+読まないだろ」「furuse.work のリンクも無い」)。** 最初の版は 350 語あり、
+リンクも `furuse.work` と平文で書いていてクリックできなかった。フィードで
+折りたたまれる前に見えるのは**冒頭 2 行だけ**なので、そこに結論を置き、
+本文は 130 語に落とし、**リンクは `https://` 付きで 1 本だけ**にした。
+多言語の話も落とした —— 主張と関係が無く、字数を食うだけだった。
 
-**ハッシュタグ(3〜5 個まで。多いと逆に届かない)**
+```text
+The best-looking number came from the worst setup.
 
-```
-#ComputerVision #MachineVision #Metrology #OpenSource
+Sizing particles from images — threshold, connected components, report D50.
+I swept the density and the D50 error went from -4.9 % to +4.5 %.
+
+It crosses zero at 13.8 %. That looked like the optimal operating point.
+It wasn't: 28 merged blobs pulling the size up, 19 edge-clipped ones pulling
+it down. Two failures cancelling.
+
+The clean, sparse sample reported a *bigger* error.
+
+The obvious fix - drop the low-solidity blobs - overcorrected to -11.3 %.
+Worse than doing nothing.
+
+So: count failure modes separately, and distrust a metric that crosses zero.
+A monotone error is a bias you can correct. One that crosses zero is usually
+two things fighting.
+
+45 worked examples like this, each with a ground truth and a null model:
+https://furuse.work
 ```
 
-**1 コメント目に置くもの**(LinkedIn は本文の外部リンクを抑制する傾向があるので、
-リンクは本文に 1 つだけ残し、詳細は最初のコメントへ):
+**ハッシュタグ(3 個。多いと逆に届かない)**
 
-> Source and the 45 worked examples:
-> https://github.com/furuse-kazufumi/fullseye
-> The particle-sizing one is `examples/poc_particle_sizing.py` — it prints every
-> number in the post, so you can disagree with me by running it.
+```
+#ComputerVision #Metrology #OpenSource
+```
+
+**1 コメント目**(本文のリンクは 1 本に絞ったので、残りはここへ):
+
+```text
+Source: https://github.com/furuse-kazufumi/fullseye
+This one is examples/poc_particle_sizing.py - it prints every number in the
+post, so you can disagree with me by running it.
+```
 
 ---
 
 ## 本文(日本語 / 従)
 
-> 同じものを 2 通りで測って、いちばん悪い条件から「いちばん良い答え」が出ました。
->
-> 画像から粒度分布(D10/D50/D90)を出す、という定番の仕事です。しきい値 → 連結成分
-> → 物体ごとに測る。面積率を 2 % から 28 % まで振ると、D50 の誤差は −4.9 % から
-> +4.5 % へ動きました。
->
-> 途中で 0 を横切ります。面積率 13.8 % のとき D50 の誤差は +0.55 %。この 1 つの
-> 数字を報告していたら、ここが「最適な条件」として通っていました。
->
-> 最適ではありません。**向きの逆な 2 つの失敗が釣り合っていただけ**です。
->
-> 触れ合った粒子は 1 個の塊に融合して分布を大きい側へ引き、視野の縁で切れた粒子は
-> 小さく測られて逆へ引く。13.8 % のとき、塊 140 個のうち融合 28 件・縁切れ 19 件。
-> たまたま同じ大きさだった、というだけです。要約した数字はそれを知りません。
->
-> いちばん薄い条件(面積率 1.9 %、ほとんど触れていない)のほうが誤差は**大きい**
-> (−4.9 %)。D50 だけを見れば、混んだ標本が空いた標本に勝ちます。
->
-> それ以来こうしています。
->
-> 1. **誤差ではなく、壊れ方を別々に数える。** 融合と縁切れは原因も直し方も違うのに、
->    RMSE や偏りに畳むと両方とも見えなくなります。
-> 2. **0 を横切る指標を疑う。** 単調な誤差は補正できる偏りですが、0 をまたぐ誤差は
->    たいてい 2 つのものが押し合っています。
->
-> ちなみに、当たり前の対策 —— 充填率(solidity)が低い塊を融合とみなして捨てる ——
-> は**悪化させました**。D50 は +6.5 % から −11.3 % へ。融合した塊には本当に大きい
-> 粒子も混ざっているからです。**過剰補正もまた失敗の型**でした。
->
-> これは Fullseye(Apache-2.0 の画像処理・3-D 計測ツールキット)に入っている
-> 45 本の実例のうちの 1 本です。どの例も**真値を閉形式か合成で厳密に持ち、
-> ゼロ点(何もしない場合)を必ず併記**します。「うちの手法は 0.9 出ました」は、
-> 何もしなかったときの点数を知るまで意味を持たないので。
->
-> ドキュメント(日本語・English・简体中文・繁體中文・한국어・Deutsch):
-> furuse.work / `pip install fullseye`
->
-> あなたの分野で、みんなが引用するのに誰も内訳を見ない指標は何ですか?
+```text
+いちばん良く見えた数字が、いちばん悪い条件から出ました。
+
+画像から粒度分布を出す仕事です。しきい値 → 連結成分 → D50。密度を振ると
+D50 の誤差は -4.9 % から +4.5 % へ動きます。
+
+13.8 % で 0 を横切る。最適な条件に見えます。違いました。融合した塊 28 件が
+大きい側へ、縁で切れた 19 件が小さい側へ引いて、打ち消し合っていただけです。
+
+きれいに空いた標本のほうが、誤差は大きい。
+
+当たり前の対策(充填率の低い塊を捨てる)は -11.3 % へ行き過ぎました。
+何もしないより悪い。
+
+だから、誤差ではなく壊れ方を別々に数える。そして 0 を横切る指標を疑う。
+単調な誤差は補正できる偏りですが、0 をまたぐ誤差はたいてい 2 つのものが
+押し合っています。
+
+こういう実例が 45 本、どれも真値とゼロ点つきで置いてあります:
+https://furuse.work
+```
 
 ---
 

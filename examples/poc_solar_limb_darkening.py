@@ -483,6 +483,8 @@ def section_spot() -> dict:
             f = fit_disc(img, "level", 0.5, robust=robust)
             dc = float(np.hypot(f["cy"] - C_TRUE[0], f["cx"] - C_TRUE[1]))
             out[(label, robust)] = (f["r"] - R_TRUE, dc)
+            if robust:
+                drops[label] = int(f.get("n_drop", 0))
             print("  %-22s %-9s  %+8.3f     %7.3f      %s" % (
                 label, "ロバスト" if robust else "最小二乗",
                 f["r"] - R_TRUE, dc,
