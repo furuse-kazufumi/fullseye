@@ -15,6 +15,8 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **データ種**: `points` → `volume`
 - **呼び出し**: `fullseye.apply(img, "tb_plane_segmentation", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
+*図なし: この op は `points` を入力に取る。画像から始まる Studio のプログラムでは型が届かないので、下の「実行できる例」で使い方を見ること。*
+
 ## 使い方
 
 反復 RANSAC で最大 max_planes 枚の平面を逐次抽出(残差点 -1)。

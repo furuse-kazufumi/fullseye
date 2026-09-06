@@ -15,6 +15,8 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **データ種**: `points` → `volume`
 - **呼び出し**: `fullseye.apply(img, "tb_points_to_voxel", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
+*図なし: この op は `points` を入力に取る。画像から始まる Studio のプログラムでは型が届かないので、下の「実行できる例」で使い方を見ること。*
+
 ## 使い方
 
 点群 (N,3) → 密度 voxel (size³)。scatter_add で splat、任意で gaussian 平滑。

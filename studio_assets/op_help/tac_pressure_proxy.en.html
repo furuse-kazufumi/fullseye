@@ -2,11 +2,16 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tac_pressure_proxy — 2D <code style="color:#22d3bf">tactile</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tac_pressure_proxy&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/tac_pressure_proxy.png" alt="tac_pressure_proxy: 入力 → 出力"></p>
+<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Contact-pressure proxy map: the rectified deviation from the pseudo-reference background `<code style="color:#22d3bf">dev = |v - G_sigma(v)|</code><code style="color:#22d3bf"> is gated to the high-deviation (contact) area -- a relative gate at </code><code style="color:#22d3bf">0.15 * max(dev)</code><code style="color:#22d3bf"> plus an absolute floor of 0.005 -- amplified by the sensitivity gain and Gaussian-smoothed, which is the standard &quot;indentation depth is monotone in normal force&quot; surrogate used when a tactile pad carries no force sensor. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = sensitivity (gain 1..10x), </code><code style="color:#22d3bf">b</code>` = smoothing radius (sigma 0.5..4.5). Output clipped to [0,1], HxW; a flat frame yields an all-zero pressure map (no contact, no force).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Try it in Studio</h3>
+<p>The program below has been verified to run (same input as the figure). In Studio&#x27;s help this block becomes buttons that load and run it on the spot.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">tac_pressure_proxy 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:tac_pressure_proxy%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:tac_pressure_proxy%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:sim2real_and_alife">sim2real_and_alife</a> — <code style="color:#22d3bf">py -3.11 examples/sim2real_and_alife.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">image</code> as input)</h3>

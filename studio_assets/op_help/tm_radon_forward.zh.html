@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tm_radon_forward — 2D <code style="color:#22d3bf">tomography</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tm_radon_forward&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/tm_radon_forward.png" alt="tm_radon_forward: 入力 → 出力"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>正向 Radon 投影：将 `<code style="color:#22d3bf">v</code><code style="color:#22d3bf"> 视为切片图像，沿平行射线对其积分以构建正弦图（行 = 角度，列 = 探测器），再重新拟合回原始的 HxW。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 设定采集的角度数量（</code><code style="color:#22d3bf">n = round(H*a)</code><code style="color:#22d3bf">，钳制在 8..360 —— 稀疏视角旋钮）；</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> 设定角度跨度（</code><code style="color:#22d3bf">span = 180*min(1, 0.5+b)</code><code style="color:#22d3bf"> 度：b &lt; 0.5 为有限角度 CT，b &gt;= 0.5 —— 包括默认值 b = 0.5 —— 为 </code><code style="color:#22d3bf">tm_fbp_reconstruct</code><code style="color:#22d3bf">／</code><code style="color:#22d3bf">tm_sart_reconstruct</code><code style="color:#22d3bf">／</code><code style="color:#22d3bf">tm_backproject_unfiltered</code><code style="color:#22d3bf"> 所假设的完整 [0,180) 跨度，因此在默认旋钮下，正向 -&gt; 反向的自然链路可以往返一致）。若可用则使用 </code><code style="color:#22d3bf">skimage.transform.radon</code>`，否则使用 NumPy 的旋转求和 Radon 变换。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
@@ -10,6 +12,9 @@
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
 <p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中试试</h3>
+<p>下面的程序已确认可以运行(与图相同的输入)。在 Studio 帮助中，此块会变成按钮，可当场加载并运行。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">tm_radon_forward 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:tm_radon_forward%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:tm_radon_forward%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_physics_alife_3d.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">image</code> 作为输入)</h3>

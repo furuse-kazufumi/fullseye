@@ -2,11 +2,16 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tac_contact_mask — 2D <code style="color:#22d3bf">tactile</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tac_contact_mask&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/tac_contact_mask.png" alt="tac_contact_mask: 入力 → 出力"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>透過偽參考背景相減求取觸覺影像幀的接觸區域:`<code style="color:#22d3bf">dev = |v - G_sigma(v)|</code><code style="color:#22d3bf">,其中 </code><code style="color:#22d3bf">sigma = max(2, min(H,W)/6)</code><code style="color:#22d3bf">(以低頻包絡取代未變形的參考幀),以 </code><code style="color:#22d3bf">thr = 0.005 + 0.145*a</code><code style="color:#22d3bf"> 灰階閾值進行閾值化,再經 </code><code style="color:#22d3bf">round(3*b)</code><code style="color:#22d3bf"> 次二值開運算(opening)後接二值閉運算(closing)(3x3、8 連通)清理。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = 偏差閾值(靈敏度),</code><code style="color:#22d3bf">b</code>` = 形態學清理強度。回傳輸入 HxW 大小的二值(BINARY)0/1 float64 區域;完全平坦(常數)的幀各處偏差皆為零,因此會得到空遮罩。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
+<p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">tac_contact_mask 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:tac_contact_mask%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:tac_contact_mask%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:sim2real_and_alife">sim2real_and_alife</a> — <code style="color:#22d3bf">py -3.11 examples/sim2real_and_alife.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">region</code> 作為輸入)</h3>

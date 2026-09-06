@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sg_normalized_cut_2 — 2D <code style="color:#22d3bf">segment</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sg_normalized_cut_2&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<p><img src="fig/sg_normalized_cut_2.png" alt="sg_normalized_cut_2: 入力 → 出力"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>輝度グラフの正規化カット（スペクトラル 2 分割、Shi &amp; Malik）で画像を明暗 2 領域に分ける（HALCON に対応オペレータなし）。</p>
 <p>計算量を抑えるため画像を `<code style="color:#22d3bf">sdim = round(10+b*14)</code><code style="color:#22d3bf"> 程度まで間引いてから、輝度差と距離で重みを決めたアフィニティグラフを作り、一般化固有値問題 </code><code style="color:#22d3bf">(D-W)y = lambda*D*y</code><code style="color:#22d3bf"> の第 2 固有ベクトル（Fiedler ベクトル）を中央値でしきい値化して 2 群に分ける。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">（0〜1）は輝度方向の帯域幅</code><code style="color:#22d3bf">sig_i = 0.05 + a*0.5</code><code style="color:#22d3bf"> を振り、</code><code style="color:#22d3bf">b</code>`（0〜1）は間引きの解像度を振る。明るい方の群を最近傍で元解像度に拡大して region として返す。</p>
@@ -11,6 +13,9 @@
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
+<p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">sg_normalized_cut_2 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:sg_normalized_cut_2%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:sg_normalized_cut_2%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_segmentation">gallery2d_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_segmentation.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">region</code> を入力に取れる)</h3>

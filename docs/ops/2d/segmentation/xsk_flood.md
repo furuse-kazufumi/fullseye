@@ -15,6 +15,10 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **データ種**: `image` → `region`
 - **呼び出し**: `fullseye.apply(img, "xsk_flood", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
+![xsk_flood: 入力 → 出力](../../_fig/xsk_flood.png)
+
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+
 ## 使い方
 
 塗りつぶし(flood fill)領域抽出。
@@ -35,6 +39,14 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
 - [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
 - アルゴリズムの正典(著者・年)と用途は上記**ファミリ使い方ガイド**に記載。
+
+## Studio で試す
+
+下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。
+
+```program
+xsk_flood 0.50 0.50
+```
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 

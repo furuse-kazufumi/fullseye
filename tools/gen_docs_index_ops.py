@@ -249,7 +249,11 @@ def _honest(lang: str) -> str:
     noted = {r["name"] for r in _records()}
     reg = {getattr(o, "name", str(o)) for o in _ops.REGISTRY}
     led = {r[0] for r in _tc.catalog()}
-    fac = {n for n in dir(fs) if not n.startswith("_")}
+    # ★`dir(fullseye)` ではなく `__all__`。dir はモジュール属性(os / sys /
+    # warnings / annotations)を含み、しかも**他のテストが import した後は
+    # 1 つ増える**(1094 → 1095)ので、全体スイートでだけドリフト門が落ちた
+    # (2026-09-06)。公開面はファサードが `__all__` で宣言している 1,091 名。
+    fac = set(fs.__all__)
     t = {"": "**網羅の実測**: 進化 op {r[1]}/{r[0]}、型つき台帳 {l[1]}/{l[0]}、"
              "1 行ファサード `fullseye.<名前>` {f[1]}/{f[0]}。"
              "**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。",

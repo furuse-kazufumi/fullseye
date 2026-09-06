@@ -15,6 +15,10 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **データ種**: `image` → `image`
 - **呼び出し**: `fullseye.apply(img, "xwt_visushrink", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
+![xwt_visushrink: 入力 → 出力](../../_fig/xwt_visushrink.png)
+
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+
 ## 使い方
 
 VisuShrink 風のウェーブレットノイズ除去。``db4`` で 2 段分解し、各段の詳細係数をソフト閾値処理してから逆変換で再構成する(VisuShrink はこの閾値をノイズ量から自動決定する手法だが、ここでは ``a`` で直接与える簡略版)。
@@ -30,6 +34,14 @@ VisuShrink 風のウェーブレットノイズ除去。``db4`` で 2 段分解�
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
 - [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
 - アルゴリズムの正典(著者・年)と用途は上記**ファミリ使い方ガイド**に記載。
+
+## Studio で試す
+
+下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。
+
+```program
+xwt_visushrink 0.35 0.50
+```
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 

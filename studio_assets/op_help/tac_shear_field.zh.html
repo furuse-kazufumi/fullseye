@@ -2,11 +2,16 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tac_shear_field — 2D <code style="color:#22d3bf">tactile</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tac_shear_field&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/tac_shear_field.png" alt="tac_shear_field: 入力 → 出力"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由二维结构张量(Foerstner / Bigun-Granlund 方向一致性)求面内剪切(in-plane shear)近似。张量 `<code style="color:#22d3bf">J = G_sigma(grad v * grad v^T)</code><code style="color:#22d3bf"> 的特征值为 l1 &gt;= l2,一致性 </code><code style="color:#22d3bf">(l1-l2)/(l1+l2) = sqrt((J11-J22)^2 + 4*J12^2) / (J11+J22)</code><code style="color:#22d3bf"> 在凝胶纹理被拉伸成单一主方向时(如在切向/剪切载荷下)为 1,在各向同性时为 0。结果还会乘以张量迹(梯度能量)作为权重,以使无纹理、未接触的凝胶保持暗色,而不会放大噪声方向。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = 张量积分 sigma(0.6~4.6),</code><code style="color:#22d3bf">b</code>` = 输出增益(0.5~2.5)。输出裁剪到 [0,1],大小为 HxW;常数帧的梯度能量为零,得到全零的剪切场。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中试试</h3>
+<p>下面的程序已确认可以运行(与图相同的输入)。在 Studio 帮助中，此块会变成按钮，可当场加载并运行。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">tac_shear_field 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:tac_shear_field%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:tac_shear_field%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:sim2real_and_alife">sim2real_and_alife</a> — <code style="color:#22d3bf">py -3.11 examples/sim2real_and_alife.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">image</code> 作为输入)</h3>

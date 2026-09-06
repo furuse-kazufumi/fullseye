@@ -17,6 +17,10 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "access_channel", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `access_channel`(意味・パラメータは HALCON リファレンスが参考になる)
 
+![access_channel: 入力 → 出力](../../_fig/access_channel.png)
+
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+
 ## 使い方
 
 多チャンネル画像から 1 チャンネルを取り出す。HALCON の ``access_channel``
@@ -38,6 +42,15 @@ a でチャンネル番号を 0(R)/1(G)/2(B) の 3 通りから選ぶ
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
 - [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
 - アルゴリズムの正典(著者・年)と用途は上記**ファミリ使い方ガイド**に記載。
+
+## Studio で試す
+
+下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。
+
+```program
+cfa_to_rgb 0.50 0.50
+access_channel 0.50 0.50
+```
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 

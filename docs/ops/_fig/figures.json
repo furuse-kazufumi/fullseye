@@ -1,0 +1,5160 @@
+{
+ "generated_for": 885,
+ "ops": {
+  "abs_image": {
+   "fig": "abs_image.png",
+   "out_kind": "ndarray",
+   "program": "abs_image 0.50 0.50",
+   "status": "ok"
+  },
+  "access_channel": {
+   "fig": "access_channel.png",
+   "out_kind": "ndarray",
+   "program": "cfa_to_rgb 0.50 0.50\naccess_channel 0.50 0.50",
+   "status": "ok"
+  },
+  "acos_image": {
+   "fig": "acos_image.png",
+   "out_kind": "ndarray",
+   "program": "acos_image 0.50 0.50",
+   "status": "ok"
+  },
+  "adaptive_gauss_thresh": {
+   "fig": "adaptive_gauss_thresh.png",
+   "out_kind": "ndarray",
+   "program": "adaptive_gauss_thresh 0.50 0.50",
+   "status": "ok"
+  },
+  "add_noise_distribution": {
+   "fig": "add_noise_distribution.png",
+   "out_kind": "ndarray",
+   "program": "add_noise_distribution 0.50 0.50",
+   "status": "ok"
+  },
+  "add_noise_white": {
+   "fig": "add_noise_white.png",
+   "out_kind": "ndarray",
+   "program": "add_noise_white 0.50 0.50",
+   "status": "ok"
+  },
+  "affine_trans_contour_xld": {
+   "fig": "affine_trans_contour_xld.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\naffine_trans_contour_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "affine_trans_image": {
+   "fig": "affine_trans_image.png",
+   "out_kind": "ndarray",
+   "program": "affine_trans_image 0.50 0.50",
+   "status": "ok"
+  },
+  "affine_trans_image_size": {
+   "fig": "affine_trans_image_size.png",
+   "out_kind": "ndarray",
+   "program": "affine_trans_image_size 0.50 0.50",
+   "status": "ok"
+  },
+  "affine_trans_polygon_xld": {
+   "fig": "affine_trans_polygon_xld.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\naffine_trans_polygon_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "affine_trans_region": {
+   "fig": "affine_trans_region.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\naffine_trans_region 0.50 0.50",
+   "status": "ok"
+  },
+  "affine_warp": {
+   "fig": "affine_warp.png",
+   "out_kind": "ndarray",
+   "program": "affine_warp 0.50 0.50",
+   "status": "ok"
+  },
+  "alife_curvature_flow": {
+   "fig": "alife_curvature_flow.png",
+   "out_kind": "ndarray",
+   "program": "alife_curvature_flow 0.50 0.50",
+   "status": "ok"
+  },
+  "alife_cyclic_ca": {
+   "fig": "alife_cyclic_ca.png",
+   "out_kind": "ndarray",
+   "program": "alife_cyclic_ca 0.50 0.50",
+   "status": "ok"
+  },
+  "alife_dla": {
+   "fig": "alife_dla.png",
+   "out_kind": "ndarray",
+   "program": "alife_dla 0.50 0.50",
+   "status": "ok"
+  },
+  "alife_gray_scott": {
+   "fig": "alife_gray_scott.png",
+   "out_kind": "ndarray",
+   "program": "alife_gray_scott 0.50 0.50",
+   "status": "ok"
+  },
+  "alife_langton_ant": {
+   "fig": "alife_langton_ant.png",
+   "out_kind": "ndarray",
+   "program": "alife_langton_ant 0.50 0.50",
+   "status": "ok"
+  },
+  "alife_lenia": {
+   "fig": "alife_lenia.png",
+   "out_kind": "ndarray",
+   "program": "alife_lenia 0.50 0.50",
+   "status": "ok"
+  },
+  "alife_life_step": {
+   "fig": "alife_life_step.png",
+   "out_kind": "ndarray",
+   "program": "alife_life_step 0.50 0.50",
+   "status": "ok"
+  },
+  "alife_perona_malik": {
+   "fig": "alife_perona_malik.png",
+   "out_kind": "ndarray",
+   "program": "alife_perona_malik 0.50 0.50",
+   "status": "ok"
+  },
+  "alife_reaction_bz": {
+   "fig": "alife_reaction_bz.png",
+   "out_kind": "ndarray",
+   "program": "alife_reaction_bz 0.50 0.50",
+   "status": "ok"
+  },
+  "alife_sandpile": {
+   "fig": "alife_sandpile.png",
+   "out_kind": "ndarray",
+   "program": "alife_sandpile 0.50 0.50",
+   "status": "ok"
+  },
+  "alife_turing": {
+   "fig": "alife_turing.png",
+   "out_kind": "ndarray",
+   "program": "alife_turing 0.50 0.50",
+   "status": "ok"
+  },
+  "alife_wolfram1d": {
+   "fig": "alife_wolfram1d.png",
+   "out_kind": "ndarray",
+   "program": "alife_wolfram1d 0.50 0.50",
+   "status": "ok"
+  },
+  "anisotropic_diffusion": {
+   "fig": "anisotropic_diffusion.png",
+   "out_kind": "ndarray",
+   "program": "anisotropic_diffusion 0.35 0.50",
+   "status": "ok"
+  },
+  "area_center": {
+   "fig": "area_center.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\narea_center 0.50 0.50",
+   "status": "ok"
+  },
+  "area_center_xld": {
+   "fig": "area_center_xld.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\narea_center_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "area_frac": {
+   "fig": "area_frac.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\narea_frac 0.50 0.50",
+   "status": "ok"
+  },
+  "area_holes": {
+   "fig": "area_holes.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\narea_holes 0.50 0.50",
+   "status": "ok"
+  },
+  "asin_image": {
+   "fig": "asin_image.png",
+   "out_kind": "ndarray",
+   "program": "asin_image 0.50 0.50",
+   "status": "ok"
+  },
+  "atan_image": {
+   "fig": "atan_image.png",
+   "out_kind": "ndarray",
+   "program": "atan_image 0.50 0.50",
+   "status": "ok"
+  },
+  "aug_barrel": {
+   "fig": "aug_barrel.png",
+   "out_kind": "ndarray",
+   "program": "aug_barrel 0.50 0.50",
+   "status": "ok"
+  },
+  "aug_chromatic": {
+   "fig": "aug_chromatic.png",
+   "out_kind": "ndarray",
+   "program": "aug_chromatic 0.50 0.50",
+   "status": "ok"
+  },
+  "aug_cutout": {
+   "fig": "aug_cutout.png",
+   "out_kind": "ndarray",
+   "program": "aug_cutout 0.50 0.50",
+   "status": "ok"
+  },
+  "aug_fixed_pattern": {
+   "fig": "aug_fixed_pattern.png",
+   "out_kind": "ndarray",
+   "program": "aug_fixed_pattern 0.50 0.50",
+   "status": "ok"
+  },
+  "aug_jpeg_blocks": {
+   "fig": "aug_jpeg_blocks.png",
+   "out_kind": "ndarray",
+   "program": "aug_jpeg_blocks 0.50 0.50",
+   "status": "ok"
+  },
+  "aug_motion_blur": {
+   "fig": "aug_motion_blur.png",
+   "out_kind": "ndarray",
+   "program": "aug_motion_blur 0.50 0.50",
+   "status": "ok"
+  },
+  "aug_read_noise": {
+   "fig": "aug_read_noise.png",
+   "out_kind": "ndarray",
+   "program": "aug_read_noise 0.50 0.50",
+   "status": "ok"
+  },
+  "aug_rolling_shutter": {
+   "fig": "aug_rolling_shutter.png",
+   "out_kind": "ndarray",
+   "program": "aug_rolling_shutter 0.50 0.50",
+   "status": "ok"
+  },
+  "aug_shot_noise": {
+   "fig": "aug_shot_noise.png",
+   "out_kind": "ndarray",
+   "program": "aug_shot_noise 0.50 0.50",
+   "status": "ok"
+  },
+  "aug_vignette": {
+   "fig": "aug_vignette.png",
+   "out_kind": "ndarray",
+   "program": "aug_vignette 0.50 0.50",
+   "status": "ok"
+  },
+  "auto_threshold": {
+   "fig": "auto_threshold.png",
+   "out_kind": "ndarray",
+   "program": "auto_threshold 0.50 0.50",
+   "status": "ok"
+  },
+  "bandpass_image": {
+   "fig": "bandpass_image.png",
+   "out_kind": "ndarray",
+   "program": "bandpass_image 0.40 0.50",
+   "status": "ok"
+  },
+  "bilateral": {
+   "fig": "bilateral.png",
+   "out_kind": "ndarray",
+   "program": "bilateral 0.35 0.50",
+   "status": "ok"
+  },
+  "bilateral_filter": {
+   "fig": "bilateral_filter.png",
+   "out_kind": "ndarray",
+   "program": "bilateral_filter 0.35 0.50",
+   "status": "ok"
+  },
+  "bin_threshold": {
+   "fig": "bin_threshold.png",
+   "out_kind": "ndarray",
+   "program": "bin_threshold 0.50 0.50",
+   "status": "ok"
+  },
+  "binary_threshold": {
+   "fig": "binary_threshold.png",
+   "out_kind": "ndarray",
+   "program": "binary_threshold 0.50 0.50",
+   "status": "ok"
+  },
+  "binomial_filter": {
+   "fig": "binomial_filter.png",
+   "out_kind": "ndarray",
+   "program": "binomial_filter 0.35 0.50",
+   "status": "ok"
+  },
+  "bit_not": {
+   "fig": "bit_not.png",
+   "out_kind": "ndarray",
+   "program": "bit_not 0.50 0.50",
+   "status": "ok"
+  },
+  "blob_count": {
+   "fig": "blob_count.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nblob_count 0.50 0.50",
+   "status": "ok"
+  },
+  "bothat": {
+   "fig": "bothat.png",
+   "out_kind": "ndarray",
+   "program": "bothat 0.35 0.50",
+   "status": "ok"
+  },
+  "boundary": {
+   "fig": "boundary.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nboundary 0.50 0.50",
+   "status": "ok"
+  },
+  "canny": {
+   "fig": "canny.png",
+   "out_kind": "ndarray",
+   "program": "canny 0.50 0.50",
+   "status": "ok"
+  },
+  "cfa_to_rgb": {
+   "fig": "cfa_to_rgb.png",
+   "out_kind": "ndarray",
+   "program": "cfa_to_rgb 0.50 0.50",
+   "status": "ok"
+  },
+  "circularity": {
+   "fig": "circularity.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\ncircularity 0.50 0.50",
+   "status": "ok"
+  },
+  "circularity_xld": {
+   "fig": "circularity_xld.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\ncircularity_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "clahe": {
+   "fig": "clahe.png",
+   "out_kind": "ndarray",
+   "program": "clahe 0.50 0.50",
+   "status": "ok"
+  },
+  "classify_shape": {
+   "fig": "classify_shape.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nclassify_shape 0.50 0.50",
+   "status": "ok"
+  },
+  "close_contours_xld": {
+   "fig": "close_contours_xld.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nclose_contours_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "closest_point_transform": {
+   "fig": "closest_point_transform.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nclosest_point_transform 0.50 0.50",
+   "status": "ok"
+  },
+  "closing_circle": {
+   "fig": "closing_circle.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nclosing_circle 0.50 0.50",
+   "status": "ok"
+  },
+  "closing_golay": {
+   "fig": "closing_golay.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nclosing_golay 0.50 0.50",
+   "status": "ok"
+  },
+  "closing_rectangle1": {
+   "fig": "closing_rectangle1.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nclosing_rectangle1 0.50 0.50",
+   "status": "ok"
+  },
+  "coherence_enhancing_diff": {
+   "fig": "coherence_enhancing_diff.png",
+   "out_kind": "ndarray",
+   "program": "coherence_enhancing_diff 0.35 0.50",
+   "status": "ok"
+  },
+  "compactness": {
+   "fig": "compactness.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\ncompactness 0.50 0.50",
+   "status": "ok"
+  },
+  "compactness_xld": {
+   "fig": "compactness_xld.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\ncompactness_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "connect_and_holes": {
+   "fig": "connect_and_holes.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nconnect_and_holes 0.50 0.50",
+   "status": "ok"
+  },
+  "contlength": {
+   "fig": "contlength.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\ncontlength 0.50 0.50",
+   "status": "ok"
+  },
+  "contour_point_num_xld": {
+   "fig": "contour_point_num_xld.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\ncontour_point_num_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "contours_to_region": {
+   "fig": "contours_to_region.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\ncontours_to_region 0.50 0.50",
+   "status": "ok"
+  },
+  "convex_fill": {
+   "fig": "convex_fill.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nconvex_fill 0.50 0.50",
+   "status": "ok"
+  },
+  "convexity": {
+   "fig": "convexity.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nconvexity 0.50 0.50",
+   "status": "ok"
+  },
+  "convexity_xld": {
+   "fig": "convexity_xld.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nconvexity_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "cooc_feature_matrix": {
+   "fig": "cooc_feature_matrix.png",
+   "out_kind": "float",
+   "program": "cooc_feature_matrix 0.50 0.50",
+   "status": "ok"
+  },
+  "corner_response": {
+   "fig": "corner_response.png",
+   "out_kind": "ndarray",
+   "program": "corner_response 0.40 0.50",
+   "status": "ok"
+  },
+  "cos_image": {
+   "fig": "cos_image.png",
+   "out_kind": "ndarray",
+   "program": "cos_image 0.50 0.50",
+   "status": "ok"
+  },
+  "count_channels": {
+   "fig": "count_channels.png",
+   "out_kind": "float",
+   "program": "cfa_to_rgb 0.50 0.50\ncount_channels 0.50 0.50",
+   "status": "ok"
+  },
+  "count_contours": {
+   "fig": "count_contours.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\ncount_contours 0.50 0.50",
+   "status": "ok"
+  },
+  "count_obj": {
+   "fig": "count_obj.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\ncount_obj 0.50 0.50",
+   "status": "ok"
+  },
+  "cv_adaptive_gauss": {
+   "fig": "cv_adaptive_gauss.png",
+   "out_kind": "ndarray",
+   "program": "cv_adaptive_gauss 0.50 0.50",
+   "status": "ok"
+  },
+  "cv_adaptive_mean": {
+   "fig": "cv_adaptive_mean.png",
+   "out_kind": "ndarray",
+   "program": "cv_adaptive_mean 0.50 0.50",
+   "status": "ok"
+  },
+  "cv_bilateral": {
+   "fig": "cv_bilateral.png",
+   "out_kind": "ndarray",
+   "program": "cv_bilateral 0.35 0.50",
+   "status": "ok"
+  },
+  "cv_blackhat": {
+   "fig": "cv_blackhat.png",
+   "out_kind": "ndarray",
+   "program": "cv_blackhat 0.35 0.50",
+   "status": "ok"
+  },
+  "cv_box": {
+   "fig": "cv_box.png",
+   "out_kind": "ndarray",
+   "program": "cv_box 0.35 0.50",
+   "status": "ok"
+  },
+  "cv_canny": {
+   "fig": "cv_canny.png",
+   "out_kind": "ndarray",
+   "program": "cv_canny 0.50 0.50",
+   "status": "ok"
+  },
+  "cv_cc_count": {
+   "fig": "cv_cc_count.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\ncv_cc_count 0.50 0.50",
+   "status": "ok"
+  },
+  "cv_clahe": {
+   "fig": "cv_clahe.png",
+   "out_kind": "ndarray",
+   "program": "cv_clahe 0.50 0.50",
+   "status": "ok"
+  },
+  "cv_close": {
+   "fig": "cv_close.png",
+   "out_kind": "ndarray",
+   "program": "cv_close 0.35 0.50",
+   "status": "ok"
+  },
+  "cv_corner_harris": {
+   "fig": "cv_corner_harris.png",
+   "out_kind": "ndarray",
+   "program": "cv_corner_harris 0.40 0.50",
+   "status": "ok"
+  },
+  "cv_dilate": {
+   "fig": "cv_dilate.png",
+   "out_kind": "ndarray",
+   "program": "cv_dilate 0.35 0.50",
+   "status": "ok"
+  },
+  "cv_dist": {
+   "fig": "cv_dist.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\ncv_dist 0.50 0.50",
+   "status": "ok"
+  },
+  "cv_erode": {
+   "fig": "cv_erode.png",
+   "out_kind": "ndarray",
+   "program": "cv_erode 0.35 0.50",
+   "status": "ok"
+  },
+  "cv_gaussian": {
+   "fig": "cv_gaussian.png",
+   "out_kind": "ndarray",
+   "program": "cv_gaussian 0.35 0.50",
+   "status": "ok"
+  },
+  "cv_good_features": {
+   "fig": "cv_good_features.png",
+   "out_kind": "float",
+   "program": "cv_good_features 0.50 0.50",
+   "status": "ok"
+  },
+  "cv_gradient": {
+   "fig": "cv_gradient.png",
+   "out_kind": "ndarray",
+   "program": "cv_gradient 0.35 0.50",
+   "status": "ok"
+  },
+  "cv_hough_circles": {
+   "fig": "cv_hough_circles.png",
+   "out_kind": "float",
+   "program": "cv_hough_circles 0.50 0.50",
+   "status": "ok"
+  },
+  "cv_hough_lines": {
+   "fig": "cv_hough_lines.png",
+   "out_kind": "float",
+   "program": "cv_hough_lines 0.50 0.50",
+   "status": "ok"
+  },
+  "cv_laplacian": {
+   "fig": "cv_laplacian.png",
+   "out_kind": "ndarray",
+   "program": "cv_laplacian 0.40 0.50",
+   "status": "ok"
+  },
+  "cv_median": {
+   "fig": "cv_median.png",
+   "out_kind": "ndarray",
+   "program": "cv_median 0.50 0.50",
+   "status": "ok"
+  },
+  "cv_min_eigen": {
+   "fig": "cv_min_eigen.png",
+   "out_kind": "ndarray",
+   "program": "cv_min_eigen 0.40 0.50",
+   "status": "ok"
+  },
+  "cv_nlmeans": {
+   "fig": "cv_nlmeans.png",
+   "out_kind": "ndarray",
+   "program": "cv_nlmeans 0.35 0.50",
+   "status": "ok"
+  },
+  "cv_open": {
+   "fig": "cv_open.png",
+   "out_kind": "ndarray",
+   "program": "cv_open 0.35 0.50",
+   "status": "ok"
+  },
+  "cv_otsu": {
+   "fig": "cv_otsu.png",
+   "out_kind": "ndarray",
+   "program": "cv_otsu 0.50 0.50",
+   "status": "ok"
+  },
+  "cv_precorner": {
+   "fig": "cv_precorner.png",
+   "out_kind": "ndarray",
+   "program": "cv_precorner 0.40 0.50",
+   "status": "ok"
+  },
+  "cv_scharr": {
+   "fig": "cv_scharr.png",
+   "out_kind": "ndarray",
+   "program": "cv_scharr 0.40 0.50",
+   "status": "ok"
+  },
+  "cv_sharpen": {
+   "fig": "cv_sharpen.png",
+   "out_kind": "ndarray",
+   "program": "cv_sharpen 0.35 0.50",
+   "status": "ok"
+  },
+  "cv_tophat": {
+   "fig": "cv_tophat.png",
+   "out_kind": "ndarray",
+   "program": "cv_tophat 0.35 0.50",
+   "status": "ok"
+  },
+  "cv_trunc": {
+   "fig": "cv_trunc.png",
+   "out_kind": "ndarray",
+   "program": "cv_trunc 0.50 0.50",
+   "status": "ok"
+  },
+  "dc_homomorphic": {
+   "fig": "dc_homomorphic.png",
+   "out_kind": "ndarray",
+   "program": "dc_homomorphic 0.50 0.50",
+   "status": "ok"
+  },
+  "dc_local_contrast_norm": {
+   "fig": "dc_local_contrast_norm.png",
+   "out_kind": "ndarray",
+   "program": "dc_local_contrast_norm 0.50 0.50",
+   "status": "ok"
+  },
+  "dc_retinex": {
+   "fig": "dc_retinex.png",
+   "out_kind": "ndarray",
+   "program": "dc_retinex 0.50 0.50",
+   "status": "ok"
+  },
+  "dc_rpca_lowrank": {
+   "fig": "dc_rpca_lowrank.png",
+   "out_kind": "ndarray",
+   "program": "dc_rpca_lowrank 0.50 0.50",
+   "status": "ok"
+  },
+  "dc_rpca_sparse": {
+   "fig": "dc_rpca_sparse.png",
+   "out_kind": "ndarray",
+   "program": "dc_rpca_sparse 0.50 0.50",
+   "status": "ok"
+  },
+  "dc_structure_texture": {
+   "fig": "dc_structure_texture.png",
+   "out_kind": "ndarray",
+   "program": "dc_structure_texture 0.50 0.50",
+   "status": "ok"
+  },
+  "dc_texture_residual": {
+   "fig": "dc_texture_residual.png",
+   "out_kind": "ndarray",
+   "program": "dc_texture_residual 0.50 0.50",
+   "status": "ok"
+  },
+  "decode_barcode": {
+   "fig": "decode_barcode.png",
+   "out_kind": "float",
+   "program": "decode_barcode 0.50 0.50",
+   "status": "ok"
+  },
+  "deform_ffd": {
+   "fig": "deform_ffd.png",
+   "out_kind": "ndarray",
+   "program": "deform_ffd 0.50 0.50",
+   "status": "ok"
+  },
+  "deform_mls": {
+   "fig": "deform_mls.png",
+   "out_kind": "ndarray",
+   "program": "deform_mls 0.50 0.50",
+   "status": "ok"
+  },
+  "deform_tps": {
+   "fig": "deform_tps.png",
+   "out_kind": "ndarray",
+   "program": "deform_tps 0.50 0.50",
+   "status": "ok"
+  },
+  "derivate_gauss": {
+   "fig": "derivate_gauss.png",
+   "out_kind": "ndarray",
+   "program": "derivate_gauss 0.40 0.50",
+   "status": "ok"
+  },
+  "deviation_image": {
+   "fig": "deviation_image.png",
+   "out_kind": "ndarray",
+   "program": "deviation_image 0.50 0.50",
+   "status": "ok"
+  },
+  "diameter_region": {
+   "fig": "diameter_region.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\ndiameter_region 0.50 0.50",
+   "status": "ok"
+  },
+  "diameter_xld": {
+   "fig": "diameter_xld.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\ndiameter_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "diff_of_gauss": {
+   "fig": "diff_of_gauss.png",
+   "out_kind": "ndarray",
+   "program": "diff_of_gauss 0.40 0.50",
+   "status": "ok"
+  },
+  "dilation_circle": {
+   "fig": "dilation_circle.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\ndilation_circle 0.50 0.50",
+   "status": "ok"
+  },
+  "dilation_golay": {
+   "fig": "dilation_golay.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\ndilation_golay 0.50 0.50",
+   "status": "ok"
+  },
+  "dilation_rectangle1": {
+   "fig": "dilation_rectangle1.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\ndilation_rectangle1 0.50 0.50",
+   "status": "ok"
+  },
+  "dilation_seq": {
+   "fig": "dilation_seq.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\ndilation_seq 0.50 0.50",
+   "status": "ok"
+  },
+  "dist_transform": {
+   "fig": "dist_transform.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\ndist_transform 0.50 0.50",
+   "status": "ok"
+  },
+  "distance_transform": {
+   "fig": "distance_transform.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\ndistance_transform 0.50 0.50",
+   "status": "ok"
+  },
+  "dl_aniso_diffusion": {
+   "fig": "dl_aniso_diffusion.png",
+   "out_kind": "ndarray",
+   "program": "dl_aniso_diffusion 0.35 0.50",
+   "status": "ok"
+  },
+  "dl_guided_filter": {
+   "fig": "dl_guided_filter.png",
+   "out_kind": "ndarray",
+   "program": "dl_guided_filter 0.35 0.50",
+   "status": "ok"
+  },
+  "dog": {
+   "fig": "dog.png",
+   "out_kind": "ndarray",
+   "program": "dog 0.40 0.50",
+   "status": "ok"
+  },
+  "dots_image": {
+   "fig": "dots_image.png",
+   "out_kind": "ndarray",
+   "program": "dots_image 0.40 0.50",
+   "status": "ok"
+  },
+  "dual_rank": {
+   "fig": "dual_rank.png",
+   "out_kind": "ndarray",
+   "program": "dual_rank 0.50 0.50",
+   "status": "ok"
+  },
+  "dual_threshold": {
+   "fig": "dual_threshold.png",
+   "out_kind": "ndarray",
+   "program": "dual_threshold 0.50 0.50",
+   "status": "ok"
+  },
+  "dyn_threshold": {
+   "fig": "dyn_threshold.png",
+   "out_kind": "ndarray",
+   "program": "dyn_threshold 0.50 0.50",
+   "status": "ok"
+  },
+  "eccentricity": {
+   "fig": "eccentricity.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\neccentricity 0.50 0.50",
+   "status": "ok"
+  },
+  "eccentricity_xld": {
+   "fig": "eccentricity_xld.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\neccentricity_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "edges_color": {
+   "fig": "edges_color.png",
+   "out_kind": "ndarray",
+   "program": "cfa_to_rgb 0.50 0.50\nedges_color 0.40 0.50",
+   "status": "ok"
+  },
+  "edges_color_sub_pix": {
+   "fig": "edges_color_sub_pix.png",
+   "out_kind": "dict",
+   "program": "cfa_to_rgb 0.50 0.50\nedges_color_sub_pix 0.50 0.50",
+   "status": "ok"
+  },
+  "edges_image": {
+   "fig": "edges_image.png",
+   "out_kind": "ndarray",
+   "program": "edges_image 0.50 0.50",
+   "status": "ok"
+  },
+  "edges_sub_pix": {
+   "fig": "edges_sub_pix.png",
+   "out_kind": "dict",
+   "program": "edges_sub_pix 0.50 0.50",
+   "status": "ok"
+  },
+  "eliminate_min_max": {
+   "fig": "eliminate_min_max.png",
+   "out_kind": "ndarray",
+   "program": "eliminate_min_max 0.50 0.50",
+   "status": "ok"
+  },
+  "eliminate_sp": {
+   "fig": "eliminate_sp.png",
+   "out_kind": "ndarray",
+   "program": "eliminate_sp 0.50 0.50",
+   "status": "ok"
+  },
+  "elliptic_axis": {
+   "fig": "elliptic_axis.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nelliptic_axis 0.50 0.50",
+   "status": "ok"
+  },
+  "elliptic_axis_xld": {
+   "fig": "elliptic_axis_xld.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nelliptic_axis_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "em_skeleton": {
+   "fig": "em_skeleton.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nem_skeleton 0.50 0.50",
+   "status": "ok"
+  },
+  "entropy_gray": {
+   "fig": "entropy_gray.png",
+   "out_kind": "float",
+   "program": "entropy_gray 0.50 0.50",
+   "status": "ok"
+  },
+  "entropy_image": {
+   "fig": "entropy_image.png",
+   "out_kind": "ndarray",
+   "program": "entropy_image 0.50 0.50",
+   "status": "ok"
+  },
+  "equ_histo_image": {
+   "fig": "equ_histo_image.png",
+   "out_kind": "ndarray",
+   "program": "equ_histo_image 0.50 0.50",
+   "status": "ok"
+  },
+  "equ_histo_image_rect": {
+   "fig": "equ_histo_image_rect.png",
+   "out_kind": "ndarray",
+   "program": "equ_histo_image_rect 0.50 0.50",
+   "status": "ok"
+  },
+  "equalize": {
+   "fig": "equalize.png",
+   "out_kind": "ndarray",
+   "program": "equalize 0.50 0.50",
+   "status": "ok"
+  },
+  "erosion_circle": {
+   "fig": "erosion_circle.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nerosion_circle 0.50 0.50",
+   "status": "ok"
+  },
+  "erosion_golay": {
+   "fig": "erosion_golay.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nerosion_golay 0.50 0.50",
+   "status": "ok"
+  },
+  "erosion_rectangle1": {
+   "fig": "erosion_rectangle1.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nerosion_rectangle1 0.50 0.50",
+   "status": "ok"
+  },
+  "erosion_seq": {
+   "fig": "erosion_seq.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nerosion_seq 0.50 0.50",
+   "status": "ok"
+  },
+  "estimate_noise": {
+   "fig": "estimate_noise.png",
+   "out_kind": "float",
+   "program": "estimate_noise 0.50 0.50",
+   "status": "ok"
+  },
+  "euler_number": {
+   "fig": "euler_number.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\neuler_number 0.50 0.50",
+   "status": "ok"
+  },
+  "exp_image": {
+   "fig": "exp_image.png",
+   "out_kind": "ndarray",
+   "program": "exp_image 0.50 0.50",
+   "status": "ok"
+  },
+  "f2_bit_slice": {
+   "fig": "f2_bit_slice.png",
+   "out_kind": "ndarray",
+   "program": "f2_bit_slice 0.50 0.50",
+   "status": "ok"
+  },
+  "f2_expand_domain": {
+   "fig": "f2_expand_domain.png",
+   "out_kind": "ndarray",
+   "program": "f2_expand_domain 0.50 0.50",
+   "status": "ok"
+  },
+  "f2_gauss_pyramid": {
+   "fig": "f2_gauss_pyramid.png",
+   "out_kind": "ndarray",
+   "program": "f2_gauss_pyramid 0.35 0.50",
+   "status": "ok"
+  },
+  "f2_gray_inside": {
+   "fig": "f2_gray_inside.png",
+   "out_kind": "ndarray",
+   "program": "f2_gray_inside 0.35 0.50",
+   "status": "ok"
+  },
+  "f2_gray_skeleton": {
+   "fig": "f2_gray_skeleton.png",
+   "out_kind": "ndarray",
+   "program": "f2_gray_skeleton 0.35 0.50",
+   "status": "ok"
+  },
+  "f2_lut_trans": {
+   "fig": "f2_lut_trans.png",
+   "out_kind": "ndarray",
+   "program": "f2_lut_trans 0.50 0.50",
+   "status": "ok"
+  },
+  "f2_shock": {
+   "fig": "f2_shock.png",
+   "out_kind": "ndarray",
+   "program": "f2_shock 0.40 0.50",
+   "status": "ok"
+  },
+  "f2_symmetry": {
+   "fig": "f2_symmetry.png",
+   "out_kind": "ndarray",
+   "program": "f2_symmetry 0.50 0.50",
+   "status": "ok"
+  },
+  "f2_topographic": {
+   "fig": "f2_topographic.png",
+   "out_kind": "ndarray",
+   "program": "f2_topographic 0.40 0.50",
+   "status": "ok"
+  },
+  "fast_threshold": {
+   "fig": "fast_threshold.png",
+   "out_kind": "ndarray",
+   "program": "fast_threshold 0.50 0.50",
+   "status": "ok"
+  },
+  "fft_generic": {
+   "fig": "fft_generic.png",
+   "out_kind": "ndarray",
+   "program": "fft_generic 0.40 0.50",
+   "status": "ok"
+  },
+  "fft_image": {
+   "fig": "fft_image.png",
+   "out_kind": "ndarray",
+   "program": "fft_image 0.40 0.50",
+   "status": "ok"
+  },
+  "fft_image_inv": {
+   "fig": "fft_image_inv.png",
+   "out_kind": "ndarray",
+   "program": "fft_image_inv 0.40 0.50",
+   "status": "ok"
+  },
+  "fill_holes": {
+   "fig": "fill_holes.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nfill_holes 0.50 0.50",
+   "status": "ok"
+  },
+  "fill_up": {
+   "fig": "fill_up.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nfill_up 0.50 0.50",
+   "status": "ok"
+  },
+  "fill_up_shape": {
+   "fig": "fill_up_shape.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nfill_up_shape 0.50 0.50",
+   "status": "ok"
+  },
+  "fit_line_contours": {
+   "fig": "fit_line_contours.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nfit_line_contours 0.50 0.50",
+   "status": "ok"
+  },
+  "frei_amp": {
+   "fig": "frei_amp.png",
+   "out_kind": "ndarray",
+   "program": "frei_amp 0.40 0.50",
+   "status": "ok"
+  },
+  "frei_dir": {
+   "fig": "frei_dir.png",
+   "out_kind": "ndarray",
+   "program": "frei_dir 0.40 0.50",
+   "status": "ok"
+  },
+  "gabor": {
+   "fig": "gabor.png",
+   "out_kind": "ndarray",
+   "program": "gabor 0.50 0.50",
+   "status": "ok"
+  },
+  "gamma": {
+   "fig": "gamma.png",
+   "out_kind": "ndarray",
+   "program": "gamma 0.50 0.50",
+   "status": "ok"
+  },
+  "gamma_image": {
+   "fig": "gamma_image.png",
+   "out_kind": "ndarray",
+   "program": "gamma_image 0.50 0.50",
+   "status": "ok"
+  },
+  "gauss_filter": {
+   "fig": "gauss_filter.png",
+   "out_kind": "ndarray",
+   "program": "gauss_filter 0.35 0.50",
+   "status": "ok"
+  },
+  "gauss_image": {
+   "fig": "gauss_image.png",
+   "out_kind": "ndarray",
+   "program": "gauss_image 0.35 0.50",
+   "status": "ok"
+  },
+  "gaussian": {
+   "fig": "gaussian.png",
+   "out_kind": "ndarray",
+   "program": "gaussian 0.35 0.50",
+   "status": "ok"
+  },
+  "gclose": {
+   "fig": "gclose.png",
+   "out_kind": "ndarray",
+   "program": "gclose 0.35 0.50",
+   "status": "ok"
+  },
+  "gdilate": {
+   "fig": "gdilate.png",
+   "out_kind": "ndarray",
+   "program": "gdilate 0.35 0.50",
+   "status": "ok"
+  },
+  "gen_contour_region_xld": {
+   "fig": "gen_contour_region_xld.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\ngen_contour_region_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "gen_gabor": {
+   "fig": "gen_gabor.png",
+   "out_kind": "ndarray",
+   "program": "gen_gabor 0.50 0.50",
+   "status": "ok"
+  },
+  "gen_region_contour_xld": {
+   "fig": "gen_region_contour_xld.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\ngen_region_contour_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "gen_region_polygon_xld": {
+   "fig": "gen_region_polygon_xld.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\ngen_region_polygon_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "gerode": {
+   "fig": "gerode.png",
+   "out_kind": "ndarray",
+   "program": "gerode 0.35 0.50",
+   "status": "ok"
+  },
+  "get_region_contour": {
+   "fig": "get_region_contour.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nget_region_contour 0.50 0.50",
+   "status": "ok"
+  },
+  "get_region_convex": {
+   "fig": "get_region_convex.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nget_region_convex 0.50 0.50",
+   "status": "ok"
+  },
+  "get_region_thickness": {
+   "fig": "get_region_thickness.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nget_region_thickness 0.50 0.50",
+   "status": "ok"
+  },
+  "gopen": {
+   "fig": "gopen.png",
+   "out_kind": "ndarray",
+   "program": "gopen 0.35 0.50",
+   "status": "ok"
+  },
+  "grad_dir": {
+   "fig": "grad_dir.png",
+   "out_kind": "ndarray",
+   "program": "grad_dir 0.40 0.50",
+   "status": "ok"
+  },
+  "gray_bothat": {
+   "fig": "gray_bothat.png",
+   "out_kind": "ndarray",
+   "program": "gray_bothat 0.35 0.50",
+   "status": "ok"
+  },
+  "gray_closing": {
+   "fig": "gray_closing.png",
+   "out_kind": "ndarray",
+   "program": "gray_closing 0.35 0.50",
+   "status": "ok"
+  },
+  "gray_closing_rect": {
+   "fig": "gray_closing_rect.png",
+   "out_kind": "ndarray",
+   "program": "gray_closing_rect 0.35 0.50",
+   "status": "ok"
+  },
+  "gray_closing_shape": {
+   "fig": "gray_closing_shape.png",
+   "out_kind": "ndarray",
+   "program": "gray_closing_shape 0.35 0.50",
+   "status": "ok"
+  },
+  "gray_dilation": {
+   "fig": "gray_dilation.png",
+   "out_kind": "ndarray",
+   "program": "gray_dilation 0.35 0.50",
+   "status": "ok"
+  },
+  "gray_dilation_rect": {
+   "fig": "gray_dilation_rect.png",
+   "out_kind": "ndarray",
+   "program": "gray_dilation_rect 0.50 0.50",
+   "status": "ok"
+  },
+  "gray_dilation_shape": {
+   "fig": "gray_dilation_shape.png",
+   "out_kind": "ndarray",
+   "program": "gray_dilation_shape 0.35 0.50",
+   "status": "ok"
+  },
+  "gray_erosion": {
+   "fig": "gray_erosion.png",
+   "out_kind": "ndarray",
+   "program": "gray_erosion 0.35 0.50",
+   "status": "ok"
+  },
+  "gray_erosion_rect": {
+   "fig": "gray_erosion_rect.png",
+   "out_kind": "ndarray",
+   "program": "gray_erosion_rect 0.50 0.50",
+   "status": "ok"
+  },
+  "gray_erosion_shape": {
+   "fig": "gray_erosion_shape.png",
+   "out_kind": "ndarray",
+   "program": "gray_erosion_shape 0.35 0.50",
+   "status": "ok"
+  },
+  "gray_histo_abs": {
+   "fig": "gray_histo_abs.png",
+   "out_kind": "float",
+   "program": "gray_histo_abs 0.50 0.50",
+   "status": "ok"
+  },
+  "gray_opening": {
+   "fig": "gray_opening.png",
+   "out_kind": "ndarray",
+   "program": "gray_opening 0.35 0.50",
+   "status": "ok"
+  },
+  "gray_opening_rect": {
+   "fig": "gray_opening_rect.png",
+   "out_kind": "ndarray",
+   "program": "gray_opening_rect 0.35 0.50",
+   "status": "ok"
+  },
+  "gray_opening_shape": {
+   "fig": "gray_opening_shape.png",
+   "out_kind": "ndarray",
+   "program": "gray_opening_shape 0.35 0.50",
+   "status": "ok"
+  },
+  "gray_range_rect": {
+   "fig": "gray_range_rect.png",
+   "out_kind": "ndarray",
+   "program": "gray_range_rect 0.50 0.50",
+   "status": "ok"
+  },
+  "gray_tophat": {
+   "fig": "gray_tophat.png",
+   "out_kind": "ndarray",
+   "program": "gray_tophat 0.35 0.50",
+   "status": "ok"
+  },
+  "guided_filter": {
+   "fig": "guided_filter.png",
+   "out_kind": "ndarray",
+   "program": "guided_filter 0.35 0.50",
+   "status": "ok"
+  },
+  "h_threshold": {
+   "fig": "h_threshold.png",
+   "out_kind": "ndarray",
+   "program": "h_threshold 0.50 0.50",
+   "status": "ok"
+  },
+  "height_width_ratio": {
+   "fig": "height_width_ratio.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nheight_width_ratio 0.50 0.50",
+   "status": "ok"
+  },
+  "highpass": {
+   "fig": "highpass.png",
+   "out_kind": "ndarray",
+   "program": "highpass 0.40 0.50",
+   "status": "ok"
+  },
+  "highpass_image": {
+   "fig": "highpass_image.png",
+   "out_kind": "ndarray",
+   "program": "highpass_image 0.40 0.50",
+   "status": "ok"
+  },
+  "hough_circle_trans": {
+   "fig": "hough_circle_trans.png",
+   "out_kind": "ndarray",
+   "program": "hough_circle_trans 0.50 0.50",
+   "status": "ok"
+  },
+  "hough_line_trans": {
+   "fig": "hough_line_trans.png",
+   "out_kind": "ndarray",
+   "program": "hough_line_trans 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_add_noise_contour": {
+   "fig": "hx_add_noise_contour.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_add_noise_contour 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_char_threshold": {
+   "fig": "hx_char_threshold.png",
+   "out_kind": "ndarray",
+   "program": "hx_char_threshold 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_clip_contours": {
+   "fig": "hx_clip_contours.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_clip_contours 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_clip_end_points": {
+   "fig": "hx_clip_end_points.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_clip_end_points 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_clip_region_rel": {
+   "fig": "hx_clip_region_rel.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nhx_clip_region_rel 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_close_edges": {
+   "fig": "hx_close_edges.png",
+   "out_kind": "ndarray",
+   "program": "hx_close_edges 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_close_edges_length": {
+   "fig": "hx_close_edges_length.png",
+   "out_kind": "ndarray",
+   "program": "hx_close_edges_length 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_closing": {
+   "fig": "hx_closing.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nhx_closing 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_cooc_feature": {
+   "fig": "hx_cooc_feature.png",
+   "out_kind": "float",
+   "program": "hx_cooc_feature 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_crop_contours": {
+   "fig": "hx_crop_contours.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_crop_contours 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_detect_edge_segments": {
+   "fig": "hx_detect_edge_segments.png",
+   "out_kind": "ndarray",
+   "program": "hx_detect_edge_segments 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_dilation1": {
+   "fig": "hx_dilation1.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nhx_dilation1 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_dilation2": {
+   "fig": "hx_dilation2.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nhx_dilation2 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_disparity_to_xyz": {
+   "fig": "hx_disparity_to_xyz.png",
+   "out_kind": "ndarray",
+   "program": "hx_disparity_to_xyz 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_dist_ellipse_contour": {
+   "fig": "hx_dist_ellipse_contour.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_dist_ellipse_contour 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_dist_ellipse_points": {
+   "fig": "hx_dist_ellipse_points.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_dist_ellipse_points 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_dist_rect2_points": {
+   "fig": "hx_dist_rect2_points.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_dist_rect2_points 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_distance_pc": {
+   "fig": "hx_distance_pc.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_distance_pc 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_distance_pr": {
+   "fig": "hx_distance_pr.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nhx_distance_pr 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_distance_sc": {
+   "fig": "hx_distance_sc.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_distance_sc 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_erosion1": {
+   "fig": "hx_erosion1.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nhx_erosion1 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_estimate_al_am": {
+   "fig": "hx_estimate_al_am.png",
+   "out_kind": "float",
+   "program": "hx_estimate_al_am 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_estimate_sl_al_lr": {
+   "fig": "hx_estimate_sl_al_lr.png",
+   "out_kind": "float",
+   "program": "hx_estimate_sl_al_lr 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_estimate_sl_al_zc": {
+   "fig": "hx_estimate_sl_al_zc.png",
+   "out_kind": "float",
+   "program": "hx_estimate_sl_al_zc 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_estimate_tilt_lr": {
+   "fig": "hx_estimate_tilt_lr.png",
+   "out_kind": "float",
+   "program": "hx_estimate_tilt_lr 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_estimate_tilt_zc": {
+   "fig": "hx_estimate_tilt_zc.png",
+   "out_kind": "float",
+   "program": "hx_estimate_tilt_zc 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_expand_region": {
+   "fig": "hx_expand_region.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nhx_expand_region 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_fill_interlace": {
+   "fig": "hx_fill_interlace.png",
+   "out_kind": "ndarray",
+   "program": "hx_fill_interlace 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_fit_circle_contour": {
+   "fig": "hx_fit_circle_contour.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_fit_circle_contour 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_fit_ellipse_contour": {
+   "fig": "hx_fit_ellipse_contour.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_fit_ellipse_contour 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_fit_rectangle2_contour": {
+   "fig": "hx_fit_rectangle2_contour.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_fit_rectangle2_contour 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_fit_surface1": {
+   "fig": "hx_fit_surface1.png",
+   "out_kind": "ndarray",
+   "program": "hx_fit_surface1 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_fit_surface2": {
+   "fig": "hx_fit_surface2.png",
+   "out_kind": "ndarray",
+   "program": "hx_fit_surface2 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_full_domain": {
+   "fig": "hx_full_domain.png",
+   "out_kind": "ndarray",
+   "program": "hx_full_domain 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_fuzzy_measure_pairs": {
+   "fig": "hx_fuzzy_measure_pairs.png",
+   "out_kind": "float",
+   "program": "hx_fuzzy_measure_pairs 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_gabor": {
+   "fig": "hx_gabor.png",
+   "out_kind": "ndarray",
+   "program": "hx_gabor 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_gen_bandfilter": {
+   "fig": "hx_gen_bandfilter.png",
+   "out_kind": "ndarray",
+   "program": "hx_gen_bandfilter 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_gen_bandpass": {
+   "fig": "hx_gen_bandpass.png",
+   "out_kind": "ndarray",
+   "program": "hx_gen_bandpass 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_gen_checker_region": {
+   "fig": "hx_gen_checker_region.png",
+   "out_kind": "ndarray",
+   "program": "hx_gen_checker_region 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_gen_circle": {
+   "fig": "hx_gen_circle.png",
+   "out_kind": "ndarray",
+   "program": "hx_gen_circle 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_gen_circle_sector": {
+   "fig": "hx_gen_circle_sector.png",
+   "out_kind": "ndarray",
+   "program": "hx_gen_circle_sector 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_gen_derivative_filter": {
+   "fig": "hx_gen_derivative_filter.png",
+   "out_kind": "ndarray",
+   "program": "hx_gen_derivative_filter 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_gen_disc_se": {
+   "fig": "hx_gen_disc_se.png",
+   "out_kind": "ndarray",
+   "program": "hx_gen_disc_se 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_gen_ellipse": {
+   "fig": "hx_gen_ellipse.png",
+   "out_kind": "ndarray",
+   "program": "hx_gen_ellipse 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_gen_ellipse_sector": {
+   "fig": "hx_gen_ellipse_sector.png",
+   "out_kind": "ndarray",
+   "program": "hx_gen_ellipse_sector 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_gen_empty_region": {
+   "fig": "hx_gen_empty_region.png",
+   "out_kind": "ndarray",
+   "program": "hx_gen_empty_region 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_gen_grid_region": {
+   "fig": "hx_gen_grid_region.png",
+   "out_kind": "ndarray",
+   "program": "hx_gen_grid_region 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_gen_highpass": {
+   "fig": "hx_gen_highpass.png",
+   "out_kind": "ndarray",
+   "program": "hx_gen_highpass 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_gen_image_proto": {
+   "fig": "hx_gen_image_proto.png",
+   "out_kind": "ndarray",
+   "program": "hx_gen_image_proto 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_gen_lowpass": {
+   "fig": "hx_gen_lowpass.png",
+   "out_kind": "ndarray",
+   "program": "hx_gen_lowpass 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_gen_parallel_contour": {
+   "fig": "hx_gen_parallel_contour.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_gen_parallel_contour 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_gen_rectangle2": {
+   "fig": "hx_gen_rectangle2.png",
+   "out_kind": "ndarray",
+   "program": "hx_gen_rectangle2 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_get_domain": {
+   "fig": "hx_get_domain.png",
+   "out_kind": "ndarray",
+   "program": "hx_get_domain 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_histo_to_thresh": {
+   "fig": "hx_histo_to_thresh.png",
+   "out_kind": "ndarray",
+   "program": "hx_histo_to_thresh 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_lowlands": {
+   "fig": "hx_lowlands.png",
+   "out_kind": "ndarray",
+   "program": "hx_lowlands 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_mean_shape": {
+   "fig": "hx_mean_shape.png",
+   "out_kind": "ndarray",
+   "program": "hx_mean_shape 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_moments_any_xld": {
+   "fig": "hx_moments_any_xld.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_moments_any_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_move_region": {
+   "fig": "hx_move_region.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nhx_move_region 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_nonmax_dir": {
+   "fig": "hx_nonmax_dir.png",
+   "out_kind": "ndarray",
+   "program": "hx_nonmax_dir 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_opening": {
+   "fig": "hx_opening.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nhx_opening 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_plane_deviation": {
+   "fig": "hx_plane_deviation.png",
+   "out_kind": "ndarray",
+   "program": "hx_plane_deviation 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_plateaus_center": {
+   "fig": "hx_plateaus_center.png",
+   "out_kind": "ndarray",
+   "program": "hx_plateaus_center 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_polar_trans_inv": {
+   "fig": "hx_polar_trans_inv.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_polar_trans_inv 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_radial_distort_contour": {
+   "fig": "hx_radial_distort_contour.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_radial_distort_contour 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_rectangle1_domain": {
+   "fig": "hx_rectangle1_domain.png",
+   "out_kind": "ndarray",
+   "program": "hx_rectangle1_domain 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_region_to_label": {
+   "fig": "hx_region_to_label.png",
+   "out_kind": "ndarray",
+   "program": "hx_region_to_label 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_region_to_mean": {
+   "fig": "hx_region_to_mean.png",
+   "out_kind": "ndarray",
+   "program": "hx_region_to_mean 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_regress_contours": {
+   "fig": "hx_regress_contours.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_regress_contours 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_select_xld_point": {
+   "fig": "hx_select_xld_point.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_select_xld_point 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_shade_height_field": {
+   "fig": "hx_shade_height_field.png",
+   "out_kind": "ndarray",
+   "program": "hx_shade_height_field 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_smallest_circle_xld": {
+   "fig": "hx_smallest_circle_xld.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_smallest_circle_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_smallest_rect1_xld": {
+   "fig": "hx_smallest_rect1_xld.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_smallest_rect1_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_smallest_rect2_xld": {
+   "fig": "hx_smallest_rect2_xld.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_smallest_rect2_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_sort_contours": {
+   "fig": "hx_sort_contours.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_sort_contours 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_split_contours": {
+   "fig": "hx_split_contours.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_split_contours 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_split_skeleton_region": {
+   "fig": "hx_split_skeleton_region.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nhx_split_skeleton_region 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_test_closed_xld": {
+   "fig": "hx_test_closed_xld.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_test_closed_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_test_region_point": {
+   "fig": "hx_test_region_point.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nhx_test_region_point 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_test_region_points": {
+   "fig": "hx_test_region_points.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nhx_test_region_points 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_test_self_intersect": {
+   "fig": "hx_test_self_intersect.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_test_self_intersect 0.50 0.50",
+   "status": "ok"
+  },
+  "hx_union_adjacent": {
+   "fig": "hx_union_adjacent.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nhx_union_adjacent 0.50 0.50",
+   "status": "ok"
+  },
+  "hysteresis_threshold": {
+   "fig": "hysteresis_threshold.png",
+   "out_kind": "ndarray",
+   "program": "hysteresis_threshold 0.50 0.50",
+   "status": "ok"
+  },
+  "identity": {
+   "fig": "identity.png",
+   "out_kind": "ndarray",
+   "program": "identity 0.50 0.50",
+   "status": "ok"
+  },
+  "illuminate": {
+   "fig": "illuminate.png",
+   "out_kind": "ndarray",
+   "program": "illuminate 0.50 0.50",
+   "status": "ok"
+  },
+  "intensity": {
+   "fig": "intensity.png",
+   "out_kind": "float",
+   "program": "intensity 0.50 0.50",
+   "status": "ok"
+  },
+  "invert": {
+   "fig": "invert.png",
+   "out_kind": "ndarray",
+   "program": "invert 0.50 0.50",
+   "status": "ok"
+  },
+  "invert_image": {
+   "fig": "invert_image.png",
+   "out_kind": "ndarray",
+   "program": "invert_image 0.50 0.50",
+   "status": "ok"
+  },
+  "invert_region": {
+   "fig": "invert_region.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\ninvert_region 0.50 0.50",
+   "status": "ok"
+  },
+  "isotropic_diffusion": {
+   "fig": "isotropic_diffusion.png",
+   "out_kind": "ndarray",
+   "program": "isotropic_diffusion 0.35 0.50",
+   "status": "ok"
+  },
+  "it_add_image_border": {
+   "fig": "it_add_image_border.png",
+   "out_kind": "ndarray",
+   "program": "it_add_image_border 0.50 0.50",
+   "status": "ok"
+  },
+  "it_bit_lshift": {
+   "fig": "it_bit_lshift.png",
+   "out_kind": "ndarray",
+   "program": "it_bit_lshift 0.50 0.50",
+   "status": "ok"
+  },
+  "it_bit_mask": {
+   "fig": "it_bit_mask.png",
+   "out_kind": "ndarray",
+   "program": "it_bit_mask 0.50 0.50",
+   "status": "ok"
+  },
+  "it_bit_rshift": {
+   "fig": "it_bit_rshift.png",
+   "out_kind": "ndarray",
+   "program": "it_bit_rshift 0.50 0.50",
+   "status": "ok"
+  },
+  "it_change_format": {
+   "fig": "it_change_format.png",
+   "out_kind": "ndarray",
+   "program": "it_change_format 0.50 0.50",
+   "status": "ok"
+  },
+  "it_convert_image_type": {
+   "fig": "it_convert_image_type.png",
+   "out_kind": "ndarray",
+   "program": "it_convert_image_type 0.50 0.50",
+   "status": "ok"
+  },
+  "it_crop_domain": {
+   "fig": "it_crop_domain.png",
+   "out_kind": "ndarray",
+   "program": "it_crop_domain 0.50 0.50",
+   "status": "ok"
+  },
+  "it_crop_part": {
+   "fig": "it_crop_part.png",
+   "out_kind": "ndarray",
+   "program": "it_crop_part 0.50 0.50",
+   "status": "ok"
+  },
+  "it_crop_rectangle1": {
+   "fig": "it_crop_rectangle1.png",
+   "out_kind": "ndarray",
+   "program": "it_crop_rectangle1 0.50 0.50",
+   "status": "ok"
+  },
+  "it_full_domain": {
+   "fig": "it_full_domain.png",
+   "out_kind": "ndarray",
+   "program": "it_full_domain 0.50 0.50",
+   "status": "ok"
+  },
+  "it_region_to_bin": {
+   "fig": "it_region_to_bin.png",
+   "out_kind": "ndarray",
+   "program": "it_region_to_bin 0.50 0.50",
+   "status": "ok"
+  },
+  "iv_backproject_superres": {
+   "fig": "iv_backproject_superres.png",
+   "out_kind": "ndarray",
+   "program": "iv_backproject_superres 0.50 0.50",
+   "status": "ok"
+  },
+  "iv_gradient_inpaint": {
+   "fig": "iv_gradient_inpaint.png",
+   "out_kind": "ndarray",
+   "program": "iv_gradient_inpaint 0.50 0.50",
+   "status": "ok"
+  },
+  "iv_motion_deblur": {
+   "fig": "iv_motion_deblur.png",
+   "out_kind": "ndarray",
+   "program": "iv_motion_deblur 0.50 0.50",
+   "status": "ok"
+  },
+  "iv_richardson_lucy": {
+   "fig": "iv_richardson_lucy.png",
+   "out_kind": "ndarray",
+   "program": "iv_richardson_lucy 0.50 0.50",
+   "status": "ok"
+  },
+  "iv_unsharp_deblur": {
+   "fig": "iv_unsharp_deblur.png",
+   "out_kind": "ndarray",
+   "program": "iv_unsharp_deblur 0.50 0.50",
+   "status": "ok"
+  },
+  "iv_wiener_deconv_spatial": {
+   "fig": "iv_wiener_deconv_spatial.png",
+   "out_kind": "ndarray",
+   "program": "iv_wiener_deconv_spatial 0.50 0.50",
+   "status": "ok"
+  },
+  "junctions_skeleton": {
+   "fig": "junctions_skeleton.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\njunctions_skeleton 0.50 0.50",
+   "status": "ok"
+  },
+  "kirsch_amp": {
+   "fig": "kirsch_amp.png",
+   "out_kind": "ndarray",
+   "program": "kirsch_amp 0.40 0.50",
+   "status": "ok"
+  },
+  "kirsch_dir": {
+   "fig": "kirsch_dir.png",
+   "out_kind": "ndarray",
+   "program": "kirsch_dir 0.40 0.50",
+   "status": "ok"
+  },
+  "laplace": {
+   "fig": "laplace.png",
+   "out_kind": "ndarray",
+   "program": "laplace 0.40 0.50",
+   "status": "ok"
+  },
+  "laplace_of_gauss": {
+   "fig": "laplace_of_gauss.png",
+   "out_kind": "ndarray",
+   "program": "laplace_of_gauss 0.40 0.50",
+   "status": "ok"
+  },
+  "length_xld": {
+   "fig": "length_xld.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nlength_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "linear_trans_color": {
+   "fig": "linear_trans_color.png",
+   "out_kind": "ndarray",
+   "program": "cfa_to_rgb 0.50 0.50\nlinear_trans_color 0.50 0.50",
+   "status": "ok"
+  },
+  "lines_color": {
+   "fig": "lines_color.png",
+   "out_kind": "dict",
+   "program": "cfa_to_rgb 0.50 0.50\nlines_color 0.50 0.50",
+   "status": "ok"
+  },
+  "lines_facet": {
+   "fig": "lines_facet.png",
+   "out_kind": "dict",
+   "program": "lines_facet 0.50 0.50",
+   "status": "ok"
+  },
+  "lines_gauss": {
+   "fig": "lines_gauss.png",
+   "out_kind": "dict",
+   "program": "lines_gauss 0.50 0.50",
+   "status": "ok"
+  },
+  "local_max": {
+   "fig": "local_max.png",
+   "out_kind": "ndarray",
+   "program": "local_max 0.50 0.50",
+   "status": "ok"
+  },
+  "local_min": {
+   "fig": "local_min.png",
+   "out_kind": "ndarray",
+   "program": "local_min 0.50 0.50",
+   "status": "ok"
+  },
+  "local_threshold": {
+   "fig": "local_threshold.png",
+   "out_kind": "ndarray",
+   "program": "local_threshold 0.50 0.50",
+   "status": "ok"
+  },
+  "log": {
+   "fig": "log.png",
+   "out_kind": "ndarray",
+   "program": "log 0.40 0.50",
+   "status": "ok"
+  },
+  "log_image": {
+   "fig": "log_image.png",
+   "out_kind": "ndarray",
+   "program": "log_image 0.50 0.50",
+   "status": "ok"
+  },
+  "lowpass": {
+   "fig": "lowpass.png",
+   "out_kind": "ndarray",
+   "program": "lowpass 0.40 0.50",
+   "status": "ok"
+  },
+  "m1_fuzzy_measure_pos": {
+   "fig": "m1_fuzzy_measure_pos.png",
+   "out_kind": "dict",
+   "program": "m1_fuzzy_measure_pos 0.50 0.50",
+   "status": "ok"
+  },
+  "m1_measure_pairs": {
+   "fig": "m1_measure_pairs.png",
+   "out_kind": "float",
+   "program": "m1_measure_pairs 0.50 0.50",
+   "status": "ok"
+  },
+  "m1_measure_pos": {
+   "fig": "m1_measure_pos.png",
+   "out_kind": "dict",
+   "program": "m1_measure_pos 0.50 0.50",
+   "status": "ok"
+  },
+  "m1_measure_projection": {
+   "fig": "m1_measure_projection.png",
+   "out_kind": "float",
+   "program": "m1_measure_projection 0.50 0.50",
+   "status": "ok"
+  },
+  "m1_measure_thresh": {
+   "fig": "m1_measure_thresh.png",
+   "out_kind": "float",
+   "program": "m1_measure_thresh 0.50 0.50",
+   "status": "ok"
+  },
+  "macro_binarize": {
+   "fig": "macro_binarize.png",
+   "out_kind": "ndarray",
+   "program": "macro_binarize 0.50 0.50",
+   "status": "ok"
+  },
+  "macro_denoise": {
+   "fig": "macro_denoise.png",
+   "out_kind": "ndarray",
+   "program": "macro_denoise 0.50 0.50",
+   "status": "ok"
+  },
+  "macro_edge": {
+   "fig": "macro_edge.png",
+   "out_kind": "ndarray",
+   "program": "macro_edge 0.50 0.50",
+   "status": "ok"
+  },
+  "macro_vol_denoise": {
+   "in_sort": "volume",
+   "reason": "画像から `volume` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "max_filter": {
+   "fig": "max_filter.png",
+   "out_kind": "ndarray",
+   "program": "max_filter 0.50 0.50",
+   "status": "ok"
+  },
+  "mean_box": {
+   "fig": "mean_box.png",
+   "out_kind": "ndarray",
+   "program": "mean_box 0.35 0.50",
+   "status": "ok"
+  },
+  "mean_curvature_flow": {
+   "fig": "mean_curvature_flow.png",
+   "out_kind": "ndarray",
+   "program": "mean_curvature_flow 0.35 0.50",
+   "status": "ok"
+  },
+  "mean_image": {
+   "fig": "mean_image.png",
+   "out_kind": "ndarray",
+   "program": "mean_image 0.35 0.50",
+   "status": "ok"
+  },
+  "mean_sp": {
+   "fig": "mean_sp.png",
+   "out_kind": "ndarray",
+   "program": "mean_sp 0.50 0.50",
+   "status": "ok"
+  },
+  "median": {
+   "fig": "median.png",
+   "out_kind": "ndarray",
+   "program": "median 0.50 0.50",
+   "status": "ok"
+  },
+  "median_image": {
+   "fig": "median_image.png",
+   "out_kind": "ndarray",
+   "program": "median_image 0.50 0.50",
+   "status": "ok"
+  },
+  "median_rect": {
+   "fig": "median_rect.png",
+   "out_kind": "ndarray",
+   "program": "median_rect 0.50 0.50",
+   "status": "ok"
+  },
+  "median_separate": {
+   "fig": "median_separate.png",
+   "out_kind": "ndarray",
+   "program": "median_separate 0.50 0.50",
+   "status": "ok"
+  },
+  "median_weighted": {
+   "fig": "median_weighted.png",
+   "out_kind": "ndarray",
+   "program": "median_weighted 0.50 0.50",
+   "status": "ok"
+  },
+  "min_filter": {
+   "fig": "min_filter.png",
+   "out_kind": "ndarray",
+   "program": "min_filter 0.50 0.50",
+   "status": "ok"
+  },
+  "min_max_gray": {
+   "fig": "min_max_gray.png",
+   "out_kind": "float",
+   "program": "min_max_gray 0.50 0.50",
+   "status": "ok"
+  },
+  "mirror_image": {
+   "fig": "mirror_image.png",
+   "out_kind": "ndarray",
+   "program": "mirror_image 0.50 0.50",
+   "status": "ok"
+  },
+  "mirror_region": {
+   "fig": "mirror_region.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nmirror_region 0.50 0.50",
+   "status": "ok"
+  },
+  "moments_region_2nd": {
+   "fig": "moments_region_2nd.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nmoments_region_2nd 0.50 0.50",
+   "status": "ok"
+  },
+  "moments_region_2nd_invar": {
+   "fig": "moments_region_2nd_invar.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nmoments_region_2nd_invar 0.50 0.50",
+   "status": "ok"
+  },
+  "moments_region_2nd_rel_invar": {
+   "fig": "moments_region_2nd_rel_invar.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nmoments_region_2nd_rel_invar 0.50 0.50",
+   "status": "ok"
+  },
+  "moments_region_3rd": {
+   "fig": "moments_region_3rd.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nmoments_region_3rd 0.50 0.50",
+   "status": "ok"
+  },
+  "moments_region_3rd_invar": {
+   "fig": "moments_region_3rd_invar.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nmoments_region_3rd_invar 0.50 0.50",
+   "status": "ok"
+  },
+  "moments_region_central": {
+   "fig": "moments_region_central.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nmoments_region_central 0.50 0.50",
+   "status": "ok"
+  },
+  "moments_region_central_invar": {
+   "fig": "moments_region_central_invar.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nmoments_region_central_invar 0.50 0.50",
+   "status": "ok"
+  },
+  "moments_xld": {
+   "fig": "moments_xld.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nmoments_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "monotony": {
+   "fig": "monotony.png",
+   "out_kind": "ndarray",
+   "program": "monotony 0.50 0.50",
+   "status": "ok"
+  },
+  "morph_grad": {
+   "fig": "morph_grad.png",
+   "out_kind": "ndarray",
+   "program": "morph_grad 0.35 0.50",
+   "status": "ok"
+  },
+  "morph_skeleton": {
+   "fig": "morph_skeleton.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nmorph_skeleton 0.50 0.50",
+   "status": "ok"
+  },
+  "ncc_locate": {
+   "fig": "ncc_locate.png",
+   "out_kind": "ndarray",
+   "program": "ncc_locate 0.50 0.50",
+   "status": "ok"
+  },
+  "nonmax_suppression_amp": {
+   "fig": "nonmax_suppression_amp.png",
+   "out_kind": "ndarray",
+   "program": "nonmax_suppression_amp 0.50 0.50",
+   "status": "ok"
+  },
+  "opening_circle": {
+   "fig": "opening_circle.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nopening_circle 0.50 0.50",
+   "status": "ok"
+  },
+  "opening_golay": {
+   "fig": "opening_golay.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nopening_golay 0.50 0.50",
+   "status": "ok"
+  },
+  "opening_rectangle1": {
+   "fig": "opening_rectangle1.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nopening_rectangle1 0.50 0.50",
+   "status": "ok"
+  },
+  "orientation_region": {
+   "fig": "orientation_region.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\norientation_region 0.50 0.50",
+   "status": "ok"
+  },
+  "orientation_xld": {
+   "fig": "orientation_xld.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\norientation_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "otsu": {
+   "fig": "otsu.png",
+   "out_kind": "ndarray",
+   "program": "otsu 0.50 0.50",
+   "status": "ok"
+  },
+  "percentile": {
+   "fig": "percentile.png",
+   "out_kind": "ndarray",
+   "program": "percentile 0.50 0.50",
+   "status": "ok"
+  },
+  "ph_coherence_enhancing_diffusion": {
+   "fig": "ph_coherence_enhancing_diffusion.png",
+   "out_kind": "ndarray",
+   "program": "ph_coherence_enhancing_diffusion 0.50 0.50",
+   "status": "ok"
+  },
+  "ph_heat_flow": {
+   "fig": "ph_heat_flow.png",
+   "out_kind": "ndarray",
+   "program": "ph_heat_flow 0.50 0.50",
+   "status": "ok"
+  },
+  "ph_mean_curvature_motion": {
+   "fig": "ph_mean_curvature_motion.png",
+   "out_kind": "ndarray",
+   "program": "ph_mean_curvature_motion 0.50 0.50",
+   "status": "ok"
+  },
+  "ph_perona_malik": {
+   "fig": "ph_perona_malik.png",
+   "out_kind": "ndarray",
+   "program": "ph_perona_malik 0.50 0.50",
+   "status": "ok"
+  },
+  "ph_reaction_diffusion": {
+   "fig": "ph_reaction_diffusion.png",
+   "out_kind": "ndarray",
+   "program": "ph_reaction_diffusion 0.50 0.50",
+   "status": "ok"
+  },
+  "ph_total_variation_flow": {
+   "fig": "ph_total_variation_flow.png",
+   "out_kind": "ndarray",
+   "program": "ph_total_variation_flow 0.50 0.50",
+   "status": "ok"
+  },
+  "phase_deg": {
+   "fig": "phase_deg.png",
+   "out_kind": "ndarray",
+   "program": "phase_deg 0.40 0.50",
+   "status": "ok"
+  },
+  "phase_rad": {
+   "fig": "phase_rad.png",
+   "out_kind": "ndarray",
+   "program": "phase_rad 0.40 0.50",
+   "status": "ok"
+  },
+  "points_foerstner": {
+   "fig": "points_foerstner.png",
+   "out_kind": "ndarray",
+   "program": "points_foerstner 0.40 0.50",
+   "status": "ok"
+  },
+  "points_harris_binomial": {
+   "fig": "points_harris_binomial.png",
+   "out_kind": "ndarray",
+   "program": "points_harris_binomial 0.40 0.50",
+   "status": "ok"
+  },
+  "polar_trans_contour_xld": {
+   "fig": "polar_trans_contour_xld.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\npolar_trans_contour_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "polar_trans_image": {
+   "fig": "polar_trans_image.png",
+   "out_kind": "ndarray",
+   "program": "polar_trans_image 0.50 0.50",
+   "status": "ok"
+  },
+  "polar_trans_image_ext": {
+   "fig": "polar_trans_image_ext.png",
+   "out_kind": "ndarray",
+   "program": "polar_trans_image_ext 0.50 0.50",
+   "status": "ok"
+  },
+  "polar_trans_image_inv": {
+   "fig": "polar_trans_image_inv.png",
+   "out_kind": "ndarray",
+   "program": "polar_trans_image_inv 0.50 0.50",
+   "status": "ok"
+  },
+  "polar_trans_region_inv": {
+   "fig": "polar_trans_region_inv.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\npolar_trans_region_inv 0.50 0.50",
+   "status": "ok"
+  },
+  "pouring": {
+   "fig": "pouring.png",
+   "out_kind": "ndarray",
+   "program": "pouring 0.50 0.50",
+   "status": "ok"
+  },
+  "pow_image": {
+   "fig": "pow_image.png",
+   "out_kind": "ndarray",
+   "program": "pow_image 0.50 0.50",
+   "status": "ok"
+  },
+  "power_byte": {
+   "fig": "power_byte.png",
+   "out_kind": "ndarray",
+   "program": "power_byte 0.40 0.50",
+   "status": "ok"
+  },
+  "power_ln": {
+   "fig": "power_ln.png",
+   "out_kind": "ndarray",
+   "program": "power_ln 0.40 0.50",
+   "status": "ok"
+  },
+  "power_real": {
+   "fig": "power_real.png",
+   "out_kind": "ndarray",
+   "program": "power_real 0.40 0.50",
+   "status": "ok"
+  },
+  "prewitt_amp": {
+   "fig": "prewitt_amp.png",
+   "out_kind": "ndarray",
+   "program": "prewitt_amp 0.40 0.50",
+   "status": "ok"
+  },
+  "prewitt_dir": {
+   "fig": "prewitt_dir.png",
+   "out_kind": "ndarray",
+   "program": "prewitt_dir 0.40 0.50",
+   "status": "ok"
+  },
+  "prewitt_mag": {
+   "fig": "prewitt_mag.png",
+   "out_kind": "ndarray",
+   "program": "prewitt_mag 0.40 0.50",
+   "status": "ok"
+  },
+  "principal_comp": {
+   "fig": "principal_comp.png",
+   "out_kind": "ndarray",
+   "program": "cfa_to_rgb 0.50 0.50\nprincipal_comp 0.50 0.50",
+   "status": "ok"
+  },
+  "projective_trans_contour_xld": {
+   "fig": "projective_trans_contour_xld.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nprojective_trans_contour_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "projective_trans_image": {
+   "fig": "projective_trans_image.png",
+   "out_kind": "ndarray",
+   "program": "projective_trans_image 0.50 0.50",
+   "status": "ok"
+  },
+  "projective_trans_image_size": {
+   "fig": "projective_trans_image_size.png",
+   "out_kind": "ndarray",
+   "program": "projective_trans_image_size 0.50 0.50",
+   "status": "ok"
+  },
+  "projective_trans_region": {
+   "fig": "projective_trans_region.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nprojective_trans_region 0.50 0.50",
+   "status": "ok"
+  },
+  "pruning": {
+   "fig": "pruning.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\npruning 0.50 0.50",
+   "status": "ok"
+  },
+  "r2_endpoints_skeleton": {
+   "fig": "r2_endpoints_skeleton.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nr2_endpoints_skeleton 0.50 0.50",
+   "status": "ok"
+  },
+  "r2_inner_circle": {
+   "fig": "r2_inner_circle.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nr2_inner_circle 0.50 0.50",
+   "status": "ok"
+  },
+  "r2_inner_rectangle1": {
+   "fig": "r2_inner_rectangle1.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nr2_inner_rectangle1 0.50 0.50",
+   "status": "ok"
+  },
+  "r2_partition_rectangle": {
+   "fig": "r2_partition_rectangle.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nr2_partition_rectangle 0.50 0.50",
+   "status": "ok"
+  },
+  "r2_runlength_features": {
+   "fig": "r2_runlength_features.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nr2_runlength_features 0.50 0.50",
+   "status": "ok"
+  },
+  "r2_smallest_circle": {
+   "fig": "r2_smallest_circle.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nr2_smallest_circle 0.50 0.50",
+   "status": "ok"
+  },
+  "r2_smallest_rectangle1": {
+   "fig": "r2_smallest_rectangle1.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nr2_smallest_rectangle1 0.50 0.50",
+   "status": "ok"
+  },
+  "r2_smallest_rectangle2": {
+   "fig": "r2_smallest_rectangle2.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nr2_smallest_rectangle2 0.50 0.50",
+   "status": "ok"
+  },
+  "r2_sort_region": {
+   "fig": "r2_sort_region.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nr2_sort_region 0.50 0.50",
+   "status": "ok"
+  },
+  "r2_split_skeleton_lines": {
+   "fig": "r2_split_skeleton_lines.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nr2_split_skeleton_lines 0.50 0.50",
+   "status": "ok"
+  },
+  "r2_union1": {
+   "fig": "r2_union1.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nr2_union1 0.50 0.50",
+   "status": "ok"
+  },
+  "r3_background_seg": {
+   "fig": "r3_background_seg.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nr3_background_seg 0.50 0.50",
+   "status": "ok"
+  },
+  "r3_clip_region": {
+   "fig": "r3_clip_region.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nr3_clip_region 0.50 0.50",
+   "status": "ok"
+  },
+  "r3_eliminate_runs": {
+   "fig": "r3_eliminate_runs.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nr3_eliminate_runs 0.50 0.50",
+   "status": "ok"
+  },
+  "r3_label_to_region": {
+   "fig": "r3_label_to_region.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nr3_label_to_region 0.50 0.50",
+   "status": "ok"
+  },
+  "r3_partition_dynamic": {
+   "fig": "r3_partition_dynamic.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nr3_partition_dynamic 0.50 0.50",
+   "status": "ok"
+  },
+  "r3_polar_trans_region": {
+   "fig": "r3_polar_trans_region.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nr3_polar_trans_region 0.50 0.50",
+   "status": "ok"
+  },
+  "r3_rank_region": {
+   "fig": "r3_rank_region.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nr3_rank_region 0.50 0.50",
+   "status": "ok"
+  },
+  "r3_region_features": {
+   "fig": "r3_region_features.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nr3_region_features 0.50 0.50",
+   "status": "ok"
+  },
+  "r3_runlength_distribution": {
+   "fig": "r3_runlength_distribution.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nr3_runlength_distribution 0.50 0.50",
+   "status": "ok"
+  },
+  "r3_select_region_point": {
+   "fig": "r3_select_region_point.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nr3_select_region_point 0.50 0.50",
+   "status": "ok"
+  },
+  "rank_image": {
+   "fig": "rank_image.png",
+   "out_kind": "ndarray",
+   "program": "rank_image 0.50 0.50",
+   "status": "ok"
+  },
+  "rank_rect": {
+   "fig": "rank_rect.png",
+   "out_kind": "ndarray",
+   "program": "rank_rect 0.50 0.50",
+   "status": "ok"
+  },
+  "rectangularity": {
+   "fig": "rectangularity.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nrectangularity 0.50 0.50",
+   "status": "ok"
+  },
+  "rectangularity_xld": {
+   "fig": "rectangularity_xld.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nrectangularity_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "reg_close": {
+   "fig": "reg_close.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nreg_close 0.50 0.50",
+   "status": "ok"
+  },
+  "reg_dilate": {
+   "fig": "reg_dilate.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nreg_dilate 0.50 0.50",
+   "status": "ok"
+  },
+  "reg_erode": {
+   "fig": "reg_erode.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nreg_erode 0.50 0.50",
+   "status": "ok"
+  },
+  "reg_open": {
+   "fig": "reg_open.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nreg_open 0.50 0.50",
+   "status": "ok"
+  },
+  "region_boundary": {
+   "fig": "region_boundary.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nregion_boundary 0.50 0.50",
+   "status": "ok"
+  },
+  "regiongrowing": {
+   "fig": "regiongrowing.png",
+   "out_kind": "ndarray",
+   "program": "regiongrowing 0.50 0.50",
+   "status": "ok"
+  },
+  "regiongrowing_mean": {
+   "fig": "regiongrowing_mean.png",
+   "out_kind": "ndarray",
+   "program": "regiongrowing_mean 0.50 0.50",
+   "status": "ok"
+  },
+  "remove_noise_region": {
+   "fig": "remove_noise_region.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nremove_noise_region 0.50 0.50",
+   "status": "ok"
+  },
+  "remove_small": {
+   "fig": "remove_small.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nremove_small 0.50 0.50",
+   "status": "ok"
+  },
+  "rescale_img": {
+   "fig": "rescale_img.png",
+   "out_kind": "ndarray",
+   "program": "rescale_img 0.50 0.50",
+   "status": "ok"
+  },
+  "rft_generic": {
+   "fig": "rft_generic.png",
+   "out_kind": "ndarray",
+   "program": "rft_generic 0.40 0.50",
+   "status": "ok"
+  },
+  "rgb1_to_gray": {
+   "fig": "rgb1_to_gray.png",
+   "out_kind": "ndarray",
+   "program": "cfa_to_rgb 0.50 0.50\nrgb1_to_gray 0.50 0.50",
+   "status": "ok"
+  },
+  "rgb3_to_gray": {
+   "fig": "rgb3_to_gray.png",
+   "out_kind": "ndarray",
+   "program": "cfa_to_rgb 0.50 0.50\nrgb3_to_gray 0.50 0.50",
+   "status": "ok"
+  },
+  "roberts": {
+   "fig": "roberts.png",
+   "out_kind": "ndarray",
+   "program": "roberts 0.40 0.50",
+   "status": "ok"
+  },
+  "roberts_mag": {
+   "fig": "roberts_mag.png",
+   "out_kind": "ndarray",
+   "program": "roberts_mag 0.40 0.50",
+   "status": "ok"
+  },
+  "robinson_amp": {
+   "fig": "robinson_amp.png",
+   "out_kind": "ndarray",
+   "program": "robinson_amp 0.40 0.50",
+   "status": "ok"
+  },
+  "robinson_dir": {
+   "fig": "robinson_dir.png",
+   "out_kind": "ndarray",
+   "program": "robinson_dir 0.40 0.50",
+   "status": "ok"
+  },
+  "rotate_image": {
+   "fig": "rotate_image.png",
+   "out_kind": "ndarray",
+   "program": "rotate_image 0.50 0.50",
+   "status": "ok"
+  },
+  "rotate_img": {
+   "fig": "rotate_img.png",
+   "out_kind": "ndarray",
+   "program": "rotate_img 0.50 0.50",
+   "status": "ok"
+  },
+  "roundness": {
+   "fig": "roundness.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nroundness 0.50 0.50",
+   "status": "ok"
+  },
+  "scale_clip": {
+   "fig": "scale_clip.png",
+   "out_kind": "ndarray",
+   "program": "scale_clip 0.50 0.50",
+   "status": "ok"
+  },
+  "scale_image": {
+   "fig": "scale_image.png",
+   "out_kind": "ndarray",
+   "program": "scale_image 0.50 0.50",
+   "status": "ok"
+  },
+  "scale_image_max": {
+   "fig": "scale_image_max.png",
+   "out_kind": "ndarray",
+   "program": "scale_image_max 0.50 0.50",
+   "status": "ok"
+  },
+  "segment_image_mser": {
+   "fig": "segment_image_mser.png",
+   "out_kind": "ndarray",
+   "program": "segment_image_mser 0.50 0.50",
+   "status": "ok"
+  },
+  "select_contours": {
+   "fig": "select_contours.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nselect_contours 0.50 0.50",
+   "status": "ok"
+  },
+  "select_contours_xld": {
+   "fig": "select_contours_xld.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nselect_contours_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "select_largest": {
+   "fig": "select_largest.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nselect_largest 0.50 0.50",
+   "status": "ok"
+  },
+  "select_shape": {
+   "fig": "select_shape.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nselect_shape 0.50 0.50",
+   "status": "ok"
+  },
+  "select_shape_std": {
+   "fig": "select_shape_std.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nselect_shape_std 0.50 0.50",
+   "status": "ok"
+  },
+  "select_shape_xld": {
+   "fig": "select_shape_xld.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nselect_shape_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "sg_felzenszwalb": {
+   "fig": "sg_felzenszwalb.png",
+   "out_kind": "ndarray",
+   "program": "sg_felzenszwalb 0.50 0.50",
+   "status": "ok"
+  },
+  "sg_gmm_segment": {
+   "fig": "sg_gmm_segment.png",
+   "out_kind": "ndarray",
+   "program": "sg_gmm_segment 0.50 0.50",
+   "status": "ok"
+  },
+  "sg_kmeans_intensity": {
+   "fig": "sg_kmeans_intensity.png",
+   "out_kind": "ndarray",
+   "program": "sg_kmeans_intensity 0.50 0.50",
+   "status": "ok"
+  },
+  "sg_normalized_cut_2": {
+   "fig": "sg_normalized_cut_2.png",
+   "out_kind": "ndarray",
+   "program": "sg_normalized_cut_2 0.50 0.50",
+   "status": "ok"
+  },
+  "sg_region_growing_seeded": {
+   "fig": "sg_region_growing_seeded.png",
+   "out_kind": "ndarray",
+   "program": "sg_region_growing_seeded 0.50 0.50",
+   "status": "ok"
+  },
+  "sg_slic_superpixels": {
+   "fig": "sg_slic_superpixels.png",
+   "out_kind": "ndarray",
+   "program": "sg_slic_superpixels 0.50 0.50",
+   "status": "ok"
+  },
+  "sg_watershed_gradient": {
+   "fig": "sg_watershed_gradient.png",
+   "out_kind": "ndarray",
+   "program": "sg_watershed_gradient 0.50 0.50",
+   "status": "ok"
+  },
+  "shape_locate": {
+   "fig": "shape_locate.png",
+   "out_kind": "ndarray",
+   "program": "shape_locate 0.50 0.50",
+   "status": "ok"
+  },
+  "shape_trans": {
+   "fig": "shape_trans.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nshape_trans 0.50 0.50",
+   "status": "ok"
+  },
+  "shape_trans_xld": {
+   "fig": "shape_trans_xld.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nshape_trans_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "sigma_image": {
+   "fig": "sigma_image.png",
+   "out_kind": "ndarray",
+   "program": "sigma_image 0.35 0.50",
+   "status": "ok"
+  },
+  "sigmoid": {
+   "fig": "sigmoid.png",
+   "out_kind": "ndarray",
+   "program": "sigmoid 0.50 0.50",
+   "status": "ok"
+  },
+  "simulate_defocus": {
+   "fig": "simulate_defocus.png",
+   "out_kind": "ndarray",
+   "program": "simulate_defocus 0.35 0.50",
+   "status": "ok"
+  },
+  "simulate_motion": {
+   "fig": "simulate_motion.png",
+   "out_kind": "ndarray",
+   "program": "simulate_motion 0.35 0.50",
+   "status": "ok"
+  },
+  "sin_image": {
+   "fig": "sin_image.png",
+   "out_kind": "ndarray",
+   "program": "sin_image 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_adapthist": {
+   "fig": "sk_adapthist.png",
+   "out_kind": "ndarray",
+   "program": "sk_adapthist 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_adjust_log": {
+   "fig": "sk_adjust_log.png",
+   "out_kind": "ndarray",
+   "program": "sk_adjust_log 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_area_opening": {
+   "fig": "sk_area_opening.png",
+   "out_kind": "ndarray",
+   "program": "sk_area_opening 0.35 0.50",
+   "status": "ok"
+  },
+  "sk_autolevel": {
+   "fig": "sk_autolevel.png",
+   "out_kind": "ndarray",
+   "program": "sk_autolevel 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_blur_effect": {
+   "fig": "sk_blur_effect.png",
+   "out_kind": "float",
+   "program": "sk_blur_effect 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_butterworth": {
+   "fig": "sk_butterworth.png",
+   "out_kind": "ndarray",
+   "program": "sk_butterworth 0.40 0.50",
+   "status": "ok"
+  },
+  "sk_canny": {
+   "fig": "sk_canny.png",
+   "out_kind": "ndarray",
+   "program": "sk_canny 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_chan_vese": {
+   "fig": "sk_chan_vese.png",
+   "out_kind": "ndarray",
+   "program": "sk_chan_vese 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_clear_border": {
+   "fig": "sk_clear_border.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nsk_clear_border 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_convex": {
+   "fig": "sk_convex.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nsk_convex 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_corner_harris": {
+   "fig": "sk_corner_harris.png",
+   "out_kind": "ndarray",
+   "program": "sk_corner_harris 0.40 0.50",
+   "status": "ok"
+  },
+  "sk_dog": {
+   "fig": "sk_dog.png",
+   "out_kind": "ndarray",
+   "program": "sk_dog 0.40 0.50",
+   "status": "ok"
+  },
+  "sk_enhance_contrast": {
+   "fig": "sk_enhance_contrast.png",
+   "out_kind": "ndarray",
+   "program": "sk_enhance_contrast 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_entropy": {
+   "fig": "sk_entropy.png",
+   "out_kind": "ndarray",
+   "program": "sk_entropy 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_entropy_feat": {
+   "fig": "sk_entropy_feat.png",
+   "out_kind": "float",
+   "program": "sk_entropy_feat 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_euler": {
+   "fig": "sk_euler.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_euler 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_farid": {
+   "fig": "sk_farid.png",
+   "out_kind": "ndarray",
+   "program": "sk_farid 0.40 0.50",
+   "status": "ok"
+  },
+  "sk_felzenszwalb": {
+   "fig": "sk_felzenszwalb.png",
+   "out_kind": "ndarray",
+   "program": "sk_felzenszwalb 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_find_boundaries": {
+   "fig": "sk_find_boundaries.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nsk_find_boundaries 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_find_contours": {
+   "fig": "sk_find_contours.png",
+   "out_kind": "dict",
+   "program": "sk_find_contours 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_frangi": {
+   "fig": "sk_frangi.png",
+   "out_kind": "ndarray",
+   "program": "sk_frangi 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_gabor": {
+   "fig": "sk_gabor.png",
+   "out_kind": "ndarray",
+   "program": "sk_gabor 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_hessian": {
+   "fig": "sk_hessian.png",
+   "out_kind": "ndarray",
+   "program": "sk_hessian 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_hessian_det": {
+   "fig": "sk_hessian_det.png",
+   "out_kind": "ndarray",
+   "program": "sk_hessian_det 0.40 0.50",
+   "status": "ok"
+  },
+  "sk_hysteresis": {
+   "fig": "sk_hysteresis.png",
+   "out_kind": "ndarray",
+   "program": "sk_hysteresis 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_lbp": {
+   "fig": "sk_lbp.png",
+   "out_kind": "ndarray",
+   "program": "sk_lbp 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_li": {
+   "fig": "sk_li.png",
+   "out_kind": "ndarray",
+   "program": "sk_li 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_local_maxima": {
+   "fig": "sk_local_maxima.png",
+   "out_kind": "ndarray",
+   "program": "sk_local_maxima 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_medial": {
+   "fig": "sk_medial.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nsk_medial 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_median_disk": {
+   "fig": "sk_median_disk.png",
+   "out_kind": "ndarray",
+   "program": "sk_median_disk 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_meijering": {
+   "fig": "sk_meijering.png",
+   "out_kind": "ndarray",
+   "program": "sk_meijering 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_niblack": {
+   "fig": "sk_niblack.png",
+   "out_kind": "ndarray",
+   "program": "sk_niblack 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_nlm": {
+   "fig": "sk_nlm.png",
+   "out_kind": "ndarray",
+   "program": "sk_nlm 0.35 0.50",
+   "status": "ok"
+  },
+  "sk_otsu": {
+   "fig": "sk_otsu.png",
+   "out_kind": "ndarray",
+   "program": "sk_otsu 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_remove_holes": {
+   "fig": "sk_remove_holes.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nsk_remove_holes 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_rolling_ball": {
+   "fig": "sk_rolling_ball.png",
+   "out_kind": "ndarray",
+   "program": "sk_rolling_ball 0.35 0.50",
+   "status": "ok"
+  },
+  "sk_sauvola": {
+   "fig": "sk_sauvola.png",
+   "out_kind": "ndarray",
+   "program": "sk_sauvola 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_scharr": {
+   "fig": "sk_scharr.png",
+   "out_kind": "ndarray",
+   "program": "sk_scharr 0.40 0.50",
+   "status": "ok"
+  },
+  "sk_shape_index": {
+   "fig": "sk_shape_index.png",
+   "out_kind": "ndarray",
+   "program": "sk_shape_index 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_skeleton": {
+   "fig": "sk_skeleton.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nsk_skeleton 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_slic": {
+   "fig": "sk_slic.png",
+   "out_kind": "ndarray",
+   "program": "sk_slic 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_swirl": {
+   "fig": "sk_swirl.png",
+   "out_kind": "ndarray",
+   "program": "sk_swirl 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_thin": {
+   "fig": "sk_thin.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nsk_thin 0.50 0.50",
+   "status": "ok"
+  },
+  "sk_tv": {
+   "fig": "sk_tv.png",
+   "out_kind": "ndarray",
+   "program": "sk_tv 0.35 0.50",
+   "status": "ok"
+  },
+  "sk_tv_bregman": {
+   "fig": "sk_tv_bregman.png",
+   "out_kind": "ndarray",
+   "program": "sk_tv_bregman 0.35 0.50",
+   "status": "ok"
+  },
+  "sk_wavelet": {
+   "fig": "sk_wavelet.png",
+   "out_kind": "ndarray",
+   "program": "sk_wavelet 0.35 0.50",
+   "status": "ok"
+  },
+  "sk_yen": {
+   "fig": "sk_yen.png",
+   "out_kind": "ndarray",
+   "program": "sk_yen 0.50 0.50",
+   "status": "ok"
+  },
+  "skeleton": {
+   "fig": "skeleton.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nskeleton 0.50 0.50",
+   "status": "ok"
+  },
+  "smallest_rectangle1": {
+   "fig": "smallest_rectangle1.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nsmallest_rectangle1 0.50 0.50",
+   "status": "ok"
+  },
+  "smooth_contours": {
+   "fig": "smooth_contours.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nsmooth_contours 0.50 0.50",
+   "status": "ok"
+  },
+  "smooth_contours_xld": {
+   "fig": "smooth_contours_xld.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nsmooth_contours_xld 0.50 0.50",
+   "status": "ok"
+  },
+  "smooth_image": {
+   "fig": "smooth_image.png",
+   "out_kind": "ndarray",
+   "program": "smooth_image 0.35 0.50",
+   "status": "ok"
+  },
+  "sobel_amp": {
+   "fig": "sobel_amp.png",
+   "out_kind": "ndarray",
+   "program": "sobel_amp 0.40 0.50",
+   "status": "ok"
+  },
+  "sobel_dir": {
+   "fig": "sobel_dir.png",
+   "out_kind": "ndarray",
+   "program": "sobel_dir 0.40 0.50",
+   "status": "ok"
+  },
+  "sobel_mag": {
+   "fig": "sobel_mag.png",
+   "out_kind": "ndarray",
+   "program": "sobel_mag 0.40 0.50",
+   "status": "ok"
+  },
+  "sp_critical_points_sub_pix": {
+   "fig": "sp_critical_points_sub_pix.png",
+   "out_kind": "dict",
+   "program": "sp_critical_points_sub_pix 0.50 0.50",
+   "status": "ok"
+  },
+  "sp_local_max_sub_pix": {
+   "fig": "sp_local_max_sub_pix.png",
+   "out_kind": "dict",
+   "program": "sp_local_max_sub_pix 0.50 0.50",
+   "status": "ok"
+  },
+  "sp_local_min_sub_pix": {
+   "fig": "sp_local_min_sub_pix.png",
+   "out_kind": "dict",
+   "program": "sp_local_min_sub_pix 0.50 0.50",
+   "status": "ok"
+  },
+  "sp_lowlands_center": {
+   "fig": "sp_lowlands_center.png",
+   "out_kind": "dict",
+   "program": "sp_lowlands_center 0.50 0.50",
+   "status": "ok"
+  },
+  "sp_plateaus": {
+   "fig": "sp_plateaus.png",
+   "out_kind": "dict",
+   "program": "sp_plateaus 0.50 0.50",
+   "status": "ok"
+  },
+  "sp_saddle_points_sub_pix": {
+   "fig": "sp_saddle_points_sub_pix.png",
+   "out_kind": "dict",
+   "program": "sp_saddle_points_sub_pix 0.50 0.50",
+   "status": "ok"
+  },
+  "sqrt_image": {
+   "fig": "sqrt_image.png",
+   "out_kind": "ndarray",
+   "program": "sqrt_image 0.50 0.50",
+   "status": "ok"
+  },
+  "std_filter": {
+   "fig": "std_filter.png",
+   "out_kind": "ndarray",
+   "program": "std_filter 0.50 0.50",
+   "status": "ok"
+  },
+  "tac_contact_mask": {
+   "fig": "tac_contact_mask.png",
+   "out_kind": "ndarray",
+   "program": "tac_contact_mask 0.50 0.50",
+   "status": "ok"
+  },
+  "tac_height_from_shading": {
+   "fig": "tac_height_from_shading.png",
+   "out_kind": "ndarray",
+   "program": "tac_height_from_shading 0.50 0.50",
+   "status": "ok"
+  },
+  "tac_pressure_proxy": {
+   "fig": "tac_pressure_proxy.png",
+   "out_kind": "ndarray",
+   "program": "tac_pressure_proxy 0.50 0.50",
+   "status": "ok"
+  },
+  "tac_shear_field": {
+   "fig": "tac_shear_field.png",
+   "out_kind": "ndarray",
+   "program": "tac_shear_field 0.50 0.50",
+   "status": "ok"
+  },
+  "tac_surface_normal": {
+   "fig": "tac_surface_normal.png",
+   "out_kind": "ndarray",
+   "program": "tac_surface_normal 0.50 0.50",
+   "status": "ok"
+  },
+  "tan_image": {
+   "fig": "tan_image.png",
+   "out_kind": "ndarray",
+   "program": "tan_image 0.50 0.50",
+   "status": "ok"
+  },
+  "tb_abs_funct_1d": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_alpha_shape_boundary": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_angle_3points": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_angular_spectrum_propagate": {
+   "in_sort": "cimage",
+   "reason": "画像から `cimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_apply_weighting": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_arc_length": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_background_subtraction_window": {
+   "in_sort": "video",
+   "reason": "画像から `video` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_bandpass": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_beamform_delay_sum": {
+   "in_sort": "beatcube",
+   "reason": "画像から `beatcube` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_box_sdf": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_countrate_to_counts": {
+   "in_sort": "counts",
+   "reason": "画像から `counts` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_counts_to_countrate": {
+   "in_sort": "counts",
+   "reason": "画像から `counts` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_cplx_cr_residual": {
+   "in_sort": "cimage",
+   "reason": "画像から `cimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_create_funct_1d_array": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_cutout": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_cx_apply_transfer_function": {
+   "in_sort": "cimage",
+   "reason": "画像から `cimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_cx_ifft": {
+   "in_sort": "cimage",
+   "reason": "画像から `cimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_cx_imag": {
+   "in_sort": "cimage",
+   "reason": "画像から `cimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_cx_log_magnitude": {
+   "in_sort": "cimage",
+   "reason": "画像から `cimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_cx_magnitude": {
+   "in_sort": "cimage",
+   "reason": "画像から `cimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_cx_phase": {
+   "in_sort": "cimage",
+   "reason": "画像から `cimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_cx_real": {
+   "in_sort": "cimage",
+   "reason": "画像から `cimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_deflicker": {
+   "in_sort": "video",
+   "reason": "画像から `video` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_dem_ecef_to_geodetic": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_derivate_funct_1d": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_dtof_depth": {
+   "in_sort": "counts",
+   "reason": "画像から `counts` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_elastic_deform": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_env_lightbox": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_env_studio": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_envelope": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_equivalent_level": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_estimate_alpha": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_estimate_normals": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_estimate_oriented_normals": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_estimate_point_normals": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_euclidean_cluster": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_exponential_background": {
+   "in_sort": "video",
+   "reason": "画像から `video` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_exponential_foreground": {
+   "in_sort": "video",
+   "reason": "画像から `video` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_farthest_point_sampling": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_find_peaks": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_fit_spline_curve": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_fmcw_range_profile": {
+   "in_sort": "beatcube",
+   "reason": "画像から `beatcube` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_fmcw_window_apply": {
+   "in_sort": "beatcube",
+   "reason": "画像から `beatcube` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_frame_difference_causal": {
+   "in_sort": "video",
+   "reason": "画像から `video` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_gaussian_curvature": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_geodesic_distances": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_get_y_value_funct_1d": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_highpass": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_indices_to_labels": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_inertia_tensor": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_inside_outside": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_integrate_funct_1d": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_iqft2": {
+   "in_sort": "qimage",
+   "reason": "画像から `qimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_iss_keypoints": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_jitter": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_keypoints_to_image2d": {
+   "in_sort": "keypoints",
+   "reason": "画像から `keypoints` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_keypoints_uv_to_points": {
+   "in_sort": "keypoints",
+   "reason": "画像から `keypoints` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_landmark_asymmetry": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_lf_center_view": {
+   "in_sort": "lightfield",
+   "reason": "画像から `lightfield` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_lf_depth_from_focus": {
+   "in_sort": "lightfield",
+   "reason": "画像から `lightfield` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_lf_epi": {
+   "in_sort": "lightfield",
+   "reason": "画像から `lightfield` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_lf_epi_slope": {
+   "in_sort": "lightfield",
+   "reason": "画像から `lightfield` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_lf_refocus": {
+   "in_sort": "lightfield",
+   "reason": "画像から `lightfield` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_lf_subaperture": {
+   "in_sort": "lightfield",
+   "reason": "画像から `lightfield` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_lf_synthetic_aperture": {
+   "in_sort": "lightfield",
+   "reason": "画像から `lightfield` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_lf_to_mla": {
+   "in_sort": "lightfield",
+   "reason": "画像から `lightfield` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_lowpass": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_mat_cond": {
+   "in_sort": "matrix",
+   "reason": "画像から `matrix` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_mat_pinv": {
+   "in_sort": "matrix",
+   "reason": "画像から `matrix` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_mean_curvature": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_mirror_plane_from_pairs": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_mls_smooth": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_monogenic_amplitude": {
+   "in_sort": "qimage",
+   "reason": "画像から `qimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_monogenic_orientation": {
+   "in_sort": "qimage",
+   "reason": "画像から `qimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_monogenic_phase": {
+   "in_sort": "qimage",
+   "reason": "画像から `qimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_motion_energy_image": {
+   "in_sort": "video",
+   "reason": "画像から `video` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_motion_history_image": {
+   "in_sort": "video",
+   "reason": "画像から `video` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_moving_average_window": {
+   "in_sort": "video",
+   "reason": "画像から `video` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_negate_funct_1d": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_normals_to_egi": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_num_points_funct_1d": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_occupancy_grid": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_optical_flow_magnitude_stream": {
+   "in_sort": "video",
+   "reason": "画像から `video` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_pc_density_equalize": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_pc_fill_sparse": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_pc_poisson_disk": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_plane_segmentation": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_points_to_voxel": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_points_zyx_to_keypoints_uv": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_project": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_project_cylindrical": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_project_points": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_project_spherical": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_qft2": {
+   "in_sort": "qimage",
+   "reason": "画像から `qimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_quat_color_filter": {
+   "in_sort": "qimage",
+   "reason": "画像から `qimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_quat_color_rotate": {
+   "in_sort": "qimage",
+   "reason": "画像から `qimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_quat_conjugate_image": {
+   "in_sort": "qimage",
+   "reason": "画像から `qimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_quat_norm": {
+   "in_sort": "qimage",
+   "reason": "画像から `qimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_quat_normalize_image": {
+   "in_sort": "qimage",
+   "reason": "画像から `qimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_quaternion_to_rgb": {
+   "in_sort": "qimage",
+   "reason": "画像から `qimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_radius_outlier_removal": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_random_dropout": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_random_rotation": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_random_scale": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_range_doppler_map": {
+   "in_sort": "beatcube",
+   "reason": "画像から `beatcube` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_reflect_points": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_reflection_symmetry_score": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_region_growing": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_render_point_depth": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_resample": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_resample_uniform": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_rgb_to_quaternion": {
+   "in_sort": "rgbimage",
+   "reason": "画像から `rgbimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_rms": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_running_gaussian_background": {
+   "in_sort": "video",
+   "reason": "画像から `video` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_running_gaussian_foreground": {
+   "in_sort": "video",
+   "reason": "画像から `video` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_sample_funct_1d": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_scale_y_funct_1d": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_sensor_capture": {
+   "in_sort": "rgbimage",
+   "reason": "画像から `rgbimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_shape_perturb": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_smooth_funct_1d_gauss": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_smooth_funct_1d_mean": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_spad_deadtime_apply": {
+   "in_sort": "counts",
+   "reason": "画像から `counts` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_spad_deadtime_correct": {
+   "in_sort": "counts",
+   "reason": "画像から `counts` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_spectrogram": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_specular_coefficient_map": {
+   "in_sort": "rgbimage",
+   "reason": "画像から `rgbimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_specular_diffuse_split": {
+   "in_sort": "rgbimage",
+   "reason": "画像から `rgbimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_specular_free_transform": {
+   "in_sort": "rgbimage",
+   "reason": "画像から `rgbimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_sphere_sdf": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_stat_correlation": {
+   "in_sort": "matrix",
+   "reason": "画像から `matrix` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_stat_covariance": {
+   "in_sort": "matrix",
+   "reason": "画像から `matrix` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_stat_zscore": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_statistical_outlier_removal": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_superquadric_residual": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_synthesize_silhouette": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_tcspc_background_subtract": {
+   "in_sort": "counts",
+   "reason": "画像から `counts` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_tcspc_coates_correct": {
+   "in_sort": "counts",
+   "reason": "画像から `counts` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_tcspc_irf_convolve": {
+   "in_sort": "counts",
+   "reason": "画像から `counts` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_temporal_band_power": {
+   "in_sort": "video",
+   "reason": "画像から `video` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_temporal_bandpass": {
+   "in_sort": "video",
+   "reason": "画像から `video` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_temporal_bilateral": {
+   "in_sort": "video",
+   "reason": "画像から `video` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_temporal_median_window": {
+   "in_sort": "video",
+   "reason": "画像から `video` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_three_frame_difference": {
+   "in_sort": "video",
+   "reason": "画像から `video` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_voxel_grid_downsample": {
+   "in_sort": "points",
+   "reason": "画像から `points` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_weighting_response": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_wetness": {
+   "in_sort": "rgbimage",
+   "reason": "画像から `rgbimage` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_zero_crossing_rate": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "tb_zero_crossings_funct_1d": {
+   "in_sort": "signal",
+   "reason": "画像から `signal` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "texture_laws": {
+   "fig": "texture_laws.png",
+   "out_kind": "ndarray",
+   "program": "texture_laws 0.50 0.50",
+   "status": "ok"
+  },
+  "tf_census_transform": {
+   "fig": "tf_census_transform.png",
+   "out_kind": "ndarray",
+   "program": "tf_census_transform 0.50 0.50",
+   "status": "ok"
+  },
+  "tf_gradient_domain_reintegrate": {
+   "fig": "tf_gradient_domain_reintegrate.png",
+   "out_kind": "ndarray",
+   "program": "tf_gradient_domain_reintegrate 0.50 0.50",
+   "status": "ok"
+  },
+  "tf_log_polar": {
+   "fig": "tf_log_polar.png",
+   "out_kind": "ndarray",
+   "program": "tf_log_polar 0.50 0.50",
+   "status": "ok"
+  },
+  "tf_phase_congruency": {
+   "fig": "tf_phase_congruency.png",
+   "out_kind": "ndarray",
+   "program": "tf_phase_congruency 0.40 0.50",
+   "status": "ok"
+  },
+  "tf_radon_sinogram": {
+   "fig": "tf_radon_sinogram.png",
+   "out_kind": "ndarray",
+   "program": "tf_radon_sinogram 0.50 0.50",
+   "status": "ok"
+  },
+  "tf_rank_transform": {
+   "fig": "tf_rank_transform.png",
+   "out_kind": "ndarray",
+   "program": "tf_rank_transform 0.50 0.50",
+   "status": "ok"
+  },
+  "tf_steerable_filter": {
+   "fig": "tf_steerable_filter.png",
+   "out_kind": "ndarray",
+   "program": "tf_steerable_filter 0.40 0.50",
+   "status": "ok"
+  },
+  "thinning": {
+   "fig": "thinning.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nthinning 0.50 0.50",
+   "status": "ok"
+  },
+  "thinning_golay": {
+   "fig": "thinning_golay.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nthinning_golay 0.50 0.50",
+   "status": "ok"
+  },
+  "thinning_seq": {
+   "fig": "thinning_seq.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nthinning_seq 0.50 0.50",
+   "status": "ok"
+  },
+  "threshold": {
+   "fig": "threshold.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50",
+   "status": "ok"
+  },
+  "threshold_sub_pix": {
+   "fig": "threshold_sub_pix.png",
+   "out_kind": "dict",
+   "program": "threshold_sub_pix 0.50 0.50",
+   "status": "ok"
+  },
+  "tm_backproject_unfiltered": {
+   "fig": "tm_backproject_unfiltered.png",
+   "out_kind": "ndarray",
+   "program": "tm_backproject_unfiltered 0.50 0.50",
+   "status": "ok"
+  },
+  "tm_fbp_reconstruct": {
+   "fig": "tm_fbp_reconstruct.png",
+   "out_kind": "ndarray",
+   "program": "tm_fbp_reconstruct 0.50 0.50",
+   "status": "ok"
+  },
+  "tm_radon_forward": {
+   "fig": "tm_radon_forward.png",
+   "out_kind": "ndarray",
+   "program": "tm_radon_forward 0.50 0.50",
+   "status": "ok"
+  },
+  "tm_sart_reconstruct": {
+   "fig": "tm_sart_reconstruct.png",
+   "out_kind": "ndarray",
+   "program": "tm_sart_reconstruct 0.50 0.50",
+   "status": "ok"
+  },
+  "tm_sinogram_denoise": {
+   "fig": "tm_sinogram_denoise.png",
+   "out_kind": "ndarray",
+   "program": "tm_sinogram_denoise 0.50 0.50",
+   "status": "ok"
+  },
+  "tophat": {
+   "fig": "tophat.png",
+   "out_kind": "ndarray",
+   "program": "tophat 0.35 0.50",
+   "status": "ok"
+  },
+  "total_length": {
+   "fig": "total_length.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\ntotal_length 0.50 0.50",
+   "status": "ok"
+  },
+  "trans_from_rgb": {
+   "fig": "trans_from_rgb.png",
+   "out_kind": "ndarray",
+   "program": "cfa_to_rgb 0.50 0.50\ntrans_from_rgb 0.50 0.50",
+   "status": "ok"
+  },
+  "trans_to_rgb": {
+   "fig": "trans_to_rgb.png",
+   "out_kind": "ndarray",
+   "program": "cfa_to_rgb 0.50 0.50\ntrans_to_rgb 0.50 0.50",
+   "status": "ok"
+  },
+  "transpose_region": {
+   "fig": "transpose_region.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\ntranspose_region 0.50 0.50",
+   "status": "ok"
+  },
+  "trimmed_mean": {
+   "fig": "trimmed_mean.png",
+   "out_kind": "ndarray",
+   "program": "trimmed_mean 0.50 0.50",
+   "status": "ok"
+  },
+  "unsharp": {
+   "fig": "unsharp.png",
+   "out_kind": "ndarray",
+   "program": "unsharp 0.35 0.50",
+   "status": "ok"
+  },
+  "var_threshold": {
+   "fig": "var_threshold.png",
+   "out_kind": "ndarray",
+   "program": "var_threshold 0.50 0.50",
+   "status": "ok"
+  },
+  "vol_count": {
+   "in_sort": "volume",
+   "reason": "画像から `volume` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "vol_dilate": {
+   "in_sort": "volume",
+   "reason": "画像から `volume` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "vol_dilation_ball": {
+   "in_sort": "volume",
+   "reason": "画像から `volume` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "vol_erode": {
+   "in_sort": "volume",
+   "reason": "画像から `volume` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "vol_erosion_ball": {
+   "in_sort": "volume",
+   "reason": "画像から `volume` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "vol_gaussian": {
+   "in_sort": "volume",
+   "reason": "画像から `volume` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "vol_median": {
+   "in_sort": "volume",
+   "reason": "画像から `volume` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "vol_mip": {
+   "in_sort": "volume",
+   "reason": "画像から `volume` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "vol_opening_ball": {
+   "in_sort": "volume",
+   "reason": "画像から `volume` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "vol_reg_dilate": {
+   "in_sort": "volume",
+   "reason": "画像から `volume` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "vol_reg_erode": {
+   "in_sort": "volume",
+   "reason": "画像から `volume` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "vol_slice": {
+   "in_sort": "volume",
+   "reason": "画像から `volume` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "vol_threshold": {
+   "in_sort": "volume",
+   "reason": "画像から `volume` を作る登録 op が無い",
+   "status": "unreachable"
+  },
+  "watersheds": {
+   "fig": "watersheds.png",
+   "out_kind": "ndarray",
+   "program": "watersheds 0.50 0.50",
+   "status": "ok"
+  },
+  "watersheds_threshold": {
+   "fig": "watersheds_threshold.png",
+   "out_kind": "ndarray",
+   "program": "watersheds_threshold 0.50 0.50",
+   "status": "ok"
+  },
+  "xcv2_fast_count": {
+   "fig": "xcv2_fast_count.png",
+   "out_kind": "float",
+   "program": "xcv2_fast_count 0.50 0.50",
+   "status": "ok"
+  },
+  "xcv2_hitmiss": {
+   "fig": "xcv2_hitmiss.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nxcv2_hitmiss 0.50 0.50",
+   "status": "ok"
+  },
+  "xcv2_lap_var": {
+   "fig": "xcv2_lap_var.png",
+   "out_kind": "float",
+   "program": "xcv2_lap_var 0.50 0.50",
+   "status": "ok"
+  },
+  "xcv2_meanshift": {
+   "fig": "xcv2_meanshift.png",
+   "out_kind": "ndarray",
+   "program": "xcv2_meanshift 0.50 0.50",
+   "status": "ok"
+  },
+  "xcv2_warp_logpolar": {
+   "fig": "xcv2_warp_logpolar.png",
+   "out_kind": "ndarray",
+   "program": "xcv2_warp_logpolar 0.50 0.50",
+   "status": "ok"
+  },
+  "xcv3_agast_count": {
+   "fig": "xcv3_agast_count.png",
+   "out_kind": "float",
+   "program": "xcv3_agast_count 0.50 0.50",
+   "status": "ok"
+  },
+  "xcv3_brisk_count": {
+   "fig": "xcv3_brisk_count.png",
+   "out_kind": "float",
+   "program": "xcv3_brisk_count 0.50 0.50",
+   "status": "ok"
+  },
+  "xcv3_denoise_tvl1": {
+   "fig": "xcv3_denoise_tvl1.png",
+   "out_kind": "ndarray",
+   "program": "xcv3_denoise_tvl1 0.35 0.50",
+   "status": "ok"
+  },
+  "xcv3_gray_hu1": {
+   "fig": "xcv3_gray_hu1.png",
+   "out_kind": "float",
+   "program": "xcv3_gray_hu1 0.50 0.50",
+   "status": "ok"
+  },
+  "xcv3_inpaint_ns": {
+   "fig": "xcv3_inpaint_ns.png",
+   "out_kind": "ndarray",
+   "program": "xcv3_inpaint_ns 0.50 0.50",
+   "status": "ok"
+  },
+  "xcv3_lsd_count": {
+   "fig": "xcv3_lsd_count.png",
+   "out_kind": "float",
+   "program": "xcv3_lsd_count 0.50 0.50",
+   "status": "ok"
+  },
+  "xcv3_pyr_laplacian": {
+   "fig": "xcv3_pyr_laplacian.png",
+   "out_kind": "ndarray",
+   "program": "xcv3_pyr_laplacian 0.35 0.50",
+   "status": "ok"
+  },
+  "xcv3_sift_count": {
+   "fig": "xcv3_sift_count.png",
+   "out_kind": "float",
+   "program": "xcv3_sift_count 0.50 0.50",
+   "status": "ok"
+  },
+  "xcv_detail_enhance": {
+   "fig": "xcv_detail_enhance.png",
+   "out_kind": "ndarray",
+   "program": "xcv_detail_enhance 0.50 0.50",
+   "status": "ok"
+  },
+  "xcv_edge_preserving": {
+   "fig": "xcv_edge_preserving.png",
+   "out_kind": "ndarray",
+   "program": "xcv_edge_preserving 0.35 0.50",
+   "status": "ok"
+  },
+  "xcv_grabcut": {
+   "fig": "xcv_grabcut.png",
+   "out_kind": "ndarray",
+   "program": "xcv_grabcut 0.50 0.50",
+   "status": "ok"
+  },
+  "xcv_inpaint": {
+   "fig": "xcv_inpaint.png",
+   "out_kind": "ndarray",
+   "program": "xcv_inpaint 0.50 0.50",
+   "status": "ok"
+  },
+  "xcv_orb_count": {
+   "fig": "xcv_orb_count.png",
+   "out_kind": "float",
+   "program": "xcv_orb_count 0.50 0.50",
+   "status": "ok"
+  },
+  "xcv_pencil_sketch": {
+   "fig": "xcv_pencil_sketch.png",
+   "out_kind": "ndarray",
+   "program": "xcv_pencil_sketch 0.50 0.50",
+   "status": "ok"
+  },
+  "xcv_stylization": {
+   "fig": "xcv_stylization.png",
+   "out_kind": "ndarray",
+   "program": "xcv_stylization 0.50 0.50",
+   "status": "ok"
+  },
+  "xcv_watershed_markers": {
+   "fig": "xcv_watershed_markers.png",
+   "out_kind": "ndarray",
+   "program": "xcv_watershed_markers 0.50 0.50",
+   "status": "ok"
+  },
+  "xg_area_center": {
+   "fig": "xg_area_center.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nxg_area_center 0.50 0.50",
+   "status": "ok"
+  },
+  "xg_clip_contours": {
+   "fig": "xg_clip_contours.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nxg_clip_contours 0.50 0.50",
+   "status": "ok"
+  },
+  "xg_crop_contours": {
+   "fig": "xg_crop_contours.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nxg_crop_contours 0.50 0.50",
+   "status": "ok"
+  },
+  "xg_eccentricity": {
+   "fig": "xg_eccentricity.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nxg_eccentricity 0.50 0.50",
+   "status": "ok"
+  },
+  "xg_elliptic_axis": {
+   "fig": "xg_elliptic_axis.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nxg_elliptic_axis 0.50 0.50",
+   "status": "ok"
+  },
+  "xg_gen_polygons": {
+   "fig": "xg_gen_polygons.png",
+   "out_kind": "dict",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nxg_gen_polygons 0.50 0.50",
+   "status": "ok"
+  },
+  "xg_height_width_ratio": {
+   "fig": "xg_height_width_ratio.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nxg_height_width_ratio 0.50 0.50",
+   "status": "ok"
+  },
+  "xg_moments": {
+   "fig": "xg_moments.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nxg_moments 0.50 0.50",
+   "status": "ok"
+  },
+  "xg_orientation": {
+   "fig": "xg_orientation.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nxg_orientation 0.50 0.50",
+   "status": "ok"
+  },
+  "xg_regress_contours": {
+   "fig": "xg_regress_contours.png",
+   "out_kind": "float",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nxg_regress_contours 0.50 0.50",
+   "status": "ok"
+  },
+  "xkor_bilateral": {
+   "fig": "xkor_bilateral.png",
+   "out_kind": "ndarray",
+   "program": "xkor_bilateral 0.35 0.50",
+   "status": "ok"
+  },
+  "xkor_canny": {
+   "fig": "xkor_canny.png",
+   "out_kind": "ndarray",
+   "program": "xkor_canny 0.50 0.50",
+   "status": "ok"
+  },
+  "xkor_clahe": {
+   "fig": "xkor_clahe.png",
+   "out_kind": "ndarray",
+   "program": "xkor_clahe 0.50 0.50",
+   "status": "ok"
+  },
+  "xkor_dog": {
+   "fig": "xkor_dog.png",
+   "out_kind": "ndarray",
+   "program": "xkor_dog 0.40 0.50",
+   "status": "ok"
+  },
+  "xkor_gaussian": {
+   "fig": "xkor_gaussian.png",
+   "out_kind": "ndarray",
+   "program": "xkor_gaussian 0.35 0.50",
+   "status": "ok"
+  },
+  "xkor_gftt": {
+   "fig": "xkor_gftt.png",
+   "out_kind": "ndarray",
+   "program": "xkor_gftt 0.40 0.50",
+   "status": "ok"
+  },
+  "xkor_harris": {
+   "fig": "xkor_harris.png",
+   "out_kind": "ndarray",
+   "program": "xkor_harris 0.40 0.50",
+   "status": "ok"
+  },
+  "xkor_hessian": {
+   "fig": "xkor_hessian.png",
+   "out_kind": "ndarray",
+   "program": "xkor_hessian 0.40 0.50",
+   "status": "ok"
+  },
+  "xkor_laplacian": {
+   "fig": "xkor_laplacian.png",
+   "out_kind": "ndarray",
+   "program": "xkor_laplacian 0.40 0.50",
+   "status": "ok"
+  },
+  "xkor_median": {
+   "fig": "xkor_median.png",
+   "out_kind": "ndarray",
+   "program": "xkor_median 0.50 0.50",
+   "status": "ok"
+  },
+  "xkor_motion_blur": {
+   "fig": "xkor_motion_blur.png",
+   "out_kind": "ndarray",
+   "program": "xkor_motion_blur 0.35 0.50",
+   "status": "ok"
+  },
+  "xkor_unsharp": {
+   "fig": "xkor_unsharp.png",
+   "out_kind": "ndarray",
+   "program": "xkor_unsharp 0.35 0.50",
+   "status": "ok"
+  },
+  "xmh_bernsen": {
+   "fig": "xmh_bernsen.png",
+   "out_kind": "ndarray",
+   "program": "xmh_bernsen 0.50 0.50",
+   "status": "ok"
+  },
+  "xmh_bwperim": {
+   "fig": "xmh_bwperim.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nxmh_bwperim 0.50 0.50",
+   "status": "ok"
+  },
+  "xmh_daubechies": {
+   "fig": "xmh_daubechies.png",
+   "out_kind": "ndarray",
+   "program": "xmh_daubechies 0.50 0.50",
+   "status": "ok"
+  },
+  "xmh_haar": {
+   "fig": "xmh_haar.png",
+   "out_kind": "ndarray",
+   "program": "xmh_haar 0.50 0.50",
+   "status": "ok"
+  },
+  "xmh_majority": {
+   "fig": "xmh_majority.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nxmh_majority 0.50 0.50",
+   "status": "ok"
+  },
+  "xmh_pftas": {
+   "fig": "xmh_pftas.png",
+   "out_kind": "float",
+   "program": "xmh_pftas 0.50 0.50",
+   "status": "ok"
+  },
+  "xmh_regmin": {
+   "fig": "xmh_regmin.png",
+   "out_kind": "ndarray",
+   "program": "xmh_regmin 0.50 0.50",
+   "status": "ok"
+  },
+  "xmh_selfmatch": {
+   "fig": "xmh_selfmatch.png",
+   "out_kind": "ndarray",
+   "program": "xmh_selfmatch 0.50 0.50",
+   "status": "ok"
+  },
+  "xmh_soft": {
+   "fig": "xmh_soft.png",
+   "out_kind": "ndarray",
+   "program": "xmh_soft 0.50 0.50",
+   "status": "ok"
+  },
+  "xmh_zernike": {
+   "fig": "xmh_zernike.png",
+   "out_kind": "float",
+   "program": "xmh_zernike 0.50 0.50",
+   "status": "ok"
+  },
+  "xpil_autocontrast": {
+   "fig": "xpil_autocontrast.png",
+   "out_kind": "ndarray",
+   "program": "xpil_autocontrast 0.50 0.50",
+   "status": "ok"
+  },
+  "xpil_contour": {
+   "fig": "xpil_contour.png",
+   "out_kind": "ndarray",
+   "program": "xpil_contour 0.40 0.50",
+   "status": "ok"
+  },
+  "xpil_contrast": {
+   "fig": "xpil_contrast.png",
+   "out_kind": "ndarray",
+   "program": "xpil_contrast 0.50 0.50",
+   "status": "ok"
+  },
+  "xpil_detail": {
+   "fig": "xpil_detail.png",
+   "out_kind": "ndarray",
+   "program": "xpil_detail 0.50 0.50",
+   "status": "ok"
+  },
+  "xpil_edge_enhance": {
+   "fig": "xpil_edge_enhance.png",
+   "out_kind": "ndarray",
+   "program": "xpil_edge_enhance 0.50 0.50",
+   "status": "ok"
+  },
+  "xpil_emboss": {
+   "fig": "xpil_emboss.png",
+   "out_kind": "ndarray",
+   "program": "xpil_emboss 0.50 0.50",
+   "status": "ok"
+  },
+  "xpil_find_edges": {
+   "fig": "xpil_find_edges.png",
+   "out_kind": "ndarray",
+   "program": "xpil_find_edges 0.40 0.50",
+   "status": "ok"
+  },
+  "xpil_mode_filter": {
+   "fig": "xpil_mode_filter.png",
+   "out_kind": "ndarray",
+   "program": "xpil_mode_filter 0.50 0.50",
+   "status": "ok"
+  },
+  "xpil_offset": {
+   "fig": "xpil_offset.png",
+   "out_kind": "ndarray",
+   "program": "xpil_offset 0.50 0.50",
+   "status": "ok"
+  },
+  "xpil_posterize": {
+   "fig": "xpil_posterize.png",
+   "out_kind": "ndarray",
+   "program": "xpil_posterize 0.50 0.50",
+   "status": "ok"
+  },
+  "xpil_smooth_more": {
+   "fig": "xpil_smooth_more.png",
+   "out_kind": "ndarray",
+   "program": "xpil_smooth_more 0.35 0.50",
+   "status": "ok"
+  },
+  "xpil_solarize": {
+   "fig": "xpil_solarize.png",
+   "out_kind": "ndarray",
+   "program": "xpil_solarize 0.50 0.50",
+   "status": "ok"
+  },
+  "xpil_unsharp_mask": {
+   "fig": "xpil_unsharp_mask.png",
+   "out_kind": "ndarray",
+   "program": "xpil_unsharp_mask 0.35 0.50",
+   "status": "ok"
+  },
+  "xsitk_closing_by_recon": {
+   "fig": "xsitk_closing_by_recon.png",
+   "out_kind": "ndarray",
+   "program": "xsitk_closing_by_recon 0.50 0.50",
+   "status": "ok"
+  },
+  "xsitk_confidence_connected": {
+   "fig": "xsitk_confidence_connected.png",
+   "out_kind": "ndarray",
+   "program": "xsitk_confidence_connected 0.50 0.50",
+   "status": "ok"
+  },
+  "xsitk_connected_threshold": {
+   "fig": "xsitk_connected_threshold.png",
+   "out_kind": "ndarray",
+   "program": "xsitk_connected_threshold 0.50 0.50",
+   "status": "ok"
+  },
+  "xsitk_curv_aniso_diff": {
+   "fig": "xsitk_curv_aniso_diff.png",
+   "out_kind": "ndarray",
+   "program": "xsitk_curv_aniso_diff 0.50 0.50",
+   "status": "ok"
+  },
+  "xsitk_curvature_flow": {
+   "fig": "xsitk_curvature_flow.png",
+   "out_kind": "ndarray",
+   "program": "xsitk_curvature_flow 0.50 0.50",
+   "status": "ok"
+  },
+  "xsitk_grayscale_fillhole": {
+   "fig": "xsitk_grayscale_fillhole.png",
+   "out_kind": "ndarray",
+   "program": "xsitk_grayscale_fillhole 0.50 0.50",
+   "status": "ok"
+  },
+  "xsitk_grayscale_grindpeak": {
+   "fig": "xsitk_grayscale_grindpeak.png",
+   "out_kind": "ndarray",
+   "program": "xsitk_grayscale_grindpeak 0.50 0.50",
+   "status": "ok"
+  },
+  "xsitk_huang_thresh": {
+   "fig": "xsitk_huang_thresh.png",
+   "out_kind": "ndarray",
+   "program": "xsitk_huang_thresh 0.50 0.50",
+   "status": "ok"
+  },
+  "xsitk_laplacian_sharpen": {
+   "fig": "xsitk_laplacian_sharpen.png",
+   "out_kind": "ndarray",
+   "program": "xsitk_laplacian_sharpen 0.50 0.50",
+   "status": "ok"
+  },
+  "xsitk_maxentropy_thresh": {
+   "fig": "xsitk_maxentropy_thresh.png",
+   "out_kind": "ndarray",
+   "program": "xsitk_maxentropy_thresh 0.50 0.50",
+   "status": "ok"
+  },
+  "xsitk_minmax_curv_flow": {
+   "fig": "xsitk_minmax_curv_flow.png",
+   "out_kind": "ndarray",
+   "program": "xsitk_minmax_curv_flow 0.50 0.50",
+   "status": "ok"
+  },
+  "xsitk_moments_thresh": {
+   "fig": "xsitk_moments_thresh.png",
+   "out_kind": "ndarray",
+   "program": "xsitk_moments_thresh 0.50 0.50",
+   "status": "ok"
+  },
+  "xsitk_opening_by_recon": {
+   "fig": "xsitk_opening_by_recon.png",
+   "out_kind": "ndarray",
+   "program": "xsitk_opening_by_recon 0.50 0.50",
+   "status": "ok"
+  },
+  "xsitk_signed_maurer_dist": {
+   "fig": "xsitk_signed_maurer_dist.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nxsitk_signed_maurer_dist 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk2_corner_kr": {
+   "fig": "xsk2_corner_kr.png",
+   "out_kind": "ndarray",
+   "program": "xsk2_corner_kr 0.40 0.50",
+   "status": "ok"
+  },
+  "xsk2_diameter_opening": {
+   "fig": "xsk2_diameter_opening.png",
+   "out_kind": "ndarray",
+   "program": "xsk2_diameter_opening 0.35 0.50",
+   "status": "ok"
+  },
+  "xsk2_h_maxima": {
+   "fig": "xsk2_h_maxima.png",
+   "out_kind": "ndarray",
+   "program": "xsk2_h_maxima 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk2_hog": {
+   "fig": "xsk2_hog.png",
+   "out_kind": "ndarray",
+   "program": "xsk2_hog 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk2_inv_gauss_grad": {
+   "fig": "xsk2_inv_gauss_grad.png",
+   "out_kind": "ndarray",
+   "program": "xsk2_inv_gauss_grad 0.40 0.50",
+   "status": "ok"
+  },
+  "xsk2_isotropic_close": {
+   "fig": "xsk2_isotropic_close.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nxsk2_isotropic_close 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk2_multiotsu": {
+   "fig": "xsk2_multiotsu.png",
+   "out_kind": "ndarray",
+   "program": "xsk2_multiotsu 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk2_radon": {
+   "fig": "xsk2_radon.png",
+   "out_kind": "ndarray",
+   "program": "xsk2_radon 0.40 0.50",
+   "status": "ok"
+  },
+  "xsk2_rank_geomean": {
+   "fig": "xsk2_rank_geomean.png",
+   "out_kind": "ndarray",
+   "program": "xsk2_rank_geomean 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk2_reconstruction": {
+   "fig": "xsk2_reconstruction.png",
+   "out_kind": "ndarray",
+   "program": "xsk2_reconstruction 0.35 0.50",
+   "status": "ok"
+  },
+  "xsk2_wiener": {
+   "fig": "xsk2_wiener.png",
+   "out_kind": "ndarray",
+   "program": "xsk2_wiener 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk3_area_closing": {
+   "fig": "xsk3_area_closing.png",
+   "out_kind": "ndarray",
+   "program": "xsk3_area_closing 0.35 0.50",
+   "status": "ok"
+  },
+  "xsk3_corner_fast": {
+   "fig": "xsk3_corner_fast.png",
+   "out_kind": "ndarray",
+   "program": "xsk3_corner_fast 0.40 0.50",
+   "status": "ok"
+  },
+  "xsk3_corner_moravec": {
+   "fig": "xsk3_corner_moravec.png",
+   "out_kind": "ndarray",
+   "program": "xsk3_corner_moravec 0.40 0.50",
+   "status": "ok"
+  },
+  "xsk3_diameter_closing": {
+   "fig": "xsk3_diameter_closing.png",
+   "out_kind": "ndarray",
+   "program": "xsk3_diameter_closing 0.35 0.50",
+   "status": "ok"
+  },
+  "xsk3_estimate_sigma": {
+   "fig": "xsk3_estimate_sigma.png",
+   "out_kind": "float",
+   "program": "xsk3_estimate_sigma 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk3_h_minima": {
+   "fig": "xsk3_h_minima.png",
+   "out_kind": "ndarray",
+   "program": "xsk3_h_minima 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk3_integral_image": {
+   "fig": "xsk3_integral_image.png",
+   "out_kind": "ndarray",
+   "program": "xsk3_integral_image 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk3_is_low_contrast": {
+   "fig": "xsk3_is_low_contrast.png",
+   "out_kind": "float",
+   "program": "xsk3_is_low_contrast 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk3_peak_local_max": {
+   "fig": "xsk3_peak_local_max.png",
+   "out_kind": "ndarray",
+   "program": "xsk3_peak_local_max 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk3_rank_equalize": {
+   "fig": "xsk3_rank_equalize.png",
+   "out_kind": "ndarray",
+   "program": "xsk3_rank_equalize 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk3_rank_majority": {
+   "fig": "xsk3_rank_majority.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nxsk3_rank_majority 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk3_rank_mean_bilateral": {
+   "fig": "xsk3_rank_mean_bilateral.png",
+   "out_kind": "ndarray",
+   "program": "xsk3_rank_mean_bilateral 0.35 0.50",
+   "status": "ok"
+  },
+  "xsk3_rank_otsu": {
+   "fig": "xsk3_rank_otsu.png",
+   "out_kind": "ndarray",
+   "program": "xsk3_rank_otsu 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk3_rank_subtract_mean": {
+   "fig": "xsk3_rank_subtract_mean.png",
+   "out_kind": "ndarray",
+   "program": "xsk3_rank_subtract_mean 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk3_threshold_local_median": {
+   "fig": "xsk3_threshold_local_median.png",
+   "out_kind": "ndarray",
+   "program": "xsk3_threshold_local_median 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk_blob_dog": {
+   "fig": "xsk_blob_dog.png",
+   "out_kind": "float",
+   "program": "xsk_blob_dog 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk_blob_doh": {
+   "fig": "xsk_blob_doh.png",
+   "out_kind": "float",
+   "program": "xsk_blob_doh 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk_blob_log": {
+   "fig": "xsk_blob_log.png",
+   "out_kind": "float",
+   "program": "xsk_blob_log 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk_flood": {
+   "fig": "xsk_flood.png",
+   "out_kind": "ndarray",
+   "program": "xsk_flood 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk_hessian_eig": {
+   "fig": "xsk_hessian_eig.png",
+   "out_kind": "ndarray",
+   "program": "xsk_hessian_eig 0.40 0.50",
+   "status": "ok"
+  },
+  "xsk_inpaint": {
+   "fig": "xsk_inpaint.png",
+   "out_kind": "ndarray",
+   "program": "xsk_inpaint 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk_meijering": {
+   "fig": "xsk_meijering.png",
+   "out_kind": "ndarray",
+   "program": "xsk_meijering 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk_orb_count": {
+   "fig": "xsk_orb_count.png",
+   "out_kind": "float",
+   "program": "xsk_orb_count 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk_random_walker": {
+   "fig": "xsk_random_walker.png",
+   "out_kind": "ndarray",
+   "program": "xsk_random_walker 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk_richardson_lucy": {
+   "fig": "xsk_richardson_lucy.png",
+   "out_kind": "ndarray",
+   "program": "xsk_richardson_lucy 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk_sato": {
+   "fig": "xsk_sato.png",
+   "out_kind": "ndarray",
+   "program": "xsk_sato 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk_struct_coherence": {
+   "fig": "xsk_struct_coherence.png",
+   "out_kind": "ndarray",
+   "program": "xsk_struct_coherence 0.50 0.50",
+   "status": "ok"
+  },
+  "xsk_unwrap_phase": {
+   "fig": "xsk_unwrap_phase.png",
+   "out_kind": "ndarray",
+   "program": "xsk_unwrap_phase 0.50 0.50",
+   "status": "ok"
+  },
+  "xsp_chamfer_dist": {
+   "fig": "xsp_chamfer_dist.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nxsp_chamfer_dist 0.50 0.50",
+   "status": "ok"
+  },
+  "xsp_cspline_smooth": {
+   "fig": "xsp_cspline_smooth.png",
+   "out_kind": "ndarray",
+   "program": "xsp_cspline_smooth 0.35 0.50",
+   "status": "ok"
+  },
+  "xsp_dct": {
+   "fig": "xsp_dct.png",
+   "out_kind": "ndarray",
+   "program": "xsp_dct 0.40 0.50",
+   "status": "ok"
+  },
+  "xsp_dct_denoise": {
+   "fig": "xsp_dct_denoise.png",
+   "out_kind": "ndarray",
+   "program": "xsp_dct_denoise 0.35 0.50",
+   "status": "ok"
+  },
+  "xsp_dct_lowpass": {
+   "fig": "xsp_dct_lowpass.png",
+   "out_kind": "ndarray",
+   "program": "xsp_dct_lowpass 0.40 0.50",
+   "status": "ok"
+  },
+  "xsp_detrend_flatten": {
+   "fig": "xsp_detrend_flatten.png",
+   "out_kind": "ndarray",
+   "program": "xsp_detrend_flatten 0.50 0.50",
+   "status": "ok"
+  },
+  "xsp_gauss_grad_mag": {
+   "fig": "xsp_gauss_grad_mag.png",
+   "out_kind": "ndarray",
+   "program": "xsp_gauss_grad_mag 0.40 0.50",
+   "status": "ok"
+  },
+  "xsp_hilbert_env": {
+   "fig": "xsp_hilbert_env.png",
+   "out_kind": "ndarray",
+   "program": "xsp_hilbert_env 0.50 0.50",
+   "status": "ok"
+  },
+  "xsp_morph_laplace": {
+   "fig": "xsp_morph_laplace.png",
+   "out_kind": "ndarray",
+   "program": "xsp_morph_laplace 0.40 0.50",
+   "status": "ok"
+  },
+  "xsp_savgol": {
+   "fig": "xsp_savgol.png",
+   "out_kind": "ndarray",
+   "program": "xsp_savgol 0.35 0.50",
+   "status": "ok"
+  },
+  "xsp_wiener": {
+   "fig": "xsp_wiener.png",
+   "out_kind": "ndarray",
+   "program": "xsp_wiener 0.35 0.50",
+   "status": "ok"
+  },
+  "xwt_detail_energy": {
+   "fig": "xwt_detail_energy.png",
+   "out_kind": "float",
+   "program": "xwt_detail_energy 0.50 0.50",
+   "status": "ok"
+  },
+  "xwt_directional_detail": {
+   "fig": "xwt_directional_detail.png",
+   "out_kind": "ndarray",
+   "program": "xwt_directional_detail 0.40 0.50",
+   "status": "ok"
+  },
+  "xwt_firm_denoise": {
+   "fig": "xwt_firm_denoise.png",
+   "out_kind": "ndarray",
+   "program": "xwt_firm_denoise 0.35 0.50",
+   "status": "ok"
+  },
+  "xwt_hf_reconstruct": {
+   "fig": "xwt_hf_reconstruct.png",
+   "out_kind": "ndarray",
+   "program": "xwt_hf_reconstruct 0.40 0.50",
+   "status": "ok"
+  },
+  "xwt_lf_reconstruct": {
+   "fig": "xwt_lf_reconstruct.png",
+   "out_kind": "ndarray",
+   "program": "xwt_lf_reconstruct 0.35 0.50",
+   "status": "ok"
+  },
+  "xwt_mra_component": {
+   "fig": "xwt_mra_component.png",
+   "out_kind": "ndarray",
+   "program": "xwt_mra_component 0.40 0.50",
+   "status": "ok"
+  },
+  "xwt_packet_entropy": {
+   "fig": "xwt_packet_entropy.png",
+   "out_kind": "float",
+   "program": "xwt_packet_entropy 0.50 0.50",
+   "status": "ok"
+  },
+  "xwt_subband_tile": {
+   "fig": "xwt_subband_tile.png",
+   "out_kind": "ndarray",
+   "program": "xwt_subband_tile 0.40 0.50",
+   "status": "ok"
+  },
+  "xwt_visushrink": {
+   "fig": "xwt_visushrink.png",
+   "out_kind": "ndarray",
+   "program": "xwt_visushrink 0.35 0.50",
+   "status": "ok"
+  },
+  "zero_crossing": {
+   "fig": "zero_crossing.png",
+   "out_kind": "ndarray",
+   "program": "zero_crossing 0.50 0.50",
+   "status": "ok"
+  },
+  "zero_crossing_sub_pix": {
+   "fig": "zero_crossing_sub_pix.png",
+   "out_kind": "dict",
+   "program": "zero_crossing_sub_pix 0.50 0.50",
+   "status": "ok"
+  },
+  "zoom_image_factor": {
+   "fig": "zoom_image_factor.png",
+   "out_kind": "ndarray",
+   "program": "zoom_image_factor 0.50 0.50",
+   "status": "ok"
+  },
+  "zoom_image_size": {
+   "fig": "zoom_image_size.png",
+   "out_kind": "ndarray",
+   "program": "zoom_image_size 0.50 0.50",
+   "status": "ok"
+  },
+  "zoom_region": {
+   "fig": "zoom_region.png",
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nzoom_region 0.50 0.50",
+   "status": "ok"
+  }
+ },
+ "size": 128,
+ "stats": {
+  "failed": 0,
+  "ok": 724,
+  "unreachable": 161
+ }
+}

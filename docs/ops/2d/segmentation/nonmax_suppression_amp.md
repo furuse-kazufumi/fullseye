@@ -17,6 +17,10 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "nonmax_suppression_amp", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `nonmax_suppression_amp`(意味・パラメータは HALCON リファレンスが参考になる)
 
+![nonmax_suppression_amp: 入力 → 出力](../../_fig/nonmax_suppression_amp.png)
+
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+
 ## 使い方
 
 極大点（ローカルマキシマム）を抽出する非極大値抑制。窓内最大値と一致し、かつ閾値 ``0.3+0.4b`` を超える画素だけを前景として残す。a が窓サイズを 3/5/7/9 に振る。
@@ -32,6 +36,14 @@ HALCON の ``nonmax_suppression_amp``（エッジ振幅画像上で法線方向�
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
 - [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
 - アルゴリズムの正典(著者・年)と用途は上記**ファミリ使い方ガイド**に記載。
+
+## Studio で試す
+
+下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。
+
+```program
+nonmax_suppression_amp 0.50 0.50
+```
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 

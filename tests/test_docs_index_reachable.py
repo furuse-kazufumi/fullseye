@@ -228,9 +228,18 @@ def test_the_generated_blocks_are_current():
                            (G.build_poc(lang), G.PSTART, G.PEND),
                            (G.build_docmap(lang), G.DSTART, G.DEND)):
             got = a + s.split(a, 1)[1].split(b, 1)[0] + b
-            assert got == want, (
-                "%s の %s ブロックが古い —— "
-                "`py -3.11 tools/gen_docs_index_ops.py` で再生成すること" % (name, a))
+            if got != want:
+                # ★どこが違うかを出す。出さないと、全体スイートでだけ落ちる
+                # ような順序依存(レジストリ汚染など)を追えない。
+                import difflib
+                d = list(difflib.unified_diff(
+                    got.splitlines(), want.splitlines(),
+                    "committed", "generated", lineterm="", n=1))
+                raise AssertionError(
+                    "%s の %s ブロックが古い —— "
+                    "`py -3.11 tools/gen_docs_index_ops.py` で再生成すること。\n"
+                    "差分(commit 済み → いま生成される):\n%s"
+                    % (name, a, chr(10).join(d[:40])))
 
     s = (DOCS / "articles" / "README.md").read_text(encoding="utf-8")
     want = G.build_articles()
@@ -272,7 +281,7 @@ def test_the_machine_readable_index_is_current():
     import imgevolve as IE
 
     got = json.loads((DOCS / "OP_INDEX.json").read_text(encoding="utf-8"))
-    fresh = IE.build_op_index()          # ★公開されるものと同じ組み立て
+    fresh = IE._build_op_index()          # ★公開されるものと同じ組み立て
     live = fresh["ops"]
     assert got == fresh, (
         "docs/OP_INDEX.json が生成物と一致しない —— "

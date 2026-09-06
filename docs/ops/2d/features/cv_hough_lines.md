@@ -17,6 +17,10 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "cv_hough_lines", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `hough_lines`(意味・パラメータは HALCON リファレンスが参考になる)
 
+![cv_hough_lines: 入力 → 出力](../../_fig/cv_hough_lines.png)
+
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+
 ## 使い方
 
 確率的 Hough 変換による直線(線分)検出(1 スカラー特徴量、OpenCV 実装)。まず Canny でエッジ画像を作り、そこから直線状に並ぶエッジ画素の集合を投票方式で探して線分として検出する —— ここでは検出できた線分の本数だけを返す(0 本なら 0)。
@@ -32,6 +36,14 @@ HALCON の `hough_lines`(Detect lines in edge images with the help of the Hough 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
 - [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
 - アルゴリズムの正典(著者・年)と用途は上記**ファミリ使い方ガイド**に記載。
+
+## Studio で試す
+
+下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。
+
+```program
+cv_hough_lines 0.50 0.50
+```
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 

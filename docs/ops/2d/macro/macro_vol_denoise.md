@@ -15,6 +15,8 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **データ種**: `volume` → `volume`
 - **呼び出し**: `fullseye.apply(img, "macro_vol_denoise", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
+*図なし: この op は `volume` を入力に取る。画像から始まる Studio のプログラムでは型が届かないので、下の「実行できる例」で使い方を見ること。*
+
 ## 使い方
 
 進化探索が発見した固定パイプライン（3-D ボリューム版）: ``vol_threshold(a=0.52,b=0.76)`` → ``vol_gaussian(a=0.08,b=0.89)``（3-D しきい値処理をかけてからガウシアン平滑化する 2 段）。

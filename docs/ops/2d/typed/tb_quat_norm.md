@@ -15,6 +15,8 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **データ種**: `qimage` → `image`
 - **呼び出し**: `fullseye.apply(img, "tb_quat_norm", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
+*図なし: この op は `qimage` を入力に取る。画像から始まる Studio のプログラムでは型が届かないので、下の「実行できる例」で使い方を見ること。*
+
 ## 使い方
 
 Per-pixel quaternion modulus ``|q| = sqrt(w^2+x^2+y^2+z^2)``. → (H, W).

@@ -3,6 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">contour</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;m1_fuzzy_measure_pos&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">fuzzy_measure_pos</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
+<p><img src="fig/m1_fuzzy_measure_pos.png" alt="m1_fuzzy_measure_pos: 入力 → 出力"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>中心を通るキャリパー線上のエッジを、ファジィなメンバーシップスコアでふるいにかけて返す（HALCON `<code style="color:#22d3bf">fuzzy_measure_pos</code>` に相当: 矩形/円弧に垂直な直線エッジをファジィ判定で検出する）。</p>
 <p>エッジ検出は `<code style="color:#22d3bf">m1_measure_pos</code><code style="color:#22d3bf"> と同じ。各エッジの振幅を</code><code style="color:#22d3bf">(amp - lo) / (gmax - lo)</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">lo = 0.05*gmax</code><code style="color:#22d3bf">）で [0,1] のファジィスコアに写像し、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf">（0〜1）以上のものだけを残す（0/1 のハードしきい値ではなく振幅に応じた連続的な信頼度で選別する点が </code><code style="color:#22d3bf">measure_pos</code><code style="color:#22d3bf"> と違う）。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は線の向き（</code><code style="color:#22d3bf">theta = a*pi</code>`）。戻り値は CONTOUR、座標単位はピクセル。</p>
@@ -14,6 +16,9 @@
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
+<p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">m1_fuzzy_measure_pos 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:m1_fuzzy_measure_pos%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:m1_fuzzy_measure_pos%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_contour_measure">gallery2d_contour_measure</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_contour_measure.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">contour</code> を入力に取れる)</h3>

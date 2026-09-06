@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_iss_keypoints — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_iss_keypoints&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p>*无图: 该算子以 <code style="color:#22d3bf">points</code> 为输入。从图像开始的 Studio 程序无法到达该类型，请参见下方的可运行示例。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>ISS（Intrinsic Shape Signatures，相当于 3D 版 Harris）关键点检测。以局部协方差的最小特征值 λ3 作为 saliency，仅将特征值 distinct（方向 well-defined）的点作为候选，再用 NMS 稀疏地选取。旋转不变。返回值 = 点的索引数组。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

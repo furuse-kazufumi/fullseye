@@ -2,11 +2,16 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tac_shear_field — 2D <code style="color:#22d3bf">tactile</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tac_shear_field&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/tac_shear_field.png" alt="tac_shear_field: 入力 → 出力"></p>
+<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>In-plane shear proxy from the 2-D structure tensor (Foerstner / Bigun-Granlund orientation coherence). The tensor `<code style="color:#22d3bf">J = G_sigma(grad v * grad v^T)</code><code style="color:#22d3bf"> has eigenvalues l1 &gt;= l2, and the coherence </code><code style="color:#22d3bf">(l1-l2)/(l1+l2) = sqrt((J11-J22)^2 + 4*J12^2) / (J11+J22)</code><code style="color:#22d3bf"> is 1 where the gel texture is stretched into a single dominant orientation (as it is under tangential/shear load) and 0 where it is isotropic. The result is additionally weighted by the tensor trace (gradient energy) so that texture-free, un-contacted gel stays dark instead of amplifying noise orientation. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = tensor integration sigma (0.6..4.6), </code><code style="color:#22d3bf">b</code>` = output gain (0.5..2.5). Output clipped to [0,1], HxW; a constant frame has zero gradient energy and yields an all-zero shear field.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Try it in Studio</h3>
+<p>The program below has been verified to run (same input as the figure). In Studio&#x27;s help this block becomes buttons that load and run it on the spot.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">tac_shear_field 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:tac_shear_field%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:tac_shear_field%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:sim2real_and_alife">sim2real_and_alife</a> — <code style="color:#22d3bf">py -3.11 examples/sim2real_and_alife.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">image</code> as input)</h3>

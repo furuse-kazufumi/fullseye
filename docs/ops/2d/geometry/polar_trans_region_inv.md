@@ -17,6 +17,10 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "polar_trans_region_inv", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `polar_trans_region_inv`(意味・パラメータは HALCON リファレンスが参考になる)
 
+![polar_trans_region_inv: 入力 → 出力](../../_fig/polar_trans_region_inv.png)
+
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+
 ## 使い方
 
 極座標表現を通常の直交座標（デカルト座標）へ逆変換する（``cv2.warpPolar`` の逆写像モード）。中心から半径 ``min(h,w)/2`` の円盤の外側は 0 で埋め、``_rebinarise`` により 0.5 しきい値で二値領域に戻す。a, b は未使用（``polar_trans_image_inv`` と同じ ``_sh_geom`` の ``polar_inv`` 分岐を共有）。
@@ -32,6 +36,15 @@ HALCON の ``polar_trans_region_inv``（極座標領域を元のデカルト座�
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
 - [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
 - アルゴリズムの正典(著者・年)と用途は上記**ファミリ使い方ガイド**に記載。
+
+## Studio で試す
+
+下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。
+
+```program
+threshold 0.50 0.50
+polar_trans_region_inv 0.50 0.50
+```
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 

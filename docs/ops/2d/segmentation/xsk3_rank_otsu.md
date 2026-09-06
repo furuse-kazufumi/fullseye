@@ -15,6 +15,10 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **データ種**: `image` → `region`
 - **呼び出し**: `fullseye.apply(img, "xsk3_rank_otsu", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
+![xsk3_rank_otsu: 入力 → 出力](../../_fig/xsk3_rank_otsu.png)
+
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+
 ## 使い方
 
 局所大津二値化(skimage ``filters.rank.otsu``)。近傍円盤内だけで大津の判別分析法(Otsu's method)の閾値を求め、画素値がその局所閾値を上回るかで二値化する —— 大域大津と違い、照明ムラのある画像でも局所的に妥当な閾値が選べる。
@@ -30,6 +34,14 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
 - [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
 - アルゴリズムの正典(著者・年)と用途は上記**ファミリ使い方ガイド**に記載。
+
+## Studio で試す
+
+下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。
+
+```program
+xsk3_rank_otsu 0.50 0.50
+```
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 

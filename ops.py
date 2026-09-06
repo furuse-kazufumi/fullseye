@@ -569,10 +569,17 @@ def _smooth_contours(cv, a, b):
 
 ``a`` が平滑化窓の半幅を ``1〜4``（窓長 ``2w+1 = 3,5,7,9``）に振る。``b`` は未使用。各輪郭の ``(row, col)`` 列を独立に等重み移動平均（``np.convolve`` の ``"same"`` モード）で均す。点数が窓長の 2 倍以下の短い輪郭はそのまま素通しする（平滑化されない）。"""
     w = 1 + int(a * 3); out = []
+    k = np.ones(2 * w + 1) / (2 * w + 1)
     for c in cv["cs"]:
         if len(c) > 2 * w + 1:
-            k = np.ones(2 * w + 1) / (2 * w + 1)
-            out.append(np.stack([np.convolve(c[:, 0], k, "same"), np.convolve(c[:, 1], k, "same")], 1))
+            # ★端は**端の値で**埋める。以前は ``np.convolve(x, k, "same")`` で、
+            # これは両端の w 点を**ゼロと**平均する —— 輪郭の始点と終点が
+            # 原点 (0,0) の方向へ最大 50 px 以上引きずられ、輪郭 140 本ぶんの
+            # 赤い筋が左上へ収束する図になった(2026-09-06、op ごとの図を初めて
+            # 作ったときに発見。数値テストでは平均ずれ 0.3 px で見えなかった)。
+            out.append(np.stack(
+                [np.convolve(np.pad(c[:, i], w, mode="edge"), k, "valid")
+                 for i in (0, 1)], 1))
         else:
             out.append(c)
     return {"shape": cv["shape"], "cs": out}

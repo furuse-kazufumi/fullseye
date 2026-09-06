@@ -3,6 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;projective_trans_image&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">projective_trans_image</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
+<p><img src="fig/projective_trans_image.png" alt="projective_trans_image: 入力 → 出力"></p>
+<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력(이미지가 아닌 반환값은 값 자체를 표시).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>원근(투영) 변환(`<code style="color:#22d3bf">cv2.warpPerspective</code><code style="color:#22d3bf">). 네 모서리 중 위쪽 두 모서리를 </code><code style="color:#22d3bf">d=0.06+0.12*a</code><code style="color:#22d3bf"> 비율로 안쪽으로 당겨 사다리꼴(원근이 걸린) 왜곡을 만든다. 프레임 밖은 반사로 채운다. HALCON의 </code><code style="color:#22d3bf">projective_trans_image</code>`(Apply a projective transformation to an image.)에 해당(HALCON은 임의의 호모그래피 행렬을 지정할 수 있지만, 여기서는 사다리꼴 왜곡 한 가지 패턴으로 한정한 근사이다).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
@@ -14,6 +16,9 @@
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
 <p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio에서 시도하기</h3>
+<p>아래 프로그램은 실제로 실행됨을 확인했습니다(그림과 같은 입력). Studio 도움말에서는 이 블록이 버튼이 되어 즉시 불러와 실행할 수 있습니다.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">projective_trans_image 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:projective_trans_image%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:projective_trans_image%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_geometry">gallery2d_geometry</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_geometry.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_water_level">poc_water_level</a> — <code style="color:#22d3bf">py -3.11 examples/poc_water_level.py</code></p>

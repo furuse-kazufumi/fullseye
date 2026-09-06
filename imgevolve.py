@@ -273,10 +273,12 @@ def cmd_bench(a):
     return bench.main()
 
 
-def build_op_index():
+def _build_op_index():
     """`docs/OP_INDEX.json` の中身をそのまま返す(書き込みはしない)。
 
-    ★`cmd_index` から切り出した(2026-09-06)。以前は組み立てが `cmd_index` の
+    ★`cmd_index` から切り出した(2026-09-06)。名前を `_` で始めるのは、これが CLI と
+    検査のための内部関数で、ファサードから届く公開 API ではないから
+    (`tests/test_public_reachability.py` が「見えない公開名」を数えて止める)。以前は組み立てが `cmd_index` の
     中にしか無く、鮮度を確かめる検査は `_all_ops()` を呼ぶしかなかった。すると
     **tier の再分類(color)が検査から見えない**ので、検査は「ずれている」と
     言い続けるか、tier を見ないよう緩めるかの二択になる。生成物そのものを
@@ -300,7 +302,7 @@ def build_op_index():
 
 
 def cmd_index(a):
-    out = build_op_index()
+    out = _build_op_index()
     rows = out["ops"]
     p = a.out or os.path.join(HERE, "docs", "OP_INDEX.json")
     os.makedirs(os.path.dirname(p), exist_ok=True)

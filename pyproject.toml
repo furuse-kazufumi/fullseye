@@ -246,6 +246,10 @@ py-modules = [
 # (`halcon_names_data` / `auto_specs_data` / `macro_champions_data`) instead, which
 # always ship as .py modules.
 "studio_assets" = ["*.json", "op_help/*.html", "op_help/*.md",
+                   # op ごとの「入力 → 出力」の図(2026-09-06)。ヘルプ HTML が
+                   # `fig/<op>.png` で参照する。宣言を忘れると wheel では図だけ
+                   # 空白になる ―― HTML と同じ事故の型なのでここに並べて置く。
+                   "op_help/fig/*.png",
                    "sample_images/*.png", "sample_images/*.json",
                    "sample_thumbs/*.png", "sample_thumbs/*.json",
                    # `sample_sources_ai/`(AI 生成の記事用素材 26 枚)は **同梱しない**。

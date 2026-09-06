@@ -17,6 +17,10 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "sk_niblack", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `var_threshold`(意味・パラメータは HALCON リファレンスが参考になる)
 
+![sk_niblack: 入力 → 出力](../../_fig/sk_niblack.png)
+
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+
 ## 使い方
 
 Niblack の局所適応しきい値。Sauvola と同じく局所平均・標準偏差からしきい値を決めるが、係数の与え方がより単純(古典的)で、Sauvola より前景を広めに(=ノイズを拾いやすく)判定する傾向がある。
@@ -32,6 +36,14 @@ HALCON の `var_threshold` に相当(近似)。実装は ``v > filters.threshold
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
 - [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
 - アルゴリズムの正典(著者・年)と用途は上記**ファミリ使い方ガイド**に記載。
+
+## Studio で試す
+
+下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。
+
+```program
+sk_niblack 0.50 0.50
+```
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 

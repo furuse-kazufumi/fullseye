@@ -17,6 +17,10 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "fast_threshold", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `fast_threshold`(意味・パラメータは HALCON リファレンスが参考になる)
 
+![fast_threshold: 入力 → 出力](../../_fig/fast_threshold.png)
+
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+
 ## 使い方
 
 固定しきい値による二値化。``x`` が ``(a, a+0.5+0.5b)`` の帯域に入る画素を前景(1)とする（``threshold`` seed op と同じ ``_sh_threshold`` の ``fixed`` 分岐）。a が下限、b が帯域幅（上限）を振る。
@@ -32,6 +36,14 @@ HALCON の ``fast_threshold``（大域しきい値による高速な二値化、
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
 - [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
 - アルゴリズムの正典(著者・年)と用途は上記**ファミリ使い方ガイド**に記載。
+
+## Studio で試す
+
+下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。
+
+```program
+fast_threshold 0.50 0.50
+```
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 

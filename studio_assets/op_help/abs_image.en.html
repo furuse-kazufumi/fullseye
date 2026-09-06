@@ -3,6 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;abs_image&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">abs_image</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
+<p><img src="fig/abs_image.png" alt="abs_image: 入力 → 出力"></p>
+<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Takes the absolute value of pixel values (`<code style="color:#22d3bf">np.abs</code><code style="color:#22d3bf">). Since fullseye&#x27;s </code><code style="color:#22d3bf">image</code><code style="color:#22d3bf"> already follows the [0,1] contract (non-negative), this acts as an identity mapping that changes nothing for a normal image. It only has an effect when a signed intermediate result, such as a difference image, is passed in directly. Stands in for HALCON&#x27;s </code><code style="color:#22d3bf">abs_image</code>` (Calculate the absolute value (modulus) of an image.).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
@@ -15,6 +17,9 @@
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
 <p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Try it in Studio</h3>
+<p>The program below has been verified to run (same input as the figure). In Studio&#x27;s help this block becomes buttons that load and run it on the spot.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">abs_image 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:abs_image%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:abs_image%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_gray_arith">gallery2d_gray_arith</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_gray_arith.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">image</code> as input)</h3>

@@ -17,6 +17,10 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "gray_dilation_shape", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `gray_dilation_shape`(意味・パラメータは HALCON リファレンスが参考になる)
 
+![gray_dilation_shape: 入力 → 出力](../../_fig/gray_dilation_shape.png)
+
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+
 ## 使い方
 
 円形（disk, 半径 ``_rad(a)``=1〜4）構造要素によるグレースケール膨張（gray dilation）—— 窓内の最大値に置き換える。b は未使用。
@@ -32,6 +36,14 @@ HALCON の ``gray_dilation_shape``（円・矩形など任意形状のマスク�
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
 - [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
 - アルゴリズムの正典(著者・年)と用途は上記**ファミリ使い方ガイド**に記載。
+
+## Studio で試す
+
+下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。
+
+```program
+gray_dilation_shape 0.35 0.50
+```
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 

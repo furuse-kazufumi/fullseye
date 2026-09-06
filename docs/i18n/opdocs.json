@@ -288,6 +288,41 @@
    "tw": "> 以下的詳細說明為原文 —— 摘要與標題已翻譯。",
    "ko": "> 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.",
    "de": "> Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt."
+  },
+  "*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*": {
+   "en": "*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*",
+   "zh": "*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*",
+   "tw": "*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*",
+   "ko": "*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력(이미지가 아닌 반환값은 값 자체를 표시).*",
+   "de": "*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe (ein Nicht-Bild-Rückgabewert wird als Wert gezeigt).*"
+  },
+  "*図なし: この op は `%s` を入力に取る。画像から始まる Studio のプログラムでは型が届かないので、下の「実行できる例」で使い方を見ること。*": {
+   "en": "*No figure: this op takes `%s` as input. A Studio program starting from an image cannot reach that type — see the runnable examples below for how it is used.*",
+   "zh": "*无图: 该算子以 `%s` 为输入。从图像开始的 Studio 程序无法到达该类型，请参见下方的可运行示例。*",
+   "tw": "*無圖: 該運算子以 `%s` 為輸入。從影像開始的 Studio 程式無法到達該型別，請參見下方的可執行範例。*",
+   "ko": "*그림 없음: 이 연산자는 `%s`를 입력으로 받습니다. 이미지에서 시작하는 Studio 프로그램으로는 그 타입에 닿지 않으므로 아래의 실행 가능한 예제를 보세요.*",
+   "de": "*Keine Abbildung: dieser Op nimmt `%s` als Eingabe. Ein Studio-Programm, das bei einem Bild beginnt, erreicht diesen Typ nicht — siehe die lauffähigen Beispiele unten.*"
+  },
+  "*図なし: 走らせたが落ちた —— %s*": {
+   "en": "*No figure: it was run but failed — %s*",
+   "zh": "*无图: 已运行但失败 —— %s*",
+   "tw": "*無圖: 已執行但失敗 —— %s*",
+   "ko": "*그림 없음: 실행했으나 실패 —— %s*",
+   "de": "*Keine Abbildung: ausgeführt, aber fehlgeschlagen — %s*"
+  },
+  "## Studio で試す": {
+   "en": "## Try it in Studio",
+   "zh": "## 在 Studio 中试试",
+   "tw": "## 在 Studio 中試試",
+   "ko": "## Studio에서 시도하기",
+   "de": "## In Studio ausprobieren"
+  },
+  "下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。": {
+   "en": "The program below has been verified to run (same input as the figure). In Studio's help this block becomes buttons that load and run it on the spot.",
+   "zh": "下面的程序已确认可以运行(与图相同的输入)。在 Studio 帮助中，此块会变成按钮，可当场加载并运行。",
+   "tw": "下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。",
+   "ko": "아래 프로그램은 실제로 실행됨을 확인했습니다(그림과 같은 입력). Studio 도움말에서는 이 블록이 버튼이 되어 즉시 불러와 실행할 수 있습니다.",
+   "de": "Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen."
   }
  }
 }

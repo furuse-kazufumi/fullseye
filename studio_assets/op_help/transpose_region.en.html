@@ -3,6 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;transpose_region&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">transpose_region</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
+<p><img src="fig/transpose_region.png" alt="transpose_region: 入力 → 出力"></p>
+<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Transposes a region (binary mask) (`<code style="color:#22d3bf">x.T</code><code style="color:#22d3bf">, a reflection about the diagonal = swapping rows and columns). The category is geometry, but the in/out type is </code><code style="color:#22d3bf">region</code><code style="color:#22d3bf">. Implemented as a kind of geometric transform via </code><code style="color:#22d3bf">_sh_geom</code><code style="color:#22d3bf">, but since transposition involves no interpolation, the value does not change even after passing through </code><code style="color:#22d3bf">build()</code><code style="color:#22d3bf">&#x27;s </code><code style="color:#22d3bf">_rebinarise</code><code style="color:#22d3bf"> (it is already {0,1}). Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">transpose_region</code>` (Reflect a region about a point) -- strictly a different transform from HALCON&#x27;s &quot;reflection about a point,&quot; approximated here as a matrix transpose = reflection about the diagonal.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
@@ -13,6 +15,10 @@
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
 <p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Try it in Studio</h3>
+<p>The program below has been verified to run (same input as the figure). In Studio&#x27;s help this block becomes buttons that load and run it on the spot.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
+transpose_region 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Atranspose_region%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Atranspose_region%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_geometry">gallery2d_geometry</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_geometry.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">region</code> as input)</h3>

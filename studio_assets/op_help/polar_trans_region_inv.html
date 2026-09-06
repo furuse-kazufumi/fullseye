@@ -3,6 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;polar_trans_region_inv&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">polar_trans_region_inv</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
+<p><img src="fig/polar_trans_region_inv.png" alt="polar_trans_region_inv: 入力 → 出力"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>極座標表現を通常の直交座標（デカルト座標）へ逆変換する（`<code style="color:#22d3bf">cv2.warpPolar</code><code style="color:#22d3bf"> の逆写像モード）。中心から半径 </code><code style="color:#22d3bf">min(h,w)/2</code><code style="color:#22d3bf"> の円盤の外側は 0 で埋め、</code><code style="color:#22d3bf">_rebinarise</code><code style="color:#22d3bf"> により 0.5 しきい値で二値領域に戻す。a, b は未使用（</code><code style="color:#22d3bf">polar_trans_image_inv</code><code style="color:#22d3bf"> と同じ </code><code style="color:#22d3bf">_sh_geom</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">polar_inv</code>` 分岐を共有）。</p>
 <p>HALCON の `<code style="color:#22d3bf">polar_trans_region_inv</code><code style="color:#22d3bf">（極座標領域を元のデカルト座標系の領域に戻す演算）に相当。実装上、円盤境界付近 1 画素程度は補間の丸めで非決定的になりうるため外側を明示的に 0 で塗って安全側に倒している（2026-09-02 修正済み、詳細は </code><code style="color:#22d3bf">_sh_geom</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">polar_inv</code>` 分岐のコメント参照）。</p>
@@ -12,6 +14,10 @@
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
+<p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
+polar_trans_region_inv 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Apolar_trans_region_inv%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Apolar_trans_region_inv%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_geometry">gallery2d_geometry</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_geometry.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">region</code> を入力に取れる)</h3>

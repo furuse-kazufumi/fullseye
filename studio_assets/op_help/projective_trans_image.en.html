@@ -3,6 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;projective_trans_image&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">projective_trans_image</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
+<p><img src="fig/projective_trans_image.png" alt="projective_trans_image: 入力 → 出力"></p>
+<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Perspective (projective) transformation (`<code style="color:#22d3bf">cv2.warpPerspective</code><code style="color:#22d3bf">). Creates a trapezoidal (perspective-distorted) warp by pulling the top two of the four corners inward by a ratio of </code><code style="color:#22d3bf">d=0.06+0.12*a</code><code style="color:#22d3bf">. Areas outside the frame are filled by reflection. Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">projective_trans_image</code>` (Apply a projective transformation to an image.) (HALCON can take an arbitrary homography matrix, but this is an approximation limited to a single trapezoidal-distortion pattern).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
@@ -14,6 +16,9 @@
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
 <p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Try it in Studio</h3>
+<p>The program below has been verified to run (same input as the figure). In Studio&#x27;s help this block becomes buttons that load and run it on the spot.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">projective_trans_image 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:projective_trans_image%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:projective_trans_image%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_geometry">gallery2d_geometry</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_geometry.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_water_level">poc_water_level</a> — <code style="color:#22d3bf">py -3.11 examples/poc_water_level.py</code></p>

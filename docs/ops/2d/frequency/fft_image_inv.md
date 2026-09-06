@@ -17,6 +17,10 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "fft_image_inv", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `fft_image_inv`(意味・パラメータは HALCON リファレンスが参考になる)
 
+![fft_image_inv: 入力 → 出力](../../_fig/fft_image_inv.png)
+
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+
 ## 使い方
 
 入力画像をそのまま周波数領域の配列とみなして逆 FFT を掛け、実部を
@@ -38,6 +42,14 @@ image.）は ``fft_image`` が作った複素スペクトル(実部・虚部の�
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
 - [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
 - アルゴリズムの正典(著者・年)と用途は上記**ファミリ使い方ガイド**に記載。
+
+## Studio で試す
+
+下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。
+
+```program
+fft_image_inv 0.40 0.50
+```
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 

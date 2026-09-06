@@ -2,11 +2,16 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tac_pressure_proxy — 2D <code style="color:#22d3bf">tactile</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tac_pressure_proxy&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/tac_pressure_proxy.png" alt="tac_pressure_proxy: 入力 → 出力"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>接触压力近似图:对伪参考背景的整流偏差 `<code style="color:#22d3bf">dev = |v - G_sigma(v)|</code><code style="color:#22d3bf"> 只保留高偏差(接触)区域——相对门限为 </code><code style="color:#22d3bf">0.15 * max(dev)</code><code style="color:#22d3bf"> 再加绝对底限 0.005——经灵敏度增益放大并做高斯平滑,这是触觉垫没有力传感器时常用的“压痕深度与法向力单调相关”的标准代理量。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = 灵敏度(增益 1~10 倍),</code><code style="color:#22d3bf">b</code>` = 平滑半径(sigma 0.5~4.5)。输出裁剪到 [0,1],大小为 HxW;平坦帧得到全零的压力图(无接触、无力)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中试试</h3>
+<p>下面的程序已确认可以运行(与图相同的输入)。在 Studio 帮助中，此块会变成按钮，可当场加载并运行。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">tac_pressure_proxy 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:tac_pressure_proxy%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:tac_pressure_proxy%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:sim2real_and_alife">sim2real_and_alife</a> — <code style="color:#22d3bf">py -3.11 examples/sim2real_and_alife.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">image</code> 作为输入)</h3>

@@ -15,6 +15,10 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **データ種**: `image` → `feature`
 - **呼び出し**: `fullseye.apply(img, "xwt_detail_energy", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
+![xwt_detail_energy: 入力 → 出力](../../_fig/xwt_detail_energy.png)
+
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+
 ## 使い方
 
 ウェーブレット詳細成分のエネルギー比。``db2`` で 3 段分解し、全詳細係数(各段の水平/垂直/対角)の二乗平均の合計を、それに近似成分の二乗平均を足した全エネルギーで割った値を返す —— 高周波(テクスチャ/ノイズ/エッジ)が画像全体に占める割合の指標で、値域はおおむね [0,1)。
@@ -30,6 +34,14 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
 - [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
 - アルゴリズムの正典(著者・年)と用途は上記**ファミリ使い方ガイド**に記載。
+
+## Studio で試す
+
+下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。
+
+```program
+xwt_detail_energy 0.50 0.50
+```
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 

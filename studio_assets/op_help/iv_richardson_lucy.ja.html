@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">iv_richardson_lucy — 2D <code style="color:#22d3bf">restoration</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;iv_richardson_lucy&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<p><img src="fig/iv_richardson_lucy.png" alt="iv_richardson_lucy: 入力 → 出力"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>小さなガウス型点広がり関数（PSF、sigma = `<code style="color:#22d3bf">RL_SIGMA</code><code style="color:#22d3bf">）を仮定したリチャードソン・ルーシー逆畳み込み（Richardson-Lucy deconvolution）。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は反復回数 n = 1 + round(a*14)（1〜15）を設定し、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は無視される。RL 法は推定値 </code><code style="color:#22d3bf">u</code><code style="color:#22d3bf"> を乗法的に更新し、</code><code style="color:#22d3bf">u (*) psf</code>` がぼけた観測値と一致するようにすることで、本物のエッジを鮮鋭化する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
@@ -10,6 +12,9 @@
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
+<p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">iv_richardson_lucy 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:iv_richardson_lucy%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:iv_richardson_lucy%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_smoothing_rank.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>

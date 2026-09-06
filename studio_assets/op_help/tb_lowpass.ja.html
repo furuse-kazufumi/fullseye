@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_lowpass — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_lowpass&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<p>*図なし: この op は <code style="color:#22d3bf">signal</code> を入力に取る。画像から始まる Studio のプログラムでは型が届かないので、下の「実行できる例」で使い方を見ること。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>バターワース・ローパスフィルタ（scipy、ゼロ位相 filtfilt）。*cutoff* は `<code style="color:#22d3bf">(0, rate/2)</code>` の範囲内でなければならない。ナイキスト周波数の範囲外のカットオフを指定すると、信号をそのまま通過させるのではなく例外を送出する。ゼロ位相 filtfilt を行うには短すぎる信号についても、フィルタを適用しないまま無言で返すのではなく例外を送出する（メッセージ中に正確な最小長を明記）。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tm_radon_forward — 2D <code style="color:#22d3bf">tomography</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tm_radon_forward&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/tm_radon_forward.png" alt="tm_radon_forward: 入力 → 出力"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>正向 Radon 投影：將 `<code style="color:#22d3bf">v</code><code style="color:#22d3bf"> 視為切片影像，沿平行射線對其積分以建立正弦圖（列 = 角度，欄 = 偵測器），再重新擬合回原始的 HxW。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 設定擷取的角度數量（</code><code style="color:#22d3bf">n = round(H*a)</code><code style="color:#22d3bf">，限制在 8..360 —— 稀疏視角旋鈕）；</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> 設定角度跨度（</code><code style="color:#22d3bf">span = 180*min(1, 0.5+b)</code><code style="color:#22d3bf"> 度：b &lt; 0.5 為有限角度 CT，b &gt;= 0.5 —— 包含預設值 b = 0.5 —— 為 </code><code style="color:#22d3bf">tm_fbp_reconstruct</code><code style="color:#22d3bf">／</code><code style="color:#22d3bf">tm_sart_reconstruct</code><code style="color:#22d3bf">／</code><code style="color:#22d3bf">tm_backproject_unfiltered</code><code style="color:#22d3bf"> 所假設的完整 [0,180) 跨度，因此在預設旋鈕下，正向 -&gt; 反向的自然鏈路可以來回一致）。若可用則使用 </code><code style="color:#22d3bf">skimage.transform.radon</code>`，否則使用 NumPy 的旋轉求和 Radon 轉換。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
@@ -10,6 +12,9 @@
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
+<p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">tm_radon_forward 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:tm_radon_forward%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:tm_radon_forward%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_physics_alife_3d.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image</code> 作為輸入)</h3>

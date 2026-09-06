@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tm_fbp_reconstruct — 2D <code style="color:#22d3bf">tomography</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tm_fbp_reconstruct&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<p><img src="fig/tm_fbp_reconstruct.png" alt="tm_fbp_reconstruct: 入力 → 出力"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>フィルタ補正逆投影法（filtered back-projection, FBP）: `<code style="color:#22d3bf">v</code><code style="color:#22d3bf"> をサイノグラム（行=角度、列=検出器、角度は [0,180) に一様分布と仮定）とみなしてスライスを再構成する。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は再構成フィルタを選ぶ — b &lt; 0.5 なら Ram-Lak（ランプフィルタ）、b &gt;= 0.5 なら Shepp-Logan。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は使用しない（意味を持つのはフィルタの方）。利用可能なら </code><code style="color:#22d3bf">skimage.transform.iradon</code>` を使用し、無ければ NumPy による FFT ランプフィルタ逆投影にフォールバックする。出力は HxW に合わせ直す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
@@ -10,6 +12,9 @@
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
+<p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">tm_fbp_reconstruct 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:tm_fbp_reconstruct%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:tm_fbp_reconstruct%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_physics_alife_3d.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>

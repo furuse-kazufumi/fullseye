@@ -582,6 +582,61 @@ def _rel(from_file: str, to_file: str) -> str:
     return r
 
 
+FIG_DIR = os.path.join(DOCS, "_fig")
+_FIG_MANIFEST = None
+
+
+def fig_manifest() -> dict:
+    """`tools/gen_op_figures.py` の結果(op 名 → status/fig/program/reason)。無ければ空。"""
+    global _FIG_MANIFEST
+    if _FIG_MANIFEST is None:
+        p = os.path.join(FIG_DIR, "figures.json")
+        _FIG_MANIFEST = {}
+        if os.path.exists(p):
+            with open(p, encoding="utf-8") as f:
+                _FIG_MANIFEST = json.load(f).get("ops", {})
+    return _FIG_MANIFEST
+
+
+def _figure_lines(rec, path, lang):
+    """op の「入力 → 出力」の図と、Studio でそのまま走るプログラム。
+
+    2026-09-06、ヘルプ 11,854 ページに画像が 1 枚も無いことが分かって足した。
+    図は `tools/gen_op_figures.py` が**実際に走らせて**作ったものだけ(fail-soft
+    で恒等に落ちたものは「動いた」と数えない)。型が画像から届かない op は
+    **理由を書く**(黙って図無しにしない)。
+    """
+    if rec["dim"] != "2d":
+        return []
+    m = fig_manifest().get(rec["name"])
+    if not m:
+        return []
+    out = []
+    if m["status"] == "ok":
+        rel = _rel(path, os.path.join(FIG_DIR, m["fig"]))
+        out.append("![%s: 入力 → 出力](%s)" % (rec["name"], rel))
+        out.append("")
+        out.append(T("*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*", lang))
+    elif m["status"] == "unreachable":
+        out.append(T("*図なし: この op は `%s` を入力に取る。画像から始まる Studio のプログラムでは型が届かないので、下の「実行できる例」で使い方を見ること。*", lang) % m["in_sort"])
+    else:
+        out.append(T("*図なし: 走らせたが落ちた —— %s*", lang) % m.get("reason", ""))
+    out.append("")
+    return out
+
+
+def _studio_lines(rec, lang):
+    """`## Studio で試す` —— ヘルプでは「読み込む / 読み込んで実行」のボタンになる。"""
+    if rec["dim"] != "2d":
+        return []
+    m = fig_manifest().get(rec["name"])
+    if not m or m["status"] != "ok":
+        return []
+    return [T("## Studio で試す", lang), "",
+            T("下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。", lang),
+            "", "```program", m["program"], "```", ""]
+
+
 def _op_md(rec, path, by_name, lang="ja", verbatim_doc=None):
     """1 op 分のノート(Markdown)。``lang`` は**枠**の言語。
 
@@ -643,6 +698,7 @@ def _op_md(rec, path, by_name, lang="ja", verbatim_doc=None):
         lines.append(T('- **上書き登録**: この名前は 2 回登録されている(core 実装 + backend の安全ラッパ)。`apply` が実行するのは**後勝ちの安全版**(fail-closed ラッパ)。core 版は backend 不在時のフォールバックとして残る(登録順=Wave0 stable slot は不変、`tests/test_opdocs.py` が上書き集合を pin)。', lang))
     lines.append("")
     # usage / behaviour — honest: docstring if present, else typed contract only
+    lines.extend(_figure_lines(rec, path, lang))
     lines.append(T("## 使い方", lang))
     lines.append("")
     if rec["doc"]:
@@ -762,6 +818,7 @@ def _op_md(rec, path, by_name, lang="ja", verbatim_doc=None):
     if rec.get("family"):
         lines.append(T("- アルゴリズムの正典(著者・年)と用途は上記**ファミリ使い方ガイド**に記載。", lang))
     lines.append("")
+    lines.extend(_studio_lines(rec, lang))
     # worked examples
     lines.append(T("## 実行できる例(この op を実際に呼ぶ検証済みサンプル)", lang))
     lines.append("")
@@ -1087,6 +1144,22 @@ def md_to_html(md: str) -> str:
                 # mermaid / math: QTextBrowser can't render these, so we keep the source
                 # in a labelled block (Markdown-native viewers — GitHub/Obsidian/RAD — do render).
                 label = ""
+                if code_lang == "program":
+                    # Studio でそのまま走るプログラム。手書きヘルプ(gaussian 等)と
+                    # 同じ `sample:` / `run:` スキームでボタンにする。
+                    import urllib.parse as _up
+                    prog = chr(10).join(code_buf)   # ← パッチ時の \n 事故の再発防止で chr(10)
+                    enc = _up.quote(prog, safe="")
+                    out.append(f'<pre style="background:#12141b;border:1px solid #2c313f;'
+                               f'padding:6px;color:{_CODE}">' + _html.escape(prog) + "</pre>"
+                               # ボタンの文言は手書きページ(gaussian 等)と同じ短い英語 ——
+                               # md_to_html は言語を知らず、6 言語で同じ HTML を使うため。
+                               f'<p><a style="color:{_AMBER}" href="sample:{enc}">▸ Load this pipeline</a>'
+                               f' &nbsp;·&nbsp; <a style="color:{_AMBER}" href="run:{enc}">Load &amp; run</a></p>')
+                    code_buf = []
+                    in_code = False
+                    code_lang = ""
+                    continue
                 if code_lang in ("mermaid", "math"):
                     kind = "Mermaid 図" if code_lang == "mermaid" else "数式(LaTeX)"
                     label = (f'<p style="color:{_MUTE};font-size:11px;margin:6px 0 0 0">'
@@ -1104,6 +1177,14 @@ def md_to_html(md: str) -> str:
             code_buf.append(line)
             continue
         if not st:
+            continue
+        if st.startswith("![") and "](" in st:
+            # 図。生成物は docs/ 相対のまま、ヘルプでは op_help/fig/<file> を指す
+            # (studio.py が表示時に絶対 file:// へ直す)。
+            alt = st[2:st.index("](")]
+            src = st[st.index("](") + 2:].rstrip(")")
+            out.append(f'<p><img src="fig/{_html.escape(os.path.basename(src), quote=True)}" '
+                       f'alt="{_html.escape(alt, quote=True)}"></p>')
             continue
         if st == "---":
             out.append('<hr style="border:0;border-top:1px solid #2c313f">')
@@ -1225,6 +1306,21 @@ def _ja_help_differs(rec) -> bool:
     return op_summary(rec, "ja")[1]
 
 
+def _copy_figures() -> int:
+    """`docs/ops/_fig/*.png` → `studio_assets/op_help/fig/`(wheel に同梱する側)。"""
+    import shutil
+    dst = os.path.join(HELP_ROOT, "fig")
+    if not os.path.isdir(FIG_DIR):
+        return 0
+    os.makedirs(dst, exist_ok=True)
+    n = 0
+    for f in sorted(os.listdir(FIG_DIR)):
+        if f.endswith(".png"):
+            shutil.copyfile(os.path.join(FIG_DIR, f), os.path.join(dst, f))
+            n += 1
+    return n
+
+
 def cmd_html():
     os.makedirs(HELP_ROOT, exist_ok=True)
     recs, _idx, _of, _fo = _records()
@@ -1267,9 +1363,10 @@ def cmd_html():
                 _write_generated(
                     os.path.join(HELP_ROOT, "guide_%s.%s.html" % (f[:-3], lang)),
                     banner + body)
+    nf = _copy_figures()
     print(f"opdocs html: wrote {n} 2-D op pages ({skipped} hand-authored preserved) "
           f"+ {n3} 3-D op pages + {nm} ledger op pages ({'/'.join(LEDGER_DIMS)}) "
-          f"+ {g} guides to {HELP_ROOT}")
+          f"+ {g} guides + {nf} figures to {HELP_ROOT}")
     # 日本語も翻訳先(原文が英語の 349 本)。数だけ出して「5 言語」と書くと、
     # ja 版が出ていることが報告から消える。
     ja_pages = sum(1 for r in recs if _ja_help_differs(r))

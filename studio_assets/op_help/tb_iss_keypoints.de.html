@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_iss_keypoints — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_iss_keypoints&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p>*Keine Abbildung: dieser Op nimmt <code style="color:#22d3bf">points</code> als Eingabe. Ein Studio-Programm, das bei einem Bild beginnt, erreicht diesen Typ nicht — siehe die lauffähigen Beispiele unten.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>ISS-Keypoint-Detektor (Intrinsic Shape Signatures, entspricht einem 3D-Harris). Der kleinste Eigenwert λ3 der lokalen Kovarianz dient als Saliency; nur Punkte mit distinct Eigenwerten (also well-defined Orientierung) werden als Kandidaten zugelassen und per NMS spärlich ausgewählt. Rotationsinvariant. Rückgabe = Array der Punktindizes.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

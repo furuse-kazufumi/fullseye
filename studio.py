@@ -3424,6 +3424,19 @@ def help_lang_bar(name, dim="2d", cur="ja", kind="op"):
             % (tr("Language"), " · ".join(parts)))
 
 
+def _abs_fig_src(html, help_dir):
+    """ヘルプ内の ``<img src="fig/…">`` を絶対 file:// に。
+
+    表示は ``QTextBrowser.setHtml`` で、基底 URL を持たないので相対パスの画像は
+    **黙って空白**になる(2026-09-06、op の図 724 枚を初めて載せたときに踏んだ)。
+    生成物は相対のまま(GitHub Pages と共有)、表示の直前にだけ絶対化する。
+    """
+    if 'src="fig/' not in html:
+        return html
+    root = "file:///" + os.path.abspath(help_dir).replace(os.sep, "/") + "/fig/"
+    return html.replace('src="fig/', 'src="%s' % root)
+
+
 def op_help_html(name, lang="en", meta=None, dim="2d"):
     """Rich HTML help for one operator. Lookup order (see studio_assets/op_help/):
       1. op_help/<name>.<lang>.html   language-specific
@@ -3450,7 +3463,7 @@ def op_help_html(name, lang="en", meta=None, dim="2d"):
         if os.path.exists(p):
             try:
                 with open(p, encoding="utf-8") as f:
-                    return f.read()
+                    return _abs_fig_src(f.read(), base)
             except Exception:
                 break
     m = meta or {}
