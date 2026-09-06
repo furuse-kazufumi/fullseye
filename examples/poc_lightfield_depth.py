@@ -100,13 +100,15 @@ EXTEND: 実データに差し替えるなら :func:`make_scene` だけを差し�
       昇格させる。numpy 2.x では ``float(result)`` が
       ``TypeError: only 0-dimensional arrays can be converted to Python
       scalars`` で落ちる(本 PoC を書いていて実際に踏んだ)。
-  (e) **``stereo.disparity_subpixel`` が RuntimeWarning を漏らす。** 124 行目の
-      ``np.where(denom > 1e-12, 0.5 * (cm - cp) / denom, 0.0)`` は両枝を評価する
-      ため ``denom == 0`` の画素(平坦領域)で「invalid value encountered in
-      divide」が出る。値は捨てられるので結果は正しいが、呼び出し側のログが
-      汚れる。同じ状況で ``lightfield.lf_epi_slope`` は
-      ``np.divide(..., out=, where=)`` を使っており、族の中で不統一。
-      最小再現 = 16x16 の階段画像 2 枚を ``disparity_subpixel(a, b, 8, 5, "ssd")``。
+  (e) **(塞がった / 2026-09-06)``stereo.disparity_subpixel`` の RuntimeWarning。**
+      以前は ``np.where(denom > 1e-12, 0.5 * (cm - cp) / denom, 0.0)`` が
+      **両枝を評価する**ため、``denom == 0`` の画素(平坦領域)で
+      「invalid value encountered in divide」が漏れていた。値は捨てられるので
+      結果は正しく、汚れるのは呼び出し側のログだけ —— という種類の穴。
+      いまは ``np.divide(..., out=, where=)`` に替わっていて、この PoC が
+      「族の中で不統一」と指摘した ``lightfield.lf_epi_slope`` と同じ形になった。
+      最小再現(16x16 の階段画像 2 枚を ``disparity_subpixel(a, b, 8, 5, "ssd")``)
+      は第 10 節に残してあり、**警告が戻ってきたら落ちる**向きで固定してある。
   (f) **``MAX_STACK_SLICES = 256`` が深度分解能の天井。** ``lf_depth_from_focus``
       の分解能は掃引点数で決まる op なのに、その上限が 256 面であることは
       docstring に書かれていない(0..3 の範囲なら 0.0118 px/view が下限)。
