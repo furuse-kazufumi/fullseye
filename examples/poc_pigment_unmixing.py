@@ -1284,6 +1284,8 @@ def main():
         assert abs(b) > 4.0 * s, \
             "%s で偏りが散らばりを圧倒していない(所見が崩れた): 偏り %+.3f 散らばり %.3f" \
             % (key, b, s)
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print(f"\n総所要 {dt_total:.1f} 秒")
     print("PASS")
     return True
