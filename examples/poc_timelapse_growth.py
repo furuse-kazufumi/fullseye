@@ -344,7 +344,7 @@ def section3_spacetime(vol, times):
                      100 * (p["voxel_count"] - closed) / closed))
         else:
             print("  %6d %12d %14s %10s" % (f, p["voxel_count"], "—(合体)", "—"))
-    print("  → 孤立した管の体積は閉形式 pi k² Σ(t+t0) と 1 %% 以内で合う。")
+    print("  → 孤立した管の体積は閉形式 pi k² Σ(t+t0) と 1 % 以内で合う。")
     print("     **体積そのものが成長則の検算になる**(面積を毎フレーム測って")
     print("     足し合わせるのと同じだが、3-D の op なら 1 回で出る)。")
     return labels, n, fam, groups
@@ -506,7 +506,7 @@ def section7_growth_constant(vol, times, labels, groups):
                   % (c, k_true, est[c], 100 * (est[c] - k_true) / k_true,
                      k_naive, 100 * (k_naive - k_true) / k_true))
     print()
-    print("  → 合体前だけを使えば k は数 %% 以内。合体後を混ぜると和の面積を")
+    print("  → 合体前だけを使えば k は数 % 以内。合体後を混ぜると和の面積を")
     print("     1 個ぶんと読むので大きく外れる。**「どこで切るか」を決める")
     print("     情報が、まさに時空間のラベルが持っているもの。**")
 

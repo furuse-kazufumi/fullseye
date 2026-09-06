@@ -225,16 +225,24 @@ def section1_check(nuc):
     o = objects(img, lab, nuc, area_true)
     rel = o["integ"][o["idx"]] / o["dna"]
     ra = o["f"]["area"][o["idx"]] / o["area_true"]
+    hi = o["ploidy"] == 4
     print()
     print("  ★ただし**マスクで積分すると裾が落ちる**(2 節以降の測定値はこの上に乗る):")
     print("     積分輝度 測定/真値  中央 %.4f  四分位 %.4f 〜 %.4f"
           % (np.median(rel), *np.percentile(rel, [25, 75])))
     print("     面積     測定/真値  中央 %.4f  四分位 %.4f 〜 %.4f"
           % (np.median(ra), *np.percentile(ra, [25, 75])))
-    print("  → 裾落ち %.1f %% は**倍率の偏り**なので、比を取る分類には効かない。"
-          % (100 * (1 - np.median(rel))))
-    print("     効くのは「DNA 量を絶対値で報告する」ときだけ。")
-    return img, lab, o, float(np.median(rel))
+    r2, r4 = float(np.median(rel[~hi])), float(np.median(rel[hi]))
+    di = dna_index(o["integ"][o["idx"]], hi)
+    print()
+    print("  → ★**予想が外れた**。「裾落ちは倍率の偏りだから比には効かない」と")
+    print("     書きかけたが、**効く**。裾落ちは 2n で %.1f %% / 4n で %.1f %% と"
+          % (100 * (1 - r2), 100 * (1 - r4)))
+    print("     大きさに依存する(落ちるのは周囲長に比例した縁の帯で、小さい核ほど")
+    print("     面積に対する縁の割合が大きい)。だから **DNA 指数(4n/2n の比)は")
+    print("     真値 2.00 に対し %.3f**(%+.1f %%)—— 分類の前に、量が既に歪んでいる。"
+          % (di, 100 * (di / 2.0 - 1)))
+    return img, lab, o, float(np.median(rel)), di
 
 
 # --------------------------------------------------------------------------- #
