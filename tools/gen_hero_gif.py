@@ -322,13 +322,14 @@ def act_caliper(nf):
     phi = BAR_ANG + np.pi / 2.0                   # 軸に直交する測定線
     # 軸に沿って -78 → +78 px を往復(幕の中で閉じる)
     travel = 78.0 * np.sin(2.0 * np.pi * np.arange(nf) / nf)
-    widths, views, profs = [], [], []
+    widths, views, profs, nedge = [], [], [], []
     for t in travel:
         r0, c0 = cy + t * sa, cx + t * ca
         m = fs.ledger.gen_measure_rectangle2(r0, c0, phi, 34.0, 5.0, img.shape)
         pairs = fs.ledger.measure_pairs(img, m, sigma=1.0, threshold=0.10)
         edges = fs.ledger.measure_pos(img, m, sigma=1.0, threshold=0.10)
         widths.append(float(pairs[0]["width"]) if pairs else np.nan)
+        nedge.append(len(edges))
         # 測定矩形の外形と検出エッジを描く(すべて fullseye の描画 op)
         v = _rgb(img)
         hs, hc = np.sin(phi), np.cos(phi)
