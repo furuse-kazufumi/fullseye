@@ -95,10 +95,30 @@ FEATURE_KEYS: tuple[str, ...] = (
     "circularity", "extent", "solidity", "holes", "touches_border",
 )
 
-#: Crofton 型の周長推定に使う近傍の符号化(:func:`_perimeter`)。
-_PERIM_KERNEL = np.array([[10, 2, 10],
-                          [2, 1, 2],
-                          [10, 2, 10]], dtype=np.int32)
+#: Crofton の公式(4 方向)で周長を数えるための 2x2 近傍の符号化。
+_PERIM_KERNEL = np.array([[0, 0, 0],
+                          [0, 1, 4],
+                          [0, 2, 8]], dtype=np.int32)
+
+#: 符号 0..15 に配る長さ。4 方向(0°/45°/90°/135°)の投影の重みつき平均。
+_PERIM_COEF = np.array([
+    0.0,
+    math.pi / 4 * (1 + 1 / math.sqrt(2)),
+    math.pi / (4 * math.sqrt(2)),
+    math.pi / (2 * math.sqrt(2)),
+    0.0,
+    math.pi / 4 * (1 + 1 / math.sqrt(2)),
+    0.0,
+    math.pi / (4 * math.sqrt(2)),
+    math.pi / 4,
+    math.pi / 2,
+    math.pi / (4 * math.sqrt(2)),
+    math.pi / (4 * math.sqrt(2)),
+    math.pi / 4,
+    math.pi / 2,
+    0.0,
+    0.0,
+], dtype=np.float64)
 
 
 # --------------------------------------------------------------------------- #
