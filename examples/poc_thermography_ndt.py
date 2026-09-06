@@ -53,12 +53,15 @@ import fullseye as fs                                            # noqa: E402
 ALPHA = 4.2e-7          # CFRP の板厚方向 熱拡散率 [m^2/s]
 L_PLATE = 3.0e-3        # 板厚 [m]
 PX = 0.5e-3             # 画素の実寸 [m]
-FPS = 40.0
-T_END = 12.0            # 観測時間 [s](最深 2 mm 欠陥の t* = 3.0 s を十分含む)
+FPS = 20.0
+# ★観測時間は**健全部の t\* (6.8 s) より十分長く**取る。短いと健全部の膝が
+# 窓の外に出て、TSR が健全部を「窓の端の深さ」と答える(実測で 2.82 mm に張り付いた)。
+T_END = 25.0            # 観測時間 [s]
 T0 = 1.0 / FPS          # 最初のフレーム時刻(t=0 は発散するので 1 フレーム後から)
 NFRAME = int(T_END * FPS)
 NPIX = 160              # 画像は 160x160 = 80 mm 角
 DT_EARLY = 10.0         # t=T0 での健全部の温度上昇 [K](フラッシュの強さを決める)
+NETD = 0.02             # 赤外カメラの雑音等価温度差 [K](実機の並)
 
 DEPTHS_MM = [0.5, 1.0, 1.5, 2.0]        # 欠陥深さ(行)
 DIAMS_MM = [2.0, 4.0, 8.0, 16.0]        # 欠陥直径(列)
@@ -77,13 +80,15 @@ def plate_temperature(t, thickness):
     return 1.0 + 2.0 * np.exp(-(n * n) * np.pi ** 2 * ALPHA * t / ll).sum(axis=1)
 
 
-def _amplitude(thickness):
-    """Q/(ρcL) を、健全部が t=T0 で DT_EARLY K になるよう決める。
+def _q_over_rhoc():
+    """Q/(ρc) [K·m] を、健全部が t=T0 で DT_EARLY K になるよう決める。
 
-    半無限体の早期解 ``T = Q/(e√(πt))`` と平板解は t≪L²/α で一致するので、
-    ここでは平板解そのものに合わせる(近似を挟まない)。
+    ★振幅は厚さに依る。表面温度は ``T = Q/(ρc·L)·f(αt/L²)`` なので、
+    **薄い欠陥層のほうが最終的に高温で落ち着く**(温める質量が少ない)。
+    厚さによらず同じ振幅を使うと、この late-time の持ち上がり ——
+    パルスサーモグラフィが実際に見ているコントラストそのもの —— が消える。
     """
-    return DT_EARLY / plate_temperature(np.array([T0]), thickness)[0]
+    return DT_EARLY * L_PLATE / plate_temperature(np.array([T0]), L_PLATE)[0]
 
 
 def build_scene():
@@ -107,10 +112,10 @@ def synth_cube(depth_map, blur=True, netd=0.0, illum=None, seed=0):
     貼る**。画素ごとに級数を回すより 25000 倍速く、しかも同じ値。
     """
     ts = T0 + np.arange(NFRAME) / FPS
-    amp = _amplitude(L_PLATE)
+    q = _q_over_rhoc()
     cube = np.empty((NFRAME, NPIX, NPIX), np.float32)
     for th in np.unique(depth_map):
-        curve = amp * plate_temperature(ts, th)
+        curve = (q / th) * plate_temperature(ts, th)
         m = depth_map == th
         cube[:, m] = curve[:, None].astype(np.float32)
     if blur:
@@ -132,26 +137,43 @@ def synth_cube(depth_map, blur=True, netd=0.0, illum=None, seed=0):
 # --- 深さ推定 ---------------------------------------------------------------- #
 #: TSR で t* を探す範囲。★端を除くのは飾りではない —— 高次多項式の 2 階微分は
 #: 端で必ず暴れる(Runge)。除かないと argmax が最初か最後のフレームに張り付き、
-#: 深さが 0.18 mm か 3.98 mm の 2 値になる(実測、2026-09-06)。
+#: 深さが窓端の 2 値に張り付く(実測、2026-09-06)。次数は 4〜11 を掃いて 8 で
+#: 決めた(4〜5 では 1.5 mm 以深が端に張り付き、8 以上は 9/11 と同じ答え)。
 _TSR_EDGE = 0.12            # ln t 範囲の上下 12 % を捨てる
 _TSR_NSAMP = 64             # 対数等間隔に再標本化する点数
 
 
-def tsr_depth(ts, cube, order=5):
+def tsr_depth(ts, cube, order=8):
     """TSR(Thermographic Signal Reconstruction)で画素ごとの深さを出す。
 
     ln T を ln t の多項式で当てはめ(雑音を落とす)、**2 階微分が最大になる
     時刻 t\\*** を取り、``d = √(π α t*)`` で深さに直す。1 節でこの関係が
     厳密解に対して 0.3 % で成り立つことを確かめてある。
+
+    2 つの実務上の要点を実装に入れてある:
+
+    * **対数等間隔に再標本化してから当てはめる**。一定フレーム間隔のまま
+      ln t で当てはめると、点の 9 割が後半に固まって早期の形が拾えない。
+    * **端を捨てて t* を探す**(``_TSR_EDGE``)。捨てないと argmax が端に
+      張り付いて深さが 2 値になる。
     """
-    lt = np.log(ts)
-    y = np.log(np.maximum(cube.reshape(len(ts), -1), 1e-6))
+    lt_raw = np.log(ts)
+    lt = np.linspace(lt_raw[0], lt_raw[-1], _TSR_NSAMP)
+    flat = np.log(np.maximum(cube.reshape(len(ts), -1), 1e-9))
+    idx = np.interp(lt, lt_raw, np.arange(len(ts)))
+    i0 = np.clip(np.floor(idx).astype(int), 0, len(ts) - 2)
+    w = (idx - i0)[:, None]
+    y = flat[i0] * (1.0 - w) + flat[i0 + 1] * w                 # (NSAMP, P)
     c = np.polynomial.polynomial.polyfit(lt, y, order)          # (order+1, P)
     d2 = np.polynomial.polynomial.polyval(
-        lt, np.polynomial.polynomial.polyder(c, 2, axis=0))     # (P, T)
-    ip = np.argmax(d2, axis=1)
-    tpk = ts[ip]
-    return np.sqrt(np.pi * ALPHA * tpk).reshape(cube.shape[1:]), d2.max(axis=1).reshape(cube.shape[1:])
+        lt, np.polynomial.polynomial.polyder(c, 2, axis=0))     # (P, NSAMP)
+    lo = int(_TSR_EDGE * _TSR_NSAMP)
+    hi = _TSR_NSAMP - lo
+    ip = np.argmax(d2[:, lo:hi], axis=1) + lo
+    tpk = np.exp(lt[ip])
+    peak = d2[np.arange(d2.shape[0]), ip]
+    return (np.sqrt(np.pi * ALPHA * tpk).reshape(cube.shape[1:]),
+            peak.reshape(cube.shape[1:]))
 
 
 def defect_masks(depth_map):
@@ -211,18 +233,18 @@ def section2_zero_point(depth_map, ts, cube, masks, sound):
     truth = np.array([k[0] * 1e-3 for k in masks])
     naive = np.full_like(truth, L_PLATE / 2)
     est = np.array([float(np.median(d_hat[m])) for m in masks.values()])
+    z0 = 1e3 * float(np.mean(np.abs(naive - truth)))
+    z1 = 1e3 * float(np.mean(np.abs(est - truth)))
     print("  16 個の欠陥(深さ 0.5〜2.0 mm、直径 2〜16 mm)全部を平均した誤差:")
-    print("    ゼロ点(常に 1.50 mm と答える) : %.3f mm" % np.mean(np.abs(naive - truth)))
-    print("    TSR                          : %.3f mm  → %.1f 倍"
-          % (np.mean(np.abs(est - truth)),
-             np.mean(np.abs(naive - truth)) / max(np.mean(np.abs(est - truth)), 1e-9)))
+    print("    ゼロ点(常に 1.50 mm と答える) : %.3f mm" % z0)
+    print("    TSR                          : %.3f mm  → %.1f 倍" % (z1, z0 / max(z1, 1e-9)))
     print()
     print("  ただし平均 1 本にまとめると**壊れている欠陥が隠れる**。")
     print("  直径 8 mm 以上に限ると:")
     big = np.array([k[1] >= 8.0 for k in masks])
-    print("    ゼロ点 %.3f mm / TSR %.3f mm  → %.1f 倍"
-          % (np.mean(np.abs(naive - truth)[big]), np.mean(np.abs(est - truth)[big]),
-             np.mean(np.abs(naive - truth)[big]) / max(np.mean(np.abs(est - truth)[big]), 1e-9)))
+    b0 = 1e3 * float(np.mean(np.abs(naive - truth)[big]))
+    b1 = 1e3 * float(np.mean(np.abs(est - truth)[big]))
+    print("    ゼロ点 %.3f mm / TSR %.3f mm  → %.1f 倍" % (b0, b1, b0 / max(b1, 1e-9)))
     return d_hat
 
 
@@ -424,10 +446,12 @@ def main():
     section1_check()
     depth_map = build_scene()
     masks, sound = defect_masks(depth_map)
-    ts, cube = synth_cube(depth_map)
+    # ★既定のキューブにも NETD を入れる。雑音ゼロだと健全部の面内ばらつきが
+    #   厳密に 0 になり、SNR が 1e9 のような無意味な数になる(実測して直した)。
+    ts, cube = synth_cube(depth_map, netd=NETD, seed=1)
     print()
-    print("  合成キューブ: %d フレーム x %d x %d(%.0f MB)、欠陥 %d 個"
-          % (NFRAME, NPIX, NPIX, cube.nbytes / 1e6, len(masks)))
+    print("  合成キューブ: %d フレーム x %d x %d(%.0f MB)、欠陥 %d 個、NETD %.0f mK"
+          % (NFRAME, NPIX, NPIX, cube.nbytes / 1e6, len(masks), 1e3 * NETD))
     d_hat = section2_zero_point(depth_map, ts, cube, masks, sound)
     section3_depth_table(masks, d_hat)
     section4_aspect(masks, d_hat, cube, sound)
