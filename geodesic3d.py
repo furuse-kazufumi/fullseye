@@ -22,7 +22,21 @@ from scipy.sparse.csgraph import dijkstra
 
 
 def knn_graph(points: np.ndarray, k: int = 8) -> Tuple[np.ndarray, np.ndarray]:
-    """各点の k 近傍インデックスと Euclid 距離(自己を除く)。→ (idx (N,k) int, dist (N,k) float)。"""
+    """各点の k 近傍インデックスと Euclid 距離(自己を除く)。→ (idx (N,k) int, dist (N,k) float)。
+
+    ``scipy.spatial.cKDTree`` で各点の k+1 近傍を引き、自分自身(距離 0)を除いた k 個を返す。
+    ``idx[i, j]`` は点 i に j 番目に近い点の添字、``dist[i, j]`` はその Euclid 距離(座標の単位)で、
+    各行は距離の昇順。
+
+    - ``points``: (N,3) など任意次元の座標(float64 に変換)。形状の検証はしない。
+    - ``k``: 近傍数(既定 8)。``N-1`` を超える値は黙って ``N-1`` に切り詰める。
+    - N < 2 のときは例外を出さず、形 (N,0) の空配列を 2 つ返す。
+
+    罠: 座標が重複していると KD-tree が自己を列 0 に返さないことがある。その場合は行ごとに自己の
+    位置を探して除き、k+1 個の中に自己が無ければ最遠の 1 つを落とす(結果はやはり k 個)。
+    ``geodesic_distances`` / ``farthest_point_sampling`` はこの結果を隣接行列(有向 CSR、
+    Dijkstra 側で無向化)にして測地距離の近似に使う。
+    """
     P = np.asarray(points, dtype=float)
     n = P.shape[0]
     if n < 2:
