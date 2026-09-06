@@ -460,7 +460,7 @@ def main():
     # 常に寝ていて、しかも**傾きが一定**(= 系統的な過小評価)。
     _t = np.array([gains[a][0] for a in (0.0, 0.4, 0.8, 1.6, 3.2, 6.4)])
     figs.save_plot("gain_vs_amplitude",
-                   [("真値(利得 1.0)", _t, _t),
+                   [("真値", _t, _t),
                     ("残差最適面", _t, np.array([gains[a][1] for a in
                                                  (0.0, 0.4, 0.8, 1.6, 3.2, 6.4)])),
                     ("ランドマーク面", _t, np.array([gains[a][2] for a in
