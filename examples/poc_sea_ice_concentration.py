@@ -374,18 +374,23 @@ def section_thin_ice() -> dict:
     print("\n" + "=" * 78)
     print("7) ★★第 3 成分(薄氷 20 %)—— 2 端成分は必ずどちらかに配分する")
     print("=" * 78)
-    print("  真値の定義           2 端成分の分解    3 端成分の分解    硬い分類")
+    sc = make_scene(0.35, 3.0, 0, thin_fraction=0.2)
+    print("  真値の内訳: 厚氷 %.3f / 薄氷 %.3f / 開水面 %.3f" % (
+        sc["c_true_thick"], sc["c_true_all"] - sc["c_true_thick"],
+        1.0 - sc["c_true_all"]))
+    print("  真値の定義          2 端成分    3 端成分    3 端成分(雑音 0)  硬い分類")
 
     out = {}
-    for label, key, rows2, rows3 in (
-            ("氷 = 厚氷 + 薄氷", "c_true_all", (0,), (0, 1)),
-            ("氷 = 厚氷のみ", "c_true_thick", (0,), (0,))):
+    for label, key, rows3 in (("氷 = 厚氷 + 薄氷", "c_true_all", (0, 1)),
+                              ("氷 = 厚氷のみ", "c_true_thick", (0,))):
         r2 = measure(0.35, 3.0, thin_fraction=0.2, truth_key=key)
         r3 = measure(0.35, 3.0, thin_fraction=0.2, truth_key=key,
                      endmembers=ENDMEMBERS3, ice_rows=rows3)
-        out[label] = (r2["unmix"], r3["unmix"], r2["hard"])
-        print("  %-18s   %+.4f          %+.4f          %+.4f" % (
-            label, r2["unmix"], r3["unmix"], r2["hard"]))
+        r3c = measure(0.35, 3.0, thin_fraction=0.2, truth_key=key,
+                      endmembers=ENDMEMBERS3, ice_rows=rows3, noise=0.0)
+        out[label] = (r2["unmix"], r3["unmix"], r2["hard"], r3c["unmix"])
+        print("  %-18s  %+.4f     %+.4f     %+.4f          %+.4f" % (
+            label, r2["unmix"], r3["unmix"], r3c["unmix"], r2["hard"]))
 
     a = out["氷 = 厚氷 + 薄氷"]
     b = out["氷 = 厚氷のみ"]
@@ -395,8 +400,15 @@ def section_thin_ice() -> dict:
     print("  直線上に無いので、FCLS は最も近い点(氷 %.2f 相当)へ射影します ——"
           % float((E_THIN[0] - E_WATER[0]) / (E_ICE[0] - E_WATER[0])))
     print("  「どちらかに配分される」のではなく「**必ず中途半端に配分される**」。")
-    print("  薄氷を 3 番目の端成分に入れると %+.1f / %+.1f ポイントまで縮みます。"
-          % (100 * a[1], 100 * b[1]))
+    print("\n  ★予想が外れた —— 「薄氷を 3 番目の端成分に入れれば直る」と踏んで")
+    print("  いたが、雑音 %.2f のもとでは %+.1f / %+.1f ポイントで**改善しない**。"
+          % (NOISE, 100 * a[1], 100 * b[1]))
+    print("  **対照群が原因を分けた**: 雑音を 0 にすると %+.1f / %+.1f ポイントに"
+          % (100 * a[3], 100 * b[3]))
+    print("  なるので、悪いのは 3 端成分という考え方ではなく**バンドが 2 本しか")
+    print("  ないこと**。端成分 3 つ + 和 1 の制約 = ちょうど決定系なので、雑音を")
+    print("  平均する余地が無く、そのまま増幅されます。第 3 成分に備えるには")
+    print("  **アルゴリズムではなくバンドを増やす**のが筋でした。")
     return out
 
 
