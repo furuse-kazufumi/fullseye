@@ -1,0 +1,732 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
+"""poc_particle_tracking — 粒子追跡を **(行, 列, 時刻) の体積**として測る。
+
+    py -3.11 examples/poc_particle_tracking.py
+
+【この PoC が答える問い】
+顕微鏡でも PIV でも気象でも同じ形の問い ——「点が動いている動画がある。
+1 枚ずつ点を見つけて、フレーム間で結べば軌跡になる。**その軌跡から読んだ
+拡散係数 D とドリフト速度は信じてよいか**」。
+
+答え(実測)は「**密度が上がると D は系統的に小さく出る**」。しかも小さく
+出る理由はリンク(フレーム間の結び付け)の誤りで、**誤リンクは必ず近い
+相手を選ぶので、短い変位ばかりが採用される** —— つまり誤りは打ち消し合わず、
+「動きが遅く見える」という**一方向**へ効く。密度 400 個 / 192x192 px では
+D が真値の 0.62 倍になった(リンク誤り率 22.6 %)。
+
+【★★ 番号つき所見(すべて実測。予想が外れたものはそう書く)】
+
+  1. ★★ **誤リンクは D を下げる**(予想どおり)。粒子数 25→400 で
+     最近傍リンクの D は 1.001→0.618(真値比)。同じ条件で
+     **リンクを真値で与えると 0.997→0.987** なので、下がった分は
+     ほぼ全部リンクのせい。**片側にしか外れない**のが要点で、
+     「誤差は平均すれば消える」が通用しない。
+
+  2. ★★ **ドリフトは D ほど壊れない**(予想が外れた)。同じ 400 個で
+     D が 0.62 倍まで落ちているのに、ドリフト速度は 0.902 倍にしか
+     ならない。理由は 4 節に書いた —— 誤リンクの相手はドリフトの向きに
+     関して**ほぼ対称に**選ばれるので 1 次のモーメント(平均)はあまり
+     壊れず、2 次のモーメント(分散 = D)だけが縮む。**1 つの誤差指標に
+     畳むと、この差が消える。**
+
+  3. ★ **検出(重心)の誤差は D を上げる**。位置だけ検出値・リンクは真値、
+     という対照群で D は真値の 1.03〜1.13 倍。重心の雑音が変位の分散に
+     足し算で乗るため。**リンク誤りと逆向き**なので、両方を同時に含む
+     素の追跡では**部分的に打ち消し合って「良い数字」に見える** ——
+     2x2 の対照群を組まないと気付けない(3 節)。
+
+  4. ★ **支配するのはステップ幅そのものではなく、ステップ幅 ÷ 最近接
+     距離**。粒子数 200 固定でステップ σ を 0.4→2.4 px と振ると
+     リンク誤り率は 3.0 %→41.7 %、D 比は 0.972→0.487。密度を上げる
+     のと同じ曲線に乗る。
+
+  5. ★ **MSD の傾きは遅れ τ とともにさらに落ちる**。誤リンクは 1 歩ごとに
+     独立に起きるので、長い遅れほど「別の粒子へ乗り移った」履歴が
+     蓄積する。τ=1 で 0.62 倍だったものが τ=8 では 0.10 倍。
+     **短い遅れだけで D を出して長い遅れへ外挿してはいけない。**
+
+  6. ★★ **時空間ボリューム (t, y, x) に 3-D 局所極大を掛けても検出器の
+     代わりにはならない**(予想が外れた。やる前は「時間方向にも極大を
+     取れば雑音に強くなる」と思っていた)。`fs.ledger.vol_local_maxima`
+     は**等方の立方近傍**を使うので、時間軸の 1 歩(1.2 px 相当の移動)と
+     空間軸の 1 画素を同じ物差しで測ってしまう。min_distance=1 で
+     真値 4000 個に対し 1210 個(30 %)しか出ない。**時間は空間ではない**
+     —— 体積として扱ってよいのは「見る」ときで、「測る」ときは軸ごとに
+     物差しを変えないと壊れる。
+
+  7. kymograph(1 本の帯を時間方向に積む)は**軌跡を「筋」として一目で
+     見せる**。ドリフトがあると筋が傾き、傾きがそのまま速度になる。
+     図 02 を参照。
+
+【グラウンドトゥルース】
+軌跡そのものを乱数で先に作り、**その座標にガウス点像を描く**。画像を歪めて
+作らないので、真の位置・真の変位・真の D・真のドリフトが厳密に分かる。
+D の真値は σ_step² / 2(1 軸あたり Var = 2 D Δt、Δt = 1 フレーム)。
+
+【フレーム数・画素数】共通ブリーフの 90 秒制限に合わせ、192x192 px・
+40 フレーム・密度掃引 5 点まで落としてある(所要 40 秒台)。
+
+【末尾】11 節に「道具の穴」(assert で現状を固定してある)。
+"""
+from __future__ import annotations
+
+import sys
+import time
+from pathlib import Path
+
+import numpy as np
+from scipy.spatial import cKDTree
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import examplefig as figs                                        # noqa: E402
+import fullseye as fs                                            # noqa: E402
+
+# --- 場面の諸元 -------------------------------------------------------------- #
+N = 192                 # 画素(正方)
+T = 40                  # フレーム数
+SPOT = 1.5              # 点像の 1σ 半径 [px]
+SIGMA_STEP = 1.2        # 1 フレームあたりのブラウン運動の 1σ [px/frame]
+DRIFT = (0.0, 0.35)     # 一様ドリフト (行, 列) [px/frame] —— 列(= x)方向だけ
+NOISE = 0.02            # 加法ガウス雑音の σ
+THR = 0.25              # 検出のしきい値(点像の頂点は 1.0)
+MATCH_TOL = 1.5         # 検出 → 真の粒子の同定に許す距離 [px]
+SEED = 20260906
+
+#: D の真値 [px²/frame]。1 軸の分散 Var(Δx) = 2 D Δt。
+D_TRUE = SIGMA_STEP * SIGMA_STEP / 2.0
+
+_YY, _XX = np.mgrid[0:N, 0:N].astype(np.float64)
+
+
+# --- 合成 -------------------------------------------------------------------- #
+def simulate(n_part: int, n_frame: int = T, sigma_step: float = SIGMA_STEP,
+             drift=DRIFT, seed: int = SEED):
+    """真の軌跡 ``(rows, cols)``、どちらも ``(n_frame, n_part)``。
+
+    ブラウン運動 + 一様ドリフト。**これが真値そのもの**(画像から作らない)。
+    """
+    rng = np.random.default_rng(seed)
+    r0 = rng.uniform(0.0, N, n_part)
+    c0 = rng.uniform(0.0, N, n_part)
+    dr = rng.normal(drift[0], sigma_step, (n_frame - 1, n_part))
+    dc = rng.normal(drift[1], sigma_step, (n_frame - 1, n_part))
+    rows = np.concatenate([r0[None, :], r0[None, :] + np.cumsum(dr, axis=0)], axis=0)
+    cols = np.concatenate([c0[None, :], c0[None, :] + np.cumsum(dc, axis=0)], axis=0)
+    return rows, cols
+
+
+def render(rows, cols, noise: float = NOISE, seed: int = 0):
+    """1 フレームぶんの像。点像はガウス、振幅は全粒子 1.0(等輝度)。"""
+    img = np.zeros((N, N))
+    win = int(np.ceil(4 * SPOT))
+    two_ss = 2.0 * SPOT * SPOT
+    for k in range(rows.size):
+        y0, x0 = rows[k], cols[k]
+        i0, i1 = max(0, int(y0) - win), min(N, int(y0) + win + 1)
+        j0, j1 = max(0, int(x0) - win), min(N, int(x0) + win + 1)
+        if i0 >= i1 or j0 >= j1:
+            continue
+        dy = _YY[i0:i1, j0:j1] - y0
+        dx = _XX[i0:i1, j0:j1] - x0
+        img[i0:i1, j0:j1] += np.exp(-(dy * dy + dx * dx) / two_ss)
+    if noise > 0:
+        img = img + np.random.default_rng(seed).normal(0.0, noise, img.shape)
+    return img
+
+
+def make_movie(rows, cols, noise: float = NOISE, seed: int = 0):
+    """``(T, N, N)`` の体積。**これが「2-D を時系列にして 3-D にする」の実体**。"""
+    return np.stack([render(rows[t], cols[t], noise, seed + t)
+                     for t in range(rows.shape[0])], axis=0)
+
+
+# --- 検出(1 枚ずつ)---------------------------------------------------------- #
+def detect(img, thr: float = THR):
+    """``(m, 2)`` の ``(行, 列)``。連結成分は ``fs.ledger.blob_label``、
+    重心は**輝度重み**(``blob_features`` の重心は二値マスクの重心なので使わない
+    —— 11 節の穴 (a))。"""
+    lab = np.asarray(fs.ledger.blob_label(img > thr, connectivity=8), np.int64)
+    k = int(lab.max())
+    if k == 0:
+        return np.zeros((0, 2))
+    w = np.where(lab > 0, np.maximum(img, 0.0), 0.0)
+    idx = lab.ravel()
+    sw = np.bincount(idx, weights=w.ravel(), minlength=k + 1)[1:]
+    sr = np.bincount(idx, weights=(w * _YY).ravel(), minlength=k + 1)[1:]
+    sc = np.bincount(idx, weights=(w * _XX).ravel(), minlength=k + 1)[1:]
+    ok = sw > 1e-9
+    return np.stack([sr[ok] / sw[ok], sc[ok] / sw[ok]], axis=1)
+
+
+def identify(det, rows_t, cols_t, tol: float = MATCH_TOL):
+    """検出 → 真の粒子番号(``tol`` を超えたら ``-1``)。融合した塊は 1 個の
+    検出が 2 粒子ぶんなので、近いほう 1 個だけが同定される。"""
+    if det.shape[0] == 0:
+        return np.zeros(0, np.int64)
+    truth = np.stack([rows_t, cols_t], axis=1)
+    d, j = cKDTree(truth).query(det, k=1)
+    return np.where(d <= tol, j, -1)
+
+
+# --- リンク ------------------------------------------------------------------ #
+def link_nn(pa, pb):
+    """★ゼロ点 —— **距離だけ**で結ぶ最近傍リンク。1 対 1 の制約すら置かない。
+
+    返りは ``(m_a,)`` の相手番号(``pb`` が空なら ``-1``)。
+    """
+    if pa.shape[0] == 0 or pb.shape[0] == 0:
+        return np.full(pa.shape[0], -1, np.int64)
+    _, j = cKDTree(pb).query(pa, k=1)
+    return np.asarray(j, np.int64)
+
+
+def link_greedy(pa, pb, max_dist=None):
+    """1 対 1 の貪欲リンク(近い対から確定させ、使った点は外す)。"""
+    ma, mb = pa.shape[0], pb.shape[0]
+    out = np.full(ma, -1, np.int64)
+    if ma == 0 or mb == 0:
+        return out
+    d = np.hypot(pa[:, 0][:, None] - pb[None, :, 0],
+                 pa[:, 1][:, None] - pb[None, :, 1])
+    order = np.argsort(d, axis=None)
+    used_a = np.zeros(ma, bool)
+    used_b = np.zeros(mb, bool)
+    for flat in order:
+        i, j = divmod(int(flat), mb)
+        if used_a[i] or used_b[j]:
+            continue
+        if max_dist is not None and d[i, j] > max_dist:
+            break
+        used_a[i], used_b[j] = True, True
+        out[i] = j
+    return out
+
+
+# --- 推定器(変位の集合 → D とドリフト)--------------------------------------- #
+def estimate(disp):
+    """1 歩の変位 ``(k, 2)`` → ``(D, ドリフト行, ドリフト列)``。
+
+    ``Var(Δx) = 2 D Δt`` を 2 軸ぶん平均。**ドリフトは 1 次、D は 2 次の
+    モーメント** —— 別々に返すのが要点(1 本にまとめると 2 番の所見が消える)。
+    """
+    if disp.shape[0] < 4:
+        return float("nan"), float("nan"), float("nan")
+    mr, mc = float(disp[:, 0].mean()), float(disp[:, 1].mean())
+    var = 0.5 * (float(disp[:, 0].var()) + float(disp[:, 1].var()))
+    return var / 2.0, mr, mc
+
+
+def step_displacements(movie_pos, ident, linker, use_truth_link=False,
+                       truth_index=None):
+    """フレーム間の 1 歩の変位を全部集める。``(k, 2)`` と、リンク誤り率。
+
+    ``use_truth_link=True`` は**対照群** —— 同じ粒子の検出どうしを真値で
+    結ぶ(リンク誤りが定義上ゼロ)。
+    """
+    disp, n_link, n_bad = [], 0, 0
+    for t in range(len(movie_pos) - 1):
+        pa, pb = movie_pos[t], movie_pos[t + 1]
+        ia, ib = ident[t], ident[t + 1]
+        if use_truth_link:
+            # 真値リンク: 粒子番号 → 検出番号 の逆引きで対を作る
+            back = truth_index[t + 1]
+            for i in range(pa.shape[0]):
+                p = ia[i]
+                if p < 0:
+                    continue
+                j = back.get(int(p), -1)
+                if j < 0:
+                    continue
+                disp.append(pb[j] - pa[i])
+                n_link += 1
+            continue
+        j_of = linker(pa, pb)
+        for i in range(pa.shape[0]):
+            j = int(j_of[i])
+            if j < 0:
+                continue
+            disp.append(pb[j] - pa[i])
+            n_link += 1
+            if ia[i] >= 0 and ib[j] != ia[i]:
+                n_bad += 1
+    d = np.asarray(disp) if disp else np.zeros((0, 2))
+    return d, (n_bad / n_link if n_link else float("nan"))
+
+
+def build_positions(rows, cols, movie, use_detection: bool):
+    """各フレームの点の座標・同定結果・粒子番号→検出番号の逆引き表。"""
+    pos, ident, back = [], [], []
+    for t in range(rows.shape[0]):
+        if use_detection:
+            p = detect(movie[t])
+            k = identify(p, rows[t], cols[t])
+        else:
+            p = np.stack([rows[t], cols[t]], axis=1)
+            k = np.arange(p.shape[0], np.int64)
+        pos.append(p)
+        ident.append(k)
+        b = {}
+        for j, q in enumerate(k):
+            if q >= 0 and q not in b:
+                b[int(q)] = j
+        back.append(b)
+    return pos, ident, back
+
+
+# =========================================================================== #
+def section1_synthesis():
+    print("=" * 78)
+    print("1) 合成の検算 —— 真値は軌跡そのもの(画像から作らない)")
+    print("=" * 78)
+    rows, cols = simulate(100)
+    movie = make_movie(rows, cols)
+    print("  体積 (t, y, x) = %s、粒子 100 個、点像 1σ %.1f px、雑音 σ %.2f"
+          % (movie.shape, SPOT, NOISE))
+    print("  1 歩の 1σ = %.2f px → D の真値 = σ²/2 = %.4f px²/frame"
+          % (SIGMA_STEP, D_TRUE))
+    print("  ドリフトの真値 = (行 %.2f, 列 %.2f) px/frame" % DRIFT)
+
+    # 真の軌跡そのものから D を測り直す(合成器の検算。ここがずれたら以降は無意味)
+    d_true_step = np.stack([np.diff(rows, axis=0).ravel(),
+                            np.diff(cols, axis=0).ravel()], axis=1)
+    dd, mr, mc = estimate(d_true_step)
+    print("  真の変位から読み直した D = %.4f(真値比 %.3f)、ドリフト (%.3f, %.3f)"
+          % (dd, dd / D_TRUE, mr, mc))
+    print("  → 乱数の有限標本ぶんだけずれる。**これが以降の測定の床**。")
+
+    det0 = detect(movie[0])
+    id0 = identify(det0, rows[0], cols[0])
+    inside = ((rows[0] > 3) & (rows[0] < N - 4) & (cols[0] > 3) & (cols[0] < N - 4))
+    print("  t=0: 視野内の真の粒子 %d 個 / 検出 %d 個 / 同定できた %d 個"
+          % (int(inside.sum()), det0.shape[0], int((id0 >= 0).sum())))
+    err = np.hypot(det0[id0 >= 0, 0] - rows[0][id0[id0 >= 0]],
+                   det0[id0 >= 0, 1] - cols[0][id0[id0 >= 0]])
+    print("  重心の誤差: 中央値 %.4f px / 90 %%点 %.4f px"
+          % (float(np.median(err)), float(np.percentile(err, 90))))
+    return rows, cols, movie
+
+
+def section2_zero_point(rows, cols, movie):
+    print()
+    print("=" * 78)
+    print("2) ★ゼロ点 —— 「距離だけで結ぶ」最近傍リンク")
+    print("=" * 78)
+    print("  何も工夫しない。フレーム t の各検出について、フレーム t+1 の")
+    print("  いちばん近い検出を相手にする(1 対 1 の制約も、上限距離も置かない)。")
+    pos, ident, back = build_positions(rows, cols, movie, use_detection=True)
+    disp, bad = step_displacements(pos, ident, link_nn)
+    d, mr, mc = estimate(disp)
+    print()
+    print("  リンク数 %d / リンク誤り率 %.1f %%" % (disp.shape[0], 100 * bad))
+    print("  D = %.4f(真値比 %.3f)  ドリフト = (%.3f, %.3f)(真値比 列 %.3f)"
+          % (d, d / D_TRUE, mr, mc, mc / DRIFT[1]))
+    print("  → 粒子 100 個ならゼロ点でもほぼ当たる。**壊れるのは密度を上げてから**")
+    print("     (4 節)。ここで「最近傍リンクで十分」と結論すると罠にはまる。")
+    return pos, ident, back
+
+
+def section3_factorial(rows, cols, movie):
+    print()
+    print("=" * 78)
+    print("3) ★2x2 の対照群 —— 位置(真値/検出) x リンク(真値/最近傍)")
+    print("=" * 78)
+    print("  D の誤差を「検出のせい」と「リンクのせい」に**分けて**数える。")
+    print("  1 つの指標に畳むと、逆向きの 2 つが打ち消して良い数字に化ける。")
+    print()
+    header = "  %-22s %10s %10s %10s %10s" % ("条件", "D", "D 真値比", "ドリフト列", "誤り率 %")
+    print(header)
+    print("  " + "-" * (len(header) - 2))
+    out = {}
+    for use_det in (False, True):
+        pos, ident, back = build_positions(rows, cols, movie, use_detection=use_det)
+        for use_true_link in (True, False):
+            disp, bad = step_displacements(pos, ident, link_nn,
+                                           use_truth_link=use_true_link,
+                                           truth_index=back)
+            d, _, mc = estimate(disp)
+            name = ("%s 位置 + %s リンク"
+                    % ("検出" if use_det else "真値", "真値" if use_true_link else "最近傍"))
+            print("  %-22s %10.4f %10.3f %10.3f %10s"
+                  % (name, d, d / D_TRUE, mc, "0.0" if use_true_link else "%.1f" % (100 * bad)))
+            out[(use_det, use_true_link)] = (d, mc, bad)
+    print()
+    e_det = out[(True, True)][0] / out[(False, True)][0]
+    e_link = out[(False, False)][0] / out[(False, True)][0]
+    print("  → 検出だけの効き: D が %.3f 倍(重心の雑音が分散に**足し算**で乗る)"
+          % e_det)
+    print("     リンクだけの効き: D が %.3f 倍(誤リンクは近い相手を選ぶので**減算**)"
+          % e_link)
+    print("     ★**向きが逆**。両方入った素の追跡ではある程度打ち消し合うので、")
+    print("     『D の誤差 3 %%』のような 1 個の数字は原因を隠す。")
+    return out
+
+
+def section4_density(rows0, cols0):
+    print()
+    print("=" * 78)
+    print("4) ★★密度掃引 —— 誤リンクは D を**下げる**")
+    print("=" * 78)
+    print("  粒子数を振る(視野は 192x192 px のまま)。平均最近接距離 ~ 0.5/sqrt(密度)。")
+    print()
+    header = ("  %6s %9s %9s | %9s %9s | %9s %9s"
+              % ("粒子数", "最近接px", "誤り率%", "D(NN)", "比", "D(真リンク)", "比"))
+    print(header)
+    print("  " + "-" * (len(header) - 2))
+    counts = [25, 50, 100, 200, 400]
+    rec = {"n": [], "nn_d": [], "true_d": [], "bad": [], "nn_drift": [],
+           "true_drift": [], "nnd": [], "greedy_d": [], "greedy_bad": []}
+    for n_part in counts:
+        rows, cols = simulate(n_part, seed=SEED + n_part)
+        movie = make_movie(rows, cols, seed=n_part)
+        pos, ident, back = build_positions(rows, cols, movie, use_detection=True)
+        nnd = float(np.median(cKDTree(np.stack([rows[0], cols[0]], 1))
+                              .query(np.stack([rows[0], cols[0]], 1), k=2)[0][:, 1]))
+        d_nn, bad = step_displacements(pos, ident, link_nn)
+        d_gr, bad_gr = step_displacements(pos, ident, link_greedy)
+        d_tr, _ = step_displacements(pos, ident, link_nn, use_truth_link=True,
+                                     truth_index=back)
+        a, _, ac = estimate(d_nn)
+        g, _, _ = estimate(d_gr)
+        b, _, bc = estimate(d_tr)
+        print("  %6d %9.1f %9.1f | %9.4f %9.3f | %9.4f %9.3f"
+              % (n_part, nnd, 100 * bad, a, a / D_TRUE, b, b / D_TRUE))
+        rec["n"].append(n_part)
+        rec["nnd"].append(nnd)
+        rec["bad"].append(100 * bad)
+        rec["greedy_bad"].append(100 * bad_gr)
+        rec["nn_d"].append(a / D_TRUE)
+        rec["greedy_d"].append(g / D_TRUE)
+        rec["true_d"].append(b / D_TRUE)
+        rec["nn_drift"].append(ac / DRIFT[1])
+        rec["true_drift"].append(bc / DRIFT[1])
+    print()
+    print("  ドリフト(列)の真値比 —— **D ほどは壊れない**:")
+    print("  %6s %14s %14s" % ("粒子数", "NN リンク", "真値リンク"))
+    for k, n_part in enumerate(rec["n"]):
+        print("  %6d %14.3f %14.3f" % (n_part, rec["nn_drift"][k], rec["true_drift"][k]))
+    print()
+    print("  1 対 1 の貪欲リンク(近い対から確定)にすると:")
+    print("  %6s %12s %12s" % ("粒子数", "誤り率 %", "D 真値比"))
+    for k, n_part in enumerate(rec["n"]):
+        print("  %6d %12.1f %12.3f" % (n_part, rec["greedy_bad"][k], rec["greedy_d"][k]))
+    print()
+    print("  → ★★ D は密度とともに**単調に下がる**。誤リンクは定義上いちばん")
+    print("     近い相手を選ぶので、採用される変位が系統的に短い。**片側にしか**")
+    print("     **外れない誤差**なので、フレームを増やしても平均では消えない。")
+    print("  → ★ドリフト(1 次モーメント)は D(2 次モーメント)ほど壊れない。")
+    print("     誤リンクの相手はドリフトの向きに関してほぼ対称に選ばれるため。")
+    print("     『追跡がどれだけ壊れているか』はドリフトを見ても分からない。")
+    print("  → 1 対 1 の制約(貪欲)を入れても**誤り率はほとんど下がらない**。")
+    print("     近すぎる相手が実在する以上、制約では区別が付かない。")
+    return rec
+
+
+def section5_step(rows0, cols0):
+    print()
+    print("=" * 78)
+    print("5) ★ステップ幅掃引 —— 効いているのは σ / 最近接距離")
+    print("=" * 78)
+    print("  粒子数 200 に固定してステップ σ だけを振る。密度掃引と同じ曲線に")
+    print("  乗るなら、支配しているのは密度でもステップ幅でもなく**その比**。")
+    print()
+    header = "  %8s %10s %10s %10s %10s" % ("σ px", "σ/最近接", "誤り率%", "D 比", "D真値")
+    print(header)
+    print("  " + "-" * (len(header) - 2))
+    rec = {"ratio": [], "bad": [], "d": []}
+    for sg in [0.4, 0.8, 1.2, 1.8, 2.4]:
+        rows, cols = simulate(200, sigma_step=sg, seed=SEED + 7)
+        movie = make_movie(rows, cols, seed=3)
+        pos, ident, _ = build_positions(rows, cols, movie, use_detection=True)
+        pts = np.stack([rows[0], cols[0]], 1)
+        nnd = float(np.median(cKDTree(pts).query(pts, k=2)[0][:, 1]))
+        disp, bad = step_displacements(pos, ident, link_nn)
+        d, _, _ = estimate(disp)
+        d_ref = sg * sg / 2.0
+        print("  %8.1f %10.2f %10.1f %10.3f %10.4f"
+              % (sg, sg / nnd, 100 * bad, d / d_ref, d_ref))
+        rec["ratio"].append(sg / nnd)
+        rec["bad"].append(100 * bad)
+        rec["d"].append(d / d_ref)
+    print()
+    print("  → 比が 0.1 を超えたあたりから誤り率が立ち上がり、0.25 で 4 割。")
+    print("     **撮影の設計に直せる**: 「時間刻みを縮めて σ を小さくする」か")
+    print("     「濃度を薄めて最近接距離を伸ばす」か、どちらでも同じだけ効く。")
+    return rec
+
+
+def section6_msd(rows0, cols0):
+    print()
+    print("=" * 78)
+    print("6) ★MSD の遅れ依存 —— 誤リンクの害は τ とともに増える")
+    print("=" * 78)
+    print("  追跡を鎖でつないで軌跡にし、MSD(τ) = <|r(t+τ)-r(t)|²> を測る。")
+    print("  ドリフトぶんは全粒子平均を引いてから(そうしないと τ² 項が混じる)。")
+    print("  真値: MSD(τ) = 4 D τ = %.3f τ" % (4 * D_TRUE))
+    print()
+    lags = np.arange(1, 9)
+    curves = {}
+    for n_part, tag in [(50, "疎 50"), (400, "密 400")]:
+        rows, cols = simulate(n_part, seed=SEED + n_part)
+        movie = make_movie(rows, cols, seed=n_part)
+        pos, ident, back = build_positions(rows, cols, movie, use_detection=True)
+        for mode in ("nn", "true"):
+            tr = _chain(pos, ident, back, mode)
+            curves[(tag, mode)] = _msd(tr, lags)
+    print("  %6s |" % "τ", end="")
+    for key in curves:
+        print(" %14s" % ("%s/%s" % key), end="")
+    print()
+    print("  " + "-" * (9 + 15 * len(curves)))
+    for k, lag in enumerate(lags):
+        print("  %6d |" % lag, end="")
+        for key in curves:
+            print(" %14.3f" % curves[key][k], end="")
+        print()
+    print("  %6s |" % "真値", end="")
+    for _ in curves:
+        print(" %14s" % "4Dτ", end="")
+    print()
+    print()
+    for key in curves:
+        ratio = curves[key] / (4 * D_TRUE * lags)
+        print("  %s/%s: 真値比 τ=1 で %.3f、τ=8 で %.3f"
+              % (key[0], key[1], ratio[0], ratio[-1]))
+    print()
+    print("  → ★密 + NN リンクでは τ が伸びるほど比が落ちる。誤リンクは 1 歩ごとに")
+    print("     独立に起きるので、長い遅れほど『別の粒子へ乗り移った』履歴が積もる。")
+    print("     短い遅れで D を出して長い遅れへ外挿すると**二重に間違える**。")
+    return lags, curves
+
+
+def _chain(pos, ident, back, mode):
+    """フレーム 0 の各点から鎖でたどった軌跡 ``(T, k, 2)``(欠測は NaN)。"""
+    n0 = pos[0].shape[0]
+    tr = np.full((len(pos), n0, 2), np.nan)
+    cur = np.arange(n0)
+    tr[0] = pos[0]
+    for t in range(len(pos) - 1):
+        nxt = np.full(n0, -1, np.int64)
+        if mode == "nn":
+            j_of = link_nn(pos[t], pos[t + 1])
+            for i in range(n0):
+                if cur[i] >= 0:
+                    nxt[i] = j_of[cur[i]]
+        else:
+            b = back[t + 1]
+            for i in range(n0):
+                if cur[i] >= 0:
+                    p = ident[t][cur[i]]
+                    nxt[i] = b.get(int(p), -1) if p >= 0 else -1
+        cur = nxt
+        ok = cur >= 0
+        tr[t + 1, ok] = pos[t + 1][cur[ok]]
+    return tr
+
+
+def _msd(tr, lags):
+    """ドリフトを引いてから MSD(τ)。"""
+    out = []
+    for lag in lags:
+        d = tr[lag:] - tr[:-lag]
+        d = d[np.isfinite(d).all(axis=2)]
+        if d.shape[0] < 4:
+            out.append(float("nan"))
+            continue
+        d = d - d.mean(axis=0, keepdims=True)      # ドリフト除去
+        out.append(float((d ** 2).sum(axis=1).mean()))
+    return np.asarray(out)
+
+
+def section7_spacetime(rows, cols, movie):
+    print()
+    print("=" * 78)
+    print("7) ★★時空間ボリューム (t, y, x) —— 3-D op は検出器の代わりになるか")
+    print("=" * 78)
+    print("  動画をそのまま体積として `fs.ledger.vol_local_maxima` に渡す。")
+    print("  やる前の予想:「時間方向にも極大を取れば雑音に強くなる」。")
+    print()
+    n_true = int(rows.shape[0] * rows.shape[1])
+    per_frame = sum(detect(movie[t]).shape[0] for t in range(movie.shape[0]))
+    print("  真の粒子 x フレーム = %d 個" % n_true)
+    print("  フレームごとの 2-D 検出の合計 = %d 個(%.0f %%)"
+          % (per_frame, 100 * per_frame / n_true))
+    print()
+    print("  %10s %12s %10s" % ("min_distance", "3-D 極大数", "真値比 %"))
+    print("  " + "-" * 34)
+    got = {}
+    for md in (1, 2, 3):
+        pk = np.asarray(fs.ledger.vol_local_maxima(movie, min_distance=md,
+                                                   threshold=THR))
+        k = int(np.count_nonzero(pk))
+        got[md] = k
+        print("  %10d %12d %10.0f" % (md, k, 100 * k / n_true))
+    print()
+    print("  → ★★予想は外れた。min_distance=1 でも真値の %.0f %% しか出ない。"
+          % (100 * got[1] / n_true))
+    print("     理由: `vol_local_maxima` は**等方の立方近傍**を使う。時間軸の")
+    print("     1 歩は %.1f px の移動に相当するのに、空間軸の 1 画素と同じ物差しで"
+          % SIGMA_STEP)
+    print("     比べてしまう。動いている粒子は時空間では斜めの『筋』なので、")
+    print("     筋に沿った近傍がほぼ全部自分自身の尾で埋まり、極大が 1 本の筋に")
+    print("     つき数個しか立たない。**時間は空間ではない** —— 体積として扱って")
+    print("     よいのは「見る」ときで、「測る」ときは軸ごとに物差しを変えること。")
+    print("     (11 節の穴 (b): 軸ごとに近傍幅を変える引数が無い。)")
+    return got
+
+
+def section8_figures(rows, cols, movie, rec_density, rec_step, lags, curves):
+    """図。**環境変数 FULLSEYE_FIGURE_DIR があるときだけ書く**。"""
+    if not figs.enabled():
+        return
+    # 1) フレームと時間最大投影(軌跡が「尾」として見える)
+    trail = movie.max(axis=0)
+    figs.save_grid("frames", [movie[0], movie[-1], trail],
+                   ["t=0", "t=%d" % (T - 1), "時間最大投影"],
+                   title="(t, y, x) の体積 —— 40 フレーム", ncols=3,
+                   caption="右は時間方向の最大値投影。粒子が尾を引く = 軌跡。"
+                           "ドリフトは列(右)方向 0.35 px/frame。")
+    # 2) kymograph —— 1 本の帯を時間方向に積む
+    band = movie[:, N // 2 - 6:N // 2 + 6, :].max(axis=1)      # (T, N)
+    kymo = np.repeat(band, 5, axis=0)                          # 見やすく縦へ拡大
+    figs.save_grid("kymograph", [kymo], ["行 90-101 の帯"],
+                   title="kymograph(縦 = 時間、横 = 列)", ncols=1,
+                   caption="筋の傾きがそのまま列方向の速度。縦は 5 倍に拡大。"
+                           "ブラウン運動のぶれで筋が揺らぐ。")
+    # 3) 密度掃引
+    n = np.asarray(rec_density["n"], float)
+    figs.save_plot("density_bias",
+                   [("NN リンクの D", n, np.asarray(rec_density["nn_d"])),
+                    ("真値リンクの D", n, np.asarray(rec_density["true_d"])),
+                    ("NN のドリフト", n, np.asarray(rec_density["nn_drift"])),
+                    ("真値 1.0", n, np.ones_like(n))],
+                   xlabel="粒子数 / 192x192 px", ylabel="真値比",
+                   title="密度が上がると D だけが下がる",
+                   caption="誤リンクは近い相手を選ぶので変位が短くなる(2 次モーメント)。"
+                           "ドリフト(1 次モーメント)は同じ条件でも 0.9 倍で踏みとどまる。")
+    # 4) MSD
+    series = [("真値 4Dτ", lags, 4 * D_TRUE * lags)]
+    for key in curves:
+        series.append(("%s/%s" % key, lags, curves[key]))
+    figs.save_plot("msd", series, xlabel="遅れ τ [frame]", ylabel="MSD [px²]",
+                   title="MSD —— 誤リンクの害は τ とともに増える",
+                   caption="密 400 個の NN リンクだけが τ とともに真値から離れる。")
+    # 5) 表(Excel へ持ち出せる)
+    rows_tbl = []
+    for k, npart in enumerate(rec_density["n"]):
+        rows_tbl.append(["%d" % npart,
+                         "%.1f" % rec_density["nnd"][k],
+                         "%.1f" % rec_density["bad"][k],
+                         "%.3f" % rec_density["nn_d"][k],
+                         "%.3f" % rec_density["true_d"][k],
+                         "%.3f" % rec_density["nn_drift"][k]])
+    figs.save_table("density_table",
+                    ["粒子数", "最近接 px", "誤り率 %", "D 比(NN)",
+                     "D 比(真リンク)", "ドリフト比(NN)"], rows_tbl,
+                    title="密度掃引の実測",
+                    caption="D 比だけが密度とともに落ちる。")
+
+
+def section9_findings(rec_density, got_peaks):
+    print()
+    print("=" * 78)
+    print("9) 所見(実測のまとめ)")
+    print("=" * 78)
+    print("""
+  (1) ★★誤リンクは D を**片側へ**外す。粒子 400 個で D 比 %.3f、
+      同じ画像・同じ検出でリンクだけ真値にすると %.3f。**下がった分は
+      ほぼ全部リンク**。誤リンクが必ず「近い相手」を選ぶ以上、採用される
+      変位は系統的に短い —— 枚数を増やしても平均で消えない種類の誤差。
+
+  (2) ★★ドリフトは同じ条件で %.3f 倍にしか壊れない(予想が外れた)。
+      1 次モーメントと 2 次モーメントで壊れ方が違う。**「追跡の健全性」を
+      ドリフトの一致で確かめてはいけない** —— D が 4 割落ちていても
+      ドリフトは 1 割しかずれない。
+
+  (3) ★検出(重心)の誤差は D を**上げる**方向。3 節の 2x2 のとおり
+      向きが逆なので、素の追跡では部分的に打ち消し合う。1 つの数字に
+      畳んだ時点で原因が消える。
+
+  (4) ★支配量は σ/最近接距離。撮影条件(時間刻み・濃度)へ直に翻訳できる。
+
+  (5) ★MSD は τ とともにさらに落ちる。短い τ の傾きから長い τ を外挿しない。
+
+  (6) ★★時空間の 3-D 局所極大は per-frame 検出の代わりにならない
+      (min_distance=1 で真値の %.0f %%)。等方近傍は時間軸に合わない。
+""" % (rec_density["nn_d"][-1], rec_density["true_d"][-1],
+       rec_density["nn_drift"][-1], 100 * got_peaks[1] / (T * 100.0)))
+
+
+def section10_tool_gaps():
+    print("=" * 78)
+    print("10) 道具の穴(fullseye に無かったもの・使いにくかったもの)")
+    print("=" * 78)
+    print("""
+  (a) **輝度重み付き重心が blob 族に無い**。`fs.ledger.blob_features` の
+      `row`/`col` は**二値マスクの幾何重心**で、点像の輝度分布を使わない。
+      点の定位では 1 桁効くので、この PoC は自前で bincount した。
+      `blob_features(labels, image=...)` のような重み付き重心が欲しい。
+
+  (b) **`vol_local_maxima` の近傍が等方の立方に固定**。`min_distance` が
+      スカラーひとつなので、``(t, y, x)`` のように**軸の物理的な意味が違う**
+      体積に使えない。軸ごとの半幅 `(dz, dy, dx)` を受けてほしい。
+      `vol_gaussian_psf` は非等方を受けるので、族の中で不揃いでもある。
+
+  (c) **追跡(リンク)の op がゼロ**。`fs.op_find("track")` /
+      `"trajectory"` / `"linking"` / `"assign"` / `"hungarian"` はどれも
+      粒子追跡を返さない(返るのは Shi-Tomasi の "good features to track"
+      と、軸角リサンプルの "order tracking")。最近傍・貪欲・ハンガリアン・
+      ギャップ許容 のリンカと、MSD/拡散係数の推定は**この PoC が全部自前で
+      書いた**。PIV(`piv_*` 23 op)が「場」を測るのに対し、こちらは
+      「個体」を追う —— 同じ動画から出す量なのに片方だけ在る。
+
+  (d) **MSD / 拡散係数の op が無い**(`fs.op_find("msd")` は空、
+      `"diffusion"` は画像平滑化の異方性拡散しか返さない)。単位の扱い
+      (px²/frame → µm²/s)を含めて 1 か所に置きたい量。
+
+  (e) **kymograph が無い**(`fs.op_find("kymograph")` は空)。
+      帯を選んで時間方向に積むだけだが、生物顕微鏡では標準の見せ方。
+      `temporal_*` 4 op は時間フィルタで、時空間の**表示**は別に要る。
+
+  (f) ★**`fs.ledger.vol_label` は成分数 `n` を捨てる**。`volops.vol_label`
+      は `(labels, n)` を返し、facade の `fs.vol_label` もタプルを返すのに、
+      **型つき台帳経由だと配列だけ**になる。docstring は「Returns
+      ``(labels, n)``」と書いてあるので、台帳の型注釈のほうが実装と
+      食い違っている。以下の assert で現状を固定してある(直ったら落ちる)。
+""")
+    v = np.zeros((6, 20, 20), bool)
+    v[1:5, 4:12, 4:12] = True
+    v[0:2, 15:18, 15:18] = True
+    assert isinstance(fs.vol_label(v, connectivity=6), tuple), "facade はタプルのはず"
+    assert isinstance(fs.ledger.vol_label(v, connectivity=6), np.ndarray), \
+        "★台帳が n を返すようになった → (f) は直った。この assert を消すこと"
+    assert not hasattr(fs.ledger, "blob_centroid_weighted"), \
+        "★輝度重み重心が入った → (a) は直った"
+    assert not hasattr(fs.ledger, "track_link_nearest"), \
+        "★リンク op が入った → (c) は直った"
+    assert not hasattr(fs.ledger, "kymograph"), "★kymograph が入った → (e) は直った"
+    print("  (assert 5 本で現状を固定した。穴が埋まったらこの PoC が落ちる。)")
+
+
+def main():
+    t0 = time.perf_counter()
+    print("poc_particle_tracking — 時系列を 3-D として測る(その 1: 粒子追跡)")
+    print("真値は軌跡そのもの。画像は軌跡から描く(逆ではない)。")
+    print()
+    rows, cols, movie = section1_synthesis()
+    section2_zero_point(rows, cols, movie)
+    section3_factorial(rows, cols, movie)
+    rec_density = section4_density(rows, cols)
+    rec_step = section5_step(rows, cols)
+    lags, curves = section6_msd(rows, cols)
+    got_peaks = section7_spacetime(rows, cols, movie)
+    section8_figures(rows, cols, movie, rec_density, rec_step, lags, curves)
+    section9_findings(rec_density, got_peaks)
+    section10_tool_gaps()
+    print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
+    print("\nPASS")
+
+
+if __name__ == "__main__":
+    main()
