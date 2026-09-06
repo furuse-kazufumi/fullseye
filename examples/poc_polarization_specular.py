@@ -351,8 +351,21 @@ def main():
         frac = float((a0 - amp < 0).mean())
         e = rmse(d_f, diffuse)
         noise_rows[sigma] = (verdict, frac, e)
+        if sigma == 1e-2:
+            noisy_ref = fn
         print(f"  {sigma:>10.0e}{verdict:>18}{frac:>12.5f}{e:>16.3e}"
               f"{e / bias70:>14.3f}")
+    # 4 枚目は何を買っているのか。3 枚(0/45/90)でも未知数はちょうど決まる。
+    e4 = noise_rows[1e-2][2]
+    e3 = rmse(specularity.polarization_separate(
+        noisy_ref[:3], ANGLES[:3], max_violation_frac=1.0)[0], diffuse)
+    noise_3v4 = (e3, e4)
+    print(f"  σ=1e-2 で 3 枚(0/45/90){e3:.3e} vs 4 枚 {e4:.3e} "
+          f"= 4 枚が {e3 / e4:.2f} 倍良い")
+    print("  → **4 枚目は雑音があるときだけ効く。** 未知数は 3 つなので雑音が")
+    print("     無ければ 3 枚で厳密に決まり(この PoC の他の節は 3 枚でも同じ数字)、")
+    print("     4 枚目が買っているのは平均化だけ。DoFP センサが 4 方位を敷くのは")
+    print("     解を決めるためではない。")
     print("  → **既定の fail-closed が拒否に転じる境界は σ = 3e-3 と 4e-3 の間**")
     print("     (暗パッチの拡散 0.02 = 最小輻度 0.01 に雑音が届く点。12288 画素の")
     print("     うち 0.03% = 4 画素が負の最小輻度を吐いた時点で全体が止まる)。")
