@@ -392,17 +392,9 @@ def section_taper() -> dict:
     figs.save_grid("scene",
                    [sc["img"], sc["cov"], b["mask"].astype(np.float64)],
                    ["撮った絵(ざらつき 5 %・照明傾斜)", "真の被覆率",
-                    "2 値化のマスク"],
+                    "2 値化のマスク(細い側で消えている)"],
                    ncols=1, title="幅が %.2f〜%.2f mm のひび割れ(1 px = %.2f mm)"
                                   % (truth.min(), truth.max(), PX_MM))
-    figs.save_plot("taper",
-                   [("真値 w(s)", xs * PX_MM, truth),
-                    ("積分法(5 点平均)", xs * PX_MM, est_s),
-                    ("2 値化 2·EDT-1", xs[got] * PX_MM, bw[got])],
-                   xlabel="経路方向の位置 [mm]", ylabel="幅 [mm]",
-                   title="幅の分布 w(s) を追う(2 値化は細い側で点が消える)",
-                   caption="2 値化の系列は値が出た点だけを結んでいる —— "
-                           "線が途切れているところは「ひび割れなし」と答えた点。")
     return {"rms_int": rms_i, "rms_smooth": rms_s, "rms_bin": rms_b,
             "rms_bin_all": rms_ball, "n_got": int(got.sum()), "n": int(xs.size),
             "n_below": int(below.sum()), "n_below_got": int((got & below).sum())}
