@@ -130,6 +130,11 @@ def stretch_between(img_a, img_b, window: int = WINDOW, multipass=None):
     一様な伸びなので、変位場 ``u(x) = (x - xc)(lam - 1)`` の**傾き**が
     ``lam - 1``。傾きは `fs.ledger.poly_fit`(1 次)で出す —— 条件数と残差も
     一緒に返るので、当てはめの健康状態が同じ場所に残る。
+
+    ★`poly_fit` は ``x`` が**厳密に単調増加**でないと例外を出す(補間ノード
+    向けの契約)。散布した格子をそのまま渡せないので、**列ごとに行方向の
+    平均**を取ってから渡す(9 節の穴 (f))。一様な伸びなら行方向は定数なので
+    情報は落ちない。
     """
     if multipass:
         flow, info = pivops.piv_multipass(img_a, img_b, windows=multipass,
@@ -138,9 +143,9 @@ def stretch_between(img_a, img_b, window: int = WINDOW, multipass=None):
         flow, info = pivops.piv_cross_correlate(img_a, img_b, window=window,
                                                 overlap=OVERLAP)
     f = np.asarray(flow)
-    cols = np.asarray(info["cols"], float)
-    x = np.tile(cols, (f.shape[1], 1)).ravel()
-    fit = fs.ledger.poly_fit(x, f[1].ravel(), degree=1)
+    x = np.asarray(info["cols"], float)
+    y = f[1].mean(axis=0)
+    fit = fs.ledger.poly_fit(x, y, degree=1)
     slope = float(fit["coeffs"][0])
     return float(np.log1p(slope)), float(fit["rms_residual"])
 
