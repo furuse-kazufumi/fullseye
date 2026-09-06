@@ -1,5 +1,7 @@
 # Fullseye ドキュメント索引
 
+**Language:** [日本語](README.md) · [English](README.en.md) · [简体中文](README.zh.md) · [繁體中文](README.tw.md) · [한국어](README.ko.md) · [Deutsch](README.de.md)
+
 **Fullseye**（作業名 imgevolve）は、numpy-native な画像処理オペレータ・ライブラリと、HDevelop 風のビジュアル・パイプライン設計環境（Fullseye Studio）+ 実行ランタイム（FullseyeEngine）を備えた、HALCON/HDevelop 級の実用ツールです。オペレータは約 **521**（レジストリ）、実 HALCON オペレータ **269/2313** を genuine 実装、31 カテゴリをカバーします。
 
 > **まずはここから → [GETTING_STARTED.md](GETTING_STARTED.md)（5 分で動かす）**
