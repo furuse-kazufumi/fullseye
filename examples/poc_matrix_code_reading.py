@@ -335,28 +335,35 @@ def find_finders(dark, step=1):
     if len(cand) < 3:
         return None
 
+    # 3 点の選び方: 直角**だけ**を条件にする。二等辺は条件にしてはいけない ——
+    # 傾けて撮ると上辺だけが cos(傾き) で縮むので、45 度で辺の比が 0.71 になり、
+    # 二等辺を要求すると偶然それらしい**別の 3 点**が勝ってしまう(実測で 40 度
+    # 以上が全滅した)。角度が 90 度から離れないことと、2 辺の比が極端でないこと、
+    # それに辺がモジュール寸法より十分長いことだけを見る。
+    m_all = float(np.median([c[2] for c in cand]))
     best, best_err = None, 1e9
     for i in range(len(cand)):
         for j in range(i + 1, len(cand)):
             for k in range(j + 1, len(cand)):
                 p = np.array([cand[i][1], cand[j][1], cand[k][1]])
-                d = np.array([np.linalg.norm(p[1] - p[2]),
-                              np.linalg.norm(p[0] - p[2]),
-                              np.linalg.norm(p[0] - p[1])])
-                order = np.argsort(d)
-                a, b, c = d[order]
-                if c <= 1e-9:
-                    continue
-                err = abs(a - b) / c + abs(c - math.sqrt(2) * a) / c
-                if err < best_err:
-                    best_err, best = err, (p, order)
-    if best is None or best_err > 0.30:
+                for a in range(3):
+                    b_, c_ = [t for t in range(3) if t != a]
+                    v1 = p[b_] - p[a]
+                    v2 = p[c_] - p[a]
+                    l1 = float(np.linalg.norm(v1)); l2 = float(np.linalg.norm(v2))
+                    if min(l1, l2) < 6.0 * m_all:
+                        continue
+                    if not 0.2 <= l1 / l2 <= 5.0:
+                        continue
+                    err = abs(float(v1 @ v2)) / (l1 * l2)         # |cos| = 直角からのずれ
+                    if err < best_err:
+                        best_err, best = err, (p, a)
+    if best is None or best_err > 0.25:
         return None
-    p, order = best
+    p, a = best
     # 走査の当たりは「核の 3 行」に偏るので、矩形窓の重心で中心へ寄せ直す
     mxs = [c[3] for c in cand if np.isfinite(c[3])]
     mys = [c[4] for c in cand if np.isfinite(c[4])]
-    m_all = float(np.median([c[2] for c in cand]))
     m_x = float(np.median(mxs)) if mxs else m_all
     m_y = float(np.median(mys)) if mys else m_all
     ref = []
@@ -364,12 +371,8 @@ def find_finders(dark, step=1):
         r = _refine_center(dark, q[1], q[0], 4.0 * m_x, 4.0 * m_y)
         ref.append(np.array([q[0], q[1]]) if r is None else np.array([r[1], r[0]]))
     p = np.array(ref)
-    tl = p[int(np.argmax([np.linalg.norm(p[1] - p[2]),
-                          np.linalg.norm(p[0] - p[2]),
-                          np.linalg.norm(p[0] - p[1])]))]
-    rest = [q for q in p if not np.allclose(q, tl)]
-    if len(rest) != 2:
-        return None
+    tl = p[a]
+    rest = [p[t] for t in range(3) if t != a]
     v1 = np.array([rest[0][1] - tl[1], rest[0][0] - tl[0]])     # (x, y)
     v2 = np.array([rest[1][1] - tl[1], rest[1][0] - tl[0]])
     if v1[0] * v2[1] - v1[1] * v2[0] > 0:                        # y 下向きの外積
