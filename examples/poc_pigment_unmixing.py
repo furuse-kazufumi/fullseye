@@ -172,19 +172,26 @@ def build_scene():
     ink = np.clip(ink, 0.0, 1.0)
 
     # --- 上層の面(3 つの区画)。境界は縦の帯で、面の中は筆致で厚みが揺れる -------
+    # 区画 2 はさらに 2 つに割る: 朱の面と、褪色する茜レーキの面。
+    # 混ぜてしまうと朱の吸収が茜を覆い隠して「褪色しても何も起きない」になる
+    # (最初の版がまさにそれで、f を 1 -> 0.15 に振っても ΔE00 が 0.20 -> 0.43 しか
+    #  動かなかった。褪色の実験になっていなかった)。
     field = np.zeros((H, W), int)
     field[:, 40:80] = 1
     field[:, 80:] = 2
+    lake = np.zeros((H, W), bool)
+    lake[:, 100:] = True                                  # 区画 2 の右半分 = 茜レーキ
 
     conc = np.zeros((H, W, len(LAYER_KEYS)))
     idx = {k: i for i, k in enumerate(LAYER_KEYS)}
-    #  区画 0: 群青 + 鉛白 / 区画 1: アズライト + 鉛白 / 区画 2: 朱 + 茜 + 鉛白
+    #  区画 0: 群青 + 鉛白 / 区画 1: アズライト + 鉛白 / 区画 2: 朱 + 鉛白 と 茜 + 鉛白
     mix_lo = 0.30 + 0.25 * _gauss(yy, 40.0, 26.0)        # 白の混ぜ量が面内で変わる
+    mix_lo = np.where(lake, 0.35 * mix_lo, mix_lo)       # レーキの面は白が少ない
     f0, f1, f2 = field == 0, field == 1, field == 2
     conc[..., idx["ultramarine"]] = np.where(f0, 1.0 - mix_lo, 0.0)
     conc[..., idx["azurite"]] = np.where(f1, 1.0 - mix_lo, 0.0)
-    conc[..., idx["vermilion"]] = np.where(f2, 0.62 * (1.0 - mix_lo), 0.0)
-    conc[..., idx["madder"]] = np.where(f2, 0.38 * (1.0 - mix_lo), 0.0)
+    conc[..., idx["vermilion"]] = np.where(f2 & ~lake, 1.0 - mix_lo, 0.0)
+    conc[..., idx["madder"]] = np.where(lake, 1.0 - mix_lo, 0.0)
     conc[..., idx["lead_white"]] = mix_lo
     conc /= conc.sum(axis=2, keepdims=True)
 
