@@ -464,6 +464,29 @@ def annotate3d_axes(img, pose, K, origin=(0.0, 0.0, 0.0), length=1.0, depth=None
     ValueError
         length が非正、原点や軸端がカメラの後ろ、labels/colors が 3 つでない、
         軸の文字が画像に収まらない。
+
+    手順: ``origin`` と、そこから世界座標の +X / +Y / +Z 方向に ``length`` 進んだ
+    3 点を射影(``annotate3d_project`` と同じ慣習)し、原点の画素から各軸端の画素へ
+    ``annotate.arrow``(矢じり 8x6 px)を描く。軸端の先 ``0.7 * font_size`` px の
+    位置に ``labels[i]`` を背景なし(``box_alpha=0``)の文字で置く。
+
+    引数:
+    - ``origin`` ``(3,)``(object 座標)、``length``: 軸の長さ(メッシュ単位、``> 0``)。
+    - ``labels``: 3 つの文字列(既定 ``("X", "Y", "Z")``)。``colors``: 3 つの色
+      (役割名か RGB。既定 ``("wrong", "right", "reference")`` はパレットの役割名)。
+    - ``width``: 線幅 [px]、1 以上の整数。``font_size`` [px]。
+    - ``depth`` / ``occlusion_tol``: 射影に渡すが、**この op は隠れ表示(破線)を
+      しない**(判定は ``depth`` の形検査に使うだけ)。
+
+    返り値: 描画済みの新しい画像(float64 ``[0, 1]``)。
+
+    エラーになる条件: ``length <= 0`` / ``labels`` か ``colors`` の長さが 3 でない /
+    原点または軸端のいずれかが ``z <= 1e-9`` / 姿勢・``K``・``depth`` の不正 / 軸の
+    文字が画像に収まらない。**枠外の軸端はエラーにしない**(矢印は枠外まで引く)。
+    視線と一致して点に潰れた軸(画素長 1e-9 未満)は黙ってスキップする。
+
+    使いどころ: 図の姿勢の説明(gnomon)。``render3d.look_at`` の ``pose`` を
+    そのまま渡し、``origin`` にメッシュの重心や ``bounds`` の角を置く。
     """
     a = A._prep(img)
     width = A._num(width, "width", lo=1, integer=True)
