@@ -156,10 +156,10 @@ def calibrate(obj, obs, fit_dist: bool = True, fit_pp: bool = True):
         init = "Zhang"
         if not (200.0 < fx0 < 2.0e4 and 200.0 < fy0 < 2.0e4):
             raise ValueError(f"Zhang の K が非現実的 (fx={fx0:.0f}, fy={fy0:.0f})")
-    except ValueError as exc:
+    except ValueError:
         fx0 = fy0 = float(IMG_W)                     # 経験則: 焦点距離 ~ 画像幅
         cx0, cy0 = CENTER
-        init = f"退化 -> 経験則 ({exc.args[0].split(' -- ')[0][:44]})"
+        init = "経験則(Zhang 拒否)"
     if not fit_pp:
         cx0, cy0 = CENTER
 
