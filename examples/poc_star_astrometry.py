@@ -668,9 +668,31 @@ def main():
     thr_eq = next((sf for sf in seps_fwhm if dbl[sf][0][0] >= 0.5), None)
     thr_un = next((sf for sf in seps_fwhm if dbl[sf][1][0] >= 0.5), None)
     print(f"   → 2 個に割れ始める境界(半数以上で 2 検出): 等光度 "
-          f"**{thr_eq:.2f} FWHM**(理論の二峰条件 {2 * sig / fw:.2f} FWHM とほぼ一致)、"
-          f"不等光度 4:1 は **{thr_un:.2f} FWHM** —— 暗い方が明るい方の翼に"
-          f"埋もれるので {thr_un / thr_eq:.1f} 倍遠くまで離れないと割れない")
+          f"**{thr_eq:.2f} FWHM**、不等光度 4:1 は **{thr_un:.2f} FWHM** —— "
+          f"暗い方が明るい方の翼に埋もれるので "
+          f"{thr_un / thr_eq:.1f} 倍遠くまで離れないと割れない")
+    # 理論(0.85 FWHM)と実測(1.25 FWHM)の差は「谷が在るか」と
+    # 「谷が雑音より深いか」の違い。谷の深さを雑音の単位で測って確かめる。
+    print(f"   ☆ 理論の二峰条件 {2 * sig / fw:.2f} FWHM と実測 {thr_eq:.2f} FWHM は "
+          f"{thr_eq / (2 * sig / fw):.1f} 倍ずれる。**「谷が在る」と"
+          f"「谷が雑音より深い」は別**だから ——")
+    print("       " + pad("分離[FWHM]", 12) + pad("峰[e-]", 10) + pad("谷[e-]", 10)
+          + pad("落差", 10) + pad("落差/雑音", 12))
+    for sf in (0.85, 1.0, 1.25, 1.5):
+        sep = sf * fw
+        dr, dc = sep * np.cos(ang) / 2, sep * np.sin(ang) / 2
+        img = render((64, 64), [32 - dr, 32 + dr], [32 - dc, 32 + dc],
+                     [30000.0, 30000.0], fw, seed=None)
+        u = np.linspace(-sep, sep, 201)
+        prof = np.array([img[int(round(32 + x * np.cos(ang))),
+                             int(round(32 + x * np.sin(ang)))] for x in u])
+        pk, sd = float(prof.max()), float(prof[80:121].min())
+        nz = float(np.sqrt(pk + READ ** 2))
+        print("       " + pad(f"{sf:.2f}", 12) + f"{pk:9.0f} {sd:9.0f} "
+              f"{pk - sd:9.0f} {(pk - sd) / nz:11.1f}")
+    print(f"       落差が雑音の数倍を超えるところで初めて 2 峰が"
+          f"**検出できる**ようになる —— 分離 0.85 FWHM の落差は"
+          f"雑音の 1 倍未満で、原理的に在る谷が観測では見えない")
     print(f"   1 個と誤認したとき、返る位置は**主星ではなく光心**: 分離 "
           f"{0.75:.2f} FWHM 等光度で 主星まで {dbl[0.75][0][1]:.3f} px に対し "
           f"光心まで {dbl[0.75][0][2]:.4f} px。不等光度 4:1・分離 1.0 FWHM でも "
