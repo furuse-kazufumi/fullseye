@@ -522,6 +522,9 @@ def main():
     assert rmse(s_op, s_true) < 1e-14, "ブリュースター角で鏡面が厳密に出ない"
     # 全輻度は分離で保存される(何も失わず何も作らない)
     assert np.abs((d_op + s_op) - (d_true + s_true)).max() < 1e-14
+    # 雑音が無ければ 3 枚でも同じ答え(8-a の主張の裏取り)
+    d3 = specularity.polarization_separate(frames[:3], ANGLES[:3])[0]
+    assert np.abs(d3 - d_op).max() < 1e-14, "雑音なしで 3 枚と 4 枚の答えが違う"
 
     # 4. 誤差は閉形式 R_p * E に一致し、ゼロ点に勝つ
     for th, (dop, e, pred, e0n, rt) in ang_rows.items():
