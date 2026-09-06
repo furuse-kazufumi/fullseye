@@ -1973,6 +1973,24 @@ def ellipse(img, center, radii, angle_deg=0.0, color="neutral", width=2,
     ------
     ValueError
         半径が非正、非有限、alpha が [0,1] の外。
+
+    描画: 画素を ``angle_deg`` だけ回した局所座標 ``(u, v)`` に写し、
+    ``q = (u/ra)^2 + (v/rb)^2`` で判定する。``fill=True`` は ``q <= 1``、
+    ``fill=False`` は ``|sqrt(q) - 1| <= max(1, width) / (2 min(ra, rb))`` の帯
+    (アンチエイリアス無し)。帯の幅を**短軸で正規化**しているので、扁平な楕円では
+    長軸の端ほど線が太く見える(近似)。
+
+    - ``center``: ``(x, y)``、x = 列・y = 行。画像外でもよい。
+    - ``radii``: ``(ra, rb)`` [px]。``ra`` が ``angle_deg`` 方向、``rb`` がその直交方向。
+      両方とも正。
+    - ``angle_deg``: 回転角 [度]。x 軸から時計回り(画面座標、y が下向き)。
+    - ``width``: 線幅 [px](``fill=False`` のとき)。
+    - ``img`` / ``color`` / ``alpha`` / ``scheme`` の扱いは ``rounded_rect`` と同じ
+      (float64 複製、``[0, 1]``、役割名か RGB)。
+    - 返り値: 入力と同形の float64。
+
+    ``ra == rb`` なら円。計測結果(楕円フィットの ``row, col, phi, ra, rb``)を
+    重ねるときは ``center=(col, row)``、``angle_deg=degrees(phi)`` に読み替える。
     """
     a = _prep(img)
     _finite("center/radii/angle", center, radii, angle_deg)
