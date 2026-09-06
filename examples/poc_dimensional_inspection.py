@@ -492,8 +492,12 @@ def section_dimensions(img):
         outer_err.append(w - truth)
         print(f"  {'外形幅 col=' + str(int(c)):<22}{truth:9.2f}{w:10.4f}"
               f"{w - truth:+10.4f}{um(w - truth):+10.2f}")
-    print(f"  段差高さ(左右の差): 真 {STEP_H:.2f} px / 実測 "
-          f"{(outer_err[1] + OUTER_W_LEFT) - (outer_err[2] + OUTER_W_RIGHT):.4f} px")
+    step_meas = (outer_err[1] + OUTER_W_LEFT) - (outer_err[2] + OUTER_W_RIGHT)
+    print(f"  段差高さ(左右の差): 真 {STEP_H:.2f} px / 実測 {step_meas:.4f} px "
+          f"(誤差 {step_meas - STEP_H:+.4f} px = {um(step_meas - STEP_H):+.2f} um)")
+    print("  ※ 列は穴・スロット・ボルト円を避けて選んである。避けずに col=200 を")
+    print("     取ると測定線がボルト穴を先に踏んで外形幅が -33.8 px 外れる ——")
+    print("     **キャリパーは『最初の対』を返すので、窓の置き方が精度より効く**。")
 
     # ---- (c) 円: 直径と中心 ---- #
     sub("(c) 円穴(真: 直径 68.50 px / 中心 row 240.40, col 500.75)")
