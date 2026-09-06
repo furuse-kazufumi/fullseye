@@ -494,6 +494,26 @@ def main():
     print("     過小評価 = 過剰に除霞する。白い面の暗チャネルは 0 でなく、その分が霞と")
     print("     誤認される。全体の t MAE には面積比でしか効かないので、1 つの数字だと")
     print("     見えない。**A が無事でも t が壊れる**のがこの崖の本体。")
+    print("  空を画面から外す(消失線より下だけを切り出す)と、大気光の推定は何を掴むか:")
+    print(f"  {'切り出し':<20}{'A角 暗ch':>10}{'|dA| 暗ch':>11}{'A角 明画素':>12}"
+          f"{'|dA| 明画素':>13}{'t MAE':>9}{'PSNR':>8}")
+    for label, r0 in (("空あり(全体)", 0), ("空なし(y>=40)", 40), ("空なし + 白 3 %", 40)):
+        frac = 0.03 if "白" in label else VAN_FRAC
+        i2, j2, t2, _d2 = build_scene(van_frac=frac)
+        i2, j2, t2 = i2[r0:], j2[r0:], t2[r0:]
+        ad, ab = airlight_dcp(i2), airlight_brightest(i2)
+        te = transmission_dcp(i2, ad)
+        print(f"  {label:<20}{angle_deg(ad, A_TRUE):>10.3f}"
+              f"{np.linalg.norm(ad - A_TRUE):>11.4f}{angle_deg(ab, A_TRUE):>12.3f}"
+              f"{np.linalg.norm(ab - A_TRUE):>13.4f}{np.mean(np.abs(te - t2)):>9.4f}"
+              f"{psnr_masked(recover(i2, ad, te), j2):>8.2f}")
+        if r0 == 0:
+            a_sky = ad
+        else:
+            a_nosky = ad
+    print(f"  → 空を外すと大気光の絶対値が下がる({a_sky} → {a_nosky})。画面内の最遠点が")
+    print("     150 m(t=0.05)にとどまり、観測値が A に届かないため。**色(角度)より")
+    print("     絶対値が先に外れる**ので、角度だけ見ていると気づけない。")
 
     print("\n=== 7. 崖 (c) パッチ寸法とハロー ===")
     eb = edge_band(d)
