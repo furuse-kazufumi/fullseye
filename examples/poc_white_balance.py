@@ -191,12 +191,14 @@ def true_illuminant(spd):
     return fs.ledger.spectrum_to_srgb(NM, FLAT * spd, illuminant=FLAT)
 
 
-def scene(spd, keep=None, bias_frac=0.0, bias_patch="赤",
+def scene(spd, keep=None, bias_frac=0.0, bias_patch="赤", bias_side="right",
           exposure=1.0, noise=0.0, shade=True, seed=1):
     """チャート画像 (H, W, 3) を線形 RGB で合成する。
 
     keep:       使うパッチの添字(既定 = 全部)。
-    bias_frac:  画面の左からこの割合を 1 枚の有彩色パッチで塗り潰す(色の偏り)。
+    bias_frac:  画面のこの割合を 1 枚の有彩色パッチで塗り潰す(色の偏り)。
+    bias_side:  塗る側。既定の ``"right"`` は左上の白パッチを残す —— 左から塗ると
+                「色が偏った」と「白が消えた」の 2 つの軸が混ざる(4 節で実測)。
     exposure:   露出倍率。1.0 を超えると明るいパッチから 1.0 で飽和する。
     noise:      加法性ガウス雑音の σ(線形空間、クリップは 0 側のみ)。
     shade:      周辺光量落ち(中心比 15 %)。平場だとどの画素も同じ答えになり、
@@ -212,7 +214,11 @@ def scene(spd, keep=None, bias_frac=0.0, bias_patch="赤",
         img[r * PATCH:(r + 1) * PATCH, c * PATCH:(c + 1) * PATCH] = cols[i]
     if bias_frac > 0.0:
         wb = int(round(bias_frac * w))
-        img[:, :wb] = render(REFL[NAMES.index(bias_patch)], spd)
+        panel = render(REFL[NAMES.index(bias_patch)], spd)
+        if bias_side == "right":
+            img[:, w - wb:] = panel
+        else:
+            img[:, :wb] = panel
     if shade:
         yy, xx = np.mgrid[0:h, 0:w]
         v = 1.0 - 0.15 * (((xx - w / 2) / (w / 2)) ** 2
