@@ -42,7 +42,7 @@
 
 | 文档 | 内容 |
 |---|---|
-| [HALCON_PARITY.md](HALCON_PARITY.md) | genuine（真正等效）实现的进展（269/2313）：不是"只有名字相同"，而是确实能做同样的处理 |
+| [HALCON_PARITY.md](HALCON_PARITY.md) | genuine（真正等效）实现的进展（269/2313）：不是“只有名字相同”，而是确实能做同样的处理 |
 | [HALCON_COVERAGE.md](HALCON_COVERAGE.md) | 通过真实抓取官方参考手册（v2605）得到的覆盖率测量 |
 | [LIB_COVERAGE.md](LIB_COVERAGE.md) | 跨多个库的覆盖情况（吸收 HALCON 之外具有特色的算子） |
 | [PARITY_CROSSBACKEND.md](PARITY_CROSSBACKEND.md) | 以多个独立实现（scipy／cv2／skimage）之间的跨后端一致性来证明对等性 |

@@ -595,11 +595,11 @@ def section8_tool_gaps():
 
     # (c) 2 次元の周波数解析が「放射平均」しかない
     rp = np.asarray(fs.radial_power_spectrum(render(mura=False)))
-    assert rp.ndim == 2 and rp.shape[1] == 2, rp.shape
+    assert rp.ndim == 2 and rp.shape[0] == 2, rp.shape        # (freqs, power)
     th = np.deg2rad(30.0)
     rot = np.asarray(fs.radial_power_spectrum(render(theta=th, mura=False)))
-    f_pk = float(rp[np.argmax(rp[1:, 1]) + 1, 0])
-    f_pk_rot = float(rot[np.argmax(rot[1:, 1]) + 1, 0])
+    f_pk = float(rp[0, np.argmax(rp[1, 1:]) + 1])
+    f_pk_rot = float(rot[0, np.argmax(rot[1, 1:]) + 1])
     print("  (c) `radial_power_spectrum` は**放射平均**なので、モアレの**向き**が消える。")
     print("      回転なしのピーク %.4f cyc/px、30 度回した像でも %.4f cyc/px ——"
           % (f_pk, f_pk_rot))
