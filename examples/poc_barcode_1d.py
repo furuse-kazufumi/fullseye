@@ -762,10 +762,10 @@ def section9_figures() -> None:
     msg = make_message(rng)
     clean = render(msg, phase=0.4)
     blurred = gaussian_filter(clean, 2.3)
-    smudged = dmg_smudge(clean, 3, np.random.default_rng(7), msg)
+    smudged = dmg_smudge(clean, 6, np.random.default_rng(7), msg)
     tilted = render(msg, theta=np.deg2rad(16.0), phase=0.4)
     figs.save_grid("barcode_damage", [clean, blurred, smudged, tilted],
-                   ["(a) 無傷", "(b) ぼけ 2.3", "(c) 汚れ 3", "(d) 傾き 16 度"],
+                   ["無傷", "ぼけ σ=2.3 px", "汚れ 6 モジュール", "傾き 16 度"],
                    ncols=2, title="4 つの壊し方(モジュール %.0f px)" % MODULE_PX,
                    caption="(d) は走査線が符号の上下からはみ出す角度。"
                            "にじんでいないのに読めない。")
