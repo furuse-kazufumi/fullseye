@@ -387,87 +387,119 @@ def main():
     print("     最良 nsr は理論値(雑音電力 / 信号電力)と同じ桁に並ぶ —— 雑音が")
     print("     大きいほど強く正則化する = 高周波を諦める、が最適解の中身。")
 
-    print("\n=== 4. 核の推定誤差 —— 何度ずれると破綻するか ===")
+    print("\n=== 4. 核の推定誤差 —— どれだけずれると破綻するか ===")
     obs40, _ = add_noise(blurred, 40.0, np.random.default_rng(SEED + 2))
-    p_null40, _ = q(gt, obs40)
-    p_uns40, _, _ = unsharp_best(obs40, gt)
-    print(f"  ゼロ点: 何もしない {p_null40:.2f} dB / アンシャープ {p_uns40:.2f} dB")
+    p_null40 = psnr(gt, obs40)
+    p_uns40, uns_ab, _ = unsharp_best(obs40, gt)
+    print(f"  ゼロ点: 何もしない {p_null40:.2f} dB / "
+          f"アンシャープ(神託 a={uns_ab[0]}, b={uns_ab[1]}) {p_uns40:.2f} dB")
     print(f"  {'角度ずれ [度]':>13}{'PSNR':>9}{'対 何もしない':>15}{'対 アンシャープ':>17}")
-    ang_break_uns = ang_break_null = None
-    for d in (0.0, 1.0, 2.0, 4.0, 6.0, 8.0, 10.0, 15.0, 20.0, 30.0, 45.0):
+    ang_x, ang_y = [], []
+    for d in (0.0, 1.0, 2.0, 3.0, 4.0, 6.0, 8.0, 10.0, 12.0, 14.0,
+              16.0, 18.0, 20.0, 25.0, 30.0, 45.0):
         p, _, _ = wiener_best(obs40, psf_line(15, 20.0 + d), gt)
-        if ang_break_uns is None and d > 0 and p < p_uns40:
-            ang_break_uns = d
-        if ang_break_null is None and d > 0 and p < p_null40:
-            ang_break_null = d
+        ang_x.append(d); ang_y.append(p)
         print(f"  {d:>13.0f}{p:>9.2f}{p - p_null40:>15.2f}{p - p_uns40:>17.2f}")
+    ang_break_uns = crossing(ang_x, ang_y, p_uns40)
+    ang_break_null = crossing(ang_x, ang_y, p_null40)
     print(f"  {'長さずれ [px]':>13}{'PSNR':>9}{'対 何もしない':>15}{'対 アンシャープ':>17}")
-    len_break_null = None
-    for d in (0, 1, 2, 3, 5, 8, 12):
+    len_x, len_y = [], []
+    for d in (0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0, 12.0):
         p, _, _ = wiener_best(obs40, psf_line(15 + d, 20.0), gt)
-        if len_break_null is None and d > 0 and p < p_null40:
-            len_break_null = d
-        print(f"  {d:>13d}{p:>9.2f}{p - p_null40:>15.2f}{p - p_uns40:>17.2f}")
-    print(f"  → 角度は {ang_break_uns:.0f} 度ずれるとアンシャープマスクに抜かれ、"
-          f"{ang_break_null:.0f} 度で「何もしない」にも抜かれる。")
-    print(f"     長さは {len_break_null} px 過大でゼロ点以下。長さより角度の方が"
-          "はるかに厳しい —— 角度がずれると核の台紙そのものがすれ違う。")
+        len_x.append(d); len_y.append(p)
+        print(f"  {d:>13.0f}{p:>9.2f}{p - p_null40:>15.2f}{p - p_uns40:>17.2f}")
+    len_break_null = crossing(len_x, len_y, p_null40)
+    print(f"  → 角度が {ang_break_uns:.1f} 度ずれるとアンシャープマスクに抜かれ、"
+          f"{ang_break_null:.1f} 度で「何もしない」にも抜かれる。")
+    print(f"     長さは {len_break_null:.1f} px 過大でゼロ点以下。**現場で効くのは"
+          "この 2 つの数字**で、")
+    print("     15 px の核なら角度の許容は ±10 度、長さの許容は ±3 px 程度しかない。")
+    print("     角度がずれると核の台紙そのものがすれ違うので、長さより厳しい。")
 
-    print("\n=== 4b. 核を推定する場合(真値を見ないで選ぶ)===")
-    t0 = time.perf_counter()
-    est_k = estimate_kernel(obs40, nsr=1e-4,
-                            lengths=range(7, 26, 2),
-                            angles=np.arange(0.0, 180.0, 5.0))
-    dt = 1e3 * (time.perf_counter() - t0)
-    p_est, _, _ = wiener_best(obs40, psf_line(*est_k), gt)
-    p_true, _, _ = wiener_best(obs40, k_ref, gt)
-    print(f"  真の核 (15, 20.0 度) / 推定 ({est_k[0]:.0f}, {est_k[1]:.0f} 度)"
-          f" / 探索 {dt:.0f} ms(10x36 通り)")
-    print(f"  推定核で {p_est:.2f} dB、既知の核なら {p_true:.2f} dB"
-          f"(差 {p_true - p_est:.2f} dB)")
-    print("  → 目安は勾配のスパース度だけ(真値は一切見ていない)。当たれば既知に")
-    print("     肉薄するが、上の表のとおり数度外すだけでゼロ点以下に落ちるので、")
-    print("     **推定の当たり外れがそのまま成否**になる。ここが現場の勝負どころ。")
+    print("\n=== 4b. 核を推定する場合(真値を一切見ない)===")
+    print(f"  {'真の核':>18}{'推定した核':>18}{'推定核で':>10}{'既知なら':>10}{'差':>8}")
+    ok_est = 0
+    for L, a in ((9.0, 0.0), (15.0, 20.0), (21.0, 70.0), (25.0, 135.0)):
+        k_t = psf_line(L, a)
+        ob, _ = add_noise(blur_circular(gt, k_t), 40.0, np.random.default_rng(SEED + 5))
+        eL, ea = estimate_line_kernel(ob)
+        p_e, _, _ = wiener_best(ob, psf_line(eL, ea), gt)
+        p_t, _, _ = wiener_best(ob, k_t, gt)
+        ok_est += int(p_t - p_e < 1.0)
+        print(f"  {f'{L:.0f} px {a:.0f} 度':>18}{f'{eL:.1f} px {ea:.1f} 度':>18}"
+              f"{p_e:>10.2f}{p_t:>10.2f}{p_t - p_e:>8.2f}")
+    print("  → 対数スペクトルの逆変換(2 次元ケプストラム)で読むと、SNR 40 dB では")
+    print("     4 件とも当たり、既知の核との差は 1 dB 未満で済む。ただしこれは")
+    print("     **直線ブレという形を仮定できているから**であって、折れ線の手ブレでは")
+    print("     零線が単純な縞にならず同じ手は使えない。")
+    print(f"  {'SNR [dB]':>9}{'推定した核':>18}{'推定核で':>10}{'既知なら':>10}{'差':>8}")
+    est_noise = {}
+    for snr in (40.0, 30.0, 20.0, 15.0):
+        ob, _ = add_noise(blurred, snr, np.random.default_rng(SEED + 6))
+        eL, ea = estimate_line_kernel(ob)
+        p_e, _, _ = wiener_best(ob, psf_line(eL, ea), gt)
+        p_t, _, _ = wiener_best(ob, k_ref, gt)
+        est_noise[snr] = (eL, ea, p_e, p_t)
+        print(f"  {snr:>9.0f}{f'{eL:.1f} px {ea:.1f} 度':>18}"
+              f"{p_e:>10.2f}{p_t:>10.2f}{p_t - p_e:>8.2f}")
+    print("  → 雑音が増えると零線が埋もれて推定が外れ、外れた瞬間に上の表の")
+    print("     許容範囲を突き抜ける。**核の推定と雑音は独立でなく、雑音が核推定を")
+    print("     壊すという二段構えで復元が死ぬ**。")
 
-    print("\n=== 5. リンギング —— 境界条件で桁が変わる ===")
-    print(f"  {'ブレの掛け方':<22}{'PSNR':>8}{'縁 / 内部 の誤差':>18}{'エッジ超過 [%]':>15}")
+    print("\n=== 5. リンギング —— 縁の悪化は境界条件で決まる ===")
+    print("  (核は厳密に既知・SNR 40 dB。nsr を固定して条件をそろえる)")
+    print(f"  {'ブレの掛け方':<20}{'nsr':>9}{'PSNR':>8}{'縁の誤差':>11}"
+          f"{'内部の誤差':>12}{'比':>7}{'エッジ超過 [%]':>15}")
+    ring = {}
     for label, obsx in (("循環(モデル一致)", blur_circular(gt, k_ref)),
                         ("反射(モデル不一致)", blur_padded(gt, k_ref))):
         o, _ = add_noise(obsx, 40.0, np.random.default_rng(SEED + 3))
-        p, nsr, est = wiener_best(o, k_ref, gt)
-        err = np.abs(np.clip(est, 0, 1) - gt)
-        m = np.zeros_like(err, bool); m[:8, :] = m[-8:, :] = m[:, :8] = m[:, -8:] = True
-        ratio = float(err[m].mean() / err[~m].mean())
-        band = (slice(50, 100), slice(105, 125))         # 矩形の右エッジのすぐ外
-        over = 100.0 * float(np.clip(est, 0, 1)[band].max() - gt[band].max()) / 0.53
-        print(f"  {label:<22}{p:>8.2f}{ratio:>18.2f}{over:>15.1f}")
-    print("  → 現実のブレ(画面外から流れ込む)を循環モデルで戻すと、縁の誤差だけが")
-    print("     跳ね上がる。復元そのものが下手なのではなく **モデルが縁で嘘をつく**。")
-    print("     オーバーシュートはどちらでも出る = 逆畳み込みに固有のもの。")
+        for nsr in (5e-5, 5e-4, 5e-3):
+            est = fs.cx_wiener_deconvolve(o, k_ref, nsr=nsr)
+            err = np.abs(est - gt)
+            m = np.zeros_like(err, bool)
+            m[:8, :] = m[-8:, :] = m[:, :8] = m[:, -8:] = True
+            e_edge = float(err[m].mean()); e_in = float(err[~m].mean())
+            band = (slice(50, 100), slice(112, 132))     # 矩形の右エッジのすぐ外
+            contrast = 0.75 - float(gt[band].max())
+            over = 100.0 * float(est[band].max() - gt[band].max()) / contrast
+            ring[(label, nsr)] = (e_edge / e_in, over)
+            print(f"  {label:<20}{nsr:>9.0e}{psnr(gt, est):>8.2f}{e_edge:>11.4f}"
+                  f"{e_in:>12.4f}{e_edge / e_in:>7.2f}{over:>15.1f}")
+    print("  → 現実のブレ(画面外から画が流れ込む)を循環モデルで戻すと、縁の誤差が")
+    print("     内部の 2 倍以上になる。復元が下手なのではなく **モデルが縁で嘘をつく**。")
+    print("     エッジ超過は正則化を強めれば消えるが、消した分だけ鮮鋭さも消える")
+    print("     (nsr 5e-5 と 5e-3 の PSNR 差がその値段)。")
     print("     なお fs.cx_wiener_deconvolve は [0,1] に切り詰めるので、負側の")
     print("     アンダーシュートはこの数字に出てこない(道具の穴 e)。")
 
     print("\n=== 6. 回転ブレは 1 枚の核では書けない ===")
-    rot = blur_rotational(gt, 6.0, n=41)
-    o_rot, _ = add_noise(rot, 40.0, np.random.default_rng(SEED + 4))
+    rgt = scene_rotation(256, 70)
+    rot = blur_rotational(rgt, 6.0, n=41)
     k_arc = psf_arc(70.0, 6.0)
-    est_rot = fs.cx_wiener_deconvolve(o_rot, k_arc, nsr=1e-4)
+    approx = blur_circular(rgt, k_arc)                   # 1 枚の核で書いたつもりの前向き
+    o_rot, _ = add_noise(rot, 40.0, np.random.default_rng(SEED + 4))
+    est_rot = fs.cx_wiener_deconvolve(o_rot, k_arc, nsr=5e-4)
     cy = cx = 128
-    spots = (("核を作った場所(右 70 px)", cy, cx + 70),
-             ("反対側(左 70 px)", cy, cx - 70),
-             ("回転中心の近く", cy + 6, cx + 6))
-    print(f"  {'場所':<26}{'観測':>9}{'復元':>9}{'差':>8}")
+    spots = (("核を作った場所(右)", cy, cx + 70),
+             ("反対側(左)", cy, cx - 70),
+             ("直交する側(上)", cy - 70, cx),
+             ("回転中心(ほぼ無ブレ)", cy, cx))
+    print(f"  {'場所':<24}{'前向きの一致':>14}{'観測':>9}{'復元':>9}{'差':>8}")
     deltas = {}
     for label, y, x in spots:
         sl = (slice(y - 16, y + 17), slice(x - 16, x + 17))
-        p0, _ = q(gt[sl], o_rot[sl])
-        p1, _ = q(gt[sl], np.clip(est_rot, 0, 1)[sl])
+        fit = psnr(np.clip(rot[sl], 0, 1), approx[sl])
+        p0 = psnr(rgt[sl], o_rot[sl])
+        p1 = psnr(rgt[sl], est_rot[sl])
         deltas[label] = p1 - p0
-        print(f"  {label:<26}{p0:>9.2f}{p1:>9.2f}{p1 - p0:>8.2f}")
-    print("  → 同じ 1 枚の核で全画面を戻すと、核を作った場所は良くなり、"
-          "反対側は悪化する。")
-    print("     回転ブレはシフト不変でないので、そもそも 1 回の畳み込みの逆では")
-    print("     書けない。区画に切って場所ごとの核を当てるしかない。")
+        print(f"  {label:<24}{fit:>14.2f}{p0:>9.2f}{p1:>9.2f}{p1 - p0:>8.2f}")
+    print("  → 「前向きの一致」= 本物の回転ブレと 1 枚の核の畳み込みがどれだけ同じか。")
+    print("     核を作った場所だけ合っていて、他は合っていない = **シフト不変でない**。")
+    print("     その結果、同じ 1 枚の核で全画面を戻すと核を作った場所は良くなり、")
+    print("     反対側と直交側は **戻すどころか悪化** する。ほぼブレていない中心では")
+    print("     リンギングを足すだけなので最も大きく壊れる。区画に切って場所ごとの")
+    print("     核を当てるしかない —— 「ブレ除去」を一括りにできない境目がここ。")
 
     print("\n=== 7. 速度(この機械での実測)===")
     for n in (256, 512, 1024):
