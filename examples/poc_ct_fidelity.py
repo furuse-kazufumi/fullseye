@@ -396,6 +396,9 @@ def main() -> bool:
     for _name, passed, _detail in checks:
         assert passed
 
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
+
     print()
     print("PASS: tomography 6 op(projection_angles / ellipse_phantom / ellipse_sinogram / "
           "radon_transform / filtered_backprojection / backproject_sinogram)を実行。")
