@@ -436,24 +436,22 @@ def main():
     print("  → 理由その 2・軸のぶれ: **正しい象限を選んでも第 1 候補が数度ずれている**。")
     print("     主軸は有限標本からの推定なので揺れる。点数を変えて確かめる:")
     print(f"  {'点数':>8}{'第1候補の回転誤差 中央値[度]':>30}{'1/sqrt(N) からの予測':>24}")
-    ref = None
+    ref, scale = None, {}
     for npts in (200, 800, 3200):
         rq = np.random.default_rng(555)
         errs = []
-        for _ in range(20):
+        for _ in range(24):
             a = bracket(npts, rq)
             b = bracket(int(npts * 1.4), rq)
             Rt = random_rot(60.0, rq)
-            dstq = fs.apply_transform(b, Rt, np.zeros(3))
-            _, _, VtP = np.linalg.svd(a - a.mean(0), full_matrices=False)
-            _, _, VtQ = np.linalg.svd(dstq - dstq.mean(0), full_matrices=False)
-            errs.append(min(rot_error_deg(VtQ.T @ np.diag(s) @ VtP, Rt)
-                            for s in ([1, 1, 1], [1, -1, -1], [-1, 1, -1], [-1, -1, 1])))
+            errs.append(pca_candidates(a, fs.apply_transform(b, Rt, np.zeros(3)), Rt)[0])
         m = med(errs)
         ref = ref if ref is not None else (m, npts)
+        scale[npts] = m
         print(f"  {npts:>8}{m:>30.2f}{ref[0] * np.sqrt(ref[1] / npts):>24.2f}")
-    print("     → 点数を 4 倍にすると誤差はおよそ半分。主軸推定の統計的ゆらぎであって")
-    print("        実装の誤りではない。**PCA は初期値専用。単体では姿勢推定器にならない**。")
+    print("     → 点数を 16 倍にすると誤差はおよそ 4 分の 1。主軸推定の統計的ゆらぎで")
+    print("        あって実装の誤りではない。この床は ICP では消えるが PCA には残る。")
+    print("        **PCA は初期値専用。単体では姿勢推定器にならない**。")
 
     # ---- 4. 収束域の広さ と 最終精度 --------------------------------------
     TR4 = 12

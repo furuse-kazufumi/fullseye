@@ -71,8 +71,8 @@ EXTEND: 実際の頭蓋・骨で走らせるなら ``cranium_mesh()`` を実ス�
   この PoC は ``_surface_deviation`` を自前で書いた。
 - **J. `fs.obb` が (N,3) の SVD を `full_matrices=True` で回す**(``pcseg.py:425``)。
   20000 点で 20000x20000 の U を 3.2 GB 確保して 3.8 秒、しかもその U は捨てている
-  (``_, _, Vt = np.linalg.svd(P - c)``)。``full_matrices=False`` なら 0.7 ms
-  (**5000 倍超**、第 7 章で実測)。10 万点では U だけで 80 GB になり落ちる。
+  (``_, _, Vt = np.linalg.svd(P - c)``)。``full_matrices=False`` なら 1 ms 未満で、
+  実測で 3 桁以上の差(第 7 章に毎回の実測値を印字)。10 万点では U だけで 80 GB になり落ちる。
   **同じ形が兄弟コードにもある**(いずれも U を捨てている。実コードで 1 件ずつ確認):
   ``pcseg.py:92`` (fit_plane) / ``measure.py:73`` (2-D 直線フィット、(N,2) で N x N)/
   ``ops.py:565`` (輪郭の直線化)/ ``camera.py:366`` と ``pnp3d.py:178`` (平面 PnP)。
@@ -550,14 +550,17 @@ def main():
     ms_svd = 1e3 * (time.perf_counter() - t0)
     print(f"  ★穴 J: fs.obb 5000 点 {ms_obb5:.0f} ms / 20000 点 {ms_obb20:.0f} ms(点数の 2 乗)。")
     print(f"     中身は (N,3) の SVD 1 回。full_matrices=False なら {ms_svd:.2f} ms"
-          f"(**{ms_obb20 / ms_svd:.0f} 倍**)。捨てている U を 20000x20000 = 3.2 GB 確保している。")
+          f"(**{ms_obb20 / ms_svd:.0f} 倍**)。")
+    print("     捨てている U を 20000x20000 = 3.2 GB 確保しているため。")
     ms_tol, rmse_tol = {}, {}
     for tol in (1e-8, 1e-7):
         t0 = time.perf_counter()
         _, _, _, r = fs.point_to_plane_icp(Qt, Pt, max_iter=60, tol=tol)
         ms_tol[tol], rmse_tol[tol] = 1e3 * (time.perf_counter() - t0), r
-    print(f"  (否定した疑い)point_to_plane_icp の tol: 1e-8 {ms_tol[1e-8]:.0f} ms /"
-          f" 1e-7 {ms_tol[1e-7]:.0f} ms、rmse 差 {abs(rmse_tol[1e-8] - rmse_tol[1e-7]):.1e}。")
+    print(f"  (否定した疑い)point_to_plane_icp の tol は遅さの原因ではない:"
+          f" 1e-8 {ms_tol[1e-8]:.0f} ms / 1e-7 {ms_tol[1e-7]:.0f} ms、")
+    print(f"     rmse 差 {abs(rmse_tol[1e-8] - rmse_tol[1e-7]):.1e}(4 反復で収束済み)。"
+          f" 遅さは上の fs.obb だった。")
     t0 = time.perf_counter()
     _, _, _, r_short = fs.icp(Qt, Pt, max_iter=3, tol=1e-8)
     ms_short = 1e3 * (time.perf_counter() - t0)
@@ -565,8 +568,9 @@ def main():
     _, _, _, r_long = fs.icp(Qt, Pt, max_iter=60, tol=1e-8)
     ms_long = 1e3 * (time.perf_counter() - t0)
     print(f"     一方 fs.icp(点対点)は 3 反復 {ms_short:.0f} ms(rmse {r_short:.4f})→"
-          f" 60 反復 {ms_long:.0f} ms(rmse {r_long:.4f})。20 倍かけて {r_short - r_long:.4f} mm"
-          f" しか下がらない —— 目的関数が点間隔ノイズに支配されていて下がる先が無い。")
+          f" 60 反復 {ms_long:.0f} ms(rmse {r_long:.4f})。")
+    print(f"     20 倍の時間で {r_short - r_long:.4f} mm しか下がらない —— 収束が遅いのではなく、"
+          f"目的関数が点間隔ノイズに支配されていて下がる先が無い。")
 
     print("\n=== 8. ファサードに出ていない op(実行時に確認)===")
     for name in ("reflect_points", "reflection_symmetry_score", "detect_reflection_symmetry",
