@@ -587,9 +587,9 @@ def section_radius(tree: dict, z: dict) -> dict:
     print("     距離変換は「最も近い背景まで」なので、2 本の枝が合流している"
           "ところでは背景が遠のく。\n     出てくるのは"
           "**どちらの枝の径でもない値**。")
-    print("  ★遠いところでも %+.1f %% 残る。これは分岐とは別の原因(離散化):"
-          "\n     縁は最後の前景画素の 0.5 px 外側にあるので、直径は約 1 px"
-          "太く出る(細い枝ほど比率が大きい)。")
+    print("  ★遠いところでも %+.1f %% 残る。これは分岐とは別の原因(離散化)——"
+          " 縁は最後の前景画素の\n     0.5 px 外側にあるので、直径は約 1 px 太く"
+          "出る(細い枝ほど比率が大きい)。" % far)
     print("     **1 つの数字にまとめると、この 2 つの原因が混ざる**。")
 
     figs.save_plot("radius_bias",
@@ -662,7 +662,7 @@ def section_murray(tree: dict, r: dict) -> dict:
 
     edt = r["edt"]
     offs, fits, meds = [], [], []
-    for off, label in ((0, "分岐点そのもの"), (3, "分岐から 3 px"),
+    for off, label in ((2, "分岐から 2 px"), (4, "分岐から 4 px"),
                        (6, "分岐から 6 px"), (10, "分岐から 10 px"),
                        (99, "枝の中点")):
         tri = []
@@ -676,7 +676,7 @@ def section_murray(tree: dict, r: dict) -> dict:
             tri.append([_dia_at(edt, p) for p in ps])
         per = [murray_exponent(*t) for t in tri]
         per = np.asarray([v for v in per if np.isfinite(v)])
-        offs.append(off if off < 99 else 99)
+        offs.append(off if off < 99 else 14)
         fits.append(murray_fit(tri))
         meds.append(float(np.median(per)) if per.size else np.nan)
         print("   %-18s   %3d / %3d        %8.2f          %8.2f"
@@ -707,10 +707,9 @@ def section_murray(tree: dict, r: dict) -> dict:
           " 0.4 px 前後。" % min(s["d"] for s in tree["segments"]))
 
     figs.save_plot("murray",
-                   [("まとめて当てはめ", [o if o < 99 else 14 for o in offs], fits),
-                    ("三つ組ごとの中央値", [o if o < 99 else 14 for o in offs], meds),
-                    ("真値 n=3", [o if o < 99 else 14 for o in offs],
-                     [3.0] * len(offs))],
+                   [("まとめて当てはめ", offs, fits),
+                    ("三つ組ごとの中央値", offs, meds),
+                    ("真値 n=3", offs, [3.0] * len(offs))],
                    xlabel="径を測る位置(分岐からの距離 [px]、14 = 枝の中点)",
                    ylabel="Murray の指数 n",
                    title="測る位置を変えても 3 に戻らない(主因は量子化)")
