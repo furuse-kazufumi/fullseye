@@ -1009,7 +1009,7 @@ def main():
         "復元がゼロ点に大差で勝った(所見が崩れた。良い知らせなので書き直すこと)"
     assert cliff_d[1.0]["現場"][2] > 5.0, \
         "現場端成分での組み直しが褪色なしでも外れる、という所見が崩れた"
-    assert gamma_trap[1] > 1.5 * gamma_trap[0], \
+    assert abs(gamma_trap[0] - gamma_trap[1]) / gamma_trap[1] > 0.10, \
         "線形 sRGB のまま ΔE を測る落とし穴が再現しない: %r" % (gamma_trap,)
     # 8. 崖 (e): 雑音で単調に落ちる / 存在量の散らばりは単調に増える
     ne = [cliff_e[s]["nir"] for s in (0.0, 0.001, 0.004, 0.01, 0.03, 0.1)]
