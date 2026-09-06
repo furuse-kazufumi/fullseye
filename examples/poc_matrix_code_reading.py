@@ -363,20 +363,14 @@ def find_alignment(dark, finders, n, module_px_est):
     dst = np.array([[f[1], f[0]] for f in finders])                        # (x, y)
     M = np.linalg.solve(np.column_stack([src, np.ones(3)]), dst)           # 3x2
     pred = np.array([n - 6.5, n - 6.5, 1.0]) @ M
-    rad = 2.5 * module_px_est
-    r0 = int(max(0, pred[1] - rad)); r1 = int(min(dark.shape[0], pred[1] + rad))
-    c0 = int(max(0, pred[0] - rad)); c1 = int(min(dark.shape[1], pred[0] + rad))
-    if r1 - r0 < 3 or c1 - c0 < 3:
+    # アフィン予測は透視ぶんだけ外れるので、広めの円板から始めて 2 段で絞る
+    got = _refine_center(dark, pred[0], pred[1], 2.6 * module_px_est, iters=6)
+    if got is None:
         return None
-    sub = dark[r0:r1, c0:c1] > 0.5
-    if sub.sum() < 4:
+    got = _refine_center(dark, got[0], got[1], 2.4 * module_px_est, iters=6)
+    if got is None:
         return None
-    yy, xx = np.mgrid[r0:r1, c0:c1]
-    d2 = (xx - pred[0]) ** 2 + (yy - pred[1]) ** 2
-    sel = sub & (d2 < (2.2 * module_px_est) ** 2)
-    if sel.sum() < 4:
-        return None
-    return np.array([xx[sel].mean(), yy[sel].mean()])                      # (x, y)
+    return np.array([got[0], got[1]])                                      # (x, y)
 
 
 def estimate_homography(dark, n, module_px_est, step=1):
