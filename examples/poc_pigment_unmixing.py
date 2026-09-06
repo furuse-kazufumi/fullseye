@@ -526,6 +526,7 @@ METHODS = (
     ("rgb",   "RGB の PCA(ゼロ点)", True),
     ("vis",   "可視のみ多波長 PCA", True),
     ("ms",    "可視+近赤外 PCA", True),
+    ("mnf",   "可視+近赤外 MNF", True),
     ("unmix", "線形アンミキシング", False),
     ("ks",    "K/S アンミキシング", False),
     ("nir",   "近赤外の単純差分", False),
