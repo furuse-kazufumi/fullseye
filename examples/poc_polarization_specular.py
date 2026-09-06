@@ -486,10 +486,15 @@ def main():
         assert e_corr < 1e-14, f"入射角 {th}: 補正後も偏りが残る ({e_corr:.3e})"
 
     # 6. 方位が格子に乗ると素朴なゼロ点が並ぶ / 外れると当てはめが効く
-    assert az_rows[0.0][1] / az_rows[0.0][0] < 10.0, \
-        "方位 0 度で素朴法が引き分ける、という所見が崩れた"
-    assert az_rows[22.5][1] / az_rows[22.5][0] > 2.0, \
+    for az in (0.0, 45.0):
+        assert az_rows[az][1] < 1e-14, \
+            f"方位 {az} 度で素朴法が引き分ける、という所見が崩れた"
+        assert abs(az_rows[az][3] - az_rows[az][2]) < 1e-14, \
+            f"方位 {az} 度は 70 度でも引き分けるはず"
+    assert az_rows[22.5][1] > 1e3 * az_rows[22.5][0], \
         "方位 22.5 度で当てはめが効く、という所見が崩れた"
+    # op 自体は方位に依らない(当てはめが 3 未知数を厳密に解いているから)
+    assert max(az_rows[a][2] for a in az_rows) - min(az_rows[a][2] for a in az_rows) < 1e-14
 
     # 7. 偏光度と Stokes が閉形式に一致
     assert np.abs(dolp - dolp_true).max() < 1e-12, "偏光度が閉形式と違う"
