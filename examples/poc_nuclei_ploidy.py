@@ -285,18 +285,18 @@ def section2_zero_point(o):
     print("  → ★★ところが**測った面積のほうが真の面積より良い**"
           "(%.1f %% < %.1f %%)。3 節で理由を切り分ける。"
           % (100 * out["面積(測定)"][0], 100 * out["面積(真値)"][0]))
-    figs.save_plot("histograms",
-                   [("2n 積分輝度", np.sort(o["integ"][o["idx"]][~hi]),
-                     np.linspace(0, 1, int((~hi).sum()))),
-                    ("4n 積分輝度", np.sort(o["integ"][o["idx"]][hi]),
-                     np.linspace(0, 1, int(hi.sum()))),
-                    ("2n 面積x100", np.sort(o["f"]["area"][o["idx"]][~hi]) * 100,
-                     np.linspace(0, 1, int((~hi).sum()))),
-                    ("4n 面積x100", np.sort(o["f"]["area"][o["idx"]][hi]) * 100,
-                     np.linspace(0, 1, int(hi.sum())))],
-                   xlabel="特徴量(面積は x100 で重ねた)", ylabel="累積割合",
+    # 2 つの特徴量を「2n の中央値で割った比」に揃えると、同じ軸で比べられる
+    # (真の DNA 比 2.0 がどこに来るべきかが 1 目盛りで分かる)。
+    ser = []
+    for tag, v in (("積分輝度", o["integ"][o["idx"]]), ("面積", o["f"]["area"][o["idx"]])):
+        r = np.asarray(v, float) / float(np.median(np.asarray(v)[~hi]))
+        for lab2, m in (("2n", ~hi), ("4n", hi)):
+            ser.append(("%s %s" % (tag, lab2), np.sort(r[m]),
+                        np.linspace(0, 1, int(m.sum()))))
+    figs.save_plot("histograms", ser,
+                   xlabel="2n の中央値に対する比(真の DNA 比 = 2.0)", ylabel="累積割合",
                    title="積分輝度は分かれ、面積は重なる",
-                   caption="累積分布。積分輝度の 2 本は離れ、面積の 2 本は大きく重なる。")
+                   caption="累積分布。積分輝度の 4n は 2.1 付近に固まり、面積の 2 本は大きく重なる。")
     return out
 
 
