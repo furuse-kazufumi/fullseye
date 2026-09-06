@@ -92,6 +92,7 @@ from scipy.ndimage import gaussian_filter, gaussian_filter1d
 from scipy.special import erf
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import examplefig as figs                                        # noqa: E402
 import fullseye as fs                                            # noqa: E402
 import measuring1d as m1                                         # noqa: E402
 import metrology as mt                                           # noqa: E402
