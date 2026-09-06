@@ -751,45 +751,62 @@ def main():
 
     print("\n=== 5. 崖 (b) 大きさのばらつき —— 単一スケールの前提はいつ壊れるか ===")
     RATIOS = (1.0, 1.5, 2.0, 2.5, 3.0)
-    print("  大型集団 10 個の線寸法だけを振る(他は同じ)。pack "
-          f"{BASE_PACK:.2f} 固定、h={H_DEF} 固定。")
-    print("  " + pad("大きさ比", 10, right=False) + pad("大型の面積比", 14)
-          + "".join(pad(n.split("(")[0][:10], 16) for n, _ in METHODS[1:]))
-    print("  " + pad("", 10, right=False) + pad("", 14)
-          + "".join(pad("偏り/過分割/過統合", 16) for _ in METHODS[1:]))
+    HS_SIZE = (1.0, 1.6, 2.4, 3.4)
+    print(f"  大型集団 8 個の線寸法だけを振る(他は同じ)。pack {BASE_PACK:.2f} 固定。")
+    print("  ★**集団ごとに分けて数える** —— 全体に混ぜると、大型の過分割と小型の")
+    print("     過統合が打ち消し合って『どちらも問題なし』に見えてしまう。")
+    print("  " + pad("大きさ比", 10, right=False) + pad("面積比", 10)
+          + "".join(pad(f"h={h}", 15) for h in HS_SIZE) + pad("形の事前知識", 18))
+    print("  " + pad("", 10, right=False) + pad("", 10)
+          + "".join(pad("大型割れ/小型統合", 15) for _ in HS_SIZE)
+          + pad("大型割れ/小型統合", 18))
     size_tab = {}
     for r in RATIOS:
         scs = [make_scene(s, pack=BASE_PACK, size_ratio=r) for s in SEEDS]
         fgs = [foreground(s["img"]) for s in scs]
+
+        def by_class(preds, scs=scs):
+            """(大型細胞の過分割件数, 小型細胞に掛かった過統合件数) の平均。"""
+            bs, sm = [], []
+            for s, pred in zip(scs, preds):
+                ev = evaluate(s, pred)
+                big = s["kind"] == KIND_LARGE
+                bs.append(float(np.maximum(ev["per_gt"][big] - 1, 0).sum()))
+                own = ev["owner_of_pred"]
+                small_pred = (own >= 0) & ~big[np.clip(own, 0, None)]
+                sm.append(float(np.maximum(ev["per_pred"][small_pred] - 1, 0).sum()))
+            return float(np.mean(bs)), float(np.mean(sm))
+
         cells = []
-        for name, fn in METHODS[1:]:
-            rr = summarize([evaluate(s, fn(s["img"], fg)) for s, fg in zip(scs, fgs)])
-            size_tab[(r, name)] = rr
-            cells.append(pad(f"{rr['bias']:+.0f}/{rr['split']:.0f}/{rr['merge']:.0f}", 16))
-        # 大型細胞だけの過分割 —— 全体に混ぜると小さい集団の過統合に埋もれる
-        big_split = []
-        for s, fg in zip(scs, fgs):
-            pred = m_ws_h(s["img"], fg, h_px=H_DEF)
-            ev = evaluate(s, pred)
-            big = s["kind"] == KIND_LARGE
-            gt = s["owner"]
-            O = np.bincount(gt.ravel().astype(np.int64) * (int(pred.max()) + 1)
-                            + pred.ravel().astype(np.int64),
-                            minlength=(s["n"] + 1) * (int(pred.max()) + 1)
-                            ).reshape(s["n"] + 1, int(pred.max()) + 1)
-            core = O[1:, 1:].astype(float)
-            avis = np.maximum(core.sum(1) + O[1:, 0], 1.0)
-            per_gt = (core >= TAU * avis[:, None]).sum(1)
-            big_split.append(float(np.maximum(per_gt[big] - 1, 0).sum()))
-            del ev
-        size_tab[(r, "big")] = float(np.mean(big_split))
-        print("  " + pad(f"{r:.1f}x", 10, right=False)
-              + pad(f"{r * r:.1f}x", 14) + "".join(cells)
-              + f"  大型 10 個の過分割 {np.mean(big_split):.1f}")
-    print("  → 大きさ比を上げると、h を固定したまま **大型細胞だけが割れる**。")
-    print("     小さい集団はそのままなので、h をどちらへ動かしても片方が悪くなる。")
-    print("     **単一の h では両方は救えない** = これはノブの調整では直らない欠陥で、")
-    print("     スケール空間(細胞の大きさごとに h を変える)が要ることの根拠になる。")
+        for h in HS_SIZE:
+            b, m = by_class([m_ws_h(s["img"], fg, h_px=h) for s, fg in zip(scs, fgs)])
+            size_tab[(r, h)] = (b, m)
+            cells.append(pad(f"{b:.1f} / {m:.1f}", 15))
+        b, m = by_class([m_shape(s["img"], fg, h_px=H_DEF) for s, fg in zip(scs, fgs)])
+        size_tab[(r, "shape")] = (b, m)
+        size_tab[(r, "n_big")] = int((scs[0]["kind"] == KIND_LARGE).sum())
+        print("  " + pad(f"{r:.1f}x", 10, right=False) + pad(f"{r * r:.1f}x", 10)
+              + "".join(cells) + pad(f"{b:.1f} / {m:.1f}", 18))
+    print(f"  (大型は {size_tab[(1.0, 'n_big')]} 個。「大型割れ」はそのうち何件が"
+          "2 つ以上に割られたか)")
+    print("  " + pad("大きさ比", 12, right=False) + pad("大型に最適な h", 18)
+          + pad("小型に最適な h", 18) + pad("差", 8))
+    for r in RATIOS:
+        hb = max(HS_SIZE, key=lambda h: -size_tab[(r, h)][0])
+        hs = max(HS_SIZE, key=lambda h: -size_tab[(r, h)][1])
+        size_tab[(r, "argh")] = (hb, hs)
+        print("  " + pad(f"{r:.1f}x", 12, right=False) + pad(f"{hb:.1f}", 18)
+              + pad(f"{hs:.1f}", 18) + pad(f"{hb - hs:+.1f}", 8))
+    print("  → 大型細胞は **h を大きくするほど** 割れなくなり、小型細胞は"
+          " **h を小さくするほど**")
+    print("     くっつかなくなる。**要求が真逆**なので、単一の h では両方は救えない。")
+    print("     大きさ比を上げるほど大型の過分割が増え、要求の差が広がる —— これが")
+    print("     ノブの調整では直らないことの根拠で、スケール空間(細胞の大きさごとに")
+    print("     h を変える)が要る。")
+    print("  → 形の事前知識(面積から個数を推して、その数まで割る)は **もっと悪い**。")
+    print("     大型細胞 1 個の面積が『1 個ぶん』の何倍もあるので、面積から推した")
+    print("     個数が最初から間違っており、**わざわざその数まで割りにいく**。")
+    print("     自己校正した『1 個ぶんの面積』が単峰であることを暗黙に前提している。")
 
     print("\n=== 6. 崖 (c) 種の間引き量 h —— 過分割と過統合のトレードオフ ===")
     HS = (0.0, 1.0, 1.5, 2.0, 2.4, 3.0, 3.6, 4.4, 5.5)
