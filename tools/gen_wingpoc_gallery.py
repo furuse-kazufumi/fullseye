@@ -104,7 +104,9 @@ def _figure_for(ex):
         pick = m[0]
     if not os.path.exists(os.path.join(d, pick["file"])):
         raise BuildError("%s: %s が無い" % (ex["id"], pick["file"]))
-    return pick, figs
+    # 2 枚目 = 看板と違う最初の図(測定のグラフ)。「1 枚に纏めない」(ユーザー方針)。
+    second = next((g for g in figs if g is not pick), None)
+    return pick, figs, second
 
 
 def _thumb(poc_id: str, file: str) -> str:
