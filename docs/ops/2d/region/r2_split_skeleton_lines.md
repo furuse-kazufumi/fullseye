@@ -5,7 +5,7 @@ category: region
 in: region
 out: region
 halcon: split_skeleton_lines
-examples: [gallery2d_region]
+examples: [gallery2d_region, poc_vessel_network]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -36,6 +36,7 @@ Thin the region to a skeleton, then break it at junctions (>=3 neighbours).
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_region](../../../../examples/gallery2d_region.py) — `py -3.11 examples/gallery2d_region.py`
+- [poc_vessel_network](../../../../examples/poc_vessel_network.py) — `py -3.11 examples/poc_vessel_network.py`
 
 ## 型が繋がる次の op(`region` を入力に取れる)
 

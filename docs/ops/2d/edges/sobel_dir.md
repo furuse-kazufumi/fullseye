@@ -5,7 +5,7 @@ category: edges
 in: image
 out: image
 halcon: sobel_dir
-examples: [gallery2d_edges, poc_document_scan]
+examples: [gallery2d_edges, poc_document_scan, poc_fiber_orientation]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -42,6 +42,7 @@ operator.）に相当(HALCON は振幅と方向を同時に返すが、ここで
 
 - [gallery2d_edges](../../../../examples/gallery2d_edges.py) — `py -3.11 examples/gallery2d_edges.py`
 - [poc_document_scan](../../../../examples/poc_document_scan.py) — `py -3.11 examples/poc_document_scan.py`
+- [poc_fiber_orientation](../../../../examples/poc_fiber_orientation.py) — `py -3.11 examples/poc_fiber_orientation.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

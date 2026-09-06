@@ -4,10 +4,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
 <p><b>二値の領域を「物体の集まり」として扱う</b>層です。入力は 2-D の二値領域、出力はラベル画像 <code style="color:#22d3bf">(H, W)</code> の <code style="color:#22d3bf">int32</code>(背景 0、物体 1..n)と、<b>物体ごとに 1 行の特徴量</b>。</p>
 <p>産業検査でいちばん頻度の高い連鎖 —— *しきい値で前景を出す → 物体に切る → 物体ごとに測る → 条件で選ぶ → 残ったものを数える/描く* —— がこの族です。</p>
-<p>7 op / 4 カテゴリ(numpy と scipy のみ。台帳は <code style="color:#22d3bf">opsblob.py</code>、実体は <code style="color:#22d3bf">blob2d.py</code>):</p>
+<p>10 op / 5 カテゴリ(numpy と scipy のみ。台帳は <code style="color:#22d3bf">opsblob.py</code>、実体は <code style="color:#22d3bf">blob2d.py</code>):</p>
 <p style="margin:2px 0 2px 12px">• <b>connect(1)</b> — <code style="color:#22d3bf">blob_label</code>: 二値領域 → ラベル画像。4 連結 / 8 連結。</p>
 <p style="margin:2px 0 2px 12px">• <b>measure(1)</b> — <code style="color:#22d3bf">blob_features</code>: 物体ごとの 19 項目(面積・重心・外接箱・周長・等価直径・慣性主軸の長短・傾き・離心率・円形度・充填率・凸性・穴の数・縁に接するか)。</p>
 <p style="margin:2px 0 2px 12px">• <b>select(2)</b> — <code style="color:#22d3bf">blob_select</code> / <code style="color:#22d3bf">blob_select_largest</code>: 特徴量の範囲、または面積の順で残す。<b>残ったものは 1..k に振り直す</b>。</p>
+<p style="margin:2px 0 2px 12px">• <b>split(3)</b> — <code style="color:#22d3bf">blob_distance</code> / <code style="color:#22d3bf">blob_seeds</code> / <code style="color:#22d3bf">blob_split</code>: 触れ合って 1 個になった塊を分水嶺で戻す。距離は<b>画素単位</b>(正規化しない)、種の <code style="color:#22d3bf">h</code> は<b>絶対値</b>。</p>
 <p style="margin:2px 0 2px 12px">• <b>extract(3)</b> — <code style="color:#22d3bf">blob_region</code> / <code style="color:#22d3bf">blob_boundaries</code> / <code style="color:#22d3bf">blob_overlay</code>: 1 個を領域として抜く、輪郭を取る、元画像に色分けして重ねる(出口)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">なぜ足したか —— 在庫を数えた結果</h3>
 <p><code style="color:#22d3bf">examples/poc_cell_counting.py</code> が「2 次元の連結成分ラベリングと per-object の region props が facade に無い」と書きました。この repo は<b>在るものを見落として同じ物を作りかけた前科がある</b>ので、今度は 3 層すべてを引いてから決めています(2026-09-06):</p>
@@ -29,6 +30,12 @@
     L --&gt; LB[&quot;labels2d (H, W) int32&lt;br/&gt;背景 0、物体 1..n&quot;]
     LB --&gt; FE[&quot;blob_features&lt;br/&gt;物体ごとに 19 項目&quot;]
     FE --&gt; T[&quot;table&lt;br/&gt;area / circularity / holes …&quot;]
+    M --&gt; DI[&quot;blob_distance&lt;br/&gt;背景までの距離(画素単位)&quot;]
+    DI --&gt; SD[&quot;blob_seeds&lt;br/&gt;h-maxima の種(h は絶対値)&quot;]
+    LB --&gt; SP[&quot;blob_split&lt;br/&gt;分水嶺で融合した塊を割る&quot;]
+    SD --&gt; SP
+    DI --&gt; SP
+    SP --&gt; LB
     LB --&gt; SE[&quot;blob_select&lt;br/&gt;特徴量の範囲で残す&quot;]
     LB --&gt; SL[&quot;blob_select_largest&lt;br/&gt;面積の大きい順に n 個&quot;]
     SE --&gt; LB2[&quot;labels2d(1..k に振り直し)&quot;]
@@ -137,8 +144,32 @@ f = fs.ledger.blob_features(lab)                  # 1 回だけ測る
 keep = f[&quot;label&quot;][(f[&quot;area&quot;] &gt;= 50) &amp; (f[&quot;circularity&quot;] &gt;= 0.85)]
 sel = np.isin(lab, keep) * lab                    # 番号を振り直さない版
 print(&quot;残した番号:&quot;, keep.tolist())</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">触れ合った塊を割る(split の 3 op)</h3>
+<p>連結成分は「触れているかどうか」しか見ないので、重なった細胞や粒子は 1 個になります。割るには <b>距離 → 種 → 分水嶺</b> の 3 段です。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import fullseye as fs
+
+# 半径 20 と 14 の円板を重ねて置く(真値は重ねる前の面積 1257 と 613)
+yy, xx = np.mgrid[0:100, 0:100]
+mask = ((yy - 50) ** 2 + (xx - 36) ** 2 &lt;= 400) | ((yy - 50) ** 2 + (xx - 66) ** 2 &lt;= 196)
+
+lab = fs.ledger.blob_label(mask)
+print(&quot;融合して&quot;, int(lab.max()), &quot;個に見える&quot;)          # -&gt; 1
+
+d = fs.ledger.blob_distance(mask)                        # 画素単位の距離
+seeds = fs.ledger.blob_seeds(d, 1.0)                     # h は絶対値
+parts = fs.ledger.blob_split(lab, seeds, d)
+f = fs.ledger.blob_features(parts)
+print(&quot;割れた:&quot;, f[&quot;n&quot;], &quot;個  面積&quot;, np.sort(f[&quot;area&quot;])[::-1].astype(int).tolist())
+# -&gt; 2 個  面積 [1149, 680]</pre>
+<p>3 つを別々の op にしてあるのは、<b>種の選び方がいちばん効くノブ</b>だからです。1 本にまとめると <code style="color:#22d3bf">h</code> の意味が隠れます。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">押さえておく偏り</h3>
+<p style="margin:2px 0 2px 12px">• <b>重なりは小さいほうへ寄ります。</b> 分水嶺は 2 つの種の中間で切るので、上の例では真値 1257 / 613 に対して <b>1149 / 680</b>。大きいほうが損をして小さいほうが得をする —— これは算法の定義どおりで、誤差ではありません。粒径分布を出すなら、この偏りを承知で使うこと。</p>
+<p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">h</code> は絶対値です。** <code style="color:#22d3bf">fs.op.xsk2_h_maxima</code> は入力を <code style="color:#22d3bf">[0,1]</code> に切り詰めるうえ <code style="color:#22d3bf">h</code> が正規化画像に対する比なので、生の距離マップには使えません(画像に大きい物体が 1 つ入るだけで、小さい物体側の実効 <code style="color:#22d3bf">h</code> が上がる)。ここはそのどちらもしません。</p>
+<p style="margin:2px 0 2px 12px">• <b>種を持たない塊はそのまま残します。</b> 割る材料が無いのに消すのは嘘になるので。総面積は必ず保存します(門で確認)。</p>
+<p style="margin:2px 0 2px 12px">• <b>速さ</b>: 種の再構成は<b>連結成分ごとの外接箱の中でだけ</b>回します。背景を通る伝播が消えるので 512×512 に 200 個の円で <b>237.7 ms → 15.3 ms(15.5 倍)</b>、結果は全画素一致(門 <code style="color:#22d3bf">test_the_per_component_reconstruction_matches_the_global_one</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">この族で測れないこと(正直に)</h3>
-<p style="margin:2px 0 2px 12px">• <b>重なった物体は 1 個になります。</b> 連結成分は「触れているかどうか」しか見ないので、重なった細胞や部品は割れません。割るには距離変換 + 分水嶺が要りますが、<b>2-D の分水嶺は facade に出ていません</b>(<code style="color:#22d3bf">segmentation.watersheds_marker</code> はモジュールに在るだけ)。<code style="color:#22d3bf">poc_cell_counting</code> がこの穴を測っています。</p>
+<p style="margin:2px 0 2px 12px">• <b>割れるのは「距離の山が 2 つ以上ある」場合だけです。</b> 深く重なって山が 1 つに融けた対は、<code style="color:#22d3bf">h</code> をどこまで下げても割れません(下げると今度は雑音の凹凸で割りすぎる)。<code style="color:#22d3bf">poc_particle_sizing</code> の実測では、面積率 21.9 % の場面で融合した塊が 54 件ありました。</p>
 <p style="margin:2px 0 2px 12px">• <b>縁で切れた物体</b>は面積も周長も切れた分だけ小さく出ます。<code style="color:#22d3bf">touches_border</code> で捨てるか、真値の側も同じ規約で数えてください。<b>危ないのは規約の選択ではなく、推定と真値で違う規約を使うこと</b>です。</p>
 <p style="margin:2px 0 2px 12px">• <b>穴の数</b>は 4 連結で数えています(物体を 8 連結で取ったので、背景は 4 連結が対)。8/8 や 4/4 で数えると、斜めにつながった細い穴の数え方が物体側と食い違います。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">関連</h3>

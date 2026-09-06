@@ -5,7 +5,7 @@ category: edges
 in: image
 out: image
 halcon: sobel_amp
-examples: [gallery2d_edges, poc_focus_stacking, poc_white_balance]
+examples: [gallery2d_edges, poc_fiber_orientation, poc_focus_stacking, poc_white_balance]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -40,6 +40,7 @@ operator.）に相当。
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_edges](../../../../examples/gallery2d_edges.py) — `py -3.11 examples/gallery2d_edges.py`
+- [poc_fiber_orientation](../../../../examples/poc_fiber_orientation.py) — `py -3.11 examples/poc_fiber_orientation.py`
 - [poc_focus_stacking](../../../../examples/poc_focus_stacking.py) — `py -3.11 examples/poc_focus_stacking.py`
 - [poc_white_balance](../../../../examples/poc_white_balance.py) — `py -3.11 examples/poc_white_balance.py`
 

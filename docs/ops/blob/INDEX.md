@@ -1,4 +1,4 @@
-# BLOB operator help — 7 ops in 4 categories
+# BLOB operator help — 10 ops in 5 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/blob/<category>/<op>.md` を走査。
 
@@ -23,6 +23,10 @@
 ### select (2)
 
 [blob_select](select/blob_select.md) · [blob_select_largest](select/blob_select_largest.md)
+
+### split (3)
+
+[blob_distance](split/blob_distance.md) · [blob_seeds](split/blob_seeds.md) · [blob_split](split/blob_split.md)
 
 ---
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

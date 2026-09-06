@@ -4,7 +4,7 @@ dim: optics
 category: imaging
 in: image2d
 out: pairs
-examples: [optics_imaging]
+examples: [optics_imaging, poc_veiling_glare]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -80,6 +80,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [optics_imaging](../../../../examples/optics_imaging.py) — `py -3.11 examples/optics_imaging.py`
+- [poc_veiling_glare](../../../../examples/poc_veiling_glare.py) — `py -3.11 examples/poc_veiling_glare.py`
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 

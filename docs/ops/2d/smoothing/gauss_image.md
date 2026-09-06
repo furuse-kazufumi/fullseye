@@ -5,7 +5,7 @@ category: smoothing
 in: image
 out: image
 halcon: gauss_image
-examples: [gallery2d_smoothing_rank]
+examples: [gallery2d_smoothing_rank, poc_moire_screen]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -40,6 +40,7 @@ discrete Gaussian functions.）の代役。
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_smoothing_rank](../../../../examples/gallery2d_smoothing_rank.py) — `py -3.11 examples/gallery2d_smoothing_rank.py`
+- [poc_moire_screen](../../../../examples/poc_moire_screen.py) — `py -3.11 examples/poc_moire_screen.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

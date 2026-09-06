@@ -5,7 +5,7 @@ category: geometry
 in: image
 out: image
 halcon: polar_trans_image
-examples: [gallery2d_geometry]
+examples: [gallery2d_geometry, poc_allsky_cloud_cover, poc_gear_tooth_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -42,6 +42,8 @@ version: 0.1.10  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_geometry](../../../../examples/gallery2d_geometry.py) — `py -3.11 examples/gallery2d_geometry.py`
+- [poc_allsky_cloud_cover](../../../../examples/poc_allsky_cloud_cover.py) — `py -3.11 examples/poc_allsky_cloud_cover.py`
+- [poc_gear_tooth_metrology](../../../../examples/poc_gear_tooth_metrology.py) — `py -3.11 examples/poc_gear_tooth_metrology.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">blob_split — BLOB <code style="color:#22d3bf">split</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">labels2d × labels2d × image2d</code> → <code style="color:#22d3bf">labels2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import blob2d; blob2d.blob_split(labels: &#x27;Any&#x27;, seeds: &#x27;Any&#x27;, distance: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">opsblob.get(&quot;blob_split&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>種から<b>高いところ順に</b>領域を広げて、融合した塊を割る(分水嶺)。</p>
+<p>`<code style="color:#22d3bf">distance</code>` の高い画素から順に、隣接する既知のラベルを取り込んでいく</p>
+<p>(immersion 型の分水嶺を、距離の降順で回す形)。**種を持たない塊はその</p>
+<p>まま残す** —— 割る材料が無いのに消すのは嘘になるため。</p>
+<p>`<code style="color:#22d3bf">segmentation.watersheds_marker</code>` を使わないのは、**skimage が無い環境で</p>
+<p>黙って別の算法(マーカーからの最近傍)に落ちる**から。落ちた先は画像を</p>
+<p>一切見ないので、同じ関数名で違うものが返る。ここは numpy と scipy だけで</p>
+<p>閉じる。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>labels : array_like</p>
+<p>割る対象。:func:<code style="color:#22d3bf">blob_label</code> の出力(`<code style="color:#22d3bf">&gt; 0</code>` の画素だけが割られる)。</p>
+<p>seeds : array_like</p>
+<p>:func:<code style="color:#22d3bf">blob_seeds</code> の出力。`<code style="color:#22d3bf">labels</code>` の外にある種は無視する。</p>
+<p>distance : array_like</p>
+<p>優先度。ふつうは :func:<code style="color:#22d3bf">blob_distance</code> の出力。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>numpy.ndarray</p>
+<p>`<code style="color:#22d3bf">int32</code>` のラベル画像。番号は 1 から振り直す。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">Leitfaden zur Familie blob_analysis</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">labels2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opblob:blob_features">blob_features</a> · <a style="color:#22d3bf" href="opblob:blob_select">blob_select</a> · <a style="color:#22d3bf" href="opblob:blob_select_largest">blob_select_largest</a> · <a style="color:#22d3bf" href="opblob:blob_region">blob_region</a> · <a style="color:#22d3bf" href="opblob:blob_boundaries">blob_boundaries</a> · <a style="color:#22d3bf" href="opblob:blob_overlay">blob_overlay</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">split</code>)</h3>
+<p><a style="color:#22d3bf" href="opblob:blob_distance">blob_distance</a> · <a style="color:#22d3bf" href="opblob:blob_seeds">blob_seeds</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: blob2d.py — BLOB Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

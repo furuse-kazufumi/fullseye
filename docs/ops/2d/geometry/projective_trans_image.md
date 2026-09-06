@@ -5,7 +5,7 @@ category: geometry
 in: image
 out: image
 halcon: projective_trans_image
-examples: [gallery2d_geometry]
+examples: [gallery2d_geometry, poc_water_level]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -41,6 +41,7 @@ projective transformation to an image.）に相当(HALCON は任意のホモグ�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_geometry](../../../../examples/gallery2d_geometry.py) — `py -3.11 examples/gallery2d_geometry.py`
+- [poc_water_level](../../../../examples/poc_water_level.py) — `py -3.11 examples/poc_water_level.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

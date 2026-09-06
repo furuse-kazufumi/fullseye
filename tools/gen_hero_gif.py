@@ -500,7 +500,11 @@ def act_pointcloud(nf):
     ncl = [len(c) for c in clusters]
     palette = fs.colorize_labels(np.arange(1, 9, dtype=np.int32)[None, :], seed=3)[0]
     K = fs.intrinsics_from_fov(42.0, PANEL, PANEL)
+    # look_at は OpenGL 流(-Z を見る)。project_points / render_point_depth は
+    # +Z が前なので y と z を反転して渡す。
     flip = np.diag([1.0, -1.0, -1.0])
+    # 点は render_point_depth(z バッファ)で撒く。draw_markers は 1 点 2 ms の
+    # Python ループで、5,000 点で 11 秒掛かり 5 分の予算に収まらなかった。
     out = []
     for i in range(nf):
         az = 2.0 * np.pi * i / nf
@@ -508,23 +512,24 @@ def act_pointcloud(nf):
         pose = fs.look_at(eye, (0.0, 0.0, 0.45), up=(0, 0, 1))
         R, t = flip @ pose[:3, :3], flip @ pose[:3, 3]
 
-        def uv_of(p):
-            u, z = fs.project_points(p, K, R=R, t=t)
-            ok = (z > 0) & (u[:, 0] > 1) & (u[:, 0] < PANEL - 2) & \
-                 (u[:, 1] > 1) & (u[:, 1] < PANEL - 2)
-            return u[ok], z[ok]
+        def splat(p):
+            return fs.ledger.render_point_depth(p, K, (PANEL, PANEL), R=R, t=t)
 
-        raw = np.full((PANEL, PANEL, 3), 1.0)
-        u, _ = uv_of(pts)
-        raw = fs.draw_markers(raw, u, color=(0.42, 0.45, 0.50), size=1, shape="dot")
-        seg = np.full((PANEL, PANEL, 3), 1.0)
-        ug, _ = uv_of(pts[gmask])
-        seg = fs.draw_markers(seg, ug, color=(0.84, 0.85, 0.87), size=1, shape="dot")
-        for j, idx in enumerate(clusters[i]):
-            uc, _ = uv_of(nonground[idx])
-            if len(uc) == 0:
+        d_all = splat(pts)
+        raw = fs.apply_cmap(np.where(d_all > 0, d_all, np.nan), "bone",
+                            vmin=3.0, vmax=9.5, invalid=(1.0, 1.0, 1.0))
+        zbuf = np.full((PANEL, PANEL), np.inf)
+        seg = np.ones((PANEL, PANEL, 3))
+        groups = [(pts[gmask], (0.80, 0.81, 0.83))]
+        groups += [(nonground[idx], tuple(palette[j % 8]))
+                   for j, idx in enumerate(clusters[i])]
+        for gpts, col in groups:
+            if len(gpts) == 0:
                 continue
-            seg = fs.draw_markers(seg, uc, color=tuple(palette[j % 8]), size=2, shape="dot")
+            d = splat(gpts)
+            m = (d > 0) & (d < zbuf)
+            zbuf[m] = d[m]
+            seg[m] = col
         c = _content()
         c = _place(c, raw, 0)
         c = _place(c, seg, 1)
@@ -532,7 +537,7 @@ def act_pointcloud(nf):
                             "フレーム(tol が往復する)", "クラスタ数",
                             caption="(c) tol とクラスタ数")
         c = _series(c, ax, np.arange(i + 1, dtype=float), np.asarray(ncl[:i + 1], float))
-        c = _cap(c, 0, "(a) 生の点群 %d 点" % len(pts))
+        c = _cap(c, 0, "(a) 生の点群 %d 点  方位 %3.0f°" % (len(pts), np.rad2deg(az)))
         c = _cap(c, 1, "(b) euclidean_clusters tol=%.3f m — %d 個" % (tols[i], ncl[i]))
         out.append(c)
     return out, "5 / 6  点群 — 地面を外してかたまりに切る", \

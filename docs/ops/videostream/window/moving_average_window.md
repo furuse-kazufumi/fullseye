@@ -4,7 +4,7 @@ dim: videostream
 category: window
 in: video
 out: video
-examples: [video_streaming]
+examples: [poc_strain_history, video_streaming]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -40,6 +40,7 @@ which is what a live stream can do.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_strain_history](../../../../examples/poc_strain_history.py) — `py -3.11 examples/poc_strain_history.py`
 - [video_streaming](../../../../examples/video_streaming.py) — `py -3.11 examples/video_streaming.py`
 
 ## 型が繋がる次の op(`video` を入力に取れる)

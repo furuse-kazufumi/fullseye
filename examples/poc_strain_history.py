@@ -589,16 +589,32 @@ def section7_figures(frames, out, cums, dirs, tru, rate_rows, rate_true,
                     ("直接 散らばり", TIMES, 1e6 * out["dir"]["scatter"]),
                     ("0", TIMES, np.zeros(T))],
                    xlabel="t [コマ]", ylabel="誤差 [µε]",
-                   title="偏りと散らばりを分けて描く",
-                   caption="1 つの RMS に畳むと、系統的なずれと揺らぎの"
-                           "どちらが効いているかが消える。")
-    rows_tbl = [["%d" % w, kind, "%.1f" % b, "%.1f" % s, "%.1f" % e]
-                for w, kind, b, s, e in rate_rows]
+                   title="偏りと散らばりを分けて描く(実現 10 通り)",
+                   caption="直接の偏りだけが伸びる。累積は偏りも散らばりも"
+                           "頭打ちで、しかも散らばりより偏りのほうが大きい ——"
+                           "ランダムウォークではない。")
+    ws = sorted({w for w, _, _, _, _ in rate_rows})
+    cen = [b for w, k, b, _, _ in rate_rows if k == "中央"]
+    cau = [b for w, k, b, _, _ in rate_rows if k == "因果"]
+    sc = [s for w, k, _, s, _ in rate_rows if k == "中央"]
+    pcau = [p for w, k, _, _, p in rate_rows if k == "因果"]
+    figs.save_plot("rate_tradeoff",
+                   [("因果 偏り", ws, np.asarray(cau)),
+                    ("因果 偏りの閉形式", ws, np.asarray(pcau)),
+                    ("中央 偏り", ws, np.asarray(cen)),
+                    ("揺らぎ(中央)", ws, np.asarray(sc))],
+                   xlabel="移動平均の窓 w [コマ]", ylabel="µε/コマ",
+                   title="ひずみ速度 —— 偏りと揺らぎのトレードオフ",
+                   caption="因果フィルタの偏りは遅れ (w-1)/2 の閉形式にほぼ"
+                           "乗る。揺らぎは窓とともに下がるが、その利得より"
+                           "遅れの代償のほうが桁で大きい。")
+    rows_tbl = [["%d" % w, kind, "%.1f" % b, "%.1f" % s, "%.1f" % p]
+                for w, kind, b, s, p in rate_rows]
     figs.save_table("rate_table",
-                    ["窓 w", "種類", "偏り µε/コマ", "揺らぎ µε/コマ", "序盤の偏り"],
+                    ["窓 w", "種類", "偏り µε/コマ", "揺らぎ µε/コマ", "予測"],
                     rows_tbl, title="時間平滑化とひずみ速度",
-                    caption="窓を広げると揺らぎは減るが、なまり(偏り)が増える。"
-                            "因果フィルタは遅れぶんだけ偏りが大きい。")
+                    caption="予測 = w=1 の偏り + 閉形式(中央はなまり、"
+                            "因果は遅れ)。因果は実測とよく合う。")
 
 
 def section8_findings(out, rec, direct_res, tru, rate_rows, sweep):

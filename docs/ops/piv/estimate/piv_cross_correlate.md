@@ -4,7 +4,7 @@ dim: piv
 category: estimate
 in: image2d × image2d
 out: flow2d
-examples: [piv_flow_from_particles, poc_dic_strain, poc_superresolution_limits]
+examples: [piv_flow_from_particles, poc_dic_strain, poc_strain_history, poc_superresolution_limits]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -75,6 +75,7 @@ Returns:
 
 - [piv_flow_from_particles](../../../../examples/piv_flow_from_particles.py) — `py -3.11 examples/piv_flow_from_particles.py`
 - [poc_dic_strain](../../../../examples/poc_dic_strain.py) — `py -3.11 examples/poc_dic_strain.py`
+- [poc_strain_history](../../../../examples/poc_strain_history.py) — `py -3.11 examples/poc_strain_history.py`
 - [poc_superresolution_limits](../../../../examples/poc_superresolution_limits.py) — `py -3.11 examples/poc_superresolution_limits.py`
 
 ## 型が繋がる次の op(`flow2d` を入力に取れる)

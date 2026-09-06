@@ -5,7 +5,7 @@ category: segmentation
 in: image
 out: region
 halcon: binary_threshold
-examples: [gallery2d_segmentation, poc_cell_counting, poc_vegetation_cover]
+examples: [gallery2d_segmentation, poc_cell_counting, poc_nuclei_ploidy, poc_vegetation_cover]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -37,6 +37,7 @@ HALCON の `binary_threshold`(Segment an image using binary thresholding.)に相
 
 - [gallery2d_segmentation](../../../../examples/gallery2d_segmentation.py) — `py -3.11 examples/gallery2d_segmentation.py`
 - [poc_cell_counting](../../../../examples/poc_cell_counting.py) — `py -3.11 examples/poc_cell_counting.py`
+- [poc_nuclei_ploidy](../../../../examples/poc_nuclei_ploidy.py) — `py -3.11 examples/poc_nuclei_ploidy.py`
 - [poc_vegetation_cover](../../../../examples/poc_vegetation_cover.py) — `py -3.11 examples/poc_vegetation_cover.py`
 
 ## 型が繋がる次の op(`region` を入力に取れる)

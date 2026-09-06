@@ -5,7 +5,7 @@ category: region
 in: region
 out: image
 halcon: distance_transform
-examples: [gallery2d_region, poc_cell_counting]
+examples: [gallery2d_region, poc_cell_counting, poc_crack_width, poc_particle_sizing, poc_vessel_network]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -41,6 +41,9 @@ distance transformation of a region.）に相当。
 
 - [gallery2d_region](../../../../examples/gallery2d_region.py) — `py -3.11 examples/gallery2d_region.py`
 - [poc_cell_counting](../../../../examples/poc_cell_counting.py) — `py -3.11 examples/poc_cell_counting.py`
+- [poc_crack_width](../../../../examples/poc_crack_width.py) — `py -3.11 examples/poc_crack_width.py`
+- [poc_particle_sizing](../../../../examples/poc_particle_sizing.py) — `py -3.11 examples/poc_particle_sizing.py`
+- [poc_vessel_network](../../../../examples/poc_vessel_network.py) — `py -3.11 examples/poc_vessel_network.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

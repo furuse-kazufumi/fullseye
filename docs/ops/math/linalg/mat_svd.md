@@ -4,7 +4,7 @@ dim: math
 category: linalg
 in: matrix
 out: table
-examples: [math_metrology]
+examples: [math_metrology, poc_water_level]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -59,6 +59,7 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [math_metrology](../../../../examples/math_metrology.py) — `py -3.11 examples/math_metrology.py`
+- [poc_water_level](../../../../examples/poc_water_level.py) — `py -3.11 examples/poc_water_level.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

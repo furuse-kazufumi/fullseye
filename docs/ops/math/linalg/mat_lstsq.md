@@ -4,7 +4,7 @@ dim: math
 category: linalg
 in: matrix × signal
 out: table
-examples: [math_metrology]
+examples: [math_metrology, poc_sea_ice_concentration, poc_solar_limb_darkening]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -66,6 +66,8 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [math_metrology](../../../../examples/math_metrology.py) — `py -3.11 examples/math_metrology.py`
+- [poc_sea_ice_concentration](../../../../examples/poc_sea_ice_concentration.py) — `py -3.11 examples/poc_sea_ice_concentration.py`
+- [poc_solar_limb_darkening](../../../../examples/poc_solar_limb_darkening.py) — `py -3.11 examples/poc_solar_limb_darkening.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

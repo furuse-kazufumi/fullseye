@@ -4,7 +4,7 @@ dim: blob
 category: select
 in: labels2d
 out: labels2d
-examples: []
+examples: [poc_particle_sizing]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -51,11 +51,11 @@ numpy.ndarray
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [poc_particle_sizing](../../../../examples/poc_particle_sizing.py) — `py -3.11 examples/poc_particle_sizing.py`
 
 ## 型が繋がる次の op(`labels2d` を入力に取れる)
 
-[blob_features](../measure/blob_features.md) · [blob_select_largest](blob_select_largest.md) · [blob_region](../extract/blob_region.md) · [blob_boundaries](../extract/blob_boundaries.md) · [blob_overlay](../extract/blob_overlay.md)
+[blob_features](../measure/blob_features.md) · [blob_select_largest](blob_select_largest.md) · [blob_split](../split/blob_split.md) · [blob_region](../extract/blob_region.md) · [blob_boundaries](../extract/blob_boundaries.md) · [blob_overlay](../extract/blob_overlay.md)
 
 ## 同カテゴリ(`select`)
 
