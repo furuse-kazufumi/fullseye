@@ -321,37 +321,51 @@ def section4_origin(frames):
     print("4) ★対照群 —— 累積の誤差は「揺らぎ」か「1 歩ごとの偏り」か")
     print("=" * 78)
     print("  対照 1: **雑音を切る**。揺らぎ由来なら誤差は消えるはず。")
-    print("  対照 2: **コマを間引く**(歩数を 1/2、1/4 に)。1 歩ごとの偏りが")
-    print("          原因なら、歩数に比例して誤差が減るはず。")
+    print("  対照 2: **コマを間引く**(歩数を 1/2、1/4 に)。教科書の")
+    print("          「累積は歩数とともに誤差が積もる」が正しければ、")
+    print("          歩数を減らすと誤差は**減る**はず。")
     print()
     tru_end = true_strain(TIMES[-1])
-    print("  %-22s %12s %12s" % ("条件", "終端 E µε", "誤差 µε"))
-    print("  " + "-" * 50)
-    clean = history_cumulative(frames)
-    print("  %-22s %12.0f %12.0f"
-          % ("雑音なし・全 25 コマ", 1e6 * clean[-1], 1e6 * (clean[-1] - tru_end)))
-    noisy = add_noise(frames, NOISE, 7)
-    nz = history_cumulative(noisy)
-    print("  %-22s %12.0f %12.0f"
-          % ("雑音 σ=0.02・全 25 コマ", 1e6 * nz[-1], 1e6 * (nz[-1] - tru_end)))
-    rec = {"steps": [], "err_clean": [], "err_noisy": []}
+    sigmas = (0.0, 0.02, 0.10, 0.20)
+    rec = {"steps": [], "sigmas": sigmas, "err": {sg: [] for sg in sigmas}}
+    print("  終端(t=24)の累積誤差 [µε]。行 = 歩数、列 = 雑音 σ:")
+    print("  %8s" % "歩数", end="")
+    for sg in sigmas:
+        print(" %12s" % ("σ=%.2f" % sg), end="")
+    print()
+    print("  " + "-" * (10 + 13 * len(sigmas)))
     for stride in (1, 2, 4, 6):
         idx = np.arange(0, T, stride)
         if idx[-1] != T - 1:
             idx = np.append(idx, T - 1)
-        c = history_cumulative(frames[idx])[-1]
-        m = history_cumulative(add_noise(frames[idx], NOISE, 7))[-1]
         rec["steps"].append(len(idx) - 1)
-        rec["err_clean"].append(1e6 * (c - tru_end))
-        rec["err_noisy"].append(1e6 * (m - tru_end))
-        print("  %-22s %12.0f %12.0f"
-              % ("間引き %d(%d 歩)" % (stride, len(idx) - 1), 1e6 * m,
-                 1e6 * (m - tru_end)))
+        print("  %8d" % (len(idx) - 1), end="")
+        for sg in sigmas:
+            if sg == 0.0:
+                e = history_cumulative(frames[idx])[-1] - tru_end
+            else:
+                vals = [history_cumulative(add_noise(frames[idx], sg,
+                                                     700 + 31 * s))[-1] - tru_end
+                        for s in range(3)]
+                e = float(np.sqrt(np.mean(np.square(vals))))
+            rec["err"][sg].append(1e6 * e)
+            print(" %12.0f" % (1e6 * e), end="")
+        print()
+    print("  (σ=0 の列は符号つきの誤差、それ以外は 3 実現の RMS)")
     print()
-    print("  歩数 vs 誤差 [µε]:")
-    print("  %8s %14s %14s" % ("歩数", "雑音なし", "雑音あり"))
-    for k, s in enumerate(rec["steps"]):
-        print("  %8d %14.0f %14.0f" % (s, rec["err_clean"][k], rec["err_noisy"][k]))
+    print("  → ★★**対照 1 で決まった**: 雑音を切っても誤差はほぼ変わらない")
+    print("     (σ=0 で %.0f µε、σ=0.02 で %.0f µε)。累積の誤差は"
+          % (rec["err"][0.0][0], rec["err"][0.02][0]))
+    print("     揺らぎではなく **PIV の系統誤差**。")
+    print("  → ★★**対照 2 で予想が外れた**: 歩数を減らすと誤差は")
+    print("     %.0f → %.0f µε と**増える**。「累積は歩数とともに積もる」は"
+          % (rec["err"][0.0][0], rec["err"][0.0][-1]))
+    print("     この条件では成り立たない。効いているのは歩数ではなく")
+    print("     **1 歩あたりの変形の大きさ** —— 1 歩 2500 µε なら相対誤差")
+    print("     0.1 %、1 歩 15000 µε なら 1.0 % で、窓の中の変形が大きいほど")
+    print("     相関ピークが潰れるから。**コマを増やすほど累積は良くなる。**")
+    print("  → ただしそれは雑音が小さいときだけ。σ=0.20 の列では歩数が")
+    print("     多いほうが悪くなる —— **最適なコマ数は雑音で決まる**。")
     return rec
 
 
