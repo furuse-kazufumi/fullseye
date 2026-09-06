@@ -52,12 +52,21 @@ MARKERS = ["<!-- ops-index:start -->", "<!-- ops-index:end -->",
            "<!-- docmap:start -->", "<!-- docmap:end -->"]
 
 _LINK = re.compile(r"\]\(([^)\s]+)")
+#: ```…``` のブロックと `…` のインラインコード。**この中はリンクではない**
+#: (`docs/I18N.md` が検査の説明として `](*.md)` と書いており、素朴に走査すると
+#: 「リンク切れ」に見える)。
+_FENCE = re.compile(r"^```.*?^```", re.S | re.M)
+_CODE = re.compile(r"`[^`\n]*`")
+
+
+def _prose(text: str) -> str:
+    return _CODE.sub("", _FENCE.sub("", text))
 
 
 def _links(path: Path) -> list:
     """md 内の相対リンク先を絶対パスで返す(http / mailto / アンカーは除く)。"""
     out = []
-    for m in _LINK.finditer(path.read_text(encoding="utf-8")):
+    for m in _LINK.finditer(_prose(path.read_text(encoding="utf-8"))):
         t = m.group(1).split("#")[0].strip()
         if not t or t.startswith(("http://", "https://", "mailto:", "<")):
             continue

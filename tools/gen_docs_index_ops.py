@@ -449,7 +449,8 @@ def _article_rows():
     """docs/articles 以下の md を (グループ, 相対パス) で返す。README 自身は除く。"""
     base = os.path.join(_ROOT, "docs", "articles")
     rows = []
-    for root, _dirs, files in os.walk(base):
+    for root, dirs, files in os.walk(base):
+        dirs.sort()   # ★os.walk の並びは OS 依存(Linux CI だけドリフト門が落ちる)
         for f in sorted(files):
             if not f.endswith(".md"):
                 continue
@@ -463,6 +464,7 @@ def _article_rows():
             else:
                 grp = "articles"
             rows.append((grp, rel))
+    rows.sort()       # 念のため最終順序も固定する
     return rows
 
 

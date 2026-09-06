@@ -52,7 +52,7 @@ SKILL.md の `FULLSEYE_REPO =` 行が**この checkout の絶対パスに自動�
 
 ## Tier 2(任意): クラスタ化コーパス — 外部ツールでの発展形
 
-ノート約 1000 枚をトピッククラスタに階層化し、各クラスタに LLM 要約を付けた
+ノート **1,843 枚**をトピッククラスタに階層化し、各クラスタに LLM 要約を付けた
 「ナビゲーション付きコーパス」も作れます。私たちは内部で
 [RAPTOR](https://github.com/gadievron/raptor) フォークの `corpus2skill`
 (TF-IDF + k-means + LLM 要約)を使っていますが、**これは任意の最適化であって
