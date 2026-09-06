@@ -100,22 +100,33 @@ def make_vehicles(seed: int = 3, n_far: int = 4, n_near: int = 6,
     ``headway`` を渡すと車線ごとに等間隔(フレーム)で流す(車間の掃引用)。
     渡さないときは**層化して**散らす —— 一様乱数だと通過時刻が偶然固まって、
     測りたい「疎な流れ」ではなく渋滞を測ってしまう(最初そうなった)。
+
+    ``n_truck`` は近い車線の**背の高い車の台数**(確率ではなく台数。確率だと
+    条件を変えたときに 0 台になって比較が消える —— これも最初そうなった)。
+    ``same_speed`` は車線内の速度と車長を固定する(5 節で使う。速度が違うと
+    帯が計数列の外で**交差**して融合し、車間の効果と混ざる)。
     """
     rng = np.random.default_rng(seed)
     out = []
     for lane, n in (("far", n_far), ("near", n_near)):
         cfg = LANES[lane]
         span = (T_FRAMES - 24.0) / max(n, 1)
+        step = max(1, int(np.ceil(n / max(n_truck, 1)))) if n_truck else 0
         for i in range(n):
-            v = float(rng.uniform(*cfg["v"]))
-            length = float(rng.uniform(*cfg["len"]))
+            if same_speed:
+                v = float(np.mean(cfg["v"]))
+                length = float(np.mean(cfg["len"]))
+            else:
+                v = float(rng.uniform(*cfg["v"]))
+                length = float(rng.uniform(*cfg["len"]))
             if headway is None:
                 s = 12.0 + (i + float(rng.uniform(0.2, 0.8))) * span
             else:
                 s = 8.0 + i * headway
-            tall = (lane == "near") and bool(rng.random() < truck_p)
+            tall = (lane == "near") and n_truck > 0 and (i % step == 0) \
+                and sum(1 for w in out if w["tall"]) < n_truck
             out.append({"lane": lane, "v": v, "len": length, "cross": s,
-                        "x0": X_REF - v * s, "tall": tall,
+                        "x0": X_REF - v * s, "tall": bool(tall),
                         "grey": float(rng.choice([1, -1]) * rng.uniform(0.16, 0.32))})
     return out
 
