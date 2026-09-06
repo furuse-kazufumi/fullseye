@@ -307,24 +307,23 @@ def fit_orders(prof, keep, orders) -> dict:
 # 5. 歯ごとの量 —— 歯厚・隣接ピッチ・歯先半径                                   #
 # --------------------------------------------------------------------------- #
 def tooth_table(prof, r_ref_mm: float) -> dict:
-    """``r_ref`` を横切る区間から、歯ごとの角幅・中心角・歯先半径を出す。"""
+    """``r_ref`` を横切る区間から、歯ごとの角幅・中心角・歯先半径を出す。
+
+    立ち上がり(内→外)と立ち下がり(外→内)を線形補間で拾い、**各立ち上がり
+    の直後に来る立ち下がり**を対にする。周回を跨ぐ 1 枚を落とさないよう、
+    差はすべて mod 2π で取る。
+    """
     n = prof.size
     th = np.arange(n) * (2.0 * np.pi / n)
     above = prof >= r_ref_mm
-    # 立ち上がり位置(サブサンプル)を拾う
-    rise, fall = [], []
-    for i in range(n):
-        j = (i + 1) % n
-        if not above[i] and above[j]:
-            rise.append(_cross(th, prof, i, j, r_ref_mm))
-        if above[i] and not above[j]:
-            fall.append(_cross(th, prof, i, j, r_ref_mm))
-    rise, fall = np.asarray(rise), np.asarray(fall)
-    if rise.size == 0 or rise.size != fall.size:
+    nxt = np.roll(above, -1)
+    ri = np.nonzero(~above & nxt)[0]
+    fi = np.nonzero(above & ~nxt)[0]
+    if ri.size == 0 or ri.size != fi.size:
         return {"n": 0}
-    fall_m = np.asarray([f if f > r else f + 2.0 * np.pi
-                         for r, f in zip(rise, np.roll(fall, -np.searchsorted(fall, rise[0])))])
-    width = fall_m - rise
+    rise = np.asarray([_cross(th, prof, i, (i + 1) % n, r_ref_mm) for i in ri])
+    fall = np.asarray([_cross(th, prof, i, (i + 1) % n, r_ref_mm) for i in fi])
+    width = np.asarray([np.mod(fall - r, 2.0 * np.pi).min() for r in rise])
     centre = np.mod(rise + 0.5 * width, 2.0 * np.pi)
     order = np.argsort(centre)
     centre, width = centre[order], width[order]
@@ -333,6 +332,45 @@ def tooth_table(prof, r_ref_mm: float) -> dict:
     step = np.diff(np.append(centre, centre[0] + 2.0 * np.pi))
     return {"n": int(centre.size), "centre": centre, "width": width, "tip": tip,
             "pitch_mm": step * r_ref_mm}
+
+
+def median_tooth(prof, n_teeth: int = Z_TEETH):
+    """**歯 1 枚ぶんの中央値テンプレート**と、そこからの残差を返す。
+
+    R(θ) を ``n_teeth`` 個の扇形に折り畳み、位相ごとに中央値を取る。偏心
+    ``e cos(θ−φ)`` は 24 個の等間隔な角度で中央値を取ると打ち消えるので、
+    テンプレートには **歯形だけ** が残る。残差 = R − テンプレート は
+    「偏心 + 欠けた歯の穴」になり、両者は大きさが 1 桁違うので分けられる。
+    """
+    n = prof.size
+    if n % n_teeth:
+        raise ValueError("角度分割 %d は歯数 %d で割り切れること" % (n, n_teeth))
+    np_ = n // n_teeth
+    tmpl = np.median(prof.reshape(n_teeth, np_), axis=0)
+    return tmpl, prof - np.tile(tmpl, n_teeth)
+
+
+def robust_runout(prof, n_teeth: int = Z_TEETH, k_mad: float = 6.0) -> dict:
+    """欠けた歯を外してから 1 次成分(偏心)を出す。
+
+    残差の中央絶対偏差で外れ値を見つけ、その前後 0.7 ピッチを捨てて
+    ``{1, 2 次}`` を最小二乗当てはめする。捨てた区間を 0 で埋めないのは、
+    そこに本来あるはずの偏心成分まで消してしまうから。
+    """
+    n = prof.size
+    _, resid = median_tooth(prof, n_teeth)
+    mad = 1.4826 * float(np.median(np.abs(resid - np.median(resid)))) + 1e-9
+    bad = np.abs(resid - np.median(resid)) > k_mad * mad
+    th = np.arange(n) * (2.0 * np.pi / n)
+    keep = np.ones(n, bool)
+    if bad.any():
+        for c in th[bad]:
+            keep &= np.abs(np.mod(th - c + np.pi, 2 * np.pi) - np.pi) > 0.7 * PITCH_ANG
+    if keep.sum() < 0.4 * n:                       # 捨てすぎたら諦めて全周を使う
+        keep = np.ones(n, bool)
+    f = fit_orders(resid, keep, [1, 2])
+    return {"ecc": f[1], "n_bad": int(bad.sum()), "kept": float(keep.mean()),
+            "resid": resid, "keep": keep}
 
 
 def _cross(th, prof, i, j, level):
