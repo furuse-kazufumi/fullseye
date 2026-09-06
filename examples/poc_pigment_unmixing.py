@@ -769,23 +769,40 @@ def main():
         de_null = float(np.median(delta_e(obs_rgb, truth_rgb)[f2]))
         row = ["%.2f" % fade, "%.2f" % de_null]
         cliff_d[fade] = {"null": de_null}
-        for tag, E in (("固定", E_unfaded), ("追従", endmember_spectra(fade=fade))):
-            A = unmix_any(cube, E @ filt16.T)
+        for tag, E, in_ks in (("固定", E_unfaded, False),
+                              ("追従", endmember_spectra(fade=fade), False),
+                              ("KS固定", E_unfaded, True),
+                              ("現場", scene_endmembers(scene, sp), False)):
+            Eb = E @ filt16.T
+            A = unmix_any(ks_transform(cube), ks_transform(Eb)) if in_ks \
+                else unmix_any(cube, Eb)
             lay = A[..., :len(LAYER_KEYS)]
             lay = lay / np.maximum(lay.sum(axis=2, keepdims=True), 1e-12)
             b, s = bias_scatter(lay[..., im][f2] - scene["conc"][..., im][f2])
-            # 未褪色の端成分で組み直して描き直す = 退色前の色の復元
-            rec = np.tensordot(A, E_unfaded, axes=([2], [0]))
+            # 未褪色の端成分で組み直して描き直す = 退色前の色の復元。
+            # 現場端成分は褪色後の見え方そのものなので、茜の行だけ未褪色に差し替える。
+            base = E_unfaded if tag != "現場" else np.vstack(
+                [E[:im], E_unfaded[im:im + 1], E[im + 1:]])
+            if in_ks:
+                rec_ks = np.tensordot(A, ks_transform(base), axes=([2], [0]))
+                rec = 1.0 + rec_ks - np.sqrt(rec_ks * rec_ks + 2.0 * rec_ks)
+            else:
+                rec = np.tensordot(A, base, axes=([2], [0]))
             rec_rgb = make_rgb(rec, np.random.default_rng(SEED + 6), sigma=0.0)
             de = float(np.median(delta_e(rec_rgb, truth_rgb)[f2]))
             cliff_d[fade][tag] = (b, s, de)
-            row += ["%+.3f" % b, "%.3f" % s, "%.2f" % de]
+            row += ["%+.3f" % b, "%.2f" % de]
         rows_d.append(row)
     _table(["褪色 f", "何もしない ΔE00",
-            "固定:茜の偏り", "固定:散らばり", "固定:復元 ΔE00",
-            "追従:茜の偏り", "追従:散らばり", "追従:復元 ΔE00"], rows_d)
-    print("   f = 茜レーキの吸収 K に掛ける倍率。1 = 未褪色。ΔE00 は朱+茜の面の中央値。")
-    print("   「固定」= 端成分を未褪色のまま使う / 「追従」= 褪色後の端成分を渡す(反則)。")
+            "固定:茜の偏り", "固定:復元 ΔE00",
+            "追従:茜の偏り", "追従:復元 ΔE00",
+            "KS固定:偏り", "KS固定:復元 ΔE00",
+            "現場:偏り", "現場:復元 ΔE00"], rows_d)
+    print("   f = 茜レーキの吸収 K に掛ける倍率。1 = 未褪色。ΔE00 はレーキの面の中央値。")
+    print("   「固定」= 端成分を未褪色の masstone のまま / 「追従」= 褪色後の masstone を")
+    print("   渡す(真値を使う反則)/ 「KS固定」= K/S 空間で解いて K/S 空間で組み直す /")
+    print("   「現場」= 褪色後の画面から材料ごとに採った端成分(これも真値を使う反則)。")
+    print("   ゼロ点は「何もしない」列。**それを下回れない復元は復元ではない**。")
 
     # ---------------------------------------------------------------- 8 -----
     print("\n8. 崖 (e) —— 雑音")
