@@ -809,6 +809,7 @@ def section_cliff_noise():
     print(f"  {'雑音 s':>8}{'SNR':>7} | {'M 偏り':>9}{'M 1s':>8}{'成功':>6}"
           f" | {'F 偏り':>9}{'F 1s':>8} | {'Z 偏り':>9}{'Z 1s':>8}")
     out = []
+    noise_fig = []                      # 図用。print している表をそのまま持ち出す
     for ns in (0.0, 0.002, 0.005, 0.01, 0.02, 0.05, 0.10):
         mv, fv, zv, ok = [], [], [], 0
         n_rep = 48 if ns > 0 else 1
