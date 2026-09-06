@@ -684,7 +684,7 @@ def main():
     )
     W = 26
     res3 = {}
-    for p in (1.15, 0.88, 0.64):
+    for p in (SPARSE, MID, DENSE):
         print(f"  — 重なり pack {p:.2f}(重なった細胞 "
               f"{100 * occ_tab[p][0]:.0f} %、真の個数 {base[p][0]['n']})—")
         print("  " + pad("手法", W, right=False) + pad("偏り", 9) + pad("散らばり", 11)
@@ -740,7 +740,7 @@ def main():
                     return p
             return None
         first[name] = (cross(sp), cross(mg))
-    print("  疎(pack 1.15)から +3 件を超えるのはどちらが先か:")
+    print(f"  疎(pack {SPARSE:.2f})から +3 件を超えるのはどちらが先か:")
     for name, _ in METHODS:
         a, b = first[name]
         print("    " + pad(name, W, right=False)
@@ -795,7 +795,7 @@ def main():
     HS = (0.0, 1.0, 1.5, 2.0, 2.4, 3.0, 3.6, 4.4, 5.5)
     print("  h=0 は間引きなし(全極大)。h は **画素単位**。")
     hcurve = {}
-    for p in (1.15, 0.88, 0.64):
+    for p in (SPARSE, MID, DENSE):
         print(f"  — 重なり pack {p:.2f} —")
         print("  " + pad("h [px]", 10, right=False) + pad("実効 h", 10)
               + pad("偏り", 9) + pad("散らばり", 11) + pad("過分割", 9)
@@ -819,7 +819,7 @@ def main():
           + pad("そのときの過分割/過統合", 26) + pad("1対1 最大の h", 18)
           + pad("その 1対1", 12))
     best_h = {}
-    for p in (1.15, 0.88, 0.64):
+    for p in (SPARSE, MID, DENSE):
         hb = min(HS, key=lambda h: abs(hcurve[(p, h)]["bias"]))
         ho = max(HS, key=lambda h: hcurve[(p, h)]["one2one"])
         best_h[p] = (hb, ho)
@@ -830,8 +830,8 @@ def main():
     print("  → 過分割は h とともに単調に減り、過統合は単調に増える —— **トレードオフ**。")
     print("     合計(右から 3 列目)には谷ができるが、その谷の位置と『偏りがゼロに")
     print("     なる h』は **一致しない**。どちらを最適と呼ぶかで答えが変わる。")
-    hb_list = [best_h[p][0] for p in (1.15, 0.88, 0.64)]
-    ho_list = [best_h[p][1] for p in (1.15, 0.88, 0.64)]
+    hb_list = [best_h[p][0] for p in (SPARSE, MID, DENSE)]
+    ho_list = [best_h[p][1] for p in (SPARSE, MID, DENSE)]
     print(f"  → **最適な h は密度で動く**: 偏り基準で {hb_list}、"
           f"1対1 基準で {ho_list}。")
     print("     疎な場面で決めた h をそのまま密な場面へ持っていくと壊れる。")
@@ -843,7 +843,7 @@ def main():
           + pad("過分割", 9) + pad("過統合", 9) + pad("誤り合計", 12)
           + pad("誤り合計の最小", 16) + pad("1対1 / 細胞数", 16))
     cancel = {}
-    for p in (1.15, 0.88, 0.64):
+    for p in (SPARSE, MID, DENSE):
         hb = best_h[p][0]
         r = hcurve[(p, hb)]
         tot_min = min(hcurve[(p, h)]["split"] + hcurve[(p, h)]["merge"] for h in HS)
@@ -854,7 +854,7 @@ def main():
               + pad(f"{r['split'] + r['merge']:.1f}", 12)
               + pad(f"{tot_min:.1f}", 16)
               + pad(f"{r['one2one']:.0f} / {r['n_gt']:.0f}", 16))
-    worst = max((0.64, 0.88, 1.15), key=lambda p: cancel[p][1]["split"]
+    worst = max((DENSE, MID, SPARSE), key=lambda p: cancel[p][1]["split"]
                 + cancel[p][1]["merge"])
     cw = cancel[worst][1]
     print(f"  → いちばん危ないのは pack {worst:.2f} / h {cancel[worst][0]:.1f} の行:")
@@ -948,7 +948,7 @@ def main():
           + pad("ra(モーメント)", 18) + pad("ra(当てはめ)", 18)
           + pad("rb(モーメント)", 18))
     area_tab = {}
-    for p in (1.15, 0.88, 0.64):
+    for p in (SPARSE, MID, DENSE):
         fgs2 = [foreground(s["img"]) for s in base[p]]
         dv, dt, dra, dra_f, drb = [], [], [], [], []
         for s, fg in zip(base[p], fgs2):
@@ -1033,11 +1033,11 @@ def main():
     print("\n=== 13. まとめ ===")
     lines = (
         ("ゼロ点(大津+連結成分)で足りるか",
-         f"疎なら足りる(偏り {zero[1.15]['bias']:+.1f})が、"
-         f"密で {zero[0.64]['bias']:+.1f} 個。失点は全部過統合"),
+         f"疎なら足りる(偏り {zero[SPARSE]['bias']:+.1f})が、"
+         f"密で {zero[DENSE]['bias']:+.1f} 個。失点は全部過統合"),
         ("分水嶺は何を直すか",
-         f"過統合を {zero[0.64]['merge']:.0f} → "
-         f"{dens[(0.64, ws_name)]['merge']:.0f} 件へ。代わりに過分割が出る"),
+         f"過統合を {zero[DENSE]['merge']:.0f} → "
+         f"{dens[(DENSE, ws_name)]['merge']:.0f} 件へ。代わりに過分割が出る"),
         ("h をどう選ぶか",
          f"選べない。偏り基準の最適 h が密度で {hb_list} と動く"),
         ("大きさが 3 倍違うと",
@@ -1049,8 +1049,8 @@ def main():
         ("縁の規約",
          f"規約を変えるだけで推定が {spread:.1f} 個動く。推定と真値で規約を揃える"),
         ("面積の誤差の床",
-         f"見えている面積には {area_tab[0.64][1]:+.1f} % で当たるが、"
-         f"真の面積には {area_tab[0.64][2]:+.1f} %"),
+         f"見えている面積には {area_tab[DENSE][1]:+.1f} % で当たるが、"
+         f"真の面積には {area_tab[DENSE][2]:+.1f} %"),
     )
     for q, a in lines:
         print("  " + pad(q, 34, right=False) + a)
@@ -1079,20 +1079,20 @@ def main():
     assert zero[PACKS[-1]]["merge"] > 5.0 * (zero[PACKS[-1]]["missed"] + 1.0), zero
 
     # (3) 分水嶺はゼロ点の過統合を大きく減らす(が過分割を出す)
-    for p in (0.88, 0.64):
+    for p in (MID, DENSE):
         assert dens[(p, ws_name)]["merge"] < 0.6 * zero[p]["merge"], (p, dens[(p, ws_name)])
         assert dens[(p, ws_name)]["split"] > zero[p]["split"], (p, dens[(p, ws_name)])
     # 全極大は最初から過分割が高い(疎な条件でも)
-    assert dens[(1.15, "距離変換+分水嶺(全極大)")]["split"] \
-        > dens[(1.15, ws_name)]["split"] + 3.0, dens[(1.15, "距離変換+分水嶺(全極大)")]
+    assert dens[(SPARSE, "距離変換+分水嶺(全極大)")]["split"] \
+        > dens[(SPARSE, ws_name)]["split"] + 3.0, dens[(SPARSE, "距離変換+分水嶺(全極大)")]
     # 形の事前知識は疎な条件で過分割を抑える
-    assert res3[(1.15, "形の事前知識(充填率+面積)")]["split"] \
-        <= res3[(1.15, "距離変換+分水嶺(全極大)")]["split"], res3
+    assert res3[(SPARSE, "形の事前知識(充填率+面積)")]["split"] \
+        <= res3[(SPARSE, "距離変換+分水嶺(全極大)")]["split"], res3
     # 面積割りは分割を一切しないのに個数の偏りは小さい = 個数は分割の証拠にならない
-    assert abs(res3[(0.64, "面積割り(個数のみ)")]["bias"]) < abs(zero[0.64]["bias"]), res3
+    assert abs(res3[(DENSE, "面積割り(個数のみ)")]["bias"]) < abs(zero[DENSE]["bias"]), res3
 
     # (4) 崖 (c) h のトレードオフ: 過分割は単調に減り、過統合は単調に増える
-    for p in (1.15, 0.88, 0.64):
+    for p in (SPARSE, MID, DENSE):
         sp = [hcurve[(p, h)]["split"] for h in HS]
         mg = [hcurve[(p, h)]["merge"] for h in HS]
         assert sp[0] > sp[-1] + 5.0, (p, sp)
@@ -1106,13 +1106,13 @@ def main():
     # (5) ★計数が合っていて分割が全部外れている点が実在する
     #     偏りが 2 % 未満なのに、分割誤りが「誤り合計の最小値」より十分多い。
     found = False
-    for p in (1.15, 0.88, 0.64):
+    for p in (SPARSE, MID, DENSE):
         hb, r, tot_min = cancel[p]
         if abs(r["bias"]) < 0.02 * r["n_gt"] and (r["split"] + r["merge"]) > tot_min + 5.0:
             found = True
             # そのとき 1対1 対応は全細胞の 9 割に届かない = 分割は当たっていない
             assert r["one2one"] < 0.90 * r["n_gt"], (p, r)
-    assert found, {p: cancel[p][1]["bias"] for p in (1.15, 0.88, 0.64)}
+    assert found, {p: cancel[p][1]["bias"] for p in (SPARSE, MID, DENSE)}
 
     # (6) 崖 (b) 大きさ: 大型集団だけの過分割が単調に増える
     bs = [size_tab[(r, "big")] for r in RATIOS]
@@ -1133,10 +1133,10 @@ def main():
         assert abs(v[2]) < 0.12 * edge_tab["全部数える"][0], (rule, v)
 
     # (9) 面積: 見えている面積には当たるが、真の面積には重なりぶん届かない(床)
-    for p in (0.88, 0.64):
+    for p in (MID, DENSE):
         assert abs(area_tab[p][1]) < 15.0, (p, area_tab[p])
         assert area_tab[p][2] < area_tab[p][1] - 3.0, (p, area_tab[p])
-    assert area_tab[0.64][2] < area_tab[1.15][2], area_tab
+    assert area_tab[DENSE][2] < area_tab[SPARSE][2], area_tab
 
     # (10) ★道具の穴が「まだ在る」ことを機械で確かめる(直ったら落ちる = 良い落ち方)
     #      (a) 進化 op の距離変換は最大値で正規化される

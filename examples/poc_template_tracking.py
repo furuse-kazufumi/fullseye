@@ -818,9 +818,8 @@ def main():
     best = min((lab for lab in ch8), key=lambda lab: ch8[lab]["err"].mean())
     print(f"→ この条件(純並進・変形なし)での最良は **{best}**"
           f"({ch8[best]['err'].mean():.2f} px)。")
-    print(f"   しかし第 3 章(回転 6 度 + 1.06 倍)では 5 フレームごと更新 "
-          f"{u5['err'].mean():.2f} px が")
-    print(f"   更新なし {z['err'].mean():.2f} px を上回った。"
+    print(f"   しかし第 3 章の強い変形では 毎フレーム更新 {u1_s['err'].mean():.2f} px が")
+    print(f"   更新なし {sz_s['err'].mean():.2f} px を大きく上回った。"
           f"**最適な更新間隔は条件で動く** —— 定数で決め打ちできない。")
     print("   決めているのは「対象がどれだけ変形するか」対「1 回の更新で入る丸め誤差」の比。")
 
