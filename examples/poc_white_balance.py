@@ -967,6 +967,17 @@ def main():
     assert floor_rows["狭帯域 3 波長"][0] > floor_rows["黒体 8000 K"][0], \
         "山谷のある光源のほうが床が高い、という所見が崩れた"
 
+    # 11-(b) 角度誤差 -> ΔE00 の換算は比例しない。床は誰にも引けない
+    assert abs(bridge["真値(= 床)"][1] - floor_b) < 1e-9, "床の行が床になっていない"
+    assert min(v[1] for v in bridge.values()) >= floor_b - 1e-9, \
+        "床より良い ΔE00 が出た —— 真値が漏れている疑い"
+    assert bridge["何もしない"][1] > 2.0 * bridge["灰色世界 (p=1)"][1], \
+        "AWB が ΔE00 でもゼロ点に勝てていない"
+    assert slope["灰色世界 (p=1)"] > 2.0 * slope["灰色エッジ p=4"], \
+        "1 度あたりの ΔE00 が一定になった —— 比例しないという所見が崩れた"
+    assert slope["何もしない"] < slope["灰色世界 (p=1)"], \
+        "大きく外した側で 1 度あたりの実費が飽和しない"
+
     # 12. 穴 (c): fs.op.sobel_amp は ch ごとに呼ぶと各 ch が 1.0 に正規化される
     assert np.abs(perch.reshape(-1, 3).max(axis=0) - 1.0).max() < 1e-12, \
         "fs.op.sobel_amp が ch ごとに 1.0 へ正規化されない —— 穴 (c) が直った?"
