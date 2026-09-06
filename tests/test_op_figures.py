@@ -29,6 +29,14 @@ from pathlib import Path
 
 import pytest
 
+# ★op 集合は環境で変わる(Linux CI は torch/kornia/mahotas/xfeatures2d が無く
+# 859 op、手元は 885)。手元で生成した文書と**生きたレジストリ**を比べる検査は
+# 満杯の環境でだけ意味を持つ —— test_opdocs と同じ規約で、揃っていなければ
+# skip(理由に欠けている backend 名が出る)。2026-09-07 の CI で 22 件が
+# これで落ちた。環境に依らない検査(ファイルの実在・中身の量・図の実在)は
+# そのまま走る。
+from conftest import requires_full_registry
+
 ROOT = Path(__file__).resolve().parents[1]
 FIG = ROOT / "docs" / "ops" / "_fig"
 HELP = ROOT / "studio_assets" / "op_help"
@@ -57,17 +65,19 @@ def test_every_2d_op_has_a_verdict_and_none_failed():
     import ops
 
     m = _manifest()
-    names = {o.name for o in ops.REGISTRY}
-    assert set(m["ops"]) == names, (
-        "manifest と登録簿がずれている(manifest のみ %s / 登録のみ %s) —— "
-        "`py -3.11 tools/gen_op_figures.py`"
-        % (sorted(set(m["ops"]) - names)[:5], sorted(names - set(m["ops"]))[:5]))
     st = _by_status(m)
+    # 環境に依らない部分を先に(落ちた 0 本・床)
     assert not st["failed"], (
         "走らせて落ちた op が %d 本: %s —— 描画側の問題なら生成器を直し、op 側の"
         "問題なら KNOWN_ISSUES に書く" % (len(st["failed"]), st["failed"][:8]))
     assert len(st["ok"]) >= _OK_FLOOR, (
         "図のある op が %d 本に減った(床 %d)" % (len(st["ok"]), _OK_FLOOR))
+    requires_full_registry()
+    names = {o.name for o in ops.REGISTRY}
+    assert set(m["ops"]) == names, (
+        "manifest と登録簿がずれている(manifest のみ %s / 登録のみ %s) —— "
+        "`py -3.11 tools/gen_op_figures.py`"
+        % (sorted(set(m["ops"]) - names)[:5], sorted(names - set(m["ops"]))[:5]))
 
 
 def test_unreachable_is_exactly_what_the_type_graph_says():
@@ -77,6 +87,7 @@ def test_unreachable_is_exactly_what_the_type_graph_says():
     (image / any / region / contour / color)。登録簿にそれ以外へ渡る op が
     増えたら(例: image → points)、この門が落ちて PREFIX を伸ばす番になる。
     """
+    requires_full_registry()
     sys.path.insert(0, str(ROOT))
     sys.path.insert(0, str(ROOT / "tools"))
     import gen_op_figures as G
@@ -119,14 +130,14 @@ def test_every_ok_op_has_its_png_in_both_places():
 
 def test_every_ok_op_note_embeds_its_figure_and_program():
     """★ノート(RAG が読む側)が図と Studio プログラムを**実際に載せている**こと。"""
-    sys.path.insert(0, str(ROOT / "tools"))
-    sys.path.insert(0, str(ROOT))
-    import opdocs as OD
-
     m = _manifest()
     st = _by_status(m)
-    recs, _i, _o, _f = OD._records()
-    path_of = {r["name"]: OD._op_path(r) for r in recs if r["dim"] == "2d"}
+    # ノートの場所は**ファイルから**引く(レジストリからだと、この環境に無い
+    # optional backend の op で KeyError になる)。2-D のノートは docs/ops/2d/<cat>/<op>.md。
+    path_of = {p.stem: p for p in (ROOT / "docs" / "ops" / "2d").rglob("*.md")
+               if p.name != "INDEX.md" and "guides" not in p.parts}
+    missing = [n for n in st["ok"] + st["unreachable"] if n not in path_of]
+    assert not missing, "manifest にあるのにノートが無い op: %s" % missing[:8]
     bad = []
     for n in st["ok"]:
         md = Path(path_of[n]).read_text(encoding="utf-8")
@@ -175,10 +186,16 @@ def test_the_sample_program_in_the_help_round_trips_and_runs():
     import fullseye as fs
     import gen_op_figures as G
 
+    import ops
+
     m = _manifest()
     st = _by_status(m)
-    picks = [n for n in st["ok"] if n not in ("gaussian", "otsu", "sobel_mag")]
+    here = {o.name for o in ops.REGISTRY}                   # この環境に居る op だけ走らせる
+    picks = [n for n in st["ok"] if n not in ("gaussian", "otsu", "sobel_mag")
+             and n in here
+             and all(l.split()[0] in here for l in m["ops"][n]["program"].splitlines())]
     picks = picks[::97][:8]                                # 8 本を抜き取り
+    assert len(picks) >= 4, "抜き取れる op が %d 本しか無い" % len(picks)
     img = G.canonical_image()
     for n in picks:
         h = (HELP / ("%s.html" % n)).read_text(encoding="utf-8")
@@ -192,22 +209,36 @@ def test_the_sample_program_in_the_help_round_trips_and_runs():
 
 
 def test_the_figures_are_deterministic():
-    """同じ入力から同じバイト列。図を commit する以上、再生成でずれてはいけない。"""
+    """同じ環境で 2 回生成して同じバイト列。
+
+    ★commit 済みとの比較は**しない**(2026-09-07 の CI で学んだ): 文字の
+    アンチエイリアスと PNG の量子化は OS / PIL / フォントで数バイト変わるので、
+    Windows で作った図は Linux では `identity.png` ですらバイト一致しない。
+    ここで守るのは「乱数や実行順が混じっていない」ことだけ —— それは同じ
+    環境で 2 回作って比べれば分かる。環境をまたぐ見た目の一致は、図を
+    生成した環境(手元 Windows)で `--limit 12` を回して目で見る。
+    """
     import subprocess
     import tempfile
 
-    st = _by_status(_manifest())
-    with tempfile.TemporaryDirectory() as td:
+    outs = []
+    for _ in range(2):
+        td = tempfile.mkdtemp()
         r = subprocess.run([sys.executable, str(ROOT / "tools" / "gen_op_figures.py"),
                             "--limit", "12", "--out", td],
                            capture_output=True, text=True, cwd=str(ROOT))
         assert r.returncode == 0, r.stderr[-800:]
-        made = sorted(f for f in os.listdir(td) if f.endswith(".png"))
-        assert made, "12 本で 1 枚も出ない"
-        diff = [f for f in made
-                if (Path(td) / f).read_bytes() != (FIG / f).read_bytes()]
-        assert not diff, ("再生成で図が変わる(非決定的): %s —— 入力画像か描画に乱数/"
-                          "環境依存が混じっている" % diff)
+        outs.append(Path(td))
+    made = sorted(f for f in os.listdir(outs[0]) if f.endswith(".png"))
+    assert made, "12 本で 1 枚も出ない"
+    diff = [f for f in made
+            if (outs[0] / f).read_bytes() != (outs[1] / f).read_bytes()]
+    assert not diff, ("同じ環境で 2 回作って図が変わる(非決定的): %s —— "
+                      "入力画像か描画に乱数/実行順依存が混じっている" % diff)
+    # manifest も同一(status / program が揺れない)
+    m0 = json.loads((outs[0] / "figures.json").read_text(encoding="utf-8"))
+    m1 = json.loads((outs[1] / "figures.json").read_text(encoding="utf-8"))
+    assert m0 == m1
 
 
 def test_the_wheel_declares_the_figures():

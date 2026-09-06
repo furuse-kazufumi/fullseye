@@ -34,6 +34,14 @@ from pathlib import Path
 
 import pytest
 
+# ★op 集合は環境で変わる(Linux CI は torch/kornia/mahotas/xfeatures2d が無く
+# 859 op、手元は 885)。手元で生成した文書と**生きたレジストリ**を比べる検査は
+# 満杯の環境でだけ意味を持つ —— test_opdocs と同じ規約で、揃っていなければ
+# skip(理由に欠けている backend 名が出る)。2026-09-07 の CI で 22 件が
+# これで落ちた。環境に依らない検査(ファイルの実在・中身の量・図の実在)は
+# そのまま走る。
+from conftest import requires_full_registry
+
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = sorted((ROOT / "docs").glob("README*.md"))
 
@@ -68,6 +76,7 @@ def test_the_index_exists_in_six_languages():
 @pytest.mark.parametrize("path", INDEX, ids=lambda p: p.name)
 def test_the_index_operator_count_is_current(path):
     """「オペレータ約 N(レジストリ)」の N が実際の登録数と一致すること。"""
+    requires_full_registry()
     n = _registry_ops()
     md = path.read_text(encoding="utf-8")
     head = md.split("\n---\n", 1)[0]
@@ -78,6 +87,7 @@ def test_the_index_operator_count_is_current(path):
 
 @pytest.mark.parametrize("path", INDEX, ids=lambda p: p.name)
 def test_the_index_category_count_is_current(path):
+    requires_full_registry()
     n = _registry_categories()
     md = path.read_text(encoding="utf-8")
     assert re.search(r"(?<![0-9])%d(?![0-9])" % n, md.split("\n---\n", 1)[0]), (

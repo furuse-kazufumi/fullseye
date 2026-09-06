@@ -902,3 +902,36 @@ Jekyll は `_` で始まるディレクトリを配信しない(内部ディレ�
 が、リンクされている `_` ディレクトリが include に載っていることを見る。
 `docs/articles/assets/_sources` も `_` だが、md からリンクされていないので
 配信されなくてよい(生成の元データ)。
+
+### ★Linux CI で 22 件が落ちた —— 手元の文書と「その環境のレジストリ」を比べていた(2026-09-07)
+
+push 後の CI(py3.10/3.11/3.12、`pip install -e .` のみ)で新しい門 22 件が落ちた。
+手元 Windows では全体スイート 12,310 passed。原因は 1 つで、**op 集合が環境で
+変わる**: Linux CI には torch / kornia / mahotas / `cv2.xfeatures2d` が無く、
+`dl_*` / `xkor_*` / `xmh_*` / `xcv3_agast|brisk_count` の 26 op が消えて
+**859 op / 40 カテゴリ**(手元は 885 / 47)。手元の満杯環境で生成した索引・
+OP_INDEX.json・図の manifest を、その環境の生きたレジストリと厳密比較すれば落ちる。
+
+これは Codex の敵対的レビュー #15(「環境依存の import 時に生成物が変わる」)で
+**先送りにした指摘そのもの**。既存の `test_opdocs` は同じ理由で 2026-09-05 に
+`requires_full_registry()`(conftest)を置いていた —— 満杯でなければ skip、
+skip 理由に欠けている backend 名を出す。新しい門も同じ規約に揃えた。
+環境に依らない検査(ファイルの実在・中身の量・図の実在・落ちた 0 本・床)は
+skip せずそのまま走る。
+
+同じ CI で分かった他の 2 つ:
+
+* **図のバイト一致は OS をまたがない**。`identity.png` ですら Linux では別バイト
+  (文字のアンチエイリアスと PNG 量子化が PIL/フォントで数バイト違う)。
+  決定性の門は「同じ環境で 2 回作って同一」に変えた。守るのは乱数と実行順が
+  混じっていないことで、環境をまたぐ見た目は生成した環境で目で見る。
+* `poc_template_tracking.py` の自己制限 90 秒が、共有ランナーでは **134 秒**で
+  落ちた。守りたいのは「桁で遅くなっていない」ことなので 300 秒に。
+
+手元で CI を再現する方法(stub で optional backend を消す):
+
+```powershell
+$S = "$env:TEMP\nobackend"; New-Item -ItemType Directory -Force $S | Out-Null
+foreach ($m in "torch","kornia","mahotas") { 'raise ImportError("stub")' | Set-Content -Encoding ascii "$S\$m.py" }
+$env:PYTHONPATH = $S; py -3.11 -m pytest tests/test_op_figures.py tests/test_docs_index_reachable.py -q -rs
+```

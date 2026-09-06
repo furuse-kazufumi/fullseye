@@ -39,6 +39,14 @@ from pathlib import Path
 
 import pytest
 
+# ★op 集合は環境で変わる(Linux CI は torch/kornia/mahotas/xfeatures2d が無く
+# 859 op、手元は 885)。手元で生成した文書と**生きたレジストリ**を比べる検査は
+# 満杯の環境でだけ意味を持つ —— test_opdocs と同じ規約で、揃っていなければ
+# skip(理由に欠けている backend 名が出る)。2026-09-07 の CI で 22 件が
+# これで落ちた。環境に依らない検査(ファイルの実在・中身の量・図の実在)は
+# そのまま走る。
+from conftest import requires_full_registry
+
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
 INDEX = DOCS / "README.md"
@@ -190,6 +198,8 @@ def test_the_operator_table_is_not_empty():
     s = (DOCS / "README.md").read_text(encoding="utf-8")
     block = s.split("<!-- ops-index:start -->", 1)[1].split("<!-- ops-index:end -->")[0]
     assert "**0 " not in block, "「0 本の op ノート」と書かれている —— 生成器が壊れている"
+    requires_full_registry()
+    assert "**0 " not in block, "「0 本の op ノート」と書かれている —— 生成器が壊れている"
 
     # ★「20 行あって 4 つの次元名が見える」で通していたが、それでは数百 op
     # 落ちても緑になる(Codex の敵対的レビュー、2026-09-06)。**次元ごとの
@@ -217,6 +227,7 @@ def test_the_operator_table_is_not_empty():
 
 def test_the_generated_blocks_are_current():
     """生成物と commit 済みが一致していること(ドリフト門)。"""
+    requires_full_registry()
     sys.path.insert(0, str(ROOT / "tools"))
     sys.path.insert(0, str(ROOT))
     import gen_docs_index_ops as G
@@ -277,6 +288,7 @@ def test_the_machine_readable_index_is_current():
     """
     import json
 
+    requires_full_registry()
     sys.path.insert(0, str(ROOT))
     import imgevolve as IE
 
@@ -326,6 +338,7 @@ def test_the_rag_guide_note_count_is_current():
     1 本は `docs/ops/SAMPLES.md` —— op ノートではない。数える対象は
     「台帳の記録」であって「`docs/ops` の md ファイル」ではない。
     """
+    requires_full_registry()
     sys.path.insert(0, str(ROOT / "tools"))
     sys.path.insert(0, str(ROOT))
     import gen_docs_index_ops as G
@@ -343,6 +356,7 @@ def test_the_note_files_on_disk_match_the_ledger_exactly():
     残り続ける(RAG は在ると答える)。逆に、記録はあるのにファイルが無ければ
     リンク切れになる。既知の例外は 1 つだけ、明示して数える。
     """
+    requires_full_registry()
     sys.path.insert(0, str(ROOT / "tools"))
     sys.path.insert(0, str(ROOT))
     import gen_docs_index_ops as G
