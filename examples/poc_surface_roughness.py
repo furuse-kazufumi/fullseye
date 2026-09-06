@@ -290,8 +290,7 @@ def main():
 
     # `radial_power_spectrum` の正規化規約は docstring に書かれていない。
     # H を 2 通り仕込んで傾きを測れば、どちらの規約かが実験で決まる。
-    print("
-  `fs.radial_power_spectrum` の規約を実験で決める(docstring に無い)")
+    print("\n  `fs.radial_power_spectrum` の規約を実験で決める(docstring に無い)")
     print(f"  {'仕込んだ H':>10}{'面 PSD 予想':>13}{'動径 PSD 予想':>14}"
           f"{'実測の傾き':>12}{'戻した H':>10}{'H の誤差':>10}")
     slope, h_err = None, {}
