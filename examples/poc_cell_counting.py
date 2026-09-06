@@ -1062,6 +1062,7 @@ def main():
     print("  " + pad("", 24, right=False) + pad("", 9)
           + "".join(pad("偏り/分割/統合/偽", 26) for _ in NOISE_METHODS))
     noise_tab = {}
+    noise_rows = []                     # 図の材料(ゼロ点の列だけを抜き出す)
     truth_fg = None
     for label, kw in (("基準", {}),
                       ("光子 1/4(雑音 2 倍)", {"photons": PHOTONS / 4}),
