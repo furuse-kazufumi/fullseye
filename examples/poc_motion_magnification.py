@@ -292,10 +292,15 @@ def main():
         #     目で見える。どちらも自分の値域で塗るので、違うのは形だけ。
         v05 = make_clip([(0.5, FREQ, 0.0)])[0]
         m25 = M.motion_magnify(v05, 25.0, *BAND, FPS)["video"]
+        # 表示は最近傍で 3 倍に伸ばすだけ(標本を増やしてはいない)。
+        def _zoom3(a):
+            return np.repeat(np.repeat(a, 3, axis=0), 3, axis=1)
+
         figs.save_grid("slit_scan",
-                       [v05[:, H // 2, :].T, m25[:, H // 2, :].T],
+                       [_zoom3(v05[:, H // 2, :].T), _zoom3(m25[:, H // 2, :].T)],
                        ["生 0.5 px", "25 倍後"], ncols=1,
-                       title="行 %d のスリット像(横 = %d フレーム)" % (H // 2, T),
+                       title="行 %d のスリット像(横 = %d フレーム、3 倍表示)"
+                             % (H // 2, T),
                        caption="拡大が買っているのは人間の目。縞のうねりが "
                                "3.7 Hz の振動そのもの。")
 
