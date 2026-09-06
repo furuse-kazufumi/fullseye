@@ -254,7 +254,14 @@ def make_sequence(world, target, n=40, step=2.0, rot_deg=0.0, zoom=1.0, amp=20.0
             m = ((_gx >= max(0.0, x0 - 40.0)) & (_gx < x1)
                  & (_gy >= y0) & (_gy < y1))
             img = np.where(m, 0.47 + 0.01 * rng.normal(size=img.shape), img)
-        frames.append(np.clip(img + noise * rng.normal(size=img.shape), 0.0, 1.5))
+        if twin_patch is not None and t >= occl_from:    # そっくりな別物体
+            img = np.asarray(img, float).copy()
+            r = int(round(xy[1] - 26.0))
+            c = int(round(xy[0] + 44.0))
+            if HALF <= r < FR_H - HALF and HALF <= c < FR_W - HALF:
+                img[r - HALF:r + HALF + 1, c - HALF:c + HALF + 1] = twin_patch
+        img = np.clip(img + noise * rng.normal(size=img.shape), 0.0, 1.0)
+        frames.append(np.round(img * 255.0) / 255.0)      # 8 bit 量子化
         truth.append(xy.copy())
         angles.append(np.rad2deg(th))
         scales.append(sc)
