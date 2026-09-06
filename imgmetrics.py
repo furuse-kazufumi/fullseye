@@ -334,7 +334,20 @@ def rgb_to_lab(rgb, white=D65_WHITE):
 
 def lab_to_rgb(lab, white=D65_WHITE):
     """CIE L\\*a\\*b\\* → sRGB ``[0, 1]``。**色域外は切り詰められる**ので
-    ``rgb_to_lab`` との往復は色域内でしか一致しない(テストで固定)。"""
+    ``rgb_to_lab`` との往復は色域内でしか一致しない(テストで固定)。
+
+    手順: ``fy = (L + 16) / 116``、``fx = fy + a / 500``、``fz = fy - b / 200`` を
+    ``xyz_to_lab`` の逆関数で XYZ に戻し(``white`` を掛ける)、XYZ→線形 RGB の
+    逆行列を掛けてから sRGB の伝達関数を掛ける。伝達関数の手前で線形 RGB を
+    ``[0, 1]`` に **無言でクリップ**する ―― ここが「色域外は切り詰め」の実体で、
+    例外は出ない。
+
+    - ``lab``: 最後の軸が 3 の任意の形。
+    - ``white``: ``rgb_to_lab`` で使ったものと同じ白色点を渡す(検証はしない)。
+    - 返り値: 入力と同じ形の float64、値域 ``[0, 1]`` のガンマ付き sRGB。
+      8 bit にするなら呼び出し側で 255 倍して丸める。
+    - 失敗(``MetricContractError``): 最後の軸が 3 でない。
+    """
     lab = np.asarray(lab, dtype=np.float64)
     if lab.shape[-1] != 3:
         raise MetricContractError(f"lab must have 3 channels in the last axis, got shape {lab.shape}")
