@@ -3,6 +3,10 @@
 [![CI](https://github.com/furuse-kazufumi/fullseye/actions/workflows/ci.yml/badge.svg)](https://github.com/furuse-kazufumi/fullseye/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/fullseye)](https://pypi.org/project/fullseye/)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+[![Docs](https://img.shields.io/badge/docs-furuse.work-informational)](https://furuse.work/)
+
+**Documentation: [furuse.work](https://furuse.work/)** — the operator index (1,500+
+ops with per-operator notes), the family guides, and the release notes.
 
 <!-- Banner: real Fullseye outputs only (no mockups). Regenerate with
      `py -3.11 tools/gen_banner.py`. Absolute raw URL for PyPI compatibility. -->
