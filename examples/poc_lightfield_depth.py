@@ -591,7 +591,18 @@ def main():
     assert abs(b_in - 1.30) > 10.0 * abs(d_in - 1.30), "2 眼が鏡面で壊れない"
     assert abs(spec[(1.30, 1.0)][2] - 1.30) < 0.1, \
         "面と同じ速さで動くハイライトでも壊れる = 鏡面の効果ではない"
-    # 10. 掃引点数の上限は 256(深度分解能の天井、穴 (f))
+    # 10. ★ 穴 (e): stereo.disparity_subpixel が平坦領域で RuntimeWarning を漏らす
+    step_a = np.zeros((16, 16))
+    step_a[:, 8:] = 1.0
+    step_b = np.zeros((16, 16))
+    step_b[:, 6:] = 1.0
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        S.disparity_subpixel(step_a, step_b, 8, 5, "ssd")
+    assert any(issubclass(c.category, RuntimeWarning) and "divide" in str(c.message)
+               for c in caught), \
+        "RuntimeWarning が出なくなった = 穴 (e) が直った(docstring から消してよい)"
+    # 11. 掃引点数の上限は 256(深度分解能の天井、穴 (f))
     try:
         L.lf_depth_from_focus(lf_int, np.linspace(0.0, 3.0, 257))
         raise AssertionError("257 面が通ってしまった")
