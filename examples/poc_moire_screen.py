@@ -543,17 +543,17 @@ def section7_design():
 def section_figures():
     if not figs.enabled():
         return
-    both = render()
-    s = np.s_[0:192, 0:192]
-    spec = np.asarray(fs.apply(render(mura=False), "fft_image"))
+    s = np.s_[0:256, 0:256]
+    both = render()[s]
+    sm = smooth(render(), 8.0)[s]
+    truth = render(stripe=False)[s]
     figs.save_grid("moire_scene",
-                   [both[s], render(mura=False)[s], render(stripe=False)[s],
-                    np.asarray(spec)[160:352, 160:352]],
-                   ["撮れた像", "縞だけ", "ムラだけ", "スペクトル"],
-                   title="モアレ(縞)と本物のムラ", ncols=2,
-                   signed=[False, False, False, False],
-                   caption="左上 192x192 px を切り出し。スペクトルは fs.apply(\"fft_image\") "
-                           "の中央部。うなりのピークが 4 象限に対称に立つ。")
+                   [both, sm, truth, sm - truth],
+                   ["撮れた像", "σ=8 で平滑化", "ムラの真値", "差 = 漏れ+減衰"],
+                   title="平滑化で残るのはムラだけではない", ncols=2,
+                   signed=[False, False, False, True],
+                   caption="左上 256x256 px。(d) は (b)-(c)。周期 20 px のモアレが"
+                           "うっすら残り、同時にムラ自身も鈍っている。")
 
 
 def section8_tool_gaps():
