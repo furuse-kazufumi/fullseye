@@ -185,7 +185,28 @@ def measure_pairs(image, measure, sigma=1.0, threshold=0.1):
 
 
 def fuzzy_measure_pairing(image, measure, sigma=1.0, threshold=0.1, pair_size=None):
-    """ファジィ基準(想定幅 pair_size)に最も合うエッジ対を選ぶ(fuzzy_measure_pairing)。"""
+    """ファジィ基準(想定幅 pair_size)に最も合うエッジ対を選ぶ(fuzzy_measure_pairing)。
+
+    手順: ``measure_pairs(image, measure, sigma, threshold)`` で極性の異なる隣接
+    エッジの対を取り、各対に ``fuzzy_score = exp(-((width - pair_size) /
+    (0.5 pair_size))^2)`` を付けて **スコア降順に並べ替える**。想定幅ちょうどで 1、
+    幅が ``±0.5 pair_size`` ずれると ``e^-1`` ≈ 0.37。先頭要素が最も合う対。
+
+    - ``image``: 2-D float(グレー値の単位は入力のまま)。
+    - ``measure``: ``gen_measure_rectangle2`` / ``gen_measure_arc`` の dict。
+    - ``sigma``: プロファイルの平滑化 σ [サンプル]。``threshold``: 採用するエッジの
+      最小 |グレー差|(画像の単位)。
+    - ``pair_size``: 想定幅 [px]。``None`` なら並べ替えもスコア付けもせず
+      ``measure_pairs`` の結果(測定線に沿った順)をそのまま返す。0 や負は検証
+      しない(0 だと分母が 1e-9 になり全対のスコアがほぼ 0 か 1 に潰れる)。
+    - 返り値: 対の dict の list(``table`` 型)。各 dict は ``first`` / ``second``
+      (サンプル index)、``width`` [px]、``first_point`` / ``second_point``
+      (``(row, col)``)、``first_amplitude`` / ``second_amplitude``、``fuzzy_score``。
+      対が 1 つも無ければ空 list(例外にはしない)。
+
+    幅の下限・上限で切りたい場合はこの結果を ``width`` で自分でフィルタする
+    (この op は順位付けだけで、閾での除外はしない)。
+    """
     pairs = measure_pairs(image, measure, sigma, threshold)
     if pair_size is None or not pairs:
         return pairs

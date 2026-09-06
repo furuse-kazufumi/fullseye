@@ -89,6 +89,26 @@ PREFIX = {
     "qimage": [("img_to_rgb", 0.5, 0.5), ("tb_rgb_to_quaternion", 0.5, 0.5)],
 }
 
+#: op ごとの前置きの上書き。sort は同じでも **その op が受け付ける値の作り方が
+#: 違う** とき(qimage: 色の四元数 vs モノジェニック信号)。
+PREFIX_OP = {
+    "tb_monogenic_amplitude": [("img_to_monogenic", 0.5, 0.5)],
+    "tb_monogenic_phase": [("img_to_monogenic", 0.5, 0.5)],
+    "tb_monogenic_orientation": [("img_to_monogenic", 0.5, 0.5)],
+}
+
+#: 型は届くが **定義域が合わない** op —— 汎用の合成入力では必ず拒否される
+#: (その op が要るのは「ちょうど 3 点」「整数の添字」「64×64 の raster」…)。
+#: 「落ちた」に混ぜず、理由つきで別に数える。**この表に載る op が通るように
+#: なったら表から外す**(tests/test_op_figures.py が「本当にまだ拒否される」
+#: ことを確かめる —— 免除台帳が黙って腐らないように)。
+DOMAIN_MISMATCH = {
+    "tb_angle_3points": "3 点(頂点 b と両端)を取る op で、(N,3) の点群は定義域の外",
+    "tb_indices_to_labels": "signal を整数の添字として読む op で、濃度プロファイルは定義域の外",
+    "tb_keypoints_to_image2d": "橋渡しで束縛した raster が 64×64 固定で、128×128 の点は外に落ちる",
+    "tb_cx_apply_transfer_function": "橋渡しで束縛した伝達関数 H が 32×32 固定で、128×128 のスペクトルと合わない",
+}
+
 #: つまみの既定。0.5 は「まん中」だが、平滑・形態学は効果が見えないので
 #: 少しだけ強めに振る(op ごとではなくカテゴリごと —— 恣意を最小にする)。
 KNOB = {"smoothing": (0.35, 0.5), "morphology": (0.35, 0.5),
@@ -344,11 +364,16 @@ def main() -> int:
 
     os.makedirs(a.out, exist_ok=True)
     base = canonical_image()
-    rows, stats = {}, {"ok": 0, "unreachable": 0, "failed": 0}
+    rows, stats = {}, {"ok": 0, "unreachable": 0, "failed": 0, "domain": 0}
     t0 = time.time()
     todo = list(OPS.REGISTRY)[: a.limit or None]
     for op in todo:
-        pre = PREFIX.get(op.in_sort)
+        pre = PREFIX_OP.get(op.name, PREFIX.get(op.in_sort))
+        if op.name in DOMAIN_MISMATCH:
+            rows[op.name] = {"status": "domain", "in_sort": op.in_sort,
+                             "reason": DOMAIN_MISMATCH[op.name]}
+            stats["domain"] += 1
+            continue
         if pre is None:
             rows[op.name] = {"status": "unreachable", "in_sort": op.in_sort,
                              "reason": "画像から `%s` を作る登録 op が無い"
@@ -378,9 +403,9 @@ def main() -> int:
     out = {"generated_for": len(todo), "size": SIZE, "stats": stats, "ops": rows}
     with open(os.path.join(a.out, "figures.json"), "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1, sort_keys=True)
-    print("[figures] %d op: 図あり %d / 型が届かない %d / 落ちた %d  (%.1f 秒)"
-          % (len(todo), stats["ok"], stats["unreachable"], stats["failed"],
-             time.time() - t0))
+    print("[figures] %d op: 図あり %d / 型が届かない %d / 定義域が合わない %d / 落ちた %d  (%.1f 秒)"
+          % (len(todo), stats["ok"], stats["unreachable"], stats["domain"],
+             stats["failed"], time.time() - t0))
     if stats["failed"]:
         bad = [k for k, v in rows.items() if v["status"] == "failed"][:8]
         print("  落ちた例:", bad)

@@ -311,6 +311,17 @@ OP_TUNABLE_OVERRIDE = {
     "running_gaussian_foreground": ("k", "var_init"),
 }
 
+#: 相対スケール(既定の 1/4〜2 倍)が **定義域を突き抜ける** 引数の絶対範囲。
+#: ``(op 名, 引数名) → (下限, 上限)``、ノブ ∈ [0,1] を線形に写す。
+#: 実測 2026-09-07: ``wetness`` の ``wet`` は既定 1.0 で定義域 [0,1] なので、
+#: 相対スケールだと a > 0.43 で ``wet = 1.125`` になり ValueError → fail-soft の
+#: 空値。**つまみの半分以上で必ず失敗する op** が台帳に載っていた
+#: (図の生成で発見。「どのノブでも死ぬ op」の親戚)。定義域が分かっている
+#: 引数はここに書く —— 推測はしない(コードが拒否する範囲を写す)。
+OP_KNOB_RANGE = {
+    ("wetness", "wet"): (0.0, 1.0),
+}
+
 
 def _point_labels_to_volume(points, labels, res=16):
     """点ごとのラベル ``(N,)`` を、その点群を覆う**ラベル体積** ``(res,res,res)`` にする。
@@ -406,21 +417,29 @@ def _bridge_doc(fn, name, dim, tunable):
     return "%s\n\n%s" % (base, note)
 
 
-def _make_runner(fn, kwargs, tunable, in_sort, out_sort, doc=None):
+def _make_runner(fn, kwargs, tunable, in_sort, out_sort, doc=None, knob_ranges=None):
     """``fn(v, a, b)`` 規約のランナー。
 
     *tunable* は ``[(param 名, 既定値), ...]`` を最大 2 個(a に第 1、b に第 2)。
     空なら a, b は未使用(その op には調整点が無い)。
+    *knob_ranges* は ``{param 名: (lo, hi)}`` —— :data:`OP_KNOB_RANGE` に載る引数は
+    相対スケールでなく ``lo + (hi - lo) * knob`` で写す(定義域を突き抜けない)。
     *doc* は橋渡し元の説明(:func:`_bridge_doc`)—— 渡さないと、カタログ側が
     ちゃんと書いた説明がラッパで消えて「説明なし」の op が 143 本できる。
     """
     # 記録名は `_run.__qualname__` を見る。`ops._label_guarded_functions_with_their_op_name`
     # が登録時に本名を書き込むので、ファサードを通さない直接呼び出しでも
     # 「どの op が劣化したか」が残る(素の None だと `?` に潰れる)。
+    ranges = dict(knob_ranges or {})
+
     def _run(v, a, b):
         kw = dict(kwargs)
         for (pname, default), knob in zip(tunable, (a, b)):
-            kw[pname] = _scaled(default, knob)
+            if pname in ranges:
+                lo, hi = ranges[pname]
+                kw[pname] = lo + (hi - lo) * float(np.clip(knob, 0.0, 1.0))
+            else:
+                kw[pname] = _scaled(default, knob)
         try:
             got = _coerce(fn(v, **kw), out_sort)
         except Exception as _e:                           # noqa: BLE001 - fail-soft, RECORDED
@@ -530,7 +549,10 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, _norm, _bin):
         post = OUTPUT_ADAPTERS_WITH_INPUT.get(name)
         if post is not None:
             base = (lambda v, *a, _f=base, _post=post, **k: _post(v, _f(v, *a, **k)))
+        ranges = {pn: OP_KNOB_RANGE[(name, pn)] for pn, _d in tunable
+                  if (name, pn) in OP_KNOB_RANGE}
         out.append(Op("tb_" + name, "typed", "", in_sort, out_sort,
                       _make_runner(base, kwargs, tunable, in_sort, out_sort,
-                                   doc=_bridge_doc(fn, name, dim, tunable))))
+                                   doc=_bridge_doc(fn, name, dim, tunable),
+                                   knob_ranges=ranges)))
     return out

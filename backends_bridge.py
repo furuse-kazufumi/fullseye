@@ -55,7 +55,7 @@ from backend_safe import guard
 #: 図・サンプルの前提と同じく「1 枚の画像」から作る合成の既定寸法。
 VIDEO_FRAMES = 8          # img_to_video のフレーム数
 LF_ANGULAR = (5, 5)       # img_to_lightfield の角度サンプル (V, U)
-BEAT_SHAPE = (32, 64)     # img_to_beatcube の (chirps, samples)
+BEAT_SHAPE = (4, 32, 64)  # img_to_beatcube の (antennas, chirps, samples)
 
 
 def _image2d(v) -> np.ndarray:
@@ -357,15 +357,17 @@ def img_to_beatcube(v, a, b):
     平滑化(σ=2)した画像の局所極大を値の降順に ``K`` 個拾い、各点を標的にする:
     ``range_m = 2 + 30 * col / W``、``velocity_ms = 15 * (2 * row / H - 1)``、
     振幅 = 画素値。前方モデルは台帳の ``fmcw_beat_simulate``(``rangedoppler``)
-    そのもので、``n_samples = 64、n_chirps = 32、n_antennas = 1``、その他は
+    そのもので、``n_samples = 64、n_chirps = 32、n_antennas = 4``(素子間隔は
+    既定の半波長、標的はすべて正面 = 到来角 0°)、その他は
     同関数の既定(標本化 10 MHz、掃引 20 THz/s、チャープ周期 50 µs、波長 3.89 mm)。
     この既定では **距離は 0〜37.5 m、速度は ±19.5 m/s が曖昧さの無い範囲** で、
     上の写像はその内側に収まる。
 
     - ``a`` → 複素白色雑音の σ ``= 0.5 * a``(a=0 で無雑音)。
     - ``b`` → 標的数 ``K = 1 + int(b * 6)``(b=0.5 で 4。極大が足りなければその数)。
-    - 返り値: ``(1, 32, 64)`` complex128。``tb_range_doppler_map`` で 2-D FFT すると
-      標的ごとの峰が「列 → 距離ビン、行 → ドップラービン」に立つ。
+    - 返り値: ``(4, 32, 64)`` complex128。``tb_range_doppler_map`` で 2-D FFT すると
+      標的ごとの峰が「列 → 距離ビン、行 → ドップラービン」に立ち、
+      ``tb_beamform_delay_sum`` は 4 素子で到来角 0° の峰を返す。
     - 乱数 seed は 0 固定(決定的)。速度の符号は ``fmcw_beat_simulate`` の規約
       (**正 = 遠ざかる**)。
     """
@@ -385,8 +387,32 @@ def img_to_beatcube(v, a, b):
     amps = np.clip(vals, 1e-3, None)
     return RD.fmcw_beat_simulate(
         ranges_m=tuple(ranges), velocities_ms=tuple(vels), amplitudes=tuple(amps),
-        n_samples=BEAT_SHAPE[1], n_chirps=BEAT_SHAPE[0], n_antennas=1,
+        n_samples=BEAT_SHAPE[2], n_chirps=BEAT_SHAPE[1], n_antennas=BEAT_SHAPE[0],
         noise_sigma=0.5 * float(np.clip(a, 0.0, 1.0)), seed=0)
+
+
+def img_to_monogenic(v, a, b):
+    """画像の単一スケールのモノジェニック信号(四元数場 (H,W,4)、sort ``qimage``)を作る。
+
+    台帳の ``monogenic_signal``(Felsberg & Sommer 2001)そのもの: 対数放射状の
+    raised-cosine 帯域通過を掛け、その Riesz 対と組にして四元数
+    ``(帯域通過像, R1, R2, 0)`` に詰める。``tb_monogenic_amplitude`` /
+    ``tb_monogenic_phase`` / ``tb_monogenic_orientation`` は **この形の qimage
+    だけ** を受け付ける(色の四元数 ``tb_rgb_to_quaternion`` を渡すと
+    「モノジェニック信号ではない」と拒否する)ので、その族の入口はこちら。
+
+    - ``a`` → 中心波長 ``wavelength_px = 8 * (0.25 + 1.75 * a)`` 画素
+      (a=0.5 で 9 px。小さいほど細かい構造に応答)。
+    - ``b`` → 帯域幅 ``bandwidth_octaves = 1.0 * (0.25 + 1.75 * b)`` オクターブ
+      (b=0.5 で 1.125)。
+    - 返り値: ``(H, W, 4)`` float64。値域は入力に依存し [0,1] に収まらない
+      (Riesz 対は符号つき)。
+    """
+    import quatimage as Q                                # 遅延 import(循環回避)
+
+    img = _image2d(v)
+    return np.asarray(Q.monogenic_signal(img, wavelength_px=8.0 * _rel(a),
+                                         bandwidth_octaves=1.0 * _rel(b)), np.float64)
 
 
 # --------------------------------------------------------------------------- #
@@ -405,6 +431,7 @@ BRIDGES = (
     ("img_to_rgb", "rgbimage", img_to_rgb),
     ("img_to_cimage", "cimage", img_to_cimage),
     ("img_to_beatcube", "beatcube", img_to_beatcube),
+    ("img_to_monogenic", "qimage", img_to_monogenic),
 )
 
 CATEGORY = "bridge"
@@ -426,6 +453,7 @@ _EMPTY_OF = {
     "rgbimage": lambda: np.zeros((2, 2, 3), np.float64),
     "cimage": lambda: np.zeros((2, 2), np.complex128),
     "beatcube": lambda: np.zeros((1, 2, 2), np.complex128),
+    "qimage": lambda: np.zeros((2, 2, 4), np.float64),
 }
 
 #: 複素数を返す sort。``backend_safe.sanitize`` は複素出力の **実部だけ** を
