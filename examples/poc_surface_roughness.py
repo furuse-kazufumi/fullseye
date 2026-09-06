@@ -760,8 +760,12 @@ def main():
     # 3) 標本化の順位: Sz は Sa より早く壊れる(崖の位置で)
     assert cliff["Sz"] is not None, "Sz が dx=16 µm まで崩れない = 仕込みが弱い"
     assert cliff["Sa"] is None or cliff["Sa"] > cliff["Sz"], "Sa が Sz より早く壊れた"
-    assert abs(rel_err(samp["point"][4]["Sa"], truth["Sa"])) \
-        < abs(rel_err(samp["point"][4]["Sz"], truth["Sz"])), "dx=4µm で Sa が Sz より悪い"
+    assert abs(rel_err(samp["point"][8]["Sa"], truth["Sa"])) * 3.0 \
+        < abs(rel_err(samp["point"][8]["Sz"], truth["Sz"])), \
+        "dx=8µm で Sz の壊れ方が Sa の 3 倍に届かない"
+    # エイリアシングはエネルギーを折り返すだけ = 2 次モーメントは保たれる
+    assert abs(rel_err(samp["point"][16]["Sq"], truth["Sq"])) < 0.05, \
+        "dx=16µm で Sq が 5% を超えた —— Sq の頑健さの根拠が崩れている"
     # 4) 評価領域: 傷なし面で Sz は窓の大きさに対し単調増加
     mono = []
     for w in (32, 64, 128, 256, 512):
