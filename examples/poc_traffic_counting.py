@@ -562,19 +562,26 @@ def section_framerate() -> dict:
         times = np.arange(0.0, T_FRAMES, float(dt))
         vid = render_sequence(veh, times)
         mask = foreground(vid)
-        oracle = foreground_oracle(vid)
-        n_all = n_ref = n_or = 0
+        n_all = n_ref = 0
         errs = []
         for ln in LANES:
             s = slit_count(kymograph(mask, LANES[ln]["slit"]))
             n_all += s["n_all"]
             n_ref += s["n_ref"]
-            n_or += slit_count(kymograph(oracle, LANES[ln]["slit"]))["n_ref"]
             sp = band_speeds(s["labels"], s["ids"], dt=float(dt))
             mt = match_speeds(sp, [v for v in crossing if v["lane"] == ln],
                               tol=max(12.0, 2.0 * dt))
             if np.isfinite(mt["fit_inner"]):
                 errs.append(mt["fit_inner"])
+        # 位相平均(対照群 = 真の空き路面。背景モデルの劣化を混ぜない)
+        phases = np.arange(0.0, float(dt), max(dt / 4.0, 1.0))
+        ph = []
+        for off in phases:
+            o = foreground_oracle(render_sequence(
+                veh, np.arange(off, T_FRAMES, float(dt))))
+            ph.append(sum(slit_count(kymograph(o, LANES[ln]["slit"]))["n_ref"]
+                          for ln in LANES))
+        n_or = float(np.mean(ph))
         pred = float(sum(min(1.0, v["len"] / (v["v"] * dt)) for v in crossing))
         verr = float(np.mean(errs)) if errs else np.nan
         dts.append(dt)
