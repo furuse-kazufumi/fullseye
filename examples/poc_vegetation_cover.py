@@ -749,6 +749,20 @@ def main():
     print("     数字だけを報告していたら、この手法は『最良』として通ってしまう**。")
     print("  → 枯れ葉は逆に可視域指数を刺す。近赤外が高いままなので NDVI では効きにくい")
     print("     が、ExG では土と紛れる(繁茂期で -2.4 → -5.7 pp)。")
+    if figs.enabled():
+        # ★「数字だけ合っている」を絵で見せる。3 枚目と 2 枚目に共通の画素がほぼ無い
+        #   のに、白い画素の**数**だけが釣り合っている。
+        _cw, _tw = observe(fields[(0, 0)], SUB, soil="soil_wet", seed=0)
+        _pw = m_otsu_green(_cw)
+        figs.save_grid("wet_soil_zero_hits",
+                       [zoom(_cw[:, :, B_GREEN]), zoom(_tw), zoom(_pw), zoom(_pw - _tw)],
+                       ["緑バンド", "真値 f", "ゼロ点の答え", "答え - 真値"],
+                       title="発芽期・湿った土 —— 被覆率 %+.1f pp、適合率 %.3f"
+                             % (lo_wet[1]["大津・緑(ゼロ点)"]["bias"],
+                                lo_wet[1]["大津・緑(ゼロ点)"]["prec"]),
+                       ncols=4, signed=[False, False, False, True],
+                       caption="白い画素の数だけが釣り合っている。当たった画素は 1 つも"
+                               "無い(適合率も再現率も 0.000)。")
 
     print("\n=== 10. 崖 (d) 固定閾値 vs 大津 —— 系統偏差はどちらに出るか ===")
     print("  " + pad("手法", 22, right=False)
