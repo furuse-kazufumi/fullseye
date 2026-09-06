@@ -1042,9 +1042,13 @@ def main():
             fn()
         speed[name] = 1e3 * (time.perf_counter() - t) / 3
         print("  " + pad(name, 26, right=False) + pad(f"{speed[name]:.1f}", 9) + " ms")
-    print("  → 形の事前知識だけ 1 桁遅い。連結成分ごとに Python の for を回して")
-    print("     部分画像に分水嶺を掛けているため。**塊の数に比例**するので、密な")
-    print("     場面では逆に速くなる(塊が減るので)。")
+    slowest = max(speed, key=lambda k: speed[k])
+    print(f"  → いちばん遅いのは {slowest}({speed[slowest]:.1f} ms)で、"
+          f"ゼロ点の {speed['連結成分(ゼロ点)']:.1f} ms の")
+    print(f"     {speed[slowest] / max(speed['連結成分(ゼロ点)'], 1e-9):.0f} 倍。"
+          "形の事前知識は連結成分ごとに Python の for を回して部分画像に")
+    print("     分水嶺を掛けるので **塊の数に比例**し、密な場面では逆に速くなる。")
+    print("     どれも 1 枚 10 ms 台なので、この規模では速度は選択理由にならない。")
 
     print("\n=== 12. 道具の穴(この PoC で当たったもの)===")
     holes = (
