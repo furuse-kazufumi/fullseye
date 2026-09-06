@@ -768,6 +768,13 @@ def main():
     # (k) 雑音が増えれば精度は落ちる
     assert noise_tbl[0.03]["p2p"][0] > noise_tbl[0.0]["p2p"][0], "雑音で誤差が増えない"
     assert noise_tbl[0.0]["p2pl"][0] < noise_tbl[0.0]["p2p"][0], "無雑音で点対面が優位でない"
+    # (l) 5-d の 2 つの穴が実在する(ここが直れば assert が落ちる = 直った合図になる)
+    assert flip_unsigned < 1e-9, "法線が符号を無視しても一致しない(別の問題がある)"
+    assert flip_signed > 0.1, "法線の符号が回転で変わらない(穴が塞がった?)"
+    assert d_fixed < 1e-6 < d_default, \
+        f"fpfh の非不変が法線の符号で説明できない(既定 {d_default:.2e} / 揃え {d_fixed:.2e})"
+    assert len(ka2 & kb2) == len(ka2) == len(kb2), "dist_step を固定しても鍵が一致しない"
+    assert len(ka & kb) < 0.9 * len(ka), "既定 dist_step が回転不変になっている(穴が塞がった?)"
 
     print(f"\n  (所要 {time.perf_counter() - t_start:.1f} 秒)")
     print("\nPASS")
