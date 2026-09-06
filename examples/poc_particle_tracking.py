@@ -774,16 +774,20 @@ def section8_figures(rows, cols, movie, rec_density, rec_step, lags, curves):
                            "kymograph は行 90-101 の帯を縦(時間)へ積んだもので、"
                            "筋の傾きがそのまま列方向の速度。縦は 5 倍に拡大。")
     # 3) 密度掃引
+    # ★上へ 3.4 倍・下へ 0.93 倍を 1 枚に収めるので、**縦軸は log10 の比**。
+    #   0 が「真値ちょうど」。線形のままだと下向きの外れが潰れて見えない。
     n = np.asarray(rec_density["n"], float)
+    lg = np.log10
     figs.save_plot("density_bias",
-                   [("検出位置+NN(欠測あり)", n, np.asarray(rec_density["d_det_nn"])),
-                    ("真値位置+NN(曖昧のみ)", n, np.asarray(rec_density["d_tru_nn"])),
-                    ("検出位置+真リンク", n, np.asarray(rec_density["d_det_true"])),
-                    ("真値 1.0", n, np.ones_like(n))],
-                   xlabel="粒子数 / 192x192 px", ylabel="D の真値比",
+                   [("検出+NN(欠測あり)", n, lg(rec_density["d_det_nn"])),
+                    ("検出+ゲート", n, lg(rec_density["gate_d"])),
+                    ("真値位置+NN(曖昧のみ)", n, lg(rec_density["d_tru_nn"])),
+                    ("真値(0)", n, np.zeros_like(n))],
+                   xlabel="粒子数 / 192x192 px", ylabel="log10(D / D 真値)",
                    title="2 つの誤リンクは D を逆向きへ外す",
-                   caption="欠測(正解が消える)は遠い他人を掴んで D を上げ、"
-                           "曖昧(正解が在るのに取り違え)は近い相手を選んで D を下げる。")
+                   caption="縦軸は常用対数(0 が真値)。欠測は遠い他人を掴んで D を"
+                           "上げ、曖昧は近い相手を選んで D を下げる。"
+                           "上限距離のゲート 1 行で上向きの暴走が 1/2.6 に。")
     # 4) MSD
     series = [("真値 4Dτ", lags, 4 * D_TRUE * lags)]
     for key in curves:
