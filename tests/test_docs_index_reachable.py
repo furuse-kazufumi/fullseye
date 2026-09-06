@@ -179,6 +179,49 @@ def test_the_index_points_at_the_machine_readable_entry_points():
     assert (DOCS / "OP_INDEX.json").is_file(), "OP_INDEX.json が無い"
 
 
+def test_the_machine_readable_index_is_current():
+    """★★`docs/OP_INDEX.json` が**いまの登録**と一致していること。
+
+    2026-09-06 に索引から「AI から引く入口」としてリンクした直後に数えたら、
+    中身は **538 op / 8 sort**、最終更新は 2026-08-12 だった。実際は
+    **902 op / 19 sort**。**4 割が入っていない索引を、機械が引く入口として
+    公開しようとしていた**。人が読むページなら「古いな」で済むが、RAG は
+    載っていない 4 割について**自信を持って間違える**(在るものを「無い」と
+    答える)ので、人向けの古さより悪い。
+
+    落ちたら `py -3.11 imgevolve.py index` を走らせる。
+    """
+    import json
+
+    sys.path.insert(0, str(ROOT))
+    import imgevolve as IE
+
+    got = json.loads((DOCS / "OP_INDEX.json").read_text(encoding="utf-8"))
+    live = IE._all_ops()
+    assert got["n_ops"] == len(live), (
+        "docs/OP_INDEX.json が古い: %d op しか無いが、いまは %d op —— "
+        "`py -3.11 imgevolve.py index` で書き直すこと"
+        % (got["n_ops"], len(live)))
+    names_json = {r["name"] for r in got["ops"]}
+    names_live = {r["name"] for r in live}
+    assert names_json == names_live, (
+        "OP_INDEX.json と登録の名前が食い違う(json のみ %s / 登録のみ %s)"
+        % (sorted(names_json - names_live)[:5], sorted(names_live - names_json)[:5]))
+
+
+def test_the_rag_guide_note_count_is_current():
+    """`AI_RAG_GUIDE.md` の「ノート N 枚」が実数と一致すること。
+
+    「約 1000 枚」と書いたまま 1,843 枚まで放置されていた。RAG の規模を
+    見誤らせる数字なので、実測に合わせて数え直す。
+    """
+    n = len([p for p in (DOCS / "ops").rglob("*.md")
+             if p.name != "INDEX.md" and "guides" not in p.parts])
+    s = (DOCS / "AI_RAG_GUIDE.md").read_text(encoding="utf-8")
+    assert "{:,}".format(n) in s or str(n) in s, (
+        "docs/AI_RAG_GUIDE.md のノート枚数が古い(いまは %s 枚)" % "{:,}".format(n))
+
+
 def test_the_docmap_lists_every_top_level_document():
     """地図が `docs/*.md` と `docs/design/*.md` を 1 本残らず含むこと。"""
     sys.path.insert(0, str(ROOT / "tools"))
