@@ -721,7 +721,14 @@ def find(query: str, limit: int = 20) -> list[dict]:
     「虹」「rust」「fresnel」「旋盤」のように**やりたいこと**で引ける入口。
     完全一致 > 名前の部分一致 > 説明の一致 の順に並べる。
 
-    返り値: ``[{"op", "ledger", "module", "category", "doc", "score"}, ...]``
+    **台帳と 2-D レジストリの両方**を見る(:data:`_REGISTRY_LEDGER` の注記)。
+    どちらから来たかは ``"ledger"`` で、**呼び方の違い**は ``"call"`` で分かる:
+
+    * ``"call": "run"``   —— :func:`run` / ``fullseye.<名前>(...)`` で呼べる。
+    * ``"call": "apply"`` —— ``fullseye.apply(image, 名前)`` か
+      ``fullseye.op.<名前>(image)``。つまみは ``a``/``b`` の 2 つだけ。
+
+    返り値: ``[{"op", "ledger", "module", "category", "doc", "call", "score"}, ...]``
     """
     q = str(query).strip().lower()
     if not q:
