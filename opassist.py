@@ -41,7 +41,19 @@ _LEDGERS = (
     ("opsimgmetrics", "OPSIMGMETRICS"), ("opscolortransport", "OPSCOLORTRANSPORT"),
     ("opsimgforensics", "OPSIMGFORENSICS"), ("opsastrostack", "OPSASTROSTACK"),
     ("opsvideostream", "OPSVIDEOSTREAM"),
+    ("opsdem", "OPSDEM"), ("opspiv", "OPSPIV"), ("opsprofile", "OPSPROFILE"),
 )
+
+#: 進化する 2-D op のレジストリ(``ops.REGISTRY``、882 op)。**台帳ではない** ——
+#: つまみが ``a``/``b`` の 2 つに固定されており、:func:`run` の宣言型・プリセット・
+#: 入力生成はどれも当てはまらない。ゆえに :func:`run` からは呼べず、
+#: ``fullseye.apply(image, name)`` あるいは ``fullseye.op.<名前>(image)`` が入口。
+#:
+#: それでも :func:`find` はここも見る —— 見ないと「erosion」で引いて **1 件も
+#: 出ない**(2026-09-06 に実測。gray_erosion も dilation_circle も、882 op すべてが
+#: 検索から消えていた)。検索に出るのに :func:`run` では動かない食い違いを隠さない
+#: ため、hit には呼び方 ``"call"``(``"run"`` か ``"apply"``)を必ず入れる。
+_REGISTRY_LEDGER = "ops"
 
 #: 引数名 → 単位(表示のみ)。名前から機械的に付けられるものだけ。推測はしない。
 _UNIT_BY_SUFFIX = (
