@@ -709,10 +709,14 @@ def main():
     ill_rows = {}
     # 実際の曇りは「暗くなる」と「影が消える」が同時に起きる。それでは何が効いたのか
     # 分けられないので、**倍率だけを変えた対照**(暗いだけ・影は晴れのまま)を置く。
-    for label, gain, sv in (("晴れ", 1.00, 0.8), ("暗いだけ(対照)", 0.45, 0.8),
-                            ("薄曇り", 0.70, 0.4), ("曇り", 0.45, 0.1)):
+    for label, gain, sv, nz in (("晴れ", 1.00, 0.8, 0.004),
+                                ("暗いだけ(対照)", 0.45, 0.8, 0.004),
+                                ("暗い+雑音も比例(対照2)", 0.45, 0.8, 0.0018),
+                                ("薄曇り", 0.70, 0.4, 0.004),
+                                ("曇り", 0.45, 0.1, 0.004)):
         for s in (0, 2):
-            sc = [observe(fields[(s, k)], SUB, shadow=sv, gain=gain, seed=k) for k in range(2)]
+            sc = [observe(fields[(s, k)], SUB, shadow=sv, gain=gain, noise=nz, seed=k)
+                  for k in range(2)]
             r = run(sc, ill_methods)
             ill_rows[(label, s)] = r
             print("  " + pad(f"{label} / {STAGES[s][0]}", 22, right=False)
