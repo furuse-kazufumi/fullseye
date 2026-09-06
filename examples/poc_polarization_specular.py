@@ -514,7 +514,7 @@ def main():
     for th, (dop, e, pred, e0n, rt) in ang_rows.items():
         assert abs(e - pred) < 1e-12 + 1e-6 * pred, \
             f"入射角 {th}: 誤差 {e:.3e} が閉形式 {pred:.3e} と違う"
-        assert ratio > 1.0, f"入射角 {th}: ゼロ点 1 に勝てていない (比 {ratio:.2f})"
+        assert rt > 1.0, f"入射角 {th}: ゼロ点 1 に勝てていない (比 {rt:.2f})"
     assert ang_rows[THETA_B][1] < ang_rows[40.0][1] < ang_rows[20.0][1], \
         "ブリュースター角 → 40 度 → 20 度の順に悪くならない"
     assert ang_rows[THETA_B][1] < ang_rows[70.0][1], "ブリュースター角が最良でない"
