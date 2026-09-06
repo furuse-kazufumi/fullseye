@@ -461,18 +461,22 @@ def section_roc() -> dict:
         print("   %-20s %.4f    " % (dn, pooled)
               + "  ".join("%-14.4f" % v for v in per))
 
-    worst = min(((dn, v[0], min(v[1]), names[int(np.argmin(v[1]))])
-                 for dn, v in table.items()), key=lambda t: t[2])
-    print("\n  ★**%s** はまとめた AUC %.4f で悪くないのに、"
-          "「%s」だけ %.4f —— でたらめ(0.5)とほぼ同じ。"
-          % (worst[0], worst[1], worst[3], worst[2]))
-    print("     まとめた 1 本の ROC を見ていたら、この盲点は**数字に一度も"
-          "現れない**。")
-    print("  ★盲点の原因は測ってある: 低周波を落とす 1 行(照明ムラ対策)が"
-          "ムラ欠陥そのものを消している。同じノッチを低周波を残して掛けると")
-    print("     同じ「%s」の AUC は %.4f -> %.4f に戻る。"
-          % (worst[3], table["ノッチ+低周波除去"][1][names.index(worst[3])],
-             table["ノッチ(格子のみ)"][1][names.index(worst[3])]))
+    areas = [int(sc["masks"][n].sum()) for n in names]
+    print("\n  陽性画素数(意図的に揃えてある): "
+          + " / ".join("%s %d" % (n, a) for n, a in zip(names, areas)))
+    zp = table["ゼロ点(局所平均)"]
+    print("\n  ★ゼロ点はまとめても種類別も %.2f 〜 %.2f —— 全面的に効いていない。"
+          % (min([zp[0]] + zp[1]), max([zp[0]] + zp[1])))
+    dn, i_sh = "ノッチ+低周波除去", names.index("ムラ(輝度低下)")
+    print("  ★★問題は %s のほう。まとめた AUC %.4f は**実務なら合格に見える**"
+          "のに、" % (dn, table[dn][0]))
+    print("     「%s」だけ %.4f。まとめた 1 本の ROC には、この盲点が"
+          "**一度も現れない**。" % (names[i_sh], table[dn][1][i_sh]))
+    print("  ★原因は測ってある: 低周波を落とす 1 行(照明ムラ対策)が"
+          "ムラ欠陥そのものを消している。")
+    print("     同じノッチを低周波を残して掛けると %.4f -> %.4f に戻る —— "
+          "消していたのは照明ではなく欠陥。"
+          % (table[dn][1][i_sh], table["ノッチ(格子のみ)"][1][i_sh]))
 
     figs.save_plot("roc",
                    [("%s %.3f" % (dn, table[dn][0]), *curves[dn])
