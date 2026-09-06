@@ -202,7 +202,7 @@ def render(world, c, theta, s):
 
 def make_sequence(world, target, n=40, step=2.0, rot_deg=0.0, zoom=1.0, amp=20.0,
                   noise=0.004, seed=0, occl=0.0, occl_from=3, gain=1.0, offset=0.0,
-                  blur_px=0.0, blur_k=5, twin=False, twin_blur=1.2):
+                  blur_px=0.0, blur_k=5, twin=False, twin_blur=2.0):
     """既知の軌跡で動画を合成する。真値は ``truth``(各フレームの ``(x, y)``)。
 
     対象がフレーム内で描く軌跡を **先に決めてから** カメラ位置を逆算する。
