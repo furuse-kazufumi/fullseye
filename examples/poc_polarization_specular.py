@@ -348,7 +348,7 @@ def main():
     print(f"  {'誤差δ[度]':>10}{'全体オフセット':>16}{'方位の誤差[度]':>16}"
           f"{'1 枚だけずれ':>16}{'70度の偏り比':>14}")
     cal_rows = {}
-    for delta in (0.0, 0.1, 0.5, 1.0, 2.0, 5.0):
+    for delta in (0.0, 0.1, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0):
         f_all = render_sweep(diffuse, s_s, s_p,
                              angles=tuple(x + delta for x in ANGLES))
         e_all = rmse(separate(f_all)[0], diffuse)   # 公称角で解く
