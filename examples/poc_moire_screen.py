@@ -160,16 +160,38 @@ def smooth(img: np.ndarray, sigma: float) -> np.ndarray:
 
 def notch(img: np.ndarray, freqs, radius: float) -> np.ndarray:
     """予測したモアレ周波数だけを周波数領域で落とす(共役側も一緒に)。"""
+    n = img.shape[0]
     F = np.fft.fft2(img - img.mean())
-    fy = np.fft.fftfreq(L)[:, None]
-    fx = np.fft.fftfreq(L)[None, :]
-    mask = np.ones((L, L))
+    fy = np.fft.fftfreq(n)[:, None]
+    fx = np.fft.fftfreq(n)[None, :]
+    mask = np.ones((n, n))
     for fj, fi in freqs:
         for sj, si in ((fj, fi), (-fj, -fi)):
             d = np.hypot(np.abs(((fx - sj) + 0.5) % 1.0 - 0.5),
                          np.abs(((fy - si) + 0.5) % 1.0 - 0.5))
             mask[d <= radius] = 0.0
     return np.real(np.fft.ifft2(F * mask)) + img.mean()
+
+
+def matched_length(delta: float, lo: float = 0.7) -> int:
+    """うなりが **FFT のビンにちょうど乗る**解析窓の長さを選ぶ。
+
+    非整数のビン位置に立つ正弦は漏れ(スペクトルリーケージ)の裾を持ち、
+    半径の小さいノッチでは取り切れない。窓長 Lc を ``delta*Lc`` が整数に
+    なるよう選べば漏れは消える —— **解析側だけで決められる**対処。
+    """
+    best, err = L, 1.0
+    for lc in range(int(L * lo), L + 1):
+        e = abs(delta * lc - round(delta * lc))
+        if e < err - 1e-12:
+            err, best = e, lc
+    return best
+
+
+def notch_matched(img: np.ndarray, freqs, delta: float, radius_bins: float = 2.0):
+    """窓長を合わせてからノッチする。返り値 ``(出力, Lc)``。"""
+    lc = matched_length(delta)
+    return notch(np.ascontiguousarray(img[:lc, :lc]), freqs, radius_bins / lc), lc
 
 
 # =========================================================================== #
