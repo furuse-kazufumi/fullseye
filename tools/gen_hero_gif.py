@@ -416,39 +416,47 @@ def act_sdf3d(nf):
     grid = np.stack(np.meshgrid(lin, lin, lin, indexing="ij"), axis=-1)
     sph = fs.ledger.sphere_sdf(grid, (0.0, 0.0, -0.18), 0.66)
     box = fs.ledger.box_sdf(grid, (0.0, 0.0, 0.46), (0.40, 0.40, 0.40))
+    K = None
+    dlo = dhi = None
+    # look_at / auto_view は -Z を見る OpenGL 流。project_points は +Z が前なので
+    # y と z の符号を反転して渡す(反転しないと depth>0 の点が 1 つも無くなる)。
+    flip = np.diag([1.0, -1.0, -1.0])
     out = []
     for i in range(nf):
         t = i / nf
         k = 0.18 + 0.13 * np.sin(2.0 * np.pi * t)        # 継ぎ目の丸め半径が動く
         fld = fs.ledger.sdf_smooth_union(sph, box, float(k))
         V, F = fs.marching_cubes(fld, level=0.0)
-        # 視点は 1 周(端で戻らないので幕がループする)
+        # 視点を回すのではなく**メッシュを重心まわりに回す** —— 外接球が変わらない
+        # ので auto_view の画角が 1 周を通して一定になる(揺れない)。
         az = 2.0 * np.pi * t
-        rad = 1.9 * n
-        eye = (n / 2 + rad * np.cos(az), n / 2 + rad * np.sin(az), n / 2 + 0.85 * n)
-        pose = fs.look_at(eye, (n / 2, n / 2, n / 2), up=(0, 0, 1))
-        K = fs.intrinsics_from_fov(38.0, PANEL, PANEL)
-        beauty = fs.ledger.render_beauty(V, F, pose=pose, intrinsics=K, size=PANEL, ss=2,
-                                         light=(0.5, -0.7, 0.9), albedo=(0.62, 0.66, 0.72),
-                                         material="plastic", ao=True, ground_shadow=False,
+        ctr = V.mean(axis=0)
+        ca, sa = np.cos(az), np.sin(az)
+        rz = np.array([[ca, -sa, 0.0], [sa, ca, 0.0], [0.0, 0.0, 1.0]])
+        Vr = (V - ctr) @ rz.T + ctr
+        pose, K = fs.auto_view(Vr, margin=1.12, width=PANEL, height=PANEL)
+        # ao=True は 1 枚 50 s 掛かるので使わない(全体の 5 分制限に収まらない)。
+        # 代わりに ss=2 のスーパーサンプリングで輪郭の品位を確保する。
+        beauty = fs.ledger.render_beauty(Vr, F, pose=pose, intrinsics=K, size=PANEL, ss=2,
+                                         light=(0.45, -0.75, 0.95), albedo=(0.58, 0.63, 0.72),
+                                         material="plastic", ao=False, ground_shadow=False,
                                          background=(1.0, 1.0, 1.0), tonemap="aces")
-        pts = fs.mesh_sample_points(V, F, n=9000, method="area", seed=0)
-        # look_at は -Z を見る OpenGL 流。project_points は +Z が前なので y/z を反転する
-        flip = np.diag([1.0, -1.0, -1.0])
+        pts = fs.mesh_sample_points(Vr, F, n=60000, method="area", seed=0)
         depth = fs.ledger.render_point_depth(pts, K, (PANEL, PANEL),
                                              R=flip @ pose[:3, :3], t=flip @ pose[:3, 3])
         dv = np.where(depth > 0, depth, np.nan)
-        lo, hi = 1.25 * n, 2.75 * n
-        dimg = fs.apply_cmap(dv, "viridis", vmin=lo, vmax=hi, invalid=(1.0, 1.0, 1.0))
-        sl = fld[:, :, n // 2]
-        sv = fs.apply_cmap(sl, "coolwarm", vmin=-0.7, vmax=0.7)
+        if dlo is None:                                   # 全フレーム共通の深度スケール
+            dlo = float(np.nanpercentile(dv, 1.0))
+            dhi = float(np.nanpercentile(dv, 99.0))
+        dimg = fs.apply_cmap(dv, "viridis", vmin=dlo, vmax=dhi, invalid=(1.0, 1.0, 1.0))
+        sv = fs.apply_cmap(fld[:, n // 2, :], "coolwarm", vmin=-0.8, vmax=0.8)
         c = _content()
         c = _place(c, sv, 0)
         c = _place(c, beauty, 1)
         c = _place(c, dimg, 2)
-        c = _cap(c, 0, "(a) SDF 断面  k = %.3f" % k)
-        c = _cap(c, 1, "(b) render_beauty  方位 %3.0f°  三角形 %d" % (np.rad2deg(az), len(F)))
-        c = _cap(c, 2, "(c) 表面サンプルの深度")
+        c = _cap(c, 0, "(a) SDF の断面  丸め k = %.3f" % k)
+        c = _cap(c, 1, "(b) render_beauty — 三角形 %d" % len(F))
+        c = _cap(c, 2, "(c) 表面サンプル 60k の深度  方位 %3.0f°" % np.rad2deg(az))
         out.append(c)
     return out, "4 / 6  3-D — 距離場から三角形へ", \
         "sphere_sdf · box_sdf · sdf_smooth_union · marching_cubes · render_beauty"
