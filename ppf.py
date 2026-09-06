@@ -97,7 +97,7 @@ def ppf_model(points, normals=None, dist_step: float = None, angle_bins: int = 3
         N = estimate_normals(P, k=k_normals)
     else:
         N = _unit(np.asarray(normals, np.float64))
-    diam = float(np.linalg.norm(P.max(0) - P.min(0)))
+    diam = _invariant_diameter(P)
     if dist_step is None:
         dist_step = diam / 20.0 if diam > 0 else 1.0
     astep = np.pi / int(angle_bins)
