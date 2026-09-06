@@ -189,11 +189,30 @@ def test_the_operator_table_is_not_empty():
     """
     s = (DOCS / "README.md").read_text(encoding="utf-8")
     block = s.split("<!-- ops-index:start -->", 1)[1].split("<!-- ops-index:end -->")[0]
-    rows = [l for l in block.splitlines() if l.startswith("| `")]
-    assert len(rows) >= 20, "次元の行が %d 行しかない(生成器が空を返している?)" % len(rows)
     assert "**0 " not in block, "「0 本の op ノート」と書かれている —— 生成器が壊れている"
-    for dim in ("`2d`", "`3d`", "`optics`", "`blob`"):
-        assert dim in block, "%s の行が無い" % dim
+
+    # ★「20 行あって 4 つの次元名が見える」で通していたが、それでは数百 op
+    # 落ちても緑になる(Codex の敵対的レビュー、2026-09-06)。**次元ごとの
+    # 実数**と 1 つ残らず突き合わせる。
+    sys.path.insert(0, str(ROOT / "tools"))
+    sys.path.insert(0, str(ROOT))
+    import gen_docs_index_ops as G
+
+    live = {}
+    for r in G._records():
+        live[r["dim"]] = live.get(r["dim"], 0) + 1
+    shown = {}
+    for line in block.splitlines():
+        m = re.match(r"\|\s*`([^`]+)`[^|]*\|\s*([\d,]+)\s*\|", line)
+        if m:
+            shown[m.group(1)] = int(m.group(2).replace(",", ""))
+    assert shown == live, (
+        "表の op 数が実数と違う。表にだけある: %s / 実数にだけある: %s / "
+        "数が違う: %s" % (
+            sorted(set(shown) - set(live)), sorted(set(live) - set(shown)),
+            {k: (shown[k], live[k]) for k in set(shown) & set(live)
+             if shown[k] != live[k]}))
+    assert sum(live.values()) == len(G._records())
 
 
 def test_the_generated_blocks_are_current():
