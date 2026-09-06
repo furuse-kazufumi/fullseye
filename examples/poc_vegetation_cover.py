@@ -861,8 +861,10 @@ def main():
     # **NDVI では見えない** —— 比は合ったまま大きさ(NIR)が縮むので、そこを assert する。
     assert ppi_gsd[48][0] < 0.05, ppi_gsd[48]
     assert abs(ppi_gsd[48][2]) > 10.0 > abs(ppi_gsd[6][2]), (ppi_gsd[6], ppi_gsd[48])
-    assert ppi_gsd[48][1] > 0.8 * NDVI_LEAF, ppi_gsd[48]          # 比は本物同然
-    assert ppi_gsd[48][3] < 0.8 * RHO["leaf"][B_NIR], ppi_gsd[48]  # 大きさは縮んでいる
+    # 葉側の端成分は本物同然のまま(比も大きさも)、崩れているのは **土側** である
+    assert ppi_gsd[48][1] > 0.8 * NDVI_LEAF, ppi_gsd[48]
+    assert ppi_gsd[48][3] > 0.8 * RHO["leaf"][B_NIR], ppi_gsd[48]
+    assert ppi_gsd[48][4] > ppi_gsd[6][4] + 0.10, (ppi_gsd[6][4], ppi_gsd[48][4])
     # (8) 崖 (c) 湿った土でゼロ点の極性が反転する(再現率が落ちる)
     dry = cond_rows[(2, "乾いた土")][1]["大津・緑(ゼロ点)"]
     wet = cond_rows[(2, "湿った土(暗い)")][1]["大津・緑(ゼロ点)"]
