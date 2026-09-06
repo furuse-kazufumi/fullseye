@@ -3,13 +3,14 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-07 03:41:20
+- **最終更新**: 2026-09-07 05:31:42
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+9d2c4fbe0 poc: ct_fidelity の「厳密に一定」を std()==0 から ptp()==0 に(py3.10 で 5.6e-17)
 1fcdf05b9 ci: 共有ランナーでだけ落ちる 2 件を直す(faulthandler の segfault / PoC 門の stdout)
 540f74907 tests: 文書の門を requires_full_registry() に揃える(Linux CI は optional backend 無しで 859 op)
 481ce77dd docs: KNOWN_ISSUES §40 に公開サイトの図 404(Jekyll の _ ディレクトリ)を追記
@@ -19,30 +20,23 @@
 68fb6c24a auto: test_docs_index_reachable.py 編集前 (2026-09-07 00:20)
 53f78b90a auto: test_docs_index_reachable.py 編集前 (2026-09-06 23:49)
 b1e7721b5 auto: test_docs_index_reachable.py 編集前 (2026-09-06 23:47)
-6e5e456d4 auto: test_docs_index_reachable.py 編集前 (2026-09-06 23:47)
 ```
 
 ## 現在の git status
 
 ```
-(clean)
+M docs/SESSION_SUMMARY.md
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
+05:28 docs/SESSION_SUMMARY.md
+04:30 docs/KNOWN_ISSUES.md
+04:30 examples/poc_ct_fidelity.py
 03:40 .pytest_cache/v/cache/nodeids
-03:37 docs/KNOWN_ISSUES.md
-03:37 examples/poc_ct_fidelity.py
 03:37 tests/test_poc_scripts_run.py
 03:36 pyproject.toml
-02:46 docs/SESSION_SUMMARY.md
-02:40 .pytest_cache/v/cache/lastfailed
-02:38 tests/test_op_figures.py
-02:38 tests/test_docs_index_numbers.py
-02:37 tests/test_docs_index_reachable.py
-02:36 examples/poc_template_tracking.py
-01:47 docs/_config.yml
 ```
 
 ---
