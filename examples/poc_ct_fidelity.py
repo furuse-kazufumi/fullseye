@@ -381,7 +381,9 @@ def main() -> bool:
     raster = abs(truth.sum() / m_an - 1)
     checks.append(("ラスタライズ質量が閉形式と 1e-3 以内", raster < 1e-3, f"{raster:.2e}"))
 
-    checks.append(("真値の一様領域は厳密に一定", truth[flat].std() == 0.0,
+    # `std() == 0.0` は py3.10(旧 numpy)で 5.6e-17 になって一度落ちた(2026-09-07 の
+    # CI)。「一様領域が厳密に一定」という主張は max − min で総和に依らず厳密に判定できる。
+    checks.append(("真値の一様領域は厳密に一定", float(np.ptp(truth[flat])) == 0.0,
                    f"{truth[flat].std():.1e}"))
 
     monotone = all(rows_out[i]["fbp"] < rows_out[i + 1]["fbp"] for i in range(len(rows_out) - 1))
