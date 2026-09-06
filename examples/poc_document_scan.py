@@ -378,11 +378,12 @@ def rule_bend(rect, half=8, contrast=0.06):
     return worst if found else float("nan")
 
 
-def band_heights(rect, dark=0.85, row_end=RAMP_R0 - 15):
-    """補正後の「文字行の高さ」の並び(暗画素の行方向占有率から run を数える)。
+def band_metrics(rect, dark=0.85, row_end=RAMP_R0 - 15):
+    """補正後の文字行の**高さ**と**行間**(どちらも副画素、書類画素)。
 
-    地を 61 px 窓で割ってから閾値を掛けるので、濃い字も薄い字も同じように
-    数えられる。図(階調のランプ)は行を数える対象ではないので範囲から外す。
+    地を 61 px 窓で割ってから閾値を掛けるので、濃い字も薄い字も同じ土俵で
+    数えられる。図(階調のランプ)は行ではないので範囲から外す。高さは
+    等価幅 ``sum(d)/max(d)``、位置は重心なので整数の run 長より細かく出る。
     """
     sub = bg_divide(rect, 61)[:row_end, TEXT_C0 + 10:TEXT_C1 - 10]
     frac = (sub < dark).mean(axis=1)
@@ -393,11 +394,25 @@ def band_heights(rect, dark=0.85, row_end=RAMP_R0 - 15):
             start = i
         elif not v and start is not None:
             if i - start >= 4:
-                runs.append((start, i - start))
+                runs.append((start, i))
             start = None
     if start is not None and len(on) - start >= 4:
-        runs.append((start, len(on) - start))
-    return [h for _, h in runs]
+        runs.append((start, len(on)))
+    heights, centres = [], []
+    rows = np.arange(len(frac), dtype=float)
+    for a, b in runs:
+        a2, b2 = max(0, a - 3), min(len(frac), b + 3)
+        d = np.maximum(frac[a2:b2] - 0.20, 0.0)
+        if d.max() <= 0:
+            continue
+        heights.append(float(d.sum() / d.max()))
+        centres.append(float((rows[a2:b2] * d).sum() / d.sum()))
+    return heights, centres
+
+
+def cv_of(v):
+    """ばらつきの指標 std/平均。3 個未満なら NaN。"""
+    return float(np.std(v) / np.mean(v)) if len(v) >= 3 else float("nan")
 
 
 def corner_rms(est, truth):

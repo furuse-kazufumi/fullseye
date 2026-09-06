@@ -274,8 +274,8 @@ def _scan(dark, step):
     return hits
 
 
-def _refine_center(dark, cx, cy, half, iters=6):
-    """(cx, cy) を中心とする一辺 2*half の**正方**窓の暗画素重心へ寄せる。
+def _refine_center(dark, cx, cy, hx, hy=None, iters=6):
+    """(cx, cy) を中心とする ``2*hx`` x ``2*hy`` の**矩形**窓の暗画素重心へ寄せる。
 
     円板ではなく正方形にするのが要点だった。位置検出パターンも位置合わせパターンも
     まわり 1 モジュールが明の分離帯なので、``half`` をパターンの半幅と分離帯の間
@@ -285,12 +285,17 @@ def _refine_center(dark, cx, cy, half, iters=6):
     円板にすると外周の輪を斜めに切り落とすため、中心は不動点ではあっても
     **反発する不動点**になり、実測で 1 反復ごとに 1 px ずつ逃げた(6 反復で 7 px)。
 
+    傾けて撮ると横のモジュールだけが縮むので、窓も縦横で別の幅を取る
+    (``hx`` は横走査から、``hy`` は縦走査から出したモジュール寸法に比例させる)。
+    正方形のまま横を広く取ると、隣のデータを片側だけ拾って中心がずれた。
+
     画素 ``i`` の幾何座標は ``i + 0.5``。指標の平均に 0.5 を足して返す。
     """
+    hy = hx if hy is None else hy
     h, w = dark.shape
     for _ in range(iters):
-        r0 = int(max(0, math.floor(cy - half))); r1 = int(min(h, math.ceil(cy + half)))
-        c0 = int(max(0, math.floor(cx - half))); c1 = int(min(w, math.ceil(cx + half)))
+        r0 = int(max(0, math.floor(cy - hy))); r1 = int(min(h, math.ceil(cy + hy)))
+        c0 = int(max(0, math.floor(cx - hx))); c1 = int(min(w, math.ceil(cx + hx)))
         if r1 - r0 < 2 or c1 - c0 < 2:
             return None
         sub = dark[r0:r1, c0:c1] > 0.5
@@ -307,9 +312,9 @@ def _refine_center(dark, cx, cy, half, iters=6):
 
 def find_finders(dark, step=1):
     """位置検出パターンの中心 3 点を (row, col) で返す。見つからなければ None。"""
-    rows = [(y, x, m) for y, x, m in _scan(dark, step)]
-    cols = [(x, y, m) for y, x, m in _scan(dark.T, step)]
-    pts = np.array([[y, x, m] for y, x, m in rows] + [[y, x, m] for y, x, m in cols])
+    rows = [(y, x, m, 1.0, 0.0) for y, x, m in _scan(dark, step)]      # 横走査 -> m_x
+    cols = [(x, y, m, 0.0, 1.0) for y, x, m in _scan(dark.T, step)]    # 縦走査 -> m_y
+    pts = np.array([list(t) for t in rows + cols])
     if len(pts) < 3:
         return None
     rad = 1.5 * float(np.median(pts[:, 2]))
@@ -321,7 +326,10 @@ def find_finders(dark, step=1):
         d = np.hypot(pts[:, 0] - pts[i, 0], pts[:, 1] - pts[i, 1])
         sel = (~used) & (d < rad)
         used |= sel
-        clusters.append((sel.sum(), pts[sel, :2].mean(0), pts[sel, 2].mean()))
+        wx, wy = pts[sel, 3], pts[sel, 4]
+        mx = float((pts[sel, 2] * wx).sum() / wx.sum()) if wx.sum() else float("nan")
+        my = float((pts[sel, 2] * wy).sum() / wy.sum()) if wy.sum() else float("nan")
+        clusters.append((sel.sum(), pts[sel, :2].mean(0), pts[sel, 2].mean(), mx, my))
     clusters.sort(key=lambda c: -c[0])
     cand = [c for c in clusters if c[0] >= 2][:8]
     if len(cand) < 3:
@@ -345,11 +353,15 @@ def find_finders(dark, step=1):
     if best is None or best_err > 0.30:
         return None
     p, order = best
-    # 走査の当たりは「核の 3 行」に偏るので、正方窓の重心で中心へ寄せ直す
-    m_est = float(np.median([c[2] for c in cand]))
+    # 走査の当たりは「核の 3 行」に偏るので、矩形窓の重心で中心へ寄せ直す
+    mxs = [c[3] for c in cand if np.isfinite(c[3])]
+    mys = [c[4] for c in cand if np.isfinite(c[4])]
+    m_all = float(np.median([c[2] for c in cand]))
+    m_x = float(np.median(mxs)) if mxs else m_all
+    m_y = float(np.median(mys)) if mys else m_all
     ref = []
     for q in p:
-        r = _refine_center(dark, q[1], q[0], 4.0 * m_est)
+        r = _refine_center(dark, q[1], q[0], 4.0 * m_x, 4.0 * m_y)
         ref.append(np.array([q[0], q[1]]) if r is None else np.array([r[1], r[0]]))
     p = np.array(ref)
     tl = p[int(np.argmax([np.linalg.norm(p[1] - p[2]),
@@ -367,14 +379,14 @@ def find_finders(dark, step=1):
     return np.array([tl, tr, bl])                                # (row, col) x 3
 
 
-def find_alignment(dark, finders, n, module_px_est):
+def find_alignment(dark, finders, n, m_x, m_y):
     """3 点のアフィン推定から位置合わせパターンを探し、重心で中心を出す。"""
     src = np.array([[3.5, 3.5], [n - 3.5, 3.5], [3.5, n - 3.5]])          # (u, v)
     dst = np.array([[f[1], f[0]] for f in finders])                        # (x, y)
     M = np.linalg.solve(np.column_stack([src, np.ones(3)]), dst)           # 3x2
     pred = np.array([n - 6.5, n - 6.5, 1.0]) @ M
     # アフィン予測は透視ぶんだけ外れる。分離帯の内側に収まる正方窓で引き込む
-    got = _refine_center(dark, pred[0], pred[1], 3.0 * module_px_est, iters=8)
+    got = _refine_center(dark, pred[0], pred[1], 3.0 * m_x, 3.0 * m_y, iters=8)
     if got is None:
         return None
     return np.array([got[0], got[1]])                                      # (x, y)
@@ -389,10 +401,11 @@ def estimate_homography(dark, n, step=1):
     f = find_finders(dark, step)
     if f is None:
         return None, "位置検出パターンを取れず"
-    m_est = float(np.linalg.norm(f[1] - f[0])) / (n - 7)
-    if not np.isfinite(m_est) or m_est < 0.5:
+    m_x = float(np.linalg.norm(f[1] - f[0])) / (n - 7)     # 上辺 = 横のモジュール寸法
+    m_y = float(np.linalg.norm(f[2] - f[0])) / (n - 7)     # 左辺 = 縦のモジュール寸法
+    if not (np.isfinite(m_x) and np.isfinite(m_y)) or min(m_x, m_y) < 0.5:
         return None, "モジュール寸法が出ず"
-    al = find_alignment(dark, f, n, m_est)
+    al = find_alignment(dark, f, n, m_x, m_y)
     if al is None:
         return None, "位置合わせパターンを取れず"
     src = np.array([[3.5, 3.5], [n - 3.5, 3.5], [3.5, n - 3.5], [n - 6.5, n - 6.5]])
