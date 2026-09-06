@@ -343,11 +343,22 @@ def main():
         e = float(imgmetrics.image_entropy(out.mean(axis=2)))
         zero_scores[name] = (rms_contrast(out), e, p, s)
         print(f"  {name:<24}{rms_contrast(out):>10.4f}{e:>13.3f}{p:>11.2f}{s:>8.4f}")
-    print(f"  真値 J そのもの         {rms_contrast(j_true):>10.4f}"
+    print(f"  {'(参考) 真値 J そのもの':<24}{rms_contrast(j_true):>10.4f}"
           f"{float(imgmetrics.image_entropy(j_true.mean(axis=2))):>13.3f}"
           f"{'inf':>11}{1.0:>8.4f}")
-    print("  → ヒストグラム等化は RMS 対比とエントロピーを最大にしながら、PSNR は")
-    print("     「何もしない」より**下がる**。見た目の指標は符号が逆に動きうる。")
+    c_str = zero_scores["大域コントラスト伸張"]
+    c_eq0 = zero_scores["ヒストグラム等化"]
+    c_no0 = zero_scores["何もしない"]
+    print(f"  → **見た目の指標は真値を最大値としない**。真値 J の RMS 対比は "
+          f"{rms_contrast(j_true):.4f} なのに、")
+    print(f"     霞んだ入力ですら {c_no0[0]:.4f}、伸張 {c_str[0]:.4f}、等化 {c_eq0[0]:.4f} と")
+    print("     **真値より高い**。霞は低対比だから対比を上げれば近づく、は成り立たない")
+    print("     (霞は J に定数 A を混ぜる操作で、混ぜた分は伸張しても分離されない)。")
+    print(f"  → 等化はエントロピーを最大 ({c_eq0[1]:.3f}) にしながら PSNR は "
+          f"{c_eq0[2] - c_no0[2]:+.2f} dB、SSIM は {c_eq0[3] - c_no0[3]:+.4f} で")
+    print(f"     どちらも悪化。伸張は PSNR {c_str[2] - c_no0[2]:+.2f} dB とわずかに改善するが "
+          f"SSIM は {c_str[3] - c_no0[3]:+.4f} で悪化。")
+    print("     **見た目の 2 指標と真値の 2 指標は符号が揃わない。**")
 
     print("\n=== 3. 主要手法 —— J の誤差 / t の誤差 / A の誤差を分けて出す ===")
     a_dcp = airlight_dcp(img)
