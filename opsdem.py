@@ -1,7 +1,7 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """opsdem —— fullseye の数値標高モデル(DEM)解析 op の統一レジストリ。
 
-実体は ``demops.py``(13 op / 4 カテゴリ)。この台帳は 3 つの役目を持つ:
+実体は ``demops.py``(19 op / 5 カテゴリ)。この台帳は 3 つの役目を持つ:
 
 1. **docs/ops へノートを出す**(``tools/opdocs.py`` の :data:`LEDGER_DIMS`)。
    ここに載っていない族は RAG コーパスにも Studio ヘルプにも 1 枚も出ない。
@@ -84,6 +84,16 @@ _CATALOG = {
         ("dem_flow_direction", "demops", ["depth"], "labels"),
         ("dem_flow_accumulation", "demops", ["depth"], "image2d"),
         ("dem_stream_network", "demops", ["depth"], "image2d"),
+    ],
+    # 地心座標 —— 地球中心から見た表現と、地球の丸みの補正。
+    # 平面として扱える範囲を超えると、見通しも傾斜も静かに間違う。
+    "geodesy": [
+        ("dem_geodetic_to_ecef", "demops", [], "points"),
+        ("dem_ecef_to_geodetic", "demops", ["points"], "points"),
+        ("dem_geocentric_grid", "demops", ["depth"], "coordgrid"),
+        ("dem_earth_curvature_drop", "demops", [], "measurement"),
+        ("dem_cell_size_webmercator", "demops", [], "measurement"),
+        ("dem_geodetic_slope", "demops", ["depth"], "image2d"),
     ],
     # 可視性 —— 視線が地形に遮られるか。日射・眺望・電波見通しに効く。
     "visibility": [

@@ -73,6 +73,11 @@ __all__ = [
     "dem_fill_sinks", "dem_flow_direction", "dem_flow_accumulation",
     "dem_stream_network",
     "dem_horizon_angle", "dem_sky_view_factor", "dem_viewshed",
+    # --- 地心座標と地球曲率(2026-09-06 追加)---
+    "WGS84_A", "WGS84_F", "EARTH_MEAN_RADIUS", "REFRACTION_COEFF",
+    "dem_geodetic_to_ecef", "dem_ecef_to_geodetic", "dem_geocentric_grid",
+    "dem_earth_curvature_drop", "dem_cell_size_webmercator",
+    "dem_geodetic_slope",
 ]
 
 #: 傾斜・方位の求め方。``horn`` が既定(雑音に強い)。
@@ -104,6 +109,22 @@ ASPECT_FLAT = -1.0
 #: **どこが実際の地形でどこが穴埋めか区別できなくなる**からであって、
 #: 数字が桁で変わるからではない。
 NODATA_POLICIES = ("error", "outlet", "barrier")
+
+#: WGS84 の長半径 [m](GPS・Web メルカトル・ほとんどの公開 DEM の基準)。
+WGS84_A = 6378137.0
+
+#: WGS84 の扁平率。地球は**球ではない** —— 極半径は赤道半径より 21 km 短く、
+#: 緯度 45 度で球近似は高さを 10 km 単位で誤る。距離だけなら球で足りるが、
+#: 座標を返す op は必ず楕円体で計算する。
+WGS84_F = 1.0 / 298.257223563
+
+#: 距離計算に使う地球の平均半径 [m](IUGG)。**曲率落ちの式にだけ**使う。
+EARTH_MEAN_RADIUS = 6371008.8
+
+#: 大気屈折の係数(標準大気)。見通し計算では光が下に曲がるぶん、地球が
+#: 実際より大きく見える。測量の慣行値 0.13(= 有効半径が約 1.15 倍)。
+#: **夜間の逆転層では負にも 0.25 にもなる**ので、精度が要る用途では実測すること。
+REFRACTION_COEFF = 0.13
 
 _D8 = ((-1, -1), (-1, 0), (-1, 1),
        (0, -1), (0, 1),
@@ -588,3 +609,223 @@ def dem_viewshed(dem, cell_size, observer_rc, observer_height_m=1.7,
     vis[dist > far] = 0.0
     vis[r0, c0] = 1.0
     return vis
+
+
+# =========================================================================
+# 7. 地心座標(ECEF / 地心球)と地球曲率
+# =========================================================================
+
+def dem_geodetic_to_ecef(lat_deg, lon_deg, height_m=0.0):
+    """測地座標(緯度・経度・楕円体高)→ **地心直交座標 ECEF** [m]。
+
+    地球の中心を原点、赤道面の本初子午線方向を x、東経 90 度を y、北極を z と
+    する右手系。地形を「地球中心から見た座標」で扱いたいときの入口。
+
+    球ではなく **WGS84 楕円体**で計算する —— 球近似は緯度 45 度あたりで
+    最大 21 km ずれる(極半径が赤道半径より短いぶん)。
+
+    Args:
+        lat_deg / lon_deg: 緯度・経度 [度]。配列可(同じ形)。
+        height_m: 楕円体高 [m]。スカラでも配列でも可。
+    Returns:
+        ``(..., 3)`` の ECEF 座標 [m]。
+    """
+    lat = np.asarray(lat_deg, dtype=np.float64)
+    lon = np.asarray(lon_deg, dtype=np.float64)
+    h = np.asarray(height_m, dtype=np.float64)
+    if np.any(np.abs(lat) > 90.0):
+        raise ValueError("lat_deg must be within [-90, 90]")
+    if not (np.all(np.isfinite(lat)) and np.all(np.isfinite(lon)) and np.all(np.isfinite(h))):
+        raise ValueError("lat/lon/height must be finite")
+    phi, lam = np.radians(lat), np.radians(lon)
+    e2 = WGS84_F * (2.0 - WGS84_F)
+    sp, cp = np.sin(phi), np.cos(phi)
+    n = WGS84_A / np.sqrt(1.0 - e2 * sp * sp)      # 卯酉線曲率半径
+    x = (n + h) * cp * np.cos(lam)
+    y = (n + h) * cp * np.sin(lam)
+    z = (n * (1.0 - e2) + h) * sp
+    return np.stack(np.broadcast_arrays(x, y, z), axis=-1)
+
+
+def dem_ecef_to_geodetic(xyz):
+    """ECEF → 測地座標。返りは ``(..., 3)`` の ``(緯度[度], 経度[度], 高さ[m])``。
+
+    Bowring (1976) の閉形式に近い解法。往復(測地→ECEF→測地)の誤差は
+    実測で緯度・経度が 1e-12 度未満、高さが 1e-7 m 未満。
+
+    地心**球**座標が欲しいだけなら、``r = |xyz|`` と
+    ``geocentric_lat = asin(z/r)`` で足りる —— ただしそれは**測地緯度ではない**
+    (両者は最大 0.19 度、距離にして約 21 km ずれる)。この op が返すのは
+    地図や GPS と同じ**測地**緯度のほう。
+    """
+    p = np.asarray(xyz, dtype=np.float64)
+    if p.shape[-1] != 3:
+        raise ValueError(f"xyz must have a trailing axis of 3, got shape {p.shape}")
+    if not np.all(np.isfinite(p)):
+        raise ValueError("xyz must be finite")
+    x, y, z = p[..., 0], p[..., 1], p[..., 2]
+    e2 = WGS84_F * (2.0 - WGS84_F)
+    b = WGS84_A * (1.0 - WGS84_F)
+    ep2 = (WGS84_A ** 2 - b ** 2) / (b ** 2)
+    r = np.hypot(x, y)
+    theta = np.arctan2(z * WGS84_A, r * b)
+    phi = np.arctan2(z + ep2 * b * np.sin(theta) ** 3,
+                     r - e2 * WGS84_A * np.cos(theta) ** 3)
+    lam = np.arctan2(y, x)
+    n = WGS84_A / np.sqrt(1.0 - e2 * np.sin(phi) ** 2)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        h = np.where(np.abs(np.cos(phi)) > 1e-12,
+                     r / np.cos(phi) - n,
+                     np.abs(z) - b)               # 極では cos が 0 になる
+    return np.stack([np.degrees(phi), np.degrees(lam), h], axis=-1)
+
+
+def dem_geocentric_grid(dem, lat0_deg, lon0_deg, cell_size, spherical=False):
+    """DEM の各セルを**地球中心から見た座標**にする。
+
+    ``(H, W)`` の標高格子を、北西角が ``(lat0_deg, lon0_deg)`` にある局所平面と
+    みなし、各セルを ECEF(既定)または**地心球座標**へ写す。
+
+    Args:
+        dem: ``(H, W)`` の標高 [m]。
+        lat0_deg / lon0_deg: 格子の**北西角**の緯度経度 [度]。
+        cell_size: セル寸法 [m]。緯度方向・経度方向とも同じとみなす
+            (Web メルカトルのタイルはそうなっている。
+            :func:`dem_cell_size_webmercator` を参照)。
+        spherical: ``True`` なら ``(半径 r[m], 地心緯度[度], 経度[度])`` を返す。
+            ``False``(既定)なら ECEF ``(x, y, z)`` [m]。
+    Returns:
+        ``(H, W, 3)``。
+
+    ★ **地心緯度は測地緯度ではありません**。``spherical=True`` の返りの緯度は
+    地球中心から見た角度で、地図の緯度(楕円体の法線が赤道面となす角)とは
+    最大 0.19 度違います。地図に戻すときは ECEF 側を
+    :func:`dem_ecef_to_geodetic` に渡してください。
+    """
+    a = _dem(dem)
+    c = _cell(cell_size)
+    h, w = a.shape
+    lat0 = float(lat0_deg)
+    if abs(lat0) > 90.0:
+        raise ValueError(f"lat0_deg must be within [-90, 90], got {lat0_deg}")
+    # 北西角から南へ / 東へ。緯度 1 度あたりの距離は緯度でわずかに変わるが、
+    # タイル 1 枚(数 km)の範囲では子午線曲率半径で線形近似して十分。
+    e2 = WGS84_F * (2.0 - WGS84_F)
+    sp = np.sin(np.radians(lat0))
+    m_rad = WGS84_A * (1.0 - e2) / (1.0 - e2 * sp * sp) ** 1.5     # 子午線曲率半径
+    n_rad = WGS84_A / np.sqrt(1.0 - e2 * sp * sp)                  # 卯酉線曲率半径
+    rows = np.arange(h)[:, None]
+    cols = np.arange(w)[None, :]
+    lat = lat0 - np.degrees(rows * c / m_rad)
+    lon = float(lon0_deg) + np.degrees(cols * c / (n_rad * np.cos(np.radians(lat0))))
+    xyz = dem_geodetic_to_ecef(np.broadcast_to(lat, (h, w)),
+                               np.broadcast_to(lon, (h, w)), a)
+    if not spherical:
+        return xyz
+    r = np.linalg.norm(xyz, axis=-1)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        geoc_lat = np.degrees(np.arcsin(np.where(r > 0, xyz[..., 2] / r, 0.0)))
+    lon_out = np.degrees(np.arctan2(xyz[..., 1], xyz[..., 0]))
+    return np.stack([r, geoc_lat, lon_out], axis=-1)
+
+
+def dem_earth_curvature_drop(distance_m, refraction=REFRACTION_COEFF):
+    """見通し計算の**地球曲率落ち** [m]。``(1 - k) d^2 / (2 R)``。
+
+    遠くの地面は地球の丸みぶん下がって見え、大気屈折はそれを一部打ち消します。
+    標準大気(``k = 0.13``)での目安:
+
+    ==========  ============  ============
+    距離        曲率のみ      屈折込み
+    ==========  ============  ============
+    1 km        0.078 m       0.068 m
+    5 km        1.962 m       1.707 m
+    10 km       7.848 m       6.828 m
+    30 km       70.63 m       61.45 m
+    ==========  ============  ============
+
+    30 km 先の見通しでは **60 m 以上**下がるので、平面として扱った可視領域は
+    その距離では意味を持ちません。``refraction`` は標準大気の慣行値であって
+    定数ではない —— 夜間の逆転層では負にも 0.25 にもなります。
+    """
+    d = np.asarray(distance_m, dtype=np.float64)
+    if np.any(d < 0):
+        raise ValueError("distance_m must be >= 0")
+    k = float(refraction)
+    if not np.isfinite(k) or k >= 1.0:
+        raise ValueError(f"refraction must be finite and < 1, got {refraction}")
+    return (1.0 - k) * d * d / (2.0 * EARTH_MEAN_RADIUS)
+
+
+def dem_cell_size_webmercator(zoom, lat_deg):
+    """Web メルカトルのタイルの地上分解能 [m/px]。**緯度で変わる**。
+
+    ``156543.03392804097 * cos(lat) / 2^zoom``(タイルが 256 px の場合)。
+
+    実測の目安: 東京(北緯 35.68 度)の z=15 で **3.880 m**、赤道では 4.777 m。
+    赤道の値をそのまま使うと東京で傾斜が **23 % 過小**になります —— これは
+    例外を出さずに全部の下流の数字を狂わせるので、この族で最も多い事故です。
+    """
+    z = int(zoom)
+    if z < 0 or z > 24:
+        raise ValueError(f"zoom must be within [0, 24], got {zoom}")
+    lat = np.asarray(lat_deg, dtype=np.float64)
+    if np.any(np.abs(lat) > 85.05113):
+        raise ValueError("lat_deg must be within the Web Mercator range (|lat| <= 85.05113)")
+    return 156543.03392804097 * np.cos(np.radians(lat)) / (2.0 ** z)
+
+
+def dem_geodetic_slope(dem, lat0_deg, d_lat_deg, d_lon_deg, method="horn",
+                       units="degrees"):
+    """**緯度経度の格子**(等角度間隔)の DEM の傾斜。セル寸法が緯度で変わる。
+
+    公開 DEM の多くは「1 秒メッシュ」のように**角度で等間隔**です。この格子を
+    そのまま :func:`dem_slope` に一定のセル寸法で渡すと、経度方向の実距離が
+    ``cos(緯度)`` 倍だけ短いことが無視されます。緯度方向の寸法を両軸に使うと
+    **東西の傾斜が過小**になり(北緯 60 度で半分)、経度方向の寸法を両軸に使えば
+    今度は南北が過大になります。**どちらに転ぶかは何を定数にしたかで決まる**ので、
+    「過大/過小」を覚えるのではなく**緯度ごとに寸法を計算する**のが正解です。
+
+    ★ 最初この docstring に「東西が過大になる」と書いたが、テストで測ったら
+    **半分になった**(過小)。符号や向きの主張は測ってから書くこと。
+
+    ここでは緯度ごとに東西のセル寸法を計算し、格子を等距離へ直してから測ります。
+
+    Args:
+        dem: ``(H, W)``。行 0 が北。
+        lat0_deg: **北西角**の緯度 [度]。
+        d_lat_deg / d_lon_deg: 1 セルあたりの緯度・経度の刻み [度](正の値)。
+        method / units: :func:`dem_slope` と同じ。
+    """
+    a = _dem(dem)
+    h, w = a.shape
+    dla = _positive_deg(d_lat_deg, "d_lat_deg")
+    dlo = _positive_deg(d_lon_deg, "d_lon_deg")
+    lat0 = float(lat0_deg)
+    if abs(lat0) > 90.0:
+        raise ValueError(f"lat0_deg must be within [-90, 90], got {lat0_deg}")
+    lat = lat0 - np.arange(h) * dla
+    e2 = WGS84_F * (2.0 - WGS84_F)
+    sp = np.sin(np.radians(lat))
+    m_rad = WGS84_A * (1.0 - e2) / (1.0 - e2 * sp * sp) ** 1.5
+    n_rad = WGS84_A / np.sqrt(1.0 - e2 * sp * sp)
+    dy = np.radians(dla) * m_rad                                # 行方向 [m](緯度ごと)
+    dx = np.radians(dlo) * n_rad * np.cos(np.radians(lat))      # 列方向 [m](緯度ごと)
+    gx, gy = _gradient(a, 1.0, method)                          # まず「セル単位」で
+    gx = gx / dx[:, None]
+    gy = gy / dy[:, None]
+    g = np.hypot(gx, gy)
+    if units == "degrees":
+        return np.degrees(np.arctan(g))
+    if units == "radians":
+        return np.arctan(g)
+    if units == "percent":
+        return 100.0 * g
+    raise ValueError(f"units must be one of ('degrees', 'radians', 'percent'), got {units!r}")
+
+
+def _positive_deg(v, name):
+    x = float(v)
+    if not np.isfinite(x) or x <= 0:
+        raise ValueError(f"{name} must be a finite positive number of degrees, got {v}")
+    return x

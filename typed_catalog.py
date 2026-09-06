@@ -179,6 +179,17 @@ PARAM_HINTS = {
     # 視点。32x32 の種に対して内側で、かつ**中心でも角でもない**位置
     # (中心対称・角対称の取りこぼしを避ける)
     "observer_rc": lambda rng: (11, 7),
+    # --- 地心座標(2026-09-06)------------------------------------------
+    # 東京付近。極や日付変更線のような端は OP_PARAM_HINTS で狙い撃つべきで、
+    # 名前ヒントは「普通の場所」を入れる(端の検査は単体テストの仕事)。
+    "lat_deg": lambda rng: 35.684,
+    "lon_deg": lambda rng: 139.735,
+    "lat0_deg": lambda rng: 35.684,
+    "lon0_deg": lambda rng: 139.735,
+    "d_lat_deg": lambda rng: 1.0 / 3600.0,        # 1 秒メッシュ
+    "d_lon_deg": lambda rng: 1.0 / 3600.0,
+    "distance_m": lambda rng: 5000.0,
+    "zoom": lambda rng: 15,
 }
 
 

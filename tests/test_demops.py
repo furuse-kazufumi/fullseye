@@ -377,3 +377,115 @@ def test_the_family_guide_python_snippet_actually_runs():
     assert runnable, "dem ガイドから実行できる例が消えている"
     for src in runnable:
         exec(compile(src, guide, "exec"), {"__name__": "__guide__"})
+
+
+# =========================================================================
+# 10. 地心座標(ECEF / 地心球)と地球曲率
+# =========================================================================
+
+def test_ecef_hits_the_two_points_we_know_by_definition():
+    """赤道の原点は (a, 0, 0)、北極は (0, 0, b)。楕円体の定義そのもの。"""
+    eq = D.dem_geodetic_to_ecef(0.0, 0.0, 0.0)
+    po = D.dem_geodetic_to_ecef(90.0, 0.0, 0.0)
+    b = D.WGS84_A * (1.0 - D.WGS84_F)
+    assert eq == pytest.approx([D.WGS84_A, 0.0, 0.0], abs=1e-6)
+    assert po == pytest.approx([0.0, 0.0, b], abs=1e-6)
+
+
+def test_the_geodetic_round_trip_closes():
+    """測地 → ECEF → 測地 が戻ること。実測: 緯度 6.4e-12 度、高さ 8.5e-7 m。"""
+    rng = np.random.default_rng(0)
+    lat = rng.uniform(-89.0, 89.0, 500)
+    lon = rng.uniform(-180.0, 180.0, 500)
+    h = rng.uniform(-500.0, 9000.0, 500)
+    back = D.dem_ecef_to_geodetic(D.dem_geodetic_to_ecef(lat, lon, h))
+    assert np.max(np.abs(back[:, 0] - lat)) < 1e-9
+    assert np.max(np.abs(((back[:, 1] - lon + 180.0) % 360.0) - 180.0)) < 1e-9
+    assert np.max(np.abs(back[:, 2] - h)) < 1e-5
+
+
+def test_the_geocentric_latitude_is_not_the_geodetic_one():
+    """★ 混同しやすいので名指しで固定する。両者は最大 0.19 度ずれる。
+
+    地心緯度(地球中心から見た角度)と測地緯度(楕円体の法線が赤道面となす角)は
+    別物。東京(北緯 35.684 度)で 0.182 度 = 距離にして約 20 km。
+    """
+    g = D.dem_geocentric_grid(np.zeros((3, 3)), 35.684, 139.735, 3.88, spherical=True)
+    assert 0.17 < 35.684 - g[0, 0, 1] < 0.19
+    # 赤道と極では一致する(定義から)
+    for lat in (0.0, 90.0):
+        gg = D.dem_geocentric_grid(np.zeros((3, 3)), lat, 0.0, 1.0, spherical=True)
+        assert abs(lat - gg[0, 0, 1]) < 1e-6
+
+
+def test_the_geocentric_grid_round_trips_through_geodetic():
+    dem = np.linspace(0.0, 100.0, 25).reshape(5, 5)
+    xyz = D.dem_geocentric_grid(dem, 35.684, 139.735, 10.0)
+    assert xyz.shape == (5, 5, 3)
+    back = D.dem_ecef_to_geodetic(xyz)
+    assert np.max(np.abs(back[..., 2] - dem)) < 1e-5     # 高さが戻る
+    assert back[0, 0, 0] == pytest.approx(35.684, abs=1e-9)
+    assert back[0, 0, 1] == pytest.approx(139.735, abs=1e-9)
+    # 行が増えると南へ、列が増えると東へ
+    assert back[1, 0, 0] < back[0, 0, 0]
+    assert back[0, 1, 1] > back[0, 0, 1]
+
+
+@pytest.mark.parametrize("dist,plain,refracted", [
+    (1000.0, 0.0785, 0.0683), (5000.0, 1.9620, 1.7070),
+    (10000.0, 7.8480, 6.8278), (30000.0, 70.632, 61.450),
+])
+def test_the_curvature_drop_matches_the_survey_table(dist, plain, refracted):
+    assert D.dem_earth_curvature_drop(dist, 0.0) == pytest.approx(plain, rel=1e-3)
+    assert D.dem_earth_curvature_drop(dist) == pytest.approx(refracted, rel=1e-3)
+
+
+def test_the_web_mercator_cell_size_depends_on_latitude():
+    """赤道の値を東京で使うと傾斜が 23 % 過小になる —— この族で最も多い事故。"""
+    tokyo = D.dem_cell_size_webmercator(15, 35.684)
+    equator = D.dem_cell_size_webmercator(15, 0.0)
+    assert tokyo == pytest.approx(3.880, abs=0.002)      # 実データで確認した値
+    assert equator == pytest.approx(4.777, abs=0.002)
+    assert (equator - tokyo) / equator == pytest.approx(0.188, abs=0.005)
+    # ズームが 1 上がると半分
+    assert D.dem_cell_size_webmercator(16, 35.684) == pytest.approx(tokyo / 2)
+
+
+def test_an_equiangular_grid_needs_the_geodetic_slope():
+    """緯度経度の等角度格子を、一定のセル寸法で dem_slope に渡すと狂う。
+
+    ★ 書き始めは「東西が過大になる」と思っていたが、測ったら**半分**だった。
+    緯度方向の寸法(北緯 60 度で経度方向の 2 倍)を両軸に使うと、東西の勾配は
+    「長すぎるセル」で割られて**過小**になる。向きは何を定数にしたかで決まる。
+    """
+    h = w = 41
+    d_lat = d_lon = 1.0 / 3600.0                      # 1 秒メッシュ
+    lat0 = 60.0
+    # 東西方向にだけ 1 m/セル(実距離)で下る面を、等角度格子として作る
+    n_rad = D.WGS84_A / np.sqrt(1 - D.WGS84_F * (2 - D.WGS84_F) * np.sin(np.radians(lat0)) ** 2)
+    dx_m = np.radians(d_lon) * n_rad * np.cos(np.radians(lat0))
+    z = -np.mgrid[0:h, 0:w][1] * dx_m * 0.1           # 東へ 10 % 下る
+    good = D.dem_geodetic_slope(z, lat0, d_lat, d_lon)[3:-3, 3:-3]
+    naive = D.dem_slope(z, np.radians(d_lat) * D.WGS84_A)[3:-3, 3:-3]
+    want = np.degrees(np.arctan(0.1))
+    assert np.mean(good) == pytest.approx(want, abs=0.01), np.mean(good)
+    assert np.mean(naive) < 0.6 * np.mean(good), (np.mean(naive), np.mean(good))
+
+
+def test_the_geocentric_ops_are_validated():
+    with pytest.raises(ValueError, match=r"\[-90, 90\]"):
+        D.dem_geodetic_to_ecef(91.0, 0.0)
+    with pytest.raises(ValueError, match="finite"):
+        D.dem_geodetic_to_ecef(0.0, 0.0, np.inf)
+    with pytest.raises(ValueError, match="trailing axis of 3"):
+        D.dem_ecef_to_geodetic(np.zeros((4, 2)))
+    with pytest.raises(ValueError, match="distance_m"):
+        D.dem_earth_curvature_drop(-1.0)
+    with pytest.raises(ValueError, match="refraction"):
+        D.dem_earth_curvature_drop(100.0, refraction=1.0)
+    with pytest.raises(ValueError, match="zoom"):
+        D.dem_cell_size_webmercator(30, 0.0)
+    with pytest.raises(ValueError, match="Web Mercator range"):
+        D.dem_cell_size_webmercator(15, 89.0)
+    with pytest.raises(ValueError, match="d_lat_deg"):
+        D.dem_geodetic_slope(np.zeros((9, 9)), 35.0, 0.0, 1.0)
