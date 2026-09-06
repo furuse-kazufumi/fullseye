@@ -211,7 +211,20 @@ def vol_rle_bbox(region):
     """Tight bounding box ``(z0, y0, x0, z1, y1, x1)`` (exclusive upper bounds)
     computed on the runs (no decode; measured ~1000x faster than scanning the
     dense mask). Matches ``volops.vol_bounding_box`` of the decoded mask
-    exactly. An empty region raises ``ValueError`` (same fail-closed rule)."""
+    exactly. An empty region raises ``ValueError`` (same fail-closed rule).
+
+    計算: ``z = rows // H``、``y = rows % H`` を復元し、``(z.min, y.min, starts.min,
+    z.max+1, y.max+1, ends.max)`` を返す。6 要素の ``int`` タプルで、軸順は
+    ``(z, y, x)`` = (depth, row, col)。上限は排他的なので
+    ``vol[z0:z1, y0:y1, x0:x1]`` がそのまま最小の外接部分 volume になる。
+    座標は voxel index(spacing は掛けない)。
+
+    検証: ``VolRLE`` の整合性検査(``_require_rle``)に加え、run が 1 本もない region は
+    「箱が定義できない」として ``ValueError``。``margin`` 引数は無い
+    (余白が要るなら ``vol_bounding_box`` を decode 後に使う)。
+
+    使いどころ: ``vol_rle_components`` の各成分の箱を取り、``vol_crop_domain`` 相当の
+    ROI 切り出しを密配列を作らずに決める。"""
     r = _require_rle(region)
     if not len(r):
         raise ValueError("region is empty (no runs) — a bounding box is undefined")

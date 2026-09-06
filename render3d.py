@@ -851,7 +851,24 @@ def terrain_region_mask(V, F, *, smooth_fraction: float = 0.3, method: str = "ne
     ``method='noise'``: low-frequency seeded fBm thresholded at the area-weighted
     ``smooth_fraction`` quantile (generic patches). ``method='slope'``: faces are ranked by
     local slope (angle between face normal and the smoothed neighbourhood normal); the
-    flattest ``smooth_fraction`` of the area is sea. Deterministic; fail-closed on bad input."""
+    flattest ``smooth_fraction`` of the area is sea. Deterministic; fail-closed on bad input.
+
+    返り値は面ごとの float64 ``(M,)`` で値は 0 か 1 の二値(中間値は出ない)。手順は
+    ``method`` ごとにスコアを 1 つ作り、スコアの小さい面から面積を累積して全面積の
+    ``smooth_fraction`` に達するまでを「海」(0)にする。
+
+    - ``'neck'``: 面重心の面積重み付き主軸(SVD 第 1 成分)に沿って、主軸座標の 20〜80 %
+      区間を 24 ビンに切り、各ビンの半径 90 percentile が最小のビン中心を「くびれ」とし、
+      くびれ面からの距離をスコアにする。8 面未満のビンは無視。``seed`` は使わない。
+    - ``'noise'``: 面重心での :func:`fbm_noise`(波長 = 境界箱対角 / 3、2 オクターブ、
+      ``seed``)をスコアにする。
+    - ``'slope'``: 面法線と「3 頂点の頂点法線平均」のなす角(ラジアン)をスコアにする。
+      ``seed`` は使わない。
+
+    ``smooth_fraction`` は [0, 1](範囲外・非有限は ``ValueError``)。0 なら全面 1、1 なら
+    全面 0 を即返す。``method`` が上記以外なら ``ValueError``。得た重みは
+    ``mesh_scatter_boulders`` / ``sample_boulders`` の ``region_weights`` に渡して海に岩を
+    置かないようにする用途。"""
     Vv, Ff = _mesh_check(V, F)
     sf = float(smooth_fraction)
     if not np.isfinite(sf) or sf < 0.0 or sf > 1.0:
