@@ -186,7 +186,7 @@ def score_ghost_contrast(img):
     st = np.stack(F.jpeg_ghost_map(img, GHOST_QS, block=BLOCK), 0)
     mu = st.mean(axis=(1, 2), keepdims=True)
     sd = st.std(axis=(1, 2), keepdims=True) + 1e-12
-    return float(np.max((mu - st) / sd, axis=0).max()) * 0 + np.max((mu - st) / sd, axis=0)
+    return np.max((mu - st) / sd, axis=0)
 
 
 def score_random(img, _rng=np.random.default_rng(12345)):
