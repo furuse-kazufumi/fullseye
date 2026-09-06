@@ -101,10 +101,16 @@ print("物体の数:", f["n"])               # -> 2(マスクのままなら 1 �
 読み違いを防ぐため、`blob_features` の返り値には `units` が入っています:
 
 ```python
-f = fs.blob_features(lab, spacing=0.05)
-f["units"]["area"]        # 'unit^2'
-f["units"]["bbox_r0"]     # 'px index'
-f["units"]["angle"]       # 'rad (+col -> +row, clockwise on screen)'
+import numpy as np
+import fullseye as fs
+
+mask = np.zeros((40, 40), bool)
+mask[8:28, 10:18] = True
+f = fs.ledger.blob_features(fs.ledger.blob_label(mask), spacing=0.05)
+print(f["units"]["area"])         # unit^2   (0.05 mm/px なら mm^2)
+print(f["units"]["bbox_r0"])      # px index (spacing を掛けない)
+print(f["units"]["angle"])        # rad (+col -> +row, clockwise on screen)
+print(round(float(f["area"][0]), 4), "mm^2")      # 160 px * 0.05^2 = 0.4
 ```
 
 ### 4. `angle` は画面では時計回りが正
