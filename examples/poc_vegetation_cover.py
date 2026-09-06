@@ -186,10 +186,10 @@ def observe(field, sub, *, soil="soil_dry", shadow=0.8, gain=1.0, noise=0.004, s
     if n % sub:
         raise ValueError(f"副画素格子 {n} が画素サイズ {sub} で割り切れない")
     h = n // sub
-    rho = np.stack([RHO["leaf"], RHO["soil_dry"], RHO["senescent"]], 0).copy()
-    rho[1] = RHO[soil]
-    refl = rho[np.clip(lab, 0, 2)]                     # (n, n, 4) —— 0 は土に上書き済み
-    refl = np.where(lab[:, :, None] == LAB_SOIL, RHO[soil][None, None, :], refl)
+    # 行の並びはラベルの並び(0=土, 1=緑葉, 2=枯れ葉)。ここを取り違えると土と葉の
+    # 分光が入れ替わり、それでも例外は出ずに「もっともらしく間違った」絵が出る。
+    rho = np.stack([RHO[soil], RHO["leaf"], RHO["senescent"]], 0)
+    refl = rho[lab]                                    # (n, n, 4)
     illum = np.where(shad[:, :, None], 1.0 - shadow * (1.0 - DIFFUSE[None, None, :]), 1.0)
     rad = gain * refl * illum
     cube = rad.reshape(h, sub, h, sub, 4).mean(axis=(1, 3))

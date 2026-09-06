@@ -585,6 +585,7 @@ def main():
     assert gains[1] > 1.0 and gains[2] > 1.0, f"中景・遠景が改善していない {gains}"
     assert total_gain > 0.0, "全体では改善している、という前提が崩れている"
     # 空はオラクルでも直らない(推定の問題ではなくモデルと t の下限の問題)。
+    sky_none = psnr_masked(img, j_true, masks[3][1])
     sky_or = psnr_masked(methods[6][3], j_true, masks[3][1])
     assert sky_or - sky_none < 1.0, f"空がオラクルで直ってしまった {sky_or - sky_none:+.2f} dB"
 
