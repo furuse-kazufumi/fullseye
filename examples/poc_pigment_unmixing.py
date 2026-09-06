@@ -309,6 +309,7 @@ def own_pca(x, n=3):
     """
     a = np.asarray(x, float)
     hh, ww, bb = a.shape
+    n = min(int(n), bb)
     flat = a.reshape(-1, bb)
     mean = flat.mean(axis=0)
     xc = flat - mean
