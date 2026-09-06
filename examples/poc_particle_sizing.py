@@ -412,8 +412,10 @@ def section_resolution() -> dict:
         ep = percentiles(f["equiv_diameter"])
         err = 100 * (ep["d50"] - tp["d50"]) / tp["d50"]
 
-        # ★対照群 —— 融合も縁切れもしていない塊だけで測り直す。ここが動けば
-        #   原因は融合ではなく**標本化(画素で塗った面積の偏り)**。
+        # ★対照群 —— 融合も縁切れもしていない塊だけを、**その塊が写している
+        #   粒子そのもの**と 1 対 1 で突き合わせる。真値の側を全粒子にすると
+        #   「大きい粒子ほど融合しやすい」という選び方の偏りが混ざって、
+        #   標本化の偏りと区別がつかなくなる(最初そう書いて取り違えた)。
         lab = f["labels"]
         rr = np.clip(np.round(sc["cy"]).astype(int), 0, lab.shape[0] - 1)
         cc = np.clip(np.round(sc["cx"]).astype(int), 0, lab.shape[1] - 1)
@@ -421,9 +423,14 @@ def section_resolution() -> dict:
         owner = lab[rr, cc]
         n_seed = np.bincount(owner[inside], minlength=int(lab.max()) + 1)[1:]
         clean = (n_seed == 1) & ~np.asarray(f["touches_border"], bool)
-        tp_c = percentiles(2.0 * sc["radii"][inside] * px_um)
-        ep_c = percentiles(np.asarray(f["equiv_diameter"])[clean])
-        err_c = 100 * (ep_c["d50"] - tp_c["d50"]) / tp_c["d50"]
+        # 塊番号 -> その塊に中心が入っている唯一の粒子
+        seed_of = {}
+        for k in np.nonzero(inside)[0]:
+            seed_of.setdefault(int(owner[k]), []).append(k)
+        idx = [i for i in np.nonzero(clean)[0] if len(seed_of.get(i + 1, [])) == 1]
+        est = np.asarray(f["equiv_diameter"])[idx]
+        tru = np.asarray([2.0 * sc["radii"][seed_of[i + 1][0]] * px_um for i in idx])
+        err_c = 100 * float(np.median((est - tru) / tru))
 
         px_list.append(px_um)
         merged.append(m)
