@@ -213,7 +213,21 @@ def scene_sphere(center_mm, radius_mm: float, material=None) -> dict:
 
 
 def scene_box(center_mm, half_size_mm, material=None) -> dict:
-    """軸平行な直方体の部品(AABB)。``half_size_mm`` は各軸の半サイズ [mm]。"""
+    """軸平行な直方体の部品(AABB)。``half_size_mm`` は各軸の半サイズ [mm]。
+
+    辺が x / y / z 軸に平行な箱で、回転は持たない(斜めに置く手段は無い)。
+    占める範囲は各軸で ``center ± half``。
+
+    - ``center_mm``: 長さ 3 の有限値 [mm]。
+    - ``half_size_mm``: 長さ 3、**全軸とも正**。1 つでも 0 以下なら ``ValueError``
+      (厚さ 0 の板は ``scene_plane`` の有限板で表す)。
+    - ``material``: ``scene_material`` の結果。省略時は lambert、albedo 0.6。
+    - 返り値: ``{"kind": "box", "c": (3,), "h": (3,), "material"}`` の dict。
+
+    交差はスラブ法(各軸の入口/出口の max/min)。``scene_difference`` の
+    ``solid`` にも ``cavity`` にも使える(角穴、ポケット)。薄い箱をステージに
+    置けば「有限で厚みのある台」になる。
+    """
     h = _arr(half_size_mm, "half_size_mm", 3)
     if np.any(h <= 0.0):
         raise ValueError("half_size_mm must be positive in every axis")
