@@ -885,8 +885,13 @@ def main():
                           + [(ch6r[r][0][1:] > LOST_PX) for r in ch6r])
     bundles["拡大・回転"] = (p_sc, None, l_sc)
 
-    e_dr = np.concatenate([ch8[k]["err"][1:] for k in ("毎フレーム", "2 フレーム", "4 フレーム")])
-    p_dr = np.concatenate([ch8[k]["peak"][1:] for k in ("毎フレーム", "2 フレーム", "4 フレーム")])
+    p_tw = np.concatenate([ch5t[f]["peak"][3:] for f in ch5t])
+    r_tw = np.concatenate([ch5t[f]["prom"][3:] for f in ch5t])
+    l_tw = np.concatenate([(ch5t[f]["err"][3:] > LOST_PX) for f in ch5t])
+    bundles["そっくりな別物体"] = (p_tw, r_tw, l_tw)
+
+    e_dr = np.concatenate([e[1:] for e in ch8["毎フレーム"]["raw_err"]])
+    p_dr = np.concatenate([p[1:] for p in ch8["毎フレーム"]["raw_peak"]])
     bundles["更新によるドリフト"] = (p_dr, None, e_dr > LOST_PX)
 
     print(f"{'条件':<20}{'フレーム':>9}{'うち失敗':>9}{'ピーク値 AUC':>15}"
