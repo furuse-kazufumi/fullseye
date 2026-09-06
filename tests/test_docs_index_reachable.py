@@ -63,12 +63,22 @@ def _prose(text: str) -> str:
     return _CODE.sub("", _FENCE.sub("", text))
 
 
+#: ★Markdown 記法だけ見ると足りない。`docs/GALLERY.md` は表の中で
+#: `<img src="...">` を 14 か所使っており、素朴な `](` の走査では 1 つも
+#: 見えない(Codex の敵対的レビューで判明、2026-09-06)。生の HTML も見る。
+_HTML = re.compile(r"""<(?:img[^>]+src|a[^>]+href)=["']([^"']+)""", re.I)
+
+
 def _links(path: Path) -> list:
-    """md 内の相対リンク先を絶対パスで返す(http / mailto / アンカーは除く)。"""
+    """md 内の相対リンク先を絶対パスで返す(http / mailto / アンカーは除く)。
+
+    Markdown の `](...)` と、生 HTML の `<img src>` / `<a href>` の両方。
+    """
+    text = _prose(path.read_text(encoding="utf-8"))
     out = []
-    for m in _LINK.finditer(_prose(path.read_text(encoding="utf-8"))):
+    for m in list(_LINK.finditer(text)) + list(_HTML.finditer(text)):
         t = m.group(1).split("#")[0].strip()
-        if not t or t.startswith(("http://", "https://", "mailto:", "<")):
+        if not t or t.startswith(("http://", "https://", "mailto:", "data:", "<")):
             continue
         out.append((path.parent / t).resolve())
     return out

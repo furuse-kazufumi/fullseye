@@ -204,15 +204,18 @@ def _honest(lang: str) -> str:
     ``fullseye.<名前>`` から見ると半分**しか無い(残りは補助関数・クラス・
     再輸出モジュールを含む)。数字を出さずに「全 op」と書かないこと。
     """
-    import glob
     import fullseye as fs
     import ops as _ops
     import typed_catalog as _tc
 
-    noted = {os.path.basename(q)[:-3] for q in
-             glob.glob(os.path.join(_ROOT, "docs", "ops", "**", "*.md"), recursive=True)
-             if "guides" not in q.replace("\\", "/").split("/")
-             and os.path.basename(q) != "INDEX.md"}
+    # ★ノートの集合は**台帳から**取る(ファイルを数え上げない)。
+    # 2026-09-06 の敵対的レビュー(Codex)で、ファイルを glob して stem を
+    # 数える版が `docs/ops/SAMPLES.md`(op ノートではない)を 1 本混ぜており、
+    # 索引は 1,842、RAG ガイドは 1,843 と**食い違う数を同時に公開**していた。
+    # ノートは records から 1:1 で生成されるので、records の名前が「ノートの
+    # ある名前」の定義そのもの。ファイルとの一致は
+    # `tests/test_docs_index_reachable.py` が別に見る(消えた/余った を検出)。
+    noted = {r["name"] for r in _records()}
     reg = {getattr(o, "name", str(o)) for o in _ops.REGISTRY}
     led = {r[0] for r in _tc.catalog()}
     fac = {n for n in dir(fs) if not n.startswith("_")}
@@ -267,9 +270,7 @@ def build(lang: str = "") -> str:
     title, intro, cols, tail = L10N[lang]
     rows = _rows()
     total = sum(n for _, n, _ in rows)
-    nguide = len([1 for d in os.listdir(os.path.join(_ROOT, "docs", "ops"))
-                  if os.path.isdir(os.path.join(_ROOT, "docs", "ops", d, "guides"))
-                  for _f in os.listdir(os.path.join(_ROOT, "docs", "ops", d, "guides"))])
+    nguide = _nguide()
     out = [START, "", "## " + title, "",
            intro.format(total=total, nguide=nguide), "",
            _honest(lang), "",
@@ -389,23 +390,47 @@ def _doc_title(rel: str) -> str:
     return ""
 
 
+#: 地図から外す部分木。**それぞれ専用の節が面倒を見る**もの以外は外さない。
+_DOCMAP_SKIP = ("ops", "articles")
+
+
 def _all_docs() -> list:
-    """`docs/` 直下と `docs/design/` の md(README* と ops/ articles/ は別扱い)。"""
+    """`docs/` 以下の md を**再帰で**すべて(README* と ops/ articles/ を除く)。
+
+    最初の版は「直下」と `design/` の 2 階層だけを見ていた(Codex の敵対的
+    レビュー、2026-09-06)。新しく `docs/howto/` を切ったら地図から丸ごと
+    落ちるうえ、地図の検査もこの同じ関数を見ていたので**検査は緑のまま**に
+    なる。深さを決め打ちせず、外す部分木のほうを明示する。
+    """
+    base = os.path.join(_ROOT, "docs")
     out = []
-    for f in sorted(os.listdir(os.path.join(_ROOT, "docs"))):
-        if f.endswith(".md") and not f.startswith("README"):
-            out.append(f)
-    d = os.path.join(_ROOT, "docs", "design")
-    if os.path.isdir(d):
-        out += ["design/" + f for f in sorted(os.listdir(d)) if f.endswith(".md")]
-    return out
+    for root, dirs, files in os.walk(base):
+        rel_root = os.path.relpath(root, base).replace(os.sep, "/")
+        if rel_root == ".":
+            dirs[:] = [d for d in dirs if d not in _DOCMAP_SKIP]
+        dirs.sort()
+        for f in sorted(files):
+            if not f.endswith(".md") or f.startswith("README"):
+                continue
+            rel = f if rel_root == "." else rel_root + "/" + f
+            out.append(rel)
+    return sorted(out)
 
 
 def _nguide() -> int:
+    """族ガイドの本数。**`*.md` だけ数える**。
+
+    最初の版は `len(os.listdir(guides))` で、隠しファイルや画像や一時ファイルが
+    あればそのぶん「ガイドが N 本あります」と水増しされた(Codex の敵対的
+    レビュー、2026-09-06)。いまは 0 本だが、数える対象は明示しておく。
+    """
     base = os.path.join(_ROOT, "docs", "ops")
-    return sum(len(os.listdir(os.path.join(base, d, "guides")))
-               for d in os.listdir(base)
-               if os.path.isdir(os.path.join(base, d, "guides")))
+    n = 0
+    for d in sorted(os.listdir(base)):
+        g = os.path.join(base, d, "guides")
+        if os.path.isdir(g):
+            n += len([f for f in os.listdir(g) if f.endswith(".md")])
+    return n
 
 
 def build_docmap(lang: str = "") -> str:

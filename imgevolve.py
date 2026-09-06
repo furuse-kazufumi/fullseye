@@ -47,14 +47,17 @@ def _all_ops():
     rows = [{"name": o.name, "halcon": o.halcon, "in_sort": o.in_sort,
              "out_sort": o.out_sort, "category": o.category, "tier": "registry"}
             for o in ops.REGISTRY]
-    try:
-        import imgops_nary as NA
-        rows += [{"name": o.name, "halcon": o.halcon, "in_sort": o.in_sorts[0],
-                  "out_sort": o.out_sort, "category": "nary", "tier": "nary",
-                  "arity": o.arity, "in_sorts": list(o.in_sorts)}
-                 for o in NA.build_nary()]
-    except Exception:
-        pass
+    # ★握り潰さない(2026-09-06 の敵対的レビュー)。`imgops_nary` は numpy と
+    # scipy しか要らない一次モジュールなので、import に失敗するのは「壊れた
+    # checkout」であって「その環境には無い機能」ではない。以前は
+    # `except Exception: pass` で、**この関数が生成器と検査の両方を兼ねている**
+    # ため、17 op が丸ごと消えた索引を CI が緑のまま公開できた。
+    import imgops_nary as NA
+    rows += [{"name": o.name, "halcon": o.halcon, "in_sort": o.in_sorts[0],
+              "out_sort": o.out_sort, "category": "nary", "tier": "nary",
+              "arity": o.arity, "in_sorts": list(o.in_sorts)}
+             for o in NA.build_nary()]
+    assert len(rows) > len(ops.REGISTRY), "nary 層が空(build_nary が何も返さない)"
     return rows
 
 
@@ -272,11 +275,10 @@ def cmd_bench(a):
 
 def cmd_index(a):
     rows = _all_ops()
-    try:
-        import backends_color as CL
-        col = set(CL.coverage()["halcon_names"])
-    except Exception:
-        col = set()
+    # 同上 —— color 層が黙って空になると、tier の内訳だけが静かに縮む。
+    import backends_color as CL
+    col = set(CL.coverage()["halcon_names"])
+    assert col, "color 層が空(backends_color.coverage が何も返さない)"
     for r in rows:
         if r["halcon"] in col:
             r["tier"] = "color"
