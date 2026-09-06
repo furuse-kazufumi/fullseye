@@ -810,7 +810,24 @@ def mesh_displace_fbm(V, F, amplitude: float, *, scale=None, octaves: int = 4,
     ``octaves``/``lacunarity``/``gain`` shape the spectrum (multifractal ridges come from the
     default 4 octaves). Deterministic for a given ``seed``; ``amplitude=0`` returns the input
     unchanged. Face normals of the displaced mesh carry the matching shading perturbation
-    (no separate bump map is faked). Fail-closed on degenerate meshes / non-finite arguments."""
+    (no separate bump map is faked). Fail-closed on degenerate meshes / non-finite arguments.
+
+    各頂点 ``x_i`` を面積重み付き頂点法線 ``n_i`` に沿って ``x_i + amplitude · fBm(x_i) · n_i``
+    へ動かす。``fBm`` は :func:`fbm_noise`(seed 固定の格子 value noise、``octaves`` 段を
+    ``lacunarity`` 倍の周波数・``gain`` 倍の振幅で重ね、振幅和で割って ``[-1, 1]``)。
+    面配列 ``F`` は変えず、返り値は ``(V' (N,3) float64, F のコピー)``。
+
+    - ``amplitude``: メッシュ単位の最大変位(0 以上)。負・非有限は ``ValueError``、0 なら
+      入力のコピーをそのまま返す(ノイズ計算をしない)。
+    - ``scale``: ノイズの基本波長(メッシュ単位)。``None`` = 境界箱対角 / 12。0 以下は
+      ``ValueError``。
+    - ``octaves`` ∈ [1, 16]、``lacunarity`` > 0、``gain`` ∈ (0, 1] の範囲外は ``ValueError``。
+    - 法線は面の巻き順から作るので外向きに一貫したメッシュを仮定する。面積ゼロで法線が
+      決まらない頂点は +Z へ動く(``_vertex_normals`` の代替値)。
+
+    波長ごとに振幅を指定したい・粗いメッシュで折り返しを避けたい場合は
+    ``mesh_displace_spectrum``(帯域制限あり)を使う。粗さを幾何に入れず陰影だけに載せるなら
+    ``bump_normals_fbm``。"""
     Vv, Ff = _mesh_check(V, F)
     amp = float(amplitude)
     if not np.isfinite(amp) or amp < 0.0:
