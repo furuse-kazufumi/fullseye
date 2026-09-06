@@ -791,12 +791,28 @@ def section10_tool_gaps() -> None:
     print("      指摘している)。本 PoC の Bernsen は scipy の順位フィルタから")
     print("      手で組んでいる —— **対比の門**まで含めて毎回書き直すことになる。")
 
-    # (d) polarity の表現が 2 通りある(文字列 と ±1)。
-    prof_img = render(make_message(np.random.default_rng(3)))
+    # (d) ★measure_pos のエッジ本数が sigma に**非単調**に依存する。
+    prof_img = render(make_message(np.random.default_rng(1)),
+                      phase=float(np.random.default_rng(1).uniform(0, MODULE_PX)))
     h, w = prof_img.shape
     hd = fs.ledger.gen_measure_rectangle2(float(CENTER_ROW), (w - 1) / 2.0, 0.0,
                                           (w - 1) / 2.0, 1, (h, w))
-    e2 = fs.ledger.measure_pos(prof_img, hd, sigma=1.0, threshold=0.2)
+    counts = [(sg, len(fs.ledger.measure_pos(prof_img, hd, sigma=sg, threshold=0.03)))
+              for sg in (0.0, 0.3, 0.4, 0.6, 0.8, 1.0, 1.5)]
+    got = dict(counts)
+    assert got[0.0] == 0 and got[1.0] != N_RUN + 1 and got[0.6] == N_RUN + 1, counts
+    print("  (d) ★**`measure_pos` のエッジ本数が sigma に非単調に依存する**。")
+    print("      同じ無傷の 1 枚(真値 %d 本)で: %s"
+          % (N_RUN + 1, " / ".join("σ=%.1f→%d 本" % c for c in counts)))
+    print("      σ=0 で **0 本**(平滑無しだと勾配の台地が厳密な極大にならない)、")
+    print("      σ=1.0 で 11 本落ちる。1 モジュール 3 px の周期構造では隣の")
+    print("      勾配ローブが重なり、どちらか一方が極大でなくなる —— どの σ が")
+    print("      当たるかは**サブピクセル位相しだい**。だから手法 5 は σ を")
+    print("      %s の順に試している。例外は出ず、本数が静かに減る。"
+          % str(CALIPER_SIGMAS))
+
+    # (e) polarity の表現が 2 通りある(文字列 と ±1)。
+    e2 = fs.ledger.measure_pos(prof_img, hd, sigma=0.6, threshold=0.2)
     assert isinstance(e2[0]["polarity"], str), e2[0]
     vol = np.repeat(prof_img[None], 4, axis=0)
     e3 = fs.vol_edge_probe(vol, (0, CENTER_ROW, 0), (0, CENTER_ROW, w - 1),

@@ -422,13 +422,21 @@ def section5_sampling(base_merge):
     print()
     strides = [1, 2, 4, 8]
     pixels = [1.0, 2.0, 3.0, 4.0]
-    rec = {"stride": strides, "pixel": pixels, "err_stride": {}, "err_pixel": {}}
+    rec = {"stride": strides, "pixel": pixels, "err_stride": {},
+           "err_pixel": {}, "spread_pixel": {}}
     for i, j in PAIRS:
         tm = true_merge_time(i, j)
-        # 空間だけ: 時間を連続とみなして画素サイズを振る
-        rec["err_pixel"][(i, j)] = [merge_time_continuous(i, j, p, 4) - tm
-                                    for p in pixels]
-        # 時間だけ: 画素 1 のまま、フレーム格子への丸めぶん
+        # --- 空間だけ: 時間を連続とみなして画素サイズを振る。
+        #     ★格子の位相を 5 通り振り、**偏り(平均)と ばらつき(幅)を分けて**数える。
+        means, spreads = [], []
+        for p in pixels:
+            vs = [merge_time_continuous(i, j, p, 4, shift=(dy * p, dx * p)) - tm
+                  for dy, dx in PHASES]
+            means.append(float(np.mean(vs)))
+            spreads.append(float(np.max(vs) - np.min(vs)))
+        rec["err_pixel"][(i, j)] = means
+        rec["spread_pixel"][(i, j)] = spreads
+        # --- 時間だけ: 画素 1 のまま、フレーム格子への丸めぶん
         tc = merge_time_continuous(i, j, 1.0, 4)
         es = []
         for s in strides:
@@ -447,23 +455,34 @@ def section5_sampling(base_merge):
             print(" %10.2f" % v, end="")
         print()
     print()
-    print("  ★空間だけを粗くしたときの誤差 [フレーム](時間は連続):")
+    print("  ★空間だけを粗くしたときの誤差 [フレーム](時間は連続)。")
+    print("    **偏り**= 画素格子の位相 5 通りの平均 / **ばらつき**= その幅:")
     print("  %10s" % "pixel", end="")
     for p in pixels:
-        print(" %10.1f" % p, end="")
+        print(" %14.1f" % p, end="")
     print()
     for key in rec["err_pixel"]:
         print("  %10s" % ("組 %d-%d" % key), end="")
-        for v in rec["err_pixel"][key]:
-            print(" %10.2f" % v, end="")
+        for k in range(len(pixels)):
+            print(" %7.2f±%-6.2f" % (rec["err_pixel"][key][k],
+                                     rec["spread_pixel"][key][k]), end="")
         print()
+    print()
+    print("  → ★★**空間の粗さは偏りよりも「ばらつき」で効く**。画素 4 倍で")
+    print("     偏りは組 %d-%d が %.2f フレームなのに、格子をずらしただけで"
+          % (PAIRS[0][0], PAIRS[0][1], rec["err_pixel"][PAIRS[0]][3]))
+    print("     %.2f フレームの幅が出る。**同じ実験を同じ倍率で撮り直しても、"
+          % rec["spread_pixel"][PAIRS[0]][3])
+    print("     カメラを 1 画素ずらしただけで答えが変わる。**")
+    print("     偏りだけを見ていると『画素を粗くしても大丈夫』と誤読する。")
     print()
     for key in PAIRS:
         s4 = abs(rec["err_stride"][key][2])
-        p4 = abs(rec["err_pixel"][key][3])
+        p4 = abs(rec["err_pixel"][key][3]) + 0.5 * rec["spread_pixel"][key][3]
         who = "空間" if p4 > s4 else "時間"
-        print("  組 %d-%d を 4 倍粗くすると 時間 %.2f / 空間 %.2f フレーム"
-              " → **%s のほうが先に効く**" % (key[0], key[1], s4, p4, who))
+        print("  組 %d-%d を 4 倍粗くすると 時間 %.2f / 空間 %.2f"
+              "(偏り+半幅)フレーム → **%s のほうが先に効く**"
+              % (key[0], key[1], s4, p4, who))
     return rec
 
 
