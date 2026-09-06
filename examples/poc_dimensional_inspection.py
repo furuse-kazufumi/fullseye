@@ -593,7 +593,7 @@ def section_cliff_blur():
     print("  小さいとき。真値の小数部 8 点で平均して、干渉の偏りと、位置の")
     print("  小数部に依存する周期誤差(S 字)を分けて出す。")
 
-    w_true = 12.00
+    w_true = 12.37       # ★整数幅にしない(理由は表の下)
     phases = np.linspace(0.0, 1.0, 9)[:-1]
     print(f"\n  真の幅 w = {w_true:.2f} px 固定、PSF sigma を振る(検出 sigma は 1.0 固定)")
     print(f"  {'PSF s':>7}{'w/s':>7} | {'M 偏り':>9}{'M 周期誤差':>11}{'検出率':>7}"
