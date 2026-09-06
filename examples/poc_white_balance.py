@@ -287,10 +287,14 @@ def angular_error(est, truth):
 
 
 def von_kries(img, est):
-    """対角(von Kries)補正 —— 推定した光源で割り、緑を基準に明るさを戻す。"""
-    e = np.asarray(est, float)
-    e = e / max(e[1], 1e-12)
-    return img / np.maximum(e, 1e-12)
+    """対角(von Kries)補正 —— 推定した光源で割る。
+
+    ``est`` は「反射率 1 の面の応答」と同じ尺度で渡す。そうすると白い面が
+    ちょうど ``(1,1,1)`` に戻る。**角度誤差は明るさを捨てた指標なので、統計
+    ベースの推定値をそのままここへ渡すと露出が狂う** —— 角度誤差 0 度と
+    「そのまま補正に使える」は別物、というのは 11 節の話とは別の落とし穴。
+    """
+    return img / np.maximum(np.asarray(est, float), 1e-12)
 
 
 #: 表に並べる手法。名前 -> 推定関数。
