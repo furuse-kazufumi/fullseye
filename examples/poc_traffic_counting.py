@@ -778,7 +778,7 @@ def main() -> None:
     sc = section_scene()
     zp = section_zero_point(sc)
     sl = section_slit(sc, zp)
-    section_tall(sc)
+    tall = section_tall(sc)
     hw = section_headway()
     fr = section_framerate()
     jam = section_jam()
@@ -788,19 +788,27 @@ def main() -> None:
     print("まとめ")
     print("=" * 78)
     print("  * ゼロ点(フレームごと CC の最大値)は %d、通過台数は %d —— "
-          "別の量。" % (zp["cc"].max(), zp["total"]))
-    print("  * スリット法は %d 台(過大分はトラックが遠い車線の計数行を"
-          "覆うぶん)。" % sum(sl[ln]["slit"]["n_ref"] for ln in LANES))
+          "別の量を測っている。" % (zp["cc"].max(), zp["total"]))
+    print("  * 疎な自由流ではスリット法 %d 台・仮想ループ %d 台・真値 %d 台で"
+          "同点。2-D の見返りは速度(誤差 %.2f %% 以下)と、壊れ方が見えること。"
+          % (sum(sl[ln]["slit"]["n_ref"] for ln in LANES), zp["loop"],
+             zp["total"], max(sl[ln]["match"]["fit_inner"] for ln in LANES)))
     print("  * 同じスリット画像でも『全部の帯』と『計数列と交わる帯』で"
           "壊れ方が逆(Δt=%d で %d 対 %d)。"
           % (fr["dts"][-1], fr["n_all"][-1], fr["n_ref"][-1]))
-    print("  * 破綻の条件は 3 つとも L/V。車間(%d/%d 条件で予測と一致)、"
-          "フレーム間隔(予測との差 %+.1f 台以内)、停止(L/V→∞)。"
+    print("  * 破綻の条件は 3 つとも L/V。車間(%d/%d 条件で予測と一致、"
+          "L/V=%.1f frame)、フレーム間隔(位相平均で予測との差 %+.2f 台以内)、"
+          "停止(L/V→∞)。"
           % (sum(1 for g, p in zip(hw["got"], hw["pred"]) if g == p),
-             len(hw["got"]),
-             max(abs(g - p) for g, p in zip(fr["n_ref"], fr["pred"]))))
-    print("  * 渋滞で落ちるのは背景モデル(先頭車の前景率 %.2f -> %.2f)。"
-          % (jam["fg_move"], jam["fg_stop"]))
+             len(hw["got"]), hw["lv"],
+             max(abs(g - p) for g, p in zip(fr["n_oracle"], fr["pred"]))))
+    print("  * 予想が 2 つ外れた: 台帳の angle は重心当てはめより**良かった**、"
+          "背の高い車は計数を**増やさず減らした**(トラックだけなら %d 本の"
+          "帯が立つ)。"
+          % max(n for _, _, n in tall["diff"]))
+    print("  * 渋滞で落ちるのは背景モデル(先頭車の前景率 %.2f -> %.2f、"
+          "最終フレームの検出 %d/%d)。"
+          % (jam["fg_move"], jam["fg_stop"], jam["seen_last"], jam["onscreen"]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     if figs.errors():
