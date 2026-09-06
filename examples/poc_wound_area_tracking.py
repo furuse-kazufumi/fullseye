@@ -371,7 +371,8 @@ def section3_methods(mm_fixed):
     wx = (xx - OX) * S_MM
     wy = -(yy - OY) * S_MM
     truth_mask = np.hypot(wx, wy) <= radius_for_area(500.0) * shape_radius(np.arctan2(wy, wx))
-    got = (rect < T_HI) & (rect > T_LO)
+    got = fs.ledger.blob_select_largest(
+        fs.ledger.blob_label((rect < T_HI) & (rect > T_LO)), 1) > 0
     figs.save_grid("scenes",
                    [img_ref, img_bad, rect, got.astype(float) - truth_mask.astype(float)],
                    ["正対 450mm", "遠+傾き", "正対化", "マスク差"],
