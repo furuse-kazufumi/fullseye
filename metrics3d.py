@@ -182,8 +182,8 @@ def normal_consistency(points_a, normals_a, points_b, normals_b):
     3-D では期待値 0.5 程度になる(cos の絶対値の平均)。
 
     注意: 位置の近さは見ない(遠い最近傍でも法線だけ比べる)。位置と合わせて評価する
-    なら ``chamfer_distance`` / ``fscore`` と併用する。法線の推定は
-    ``pointcloud`` 側の法線 op(PCA 近傍)や ``register_fpfh`` の前処理と同じもの。"""
+    なら ``chamfer_distance`` / ``fscore`` と併用する。法線が無い雲は
+    ``estimate_point_normals``(局所 PCA)で作ってから渡す。"""
     from scipy.spatial import cKDTree
     pa = _require_cloud(points_a, "points_a")
     pb = _require_cloud(points_b, "points_b")
