@@ -772,7 +772,7 @@ def section_cliff_blur():
 # --------------------------------------------------------------------------- #
 def section_cliff_noise():
     head(5, "★崖 (b) —— 雑音。偏り(系統)と散らばり(繰り返し)を分ける")
-    print("  同じ部品を 32 回撮り直す。平均のずれが偏り(校正で消せる)、")
+    print("  同じ部品を 48 回撮り直す。平均のずれが偏り(校正で消せる)、")
     print("  ばらつきが繰り返し精度(消せない)。検査の合否には偏りが効く。")
 
     w_true, a = 40.50, 30.27
@@ -784,7 +784,7 @@ def section_cliff_noise():
     out = []
     for ns in (0.0, 0.002, 0.005, 0.01, 0.02, 0.05, 0.10):
         mv, fv, zv, ok = [], [], [], 0
-        n_rep = 32 if ns > 0 else 1
+        n_rep = 48 if ns > 0 else 1
         for _ in range(n_rep):
             img = base + (rng.normal(0, ns, base.shape) if ns > 0 else 0.0)
             ms = m1.gen_measure_rectangle2(24, 69.5, 0.0, 60, 1, img.shape)
@@ -1410,7 +1410,7 @@ def main():
     z_rms = section_zero_point(img)
     slot_bias, circ_err, tilt_T, tilt_M = section_dimensions(img)
     edge_ratio, lost_at, usable_at = section_cliff_blur()
-    noise_tab = section_cliff_noise()
+    noise_tab, u_rep, u_c, b_sys = section_cliff_noise()
     ang_corr = section_cliff_angle()
     zz, zs, mm, ff = section_cliff_illum()
     spread = section_cliff_chamfer()
@@ -1434,7 +1434,9 @@ def main():
     print(f"  干渉の崖                  w/sigma <= {edge_ratio:.2f} で偏り > 0.05 px")
     print(f"  偏り 0.05 px を超える幅   w = {usable_at} px "
           f"(= {usable_at / 1.5:.2f} sigma, PSF sigma 1.5)")
-    print(f"  公開経路からの到達性      {n_reach} / 14 関数")
+    print(f"  不確かさ(SNR 140, band 9) u_c {u_c:.4f} px = {um(u_c):.3f} um / "
+          f"U=2u_c {um(2 * u_c):.3f} um")
+  print(f"  公開経路からの到達性      {n_reach} / 14 関数")
 
     gain = abs(z_rms / slot_bias["M"]) if slot_bias["M"] else float("inf")
     print(f"\n  -> ゼロ点比 {gain:.0f} 倍(スロット幅の偏りで比較)。")
@@ -1466,6 +1468,7 @@ def main():
         f"埋もれた API の一致性: translate {tr_same} generic {gen_same} " \
         f"align {align_ok} fuzzy {fz_ok}"
     assert ell_err < 0.10, f"楕円当てはめが円で崩れる: {ell_err}"
+    assert u_rep > 0 and u_c >= u_rep and 2 * u_c < 0.20,         f"不確かさ収支が壊れている: u_rep={u_rep} u_c={u_c}"
     assert n_reach == 0, \
         f"14 関数のいずれかが公開経路から届くようになった(この PoC の前提が変わった): {n_reach}"
     assert "measure_pairs" not in dir(fs) and "measure_pairs" not in dir(fs.ledger)
