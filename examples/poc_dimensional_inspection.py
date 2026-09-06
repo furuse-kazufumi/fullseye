@@ -1314,8 +1314,8 @@ def main():
         f"干渉の崖が見つからない / 早すぎる: {edge_ratio}"
     assert abs(ang_corr[0]) < 0.05 and abs(ang_corr[4]) < 0.10, \
         f"cos 補正で戻らない: {ang_corr[:5]}"
-    assert abs(zz[-1]) > 3 * max(abs(mm[-1]), abs(ff[-1])), \
-        "照明傾斜で大域しきい値が崩れていない(崖が再現していない)"
+    assert abs(zs[-1] - zs[0]) > 5 * max(abs(mm[-1] - mm[0]), abs(ff[-1] - ff[0])), \
+        f"照明傾斜で大域しきい値が崩れていない(崖が再現していない): {zs}"
     wm8, wf8, wt8, wb8, pr8 = spread[("fillet", 8.0)]
     assert (wb8 - wt8) > 20 * abs(slot_bias["M"]), \
         "縁の定義の幅がサブピクセル誤差を圧倒していない"
