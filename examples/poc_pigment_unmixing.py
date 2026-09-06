@@ -649,6 +649,27 @@ def main():
     print("   上の表と違い、ここは **面ごとに閾値を引き直した**。信号があるかどうかと、")
     print("   全体で 1 本の閾値が引けるかどうかは別の問いだから分ける。")
 
+    # ゼロ点をもう一段強くしてみる: 面ごとに主成分分析ごとやり直す。
+    # 弱いゼロ点に勝っても意味がないので、勝てる可能性のある形まで持ち上げる。
+    zero_strong = []
+    for f in range(3):
+        m = field == f
+        sub = det0["_rgb"][:, m.any(axis=0)] if m.all(axis=0).any() else det0["_rgb"]
+        sc_, _c, _v = own_pca(det0["_rgb"][m].reshape(1, -1, 3), 3)
+        pf, nf = pos[m], neg[m]
+        d = np.zeros(m.sum())
+        best = -1.0
+        for j in (1, 2):
+            for sgn in (1.0, -1.0):
+                cand = sgn * sc_[0, :, j]
+                a = auc(cand[pf], cand[nf])
+                if a > best:
+                    best, d = a, cand
+        zero_strong.append((best, pr_at(d, pf, nf, thresh_at_fpr(d[nf], 0.01))[0]))
+    print("   ゼロ点をさらに強くする(面ごとに主成分分析からやり直す): "
+          + " / ".join("%s AUC %.3f 再現率 %.3f" % (field_names[f], zero_strong[f][0],
+                                                    zero_strong[f][1]) for f in range(3)))
+
     # ---------------------------------------------------------------- 4 -----
     print("\n4. 崖 (a) —— 上層の光学的厚み。下絵はどこで見えなくなるか")
     taus = (0.15, 0.3, 0.6, 1.0, 1.6, 2.5)
