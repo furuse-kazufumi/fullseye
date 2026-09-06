@@ -527,6 +527,30 @@ def annotate3d_bbox(img, bounds, pose, K, depth=None, color="emphasis", width=1.
     ------
     ValueError
         bounds の形 / min > max、角がカメラの後ろ。
+
+    手順: ``bounds`` から 8 つの角 ``(x_i, y_j, z_k)``(i, j, k ∈ {min, max})を作り、
+    まとめて射影(``annotate3d_project`` と同じ慣習)。12 辺を
+    ``annotate._aa_polyline`` で描く。辺の両端が ``hidden`` なら破線、片端だけなら
+    実線。
+
+    引数:
+    - ``bounds``: ``((xmin, ymin, zmin), (xmax, ymax, zmax))`` の ``(2, 3)``(object
+      座標、有限、各軸で ``max >= min``。``max == min`` の潰れた箱は許す)。点群なら
+      ``points.min(0)`` / ``points.max(0)``、メッシュなら ``V`` から作る。
+    - ``width``: 線幅 [px]、``>= 0.5`` の実数。``color``: 役割名か RGB。
+    - ``depth``: 前方距離画像(``render3d.render_mesh`` の ``depth``)。
+      ``occlusion_tol``: ``[0, 1)``。
+
+    返り値: 描画済みの新しい画像(float64 ``[0, 1]``、入力は変更しない)。
+
+    エラーになる条件: ``bounds`` が ``(2, 3)`` でない・非有限・``max < min`` の軸が
+    ある / **8 角のいずれかが** ``z <= 1e-9``(カメラ面上か後ろ。箱が視点を囲む場合は
+    描けない) / 姿勢・``K``・``depth`` の不正。角が画像の外に出るのはエラーに
+    しない(線は枠外まで引かれ、見た目は切れる)。
+
+    注意: 軸平行(世界座標に沿った)箱のみ。回転した箱(``smallest_box3`` の
+    ``corners``)を描くには、8 角を自分で射影(``annotate3d_project``)して 2-D の
+    ``annotate`` 線描画で結ぶ。
     """
     a = A._prep(img)
     b = np.asarray(bounds, dtype=np.float64)
