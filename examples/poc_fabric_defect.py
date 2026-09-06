@@ -508,19 +508,24 @@ def section_period_error() -> dict:
     print("\n" + "=" * 78)
     print("6) 周期の推定が ε ずれると —— 高次から効かなくなる")
     print("=" * 78)
-    print("  m 次の高調波は m·ε·N/P ビン動く。ノッチ半径 r を超えるのは")
-    print("  m > r·P/(ε·N) から。N=%d, P=%.0f, r=1.0 で予測と実測を比べる。" % (N, PERIOD))
-    print("\n     ε      仮の周期   予測: 残る最小次数 m   地の残差 RMS   倍率   AUC(まとめ)")
+    print("  格子成分 (my,mx) のノッチ中心は ε·(N/P)·|m| ビン動く(|m| = "
+          "sqrt(my²+mx²))。")
+    print("  半径 r=1.0 を超えると外れる: |m| > r·P/(ε·N)。**地に実際に入って"
+          "いる成分**")
+    print("  %s の上で予測する —— 入っていない高調波で数えたら嘘になる。"
+          % ", ".join("(%d,%d)" % c for c in LATTICE))
+    print("\n     ε      仮の周期   予測: 外れる成分       地の残差 RMS   倍率   AUC")
 
     clean = make_scene(which=[])["img"]
     sc = make_scene()
     neg = ~sc["any"]
     base_rms = float(np.sqrt(np.mean(det_notch(clean) ** 2)))
     base_auc = auc(det_notch(sc["img"]), sc["any"], neg)
-    eps_l, rms_l, auc_l, fold_l = [], [], [], []
-    for eps in (0.0, 0.002, 0.005, 0.01, 0.02, 0.04, 0.08):
+    eps_l, rms_l, auc_l, fold_l, esc_l = [], [], [], [], []
+    for eps in (0.0, 0.002, 0.005, 0.01, 0.015, 0.02, 0.04, 0.08):
         p = PERIOD * (1.0 + eps)
-        m_esc = (1.0 * PERIOD / (eps * N)) if eps > 0 else np.inf
+        esc = [c for c in LATTICE
+               if eps * (N / PERIOD) * np.hypot(*c) > 1.0]
         r = float(np.sqrt(np.mean(det_notch(clean, period=p) ** 2)))
         a = auc(det_notch(sc["img"], period=p), sc["any"], neg)
         rf = float(np.sqrt(np.mean(det_fold(clean, period=p) ** 2)))
@@ -528,22 +533,31 @@ def section_period_error() -> dict:
         rms_l.append(r)
         auc_l.append(a)
         fold_l.append(rf)
-        print("   %5.1f %%   %8.4f       %14s        %9.5f  %6.1f    %.4f"
+        esc_l.append(len(esc))
+        print("   %5.1f %%   %8.4f   %-20s   %9.5f  %6.1f   %.4f"
               % (100 * eps, p,
-                 "(全部残る)" if not np.isfinite(m_esc) else
-                 ("%.1f" % np.ceil(m_esc) if m_esc >= 1 else "1(全滅)"),
+                 "なし" if not esc else ",".join("(%d,%d)" % c for c in esc),
                  r, r / base_rms, a))
 
-    print("\n  ★ε=1 %% で地の残差は %.1f 倍(AUC %.4f -> %.4f)。予測どおり"
-          "**低次は残ったまま高次から漏れる**。" % (
-              rms_l[3] / base_rms, base_auc, auc_l[3]))
-    print("     絵は「格子が消えた」ように見えるのに残差は上がる —— "
-          "見た目で合否を決められない種類の劣化。")
-    print("\n   折り返し平均差の同じ掃引(参考): "
+    first = next((e for e, n in zip(eps_l, esc_l) if n), None)
+    jump = next((e for e, r in zip(eps_l, rms_l) if r > 1.5 * base_rms), None)
+    print("\n  ★予測「最初に外れるのは ε=%.1f %%」に対し、残差が跳ねたのは "
+          "ε=%.1f %% —— %s。" % (first, jump,
+                                 "一致" if first == jump else "ずれた"))
+    print("     ε=1.0 %% では残差 %.1f 倍(AUC %.4f)、まだ 1 つも外れていない。"
+          "**低次だけの地なら 1 %% は効かない** —— "
+          % (rms_l[3] / base_rms, auc_l[3]))
+    print("     高調波を多く含む地(細かい織り)ほど、同じ ε で先に壊れる。")
+    print("  ★全部外れると残差は %.1f 倍で頭打ち。これは地そのものの RMS で、"
+          "2 節の k=8(利得 0)の値 %.5f と一致する。"
+          % (max(rms_l) / base_rms, max(rms_l)))
+    print("\n   折り返し平均差の同じ掃引: "
           + " / ".join("%.1f%%:%.5f" % (e, v) for e, v in zip(eps_l, fold_l)))
-    print("     ★こちらは ε に対して %s。" % (
-        "ノッチより緩やか" if fold_l[3] / fold_l[0] < rms_l[3] / rms_l[0]
-        else "ノッチより急"))
+    print("     ★こちらは ε に **%s**(ε=0.5 %% で既に %.1f 倍)。"
+          "位相で畳む方式は周期の誤差が場所とともに積み上がるので、"
+          "\n     周波数領域のノッチより**桁で厳しい**。"
+          % ("弱い" if fold_l[2] / fold_l[0] > rms_l[2] / rms_l[0] else "強い",
+             fold_l[2] / fold_l[0]))
 
     figs.save_plot("period_error",
                    [("ノッチ 残差 RMS", eps_l, rms_l),
