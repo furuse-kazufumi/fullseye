@@ -234,10 +234,12 @@ def main():
           f"  歪み k1={TRUE_DIST[0]:+.3f} k2={TRUE_DIST[1]:+.3f}"
           f" p1={TRUE_DIST[2]:+.1e} p2={TRUE_DIST[3]:+.1e}")
     obs0 = observe(obj, good, sigma_px=0.0)
-    back = fs.undistort_points(fs.distort_points(obs0[0], K_TRUE, TRUE_DIST),
-                               K_TRUE, TRUE_DIST, iters=30)
-    print(f"  歪み -> 歪み除去 の往復残差 最大 {np.abs(back - obs0[0]).max():.2e} px")
     uv, dep = fs.project_points(obj, K_TRUE, *good[0])
+    back = fs.undistort_points(fs.distort_points(uv, K_TRUE, TRUE_DIST),
+                               K_TRUE, TRUE_DIST, iters=30)
+    print(f"  歪み -> 歪み除去 の往復残差 最大 {np.abs(back - uv).max():.2e} px")
+    print(f"  歪みが画素をどれだけ動かすか 最大 "
+          f"{np.abs(fs.distort_points(uv, K_TRUE, TRUE_DIST) - uv).max():.2f} px")
     xc = fs.backproject(uv, dep, K_TRUE)
     print(f"  投影 -> 逆投影 の往復残差 最大 "
           f"{np.abs(xc - (obj @ good[0][0].T + good[0][1])).max():.2e} m")
