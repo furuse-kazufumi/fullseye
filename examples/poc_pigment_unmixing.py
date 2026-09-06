@@ -780,8 +780,8 @@ def main():
     for key, name, _p in METHODS:
         if key not in detect_summary:
             continue
-        a, r1, p1, per, rf = detect_summary[key]
-        gain = ("%.1f 倍" % (r1 / zero)) if zero > 1e-6 else "—"
+        a, r1, p1, per, rf, aper, f1 = detect_summary[key]
+        gain = ("%.2f 倍" % (r1 / zero)) if zero > 1e-6 else "—"
         print("   %s: AUC %.3f / 再現率@FPR1%% %.3f(ゼロ点比 %s)/ 適合率 %.3f"
               % (_pad(name, 22), a, r1, gain, p1))
 
