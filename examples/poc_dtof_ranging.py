@@ -233,18 +233,22 @@ def main():
     # 図: 推定器が見ている生ヒストグラム。背景を入れると信号の山より外側の
     #     裾のほうが総量で勝つ —— 素の重心が 2 桁崩れる理由が目で分かる。
     d_axis = C * BIN_PS * 1e-12 * np.arange(BINS) / 2.0
-    h_clean, h_amb = trial(200.0, 0.0, 0), trial(200.0, 6400.0, 0)
-    peak_bin = int(np.argmax(h_clean))
     figs.save_plot("histograms",
-                   [("背景なし", d_axis, h_clean),
-                    ("背景 6400(SBR 0.031)", d_axis, h_amb),
-                    ("ゲート ±3σ の範囲",
-                     d_axis[[max(0, peak_bin - GATE_R), min(BINS - 1, peak_bin + GATE_R)]],
-                     [float(h_amb.max()), float(h_amb.max())])],
+                   [("背景なし", d_axis, trial(200.0, 0.0, 0)),
+                    ("背景 6400(SBR 0.031)", d_axis, trial(200.0, 6400.0, 0))],
                    xlabel="距離 [m]", ylabel="光子数 / ビン",
                    title="TCSPC ヒストグラム(信号 200 光子、真値 2.5 m)",
-                   caption="背景は全ビンに一様に乗る。総量では背景が勝つので、"
-                           "窓全体の重心は窓の中心へ引かれる。")
+                   caption="背景は 256 ビン全体に一様に乗るので、総量では信号の山に"
+                           "勝つ。窓全体の重心が窓の中心へ引かれるのがこれ。"
+                           "ゲートは山の周り ±%d ビンだけを残す。" % GATE_R)
+    figs.save_table("methods",
+                    ["背景光", "SBR"] + [n for n, _ in methods],
+                    [["%.0f" % amb, "∞" if amb == 0 else "%.3f" % (200.0 / amb)]
+                     + ["%.2f" % table2[amb][n] for n, _ in methods]
+                     for amb in (0.0, 100.0, 6400.0)],
+                    title="距離 RMSE [mm](N=200 光子、2000 試行)",
+                    caption="背景が無ければ素の重心で足りる。背景が入ると 2 桁崩れ、"
+                            "docstring が勧める背景減算でも戻らない。")
 
     # ------------------------------------------------------------------ #
     print("\n=== 3. 理論限界 —— σ ∝ 1/√N に乗るか ===")
