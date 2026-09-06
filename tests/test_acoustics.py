@@ -1025,30 +1025,30 @@ def test_global_prominence_inverts_in_a_narrow_band():
     名前からはそれが分からない。ここが崩れたら docstring の表も一緒に直すこと。
     """
     fs = 25600.0
-    sig = synthesize_bearing_signal(rate=fs, duration=1.0, carrier_hz=3000.0,
+    sig = A.synthesize_bearing_signal(rate=fs, duration=1.0, carrier_hz=3000.0,
                                     defect_hz=107.0, modulation=0.5, seed=1)
     noise = np.random.default_rng(0).standard_normal(int(fs))
     wide = (2000.0, 4000.0)
     narrow = (2900.0, 3100.0)
 
-    d_wide = envelope_spectrum(sig, rate=fs, low=wide[0], high=wide[1])
-    n_wide = envelope_spectrum(noise, rate=fs, low=wide[0], high=wide[1])
+    d_wide = A.envelope_spectrum(sig, rate=fs, low=wide[0], high=wide[1])
+    n_wide = A.envelope_spectrum(noise, rate=fs, low=wide[0], high=wide[1])
     assert d_wide["peak_prominence"] > 10 * n_wide["peak_prominence"]   # 広帯域では効く
 
-    d_nar = envelope_spectrum(sig, rate=fs, low=narrow[0], high=narrow[1])
-    n_nar = envelope_spectrum(noise, rate=fs, low=narrow[0], high=narrow[1])
+    d_nar = A.envelope_spectrum(sig, rate=fs, low=narrow[0], high=narrow[1])
+    n_nar = A.envelope_spectrum(noise, rate=fs, low=narrow[0], high=narrow[1])
     assert n_nar["peak_prominence"] > d_nar["peak_prominence"], (
         "狭帯域での逆転が消えている —— 直したなら docstring の表も更新すること")
 
 
 def test_local_prominence_keeps_the_order_in_both_bands():
     fs = 25600.0
-    sig = synthesize_bearing_signal(rate=fs, duration=1.0, carrier_hz=3000.0,
+    sig = A.synthesize_bearing_signal(rate=fs, duration=1.0, carrier_hz=3000.0,
                                     defect_hz=107.0, modulation=0.5, seed=1)
     noise = np.random.default_rng(0).standard_normal(int(fs))
     for lo, hi in ((2000.0, 4000.0), (2900.0, 3100.0)):
-        d = envelope_spectrum(sig, rate=fs, low=lo, high=hi)
-        n = envelope_spectrum(noise, rate=fs, low=lo, high=hi)
+        d = A.envelope_spectrum(sig, rate=fs, low=lo, high=hi)
+        n = A.envelope_spectrum(noise, rate=fs, low=lo, high=hi)
         assert d["local_prominence"] > 10 * n["local_prominence"], (lo, hi)
         assert n["local_prominence"] < 5.0, "雑音の近傍突出度が 5 を超えた"
         assert d["local_noise_floor"] > 0.0 and n["local_noise_floor"] > 0.0
@@ -1056,9 +1056,9 @@ def test_local_prominence_keeps_the_order_in_both_bands():
 
 def test_local_prominence_is_present_on_the_order_axis_too():
     fs = 25600.0
-    sig = synthesize_bearing_signal(rate=fs, duration=1.0, carrier_hz=3000.0,
+    sig = A.synthesize_bearing_signal(rate=fs, duration=1.0, carrier_hz=3000.0,
                                     defect_hz=107.0, modulation=0.5, seed=1)
-    o = order_spectrum(sig, fs, np.full(int(fs), 1800.0))
+    o = A.order_spectrum(sig, fs, np.full(int(fs), 1800.0))
     assert o["local_prominence"] > 100.0 and o["local_noise_floor"] > 0.0
     # 窓が次数単位であること: Hz の 50 を次数軸に当てるとスペクトル全体を覆い、
     # 大域中央値と一致してしまう。一致していないことで単位の取り違えを検出する。
@@ -1067,6 +1067,6 @@ def test_local_prominence_is_present_on_the_order_axis_too():
 
 def test_nothing_at_all_still_reports_zero_not_infinity():
     fs = 25600.0
-    e = envelope_spectrum(np.ones(int(fs)), rate=fs, low=2000.0, high=4000.0)
+    e = A.envelope_spectrum(np.ones(int(fs)), rate=fs, low=2000.0, high=4000.0)
     assert np.isfinite(e["local_prominence"])
     assert e["local_prominence"] < 5.0

@@ -504,9 +504,16 @@ def main():
         assert abs(e - pred) < 1e-12 + 1e-6 * pred, \
             f"入射角 {th}: 誤差 {e:.3e} が閉形式 {pred:.3e} と違う"
         assert ratio > 1.0, f"入射角 {th}: ゼロ点 1 に勝てていない (比 {ratio:.2f})"
-    assert ang_rows[THETA_B][1] < ang_rows[20.0][1], "ブリュースター角が最良でない"
+    assert ang_rows[THETA_B][1] < ang_rows[40.0][1] < ang_rows[20.0][1], \
+        "ブリュースター角 → 40 度 → 20 度の順に悪くならない"
     assert ang_rows[THETA_B][1] < ang_rows[70.0][1], "ブリュースター角が最良でない"
     assert ang_rows[20.0][4] < 1.5, "20 度でゼロ点との差が小さいという所見が崩れた"
+    # 評価軸で最適角が割れる(所見 2)。絶対誤差では 70 度が 20 度より悪く、
+    # ゼロ点比では逆転する。この 2 行が同時に成り立つことが所見の中身そのもの。
+    assert ang_rows[70.0][1] > ang_rows[20.0][1], \
+        "絶対誤差で 70 度が 20 度より悪い、という所見が崩れた"
+    assert ang_rows[70.0][4] > ang_rows[20.0][4], \
+        "ゼロ点比で 70 度が 20 度より良い、という所見が崩れた"
 
     # 5. 入射角が既知なら偏りは消える
     for th, (e_raw, e_corr, amp) in corr_rows.items():
