@@ -1326,12 +1326,29 @@ def main():
           f"段 1 の S/N 掃引がそのまま出ている")
     print(f"   位置で割ると: 中心 1/3 {d_uni['  うち視野中心 1/3'][4]:.4f} / "
           f"中間 {d_uni['  うち中間 1/3'][4]:.4f} / "
-          f"外側 {d_uni['  うち視野外側 1/3'][4]:.4f} 秒角。"
-          f"外側が悪ければプレートモデルの不足(高次項)を疑う場面だが、"
-          f"ここでは {SHAPE[0] * PLATE_ARCSEC_PX / 60:.1f} 分角の視野なので"
-          f"接平面投影の非線形は "
-          f"{ARCSEC * (1 / np.cos(np.deg2rad(SHAPE[0] * PLATE_ARCSEC_PX / 3600 / 2)) - 1) * 1e3:.2f} "
-          f"ミリ秒角しかなく、差は出ない")
+          f"外側 {d_uni['  うち視野外側 1/3'][4]:.4f} 秒角 —— "
+          f"外側が {d_uni['  うち視野外側 1/3'][4] / d_uni['  うち視野中心 1/3'][4]:.1f} 倍。"
+          f"ただしこれは暗い星がたまたま外側に多いためで、"
+          f"**投影の非線形ではない**(下で切り分ける)")
+    # 切り分け: 接平面投影を**やらずに** RA/Dec の平坦近似で解いたらどうなるか。
+    flat = np.stack([(cat["dec"][ci] - DEC0_DEG) * 3600.0,
+                     (cat["ra"][ci] - RA0_DEG) * 3600.0
+                     * np.cos(np.deg2rad(DEC0_DEG))], axis=1)
+    d_proj = np.abs(flat - src_all).max()
+    Mf = FT.vector_to_similarity(flat, dst_all)
+    rf = np.hypot(*(apply_matrix(Mf, flat) - dst_all).T) * PLATE_ARCSEC_PX
+    rad_c = np.hypot(dst_all[:, 0] - 127.5, dst_all[:, 1] - 127.5)
+    inner, outer = rad_c <= np.median(rad_c), rad_c > np.median(rad_c)
+    print(f"   切り分け —— 接平面投影を**省いて** RA/Dec の平坦近似で"
+          f"プレート解を当てると、標準座標との差は最大 {d_proj * 1e3:.1f} ミリ秒角、"
+          f"残差は 中心側 {np.median(rf[inner]):.4f} / "
+          f"外側 {np.median(rf[outer]):.4f} 秒角。正しく投影した場合は "
+          f"{np.median(np.hypot(d_xi, d_eta)[uni][rad[uni] <= np.median(rad[uni])]):.4f} / "
+          f"{np.median(np.hypot(d_xi, d_eta)[uni][rad[uni] > np.median(rad[uni])]):.4f} —— "
+          f"この視野({SHAPE[0] * PLATE_ARCSEC_PX / 60:.1f} 分角)では投影を"
+          f"省いても測位誤差に埋もれる。**視野が広がると先に効いてくるのはここ**"
+          f"(非線形は視野の 2 乗で伸びるので、1 度角なら "
+          f"{d_proj * (3600.0 / (SHAPE[0] * PLATE_ARCSEC_PX)) ** 2:.2f} 秒角)")
     print(f"   偏りと散らばりを分ける意味: 二重星の集団は 偏り "
           f"{d_uni['二重星'][2]:.4f} / 散らばり {d_uni['二重星'][3]:.4f} 秒角 —— "
           f"偏りだけで孤立星(1 個抜き)の中央 {np.median(lr):.4f} 秒角の "
