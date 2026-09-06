@@ -180,6 +180,23 @@ def link_nn(pa, pb):
     return np.asarray(j, np.int64)
 
 
+#: ゲート付きリンクの上限距離 [px]。1 歩の大きさは Rayleigh(σ=SIGMA_STEP)+
+#: ドリフトなので、99 % 分位はおよそ 3.0 σ。少し余裕を見て 3.5 σ。
+GATE = 3.5 * SIGMA_STEP
+
+
+def link_nn_gated(pa, pb, max_dist: float = GATE):
+    """最近傍だが、``max_dist`` を超える相手とは**結ばない**(``-1``)。
+
+    「相手が居ないなら結ばない」だけの 1 行の違いで、欠測由来の暴走が止まる
+    (4 節で実測)。1 対 1 の制約より効く。
+    """
+    if pa.shape[0] == 0 or pb.shape[0] == 0:
+        return np.full(pa.shape[0], -1, np.int64)
+    d, j = cKDTree(pb).query(pa, k=1)
+    return np.where(d <= max_dist, j, -1).astype(np.int64)
+
+
 def link_greedy(pa, pb, max_dist=None):
     """1 対 1 の貪欲リンク(近い対から確定させ、使った点は外す)。"""
     ma, mb = pa.shape[0], pb.shape[0]
