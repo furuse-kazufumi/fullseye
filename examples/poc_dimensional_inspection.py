@@ -1356,7 +1356,16 @@ def section_buried_api(img):
     d_fs, d_led, d_op = set(dir(fs)), set(dir(fs.ledger)), set(dir(fs.op))
     n_reach = sum(1 for n in names_m1 + names_mt
                   if n in d_fs or n in d_led or n in d_op)
+    n_ledger = sum(1 for n in names_m1 + names_mt if n in d_led)
+    n_facade = sum(1 for n in names_m1 + names_mt if n in d_fs)
     print(f"  14 関数のうち fs. / fs.ledger / fs.op から届くもの: {n_reach} / 14")
+    print(f"    内訳: 1 行ファサード fs. から {n_facade} / 14、"
+          f"型つき台帳 fs.ledger から {n_ledger} / 14")
+    print("  ★2026-09-06 に**塞がった**。この PoC を書いた時点では 0 / 14 で、")
+    print("     14 関数すべてがモジュールにしか無く、利用者からは存在しなかった。")
+    print("     `opsmeasure1d` 台帳が登録されて fs.ledger に出た。ただし**ファサード")
+    print("     (fs.<名前>)には今も 1 つも出ていない** —— 台帳を引くことを知らない")
+    print("     利用者にとっては、まだ見えないままである。")
     print(f"  一方 fs.op には別実装の m1_* が居る: "
           f"{sorted(n for n in d_op if n.startswith('m1_'))}")
     probe = bar_image(120, 40.0, 52.0, 1.5, height=32)
