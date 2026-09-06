@@ -774,8 +774,14 @@ def main():
     assert lam_c_tab[16.0]["Sq"] < truth["Sq"] * 0.9, "λc=16µm で加工目が落ちていない"
     assert lam_c_tab[256.0]["Sq"] > truth["Sq"] * 1.1, "λc=256µm でうねりが漏れていない"
     # 6) λs は Sq より Sz を強く動かす
+    # 6) λs の選択性は「雑音のあるときだけ」出る(予想が外れた側を固定する)
+    #    雑音なし: Sz の動きは Sq の 2 倍未満 = 選択性は無いに等しい
     assert abs(rel_err(lam_s_tab[8.0]["Sz"], lam_s_tab[0.0]["Sz"])) \
-        > 3.0 * abs(rel_err(lam_s_tab[8.0]["Sq"], lam_s_tab[0.0]["Sq"]))
+        < 2.0 * abs(rel_err(lam_s_tab[8.0]["Sq"], lam_s_tab[0.0]["Sq"])), \
+        "雑音なしで λs に選択性が出た = 仕込みが変わっている"
+    #    雑音あり: Sz の動きは Sq の 3 倍超
+    assert abs(n_sz) > 3.0 * abs(n_sq), \
+        f"白色雑音でも Sz が選択的に上がらない: Sz{n_sz:+.3f} Sq{n_sq:+.3f}"
     # 7) ロバスト当てはめは最小二乗より真の勾配に近い(広い外れ値のとき)
     s_wide = _scratch_field(C["xx"], C["yy"], 40.0)
     rt_w = psd + lay + s_wide
