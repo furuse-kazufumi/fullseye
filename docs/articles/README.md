@@ -9,6 +9,7 @@ complementing the reference docs (`docs/ops/`, guides) meant for lookup.
 | ファイル | 内容 | 言語 |
 |---|---|---|
 | `fullseye_overview_qiita_ja.md` / `fullseye_overview_qiita_en.md` | **総集編**: 設計思想・3層構造・Studio・RAG 運用・正直さの規律・151 の展示 | ja / **en** |
+| `fullseye_poc_museum_qiita_ja.md` / `fullseye_poc_museum_qiita_en.md` | **PoC 展示館**: 真値を仕込んだ計測 PoC 53 本を 9 ウィングで展示(生成物。正本は `exhibits/poc_captions.json` + `examples/poc_*.py` の図、`tools/gen_wingpoc_gallery.py` で組む) | ja / **en** |
 | `exhibits/` | 紙面の科学館 —— op で遊ぶ展示。`_intro` / `museum` / `science` / `wing*`(1D/2D/3D/astro/conv/ct/evo …) | ja / 一部 **en** |
 | `qiita_3dgs_sim_native.md` | 物理シミュをそのまま 3D Gaussian Splatting にする(姿勢推定いらず・純 PyTorch) | ja |
 | `assets/` | 記事と README で使う図版。**すべて Fullseye 自身の op の実出力**(モックアップなし) | — |
@@ -24,21 +25,23 @@ All figures are regenerable with `py -3.11 tools/gen_article_assets.py`
 
 <!-- articles:start -->
 
-## この下にあるもの(全 39 本 —— 生成)
+## この下にあるもの(全 43 本 —— 生成)
 
 `py -3.11 tools/gen_docs_index_ops.py` が `docs/articles/` を歩いて作ります。**ここから辿れない文書を作らない**ための一覧なので、手で足し引きしないでください。
 
-**記事**(5) —— 記事本文。長文の原稿はここが正本で、Qiita などへはここから出す。
+**記事**(7) —— 記事本文。長文の原稿はここが正本で、Qiita などへはここから出す。
 
 | ファイル | 見出し |
 |---|---|
 | [`LINKEDIN_POST.md`](LINKEDIN_POST.md) | LinkedIn 投稿キット(Fullseye) |
-| [`fullseye_overview_qiita_en.md`](fullseye_overview_qiita_en.md) | > **言語 / Language**: **English** · [日本語](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullse... |
-| [`fullseye_overview_qiita_ja.md`](fullseye_overview_qiita_ja.md) | > **言語 / Language**: **日本語** · [English](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullse... |
+| [`fullseye_overview_qiita_en.md`](fullseye_overview_qiita_en.md) | Carrying ~1,000 Explainable Classical Vision Algorithms as "Skills" — Building Fullseye, a Self-Made Vision Workshop ... |
+| [`fullseye_overview_qiita_ja.md`](fullseye_overview_qiita_ja.md) | 説明できる古典画像処理を「スキル」として1000個持ち歩く ―― Physical AI のための自作ビジョン工房 **Fullseye** をつくっている話 |
+| [`fullseye_poc_museum_qiita_en.md`](fullseye_poc_museum_qiita_en.md) | A Metrology Museum on Paper — Planting Your Own Ground Truth to Find Where Image Measurement Breaks |
+| [`fullseye_poc_museum_qiita_ja.md`](fullseye_poc_museum_qiita_ja.md) | 紙面の計測館 ―― 真値を自分で仕込んで、画像計測の「壊れる場所」を先に知る |
 | [`qiita_3dgs_sim_native.md`](qiita_3dgs_sim_native.md) | 物理シミュレーションを、そのまま3D Gaussian Splattingにする ―― 「姿勢推定いらず」の3DGSを純PyTorchでRTX 5090に実装した話 |
 | [`qiita_blas_threads_ja.md`](qiita_blas_threads_ja.md) | 24 コアが 1 コアに負ける ―― 行列分解の速さを、仮説ではなく測定で決めるまで |
 
-**展示(exhibits)**(26) —— 記事の「紙面の科学館」章の単一真実源。`<id>.ja.md` / `<id>.en.md` の 2 枚組で、本文は `tools/build_exhibits.py` が組み立てる。
+**展示(exhibits)**(28) —— 記事の「紙面の科学館」章の単一真実源。`<id>.ja.md` / `<id>.en.md` の 2 枚組で、本文は `tools/build_exhibits.py` が組み立てる。`wingpoc.*` だけは `poc_captions.json` + 各 PoC の図から `tools/gen_wingpoc_gallery.py` が生成する(PoC 展示館の記事も同時に出る)。
 
 | ファイル | 見出し |
 |---|---|
@@ -64,6 +67,8 @@ All figures are regenerable with `py -3.11 tools/gen_article_assets.py`
 | [`exhibits/wingevo.md`](exhibits/wingevo.md) | はこのファイルからは触らない。 --> |
 | [`exhibits/wingopt.en.md`](exhibits/wingopt.en.md) | The prose is written by hand; every number, unit and op name is the same measurement |
 | [`exhibits/wingopt.ja.md`](exhibits/wingopt.ja.md) | 光学設計・検査ウィング —— キャプション原稿 |
+| [`exhibits/wingpoc.en.md`](exhibits/wingpoc.en.md) | The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist |
+| [`exhibits/wingpoc.ja.md`](exhibits/wingpoc.ja.md) | 産業検査ウィング ―― 合格の数字と不合格の数字は両立する |
 | [`exhibits/wingstudio.en.md`](exhibits/wingstudio.en.md) | The Studio-Screen / 3-D-Display Wing — exhibit captions (English) |
 | [`exhibits/wingstudio.ja.md`](exhibits/wingstudio.ja.md) | Studio 画面 / 3D 表示ウィング —— 展示キャプション原稿(日本語) |
 | [`exhibits/wingvox.en.md`](exhibits/wingvox.en.md) | The Voxel-Colouring Wing — exhibit caption drafts |

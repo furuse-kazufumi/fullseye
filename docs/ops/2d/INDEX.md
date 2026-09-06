@@ -1,9 +1,10 @@
-# 2D operator help — 885 ops in 47 categories
+# 2D operator help — 897 ops in 48 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/2d/<category>/<op>.md` を走査。
 
 ## ファミリ使い方ガイド(用途→op の教材)
 
+- [gallery2d_bridge](guides/gallery2d_bridge.md) — 入口 op（img_to_*、category=bridge） — 使い方ガイド
 - [gallery2d_color_artistic](guides/gallery2d_color_artistic.md) — 色・芸術・拡張 — 使い方ガイド
 - [gallery2d_contour_measure](guides/gallery2d_contour_measure.md) — 輪郭・1次元計測・テンプレート照合 — 使い方ガイド
 - [gallery2d_edges](guides/gallery2d_edges.md) — エッジ・微分・コーナー — 使い方ガイド
@@ -48,6 +49,10 @@
 ### barcode (1)
 
 [decode_barcode](barcode/decode_barcode.md)
+
+### bridge (12)
+
+[img_to_beatcube](bridge/img_to_beatcube.md) · [img_to_cimage](bridge/img_to_cimage.md) · [img_to_counts](bridge/img_to_counts.md) · [img_to_keypoints](bridge/img_to_keypoints.md) · [img_to_lightfield](bridge/img_to_lightfield.md) · [img_to_matrix](bridge/img_to_matrix.md) · [img_to_monogenic](bridge/img_to_monogenic.md) · [img_to_points](bridge/img_to_points.md) · [img_to_rgb](bridge/img_to_rgb.md) · [img_to_signal](bridge/img_to_signal.md) · [img_to_video](bridge/img_to_video.md) · [img_to_volume](bridge/img_to_volume.md)
 
 ### classification (1)
 

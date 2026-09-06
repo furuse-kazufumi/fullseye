@@ -67,6 +67,29 @@ def structured_image(n: int = 48) -> np.ndarray:
     return np.clip(s, 0.0, 1.0)
 
 
+def structured_fragments(n: int = 48) -> np.ndarray:
+    """細い線分の断片(長さ 3 / 6 / 12 / 25 / 40 px)+ 小さな塊 + 弱い背景勾配。
+
+    ``structured_image`` は塊が大きく、しきい値で二値化すると連結成分が数百画素に
+    なる。だから「短い断片を落とす」「近い端点を繋ぐ」「線の長さで選ぶ」種類の
+    ノブは、あの画像だけでは何を振っても出力が変わらない(2026-09-07:
+    ``hx_close_edges_length`` の ``b`` = 残す最小画素数 2〜22 が探針では
+    「効かない」と誤判定された)。断片の長さが段階的に並ぶこの画像を 1 枚足す。
+    """
+    y, x = np.mgrid[0:n, 0:n]
+    s = 0.08 * (x / float(n - 1))
+    row = 4
+    for L in (3, 6, 12, 25, 40):
+        L = min(L, n - 4)
+        s[row, 2:2 + L] = 1.0
+        row += 5
+    # 斜めの断片(4 近傍では 1 画素ずつに切れる)と、小さな塊
+    for k in range(8):
+        s[min(n - 1, row + k), min(n - 1, 2 + k)] = 1.0
+    s[n - 8:n - 4, n - 10:n - 5] = 0.9
+    return np.clip(s, 0.0, 1.0)
+
+
 def structured_region(n: int = 48) -> np.ndarray:
     """穴つき 2 連結成分の二値領域。面積・穴数・凸性のどれでも差が出る形。"""
     b = np.zeros((n, n))
@@ -197,6 +220,9 @@ def sample_probes(sort: str, name: str = "", n: int = 4):
         if v is None:
             break
         out.append(v)
+    # 末尾に「細い断片」画像を 1 枚足す(既存の探針は種も順序も変わらない)。
+    if sort in ("image", "any"):
+        out.append(structured_fragments())
     return out
 
 

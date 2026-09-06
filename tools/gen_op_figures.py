@@ -757,6 +757,19 @@ def main() -> int:
     n_gif = sum(1 for r in rows.values() if r.get("extra", {}).get("gif"))
     n_ch = sum(1 for r in rows.values() if r.get("extra", {}).get("chain"))
     stats.update({"with_sweep": n_sw, "with_gif": n_gif, "with_chain": n_ch})
+    if not a.limit:
+        # 全数生成のときだけ、manifest に無い古い図を消す(形式を PNG → JPEG に変えた
+        # ときの残骸が 2026-09-07 に 1,900 枚残っていた)。inputs/ と figures.json は残す。
+        keep = {"figures.json"}
+        for r in rows.values():
+            if r.get("fig"):
+                keep.add(r["fig"])
+            keep.update((r.get("extra") or {}).values())
+        for f in os.listdir(a.out):
+            fp = os.path.join(a.out, f)
+            if os.path.isfile(fp) and f not in keep:
+                os.remove(fp)
+                stats["pruned"] = stats.get("pruned", 0) + 1
     out = {"generated_for": len(todo), "size": SIZE, "stats": stats, "ops": rows}
     with open(os.path.join(a.out, "figures.json"), "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1, sort_keys=True)

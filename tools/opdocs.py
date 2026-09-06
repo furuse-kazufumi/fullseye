@@ -1417,10 +1417,13 @@ def _copy_figures() -> int:
         return 0
     os.makedirs(dst, exist_ok=True)
     n = 0
-    for f in sorted(os.listdir(FIG_DIR)):
-        if f.endswith((".png", ".gif")):          # JPEG(段階図・複数入力)は docs だけ
-            shutil.copyfile(os.path.join(FIG_DIR, f), os.path.join(dst, f))
-            n += 1
+    want = {f for f in os.listdir(FIG_DIR) if f.endswith((".png", ".gif"))}   # JPEG は docs だけ
+    for f in sorted(want):
+        shutil.copyfile(os.path.join(FIG_DIR, f), os.path.join(dst, f))
+        n += 1
+    for f in os.listdir(dst):                      # 元に無い残骸(旧形式・消えた op)は消す
+        if f not in want and os.path.isfile(os.path.join(dst, f)):
+            os.remove(os.path.join(dst, f))
     return n
 
 

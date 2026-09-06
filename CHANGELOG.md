@@ -28,6 +28,13 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   体積の GIF、複数入力(合成 / 写真 / 硬貨 / 生成画像 4 枚 / カラー)での結果。
   生成画像は `tools/gen_ai_inputs.py`(来歴 `docs/ops/_fig/inputs/PROVENANCE.json`)。
 - 手書きヘルプ 3 本に呼び出し形、`<img alt>` を英語に。
+- **PoC 展示館の記事(ja / en)を生成物に**: `docs/articles/exhibits/poc_captions.json`
+  + 各 PoC の図から `tools/gen_wingpoc_gallery.py` が Qiita 用記事・翼・サムネ・看板
+  モンタージュを組む。使用 op は自動検出して docs サイトのノートへリンク。投稿は
+  `tools/qiita_post_poc.py`(限定共有が既定、画像 200 検査つき)。
+- ノブ生死の門: 探針に細い断片画像を追加(`op_probe.structured_fragments`)、docstring の
+  折り返しで「未使用」を見落とす判定を修正、`tb_wetness` の `b` が台帳から外れた。
+- `poc_fabric_defect` の図キャプションに `%%` が残っていたのを修正。
 - 修正: `imgmetrics` の int8/int16 `data_range`(255/65535 → 127/32767、PSNR 6 dB ずれ)、
   `tb_wetness` がノブの半分以上で必ず失敗していた(定義域つき引数の絶対範囲表
   `backends_typed.OP_KNOB_RANGE`)。

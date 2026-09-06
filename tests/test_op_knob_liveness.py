@@ -66,7 +66,7 @@ KNOWN_DEAD_KNOBS = {
     ("sp_local_max_sub_pix", "a"), ("sp_local_min_sub_pix", "a"),
     ("xcv3_sift_count", "a"), ("xcv_grabcut", "a"), ("xsk_orb_count", "a"),
     ("tb_beamform_delay_sum", "a"), ("tb_env_studio", "a"), ("tb_mat_pinv", "a"),
-    ("tb_spectrogram", "a"), ("tb_wetness", "b"),
+    ("tb_spectrogram", "a"),   # tb_wetness b は OP_KNOB_RANGE(ior 1.01〜2.5)で 2026-09-07 に生き返った
     ("tb_specular_diffuse_split", "a"), ("tb_specular_diffuse_split", "b"),
     # 種の二重定義(ruff F601)を直して**op が生き返った**あと、初めて
     # 「ノブが効かない」が本物の指摘として見えるようになった 2 件
@@ -120,6 +120,9 @@ def _knob_live(op, which, v):
 
 
 def _claims(doc, which):
+    # 行の折り返し(「``b`` は<改行>    未使用」)を 1 行に戻してから判定する。
+    # 2026-09-07 に折り返しだけで 2 件が「振ると書いてあるのに効かない」に化けた。
+    doc = re.sub(r"\n[ \t]+", " ", doc)
     if _UNUSED_BOTH.search(doc) or _UNUSED[which].search(doc):
         return False
     return bool(_CLAIM[which].search(doc))

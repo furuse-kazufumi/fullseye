@@ -556,7 +556,9 @@ ART_HEAD = {
                  "ここから出す。"),
     "exhibits": ("展示(exhibits)", "記事の「紙面の科学館」章の単一真実源。"
                  "`<id>.ja.md` / `<id>.en.md` の 2 枚組で、本文は "
-                 "`tools/build_exhibits.py` が組み立てる。"),
+                 "`tools/build_exhibits.py` が組み立てる。`wingpoc.*` だけは "
+                 "`poc_captions.json` + 各 PoC の図から `tools/gen_wingpoc_gallery.py` "
+                 "が生成する(PoC 展示館の記事も同時に出る)。"),
     "assets": ("図版まわりの資料", "図版の出典表記と、記事へ差し込む断片"
                "(`_*_snippet.md`)。断片は生成物で、手で編集しない。"),
 }
@@ -590,7 +592,7 @@ def _articles_title(rel: str) -> str:
             t = line.strip()
             if t.startswith("#"):
                 t = t.lstrip("#").strip()
-            elif (not t) or t.startswith(("<!--", "---", "!", "[")):
+            elif (not t) or t.startswith(("<!--", "---", "!", "[", ">")):   # > は言語切替行
                 continue
             t = t.replace("|", "/")
             return t if len(t) <= 120 else t[:117] + "..."

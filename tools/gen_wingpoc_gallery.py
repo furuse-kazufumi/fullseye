@@ -124,6 +124,62 @@ def _thumb(poc_id: str, file: str) -> str:
     return name
 
 
+MONTAGE = "_hero_montage.jpg"
+MONTAGE_TILE = (400, 267)     # 3:2 のタイル。4 × 3 = 1600 × 801 px
+MONTAGE_GRID = (4, 3)
+
+
+def _hero_montage(cap: dict) -> str:
+    """看板画像: 各ウィング先頭の展示の「場面」図を中央クロップして 4 × 3 に並べる。
+    素材は PoC 自身の出力(モックアップ禁止)。ウィングが 12 未満なら残りは追加日の新しい
+    展示で埋める。返り値はファイル名(ASSETS 直下)。"""
+    from PIL import Image
+
+    tiles = list(cap["meta"].get("hero_tiles") or [])
+    if not tiles:   # 指定が無ければ各ウィング先頭の展示の場面図、足りなければ新しい順
+        wings = sorted(cap["wings"], key=lambda w: w["order"])
+        order, seen = [], set()
+        for w in wings:
+            for e in cap["exhibits"]:
+                if e["wing"] == w["id"]:
+                    order.append(e); seen.add(e["id"]); break
+        for e in sorted(cap["exhibits"], key=lambda e: e["added"], reverse=True):
+            if e["id"] not in seen:
+                order.append(e); seen.add(e["id"])
+        tiles = [e["id"] + "/" + _figure_for(e)[0]["file"] for e in order]
+    # 雑誌の見開き風: 行の高さを揃え、図を高さに合わせて縮めて左から詰める(隙間なし)。
+    # 各図は切らずに入れ、行の右端にはみ出た分だけ切る。タイルが尽きたら先頭から繰り返す。
+    cols, rows = MONTAGE_GRID
+    tw, th = MONTAGE_TILE
+    W = cols * tw
+    sheet = Image.new("RGB", (W, rows * th), (24, 24, 28))
+    ims = []
+    for rel in tiles:
+        src = os.path.join(ASSETS, rel.replace("/", os.sep))
+        if not os.path.exists(src):
+            raise BuildError("hero_tiles: %s が無い" % rel)
+        im = Image.open(src).convert("RGB")
+        ims.append(im.resize((max(1, round(im.width * th / im.height)), th), Image.LANCZOS))
+    if not ims:
+        raise BuildError("hero_tiles が空")
+    k = 0
+    for r in range(rows):
+        x = 0
+        while x < W:
+            im = ims[k % len(ims)]
+            k += 1
+            sheet.paste(im.crop((0, 0, min(im.width, W - x), th)), (x, r * th))
+            x += im.width + 2   # 2 px の黒い目地
+    dst = os.path.join(ASSETS, MONTAGE)
+    buf = io.BytesIO()
+    sheet.save(buf, "JPEG", quality=JPEG_Q, optimize=True)
+    data = buf.getvalue()
+    # 内容が同じなら書かない(mtime だけ動いて差分に見えるのを避ける)
+    if not (os.path.exists(dst) and io.open(dst, "rb").read() == data):
+        io.open(dst, "wb").write(data)
+    return MONTAGE
+
+
 _OP_URL = None
 
 
@@ -225,9 +281,10 @@ def build(lang: str, cap: dict, byid: dict) -> tuple[str, str]:
         wing_parts.append("")
         for ex in exs:
             n += 1
-            pick, _figs = _figure_for(ex)
+            pick, _figs, second = _figure_for(ex)
             thumb = _thumb(ex["id"], pick["file"])
-            wing_parts.append(_exhibit_md(n, ex, lang, pick, thumb, byid))
+            thumb2 = _thumb(ex["id"], second["file"]) if second is not None else None
+            wing_parts.append(_exhibit_md(n, ex, lang, pick, thumb, byid, second, thumb2))
     total = n
     head = ("<!-- tools/gen_wingpoc_gallery.py が自動生成(単一真実源 = docs/articles/exhibits/poc_captions.json "
             "+ 各 PoC の figures.json)。手で編集しない。 -->" if lang == "ja" else
@@ -239,13 +296,23 @@ def build(lang: str, cap: dict, byid: dict) -> tuple[str, str]:
     switch = ("> **言語 / Language**: **日本語** · [English](%s)" % (GH + "docs/articles/fullseye_poc_museum_qiita_en.md")
               if lang == "ja" else
               "> **Language**: [日本語](%s) · **English**" % (GH + "docs/articles/fullseye_poc_museum_qiita_ja.md"))
-    title = ent["title_" + lang]
+    title = ent.get("title_" + lang) or cap["meta"]["title_" + lang]
     tldr = "\n".join("- " + t for t in ent["tldr_" + lang])
     gl = "\n".join("- **%s** —— %s" % (t, e) for t, e in ent["glossary_" + lang])
     lat = "\n".join("- %s — %s(%s)" % (e["added"], e["title_" + lang], e["id"]) if lang == "ja"
                     else "- %s — %s (%s)" % (e["added"], e["title_" + lang], e["id"]) for e in latest)
+    hero = RAW + _hero_montage(cap)
+    hero_line = ("![%s](%s)" % ("PoC museum montage", hero))
+    hero_cap = ("*↑ 展示の場面図を 12 枚並べたもの。どれも PoC スクリプト自身の出力で、記事のために描いた絵は 1 枚もありません。*"
+                if lang == "ja" else
+                "*↑ Twelve exhibit scenes side by side. Every tile is the PoC script's own output; nothing was drawn for the article.*")
+    funnel = ("> 図と op の使い方は docs サイト [furuse.work](https://furuse.work/) と共通です。各展示の「使用 op」から op ノート(型契約・罠・図・Studio で走るプログラム)へ飛べます。AI に読ませるなら [AI_RAG_GUIDE](https://furuse.work/AI_RAG_GUIDE.html)。"
+              if lang == "ja" else
+              "> Figures and op usage are shared with the docs site [furuse.work](https://furuse.work/). The \"Ops used\" line under each exhibit jumps to the op notes (type contracts, pitfalls, figures, runnable Studio programs). For AI readers: [AI_RAG_GUIDE](https://furuse.work/AI_RAG_GUIDE.html).")
     parts = [
         switch, "", "# " + title, "",
+        hero_line, "", hero_cap, "",
+        funnel, "",
         ("> この記事は生成物です。展示の追加・修正は `docs/articles/exhibits/poc_captions.json` と各 PoC の図(`FULLSEYE_FIGURE_DIR`)で行い、`py -3.11 tools/gen_wingpoc_gallery.py` で組み直します。"
          if lang == "ja" else
          "> This article is generated. Exhibits are added or edited in `docs/articles/exhibits/poc_captions.json` plus each PoC's figures (`FULLSEYE_FIGURE_DIR`), then rebuilt with `py -3.11 tools/gen_wingpoc_gallery.py`."),
@@ -260,13 +327,20 @@ def build(lang: str, cap: dict, byid: dict) -> tuple[str, str]:
         ("## 最近の追加(新しい順)" if lang == "ja" else "## Recently added (newest first)"), "", lat, "",
         ("## 展示室(全 %d 展示)" % total if lang == "ja" else "## The wings (%d exhibits)" % total), "",
         wing_md, "",
-        ("## 自分の問題に当てはめるには" if lang == "ja" else "## Bringing this to your own problem"), "",
-        ent["howto_" + lang].strip(), "",
-        ("## 正直に、まだ出来ないこと" if lang == "ja" else "## Honestly: what is not there yet"), "",
-        ent["limits_" + lang].strip(), "",
-        ("## 閉館の挨拶" if lang == "ja" else "## Closing"), "", ent["closing_" + lang].strip(), "",
-        ent.get("credits_" + lang, "").strip(), "",
     ]
+    # 閉館部: JSON が howto/limits を別キーで持つ版と、closing に「## 見出し」込みで
+    # 持つ版の両方を受ける(closing に見出しがあればそのまま貼る)。
+    closing = ent["closing_" + lang].strip()
+    if "howto_" + lang in ent:
+        parts += [("## 自分の問題に当てはめるには" if lang == "ja" else "## Bringing this to your own problem"), "",
+                  ent["howto_" + lang].strip(), ""]
+    if "limits_" + lang in ent:
+        parts += [("## 正直に、まだ出来ないこと" if lang == "ja" else "## Honestly: what is not there yet"), "",
+                  ent["limits_" + lang].strip(), ""]
+    if not re.match(r"^#+ ", closing):
+        parts += [("## 閉館の挨拶" if lang == "ja" else "## Closing"), ""]
+    parts += [closing, "", ent.get("credits_" + lang, "").strip(), "",
+              ent.get("cta_" + lang, "").strip(), ""]   # 招待リンク + いいね依頼(ユーザー指示 2026-09-07)
     return wing_md + "\n", "\n".join(parts).rstrip() + "\n"
 
 

@@ -1,0 +1,784 @@
+{
+ "meta": {
+  "title_candidates_ja": [
+   "紙面の計測館 ―― 真値を自分で仕込んで、画像計測の「壊れる場所」を先に知る(Fullseye PoC ウィング)",
+   "ひび割れ幅から星の位置まで ―― 答えを知っている問題で画像計測の道具を試す",
+   "逆向きの 2 つの失敗は打ち消し合う ―― 画像で「測る」仕事を真値つきで採点した展示"
+  ],
+  "title_ja": "紙面の計測館 ―― 真値を自分で仕込んで、画像計測の「壊れる場所」を先に知る",
+  "title_en": "A Metrology Museum on Paper — Planting Your Own Ground Truth to Find Where Image Measurement Breaks",
+  "fig_placeholder": "<!-- FIG {id} -->",
+  "run_template": "py -3.11 examples/{id}.py",
+  "repo": "https://github.com/furuse-kazufumi/fullseye",
+  "docs": "https://furuse.work/",
+  "overview_article_ja": "https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_ja.md",
+  "overview_article_en": "https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_en.md",
+  "numbers_note_ja": "数字は各 PoC が実行時に印字する実測値。numbers_source が log のものは 2026-09-07 の実行ログから、docstring のものはスクリプト冒頭の docstring から転記した。",
+  "numbers_note_en": "Every number is printed by the PoC itself at run time. Exhibits marked numbers_source = log quote the 2026-09-07 run logs; those marked docstring quote the script's own docstring.",
+  "hero_tiles": [
+   "poc_photoelasticity/01_polariscope.png",
+   "poc_gear_tooth_metrology/01_scene.png",
+   "poc_fiber_orientation/01_scene.png",
+   "poc_particle_sizing/01_scene.png",
+   "poc_focus_stacking/01_stack.png",
+   "poc_dehazing/01_scene.png",
+   "poc_star_astrometry/03_starfield.png",
+   "poc_thermography_ndt/02_depth_map.png",
+   "poc_solar_limb_darkening/01_scene.png",
+   "poc_fabric_defect/04_scene.png",
+   "poc_moire_screen/04_moire_scene.png",
+   "poc_vessel_network/01_scene.png",
+   "poc_weld_bead_profile/01_laser_images.png",
+   "poc_crack_width/02_scene.png",
+   "poc_sea_ice_concentration/01_scene.png",
+   "poc_interferometry_step/01_interferogram.png",
+   "poc_traffic_counting/02_scene.png",
+   "poc_lightfield_depth/01_scene_and_depth.png",
+   "poc_dic_strain/01_speckle.png",
+   "poc_water_level/01_scene.png"
+  ],
+  "hero_tiles_note": "看板モンタージュのタイル(左上から)。PoC 自身の出力から見た目で選ぶ。無ければ各ウィング先頭の展示の場面図。",
+  "qiita_tags": [
+   "画像処理",
+   "Python",
+   "計測",
+   "ComputerVision",
+   "品質管理"
+  ]
+ },
+ "entrance": {
+  "tldr_ja": [
+   "画像で「測る」仕事(ひび割れ幅、歯車の偏心、細胞の個数、星の明るさ、河川の水位…)を、**答えを自分で仕込んだ合成データ**で採点する実行可能なスクリプト群を、画像処理ライブラリ Fullseye の `examples/poc_*.py` として公開しました。1 本ずつ `py -3.11 examples/poc_<名前>.py` で走り、数字は全部その場で印字されます。",
+   "どの 1 本にも同じ 3 つが入っています: **真値(自分で仕込んだ正解)**、**ゼロ点(いちばん素朴なやり方の成績)**、**どこで壊れるかの崖**。「できました」ではなく「ここまでは信じてよく、ここから先は嘘になる」を数字で置く形です。",
+   "通して見えた 1 つの型 ―― **向きの逆な 2 つの失敗は打ち消し合い、まとめた 1 つの数字はそのときいちばん良く見える**。粒度分布・モアレ・雲量・海氷・細胞計数・除霞・タイムラプスで、別々の物理から同じ形が出ました。",
+   "展示は 9 つのウィング(産業検査 / 寸法・形状 / 医用・生物 / 天文・環境 / 撮像品質・復元 / 時系列を 3-D として測る / 幾何・校正 / 色・分離 / 法科学・文書)。自分の分野だけ拾ってもらえば足ります。",
+   "各スクリプトには実写へ差し替える口(`EXTEND` の印)があり、合成器 1 関数を差し替えれば採点の枠組みはそのまま自分のデータで動きます。使っている op はすべて docs サイトのノートに図つきで載っています。",
+   "PoC を書くことでライブラリ側の穴(公開経路に出ていない実装、既定値が寛容側の op、窓が固定の op)も多数見つかりました。直したもの・直していないものを分けて末尾に書きます。"
+  ],
+  "tldr_en": [
+   "A set of runnable scripts, `examples/poc_*.py` in the Fullseye image-processing library, each scores one real measurement task (crack width, gear eccentricity, cell counts, stellar brightness, river stage, and so on) against **synthetic data whose answer was planted in advance**. Run any of them with `py -3.11 examples/poc_<name>.py`; every number is printed on the spot.",
+   "Every script carries the same three things: a **ground truth** you planted yourself, a **null baseline** (the most naive method's score), and the **cliff** where the method breaks. The point is not 'it works' but 'trust it up to here, and it lies beyond here', stated in numbers.",
+   "One pattern kept recurring: **two errors of opposite sign cancel, and the single summary number looks best exactly then**. Particle sizing, moire, cloud cover, sea ice, cell counting, dehazing and time-lapse growth all produced the same shape from unrelated physics.",
+   "The exhibits are grouped into nine wings (industrial inspection / dimensional and shape metrology / medical and biological / astronomy and environment / image quality and restoration / measuring time series as 3-D / geometry and calibration / colour and separation / forensics and documents). Read only your own wing if you like.",
+   "Each script has a marked `EXTEND` entry point for swapping in real data: replace the one synthesis function and the scoring framework runs unchanged. Every op used is documented, with figures, on the docs site.",
+   "Writing the PoCs also exposed holes in the library itself (implementations missing from the public path, ops whose defaults sit on the permissive side, ops with fixed windows). The closing section separates what was fixed from what was not."
+  ],
+  "glossary_ja": [
+   [
+    "PoC(proof of concept、概念実証)",
+    "「この考え方で本当に測れるのか」を最小の実装で確かめる短いプログラム。ここでは 1 本 = 1 つの計測課題。"
+   ],
+   [
+    "真値(ground truth)",
+    "採点に使う正解。この展示の PoC は**すべて真値を自分で作る**(既知の形・既知の変形・既知の雑音から画像を合成する)ので、推定値との差を丸め誤差の桁まで言えます。"
+   ],
+   [
+    "ゼロ点(null baseline)",
+    "「いちばん素朴なやり方」の成績。二値化して数える、1 枚目で較正して使い回す、何もしない、など。**ゼロ点に勝てない手法は、勝てないと書く**のが約束です。"
+   ],
+   [
+    "閉形式(closed form)",
+    "数値計算ではなく式で書ける答え。球冠の立体角、インボリュート歯形、円板圧縮の応力場、1 次元熱伝導の解。真値を閉形式で持てると、合成器そのものを検算できます。"
+   ],
+   [
+    "打ち消し(cancellation)",
+    "逆向きの 2 つの誤差が足し合わさって小さく見える現象。この展示の通し主題。**「合っている」のではなく「釣り合っているだけ」**を見分けるのが目的です。"
+   ],
+   [
+    "対照群(control)",
+    "原因を分けるために「その要因だけ止めた条件」を並べること。検出を止めて幾何だけの誤差を測る、ぼけをゼロにして減光だけの偏りを測る、など。"
+   ]
+  ],
+  "glossary_en": [
+   [
+    "PoC (proof of concept)",
+    "A short program that checks whether an approach can really measure something, with the smallest implementation that settles the question. Here, one script = one measurement task."
+   ],
+   [
+    "Ground truth",
+    "The answer used for scoring. Every PoC here **builds its own ground truth** (images are synthesised from a known shape, known deformation and known noise), so the error of an estimate can be stated down to rounding."
+   ],
+   [
+    "Null baseline",
+    "The score of the most naive method: threshold and count, calibrate once on the first frame and reuse, do nothing. The rule is that **a method that cannot beat the null is reported as not beating it**."
+   ],
+   [
+    "Closed form",
+    "An answer that can be written as a formula rather than computed numerically: the solid angle of a spherical cap, an involute tooth profile, the stress field of a diametrally loaded disc, the 1-D heat-conduction solution. A closed-form truth lets you check the synthesiser itself."
+   ],
+   [
+    "Cancellation",
+    "Two errors of opposite sign adding up to something small. This is the museum's thesis: telling **'balanced' apart from 'correct'**."
+   ],
+   [
+    "Control",
+    "A condition with one cause switched off, used to separate causes: score with detection disabled to isolate geometry, set blur to zero to isolate limb darkening, and so on."
+   ]
+  ],
+  "thesis_ja": "PoC を 1 本ずつ書いていた段階では、分野ごとに別々の話をしているつもりでした。粉体の粒度分布と、ディスプレイ検査のモアレと、全天カメラの雲量に、共通点があるとは思っていません。ところが並べると、同じ形の罠が別々の物理から出てきます。\n\n**粒度分布**では、触れ合った粒子が 1 個に融合する誤りは大きい側へ、視野の縁で切れる誤りは小さい側へ引きます。面積率を 1.9 % から 28.2 % まで振ると代表径 D50 の誤差は -4.9 % から +4.5 % へ単調に動き、途中の **13.8 % でほぼゼロ(+0.55 %)を通ります**。そこは正確なのではなく、塊 140 個のうち融合 28 件と縁切れ 19 件が釣り合っているだけでした。**モアレ**では、ならしを強くするほどモアレの漏れ込み(過大)が減り本物のムラの減衰(過小)が増え、σ = 8 px で**合計誤差 +0.9 %** ―― 内訳は漏れ +8.3 % / 減衰 -7.4 %。**雲量**では、魚眼の幾何だけの誤差 -5.02 % と太陽まわりの偽陽性だけの誤差 +37.95 % が、素朴な数え方では +29.73 % に見えます。\n\n同じ形は、**海氷密接度**(密接度 0.15 → 0.85 で偏りが -5.9 → +6.0 ポイントと符号を変え、0.49 付近でゼロを横切る)、**太陽の縁**(しきい値 0.26 付近でぼけの影響が消えるが、減光係数を変えると 0.38 へ動く)、**細胞計数**(過分割と過統合が釣り合う点で個数の偏り +0.3 個なのに分割誤りが 13.3 件残る)、**除霞**(全体 +4.04 dB の中身は近景 -1.49 dB の劣化)、**タイムラプス**(画素の面積で合体が早く見える分と、フレーム格子への丸めで遅く見える分が逆向き)にも出ました。\n\nここから引き出せる、書き手が消えても残る規則は 3 つです。**失敗の種類ごとに数える**(誤読と読み取り不能、過分割と過統合、曖昧な誤リンクと欠測による誤リンク ―― 畳んだ瞬間に「どちらを直すか」が決まらなくなる)。**対照群を置く**(原因を 1 つだけ止めた条件が無いと、打ち消しは「合っている」と区別できない)。**打ち消し点を「最良の条件」と呼ばない**(その点は条件を少し変えるだけで動く)。",
+  "thesis_en": "While the PoCs were being written one at a time, each looked like a separate story. Nobody expected powder particle sizing, display moire and all-sky cloud cover to share anything. Laid side by side, the same trap appears from unrelated physics.\n\nIn **particle sizing**, particles that touch and merge pull the result toward larger sizes; particles cut by the field edge pull it toward smaller ones. Sweeping the area fraction from 1.9 % to 28.2 % moves the D50 error monotonically from -4.9 % to +4.5 %, and it passes through almost zero (+0.55 %) at **13.8 %**. That point is not accurate: of 140 blobs, 28 merges and 19 edge cuts happen to balance. In **moire**, stronger smoothing reduces moire leakage (over-estimate) while increasing the attenuation of real non-uniformity (under-estimate); at σ = 8 px the **total error is +0.9 %**, made of +8.3 % leakage and -7.4 % attenuation. In **cloud cover**, the fisheye geometry error alone is -5.02 % and the sun-glare false-positive error alone is +37.95 %, yet the naive count reports +29.73 %.\n\nThe same shape shows up in **sea-ice concentration** (bias flips from -5.9 to +6.0 points between concentrations 0.15 and 0.85, crossing zero near 0.49), the **solar limb** (the blur effect vanishes near threshold 0.26, but moves to 0.38 when the darkening coefficient changes), **cell counting** (where over- and under-segmentation balance, the count bias is +0.3 cells while 13.3 segmentation errors remain), **dehazing** (the overall +4.04 dB hides a -1.49 dB degradation of the near field) and **time-lapse growth** (pixel area makes merging look early; frame-grid rounding makes it look late; the two are opposite).\n\nThree rules survive even if the author is forgotten. **Count failures by kind** (misread versus unreadable, over- versus under-segmentation, ambiguous versus missing-target mislinks: collapse them and you no longer know which one to fix). **Keep a control** (without a condition that switches off exactly one cause, cancellation is indistinguishable from correctness). **Never call the cancellation point the optimum** (it moves the moment a condition changes).",
+  "closing_ja": "## 自分の問題に当てはめるには\n\n53 本はどれも合成データで閉じていますが、**実データへの差し替え口を最初から決めて書いてあります**。\n\n**1. `EXTEND` の印を探す。** 各スクリプトの docstring に `EXTEND:` で始まる段落があり、「この関数の戻り値をこれに置き換える」と書いてあります。ほとんどの PoC は合成器 1 関数(`make_scene` / `render` / `build_case` など)だけを差し替えれば、ゼロ点・崖の掃引・表の印字はそのまま動きます。同時に「真値が消えるので測れなくなるもの」も書いてあります ―― 手ブレの PoC では実写真だと意味を保つのはリンギングと速度の章だけ、パノラマなら閉ループ誤差だけ、追跡なら往復不一致だけ。**真値なしで測れる絶対量は少ない**ので、そこを先に読んでから撮り方を決めるのが早道です。\n\n**2. op は 2 段で呼べる。** 1 行で済ませたいときは `fs.apply(img, \"op名\", ...)`、引数の規約まで握りたいときは `fs.ledger.<op名>(...)`。PoC の中で裸のモジュールを直接 import している箇所には「公開経路に出ていない」と注記してあります(それ自体が末尾の「穴」の一覧です)。\n\n**3. 図と使い方は docs サイトにある。** [https://furuse.work/](https://furuse.work/) に op ごとのノート(何をする op か、型契約、罠、関連 op、図)があります。各展示には、その PoC が呼んでいる op のノートへのリンクが付きます。Fullseye Studio を横に開いておくと、PoC が印字した中間結果(マスク、断面、スペクトル)を画像ウィンドウや 3-D 表示で確かめられます。\n\n**4. AI に読ませる。** `pip install fullseye` のあと `fullseye-rag` を 1 回叩くと、op のノート群が Claude Code のスキルとして登録されます。この状態で「この PoC を自分の顕微鏡画像に差し替えて」と頼むと、AI は `EXTEND` 段落と op ノートを読んで差し替え案を書きます。**私が使っている運用はこれ**で、この展示の PoC 群も同じ経路で書き進めました。\n\n---\n\n## 正直な限界\n\n**測っていないもの。** 全部が合成データです。実機の記録には、転がり滑り、複数の共振、紙の反り、焦点ブリージング、2 光源の混在といった、ここで仕込んでいない要因が乗ります。各 PoC が出す検出限界や崖の位置は**そのモデル・その条件での上界**であって現場の値ではなく、どの docstring にもそう書いてあります。バーコードとマトリクスコードは実在規格ではないので、読取率を規格準拠リーダの性能として引用してはいけません。改竄検出は防御側だけを扱い、うまく作る方法は含めていません。\n\n**PoC が見つけて直したもの。** CT のランプフィルタが DC ビンで各投影の平均を丸ごと引いていた(質量欠損 -3.34 % → -0.0099 %)。当初「検出器を増やすと改善する」と読んでいたのは取り違えで、363 bin と 511 bin が同じ値を返していたのは両方 FFT のパッド長 1024 に詰まるからでした。地形の天空率が 41.9 秒かかっていたのを、結果 bit 一致のまま 2.03 秒に。DIC で既存の `piv_cross_correlate` を検索が返さず「無い」と書きかけた件は、検索の側を直しました。`mueller_apply` が画像に効かなかった件は broadcast を通しました。\n\n**PoC が見つけたが、op 本体はまだ直していないもの。** カメラ校正・パノラマが公開経路(`fs.` / `fs.ledger` / op レジストリ)から届かない。`h_maxima` の h が正規化画像に対する比なので、大きい細胞が 1 つ入るだけで小さい細胞側の下限が 0.42 → 0.80 画素へ上がる。`vol_label` の既定 26 近傍が寛容側でニアミスを合体させる。`gauss_image` の σ が 0.3〜3.0 に固定、`min_filter` の窓が 3, 5, 7, 9 に固定、局所しきい値の窓が最大 4 px / 15 px でモジュール寸法に届かない。`ncc_locate` が相関マップを返さず突出度が計算できない。`reprojection_error` に歪み引数が無い。2-D 画像を任意倍率でリサイズする op、任意のホモグラフィで歪ませる op、大気散乱の族、統計ベースの光源推定 op、光弾性の族が無い。`polarization_separate` の拡散成分が R_p·E だけ系統的に大きい。**PoC は道具の穴を出すためにある**、というのがこの一覧の言い分です。\n\n---\n\n## 次回に続く\n\n穴の一覧は、そのまま次の作業台帳です。公開経路に出ていない実装を出す、既定値が寛容側の op を締める、窓が固定の op を開ける ―― 1 つ直すたびに、この展示の PoC を走らせ直して数字がどう動くかを見られます。**ゼロ点は動かないはずで、動いたら何かを壊した合図です。**\n\nもう 1 つ気になっていることがあります。通し主題の「逆向きの 2 つの失敗」は、7 つの PoC で別々の物理から出ました。では、実データに差し替えたとき ―― 合成には入っていなかった要因が乗ったとき ―― でも同じ形が出るのでしょうか。それとも合成だから綺麗に釣り合って見えただけなのでしょうか。国土地理院の標高データだけは実データで走らせて時間を測りましたが、精度の採点はまだです。次はそこを歩きます。\n\n---\n\n### この展示の作り方について\n\nPoC の問い(「その 1 行がどれだけ嘘か」「読取率を 1 つに畳まない」「合体は早まるのか遅れるのか」)と、結果に対する違和感(「ゼロ点が理論下限を下回るのはおかしい」「面積分類器がぼかすと良くなるのは何かが入れ替わっている」)は私が出し、方向を決めています。実装、掃引、対照群の追加、そして私の予想を反証する敵対的な検算は Claude Code に回してもらいました。docstring に「予想が外れた」と書いてある箇所は、私の予想が AI の実測で覆された記録です。逆に AI の初稿を私が疑って書き直させた箇所(「門は死んでいる」→ 歪みが無ければ設計どおり働く、など)もあり、その往復ごと残してあります。\n\n読んでくださってありがとうございました。自分の分野の 1 本を走らせてみて、崖の位置が現場の感覚と違ったら、それがいちばん聞きたい話です。",
+  "closing_en": "## Applying it to your own problem\n\nAll 53 scripts are closed over synthetic data, but **the entry point for real data was decided before they were written**.\n\n**1. Look for the `EXTEND` marker.** Each docstring has a paragraph beginning `EXTEND:` that says which function's return value to replace. For most PoCs, swapping the single synthesis function (`make_scene`, `render`, `build_case` and the like) leaves the null baseline, the cliff sweeps and the printed tables running unchanged. The same paragraph also lists what stops being measurable once the truth is gone: for camera shake on real photos only the ringing and speed chapters keep their meaning, for panoramas only the loop-closure error, for tracking only the forward-backward inconsistency. **Few absolute quantities survive without ground truth**, so read that paragraph before deciding how to shoot.\n\n**2. Ops can be called at two levels.** `fs.apply(img, \"op_name\", ...)` for a one-liner; `fs.ledger.<op_name>(...)` when you need the argument conventions. Wherever a PoC imports a bare module directly, it says so (those notes are the list of holes at the end).\n\n**3. Figures and usage live on the docs site.** [https://furuse.work/](https://furuse.work/) has a note per op (what it does, its type contract, its traps, related ops, figures). Each exhibit links to the notes of the ops its PoC calls. With Fullseye Studio open beside it, the intermediate results a PoC prints (masks, profiles, spectra) can be checked in an image window or the 3-D view.\n\n**4. Let an AI read it.** After `pip install fullseye`, running `fullseye-rag` once registers the op notes as a Claude Code skill. Ask 'swap this PoC onto my microscope images' and the AI reads the `EXTEND` paragraph and the op notes and drafts the replacement. **This is the workflow I actually use**; the PoCs in this museum were written through the same path.\n\n---\n\n## Honest limits\n\n**What was not measured.** Everything is synthetic. Real recordings carry rolling slip, multiple resonances, paper curl, focus breathing, mixed illuminants and other factors that were never planted here. The detection limits and cliff positions each PoC reports are **upper bounds under that model and those conditions**, not field values, and every docstring says so. The barcode and matrix code are not real standards, so their read rates must not be quoted as the performance of a standards-compliant reader. Forgery detection covers the defensive side only; nothing here helps make a better forgery.\n\n**What the PoCs found and was fixed.** The CT ramp filter's DC bin was subtracting each projection's mean outright (mass loss -3.34 % → -0.0099 %); the earlier reading that 'more detectors help' was a mix-up, since 363 and 511 bins returned the same value only because both pad to an FFT length of 1024. The terrain sky-view factor took 41.9 s; rewritten, it takes 2.03 s with bit-identical output. In DIC the search failed to return the existing `piv_cross_correlate` and the draft almost declared it missing; the search was fixed. `mueller_apply` did not broadcast over images; now it does.\n\n**What the PoCs found and is not yet fixed in the ops.** Camera calibration and panorama code are unreachable from the public path (`fs.`, `fs.ledger`, the op registry). `h_maxima` takes h as a ratio of the normalised image, so one large cell raises the smallest usable h from 0.42 to 0.80 px. `vol_label` defaults to 26-connectivity, which merges near misses. `gauss_image` fixes σ to 0.3–3.0, `min_filter` fixes its window to 3, 5, 7, 9, and local thresholds cap their window at 4 px / 15 px, short of a code module. `ncc_locate` returns no correlation map, so peak prominence cannot be computed. `reprojection_error` has no distortion argument. There is no op to resize a 2-D image by an arbitrary factor, none to warp by an arbitrary homography, no atmospheric-scattering family, no statistical illuminant estimator, no photoelasticity family. The diffuse term returned by `polarization_separate` is systematically high by R_p·E. **PoCs exist to expose the holes in the tools**; that is what this list is for.\n\n---\n\n## To be continued\n\nThe list of holes is the next work ledger. Publish the buried implementations, tighten the permissive defaults, open the fixed windows; after each fix the PoCs in this museum can be re-run to see which numbers move. **The null baselines should not move; if one does, something broke.**\n\nOne more open question. The thesis pattern, two errors of opposite sign, appeared in seven PoCs from unrelated physics. Does it appear on real data too, once the factors the synthesis left out come into play? Or did it only balance so neatly because the data were synthetic? Only the terrain PoC has been run on real elevation data so far, and only for timing; the accuracy scoring is still to come. That is where the next walk goes.\n\n---\n\n### How this museum was made\n\nThe questions each PoC asks ('how much does that one line lie', 'do not collapse read rate into one number', 'does merging look early or late') and the unease about results ('a null baseline below the theoretical floor is wrong', 'an area classifier improving under blur means the measured quantity has switched') came from me, and I set the direction. Implementation, parameter sweeps, added controls and the adversarial re-checks that disproved my own predictions were delegated to Claude Code. Every 'the prediction was wrong' in a docstring records my prediction being overturned by the AI's measurement; the reverse also happened, where I distrusted the AI's first draft and had it rewritten ('the gate is dead' → it works as designed without distortion), and those round trips are kept.\n\nThank you for reading. If you run the one PoC in your own field and the cliff lands somewhere other than where your experience says it should, that is the conversation I most want to have.",
+  "cta_ja": "---\n\n**この展示館は Claude Code と一緒に作りました。** 問いと方向決めは私、実装・掃引・対照群・敵対レビューは Claude Code、という分業です。53 本の PoC を 2 日で走らせて図まで揃えられたのは、この運用のおかげです。試してみたい方は、こちらの招待リンクから **1 週間の無料トライアル** が使えます: [claude.ai/referral/0sqPw8E_lw](https://claude.ai/referral/0sqPw8E_lw)\n\n面白い展示が 1 つでもあったら、**いいね・ストック**をもらえると助かります。どのウィングを次に増やすかは反応を見て決めるつもりなので、「自分の分野のこれが欲しい」もコメントで教えてください。実データに差し替えて崖の位置が変わった話は、いちばん聞きたい話です。",
+  "cta_en": "---\n\n**This museum was built together with Claude Code.** I set the questions and the direction; Claude Code did the implementation, the sweeps, the control groups and the adversarial checks. That division of labour is what made it possible to run 53 PoCs and collect their figures in two days. If you want to try it, this invitation link gives you a **one-week free trial**: [claude.ai/referral/0sqPw8E_lw](https://claude.ai/referral/0sqPw8E_lw)\n\nIf even one exhibit was worth your time, a **like or a stock** helps: the reactions decide which wing grows next, so tell me in the comments which measurement from your own field you would want to see. And if you swapped in real data and the cliff moved, that is the story I most want to hear."
+ },
+ "wings": [
+  {
+   "id": "wing_industrial",
+   "order": 10,
+   "title_ja": "産業検査ウィング ―― 合格の数字と不合格の数字は両立する",
+   "title_en": "The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist",
+   "placard_ja": "検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 10 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。\n\n真値はどれも自分で仕込んであります。周期地の閉形式、レーザー断面の h(x)、1 次元熱伝導の解析解、閉形式の欠陥周波数。だから「検出できました」の先にある「どこで検出できなくなるか」を、しきい値を後から合わせずに測れます。\n\nもう 1 つの共通点は、壊れ方が連続ではなく崖であること。傾き 15 度と 16 度、時間窓 25 秒と 4 秒、ΔT 1.6 K ―― その位置は幾何か物理で先に計算できる場合が多く、計算できたものは実測と突き合わせてあります。",
+   "placard_en": "Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The ten exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.\n\nEvery ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.\n\nThe other shared feature is that failure arrives as a cliff, not a slope: 15 versus 16 degrees of tilt, a 25-second versus a 4-second fitting window, ΔT of 1.6 K. Most of those positions can be predicted from geometry or physics first, and wherever they could be, the prediction is checked against the measurement."
+  },
+  {
+   "id": "wing_metrology",
+   "order": 20,
+   "title_ja": "寸法・形状計測ウィング ―― 偏りと散らばりは別々に持つ",
+   "title_en": "The Dimensional and Shape Metrology Wing — Keep Bias and Scatter Apart",
+   "placard_ja": "「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。\n\nこの部屋の 10 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。\n\n共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。",
+   "placard_en": "To state that a part is 50.50 pixels wide, you need bias (the part that always shifts the same way) and scatter (the part that changes from shot to shot) as two separate numbers. Pass/fail is decided by bias; repeatability by scatter. Merge them into one 'error' and you no longer know which countermeasure to take.\n\nThe ten exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.\n\nThe recurring finding is that a number without its definition cannot be compared: crack widths that differ by 0.20 mm between two distance-transform conventions, a D50 that differs by 1.66x between number- and area-weighting, an Sz that never plateaus as the evaluation area grows, an orientation index that moves 5 % depending on whether the truth is counted by fibre or by length. These are not instrument errors; they are questions of what you are comparing against."
+  },
+  {
+   "id": "wing_bio",
+   "order": 30,
+   "title_ja": "医用・生物ウィング ―― 個数が合っていて中身が外れている",
+   "title_en": "The Medical and Biological Wing — The Count Is Right and the Contents Are Wrong",
+   "placard_ja": "細胞を数える、核の DNA 量を読む、血管の分岐を測る、創傷の面積を追う。どれも「1 つの数字」で報告されがちで、しかもその数字が合ってしまう場面があります。過分割と過統合が釣り合って個数の偏りが +0.3 個になる細胞計数、背景を引き忘れても分類が生き残る倍数性、いちばん安定して、いちばん間違った治癒定数を返す較正。\n\nこの部屋の 4 点は、真値に「どれとどれが重なっているか」「面積と DNA 量が別々にばらつく」「分岐則を厳密に満たす木」といった、ラベル画像だけでは残らない情報を持たせています。実データに差し替えるときも、ラベル画像だけを真値と呼ぶと主題そのものが消える、と各 docstring に書いてあります。\n\n見どころは、性能が上がったように見えて測っている量が入れ替わっている場面です。ぼかすほど面積分類器が良くなるのは、面積という名前で DNA 量を漏らしているから。1 つの指標が良くなった理由を毎回追わないと、こういう嘘を成果として持ち帰ることになります。",
+   "placard_en": "Counting cells, reading a nucleus's DNA content, measuring vessel branching, tracking a wound's area: all of these tend to be reported as one number, and there are situations in which that number is right anyway. Cell counting where over- and under-segmentation balance to a +0.3-cell bias; ploidy classification that survives a forgotten background subtraction; a calibration that returns the most stable and most wrong healing constant.\n\nThe four exhibits carry ground truth that a label image alone cannot hold — which cells overlap which, area and DNA content varying independently, a tree that satisfies the branching law exactly. Each docstring warns that calling a label image 'the truth' on real data erases the very thing being tested.\n\nThe thing to watch for is a method that appears to improve while the quantity it measures quietly swaps: the area classifier gets better with more blur because 'area' is leaking DNA content. Unless the reason for every improvement is traced, this kind of lie gets carried home as a result."
+  },
+  {
+   "id": "wing_astroenv",
+   "order": 40,
+   "title_ja": "天文・環境ウィング ―― 位置で偏り、真値の定義で反転する",
+   "title_en": "The Astronomy and Environment Wing — Biased by Position, Flipped by the Definition of Truth",
+   "placard_ja": "星の明るさと位置、太陽の縁、全天の雲量、海氷の密接度、畑の被覆率、地形、河川の水位。対象は遠く、真値は普通手に入りません。この部屋の 8 点はそれを逆手に取り、天球座標・球冠の立体角・Eddington の周辺減光・国土地理院の標高タイルといった閉形式や公開データから真値を置いています。\n\n共通して出てきたのは「同じ物が、どこにあるかで違って読める」ことです。同じ雲が天頂と地平線で 1.45 倍、同じ厚さの雲が太陽からの角距離で検出されたりされなかったり、同じ反射が検出器によって「静かに低く読む」か「黙って止まる」か。\n\nもう 1 つは、真値の定義が結論を決めること。薄氷を「氷」に入れるか入れないかで同じ推定が -4.4 と +2.7 ポイントに外れ、マスクの角度を書かない雲量は 0.18 から 0.23 まで名乗れます。測定器より先に、何を真値と呼ぶかを書く必要があります。",
+   "placard_en": "Stellar brightness and position, the solar limb, all-sky cloud cover, sea-ice concentration, crop cover, terrain, river stage. The subjects are far away and ground truth is normally out of reach. The eight exhibits here turn that around, placing their truth in closed forms and public data: celestial coordinates, the solid angle of a spherical cap, Eddington limb darkening, elevation tiles from the Geospatial Information Authority of Japan.\n\nThe shared finding is that the same object reads differently depending on where it is: the same cloud counts 1.45x more at the horizon than at the zenith; clouds of equal optical thickness are detected or not depending on their angular distance from the sun; the same reflection makes one detector read quietly low and another stop silently.\n\nThe other is that the definition of truth decides the conclusion. Counting thin ice as 'ice' or not sends the same estimate to -4.4 or +2.7 points; a cloud fraction reported without its horizon-mask angle can legitimately claim anything from 0.18 to 0.23. What you call the truth has to be written down before the instrument is."
+  },
+  {
+   "id": "wing_imaging",
+   "order": 50,
+   "title_ja": "撮像品質・復元ウィング ―― 絵が良くなることと真値に近づくことは別",
+   "title_en": "The Image Quality and Restoration Wing — Looking Better and Getting Closer to the Truth Are Different Things",
+   "placard_ja": "手ブレを戻す、拡大する、霞を剥がす、深度合成する、投影から再構成する、光子を数えて距離を出す。復元の分野は「見た目が良くなった」と「真値に近づいた」が最も混ざりやすい場所です。この部屋の 7 点は、核・深度・大気光・PSD・投影・到達時刻をこちらが決めた合成で、その 2 つを分けて採点しています。\n\n見た目の指標は真値を最大値としません。霞んだ入力の対比が真値より高い、アンシャープで勾配は真値に一致するのに PSNR は落ちる、雑音を足すと PSNR が上がる。逆に、ナイキストより細かい縞を戻したのに PSNR が -0.01 dB しか動かない場面もあります。\n\n共通して置いたゼロ点は「何もしない」です。核の角度が 19.4 度ずれた復元、投影 12 本の FBP、視程 782 m 以上の除霞、無テクスチャ領域の深度。いずれもそのゼロ点に負けます。負ける条件を数字で置くことが、この部屋の展示の中身です。",
+   "placard_en": "Deblurring, upscaling, dehazing, focus stacking, reconstructing from projections, ranging by counting photons. Restoration is where 'it looks better' and 'it is closer to the truth' are most easily confused. The seven exhibits here synthesise the kernel, the depth, the airlight, the PSD, the projections and the arrival time themselves, so the two can be scored separately.\n\nAppearance metrics do not peak at the truth: a hazy input has higher contrast than the true scene; unsharp masking matches the true gradient energy while PSNR drops; adding noise raises PSNR. Conversely, a method can restore stripes finer than Nyquist while PSNR moves by only -0.01 dB.\n\nThe null baseline placed throughout is 'do nothing'. Deblurring with the kernel angle off by 19.4 degrees, FBP from 12 projections, dehazing at visibility above 782 m, depth in textureless regions: each loses to that baseline. Stating the losing conditions in numbers is what this room is for."
+  },
+  {
+   "id": "wing_xyt",
+   "order": 60,
+   "title_ja": "時系列を 3-D として測るウィング ―― 動画は 1 つの体積",
+   "title_en": "The Time-as-3-D Wing — A Video Is One Volume",
+   "placard_ja": "2-D の動画を (t, y, x) の 1 つの体積とみなすと、3-D の op ―― 連結成分、等値面、領域特徴 ―― がそのまま時間方向に効きます。合体したコロニーは時空間で Y 字になり、通過する車は (t, x) 画像の帯になり、波面の到達時刻は等値面になります。この部屋の 6 点はその実演です。\n\n同時に、時間方向ならではの罠も出ました。フレーム格子への丸めは必ず遅らせ、画素の面積は合体を早める。誤リンクには向きの逆な 2 種類があり、誤り率 1 本では拡散係数がどちらへ外れるか決まらない。テンプレート追跡は見失うより先に静かにずれ、ずれた 152 フレーム全部が「見つけた」と報告する。\n\nモーション拡大の展示は、この部屋でいちばん正直な結論を持っています。拡大率 200 まで機械精度で厳密に動くのに、測定の役には立たない ―― 拡大は人間に見せるための道具です。",
+   "placard_en": "Treat a 2-D video as one (t, y, x) volume and the 3-D ops — connected components, isosurfaces, region properties — work along time unchanged. Merging colonies become a Y in space-time, passing vehicles become bands in a (t, x) image, a wavefront's arrival time becomes an isosurface. The six exhibits here demonstrate exactly that.\n\nThe time axis also brings its own traps. Rounding onto the frame grid always delays; pixel area makes merging look early. Mislinks come in two opposite kinds, so a single error rate cannot say which way the diffusion coefficient is wrong. Template tracking drifts quietly before it ever loses the target, and all 152 drifted frames report 'found'.\n\nThe motion-magnification exhibit carries the most candid conclusion in the room: exact to machine precision up to a magnification of 200, and of no help for measurement. Magnification is a tool for showing people, not for measuring."
+  },
+  {
+   "id": "wing_geometry",
+   "order": 70,
+   "title_ja": "幾何・校正ウィング ―― 残差が小さいことは正しさの証明にならない",
+   "title_en": "The Geometry and Calibration Wing — A Small Residual Is Not Proof of Correctness",
+   "placard_ja": "カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 3 点はその読み方が成り立たない場面を、真値を握った上で並べています。\n\n再投影誤差 0.0688〜0.0690 px で焦点距離の誤差が 0.026〜7.334 %。隣の継ぎ目が 0.12 px なのに閉じる 1 本だけ 1.5 px。球や円柱では残差が同じまま姿勢が任意。最小二乗は残差を雑音まで落とすのが仕事で、落ちた先が真値かどうかは別の話です。\n\n測り方そのものの罠も残してあります。点群を 1 組固定して姿勢だけ振っても標本は 1 つしか無く、乱数の種だけで「象限誤り 0 %」と「100 %」の両方が出ました。真値なしで測れる絶対量は、一周する撮り方の閉ループ誤差くらいしかありません。",
+   "placard_en": "Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The three exhibits here, with ground truth in hand, show where that reading fails.\n\nReprojection RMS of 0.0688–0.0690 px alongside focal-length errors of 0.026–7.334 %. Adjacent seams at 0.12 px while the single closing seam opens by 1.5 px. Spheres and cylinders converging to the same residual with an arbitrary pose. Least squares drives the residual down to the noise; whether it lands on the truth is a separate question.\n\nA trap in the measuring procedure itself is kept on display: fix one point cloud and sweep only the pose, and you still have a sample of one — the random seed alone produced both '0 % quadrant errors' and '100 %'. About the only absolute quantity measurable without ground truth is the loop-closure error of a full 360-degree sweep."
+  },
+  {
+   "id": "wing_color",
+   "order": 80,
+   "title_ja": "色・分離ウィング ―― 「効く手法」は無い、あるのは効く条件だけ",
+   "title_en": "The Colour and Separation Wing — There Is No Method That Works, Only Conditions Under Which One Does",
+   "placard_ja": "光源を推定して色を戻す、多波長で絵画の層を剥がす、偏光で鏡面反射を分離する。この部屋の 3 点は、既知の分光反射率・既知の光源・フレネルの式から線形の輻度を合成し、分離の結果を真値と突き合わせています。\n\n結論は、どの展示でも「壊れる軸が直交している」ことでした。白パッチ法は白が在れば最良で、いちばん明るい 1 枚を外すだけで 8 倍悪くなる。灰色世界は飽和に強く、有彩色が 2 割を超えると負ける。基準光源では全手法がゼロ点に負ける。バンドを増やしても勝てず、近赤外を入れた瞬間に勝つ。\n\n共通の注意は「リニアな輻度に戻してから渡す」こと。sRGB ガンマのまま渡しても例外は出ず、分離が静かに劣化するだけです。例外が出ない失敗は、この展示全体で最も多い型です。",
+   "placard_en": "Estimating the illuminant to restore colour, peeling the layers of a painting with multiple wavelengths, separating specular reflection with polarisation. The three exhibits here synthesise linear radiance from known spectral reflectances, known illuminants and the Fresnel equations, then compare the separation against that truth.\n\nThe conclusion in every case was that the failure axes are orthogonal. Max-RGB is best when a white patch is present and gets 8x worse when the single brightest patch is removed; grey-world shrugs off saturation but loses once chromatic content exceeds 20 %; under a reference illuminant every method loses to doing nothing; adding bands does not win, adding near-infrared does.\n\nThe shared warning is to convert to linear radiance before calling anything. Pass sRGB-gamma values and no exception is raised; the separation simply degrades in silence. Failure without an exception is the most common pattern in the whole museum."
+  },
+  {
+   "id": "wing_forensics",
+   "order": 90,
+   "title_ja": "法科学・文書ウィング ―― 1 枚の成功例は証拠にならない",
+   "title_en": "The Forensics and Documents Wing — One Successful Image Is Not Evidence",
+   "placard_ja": "改竄検出と書類の正対化。どちらも「見つかった 1 枚」「まっすぐになった 1 枚」で語られがちですが、この部屋の 2 点は、貼付の場所と品質、既知のホモグラフィと照明、を自分で決めた上で、画素ごとの ROC と画素単位の幾何誤差で採点しています。\n\n改竄検出は検出側(防御)の PoC です。改竄を自分で作るのは検出器を測るのに真値が要るためだけで、作り方は最も稚拙なものに留めてあります。この展示がいちばん強く示すのは、保存ボタン 1 回でどの手掛かりも弱る、という検出側に不利な事実のほうです。\n\n書類のほうは、名前が同じでモデルが違う関数を取り違えても例外が出ず、台形が残ったままもっともらしい絵が返る、という穴を数字にしています。影除去に良いところ取りは無く、平らにするほど薄い字が消えます。",
+   "placard_en": "Forgery detection and document rectification. Both tend to be presented through 'the one image where it was found' or 'the one page that came out straight'. The two exhibits here fix the paste location and quality, the homography and the lighting themselves, then score with a per-pixel ROC and pixel-level geometric error.\n\nThe forgery exhibit is on the detection (defensive) side. Forgeries are generated only because scoring a detector needs ground truth, and the generator is kept to the crudest form possible. What the exhibit shows most strongly is the fact that works against the detector: one press of the save button weakens every cue.\n\nThe document exhibit puts a number on a hole: two functions with the same name and different models can be swapped without an exception, returning a plausible picture with the keystone still in it. Shadow removal has no free lunch; the flatter the paper, the more of the faint text disappears."
+  }
+ ],
+ "exhibits": [
+  {
+   "id": "poc_fabric_defect",
+   "wing": "wing_industrial",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "周期のある地に埋もれた欠陥 ―― まとめた ROC が隠すもの",
+   "title_en": "Defects Buried in a Periodic Background — What a Pooled ROC Hides",
+   "caption_ja": "周期 8 px の織り地に線・斑点・ムラの 3 種の欠陥を埋め、検出器のスコア地図と種類別の ROC を並べた図。現場でいちばん普通の「格子除去 + 低周波除去」はまとめた AUC 0.8113 で合格に見えるのに、ムラだけは 0.4746 とでたらめ以下。低周波を落とす 1 行が照明ムラと一緒に欠陥のムラを消していた ―― 外すだけで 0.9998 に戻る。",
+   "caption_en": "Three defect classes (thread break, stain, dim patch) buried in a weave of period 8 px, with the detector's score map and per-class ROC curves side by side. The everyday recipe 'notch out the grid, remove low frequencies' pools to an AUC of 0.8113 and looks like a pass, but the dim-patch class alone scores 0.4746, worse than chance. The one line that removes low frequencies was deleting the defect along with the lighting; drop it and the class recovers to 0.9998.",
+   "run": "py -3.11 examples/poc_fabric_defect.py"
+  },
+  {
+   "id": "poc_weld_bead_profile",
+   "wing": "wing_industrial",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "レーザー三角測量の断面から溶接ビードを測る ―― 測れなかったところを 0 と書く罪",
+   "title_en": "Weld Bead From a Laser-Triangulation Profile — The Sin of Writing 0 Where Nothing Was Measured",
+   "caption_ja": "輝線 1 本の行位置から断面 h(x) を戻し、余盛高さ・幅・アンダーカットを読む図。ゼロ点(各列の最大値の行)に対し重心は 9.3 倍良く、雑音ゼロなら対数放物線は機械精度(素の放物線と 12 桁差)なのに、雑音 1 % では 0.00272 対 0.00260 mm で区別がつかない。スパッタ 5 点で 3 種の推定量がそろって 0.11 mm(40 倍)へ壊れる ―― 効くのは精緻化ではなく、どのピークを選ぶか。",
+   "caption_en": "The profile h(x) recovered from the row position of a single laser line, with reinforcement height, width and undercut read off it. The centroid beats the null (integer argmax per column) by 9.3x, and with zero noise the log-parabola is exact to machine precision, 12 orders better than a plain parabola; at 1 % noise the two are 0.00272 versus 0.00260 mm, indistinguishable. Five spatter points break all three estimators together to 0.11 mm (40x); what matters is not refinement but which peak you pick.",
+   "run": "py -3.11 examples/poc_weld_bead_profile.py"
+  },
+  {
+   "id": "poc_crack_width",
+   "wing": "wing_industrial",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "コンクリートのひび割れ幅は 1 画素より細い ―― 数える幅と、積分する幅",
+   "title_en": "Concrete Crack Width Is Thinner Than a Pixel — Counting Width Versus Integrating Width",
+   "caption_ja": "1 px = 0.20 mm の視野で幅 0.05〜2.0 mm のひび割れを振り、二値化して数える幅と輝度欠損を積分する幅を並べた図。二値化は 0.20 mm 以下で何も返さず、真値 0.25〜0.40 mm の 4 条件が全部 0.200 mm を返す。積分法は 0.05 mm(0.25 px)まで連続に追えるが、照明が曲がると 1 次のベースラインでは +0.1741 mm の下駄が乗る(2 次なら +0.0062 mm)。",
+   "caption_en": "Cracks from 0.05 to 2.0 mm wide in a field where 1 px = 0.20 mm, measured by thresholding-and-counting and by integrating the intensity deficit across the crack. Thresholding returns nothing at or below 0.20 mm and reports 0.200 mm for all four true widths between 0.25 and 0.40 mm. Integration tracks continuously down to 0.05 mm (0.25 px), but curved illumination adds a +0.1741 mm offset under a first-order baseline (+0.0062 mm with second order).",
+   "run": "py -3.11 examples/poc_crack_width.py"
+  },
+  {
+   "id": "poc_veiling_glare",
+   "wing": "wing_industrial",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "迷光がコントラスト計測を壊す ―― MTF 合格・黒レベル不合格は両立する",
+   "title_en": "Veiling Glare Breaks Contrast Measurement — MTF Passes While Black Level Fails",
+   "caption_ja": "PSF の裾だけを重くした像で、刃のエッジの MTF と黒四角の黒レベルを同時に測った図。裾の割合 0 → 0.20 で MTF50 は 0.2347 → 0.2249 cyc/px(-4.2 %、合格のまま)なのに、黒レベルは 0.0 → 15.7 %(不合格)。±16 px の測定窓には裾のエネルギーの 6 % しか入らない ―― 迷光は測る範囲を宣言しないと数字にならない。",
+   "caption_en": "A PSF whose core stays sharp while only its tail is made heavier, with the slanted-edge MTF and the black level of a dark square measured on the same image. Raising the tail fraction from 0 to 0.20 moves MTF50 from 0.2347 to 0.2249 cyc/px (-4.2 %, still passing) while the black level goes from 0.0 to 15.7 % (failing). A ±16 px measurement window captures only 6 % of the tail's energy; a glare figure means nothing until the measurement extent is declared.",
+   "run": "py -3.11 examples/poc_veiling_glare.py"
+  },
+  {
+   "id": "poc_moire_screen",
+   "wing": "wing_industrial",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "ディスプレイ検査のモアレは「本物のムラ」と区別できるか",
+   "title_en": "Can Display-Inspection Moire Be Told From Real Non-Uniformity?",
+   "caption_ja": "画素格子と表示の縞が干渉して作るモアレと、本物の輝度ムラを同じ像に重ねた図。ならしの σ = 8 px で合計誤差 +0.9 % ―― 内訳は漏れ +8.3 % と減衰 -7.4 % の打ち消し。基本波のうなりが安全に見える k = 0.67 でも 3 次高調波がムラの帯に落ち、漏れは真値の +202.6 %。",
+   "caption_en": "Moire from the interference of the display's stripes with the camera's pixel grid, overlaid on genuine luminance non-uniformity in one image. At a smoothing σ of 8 px the total error is +0.9 %, made of +8.3 % moire leakage cancelling -7.4 % attenuation of the real defect. At k = 0.67 the fundamental beat looks safe, yet the third harmonic lands in the defect band and the leakage reaches +202.6 % of the true value.",
+   "run": "py -3.11 examples/poc_moire_screen.py"
+  },
+  {
+   "id": "poc_bearing_diagnosis",
+   "wing": "wing_industrial",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "転がり軸受の異常診断 ―― どこまで雑音に埋もれても当てられるか",
+   "title_en": "Rolling-Bearing Diagnosis — How Deep in Noise Can It Still Be Caught?",
+   "caption_ja": "閉形式の欠陥周波数(BPFO 104.556 Hz)で合成した衝撃列を雑音に沈め、生スペクトルと包絡線スペクトルの検出率を並べた図。10/10 を保てた最悪の SNR は生 -0.9 dB、包絡線 -18.4 dB で 17.5 dB の差。ただし欠陥の無い記録でも大域顕著さは 43 まで出る ―― しきい値を null から決めていなければ、この PoC 自体が偽陽性を出していた。",
+   "caption_en": "An impulse train synthesised at the closed-form defect frequency (BPFO 104.556 Hz), sunk into noise, with detection rates of the raw spectrum and the envelope spectrum side by side. The worst SNR at which 10 of 10 seeds still detect is -0.9 dB for the raw spectrum and -18.4 dB for the envelope, a 17.5 dB gap. But a record with no defect at all still produces a global prominence of 43; had the threshold not been set from the null recording, this PoC would have been its own false positive.",
+   "run": "py -3.11 examples/poc_bearing_diagnosis.py"
+  },
+  {
+   "id": "poc_thermography_ndt",
+   "wing": "wing_industrial",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "パルスサーモグラフィで内部欠陥の深さを測る",
+   "title_en": "Depth of a Subsurface Defect by Pulsed Thermography",
+   "caption_ja": "フラッシュ加熱後の表面温度を 1 次元熱伝導の厳密解で作り、剥離の深さを画像から当てる図。直径が深さの 4 倍以上なら数 % で当たるが、深さ 0.5 mm・直径 2 mm では +627 %。原因は横拡散ではなく当てはめる時間窓で、窓を 25 s → 4 s に切り詰めると -9 % に戻る。",
+   "caption_en": "Surface temperature after a flash, generated from the exact 1-D heat-conduction solution, with delamination depth estimated from the image sequence. Where the diameter is at least four times the depth the estimate lands within a few percent; at 0.5 mm deep and 2 mm across it is off by +627 %. The cause is not lateral diffusion but the fitting window: shortening it from 25 s to 4 s brings that case back to -9 %.",
+   "run": "py -3.11 examples/poc_thermography_ndt.py"
+  },
+  {
+   "id": "poc_thermal_drift_metrology",
+   "wing": "wing_industrial",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "カメラの熱ドリフトが寸法計測に効く量",
+   "title_en": "How Much Camera Thermal Drift Costs a Dimensional Measurement",
+   "caption_ja": "温度 ΔT で焦点距離・架台・主点が漂うカメラで一辺 40 mm のワークを測り、誤差を半径の 1 次式 a + b·R に分けた図。ΔT = 15 K で定数項 a = +224.5 ppm(片方だけ動かした対照条件 +225.3 ppm)。雑音の床(25 枚平均で 23 ppm)を超えるのは ΔT = 1.6 K から ―― それ以下では「温度の影響は見えない」が正しい報告。",
+   "caption_en": "A 40 mm square measured by a camera whose focal length, mount and principal point drift with temperature ΔT, the error split into a + b·R in image radius. At ΔT = 15 K the constant term is +224.5 ppm (the single-cause control gives +225.3 ppm). Drift rises above the noise floor (23 ppm for a 25-frame average) only from ΔT = 1.6 K; below that, the honest report is that no temperature effect is visible.",
+   "run": "py -3.11 examples/poc_thermal_drift_metrology.py"
+  },
+  {
+   "id": "poc_barcode_1d",
+   "wing": "wing_industrial",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "1 次元バーコードが読めなくなる境界 ―― 誤読と読み取り不能を分けて数える",
+   "title_en": "Where a 1-D Barcode Stops Reading — Counting Misreads and Unreadables Separately",
+   "caption_ja": "自作の簡易符号(実在規格ではない)を 4 通りに壊し、成功 / 誤読 / 読み取り不能を分けて数えた図。壊れ始めてからの 384 枚で、構造を検査する厳格デコーダは誤読 7.3 %、必ず 9 桁返す寛容デコーダは誤読 46.1 % ―― 成功率は寛容のほうが高い(47.7 % 対 40.1 %)。傾きの崖は幾何だけで決まり(予測 15.95 度)、実測は 15 度と 16 度のあいだ。",
+   "caption_en": "A home-made simple code (not a real standard) damaged four ways, with success, misread and unreadable counted as three separate outcomes. Over the 384 images past the onset of damage, the strict decoder that checks run structure misreads 7.3 %, while the lenient decoder that always returns nine digits misreads 46.1 % — and has the higher success rate (47.7 % versus 40.1 %). The tilt cliff is pure geometry (predicted 15.95 degrees) and lands between 15 and 16 degrees.",
+   "run": "py -3.11 examples/poc_barcode_1d.py"
+  },
+  {
+   "id": "poc_matrix_code_reading",
+   "wing": "wing_industrial",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "2 値マトリクスコードを読む ―― 先に死ぬのはいつも幾何",
+   "title_en": "Reading a Binary Matrix Code — Geometry Always Dies First",
+   "caption_ja": "QR と同型のレイアウトに乱数ビットを置いた符号(誤り訂正なし)を、ぼけ・傾き・遮蔽で壊してビット誤り率を数えた図。ゼロ点は当てずっぽうの 0.5 に張り付き(0.526 / 0.507)、読める側は 0.0000。崖は傾き 78 度、位置検出パターンの遮蔽 2 モジュール ―― 真のホモグラフィを渡した条件と並べると、先に落ちるのはいつも定位。",
+   "caption_en": "A code with QR-style layout and random data bits (no error correction), damaged by blur, tilt and occlusion, with the raw bit error rate counted directly. The nulls sit at chance (0.526 / 0.507) while the reader scores 0.0000. Cliffs: 78 degrees of tilt, two modules of finder-pattern occlusion; run beside the condition that receives the true homography, localisation is always the stage that fails first.",
+   "run": "py -3.11 examples/poc_matrix_code_reading.py"
+  },
+  {
+   "id": "poc_dimensional_inspection",
+   "wing": "wing_metrology",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "産業部品の寸法検査 ―― 偏りと散らばりを別々に出す",
+   "title_en": "Dimensional Inspection of a Machined Part — Bias and Scatter as Two Numbers",
+   "caption_ja": "符号つき距離関数で描いた部品(スロット幅 50.50 px、1 px = 12.5 µm)を既知の PSF と雑音で撮り、4 系のキャリパーで測った図。大津の整数幅(ゼロ点)は RMS 0.464 px = 5.8 µm、埋もれていた 1-D 計測実装の偏りは -0.0113 px = -0.14 µm で 41 倍。エッジ間距離が PSF 幅の 3.09 倍を切ると幅は系統的に大きく出るのに、API は成功を返し続ける。",
+   "caption_en": "A part defined by a signed distance function (slot width 50.50 px, 1 px = 12.5 µm), imaged through a known PSF and noise and measured by four caliper systems. Otsu's integer width (the null) has an RMS error of 0.464 px = 5.8 µm; the buried 1-D measuring implementation is biased by -0.0113 px = -0.14 µm, 41x better. Once the edge spacing drops below 3.09 PSF widths the width comes out systematically large, and the API keeps returning success.",
+   "run": "py -3.11 examples/poc_dimensional_inspection.py"
+  },
+  {
+   "id": "poc_gear_tooth_metrology",
+   "wing": "wing_metrology",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "歯車の歯形を測る ―― 偏心は 1 次、歯は z 次",
+   "title_en": "Gear Tooth Metrology — Eccentricity Is Order 1, Teeth Are Order z",
+   "caption_ja": "インボリュートの閉形式で描いた歯車から偏心と歯形を読む図。ゼロ点の最小二乗円は直径 47.278 mm で、ピッチ円 48 / 歯先円 52 / 歯底円 43 のどれでもない。歯が 1 枚欠けると偏心 0.050 mm が 0.1285 mm(+157 %)に化けるが、歯ごとに 1 標本だけ読む伝統的な測り方なら 0.0501 mm(+0.2 %)。",
+   "caption_en": "Eccentricity and tooth profile read from a gear drawn with the closed-form involute. The null's least-squares circle has a diameter of 47.278 mm, which is neither the pitch (48), tip (52) nor root (43) circle. One missing tooth turns an eccentricity of 0.050 mm into 0.1285 mm (+157 %); the traditional method of one sample per tooth returns 0.0501 mm (+0.2 %).",
+   "run": "py -3.11 examples/poc_gear_tooth_metrology.py"
+  },
+  {
+   "id": "poc_surface_roughness",
+   "wing": "wing_metrology",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "表面粗さ Sa / Sq / Sz は標本化とカットオフにどこまで耐えるか",
+   "title_en": "How Far Sa / Sq / Sz Survive Sampling and Cutoff",
+   "caption_ja": "指定 PSD から合成した表面(Sq の真値は Parseval で解析的)に傾き・うねり・加工目・傷を足し、粗さパラメータを測った図。生の rms を Sq と呼ぶと 20 倍の過大、平面だけ除いても 1.8 倍。標本間隔 8 µm で Sa は -3.5 %(合格)、Sz は -19.8 %(不合格) ―― Sz は評価領域を広げると頭打ちにならず、「真の Sz」は存在しない。",
+   "caption_en": "A surface synthesised from a prescribed PSD (so the true Sq follows analytically from Parseval), with tilt, waviness, lay and scratches added before the roughness parameters are measured. Calling the raw rms 'Sq' overstates it 20x; removing only the plane still leaves 1.8x. At 8 µm sampling Sa is -3.5 % (pass) while Sz is -19.8 % (fail); Sz keeps growing with evaluation area and never plateaus, so there is no such thing as the true Sz.",
+   "run": "py -3.11 examples/poc_surface_roughness.py"
+  },
+  {
+   "id": "poc_interferometry_step",
+   "wing": "wing_metrology",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "白色干渉計でナノメートルの段差をどこまで正確に測れるか",
+   "title_en": "How Accurately a White-Light Interferometer Measures a Nanometre Step",
+   "caption_ja": "白色干渉計の走査スタックを合成し、50〜500 nm の段差を測り返した図。雑音 1 % で偏り 2.4 nm 以内・標準偏差 14.1 nm 以内、しかも段差の大きさにほぼ依らない。ゼロ点(包絡線の最大サンプル)の誤差は走査ステップの半分に厳密一致し、Nyquist 上限 0.15 µm の手前 0.14 µm では雑音なしでも +14.1 nm。",
+   "caption_en": "A synthesised coherence-scanning stack with steps of 50 to 500 nm measured back. At 1 % noise the bias stays within 2.4 nm and the standard deviation within 14.1 nm, almost independent of step height. The null (envelope's maximum sample) errs by exactly half the scan step, and at 0.14 µm, just inside the Nyquist ceiling of 0.15 µm, the noise-free error is already +14.1 nm.",
+   "run": "py -3.11 examples/poc_interferometry_step.py"
+  },
+  {
+   "id": "poc_dic_strain",
+   "wing": "wing_metrology",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "スペックル画像からひずみを測る(DIC)",
+   "title_en": "Strain From Speckle Images (DIC)",
+   "caption_ja": "3000 個のガウス斑点を変形写像で移してから描き直したスペックル対から変位とひずみを読む図。真の変位 0.37 px に対し窓相関(piv)の偏り 0.0002 px・散らばり 0.0022 px で、ゼロ点(動かないと答える)の 167 倍。剛体回転が微小ひずみの定義で数百 µε の嘘を作る ―― Green-Lagrange なら厳密に 0。",
+   "caption_en": "Displacement and strain read from a speckle pair in which 3000 Gaussian spots were moved by the deformation map and redrawn, not interpolated. For a true shift of 0.37 px the window-correlation estimator (piv) is biased by 0.0002 px with 0.0022 px scatter, 167x better than the null that answers 'no motion'. A rigid rotation manufactures several hundred µε of false strain under the small-strain definition; Green-Lagrange gives exactly 0.",
+   "run": "py -3.11 examples/poc_dic_strain.py"
+  },
+  {
+   "id": "poc_strain_history",
+   "wing": "wing_metrology",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "クリープ試験のひずみ履歴 ―― 累積か直接か",
+   "title_en": "Strain History in a Creep Test — Cumulative or Direct?",
+   "caption_ja": "1 時間のクリープを 25 コマ撮り、隣接コマの累積と基準フレームとの直接比較でひずみ履歴を出した図。終端で累積 61 µε / 直接 1878 µε と累積が 31 倍良く、教科書の「時刻で入れ替わる」交点は無い(入れ替わるのは雑音の軸)。コマを 24 → 4 歩に間引くと累積は -60 → -606 µε と悪化 ―― 効くのは歩数でなく 1 歩あたりの変形量。",
+   "caption_en": "One hour of creep in 25 frames, with strain history from accumulating adjacent-frame displacements versus comparing each frame directly with the reference. At the end, cumulative errs by 61 µε and direct by 1878 µε — cumulative wins 31x and the textbook crossover in time never appears (it lives on the noise axis instead). Thinning from 24 to 4 steps worsens cumulative from -60 to -606 µε; what matters is the deformation per step, not the number of steps.",
+   "run": "py -3.11 examples/poc_strain_history.py"
+  },
+  {
+   "id": "poc_photoelasticity",
+   "wing": "wing_metrology",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "光弾性で応力を測る ―― 巻き戻しが最初に失敗するのは等方点",
+   "title_en": "Stress by Photoelasticity — Unwrapping Fails First at the Isotropic Point",
+   "caption_ja": "円板圧縮の閉形式応力場(中心 4.2441 MPa、縞次数 2.380)を Mueller 行列の op で偏光像にし、縞から応力へ戻す図。op の偏光系は教科書式と 125 通りで最大差 2.2e-16。縞次数が 0.5 を超える 84.2 % の画素で位相が巻き、巻き戻しが最初に壊れるのは応力の大きい所ではなく、変調が落ちる等方点。",
+   "caption_en": "The closed-form stress field of a diametrally loaded disc (4.2441 MPa at the centre, fringe order 2.380) turned into polariscope images by the Mueller-matrix ops and read back to stress. The op-built polariscope matches the textbook formula to 2.2e-16 across 125 cases. Phase wraps in the 84.2 % of pixels above fringe order 0.5, and unwrapping breaks first not where stress is highest but at the isotropic point, where modulation vanishes.",
+   "run": "py -3.11 examples/poc_photoelasticity.py"
+  },
+  {
+   "id": "poc_bilateral_asymmetry",
+   "wing": "wing_metrology",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "左右非対称性を測る ―― 対称面は変形に引きずられる",
+   "title_en": "Measuring Bilateral Asymmetry — The Symmetry Plane Gets Dragged by the Deformation",
+   "caption_ja": "厳密に左右対称な合成頭蓋の片側に既知の膨らみを入れ、鏡映して重ねた図。完全対称な標本でも床は 0 にならず、点対点 1.33 mm → 点対面 0.030 mm → 近傍平滑 0.012 mm。残差を最小にする面は 6.33 mm の膨らみで 2.92 mm / 1.72 度引きずられ、非対称量の 46 % が消える。",
+   "caption_en": "A perfectly symmetric synthetic skull with a known bulge added on one side, mirrored and overlaid. Even a perfectly symmetric specimen never scores 0: the floor drops from 1.33 mm (point-to-point) to 0.030 mm (point-to-plane) to 0.012 mm (neighbourhood smoothing). The residual-minimising plane is dragged 2.92 mm / 1.72 degrees by a 6.33 mm bulge, and 46 % of the asymmetry disappears.",
+   "run": "py -3.11 examples/poc_bilateral_asymmetry.py"
+  },
+  {
+   "id": "poc_particle_sizing",
+   "wing": "wing_metrology",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "粒度分布を画像から測る ―― 融合と縁切れが逆向きに効き、途中で打ち消し合う",
+   "title_en": "Particle Size Distribution From Images — Merging and Edge Cuts Pull Opposite Ways and Cancel",
+   "caption_ja": "粒子を撒いた合成画像から D10 / D50 / D90 を出し、融合(大きい側へ)と縁切れ(小さい側へ)を別々に数えた図。面積率 13.8 % で D50 誤差 +0.55 % ―― 融合 28 件と縁切れ 19 件が釣り合っているだけ。個数基準と面積基準では同じ塊から D50 が 26.9 µm と 44.7 µm(1.66 倍)。",
+   "caption_en": "D10 / D50 / D90 from a synthetic scatter of particles, with merges (pulling large) and edge cuts (pulling small) counted separately. At an area fraction of 13.8 % the D50 error is +0.55 % — because 28 merges and 19 edge cuts happen to balance. Number- and area-weighting give D50 values of 26.9 and 44.7 µm (1.66x) from the same blobs.",
+   "run": "py -3.11 examples/poc_particle_sizing.py"
+  },
+  {
+   "id": "poc_fiber_orientation",
+   "wing": "wing_metrology",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "繊維の配向分布を測る ―― 角度は 180 度周期、素朴に平均すると 90 度ずれる",
+   "title_en": "Fibre Orientation Distribution — Angles Repeat Every 180 Degrees, and a Naive Mean Is 90 Degrees Off",
+   "caption_ja": "フォン・ミーゼス分布から撒いた繊維 140 本の配向を構造テンソルで読む図。真の平均 177.9 度を算術平均は 105.55 度と報告し(-72.33 度)、2 倍角の円形平均なら +0.17 度 ―― 画像も測定も 1 ビットも変えていない。全画素を等しく数えると配向度が -31.3 % 落ちる。",
+   "caption_en": "Orientation of 140 fibres drawn from a von Mises distribution, read with a structure tensor. For a true mean of 177.9 degrees the arithmetic mean reports 105.55 degrees (-72.33), while the doubled-angle circular mean is off by +0.17 degrees — with not one bit of the image or the measurement changed. Weighting every pixel equally drops the orientation index by -31.3 %.",
+   "run": "py -3.11 examples/poc_fiber_orientation.py"
+  },
+  {
+   "id": "poc_cell_counting",
+   "wing": "wing_bio",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "重なった細胞をどう数えるか ―― 個数・過分割・過統合を別々に測る",
+   "title_en": "Counting Overlapping Cells — Count, Over-Segmentation and Under-Segmentation as Three Numbers",
+   "caption_ja": "重なった細胞の合成画像で、個数・過分割・過統合を別々に数えた図。いちばん密な条件でゼロ点は 78 個中 25 個を取りこぼし、失点は全部過統合。種の間引きを振ると釣り合う点があり、個数の偏り +0.3 個なのに分割誤りは 13.3 件残る ―― 個数だけ報告すれば最良の設定として通る。",
+   "caption_en": "Synthetic overlapping cells with the count, over-segmentation and under-segmentation tallied separately. In the densest condition the null misses 25 of 78 cells, every one of them an under-segmentation. Sweeping the seed suppression finds a balance point where the count bias is +0.3 cells while 13.3 segmentation errors remain; report the count alone and it passes as the best setting.",
+   "run": "py -3.11 examples/poc_cell_counting.py"
+  },
+  {
+   "id": "poc_nuclei_ploidy",
+   "wing": "wing_bio",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "蛍光核の積分輝度から倍数性を出す ―― 面積では分かれない",
+   "title_en": "Ploidy From Integrated Nuclear Intensity — Area Cannot Separate It",
+   "caption_ja": "DNA 量 D と面積 A を別々のばらつきで撒いた蛍光核で、倍数性を面積と積分輝度から分けた図。真の面積でも誤分類 15.4 %、積分輝度は 0 %。背景を引き忘れると分類は生き残ったまま DNA 指数だけが 2.115 → 1.702(-20 %)壊れる ―― 分類だけを見ていたら気づけない。",
+   "caption_en": "Fluorescent nuclei whose DNA content D and area A were drawn with independent spread, classified by area and by integrated intensity. Even the true area misclassifies 15.4 %; integrated intensity misclassifies 0 %. Forgetting to subtract background leaves the classification intact while the DNA index alone breaks from 2.115 to 1.702 (-20 %) — invisible if you only watch the classification.",
+   "run": "py -3.11 examples/poc_nuclei_ploidy.py"
+  },
+  {
+   "id": "poc_vessel_network",
+   "wing": "wing_bio",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "血管網を抜いて分岐を測る ―― ヒゲ、分岐近傍の径の過大、そして指数の脆さ",
+   "title_en": "Extracting a Vessel Network — Spurs, Overestimated Radii Near Branches, and a Fragile Exponent",
+   "caption_ja": "Murray の法則に厳密に従う合成血管木を細線化し、分岐点・径・指数を測った図。分岐画素をそのまま数えると 25 個の分岐に 47 画素、連結成分にまとめれば 25 個ちょうど。ヒゲを作るのは細線化ではなく境界のざらつきで(余分な分岐 0 → 72 個)、径は分岐から 3 px 未満で +26.2 % 過大。",
+   "caption_en": "A synthetic vessel tree obeying Murray's law exactly, skeletonised and measured for branch points, radii and the exponent. Counting branch pixels directly gives 47 pixels for 25 branches; grouping them into connected components gives exactly 25. Spurs come not from the skeletonisation but from boundary roughness (spurious branches 0 → 72), and radii within 3 px of a branch are overestimated by +26.2 %.",
+   "run": "py -3.11 examples/poc_vessel_network.py"
+  },
+  {
+   "id": "poc_wound_area_tracking",
+   "wing": "wing_bio",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "創傷面積の経時変化 ―― 較正の誤差は面積に 2 乗で効く",
+   "title_en": "Wound Area Over Time — Calibration Error Enters the Area Squared",
+   "caption_ja": "mm 平面に置いた星形の創面(面積は閉形式)をピンホールカメラで日ごとに撮り、治癒定数 k を推定した図。距離が 4 % 違うだけで面積が 7.7 % 動き、日ごとに 1.2 % 漂うと真の k = 0.1200 に対しゼロ点は 0.1424(+18.7 %)。しかもその標準偏差 0.0049 は毎回較正の 0.0059 より小さい ―― いちばん安定して、いちばん間違った答え。",
+   "caption_en": "A star-shaped wound on a millimetre plane (closed-form area), photographed day by day through a pinhole camera to estimate the healing constant k. A 4 % change in distance moves the area by 7.7 %; with the distance drifting 1.2 % per day the null reports k = 0.1424 against a true 0.1200 (+18.7 %). Its standard deviation, 0.0049, is smaller than the 0.0059 of recalibrating every time — the most stable and the most wrong answer.",
+   "run": "py -3.11 examples/poc_wound_area_tracking.py"
+  },
+  {
+   "id": "poc_astro_photometry",
+   "wing": "wing_astroenv",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "何枚重ねると、星の明るさは何 % の精度で測れるか",
+   "title_en": "How Many Frames for What Photometric Precision?",
+   "caption_ja": "指定どおりに置いた星野を N 枚重ね、開口測光の誤差が 1/√N で落ちるかを見た図。N = 1 → 16 で中央誤差 0.6350 % → 0.1616 %、8 通りすべてで理論から 4.6 % 以内。宇宙線 1 発で単純平均は +5.89 %、κ-σ なら +0.30 % ―― 棄却率は動かないので「棄却率が上がったから効いた」とは言えない。",
+   "caption_en": "A star field placed to specification and stacked N deep, to see whether aperture-photometry error falls as 1/√N. From N = 1 to 16 the median error drops from 0.6350 % to 0.1616 %, within 4.6 % of theory in all eight cases. One cosmic ray pushes the plain mean to +5.89 % while κ-σ clipping holds +0.30 %; the rejection rate does not move, so 'the rejection rate went up, therefore it worked' is not an available argument.",
+   "run": "py -3.11 examples/poc_astro_photometry.py"
+  },
+  {
+   "id": "poc_star_astrometry",
+   "wing": "wing_astroenv",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "星の位置は何分の 1 画素まで測れて、どこで崖に落ちるか",
+   "title_en": "To What Fraction of a Pixel Can a Star Be Located, and Where Is the Cliff?",
+   "caption_ja": "既知の天球座標から描いた星の位置を 4 手法で測り、Fisher 情報の理論限界と比べた図。S/N 298 で重心(ゼロ点)は理論の 5.56 倍、背景引き重心は 1.03 倍で、限界を上回った手法は無い。暗い端でゼロ点が限界を下回って見える(0.2790 px 対 0.3471 px)のは、感度 0.038 で初期値の四捨五入を返しているだけ。",
+   "caption_en": "Stars rendered from known celestial coordinates, located by four methods and compared with the Fisher-information bound. At S/N 298 the centroid (null) sits at 5.56x the bound and the background-subtracted centroid at 1.03x; no method beats the bound. At the faint end the null appears to beat it (0.2790 px versus 0.3471 px), but with a sensitivity of 0.038 it is merely returning the rounded initial guess.",
+   "run": "py -3.11 examples/poc_star_astrometry.py"
+  },
+  {
+   "id": "poc_solar_limb_darkening",
+   "wing": "wing_astroenv",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "縁が暗い天体の輪郭はどこか ―― 周辺減光があると「50 % 法」は半径を小さく見る",
+   "title_en": "Where Is the Edge of a Limb-Darkened Disc? The 50 % Rule Reads the Radius Small",
+   "caption_ja": "周辺減光つきの太陽面をシーイング越しに撮り、縁の半径を 50 % 法・勾配最大・モデル当てはめで測った図。「偏りは減光係数に比例」の予想は外れ、u = 0.8 で -12.76 px(幾何だけの予測 -13.14 px)。しきい値 0.26 付近でぼけの影響が消える打ち消し点は、u を変えると 0.38 へ動く。",
+   "caption_en": "A limb-darkened solar disc seen through seeing, its radius measured by the 50 % rule, by gradient maximum and by model fitting. The prediction 'bias scales with the darkening coefficient' failed: at u = 0.8 the bias is -12.76 px (pure geometry predicts -13.14 px). The cancellation point near threshold 0.26, where blur appears to have no effect, moves to 0.38 when u changes.",
+   "run": "py -3.11 examples/poc_solar_limb_darkening.py"
+  },
+  {
+   "id": "poc_allsky_cloud_cover",
+   "wing": "wing_astroenv",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "全天カメラの雲量 ―― 画素を数えると位置で偏る",
+   "title_en": "All-Sky Cloud Cover — Counting Pixels Is Biased by Position",
+   "caption_ja": "魚眼(等距離射影)の空に球冠の雲(立体角は閉形式)を置き、画素数比と立体角重みで雲量を数えた図。同じ雲が天頂角 0 → 82 度で 0.00789 → 0.01142(1.45 倍)に読める。幾何だけの誤差 -5.02 % と検出だけの誤差 +37.95 % が、素朴な数え方では +29.73 % に打ち消し合う。",
+   "caption_en": "Spherical-cap clouds (closed-form solid angle) placed in an equidistant fisheye sky, with cloud fraction counted by pixel ratio and by solid-angle weight. The same cloud reads 0.00789 at the zenith and 0.01142 at 82 degrees (1.45x). Geometry alone errs by -5.02 %, detection alone by +37.95 %, and the naive count cancels them to +29.73 %.",
+   "run": "py -3.11 examples/poc_allsky_cloud_cover.py"
+  },
+  {
+   "id": "poc_sea_ice_concentration",
+   "wing": "wing_astroenv",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "海氷密接度 ―― 混合画素をどう数えるかで答えが変わる",
+   "title_en": "Sea-Ice Concentration — The Answer Depends on How Mixed Pixels Are Counted",
+   "caption_ja": "PSF でぼかした海氷/水の 2 バンド像から密接度を硬い分類と線形混合分解で出した図。硬い分類は -4.2 ポイント、分解は +0.02 ポイント。偏りは周長率で説明がつき(R² = 0.984)、密接度 0.49 付近でゼロを横切る ―― そこだけで検証すると合格する。",
+   "caption_en": "Ice concentration from a PSF-blurred two-band ice/water image, by hard classification and by linear unmixing. Hard classification is off by -4.2 points, unmixing by +0.02. The bias is explained by the perimeter fraction (R² = 0.984) and crosses zero near a concentration of 0.49 — validate only there and it passes.",
+   "run": "py -3.11 examples/poc_sea_ice_concentration.py"
+  },
+  {
+   "id": "poc_vegetation_cover",
+   "wing": "wing_astroenv",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "畑の緑を数える ―― 被覆率の真値を画素ごとの葉の面積率で持つ",
+   "title_en": "Counting Crop Green — Ground Truth as Per-Pixel Leaf Area Fraction",
+   "caption_ja": "4 バンドの圃場像から被覆率を出し、画素ごとの葉の面積率を真値にした図。ゼロ点(緑チャネルに大津)は中期で +16.3 pp 上振れし、散らばりはどの手法も 0.5 pp 以下なので、効いている差はほぼ全部が偏り。発芽期・湿った土では被覆率の偏り -0.2 pp なのに適合率も再現率も 0.000 ―― 数字だけ合っていて画素が 1 つも当たっていない。",
+   "caption_en": "Cover fraction from a four-band field image, scored against the per-pixel leaf area fraction. The null (Otsu on the green channel) overshoots by +16.3 pp at mid-season, and since every method scatters by under 0.5 pp, nearly all of the difference is bias. At emergence on wet soil the null's cover bias is -0.2 pp while precision and recall are both 0.000 — the number is right and not a single pixel is.",
+   "run": "py -3.11 examples/poc_vegetation_cover.py"
+  },
+  {
+   "id": "poc_dem_terrain",
+   "wing": "wing_astroenv",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "地形を測る ―― 傾斜・水の流れ・日当たりを閉形式と突き合わせる",
+   "title_en": "Measuring Terrain — Slope, Flow and Insolation Against Closed Forms",
+   "caption_ja": "平面・円錐・ガウス丘で傾斜・曲率・天空率を閉形式と突き合わせた図。ガウス丘の曲率誤差はセルを半分にすると約 4 分の 1 ―― 離散化の誤差であって式の誤りではない。天空率は 513×513・8 方位で 2.03 秒 ―― 書き直す前は 41.9 秒かかっていて、テストは「動く」ことしか確かめていなかった。",
+   "caption_en": "Slope, curvature and sky-view factor checked against closed forms on a plane, a cone and a Gaussian hill. Halving the cell size cuts the hill's curvature error by about four — a discretisation error, not a wrong formula. The sky-view factor takes 2.03 s on a 513×513 grid with 8 directions; before the rewrite it took 41.9 s, and the tests had only ever checked that it runs.",
+   "run": "py -3.11 examples/poc_dem_terrain.py"
+  },
+  {
+   "id": "poc_water_level",
+   "wing": "wing_astroenv",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "河川の水位を斜め写真から測る ―― 透視を無視した「行番号」は弓なりに外れる",
+   "title_en": "River Stage From an Oblique Photo — Ignoring Perspective Bends the Row-Number Error Into an Arc",
+   "caption_ja": "量水標を斜めから撮った像で水面線を検出し、水位に直した図。目盛り 2 点の線形換算は最大 -6.4 cm(水位 1.00 m)弓なりに外れ、符号は水位でなく内挿(-6.6 cm)か外挿(+16.3 cm)かで決まる。4 点ホモグラフィなら 0.2 cm 以下で、残るのは透視でなく水面線の検出誤差。",
+   "caption_en": "The waterline detected on an obliquely photographed staff gauge and converted to stage. Linear conversion from two gauge marks bends off by up to -6.4 cm (at 1.00 m), and the sign is decided not by the stage but by whether the reading interpolates (-6.6 cm) or extrapolates (+16.3 cm). A four-point homography brings it under 0.2 cm; what remains is waterline detection, not perspective.",
+   "run": "py -3.11 examples/poc_water_level.py"
+  },
+  {
+   "id": "poc_camera_shake_deblur",
+   "wing": "wing_imaging",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "手ブレはどこまで戻せるか ―― 核を自分で作り、掛けて、戻して、元と比べる",
+   "title_en": "How Much Camera Shake Can Be Undone — Make the Kernel, Apply It, Invert It, Compare",
+   "caption_ja": "既知の直線ブレ核を掛けて戻し、雑音と核の推定誤差で上限を測った図。無雑音なら 22.38 → 56.41 dB、SNR 20 dB では取り分 1.82 dB。核の角度が 19.4 度ずれると「何もしない」に抜かれ、回転ブレを 1 枚の核で戻すと回転中心が -49.41 dB 悪化する。",
+   "caption_en": "A known linear blur kernel applied and inverted, with the ceiling set by noise and by kernel estimation error. Without noise the image recovers from 22.38 to 56.41 dB; at 20 dB SNR the gain is 1.82 dB. A kernel angle off by 19.4 degrees is beaten by doing nothing, and undoing rotational blur with a single kernel makes the centre of rotation worse by -49.41 dB.",
+   "run": "py -3.11 examples/poc_camera_shake_deblur.py"
+  },
+  {
+   "id": "poc_superresolution_limits",
+   "wing": "wing_imaging",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "超解像は情報を増やすのか ―― 真値を持ったまま縮小して、戻して、数える",
+   "title_en": "Does Super-Resolution Add Information? Downsample With the Truth in Hand, Restore, Count",
+   "caption_ja": "真値を縮小して観測を作り、単一画像拡大・逆投影・drizzle を分解能の列で採点した図。単一画像の拡大は bicubic のゼロ点を最大 +0.036 dB しか上回れない。副画素ずれのある 16 枚の drizzle は標本化不足の条件で +13.96 dB、ナイキスト超えの周期 6 の変調度が 0.03 → 0.38 に立ち上がる。",
+   "caption_en": "Observations made by downsampling the truth, with single-image upscaling, iterative back-projection and drizzle scored on a resolution table. No single-image upscaler beats the bicubic null by more than +0.036 dB. Drizzling 16 sub-pixel-shifted frames gains +13.96 dB in the undersampled condition, and the modulation of a period-6 pattern beyond Nyquist rises from 0.03 to 0.38.",
+   "run": "py -3.11 examples/poc_superresolution_limits.py"
+  },
+  {
+   "id": "poc_dehazing",
+   "wing": "wing_imaging",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "霞を剥がす ―― 大気散乱モデルで真値を作り、透過率と大気光を別々に採点する",
+   "title_en": "Removing Haze — Ground Truth From the Scattering Model, Transmission and Airlight Scored Apart",
+   "caption_ja": "深度・大気光・消散係数から真の透過率とシーンを持った霞画像を作り、除霞を採点した図。全体 +4.04 dB の中身は近景 -1.49 dB の劣化を中景 +4.03 / 遠景 +11.28 dB が覆ったもの。視程 782 m 以上では除霞が害になり、雑音を足すと PSNR が上がる(偶然の打ち消し)。",
+   "caption_en": "A hazy image built from depth, airlight and extinction so that the true transmission and the true scene are both known, then dehazed and scored. The overall +4.04 dB hides a -1.49 dB degradation of the near field covered by +4.03 dB mid and +11.28 dB far. Above 782 m visibility dehazing does harm, and adding noise raises PSNR (an accidental cancellation).",
+   "run": "py -3.11 examples/poc_dehazing.py"
+  },
+  {
+   "id": "poc_focus_stacking",
+   "wing": "wing_imaging",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "深度合成 ―― 全焦点画像と深度地図は別物",
+   "title_en": "Focus Stacking — The All-in-Focus Image and the Depth Map Are Different Things",
+   "caption_ja": "錯乱円の閉形式で深さに応じたぼけを掛けた 15 枚から、全焦点画像と深度地図を取り出した図。全焦点は 35.89 dB(ゼロ点 20.98 dB)なのに、同じ融合の深度は無テクスチャ領域でゼロ点に 8 倍負ける(0.13 倍)。相対量の信頼度は無テクスチャで 0.9923 と有テクスチャの 0.9630 より高く出る ―― 絶対値(23600 倍差)で棄却すると RMS 1.505 → 0.878 mm。",
+   "caption_en": "An all-in-focus image and a depth map pulled from 15 frames blurred by the closed-form circle of confusion. The all-in-focus image reaches 35.89 dB (null 20.98 dB), yet the depth from the same fusion loses to the null by 8x (0.13x) in textureless regions. A relative confidence scores 0.9923 there, higher than the 0.9630 of textured regions; rejecting by absolute value (23600x apart) brings the RMS from 1.505 to 0.878 mm.",
+   "run": "py -3.11 examples/poc_focus_stacking.py"
+  },
+  {
+   "id": "poc_ct_fidelity",
+   "wing": "wing_imaging",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "投影数を減らすと CT 再構成はどこから壊れるか",
+   "title_en": "Where CT Reconstruction Starts to Break as Projections Are Removed",
+   "caption_ja": "Shepp-Logan を 180 → 12 本で撮り直し、FBP を空白画像と無フィルタ逆投影の 2 つの零点と並べた図。12 本の FBP(RMSE 0.2576)は空白画像(0.2420)より悪い。サイノグラムの行和という再構成を見ない検算が、RMSE では見えない質量欠損 -3.34 % を捕まえ、ランプフィルタの DC ビンを直して -0.0099 % に。",
+   "caption_en": "Shepp-Logan re-imaged with 180 down to 12 projections, FBP placed beside two nulls: a blank image and unfiltered back-projection. With 12 projections FBP (RMSE 0.2576) is worse than the blank image (0.2420). A check that never looks at the reconstruction — the row sums of the sinogram — caught a -3.34 % mass loss that RMSE could not see; fixing the ramp filter's DC bin brought it to -0.0099 %.",
+   "run": "py -3.11 examples/poc_ct_fidelity.py"
+  },
+  {
+   "id": "poc_lightfield_depth",
+   "wing": "wing_imaging",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "ライトフィールドから深度を出す ―― 既知の深度で作った光場に、ゼロ点を並べて突きつける",
+   "title_en": "Depth From a Light Field — A Light Field of Known Depth, Confronted With Its Nulls",
+   "caption_ja": "9×9 の光場を解析的な逆写像で描き、真値スロープ地図に対して焦点度・EPI・2 眼ブロックマッチングを採点した図。定数ゼロ点には 22 倍勝つが、視点 2 枚だけ使う 2 眼に対しては cubic でようやく 1.6 倍。既定の linear 補間は整数スロープに吸着し、真値 1.30 を 1.4750 と読む(深度で 11.9 %)。",
+   "caption_en": "A 9×9 light field rendered by analytic inverse mapping, with focus-measure, EPI-slope and two-view block matching scored against the true slope map. The winner beats the constant null by 22x, but beats two-view matching — which uses only 2 of the 81 views — by just 1.6x, and only with cubic interpolation. The default linear interpolation snaps to integer slopes, reading a true 1.30 as 1.4750 (11.9 % in depth).",
+   "run": "py -3.11 examples/poc_lightfield_depth.py"
+  },
+  {
+   "id": "poc_dtof_ranging",
+   "wing": "wing_imaging",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "光子を数えて距離を測る ―― 何個数えれば何ミリまで出るのか",
+   "title_en": "Ranging by Counting Photons — How Many for How Many Millimetres?",
+   "caption_ja": "往復時刻にガウシアンをビン積分で置き Poisson 標本を引いた到達時刻ヒストグラムから距離を読む図。N = 200 光子でピーク位置そのまま 11.02 mm、ゲート重心 2.29 mm、理論限界 31.83 mm/√N に 1.00〜1.07 倍で乗る。背景が入ると素の重心は 2 桁崩れ(SBR 0.031 で 564 mm)、族が推すガウス当てはめ 8.82 mm は利用者が 6 行で書くゲート重心に負ける。",
+   "caption_en": "Range read from an arrival-time histogram built by bin-integrating a Gaussian at the round-trip time and drawing Poisson samples. With 200 photons the raw peak position errs by 11.02 mm and the gated centroid by 2.29 mm, riding the 31.83 mm/√N bound at 1.00 to 1.07x. With background the plain centroid collapses by two orders (564 mm at SBR 0.031), and the family's recommended Gaussian fit at 8.82 mm loses to a gated centroid a user can write in six lines.",
+   "run": "py -3.11 examples/poc_dtof_ranging.py"
+  },
+  {
+   "id": "poc_timelapse_growth",
+   "wing": "wing_xyt",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "成長のタイムラプスを時空間の連結成分として測る",
+   "title_en": "A Growth Time-Lapse as Space-Time Connected Components",
+   "caption_ja": "広がって合体するコロニーの動画を (t, y, x) の体積として 3-D 連結成分で読んだ図。画素が面積を持つせいで合体は早く見え(組 0-1 で -1.16 フレーム)、フレーム格子への丸めは遅らせる(+0.94) ―― 逆向きなので合計は小さく見える。`vol_label` の既定 26 近傍は、隙間 0.92 のニアミスを合体させた。",
+   "caption_en": "A video of colonies spreading and merging, read as a (t, y, x) volume with 3-D connected components. Pixel area makes merging look early (-1.16 frames for pair 0-1) while rounding onto the frame grid makes it look late (+0.94); the two oppose, so the sum looks small. The default 26-connectivity of `vol_label` merged a near miss with a gap of 0.92.",
+   "run": "py -3.11 examples/poc_timelapse_growth.py"
+  },
+  {
+   "id": "poc_traffic_counting",
+   "wing": "wing_xyt",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "(x, y, t) で数える ―― 通過台数とオクルージョン、そして L/V という 1 つの定数",
+   "title_en": "Counting in (x, y, t) — Vehicles Passed, Occlusion, and One Constant: L/V",
+   "caption_ja": "車を流した合成動画で、フレームごとの計数・仮想ループ・(t, x) スリット画像の連結成分を並べた図。フレームごとの最大値は通過 10 台に対し 7 ―― 別の量を測っている。破綻の条件は 3 つとも車長 ÷ 速度 = L/V(9.0 フレーム)で書け、フレーム間隔 16 では帯が千切れて 10 → 49 台。",
+   "caption_en": "A synthetic traffic video counted per frame, by a virtual loop, and by connected components in a (t, x) slit image. The per-frame maximum reports 7 for 10 vehicles passed — it measures a different quantity. All three failure conditions are written with one constant, vehicle length over speed = L/V (9.0 frames); at a frame interval of 16 the bands fragment and 10 vehicles become 49.",
+   "run": "py -3.11 examples/poc_traffic_counting.py"
+  },
+  {
+   "id": "poc_xyt_event_surface",
+   "wing": "wing_xyt",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "到達時刻面を (x, y, t) の等値面として取り出す",
+   "title_en": "The Arrival-Time Surface as an Isosurface in (x, y, t)",
+   "caption_ja": "点源から広がる波面の到達時刻面を (x, y, t) 体積の等値面として取り出した図。ゼロ点(初めて超えたフレーム番号)の偏りは Δt/2 で枚数では消えず、線形補間で 27 倍(0.0209 ms)。放物線補間は線形に負け、しきい値がガウス波形の変曲点 θ = 0.6065 にあるとき線形が最良(3.8 倍差)。",
+   "caption_en": "The arrival-time surface of wavefronts spreading from point sources, extracted as an isosurface of the (x, y, t) volume. The null (first frame above threshold) is biased by Δt/2, which more frames cannot remove; linear sub-frame interpolation is 27x better (0.0209 ms). Parabolic interpolation loses to linear, and linear is at its best (a 3.8x margin) when the threshold sits at the Gaussian's inflection point θ = 0.6065.",
+   "run": "py -3.11 examples/poc_xyt_event_surface.py"
+  },
+  {
+   "id": "poc_particle_tracking",
+   "wing": "wing_xyt",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "粒子追跡を (行, 列, 時刻) の体積として測る ―― 誤リンクの向きは 1 種類ではない",
+   "title_en": "Particle Tracking as a (row, column, time) Volume — Mislinks Come in Two Directions",
+   "caption_ja": "400 個の粒子の動画を追跡し、軌跡から拡散係数 D を読んだ図。曖昧な誤リンクは D を 0.925 倍に下げ、欠測による誤リンクは同じ動画で 3.429 倍に上げる ―― 誤り率 1 本では向きが決まらない。効くのは 1 対 1 制約ではなく、上限距離のゲート 1 行(3.429 → 1.304)。",
+   "caption_en": "A video of 400 particles tracked, with the diffusion coefficient D read from the trajectories. Ambiguous mislinks pull D down to 0.925x; mislinks caused by missing targets push it up to 3.429x in the same video — one error rate cannot tell you the direction. What helps is not a one-to-one constraint but a single line imposing a maximum link distance (3.429 → 1.304).",
+   "run": "py -3.11 examples/poc_particle_tracking.py"
+  },
+  {
+   "id": "poc_template_tracking",
+   "wing": "wing_xyt",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "テンプレート追跡は「見失う」より先に「静かにずれる」",
+   "title_en": "Template Tracking Drifts Quietly Before It Ever Loses the Target",
+   "caption_ja": "既知の相似変換でカメラを動かし、テンプレート追跡が「見失う」「静かにずれる」「自信満々で間違える」の 3 通りで壊れるのを見た図。ずれていた 152 フレームの 152 フレーム全部が、遮蔽なしで校正したピークのしきい値を通って「見つけた」と報告した。真値なしで測れる絶対量は往復追跡の不一致だけ。",
+   "caption_en": "A camera moved by a known similarity transform, exposing the three ways template tracking fails: losing the target, drifting quietly, and being confidently wrong. All 152 of the 152 drifted frames passed the peak threshold calibrated without occlusion and reported 'found'. The only absolute quantity measurable without ground truth is forward-backward inconsistency.",
+   "run": "py -3.11 examples/poc_template_tracking.py"
+  },
+  {
+   "id": "poc_motion_magnification",
+   "wing": "wing_xyt",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "構造物の微小振動を映像から測る ―― モーション拡大は「測る」役に立つのか",
+   "title_en": "Micro-Vibration of a Structure From Video — Does Motion Magnification Help You Measure?",
+   "caption_ja": "既知振幅 0.02 px・3.7 Hz の振動を合成し、モーション拡大が測定に効くかを見た図。拡大率 α = 200 まで機械精度で厳密。だが拡大は測定精度を良くしない ―― 位相を α 倍すると雑音も α 倍。片持ち梁では位相相関が 0.30 と 0.00 px の面積平均 0.15 px という、どこにも存在しない数を返す。",
+   "caption_en": "A vibration of known amplitude 0.02 px at 3.7 Hz, synthesised to test whether motion magnification helps measurement. Exact to machine precision up to α = 200. But magnification does not improve measurement precision — multiplying the phase by α multiplies the noise by α. On a cantilever, phase correlation returns 0.15 px, the area average of 0.30 and 0.00 px, a number that exists nowhere.",
+   "run": "py -3.11 examples/poc_motion_magnification.py"
+  },
+  {
+   "id": "poc_camera_calibration",
+   "wing": "wing_geometry",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "再投影誤差 0.05 px は何も保証しない",
+   "title_en": "A Reprojection Error of 0.05 px Guarantees Nothing",
+   "caption_ja": "既知の内部パラメータと姿勢で格子点を投影し、校正し直して成分ごとに誤差を出した図。板の傾き 32 / 8 / 2 度で再投影 RMS は 0.0688〜0.0690 px(比 1.00)なのに、fx の誤差は 0.026〜7.334 %(281 倍)。歪みのあるカメラでは退化検出の門が発火せず、非線形最適化は正面配置でも答えを返す。",
+   "caption_en": "Grid points projected with known intrinsics and poses, re-calibrated, and the error split by component. With the board tilted 32 / 8 / 2 degrees the reprojection RMS spans 0.0688 to 0.0690 px (ratio 1.00) while the focal-length error spans 0.026 to 7.334 % (281x). With a distorting camera the degeneracy gate never fires, and the non-linear optimiser returns an answer even for a fronto-parallel board.",
+   "run": "py -3.11 examples/poc_camera_calibration.py"
+  },
+  {
+   "id": "poc_panorama_drift",
+   "wing": "wing_geometry",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "隣どうしを鎖でつなぐと、一周して元に戻れない",
+   "title_en": "Chain the Neighbours Together and You Cannot Get Back Where You Started",
+   "caption_ja": "既知の回転列で円筒パノラマから 36 枚を切り出し、隣接ペアの鎖で一周させた図。隣の継ぎ目は 0.12 px なのに閉じる 1 本だけ 1.5 px(13 倍)開く。埋もれていた `bundle_adjust_mosaic` は鎖を上回らず(30/36 枚が単位行列のまま)、姿勢の最悪誤差は鎖 1.65 → 大域最適化 0.56 px。",
+   "caption_en": "36 frames cut from a cylindrical panorama by a known rotation sequence and chained pairwise around a full turn. Adjacent seams agree to 0.12 px, yet the one closing seam opens by 1.5 px (13x). The buried `bundle_adjust_mosaic` did not beat the chain (30 of 36 frames were left as the identity); the worst pose error goes from 1.65 px for the chain to 0.56 px with global optimisation.",
+   "run": "py -3.11 examples/poc_panorama_drift.py"
+  },
+  {
+   "id": "poc_registration_basin",
+   "wing": "wing_geometry",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "点群位置合わせの収束域 ―― 初期姿勢がどれだけずれたら壊れるか",
+   "title_en": "The Convergence Basin of Point-Cloud Registration — How Far Off Can the Initial Pose Be?",
+   "caption_ja": "点群を毎試行取り直し、初期姿勢のずれに対する ICP の成功率を等高線にした図。並進ずれ 0 で成功率が 50 % を切るのは点対点 90 度、点対面 120 度。球や円柱は残差が同じまま姿勢が任意で、大域手法では 16/16 が見かけ上収束しつつ姿勢は誤り ―― 残差では検出できない。",
+   "caption_en": "ICP success rate contoured against the initial pose error, with the point cloud re-sampled on every trial. With no translation offset, success drops below 50 % at 90 degrees for point-to-point and 120 degrees for point-to-plane. Spheres and cylinders converge to the same residual with an arbitrary pose; with the global method all 16 of 16 trials appear converged and the pose is wrong — undetectable from the residual.",
+   "run": "py -3.11 examples/poc_registration_basin.py"
+  },
+  {
+   "id": "poc_white_balance",
+   "wing": "wing_color",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "色恒常性(ホワイトバランス)―― 「効く手法」は無い、あるのは効く条件だけ",
+   "title_en": "Colour Constancy (White Balance) — No Method Works, Only Conditions Do",
+   "caption_ja": "24 枚の既知分光反射率と既知光源から線形 RGB を合成し、光源推定の回復角度誤差を測った図。白パッチ法は 11 光源の中央値 1.06 度で最良だが、いちばん明るい 1 枚を外すと 8.45 度、露出 3 倍で 43 % を飽和させると 13.61 度で「何もしない」と一致。真の光源で対角補正しても 2500 K では ΔE00 平均 5.07 が残る。",
+   "caption_en": "Linear RGB synthesised from 24 known spectral reflectances and known illuminants, with illuminant estimation scored by recovery angular error. Max-RGB is best at a median of 1.06 degrees over 11 illuminants, but removing the single brightest patch takes it to 8.45 degrees, and tripling exposure to saturate 43 % of pixels takes it to 13.61 degrees, identical to doing nothing. Even a diagonal correction with the true illuminant leaves a mean ΔE00 of 5.07 at 2500 K.",
+   "run": "py -3.11 examples/poc_white_balance.py"
+  },
+  {
+   "id": "poc_pigment_unmixing",
+   "wing": "wing_color",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "多波長で層を剥がす ―― 下絵・地塗り・上塗り・褪色を、真値を握ったまま分離する",
+   "title_en": "Peeling Layers With Many Wavelengths — Underdrawing, Ground, Glaze and Fading, Truth in Hand",
+   "caption_ja": "地塗り・下絵・上塗り・褪色を重ねた分光キューブを合成し、層を分離した図。可視だけを 16 バンドに割っても RGB と同じ(再現率 0.118 対 0.119)で、勝ったのは近赤外を入れたこと。同じ検出器が群青で AUC 1.000、アズライトで 0.630、剥落部で 0.013 ―― 平均すると全部消える。褪色前の色の復元は ΔE00 16.79 → 16.46 で、ゼロ点にほぼ勝てなかった。",
+   "caption_en": "A spectral cube of ground, underdrawing, glaze and fading stacked in layers, then unmixed. Splitting the visible range into 16 bands does no better than RGB (recall 0.118 versus 0.119); what won was adding near-infrared. The same detector scores an AUC of 1.000 on ultramarine, 0.630 on azurite and 0.013 on losses — averaged, all of that vanishes. Restoring the unfaded colour barely beat the null, ΔE00 16.79 → 16.46.",
+   "run": "py -3.11 examples/poc_pigment_unmixing.py"
+  },
+  {
+   "id": "poc_polarization_specular",
+   "wing": "wing_color",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "偏光で鏡面反射を剥がす ―― フレネルの式で真値を作り、分離結果を突き合わせる",
+   "title_en": "Stripping Specular Reflection With Polarisation — Truth From the Fresnel Equations",
+   "caption_ja": "拡散と鏡面を s/p 成分で合成し、フレネルの式から偏光度を出して分離結果を採点した図。偏光を使う手は入射角 20 度では 1.2 倍しか勝たない。拡散成分の誤差は閉形式 R_p·E に一致してブリュースター角 56.31 度で 0 ―― `polarization_separate` の拡散はその分だけ系統的に大きい。",
+   "caption_en": "Diffuse and specular components synthesised as s/p terms with the degree of polarisation from the Fresnel equations, and the separation scored against them. At 20 degrees of incidence the polarisation method wins by only 1.2x. The diffuse error matches the closed form R_p·E exactly and vanishes at the Brewster angle of 56.31 degrees — the diffuse term of `polarization_separate` is systematically high by that amount.",
+   "run": "py -3.11 examples/poc_polarization_specular.py"
+  },
+  {
+   "id": "poc_forensics_roc",
+   "wing": "wing_forensics",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "改竄検出を ROC で語る ―― 「見つかった 1 枚」ではなく、偽陽性を固定したときの検出率",
+   "title_en": "Forgery Detection as an ROC — Not the One Image Found, but Detection at a Fixed False-Positive Rate",
+   "caption_ja": "JPEG q60 の素材を q92 の背景に貼って q95 で保存した改竄画像 10 枚を、画素ごとの ROC で採点した図。ELA の 1 つの数字は向きが教科書と逆(貼付部 / 背景 = 0.58 倍)で、改竄していない画像でも場所への偏りで AUC 0.797 が出る。ゴーストの谷の深さは AUC 0.997 だが、全体を q75 で再圧縮すると 0.975 へ落ちる。",
+   "caption_en": "Ten forgeries made by pasting a JPEG q60 patch onto a q92 background and saving at q95, scored with a per-pixel ROC. ELA's single number points the opposite way from the textbook (paste / background = 0.58x), and an untouched image still yields an AUC of 0.797 from position bias alone. The ghost-valley depth reaches an AUC of 0.997, which falls to 0.975 after one whole-image recompression at q75.",
+   "run": "py -3.11 examples/poc_forensics_roc.py"
+  },
+  {
+   "id": "poc_document_scan",
+   "wing": "wing_forensics",
+   "added": "2026-09-06",
+   "numbers_source": "log",
+   "title_ja": "手持ちで撮った書類をまっすぐに戻す ―― 台形補正と影除去を、真値と突き合わせて測る",
+   "title_en": "Straightening a Hand-Held Document Photo — Keystone Correction and Shadow Removal Against Ground Truth",
+   "caption_ja": "既知のホモグラフィと照明で撮った書類を戻し、4 隅と格子の画素誤差で採点した図。推定は格子 RMS 1.070 px(何もしない 37.376 px)だが、名前が同じでモデルが違う関数(アフィン)を取り違えると 32 倍悪く、例外は出ない。影の強さ 0.45 で 4 隅 RMS 5.72 px、0.55 で 65.10 px と崖。",
+   "caption_en": "A document imaged under a known homography and lighting, rectified, and scored by corner and grid error in pixels. The estimate reaches a grid RMS of 1.070 px (doing nothing: 37.376 px), but swapping in the same-named function with a different model (affine) is 32x worse and raises no exception. Shadow strength 0.45 gives a corner RMS of 5.72 px; 0.55 gives 65.10 px — a cliff.",
+   "run": "py -3.11 examples/poc_document_scan.py"
+  }
+ ]
+}

@@ -1036,6 +1036,22 @@ typed bridge が点群 op に束縛した半径 2.0・境界箱 0〜10・格子�
 
 門: `tests/test_op_figures.py::test_extra_figures_exist_and_are_counted`(床: 段階図 600 組・GIF 30 本・複数入力 600 本)、`::test_dead_knobs_are_really_dead`(「効かない」と記録したつまみが本当に効かないか抜き取り)。
 
+### 2c. 再生成の順番(この回で 3 度やり直した —— 手順として固定)
+
+```
+py -3.11 tools/gen_op_figures.py        # 図(主図 PNG・段階図/複数入力 JPEG・GIF)+ figures.json
+py -3.11 tools/opdocs.py md             # op ノート(図・sample: を埋め込む)
+py -3.11 tools/opdocs.py toc            # ★op 目次(INDEX.md、レジストリ指紋)—— md では作られない
+py -3.11 tools/opdocs.py html           # Studio ヘルプ(6 言語)+ op_help/fig へ PNG/GIF 複製
+py -3.11 tools/gen_op_catalog.py        # OP_CATALOG.md(索引の到達性はここ経由)
+py -3.11 imgevolve.py index             # OP_INDEX.json(★gen_docs_index_ops より先)
+py -3.11 tools/gen_docs_index_ops.py    # docs/README*.md(6 言語)の生成 3 節
+py -3.11 tools/gen_examples_readme.py   # examples/README.md
+```
+
+`toc` を抜かすと「INDEX.md の指紋が live と違う」「新カテゴリのノートが索引から辿れない」
+の 2 門が落ちる(実測)。`imgevolve.py index` を後にすると README の op 数が古いまま出る。
+
 ### 3. 使い方が 1 行だった 494 本 → 0 本
 
 2 つの原因が重なっていた。
@@ -1117,3 +1133,42 @@ typed bridge が点群 op に束縛した半径 2.0・境界箱 0〜10・格子�
 - 手書きヘルプ 3 本(`gaussian` / `otsu` / `sobel_mag`)に呼び出し形を足した
   (`fs.apply` / `fs.op.<name>` / Studio の 1 行)。
 
+### 7. PoC 展示館の記事(Qiita、ja / en)—— データから組む(2026-09-07)
+
+ユーザー方針: 「PoC シリーズも記事更新もしながらどんどん増やす。記事更新時に追加しやすい
+構成」「展示会・博物館くらいの規模と見た目」「Qiita は日本語と英語だけ」「ヘルプの目録への
+リンクを貼れば細かい説明はいらない」「Qiita と furuse.work は素材を共用し、Qiita から
+furuse.work へ誘導する」。
+
+- **単一真実源** = `docs/articles/exhibits/poc_captions.json`(9 ウィング × 53 展示の題・
+  キャプション ja/en・数字の出所・追加日)+ 各 PoC の `docs/articles/assets/poc/<id>/figures.json`
+  (`FULLSEYE_FIGURE_DIR` で走らせた PoC 自身の出力。記事のために描いた図は無い)。
+  `py -3.11 tools/gen_wingpoc_gallery.py` が `exhibits/wingpoc.{ja,en}.md` と
+  `docs/articles/fullseye_poc_museum_qiita_{ja,en}.md` と 720 px サムネ、看板モンタージュ
+  (`assets/poc/_hero_montage.jpg`、`meta.hero_tiles` で選ぶ)を生成する。
+- **PoC を 1 本足す手順**: `examples/poc_<id>.py` を書く → `examples2d.EXAMPLES` に登録 →
+  `FULLSEYE_FIGURE_DIR=docs/articles/assets/poc/poc_<id>` で走らせる → `poc_captions.json` に
+  1 エントリ(wing / title / caption / added / numbers_source)→ 生成器を回す。
+  `tests/test_wingpoc_gallery.py` が「展示 = examples2d の poc_*」「生成物が最新」「画像が
+  全部 repo にある」「ローカルパス無し」を門にする。
+- **使用 op の行**は手で書かない: `op_example_index._called` と同じ規則で PoC のソースから
+  検出し、`https://furuse.work/ops/<dim>/<cat>/<op>.html` へリンクする(誘導の主経路)。
+- **数字は実行ログが正**(docstring と食い違った 5 件はログ側を採用: thermography +627 %、
+  moire +202.6 %、document_scan 32x、dem 天空率 2.03 s、water_level -6.4/-6.6/+16.3 cm)。
+- **投稿**は `tools/qiita_post_poc.py`(既定 = 限定共有。画像 raw URL の HEAD 200 と
+  ローカルパス検査を通らないと書かない。item id は `exhibits/qiita_items.json` に残し
+  2 回目以降は PATCH)。公開へ倒すのは `--public` 明示時のみ。
+- 末尾に Claude Code の招待リンク(1 週間無料トライアル)と「いいね・ストック」の依頼を
+  置いた(ユーザー指示)。文面は `entrance.cta_ja/en`。
+- 残り: 図の中の文字が日本語(en 記事ではキャプションで断っている)。PoC ごとの英語版
+  図は未着手。
+
+### 8. ノブ生死の門が探針で誤判定していた(2026-09-07)
+
+- `hx_close_edges_length` の `b`(残す最小画素数 2〜22)は配線されているのに「効かない」と
+  出た。探針画像(`structured_image`)はしきい値で二値化すると連結成分が数百画素になり、
+  短い断片を落とすノブに効く余地が無かった。**探針に「細い断片」画像(長さ 3/6/12/25/40 px)
+  を 1 枚足した**(`op_probe.structured_fragments`、既存の探針の種と順序は不変)。
+- `r2_smallest_circle` / `xg_area_center` は docstring の「``b`` は<改行>未使用」が
+  行の折り返しで「振る」判定に化けていた。判定前に折り返しを 1 行に戻す。
+- `tb_wetness` の `b` は `OP_KNOB_RANGE`(ior 1.01〜2.5)で生き返ったので台帳から消した。
