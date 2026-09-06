@@ -852,24 +852,41 @@ def section_cliff_illum():
 
     w_true, a = 40.50, 45.27
     print(f"\n  真の幅 {w_true} px。傾斜 g は画像端で +-g/2 の乗法変化")
-    print(f"  {'g':>7} | {'Z 偏り':>9} | {'M 偏り':>9} | {'F 偏り':>9}")
-    zz, mm, ff = [], [], []
+    print("  Z = 大津の整数幅 / Z' = 大津のしきい値を線形補間で横切った幅")
+    print("  (Z' を並べるのは、Z の整数量子化が『しきい値が動いた』を隠すから)")
+    print(f"  {'g':>7} | {'Z 偏り':>9}{'Z’ 偏り':>10} | {'M 偏り':>9} | {'F 偏り':>9}")
+    zz, zs, mm, ff = [], [], [], []
     for g in (0.0, 0.1, 0.2, 0.4, 0.8, 1.2):
         img = bar_image(140, a, a + w_true, 1.5, height=48)
         x = (np.arange(140) - 69.5) / 139.0
         img = img * (1.0 + g * x)[None, :]
         zw = otsu_bright_run_len(img, 24, 0, 140) - w_true
+        # 大域しきい値のサブピクセル交差(量子化を外して、しきい値のずれだけ見る)
+        mask = np.asarray(fs.op.otsu(img), float) > 0.5
+        lvl_hi = float(img[mask].min()) if mask.any() else 0.0
+        lvl_lo = float(img[~mask].max()) if (~mask).any() else 0.0
+        lvl = 0.5 * (lvl_hi + lvl_lo)
+        row = img[24]
+        d = row - lvl
+        j = np.where(np.diff(np.sign(d)) != 0)[0]
+        if len(j) >= 2:
+            xs = [jj + d[jj] / (d[jj] - d[jj + 1]) for jj in (j[0], j[-1])]
+            zsw = (xs[1] - xs[0]) - w_true
+        else:
+            zsw = float("nan")
         ms = m1.gen_measure_rectangle2(24, 69.5, 0.0, 60, 1, img.shape)
         pr = m1.measure_pairs(img, ms, sigma=1.0, threshold=0.15)
         mw = (pr[0]["width"] - w_true) if pr else float("nan")
         p50 = pairs_50(img[24], det_sigma=1.0, plateau=1.5)
         fw = (p50[0]["width"] - w_true) if p50 else float("nan")
-        zz.append(zw); mm.append(mw); ff.append(fw)
-        print(f"  {g:7.2f} | {zw:+9.4f} | {mw:+9.4f} | {fw:+9.4f}")
-    print("\n  -> 大域しきい値(Z)は傾斜でまるごと流れる。勾配極大(M)と 50% 交差(F)は")
+        zz.append(zw); zs.append(zsw); mm.append(mw); ff.append(fw)
+        print(f"  {g:7.2f} | {zw:+9.4f}{zsw:+10.4f} | {mw:+9.4f} | {fw:+9.4f}")
+    print("\n  -> 大域しきい値(Z')は傾斜に比例して流れる。勾配極大(M)と 50% 交差(F)は")
     print("     どちらも局所量なのでほとんど動かない。**照明の均一化に金をかける前に、")
     print("     しきい値を大域で持っていないかを見るほうが安い。**")
-    return zz, mm, ff
+    print("     整数版(Z)は流れを 1 px の階段で表すので、傾斜が小さいうちは")
+    print("     『変わっていない』ように見える —— 量子化は誤差を隠す。")
+    return zz, zs, mm, ff
 
 
 # --------------------------------------------------------------------------- #
@@ -1207,7 +1224,7 @@ def main():
     edge_ratio, lost_at, usable_at = section_cliff_blur()
     noise_tab = section_cliff_noise()
     ang_corr = section_cliff_angle()
-    zz, mm, ff = section_cliff_illum()
+    zz, zs, mm, ff = section_cliff_illum()
     spread = section_cliff_chamfer()
     (arc_bias, fz_ok, tr_same, gen_same, align_ok,
      ell_err, n_reach) = section_buried_api(img)
