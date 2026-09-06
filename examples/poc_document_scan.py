@@ -484,63 +484,67 @@ def main():
                                 illum=illumination_field(strength=0.50, shadow=0.50))
     rect_ideal = rectify(cam_hard, H_ideal)
     truth = doc
-    paper = truth > 0.85                                   # 紙だけの画素(真値で定義)
-    faint = np.zeros_like(truth, bool)
-    for i in FAINT_BANDS:
-        faint[BAND_ROWS[i]:BAND_ROWS[i] + BAND_H, TEXT_C0:TEXT_C1] = truth[
-            BAND_ROWS[i]:BAND_ROWS[i] + BAND_H, TEXT_C0:TEXT_C1] < 0.8
-    ramp = np.zeros_like(truth, bool)
-    ramp[RAMP_R0:RAMP_R1, RAMP_C0:RAMP_C1] = True
     inner = np.zeros_like(truth, bool)
     inner[12:-12, 12:-12] = True
-    paper &= inner
+    paper = (truth > 0.85) & inner                         # 紙の地(真値で定義)
+    strong_ink = np.zeros_like(truth, bool)
+    faint_ink = np.zeros_like(truth, bool)
+    for i, r0 in enumerate(BAND_ROWS):
+        band = np.zeros_like(truth, bool)
+        band[r0:r0 + BAND_H, TEXT_C0:TEXT_C1] = True
+        tgt = faint_ink if i in FAINT_BANDS else strong_ink
+        tgt |= band & (truth < 0.85)
+    ramp = np.zeros_like(truth, bool)
+    ramp[RAMP_R0:RAMP_R1, RAMP_C0:RAMP_C1] = True
 
     def flatness(x):
         """紙の地の明るさのばらつき(小さいほど平ら)。"""
         return float(np.std(x[paper]))
 
-    def faint_contrast(x):
-        """薄字と周りの紙のコントラスト(消えると 0 に近づく)。"""
-        return float(np.mean(x[paper]) - np.mean(x[faint]))
+    def ink_mask(x):
+        """処理後の画像から「字」と判定される画素(大域 2 値化のあと)。"""
+        return np.asarray(fs.op.otsu(x)) < 0.5
 
-    def ramp_fidelity(x):
-        """図の階調が残っているか(真の傾斜との相関 × 残った振幅の比)。"""
+    def ramp_corr(x):
+        """図の階調の順序が残っているか(真の傾斜との相関、1.0 = 無傷)。"""
         a = x[ramp].ravel(); b = truth[ramp].ravel()
         if np.std(a) < 1e-9:
             return 0.0
-        r = float(np.corrcoef(a, b)[0, 1])
-        return r * float(np.ptp(a) / np.ptp(b))
+        return float(np.corrcoef(a, b)[0, 1])
 
-    def bg_divide(x, k):
-        """局所平均で割る(★ 窓 k は自前。fs.op では 9 px までしか届かない)。"""
-        pad = k // 2
-        xp = np.pad(x, pad, mode="reflect")
-        cs = np.cumsum(np.cumsum(xp, axis=0), axis=1)
-        cs = np.pad(cs, ((1, 0), (1, 0)))
-        s = (cs[k:, k:] - cs[:-k, k:] - cs[k:, :-k] + cs[:-k, :-k]) / (k * k)
-        return np.clip(x / np.maximum(s, 1e-6) * 0.9, 0.0, 1.0)
+    def ramp_range(x):
+        """図に残っている振幅(真値との比、1.0 = 無傷)。"""
+        return float(np.ptp(x[ramp]) / np.ptp(truth[ramp]))
 
     methods = [
         ("何もしない", lambda x: x),
         ("局所平均で割る(窓 9 = op の上限)", lambda x: bg_divide(x, 9)),
+        ("局所平均で割る(窓 25)", lambda x: bg_divide(x, 25)),
         ("局所平均で割る(窓 61 = 自前)", lambda x: bg_divide(x, 61)),
         ("illuminate(シグマ上限 15)", lambda x: np.asarray(fs.op.illuminate(x, a=1.0, b=1.0))),
         ("gray_tophat(窓 9)", lambda x: np.asarray(fs.op.gray_tophat(x, a=1.0))),
         ("dc_homomorphic(周波数)", lambda x: np.asarray(fs.op.dc_homomorphic(x, a=0.1, b=0.5))),
         ("var_threshold(2 値、窓 15)", lambda x: np.asarray(fs.op.var_threshold(x, a=1.0))),
     ]
-    print(f"  {'手法':<32}{'地の平坦度':>12}{'薄字の残り':>12}{'図の階調':>10}")
-    base = None
+    print(f"  {'手法':<32}{'地の平坦度':>11}{'濃い字':>8}{'薄い字':>8}{'紙の誤検出':>11}"
+          f"{'図の相関':>9}{'図の振幅':>9}")
+    shadow_stats = {}
     for name, fn in methods:
         out = fn(rect_ideal)
-        fl, fc, rf = flatness(out), faint_contrast(out), ramp_fidelity(out)
-        if base is None:
-            base = (fl, fc, rf)
-        print(f"  {name:<32}{fl:>12.4f}{100 * fc / base[1]:>11.0f}%{100 * rf / base[2]:>9.0f}%")
-    print("  → 平坦度(小さいほど良い)と薄字・階調(大きいほど良い)は同時に成り立たない。")
-    print("     窓 61 は平坦度を最も下げるが、薄字も図の階調も削る。2 値化は")
-    print("     階調を 0 にする —— 文字だけ読めればいい用途にしか使えない。")
-    print("     ★ 窓 9 と窓 61 の差が、op の a/b が小窓にしか届かないことの代償。")
+        m = ink_mask(out)
+        fl = flatness(out)
+        rs = float(m[strong_ink].mean()); rw = float(m[faint_ink].mean())
+        fp = float(m[paper].mean())
+        rc, rg = ramp_corr(out), ramp_range(out)
+        shadow_stats[name] = (fl, rs, rw, fp, rc, rg)
+        print(f"  {name:<32}{fl:>11.4f}{100 * rs:>7.0f}%{100 * rw:>7.0f}%{100 * fp:>10.1f}%"
+              f"{rc:>9.3f}{rg:>9.2f}")
+    print("  → 「濃い字」「薄い字」は真の字の画素のうち 2 値化後も字と判定された割合、")
+    print("     「紙の誤検出」は紙の地が字にされた割合。平坦度は小さいほど良い。")
+    print("     何もしないと影の中の紙が丸ごと字にされ(誤検出)、薄い字は影の外で消える。")
+    print("     窓を大きくするほど地は平らになるが、図の階調は局所平均と区別が付かず")
+    print("     相関が落ちる —— **ランプは照明そのものに見える**。2 値化は振幅を 0 にする。")
+    print("     ★ 窓 9(op で届く上限)と窓 61 の差が、a/b が小窓しか出せないことの代償。")
 
     print("\n=== 5. 壊れる条件 ===")
 
