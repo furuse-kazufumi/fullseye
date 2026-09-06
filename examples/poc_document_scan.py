@@ -153,7 +153,7 @@ def illumination_field(strength=0.30, shadow=0.22, edge=0.55, soft=45.0):
     return grad * (1.0 - shadow * band)
 
 
-def render_camera(doc, H, bg=0.35, illum=None, noise=0.006, kappa=0.0, seed=RNG_SEED):
+def render_camera(doc, H, bg=0.30, illum=None, noise=0.006, kappa=0.0, seed=RNG_SEED):
     """書類 → 撮影画像。H は書類 (x,y) → 画像 (u,v) のホモグラフィ。"""
     rr, cc = np.mgrid[0:CAM_H, 0:CAM_W].astype(float)
     uv = np.column_stack([cc.ravel(), rr.ravel()])
