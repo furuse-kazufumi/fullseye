@@ -853,8 +853,9 @@ def main():
                                            fs.linear_to_srgb(lin_b))[f2]))
     print("   ついでの落とし穴: 線形 sRGB のまま delta_e_map に渡すと ΔE00 %.2f、"
           % de_raw)
-    print("   linear_to_srgb を挟むと %.2f(%.1f 倍)。例外は出ないので気づけない。"
-          % (de_ok, de_ok / max(de_raw, 1e-9)))
+    print("   linear_to_srgb を挟むと %.2f。%.0f %% ずれる(この場面では過大に出る)。"
+          % (de_ok, 100 * abs(de_raw - de_ok) / de_ok))
+    print("   例外は出ないので気づけない。ΔE を色差として引用するなら致命的な差。")
     gamma_trap = (de_raw, de_ok)
 
     # ---------------------------------------------------------------- 8 -----
