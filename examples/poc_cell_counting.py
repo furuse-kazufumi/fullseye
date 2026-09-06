@@ -1088,8 +1088,8 @@ def main():
         ("縁の規約",
          f"規約を変えるだけで推定が {spread:.1f} 個動く。推定と真値で規約を揃える"),
         ("面積の誤差の床",
-         f"見えている面積には {area_tab[DENSE][1]:+.1f} % で当たるが、"
-         f"真の面積には {area_tab[DENSE][2]:+.1f} %"),
+         f"よく隠れた細胞では 見えている面積 {np.mean(bins[3]['dv']):+.1f} % に対し"
+         f" 真の面積 {np.mean(bins[3]['dt']):+.1f} %"),
     )
     for q, a in lines:
         print("  " + pad(q, 34, right=False) + a)
