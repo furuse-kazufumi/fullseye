@@ -578,11 +578,12 @@ def section7_strict(truth: dict) -> None:
     print("7) ★第 3 の方針 —— 未測定が 1 列でもあればその量を返さない")
     print("=" * 78)
     print("  0 埋めも NaN も**数字を返してしまう**。返さない実装と比べる。")
+    print("  判定は量ごと —— その量を出すのに要る区間だけを見る。")
     print()
-    print("  %6s | %-30s | %-30s"
-          % ("角度", "0 埋め(UC左/幅/脚左)", "答えない(UC左/幅/脚左)"))
+    print("  %6s %7s | %-26s | %-26s"
+          % ("角度", "影の率", "0 埋め(UC左/UC右/脚左/脚右)", "答えない(同じ順)"))
     print("  " + "-" * 74)
-    for a in [40.0, 50.0, 55.0, 60.0]:
+    for a in [30.0, 40.0, 50.0, 60.0]:
         img, lit = render(laser_deg=a, seed=16)
         v = est_parabola(img)
         ok = np.isfinite(v)
@@ -591,16 +592,20 @@ def section7_strict(truth: dict) -> None:
         qs = quantities(_X, np.where(ok, h_est, np.nan), valid=ok, strict=True)
 
         def _f(q, k):
-            return "測定不能" if not np.isfinite(q[k]) else "%.4f" % q[k]
+            return "不能" if not np.isfinite(q[k]) else "%.3f" % q[k]
 
-        print("  %6.0f | %-30s | %-30s"
-              % (a, "%s / %s / %s" % (_f(qz, "ucL"), _f(qz, "width"), _f(qz, "legL")),
-                 "%s / %s / %s" % (_f(qs, "ucL"), _f(qs, "width"), _f(qs, "legL"))))
+        def _row(q):
+            return " / ".join(_f(q, k) for k in ("ucL", "ucR", "legL", "legR"))
+
+        print("  %6.0f %7.3f | %-26s | %-26s"
+              % (a, 1 - lit.mean(), _row(qz), _row(qs)))
+    print("  真値                 | %.3f / %.3f / %.3f / %.3f"
+          % (truth["ucL"], truth["ucR"], truth["legL"], truth["legR"]))
     print()
-    print("  → 答えない方針は 40 度から左脚長とアンダーカットを返さなくなる。")
-    print("     不便だが、**-36 % の嘘より不便のほうがましである**。")
-    print("     右側は影に入らないので、右のアンダーカットと右脚長は返り続ける")
-    print("     —— 量ごとに判定するので、片側が測れないだけで全部を捨てはしない。")
+    print("  → ★30 度では影が 1 列も出ないので、答えない方針でも**全部返る**。")
+    print("     40 度から左のアンダーカットと左脚長だけが「不能」になり、")
+    print("     **右側は 60 度でも返り続ける** —— 片側が測れないだけで全部を")
+    print("     捨てはしない。答えない方針は不便だが、**-32 % の嘘よりましである**。")
 
     # 対照群: 遮蔽だけを止める(同じ雑音・同じ推定器)
     print()
