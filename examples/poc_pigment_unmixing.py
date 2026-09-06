@@ -573,6 +573,8 @@ def main():
     for f in range(3):
         rows.append(["区画 %d: %s" % (f, field_names[f]), str(int((field == f).sum())),
                      "%.1f %%" % (100 * (field == f).mean())])
+    rows.append(["  うち茜レーキの面(褪色する)", str(int(scene["lake"].sum())),
+                 "%.1f %%" % (100 * scene["lake"].mean())])
     _table(["真値の内訳", "画素数", "割合"], rows)
 
     # ---------------------------------------------------------------- 2 -----
