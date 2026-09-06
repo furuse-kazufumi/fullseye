@@ -185,6 +185,8 @@ def main() -> bool:
         bp_raw = fs.backproject_sinogram(sino, ang, size=SIZE)
         dt_bp = time.perf_counter() - t0
         bp, gain, _off = lsq_rescale(bp_raw, truth)
+        if figs.enabled():
+            recon[n_views] = (fbp, bp)
         r_fbp, r_bp = rmse(fbp, truth), rmse(bp, truth)
         rows_out.append({
             "views": n_views, "fbp": r_fbp, "bp": r_bp, "bp_raw": rmse(bp_raw, truth),
