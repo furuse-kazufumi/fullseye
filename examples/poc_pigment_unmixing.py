@@ -841,6 +841,22 @@ def main():
     print("   「現場」= 褪色後の画面から材料ごとに採った端成分(これも真値を使う反則)。")
     print("   ゼロ点は「何もしない」列。**それを下回れない復元は復元ではない**。")
 
+    # 分光 -> ΔE の道に踏み台がある。spectrum_to_srgb は **線形** sRGB を返し、
+    # delta_e_map / rgb_to_lab は **ガンマ後の** sRGB を期待する。間を linear_to_srgb で
+    # 繋がないと例外は出ず、ΔE00 だけが静かにずれる。どれだけずれるかを測っておく。
+    sp_f = render_spectra(scene, tau=TAU0, fade=0.30)
+    lin_a = np.clip(fs.spectrum_to_srgb(WL[VIS], render_spectra(scene, tau=TAU0)[..., VIS]),
+                    0.0, 1.0)
+    lin_b = np.clip(fs.spectrum_to_srgb(WL[VIS], sp_f[..., VIS]), 0.0, 1.0)
+    de_raw = float(np.median(fs.delta_e_map(lin_a, lin_b)[f2]))
+    de_ok = float(np.median(fs.delta_e_map(fs.linear_to_srgb(lin_a),
+                                           fs.linear_to_srgb(lin_b))[f2]))
+    print("   ついでの落とし穴: 線形 sRGB のまま delta_e_map に渡すと ΔE00 %.2f、"
+          % de_raw)
+    print("   linear_to_srgb を挟むと %.2f(%.1f 倍)。例外は出ないので気づけない。"
+          % (de_ok, de_ok / max(de_raw, 1e-9)))
+    gamma_trap = (de_raw, de_ok)
+
     # ---------------------------------------------------------------- 8 -----
     print("\n8. 崖 (e) —— 雑音")
     rows_e = []
