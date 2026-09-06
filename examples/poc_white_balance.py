@@ -422,6 +422,30 @@ def main():
               + "".join(f"{per_ill[name][n]:>17.2f}" for n, _ in METHODS[5:]))
     print("  → 白パッチ法が強いのは **チャートに白があるから**。5 節で外すと崩れる。")
     print("     基準光源の行だけ見ると、全手法が「何もしない」の 0.01 度に負けている。")
+    if figs.enabled():
+        # 色そのものが主張なので、表示のためだけ sRGB に載せて [0,1] に収める
+        # (線形のまま出すと暗部が潰れ、色かぶりの向きが読めない)。明るさは
+        # 真値のノルムに合わせる —— 角度誤差は明るさを見ない指標だから。
+        spd_f = planck(2500.0)
+        e_f = true_illuminant(spd_f)
+        img_f = scene(spd_f)
+
+        def _srgb(v):
+            return np.clip(np.asarray(fs.ledger.linear_to_srgb(
+                np.clip(np.asarray(v, float), 0.0, 1.0))), 0.0, 1.0)
+
+        def _corr(est):
+            v = np.asarray(est, float)
+            v = v / np.linalg.norm(v) * np.linalg.norm(e_f)
+            return _srgb(von_kries(img_f, v))
+
+        figs.save_grid("casts",
+                       [_srgb(scene(FLAT)), _srgb(img_f), _corr(gray_world(img_f)),
+                        _corr(max_rgb(img_f)), _corr(e_f)],
+                       ["基準光源", "2500 K の観測", "灰色世界", "白パッチ法", "真の光源"],
+                       ncols=3, title="色かぶりと、それを割り戻した結果",
+                       caption="いちばん右下(真の光源で割る)でも基準光源とは一致"
+                               "しない —— 11 節の対角モデルの床。")
 
     # ------------------------------------------------------------------ #
     variants = (("素のチャート", dict()),
