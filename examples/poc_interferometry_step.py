@@ -315,6 +315,7 @@ def main():
           "**段差そのものを縮める**:")
     print("   雑音 | 段差 50 nm | 100 nm | 200 nm | 500 nm |  ゲイン(測定/真値)")
     gain_at = {}
+    gain_rows = []
     for noise in (0.0, 0.01, 0.03, 0.10):
         gains, cells = [], []
         for step in STEPS:
@@ -322,8 +323,17 @@ def main():
             gains.append((step * 1000 + b) / (step * 1000))
             cells.append("%+7.1f" % b)
         gain_at[noise] = float(np.mean(gains))
+        gain_rows.append(["%.2f" % noise] + [c.strip() for c in cells]
+                         + ["%.4f" % gain_at[noise]])
         print("   %4.2f | %s | %.4f ± %.4f"
               % (noise, " | ".join(cells), gain_at[noise], float(np.std(gains))))
+    figs.save_table("centroid_gain",
+                    ["雑音"] + ["%.0f nm の偏り" % (1000 * s) for s in STEPS]
+                    + ["ゲイン"],
+                    gain_rows,
+                    title="centroid は段差そのものを縮める(偏り [nm])",
+                    caption="4 種の段差でゲインが揃う = オフセットではなく倍率の"
+                            "誤差。再現性を精度と読み替えるとここで嘘をつく。")
     g_lo, g_mid, g_hi = gain_at[0.0], gain_at[0.03], gain_at[0.10]
     print("   ゲインが段差 4 種でほぼ揃う = これはオフセットではなく**倍率の誤差**。"
           "雑音 0 で %.3f、3%% で %.3f、10%% で %.3f まで落ちる。"

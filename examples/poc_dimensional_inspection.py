@@ -499,6 +499,21 @@ def section_dimensions(img):
     slot_bias["T"] = t_w - SLOT_W
     print(f"  {'T metrology(矩形)':<25}{t_w - SLOT_W:+11.4f}{'(単発)':>14}"
           f"{um(t_w - SLOT_W):+11.2f}{'':>14}")
+    # 4 系の偏りと散らばりを 1 枚に。ゼロ点(Z)との桁の差がこの節の主張。
+    figs.save_table(
+        "slot_bias",
+        ["系", "偏り px", "散らばり 1s px", "偏り um", "散らばり um"],
+        [[name, "%+.4f" % float(np.nanmean(np.array(res[k], float) - SLOT_W)),
+          "%.4f" % float(np.nanstd(np.array(res[k], float) - SLOT_W)),
+          "%+.2f" % um(float(np.nanmean(np.array(res[k], float) - SLOT_W))),
+          "%.2f" % um(float(np.nanstd(np.array(res[k], float) - SLOT_W)))]
+         for k, name in (("Z", "Z 大津の整数幅"), ("M", "M measuring1d"),
+                         ("F", "F 自前 50% 交差"))]
+        + [["T metrology(矩形)", "%+.4f" % slot_bias["T"], "(単発)",
+            "%+.2f" % um(slot_bias["T"]), ""]],
+        title="スロット幅 %.2f px を 9 行で測る" % SLOT_W,
+        caption="ゼロ点(整数幅)だけ偏りが 1 桁大きい。"
+                "偏りは合否に、散らばりは繰り返し精度に効く。")
     print(f"     -> 半辺長 l1={rr['params']['l1']:.3f}(真 {(SLOT_R1 - SLOT_R0) / 2:.2f}) "
           f"l2={rr['params']['l2']:.3f}(真 {SLOT_W / 2:.2f}) "
           f"rms={rr['rms']:.5f} px, エッジ点 {len(rr['edge_points'])} 点")
