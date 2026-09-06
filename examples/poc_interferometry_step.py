@@ -247,6 +247,13 @@ def main():
         sweep[dz] = (clean - 0.100) * 1000
         print("   %6.2f | %4d | %+12.3f nm | %+8.2f | %9.2f | %7.1f ms"
               % (dz, npl, sweep[dz], bias, std, dt * 1000))
+    dzs = sorted(sweep)
+    figs.save_plot("zstep_sweep",
+                   [("雑音なし誤差", dzs, [sweep[d] for d in dzs])],
+                   xlabel="走査ステップ [µm]", ylabel="段差の誤差 [nm]",
+                   title="走査ステップを細かくしても良くならない",
+                   caption="0.02〜0.12 µm は 0.05 nm 以内で平ら。Nyquist 上限 "
+                           "%.2f µm の手前 0.14 µm で崖。" % DESIGN["max_z_step_um"])
     print("   ★細かくしても良くならない。0.02 µm(601 面)は 0.10 µm(121 面)と同等で、"
           "計算量だけ 5 倍。局所当てはめは argmax 近傍 3 点しか見ないため。")
     print("   ★Nyquist 上限 λ/4 = %.2f µm の手前 0.14 µm で、雑音が無いのに誤差 %+.1f nm。"
