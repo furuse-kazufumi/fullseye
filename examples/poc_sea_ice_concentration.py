@@ -359,7 +359,7 @@ def section_endmember_error() -> dict:
         r = measure(0.35, 3.0, endmembers=e)
         out[name] = (r["unmix"], r["hard"])
         print("  %-16s   %+.4f              %+.4f" % (name, r["unmix"], r["hard"]))
-    print("\n  ★氷側を 5 % 明るく見積もると密接度は %+.1f ポイント。分解の答えは"
+    print("\n  ★氷側を 5 %% 明るく見積もると密接度は %+.1f ポイント。分解の答えは"
           % (100 * out["氷 +5 %"][0]))
     print("  ほぼ (観測 - 水) / (氷 - 水) なので、端成分の誤差が**そのまま**乗ります。")
     print("  硬い分類はこの列では動きません(しきい値を端成分から作っていないため)")
