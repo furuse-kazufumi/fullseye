@@ -364,6 +364,18 @@ def section4_rbr_sun():
     print("     検出率が %.2f → %.2f に落ちる**。2 つを 1 つの誤差にまとめると、"
           % (thin_rec[0], thin_rec[-1]))
     print("     打ち消し合った点が「最適なしきい値」に見える —— 分けて数えること。")
+    psi_thin = [np.rad2deg(np.arccos(float(np.clip(
+        unit(np.deg2rad(CAPS[i][0]), np.deg2rad(CAPS[i][1]))
+        @ unit(TH_SUN, PH_SUN), -1, 1)))) for i in THIN]
+    print("  → ★★**内訳が単調でない**。t=0.70 で厚さ 0.20 の雲が %.2f 検出され、"
+          % [float(x) for x in
+             [(detect(full, 0.70) & thin[0]).sum() / max(thin[0].sum(), 1)]][0])
+    print("     厚さ 0.35 の雲は %.2f。**薄いほうが残る**。太陽からの角距離が"
+          % float((detect(full, 0.70) & thin[1]).sum() / max(thin[1].sum(), 1)))
+    print("     %.0f 度 と %.0f 度で、太陽に近い雲は下地の晴天 RBR が既に高いから。"
+          % (psi_thin[0], psi_thin[1]))
+    print("     **同じ光学的厚さの雲が、空のどこに居るかで検出されたりされなかったり")
+    print("     する** —— 2 節の幾何の偏りと同じ形が、検出の側にも出ている。")
     figs.save_plot("rbr_threshold",
                    [("偽陽性(実測 重みつき)", ts, fp),
                     ("偽陽性(閉形式 1-cosψ_t)", ts, law),
