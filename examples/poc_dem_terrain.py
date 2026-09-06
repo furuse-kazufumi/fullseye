@@ -33,11 +33,17 @@ EXTEND: 実際の標高データを使うなら ``dem`` を差し替える。国
 from __future__ import annotations
 
 import math
+import sys
 import time
+from pathlib import Path
 
 import numpy as np
 
-import demops
+# ★リポジトリ直下を通しておかないと ``demops`` が見つからない(この例は
+#   `fullseye` を import しないので、パスフックが効かない)。
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import demops                                                    # noqa: E402
+import examplefig as figs                                        # noqa: E402
 
 
 def plane(h, w, cell, slope_deg, aspect_deg):
