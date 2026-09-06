@@ -391,13 +391,17 @@ def section4_background(nuc):
           % (5.0 * unit, slope))
     print("  → ★**分類は壊れない**(b が核輝度の 5 倍でも誤分類 %.3f)。壊れるのは"
           % curve["err"][-1])
-    print("     **量のほう**: DNA 指数が真値 2.00 → %.2f(%.0f %%)。"
-          % (curve["raw"][-1], 100 * (curve["raw"][-1] / 2.0 - 1)))
+    print("     **量のほう**: DNA 指数が b=0 の %.3f から %.3f へ(%+.0f %%)。"
+          % (curve["raw"][0], curve["raw"][-1],
+             100 * (curve["raw"][-1] / curve["raw"][0] - 1)))
     print("     分類だけを見ていたら気づけない —— これがこのシリーズの中心的な形。")
-    print("  → 対照群。背景の中央値を引くと %.3f、`fs.aperture_photometry` の"
+    print("  → 対照群。**背景を引けば b をいくら振っても %.3f のまま**"
           % curve["sub"][-1])
-    print("     環状背景なら %.3f。どちらも 2.00 に戻す(環状背景は開口が")
-    print("     核の形と合わないぶんだけ残る)。")
+    print("     (1 節の裾落ちぶんだけ 2.00 より高い)。`fs.aperture_photometry` の")
+    print("     環状背景なら %.3f —— 開口が裾まで含むので**裾落ちも同時に直る**。"
+          % curve["ap"][-1])
+    print("     ★背景を引くだけでは 1 節の歪み(+%.1f %%)は残る。2 つは別の穴。"
+          % (100 * (curve["sub"][-1] / 2.0 - 1)))
     figs.save_plot("background",
                    [("引き忘れ", muls, curve["raw"]),
                     ("背景を引く", muls, curve["sub"]),
