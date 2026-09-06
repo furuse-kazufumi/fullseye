@@ -960,14 +960,20 @@ def main():
     print("\n=== 10. 面積と長短径の推定誤差 —— 見えている面積までしか取れない ===")
     print("  1 対 1 に対応した細胞だけを見る。面積は画素数、長短径はモーメント楕円と")
     print("  ``fs.fit_ellipse``(境界点への直接最小二乗当てはめ)の両方で出す。")
-    print("  " + pad("重なり pack", 12, right=False) + pad("1対1 の数", 12)
-          + pad("面積 vs 見えている", 20) + pad("面積 vs 真の面積", 20)
-          + pad("ra(モーメント)", 18) + pad("ra(当てはめ)", 18)
-          + pad("rb(モーメント)", 18))
+    print("  ★**隠れた割合の帯で分ける** —— 混ぜると、隠れていない細胞が数で薄めて")
+    print("     『面積はよく当たる』に見えてしまう。")
+    print("  " + pad("隠れた割合", 14, right=False) + pad("細胞数", 9)
+          + pad("面積 vs 見えている面積", 26) + pad("面積 vs 真の面積", 22)
+          + pad("ra(モーメント)", 20) + pad("ra(当てはめ)", 20)
+          + pad("rb(モーメント)", 20))
+    OCC_EDGES = ((0.0, 0.02), (0.02, 0.15), (0.15, 0.40), (0.40, 1.01))
+    OCC_LBL = ("~2 %", "2-15 %", "15-40 %", "40 % 超")
+    bins = {i: {"dv": [], "dt": [], "ra": [], "rf": [], "rb": []}
+            for i in range(len(OCC_EDGES))}
     area_tab = {}
     for p in (SPARSE, MID, DENSE):
         fgs2 = [foreground(s["img"]) for s in base[p]]
-        dv, dt, dra, dra_f, drb = [], [], [], [], []
+        dv, dt = [], []
         for s, fg in zip(base[p], fgs2):
             pred = m_ws_h(s["img"], fg, h_px=H_DEF)
             ev = evaluate(s, pred)
@@ -983,28 +989,40 @@ def main():
                 if s["on_edge"][g] or q not in pp:
                     continue
                 a_pred = pp[q]["area"]
-                dv.append(100.0 * (a_pred / max(s["area_vis"][g], 1.0) - 1.0))
-                dt.append(100.0 * (a_pred / max(s["area_true"][g], 1.0) - 1.0))
-                ra_t = s["cells"][g][2]
-                rb_t = s["cells"][g][3]
-                dra.append(100.0 * (pp[q]["ra"] / ra_t - 1.0))
-                drb.append(100.0 * (pp[q]["rb"] / rb_t - 1.0))
+                e_vis = 100.0 * (a_pred / max(s["area_vis"][g], 1.0) - 1.0)
+                e_true = 100.0 * (a_pred / max(s["area_true"][g], 1.0) - 1.0)
+                dv.append(e_vis)
+                dt.append(e_true)
+                o = float(s["occ"][g])
+                bi = next(i for i, (a, b) in enumerate(OCC_EDGES) if a <= o < b)
+                ra_t, rb_t = s["cells"][g][2], s["cells"][g][3]
+                bins[bi]["dv"].append(e_vis)
+                bins[bi]["dt"].append(e_true)
+                bins[bi]["ra"].append(100.0 * (pp[q]["ra"] / ra_t - 1.0))
+                bins[bi]["rb"].append(100.0 * (pp[q]["rb"] / rb_t - 1.0))
                 ys, xs = np.nonzero(bnd & (pred == q))
                 if ys.size >= 6:
                     try:
                         e = fs.fit_ellipse(np.stack([ys, xs], 1).astype(float))
-                        dra_f.append(100.0 * (e["ra"] / ra_t - 1.0))
+                        bins[bi]["rf"].append(100.0 * (e["ra"] / ra_t - 1.0))
                     except Exception:
                         pass
-        f = lambda v: f"{np.mean(v):+.1f}±{np.std(v):.1f}" if len(v) else "—"
-        area_tab[p] = (len(dv), float(np.mean(dv)), float(np.mean(dt)),
-                       float(np.mean(dra)), float(np.mean(dra_f)) if dra_f else np.nan)
-        print("  " + pad(f"{p:.2f}", 12, right=False) + pad(f"{len(dv)}", 12)
-              + pad(f(dv), 20) + pad(f(dt), 20) + pad(f(dra), 18)
-              + pad(f(dra_f), 18) + pad(f(drb), 18))
-    print("  → 単位は %。**見えている面積に対しては数 % で当たる**のに、真の面積に")
-    print("     対しては重なりが増えるほど下振れする。この差は分割の巧拙ではなく、")
-    print("     **隠れた部分は原理的に観測できない**ことの現れ = 誤差の床である。")
+        area_tab[p] = (len(dv), float(np.mean(dv)), float(np.mean(dt)))
+    f = lambda v: f"{np.mean(v):+.1f}±{np.std(v):.1f}" if len(v) else "—"
+    for i, lbl in enumerate(OCC_LBL):
+        b = bins[i]
+        print("  " + pad(lbl, 14, right=False) + pad(f"{len(b['dv'])}", 9)
+              + pad(f(b["dv"]), 26) + pad(f(b["dt"]), 22) + pad(f(b["ra"]), 20)
+              + pad(f(b["rf"]), 20) + pad(f(b["rb"]), 20))
+    print("  " + pad("(全部混ぜる)", 14, right=False)
+          + pad(f"{sum(len(bins[i]['dv']) for i in bins)}", 9)
+          + pad(f(sum((bins[i]["dv"] for i in bins), [])), 26)
+          + pad(f(sum((bins[i]["dt"] for i in bins), [])), 22))
+    print("  → 単位は %。**隠れていない細胞では 2 つの列がほぼ一致する**のに、")
+    print("     隠れた細胞では『見えている面積』には当たったまま『真の面積』だけが")
+    print("     大きく下振れする。この差は分割の巧拙ではなく、**隠れた部分は原理的に")
+    print("     観測できない**ことの現れ = 誤差の床である。最下行のように混ぜると")
+    print("     床が薄まって見えなくなる。")
     print("  → 長半径はモーメント楕円のほうが安定する。境界点への当てはめは、")
     print("     分水嶺が引いた **直線的な切断面** をそのまま楕円弧と読むので、")
     print("     切られた細胞で大きく外れる。切断面を除いて当てはめる仕掛けが要る。")
