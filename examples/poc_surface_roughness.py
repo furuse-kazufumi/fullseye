@@ -729,9 +729,11 @@ def main():
           "分離が自前 FFT になる。`vol_fft_highpass` は 3-D 体積向けで、"
           "2-D 高さ場のカットオフ波長指定には使えない。")
     print("  (C) `fs.radial_power_spectrum` は正規化の規約が docstring に無い。"
-          f"1 節の実測傾き {slope:+.3f} は面 PSD の {-2 * (HURST + 1):+.3f} とも"
-          f"動径 PSD の {-2 * (HURST + 1) + 1:+.3f} とも一致せず、"
-          "**そのままでは Hurst 指数の推定に使えない**。")
+          "1 節で H を 2 通り仕込んで実験で決めた結果、**面 PSD(環内の |F|² の"
+          f"平均)の規約**だと分かった(実測傾き {slope:+.3f} 対 予想 "
+          f"{-2 * (HURST + 1):+.3f})。使えないわけではないが、規約が書いて"
+          f"いないので毎回この検算が要る。戻した H には一律 {h_err[HURST]:+.3f} の"
+          "系統誤差(環平均の離散化)があり、docstring に注記が欲しい。")
     print("  (D) **PSD からの高さ場合成器が無い。** 真値の分かる粗さ面を作る"
           "唯一の実用的な方法なのに、`fringe`/`interferometry`/`dem` のどこにも無い。"
           "この PoC の `synth_psd_surface` がそのまま op になる。")
