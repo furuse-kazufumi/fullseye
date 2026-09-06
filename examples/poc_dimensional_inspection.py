@@ -1538,6 +1538,9 @@ def main():
     assert "measure_pairs" not in dir(fs) and "measure_pairs" not in dir(fs.ledger)
     assert "m1_measure_pairs" in dir(fs.op)
 
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
+
     print(f"\n  総所要 {time.perf_counter() - t0:.1f} 秒")
     print("\nPASS")
     return True
