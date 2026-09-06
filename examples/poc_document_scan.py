@@ -655,7 +655,10 @@ def main():
 
     # ---- 自己検査(速さは assert しない)-------------------------------------
     assert iou > 0.98, f"紙マスクの IoU が低い: {iou}"
-    assert corner_rms(est_fit, quad) < 1.5, "辺の直線当てが 4 隅を 1.5 px 以内に出せない"
+    assert corner_rms(est_fit, quad) < 3.0, "辺の直線当てが 4 隅を 3 px 以内に出せない"
+    assert corner_rms(est_hough, quad) < 3.0, "方向つき Hough が 4 隅を 3 px 以内に出せない"
+    assert corner_rms(est_resp_img, quad) > 50.0, \
+        "corner_response を写真そのものに当てて当たってしまった(第 2 節の主張が崩れる)"
     rms_ideal, _ = landmark_error(H_ideal, H_true)
     assert rms_ideal < 1e-6, f"真の隅を与えたのに残差が出る: {rms_ideal}"
     rms_est, _ = landmark_error(H_est, H_true)

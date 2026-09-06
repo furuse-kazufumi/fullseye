@@ -345,10 +345,13 @@ def find_finders(dark, n, step=1):
     # 以上が全滅した)。角度が 90 度から離れないことと、2 辺の比が極端でないこと、
     # それに辺がモジュール寸法より十分長いことだけを見る。
     m_all = float(np.median([c[2] for c in cand]))
+    pred_x = (n - 7) * float(np.median([c[3] for c in cand if np.isfinite(c[3])] or [m_all]))
+    pred_y = (n - 7) * float(np.median([c[4] for c in cand if np.isfinite(c[4])] or [m_all]))
     best, best_err = None, 1e9
     for i in range(len(cand)):
         for j in range(i + 1, len(cand)):
             for k in range(j + 1, len(cand)):
+                trio = (i, j, k)
                 p = np.array([cand[i][1], cand[j][1], cand[k][1]])
                 for a in range(3):
                     b_, c_ = [t for t in range(3) if t != a]
@@ -359,29 +362,26 @@ def find_finders(dark, n, step=1):
                         continue
                     if not 0.2 <= l1 / l2 <= 5.0:
                         continue
-                    # 直角からのずれ + 辺の長さがモジュール寸法から予想される値
-                    # ((n-7) モジュール)とどれだけ食い違うか
+                    # 直角からのずれ + 辺の長さが「(n-7) モジュール」から外れた量
                     lx, ly = (l1, l2) if abs(v1[1]) > abs(v2[1]) else (l2, l1)
-                    pred_x = (n - 7) * float(np.median(
-                        [c[3] for c in cand if np.isfinite(c[3])] or [m_all]))
-                    pred_y = (n - 7) * float(np.median(
-                        [c[4] for c in cand if np.isfinite(c[4])] or [m_all]))
                     err = (abs(float(v1 @ v2)) / (l1 * l2)
                            + 0.5 * abs(lx / pred_x - 1.0)
                            + 0.5 * abs(ly / pred_y - 1.0))
                     if err < best_err:
-                        best_err, best = err, (p, a)
+                        best_err, best = err, (trio, a)
     if best is None or best_err > 0.40:
         return None
-    p, a = best
-    # 走査の当たりは「核の 3 行」に偏るので、矩形窓の重心で中心へ寄せ直す
-    mxs = [c[3] for c in cand if np.isfinite(c[3])]
-    mys = [c[4] for c in cand if np.isfinite(c[4])]
-    m_x = float(np.median(mxs)) if mxs else m_all
-    m_y = float(np.median(mys)) if mys else m_all
+    trio, a = best
+    # 走査の当たりは「核の 3 行」に偏るので、矩形窓の重心で中心へ寄せ直す。
+    # 窓の幅は**その塊自身の**モジュール推定から取る —— 傾けると同じ画像の中で
+    # 手前と奥でモジュール寸法が変わるので、全体の中央値を使うと奥側の窓が
+    # 広すぎて隣のデータを片側だけ拾い、中心が 13 px ずれた(55 度で実測)。
     ref = []
-    for q in p:
-        r = _refine_center(dark, q[1], q[0], 4.0 * m_x, 4.0 * m_y)
+    for t in trio:
+        q = cand[t][1]
+        mx = cand[t][3] if np.isfinite(cand[t][3]) else m_all
+        my = cand[t][4] if np.isfinite(cand[t][4]) else m_all
+        r = _refine_center(dark, q[1], q[0], 3.9 * mx, 3.9 * my)
         ref.append(np.array([q[0], q[1]]) if r is None else np.array([r[1], r[0]]))
     p = np.array(ref)
     tl = p[a]
