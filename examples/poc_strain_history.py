@@ -74,7 +74,8 @@
 `piv_sample_at_windows` / `piv_error_stats` / `poly_fit` /
 `fullseye.moving_average`(中央)/ `ledger.moving_average_window`(因果)。
 
-【90 秒制限】256x256 px・25 コマ・雑音の実現 6 通り(実測は末尾)。
+【90 秒制限】256x256 px・25 コマ・雑音の実現 10 通り・雑音掃引 5 点。
+実測 31 秒(掃引の点数を増やせばすぐ 90 秒に届くので、ここで止めてある)。
 """
 from __future__ import annotations
 

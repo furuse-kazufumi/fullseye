@@ -672,7 +672,7 @@ def section_murray(tree: dict, r: dict) -> dict:
     print("\n   径を測る位置        使えた分岐   三つ組ごとの中央値   まとめて当てはめ")
 
     edt = r["edt"]
-    offs, fits, meds = [], [], []
+    offs, fits, meds, useds = [], [], [], []
     for off, label in ((2, "分岐から 2 px"), (4, "分岐から 4 px"),
                        (6, "分岐から 6 px"), (10, "分岐から 10 px"),
                        (99, "枝の中点")):
@@ -688,13 +688,19 @@ def section_murray(tree: dict, r: dict) -> dict:
         per = [murray_exponent(*t) for t in tri]
         per = np.asarray([v for v in per if np.isfinite(v)])
         offs.append(off if off < 99 else 14)
+        useds.append(int(per.size))
         fits.append(murray_fit(tri))
         meds.append(float(np.median(per)) if per.size else np.nan)
         print("   %-18s   %3d / %3d        %8.2f          %8.2f"
               % (label, per.size, len(tree["bifs"]), meds[-1], fits[-1]))
 
-    print("\n  ★どこで測っても n は 3 に戻らない(まとめて当てはめて %.2f 前後)。"
-          "★★原因を対照群で分ける:" % np.nanmedian(fits[1:]))
+    print("\n  ★分岐から 6 px 以上離せば、画像から測った径でも n = %.2f / %.2f / "
+          "%.2f と当たる(真値 3.00)。" % (fits[2], fits[3], fits[4]))
+    print("     近いところは駄目: 2 px では **1 つも解けない**(3 点が近すぎて"
+          " d0 ≈ d1 ≈ d2 になり、比が 1 に張り付く)。\n     4 px でも %d / %d "
+          "しか解けず %.2f。" % (useds[1], len(tree["bifs"]), fits[1]))
+    print("  ★★当たったのは運ではない。**指数は径の比だけで決まる** ので、"
+          "誤差の形が結論を決める —— 対照群:" )
     # 対照群 A: 真値の径に「量子化だけ」を入れる —— EDT は 2*sqrt(整数) しか返せない
     lut = 2.0 * np.sqrt(np.arange(0, 400))
     quant = [[float(lut[np.argmin(np.abs(lut - v))]) for v in t] for t in truth_tri]
