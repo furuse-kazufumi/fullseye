@@ -168,9 +168,19 @@ print(round(float(f["area"][0]), 4), "mm^2")      # 160 px * 0.05^2 = 0.4
 **何度も選ぶなら `blob_features` を 1 回だけ**:
 
 ```python
-f = fs.blob_features(lab)
+import numpy as np
+import fullseye as fs
+
+rr, cc = np.mgrid[0:80, 0:80]
+mask = np.zeros((80, 80), bool)
+for r0, c0, rad in ((20, 20, 10), (20, 60, 4), (60, 40, 12)):
+    mask |= (rr - r0) ** 2 + (cc - c0) ** 2 <= rad * rad
+
+lab = fs.ledger.blob_label(mask)
+f = fs.ledger.blob_features(lab)                  # 1 回だけ測る
 keep = f["label"][(f["area"] >= 50) & (f["circularity"] >= 0.85)]
-sel = np.isin(lab, keep) * lab          # 番号を振り直さない版
+sel = np.isin(lab, keep) * lab                    # 番号を振り直さない版
+print("残した番号:", keep.tolist())
 ```
 
 ## この族で測れないこと(正直に)
