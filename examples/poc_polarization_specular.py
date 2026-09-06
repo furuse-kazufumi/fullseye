@@ -511,7 +511,7 @@ def main():
     assert np.abs((d_op + s_op) - (d_true + s_true)).max() < 1e-14
 
     # 4. 誤差は閉形式 R_p * E に一致し、ゼロ点に勝つ
-    for th, (dop, e, pred, e0n, ratio) in ang_rows.items():
+    for th, (dop, e, pred, e0n, rt) in ang_rows.items():
         assert abs(e - pred) < 1e-12 + 1e-6 * pred, \
             f"入射角 {th}: 誤差 {e:.3e} が閉形式 {pred:.3e} と違う"
         assert ratio > 1.0, f"入射角 {th}: ゼロ点 1 に勝てていない (比 {ratio:.2f})"
