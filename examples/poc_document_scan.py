@@ -603,11 +603,11 @@ def main():
         print(f"  {tilt:>10.0f}{s}   {occ:>5.1f} %")
 
     print(f"\n  {'枠外への食み出し [px]':>22}{'4 隅 RMS [px]':>14}{'格子 RMS [px]':>14}")
-    for dy in (0.0, -0.010, -0.020, -0.032, -0.044, -0.056):
-        q = camera_quad(shift=(0.0, dy))
+    for dx in (0.0, 0.004, 0.010, 0.018, 0.026, 0.034):
+        q = camera_quad(shift=(dx, 0.0))
         out_px = max(0.0, float(np.max(np.maximum(-q[:, 1], q[:, 1] - (CAM_H - 1)))),
                      float(np.max(np.maximum(-q[:, 0], q[:, 0] - (CAM_W - 1)))))
-        cr, lr, _, _ = run_case(shift=(0.0, dy))
+        cr, lr, _, _ = run_case(shift=(dx, 0.0))
         s = f"{cr:>14.2f}{lr:>14.3f}" if cr is not None else f"{'検出できず':>28}"
         print(f"  {out_px:>22.0f}{s}")
     print("  → 辺に直線を当てて交点を取る方式は、隅そのものが見えなくても外挿できる。")
