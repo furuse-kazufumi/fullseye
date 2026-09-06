@@ -267,8 +267,8 @@ def section2_zero_point():
     figs.save_plot("jacobian",
                    [("実測 画素/真値", thc, px_r),
                     ("閉形式 (θ/sinθ)/(θmax²/2)", thc, law),
-                    ("重みつき/真値", thc, wt_r),
-                    ("正しい値 1.0", thc, [1.0] * len(thc))],
+                    ("正しい値 1.0", thc, [1.0] * len(thc)),
+                    ("重みつき/真値", thc, wt_r)],
                    xlabel="雲の天頂角 [度]", ylabel="推定 / 真値",
                    title="同じ雲、違う答え(等距離射影のヤコビアン)",
                    caption="画素数比は天頂で 0.81、地平線側で 1.17。重みを掛けると 1 に張り付く。")
