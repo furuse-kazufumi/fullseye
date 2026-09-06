@@ -974,6 +974,19 @@ def main():
     print("     ノブは連続に見えて、実は「種を全部使う」か「間引く」かで挙動が")
     print("     切れている。下限(実効 h の列)より下は刻めないので、その境目の")
     print("     内側は **この op では覗けない**。節 7 で別のノブに切り替える理由。")
+    # トレードオフは 2 本の線が逆向きに走ることそのものなので、図が言葉より速い。
+    # 「誤り合計の谷」と「|偏り| の谷」が**別の場所にある**のが要点。
+    _h = np.asarray(HS, float)
+    figs.save_plot("h_tradeoff",
+                   [("過分割", _h, np.array([hcurve[(MID, h)]["split"] for h in HS])),
+                    ("過統合", _h, np.array([hcurve[(MID, h)]["merge"] for h in HS])),
+                    ("誤り合計", _h, np.array([hcurve[(MID, h)]["split"]
+                                               + hcurve[(MID, h)]["merge"] for h in HS])),
+                    ("|偏り|", _h, np.array([abs(hcurve[(MID, h)]["bias"]) for h in HS]))],
+                   xlabel="種の間引き量 h [px]", ylabel="件数(3 枚平均)",
+                   title="h のトレードオフ(重なり pack %.2f)" % MID,
+                   caption="誤り合計の谷と |偏り| の谷は同じ場所に来ない。"
+                           "どちらを最適と呼ぶかで答えが変わる。")
 
     print("\n=== 7. ★計数が合っていて分割が全部外れている点を探す ===")
     print("  過分割と過統合は逆向きに動くので、**どこかで打ち消し合う**。h の下限に")
