@@ -716,6 +716,15 @@ def main():
             rows.append((ber(bits, bk), "ok" if bd is not None else why))
         print(f"  {k:>11d}{k * k / (n * n):>10.3f}{rows[0][0]:>10.4f}{rows[0][1]:>11}"
               f"{rows[1][0]:>9.4f}{rows[1][1]:>20}")
+        occl_tab.append(["%d" % k, "%.3f" % (k * k / (n * n)),
+                         "%.4f" % rows[0][0], rows[0][1],
+                         "%.4f" % rows[1][0], rows[1][1]])
+    figs.save_table("occlusion",
+                    ["一辺 mod", "覆う割合", "中央 BER", "中央 検出",
+                     "隅 BER", "隅 検出"],
+                    occl_tab, title="どこを隠したかで壊れ方が違う",
+                    caption="位置検出パターンは一辺 2 モジュール(全体の 0.6 %)で"
+                            "致命的。誤り訂正はビットを救うが幾何は救わない。")
     print("  中央(データ部)を覆っても定位は生きたまま、誤りは覆った暗モジュール分")
     print("  だけに留まる —— 一辺 10 モジュール(全体の 16 %)で BER 0.10。")
     print("  位置検出パターンの中心は**一辺 2 モジュールで致命的**。覆う面積は全体の")
