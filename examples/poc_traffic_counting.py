@@ -183,6 +183,11 @@ def foreground(vid: np.ndarray) -> np.ndarray:
     return np.asarray(fs.background_subtraction(vid, threshold=FG_THRESHOLD)) > 0.5
 
 
+def foreground_oracle(vid: np.ndarray) -> np.ndarray:
+    """対照群 —— **真の空きの路面**を背景に使う(背景モデルの劣化を切り分ける)。"""
+    return np.abs(vid - _road()[None, ...]) > FG_THRESHOLD
+
+
 def per_frame_counts(mask: np.ndarray) -> np.ndarray:
     """ゼロ点。フレームごとに連結成分を数える。"""
     return np.asarray([int(_LAB.blob_label(m).max()) for m in mask], np.int64)

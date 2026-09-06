@@ -162,15 +162,15 @@ def _base_frame(title, ops):
     f = np.full((H, W, 3), BG, float)
     f[:TOP_H] = 0.13
     f[H - BOT_H:] = 0.965
-    f = fs.text_box(f, "fullseye", (22, TOP_H // 2), anchor="lm", font_size=16,
+    f = fs.text_box(f, "fullseye", (22, TOP_H // 2), anchor="lm", font_size=15, pad=2,
                     box_alpha=0.0, text_color=(0.95, 0.96, 0.97), min_contrast=1.05)
     f = fs.text_box(f, "numpy-native image / 3-D operators  ·  pip install fullseye",
-                    (W - 22, TOP_H // 2), anchor="rm", font_size=13, box_alpha=0.0,
+                    (W - 22, TOP_H // 2), anchor="rm", font_size=12, pad=2, box_alpha=0.0,
                     text_color=(0.72, 0.76, 0.80), min_contrast=1.05)
     f = fs.draw_line(f, (0, H - BOT_H), (W - 1, H - BOT_H), color=(0.80, 0.82, 0.84), width=1)
-    f = fs.text_box(f, title, (22, H - BOT_H // 2), anchor="lm", font_size=15,
+    f = fs.text_box(f, title, (22, H - BOT_H // 2), anchor="lm", font_size=14, pad=2,
                     box_alpha=0.0, text_color=INK, min_contrast=1.05)
-    f = fs.text_box(f, ops, (W - 22, H - BOT_H // 2), anchor="rm", font_size=12,
+    f = fs.text_box(f, ops, (W - 22, H - BOT_H // 2), anchor="rm", font_size=12, pad=2,
                     box_alpha=0.0, text_color=(0.38, 0.40, 0.43), min_contrast=1.05)
     return f
 
