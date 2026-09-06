@@ -445,6 +445,7 @@ def main():
 
     print("  (b) 画像の中央にしか点が無い —— 板の占める面積を変える")
     print(f"  {'視野占有':>10}{'再投影RMS':>11}{'fx誤差%':>10}{'|dcx|px':>10}{'|dk1|':>10}{'sigma_fx':>11}")
+    fill_tab = []
     for zlo, zhi in ((0.55, 0.85), (0.9, 1.1), (1.4, 1.6), (2.2, 2.4)):
         poses = make_poses(N_VIEWS, tilt_deg=32.0, offset_m=0.0, z_lo=zlo, z_hi=zhi)
         ob = observe(obj, poses, sigma_px=0.05, seed=5)
@@ -453,6 +454,17 @@ def main():
               f"{100 * abs(r['fx'] - TRUE_FX) / TRUE_FX:>10.3f}"
               f"{abs(r['cx'] - TRUE_CX):>10.2f}{abs(r['dist'][0] - TRUE_DIST[0]):>10.4f}"
               f"{r['sigma_fx']:>11.2f}")
+        fill_tab.append(["%.0f%%" % (100 * frame_fill(ob)), "%.4f" % r["rms"],
+                         "%.3f" % (100 * abs(r["fx"] - TRUE_FX) / TRUE_FX),
+                         "%.2f" % abs(r["cx"] - TRUE_CX),
+                         "%.4f" % abs(r["dist"][0] - TRUE_DIST[0]),
+                         "%.2f" % r["sigma_fx"]])
+    figs.save_table("frame_fill",
+                    ["視野占有", "再投影 RMS", "fx 誤差 %", "|dcx| px",
+                     "|dk1|", "sigma_fx"],
+                    fill_tab, title="中央にしか点が無いと何が決まらなくなるか",
+                    caption="RMS はどの行も 0.067 px(= 0.05·√2)で動かない。"
+                            "歪みは半径の 2 乗以上でしか効かず、中央にその信号は無い。")
     print("      → 再投影 RMS はどの行でも 0.067 px(= 0.05 x sqrt2)。歪み係数と主点は視野を")
     print("         占めなくなると決まらなくなる(歪みは半径の 2 乗以上でしか効かず、")
     print("         中央にはその信号が無い)。")
