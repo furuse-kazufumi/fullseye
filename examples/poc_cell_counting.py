@@ -609,8 +609,9 @@ def main():
     t0 = time.perf_counter()
     SEEDS = (0, 1, 2)
     #: 重なりの強さ(コロニー内の中心間距離 / 2ra)。個数は変えずにこれだけ振る。
-    PACKS = (1.15, 1.00, 0.88, 0.76, 0.64)
-    BASE_PACK = 0.88
+    PACKS = (1.50, 1.25, 1.05, 0.85, 0.65)
+    BASE_PACK = 1.05
+    SPARSE, MID, DENSE = PACKS[0], PACKS[2], PACKS[-1]
 
     print("=== 1. 何を作ったか(真値は全部こちらが握っている)===")
     base = {p: [make_scene(s, pack=p) for s in SEEDS] for p in PACKS}
