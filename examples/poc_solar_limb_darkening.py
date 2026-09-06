@@ -116,25 +116,26 @@ def render(radius: float = R_TRUE, centre=C_TRUE, u: float = U_TRUE,
 # --------------------------------------------------------------------------- #
 # 縁を拾う 2 通り + 円の当てはめ                                                #
 # --------------------------------------------------------------------------- #
-def rough_centre(img: np.ndarray) -> tuple[float, float]:
-    """真値を見ずに中心のあたりを付ける(明るさの重心)。"""
-    m = img - np.percentile(img, 5.0)
-    m = np.clip(m, 0.0, None)
+def rough_geometry(img: np.ndarray) -> tuple[float, float, float]:
+    """**真値を一切見ずに**中心と半径のあたりを付ける(重心と、面積からの等価半径)。"""
+    lo, hi = float(np.percentile(img, 2.0)), float(np.percentile(img, 98.0))
+    m = img >= 0.5 * (lo + hi)
     yy, xx = np.mgrid[0:N_PIX, 0:N_PIX]
-    s = m.sum()
-    return float((m * yy).sum() / s), float((m * xx).sum() / s)
+    s = float(m.sum())
+    return (float((m * yy).sum() / s), float((m * xx).sum() / s),
+            float(np.sqrt(s / np.pi)))
 
 
-def _levels(img: np.ndarray, centre) -> tuple[float, float]:
+def _levels(img: np.ndarray, centre, r_rough: float) -> tuple[float, float]:
     """円板中心付近の明るさ I0 と背景 sky を**画像から**測る。"""
     yy, xx = np.mgrid[0:N_PIX, 0:N_PIX]
     r = np.hypot(yy - centre[0], xx - centre[1])
-    i0 = float(np.median(img[r < 0.25 * R_TRUE]))
-    bg = float(np.median(img[r > 1.25 * R_TRUE]))
+    i0 = float(np.median(img[r < 0.25 * r_rough]))
+    bg = float(np.median(img[r > 1.30 * r_rough]))
     return i0, bg
 
 
-def edge_points(img: np.ndarray, centre, how: str = "level",
+def edge_points(img: np.ndarray, centre, r_rough: float, how: str = "level",
                 level: float = 0.5) -> np.ndarray:
     """放射状の測定線で縁の (row, col) を拾う。``how`` = level / gradient。
 
