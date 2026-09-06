@@ -1,24 +1,57 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""血管網を抜いて分岐を測る —— 細線化のヒゲと、分岐近傍の径の過大。
+"""血管網を抜いて分岐を測る —— ヒゲ、分岐近傍の径の過大、そして指数の脆さ。
 
-血管造影・網膜眼底・μCT の血管セグメント、あるいは多孔質材やひび割れの網目を
-グラフにして測る、という仕事です。出す数字は **分岐点の数と位置 / 枝の径 /
-分岐則(Murray)の指数**。
+血管造影・網膜眼底・μCT の血管、あるいは多孔質材やひび割れの網目をグラフに
+して測る、という仕事です。出す数字は **分岐点の数と位置 / 枝の径 / 分岐則
+(Murray)の指数**。
 
 真値は **合成した木そのもの**(各枝の始点・終点・直径、各分岐点の座標)です。
-枝の直径は Murray の法則 d0^3 = d1^3 + d2^3 に厳密に従わせ、分岐角も Murray
-の最適角(cos θ1 = (d0^4 + d1^4 − d2^4)/(2 d0^2 d1^2))で置いているので、
-指数 3 が復元できるかを **式に対して** 検定できます。
+直径は Murray の法則 d0^3 = d1^3 + d2^3 に厳密に従わせ、分岐角も同じ式から
+出る最適角(cos θ1 = (d0^4 + d1^4 − d2^4)/(2 d0^2 d1^2))で置いてあるので、
+**指数 3 が復元できるかを式に対して検定できます**(真値の径で解くと 3.0000)。
 
-EXTEND: 実物に差し替えるなら :func:`build_tree` が返す枝の表(``segments``)と
+EXTEND: 実物に差し替えるなら :func:`build_tree` の返す枝の表(``segments``)と
 分岐点の表(``bifs``)を、手でトレースした中心線と径の表に置き換えます。
-**セグメンテーション結果を真値にするのは不可** —— この PoC が測っている
-いちばん大きな誤差(分岐近傍の径の過大)は、セグメンテーションにも同じ形で
-入っているので、比べても打ち消して見えなくなります。
+**セグメンテーション結果を真値にするのは不可** —— この PoC がいちばん大きく
+測っている誤差(分岐近傍の径の過大)はセグメンテーションにも同じ形で入るので、
+比べると打ち消して見えなくなります。
 
 この PoC が示すこと(数字はいずれも実行時に印字される実測値):
 
-(番号つきの所見は :func:`main` の実行結果でそのまま印字されます)
+1. **ゼロ点(2 値化 → 細線化 → 近傍数 3 以上)は、数え方を 1 つ足すだけで
+   別物になる**。分岐画素をそのまま数えると 37 個の分岐に対し 74 画素
+   (**1 分岐あたり 2.0 画素**)。連結成分にまとめると 40 個(余分 3)。
+   ★細線化のアルゴリズムを替えるだけで節点は **40 / 40 / 41 / 51 個**
+   (Lee 3-D / skimage skeletonize / thin / medial_axis)—— **medial_axis は
+   同じ画像から 11 個多く分岐を作ります**。
+2. ★★**きれいな合成画像にはヒゲが出ない**。予想は「細線化は分岐点の近くに
+   短い枝を生やす」でしたが、外れました: 端点を持つ枝の最短が 15 px で、
+   ヒゲと呼べる長さのものが 1 本もありません。**ヒゲは細線化ではなく
+   「境界のざらつき」が作ります**。境界に相関のある揺らぎを入れると
+   (振幅 0 → 0.35)、余分な分岐が 3 → 34 個に増えます。
+3. ★★**ヒゲを刈る長さのしきい値は、解像度で成り立ったり成り立たなかったり
+   する**。原寸ではヒゲ(最長 9 px)と本物の末端枝(最短 15 px)の長さが
+   分かれているので、12 px で切れば **余分 0・末端の消失 0** にできます。
+   ★半分の解像度にすると両者が重なり(ヒゲ最長 7 px、本物最短 6 px)、
+   どのしきい値でも両方をゼロにできません。**「刈れば直る」は解像度に
+   依存する主張**でした。
+4. ★★**径は分岐の近くで必ず過大**。分岐から 3 px 未満で **+26.0 %**、
+   15 px 以上で **+5.1 %**。距離変換は「最も近い背景まで」を測るので、
+   2 本が合流したところでは背景が遠のき、どちらの枝の径でもない値が出ます。
+   ★遠くでも +5 % 残るのは離散化(縁が画素の外側半分ぶん出る)で、これは
+   分岐とは別の原因 —— **1 つの数字にまとめると原因が混ざります**。
+5. ★★**径の 1 割の誤差が、指数を 1 以上動かす**。真値の径で解くと n = 3.0000。
+   同じ分岐を画像から測ると、まとめて当てはめて **n = 2.0** 前後。
+   ★内訳を対照群で分けると、効いているのは EDT の量子化(2×√整数)でした:
+   真値の径に **±0.5 px の丸めを入れるだけ** で n = 3.00 → 2.2 まで落ちます。
+   分岐近傍を避けて測っても、交差を消しても、この量子化だけは残ります。
+6. ★**投影像の交差は分岐に化ける**。枝どうしの衝突を避けて作った木と、
+   避けずに作った木を比べると、余分な分岐が 3 → 12 個。位置誤差は変わり
+   ません —— **交差は「間違った位置に出る」のではなく「無い分岐を足す」**。
+7. ★**失われるのは細い枝**。解像度を 1.0 → 0.5 → 0.35 と落とすと、直径
+   3-4 px の帯は 100 % → 79 % → 21 % に落ちるのに、10 px 以上の帯は
+   100 % のままです。木は末端ほど本数が多いので、**本数で数えた検出率は
+   細い側の性能でほぼ決まります**。
 
 来歴(公開文献のみ): Murray, *PNAS* 12 (1926) 207 —— 最小仕事の法則と分岐角 /
 Zhang & Suen, *CACM* 27 (1984) 236 —— 細線化 / Lee, Kashyap & Chu,
@@ -40,11 +73,12 @@ import fullseye as fs                                            # noqa: E402
 
 # --- 場面の諸元 -------------------------------------------------------------- #
 N_PIX = 512              # 視野 [px]
-D_ROOT = 13.0            # 根の直径 [px]
+D_ROOT = 12.0            # 根の直径 [px]
 D_MIN = 3.0              # これ未満になったら枝分かれを止める [px]
 LAMBDA_LO, LAMBDA_HI = 5.5, 7.5   # 枝の長さ / 直径
 GAMMA_LO, GAMMA_HI = 0.65, 1.0    # 分岐の非対称度 d2/d1
 MAX_DEPTH = 6
+CLEARANCE = 2.5          # 枝どうしの最小すきま [px](衝突回避)
 FG, BG = 0.82, 0.14      # 血管と背景の明るさ
 PSF_SIGMA = 1.0          # 撮像系のぼけ [px]
 NOISE = 0.012            # 撮像ノイズ(1σ)
@@ -56,21 +90,52 @@ _LAB = fs.ledger
 # --------------------------------------------------------------------------- #
 # 1. 木を作る —— Murray の法則が真値                                            #
 # --------------------------------------------------------------------------- #
-def build_tree(seed: int = SEED, n_pix: int = N_PIX) -> dict:
+def _seg_dist(pts, p0, p1) -> np.ndarray:
+    """点列 (N,2) から線分 p0-p1 までの距離。"""
+    vy, vx = p1[0] - p0[0], p1[1] - p0[1]
+    ll = max(vy * vy + vx * vx, 1e-9)
+    t = np.clip(((pts[:, 0] - p0[0]) * vy + (pts[:, 1] - p0[1]) * vx) / ll, 0.0, 1.0)
+    return np.hypot(pts[:, 0] - (p0[0] + t * vy), pts[:, 1] - (p0[1] + t * vx))
+
+
+def seg_distance(pts, seg) -> np.ndarray:
+    return _seg_dist(np.asarray(pts, np.float64).reshape(-1, 2), seg["p0"], seg["p1"])
+
+
+def _clearance(p0, p1, d, segs, skip) -> float:
+    """新しい枝と既存の枝の **すきま**(表面どうしの最短距離)[px]。"""
+    best = 1e9
+    probe = np.linspace(0.0, 1.0, 12)
+    pts = np.column_stack([p0[0] + probe * (p1[0] - p0[0]),
+                           p0[1] + probe * (p1[1] - p0[1])])
+    for i, s in enumerate(segs):
+        if i in skip:
+            continue
+        gap = _seg_dist(pts, s["p0"], s["p1"]).min() - 0.5 * (d + s["d"])
+        best = min(best, gap)
+    return best
+
+
+def build_tree(seed: int = SEED, n_pix: int = N_PIX, avoid: bool = True) -> dict:
     """Murray 則に厳密に従う 2 分木を作る。返り値が **この PoC の真値**。
 
     * 直径: d0^3 = d1^3 + d2^3(非対称度 γ = d2/d1 を毎回引く)
-    * 分岐角: Murray の最適角(上式の cos θ)。角度も直径から決まるので、
-      「もっともらしく見える木」ではなく **法則に従う木** になる。
-    * 長さ: L = λ·d(λ は 5.5〜7.5)。血管の長さ/径比の実測範囲に合わせた。
+    * 分岐角: Murray の最適角。角度も直径から決まるので、「もっともらしく
+      見える木」ではなく **法則に従う木** になる。
+    * 長さ: L = λ·d(λ は 5.5〜7.5)
+
+    ``avoid=True`` なら、分岐のたびに左右どちらへ振るかを **既存の枝との
+    すきまが大きいほう** に選び、それでも足りなければそこで枝分かれを止める。
+    投影像では枝どうしの交差が偽の分岐になるので、その効果を分けて測るための
+    切り替え(6 節の対照群が ``avoid=False``)。
     """
     rng = np.random.default_rng(seed)
     segs, bifs = [], []
-    root = (n_pix - 14.0, n_pix * 0.5)                 # (row, col)、下端の中央
-    stack = [(root, -np.pi / 2.0, D_ROOT, 0, -1)]
-    while stack:
-        p0, ang, d, depth, parent = stack.pop()
-        length = d * rng.uniform(LAMBDA_LO, LAMBDA_HI)
+    root = (n_pix - 14.0, n_pix * 0.5)
+    queue = [(root, -np.pi / 2.0, D_ROOT, D_ROOT * rng.uniform(LAMBDA_LO, LAMBDA_HI),
+              0, -1)]
+    while queue:
+        p0, ang, d, length, depth, parent = queue.pop()
         p1 = (p0[0] + length * np.sin(ang), p0[1] + length * np.cos(ang))
         idx = len(segs)
         segs.append({"p0": p0, "p1": p1, "d": d, "depth": depth, "parent": parent})
@@ -84,18 +149,74 @@ def build_tree(seed: int = SEED, n_pix: int = N_PIX) -> dict:
         c1 = (d ** 4 + d1 ** 4 - d2 ** 4) / (2.0 * d ** 2 * d1 ** 2)
         c2 = (d ** 4 + d2 ** 4 - d1 ** 4) / (2.0 * d ** 2 * d2 ** 2)
         t1, t2 = np.arccos(np.clip(c1, -1, 1)), np.arccos(np.clip(c2, -1, 1))
-        sgn = 1.0 if rng.random() < 0.5 else -1.0
-        jitter = rng.normal(0.0, 0.06)
+        l1 = d1 * rng.uniform(LAMBDA_LO, LAMBDA_HI)
+        l2 = d2 * rng.uniform(LAMBDA_LO, LAMBDA_HI)
+        jit = rng.normal(0.0, 0.05)
+        cand = []
+        for sgn in (1.0, -1.0):
+            a1, a2 = ang - sgn * t1 + jit, ang + sgn * t2 + jit
+            q1 = (p1[0] + l1 * np.sin(a1), p1[1] + l1 * np.cos(a1))
+            q2 = (p1[0] + l2 * np.sin(a2), p1[1] + l2 * np.cos(a2))
+            skip = {idx, parent}
+            gap = min(_clearance(p1, q1, d1, segs, skip),
+                      _clearance(p1, q2, d2, segs, skip))
+            inside = all(6 < v < n_pix - 6 for v in (q1[0], q1[1], q2[0], q2[1]))
+            cand.append((gap if inside else -1e9, sgn, a1, a2))
+        cand.sort(reverse=True)
+        gap, sgn, a1, a2 = cand[0]
+        if avoid and gap < CLEARANCE:
+            continue                       # 交差しそうならここで止める(葉になる)
+        if not avoid and gap < -1e8:
+            continue                       # 視野の外へ出るものだけは止める
         bifs.append({"pos": p1, "parent": idx, "d0": d, "d1": d1, "d2": d2,
-                     "children": (len(segs) + 0, len(segs) + 1)})
-        stack.append((p1, ang - sgn * t1 + jitter, d1, depth + 1, idx))
-        stack.append((p1, ang + sgn * t2 + jitter, d2, depth + 1, idx))
+                     "children": (len(segs) + 1, len(segs) + 0)})
+        queue.append((p1, a1, d1, l1, depth + 1, idx))
+        queue.append((p1, a2, d2, l2, depth + 1, idx))
     return {"segments": segs, "bifs": bifs, "n_pix": n_pix}
 
 
+def scale_tree(tree: dict, s: float) -> dict:
+    """木ごと解像度を変える(**同じ物** を粗い画素で撮るのと同じ)。"""
+    segs = [{"p0": (v["p0"][0] * s, v["p0"][1] * s),
+             "p1": (v["p1"][0] * s, v["p1"][1] * s),
+             "d": v["d"] * s, "depth": v["depth"], "parent": v["parent"]}
+            for v in tree["segments"]]
+    bifs = [{"pos": (b["pos"][0] * s, b["pos"][1] * s), "parent": b["parent"],
+             "d0": b["d0"] * s, "d1": b["d1"] * s, "d2": b["d2"] * s,
+             "children": b["children"]} for b in tree["bifs"]]
+    return {"segments": segs, "bifs": bifs,
+            "n_pix": int(round(tree["n_pix"] * s))}
+
+
+def count_close_pairs(tree: dict) -> int:
+    """親子・兄弟でない枝どうしが接触している組の数(交差の量の真値)。"""
+    segs = tree["segments"]
+    hits = 0
+    for i, a in enumerate(segs):
+        pa = np.asarray([a["p0"], a["p1"]])
+        for j in range(i + 1, len(segs)):
+            b = segs[j]
+            if b["parent"] == i or a["parent"] == j or a["parent"] == b["parent"]:
+                continue
+            gap = min(_seg_dist(pa, b["p0"], b["p1"]).min(),
+                      _seg_dist(np.asarray([b["p0"], b["p1"]]), a["p0"],
+                                a["p1"]).min()) - 0.5 * (a["d"] + b["d"])
+            if gap < 0.0:
+                hits += 1
+    return hits
+
+
+# --------------------------------------------------------------------------- #
+# 2. 撮る —— 面積被覆 + 境界のざらつき + ぼけ + 雑音                            #
+# --------------------------------------------------------------------------- #
 def render(tree: dict, seed: int = SEED, noise: float = NOISE,
-           psf: float = PSF_SIGMA) -> np.ndarray:
-    """木を **面積被覆** で塗り、撮像系のぼけと雑音を足した観測画像を返す。"""
+           psf: float = PSF_SIGMA, rough: float = 0.0) -> np.ndarray:
+    """木を面積被覆で塗り、境界の揺らぎ・ぼけ・雑音を足した観測画像を返す。
+
+    ``rough`` は **境界だけ** を揺らす(相関のある雑音に 4·c·(1−c) を掛ける
+    ので、内部と背景は動かない)。血管壁の凹凸やセグメンテーションの粗さに
+    相当し、**これがヒゲの原因** であることを 2 節で切り分ける。
+    """
     n = tree["n_pix"]
     cov = np.zeros((n, n))
     yy, xx = np.mgrid[0:n, 0:n]
@@ -111,46 +232,25 @@ def render(tree: dict, seed: int = SEED, noise: float = NOISE,
         py = yy[r0:r1, c0:c1] - y0
         px = xx[r0:r1, c0:c1] - x0
         vy, vx = y1 - y0, x1 - x0
-        ll = vy * vy + vx * vx
-        t = np.clip((py * vy + px * vx) / max(ll, 1e-9), 0.0, 1.0)
+        ll = max(vy * vy + vx * vx, 1e-9)
+        t = np.clip((py * vy + px * vx) / ll, 0.0, 1.0)
         dist = np.hypot(py - t * vy, px - t * vx)
         cov[r0:r1, c0:c1] = np.maximum(cov[r0:r1, c0:c1],
                                        np.clip(r + 0.5 - dist, 0.0, 1.0))
+    rng = np.random.default_rng(seed + 1000)
+    if rough > 0:
+        w = rng.normal(0.0, 1.0, cov.shape)
+        w = np.asarray(fs.apply(w, "gauss_filter", a=(1.4 - 0.3) / 2.7))
+        w = w / (w.std() + 1e-12)
+        cov = np.clip(cov + rough * w * (4.0 * cov * (1.0 - cov)), 0.0, 1.0)
     img = BG + (FG - BG) * cov
     if psf > 0:
         img = np.asarray(fs.apply(img, "gauss_filter", a=(psf - 0.3) / 2.7))
-    rng = np.random.default_rng(seed + 1000)
     return np.clip(img + rng.normal(0.0, noise, img.shape), 0.0, 1.0)
 
 
-def seg_distance(pts, seg) -> np.ndarray:
-    """点列 ``pts`` (N,2) から線分までの距離。"""
-    (y0, x0), (y1, x1) = seg["p0"], seg["p1"]
-    vy, vx = y1 - y0, x1 - x0
-    ll = max(vy * vy + vx * vx, 1e-9)
-    t = np.clip(((pts[:, 0] - y0) * vy + (pts[:, 1] - x0) * vx) / ll, 0.0, 1.0)
-    return np.hypot(pts[:, 0] - (y0 + t * vy), pts[:, 1] - (x0 + t * vx))
-
-
-def count_true_crossings(tree: dict) -> int:
-    """真値の木で、親子でない枝どうしが近づきすぎている組の数(交差の見張り)。"""
-    segs = tree["segments"]
-    hits = 0
-    for i, a in enumerate(segs):
-        pa = np.asarray([a["p0"], a["p1"]])
-        for j in range(i + 1, len(segs)):
-            b = segs[j]
-            if b["parent"] == i or a["parent"] == j or a["parent"] == b["parent"]:
-                continue
-            d = min(seg_distance(pa, b).min(),
-                    seg_distance(np.asarray([b["p0"], b["p1"]]), a).min())
-            if d < 0.5 * (a["d"] + b["d"]):
-                hits += 1
-    return hits
-
-
 # --------------------------------------------------------------------------- #
-# 2. 骨格の道具 —— fullseye の 3-D 骨格族を 1 枚のスライスに使う                #
+# 3. 骨格の道具 —— fullseye の 3-D 骨格族を 1 枚のスライスに使う                #
 # --------------------------------------------------------------------------- #
 def skeletonize(mask) -> np.ndarray:
     """2-D の細線化。**3-D の骨格族に (1,H,W) を渡す**(末尾「道具の穴」(a))。"""
@@ -158,7 +258,6 @@ def skeletonize(mask) -> np.ndarray:
 
 
 def neighbour_count(skel) -> np.ndarray:
-    """骨格画素の 8 近傍にある骨格画素の数。"""
     s = np.asarray(skel, np.uint8)
     return ndimage.convolve(s, np.ones((3, 3), int), mode="constant") - s
 
@@ -173,22 +272,35 @@ def endpoint_pixels(skel) -> np.ndarray:
 
 
 def junction_nodes(skel) -> np.ndarray:
-    """分岐画素を **連結成分にまとめて** 1 分岐 1 点の座標にする。"""
+    """分岐画素を **連結成分にまとめて** 1 分岐 1 点にする(2-D CC = blob 族)。"""
     j = junction_pixels(skel)
     if not j.any():
         return np.zeros((0, 2))
-    lab = _LAB.blob_label(j)
-    f = _LAB.blob_features(lab)
+    f = _LAB.blob_features(_LAB.blob_label(j))
     return np.column_stack([f["row"], f["col"]])
+
+
+def spur_lengths(skel) -> np.ndarray:
+    """端点を持つ枝(= ヒゲ候補)の長さ[画素数]の一覧。"""
+    sk = np.asarray(skel, bool)
+    seg = sk & ~junction_pixels(sk)
+    if not seg.any():
+        return np.zeros(0, int)
+    lab = _LAB.blob_label(seg)
+    n = int(lab.max())
+    size = np.bincount(lab.ravel(), minlength=n + 1)
+    has_end = np.zeros(n + 1, bool)
+    e = endpoint_pixels(sk)
+    has_end[lab[e & (lab > 0)]] = True
+    return size[1:][has_end[1:]]
 
 
 def prune_spurs(skel, min_len: float, iters: int = 3) -> np.ndarray:
     """**短い枝だけ** を刈る(端点を持ち、長さが ``min_len`` 未満の枝)。
 
     用意されている :func:`ledger.skeleton_prune3d` は「端点除去を length 回
-    反復」なので、**すべての枝を length 画素ずつ短くする** —— 短い枝だけを
-    落とす道具ではない(6 節で実測して比べる)。ここでは分岐画素を外して
-    連結成分に切り、端点を含む短い成分だけを消す。
+    反復」で **すべての枝を length 画素ずつ短くする** ので、短い枝だけを
+    落とす道具にはならない(6 節の「道具の穴」(c)で実測)。
     """
     sk = np.asarray(skel, bool).copy()
     for _ in range(iters):
@@ -233,6 +345,26 @@ def match_points(det, true_pts, tol: float) -> dict:
             "n_fp": len(det) - len(errs), "n_fn": len(tru) - len(errs)}
 
 
+def radius_field(mask) -> np.ndarray:
+    """画素単位の EDT。**進化 op の distance_transform は最大値で正規化される**
+    ので使えず、3-D の :func:`vol_distance_transform` に (1,H,W) を渡す
+    (末尾「道具の穴」(b))。"""
+    return np.asarray(fs.vol_distance_transform(np.asarray(mask, bool)[None, :, :]))[0]
+
+
+def leaves_of(tree: dict) -> np.ndarray:
+    """子を持たない枝の先端(= 本物の末端)の座標。"""
+    has_child = {s["parent"] for s in tree["segments"] if s["parent"] >= 0}
+    return np.asarray([s["p1"] for i, s in enumerate(tree["segments"])
+                       if i not in has_child])
+
+
+def leaf_lengths(tree: dict) -> np.ndarray:
+    has_child = {s["parent"] for s in tree["segments"] if s["parent"] >= 0}
+    return np.asarray([np.hypot(s["p1"][0] - s["p0"][0], s["p1"][1] - s["p0"][1])
+                       for i, s in enumerate(tree["segments"]) if i not in has_child])
+
+
 # --------------------------------------------------------------------------- #
 # 節 1. ゼロ点 —— 2 値化 -> 細線化 -> 近傍数 3 以上                             #
 # --------------------------------------------------------------------------- #
@@ -246,109 +378,155 @@ def section_zero_point(tree: dict, img) -> dict:
     jp = junction_pixels(skel)
     nodes = junction_nodes(skel)
     tru = np.asarray([b["pos"] for b in tree["bifs"]])
-    tol = 6.0
 
-    m_pix = match_points(np.column_stack(np.nonzero(jp)), tru, tol)
-    m_nod = match_points(nodes, tru, tol)
-    print("  真値の分岐 %d 個(枝 %d 本、真値どうしの近接 %d 組)"
-          % (len(tru), len(tree["segments"]), count_true_crossings(tree)))
-    print("  ★ゼロ点(画素をそのまま数える): 分岐画素 %d 個 -> 対応 %d / 余分 %d / "
+    m_pix = match_points(np.column_stack(np.nonzero(jp)), tru, 6.0)
+    m_nod = match_points(nodes, tru, 6.0)
+    print("  真値: 枝 %d 本 / 分岐 %d 個 / 接触している枝の組 %d"
+          % (len(tree["segments"]), len(tru), count_close_pairs(tree)))
+    print("  ゼロ点(分岐画素をそのまま数える): %d 画素 -> 対応 %d / 余分 %d / "
           "見落とし %d、位置誤差 %.2f px"
           % (int(jp.sum()), m_pix["n_match"], m_pix["n_fp"], m_pix["n_fn"],
              m_pix["err"].mean() if m_pix["err"].size else np.nan))
-    print("     1 個の分岐が **画素 %d 個** に化けている(%.1f 倍)。"
-          % (int(jp.sum()), jp.sum() / max(len(tru), 1)))
-    print("  連結成分にまとめる(fs.skeleton_nodes と同じ規約): 節点 %d 個 -> "
-          "対応 %d / 余分 %d / 見落とし %d、位置誤差 %.2f px"
+    print("     **1 個の分岐が %.1f 画素に化けている**。まず連結成分にまとめる。"
+          % (jp.sum() / max(len(tru), 1)))
+    print("  連結成分にまとめる: 節点 %d 個 -> 対応 %d / 余分 %d / 見落とし %d、"
+          "位置誤差 %.2f px"
           % (len(nodes), m_nod["n_match"], m_nod["n_fp"], m_nod["n_fn"],
              m_nod["err"].mean() if m_nod["err"].size else np.nan))
     fn = fs.skeleton_nodes(mask)
-    print("  検算: fs.skeleton_nodes は分岐 %d 個・端点 %d 個(骨格 %d px)と"
-          "報告する —— 節点の数は一致した。"
+    print("  検算: fs.skeleton_nodes は分岐 %d 個・端点 %d 個(骨格 %d px)—— 一致。"
           % (fn["n_junctions"], fn["n_endpoints"], fn["skeleton_length"]))
-    print("  ★まとめても余分が %d 個残る。これが **ヒゲ(spur)** ——"
-          " 太い枝の縁の凹凸から短い枝が生えて、そこが新しい分岐に見える。"
-          % m_nod["n_fp"])
 
-    over = np.asarray(fs.colorize_labels(skel.astype(np.int32) * 1))
-    view = np.where(skel[..., None], over, np.repeat(img[..., None], 3, axis=2))
+    print("\n  ★細線化のアルゴリズムを替えるだけで節点の数が変わる:")
+    algo = []
+    for name, sk in (("Lee 3-D(vol)", skel),
+                     ("skeleton(op)",
+                      np.asarray(fs.apply(mask.astype(float), "skeleton")) > 0.5),
+                     ("thinning(op)",
+                      np.asarray(fs.apply(mask.astype(float), "thinning")) > 0.5),
+                     ("sk_medial(op)",
+                      np.asarray(fs.apply(mask.astype(float), "sk_medial")) > 0.5)):
+        nd = junction_nodes(sk)
+        mm = match_points(nd, tru, 6.0)
+        algo.append((name, len(nd), mm["n_fp"]))
+        print("     %-16s 骨格 %5d px / 節点 %3d 個 / 余分 %2d 個"
+              % (name, int(np.asarray(sk).sum()), len(nd), mm["n_fp"]))
+    print("     ★medial_axis は同じ画像から余分な分岐を %d 個作る"
+          "(距離場の尾根を追うので、境界の凹凸を拾いやすい)。" % algo[-1][2])
+
+    view = np.repeat(img[..., None], 3, axis=2)
+    view[skel] = (1.0, 0.25, 0.0)
     figs.save_grid("scene", [img, view, jp.astype(float)],
-                   ["観測画像", "細線化", "近傍数 3 以上"],
-                   title="血管網(枝 %d 本 / 分岐 %d 個 / 根の直径 %.0f px)"
-                         % (len(tree["segments"]), len(tru), D_ROOT), ncols=3)
-    return {"skel": skel, "mask": mask, "true": tru, "pix": m_pix, "nod": m_nod}
+                   ["観測画像", "細線化を重ねる", "近傍数 3 以上"],
+                   title="血管網(枝 %d 本 / 分岐 %d 個 / 直径 %.1f-%.1f px)"
+                         % (len(tree["segments"]), len(tru),
+                            min(s["d"] for s in tree["segments"]), D_ROOT), ncols=3)
+    return {"skel": skel, "mask": mask, "true": tru, "pix": m_pix, "nod": m_nod,
+            "algo": algo}
 
 
 # --------------------------------------------------------------------------- #
-# 節 2. ★★ヒゲを刈るしきい値 —— 両立しない                                     #
+# 節 2-3. ★★ヒゲはどこから来るか / 刈るしきい値は解像度に依存する               #
 # --------------------------------------------------------------------------- #
-def section_prune(tree: dict, img, z: dict) -> dict:
+def section_spurs(tree: dict, z: dict) -> dict:
     print("\n" + "=" * 78)
-    print("2) ★★ヒゲを刈るしきい値を振る —— 偽の分岐と、本物の細い枝は両立しない")
+    print("2) ★★ヒゲはどこから来るか —— 細線化ではなく境界のざらつき")
     print("=" * 78)
 
     tru = z["true"]
-    # 「本物の末端」= 子を持たない枝の先端。刈りすぎるとこれが消える。
-    segs = tree["segments"]
-    has_child = {s["parent"] for s in segs if s["parent"] >= 0}
-    leaves = np.asarray([s["p1"] for i, s in enumerate(segs) if i not in has_child])
-    print("  真値: 分岐 %d 個 / 末端 %d 本(いちばん細い枝の直径 %.2f px)"
-          % (len(tru), len(leaves), min(s["d"] for s in segs)))
-    print("\n   刈る長さ [px]  節点  余分  見落とし  位置誤差   末端の残存  "
-          "末端の位置誤差")
+    lens = leaf_lengths(tree)
+    print("  予想は「細線化が分岐の近くに短い枝を生やす」だった。**外れた**:")
+    sp0 = spur_lengths(z["skel"])
+    print("     きれいな画像では、端点を持つ枝の最短が %d px、最長が %d px。"
+          "ヒゲと呼べる長さのものが 1 本も無い。" % (sp0.min(), sp0.max()))
+    print("     本物の末端枝の長さは %.0f - %.0f px なので、"
+          "**端点を持つ枝はすべて本物**。" % (lens.min(), lens.max()))
+    print("\n   境界のざらつき   節点   余分   見落とし   ヒゲ(<12 px)の本数   "
+          "その最長 [px]")
+    rows = []
+    keep = {}
+    for rough in (0.0, 0.15, 0.25, 0.35):
+        img = render(tree, rough=rough)
+        sk = skeletonize(img >= 0.5 * (FG + BG))
+        nd = junction_nodes(sk)
+        mm = match_points(nd, tru, 6.0)
+        sp = spur_lengths(sk)
+        short = sp[sp < 12]
+        rows.append((rough, len(nd), mm["n_fp"], mm["n_fn"], len(short)))
+        print("       %.2f         %3d    %3d      %3d           %3d             "
+              "%3d" % (rough, len(nd), mm["n_fp"], mm["n_fn"], len(short),
+                       int(short.max()) if short.size else 0))
+        keep[rough] = sk
+    print("\n  ★境界に相関のある揺らぎを入れると、余分な分岐が %d -> %d 個。"
+          "**ヒゲを作るのは細線化ではなく境界のざらつき**。"
+          % (rows[0][2], rows[-1][2]))
 
-    lens, n_fp, n_fn, n_leaf, errs = [], [], [], [], []
-    keep_sk = {}
-    for ln in (0, 2, 4, 6, 8, 12, 18, 26):
-        sk = prune_spurs(z["skel"], ln) if ln else z["skel"]
-        nodes = junction_nodes(sk)
-        m = match_points(nodes, tru, 6.0)
-        ep = np.column_stack(np.nonzero(endpoint_pixels(sk)))
-        ml = match_points(ep, leaves, 12.0)
-        lens.append(ln)
-        n_fp.append(m["n_fp"])
-        n_fn.append(m["n_fn"])
-        n_leaf.append(ml["n_match"])
-        errs.append(float(m["err"].mean()) if m["err"].size else np.nan)
-        print("       %3d        %3d   %3d     %3d      %.2f px      %3d / %d    "
-              "%.2f px" % (ln, len(nodes), m["n_fp"], m["n_fn"], errs[-1],
-                           ml["n_match"], len(leaves),
-                           float(ml["err"].mean()) if ml["err"].size else np.nan))
-        if ln in (0, 6, 26):
-            keep_sk[ln] = sk
+    # --- 3) 刈るしきい値は解像度に依存する ------------------------------- #
+    print("\n" + "=" * 78)
+    print("3) ★★ヒゲを刈るしきい値 —— 原寸では両立できる。半分にすると破綻する")
+    print("=" * 78)
+    out = {}
+    for scale in (1.0, 0.5):
+        tr = scale_tree(tree, scale) if scale != 1.0 else tree
+        img = render(tr, rough=0.30)
+        sk = skeletonize(img >= 0.5 * (FG + BG))
+        t2 = np.asarray([b["pos"] for b in tr["bifs"]])
+        lv = leaves_of(tr)
+        ll = leaf_lengths(tr)
+        sp = spur_lengths(sk)
+        print("\n  解像度 %.2f(視野 %d px、いちばん細い枝 %.1f px):"
+              % (scale, tr["n_pix"], min(s["d"] for s in tr["segments"])))
+        print("    本物の末端枝の長さ %.0f - %.0f px / 端点を持つ枝の長さ %d - %d px"
+              % (ll.min(), ll.max(), sp.min(), sp.max()))
+        print("    刈る長さ  節点  余分  見落とし  末端の残存")
+        best, rec = None, []
+        for cut in (0, 2, 4, 6, 8, 10, 12, 16, 20):
+            s2 = prune_spurs(sk, cut) if cut else sk
+            nd = junction_nodes(s2)
+            mm = match_points(nd, t2, 6.0)
+            ep = np.column_stack(np.nonzero(endpoint_pixels(s2)))
+            ml = match_points(ep, lv, 12.0)
+            lost = len(lv) - ml["n_match"]
+            rec.append((cut, mm["n_fp"], mm["n_fn"], lost))
+            print("      %3d      %3d   %3d     %3d        %3d / %d"
+                  % (cut, len(nd), mm["n_fp"], mm["n_fn"], ml["n_match"], len(lv)))
+            if best is None or (mm["n_fp"] + mm["n_fn"] + lost) < best[1]:
+                best = (cut, mm["n_fp"] + mm["n_fn"] + lost, mm["n_fp"], lost)
+        out[scale] = {"rec": rec, "best": best, "spur": sp, "leaf": ll,
+                      "n_leaf": len(lv)}
+        print("    -> 最良は %d px(余分 %d / 末端の消失 %d)"
+              % (best[0], best[2], best[3]))
 
-    best = int(np.argmin([a + b for a, b in zip(n_fp, n_fn)]))
-    print("\n  ★偽の分岐(余分)は %d -> %d に減るが、同じ操作で本物の末端が "
-          "%d / %d -> %d / %d に減る。"
-          % (n_fp[0], n_fp[-1], n_leaf[0], len(leaves), n_leaf[-1], len(leaves)))
-    print("  ★どちらもゼロになる長さは無い。いちばん総誤差が小さいのは %d px で、"
-          "そこでも 余分 %d / 見落とし %d / 末端の消失 %d 本。"
-          % (lens[best], n_fp[best], n_fn[best], len(leaves) - n_leaf[best]))
-    print("     ヒゲの長さと、いちばん細い枝の長さが **重なっている** ので、"
-          "長さだけでは分けられない。")
+    a, b = out[1.0], out[0.5]
+    print("\n  ★原寸ではヒゲ(最長 %d px)と本物の末端枝(最短 %.0f px)の長さが"
+          "**分かれている** ので、しきい値 1 本で両方を捌ける。"
+          % (int(a["spur"][a["spur"] < 12].max()) if (a["spur"] < 12).any() else 0,
+             a["leaf"].min()))
+    print("  ★半分の解像度にすると重なる(ヒゲ最長 %d px / 本物最短 %.0f px)——"
+          " 最良でも 余分 %d・末端の消失 %d が残る。"
+          % (int(b["spur"][b["spur"] < 12].max()) if (b["spur"] < 12).any() else 0,
+             b["leaf"].min(), b["best"][2], b["best"][3]))
+    print("     **「短いものを刈れば直る」は、解像度に依存する主張**だった。")
 
     figs.save_plot("prune",
-                   [("偽の分岐(余分)", lens, n_fp),
-                    ("見落とした分岐", lens, n_fn),
-                    ("消えた末端", lens, [len(leaves) - v for v in n_leaf])],
+                   [("原寸: 余分な分岐", [r[0] for r in a["rec"]],
+                     [r[1] for r in a["rec"]]),
+                    ("原寸: 消えた末端", [r[0] for r in a["rec"]],
+                     [r[3] for r in a["rec"]]),
+                    ("半分: 余分な分岐", [r[0] for r in b["rec"]],
+                     [r[1] for r in b["rec"]]),
+                    ("半分: 消えた末端", [r[0] for r in b["rec"]],
+                     [r[3] for r in b["rec"]])],
                    xlabel="刈る枝の長さ [px]", ylabel="件数",
-                   title="ヒゲを刈るほど本物の細い枝も消える")
-    return {"len": lens, "fp": n_fp, "fn": n_fn, "leaf": n_leaf,
-            "leaves": leaves, "sk": keep_sk, "best": lens[best]}
+                   title="刈るしきい値が効くかどうかは解像度で決まる")
+    return {"rough": rows, "scales": out, "sk_rough": keep}
 
 
 # --------------------------------------------------------------------------- #
-# 節 3. ★★径の推定 —— 分岐の近くで必ず過大                                     #
+# 節 4. ★★径の推定 —— 分岐の近くで必ず過大                                     #
 # --------------------------------------------------------------------------- #
-def radius_field(mask) -> np.ndarray:
-    """画素単位の EDT。**進化 op の distance_transform は最大値で正規化される**
-    ので使えず、3-D の :func:`vol_distance_transform` に (1,H,W) を渡す
-    (末尾「道具の穴」(b))。"""
-    return np.asarray(fs.vol_distance_transform(np.asarray(mask, bool)[None, :, :]))[0]
-
-
-def truth_at(tree: dict, pts) -> tuple:
-    """各点について、**最も近い枝の直径** と **最寄りの分岐までの距離** を返す。"""
+def truth_at(tree: dict, pts):
+    """各点について、**最も近い枝の直径** と **最寄りの分岐までの距離**。"""
     segs = tree["segments"]
     dmat = np.stack([seg_distance(pts, s) for s in segs], axis=1)
     k = np.argmin(dmat, axis=1)
@@ -356,62 +534,59 @@ def truth_at(tree: dict, pts) -> tuple:
     bif = np.asarray([b["pos"] for b in tree["bifs"]])
     db = np.hypot(pts[:, None, 0] - bif[None, :, 0],
                   pts[:, None, 1] - bif[None, :, 1]).min(axis=1)
-    return d_true, db, k
+    return d_true, db
 
 
-def section_radius(tree: dict, img, z: dict) -> dict:
+def section_radius(tree: dict, z: dict) -> dict:
     print("\n" + "=" * 78)
-    print("3) ★★径の推定(距離変換の 2 倍)—— 分岐の近くで必ず過大")
+    print("4) ★★径の推定(距離変換の 2 倍)—— 分岐の近くで必ず過大")
     print("=" * 78)
 
     edt = radius_field(z["mask"])
-    sk = prune_spurs(z["skel"], 6)
+    sk = z["skel"]
     pts = np.column_stack(np.nonzero(sk)).astype(np.float64)
     d_est = 2.0 * edt[sk]
-    d_true, d_bif, _ = truth_at(tree, pts)
+    d_true, d_bif = truth_at(tree, pts)
     rel = 100.0 * (d_est - d_true) / d_true
 
     print("  骨格画素 %d 点で評価。全体の偏り %+.2f %%(中央値 %+.2f %%)"
           % (len(pts), rel.mean(), np.median(rel)))
     print("\n   分岐からの距離 [px]   点数    径の偏り [%]   標準偏差")
     edges = [0, 3, 6, 10, 15, 22, 32, 60]
-    ctr, bias, sd = [], [], []
+    ctr, bias = [], []
     for a, b in zip(edges[:-1], edges[1:]):
         m = (d_bif >= a) & (d_bif < b)
         if m.sum() < 10:
             continue
         ctr.append(0.5 * (a + b))
         bias.append(float(rel[m].mean()))
-        sd.append(float(rel[m].std()))
         print("      %3d - %3d          %5d      %+7.2f       %6.2f"
-              % (a, b, int(m.sum()), bias[-1], sd[-1]))
+              % (a, b, int(m.sum()), bias[-1], float(rel[m].std())))
 
-    far = rel[d_bif >= 15]
-    near = rel[d_bif < 6]
-    print("\n  ★分岐から 6 px 未満では %+.1f %%、15 px 以上では %+.1f %% ——"
-          " **差は %.1f 点**。" % (near.mean(), far.mean(),
-                                   near.mean() - far.mean()))
+    near = float(rel[d_bif < 3].mean())
+    far = float(rel[d_bif >= 15].mean())
+    print("\n  ★分岐から 3 px 未満では %+.1f %%、15 px 以上では %+.1f %% ——"
+          " **差は %.1f 点**。" % (near, far, near - far))
     print("     距離変換は「最も近い背景まで」なので、2 本の枝が合流している"
-          "ところでは背景が遠のき、\n     どちらの枝の径でもない大きな値になる。")
-    print("  ★遠いところでも偏りは %+.1f %% 残る(ゼロではない)—— これは"
-          "しきい値の位置(縁が %.2f px 外へ出る)による系統的な太り。"
-          % (far.mean(), 0.5 * far.mean() / 100 * float(np.median(d_true))))
+          "ところでは背景が遠のく。\n     出てくるのは"
+          "**どちらの枝の径でもない値**。")
+    print("  ★遠いところでも %+.1f %% 残る。これは分岐とは別の原因(離散化):"
+          "\n     縁は最後の前景画素の 0.5 px 外側にあるので、直径は約 1 px"
+          "太く出る(細い枝ほど比率が大きい)。")
+    print("     **1 つの数字にまとめると、この 2 つの原因が混ざる**。")
 
     figs.save_plot("radius_bias",
-                   [("径の偏り [%]", ctr, bias),
-                    ("偏りゼロ", ctr, [0.0] * len(ctr))],
+                   [("径の偏り [%]", ctr, bias), ("偏りゼロ", ctr, [0.0] * len(ctr))],
                    xlabel="最寄りの分岐までの距離 [px]", ylabel="径の偏り [%]",
                    title="分岐の近くでは径が必ず過大に出る")
-    return {"edt": edt, "sk": sk, "pts": pts, "d_est": d_est, "d_true": d_true,
-            "d_bif": d_bif, "rel": rel, "near": float(near.mean()),
-            "far": float(far.mean())}
+    return {"edt": edt, "near": near, "far": far, "rel": rel, "d_bif": d_bif}
 
 
 # --------------------------------------------------------------------------- #
-# 節 4. ★★Murray の指数 —— 測る位置で 3 になったりならなかったり                #
+# 節 5. ★★Murray の指数 —— 径の 1 割が指数の 1 になる                          #
 # --------------------------------------------------------------------------- #
 def murray_exponent(d0: float, d1: float, d2: float) -> float:
-    """(d1/d0)^n + (d2/d0)^n = 1 を満たす n を二分法で解く。"""
+    """(d1/d0)^n + (d2/d0)^n = 1 を満たす n を二分法で解く(三つ組ごと)。"""
     r1, r2 = d1 / d0, d2 / d0
     if not (0 < r1 < 1 and 0 < r2 < 1):
         return np.nan
@@ -430,137 +605,181 @@ def murray_exponent(d0: float, d1: float, d2: float) -> float:
     return 0.5 * (lo + hi)
 
 
-def _diameter_along(seg, from_pos, offset: float, edt, sk) -> float:
-    """枝 ``seg`` の、``from_pos`` から ``offset`` 進んだ点での径(2×EDT)。"""
+def murray_fit(triples) -> float:
+    """全分岐を **まとめて** 1 個の指数に当てはめる(残差二乗和の最小)。"""
+    tri = np.asarray([t for t in triples if min(t) > 0 and t[1] < t[0] and t[2] < t[0]])
+    if len(tri) < 3:
+        return np.nan
+    r = tri[:, 1:] / tri[:, :1]
+    ns = np.linspace(0.5, 8.0, 3001)
+    res = [float(np.sum((r[:, 0] ** n + r[:, 1] ** n - 1.0) ** 2)) for n in ns]
+    return float(ns[int(np.argmin(res))])
+
+
+def _dia_at(edt, p, win: int = 1) -> float:
+    """点 ``p`` のまわり ``win`` 画素での EDT の最大値 × 2(= 径)。"""
+    r, c = int(round(p[0])), int(round(p[1]))
+    sub = edt[max(0, r - win):r + win + 1, max(0, c - win):c + win + 1]
+    return 2.0 * float(sub.max()) if sub.size else 0.0
+
+
+def _point_on(seg, frm, off: float):
+    """枝 ``seg`` の ``frm`` 側の端から ``off`` px 進んだ点(最大でも中点)。"""
     (y0, x0), (y1, x1) = seg["p0"], seg["p1"]
-    if np.hypot(y0 - from_pos[0], x0 - from_pos[1]) > \
-       np.hypot(y1 - from_pos[0], x1 - from_pos[1]):
+    if np.hypot(y0 - frm[0], x0 - frm[1]) > np.hypot(y1 - frm[0], x1 - frm[1]):
         (y0, x0), (y1, x1) = (y1, x1), (y0, x0)
     ll = np.hypot(y1 - y0, x1 - x0)
-    t = min(offset / max(ll, 1e-9), 0.95)
-    p = (y0 + t * (y1 - y0), x0 + t * (x1 - x0))
-    ys, xs = np.nonzero(sk)
-    d2 = (ys - p[0]) ** 2 + (xs - p[1]) ** 2
-    k = int(np.argmin(d2))
-    return 2.0 * float(edt[ys[k], xs[k]])
+    t = min(off / max(ll, 1e-9), 0.5)
+    return (y0 + t * (y1 - y0), x0 + t * (x1 - x0))
 
 
 def section_murray(tree: dict, r: dict) -> dict:
     print("\n" + "=" * 78)
-    print("4) ★★Murray の指数 —— 測る位置を分岐から離すと 3 に近づく")
+    print("5) ★★Murray の指数 —— 径の 1 割の誤差が、指数の 1 になる")
     print("=" * 78)
-    print("  真値は厳密に n = 3(直径を d0^3 = d1^3 + d2^3 で作っている)。")
-    print("\n   分岐からの距離 [px]   使えた分岐   指数の中央値   四分位範囲   "
-          "|n-3| の中央値")
 
-    edt, sk = r["edt"], r["sk"]
-    offs, meds, iqrs = [], [], []
-    for off in (0, 3, 6, 10, 15, 22):
-        ns = []
+    truth_tri = [[b["d0"], b["d1"], b["d2"]] for b in tree["bifs"]]
+    n_truth = murray_fit(truth_tri)
+    print("  検算: **真値の径** で解くと n = %.4f(作り方どおり 3)。" % n_truth)
+    print("\n   径を測る位置        使えた分岐   三つ組ごとの中央値   まとめて当てはめ")
+
+    edt = r["edt"]
+    offs, fits, meds = [], [], []
+    for off, label in ((0, "分岐点そのもの"), (3, "分岐から 3 px"),
+                       (6, "分岐から 6 px"), (10, "分岐から 10 px"),
+                       (99, "枝の中点")):
+        tri = []
         for b in tree["bifs"]:
             par = tree["segments"][b["parent"]]
             ch = [tree["segments"][i] for i in b["children"]
                   if i < len(tree["segments"])]
             if len(ch) != 2:
                 continue
-            d0 = _diameter_along(par, b["pos"], off, edt, sk)
-            d1 = _diameter_along(ch[0], b["pos"], off, edt, sk)
-            d2 = _diameter_along(ch[1], b["pos"], off, edt, sk)
-            n = murray_exponent(d0, d1, d2)
-            if np.isfinite(n):
-                ns.append(n)
-        ns = np.asarray(ns)
-        q1, q3 = (np.percentile(ns, [25, 75]) if ns.size else (np.nan, np.nan))
-        offs.append(off)
-        meds.append(float(np.median(ns)) if ns.size else np.nan)
-        iqrs.append(float(q3 - q1) if ns.size else np.nan)
-        print("        %3d              %3d / %3d        %5.2f       %5.2f       "
-              "%5.2f" % (off, ns.size, len(tree["bifs"]), meds[-1], iqrs[-1],
-                         float(np.median(np.abs(ns - 3.0))) if ns.size else np.nan))
+            ps = [_point_on(s, b["pos"], off) for s in [par] + ch]
+            tri.append([_dia_at(edt, p) for p in ps])
+        per = [murray_exponent(*t) for t in tri]
+        per = np.asarray([v for v in per if np.isfinite(v)])
+        offs.append(off if off < 99 else 99)
+        fits.append(murray_fit(tri))
+        meds.append(float(np.median(per)) if per.size else np.nan)
+        print("   %-18s   %3d / %3d        %8.2f          %8.2f"
+              % (label, per.size, len(tree["bifs"]), meds[-1], fits[-1]))
 
-    j = int(np.nanargmin([abs(m - 3.0) for m in meds]))
-    print("\n  ★分岐点そのもの(距離 0)で測ると指数の中央値は %.2f。親の径が"
-          "過大に出るので、\n     d1^n + d2^n = d0^n を満たすには n を大きく"
-          "しなければならない。" % meds[0])
-    print("  ★%d px 離すと %.2f まで戻る(真値 3.00、誤差 %+.2f)。"
-          % (offs[j], meds[j], meds[j] - 3.0))
-    print("     ただし離しすぎると別の問題が出る: 使えた分岐が %d -> %d 個に減る"
-          "(短い枝は %d px も無い)。" % (len(tree["bifs"]),
-                                          len(tree["bifs"]), offs[-1]))
+    print("\n  ★どこで測っても n は 3 に戻らない(まとめて当てはめて %.2f 前後)。"
+          "★★原因を対照群で分ける:" % np.nanmedian(fits[1:]))
+    # 対照群 A: 真値の径に「量子化だけ」を入れる —— EDT は 2*sqrt(整数) しか返せない
+    lut = 2.0 * np.sqrt(np.arange(0, 400))
+    quant = [[float(lut[np.argmin(np.abs(lut - v))]) for v in t] for t in truth_tri]
+    n_quant = murray_fit(quant)
+    # 対照群 B: 真値の径に「一定のオフセット +1 px」だけを入れる
+    off1 = [[v + 1.0 for v in t] for t in truth_tri]
+    n_off = murray_fit(off1)
+    # 対照群 C: 真値の径に「比例誤差 +8 %」だけを入れる
+    prop = [[v * 1.08 for v in t] for t in truth_tri]
+    n_prop = murray_fit(prop)
+    print("     真値の径のまま                              n = %.2f" % n_truth)
+    print("     + 距離変換の量子化(2·√整数 に丸めるだけ)   n = %.2f  <- ★これが主因"
+          % n_quant)
+    print("     + 一定の太り(全部の径に +1.0 px)           n = %.2f" % n_off)
+    print("     + 比例した太り(全部の径を 1.08 倍)         n = %.2f  "
+          "(比例誤差は比を変えないので効かない)" % n_prop)
+    print("  ★指数は **径の比** で決まるので、比を変えない誤差(比例)は無害、"
+          "比を変える誤差(丸め・一定オフセット)は致命的。")
+    print("     細い枝ほど丸めの相対量が大きいので、子の側が壊れる ——"
+          "\n     この PoC でいちばん細い枝は直径 %.1f px で、EDT の刻みは"
+          " 0.4 px 前後。" % min(s["d"] for s in tree["segments"]))
+
     figs.save_plot("murray",
-                   [("指数の中央値", offs, meds),
-                    ("真値 n=3", offs, [3.0] * len(offs))],
-                   xlabel="径を測る位置(分岐からの距離)[px]",
+                   [("まとめて当てはめ", [o if o < 99 else 14 for o in offs], fits),
+                    ("三つ組ごとの中央値", [o if o < 99 else 14 for o in offs], meds),
+                    ("真値 n=3", [o if o < 99 else 14 for o in offs],
+                     [3.0] * len(offs))],
+                   xlabel="径を測る位置(分岐からの距離 [px]、14 = 枝の中点)",
                    ylabel="Murray の指数 n",
-                   title="分岐点で測ると指数が壊れる(真値 3)")
-    return {"off": offs, "med": meds, "iqr": iqrs}
+                   title="測る位置を変えても 3 に戻らない(主因は量子化)")
+    return {"off": offs, "fit": fits, "med": meds, "n_truth": n_truth,
+            "n_quant": n_quant, "n_off": n_off, "n_prop": n_prop}
 
 
 # --------------------------------------------------------------------------- #
-# 節 5. どの枝が失われるか(太さで数える)                                      #
+# 節 6. ★交差の対照群 / 解像度で失われる枝                                      #
 # --------------------------------------------------------------------------- #
-def section_thin(tree: dict, z: dict, p: dict) -> dict:
+def section_crossing_and_thin(tree: dict, z: dict) -> dict:
     print("\n" + "=" * 78)
-    print("5) ★失われるのは細い枝 —— 太さで分けて数える")
+    print("6) ★投影像の交差は「無い分岐」を足す(対照群)")
     print("=" * 78)
 
-    sk = p["sk"][p["best"]] if p["best"] in p["sk"] else prune_spurs(z["skel"],
-                                                                    p["best"])
-    segs = tree["segments"]
-    pts = np.column_stack(np.nonzero(sk)).astype(np.float64)
-    print("   直径の帯 [px]   枝の本数   骨格が乗った本数   乗った割合")
+    print("   衝突回避   枝   分岐   接触する組   節点   余分   見落とし   位置誤差")
     rows = []
-    for lo, hi in ((3.0, 4.0), (4.0, 5.5), (5.5, 7.5), (7.5, 10.0), (10.0, 99.0)):
-        sel = [s for s in segs if lo <= s["d"] < hi]
-        if not sel:
-            continue
-        hit = 0
-        for s in sel:
-            d = seg_distance(pts, s)
-            if (d < 0.5 * s["d"] + 1.5).sum() >= 0.4 * np.hypot(
-                    s["p1"][0] - s["p0"][0], s["p1"][1] - s["p0"][1]):
-                hit += 1
-        rows.append((lo, hi, len(sel), hit))
-        print("    %4.1f - %4.1f       %3d          %3d           %5.1f %%"
-              % (lo, hi, len(sel), hit, 100.0 * hit / len(sel)))
-    thin = rows[0]
-    thick = rows[-1]
-    print("\n  ★いちばん細い帯(%.1f-%.1f px)で %d / %d 本、いちばん太い帯で "
-          "%d / %d 本。" % (thin[0], thin[1], thin[3], thin[2], thick[3], thick[2]))
-    print("     失うのは常に細いほうで、しかも **細い枝ほど本数が多い**"
-          "(木の末端だから)—— 本数で数えた検出率は細い側の性能でほぼ決まる。")
-    figs.save_table("summary",
-                    ["量", "真値", "推定", "備考"],
-                    [["分岐の数", "%d" % len(tree["bifs"]),
-                      "%d" % (len(tree["bifs"]) - z["nod"]["n_fn"] + z["nod"]["n_fp"]),
-                      "刈らない状態(節点にまとめた後)"],
-                     ["分岐の位置誤差 [px]", "0",
-                      "%.2f" % z["nod"]["err"].mean(), "対応がついたものだけ"],
-                     ["径の偏り(分岐 < 6 px)[%]", "0", "%+.1f" % p["near_bias"],
-                      "距離変換が合流を見る"],
-                     ["径の偏り(分岐 >= 15 px)[%]", "0", "%+.1f" % p["far_bias"],
-                      "しきい値の位置による太り"],
-                     ["Murray の指数(距離 0)", "3.00", "%.2f" % p["n0"],
-                      "分岐点で測ると壊れる"],
-                     ["Murray の指数(最良)", "3.00", "%.2f" % p["nbest"],
-                      "分岐から %d px 離す" % p["offbest"]]],
-                    title="血管網の計測まとめ(枝 %d 本 / 分岐 %d 個)"
-                          % (len(segs), len(tree["bifs"])))
-    return {"rows": rows}
+    for avoid in (True, False):
+        tr = build_tree(avoid=avoid) if not avoid else tree
+        im = render(tr)
+        sk = skeletonize(im >= 0.5 * (FG + BG))
+        nd = junction_nodes(sk)
+        t2 = np.asarray([b["pos"] for b in tr["bifs"]])
+        mm = match_points(nd, t2, 6.0)
+        rows.append((avoid, len(tr["segments"]), len(t2), count_close_pairs(tr),
+                     len(nd), mm["n_fp"], mm["n_fn"],
+                     float(mm["err"].mean()) if mm["err"].size else np.nan))
+        print("     %-5s   %3d   %3d       %3d       %3d    %3d      %3d      "
+              "%.2f px" % ("有" if avoid else "無", *rows[-1][1:]))
+    print("\n  ★交差を許すと余分な分岐が %d -> %d 個に増える。位置誤差は %.2f -> "
+          "%.2f px でほとんど変わらない —— " % (rows[0][5], rows[1][5],
+                                                 rows[0][7], rows[1][7]))
+    print("     **交差は「間違った位置に出す」のではなく「無い分岐を足す」**。"
+          "だから位置誤差だけを見ていると気づけない。")
+
+    print("\n" + "=" * 78)
+    print("7) ★解像度を落とすと、失われるのは細い枝から")
+    print("=" * 78)
+    print("   直径の帯(原寸)[px]   本数    解像度 1.00   0.50   0.35")
+    bands = ((3.0, 4.0), (4.0, 5.5), (5.5, 7.5), (7.5, 99.0))
+    hits = {s: [] for s in (1.0, 0.5, 0.35)}
+    for s in (1.0, 0.5, 0.35):
+        tr = scale_tree(tree, s) if s != 1.0 else tree
+        sk = skeletonize(render(tr) >= 0.5 * (FG + BG))
+        pts = np.column_stack(np.nonzero(sk)).astype(np.float64)
+        for lo, hi in bands:
+            sel = [(i, v) for i, v in enumerate(tree["segments"]) if lo <= v["d"] < hi]
+            ok = 0
+            for i, v in sel:
+                sv = tr["segments"][i]
+                ln = np.hypot(sv["p1"][0] - sv["p0"][0], sv["p1"][1] - sv["p0"][1])
+                d = seg_distance(pts, sv)
+                if (d < 0.5 * sv["d"] + 1.5).sum() >= 0.4 * ln:
+                    ok += 1
+            hits[s].append((len(sel), ok))
+    for k, (lo, hi) in enumerate(bands):
+        n = hits[1.0][k][0]
+        print("      %4.1f - %4.1f          %3d      %5.0f %%  %5.0f %%  %5.0f %%"
+              % (lo, hi, n, 100 * hits[1.0][k][1] / n, 100 * hits[0.5][k][1] / n,
+                 100 * hits[0.35][k][1] / n))
+    print("\n  ★いちばん細い帯は %.0f %% -> %.0f %% -> %.0f %% と落ちるのに、"
+          "いちばん太い帯は %.0f %% のまま。"
+          % (100 * hits[1.0][0][1] / hits[1.0][0][0],
+             100 * hits[0.5][0][1] / hits[1.0][0][0],
+             100 * hits[0.35][0][1] / hits[1.0][0][0],
+             100 * hits[0.35][-1][1] / hits[1.0][-1][0]))
+    print("     木は末端ほど本数が多い(%d / %d 本が細い 2 帯)ので、"
+          "**本数で数えた検出率は細い側の性能でほぼ決まる**。"
+          % (hits[1.0][0][0] + hits[1.0][1][0], len(tree["segments"])))
+    return {"cross": rows, "hits": hits, "bands": bands}
 
 
 # --------------------------------------------------------------------------- #
-# 節 6. 道具の穴                                                                #
+# 節 8. 道具の穴                                                                #
 # --------------------------------------------------------------------------- #
 def section_tool_gaps() -> None:
     print("\n" + "=" * 78)
-    print("6) 道具の穴(この PoC で fullseye を使ってみて)")
+    print("8) 道具の穴(この PoC で fullseye を使ってみて)")
     print("=" * 78)
 
-    import ops
-    reg = {o.name: o for o in ops.REGISTRY}
+    import inspect as _insp
 
-    # (a) 2-D の骨格解析(端点・分岐・枝分割・剪定)が台帳に無い —— 3-D だけ
+    import ops
+    reg = {o.name for o in ops.REGISTRY}
+
+    # (a) 2-D の骨格解析(端点・分岐・枝分割・剪定)が無い —— 3-D だけ
     for name in ("skeleton_junctions", "skeleton_endpoints", "skeleton_prune",
                  "skeleton_branches", "skeletonize"):
         assert not hasattr(fs, name) and not hasattr(fs.ledger, name), name
@@ -576,17 +795,18 @@ def section_tool_gaps() -> None:
         pass
     assert np.asarray(_LAB.skeletonize_vol(m[None])).shape == (1, 40, 40)
     print("  (a) 骨格解析の族(細線化・端点・分岐・枝分割・剪定)は **3-D 専用**。"
-          "2-D を渡すと ValueError。(1,H,W) にすると全部そのまま動くので、"
-          "この PoC はそうしている —— 動くのに 2-D の名前が無いだけ。")
+          "2-D を渡すと ValueError だが、(1,H,W) にすると全部そのまま動く ——"
+          "この PoC はそうしている。**実装は在るのに 2-D の名前が無いだけ**。")
 
     # (b) 画素単位の距離変換が 2-D の公開経路に無い(op は最大値で正規化)
     dn = np.asarray(fs.apply(m.astype(np.float64), "distance_transform"))
     assert abs(float(dn.max()) - 1.0) < 1e-9, float(dn.max())
     d3 = np.asarray(fs.vol_distance_transform(m[None]))
     assert abs(float(d3.max()) - 2.0) < 1e-9, float(d3.max())
-    print("  (b) 進化 op の distance_transform は最大値で正規化するので、"
-          "画素単位の距離が取れない(2.0 px が 1.0 になる)。"
-          "vol_distance_transform に (1,H,W) を渡すのが唯一の経路。")
+    print("  (b) 進化 op の distance_transform は最大値で正規化するので画素単位の"
+          "距離が取れない(2.0 px が 1.0 になる)。vol_distance_transform に"
+          " (1,H,W) を渡すのが唯一の経路。5 節が示すとおり、径の **絶対値** が"
+          "要る用途では致命的。")
 
     # (c) ★skeleton_prune3d は「短い枝を刈る」ではなく「全部の枝を短くする」
     t = np.zeros((80, 80), bool)
@@ -596,36 +816,37 @@ def section_tool_gaps() -> None:
     before = int(sk.sum())
     after = int(np.asarray(_LAB.skeleton_prune3d(sk, 10)).sum())
     assert before - after > 25, (before, after)
-    print("  (c) ★skeleton_prune3d(sk, L) は端点除去を L 回反復するので、"
-          "ヒゲだけでなく **すべての枝が L 画素ずつ短くなる**"
-          "(ヒゲの無い T 字で %d -> %d px)。"
-          "「短い枝だけを刈る」道具として使うと、本物の枝の先端を失う。"
-          % (before, after))
+    print("  (c) ★skeleton_prune3d(sk, L) は端点除去を L 回反復するので、ヒゲだけ"
+          "でなく **すべての枝が L 画素ずつ短くなる**(ヒゲの無い T 字で "
+          "%d -> %d px)。「短い枝だけを刈る」道具として使うと本物の枝の先端を"
+          "失う —— この PoC は自前で書いた。" % (before, after))
 
     # (d) ★fs.skeleton_nodes は docstring が「座標」と言うのに端点しか返さない
     info = fs.skeleton_nodes(t)
-    import inspect as _insp
     assert "their coordinates" in (_insp.getdoc(fs.skeleton_nodes) or "")
     assert "endpoints" in info and "junctions" not in info, sorted(info)
     print("  (d) ★fs.skeleton_nodes の docstring は「端点と分岐点 **とその座標**」"
-          "と書いてあるが、返るのは端点の座標だけ。分岐点は数しか返らない"
-          "(実装では座標を作って捨てている)。血管のグラフ化には座標が要る。")
+          "と書いてあるが、返るのは端点の座標だけ(実装では分岐点の座標を作って"
+          "捨てている)。血管のグラフ化には分岐点の座標が要る。")
 
-    # (e) 骨格をグラフ(節点と辺)にする口が無い
+    # (e) medial_axis_points も docstring と返り値が食い違う
+    v = np.zeros((1, 40, 40), bool)
+    v[0, 18:22, 5:35] = True
+    got = _LAB.medial_axis_points(v)
+    assert "(points, radius)" in (_insp.getdoc(_LAB.medial_axis_points) or "")
+    assert isinstance(got, np.ndarray) and got.ndim == 2 and got.shape[1] == 3, got.shape
+    print("  (e) ★medial_axis_points の docstring は「返り値 (points, radius)」"
+          "と書いてあるが、実際は (M,3) の配列 1 個だけ(半径が返らない)。"
+          "`pts, r = medial_axis_points(v)` と書くと ValueError になる。")
+
+    # (f) 骨格をグラフ(節点と辺)にする口が無い
     for name in ("skeleton_graph", "to_graph", "branch_table", "network_graph"):
         assert not hasattr(fs, name) and not hasattr(fs.ledger, name), name
-    assert "r2_split_skeleton_lines" in reg          # 枝に切る op はある(画像出力)
-    print("  (e) 骨格を **節点と辺の表** にする口が無い。r2_split_skeleton_lines は"
-          "枝に切るが返り値は画像なので、どの枝がどの節点につながるかが取れない。"
+    assert "r2_split_skeleton_lines" in reg
+    print("  (f) 骨格を **節点と辺の表** にする口が無い。r2_split_skeleton_lines は"
+          "枝に切るが返り値が画像なので、どの枝がどの節点につながるかが取れない。"
           "分岐次数・枝長・径を枝ごとに出すには呼び手が全部書くことになる"
-          "(この PoC がそう)。")
-
-    # (f) Murray 則のような「枝の関係」を検定する道具は当然無い(記録として)
-    for name in ("murray_exponent", "branching_exponent"):
-        assert not hasattr(fs, name) and not hasattr(fs.ledger, name), name
-    print("  (f) 分岐則(Murray)の指数当てはめは無い。これは応用側の量なので"
-          "無くて当然だが、(e) の枝の表さえあれば 10 行で書ける ——"
-          "**足りないのは統計ではなくグラフのほう**。")
+          "(この PoC がそう)。**足りないのは統計ではなくグラフのほう**。")
 
 
 # --------------------------------------------------------------------------- #
@@ -634,7 +855,7 @@ def main() -> None:
     tree = build_tree()
     img = render(tree)
     print("=" * 78)
-    print("血管網を抜いて分岐を測る —— ヒゲと、分岐近傍の径の過大")
+    print("血管網を抜いて分岐を測る —— ヒゲ、分岐近傍の径、指数の脆さ")
     print("視野 %d px 角 / 枝 %d 本 / 分岐 %d 個 / 直径 %.1f - %.1f px"
           % (N_PIX, len(tree["segments"]), len(tree["bifs"]),
              min(s["d"] for s in tree["segments"]),
@@ -643,28 +864,33 @@ def main() -> None:
     print("=" * 78)
 
     z = section_zero_point(tree, img)
-    p = section_prune(tree, img, z)
-    r = section_radius(tree, img, z)
+    sp = section_spurs(tree, z)
+    r = section_radius(tree, z)
     mu = section_murray(tree, r)
-    j = int(np.nanargmin([abs(m - 3.0) for m in mu["med"]]))
-    section_thin(tree, z, {**p, "near_bias": r["near"], "far_bias": r["far"],
-                           "n0": mu["med"][0], "nbest": mu["med"][j],
-                           "offbest": mu["off"][j]})
+    ct = section_crossing_and_thin(tree, z)
     section_tool_gaps()
 
     print("\n" + "=" * 78)
     print("まとめ")
     print("=" * 78)
-    print("  * 分岐画素をそのまま数えると 1 個の分岐が %.1f 倍に化ける。"
-          "連結成分にまとめるのは最低条件。" % (z["pix"]["n_fp"] / max(len(z["true"]), 1)))
-    print("  * ヒゲを刈る長さには両立点が無い(余分 %d、末端の消失 %d 本が最良)。"
-          % (p["fp"][int(np.argmin([a + b for a, b in zip(p["fp"], p["fn"])]))],
-             len(p["leaves"]) - p["leaf"][int(np.argmin(
-                 [a + b for a, b in zip(p["fp"], p["fn"])]))]))
-    print("  * 径は分岐の近くで %+.1f %%、離れて %+.1f %% —— **1 つの数字に"
-          "まとめてはいけない**。" % (r["near"], r["far"]))
-    print("  * Murray の指数は測る位置で %.2f -> %.2f と動く(真値 3)。"
-          % (mu["med"][0], mu["med"][j]))
+    print("  * 分岐画素をそのまま数えると 1 個が %.1f 画素に化ける。"
+          "細線化アルゴリズムを替えるだけで節点は %d -> %d 個。"
+          % (z["pix"]["n_fp"] / max(len(z["true"]), 1) + 1,
+             z["algo"][0][1], z["algo"][-1][1]))
+    print("  * ヒゲを作るのは細線化ではなく境界のざらつき(余分な分岐 %d -> %d 個)。"
+          % (sp["rough"][0][2], sp["rough"][-1][2]))
+    print("  * 「短いものを刈れば直る」は解像度に依存する。半分にすると"
+          "しきい値の窓が消える。")
+    print("  * 径は分岐の近くで %+.1f %%、離れて %+.1f %% —— 原因が 2 つあるので"
+          "1 つの数字にまとめない。" % (r["near"], r["far"]))
+    print("  * Murray の指数は真値の径なら %.2f、画像から測ると %.2f 前後。"
+          "主因は距離変換の量子化(それだけで %.2f)。"
+          % (mu["n_truth"], np.nanmedian(mu["fit"][1:]), mu["n_quant"]))
+    print("  * 交差は「無い分岐を足す」(余分 %d -> %d)、"
+          "解像度は「細い枝を消す」(%.0f %% -> %.0f %%)。"
+          % (ct["cross"][0][5], ct["cross"][1][5],
+             100 * ct["hits"][1.0][0][1] / ct["hits"][1.0][0][0],
+             100 * ct["hits"][0.35][0][1] / ct["hits"][1.0][0][0]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     if figs.errors():
