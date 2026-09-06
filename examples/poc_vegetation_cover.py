@@ -447,10 +447,10 @@ def main():
               + pad(f"{d['bias']:+.1f}", 12) + pad(f"{d['scatter']:.1f}", 11)
               + pad(f"{d['prec']:.3f}", 10) + pad(f"{d['rec']:.3f}", 10))
     zb = [z[s]["bias"] for s in range(len(STAGES))]
-    print(f"  → ゼロ点はどの段階でも **同じ向きに** 上振れする(+{min(zb):.1f} 〜"
-          f" +{max(zb):.1f} pp)。散らばりは 0.5 pp 以下なので、")
-    print("     これは枚数を増やしても消えない **偏り**である。ここに勝てない手法は")
-    print("     採らない、というのがこの表の使い道。")
+    print(f"  → ゼロ点はどの段階でも **同じ向きに** 上振れする"
+          f"(+{min(zb):.1f} 〜 +{max(zb):.1f} pp)。")
+    print("     散らばりは 0.5 pp 以下なので、これは枚数を増やしても消えない **偏り**。")
+    print("     ここに勝てない手法は採らない、というのがこの表の使い道。")
     print(f"  → **どの指標を見るかで『壊れている段階』が変わる**。偏りの最悪は"
           f" {STAGES[int(np.argmax(np.abs(zb)))][0]}"
           f"({max(zb, key=abs):+.1f} pp)だが、")
