@@ -1605,7 +1605,25 @@ def displacement_band_weights(V, F, wavelengths=(0.06, 0.03, 0.015, 0.0075, 0.00
     mesh to decide which octaves may be displaced (the rest go to bump normals); (ii) on
     the *source* model to measure which wavelengths the real data already carries — the
     complement ``1 − gate`` is the synthetic-relief weight (0 where the data are fine,
-    1 where they are coarse), so dense regions are not double-textured. Deterministic."""
+    1 where they are coarse), so dense regions are not double-textured. Deterministic.
+
+    計算は ``ratio = λ_k / e_i`` に対し、``fade == 0`` なら ``gate = (ratio ≥ nyquist)`` の
+    二値、それ以外は ``gate = clip((ratio − nyquist) / fade, 0, 1)``。返り値は float64
+    ``(K, N)``(K = 波長数、N = 頂点数)。
+
+    - ``wavelengths``: メッシュ単位の波長列(空・非正・非有限は ``ValueError``)。
+      ``mesh_displace_spectrum`` と同じ列を渡す。
+    - ``nyquist``: 「幾何として担える」と見なす波長/辺長比の下限(既定 2 = 1 波長に
+      2 辺)。0 以下は ``ValueError``。
+    - ``fade``: 遷移幅(辺長の倍数)。0 で硬い閾値。負は ``ValueError``。
+    - ``local_edge``: 頂点ごとの辺長 ``(N,)`` を自分で与える場合(``mesh_edge_lengths`` の
+      ``per='vertex'`` 相当)。長さ不一致・非正・非有限は ``ValueError``。``None`` なら
+      内部で :func:`mesh_edge_lengths` を呼ぶ。
+
+    ``mesh_displace_spectrum`` は内部でこの関数を呼ぶので、通常は直接呼ぶ必要はない。直接
+    使うのは、元データが既に担っている波長を測って ``1 − gate`` を ``weights`` として渡す
+    (細かい所に合成起伏を二重に載せない)ときと、``bump_normals_fbm`` へ回す残りを
+    決めるとき。"""
     Vv, Ff = _mesh_check(V, F)
     lam = np.asarray(wavelengths, np.float64).reshape(-1)
     if lam.size == 0 or not np.all(np.isfinite(lam)) or np.any(lam <= 0.0):
