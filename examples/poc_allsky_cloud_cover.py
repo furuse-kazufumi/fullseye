@@ -327,10 +327,14 @@ def section4_rbr_sun():
     print()
     clear = rbr_sub([])
     full = rbr_sub(CAPS)
-    thin = coverage([CAPS[-1]]) > 0
-    print("  %6s %8s %10s %10s %10s %12s" %
-          ("t", "ψ_t 度", "偽陽性 px", "偽陽性 重み", "閉形式", "薄雲 検出率"))
-    print("  " + "-" * 62)
+    thin = [coverage([CAPS[i]]) > 0 for i in THIN]
+    thin_all = np.logical_or.reduce(thin)
+    print("  薄い雲は 3 つ(光学的厚さ %s)。しきい値を上げると薄いものから落ちる。"
+          % ", ".join("%.2f" % CAPS[i][3] for i in THIN))
+    print()
+    print("  %6s %8s %9s %9s %9s %10s %s" %
+          ("t", "ψ_t 度", "偽陽性px", "偽陽性重", "閉形式", "薄雲 検出", "内訳(薄い順)"))
+    print("  " + "-" * 72)
     ts = [0.55, 0.60, 0.65, 0.70, 0.80, 0.90]
     fp, law, thin_rec = [], [], []
     for t in ts:
@@ -339,12 +343,15 @@ def section4_rbr_sun():
         arg = max(np.log(RBR_AUR / max(t - RBR_BASE, 1e-12)), 0.0)
         psi_t = PSI0 * np.sqrt(arg)
         cl = 1.0 - np.cos(psi_t)
-        rec = float((detect(full, t) & thin).sum() / max(thin.sum(), 1))
+        dt = detect(full, t)
+        each = [float((dt & m).sum() / max(m.sum(), 1)) for m in thin]
+        rec = float((dt & thin_all).sum() / max(thin_all.sum(), 1))
         fp.append(wt)
         law.append(cl)
         thin_rec.append(rec)
-        print("  %6.2f %8.1f %10.4f %10.4f %10.4f %12.3f"
-              % (t, np.rad2deg(psi_t), px, wt, cl, rec))
+        print("  %6.2f %8.1f %9.4f %9.4f %9.4f %10.3f  %s"
+              % (t, np.rad2deg(psi_t), px, wt, cl, rec,
+                 " ".join("%.2f" % e for e in each)))
     dev = float(np.max(np.abs(np.array(fp) - np.array(law))))
     j = ts.index(RBR_T)
     print()
