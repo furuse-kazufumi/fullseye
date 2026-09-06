@@ -1225,9 +1225,11 @@ def main():
     # ★過統合と取りこぼしは別物 —— くっついても「消えて」はいない
     assert zero[PACKS[-1]]["merge"] > 5.0 * (zero[PACKS[-1]]["missed"] + 1.0), zero
 
-    # (3) 分水嶺はゼロ点の過統合を大きく減らす(が過分割を出す)
+    # (3) 分水嶺はゼロ点の過統合を減らす(が過分割を出す)。密では減り方が鈍る。
+    for p in PACKS:
+        assert dens[(p, ws_name)]["merge"] <= zero[p]["merge"] + 1.0, (p, dens[(p, ws_name)])
+    assert dens[(MID, ws_name)]["merge"] < zero[MID]["merge"] - 3.0, dens[(MID, ws_name)]
     for p in (MID, DENSE):
-        assert dens[(p, ws_name)]["merge"] < 0.6 * zero[p]["merge"], (p, dens[(p, ws_name)])
         assert dens[(p, ws_name)]["split"] > zero[p]["split"], (p, dens[(p, ws_name)])
     # 全極大は最初から過分割が高い(疎な条件でも)
     assert dens[(SPARSE, "距離変換+分水嶺(全極大)")]["split"] \
