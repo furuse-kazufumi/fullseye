@@ -932,3 +932,38 @@ def test_csi_signal_simulate_scan_range_bound_is_n_planes_minus_one_steps():
         assert "(n_planes - 1)*z_step_um" in msg
         assert "+ n_planes*z_step_um" not in msg
         assert "[0, %g]" % last in msg
+
+
+def test_step_near_the_nyquist_ceiling_is_accepted_but_wrong():
+    """``max_z_step_um`` は拒否の境界であって、そこまで使える保証ではない。
+
+    2026-09-06、PoC が出した宿題。雑音ゼロで測ると推奨(lambda/8)の RMSE
+    0.26 nm に対し、上限手前の 0.14 um で 134.6 nm —— **500 倍**。しかも
+    0.1499 um は 18.4 nm でこれより良い(縞周期との唸りなので単調でない)。
+    docstring の表がこの門で守られる。数字が動いたら表も直すこと。
+    """
+    lam, fwhm = 0.6, 1.3238136009159096
+    d = itf.csi_design(wavelength_um=lam, bandwidth_um=0.12)
+    assert d["max_z_step_um"] == pytest.approx(0.15)
+    truth = np.linspace(2.0, 2.4, 41).reshape(1, 41)
+
+    def rmse_nm(step):
+        n = int(round(4.0 / step)) + 1
+        st = itf.csi_stack_simulate(
+            truth, z_start_um=0.5, z_step_um=step, n_planes=n,
+            wavelength_um=lam, envelope_fwhm_um=fwhm, noise=0.0)
+        est = itf.csi_height_map(st, z_step_um=step, z_start_um=0.5,
+                                            wavelength_um=lam)
+        return float(np.sqrt(np.nanmean(((est - truth) * 1e3) ** 2)))
+
+    good = rmse_nm(d["recommended_z_step_um"])
+    near = rmse_nm(0.14)
+    assert good < 1.0, "推奨ステップで 1 nm を切らない"
+    assert near > 50.0 * good, "上限手前の劣化が消えている(docstring の表を確認)"
+    # 拒否は上限**以上**でだけ起きる。0.14 は通ってしまう、が要点。
+    with pytest.raises(ValueError):
+        itf.csi_height_map(
+            itf.csi_stack_simulate(
+                truth, z_start_um=0.5, z_step_um=0.05, n_planes=81,
+                wavelength_um=lam, envelope_fwhm_um=fwhm, noise=0.0),
+            z_step_um=d["max_z_step_um"], z_start_um=0.5, wavelength_um=lam)
