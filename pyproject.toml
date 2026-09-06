@@ -43,7 +43,9 @@ dependencies = ["numpy>=1.23", "scipy>=1.9", "threadpoolctl>=3.1"]
 [project.urls]
 Homepage = "https://github.com/furuse-kazufumi/fullseye"
 Repository = "https://github.com/furuse-kazufumi/fullseye"
-Documentation = "https://github.com/furuse-kazufumi/fullseye/tree/master/docs"
+# 2026-09-06: GitHub Pages に独自ドメインを付けた(CNAME = furuse.work)。
+# 配信元は docs/index.md なので、生の Markdown ツリーではなくこちらを指す。
+Documentation = "https://furuse.work/"
 "Operator corpus (RAG)" = "https://github.com/furuse-kazufumi/fullseye/tree/master/docs/ops"
 "Bug tracker" = "https://github.com/furuse-kazufumi/fullseye/issues"
 
