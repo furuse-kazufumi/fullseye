@@ -496,7 +496,80 @@ def main():
           f"重み付けの引数を持たない**ので、この {100 * (1 - w_gain[100000.0][1] / w_gain[100000.0][0]):.0f} % は"
           f"利用者側では取り戻せない(道具の穴として報告する)")
     assert w_gain[100000.0][1] < w_gain[100000.0][0]
+    assert abs(w_gain[100000.0][1] - 1.0) < 0.08
     timing["2 位相"] = time.perf_counter() - t0
+
+    # --------------------------------------------------------------- #
+    # 3) 飽和 —— ピークが潰れると位置はどこへ行くか                      #
+    # --------------------------------------------------------------- #
+    t0 = time.perf_counter()
+    peak_frac = float(profile((64, 64), 32.0, 32.0, 3.2).max())
+    print(f"\n【3】飽和 —— ピークが潰れた星。満杯 {FULL_WELL:.0f} e-/px、"
+          f"FWHM 3.2(中心画素の取り分 {peak_frac:.4f})。"
+          f"雑音は切って**飽和だけ**の効果を見る")
+    print("     " + pad("飽和度", 9) + pad("flux[e-]", 11) + pad("潰れ画素", 10)
+          + "".join(pad(lab, 20) for lab, _ in METHODS))
+    print("     " + pad("(peak/満杯)", 9) + pad("", 11) + pad("(最大)", 10)
+          + "".join(pad("山谷差   平均|e|", 20) for _ in METHODS))
+    sat_tab = {}
+    for ratio in (0.5, 1.2, 2.0, 4.0, 8.0, 16.0):
+        flux = ratio * FULL_WELL / peak_frac
+        line = "     " + pad(f"{ratio:.1f}x", 9) + f"{flux:10.3e} "
+        nsat = 0
+        sat_tab[ratio] = {}
+        for lab, fn in METHODS:
+            e = []
+            for ph in phases:
+                r0 = 32.0 + ph
+                img = render((64, 64), [r0], [32.0], [flux], 3.2, seed=None,
+                             full_well=FULL_WELL)
+                nsat = max(nsat, int((img >= FULL_WELL - 1e-6).sum()))
+                got = fn(img, [(round(r0), 32)], box=11, fwhm_px=3.2)
+                e.append(got[0, 0] - r0)
+            e = np.array(e)
+            sat_tab[ratio][lab] = (float(np.ptp(e)), float(np.abs(e).mean()))
+            line += f"{np.ptp(e):9.4f}{np.abs(e).mean():11.4f}"
+        print("     " + pad(f"{ratio:.1f}x", 9) + f"{flux:10.3e}" + f"{nsat:7d}   "
+              + "".join(f"{sat_tab[ratio][lab][0]:9.4f}{sat_tab[ratio][lab][1]:11.4f}"
+                        for lab, _ in METHODS))
+    g = sat_tab
+    print(f"   → 飽和は **偏りを作る**。背景引き重心の山谷差は "
+          f"{g[0.5]['背景引き重心'][0]:.4f}(未飽和)→ "
+          f"{g[1.2]['背景引き重心'][0]:.4f}(1.2x)→ "
+          f"{g[4.0]['背景引き重心'][0]:.4f}(4x)→ "
+          f"{g[16.0]['背景引き重心'][0]:.4f} px(16x)= "
+          f"{PLATE_ARCSEC_PX * g[16.0]['背景引き重心'][0]:.3f} 秒角。"
+          f"潰れた平面は**画素の格子に貼り付く**ので、返る位置が"
+          f"格子の側へ引かれる(段 2 の希釈と同じ形の誤差)")
+    print(f"   ガウシアン当てはめが一番悪い —— 16x で山谷差 "
+          f"{g[16.0]['ガウシアン当てはめ'][0]:.4f} px、平均 |e| "
+          f"{g[16.0]['ガウシアン当てはめ'][1]:.4f} px。"
+          f"潰れた頂上はガウシアンではないのに、モデルは頂上を一番強く重視する")
+    # 対策: 潰れた画素を捨てる。捨てられるかどうかは「翼が残っているか」で決まる
+    fixed = {}
+    for ratio in (2.0, 8.0, 16.0):
+        flux = ratio * FULL_WELL / peak_frac
+        e = []
+        for ph in phases:
+            r0 = 32.0 + ph
+            img = render((64, 64), [r0], [32.0], [flux], 3.2, seed=None,
+                         full_well=FULL_WELL)
+            m = img.copy()
+            m[m >= FULL_WELL - 1e-6] = np.nan          # 潰れた画素を捨てる
+            st, r_off, _ = _stamp(m, round(r0), 32, 11)
+            w = np.where(np.isfinite(st), st - SKY, 0.0)
+            w = np.maximum(w, 0.0)
+            rr = np.arange(st.shape[0])[:, None]
+            e.append((w * rr).sum() / w.sum() + r_off - r0)
+        fixed[ratio] = float(np.ptp(np.array(e)))
+    print(f"   対策 —— 潰れた画素を**捨てて**翼だけで重心を取る: 山谷差 "
+          + " / ".join(f"{r:.0f}x で {g[r]['背景引き重心'][0]:.4f} → {fixed[r]:.4f}"
+                       for r in (2.0, 8.0, 16.0))
+          + f" px。★ fullseye には**飽和画素マスクを受け取る測位 op が無い**"
+          f"(``psf_fit`` にも ``star_detect`` にも ``mask`` 引数が無い)")
+    assert g[16.0]["背景引き重心"][0] > 5.0 * g[0.5]["背景引き重心"][0]
+    assert fixed[8.0] < g[8.0]["背景引き重心"][0]
+    timing["3 飽和"] = time.perf_counter() - t0
 
     print("\nPASS(執筆中)")
     return True
