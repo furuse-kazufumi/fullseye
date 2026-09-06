@@ -196,7 +196,25 @@ def procrustes_fit(source, target, scaling: bool = True, reflection: bool = Fals
 
 
 def procrustes_align(source, target, scaling: bool = True, reflection: bool = False):
-    """*source* を *target* に重ねた点。→ ``(N, 3)``(:func:`procrustes_fit` の適用)。"""
+    """*source* を *target* に重ねた点。→ ``(N, 3)``(:func:`procrustes_fit` の適用)。
+
+    ``M = procrustes_fit(source, target, scaling, reflection)`` を求め、
+    ``source @ M[:3, :3].T + M[:3, 3]`` を返す。変換は重心合わせ + SVD による回転
+    (+ 任意でスケール)の相似変換で、**i 番目どうしが対応している**ことが前提。
+    対応の無い点群を渡しても例外は出ず、意味の無い配置が返る(その場合は
+    ICP 系の登録を使う)。
+
+    - ``source``, ``target``: ``(N, 3)``、同じ ``N``、有限。``N = 1`` でも通る(並進のみ)。
+    - ``scaling=True``: 大きさの違いも吸収する。``False`` なら剛体変換。
+      ``source`` が全点同一(広がり 0)のときスケールは 1 のまま。
+    - ``reflection=False``(既定): ``det(R) = +1`` を強制。``True`` にすると鏡像も
+      許す ―― 左右非対称性を測る用途では消えてしまうので通常は既定のまま。
+    - 返り値: ``(N, 3)`` float64。残差を数値で欲しいなら ``procrustes_distance``、
+      変換行列そのものは ``procrustes_fit``。
+    - 失敗: ``ValueError``(形が ``(N, 3)`` でない、``N`` 不一致、非有限)。
+
+    多数の形を同時に揃えるなら ``generalized_procrustes``。
+    """
     a = _as_shape(source, "source")
     M = procrustes_fit(a, target, scaling=scaling, reflection=reflection)
     return a @ M[:3, :3].T + M[:3, 3]
