@@ -782,7 +782,11 @@ def main():
 
         cells = []
         for h in HS_SIZE:
-            b, m = by_class([m_ws_h(s["img"], fg, h_px=h) for s, fg in zip(scs, fgs)])
+            if h == 0.0:
+                preds = [m_ws_all(s["img"], fg) for s, fg in zip(scs, fgs)]
+            else:
+                preds = [m_ws_h(s["img"], fg, h_px=h) for s, fg in zip(scs, fgs)]
+            b, m = by_class(preds)
             size_tab[(r, h)] = (b, m)
             cells.append(pad(f"{b:.1f} / {m:.1f}", 15))
         b, m = by_class([m_shape(s["img"], fg, h_px=H_DEF) for s, fg in zip(scs, fgs)])
