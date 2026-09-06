@@ -199,6 +199,13 @@ OP_PARAM_HINTS = {
     # 束縛しないとファザーからは永久に未実行になるので、ここで名指しする。
     ("strain_from_displacement", "window"): lambda rng: 9,
     ("strain_from_displacement", "method"): lambda rng: "green",
+    # blob 族(2026-09-06)。`blob_select` は「両端とも None なら拒否」なので
+    # 束縛しないと**毎回例外**で終わり、カバレッジ表では「呼べたが失敗」に
+    # なる。面積の下限だけを与えて、種の 3 物体のうち小さい棒が落ちる値にする。
+    ("blob_select", "feature"): lambda rng: "area",
+    ("blob_select", "vmin"): lambda rng: 10.0,
+    # 1 起点。0 は背景なので拒否される —— 既定の 0 に任せると毎回 ValueError。
+    ("blob_region", "index"): lambda rng: 1,
     # optscene.observe_surface は既定 (256, 256) x supersample 2 で **117 秒**
     # かかる(2026-09-06 実測。32:0.25 / 64:0.69 / 128:2.40 / 256:19.1 秒
     # (supersample 1)、supersample 2 で更に 6 倍)。ファザーの仕事は型と契約の
