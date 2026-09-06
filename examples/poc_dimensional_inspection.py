@@ -647,9 +647,10 @@ def section_dimensions(img):
     note("measuring1d", "measure_pos", "OK",
          "list[dict] pos/dist/row/col/amplitude/polarity",
          "amplitude はグレー差(符号つき)、pos は測定開始点からの px")
-    note("measuring1d", "measure_pairs", "OK",
+    note("measuring1d", "measure_pairs", "OK(引数が 1 つ足りない)",
          "list[dict] first/second/width/first_point/second_point/*_amplitude",
-         "width は px。first/second は pos(画像座標ではない)")
+         "width は px。first/second は pos(画像座標ではない)。★transition を "
+         "受け取らないので、暗い特徴(穴/溝)から対を作り始められない")
     return slot_bias, circ_err, tilt_T - FACE_TILT_DEG, tilt_M - FACE_TILT_DEG
 
 
@@ -752,8 +753,9 @@ def section_cliff_blur():
         print("\n  -> ★ エッジ対を **一度も見失わなかった**。w = 2.37 px "
               "(= 1.6 sigma)まで")
         print("     『対が 1 つ見つかりました』と答え続ける。しかしその幅は")
-        print(f"     w = {usable_at} px(= {usable_at / 1.5:.2f} sigma)より詰まると "
-              "0.05 px 以上偏っている。")
+        if usable_at is not None:
+            print(f"     w = {usable_at} px(= {usable_at / 1.5:.2f} sigma)より"
+                  "詰まると 0.05 px 以上偏っている。")
     else:
         print(f"\n  -> エッジ対を見失うのは w = {lost_at} px "
               f"(= {lost_at / 1.5:.2f} sigma)から。")
@@ -1060,8 +1062,9 @@ def section_buried_api(img):
     fz_ok = bool(fz) and abs(fz[0]["width"] - 2 * BOLT_RAD) < 1.0
     print(f"  -> 想定幅に最も近い対が先頭に来たか: {fz_ok}")
     print("     ただし ``fuzzy_measure_pairing`` は **並べ替えるだけ**で、候補を")
-    print("     落とさない。HALCON 系の名前から連想する『ファジィ集合で採否を決める』")
-    print("     機能ではない(スコアは exp(-((w-s)/(0.5s))^2) の 1 個だけ)。")
+    print("     落とさない。名前から連想する『ファジィ集合で採否を決める』機能では")
+    print("     なく、スコアは exp(-((w-s)/(0.5s))^2) の 1 個だけ。棄却したいなら")
+    print("     呼ぶ側で fuzzy_score にしきい値を掛けることになる。")
     note("measuring1d", "fuzzy_measure_pairing", "OK(機能は限定)",
          "measure_pairs の結果に fuzzy_score を足して降順ソート",
          "pair_size=None だとただの measure_pairs。候補の棄却はしない")
@@ -1189,19 +1192,20 @@ def section_buried_api(img):
     print(f"  (既定引数のまま呼ぶと a=0.5 = 縦方向の測定線になり、横に伸びた帯には")
     print(f"   直交して 0 本になる: m1_measure_pairs(probe) = {fs.op.m1_measure_pairs(probe)!r})")
 
-    # 台帳に残り 2 本を記録
-    note("measuring1d", "measure_pairs(transition)", "穴",
-         "transition 引数を受け取らない",
-         "暗い特徴(穴/溝)から測り始められない。測定窓の置き方で回避するしかない")
     return arc_bias, fz_ok, same, gen_same, align_ok, ell_err, n_reach
 
 
 def print_ledger():
     sub("14 関数の実地評価表")
-    print(f"  {'module':<12}{'関数':<40}{'判定':<14}")
-    print(f"  {'-' * 12}{'-' * 40}{'-' * 14}")
-    for r in LEDGER:
-        print(f"  {r['module']:<12}{r['fn']:<40}{r['status']:<14}")
+    print(f"  14 関数を全部叩いた結果。判定の内訳: "
+          f"動いた {sum(1 for r in LEDGER if r['status'].startswith('OK'))} / "
+          f"{len(LEDGER)}、動かなかった "
+          f"{sum(1 for r in LEDGER if not r['status'].startswith('OK'))}、"
+          f"規約が分からなかった 0")
+    print(f"  {'module':<12}{'関数':<40}{'判定':<26}")
+    print(f"  {'-' * 12}{'-' * 40}{'-' * 26}")
+    for r in sorted(LEDGER, key=lambda x: (x["module"], x["fn"])):
+        print(f"  {r['module']:<12}{r['fn']:<40}{r['status']:<26}")
         print(f"  {'':<12}規約: {r['contract']}")
         if r["remark"]:
             print(f"  {'':<12}注意: {r['remark']}")
