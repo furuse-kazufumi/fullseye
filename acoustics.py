@@ -1024,8 +1024,11 @@ def _local_prominence(mag, freqs, i, half=None, exclude=None):
     「白色雑音は 365」と書いた既存の表は**その帯域幅でしか成り立たない**。
     近傍の突出度は両方の帯域幅で単調(雑音と定数はどちらも 2.2-3.3 に収まる)。
 
-    返す比は「ピーク / 近傍の中央値」。窓は :data:`_LOCAL_HALF_HZ` 片側、
-    ピーク自身の裾 :data:`_LOCAL_EXCLUDE_HZ` を除く。近傍が空、または中央値が
+    返す比は「ピーク / 近傍の中央値」。窓は ``half`` 片側、ピーク自身の裾
+    ``exclude`` を除く(既定は :data:`_LOCAL_HALF_HZ` / :data:`_LOCAL_EXCLUDE_HZ`
+    で **``freqs`` と同じ単位**。次数軸で呼ぶときは :data:`_LOCAL_HALF_ORDER` /
+    :data:`_LOCAL_EXCLUDE_ORDER` を渡す —— Hz の値をそのまま使うと窓が
+    スペクトル全体を覆い、大域中央値に戻ってしまう)。近傍が空、または中央値が
     0 のときは :func:`_prominence` と同じ場合分け(0/0 は 0.0、正/0 は inf)。
     """
     n = int(mag.size)
