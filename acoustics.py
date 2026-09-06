@@ -1037,8 +1037,9 @@ def _local_prominence(mag, freqs, i, half=None, exclude=None):
     df = float(freqs[1] - freqs[0])
     if not (df > 0.0):
         return 0.0, 0.0
-    hw = max(_LOCAL_MIN_BINS, int(_LOCAL_HALF_HZ / df))
-    ex = max(1, int(_LOCAL_EXCLUDE_HZ / df))
+    hw = max(_LOCAL_MIN_BINS,
+             int((_LOCAL_HALF_HZ if half is None else float(half)) / df))
+    ex = max(1, int((_LOCAL_EXCLUDE_HZ if exclude is None else float(exclude)) / df))
     lo, hi = max(0, i - hw), min(n, i + hw + 1)
     left = mag[lo:max(lo, i - ex)]
     right = mag[min(hi, i + ex + 1):hi]
