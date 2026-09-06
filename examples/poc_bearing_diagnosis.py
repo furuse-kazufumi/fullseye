@@ -393,6 +393,9 @@ def main():
     print("     良 SNR では**どの帯域で復調しても**欠陥周波数が出る。負けるのは雑音が")
     print("     乗ってから —— 帯域選択の効きは SNR に依存し、単独では順位が決まらない。")
 
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
+
     elapsed = time.perf_counter() - t_start
     print("\n所要 %.2f s(assert していない = 環境依存の数字)。"
           "1 記録 %.0f サンプル / %.1f s。" % (elapsed, DURATION * RATE, DURATION))
