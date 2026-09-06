@@ -591,7 +591,8 @@ def main():
                 if rmse < 2.0 * spacing_of(dstc):
                     conv += 1
                     bad += int(rd > LIE_DEG)
-            sym[(mode, label)] = (conv, bad, med(res), med(rr))
+            sym[(mode, label)] = (conv, bad)
+            sym_stat[(mode, label)] = (med(res), med(rr))       # 図用
             print(f"  {label:<12}{med(res):>16.5f}{med(rr):>22.2f}"
                   f"{conv:>13}/{N_S}{bad:>17}")
     figs.save_table("symmetry_lies",
