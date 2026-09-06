@@ -565,31 +565,45 @@ def section_scales() -> dict:
 
     sc = make_scene()
     truth = circ_stats(sc["angles"], sc["len_vis"])
-    print("   σ_i [px]  平均 [deg]  誤差     配向度   (σ_d = %.0f px 固定)" % SIG_D)
+    print("   σ_i [px]  平均 [deg]  誤差     配向度   Σw(重みの総和)  分子 |Σ w e^{2iθ}|")
     sig, rr, ee = [], [], []
     for s in (1.0, 2.0, 4.0, 8.0, 16.0, 24.0):
         m = measure(sc, sigma_i=s)
+        num = abs(np.sum(m["w"] * np.exp(2j * m["theta"])))
         sig.append(s)
         rr.append(m["R"])
         ee.append(abs(_ang_err(m["mean_deg"], truth["mean_deg"])))
-        print("    %5.1f     %6.2f    %+5.2f    %.4f"
-              % (s, m["mean_deg"], _ang_err(m["mean_deg"], truth["mean_deg"]), m["R"]))
-    best = int(np.argmin(ee))
-    print("\n  ★配向度は σ_i とともに単調に落ちる(%.3f -> %.3f)が、平均角度の"
-          "誤差は σ_i = %.0f px で最小(%.2f 度)。" % (rr[0], rr[-1], sig[best], ee[best]))
+        print("    %5.1f     %6.2f    %+5.2f    %.4f    %10.1f        %10.1f"
+              % (s, m["mean_deg"], _ang_err(m["mean_deg"], truth["mean_deg"]),
+                 m["R"], float(np.sum(m["w"])), float(num)))
+
+    print("\n  ★★平均角度が σ_i を変えても **1 桁目まで動かない** のは偶然では"
+          "ありません(上の最後の列)。")
+    print("     w·e^{2iθ} = −[(Jxx−Jyy) + 2i·Jxy] が恒等式で、ガウス平滑化は"
+          "総和を保つので、**分子は σ_i に依らない**。")
+    print("     一方 Σw = Σ(トレース×コヒーレンス)は平滑化で局所の打ち消しが"
+          "増えるぶん縮む。だから")
+    print("  ★★配向度は σ_i とともに **単調に上がる**(%.4f -> %.4f、真値 %.4f)"
+          " —— 揃ったのではなく **分母が縮んだだけ**。"
+          % (rr[0], rr[-1], truth["R"]))
+    print("     窓を広げると配向度が良く見える、というのは測っている量の性質で、"
+          "材料の性質ではない。")
 
     m0 = measure(sc, sigma_d=0.0)
     m1 = measure(sc, sigma_d=SIG_D)
-    print("  ★微分スケールを 0 にする(前平滑化なし)と配向度 %.4f -> %.4f。"
-          % (m1["R"], m0["R"]))
-    print("     **積分スケールを増やしても代わりにならない** —— 前者は勾配の"
-          "雑音を抑え、後者は方向を集める。役目が違う。")
+    print("  ★微分スケール σ_d を 0 にする(前平滑化なし)と配向度 %.4f -> %.4f、"
+          "平均角度 %.2f -> %.2f 度。"
+          % (m1["R"], m0["R"], m1["mean_deg"], m0["mean_deg"]))
+    print("     効き方が σ_i とは別 —— 前者は勾配の雑音を抑え、後者は方向を集める。"
+          "片方で代用できない。")
     figs.save_plot("scales",
-                   [("配向度", sig, rr), ("平均角度の誤差 [deg]", sig, ee),
-                    ("真値の配向度", sig, [truth["R"]] * len(sig))],
+                   [("配向度(推定)", sig, rr),
+                    ("真値の配向度", sig, [truth["R"]] * len(sig)),
+                    ("平均角度の誤差 [deg]", sig, ee)],
                    xlabel="積分スケール σ_i [px]", ylabel="配向度 / 誤差 [deg]",
-                   title="窓を広げるほど配向度は落ちる(平均角度には最適点)")
-    return {"sigma": sig, "R": rr, "err": ee, "sd0": m0["R"], "sd1": m1["R"]}
+                   title="窓を広げると配向度が上がる(分母が縮むだけ)")
+    return {"sigma": sig, "R": rr, "err": ee, "sd0": m0["R"], "sd1": m1["R"],
+            "truth": truth}
 
 
 def section_border() -> dict:

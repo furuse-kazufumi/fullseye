@@ -402,8 +402,15 @@ def main() -> bool:
                    worst["streak_fbp"] / best["streak_fbp"] > 5.0,
                    f"{worst['streak_fbp'] / best['streak_fbp']:.1f}x"))
 
-    checks.append(("検出器を倍にすると質量欠損が 2 倍以上改善する",
-                   abs(m_c) > 2.0 * abs(m_f), f"{m_c:+.4%} -> {m_f:+.4%}"))
+    # ★2026-09-06 に塞がった。以前は「検出器を倍にすると質量欠損が 2 倍以上
+    #   改善する」= 壊れていることを固定していた。いまは 2 つを固定する:
+    #   (1) 質量がそもそも保存されている (2) 検出器の数では動かない
+    #   (n_detectors は検出器の**幅**であって標本化の細かさではないので、
+    #    対象が収まっていれば増やしたぶんは空のビンが増えるだけ)。
+    checks.append(("FBP が質量を 0.1 % 以内で保存する",
+                   abs(m_c) < 1e-3, f"{m_c:+.4%}"))
+    checks.append(("検出器の数では質量が動かない(幅の引数だから)",
+                   abs(m_c - m_f) < 1e-9, f"{m_c:+.6%} vs {m_f:+.6%}"))
 
     ok = True
     for name, passed, detail in checks:
