@@ -430,26 +430,35 @@ def main():
 
     # ------------------------------------------------------------------ #
     print("\n=== 4. ★崖 (a) 有彩色が画面を占める割合 ===")
-    print("  画面の左から f の割合を 1 枚の飽和した赤で塗り潰す(残りはチャート)。")
+    print("  画面の**右から** f の割合を 1 枚の飽和した赤で塗り潰す(残りはチャート)。")
+    print("  右から塗るのは、左上の白パッチを残して「色の偏り」の軸だけを動かすため。")
+    print("  最右列は左から塗った場合の白パッチ法 —— 軸が混ざるとどうなるかの対照。")
     print("  数字は 11 光源の**中央値** [度]。")
     cols = ("何もしない", "灰色世界 (p=1)", "白パッチ (p=inf)", "SoG p=4",
             "SoG p=16", "灰色エッジ p=1")
-    print(f"  {'f':>6}" + "".join(f"{c:>18}" for c in cols))
+    print(f"  {'f':>6}" + "".join(f"{c:>18}" for c in cols)
+          + f"{'白パッチ(左から)':>20}")
     bias_rows = {}
     for frac in (0.0, 0.1, 0.2, 0.3, 0.45, 0.6, 0.75, 0.9):
         acc = {c: [] for c in cols}
+        acc_left = []
         for _, spd in ILLUMINANTS:
             img = scene(spd, bias_frac=frac)
             e = true_illuminant(spd)
             for c in cols:
                 acc[c].append(angular_error(dict(METHODS)[c](img), e))
+            acc_left.append(angular_error(
+                max_rgb(scene(spd, bias_frac=frac, bias_side="left")), e))
         bias_rows[frac] = {c: float(np.median(acc[c])) for c in cols}
-        print(f"  {frac:>6.2f}" + "".join(f"{bias_rows[frac][c]:>18.2f}" for c in cols))
-    print("  → 灰色世界は f=0.3 で「何もしない」に追いつかれ、f>=0.45 で**負ける**。")
-    print("     白パッチ法は f=0.9 まで動かない —— 赤で塗り潰しても、まだどこかに")
-    print("     明るい無彩パッチが残っているから。崖の位置は手法ごとに別物。")
-    print("     灰色エッジは平坦な塗り潰しの寄与がほぼ 0 なので一番粘る"
-          "(縁だけが効く)。")
+        bias_rows[frac]["白パッチ(左)"] = float(np.median(acc_left))
+        print(f"  {frac:>6.2f}" + "".join(f"{bias_rows[frac][c]:>18.2f}" for c in cols)
+              + f"{bias_rows[frac]['白パッチ(左)']:>20.2f}")
+    print("  → 灰色世界の崖は f=0.2 と 0.3 の間(そこで「何もしない」に負ける)。")
+    print("     白パッチ法は f=0.75 まで無傷 —— 白が写っている限り、画面の 3/4 が")
+    print("     真っ赤でも動じない。**崖の位置も、崖の有無も、手法ごとに別物。**")
+    print("     最右列(左から塗る)は f=0.2 で既に崩れる。塗り潰しが白パッチを")
+    print("     隠すからで、これは「色の偏り」ではなく「白の消失」の効果。")
+    print("     **2 つの軸を 1 つの実験で動かすと、原因を取り違える。**")
 
     # ------------------------------------------------------------------ #
     print("\n=== 5. ★崖 (b) 白パッチを外す ===")
