@@ -436,12 +436,15 @@ def test_the_fuzzer_knows_the_new_type_and_can_seed_it():
     import chain_fuzz as cf
 
     assert "labels2d" in cf.TYPE_CHECKS
-    seed = cf._seed_makers()["labels2d"](np.random.default_rng(0)) \
-        if hasattr(cf, "_seed_makers") else None
-    if seed is None:                       # 種の表の作りが変わったら名前で探す
-        pytest.skip("chain_fuzz の種の作りが変わった(述語だけ確認済み)")
+    seed = cf.make_generators()["labels2d"](np.random.default_rng(0))
     assert cf.TYPE_CHECKS["labels2d"](seed)
     assert int(seed.max()) >= 3, "種の物体が 3 個未満(形の違いを測れない)"
+    # ★物体が 3 つとも別の形であること。同じ形を並べた種だと circularity も
+    #   holes も全部同じ値になり、「どのノブでも同じ数を返す op」を見逃す。
+    f = B.blob_features(seed)
+    assert len(set(np.round(f["circularity"], 2).tolist())) == 3, f["circularity"]
+    assert int(f["holes"].max()) >= 1, "穴のある物体が種に無い"
+    assert float(f["eccentricity"].max()) > 0.9, "細長い物体が種に無い"
 
 
 def test_the_predicate_does_not_accept_a_boolean_mask():
