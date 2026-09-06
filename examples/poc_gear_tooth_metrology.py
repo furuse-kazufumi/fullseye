@@ -79,6 +79,7 @@ FG, BG = 0.78, 0.16      # 歯車と背景の明るさ
 PSF_SIGMA = 1.2          # 撮像系のぼけ [px]
 NOISE = 0.004            # 撮像ノイズ(1σ)
 TH0 = 0.0                # 1 番目の歯の中心角 [rad]
+ECC_DEG = 25.0           # 偏心の向き [deg](真値)
 
 # 派生量(すべて閉形式)
 R_PITCH = MODULE_MM * Z_TEETH / 2.0                  # ピッチ円半径 24.000 mm
@@ -132,7 +133,7 @@ def duty_at(r_mm: float) -> float:
 # --------------------------------------------------------------------------- #
 # 2. 場面を作る —— 面積被覆で塗ってからぼかす                                   #
 # --------------------------------------------------------------------------- #
-def make_scene(ecc_mm: float = 0.0, ecc_deg: float = 25.0, missing: tuple = (),
+def make_scene(ecc_mm: float = 0.0, ecc_deg: float = ECC_DEG, missing: tuple = (),
                pitch_off_mm: float = 0.0, pitch_off_tooth: int = 6,
                illum: float = 0.0, seed: int = 7) -> dict:
     """歯車 1 個の観測画像と真値を返す。
@@ -581,7 +582,7 @@ def section_missing_tooth() -> dict:
           % (e5_ok, 100 * (e5_ok - 0.05) / 0.05, e5_miss,
              100 * (e5_miss - 0.05) / 0.05, e5_pt, 100 * (e5_pt - 0.05) / 0.05))
     print("     方向も出る: 推定 %.1f deg(真値 %.1f deg)。"
-          % (rows[3][6], make_scene.__defaults__[1]))
+          % (rows[3][6], ECC_DEG))
     print("  対照群(中央値テンプレート): %.4f mm (%+.1f %%)。こちらは **効きが悪い** "
           "—— 偏心は歯を角度方向にも動かすので、\n     急な歯面では"
           "(dR/dθ)·(e/r) ≈ %.2f mm の残差が立ち、欠けの穴と同じ大きさになって"
