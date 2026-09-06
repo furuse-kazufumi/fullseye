@@ -394,6 +394,7 @@ def main():
     print(f"  {'SNR [dB]':>9}{'観測':>9}{'アンシャープ':>13}{'核既知':>9}{'取り分':>8}"
           f"{'最良 nsr':>11}{'理論 nsr':>11}")
     gains = {}
+    snr_curve = []                       # 図用。無雑音(x 軸に置けない)は入れない
     for snr in (math.inf, 60.0, 40.0, 30.0, 20.0):
         obs, sd = add_noise(blurred, snr, np.random.default_rng(SEED + 1))
         p_null = psnr(gt, obs)
@@ -401,6 +402,8 @@ def main():
         p_win, nsr, _ = wiener_best(obs, k_ref, gt)
         theory = (sd ** 2) / float(np.var(gt)) if sd > 0 else 0.0
         gains[snr] = p_win - max(p_null, p_uns)
+        if np.isfinite(snr):
+            snr_curve.append((snr, p_null, p_uns, p_win))
         lab = "無雑音" if not np.isfinite(snr) else f"{snr:.0f}"
         print(f"  {lab:>9}{p_null:>9.2f}{p_uns:>13.2f}{p_win:>9.2f}"
               f"{gains[snr]:>8.2f}{nsr:>11.2e}{theory:>11.2e}")
