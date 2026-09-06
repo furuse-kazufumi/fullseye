@@ -572,8 +572,11 @@ def act_optics(nf):
     for d in dz:
         sysd = copy.deepcopy(base)
         sysd["image_mm"] = float(bfl + d)
-        im = fs.render_through_lens(target, sysd, pixel_pitch_um=5.5, field_of_view=3.0,
-                                    zones=3)
+        # 画角と画素ピッチは像がセンサを埋めるよう合わせてある: EFL 96.6 mm の
+        # ダブレットで半画角 1.85° の像高は 3.1 mm、224 px x 20 µm のセンサの
+        # 半対角 3.17 mm とほぼ等しい(5.5 µm のままだと像が中央に縮む)。
+        im = fs.render_through_lens(target, sysd, pixel_pitch_um=20.0,
+                                    field_of_view=1.85, zones=3)
         imgs.append(im)
         contrast.append(float(fs.stat_describe(im.ravel())["std"]))
     vmax = max(float(a.max()) for a in imgs)             # 全フレーム共通の露出

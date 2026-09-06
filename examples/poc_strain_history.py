@@ -574,14 +574,9 @@ def section7_figures(frames, out, cums, dirs, tru, rate_rows, rate_true,
                    signed=[False, False, True],
                    caption="粒子を動かしてから描き直しているので真値が厳密。"
                            "差の像が中心から外へ向かって強くなるのが一様な伸び。")
-    figs.save_plot("history",
-                   [("真値", TIMES, 1e6 * tru),
-                    ("累積(ゼロ点)", TIMES, 1e6 * cums.mean(axis=0)),
-                    ("直接", TIMES, 1e6 * dirs.mean(axis=0))],
-                   xlabel="t [コマ]", ylabel="真ひずみ [µε]",
-                   title="クリープのひずみ履歴 E(t) = A((t+2)^0.4 - 2^0.4)",
-                   caption="実現 6 通りの平均。目では区別が付かないので、"
-                           "次の図で誤差だけを描く。")
+    # ★履歴そのものを重ねた図は作らない —— 真値・累積・直接が目では
+    #   区別できず(誤差は真値の 0.1〜3 %)、「よく合っています」に見えるだけの
+    #   図になる。**測ったものが見える図だけを出す**。
     figs.save_plot("errors",
                    [("累積 偏り", TIMES, 1e6 * out["cum"]["bias"]),
                     ("累積 散らばり", TIMES, 1e6 * out["cum"]["scatter"]),

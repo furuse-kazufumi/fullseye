@@ -480,8 +480,9 @@ def section_spurs(tree: dict, z: dict) -> dict:
 
     # --- 3) 刈るしきい値は解像度に依存する ------------------------------- #
     print("\n" + "=" * 78)
-    print("3) ★★ヒゲを刈るしきい値 —— 原寸では両立できる。半分にすると破綻する")
+    print("3) ★★刈るしきい値 —— 解像度を下げると **失敗の種類が入れ替わる**")
     print("=" * 78)
+    print("  ざらつき 0.8 の同じ木を、原寸と半分の解像度で撮って比べる。")
     out = {}
     for scale in (1.0, 0.5):
         tr = scale_tree(tree, scale) if scale != 1.0 else tree
