@@ -1,0 +1,141 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">Dieser Leitfaden liegt nur auf Japanisch vor (es ist von Menschen geschriebene Prosa, hier wird nichts maschinell ersetzt).</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">断面形状の計測(翼型・羽根・押し出し材) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p><b>閉じた輪郭を「弦」で正規化して、その断面の性質を数字にする</b>層です。入力は <code style="color:#22d3bf">(N, 2)</code> の <code style="color:#22d3bf">(x, y)</code> 点列(閉輪郭)、出力は厚み分布・キャンバー線・前縁半径・後縁隙間、そして<b>設計形状との偏差</b>です。</p>
+<p>翼型が典型ですが、原理は「細長い閉断面を弦に沿って測る」だけなので、送風ファンの羽根、羽根車、タービン翼、押し出し材、ガスケット、板金の断面にそのまま使えます。</p>
+<p>12 op / 4 カテゴリ(numpy のみ。台帳は <code style="color:#22d3bf">opsprofile.py</code>、実体は <code style="color:#22d3bf">profileops.py</code>):</p>
+<p style="margin:2px 0 2px 12px">• <b>synth(2)</b> — <code style="color:#22d3bf">profile_synth_naca4</code> / <code style="color:#22d3bf">profile_perturb</code>: 閉形式の翼型と、<b>既知の量の欠陥</b>。この族の真値の供給源。</p>
+<p style="margin:2px 0 2px 12px">• <b>frame(3)</b> — <code style="color:#22d3bf">profile_chord_frame</code> / <code style="color:#22d3bf">profile_normalise</code> / <code style="color:#22d3bf">profile_resample</code>: 弦の枠、正規化、等弧長の取り直し。</p>
+<p style="margin:2px 0 2px 12px">• <b>measure(5)</b> — <code style="color:#22d3bf">profile_sides</code> / <code style="color:#22d3bf">profile_thickness</code> / <code style="color:#22d3bf">profile_camber</code> / <code style="color:#22d3bf">profile_leading_edge_radius</code> / <code style="color:#22d3bf">profile_trailing_edge_gap</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>compare(2)</b> — <code style="color:#22d3bf">profile_align</code> / <code style="color:#22d3bf">profile_deviation</code>: 位置合わせと符号つき偏差。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">なぜ足したか —— 在庫を数えた結果</h3>
+<p>2-D レジストリには輪郭を扱う op が <b>97 個</b>ありました(<code style="color:#22d3bf">*_xld</code> の生成・選択・平滑化・モーメント・当てはめ、<code style="color:#22d3bf">convex_hull</code>、<code style="color:#22d3bf">distance_transform</code> …)。しかし:</p>
+<p>| やりたいこと | 既存で近いもの | なぜ代わりにならないか |</p>
+<p>|---|---|---|</p>
+<p>| 弦に沿った厚み分布 | <code style="color:#22d3bf">get_region_thickness</code> | 領域の太さで、弦方向の分布ではない |</p>
+<p>| キャンバー線 | —— | 無い |</p>
+<p>| 前縁半径 | <code style="color:#22d3bf">hx_fit_circle_contour</code> | 円は当てられるが「どこが前縁か」を決める層が無い |</p>
+<p>| 輪郭同士の符号つき偏差 | <code style="color:#22d3bf">hx_dist_ellipse_contour</code> / <code style="color:#22d3bf">distance_transform</code> | 前者は楕円限定、後者はラスタ |</p>
+<p>つまり「形はいくらでも作れて選べるのに、<b>断面として測る</b>層が空いていた」。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">最小の例(そのまま動きます)</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+
+import profileops
+
+# 1) 設計形状は閉形式から(真値が計算で出る)
+ref = profileops.profile_synth_naca4(&quot;2412&quot;, n=801)
+
+# 2) 既知の欠陥を注入して「測定品」を作る —— 検出力を測るために要る
+measured = profileops.profile_perturb(ref, &quot;thicken&quot;, amount=0.002)
+
+# 3) 断面としての量
+t = profileops.profile_thickness(ref, 401)          # (x, 厚み)
+cam = profileops.profile_camber(ref, 401)           # (x, キャンバー)
+r_le = profileops.profile_leading_edge_radius(ref)  # 前縁半径
+gap = profileops.profile_trailing_edge_gap(ref)     # 後縁の開き
+
+assert abs(np.max(t[:, 1]) - 0.12) &lt; 5e-4                  # 下 2 桁 = 最大厚み
+assert abs(r_le - 1.1019 * 0.12 ** 2) &lt; 0.05 * r_le        # NACA の閉形式
+assert gap &gt; 1e-3                                          # 既定係数は後縁が開く
+
+# 4) 設計形状との偏差 —— 注入した 0.002 がそのまま戻るか
+dev = profileops.profile_deviation(measured, ref, n=400)
+assert abs(dev[&quot;mean&quot;] - 0.002) &lt; 0.0002
+
+# 5) 3 度回して 0.7 ずらしても、欠陥は消えない
+a = np.radians(3.0)
+rot = np.array([[np.cos(a), -np.sin(a)], [np.sin(a), np.cos(a)]])
+moved = measured @ rot.T + np.array([0.7, -0.3])
+assert abs(profileops.profile_deviation(moved, ref, n=400)[&quot;mean&quot;] - 0.002) &lt; 0.0002
+
+# 6) 同じ形どうしなら偏差はほぼ 0(検査の床)
+assert profileops.profile_deviation(ref, ref, n=400)[&quot;rms&quot;] &lt; 1e-5</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使う順序</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TD
+    N[&quot;profile_synth_naca4&lt;br/&gt;閉形式の設計形状&quot;]
+    M[&quot;測定した輪郭&lt;br/&gt;(スキャン・撮影・CAD)&quot;]
+    N --&gt; PB[&quot;profile_perturb&lt;br/&gt;既知の欠陥を注入&quot;]
+    PB --&gt; M
+    M --&gt; FR[&quot;profile_chord_frame&lt;br/&gt;弦・前縁・後縁&quot;]
+    FR --&gt; NO[&quot;profile_normalise&lt;br/&gt;弦長 1・前縁が原点&quot;]
+    NO --&gt; SI[&quot;profile_sides&lt;br/&gt;上面 / 下面&quot;]
+    SI --&gt; TH[&quot;profile_thickness&quot;]
+    SI --&gt; CA[&quot;profile_camber&quot;]
+    NO --&gt; LE[&quot;profile_leading_edge_radius&quot;]
+    SI --&gt; TE[&quot;profile_trailing_edge_gap&quot;]
+    M --&gt; AL[&quot;profile_align&lt;br/&gt;chord / rigid / none&quot;]
+    N --&gt; AL
+    AL --&gt; DV[&quot;profile_deviation&lt;br/&gt;符号つき法線偏差&quot;]
+    N --&gt; DV
+    DV --&gt; OUT[&quot;合否・工程管理&lt;br/&gt;ロット別ヒートマップ&quot;]
+    TH --&gt; OUT
+    CA --&gt; OUT
+    LE --&gt; OUT</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">閉形式との一致(NACA 4 桁)</h3>
+<p>| 量 | 閉形式 | 実測(NACA 2412、点数 801) |</p>
+<p>|---|---|---|</p>
+<p>| 最大厚み | 下 2 桁 / 100 = 0.12 | 0.12006(x = 0.300) |</p>
+<p>| 最大キャンバー | 1 桁目 / 100 = 0.02 | 0.01882(x = 0.415)★定義差 |</p>
+<p>| 前縁半径 | <code style="color:#22d3bf">1.1019 t²</code> = 0.01587 | 0.01594(<code style="color:#22d3bf">frac=0.001</code>) |</p>
+<p>| 後縁隙間 | 既定係数なら開く | 0.00390 |</p>
+<p><b>公開表とも突き合わせてあります</b> —— UIUC の <code style="color:#22d3bf">naca2412.dat</code> の上面 15 点と閉形式の差は<b>最大 1.0e-4 翼弦</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">★ 対称翼で 0 になるか —— この族で一番効いた検査</h3>
+<p>対称翼(NACA 0012 など)のキャンバーは定義上 <b>0</b> です。ここが 0 にならなければ、どこかで規約が破れています。</p>
+<p>実際、最初の実装は <b>0.001257</b> を返しました。これは後縁の<b>半隙間</b>そのもの。原因は「弦 = 最も離れた 2 点」という素朴な定義で、<b>後縁が開いていると角の片方を拾って弦が 0.07 度傾く</b>ことでした。有翼(2412)だけを見ていたら「キャンバーが 7 % 低い」で片づけていたはずです。</p>
+<p>いまは後縁を<b>隙間の中点</b>に取り直してから前縁を決め直すので、対称翼で 0.00001 になります。</p>
+<p>もう 1 つ、前縁と後縁の区別も<b>直観が逆</b>でした。「前縁は丸い = 曲率が大きい」と考えて 3 点円の曲率で判定したところ、上下面がほぼ接する<b>後縁のほうが曲率が大きく出て</b>、前縁と後縁が入れ替わりました。正しい弁別は「少し入ったところが太いほう」です。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">前縁半径は当てはめ窓で変わる</h3>
+<p>鼻先は円ですが、少し離れると円ではありません。窓を広げると<b>系統的に過大</b>になります(NACA の閉形式 <code style="color:#22d3bf">1.1019 t²</code> と突き合わせた実測、点数 4001):</p>
+<p>| <code style="color:#22d3bf">frac</code> | NACA 0012 | NACA 2412 | NACA 0021 | NACA 0008 |</p>
+<p>|---|---:|---:|---:|---:|</p>
+<p>| 閉形式 | 0.01587 | 0.01587 | 0.04859 | 0.00705 |</p>
+<p>| <b>0.001</b>(既定) | 0.01590 | 0.01594 | 0.04780 | 0.00730 |</p>
+<p>| 0.005 | 0.01708 | 0.01716 | 0.04801 | 0.00870 |</p>
+<p>| 0.01 | 0.01872 | 0.01880 | 0.04897 | 0.01042 |</p>
+<p>| 0.03 | 0.02517 | 0.02526 | 0.05412 | 0.01688 |</p>
+<p>既定を 0.03 にしていたころは閉形式の <b>1.6 倍</b>を返していました(docstring には「1 % 以内」と書いてありましたが、それは確かめる前の推測でした)。厚い翼ほど鈍いので窓の影響が小さく、薄い翼ほど敏感です。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">★ 位置合わせが欠陥を吸収する(この族でいちばん危ない罠)</h3>
+<p>一様な厚み増(0.002)は、どの合わせ方でも平均 0.00199 として戻ります。3 度回して並進を掛けても同じ。ここは安心してよい。</p>
+<p><b>問題は、欠陥が合わせの基準そのものに乗っているとき</b>です。前縁を 0.003 削った形を比べた実測:</p>
+<p>| 合わせ方 | 最悪の偏差 | その位置 | 前縁側の最悪 |</p>
+<p>|---|---:|---|---:|</p>
+<p>| <code style="color:#22d3bf">&quot;chord&quot;</code>(既定) | -0.00283 | <b>x = 1.000(後縁!)</b> | -0.00096 |</p>
+<p>| <code style="color:#22d3bf">&quot;rigid&quot;</code> | -0.00166 | x = 0.009 | -0.00166 |</p>
+<p>| <code style="color:#22d3bf">&quot;none&quot;</code> | -0.00309 | x = 0.001 | -0.00309 |</p>
+<p>前縁を削ると前縁の位置そのものが動くので、前縁と後縁を合わせる <code style="color:#22d3bf">&quot;chord&quot;</code> は<b>損失を反対の端へ移し</b>、前縁での落ち込みを 3 分の 1 に見せます。<code style="color:#22d3bf">&quot;rigid&quot;</code>(全点の最小二乗)は場所は正しく出しますが、ずれを全体へ散らして半分に見せます。**同じ座標系にある(<code style="color:#22d3bf">&quot;none&quot;</code>)ときだけ、注入した 0.003 がそのまま出ます**。</p>
+<p>&gt; 欠陥が基準に乗る場所(前縁・後縁・取り付け面)を検査するときは、合わせの自由度をその場所から<b>外して</b>取るか、測定側の座標系を先に決めて <code style="color:#22d3bf">&quot;none&quot;</code> で比べること。</p>
+<p><b>相似(スケール推定)は提供していません</b> —— 大きさの誤差そのものを吸収するからです。<code style="color:#22d3bf">profile_align</code> は常に <code style="color:#22d3bf">scale = 1.0</code> を返します(推定していないことの明示)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">検査の床 —— 検出したい量と同じ桁なら意味が無い</h3>
+<p>同じ形を自分自身と比べたときの偏差が、検出したい欠陥と同じ桁なら、その検査は何も見つけません。</p>
+<p>最初の実装は <b>rms 6.05e-4</b> でした(狙う欠陥 1e-3 と同じ桁)。原因は「合わせる前に取り方が揃っていなかった」こと —— 生の輪郭と取り直した輪郭では弦の枠(とくに後縁の中点)がわずかに違い、<b>同一の形でも 0.02 度の回転と 7.8e-4 の並進</b>が入っていました。比べる前に同じ取り方で取り直すようにして、床は <b>1.13e-6</b> になりました(535 倍)。</p>
+<p>その結果、注入した欠陥はここまで測り返せます:</p>
+<p>| 注入 | 量 | 測定 |</p>
+<p>|---|---:|---|</p>
+<p>| 一様な厚み増 | 0.002 | 平均 +0.001993 |</p>
+<p>| 同上 | 0.0005 | 平均 +0.000497 |</p>
+<p>| 同上 | <b>0.0001</b> | 平均 +0.000099 |</p>
+<p>| 前縁侵食 | 0.003 | 最小 -0.00309(<code style="color:#22d3bf">none</code>) |</p>
+<p>| うねり | 0.001 | ±0.00104(平均は打ち消し) |</p>
+<p>| ねじれ | 0.5 度 | ±0.0018(平均は打ち消し) |</p>
+<p>0.0001 翼弦は、弦 1 m の羽根なら <b>0.1 mm</b> です。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">取り直しは前縁の分解能を落とす</h3>
+<p><code style="color:#22d3bf">profile_resample</code> は等弧長です。NACA の生成は余弦分布(鼻先が密)なので、等弧長に直すと<b>前縁の分解能が落ちます</b>:</p>
+<p>| 取り直しの点数 | 元形状からの rms |</p>
+<p>|---:|---:|</p>
+<p>| 150 | 5.4e-4 |</p>
+<p>| 300 | 4.1e-4 |</p>
+<p>| 600 | 1.7e-4 |</p>
+<p>| 1200 | 1.1e-4 |</p>
+<p>| 2400 | 2.0e-5 |</p>
+<p>「取り直しても形は同じ」ではありません。比べる 2 本は<b>同じ点数で</b>取り直すこと(<code style="color:#22d3bf">profile_deviation</code> はそうしています)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型を 1 つも作らなかった理由</h3>
+<p>輪郭は既存の <code style="color:#22d3bf">pairs</code>(<code style="color:#22d3bf">(N, 2)</code> の <code style="color:#22d3bf">(x, y)</code>)です。この repo で <code style="color:#22d3bf">pairs</code> は「1 価の関数データ」(spectrum / MTF / ray_fan)と「多角形」(<code style="color:#22d3bf">filled_polygon</code> が食う)の両方に使われており、後者と同じ立場を採りました。</p>
+<p><b>混ぜたら嘘になるか</b>を確かめた結果:</p>
+<p style="margin:2px 0 2px 12px">• 当初は「1 価の関数を渡すと下面が取れないので拒否される」と考えていました。<b>これは嘘でした</b> —— 点列は閉じれば多角形になり、厚みも面積も出ます(指数関数の曲線が素通りしました)。</p>
+<p style="margin:2px 0 2px 12px">• 実際に効く判定は「<b>もともと閉じているか</b>」。端点間の隙間を形の広がりで割って見ます。NACA の開いた後縁は 0.25 %、閉じ忘れた曲線は 100 % 前後。閾値 20 % で分かれます。</p>
+<p>型を分けると、97 個ある既存の輪郭 op(<code style="color:#22d3bf">gen_region_contour_xld</code> / <code style="color:#22d3bf">smooth_contours</code> / <code style="color:#22d3bf">convex_hull</code> 系 / <code style="color:#22d3bf">filled_polygon</code>)との接続が切れます。そこを切る損のほうが大きい、という判断です。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">次にどこへ繋がるか</h3>
+<p style="margin:2px 0 2px 12px">• <b>実データ</b> —— UIUC 翼型データベース(1,625 形状、認証不要)。ファイル形式が <b>Selig と Lednicer の 2 系統</b>あり、見分けを誤ると翼型が砂時計状に交差した多角形になります(RAD コーパス <code style="color:#22d3bf">fullseye_poc_datasets_corpus_v2</code> のノート 031 に判別法)。</p>
+<p style="margin:2px 0 2px 12px">• <b>3D へ</b> —— 断面を積めば羽根になります。<code style="color:#22d3bf">measure3d</code> の OBB / 体積、SDF、点群位置合わせと繋がります。</p>
+<p style="margin:2px 0 2px 12px">• <b>流れへ</b> —— 同じ翼型の流れ場は <code style="color:#22d3bf">piv</code> 族(ノート 062 の SPLEEN 翼列 PIV は実データで CC BY 4.0)。<b>形と性能を同じ土俵に載せられる</b>のがこの 2 族を並べた狙いです。</p>

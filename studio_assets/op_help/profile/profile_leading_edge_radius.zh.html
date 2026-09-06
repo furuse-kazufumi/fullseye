@@ -1,0 +1,40 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">profile_leading_edge_radius — PROFILE <code style="color:#22d3bf">measure</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import profileops; profileops.profile_leading_edge_radius(contour, frac=0.001, n_fit=24)</code>(或 <code style="color:#22d3bf">opsprofile.get(&quot;profile_leading_edge_radius&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>前縁半径(翼弦比)。前縁近傍の点に円を当てはめる。</p>
+<p>`<code style="color:#22d3bf">frac</code>` は前縁から弦方向にどこまでを「前縁付近」とみなすか。**この値で</p>
+<p>答えが変わる**。鼻先は円だが、少し離れると円ではないので、窓を広げると</p>
+<p>系統的に<b>過大</b>になる。NACA 4 桁の閉形式 `<code style="color:#22d3bf">1.1019 * t^2</code>` と突き合わせた</p>
+<p>実測(点数 4001 で生成):</p>
+<p>==========  ==========  ==========  ==========  ==========</p>
+<p>frac        NACA 0012   NACA 2412   NACA 0021   NACA 0008</p>
+<p>==========  ==========  ==========  ==========  ==========</p>
+<p>閉形式      0.01587     0.01587     0.04859     0.00705</p>
+<p>0.001       0.01590     0.01594     0.04780     0.00730</p>
+<p>0.005       0.01708     0.01716     0.04801     0.00870</p>
+<p>0.01        0.01872     0.01880     0.04897     0.01042</p>
+<p>0.03        0.02517     0.02526     0.05412     0.01688</p>
+<p>==========  ==========  ==========  ==========  ==========</p>
+<p>★ 既定は <b>0.001</b>。最初 0.03 を既定にしていて、閉形式の <b>1.6 倍</b>の値を</p>
+<p>返していた(「1 % 以内」と docstring に書いたのは確かめる前の推測だった)。</p>
+<p>厚い翼(0021)ほど鈍いので窓の影響が小さく、薄い翼(0008)ほど敏感。</p>
+<p>実データのように点が疎な輪郭では、この窓に点が 5 つ入らないことがある ——</p>
+<p>そのときは自動で等弧長に取り直してから当てはめる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:profile_shape_inspection">profile_shape_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/profile_shape_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">measurement</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">measure</code>)</h3>
+<p><a style="color:#22d3bf" href="opprofile:profile_sides">profile_sides</a> · <a style="color:#22d3bf" href="opprofile:profile_thickness">profile_thickness</a> · <a style="color:#22d3bf" href="opprofile:profile_camber">profile_camber</a> · <a style="color:#22d3bf" href="opprofile:profile_trailing_edge_gap">profile_trailing_edge_gap</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: profileops.py — PROFILE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

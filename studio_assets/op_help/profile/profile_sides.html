@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">profile_sides — PROFILE <code style="color:#22d3bf">measure</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import profileops; profileops.profile_sides(contour, n=101, normalise=True)</code> (または <code style="color:#22d3bf">opsprofile.get(&quot;profile_sides&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>上面・下面を弦方向の関数として取り出す。返りは dict。</p>
+<p>弦を `<code style="color:#22d3bf">n</code>` 等分し、各位置で輪郭と交わる上下の点を線形補間で拾う。</p>
+<p><b>開いた曲線はここで拒否される</b> —— 1 価の関数(MTF 曲線のような)を渡すと</p>
+<p>下面が取れないので、「これは閉じた断面ではない」と明示して落とす。型ではなく</p>
+<p>検証で守っている(`<code style="color:#22d3bf">pairs</code>` は関数データにも閉輪郭にも使われる語彙なので、</p>
+<p>型を分けると既存の輪郭生成 op から繋がらなくなる)。</p>
+<p>Returns:</p>
+<p>dict: `<code style="color:#22d3bf">x</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">(n,)</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">upper</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">lower</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">(n,)</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">normalised</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">measure</code>)</h3>
+<p><a style="color:#22d3bf" href="opprofile:profile_thickness">profile_thickness</a> · <a style="color:#22d3bf" href="opprofile:profile_camber">profile_camber</a> · <a style="color:#22d3bf" href="opprofile:profile_leading_edge_radius">profile_leading_edge_radius</a> · <a style="color:#22d3bf" href="opprofile:profile_trailing_edge_gap">profile_trailing_edge_gap</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: profileops.py — PROFILE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">profile_chord_frame — PROFILE <code style="color:#22d3bf">frame</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import profileops; profileops.profile_chord_frame(contour)</code>(或 <code style="color:#22d3bf">opsprofile.get(&quot;profile_chord_frame&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>弦(最も離れた 2 点)を見つける。返りは dict。</p>
+<p>翼型の慣行どおり、<b>最も離れた 2 点</b>を前縁・後縁とみなす。どちらが前縁かは</p>
+<p><b>その点の近傍の曲率が大きいほう</b>で決める(前縁は丸く、後縁は尖る)。</p>
+<p>Returns:</p>
+<p>dict: `<code style="color:#22d3bf">le</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">te</code><code style="color:#22d3bf">(座標)、</code><code style="color:#22d3bf">le_index</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">te_index</code>`、</p>
+<p>`<code style="color:#22d3bf">chord</code><code style="color:#22d3bf">(長さ)、</code><code style="color:#22d3bf">angle_deg</code>`(弦の向き)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:profile_shape_inspection">profile_shape_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/profile_shape_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">frame</code>)</h3>
+<p><a style="color:#22d3bf" href="opprofile:profile_normalise">profile_normalise</a> · <a style="color:#22d3bf" href="opprofile:profile_resample">profile_resample</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: profileops.py — PROFILE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

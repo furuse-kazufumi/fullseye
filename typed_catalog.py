@@ -471,7 +471,8 @@ def _registry_adapters():
     d.update(opscadmap.RESULT_ADAPTERS)          # 空(意図的): 素の返りが宣言型
     for _mod in ("opstomography", "opsvolcolor", "opsreprconv", "opsannotate",
                  "opsgfx2d", "opsimgmetrics", "opscolortransport",
-                 "opsimgforensics", "opsastrostack", "opsdem", "opspiv"):
+                 "opsimgforensics", "opsastrostack", "opsdem", "opspiv",
+                 "opsprofile"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
         except Exception as _e:                       # 台帳が無い環境でも動く
@@ -624,6 +625,10 @@ def catalog():
         # 2026-09-03: ストリーミング動画処理。入力は既存の `video` 種
         # (_motion_clip = (32,32,32) の並進格子)をそのまま使う
         ("opsvideostream", "OPSVIDEOSTREAM", "videostream"),
+        # 2026-09-06: 断面形状の計測。入力は既存の `pairs`。族の入口
+        # (profile_synth_naca4)が閉形式の翼型をプールへ入れるので、
+        # 関数データしか無いプールでも実際に走る。
+        ("opsprofile", "OPSPROFILE", "profile"),
         # 2026-09-06: PIV。**画像対から密な変位を出す op がこの repo に 1 つも
         # 無かった**(scene_flow_lk は 3-D 体積用、estimate_flow は点群用)。
         # 新語 `flow2d` を 1 つだけ足す —— flow_dense の述語は

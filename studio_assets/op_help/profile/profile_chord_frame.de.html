@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">profile_chord_frame — PROFILE <code style="color:#22d3bf">frame</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import profileops; profileops.profile_chord_frame(contour)</code> (oder <code style="color:#22d3bf">opsprofile.get(&quot;profile_chord_frame&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>弦(最も離れた 2 点)を見つける。返りは dict。</p>
+<p>翼型の慣行どおり、<b>最も離れた 2 点</b>を前縁・後縁とみなす。どちらが前縁かは</p>
+<p><b>その点の近傍の曲率が大きいほう</b>で決める(前縁は丸く、後縁は尖る)。</p>
+<p>Returns:</p>
+<p>dict: `<code style="color:#22d3bf">le</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">te</code><code style="color:#22d3bf">(座標)、</code><code style="color:#22d3bf">le_index</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">te_index</code>`、</p>
+<p>`<code style="color:#22d3bf">chord</code><code style="color:#22d3bf">(長さ)、</code><code style="color:#22d3bf">angle_deg</code>`(弦の向き)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">Leitfaden zur Familie profile_metrology</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:profile_shape_inspection">profile_shape_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/profile_shape_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">frame</code>)</h3>
+<p><a style="color:#22d3bf" href="opprofile:profile_normalise">profile_normalise</a> · <a style="color:#22d3bf" href="opprofile:profile_resample">profile_resample</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: profileops.py — PROFILE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

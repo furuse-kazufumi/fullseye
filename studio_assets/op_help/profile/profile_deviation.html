@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">profile_deviation — PROFILE <code style="color:#22d3bf">compare</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pairs × pairs</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import profileops; profileops.profile_deviation(measured, reference, n=200, align=&#x27;chord&#x27;, oversample=8)</code> (または <code style="color:#22d3bf">opsprofile.get(&quot;profile_deviation&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>設計形状からの<b>符号つき法線方向のずれ</b>。返りは dict。</p>
+<p>正が「太い側(外向き)」、負が「痩せた側」。設計輪郭の外向き法線を基準にする。</p>
+<p>Args:</p>
+<p>measured / reference: `<code style="color:#22d3bf">(N, 2)</code>` の閉輪郭。</p>
+<p>n: 比較に使う等弧長の点数(両方を取り直す)。</p>
+<p>align: :data:<code style="color:#22d3bf">ALIGN_MODES</code>。</p>
+<p>oversample: 相手側を基準の何倍の密度で取り直すか(既定 8)。</p>
+<p>折れ線が弧を切る分だけ偏差に床ができるので、<b>相手側は細かく</b>取る。</p>
+<p>Returns:</p>
+<p>dict: `<code style="color:#22d3bf">points</code><code style="color:#22d3bf">(基準側の点、</code><code style="color:#22d3bf">(n, 2)</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">deviation</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">(n,)</code>`)、</p>
+<p>`<code style="color:#22d3bf">max</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">min</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">rms</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mean</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">align</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:profile_shape_inspection">profile_shape_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/profile_shape_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">compare</code>)</h3>
+<p><a style="color:#22d3bf" href="opprofile:profile_align">profile_align</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: profileops.py — PROFILE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

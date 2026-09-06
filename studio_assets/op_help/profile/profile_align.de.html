@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">profile_align — PROFILE <code style="color:#22d3bf">compare</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">pairs × pairs</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import profileops; profileops.profile_align(measured, reference, mode=&#x27;chord&#x27;)</code> (oder <code style="color:#22d3bf">opsprofile.get(&quot;profile_align&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>測った輪郭を設計輪郭へ合わせる。返りは `<code style="color:#22d3bf">(aligned, info)</code>`。</p>
+<p>`<code style="color:#22d3bf">mode</code><code style="color:#22d3bf"> は :data:</code>ALIGN_MODES`。<b>相似(スケール推定)は提供しない</b> ——</p>
+<p>大きさの誤差そのものを吸収してしまうため(モジュール docstring の実測表)。</p>
+<p>Returns:</p>
+<p>`<code style="color:#22d3bf">(aligned (N, 2), info)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">info</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">mode</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">angle_deg</code>` /</p>
+<p>`<code style="color:#22d3bf">translation</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">scale</code>`(常に 1.0。<b>推定していないことの明示</b>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">Leitfaden zur Familie profile_metrology</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">pairs</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opprofile:profile_perturb">profile_perturb</a> · <a style="color:#22d3bf" href="opprofile:profile_chord_frame">profile_chord_frame</a> · <a style="color:#22d3bf" href="opprofile:profile_normalise">profile_normalise</a> · <a style="color:#22d3bf" href="opprofile:profile_resample">profile_resample</a> · <a style="color:#22d3bf" href="opprofile:profile_sides">profile_sides</a> · <a style="color:#22d3bf" href="opprofile:profile_thickness">profile_thickness</a> · <a style="color:#22d3bf" href="opprofile:profile_camber">profile_camber</a> · <a style="color:#22d3bf" href="opprofile:profile_leading_edge_radius">profile_leading_edge_radius</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">compare</code>)</h3>
+<p><a style="color:#22d3bf" href="opprofile:profile_deviation">profile_deviation</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: profileops.py — PROFILE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -107,6 +107,11 @@ LEDGER_DIMS = {
     # 2026-09-03: ストリーミング動画処理(リング/状態つき op/パイプライン)
     "videostream": {"registry": "opsvideostream", "table": "OPSVIDEOSTREAM",
                     "module": "videostream", "family": "video_streaming"},
+    # 2026-09-06: 断面形状(profile)の計測。輪郭 op は 97 個あったが、
+    # 「断面として測る」層(厚み分布・キャンバー・前縁半径・輪郭同士の偏差)が
+    # 空いていた。新しい型語彙は 1 つも作らない(既存の pairs)。
+    "profile": {"registry": "opsprofile", "table": "OPSPROFILE",
+                "module": "profileops", "family": "profile_metrology"},
     # 2026-09-06: PIV(画像対 → 密な変位)。新語 flow2d を 1 つだけ持ち込む。
     "piv": {"registry": "opspiv", "table": "OPSPIV",
             "module": "pivops", "family": "piv_displacement"},

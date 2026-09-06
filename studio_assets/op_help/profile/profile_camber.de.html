@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">profile_camber — PROFILE <code style="color:#22d3bf">measure</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import profileops; profileops.profile_camber(contour, n=101)</code> (oder <code style="color:#22d3bf">opsprofile.get(&quot;profile_camber&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>キャンバー線(上下面の中線)。返りは `<code style="color:#22d3bf">(n, 2)</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">(x, yc)</code>`。</p>
+<p>★<b>定義の差を承知で使うこと</b>。ここが返すのは「弦の各位置での上下面の中点」</p>
+<p>で、NACA が翼型を<b>作るときに使う</b>キャンバー線(厚みを法線方向に載せる前の</p>
+<p>中心線)とは厳密には別物です。加えて弦の取り方も違う —— 幾何的な弦は</p>
+<p>「後縁の中点から最も遠い点」を前縁とするので、キャンバーのある翼では</p>
+<p>生成座標の原点からわずかにずれ、弦が 0.1 度ほど傾きます。</p>
+<p>実測(閉形式の最大キャンバー比 対 本 op の返り):</p>
+<p>==========  ==========  ==========  ==========</p>
+<p>翼型        閉形式      実測        比</p>
+<p>==========  ==========  ==========  ==========</p>
+<p>NACA 0012   0.0000      0.00001     ——</p>
+<p>NACA 2412   0.0200      0.01882     0.94</p>
+<p>NACA 4412   0.0400      0.03786     0.95</p>
+<p>==========  ==========  ==========  ==========</p>
+<p><b>対称翼で 0 になること</b>は確認済み(0.00001)。有翼で 5-6 % 低く出るのは</p>
+<p>上の定義差で、実装の誤りではありません。設計値と比べるときは、同じ定義で</p>
+<p>測った基準形状(`<code style="color:#22d3bf">profile_synth_naca4</code>` の出力)と比べること ——</p>
+<p>:func:<code style="color:#22d3bf">profile_deviation</code> はまさにそれをします。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">Leitfaden zur Familie profile_metrology</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:profile_shape_inspection">profile_shape_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/profile_shape_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">pairs</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opprofile:profile_perturb">profile_perturb</a> · <a style="color:#22d3bf" href="opprofile:profile_chord_frame">profile_chord_frame</a> · <a style="color:#22d3bf" href="opprofile:profile_normalise">profile_normalise</a> · <a style="color:#22d3bf" href="opprofile:profile_resample">profile_resample</a> · <a style="color:#22d3bf" href="opprofile:profile_sides">profile_sides</a> · <a style="color:#22d3bf" href="opprofile:profile_thickness">profile_thickness</a> · <a style="color:#22d3bf" href="opprofile:profile_leading_edge_radius">profile_leading_edge_radius</a> · <a style="color:#22d3bf" href="opprofile:profile_trailing_edge_gap">profile_trailing_edge_gap</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">measure</code>)</h3>
+<p><a style="color:#22d3bf" href="opprofile:profile_sides">profile_sides</a> · <a style="color:#22d3bf" href="opprofile:profile_thickness">profile_thickness</a> · <a style="color:#22d3bf" href="opprofile:profile_leading_edge_radius">profile_leading_edge_radius</a> · <a style="color:#22d3bf" href="opprofile:profile_trailing_edge_gap">profile_trailing_edge_gap</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: profileops.py — PROFILE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
