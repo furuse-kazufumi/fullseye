@@ -621,7 +621,7 @@ def main():
 
     print("\n  8-b. 雑音を消して、純画素のほうを消す(画素を大きくする)")
     print("  " + pad("画素/葉", 10, right=False) + pad("純・葉画素", 14)
-          + pad("PPI 端成分の NDVI 最大", 26) + pad("被覆率の偏り", 16))
+          + pad("端成分の NDVI", 16) + pad("端成分の NIR", 16) + pad("被覆率の偏り", 16))
     ppi_gsd = {}
     for sub in (6, 12, 24, 48):
         cube, truth = observe(fields[(2, 0)], sub, noise=0.0, seed=0)
@@ -629,26 +629,30 @@ def main():
         E, nd, j = ppi_probe(cube)
         a = specops.spec_unmix(cube, E, constrained=True)
         bias = 100.0 * (float(a[:, :, j].mean()) - float(truth.mean()))
-        ppi_gsd[sub] = (pure, max(nd), bias)
+        ppi_gsd[sub] = (pure, max(nd), bias, float(E[j][B_NIR]))
         print("  " + pad(f"{sub / LEAF_LEN_SUB:.2f}", 10, right=False)
-              + pad(f"{100 * pure:.1f} %", 14) + pad(f"{max(nd):+.3f}", 26)
-              + pad(f"{bias:+.1f} pp", 16))
+              + pad(f"{100 * pure:.1f} %", 14) + pad(f"{max(nd):+.3f}", 16)
+              + pad(f"{E[j][B_NIR]:.3f}", 16) + pad(f"{bias:+.1f} pp", 16))
+    print(f"  (真値の葉: NDVI {NDVI_LEAF:+.3f} / NIR {RHO['leaf'][B_NIR]:.3f})")
     print("  → 雑音が無ければ、純画素が残っているうちは端成分を当てる。純画素が消えると")
-    print("     拾えるのは『いちばん端の混合画素』で、端成分が内側に縮む。**崖は 2 つあり、")
-    print("     雑音のほうがずっと手前にある**。定石は MNF(雑音で白色化した主成分)空間で")
-    print("     PPI を掛け、選ばれた画素の **元の** 分光を引くことだが、")
-    print("     ``spec_endmembers_ppi`` は選んだ画素の添字を返さず分光そのものを返すので、")
-    print("     この経路が組めない。★道具の穴。")
+    print("     拾えるのは『いちばん端の混合画素』になる。ここで注意 —— **NDVI で見ると**")
+    print("     **最後の行も +0.849 で本物同然に見えるのに、被覆率は 23 pp ずれる**。")
+    print("     NDVI は比なので大きさを見ておらず、端成分は形が合ったまま**内側に縮む**。")
+    print("     比だけの診断は端成分の劣化を見逃す。NIR の列を並べると 0.500 → 0.31 で")
+    print("     はっきり分かる。**崖は 2 つあり、雑音のほうがずっと手前にある**。")
+    print("     定石は MNF(雑音で白色化した主成分)空間で PPI を掛け、選ばれた画素の")
+    print("     **元の** 分光を引くことだが、``spec_endmembers_ppi`` は選んだ画素の添字を")
+    print("     返さず分光そのものを返すので、この経路が素直に組めない。★道具の穴。")
     sc, _, _ = specops.spec_mnf(cube_hi, 4)
     Em = specops.spec_endmembers_ppi(sc, 2, n_projections=1000, seed=0)
     Pm = sc.reshape(-1, sc.shape[2])
     orig = cube_hi.reshape(-1, 4)
     E_mnf = orig[[int(np.argmin(((Pm - e) ** 2).sum(1))) for e in Em]]
     nd_mnf = [float((e[B_NIR] - e[B_RED]) / (e[B_NIR] + e[B_RED])) for e in E_mnf]
-    print("     (代用として MNF スコアから最近傍の元画素を逆引きすると"
-          f" NDVI {max(nd_mnf):+.3f} / {min(nd_mnf):+.3f}、")
-    print(f"      生の PPI の {ppi_noise[0.004][0]:+.3f} より本物に近い。添字を返す引数が")
-    print("      あれば逆引きは要らない。)")
+    print("     (代用として MNF スコアから最近傍の元画素を逆引きしてみると"
+          f" NDVI {max(nd_mnf):+.3f} / {min(nd_mnf):+.3f} で、")
+    print(f"      生の PPI の {ppi_noise[0.004][0]:+.3f} から **改善しなかった**。つまり")
+    print("      この場面の主因は雑音の白色化ではなく、上の『票が割れる』ほうである。)")
 
     print("\n=== 9. 崖 (c) 土の湿りと枯れ葉 ===")
     cond_methods = sh_methods
