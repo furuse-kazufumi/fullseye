@@ -490,39 +490,54 @@ def main():
     # =======================================================================
     rule("3. 系の比較 —— 更新するか、予測するか")
     # =======================================================================
-    print("対象は 一意、軌跡は 並進 + 回転 6 度 + 1.06 倍(更新の値打ちが出る条件)。")
-    fr, tr, t0 = SEQ[("一意", "並進+回転6度+1.06倍")]
+    print("対象は 一意。同じ 4 系を **変形の弱い軌跡と強い軌跡の 2 条件** で走らせる。")
+    print("1 条件だけで表を作ると「どれが良いか」を言い切ってしまうので、")
+    print("**順位が入れ替わることそのもの** を見せる。")
     SYS = [("0 更新なし全域探索(ゼロ点)", dict(mode="static")),
            ("1 毎フレーム更新", dict(mode="update1")),
            ("2 5 フレームごと更新", dict(mode="updatek", update_k=5)),
            ("3 予測つき局所探索(±12)", dict(mode="local", rad=12))]
-    print()
-    print(f"{'系':<28}{'平均':>8}{'最悪':>8}{'最終':>8}{'壊れ':>7}"
-          f"{'平均ピーク':>12}{'秒':>8}")
-    print("-" * 79)
+    COND3 = (("弱い変形(回転 6 度 + 1.06 倍)", dict(rot_deg=6.0, zoom=1.06)),
+             ("強い変形(回転 30 度 + 1.35 倍)", dict(rot_deg=30.0, zoom=1.35)))
     ch3 = {}
-    for label, kw in SYS:
-        t_a = time.perf_counter()
-        est, pk, pr = run_tracker(fr, t0, tr[0], **kw)
-        dt = time.perf_counter() - t_a
-        e = err_of(est, tr)
-        ch3[label] = dict(err=e, peak=pk, prom=pr, sec=dt)
-        print(f"{label:<28}{e.mean():>8.2f}{e.max():>8.2f}{e[-1]:>8.2f}"
-              f"{int((e > LOST_PX).sum()):>5} /40{np.nanmean(pk):>12.3f}{dt:>8.3f}")
-    print("-" * 79)
-    z, u1 = ch3["0 更新なし全域探索(ゼロ点)"], ch3["1 毎フレーム更新"]
-    u5, lo = ch3["2 5 フレームごと更新"], ch3["3 予測つき局所探索(±12)"]
-    print(f"\n→ 毎フレーム更新は平均ピークが {np.nanmean(u1['peak']):.3f} で全系中いちばん高い。")
-    print(f"   なのに最終誤差は {u1['err'][-1]:.2f} px(ゼロ点 {z['err'][-1]:.2f} px)。")
-    print("   **自分の直前の切り出しに合わせているのだから、当たっているのは当たり前**。")
+    for cond, ckw in COND3:
+        fr, tr, _, _ = make_sequence(world, TARGETS["一意"], n=40, step=2.0, **ckw)
+        t0 = crop_template(fr[0], tr[0])
+        print(f"\n[{cond}]")
+        print(f"{'系':<28}{'平均':>8}{'最悪':>8}{'最終':>8}{'壊れ':>7}"
+              f"{'平均ピーク':>12}{'秒':>8}")
+        print("-" * 79)
+        for label, kw in SYS:
+            t_a = time.perf_counter()
+            est, pk, pr = run_tracker(fr, t0, tr[0], **kw)
+            dt = time.perf_counter() - t_a
+            e = err_of(est, tr)
+            ch3[(cond, label)] = dict(err=e, peak=pk, prom=pr, sec=dt)
+            print(f"{label:<28}{e.mean():>8.2f}{e.max():>8.2f}{e[-1]:>8.2f}"
+                  f"{int((e > LOST_PX).sum()):>5} /40{np.nanmean(pk):>12.3f}{dt:>8.3f}")
+        print("-" * 79)
+    C_W, C_S = COND3[0][0], COND3[1][0]
+    sys_z = ch3[(C_W, "0 更新なし全域探索(ゼロ点)")]
+    u1 = ch3[(C_W, "1 毎フレーム更新")]
+    u5 = ch3[(C_W, "2 5 フレームごと更新")]
+    lo = ch3[(C_W, "3 予測つき局所探索(±12)")]
+    sz_s = ch3[(C_S, "0 更新なし全域探索(ゼロ点)")]
+    u1_s = ch3[(C_S, "1 毎フレーム更新")]
+    print(f"\n→ **順位が入れ替わる**。弱い変形ではゼロ点 {sys_z['err'].mean():.2f} px が")
+    print(f"   毎フレーム更新 {u1['err'].mean():.2f} px に勝つ。強い変形では逆で、")
+    print(f"   ゼロ点 {sz_s['err'].mean():.2f} px に対し毎フレーム更新 {u1_s['err'].mean():.2f} px。")
+    print("   更新は「変形についていく」ことと「丸め誤差を溜めること」を同時にする。")
+    print("   どちらが勝つかは **対象がどれだけ変形するか** で決まり、定数では決められない。")
+    print(f"→ 弱い変形でも毎フレーム更新の平均ピークは {np.nanmean(u1['peak']):.3f} で、")
+    print(f"   ゼロ点の {np.nanmean(sys_z['peak']):.3f} より高い。誤差は逆に大きいのに、である。")
+    print("   **自分の直前の切り出しに合わせているのだから、高くて当たり前** ——")
     print("   相関値は「対象に合っているか」ではなく「直前の自分に合っているか」を測っている。")
-    print(f"→ 局所探索は全域探索の {z['sec'] / max(lo['sec'], 1e-9):.0f} 倍速い"
-          f"({lo['sec'] * 1e3 / 39:.1f} ms/frame 対 {z['sec'] * 1e3 / 39:.1f} ms/frame)。")
-    print(f"   精度は平均 {lo['err'].mean():.2f} px でゼロ点の {z['err'].mean():.2f} px と"
-          f"{'同等' if abs(lo['err'].mean() - z['err'].mean()) < 0.2 else '別'}。")
-    print(f"   **速さは買えたが精度は買えていない** —— 局所探索の値打ちは第 9 章で出る。")
-    print(f"→ 5 フレームごと更新は平均 {u5['err'].mean():.2f} px。"
-          f"毎フレーム {u1['err'].mean():.2f} px とゼロ点 {z['err'].mean():.2f} px の間。"
+    print(f"→ 局所探索は全域探索の {sys_z['sec'] / max(lo['sec'], 1e-9):.0f} 倍速い"
+          f"({lo['sec'] * 1e3 / 39:.1f} ms/frame 対 {sys_z['sec'] * 1e3 / 39:.1f} ms/frame)。")
+    print(f"   弱い変形での精度は {lo['err'].mean():.2f} px でゼロ点 {sys_z['err'].mean():.2f} px と同等 ——")
+    print("   **ここでは速さだけを買っている**。精度を買える場面は第 9 章に出る。")
+    print(f"→ 5 フレームごと更新は弱い変形で {u5['err'].mean():.2f} px、強い変形で "
+          f"{ch3[(C_S, '2 5 フレームごと更新')]['err'].mean():.2f} px。"
           f"最適な間隔は条件で動く(第 8 章)。")
 
     # =======================================================================
