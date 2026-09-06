@@ -580,30 +580,46 @@ def section_detection() -> dict:
     print("7) 検出と測定を分ける —— データから引いた経路で測り直す")
     print("=" * 78)
     print("  (2〜6 節は経路に真値を渡している。ここだけデータから引く)")
-    print("   幅 mm   経路の誤差 [px]   幅の誤差(真の経路)  幅の誤差(引いた経路)")
+    print("   幅 mm   σ     経路の誤差 [px]   外れた列   幅の誤差(真)  幅の誤差(引いた)")
 
     xs, ys, dys = sample_points(step=8)
-    rows = []
-    for w in (0.10, 0.20, 0.40, 0.80):
+    idx = xs.astype(int)
+    rows, tbl = [], []
+    for w, s in ((0.10, 0.05), (0.10, 0.10), (0.10, 0.16),
+                 (0.30, 0.05), (0.30, 0.16), (0.80, 0.16)):
         sc = render(lambda x, w=w: np.full_like(np.asarray(x, float), w),
-                    texture=0.05, slope=0.30, seed=9)
+                    texture=s, slope=0.30, seed=9)
         rr = detect_path(sc["img"])
-        idx = xs.astype(int)
-        perr = float(np.sqrt(np.mean((rr[idx] - ys) ** 2)))
-        e_true = measure_integral(sc["img"], xs, ys, dys).mean() - w
-        # 引いた経路の傾きは、引いた行を平滑化してから差分で出す
-        rs = gaussian_filter(rr, 12.0)
+        dev = rr[idx] - ys
+        perr = float(np.sqrt(np.mean(dev ** 2)))
+        lost = int(np.count_nonzero(np.abs(dev) > 2.0))
+        e_true = float(measure_integral(sc["img"], xs, ys, dys).mean() - w)
+        rs = gaussian_filter(rr, 12.0)                # 傾きは平滑化してから差分
         d = np.gradient(rs)[idx]
-        e_det = measure_integral(sc["img"], xs, rr[idx], d).mean() - w
-        rows.append((w, perr, e_true, e_det))
-        print("   %.2f      %8.3f          %+8.4f mm         %+8.4f mm"
-              % (w, perr, e_true, e_det))
+        e_det = float(measure_integral(sc["img"], xs, rr[idx], d).mean() - w)
+        rows.append((w, s, perr, lost, e_true, e_det))
+        print("   %.2f   %.2f      %8.3f       %3d/%3d      %+7.4f mm    %+7.4f mm"
+              % (w, s, perr, lost, xs.size, e_true, e_det))
+        tbl.append(["%.2f" % w, "%.2f" % s, "%.3f" % perr,
+                    "%d/%d" % (lost, xs.size), "%+.4f" % e_true, "%+.4f" % e_det])
 
-    print("\n  ★経路の誤差が 1 px を超えると、幅の推定は**外側の地を"
-          "ひび割れに数え始める**のではなく、断面が斜めに切れて過大になる。")
-    print("     細い側ほど経路が引けない —— 検出できないものは測れない、"
-          "という当たり前が数字で出る。")
-    return {"rows": rows}
+    easy = [r for r in rows if r[3] == 0]
+    hard = [r for r in rows if r[3] > 0]
+    print("\n  ★予想は「細い側ほど経路が引けない」だったが、**幅より"
+          "ざらつきのほうがはるかに効いた**。")
+    if easy:
+        print("     経路が 1 列も外れない条件では、真の経路との幅の差は "
+              "最大 %.4f mm(= 経路は測定の律速ではない)。"
+              % max(abs(r[5] - r[4]) for r in easy))
+    if hard:
+        print("     外れる条件(%d 件)では、外れた列で断面が別の場所を切るので"
+              "幅は %+.4f mm ずれる。"
+              % (len(hard), max((r[5] - r[4]) for r in hard)))
+    else:
+        print("     この掃引の範囲では、列ごとの尾根追跡は一度も外れなかった"
+              "(σ=0.16 の幅 0.10 mm でも)。**検出は思ったより易しい** —— "
+              "難しいのは幅のほう。")
+    return {"rows": rows, "tbl": tbl}
 
 
 # --------------------------------------------------------------------------- #
