@@ -566,8 +566,10 @@ def act_optics(nf):
     target = _siemens()
     base = fs.example_system("doublet")
     bfl = fs.paraxial_trace(base)["bfl"]
-    # 焦点を通り抜ける = -1.6 → +1.6 mm。sin 掃引で幕の中を往復して閉じる
-    dz = 1.6 * np.sin(2.0 * np.pi * np.arange(nf) / nf)
+    # 焦点を通り抜ける = -1.7 → +1.7 mm を**等間隔で一方向に**。sin 掃引にすると
+    # 折り返し付近で Δz がほとんど動かず、量子化後に隣り合うフレームが同一に
+    # なった(実測 2 か所)。直線掃引なら 1 枚ごとに 0.16 mm 動く。
+    dz = np.linspace(-1.7, 1.7, nf)
     imgs, contrast = [], []
     for d in dz:
         sysd = copy.deepcopy(base)
@@ -586,13 +588,10 @@ def act_optics(nf):
         c = _content()
         c = _place(c, target, 0)
         c = _place(c, np.clip(imgs[i] / vmax, 0.0, 1.0), 1)
-        c, ax = _plot_panel(c, _wide_rect(2, 2), (-1.7, 1.7), (0.0, cmax * 1.12),
+        c, ax = _plot_panel(c, _wide_rect(2, 2), (-1.8, 1.8), (0.0, cmax * 1.12),
                             "デフォーカス [mm]", "std",
                             caption="(c) 通し抜けの RMS コントラスト")
-        order = np.argsort(dz[:i + 1])
-        c = fs.plot_series(c, ax, dz[:i + 1][order],
-                           np.asarray(contrast[:i + 1], float)[order],
-                           kind="scatter", color="emphasis", marker_size=3)
+        c = _series(c, ax, dz[:i + 1], np.asarray(contrast[:i + 1], float))
         c = _cap(c, 0, "(a) 理想像(シーメンススター)")
         c = _cap(c, 1, "(b) render_through_lens  Δz = %+.2f mm" % dz[i])
         out.append(c)
