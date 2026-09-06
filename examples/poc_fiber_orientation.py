@@ -518,11 +518,14 @@ def section_density() -> dict:
     print("\n" + "=" * 78)
     print("5) ★繊維が交差すると配向度が落ちる(平均角度は動かない)")
     print("=" * 78)
-    print("   本数   交差点 [件]  面積率 [%]   平均 [deg]  誤差    配向度   真値")
+    print("  **同じ繊維に本数を足していく**(400 本の池から先頭 n 本)—— こうしないと"
+          "\n  本数を変えるたびに別の標本になり、密度の効果と標本のばらつきが混ざる。")
+    print("\n   本数   交差点 [件]  面積率 [%]  配向度(推定)  真値    偏り"
+          "     平均角度の誤差")
 
-    ns, cross, rs, errs = [], [], [], []
+    ns, cross, bias, errs, rs = [], [], [], [], []
     for n in (40, 100, 200, 400):
-        sc = make_scene(n_fibers=n)
+        sc = make_scene(n_fibers=n, n_pool=400)
         cr = count_crossings(sc)
         t = circ_stats(sc["angles"], sc["len_vis"])
         m = measure(sc)
@@ -530,24 +533,29 @@ def section_density() -> dict:
         ns.append(n)
         cross.append(cr)
         rs.append(m["R"])
+        bias.append(m["R"] - t["R"])
         errs.append(abs(_ang_err(m["mean_deg"], t["mean_deg"])))
-        print("   %4d    %6d      %5.1f      %6.2f   %+5.2f   %.4f   %.4f"
-              % (n, cr, frac, m["mean_deg"],
-                 _ang_err(m["mean_deg"], t["mean_deg"]), m["R"], t["R"]))
+        print("   %4d    %6d      %5.1f       %.4f     %.4f  %+.4f      %+5.2f 度"
+              % (n, cr, frac, m["R"], t["R"], m["R"] - t["R"],
+                 _ang_err(m["mean_deg"], t["mean_deg"])))
 
-    print("\n  ★本数を %d -> %d にすると交差は %d -> %d 件、配向度は %.3f -> %.3f。"
-          % (ns[0], ns[-1], cross[0], cross[-1], rs[0], rs[-1]))
-    print("  ★予想が外れた: 「交差点では 2 方向の中間が出るから平均角度もずれる」"
-          "と踏んでいたが、\n     平均角度の誤差は %.1f -> %.1f 度でほとんど動かない。"
+    print("\n  ★★予想が外れた(2 か所)。")
+    print("   1) 「交差点では 2 方向が混ざるので配向度は落ちる」と踏んでいたが、"
+          "**偏りは %+.4f -> %+.4f と逆向きに増える**。"
+          % (bias[0], bias[-1]))
+    print("      混ざった画素はコヒーレンスが下がる = **重みも下がる** ので、"
+          "分布から抜けるだけで薄めない。\n      残るのは揃った画素なので、"
+          "配向度はむしろ **高めに出る**。")
+    print("   2) 「平均角度もずれる」も外れ: 誤差は %.2f -> %.2f 度でほとんど"
+          "動かない。中間角は分布の **両側から等しく** 出る。"
           % (errs[0], errs[-1]))
-    print("     中間角は分布の **両側から等しく** 出るので、広がりだけが増えて"
-          "中心はずれない。")
     figs.save_plot("density",
-                   [("配向度(推定)", cross, rs),
-                    ("平均角度の誤差 [deg]", cross, errs)],
-                   xlabel="視野内の交差点 [件]", ylabel="配向度 / 誤差 [deg]",
-                   title="交差は分布を広げるが、中心はずらさない")
-    return {"n": ns, "cross": cross, "R": rs, "err": errs}
+                   [("配向度の偏り(推定−真値)", cross, bias),
+                    ("平均角度の誤差 [deg]", cross, errs),
+                    ("偏りゼロ", cross, [0.0] * len(cross))],
+                   xlabel="視野内の交差点 [件]", ylabel="偏り / 誤差 [deg]",
+                   title="交差は配向度を **高め** にずらす(予想と逆)")
+    return {"n": ns, "cross": cross, "R": rs, "bias": bias, "err": errs}
 
 
 def section_scales() -> dict:
