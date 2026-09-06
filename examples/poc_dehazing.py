@@ -781,6 +781,8 @@ def main():
     # (10) 大気光の推定は「色」としては当たる —— 律速が t である根拠の裏取り。
     assert angle_deg(a_dcp, A_TRUE) < 1.5, "暗チャネル法の大気光が色として外れている"
 
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("\nPASS")
 
 
