@@ -837,7 +837,7 @@ def section9_findings(rec_density, got_peaks):
 
   (6) ★★時空間の 3-D 局所極大は per-frame 検出の代わりにならない
       (適合率 %.0f %% と高いのに再現率 %.0f %%)。等方近傍は時間軸に合わない
-      —— 静止粒子の対照群で再現率がほぼ 100 %% に戻るので、犯人は動き。
+      —— 対照群で「犯人は動きではなく時間軸への厳密最大の要求」と確定。
 """ % (rec_density["d_det_nn"][-1], rec_density["d_tru_nn"][-1],
        rec_density["drift_det_nn"][-1], 100 * got_peaks[1][2],
        100 * got_peaks[1][1]))
