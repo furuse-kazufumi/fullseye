@@ -314,6 +314,23 @@ def _fmt(x, w=8, p=3):
     return f"{'-':>{w}}" if not np.isfinite(x) else f"{x:>{w}.{p}f}"
 
 
+def _unwrap_map(P_local, values, nu=100, nv=50, k=3):
+    """標本座標の点群を球面座標へ展開した画像(図のためだけ)。→ (nv*k, nu*k)。
+
+    横 = 方位角 atan2(y, x)、縦 = 天頂角。閉曲面なので**隠れる面が無く**、
+    左右のローブを 1 枚に収められる(横から撮ると片方が裏に回る)。
+    同じ画素に複数点が落ちたら**絶対値が最大の値**を残す —— 平均にすると
+    符号の違う点が打ち消し合い、二重ローブがそこだけ消えてしまう。
+    """
+    q = P_local / np.maximum(np.linalg.norm(P_local, axis=1, keepdims=True), 1e-12)
+    j = np.clip(((np.arctan2(q[:, 1], q[:, 0]) + np.pi) / (2 * np.pi) * nu).astype(int), 0, nu - 1)
+    i = np.clip((np.arccos(np.clip(q[:, 2], -1.0, 1.0)) / np.pi * nv).astype(int), 0, nv - 1)
+    img = np.zeros((nv, nu))
+    order = np.argsort(np.abs(np.asarray(values, float)))    # 大きいものを最後に書く
+    img[i[order], j[order]] = np.asarray(values, float)[order]
+    return np.repeat(np.repeat(img, k, axis=0), k, axis=1)
+
+
 # ==== 本体 ==================================================================
 
 def main():
