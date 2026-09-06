@@ -499,39 +499,56 @@ def main():
     # ---------------------------------------------------------------- 6 --- #
     print("\n=== 6. 傾き除去 —— 最小二乗平面 vs ロバスト(RANSAC)===")
     print("  傷 4 本はすべて x > 0.55L の側に寄せてある。傾きの基準に傷が乗る状況。")
+    print("  うねりも λc も外し、**傾きの当てはめだけ**を誤差源にする"
+          "(2 つの誤差源を同じ表で混ぜない)。真値はこの節だけ帯域無しの"
+          "`rough_true` そのもの。")
     surf_tilt = rough_true + tilt          # うねり無し。傾きだけを除く問題に絞る
-    exact = surf_tilt - tilt
+    truth6 = areal_params(rough_true)
     res_ls, pl_ls = _plane_removed(surf_tilt, C["xx"], C["yy"], robust=False)
     t0 = time.perf_counter()
     res_rs, pl_rs = _plane_removed(surf_tilt, C["xx"], C["yy"], robust=True)
     t_rs = time.perf_counter() - t0
     print(f"\n  {'除去のしかた':<26}{'勾配 x':>12}{'勾配 y':>12}"
-          f"{'残った傾き rms':>16}")
+          f"{'余計に除いた傾きの rms':>22}")
     for lab, pl in (("真値(仕込んだ値)", (TILT_X, TILT_Y)),
                     ("最小二乗平面 fit_plane", _slopes(pl_ls)),
                     ("ロバスト fit_plane_ransac", _slopes(pl_rs))):
         gx, gy = pl
-        left = (gx - TILT_X) * L / 2 + (gy - TILT_Y) * L / 2
-        print(f"  {lab:<26}{gx:>12.6f}{gy:>12.6f}{abs(left):>16.4f}")
+        # 余計に除いた平面 = (gx-TILT_X)x + (gy-TILT_Y)y。一様格子上の rms は
+        # sqrt((dgx² + dgy²) L² / 12)。
+        left = math.sqrt(((gx - TILT_X) ** 2 + (gy - TILT_Y) ** 2) * L ** 2 / 12.0)
+        print(f"  {lab:<26}{gx:>12.6f}{gy:>12.6f}{left:>22.4f}")
     print(f"    (RANSAC {t_rs * 1000:.0f} ms / {N * N} 点)")
     print("\n  " + head()[2:])
-    for lab, z in (("厳密除去(真値)", exact),
-                   ("最小二乗平面", res_ls),
-                   ("ロバスト RANSAC", res_rs)):
+    print(fmt_row("真値(厳密に傾きだけ除去)", truth6))
+    for lab, z in (("最小二乗平面", res_ls), ("ロバスト RANSAC", res_rs)):
         print(fmt_row(lab, areal_params(z)))
     print(head_err())
     for lab, z in (("最小二乗平面", res_ls), ("ロバスト RANSAC", res_rs)):
         d = areal_params(z)
-        cells = "".join(f"{100 * rel_err(d[k], truth[k]):>12.2f}" for k in PARAMS)
+        cells = "".join(f"{100 * rel_err(d[k], truth6[k]):>12.2f}" for k in PARAMS)
         print(f"  {lab:<26}{cells}")
-    e_ls = abs(rel_err(areal_params(res_ls)["Sq"], truth["Sq"]))
-    e_rs = abs(rel_err(areal_params(res_rs)["Sq"], truth["Sq"]))
+    e_ls = abs(rel_err(areal_params(res_ls)["Sq"], truth6["Sq"]))
+    e_rs = abs(rel_err(areal_params(res_rs)["Sq"], truth6["Sq"]))
     print(f"  → 傷が面積の {100 * float((scratch < -0.5).mean()):.1f}% しか無くても、"
           f"最小二乗平面は勾配を "
-          f"{abs(_slopes(pl_ls)[0] - TILT_X):.2e} だけ傾け、Sq 誤差 "
-          f"{100 * e_ls:+.2f}%。RANSAC は {100 * e_rs:+.2f}%"
+          f"{abs(_slopes(pl_ls)[0] - TILT_X):.2e} 傾け、Sq を {100 * e_ls:.2f}% "
+          f"**過小**にする。RANSAC は {100 * e_rs:.2f}%"
           f"({e_ls / max(e_rs, 1e-12):.1f} 倍の改善)。")
-    print("     効き方が小さいのは傷が『深いが細い』から。**深さでなく面積比が"
+    print("     符号が過小なのは、最小二乗が『傷が片側に寄っていることによる"
+          "本物の非対称』まで平面として吸い上げてしまうから。"
+          "**除きすぎるほうに壊れる。**")
+    # この節の答えが λc の後にも残るかを確かめる(残らないなら気にする必要が無い)
+    aft_ls = areal_params(areal_filter(res_ls, DX, LAMBDA_C, "high"))
+    aft_rs = areal_params(areal_filter(res_rs, DX, LAMBDA_C, "high"))
+    aft_tr = areal_params(areal_filter(rough_true, DX, LAMBDA_C, "high"))
+    print(f"  ★ただし λc={LAMBDA_C:.0f}µm ハイパスを後段に置くと差は消える"
+          f"(Sq 誤差 LS {100 * rel_err(aft_ls['Sq'], aft_tr['Sq']):+.2f}% / "
+          f"RANSAC {100 * rel_err(aft_rs['Sq'], aft_tr['Sq']):+.2f}%)。")
+    print("     余計に除いた平面は純粋な長波長なので、ハイパスが同じものを"
+          "もう一度捨てるだけ。**当てはめのロバスト性が効くのは、λc を掛けない"
+          "運用(形状偏差・平面度)のとき。** 粗さだけを見るなら順序で救える。")
+    print("\n     効き方が小さいのは傷が『深いが細い』から。**深さでなく面積比が"
           "効く**ので、傷が広がるほど最小二乗は速く壊れる —— 面積比を振って確認:")
     print(f"  {'傷の半値半幅':<26}{'面積比':>10}{'LS の Sq 誤差':>16}{'RANSAC の Sq 誤差':>20}")
     for hw in (4.0, 12.0, 24.0, 40.0):
