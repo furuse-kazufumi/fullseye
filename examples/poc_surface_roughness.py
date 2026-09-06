@@ -336,6 +336,16 @@ def main():
     print(fmt_row("真値 Sa/Sq/Sz/Ssk/Sku", truth))
     print("  Ssk が負・Sku が大きいのは 4 本の深い傷のせい。ガウス乱数だけの面なら"
           " Ssk≈0, Sku≈3 で、この 2 つは何も言わない指標になってしまう。")
+    # 高さは符号つきの量なので発散 LUT で塗る(0 = 平均面がどこかが分かる)。
+    figs.save_grid("surface_components", [surface, rough_band, wav + tilt],
+                   ["測定器が見る面(Sq %.3f µm)" % surface.std(),
+                    "粗さの真値 = λc %.0fµm で切った後(Sq %.3f)"
+                    % (LAMBDA_C, rough_band.std()),
+                    "除くべき うねり + 傾き(Sq %.3f)" % (wav + tilt).std()],
+                   title="同じ面から「粗さ」を取り出す", ncols=3, signed=True,
+                   caption="左の面をそのまま rms すると真値の %.0f 倍になる。"
+                           "帯域を宣言しない粗さの数字は存在しない。"
+                           % (surface.std() / rough_band.std()))
 
     # ---------------------------------------------------------------- 2 --- #
     print("\n=== 2. ★ゼロ点 —— 生の rms をそのまま Sq と呼ぶとどうなるか ===")
