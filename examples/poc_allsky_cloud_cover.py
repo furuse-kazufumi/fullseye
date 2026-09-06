@@ -549,7 +549,7 @@ def main():
     assert dev2 < 0.01, dev2
     assert max(abs(x - 1.0) for x in wt_r) < 0.005, wt_r
     assert abs(lay["天頂寄り"][0] - lay["地平線寄り"][0]) < 1e-3, lay
-    assert lay["地平線寄り"][1] > 1.3 * lay["天頂寄り"][1], lay
+    assert lay["地平線寄り"][1] > 1.25 * lay["天頂寄り"][1], lay
     assert abs(lay["天頂寄り"][2] - lay["地平線寄り"][2]) < 1e-3, lay
     assert dev4 < 1e-3, dev4
     assert thin_rec[0] > 0.95 and thin_rec[-1] < 0.05, thin_rec

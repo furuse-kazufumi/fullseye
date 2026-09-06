@@ -494,7 +494,20 @@ def section_reflection() -> dict:
           % out[0.0][0])
     print("     何枚平均しても消えません**。")
     print("   * キャリパー(勾配ピーク + 振幅の門)は**見失う** —— 壁 -> 水の")
-    print("     グレー差が 0.38 -> 0.12 と潰れて門を通らず、検出列が %d -> %d に落ちる。"
+    amps = []
+    col = int(_detect_cols()[60])
+    for r in (0.0, 0.5, 0.7):
+        im = render(1.0, refl=r)
+        mm = fs.ledger.gen_measure_rectangle2(H_PIX / 2.0, float(col), np.pi / 2.0,
+                                              (H_PIX - 8) / 2.0, 3, (H_PIX, W_PIX))
+        ee = fs.ledger.measure_pos(im, mm, sigma=1.2, threshold=0.0,
+                                   transition="negative")
+        ve = float(w2i(X_GAUGE, 1.0)[1][0])
+        near = [e for e in ee if abs(e["row"] - ve) < 4.0]
+        amps.append(abs(near[0]["amplitude"]) if near else float("nan"))
+    print("     グレー差が %.2f -> %.2f(反射率 0.5)-> %.2f(0.7)と潰れて門を"
+          % tuple(amps))
+    print("     通らなくなり、検出列が %d -> %d に落ちる。"
           % (rate[0.0][1], rate[0.7][1]))
     print("     「静かに嘘をつく」のと「黙って落ちる」のは、運用上まったく別の")
     print("     故障です。前者は監視で気づけません。")
