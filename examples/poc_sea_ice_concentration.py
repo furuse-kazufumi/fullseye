@@ -213,9 +213,9 @@ def section_sanity() -> None:
     # 周長の代理変数を fullseye の blob 族と突き合わせる
     lab = fs.ledger.blob_label(m, connectivity=4)
     feats = fs.ledger.blob_features(lab)
-    p_blob = sum(f["perimeter"] for f in feats) / (2.0 * m.size)
+    p_blob = float(np.sum(feats["perimeter"])) / (2.0 * m.size)
     print("  周長率: 自前の境界数え %.4f / blob_features の周長和 %.4f(%d 塊)" % (
-        perimeter_fraction(m), p_blob, len(feats)))
+        perimeter_fraction(m), p_blob, int(feats["n"])))
     print("  -> 桁と傾向は一致(定義が違うので一致はしない。以後は自前の指標を使う)。")
 
 
