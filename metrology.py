@@ -91,11 +91,11 @@ def add_metrology_object_rectangle2_measure(model, row, col, phi, l1, l2, n: int
     参照矩形(中心 ``(row, col)`` [px]、``phi`` 方向の半辺長 ``l1``、直交方向の
     半辺長 ``l2``)を ``model["objects"]`` に積む(dict をその場で更新)。
     ``apply_metrology_model`` は 4 辺それぞれに ``max(2, n // 4)`` 点を **角を避けて**
-    等間隔に置き、各辺の外向き法線に沿ってエッジを測り、``fit_rectangle2`` で
+    等間隔に置き、各辺の外向き法線に沿ってエッジを測り、矩形フィットで
     中心・向き・半辺長を出し直す。
 
-    - ``phi``: col 軸(x)から row 軸(画像下向き)へ測ったラジアン。
-      ``gen_rectangle2_contour_xld`` と同じ規約。
+    - ``phi``: col 軸(x)から row 軸(画像下向き)へ測ったラジアン
+      (``gen_measure_rectangle2`` と同じ規約)。
     - ``l1``, ``l2``: 半辺長 [px](全長ではない)。
     - ``n``: 総サンプル数の目安(既定 40 → 各辺 10 点)。4 未満でも各辺 2 点は置く。
     - 引数は検証しない。返り値は追加位置の index(0 始まり)。
