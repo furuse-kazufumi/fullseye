@@ -390,39 +390,46 @@ def section_zero_point() -> dict:
     print("1) ゼロ点 —— 2 値化 -> 外形の輪郭点 -> 最小二乗円")
     print("=" * 78)
 
+    print("   偏心 [mm]  歯欠け   当てはめ円の直径 [mm]   中心の軸からの距離 [mm]"
+          "   偏心の誤差")
     rows = []
     keep = None
-    for ecc in (0.0, 0.050, 0.200):
-        sc = make_scene(ecc_mm=ecc)
+    cen = (N_PIX - 1) / 2.0
+    for ecc, miss in ((0.0, ()), (0.050, ()), (0.200, ()), (0.050, (11,))):
+        sc = make_scene(ecc_mm=ecc, missing=miss)
         img = sc["img"]
         lab = _LAB.blob_label(img >= 0.5 * (FG + BG))
         big = _LAB.blob_select_largest(lab, 1)
         bnd = np.asarray(_LAB.blob_boundaries(big))
         # 外形の輪郭だけ(軸穴の縁は基準半径より内側なので落とす)
         pts = np.column_stack(np.nonzero(bnd)).astype(np.float64)
-        cen = (N_PIX - 1) / 2.0
         rr = np.hypot(pts[:, 0] - cen, pts[:, 1] - cen) * PX_MM
         outer = pts[rr > 0.5 * (BORE_MM + R_ROOT)]
         c = fs.fit_circle(outer)
-        d_err = 2.0 * float(c["r"]) * PX_MM
-        off = np.hypot(float(c["cy"]) - sc["gear_center"][0],
-                       float(c["cx"]) - sc["gear_center"][1]) * PX_MM
+        dia = 2.0 * float(c["r"]) * PX_MM
         run = np.hypot(float(c["cy"]) - cen, float(c["cx"]) - cen) * PX_MM
-        rows.append((ecc, d_err, run, off))
-        print("  偏心 %.3f mm -> 当てはめ円の直径 %.3f mm / 中心は軸から %.4f mm / "
-              "歯の並びの中心から %.4f mm" % (ecc, d_err, run, off))
+        err = "  --   " if ecc == 0 else "%+7.2f %%" % (100 * (run - ecc) / ecc)
+        rows.append((ecc, bool(miss), dia, run))
+        print("     %.3f      %s          %.3f                 %.4f            %s"
+              % (ecc, "有" if miss else "無", dia, run, err))
         if keep is None:
             keep = (sc, big)
 
     print("\n  真値: ピッチ円 %.3f / 歯先円 %.3f / 歯底円 %.3f mm" % (
         2 * R_PITCH, 2 * R_TIP, 2 * R_ROOT))
-    print("  ★当てはめ円の直径はこの 3 つのどれでもない(歯のデューティ比で"
-          "決まる中間値)。")
-    print("  ★★もっと重い: 円の中心は **歯の並びの中心** に来る(残差 %.4f mm)。"
-          % rows[-1][3])
-    print("     そこを基準にすると、偏心 %.3f mm の歯車でも振れは %.4f mm しか"
-          "出ない = **偏心をゼロと報告する**。" % (rows[-1][0], rows[-1][2]))
-    print("     基準は **軸穴** でなければならない。")
+    print("  ★当てはめ円の直径 %.3f mm は、この 3 つの **どれでもない** ——"
+          " 歯先と歯底のあいだの、歯のデューティ比で決まる中間値。"
+          % rows[0][2])
+    print("     「歯車の直径」と書いて出せる数字がここには無い。")
+    print("  正直に: **偏心だけは当たる**。歯が揃っていれば当てはめ円の中心は歯の"
+          "並びの中心に来るので、\n     軸(軸穴)から測れば %.4f mm(真値 %.3f、"
+          "%+.1f %%)。ゼロ点が無能なのではない。"
+          % (rows[2][3], rows[2][0], 100 * (rows[2][3] - rows[2][0]) / rows[2][0]))
+    print("  ★★壊れるのは歯が 1 枚欠けたとき: 同じ偏心 %.3f mm が %.4f mm"
+          "(%+.0f %%)になる。" % (rows[3][0], rows[3][3],
+                                  100 * (rows[3][3] - rows[3][0]) / rows[3][0]))
+    print("     円 1 個には「歯が 1 枚無い」を表す自由度が無いので、"
+          "欠けは丸ごと中心のずれに化ける。")
 
     sc, big = keep
     figs.save_grid("scene",
