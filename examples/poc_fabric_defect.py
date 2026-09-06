@@ -368,14 +368,21 @@ def section_window() -> dict:
               % (k, g, abs(1 - g), r, a))
 
     best = ks[int(np.argmax(aucs))]
-    print("\n  ★予想は「窓が周期(%.0f px)の整数倍のとき地が消えて良い」。"
-          "実測の最良は k=%d。" % (PERIOD, best))
-    print("     計算するとその予想は**逆**だった: 整数倍のとき矩形平均の利得は "
-          "G=0、つまり\n     背景推定から地が消えるので、残差 = I - 背景 に"
-          "**地がそのまま残る**(|1-G| = 1)。")
-    print("     地を消したいなら背景推定に地を**残さねばならない** ——"
-          "この符号を取り違えると窓を選び間違える。")
-    return {"k": ks, "auc": aucs, "rms": rms, "best": best}
+    g_abs = [abs(1 - _dirichlet_gain(k, PERIOD)) for k in ks]
+    corr = float(np.corrcoef(g_abs, rms)[0, 1])
+    print("\n  ★予想は「窓が周期(%.0f px)の整数倍のとき地が消えて良い」だったが、"
+          "**符号が逆**だった。" % PERIOD)
+    print("     整数倍のとき矩形平均の利得は G=0 —— 背景推定のほうから地が"
+          "消えるので、\n     残差 = I - 背景 に**地がそのまま残る**(|1-G| = 1)。"
+          "地を消したいなら\n     背景に地を**残さねばならない**。")
+    print("     実測の残差 RMS は |1-G| とよく合う(相関 %.3f)。" % corr)
+    print("  ★そして、どの窓でも AUC は %.4f 〜 %.4f。**窓を選んでもゼロ点は"
+          "救われない**" % (min(aucs), max(aucs)))
+    print("     (最良は k=%d だが差は %.4f で、地の残差 %.1f 倍の違いに対して"
+          "無意味)。" % (best, max(aucs) - min(aucs), max(rms) / min(rms)))
+    print("     効く/効かないは窓の大きさではなく、**背景モデルが周期を"
+          "表現できるか**で決まる。")
+    return {"k": ks, "auc": aucs, "rms": rms, "best": best, "corr": corr}
 
 
 # --------------------------------------------------------------------------- #

@@ -139,7 +139,7 @@ def _cap(canvas, ix, text, size=PANEL, y=6):
                        text_color=INK, min_contrast=1.05)
 
 
-def _plot_panel(canvas, rect, xlim, ylim, xlabel, ylabel, caption=""):
+def _plot_panel(canvas, rect, xlim, ylim, xlabel, ylabel, caption="", xscale="linear"):
     """白い作図パネル(枠 + 目盛り)を置き、axes 辞書を返す。
 
     図注は**上端**に置く(画像パネルは下端)—— 下端には x 軸のラベルと目盛り数字が
@@ -155,10 +155,10 @@ def _plot_panel(canvas, rect, xlim, ylim, xlabel, ylabel, caption=""):
                              box_alpha=0.0, text_color=INK, min_contrast=1.05)
     canvas = fs.text_box(canvas, ylabel, (x + w - 8, y + 7), anchor="rt", font_size=11,
                          box_alpha=0.0, text_color=(0.38, 0.40, 0.43), min_contrast=1.05)
-    inner = (x + 54, y + 30, w - 74, h - 88)
-    axes = fs.axes_transform(inner, xlim, ylim)
+    inner = (x + 56, y + 40, w - 76, h - 98)
+    axes = fs.axes_transform(inner, xlim, ylim, xscale=xscale)
     canvas = fs.axes_frame(canvas, axes, color=(0.55, 0.57, 0.60), width=1, box=False)
-    canvas = fs.ticks(canvas, axes, xticks=fs.nice_ticks(*xlim, 4),
+    canvas = fs.ticks(canvas, axes, xticks=fs.nice_ticks(*xlim, 4, scale=xscale),
                       yticks=fs.nice_ticks(*ylim, 4), color=(0.55, 0.57, 0.60),
                       font_size=10, text_color=INK)
     canvas = fs.text_box(canvas, xlabel, (x + w // 2, y + h - 5), anchor="cb",
@@ -517,7 +517,10 @@ def _lidar_scene():
 def act_pointcloud(nf):
     pts = _lidar_scene()
     nonground, gmask = fs.remove_ground(pts, thresh=0.05, iters=120, seed=0)
-    tols = 0.16 + 0.10 * np.sin(2.0 * np.pi * np.arange(nf) / nf)   # 幕の中で閉じる
+    # tol は対数で 0.055 → 2.0 m。実測でこの区間の両端に構造がある ——
+    # 小さすぎると物体が砕け(13 個)、0.07〜1.4 m では正しく 4 個、
+    # 1.6 m を超えると隣の物体と融合して 2 個 → 1 個になる。
+    tols = np.geomspace(0.055, 2.0, nf)
     clusters = [fs.euclidean_clusters(nonground, tol=float(t), min_size=60) for t in tols]
     ncl = [len(c) for c in clusters]
     palette = fs.colorize_labels(np.arange(1, 9, dtype=np.int32)[None, :], seed=3)[0]
@@ -557,10 +560,10 @@ def act_pointcloud(nf):
         c = _content()
         c = _place(c, raw, 0)
         c = _place(c, seg, 1)
-        c, ax = _plot_panel(c, _wide_rect(2, 2), (0.0, float(nf - 1)), (0.0, max(ncl) + 1.0),
-                            "フレーム(tol は往復する)", "個数",
-                            caption="(c) tol とクラスタ数")
-        c = _series(c, ax, np.arange(i + 1, dtype=float), np.asarray(ncl[:i + 1], float))
+        c, ax = _plot_panel(c, _wide_rect(2, 2), (0.05, 2.2), (0.0, max(ncl) + 1.0),
+                            "許容距離 tol [m](対数)", "個数",
+                            caption="(c) tol とクラスタ数", xscale="log")
+        c = _series(c, ax, tols[:i + 1], np.asarray(ncl[:i + 1], float))
         c = _cap(c, 0, "(a) 生の点群 %d 点  方位 %3.0f°" % (len(pts), np.rad2deg(az)))
         c = _cap(c, 1, "(b) euclidean_clusters tol=%.3f m — %d 個" % (tols[i], ncl[i]))
         out.append(c)
