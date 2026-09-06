@@ -254,7 +254,7 @@ def main():
           f"プレートの往復 最大 {d_plate.max():.3e} 秒角(倍精度の丸めの桁)")
     assert d_sky.max() < 1e-8 and d_plate.max() < 1e-9
     print(f"   視野 {SHAPE[0]}x{SHAPE[1]} px = "
-          f"{SHAPE[0] * PLATE_ARCSEC_PX / 60:.2f} 分角角。"
+          f"{SHAPE[0] * PLATE_ARCSEC_PX / 60:.2f} 分角四方。"
           f"1 px = {PLATE_ARCSEC_PX} 秒角 なので "
           f"0.01 px = {0.01 * PLATE_ARCSEC_PX * 1000:.0f} ミリ秒角")
     timing["0 真値"] = time.perf_counter() - t0
