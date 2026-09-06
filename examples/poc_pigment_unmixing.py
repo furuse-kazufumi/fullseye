@@ -484,6 +484,9 @@ def detectors(scene, spectra, rng, n_bands=NB0, sigma=None, fixed_sigma=False,
         d = nir_difference(centers, cube)
         if d is not None:
             out["nir"] = d
+        nb = (centers >= NIR_LO) & (centers <= NIR_HI)
+        if nb.any():
+            out["nirb"] = -cube[..., nb].mean(axis=2)      # 近赤外 1 枚(暗い所を拾う)
     if "sam" in want:
         out["sam"] = -fs.spec_angle_mapper(cube, Eb[CARBON_ROW])
     return out
