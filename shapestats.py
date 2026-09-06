@@ -280,8 +280,26 @@ def shape_pca(shapes, n_components: int = 0, align: bool = True):
     (揃えずに PCA を取ると、第 1 主成分が「位置の違い」になって形の話が消える)。
 
     ★ **分散は標本分散(``K-1`` で割る)**。K が小さいと固有値は系統的に大きく
-    出る —— K=8 の群で真の分散を 1.14 倍ほど過大に見積もる。個体数が二桁に
-    届かないうちは、固有値そのものより**比**を見ること。
+    出る。個体数が二桁に届かないうちは、固有値そのものより**比**を見ること。
+
+    ★★ **``align=True`` は「大きさの違い」も消すので、大きさに近いモードの分散を
+    食う。** :func:`shape_synth_family` は第 1 モードを「長軸の伸び縮み」、第 2 を
+    「曲げ」にしてあり、重みの比は 0.30 : 0.12 なので**分散比の真値は 6.25**。
+    実測(K=40、N=80、seed=7):
+
+    ==========================  ==========  ======================
+    前処理                      分散比      寄与率(第 1 / 第 2)
+    ==========================  ==========  ======================
+    ``align=False``                  6.981        0.8747 / 0.1253
+    GPA(``scaling=False``)          6.981        0.8747 / 0.1253
+    ``align=True``(既定)            2.565        0.7188 / 0.2803
+    ==========================  ==========  ======================
+
+    伸びは一様拡大とよく似ているので、Procrustes のスケール除去がその半分以上を
+    持っていく。**間違いではなく定義の帰結** —— 「大きさを形質に数えるか」を
+    先に決めていないと、同じデータから違う主成分が出る。成長や体格差を形の話に
+    含めたいなら ``align=False``(または ``generalized_procrustes(scaling=False)``
+    を通してから ``align=False``)にすること。
     """
     x = _as_family(shapes)
     if align:
@@ -419,7 +437,7 @@ def shape_synthesize(model, sigmas=None, n_modes: int = 3, seed: int = 0):
 # --------------------------------------------------------------------------- #
 # 4. 左右対称性(ランドマーク)                                                #
 # --------------------------------------------------------------------------- #
-def mirror_plane_from_pairs(landmarks, pairs, midline=None):
+def mirror_plane_from_pairs(landmarks, pairs=None, midline=None):
     """左右の対応ランドマークから正中面を出す。→ ``(2, 3)``(1 行目 = 点、2 行目 = 法線)。
 
     左右の対 ``(i, j)`` の**中点**は、どれも正中面の上に乗る。だからその中点集合に
@@ -432,8 +450,20 @@ def mirror_plane_from_pairs(landmarks, pairs, midline=None):
 
     *midline* は正中線上にある(対にならない)ランドマークの添字。与えると
     中点集合に足して面の当てはめを安定させる。
+
+    ``pairs=None`` は**前半と後半を対にする**規約(``i`` と ``i + N//2``)。
+    左のランドマークを全部並べてから右を同じ順で並べる、という保存形式が
+    形態計測では一般的なので、それに合わせてある。**点数が奇数なら拒否する**
+    —— 半分に割れない並びを黙って切り詰めると、対が 1 つずつずれて全部の
+    符号が入れ替わる。
     """
     p = _as_shape(landmarks, "landmarks")
+    if pairs is None:
+        n = p.shape[0]
+        if n % 2 != 0 or n < 4:
+            raise ValueError("pairs=None は前半/後半の規約なので、ランドマークは "
+                             "偶数個(4 以上)必要(got %d)" % n)
+        pairs = np.column_stack([np.arange(n // 2), np.arange(n // 2, n)])
     idx = np.asarray(pairs, dtype=np.int64)
     if idx.ndim != 2 or idx.shape[1] != 2 or idx.shape[0] < 2:
         raise ValueError("pairs must be (M, 2) with M >= 2, got %r" % (idx.shape,))
@@ -459,18 +489,32 @@ def mirror_plane_from_pairs(landmarks, pairs, midline=None):
     return np.vstack([c, normal / max(float(np.linalg.norm(normal)), 1e-12)])
 
 
-def landmark_asymmetry(landmarks, pairs, plane):
+def landmark_asymmetry(landmarks, pairs=None, plane=None):
     """左右の対ごとの**符号つき**非対称量。→ ``(M,)``。
 
     各対について、片方を面で鏡映してもう片方と比べ、面の法線方向の差を返す。
     符号は「右が外側なら正」(:func:`mirror_plane_from_pairs` が法線をその向きに
     揃えている)。**絶対値にまとめない** —— 左右どちらが張り出しているかは
     臨床でも検査でも意味が違う。
+
+    ``pairs=None`` / ``plane=None`` はどちらも :func:`mirror_plane_from_pairs`
+    と同じ既定(前半/後半の対、その対から出した正中面)。**面を省くと、面自体が
+    同じ対から決まる**ので「面を決めた材料で面からのずれを測る」ことになる ——
+    それでも左右差は測れる(中点は定義上どちらの側にも寄らない)が、
+    別の情報源から面が決まるなら渡したほうが強い。
     """
     p = _as_shape(landmarks, "landmarks")
+    if pairs is None:
+        n = p.shape[0]
+        if n % 2 != 0 or n < 4:
+            raise ValueError("pairs=None は前半/後半の規約なので、ランドマークは "
+                             "偶数個(4 以上)必要(got %d)" % n)
+        pairs = np.column_stack([np.arange(n // 2), np.arange(n // 2, n)])
     idx = np.asarray(pairs, dtype=np.int64)
     if idx.ndim != 2 or idx.shape[1] != 2:
         raise ValueError("pairs must be (M, 2), got %r" % (idx.shape,))
+    if plane is None:
+        plane = mirror_plane_from_pairs(p, idx)
     pl = np.asarray(plane, dtype=np.float64)
     if pl.shape != (2, 3):
         raise ValueError("plane must be (2, 3): row 0 point, row 1 normal")

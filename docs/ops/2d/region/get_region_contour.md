@@ -5,10 +5,10 @@ category: region
 in: region
 out: region
 halcon: get_region_contour
-examples: [gallery2d_region]
+examples: [gallery2d_region, poc_document_scan]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.9  # fullseye lib version this note was generated for
+version: 0.1.10  # fullseye lib version this note was generated for
 ---
 
 # get_region_contour — 2D `region` op
@@ -36,6 +36,7 @@ HALCON の ``get_region_contour``（領域の輪郭を取得する演算、本�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_region](../../../../examples/gallery2d_region.py) — `py -3.11 examples/gallery2d_region.py`
+- [poc_document_scan](../../../../examples/poc_document_scan.py) — `py -3.11 examples/poc_document_scan.py`
 
 ## 型が繋がる次の op(`region` を入力に取れる)
 

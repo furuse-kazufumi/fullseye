@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">generalized_procrustes — SHAPESTAT <code style="color:#22d3bf">procrustes</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">shapeset</code> → <code style="color:#22d3bf">shapeset</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import shapestats; shapestats.generalized_procrustes(shapes, max_iter: &#x27;int&#x27; = 100, tol: &#x27;float&#x27; = 1e-10, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>(或 <code style="color:#22d3bf">opsshapestat.get(&quot;generalized_procrustes&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>一般化 Procrustes(GPA)。全個体を共通の枠へ。→ `<code style="color:#22d3bf">(K, N, 3)</code>`。</p>
+<p>手順は教科書どおり: 1 個体を仮の平均にして全員を合わせ、平均を取り直し、</p>
+<p>その平均を<b>最初の個体に合わせ直して</b>枠の漂流を止め、収束まで繰り返す。</p>
+<p>最後の一手が無いと平均が毎回ゆっくり回り、`<code style="color:#22d3bf">tol</code>` に到達しない。</p>
+<p>収束の判定は平均形状の移動量(点ごと RMS)。反復数と収束の可否は</p>
+<p>:func:<code style="color:#22d3bf">shape_mean</code> ではなくこちらには返らない —— 群を返す関数なので、</p>
+<p>診断が要るときは前後で :func:<code style="color:#22d3bf">procrustes_distance</code> を測ること。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">shapeset</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opshapestat:shape_mean">shape_mean</a> · <a style="color:#22d3bf" href="opshapestat:shape_pca">shape_pca</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">procrustes</code>)</h3>
+<p><a style="color:#22d3bf" href="opshapestat:procrustes_fit">procrustes_fit</a> · <a style="color:#22d3bf" href="opshapestat:procrustes_align">procrustes_align</a> · <a style="color:#22d3bf" href="opshapestat:procrustes_distance">procrustes_distance</a> · <a style="color:#22d3bf" href="opshapestat:shape_mean">shape_mean</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: shapestats.py — SHAPESTAT 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

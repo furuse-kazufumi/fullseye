@@ -198,3 +198,26 @@ def test_the_two_namespaces_overlap_in_exactly_one_name():
     both = _ledger_names() & {o.name for o in ops.REGISTRY}
     assert both == {"fill_holes"}, sorted(both)
     assert fs.ledger.fill_holes is not fs.op.fill_holes
+
+
+def test_ledger_namespace_exposes_the_raw_return_through_dot_raw():
+    """adapter が捨てる 2 番目以降に ``.raw`` で届くこと(2026-09-06)。
+
+    ``flow, info = fs.ledger.piv_cross_correlate(a, b)`` は例外を出さずに
+    (2, R, C) を第 1 軸で開き、``flow`` が dy 成分だけになる。実際に PoC が
+    それで踏んで、ずれ推定を 0.12 → 0.74 画素にした。
+    """
+    import numpy as np
+    rng = np.random.default_rng(0)
+    a = rng.random((96, 96))
+    b = np.roll(a, 2, axis=1)
+    adapted = fs.ledger.piv_cross_correlate(a, b, window=16)
+    raw = fs.ledger.piv_cross_correlate.raw(a, b, window=16)
+    assert isinstance(adapted, np.ndarray) and adapted.shape[0] == 2
+    assert isinstance(raw, tuple) and len(raw) == 2
+    assert np.array_equal(raw[0], adapted, equal_nan=True)
+    assert isinstance(raw[1], dict)
+    assert np.isfinite(adapted).any(), "全部 nan —— 窓か入力の選び方を見直すこと"
+    # adapter が無い op でも .raw は同じものを返す(呼び分けを覚えなくてよい)
+    plain = fs.ledger.dem_slope(np.zeros((8, 8)), 5.0)
+    assert np.array_equal(fs.ledger.dem_slope.raw(np.zeros((8, 8)), 5.0), plain)

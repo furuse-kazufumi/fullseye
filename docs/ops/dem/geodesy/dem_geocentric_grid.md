@@ -3,16 +3,16 @@ op: dem_geocentric_grid
 dim: dem
 category: geodesy
 in: depth
-out: coordgrid
+out: pointmap
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.9  # fullseye lib version this note was generated for
+version: 0.1.10  # fullseye lib version this note was generated for
 ---
 
 # dem_geocentric_grid — DEM `geodesy` op
 
-- **データ種**: `depth` → `coordgrid`
+- **データ種**: `depth` → `pointmap`
 - **呼び出し**: `import demops; demops.dem_geocentric_grid(dem, lat0_deg, lon0_deg, cell_size, spherical=False)` (または `opsdem.get("dem_geocentric_grid")`)
 
 ## 使い方
@@ -52,7 +52,7 @@ Returns:
 
 - (まだありません)
 
-## 型が繋がる次の op(`coordgrid` を入力に取れる)
+## 型が繋がる次の op(`pointmap` を入力に取れる)
 
 —
 

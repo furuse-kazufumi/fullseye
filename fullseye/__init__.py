@@ -455,6 +455,17 @@ class _LedgerNamespace:
     チェックが要るなら :func:`fullseye.op_run`、進化する 2-D op なら
     :data:`fullseye.op` を使う。
 
+    ★ **adapter はタプルの 2 番目以降を捨てる。** ``drizzle_resample`` は
+    ``(sci, wht)`` の ``sci`` だけ、``piv_cross_correlate`` は ``(flow, info)`` の
+    ``flow`` だけが返る。捨てられた側が要るときは ``.raw`` を使う::
+
+        flow, info = fs.ledger.piv_cross_correlate.raw(a, b)
+        sci, wht = fs.ledger.drizzle_resample.raw(frames)
+
+    ``.raw`` を用意したのは、2026-09-06 に ``flow, info = fs.ledger.piv_...(a, b)``
+    と書いた PoC が **例外なしに嘘の値**を作ったため —— 返るのは ``(2, R, C)`` の
+    配列なので第 1 軸で開かれ、``flow`` が dy 成分だけになる。
+
     ``fullseye`` 直下に既にある 499 個は**そのまま**にしてある。名前を消すのは
     利用者のコードを壊すし、ここに全部あるので探すには困らない。台帳をまたぐ
     同名は ``gaussians_to_voxel`` の 1 つだけで(``ops3d`` と ``opsreprconv``)、
@@ -508,6 +519,14 @@ class _LedgerNamespace:
         _call.__name__ = name
         _call.__qualname__ = "fullseye.ledger." + name
         fn = entry.get("func")
+        # ★ 宣言 out 型に合わせる adapter は、タプルを返す op の**2 番目以降を
+        #   捨てる**(``drizzle_resample`` の ``wht``、``piv_cross_correlate`` の
+        #   ``info``)。捨てられた側が必要なとき、台帳の入口からは届かなかった。
+        #   2026-09-06、超解像の PoC が ``flow, info = fs.ledger.piv_cross_correlate(...)``
+        #   と書いて (2,R,C) を第 1 軸で開き、dy の 2 行目を dx として使い、
+        #   ずれ推定を 0.12 → 0.74 画素にした(例外は出ない)。
+        #   ``.raw`` で素の返りに届く: ``fs.ledger.piv_cross_correlate.raw(a, b)``。
+        _call.raw = fn
         _call.__doc__ = "%s\n\n(台帳 %s / %s: %s -> %s)" % (
             (getattr(fn, "__doc__", None) or entry.get("doc") or ""),
             mod.__name__, entry.get("category"),

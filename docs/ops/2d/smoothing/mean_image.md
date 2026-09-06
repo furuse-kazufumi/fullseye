@@ -5,10 +5,10 @@ category: smoothing
 in: image
 out: image
 halcon: mean_image
-examples: [gallery2d_smoothing_rank]
+examples: [gallery2d_smoothing_rank, poc_document_scan, poc_focus_stacking]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.9  # fullseye lib version this note was generated for
+version: 0.1.10  # fullseye lib version this note was generated for
 ---
 
 # mean_image — 2D `smoothing` op
@@ -39,6 +39,8 @@ averaging.）に相当する近似で、注目画素を一辺 k の窓の平均�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_smoothing_rank](../../../../examples/gallery2d_smoothing_rank.py) — `py -3.11 examples/gallery2d_smoothing_rank.py`
+- [poc_document_scan](../../../../examples/poc_document_scan.py) — `py -3.11 examples/poc_document_scan.py`
+- [poc_focus_stacking](../../../../examples/poc_focus_stacking.py) — `py -3.11 examples/poc_focus_stacking.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

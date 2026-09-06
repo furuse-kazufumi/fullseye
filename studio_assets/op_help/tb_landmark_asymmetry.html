@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tb_landmark_asymmetry — 2D <code style="color:#22d3bf">typed</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_landmark_asymmetry&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>左右の対ごとの<b>符号つき</b>非対称量。→ `<code style="color:#22d3bf">(M,)</code>`。</p>
+<p>各対について、片方を面で鏡映してもう片方と比べ、面の法線方向の差を返す。</p>
+<p>符号は「右が外側なら正」(:func:<code style="color:#22d3bf">mirror_plane_from_pairs</code> が法線をその向きに</p>
+<p>揃えている)。<b>絶対値にまとめない</b> —— 左右どちらが張り出しているかは</p>
+<p>臨床でも検査でも意味が違う。</p>
+<p>`<code style="color:#22d3bf">pairs=None</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">plane=None</code><code style="color:#22d3bf"> はどちらも :func:</code>mirror_plane_from_pairs`</p>
+<p>と同じ既定(前半/後半の対、その対から出した正中面)。**面を省くと、面自体が</p>
+<p>同じ対から決まる**ので「面を決めた材料で面からのずれを測る」ことになる ——</p>
+<p>それでも左右差は測れる(中点は定義上どちらの側にも寄らない)が、</p>
+<p>別の情報源から面が決まるなら渡したほうが強い。</p>
+<p>2-D 進化レジストリへ橋渡しした shapestat の op `<code style="color:#22d3bf">landmark_asymmetry</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">signal</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_create_funct_1d_array">tb_create_funct_1d_array</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_gauss">tb_smooth_funct_1d_gauss</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_mean">tb_smooth_funct_1d_mean</a> · <a style="color:#22d3bf" href="op:tb_derivate_funct_1d">tb_derivate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_integrate_funct_1d">tb_integrate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_zero_crossings_funct_1d">tb_zero_crossings_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_abs_funct_1d">tb_abs_funct_1d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">typed</code>)</h3>
+<p><a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_angle_3points">tb_angle_3points</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -5,10 +5,10 @@ category: edges
 in: image
 out: image
 halcon: laplace_of_gauss
-examples: [gallery2d_edges, photon_timeresolved, poc_dtof_ranging, signal_funct1d]
+examples: [gallery2d_edges, photon_timeresolved, poc_camera_shake_deblur, poc_dtof_ranging, poc_matrix_code_reading, signal_funct1d]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.9  # fullseye lib version this note was generated for
+version: 0.1.10  # fullseye lib version this note was generated for
 ---
 
 # log — 2D `edges` op
@@ -37,7 +37,9 @@ version: 0.1.9  # fullseye lib version this note was generated for
 
 - [gallery2d_edges](../../../../examples/gallery2d_edges.py) — `py -3.11 examples/gallery2d_edges.py`
 - [photon_timeresolved](../../../../examples/photon_timeresolved.py) — `py -3.11 examples/photon_timeresolved.py`
+- [poc_camera_shake_deblur](../../../../examples/poc_camera_shake_deblur.py) — `py -3.11 examples/poc_camera_shake_deblur.py`
 - [poc_dtof_ranging](../../../../examples/poc_dtof_ranging.py) — `py -3.11 examples/poc_dtof_ranging.py`
+- [poc_matrix_code_reading](../../../../examples/poc_matrix_code_reading.py) — `py -3.11 examples/poc_matrix_code_reading.py`
 - [signal_funct1d](../../../../examples/signal_funct1d.py) — `py -3.11 examples/signal_funct1d.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)

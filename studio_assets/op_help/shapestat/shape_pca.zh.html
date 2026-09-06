@@ -1,0 +1,45 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">shape_pca — SHAPESTAT <code style="color:#22d3bf">model</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">shapeset</code> → <code style="color:#22d3bf">shapemodel</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import shapestats; shapestats.shape_pca(shapes, n_components: &#x27;int&#x27; = 0, align: &#x27;bool&#x27; = True)</code>(或 <code style="color:#22d3bf">opsshapestat.get(&quot;shape_pca&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>形態 PCA(統計形状モデル)。→ dict(`<code style="color:#22d3bf">shapemodel</code>`)。</p>
+<p>返す辞書: `<code style="color:#22d3bf">mean</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">components</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(k, N*3)</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">variance</code>`</p>
+<p>`<code style="color:#22d3bf">(k,)</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_points</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">total_variance</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">aligned</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(K,N,3)</code>`。</p>
+<p>`<code style="color:#22d3bf">n_components=0</code><code style="color:#22d3bf">(既定)は </code><code style="color:#22d3bf">min(K-1, N*3)</code>` 本すべて。</p>
+<p>`<code style="color:#22d3bf">align=True</code><code style="color:#22d3bf"> なら先に :func:</code>generalized_procrustes` を掛ける</p>
+<p>(揃えずに PCA を取ると、第 1 主成分が「位置の違い」になって形の話が消える)。</p>
+<p>★ **分散は標本分散(`<code style="color:#22d3bf">K-1</code>` で割る)**。K が小さいと固有値は系統的に大きく</p>
+<p>出る。個体数が二桁に届かないうちは、固有値そのものより<b>比</b>を見ること。</p>
+<p>★★ **`<code style="color:#22d3bf">align=True</code>` は「大きさの違い」も消すので、大きさに近いモードの分散を</p>
+<p>食う。** :func:<code style="color:#22d3bf">shape_synth_family</code> は第 1 モードを「長軸の伸び縮み」、第 2 を</p>
+<p>「曲げ」にしてあり、重みの比は 0.30 : 0.12 なので<b>分散比の真値は 6.25</b>。</p>
+<p>実測(K=40、N=80、seed=7):</p>
+<p>==========================  ==========  ======================</p>
+<p>前処理                      分散比      寄与率(第 1 / 第 2)</p>
+<p>==========================  ==========  ======================</p>
+<p>`<code style="color:#22d3bf">align=False</code>`                  6.981        0.8747 / 0.1253</p>
+<p>GPA(`<code style="color:#22d3bf">scaling=False</code>`)          6.981        0.8747 / 0.1253</p>
+<p>`<code style="color:#22d3bf">align=True</code>`(既定)            2.565        0.7188 / 0.2803</p>
+<p>==========================  ==========  ======================</p>
+<p>伸びは一様拡大とよく似ているので、Procrustes のスケール除去がその半分以上を</p>
+<p>持っていく。<b>間違いではなく定義の帰結</b> —— 「大きさを形質に数えるか」を</p>
+<p>先に決めていないと、同じデータから違う主成分が出る。成長や体格差を形の話に</p>
+<p>含めたいなら `<code style="color:#22d3bf">align=False</code><code style="color:#22d3bf">(または </code><code style="color:#22d3bf">generalized_procrustes(scaling=False)</code>`</p>
+<p>を通してから `<code style="color:#22d3bf">align=False</code>`)にすること。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">shapemodel</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opshapestat:shape_project">shape_project</a> · <a style="color:#22d3bf" href="opshapestat:shape_reconstruct">shape_reconstruct</a> · <a style="color:#22d3bf" href="opshapestat:shape_mahalanobis">shape_mahalanobis</a> · <a style="color:#22d3bf" href="opshapestat:shape_explained_variance">shape_explained_variance</a> · <a style="color:#22d3bf" href="opshapestat:shape_synthesize">shape_synthesize</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">model</code>)</h3>
+<p><a style="color:#22d3bf" href="opshapestat:shape_project">shape_project</a> · <a style="color:#22d3bf" href="opshapestat:shape_reconstruct">shape_reconstruct</a> · <a style="color:#22d3bf" href="opshapestat:shape_mahalanobis">shape_mahalanobis</a> · <a style="color:#22d3bf" href="opshapestat:shape_explained_variance">shape_explained_variance</a> · <a style="color:#22d3bf" href="opshapestat:shape_synthesize">shape_synthesize</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: shapestats.py — SHAPESTAT 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

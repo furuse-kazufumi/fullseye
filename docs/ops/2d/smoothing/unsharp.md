@@ -5,10 +5,10 @@ category: smoothing
 in: image
 out: image
 halcon: emphasize
-examples: [gallery2d_smoothing_rank]
+examples: [gallery2d_smoothing_rank, poc_camera_shake_deblur, poc_superresolution_limits]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.9  # fullseye lib version this note was generated for
+version: 0.1.10  # fullseye lib version this note was generated for
 ---
 
 # unsharp — 2D `smoothing` op
@@ -40,6 +40,8 @@ max=+1.1499)。`_apply` は段間で同じ clip を掛けるので **パイプ�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_smoothing_rank](../../../../examples/gallery2d_smoothing_rank.py) — `py -3.11 examples/gallery2d_smoothing_rank.py`
+- [poc_camera_shake_deblur](../../../../examples/poc_camera_shake_deblur.py) — `py -3.11 examples/poc_camera_shake_deblur.py`
+- [poc_superresolution_limits](../../../../examples/poc_superresolution_limits.py) — `py -3.11 examples/poc_superresolution_limits.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

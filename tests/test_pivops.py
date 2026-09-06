@@ -639,3 +639,22 @@ def test_the_module_states_the_conventions_that_silently_break_things():
     doc = P.__doc__ or ""
     for probe in ("(dy, dx)", "画素/フレーム", "反時計回り", "scene_flow_lk"):
         assert probe in doc, f"規約の記述 {probe!r} が docstring から消えている"
+
+
+def test_info_reports_how_many_windows_actually_produced_a_vector():
+    """★ nan の割合が返り値から分かること(2026-09-06 追加)。
+
+    テクスチャの無い窓は nan を返す —— 0 を返さないのは「動いていない」と
+    「分からない」を混ぜないためで、それ自体は正しい。だが**何割が nan かは
+    どこにも出ておらず**、``flow.mean()`` が nan になって初めて気づく形だった。
+    """
+    block = np.zeros((64, 64))
+    block[24:40, 24:40] = 1.0
+    _, info = P.piv_cross_correlate(block, np.roll(block, 2, axis=1), window=16)
+    assert info["valid_fraction"] == pytest.approx(16 / 98, abs=0.02)
+
+    rng = np.random.default_rng(0)
+    tex = rng.random((96, 96))
+    flow, info2 = P.piv_cross_correlate(tex, np.roll(tex, 2, axis=1), window=16)
+    assert info2["valid_fraction"] == 1.0
+    assert float(np.nanmedian(flow[1])) == pytest.approx(2.0, abs=0.05)

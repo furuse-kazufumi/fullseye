@@ -20,12 +20,22 @@
 <p>貼った場合は差が出ない。</p>
 <p style="margin:2px 0 2px 12px">• JPEG は雑音をブロックごとに削るので、圧縮済みの画像では `<code style="color:#22d3bf">block</code>` を 8 の倍数に</p>
 <p>しないとブロック格子と干渉して縞が出る(既定 16 は 8 の倍数)。</p>
+<p style="margin:2px 0 2px 12px">• ★ <b>画像の縁に、改竄と無関係な段差が必ず出る</b>(2026-09-06 実測)。</p>
+<p>畳み込みが `<code style="color:#22d3bf">mode=&quot;reflect&quot;</code>` で折り返すため、外周のブロックでは高周波が</p>
+<p>減って σ が低く出る。<b>改竄ゼロ・一様雑音</b>の 256x256 で、最外ブロック帯</p>
+<p>8.815 に対し中心 9.537(<b>-7.6 %</b>)。同じ画像の生の局所 std は</p>
+<p>0.03491 と 0.03563(-2.0 %)しか違わないので、差の大半は推定器が作っている。</p>
+<p>中央値からの隔たりで見ると最外 0.7173 / 中心 0.5948 = <b>1.21 倍</b>。</p>
+<p>画素ごとの ROC を取るとこれだけでゼロ点 AUC が 0.5 から外れる</p>
+<p>(`<code style="color:#22d3bf">examples/poc_forensics_roc.py</code>` の実測で 0.447)。**外周 1 ブロックを</p>
+<p>判定から外す**か、中央値を場所ごとに取ること。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_forensics_audit">image_forensics_audit</a> — <code style="color:#22d3bf">py -3.11 examples/image_forensics_audit.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_forensics_roc">poc_forensics_roc</a> — <code style="color:#22d3bf">py -3.11 examples/poc_forensics_roc.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="opimgforensics:perceptual_hash">perceptual_hash</a> · <a style="color:#22d3bf" href="opimgforensics:fingerprint_correlate">fingerprint_correlate</a> · <a style="color:#22d3bf" href="opimgforensics:error_level_map">error_level_map</a> · <a style="color:#22d3bf" href="opimgforensics:jpeg_quality_estimate">jpeg_quality_estimate</a> · <a style="color:#22d3bf" href="opimgforensics:jpeg_ghost_map">jpeg_ghost_map</a> · <a style="color:#22d3bf" href="opimgforensics:copy_move_regions">copy_move_regions</a> · <a style="color:#22d3bf" href="opimgforensics:watermark_embed">watermark_embed</a> · <a style="color:#22d3bf" href="opimgforensics:watermark_extract">watermark_extract</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">noise</code>)</h3>

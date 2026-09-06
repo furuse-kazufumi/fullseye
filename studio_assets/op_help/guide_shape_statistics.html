@@ -1,0 +1,106 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">形態統計(形の群を比べる) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p><b>1 つの形ではなく、形の群を比べる</b>層です。入力は対応の取れた点(ランドマーク、</p>
+<p>または同じ手順で再標本化した頂点)、出力は共通の枠へ揃えた形・平均形状・</p>
+<p>主成分・異常度・正中面・符号つきの面距離。</p>
+<p>16 op / 5 カテゴリ(numpy と scipy のみ。台帳は <code style="color:#22d3bf">opsshapestat.py</code>、実体は</p>
+<p><code style="color:#22d3bf">shapestats.py</code>):</p>
+<p style="margin:2px 0 2px 12px">• <b>synth(2)</b> — <code style="color:#22d3bf">shape_synth_family</code> / <code style="color:#22d3bf">shape_perturb</code>: 既知の変形モードを</p>
+<p>持つ形の群と、既知の 1 変形。<b>この族の全テストの真値の供給源</b>。</p>
+<p style="margin:2px 0 2px 12px">• <b>procrustes(5)</b> — <code style="color:#22d3bf">procrustes_fit</code> / <code style="color:#22d3bf">procrustes_align</code> /</p>
+<p><code style="color:#22d3bf">procrustes_distance</code> / <code style="color:#22d3bf">generalized_procrustes</code> / <code style="color:#22d3bf">shape_mean</code>:</p>
+<p>位置・向き・大きさを取り除く。</p>
+<p style="margin:2px 0 2px 12px">• <b>model(6)</b> — <code style="color:#22d3bf">shape_pca</code> / <code style="color:#22d3bf">shape_project</code> / <code style="color:#22d3bf">shape_reconstruct</code> /</p>
+<p><code style="color:#22d3bf">shape_mahalanobis</code> / <code style="color:#22d3bf">shape_explained_variance</code> / <code style="color:#22d3bf">shape_synthesize</code>:</p>
+<p>統計形状モデル。</p>
+<p style="margin:2px 0 2px 12px">• <b>symmetry(2)</b> — <code style="color:#22d3bf">mirror_plane_from_pairs</code> / <code style="color:#22d3bf">landmark_asymmetry</code>:</p>
+<p>左右の対から正中面を出し、符号つきで測る。</p>
+<p style="margin:2px 0 2px 12px">• <b>deviation(1)</b> — <code style="color:#22d3bf">signed_surface_distance</code>: 3-D の符号つき面距離。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">全体の流れ</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    A[&quot;対応の取れた点&lt;br/&gt;(K, N, 3)&quot;] --&gt; B[&quot;generalized_procrustes&lt;br/&gt;位置・向き・大きさを外す&quot;]
+    B --&gt; C[&quot;shape_mean&lt;br/&gt;群の平均形状&quot;]
+    B --&gt; D[&quot;shape_pca&lt;br/&gt;変形モード + 分散&quot;]
+    D --&gt; E[&quot;shape_project / shape_reconstruct&lt;br/&gt;係数へ / 形へ戻す&quot;]
+    D --&gt; F[&quot;shape_mahalanobis&lt;br/&gt;群からの外れ具合&quot;]
+    A --&gt; G[&quot;mirror_plane_from_pairs&lt;br/&gt;対の中点から正中面&quot;]
+    G --&gt; H[&quot;landmark_asymmetry&lt;br/&gt;符号つきの左右差&quot;]
+    C --&gt; I[&quot;signed_surface_distance&lt;br/&gt;平均形状からの面偏差&quot;]</pre>
+<p>左の枝が「群と比べる」、右の枝が「自分の中の左右で比べる」。真値が要るときは</p>
+<p><code style="color:#22d3bf">shape_synth_family</code> と <code style="color:#22d3bf">shape_perturb</code> で既知の変形を作ってから同じ経路を通します。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">なぜ足したか —— 在庫を数えた結果</h3>
+<p>2026-09-06、左右非対称性の PoC(<code style="color:#22d3bf">examples/poc_bilateral_asymmetry.py</code>)が</p>
+<p>「形を 1 つずつ扱う道具は揃っているのに、<b>群で比べる層が無い</b>」と具体的に</p>
+<p>列挙しました。</p>
+<p>| 既にあったもの | 何をするか | なぜ代わりにならないか |</p>
+<p>|---|---|---|</p>
+<p>| <code style="color:#22d3bf">kabsch</code> | 対応つき点の<b>剛体</b>当てはめ | 大きさを吸収できない。群の平均も出ない |</p>
+<p>| <code style="color:#22d3bf">icp</code> / <code style="color:#22d3bf">point_to_plane_icp</code> | 対応<b>無し</b>の位置合わせ | ランドマークの対応を活かせない |</p>
+<p>| <code style="color:#22d3bf">pca_align</code> | 主軸で揃える | 素の直方体で 83 % が反転した象限を掴む |</p>
+<p>| <code style="color:#22d3bf">symmetry3d.detect_reflection_symmetry</code> | 残差最小の鏡映面 | <b>片側の変形に引きずられる</b>(下記) |</p>
+<p>| <code style="color:#22d3bf">profileops.profile_deviation</code> | 1-D 輪郭の符号つき偏差 | 3-D に相当が無かった |</p>
+<p><b>工業検査との違いは 1 点だけ</b> —— 設計 CAD が無い。だから基準が「図面との差」</p>
+<p>ではなく「群集平均との差」「左右対称性」「成長の軸」になる。それ以外は同じ</p>
+<p>パイプライン(抽出 → 位置合わせ → 特徴量化 → 群比較 → 異常検出)に載ります。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">いちばん短い例</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import shapestats as ss
+
+fam = ss.shape_synth_family(n_shapes=20, n_points=64, seed=0)   # (20, 64, 3)
+model = ss.shape_pca(fam)                    # 平均形状 + 主成分 + 分散
+score = ss.shape_mahalanobis(model, fam[0])  # この個体は群からどれだけ外れているか</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">落とし穴 3 つ(どれも実測つき)</h3>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">1. <code style="color:#22d3bf">scaling</code> の選択で主成分が変わる</h3>
+<p>Procrustes は 3 段階で情報を捨てます: 平行移動 → 回転 → <b>大きさ</b>。3 段目は</p>
+<p>既定で有効です。ところが「長軸の伸び縮み」というモードは一様拡大とよく似て</p>
+<p>いるので、<b>スケール除去がその半分以上を持っていきます</b>。</p>
+<p><code style="color:#22d3bf">shape_synth_family</code> は第 1 モードを伸び、第 2 を曲げにし、重みの比を</p>
+<p>0.30 : 0.12 にしてあるので<b>分散比の真値は 6.25</b> です。実測(K=40、N=80):</p>
+<p>| 前処理 | 分散比 | 寄与率(第 1 / 第 2) |</p>
+<p>|---|---|---|</p>
+<p>| <code style="color:#22d3bf">align=False</code> | 6.981 | 0.8747 / 0.1253 |</p>
+<p>| GPA(<code style="color:#22d3bf">scaling=False</code>) | 6.981 | 0.8747 / 0.1253 |</p>
+<p>| <code style="color:#22d3bf">align=True</code>(既定) | <b>2.565</b> | 0.7188 / 0.2803 |</p>
+<p>間違いではなく定義の帰結です。<b>「大きさを形質に数えるか」を先に決めてから</b></p>
+<p>使ってください。成長や体格差を形の話に含めたいなら <code style="color:#22d3bf">align=False</code>。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">2. Mahalanobis は裾を切らないと意味を失う</h3>
+<p>K 個体の群から出る主成分は K−1 本ですが、後ろのほうは分散が数値的なゼロまで</p>
+<p>落ちます。実測(K=12、N=80、真のモードは 2 本)の分散:</p>
+<p><code style="color:#22d3bf">3.2e-02, 5.6e-03, 4.0e-05, 6.7e-13, …, 1.0e-31</code>。この裾で割ると:</p>
+<p>| 使う本数 | 群内の個体 | 0.5 の膨らみを注入 |</p>
+<p>|---|---|---|</p>
+<p>| 2 | 0.885 | 2.617 |</p>
+<p>| 5 | 1.373 | 1393035.060 |</p>
+<p>| 11(全部) | <b>46613.636</b> | 9.3e+13 |</p>
+<p>11 本では<b>群内ですら 46614</b>。「異常度」ではなく「数値ゼロで割った回数」を</p>
+<p>測っています。既定は累積寄与率 0.99 までで打ち切ります(上の群では 2 本)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">3. 正中面は「残差が小さい面」ではない</h3>
+<p><code style="color:#22d3bf">symmetry3d.detect_reflection_symmetry</code> は残差を最小にする面を選びます。それは</p>
+<p><b>症状を左右に均して残差を買っている</b>ので、片側の変形があると面自体が</p>
+<p>引きずられます。PoC の実測: 6.4 mm の片側変形で面が真の正中面から</p>
+<p><b>2.92 mm / 1.72 度</b>ずれ、非対称量の <b>46 %</b> が消えました(利得 0.54)。</p>
+<p>対の中点から決める <code style="color:#22d3bf">mirror_plane_from_pairs</code> なら利得 1.03。</p>
+<p><b>見つけるなら残差最適面、量を言うならランドマーク面</b>、が両者の使い分けです。</p>
+<p>ただしランドマーク面にも限界があります。**片側が一様に広がる変形は面が丸ごと</p>
+<p>吸います**(中点が半分だけ動き、面もそこへ動く)。実測でその場合の左右差は</p>
+<p>4.9e-35。外から面を与えるか、正中線上のランドマーク(<code style="color:#22d3bf">midline</code>)を足してください。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">検査の床を先に測る</h3>
+<p>「差が出た」と言う前に、<b>同じものを測って出る差</b>を測ってください。PoC の</p>
+<p>実測(15000 点、点間隔 1.09 mm):</p>
+<p>| 測り方 | 床(完全対称な標本での rms) |</p>
+<p>|---|---|</p>
+<p>| 点対点 | 1.3262 mm(点間隔 x 1.2) |</p>
+<p>| 点対面 | 0.0297 mm(<b>45 倍改善</b>) |</p>
+<p>| 近傍中央値で平滑 | 0.0116 mm |</p>
+<p>測る距離だけでなく<b>合わせる距離</b>も効きます。ICP を点対点にすると床は</p>
+<p>0.1554 mm(点対面の 13 倍)。両方を接平面にして初めて床に届きます。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実データへ</h3>
+<p>比較形態学なら MorphoSource(&lt;https://www.morphosource.org/&gt;)に骨・歯・頭蓋・</p>
+<p>化石の CT とメッシュがあります。<b>リポジトリには同梱せず</b>、</p>
+<p><b>標本やファイルごとに寄託機関が条件を付ける</b>ので個別に確認してください。</p>
+<p>実スキャンで増える条件が 3 つあります: 単位が mm とは限らない / 破損標本には</p>
+<p>trimmed ICP が要る / 非閉曲面では重心基準の法線向き付けが使えない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">関連</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">examples/poc_bilateral_asymmetry.py</code> —— この族を作らせた PoC。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">docs/ops/3d/</code> の位置合わせ・点群・メッシュ修復 —— 前段の道具。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">docs/ops/profile/guides/profile_metrology.md</code> —— 1-D 断面の同型問題。</p>

@@ -4,10 +4,10 @@ dim: imgforensics
 category: noise
 in: image2d
 out: image2d
-examples: [image_forensics_audit]
+examples: [image_forensics_audit, poc_forensics_roc]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.9  # fullseye lib version this note was generated for
+version: 0.1.10  # fullseye lib version this note was generated for
 ---
 
 # noise_inconsistency_map — IMGFORENSICS `noise` op
@@ -38,6 +38,15 @@ Immerkær 1996 の 3x3 マスクで高周波成分を取り、``block`` 角の�
   貼った場合は差が出ない。
 * JPEG は雑音をブロックごとに削るので、圧縮済みの画像では ``block`` を 8 の倍数に
   しないとブロック格子と干渉して縞が出る(既定 16 は 8 の倍数)。
+* ★ **画像の縁に、改竄と無関係な段差が必ず出る**(2026-09-06 実測)。
+  畳み込みが ``mode="reflect"`` で折り返すため、外周のブロックでは高周波が
+  減って σ が低く出る。**改竄ゼロ・一様雑音**の 256x256 で、最外ブロック帯
+  8.815 に対し中心 9.537(**-7.6 %**)。同じ画像の生の局所 std は
+  0.03491 と 0.03563(-2.0 %)しか違わないので、差の大半は推定器が作っている。
+  中央値からの隔たりで見ると最外 0.7173 / 中心 0.5948 = **1.21 倍**。
+  画素ごとの ROC を取るとこれだけでゼロ点 AUC が 0.5 から外れる
+  (``examples/poc_forensics_roc.py`` の実測で 0.447)。**外周 1 ブロックを
+  判定から外す**か、中央値を場所ごとに取ること。
 
 ## 参考(サンプルデータ・文献)
 
@@ -48,6 +57,7 @@ Immerkær 1996 の 3x3 マスクで高周波成分を取り、``block`` 角の�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [image_forensics_audit](../../../../examples/image_forensics_audit.py) — `py -3.11 examples/image_forensics_audit.py`
+- [poc_forensics_roc](../../../../examples/poc_forensics_roc.py) — `py -3.11 examples/poc_forensics_roc.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

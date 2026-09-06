@@ -4,10 +4,10 @@ dim: imgforensics
 category: compression
 in: image2d
 out: image2d
-examples: [image_forensics_audit]
+examples: [image_forensics_audit, poc_forensics_roc]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.9  # fullseye lib version this note was generated for
+version: 0.1.10  # fullseye lib version this note was generated for
 ---
 
 # error_level_map — IMGFORENSICS `compression` op
@@ -60,6 +60,7 @@ numpy で真似ると、符号化器の丸め・色空間変換・チャネル�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [image_forensics_audit](../../../../examples/image_forensics_audit.py) — `py -3.11 examples/image_forensics_audit.py`
+- [poc_forensics_roc](../../../../examples/poc_forensics_roc.py) — `py -3.11 examples/poc_forensics_roc.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

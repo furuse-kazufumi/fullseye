@@ -5,10 +5,10 @@ category: segmentation
 in: image
 out: region
 halcon: var_threshold
-examples: [gallery2d_segmentation]
+examples: [gallery2d_segmentation, poc_document_scan]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.9  # fullseye lib version this note was generated for
+version: 0.1.10  # fullseye lib version this note was generated for
 ---
 
 # var_threshold — 2D `segmentation` op
@@ -42,6 +42,7 @@ HALCON の式は係数が異なる ―― 同一の数値結果にはならな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_segmentation](../../../../examples/gallery2d_segmentation.py) — `py -3.11 examples/gallery2d_segmentation.py`
+- [poc_document_scan](../../../../examples/poc_document_scan.py) — `py -3.11 examples/poc_document_scan.py`
 
 ## 型が繋がる次の op(`region` を入力に取れる)
 

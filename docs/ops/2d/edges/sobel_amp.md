@@ -5,10 +5,10 @@ category: edges
 in: image
 out: image
 halcon: sobel_amp
-examples: [gallery2d_edges]
+examples: [gallery2d_edges, poc_focus_stacking]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.9  # fullseye lib version this note was generated for
+version: 0.1.10  # fullseye lib version this note was generated for
 ---
 
 # sobel_amp — 2D `edges` op
@@ -40,6 +40,7 @@ operator.）に相当。
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_edges](../../../../examples/gallery2d_edges.py) — `py -3.11 examples/gallery2d_edges.py`
+- [poc_focus_stacking](../../../../examples/poc_focus_stacking.py) — `py -3.11 examples/poc_focus_stacking.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

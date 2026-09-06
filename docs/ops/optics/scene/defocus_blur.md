@@ -4,10 +4,10 @@ dim: optics
 category: scene
 in: rgbimage × image2d × table
 out: rgbimage
-examples: [virtual_machine_vision]
+examples: [poc_focus_stacking, virtual_machine_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.9  # fullseye lib version this note was generated for
+version: 0.1.10  # fullseye lib version this note was generated for
 ---
 
 # defocus_blur — OPTICS `scene` op
@@ -65,6 +65,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_focus_stacking](../../../../examples/poc_focus_stacking.py) — `py -3.11 examples/poc_focus_stacking.py`
 - [virtual_machine_vision](../../../../examples/virtual_machine_vision.py) — `py -3.11 examples/virtual_machine_vision.py`
 
 ## 型が繋がる次の op(`rgbimage` を入力に取れる)

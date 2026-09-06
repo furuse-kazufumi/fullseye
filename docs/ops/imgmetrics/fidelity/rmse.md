@@ -4,10 +4,10 @@ dim: imgmetrics
 category: fidelity
 in: image2d × image2d
 out: scalar
-examples: [grasp_pose, image_quality_metrics, physical_ai_perception, poc_ct_fidelity, poc_polarization_specular]
+examples: [grasp_pose, image_quality_metrics, physical_ai_perception, poc_ct_fidelity, poc_polarization_specular, poc_registration_basin]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.9  # fullseye lib version this note was generated for
+version: 0.1.10  # fullseye lib version this note was generated for
 ---
 
 # rmse — IMGMETRICS `fidelity` op
@@ -36,6 +36,7 @@ version: 0.1.9  # fullseye lib version this note was generated for
 - [physical_ai_perception](../../../../examples/physical_ai_perception.py) — `py -3.11 examples/physical_ai_perception.py`
 - [poc_ct_fidelity](../../../../examples/poc_ct_fidelity.py) — `py -3.11 examples/poc_ct_fidelity.py`
 - [poc_polarization_specular](../../../../examples/poc_polarization_specular.py) — `py -3.11 examples/poc_polarization_specular.py`
+- [poc_registration_basin](../../../../examples/poc_registration_basin.py) — `py -3.11 examples/poc_registration_basin.py`
 
 ## 型が繋がる次の op(`scalar` を入力に取れる)
 

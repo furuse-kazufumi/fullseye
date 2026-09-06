@@ -5,10 +5,10 @@ category: segmentation
 in: image
 out: region
 halcon: binary_threshold
-examples: [ct_inspection, gallery2d_segmentation, quickstart, segment_and_classify]
+examples: [ct_inspection, gallery2d_segmentation, poc_document_scan, poc_matrix_code_reading, quickstart, segment_and_classify]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.9  # fullseye lib version this note was generated for
+version: 0.1.10  # fullseye lib version this note was generated for
 ---
 
 # otsu — 2D `segmentation` op
@@ -37,6 +37,8 @@ version: 0.1.9  # fullseye lib version this note was generated for
 
 - [ct_inspection](../../../../examples/ct_inspection.py) — `py -3.11 examples/ct_inspection.py`
 - [gallery2d_segmentation](../../../../examples/gallery2d_segmentation.py) — `py -3.11 examples/gallery2d_segmentation.py`
+- [poc_document_scan](../../../../examples/poc_document_scan.py) — `py -3.11 examples/poc_document_scan.py`
+- [poc_matrix_code_reading](../../../../examples/poc_matrix_code_reading.py) — `py -3.11 examples/poc_matrix_code_reading.py`
 - [quickstart](../../../../examples/quickstart.py) — `py -3.11 examples/quickstart.py`
 - [segment_and_classify](../../../../examples/segment_and_classify.py) — `py -3.11 examples/segment_and_classify.py`
 

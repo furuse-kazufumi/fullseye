@@ -4,10 +4,10 @@ dim: imgforensics
 category: copy_move
 in: image2d
 out: table
-examples: [image_forensics_audit]
+examples: [image_forensics_audit, poc_forensics_roc]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.9  # fullseye lib version this note was generated for
+version: 0.1.10  # fullseye lib version this note was generated for
 ---
 
 # copy_move_regions — IMGFORENSICS `copy_move` op
@@ -109,6 +109,7 @@ keypoint 法・block 法とも群 **0 件**(seed 4/5/6)。
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [image_forensics_audit](../../../../examples/image_forensics_audit.py) — `py -3.11 examples/image_forensics_audit.py`
+- [poc_forensics_roc](../../../../examples/poc_forensics_roc.py) — `py -3.11 examples/poc_forensics_roc.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

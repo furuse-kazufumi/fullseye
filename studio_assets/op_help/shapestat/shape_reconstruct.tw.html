@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">shape_reconstruct — SHAPESTAT <code style="color:#22d3bf">model</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">shapemodel × signal</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import shapestats; shapestats.shape_reconstruct(model, scores)</code>(或 <code style="color:#22d3bf">opsshapestat.get(&quot;shape_reconstruct&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>スコアから形を戻す。→ `<code style="color:#22d3bf">(N, 3)</code>`。</p>
+<p>与えたスコアが本数より少なければ残りは 0(= 平均のまま)として扱う。</p>
+<p>多ければ `<code style="color:#22d3bf">ValueError</code>` —— 黙って切り捨てると「入れたはずのモードが効かない」</p>
+<p>という追いにくい形になる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• (尚無)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">points</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opshapestat:shape_perturb">shape_perturb</a> · <a style="color:#22d3bf" href="opshapestat:procrustes_fit">procrustes_fit</a> · <a style="color:#22d3bf" href="opshapestat:procrustes_align">procrustes_align</a> · <a style="color:#22d3bf" href="opshapestat:procrustes_distance">procrustes_distance</a> · <a style="color:#22d3bf" href="opshapestat:shape_project">shape_project</a> · <a style="color:#22d3bf" href="opshapestat:shape_mahalanobis">shape_mahalanobis</a> · <a style="color:#22d3bf" href="opshapestat:mirror_plane_from_pairs">mirror_plane_from_pairs</a> · <a style="color:#22d3bf" href="opshapestat:landmark_asymmetry">landmark_asymmetry</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">model</code>)</h3>
+<p><a style="color:#22d3bf" href="opshapestat:shape_pca">shape_pca</a> · <a style="color:#22d3bf" href="opshapestat:shape_project">shape_project</a> · <a style="color:#22d3bf" href="opshapestat:shape_mahalanobis">shape_mahalanobis</a> · <a style="color:#22d3bf" href="opshapestat:shape_explained_variance">shape_explained_variance</a> · <a style="color:#22d3bf" href="opshapestat:shape_synthesize">shape_synthesize</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: shapestats.py — SHAPESTAT 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

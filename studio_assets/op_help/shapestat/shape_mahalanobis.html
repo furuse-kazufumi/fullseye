@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">shape_mahalanobis — SHAPESTAT <code style="color:#22d3bf">model</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">shapemodel × points</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import shapestats; shapestats.shape_mahalanobis(model, shape, align: &#x27;bool&#x27; = True, cumulative: &#x27;float&#x27; = 0.99, n_modes: &#x27;int&#x27; = 0)</code> (または <code style="color:#22d3bf">opsshapestat.get(&quot;shape_mahalanobis&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>モデルから見てその形がどれだけ<b>異常</b>か。→ float。</p>
+<p>`<code style="color:#22d3bf">sqrt(sum(score_i^2 / variance_i))</code>` を<b>先頭の何本かに限って</b>足す。</p>
+<p>★ <b>全成分を足してはいけない。</b> K 個体の群から出る主成分は K-1 本だが、</p>
+<p>後ろのほうは分散が数値的なゼロまで落ちる。実測(K=12、N=80、真のモードは</p>
+<p>2 本)の分散: ``3.2e-02, 5.6e-03, 4.0e-05, 6.7e-13, 9.7e-14, 9.9e-17, …,</p>
+<p>1.0e-31``。この裾で割ると値が意味を失う:</p>
+<p>==========  ===========  ==================</p>
+<p>使う本数    群内の個体   0.5 の膨らみを注入</p>
+<p>==========  ===========  ==================</p>
+<p>1                 0.428               1.821</p>
+<p>2                 0.885               2.617</p>
+<p>3                 1.035              18.134</p>
+<p>5                 1.373        1393035.060</p>
+<p>11(全部)      46613.636       9.3e+13</p>
+<p>==========  ===========  ==================</p>
+<p>5 本で群内の個体が 1.37 なのに外れが 100 万、11 本では<b>群内ですら 46614</b>。</p>
+<p>「異常度」ではなく「数値ゼロで割った回数」を測っている。</p>
+<p>そこで既定は**累積寄与率 `<code style="color:#22d3bf">cumulative</code>`(0.99)までの成分だけ**を使う。</p>
+<p>上の群では 2 本(0.99895)が選ばれ、群内 0.885 / 外れ 2.617 と素直に並ぶ。</p>
+<p>`<code style="color:#22d3bf">n_modes</code>` を正の数で与えればその本数に固定する(比較のため本数を揃えたい</p>
+<p>ときに使う)。<b>どちらを使ったかで値が変わる</b>ので、報告するときは本数も一緒に。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">measurement</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">model</code>)</h3>
+<p><a style="color:#22d3bf" href="opshapestat:shape_pca">shape_pca</a> · <a style="color:#22d3bf" href="opshapestat:shape_project">shape_project</a> · <a style="color:#22d3bf" href="opshapestat:shape_reconstruct">shape_reconstruct</a> · <a style="color:#22d3bf" href="opshapestat:shape_explained_variance">shape_explained_variance</a> · <a style="color:#22d3bf" href="opshapestat:shape_synthesize">shape_synthesize</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: shapestats.py — SHAPESTAT operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

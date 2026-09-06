@@ -722,8 +722,10 @@ def dem_geocentric_grid(dem, lat0_deg, lon0_deg, cell_size, spherical=False):
     cols = np.arange(w)[None, :]
     lat = lat0 - np.degrees(rows * c / m_rad)
     lon = float(lon0_deg) + np.degrees(cols * c / (n_rad * np.cos(np.radians(lat0))))
+    # ``dem_geodetic_to_ecef`` は台帳の宣言(points = (N,3))に合わせて常に
+    # 平らな (N, 3) を返すので、ここで格子の形へ戻す(2026-09-06)。
     xyz = dem_geodetic_to_ecef(np.broadcast_to(lat, (h, w)),
-                               np.broadcast_to(lon, (h, w)), a)
+                               np.broadcast_to(lon, (h, w)), a).reshape(h, w, 3)
     if not spherical:
         return xyz
     r = np.linalg.norm(xyz, axis=-1)

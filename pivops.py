@@ -466,7 +466,14 @@ def piv_cross_correlate(a, b, window=32, overlap=0.5, peak="gauss3",
     info = {"rows": rows + (win - 1) / 2.0, "cols": cols + (win - 1) / 2.0,
             "peak_ratio": ratio, "window": win, "overlap": ov, "peak": peak,
             "window_func": window_func, "step": step,
-            "normalize": normalize, "search_limit": search_limit}
+            "normalize": normalize, "search_limit": search_limit,
+            # ★ 相関の峰が立たない窓(テクスチャが無い・全面一様)は nan を返す
+            #   —— 0 を返さないのは「動いていない」と「分からない」を混ぜないため。
+            #   だが**何割が nan なのかは返り値からしか分からず**、``flow.mean()``
+            #   が nan になって初めて気づく形だった(2026-09-06)。ここで数える。
+            #   実測: 一様な背景に 16x16 の四角だけの画像では 98 窓中 16 窓しか
+            #   有限にならない(0.163)。全面テクスチャなら 1.000。
+            "valid_fraction": float(np.isfinite(flow[0]).mean())}
     return flow, info
 
 

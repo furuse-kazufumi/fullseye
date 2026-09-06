@@ -2839,6 +2839,30 @@ def observe_surface(material: str = "al", finish: str = "hairline",
 
     返り値 dict: ``image``(線形 RGB)/ ``camera`` / ``scene`` / ``light`` /
     ``budget``(上の光学バジェット)/ ``defect_mask``(``defects`` を渡したとき)。
+
+    ★ **既定の引数は 117 秒かかる。** 「一行で使える入口」と書いてあるが、
+    既定 ``resolution=(256, 256)`` / ``supersample=2`` は 2 分の計算である
+    (2026-09-06 実測、この機械):
+
+    ==============  =============  =============
+    resolution      supersample 1  supersample 2
+    ==============  =============  =============
+    32 x 32                0.25 s              —
+    64 x 64                0.69 s              —
+    128 x 128              2.40 s        19.10 s
+    256 x 256             19.12 s       116.93 s
+    ==============  =============  =============
+
+    画素あたりの費用が一定ではない(32→256 で画素は 64 倍なのに時間は 76 倍)。
+    内訳は ``_light_background`` が 16.2 秒中の 11.0 秒で、面光源 196 点 x 鏡面
+    候補 25 回のループ。発光点をまとめて処理する書き換えは試したが **1.3 倍**
+    にしかならず(律速は Python のループではなくメモリ帯域)、**まだ解いていない**
+    —— ``docs/KNOWN_ISSUES.md`` に残してある。
+
+    **試すときは小さく呼ぶこと**: ``observe_surface(resolution=(64, 64),
+    supersample=1)`` なら 0.69 秒で、仕上げの見え方の違いは十分わかる。
+    連鎖ファザーもこの理由で 32 x 32 / supersample 1 に固定してある
+    (``typed_catalog.OP_PARAM_HINTS``)。
     """
     if material not in _gm.METALS:
         raise ValueError(f"material must be one of {tuple(_gm.METALS)}, got {material!r}")

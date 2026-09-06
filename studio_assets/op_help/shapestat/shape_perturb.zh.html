@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">shape_perturb — SHAPESTAT <code style="color:#22d3bf">synth</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import shapestats; shapestats.shape_perturb(shape, amplitude: &#x27;float&#x27; = 0.05, mode: &#x27;str&#x27; = &#x27;bulge&#x27;, center=(1.0, 0.0, 0.0), sigma: &#x27;float&#x27; = 0.4, seed: &#x27;int&#x27; = 0)</code>(或 <code style="color:#22d3bf">opsshapestat.get(&quot;shape_perturb&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>形に<b>既知の</b>変形を 1 つ入れる。→ `<code style="color:#22d3bf">(N, 3)</code>`。</p>
+<p>`<code style="color:#22d3bf">mode</code>`:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;bulge&quot;</code>`  —— *center* のまわりをガウス重みで外向きに膨らませる。</p>
+<p>片側だけに入れれば左右非対称性の真値になる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;shift&quot;</code>`  —— *center* 方向へ一様に平行移動(Procrustes が消す成分)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;scale&quot;</code><code style="color:#22d3bf">  —— 一様拡大(</code><code style="color:#22d3bf">scaling=True</code>` の Procrustes が消す成分)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;noise&quot;</code>`  —— 等方ガウス雑音(どの手法でも消えない床)。</p>
+<p>「Procrustes が消してくれる変形」と「消してはいけない変形」を分けて試せる</p>
+<p>ように 4 つ置いてある。位置合わせの検算はこの区別が要る。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">points</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opshapestat:procrustes_fit">procrustes_fit</a> · <a style="color:#22d3bf" href="opshapestat:procrustes_align">procrustes_align</a> · <a style="color:#22d3bf" href="opshapestat:procrustes_distance">procrustes_distance</a> · <a style="color:#22d3bf" href="opshapestat:shape_project">shape_project</a> · <a style="color:#22d3bf" href="opshapestat:shape_mahalanobis">shape_mahalanobis</a> · <a style="color:#22d3bf" href="opshapestat:mirror_plane_from_pairs">mirror_plane_from_pairs</a> · <a style="color:#22d3bf" href="opshapestat:landmark_asymmetry">landmark_asymmetry</a> · <a style="color:#22d3bf" href="opshapestat:signed_surface_distance">signed_surface_distance</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">synth</code>)</h3>
+<p><a style="color:#22d3bf" href="opshapestat:shape_synth_family">shape_synth_family</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: shapestats.py — SHAPESTAT 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

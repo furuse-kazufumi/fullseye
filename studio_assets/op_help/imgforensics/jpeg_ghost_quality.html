@@ -8,12 +8,33 @@
 <p>—— **枚数が合わなければ :class:<code style="color:#22d3bf">ValueError</code>**(添字と品質がずれた地図を返さない)。</p>
 <p>返りは品質そのものを画素値に持つ `<code style="color:#22d3bf">(H, W)</code>` なので、値域は [0, 1] ではない。</p>
 <p>表示するときは正規化すること(この op は数値を返すのであって絵を返さない)。</p>
+<p>★ <b>合成後に一度でも保存すると、この argmin は使えない。</b> 2026-09-06 に</p>
+<p>測った。背景 q92・素材 q60 で 32x32 を貼った 128x128 で:</p>
+<p>====================  ==================  ================</p>
+<p>条件                  貼付部の最頻品質    背景の最頻品質</p>
+<p>====================  ==================  ================</p>
+<p>合成後に保存しない            <b>60</b>(正解)              95</p>
+<p>合成後に q95 で保存           <b>95</b>(背景と同じ)         95</p>
+<p>====================  ==================  ================</p>
+<p>理由は掃引の残差が品質に対して<b>単調減少</b>すること —— 最後の保存品質が</p>
+<p>掃引の上端にあると、`<code style="color:#22d3bf">argmin</code>` は全画素でそこに張り付く(実測: 保存後の</p>
+<p>残差平均は 230.7 → 5.9e-02 と一直線に下がる)。実運用の改竄は必ず保存を</p>
+<p>経るので、<b>この読み出しは実画像では定数地図になる</b>。既存テスト</p>
+<p>`<code style="color:#22d3bf">test_jpeg_ghost_finds_the_pasted_quality</code>` が通るのは、合成後に一度も</p>
+<p>保存していないからである(それ自体は正しい単体テストで、<code style="color:#22d3bf">argmin</code> の実装は</p>
+<p>間違っていない —— 読み出し方が現場に合わない)。</p>
+<p><b>代わりに使うもの</b>: 掃引方向の残差曲線の<b>谷の深さ</b>(局所的な凹み)。</p>
+<p>同じ実験で画素ごとの ROC を取ると、argmin 読み出しは AUC 0.500(乱数と同じ)、</p>
+<p>谷の深さ読み出しは <b>AUC 0.997 / 偽陽性 1 % で検出率 0.944</b> だった</p>
+<p>(`<code style="color:#22d3bf">examples/poc_forensics_roc.py</code>`)。それでも全体を q60 で保存し直すと</p>
+<p>0.475 まで落ちる —— JPEG ゴーストは後処理に弱い、というのが正しい要約。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_forensics_audit">image_forensics_audit</a> — <code style="color:#22d3bf">py -3.11 examples/image_forensics_audit.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_forensics_roc">poc_forensics_roc</a> — <code style="color:#22d3bf">py -3.11 examples/poc_forensics_roc.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="opimgforensics:perceptual_hash">perceptual_hash</a> · <a style="color:#22d3bf" href="opimgforensics:fingerprint_correlate">fingerprint_correlate</a> · <a style="color:#22d3bf" href="opimgforensics:error_level_map">error_level_map</a> · <a style="color:#22d3bf" href="opimgforensics:jpeg_quality_estimate">jpeg_quality_estimate</a> · <a style="color:#22d3bf" href="opimgforensics:jpeg_ghost_map">jpeg_ghost_map</a> · <a style="color:#22d3bf" href="opimgforensics:noise_inconsistency_map">noise_inconsistency_map</a> · <a style="color:#22d3bf" href="opimgforensics:copy_move_regions">copy_move_regions</a> · <a style="color:#22d3bf" href="opimgforensics:watermark_embed">watermark_embed</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">compression</code>)</h3>

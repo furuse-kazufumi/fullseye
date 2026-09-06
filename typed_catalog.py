@@ -194,6 +194,15 @@ PARAM_HINTS = {
 
 
 OP_PARAM_HINTS = {
+    # optscene.observe_surface は既定 (256, 256) x supersample 2 で **117 秒**
+    # かかる(2026-09-06 実測。32:0.25 / 64:0.69 / 128:2.40 / 256:19.1 秒
+    # (supersample 1)、supersample 2 で更に 6 倍)。ファザーの仕事は型と契約の
+    # 検査であって性能測定ではないので、ここでは 32x32 x 1 で呼ぶ(0.25 秒)。
+    # ★ 既定値そのものが重い件は別扱い —— docstring に費用表を書き、
+    #   docs/KNOWN_ISSUES.md に「解いていない」として残した。ここで軽くするのは
+    #   検査を通すためであって、遅さを隠すためではない。
+    ("observe_surface", "resolution"): lambda rng: (32, 32),
+    ("observe_surface", "supersample"): lambda rng: 1,
     # raytrace.glass(nd, vd) は必須引数が 2 つで名前ヒントに無い(束縛できず永久
     # スキップ = 「発見ゼロ」に化ける)。BK7 近傍の実在硝材域で束縛する
     ("glass", "nd"): lambda rng: float(rng.uniform(1.45, 1.90)),

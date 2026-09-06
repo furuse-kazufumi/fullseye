@@ -388,8 +388,20 @@ def test_ecef_hits_the_two_points_we_know_by_definition():
     eq = D.dem_geodetic_to_ecef(0.0, 0.0, 0.0)
     po = D.dem_geodetic_to_ecef(90.0, 0.0, 0.0)
     b = D.WGS84_A * (1.0 - D.WGS84_F)
-    assert eq == pytest.approx([D.WGS84_A, 0.0, 0.0], abs=1e-6)
-    assert po == pytest.approx([0.0, 0.0, b], abs=1e-6)
+    # ★ 返りは**常に (N, 3)**。スカラを渡しても (3,) ではなく (1, 3) になる ——
+    #   台帳が points = (N, 3) と宣言しているため(2026-09-06、ファザーの
+    #   TYPEMISS で食い違いが露見して実装を宣言に合わせた)。
+    assert eq.shape == (1, 3) and po.shape == (1, 3)
+    assert eq[0] == pytest.approx([D.WGS84_A, 0.0, 0.0], abs=1e-6)
+    assert po[0] == pytest.approx([0.0, 0.0, b], abs=1e-6)
+
+
+def test_geodetic_to_ecef_always_returns_n_by_3():
+    """宣言 out 型と実際の返りが一致すること(ファザーの TYPEMISS の再発防止)。"""
+    import numpy as _np
+    assert D.dem_geodetic_to_ecef(35.0, 139.0).shape == (1, 3)
+    assert D.dem_geodetic_to_ecef(_np.zeros(7), _np.zeros(7)).shape == (7, 3)
+    assert D.dem_geodetic_to_ecef(_np.zeros((3, 4)), _np.zeros((3, 4))).shape == (12, 3)
 
 
 def test_the_geodetic_round_trip_closes():

@@ -17,6 +17,26 @@
 <p>器具が映って明るく(明視野)、低角のリングは映らないので暗い(暗視野)。</p>
 <p>返り値 dict: `<code style="color:#22d3bf">image</code><code style="color:#22d3bf">(線形 RGB)/ </code><code style="color:#22d3bf">camera</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">scene</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">light</code>` /</p>
 <p>`<code style="color:#22d3bf">budget</code><code style="color:#22d3bf">(上の光学バジェット)/ </code><code style="color:#22d3bf">defect_mask</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">defects</code>` を渡したとき)。</p>
+<p>★ <b>既定の引数は 117 秒かかる。</b> 「一行で使える入口」と書いてあるが、</p>
+<p>既定 `<code style="color:#22d3bf">resolution=(256, 256)</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">supersample=2</code>` は 2 分の計算である</p>
+<p>(2026-09-06 実測、この機械):</p>
+<p>==============  =============  =============</p>
+<p>resolution      supersample 1  supersample 2</p>
+<p>==============  =============  =============</p>
+<p>32 x 32                0.25 s              —</p>
+<p>64 x 64                0.69 s              —</p>
+<p>128 x 128              2.40 s        19.10 s</p>
+<p>256 x 256             19.12 s       116.93 s</p>
+<p>==============  =============  =============</p>
+<p>画素あたりの費用が一定ではない(32→256 で画素は 64 倍なのに時間は 76 倍)。</p>
+<p>内訳は `<code style="color:#22d3bf">_light_background</code>` が 16.2 秒中の 11.0 秒で、面光源 196 点 x 鏡面</p>
+<p>候補 25 回のループ。発光点をまとめて処理する書き換えは試したが <b>1.3 倍</b></p>
+<p>にしかならず(律速は Python のループではなくメモリ帯域)、<b>まだ解いていない</b></p>
+<p>—— `<code style="color:#22d3bf">docs/KNOWN_ISSUES.md</code>` に残してある。</p>
+<p><b>試すときは小さく呼ぶこと</b>: ``observe_surface(resolution=(64, 64),</p>
+<p>supersample=1)`` なら 0.69 秒で、仕上げの見え方の違いは十分わかる。</p>
+<p>連鎖ファザーもこの理由で 32 x 32 / supersample 1 に固定してある</p>
+<p>(`<code style="color:#22d3bf">typed_catalog.OP_PARAM_HINTS</code>`)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

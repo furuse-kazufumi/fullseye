@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">procrustes_fit — SHAPESTAT <code style="color:#22d3bf">procrustes</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import shapestats; shapestats.procrustes_fit(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>(或 <code style="color:#22d3bf">opsshapestat.get(&quot;procrustes_fit&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>*source* を *target* へ重ねる相似変換。→ `<code style="color:#22d3bf">(4, 4)</code>` の同次行列。</p>
+<p><b>点の並びが対応していること</b>が前提(i 番目どうしが同じ解剖学的位置)。</p>
+<p>対応が無い点群では例外は出ず、意味の無い変換が返る —— 対応の有無は</p>
+<p>この関数からは見えない。対応が無いなら ICP 系(`<code style="color:#22d3bf">registration</code>`)を使う。</p>
+<p>`<code style="color:#22d3bf">scaling=True</code><code style="color:#22d3bf"> なら大きさの違いも吸収する。</code><code style="color:#22d3bf">reflection=False</code>`(既定)は</p>
+<p>`<code style="color:#22d3bf">det(R) = +1</code>` を強制する —— 許すと左手系の個体が右手系の平均に重なり、</p>
+<p>左右非対称性という測りたいものが消える。</p>
+<p>行列は同次座標で `<code style="color:#22d3bf">target ~ source @ M[:3,:3].T + M[:3,3]</code>` の向き。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">matrix</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">procrustes</code>)</h3>
+<p><a style="color:#22d3bf" href="opshapestat:procrustes_align">procrustes_align</a> · <a style="color:#22d3bf" href="opshapestat:procrustes_distance">procrustes_distance</a> · <a style="color:#22d3bf" href="opshapestat:generalized_procrustes">generalized_procrustes</a> · <a style="color:#22d3bf" href="opshapestat:shape_mean">shape_mean</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: shapestats.py — SHAPESTAT 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

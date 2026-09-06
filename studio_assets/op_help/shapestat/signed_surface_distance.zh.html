@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">signed_surface_distance — SHAPESTAT <code style="color:#22d3bf">deviation</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import shapestats; shapestats.signed_surface_distance(query, surface, surface_normals=None, k: &#x27;int&#x27; = 1)</code>(或 <code style="color:#22d3bf">opsshapestat.get(&quot;signed_surface_distance&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>問い合わせ点から面までの<b>符号つき</b>距離。→ `<code style="color:#22d3bf">(N,)</code>`。</p>
+<p>符号は面の法線から決める(外側が正)。1-D の輪郭には</p>
+<p>`<code style="color:#22d3bf">profileops.profile_deviation</code>` があるのに 3-D に相当が無かった、というのが</p>
+<p>2026-09-06 に PoC が出した穴。</p>
+<p>法線を省くと :func:<code style="color:#22d3bf">normals_orient.estimate_oriented_normals</code> で推定する</p>
+<p>—— <b>向き付き</b>でなければ符号が点ごとにばらつく(素の PCA 法線は符号が任意で、</p>
+<p>回転すると 4 割が裏返る。`<code style="color:#22d3bf">pointcloud.fpfh</code>` が踏んだのと同じ穴)。</p>
+<p>`<code style="color:#22d3bf">k</code>` は符号を決めるときに使う最近傍の数。1 だと最近傍 1 点の法線に賭ける</p>
+<p>ことになり、雑音のある面では符号が飛ぶ。2 以上にすると距離で重みを付けた</p>
+<p>平均の向きで決める(距離そのものは最近傍のまま)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">signal</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opshapestat:shape_reconstruct">shape_reconstruct</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">deviation</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: shapestats.py — SHAPESTAT 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

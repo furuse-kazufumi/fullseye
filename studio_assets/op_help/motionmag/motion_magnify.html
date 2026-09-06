@@ -57,6 +57,32 @@
 <p>reported for completeness rather than as a verdict. `<code style="color:#22d3bf">phase_shift_rms_rad</code>`</p>
 <p>is the contrast-weighted RMS — the number that describes the structure a</p>
 <p>viewer actually sees — and `<code style="color:#22d3bf">linear_regime</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">phase_shift_rms_rad &lt; pi</code>`.</p>
+<p>★ **`<code style="color:#22d3bf">linear_regime</code>` is wrong in both directions. Read</p>
+<p>`<code style="color:#22d3bf">reference_coherence</code>` instead.** Measured 2026-09-06 on a 64x64 / 100</p>
+<p>frame / 37 fps clip, 3.7 Hz on-bin, band 3.0-4.5 Hz:</p>
+<p>==========  =======  ==============  ==============  ==================</p>
+<p>amplitude   alpha    rms [rad]       linear_regime   reference_coherence</p>
+<p>==========  =======  ==============  ==============  ==================</p>
+<p>0.10 px         200          7.809   <b>False</b>                   0.9992</p>
+<p>2.50 px           3          0.661   True                        0.6225</p>
+<p>3.05 px           3          0.017   <b>True</b>                    0.5024</p>
+<p>3.10 px           3          0.032   <b>True</b>                    0.5077</p>
+<p>==========  =======  ==============  ==============  ==================</p>
+<p>Row 1: `<code style="color:#22d3bf">alpha = 200</code>` on a 0.1 px motion is reproduced to a fidelity error</p>
+<p>of 2e-14 against a clip that really was moved 200x — perfectly linear, and</p>
+<p>the flag says False. **The magnification factor does not break linearity;</p>
+<p>the input amplitude does.** Rows 3 and 4 straddle the actual breakdown, at</p>
+<p>the first zero of `<code style="color:#22d3bf">J0(k A)</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">2.4048 / k = 3.0619 px</code>` here), where the</p>
+<p>fidelity error jumps from machine precision to 1.6e+01 — and the flag says</p>
+<p>True. Worse, `<code style="color:#22d3bf">phase_shift_rms_rad</code>` <b>collapses</b> across that boundary</p>
+<p>(0.661 -&gt; 0.017) rather than growing, because the temporal-mean phase</p>
+<p>reference the RMS is measured against is itself dying. A statistic that</p>
+<p>points the wrong way cannot be repaired by moving its threshold, so the</p>
+<p>flag is left as it is (it does report what it says: whether the phase</p>
+<p>increment stayed under pi) and `<code style="color:#22d3bf">reference_coherence</code>` — which falls</p>
+<p>monotonically 1.00 -&gt; 0.50 as the amplitude approaches that zero — is the</p>
+<p>number to act on. Pinned by</p>
+<p>`<code style="color:#22d3bf">tests/test_motionmag.py::test_linear_regime_flag_is_wrong_in_both_directions</code>`.</p>
 <p>`<code style="color:#22d3bf">reference_coherence</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">|mean_t z| / mean_t |z|</code>`, weighted by band</p>
 <p>energy: it is 1 for small motion and collapses towards 0 when the motion is</p>
 <p>large enough that the temporal-mean phase reference stops being meaningful</p>
