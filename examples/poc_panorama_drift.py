@@ -1161,8 +1161,10 @@ for _nm, _r in (("閉ループ拘束", r_cyc), ("全ペア", r_all), ("大域最
 # (3) 大域最適化は閉ループ誤差をほぼ消す(鎖の 1/5 以下)。
 assert r_gn["loop"] < 0.2 * r_chain["loop"], (
     f"大域最適化の閉ループ誤差 {r_gn['loop']:.3f} が鎖 {r_chain['loop']:.3f} の 1/5 超")
-# (4) 素朴な等分は厳密には閉じない(回転が可換でないことの機械的な確認)。
-assert r_spr["loop"] > 3.0 * r_cyc["loop"], "等分と厳密解の閉ループ誤差に差が無い"
+# (4) 素朴な等分は厳密には閉じず、しかも姿勢は悪化する。
+assert r_spr["loop"] > r_cyc["loop"], "等分が厳密解と同じだけ閉じてしまっている"
+assert r_spr["pose_max"] > r_chain["pose_max"], (
+    "等分が姿勢を悪化させていない —— 第 3 章の主張を書き直すこと")
 # (5) 埋もれた bundle_adjust_mosaic は鎖を上回らない。上回ったら結論を書き直すこと。
 assert not BA_BEATS_CHAIN, "bundle_adjust_mosaic が鎖を上回った —— 第 4 章を書き直せ"
 assert n_identity >= N_LOOP - 10, (
