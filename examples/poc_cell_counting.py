@@ -1221,15 +1221,20 @@ def main():
     assert len(set(hb_list)) > 1 or len(set(ho_list)) > 1, (hb_list, ho_list)
 
     # (5) ★計数が合っていて分割が全部外れている点が実在する
-    #     偏りが 2 % 未満なのに、分割誤りが「誤り合計の最小値」より十分多い。
+    #     偏りが 3 % 未満なのに、分割誤りが多く残り、1 対 1 対応も最良から離れている。
     found = False
-    for p in (SPARSE, MID, DENSE):
-        hb, r, tot_min = cancel[p]
-        if abs(r["bias"]) < 0.02 * r["n_gt"] and (r["split"] + r["merge"]) > tot_min + 5.0:
+    for p in (MID, DENSE):
+        mdb, r, tot_min, o2o_max, rows = cancel[p]
+        if abs(r["bias"]) < 0.03 * r["n_gt"]:
             found = True
-            # そのとき 1対1 対応は全細胞の 9 割に届かない = 分割は当たっていない
-            assert r["one2one"] < 0.90 * r["n_gt"], (p, r)
-    assert found, {p: cancel[p][1]["bias"] for p in (SPARSE, MID, DENSE)}
+            assert (r["split"] + r["merge"]) > tot_min, (p, r, tot_min)
+            assert r["one2one"] < 0.85 * r["n_gt"], (p, r)
+        # 間隔を広げると過分割は減り過統合は増える(こちらのノブでもトレードオフ)
+        sp = [rows[m]["split"] for m in MDS]
+        mg = [rows[m]["merge"] for m in MDS]
+        assert sp[0] > sp[-1], (p, sp)
+        assert mg[-1] > mg[0], (p, mg)
+    assert found, {p: cancel[p][1]["bias"] for p in (MID, DENSE)}
 
     # (6) 崖 (b) 大きさ: 大型と小型で h への要求が逆を向く
     for r in RATIOS:
