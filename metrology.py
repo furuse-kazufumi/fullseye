@@ -316,7 +316,22 @@ def apply_metrology_model(model, image, measure_length=6.0, sigma=1.0, threshold
 
 
 def align_metrology_model(model, drow=0.0, dcol=0.0) -> dict:
-    """計測モデルの全オブジェクトを平行移動して整列(align_metrology_model)。"""
+    """計測モデルの全オブジェクトを平行移動して整列(align_metrology_model)。
+
+    全オブジェクトの位置に ``(drow, dcol)`` [px] を足した **新しいモデル** を返す
+    (入力の dict は書き換えない)。``line`` は両端点 ``(row1, col1)``・``(row2, col2)``
+    が動き、``circle`` / ``rect`` / ``ellipse`` は中心 ``(row, col)`` が動く。半径・
+    半辺長・``phi``・``n`` は変えない ―― **回転とスケールは扱わない**。
+
+    - ``drow``, ``dcol``: 変位 [px]。既定 0(写しを作るだけになる)。
+    - 型は検証しない。``add_metrology_object_generic`` で積んだ未知型は
+      ``params[0]``/``params[1]`` を row/col とみなして動かす。
+    - 返り値: ``{"objects": [...]}``(``metrologymodel`` 型)。
+
+    典型例: 形状マッチング(``find_shape_model`` 等)で得た位置ずれをここで
+    モデルに反映し、``apply_metrology_model`` を掛ける。傾いたワークには使えない
+    (参照形状の法線が実物の法線からずれ、探索半幅 ``measure_length`` の外に出る)。
+    """
     out = {"objects": []}
     for obj in model["objects"]:
         p = list(obj["p"])
