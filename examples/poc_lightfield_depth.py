@@ -536,9 +536,10 @@ def main():
         print(f"  {label:<32}{ms[label]:>9.1f} ms")
     print("  → 焦点度は掃引 1 面ごとに 81 視点をシフトして足すので、掃引点数に")
     print("     比例する。EPI 傾きは 1 パスで 1 桁以上速い。")
-    print(f"  → ★ 精度のために要る cubic は linear の "
-          f"{ms[f'焦点度(掃引 {len(SWEEP)} 面, cubic)'] / ms[f'焦点度(掃引 {len(SWEEP)} 面, linear)']:.1f}"
-          f" 倍遅い。既定を cubic にするなら、この代償も併記が要る。")
+    cubic_cost = (ms[f"焦点度(掃引 {len(SWEEP)} 面, cubic)"]
+                  / ms[f"焦点度(掃引 {len(SWEEP)} 面, linear)"])
+    print(f"  → ★ 精度のために要る cubic は linear の {cubic_cost:.1f} 倍遅い。")
+    print("     既定を cubic にするなら、この代償も併記が要る。")
     print("  → 2 眼 BM は画像 2 枚しか触らないので 2 桁速い。9x9 でようやく")
     print("     精度が並ぶことを思うと、**単一露光であること**と**リフォーカス**")
     print("     こそがライトフィールドの取り分で、深度の数字そのものではない。")
