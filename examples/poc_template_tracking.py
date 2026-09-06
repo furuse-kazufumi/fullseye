@@ -89,6 +89,7 @@ import numpy as np
 from scipy.ndimage import gaussian_filter, map_coordinates
 
 import fullseye as fs
+import examplefig as figs   # ★fullseye を先に import しないと解決しない(repo 直下)
 # ★ 穴 (a): 相関マップを返す公開 op が無いので private を借りる。
 #    第 0 章で公開 op ``fs.op.ncc_locate`` と一致することを検算してから使う。
 import ops
