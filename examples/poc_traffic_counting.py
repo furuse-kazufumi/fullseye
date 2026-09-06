@@ -636,30 +636,45 @@ def section_jam() -> dict:
 
     mask = foreground(vid)
     row = LANES["near"]["slit"]
+
+    # 真値は軌跡から出す。「x_ref を跨いだ台数」と「最後のフレームで画面に
+    # 居る台数」は**別の量**で、渋滞ではこの 2 つが大きく食い違う。
+    half = np.asarray([0.5 * v["len"] for v in veh])
+    passed = int(np.count_nonzero((xs.max(axis=0) + half >= X_REF)
+                                  & (xs.min(axis=0) - half <= X_REF)))
+    last = xs[-1]
+    onscreen = int(np.count_nonzero((last + half > 0) & (last - half < W_PX)))
+
     # 停止した先頭車が実際に居る画素が、前景として残っているか
     lead = 0
-    c0 = int(round(stop_at[lead] - 0.5 * veh[lead]["len"]))
-    c1 = int(round(stop_at[lead] + 0.5 * veh[lead]["len"]))
-    c0, c1 = max(c0, 0), min(c1, W_PX)
-    stopped = times >= 70.0
+    c0 = max(int(round(stop_at[lead] - 0.5 * veh[lead]["len"])), 0)
+    c1 = min(int(round(stop_at[lead] + 0.5 * veh[lead]["len"])), W_PX)
+    stopped = times >= 120.0
     fg_rate = float(mask[np.ix_(stopped, [row], range(c0, c1))].mean())
     moving = times < 30.0
     fg_move = float(mask[np.ix_(moving, [row], range(c0, c1))].mean())
 
     s = slit_count(kymograph(mask, row))
     cc = per_frame_counts(mask)
-    print("  近い車線に %d 台。40 フレーム目から減速し、%d 列の手前へ詰まる。"
+    seen_last = int(_LAB.blob_label(mask[-1]).max())
+    print("  近い車線に %d 台。40 フレーム目から減速し、%d 列の前後へ詰まる。"
           % (len(veh), X_REF))
-    print("  停止した先頭車の画素が前景に残っている割合: 走行中 %.2f -> 停止後 %.2f"
-          % (fg_move, fg_rate))
-    print("  ★時間中央値の背景は、**停止した車を背景として学習する**。"
+    print("  真値: 計数列を跨いだ %d 台 / 最後のフレームで画面に居る %d 台。"
+          % (passed, onscreen))
+    print("  スリットの帯(計数列と交わる)%d 台 —— **通過台数としては正しい**。"
+          % s["n_ref"])
+    print("\n  ★壊れているのは通過台数ではなく**滞留のほう**。")
+    print("     停止した先頭車の画素が前景に残っている割合: 走行中 %.2f -> "
+          "停止後 %.2f。" % (fg_move, fg_rate))
+    print("     最後のフレームで検出できた塊は %d(真の画面内 %d)。"
+          % (seen_last, onscreen))
+    print("     時間中央値の背景は**停止した車を背景として学習する**ので、"
           "検出器を替えても直らない。")
-    print("  スリットの帯(計数列と交わる)%d / 真値 %d / ゼロ点の最大値 %d"
-          % (s["n_ref"], len(veh), cc.max()))
     print("  ★渋滞では L/V -> ∞ なので 5 節・6 節の破綻条件は**遠ざかる**。"
-          "壊れているのは数え方ではなく前段の背景モデル。")
+          "破綻の場所が前段(背景モデル)へ移っただけで、渋滞に強いのではない。")
     return {"fg_move": fg_move, "fg_stop": fg_rate, "n_ref": s["n_ref"],
-            "n": len(veh)}
+            "passed": passed, "onscreen": onscreen, "seen_last": seen_last,
+            "cc_max": int(cc.max())}
 
 
 # --------------------------------------------------------------------------- #
