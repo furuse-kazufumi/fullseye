@@ -319,8 +319,20 @@ def section_width_sweep() -> dict:
         int_l.append(float(e.mean()))
 
     dead = [w for w, v in zip(true_l, bin_l) if v == 0.0]
-    print("\n  ★ゼロ点が何も返さない範囲: %s mm(= %.2f px 以下)。"
-          % (", ".join("%.3f" % d for d in dead), max(dead) / PX_MM))
+    print("\n  ★ゼロ点が何も返さない範囲: %.3f 〜 %.3f mm(%d 条件、= %.2f px 以下)。"
+          % (min(dead), max(dead), len(dead), max(dead) / PX_MM))
+    # 同じ値を返してしまう真値の幅を数える(= 階段の踏み面)
+    tie, best = {}, None
+    for t, v in zip(true_l, bin2_l):
+        if v > 0:
+            tie.setdefault(round(v, 6), []).append(t)
+    for v, ts in tie.items():
+        if len(ts) >= 2 and (best is None or max(ts) / min(ts) > best[1]):
+            best = (v, max(ts) / min(ts), min(ts), max(ts), len(ts))
+    if best:
+        print("  ★階段の踏み面: 真値 %.3f 〜 %.3f mm の %d 条件が**すべて同じ "
+              "%.3f mm** を返す(真値は %.2f 倍違う)。"
+              % (best[2], best[3], best[4], best[0], best[1]))
     print("  ★同じマスクから 2 通りの幅が出て、差は常に 1 px = %.2f mm。" % PX_MM)
     ok = [(t, i) for t, i in zip(true_l, int_l)]
     err = [100 * (i - t) / t for t, i in ok]
