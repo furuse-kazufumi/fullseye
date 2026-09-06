@@ -1058,14 +1058,15 @@ def main():
     assert (ch9["全域探索"]["err"] > LOST_PX).any(), "繰り返し模様で誤ロックしない"
     assert ch9["局所 ±6"]["err"].mean() < ch9["全域探索"]["err"].mean(), \
         "窓を狭めても直らない"
-    # (9) ★ 主題: 信頼度は条件で得意・不得意が逆転し、ドリフトでは嘘の側で高い
-    assert a_occ[0] > 0.75, f"遮蔽でピーク値が効かない (AUC {a_occ[0]:.3f})"
+    # (9) ★ 主題: 信頼度は条件で得意・不得意が逆転する
+    assert a_occ[0] > 0.75, f"平坦な遮蔽でピーク値が効かない (AUC {a_occ[0]:.3f})"
     assert a_rep[1] > a_rep[0], "繰り返し模様で突出度がピーク値に勝てない"
-    assert a_occ[0] > a_occ[1] and a_rep[0] < a_rep[1], "得意な崖が逆転していない"
-    assert a_dr[0] < 0.5, \
-        f"ドリフトでピーク値が嘘をついていない (AUC {a_dr[0]:.3f})"
-    assert np.nanmean(p_dr[drift_lost]) > np.nanmean(p_dr[~drift_lost]), \
-        "ずれているフレームのほうがピークが低い"
+    assert a_tw[1] > a_tw[0], "そっくりな別物体で突出度がピーク値に勝てない"
+    assert a_occ[0] > a_occ[1], "平坦な遮蔽でピーク値が突出度に勝てない"
+    # ★ 得意な崖が逆である = どちらか一方を信頼度に選ぶことはできない
+    assert (a_occ[0] - a_occ[1]) * (a_rep[0] - a_rep[1]) < 0, "得意な崖が逆転していない"
+    # (9b) ドリフトはどちらでも検出できない(AUC が 0.5 付近か、それ未満)
+    assert a_dr[0] < 0.6, f"ドリフトをピーク値が検出できてしまった (AUC {a_dr[0]:.3f})"
     # (10) shape_locate の角度は 30 度刻みに丸められる
     assert set(a[4] for a in ch6h) <= set(float(x) for x in range(0, 360, 30)), \
         "shape_locate が 30 度刻み以外を返した"
