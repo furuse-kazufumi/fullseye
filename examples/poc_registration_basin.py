@@ -571,7 +571,7 @@ def main():
     SHAPES = (("非対称当て金", bracket), ("素の直方体", plain_box),
               ("球", sphere), ("円柱", cylinder))
     N_S = 16
-    sym = {}
+    sym, sym_stat = {}, {}
     for mode, init_deg, use_global in (("局所: ICP を恒等から", 25.0, False),
                                        ("大域: PCA + ICP", 120.0, True)):
         print(f"\n  [{mode}、初期ずれ {init_deg:.0f} 度 / 直径の 5 %、{N_S} 試行]")
