@@ -116,6 +116,11 @@ LEDGER_DIMS = {
     # 左右対称性 / 符号つき面距離)が空いていた。新語は shapeset と shapemodel。
     "shapestat": {"registry": "opsshapestat", "table": "OPSSHAPESTAT",
                   "module": "shapestats", "family": "shape_statistics"},
+    # 2026-09-06: 2-D の形を記述して写す(EFD + ランドマークワープ)。**実装も
+    # テストも揃っていたのに公開経路のどこからも届いていなかった 2 モジュール**を
+    # 台帳に載せた回。新語は efdmodel の 1 つだけ。
+    "shape2d": {"registry": "opsshape2d", "table": "OPSSHAPE2D",
+                "module": "fourierdesc", "family": "shape_description_2d"},
     # 2026-09-06: PIV(画像対 → 密な変位)。新語 flow2d を 1 つだけ持ち込む。
     "piv": {"registry": "opspiv", "table": "OPSPIV",
             "module": "pivops", "family": "piv_displacement"},

@@ -678,6 +678,18 @@ def main():
     assert all(r[6] < 0.0 for r in white_rows[1:]), \
         f"白い物体の内側で t が過小評価されていない {[r[6] for r in white_rows[1:]]}"
 
+    # (7b) 空の有無で A 推定の難易度が変わる —— 3 節の「A は易しい」は場面の性質。
+    assert rows_nosky[0][1] < 0.5, "空ありで暗チャネル法の A が既に外れている"
+    assert rows_nosky[1][1] > 1.0, "空を外しても暗チャネル法の A が壊れていない"
+    assert rows_nosky[1][2] > 10.0 * rows_nosky[0][2], "空を外しても A の絶対値がずれていない"
+    assert rows_nosky[2][1] < rows_nosky[1][1], "白い物体が空の代役になっていない"
+
+    # (7c) 透過率のバイアスは帯で符号が反転する(平均を見ても壊れ方が分からない)。
+    bias_near = float(np.mean(t_dcp[masks[0][1]] - t_true[masks[0][1]]))
+    bias_sky = float(np.mean(t_dcp[masks[3][1]] - t_true[masks[3][1]]))
+    assert bias_near < -0.05, f"近景で t が過小評価されていない {bias_near:+.4f}"
+    assert bias_sky > 0.10, f"空で t が過大評価されていない {bias_sky:+.4f}"
+
     # (8) 崖 (c) —— パッチを大きくすると段差帯 / 平坦の誤差比(ハロー)が増える。
     ratios = [r[2] / r[3] for r in patch_rows]
     assert ratios[-1] > ratios[0], f"パッチ寸法でハロー比が増えていない {ratios}"

@@ -492,7 +492,7 @@ def _registry_adapters():
     for _mod in ("opstomography", "opsvolcolor", "opsreprconv", "opsannotate",
                  "opsgfx2d", "opsimgmetrics", "opscolortransport",
                  "opsimgforensics", "opsastrostack", "opsdem", "opspiv",
-                 "opsprofile", "opsshapestat"):
+                 "opsprofile", "opsshapestat", "opsshape2d"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
         except Exception as _e:                       # 台帳が無い環境でも動く
@@ -653,6 +653,11 @@ def catalog():
         # 出したので新設。族の入口 shape_synth_family が (K,N,3) をプールへ
         # 入れるので、shapeset / shapemodel のプールが空にならない。
         ("opsshapestat", "OPSSHAPESTAT", "shapestat"),
+        # 2026-09-06: 2-D 形状記述(EFD)とランドマークワープ。**実装もテストも
+        # あったのに facade / ledger / op のどこにも出ていなかった**ので台帳へ。
+        # 新語 efdmodel の生産者は elliptic_fourier 1 本なので、これを外すと
+        # 消費者 4 本のプールが空になり永久に未実行になる。
+        ("opsshape2d", "OPSSHAPE2D", "shape2d"),
         # 2026-09-06: PIV。**画像対から密な変位を出す op がこの repo に 1 つも
         # 無かった**(scene_flow_lk は 3-D 体積用、estimate_flow は点群用)。
         # 新語 `flow2d` を 1 つだけ足す —— flow_dense の述語は

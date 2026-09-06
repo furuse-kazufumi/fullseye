@@ -132,7 +132,7 @@ py-modules = [
   "profileops", "opsprofile",
   # shapestats: 形態統計(Procrustes / GPA / 形態 PCA / 左右対称性)。比較形態学と
   # 「設計 CAD の無い部品を個体群と比べる」検査の両方に効く(2026-09-06 追加)。
-  "shapestats", "opsshapestat",
+  "shapestats", "opsshapestat", "opsshape2d",
   "backends", "backends_auto", "backends_color", "backends_cv2b", "backends_dl",
   "backends_extra", "backends_kornia", "backends_pil", "backends_r3",
   "backends_scipy", "backends_ski2",
