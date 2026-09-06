@@ -484,7 +484,10 @@ def m_shape(img, fg=None, h_px=2.4):
     1. 連結成分を取り、モーメント楕円の充填率と面積を出す。
     2. 面積が細胞 1 個ぶんの 1/4 未満なら **デブリとして棄てる**。
     3. 充填率が高く、面積も 1 個ぶんなら **そのまま**(分水嶺に掛けない)。
-    4. そうでないものだけ、その連結成分の中で h-maxima 分水嶺を掛ける。
+    4. そうでないものは、面積から推した個数 ``k = round(面積 / 1 個ぶん)`` に
+       届くまで h を下げながら分水嶺を掛ける。★この「期待した個数まで割る」が
+       単一スケールの前提そのもので、大きさが 3 倍違う集団が混ざると **大型細胞を
+       ``k`` 個に割ってしまう**(崖 (b))。
     """
     fg = foreground(img) if fg is None else fg
     lab, k = cc_label(fg)
@@ -505,8 +508,16 @@ def m_shape(img, fg=None, h_px=2.4):
         y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
         sub = sel[y0:y1, x0:x1]
         d = edt(sub)
-        mk, kk, _h = h_maxima_seeds(d, h_px)
-        w = watershed(-d, mk, sub) if kk else cc_label(sub)[0]
+        w = None
+        for hh in (h_px, 0.6 * h_px, 0.35 * h_px):
+            mk, kk, _h = h_maxima_seeds(d, hh)
+            if kk == 0:
+                continue
+            w = watershed(-d, mk, sub)
+            if kk >= kest:
+                break
+        if w is None:
+            w = cc_label(sub)[0]
         for j in range(1, int(w.max()) + 1):
             m = w == j
             if m.any():
