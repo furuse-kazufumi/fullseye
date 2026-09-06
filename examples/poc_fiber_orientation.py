@@ -630,8 +630,8 @@ def section_scales() -> dict:
                     ("平均角度の誤差 [deg]", sig, ee)],
                    xlabel="積分スケール σ_i [px]", ylabel="配向度 / 誤差 [deg]",
                    title="窓を広げると配向度が上がる(分母が縮むだけ)")
-    return {"sigma": sig, "R": rr, "err": ee, "sd0": m0["R"], "sd1": m1["R"],
-            "truth": truth}
+    return {"sigma": sig, "R": rr, "err": ee, "sd": sd_list,
+            "sd_r_lo": sd_r_lo, "sd_r_hi": sd_r_hi, "truth": truth}
 
 
 def section_border() -> dict:
