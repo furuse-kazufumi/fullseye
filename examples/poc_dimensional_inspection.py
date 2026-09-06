@@ -831,6 +831,19 @@ def section_cliff_noise():
               f" | {np.mean(fv) if fv else float('nan'):+9.4f}"
               f"{np.std(fv) if fv else float('nan'):8.4f}"
               f" | {np.mean(zv):+9.4f}{np.std(zv):8.4f}")
+        noise_fig.append(["%.3f" % ns, "%.0f" % snr,
+                          "%+.4f" % (np.mean(mv) if mv else float("nan")),
+                          "%.4f" % (np.std(mv) if mv else float("nan")),
+                          "%.0f%%" % (100 * ok / n_rep),
+                          "%+.4f" % (np.mean(fv) if fv else float("nan")),
+                          "%.4f" % (np.std(fv) if fv else float("nan")),
+                          "%+.4f" % np.mean(zv)])
+    figs.save_table("noise_bias_spread",
+                    ["雑音 s", "SNR", "M 偏り", "M 1s", "M 成功率",
+                     "F 偏り", "F 1s", "Z 偏り"],
+                    noise_fig, title="雑音を上げる —— 偏りと散らばりは別々に動く",
+                    caption="偏りは SNR 140 まで動かず、増えるのは散らばりだけ。"
+                            "SNR 7 で崩壊しても成功率は 100 % のまま。")
 
     print("\n  読み方:")
     print("  * 偏りは SNR 140 まで -0.02 px 前後で動かない。動いているのは散らばり。")
