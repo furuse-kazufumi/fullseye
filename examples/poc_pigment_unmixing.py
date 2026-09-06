@@ -695,20 +695,21 @@ def main():
                            sigma=sigma, want=("ms", "unmix", "nir"))
             mp = score_maps(dt, pos, neg)
             au = auc(mp["unmix"][pos], mp["unmix"][neg])
-            an = auc(mp["nir"][pos], mp["nir"][neg])
-            # 存在量の散らばり(検出の AUC より雑音に素直に反応する量)
+            rn = pr_at(mp["nir"], pos, neg, thresh_at_fpr(mp["nir"][neg], 0.01))[0]
+            # 存在量の散らばり。群青を見る(アズライトは推定が単体の頂点に張り付いて
+            # しまい、雑音にもバンド数にも反応しないので指標にならない)。
             lay = dt["_abund"][..., :len(LAYER_KEYS)]
             lay = lay / np.maximum(lay.sum(axis=2, keepdims=True), 1e-12)
-            ia = LAYER_KEYS.index("azurite")
-            m1 = (field == 1) & ~flake & neg_all
-            sc_ = bias_scatter(lay[..., ia][m1] - scene["conc"][..., ia][m1])[1]
-            cliff_b[nb][tag] = (au, an, sc_)
-            row += ["%.3f" % au, "%.3f" % an, "%.4f" % sc_]
+            iu = LAYER_KEYS.index("ultramarine")
+            m0 = (field == 0) & ~flake & neg_all
+            sc_ = bias_scatter(lay[..., iu][m0] - scene["conc"][..., iu][m0])[1]
+            cliff_b[nb][tag] = (au, rn, sc_)
+            row += ["%.3f" % au, "%.3f" % rn, "%.4f" % sc_]
         rows_b.append(row)
     _table(["バンド数",
-            "光:アンミAUC", "光:NIR AUC", "光:存在量散らばり",
-            "暗:アンミAUC", "暗:NIR AUC", "暗:存在量散らばり",
-            "固:アンミAUC", "固:NIR AUC", "固:存在量散らばり"], rows_b)
+            "光:アンミAUC", "光:NIR再現率", "光:群青散らばり",
+            "暗:アンミAUC", "暗:NIR再現率", "暗:群青散らばり",
+            "固:アンミAUC", "固:NIR再現率", "固:群青散らばり"], rows_b)
     print("   B=3 は fs.spec_unmix / fs.spec_pca が (H,W,3) を拒否するので自前で解いた。")
     print("   拒否は「色画像を分光キューブと取り違えない」ための型境界で設計としては")
     print("   正しいが、可視 / レッドエッジ / 近赤外の 3 バンド機は実在する構成であり、")
