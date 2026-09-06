@@ -417,6 +417,16 @@ def main():
         else:
             print(f"  {i:<6}{k:<12}{'%.0f µm' % (DX * cliff[k]):>12}"
                   f"{100 * rel_err(samp['point'][cliff[k]][k], truth[k]):>15.1f}%")
+    # 5 本を 1 枚に載せると「先に落ちるのは Sz」が線の分かれ方で見える。
+    dx_ax = np.array([DX * f for f in factors])
+    figs.save_plot("sampling_cliff",
+                   [(k, dx_ax,
+                     np.array([100 * rel_err(samp["point"][f][k], truth[k])
+                               for f in factors])) for k in PARAMS],
+                   xlabel="標本間隔 [µm]", ylabel="相対誤差 [%]",
+                   title="標本間隔の掃引 —— 先に落ちるのは Sz",
+                   caption="dx=8 µm では Sa が ±5 % 合格で Sz が不合格。"
+                           "同じデータでも見るパラメータで結論が反転する。")
     print("  → 弱い順に並べると " + " < ".join(order) + " (左ほど早く壊れる)。")
     print("     Sz が先に落ちるのは、深い傷の底が『たまたま標本点に乗るか』で"
           "決まる**極値**だから。Sa は面全体の積分なので鈍い。")
