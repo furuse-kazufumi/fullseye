@@ -743,12 +743,14 @@ def main():
 
     # ---- 道具の穴 ----------------------------------------------------------
     print("\n=== ★ この PoC が出した道具の穴(op 本体は直していない)===")
-    print("  1. **fpfh は docstring が謳う rotation-invariant になっていない**(5-d)。")
-    print(f"     同じ点群を 90 度回すだけで記述子が max|Δ| {d_default:.2e} 変わる。原因は")
-    print("     数式ではなく、既定で使う estimate_normals の**符号が任意**で、回転すると")
-    print(f"     {100 * flip_signed:.0f} % の点で別の符号が選ばれること。向きを揃えた法線を")
-    print(f"     渡せば max|Δ| {d_fixed:.1e} で厳密に不変になる。fpfh は normals 引数を")
-    print("     持つのに、それを使わない既定経路が「不変」と書かれているのが穴。")
+    print("  1. **(塞がった / 2026-09-06)fpfh の既定経路は回転不変になった**(5-d)。")
+    print(f"     いまは max|Δ| {d_default:.2e}。以前はここが 1e+03 台で、原因は数式ではなく")
+    print("     法線の符号だった。直り方は「fpfh が自前の estimate_point_normals を使い、")
+    print("     **重心から外向きに**符号を揃えてから角を作る」—— この PoC が書いた回避策")
+    print("     そのものが実装に入った形。")
+    print(f"     ★ただし残りがある: ファサードの estimate_normals はいまも {100 * flip_signed:.0f} % の点で")
+    print(f"     符号が回転で変わり、それを fpfh に**明示的に渡すと max|Δ| {d_user:.2e} に")
+    print("     壊れる**。「引数を使わないほうが正しい」形が残っているのが現在の穴。")
     print("  2. **ppf_model の既定 dist_step が回転不変でない**(5-d)。軸平行境界箱の")
     print(f"     対角/20 なので、同じ物体でも向きで {diameter(a_d):.3f} → {diameter(b_d):.3f} と")
     print(f"     変わり、ハッシュ鍵の一致率が {100 * len(ka & kb) / len(ka):.0f} % に落ちる。"
