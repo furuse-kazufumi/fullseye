@@ -114,7 +114,24 @@ def completeness(a, b, tau):
 def fscore(a, b, tau):
     """F-score @ tau = precision と recall の調和平均。→ (f, precision, recall)。再構成の標準指標。
 
-    Raises ValueError: どちらかが空 or (N,3) でない場合(accuracy/completeness 経由)。"""
+    Raises ValueError: どちらかが空 or (N,3) でない場合(accuracy/completeness 経由)。
+
+    計算(``a`` = 再構成/推定、``b`` = 参照/GT の慣習):
+    - ``precision`` = ``a`` の点のうち、``b`` への最近傍距離が ``tau`` **未満**
+      (``< tau``、等号は含まない)の割合。
+    - ``recall`` = ``b`` の点のうち、``a`` への最近傍距離が ``tau`` 未満の割合。
+    - ``f = 2 p r / (p + r)``、``p + r == 0`` なら ``0.0``(0 除算にしない)。
+
+    引数: ``a``, ``b`` は ``(N, 3)`` / ``(M, 3)`` 点群(対応不要、点数は異なってよい)。
+    ``tau`` は距離閾値(座標と同じ単位、正の値を想定。``tau <= 0`` だと距離 0 の点も
+    ``< tau`` にならず precision = recall = 0 になる。検査はしない)。
+
+    返り値: ``(f, precision, recall)`` の 3 つの ``float``、それぞれ ``[0, 1]``。
+    1 が完全一致。
+
+    注意: ``tau`` の選び方が結果を決める(voxel サイズ・スキャン分解能の 1〜2 倍が
+    目安)。片方の雲だけ密だと precision と recall が乖離する — その非対称性を見る
+    のがこの指標の価値で、1 数字で良ければ ``chamfer_distance``。"""
     p = accuracy(a, b, tau)
     r = completeness(a, b, tau)
     f = 0.0 if (p + r) == 0 else 2 * p * r / (p + r)
