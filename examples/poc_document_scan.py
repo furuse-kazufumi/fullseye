@@ -525,7 +525,7 @@ def main():
 
     print("\n=== 5. 壊れる条件 ===")
 
-    def run_case(tilt=32.0, roll=7.0, shift=(0.0, 0.0), bg=0.35, shadow=0.45, kappa=0.0):
+    def run_case(tilt=32.0, roll=7.0, shift=(0.0, 0.0), bg=0.30, shadow=0.22, kappa=0.0):
         q = camera_quad(tilt_deg=tilt, roll_deg=roll, shift=shift)
         Ht = calib.vector_to_hom_mat2d(src, q)
         il = illumination_field(shadow=shadow)
