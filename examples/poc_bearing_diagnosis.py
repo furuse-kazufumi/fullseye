@@ -295,6 +295,12 @@ def main():
                      sk["band_lo"], sk["band_hi"], "はい" if covers else "いいえ",
                      env["band_fraction"], fp, loc, "OK" if ok else "NG"))
             sk_rows.append((sigma, win, covers, ok, env["band_fraction"], loc, fp))
+            sk_table.append(["%.1f" % sigma, "%d" % win,
+                             "%.2f" % (1000.0 * sk["window_seconds"]),
+                             "%.0f-%.0f" % (sk["band_lo"], sk["band_hi"]),
+                             "はい" if covers else "いいえ",
+                             "%.3f" % env["band_fraction"],
+                             "%.1f" % loc, "OK" if ok else "NG"])
     print("   衝撃の間隔 = 1/%.2f = %.2f ms。**枠がこれより長いと全部の枠に衝撃が 1 個ずつ"
           % (defect_hz, 1000.0 / defect_hz))
     print("   入り、その帯域は「定常」に見える** —— win=256(10 ms)がその失敗で、")
