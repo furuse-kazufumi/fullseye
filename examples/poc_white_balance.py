@@ -894,11 +894,13 @@ def main():
     print(f"       自前 Sobel {angular_error(est_sob, e_g):.2f} -> 画像ごと "
           f"{angular_error(est_whole, e_g):.2f} -> ch ごと "
           f"{angular_error(est_perch, e_g):.2f} 度。")
-    print("       同型の 2-D 微分 op(laplace / prewitt_amp / roberts / sobel_dir")
-    print("       など、``_norm`` を通す族全部)が同じ 2 つの性質を持つはずで、")
-    print("       **1 件直すのではなく族ごと点検すべき**。")
+    print("       **1 件の不具合ではない**: 同じ検査で laplace 0.5000 / prewitt_amp")
+    print("       0.5000 / gauss_filter 0.3325(B にも 0.2214)/ mean_image 0.2857")
+    print("       (B に 0.4286)が漏れた。roberts は 3 次元で内部例外を起こし")
+    print("       FullseyeFallbackWarning を 1 回出して fallback に降格する。")
     print("       最小の直しは (1) 3 次元入力を色軸として明示的に扱う(または断る)")
-    print("       (2) 何で割ったかを docstring に書く、の 2 つ。")
+    print("       (2) 何で割ったかを docstring に書く、の 2 つ。**族の規約として**")
+    print("       決めないと、同じことが近傍演算 op の全部で起き続ける。")
     print("   (d) **spectrum_to_srgb は色かぶりを作れない。** 反射率 1 が常に")
     print("       (1,1,1) になる正規化なので、光源の色を残した生応答が出せない。")
     print("       本 PoC は光源を反射率側に畳む回り道で合成した(1 節)。")
