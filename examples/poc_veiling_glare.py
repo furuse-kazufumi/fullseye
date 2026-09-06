@@ -381,12 +381,16 @@ def section5_window():
     alpha = (0.20 / 0.80) * e_core / e_tail_ref
     print("  %10s %12s %14s" % ("R px", "裾の割合", "画角 相当"))
     print("  " + "-" * 40)
-    for R in (56, 112, R_PSF, 448, 896, 1792):
+    radii = (56, 112, R_PSF, 448, 896, 1792)
+    gr = []
+    for R in radii:
         et = alpha * np.pi * R0_TAIL ** 2 * np.log1p((R / R0_TAIL) ** 2)
-        print("  %10d %12.3f %13.1f °" % (R, et / (e_core + et),
+        gr.append(et / (e_core + et))
+        print("  %10d %12.3f %13.1f °" % (R, gr[-1],
                                           np.degrees(np.arctan(R * PITCH_UM * 1e-3 / 16.0))))
     print()
-    print("  → 同じレンズが「裾 8.5 %」とも「裾 33.6 %」とも書ける。")
+    print("  → 同じレンズが「裾 %.1f %%」とも「裾 %.1f %%」とも書ける。"
+          % (100 * gr[0], 100 * gr[-1]))
     print("     ★**測る範囲を宣言しない迷光の数字は意味を持たない**。ISO 9358 が")
     print("     黒点の径と積分球の立体角を規格で固定しているのはこのため。")
     if figs.enabled():

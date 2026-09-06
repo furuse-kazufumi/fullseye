@@ -350,12 +350,30 @@ def median_tooth(prof, n_teeth: int = Z_TEETH):
     return tmpl, prof - np.tile(tmpl, n_teeth)
 
 
-def robust_runout(prof, n_teeth: int = Z_TEETH, k_mad: float = 6.0) -> dict:
-    """欠けた歯を外してから 1 次成分(偏心)を出す。
+def runout_per_tooth(prof) -> dict:
+    """**歯 1 枚につき 1 個の半径**(歯先)から 1 次成分を出す。
 
-    残差の中央絶対偏差で外れ値を見つけ、その前後 0.7 ピッチを捨てて
-    ``{1, 2 次}`` を最小二乗当てはめする。捨てた区間を 0 で埋めないのは、
-    そこに本来あるはずの偏心成分まで消してしまうから。
+    これが歯車振れの伝統的な測り方(歯溝にボールを当てて 1 周ぶん読む)。
+    高次の歯形成分をそもそも標本化しないので、**欠けた歯は「1 標本落ちる」
+    だけ** になり、残りの 23 枚で 1 次を当てられる。
+    """
+    tt = tooth_table(prof, R_PITCH)
+    if tt["n"] < 5:
+        return {"ecc": float("nan"), "deg": float("nan"), "n": tt.get("n", 0)}
+    th, r = tt["centre"], tt["tip"]
+    a = np.column_stack([np.ones_like(th), np.cos(th), np.sin(th)])
+    c, *_ = np.linalg.lstsq(a, r, rcond=None)
+    return {"ecc": float(np.hypot(c[1], c[2])),
+            "deg": float(np.degrees(np.arctan2(c[2], c[1])) % 360.0),
+            "n": int(tt["n"])}
+
+
+def runout_template(prof, n_teeth: int = Z_TEETH, k_mad: float = 6.0) -> dict:
+    """中央値テンプレートの残差から 1 次成分を出す(**対照群**)。
+
+    残差の中央絶対偏差で外れ値を拾い、その前後 0.7 ピッチを捨ててから
+    ``{1, 2 次}`` を当てる。捨てた区間を 0 で埋めないのは、そこに本来ある
+    偏心成分まで消してしまうから。
     """
     n = prof.size
     _, resid = median_tooth(prof, n_teeth)
