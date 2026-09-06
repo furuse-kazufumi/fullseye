@@ -388,7 +388,7 @@ def section6_countermeasures(floors):
     print()
 
     def gauge_scale(r_gauge: float) -> float:
-        """画面内の既知長さ(%.1f mm)を測って得られるスケール係数。""" % GAUGE_MM
+        """画面内の既知長さ(GAUGE_MM)を測って得られるスケール係数。"""
         gx, gy = place_at_radius(r_gauge)
         pts = np.array([[gx - GAUGE_MM / 2, gy], [gx + GAUGE_MM / 2, gy]])
         m = measure_xy(image_points(pts, dT))
