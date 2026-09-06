@@ -374,9 +374,13 @@ def rule_bend(rect, half=8, contrast=0.06):
     return worst if found else float("nan")
 
 
-def band_heights(rect, dark=0.45):
-    """補正後の「文字行の高さ」の並び(暗画素の行方向占有率から run を数える)。"""
-    sub = rect[:, TEXT_C0 + 10:TEXT_C1 - 10]
+def band_heights(rect, dark=0.85, row_end=RAMP_R0 - 15):
+    """補正後の「文字行の高さ」の並び(暗画素の行方向占有率から run を数える)。
+
+    地を 61 px 窓で割ってから閾値を掛けるので、濃い字も薄い字も同じように
+    数えられる。図(階調のランプ)は行を数える対象ではないので範囲から外す。
+    """
+    sub = bg_divide(rect, 61)[:row_end, TEXT_C0 + 10:TEXT_C1 - 10]
     frac = (sub < dark).mean(axis=1)
     on = frac > 0.20
     runs, start = [], None
