@@ -936,6 +936,18 @@ def main():
             "アンミ全体", "アンミアズ", "NIR全体", "NIRアズ"], rows_a)
     print("   「全体」= 全体で 1 本の閾値 / 「アズ」= アズライトの面だけで引き直した閾値。")
     print("   平均の厚み(剥落部を除く)= tau x %.3f。" % scene["thick"][~flake].mean())
+    # 崖の位置が **同じ絵の中で 4 倍違う**。近赤外の 2 本(全体とアズライト)を
+    # 並べると、そこが線の離れ方として出る。
+    _t = np.asarray(taus, float)
+    figs.save_plot("thickness_cliff",
+                   [("近赤外 差分(全体)", _t, np.array([cliff_a[t]["nir"][0] for t in taus])),
+                    ("近赤外 差分(アズ)", _t, np.array([cliff_a[t]["nir"][1] for t in taus])),
+                    ("多波長 PCA(全体)", _t, np.array([cliff_a[t]["ms"][0] for t in taus])),
+                    ("RGB PCA(全体)", _t, np.array([cliff_a[t]["rgb"][0] for t in taus]))],
+                   xlabel="上層の厚み倍率 tau", ylabel="再現率 @ FPR 1 %",
+                   title="下絵が見えなくなる厚み",
+                   caption="半分を割るのは tau 0.30–0.60 のあいだ。アズライトの面だけ"
+                           "見ると崖はもっと手前にある —— 同じ絵の中で位置が 4 倍違う。")
 
     # ---------------------------------------------------------------- 5 -----
     print("\n5. 崖 (b) —— バンド数。増やすほど良い、とは限らない")
