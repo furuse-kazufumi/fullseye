@@ -257,7 +257,7 @@ def section3_crossover(frames):
           % ("t", "累積偏り", "散らばり", "RMS", "直接偏り", "散らばり", "RMS"))
     print("  " + "-" * 70)
     for k in (1, 2, 4, 6, 8, 12, 16, 20, 24):
-        print("  %4d | %10.0f %10.0f %10.0f | %10.0f %10.0f %10.0f"
+        print("  %4d | %9.1f %9.1f %9.1f | %9.1f %9.1f %9.1f"
               % (k, 1e6 * out["cum"]["bias"][k], 1e6 * out["cum"]["scatter"][k],
                  1e6 * out["cum"]["rms"][k], 1e6 * out["dir"]["bias"][k],
                  1e6 * out["dir"]["scatter"][k], 1e6 * out["dir"]["rms"][k]))
