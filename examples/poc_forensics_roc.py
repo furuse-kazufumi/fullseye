@@ -180,8 +180,7 @@ GHOST_QS = list(range(40, 100, 5))
 def score_ghost_argmin(img):
     """op の読み出しそのまま:画素ごとの最小残差品質の、最頻値からの隔たり。"""
     q = F.jpeg_ghost_quality(F.jpeg_ghost_map(img, GHOST_QS, block=BLOCK), GHOST_QS)
-    mode = float(np.bincount(q.astype(int)).argmax())
-    return np.abs(q - mode)
+    return np.abs(q - _mode(q))
 
 
 def score_ghost_contrast(img):
