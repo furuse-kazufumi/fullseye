@@ -512,13 +512,14 @@ def section_figures():
               for p, a in ((maps["f"], lim), (maps["c"], lim),
                            (maps["both"], lim), (resid, max(lim / 20, 1e-9)))]
     figs.save_grid("error_maps", panels,
-                   ["f のみ", "主点のみ", "両方", "残り(1/20 目盛)"],
+                   ["f のみ", "主点のみ", "両方", "重ね合わせの残り"],
                    title="一辺 200 px の試験片の寸法誤差 [ppm](ΔT=15 K)",
                    ncols=2, signed=True,
-                   caption="±%.0f ppm で切って発散 LUT。f のみはほぼ一様、"
-                           "主点のみは中心から離れるほど大きい。4 枚目は "
-                           "重ね合わせからの残り(最大 %.2f ppm)。"
-                           % (lim, float(np.max(np.abs(resid)))))
+                   caption="発散 LUT。**各パネルは自分の最大値で正規化される**ので"
+                           "色の濃さはパネル間で比べられない。(a)(b)(c) の実値は "
+                           "±%.0f ppm、(d) は最大 %.2f ppm —— 3 桁小さい"
+                           "(重ね合わせが成り立っている)。(b) は主点の移動方向に"
+                           "直交して符号が変わる。" % (lim, float(np.max(np.abs(resid)))))
 
 
 def section8_tool_gaps():
