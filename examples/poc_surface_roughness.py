@@ -410,20 +410,34 @@ def main():
     print("  傷ありの面と、傷を抜いた面の両方でやる(極値統計と外れ値を分けるため)。")
     rough_with = _pipeline(surface, DX)
     rough_without = _pipeline(rough_true - scratch + wav + tilt, DX)
+    ratios = {}
     for tag, fld in (("傷あり", rough_with), ("傷なし", rough_without)):
         print(f"\n  [{tag}]  {'窓':>8}{'窓数':>7}{'Sz 平均':>11}{'Sz 最小':>11}"
-              f"{'Sz 最大':>11}{'Sq 平均':>11}{'√(2 ln M) 予測':>16}")
+              f"{'Sz 最大':>11}{'Sq 平均':>11}{'2√(2lnM)·Sq':>14}{'実測/予測':>11}")
+        ratios[tag] = []
         for w in (32, 64, 128, 256, 512):
             wins = [fld[i:i + w, j:j + w]
                     for i in range(0, N, w) for j in range(0, N, w)]
             szs = np.array([float(v.max() - v.min()) for v in wins])
             sqs = np.array([float(v.std()) for v in wins])
             pred = 2.0 * math.sqrt(2.0 * math.log(w * w)) * float(sqs.mean())
+            ratios[tag].append(float(szs.mean() / pred))
             print(f"  {'':8}{w:>8}{len(wins):>7}{szs.mean():>11.4f}{szs.min():>11.4f}"
-                  f"{szs.max():>11.4f}{sqs.mean():>11.4f}{pred:>16.4f}")
-    print("\n  → 傷なしなら Sz 平均は窓 32→512 で単調に増え、ガウス極値の"
-          " 2√(2 ln M) 予測とおおむね同じ増え方をする(窓の点数 M の対数でしか"
-          "増えない = 領域を 4 倍にしても Sz は数 % しか増えない)。")
+                  f"{szs.max():>11.4f}{sqs.mean():>11.4f}{pred:>14.4f}"
+                  f"{szs.mean() / pred:>11.3f}")
+    rr = np.array(ratios["傷なし"])
+    print("\n  → 傷なしなら Sz 平均は窓 32→512 で単調に増える。ガウス極値の"
+          " 2√(2 ln M) は **増え方は当てるが絶対値を外す**: 実測/予測は"
+          f" {rr.min():.3f}〜{rr.max():.3f} でほぼ一定"
+          f"(ばらつき ±{100 * (rr.max() - rr.min()) / rr.mean() / 2:.0f}%)。")
+    print("     一定倍率でずれるのは、面に相関があって**独立な標本の数が点数 M"
+          "より少ない**から。log の中の M を実効値に直せば合う —— つまり"
+          "「Sz は領域の対数でしか増えない」という形は正しい。")
+    print(f"     結果として、領域を {512 * 512 // (32 * 32)} 倍(32²→512²)に"
+          f"広げても Sz は {szs.mean() / np.array([0.0]) if False else 0:.0f}"[:0]
+          + f"     結果として、領域を 256 倍(32²→512²)に広げても Sz は "
+          f"{100 * (mono_preview(rough_without) - 1):.0f}% しか増えない"
+          "(が、確実に増える。頭打ちにはならない)。")
     w = 64
     wins = [rough_with[i:i + w, j:j + w] for i in range(0, N, w) for j in range(0, N, w)]
     szs = np.array([float(v.max() - v.min()) for v in wins])
