@@ -481,6 +481,16 @@ def main():
         ratio = f"{eb / eg:>8.0f}" if eg > 1e-9 else f"{'—':>8}"
         print(f"  {sigma:>9.2f}{rg2['rms']:>10.4f}{eg:>10.4f}"
               f"{rb2['rms']:>10.4f}{eb:>10.4f}{ratio}")
+        nz_ax.append(sigma)
+        nz_good.append(eg)
+        nz_bad.append(eb)
+    figs.save_plot("noise_amplification",
+                   [("傾き 32 度(良い配置)", np.array(nz_ax), np.array(nz_good)),
+                    ("傾き 2 度(悪い配置)", np.array(nz_ax), np.array(nz_bad))],
+                   xlabel="角点の雑音 [px]", ylabel="fx の誤差 [%]",
+                   title="校正の質は雑音でなく配置で決まる",
+                   caption="どちらも雑音 0 では真値。伸びる係数だけが違い、"
+                           "悪い配置の増幅率は 3 桁。RMS には差が出ない。")
     print("      → 雑音 0 ではどちらも真値を返す(モデルが完全に一致するから)。")
     print("         再投影 RMS はどちらも雑音そのもの(sigma x sqrt2)。fx 誤差は")
     print("         雑音に比例して伸びるが、伸びる**係数**が配置で決まる。悪い配置の")
