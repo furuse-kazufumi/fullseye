@@ -525,20 +525,32 @@ def main():
     assert gains[20.0] < gains[40.0], "雑音を増やしたのに取り分が縮まない"
     assert gains[20.0] < 3.0, f"SNR 20 dB での取り分 {gains[20.0]:.2f} dB は大きすぎる"
     # (3) 核が正しければゼロ点に勝ち、大きくずらせば負ける
+    p_true, _, _ = wiener_best(obs40, k_ref, gt)
     assert p_true > p_uns40 and p_true > p_null40, "核既知でもゼロ点に勝てていない"
     p_bad, _, _ = wiener_best(obs40, psf_line(15, 20.0 + 45.0), gt)
     assert p_bad < p_null40, "45 度ずらしても『何もしない』に負けない = 前提が怪しい"
     assert ang_break_uns is not None and ang_break_null is not None, "破綻点が出ていない"
     assert ang_break_uns <= ang_break_null, "アンシャープより先に『何もしない』に負けた"
-    # (4) 核はどれも総和 1・非負(前向きモデルが明るさを変えないこと)
+    assert len_break_null is not None and len_break_null < 8.0, "長さの破綻点が出ていない"
+    # (4) 核を推定した場合: 雑音が軽ければ既知に肉薄し、重ければ壊れる
+    assert ok_est >= 3, f"4 件中 {ok_est} 件しか推定が当たっていない"
+    assert est_noise[40.0][2] - est_noise[15.0][2] > 1.0, \
+        "SNR 15 dB でも推定核の復元が落ちない = 雑音の効きが出ていない"
+    # (5) 核はどれも総和 1・非負(前向きモデルが明るさを変えないこと)
     for name, k in kernels.items():
         assert abs(float(k.sum()) - 1.0) < 1e-12, f"{name} の総和が 1 でない"
         assert float(k.min()) >= 0.0, f"{name} に負の重みがある"
     assert abs(float(blur_circular(gt, k_ref).mean() - gt.mean())) < 1e-9, \
         "循環ブレが平均輝度を変えた"
-    # (5) 回転ブレ: 核を作った場所は良くなり、反対側は悪くなる
-    assert deltas["核を作った場所(右 70 px)"] > 1.0, "核を作った場所で改善しない"
-    assert deltas["反対側(左 70 px)"] < 0.0, "反対側が悪化しない = シフト不変に見える"
+    # (6) リンギング: 非循環ブレは縁だけ壊れる / 正則化を強めると超過が減る
+    assert ring[("反射(モデル不一致)", 5e-4)][0] > ring[("循環(モデル一致)", 5e-4)][0], \
+        "モデル不一致でも縁が悪化しない"
+    assert ring[("循環(モデル一致)", 5e-3)][1] < ring[("循環(モデル一致)", 5e-5)][1], \
+        "正則化を強めてもオーバーシュートが減らない"
+    # (7) 回転ブレ: 核を作った場所は良くなり、他は悪くなる(シフト不変でない)
+    assert deltas["核を作った場所(右)"] > 1.0, "核を作った場所で改善しない"
+    assert deltas["反対側(左)"] < 0.0, "反対側が悪化しない = シフト不変に見える"
+    assert deltas["直交する側(上)"] < 0.0, "直交側が悪化しない = シフト不変に見える"
     # (6) 道具の側の fail-closed(壊れた入力を黙って通さないこと)
     for bad in ({"nsr": 0.0}, {"nsr": -1.0}):
         try:
