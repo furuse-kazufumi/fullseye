@@ -389,11 +389,12 @@ def section_slit(sc: dict, zp: dict) -> dict:
     tot_ref = sum(out[ln]["slit"]["n_ref"] for ln in LANES)
     print("\n  合計: スリット %d 台 / 仮想ループ %d 台 / ゼロ点(最大値) %d 台"
           " / 真値 %d 台" % (tot_ref, zp["loop"], zp["cc"].max(), zp["total"]))
-    print("  遠い車線は真値 %d に対し %d(%+d)。トラック %d 台が計数行 %d を"
-          "覆うので、その分の偽の帯が乗る(4 節で切り分ける)。"
-          % (sc["truth"]["far"], out["far"]["slit"]["n_ref"],
-             out["far"]["slit"]["n_ref"] - sc["truth"]["far"], sc["trucks"],
-             LANES["far"]["slit"]))
+    print("  遠い車線 %d/%d、近い車線 %d/%d。**疎な自由流ではスリット法と"
+          "仮想ループは同点** —— どちらも同じ列の情報しか使っていない。"
+          % (out["far"]["slit"]["n_ref"], sc["truth"]["far"],
+             out["near"]["slit"]["n_ref"], sc["truth"]["near"]))
+    print("  2-D にした見返りは速度が同時に出ること(下)と、"
+          "壊れ方が絵で見えることのほう。")
     ff = [out[ln]["match"]["fit"] for ln in LANES]
     fi = [out[ln]["match"]["fit_inner"] for ln in LANES]
     fa = [out[ln]["match"]["angle"] for ln in LANES]
