@@ -648,3 +648,36 @@ def test_docstrings_agree_with_the_design_note_that_phase_is_never_unwrapped_in_
 
 if __name__ == "__main__":       # pragma: no cover
     pytest.main([__file__, "-q"])
+
+
+def test_linear_regime_flag_is_wrong_in_both_directions():
+    """``linear_regime`` は両方向に誤る。``reference_coherence`` が正しい指標。
+
+    2026-09-06 に PoC が出した宿題。この門は**直さないことを固定する**ための
+    もので、docstring の表と対になっている。数字が動いたら表も直すこと。
+    """
+    def run(amplitude, alpha):
+        v = mm.synthesize_translation(shape=(64, 64), frames=100,
+                                      amplitude_px=amplitude,
+                                      frequency_hz=3.7, fps=37.0)
+        return mm.motion_magnify(v, alpha, 3.0, 4.5, 37.0)
+
+    # (1) 偽陰性: alpha=200 でも 0.1 px の運動は厳密に線形。旗は False を返す。
+    big_alpha = run(0.1, 200)
+    assert big_alpha["linear_regime"] is False
+    assert big_alpha["reference_coherence"] > 0.99, "coherence まで壊れたら話が別"
+
+    # (2) 偽陽性: J0 の第 1 零点 3.0619 px を越えても旗は True。
+    broken = run(3.10, 3)
+    assert broken["linear_regime"] is True
+    assert broken["reference_coherence"] < 0.6, "coherence が破綻を捉えていない"
+
+    # (3) rms は破綻の**手前で大きく、越えると小さくなる**(向きが逆)。
+    before = run(2.50, 3)
+    assert before["phase_shift_rms_rad"] > 10.0 * broken["phase_shift_rms_rad"], (
+        before["phase_shift_rms_rad"], broken["phase_shift_rms_rad"])
+
+    # (4) coherence は単調に落ちる —— こちらは指標として使える。
+    coh = [run(a, 3)["reference_coherence"] for a in (0.1, 1.0, 2.5, 3.05)]
+    assert coh == sorted(coh, reverse=True), coh
+    assert coh[0] > 0.99 and coh[-1] < 0.55

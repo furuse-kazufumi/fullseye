@@ -952,6 +952,35 @@ def motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4,
     reported for completeness rather than as a verdict. ``phase_shift_rms_rad``
     is the contrast-weighted RMS — the number that describes the structure a
     viewer actually sees — and ``linear_regime`` is ``phase_shift_rms_rad < pi``.
+
+    ★ **``linear_regime`` is wrong in both directions. Read
+    ``reference_coherence`` instead.** Measured 2026-09-06 on a 64x64 / 100
+    frame / 37 fps clip, 3.7 Hz on-bin, band 3.0-4.5 Hz:
+
+    ==========  =======  ==============  ==============  ==================
+    amplitude   alpha    rms [rad]       linear_regime   reference_coherence
+    ==========  =======  ==============  ==============  ==================
+    0.10 px         200          7.809   **False**                   0.9992
+    2.50 px           3          0.661   True                        0.6225
+    3.05 px           3          0.017   **True**                    0.5024
+    3.10 px           3          0.032   **True**                    0.5077
+    ==========  =======  ==============  ==============  ==================
+
+    Row 1: ``alpha = 200`` on a 0.1 px motion is reproduced to a fidelity error
+    of 2e-14 against a clip that really was moved 200x — perfectly linear, and
+    the flag says False. **The magnification factor does not break linearity;
+    the input amplitude does.** Rows 3 and 4 straddle the actual breakdown, at
+    the first zero of ``J0(k A)`` (``2.4048 / k = 3.0619 px`` here), where the
+    fidelity error jumps from machine precision to 1.6e+01 — and the flag says
+    True. Worse, ``phase_shift_rms_rad`` **collapses** across that boundary
+    (0.661 -> 0.017) rather than growing, because the temporal-mean phase
+    reference the RMS is measured against is itself dying. A statistic that
+    points the wrong way cannot be repaired by moving its threshold, so the
+    flag is left as it is (it does report what it says: whether the phase
+    increment stayed under pi) and ``reference_coherence`` — which falls
+    monotonically 1.00 -> 0.50 as the amplitude approaches that zero — is the
+    number to act on. Pinned by
+    ``tests/test_motionmag.py::test_linear_regime_flag_is_wrong_in_both_directions``.
     ``reference_coherence`` is ``|mean_t z| / mean_t |z|``, weighted by band
     energy: it is 1 for small motion and collapses towards 0 when the motion is
     large enough that the temporal-mean phase reference stops being meaningful
