@@ -653,10 +653,21 @@ def main():
     d_default = float(np.max(np.abs(fs.fpfh(b_d, k=12) - fs.fpfh(a_d, k=12))))
     d_fixed = float(np.max(np.abs(fs.fpfh(b_d, normals=outward(a_d) @ R_d.T, k=12)
                                   - fs.fpfh(a_d, normals=outward(a_d), k=12))))
-    print(f"  fpfh の記述子の差 max|Δ|: 法線を道具任せ {d_default:.3e} / "
-          f"向きを揃えて渡すと {d_fixed:.3e}")
-    print("    → docstring は「rotation-invariant」と書いてあるが、既定の法線では不変でない。")
-    print("       向きの揃った法線を渡せば厳密に不変になる(=数式ではなく法線の符号が原因)。")
+    # ★利用者が「法線なら在るじゃないか」と `estimate_normals` を明示的に渡した場合。
+    #   ここが穴の**残り**で、既定より 14 桁悪い。
+    d_user = float(np.max(np.abs(fs.fpfh(b_d, normals=n_b, k=12)
+                                 - fs.fpfh(a_d, normals=n_a, k=12))))
+    print(f"  fpfh の記述子の差 max|Δ|: 既定(道具任せ){d_default:.3e} / "
+          f"向きを揃えて渡す {d_fixed:.3e} / "
+          f"estimate_normals を渡す {d_user:.3e}")
+    print("    → ★2026-09-06 に**塞がった**。以前はここが 1e+03 台で、この PoC は")
+    print("       『docstring は rotation-invariant と書いてあるが不変でない』と記録した。")
+    print("       いまは fpfh が自前の estimate_point_normals を使い、**重心から外向きに**")
+    print("       符号を揃えてから角を作るので、既定のまま厳密に不変になっている。")
+    print("    → 残っている穴は 2 つ。(i) ファサードの estimate_normals は**いまも**")
+    print(f"       符号が回転で変わる({100 * flip_signed:.0f} % の点)。(ii) それを")
+    print(f"       fpfh に**明示的に渡すと不変性が丸ごと壊れる**(max|Δ| {d_user:.3e})。")
+    print("       つまり「引数を使わないほうが正しい」という、道具として危ない形が残る。")
     ka = set(fs.ppf_model(a_d, normals=outward(a_d), angle_bins=24)["table"])
     kb = set(fs.ppf_model(b_d, normals=outward(a_d) @ R_d.T, angle_bins=24)["table"])
     st = inv_step(a_d)

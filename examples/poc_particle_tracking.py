@@ -570,32 +570,60 @@ def section7_spacetime(rows, cols, movie):
     print("  動画をそのまま体積として `fs.ledger.vol_local_maxima` に渡す。")
     print("  やる前の予想:「時間方向にも極大を取れば雑音に強くなる」。")
     print()
-    n_true = int(rows.shape[0] * rows.shape[1])
-    per_frame = sum(detect(movie[t]).shape[0] for t in range(movie.shape[0]))
-    print("  真の粒子 x フレーム = %d 個" % n_true)
-    print("  フレームごとの 2-D 検出の合計 = %d 個(%.0f %%)"
-          % (per_frame, 100 * per_frame / n_true))
+    # 視野内の真の粒子 x フレーム(端の外に出たものは数えない)
+    inside = (rows >= 0) & (rows < N) & (cols >= 0) & (cols < N)
+    n_true = int(inside.sum())
+    print("  視野内の 真の粒子 x フレーム = %d 個" % n_true)
     print()
-    print("  %10s %12s %10s" % ("min_distance", "3-D 極大数", "真値比 %"))
-    print("  " + "-" * 34)
+    print("  ★**個数だけを見ない**。取りこぼし(再現率)と偽物(適合率)を分ける")
+    print("     —— 数が合っていても中身が入れ替わっていることがある。")
+    print()
+    header = "  %-22s %9s %9s %9s %9s" % ("検出のしかた", "点数", "真値比%", "再現率%", "適合率%")
+    print(header)
+    print("  " + "-" * (len(header) - 2))
+
+    def _score(pts_by_frame, tag):
+        n_pt = sum(p.shape[0] for p in pts_by_frame)
+        hit_t = hit_p = 0
+        for t in range(movie.shape[0]):
+            tru = np.stack([rows[t][inside[t]], cols[t][inside[t]]], axis=1)
+            pts = pts_by_frame[t]
+            if tru.shape[0] and pts.shape[0]:
+                d1, _ = cKDTree(pts).query(tru, k=1)
+                hit_t += int((d1 <= MATCH_TOL).sum())
+                d2, _ = cKDTree(tru).query(pts, k=1)
+                hit_p += int((d2 <= MATCH_TOL).sum())
+        print("  %-22s %9d %9.0f %9.1f %9.1f"
+              % (tag, n_pt, 100 * n_pt / n_true, 100 * hit_t / n_true,
+                 100 * hit_p / max(n_pt, 1)))
+        return n_pt, hit_t / n_true, hit_p / max(n_pt, 1)
+
     got = {}
+    got["2d"] = _score([detect(movie[t]) for t in range(movie.shape[0])],
+                       "フレームごとの 2-D")
     for md in (1, 2, 3):
         pk = np.asarray(fs.ledger.vol_local_maxima(movie, min_distance=md,
                                                    threshold=THR))
-        k = int(np.count_nonzero(pk))
-        got[md] = k
-        print("  %10d %12d %10.0f" % (md, k, 100 * k / n_true))
+        loc = np.argwhere(pk)
+        by_frame = [loc[loc[:, 0] == t][:, 1:].astype(float)
+                    for t in range(movie.shape[0])]
+        got[md] = _score(by_frame, "3-D 極大 min_dist=%d" % md)
     print()
-    print("  → ★★予想は外れた。min_distance=1 でも真値の %.0f %% しか出ない。"
-          % (100 * got[1] / n_true))
-    print("     理由: `vol_local_maxima` は**等方の立方近傍**を使う。時間軸の")
-    print("     1 歩は %.1f px の移動に相当するのに、空間軸の 1 画素と同じ物差しで"
+    print("  → ★★予想は外れた。**min_distance=1 では逆に多すぎる**"
+          "(真値の %.0f %%)" % (100 * got[1][0] / n_true))
+    print("     のに、適合率が %.0f %% しかない —— 出てくる点の 1/3 は粒子の"
+          % (100 * got[1][2]))
+    print("     どこでもない場所。min_distance を上げると今度は取りこぼす")
+    print("     (md=3 で再現率 %.0f %%)。**どこにも正解が無い。**"
+          % (100 * got[3][1]))
+    print("     理由: `vol_local_maxima` は**等方の立方近傍**を使う。空間の")
+    print("     1 画素と時間の 1 フレーム(= %.1f px の移動)を同じ物差しで比べる。"
           % SIGMA_STEP)
-    print("     比べてしまう。動いている粒子は時空間では斜めの『筋』なので、")
-    print("     筋に沿った近傍がほぼ全部自分自身の尾で埋まり、極大が 1 本の筋に")
-    print("     つき数個しか立たない。**時間は空間ではない** —— 体積として扱って")
-    print("     よいのは「見る」ときで、「測る」ときは軸ごとに物差しを変えること。")
-    print("     (11 節の穴 (b): 軸ごとに近傍幅を変える引数が無い。)")
+    print("     動く粒子は時空間では斜めの管なので、管の内側で「立方近傍の最大」")
+    print("     になる voxel が中心から外れた場所にいくつも立つ。")
+    print("     **時間は空間ではない** —— 体積として扱ってよいのは「見る」ときで、")
+    print("     「測る」ときは軸ごとに物差しを変えないと壊れる。")
+    print("     (10 節の穴 (b): 軸ごとに近傍幅を変える引数が無い。)")
     return got
 
 
