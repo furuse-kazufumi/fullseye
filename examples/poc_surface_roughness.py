@@ -245,14 +245,8 @@ def rel_err(val, truth):
     return (val - truth) / abs(truth)
 
 
-def fmt_row(label, d, truth=None, width=12):
-    cells = []
-    for k in PARAMS:
-        if truth is None:
-            cells.append(f"{d[k]:>{width}.4f}")
-        else:
-            cells.append(f"{d[k]:>{width}.4f}")
-    return f"  {label:<26}" + "".join(cells)
+def fmt_row(label, d, width=12):
+    return f"  {label:<26}" + "".join(f"{d[k]:>{width}.4f}" for k in PARAMS)
 
 
 def head(width=12):
