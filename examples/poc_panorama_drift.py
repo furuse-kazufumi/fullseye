@@ -728,8 +728,7 @@ print("    守り方が揃っていない。")
 _p1, _p2 = M_ADJ[(0, 1)]["p1"], M_ADJ[(0, 1)]["p2"]
 _g = mosaic.proj_match_points_ransac_guided(
     _p1[:, ::-1], _p2[:, ::-1],
-    guide_H=SWAP @ true_homography(R_LOOP[0], R_LOOP[1]) @ SWAP,
-    thresh=0.12)
+    guide_H=true_homography(R_LOOP[0], R_LOOP[1]), thresh=0.10)
 print(f"\n(3) proj_match_points_ransac_guided: 入力 {len(_p1)} 点 → "
       f"inliers の長さ {len(_g['inliers'])}(穴 e)")
 print("    真の H を誘導に渡して窓を絞ると、返るマスクは **間引いた後** の部分集合に")
