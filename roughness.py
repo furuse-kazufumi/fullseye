@@ -53,10 +53,10 @@ GAUSS_ALPHA = math.sqrt(math.log(2.0) / math.pi)
 #: `surface_filter` が受ける端の扱い。
 _END_EFFECTS = ("reject", "mirror", "wrap")
 
-#: `surface_params` が「帯域処理済み」と認める上限。値の根拠は
-#: `surface_params` の docstring(実測表)にある。
-_BAND_LONGWAVE_MAX = 0.35
-_BAND_FORM_PTV_MAX = 3.0
+#: `surface_params` が「帯域処理済み」と認める上限。値の根拠(通す側と拒否する側の
+#: 実測値、およびその間の余裕)は `surface_params` の docstring にある。
+_BAND_LONGWAVE_MAX = 0.25
+_BAND_FORM_PTV_MAX = 1.0
 
 
 # --------------------------------------------------------------------------- #
