@@ -131,14 +131,27 @@ def build_tree(seed: int = SEED, n_pix: int = N_PIX, avoid: bool = True) -> dict
     """
     rng = np.random.default_rng(seed)
     segs, bifs = [], []
-    root = (n_pix - 14.0, n_pix * 0.5)
-    queue = [(root, -np.pi / 2.0, D_ROOT, D_ROOT * rng.uniform(LAMBDA_LO, LAMBDA_HI),
-              0, -1)]
-    while queue:
-        p0, ang, d, length, depth, parent = queue.pop()
+
+    def add(p0, ang, d, length, depth, parent) -> int:
+        """枝を 1 本作って **その場で番号を確定** する。
+
+        ★以前は「あとで展開するときに番号が決まる」書き方をしていて、
+        深さ優先で展開する順序のせいで ``children`` が別の枝を指していた。
+        親子の対応が壊れると Murray の検定が静かに嘘をつく(例外は出ない)
+        ので、作った瞬間に番号を返す形に直してある。
+        """
         p1 = (p0[0] + length * np.sin(ang), p0[1] + length * np.cos(ang))
-        idx = len(segs)
         segs.append({"p0": p0, "p1": p1, "d": d, "depth": depth, "parent": parent})
+        return len(segs) - 1
+
+    root = (n_pix - 14.0, n_pix * 0.5)
+    queue = [add(root, -np.pi / 2.0, D_ROOT,
+                 D_ROOT * rng.uniform(LAMBDA_LO, LAMBDA_HI), 0, -1)]
+    while queue:
+        idx = queue.pop()
+        s = segs[idx]
+        p1, d, depth, parent = s["p1"], s["d"], s["depth"], s["parent"]
+        ang = np.arctan2(p1[0] - s["p0"][0], p1[1] - s["p0"][1])
         if depth >= MAX_DEPTH:
             continue
         g = rng.uniform(GAMMA_LO, GAMMA_HI)
@@ -164,14 +177,13 @@ def build_tree(seed: int = SEED, n_pix: int = N_PIX, avoid: bool = True) -> dict
             cand.append((gap if inside else -1e9, sgn, a1, a2))
         cand.sort(reverse=True)
         gap, sgn, a1, a2 = cand[0]
-        if avoid and gap < CLEARANCE:
-            continue                       # 交差しそうならここで止める(葉になる)
-        if not avoid and gap < -1e8:
-            continue                       # 視野の外へ出るものだけは止める
+        if gap < (CLEARANCE if avoid else -1e8):
+            continue                       # 交差しそう(or 視野外)ならここで葉に
+        i1 = add(p1, a1, d1, l1, depth + 1, idx)
+        i2 = add(p1, a2, d2, l2, depth + 1, idx)
         bifs.append({"pos": p1, "parent": idx, "d0": d, "d1": d1, "d2": d2,
-                     "children": (len(segs) + 1, len(segs) + 0)})
-        queue.append((p1, a1, d1, l1, depth + 1, idx))
-        queue.append((p1, a2, d2, l2, depth + 1, idx))
+                     "children": (i1, i2)})
+        queue += [i1, i2]
     return {"segments": segs, "bifs": bifs, "n_pix": n_pix}
 
 
