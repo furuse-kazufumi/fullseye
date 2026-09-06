@@ -357,21 +357,30 @@ def main():
     print("     変化し、この自由度が破れる。傾きが校正の情報源そのもの。")
 
     print("\n=== 6. 壊れる条件 ===")
-    print("  (a) 退化配置 —— 全視点が正面平行(傾き 0 度)。どの門が止めるか")
-    flat = make_poses(N_VIEWS, tilt_deg=0.0, offset_m=0.14, z_lo=0.55, z_hi=0.85)
-    for sigma in (0.0, 0.05):
-        ob_f = observe(obj, flat, sigma_px=sigma, seed=4)
+    print("  (a) 退化配置 —— 板の傾きを 0 度から増やすと閉形式はどこで生き返るか")
+    print(f"  {'傾き deg':>9}{'sv[-2]/sv[0]':>15}{'Zhang の fx':>13}{'誤差 %':>10}  止めた門")
+    for tilt in (0.0, 2.0, 5.0, 8.0, 20.0, 32.0):
+        poses_t = make_poses(N_VIEWS, tilt_deg=tilt, offset_m=0.14, z_lo=0.55, z_hi=0.85)
+        ob_t = observe(obj, poses_t, sigma_px=0.05, seed=4)
+        ratio = zhang_null_ratio(obj, ob_t)
         try:
-            calib.camera_calibration(obj[:, :2], [o[:, ::-1] for o in ob_f])
-            print(f"      雑音 {sigma:.2f} px: Zhang が通ってしまった(想定外)")
+            z = calib.camera_calibration(obj[:, :2], [o[:, ::-1] for o in ob_t])
+            print(f"  {tilt:>9.1f}{ratio:>15.2e}{z['fx']:>13.1f}"
+                  f"{100 * abs(z['fx'] - TRUE_FX) / TRUE_FX:>10.1f}  通過")
         except ValueError as exc:
             gate = ("零空間の次元" if "degenerate calibration views" in exc.args[0]
                     else "K が非有限/非正")
-            print(f"      雑音 {sigma:.2f} px: Zhang は拒否 —— 止めた門は「{gate}」")
-    print("      → 雑音を入れると特異値が厳密なゼロから離れ、退化検出のしきい値")
-    print("         (sv[-2] <= 1e-8 * sv[0])を**すり抜ける**。実際に止めているのは")
-    print("         その後段の「fx が nan」の門。fail-closed ではあるが、退化という")
-    print("         診断名は失われ、利用者には原因が伝わらない。")
+            print(f"  {tilt:>9.1f}{ratio:>15.2e}{'—':>13}{'—':>10}  {gate}")
+    print("      → ★ **退化検出の門が一度も発火しない**。傾き 0 度(教科書どおりの")
+    print("         退化)でも sv[-2]/sv[0] は 1.7e-06 で、しきい値 1e-8 の 170 倍。")
+    print("         原因は V を**正規化していないホモグラフィ**から組むこと —— H の")
+    print("         列は画素尺度(1e4)と 1(最終行)が混在し、V の特異値は 10 桁に")
+    print("         またがる。この上で相対しきい値 1e-8 を課しても到達しない。実際に")
+    print("         止めているのは後段の「fx が nan」の門で、fail-closed ではあるが")
+    print("         「板を傾けよ」という診断名は利用者に届かない。")
+    print("      → 閉形式は 5 度で生き返るが fx を 41 % 誤る(歪みを無視するため)。")
+    print("         非線形最適化の初期値としては使えるが、答えとしては使えない。")
+    flat = make_poses(N_VIEWS, tilt_deg=0.0, offset_m=0.14, z_lo=0.55, z_hi=0.85)
     ob = observe(obj, flat, sigma_px=0.05, seed=4)
     rflat = calibrate(obj, ob)
     print(HEAD)
