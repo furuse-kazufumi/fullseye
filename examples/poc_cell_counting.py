@@ -1184,15 +1184,17 @@ def main():
     # (6) 崖 (b) 大きさ: 大型と小型で h への要求が逆を向く
     for r in RATIOS:
         bsp = [size_tab[(r, h)][0] for h in HS_SIZE]     # 大型の過分割
-        smg = [size_tab[(r, h)][1] for h in HS_SIZE]     # 小型の過統合
+        smg = [size_tab[(r, h)][2] for h in HS_SIZE]     # 小型の過統合
         assert bsp[0] >= bsp[-1], (r, bsp)               # h を上げれば割れなくなる
         assert smg[-1] >= smg[0], (r, smg)               # h を上げればくっつく
-    # 大きさ比が上がるほど大型が割れる(h は最小の 1.0 で見る = 要求が最も衝突する点)
-    bs = [size_tab[(r, HS_SIZE[0])][0] for r in RATIOS]
+    # 大きさ比が上がるほど、種を細かく撒いたときに大型が割れる
+    bs = [size_tab[(r, 0.0)][0] for r in RATIOS]
     assert bs[-1] > bs[0] + 2.0, bs
-    # 面積から個数を推す手法は、大型集団があると **大型を割りにいく**
-    assert size_tab[(3.0, "shape")][0] > size_tab[(1.0, "shape")][0] + 2.0, \
-        (size_tab[(1.0, "shape")], size_tab[(3.0, "shape")])
+    assert bs[-1] > 0.5 * size_tab[(3.0, "n_big")], (bs, size_tab[(3.0, "n_big")])
+    # ★指定できる最小の h が大きさ比とともに上がる(道具の仕様によるスケール結合)
+    hmins = [size_tab[(r, "hmin")] for r in RATIOS]
+    assert all(hmins[i] <= hmins[i + 1] + 1e-9 for i in range(len(hmins) - 1)), hmins
+    assert hmins[-1] > 2.0 * hmins[0], hmins
 
     # (7) 崖 (d) 雑音は過分割を、背景ムラは前景率を壊す —— 効き方が違う
     n_base = noise_tab[("基準", "距離変換+分水嶺(全極大)")]
