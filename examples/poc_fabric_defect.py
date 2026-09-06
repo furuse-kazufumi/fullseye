@@ -245,11 +245,36 @@ def poc_peak_table(img: np.ndarray, baseline: int = 96, top: int = 5):
     order = loc[np.argsort(-surf[loc])]
     picked = []
     for i in order:
-        if all(abs(int(lag[i]) - s) >= 4 for s, _ in picked):
+        if all(abs(int(lag[i]) - s) >= 6 for s, _ in picked):
             picked.append((int(lag[i]), float(surf[i])))
         if len(picked) >= top:
             break
     return sorted(picked)
+
+
+def period_from_poc(img: np.ndarray, baseline: int, coarse: float) -> dict:
+    """POC のピーク位置(サブピクセル)から周期を出す。
+
+    ``a(x) = p(x)``、``b(x) = p(x+B)`` の POC のピーク ``L`` は
+    ``B - L = k·P`` を満たす。**周期そのものではなく余りが出る**ので、
+    ``k`` を粗い推定から決める必要がある —— そこを 1 つ間違えると
+    推定は不連続に飛ぶ(下でその量も出す)。
+    """
+    p = img.mean(axis=0)
+    a, b = p[:p.size - baseline], p[baseline:]
+    surf = poc_1d(a, b)
+    n = surf.size
+    i = int(np.argmax(surf))
+    c, lo, hi = surf[i], surf[(i - 1) % n], surf[(i + 1) % n]
+    den = lo - 2 * c + hi
+    sub = 0.5 * (lo - hi) / den if abs(den) > 1e-12 else 0.0
+    lag = i + float(np.clip(sub, -1.0, 1.0))
+    if lag > n / 2:
+        lag -= n
+    k = int(round((baseline - lag) / coarse))
+    return {"lag": lag, "k": k, "period": (baseline - lag) / k if k else np.nan,
+            "jump": abs((baseline - lag) / k - (baseline - lag) / (k + 1))
+            if k else np.nan}
 
 
 def estimate_period(img: np.ndarray, margin: int = 24) -> dict:
