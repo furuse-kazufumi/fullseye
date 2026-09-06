@@ -564,16 +564,16 @@ def section_missing_tooth() -> dict:
     print("     中央値が効くのは、24 個の等間隔な角度で中央値を取ると偏心 "
           "e·cos(θ−φ) が打ち消えるから(歯形だけが残る)。")
 
-    sc_ok, prof_ok, amp_ok = figs_keep["ok"]
-    sc_ms, prof_ms, amp_ms = figs_keep["miss"]
+    sc_ok, prof_ok, amp_ok, rr_ok = figs_keep["ok"]
+    sc_ms, prof_ms, amp_ms, rr_ms = figs_keep["miss"]
     n_show = 3 * Z_TEETH + 2
     k = np.arange(n_show)
     figs.save_plot("spectrum",
                    [("歯欠け無し", k[1:], amp_ok[1:n_show]),
                     ("歯欠け有り", k[1:], amp_ms[1:n_show])],
                    xlabel="次数(1 = 偏心、%d = 歯)" % Z_TEETH,
-                   ylabel="振幅 [mm]",
-                   title="1 枚の歯欠けは全次数に漏れる(偏心 0.050 mm)")
+                   ylabel="振幅 [mm]", ylim=(0.0, 0.35),
+                   title="1 枚の歯欠けは全次数に漏れる(0.35 mm で切って表示)")
     figs.save_grid("missing",
                    [sc_ok["img"], sc_ms["img"], sc_ms["img"] - sc_ok["img"]],
                    ["歯 24 枚", "1 枚欠け", "差"],
