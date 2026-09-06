@@ -644,6 +644,25 @@ def dem_viewshed(dem, cell_size, observer_rc, observer_height_m=1.7,
     """1 点からの可視領域(1 = 見える)。視線が地形に遮られるかを判定する。
 
     ``observer_rc`` は ``(row, col)``。観測点自身は常に可視。
+
+    手順: 目の高さ ``eye = z[observer] + observer_height_m``。各セルへの視線を
+    ``ceil(hypot(H, W))`` 等分し、途中の地形の仰角 ``(z_mid - eye) / d_mid`` が
+    目標の仰角 ``(z + target_height_m - eye) / d`` を上回るセルがあれば遮蔽(0)。
+    途中の点は最近傍セルに丸めるので、斜めの視線は格子誤差を含む。
+    **地球の曲率と大気屈折は入れない**(数 km 超では別途補正する)。
+
+    - ``dem``: ``(H, W)`` [m]、3x3 以上、番兵値は拒否(``dem_slope`` と同じ契約)。
+      ``nan`` セルは比較が偽になるため**遮蔽にも被遮蔽にもならず 1 のまま**残る。
+    - ``cell_size``: [m]、正。距離判定に使う。
+    - ``observer_rc``: 格子内の ``(row, col)`` 整数。外や pair でないものは ``ValueError``。
+    - ``observer_height_m`` / ``target_height_m``: 地面からの高さ [m]。既定は目の高さ
+      1.7 m と地表 0 m。鉄塔からの可視域なら ``observer_height_m`` を上げる。
+    - ``max_distance_m``: これより遠いセルは 0(省略時は無制限)。
+    - 返り値: ``(H, W)`` float64 の 1 / 0。観測点は常に 1。
+    - 計算量: 格子全体 × ``ceil(hypot(H, W))`` 回のベクトル演算。
+
+    ``dem_horizon_angle`` / ``dem_sky_view_factor`` は逆に「各セルから空がどれだけ
+    見えるか」を出す。
     """
     a = _dem(dem)
     c = _cell(cell_size)
