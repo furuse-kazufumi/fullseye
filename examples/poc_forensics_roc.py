@@ -124,10 +124,14 @@ def jpeg(img, q):
     return np.asarray(Image.open(buf).convert("L"), np.float64) / 255.0
 
 
-def flatten_band(img, r0=64, r1=192):
-    """帯状に平坦化する。平坦な領域で検出器が効かなくなることを見るため。"""
+def flatten_band(img, r0=64, r1=192, value=0.5):
+    """帯状に平坦化する。**値は画像に依らない定数**にする。
+
+    画像ごとの平均で埋めると、貼付部と背景で明るさが違ってしまい、
+    「平坦だから見えない」ではなく「段差があるから見える」を測ることになる。
+    """
     out = img.copy()
-    out[r0:r1] = float(np.mean(img[r0:r1]))
+    out[r0:r1] = float(value)
     return out
 
 
