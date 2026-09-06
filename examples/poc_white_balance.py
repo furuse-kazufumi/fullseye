@@ -264,8 +264,9 @@ def shades_of_gray(img, p, mask=None):
 def gray_edge(img, p=1, mask=None):
     """灰色エッジ —— 微分画像の p ノルム。平均**勾配**が無彩色、という仮定。
 
-    勾配は自前で取る。``fs.op.sobel_amp`` をチャンネルごとに呼ぶと各チャンネルが
-    自分の最大で割られて **RGB の比が消える**(穴 c、13 節で実測)。
+    勾配は自前で取る。``fs.op.sobel_amp`` には**正しい呼び方が無い** —— チャンネル
+    ごとに呼ぶと各チャンネルが自分の最大で割られて RGB の比が消え、画像ごと渡すと
+    色軸が 3 本目の空間軸として扱われて隣接チャンネルが混ざる(穴 c、12 節で実測)。
     """
     gy = np.gradient(img, axis=0)
     gx = np.gradient(img, axis=1)

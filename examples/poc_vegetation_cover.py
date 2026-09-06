@@ -487,9 +487,12 @@ def main():
         cells = "".join(pad(f"{res[s][name]['prec']:.3f}/{res[s][name]['rec']:.3f}", 16)
                         for s in range(len(STAGES)))
         print("  " + pad(name, W, right=False) + cells)
-    print("  → ゼロ点の発芽期は 再現率 0.9 台 / 適合率 0.3 台。**F 値に丸めると 0.5 前後**")
-    print("     になり『半分は当たっている』と読めてしまうが、実体は『ほぼ全部を植生と")
-    print("     答えている』である。2 つを分けて出さないと、この壊れ方は見えない。")
+    print("  → いちばん極端なのは ExG > 0(固定)の発芽期で、**再現率 1.000 / 適合率 0.119**。")
+    print("     F 値に丸めると 0.213 だが、実体は『ほぼ全画素を植生と答えた』であって")
+    print("     『2 割正解した』ではない。ゼロ点も向きは同じ(再現率 0.964 / 適合率 0.474)。")
+    print("     逆にアンミックス2 は 適合率 1.000 / 再現率 0.94-0.98 で、**落としている**")
+    print("     **側**に偏っている。同じ『そこそこの数字』でも欠陥の向きは正反対で、")
+    print("     どちらに倒すかは用途で決まる —— 1 つに丸めるとその選択ができなくなる。")
 
     print("\n=== 5. 混合画素 —— 真値 f のビンごとに、手法は何と答えるか ===")
     edges = np.array([0.0, 1e-9, 0.1, 0.3, 0.5, 0.7, 0.9, 1.0 - 1e-9, 1.0 + 1e-9])
@@ -516,10 +519,16 @@ def main():
     lin = np.concatenate([m.ravel() for m, _ in allmaps["NDVI 線形換算"]])
     mid = (tcat > 0.05) & (tcat < 0.95)
     lin_bias = 100.0 * float((lin[mid] - tcat[mid]).mean())
-    print(f"  NDVI 線形換算の混合画素(0.05<f<0.95)での偏り {lin_bias:+.2f} pp。")
-    print("     NDVI は混合率の非線形関数なので原理的に偏るが、この分光条件では小さい。")
-    print("     なお 2 乗形(Carlson & Ripley 流 fc=((N-Ns)/(Nv-Ns))^2)は線形混合の場面")
-    print(f"     では逆に大きく下振れする: 同じ画素で {100 * float(((lin[mid] ** 2) - tcat[mid]).mean()):+.2f} pp。")
+    print(f"  NDVI 線形換算の混合画素(0.05<f<0.95)での偏り {lin_bias:+.2f} pp"
+          f"(画素全体では {100 * float((lin - tcat).mean()):+.2f} pp)。")
+    print("     NDVI は混合率の**非線形**関数なので、線形に割り戻すと原理的に上振れする。")
+    print("     被覆率全体の偏りが 1-2 pp に見えるのは、純画素(f=0 と f=1)が数で薄める")
+    print("     ためで、**混合画素だけを見ると 8 pp を超える**。混ぜて 1 つの数字にすると")
+    print("     『NDVI 線形換算はよく当たる』と読めてしまう。")
+    print("     なお 2 乗形(Carlson & Ripley 流 fc=((N-Ns)/(Nv-Ns))^2)は、線形混合が")
+    print("     前提のこの場面では逆に大きく下振れする: 同じ画素で"
+          f" {100 * float(((lin[mid] ** 2) - tcat[mid]).mean()):+.2f} pp。")
+    print("     2 乗形が想定しているのは葉面積指数に対する飽和で、面積混合ではない。")
 
     print("\n=== 6. 崖 (a) 影の強さ —— 何が先に壊れるか ===")
     sh_methods = (("大津・緑(ゼロ点)", m_otsu_green), ("ExG + 大津", m_exg_otsu),
@@ -552,7 +561,7 @@ def main():
     gsd_rows = {}
     for s in (0, 2):
         print("  " + pad(f"— {STAGES[s][0]} —", 10, right=False))
-        for sub in (4, 6, 8, 12, 16, 24):
+        for sub in (4, 6, 8, 12, 16, 24, 32, 48):
             sc = [observe(fields[(s, k)], sub, seed=k) for k in range(2)]
             f = np.concatenate([t.ravel() for _, t in sc])
             mf = float(np.mean((f > 0) & (f < 1)))
@@ -561,10 +570,12 @@ def main():
             print("  " + pad(f"{sub / LEAF_LEN_SUB:.2f}", 10, right=False)
                   + pad(f"{FIELD_SUB // sub}²", 10) + pad(f"{100 * mf:.0f} %", 10)
                   + "".join(pad(f"{r[n]['bias']:+.1f}", 15) for n, _ in gsd_methods))
-    print("  → 混合率が 8 割を超える(画素 / 葉 ≒ 0.27 以上)と、二値手法の偏りが")
-    print("     一斉に伸びる。**どこに閾値を置いても直らない** —— 半分葉の画素を")
-    print("     0 と答えるか 1 と答えるかしかないので。アンミックスだけが最後まで残る")
-    print("     が、それも純画素が消えると端成分の推定ができなくなる(次節)。")
+    print("  → 二値手法は **段階で向きが逆**に伸びる。発芽期は混合画素をまとめて植生と")
+    print("     数えて上振れし、繁茂期の ExG は条間の混合画素を土と数えて下振れする。")
+    print("     どちらも『半分葉の画素を 0 と答えるか 1 と答えるか』しか選べないことの")
+    print("     現れで、**閾値をどこに置いても直らない**。アンミックス3 は混合率 9 割")
+    print("     でも数 pp に留まる —— ただしそれは端成分を知っている場合の話で、")
+    print("     画像から推定しようとすると次節のとおりになる。")
 
     print("\n=== 8. 端成分を盲目的に取る(PPI)—— 純画素が無いと足元が崩れる ===")
     print("  " + pad("画素/葉", 10, right=False) + pad("純・葉画素", 14)
