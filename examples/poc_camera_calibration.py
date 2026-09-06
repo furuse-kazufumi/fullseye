@@ -86,6 +86,7 @@ from scipy.optimize import least_squares
 
 import fullseye as fs
 import calib                      # ★ 穴 (a): fs ファサードに出ていない
+import examplefig as figs         # ★fullseye を先に import しないと解決しない
 
 # ── 真値(私が決める)────────────────────────────────────────────────────────── #
 IMG_W, IMG_H = 1280, 960

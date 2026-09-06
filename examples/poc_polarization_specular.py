@@ -264,6 +264,16 @@ def main():
         ang_rows[th] = (dop, e, pred, e0n, rt)
         print(f"  {th:>8.2f}{dop:>12.6f}{e:>14.3e}{pred:>14.3e}"
               f"{abs(e - pred):>10.1e}{e0n:>12.3e}{rt:>12.3g}")
+    th_ax = list(THETAS)
+    figs.save_plot("angle_error",
+                   [("op の拡散 RMSE", th_ax, [ang_rows[t][1] for t in th_ax]),
+                    ("閉形式 R_p * E", th_ax, [ang_rows[t][2] for t in th_ax]),
+                    ("ゼロ点 1(分離しない)", th_ax,
+                     [ang_rows[t][3] for t in th_ax])],
+                   xlabel="入射角 [度]", ylabel="拡散の RMSE",
+                   title="誤差は R_p * E に一致する(ブリュースター角で 0)",
+                   caption="実測と閉形式が重なる。70 度の絶対誤差は 20 度より悪い"
+                           "のに、ゼロ点比では 70 度が最良 —— 最適角は評価軸で割れる。")
     print("  → 誤差は閉形式 R_p * E に厳密一致(差は 1e-17 台)。理論どおり")
     print("     ブリュースター角で最良。ただし **20 度ではゼロ点の 1.2 倍しか")
     print("     勝たない** —— 偏光板を付ける価値が無い角度がある。")
