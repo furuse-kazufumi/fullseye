@@ -699,12 +699,19 @@ def section_tool_gaps() -> None:
           "3-D。受けるほうが便利だったので本 PoC は使っているが、"
           "**同じ族で入力検査が食い違うのは事故のもと**。")
 
-    # (f) 角度画像を「周期的な量」として塗る LUT が無い
+    # (f) 角度画像を「周期的な量」として塗る LUT —— 直接の口は無いが代用が在る
     assert hasattr(fs, "colorize_depth") and hasattr(fs, "diverging_lut")
-    for name in ("cyclic_lut", "hsv_lut", "colorize_angle"):
-        assert not hasattr(fs, name), name
-    print("  (f) 角度(周期量)を塗る循環 LUT が無い。colorize_depth で塗ると"
-          "0 度と 179 度が **正反対の色** になり、同じ向きが違って見える。")
+    for name in ("cyclic_lut", "hsv_lut", "colorize_angle", "colorize_orientation"):
+        assert not hasattr(fs, name) and not hasattr(fs.ledger, name), name
+    assert hasattr(fs, "colorize_flow")           # ★これが代用になる
+    th = np.linspace(0.0, np.pi, 32)
+    rgb = np.asarray(fs.colorize_flow(np.cos(2 * th)[None, :], np.sin(2 * th)[None, :]))
+    assert np.allclose(rgb[0, 0], rgb[0, -1], atol=0.02), "0 度と 180 度の色が違う"
+    print("  (f) 角度(周期量)を塗る循環 LUT の **直接の口は無い**"
+          "(colorize_depth で塗ると 0 度と 179 度が正反対の色になる)。"
+          "★ただし colorize_flow に (cos2θ, sin2θ) を渡すと循環 LUT になる ——"
+          "0 度と 180 度が同じ色になることを上で検算した。名前からは見つからない"
+          "ので、族の説明に書く価値がある。")
 
 
 # --------------------------------------------------------------------------- #
