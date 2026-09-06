@@ -135,6 +135,22 @@ def medial_axis_points(vol, min_radius=0.0):
     Returns:
         points (float64, (M,3)): medial voxel 座標(z, y, x)。
         radius (float64, (M,)): 各点の EDT 値(= 局所内接半径)。
+
+    手順: ``distance_ridge(vol, min_radius)`` で得た ``ridge_mask`` の ``np.argwhere``
+    (配列 index、行は z-major の辞書順で決定的)と、その位置の ``edt`` 値を返す。
+    座標は voxel index で spacing は掛けない(物理座標が要るなら呼び手で
+    ``points * (sz, sy, sx)``、半径も同様に等方 spacing を掛ける)。
+
+    引数と検証: ``vol`` は 3-D(非ゼロ = 前景)。3-D でない・空・NaN/Inf は
+    ``ValueError``、``min_radius < 0`` も ``ValueError``。``radius`` は
+    ``> min_radius`` の点だけ(境界 voxel は EDT が 1 以下なので ``min_radius=1`` で
+    外殻ノイズをほぼ落とせる)。
+
+    端の挙動: 前景が無い、または全点が ``min_radius`` 以下なら ``points`` は ``(0, 3)``、
+    ``radius`` は ``(0,)`` の空配列(エラーにしない)。
+
+    使いどころ: ``medial_match`` の半径分布、点群 op(``smallest_sphere3`` /
+    ``fit_line3`` 等)への橋渡し、``np.argmax(radius)`` で最大内接球の中心を取る。
     """
     ridge_mask, edt = distance_ridge(vol, min_radius=min_radius)
     points = np.argwhere(ridge_mask).astype(np.float64)          # (M,3) in (z,y,x)
