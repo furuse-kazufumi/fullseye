@@ -626,13 +626,15 @@ def main():
     assert rms_est < 0.05 * rms_lo, "推定が下限(何もしない)に対して 20 倍良くない"
     rms_aff, _ = landmark_error(H_aff, H_true)
     assert rms_aff > 10 * rms_est, "同名 op(アフィン)の取り違えが数字に出ていない"
-    # 影除去は必ず何かを削る: 平坦度が最も良い手法は薄字を減らす
-    flat_none = flatness(rect_ideal); fc_none = faint_contrast(rect_ideal)
-    d61 = bg_divide(rect_ideal, 61)
-    assert flatness(d61) < flat_none, "窓 61 で地が平らにならない"
-    assert faint_contrast(d61) < fc_none, "地を平らにしたのに薄字が一切減らない(想定外)"
-    # 2 値化は階調を潰す
-    assert ramp_fidelity(np.asarray(fs.op.var_threshold(rect_ideal, a=1.0))) < 0.5 * ramp_fidelity(rect_ideal)
+    # 影除去は必ず何かを削る: 地を平らにするほど図の階調が失われる
+    s_none = shadow_stats["何もしない"]
+    s_61 = shadow_stats["局所平均で割る(窓 61 = 自前)"]
+    s_9 = shadow_stats["局所平均で割る(窓 9 = op の上限)"]
+    s_bin = shadow_stats["var_threshold(2 値、窓 15)"]
+    assert s_61[0] < s_none[0], "窓 61 で地が平らにならない"
+    assert s_61[4] < s_none[4], "地を平らにしたのに図の階調が一切傷まない(想定外)"
+    assert s_9[0] > s_61[0], "窓 9(op の上限)が窓 61 と同じだけ地を平らにできてしまう"
+    assert s_bin[5] < 0.05, "2 値化なのに図の振幅が残っている"
     # op の局所窓が小さいことの機械的な確認(道具の穴 (d))
     o = fs.find_op("mean_image")
     assert "9" in (o.doc or ""), "mean_image の窓上限が docstring から読み取れない"
