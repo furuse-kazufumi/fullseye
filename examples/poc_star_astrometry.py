@@ -1064,7 +1064,118 @@ def main():
     assert false_p[3][3] == 0.0 and n_survive == 0 and n_hit_true == n_clean
     timing["6b 偽解"] = time.perf_counter() - t0
 
-    print("\nPASS(執筆中)")
+    # --------------------------------------------------------------- #
+    # 7) 天球座標に直したときの誤差 —— 1 つの数字にまとめない            #
+    # --------------------------------------------------------------- #
+    t0 = time.perf_counter()
+    Minv = np.linalg.inv(M_all)
+    got_src = apply_matrix(Minv, meas)                 # (eta, xi) [秒角]
+    ra_e, dec_e = standard_to_sky(got_src[:, 1], got_src[:, 0])
+    xi_t, eta_t = sky_to_standard(cat["ra"][j], cat["dec"][j])
+    d_xi, d_eta = got_src[:, 1] - xi_t, got_src[:, 0] - eta_t
+    # 検算: 標準座標での差と、天球上の角距離が一致すること
+    dsky = np.hypot((ra_e - cat["ra"][j]) * np.cos(np.deg2rad(dec_e)),
+                    dec_e - cat["dec"][j]) * 3600.0
+    print(f"\n【7】天球座標に直した誤差。プレート解は 6a の孤立星 {n_clean} 個から。"
+          f"検算: 標準座標での差 と 天球上の角距離 の食い違いは最大 "
+          f"{np.abs(dsky - np.hypot(d_xi, d_eta)).max():.2e} 秒角")
+    assert np.abs(dsky - np.hypot(d_xi, d_eta)).max() < 1e-3
+    print(f"   **平均だけを見ない**。偏り(誤差ベクトルの平均の大きさ)と"
+          f"散らばり(平均まわりの RMS)を分け、中央値・95 % 点・最悪も出す。"
+          f"単位は秒角(1 px = {PLATE_ARCSEC_PX} 秒角)")
+
+    def stat(mask, name):
+        n = int(mask.sum())
+        if n == 0:
+            return None
+        bx, by = d_xi[mask].mean(), d_eta[mask].mean()
+        bias = float(np.hypot(bx, by))
+        sc = float(np.sqrt(((d_xi[mask] - bx) ** 2 + (d_eta[mask] - by) ** 2).mean()))
+        r = np.hypot(d_xi[mask], d_eta[mask])
+        return (name, n, bias, sc, float(np.median(r)),
+                float(np.percentile(r, 95)), float(r.max()))
+
+    print("       " + pad("集団", 22) + pad("N", 4) + pad("偏り", 9)
+          + pad("散らばり", 11) + pad("中央", 9) + pad("95 %", 9) + pad("最悪", 9))
+    kindj = cat["kind"][j]
+    rad = np.hypot(meas[:, 0] - 127.5, meas[:, 1] - 127.5)
+    fl = cat["flux"][j]
+    uni = ok & (kindj == 0)
+    q1, q2 = np.percentile(fl[uni], [33, 67])
+    rq1, rq2 = np.percentile(rad[uni], [33, 67])
+    rows7 = [stat(uni, "一様・孤立(全体)"),
+             stat(uni & (fl <= q1), "  うち暗い 1/3"),
+             stat(uni & (fl > q1) & (fl <= q2), "  うち中位 1/3"),
+             stat(uni & (fl > q2), "  うち明るい 1/3"),
+             stat(uni & (rad <= rq1), "  うち視野中心 1/3"),
+             stat(uni & (rad > rq1) & (rad <= rq2), "  うち中間 1/3"),
+             stat(uni & (rad > rq2), "  うち視野外側 1/3"),
+             stat(ok & (kindj == 1), "密集星団"),
+             stat(ok & (kindj == 2), "二重星"),
+             stat(ok & (kindj == 3), "飽和星"),
+             stat(ok, "全部まぜて 1 つの数字に")]
+    for r in rows7:
+        if r is None:
+            continue
+        print("       " + pad(r[0], 22) + f"{r[1]:3d} " + f"{r[2]:8.4f}"
+              f"{r[3]:10.4f}{r[4]:10.4f}{r[5]:9.4f}{r[6]:9.4f}")
+    d_uni = dict((r[0], r) for r in rows7 if r)
+    all_row = d_uni["全部まぜて 1 つの数字に"]
+    uni_row = d_uni["一様・孤立(全体)"]
+    print(f"   → **1 つの数字にまとめると嘘になる**。全部混ぜた中央値 "
+          f"{all_row[4]:.4f} 秒角は、孤立星の "
+          f"{uni_row[4]:.4f} 秒角と 二重星の {d_uni['二重星'][4]:.4f} 秒角の"
+          f"あいだのどこでもない値。最悪は {all_row[6]:.3f} 秒角 = "
+          f"中央値の {all_row[6] / all_row[4]:.0f} 倍で、"
+          f"その正体は二重星と星団の混み合い")
+    print(f"   明るさで割ると: 暗い 1/3 の中央 {d_uni['  うち暗い 1/3'][4]:.4f} vs "
+          f"明るい 1/3 の {d_uni['  うち明るい 1/3'][4]:.4f} 秒角 —— "
+          f"{d_uni['  うち暗い 1/3'][4] / max(d_uni['  うち明るい 1/3'][4], 1e-9):.1f} 倍。"
+          f"段 1 の S/N 掃引がそのまま出ている")
+    print(f"   位置で割ると: 中心 1/3 {d_uni['  うち視野中心 1/3'][4]:.4f} / "
+          f"中間 {d_uni['  うち中間 1/3'][4]:.4f} / "
+          f"外側 {d_uni['  うち視野外側 1/3'][4]:.4f} 秒角。"
+          f"外側が悪ければプレートモデルの不足(高次項)を疑う場面だが、"
+          f"ここでは {SHAPE[0] * PLATE_ARCSEC_PX / 60:.1f} 分角の視野なので"
+          f"接平面投影の非線形は "
+          f"{ARCSEC * (1 / np.cos(np.deg2rad(SHAPE[0] * PLATE_ARCSEC_PX / 3600 / 2)) - 1) * 1e3:.2f} "
+          f"ミリ秒角しかなく、差は出ない")
+    print(f"   偏りと散らばりを分ける意味: 二重星の集団は 偏り "
+          f"{d_uni['二重星'][2]:.4f} / 散らばり {d_uni['二重星'][3]:.4f} 秒角 —— "
+          f"{'偏りが主' if d_uni['二重星'][2] > d_uni['二重星'][3] else '散らばりが主'}。"
+          f"孤立星は 偏り {uni_row[2]:.4f} / 散らばり {uni_row[3]:.4f} で"
+          f"{'偏りが主' if uni_row[2] > uni_row[3] else '散らばりが主'}。"
+          f"★ **散らばりは枚数で減るが偏りは減らない**ので、"
+          f"この 2 つを足して 1 つの誤差にすると「もっと撮れば良くなる」を誤る")
+    assert d_uni["  うち暗い 1/3"][4] > d_uni["  うち明るい 1/3"][4]
+    assert d_uni["二重星"][4] > 5.0 * uni_row[4]
+    assert all_row[6] > 10.0 * uni_row[4]
+    timing["7 天球誤差"] = time.perf_counter() - t0
+
+    # --------------------------------------------------------------- #
+    # 8) 速さ(assert しない)                                          #
+    # --------------------------------------------------------------- #
+    print("\n【8】速さ(参考値・assert しない): " + "  ".join(
+        f"{k} {v:.2f}s" for k, v in timing.items())
+        + f"  合計 {sum(timing.values()):.2f}s")
+
+    print(f"\nPASS: 測位は理論下限を上回れない(最良 "
+          f"{min(bright.values()):.2f}x、重み付き当てはめで "
+          f"{w_gain[100000.0][1]:.2f}x)。崖は 3 つ —— "
+          f"FWHM 2 px を切る標本化不足(位相系統誤差 "
+          f"{phase_tab['PSF 相関'][1.0][0]:.4f} px)、飽和 "
+          f"({g[16.0]['背景引き重心'][0]:.4f} px、マスクして"
+          f"**当てはめ**れば {mask_fit[16.0]:.5f} px だが"
+          f"マスクして**重心**を取ると {mask_cen[16.0]:.3f} px に悪化)、"
+          f"二重星({thr_eq:.2f} FWHM 未満は 1 個に見え、位置は光心へ寄る)。"
+          f"宇宙線はしきい値を超えたら {worst[2]:.0%} が星として出るが、"
+          f"鋭さで {1 - worst[3] / worst[1]:.0%} 落とせる。"
+          f"プレート解は 2 個では**でたらめでも残差 0**、3 個から一意 —— "
+          f"ただし総当たり {n_hyp} 通りでは 1 px 許容で期待偽解 "
+          f"{n_hyp * p10:.1f} 件。天球誤差は集団で "
+          f"{uni_row[4]:.4f}(孤立星)〜{d_uni['二重星'][4]:.3f}(二重星)秒角と "
+          f"{d_uni['二重星'][4] / uni_row[4]:.0f} 倍違い、"
+          f"1 つの数字にまとめてはいけない")
     return True
 
 
