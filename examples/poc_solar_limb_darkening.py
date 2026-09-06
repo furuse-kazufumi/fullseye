@@ -324,12 +324,12 @@ def section_zero_point() -> dict:
             name, f["r"], f["r"] - R_TRUE, d, f["n"]))
 
     c = fit_disc(img, "level", 0.5)
-    m = fit_limb_model(img, (c["cy"], c["cx"]))
+    m = fit_limb_model(img, (c["cy"], c["cx"]), c["r"])
     out["減光モデル"] = (m["r"] - R_TRUE, float("nan"))
     print("  %-20s %8.3f  %+7.3f       (中心は 50 %% 法から)  u=%.3f (真 %.2f)" % (
         "減光モデル", m["r"], m["r"] - R_TRUE, m["u"], U_TRUE))
 
-    m0 = fit_limb_model(img, (c["cy"], c["cx"]), u_grid=0.0)
+    m0 = fit_limb_model(img, (c["cy"], c["cx"]), c["r"], u_grid=0.0)
     out["減光モデル(u=0 と誤認)"] = (m0["r"] - R_TRUE, float("nan"))
     print("  %-20s %8.3f  %+7.3f       <- モデルを間違えると 50 %% 法より悪い" % (
         "同 u=0 と決め打ち", m0["r"], m0["r"] - R_TRUE))
