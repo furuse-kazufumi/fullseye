@@ -374,7 +374,8 @@ def main():
         ("オラクル t(A は推定)", a_dcp,  t_true, recover(img, a_dcp, t_true)),
         ("オラクル A と t",       A_TRUE, t_true, recover(img, A_TRUE, t_true)),
     )
-    print(f"  {'手法':<22}{'PSNR':>8}{'SSIM':>8}{'t MAE':>9}{'A 誤差':>9}{'A 角度':>9}")
+    print(f"  {'手法':<22}{'PSNR':>8}{'SSIM':>8}{'t MAE':>9}{'A 誤差':>9}{'A 角度':>9}"
+          f"{'RMS 対比':>10}")
     scores = {}
     for name, a_est, t_est, out in methods:
         p = psnr_masked(out, j_true)
@@ -384,7 +385,10 @@ def main():
         ag = float("nan") if a_est is None else angle_deg(a_est, A_TRUE)
         scores[name] = (p, s, tm, ae, ag)
         f = (lambda v, w, n: f"{v:>{w}.{n}f}" if v == v else f"{'—':>{w}}")
-        print(f"  {name:<22}{p:>8.2f}{s:>8.4f}{f(tm, 9, 4)}{f(ae, 9, 4)}{f(ag, 9, 3)}")
+        print(f"  {name:<22}{p:>8.2f}{s:>8.4f}{f(tm, 9, 4)}{f(ae, 9, 4)}{f(ag, 9, 3)}"
+              f"{rms_contrast(out):>10.4f}")
+    print(f"  {'(参考) 真値 J そのもの':<22}{'inf':>8}{1.0:>8.4f}{0.0:>9.4f}{0.0:>9.4f}"
+          f"{0.0:>9.3f}{rms_contrast(j_true):>10.4f}")
     print(f"  推定した大気光: 暗チャネル法 {a_dcp}  上位 0.1 % 明画素 {a_bri}")
     d_a = scores["オラクル A(t は推定)"][0] - scores["暗チャネル p=15"][0]
     d_t = scores["オラクル t(A は推定)"][0] - scores["暗チャネル p=15"][0]
