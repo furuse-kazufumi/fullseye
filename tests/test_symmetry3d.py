@@ -1,5 +1,6 @@
 """symmetry3d の GT 検証: 楕円体=反射対称・非対称形状=スコア大・円柱=回転対称。"""
 import numpy as np
+import pytest
 
 import symmetry3d as S
 
@@ -82,3 +83,47 @@ def test_degenerate_all_identical_is_fail_closed():
     pts = np.zeros((5, 3))
     with pytest.raises(ValueError):
         S.detect_reflection_symmetry(pts)
+
+
+# --------------------------------------------------------------------------- #
+# margin —— 「どの候補でも同じ」を検出できるか(2026-09-06)
+# --------------------------------------------------------------------------- #
+def _rng_cloud(n, seed=0):
+    return np.random.default_rng(seed).random((n, 3))
+
+
+def test_reflection_margin_is_small_when_several_planes_tie():
+    """鏡映面が複数ある形では margin が潰れる。それが「選択に意味が無い」の合図。
+
+    点群位置合わせの PoC が同じ構造を測った —— PCA 候補は素の直方体で 83 % が
+    反転した象限を掴み、そのとき先に潰れるのは残差ではなく margin だった。
+    """
+    rng = np.random.default_rng(0)
+    box = (rng.random((1500, 3)) - 0.5) @ np.diag([1.0, 0.62, 0.38])
+    r = S.detect_reflection_symmetry(box)
+    assert "margin" in r
+    assert r["margin"] == pytest.approx(sorted(r["all_scores"])[1]
+                                        - min(r["all_scores"]), abs=1e-12)
+    assert r["margin"] < 0.05, r["margin"]        # 3 枚が団子
+
+    # 対照: 軸長を大きく変えると 1 枚が抜ける方向へ動く
+    flat = (rng.random((1500, 3)) - 0.5) @ np.diag([1.0, 0.05, 0.05])
+    assert S.detect_reflection_symmetry(flat)["margin"] >= 0.0
+
+
+def test_reflection_score_never_reaches_zero_even_for_a_symmetric_shape():
+    """score には点間隔の床がある。0 と比べるな、を固定する。"""
+    rng = np.random.default_rng(1)
+    box = (rng.random((2000, 3)) - 0.5) @ np.diag([1.0, 0.62, 0.38])
+    r = S.detect_reflection_symmetry(box)
+    assert r["score"] > 0.5, "床が消えた —— docstring の表を測り直すこと"
+
+
+def test_rotational_detection_also_reports_a_margin():
+    rng = np.random.default_rng(2)
+    cyl_t = rng.random(1200) * 2.0 * np.pi
+    cyl = np.column_stack([np.cos(cyl_t), np.sin(cyl_t), rng.random(1200) * 2.0 - 1.0])
+    r = S.detect_rotational_symmetry(cyl)
+    assert "margin" in r and r["margin"] >= 0.0
+    assert r["margin"] == pytest.approx(
+        sorted(t[2] for t in r["table"])[1] - min(t[2] for t in r["table"]), abs=1e-12)

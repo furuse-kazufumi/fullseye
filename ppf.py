@@ -76,6 +76,36 @@ def _angle(u, v):
     return np.arccos(d)
 
 
+def _invariant_diameter(P) -> float:
+    """点群の直径。**回転で変わらない**量として測る。
+
+    2026-09-06 まで、既定の ``dist_step`` は**軸平行境界箱の対角 / 20** だった。
+    その対角は向きで変わる —— 同じ 800 点の箱を z 軸まわりに回すと 1.2333
+    (0 度、90 度)と 1.5735(143 度)で **28 % 動く**。``dist_step`` は距離を
+    量子化する幅なので、動けばハッシュ鍵が変わる。実測でモデルと場面の鍵の
+    一致率が 58 % まで落ちた。PPF は「モデルを 1 度作って多くの場面に使い回す」
+    設計なので、**別の向きで撮った場面だけ当たらない**という、再現しにくい
+    壊れ方になる。
+
+    ここでは凸包の頂点どうしの最大距離(= 真の直径)を返す。上の箱では回転角に
+    依らず 1.1784 で一定。50000 点でも凸包の頂点は 174 個しかなく **7.1 ms**。
+
+    凸包が作れない配置(同一平面・同一直線・4 点未満)では ``2 * max|p - c|`` に
+    落とす。**こちらも回転不変**なので、落ちても今回の不具合は戻らない
+    (値は 1-5 % 大きめに出る。球殻で 2.0927 対 2.0000)。
+    """
+    P = np.asarray(P, np.float64)
+    if P.shape[0] < 2:
+        return 0.0
+    try:
+        from scipy.spatial import ConvexHull
+        h = P[ConvexHull(P).vertices]
+        return float(np.linalg.norm(h[:, None, :] - h[None, :, :], axis=-1).max())
+    except Exception:                            # noqa: BLE001 — 退化配置
+        c = P.mean(0)
+        return float(2.0 * np.linalg.norm(P - c, axis=1).max())
+
+
 def ppf_model(points, normals=None, dist_step: float = None, angle_bins: int = 30,
               k_normals: int = 16) -> dict:
     """Build the Point Pair Feature descriptor (hash table) of a model cloud.
@@ -93,8 +123,13 @@ def ppf_model(points, normals=None, dist_step: float = None, angle_bins: int = 3
     if M < 5:
         raise ValueError("need >= 5 model points")
     if normals is None:
-        from pointcloud import estimate_normals
-        N = estimate_normals(P, k=k_normals)
+        # ★ 素の PCA 法線は**符号が任意**で、回転すると 4 割の点で裏返る。PPF の
+        #   特徴は法線どうしの角度なので、裏返れば鍵が変わる。実測(400 点、
+        #   z 軸まわり): 素の法線だと鍵の一致率が 0/37/90/143 度で
+        #   100 / 73.6 / 69.4 / 67.2 %、向き付き法線なら **すべて 100 %**。
+        #   ``pointcloud.fpfh`` が踏んでいたのと同じ穴で、同じ日に一緒に直した。
+        from normals_orient import estimate_oriented_normals
+        N = estimate_oriented_normals(P, k=k_normals)
     else:
         N = _unit(np.asarray(normals, np.float64))
     diam = _invariant_diameter(P)
