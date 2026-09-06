@@ -635,13 +635,18 @@ def section_framerate() -> dict:
 # --------------------------------------------------------------------------- #
 # 7. 渋滞 —— 壊れるのは検出器ではなく背景モデル                                 #
 # --------------------------------------------------------------------------- #
-def _jam_positions(veh, times, stop_at, brake_from):
-    """減速して停止する軌跡(x は単調非減少)。"""
+def _jam_positions(veh, times, stop_at):
+    """停止位置で止まる軌跡。**x は単調非減少**でなければならない。
+
+    ★最初は「``brake_from`` 以降だけ停止位置で頭打ち」と書いていて、それだと
+    停止位置を追い越した車が制動開始の瞬間に**後ろへ飛ぶ**。絵では気づかず、
+    スリット画像の帯だけが 1 本余計に融合していた(真値 3 に対し 2)。
+    合成の側の不整合は、推定器の欠陥に化けて見える。
+    """
     out = np.empty((len(times), len(veh)))
     for j, v in enumerate(veh):
-        for i, s in enumerate(times):
-            x = v["x0"] + v["v"] * s
-            out[i, j] = min(x, stop_at[j]) if s >= brake_from else x
+        out[:, j] = np.minimum(v["x0"] + v["v"] * np.asarray(times), stop_at[j])
+    assert np.all(np.diff(out, axis=0) >= -1e-9), "軌跡が後戻りしている"
     return out
 
 
