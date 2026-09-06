@@ -594,13 +594,34 @@ def section_scales() -> dict:
     print("     窓を広げると配向度が良く見える、というのは測っている量の性質で、"
           "材料の性質ではない。")
 
-    m0 = measure(sc, sigma_d=0.0)
-    m1 = measure(sc, sigma_d=SIG_D)
-    print("  ★微分スケール σ_d を 0 にする(前平滑化なし)と配向度 %.4f -> %.4f、"
-          "平均角度 %.2f -> %.2f 度。"
-          % (m1["R"], m0["R"], m1["mean_deg"], m0["mean_deg"]))
-    print("     効き方が σ_i とは別 —— 前者は勾配の雑音を抑え、後者は方向を集める。"
-          "片方で代用できない。")
+    # --- 微分スケールの役目は別 —— 雑音を上げた対照群で切り分ける ---------- #
+    print("\n   微分スケール σ_d を振る(雑音 1σ を 2 段階で)。σ_i = %.0f px 固定:"
+          % SIG_I)
+    print("   σ_d [px]   雑音 %.3f: 平均 / 誤差 / 配向度      雑音 %.3f: 平均 / 誤差 / 配向度"
+          % (NOISE, 5 * NOISE))
+    sd_list, sd_r_lo, sd_r_hi, sd_e_hi = [], [], [], []
+    sc_hi = make_scene(noise=5 * NOISE)
+    t_hi = circ_stats(sc_hi["angles"], sc_hi["len_vis"])
+    for sd in (0.0, 0.5, 1.0, 2.0, 4.0):
+        a = measure(sc, sigma_d=sd)
+        b = measure(sc_hi, sigma_d=sd)
+        sd_list.append(sd)
+        sd_r_lo.append(a["R"])
+        sd_r_hi.append(b["R"])
+        sd_e_hi.append(abs(_ang_err(b["mean_deg"], t_hi["mean_deg"])))
+        print("     %4.1f      %6.2f / %+5.2f / %.4f          %6.2f / %+5.2f / %.4f"
+              % (sd, a["mean_deg"], _ang_err(a["mean_deg"], truth["mean_deg"]), a["R"],
+                 b["mean_deg"], _ang_err(b["mean_deg"], t_hi["mean_deg"]), b["R"]))
+    print("  ★★σ_d は **雑音が小さいうちはほとんど効かない**"
+          "(配向度 %.4f -> %.4f)。雑音を 5 倍にすると初めて効き、"
+          % (sd_r_lo[0], sd_r_lo[-1]))
+    print("     σ_d=0 で配向度 %.4f(真値 %.4f、%+.0f %%)が、σ_d=%.1f px で "
+          "%.4f(%+.0f %%)まで戻る。"
+          % (sd_r_hi[0], t_hi["R"], 100 * (sd_r_hi[0] - t_hi["R"]) / t_hi["R"],
+             sd_list[int(np.argmax(sd_r_hi))], max(sd_r_hi),
+             100 * (max(sd_r_hi) - t_hi["R"]) / t_hi["R"]))
+    print("     **σ_i を増やしても代わりにならない** —— σ_i は方向を集めるが、"
+          "雑音の勾配そのものは消せない。")
     figs.save_plot("scales",
                    [("配向度(推定)", sig, rr),
                     ("真値の配向度", sig, [truth["R"]] * len(sig)),
