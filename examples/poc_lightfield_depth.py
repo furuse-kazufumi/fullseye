@@ -638,10 +638,12 @@ def main():
     step_b[:, 6:] = 1.0
     with warnings.catch_warnings(record=True) as caught:
         warnings.simplefilter("always")
-        S.disparity_subpixel(step_a, step_b, 8, 5, "ssd")
-    assert any(issubclass(c.category, RuntimeWarning) and "divide" in str(c.message)
-               for c in caught), \
-        "RuntimeWarning が出なくなった = 穴 (e) が直った(docstring から消してよい)"
+        step_out = np.asarray(S.disparity_subpixel(step_a, step_b, 8, 5, "ssd"))
+    leaked = [str(c.message) for c in caught
+              if issubclass(c.category, RuntimeWarning) and "divide" in str(c.message)]
+    assert not leaked, "平坦領域の divide 警告が戻ってきた: %s" % leaked[:2]
+    # 警告を消しただけで値まで変わっていないこと(where= の外は 0 のまま)。
+    assert np.all(np.isfinite(step_out)), "警告は消えたが NaN/Inf が出ている"
     # 11. 掃引点数の上限は 256(深度分解能の天井、穴 (f))
     try:
         L.lf_depth_from_focus(lf_int, np.linspace(0.0, 3.0, 257))

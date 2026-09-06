@@ -456,10 +456,9 @@ def section_crossover() -> dict:
              else "この範囲では入れ替わらない(積分法が全域で下)"))
     print("     2 値化が点ごとに散らばらないのは強さではなく、**1 画素の階段に"
           "張り付いている**ため。")
+    fb = [v for v in bin_bias if np.isfinite(v)]
     print("     その代わり偏りは消せない(表の『2値の偏り』列 = "
-          "%+.4f 〜 %+.4f mm)。"
-          % (min(v for v in [float(np.mean(x)) for x in [bin_mean_rms]] if True) * 0,
-             0.0))
+          "%+.4f 〜 %+.4f mm、平均しても残る)。" % (min(fb), max(fb)))
 
     # --- 照明の曲がり: ベースラインの次数が効く -------------------------------
     print("\n  照明の「曲がり」に対する感度(ざらつき無し・幅 0.60 mm)")
