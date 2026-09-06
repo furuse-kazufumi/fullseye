@@ -208,22 +208,31 @@ def section2_noise_floor():
     print("  ΔT=0 のまま、角点検出の雑音 σ=%.3f px だけを 300 回入れる。" % SIGMA_PX)
     print("  **この床を超えていなければ「ドリフトが効いている」とは言えない**。")
     print()
+    print("  現場は 1 枚では判定しないので、**%d 枚平均**の床も出す。" % N_AVG)
+    print()
     rng = np.random.default_rng(7)
-    print("  %8s %14s %14s %14s" % ("半径 px", "偏り µm", "散らばり µm", "散らばり ppm"))
-    print("  " + "-" * 54)
+    print("  %8s %12s %12s %14s %12s"
+          % ("半径 px", "偏り µm", "1 枚 µm", "%d 枚平均 µm" % N_AVG, "平均 ppm"))
+    print("  " + "-" * 62)
     floors = {}
     for r in (0.0, 600.0, 1200.0):
         c = place_at_radius(r)
-        vals = [measure_side(c, 0.0, "both", rng) for _ in range(300)]
-        v = np.array(vals)
-        floors[r] = float(v.std())
-        print("  %8.0f %14.3f %14.3f %14.1f"
+        v = np.array([measure_side(c, 0.0, "both", rng) for _ in range(300)])
+        avg = v.reshape(-1, N_AVG).mean(axis=1) if 300 % N_AVG == 0 else v
+        floors[r] = float(v.std()) / np.sqrt(N_AVG)
+        print("  %8.0f %12.3f %12.3f %14.3f %12.1f"
               % (r, um(float(v.mean()), SIDE_MM), 1e3 * float(v.std()),
-                 1e6 * float(v.std()) / SIDE_MM))
+                 1e3 * floors[r], 1e6 * floors[r] / SIDE_MM))
     print()
-    print("  → 床は %.2f µm(%.0f ppm)前後。角点 4 点の平均なので σ/2 相当。"
-          % (1e3 * floors[0.0], 1e6 * floors[0.0] / SIDE_MM))
-    print("     偏りは 0 に落ちる(雑音は系統誤差を作らない)—— ここが対照群。")
+    print("  → 1 枚の床は %.2f µm(%.0f ppm)—— この視野では 0.05 px = %.1f µm なので"
+          % (1e3 * floors[0.0] * np.sqrt(N_AVG),
+             1e6 * floors[0.0] * np.sqrt(N_AVG) / SIDE_MM, 1e3 * SIGMA_PX * MM_PER_PX))
+    print("     角点 4 点を平均しても µm 単位。%d 枚平均で %.2f µm(%.0f ppm)まで下がる。"
+          % (N_AVG, 1e3 * floors[0.0], 1e6 * floors[0.0] / SIDE_MM))
+    print("     偏りは %.3f µm と 0 に落ちる(雑音は系統誤差を作らない)—— ここが対照群。"
+          % um(float(np.mean([measure_side(place_at_radius(0.0), 0.0, "both", rng)
+                              for _ in range(300)])), SIDE_MM))
+    print("     ★以降「床」と書いたら **%d 枚平均の 1σ** を指す。" % N_AVG)
     return floors
 
 
