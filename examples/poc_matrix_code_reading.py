@@ -369,11 +369,8 @@ def find_alignment(dark, finders, n, module_px_est):
     dst = np.array([[f[1], f[0]] for f in finders])                        # (x, y)
     M = np.linalg.solve(np.column_stack([src, np.ones(3)]), dst)           # 3x2
     pred = np.array([n - 6.5, n - 6.5, 1.0]) @ M
-    # アフィン予測は透視ぶんだけ外れるので、広めの円板から始めて 2 段で絞る
-    got = _refine_center(dark, pred[0], pred[1], 2.6 * module_px_est, iters=6)
-    if got is None:
-        return None
-    got = _refine_center(dark, got[0], got[1], 2.4 * module_px_est, iters=6)
+    # アフィン予測は透視ぶんだけ外れる。分離帯の内側に収まる正方窓で引き込む
+    got = _refine_center(dark, pred[0], pred[1], 3.0 * module_px_est, iters=8)
     if got is None:
         return None
     return np.array([got[0], got[1]])                                      # (x, y)
