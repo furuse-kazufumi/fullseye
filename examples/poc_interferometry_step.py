@@ -289,18 +289,18 @@ def main():
             b, _, _, _ = repeat(step, noise, mode="centroid", n=16)
             gains.append((step * 1000 + b) / (step * 1000))
             cells.append("%+7.1f" % b)
+        gain_at[noise] = float(np.mean(gains))
         print("   %4.2f | %s | %.4f ± %.4f"
-              % (noise, " | ".join(cells), float(np.mean(gains)),
-                 float(np.std(gains))))
-    g_lo = np.mean([(s * 1000 + repeat(s, 0.0, mode="centroid", n=4)[0])
-                    / (s * 1000) for s in STEPS])
-    g_hi = np.mean([(s * 1000 + repeat(s, 0.10, mode="centroid", n=16)[0])
-                    / (s * 1000) for s in STEPS])
+              % (noise, " | ".join(cells), gain_at[noise], float(np.std(gains))))
+    g_lo, g_mid, g_hi = gain_at[0.0], gain_at[0.03], gain_at[0.10]
     print("   ゲインが段差 4 種でほぼ揃う = これはオフセットではなく**倍率の誤差**。"
-          "雑音 0 で %.3f、雑音 10%% で %.3f まで落ちる。" % (g_lo, g_hi))
-    print("   繰り返し測定の再現性(std %.1f nm)だけを見ると最良の推定量に見えるので、"
+          "雑音 0 で %.3f、3%% で %.3f、10%% で %.3f まで落ちる。"
+          % (g_lo, g_mid, g_hi))
+    print("   同じ雑音 10%% で `gaussian` の標準偏差は %.1f nm、`centroid` は %.1f nm。"
+          "再現性だけを見ると `centroid` が最良に見えるので、"
           "**再現性を精度と読み替えるとここで嘘をつく**。"
-          % repeat(0.100, 0.10, mode="centroid", n=16)[1])
+          % (repeat(0.100, 0.10, mode="gaussian", n=16)[1],
+             repeat(0.100, 0.10, mode="centroid", n=16)[1]))
     assert g_lo > 0.999 and g_hi < 0.9      # 雑音で倍率が落ちる
 
     # ------------------------------------------------------------------ #
