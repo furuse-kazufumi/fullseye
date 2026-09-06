@@ -662,15 +662,19 @@ def main():
     assert rms_est < 0.05 * rms_lo, "推定が下限(何もしない)に対して 20 倍良くない"
     rms_aff, _ = landmark_error(H_aff, H_true)
     assert rms_aff > 10 * rms_est, "同名 op(アフィン)の取り違えが数字に出ていない"
-    # 影除去は必ず何かを削る: 地を平らにするほど図の階調が失われる
+    # 影除去は必ず何かを削る
     s_none = shadow_stats["何もしない"]
     s_61 = shadow_stats["局所平均で割る(窓 61 = 自前)"]
     s_9 = shadow_stats["局所平均で割る(窓 9 = op の上限)"]
     s_bin = shadow_stats["var_threshold(2 値、窓 15)"]
     assert s_61[0] < s_none[0], "窓 61 で地が平らにならない"
     assert s_61[4] < s_none[4], "地を平らにしたのに図の階調が一切傷まない(想定外)"
-    assert s_9[0] > s_61[0], "窓 9(op の上限)が窓 61 と同じだけ地を平らにできてしまう"
-    assert s_bin[5] < 0.05, "2 値化なのに図の振幅が残っている"
+    assert s_9[4] < s_61[4], "窓が小さいほど図が壊れる、が数字に出ていない"
+    assert s_bin[5] <= 4, f"2 値化なのに図の階調が {s_bin[5]} 段残っている"
+    # 「平坦・薄字・誤検出なし」の 3 つを同時に満たす手法はこの表に無い
+    assert not any(f < 0.06 and w > 0.9 and p < 0.10
+                   for f, _s, w, p, _c, _l in shadow_stats.values()), \
+        "良いところ取りができてしまった —— 表か指標のどちらかが間違っている"
     # op の局所窓が小さいことの機械的な確認(道具の穴 (d))
     o = fs.find_op("mean_image")
     assert "9" in (o.doc or ""), "mean_image の窓上限が docstring から読み取れない"
