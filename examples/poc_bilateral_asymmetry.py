@@ -507,6 +507,15 @@ def main():
     print(f"    2 点は正中面の反対側にある(真の面までの符号つき距離 "
           f"{float(m_true @ hi - c_true):+.1f} / {float(m_true @ lo - c_true):+.1f} mm)。")
     print("    どちらが患側かは鏡映だけでは決まらない。★穴 H: 群集平均(統計形状モデル)が要る。")
+    # この節の主張は 2 つとも**場の形**の話なので、数字より展開図が速い。
+    # 2 枚は同じ標本・同じ塗り分け(発散 LUT、0 が中央)。
+    _loc = (P64 - t_pose) @ R_pose               # 標本座標へ戻す(x>0 が右側)
+    figs.save_grid("deviation_map",
+                   [_unwrap_map(_loc, sm_ora), _unwrap_map(_loc, sm_opt)],
+                   ["真の正中面で鏡映", "残差最適面で鏡映"],
+                   title="非対称場の展開図(球面座標、横=方位角)", ncols=2, signed=True,
+                   caption="どちらも患部 + とその鏡像 - の二重ローブ。右は面が引きずられて"
+                           "ローブが薄くなり、%.0f %% が消えている。" % (100 * (1 - g_opt)))
 
     print("\n=== 6. 壊れる条件 ===")
     print("  (a) 変形が大きすぎる —— PCA が別の主軸を選び、面が丸ごと飛ぶ")
