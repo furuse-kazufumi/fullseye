@@ -494,6 +494,7 @@ def section_spot() -> dict:
     a_r, a_c = out[(key, False)]
     b_r, b_c = out[(key, True)]
     z_r, z_c = out[("黒点なし(対照群)", False)]
+    out_drop = drops[key]
     print("\n  ★**効くのは半径より中心**。縁に載った黒点で、半径は %+.2f -> %+.2f px"
           % (z_r, a_r))
     print("  (差 %.2f px)しか動かないのに、**中心は %.3f -> %.3f px** と %.0f 倍に"
