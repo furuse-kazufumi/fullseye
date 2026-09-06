@@ -121,6 +121,17 @@ def rmse(a, b):
     return float(np.sqrt(np.mean((np.asarray(a) - np.asarray(b)) ** 2)))
 
 
+def ratio(num, den):
+    """num/den。分母 0 は inf(0/0 は 1)—— 比の表で 0 除算に落ちないように。
+
+    ゼロ点が **厳密に** 真値を当てることが実際に起きる(6 節の方位 0/45 度)。
+    そこを例外で落とすと、一番面白い行だけが表から消える。
+    """
+    if den == 0.0:
+        return 1.0 if num == 0.0 else float("inf")
+    return num / den
+
+
 def separate(frames, angles=ANGLES, mvf=0.0):
     return specularity.polarization_separate(frames, angles, max_violation_frac=mvf)
 
@@ -209,7 +220,7 @@ def main():
         e = rmse(d_est, d_true)
         es = rmse(s_est, s_true) if s_est is not None else float("nan")
         rs_txt = f"{es:>12.3e}" if s_est is not None else f"{'—':>12}"
-        print(f"  {name:<34}{e:>12.3e}{rs_txt}{e / base:>11.3g}")
+        print(f"  {name:<34}{e:>12.3e}{rs_txt}{ratio(e, base):>11.3g}")
     print("  → ブリュースター角では op の誤差が 1e-17 台 = 倍精度の床。R_p = 0 な")
     print("     ので「2*I_min = D」が恒等式として成り立ち、ゼロ点との比は 14〜15 桁。")
     print("     この「比が意味を失うほど勝つ」のはブリュースター角限定で、4 節で")
@@ -230,10 +241,10 @@ def main():
         e = rmse(d_e, diffuse)
         pred = rp * E0 * g_rms                      # 2*I_p = R_p * E * lobe
         e0n = rmse(null_no_separation(f), diffuse)
-        ratio = e0n / e if e > 0 else float("inf")
-        ang_rows[th] = (dop, e, pred, e0n, ratio)
+        rt = ratio(e0n, e)
+        ang_rows[th] = (dop, e, pred, e0n, rt)
         print(f"  {th:>8.2f}{dop:>12.6f}{e:>14.3e}{pred:>14.3e}"
-              f"{abs(e - pred):>10.1e}{e0n:>12.3e}{ratio:>12.3g}")
+              f"{abs(e - pred):>10.1e}{e0n:>12.3e}{rt:>12.3g}")
     print("  → 誤差は閉形式 R_p * E に厳密一致(差は 1e-17 台)。理論どおり")
     print("     ブリュースター角で最良。ただし **20 度ではゼロ点の 1.2 倍しか")
     print("     勝たない** —— 偏光板を付ける価値が無い角度がある。")
@@ -279,8 +290,8 @@ def main():
         e, e3 = rmse(separate(fb)[0], diffuse), rmse(null_frame_min2(fb), diffuse)
         e7, e37 = rmse(separate(f7)[0], diffuse), rmse(null_frame_min2(f7), diffuse)
         az_rows[az] = (e, e3, e7, e37)
-        print(f"  {az:>10.1f}{e:>12.3e}{e3:>12.3e}{e3 / e:>10.3g}"
-              f"{e7:>12.3e}{e37:>16.3e}{e37 / e7:>8.2f}")
+        print(f"  {az:>10.1f}{e:>12.3e}{e3:>12.3e}{ratio(e3, e):>10.3g}"
+              f"{e7:>12.3e}{e37:>16.3e}{ratio(e37, e7):>8.2f}")
     print("  → 方位が 0 度 / 45 度(= 測った角度そのもの)では離散最小値が真の")
     print("     I_min に **厳密に**一致するので、素朴なゼロ点 3 の誤差が 0 になり、")
     print("     丸めの乗る当てはめ(4.7e-17)より **わずかに良い**(比 0 はそれ)。")

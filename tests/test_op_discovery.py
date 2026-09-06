@@ -92,7 +92,7 @@ def test_op_namespace_carries_the_ops_own_doc():
 
 def test_op_namespace_is_fail_closed_on_unknown_names():
     with pytest.raises(AttributeError, match="op_find"):
-        fs.op.definitely_not_an_op
+        _ = fs.op.definitely_not_an_op
 
 
 def test_the_three_colliding_names_are_different_things():
