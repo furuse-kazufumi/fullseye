@@ -233,8 +233,8 @@ def main():
     t_start = time.perf_counter()
     rng = np.random.default_rng(20260906)
 
-    src = bracket(800, rng)                          # 標本 A
-    dst_base = bracket(1100, rng)                    # 同じ面から独立に取った標本 B
+    src = bracket(500, rng)                          # 標本 A
+    dst_base = bracket(700, rng)                     # 同じ面から独立に取った標本 B
     diam = diameter(dst_base)
     dst_n_base = fs.estimate_normals(dst_base, k=16)
     spacing = spacing_of(dst_base)
