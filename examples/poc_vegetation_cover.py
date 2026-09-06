@@ -882,13 +882,23 @@ def main():
         assert abs(res[s]["ExG > 0(固定)"]["bias"]) > abs(res[s]["ExG + 大津"]["bias"])
     # (10) 崖 (e) 照度:**倍率だけ**変えた対照で、壊れるのはアンミックス2 だけ
     ctrl = ill_rows[("暗いだけ(対照)", 2)]
+    ctrl2 = ill_rows[("暗い+雑音も比例(対照2)", 2)]
     base = ill_rows[("晴れ", 2)]
     assert abs(ctrl["アンミックス2(葉+土)"]["bias"]) \
         > abs(base["アンミックス2(葉+土)"]["bias"]) + 5.0, (
             base["アンミックス2(葉+土)"]["bias"], ctrl["アンミックス2(葉+土)"]["bias"])
-    for name in ("大津・緑(ゼロ点)", "ExG + 大津", "NDVI + 大津", "アンミックス3(+影)"):
+    # 倍率だけでは動かない手法(大津の閾値はアフィン等変、正規化指数は分母で割る)
+    for name in ("大津・緑(ゼロ点)", "NDVI + 大津", "アンミックス3(+影)"):
         assert abs(ctrl[name]["bias"] - base[name]["bias"]) < 2.0, (
             name, base[name]["bias"], ctrl[name]["bias"])
+    # ExG は倍率そのものではなく S/N で動く:雑音も比例させれば元に戻る
+    assert abs(ctrl["ExG + 大津"]["bias"] - base["ExG + 大津"]["bias"]) > 1.0, (
+        base["ExG + 大津"]["bias"], ctrl["ExG + 大津"]["bias"])
+    assert abs(ctrl2["ExG + 大津"]["bias"] - base["ExG + 大津"]["bias"]) < 1.0, (
+        base["ExG + 大津"]["bias"], ctrl2["ExG + 大津"]["bias"])
+    # 対照2 でもアンミックス2 は壊れたまま = あちらは倍率そのものが原因
+    assert abs(ctrl2["アンミックス2(葉+土)"]["bias"]) \
+        > abs(base["アンミックス2(葉+土)"]["bias"]) + 5.0, ctrl2["アンミックス2(葉+土)"]["bias"]
     # (11) ★道具の穴:3 つの大津が同じ入力に違う答えを返す。sk_otsu だけがアフィン不変。
     assert aff["sk_otsu"] < 1e-12, aff
     assert aff["otsu"] > 0.10, aff
