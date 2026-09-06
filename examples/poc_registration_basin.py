@@ -404,12 +404,20 @@ def main():
     src_c, dst_c = src[ia], dst_base[ib]
     diam_c = diameter(dst_c)
     dn_c = fs.estimate_normals(dst_c, k=12)
-    Rc, tc = fs.icp(src_c, fs.apply_transform(dst_c, R_true, t_true),
-                    init=(R_true, t_true), max_iter=60)[:2]
+    rng_f = np.random.default_rng(606)
+    fr_r, fr_c = [], []
+    for _ in range(8):                                # 下限は 1 標本で決めない
+        dq, _dn, Rt, tt = make_pair(dst_c, dn_c, 60.0, 0.15, diam_c, rng_f)
+        Rf, tf = fs.icp(src_c, dq, init=(Rt, tt), max_iter=60)[:2]
+        fr_r.append(rot_error_deg(Rf, Rt))
+        fr_c.append(cen_error(Rf, tf, Rt, tt, src_c.mean(0)))
+    floor_c = med(fr_r)
     print(f"  点数を落とした共通の組 src {src_c.shape[0]} / dst {dst_c.shape[0]}"
           f"(FPFH と PPF が現実的な時間で回る密度)")
-    print(f"  この組の下限: 回転 {rot_error_deg(Rc, R_true):.3f} 度 / 並進 "
-          f"直径の {100 * cen_error(Rc, tc, R_true, t_true, src_c.mean(0)) / diam_c:.3f} %")
+    print(f"  この組の下限(真値から開始、8 姿勢の中央値): 回転 {floor_c:.2f} 度 / "
+          f"並進 直径の {100 * med(fr_c) / diam_c:.3f} %")
+    print(f"  → しきい値 {ROT_OK_DEG:.0f} 度 まで余裕は 2-3 倍しかない。この密度では")
+    print("     「成功時の回転誤差」列は点間隔で頭打ちになる(手法の限界ではない)。")
     WIDE = (0, 45, 90, 135, 180)
     print(f"  行 = 手法、列 = 初期回転ずれ[度](並進ずれ 直径の 15 % 固定、8 試行/セル)")
     print("  " + f"{'手法':<20}" + "".join(f"{r:>7}" for r in WIDE)
