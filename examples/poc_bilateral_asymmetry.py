@@ -356,8 +356,9 @@ def main():
         sm, raw = _surface_deviation(P, aligned)
         p2p = float(np.sqrt(np.mean(cKDTree(aligned).query(P)[0] ** 2)))
         floors[n] = (float(np.sqrt(np.mean(sm ** 2))), float(np.abs(sm).max()), spacing)
+        p99 = float(np.percentile(np.abs(sm), 99))
         print(f"  {n:>7d}{spacing:>9.3f}{p2p:>12.4f}{float(np.sqrt(np.mean(raw ** 2))):>12.4f}"
-              f"{floors[n][0]:>11.4f}{float(np.percentile(np.abs(sm), 99)):>10.4f}{floors[n][1]:>11.4f}")
+              f"{floors[n][0]:>11.4f}{p99:>10.4f}{floors[n][1]:>11.4f}")
     print("  → 点対点は**点間隔がそのまま床**(rms / 点間隔 が 4 段とも 1.2 前後で一定。下の assert)。")
     print("     接平面へ落とすと接線方向のばらつきが消え、近傍中央値でさらに落ちる。")
     print("     ★穴 C: symmetry3d の対称スコアは点対点(chamfer)しか持たない。")
@@ -517,8 +518,10 @@ def main():
         sc = pca_plane_candidates(Pa)[2]
         ang = math.degrees(math.acos(min(1.0, abs(float(n_s @ m_true)))))
         degenerate[label] = (margin, ang)
-        print(f"  {label:<22}{f'{e[0]:.1f} x {e[1]:.1f} x {e[2]:.1f}':>26}"
-              f"{f'{sc[0]:.2f} / {sc[1]:.2f} / {sc[2]:.2f}':>26}{margin:>9.3f}{axis:>4d}{ang:>10.2f}")
+        e_txt = f"{e[0]:.1f} x {e[1]:.1f} x {e[2]:.1f}"
+        s_txt = f"{sc[0]:.2f} / {sc[1]:.2f} / {sc[2]:.2f}"
+        print(f"  {label:<22}{e_txt:>26}{s_txt:>26}"
+              f"{margin:>9.3f}{axis:>4d}{ang:>10.2f}")
     print("     回転体では y 軸を含む面がどれも真の対称面なので、正中面を選ぶ根拠がデータに無い。")
     print("     ★穴 D: それでも op は最良候補を 1 つ返すだけで、外したことを何も知らせない。")
     print("     候補スコアの差(margin)が 0.1 を切ったら結果を採用しない、という門は自前で要る。")
