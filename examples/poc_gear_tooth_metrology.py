@@ -547,8 +547,8 @@ def section_missing_tooth() -> dict:
     print("4-5) ★★歯が 1 枚欠けると全周波数に漏れる / 外して測り直すと戻る")
     print("=" * 78)
 
-    print("   偏心 [mm]  歯欠け  検出した歯  外れ角度 [%]  FFT の 1 次    "
-          "中央値テンプレート後")
+    print("   偏心 [mm]  歯欠け  検出した歯   FFT の 1 次   歯ごと 1 標本   "
+          "中央値テンプレート(対照)")
     rows = []
     figs_keep = {}
     for ecc in (0.000, 0.050):
@@ -557,30 +557,36 @@ def section_missing_tooth() -> dict:
             b = bore_centre(sc["img"])
             prof = radial_profile(sc["img"], (b["cy"], b["cx"]))
             amp = harmonics(prof)
-            tt = tooth_table(prof, R_PITCH)
-            rr = robust_runout(prof)
-            rows.append((ecc, bool(miss), tt["n"], float(amp[1]), rr["ecc"],
-                         1.0 - rr["kept"]))
-            print("     %.3f      %s       %2d 枚       %5.1f       %.4f mm     "
-                  "%.4f mm" % (ecc, "有" if miss else "無", tt["n"],
-                               100 * (1 - rr["kept"]), amp[1], rr["ecc"]))
+            pt = runout_per_tooth(prof)
+            tm = runout_template(prof)
+            rows.append((ecc, bool(miss), pt["n"], float(amp[1]), pt["ecc"],
+                         tm["ecc"], pt["deg"]))
+            print("     %.3f      %s       %2d 枚      %.4f mm     %.4f mm      "
+                  "%.4f mm" % (ecc, "有" if miss else "無", pt["n"], amp[1],
+                               pt["ecc"], tm["ecc"]))
             if ecc == 0.050:
-                figs_keep["miss" if miss else "ok"] = (sc, prof, amp, rr)
+                figs_keep["miss" if miss else "ok"] = (sc, prof, amp, tm)
 
     e0_miss = rows[1][3]
-    e5_ok, e5_miss, e5_cut = rows[2][3], rows[3][3], rows[3][4]
+    e5_ok, e5_miss, e5_pt, e5_tm = rows[2][3], rows[3][3], rows[3][4], rows[3][5]
     print("\n  ★★偏心ゼロの歯車から 1 枚落としただけで、FFT の 1 次が %.4f mm 立つ"
           "(実在する偏心 0.050 mm の %.1f 倍)。" % (e0_miss, e0_miss / 0.050))
     print("     欠けは局所的な穴なので、周期 z の系列には収まらず **全次数へ漏れる**"
           " —— その一部が 1 次に落ちる。")
-    print("  ★直し方: 24 個の扇形に折り畳んで **位相ごとの中央値** を歯形テンプレート"
-          "とし、残差から偏心を取る。")
-    print("     偏心 0.050 mm の歯車: 欠け無し %.4f mm (%+.1f %%) -> 欠け有り "
-          "FFT %.4f mm (%+.0f %%) -> テンプレート後 %.4f mm (%+.1f %%)。"
+    print("  ★直し方: 歯 1 枚につき歯先半径を 1 個だけ読む(振れの伝統的な測り方)。")
+    print("     高次の歯形をそもそも標本化しないので、欠けは **標本が 1 個減るだけ**"
+          "になる。")
+    print("     偏心 0.050 mm の歯車: 欠け無し FFT %.4f mm (%+.1f %%) -> 欠け有り "
+          "FFT %.4f mm (%+.0f %%) -> 歯ごと 1 標本 %.4f mm (%+.1f %%)。"
           % (e5_ok, 100 * (e5_ok - 0.05) / 0.05, e5_miss,
-             100 * (e5_miss - 0.05) / 0.05, e5_cut, 100 * (e5_cut - 0.05) / 0.05))
-    print("     中央値が効くのは、24 個の等間隔な角度で中央値を取ると偏心 "
-          "e·cos(θ−φ) が打ち消えるから(歯形だけが残る)。")
+             100 * (e5_miss - 0.05) / 0.05, e5_pt, 100 * (e5_pt - 0.05) / 0.05))
+    print("     方向も出る: 推定 %.1f deg(真値 %.1f deg)。"
+          % (rows[3][6], make_scene.__defaults__[1]))
+    print("  対照群(中央値テンプレート): %.4f mm (%+.1f %%)。こちらは **効きが悪い** "
+          "—— 偏心は歯を角度方向にも動かすので、\n     急な歯面では"
+          "(dR/dθ)·(e/r) ≈ %.2f mm の残差が立ち、欠けの穴と同じ大きさになって"
+          "分離できない。" % (e5_tm, 100 * (e5_tm - 0.05) / 0.05,
+                              0.050 / R_PITCH * (R_TIP - R_ROOT) / 0.05))
 
     sc_ok, prof_ok, amp_ok, rr_ok = figs_keep["ok"]
     sc_ms, prof_ms, amp_ms, rr_ms = figs_keep["miss"]
