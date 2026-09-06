@@ -150,6 +150,52 @@ def merge_frame_from_volume(labels, fam_id, times, connectivity2d: int = 4):
     return float("nan")
 
 
+def _pair_connected(i: int, j: int, t: float, pixel: float,
+                    connectivity2d: int = 4) -> bool:
+    """時刻 ``t`` に、コロニー ``i`` と ``j`` の**離散化された**円が繋がるか。
+
+    2 つだけを、必要な範囲だけ描く(掃引で何百回も呼ぶので)。
+    """
+    cy1, cx1, _ = COLONIES[i]
+    cy2, cx2, _ = COLONIES[j]
+    r1, r2 = float(radius(i, t)), float(radius(j, t))
+    lo_y = max(0.0, min(cy1 - r1, cy2 - r2) - 2 * pixel)
+    hi_y = min(float(N), max(cy1 + r1, cy2 + r2) + 2 * pixel)
+    lo_x = max(0.0, min(cx1 - r1, cx2 - r2) - 2 * pixel)
+    hi_x = min(float(N), max(cx1 + r1, cx2 + r2) + 2 * pixel)
+    k0, k1 = int(lo_y / pixel), int(np.ceil(hi_y / pixel))
+    l0, l1 = int(lo_x / pixel), int(np.ceil(hi_x / pixel))
+    yy = (np.arange(k0, k1) + 0.5) * pixel
+    xx = (np.arange(l0, l1) + 0.5) * pixel
+    gy, gx = np.meshgrid(yy, xx, indexing="ij")
+    m = (((gy - cy1) ** 2 + (gx - cx1) ** 2 <= r1 * r1)
+         | ((gy - cy2) ** 2 + (gx - cx2) ** 2 <= r2 * r2))
+    lab = np.asarray(fs.ledger.blob_label(m, connectivity=connectivity2d))
+    a = int(lab[int(round(cy1 / pixel - 0.5)) - k0, int(round(cx1 / pixel - 0.5)) - l0])
+    b = int(lab[int(round(cy2 / pixel - 0.5)) - k0, int(round(cx2 / pixel - 0.5)) - l0])
+    return a != 0 and a == b
+
+
+def merge_time_continuous(i: int, j: int, pixel: float = 1.0,
+                          connectivity2d: int = 4, tol: float = 0.01) -> float:
+    """**時間を連続とみなした**ときの合体時刻(空間の離散化だけが効く)。
+
+    フレーム量子化と空間の離散化を**分けて数える**ための対照。二分法。
+    """
+    lo, hi = -T0 + 1e-6, float(T) * 4.0
+    if _pair_connected(i, j, lo, pixel, connectivity2d):
+        return lo
+    if not _pair_connected(i, j, hi, pixel, connectivity2d):
+        return float("nan")
+    while hi - lo > tol:
+        mid = 0.5 * (lo + hi)
+        if _pair_connected(i, j, mid, pixel, connectivity2d):
+            hi = mid
+        else:
+            lo = mid
+    return 0.5 * (lo + hi)
+
+
 def growth_fit(vol, labels, fam_id, colony_ids, times, pixel: float):
     """家族の**合体前**のフレームだけを使って ``k`` を出す。
 
