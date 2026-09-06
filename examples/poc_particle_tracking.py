@@ -438,6 +438,7 @@ def section4_density(rows0, cols0):
         posd, idd, backd = build_positions(rows, cols, movie, use_detection=True)
         dd, bd = step_displacements(posd, idd, link_nn, truth_index=backd)
         dg, bg = step_displacements(posd, idd, link_greedy, truth_index=backd)
+        dgate, bgate = step_displacements(posd, idd, link_nn_gated, truth_index=backd)
         dt, _ = step_displacements(posd, idd, link_nn, use_truth_link=True,
                                    truth_index=backd)
         # 真値位置(欠測なし = 曖昧だけ)
