@@ -15,6 +15,26 @@ def to_points(data, kind, samples=20000, **kw):
 
     kind: "points"(N,3)/ "mesh"=(vertices,faces)/ "depth"=depth+{fx,fy,cx,cy[,stride]}/
           "voxel"=密度 grid+{iso}/ "3dgs"=means(N,3)。
+
+    ``kind`` ごとの変換(実装どおり):
+    - ``"points"`` / ``"3dgs"``: ``np.asarray(data, float)`` を返すだけ(形の検査は
+      しない。``(N, 3)`` を渡すのは呼び手の責任)。
+    - ``"mesh"``: ``data = (vertices, faces)``。``match3d.mesh_to_points`` で面積重みの
+      一様サンプリングを ``samples`` 点(既定 20000、seed 固定 = 決定的)。
+    - ``"depth"``: ``data`` は深度マップ ``(H, W)``、``kw`` に ``fx, fy, cx, cy`` が
+      **必須**(無ければ ``KeyError``)、``stride`` は任意(既定 1、間引き)。
+      ``match3d.depth_to_points`` のピンホール逆投影で、``depth > 0`` の画素だけを
+      ``(x, y, z)`` 点にする(カメラ座標、x = 列方向、y = 行方向、z = 深度)。
+    - ``"voxel"``: 密度 grid ``(D, H, W)`` を ``kw["iso"]``(既定 0.5)で閾値し、
+      ``np.argwhere`` の **整数 index 座標** ``(z, y, x)`` を float にした点群。
+      物理座標には直さない(spacing は掛けない)。
+
+    返り値: ``(N, 3)`` float64。``kind`` が上記以外なら ``ValueError``。
+    ``samples`` は ``"mesh"`` 以外では無視される。
+
+    注意: ``"voxel"`` の座標は配列 index 順 ``(z, y, x)``、``"depth"`` はカメラ座標
+    ``(x, y, z)`` と、種別ごとに軸の意味が違う。異種を ``register_cross`` /
+    ``fuse_to_voxel`` で混ぜるときは、この差を呼び手が揃えておくこと。
     """
     if kind == "points":
         return np.asarray(data, float)
