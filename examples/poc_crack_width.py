@@ -243,7 +243,10 @@ def section_renderer() -> None:
     print("\n" + "=" * 78)
     print("1) 描き手の検算 —— 被覆率の総量 = 幅。PSF を掛けても保存されるか")
     print("=" * 78)
-    print("   幅 [mm]  幅 [px]   Σcov/長さ [px]   PSF 後 [px]   ずれ")
+    print("  経路が斜めなので、画素の被覆率の総和は**垂直方向の**幅になる。")
+    print("  期待値は w/PX_MM · mean(sqrt(1+f'^2)) = w/PX_MM · %.5f。"
+          % float(np.sqrt(1.0 + path_y(np.arange(W_PX, dtype=np.float64))[1] ** 2).mean()))
+    print("\n   幅 [mm]  幅 [px]   Σcov/長さ [px]   PSF 後 [px]   期待との差")
 
     xs, ys, dys = sample_points(step=8)
     for w_mm in (0.05, 0.20, 0.60, 2.00):
