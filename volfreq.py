@@ -135,7 +135,22 @@ def vol_fft_lowpass(vol, cutoff, spacing=None):
 def vol_fft_highpass(vol, cutoff, spacing=None):
     """Gaussian high-pass — the exact complement ``1 - lowpass`` (the two sum
     to the input to float precision, proven in tests). Removes the DC level and
-    slow drift, keeps edges/texture. Output is signed (mean ~ 0)."""
+    slow drift, keeps edges/texture. Output is signed (mean ~ 0).
+
+    伝達関数は ``1 - exp(-|f|^2 / (2 cutoff^2))``。DC(``f = 0``)は係数 0 なので平均
+    輝度は完全に落ち、``|f| = cutoff`` で ``1 - 0.61 ≈ 0.39``、高周波ほど 1 に近づく。
+    返り値は入力と同じ ``(D, H, W)`` の float64 で **符号付き**(負の値を含む)。
+    ``[0, 1]`` 前提の後段(表示・``vol_window_level`` 等)に渡すなら ``vol_stretch`` で
+    正規化するか、``vol + highpass`` の形で使う。
+
+    引数: ``cutoff`` は正の有限値。``spacing=None`` で cycles/voxel、``spacing``
+    (``(sz, sy, sx)`` または ``volio.VolumeMeta``)を渡すと cycles/mm。
+
+    検証(``ValueError``): ``vol_fft_lowpass`` と同じ(3-D でない / NaN・Inf /
+    ``MAX_VOXELS`` 超 / cutoff・spacing 不正)。
+
+    使いどころ: 照明むら・厚みドリフト・背景勾配の除去(``vol_fft_lowpass`` の結果を
+    引くのと同値)。周期的とみなす FFT の性質上、面どうしの輝度差は wrap で漏れる。"""
     c = _check_cutoff(cutoff, "cutoff")
     return _apply_transfer(vol, spacing,
                            lambda f: 1.0 - np.exp(-(f * f) / (2.0 * c * c)))
