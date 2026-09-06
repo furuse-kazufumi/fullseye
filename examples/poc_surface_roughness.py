@@ -458,6 +458,8 @@ def main():
           " どちら側にも壊れるので『安全側の λc』は存在しない。")
 
     print("\n  [λs 掃引(高域カットオフ / ローパス、λc=80µm の後に掛ける)]")
+    print("  ★ここは予想が外れた側。「λs は尖りの指標(Sz/Sku)だけを選択的に削る」"
+          "と思っていたが、雑音の無い面ではほぼ**比例して全部**削る。")
     print(head())
     lam_s_tab = {}
     rough80 = areal_filter(base, DX, LAMBDA_C, "high")
@@ -466,11 +468,33 @@ def main():
         d = areal_params(z)
         lam_s_tab[lam] = d
         print(fmt_row("λs = 無し" if lam == 0.0 else f"λs = {lam:>5.0f} µm", d))
-    print(f"  → λs は Sq をほとんど動かさない({100 * rel_err(lam_s_tab[8.0]['Sq'], lam_s_tab[0.0]['Sq']):+.1f}%"
-          f" @λs=8µm)のに、Sz は {100 * rel_err(lam_s_tab[8.0]['Sz'], lam_s_tab[0.0]['Sz']):+.1f}%、"
-          f"Sku は {100 * rel_err(lam_s_tab[8.0]['Sku'], lam_s_tab[0.0]['Sku']):+.1f}% 動く。")
-    print("     高域を削るのは『雑音を消す』つもりでも、**尖りの指標だけを"
-          "選択的に削っている**。")
+    r_sq = rel_err(lam_s_tab[8.0]["Sq"], lam_s_tab[0.0]["Sq"])
+    r_sz = rel_err(lam_s_tab[8.0]["Sz"], lam_s_tab[0.0]["Sz"])
+    print(f"  → λs=8µm で Sq {100 * r_sq:+.1f}%、Sz {100 * r_sz:+.1f}%、"
+          f"Sku {100 * rel_err(lam_s_tab[8.0]['Sku'], lam_s_tab[0.0]['Sku']):+.1f}%。"
+          f"Sz の落ち方は Sq の {abs(r_sz / r_sq):.1f} 倍でしかない。")
+    print("     理由は仕込んだ形にある。いちばん尖った特徴(傷、半値半幅 4 µm)でも"
+          " λs=8 µm より広い。**λs が効くのは λs と同じ大きさの特徴があるときだけ。**")
+
+    print("\n  [λs 掃引・白色雑音(σ=0.05 µm)を足した面] —— λs 本来の用途")
+    rng_n = np.random.default_rng(4242)
+    noisy = rough80 + rng_n.normal(0.0, 0.05, rough80.shape)
+    print(head())
+    lam_s_noise = {}
+    for lam in (0.0, 2.0, 4.0, 8.0):
+        z = noisy if lam == 0.0 else areal_filter(noisy, DX, lam, "low")
+        d = areal_params(z)
+        lam_s_noise[lam] = d
+        print(fmt_row("λs = 無し(雑音入り)" if lam == 0.0 else f"λs = {lam:>5.0f} µm", d))
+    print(fmt_row("参考: 雑音なし λs 無し", lam_s_tab[0.0]))
+    n_sq = rel_err(lam_s_noise[0.0]["Sq"], lam_s_tab[0.0]["Sq"])
+    n_sz = rel_err(lam_s_noise[0.0]["Sz"], lam_s_tab[0.0]["Sz"])
+    print(f"  → σ=0.05 µm(Sq の {100 * 0.05 / lam_s_tab[0.0]['Sq']:.0f}%)の白色雑音は "
+          f"Sq を {100 * n_sq:+.1f}% しか動かさないのに Sz を {100 * n_sz:+.1f}% 押し上げる。")
+    print(f"     λs=4 µm を掛けると Sz は {100 * rel_err(lam_s_noise[4.0]['Sz'], lam_s_noise[0.0]['Sz']):+.1f}%、"
+          f"Sq は {100 * rel_err(lam_s_noise[4.0]['Sq'], lam_s_noise[0.0]['Sq']):+.1f}% 戻る。")
+    print("     **Sz は雑音を測る。λs はその雑音を落とすためにある** —— つまり"
+          "『λs を掛けるかどうか』は、Sz を報告するときだけ結論を変える。")
 
     # ---------------------------------------------------------------- 6 --- #
     print("\n=== 6. 傾き除去 —— 最小二乗平面 vs ロバスト(RANSAC)===")
