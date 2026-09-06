@@ -1,0 +1,95 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">本指南仅有日文版(它是人写的散文,这里不做机械替换)。</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">連結成分解析(散らばった物体を数えて測って選ぶ) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p><b>二値の領域を「物体の集まり」として扱う</b>層です。入力は 2-D の二値領域、出力はラベル画像 <code style="color:#22d3bf">(H, W)</code> の <code style="color:#22d3bf">int32</code>(背景 0、物体 1..n)と、<b>物体ごとに 1 行の特徴量</b>。</p>
+<p>産業検査でいちばん頻度の高い連鎖 —— *しきい値で前景を出す → 物体に切る → 物体ごとに測る → 条件で選ぶ → 残ったものを数える/描く* —— がこの族です。</p>
+<p>7 op / 4 カテゴリ(numpy と scipy のみ。台帳は <code style="color:#22d3bf">opsblob.py</code>、実体は <code style="color:#22d3bf">blob2d.py</code>):</p>
+<p style="margin:2px 0 2px 12px">• <b>connect(1)</b> — <code style="color:#22d3bf">blob_label</code>: 二値領域 → ラベル画像。4 連結 / 8 連結。</p>
+<p style="margin:2px 0 2px 12px">• <b>measure(1)</b> — <code style="color:#22d3bf">blob_features</code>: 物体ごとの 19 項目(面積・重心・外接箱・周長・等価直径・慣性主軸の長短・傾き・離心率・円形度・充填率・凸性・穴の数・縁に接するか)。</p>
+<p style="margin:2px 0 2px 12px">• <b>select(2)</b> — <code style="color:#22d3bf">blob_select</code> / <code style="color:#22d3bf">blob_select_largest</code>: 特徴量の範囲、または面積の順で残す。<b>残ったものは 1..k に振り直す</b>。</p>
+<p style="margin:2px 0 2px 12px">• <b>extract(3)</b> — <code style="color:#22d3bf">blob_region</code> / <code style="color:#22d3bf">blob_boundaries</code> / <code style="color:#22d3bf">blob_overlay</code>: 1 個を領域として抜く、輪郭を取る、元画像に色分けして重ねる(出口)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">なぜ足したか —— 在庫を数えた結果</h3>
+<p><code style="color:#22d3bf">examples/poc_cell_counting.py</code> が「2 次元の連結成分ラベリングと per-object の region props が facade に無い」と書きました。この repo は<b>在るものを見落として同じ物を作りかけた前科がある</b>ので、今度は 3 層すべてを引いてから決めています(2026-09-06):</p>
+<p>| 引いた先 | 何が在ったか | なぜ代わりにならないか |</p>
+<p>|---|---|---|</p>
+<p>| <code style="color:#22d3bf">fullseye.ledger.label_components</code> / <code style="color:#22d3bf">region_props</code> | 連結成分とその特徴量 | <b>3-D 専用</b>。2-D を渡すと <code style="color:#22d3bf">ValueError: a 3D voxel array (ndim==3) is required</code> |</p>
+<p>| <code style="color:#22d3bf">fullseye.ledger.vol_label</code> / <code style="color:#22d3bf">vol_region_props</code> | 同上(体積側の別名) | 同じ |</p>
+<p>| <code style="color:#22d3bf">fullseye.op.circularity</code> / <code style="color:#22d3bf">eccentricity</code> / <code style="color:#22d3bf">area_center</code> | 形の量 | <b>進化 op</b>。画像 1 枚 → スカラ 1 個。「2 番目の物体の面積」が取れない |</p>
+<p>| <code style="color:#22d3bf">fullseye.op.select_shape</code> / <code style="color:#22d3bf">blob_count</code> / <code style="color:#22d3bf">select_largest</code> | 選ぶ/数える | 同じく進化 op。つまみが <code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> の 2 つで、特徴量の名前も境界値も指定できない |</p>
+<p>| <code style="color:#22d3bf">regions_setops</code> / <code style="color:#22d3bf">regions_gen</code> | 領域の集合演算と生成 | 領域を<b>分ける</b>口が無い |</p>
+<p>| <code style="color:#22d3bf">segmentation.watersheds_marker</code> | 分水嶺 | モジュールには在るが facade にも台帳にも出ていない(別件) |</p>
+<p><code style="color:#22d3bf">ndimage.label</code> 自体は op の実装の<b>中</b>に 20 か所以上あります。ただしどれも結果を画像かスカラに畳んでから返すので、利用者からは見えません。<b>実装が在ることと、公開経路が在ることは別</b>というのがこの repo で繰り返し出ている形です。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使う順序</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import fullseye as fs
+
+img = fs.read_image(&quot;parts.png&quot;)          # (H, W) の実数画像
+mask = img &gt; fs.otsu_threshold(img)       # 前景を出す(この族の外)
+
+lab = fs.blob_label(mask)                 # 1) 物体に切る(既定は 8 連結)
+f = fs.blob_features(lab, spacing=0.05)   # 2) 測る(1 px = 0.05 mm)
+big = fs.blob_select(lab, &quot;area&quot;, vmin=0.5, spacing=0.05)   # 3) 0.5 mm^2 以上
+round_ = fs.blob_select(big, &quot;circularity&quot;, vmin=0.85)      #    かつ丸いもの
+
+print(&quot;残った物体:&quot;, int(round_.max()))
+view = fs.blob_overlay(img, round_)       # 4) 見る</pre>
+<p><b>選ぶ前に測る必要はありません</b> —— <code style="color:#22d3bf">blob_select</code> は中で <code style="color:#22d3bf">blob_features</code> を呼びます。ただし何度も選ぶなら、<code style="color:#22d3bf">blob_features</code> を 1 回だけ呼んで自分で <code style="color:#22d3bf">np.isin</code> する方が速い(下の「速さ」節)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">押さえておく約束</h3>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">1. ラベルは連番。穴を開けない</h3>
+<p><code style="color:#22d3bf">blob_select</code> は残った物体を <b>1..k に振り直します</b>。元の番号は消えるので、必要なら選ぶ前に <code style="color:#22d3bf">blob_features(lab)[&quot;label&quot;]</code> を取っておくこと。</p>
+<p>振り直す理由は、<code style="color:#22d3bf">features[&quot;area&quot;][k]</code> の <code style="color:#22d3bf">k</code> が何番の物体なのか呼び手が追えなくなるからです。歯抜けを許すと「ラベル番号」と「配列の添字」が別物になり、その食い違いは例外ではなく<b>もっともらしく間違った数値</b>として出ます。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">2. 二値マスクは <code style="color:#22d3bf">blob_features</code> に渡せない</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">fs.blob_features(mask)         # ValueError: ... is a boolean mask, not a label image
+fs.blob_features(fs.blob_label(mask))   # 正しい</pre>
+<p>拒否するのは意地悪ではありません。マスクをそのまま測ると<b>別々の 2 個の細胞が 1 個の物体として測られ、2 つの中心のあいだに重心が出ます</b>。例外にならず、それらしい数字が返る —— この repo が型を分ける基準そのものです。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">3. <code style="color:#22d3bf">spacing</code> は長さに 1 乗、面積に 2 乗。ただし添字は素通し</h3>
+<p><code style="color:#22d3bf">spacing</code> は画素 1 個の大きさです。<code style="color:#22d3bf">area</code> には 2 乗、<code style="color:#22d3bf">perimeter</code> / <code style="color:#22d3bf">major</code> / <code style="color:#22d3bf">minor</code> / <code style="color:#22d3bf">equiv_diameter</code> には 1 乗が掛かります。**<code style="color:#22d3bf">bbox_*</code> と <code style="color:#22d3bf">row</code> / <code style="color:#22d3bf">col</code> は画素のまま**です —— あれは長さではなく添字だからです。</p>
+<p>読み違いを防ぐため、<code style="color:#22d3bf">blob_features</code> の返り値には <code style="color:#22d3bf">units</code> が入っています:</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">f = fs.blob_features(lab, spacing=0.05)
+f[&quot;units&quot;][&quot;area&quot;]        # &#x27;unit^2&#x27;
+f[&quot;units&quot;][&quot;bbox_r0&quot;]     # &#x27;px index&#x27;
+f[&quot;units&quot;][&quot;angle&quot;]       # &#x27;rad (+col -&gt; +row, clockwise on screen)&#x27;</pre>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">4. <code style="color:#22d3bf">angle</code> は画面では時計回りが正</h3>
+<p>行は下向き、列は右向きです。<code style="color:#22d3bf">angle</code> は <b>+列(右)から +行(下)へ</b>測るので、画面で見ると時計回りが正になります。数学の慣習と符号が逆なので、図に重ねるときは向きを 1 度確かめてください。</p>
+<p>検算は済んでいます: 長半径 40 px・短半径 15 px の楕円を 30 度に置くと、<code style="color:#22d3bf">major</code> 79.98(真値 80)、<code style="color:#22d3bf">minor</code> 29.94(真値 30)、<code style="color:#22d3bf">angle</code> 29.79 度、<code style="color:#22d3bf">eccentricity</code> 0.9273(真値 0.9270)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">数え方をどう選んだか(実測)</h3>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">周長 —— 3 通り測って Crofton にした</h3>
+<p>半径 r の円板(真値 2πr):</p>
+<p>| r | 真値 | 境界画素を数える | Serra の重み | Crofton 4 方向 |</p>
+<p>|---|---|---|---|---|</p>
+<p>| 10 | 62.83 | 76 (+21.0 %) | 65.94 (+4.95 %) | 65.20 (+3.77 %) |</p>
+<p>| 20 | 125.66 | 156 (+24.1 %) | 131.88 (+4.95 %) | 127.71 (+1.63 %) |</p>
+<p>| 40 | 251.33 | 316 (+25.7 %) | 263.76 (+4.95 %) | <b>252.75 (+0.56 %)</b> |</p>
+<p>素朴に数えると 2 割超の過大。Serra の重み(1 / √2 / (1+√2)/2)は<b>大きさを変えても +4.95 % のまま</b>で、円板の円形度が 0.908 で頭打ちになります —— 「円らしさ 0.9 以上」で切る使い方が成り立ちません。Crofton は大きさとともに真値へ寄り、r=40 で円形度 <b>0.988</b>。</p>
+<p><b>正直に書いておく偏り</b>: 軸に平行な多角形では逆に小さく出ます。20×20 の正方形(真値 80)で 74.73(<b>−6.6 %</b>)、円形度は π/4 = 0.785 のところ 0.900。<b>角ばった物体の円形度を絶対値で語らないこと</b>(同じ形どうしの相対比較なら向きは保たれます)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">円形度の定義 —— HALCON と違う</h3>
+<p><code style="color:#22d3bf">circularity</code> は <b>4πA/P²</b>(等周比)です。**HALCON の <code style="color:#22d3bf">circularity</code> は「面積 / 最遠点を半径とする円の面積」で別物**なので、値を突き合わせるときは定義を確かめてください。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">充填率(<code style="color:#22d3bf">solidity</code>)—— 凸包は塗り直して数える</h3>
+<p>分母の凸包面積を多角形として出すと、「画素を点と見るか正方形と見るか」でどちらかへ必ずずれ、<b>凸な物体でも 1 になりません</b>(半径 40 px の円板で 0.977 か 1.025)。分子が画素の数なら分母も画素の数で揃える —— 凸包を塗り直して数えると 1.000 になります。</p>
+<p>実測: 円板 1.000 / 正方形 1.000 / 直角三角形 1.000 / 1 画素 1.000 / 1 画素幅の線 1.000 / 三日月 0.528。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">慣性モーメントに 1/12 を足す</h3>
+<p>画素を点ではなく 1 辺 1 の正方形として扱う補正です。これが無いと **1 画素幅の線で <code style="color:#22d3bf">minor</code> が 0 になり <code style="color:#22d3bf">eccentricity</code> が 1 に張り付きます**。補正を入れると <code style="color:#22d3bf">minor</code> = 1.155、<code style="color:#22d3bf">eccentricity</code> = 0.986。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">4 連結か 8 連結か</h3>
+<p>既定は <b>8</b>(<code style="color:#22d3bf">ndimage.label</code> と HALCON <code style="color:#22d3bf">connection</code> の既定)。市松に並べた 2 個は 8 連結で 1 個、4 連結で 2 個になります。<code style="color:#22d3bf">poc_cell_counting</code> の実測では、4 連結にすると斜めに接した細胞が別々に数えられて過剰計数になりました。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">速さ</h3>
+<p>512×512 に 153 物体(半径 4–10 px の円を 200 個、重なりあり)、2026-09-06 実測:</p>
+<p>| | 時間 |</p>
+<p>|---|---|</p>
+<p>| <code style="color:#22d3bf">blob_label</code> | 0.7 ms |</p>
+<p>| <code style="color:#22d3bf">blob_features</code> | 33.6 ms(0.22 ms/物体) |</p>
+<p>| <code style="color:#22d3bf">blob_select(&quot;area&quot;, vmin=…)</code> | 中で <code style="color:#22d3bf">blob_features</code> を呼ぶので同程度 |</p>
+<p><code style="color:#22d3bf">blob_features</code> の内訳は凸包が 19.4 ms・周長 3.4 ms・穴の数 3.4 ms。凸包は Qhull を呼ばず monotone chain を自前で持っています(Qhull 版は 74.1 ms、<b>3.8 倍</b>遅い —— 小さな点集合を何千回も包む用途では起動費が支配的)。</p>
+<p>**何度も選ぶなら <code style="color:#22d3bf">blob_features</code> を 1 回だけ**:</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">f = fs.blob_features(lab)
+keep = f[&quot;label&quot;][(f[&quot;area&quot;] &gt;= 50) &amp; (f[&quot;circularity&quot;] &gt;= 0.85)]
+sel = np.isin(lab, keep) * lab          # 番号を振り直さない版</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族で測れないこと(正直に)</h3>
+<p style="margin:2px 0 2px 12px">• <b>重なった物体は 1 個になります。</b> 連結成分は「触れているかどうか」しか見ないので、重なった細胞や部品は割れません。割るには距離変換 + 分水嶺が要りますが、<b>2-D の分水嶺は facade に出ていません</b>(<code style="color:#22d3bf">segmentation.watersheds_marker</code> はモジュールに在るだけ)。<code style="color:#22d3bf">poc_cell_counting</code> がこの穴を測っています。</p>
+<p style="margin:2px 0 2px 12px">• <b>縁で切れた物体</b>は面積も周長も切れた分だけ小さく出ます。<code style="color:#22d3bf">touches_border</code> で捨てるか、真値の側も同じ規約で数えてください。<b>危ないのは規約の選択ではなく、推定と真値で違う規約を使うこと</b>です。</p>
+<p style="margin:2px 0 2px 12px">• <b>穴の数</b>は 4 連結で数えています(物体を 8 連結で取ったので、背景は 4 連結が対)。8/8 や 4/4 で数えると、斜めにつながった細い穴の数え方が物体側と食い違います。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">関連</h3>
+<p style="margin:2px 0 2px 12px">• 3-D の同じ操作は <code style="color:#22d3bf">label_components</code> / <code style="color:#22d3bf">region_props</code> / <code style="color:#22d3bf">vol_label</code> / <code style="color:#22d3bf">vol_region_props</code>。</p>
+<p style="margin:2px 0 2px 12px">• 形を「1 つの輪郭」として記述して比べるなら <code style="color:#22d3bf">opsshape2d</code>(楕円フーリエ記述子)。</p>
+<p style="margin:2px 0 2px 12px">• 領域そのものの集合演算・生成は <code style="color:#22d3bf">regions_setops</code> / <code style="color:#22d3bf">regions_gen</code>。</p>
+<p>来歴(公開文献のみ): Rosenfeld &amp; Pfaltz, *J. ACM* 13 (1966) 471 —— 連結成分ラベリング / Serra, *Image Analysis and Mathematical Morphology* (Academic Press, 1982) —— Crofton の公式による周長推定 / Hu, *IRE Trans. Inf. Theory* 8 (1962) 179 —— 2 次モーメントと慣性主軸 / Andrew, *Inf. Process. Lett.* 9 (1979) 216 —— monotone chain。</p>

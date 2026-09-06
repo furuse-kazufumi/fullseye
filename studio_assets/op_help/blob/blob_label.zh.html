@@ -1,0 +1,40 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">blob_label — BLOB <code style="color:#22d3bf">connect</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">mask</code> → <code style="color:#22d3bf">labels2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import blob2d; blob2d.blob_label(region: &#x27;Any&#x27;, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsblob.get(&quot;blob_label&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>二値領域を連結成分に分け、`<code style="color:#22d3bf">int32</code>` のラベル画像(背景 0、物体 1..n)を返す。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>region : array_like</p>
+<p>2-D。`<code style="color:#22d3bf">&gt; 0</code>` が前景(bool でも実数でもよい。NaN は背景)。</p>
+<p>connectivity : {4, 8}</p>
+<p>斜めに触れる 2 画素をつなぐか。既定 8 は `<code style="color:#22d3bf">ndimage.label</code>` と</p>
+<p>HALCON `<code style="color:#22d3bf">connection</code>` の既定に一致する。**4 にすると斜めに接した塊が</p>
+<p>別々に数えられる**。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>numpy.ndarray</p>
+<p>`<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">int32</code>`。番号は 1 から連番で歯抜けが無い。</p>
+<p>Examples</p>
+<p>--------</p>
+<p>&gt;&gt;&gt; import numpy as np</p>
+<p>&gt;&gt;&gt; m = np.zeros((6, 9), bool); m[1:4, 1:4] = True; m[1:4, 5:8] = True</p>
+<p>&gt;&gt;&gt; int(blob_label(m).max())</p>
+<p>2</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">labels2d</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opblob:blob_features">blob_features</a> · <a style="color:#22d3bf" href="opblob:blob_select">blob_select</a> · <a style="color:#22d3bf" href="opblob:blob_select_largest">blob_select_largest</a> · <a style="color:#22d3bf" href="opblob:blob_region">blob_region</a> · <a style="color:#22d3bf" href="opblob:blob_boundaries">blob_boundaries</a> · <a style="color:#22d3bf" href="opblob:blob_overlay">blob_overlay</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">connect</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: blob2d.py — BLOB 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

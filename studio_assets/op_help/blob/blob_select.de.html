@@ -1,0 +1,40 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">blob_select — BLOB <code style="color:#22d3bf">select</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">labels2d</code> → <code style="color:#22d3bf">labels2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import blob2d; blob2d.blob_select(labels: &#x27;Any&#x27;, feature: &#x27;str&#x27;, vmin: &#x27;Optional[float]&#x27; = None, vmax: &#x27;Optional[float]&#x27; = None, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">opsblob.get(&quot;blob_select&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>特徴量が `<code style="color:#22d3bf">[vmin, vmax]</code>` に入る物体だけ残す(<b>番号は 1 から振り直す</b>)。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>labels : array_like</p>
+<p>:func:<code style="color:#22d3bf">blob_label</code> の出力。</p>
+<p>feature : str</p>
+<p>:data:<code style="color:#22d3bf">FEATURE_KEYS</code> のどれか。知らない鍵は<b>候補を並べて拒否する</b>。</p>
+<p>vmin, vmax : float or None</p>
+<p>両端(含む)。`<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> は片側を開ける。両方 </code><code style="color:#22d3bf">None</code>` は</p>
+<p>「何も選んでいない」ので拒否する —— 全部通す意図なら呼ばなければよい。</p>
+<p>spacing : float</p>
+<p>:func:<code style="color:#22d3bf">blob_features</code> と同じ意味。`<code style="color:#22d3bf">area</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">perimeter</code>` を</p>
+<p>物理単位で切るときに要る。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>numpy.ndarray</p>
+<p>`<code style="color:#22d3bf">int32</code>` のラベル画像。<b>残った物体は 1..k の連番</b>になる</p>
+<p>(元の番号は残さない)。元の番号が要るなら</p>
+<p>`<code style="color:#22d3bf">blob_features(labels)[&quot;label&quot;]</code>` を先に取っておくこと。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">Leitfaden zur Familie blob_analysis</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">labels2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opblob:blob_features">blob_features</a> · <a style="color:#22d3bf" href="opblob:blob_select_largest">blob_select_largest</a> · <a style="color:#22d3bf" href="opblob:blob_region">blob_region</a> · <a style="color:#22d3bf" href="opblob:blob_boundaries">blob_boundaries</a> · <a style="color:#22d3bf" href="opblob:blob_overlay">blob_overlay</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">select</code>)</h3>
+<p><a style="color:#22d3bf" href="opblob:blob_select_largest">blob_select_largest</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: blob2d.py — BLOB Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

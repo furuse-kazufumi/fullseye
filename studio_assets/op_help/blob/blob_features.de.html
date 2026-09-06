@@ -1,0 +1,53 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">blob_features — BLOB <code style="color:#22d3bf">measure</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">labels2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import blob2d; blob2d.blob_features(labels: &#x27;Any&#x27;, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code> (oder <code style="color:#22d3bf">opsblob.get(&quot;blob_features&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>物体ごとの形の特徴量を、<b>鍵ごとに 1 本の配列</b>で返す。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>labels : array_like</p>
+<p>:func:<code style="color:#22d3bf">blob_label</code> の出力(整数、背景 0)。</p>
+<p>spacing : float</p>
+<p>画素 1 個の大きさ[単位/px]。長さにこれを、面積にその 2 乗を掛ける。</p>
+<p><b>既定 1.0 = 画素のまま</b>。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>dict</p>
+<p>`<code style="color:#22d3bf">n</code><code style="color:#22d3bf">(物体数)、</code><code style="color:#22d3bf">spacing</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">units</code>`(項目 → 単位の対応)と、</p>
+<p>長さ `<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> の配列 19 本(:data:</code>FEATURE_KEYS`)。物体が 0 個でも</p>
+<p>鍵は全部揃えて空配列で返す(呼び手が分岐しなくて済む)。</p>
+<p>Notes</p>
+<p>-----</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">angle</code>` は<b>行列座標系</b>の傾き(+列 → +行 が正 = 画面では時計回り)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">major</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">minor</code>` は<b>同じ 2 次モーメントを持つ楕円</b>の軸長</p>
+<p>(`<code style="color:#22d3bf">4 sqrt(lambda)</code>`)。画素の並びの外接ではないので、正方形に対しては</p>
+<p>辺長より少し長く出る —— これは定義どおりで、誤差ではない。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">circularity</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">4 pi A / P^2</code><code style="color:#22d3bf">。**HALCON の </code><code style="color:#22d3bf">circularity</code>` は</p>
+<p>「面積 / 最遠点を半径とする円の面積」で別物**なので、値を突き合わせる</p>
+<p>ときは定義を確かめること。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">touches_border</code>` が True の物体は、面積も周長も<b>切れた分だけ小さい</b>。</p>
+<p>数える前に捨てるか、真値の側も同じ規約で数えること。</p>
+<p>Examples</p>
+<p>--------</p>
+<p>&gt;&gt;&gt; import numpy as np</p>
+<p>&gt;&gt;&gt; m = np.zeros((20, 20), bool); m[4:14, 4:9] = True</p>
+<p>&gt;&gt;&gt; f = blob_features(blob_label(m))</p>
+<p>&gt;&gt;&gt; int(f[&quot;n&quot;]), float(f[&quot;area&quot;][0])</p>
+<p>(1, 50.0)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">Leitfaden zur Familie blob_analysis</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">measure</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: blob2d.py — BLOB Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

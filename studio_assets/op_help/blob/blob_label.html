@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">blob_label — BLOB <code style="color:#22d3bf">connect</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">mask</code> → <code style="color:#22d3bf">labels2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import blob2d; blob2d.blob_label(region: &#x27;Any&#x27;, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">opsblob.get(&quot;blob_label&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>二値領域を連結成分に分け、`<code style="color:#22d3bf">int32</code>` のラベル画像(背景 0、物体 1..n)を返す。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>region : array_like</p>
+<p>2-D。`<code style="color:#22d3bf">&gt; 0</code>` が前景(bool でも実数でもよい。NaN は背景)。</p>
+<p>connectivity : {4, 8}</p>
+<p>斜めに触れる 2 画素をつなぐか。既定 8 は `<code style="color:#22d3bf">ndimage.label</code>` と</p>
+<p>HALCON `<code style="color:#22d3bf">connection</code>` の既定に一致する。**4 にすると斜めに接した塊が</p>
+<p>別々に数えられる**。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>numpy.ndarray</p>
+<p>`<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">int32</code>`。番号は 1 から連番で歯抜けが無い。</p>
+<p>Examples</p>
+<p>--------</p>
+<p>&gt;&gt;&gt; import numpy as np</p>
+<p>&gt;&gt;&gt; m = np.zeros((6, 9), bool); m[1:4, 1:4] = True; m[1:4, 5:8] = True</p>
+<p>&gt;&gt;&gt; int(blob_label(m).max())</p>
+<p>2</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">labels2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opblob:blob_features">blob_features</a> · <a style="color:#22d3bf" href="opblob:blob_select">blob_select</a> · <a style="color:#22d3bf" href="opblob:blob_select_largest">blob_select_largest</a> · <a style="color:#22d3bf" href="opblob:blob_region">blob_region</a> · <a style="color:#22d3bf" href="opblob:blob_boundaries">blob_boundaries</a> · <a style="color:#22d3bf" href="opblob:blob_overlay">blob_overlay</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">connect</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: blob2d.py — BLOB operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

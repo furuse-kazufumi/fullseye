@@ -505,6 +505,17 @@ def main():
             ref_lo = rms
         if name.startswith("理想"):
             ref_hi = rms
+    # 数字より先に「台形が残っているかどうか」が目で分かる。
+    figs.save_grid(
+        "rectify_zero_points",
+        [cam, rectify(cam, H_sim), rectify(cam, H_aff), rectify(cam, H_est)],
+        ["撮影した写真",
+         "相似 %.0f px" % results["何もしない(相似で合わせるだけ)"][0],
+         "アフィン %.1f px" % results["アフィンまで(同名 op の取り違え)"][0],
+         "射影 %.2f px" % results["推定(輪郭の直線当て)"][0]],
+        title="ゼロ点を置くと「戻せた」が数字になる", ncols=2,
+        caption="括弧の数字は格子 RMS。アフィン(同名 op の取り違え)は例外を"
+                "出さず、台形が残ったままそれらしい絵を返す。")
     got = results["推定(輪郭の直線当て)"][0]
     print(f"  → ゼロ点比: 下限 {ref_lo:.3f} px / 上限 {ref_hi:.2e} px / 推定 {got:.3f} px")
     print(f"     下限からの改善 {100 * (1 - (got - ref_hi) / (ref_lo - ref_hi)):.2f} %"
