@@ -269,7 +269,8 @@ def main():
     basin = {}
     for label, method in (("点対点 ICP", m_icp), ("点対面 ICP", m_p2pl)):
         print(f"\n  [{label}] 行 = 初期並進ずれ(直径比)、列 = 初期回転ずれ[度]")
-        print("  " + f"{'並進\\回転':>12}" + "".join(f"{r:>7}" for r in ROTS))
+        corner = "並進 / 回転"
+        print("  " + f"{corner:>12}" + "".join(f"{r:>7}" for r in ROTS))
         grid = np.zeros((len(TRANS), len(ROTS)))
         for i, tf in enumerate(TRANS):
             row = []
