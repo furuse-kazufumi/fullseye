@@ -680,6 +680,8 @@ def main():
     except ValueError:
         pass
 
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("\nPASS")
     return 0
 
