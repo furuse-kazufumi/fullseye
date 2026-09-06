@@ -372,6 +372,16 @@ def main():
     print("     アンシャープマスクは 1 dB も稼げない —— 高周波を持ち上げても、")
     print("     ブレで潰れた零点は元に戻らない(掛け算の逆をしていないため)。")
 
+    # 道具の穴 (a) の実測 —— 核を渡せる RL は 3-D 版しかなく、板にすると通るが負ける
+    k0 = kernels["直線 L=15 20 度"]
+    obs_rl, _ = add_noise(blur_circular(gt, k0), 40.0, np.random.default_rng(SEED))
+    slab = np.clip(obs_rl, 0.0, 1.0)[None, :, :]
+    rl = fs.vol_richardson_lucy(slab, k0[None, :, :], iterations=20)[0]
+    print(f"  ★ 核を渡せる Richardson-Lucy は 3-D 版だけ。(1, H, W) の板にすると通るが")
+    print(f"     {psnr(gt, rl):.2f} dB —— 何もしない {psnr(gt, obs_rl):.2f} dB より悪い。")
+    print("     3-D 版は零詰めの畳み込みが前提で、循環ブレとは前向きモデルが違うため")
+    print("     (道具の穴 a)。2-D で核を取る RL が無い、が本当の問題。")
+
     k_ref = kernels["直線 L=15 20 度"]
     blurred = blur_circular(gt, k_ref)
 
