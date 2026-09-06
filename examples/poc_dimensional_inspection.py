@@ -273,7 +273,7 @@ def edges_50(prof, det_sigma=1.0, min_amp=0.10, plateau=None):
                     "polarity": "positive" if b > a else "negative"})
     ded = []
     for e in out:
-        if ded and abs(e["pos"] - ded[-1]["pos"]) < 1.0 and e["polarity"] == ded[-1]["polarity"]:
+        if ded and abs(e["pos"] - ded[-1]["pos"]) < nms and e["polarity"] == ded[-1]["polarity"]:
             if abs(e["amplitude"]) > abs(ded[-1]["amplitude"]):
                 ded[-1] = e
             continue
