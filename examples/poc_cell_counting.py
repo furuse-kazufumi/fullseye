@@ -251,8 +251,12 @@ def make_scene(seed, *, pack=0.88, size_ratio=2.0, bg_amp=BG_AMP, photons=PHOTON
       ``owner``  画素ごとの帰属ラベル (IMG, IMG) int32。0 = 背景 / デブリ。
       ``cells``  細胞の一覧(中心・長短径・傾き・種別)。
       ``area_true``    真の面積 πab [画素²](重なりで隠れていても変わらない)。
-      ``area_vis``     見えている面積 [画素²](``owner`` の画素数)。
-      ``occ``          隠された割合 = 1 - area_vis / area_true。
+      ``area_alone``   **他の細胞が無ければ**見えたはずの面積(= 画像内に入る楕円)。
+      ``area_vis``     実際に見えている面積 [画素²](``owner`` の画素数)。
+      ``occ``          他の細胞に隠された割合 = 1 - area_vis / area_alone。
+                       ★画像の縁で切れたぶんは ``area_alone`` 側に織り込み済みで、
+                       **重なりと縁を混ぜない**(混ぜると縁の細胞が全部「重なって
+                       いる」ことになり、重なりのノブが測れなくなる)。
       ``on_edge``      画像の縁に掛かっているか。
     """
     cells, rng = layout(seed, pack=pack, size_ratio=size_ratio, **kw)
@@ -260,8 +264,9 @@ def make_scene(seed, *, pack=0.88, size_ratio=2.0, bg_amp=BG_AMP, photons=PHOTON
     acc = np.zeros((n, n), np.float32)
     owner = np.zeros((n, n), np.int32)
     best = np.full((n, n), np.inf, np.float32)
+    alone = np.zeros(len(cells))
     for i, (cy, cx, ra, rb, th, br, _k) in enumerate(cells):
-        _paint(acc, owner, best, cy, cx, ra, rb, th, br, i + 1)
+        alone[i] = _paint(acc, owner, best, cy, cx, ra, rb, th, br, i + 1) / (SS * SS)
 
     # デブリ —— 細胞ではないので owner には入れない。明るい微粒子と、暗く細長い破片。
     for _ in range(n_debris):
