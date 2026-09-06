@@ -689,6 +689,8 @@ def main():
                           pano_uv(np.eye(3), CORNERS_XY)).mean())
         RESULT[name] = dict(pose_mean=pe.mean(), pose_max=pe.max(), seam=others,
                             close=sm[(N_LOOP - 1, 0)], loop=lg)
+        seam_by_sys[name] = sm
+        pose_by_sys[name] = pe
         print(f"{name:<24}{n_edge:>4}{pe.mean():>10.3f}{pe.max():>10.3f}"
               f"{others:>12.3f}{sm[(N_LOOP - 1, 0)]:>9.3f}{lg:>10.3f}")
     print("-" * 79)
