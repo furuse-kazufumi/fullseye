@@ -591,15 +591,26 @@ def main():
         shadow_stats[name] = (fl, rs, rw, fp, rc, lv)
         print(f"  {name:<32}{fl:>11.4f}{100 * rs:>7.0f}%{100 * rw:>7.0f}%{100 * fp:>10.1f}%"
               f"{rc:>9.3f}{lv:>9d}")
+    # 表の 1 列目は隣の列に食い込まない長さに詰める(save_table は列幅を
+    # 一定にするだけで、はみ出しを教えてくれない)。
+    short = {"何もしない": "何もしない",
+             "局所平均で割る(窓 9 = op の上限)": "局所平均 窓 9",
+             "局所平均で割る(窓 25)": "局所平均 窓 25",
+             "局所平均で割る(窓 61 = 自前)": "局所平均 窓 61",
+             "illuminate(シグマ上限 15)": "illuminate σ15",
+             "gray_tophat(窓 9)": "gray_tophat 窓9",
+             "dc_homomorphic(周波数)": "dc_homomorphic",
+             "var_threshold(2 値、窓 15)": "var_threshold 窓15"}
     figs.save_table(
         "shadow_tradeoff",
         ["手法", "地の平坦度", "濃い字", "薄い字", "紙の誤検出", "図の相関", "図の段数"],
-        [[name, "%.4f" % v[0], "%.0f%%" % (100 * v[1]), "%.0f%%" % (100 * v[2]),
+        [[short[name], "%.4f" % v[0], "%.0f%%" % (100 * v[1]), "%.0f%%" % (100 * v[2]),
           "%.1f%%" % (100 * v[3]), "%.3f" % v[4], "%d" % v[5]]
          for name, v in shadow_stats.items()],
-        title="影除去は必ず何かを壊す", col_w=170,
-        caption="平坦・薄字・誤検出なしを同時に満たす行は 1 つも無い。"
-                "図の階調は真値で %d 段。" % ramp_levels(truth))
+        title="影除去は必ず何かを壊す", col_w=150,
+        caption="平坦・薄字・誤検出なしを同時に満たす行は 1 つも無い。窓 9 が "
+                "fs.op で届く上限、窓 61 は自前。図の階調は真値で %d 段。"
+                % ramp_levels(truth))
     # 数字だけだと「何が壊れたのか」が像として残らないので、代表 4 つを並べる。
     figs.save_grid(
         "shadow_removal",
