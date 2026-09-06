@@ -202,7 +202,7 @@ def render(world, c, theta, s):
 
 def make_sequence(world, target, n=40, step=2.0, rot_deg=0.0, zoom=1.0, amp=20.0,
                   noise=0.004, seed=0, occl=0.0, occl_from=3, gain=1.0, offset=0.0,
-                  blur_px=0.0, blur_k=5, twin=False, twin_blur=2.0):
+                  blur_px=0.0, blur_k=5, twin=False, twin_blur=1.6):
     """既知の軌跡で動画を合成する。真値は ``truth``(各フレームの ``(x, y)``)。
 
     対象がフレーム内で描く軌跡を **先に決めてから** カメラ位置を逆算する。
@@ -664,10 +664,13 @@ def main():
     ff_tot = sum(ch5t[f]["ff"] for f in ch5t)
     ffp_tot = sum(ch5t[f]["ffp"] for f in ch5t)
     nl_tot = sum(ch5t[f]["nl"] for f in ch5t)
+    _maj = next((f for f in sorted(ch5t) if ch5t[f]["nl"] >= 14), None)
     print(f"\n→ 崖は遮蔽 {'(壊れなかった)' if tw_cliff is None else format(tw_cliff * 100, '.0f') + ' %'}"
-          f" —— 平坦な遮蔽物の崖({'—' if cliff is None else format(cliff * 100, '.0f') + ' %'})"
-          f"より **手前に来る**。")
-    print("   真の対象が少し崩れた瞬間に、崩れていない複製のほうが相関が高くなって乗り換える。")
+          f"(半数を超えるのは {'—' if _maj is None else format(_maj * 100, '.0f') + ' %'})。")
+    print(f"   平坦な遮蔽物の崖({'—' if cliff is None else format(cliff * 100, '.0f') + ' %'})"
+          f"より **はるかに手前に来る** ——")
+    print("   **同型の物体が視野にいるだけで既に危ない**。真の対象がほんの少し崩れた瞬間に、")
+    print("   崩れていない複製のほうが相関が高くなって乗り換える。")
     if nl_tot:
         print(f"→ **ここでピーク値は嘘をつく**。ずれていた {nl_tot} フレームのうち "
               f"{ff_tot} フレーム({100.0 * ff_tot / nl_tot:.0f} %)で")
