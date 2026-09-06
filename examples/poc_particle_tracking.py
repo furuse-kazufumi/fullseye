@@ -74,7 +74,7 @@ D は小さく出る」だった。**半分当たって半分外れた** —— 
      比べている。**時間は空間ではない。**
 
   9. kymograph(1 本の帯を時間方向に積む)は**軌跡を「筋」として一目で
-     見せる**。ドリフトがあると筋が傾き、傾きがそのまま速度になる(図 02)。
+     見せる**。ドリフトがあると筋が傾き、傾きがそのまま速度になる(図 01)。
 
 【グラウンドトゥルース】
 軌跡そのものを乱数で先に作り、**その座標にガウス点像を描く**。画像を歪めて
@@ -763,20 +763,16 @@ def section8_figures(rows, cols, movie, rec_density, rec_step, lags, curves):
     """図。**環境変数 FULLSEYE_FIGURE_DIR があるときだけ書く**。"""
     if not figs.enabled():
         return
-    # 1) フレームと時間最大投影(軌跡が「尾」として見える)
+    # 1) フレーム・時間最大投影・kymograph(時系列を 3-D として「見る」)
     trail = movie.max(axis=0)
-    figs.save_grid("frames", [movie[0], movie[-1], trail],
-                   ["t=0", "t=%d" % (T - 1), "時間最大投影"],
-                   title="(t, y, x) の体積 —— 40 フレーム", ncols=3,
-                   caption="右は時間方向の最大値投影。粒子が尾を引く = 軌跡。"
-                           "ドリフトは列(右)方向 0.35 px/frame。")
-    # 2) kymograph —— 1 本の帯を時間方向に積む
-    band = movie[:, N // 2 - 6:N // 2 + 6, :].max(axis=1)      # (T, N)
+    band = movie[:, N // 2 - 6:N // 2 + 6, :].max(axis=1)      # (T, N) kymograph
     kymo = np.repeat(band, 5, axis=0)                          # 見やすく縦へ拡大
-    figs.save_grid("kymograph", [kymo], ["行 90-101 の帯"],
-                   title="kymograph(縦 = 時間、横 = 列)", ncols=1,
-                   caption="筋の傾きがそのまま列方向の速度。縦は 5 倍に拡大。"
-                           "ブラウン運動のぶれで筋が揺らぐ。")
+    figs.save_grid("spacetime", [movie[0], movie[-1], trail, kymo],
+                   ["t=0", "t=%d" % (T - 1), "時間最大投影", "kymograph"],
+                   title="(t, y, x) の体積 —— 40 フレーム", ncols=2,
+                   caption="時間最大投影では粒子が尾を引く(= 軌跡)。"
+                           "kymograph は行 90-101 の帯を縦(時間)へ積んだもので、"
+                           "筋の傾きがそのまま列方向の速度。縦は 5 倍に拡大。")
     # 3) 密度掃引
     n = np.asarray(rec_density["n"], float)
     figs.save_plot("density_bias",
