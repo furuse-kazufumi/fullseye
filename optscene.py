@@ -1018,6 +1018,21 @@ def illumination_visibility(scene, points, light) -> np.ndarray:
 
     点ごとに全発光点への遮蔽を判定して平均する。バックライトのように部品の裏に
     光源がある配置では 0 になり、シルエットが立つ。返り値 (M,)。
+
+    手順: 各点 ``p`` から各発光点 ``e`` へ向かう単位方向 ``d`` を取り、
+    ``p + 1e-4 d``(自分の面に再衝突しないための 0.1 µm のオフセット)から光線を撃つ。
+    どれかのプリミティブに ``e`` より手前で当たれば「遮られた」。可視率 =
+    遮られなかった発光点の数 / 発光点の総数。**幾何的な遮蔽だけ**で、発光点の
+    向き(``directions``)・強度・cos 則・距離減衰は入れない(それらは
+    ``render_optscene`` の陰影側が持つ)。
+
+    - ``scene``: ``scene_*`` の dict、またはその list。空なら ``ValueError``。
+    - ``points``: ``(M, 3)`` [mm]、有限。面上の点を渡すなら ``trace_rays(...)["point"]``。
+      面の裏側に発光点がある点は自分の部品に遮られて 0 になる。
+    - ``light``: ``light_spec`` または ``light_source`` の結果(``emitters`` と
+      ``directions`` を持つ dict)。無ければ ``ValueError``。
+    - 返り値: ``(M,)`` の float64、``[0, 1]``。発光点 ``n`` 個なら ``1/n`` 刻み。
+    - 計算量は 点数 × 発光点数 × プリミティブ数。
     """
     scene = _check_scene(scene)
     p = _arr(points, "points", 3).reshape(-1, 3)

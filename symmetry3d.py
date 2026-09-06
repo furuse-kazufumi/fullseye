@@ -76,7 +76,22 @@ def _pca_axes(points):
 
 
 def reflection_symmetry_score(points, plane_point, plane_normal):
-    """反射対称スコア = chamfer(鏡映, 元) / 中央値最近傍間隔(小さいほど対称、スケール不変)。→ float。"""
+    """反射対称スコア = chamfer(鏡映, 元) / 中央値最近傍間隔(小さいほど対称、スケール不変)。→ float。
+
+    ``reflect_points`` で点群を平面で鏡映し、元の点群との対称 Chamfer 距離(``chamfer_distance``:
+    双方向の最近傍距離の平均の平均)を、元の点群の最近傍間隔の中央値で割る。「鏡像が元の点から
+    点間隔の何倍ずれているか」という無次元量なので、座標を定数倍しても値は変わらない。
+
+    - ``points``: (N,3) 点群。``plane_point`` / ``plane_normal``: 候補平面(法線は内部で正規化)。
+    - fail-closed: 点群が空・(N,3) でない(``chamfer_distance`` が ``ValueError``)、全点が一致して
+      間隔が定義できない(``ValueError``)。重複点で中央値間隔が 0 になる場合だけ、重心からの RMS
+      半径 × 1e-12 を床にする。
+
+    読み方の注意: 厳密に対称な形でも、鏡像の点が元のサンプル点にぴったり重なるわけではないので
+    スコアは 0 にならず、点間隔程度が床になる(実測値は ``detect_reflection_symmetry`` の表を参照)。
+    閾値で採否を決めるより、複数候補を掃引して最小値と 2 位との差(``margin``)を見る。PCA の
+    3 軸以外の候補面を試したいときは、この関数を平面パラメータで直接掃引する。
+    """
     p = np.asarray(points, float)
     refl = reflect_points(p, plane_point, plane_normal)
     return float(metrics3d.chamfer_distance(refl, p) / _median_spacing(p))

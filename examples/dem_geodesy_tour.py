@@ -13,8 +13,9 @@ DEM を「地球中心から見た座標」で扱う 6 つの op(``dem_geodetic_
 1. 赤道上の本初子午線 (0, 0, 0) は ECEF で (a, 0, 0)、北極 (90, 0, 0) は (0, 0, b)。
    楕円体上の点は必ず x²/a² + y²/a² + z²/b² = 1 を満たし、高さ h を足すと**法線方向**へ
    ちょうど h [m] 動く(法線 = (cosφ cosλ, cosφ sinλ, sinφ))。
-2. 測地 → ECEF → 測地の往復は緯度経度 1e-9 度・高さ 1e-6 m 以内で戻る(docstring の
-   主張は 1e-12 度 / 1e-7 m。ここでは実測を印字して、その桁で assert する)。
+2. 測地 → ECEF → 測地の往復は緯度経度 1e-9 度以内で戻る。高さの誤差は**高さに依存**し、
+   楕円体面で 2e-9 m、8848 m で 8e-7 m、20 km で 4e-6 m(docstring の「1e-7 m」は地表付近の
+   値。ここでは高さ別に印字し、1e-5 m で assert する)。
 3. 地心緯度と測地緯度の差は atan((1-e²) tanφ) と φ の差 —— 緯度 45 度で **0.19 度**。
 4. ``dem_geocentric_grid`` の隣接セル間距離は ``cell_size`` に一致し(相対 1e-4 以内)、
    北西角は ``dem_geodetic_to_ecef(lat0, lon0)`` そのもの。ECEF 側を測地に戻せば
@@ -124,10 +125,18 @@ def run() -> dict:
     d_lat = np.max(np.abs(back[:, 0] - LA.ravel()))
     # 経度は ±180 が同じ点なので、差は 360 で畳んでから測る。
     d_lon = np.max(np.abs((back[:, 1] - LO.ravel() + 180.0) % 360.0 - 180.0))
-    d_h = np.max(np.abs(back[:, 2] - HH.ravel()))
+    h_err = np.abs(back[:, 2] - HH.ravel()).reshape(LA.shape)
+    d_h = float(h_err.max())
     print(f"  {xyz.shape[0]} 点の往復: 緯度 {d_lat:.2e} 度 / 経度 {d_lon:.2e} 度 / 高さ {d_h:.2e} m")
-    print("  (docstring の主張は 1e-12 度 / 1e-7 m。ここでは 1e-9 度 / 1e-6 m で判定)")
-    assert d_lat < 1e-9 and d_lon < 1e-9 and d_h < 1e-6
+    # ★正直な内訳: Bowring の 1 回反復は楕円体面では 1e-9 m だが、高さが上がるほど
+    #   誤差が増える(実測 8848 m で 8e-7 m、20 km で 4e-6 m)。docstring の
+    #   「1e-12 度 / 1e-7 m」は地表付近の値であって、成層圏の高さでは成り立たない。
+    #   地形(標高 < 9 km)の用途では 1e-6 m で、ここでは 1e-5 m を閾値にする。
+    for k, hv in enumerate(hs):
+        print(f"    高さ {hv:>8.0f} m の往復誤差(高さ)最大 {h_err[:, :, k].max():.2e} m")
+    print("  (docstring の主張は 1e-12 度 / 1e-7 m。緯度経度は 1e-9 度、高さは 1e-5 m で判定)")
+    assert d_lat < 1e-9 and d_lon < 1e-9 and d_h < 1e-5
+    assert h_err[:, :, 1].max() < 1e-7, "楕円体面(h=0)では docstring の 1e-7 m が成り立つはず"
     out["roundtrip_deg"] = float(max(d_lat, d_lon))
     out["roundtrip_m"] = float(d_h)
 
