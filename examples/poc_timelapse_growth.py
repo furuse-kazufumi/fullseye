@@ -151,13 +151,17 @@ def merge_frame_from_volume(labels, fam_id, times, connectivity2d: int = 4):
 
 
 def _pair_connected(i: int, j: int, t: float, pixel: float,
-                    connectivity2d: int = 4) -> bool:
+                    connectivity2d: int = 4, shift=(0.0, 0.0)) -> bool:
     """時刻 ``t`` に、コロニー ``i`` と ``j`` の**離散化された**円が繋がるか。
 
     2 つだけを、必要な範囲だけ描く(掃引で何百回も呼ぶので)。
+    ``shift`` は**画素格子に対する場面のずらし**[長さ単位] —— 格子の位相が
+    結果をどれだけ動かすかを測るために要る(5 節)。
     """
     cy1, cx1, _ = COLONIES[i]
     cy2, cx2, _ = COLONIES[j]
+    cy1, cx1 = cy1 + shift[0], cx1 + shift[1]
+    cy2, cx2 = cy2 + shift[0], cx2 + shift[1]
     r1, r2 = float(radius(i, t)), float(radius(j, t))
     lo_y = max(0.0, min(cy1 - r1, cy2 - r2) - 2 * pixel)
     hi_y = min(float(N), max(cy1 + r1, cy2 + r2) + 2 * pixel)
