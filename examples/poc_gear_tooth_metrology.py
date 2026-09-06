@@ -676,7 +676,8 @@ def section_pitch_error() -> dict:
     print("\n" + "=" * 78)
     print("8) ★偏心は隣接ピッチ誤差を捏造する(割り出しは完璧なのに)")
     print("=" * 78)
-    print("   偏心 [mm]  与えた割出誤差 [mm]  隣接ピッチ誤差の最大 [mm]  理論 e*2pi/z")
+    print("   偏心 [mm]  与えた割出誤差 [mm]   誤差の最大 [mm]   1 次振幅 [mm]"
+          "   理論 2e·sin(pi/z)")
 
     rows = []
     for ecc, off in ((0.000, 0.000), (0.050, 0.000), (0.100, 0.000),
@@ -686,18 +687,27 @@ def section_pitch_error() -> dict:
         prof = radial_profile(sc["img"], (b["cy"], b["cx"]))
         tt = tooth_table(prof, R_PITCH)
         err = tt["pitch_mm"] - PITCH_MM
-        rows.append((ecc, off, float(np.abs(err).max()), float(err.std())))
-        print("    %.3f        %.3f              %.4f              %.4f"
-              % (ecc, off, np.abs(err).max(), ecc * PITCH_ANG))
+        # 誤差の列の 1 次成分(= 振れ由来の分)。歯の中心角を横軸に取る
+        thk = tt["centre"]
+        a = np.column_stack([np.ones_like(thk), np.cos(thk), np.sin(thk)])
+        c, *_ = np.linalg.lstsq(a, err, rcond=None)
+        amp1 = float(np.hypot(c[1], c[2]))
+        theo = 2.0 * ecc * np.sin(np.pi / Z_TEETH)
+        rows.append((ecc, off, float(np.abs(err).max()), amp1, theo))
+        print("     %.3f        %.3f              %.4f            %.4f"
+              "          %.4f" % (ecc, off, np.abs(err).max(), amp1, theo))
 
     print("\n  ★割り出しが完璧(与えた誤差 0)でも、偏心 %.3f mm で隣接ピッチ誤差の"
           "最大が %.4f mm 出る。" % (rows[2][0], rows[2][2]))
-    print("    理論値 e*(2pi/z) = %.4f mm と %.0f %% で一致 —— これは歯切り盤の"
-          "割り出しではなく **振れ**。"
-          % (rows[2][0] * PITCH_ANG,
-             100 * abs(rows[2][2] - rows[2][0] * PITCH_ANG) / (rows[2][0] * PITCH_ANG)))
-    print("  ★与えた割出誤差 %.3f mm は %.4f mm として検出される(こちらは本物)。"
-          % (rows[3][1], rows[3][2]))
+    print("    その 1 次振幅 %.4f mm は理論値 2e·sin(π/z) = %.4f mm と %.0f %% で"
+          "一致 —— これは歯切り盤の割り出しではなく **振れ**。"
+          % (rows[2][3], rows[2][4],
+             100 * abs(rows[2][3] - rows[2][4]) / rows[2][4]))
+    print("    (最大値のほうが理論より大きいのは、偏心ゼロでも %.4f mm の"
+          "雑音床があるため。)" % rows[0][2])
+    print("  ★与えた割出誤差 %.3f mm は最大 %.4f mm として検出され、しかも"
+          "1 次振幅は %.4f mm しか無い(= 局所的で振れではない)。"
+          % (rows[3][1], rows[3][2], rows[3][3]))
 
     figs.save_table("summary",
                     ["量", "真値", "推定", "誤差"],
