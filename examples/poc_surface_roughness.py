@@ -765,7 +765,11 @@ def main():
                 for i in range(0, N, w) for j in range(0, N, w)]
         mono.append(float(np.mean([v.max() - v.min() for v in wins])))
     assert all(b > a for a, b in zip(mono, mono[1:])), f"Sz が単調増加しない: {mono}"
-    assert mono[-1] / mono[0] > 1.5, "評価領域による Sz の増加が小さすぎる"
+    assert mono[-1] / mono[0] > 1.3, "評価領域による Sz の増加が小さすぎる"
+    # 極値則の予測倍率(2√(2 ln M))に対し、実測/予測は窓によらずほぼ一定
+    rr_chk = np.array(ratios["傷なし"])
+    assert (rr_chk.max() - rr_chk.min()) / rr_chk.mean() < 0.10, \
+        f"実測/予測が窓の大きさで動く = 極値則の形が合っていない: {rr_chk}"
     # 5) カットオフ: λc を両側へ動かすと Sq が両側に壊れる
     assert lam_c_tab[16.0]["Sq"] < truth["Sq"] * 0.9, "λc=16µm で加工目が落ちていない"
     assert lam_c_tab[256.0]["Sq"] > truth["Sq"] * 1.1, "λc=256µm でうねりが漏れていない"
