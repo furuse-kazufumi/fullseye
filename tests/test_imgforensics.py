@@ -1051,3 +1051,39 @@ def test_calibration_ops_fail_closed():
         F.evidence_quantile(1.0, {"mean": 0.0})
     with _pytest.raises(ValueError, match="measurement must be finite"):
         F.evidence_quantile(np.inf, F.null_distribution([1.0, 2.0]))
+
+
+def test_jpeg_ghost_argmin_dies_after_one_more_save():
+    """**保存を 1 回挟むと argmin 読み出しは背景と同じ品質を返す**(2026-09-06)。
+
+    既存の ``test_jpeg_ghost_finds_the_pasted_quality`` は合成後に保存しない
+    ので通る。現場の改竄は必ず保存を経るので、そちらが本当の使われ方になる。
+    docstring の表と対。直したら(谷の深さ読み出しを op にしたら)ここも直す。
+    """
+    def rt(a, q):
+        r = F._jpeg_roundtrip(a, q)
+        return r.astype(np.float64) / 255.0 if r.max() > 1.5 else r
+
+    rng = np.random.default_rng(1)
+    base = np.clip(0.5 + 0.12 * rng.standard_normal((128, 128))
+                   + 0.25 * np.sin(np.mgrid[0:128, 0:128][1] / 6.0), 0.0, 1.0)
+    comp = rt(base, 92)
+    comp[32:64, 32:64] = rt(base[::-1], 60)[32:64, 32:64]
+
+    def modes(img):
+        q = F.jpeg_ghost_quality(F.jpeg_ghost_map(img))
+        inside = q[36:60, 36:60].ravel().astype(int)
+        outside = np.concatenate([q[:28].ravel(), q[100:].ravel()]).astype(int)
+        return np.bincount(inside).argmax(), np.bincount(outside).argmax()
+
+    fresh_in, fresh_out = modes(comp)
+    assert fresh_in == 60 and fresh_out == 95, (fresh_in, fresh_out)
+
+    saved_in, saved_out = modes(rt(comp, 95))
+    assert saved_in == saved_out == 95, (
+        "保存後も貼付品質を当てられている —— 谷の深さ読み出しが入ったなら "
+        "jpeg_ghost_quality の docstring を更新せよ")
+
+    # 機構: 残差は品質に対して単調減少する。だから argmin は上端に張り付く。
+    resid = np.stack(F.jpeg_ghost_map(rt(comp, 95)), 0).mean(axis=(1, 2))
+    assert np.all(np.diff(resid) < 0.0), resid

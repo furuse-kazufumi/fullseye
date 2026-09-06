@@ -351,8 +351,7 @@ def main():
         floors[n] = (float(np.sqrt(np.mean(sm ** 2))), float(np.abs(sm).max()), spacing)
         print(f"  {n:>7d}{spacing:>9.3f}{p2p:>12.4f}{float(np.sqrt(np.mean(raw ** 2))):>12.4f}"
               f"{floors[n][0]:>11.4f}{float(np.percentile(np.abs(sm), 99)):>10.4f}{floors[n][1]:>11.4f}")
-    print(f"  → 点対点は**点間隔がそのまま床**(rms / 点間隔 = "
-          f"{floors[N_MAIN][2] and 0 or 0:.0f}"[:0] + "点間隔の約 1.2 倍で 4 段とも一定)。")
+    print("  → 点対点は**点間隔がそのまま床**(rms / 点間隔 が 4 段とも 1.2 前後で一定。下の assert)。")
     print("     接平面へ落とすと接線方向のばらつきが消え、近傍中央値でさらに落ちる。")
     print("     ★穴 C: symmetry3d の対称スコアは点対点(chamfer)しか持たない。")
     floor_rms, floor_max, _ = floors[N_MAIN]
