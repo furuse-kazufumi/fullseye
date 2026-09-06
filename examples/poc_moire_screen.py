@@ -208,8 +208,9 @@ def section1_check():
     print("    ムラだけの像から (max-min)/2 = %.5f(真値 %.5f、差 %.1e)"
           % (mura_amplitude(render(stripe=False)), A_MURA,
              abs(mura_amplitude(render(stripe=False)) - A_MURA)))
-    print("    縞だけの像から (max-min)/2 = %.5f(ムラは仕込んでいないので、これは")
-    print("      **全部がモアレの漏れ込み**)" % mura_amplitude(render(mura=False)))
+    print("    縞だけの像から (max-min)/2 = %.5f(ムラは仕込んでいないので、"
+          % mura_amplitude(render(mura=False)))
+    print("      これは**全部がモアレの漏れ込み**)")
     return img
 
 
