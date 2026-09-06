@@ -4,7 +4,7 @@ dim: astrostack
 category: photometry
 in: image2d × keypoints
 out: table
-examples: [astro_stacking]
+examples: [astro_stacking, poc_star_astrometry]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -67,6 +67,7 @@ Returns 各星 1 つの dict の ``list``(``table`` 語彙)。キーは
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [astro_stacking](../../../../examples/astro_stacking.py) — `py -3.11 examples/astro_stacking.py`
+- [poc_star_astrometry](../../../../examples/poc_star_astrometry.py) — `py -3.11 examples/poc_star_astrometry.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

@@ -220,6 +220,14 @@ def crlb_px(flux, fwhm_px, sky=SKY, read=READ, box=21):
     return float(1.0 / np.sqrt(((flux * dp) ** 2 / var).sum()))
 
 
+def pad(text, width, right=False):
+    """全角を 2 桁と数えて表の桁を揃える(固定幅の表を日本語で書くため)。"""
+    import unicodedata
+    w = sum(2 if unicodedata.east_asian_width(ch) in "WF" else 1 for ch in text)
+    fill = " " * max(0, width - w)
+    return fill + text if right else text + fill
+
+
 def bias_scatter(err):
     """``(bias, scatter)``。偏りと散らばりは別の量なので必ず分けて返す。"""
     e = np.asarray(err, float)

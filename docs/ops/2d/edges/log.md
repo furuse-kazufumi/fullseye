@@ -5,7 +5,7 @@ category: edges
 in: image
 out: image
 halcon: laplace_of_gauss
-examples: [gallery2d_edges, photon_timeresolved, poc_camera_shake_deblur, poc_dehazing, poc_dtof_ranging, poc_matrix_code_reading, poc_panorama_drift, poc_surface_roughness, signal_funct1d]
+examples: [gallery2d_edges, photon_timeresolved, poc_camera_shake_deblur, poc_dehazing, poc_dtof_ranging, poc_matrix_code_reading, poc_panorama_drift, poc_star_astrometry, poc_surface_roughness, signal_funct1d]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -42,6 +42,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - [poc_dtof_ranging](../../../../examples/poc_dtof_ranging.py) — `py -3.11 examples/poc_dtof_ranging.py`
 - [poc_matrix_code_reading](../../../../examples/poc_matrix_code_reading.py) — `py -3.11 examples/poc_matrix_code_reading.py`
 - [poc_panorama_drift](../../../../examples/poc_panorama_drift.py) — `py -3.11 examples/poc_panorama_drift.py`
+- [poc_star_astrometry](../../../../examples/poc_star_astrometry.py) — `py -3.11 examples/poc_star_astrometry.py`
 - [poc_surface_roughness](../../../../examples/poc_surface_roughness.py) — `py -3.11 examples/poc_surface_roughness.py`
 - [signal_funct1d](../../../../examples/signal_funct1d.py) — `py -3.11 examples/signal_funct1d.py`
 
