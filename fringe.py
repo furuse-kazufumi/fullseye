@@ -281,6 +281,31 @@ def decode_fringe(phase_shift_images, ref_phase=None, k=1.0,
 
     返り値: 高さマップ(2D float)。ref_phase=None のときは k を掛けた連続位相を返す。
     無効画素は NaN。
+
+    手順(実装どおり): ``wrapped_phase`` → 信頼マスクを組む(``min_modulation`` が
+    あれば ``modulation(stack) >= min_modulation``、``mask`` があればそれと AND)→
+    ``unwrap_phase_2d(wrapped, mask=信頼マスク)`` → ``ref_phase`` が ``None`` なら
+    ``k * unwrapped``、あれば ``phase_to_height``(``k * (unwrapped - ref_phase)``)。
+
+    引数:
+    - ``phase_shift_images``: ``(N, H, W)``、``N >= 3``、等間隔位相シフト。
+    - ``ref_phase``: スカラまたは ``(H, W)``。参照面を**同じ手順で展開した**位相を
+      渡す(``unwrap_phase_2d`` の大域オフセットが両者で同じ扱いになるよう、参照も
+      本 op で ``ref_phase=None`` として復号した結果を使うのが安全)。
+    - ``k``: 位相→高さの較正定数(単位/rad)。``synthesize_fringes`` の
+      ``phase_gain`` の逆数に対応。
+    - ``mask``: ``(H, W)`` の bool、True = 有効。``min_modulation``: 変調度の下限
+      (``[0, 1]`` 程度。影・飽和の画素を落とす)。
+
+    検証(``ValueError``): 画像列が 3-D でない・``N < 3``・非有限 / ``mask`` の形が
+    違う / ``ref_phase`` の形が違う / 有効画素がゼロ。scikit-image が無ければ
+    ``RuntimeError``。
+
+    返り値: ``(H, W)`` float64。無効画素は NaN。単位は ``k`` の単位。
+
+    注意: 空間アンラップに依存するので、段差・オクルージョンで島に分かれた場面では
+    島ごとに ``2πm k`` の高さオフセットが残りうる。絶対高さが要る場面は
+    ``graycode_decode`` → ``absolute_phase`` → ``triangulate_column`` の経路。
     """
     stack = _as_stack(phase_shift_images)
     wrapped = wrapped_phase(stack)
