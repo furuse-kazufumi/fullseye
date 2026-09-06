@@ -591,8 +591,8 @@ def section_framerate() -> dict:
         pred_l.append(pred)
         verr_l.append(verr)
         rows.append(["%d" % dt, "%.1f" % (FPS / dt), str(total), str(n_all),
-                     str(n_ref), str(n_or), "%.1f" % pred, "%.1f %%" % verr])
-        print("   %3d %6.1f %6d %7d %9d %10d %14.1f %8.2f %%"
+                     str(n_ref), "%.2f" % n_or, "%.1f" % pred, "%.1f %%" % verr])
+        print("   %3d %6.1f %6d %7d %9d %8.2f %14.1f %8.2f %%"
               % (dt, FPS / dt, total, n_all, n_ref, n_or, pred, verr))
 
     lv = sorted(v["len"] / v["v"] for v in crossing)
