@@ -224,28 +224,37 @@ def _model_profile(rr: np.ndarray, radius: float, u: float, seeing: float) -> np
                        mode="same")[len(fine) - 1:]
 
 
-def fit_limb_model(img: np.ndarray, centre, seeing: float = SEEING,
-                   u_grid=None, r0: float = R_TRUE) -> dict:
+def fit_limb_model(img: np.ndarray, centre, r0: float, seeing: float = SEEING,
+                   u_grid=None) -> dict:
     """★対比 —— 減光モデルを当てはめて縁を**外挿**する(A と背景は線形に解く)。
 
+    ``r0`` は探索の出発点で、**真値ではなく 50 % 法の答え**を渡します。
     ``u_grid`` に 1 点だけ渡すと「u をこう決め打つ」版になります。
+    粗い格子 -> 細かい格子の 2 段(全域を 0.05 px で舐めると遅いため)。
     """
-    rmax = 1.35 * R_TRUE
+    rmax = 1.35 * r0 * 1.15
     n = 541
     rr = np.linspace(0.0, rmax, n)
     obs = radial_profile(img, centre, rmax, n)
-    us = np.linspace(0.0, 1.0, 51) if u_grid is None else np.atleast_1d(u_grid)
-    rs = r0 + np.arange(-8.0, 8.01, 0.05)
-    best = (np.inf, np.nan, np.nan)
-    for u in us:
-        for radius in rs:
-            m = _model_profile(rr, radius, u, seeing)
-            a = np.column_stack([m, np.ones(n)])
-            sol = fs.mat_lstsq(a, obs)
-            ss = float(np.atleast_1d(sol["residual_ss"])[0])
-            if ss < best[0]:
-                best = (ss, radius, float(u))
-    return {"r": best[1], "u": best[2], "ss": best[0]}
+
+    def scan(rs, us):
+        best = (np.inf, np.nan, np.nan)
+        for u in us:
+            for radius in rs:
+                m = _model_profile(rr, radius, u, seeing)
+                a = np.column_stack([m, np.ones(n)])
+                sol = fs.mat_lstsq(a, obs)
+                ss = float(np.atleast_1d(sol["residual_ss"])[0])
+                if ss < best[0]:
+                    best = (ss, float(radius), float(u))
+        return best
+
+    us0 = np.linspace(0.0, 1.0, 21) if u_grid is None else np.atleast_1d(u_grid)
+    ss, radius, u = scan(r0 + np.arange(-25.0, 25.01, 0.5), us0)
+    us1 = (np.clip(u + np.arange(-0.05, 0.051, 0.005), 0.0, 1.0)
+           if u_grid is None else us0)
+    ss, radius, u = scan(radius + np.arange(-0.6, 0.601, 0.02), us1)
+    return {"r": radius, "u": u, "ss": ss}
 
 
 # --------------------------------------------------------------------------- #
