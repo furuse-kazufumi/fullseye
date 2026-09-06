@@ -4,7 +4,7 @@
 
 > **请注意：**目前只有本索引页有译文，它所链接的各篇文档暂时仅有日文版。
 
-**Fullseye**（工作代号 imgevolve）是一套 HALCON/HDevelop 级别的实用工具：由 numpy 原生的图像处理算子库、HDevelop 风格的可视化流水线设计环境（Fullseye Studio）以及执行运行时（FullseyeEngine）三者组成。算子约 **521** 个（以注册表计数），其中 **269/2313** 个真实 HALCON 算子做到了 genuine（真正等效）实现，覆盖 31 个类别。
+**Fullseye**（工作代号 imgevolve）是一套 HALCON/HDevelop 级别的实用工具：由 numpy 原生的图像处理算子库、HDevelop 风格的可视化流水线设计环境（Fullseye Studio）以及执行运行时（FullseyeEngine）三者组成。算子约 **885** 个（以注册表计数），其中 **979/2313** 个真实 HALCON 算子做到了 genuine（真正等效）实现，覆盖 47 个类别。
 
 > **先从这里开始 → [GETTING_STARTED.md](GETTING_STARTED.md)（5 分钟跑起来）**
 
@@ -42,7 +42,7 @@
 
 | 文档 | 内容 |
 |---|---|
-| [HALCON_PARITY.md](HALCON_PARITY.md) | genuine（真正等效）实现的进展（269/2313）：不是“只有名字相同”，而是确实能做同样的处理 |
+| [HALCON_PARITY.md](HALCON_PARITY.md) | genuine（真正等效）实现的进展（979/2313）：不是“只有名字相同”，而是确实能做同样的处理 |
 | [HALCON_COVERAGE.md](HALCON_COVERAGE.md) | 通过真实抓取官方参考手册（v2605）得到的覆盖率测量 |
 | [LIB_COVERAGE.md](LIB_COVERAGE.md) | 跨多个库的覆盖情况（吸收 HALCON 之外具有特色的算子） |
 | [PARITY_CROSSBACKEND.md](PARITY_CROSSBACKEND.md) | 以多个独立实现（scipy／cv2／skimage）之间的跨后端一致性来证明对等性 |

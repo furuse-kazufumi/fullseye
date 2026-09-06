@@ -241,14 +241,15 @@ def poc_peak_table(img: np.ndarray, baseline: int = 96, top: int = 5):
     n = surf.size
     lag = np.arange(n)
     lag = np.where(lag > n // 2, lag - n, lag)
-    order = np.argsort(-surf)
+    loc = np.nonzero((surf > np.roll(surf, 1)) & (surf > np.roll(surf, -1)))[0]
+    order = loc[np.argsort(-surf[loc])]
     picked = []
     for i in order:
-        if all(abs(int(lag[i]) - s) >= 3 for s, _ in picked):
+        if all(abs(int(lag[i]) - s) >= 4 for s, _ in picked):
             picked.append((int(lag[i]), float(surf[i])))
         if len(picked) >= top:
             break
-    return picked
+    return sorted(picked)
 
 
 def estimate_period(img: np.ndarray, margin: int = 24) -> dict:

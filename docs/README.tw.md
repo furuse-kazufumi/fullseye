@@ -4,7 +4,7 @@
 
 > **請注意：**目前只有這份索引頁有譯文，它所連結的各篇文件暫時僅有日文版。
 
-**Fullseye**（開發代號 imgevolve）是一套 HALCON/HDevelop 等級的實用軟體：由 numpy 原生的影像處理運算子函式庫、HDevelop 風格的視覺化管線設計環境（Fullseye Studio），以及負責執行的 runtime（FullseyeEngine）三者組成。運算子約 **521** 個（以 registry 計），其中 **269/2313** 個真實的 HALCON 運算子做到 genuine（真正等效）的實作，涵蓋 31 個類別。
+**Fullseye**（開發代號 imgevolve）是一套 HALCON/HDevelop 等級的實用軟體：由 numpy 原生的影像處理運算子函式庫、HDevelop 風格的視覺化管線設計環境（Fullseye Studio），以及負責執行的 runtime（FullseyeEngine）三者組成。運算子約 **885** 個（以 registry 計），其中 **979/2313** 個真實的 HALCON 運算子做到 genuine（真正等效）的實作，涵蓋 47 個類別。
 
 > **請從這裡開始 → [GETTING_STARTED.md](GETTING_STARTED.md)（5 分鐘跑起來）**
 
@@ -42,7 +42,7 @@
 
 | 文件 | 內容 |
 |---|---|
-| [HALCON_PARITY.md](HALCON_PARITY.md) | genuine（真正等效）實作的進度（269/2313）：不是「只有名字一樣」，而是確實做得到同樣的處理 |
+| [HALCON_PARITY.md](HALCON_PARITY.md) | genuine（真正等效）實作的進度（979/2313）：不是「只有名字一樣」，而是確實做得到同樣的處理 |
 | [HALCON_COVERAGE.md](HALCON_COVERAGE.md) | 實際抓取官方參考手冊（v2605）後量出的涵蓋率 |
 | [LIB_COVERAGE.md](LIB_COVERAGE.md) | 跨多個函式庫的涵蓋情形（納入 HALCON 以外具特色的運算子） |
 | [PARITY_CROSSBACKEND.md](PARITY_CROSSBACKEND.md) | 以多個獨立實作（scipy／cv2／skimage）之間的跨後端一致性，來佐證對等性 |

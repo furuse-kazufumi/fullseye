@@ -4,7 +4,7 @@
 
 > **Please note:** only this index page is translated. The individual documents it links to are, for the moment, available in Japanese only.
 
-**Fullseye** (working name: imgevolve) is a HALCON/HDevelop-class production tool. It combines a numpy-native library of image-processing operators with an HDevelop-style visual pipeline design environment (Fullseye Studio) and an execution runtime (FullseyeEngine). It carries roughly **521** operators (as counted in the registry), provides genuine implementations of **269/2313** actual HALCON operators, and spans 31 categories.
+**Fullseye** (working name: imgevolve) is a HALCON/HDevelop-class production tool. It combines a numpy-native library of image-processing operators with an HDevelop-style visual pipeline design environment (Fullseye Studio) and an execution runtime (FullseyeEngine). It carries roughly **885** operators (as counted in the registry), provides genuine implementations of **979/2313** actual HALCON operators, and spans 47 categories.
 
 > **Start here → [GETTING_STARTED.md](GETTING_STARTED.md) (up and running in 5 minutes)**
 
@@ -42,7 +42,7 @@
 
 | Document | Contents |
 |---|---|
-| [HALCON_PARITY.md](HALCON_PARITY.md) | Genuine implementation status (269/2313): whether an operator truly does the same work, rather than merely sharing a name |
+| [HALCON_PARITY.md](HALCON_PARITY.md) | Genuine implementation status (979/2313): whether an operator truly does the same work, rather than merely sharing a name |
 | [HALCON_COVERAGE.md](HALCON_COVERAGE.md) | Coverage measured by actually scraping the official reference (v2605) |
 | [LIB_COVERAGE.md](LIB_COVERAGE.md) | Cross-library coverage (distinctive operators taken in from beyond HALCON) |
 | [PARITY_CROSSBACKEND.md](PARITY_CROSSBACKEND.md) | Parity evidenced by cross-backend agreement between independent implementations (scipy/cv2/skimage) |

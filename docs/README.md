@@ -2,7 +2,7 @@
 
 **Language:** [日本語](README.md) · [English](README.en.md) · [简体中文](README.zh.md) · [繁體中文](README.tw.md) · [한국어](README.ko.md) · [Deutsch](README.de.md)
 
-**Fullseye**（作業名 imgevolve）は、numpy-native な画像処理オペレータ・ライブラリと、HDevelop 風のビジュアル・パイプライン設計環境（Fullseye Studio）+ 実行ランタイム（FullseyeEngine）を備えた、HALCON/HDevelop 級の実用ツールです。オペレータは約 **521**（レジストリ）、実 HALCON オペレータ **269/2313** を genuine 実装、31 カテゴリをカバーします。
+**Fullseye**（作業名 imgevolve）は、numpy-native な画像処理オペレータ・ライブラリと、HDevelop 風のビジュアル・パイプライン設計環境（Fullseye Studio）+ 実行ランタイム（FullseyeEngine）を備えた、HALCON/HDevelop 級の実用ツールです。オペレータは約 **885**（レジストリ）、実 HALCON オペレータ **979/2313** を genuine 実装、47 カテゴリをカバーします。
 
 > **まずはここから → [GETTING_STARTED.md](GETTING_STARTED.md)（5 分で動かす）**
 
@@ -40,7 +40,7 @@
 
 | ドキュメント | 内容 |
 |---|---|
-| [HALCON_PARITY.md](HALCON_PARITY.md) | 「名前だけ」でなく実際に同じ処理ができるかの genuine 実装状況（269/2313） |
+| [HALCON_PARITY.md](HALCON_PARITY.md) | 「名前だけ」でなく実際に同じ処理ができるかの genuine 実装状況（979/2313） |
 | [HALCON_COVERAGE.md](HALCON_COVERAGE.md) | 公式リファレンス（v2605）を実スクレイプした被覆計測 |
 | [LIB_COVERAGE.md](LIB_COVERAGE.md) | 多ライブラリ横断被覆（HALCON 以外の distinctive op 取り込み） |
 | [PARITY_CROSSBACKEND.md](PARITY_CROSSBACKEND.md) | 独立実装（scipy/cv2/skimage）同士のクロスバックエンド一致による parity 実証 |
