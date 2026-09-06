@@ -776,6 +776,12 @@ def main():
         f"fpfh の非不変が法線の符号で説明できない(既定 {d_default:.2e} / 揃え {d_fixed:.2e})"
     assert len(ka2 & kb2) == len(ka2) == len(kb2), "dist_step を固定しても鍵が一致しない"
     assert len(ka & kb) < 0.9 * len(ka), "既定 dist_step が回転不変になっている(穴が塞がった?)"
+    # (m) surface_match(refine=False) の rmse は nan(型は float のまま静かに比較を裏切る)
+    nan_out = fs.surface_match(fs.ppf_model(a_d[:120], angle_bins=24), a_d[:150],
+                               refine=False, ref_fraction=0.25, topk=3)
+    assert isinstance(nan_out["rmse"], float) and np.isnan(nan_out["rmse"]), \
+        "surface_match(refine=False) の rmse が nan でない(穴が塞がった?)"
+    assert (nan_out["rmse"] < 1.0) is False, "nan の比較が False にならない"
 
     print(f"\n  (所要 {time.perf_counter() - t_start:.1f} 秒)")
     print("\nPASS")
