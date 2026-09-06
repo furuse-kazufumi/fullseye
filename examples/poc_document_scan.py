@@ -459,7 +459,11 @@ def main():
     print("        例外は出ない —— 台形が残ったまま、それらしい絵が返る。")
 
     print("\n=== 4. 影除去は何を壊すか ===")
-    rect_ideal = rectify(cam, H_ideal)
+    # 幾何は理想の補正で片付けてから、光の話だけを見る。照明は第 1 節より強くする
+    # (勾配 50 % + 影 50 %)—— 弱い照明では手法の差が出ず、比較にならないため。
+    cam_hard, _ = render_camera(doc, H_ideal,
+                                illum=illumination_field(strength=0.50, shadow=0.50))
+    rect_ideal = rectify(cam_hard, H_ideal)
     truth = doc
     paper = truth > 0.85                                   # 紙だけの画素(真値で定義)
     faint = np.zeros_like(truth, bool)

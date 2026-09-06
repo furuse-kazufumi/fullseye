@@ -336,7 +336,7 @@ def main():
     kernels = {
         "直線 L=15 20 度": psf_line(15, 20.0),
         "手ブレ(折れ線)": psf_shake([(0, 0), (2.5, 6.0), (-1.0, 10.5), (3.5, 14.0)]),
-        "回転 r=70 6 度": psf_arc(70.0, 6.0),
+        "回転(局所)r=70": psf_arc(70.0, 6.0),
     }
 
     print("=== 1. 3 種類のブレ核 —— 真値は自分で決めているので完璧に分かる ===")
@@ -356,7 +356,7 @@ def main():
     print(f"  {'核':<18}{'何もしない':>12}{'アンシャープ':>14}{'核既知':>10}{'取り分':>9}")
     for name, k in kernels.items():
         obs, _ = add_noise(blur_circular(gt, k), 40.0, np.random.default_rng(SEED))
-        p_null, _ = q(gt, obs)
+        p_null = psnr(gt, obs)
         p_uns, _, _ = unsharp_best(obs, gt)
         p_win, _, _ = wiener_best(obs, k, gt)
         print(f"  {name:<18}{p_null:>12.2f}{p_uns:>14.2f}{p_win:>10.2f}"
@@ -374,7 +374,7 @@ def main():
     gains = {}
     for snr in (math.inf, 60.0, 40.0, 30.0, 20.0):
         obs, sd = add_noise(blurred, snr, np.random.default_rng(SEED + 1))
-        p_null, _ = q(gt, obs)
+        p_null = psnr(gt, obs)
         p_uns, _, _ = unsharp_best(obs, gt)
         p_win, nsr, _ = wiener_best(obs, k_ref, gt)
         theory = (sd ** 2) / float(np.var(gt)) if sd > 0 else 0.0
