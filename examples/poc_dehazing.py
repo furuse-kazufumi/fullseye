@@ -403,22 +403,31 @@ def main():
     print("     真の t = 0.0003 を使えば復元式は 0/0 になる。**ここは推定の問題ではない**。")
 
     print("\n=== 5. 崖 (a) 霞の濃さ —— beta を薄いから濃いまで振る ===")
-    print(f"  {'beta':>7}{'視程 m':>8}{'t 中央':>8}{'t MAE':>8}{'A 角度':>8}"
-          f"{'PSNR 霞':>9}{'PSNR 除霞':>10}{'PSNR オラクル':>13}")
+    print("  t の誤差は 2 通りで出す。絶対誤差 |t̂-t| は t 自体が小さくなると勝手に")
+    print("  小さくなるので、**尺度によらない光学的深さの誤差 |ln t̂ - ln t|** を並べる。")
+    print(f"  {'beta':>7}{'視程 m':>8}{'t 中央':>8}{'|dt|':>8}{'|d ln t|':>10}"
+          f"{'A 角度':>8}{'PSNR 霞':>9}{'PSNR 除霞':>10}{'利得':>8}{'オラクル':>9}")
     beta_rows = []
-    for beta in (0.005, 0.010, 0.020, 0.040, 0.080):
-        i2, j2, t2, d2 = build_scene(beta=beta)
+    for beta in (0.0025, 0.005, 0.0075, 0.010, 0.020, 0.040, 0.080):
+        i2, j2, t2, _d2 = build_scene(beta=beta)
         a2 = airlight_dcp(i2)
         te = transmission_dcp(i2, a2)
         p_raw = psnr_masked(i2, j2)
         p_dcp = psnr_masked(recover(i2, a2, te), j2)
         p_or = psnr_masked(recover(i2, A_TRUE, t2), j2)
         tm = float(np.mean(np.abs(te - t2)))
-        beta_rows.append((beta, tm, p_raw, p_dcp, p_or))
-        print(f"  {beta:>7.3f}{3.912 / beta:>8.0f}{np.median(t2):>8.4f}{tm:>8.4f}"
-              f"{angle_deg(a2, A_TRUE):>8.3f}{p_raw:>9.2f}{p_dcp:>10.2f}{p_or:>13.2f}")
-    print("  → 霞が濃いほど除霞の**利得**は増えるが、透過率の誤差も増える。")
-    print("     オラクルとの差が開き続けるのは、濃い霞ほど t の推定が難しいから。")
+        od = float(np.mean(np.abs(np.log(np.clip(te, 1e-3, 1.0))
+                                  - np.log(np.clip(t2, 1e-3, 1.0)))))
+        beta_rows.append((beta, tm, od, p_raw, p_dcp, p_or))
+        print(f"  {beta:>7.4f}{3.912 / beta:>8.0f}{np.median(t2):>8.4f}{tm:>8.4f}{od:>10.4f}"
+              f"{angle_deg(a2, A_TRUE):>8.3f}{p_raw:>9.2f}{p_dcp:>10.2f}"
+              f"{p_dcp - p_raw:>+8.2f}{p_or:>9.2f}")
+    cross = [r for r in beta_rows if r[4] <= r[3]]
+    print(f"  → **薄い霞では除霞が害になる**。利得が負に転じるのは beta <= "
+          f"{max(r[0] for r in cross) if cross else float('nan'):.4f}"
+          f"(視程 {3.912 / max(r[0] for r in cross):.0f} m 以上)。")
+    print("     絶対誤差 |dt| は beta とともに**減る**が、これは t が 0 に潰れるだけの見かけ。")
+    print("     光学的深さで測ると単調に増えていて、そちらが実際の難しさに対応する。")
 
     print("\n=== 6. 崖 (b)(d) 白い物体 —— 大気光の推定が壊れる条件 ===")
     print("  白い車両(反射率 0.96、深度 18 m)の面積率を振る。空は常に画面内にある。")
