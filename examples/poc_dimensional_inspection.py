@@ -927,10 +927,12 @@ def section_cliff_chamfer():
     width, centre, half_base, psf = 160, 79.5, 45.25, 1.2
     print(f"\n  底面の半幅 {half_base} px 固定、PSF sigma {psf}")
     print(f"  {'縁':>8}{'寸法':>7}{'上面幅(真)':>12}{'底面幅(真)':>12}"
-          f"{'M エッジ数':>11}{'M 幅':>10}{'F 幅':>10}{'定義の幅':>10}")
+          f"{'M エッジ数':>11}{'M 幅':>10}{'F 幅':>10}{'50% 予測':>10}")
     spread = {}
+    jump = None
+    prev = None
     for kind in ("chamfer", "fillet"):
-        for size in (2.0, 4.0, 6.0, 8.0):
+        for size in (2.0, 3.0, 4.0, 5.0, 6.0, 8.0):
             prof = _front_lit_profile(width, centre, half_base, kind, size, psf)
             img = np.tile(prof[None, :], (24, 1))
             ms = m1.gen_measure_rectangle2(12, centre, 0.0, 70, 1, img.shape)
@@ -940,18 +942,35 @@ def section_cliff_chamfer():
             p50 = pairs_50(prof, det_sigma=1.0, plateau=max(1.2, size))
             wf = p50[0]["width"] if p50 else float("nan")
             w_top, w_base = 2 * (half_base - size), 2 * half_base
-            spread[(kind, size)] = (wm, wf, w_top, w_base)
+            # 50% 交差の予測: 面取りは cos45=0.707 > 0.5 なので外側の段で切れる
+            # (= 底面幅)。丸みは sqrt(1-u^2)=0.5 -> u=sqrt(3)/2 の位置。
+            pred = w_base if kind == "chamfer" else \
+                2 * (half_base - size * (1.0 - math.sqrt(3.0) / 2.0))
+            spread[(kind, size)] = (wm, wf, w_top, w_base, pred)
+            if kind == "chamfer" and prev is not None and jump is None \
+                    and abs(wm - prev[1]) > 5.0:
+                jump = (prev[0], size, prev[1], wm)
+            if kind == "chamfer":
+                prev = (size, wm)
             print(f"  {kind:>8}{size:7.1f}{w_top:12.2f}{w_base:12.2f}"
-                  f"{len(ed):11d}{wm:10.3f}{wf:10.3f}{w_base - w_top:10.2f}")
+                  f"{len(ed):11d}{wm:10.3f}{wf:10.3f}{pred:10.2f}")
 
     print("\n  読み方:")
-    print("  * 面取りは **エッジを 2 本に増やす**(上面/面取りの境と、面取り/側面の境)。")
-    print("    キャリパーは最初の対を返すので、答えは黙って『上面の幅』側に寄る。")
-    print("  * 丸みは 1 本のなだらかな遷移になり、50% 交差は 0.87 x 半径 の位置")
-    print("    (sqrt(1-u^2) = 0.5 -> u = 0.866)に落ちる。上面幅でも底面幅でもない。")
-    wm8, wf8, wt8, wb8 = spread[("fillet", 8.0)]
+    if jump:
+        print(f"  * ★面取りが PSF に対して大きくなると、キャリパーの答えが **黙って飛ぶ**。")
+        print(f"    面取り {jump[0]:.0f} px では {jump[2]:.2f}(底面幅 {2 * half_base:.2f} 側)、")
+        print(f"    面取り {jump[1]:.0f} px では {jump[3]:.2f}(上面幅 "
+              f"{2 * (half_base - jump[1]):.2f} 側)—— "
+              f"{abs(jump[3] - jump[2]):.1f} px の跳び。")
+        print("    エラーも警告も出ない。面取りが分解できた瞬間にエッジが 2 本になり、")
+        print("    『最初の対』の意味が変わるだけ。**寸法が段でジャンプする不良は、")
+        print("    部品ではなく縁の分解能が変わったせいかもしれない。**")
+    print("  * 丸みはエッジを増やさず、なだらかな 1 本の遷移になる。50% 交差は")
+    print("    sqrt(1-u^2) = 0.5 -> u = sqrt(3)/2 の位置に落ちる —— 上面幅でも")
+    print("    底面幅でもない第三の値で、しかも『それらしい』ので疑われない。")
+    wm8, wf8, wt8, wb8, pr8 = spread[("fillet", 8.0)]
     print(f"  * 丸み rf=8 px の実例: 上面幅 {wt8:.2f} / 底面幅 {wb8:.2f} / "
-          f"50% 交差 {wf8:.2f}。")
+          f"50% 交差 {wf8:.2f}(予測 {pr8:.2f})。")
     print(f"    **定義を宣言しないと {wb8 - wt8:.1f} px = {um(wb8 - wt8):.0f} um 動く。**")
     print("    サブピクセルで 0.01 px を争う前に、ここで 3 桁大きい量が動いている。")
     return spread
