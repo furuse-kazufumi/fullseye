@@ -521,23 +521,30 @@ def main():
     assert "通る" in verdicts and "拒否" in verdicts, "雑音で境界が見えない"
     assert verdicts.index("拒否") > verdicts.index("通る"), "拒否が先に来ている"
 
-    # 8-(b) 全体オフセットは無害(方位だけ δ 狂う)/ 1 枚ずれは有害
+    # 8-(b) 全体オフセットは無害(方位だけ δ 狂う)/ 1 枚ずれは有害だが小さい
     for delta, (e_all, az_err, e_one) in cal_rows.items():
         assert e_all < 1e-14, \
             f"全体オフセット {delta} 度で分離が壊れた: {e_all:.3e}"
         assert abs(az_err - delta) < 1e-6, \
             f"全体オフセット {delta} 度で方位誤差が δ に一致しない: {az_err:.4f}"
-    assert cal_rows[1.0][2] > 1e3 * cal_rows[0.0][2] + 1e-4, \
-        "1 枚だけの角度誤差が無害になっている(想定外)"
-    assert cal_rows[5.0][2] > cal_rows[1.0][2] > cal_rows[0.1][2], \
+    assert cal_rows[1.0][2] > 1e6 * cal_rows[0.0][2], \
+        "1 枚だけの角度誤差が全体オフセットと区別できない(想定外)"
+    assert 1e-5 < cal_rows[1.0][2] < 1e-3, \
+        f"1 枚 1 度ずれの誤差が想定の桁でない: {cal_rows[1.0][2]:.3e}"
+    ones = [cal_rows[d][2] for d in (0.1, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0)]
+    assert all(b > a for a, b in zip(ones, ones[1:])), \
         "1 枚ずれの誤差が δ で単調に増えない"
+    assert cal_rows[20.0][2] < bias70, \
+        "20 度ずれても 70 度の偏りに届かない、という所見が崩れた"
 
-    # 8-(c) 飽和は例外なしで静かに悪化する
-    assert sat_rows[1.0][0] == 0.0, "露光 1 倍で既に飽和している"
-    assert sat_rows[6.0][0] > 0.05, "露光 6 倍でも飽和しない(シーンが暗すぎる)"
+    # 8-(c) 飽和は例外なしで静かに悪化する(拡散側は最後まで飽和させない)
+    assert (0.5 * diffuse).max() < 1.0, "拡散だけで飽和している(実験設計が壊れた)"
+    assert sat_rows[1.0][0] == 0.0, "光源 1 倍で既に飽和している"
+    assert sat_rows[8.0][0] > 0.03, "光源 8 倍でも飽和しない(シーンが暗すぎる)"
     assert all(v[1] == "無し" for v in sat_rows.values()), \
         "飽和で例外が出た(所見 c の前提が変わった)"
-    assert sat_rows[6.0][2] > 1e3 * sat_rows[1.0][2], "飽和で悪化していない"
+    assert sat_rows[8.0][2] > 1e3 * sat_rows[1.0][2], "飽和で悪化していない"
+    assert sat_rows[8.0][2] > bias70, "飽和が 70 度の偏りにすら届かない"
 
     # 9. ゼロ点の妥当性(そもそもゼロ点が真値そのものになっていないこと)
     assert rmse(null_no_separation(frames), d_true) > 1e-3

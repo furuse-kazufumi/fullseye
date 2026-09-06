@@ -379,6 +379,7 @@ def main():
     cube = P.dtof_cube_simulate(depth_map, BINS, BIN_PS, signal_photons=20.0,
                                 ambient_photons=5.0, irf_fwhm_ps=IRF_FWHM_PS,
                                 seed=0)
+    timing = {}
     for label, fn, reps in (
             ("tcspc_simulate (256 ビン)", lambda: trial(200.0, 20.0, 1), 1000),
             ("dtof_depth peak", lambda: P.dtof_depth(h, BIN_PS, mode="peak"), 1000),
