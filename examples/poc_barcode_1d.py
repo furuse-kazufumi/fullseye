@@ -818,24 +818,24 @@ def section10_tool_gaps() -> None:
     e3 = fs.vol_edge_probe(vol, (0, CENTER_ROW, 0), (0, CENTER_ROW, w - 1),
                            sigma=1.0, threshold=0.2)
     assert e3 and not isinstance(e3[0]["polarity"], str), e3[0] if e3 else e3
-    print("  (d) **同じ「極性」が 2 つの型で返る**: `measure_pos` は文字列")
+    print("  (e) **同じ「極性」が 2 つの型で返る**: `measure_pos` は文字列")
     print("      (\"positive\"/\"negative\")、`vol_edge_probe` は ±1 の数値。")
     print("      どちらも 3 点放物線のサブピクセルエッジで、中身は同じ概念。")
     print("      呼び分ける側が毎回変換する。")
 
-    # (e) 成功 / 誤読 / 読み取り不能 を分けて数える枠組みが無い。
+    # (f) 成功 / 誤読 / 読み取り不能 を分けて数える枠組みが無い。
     for nm in ("classification_report", "confusion_counts", "decode_report"):
         assert not hasattr(fs, nm) and not hasattr(fs.ledger, nm), nm
-    print("  (e) 「成功 / 誤読 / 読み取り不能」のような**3 通りの採点**を集計する")
+    print("  (f) 「成功 / 誤読 / 読み取り不能」のような**3 通りの採点**を集計する")
     print("      口が無い。この repo の PoC が繰り返し必要としている型なのに、")
     print("      毎回 Counter を手で書いている(4 章がまさにそれ)。")
 
-    # (f) 在って助かったもの
+    # (g) 在って助かったもの
     assert hasattr(fs.ledger, "gen_measure_rectangle2") and hasattr(fs.ledger, "measure_pos")
-    print("  (f) 在って助かった: `gen_measure_rectangle2` + `measure_pos`。")
+    print("  (g) 在って助かった: `gen_measure_rectangle2` + `measure_pos`。")
     print("      サブピクセルのエッジ位置が 1 行で取れるので、手法 5 は")
-    print("      **自前の微分も零交差も書かずに**組めた。3 章で分かるとおり")
-    print("      低コントラストにいちばん強い(勾配だけを見ているから)。")
+    print("      **自前の微分も零交差も書かずに**組めた((d) の σ 探索を除けば)。")
+    print("      3 章のとおり低コントラストに最も強い(勾配だけを見ているから)。")
 
 
 def main() -> None:

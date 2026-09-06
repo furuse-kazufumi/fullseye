@@ -93,15 +93,16 @@ def make_nuclei(n=N_NUC, frac4=0.30, seed=7, sep=1.20):
     area = A2N * (AREA_RATIO ** ((ploidy - 2) / 2.0)) * np.exp(rng.normal(0, AREA_CV, n))
     dna = D0 * (ploidy / 2.0) * np.exp(rng.normal(0, DNA_CV, n))
     req = np.sqrt(area / np.pi)
-    cy, cx, tries = [], [], 0
+    cy, cx = [], []
     for i in range(n):
-        while True:
-            tries += 1
+        # 試行の予算は**核ごと**に持つ(全体で持つと、後半の核が予算切れで
+        # 素通りして「疎に撒いたはずが融合している」という合成側の嘘になる)。
+        for t in range(600):
             y = rng.uniform(req[i] + 3, N_PX - req[i] - 3)
             x = rng.uniform(req[i] + 3, N_PX - req[i] - 3)
             ok = all((y - cy[j]) ** 2 + (x - cx[j]) ** 2 >= (sep * (req[i] + req[j])) ** 2
                      for j in range(len(cy)))
-            if ok or tries > 80 * n:
+            if ok or t == 599:
                 cy.append(y)
                 cx.append(x)
                 break
