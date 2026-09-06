@@ -780,9 +780,9 @@ def main():
     print("     過統合が打ち消し合って『どちらも問題なし』に見えてしまう。")
     print("  " + pad("大きさ比", 8, right=False) + pad("面積比", 8)
           + pad("指定可能な最小 h", 18)
-          + "".join(pad(f"h={h}", 17) for h in HS_SIZE) + pad("形の事前知識", 18))
+          + "".join(pad(f"h={h}", 23) for h in HS_SIZE) + pad("形の事前知識", 18))
     print("  " + pad("", 8, right=False) + pad("", 8) + pad("[px]", 18)
-          + "".join(pad("大型割/小型割/小型統合", 17) for _ in HS_SIZE)
+          + "".join(pad("大型割/小型割/統合", 23) for _ in HS_SIZE)
           + pad("大型割/小型割/統合", 18))
     size_tab = {}
     for r in RATIOS:
@@ -814,7 +814,7 @@ def main():
                 preds = [m_ws_h(s["img"], fg, h_px=h) for s, fg in zip(scs, fgs)]
             v = by_class(preds)
             size_tab[(r, h)] = v
-            cells.append(pad("%.1f/%.1f/%.1f" % v, 17))
+            cells.append(pad("%.1f / %.1f / %.1f" % v, 23))
         v = by_class([m_shape(s["img"], fg, h_px=H_DEF) for s, fg in zip(scs, fgs)])
         size_tab[(r, "shape")] = v
         size_tab[(r, "n_big")] = int((scs[0]["kind"] == KIND_LARGE).sum())
@@ -962,9 +962,9 @@ def main():
     print("     混ぜると、雑音で前景が粒々になった場面が『過分割が増えた』に見える。")
     NOISE_METHODS = (METHODS[0], METHODS[2], METHODS[3])
     print("  " + pad("条件", 24, right=False) + pad("前景率", 9)
-          + "".join(pad(n.split("(")[0][:12], 22) for n, _ in NOISE_METHODS))
+          + "".join(pad(n.split("(")[0][:12], 26) for n, _ in NOISE_METHODS))
     print("  " + pad("", 24, right=False) + pad("", 9)
-          + "".join(pad("偏り/過分割/過統合/偽物", 22) for _ in NOISE_METHODS))
+          + "".join(pad("偏り/分割/統合/偽", 26) for _ in NOISE_METHODS))
     noise_tab = {}
     truth_fg = None
     for label, kw in (("基準", {}),
@@ -984,7 +984,7 @@ def main():
             r = summarize([evaluate(s, fn(s["img"], fg)) for s, fg in zip(scs, fgs)])
             noise_tab[(label, name)] = r
             cells.append(pad(f"{r['bias']:+.0f}/{r['split']:.0f}/"
-                             f"{r['merge']:.0f}/{r['spurious']:.0f}", 22))
+                             f"{r['merge']:.0f}/{r['spurious']:.0f}", 26))
         noise_tab[(label, "fg")] = fgr
         print("  " + pad(label, 24, right=False) + pad(f"{100 * fgr:.1f} %", 9)
               + "".join(cells))
@@ -1031,7 +1031,8 @@ def main():
         print("  " + pad(rule, 22, right=False) + pad(f"{edge_tab[rule][0]:.1f}", 10)
               + pad(f"{edge_tab[rule][1]:.1f}", 10)
               + pad(f"{edge_tab[rule][2]:+.1f}", 9)
-              + pad(f"{edge_tab[rule][3]:.1f}", 11) + pad(note, 24, right=False))
+              + pad(f"{edge_tab[rule][3]:.1f}", 11) + "  "
+              + pad(note, 24, right=False))
     spread = max(v[1] for v in edge_tab.values()) - min(v[1] for v in edge_tab.values())
     print(f"  → **規約を変えるだけで推定個数が {spread:.1f} 個動く**"
           f"(真値 {edge_tab['全部数える'][0]:.0f} 個の"
