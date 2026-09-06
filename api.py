@@ -1287,6 +1287,78 @@ def _policy(on_error):
     return p
 
 
+# ---- カラー画像を 3 本目の空間軸として扱う op --------------------------------- #
+# `_NDIM_OK["image"] = (2, 3)` は 3-D をわざと通している。ところが中の実装は
+# `ndimage.*` を素通しするので、(H, W, 3) は「高さ 3 の体積」として扱われ、
+# **近傍演算が色を跨ぐ**。
+#
+# 2026-09-06 の全数計測(因果の形の探針: R と G は両方の入力で 0 と 1 を含む
+# よう固定し、**B の中身だけ**を (0,1) の内側で 2 通りに変えて R の出力が動くかを
+# 見る。正規化は配列全体の最大で割るので、min/max を動かさないのがこの探針の要)。
+# 882 op のうち RGB の形のまま返る 472 op を数えて:
+#
+#     跨がない 372 / **跨いだ 100** / 形が変わる 370 / 例外 43
+#     跨いだ 100 の宣言入力型: image 78 / region 11 / volume 4 / color 3 /
+#                              rgbimage 2 / video 2
+#
+# volume・color・rgbimage・video は 3-D を受けるのが仕様なので正しい。
+# **image と region の 89 本が不具合**で、下はそのうち image の 78 本。
+#
+# ★ **いまのところカラー画像に対して正しい呼び方が存在しない**: まとめて渡すと
+#   色が混ざり、チャネルごとに 3 回呼ぶと自己正規化する op が各チャネルを
+#   自分の最大で割ってチャネル間の比を壊す(灰色エッジ法の角度誤差が
+#   自前 Sobel 1.03 度 -> 画像ごと 4.17 度 -> ch ごと 27.86 度、ゼロ点 29.14 度)。
+#   どちらに倒すかは**契約の決め**なので、ここでは既定の数値は 1 つも変えず、
+#   `on_error="raise"` のときだけ拒否し、既定では台帳に記録して見えるようにする。
+#   詳細と選択肢は docs/KNOWN_ISSUES.md。
+_CHANNEL_UNSAFE_IMAGE_OPS = frozenset((
+    "bilateral_filter", "bothat", "corner_response", "cv_bilateral",
+    "deviation_image", "diff_of_gauss", "dog", "dots_image",
+    "dual_rank", "eliminate_min_max", "eliminate_sp", "fft_generic",
+    "fft_image", "fft_image_inv", "gauss_filter", "gauss_image",
+    "gaussian", "gclose", "gdilate", "gray_dilation_rect",
+    "gray_range_rect", "guided_filter", "hx_region_to_mean", "isotropic_diffusion",
+    "laplace_of_gauss", "log", "macro_binarize", "max_filter",
+    "mean_box", "mean_curvature_flow", "mean_image", "mean_sp",
+    "median", "median_image", "median_separate", "median_weighted",
+    "morph_grad", "percentile", "phase_deg", "phase_rad",
+    "power_byte", "power_ln", "power_real", "rank_image",
+    "rank_rect", "rft_generic", "sigma_image", "simulate_defocus",
+    "sk_butterworth", "sk_dog", "sk_farid", "sk_frangi",
+    "sk_hessian", "sk_hessian_det", "sk_meijering", "sk_nlm",
+    "sk_rolling_ball", "sk_tv", "smooth_image", "std_filter",
+    "texture_laws", "trimmed_mean", "xmh_regmin", "xmh_selfmatch",
+    "xsitk_curv_aniso_diff", "xsitk_curvature_flow", "xsitk_minmax_curv_flow", "xsk2_inv_gauss_grad",
+    "xsk3_integral_image", "xsk_hessian_eig", "xsk_inpaint", "xsk_meijering",
+    "xsk_sato", "xsk_unwrap_phase", "xsp_dct", "xsp_dct_denoise",
+    "xsp_gauss_grad_mag", "xsp_morph_laplace",
+))
+
+#: 同じ穴だが宣言入力型が region のもの(二値も 2-D なので同様に混ざる)。
+_CHANNEL_UNSAFE_REGION_OPS = frozenset((
+    "closest_point_transform", "dilation_seq", "dist_transform", "distance_transform",
+    "morph_skeleton", "reg_dilate", "sk_skeleton", "skeleton",
+    "xsitk_signed_maurer_dist", "xsk2_isotropic_close", "xsp_chamfer_dist",
+))
+
+_CHANNEL_UNSAFE_OPS = _CHANNEL_UNSAFE_IMAGE_OPS | _CHANNEL_UNSAFE_REGION_OPS
+
+
+def _check_channel_axis(v, op):
+    """(H, W, 3|4) を 3 本目の空間軸として扱ってしまう op を指す例外、または None。"""
+    if op.name not in _CHANNEL_UNSAFE_OPS:
+        return None
+    arr = v if isinstance(v, np.ndarray) else None
+    if arr is None or arr.ndim != 3 or arr.shape[-1] not in (3, 4):
+        return None
+    return ValueError(
+        "op %r は 2-D の %s 用で、(H, W, %d) を渡すと**色軸を 3 本目の空間軸として "
+        "扱う**(近傍演算が色を跨ぐ。2026-09-06 の全数計測で image 78 本 / "
+        "region 11 本がこの形)。チャネルごとに呼ぶ手もあるが、自己正規化する op は "
+        "チャネル間の比を壊す —— docs/KNOWN_ISSUES.md を読んでから決めること。"
+        % (op.name, op.in_sort, arr.shape[-1]))
+
+
 def _check_input_sort(v, op):
     """Exception describing a clearly wrong input for *op*, or None (light, ndim-level check)."""
     ok = _NDIM_OK.get(op.in_sort)
@@ -1305,7 +1377,7 @@ def _check_input_sort(v, op):
 
 
 def _guard_input(v, op, policy):
-    err = _check_input_sort(v, op)
+    err = _check_input_sort(v, op) or _check_channel_axis(v, op)
     if err is None:
         return
     if policy == "raise":
