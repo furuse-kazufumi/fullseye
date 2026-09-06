@@ -466,7 +466,7 @@ def section_night() -> dict:
 
     hhat = homography_from_marks()
     out = {}
-    for sig in (0.0, 0.005, 0.01, 0.02):
+    for sig in (0.0, 0.01, 0.03, 0.06):
         errs, ncol = [], []
         for k, h in enumerate((0.6, 1.0, 1.4)):
             img = render(h, gain=0.25, noise=sig, seed=17 + k)
