@@ -985,6 +985,57 @@ def _prominence(peak: float, med: float) -> float:
         return peak / med
     return float("inf") if peak > 0.0 else 0.0
 
+
+#: ピーク近傍の雑音床を測る窓(片側 [Hz])と、ピーク自身を除く幅(片側 [Hz])。
+#: 50 Hz は軸受の欠陥高調波(107, 214, 321 …)を窓に入れないための値で、
+#: 5 Hz はピークの裾(窓関数と有限長による広がり)を雑音床に数えないための値。
+_LOCAL_HALF_HZ = 50.0
+_LOCAL_EXCLUDE_HZ = 5.0
+#: 窓が細かすぎる(短い記録)ときの下限[ビン]。中央値が 2-3 点では意味を持たない。
+_LOCAL_MIN_BINS = 8
+
+
+def _local_prominence(mag, freqs, i):
+    """ピークが**近傍**からどれだけ立っているか。``(比, 近傍の中央値)`` を返す。
+
+    :func:`_prominence` の大域中央値は、**帯域を狭めると壊れる**。狭い帯域を
+    通すとスペクトルの大半が床に落ちるので中央値が小さくなり、比だけが跳ね上がる。
+    2026-09-06 の実測(25600 Hz / 1 s、2900-3100 Hz 復調):
+
+    ==================  ==============  ==============
+    入力                大域の突出度    近傍の突出度
+    ==================  ==============  ==============
+    欠陥 m=0.5                  9433.8           33.86
+    欠陥 m=0.05                 1074.2            3.60
+    純白色雑音                 11375.6            2.18
+    純白色雑音(別種)           12329.9            3.02
+    定数(何も無い)             6718.8            3.01
+    ==================  ==============  ==============
+
+    **純雑音のほうが本物の欠陥より大域突出度が高い** —— 順序が逆転している。
+    広い帯域(2000-4000 Hz)では逆転しない(欠陥 10018 対 雑音 402)ので、
+    「白色雑音は 365」と書いた既存の表は**その帯域幅でしか成り立たない**。
+    近傍の突出度は両方の帯域幅で単調(雑音と定数はどちらも 2.2-3.3 に収まる)。
+
+    返す比は「ピーク / 近傍の中央値」。窓は :data:`_LOCAL_HALF_HZ` 片側、
+    ピーク自身の裾 :data:`_LOCAL_EXCLUDE_HZ` を除く。近傍が空、または中央値が
+    0 のときは :func:`_prominence` と同じ場合分け(0/0 は 0.0、正/0 は inf)。
+    """
+    n = int(mag.size)
+    if n < 3 or freqs.size < 2:
+        return 0.0, 0.0
+    df = float(freqs[1] - freqs[0])
+    if not (df > 0.0):
+        return 0.0, 0.0
+    hw = max(_LOCAL_MIN_BINS, int(_LOCAL_HALF_HZ / df))
+    ex = max(1, int(_LOCAL_EXCLUDE_HZ / df))
+    lo, hi = max(0, i - hw), min(n, i + hw + 1)
+    left = mag[lo:max(lo, i - ex)]
+    right = mag[min(hi, i + ex + 1):hi]
+    nb = np.concatenate([left, right]) if (left.size or right.size) else mag[:0]
+    med = float(np.median(nb)) if nb.size else 0.0
+    return _prominence(float(mag[i]), med), med
+
 def envelope_spectrum(x, rate, low, high, order=4, n_peaks=5):
     """Band-pass, demodulate, transform — where a bearing defect actually shows.
 
