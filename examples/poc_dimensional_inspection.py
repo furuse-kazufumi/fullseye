@@ -1288,7 +1288,7 @@ def main():
         f"cos 補正で戻らない: {ang_corr[:5]}"
     assert abs(zz[-1]) > 3 * max(abs(mm[-1]), abs(ff[-1])), \
         "照明傾斜で大域しきい値が崩れていない(崖が再現していない)"
-    wm8, wf8, wt8, wb8 = spread[("fillet", 8.0)]
+    wm8, wf8, wt8, wb8, pr8 = spread[("fillet", 8.0)]
     assert (wb8 - wt8) > 20 * abs(slot_bias["M"]), \
         "縁の定義の幅がサブピクセル誤差を圧倒していない"
     assert tr_same and gen_same and align_ok and fz_ok, \
