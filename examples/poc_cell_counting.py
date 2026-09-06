@@ -1258,13 +1258,22 @@ def main():
     assert all(hmins[i] <= hmins[i + 1] + 1e-9 for i in range(len(hmins) - 1)), hmins
     assert hmins[-1] > 2.0 * hmins[0], hmins
 
-    # (7) 崖 (d) 雑音は過分割を、背景ムラは前景率を壊す —— 効き方が違う
-    n_base = noise_tab[("基準", "距離変換+分水嶺(全極大)")]
-    n_noisy = noise_tab[("光子 1/16(雑音 4 倍)", "距離変換+分水嶺(全極大)")]
-    assert n_noisy["split"] > n_base["split"] + 3.0, (n_base, n_noisy)
+    # (7) 崖 (d) 雑音は「偽物」を、背景ムラは前景率と「過統合」を壊す —— 効き方が違う
+    zname = METHODS[0][0]
+    n_base = noise_tab[("基準", zname)]
+    n_noisy = noise_tab[("光子 1/9(雑音 3 倍)", zname)]
+    n_shade = noise_tab[("背景ムラ 5 倍", zname)]
+    assert n_noisy["spurious"] > 3.0 * (n_base["spurious"] + 1.0), (n_base, n_noisy)
+    assert n_shade["merge"] > n_base["merge"] + 5.0, (n_base, n_shade)
+    # 雑音は前景率をほとんど動かさない / 背景ムラは大きく動かす = 別の壊れ方
     fg_base = noise_tab[("基準", "fg")]
     fg_shade = noise_tab[("背景ムラ 5 倍", "fg")]
-    assert abs(fg_shade - truth_fg) > abs(fg_base - truth_fg) + 0.01, (fg_base, fg_shade)
+    fg_noisy = noise_tab[("光子 1/9(雑音 3 倍)", "fg")]
+    assert abs(fg_shade - truth_fg) > abs(fg_noisy - truth_fg) + 0.05, \
+        (fg_base, fg_noisy, fg_shade, truth_fg)
+    # 面積の下限を持つ手法だけが雑音の偽物を落とせる
+    assert noise_tab[("光子 1/9(雑音 3 倍)", METHODS[3][0])]["spurious"] \
+        < 0.2 * n_noisy["spurious"], noise_tab[("光子 1/9(雑音 3 倍)", METHODS[3][0])]
 
     # (8) 崖 (e) 縁: 規約を変えると推定が動くが、真値も同じ規約なら偏りは小さい
     assert spread > 2.0, spread
