@@ -407,11 +407,17 @@ def main():
     print("     基準光源の行だけ見ると、全手法が「何もしない」の 0.00 度に負けている。")
 
     # ------------------------------------------------------------------ #
-    print("\n=== 3. 分布で見る —— 11 光源 x 4 場面 = 44 枚 ===")
     variants = (("素のチャート", dict()),
                 ("白パッチ無し", dict(keep=NO_WHITE)),
                 ("淡彩のみ", dict(keep=PALE_ONLY)),
-                ("有彩色 50 %", dict(bias_frac=0.5)))
+                ("有彩色 50 %", dict(bias_frac=0.5)),
+                ("有彩色 50 % + 白なし", dict(bias_frac=0.5, keep=NO_WHITE)),
+                ("飽和(露出 1.5)", dict(exposure=1.5)),
+                ("雑音 σ=0.01", dict(noise=0.01, seed=31)),
+                ("暗い(露出 0.35)", dict(exposure=0.35)))
+    print(f"\n=== 3. 分布で見る —— {len(ILLUMINANTS)} 光源 x {len(variants)} 場面 = "
+          f"{len(ILLUMINANTS) * len(variants)} 枚 ===")
+    print("  場面: " + " / ".join(n for n, _ in variants))
     ens = {n: [] for n, _ in METHODS}
     for _, kw in variants:
         for _, spd in ILLUMINANTS:
