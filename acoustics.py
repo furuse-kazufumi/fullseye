@@ -1782,6 +1782,9 @@ def order_spectrum(x, rate, rpm, samples_per_rev=64, revolutions=None,
         #  わずかに残って med > 0 になっていただけで、**不具合は前からあった**。)
         "peak_prominence": _prominence(peak, med),
         "noise_floor": med,
+        # 次数軸でも同じ落とし穴がある(窓は次数単位)。理由は _local_prominence。
+        "local_prominence": loc_prom,
+        "local_noise_floor": loc_med,
         "peak_orders": orders[idx].copy(), "peak_amplitudes": body[idx].copy(),
         "resolution_order": 1.0 / float(whole),
         "whole_revolutions": whole, "samples_per_rev": spr,
