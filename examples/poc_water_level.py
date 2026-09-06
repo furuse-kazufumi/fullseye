@@ -103,7 +103,7 @@ def i2w(u, v, hmat=None):
 
 
 #: 標定点 —— (X, Z, u, v)。4 点が同一直線に乗らないよう 2 本の柱から取る。
-CAL_MARKS = [(x, z) + tuple(float(a) for a in w2i(x, z))
+CAL_MARKS = [(x, z, float(w2i(x, z)[0][0]), float(w2i(x, z)[1][0]))
              for x in (X_GAUGE, X_REF) for z in Z_CAL]
 
 
