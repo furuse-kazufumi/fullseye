@@ -556,7 +556,158 @@ def blob_boundaries(labels: Any) -> np.ndarray:
 
 
 # --------------------------------------------------------------------------- #
-# 5. 見る                                                                      #
+# 5. 割る —— 触れ合って 1 個になった塊を戻す                                    #
+# --------------------------------------------------------------------------- #
+def blob_distance(region: Any, spacing: float = 1.0) -> np.ndarray:
+    """前景の各画素から**いちばん近い背景まで**の距離。単位は ``spacing`` 倍。
+
+    ``scipy.ndimage.distance_transform_edt`` そのもの。**わざわざ口を作った
+    理由**は、進化 op の ``distance_transform`` が最大値で正規化して返すため
+    (``poc_cell_counting`` の実測: 出力の最大が常に 1.0)、**画素単位の距離が
+    取れない**こと。分水嶺の種を作るには絶対値が要る。
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> m = np.zeros((21, 21), bool); m[5:16, 5:16] = True
+    >>> float(blob_distance(m).max())      # 11x11 の正方形の中心まで
+    6.0
+    """
+    m = _as_binary(region, "blob_distance")
+    sp = _positive_float(spacing, "blob_distance", "spacing")
+    return np.asarray(ndimage.distance_transform_edt(m), np.float64) * sp
+
+
+def _reconstruct_by_dilation(seed: np.ndarray, mask: np.ndarray) -> np.ndarray:
+    """測地膨張による再構成(seed <= mask)。``mask`` の外へは広がらない。"""
+    fp = np.ones((3, 3), bool)
+    prev = seed
+    while True:
+        cur = np.minimum(ndimage.grey_dilation(prev, footprint=fp), mask)
+        if np.array_equal(cur, prev):
+            return cur
+        prev = cur
+
+
+def blob_seeds(distance: Any, h: float, connectivity: int = 8) -> np.ndarray:
+    """h-maxima の種。**``h`` は ``distance`` と同じ単位の絶対値**。
+
+    「高さ ``h`` 以上そびえている極大」だけを残し、連結成分に番号を振って返す。
+    融合した塊を割るときの種として使う。
+
+    **既存の ``fs.op.xsk2_h_maxima`` と違う点**(``poc_cell_counting`` が
+    記録した穴):
+
+    * あちらは入力を ``[0, 1]`` に**切り詰める**ので、生の距離マップを渡すと
+      壊れる(2 px も 20 px も 1.0 になる)。ここは切り詰めない。
+    * あちらの ``h`` は ``0.05 + 0.3a`` = **正規化画像に対する比**なので、
+      画像に大きい物体が 1 つ入るだけで小さい物体側の実効 ``h`` が上がる
+      (実測で下限が 0.42 → 0.80 px へ動いた)。ここは画素(または物理単位)。
+
+    **速さ**: 再構成は**連結成分ごとの外接箱の中でだけ**回す。背景を通る
+    伝播が消えるので、512x512 に 200 個の円で **237.7 ms → 15.3 ms(15.5 倍)**、
+    結果は全画素一致(2026-09-06 実測)。
+
+    Parameters
+    ----------
+    distance : array_like
+        2-D の実数場。ふつうは :func:`blob_distance` の出力。
+    h : float
+        そびえの高さ。``distance`` と同じ単位で、**0 より大きいこと**。
+        大きくすると種が減る(= 割りすぎが減り、割り残しが増える)。
+    connectivity : {4, 8}
+        極大の連結の取り方。
+
+    Returns
+    -------
+    numpy.ndarray
+        ``int32`` のラベル画像(背景 0、種 1..n)。
+    """
+    f = np.asarray(distance, np.float64)
+    if f.ndim != 2:
+        raise ValueError(
+            f"blob_seeds: distance must be a 2-D field, got ndim={f.ndim}")
+    if not np.all(np.isfinite(f)):
+        raise ValueError("blob_seeds: distance contains NaN or Inf")
+    hh = _positive_float(h, "blob_seeds", "h")
+    if connectivity not in CONNECTIVITIES:
+        raise ValueError(
+            f"blob_seeds: connectivity must be 4 or 8, got {connectivity!r}")
+
+    st = np.ones((3, 3), bool)
+    lab, _ = ndimage.label(f > 0, structure=st)
+    out = np.zeros(f.shape, bool)
+    for idx, sl in enumerate(ndimage.find_objects(lab), start=1):
+        if sl is None:
+            continue
+        pad = (slice(max(sl[0].start - 1, 0), sl[0].stop + 1),
+               slice(max(sl[1].start - 1, 0), sl[1].stop + 1))
+        sub = np.where(lab[pad] == idx, f[pad], 0.0)
+        out[pad] |= (sub - _reconstruct_by_dilation(sub - hh, sub)) > 0
+    seed_st = (st if connectivity == 8
+               else ndimage.generate_binary_structure(2, 1))
+    return np.asarray(ndimage.label(out, structure=seed_st)[0], np.int32)
+
+
+def blob_split(labels: Any, seeds: Any, distance: Any) -> np.ndarray:
+    """種から**高いところ順に**領域を広げて、融合した塊を割る(分水嶺)。
+
+    ``distance`` の高い画素から順に、隣接する既知のラベルを取り込んでいく
+    (immersion 型の分水嶺を、距離の降順で回す形)。**種を持たない塊はその
+    まま残す** —— 割る材料が無いのに消すのは嘘になるため。
+
+    ``segmentation.watersheds_marker`` を使わないのは、**skimage が無い環境で
+    黙って別の算法(マーカーからの最近傍)に落ちる**から。落ちた先は画像を
+    一切見ないので、同じ関数名で違うものが返る。ここは numpy と scipy だけで
+    閉じる。
+
+    Parameters
+    ----------
+    labels : array_like
+        割る対象。:func:`blob_label` の出力(``> 0`` の画素だけが割られる)。
+    seeds : array_like
+        :func:`blob_seeds` の出力。``labels`` の外にある種は無視する。
+    distance : array_like
+        優先度。ふつうは :func:`blob_distance` の出力。
+
+    Returns
+    -------
+    numpy.ndarray
+        ``int32`` のラベル画像。番号は 1 から振り直す。
+    """
+    lab = _as_labels(labels, "blob_split")
+    sd = _as_labels(seeds, "blob_split", "seeds")
+    f = np.asarray(distance, np.float64)
+    if sd.shape != lab.shape or f.shape != lab.shape:
+        raise ValueError(
+            "blob_split: labels %s, seeds %s and distance %s must have the "
+            "same shape" % (lab.shape, sd.shape, f.shape))
+
+    fg = lab > 0
+    cur = np.where(fg, sd, 0).astype(np.int32)      # 領域の外の種は捨てる
+    if not cur.any():
+        return _renumber(lab, np.unique(lab[fg]))   # 種が無ければそのまま
+    fp = np.ones((3, 3), bool)
+    # 距離の高い順に「その高さ以上でまだ番号の無い画素」へ広げる。値の段数は
+    # ふつう数十しかないので、段ごとに膨張が収まるまで回しても十分速い。
+    for level in np.unique(f[fg])[::-1]:
+        allowed = fg & (f >= level)
+        while True:
+            grown = ndimage.grey_dilation(cur, footprint=fp)
+            nxt = np.where((cur == 0) & allowed, grown, cur)
+            if np.array_equal(nxt, cur):
+                break
+            cur = nxt
+    # 種を 1 つも含まなかった塊は、元の 1 個としてそのまま残す
+    left = fg & (cur == 0)
+    if left.any():
+        keep, _ = ndimage.label(left, structure=fp)
+        cur = np.where(left, keep + int(cur.max()), cur)
+    return _renumber(cur, np.unique(cur[cur > 0]))
+
+
+# --------------------------------------------------------------------------- #
+# 6. 見る                                                                      #
 # --------------------------------------------------------------------------- #
 def blob_overlay(image: Any, labels: Any, alpha: float = 0.5,
                  seed: int = 0) -> np.ndarray:

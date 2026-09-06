@@ -414,8 +414,9 @@ def act_sdf3d(nf):
     n = 56
     lin = np.linspace(-1.25, 1.25, n)
     grid = np.stack(np.meshgrid(lin, lin, lin, indexing="ij"), axis=-1)
-    sph = fs.ledger.sphere_sdf(grid, (0.0, 0.0, -0.18), 0.66)
-    box = fs.ledger.box_sdf(grid, (0.0, 0.0, 0.46), (0.40, 0.40, 0.40))
+    sph = fs.ledger.sphere_sdf(grid, (0.0, 0.0, -0.26), 0.60)
+    box = fs.ledger.box_sdf(grid, (0.0, 0.0, 0.34), (0.50, 0.24, 0.30))
+    knob = fs.ledger.sphere_sdf(grid, (0.62, 0.0, 0.30), 0.24)   # 回転が分かる非対称
     K = None
     dlo = dhi = None
     # look_at / auto_view は -Z を見る OpenGL 流。project_points は +Z が前なので
@@ -425,7 +426,8 @@ def act_sdf3d(nf):
     for i in range(nf):
         t = i / nf
         k = 0.18 + 0.13 * np.sin(2.0 * np.pi * t)        # 継ぎ目の丸め半径が動く
-        fld = fs.ledger.sdf_smooth_union(sph, box, float(k))
+        fld = fs.ledger.sdf_smooth_union(fs.ledger.sdf_smooth_union(sph, box, float(k)),
+                                         knob, float(k))
         V, F = fs.marching_cubes(fld, level=0.0)
         # 視点を回すのではなく**メッシュを重心まわりに回す** —— 外接球が変わらない
         # ので auto_view の画角が 1 周を通して一定になる(揺れない)。
@@ -434,7 +436,15 @@ def act_sdf3d(nf):
         ca, sa = np.cos(az), np.sin(az)
         rz = np.array([[ca, -sa, 0.0], [sa, ca, 0.0], [0.0, 0.0, 1.0]])
         Vr = (V - ctr) @ rz.T + ctr
-        pose, K = fs.auto_view(Vr, margin=1.12, width=PANEL, height=PANEL)
+        # auto_view は真上(+Z)からの正対しか置かないので斜め視点を自前で組む。
+        # 距離は外接球が画角に収まる閉形式 dist = r*margin / tan(fov/2)。
+        rad = float(np.linalg.norm(Vr - ctr, axis=1).max())
+        fov = 38.0
+        dist = rad * 1.30 / np.tan(np.deg2rad(fov) / 2.0)
+        el = np.deg2rad(24.0)
+        eye = ctr + dist * np.array([np.cos(el) * 0.94, -np.cos(el) * 0.34, np.sin(el)])
+        pose = fs.look_at(eye, ctr, up=(0.0, 0.0, 1.0))
+        K = fs.intrinsics_from_fov(fov, PANEL, PANEL)
         # ao=True は 1 枚 50 s 掛かるので使わない(全体の 5 分制限に収まらない)。
         # 代わりに ss=2 のスーパーサンプリングで輪郭の品位を確保する。
         beauty = fs.ledger.render_beauty(Vr, F, pose=pose, intrinsics=K, size=PANEL, ss=2,
@@ -455,8 +465,8 @@ def act_sdf3d(nf):
         c = _place(c, beauty, 1)
         c = _place(c, dimg, 2)
         c = _cap(c, 0, "(a) SDF の断面  丸め k = %.3f" % k)
-        c = _cap(c, 1, "(b) render_beauty — 三角形 %d" % len(F))
-        c = _cap(c, 2, "(c) 表面サンプル 60k の深度  方位 %3.0f°" % np.rad2deg(az))
+        c = _cap(c, 1, "(b) render_beauty — 三角形 %d  方位 %3.0f°" % (len(F), np.rad2deg(az)))
+        c = _cap(c, 2, "(c) 表面サンプル 60k の深度")
         out.append(c)
     return out, "4 / 6  3-D — 距離場から三角形へ", \
         "sphere_sdf · box_sdf · sdf_smooth_union · marching_cubes · render_beauty"
