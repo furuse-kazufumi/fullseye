@@ -138,7 +138,6 @@ def _lowpass2(z: np.ndarray, lam: float, dx: float, dy: float, mode: str) -> np.
     return ndimage.correlate1d(out, _gauss_weights(lam, dx), axis=1, mode=mode)
 
 
-
 def surface_filter(z, dx, lambda_c=None, lambda_s=None, kind="gaussian",
                    end_effect="reject", dy=None):
     """高さ場を粗さとうねりに分ける(ISO 16610-21 のガウスフィルタ)。
