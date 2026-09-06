@@ -756,9 +756,38 @@ def find(query: str, limit: int = 20) -> list[dict]:
                 score = 20
             if score:
                 hits.append({"op": name, "ledger": mod_name, "module": info.get("module"),
-                             "category": info.get("category"), "doc": doc, "score": score})
+                             "category": info.get("category"), "doc": doc,
+                             "call": "run", "score": score})
+    # 2-D レジストリ(882 op)。台帳と同じ採点で、同点なら台帳を先に出す(-1 点)。
+    seen = {h["op"] for h in hits}
+    for op in _registry_ops():
+        if op.name in seen:
+            continue
+        doc = str(op.doc or "")
+        hay_name = op.name.lower()
+        if hay_name == q:
+            score = 99
+        elif q in hay_name:
+            score = 59 + max(0, 20 - len(hay_name))
+        elif q in doc.lower():
+            score = 29
+        elif q in str(op.category or "").lower() or q in str(op.halcon or "").lower():
+            score = 19
+        else:
+            continue
+        hits.append({"op": op.name, "ledger": _REGISTRY_LEDGER, "module": "ops",
+                     "category": op.category, "doc": doc,
+                     "call": "apply", "score": score})
     hits.sort(key=lambda h: (-h["score"], h["op"]))
     return hits[: max(int(limit), 1)]
+
+
+def _registry_ops():
+    """``ops.REGISTRY`` を遅延で読む(読めなければ空 —— 検索だけ痩せる)。"""
+    try:
+        return importlib.import_module("ops").REGISTRY
+    except Exception:                                    # noqa: BLE001
+        return ()
 
 
 def run(op_name: str, *data, preset=None, strict: bool = False, **kwargs):
