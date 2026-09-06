@@ -273,8 +273,8 @@ def run() -> dict:
     # ------------------------------------------------------------------ 7
     print("\n=== 7. 時間統計 —— 場全体を揺らした列の RMS を、独立な経路で検算 ===")
     jit = 0.3
-    tframes, ttruth = pivops.piv_synth_sequence((192, 192), (1.5, 2.0), n_frames=12,
-                                                density=0.02, seed=9, jitter=jit)
+    tframes, _ = pivops.piv_synth_sequence((192, 192), (1.5, 2.0), n_frames=12,
+                                           density=0.02, seed=9, jitter=jit)   # 真値は揺れ込みで測り返す
     ts = pivops.piv_time_statistics(tframes, window=32, overlap=0.5)
     # 独立な検算: 各対の場は「一様 + そのコマの揺れ」なので、場の中央値 = その対の変位。
     # その時間 RMS が、窓ごとの時間 RMS の中央値と一致するはず(揺れは場全体で共通)
