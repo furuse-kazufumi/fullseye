@@ -424,6 +424,26 @@ def main():
     print(f"  ★ 同じ IBP を PSNR で見ると {p_ibp - p_nul:+.3f} dB —— "
           "**改善がほとんど見えない**。")
     print("     忠実度の指標は「戻った」ことを検出しない。分解能は別に測る必要がある。")
+    # 縞の群だけを切り出す(全体を並べると 1 群あたり 48 px しか無く読めない)。
+    bars_crop = np.s_[16:144, 24:288]
+    figs.save_grid("upscale",
+                   [truth[bars_crop], recon[(s, "bicubic(零点)")][bars_crop],
+                    recon[(s, "IBP(順モデル既知)")][bars_crop],
+                    recon[(s, "bicubic+鮮鋭化")][bars_crop]],
+                   ["真値", "bicubic(零点)", "IBP(順モデル既知)", "bicubic+鮮鋭化"],
+                   title="倍率 4 の拡大 —— 縞の群(左から周期 24/16/12/8/6 真値画素)",
+                   ncols=1,
+                   caption="鮮鋭化だけがナイキスト(周期 8)より細かい列にも縞を"
+                           "作る。それは分解能ではなく**無い縞**。")
+    figs.save_plot("modulation",
+                   [("真値", np.array(BAR_PERIODS), np.ones(len(BAR_PERIODS)))]
+                   + [(n, np.array(BAR_PERIODS), mods[n])
+                      for n in ("bicubic(零点)", "IBP(順モデル既知)",
+                                "bicubic+鮮鋭化")],
+                   xlabel="縞の周期 [真値画素]", ylabel="変調度(1.0 = 真値どおり)",
+                   title="分解能の実測 —— 倍率 4、低解像側のナイキストは周期 8",
+                   caption="IBP は周期 12 以上の落ちた変調を戻すが、8 より細かい列は"
+                           "1 本も戻らない(順モデルの零空間)。")
 
     print("\n=== 3. 「鮮鋭に見える」と「情報が増えた」は別 ===")
     s2 = 2
