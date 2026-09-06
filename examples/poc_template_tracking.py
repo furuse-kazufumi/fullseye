@@ -619,16 +619,61 @@ def main():
         ch5[f_occ] = dict(err=e, peak=pk, prom=pr, lost=lost, mask=m)
         print(f"{f_occ * 100:>7.0f}{e.mean():>10.2f}{e.max():>8.2f}"
               f"{n_lost:>6} /27{np.nanmean(pk[m]):>12.3f}{np.nanmean(pr[m]):>12.3f}"
-              f"{false_found:>9} /{max(n_lost, 1):>3}")
+              f"{false_found:>10} /{n_lost:<3}")
     print("-" * 73)
-    print("「誤って見つけた」= 実際は 5 px 以上ずれているのにピークがしきい値以上だった数。")
-    cliff = next((f for f in sorted(ch5) if (ch5[f]['err'] > LOST_PX).any()), None)
-    print(f"\n→ 崖は遮蔽 {cliff * 100:.0f} % と "
-          f"{sorted(f for f in ch5 if f > (cliff or 0))[0] * 100 if cliff is not None and cliff < 0.8 else 80:.0f} % の間。")
-    print("   それ以下は **遮蔽されていない側だけで当たる** —— 半分隠れても位置は出る。")
+    print("「誤って見つけた」= 実際は 5 px 以上ずれているのにピークがしきい値以上だった数")
+    print("  / ずれていたフレーム数。分母が 0 の行は「一度もずれなかった」。")
+    occ_l = sorted(f for f in ch5 if (ch5[f]["err"] > LOST_PX).any())
+    cliff = occ_l[0] if occ_l else None
+    prev = max([f for f in ch5 if cliff is not None and f < cliff], default=None)
+    print(f"\n→ 崖は遮蔽 {0 if prev is None else prev * 100:.0f} % と "
+          f"{'(壊れなかった)' if cliff is None else format(cliff * 100, '.0f') + ' %'} の間。")
+    print("   それ未満は **遮蔽されていない側だけで当たる** —— 半分隠れても位置は出る。")
     print(f"→ ピーク値は遮蔽率とともに単調に下がる"
-          f"({ch5[0.0]['peak'][1:].mean():.3f} → {np.nanmean(ch5[0.8]['peak'][3:]):.3f})。")
-    print("   遮蔽に限れば **ピーク値は正直** である(第 10 章で数値化する)。")
+          f"({np.nanmean(ch5[0.0]['peak'][3:]):.3f} → {np.nanmean(ch5[0.8]['peak'][3:]):.3f})。")
+    print("   **平坦な遮蔽物に限れば ピーク値は正直** である(第 10 章で数値化する)。")
+
+    print("\n[同じ章の本番] そっくりな別物体が一緒に流れてくる場合。")
+    print("同じ部品が 2 つ並んで流れる産業の場面。1 枚目のテンプレートを少しぼかした")
+    print("複製を、真の対象から 51 px 離れた位置に一緒に動かす。遮蔽率は真の対象にだけ掛ける。")
+    print()
+    print(f"{'遮蔽 %':>7}{'平均誤差':>10}{'最悪':>8}{'壊れ':>8}{'平均ピーク':>12}"
+          f"{'平均突出度':>12}{'誤って見つけた':>16}")
+    print("-" * 73)
+    ch5t = {}
+    for f_occ in (0.0, 0.2, 0.4, 0.5, 0.6, 0.7, 0.8):
+        fr, tr, _, _ = make_sequence(world, TARGETS["一意"], n=30, step=2.0,
+                                     occl=f_occ, twin=True)
+        t0 = crop_template(fr[0], tr[0])
+        est, pk, pr = run_tracker(fr, t0, tr[0], "static")
+        e = err_of(est, tr)
+        m = np.arange(len(e)) >= 3
+        lost = e > LOST_PX
+        n_lost = int((lost & m).sum())
+        false_found = int((lost & m & (pk >= THR_PK)).sum())
+        ch5t[f_occ] = dict(err=e, peak=pk, prom=pr, lost=lost, mask=m,
+                           ff=false_found, nl=n_lost)
+        print(f"{f_occ * 100:>7.0f}{e.mean():>10.2f}{e.max():>8.2f}"
+              f"{n_lost:>6} /27{np.nanmean(pk[m]):>12.3f}{np.nanmean(pr[m]):>12.3f}"
+              f"{false_found:>10} /{n_lost:<3}")
+    print("-" * 73)
+    tw_l = sorted(f for f in ch5t if ch5t[f]["nl"] > 0)
+    tw_cliff = tw_l[0] if tw_l else None
+    ff_tot = sum(ch5t[f]["ff"] for f in ch5t)
+    nl_tot = sum(ch5t[f]["nl"] for f in ch5t)
+    print(f"\n→ 崖は遮蔽 {'(壊れなかった)' if tw_cliff is None else format(tw_cliff * 100, '.0f') + ' %'}"
+          f" —— 平坦な遮蔽物より **手前に来る**。真の対象が少し崩れた瞬間に、")
+    print("   崩れていない複製のほうが相関が高くなって乗り換えるから。")
+    if nl_tot:
+        print(f"→ **ここでピーク値は嘘をつく**。ずれていた {nl_tot} フレームのうち "
+              f"{ff_tot} フレーム({100.0 * ff_tot / nl_tot:.0f} %)で")
+        print(f"   ピークが校正しきい値 {THR_PK:.3f} 以上 = 「見つけた」と報告する。")
+        _tf = max(ch5t)
+        print(f"   遮蔽 {_tf * 100:.0f} % の平均ピークは {np.nanmean(ch5t[_tf]['peak'][3:]):.3f} で、")
+        print(f"   平坦な遮蔽物の同じ条件 {np.nanmean(ch5[_tf]['peak'][3:]):.3f} より **高い**。")
+        print(f"→ 一方 突出度 は {np.nanmean(ch5t[_tf]['prom'][3:]):.3f} まで落ちる"
+              f"(平坦な遮蔽物 {np.nanmean(ch5[_tf]['prom'][3:]):.3f})。")
+        print("   2 つの山が同じ高さで立っているから。**この崖を見分けるのは突出度だけ**。")
 
     # =======================================================================
     rule("6. ★ 崖 (c) スケールと回転 —— 並進しか探さない追跡はどこまで耐えるか")
