@@ -73,12 +73,11 @@ POSTER_PATH = ASSETS / "fullseye_hero_poster.png"
 # 版面                                                                          #
 # --------------------------------------------------------------------------- #
 W, H = 960, 360
-TOP_H = 26                      # 上帯(作品名・pip install。全幕で不変)
-BOT_H = 34                      # 下帯(幕の題と使った op 名)
-CONTENT_H = H - TOP_H - BOT_H   # 300
-PANEL = 288                     # 正方パネルの一辺(24 + 288*3 + 24*2 + 24 = 960)
-PANEL_X = (24, 336, 648)
-PANEL_Y = TOP_H + 6
+TOP_H = 30                      # 上帯(作品名・pip install。全幕で不変)
+BOT_H = 38                      # 下帯(幕の題と使った op 名)
+CONTENT_H = H - TOP_H - BOT_H   # 292
+PANEL = 280                     # 正方パネル(24 + 280 + 36 + 280 + 36 + 280 + 24 = 960)
+PANEL_X = (24, 340, 656)
 
 FPS = 12
 FRAMES_PER_ACT = 22
