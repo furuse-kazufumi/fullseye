@@ -225,7 +225,8 @@ def run() -> dict:
     c16_tokyo = float(demops.dem_cell_size_webmercator(16, 35.68))
     print(f"  z=15 赤道 {c15_eq:.3f} m / 東京 {c15_tokyo:.3f} m(docstring 4.777 / 3.880)"
           f" / z=16 東京 {c16_tokyo:.3f} m(半分)")
-    assert abs(c15_eq - 4.777) < 5e-4 and abs(c15_tokyo - 3.880) < 5e-4
+    # docstring の 3.880 は 3.8805.. の切り捨て(4 桁目で丸めが割れる)。1e-3 で判定する。
+    assert abs(c15_eq - 4.777) < 1e-3 and abs(c15_tokyo - 3.880) < 1e-3
     assert abs(c15_tokyo / c16_tokyo - 2.0) < 1e-12
     assert abs(c15_tokyo / c15_eq - math.cos(math.radians(35.68))) < 1e-12
     # 赤道の値を東京で使うと傾斜が過小になる —— その割合を式で出す。

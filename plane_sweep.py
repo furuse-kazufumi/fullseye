@@ -68,6 +68,21 @@ def warp_by_plane(img: np.ndarray, H: np.ndarray, order: int = 1,
     """homography H で img を逆ワープ。→ out[y,x] = img(H·(x,y,1))(bilinear)。
 
     H は出力(ref)画素 → 入力(src)画素の写像。視野外は cval(既定 NaN)。
+
+    出力画素 (x=列, y=行) ごとに ``q = H @ (x, y, 1)``、``(sx, sy) = (q0/q2, q1/q2)`` を求め、
+    ``scipy.ndimage.map_coordinates`` で入力画像の (行 sy, 列 sx) を補間して埋める(逆ワープなので
+    穴が空かない)。出力の形は入力と同じ (h,w)。同モジュールの ``plane_homography`` が返す H
+    (ref 画素 → src 画素)をそのまま渡すと「src を ref 視点へ持ってきた画像」になる。
+
+    - ``img``: (H,W) の 2-D グレースケール(float に変換)。空・非 2-D は ``ValueError``。
+    - ``H``: (3,3) 以外は ``ValueError``。
+    - ``order``: 補間次数(既定 1 = bilinear)。``prefilter=False`` で呼ぶため、2 以上を指定しても
+      スプライン前処理を省いた近似(平滑化寄り)になる。
+    - ``cval``: 入力の範囲外に写った画素、および ``|q2| < 1e-12``(無限遠に飛ぶ画素)に入れる値。
+      既定 NaN なので、後段で ``np.isfinite`` により「対応が取れなかった画素」を区別できる。
+
+    ``plane_sweep_depth`` は候補深度ごとにこの関数で src をワープし、``|I_ref - warp(I_src)|`` を
+    photo-consistency コストにしている。
     """
     a = _check_image(img, "img")
     H = np.asarray(H, float)
