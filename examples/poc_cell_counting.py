@@ -293,7 +293,10 @@ def make_scene(seed, *, pack=0.88, size_ratio=2.0, bg_amp=BG_AMP, photons=PHOTON
 
     ncell = len(cells)
     area_true = np.asarray([np.pi * c[2] * c[3] for c in cells])
-    area_vis = np.bincount(own_px.ravel(), minlength=ncell + 1)[1:].astype(float)
+    # 見えている面積は **副画素で** 数える。画素で数えると標本化の揺らぎが
+    # ±数 % 乗って「隠れた割合」が負になり、重なりのノブが測れなくなる。
+    area_vis = (np.bincount(owner.ravel(), minlength=ncell + 1)[1:].astype(float)
+                / (SS * SS))
     on_edge = np.asarray([
         (c[0] - c[2] < 0) or (c[0] + c[2] > IMG - 1) or
         (c[1] - c[2] < 0) or (c[1] + c[2] > IMG - 1) for c in cells])
