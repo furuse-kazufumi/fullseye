@@ -727,17 +727,26 @@ def main() -> None:
     print("=" * 78)
     names = roc["names"]
     dn = "ノッチ+低周波除去"
-    print("  * ゼロ点の窓は「周期の整数倍が良い」ではない(最良 k=%d)。"
-          "整数倍では矩形平均の利得が 0 になり、地がそのまま残差になる。"
-          % win["best"])
-    print("  * 周期は FFT の粗い値(%.5f px)を位相限定相関で %.5f px まで磨ける"
-          "(真値 %.5f)。" % (per["est"]["coarse"], per["est"]["fine"], PERIOD))
     print("  * **%s** はまとめた AUC %.4f、しかし「%s」だけ %.4f。"
           % (dn, roc["table"][dn][0], names[2], roc["table"][dn][1][2]))
     print("    低周波を残すだけで %.4f に戻る —— 消していたのは照明ではなく欠陥。"
           % roc["table"]["ノッチ(格子のみ)"][1][2])
-    print("  * 周期が 1 %% ずれると地の残差は %.1f 倍(高次の高調波から漏れる)。"
-          % (pe["rms"][3] / pe["base_rms"]))
+    print("  * ゼロ点は窓を %d〜%d px で振っても AUC %.3f〜%.3f。"
+          "「周期の整数倍が良い」は符号が逆で、整数倍では地がそのまま残差になる"
+          "(残差と |1-G| の相関 %.3f)。"
+          % (min(win["k"]), max(win["k"]), min(win["auc"]), max(win["auc"]),
+             win["corr"]))
+    print("  * 周期: POC のピークは「基線 ÷ 周期の余り」しか返さない。位相の"
+          "傾きなら誤差 %+.5f px(FFT の粗い値 %+.5f px の %.0f 倍の精度)。"
+          % (per["est"]["fine"] - PERIOD_EST, per["est"]["coarse"] - PERIOD_EST,
+             abs(per["est"]["coarse"] - PERIOD_EST)
+             / max(abs(per["est"]["fine"] - PERIOD_EST), 1e-12)))
+    print("  * 周期の誤差 1 %% では**何も起きない**(残差 %.1f 倍)。予測どおり "
+          "ε=%.1f %% で最大次数の成分が外れて %.1f 倍へ跳ねる。"
+          % (pe["rms"][3] / pe["base_rms"], pe["eps"][5],
+             pe["rms"][5] / pe["base_rms"]))
+    print("  * 折り返し平均は同じ ε=0.5 %% で既に %.1f 倍 —— 位相で畳む方式は"
+          "周期の誤差に桁で弱い。" % (pe["fold"][2] / pe["fold"][0]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     if figs.errors():
