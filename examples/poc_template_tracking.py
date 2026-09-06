@@ -296,13 +296,15 @@ def locate_local(img, tpl, pred_xy, rad):
     **黙って何も見つからない** ことになる(ここでは明示的に失敗を返す)。
     """
     h = int(rad) + HALF + 1
-    r = int(np.clip(round(pred_xy[1]), 0, FR_H - 1))
-    c = int(np.clip(round(pred_xy[0]), 0, FR_W - 1))
+    p = np.where(np.isfinite(pred_xy), pred_xy, O_XY)     # 予測が壊れたら画面中心へ
+    r = int(np.clip(round(float(p[1])), 0, FR_H - 1))
+    c = int(np.clip(round(float(p[0])), 0, FR_W - 1))
     r0, r1 = max(0, r - h), min(FR_H, r + h + 1)
     c0, c1 = max(0, c - h), min(FR_W, c + h + 1)
     crop = img[r0:r1, c0:c1]
     if crop.shape[0] <= TPL or crop.shape[1] <= TPL:
-        return 0.0, np.array([np.nan, np.nan]), 0.0, float("nan")
+        # ★ 穴 (d): 公開 op ならここで黙って [0,0,0] が返る。明示的に失敗を返す。
+        return 0.0, np.array([float(c), float(r)]), 0.0, float("nan")
     pk, xy, prom, d2 = peak_and_prominence(ops._ncc_map(crop, tpl))
     return pk, xy + np.array([c0, r0]), prom, d2
 
