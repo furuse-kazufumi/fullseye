@@ -83,7 +83,22 @@ def pose_graph_residuals(poses, edges):
 
 
 def mean_edge_error(poses, edges):
-    """エッジ残差の RMS(姿勢グラフの整合度)。→ scalar。"""
+    """エッジ残差の RMS(姿勢グラフの整合度)。→ scalar。
+
+    各エッジ ``(i, j, rvec_meas, t_meas[, w_rot, w_trans])`` について、予測相対姿勢 ``T_i⁻¹ ∘ T_j`` と
+    計測 ``(rvec_meas, t_meas)`` の食い違い ``measured⁻¹ ∘ predicted`` を回転ベクトル 3 成分 + 並進
+    3 成分の 6 次元残差にし(それぞれ ``sqrt(w_rot)``、``sqrt(w_trans)`` を掛ける。重み省略時は 1)、
+    全エッジ・全成分をまとめた 2 乗平均平方根を返す。``optimize_pose_graph`` の返り値 ``rmse`` と
+    同じ量で、最適化前後の比較に使う。
+
+    - ``poses``: (N,6) にリシェイプできる ``[rvec | t]``(world←body)。
+    - ``edges``: 上記タプルのリスト。空なら 0.0 を返す。
+
+    注意: 回転成分(rad)と並進成分(座標の単位)を同じ配列で平均するため、値の次元は混在する。
+    並進のスケールが大きいシーンでは並進項が支配的になるので、単位を揃えたいときは ``w_rot`` /
+    ``w_trans`` で重み付けする。エッジ添字の範囲検証はこの関数では行わない(負の添字は numpy の
+    折り返しで別ノードを黙って参照する。``optimize_pose_graph`` は検証する)。
+    """
     r = pose_graph_residuals(poses, edges)
     return float(np.sqrt(np.mean(r ** 2))) if len(r) else 0.0
 
