@@ -798,16 +798,25 @@ def main():
     assert 0.60 < truth_cover[2] < 0.95, truth_cover[2]
     for s in range(len(STAGES)):
         assert mixed_frac[s] > 0.10, (s, mixed_frac[s])
-    # (2) ゼロ点は繁茂期で使えて、発芽期で壊れる —— これが「1 つの数字にしない」根拠
-    assert abs(res[2]["大津・緑(ゼロ点)"]["bias"]) < 5.0, res[2]["大津・緑(ゼロ点)"]
-    assert res[0]["大津・緑(ゼロ点)"]["bias"] > 15.0, res[0]["大津・緑(ゼロ点)"]
-    assert res[0]["大津・緑(ゼロ点)"]["prec"] < 0.6 < res[0]["大津・緑(ゼロ点)"]["rec"], \
-        res[0]["大津・緑(ゼロ点)"]
+    # (2) ゼロ点は全段で同じ向きに上振れし、散らばりでは説明できない(= 偏り)
+    for s in range(len(STAGES)):
+        d = res[s]["大津・緑(ゼロ点)"]
+        assert d["bias"] > 5.0, (s, d["bias"])
+        assert d["scatter"] < 1.0, (s, d["scatter"])          # 枚数では消えない
+    # 低被覆率では「ほぼ全部を植生と答える」壊れ方 —— 適合率と再現率を分けたから見える
+    assert res[0]["大津・緑(ゼロ点)"]["prec"] < 0.6, res[0]["大津・緑(ゼロ点)"]["prec"]
+    assert res[0]["大津・緑(ゼロ点)"]["rec"] > 0.90, res[0]["大津・緑(ゼロ点)"]["rec"]
+    # 「壊れている段階」は指標で変わる:偏りの最悪と適合率の最悪は別の段階
+    assert int(np.argmax([abs(res[s]["大津・緑(ゼロ点)"]["bias"]) for s in range(3)])) \
+        != int(np.argmin([res[s]["大津・緑(ゼロ点)"]["prec"] for s in range(3)]))
+    # ExG > 0(固定)は「ほぼ全画素を植生」= 再現率 1.0 なのに適合率 0.2 未満
+    assert res[0]["ExG > 0(固定)"]["rec"] > 0.99, res[0]["ExG > 0(固定)"]["rec"]
+    assert res[0]["ExG > 0(固定)"]["prec"] < 0.20, res[0]["ExG > 0(固定)"]["prec"]
     # (3) 指数を使う手法はゼロ点に勝つ(全段の |偏り| 平均で)
     zero_mab = np.mean([abs(res[s]["大津・緑(ゼロ点)"]["bias"]) for s in range(3)])
     for name in ("ExG + 大津", "NDVI + 大津", "アンミックス3(+影)"):
-        mab = np.mean([abs(res[s][name]["bias"]) for s in range(3)])
-        assert mab < 0.5 * zero_mab, (name, mab, zero_mab)
+        m_ab = np.mean([abs(res[s][name]["bias"]) for s in range(3)])
+        assert m_ab < 0.5 * zero_mab, (name, m_ab, zero_mab)
     # (4) 混合画素で分数を返せるのはアンミキシングだけ:f のビンに沿って単調に上がる
     u3 = np.concatenate([m.ravel() for m, _ in allmaps["アンミックス3(+影)"]])
     means = [u3[idx == i].mean() for i in range(len(lbls))]
