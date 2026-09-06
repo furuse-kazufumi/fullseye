@@ -341,41 +341,35 @@ def section_slit(sc: dict, zp: dict) -> dict:
     print("\n" + "=" * 78)
     print("3) スリット法 —— (t, x) 画像の帯を数え、傾きから速度を出す")
     print("=" * 78)
-    print("   車線    真値   帯(全部)  帯(計数列と交わる)  速度誤差(重心当て)"
+    print("   車線    真値   帯(全部)  帯(計数列と交わる)  対応 速度誤差(重心当て)"
           "  速度誤差(angle)")
 
     out = {}
     for ln in LANES:
         kym = kymograph(sc["mask"], LANES[ln]["slit"])
         s = slit_count(kym)
-        sp = band_speeds(kym, s["labels"], s["ids"])
-        true_v = np.asarray(sorted(v["v"] for v in sc["veh"]
-                                   if v["lane"] == ln
-                                   and crosses_ref(v, T_FRAMES - 1)))
-        est = np.sort(sp["fit"])
-        ea = np.sort(sp["angle"][np.isfinite(sp["angle"])])
-        m = min(true_v.size, est.size)
-        err = 100 * np.mean(np.abs(est[:m] - true_v[:m]) / true_v[:m]) if m else np.nan
-        ma = min(true_v.size, ea.size)
-        erra = (100 * np.mean(np.abs(ea[:ma] - true_v[:ma]) / true_v[:ma])
-                if ma else np.nan)
-        print("   %-5s  %4d   %6d      %10d          %8.2f %%       %8.2f %%"
-              % (ln, sc["truth"][ln], s["n_all"], s["n_ref"], err, erra))
-        out[ln] = {"kym": kym, "slit": s, "speed": sp, "err": err, "erra": erra,
-                   "true_v": true_v}
+        sp = band_speeds(s["labels"], s["ids"])
+        cars = [v for v in sc["veh"] if v["lane"] == ln
+                and crosses_ref(v, T_FRAMES - 1)]
+        mt = match_speeds(sp, cars)
+        print("   %-5s  %4d   %6d      %10d      %3d/%d      %8.2f %%     %8.2f %%"
+              % (ln, sc["truth"][ln], s["n_all"], s["n_ref"], mt["n"], len(cars),
+                 mt["fit"], mt["angle"]))
+        out[ln] = {"kym": kym, "slit": s, "speed": sp, "match": mt}
 
     tot_ref = sum(out[ln]["slit"]["n_ref"] for ln in LANES)
     print("\n  合計: スリット %d 台 / 仮想ループ %d 台 / ゼロ点(最大値) %d 台"
           " / 真値 %d 台" % (tot_ref, zp["loop"], zp["cc"].max(), zp["total"]))
-    print("  ★遠い車線が %+d 台になっているのは、トラック %d 台が計数行 %d を"
-          "覆って偽の帯を作るから(4 節)。"
-          % (out["far"]["slit"]["n_ref"] - sc["truth"]["far"], sc["trucks"],
+    print("  遠い車線は真値 %d に対し %d(%+d)。トラック %d 台が計数行 %d を"
+          "覆うので、その分の偽の帯が乗る(4 節で切り分ける)。"
+          % (sc["truth"]["far"], out["far"]["slit"]["n_ref"],
+             out["far"]["slit"]["n_ref"] - sc["truth"]["far"], sc["trucks"],
              LANES["far"]["slit"]))
     print("  ★速度は行ごとの重心を線形当てはめすると誤差 %.2f / %.2f %%。"
-          % (out["far"]["err"], out["near"]["err"]))
-    print("     台帳の blob_features['angle'] からも出せるが %.2f / %.2f %% —— "
-          "帯が画面の左右で切れているぶん主軸が寝るので、当てはめのほうが良い。"
-          % (out["far"]["erra"], out["near"]["erra"]))
+          % (out["far"]["match"]["fit"], out["near"]["match"]["fit"]))
+    print("     台帳の blob_features['angle'] からも出せて %.2f / %.2f %% —— "
+          % (out["far"]["match"]["angle"], out["near"]["match"]["angle"]))
+    print("     帯が画面の左右で切れると主軸が寝るので、当てはめのほうが安全。")
 
     figs.save_grid("scene",
                    [sc["vid"][60], sc["mask"][60].astype(np.float64),

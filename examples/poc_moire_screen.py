@@ -300,9 +300,6 @@ def section3_split_failures(both):
           % (100 * leaks[k] / A_MURA, 100 * (atts[k] / A_MURA - 1)))
     print("     パネルの明るさが変わったり、縞の位相が変わったりすれば、")
     print("     打ち消しはすぐ壊れる。**1 つの数字に畳んだ時点で見えなくなる**。")
-    figs.save_table("failure_split",
-                    ["σ px", "漏れ(縞のみ)", "減衰後(ムラのみ)", "合計 推定", "合計 誤差"],
-                    rows, title="ムラの推定を 2 つの失敗に割る(真値 %.4f)" % A_MURA)
     if figs.enabled():
         xs = np.array(sigmas)
         figs.save_plot("failure_split_plot",
@@ -483,13 +480,6 @@ def section6_rotation():
           % (pred_p[0], pred_p[1]))
     print("     **モアレは治具の据え付け精度に強く依存する** —— だから「昨日は")
     print("     出なかった」が起きる。実測と閉形式の差は FFT の分解能ぶん。")
-    if figs.enabled():
-        figs.save_plot("rotation",
-                       [("閉形式", np.array(angles), np.array(pred_p)),
-                        ("実測 FFT", np.array(angles), np.array(meas_p))],
-                       xlabel="カメラの回転 [度]", ylabel="モアレ周期 [px]",
-                       title="0.5 度でモアレの周期は変わる",
-                       caption="基本波のみ。実測は FFT ピーク、閉形式は wrap(k·cosθ) から。")
 
 
 def section7_design():
