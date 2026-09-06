@@ -293,7 +293,7 @@ def main():
           f"動径 1-D PSD の規約なら +1 して {-2 * (HURST + 1) + 1:+.3f}。"
           "  ← 実測はこの 2 つのどちらでもない中間値で、")
     print("       返り値が『環内の |F|² の平均』であることと有限帯域の端の効き方に"
-          "よる。**この op を粗さの H 推定に使うなら較正が要る**(所見 (g))。")
+          "よる。**この op を粗さの H 推定に使うなら較正が要る**(所見 (C))。")
 
     print("\n  成分の内訳(それぞれ単独の rms / 最大高低差、µm)")
     print(f"  {'成分':<20}{'rms':>12}{'max-min':>12}   扱い")
@@ -690,26 +690,26 @@ def main():
           "Rq は安定して出る。**Rz と Rq は断面 1 本に対する要求が全く違う。**")
 
     print("\n所見(fullseye の穴 —— この PoC で塞げなかったもの):")
-    print("  (e) **粗さパラメータの op が 1 つも無い。** Sa/Sq/Sz/Sp/Sv/Ssk/Sku も、"
+    print("  (A) **粗さパラメータの op が 1 つも無い。** Sa/Sq/Sz/Sp/Sv/Ssk/Sku も、"
           "1-D の Ra/Rq/Rz/Rsk/Rku も、`dir(fullseye)` に存在しない"
           "(`roughness_map` は局所標準偏差の画像で、面のパラメータではない)。"
           "この PoC は全部自前で書いた。")
-    print("  (f) **帯域を切る道具が無い。** ISO 流のガウスフィルタ"
+    print("  (B) **帯域を切る道具が無い。** ISO 流のガウスフィルタ"
           "(透過率 exp(-π(αλf)²), α=√(ln2/π))が無いので、粗さ / うねり / 形状の"
           "分離が自前 FFT になる。`vol_fft_highpass` は 3-D 体積向けで、"
           "2-D 高さ場のカットオフ波長指定には使えない。")
-    print("  (g) `fs.radial_power_spectrum` は正規化の規約が docstring に無い。"
+    print("  (C) `fs.radial_power_spectrum` は正規化の規約が docstring に無い。"
           f"1 節の実測傾き {slope:+.3f} は面 PSD の {-2 * (HURST + 1):+.3f} とも"
           f"動径 PSD の {-2 * (HURST + 1) + 1:+.3f} とも一致せず、"
           "**そのままでは Hurst 指数の推定に使えない**。")
-    print("  (h) **PSD からの高さ場合成器が無い。** 真値の分かる粗さ面を作る"
+    print("  (D) **PSD からの高さ場合成器が無い。** 真値の分かる粗さ面を作る"
           "唯一の実用的な方法なのに、`fringe`/`interferometry`/`dem` のどこにも無い。"
           "この PoC の `synth_psd_surface` がそのまま op になる。")
-    print("  (i) `fs.fit_plane` / `fs.fit_plane_ransac` は (N,3) 点群を要求するので、"
+    print("  (E) `fs.fit_plane` / `fs.fit_plane_ransac` は (N,3) 点群を要求するので、"
           "高さ場(2-D 配列)を毎回 `column_stack` で展開する必要がある"
           f"({N}² = {N * N} 点で {N * N * 3 * 8 / 1e6:.1f} MB)。"
           "格子を格子のまま受ける口が無い。")
-    print("  (j) `fs.line_profile` は num を指定しても **物理的な標本間隔を返さない**。"
+    print("  (F) `fs.line_profile` は num を指定しても **物理的な標本間隔を返さない**。"
           "斜め断面では 1 標本が √2 画素になるので、波長指定のフィルタを掛ける側が"
           "自分で dx を計算して渡すしかない(この PoC の 7 節がそれ)。取り違えると"
           "λc が 41% ずれる。")
@@ -735,7 +735,7 @@ def main():
           "  … 1 節の合成器。**解析 Sq を一緒に返す**のが肝で、これが無いと"
           "粗さの検査に真値を用意できない。")
     print("  6. `surface_psd(z, dx, kind=\"areal\"|\"radial\") -> (q, C)`"
-          "  … 規約を引数で明示した PSD。(g) の曖昧さを消し、Hurst 推定を"
+          "  … 規約を引数で明示した PSD。(C) の曖昧さを消し、Hurst 推定を"
           "検算可能にする。")
 
     # ------------------------------------------------------------- assert -- #
@@ -805,7 +805,7 @@ def _scratch_field(xx, yy, half_width):
 def _plane_removed(z, xx, yy, robust):
     """`fs.fit_plane` / `fs.fit_plane_ransac` で平面を除く。戻り値 (残差, 平面)。
 
-    どちらも (N,3) 点群を要求するので毎回展開が要る(所見 (i))。
+    どちらも (N,3) 点群を要求するので毎回展開が要る(所見 (E))。
     法線の向きは +z 側に揃える —— 揃えないと `height_above_plane` の符号が
     反転して Ssk の符号が逆になる。
     """
