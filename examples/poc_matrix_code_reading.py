@@ -654,13 +654,25 @@ def main():
     print("  崩れ始める(奥の紙が手前の墨より暗くなり、1 本の線では分けられない)。")
     print("  (b) ムラ幅 0.9 に固定して**モジュール寸法**を振る ★ここが道具の穴 A")
     print(f"  {'m [px]':>8}" + "".join(f"{m:>17}" for m in modes))
+    ms_px, ber_by_mode = [], {md: [] for md in modes}
     for m in (4, 6, 8, 12, 16, 24):
         im, H = capture(bits, module_px=m, illum=0.9, noise=0.01, seed=5)
         row = f"  {m:>8d}"
+        ms_px.append(m)
         for md in modes:
             b, _ = read(im, n, m, mode=md, H_true=H)
+            ber_by_mode[md].append(ber(bits, b))
             row += f"{ber(bits, b):>17.4f}"
         print(row)
+    # 窓が画素固定の op は右へ行くほど崩れ、窓をモジュール寸法で決めた bernsen は
+    # 平らなまま —— 穴 A はこの 1 枚に全部写る。
+    figs.save_plot("threshold_window",
+                   [(md, np.array(ms_px, float), np.array(ber_by_mode[md]))
+                    for md in modes],
+                   xlabel="1 モジュール [px]", ylabel="BER",
+                   title="局所しきい値の窓は画素で固定されている(穴 A)",
+                   caption="照明ムラ 0.9 固定。解像度を上げるだけで"
+                           "「ムラに強い op」が当てずっぽう(0.5)へ落ちる。")
     print("  ★ 窓が画素で固定されている 2 つは、モジュールが窓より大きくなった所で")
     print("     崩れる: adaptive_gauss(sigma 4 px)は m=16 で BER 0.14、m=24 で 0.55。")
     print("     sauvola(窓 15 px)は m=16 で 0.20。窓 = 3 モジュールの bernsen は")
