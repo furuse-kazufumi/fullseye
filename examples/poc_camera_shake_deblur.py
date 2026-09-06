@@ -513,7 +513,8 @@ def main():
         p0 = psnr(rgt[sl], o_rot[sl])
         p1 = psnr(rgt[sl], est_rot[sl])
         deltas[label] = p1 - p0
-        print(f"  {label:<24}{fit:>14.2f}{p0:>9.2f}{p1:>9.2f}{p1 - p0:>8.2f}")
+        fit_s = "> 99" if fit > 99.0 else f"{fit:.2f}"    # 中心は両方とも無ブレで発散
+        print(f"  {label:<24}{fit_s:>14}{p0:>9.2f}{p1:>9.2f}{p1 - p0:>8.2f}")
     print("  → 「前向きの一致」= 本物の回転ブレと 1 枚の核の畳み込みがどれだけ同じか。")
     print("     核を作った場所だけ合っていて、他は合っていない = **シフト不変でない**。")
     print("     その結果、同じ 1 枚の核で全画面を戻すと核を作った場所は良くなり、")
