@@ -2649,7 +2649,8 @@ def light_wavelengths(light: dict, samples: int = 5):
     - 返り値: ``(wavelengths (k,), weights (k,))`` の 2 本の float64 配列。
       スペクトルの実形状(LED の非対称、ハロゲンの黒体分布)は模さない近似。
 
-    ``render_optscene`` の内部でこの重みで波長ごとの結果を足し合わせる。
+    ``layout_capture`` が ``spectral_samples`` 本でこれを呼び、波長ごとの結果を
+    この重みで足し合わせる。
     """
     lam = float(light.get("wavelength_nm", 550.0))
     bw = float(light.get("bandwidth_nm", 0.0))
