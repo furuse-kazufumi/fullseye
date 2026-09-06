@@ -123,6 +123,25 @@ def reconstruct(model, n_points=300, n_harmonics=None):
 
     n_harmonics を係数数より小さくすると **高調波を打ち切って平滑化** される
     (低次だけ残すほど丸くなる)。
+
+    式: ``t = linspace(0, 1, n_points, endpoint=False)`` について
+    ``x(t) = a0 + Σ a_n cos(2πnt) + b_n sin(2πnt)``、
+    ``y(t) = c0 + Σ c_n cos(2πnt) + d_n sin(2πnt)``(``n = 1..N``)。
+
+    - ``model``: ``elliptic_fourier`` の返り値(``coeffs`` ``(N, 4)``、``a0``、``c0``)。
+      ``normalize`` を通した係数を渡せば正準ポーズ(第 1 高調波で整列)の輪郭が
+      出る。dict の検証はしない(キー欠落は ``KeyError``)。
+    - ``n_points``: 出力点数 ``M``(``int`` に切る)。等**パラメータ**間隔で、弧長
+      等間隔ではない。``endpoint=False`` なので**末尾点は先頭点と一致しない**
+      (閉じた多角形にするなら先頭点を末尾に足す)。0 なら空の ``(0, 2)``。
+    - ``n_harmonics``: 使う高調波数。``None`` で全部、``N`` より大きい値は ``N`` に
+      切り詰め、0 以下なら DC だけ(全点が中心 ``(a0, c0)``)。
+    - 返り値: ``(M, 2)`` float64。座標の並び(``(x, y)`` か ``(row, col)``)は
+      ``elliptic_fourier`` に渡した並びをそのまま引き継ぐ。``t = 0`` は元輪郭の
+      始点に対応する。
+
+    輪郭を係数化せずに滑らかにするだけなら ``fourier_smooth``。係数どうしの
+    比較は ``invariants`` / ``descriptor_distance``。
     """
     coeffs = np.asarray(model["coeffs"], dtype=np.float64)
     N = coeffs.shape[0] if n_harmonics is None else min(int(n_harmonics), coeffs.shape[0])
