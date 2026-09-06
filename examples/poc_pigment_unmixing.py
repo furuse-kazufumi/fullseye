@@ -690,7 +690,7 @@ def main():
         row = [str(nb)]
         cliff_b[nb] = {}
         for tag, sg, dim in panels:
-            sigma = sg if sg is not None else (SIGMA0 * 5 if dim else SIGMA0) * np.sqrt(nb)
+            sigma = sg if sg is not None else SIGMA0 * dim * np.sqrt(nb)
             dt = detectors(scene, spec0, np.random.default_rng(SEED + 3), n_bands=nb,
                            sigma=sigma, want=("ms", "unmix", "nir"))
             mp = score_maps(dt, pos, neg)
