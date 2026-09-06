@@ -708,14 +708,17 @@ def section_cliff_blur():
               f"{nfound / len(phases):7.0%} | {fb:+9.4f}{fp:11.4f}")
 
     # 横軸は PSF sigma ではなく **w/sigma** —— 崖はこちらの軸で立つ、が主張。
+    # 縦軸は log10。M の 0.01 px 台と F の 10 px 台を 1 枚に載せるため
+    # (偏りはどちらも正なので、絶対値を取っても符号の情報は落ちない)。
     ratios = np.array([r[1] for r in rows])
+    lg = lambda v: np.log10(np.maximum(np.abs(np.array(v, float)), 1e-4))   # noqa: E731
     figs.save_plot("blur_cliff",
-                   [("判定境界 0.05 px", ratios, np.full(ratios.size, 0.05)),
-                    ("M measuring1d", ratios, np.array([r[2] for r in rows])),
-                    ("F 自前 50% 交差", ratios, np.array([r[5] for r in rows]))],
-                   xlabel="エッジ間距離 / PSF 幅 (w/sigma)", ylabel="幅の偏り [px]",
+                   [("判定境界 0.05 px", ratios, np.full(ratios.size, math.log10(thr0))),
+                    ("M measuring1d", ratios, lg([r[2] for r in rows])),
+                    ("F 自前 50% 交差", ratios, lg([r[5] for r in rows]))],
+                   xlabel="w/sigma", ylabel="log10|偏り| px",
                    title="崖は「ぼけ」ではなく「エッジ間距離 / PSF 幅」で立つ",
-                   caption="偏りは必ず正(対が互いを押し広げる)。"
+                   caption="偏りはどちらも正(対が互いを押し広げる)。"
                            "符号が一定なので繰り返し測っても消えない。")
 
     # 崖の境界: sigma を大きくしていって |偏り| が最初に 0.05 px を超える w/sigma
