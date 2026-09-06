@@ -613,10 +613,11 @@ def section_jam() -> dict:
     print("7) 渋滞 —— 壊れるのは検出器ではなく背景モデル")
     print("=" * 78)
 
-    veh = make_vehicles(seed=11, n_far=0, n_near=6, headway=14.0, truck_p=0.0)
+    veh = make_vehicles(seed=11, n_far=0, n_near=6, headway=14.0,
+                        n_truck=0, same_speed=True)
     times = np.arange(T_FRAMES, dtype=np.float64)
-    # 先頭から順に X_REF の手前へ詰めて停止させる
-    stop_at = [X_REF + 40 - k * 70.0 for k in range(len(veh))]
+    # 先頭から順に詰めて停止させる(先頭は X_REF より先まで進む)
+    stop_at = [X_REF + 130 - k * 66.0 for k in range(len(veh))]
     xs = _jam_positions(veh, times, stop_at, brake_from=40.0)
 
     road = _road()
