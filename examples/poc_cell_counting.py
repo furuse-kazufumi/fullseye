@@ -1038,6 +1038,20 @@ def main():
     print("     **個数だけを報告していたら最良の設定として通る**。打ち消し合いの機序も")
     print("     はっきりしている: 過分割は個数を +1、過統合は -1 に動かすので、両者が")
     print("     同数なら **個数は元に戻る**。個数は分割の質の証拠にならない。")
+    # ★この PoC の見出し。偏りの線が 0 を横切る場所で、分割誤りは谷になっていない。
+    _rows = cancel[worst][4]
+    _md = np.asarray(MDS, float)
+    figs.save_plot("count_cancellation",
+                   [("偏り(個数)", _md, np.array([_rows[m]["bias"] for m in MDS])),
+                    ("過分割", _md, np.array([_rows[m]["split"] for m in MDS])),
+                    ("過統合", _md, np.array([_rows[m]["merge"] for m in MDS])),
+                    ("誤り合計", _md, np.array([_rows[m]["split"] + _rows[m]["merge"]
+                                                for m in MDS]))],
+                   xlabel="種の最小間隔 [px]", ylabel="件数 / 個数の偏り",
+                   title="計数が合う点と、分割が合う点は別(pack %.2f)" % worst,
+                   caption="偏りが 0 を横切る間隔 %d で分割誤りは %.1f 件残る。"
+                           "個数だけ見ていると最良の設定として通る。"
+                           % (cancel[worst][0], cw["split"] + cw["merge"]))
 
     print("\n=== 8. 崖 (d) 雑音と背景ムラ ===")
     print("  ★**偽物(細胞でないものを 1 個と数えた)を分けて出す** —— これを個数に")
