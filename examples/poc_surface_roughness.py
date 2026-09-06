@@ -524,40 +524,64 @@ def main():
     # ---------------------------------------------------------------- 7 --- #
     print("\n=== 7. 1-D(Ra/Rq/Rz)と 2-D(Sa/Sq/Sz)の食い違い ===")
     print("  加工目は行方向(x)に走らせてある。つまり『目に平行な断面』は"
-          "加工目を一切見ない。")
+          "加工目を一切見ない。Rz はここでは評価長さ全体の最大高低差(= Rt)で、"
+          "Sz と定義を揃えてある。")
+
+    def sections(fld, step=4):
+        rows = np.array([[profile_params(
+            profile_filter(fld[i, :], DX, LAMBDA_C, "high"))[k]
+            for k in ("Ra", "Rq", "Rz")] for i in range(0, N, step)])
+        cols = np.array([[profile_params(
+            profile_filter(fld[:, j], DX, LAMBDA_C, "high"))[k]
+            for k in ("Ra", "Rq", "Rz")] for j in range(0, N, step)])
+        # 斜め断面は `fs.line_profile`(双一次補間)で取る。1 標本 = √2 画素。
+        diag = []
+        for off in range(0, N - 32, 16):
+            p = fs.line_profile(fld, (0.0, float(off)),
+                                (float(N - 1 - off), float(N - 1)), num=N)
+            diag.append([profile_params(profile_filter(
+                p, DX * math.sqrt(2.0), LAMBDA_C, "high"))[k]
+                for k in ("Ra", "Rq", "Rz")])
+        return rows, cols, np.array(diag)
+
+    print("\n  [7a] 向きの依存 —— 傷を抜いた面(加工目 + PSD だけ)で見る。")
+    print("       傷が入ると外れ値が Rq を支配して、向きの効果が見えなくなるため。")
+    r0, c0, d0 = sections(rough_without)
+    print(f"  {'断面の向き':<24}{'本数':>6}{'Ra 平均':>11}{'Rq 平均':>11}{'Rz 平均':>11}")
+    for lab, a in (("目に平行(行)", r0), ("目に直交(列)", c0),
+                   ("斜め 45°(line_profile)", d0)):
+        print(f"  {lab:<24}{len(a):>6}{a[:, 0].mean():>11.4f}"
+              f"{a[:, 1].mean():>11.4f}{a[:, 2].mean():>11.4f}")
+    s0 = areal_params(rough_without)
+    print(f"  {'2-D(面全体)':<24}{1:>6}{s0['Sa']:>11.4f}{s0['Sq']:>11.4f}"
+          f"{s0['Sz']:>11.4f}")
+    ratio = c0[:, 1].mean() / r0[:, 1].mean()
+    print(f"  → 目に直交する断面の Rq は平行な断面の {ratio:.1f} 倍"
+          f"(Ra なら {c0[:, 0].mean() / r0[:, 0].mean():.1f} 倍)。"
+          "**同じ表面、同じ装置、向きが違うだけ。**")
+    print(f"     斜め 45° は両者の中間({d0[:, 1].mean():.4f})。加工目の向きが"
+          "分からない面では、Rq の値そのものが走査方向の記録なしには再現しない。")
+
+    print("\n  [7b] Rz のばらつき —— 傷ありの面で、断面 1 本がどれだけ当てにならないか。")
+    rows, cols, diag = sections(rough_with)
     fld = rough_with
-    rows = np.array([[profile_params(profile_filter(fld[i, :], DX, LAMBDA_C, "high"))[k]
-                      for k in ("Ra", "Rq", "Rz")] for i in range(0, N, 4)])
-    cols = np.array([[profile_params(profile_filter(fld[:, j], DX, LAMBDA_C, "high"))[k]
-                      for k in ("Ra", "Rq", "Rz")] for j in range(0, N, 4)])
-    # 斜め断面は `fs.line_profile`(双一次補間)で取る
-    diag = []
-    for off in range(0, 480, 16):
-        p = fs.line_profile(fld, (0.0, float(off)), (float(N - 1 - off), float(N - 1)),
-                            num=N)
-        diag.append([profile_params(profile_filter(p, DX * math.sqrt(2.0),
-                                                   LAMBDA_C, "high"))[k]
-                     for k in ("Ra", "Rq", "Rz")])
-    diag = np.array(diag)
-    print(f"\n  {'断面の向き':<22}{'本数':>6}{'Ra 平均':>11}{'Rq 平均':>11}"
-          f"{'Rz 平均':>11}{'Rz 最小':>11}{'Rz 最大':>11}{'Rz 最大/最小':>14}")
+    s2d = areal_params(fld)
+    print(f"  {'断面の向き':<24}{'本数':>6}{'Rz 平均':>11}{'Rz 最小':>11}"
+          f"{'Rz 最大':>11}{'最大/最小':>11}{'Sz の 8 割超':>14}")
     for lab, a in (("目に平行(行)", rows), ("目に直交(列)", cols),
                    ("斜め 45°(line_profile)", diag)):
-        print(f"  {lab:<22}{len(a):>6}{a[:, 0].mean():>11.4f}{a[:, 1].mean():>11.4f}"
-              f"{a[:, 2].mean():>11.4f}{a[:, 2].min():>11.4f}{a[:, 2].max():>11.4f}"
-              f"{a[:, 2].max() / a[:, 2].min():>14.1f}")
-    s2d = areal_params(fld)
-    print(f"  {'2-D(面全体)':<22}{1:>6}{s2d['Sa']:>11.4f}{s2d['Sq']:>11.4f}"
-          f"{s2d['Sz']:>11.4f}{'—':>11}{'—':>11}{'—':>14}")
-    ratio = cols[:, 1].mean() / rows[:, 1].mean()
-    print(f"\n  → 目に直交する断面の Rq は平行な断面の {ratio:.1f} 倍。"
-          "**同じ表面、同じ装置、向きが違うだけ。**")
-    print(f"  → Rz は 1 本の断面では {rows[:, 2].max() / rows[:, 2].min():.1f}〜"
-          f"{cols[:, 2].max() / cols[:, 2].min():.1f} 倍振れ、面の Sz"
-          f"({s2d['Sz']:.3f})に届く断面は行 {int((rows[:, 2] > 0.9 * s2d['Sz']).sum())}/"
-          f"{len(rows)} 本、列 {int((cols[:, 2] > 0.9 * s2d['Sz']).sum())}/{len(cols)} 本しかない。")
-    print("     1-D の Rz を何本か取って最大値を報告する運用は、"
-          "**本数を書かないと再現しない**。")
+        n_hit = int((a[:, 2] > 0.8 * s2d["Sz"]).sum())
+        print(f"  {lab:<24}{len(a):>6}{a[:, 2].mean():>11.4f}{a[:, 2].min():>11.4f}"
+              f"{a[:, 2].max():>11.4f}{a[:, 2].max() / a[:, 2].min():>11.1f}"
+              f"{'%d / %d' % (n_hit, len(a)):>14}")
+    print(f"  {'2-D(面全体)Sz':<24}{1:>6}{s2d['Sz']:>11.4f}")
+    worst = max(rows[:, 2].max() / rows[:, 2].min(), cols[:, 2].max() / cols[:, 2].min())
+    print(f"\n  → 断面 1 本の Rz は同じ面の中で最大 {worst:.0f} 倍振れる。"
+          f"面の Sz({s2d['Sz']:.3f})の 8 割に届く断面は、行で"
+          f" {int((rows[:, 2] > 0.8 * s2d['Sz']).sum())}/{len(rows)} 本しかない。")
+    print("     『Rz を数本取って最大値を報告する』運用は、**本数と向きを"
+          "書かないと再現しない**。Rq は数本で足りるが Rz は足りない —— "
+          "同じ 1-D 断面でも、パラメータごとに必要な本数が違う。")
 
     # ---------------------------------------------------------------- 8 --- #
     print("\n=== 8. まとめ —— 標本化・帯域に対する頑健さの順位 ===")

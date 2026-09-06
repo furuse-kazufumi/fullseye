@@ -97,7 +97,7 @@ FIELD_SUB = 576
 LEAF_LEN_SUB = 60.0
 
 #: 生育段階 —— (名前, 葉の長さ倍率, 1 株あたりの葉数)。
-STAGES = (("発芽期", 0.42, 5), ("中期", 0.72, 9), ("繁茂期", 1.05, 16))
+STAGES = (("発芽期", 0.33, 4), ("中期", 0.62, 8), ("繁茂期", 0.90, 14))
 
 
 # --------------------------------------------------------------------------- #
@@ -342,6 +342,14 @@ def pr(pred_map, truth_f):
     return prec, rec
 
 
+def _nanmean(xs):
+    """nan を除いた平均。**全部 nan なら nan を返す**(0 を返して「当たっている」ように
+    見せない —— 陽性を 1 つも出さなかった手法の適合率は 0 ではなく『未定義』)。"""
+    a = np.asarray(xs, np.float64)
+    a = a[np.isfinite(a)]
+    return float(a.mean()) if a.size else float("nan")
+
+
 def run(scenes, methods):
     """``scenes`` = [(cube, truth), ...] を回して手法ごとの結果をまとめる。
 
@@ -365,8 +373,8 @@ def run(scenes, methods):
             "bias": float(e.mean()),
             "scatter": float(e.std()),
             "mae": float(np.abs(e).mean()),
-            "prec": float(np.nanmean(precs)),
-            "rec": float(np.nanmean(recs)),
+            "prec": _nanmean(precs),
+            "rec": _nanmean(recs),
             "maps": maps,
         }
     return out
