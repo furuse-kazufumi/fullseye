@@ -646,6 +646,16 @@ def main():
                        ("素材も背景と同じ q92", same_rows)):
         print("  " + pad(label, 26, right=False)
               + pad(f"{key['ELA'][0]:.3f}", 10) + pad(f"{key['ゴーストV'][0]:.3f}", 12))
+        break_rows.append([label, "%.3f" % key["ELA"][0], "%.3f" % key["ゴーストV"][0],
+                           "%.3f" % key["ELA"][1], "%.3f" % key["ゴーストV"][1]])
+    # AUC だけの表にしない —— FPR 1 % の検出率のほうが先に落ちる(4-a 参照)。
+    figs.save_table("breaking_conditions",
+                    ["条件", "ELA AUC", "ゴーストV AUC",
+                     "ELA FPR1%", "ゴーストV FPR1%"],
+                    break_rows, col_w=145,
+                    title="どこで崩れるか(乱数の AUC は 0.500)",
+                    caption="保存ボタン 1 回(q60 再圧縮)で ゴーストV は乱数以下。"
+                            "『平坦な帯』の行は実体が場所への偏り。")
     print("  **ゼロ点と後処理を置かずに『検出できた』と書くのは、この差を隠すことに**")
     print("  **等しい**。実運用で相手が保存ボタンを 1 回押せば、上の表の 3 行目まで")
     print("  落ちる。それが画像フォレンジックの正直な現在地である。")
