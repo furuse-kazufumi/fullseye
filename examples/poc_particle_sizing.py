@@ -228,8 +228,7 @@ def section_density_sweep() -> dict:
     # 一番薄い行(融合ゼロ)は打ち消しではなく、単に壊れていないだけ。
     active = [r for r in rows if r[2] >= 5.0]
     cancel = min(active, key=lambda r: abs(r[4])) if active else rows[0]
-    print("
-  ★打ち消しの点: 面積率 %.1f %% で D50 誤差 %+.2f %% ± %.2f —— "
+    print("\n  ★打ち消しの点: 面積率 %.1f %% で D50 誤差 %+.2f %% ± %.2f —— "
           "**内訳は融合 %.0f 件・縁切れ %.0f 件(塊 %.0f 個中)**。"
           % (cancel[0], cancel[4], cancel[5], cancel[2], cancel[3], cancel[1]))
     print("     D50 だけを見ていたら『この条件が最良』として通る。")
