@@ -1115,6 +1115,25 @@ def main():
     dmin = d[np.arange(len(meas)), j]
     ok = dmin < 2.0
     print(f"   採点用の突き合わせ(2 px 以内): {int(ok.sum())} / {len(meas)} 一致")
+    if figs.enabled():
+        # 図: 段 7 で集団ごとに分けて数える相手そのもの。切り出しは最近傍で
+        #     2 倍に伸ばしただけ(標本は増やしていない)。log10 にしないと
+        #     空だけが写る。
+        def _log(a):
+            return np.log10(np.maximum(a, 1.0))
+
+        def _crop(r, c, h):
+            a = img[int(r) - h:int(r) + h, int(c) - h:int(c) + h]
+            return np.repeat(np.repeat(_log(a), 2, axis=0), 2, axis=1)
+
+        figs.save_grid("starfield",
+                       [_log(img), _crop(68, 182, 24), _crop(205, 75, 28),
+                        _crop(45, 45, 20)],
+                       ["星野 全体", "密集星団(2 倍)", "二重星 3 組(2 倍)",
+                        "飽和星(2 倍)"],
+                       title="構造のある星野(表示は log10 電子数)",
+                       caption="一様 24 / 星団 10 / 二重星 6 / 飽和 2 個と宇宙線 25 発。"
+                               "乱数の一様分布だけでは出ない失敗を入れてある。")
 
     # --- 6a) 対応が既知のとき、何個の星でプレート定数が決まるか ---------- #
     clean = ok & (cat["kind"][j] == 0)                 # 一様配置の孤立星だけ
