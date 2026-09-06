@@ -704,6 +704,8 @@ def main():
             raise AssertionError("退化入力が素通りした")
         except ValueError:
             pass
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("\nPASS")
 
 
