@@ -495,8 +495,13 @@ def section_dimensions(img):
     step_meas = (outer_err[1] + OUTER_W_LEFT) - (outer_err[2] + OUTER_W_RIGHT)
     print(f"  段差高さ(左右の差): 真 {STEP_H:.2f} px / 実測 {step_meas:.4f} px "
           f"(誤差 {step_meas - STEP_H:+.4f} px = {um(step_meas - STEP_H):+.2f} um)")
+    ms_bad = m1.gen_measure_rectangle2((R_TOP + R_BOT) / 2, 200.0, math.pi / 2,
+                                       140, 1, img.shape)
+    pr_bad = m1.measure_pairs(img, ms_bad, sigma=1.0, threshold=0.2)
+    w_bad = pr_bad[0]["width"] if pr_bad else float("nan")
     print("  ※ 列は穴・スロット・ボルト円を避けて選んである。避けずに col=200 を")
-    print("     取ると測定線がボルト穴を先に踏んで外形幅が -33.8 px 外れる ——")
+    print(f"     取ると測定線がボルト穴を先に踏み、外形幅が {w_bad:.4f} px "
+          f"(誤差 {w_bad - OUTER_W_LEFT:+.2f} px)になる ——")
     print("     **キャリパーは『最初の対』を返すので、窓の置き方が精度より効く**。")
 
     # ---- (c) 円: 直径と中心 ---- #
