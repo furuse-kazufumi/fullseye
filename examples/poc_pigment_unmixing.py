@@ -906,54 +906,97 @@ def main():
         print("   %s: AUC %.3f / 再現率@FPR1%% %.3f(ゼロ点比 %s)/ 適合率 %.3f"
               % (_pad(name, 22), a, r1, gain, p1))
 
+    print("   復元(退色前の色)は **ゼロ点にほぼ勝てなかった** —— 最良の K/S 固定でも")
+    print("   f=0.15 で ΔE00 %.2f → %.2f(改善 %.0f %%)。褪色前の色は「復元できる」と"
+          % (cliff_d[0.15]["null"], cliff_d[0.15]["KS固定"][2],
+             100 * (1 - cliff_d[0.15]["KS固定"][2] / cliff_d[0.15]["null"])))
+    print("   書けるほどの差ではない。f=1(褪色なし)ですら組み直しに ΔE00 %.2f 掛かる。"
+          % cliff_d[1.0]["KS固定"][2])
+
     dt_total = time.perf_counter() - t_all
 
     # --------------------------------------------------------------- 検証 ----
     # 1. ゼロ点が実在し、可視だけでは下絵がほとんど見えない
     assert detect_summary["rgb"][0] < 0.90, \
         "ゼロ点(RGB PCA)が強すぎる。実験設計が崩れた: AUC %.3f" % detect_summary["rgb"][0]
-    # 2. 近赤外を含む手法がゼロ点に勝つ
+    assert max(z[0] for z in zero_strong) < 0.99, \
+        "面ごとにやり直したゼロ点が完璧になった(可視で見えてしまっている)"
+    # 2. バンドを増やすだけ(可視のみ)ではゼロ点に勝てない —— 効いたのは近赤外
+    assert abs(detect_summary["vis"][1] - detect_summary["rgb"][1]) < 0.05, \
+        "可視のみ 16 バンドが RGB と大きく違う(所見が崩れた): %.3f vs %.3f" \
+        % (detect_summary["vis"][1], detect_summary["rgb"][1])
     assert detect_summary["nir"][1] > 2.0 * max(detect_summary["rgb"][1], 0.01), \
         "近赤外がゼロ点に勝てていない"
-    assert detect_summary["ms"][0] > detect_summary["vis"][0], \
+    assert detect_summary["ms"][1] > 2.0 * detect_summary["vis"][1], \
         "可視+近赤外が可視のみに勝てていない"
     # 3. 面ごとに結果が割れる(1 つの数字にまとめられない)
-    nir_per = detect_summary["nir"][3]
-    assert nir_per[1] < 0.5 * max(nir_per[0], nir_per[2]), \
-        "アズライトの面でも近赤外が効いてしまっている(物理の仮定が崩れた): %r" % (nir_per,)
-    assert detect_summary["nir"][4] > 0.8, "剥落部ですら下絵が取れていない"
+    nir_per, nir_auc_per = detect_summary["nir"][3], detect_summary["nir"][5]
+    assert nir_auc_per[0] > 0.95 and nir_auc_per[2] > 0.95, \
+        "近赤外が効くはずの面で効いていない: %r" % (nir_auc_per,)
+    assert nir_auc_per[1] < 0.80, \
+        "アズライトの面でも近赤外が効いてしまっている(物理の仮定が崩れた): %r" \
+        % (nir_auc_per,)
+    # 差分は「剥落部で盲目」という固有の穴を持つ(平坦な材料では差が消える)
+    assert detect_summary["nir"][4] < 0.10 < detect_summary["nirb"][4], \
+        "近赤外『差分』が剥落部で盲目、という所見が崩れた: 差分 %.3f / 1 枚 %.3f" \
+        % (detect_summary["nir"][4], detect_summary["nirb"][4])
+    # 全体で 1 本の閾値が引けない検出器が実在する(近赤外 1 枚は面ごとには完璧)
+    assert detect_summary["nirb"][1] < 0.05 and min(detect_summary["nirb"][3][0],
+                                                    detect_summary["nirb"][3][2]) > 0.95, \
+        "近赤外 1 枚の「面ごとには完璧・全体では 1 本引けない」が崩れた"
     # 4. 崖 (a): 厚みで単調に落ち、どこかで半分を割る
     nir_a = [cliff_a[t]["nir"][0] for t in taus]
-    assert nir_a[0] > 0.8 and nir_a[-1] < 0.5, \
+    assert nir_a[0] > 0.8 and nir_a[-1] < 0.1, \
         "厚みの崖が見えない: %r" % (["%.3f" % v for v in nir_a],)
     assert all(b <= a + 1e-9 for a, b in zip(nir_a, nir_a[1:])), \
         "厚みに対して単調でない: %r" % (["%.3f" % v for v in nir_a],)
-    # 5. 崖 (b): 光量一定なら 8→16→31 で頭打ち(31 が 16 を明確に上回らない)
-    r8, r16, r31 = (cliff_b[n][("unmix", False)] for n in (8, 16, 31))
-    assert r31 <= r16 + 0.02, \
-        "光量一定でもバンドを増やし続けて改善している(頭打ちの所見が崩れた): " \
-        "8=%.3f 16=%.3f 31=%.3f" % (r8, r16, r31)
-    assert cliff_b[3][("unmix", False)] < r8, "3 バンドが 8 バンドに勝っている"
-    # 6. 崖 (c): 相関が上がるほど散らばりが増える
+    # 5. 崖 (b): 8 本で頭打ち。低照度では増やすほど存在量が悪化する
+    b3, b8, b16, b31 = (cliff_b[n]["十分光量"][0] for n in (3, 8, 16, 31))
+    assert b3 < 0.6 < b8, "3 バンドと 8 バンドの差が見えない: %.3f / %.3f" % (b3, b8)
+    assert abs(b31 - b8) < 0.02, \
+        "8 本から先も改善が続いている(頭打ちの所見が崩れた): 8=%.3f 16=%.3f 31=%.3f" \
+        % (b8, b16, b31)
+    d3, d8, d31 = (cliff_b[n]["低照度"][2] for n in (3, 8, 31))
+    assert d31 > 2.0 * d3, \
+        "低照度でバンドを増やしても存在量が悪化しない(崖の所見が崩れた): " \
+        "3=%.4f 8=%.4f 31=%.4f" % (d3, d8, d31)
+    # 6. 崖 (c): 相関が上がるほど散らばりが増え、どこかで 0.10 を割り込む
     scat_c = [c[2] for c in cliff_c]
-    assert scat_c[-1] > 3.0 * scat_c[0], \
-        "2 つの青を似せても散らばりが増えない: %r" % (["%.3f" % v for v in scat_c],)
-    # 7. 崖 (d): 端成分固定は褪色が進むほど外れる / 追従より必ず悪い
+    assert all(b > a for a, b in zip(scat_c, scat_c[1:])), \
+        "2 青の相関で散らばりが単調に増えない: %r" % (["%.4f" % v for v in scat_c],)
+    assert scat_c[0] < 0.01 < 0.10 < scat_c[-1], "分離の境界が範囲内に無い"
+    # 7. 崖 (d): 端成分を固定したままだと褪色が進むほど外れる
     de_fixed = [cliff_d[f]["固定"][2] for f in (1.0, 0.7, 0.5, 0.3, 0.15)]
-    assert de_fixed[-1] > de_fixed[0], "褪色を進めても固定端成分の誤差が増えない"
-    for f in (0.7, 0.5, 0.3, 0.15):
-        assert cliff_d[f]["固定"][2] >= cliff_d[f]["追従"][2] - 1e-9, \
-            "端成分を追従させたのに悪化した (f=%.2f)" % f
-    # 8. 崖 (e): 雑音で単調に落ちる
+    assert all(b > a for a, b in zip(de_fixed, de_fixed[1:])), \
+        "褪色を進めても固定端成分の誤差が増えない: %r" % (["%.2f" % v for v in de_fixed],)
+    assert abs(cliff_d[1.0]["固定"][0] - cliff_d[0.15]["固定"][0]) < 1e-6, \
+        "固定端成分の茜の存在量が褪色で動いた(単体の頂点に張り付く所見が崩れた)"
+    # 復元はゼロ点にほとんど勝てない —— 勝てないことを数字で固定する
+    assert cliff_d[0.15]["KS固定"][2] > 0.90 * cliff_d[0.15]["null"], \
+        "復元がゼロ点に大差で勝った(所見が崩れた。良い知らせなので書き直すこと)"
+    assert cliff_d[1.0]["現場"][2] > 5.0, \
+        "現場端成分での組み直しが褪色なしでも外れる、という所見が崩れた"
+    # 8. 崖 (e): 雑音で単調に落ちる / 存在量の散らばりは単調に増える
     ne = [cliff_e[s]["nir"] for s in (0.0, 0.001, 0.004, 0.01, 0.03, 0.1)]
     assert ne[0] > ne[-1] and ne[-1] < 0.3, \
         "雑音で落ちない: %r" % (["%.3f" % v for v in ne],)
+    se = [cliff_e[s]["scatter"] for s in (0.0, 0.001, 0.004, 0.01, 0.03, 0.1)]
+    assert all(b >= a - 1e-9 for a, b in zip(se, se[1:])) and se[-1] > 10 * se[0], \
+        "雑音で存在量の散らばりが増えない: %r" % (["%.4f" % v for v in se],)
     # 9. 物理の両端(KM の極限)が閉形式に一致
     for key in LAYER_KEYS:
         r_inf, s550, _n = PIGMENTS[key]
         S = scat(s550)
         assert np.abs(km_layer(S * ks_ratio(r_inf), S, 1e-9,
                                np.full_like(S, 0.5)) - 0.5).max() < 1e-5
+        assert np.abs(km_layer(S * ks_ratio(r_inf), S, 30.0,
+                               np.full_like(S, 0.5)) - r_inf).max() < 1e-2
+    # 10. 存在量: 反射率で線形に解くと単体の頂点に張り付く(散らばりより偏りが大きい)
+    for key in ("azurite", "vermilion", "madder"):
+        b, s = ab_summary[("masstone / R", key)]
+        assert abs(b) > 4.0 * s, \
+            "%s で偏りが散らばりを圧倒していない(所見が崩れた): 偏り %+.3f 散らばり %.3f" \
+            % (key, b, s)
     print(f"\n総所要 {dt_total:.1f} 秒")
     print("PASS")
     return True
