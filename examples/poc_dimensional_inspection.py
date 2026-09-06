@@ -1436,7 +1436,7 @@ def main():
           f"(= {usable_at / 1.5:.2f} sigma, PSF sigma 1.5)")
     print(f"  不確かさ(SNR 140, band 9) u_c {u_c:.4f} px = {um(u_c):.3f} um / "
           f"U=2u_c {um(2 * u_c):.3f} um")
-  print(f"  公開経路からの到達性      {n_reach} / 14 関数")
+    print(f"  公開経路からの到達性      {n_reach} / 14 関数")
 
     gain = abs(z_rms / slot_bias["M"]) if slot_bias["M"] else float("inf")
     print(f"\n  -> ゼロ点比 {gain:.0f} 倍(スロット幅の偏りで比較)。")
