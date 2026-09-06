@@ -335,6 +335,13 @@ def find_finders(dark, step=1):
     if best is None or best_err > 0.30:
         return None
     p, order = best
+    # 走査の当たりの平均は「核の 3 行だけ」に偏るので、円板の重心で中心へ寄せ直す
+    m_est = float(np.median([c[2] for c in cand]))
+    ref = []
+    for q in p:
+        r = _refine_center(dark, q[1], q[0], 3.4 * m_est)
+        ref.append(np.array([q[0], q[1]]) if r is None else np.array([r[1], r[0]]))
+    p = np.array(ref)
     tl = p[int(np.argmax([np.linalg.norm(p[1] - p[2]),
                           np.linalg.norm(p[0] - p[2]),
                           np.linalg.norm(p[0] - p[1])]))]
