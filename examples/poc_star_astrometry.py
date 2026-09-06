@@ -196,6 +196,7 @@ from scipy.special import erf
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import astrostack as A          # noqa: E402
+import examplefig as figs       # noqa: E402
 import fit_transform as FT      # noqa: E402
 
 ARCSEC = 180.0 * 3600.0 / np.pi          # rad → 秒角
