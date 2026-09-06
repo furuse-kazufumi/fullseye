@@ -192,6 +192,26 @@ def med(a):
     return float(np.median(a)) if a.size else float("nan")
 
 
+def pca_candidates(src, dst, R_true):
+    """PCA 位置合わせの姿勢候補 4 つの回転誤差[度]を小さい順に返す。
+
+    主軸は符号まで決まらないので符号の組合せは 8 通り。**そのうち行列式が +1 の
+    ものだけが姿勢候補**で、numpy の SVD が返す ``Vt`` の行列式は +1 とは限らない
+    (ここを 4 通り決め打ちにしたら、誤差がぴったり 90 度に張り付く結果が出た ——
+    鏡映を姿勢として数えていた。PoC 側の誤りで、道具の誤りではない)。
+    """
+    _, _, VtP = np.linalg.svd(np.asarray(src) - np.asarray(src).mean(0), full_matrices=False)
+    _, _, VtQ = np.linalg.svd(np.asarray(dst) - np.asarray(dst).mean(0), full_matrices=False)
+    out = []
+    for sx in (1.0, -1.0):
+        for sy in (1.0, -1.0):
+            for sz in (1.0, -1.0):
+                R = VtQ.T @ np.diag([sx, sy, sz]) @ VtP
+                if np.linalg.det(R) > 0:
+                    out.append(rot_error_deg(R, R_true))
+    return np.sort(np.array(out))
+
+
 # ---------------------------------------------------------------------------
 # 手法(すべて (R, t) を返す。src -> dst の向き)
 # ---------------------------------------------------------------------------
