@@ -1125,8 +1125,9 @@ def main():
         ("縁の規約",
          f"規約を変えるだけで推定が {spread:.1f} 個動く。推定と真値で規約を揃える"),
         ("面積の誤差の床",
-         f"よく隠れた細胞では 見えている面積 {np.mean(bins[3]['dv']):+.1f} % に対し"
-         f" 真の面積 {np.mean(bins[3]['dt']):+.1f} %"),
+         f"隠れ {OCC_LBL[occ_hi]} の帯では 見えている面積 "
+         f"{np.mean(bins[occ_hi]['dv']):+.1f} % に対し"
+         f" 真の面積 {np.mean(bins[occ_hi]['dt']):+.1f} %"),
     )
     for q, a in lines:
         print("  " + pad(q, 34, right=False) + a)
