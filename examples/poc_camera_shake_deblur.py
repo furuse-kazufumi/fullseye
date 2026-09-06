@@ -237,13 +237,17 @@ def add_noise(img, snr_db, rng):
 # --------------------------------------------------------------------------- #
 # 4. 復元とゼロ点                                                              #
 # --------------------------------------------------------------------------- #
+def psnr(gt, est):
+    return fs.psnr(gt, np.clip(est, 0.0, 1.0), data_range=DR)
+
+
 def q(gt, est):
     """(PSNR [dB], SSIM)。どちらも fullseye の台帳 op。"""
     e = np.clip(est, 0.0, 1.0)
     return fs.psnr(gt, e, data_range=DR), fs.ssim(gt, e, data_range=DR)
 
 
-NSR_GRID = np.logspace(-8.0, -0.3, 32)
+NSR_GRID = np.logspace(-8.0, -0.3, 28)
 
 
 def wiener_best(obs, psf, gt):
@@ -251,7 +255,7 @@ def wiener_best(obs, psf, gt):
     best = (-1.0, None, None)
     for nsr in NSR_GRID:
         est = fs.cx_wiener_deconvolve(obs, psf, nsr=float(nsr))
-        p, _ = q(gt, est)
+        p = psnr(gt, est)
         if p > best[0]:
             best = (p, float(nsr), est)
     return best
@@ -264,32 +268,46 @@ UNSHARP_GRID = [(a, b) for a in (0.15, 0.3, 0.5, 0.7, 0.9, 1.0)
 def unsharp_best(obs, gt):
     """ゼロ点その 2。**神託で最良のつまみを選ぶ** ので、ゼロ点側に有利な測り方。"""
     best = (-1.0, None, None)
+    x = np.clip(obs, 0.0, 1.0)
     for a, b in UNSHARP_GRID:
-        est = fs.op.unsharp(np.clip(obs, 0.0, 1.0), a=a, b=b)
-        p, _ = q(gt, est)
+        est = fs.op.unsharp(x, a=a, b=b)
+        p = psnr(gt, est)
         if p > best[0]:
             best = (p, (a, b), est)
     return best
 
 
-def sparsity(u):
-    """勾配のスパース度。小さいほど「自然画らしい」= ブラインド探索の目安。"""
-    gy = np.diff(u, axis=0).ravel()
-    gx = np.diff(u, axis=1).ravel()
-    g = np.concatenate([gy, gx])
-    return float(np.abs(g).sum() / (math.sqrt(g.size) * np.linalg.norm(g) + 1e-12))
+def crossing(xs, ys, level):
+    """ys が level を下回る x を線形補間で 1 つ返す(見つからなければ None)。"""
+    for i in range(1, len(xs)):
+        if ys[i - 1] >= level > ys[i]:
+            t = (ys[i - 1] - level) / (ys[i - 1] - ys[i])
+            return xs[i - 1] + t * (xs[i] - xs[i - 1])
+    return None
 
 
-def estimate_kernel(obs, nsr, lengths, angles):
-    """真値を見ずに核を選ぶ。復元した画の勾配スパース度が最小の (長さ, 角度)。"""
-    best = (math.inf, None)
-    for L in lengths:
-        for a in angles:
-            est = fs.cx_wiener_deconvolve(obs, psf_line(L, a), nsr=nsr)
-            s = sparsity(est)
-            if s < best[0]:
-                best = (s, (float(L), float(a)))
-    return best[1]
+def estimate_line_kernel(obs, rmin=4.0, rmax=45.0):
+    """真値を見ずに直線ブレの核を読む —— 対数振幅スペクトルの逆変換の負のピーク。
+
+    直線ブレは周波数領域で ``sinc`` の零線を刻む。対数を取ってから逆変換すると
+    その周期性が **負のピーク** として実空間に立ち、その位置が軌跡の端から端まで
+    の変位そのものになる。窓を掛けるのは画像の縁の不連続が十字状の偽ピークを
+    立てるため。★ この 20 行に相当する op が fullseye には無い(道具の穴 d)。
+    """
+    x = np.asarray(obs, float)
+    x = x - x.mean()
+    win = np.outer(np.hanning(x.shape[0]), np.hanning(x.shape[1]))
+    ceps = np.real(np.fft.ifft2(np.log(np.abs(np.fft.fft2(x * win)) + 1e-9)))
+    ceps = np.fft.fftshift(ceps)
+    h, w = ceps.shape
+    c0, c1 = h // 2, w // 2
+    yy, xx = np.mgrid[0:h, 0:w]
+    r = np.hypot(yy - c0, xx - c1)
+    masked = np.where((r >= rmin) & (r <= rmax), ceps, np.inf)
+    iy, ix = np.unravel_index(int(np.argmin(masked)), ceps.shape)
+    dy, dx = iy - c0, ix - c1
+    # ピークは「端から端までの変位」= psf_line の長さ引く 1 に対応する。
+    return math.hypot(dy, dx) + 1.0, math.degrees(math.atan2(dy, dx)) % 180.0
 
 
 # --------------------------------------------------------------------------- #
