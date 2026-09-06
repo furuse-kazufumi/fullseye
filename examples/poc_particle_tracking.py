@@ -329,14 +329,17 @@ def section2_zero_point(rows, cols, movie):
     print("  何も工夫しない。フレーム t の各検出について、フレーム t+1 の")
     print("  いちばん近い検出を相手にする(1 対 1 の制約も、上限距離も置かない)。")
     pos, ident, back = build_positions(rows, cols, movie, use_detection=True)
-    disp, bad = step_displacements(pos, ident, link_nn)
+    disp, bad = step_displacements(pos, ident, link_nn, truth_index=back)
     d, mr, mc = estimate(disp)
     print()
-    print("  リンク数 %d / リンク誤り率 %.1f %%" % (disp.shape[0], 100 * bad))
+    print("  リンク数 %d / 誤り率 %.1f %%(内訳: 曖昧 %.1f %%、欠測 %.1f %%)"
+          % (bad["n"], 100 * bad["all"], 100 * bad["amb"], 100 * bad["miss"]))
     print("  D = %.4f(真値比 %.3f)  ドリフト = (%.3f, %.3f)(真値比 列 %.3f)"
           % (d, d / D_TRUE, mr, mc, mc / DRIFT[1]))
-    print("  → 粒子 100 個ならゼロ点でもほぼ当たる。**壊れるのは密度を上げてから**")
-    print("     (4 節)。ここで「最近傍リンクで十分」と結論すると罠にはまる。")
+    print("  → **誤り率の内訳を分けて数えるのが要点**。曖昧(正解が在るのに")
+    print("     取り違えた)は変位を短くし、欠測(正解が消えた)は遠い他人を")
+    print("     掴んで変位を長くする。**向きが逆**なので、1 本の誤り率では")
+    print("     D がどちらへ外れるか予想できない。3 節で分離する。")
     return pos, ident, back
 
 
