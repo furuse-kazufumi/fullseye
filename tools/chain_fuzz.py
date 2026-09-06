@@ -386,6 +386,18 @@ def make_generators():
         # なので、縁から離すのが実際に走らせる条件。
         "mask": lambda rng: (lambda m: (m.__setitem__(
             (slice(6, 26), slice(8, 24)), True), m)[1])(np.zeros((32, 32), bool)),
+        # labels2d(2026-09-06、blob 族)—— **実体 `blob_label` を通して作る**。
+        # 手で番号を振ると「連番で歯抜けが無い」という族の約束を種のほうが
+        # 破りかねず、下流の検査が別の物を測る。物体は**わざと 3 つとも形を
+        # 変える**(四角・細長い棒・穴あきの輪)—— 同じ形を 3 つ並べた種だと
+        # circularity も solidity も holes も全部同じ値になり、「どのノブでも
+        # 同じ数が返る op」を見逃す。
+        "labels2d": lambda rng: __import__("blob2d").blob_label(
+            (lambda m: (m.__setitem__((slice(2, 10), slice(2, 10)), True),
+                        m.__setitem__((slice(4, 8), slice(4, 8)), False),
+                        m.__setitem__((slice(14, 17), slice(3, 20)), True),
+                        m.__setitem__((slice(20, 30), slice(20, 30)), True),
+                        m)[-1])(np.zeros((32, 32), bool))),
         "rgb": lambda rng: rng.random((24, 32, 3)),
         # ここに二度目の "rgbimage" があった —— 上の二色性レンダ(意図つき)を
         # 一様乱数で**黙って上書き**しており、鏡面分離系の op が
@@ -1379,6 +1391,13 @@ TYPE_CHECKS = {
                              and np.issubdtype(v.dtype, np.floating),
     "mask": lambda v: isinstance(v, np.ndarray) and v.ndim == 2
                       and (v.dtype == bool or np.issubdtype(v.dtype, np.integer)),
+    # labels2d(2026-09-06、blob 族): 背景 0・物体 1..n の 2-D 整数画像。
+    # **bool を通さない**のが肝 —— mask の述語には当たってしまう型なので、
+    # ここまで緩めると「二値を返す op が labels2d を名乗る」を検出できない。
+    "labels2d": lambda v: isinstance(v, np.ndarray) and v.ndim == 2
+                          and v.dtype != bool
+                          and np.issubdtype(v.dtype, np.integer)
+                          and v.size > 0 and int(v.min()) >= 0,
     # 実測でキーは mu / sigma / w(最初 "mean" と推測して書いたら
     # points_to_gaussians が TYPEMISS になった —— op ではなく述語が誤り)
     "gaussians": lambda v: isinstance(v, dict) and {"mu", "sigma", "w"} <= set(v),
