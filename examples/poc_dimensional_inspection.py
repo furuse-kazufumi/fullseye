@@ -1299,7 +1299,8 @@ def main():
     assert abs(circ_err) < 0.10, f"円穴の直径が合わない: {circ_err}"
     assert abs(tilt_T) < 0.05 and abs(tilt_M) < 0.05, \
         f"角度が合わない: {tilt_T} / {tilt_M}"
-    assert abs(arc_bias + 1.2 ** 2 / BOLT_RAD) < 0.10, \n        f"円弧キャリパーが曲率の偏りだけでは説明できない: {arc_bias}"
+    assert abs(arc_bias + 1.2 ** 2 / BOLT_RAD) < 0.10, \
+        f"円弧キャリパーが曲率の偏りだけでは説明できない: {arc_bias}"
     assert edge_ratio is not None and edge_ratio <= 6.0, \
         f"干渉の崖が見つからない / 早すぎる: {edge_ratio}"
     assert abs(ang_corr[0]) < 0.05 and abs(ang_corr[4]) < 0.10, \
