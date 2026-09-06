@@ -451,7 +451,9 @@ def act_sdf3d(nf):
                                          light=(0.45, -0.75, 0.95), albedo=(0.58, 0.63, 0.72),
                                          material="plastic", ao=False, ground_shadow=False,
                                          background=(1.0, 1.0, 1.0), tonemap="aces")
-        pts = fs.mesh_sample_points(Vr, F, n=60000, method="area", seed=0)
+        # 60k では 1 画素あたりの表側サンプルが足りず、裏面が点々と透けて
+        # 胡麻塩になる。250k(≈ 表側 5 点/画素)で消える。
+        pts = fs.mesh_sample_points(Vr, F, n=250000, method="area", seed=0)
         depth = fs.ledger.render_point_depth(pts, K, (PANEL, PANEL),
                                              R=flip @ pose[:3, :3], t=flip @ pose[:3, 3])
         dv = np.where(depth > 0, depth, np.nan)
@@ -466,7 +468,7 @@ def act_sdf3d(nf):
         c = _place(c, dimg, 2)
         c = _cap(c, 0, "(a) SDF の断面  丸め k = %.3f" % k)
         c = _cap(c, 1, "(b) render_beauty — 三角形 %d  方位 %3.0f°" % (len(F), np.rad2deg(az)))
-        c = _cap(c, 2, "(c) 表面サンプル 60k の深度")
+        c = _cap(c, 2, "(c) 表面サンプル 250k の深度")
         out.append(c)
     return out, "4 / 6  3-D — 距離場から三角形へ", \
         "sphere_sdf · box_sdf · sdf_smooth_union · marching_cubes · render_beauty"

@@ -21,12 +21,15 @@ region props が facade に無い」と書いた。3 層すべてを引いて確
 つまり閾値処理のあとの定番の連鎖 —— 領域を物体に切り、物体ごとに測り、
 条件で選ぶ —— が、この道具では書けなかった。
 
-## 内容(7 op)
+## 内容(10 op)
 
     切る     `blob_label`          … 二値領域 → ラベル画像(4/8 連結)
     測る     `blob_features`       … 物体ごとの 19 項目(面積・重心・慣性主軸…)
     選ぶ     `blob_select`         … 特徴量の範囲で残す(番号は振り直す)
              `blob_select_largest` … 面積の大きい順に n 個
+    割る     `blob_distance`       … 背景までの距離(**画素単位。正規化しない**)
+             `blob_seeds`          … h-maxima の種(**h は絶対値**)
+             `blob_split`          … 種から分水嶺で融合した塊を割る
     取り出す `blob_region`         … 1 個を二値領域として抜く
              `blob_boundaries`     … 物体の輪郭(1 画素幅)
     見る     `blob_overlay`        … 元画像の上に色分けして重ねる
@@ -84,6 +87,7 @@ from scipy import ndimage
 __all__ = [
     "blob_label", "blob_features", "blob_select", "blob_select_largest",
     "blob_region", "blob_boundaries", "blob_overlay",
+    "blob_distance", "blob_seeds", "blob_split",
     "FEATURE_KEYS", "CONNECTIVITIES",
 ]
 

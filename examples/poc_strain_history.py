@@ -451,13 +451,18 @@ def section6_rate(frames, cums, dirs, tru):
     print("     窓ごとに範囲を変えると、なまりを測っているのか別の時刻を")
     print("     測っているのか分からなくなる(最初そう書いていて気付いた)。")
     print()
+    print("  履歴は**累積**のほう(3 節で誤差がいちばん小さかった)を使う。")
+    print("  直接の履歴を使うと、その系統誤差が微分にも乗って平滑化の効果と")
+    print("  混ざる —— 測りたいのは平滑化そのものなので、素性の良い入力を選ぶ。")
+    print()
     rate_true = true_rate(TIMES)
     te = TIMES[EVAL]
     rows = []
+    base = {}
     for w in (1, 3, 5, 7, 9, 11):
         for kind in ("中央", "因果"):
             rates = np.asarray([np.gradient(_smooth(h, w, kind), TIMES)
-                                for h in dirs])
+                                for h in cums])
             err = rates - rate_true[None, :]
             bias = float(err[:, EVAL].mean())
             scat = float(err[:, EVAL].std(axis=0).mean())
@@ -468,9 +473,13 @@ def section6_rate(frames, cums, dirs, tru):
             else:
                 pred = float(np.mean(true_rate(te - (w - 1) / 2.0)
                                      - rate_true[EVAL]))
-            rows.append((w, kind, 1e6 * bias, 1e6 * scat, 1e6 * pred))
+            if w == 1:
+                base[kind] = bias
+            rows.append((w, kind, 1e6 * bias, 1e6 * scat,
+                         1e6 * (base[kind] + pred)))
+    print("  「予測」= w=1 の偏り(平滑化と無関係な床)+ 閉形式のなまり/遅れ。")
     print("  %5s %6s %14s %14s %16s"
-          % ("窓 w", "種類", "偏り µε/コマ", "揺らぎ µε/コマ", "閉形式の予測"))
+          % ("窓 w", "種類", "偏り µε/コマ", "揺らぎ µε/コマ", "予測 µε/コマ"))
     print("  " + "-" * 62)
     for w, kind, b, s, p in rows:
         print("  %5d %6s %14.1f %14.1f %16.1f" % (w, kind, b, s, p))
