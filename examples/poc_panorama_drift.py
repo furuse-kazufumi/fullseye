@@ -819,8 +819,13 @@ def main():
     print("      無い(穴 c, k)。")
     # 3 枚目は差(符号つき)。上書き合成なので、ずれていても継ぎ目に二重像が
     # 出ない —— 引き算して初めてずれが見える、という主張そのものの図。
+    # 差は数画素の縁に集中して最大 0.5 まで振れるので、99 %tile で切って
+    # 塗らないと全面が「0 と同じ黒」になって何も読めない。
+    _dif = np.where(_m1, mos_est - mos_true, 0.0)
+    _dif = np.clip(_dif, -np.percentile(np.abs(_dif[_m1]), 99),
+                   np.percentile(np.abs(_dif[_m1]), 99))
     figs.save_grid("mosaic",
-                   [mos_true, mos_est, mos_est - mos_true],
+                   [mos_true, mos_est, _dif],
                    ["真の H で合成", "鎖の H で合成", "差(鎖 - 真値)"],
                    title="合成画像を眺めても、ずれ量は分からない", ncols=1,
                    signed=[False, False, True],
