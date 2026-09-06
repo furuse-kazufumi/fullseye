@@ -182,6 +182,17 @@ def main():
     hmap = I.csi_height_map(stack, DZ, 0.0, LAM, on_invalid="fill")
     px_std_nm = float(np.nanstd(hmap - make_stack(0.100, 0.0, 0)[0])) * 1000.0
     pred_nm = px_std_nm * np.sqrt(2.0 / (PH * PW))
+    # 図: この PoC が測っている生データそのもの。左右 1 画素ずつの走査信号を
+    #     重ねると、段差 100 nm = 縞周期 0.3 µm の 1/3 のずれとして見える。
+    z_ax = 0.0 + DZ * np.arange(stack.shape[0])
+    sel = (z_ax > BASE - 1.5) & (z_ax < BASE + 1.5)
+    figs.save_plot("interferogram",
+                   [("低い側(1 画素)", z_ax[sel], stack[sel, PH // 2, PW // 2]),
+                    ("高い側(1 画素)", z_ax[sel], stack[sel, PH // 2, PW + PW // 2])],
+                   xlabel="走査位置 z [µm]", ylabel="輝度",
+                   title="コヒーレンス走査の生信号(段差 100 nm、雑音 1 %)",
+                   caption="包絡線の中心が段差ぶんずれる。包絡線には周期が無いので"
+                           "巻き戻る対象が無い(7 節)。")
     print("   1 画素あたりの散らばり %.1f nm → %d 画素の左右平均差の予測 %.1f nm、"
           "実測 %.1f nm(√N 則どおり)"
           % (px_std_nm, PH * PW, pred_nm, float(np.std(single, ddof=1)) * 1000))

@@ -67,11 +67,15 @@ EXTEND: 実際の顕微鏡 Z スタックに差し替えるには、``focal_stac
 """
 from __future__ import annotations
 
+import sys
 import time
+from pathlib import Path
 
 import numpy as np
 
-import fullseye as fs
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import examplefig as figs                                        # noqa: E402
+import fullseye as fs                                            # noqa: E402
 
 # ---------------------------------------------------------------------------
 # 場面と真値
