@@ -107,7 +107,27 @@ def vol_fft_lowpass(vol, cutoff, spacing=None):
     """Gaussian low-pass: keeps structure coarser than ``1/cutoff`` (voxels, or
     mm with *spacing*), attenuates finer detail smoothly. Transfer
     ``exp(-f^2 / (2 cutoff^2))`` — the DC level (mean intensity) passes
-    unchanged. Typical use: extract the illumination/thickness drift."""
+    unchanged. Typical use: extract the illumination/thickness drift.
+
+    手順: ``np.fft.rfftn`` で実 FFT → 各周波数 bin の大きさ ``|f| = sqrt(fz^2 + fy^2 + fx^2)``
+    に伝達関数 ``exp(-|f|^2 / (2 cutoff^2))`` を掛ける → ``irfftn`` で戻す。入力と同じ
+    ``(D, H, W)`` の float64 を返す(spacing を渡しても shape は変わらない)。
+
+    引数:
+    - ``cutoff``: 正の有限値。``spacing=None`` なら **cycles/voxel**(Nyquist = 0.5)、
+      ``spacing=(sz, sy, sx)``(mm、または ``spacing_mm`` を持つ ``volio.VolumeMeta``)を
+      渡すと **cycles/mm**。異方 voxel では軸ごとに ``fftfreq(n, d=spacing)`` で物理
+      周波数に直すので、同じ物理構造が同じ扱いになる。
+    - 減衰は Gaussian で、``|f| = cutoff`` で ``exp(-1/2) ≈ 0.61``(brick-wall では
+      ない。リンギングは出ない)。
+
+    検証(``ValueError``): 3-D でない / NaN・Inf / voxel 数が ``MAX_VOXELS``(``1 << 27``)
+    超 / ``cutoff`` が非正・非有限・2 乗がアンダーフローするほど小さい / ``spacing`` が
+    長さ 3 でない・非正。
+
+    注意: FFT は volume を周期的とみなす。向かい合う面の輝度差が大きいと wrap を
+    またいで漏れる(窓掛けは黙ってしない)。``vol_fft_highpass`` は厳密にこの補集合
+    ``1 - lowpass`` で、両者の和は入力に一致する。"""
     c = _check_cutoff(cutoff, "cutoff")
     return _apply_transfer(vol, spacing, lambda f: np.exp(-(f * f) / (2.0 * c * c)))
 
