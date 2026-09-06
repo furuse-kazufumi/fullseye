@@ -832,7 +832,66 @@ def section_cliff_noise():
             ref = s
         print(f"  {band:8d}{np.mean(v):+10.4f}{s:9.4f}{ref / math.sqrt(band):15.4f}")
     print("  -> 平均化は散らばりを下げるが、偏りは動かない。**偏りは平均化では消えない**。")
-    return out
+
+    # ------------------------------------------------------------------ #
+    sub("不確かさ収支 —— 消せる偏りと消せない散らばりを分けて足す")
+    print("  対象: スロット幅 50.50 px を PSF sigma 1.2 / SNR 140 / length2=9 で測る。")
+    print("  A 型 = 繰り返しから統計的に出す / B 型 = 別の根拠から範囲を見積もる。")
+    wt, a0, psf = SLOT_W, 30.27, 1.2
+    base2 = bar_image(160, a0, a0 + wt, psf, height=64)
+    rng2 = np.random.default_rng(SEED + 1)
+    v = []
+    for _ in range(64):
+        im = base2 + rng2.normal(0.0, 0.005, base2.shape)
+        ms = m1.gen_measure_rectangle2(32, 79.5, 0.0, 70, 9, im.shape)
+        pr = m1.measure_pairs(im, ms, sigma=1.0, threshold=0.15)
+        if pr:
+            v.append(pr[0]["width"])
+    u_rep = float(np.std(v, ddof=1))
+    b_sys = float(np.mean(v)) - wt
+
+    ph = []
+    for p_ in np.linspace(0.0, 1.0, 9)[:-1]:
+        im = bar_image(160, 30.0 + p_, 30.0 + p_ + wt, psf, height=8)
+        ms = m1.gen_measure_rectangle2(4, 79.5, 0.0, 70, 1, im.shape)
+        pr = m1.measure_pairs(im, ms, sigma=1.0, threshold=0.15)
+        if pr:
+            ph.append(pr[0]["width"] - wt)
+    a_phase = 0.5 * float(np.ptp(ph))
+
+    ill = []
+    for g in (-0.1, 0.0, 0.1):
+        im = bar_image(160, a0, a0 + wt, psf, height=8)
+        x = (np.arange(160) - 79.5) / 159.0
+        im = im * (1.0 + g * x)[None, :]
+        ms = m1.gen_measure_rectangle2(4, 79.5, 0.0, 70, 1, im.shape)
+        pr = m1.measure_pairs(im, ms, sigma=1.0, threshold=0.15)
+        if pr:
+            ill.append(pr[0]["width"] - wt)
+    a_ill = 0.5 * float(np.ptp(ill))
+
+    u_phase, u_ill = a_phase / math.sqrt(3.0), a_ill / math.sqrt(3.0)
+    u_c = math.sqrt(u_rep ** 2 + u_phase ** 2 + u_ill ** 2)
+    print(f"\n  {'成分':<30}{'型':>4}{'u [px]':>10}{'u [um]':>10}  消せるか")
+    for name, typ, u, killable in (
+            ("繰り返し(雑音, n=64)", "A", u_rep, "平均化・多点測定で下がる"),
+            ("位相の周期誤差(S 字)", "B", u_phase, "下がらない(補間器の性質)"),
+            ("照明の +-10% 変動", "B", u_ill, "局所しきい値なら小さい"),
+    ):
+        print(f"  {name:<30}{typ:>4}{u:10.4f}{um(u):10.3f}  {killable}")
+    print(f"  {'-' * 64}")
+    print(f"  {'合成標準不確かさ u_c':<30}{'':>4}{u_c:10.4f}{um(u_c):10.3f}")
+    print(f"  {'拡張不確かさ U = 2 u_c':<30}{'':>4}{2 * u_c:10.4f}{um(2 * u_c):10.3f}"
+          f"  (おおむね 95%)")
+    print(f"\n  これとは **別に** 系統誤差(偏り)が {b_sys:+.4f} px "
+          f"= {um(b_sys):+.3f} um。")
+    print("  偏りは不確かさに足すものではなく **引くもの** —— 校正で除ける。")
+    print("  この PoC で数字にした引ける偏り: 曲率 -sigma^2/rho(3 節)、")
+    print("  干渉 w/sigma < 3(4 節)、大域しきい値の照明ドリフト(7 節)。")
+    print("  引けない量は 8 節の **縁の定義**(面取り・丸みで px 単位)。")
+    print(f"  つまりこの部品では、U = {um(2 * u_c):.2f} um を語る前に、")
+    print("  縁の定義が宣言されているかを先に確かめる必要がある。")
+    return out, u_rep, u_c, b_sys
 
 
 # --------------------------------------------------------------------------- #
