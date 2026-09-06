@@ -594,17 +594,24 @@ def section8_tool_gaps():
     print("      `notch_filter(img, freqs, radius)` は族に入れる価値がある。")
 
     # (c) 2 次元の周波数解析が「放射平均」しかない
-    rp = np.asarray(fs.radial_power_spectrum(render(mura=False)))
-    assert rp.ndim == 2 and rp.shape[0] == 2, rp.shape        # (freqs, power)
-    th = np.deg2rad(30.0)
-    rot = np.asarray(fs.radial_power_spectrum(render(theta=th, mura=False)))
-    f_pk = float(rp[0, np.argmax(rp[1, 1:]) + 1])
-    f_pk_rot = float(rot[0, np.argmax(rot[1, 1:]) + 1])
+    # 同じ radial 周波数 0.05、向きだけが 0 度 / 45 度違う 2 枚
+    f0 = 0.05
+    a_h = np.cos(2 * np.pi * f0 * _J)
+    a_d = np.cos(2 * np.pi * f0 * (_J + _I) / np.sqrt(2.0))
+    rp_h = np.asarray(fs.radial_power_spectrum(a_h))
+    rp_d = np.asarray(fs.radial_power_spectrum(a_d))
+    assert rp_h.ndim == 2 and rp_h.shape[0] == 2, rp_h.shape        # (freqs, power)
+    peak_h = float(rp_h[0, int(np.argmax(rp_h[1]))])
+    peak_d = float(rp_d[0, int(np.argmax(rp_d[1]))])
+    rel = float(np.max(np.abs(rp_h[1] - rp_d[1])) / max(rp_h[1].max(), 1e-30))
+    assert abs(peak_h - peak_d) < 1e-9 and rel < 0.05, (peak_h, peak_d, rel)
     print("  (c) `radial_power_spectrum` は**放射平均**なので、モアレの**向き**が消える。")
-    print("      回転なしのピーク %.4f cyc/px、30 度回した像でも %.4f cyc/px ——"
-          % (f_pk, f_pk_rot))
-    print("      向きが 30 度変わったことは曲線からは分からない。方向別(角度ビン)の")
-    print("      スペクトルを返す口が要る。モアレの診断では**向きが原因の手がかり**。")
+    print("      同じ周波数 %.2f cyc/px の縞を 0 度と 45 度で作ると、ピークはどちらも" % f0)
+    print("      %.4f cyc/px、曲線同士の最大差はピーク値の %.1f %% しかない —— "
+          % (peak_h, 100 * rel))
+    print("      **向きの情報が返り値に無い**。モアレの診断では向きが原因の手がかり")
+    print("      (6 節のとおり治具の傾きが向きを変える)なので、方向別(角度ビン)の")
+    print("      スペクトルを返す口が要る。")
 
     # (d) fft_image は表示用で、複素スペクトルを返さない
     sp = np.asarray(fs.apply(render(), "fft_image"))
