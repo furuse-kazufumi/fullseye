@@ -4,7 +4,7 @@ dim: optics
 category: appearance
 in: signal
 out: vector
-examples: [appearance_structural_colour]
+examples: [appearance_structural_colour, poc_white_balance]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -61,6 +61,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [appearance_structural_colour](../../../../examples/appearance_structural_colour.py) — `py -3.11 examples/appearance_structural_colour.py`
+- [poc_white_balance](../../../../examples/poc_white_balance.py) — `py -3.11 examples/poc_white_balance.py`
 
 ## 型が繋がる次の op(`vector` を入力に取れる)
 

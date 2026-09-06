@@ -4,7 +4,7 @@ dim: specular
 category: dichromatic
 in: rgbimage × labels
 out: vector
-examples: [specular_photometric]
+examples: [poc_white_balance, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -64,6 +64,7 @@ surviving planes do not intersect in a well-determined line.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_white_balance](../../../../examples/poc_white_balance.py) — `py -3.11 examples/poc_white_balance.py`
 - [specular_photometric](../../../../examples/specular_photometric.py) — `py -3.11 examples/specular_photometric.py`
 
 ## 型が繋がる次の op(`vector` を入力に取れる)

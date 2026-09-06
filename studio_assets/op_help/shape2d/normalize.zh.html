@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">normalize — SHAPE2D <code style="color:#22d3bf">descriptor</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">efdmodel</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import fourierdesc; fourierdesc.normalize(model, size_invariant=True)</code>(或 <code style="color:#22d3bf">opsshape2d.get(&quot;normalize&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>EFD 係数を「正準ポーズ」の係数へ変換する(第1高調波を基準に整列)。</p>
+<p>Kuhl–Giardina の正準化: (1) 第1高調波の位相で <b>始点</b> の任意性を除去、(2) 第1</p>
+<p>楕円の長軸を基準軸へ回して <b>向き</b> を揃え、(3) 第1高調波の長軸長で割って <b>大きさ</b></p>
+<p>を揃える。複数形状を重ねる/平均する等の「正準ポーズ再構成」向け。</p>
+<p>注意(honest): 第1高調波がほぼ <b>円形</b>(長軸≈短軸)の形状では位相 (theta/psi) が</p>
+<p>悪条件で不安定になる。<b>不変マッチングには本関数でなく</b> :func:<code style="color:#22d3bf">invariants</code> /</p>
+<p>:func:<code style="color:#22d3bf">descriptor_distance</code>(特異値ベース)を使うこと。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:piv_flow_from_particles">piv_flow_from_particles</a> — <code style="color:#22d3bf">py -3.11 examples/piv_flow_from_particles.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">matrix</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">descriptor</code>)</h3>
+<p><a style="color:#22d3bf" href="opshape2d:elliptic_fourier">elliptic_fourier</a> · <a style="color:#22d3bf" href="opshape2d:reconstruct">reconstruct</a> · <a style="color:#22d3bf" href="opshape2d:invariants">invariants</a> · <a style="color:#22d3bf" href="opshape2d:descriptor_distance">descriptor_distance</a> · <a style="color:#22d3bf" href="opshape2d:fourier_smooth">fourier_smooth</a> · <a style="color:#22d3bf" href="opshape2d:from_xld">from_xld</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: fourierdesc.py — SHAPE2D 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

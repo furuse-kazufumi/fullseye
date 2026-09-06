@@ -45,6 +45,26 @@ PoC そのものは `examples/poc_*.py` にあり、どれも `PASS` で終わ�
   スカラ入力で `(3,)`、`dem_geocentric_grid` が `coordgrid` でなく `pointmap`)。
   追加した日にファザーを回していなかったのが原因。
 
+* ★**大津のしきい値が入力の値域で変わっていた。** `ops._otsu` が
+  `np.clip(v, 0, 1)` してから `[0,1]` 固定の 256 ビンで数えていたので、
+  **0..255 の float(8 bit 相当。まったく普通の入力)を渡すと全画素が飽和し、
+  「全画素が前景」を返していた** —— 正解との IoU が **1.0000 → 0.2578**、
+  警告も例外も無し。大津のしきい値はアフィン変換に等変であるべきなので
+  これは仕様ではない。同じ 1 行が `ops._equalize`(CDF が全部 1 になり
+  平坦化が恒等に化ける)と `backends._u8`(**backends.py だけで 23 op が
+  通る**)にもあり、まとめて直した。値域が `[0,1]` の中にある入力の結果は
+  **1 ビットも変えていない**(範囲外のときだけ実データの範囲を使う)。
+  門は `tests/test_value_range_saturation.py`。
+* ★**配布しているのに公開経路のどこからも呼べないモジュールが 95 個・
+  関数 804 本あった。** `fourierdesc`(楕円フーリエ記述子)・`imagemorph`
+  (TPS/区分アフィンのワープ)・`measuring1d`(1-D 測定)・`scale`(大画像の
+  タイル処理)は、**専用テストで 7/7・6/6・6/6・6/6 が実際に呼ばれている**のに
+  `fullseye.<名前>` にも `.ledger` にも `.op` にも一つも出ていなかった。
+  `docs/ops` の drift 検査も op→example のカバレッジも**すでに登録された op**
+  を数える門なので、登録されなかったものは母集団にすら入らず全部緑のまま
+  だった。門を `tests/test_public_reachability.py` に立て(3 通りの壊し方で
+  発火を確認)、まず `fourierdesc` + `imagemorph` を台帳に載せた。
+
 ### 増えたもの
 
 * **`fullseye.op`** —— 進化する 2-D op 882 個を属性で呼ぶ入口。それまで
@@ -56,6 +76,12 @@ PoC そのものは `examples/poc_*.py` にあり、どれも `PASS` で終わ�
   Procrustes / 平均形状 / 形態 PCA / Mahalanobis / 正中面 / 符号つき面距離。
   比較形態学(頭蓋・骨・歯)と「設計 CAD の無い部品を個体群と比べる」検査の
   両方に効く。
+* **`shape2d` 族(13 op)** —— 2-D の形を記述して写す層。楕円フーリエ記述子
+  7 本(`elliptic_fourier` / `invariants` / `reconstruct` / `normalize` /
+  `descriptor_distance` / `fourier_smooth` / `from_xld`)と、ランドマーク駆動の
+  ワープ 6 本(`warp_tps_image` / `warp_piecewise_affine` / `morph` /
+  `morph_sequence` / `blend` / `add_frame_corners`)。**新規実装ではなく、
+  届いていなかった既存実装を公開経路に載せたもの**。ファザー到達 13/13。
 * **`orientation_rank_ratio`**(`camera_calibration`)—— 視点の向きが内部
   パラメータをどれだけ拘束しているか。再投影誤差は配置の良し悪しを映さない
   (板の傾きだけで再投影 RMS 比 1.00 倍のまま fx 誤差が 281 倍)。

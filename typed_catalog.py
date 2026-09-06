@@ -201,6 +201,10 @@ OP_PARAM_HINTS = {
     # ★ 既定値そのものが重い件は別扱い —— docstring に費用表を書き、
     #   docs/KNOWN_ISSUES.md に「解いていない」として残した。ここで軽くするのは
     #   検査を通すためであって、遅さを隠すためではない。
+    # fourier_smooth(points, keep) の keep は既定が無い必須引数。束縛できないと
+    # 「引数が組めない」で永久にスキップされ、カバレッジ表には未到達として
+    # しか出ない(2026-09-06 の初回計測で 13 op 中この 1 本だけ落ちた)。
+    ("fourier_smooth", "keep"): lambda rng: int(rng.integers(3, 12)),
     ("observe_surface", "resolution"): lambda rng: (32, 32),
     ("observe_surface", "supersample"): lambda rng: 1,
     # raytrace.glass(nd, vd) は必須引数が 2 つで名前ヒントに無い(束縛できず永久

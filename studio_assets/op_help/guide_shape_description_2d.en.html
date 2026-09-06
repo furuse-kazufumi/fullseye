@@ -1,0 +1,120 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">This guide is available in Japanese only (it is human-written prose, so nothing here is machine-substituted).</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">2-D の形を記述して写す(EFD とランドマークワープ) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p><b>閉じた輪郭を係数に畳んで比べる</b>層と、<b>対応点で画像を写す</b>層です。</p>
+<p>13 op / 2 カテゴリ(numpy と scipy のみ。台帳は <code style="color:#22d3bf">opsshape2d.py</code>、実体は</p>
+<p><code style="color:#22d3bf">fourierdesc.py</code> と <code style="color:#22d3bf">imagemorph.py</code>):</p>
+<p style="margin:2px 0 2px 12px">• <b>descriptor(7)</b> — <code style="color:#22d3bf">elliptic_fourier</code> / <code style="color:#22d3bf">reconstruct</code> / <code style="color:#22d3bf">invariants</code> /</p>
+<p><code style="color:#22d3bf">normalize</code> / <code style="color:#22d3bf">descriptor_distance</code> / <code style="color:#22d3bf">fourier_smooth</code> / <code style="color:#22d3bf">from_xld</code>:</p>
+<p>閉輪郭 → 楕円フーリエ係数 → 不変量 → 形どうしの距離。</p>
+<p style="margin:2px 0 2px 12px">• <b>morph(6)</b> — <code style="color:#22d3bf">warp_tps_image</code> / <code style="color:#22d3bf">warp_piecewise_affine</code> / <code style="color:#22d3bf">morph</code> /</p>
+<p><code style="color:#22d3bf">morph_sequence</code> / <code style="color:#22d3bf">blend</code> / <code style="color:#22d3bf">add_frame_corners</code>:</p>
+<p>ランドマークの対応で画像を変形する。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">なぜ台帳に載せたか —— 見えていなかったから</h3>
+<p>2026-09-06 に数え直したところ、この 2 モジュールは</p>
+<p style="margin:2px 0 2px 12px">• wheel に<b>同梱されていて</b>(<code style="color:#22d3bf">pyproject.toml</code> の <code style="color:#22d3bf">py-modules</code>)、</p>
+<p style="margin:2px 0 2px 12px">• 専用テストがあって <b>7/7・6/6 の関数が実際に呼ばれていて</b>、</p>
+<p style="margin:2px 0 2px 12px">• それでも <code style="color:#22d3bf">fullseye.&lt;名前&gt;</code> にも <code style="color:#22d3bf">fullseye.ledger.&lt;名前&gt;</code> にも</p>
+<p><code style="color:#22d3bf">fullseye.op.&lt;名前&gt;</code> にも<b>一つも出ていませんでした</b>。</p>
+<p>呼んでいたのはギャラリー生成器とテストだけ。つまり**実装した・テストも</p>
+<p>書いた、で終わっていて、利用者から見ると存在しない**状態でした。</p>
+<p>見落とした理由がはっきりしています。<code style="color:#22d3bf">docs/ops</code> の drift 検査も</p>
+<p>op→example のカバレッジも、<b>すでに登録された op</b> を数える門です。</p>
+<p>登録されなかったものは母集団にすら入らないので、どの検査も緑のまま</p>
+<p>気づけません。同じ形の穴を数える門を</p>
+<p><code style="color:#22d3bf">tests/test_public_reachability.py</code> に立てました。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">全体の流れ</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    A[&quot;閉じた輪郭 (N,2)&quot;] --&gt; B[&quot;elliptic_fourier&lt;br/&gt;H 本の高調波へ畳む&quot;]
+    B --&gt; C[&quot;invariants&lt;br/&gt;回転・平行移動・始点・大きさに不変&quot;]
+    C --&gt; D[&quot;descriptor_distance&lt;br/&gt;形どうしの距離&quot;]
+    B --&gt; E[&quot;reconstruct&lt;br/&gt;係数から輪郭へ戻す&quot;]
+    B --&gt; F[&quot;normalize&lt;br/&gt;正準ポーズの係数&quot;]
+    A --&gt; G[&quot;fourier_smooth&lt;br/&gt;帯域制限で輪郭を平滑化&quot;]
+    H[&quot;XLD 輪郭 dict&quot;] --&gt; I[&quot;from_xld&quot;] --&gt; A
+    J[&quot;画像 + 対応点&quot;] --&gt; K[&quot;warp_tps_image&lt;br/&gt;滑らかに写す&quot;]
+    J --&gt; L[&quot;warp_piecewise_affine&lt;br/&gt;三角形ごとに写す&quot;]
+    K --&gt; M[&quot;morph / morph_sequence&lt;br/&gt;2 枚を混ぜる&quot;]
+    L --&gt; M
+    N[&quot;add_frame_corners&quot;] --&gt; K</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">いちばん短い例</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import fourierdesc as F
+
+t = np.linspace(0, 2 * np.pi, 240, endpoint=False)
+r = 30 + 6 * np.cos(3 * t)                      # 3 葉の突起を持つ形
+pts = np.c_[60 + r * np.cos(t), 60 + 0.7 * r * np.sin(t)]
+
+model = F.elliptic_fourier(pts, n_harmonics=10)  # 係数へ畳む
+inv = F.invariants(model)                        # 向きも大きさも消した記述子
+d = F.descriptor_distance(model, model)          # 同じ形なら 0.0</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">落とし穴 4 つ(どれも実測つき)</h3>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">1. 高調波を増やしても、ある所から先は下がらない</h3>
+<p>上の 3 葉 + 7 葉の形(240 点)で、係数から戻した輪郭と元の輪郭の</p>
+<p>最近傍距離を測ると:</p>
+<p>| 高調波の本数 | 最大 | 中央値 |</p>
+<p>|---|---|---|</p>
+<p>| 2 | 4.4221 px | 1.3359 px |</p>
+<p>| 6 | 2.0614 px | 0.5836 px |</p>
+<p>| 8 | 1.0931 px | 0.3299 px |</p>
+<p>| 12 | <b>0.4123 px</b> | 0.2175 px |</p>
+<p>| 20 | 0.3729 px | 0.2038 px |</p>
+<p>| 40 | 0.3811 px | 0.1875 px |</p>
+<p>H=12 で頭打ちになり、40 本にしても最大誤差は<b>むしろ少し増えます</b>。</p>
+<p>残っている 0.37 px は形の情報ではなく、<code style="color:#22d3bf">reconstruct</code> が弧長で等間隔に</p>
+<p>点を打ち直すことによる標本化の床です。**「まだ誤差があるから高調波を</p>
+<p>増やす」は、この床から先は効きません**。元の形に鋭い角があるとき以外、</p>
+<p>実務では H=10〜15 で足ります。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">2. 不変量は本当に不変(そこは信じてよい)</h3>
+<p>同じ形を動かして <code style="color:#22d3bf">invariants</code> を比べた実測:</p>
+<p>| 変換 | 記述子の最大差 |</p>
+<p>|---|---|</p>
+<p>| 回転 37 度 | 3.3e-16 |</p>
+<p>| 平行移動 +(13, −7) | 2.2e-16 |</p>
+<p>| 2.5 倍に拡大 | 3.3e-16 |</p>
+<p>| 始点を 60 点ずらす | 5.6e-16 |</p>
+<p>4 つとも倍精度の丸め誤差です。この族で「回転不変」と書いてあるものは</p>
+<p><b>下請けの任意性に引きずられていません</b> —— 同じ主張を持つ 3-D の記述子</p>
+<p>(<code style="color:#22d3bf">fpfh</code> / <code style="color:#22d3bf">ppf</code>)は法線の符号の任意性で実際に壊れていたので、平面の</p>
+<p>輪郭でも念のため測りました。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">3. 距離は「形の違いの量」に比例しない</h3>
+<p>形を周期 5 で <code style="color:#22d3bf">k</code> の割合だけ膨らませて距離を測ると:</p>
+<p>| 歪み k | 距離 |</p>
+<p>|---|---|</p>
+<p>| 0.00 | 0.00000 |</p>
+<p>| 0.02 | 0.02637 |</p>
+<p>| 0.05 | 0.06195 |</p>
+<p>| 0.10 | 0.10673 |</p>
+<p>| 0.20 | 0.18250 |</p>
+<p><b>順序は保ちますが、比例しません</b>(k を 10 倍にしても距離は 6.9 倍)。</p>
+<p>歪みが大きいほど頭打ちになるので、「距離 0.1 は距離 0.05 の 2 倍おかしい」</p>
+<p>とは読めません。<b>閾値を切る用途には使えて、量を言う用途には向きません</b>。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">4. TPS と区分アフィンは「どこまで影響するか」が違う</h3>
+<p>96x128 の滑らかな傾斜画像で、5 つの制御点のうち<b>中央の 1 点だけ</b>を</p>
+<p>(8, 0) 動かしたときの実測:</p>
+<p>| 手法 | 制御点の凸包の内 | 凸包の外 | 変位場の二階差分 rms |</p>
+<p>|---|---|---|---|</p>
+<p>| <code style="color:#22d3bf">warp_piecewise_affine</code> | 0.0312 | 0.0288 | 0.00020 |</p>
+<p>| <code style="color:#22d3bf">warp_tps_image</code> | 0.0313 | <b>0.0333</b> | <b>0.00006</b> |</p>
+<p><b>TPS のほうが変位場は 3.3 倍滑らかで、そのぶん凸包の外まで効きます</b></p>
+<p>(薄板スプラインは大域的な基底なので当然の帰結です)。顔や生物のように</p>
+<p>連続した変形を作りたいなら TPS、部品ごとに独立に動かしたいなら区分</p>
+<p>アフィン、という使い分けになります。</p>
+<p>なお、<b>制御点を全部同じだけ動かした形の検査では両者の差は出ません</b></p>
+<p>(一様な平行移動はどこでもアフィンなので当たり前)。最初にその形で</p>
+<p>測って「差が無い」と書きかけました —— 探針が 1 枚だと差が出ないことの</p>
+<p>ほうが多いので、必ず<b>一様でない変形</b>で比べてください。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">縁を止めたいときは枠の点を足す</h3>
+<p>制御点だけを渡すと、画像の縁も一緒に動きます。<code style="color:#22d3bf">add_frame_corners</code> は</p>
+<p>四隅と辺の中点を固定点として足します(4 点 → 12 点)。同じ変形での実測:</p>
+<p>| | 点数 | 画像の上下端の変化 | 中央の変化 |</p>
+<p>|---|---|---|---|</p>
+<p>| 枠なし | 4 | 0.0547 | 0.0547 |</p>
+<p>| <code style="color:#22d3bf">add_frame_corners</code> | 12 | <b>0.0256</b> | 0.0472 |</p>
+<p>縁の動きは半分以下になり、中央の変形はほぼ保たれます。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">関連</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">docs/ops/shapestat/guides/shape_statistics.md</code> —— 3-D のランドマークを</p>
+<p><b>群</b>で比べる層。こちらは 2-D の輪郭を 1 つずつ記述する層。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">docs/ops/profile/guides/profile_metrology.md</code> —— 1-D 断面の計測。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">examples/contour_fourier.py</code> —— この族を使う例。</p>

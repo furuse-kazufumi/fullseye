@@ -5,7 +5,7 @@ category: segmentation
 in: image
 out: region
 halcon: binary_threshold
-examples: [ct_inspection, gallery2d_segmentation, poc_document_scan, poc_matrix_code_reading, quickstart, segment_and_classify]
+examples: [ct_inspection, gallery2d_segmentation, poc_document_scan, poc_matrix_code_reading, poc_vegetation_cover, quickstart, segment_and_classify]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -21,7 +21,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 大津の判別分析法（Otsu's method）による自動しきい値処理。HALCON の ``binary_threshold``（Segment an image using binary thresholding.）に相当。
 
-``a``, ``b`` は未使用（しきい値は入力から自動で決まる）。``[0,1]`` を 256 ビンのヒストグラムに分け、クラス間分散 ``ω(1-ω)`` を最大化するしきい値を全探索して選び、それより大きい画素を前景とする。前景・背景 2 クラスの分離を仮定するため、ヒストグラムが単峰（1 山）の画像では意図しない位置で切れることがある。
+``a``, ``b`` は未使用（しきい値は入力から自動で決まる）。値が ``[0,1]`` に収まっていればその範囲を、はみ出していれば**入力の実際の範囲**を 256 ビンのヒストグラムに分け、クラス間分散 ``ω(1-ω)`` を最大化するしきい値を全探索して選び、それより大きい画素を前景とする。前景・背景 2 クラスの分離を仮定するため、ヒストグラムが単峰（1 山）の画像では意図しない位置で切れることがある。
 
 ## 詳しい使い方ガイド
 
@@ -39,6 +39,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - [gallery2d_segmentation](../../../../examples/gallery2d_segmentation.py) — `py -3.11 examples/gallery2d_segmentation.py`
 - [poc_document_scan](../../../../examples/poc_document_scan.py) — `py -3.11 examples/poc_document_scan.py`
 - [poc_matrix_code_reading](../../../../examples/poc_matrix_code_reading.py) — `py -3.11 examples/poc_matrix_code_reading.py`
+- [poc_vegetation_cover](../../../../examples/poc_vegetation_cover.py) — `py -3.11 examples/poc_vegetation_cover.py`
 - [quickstart](../../../../examples/quickstart.py) — `py -3.11 examples/quickstart.py`
 - [segment_and_classify](../../../../examples/segment_and_classify.py) — `py -3.11 examples/segment_and_classify.py`
 

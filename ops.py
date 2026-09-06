@@ -277,7 +277,17 @@ def _equalize(v, a, b):
     """ヒストグラム均等化（線形化）。HALCON の ``equ_histo_image``（Histogram linearization of images）に相当。
 
 ``a``, ``b`` は未使用。``[0,1]`` を 256 ビンに分けたヒストグラムの累積分布関数（CDF）を求め、各画素値をその CDF で置き換えることで、出力のヒストグラムがほぼ一様になるよう引き伸ばす。コントラストが低い（値域が狭い）画像を見やすくするのに使う。全画素が同一値だと CDF が定義できず ``cdf[-1]`` が 0 になり、変換は事実上恒等（変化なし）になる。"""
-    x = np.clip(v, 0, 1); hist, edges = np.histogram(x, 256, (0, 1))
+    x = np.asarray(v, np.float64)
+    lo = float(np.nanmin(x)) if x.size else 0.0
+    hi = float(np.nanmax(x)) if x.size else 1.0
+    # [0,1] の外を clip すると CDF が全部 1 になり、平坦化が恒等に化ける
+    # (0..255 の float を渡すと出力が一様に 1.0)。範囲外のときだけ実データの
+    # 範囲でビンを張る —— [0,1] 内の入力に対する結果は**一切変えない**。
+    if hi > 1.0 or lo < 0.0:
+        span = (lo, hi) if hi > lo else (lo, lo + 1.0)
+    else:
+        x = np.clip(x, 0, 1); span = (0.0, 1.0)
+    hist, edges = np.histogram(x, 256, span)
     cdf = np.cumsum(hist).astype(np.float64); cdf = cdf / cdf[-1] if cdf[-1] > 0 else cdf
     return np.interp(x.ravel(), (edges[:-1] + edges[1:]) / 2, cdf).reshape(x.shape)
 
@@ -350,8 +360,21 @@ def _threshold(v, a, b):
 def _otsu(v, a, b):
     """大津の判別分析法（Otsu's method）による自動しきい値処理。HALCON の ``binary_threshold``（Segment an image using binary thresholding.）に相当。
 
-``a``, ``b`` は未使用（しきい値は入力から自動で決まる）。``[0,1]`` を 256 ビンのヒストグラムに分け、クラス間分散 ``ω(1-ω)`` を最大化するしきい値を全探索して選び、それより大きい画素を前景とする。前景・背景 2 クラスの分離を仮定するため、ヒストグラムが単峰（1 山）の画像では意図しない位置で切れることがある。"""
-    x = np.clip(v, 0, 1); hist, edges = np.histogram(x, 256, (0, 1))
+``a``, ``b`` は未使用（しきい値は入力から自動で決まる）。値が ``[0,1]`` に収まっていればその範囲を、はみ出していれば**入力の実際の範囲**を 256 ビンのヒストグラムに分け、クラス間分散 ``ω(1-ω)`` を最大化するしきい値を全探索して選び、それより大きい画素を前景とする。前景・背景 2 クラスの分離を仮定するため、ヒストグラムが単峰（1 山）の画像では意図しない位置で切れることがある。"""
+    x = np.asarray(v, np.float64)
+    lo = float(np.nanmin(x)) if x.size else 0.0
+    hi = float(np.nanmax(x)) if x.size else 1.0
+    # [0,1] の外を clip すると**判別の対象そのものが潰れる**。0..255 の float
+    # (8 bit 相当)を渡すと全画素が 1 に飽和し、「全画素が前景」が返っていた
+    # (2026-09-06 実測: 正解との IoU が 1.0000 -> 0.2578。警告も例外も無し)。
+    # 大津のしきい値はアフィン変換に等変であるべきなので、これは仕様ではなく穴。
+    # 範囲外のときだけ実データの範囲でビンを張る —— [0,1] 内の入力に対する
+    # 結果は**一切変えない**。
+    if hi > 1.0 or lo < 0.0:
+        span = (lo, hi) if hi > lo else (lo, lo + 1.0)
+    else:
+        x = np.clip(x, 0, 1); span = (0.0, 1.0)
+    hist, edges = np.histogram(x, 256, span)
     p = hist.astype(np.float64) / max(1, hist.sum()); omega = np.cumsum(p)
     mids = (edges[:-1] + edges[1:]) / 2; mu = np.cumsum(p * mids); mu_t = mu[-1]
     den = omega * (1 - omega); sb = np.where(den > 1e-12, (mu_t * omega - mu) ** 2 / np.maximum(den, 1e-12), 0.0)

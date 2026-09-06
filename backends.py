@@ -70,7 +70,22 @@ def _safe(fn, out_sort=None):
 
 
 def _u8(v):
-    return (np.clip(v, 0, 1) * 255).astype(np.uint8)
+    """float 画像 -> uint8。**[0,1] の外は clip せず伸ばす**。
+
+    2026-09-06 まで無条件に ``np.clip(v, 0, 1)`` していた。0..255 の float
+    (8 bit 相当)を渡すと全画素が 255 に飽和し、``cv_otsu`` は「全画素が
+    前景」を返していた(正解との IoU 1.0000 -> 0.2578。警告も例外も無し)。
+    この関数を通る op は backends.py だけで 23 本あるので、1 か所で直す。
+
+    **[0,1] に収まっている入力の結果は 1 ビットも変えない** —— 範囲外の
+    ときだけ ``(v - min) / (max - min)`` へ写す。定数画像は 0 にする。
+    """
+    a = np.asarray(v, np.float64)
+    if a.size:
+        lo = float(np.nanmin(a)); hi = float(np.nanmax(a))
+        if hi > 1.0 or lo < 0.0:
+            a = (a - lo) / (hi - lo) if hi - lo > 1e-12 else np.zeros_like(a)
+    return (np.clip(a, 0, 1) * 255).astype(np.uint8)
 
 
 #: lambda で定義された op の説明(lambda に docstring は書けない)。
@@ -784,7 +799,7 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             return morphology.disk(1 + int(a * 3))
 
         def _u8s(v):
-            return (np.clip(v, 0, 1) * 255).astype(np.uint8)
+            return _u8(v)                     # 2026-09-06: 飽和の穴を 1 か所へ
 
         sk = [
             ("sk_scharr", "edges", "edges_image", IMAGE, IMAGE, lambda v, a, b: norm(filters.scharr(v))),
