@@ -240,11 +240,20 @@ def m2_band(img):
 
 
 def m3_adaptive(img):
-    """中央 1 行 + 局所平均しきい値(窓 8 モジュール)。"""
+    """中央 1 行 + 局所しきい値(Bernsen: 窓 8 モジュールの最大最小の中点)。
+
+    ★**対比の門が要る**: 局所平均だけで切ると、白しかない静止帯でしきい値が
+    その白の平均に来るので、雑音の半分が「暗」に化けて run が増える
+    (最初にそう書いて、雑音のある条件が全滅した)。窓の中の振れ幅が
+    画像全体の振れ幅の 35 % を切ったら「ここには構造が無い」と見なす。
+    """
     prof = img[CENTER_ROW]
     win = int(round(8 * MODULE_PX))
-    thr = uniform_filter1d(prof, win, mode="nearest")
-    lens = _runs_from_mask(prof < thr - 0.02)
+    lo = minimum_filter1d(prof, win, mode="nearest")
+    hi = maximum_filter1d(prof, win, mode="nearest")
+    swing = float(np.percentile(prof, 98) - np.percentile(prof, 2))
+    dark = (prof < 0.5 * (lo + hi)) & ((hi - lo) > 0.35 * swing)
+    lens = _runs_from_mask(dark)
     return None if lens is None else decode_runs(lens)
 
 
