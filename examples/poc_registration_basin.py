@@ -419,16 +419,7 @@ def main():
             Rt = random_rot(60.0, rq)
             u = rq.normal(size=3)
             dstq = fs.apply_transform(b, Rt, (u / np.linalg.norm(u)) * (0.15 * dq))
-            _, _, VtP = np.linalg.svd(a - a.mean(0), full_matrices=False)
-            _, _, VtQ = np.linalg.svd(dstq - dstq.mean(0), full_matrices=False)
-            cands = []
-            for sx in (1.0, -1.0):
-                for sy in (1.0, -1.0):
-                    for sz in (1.0, -1.0):
-                        Rc = VtQ.T @ np.diag([sx, sy, sz]) @ VtP
-                        if np.linalg.det(Rc) > 0:
-                            cands.append(rot_error_deg(Rc, Rt))
-            cands = np.sort(np.array(cands))
+            cands = pca_candidates(a, dstq, Rt)
             chosen = rot_error_deg(fs.pca_align(a, dstq)[0], Rt)
             best.append(cands[0])
             rest.append(cands[1])
