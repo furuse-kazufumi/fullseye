@@ -558,23 +558,35 @@ def main():
 
     print("\n=== 8. 崖 —— 波長依存の消散(モデルそのものが外れる) ===")
     print("  暗チャネル法は t を 1 枚(チャネル共通)としか置けない。beta を波長で変える。")
-    print(f"  {'beta (R,G,B)':<26}{'t MAE':>9}{'A 角度':>9}{'PSNR':>8}{'色の偏り':>11}")
+    print("  オラクルの列は**真の t(3 チャネルの平均)と真の A** を与えた場合。推定を")
+    print("  完璧にしても残るぶんが、単一 t という置き方そのものの限界。")
+    print(f"  {'beta (R,G,B)':<26}{'t MAE':>9}{'PSNR 推定':>10}{'色の偏り':>10}"
+          f"{'PSNR オラクル':>13}{'色の偏り or':>13}")
+    j_w = scene_radiance()
+    d_w = depth_map()
+    wave_rows = []
     for label, bvec in (("等方 (0.020,0.020,0.020)", (0.020, 0.020, 0.020)),
                         ("弱い波長依存 λ^-1 相当", (0.017, 0.020, 0.024)),
                         ("強い波長依存 λ^-4 相当", (0.010, 0.020, 0.041))):
-        i2, t3v = haze(scene_radiance(), depth_map(), beta=np.array(bvec))
-        j2 = scene_radiance()
+        i2, t3v = haze(j_w, d_w, beta=np.array(bvec))
         t2 = t3v.mean(axis=2)
         a2 = airlight_dcp(i2)
         te = transmission_dcp(i2, a2)
-        out = recover(i2, a2, te)
-        bias = float(np.mean(out[..., 2] - j2[..., 2]) - np.mean(out[..., 0] - j2[..., 0]))
-        print(f"  {label:<26}{np.mean(np.abs(te - t2)):>9.4f}{angle_deg(a2, A_TRUE):>9.3f}"
-              f"{psnr_masked(out, j2):>8.2f}{bias:>11.4f}")
+        out, out_or = recover(i2, a2, te), recover(i2, A_TRUE, t2)
+        bias = (lambda o: float(np.mean(o[..., 2] - j_w[..., 2])
+                                - np.mean(o[..., 0] - j_w[..., 0])))
+        wave_rows.append((label, psnr_masked(out, j_w), bias(out),
+                          psnr_masked(out_or, j_w), bias(out_or)))
+        print(f"  {label:<26}{np.mean(np.abs(te - t2)):>9.4f}{psnr_masked(out, j_w):>10.2f}"
+              f"{bias(out):>10.4f}{psnr_masked(out_or, j_w):>13.2f}{bias(out_or):>13.4f}")
     print("  → 単一 t のモデルでは、波長依存が強いほど青が系統的にずれる(色の偏りの列)。")
-    print("     等方でも -0.03 の偏りがあるのは復元後のクリップによるもので、読むべきは")
-    print("     そこからの**変化**。強い波長依存で +0.26 まで振れる = 青が過剰に復元される。")
-    print("     これは推定の精度でなく**モデルの表現力**の限界で、t を真値にしても消えない。")
+    print("     等方でも偏りが 0 でないのは復元後のクリップによるもので、読むべきは")
+    print("     そこからの**変化**。強い波長依存で青の側へ振れる = 青が過剰に復元される。")
+    print(f"  → **オラクルでも消えない**。真の t と真の A を与えても色の偏りは "
+          f"{wave_rows[0][4]:+.4f} → {wave_rows[2][4]:+.4f} と")
+    print(f"     同じ向きに動き、PSNR も {wave_rows[0][3]:.2f} → {wave_rows[2][3]:.2f} dB へ落ちる。")
+    print("     これは推定の精度でなく**モデルの表現力**の限界 —— t を 3 枚に分けない限り")
+    print("     直らない(暗チャネル法の定式化にその口が無い)。")
 
     print("\n=== 9. 崖 (e) 雑音の 1/t 増幅 —— 距離別に出す ===")
     sigma = 0.010
