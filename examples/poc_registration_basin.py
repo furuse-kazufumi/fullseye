@@ -598,7 +598,9 @@ def main():
     figs.save_table("symmetry_lies",
                     ["初期化", "形状", "残差/直径", "回転誤差 度", "見かけ収束",
                      "姿勢が誤り"],
-                    [[mode.split(":")[0], label, "%.5f" % v[2], "%.2f" % v[3],
+                    [[mode.split(":")[0], label,
+                      "%.5f" % sym_stat[(mode, label)][0],
+                      "%.2f" % sym_stat[(mode, label)][1],
                       "%d/%d" % (v[0], N_S), "%d" % v[1]]
                      for (mode, label), v in sym.items()],
                     title="収束したのに間違っている(残差では検出できない)",
