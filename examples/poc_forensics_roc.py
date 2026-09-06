@@ -151,10 +151,11 @@ def build_case(seed, *, tampered=True, size=64, dst=(96, 96), src=(40, 40),
     mask = np.zeros((N, N), bool)
     r, c = dst
     mask[r:r + size, c:c + size] = True
+    donor_scene = natural(N, seed + 5000)
+    if flat:
+        donor_scene = flatten_band(donor_scene)
     if tampered:
-        donor = jpeg(natural(N, seed + 5000), donor_q)
-        if flat:
-            donor = jpeg(flatten_band(natural(N, seed + 5000)), donor_q)
+        donor = jpeg(donor_scene, donor_q)
         comp[r:r + size, c:c + size] = donor[src[0]:src[0] + size, src[1]:src[1] + size]
     img = comp if save_q is None else jpeg(comp, save_q)
     if post is not None:
