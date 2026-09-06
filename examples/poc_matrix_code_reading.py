@@ -603,6 +603,17 @@ def main():
     print("  低下ではなく、**隣のモジュールが中心画素に染み出すこと**の方。")
     print("  定位はもう一段手前で落ちる: 標本化がまだ BER 0.07 の 0.50 では読めるが、")
     print("  0.60 では 1:1:3:1:1 の比が崩れて位置検出パターンが見つからない。")
+    # 自力検出の線は「読めた点」で途切れる。途切れる場所そのものが崖。
+    br_ax = np.array([r[0] for r in blur_rows])
+    det_ok = np.array([np.isfinite(r[2]) for r in blur_rows])
+    figs.save_plot("blur_cliff",
+                   [("幾何既知(標本化だけ)", br_ax, np.array([r[1] for r in blur_rows])),
+                    ("自力検出(幾何 + 標本化)", br_ax[det_ok],
+                     np.array([r[2] for r in blur_rows])[det_ok])],
+                   xlabel="sigma / m", ylabel="BER",
+                   title="ぼけの崖 —— 先に落ちるのは幾何のほう",
+                   caption="自力検出の線は sigma/m 0.50 で途切れる(位置検出パターンが"
+                           "見つからない)。標本化はそこでまだ BER 0.07。")
 
     print("\n=== 4. 透視ひずみ —— 傾けると横のモジュールが縮む ===")
     print(f"  {'傾き [度]':>10}{'横の縮み':>10}{'実効モジュール [px]':>20}"
