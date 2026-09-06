@@ -730,19 +730,26 @@ def main():
     e_loc = ber(bits, read(im, n, 8, mode="bernsen(3mod)", H_true=H)[0])
     assert e_glob > 0.05, "強いムラで大域しきい値が生き残った(ムラの入れ方を疑う)"
     assert e_loc < 0.02, f"モジュール寸法の局所しきい値が読めない BER={e_loc}"
-    # 穴 A の実測: 窓が 1 モジュールより小さい局所しきい値はムラ 0 でも読めない
-    im, H = capture(bits, module_px=8, noise=0.0)
-    assert ber(bits, read(im, n, 8, mode="adaptive_gauss", H_true=H)[0]) > 0.05, \
-        "sigma 4 px の局所しきい値が 8 px モジュールを読めてしまった(穴 A の再確認を)"
-    # 遮蔽: 位置検出パターンを一辺 6 モジュール隠すと定位が死ぬ
-    im, H = capture(bits, module_px=8, occl_mod=6, occl_at="finder", noise=0.01, seed=9)
-    assert detect(im, 8)[0] is None, "位置検出パターンを潰しても定位できた"
+    # 穴 A の実測: 窓が画素で固定された局所しきい値は、モジュールが窓より大きい所で
+    # 崩れる。8 px では耐え、24 px では崩れる —— これが「静かに壊れる」の中身。
+    im8, H8 = capture(bits, module_px=8, illum=0.9, noise=0.01, seed=5)
+    e8 = ber(bits, read(im8, n, 8, mode="adaptive_gauss", H_true=H8)[0])
+    im24, H24 = capture(bits, module_px=24, illum=0.9, noise=0.01, seed=5)
+    e24 = ber(bits, read(im24, n, 24, mode="adaptive_gauss", H_true=H24)[0])
+    assert e8 < 0.05, f"m=8 で adaptive_gauss が読めない BER={e8}(前提が変わった)"
+    assert e24 > 0.20, f"m=24 で adaptive_gauss が崩れない BER={e24}(穴 A の再確認を)"
+    assert ber(bits, read(im24, n, 24, mode="bernsen(3mod)", H_true=H24)[0]) < 0.02, \
+        "モジュール寸法で窓を決めた側まで m=24 で崩れた"
+    # 遮蔽: 位置検出パターンの中心を一辺 2 モジュール隠すと定位が死ぬ
+    im, H = capture(bits, module_px=8, occl_mod=2, occl_at="finder", noise=0.01, seed=9)
+    assert detect(im, 8)[0] is None, "位置検出パターンの中心を潰しても定位できた"
+    im, H = capture(bits, module_px=8, occl_mod=10, occl_at="center", noise=0.01, seed=9)
+    assert detect(im, 8)[0] is not None, "データ部を覆っただけで定位が死んだ"
     # モジュール寸法の下限
     im, H = capture(bits, module_px=6, blur_ratio=0.25, noise=0.02, seed=21)
     assert ber(bits, detect(im, 6)[0]) == 0.0, "1 モジュール 6 px で読めない"
-    im, H = capture(bits, module_px=2, blur_ratio=0.25, noise=0.02, seed=21)
-    b2, _ = detect(im, 2)
-    assert b2 is None or ber(bits, b2) > 0.0, "1 モジュール 2 px で完璧に読めた(合成を疑う)"
+    im, H = capture(bits, module_px=1, blur_ratio=0.25, noise=0.02, seed=21)
+    assert detect(im, 1)[0] is None, "1 モジュール 1 px で定位できた(合成を疑う)"
     # 構造の真値そのもの
     assert bits[3, 3] == 1 and bits[0, 0] == 1 and bits[1, 1] == 0, "位置検出パターンが違う"
     assert bits[7, 0] == 0 and bits[0, 7] == 0, "分離帯が明でない"

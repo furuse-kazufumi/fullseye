@@ -228,7 +228,9 @@ def order_corners(q):
 def _fit_line_tls(pts):
     """全最小二乗で直線を当て、両端の 2 点 (r0,c0,r1,c1) を返す。"""
     m = pts.mean(0)
-    _, _, Vt = np.linalg.svd(pts - m)
+    # U は捨てるので full_matrices=False(既定は (N,N) を確保して捨てる)。
+    # tests/test_svd_full_matrices.py が静的に強制している。
+    _, _, Vt = np.linalg.svd(pts - m, full_matrices=False)
     d = Vt[0]
     a = m - 400.0 * d; b = m + 400.0 * d
     return (a[1], a[0], b[1], b[0])                            # (row, col) x2
