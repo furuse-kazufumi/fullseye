@@ -277,7 +277,26 @@ def _max_all_ones_rect(m: np.ndarray):
 # operators
 # --------------------------------------------------------------------------- #
 def r2_inner_circle(v, a, b):
-    """Largest inscribed circle drawn as a mask (a scales drawn radius; a=0.5=exact)."""
+    """Largest inscribed circle drawn as a mask (a scales drawn radius; a=0.5=exact).
+
+    領域の最大内接円をマスクとして描く。入力を ``> 0.5`` で前景マスクに直し、
+    ``scipy.ndimage.distance_transform_edt`` で各前景画素から最近傍の背景画素
+    までの距離を取り、その最大値 ``r0`` を与える画素を中心 ``(cy, cx)`` とする
+    (最大値が複数あれば行優先で最初の画素)。描く半径は
+    ``r = r0 * (0.6 + 0.8*a)`` で、``a=0`` で 0.6 倍、``a=0.5`` で ``r0`` そのまま、
+    ``a=1`` で 1.4 倍(``a`` は [0,1] に clip、非有限なら 0.5)。``b`` は未使用。
+
+    返り値は入力と同形の float64 0/1 マスク(円板 ``(y-cy)^2+(x-cx)^2 <= r^2``)。
+    前景が無ければ全零。座標は (row, col)。
+
+    注意: ``r0`` は「背景画素の中心までの距離」なので、``a=0.5`` でも描いた円板は
+    領域の縁を 1 画素程度はみ出すことがある(10x20 の矩形で 2 画素、半径 7 の
+    円板で 12 画素の外側画素を実測)。厳密に内側へ収めたいなら ``a`` を少し
+    下げる。領域が複数の連結成分からなる場合も内接円は 1 つだけ(最も太い成分の
+    もの)。3 次元配列 (H,W,C) は (H, W*C) に平坦化されるのでカラー画像は渡さない。
+    前段に ``threshold`` や ``select_largest``、対になる外接円は
+    ``r2_smallest_circle``(両者の半径比が真円度の粗い指標になる)。
+    """
     m = _as_mask(v)
     out = np.zeros(m.shape, np.float64)
     if not m.any():
@@ -291,7 +310,24 @@ def r2_inner_circle(v, a, b):
 
 
 def r2_inner_rectangle1(v, a, b):
-    """Largest axis-aligned inscribed rectangle (a shrinks the drawn rect; a=0=exact)."""
+    """Largest axis-aligned inscribed rectangle (a shrinks the drawn rect; a=0=exact).
+
+    領域に内接する軸並行矩形のうち面積最大のものをマスクとして描く。前景マスク
+    (``> 0.5``)に対し、行ごとに各列の連続前景高さを積み、単調スタックで最大
+    長方形を求めるヒストグラム法(O(H*W))で厳密解を得る。同面積の候補が複数
+    あるときは走査順で最初に見つかったものを採る。
+
+    ``a`` は描く矩形を内側へ縮める割合で、``f = 0.3*a`` として高さを
+    ``round(hh*f/2)`` 行ずつ、幅を ``round(ww*f/2)`` 列ずつ両側から削る。``a=0`` で
+    厳密な最大内接矩形、``a=1`` で各辺が約 15% ずつ縮む(面積ではおよそ半分)。
+    縮めすぎて辺が潰れる場合は中央の 1 行 / 1 列に丸める。``b`` は未使用。
+
+    返り値は入力と同形の float64 0/1 マスク。前景が無ければ全零。矩形は画素境界に
+    そろうため ``a=0`` の出力は必ず領域に含まれる(``r2_inner_circle`` と異なり
+    はみ出さない)。孔のある領域では孔を避けた矩形になるので、孔を無視したい
+    ときは前段に ``fill_up``。回転した矩形は扱えない(軸並行のみ)。外接側の
+    軸並行矩形は ``r2_smallest_rectangle1``。
+    """
     m = _as_mask(v)
     out = np.zeros(m.shape, np.float64)
     rect = _max_all_ones_rect(m)
@@ -314,7 +350,20 @@ def r2_inner_rectangle1(v, a, b):
 
 
 def r2_smallest_rectangle1(v, a, b):
-    """Axis-aligned bounding box (smallest_rectangle1)."""
+    """Axis-aligned bounding box (smallest_rectangle1).
+
+    領域の外接軸並行矩形(bounding box)をマスクとして描く。前景マスク(``> 0.5``)
+    の前景画素について行・列の最小/最大 ``ys.min()..ys.max()``、
+    ``xs.min()..xs.max()`` を取り、その範囲を 1.0 で塗る。``a``, ``b`` は未使用。
+
+    返り値は入力と同形の float64 0/1 マスク。前景が無ければ全零。出力は必ず入力
+    領域を含む。複数の連結成分があれば全成分をまとめて囲む 1 つの矩形になる
+    (成分ごとの bbox が欲しければ先に ``r2_sort_region`` や ``select_largest`` で
+    1 成分に絞る)。矩形の 4 隅の座標そのものは返さない(マスク表現)。孤立ノイズが
+    1 画素あるだけで矩形が大きく広がるので、前段で ``remove_small`` や
+    ``opening_circle`` を掛けておく。回転を許した最小面積矩形は
+    ``r2_smallest_rectangle2``、内接側は ``r2_inner_rectangle1``。
+    """
     m = _as_mask(v)
     out = np.zeros(m.shape, np.float64)
     ys, xs = np.where(m)
@@ -325,7 +374,25 @@ def r2_smallest_rectangle1(v, a, b):
 
 
 def r2_smallest_circle(v, a, b):
-    """Minimum enclosing circle as a mask (Welzl); a inflates radius (>=0)."""
+    """Minimum enclosing circle as a mask (Welzl); a inflates radius (>=0).
+
+    領域の全前景画素(画素中心)を含む最小包含円をマスクとして描く。前景座標を
+    凸包(Andrew の単調鎖、向き判定は ``predicates.orient2d`` の頑健版)に減らして
+    から Welzl の再帰アルゴリズムで厳密な最小円 ``(cy, cx, r)`` を求める。凸包
+    頂点の順序は ``numpy.random.default_rng(0)`` で固定シャッフルするので結果は
+    決定的。
+
+    描く半径は ``r_draw = (r + 0.75) * (1 + 0.4*a)``。``a=0`` でも 0.75 画素
+    余分に膨らませる(画素中心ベースの ``r`` では縁の画素が欠けるため、全前景
+    画素を確実に含める設計)。``a=1`` で 1.4 倍。``a`` は [0,1] に clip。``b`` は
+    未使用。返り値は入力と同形の float64 0/1 マスク、前景が無ければ全零。
+
+    注意: 出力は常に入力領域を含み、``a`` を上げても縮む方向には動かない。複数の
+    連結成分があれば全体を囲む 1 つの円。前景が 1 画素なら ``r=0`` で半径 0.75
+    の円板(1 画素)になる。Welzl の再帰は凸包頂点数ぶん深くなる。円の中心や
+    半径の数値は返さない。内接円 ``r2_inner_circle`` との半径比が真円度の粗い
+    指標になり、向きを持つ外接形は ``r2_smallest_rectangle2``。
+    """
     m = _as_mask(v)
     out = np.zeros(m.shape, np.float64)
     ys, xs = np.where(m)
@@ -338,7 +405,25 @@ def r2_smallest_circle(v, a, b):
 
 
 def r2_smallest_rectangle2(v, a, b):
-    """Minimum-area ORIENTED bounding rectangle as a mask (rotating calipers)."""
+    """Minimum-area ORIENTED bounding rectangle as a mask (rotating calipers).
+
+    領域の全前景画素を含む最小面積の回転矩形をマスクとして描く。前景座標の凸包を
+    取り、凸包の各辺に平行な向きで外接矩形を作って面積最小のものを選ぶ
+    (rotating calipers。最小面積矩形は凸包のいずれかの辺に接するという性質を使う)。
+    内部表現は中心 ``(cy, cx)``、長辺 ``long_len``、短辺 ``short_len``、長辺の向き
+    ``angle``(画像座標 x=col, y=row で測ったラジアン)。
+
+    ``a`` は長辺だけを ``1 + 0.3*a`` 倍に伸ばす(``a=0`` で最小矩形そのもの、
+    ``a=1`` で長辺 1.3 倍。短辺は変えない)。``b`` は未使用。描画は中心からの
+    射影 ``|pu| <= long/2 + 0.5``、``|pv| <= short/2 + 0.5`` で、画素の広がりぶん
+    0.5 画素の余白を足すため出力は入力領域を必ず含む。
+
+    返り値は入力と同形の float64 0/1 マスク、前景が無ければ全零。角度や辺長の
+    数値は返さない。複数の連結成分があれば全体で 1 つの矩形。前景が 1 画素や
+    一直線上の場合は退化(点・線分)し、描画は 1 画素幅程度の細い帯になる。
+    軸並行でよければ ``r2_smallest_rectangle1`` の方が軽い。細長い部品の向きを
+    見る前処理や、``r2_inner_rectangle1`` との面積比で矩形らしさを見る用途に。
+    """
     m = _as_mask(v)
     out = np.zeros(m.shape, np.float64)
     ys, xs = np.where(m)
@@ -351,7 +436,21 @@ def r2_smallest_rectangle2(v, a, b):
 
 
 def r2_sort_region(v, a, b):
-    """Keep the k-th largest connected component; k = round(a*(n-1))."""
+    """Keep the k-th largest connected component; k = round(a*(n-1)).
+
+    前景マスク(``> 0.5``)を ``scipy.ndimage.label``(既定の 4 連結)で連結成分に
+    分け、面積(画素数)の降順に並べて ``k`` 番目の成分だけを残す。``k`` は
+    ``round(a*(n-1))`` を ``[0, n-1]`` に clip した整数で、``a=0`` で最大成分、
+    ``a=1`` で最小成分、``a=0.5`` でおおよそ中央の順位の成分。``n`` は成分数。
+    ``b`` は未使用。
+
+    返り値は入力と同形の float64 0/1 マスク。成分が無ければ全零。同面積の成分が
+    複数あるときの順位は保証されない(``numpy.argsort`` の順序に依存)。成分数
+    ``n`` が変わると同じ ``a`` でも選ばれる順位が変わる(相対指定)ので、
+    「最大成分」を確実に取りたいだけなら ``a=0`` か ``select_largest`` を使う。
+    斜め接続だけでつながった画素は別成分として数えられる(4 連結)。前段に
+    ``opening_circle`` でくびれを切っておくと成分単位の選択が安定する。
+    """
     m = _as_mask(v)
     out = np.zeros(m.shape, np.float64)
     lab, n = ndimage.label(m)
@@ -366,14 +465,41 @@ def r2_sort_region(v, a, b):
 
 
 def r2_union1(v, a, b):
-    """Union of all connected components into a single mask (OR of labels)."""
+    """Union of all connected components into a single mask (OR of labels).
+
+    前景マスク(``> 0.5``)を ``scipy.ndimage.label`` で連結成分にラベル付けし、
+    ``label > 0`` を 1.0 に戻して 1 枚のマスクとして返す。全成分の和集合なので、
+    結果は「入力を 0/1 に正規化したもの」と同じになる(値の 2 値化と非有限値の
+    除去が実際の効果)。``a``, ``b`` は未使用。
+
+    返り値は入力と同形の float64 0/1 マスク。前景が無ければ全零。0.5 以下の
+    グレー値や NaN/Inf はすべて背景になる。複数のラベル値を持つラベル画像を
+    受けた場合もラベル番号の区別は消え、単一の前景マスクになる(ラベルごとに
+    取り出したいなら ``r3_label_to_region``)。パイプライン上は「領域を 1 個の
+    オブジェクトとして扱う」ことを明示する位置づけで、成分単位の選別
+    (``select_shape`` / ``r2_sort_region``)はこの op より前に置く。
+    """
     m = _as_mask(v)
     lab, _ = ndimage.label(m)
     return _clip01((lab > 0).astype(np.float64))
 
 
 def r2_partition_rectangle(v, a, b):
-    """Split the region bbox into an NxN grid; keep cells overlapping the region."""
+    """Split the region bbox into an NxN grid; keep cells overlapping the region.
+
+    領域の外接軸並行矩形を ``N x N`` の格子に等分し、領域と 1 画素でも重なる
+    セルを丸ごと 1.0 で塗ったマスクを返す。``N = 2 + int(a*4)`` で ``a=0`` → 2、
+    ``a=1`` → 6 分割(``a`` は [0,1] に clip)。セル境界は
+    ``numpy.linspace(top, bottom+1, N+1)`` を整数化したもので、bbox がセル数より
+    小さいと幅 0 のセルが生じ、そのセルはスキップされる。``b`` は未使用。
+
+    返り値は入力と同形の float64 0/1 マスク。前景が無ければ全零。出力は「領域を
+    覆うセルの和」なので入力領域を必ず含み、bbox の外は塗られない。中身が凸で
+    bbox いっぱいに詰まった領域では全セルが該当し、``a`` を変えても出力は bbox
+    そのものになる。孔や凹みが大きい領域で初めて格子の粗さが見える。用途は
+    粗いタイル分割(局所処理の窓決め)や占有パターンの粗視化。隣接セルは
+    つながって 1 つの塊になるため、セル単位で分けて扱う用途には向かない。
+    """
     m = _as_mask(v)
     out = np.zeros(m.shape, np.float64)
     ys, xs = np.where(m)
@@ -396,7 +522,19 @@ def r2_partition_rectangle(v, a, b):
 
 
 def r2_runlength_features(v, a, b):
-    """Region -> feature: mean length of horizontal foreground runs."""
+    """Region -> feature: mean length of horizontal foreground runs.
+
+    前景マスク(``> 0.5``)の各行を左から走査し、連続する前景画素の並び(水平ラン)の
+    長さをすべて集めて、その平均(画素数)を 1 つのスカラーで返す。行ごとにゼロ
+    埋めした行の差分でランの開始/終了を検出する。``a``, ``b`` は未使用。
+
+    返り値は ``numpy.float64``。前景が無ければ 0.0。単位は画素で、画像サイズで
+    正規化しない(同じ形状でも解像度が 2 倍なら値も 2 倍になる)。垂直方向のランは
+    数えない(縦縞と横縞で値が大きく変わる、向きに依存する特徴量)。細い横線が
+    多い領域では値が大きく、点状ノイズが多いと 1 に近づく。ラン長の分散や
+    エントロピーは ``r3_runlength_distribution``、短いランの除去は
+    ``r3_eliminate_runs``。特徴量なので後段に画像 op は繋げない。
+    """
     m = _as_mask(v)
     if not m.any():
         return np.float64(0.0)

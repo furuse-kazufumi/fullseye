@@ -140,7 +140,22 @@ def xg_moments(v, a, b):
 
 
 def xg_area_center(v, a, b):
-    """Polygon area of the contour(s) via the shoelace formula (summed abs)."""
+    """Polygon area of the contour(s) via the shoelace formula (summed abs).
+
+    輪郭辞書 ``{"shape": (H, W), "cs": [Nx2 の (row, col) 点列, ...]}`` の各輪郭を
+    多角形とみなし、靴ひも公式 ``0.5*|Σ(x_i*y_{i+1} - x_{i+1}*y_i)|`` で面積を
+    求めて全輪郭の合計を返す。点が 3 個未満の輪郭は 0 として無視。``a``, ``b`` は
+    未使用。
+
+    返り値は ``numpy.float64``(単位は画素²、正規化なし)。輪郭が無い・辞書で
+    ない・非有限値を含む輪郭は読み飛ばされ、合計に寄与しない(空なら 0.0)。
+    開いた輪郭でも「最後の点と最初の点を結んで閉じた多角形」の面積になる点に
+    注意(直線状の開輪郭では 0、折れ線の開輪郭でも非零になる)。絶対値を取る
+    ので点列の向き(時計回り/反時計回り)は結果に影響しない。自己交差する輪郭では
+    交差で符号が打ち消しあい、真の面積より小さく出る。名前に反して重心は
+    返さない(面積のみ)。同じ点集合の 2 次モーメントは ``xg_moments``、bbox の
+    縦横比は ``xg_height_width_ratio``。
+    """
     total = 0.0
     for c in _cs(v):
         if len(c) >= 3:
@@ -151,7 +166,21 @@ def xg_area_center(v, a, b):
 
 
 def xg_eccentricity(v, a, b):
-    """Eccentricity sqrt(1 - lambda_min/lambda_max) from the point covariance."""
+    """Eccentricity sqrt(1 - lambda_min/lambda_max) from the point covariance.
+
+    輪郭辞書 ``{"shape", "cs"}`` の全輪郭の点を 1 つの点集合にまとめ、その
+    (row, col) 座標の母共分散行列の固有値 ``λ_min <= λ_max`` から離心率
+    ``e = sqrt(1 - λ_min/λ_max)`` を返す。閉輪郭の重複した終点(先頭と同じ点)は
+    数えない。``a``, ``b`` は未使用。
+
+    返り値は ``numpy.float64`` で [0, 1]。真円・正方形など等方な点配置で 0、
+    一直線上の点(``λ_min = 0``)で 1。点が 2 個未満、または ``λ_max <= 1e-12``
+    (全点同一)なら 0.0。輪郭が複数あればそれらをまとめた分布の離心率になり、
+    個々の輪郭の形ではなく配置の広がりも混ざる(輪郭ごとに評価したいなら先に
+    ``select_contours_xld`` などで 1 本に絞る)。輪郭点の密度に依存する(点が
+    密な部分が重く効く)点は面積ベースの指標と異なる。軸比そのものは
+    ``xg_elliptic_axis``、主軸の向きは ``xg_orientation``。
+    """
     r = _pca(_openpts(_cs(v)))
     if r is None:
         return np.float64(0.0)
@@ -188,7 +217,20 @@ def xg_orientation(v, a, b):
 
 
 def xg_elliptic_axis(v, a, b):
-    """Major/minor axis ratio sqrt(lambda_max/lambda_min) of the point set."""
+    """Major/minor axis ratio sqrt(lambda_max/lambda_min) of the point set.
+
+    全輪郭の点(閉輪郭の重複終点は除く)の (row, col) 共分散行列の固有値から、
+    等価楕円の長軸/短軸比 ``sqrt(λ_max/λ_min)`` を返す。``a``, ``b`` は未使用。
+
+    返り値は ``numpy.float64`` で 1 以上。等方な点配置で 1、細長いほど大きい。
+    ``λ_min <= 1e-12``(全点が一直線)では ``λ_max > 1e-12`` なら 1e6、そうで
+    なければ 1.0。それ以外でも上限 1e6 で打ち切る。点が 2 個未満なら 1.0。
+    非有限になった場合も 1.0 に落とす。[0,1] に正規化されていない量なので、
+    他の特徴量と並べる際はスケールに注意(1e6 の外れ値が出うる)。
+    ``xg_eccentricity`` は同じ固有値を [0,1] に写した版で、こちらは比を直接
+    見たいときに使う。軸ではなく外接矩形の縦横比なら ``xg_height_width_ratio``
+    (こちらは向きに依存する)。
+    """
     r = _pca(_openpts(_cs(v)))
     if r is None:
         return np.float64(1.0)
@@ -200,7 +242,19 @@ def xg_elliptic_axis(v, a, b):
 
 
 def xg_height_width_ratio(v, a, b):
-    """Axis-aligned bounding-box height/width ratio of the point set."""
+    """Axis-aligned bounding-box height/width ratio of the point set.
+
+    全輪郭の点(閉輪郭の重複終点は除く)をまとめ、行方向の広がり
+    ``h = max(row) - min(row)`` と列方向の広がり ``w = max(col) - min(col)`` の比
+    ``h / w`` を返す。``a``, ``b`` は未使用。
+
+    返り値は ``numpy.float64``。点が無ければ 0.0。``w < 1e-12``(全点が同じ列=
+    縦一直線)では ``h > 1e-12`` なら 1e6、そうでなければ 0.0。上限は 1e6。
+    軸並行の bbox なので回転に不変ではない(45° 傾いた細長い輪郭は 1 に近づく)。
+    回転不変な細長さは ``xg_elliptic_axis`` / ``xg_eccentricity`` を使う。
+    ``h``, ``w`` は点座標の範囲(画素中心間の距離)で、画素数ベースの幅より 1 小さい。
+    複数輪郭があれば全体を囲む 1 つの bbox の比になる。
+    """
     pts = _openpts(_cs(v))
     if len(pts) < 1:
         return np.float64(0.0)
@@ -229,7 +283,21 @@ def xg_regress_contours(v, a, b):
 # contour -> contour
 # --------------------------------------------------------------------------- #
 def xg_clip_contours(v, a, b):
-    """Drop contours whose polyline length is below a * max-length (a in [0,1])."""
+    """Drop contours whose polyline length is below a * max-length (a in [0,1]).
+
+    各輪郭の折れ線長(隣接点間のユークリッド距離の和)を求め、最長の輪郭の長さ
+    ``L_max`` に対して ``length >= a * L_max`` を満たす輪郭だけ残す。``a`` は
+    [0,1] に clip され、``a=0`` で全輪郭を残し、``a=1`` で最長の輪郭(同長なら
+    複数)だけ残す。``b`` は未使用。
+
+    返り値は入力と同じ ``{"shape", "cs"}`` 形式の輪郭辞書(点配列はコピー)。
+    輪郭が無ければ ``cs`` は空。``L_max <= 1e-12``(全輪郭が 1 点)なら全輪郭を
+    そのまま返す。しきい値が画像サイズでなく「最長輪郭に対する相対値」なので、
+    最長の輪郭が変わると選別基準も動く(点数の絶対値で選ぶなら
+    ``select_contours_xld``)。名前から想像される矩形での切り取りではなく、
+    長さによる選別である(矩形で切るのは ``xg_crop_contours`` / ``hx_clip_contours``)。
+    閉輪郭の重複終点も長さに含むが、0 長の辺なので影響しない。
+    """
     cs = _cs(v)
     shape = _shape(v)
     if not cs:
@@ -278,7 +346,22 @@ def _dp(pts, eps):
 
 
 def xg_gen_polygons(v, a, b):
-    """Douglas-Peucker polyline simplification; eps = a * contour bbox diagonal."""
+    """Douglas-Peucker polyline simplification; eps = a * contour bbox diagonal.
+
+    各輪郭を Ramer-Douglas-Peucker 法で間引いて頂点数の少ない折れ線(多角形)に
+    する。始点と終点は必ず残し、区間の弦から最も離れた点の距離が ``eps`` を
+    超えればその点を採用して再帰的に分割する。``eps`` は輪郭ごとに、その輪郭の
+    bbox の対角長 ``hypot(Δrow, Δcol)`` に ``a``([0,1] に clip)を掛けた値。
+    ``a=0`` で ``eps=0``(弦上に完全に乗る点だけ落ちる)、``a`` を上げるほど粗く
+    なり、``a=1`` では両端の 2 点だけになる。``b`` は未使用。
+
+    返り値は ``{"shape", "cs"}`` の輪郭辞書。点が 3 個未満の輪郭はコピーのまま。
+    閉輪郭(先頭=末尾)は始点と終点が同じ点なので、``a`` が大きいと 2 点(同一点)に
+    退化し、面積や向きの特徴量が 0 になる。閉輪郭の形を保ちたい場合は ``a`` を
+    小さめにする(実測では半径 5〜8 の楕円 101 点が ``a=0.05`` で 9 点)。
+    間引きは元の点の部分集合を返し、新しい点は作らない。後段の ``xg_area_center``
+    や ``xg_regress_contours`` の計算量を減らす前処理、折れ線の角(頂点)検出に。
+    """
     cs = _cs(v)
     shape = _shape(v)
     out = []
@@ -293,7 +376,23 @@ def xg_gen_polygons(v, a, b):
 
 
 def xg_crop_contours(v, a, b):
-    """Keep only contour points inside the central a-fraction window of the shape."""
+    """Keep only contour points inside the central a-fraction window of the shape.
+
+    画像中心に置いた、高さ ``a*H``、幅 ``a*W`` の矩形窓の内側にある輪郭点だけを
+    残す(``a`` は [0,1] に clip、``b`` は未使用)。窓は行 ``[(0.5-a/2)H, (0.5+a/2)H]``、
+    列 ``[(0.5-a/2)W, (0.5+a/2)W]`` の閉区間。``H, W`` は辞書の ``shape`` から取り、
+    無ければ全点の最大座標+1 で代用する。
+
+    返り値は ``{"shape": (H, W), "cs": [...]}``。窓内に 1 点も残らない輪郭は捨て、
+    ``a=0`` では中心線上に正確に乗る点しか残らないためほぼ空、``a=1`` で全点が
+    残る。
+
+    注意: 窓に切られた輪郭は分割されない。残った点をそのまま 1 本の折れ線として
+    繋ぐので、輪郭が窓を出入りするたびに「窓の縁を飛び越える辺」が生まれ、
+    ``xg_area_center`` の面積や折れ線長が実際より大きく出る。切り口を正しく
+    扱いたいなら、領域の段階で ``r3_clip_region`` を掛けてから輪郭を取り直す。
+    座標は (row, col)。長さで輪郭ごと選別するのは ``xg_clip_contours``。
+    """
     cs = _cs(v)
     H, W = _shape(v)
     if H <= 0 or W <= 0:

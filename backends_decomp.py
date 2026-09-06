@@ -187,7 +187,27 @@ def _rpca(img, a, max_iter=60, work_max=64):
 # operators                                                                    #
 # --------------------------------------------------------------------------- #
 def dc_structure_texture(v, a, b):
-    """Structure / cartoon part of the image (TV-L2, Chambolle)."""
+    """Structure / cartoon part of the image (TV-L2, Chambolle).
+
+    画像を「構造(cartoon)+テクスチャ」に分け、構造側を返す。ROF/TV-L2 モデル
+    ``min_u ||u - f||^2 / (2*weight) + TV(u)`` を Chambolle(2004)の双対射影法で
+    固定 120 反復(``tau=0.125``)解く。``weight = 0.02 + 0.28*a`` で、``a`` が
+    大きいほど滑らか(平坦な区画が広がり、細かい模様が消える)、``a=0`` でも
+    ごく弱い平滑が入る。``b`` は未使用。
+
+    入力は 2 次元 float64・[0,1] に揃える(3 次元はチャネル平均、NaN→0、
+    ±Inf→1/0)。返り値は入力と同形の float64、[0,1] に clip。飽和しない限り
+    ``dc_structure_texture + (dc_texture_residual - 0.5) == 入力`` が成り立つ。
+    1xN / Nx1 など 2 次元の発散が定義できない極小画像は入力をそのまま返す
+    (構造=入力、テクスチャ=0.5)。例外時は fail-soft で入力のクリップ版が返り、
+    backend_safe の台帳に記録される(strict モードでは再送出)。
+
+    ガウスぼかしと違ってエッジ(段差)は保ち、模様・ノイズだけを落とす。反復数が
+    固定なので大きな画像では収束しきらないことがある(残りはテクスチャ側に出る)。
+    テクスチャ側だけが欲しければ ``dc_texture_residual``。周期模様の除去や
+    欠陥検出の前処理として使い、後段に ``threshold`` や ``dyn_threshold``。
+    背景が低ランク(縞・グラデーション)なら ``dc_rpca_lowrank`` も候補。
+    """
     return _tv_structure(_img(v), a)
 
 
@@ -202,14 +222,57 @@ def dc_texture_residual(v, a, b):
 
 
 def dc_rpca_lowrank(v, a, b):
-    """Robust-PCA low-rank (background) part."""
+    """Robust-PCA low-rank (background) part.
+
+    画像行列 ``M`` を ``M = L + S``(低ランク ``L`` + スパース ``S``)に分解する
+    Principal Component Pursuit を inexact ALM(Lin/Chen/Ma 2010)で解き、``L``
+    を返す。スパース項の重みは ``λ = (0.5 + 1.5*a) / sqrt(max(m, n))``(``m, n``
+    は分解時の行列寸法)で、``a`` が大きいほど ``S`` が疎になり、その分 ``L`` に
+    残る成分(ランク)が増える。``a=0`` では ``λ`` が小さく、ほとんどの変動が
+    ``S`` に吸われて ``L`` はのっぺりする。``b`` は未使用。反復は最大 60 回、
+    収束判定は ``||M - L - S||_F <= 1e-7 * ||M||_F``。
+
+    長辺が 64 を超える画像は 64 に縮小して分解し、``L`` だけを線形補間で元の
+    大きさに戻す(低ランク部は縮小に耐えるため)。入力は [0,1] の 2 次元 float64
+    に揃え(3 次元はチャネル平均)、返り値も同形・[0,1] に clip。全零画像は入力を
+    そのまま返す。BLAS のスレッド数は分解中だけ ``fsthreads`` で絞る(小行列の
+    SVD ではスレッドが多いほど遅いため)。例外時は fail-soft で入力のクリップ版が
+    返り、台帳に記録される。
+
+    「行や列にわたって繰り返す構造」(縞、グラデーション、周期パターン)を背景と
+    みなす分解なので、単一の 2 次元画像でも織物・シート・ディスプレイ画素などの
+    周期背景から孤立欠陥を分離するのに向く。自然画像のような非周期背景では
+    ``L`` は単なる低ランク近似で、意味のある背景にならない。対になる欠陥側は
+    ``dc_rpca_sparse``(``L + (S - 0.5) == 入力``)。エッジ保存の平滑で構造を
+    取りたいなら ``dc_structure_texture``。
+    """
     img = _img(v)
     L, _ = _rpca(img, a)
     return np.clip(L, 0.0, 1.0)
 
 
 def dc_rpca_sparse(v, a, b):
-    """Robust-PCA sparse (defect / anomaly) residual = input - low-rank, at 0.5."""
+    """Robust-PCA sparse (defect / anomaly) residual = input - low-rank, at 0.5.
+
+    ``dc_rpca_lowrank`` と同じ inexact ALM の PCP 分解 ``M = L + S`` を行い、
+    スパース項 ``S`` を 0.5 を中心に置いて返す(``clip(S + 0.5, 0, 1)``)。背景と
+    同じ画素は 0.5、背景より明るい孤立点は 0.5 より上、暗い点は下に出る符号つき
+    残差で、飽和しない範囲で ``dc_rpca_lowrank + (この出力 - 0.5) == 入力``。
+    ``a`` はスパース重み ``λ = (0.5 + 1.5*a)/sqrt(max(m, n))`` で、大きいほど
+    ``S`` が疎(小さな残差は 0 に丸められ、はっきりした欠陥だけ残る)、``a=0``
+    ではほぼ全画素に残差が出る。``b`` は未使用。
+
+    長辺 64 超の画像は縮小して ``L`` を解き、``S`` は元解像度で
+    ``S = soft(M0 - L_up, λ/μ_final)`` として作り直す(縮小した ``S`` を拡大
+    すると 1 画素欠陥がにじんで振幅を失うため)。入力は [0,1] の 2 次元に揃え、
+    返り値は同形 float64、[0,1]。全零画像では ``S = 0`` で一様 0.5。例外時は
+    fail-soft で入力のクリップ版が返り、台帳に記録される。
+
+    後段では ``|出力 - 0.5|`` が欠陥の強さなので、``threshold`` 系の op で 0.5 から
+    離れた画素を拾う(明側・暗側のどちらを拾うかはしきい値の向きで決まる)。周期
+    背景(織物・格子・ディスプレイ)上の点欠陥・傷の検出向けで、非周期背景では
+    残差に背景の凹凸がそのまま混ざる。
+    """
     img = _img(v)
     _, S = _rpca(img, a)
     return np.clip(S + 0.5, 0.0, 1.0)
