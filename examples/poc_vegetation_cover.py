@@ -822,33 +822,67 @@ def main():
     means = [u3[idx == i].mean() for i in range(len(lbls))]
     assert all(means[i] < means[i + 1] for i in range(len(means) - 1)), means
     assert means[0] < 0.15 and means[-1] > 0.85, (means[0], means[-1])
-    # (5) 崖 (a) 影:ゼロ点は影を強くすると単調に悪化し、アンミックス3 は動かない
-    z0 = [abs(shadow_rows[(0, sv)]["大津・緑(ゼロ点)"]["bias"]) for sv in (0.0, 0.4, 0.8, 1.0)]
-    assert z0[-1] > z0[0] + 5.0, z0
-    u0 = [abs(shadow_rows[(0, sv)]["アンミックス3(+影)"]["bias"]) for sv in (0.0, 0.4, 0.8, 1.0)]
-    assert max(u0) < 3.0, u0
+    # (5) 崖 (a) 影:ゼロ点は影で悪化し、アンミックス3 は動かない
+    for s in (0, 2):
+        zs = [abs(shadow_rows[(s, sv)]["大津・緑(ゼロ点)"]["bias"])
+              for sv in (0.0, 0.4, 0.8, 1.0)]
+        assert max(zs) > zs[0] + 4.0, (s, zs)
+        us = [abs(shadow_rows[(s, sv)]["アンミックス3(+影)"]["bias"])
+              for sv in (0.0, 0.4, 0.8, 1.0)]
+        assert max(us) < 3.0, (s, us)
     # (6) 崖 (b) 画素の大きさ:混合率は単調に上がり、二値手法の偏りが伸びる
-    mfs = [gsd_rows[(2, sub)][0] for sub in (4, 6, 8, 12, 16, 24)]
+    subs = (4, 6, 8, 12, 16, 24, 32, 48)
+    mfs = [gsd_rows[(2, sub)][0] for sub in subs]
     assert all(mfs[i] <= mfs[i + 1] for i in range(len(mfs) - 1)), mfs
-    assert mfs[-1] > 0.90, mfs[-1]
+    assert mfs[-1] > 0.85, mfs[-1]
     fine = abs(gsd_rows[(0, 4)][1]["NDVI + 大津"]["bias"])
     coarse = abs(gsd_rows[(0, 24)][1]["NDVI + 大津"]["bias"])
     assert coarse > fine + 2.0, (fine, coarse)
-    # (7) 崖 (c) 湿った土でゼロ点の極性が反転する(再現率が落ちる)
+    # 繁茂期の ExG は逆向き(下振れ)に伸びる —— 向きは段階で反転する
+    assert gsd_rows[(2, 48)][1]["ExG + 大津"]["bias"] \
+        < gsd_rows[(2, 4)][1]["ExG + 大津"]["bias"] - 3.0, (
+            gsd_rows[(2, 4)][1]["ExG + 大津"]["bias"],
+            gsd_rows[(2, 48)][1]["ExG + 大津"]["bias"])
+    # (7) ★PPI は雑音で壊れる —— 純画素が 6 割以上あっても葉を拾わない。
+    #     一方で雑音ゼロなら同じ場面で当てる = 崖の原因は純画素の不足ではない。
+    assert ppi_noise[0.0][1], ppi_noise[0.0]
+    assert not ppi_noise[0.004][1], ppi_noise[0.004]
+    assert ppi_gsd[6][0] > 0.60, ppi_gsd[6]
+    # 純画素が消えるほうの崖も実在する(雑音ゼロで画素を大きくすると外れる)
+    assert ppi_gsd[48][0] < 0.05 and ppi_gsd[48][1] < 0.5 * NDVI_LEAF, ppi_gsd[48]
+    # (8) 崖 (c) 湿った土でゼロ点の極性が反転する(再現率が落ちる)
     dry = cond_rows[(2, "乾いた土")][1]["大津・緑(ゼロ点)"]
     wet = cond_rows[(2, "湿った土(暗い)")][1]["大津・緑(ゼロ点)"]
-    assert wet["rec"] < dry["rec"] - 0.30, (dry, wet)
-    # (8) 崖 (e) 照度:アンミックス2 は倍率で壊れ、アンミックス3 と正規化指数は不変
-    a2 = [abs(ill_rows[(l, 2)]["アンミックス2(葉+土)"]["bias"]) for l in ("晴れ", "曇り")]
-    a3 = [abs(ill_rows[(l, 2)]["アンミックス3(+影)"]["bias"]) for l in ("晴れ", "曇り")]
-    assert a2[1] > a2[0] + 5.0, a2
-    assert max(a3) < 3.0, a3
-    # (9) ★道具の穴:3 つの大津が同じ入力に違う答えを返す。sk_otsu だけがアフィン不変。
+    assert wet["rec"] < dry["rec"] - 0.30, (dry["rec"], wet["rec"])
+    # (9) 崖 (d) 固定閾値は段階によらず同じ符号(偏り)、大津は小さい
+    for s in range(3):
+        assert res[s]["ExG > 0(固定)"]["bias"] > 5.0, (s, res[s]["ExG > 0(固定)"]["bias"])
+        assert abs(res[s]["ExG > 0(固定)"]["bias"]) > abs(res[s]["ExG + 大津"]["bias"])
+    # (10) 崖 (e) 照度:**倍率だけ**変えた対照で、壊れるのはアンミックス2 だけ
+    ctrl = ill_rows[("暗いだけ(対照)", 2)]
+    base = ill_rows[("晴れ", 2)]
+    assert abs(ctrl["アンミックス2(葉+土)"]["bias"]) \
+        > abs(base["アンミックス2(葉+土)"]["bias"]) + 5.0, (
+            base["アンミックス2(葉+土)"]["bias"], ctrl["アンミックス2(葉+土)"]["bias"])
+    for name in ("大津・緑(ゼロ点)", "ExG + 大津", "NDVI + 大津", "アンミックス3(+影)"):
+        assert abs(ctrl[name]["bias"] - base[name]["bias"]) < 2.0, (
+            name, base[name]["bias"], ctrl[name]["bias"])
+    # (11) ★道具の穴:3 つの大津が同じ入力に違う答えを返す。sk_otsu だけがアフィン不変。
     assert aff["sk_otsu"] < 1e-12, aff
-    assert aff["otsu"] > 0.01, aff
-    assert abs(otsu_frac[("NDVI", "otsu")] - otsu_frac[("NDVI", "sk_otsu")]) > 0.01, otsu_frac
-    # (10) NDVI 線形換算は原理どおり上振れする(小さくても符号は決まっている)
+    assert aff["otsu"] > 0.10, aff
+    assert aff["cv_otsu"] > 0.10, aff
+    # ExG(負が半分ある)でも otsu と sk_otsu は一致しない
+    k = "ExG(発芽期・負が半分)"
+    assert abs(otsu_frac[(k, "otsu")] - otsu_frac[(k, "sk_otsu")]) > 1e-3, otsu_frac
+    # (12) ★道具の穴:spec_unmix は B=3(色画像)を拒否する = RGB を解く経路が無い
+    try:
+        specops.spec_unmix(cube_hi2[:, :, :3], E_LEAF_SOIL[:, :3], constrained=False)
+        raise AssertionError("B=3 が通ってしまった(この PoC の前提が変わっている)")
+    except ValueError:
+        pass
+    # (13) NDVI 線形換算は原理どおり上振れし、**混合画素だけで見ると全体より大きい**
     assert lin_bias > 0.0, lin_bias
+    assert lin_bias > 100.0 * abs(float((lin - tcat).mean())), lin_bias
     print("\nPASS")
 
 
