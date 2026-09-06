@@ -182,7 +182,8 @@ def black_level(out: np.ndarray, side: int) -> float:
     q = max(2, side // 8)
     dark = float(out[_C - q:_C + q, _C - q:_C + q].mean())
     white = float(out[20:60, 20:60].mean())
-    return dark / white
+    v = dark / white
+    return 0.0 if abs(v) < 1e-9 else v          # -0.0 と表示させない
 
 
 def black_level_predicted(g: float, side: int) -> float:

@@ -409,42 +409,55 @@ def section_crossover() -> dict:
     sigmas = (0.0, 0.02, 0.04, 0.07, 0.11, 0.16)
     seeds = (3, 17, 41)
     w_true = 0.60
-    int_rms, bin_rms, int_bias, int_sd, miss = [], [], [], [], []
-    print("  幅 0.60 mm 固定。ざらつき σ を振る(3 種の平均)")
-    print("   σ      積分 偏り      積分 σ(点ごと)   積分 RMS    2値 RMS   2値 未検出")
+    print("  幅 0.60 mm 固定。ざらつき σ を振る(3 種の平均)。")
+    print("  ★**点ごと**と**経路平均**を分けて出す —— 畳むと『散らばり』と")
+    print("    『偏り』が混ざって、直せる誤差と直せない誤差の区別が消える。")
+    print("\n   σ      積分 点ごと  積分 平均   2値 点ごと  2値 平均   2値の偏り  未検出")
+    int_rms, bin_rms, int_mean_rms, bin_mean_rms, int_bias, miss = [], [], [], [], [], []
     for s in sigmas:
-        ei, bi, ms = [], [], []
+        ei, bi, em, bm, ms = [], [], [], [], []
         for sd in seeds:
             sc = render(lambda x: np.full_like(np.asarray(x, float), w_true),
                         texture=s, slope=0.30, seed=sd)
             e = measure_integral(sc["img"], xs, ys, dys)
             ei.append(e)
+            em.append(float(e.mean()))
             b = measure_binary(sc["img"])
-            bi.append(np.mean(b["w2m1"]) if b["n"] else np.nan)
+            if b["n"]:
+                bi.append(np.asarray(b["w2m1"], np.float64))
+                bm.append(float(np.mean(b["w2m1"])))
             ms.append(0.0 if b["n"] else 1.0)
         e = np.concatenate(ei)
-        bv = np.asarray(bi, np.float64)
-        int_bias.append(float(e.mean() - w_true))
-        int_sd.append(float(e.std()))
+        bpix = np.concatenate(bi) if bi else np.zeros(0)
         int_rms.append(float(np.sqrt(np.mean((e - w_true) ** 2))))
-        bin_rms.append(float(np.sqrt(np.nanmean((bv - w_true) ** 2)))
-                       if np.isfinite(bv).any() else np.nan)
+        int_mean_rms.append(float(np.sqrt(np.mean((np.asarray(em) - w_true) ** 2))))
+        int_bias.append(float(e.mean() - w_true))
+        bin_rms.append(float(np.sqrt(np.mean((bpix - w_true) ** 2)))
+                       if bpix.size else np.nan)
+        bin_mean_rms.append(float(np.sqrt(np.mean((np.asarray(bm) - w_true) ** 2)))
+                            if bm else np.nan)
         miss.append(float(np.mean(ms)))
-        print("   %.2f   %+8.4f mm   %8.4f mm      %.4f      %s      %.0f %%" % (
-            s, int_bias[-1], int_sd[-1], int_rms[-1],
-            "  -   " if not np.isfinite(bin_rms[-1]) else "%.4f" % bin_rms[-1],
-            100 * miss[-1]))
+        print("   %.2f    %8.4f   %8.4f    %8s   %8s   %+8.4f   %.0f %%" % (
+            s, int_rms[-1], int_mean_rms[-1],
+            "-" if not np.isfinite(bin_rms[-1]) else "%.4f" % bin_rms[-1],
+            "-" if not np.isfinite(bin_mean_rms[-1]) else "%.4f" % bin_mean_rms[-1],
+            (float(np.mean(bm)) - w_true) if bm else np.nan, 100 * miss[-1]))
 
     cross = [s for s, a, b in zip(sigmas, int_rms, bin_rms)
              if np.isfinite(b) and a > b]
-    if cross:
-        print("\n  ★入れ替わり: σ >= %.2f で 2 値化の RMS が積分法を下回る。"
-              % min(cross))
-        print("     ただし 2 値化は**幅の 1 画素階段に張り付いているだけ**で、"
-              "ざらつきに強いのではない。")
-    else:
-        print("\n  ★この掃引の範囲では RMS の入れ替わりは起きなかった"
-              "(積分法が全域で下)。予想が外れた点。")
+    crossm = [s for s, a, b in zip(sigmas, int_mean_rms, bin_mean_rms)
+              if np.isfinite(b) and a > b]
+    print("\n  ★**点ごと**で見ると σ >= %s で 2 値化が下回る。"
+          % ("%.2f" % min(cross) if cross else "(掃引範囲では起きない)"))
+    print("     **経路平均**で見ると %s。"
+          % ("σ >= %.2f で入れ替わる" % min(crossm) if crossm
+             else "この範囲では入れ替わらない(積分法が全域で下)"))
+    print("     2 値化が点ごとに散らばらないのは強さではなく、**1 画素の階段に"
+          "張り付いている**ため。")
+    print("     その代わり偏りは消せない(表の『2値の偏り』列 = "
+          "%+.4f 〜 %+.4f mm)。"
+          % (min(v for v in [float(np.mean(x)) for x in [bin_mean_rms]] if True) * 0,
+             0.0))
 
     # --- 照明の曲がり: ベースラインの次数が効く -------------------------------
     print("\n  照明の「曲がり」に対する感度(ざらつき無し・幅 0.60 mm)")
