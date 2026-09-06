@@ -128,8 +128,8 @@ C = P.SPEED_OF_LIGHT_M_S
 
 # --- 装置。以降すべてこの 1 組で通す ---------------------------------------
 BINS = 256
-BIN_PS = 100.0            # 1 ビン = 100 ps = 15.0 mm の往復 = 7.5 mm の距離... ではなく
-IRF_FWHM_PS = 500.0       #   c*100ps/2 = 14.99 mm。ビン分解能はこの値。
+BIN_PS = 100.0            # 1 ビンの時間幅。距離に直すと c*100ps/2 = 14.99 mm
+IRF_FWHM_PS = 500.0       # 装置応答の全幅半値。σ に直すと FWHM/2.3548
 TRUE_D = 2.5              # 与える真値 [m]
 SIGMA_PS = IRF_FWHM_PS / P.FWHM_PER_SIGMA            # 212.31 ps
 SIGMA_M = C * SIGMA_PS * 1e-12 / 2.0                 # 31.83 mm
