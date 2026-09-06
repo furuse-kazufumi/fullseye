@@ -395,9 +395,407 @@ def delta_e(rgb_a, rgb_b):
     return fs.delta_e_map(np.clip(rgb_a, 0.0, 1.0), np.clip(rgb_b, 0.0, 1.0))
 
 
+#: 既定の上層の厚み倍率。0.6 = 薄めに塗られた層(可視でもわずかに下絵が漏れる)。
+TAU0 = 0.6
+#: 既定のバンド数(400–1000 nm)。
+NB0 = 16
+
+
+def unmix_any(cube, endm_bands, constrained=True):
+    """``fs.spec_unmix`` を呼ぶ。ただし **B=3 は op が拒否する**ので自前に落ちる。
+
+    拒否は「(H,W,3) は色画像であって分光キューブではない」という型境界であり、
+    RGB を黙って食わないための設計としては正しい。だが 3 バンドの多波長カメラ
+    (可視 / レッドエッジ / 近赤外)は実在する構成で、それも同じ扱いで落ちる。
+    バンド数の頭打ちを測るには 3 が要るので、ここだけ自前で解く。
+    """
+    if np.asarray(cube).shape[2] != 3:
+        return fs.spec_unmix(cube, endm_bands, constrained=constrained)
+    from scipy.optimize import nnls
+    hh, ww, bb = cube.shape
+    E = np.asarray(endm_bands, float)
+    K = E.shape[0]
+    if not constrained:
+        return (cube.reshape(-1, bb) @ np.linalg.pinv(E)).reshape(hh, ww, K)
+    delta = 1e3
+    M = np.vstack([E.T, delta * np.ones((1, K))])
+    P = cube.reshape(-1, bb)
+    A = np.zeros((P.shape[0], K))
+    y = np.empty(bb + 1)
+    y[bb] = delta
+    for i in range(P.shape[0]):
+        y[:bb] = P[i]
+        A[i], _ = nnls(M, y)
+    return A.reshape(hh, ww, K)
+
+
+def detectors(scene, spectra, rng, n_bands=NB0, sigma=None, fixed_sigma=False,
+              endm_full=None, want=("rgb", "vis", "ms", "unmix", "ks", "nir", "sam")):
+    """全手法の検出マップを作って dict で返す。値が大きいほど「下絵あり」。"""
+    out = {}
+    if "rgb" in want:
+        rgb = make_rgb(spectra, rng, sigma=(sigma if sigma is not None
+                                            else SIGMA0 * np.sqrt(3.0)))
+        out["_rgb"] = rgb
+        out["rgb"] = own_pca(rgb, 3)[0]                      # 成分選択は後段
+    if "vis" in want:
+        _, cv = make_cube(spectra, n_bands, rng, lo=400.0, hi=700.0,
+                          sigma=sigma, fixed_sigma=fixed_sigma)
+        out["vis"] = (own_pca(cv, 4)[0] if n_bands == 3
+                      else fs.spec_pca(cv, 4)[0])
+    centers, cube = make_cube(spectra, n_bands, rng, sigma=sigma, fixed_sigma=fixed_sigma)
+    out["_cube"] = cube
+    out["_centers"] = centers
+    if "ms" in want:
+        out["ms"] = (own_pca(cube, 4)[0] if n_bands == 3 else fs.spec_pca(cube, 4)[0])
+    _, filt = band_filters(n_bands)
+    Eb = (endm_full if endm_full is not None else endmember_spectra()) @ filt.T
+    if "unmix" in want:
+        A = unmix_any(cube, Eb)
+        out["_abund"] = A
+        out["unmix"] = A[..., CARBON_ROW]
+    if "ks" in want:
+        A2 = unmix_any(ks_transform(cube), ks_transform(Eb))
+        out["_abund_ks"] = A2
+        out["ks"] = A2[..., CARBON_ROW]
+    if "nir" in want:
+        d = nir_difference(centers, cube)
+        if d is not None:
+            out["nir"] = d
+    if "sam" in want:
+        out["sam"] = -fs.spec_angle_mapper(cube, Eb[CARBON_ROW])
+    return out
+
+
+METHODS = (
+    ("rgb",   "RGB の PCA(ゼロ点)", True),
+    ("vis",   "可視のみ多波長 PCA", True),
+    ("ms",    "可視+近赤外 PCA", True),
+    ("unmix", "線形アンミキシング", False),
+    ("ks",    "K/S アンミキシング", False),
+    ("nir",   "近赤外の単純差分", False),
+    ("sam",   "分光角マッパ", False),
+)
+
+
+def score_maps(det, pos, neg):
+    """PCA 系は成分と符号を真値で選ぶ(下駄)。他はそのまま。"""
+    maps = {}
+    for key, _name, is_pca in METHODS:
+        if key not in det:
+            continue
+        maps[key] = best_pc_detector(det[key], pos, neg)[0] if is_pca else det[key]
+    return maps
+
+
 def main():
     t_all = time.perf_counter()
-    print("PLACEHOLDER")
+    rng = np.random.default_rng(SEED)
+    scene = build_scene()
+    ink, flake, field = scene["ink"], scene["flake"], scene["field"]
+
+    # 評価マスク。中間の被覆率(0.02 < alpha < 0.6)は「どちらとも言えない」ので外す。
+    pos_all = ink >= 0.6
+    neg_all = ink <= 0.02
+    pos, neg = pos_all & ~flake, neg_all & ~flake
+    field_names = ("群青の面", "アズライトの面", "朱+茜の面")
+
+    # ---------------------------------------------------------------- 1 -----
+    print("\n1. 場面 —— 何を作って、何を真値として握っているか")
+    print(f"   画素 {H}x{W} / 分光 {WL[0]:.0f}–{WL[-1]:.0f} nm を {WL.size} 点")
+    print("   層: 白亜の地 → 炭素黒の線で下絵 → 上層(区画ごとに顔料が違う)、一部剥落")
+    rows = [
+        ["下絵の線 (alpha>=0.6)", str(int(pos_all.sum())), "%.1f %%" % (100 * pos_all.mean())],
+        ["中間の縁 (0.02<alpha<0.6)", str(int(((ink > 0.02) & (ink < 0.6)).sum())),
+         "%.1f %%" % (100 * ((ink > 0.02) & (ink < 0.6)).mean())],
+        ["下絵なし (alpha<=0.02)", str(int(neg_all.sum())), "%.1f %%" % (100 * neg_all.mean())],
+        ["剥落部", str(int(flake.sum())), "%.1f %%" % (100 * flake.mean())],
+        ["剥落部のうち線", str(int((pos_all & flake).sum())), "—"],
+    ]
+    for f in range(3):
+        rows.append(["区画 %d: %s" % (f, field_names[f]), str(int((field == f).sum())),
+                     "%.1f %%" % (100 * (field == f).mean())])
+    _table(["真値の内訳", "画素数", "割合"], rows)
+
+    # ---------------------------------------------------------------- 2 -----
+    print("\n2. 物理の確認 —— Kubelka–Munk が両端で正しく振る舞うか")
+    lim_rows = []
+    for key in LAYER_KEYS:
+        r_inf, s550, name = PIGMENTS[key]
+        S = scat(s550)
+        K = S * ks_ratio(r_inf)
+        rg = np.full_like(S, 0.5)
+        e_thick = float(np.abs(km_layer(K, S, 30.0, rg) - r_inf).max())
+        e_thin = float(np.abs(km_layer(K, S, 1e-9, rg) - 0.5).max())
+        lim_rows.append([name, "%.3f" % r_inf[WL == 550][0], "%.1f" % s550,
+                         "%.1e" % e_thick, "%.1e" % e_thin])
+    _table(["顔料", "R∞(550nm)", "散乱能 S550", "厚→∞ の誤差", "厚→0 の誤差"], lim_rows)
+
+    # 下絵そのものの信号(インクを消した同じ場面との差)。手法の話の前に物理を見る。
+    scene_noink = dict(scene, ink=np.zeros_like(ink))
+    sig_rows = []
+    for tau in (0.3, TAU0, 1.0, 2.0):
+        d = render_spectra(scene, tau=tau) - render_spectra(scene_noink, tau=tau)
+        row = ["%.1f" % tau]
+        for f in range(3):
+            fm = pos & (field == f)
+            row.append("%+.4f" % d[..., WL == 450][..., 0][fm].mean())
+            row.append("%+.4f" % d[..., WL == 950][..., 0][fm].mean())
+        sig_rows.append(row)
+    _table(["厚み倍率 tau",
+            "群青 450nm", "群青 950nm",
+            "アズ 450nm", "アズ 950nm",
+            "朱茜 450nm", "朱茜 950nm"], sig_rows)
+    print("   線のところの反射率が、下絵を消した場合と比べてどれだけ下がるか。")
+    print("   アズライトは近赤外でも吸収が残るので、下絵の信号がほぼ出ない(後で効く)。")
+
+    print(f"\n   以降の既定: 厚み倍率 tau={TAU0} / バンド数 {NB0}(400–1000 nm) /")
+    print(f"   雑音は光量一定モデル sigma = {SIGMA0} * sqrt(B) = "
+          f"{SIGMA0 * np.sqrt(NB0):.4f}(RGB は sqrt(3) で {SIGMA0 * np.sqrt(3):.4f})")
+
+    # ---------------------------------------------------------------- 3 -----
+    print("\n3. 下絵の検出 —— 適合率と再現率を別々に、面ごとに分けて")
+    spec0 = render_spectra(scene, tau=TAU0)
+    det0 = detectors(scene, spec0, np.random.default_rng(SEED + 1))
+    maps0 = score_maps(det0, pos, neg)
+
+    head = ["手法", "AUC", "再現率@FPR1%", "適合率@FPR1%", "再現率@FPR5%",
+            "群青", "アズ", "朱茜", "剥落部"]
+    rows = []
+    detect_summary = {}
+    for key, name, _p in METHODS:
+        if key not in maps0:
+            continue
+        d = maps0[key]
+        a = auc(d[pos], d[neg])
+        t1 = thresh_at_fpr(d[neg], 0.01)
+        t5 = thresh_at_fpr(d[neg], 0.05)
+        r1, p1 = pr_at(d, pos, neg, t1)
+        r5, _ = pr_at(d, pos, neg, t5)
+        per = [pr_at(d, pos & (field == f), neg & (field == f), t1)[0] for f in range(3)]
+        rf = pr_at(d, pos_all & flake, neg_all & flake, t1)[0]
+        detect_summary[key] = (a, r1, p1, per, rf)
+        rows.append([name, "%.3f" % a, "%.3f" % r1, "%.3f" % p1, "%.3f" % r5,
+                     "%.3f" % per[0], "%.3f" % per[1], "%.3f" % per[2], "%.3f" % rf])
+    _table(head, rows)
+    print("   閾値は「下絵なしの画素の 1 %(5 %)が超える」ところに置いた(全体で 1 本)。")
+    print("   区画ごとの列はその同じ閾値での再現率。剥落部は上層が無いので別に出す。")
+    print("   PCA の 3 手法は **真値を見て**成分と符号を選んでいる(ゼロ点に下駄を履かせた)。")
+
+    # ---------------------------------------------------------------- 4 -----
+    print("\n4. 崖 (a) —— 上層の光学的厚み。下絵はどこで見えなくなるか")
+    taus = (0.15, 0.3, 0.6, 1.0, 1.6, 2.5)
+    rows_a = []
+    cliff_a = {}
+    for tau in taus:
+        sp = render_spectra(scene, tau=tau)
+        dt = detectors(scene, sp, np.random.default_rng(SEED + 2),
+                       want=("rgb", "ms", "unmix", "nir"))
+        mp = score_maps(dt, pos, neg)
+        row = ["%.2f" % tau]
+        cliff_a[tau] = {}
+        for key in ("rgb", "ms", "unmix", "nir"):
+            d = mp[key]
+            r1 = pr_at(d, pos, neg, thresh_at_fpr(d[neg], 0.01))[0]
+            r1b = pr_at(d, pos & (field == 1), neg & (field == 1),
+                        thresh_at_fpr(d[neg], 0.01))[0]
+            cliff_a[tau][key] = (r1, r1b)
+            row += ["%.3f" % r1, "%.3f" % r1b]
+        rows_a.append(row)
+    _table(["tau", "RGB全体", "RGBアズ", "多波長全体", "多波長アズ",
+            "アンミ全体", "アンミアズ", "NIR全体", "NIRアズ"], rows_a)
+    print("   平均の厚み(剥落部を除く)= tau x %.3f。" % scene["thick"][~flake].mean())
+
+    # ---------------------------------------------------------------- 5 -----
+    print("\n5. 崖 (b) —— バンド数。増やすほど良い、とは限らない")
+    print("   左半分 = 光量一定(バンドを割ると 1 本あたりの雑音は sqrt(B) 倍)")
+    print("   右半分 = 雑音固定(バンドを増やしても雑音が増えない、都合のよい仮定)")
+    rows_b = []
+    cliff_b = {}
+    for nb in (3, 8, 16, 31):
+        row = [str(nb)]
+        cliff_b[nb] = {}
+        for fixed in (False, True):
+            dt = detectors(scene, spec0, np.random.default_rng(SEED + 3), n_bands=nb,
+                           fixed_sigma=fixed, want=("ms", "unmix", "nir"))
+            mp = score_maps(dt, pos, neg)
+            for key in ("ms", "unmix", "nir"):
+                d = mp[key]
+                r1 = pr_at(d, pos, neg, thresh_at_fpr(d[neg], 0.01))[0]
+                cliff_b[nb][(key, fixed)] = r1
+                row.append("%.3f" % r1)
+        rows_b.append(row)
+    _table(["バンド数", "多波長PCA", "アンミックス", "NIR差分",
+            "多波長PCA*", "アンミックス*", "NIR差分*"], rows_b)
+    print("   * = 雑音固定。B=3 は fs.spec_unmix / fs.spec_pca が拒否するので自前で解いた。")
+
+    # ---------------------------------------------------------------- 6 -----
+    print("\n6. 崖 (c) —— 似た 2 つの青。どこまで似ると分けられなくなるか")
+    az = PIGMENTS["azurite"][0]
+    ul = PIGMENTS["ultramarine"][0]
+    _, filt16 = band_filters(NB0)
+    rows_c = []
+    cliff_c = []
+    for s in (1.0, 0.5, 0.25, 0.12, 0.06, 0.03, 0.015):
+        blue2 = np.clip(az + s * (ul - az), 0.02, 0.95)
+        bb = np.vstack([az, blue2]) @ filt16.T
+        r = float(np.corrcoef(bb[0], bb[1])[0, 1])
+        E = endmember_spectra(swap=("ultramarine", blue2))
+        sp = render_spectra(scene, tau=TAU0, swap=("ultramarine", blue2))
+        _, cube = make_cube(sp, NB0, np.random.default_rng(SEED + 4))
+        A = unmix_any(cube, E @ filt16.T)
+        lay = A[..., :len(LAYER_KEYS)]
+        lay = lay / np.maximum(lay.sum(axis=2, keepdims=True), 1e-12)
+        ia, iu = LAYER_KEYS.index("azurite"), LAYER_KEYS.index("ultramarine")
+        m1 = (field == 1) & ~flake & neg_all
+        m0 = (field == 0) & ~flake & neg_all
+        e_az = lay[..., ia][m1] - scene["conc"][..., ia][m1]
+        e_b2 = lay[..., iu][m0] - scene["conc"][..., iu][m0]
+        leak = float(lay[..., iu][m1].mean())         # アズライトの面に混ざった青2
+        b_az, s_az = bias_scatter(e_az)
+        cliff_c.append((r, b_az, s_az, leak))
+        rows_c.append(["%.5f" % r, "%+.3f" % b_az, "%.3f" % s_az,
+                       "%+.3f" % bias_scatter(e_b2)[0], "%.3f" % leak])
+    _table(["2 青の相関 r", "アズの偏り", "アズの散らばり", "青2の偏り", "青2の漏れ込み"],
+           rows_c)
+    print("   偏り = 平均誤差、散らばり = 誤差の標準偏差。1 つの RMSE に丸めない。")
+
+    # ---------------------------------------------------------------- 7 -----
+    print("\n7. 崖 (d) —— 褪色。端成分を未褪色のまま使うとどれだけ外れるか")
+    truth_rgb = make_rgb(render_spectra(scene, tau=TAU0, fade=1.0),
+                         np.random.default_rng(SEED + 9), sigma=0.0)
+    E_unfaded = endmember_spectra(fade=1.0)
+    im = LAYER_KEYS.index("madder")
+    f2 = (field == 2) & ~flake & neg_all
+    rows_d = []
+    cliff_d = {}
+    for fade in (1.0, 0.7, 0.5, 0.3, 0.15):
+        sp = render_spectra(scene, tau=TAU0, fade=fade)
+        obs_rgb = make_rgb(sp, np.random.default_rng(SEED + 5))
+        _, cube = make_cube(sp, NB0, np.random.default_rng(SEED + 5))
+        de_null = float(np.median(delta_e(obs_rgb, truth_rgb)[f2]))
+        row = ["%.2f" % fade, "%.2f" % de_null]
+        cliff_d[fade] = {"null": de_null}
+        for tag, E in (("固定", E_unfaded), ("追従", endmember_spectra(fade=fade))):
+            A = unmix_any(cube, E @ filt16.T)
+            lay = A[..., :len(LAYER_KEYS)]
+            lay = lay / np.maximum(lay.sum(axis=2, keepdims=True), 1e-12)
+            b, s = bias_scatter(lay[..., im][f2] - scene["conc"][..., im][f2])
+            # 未褪色の端成分で組み直して描き直す = 退色前の色の復元
+            rec = np.tensordot(A, E_unfaded, axes=([2], [0]))
+            rec_rgb = make_rgb(rec, np.random.default_rng(SEED + 6), sigma=0.0)
+            de = float(np.median(delta_e(rec_rgb, truth_rgb)[f2]))
+            cliff_d[fade][tag] = (b, s, de)
+            row += ["%+.3f" % b, "%.3f" % s, "%.2f" % de]
+        rows_d.append(row)
+    _table(["褪色 f", "何もしない ΔE00",
+            "固定:茜の偏り", "固定:散らばり", "固定:復元 ΔE00",
+            "追従:茜の偏り", "追従:散らばり", "追従:復元 ΔE00"], rows_d)
+    print("   f = 茜レーキの吸収 K に掛ける倍率。1 = 未褪色。ΔE00 は朱+茜の面の中央値。")
+    print("   「固定」= 端成分を未褪色のまま使う / 「追従」= 褪色後の端成分を渡す(反則)。")
+
+    # ---------------------------------------------------------------- 8 -----
+    print("\n8. 崖 (e) —— 雑音")
+    rows_e = []
+    cliff_e = {}
+    for sg in (0.0, 0.001, 0.004, 0.01, 0.03, 0.1):
+        dt = detectors(scene, spec0, np.random.default_rng(SEED + 7), sigma=sg,
+                       want=("rgb", "ms", "unmix", "nir"))
+        mp = score_maps(dt, pos, neg)
+        row = ["%.3f" % sg]
+        cliff_e[sg] = {}
+        for key in ("rgb", "ms", "unmix", "nir"):
+            d = mp[key]
+            r1 = pr_at(d, pos, neg, thresh_at_fpr(d[neg], 0.01))[0]
+            cliff_e[sg][key] = r1
+            row.append("%.3f" % r1)
+        rows_e.append(row)
+    _table(["雑音 sigma", "RGB PCA", "多波長 PCA", "アンミックス", "NIR 差分"], rows_e)
+
+    # ---------------------------------------------------------------- 9 -----
+    print("\n9. 顔料の存在量 —— 偏りと散らばりを分ける(既定条件)")
+    painted = ~flake & neg_all
+    rows_f = []
+    ab_summary = {}
+    for tag, akey in (("反射率で線形", "_abund"), ("K/S で線形", "_abund_ks")):
+        A = det0[akey]
+        lay = A[..., :len(LAYER_KEYS)]
+        lay = lay / np.maximum(lay.sum(axis=2, keepdims=True), 1e-12)
+        for i, key in enumerate(LAYER_KEYS):
+            fm = painted & (scene["conc"][..., i] > 0.02)
+            if fm.sum() < 20:
+                continue
+            b, s = bias_scatter(lay[..., i][fm] - scene["conc"][..., i][fm])
+            ab_summary[(tag, key)] = (b, s)
+            rows_f.append([tag, PIGMENTS[key][2], str(int(fm.sum())),
+                           "%.3f" % scene["conc"][..., i][fm].mean(),
+                           "%+.3f" % b, "%.3f" % s])
+    _table(["空間", "顔料", "対象画素", "真の平均濃度", "偏り", "散らばり"], rows_f)
+    print("   真値は上層の顔料濃度(和 1)。推定は 7 端成分のうち上層 5 種を和 1 に正規化。")
+    print("   線形混合モデルは層構造(Kubelka–Munk)を知らないので、偏りは残って当然。")
+    print("   見るべきは **偏りと散らばりのどちらが大きいか** —— 偏りなら補正できる。")
+
+    # --------------------------------------------------------------- 10 -----
+    print("\n10. まとめ —— 何が効いて、何が効かなかったか")
+    zero = detect_summary["rgb"][1]
+    for key, name, _p in METHODS:
+        if key not in detect_summary:
+            continue
+        a, r1, p1, per, rf = detect_summary[key]
+        gain = ("%.1f 倍" % (r1 / zero)) if zero > 1e-6 else "—"
+        print("   %s: AUC %.3f / 再現率@FPR1%% %.3f(ゼロ点比 %s)/ 適合率 %.3f"
+              % (_pad(name, 22), a, r1, gain, p1))
+
+    dt_total = time.perf_counter() - t_all
+
+    # --------------------------------------------------------------- 検証 ----
+    # 1. ゼロ点が実在し、可視だけでは下絵がほとんど見えない
+    assert detect_summary["rgb"][0] < 0.90, \
+        "ゼロ点(RGB PCA)が強すぎる。実験設計が崩れた: AUC %.3f" % detect_summary["rgb"][0]
+    # 2. 近赤外を含む手法がゼロ点に勝つ
+    assert detect_summary["nir"][1] > 2.0 * max(detect_summary["rgb"][1], 0.01), \
+        "近赤外がゼロ点に勝てていない"
+    assert detect_summary["ms"][0] > detect_summary["vis"][0], \
+        "可視+近赤外が可視のみに勝てていない"
+    # 3. 面ごとに結果が割れる(1 つの数字にまとめられない)
+    nir_per = detect_summary["nir"][3]
+    assert nir_per[1] < 0.5 * max(nir_per[0], nir_per[2]), \
+        "アズライトの面でも近赤外が効いてしまっている(物理の仮定が崩れた): %r" % (nir_per,)
+    assert detect_summary["nir"][4] > 0.8, "剥落部ですら下絵が取れていない"
+    # 4. 崖 (a): 厚みで単調に落ち、どこかで半分を割る
+    nir_a = [cliff_a[t]["nir"][0] for t in taus]
+    assert nir_a[0] > 0.8 and nir_a[-1] < 0.5, \
+        "厚みの崖が見えない: %r" % (["%.3f" % v for v in nir_a],)
+    assert all(b <= a + 1e-9 for a, b in zip(nir_a, nir_a[1:])), \
+        "厚みに対して単調でない: %r" % (["%.3f" % v for v in nir_a],)
+    # 5. 崖 (b): 光量一定なら 8→16→31 で頭打ち(31 が 16 を明確に上回らない)
+    r8, r16, r31 = (cliff_b[n][("unmix", False)] for n in (8, 16, 31))
+    assert r31 <= r16 + 0.02, \
+        "光量一定でもバンドを増やし続けて改善している(頭打ちの所見が崩れた): " \
+        "8=%.3f 16=%.3f 31=%.3f" % (r8, r16, r31)
+    assert cliff_b[3][("unmix", False)] < r8, "3 バンドが 8 バンドに勝っている"
+    # 6. 崖 (c): 相関が上がるほど散らばりが増える
+    scat_c = [c[2] for c in cliff_c]
+    assert scat_c[-1] > 3.0 * scat_c[0], \
+        "2 つの青を似せても散らばりが増えない: %r" % (["%.3f" % v for v in scat_c],)
+    # 7. 崖 (d): 端成分固定は褪色が進むほど外れる / 追従より必ず悪い
+    de_fixed = [cliff_d[f]["固定"][2] for f in (1.0, 0.7, 0.5, 0.3, 0.15)]
+    assert de_fixed[-1] > de_fixed[0], "褪色を進めても固定端成分の誤差が増えない"
+    for f in (0.7, 0.5, 0.3, 0.15):
+        assert cliff_d[f]["固定"][2] >= cliff_d[f]["追従"][2] - 1e-9, \
+            "端成分を追従させたのに悪化した (f=%.2f)" % f
+    # 8. 崖 (e): 雑音で単調に落ちる
+    ne = [cliff_e[s]["nir"] for s in (0.0, 0.001, 0.004, 0.01, 0.03, 0.1)]
+    assert ne[0] > ne[-1] and ne[-1] < 0.3, \
+        "雑音で落ちない: %r" % (["%.3f" % v for v in ne],)
+    # 9. 物理の両端(KM の極限)が閉形式に一致
+    for key in LAYER_KEYS:
+        r_inf, s550, _n = PIGMENTS[key]
+        S = scat(s550)
+        assert np.abs(km_layer(S * ks_ratio(r_inf), S, 1e-9,
+                               np.full_like(S, 0.5)) - 0.5).max() < 1e-5
+    print(f"\n総所要 {dt_total:.1f} 秒")
+    print("PASS")
     return True
 
 

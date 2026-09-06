@@ -403,7 +403,8 @@ def main():
             e.append(got[0, 0] - r0)
         return np.array(e)
 
-    print("     " + pad("手法", 20) + "".join(f"FWHM {f:>4.1f}" for f in fwhms))
+    print("     " + pad("手法", 20) + "".join(
+        f"{'FWHM ' + format(f, '.1f'):>9s}" for f in fwhms))
     phase_tab = {}
     for lab, fn in METHODS:
         line = "     " + pad(lab, 20)
@@ -434,7 +435,7 @@ def main():
     e4 = {b: float(np.ptp(phase_curve(m_centroid_bg, 4.0, box=b))) for b in (11, 15, 21)}
     print(f"      右側が箱のせいである証拠: FWHM 4.0 のまま箱だけ広げると "
           + " / ".join(f"箱 {b} で {v:.5f}" for b, v in e4.items())
-          + f" —— {e4[11] / max(e4[21], 1e-9):.0f} 倍縮む。"
+          + f" —— 箱 21 では {e4[21]:.1e} px まで落ちて**測れなくなる**。"
           f"左側は箱を広げても消えない(標本化は箱の外の話ではない)")
     e1 = {b: float(np.ptp(phase_curve(m_centroid_bg, 1.0, box=b))) for b in (11, 21)}
     print(f"      実際 FWHM 1.0 では 箱 11 で {e1[11]:.4f} / 箱 21 で {e1[21]:.4f} "
@@ -475,7 +476,7 @@ def main():
         got = {}
         for lab, fn in (("u", m_gaussfit), ("w", m_gaussfit_w)):
             ee = []
-            for rep in range(3):
+            for rep in range(6):
                 rg = np.random.default_rng(2000 + rep)
                 dr = rg.uniform(-0.5, 0.5, n_grid)
                 dc = rg.uniform(-0.5, 0.5, n_grid)
