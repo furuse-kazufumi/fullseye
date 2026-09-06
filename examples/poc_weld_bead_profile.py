@@ -465,36 +465,48 @@ def section5_spatter(truth: dict) -> None:
     print("5) ★★スパッタにはサブピクセルが無力 —— 効くのは「どのピークを選ぶか」")
     print("=" * 78)
     h_true = height(_X)
+    print("  RMS だけでは「数列だけが致命的に外れた」のか「全体がぼやけた」のか")
+    print("  分からないので、**外れた列の数**(|誤差| > 0.1 mm)も並べる。")
+    print()
     print("  %8s |" % "スパッタ", end="")
     for name in ("argmax", "重心", "放物線", "連続性で選ぶ"):
-        print(" %14s" % name, end="")
+        print(" %18s" % name, end="")
     print()
-    print("  " + "-" * (10 + 15 * 4))
+    print("  " + "-" * (10 + 19 * 4))
     fns = [est_argmax, est_centroid, est_parabola, est_robust]
+    got = {}
     for ns in [0, 5, 20, 60]:
         img, lit = render(spatter=ns, seed=15, occlusion=False)
         print("  %8d |" % ns, end="")
-        for fn in fns:
+        for name, fn in zip(("argmax", "重心", "放物線", "連続性"), fns):
             v = to_height(fn(img))
             m = lit & np.isfinite(v)
-            print(" %14.4f" % _rms((v - h_true)[m]), end="")
+            e = (v - h_true)[m]
+            got[(ns, name)] = (_rms(e), int(np.sum(np.abs(e) > 0.1)),
+                               float(np.max(np.abs(e))))
+            print(" %11.4f /%4d 列" % (_rms(e), got[(ns, name)][1]), end="")
         print()
-    print("  (RMS [mm])")
+    print("  (左 = RMS [mm]、右 = 0.1 mm 以上外れた列数 / 全 %d 列)" % N_COL)
     print()
-    img, lit = render(spatter=20, seed=15, occlusion=False)
-    vp = to_height(est_parabola(img))
-    vr = to_height(est_robust(img))
-    mp, mr = lit & np.isfinite(vp), lit & np.isfinite(vr)
-    print("  スパッタ 20 個での**最大の外れ**: 放物線 %.3f mm / 連続性 %.3f mm"
-          % (float(np.max(np.abs((vp - h_true)[mp]))),
-             float(np.max(np.abs((vr - h_true)[mr])))))
+    print("  最大の外れ(スパッタ 20 個): 放物線 %.3f mm / 連続性 %.3f mm"
+          % (got[(20, "放物線")][2], got[(20, "連続性")][2]))
     print()
-    print("  → 点 5 個で 3 種とも 0.0026 -> 0.35 mm(**135 倍**)。サブピクセルの")
-    print("     選択は**まったく効いていない** —— スパッタのほうが輝線より明るい")
-    print("     ので、3 種とも同じ間違った山を精緻化しているだけ。")
-    print("     ★隣の列との連続性でピークを選び直すと 0.0127 mm(**28 倍**戻る)。")
+    print("  → 点 5 個で 3 種とも RMS が %.4f -> %.4f mm(**%.0f 倍**)。"
+          % (got[(0, "放物線")][0], got[(5, "放物線")][0],
+             got[(5, "放物線")][0] / got[(0, "放物線")][0]))
+    print("     ★サブピクセルの選択は**まったく効いていない** —— argmax も重心も")
+    print("     放物線も同じ %d 列で外れる。スパッタのほうが輝線より明るいので、"
+          % got[(5, "放物線")][1])
+    print("     3 種とも**同じ間違った山**を精緻化しているだけ。")
+    print("     ★隣の列との連続性でピークを選び直すと %.4f mm(**%.1f 倍**戻る、"
+          % (got[(5, "連続性")][0],
+             got[(5, "放物線")][0] / got[(5, "連続性")][0]))
+    print("     外れた列 %d -> %d)。20 個なら %.1f 倍(%d -> %d 列)。"
+          % (got[(5, "放物線")][1], got[(5, "連続性")][1],
+             got[(20, "放物線")][0] / got[(20, "連続性")][0],
+             got[(20, "放物線")][1], got[(20, "連続性")][1]))
     print("     変えたのは選び方だけで、精緻化は同じ放物線のまま。")
-    print("     **磨く場所を間違えると 2 桁損する。**")
+    print("     **磨く場所を間違えると 1 桁損する。**")
 
 
 def section6_occlusion(truth: dict) -> dict:
