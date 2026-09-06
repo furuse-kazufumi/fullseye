@@ -325,14 +325,16 @@ def main() -> bool:
 
     # ★この PoC の見出し。零点 A(水平線)と零点 B に FBP が**交差する**ところが
     #   目で見える。横軸は投影数(左が疎)。
-    vs = np.array([r["views"] for r in rows_out], float)
+    # 横軸は log —— 交差が起きるのは疎な側(12〜45 本)で、線形軸だと左端に
+    # 潰れて肝心のところが読めない。
+    vs = np.log10([r["views"] for r in rows_out])
     figs.save_plot(
         "rmse_vs_views",
         [("FBP (ramp)", vs, np.array([r["fbp"] for r in rows_out])),
          ("FBP (hann)", vs, np.array([r_h for (_n, _r, r_h) in hann_rows])),
-         ("零点 B(無フィルタ BP)", vs, np.array([r["bp"] for r in rows_out])),
-         ("零点 A(空白画像)", vs, np.full(vs.size, blank_rmse))],
-        xlabel="投影数", ylabel="RMSE(密度そのまま)",
+         ("零点 B", vs, np.array([r["bp"] for r in rows_out])),
+         ("零点 A", vs, np.full(vs.size, blank_rmse))],
+        xlabel="log10 投影数(12 / 24 / 45 / 90 / 180)", ylabel="RMSE(密度そのまま)",
         title="FBP は零点と交差する",
         caption="24 本までは FBP の勝ち。12 本では零点 B にも零点 A にも負ける —— "
                 "ランプは測っていない高周波を増幅するため。")
