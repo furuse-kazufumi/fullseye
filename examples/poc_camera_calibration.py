@@ -574,6 +574,8 @@ def main():
     assert not hasattr(fs, "camera_calibration"), "穴 (a) が塞がった —— docstring を更新せよ"
     assert fs.find_op("camera_calibration") is None, "op レジストリに載った —— docstring を更新せよ"
 
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("\nPASS")
 
 
