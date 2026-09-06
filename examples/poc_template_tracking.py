@@ -965,6 +965,17 @@ def main():
         print(f"{name:<20}{len(lost):>9}{int(lost.sum()):>9}{a_pk:>15.3f}"
               f"{'—' if prv is None else format(a_pr, '.3f'):>13}")
     print("-" * 66)
+    figs.save_table("confidence_auc",
+                    ["条件", "フレーム", "うち失敗", "ピーク値 AUC", "突出度 AUC"],
+                    [[name, "%d" % len(bundles[name][2]),
+                      "%d" % int(bundles[name][2].sum()),
+                      "%.3f" % auc_tbl[name][0],
+                      "—" if bundles[name][1] is None else "%.3f" % auc_tbl[name][1]]
+                     for name in bundles],
+                    title="見失ったことに気づけるか(AUC。0.5 = 無力)",
+                    col_w=140,
+                    caption="得意な崖が逆。0.5 を下回った欄はその量が嘘の側で高く"
+                            "出ている = 使うと逆効果。")
     print("(拡大・回転 と ドリフト の突出度は出さない —— どちらも自分自身の肩が 2 位になり、")
     print(" 「別の候補との差」という意味を失うため。無意味な数字を並べない。)")
     a_occ, a_amb = auc_tbl["遮蔽 0-80 %"], auc_tbl["紛らわしい対象(全域)"]
