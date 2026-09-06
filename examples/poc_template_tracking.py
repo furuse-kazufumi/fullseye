@@ -944,29 +944,38 @@ def main():
     # =======================================================================
     rule("11. 時間推移 —— 1 つの数字にまとめない")
     # =======================================================================
-    print("第 3 章の 4 系(対象 一意、回転 6 度 + 1.06 倍)を、平均でなく時間で並べる。")
+    print(f"第 3 章の 4 系を、平均でなく時間で並べる({C_S})。")
     print()
     hdr = f"{'frame':>6}" + "".join(f"{lab.split()[0]:>10}" for lab, _ in SYS)
-    print(hdr + f"{'毎更新ピーク':>14}")
-    print("-" * (len(hdr) + 14))
+    print(hdr + f"{'ゼロ点ピーク':>14}{'毎更新ピーク':>14}")
+    print("-" * (len(hdr) + 28))
     for t in (0, 5, 10, 15, 20, 25, 30, 35, 39):
         line = f"{t:>6}"
         for lab, _ in SYS:
-            line += f"{ch3[lab]['err'][t]:>10.2f}"
-        line += f"{ch3['1 毎フレーム更新']['peak'][t]:>14.4f}"
+            line += f"{ch3[(C_S, lab)]['err'][t]:>10.2f}"
+        line += f"{ch3[(C_S, SYS[0][0])]['peak'][t]:>14.4f}"
+        line += f"{ch3[(C_S, SYS[1][0])]['peak'][t]:>14.4f}"
         print(line)
-    print("-" * (len(hdr) + 14))
+    print("-" * (len(hdr) + 28))
     print("列は誤差[px]。0/1/2/3 は第 3 章の系番号。")
-    u1e = ch3["1 毎フレーム更新"]["err"]
-    t_cross = next((t for t in range(len(u1e)) if u1e[t] > LOST_PX), None)
-    print(f"\n→ 毎フレーム更新が 5 px を超えるのはフレーム "
-          f"{t_cross if t_cross is not None else '(超えなかった)'}。")
-    print(f"   そのときピークは {ch3['1 毎フレーム更新']['peak'][t_cross]:.4f}"
-          if t_cross is not None else "")
-    print("   —— 平均だけを見ていると、**いつ壊れたか** も **壊れても信頼度が高いまま** も見えない。")
-    print(f"→ 遮蔽の時間推移(遮蔽 70 %): 誤差 "
-          f"{np.round(ch5[0.7]['err'][::6], 1).tolist()}(6 フレームおき)")
-    print(f"   ピーク {np.round(ch5[0.7]['peak'][::6], 3).tolist()}")
+    z_e = ch3[(C_S, SYS[0][0])]["err"]
+    t_cross = next((t for t in range(len(z_e)) if z_e[t] > LOST_PX), None)
+    print(f"\n→ ゼロ点が 5 px を超えるのはフレーム "
+          f"{t_cross if t_cross is not None else '(超えなかった)'}"
+          f"{'' if t_cross is None else f'、そのときピーク {ch3[(C_S, SYS[0][0])][chr(39) + chr(39)] if False else ch3[(C_S, SYS[0][0])][chr(112) + chr(101) + chr(97) + chr(107)][t_cross]:.4f}'}。")
+    print("   平均だけを見ていると **いつ壊れたか** が消える。壊れる前に")
+    print("   ピークが落ちているかどうかも、時間で並べて初めて分かる。")
+    dr = ch8["毎フレーム"]
+    print(f"→ 毎フレーム更新のドリフト(第 8 章、純並進 64 フレーム)は"
+          f"「壊れた瞬間」が無い:")
+    print(f"   誤差 {np.round(dr['err'][::8], 2).tolist()}(8 フレームおき)")
+    print(f"   ピーク {np.round(dr['peak'][::8], 3).tolist()}")
+    print("   誤差だけが単調に伸び、ピークは最後まで動かない。**時間推移でも見えない崖**。")
+    print(f"→ 遮蔽 70 % + そっくりな別物体: 誤差 "
+          f"{np.round(ch5t[0.7]['err'][::6], 1).tolist()}(6 フレームおき)")
+    print(f"   ピーク {np.round(ch5t[0.7]['peak'][::6], 3).tolist()} / "
+          f"突出度 {np.round(ch5t[0.7]['prom'][::6], 3).tolist()}")
+    print("   誤差が跳ねた瞬間にピークは高いまま、**突出度だけが落ちる**。")
 
     # =======================================================================
     rule("12. 速度と、測らなかったこと")
