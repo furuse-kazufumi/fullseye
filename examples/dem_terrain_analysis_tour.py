@@ -194,10 +194,11 @@ def run() -> dict:
     # 閾値を越えないと河道は 1 セルも出ない。
     assert demops.dem_stream_network(valley, cell, threshold_cells=hv * wv + 1).sum() == 0
     figs.save_grid("valley_stream",
-                   [_big(valley), _big(dv.astype(float)), _big(np.log10(acc)), _big(stream)],
-                   ["V 字谷の標高", "D8 流向(0-7, 谷底は 6=南)", "集水量 log10", f"河道(閾値 {T:.0f})"],
-                   ncols=4, title="V 字谷 —— 流向・集水量・河道がセル単位で数えられる",
-                   caption="谷底 i 行目の集水量は幅 W×(i+1)。河道は閾値を越えた行から始まる。")
+                   [_big(valley, 4), _big(dv.astype(float), 4), _big(np.log10(acc), 4), _big(stream, 4)],
+                   ["標高", "D8 流向", "集水量 log10", "河道"],
+                   ncols=2, title="V 字谷 —— 流向・集水量・河道がセル単位で数えられる",
+                   caption="流向は 0-7(谷底は 6=南)。谷底 i 行目の集水量は幅 W×(i+1)。"
+                           f"河道は閾値 {T:.0f} セルを越えた行から始まる。")
     out["stream_cells"] = int(stream.sum())
 
     # ------------------------------------------------------------------ 5
