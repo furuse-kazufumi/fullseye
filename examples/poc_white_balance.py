@@ -902,10 +902,14 @@ def main():
     assert abs(float(whole.max()) - 1.0) < 1e-12, "画像ごとでも最大が 1.0 でない"
     assert whole.reshape(-1, 3).max(axis=0).min() < 0.9, \
         "画像ごとに渡しても ch ごとに正規化された —— 穴 (c) の内容が変わった"
-    assert angular_error(est_perch, e_g) > 2.0 * angular_error(own, e_g), \
+    assert angular_error(est_perch, e_g) > 3.0 * angular_error(est_whole, e_g), \
         "ch ごとの正規化で灰色エッジが悪化しない —— 穴 (c) が直った?"
-    assert angular_error(est_whole, e_g) < 1.5 * angular_error(own, e_g), \
-        "画像ごとに渡しても壊れる —— 穴 (c) の回避策が効かない"
+    # 画像ごとに渡した結果は「自前 Sobel(正規化なし)」と角度が一致する。
+    # = 全体を 1 個で割る正規化は角度に何も足さない。差はカーネルだけ。
+    assert abs(angular_error(est_whole, e_g) - angular_error(est_sob, e_g)) < 0.5, \
+        "画像ごとの正規化が角度を変えた —— 全体 1 個で割るという前提が崩れた"
+    assert angular_error(est_perch, e_g) > 0.7 * angular_error(np.ones(3), e_g), \
+        "ch ごとに正規化してもゼロ点まで退化しない —— 穴 (c) の内容が変わった"
 
     # 13. 穴 (a)(b): 該当 op が本当に無いことを台帳で確かめる
     catalog = set(fs.ledger) | set(fs.op)
