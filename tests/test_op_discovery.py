@@ -111,8 +111,9 @@ def test_the_three_colliding_names_are_different_things():
     mask[14:18, 14:18] = 0.0
     filled = fs.op.fill_holes(mask)
     assert filled.sum() > mask.sum(), "2-D 側の fill_holes が穴を埋めていない"
-    assert "mesh" in (getattr(fs, "fill_holes").__doc__ or "").lower() or \
-           "面" in (getattr(fs, "fill_holes").__doc__ or "")
+    mesh_doc = (fs.fill_holes.__doc__ or "").lower()
+    assert "boundary loop" in mesh_doc and "(v, f)" in mesh_doc, \
+        "fs.fill_holes は網の境界ループを閉じる op のはず(2-D の穴埋めではない)"
 
 
 # --------------------------------------------------------------------------- #
