@@ -328,7 +328,7 @@ def align_metrology_model(model, drow=0.0, dcol=0.0) -> dict:
       ``params[0]``/``params[1]`` を row/col とみなして動かす。
     - 返り値: ``{"objects": [...]}``(``metrologymodel`` 型)。
 
-    典型例: 形状マッチング(``find_shape_model`` 等)で得た位置ずれをここで
+    典型例: 形状マッチングや基準マークの検出で得た位置ずれをここで
     モデルに反映し、``apply_metrology_model`` を掛ける。傾いたワークには使えない
     (参照形状の法線が実物の法線からずれ、探索半幅 ``measure_length`` の外に出る)。
     """
