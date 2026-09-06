@@ -1169,6 +1169,49 @@ def section_buried_api(img):
     note("metrology", "align_metrology_model", "OK(平行移動のみ)",
          "(model,drow,dcol) -> 新しい model", "回転・スケールが無い。姿勢変化に追随できない")
 
+    # ---------- 規約の実測 ---------- #
+    sub("戻り値の規約を実測で確定する(docstring と食い違ったら、その食い違いを書く)")
+    phi = math.radians(30.0)
+    ms3 = m1.gen_measure_rectangle2(200.0, 300.0, phi, 40, 1, img.shape)
+    n3 = len(ms3["rows"])
+    print(f"  gen_measure_rectangle2(200, 300, 30deg, length1=40, ...) ->")
+    print(f"    dict のキー: {sorted(ms3)}")
+    print(f"    サンプル数 {n3}(= round(2*length1)+1 = {round(2 * 40) + 1})、"
+          f"spacing {ms3['spacing']}")
+    print(f"    rows[0]={ms3['rows'][0]:.4f} cols[0]={ms3['cols'][0]:.4f} "
+          f"(中心から -(n-1)/2 px の位置: "
+          f"{200 - (n3 - 1) / 2 * math.sin(phi):.4f} / "
+          f"{300 - (n3 - 1) / 2 * math.cos(phi):.4f})")
+    ed3 = m1.measure_pos(img, ms3, sigma=1.0, threshold=0.15)
+    if ed3:
+        e = ed3[0]
+        pr_row = ms3["rows"][0] + e["pos"] * math.sin(phi)
+        pr_col = ms3["cols"][0] + e["pos"] * math.cos(phi)
+        print(f"    measure_pos の最初のエッジ: pos={e['pos']:.4f} "
+              f"dist={e['dist']:.4f} row={e['row']:.4f} col={e['col']:.4f}")
+        print(f"    pos から幾何で再計算した (row, col) = ({pr_row:.4f}, {pr_col:.4f}) "
+              f"-> 差 {abs(pr_row - e['row']):.2e} / {abs(pr_col - e['col']):.2e}")
+        print("    => **pos は測定線の始点からの px、row/col は画像座標 (row, col)。**")
+        print("       (x, y) ではない。単位はどちらも画素で、物理量への換算は入らない。")
+    print("  ★ docstring との食い違い: ``measure_pairs`` の説明は「立ち上がり/")
+    print("     立ち下がりエッジのペア」だが、実装は **極性が交互なら順序を問わない**。")
+    print("     実際、円弧の測定では『立ち下がり -> 立ち上がり』(= 暗い穴)を対にした。")
+    print("     『明るい構造の幅』を期待して呼ぶと、暗い構造の幅が返ることがある。")
+
+    m_sw = mt.create_metrology_model()
+    mt.add_metrology_object_rectangle2_measure(
+        m_sw, (SLOT_R0 + SLOT_R1) / 2, (SLOT_C0 + SLOT_C1) / 2,
+        0.0, SLOT_W / 2, (SLOT_R1 - SLOT_R0) / 2, n=60)     # l1 < l2 で与える
+    r_sw = mt.apply_metrology_model(m_sw, img, measure_length=8.0, sigma=1.0,
+                                    threshold=0.15)[0]
+    p_sw = r_sw["params"]
+    print(f"\n  ★ metrology の矩形は **l1 >= l2 に正規化して返す**。")
+    print(f"     入力 phi=0, l1={SLOT_W / 2:.2f}, l2={(SLOT_R1 - SLOT_R0) / 2:.2f}"
+          f"(l1 < l2)-> 出力 phi={math.degrees(p_sw['phi']):+.2f} deg, "
+          f"l1={p_sw['l1']:.3f}, l2={p_sw['l2']:.3f}")
+    print("     入れた軸と返る軸が入れ替わり、phi が 90 度回る。往復しないので、")
+    print("     `add` の l1 と `apply` の l1 を同じ意味だと思って引き算すると事故る。")
+
     # ---------- 公開経路からの到達性 ---------- #
     sub("公開経路から届くか(埋もれている度合いの実測)")
     names_m1 = ["gen_measure_rectangle2", "gen_measure_arc", "measure_pos",
