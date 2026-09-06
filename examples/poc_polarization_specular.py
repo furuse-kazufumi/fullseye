@@ -656,6 +656,9 @@ def main():
     assert rmse(null_no_separation(frames), d_true) > 1e-3
     assert rmse(null_frame_min(frames), d_true) > 1e-2
 
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
+
     print(f"\n総所要 {time.perf_counter() - t_all:.1f} 秒")
     print("PASS")
     return True
