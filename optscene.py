@@ -1493,6 +1493,21 @@ def optscene_mask(scene, camera, index: int) -> np.ndarray:
     """``index`` 番のプリミティブが見えている画素の**真値マスク** (H, W) の bool。
 
     画素完全(アンチエイリアスしない)。検出結果との IoU をそのまま測れる。
+
+    手順: ``camera_rays(camera)`` で全画素の光線を作り、``trace_rays`` で最初の
+    交点を取り、``hit["index"] == index`` の画素を True にする。手前の別部品に
+    隠れた部分は False(**見えている**画素だけ)。光線は画素中心 1 本なので、
+    境界の画素は「中心がその部品に落ちるか」で決まる。
+
+    - ``scene``: ``scene_*`` の dict、または list。``index`` は list 内の位置
+      (0 始まり)。範囲 ``[0, len(scene))`` の外は ``ValueError``。
+      ``scene_difference`` は 1 個として数える。
+    - ``camera``: ``optical_camera`` の結果(``K``, ``R``, ``eye``, ``width``, ``height``)。
+    - 返り値: ``(H, W)`` の bool。どの光線も当たらなければ全 False(例外にはしない)。
+
+    ``render_optscene`` の画像と同じカメラで作れば画素が一対一に対応する。
+    深度の真値は ``optscene_depth``、欠陥の真値は ``optscene_defect_mask``、
+    部品ごとのインスタンス列は ``optscene_instances``。
     """
     scene = _check_scene(scene)
     i = int(index)
