@@ -116,6 +116,10 @@ LEDGER_DIMS = {
     # 左右対称性 / 符号つき面距離)が空いていた。新語は shapeset と shapemodel。
     "shapestat": {"registry": "opsshapestat", "table": "OPSSHAPESTAT",
                   "module": "shapestats", "family": "shape_statistics"},
+    # 2026-09-06: 表面粗さ。PoC が「粗さパラメータの op が 1 つも無い」と実測つきで
+    # 報告して新設。新語は 1 つも作らない(高さ場は既存の depth)。
+    "roughness": {"registry": "opsroughness", "table": "OPSROUGHNESS",
+                  "module": "roughness", "family": "surface_roughness"},
     # 2026-09-06: 2-D の形を記述して写す(EFD + ランドマークワープ)。**実装も
     # テストも揃っていたのに公開経路のどこからも届いていなかった 2 モジュール**を
     # 台帳に載せた回。新語は efdmodel の 1 つだけ。

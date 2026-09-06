@@ -204,6 +204,20 @@ OP_PARAM_HINTS = {
     # fourier_smooth(points, keep) の keep は既定が無い必須引数。束縛できないと
     # 「引数が組めない」で永久にスキップされ、カバレッジ表には未到達として
     # しか出ない(2026-09-06 の初回計測で 13 op 中この 1 本だけ落ちた)。
+    # 表面粗さ。制約は 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8。
+    ("surface_synth_psd", "n"): lambda rng: 64,
+    ("surface_synth_psd", "dx"): lambda rng: 1.0,
+    ("surface_synth_psd", "hurst"): lambda rng: 0.8,
+    ("surface_synth_psd", "lambda_lo"): lambda rng: 4.0,
+    ("surface_synth_psd", "lambda_hi"): lambda rng: 32.0,
+    ("surface_synth_psd", "sq"): lambda rng: 1.0,
+    ("surface_form_remove", "dx"): lambda rng: 1.0,
+    ("surface_psd", "dx"): lambda rng: 1.0,
+    ("surface_filter", "dx"): lambda rng: 1.0,
+    ("surface_filter", "lambda_c"): lambda rng: 8.0,
+    # ★ここを入れないと surface_params は毎回 fail-closed で拒否され、
+    #   カバレッジ 1 数字では「呼べた」に見えて実体は未実行になる。
+    ("surface_params", "assume_filtered"): lambda rng: True,
     ("fourier_smooth", "keep"): lambda rng: int(rng.integers(3, 12)),
     ("observe_surface", "resolution"): lambda rng: (32, 32),
     ("observe_surface", "supersample"): lambda rng: 1,
@@ -496,7 +510,7 @@ def _registry_adapters():
     for _mod in ("opstomography", "opsvolcolor", "opsreprconv", "opsannotate",
                  "opsgfx2d", "opsimgmetrics", "opscolortransport",
                  "opsimgforensics", "opsastrostack", "opsdem", "opspiv",
-                 "opsprofile", "opsshapestat", "opsshape2d"):
+                 "opsprofile", "opsshapestat", "opsshape2d", "opsroughness"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
         except Exception as _e:                       # 台帳が無い環境でも動く
@@ -662,6 +676,11 @@ def catalog():
         # 新語 efdmodel の生産者は elliptic_fourier 1 本なので、これを外すと
         # 消費者 4 本のプールが空になり永久に未実行になる。
         ("opsshape2d", "OPSSHAPE2D", "shape2d"),
+        # 2026-09-06: 表面粗さ。生成 op surface_synth_psd は**入力を取らない**ので
+        # OP_PARAM_HINTS だけが頼り(6 引数すべてに既定が無い)。加えて
+        # surface_params は既定で「帯域未処理の配列」を fail-closed で拒否するため、
+        # ヒントに assume_filtered=True を入れないと「呼べたが毎回拒否」になる。
+        ("opsroughness", "OPSROUGHNESS", "roughness"),
         # 2026-09-06: PIV。**画像対から密な変位を出す op がこの repo に 1 つも
         # 無かった**(scene_flow_lk は 3-D 体積用、estimate_flow は点群用)。
         # 新語 `flow2d` を 1 つだけ足す —— flow_dense の述語は
