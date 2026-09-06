@@ -545,7 +545,6 @@ def main():
     sat_tab = {}
     for ratio in (0.5, 1.2, 2.0, 4.0, 8.0, 16.0):
         flux = ratio * FULL_WELL / peak_frac
-        line = "     " + pad(f"{ratio:.1f}x", 9) + f"{flux:10.3e} "
         nsat = 0
         sat_tab[ratio] = {}
         for lab, fn in METHODS:
@@ -559,7 +558,6 @@ def main():
                 e.append(got[0, 0] - r0)
             e = np.array(e)
             sat_tab[ratio][lab] = (float(np.ptp(e)), float(np.abs(e).mean()))
-            line += f"{np.ptp(e):9.4f}{np.abs(e).mean():11.4f}"
         print("     " + pad(f"{ratio:.1f}x", 9) + f"{flux:10.3e}" + f"{nsat:7d}   "
               + "".join(f"{sat_tab[ratio][lab][0]:9.4f}{sat_tab[ratio][lab][1]:11.4f}"
                         for lab, _ in METHODS))
@@ -576,30 +574,46 @@ def main():
           f"{g[16.0]['ガウシアン当てはめ'][0]:.4f} px、平均 |e| "
           f"{g[16.0]['ガウシアン当てはめ'][1]:.4f} px。"
           f"潰れた頂上はガウシアンではないのに、モデルは頂上を一番強く重視する")
-    # 対策: 潰れた画素を捨てる。捨てられるかどうかは「翼が残っているか」で決まる
-    fixed = {}
+    # 対策を 2 つ測る。「潰れた画素を捨てる」だけでは**悪化する**。
+    mask_cen, mask_fit = {}, {}
     for ratio in (2.0, 8.0, 16.0):
         flux = ratio * FULL_WELL / peak_frac
-        e = []
+        ec, ef = [], []
         for ph in phases:
             r0 = 32.0 + ph
             img = render((64, 64), [r0], [32.0], [flux], 3.2, seed=None,
                          full_well=FULL_WELL)
-            m = img.copy()
-            m[m >= FULL_WELL - 1e-6] = np.nan          # 潰れた画素を捨てる
-            st, r_off, _ = _stamp(m, round(r0), 32, 11)
-            w = np.where(np.isfinite(st), st - SKY, 0.0)
-            w = np.maximum(w, 0.0)
+            msk = img.copy()
+            msk[msk >= FULL_WELL - 1e-6] = np.nan      # 潰れた画素を捨てる
+            st, r_off, _ = _stamp(msk, round(r0), 32, 15)
+            w = np.maximum(np.where(np.isfinite(st), st - SKY, 0.0), 0.0)
             rr = np.arange(st.shape[0])[:, None]
-            e.append((w * rr).sum() / w.sum() + r_off - r0)
-        fixed[ratio] = float(np.ptp(np.array(e)))
-    print(f"   対策 —— 潰れた画素を**捨てて**翼だけで重心を取る: 山谷差 "
-          + " / ".join(f"{r:.0f}x で {g[r]['背景引き重心'][0]:.4f} → {fixed[r]:.4f}"
-                       for r in (2.0, 8.0, 16.0))
-          + f" px。★ fullseye には**飽和画素マスクを受け取る測位 op が無い**"
-          f"(``psf_fit`` にも ``star_detect`` にも ``mask`` 引数が無い)")
+            ec.append((w * rr).sum() / w.sum() + r_off - r0)
+            ef.append(m_gaussfit_masked(msk, [(round(r0), 32)], box=15)[0, 0] - r0)
+        mask_cen[ratio] = float(np.ptp(np.array(ec)))
+        mask_fit[ratio] = float(np.ptp(np.array(ef)))
+    print("     " + pad("対策(山谷差 px)", 26) + "".join(
+        f"{r:.0f}x 飽和".rjust(12) for r in (2.0, 8.0, 16.0)))
+    for name, tab in (("何もしない(背景引き重心)",
+                       {r: g[r]["背景引き重心"][0] for r in (2.0, 8.0, 16.0)}),
+                      ("潰れた画素を捨てて重心", mask_cen),
+                      ("潰れた画素を捨てて当てはめ", mask_fit)):
+        print("     " + pad(name, 26) + "".join(
+            f"{tab[r]:12.5f}" for r in (2.0, 8.0, 16.0)))
+    print(f"   ☆ ここも予想が外れた。**「潰れた画素を捨てる」だけでは "
+          f"{mask_cen[16.0] / g[16.0]['背景引き重心'][0]:.0f} 倍悪化する** —— "
+          f"捨てた穴の形が画素の格子に量子化され、位相が 0.5 を跨ぐたびに"
+          f"穴が 1 画素ぶん非対称になる。残った翼の重心はその非対称を"
+          f"そのまま拾う({mask_cen[16.0]:.3f} px = 半画素の桁)。"
+          f"対して**同じマスクで当てはめる**と {mask_fit[16.0]:.5f} px —— "
+          f"モデルが対称だから、欠けた画素があっても残りから中心が決まる。"
+          f"{g[16.0]['背景引き重心'][0] / mask_fit[16.0]:.0f} 倍改善")
+    print(f"   ★ fullseye には**画素マスクを受け取る測位 op が無い** —— "
+          f"``psf_fit`` にも ``star_detect`` にも ``mask`` / ``saturation`` 引数が"
+          f"無く、飽和した星は黙って偏った値を返す(この PoC は自前で書いた)")
     assert g[16.0]["背景引き重心"][0] > 5.0 * g[0.5]["背景引き重心"][0]
-    assert fixed[8.0] < g[8.0]["背景引き重心"][0]
+    assert mask_cen[16.0] > 5.0 * g[16.0]["背景引き重心"][0]      # 悪化する
+    assert mask_fit[16.0] < 0.1 * g[16.0]["背景引き重心"][0]      # 当てはめは効く
     timing["3 飽和"] = time.perf_counter() - t0
 
     print("\nPASS(執筆中)")
