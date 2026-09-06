@@ -367,8 +367,8 @@ def section5_window():
         print("  %6d %12.5f %12.5f %12.2f" % (D, bl, black_level_logform(g, D),
                                               bl / meas[0]))
     print()
-    print("  → 同じレンズが 19.6 % とも 4.5 % とも読める(%.1f 倍の開き)。"
-          % (meas[0] / meas[-1]))
+    print("  → 同じレンズが %.1f %% とも %.1f %% とも読める(%.1f 倍の開き)。"
+          % (100 * meas[0], 100 * meas[-1], meas[0] / meas[-1]))
     print("     裾が 1/(1+(r/r0)²) だと、半径 a から R までの集光量は")
     print("     ln(R/a) —— **a を半分にするたびに一定量ずつ増える**。収束しない。")
     print()
