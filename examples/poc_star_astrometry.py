@@ -269,17 +269,16 @@ def main():
     n_grid, n_rep = base_r.size, 6
     fluxes = (300.0, 1000.0, 3000.0, 10000.0, 30000.0, 100000.0)
     print(f"\n【1】S/N を振る —— 孤立星 {n_grid} 個 x {n_rep} 実現 = "
-          f"{n_grid * n_rep} 標本 / 明るさ。FWHM {3.2} px、"
+          f"{n_grid * n_rep} 標本 x 2 軸 / 明るさ。FWHM 3.2 px、"
           f"位相は毎回一様乱数(画素位相を平均化する)。初期値は全手法で同じ"
           f"(真値の四捨五入)なので、検出のずれは混ざらない")
-    print("     flux[e-]  S/N   理論下限     " + "".join(
-        f"{lab:>21s}" for lab, _ in METHODS))
-    print(" " * 25 + "sigma[px]  " + "".join(
-        f"{'偏り':>9s}{'散らばり':>12s}" for _ in METHODS))
-    sn_tab = {}
+    print(f"   理論下限は Fisher 情報から: I = Σ(∂μ/∂x)^2 / (μ + read^2)、"
+          f"μ は描くのと同じ画素積分。**この雑音モデルそのものの下限**であって"
+          f"経験式ではない")
+    sn_tab, raw = {}, {}
     for flux in fluxes:
-        crlb = crlb_px(flux, 3.2)
         errs = {lab: [] for lab, _ in METHODS}
+        frac = []
         for rep in range(n_rep):
             rg = np.random.default_rng(1000 + rep)
             dr = rg.uniform(-0.5, 0.5, n_grid)
@@ -287,33 +286,50 @@ def main():
             tr, tc = base_r + dr, base_c + dc
             img = render(SHAPE, tr, tc, np.full(n_grid, flux), 3.2, seed=500 + rep)
             guess = np.stack([np.round(tr), np.round(tc)], axis=1)
+            frac.append(np.concatenate([tr - guess[:, 0], tc - guess[:, 1]]))
             for lab, fn in METHODS:
                 got = fn(img, guess, box=11, fwhm_px=3.2)
-                errs[lab].append(np.stack([got[:, 0] - tr, got[:, 1] - tc], axis=1))
-        row = f"    {flux:9.0f}"
-        snr = flux / np.sqrt(flux + 121.0 * (SKY + READ ** 2))
-        row += f" {snr:6.1f} {crlb:9.4f}   "
-        cells = {}
+                errs[lab].append(np.concatenate([got[:, 0] - tr, got[:, 1] - tc]))
+        frac = np.concatenate(frac)
+        raw[flux] = (frac, {lab: np.concatenate(v) for lab, v in errs.items()})
+        sn_tab[flux] = {}
         for lab, _ in METHODS:
-            e = np.concatenate(errs[lab]).ravel()
+            e = np.concatenate(errs[lab])
             b, s = bias_scatter(e)
-            cells[lab] = (b, s, crlb)
-            row += f"{b:+9.4f}{s:12.4f}"
-        sn_tab[flux] = cells
-        print(row)
-    best = min(METHODS, key=lambda m: sn_tab[10000.0][m[0]][1])[0]
-    ratios = {lab: sn_tab[100000.0][lab][1] / sn_tab[100000.0][lab][2]
+            # 感度 = (返り値 - 初期値) を (真値 - 初期値) に回帰した傾き。
+            # 1 なら星を追えている、0 なら**初期値をそのまま返している**。
+            slope = float(np.polyfit(frac, frac + e, 1)[0])
+            sn_tab[flux][lab] = (b, s, float(np.sqrt(np.nanmean(e ** 2))),
+                                 crlb_px(flux, 3.2), slope)
+    print("     手法                flux[e-]   S/N     偏り     散らばり     RMS   "
+          "  理論下限   RMS/下限   感度")
+    for lab, _ in METHODS:
+        for flux in fluxes:
+            b, s, r, c, sl = sn_tab[flux][lab]
+            snr = flux / np.sqrt(flux + 121.0 * (SKY + READ ** 2))
+            print(f"     {lab:<18s}{flux:9.0f}{snr:7.1f} {b:+9.4f}{s:10.4f}"
+                  f"{r:9.4f}{c:10.4f}{r / c:10.2f}{sl:8.3f}")
+        print()
+    zero = sn_tab[300.0]["重心(ゼロ点)"]
+    print(f"   ★ 素の重心は暗い端で **散らばり {zero[1]:.4f} px が理論下限 "
+          f"{zero[3]:.4f} px を下回る** —— 一見「限界を破った」ように見えるが、"
+          f"感度 {zero[4]:.3f} が正体を明かす: 11x11 の箱に入る空 "
+          f"{121 * SKY:.0f} e- が星 300 e- を圧倒し、返っているのは"
+          f"**初期値(真値の四捨五入)そのもの**。誤差は端数の一様分布で、"
+          f"その標準偏差 1/√12 = {1 / np.sqrt(12):.4f} px と一致する"
+          f"(実測 {zero[1]:.4f})。**散らばりだけを見ると不動の推定器が勝つ**")
+    assert zero[4] < 0.2 and abs(zero[1] - 1 / np.sqrt(12)) < 0.02
+    assert all(sn_tab[300.0][lab][4] > 0.7 for lab in
+               ("背景引き重心", "ガウシアン当てはめ", "PSF 相関"))
+    bright = {lab: sn_tab[100000.0][lab][2] / sn_tab[100000.0][lab][3]
               for lab, _ in METHODS}
-    print(f"   → 明るい端(flux 1e5)で理論下限に対する比: " + "  ".join(
-        f"{lab} {ratios[lab]:.2f}x" for lab, _ in METHODS))
-    print(f"   暗い端(flux 300)では **素の重心が使い物にならない** —— "
-          f"散らばり {sn_tab[300.0]['重心(ゼロ点)'][1]:.3f} px は "
-          f"理論下限 {sn_tab[300.0]['重心(ゼロ点)'][2]:.3f} px の "
-          f"{sn_tab[300.0]['重心(ゼロ点)'][1] / sn_tab[300.0]['重心(ゼロ点)'][2]:.0f} 倍。"
-          f"11x11 の箱に入る空 {121 * SKY:.0f} e- が星 300 e- を圧倒し、"
-          f"**測っているのは箱の中心**であって星ではない")
-    assert ratios["ガウシアン当てはめ"] < 2.0
-    assert sn_tab[300.0]["重心(ゼロ点)"][1] > 3.0 * sn_tab[300.0]["背景引き重心"][1]
+    print(f"   明るい端(flux 1e5、S/N 298)で理論下限に対する RMS 比: " + " / ".join(
+        f"{lab} {bright[lab]:.2f}x" for lab, _ in METHODS))
+    print(f"   → **理論限界は上回れない**。最良でも背景引き重心の "
+          f"{min(bright.values()):.2f}x で、下回った例は 1 つも無い"
+          f"(下回って見えるのは上の「動かない推定器」だけ)")
+    assert min(bright.values()) > 0.95
+    assert bright["ガウシアン当てはめ"] < 2.0 and bright["PSF 相関"] < 2.0
     timing["1 S/N"] = time.perf_counter() - t0
 
     print("\nPASS(執筆中)")
