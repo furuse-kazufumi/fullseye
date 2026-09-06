@@ -119,6 +119,25 @@ def vol_rle_encode(vol_binary) -> VolRLE:
     Memory: proportional to the number of runs (~surface complexity per plane
     row), not to the voxel count — measured 1/145 of the dense bool mask on a
     realistic 384**3 part.
+
+    何を作るか: ``(D, H, W)`` のバイナリ volume を、x 軸(最終軸)方向の連続前景区間
+    (run)の列に変換する。``VolRLE`` は ``rows``(平面行 id ``z*H + y``、int32、昇順)、
+    ``starts`` / ``ends``(run の x 範囲 ``[start, end)``、end は排他的)、``shape``
+    (元の ``(D, H, W)``)を持つ frozen dataclass。run ``i`` は
+    ``vol[z, y, starts[i]:ends[i]]`` を表す。
+
+    引数と検証(fail-closed):
+    - ``vol_binary``: 3-D 配列。bool ならそのまま、それ以外は float64 に変換して
+      NaN/Inf があれば ``ValueError``、``> 0.5`` で二値化する。
+    - 3-D でない、または voxel 数が ``MAX_VOXELS``(``1 << 27`` ≈ 1.34 億)を超えると
+      ``ValueError``。
+    - 空マスクは run 数 0 の ``VolRLE`` になる(エラーではない)。
+
+    注意: 軸順は ``[z, y, x]``(depth, row, col)。run は x 方向にしか走らないので、
+    x 方向に細かく途切れる形状(縞・ノイズ)ほど run 数が増え、圧縮の利点は減る。
+    ``vol_rle_volume`` / ``vol_rle_bbox`` / ``vol_rle_centroid`` は decode せずに
+    run 上で答える。集合演算は ``vol_rle_union`` / ``vol_rle_intersect`` /
+    ``vol_rle_difference``、密配列へ戻すのは ``vol_rle_decode``。
     """
     v = np.ascontiguousarray(vol_binary)
     if v.ndim != 3:
