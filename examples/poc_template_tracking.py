@@ -212,10 +212,21 @@ def make_sequence(world, target, n=40, step=2.0, rot_deg=0.0, zoom=1.0, amp=20.0
 
     ``rot_deg`` / ``zoom`` は最終フレームまでの総量。``occl`` は
     **テンプレート面積に対する遮蔽率**(左から帯が入る)。``gain``/``offset`` は
-    照明変化、``blur_px`` は 1 フレームぶんの動きぼけの長さ。
+    照明変化、``blur_px`` は 1 フレームぶんの動きぼけの長さ。``twin`` は
+    **そっくりな別物体**(1 枚目のテンプレートを少しぼかした複製)を
+    一定のずれた位置に一緒に動かす —— 同じ部品が 2 つ流れてくる状況。
+
+    最後に **[0, 1] で切って 8 bit に量子化する**。カメラは 1 を超える値を
+    出せないので、飽和は「明るさが上がった」ではなく **情報が消えた** 状態に
+    なる。第 7 章の結論はこの切り捨てがあって初めて意味を持つ。
     """
     omega = 2.0 * np.arcsin(min(1.0, step / (2.0 * amp)))
     rng = np.random.default_rng(1000 + seed)
+    twin_patch = None
+    if twin:
+        xy0 = O_XY.copy()
+        twin_patch = gaussian_filter(
+            crop_template(render(world, target, 0.0, 1.0), xy0), twin_blur)
     frames, truth, angles, scales = [], [], [], []
     for t in range(n):
         u = t / max(1, n - 1)
