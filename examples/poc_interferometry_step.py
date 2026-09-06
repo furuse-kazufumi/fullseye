@@ -149,7 +149,7 @@ def main():
         got, _ = measure_step(step, 0.0, 0)
         err_nm = (got - step) * 1000.0
         floor_nm = max(floor_nm, abs(err_nm))
-        print("   %8.1f nm | %12.6f µm | %+12.6f nm" % (step * 1000, got, err_nm))
+        print("   %8.1f nm | %12.6f µm | %+12.3e nm" % (step * 1000, got, err_nm))
     print("   床 = %.6f nm。段差 500 nm でも桁が変わらない = 誤差は段差に比例しない"
           % floor_nm)
     assert floor_nm < 0.05          # 雑音が無ければ 0.05 nm 以内
