@@ -240,7 +240,7 @@ def main():
     spacing = spacing_of(dst_base)
 
     print("=== 0. 舞台 ===")
-    print(f"  形状 = 非対称な当て金(直方体 {MAIN_DIMS} + 隅の出っ張り {BUMP_DIMS})")
+    print(f"  形状 = 非対称な当て金(直方体 {MAIN_DIMS} + +x 面から突き出す角柱 {PEG_DIMS})")
     print(f"  点数 src {src.shape[0]} / dst {dst_base.shape[0]}"
           "(同じ面からの**独立な**標本。対応点は存在しない)")
     print(f"  直径 {diam:.4f} 単位 / dst の点間隔 中央値 {spacing:.4f} 単位"
