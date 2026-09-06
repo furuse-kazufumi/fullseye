@@ -1069,6 +1069,9 @@ def section_cliff_chamfer():
     wm8, wf8, wt8, wb8, pr8 = spread[("fillet", 8.0)]
     print(f"  * 丸み rf=8 px の実例: 上面幅 {wt8:.2f} / 底面幅 {wb8:.2f} / "
           f"50% 交差 {wf8:.2f}(予測 {pr8:.2f})。")
+    print(f"    予測と {wf8 - pr8:+.2f} px ずれるのは、丸みの遷移が非対称で PSF が")
+    print("    平坦部の推定を引き寄せるから —— 『0.87 x 半径』という覚え方も")
+    print("    精密には正しくない。定義を式で書いても、測ると少しずれる。")
     print(f"    **定義を宣言しないと {wb8 - wt8:.1f} px = {um(wb8 - wt8):.0f} um 動く。**")
     print("    サブピクセルで 0.01 px を争う前に、ここで 3 桁大きい量が動いている。")
     return spread
