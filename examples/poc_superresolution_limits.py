@@ -649,6 +649,8 @@ def main():
     assert fid(blt, good)[0] - fid(blt, bad)[0] > 5.0, \
         "ずれの符号を反転しても結果が変わらない —— 合成が効いていない疑い"
 
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print(f"\n所要 {time.perf_counter() - t_start:.1f} 秒")
     print("PASS")
 
