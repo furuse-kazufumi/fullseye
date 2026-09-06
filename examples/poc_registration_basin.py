@@ -591,7 +591,7 @@ def main():
                 if rmse < 2.0 * spacing_of(dstc):
                     conv += 1
                     bad += int(rd > LIE_DEG)
-            sym[(mode, label)] = (conv, bad)
+            sym[(mode, label)] = (conv, bad, med(res), med(rr))
             print(f"  {label:<12}{med(res):>16.5f}{med(rr):>22.2f}"
                   f"{conv:>13}/{N_S}{bad:>17}")
     print("\n  → 局所 ICP は初期ずれが小さければ対称形状でも**近い**解に落ちるので嘘が")
