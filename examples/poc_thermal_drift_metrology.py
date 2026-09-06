@@ -91,6 +91,7 @@ GAMMA_Y = 0.15                   # 主点の縦ずれ [px/K]
 SIDE_MM = 40.000                 # ワークの一辺(真値)
 GAUGE_MM = 30.000                # 画面内基準物の長さ(真値)
 SIGMA_PX = 0.05                  # 角点検出の雑音 [px]
+N_AVG = 25                       # 判定に使うフレーム数(床は 1σ/sqrt(N))
 MM_PER_PX = Z0 / F0              # 0.1333 mm/px
 
 K_CAL = fs.intrinsic_matrix(F0, F0, CX0, CY0)     # 立ち上げ時の校正値
