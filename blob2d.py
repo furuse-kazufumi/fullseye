@@ -545,9 +545,14 @@ def blob_boundaries(labels: Any) -> np.ndarray:
     物体の内部にある —— 外側を取ると隣の物体の画素を輪郭だと言うことになる。
     """
     lab = _as_labels(labels, "blob_boundaries")
-    fg = lab > 0
-    same = ndimage.grey_erosion(lab, footprint=np.ones((3, 3), bool)) == lab
-    return fg & ~same
+    fp = np.ones((3, 3), bool)
+    # ★収縮だけでは**片側しか出ない**。番号の小さい物体は、隣に番号の大きい
+    #   物体が来ても近傍の最小値が自分のままなので「内部」と判定される
+    #   (2026-09-06 実測: 1 と 2 が接する列で 1 の側の輪郭が消えた)。
+    #   膨張と両方見れば「近傍に自分と違う番号がある」の対称な判定になる。
+    lo = ndimage.grey_erosion(lab, footprint=fp)
+    hi = ndimage.grey_dilation(lab, footprint=fp)
+    return (lab > 0) & ((lo != lab) | (hi != lab))
 
 
 # --------------------------------------------------------------------------- #
