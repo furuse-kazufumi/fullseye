@@ -469,16 +469,9 @@ def section6_chart():
                        / (ratio[0.0][0] / ratio[0.0][periods.index(128)]) - 1)))
     print("     ★盲点を作るのは周波数ではなく**基準レベルの取り方**。SFR が窓の両端を")
     print("     黒/白の基準にする(ISO 12233 の実務)瞬間に、これが起きている。")
-    if figs.enabled():
-        f_ax = 1.0 / np.array(periods, float)
-        series = [("g=%.2f 絶対" % g, f_ax, np.array(ratio[g])) for g in (0.0, 0.10, 0.20)]
-        series.append(("g=0.20 CTF(周期 64 基準)", f_ax,
-                       np.array(ratio[0.20]) / ratio[0.20][periods.index(64)]))
-        figs.save_plot("chart_contrast", series, xlabel="空間周波数 [cyc/px]",
-                       ylabel="Michelson コントラスト",
-                       title="裾を見るかどうかは基準の取り方で決まる",
-                       caption="絶対コントラストは (1-g) だけ下がる。粗いチャートで"
-                               "正規化した CTF は g=0 の曲線へ戻ってしまう。")
+    # 7 節の図に載せるため、周波数軸と絶対コントラストを渡す
+    CHART["f"] = 1.0 / np.array(periods, float)
+    CHART["abs20"] = np.array(ratio[0.20])
 
 
 def section7_where_is_the_tail():
