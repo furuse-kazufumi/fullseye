@@ -618,40 +618,43 @@ def main():
         hi[sl] = body[i] + lobe[..., None] * e_d
         labels[sl] = i
     est_d = fs.ledger.illuminant_from_dichromatic_planes(hi, labels)
-    print(f"  {'条件':<34}{'角度誤差 [度]':>16}{'備考':<40}")
-    print(f"  {'ハイライトあり・4 材質':<34}{angular_error(est_d, e_d):>16.2e}"
-          f"  {'幾何が厳密に解ける'}")
-    try:
-        fs.ledger.illuminant_from_dichromatic_planes(matte, labels)
-        matte_refused = ""
-    except ValueError as exc:
-        matte_refused = str(exc).split(";")[0]
-    print(f"  {'ハイライト無し(マット面)':<34}{'—':>16}  拒否: "
-          f"{matte_refused.split(': ', 1)[-1][:44]}")
+    print(f"  {'条件':<26}{'二色性 op':>12}{'白パッチ法':>12}   備考")
+    print(f"  {'ハイライトあり・4 材質':<26}{angular_error(est_d, e_d):>12.1e}"
+          f"{angular_error(max_rgb(hi), e_d):>12.2f}   幾何が厳密に解ける")
+
+    def _refuse(image, lab):
+        try:
+            fs.ledger.illuminant_from_dichromatic_planes(image, lab)
+            return ""
+        except ValueError as exc:
+            return str(exc).split(": ", 1)[-1]
+
+    matte_refused = _refuse(matte, labels)
+    print(f"  {'ハイライト無し(マット面)':<26}{'拒否':>12}"
+          f"{angular_error(max_rgb(matte), e_d):>12.2f}   {matte_refused[:52]}")
     lab1 = labels.copy()
     lab1[labels >= 1] = 0                       # 1 材質だけにする
-    try:
-        fs.ledger.illuminant_from_dichromatic_planes(hi, lab1)
-        one_refused = ""
-    except ValueError as exc:
-        one_refused = str(exc).split(";")[0]
-    print(f"  {'ハイライトあり・1 材質':<34}{'—':>16}  拒否: "
-          f"{one_refused.split(': ', 1)[-1][:44]}")
+    one_refused = _refuse(hi, lab1)
+    print(f"  {'ハイライトあり・1 材質':<26}{'拒否':>12}"
+          f"{angular_error(max_rgb(hi), e_d):>12.2f}   {one_refused[:52]}")
     rng = np.random.default_rng(5)
     noisy_rows = {}
-    for s in (0.0, 0.002, 0.01, 0.05):
+    for s in (0.002, 0.01, 0.05):
         hn = np.clip(hi + rng.normal(0.0, s, hi.shape), 0.0, None)
         try:
             en = fs.ledger.illuminant_from_dichromatic_planes(hn, labels)
             noisy_rows[s] = angular_error(en, e_d)
         except ValueError:
             noisy_rows[s] = float("nan")
-        print(f"  {'ハイライトあり + 雑音 σ=' + f'{s:.3f}':<34}"
-              f"{noisy_rows[s]:>16.2f}  "
-              f"{'統計手法(白パッチ法)は同じ場面で ' + f'{angular_error(max_rgb(hn), e_d):.2f}':<40}")
-    print("  → 雑音が無ければ厳密(1e-14 台)。**統計手法とは桁が違う。** ただし")
+        print(f"  {'ハイライトあり + 雑音 σ=' + f'{s:.3f}':<26}{noisy_rows[s]:>12.2f}"
+              f"{angular_error(max_rgb(hn), e_d):>12.2f}   同じ画像を統計手法で解いた比較")
+    print(f"  拒否の全文(マット面): {matte_refused[:110]}")
+    print("  → 雑音が無ければ厳密(0.0e+00 度)。**統計手法とは桁が違う。** ただし")
     print("     ラベルもハイライトも無いマット面では、もっともらしい答えを返さず")
-    print("     名指しで拒否する(fail-closed)。使える場面が狭いのは正しい。")
+    print("     何材質が何の理由で落ちたかを名指しして拒否する(fail-closed)。")
+    print("     ★雑音 σ=0.05 では二色性 op のほうが白パッチ法より悪くなる。")
+    print("     平面の当てはめは特異値の第 2 位に依存するので、雑音がその水準に")
+    print("     届いた瞬間に「平面」が決まらなくなる。**厳密さと頑健さは別。**")
 
     # ------------------------------------------------------------------ #
     print("\n=== 11. 対角(von Kries)補正の床 —— 真の光源を知っていても残る誤差 ===")
