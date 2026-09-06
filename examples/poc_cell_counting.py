@@ -66,6 +66,8 @@ import fullseye as fs          # ★先に fullseye を import すること(パ�
 import volops                  #   リポジトリ直下を sys.path に足すので順序が要る)
 import segmentation as fsseg   # noqa: F401  (2D watershed の所在を示すために保持)
 
+import examplefig as figs      # ★fullseye の後(上のパスフックに乗る)
+
 
 # --------------------------------------------------------------------------- #
 # 表示                                                                          #
