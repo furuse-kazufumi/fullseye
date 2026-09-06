@@ -487,10 +487,14 @@ def section_weights() -> dict:
           "\n     どちらか片方だけを見て「よく合っている」と言えない。")
 
     m = measure(sc)
-    th = np.degrees(m["theta"])
+    # ★角度は周期量なので colorize_depth で塗ると 0 度と 179 度が正反対の色に
+    #   なる。fullseye には循環 LUT の名前は無いが、colorize_flow に
+    #   (cos2θ, sin2θ) を渡すと 2 倍角の循環 LUT になる(末尾「道具の穴」(f))。
+    hue = np.asarray(fs.colorize_flow(np.cos(2 * m["theta"]) * m["st"]["coh"],
+                                      np.sin(2 * m["theta"]) * m["st"]["coh"]))
     figs.save_grid("field",
-                   [sc["img"], th, m["st"]["coh"]],
-                   ["観測画像", "配向角 [deg]", "コヒーレンス"],
+                   [sc["img"], hue, m["st"]["coh"]],
+                   ["観測画像", "配向角(循環 LUT)", "コヒーレンス"],
                    title="局所構造テンソルの出力(σ_d=%.0f, σ_i=%.0f px)"
                          % (SIG_D, SIG_I), ncols=3)
 
