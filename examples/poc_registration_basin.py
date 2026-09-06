@@ -326,22 +326,27 @@ def main():
     # ---- 3-b. PCA の象限 ---------------------------------------------------
     print("\n=== 3-b. PCA の象限 —— 主軸の符号で 4 通り。どれに落ちるか ===")
     print("  主軸は符号まで決まらないので候補は 8 通り、うち行列式 +1 の 4 通りが姿勢候補。")
-    print("  道具は最小 RMSE で 1 つ選ぶ。ここでは 4 候補すべての誤差と、選ばれた順位を数える。")
-    print(f"  {'形状':<26}{'第1':>7}{'第2':>7}{'第3':>7}{'第4':>7}"
-          f"{'選択の内訳(1/2/3/4)':>22}{'象限誤り':>10}")
-    N_Q = 40
+    print("  道具は最小 RMSE で 1 つ選ぶ。ここでは 4 候補すべての誤差と選択結果を数える。")
+    print("  **試行ごとに点群を取り直す**(取り直さないと剛体回転しても候補の順位が変わらず、")
+    print("  何回まわしても実質 1 標本にしかならない)。")
+    print(f"  {'形状':<24}{'第1候補[度]':>13}{'第2〜4候補[度]':>16}"
+          f"{'象限誤り':>10}{'選ばれた解[度]':>16}")
+    N_Q = 60
     quad_wrong = {}
-    for label, bump in (("非対称 強(出っ張り 1.0)", 1.0),
-                        ("非対称 弱(出っ張り 0.35)", 0.35),
+    quad_best = {}
+    for label, bump in (("非対称 強(角柱 1.0)", 1.0),
+                        ("非対称 弱(角柱 0.25)", 0.25),
                         ("対称(素の直方体)", 0.0)):
         rq = np.random.default_rng(777)
-        a = bracket(800, rq, bump=bump)
-        b = bracket(1100, rq, bump=bump)
-        dq = diameter(b)
-        bn = fs.estimate_normals(b, k=16)
-        cands_all, hist, wrong = [], np.zeros(4, int), 0
+        best, rest, chosen_all, wrong = [], [], [], 0
         for _ in range(N_Q):
-            dstq, _dnq, Rt, tt = make_pair(b, bn, 60.0, 0.15, dq, rq)
+            a = bracket(800, rq, bump=bump)
+            b = bracket(1100, rq, bump=bump)
+            dq = diameter(b)
+            Rt = random_rot(60.0, rq)
+            u = rq.normal(size=3)
+            tt = (u / np.linalg.norm(u)) * (0.15 * dq)
+            dstq = fs.apply_transform(b, Rt, tt)
             cp, cq = a.mean(0), dstq.mean(0)
             _, _, VtP = np.linalg.svd(a - cp, full_matrices=False)
             _, _, VtQ = np.linalg.svd(dstq - cq, full_matrices=False)
@@ -353,19 +358,44 @@ def main():
                         if np.linalg.det(Rc) > 0:
                             cands.append(rot_error_deg(Rc, Rt))
             cands = np.sort(np.array(cands))
-            cands_all.append(cands)
             chosen = rot_error_deg(fs.pca_align(a, dstq)[0], Rt)
-            hist[int(np.argmin(np.abs(cands - chosen)))] += 1
-            wrong += int(chosen > 5.0)
-        cands_all = np.array(cands_all)
+            best.append(cands[0])
+            rest.append(cands[1])
+            chosen_all.append(chosen)
+            # 象限誤り = 最良候補ではなく反転した候補を選んだ(軸推定のぶれとは別の失敗)
+            wrong += int(chosen > cands[0] + 30.0)
         quad_wrong[label] = wrong / N_Q
-        m4 = np.median(cands_all, axis=0)
-        print(f"  {label:<24}" + "".join(f"{v:>7.0f}" for v in m4)
-              + f"{'/'.join(str(h) for h in hist):>22}{100 * wrong / N_Q:>9.0f}%")
-    print("  (第 1〜4 = 4 候補の回転誤差の中央値[度]、小さい順。象限誤り = 選ばれた解が 5 度超)")
-    print("  → 非対称が強ければ最小 RMSE でほぼ当たる。弱めると外れ始め、素の直方体では")
-    print("     4 候補が形として区別できないので選択は実質くじ引きになる。**PCA の正しさは")
-    print("     形状の非対称性に賭けている** —— 対象を変えたら測り直すしかない。")
+        quad_best[label] = med(best)
+        print(f"  {label:<22}{med(best):>13.2f}{med(rest):>16.1f}"
+              f"{100 * wrong / N_Q:>9.0f}%{med(chosen_all):>16.2f}")
+    print("  (象限誤り = 選ばれた解が最良候補より 30 度以上悪い = 反転した象限を掴んだ)")
+    print("  → 角柱があるうちは最小 RMSE がほぼ確実に正しい象限を選ぶ。素の直方体では")
+    print("     4 候補が形として区別できず、選択が崩れる。**PCA の正しさは形状の")
+    print("     非対称性に賭けている** —— 対象を変えたら測り直すしかない。")
+    print("  → もう 1 つ別の話: **正しい象限を選んでも第 1 候補自体が数度ずれている**。")
+    print("     主軸は有限標本から推定するので、固有値が近い軸ほどぶれる。点数を変えて測る:")
+    print(f"  {'点数':>8}{'第1候補の回転誤差 中央値[度]':>30}{'1/sqrt(N) 予測':>18}")
+    ref = None
+    for npts in (200, 800, 3200):
+        rq = np.random.default_rng(555)
+        errs = []
+        for _ in range(20):
+            a = bracket(npts, rq)
+            b = bracket(int(npts * 1.4), rq)
+            Rt = random_rot(60.0, rq)
+            dstq = fs.apply_transform(b, Rt, np.zeros(3))
+            _, _, VtP = np.linalg.svd(a - a.mean(0), full_matrices=False)
+            _, _, VtQ = np.linalg.svd(dstq - dstq.mean(0), full_matrices=False)
+            cands = [rot_error_deg(VtQ.T @ np.diag([sx, sy, sz]) @ VtP, Rt)
+                     for sx in (1.0, -1.0) for sy in (1.0, -1.0) for sz in (1.0, -1.0)
+                     if np.linalg.det(VtQ.T @ np.diag([sx, sy, sz]) @ VtP) > 0]
+            errs.append(min(cands))
+        m = med(errs)
+        ref = ref if ref is not None else (m, npts)
+        pred = ref[0] * np.sqrt(ref[1] / npts)
+        print(f"  {npts:>8}{m:>30.2f}{pred:>18.2f}")
+    print("     → 点数を 4 倍にすると誤差はおよそ半分。主軸推定の統計的ゆらぎであって")
+    print("        実装の誤りではない。**PCA は初期値専用で、単体では姿勢推定器にならない**。")
 
     # ---- 4. 収束域の広さ と 最終精度 --------------------------------------
     print("\n=== 4. 収束域の広さ と 最終精度 は別の軸(同じ点群・同じしきい値で 5 手法)===")
