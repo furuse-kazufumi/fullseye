@@ -501,12 +501,14 @@ def main():
     print("\n=== 4-b. 効かなくなる境界:あとから全体にかけた後処理 ===")
     header()
     post_rows = {}
+    post_cases = {}                 # 図で ROC 曲線を引くために取っておく
     for label, post in (("後処理なし", None),
                         ("全体を q75 で再圧縮", ("recompress", 75)),
                         ("全体を q60 で再圧縮", ("recompress", 60)),
                         ("0.75 倍に縮小して戻す", ("resize", 0.75)),
                         ("ぼかし sigma=1.0", ("blur", 1.0))):
-        post_rows[label] = row(label, make_cases(n_img, post=post))
+        post_cases[label] = make_cases(n_img, post=post)
+        post_rows[label] = row(label, post_cases[label])
     print("  ↓ 同じ条件を FPR 1 % での検出率で見る")
     header()
     for label in post_rows:
