@@ -144,13 +144,13 @@ def _plot_panel(canvas, rect, xlim, ylim, xlabel, ylabel):
     canvas = fs.draw_polyline(canvas, [(x - 1, y - 1), (x + w, y - 1), (x + w, y + h),
                                        (x - 1, y + h)], color=(0.72, 0.74, 0.76),
                               width=1, closed=True)
-    inner = (x + 52, y + 20, w - 72, h - 54)
+    inner = (x + 54, y + 22, w - 74, h - 68)
     axes = fs.axes_transform(inner, xlim, ylim)
     canvas = fs.axes_frame(canvas, axes, color=(0.55, 0.57, 0.60), width=1, box=False)
     canvas = fs.ticks(canvas, axes, xticks=fs.nice_ticks(*xlim, 4),
                       yticks=fs.nice_ticks(*ylim, 4), color=(0.55, 0.57, 0.60),
                       font_size=10, text_color=INK)
-    canvas = fs.text_box(canvas, xlabel, (x + w // 2, y + h - 6), anchor="cb",
+    canvas = fs.text_box(canvas, xlabel, (x + w // 2, y + h - 5), anchor="cb",
                          font_size=11, box_alpha=0.0, text_color=INK, min_contrast=1.05)
     canvas = fs.text_box(canvas, ylabel, (x + 6, y + 8), anchor="lt",
                          font_size=11, box_alpha=0.0, text_color=INK, min_contrast=1.05)
@@ -257,26 +257,46 @@ def act_edges(nf):
 # 幕 2 — 連結成分                                                               #
 # --------------------------------------------------------------------------- #
 def _blob_scene(size=256):
+    """明るい地に暗い部品を撒いた検査画像。**重なりは棄却法で避ける** ——
+    重なると連結成分が 1 個に融合し、「数える」話が成り立たなくなるため。"""
     rs = np.random.RandomState(20260906)
-    img = np.full((size, size), 0.10)
+    img = np.full((size, size), 0.93)
     yy, xx = np.mgrid[0:size, 0:size].astype(float)
-    for _ in range(90):                                  # 丸い部品
-        r = rs.uniform(4.0, 15.0)
-        cy, cx = rs.uniform(r + 2, size - r - 2, 2)
-        img[(yy - cy) ** 2 + (xx - cx) ** 2 <= r * r] = 0.85
-    for _ in range(14):                                  # 細長い切り粉
-        cy, cx = rs.uniform(20, size - 20, 2)
-        ang = rs.uniform(0, np.pi)
-        L, hw = rs.uniform(14, 34), rs.uniform(1.2, 2.2)
-        s = (yy - cy) * np.sin(ang) + (xx - cx) * np.cos(ang)
-        d = -(yy - cy) * np.cos(ang) + (xx - cx) * np.sin(ang)
-        img[(np.abs(s) < L / 2) & (np.abs(d) < hw)] = 0.85
+    placed = []                                          # (cy, cx, r)
+
+    def free(cy, cx, r, gap=3.0):
+        return all((cy - a) ** 2 + (cx - b) ** 2 > (r + rr + gap) ** 2
+                   for a, b, rr in placed)
+
+    for _ in range(4000):                                # 丸い部品(70 個まで)
+        if len(placed) >= 70:
+            break
+        r = rs.uniform(4.0, 12.0)
+        cy, cx = rs.uniform(r + 3, size - r - 3, 2)
+        if not free(cy, cx, r):
+            continue
+        img[(yy - cy) ** 2 + (xx - cx) ** 2 <= r * r] = 0.16
+        placed.append((cy, cx, r))
+    for _ in range(4000):                                # 細長い切り粉(12 本まで)
+        n_chip = len(placed) - 70
+        if n_chip >= 12:
+            break
+        L, hw = rs.uniform(16.0, 32.0), rs.uniform(1.4, 2.4)
+        cy, cx = rs.uniform(L, size - L, 2)
+        if not free(cy, cx, L / 2.0):
+            continue
+        ang = rs.uniform(0.0, np.pi)
+        sa, ca = np.sin(ang), np.cos(ang)
+        s = (yy - cy) * sa + (xx - cx) * ca
+        d = -(yy - cy) * ca + (xx - cx) * sa
+        img[(np.abs(s) < L / 2.0) & (np.abs(d) < hw)] = 0.16
+        placed.append((cy, cx, L / 2.0))
     return img
 
 
 def act_blobs(nf):
     img = _blob_scene()
-    lab = fs.ledger.blob_label(img > 0.5)
+    lab = fs.ledger.blob_label(img < 0.5)   # 暗い部品が前景
     feat = fs.ledger.blob_features(lab)
     amax = float(np.max(feat["area"]))
     thrs = np.linspace(1.0, 0.62 * amax, nf)

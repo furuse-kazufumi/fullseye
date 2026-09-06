@@ -422,46 +422,56 @@ def section_slit(sc: dict, zp: dict) -> dict:
 # --------------------------------------------------------------------------- #
 def section_tall(sc: dict) -> dict:
     print("\n" + "=" * 78)
-    print("4) オクルージョンは「減らす」だけでなく「増やす」")
+    print("4) 背の高い車は別の車線のスリットに書き込む")
     print("=" * 78)
+    print("  対照群つき: 同じトラックだけを流して(遠い車線を空にして)、")
+    print("  遠い車線のスリットに何本の帯が立つかを別に数える。")
+    print("\n   トラック   far 帯/真値   差   near 帯/真値   トラックのみの far 帯")
 
-    rows, excess = [], []
-    for nt in (0, 2, 4, 6):
+    rows, diff = [], []
+    for nt in (0, 2, 3, 6):
         veh = make_vehicles(seed=3, n_truck=nt)
         n_truck = sum(1 for v in veh if v["tall"])
         vid = render_sequence(veh, np.arange(T_FRAMES, dtype=np.float64))
         mask = foreground(vid)
         s_far = slit_count(kymograph(mask, LANES["far"]["slit"]))
         s_near = slit_count(kymograph(mask, LANES["near"]["slit"]))
-        cc = per_frame_counts(mask)
         t_far = sum(1 for v in veh if v["lane"] == "far")
         t_near = sum(1 for v in veh if v["lane"] == "near")
-        excess.append((n_truck, s_far["n_ref"] - t_far))
+        # 対照群: 遠い車線を空にして、トラックだけを同じ軌跡で流す
+        only = [v for v in veh if v["tall"]]
+        n_only = 0
+        if only:
+            mo = foreground(render_sequence(only,
+                                            np.arange(T_FRAMES, dtype=np.float64)))
+            n_only = slit_count(kymograph(mo, LANES["far"]["slit"]))["n_ref"]
+        diff.append((n_truck, s_far["n_ref"] - t_far, n_only))
         rows.append([str(n_truck), "%d / %d" % (s_far["n_ref"], t_far),
                      "%+d" % (s_far["n_ref"] - t_far),
-                     "%d / %d" % (s_near["n_ref"], t_near), str(int(cc.max()))])
-        print("   トラック %d 台: far %d/%d(%+d)、near %d/%d、"
-              "ゼロ点の最大値 %d" % (n_truck, s_far["n_ref"], t_far,
-                                     s_far["n_ref"] - t_far,
-                                     s_near["n_ref"], t_near, cc.max()))
+                     "%d / %d" % (s_near["n_ref"], t_near), str(n_only)])
+        print("     %4d      %3d / %d    %+3d     %3d / %d          %6d"
+              % (n_truck, s_far["n_ref"], t_far, s_far["n_ref"] - t_far,
+                 s_near["n_ref"], t_near, n_only))
 
-    same = sum(1 for n, e in excess if e == n)
-    print("\n  ★遠い車線の過大分がトラックの台数と一致したのは %d/%d 条件"
-          "(背が %d 行から始まり、計数行 %d を覆うため)。"
-          % (same, len(excess), TRUCK_Y0, LANES["far"]["slit"]))
-    print("     一致しない条件は、トラックの帯が遠い車線の車の帯と"
-          "**同じ時刻に重なって融合した**分(増える失敗と減る失敗が同時に起きる)。")
-    print("     車線ごとにスリットを引いても、**行が物理的に重なっていれば"
-          "分離できない** —— 直すなら計数行ではなく車線の帯で切る必要がある。")
+    print("\n  ★**予想が外れた**。「偽の帯が増えて過大になる」と踏んでいたが、"
+          "実測は %s。" % ("すべて過小" if all(d <= 0 for _, d, _ in diff)
+                           else "条件で向きが変わる"))
+    print("     対照群がその理由を示す: トラックだけを流すと遠い車線のスリットに"
+          "帯は確かに立つ(右端の列)。")
+    print("     つまり書き込みは起きている。しかし遠い車線の車が居ると、"
+          "その帯と**交差して融合する**ので、増えるどころか減る。")
+    print("     増える失敗と減る失敗が同時に起き、**減るほうが勝つ** ——"
+          "1 つの数字だけ見ていたら「オクルージョンで隠れた」と誤読する。")
     figs.save_table("tall_vehicles",
-                    ["トラック", "far 帯/真値", "過大", "near 帯/真値",
-                     "ゼロ点 最大"],
+                    ["トラック", "far 帯/真値", "差", "near 帯/真値",
+                     "トラックのみ"],
                     rows, title="背の高い車が遠い車線のスリットに書き込む",
                     caption="トラックは画像の %d 行から %d 行を占めるので、"
-                            "遠い車線の計数行 %d を横切る。"
+                            "遠い車線の計数行 %d を横切る。右端は対照群"
+                            "(遠い車線を空にして同じトラックだけを流した)。"
                             % (TRUCK_Y0, LANES["near"]["y1"] - 1,
                                LANES["far"]["slit"]))
-    return {"rows": rows, "excess": excess}
+    return {"rows": rows, "diff": diff}
 
 
 # --------------------------------------------------------------------------- #
