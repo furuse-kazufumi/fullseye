@@ -392,9 +392,12 @@ def main():
         for _ in range(reps):
             fn()
         dt = 1e3 * (time.perf_counter() - t0) / reps
+        timing[label] = dt
         print(f"  {label:<28}{dt:>9.4f} ms/回")
-    print("  → 1 画素あたり 30 μs 以下。立方体はベクトル化されていて 1 画素あたり")
-    print("     0.7 μs まで落ちる。測距そのものが律速になる場面は無い。")
+    per_px = 1e3 * timing["dtof_cube_depth 32x32x256"] / cube[..., 0].size
+    print(f"  → 1 画素を 1 回測るのに {1e3 * timing['ゲート重心 (3 op)']:.1f} μs。")
+    print(f"     立方体はベクトル化されていて 1 画素あたり {per_px:.2f} μs まで落ちる")
+    print(f"     ({1e3 * timing['ゲート重心 (3 op)'] / per_px:.0f} 倍)。測距そのものが律速になる場面は無い。")
 
     # ------------------------------------------------------------------ #
     print("\n=== 8. 道具の穴(数字で示す)===")
