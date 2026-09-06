@@ -112,6 +112,10 @@ LEDGER_DIMS = {
     # 空いていた。新しい型語彙は 1 つも作らない(既存の pairs)。
     "profile": {"registry": "opsprofile", "table": "OPSPROFILE",
                 "module": "profileops", "family": "profile_metrology"},
+    # 2026-09-06: 形態統計。形を**群**で比べる層(Procrustes / GPA / 形態 PCA /
+    # 左右対称性 / 符号つき面距離)が空いていた。新語は shapeset と shapemodel。
+    "shapestat": {"registry": "opsshapestat", "table": "OPSSHAPESTAT",
+                  "module": "shapestats", "family": "shape_statistics"},
     # 2026-09-06: PIV(画像対 → 密な変位)。新語 flow2d を 1 つだけ持ち込む。
     "piv": {"registry": "opspiv", "table": "OPSPIV",
             "module": "pivops", "family": "piv_displacement"},

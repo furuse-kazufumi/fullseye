@@ -42,6 +42,7 @@ _LEDGERS = (
     ("opsimgforensics", "OPSIMGFORENSICS"), ("opsastrostack", "OPSASTROSTACK"),
     ("opsvideostream", "OPSVIDEOSTREAM"),
     ("opsdem", "OPSDEM"), ("opspiv", "OPSPIV"), ("opsprofile", "OPSPROFILE"),
+    ("opsshapestat", "OPSSHAPESTAT"),
 )
 
 #: 進化する 2-D op のレジストリ(``ops.REGISTRY``、882 op)。**台帳ではない** ——

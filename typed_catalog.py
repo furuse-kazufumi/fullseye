@@ -483,7 +483,7 @@ def _registry_adapters():
     for _mod in ("opstomography", "opsvolcolor", "opsreprconv", "opsannotate",
                  "opsgfx2d", "opsimgmetrics", "opscolortransport",
                  "opsimgforensics", "opsastrostack", "opsdem", "opspiv",
-                 "opsprofile"):
+                 "opsprofile", "opsshapestat"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
         except Exception as _e:                       # 台帳が無い環境でも動く
@@ -640,6 +640,10 @@ def catalog():
         # (profile_synth_naca4)が閉形式の翼型をプールへ入れるので、
         # 関数データしか無いプールでも実際に走る。
         ("opsprofile", "OPSPROFILE", "profile"),
+        # 2026-09-06: 形態統計。左右非対称性の PoC が「群で比べる層が無い」と
+        # 出したので新設。族の入口 shape_synth_family が (K,N,3) をプールへ
+        # 入れるので、shapeset / shapemodel のプールが空にならない。
+        ("opsshapestat", "OPSSHAPESTAT", "shapestat"),
         # 2026-09-06: PIV。**画像対から密な変位を出す op がこの repo に 1 つも
         # 無かった**(scene_flow_lk は 3-D 体積用、estimate_flow は点群用)。
         # 新語 `flow2d` を 1 つだけ足す —— flow_dense の述語は

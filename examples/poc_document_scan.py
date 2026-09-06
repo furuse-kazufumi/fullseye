@@ -538,9 +538,9 @@ def main():
             return 0.0
         return float(np.corrcoef(a, b)[0, 1])
 
-    def ramp_range(x):
-        """図に残っている振幅(真値との比、1.0 = 無傷)。"""
-        return float(np.ptp(x[ramp]) / np.ptp(truth[ramp]))
+    def ramp_levels(x):
+        """図に残っている階調の段数(8 bit に丸めた異なり数。真値は下に印字)。"""
+        return int(len(np.unique(np.round(x[ramp] * 255))))
 
     methods = [
         ("何もしない", lambda x: x),
