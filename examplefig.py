@@ -233,8 +233,38 @@ def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str 
         return None
 
 
+#: 表の列幅の下限・上限[px](自動計算がどちらかへ振り切れないようにする)
+COL_W_MIN, COL_W_MAX = 56, 320
+
+#: 列と列のあいだの余白[px]。
+COL_GAP = 16
+
+
+def _column_widths(header, rows, col_w=None) -> list[int]:
+    """表の列幅を **中身を測って**決める(:func:`fullseye.measure_text`)。
+
+    ★2026-09-06 まで固定 110 px だった。数字だけの列でも 110 px 取り、
+    「深さ mm(推定/真値)」のような長い見出しは隣の列へはみ出していた。
+    ``fullseye`` には**描く前に測る** :func:`measure_text` があるのだから、
+    自前の表がそれを使わないのは筋が通らない(ドッグフーディング)。
+
+    ``col_w`` に数値を渡せば従来どおり全列その幅(呼び手が版を決めたいとき)。
+    """
+    import fullseye as fs
+
+    ncol = len(header)
+    if col_w is not None:
+        return [int(col_w)] * ncol
+    out = []
+    for j in range(ncol):
+        cells = [str(header[j])] + [str(r[j]) for r in rows if j < len(r)]
+        wide = max(int(fs.measure_text(c, font_size=11)["width"]) for c in cells)
+        out.append(int(min(COL_W_MAX, max(COL_W_MIN, wide + COL_GAP))))
+    return out
+
+
 def save_table(name: str, header, rows, title: str = "", caption: str = "",
-               col_w=110, row_h=24) -> Path | None:
+               col_w=None, row_h=24) -> Path | None:
     """数表を**画像として**書き、**同じ内容を CSV/TSV でも置く**。
 
     「表も Fullseye で作れる」——`text_box` を格子状に置くだけ。値の整形は
@@ -257,19 +287,21 @@ def save_table(name: str, header, rows, title: str = "", caption: str = "",
         import fullseye as fs
 
         ncol = len(header)
-        w = 24 + col_w * ncol
+        widths = _column_widths(header, rows, col_w)
+        xs = [14 + sum(widths[:j]) for j in range(ncol)]
+        w = 24 + sum(widths)
         h = 56 + row_h * (len(rows) + 1)
         img = np.full((h, w, 3), 1.0)
         if title:
             img = np.asarray(fs.text_box(img, title, (12, 8), anchor="lt", font_size=13))
         y0 = 40
         for j, cell in enumerate(header):
-            img = np.asarray(fs.text_box(img, str(cell), (14 + col_w * j, y0),
+            img = np.asarray(fs.text_box(img, str(cell), (xs[j], y0),
                                          anchor="lt", font_size=11, color="emphasis"))
         for i, row in enumerate(rows):
             for j, cell in enumerate(row[:ncol]):
                 img = np.asarray(fs.text_box(img, str(cell),
-                                             (14 + col_w * j, y0 + row_h * (i + 1)),
+                                             (xs[j], y0 + row_h * (i + 1)),
                                              anchor="lt", font_size=11,
                                              box_alpha=0.0, border=0))
         path = save(name, img, caption)
