@@ -347,7 +347,7 @@ def section_width_sweep() -> dict:
                     ("2 値化 2·EDT", pick(true_l), pick(bin_l)),
                     ("2 値化 2·EDT-1", pick(true_l), pick(bin2_l))],
                    xlabel="真の幅 [mm]", ylabel="推定した幅 [mm]",
-                   ylim=(-0.05, 1.55),
+                   ylim=(-0.05, 1.55), kinds=["line", "scatter", "line", "line"],
                    title="幅の掃引(きれいな場面)。0 は「何も返さなかった」",
                    caption="2 値化の 2 本は階段。0.20 mm(1 px)以下ではマスクが"
                            "空になり 0(= 未検出)へ落ちる。積分法は 0.05 mm "
