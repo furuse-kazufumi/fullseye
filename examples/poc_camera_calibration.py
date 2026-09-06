@@ -354,17 +354,25 @@ def main():
     print("     変化し、この自由度が破れる。傾きが校正の情報源そのもの。")
 
     print("\n=== 6. 壊れる条件 ===")
-    print("  (a) 退化配置 —— 全視点が正面平行(傾き 0 度)")
+    print("  (a) 退化配置 —— 全視点が正面平行(傾き 0 度)。どの門が止めるか")
     flat = make_poses(N_VIEWS, tilt_deg=0.0, offset_m=0.14, z_lo=0.55, z_hi=0.85)
+    for sigma in (0.0, 0.05):
+        ob_f = observe(obj, flat, sigma_px=sigma, seed=4)
+        try:
+            calib.camera_calibration(obj[:, :2], [o[:, ::-1] for o in ob_f])
+            print(f"      雑音 {sigma:.2f} px: Zhang が通ってしまった(想定外)")
+        except ValueError as exc:
+            gate = ("零空間の次元" if "degenerate calibration views" in exc.args[0]
+                    else "K が非有限/非正")
+            print(f"      雑音 {sigma:.2f} px: Zhang は拒否 —— 止めた門は「{gate}」")
+    print("      → 雑音を入れると特異値が厳密なゼロから離れ、退化検出のしきい値")
+    print("         (sv[-2] <= 1e-8 * sv[0])を**すり抜ける**。実際に止めているのは")
+    print("         その後段の「fx が nan」の門。fail-closed ではあるが、退化という")
+    print("         診断名は失われ、利用者には原因が伝わらない。")
     ob = observe(obj, flat, sigma_px=0.05, seed=4)
-    try:
-        calib.camera_calibration(obj[:, :2], [o[:, ::-1] for o in ob])
-        print("      Zhang が通ってしまった(想定外)")
-    except ValueError as exc:
-        print(f"      Zhang は fail-closed で拒否: {exc.args[0][:72]}...")
     rflat = calibrate(obj, ob)
     print(HEAD)
-    report("  傾き0度(退化)", rflat, flat, f"init={rflat['init'][:28]}")
+    report("  傾き0度(退化)", rflat, flat, f"init={rflat['init']}")
     print("      → 閉形式は拒否するが、**非線形最適化は拒否せず答えを返す**。")
     print("         再投影 RMS は小さいまま。ここが一番危ない。")
 
