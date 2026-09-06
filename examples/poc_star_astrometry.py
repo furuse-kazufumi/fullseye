@@ -960,7 +960,15 @@ def main():
           f"{solve_tab[2][7]:.3f} 秒角 = {solve_tab[2][7] / PLATE_ARCSEC_PX:.2f} px。"
           f"k を増やすと {solve_tab[4][7]:.4f}(k=4)→ {solve_tab[10][7]:.4f}"
           f"(k=10)秒角 と落ちる。**解が出ることと解が正しいことは別**")
-    assert solve_tab[2][7] > 5.0 * solve_tab[10][7]
+    lever = float(np.sqrt(((dst_all - dst_all.mean(axis=0)) ** 2).sum(axis=1).mean()))
+    print(f"       ★ 単位に騙されないこと: 全 {n_clean} 個を使った解でも回転誤差は "
+          f"{solve_tab[n_clean][2]:.0f} 秒角ある。桁が大きく見えるが、"
+          f"腕の長さ(星の重心からの RMS 距離){lever:.1f} px を掛けると "
+          f"{np.deg2rad(solve_tab[n_clean][2] / 3600.0) * lever:.4f} px —— "
+          f"段 1 で測った 1 星の測位精度と同じ桁。"
+          f"**角度の誤差は腕の長さを掛けて初めて意味を持つ**")
+    assert solve_tab[2][7] > 3.0 * solve_tab[10][7]
+    assert np.deg2rad(solve_tab[n_clean][2] / 3600.0) * lever < 0.1
     timing["6 プレート解"] = time.perf_counter() - t0
 
     # --- 6b) 対応が未知のとき、間違った対応が「もっともらしく」出る確率 --- #

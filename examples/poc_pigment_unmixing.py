@@ -654,7 +654,6 @@ def main():
     zero_strong = []
     for f in range(3):
         m = field == f
-        sub = det0["_rgb"][:, m.any(axis=0)] if m.all(axis=0).any() else det0["_rgb"]
         sc_, _c, _v = own_pca(det0["_rgb"][m].reshape(1, -1, 3), 3)
         pf, nf = pos[m], neg[m]
         d = np.zeros(m.sum())
