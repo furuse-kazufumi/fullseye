@@ -678,7 +678,24 @@ def main():
     print("     角度誤差 0 度 = 色が合う、ではない。")
 
     # ------------------------------------------------------------------ #
-    print("\n=== 12. ★ fs.op.sobel_amp をチャンネルごとに呼ぶと比が消える(穴 c)===")
+    print("\n=== 12. ★ カラー画像に 2-D op を渡す 2 通り、両方が壊れる(穴 c)===")
+    print("  灰色エッジ法は微分が要る。fullseye には sobel_amp があるので使いたいが、")
+    print("  **画像ごと渡す / ch ごとに回す のどちらも壊れる**。まず漏れの検査:")
+    probe = np.zeros((20, 20, 3))
+    probe[:, :10, 0] = 1.0            # R にだけ縦エッジ。G と B は恒等的に 0
+    leak = fs.op.sobel_amp(probe)
+    leak_max = leak.reshape(-1, 3).max(axis=0)
+    print(f"  入力: R だけに縦エッジ、G と B は全画素 0.0"
+          f"(入力 G の最大 = {probe[..., 1].max():.1f})")
+    print(f"  出力の各チャンネル最大: R={leak_max[0]:.4f} G={leak_max[1]:.4f} "
+          f"B={leak_max[2]:.4f}")
+    print("  → ★**入力が恒等的に 0 の G に 0.3333 が出る。** 実装は")
+    print("     ``ndimage.sobel(v, axis)`` をそのまま呼んでおり、``v`` が (H,W,3) だと")
+    print("     **色軸が 3 本目の空間軸として扱われ、[1,2,1]/4 の平滑が RGB を跨いで")
+    print("     掛かる**。R が G へ 1/3 漏れ、B は 2 つ離れているので届かない。")
+    print("     例外も警告も出ず、それらしいエッジ画像が返る。")
+    print()
+    print("  この漏れが色恒常性に効く(以下は同じチャート、黒体 3000 K):")
     spd_g = planck(3000.0)
     img_g = scene(spd_g)
     e_g = true_illuminant(spd_g)
