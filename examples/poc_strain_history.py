@@ -253,10 +253,9 @@ def section3_crossover(frames):
         out[name] = {"bias": err.mean(axis=0), "scatter": err.std(axis=0),
                      "rms": np.sqrt((err ** 2).mean(axis=0))}
     print()
-    print("  %4s | %10s %10s %10s | %10s %10s %10s"
-          % ("t", "累積 偏り", "散らばり", "RMS", "直接 偏り", "散らばり", "RMS")
-          .replace("累積 偏り", "累積偏り"))
-    print("  " + "-" * 74)
+    print("  %4s | %9s %9s %9s | %9s %9s %9s"
+          % ("t", "累積偏り", "散らばり", "RMS", "直接偏り", "散らばり", "RMS"))
+    print("  " + "-" * 70)
     for k in (1, 2, 4, 6, 8, 12, 16, 20, 24):
         print("  %4d | %10.0f %10.0f %10.0f | %10.0f %10.0f %10.0f"
               % (k, 1e6 * out["cum"]["bias"][k], 1e6 * out["cum"]["scatter"][k],
