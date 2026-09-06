@@ -386,7 +386,7 @@ def section_taper() -> dict:
                                   % (truth.min(), truth.max(), PX_MM))
     figs.save_plot("taper",
                    [("真値 w(s)", xs * PX_MM, truth),
-                    ("積分法", xs * PX_MM, est),
+                    ("積分法(5 点平均)", xs * PX_MM, est_s),
                     ("2 値化 2·EDT-1", xs[got] * PX_MM, bw[got])],
                    xlabel="経路方向の位置 [mm]", ylabel="幅 [mm]",
                    title="幅の分布 w(s) を追う(2 値化は細い側で点が消える)",
