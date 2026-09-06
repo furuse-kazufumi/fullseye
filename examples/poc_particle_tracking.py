@@ -620,18 +620,18 @@ def section8_figures(rows, cols, movie, rec_density, rec_step, lags, curves):
     # 3) 密度掃引
     n = np.asarray(rec_density["n"], float)
     figs.save_plot("density_bias",
-                   [("NN リンクの D", n, np.asarray(rec_density["nn_d"])),
-                    ("真値リンクの D", n, np.asarray(rec_density["true_d"])),
-                    ("NN のドリフト", n, np.asarray(rec_density["nn_drift"])),
+                   [("検出位置+NN(欠測あり)", n, np.asarray(rec_density["d_det_nn"])),
+                    ("真値位置+NN(曖昧のみ)", n, np.asarray(rec_density["d_tru_nn"])),
+                    ("検出位置+真リンク", n, np.asarray(rec_density["d_det_true"])),
                     ("真値 1.0", n, np.ones_like(n))],
-                   xlabel="粒子数 / 192x192 px", ylabel="真値比",
-                   title="密度が上がると D だけが下がる",
-                   caption="誤リンクは近い相手を選ぶので変位が短くなる(2 次モーメント)。"
-                           "ドリフト(1 次モーメント)は同じ条件でも 0.9 倍で踏みとどまる。")
+                   xlabel="粒子数 / 192x192 px", ylabel="D の真値比",
+                   title="2 つの誤リンクは D を逆向きへ外す",
+                   caption="欠測(正解が消える)は遠い他人を掴んで D を上げ、"
+                           "曖昧(正解が在るのに取り違え)は近い相手を選んで D を下げる。")
     # 4) MSD
     series = [("真値 4Dτ", lags, 4 * D_TRUE * lags)]
     for key in curves:
-        series.append(("%s/%s" % key, lags, curves[key]))
+        series.append((key, lags, curves[key]))
     figs.save_plot("msd", series, xlabel="遅れ τ [frame]", ylabel="MSD [px²]",
                    title="MSD —— 誤リンクの害は τ とともに増える",
                    caption="密 400 個の NN リンクだけが τ とともに真値から離れる。")
@@ -640,15 +640,17 @@ def section8_figures(rows, cols, movie, rec_density, rec_step, lags, curves):
     for k, npart in enumerate(rec_density["n"]):
         rows_tbl.append(["%d" % npart,
                          "%.1f" % rec_density["nnd"][k],
-                         "%.1f" % rec_density["bad"][k],
-                         "%.3f" % rec_density["nn_d"][k],
-                         "%.3f" % rec_density["true_d"][k],
-                         "%.3f" % rec_density["nn_drift"][k]])
+                         "%.1f" % rec_density["amb_det"][k],
+                         "%.1f" % rec_density["miss_det"][k],
+                         "%.3f" % rec_density["d_det_nn"][k],
+                         "%.3f" % rec_density["d_tru_nn"][k],
+                         "%.3f" % rec_density["d_det_true"][k],
+                         "%.3f" % rec_density["drift_det_nn"][k]])
     figs.save_table("density_table",
-                    ["粒子数", "最近接 px", "誤り率 %", "D 比(NN)",
-                     "D 比(真リンク)", "ドリフト比(NN)"], rows_tbl,
+                    ["粒子数", "最近接 px", "曖昧 %", "欠測 %", "D比 検出+NN",
+                     "D比 真値+NN", "D比 真リンク", "ドリフト比"], rows_tbl,
                     title="密度掃引の実測",
-                    caption="D 比だけが密度とともに落ちる。")
+                    caption="曖昧と欠測を分けて数えると、D の外れる向きが説明できる。")
 
 
 def section9_findings(rec_density, got_peaks):
