@@ -109,7 +109,24 @@ def add_metrology_object_rectangle2_measure(model, row, col, phi, l1, l2, n: int
 
 def add_metrology_object_ellipse_measure(model, row, col, phi, ra, rb, n: int = 40) -> int:
     """楕円計測オブジェクトを追加(add_metrology_object_ellipse_measure)。
-    ``phi`` = ``ra`` 軸の向き(col 軸から、ラジアン)。"""
+    ``phi`` = ``ra`` 軸の向き(col 軸から、ラジアン)。
+
+    参照楕円(中心 ``(row, col)`` [px]、``phi`` 方向の半径 ``ra``、直交方向の半径
+    ``rb``)を ``model["objects"]`` に積む(dict をその場で更新)。
+    ``apply_metrology_model`` はパラメータ角 ``t`` を ``n`` 等分した点を置き
+    (弧長等分ではないので、扁平な楕円では長軸端が密になる)、各点で楕円の
+    外向き法線 ``∇F`` に沿ってエッジを測り、``fit_ellipse`` で出し直す。
+
+    - ``phi``: col 軸(x)から row 軸(画像下向き)へ測ったラジアン。
+      ``gen_ellipse_contour_xld`` と同じ規約。
+    - ``ra``, ``rb``: 半径 [px]。0 を入れると法線計算で 0 除算になるので避ける
+      (ここでは検証しない)。
+    - ``n``: サンプル数(既定 40)。
+    - 返り値: 追加位置の index(0 始まり)。
+    - ``apply`` 結果の ``params`` は ``row / col / phi / ra / rb`` で **``ra >= rb``
+      (長軸が ``ra``)** に正規化され、``rms`` は代数残差ではなく中心からの
+      半径方向の幾何残差 [px]。
+    """
     model["objects"].append({"type": "ellipse", "p": (row, col, phi, ra, rb), "n": n})
     return len(model["objects"]) - 1
 
