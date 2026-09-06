@@ -381,28 +381,43 @@ def section_window() -> dict:
 # --------------------------------------------------------------------------- #
 def section_period() -> dict:
     print("\n" + "=" * 78)
-    print("3) 周期の推定 —— FFT の粗い値を位相限定相関で磨く")
+    print("3) 周期の推定 —— 位相限定相関の「ピーク」では決まらない")
     print("=" * 78)
+    print("  ★この節だけ周期 %.1f px の別の場面で測る。%.0f px は画像幅 %d の"
+          "約数なので\n    FFT のピークが真値ちょうどに乗ってしまい、"
+          "**推定問題が消える**。" % (PERIOD_EST, PERIOD, N))
 
-    sc = make_scene()
+    sc = make_scene(period=PERIOD_EST, which=[])
+    peaks = poc_peak_table(sc["img"])
+    print("\n  (a) 位相限定相関のピーク上位 %d 個(基線 96 px):" % len(peaks))
+    for lag, val in peaks:
+        print("      ずれ %+4d px   高さ %.4f" % (lag, val))
+    spread = (max(v for _, v in peaks) - min(v for _, v in peaks)) \
+        / max(v for _, v in peaks)
+    print("      ★ずれはすべて周期 %.1f px の整数倍近辺で、高さの差は %.1f %% "
+          "しかない。" % (PERIOD_EST, 100 * spread))
+    print("      **周期信号は自分自身と周期ずらしでも一致する**ので、"
+          "ピーク位置からは周期を決められない。")
+
+    print("\n  (b) 決められるのは位相の**傾き**のほう(粗い周波数で復調する):")
     est = estimate_period(sc["img"])
-    print("  FFT のピーク: %d ビン -> 周期 %.5f px(1 ビン刻みなので分解能は"
-          " %.4f px)" % (est["bin"], est["coarse"],
-                         N / est["bin"] - N / (est["bin"] + 1)))
-    print("  位相限定相関(基線 %d px、%d 周期ぶん): ずれ %+.4f px -> 周期 %.5f px"
-          % (200, est["k"], est["shift"], est["fine"]))
-    print("  真値 %.5f px。誤差は FFT %+.5f px / 位相限定相関 %+.5f px(%.0f 倍)"
-          % (PERIOD, est["coarse"] - PERIOD, est["fine"] - PERIOD,
-             abs(est["coarse"] - PERIOD) / max(abs(est["fine"] - PERIOD), 1e-9)))
+    print("      FFT のピーク %d ビン -> 周期 %.5f px(1 ビン刻みの分解能 %.4f px)"
+          % (est["bin"], est["coarse"], N / est["bin"] - N / (est["bin"] + 1)))
+    print("      位相の傾き %+.6f rad/px -> 周期 %.5f px" % (est["slope"], est["fine"]))
+    print("      真値 %.5f px。誤差 FFT %+.5f px / 位相勾配 %+.5f px(%.0f 倍改善)"
+          % (PERIOD_EST, est["coarse"] - PERIOD_EST, est["fine"] - PERIOD_EST,
+             abs(est["coarse"] - PERIOD_EST) / max(abs(est["fine"] - PERIOD_EST), 1e-12)))
 
-    print("\n   基線 [px]   周期の推定      誤差 [px]")
+    print("\n   当てはめ長 [px]   周期の推定      誤差 [px]")
     rows = []
-    for b in (40, 80, 120, 160, 200):
-        e = estimate_period(sc["img"], baseline=b)
-        rows.append((b, e["fine"]))
-        print("     %4d      %10.5f     %+.5f" % (b, e["fine"], e["fine"] - PERIOD))
-    print("  ★基線を伸ばすほど精度が上がる(ずれの誤差が周期数で割られるから)。")
-    return {"est": est, "rows": rows}
+    for m in (96, 72, 48, 24, 8):
+        e = estimate_period(sc["img"], margin=m)
+        rows.append((e["span"], e["fine"]))
+        print("        %4d        %10.5f     %+.5f"
+              % (e["span"], e["fine"], e["fine"] - PERIOD_EST))
+    print("  ★当てはめを伸ばすほど良くなる —— ただし端は復調の過渡なので"
+          "落とさないと逆に悪くなる(いちばん下の行)。")
+    return {"est": est, "rows": rows, "peaks": peaks}
 
 
 # --------------------------------------------------------------------------- #
