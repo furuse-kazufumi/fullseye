@@ -836,6 +836,8 @@ def main():
     assert bits[3, 3] == 1 and bits[0, 0] == 1 and bits[1, 1] == 0, "位置検出パターンが違う"
     assert bits[7, 0] == 0 and bits[0, 7] == 0, "分離帯が明でない"
     assert np.all(bits[6, 8:16] == np.array([1, 0, 1, 0, 1, 0, 1, 0])), "タイミングが交番でない"
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("\nPASS")
 
 
