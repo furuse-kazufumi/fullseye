@@ -321,6 +321,31 @@ def annotate3d_label(img, text, anchor, pose, K, depth=None, offset=(26.0, -22.0
     ------
     ValueError
         アンカーがカメラの後ろ / 画像の外、文字が収まらない、姿勢・K の不正。
+
+    手順: ``anchor``(object 座標 ``(3,)``)を ``annotate3d_project`` と同じ射影で
+    画素 ``(x, y)`` にし、``(x, y)`` から ``(x + offset[0], y + offset[1])`` へ
+    引き出し線(``annotate._aa_polyline``、幅 ``width``)を引き、アンカー側に半径
+    ``cap_size`` の点を打ち、線の先に ``annotate.text_box`` で文字を置く。
+    文字箱の付け根(anchor)は ``offset[0] > 0`` なら左中、``< 0`` なら右中、
+    ``== 0`` なら ``offset[1] < 0`` で下中央・それ以外で上中央。
+
+    引数:
+    - ``offset``: 画素単位 ``(dx, dy)``(``dy`` は下向き正 = 行方向)。既定
+      ``(26, -22)`` は右上へ。
+    - ``width``: 線幅 [px]、``>= 0.5`` の実数。``cap_size``: 点の半径 [px]、0 で
+      打たない。``pad`` / ``font_size`` / ``box_alpha`` / ``text_color`` /
+      ``font_path``: 文字箱の見た目(``font_size`` 未満 9 までは自動縮小)。
+    - ``depth``: 前方距離画像。隠れていれば線を破線、点を白抜き(ring)にする。
+    - ``color``: 役割名か RGB。``occlusion_tol``: ``[0, 1)``。
+
+    返り値: 描画済みの新しい画像(float64 ``[0, 1]``、入力は変更しない)。
+
+    エラーになる条件(実装どおり): アンカーが ``z <= 1e-9`` / アンカーの画素が
+    ``[0, W-1] x [0, H-1]`` の外 / 姿勢・``K``・``depth`` の不正 / 文字箱が縮小しても
+    画像に収まらない(``text_box`` 側)。``offset`` の先が枠外でも線は引く。
+
+    使いどころ: 図中の部位名・番号付け。複数の点を一括でラベル付けするときは
+    ``annotate3d_project`` で可視判定を先に取り、``visible`` の点だけ呼ぶ。
     """
     a = A._prep(img)
     tab = project_anchors(_points3(anchor, "anchor"), pose, K, depth=depth,
