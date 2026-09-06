@@ -305,12 +305,36 @@ def main():
     print("       ただし読める周波数が違う: 生 %.2f Hz(%.0f 次高調波)/ 包絡線 %.2f Hz。"
           % (f1, f1 / defect_hz, f2))
     print("       「検出できた」だけを見ると同点、「何 Hz か」まで見ると差がつく。")
-    env_bad = A.envelope_spectrum(x, RATE, 200.0, 800.0)   # 共振の無い帯域で復調
-    fb, _, pb = _peak_and_prominence(env_bad["freqs"], env_bad["magnitude"])
-    print("   (b) 帯域を外すと包絡線は生スペクトルに**負ける**: 200-800 Hz で復調 ->"
-          " ピーク %.2f Hz、顕著さ %.1f、帯域内の割合 %.3f"
-          % (fb, pb, env_bad["band_fraction"]))
-    print("       (帯域が正しければ %.1f。包絡線解析の性能は帯域選択の性能そのもの)" % p2)
+    bad_band = (200.0, 800.0)          # 共振の無い帯域(ここには何も無い)
+    print("   (b) 帯域を外すと包絡線は生スペクトルに**負ける**。同じ記録を"
+          "%.0f-%.0f Hz で復調した検出率:" % bad_band)
+    print("       %6s %8s | %s" % ("sigma", "SNR[dB]", "正しい帯域 / 外した帯域 / 生スペクトル"))
+    loser = None
+    for sigma in (0.05, 0.2, 0.5, 1.0):
+        good = bad = raw = 0
+        frac = 0.0
+        for s in range(n_trial):
+            xs = _record(defect_hz, sigma, seed=100 + s)
+            eg = A.envelope_spectrum(xs, RATE, BAND[0], BAND[1])
+            fg, _, pg = _peak_and_prominence(eg["freqs"], eg["magnitude"])
+            eb = A.envelope_spectrum(xs, RATE, bad_band[0], bad_band[1])
+            fb, _, pb = _peak_and_prominence(eb["freqs"], eb["magnitude"])
+            frr, ampr = _raw_amplitude_spectrum(xs, RATE)
+            f1r, _, p1r = _peak_and_prominence(frr, ampr)
+            good += int(_matches(fg, defect_hz) and pg >= threshold)
+            bad += int(_matches(fb, defect_hz) and pb >= threshold)
+            raw += int(_matches(f1r, defect_hz) and p1r >= threshold)
+            frac = eb["band_fraction"]
+        mark = ""
+        if bad < raw:
+            mark = "  <- 外した包絡線 < 生スペクトル(band_fraction %.3f)" % frac
+            loser = (sigma, bad, raw)
+        print("       %6.2f %+8.1f | %2d/%2d   %2d/%2d   %2d/%2d%s"
+              % (sigma, 20.0 * np.log10(rms_clean / sigma), good, n_trial,
+                 bad, n_trial, raw, n_trial, mark))
+    print("       包絡線解析の性能は**帯域選択の性能そのもの**。帯域を外した包絡線は")
+    print("       ゼロ点(生スペクトル)より悪い —— 「包絡線だから強い」ではない。")
+    assert loser is not None, "外した帯域が生スペクトルに負ける段が 1 つも無い"
     print("   (c) この PoC の検出限界は合成モデル上の値。実機は滑り・複数共振・"
           "回転数変動があり、")
     print("       同じ SNR でもここまで持たない。ここで測ったのは"
