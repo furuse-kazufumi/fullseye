@@ -61,16 +61,32 @@ MANIFEST = os.path.join(_ROOT, "docs", "ops", "_fig", "figures.json")
 #: 図が重くなる。128 は「5 段のガウシアンピラミッドが組める」下限。
 SIZE = 128
 
-#: `in_sort` ごとの前置き(画像から型を作る鎖)。**画像から到達できる sort は
-#: 6 つだけ**(image / region / contour / color / feature / match)。残りの
-#: 161 op は Studio のプログラム模型(1 画像 + つまみ 2 つ)では実演できない
-#: ので、図を作らず**理由を記録する**。
+#: `in_sort` ごとの前置き(画像から型を作る鎖)。2026-09-06 までは**画像から
+#: 到達できる sort が 6 つだけ**(image / region / contour / color / feature /
+#: match)で、残りの 161 op は「型が届かない」と記録するしかなかった。
+#: 2026-09-07 に入口 op(`backends_bridge`、category `bridge`)を足し、**登録
+#: されている全 in_sort に鎖がある**ことを `tests/test_op_figures.py` が確かめる。
+#: ここに無い sort は「型が届かない」として記録される(落ちたとは数えない)。
 PREFIX = {
     "image": [],
     "any": [],
     "region": [("threshold", 0.5, 0.5)],
     "contour": [("threshold", 0.5, 0.5), ("sk_find_contours", 0.5, 0.5)],
     "color": [("cfa_to_rgb", 0.5, 0.5)],
+    # --- backends_bridge の入口 op(image → 新設 sort) ---
+    "points": [("img_to_points", 0.5, 0.5)],
+    "keypoints": [("img_to_keypoints", 0.5, 0.5)],
+    "signal": [("img_to_signal", 0.5, 0.5)],
+    "counts": [("img_to_counts", 0.5, 0.5)],
+    "matrix": [("img_to_matrix", 0.5, 0.5)],
+    "video": [("img_to_video", 0.5, 0.5)],
+    "volume": [("img_to_volume", 0.5, 0.5)],
+    "lightfield": [("img_to_lightfield", 0.5, 0.5)],
+    "rgbimage": [("img_to_rgb", 0.5, 0.5)],
+    "cimage": [("img_to_cimage", 0.5, 0.5)],
+    "beatcube": [("img_to_beatcube", 0.5, 0.5)],
+    # qimage は rgbimage を経由(rgb → 純四元数の埋め込みは既存の橋渡し op)。
+    "qimage": [("img_to_rgb", 0.5, 0.5), ("tb_rgb_to_quaternion", 0.5, 0.5)],
 }
 
 #: つまみの既定。0.5 は「まん中」だが、平滑・形態学は効果が見えないので
@@ -155,6 +171,83 @@ def _plate(shape, value) -> np.ndarray:
     return plate
 
 
+def _line_plot(shape, y) -> np.ndarray:
+    """1-D 列(signal / counts)を折れ線で描く。縦軸は min–max、横軸は添字。"""
+    import fullseye as fs
+
+    h, w = shape[:2]
+    y = np.asarray(y, np.float64).ravel()
+    plate = np.full((h, w, 3), 0.12)
+    if y.size < 2 or not np.isfinite(y).all():
+        return plate
+    lo, hi = float(y.min()), float(y.max())
+    yn = (y - lo) / (hi - lo) if hi - lo > 1e-12 else np.full_like(y, 0.5)
+    xs = np.linspace(4, w - 5, y.size)
+    ys = (h - 5) - yn * (h - 10)
+    pts = np.stack([xs, ys], axis=1)
+    return np.asarray(fs.draw_polyline(plate, pts, color=(0.25, 0.85, 0.75), width=1,
+                                       closed=False))
+
+
+def _scatter(shape, xy, z=None) -> np.ndarray:
+    """(N,2|3) の点を上から見た散布図(x → 列、y → 行、z → 明るさ)。"""
+    h, w = shape[:2]
+    plate = np.full((h, w, 3), 0.12)
+    p = np.asarray(xy, np.float64)
+    if p.ndim != 2 or p.shape[0] == 0:
+        return plate
+    x, y = p[:, 0], p[:, 1]
+    def _n(t, n):
+        lo, hi = float(t.min()), float(t.max())
+        return ((t - lo) / (hi - lo) * (n - 5) + 2 if hi - lo > 1e-12
+                else np.full_like(t, n / 2.0))
+    xi = np.clip(np.round(_n(x, w)).astype(int), 0, w - 1)
+    yi = np.clip(np.round(_n(y, h)).astype(int), 0, h - 1)
+    if z is not None and np.asarray(z).size == p.shape[0]:
+        zz = np.asarray(z, np.float64)
+        lo, hi = float(zz.min()), float(zz.max())
+        val = 0.3 + 0.7 * ((zz - lo) / (hi - lo) if hi - lo > 1e-12 else 0.5)
+    else:
+        val = np.full(p.shape[0], 0.9)
+    plate[yi, xi] = np.stack([val * 0.35, val, val * 0.85], axis=1)
+    return plate
+
+
+def _panel_for(value, sort: str, base) -> np.ndarray:
+    """sort に応じて「絵」にする。sort が分からない・絵にならないなら None。
+
+    2026-09-07: 新設 sort(points / signal / video / …)の出力を `array(4096, 3)`
+    と書いた札にしていたが、それでは op が何をしたか伝わらない(ユーザー指摘
+    「意味が伝わる事が大事」)。sort ごとに素直な見せ方を決める。
+    """
+    a = value
+    if isinstance(a, np.ndarray):
+        if sort in ("points",) and a.ndim == 2 and a.shape[1] >= 2:
+            return _scatter(base.shape, a[:, :2], a[:, 2] if a.shape[1] >= 3 else None)
+        if sort == "keypoints" and a.ndim == 2 and a.shape[1] == 2:
+            import fullseye as fs
+            return np.asarray(fs.draw_markers(_panel(base), a, color=(1.0, 0.3, 0.1), size=3))
+        if sort in ("signal", "counts") and a.ndim == 1:
+            return _line_plot(base.shape, a)
+        if sort == "cimage" and a.ndim == 2:
+            return _panel(np.abs(a))
+        if sort == "beatcube" and a.ndim == 3:
+            return _panel(np.abs(a[0]))
+        if sort == "video" and a.ndim == 3:
+            return _panel(a[a.shape[0] // 2])           # 中央フレーム
+        if sort == "volume" and a.ndim == 3:
+            return _panel(a.max(axis=0))                # z 方向の MIP
+        if sort == "lightfield" and a.ndim == 4:
+            return _panel(a[a.shape[0] // 2, a.shape[1] // 2])   # 中央視点
+        if sort == "qimage" and a.ndim == 3 and a.shape[-1] == 4:
+            return _panel(a[..., 1:4])                  # ベクトル部 (i, j, k) を RGB に
+        if sort == "matrix" and a.ndim == 2:
+            return _panel(a)
+        if a.dtype.kind == "c":
+            return _panel(np.abs(a))
+    return None
+
+
 def _render(base, before, after, op) -> np.ndarray:
     """入力と出力を横に並べた 1 枚。
 
@@ -163,8 +256,14 @@ def _render(base, before, after, op) -> np.ndarray:
     """
     import fullseye as fs
 
-    left = _panel(before if _is_image(before) else base)
-    if _is_image(after):
+    left = _panel_for(before, op.in_sort, base)
+    if left is None:
+        left = _panel(before if _is_image(before) else base)
+    out_sort = op.in_sort if op.out_sort == "any" else op.out_sort
+    right = _panel_for(after, out_sort, base)
+    if right is not None:
+        pass
+    elif _is_image(after):
         right = _panel(after)
     elif isinstance(after, dict) and "cs" in after:
         # contour(XLD)は**元画像に重ね描き**する。`cs=[array(…` と書いた札では

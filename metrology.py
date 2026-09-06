@@ -132,7 +132,26 @@ def add_metrology_object_ellipse_measure(model, row, col, phi, ra, rb, n: int = 
 
 
 def add_metrology_object_generic(model, otype, params, n: int = 40) -> int:
-    """汎用計測オブジェクトを追加(add_metrology_object_generic)。"""
+    """汎用計測オブジェクトを追加(add_metrology_object_generic)。
+
+    形状の種類を文字列で指定する入口。``otype`` と ``params`` の組は専用 op と
+    同じ並びでなければならない:
+
+    - ``"line"``: ``(row1, col1, row2, col2)``
+    - ``"circle"``: ``(row, col, radius)``
+    - ``"rect"``: ``(row, col, phi, l1, l2)``(``phi`` ラジアン、``l1``/``l2`` 半辺長)
+    - ``"ellipse"``: ``(row, col, phi, ra, rb)``
+
+    ``params`` は ``tuple`` にして積むだけで、**ここでは ``otype`` も要素数も検証
+    しない**。未知の ``otype`` は ``apply_metrology_model`` が ``ValueError`` で拒否し、
+    要素数が違えば同じく ``apply`` 時に展開で失敗する。設定ファイルから形状を
+    読み込むときは、積む前に上の表で確認すること。
+
+    - ``n``: サンプル数(既定 40。矩形は 4 辺に分配)。
+    - 返り値: 追加位置の index(0 始まり)。
+    - ``align_metrology_model`` は ``params[0]``/``params[1]`` を row/col として
+      動かす(``"line"`` のみ ``[2]``/``[3]`` も)。
+    """
     model["objects"].append({"type": otype, "p": tuple(params), "n": n})
     return len(model["objects"]) - 1
 
