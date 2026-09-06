@@ -1000,11 +1000,15 @@ def main():
 
     print("\n=== 9. 崖 (e) 縁で切れた細胞をどう数えるか ===")
     print("  3 通りの規約: 全部数える / 縁に触れたものを捨てる / 半分に数える。")
+    print("  分割は節 7 で偏りが最小だった設定(種の最小間隔 5 画素)を使う ——")
+    print("  分割が大きく外れている設定だと、規約の差がその誤差に埋もれてしまう。")
     print("  " + pad("規約", 22, right=False) + pad("真値", 10) + pad("推定", 10)
-          + pad("偏り", 9) + pad("散らばり", 11) + pad("真値との差の由来", 24))
+          + pad("偏り", 9) + pad("散らばり", 11) + "  "
+          + pad("真値との差の由来", 24, right=False))
     edge_tab = {}
     fgs = [foreground(s["img"]) for s in base[BASE_PACK]]
-    preds = [m_ws_h(s["img"], fg, h_px=H_DEF) for s, fg in zip(base[BASE_PACK], fgs)]
+    preds = [m_ws_md(s["img"], fg, min_distance=5)
+             for s, fg in zip(base[BASE_PACK], fgs)]
     for rule in ("全部数える", "縁を捨てる", "半分に数える"):
         gts, ests = [], []
         for s, pred in zip(base[BASE_PACK], preds):
