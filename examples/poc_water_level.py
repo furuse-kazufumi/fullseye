@@ -551,10 +551,10 @@ def section_figures(zp: dict, anc: dict, refl: dict) -> None:
                    xlabel="真の水位 [m]", ylabel="水位の誤差 [cm]",
                    title="較正に使う目盛りのペアで符号が変わる")
 
-    rows = [["%.2f" % r] + ["%+.1f" % (100 * e) for e in v]
-            + ["%+.1f" % (100 * float(np.mean(v)))] for r, v in refl.items()]
-    figs.save_table("reflection", ["反射率", "0.6 m", "1.0 m", "1.4 m", "平均"],
-                    rows, title="反射がある水位の誤差 [cm](負 = 低く読む)")
+    rows = [["%.2f" % r, "%+.1f" % (100 * v[0]), "%+.1f" % (100 * v[1])]
+            for r, v in refl.items()]
+    figs.save_table("reflection", ["反射率", "しきい値交差 [cm]", "キャリパー [cm]"],
+                    rows, title="反射があるときの水位誤差(負 = 低く読む / nan = 見失う)")
 
 
 # --------------------------------------------------------------------------- #
