@@ -433,7 +433,7 @@ def main():
                           ("PPF surface_match", m_ppf)):
         rates, fr, fc = [], [], []
         for j, rd in enumerate(WIDE):
-            r, a, b = run_cell(method, src_c, dst_c, dn_c, rd, 0.15, diam_c, 8,
+            r, a, b = run_cell(method, src_c, dst_c, dn_c, rd, 0.15, diam_c, TR4,
                                seed=5000 + 31 * j)
             rates.append(r)
             keep = (a < ROT_OK_DEG) & (b < CEN_OK_FRAC * diam_c)

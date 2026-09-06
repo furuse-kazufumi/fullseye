@@ -106,3 +106,56 @@ def test_project_point_hom_mat3d_matches_project_3d_point_row_col():
     b = calib.project_point_hom_mat3d(world, proj)
     c = calib.project_hom_point_hom_mat3d(np.column_stack([world, np.ones(len(world))]), proj)
     assert np.allclose(a, b) and np.allclose(a, c)
+
+
+# --------------------------------------------------------------------------- #
+# 退化検出の門は「歪みが無ければ」働く(2026-09-06、PoC が出した宿題)
+# --------------------------------------------------------------------------- #
+def _flat_views(tilt_rad=0.0, n=6, k1=0.0):
+    """正面平行(または微小傾き)ばかりの視点。``k1`` で樽型歪みを入れる。"""
+    xy = _target()
+    world = np.column_stack([xy, np.zeros(len(xy))])
+    out = []
+    for i in range(n):
+        R = _rotm(tilt_rad * np.cos(2 * np.pi * i / n),
+                  tilt_rad * np.sin(2 * np.pi * i / n), 2 * np.pi * i / n)
+        p = world @ R.T + np.array([0.0, 0.0, 400.0 + 15.0 * i])
+        xn = p[:, :2] / p[:, 2:3]
+        if k1:
+            r2 = (xn ** 2).sum(1, keepdims=True)
+            xn = xn * (1.0 + k1 * r2)
+        col = K_TRUE["fx"] * xn[:, 0] + K_TRUE["cx"]
+        row = K_TRUE["fy"] * xn[:, 1] + K_TRUE["cy"]
+        out.append(np.column_stack([row, col]))
+    return xy, out
+
+
+def test_degenerate_views_are_refused_when_there_is_no_distortion():
+    xy, views = _flat_views(tilt_rad=0.0)
+    with pytest.raises(ValueError, match="degenerate calibration views"):
+        calib.camera_calibration(xy, views)
+
+
+def test_lens_distortion_blinds_the_degeneracy_check():
+    """**歪みがあると退化門は鳴らない。** 直せないので、代わりに数字と文言で渡す。
+
+    平面ホモグラフィのモデルが歪みで合わなくなり、零空間の比が傾きに依らず
+    2e-06 前後に張り付く(2026-09-06 実測: 0 度 1.92e-06 / 0.2 度 2.01e-06、
+    傾き 2 度でも 4.42e-06 で 2.3 倍しか違わない = 線が引けない)。
+    しきい値を動かす「修正」を入れたらこの門が落ちる。
+    """
+    xy, views = _flat_views(tilt_rad=0.0, k1=-0.18)
+    with pytest.raises(ValueError) as exc:
+        calib.camera_calibration(xy, views)
+    msg = str(exc.value)
+    assert "degenerate calibration views" not in msg, "歪みありで退化門が鳴った"
+    assert "tilted" in msg, "止めた側の門が傾き不足を名指ししていない"
+    assert "rank ratio" in msg
+
+
+def test_orientation_rank_ratio_is_returned_and_grows_with_tilt():
+    xy, good = _views(POSES)
+    r_good = calib.camera_calibration(xy, good)["orientation_rank_ratio"]
+    xy, mild = _flat_views(tilt_rad=np.deg2rad(3.0))
+    r_mild = calib.camera_calibration(xy, mild)["orientation_rank_ratio"]
+    assert 0.0 < r_mild < r_good, (r_mild, r_good)
