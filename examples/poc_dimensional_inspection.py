@@ -479,7 +479,7 @@ def section_dimensions(img):
           f"{um(t_w - SLOT_W):+11.2f}{'':>14}")
     print(f"     -> 半辺長 l1={rr['params']['l1']:.3f}(真 {(SLOT_R1 - SLOT_R0) / 2:.2f}) "
           f"l2={rr['params']['l2']:.3f}(真 {SLOT_W / 2:.2f}) "
-          f"rms={rr['rms']:.4f} px, エッジ点 {len(rr['edge_points'])} 点")
+          f"rms={rr['rms']:.5f} px, エッジ点 {len(rr['edge_points'])} 点")
 
     # ---- (b2) 外形の平行 2 辺 ---- #
     sub("(b2) 外形の平行 2 辺(左半分 220.50 px / 右半分 190.50 px)")
@@ -1142,13 +1142,13 @@ def main():
     worst_gray, worst_pos = section_synth_check()
 
     t = time.perf_counter()
-    img = render_part(1.2)
+    img = render_part(1.2, noise_sigma=0.004)
     print(f"\n  (部品画像を合成: {time.perf_counter() - t:.2f} s, "
-          f"PSF sigma 1.2, 雑音なし)")
+          f"PSF sigma 1.2, 雑音 sigma 0.004 = SNR {DG / 0.004:.0f})")
 
     z_rms = section_zero_point(img)
     slot_bias, circ_err, tilt_T, tilt_M = section_dimensions(img)
-    edge_ratio, lost_at = section_cliff_blur()
+    edge_ratio, lost_at, usable_at = section_cliff_blur()
     noise_tab = section_cliff_noise()
     ang_corr = section_cliff_angle()
     zz, mm, ff = section_cliff_illum()
@@ -1170,7 +1170,8 @@ def main():
     print(f"  角度(metrology/M)       誤差 {tilt_T:+.4f} / {tilt_M:+.4f} deg")
     print(f"  円弧キャリパー            偏り {arc_bias:+.4f} px")
     print(f"  干渉の崖                  w/sigma <= {edge_ratio:.2f} で偏り > 0.05 px")
-    print(f"  対を見失う                w = {lost_at} px (= {lost_at / 1.5:.2f} sigma)")
+    print(f"  偏り 0.05 px を超える幅   w = {usable_at} px "
+          f"(= {usable_at / 1.5:.2f} sigma, PSF sigma 1.5)")
     print(f"  公開経路からの到達性      {n_reach} / 14 関数")
 
     gain = abs(z_rms / slot_bias["M"]) if slot_bias["M"] else float("inf")

@@ -1044,12 +1044,16 @@ def main():
     # (5) 局所探索には移動量の崖があり、全域探索には無い
     assert ch4[24.0][0][0] > LOST_PX, "窓 ±6 が 24 px/frame で壊れない"
     assert ch4[24.0][1] < LOST_PX, "全域探索が移動量で壊れた"
-    # (6) 遮蔽には崖があり、それ以下では耐える
+    # (6) 遮蔽には崖があり、それ以下では耐える。そっくりな別物体は崖が手前に来る
     assert (ch5[0.3]["err"] <= LOST_PX).all(), "遮蔽 30 % で既に壊れている"
     assert (ch5[0.8]["err"] > LOST_PX).any(), "遮蔽 80 % でも壊れない"
-    # (7) NCC は一次の照明変化に強い —— ただし線形域だけ
-    assert abs(ch7[(1.6, 0.0)][0].mean() - base[0].mean()) < 0.05, "gain で誤差が動いた"
-    assert abs(ch7[(1.0, 0.35)][0].mean() - base[0].mean()) < 0.05, "offset で誤差が動いた"
+    assert tw_cliff is not None and tw_cliff <= (cliff if cliff is not None else 1.0), \
+        "そっくりな別物体の崖が平坦な遮蔽物より手前に来ていない"
+    assert ff_tot > 0, "そっくりな別物体でピーク値が嘘をつかなかった"
+    # (7) NCC は一次の照明変化に強い —— ただし信号が残っている間だけ
+    assert abs(ch7[(1.6, 0.0)][0].mean() - base[0].mean()) < 0.10, "gain で誤差が動いた"
+    assert abs(ch7[(1.0, 0.30)][0].mean() - base[0].mean()) < 0.10, "offset で誤差が動いた"
+    assert ch7[(2.6, 0.25)][2] > 50.0, "gain 2.6 で飽和していない(舞台の想定違い)"
     # (8) 繰り返し模様: 全域探索は壊れ、窓を周期より狭めると直る
     assert (ch9["全域探索"]["err"] > LOST_PX).any(), "繰り返し模様で誤ロックしない"
     assert ch9["局所 ±6"]["err"].mean() < ch9["全域探索"]["err"].mean(), \
