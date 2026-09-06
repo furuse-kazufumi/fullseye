@@ -193,8 +193,12 @@ def fpfh(points, normals=None, k: int = 16, bins: int = 11):
         raise ValueError("points must be (N, 3)")
     if P.shape[0] < 2:
         return np.zeros((P.shape[0], 3 * bins))
-    N = (np.asarray(normals, np.float64) if normals is not None
-         else estimate_normals(P, k=k))
+    if normals is not None:
+        N = np.asarray(normals, np.float64)
+    else:
+        # 向き付き法線でなければ回転不変にならない(上の注記の実測)。
+        from normals_orient import estimate_oriented_normals
+        N = estimate_oriented_normals(P, k=k)
     kk = int(min(k + 1, P.shape[0]))
     dist, idx = cKDTree(P).query(P, k=kk)
     if kk == 1:
