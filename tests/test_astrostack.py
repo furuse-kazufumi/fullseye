@@ -1069,3 +1069,24 @@ class TestBugsFoundByMeasurement:
         _, mask = A.cosmic_ray_reject(frame, sigma=5.0, f_lim=2.0)
         assert int(mask.sum()) < 60              # 修正前は 227
         assert int((mask & truth["cosmic_mask"]).sum()) / mask.sum() > 0.9
+
+
+def test_drizzle_maps_input_pixel_centres_by_scale_and_half_offset():
+    """``out = in*scale + (scale-1)/2``。2026-09-06 に規約が抜けていたので固定。
+
+    単なる ``in*scale`` だと ``scale=4`` で 1.5 出力画素(入力 0.375 画素)の
+    系統ずれになり、例外を出さずに測光と間隔を狂わせる。
+    """
+    def index_centroid(a):
+        yy, xx = np.mgrid[0:a.shape[0], 0:a.shape[1]]
+        s = a.sum()
+        return float((yy * a).sum() / s), float((xx * a).sum() / s)
+
+    for scale in (2.0, 3.0, 4.0):
+        for r, c in ((8, 8), (3, 11), (0, 0)):
+            f = np.zeros((24, 24))
+            f[r, c] = 1.0
+            sci, _ = A.drizzle_resample([f], scale=scale, pixfrac=1.0)
+            gr, gc = index_centroid(sci)
+            assert gr == pytest.approx(r * scale + (scale - 1.0) / 2.0, abs=1e-9)
+            assert gc == pytest.approx(c * scale + (scale - 1.0) / 2.0, abs=1e-9)
