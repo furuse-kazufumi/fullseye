@@ -378,16 +378,13 @@ def main():
     worst_kernel_gain = -9.9
     for s in (2, 3, 4):
         lr = down_box(truth, s)
-        null_p = null_s = None
         for name, fn in methods:
-            out = fn(lr, s)
-            recon[(s, name)] = out
-            p, ss = fid(truth, out)
-            if name.startswith("bicubic("):
-                null_p, null_s = p, ss
-            dp = "" if null_p is None else f"{p - null_p:+10.3f}"
-            ds = "" if null_s is None else f"{ss - null_s:+10.4f}"
-            print(f"  {s:>4}{name:>20}{p:>12.3f}{dp}{ss:>9.4f}{ds}")
+            recon[(s, name)] = fn(lr, s)
+        null_p, null_s = fid(truth, recon[(s, "bicubic(零点)")])
+        for name, _fn in methods:
+            p, ss = fid(truth, recon[(s, name)])
+            print(f"  {s:>4}{name:>20}{p:>12.3f}{p - null_p:+10.3f}"
+                  f"{ss:>9.4f}{ss - null_s:+10.4f}")
             if name in ("nearest", "bilinear", "五次スプライン", "Lanczos-3(自前)"):
                 worst_kernel_gain = max(worst_kernel_gain, p - null_p)
         print(f"       低解像 {lr.shape[0]}x{lr.shape[1]}、"
