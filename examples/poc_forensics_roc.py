@@ -41,10 +41,14 @@ CASIA は再配布条件が明示されておらず、Columbia は研究利用�
       複製元と複製先のオフセットの差が 8 の倍数のときだけ品質 60 を言い当て、
       それ以外は 95(背景と同じ)。テストは ``[40:104]`` → ``[64:128]`` という
       差 24 = 8 の倍数の配置しか見ていない。docstring にこの条件が書かれていない。
-  (c) **``noise_inconsistency_map`` はブロック定数を端で複製するので、右端と下端に
-      幅 ``block`` の偽の段差が立つ**(256 は 16 で割り切れるので本 PoC では出ないが、
-      ``H % block != 0`` のとき ``full[out.shape[0]:] = out[-1:]`` が最終行を引き伸ばす)。
-      ROC を引くと、この帯が固定の偽陽性源になる。
+  (c) **``noise_inconsistency_map`` は画像の縁に固定の偽陽性源を作る**。改竄が
+      1 画素も無い画像で、縁 1 ブロックの ``|σ - 中央値|`` が内側の **1.44 倍**
+      (実測 0.0924 / 0.0642)。境界を reflect で折り返して Immerkær のマスクを
+      畳み込むためで、その結果 **ゼロ点の AUC が 0.5 ではなく 0.447** になる
+      (画像の中央に置いた偽マスクが相対的に『静か』に見える)。docstring の
+      「言えないこと」に場所依存の偏りが載っていない。なお ``H % block != 0``
+      のときは ``full[out.shape[0]:] = out[-1:]`` が最終ブロックを引き伸ばす経路が
+      別にあるが、本 PoC は 256 / 16 割り切れなのでそちらは踏んでいない。
   (d) **``null_distribution`` / ``evidence_quantile`` は「証拠量 1 個」を清浄分布に
       置く道具で、画素ごとの地図には掛けられない**。ROC を引くには結局 PoC 側で
       順位計算を書くことになる。この族に「地図 + 真値マスク → ROC」の op が無い。
@@ -54,6 +58,7 @@ CASIA は再配布条件が明示されておらず、Columbia は研究利用�
 """
 from __future__ import annotations
 
+import hashlib
 import io
 import time
 import unicodedata
@@ -219,9 +224,16 @@ def score_ghost_contrast(img):
     return np.max((mu - st) / sd, axis=0)
 
 
-def score_random(img, _rng=np.random.default_rng(12345)):
-    """零点の下限:画像を見ずに乱数を返す検出器。ROC は必ず 0.5 に行くはず。"""
-    return _rng.random(img.shape)
+def score_random(img):
+    """零点の下限:画像の**中身に依存しない**乱数場。ROC は必ず 0.5 に行くはず。
+
+    種は画像のバイト列から引く。**実行のたびに変える誘惑に負けないこと** ——
+    同じ画像に同じスコアが出ないと、下の「貼っても画素が変わらないなら AUC も
+    1 ビットも変わらないはず」という検算ができなくなる。
+    """
+    h = hashlib.blake2b(np.ascontiguousarray(img, np.float64).tobytes(),
+                        digest_size=8).digest()
+    return np.random.default_rng(int.from_bytes(h, "little")).random(img.shape)
 
 
 DETECTORS = (
@@ -364,10 +376,21 @@ def main():
     print("  → 内/外の比は 1 から離れ、z は 2 桁になる。**それでも AUC は 0.5 付近**")
     print("     である(改竄していないのだから当然)。**z が大きいことと検出できること**")
     print("     **は別**で、それを分けて言えるのが AUC と FPR 固定の検出率のほうである。")
-    print(f"     雑音 σ のゼロ点 AUC が {res_null['雑音σ'][0]:.3f} と 0.5 から離れているのは、")
-    print("     ブロック定数の地図が端で最終ブロックを引き伸ばすため、画像の縁に固定の")
-    print("     偽陽性源ができ、中央に置いた偽マスクが相対的に『静か』になるから。")
-    print("     ★道具の穴 (c)。**場所に依存する偏りは、ゼロ点を置かないと見えない**。")
+    edge = np.zeros((N, N), bool)
+    edge[:BLOCK] = edge[-BLOCK:] = True
+    edge[:, :BLOCK] = edge[:, -BLOCK:] = True
+    e, i = [], []
+    for im, _ in null:
+        d = score_noise(im)
+        e.append(d[edge].mean())
+        i.append(d[~edge].mean())
+    print(f"     雑音 σ のゼロ点 AUC は {res_null['雑音σ'][0]:.3f} で、0.5 から離れている。")
+    print(f"     実測すると縁 1 ブロックの |σ - 中央値| が {np.mean(e):.4f}、内側が"
+          f" {np.mean(i):.4f}")
+    print(f"     = {np.mean(e) / np.mean(i):.2f} 倍で、**改竄が無くても縁が固定の偽陽性源**")
+    print("     **になっている**(境界を reflect で折り返して畳み込むため)。0.447 という")
+    print("     数字が縁だけで説明できるとまでは言わない —— 言えるのは『場所に依存する")
+    print("     偏りが実在し、それはゼロ点を置かないと見えない』ことである。★道具の穴 (c)。")
 
     print("\n=== 4-a. 効かなくなる境界:改竄領域の大きさ ===")
     header()
@@ -407,21 +430,28 @@ def main():
     print("     を通り越して、符号を逆に読ませる方向に壊れているということである。")
 
     print("\n=== 4-c. 効かなくなる境界:平坦な領域(貼っても画素が変わらない)===")
-    fim, fmk = build_case(0, flat=True)
-    fnull, _ = build_case(0, flat=True, tampered=False)
+    FLAT_KW = dict(flat=True, src=(80, 80))     # 切り出し元も平坦帯 (64..191) の中
+    fim, fmk = build_case(0, **FLAT_KW)
+    fnull, _ = build_case(0, tampered=False, **FLAT_KW)
     changed = int(np.count_nonzero(np.abs(fim - fnull)[fmk] > 0.5 / 255.0))
-    print(f"  平坦な帯(値 0.5 一定)に別画像の平坦部を貼ると、実際に変わった画素は")
+    print("  平坦な帯(値 0.5 一定)に別画像の平坦部を貼ると、実際に変わった画素は")
     print(f"  {changed} / {int(fmk.sum())}。JPEG は平坦な 8x8 を同じ定数に量子化するので、")
     print("  **貼るという操作が画素の上に痕跡を一切残さない**。")
+    print("  (切り出し元も帯の中に取ること —— 帯の外にはみ出すと、そこだけ模様が")
+    print("   入って『平坦だから見えない』ではなく『模様が見える』を測ってしまう。")
+    print("   最初にそれで 1532 / 4096 画素が変わり、ゴーストが 0.728 と高く出た。)")
     header()
-    flat_rows = {"通常": {n: res_pos[n] for n, _ in DETECTORS},
-                 "平坦": row("平坦な帯に貼る", make_cases(n_img, flat=True))}
+    flat_rows = {"平坦": row("平坦・改竄あり", make_cases(n_img, **FLAT_KW)),
+                 "平坦ゼロ点": row("平坦・改竄なし",
+                                   make_cases(n_img, tampered=False, **FLAT_KW))}
     print("  " + pad("通常(構造あり)= 2 節の再掲", W_LABEL, right=False)
           + "".join(pad(f"{res_pos[n][0]:.3f}", W_COL) for n, _ in DETECTORS))
-    print("  → 真値マスクは『ここを貼った』と言っているのに、そこに情報が無い。")
-    print("     どの検出器も 0.5 付近に落ちるのが**正しい**振る舞いであって、ここで")
-    print("     高い AUC を出す検出器があれば、それは真値マスクの位置を別経路で")
-    print("     当てているという意味になる(この PoC の作りが漏れている疑い)。")
+    print("  → 上 2 行は **1 ビットも違わない**(改竄ありと改竄なしで画像が同一)。")
+    print("     つまりここで見えている 0.5 からの隔たりは、検出ではなく")
+    print("     **場所への偏り**である —— 偽マスクは平坦な帯の中にあり、帯の外の")
+    print("     模様がある所のほうがスコアが高いので、そのぶん 0.5 からずれる。")
+    print("     ゴーストV の 0.8 前後がいちばん大きい。**同じ数字が『検出できた』**")
+    print("     **として報告されうる**ことに注意 —— 分けられるのはゼロ点があるから。")
 
     print("\n=== 4-e. 対照:品質差が無い貼り付け(素材も背景と同じ q92)===")
     header()
@@ -509,7 +539,7 @@ def main():
                        ("0.75 倍に縮小して戻す", post_rows["0.75 倍に縮小して戻す"]),
                        ("ぼかし sigma=1.0", post_rows["ぼかし sigma=1.0"]),
                        ("16x16 の小さい改竄", size_rows[16]),
-                       ("平坦な帯(痕跡が無い)", flat_rows["平坦"]),
+                       ("平坦な帯(実体は場所の偏り)", flat_rows["平坦"]),
                        ("素材も背景と同じ q92", same_rows)):
         print("  " + pad(label, 26, right=False)
               + pad(f"{key['ELA'][0]:.3f}", 10) + pad(f"{key['ゴーストV'][0]:.3f}", 12))
@@ -545,10 +575,15 @@ def main():
     assert post_rows["0.75 倍に縮小して戻す"]["ELA"][0] < post_rows["後処理なし"]["ELA"][0] - 0.10
     assert post_rows["全体を q60 で再圧縮"]["ゴーストV"][0] < 0.60
     assert post_rows["ぼかし sigma=1.0"]["ゴーストV"][0] < 0.60
-    # (7) 平坦な帯は貼っても画素が変わらない = どの検出器も 0.5 付近に落ちるのが正しい
+    # (7) 平坦な帯では貼っても画素が 1 つも変わらない。したがって「改竄あり」と
+    #     「改竄なし」の AUC は **完全に一致**しなければならない。一致するなら、
+    #     そこに出ている 0.5 からの隔たりは検出ではなく場所への偏りだと確定する。
     assert changed == 0, f"平坦な帯で {changed} 画素が変わっている(対照が成立していない)"
     for name, _ in DETECTORS:
-        assert abs(flat_rows["平坦"][name][0] - 0.5) < 0.12, (name, flat_rows["平坦"][name])
+        a1 = flat_rows["平坦"][name][0]
+        a2 = flat_rows["平坦ゼロ点"][name][0]
+        assert abs(a1 - a2) < 1e-12, (name, a1, a2)
+    assert flat_rows["平坦"]["ELA"][0] < res_pos["ELA"][0] - 0.30
     # (8) 品質差が無ければ、圧縮履歴を見る検出器は落ちる
     assert same_rows["ゴーストV"][0] < res_pos["ゴーストV"][0] - 0.05, (
         same_rows["ゴーストV"], res_pos["ゴーストV"])

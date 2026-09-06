@@ -445,7 +445,8 @@ def main():
 
     print("\n=== 7. 速度(この機械での実測)===")
     big = np.tile(obj, (40, 1))
-    for label, fn in (("project_points (25200 点)", lambda: fs.project_points(big, K_TRUE, *good[0])),
+    for label, fn in (("project_points (25200 点)",
+                       lambda: fs.project_points(big, K_TRUE, *good[0])),
                       ("distort_points (25200 点)", lambda: fs.distort_points(
                           fs.project_points(big, K_TRUE, *good[0])[0], K_TRUE, TRUE_DIST)),
                       ("undistort_points (25200 点)", lambda: fs.undistort_points(
