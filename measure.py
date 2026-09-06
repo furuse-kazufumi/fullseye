@@ -92,7 +92,8 @@ def fit_circle(points) -> dict:
     y, x = p[:, 0], p[:, 1]
     # Collinear points admit only an infinite-radius (line) "circle": the algebraic
     # system is rank-deficient. Reject it explicitly (perpendicular spread ~ 0).
-    _, sv, _ = np.linalg.svd(np.column_stack([x - x.mean(), y - y.mean()]))
+    _, sv, _ = np.linalg.svd(np.column_stack([x - x.mean(), y - y.mean()]),
+                             full_matrices=False)  # U は捨てる(2026-09-06)
     if sv[0] <= 1e-12 or sv[1] <= 1e-9 * sv[0]:
         raise ValueError("points are collinear or coincident; no circle fit")
     a_mat = np.column_stack([2.0 * x, 2.0 * y, np.ones(len(x))])
