@@ -93,19 +93,23 @@
 """
 from __future__ import annotations
 
+import sys
 import time
 import warnings
+from pathlib import Path
 
 import numpy as np
 from scipy.ndimage import gaussian_filter, map_coordinates
 from scipy.optimize import least_squares
 
-import fullseye as fs
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import examplefig as figs                                        # noqa: E402
+import fullseye as fs                                            # noqa: E402
 # ★ 穴 (a): 以下 4 つはどれも fs ファサードにも fs.op にも出ていない
-import fit_transform
-import mosaic
-import plane_sweep
-import transforms
+import fit_transform                                             # noqa: E402
+import mosaic                                                    # noqa: E402
+import plane_sweep                                               # noqa: E402
+import transforms                                                # noqa: E402
 
 T_START = time.perf_counter()
 
