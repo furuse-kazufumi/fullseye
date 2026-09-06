@@ -500,6 +500,16 @@ def main():
         band[label] = vals
         print(f"  {label:>11}{int(m.sum()):>8}{vals[0]:>14.3f}{vals[1]:>9.3f}"
               f"{vals[2]:>10.3f}")
+    labels = ("0-1", "1-3", "3-5", "5-9", "9 以上")
+    d_rep = [0.5, 2.0, 4.0, 7.0, 12.0]      # 帯の代表距離(9 以上は 12 px で置く)
+    figs.save_plot("occlusion_bands",
+                   [(nm, d_rep, [band[k][i] for k in labels])
+                    for i, nm in enumerate(("焦点度 cubic", "EPI 傾き", "BM 2 枚"))],
+                   xlabel="深度不連続からの距離 [px](帯の代表値)",
+                   ylabel="スロープ RMSE [px/view]",
+                   title="遮蔽境界の影響半径",
+                   caption="境界から 5 px 離れれば内側の水準に戻る。影響半径は"
+                           "開口の見込み視差(最大 7.5 px)と同じ桁。")
     print(f"  → 境界に接する画素(0-1 px)の誤差は内側(9 px 以上)の "
           f"{band['0-1'][0] / band['9 以上'][0]:.0f} 倍(焦点度)/ "
           f"{band['0-1'][2] / band['9 以上'][2]:.0f} 倍(2 眼)。")
