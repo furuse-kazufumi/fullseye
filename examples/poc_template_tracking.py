@@ -1112,7 +1112,10 @@ def main():
         f"AUC {a_tw[0]:.3f} と誤報 {ff_tot}/{nl_tot} の食い違いが再現しない"
     # (9c) 突出度は曖昧さの量であって正しさの量ではない(逆相関になる)
     assert a_tw[1] < 0.4, f"そっくりな別物体で突出度が逆相関にならない ({a_tw[1]:.3f})"
-    assert a_rep[1] < 0.6, f"窓を混ぜたとき突出度が無力にならない ({a_rep[1]:.3f})"
+    # 窓を狭めると「間違ったまま自信が増す」—— 平均 AUC ではなく個別の反例で固定する
+    assert (np.nanmean(ch9["局所 ±20"]["prom"]) > np.nanmean(ch9["全域探索"]["prom"])
+            and (ch9["局所 ±20"]["err"] > LOST_PX).sum() >= 20), \
+        "窓を狭めたときの「間違ったまま突出度が上がる」例が再現しない"
     # (9d) ドリフトはどちらでも検出できない(AUC が 0.5 付近か、それ未満)
     assert a_dr[0] < 0.6, f"ドリフトをピーク値が検出できてしまった (AUC {a_dr[0]:.3f})"
     assert np.nanmean(p_dr[drift_lost]) > np.nanmean(p_dr[~drift_lost]), \
