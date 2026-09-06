@@ -2901,6 +2901,25 @@ def annotate_outline(img, mask, label=None, color="emphasis", width=1.5, alpha=1
     ------
     ValueError
         mask の形が画像と違う、真の画素が無い、alpha が [0,1] の外。
+
+    手順: ``layout`` が無ければ ``annotate_outline_layout(mask)`` で境界ループ
+    (画素の辺に沿う ``(x, y)`` の閉多角形、外周と穴の両方、成分ごと)と重心を
+    求め、各ループを距離被覆率のアンチエイリアス折れ線で載せる。``label`` が
+    あれば重心 + ``label_offset`` に ``text_box``(``anchor="cm"``、下敷き付き)を置く。
+
+    - ``img``: ``(H, W)`` / ``(H, W, 1|3|4)``、float64 複製・``[0, 1]``。
+    - ``mask``: ``(H, W)``、画像と同じ形(``[row, col]`` 添字)。bool 以外は ``> 0.5``
+      で二値化、非有限は ``ValueError``。真の画素が無ければ ``ValueError``。
+    - ``width``: 線幅 [px]、0.5 以上。``dash=(on, off)`` [px] で破線(``on > 0``、
+      ``off >= 0``)。
+    - ``alpha``: ``[0, 1]``。``box_alpha`` は文字の下敷きの不透明度。
+    - ``label_offset``: ``(dx, dy)`` [px]。重心が輪郭の外に落ちる形(三日月など)は
+      ここでずらす。
+    - ``layout``: ``annotate_outline_layout`` の返り値を渡すと再計算せず同じ配置を
+      別の絵に使い回せる(``contours`` / ``centroid`` を読む)。
+    - 返り値: 入力と同形の float64。
+
+    塗りで示すなら ``overlay_mask``、複数領域に番号を振るなら ``annotate_markers``。
     """
     a = _prep(img)
     m = np.asarray(mask)
