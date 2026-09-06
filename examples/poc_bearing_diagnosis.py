@@ -258,6 +258,15 @@ def main():
           % (sweep[-2][0], sweep[-2][1]))
     print("   欠陥と無関係な周波数を返す —— 「常にピークを返す op」なので、"
           "顕著さを見ないと嘘を読む。")
+    # 検出限界は「率が 10/10 から崩れる場所」なので、率そのものを横軸 SNR で描く。
+    snr_axis = np.array([s[1] for s in sweep])
+    figs.save_plot("detection_sweep",
+                   [("生スペクトル(ゼロ点)", snr_axis, np.array([s[2] for s in sweep])),
+                    ("包絡線スペクトル", snr_axis, np.array([s[3] for s in sweep]))],
+                   xlabel="SNR [dB]", ylabel="検出数 / %d 試行" % n_trial,
+                   title="検出限界 —— 崖の位置が %.1f dB ずれる" % (raw_limit - env_limit),
+                   caption="どちらも最悪条件では 0 に落ちる。包絡線は万能ではなく、"
+                           "崖が悪い SNR 側へ動くだけ。")
     assert env_limit < raw_limit                 # 包絡線が確かに下(悪い SNR)まで持つ
     assert sweep[0][2] == n_trial                # 生スペクトルも良条件では 10/10(ゼロ点は死んでいない)
     assert sweep[-1][3] == 0                     # 最悪条件では包絡線も落ちる(万能ではない)
