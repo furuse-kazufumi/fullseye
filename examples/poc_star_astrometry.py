@@ -1120,6 +1120,27 @@ def main():
         print("       " + pad(r[0], 22) + f"{r[1]:3d} " + f"{r[2]:8.4f}"
               f"{r[3]:10.4f}{r[4]:10.4f}{r[5]:9.4f}{r[6]:9.4f}")
     d_uni = dict((r[0], r) for r in rows7 if r)
+    # ★ 「一様・孤立」の偏りが 0.0000 なのは当たり前 —— プレート解を
+    #   その 24 個で当てたので、最小二乗が残差の平均を 0 にしている。
+    #   使わなかった星での誤差を見るには 1 個ずつ抜いて解き直す。
+    loo = []
+    for i in range(n_clean):
+        keep = np.setdiff1d(np.arange(n_clean), [i])
+        Mi = FT.vector_to_similarity(src_all[keep], dst_all[keep])
+        p = apply_matrix(np.linalg.inv(Mi), dst_all[i:i + 1])[0]
+        loo.append((p[1] - src_all[i, 1], p[0] - src_all[i, 0]))
+    loo = np.array(loo)
+    lb = np.hypot(*loo.mean(axis=0))
+    ls = float(np.sqrt(((loo - loo.mean(axis=0)) ** 2).sum(axis=1).mean()))
+    lr = np.hypot(*loo.T)
+    print("       " + pad("一様・孤立(1 個抜き)", 22) + f"{n_clean:3d} "
+          + f"{lb:8.4f}{ls:10.4f}{np.median(lr):10.4f}"
+            f"{np.percentile(lr, 95):9.4f}{lr.max():9.4f}")
+    print(f"       ↑ 上の「一様・孤立(全体)」の偏り {uni_row[2]:.4f} は"
+          f"**当たり前に 0**(その 24 個でプレート解を当てたので、"
+          f"最小二乗が残差の平均を 0 にする)。1 個ずつ抜いて解き直すと "
+          f"偏り {lb:.4f} / 中央 {np.median(lr):.4f} 秒角 —— "
+          f"自分を当てはめに使った数字を「精度」と呼んではいけない")
     all_row = d_uni["全部まぜて 1 つの数字に"]
     uni_row = d_uni["一様・孤立(全体)"]
     print(f"   → **1 つの数字にまとめると嘘になる**。全部混ぜた中央値 "
