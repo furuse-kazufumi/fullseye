@@ -302,8 +302,9 @@ def main():
                      [np.log10(limit_nm)] * len(noise_pts))],
                    xlabel="log10 雑音(振幅比)", ylabel="log10 総合誤差 [nm]",
                    title="どこで測れなくなるか(段差 100 nm)",
-                   caption="centroid のほうが常に下に見えるが、その差は精度ではなく"
-                           "段差を縮めるゲイン誤差(下の表)。")
+                   caption="centroid は散らばりが gaussian の 1/3〜1/5 なのに"
+                           "総合誤差では上に来る。差の正体は段差を縮める"
+                           "ゲイン誤差(下の表)。")
     print("   測れなくなる境目(総合誤差が段差の 10%% = %.0f nm を超える点):"
           % limit_nm)
     for mode in ("gaussian", "centroid"):
