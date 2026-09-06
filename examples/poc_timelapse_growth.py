@@ -589,19 +589,24 @@ def section8_figures(vol, times, labels, groups, rec, merge):
                    xlabel="粗さ(フレーム間引き stride / 画素サイズ pixel)",
                    ylabel="合体時刻の誤差 [フレーム]",
                    title="時間を粗くするのと空間を粗くするのはどちらが効くか",
-                   caption="横軸はどちらも『何倍粗くしたか』。同じ倍率で比べる。")
-    # 4) 表
+                   caption="横軸はどちらも『何倍粗くしたか』。時間は必ず正"
+                           "(次のコマまで気付けない)、空間は必ず負"
+                           "(画素が物を太らせる)。空間側は画素格子の位相"
+                           "5 通りの平均で、ばらつきは表を参照。")
+    # 4) 表(ばらつきまで含めて Excel へ持ち出せる形で)
     rows_tbl = []
     for key in rec["err_stride"]:
         for k, s in enumerate(rec["stride"]):
             rows_tbl.append(["%d-%d" % key, "時間", "%d" % s,
-                             "%.2f" % rec["err_stride"][key][k]])
+                             "%.2f" % rec["err_stride"][key][k], "—"])
         for k, p in enumerate(rec["pixel"]):
             rows_tbl.append(["%d-%d" % key, "空間", "%.0f" % p,
-                             "%.2f" % rec["err_pixel"][key][k]])
-    figs.save_table("sampling_table", ["組", "粗くした軸", "倍率", "誤差 frame"],
+                             "%.2f" % rec["err_pixel"][key][k],
+                             "%.2f" % rec["spread_pixel"][key][k]])
+    figs.save_table("sampling_table",
+                    ["組", "粗くした軸", "倍率", "誤差 frame", "位相の幅"],
                     rows_tbl, title="標本化と合体時刻の誤差",
-                    caption="同じ倍率でどちらが大きい誤差を生むか。")
+                    caption="空間側は格子の位相でこれだけ動く(偏りより大きい)。")
 
 
 def section9_findings(rec, conn, merge):
