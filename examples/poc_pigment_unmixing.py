@@ -636,13 +636,13 @@ def main():
         for key in ("rgb", "ms", "unmix", "nir"):
             d = mp[key]
             r1 = pr_at(d, pos, neg, thresh_at_fpr(d[neg], 0.01))[0]
-            r1b = pr_at(d, pos & (field == 1), neg & (field == 1),
-                        thresh_at_fpr(d[neg], 0.01))[0]
+            r1b = recall_at(d, pos & (field == 1), neg & (field == 1), 0.01)
             cliff_a[tau][key] = (r1, r1b)
             row += ["%.3f" % r1, "%.3f" % r1b]
         rows_a.append(row)
     _table(["tau", "RGB全体", "RGBアズ", "多波長全体", "多波長アズ",
             "アンミ全体", "アンミアズ", "NIR全体", "NIRアズ"], rows_a)
+    print("   「全体」= 全体で 1 本の閾値 / 「アズ」= アズライトの面だけで引き直した閾値。")
     print("   平均の厚み(剥落部を除く)= tau x %.3f。" % scene["thick"][~flake].mean())
 
     # ---------------------------------------------------------------- 5 -----
