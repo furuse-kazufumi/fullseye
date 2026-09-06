@@ -388,11 +388,17 @@ def section_slit(sc: dict, zp: dict) -> dict:
           % (sc["truth"]["far"], out["far"]["slit"]["n_ref"],
              out["far"]["slit"]["n_ref"] - sc["truth"]["far"], sc["trucks"],
              LANES["far"]["slit"]))
-    print("  ★速度は行ごとの重心を線形当てはめすると誤差 %.2f / %.2f %%。"
-          % (out["far"]["match"]["fit"], out["near"]["match"]["fit"]))
-    print("     台帳の blob_features['angle'] からも出せて %.2f / %.2f %% —— "
-          % (out["far"]["match"]["angle"], out["near"]["match"]["angle"]))
-    print("     帯が画面の左右で切れると主軸が寝るので、当てはめのほうが安全。")
+    ff = [out[ln]["match"]["fit"] for ln in LANES]
+    fi = [out[ln]["match"]["fit_inner"] for ln in LANES]
+    fa = [out[ln]["match"]["angle"] for ln in LANES]
+    print("\n  ★**予想が外れた**。「端で切れた帯は主軸が寝るので angle は"
+          "当てにならない」と踏んでいたが、実測は逆で")
+    print("     angle %.2f / %.2f %% < 重心当て %.2f / %.2f %%。"
+          % (fa[0], fa[1], ff[0], ff[1]))
+    print("     原因は測ってある: 端で切れた行では**重心のほうが**引っ張られる。"
+          "その行を落とすと %.2f / %.2f %% まで下がり、angle と同水準になる。"
+          % (fi[0], fi[1]))
+    print("     2 次モーメントは面積で重みづけるので、端の数行の影響が小さい。")
 
     figs.save_grid("scene",
                    [sc["vid"][60], sc["mask"][60].astype(np.float64),
