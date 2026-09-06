@@ -579,6 +579,76 @@ def main():
           f"回転全体の誤差 中央値 {med(full_err):.2f} 度")
     print("     = 決まる自由度と決まらない自由度が同居している。1 つの数にまとめると消える。")
 
+    # ---- 5-d. 回転不変のはずの記述子が回転で変わる --------------------------
+    print("\n=== 5-d. ★ 回転不変のはずの記述子が回転で変わる(第 4 章の右下がりの正体)===")
+    rngd = np.random.default_rng(7)
+    a_d = bracket(N_CSRC, rngd)
+    R_d = rot_axis_angle((0.3, -0.7, 0.65), 90.0)
+    b_d = fs.apply_transform(a_d, R_d, np.array([0.3, -0.2, 0.1]))   # 同じ点を剛体移動しただけ
+
+    def outward(P, k=12):
+        """重心から外向きに符号を揃えた法線 —— 星形の物体なら回転に対して同変。"""
+        n = fs.estimate_normals(P, k=k)
+        n[np.einsum("ni,ni->n", n, P - P.mean(0)) < 0] *= -1.0
+        return n
+
+    def inv_step(P):
+        """回転不変な距離刻み(重心からの最大半径から作る)。"""
+        return 2.0 * float(np.max(np.linalg.norm(P - P.mean(0), axis=1))) / 20.0
+
+    n_a, n_b = fs.estimate_normals(a_d, k=12), fs.estimate_normals(b_d, k=12)
+    flip_signed = float(np.mean(np.linalg.norm(n_b - n_a @ R_d.T, axis=1) > 1e-6))
+    flip_unsigned = float(np.mean(np.minimum(
+        np.linalg.norm(n_b - n_a @ R_d.T, axis=1),
+        np.linalg.norm(n_b + n_a @ R_d.T, axis=1)) > 1e-6))
+    print("  同一の点群を 90 度回しただけの 2 つを比べる(答えは完全に一致すべき)。")
+    print(f"  estimate_normals: 向きまで一致しない点 {100 * flip_signed:.0f} % / "
+          f"符号を無視すれば {100 * flip_unsigned:.0f} %")
+    print("    → 法線そのものは正しい。**符号が任意で、しかも回転すると別の符号を選ぶ**。")
+    d_default = float(np.max(np.abs(fs.fpfh(b_d, k=12) - fs.fpfh(a_d, k=12))))
+    d_fixed = float(np.max(np.abs(fs.fpfh(b_d, normals=outward(a_d) @ R_d.T, k=12)
+                                  - fs.fpfh(a_d, normals=outward(a_d), k=12))))
+    print(f"  fpfh の記述子の差 max|Δ|: 法線を道具任せ {d_default:.3e} / "
+          f"向きを揃えて渡すと {d_fixed:.3e}")
+    print("    → docstring は「rotation-invariant」と書いてあるが、既定の法線では不変でない。")
+    print("       向きの揃った法線を渡せば厳密に不変になる(=数式ではなく法線の符号が原因)。")
+    ka = set(fs.ppf_model(a_d, normals=outward(a_d), angle_bins=24)["table"])
+    kb = set(fs.ppf_model(b_d, normals=outward(a_d) @ R_d.T, angle_bins=24)["table"])
+    st = inv_step(a_d)
+    ka2 = set(fs.ppf_model(a_d, normals=outward(a_d), angle_bins=24, dist_step=st)["table"])
+    kb2 = set(fs.ppf_model(b_d, normals=outward(a_d) @ R_d.T, angle_bins=24,
+                           dist_step=st)["table"])
+    print(f"  ppf_model のハッシュ鍵の一致率: 既定の dist_step {100 * len(ka & kb) / len(ka):.0f} % / "
+          f"回転不変な dist_step を渡すと {100 * len(ka2 & kb2) / len(ka2):.0f} %")
+    print(f"    → 既定の dist_step は**軸平行境界箱の対角/20**。同じ物体でも向きで変わる"
+          f"(対角 {diameter(a_d):.3f} → {diameter(b_d):.3f})ので、距離の量子化が")
+    print("       ずれる。明示的に渡せば鍵は完全一致する。")
+    TR_D = 14
+    print(f"  端から端まで(find_surface_pose、{TR_D} 試行/セル):")
+    print(f"  {'初期回転ずれ':>12}{'既定':>10}{'向き揃え + 不変 step':>24}")
+    ppf_fix = {}
+    for deg in (0.0, 180.0):
+        row = []
+        for fixed in (False, True):
+            rr = np.random.default_rng(4321)
+            n_ok = 0
+            for _ in range(TR_D):
+                a, b, bn, dm = coarse(rr)
+                dq, _dn, Rt, tt = make_pair(b, bn, deg, 0.15, dm, rr)
+                if fixed:
+                    o = fs.find_surface_pose(a, dq, model_normals=outward(a),
+                                             scene_normals=outward(dq), dist_step=inv_step(a),
+                                             angle_bins=24, ref_fraction=0.25, topk=3)
+                else:
+                    o = fs.find_surface_pose(a, dq, angle_bins=24, ref_fraction=0.25, topk=3)
+                n_ok += int(ok(rot_error_deg(o["R"], Rt),
+                               cen_error(o["R"], o["t"], Rt, tt, a.mean(0)), dm))
+            row.append(n_ok / TR_D)
+        ppf_fix[deg] = row
+        print(f"  {deg:>11.0f}度{row[0] * 100:>9.0f}%{row[1] * 100:>23.0f}%")
+    print(f"  → 記述子の一致は厳密な数値で言えるが、端から端までの成功率は {TR_D} 試行では")
+    print("     ばらつきが大きい。**結論の根拠は上の max|Δ| と鍵一致率の方**に置く。")
+
     # ---- 6. 速度 -----------------------------------------------------------
     print("\n=== 6. 速度(この機械での実測)===")
     rngv = np.random.default_rng(31415)
