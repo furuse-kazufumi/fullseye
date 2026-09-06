@@ -577,28 +577,78 @@ def main():
     print("     でも数 pp に留まる —— ただしそれは端成分を知っている場合の話で、")
     print("     画像から推定しようとすると次節のとおりになる。")
 
-    print("\n=== 8. 端成分を盲目的に取る(PPI)—— 純画素が無いと足元が崩れる ===")
-    print("  " + pad("画素/葉", 10, right=False) + pad("純・葉画素", 14)
-          + pad("PPI 端成分の NDVI", 20) + pad("PPI アンミックスの偏り", 24))
-    ppi_rows = {}
-    for sub in (6, 12, 24):
-        cube, truth = observe(fields[(2, 0)], sub, seed=0)
-        pure = float(np.mean(truth == 1))
-        E = specops.spec_endmembers_ppi(cube, 2, n_projections=400, seed=0)
-        nd = [(e[B_NIR] - e[B_RED]) / (e[B_NIR] + e[B_RED]) for e in E]
-        j = int(np.argmax(nd))                                  # 植生らしい側
+    print("\n=== 8. 端成分を盲目的に取る(PPI)—— 壊す原因は雑音のほうだった ===")
+    print("  アンミックスが強いのは端成分を **知っている** からである。画像から取れるか。")
+    print("  PPI(Pixel Purity Index)= 乱数の射影軸に沿って端に来た画素に得点を与え、")
+    print("  上位 K 画素を端成分とする。真値: 緑葉の NDVI "
+          f"{NDVI_LEAF:+.3f} / 乾いた土 {NDVI_SOIL:+.3f}")
+
+    def ppi_probe(cube, k=2, seed=0):
+        """PPI で端成分を取り、``(端成分, NDVI のリスト, 葉らしい側の添字)`` を返す。"""
+        E = specops.spec_endmembers_ppi(cube, k, n_projections=1000, seed=seed)
+        nd = [float((e[B_NIR] - e[B_RED]) / (e[B_NIR] + e[B_RED])) for e in E]
+        return E, nd, int(np.argmax(nd))
+
+    pure_hi = float(np.mean(observe(fields[(2, 0)], SUB, seed=0)[1] == 1))
+    print(f"\n  8-a. 雑音を振る(繁茂期、画素 / 葉 = {SUB / LEAF_LEN_SUB:.2f}、"
+          f"純粋な葉の画素が {100 * pure_hi:.0f} % ある場面)")
+    print("  " + pad("雑音 σ", 12, right=False) + pad("PPI 端成分の NDVI 最大/最小", 32)
+          + pad("葉を拾えたか", 16) + pad("被覆率の偏り", 16))
+    ppi_noise = {}
+    for nz in (0.0, 0.0005, 0.001, 0.002, 0.004):
+        cube, truth = observe(fields[(2, 0)], SUB, noise=nz, seed=0)
+        E, nd, j = ppi_probe(cube)
         a = specops.spec_unmix(cube, E, constrained=True)
         bias = 100.0 * (float(a[:, :, j].mean()) - float(truth.mean()))
-        ppi_rows[sub] = (pure, max(nd), bias)
+        ok = max(nd) > 0.5 * NDVI_LEAF
+        ppi_noise[nz] = (max(nd), ok, bias)
+        print("  " + pad(f"{nz:.4f}", 12, right=False)
+              + pad(f"{max(nd):+.3f} / {min(nd):+.3f}", 32)
+              + pad("はい" if ok else "**いいえ**", 16) + pad(f"{bias:+.1f} pp", 16))
+    print("  → 雑音ゼロなら PPI は端成分をぴたりと当てる。**反射率で 0.1 % ほどの雑音を**")
+    print("     **足しただけで葉を 1 つも拾わなくなる**。返ってくるのは深い影の画素で、")
+    print("     全バンドがほぼ同じ低い値 = 材質の分光ではなく『いちばん暗い点』である。")
+    cube_hi, _ = observe(fields[(2, 0)], SUB, seed=0)
+    P = cube_hi.reshape(-1, 4)
+    E3, _, _ = ppi_probe(cube_hi, k=3)
+    fmt = lambda v: "[" + " ".join(f"{x:.4f}" for x in v) + "]"
+    print(f"     PPI が返した 3 本 : {fmt(E3[0])} {fmt(E3[1])} {fmt(E3[2])}")
+    print(f"     選ばれなかった最輝画素(= 純粋な葉): {fmt(P[int(np.argmax((P ** 2).sum(1)))])}")
+    print("     理由は得点の配り方にある。**孤立した 1 点は多方向の射影で同時に端を取る**")
+    print("     ので得点が集中するが、純粋な葉は何千画素もあって互いに票を割る。")
+    print("     つまり PPI が選ぶのは『純粋な材質』ではなく『孤立した外れ値』で、")
+    print("     **純画素が多いほど壊れやすい**という、予想と逆の性質になる。")
+
+    print("\n  8-b. 雑音を消して、純画素のほうを消す(画素を大きくする)")
+    print("  " + pad("画素/葉", 10, right=False) + pad("純・葉画素", 14)
+          + pad("PPI 端成分の NDVI 最大", 26) + pad("被覆率の偏り", 16))
+    ppi_gsd = {}
+    for sub in (6, 12, 24, 48):
+        cube, truth = observe(fields[(2, 0)], sub, noise=0.0, seed=0)
+        pure = float(np.mean(truth == 1))
+        E, nd, j = ppi_probe(cube)
+        a = specops.spec_unmix(cube, E, constrained=True)
+        bias = 100.0 * (float(a[:, :, j].mean()) - float(truth.mean()))
+        ppi_gsd[sub] = (pure, max(nd), bias)
         print("  " + pad(f"{sub / LEAF_LEN_SUB:.2f}", 10, right=False)
-              + pad(f"{100 * pure:.1f} %", 14)
-              + pad(f"{max(nd):+.3f} / {min(nd):+.3f}", 20)
-              + pad(f"{bias:+.1f} pp", 24))
-    print(f"  (参考)本物の端成分の NDVI: 緑葉 {NDVI_LEAF:+.3f} / 乾いた土 {NDVI_SOIL:+.3f}")
-    print("  → 純画素が残っているうちは PPI の端成分は本物に近い。画素が葉より大きく")
-    print("     なって純画素が消えると、PPI が拾うのは『いちばん端の混合画素』になり、")
-    print("     端成分が内側に縮む = 被覆率が上振れする。**アンミキシングが混合画素に")
-    print("     強いという長所は、端成分を別途知っていることが前提**である。")
+              + pad(f"{100 * pure:.1f} %", 14) + pad(f"{max(nd):+.3f}", 26)
+              + pad(f"{bias:+.1f} pp", 16))
+    print("  → 雑音が無ければ、純画素が残っているうちは端成分を当てる。純画素が消えると")
+    print("     拾えるのは『いちばん端の混合画素』で、端成分が内側に縮む。**崖は 2 つあり、")
+    print("     雑音のほうがずっと手前にある**。定石は MNF(雑音で白色化した主成分)空間で")
+    print("     PPI を掛け、選ばれた画素の **元の** 分光を引くことだが、")
+    print("     ``spec_endmembers_ppi`` は選んだ画素の添字を返さず分光そのものを返すので、")
+    print("     この経路が組めない。★道具の穴。")
+    sc, _, _ = specops.spec_mnf(cube_hi, 4)
+    Em = specops.spec_endmembers_ppi(sc, 2, n_projections=1000, seed=0)
+    Pm = sc.reshape(-1, sc.shape[2])
+    orig = cube_hi.reshape(-1, 4)
+    E_mnf = orig[[int(np.argmin(((Pm - e) ** 2).sum(1))) for e in Em]]
+    nd_mnf = [float((e[B_NIR] - e[B_RED]) / (e[B_NIR] + e[B_RED])) for e in E_mnf]
+    print("     (代用として MNF スコアから最近傍の元画素を逆引きすると"
+          f" NDVI {max(nd_mnf):+.3f} / {min(nd_mnf):+.3f}、")
+    print(f"      生の PPI の {ppi_noise[0.004][0]:+.3f} より本物に近い。添字を返す引数が")
+    print("      あれば逆引きは要らない。)")
 
     print("\n=== 9. 崖 (c) 土の湿りと枯れ葉 ===")
     cond_methods = sh_methods
