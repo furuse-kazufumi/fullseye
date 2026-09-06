@@ -46,6 +46,12 @@ import demops                                                    # noqa: E402
 import examplefig as figs                                        # noqa: E402
 
 
+def _big(a, k=3):
+    """図に載せるためだけの最近傍拡大。格子が 41〜122 画素だと、パネルの題が
+    入る幅すら無い(``annotate_figure_grid`` は題をパネル幅に収める)。"""
+    return np.repeat(np.repeat(np.asarray(a, float), k, axis=0), k, axis=1)
+
+
 def plane(h, w, cell, slope_deg, aspect_deg):
     """既知の傾斜・方位を持つ平面。行 0 が北、方位は北 0 度・東回り。"""
     yy, xx = np.mgrid[0:h, 0:w].astype(np.float64)
