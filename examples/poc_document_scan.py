@@ -415,10 +415,12 @@ def main():
     print(f"  真の 4 隅 (x,y): " + " ".join(f"({x:.1f},{y:.1f})" for x, y in quad))
     w_top = np.hypot(*(quad[1] - quad[0])); w_bot = np.hypot(*(quad[2] - quad[3]))
     print(f"  上辺 {w_top:.1f} px / 下辺 {w_bot:.1f} px → 台形の度合い {w_bot / w_top:.3f} 倍")
-    print(f"  照明: 左右勾配 30 % + 斜めの影 22 %(紙の明るさの最大/最小 "
-          f"{cam[inside].max() / max(cam[inside].min(), 1e-6):.2f} 倍)")
-    print(f"  紙のいちばん暗いところ {cam[inside].min():.3f} / 机のいちばん明るいところ "
-          f"{cam[~inside].max():.3f} —— 大域 2 値化が効くのはこの大小が保たれている間だけ。")
+    il = illumination_field()
+    print(f"  照明: 左右勾配 30 % + 斜めの影 22 %(紙にかかる係数 "
+          f"{il[inside].min():.2f}〜{il[inside].max():.2f} = {il[inside].max() / il[inside].min():.2f} 倍)")
+    print(f"  紙の地のいちばん暗いところ {PAPER * il[inside].min():.3f} / "
+          f"机のいちばん明るいところ {0.30 * il[~inside].max():.3f}")
+    print("  → 大域 2 値化が効くのはこの大小が保たれている間だけ(第 5 節でその崖を測る)。")
 
     print("\n=== 2. ページ検出 —— 3 つの推定器を同じ画像に当てる ===")
     mask = page_mask(cam)
