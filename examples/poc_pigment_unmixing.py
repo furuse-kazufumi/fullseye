@@ -840,8 +840,17 @@ def main():
             r1 = pr_at(d, pos, neg, thresh_at_fpr(d[neg], 0.01))[0]
             cliff_e[sg][key] = r1
             row.append("%.3f" % r1)
+        lay = dt["_abund"][..., :len(LAYER_KEYS)]
+        lay = lay / np.maximum(lay.sum(axis=2, keepdims=True), 1e-12)
+        iu = LAYER_KEYS.index("ultramarine")
+        m0 = (field == 0) & ~flake & neg_all
+        bu, su = bias_scatter(lay[..., iu][m0] - scene["conc"][..., iu][m0])
+        cliff_e[sg]["scatter"] = su
+        row += ["%+.3f" % bu, "%.4f" % su]
         rows_e.append(row)
-    _table(["雑音 sigma", "RGB PCA", "多波長 PCA", "アンミックス", "NIR 差分"], rows_e)
+    _table(["雑音 sigma", "RGB PCA", "多波長 PCA", "アンミックス", "NIR 差分",
+            "群青の偏り", "群青の散らばり"], rows_e)
+    print("   検出の再現率は同値のせいで鈍い。存在量の散らばりのほうが雑音に素直。")
 
     # ---------------------------------------------------------------- 9 -----
     print("\n9. 顔料の存在量 —— 偏りと散らばりを分ける(既定条件)")
