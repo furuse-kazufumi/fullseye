@@ -743,29 +743,37 @@ def main():
           f"{'飽和画素 %':>12}")
     print("-" * 58)
     ch7 = {}
-    for g, off in ((1.0, 0.0), (1.6, 0.0), (0.4, 0.0), (1.0, 0.35), (1.0, -0.25),
-                   (2.2, -0.3), (0.15, 0.0), (2.6, 0.25)):
+    LIN = ((1.0, 0.0), (1.6, 0.0), (0.4, 0.0), (1.0, 0.30), (1.0, -0.20))
+    for g, off in LIN + ((2.2, -0.30), (0.15, 0.0), (0.06, 0.0), (2.6, 0.25)):
         fr, tr, _, _ = make_sequence(world, TARGETS["一意"], n=24, step=2.0,
                                      gain=g, offset=off)
         t0 = crop_template(fr[0], tr[0])
         est, pk, pr = run_tracker(fr, t0, tr[0], "static")
         e = err_of(est, tr)
-        sat = 100.0 * np.mean([np.mean((f <= 0.0) | (f >= 1.5)) for f in fr])
-        ch7[(g, off)] = (e, pk, sat)
+        sat = 100.0 * np.mean([np.mean((f <= 0.0) | (f >= 1.0)) for f in fr])
+        lev = float(np.mean([len(np.unique(f)) for f in fr]))
+        ch7[(g, off)] = (e, pk, sat, lev)
         print(f"{g:>7.2f}{off:>9.2f}{e.mean():>10.2f}{e.max():>8.2f}"
-              f"{np.nanmean(pk):>12.4f}{sat:>12.2f}")
-    print("-" * 58)
+              f"{np.nanmean(pk):>12.4f}{sat:>12.2f}{lev:>10.0f}")
+    print("-" * 68)
     base = ch7[(1.0, 0.0)]
+    lin_max = max(ch7[k][0].mean() for k in LIN)
     worst = max(ch7, key=lambda k: ch7[k][0].mean())
-    print(f"→ **強い**: 一次の変化(gain·I + offset)では誤差が動かない。"
-          f"gain 0.4〜2.2 / offset ±0.35 の全条件で")
-    print(f"   平均誤差は {min(v[0].mean() for v in ch7.values()):.2f}〜"
-          f"{max(v[0].mean() for v in ch7.values()):.2f} px、"
-          f"素の {base[0].mean():.2f} px と実質同じ。")
-    print(f"→ **弱い**: 効くのは飽和と量子化だけ。最悪条件 gain={worst[0]} offset={worst[1]} で")
-    print(f"   飽和画素 {ch7[worst][2]:.2f} %、平均誤差 {ch7[worst][0].mean():.2f} px。")
-    print("   つまり「NCC は照明に強い」は正しいが、**強いのは線形域だけ** で、")
-    print("   その外(白飛び・黒潰れ)では不変性の前提そのものが消える。")
+    print(f"→ **強い**: 飽和しない範囲(表の上 {len(LIN)} 行、飽和 "
+          f"{max(ch7[k][2] for k in LIN):.2f} % 以下)では")
+    print(f"   平均誤差 {min(ch7[k][0].mean() for k in LIN):.2f}〜{lin_max:.2f} px。"
+          f"素の {base[0].mean():.2f} px と実質同じで、")
+    print("   ピークもほとんど動かない。**一次の輝度変化に対する不変性は本物**である。")
+    print(f"→ **弱い**: 崩れるのは飽和と量子化。最悪は gain={worst[0]} offset={worst[1]} の")
+    print(f"   飽和 {ch7[worst][2]:.2f} % / 階調 {ch7[worst][3]:.0f} 段 で "
+          f"平均誤差 {ch7[worst][0].mean():.2f} px、ピーク {np.nanmean(ch7[worst][1]):.3f}。")
+    print(f"   低コントラスト側 gain=0.06 は飽和 {ch7[(0.06, 0.0)][2]:.2f} % なのに階調が "
+          f"{ch7[(0.06, 0.0)][3]:.0f} 段しか残らず、")
+    print(f"   平均誤差 {ch7[(0.06, 0.0)][0].mean():.2f} px / ピーク "
+          f"{np.nanmean(ch7[(0.06, 0.0)][1]):.3f}。")
+    print("   つまり「NCC は照明に強い」は正しいが、**強いのは信号が残っている間だけ**。")
+    print("   不変なのは輝度の一次変換に対してであって、**情報を捨てる操作**")
+    print("   (白飛び・黒潰れ・量子化)には何の耐性も無い。")
 
     # =======================================================================
     rule("8. ★ 崖 (e) 更新間隔とドリフト —— log-log の傾きを実測する")
