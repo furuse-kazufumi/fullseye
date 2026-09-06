@@ -852,8 +852,12 @@ def main():
     assert ppi_noise[0.0][1], ppi_noise[0.0]
     assert not ppi_noise[0.004][1], ppi_noise[0.004]
     assert ppi_gsd[6][0] > 0.60, ppi_gsd[6]
-    # 純画素が消えるほうの崖も実在する(雑音ゼロで画素を大きくすると外れる)
-    assert ppi_gsd[48][0] < 0.05 and ppi_gsd[48][1] < 0.5 * NDVI_LEAF, ppi_gsd[48]
+    # 純画素が消えるほうの崖も実在する(雑音ゼロで画素を大きくすると被覆率が外れる)。
+    # **NDVI では見えない** —— 比は合ったまま大きさ(NIR)が縮むので、そこを assert する。
+    assert ppi_gsd[48][0] < 0.05, ppi_gsd[48]
+    assert abs(ppi_gsd[48][2]) > 10.0 > abs(ppi_gsd[6][2]), (ppi_gsd[6], ppi_gsd[48])
+    assert ppi_gsd[48][1] > 0.8 * NDVI_LEAF, ppi_gsd[48]          # 比は本物同然
+    assert ppi_gsd[48][3] < 0.8 * RHO["leaf"][B_NIR], ppi_gsd[48]  # 大きさは縮んでいる
     # (8) 崖 (c) 湿った土でゼロ点の極性が反転する(再現率が落ちる)
     dry = cond_rows[(2, "乾いた土")][1]["大津・緑(ゼロ点)"]
     wet = cond_rows[(2, "湿った土(暗い)")][1]["大津・緑(ゼロ点)"]
