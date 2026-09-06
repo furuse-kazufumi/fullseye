@@ -149,8 +149,8 @@ def main():
         a = demops.dem_flow_accumulation(z2, cell, nodata=policy)
         top = float(np.nanmax(a))
         print(f"  {policy:>10}{top:>14.0f}{100 * top / a.size:>9.1f}%")
-        acc_maps.append(np.log10(np.nan_to_num(np.asarray(a, float), nan=0.0) + 1.0))
-        acc_names.append("集水量 log10(1+A) —— %s" % policy)
+        acc_maps.append(_big(np.log10(np.nan_to_num(np.asarray(a, float), nan=0.0) + 1.0), 2))
+        acc_names.append("集水量 log10 —— %s" % policy)
     print("  → 中央値などで**埋める**選択肢は置いていない。埋めると存在しない平原が")
     print("     でき、例外も出さずに水を通すため(どこが地形でどこが穴埋めか消える)。")
     # 「答えが変わる」を数字 2 つでなく形で見せる。outlet は欠測へ水を吸い込み、
