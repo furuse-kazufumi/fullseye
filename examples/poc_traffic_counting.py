@@ -660,7 +660,7 @@ def section_jam() -> dict:
     times = np.arange(T_FRAMES, dtype=np.float64)
     # 先頭から順に詰めて停止させる(先頭は X_REF より先まで進む)
     stop_at = [X_REF + 130 - k * 66.0 for k in range(len(veh))]
-    xs = _jam_positions(veh, times, stop_at, brake_from=40.0)
+    xs = _jam_positions(veh, times, stop_at)
 
     road = _road()
     vid = np.empty((times.size, H_PX, W_PX))
