@@ -646,7 +646,7 @@ def _ramp_filter(n_pad: int, kind: str, cutoff: float) -> np.ndarray:
     *analytic* sinogram and requires the interior to come back at 1.0.
     """
     f = np.fft.rfftfreq(n_pad, d=1.0)
-    ramp = np.abs(f)
+    ramp = _ramlak_spectrum(n_pad)
     nyq = 0.5
     with np.errstate(divide="ignore", invalid="ignore"):
         if kind == "ramp":
