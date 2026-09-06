@@ -882,12 +882,19 @@ def section_cliff_illum():
         p50 = pairs_50(img[24], det_sigma=1.0, plateau=1.5)
         fw = (p50[0]["width"] - w_true) if p50 else float("nan")
         zz.append(zw); zs.append(zsw); mm.append(mw); ff.append(fw)
-        print(f"  {g:7.2f} | {zw:+9.4f}{zsw:+10.4f} | {mw:+9.4f} | {fw:+9.4f}")
-    print("\n  -> 大域しきい値(Z')は傾斜に比例して流れる。勾配極大(M)と 50% 交差(F)は")
-    print("     どちらも局所量なのでほとんど動かない。**照明の均一化に金をかける前に、")
-    print("     しきい値を大域で持っていないかを見るほうが安い。**")
+        print(f"  {g:7.2f} | {zw:+9.4f}{zsw:+10.4f}{zsw - zs[0]:+10.4f} | "
+              f"{mw:+9.4f}{mw - mm[0]:+9.4f} | {fw:+9.4f}{fw - ff[0]:+9.4f}")
+    dz, dm, df = zs[-1] - zs[0], mm[-1] - mm[0], ff[-1] - ff[0]
+    print(f"\n  -> g=1.2(端で明るさ +-60%)での流れ: Z' {dz:+.4f} px に対し "
+          f"M {dm:+.4f} / F {df:+.4f} px。")
+    print(f"     大域しきい値だけが {abs(dz) / max(abs(dm), abs(df)):.0f} 倍流れる。")
+    print("     勾配極大(M)も 50% 交差(F)も局所量なのでほとんど動かない。")
+    print("     **照明の均一化に金をかける前に、しきい値を大域で持っていないかを")
+    print("     見るほうが安い。**")
     print("     整数版(Z)は流れを 1 px の階段で表すので、傾斜が小さいうちは")
     print("     『変わっていない』ように見える —— 量子化は誤差を隠す。")
+    print(f"     なお Z' は g=0 でも {zs[0]:+.3f} px 偏っている。大津のしきい値は")
+    print("     『明暗の中点』ではないので、そこで切れば幅は最初からずれている。")
     return zz, zs, mm, ff
 
 
