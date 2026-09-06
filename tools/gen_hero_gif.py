@@ -137,23 +137,31 @@ def _cap(canvas, ix, text, size=PANEL, y=6):
                        text_color=INK, min_contrast=1.05)
 
 
-def _plot_panel(canvas, rect, xlim, ylim, xlabel, ylabel):
-    """白い作図パネル(枠 + 目盛り)を置き、axes 辞書を返す。"""
+def _plot_panel(canvas, rect, xlim, ylim, xlabel, ylabel, caption=""):
+    """白い作図パネル(枠 + 目盛り)を置き、axes 辞書を返す。
+
+    図注は**上端**に置く(画像パネルは下端)—— 下端には x 軸のラベルと目盛り数字が
+    並ぶので、そこへ重ねると読めなくなる。
+    """
     x, y, w, h = rect
     canvas[y:y + h, x:x + w] = PANEL_BG
     canvas = fs.draw_polyline(canvas, [(x - 1, y - 1), (x + w, y - 1), (x + w, y + h),
                                        (x - 1, y + h)], color=(0.72, 0.74, 0.76),
                               width=1, closed=True)
-    inner = (x + 54, y + 22, w - 74, h - 68)
+    if caption:
+        canvas = fs.text_box(canvas, caption, (x + 8, y + 7), anchor="lt", font_size=12,
+                             box_alpha=0.0, text_color=INK, min_contrast=1.05)
+    canvas = fs.text_box(canvas, ylabel, (x + w - 8, y + 7), anchor="rt", font_size=11,
+                         box_alpha=0.0, text_color=(0.38, 0.40, 0.43), min_contrast=1.05)
+    inner = (x + 54, y + 30, w - 74, h - 76)
     axes = fs.axes_transform(inner, xlim, ylim)
     canvas = fs.axes_frame(canvas, axes, color=(0.55, 0.57, 0.60), width=1, box=False)
     canvas = fs.ticks(canvas, axes, xticks=fs.nice_ticks(*xlim, 4),
                       yticks=fs.nice_ticks(*ylim, 4), color=(0.55, 0.57, 0.60),
                       font_size=10, text_color=INK)
     canvas = fs.text_box(canvas, xlabel, (x + w // 2, y + h - 5), anchor="cb",
-                         font_size=11, box_alpha=0.0, text_color=INK, min_contrast=1.05)
-    canvas = fs.text_box(canvas, ylabel, (x + 6, y + 8), anchor="lt",
-                         font_size=11, box_alpha=0.0, text_color=INK, min_contrast=1.05)
+                         font_size=11, box_alpha=0.0, text_color=(0.38, 0.40, 0.43),
+                         min_contrast=1.05)
     return canvas, axes
 
 
@@ -310,7 +318,8 @@ def act_blobs(nf):
         c = _place(c, fs.ledger.blob_overlay(img, sels[i]), 1)
         c, ax = _plot_panel(c, _wide_rect(2, 2), (0.0, float(thrs[-1])),
                             (0.0, float(counts[0]) * 1.08),
-                            "面積のしきい値 [px²]", "残った物体")
+                            "面積のしきい値 [px²]", "残った物体",
+                            caption="(c) しきい値と残数")
         c = _series(c, ax, thrs[:i + 1], np.asarray(counts[:i + 1], float))
         c = _cap(c, 0, "(a) blob_label — %d 個" % feat["n"])
         c = _cap(c, 1, "(b) blob_select area ≥ %.0f px² — %d 個" % (thrs[i], counts[i]))
@@ -333,7 +342,7 @@ def _taper_scene(size=256):
     sa, ca = np.sin(BAR_ANG), np.cos(BAR_ANG)
     s = (yy - cy) * sa + (xx - cx) * ca          # 軸方向
     d = -(yy - cy) * ca + (xx - cx) * sa         # 幅方向
-    half = ss * (13.0 + 11.0 * (s / (ss * 100.0) + 1.0) / 2.0)
+    half = ss * (9.0 + 8.0 * (s / (ss * 100.0) + 1.0) / 2.0)
     img = np.full((n, n), 0.14)
     img += 0.05 * (yy / n)                        # ゆるい照明むら
     img[(np.abs(d) < half) & (np.abs(s) < ss * 100.0)] = 0.86
@@ -383,16 +392,16 @@ def act_caliper(nf):
         c = _place(c, views[i], 0)
         p = profs[i]
         c, ax = _plot_panel(c, _wide_rect(1, 1), (0.0, float(len(p) - 1)), (0.0, 1.0),
-                            "測定線上の位置 [px]", "グレー値")
+                            "測定線上の位置 [px]", "グレー値",
+                            caption="(b) line_profile — エッジ %d 点" % nedge[i])
         c = fs.plot_series(c, ax, np.arange(len(p), dtype=float), np.clip(p, 0.0, 1.0),
                            kind="line", color="reference", width=2)
         c, ax2 = _plot_panel(c, _wide_rect(2, 2), (0.0, float(nf - 1)),
                              (float(np.nanmin(wa)) - 2.0, float(np.nanmax(wa)) + 2.0),
-                             "フレーム", "測った幅 [px]")
+                             "フレーム(走査は往復する)", "測った幅 [px]",
+                             caption="(c) measure_pairs — %.2f px" % wa[i])
         c = _series(c, ax2, np.arange(i + 1, dtype=float), wa[:i + 1])
         c = _cap(c, 0, "(a) キャリパー phi=%.0f°  走査 %+.0f px" % (np.rad2deg(phi), travel[i]))
-        c = _cap(c, 1, "(b) measure_pos — エッジ %d 点" % nedge[i])
-        c = _cap(c, 2, "(c) measure_pairs — 幅 %.2f px" % wa[i])
         out.append(c)
     return out, "3 / 6  サブピクセル計測 — 測定線とキャリパー", \
         "gen_measure_rectangle2 · measure_pos · measure_pairs · line_profile"
@@ -500,7 +509,8 @@ def act_pointcloud(nf):
         c = _place(c, raw, 0)
         c = _place(c, seg, 1)
         c, ax = _plot_panel(c, _wide_rect(2, 2), (0.0, float(nf - 1)), (0.0, max(ncl) + 1.0),
-                            "フレーム(tol が往復する)", "クラスタ数")
+                            "フレーム(tol が往復する)", "クラスタ数",
+                            caption="(c) tol とクラスタ数")
         c = _series(c, ax, np.arange(i + 1, dtype=float), np.asarray(ncl[:i + 1], float))
         c = _cap(c, 0, "(a) 生の点群 %d 点" % len(pts))
         c = _cap(c, 1, "(b) euclidean_clusters tol=%.3f m — %d 個" % (tols[i], ncl[i]))
@@ -547,7 +557,8 @@ def act_optics(nf):
         c = _place(c, target, 0)
         c = _place(c, np.clip(imgs[i] / vmax, 0.0, 1.0), 1)
         c, ax = _plot_panel(c, _wide_rect(2, 2), (-1.7, 1.7), (0.0, cmax * 1.12),
-                            "デフォーカス [mm]", "RMS コントラスト")
+                            "デフォーカス [mm]", "RMS コントラスト",
+                            caption="(c) 通し抜けのコントラスト")
         order = np.argsort(dz[:i + 1])
         c = fs.plot_series(c, ax, dz[:i + 1][order],
                            np.asarray(contrast[:i + 1], float)[order],
