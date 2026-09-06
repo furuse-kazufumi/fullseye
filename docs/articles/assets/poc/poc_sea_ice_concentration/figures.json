@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "",
+  "shape": [
+   1159,
+   1054,
+   3
+  ]
+ },
+ {
+  "file": "02_bias_vs_threshold.png",
+  "name": "bias_vs_threshold",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_bias_vs_concentration.png",
+  "name": "bias_vs_concentration",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_summary.png",
+  "name": "summary",
+  "caption": "下 3 段は端成分 5 % 誤差と薄氷 20 %(2 端成分の分解)。",
+  "shape": [
+   320,
+   318,
+   3
+  ],
+  "csv": "04_summary.csv",
+  "tsv": "04_summary.tsv"
+ }
+]

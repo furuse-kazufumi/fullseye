@@ -231,6 +231,10 @@ def build(lang: str, cap: dict, byid: dict) -> tuple[str, str]:
          "> This article is generated. Exhibits are added or edited in `docs/articles/exhibits/poc_captions.json` plus each PoC's figures (`FULLSEYE_FIGURE_DIR`), then rebuilt with `py -3.11 tools/gen_wingpoc_gallery.py`."),
         "",
         "## TL;DR" , "", tldr, "",
+        ("> 各展示の細かい説明は書きません。使っている op の**ヘルプの目録**(op ごとのノート・図・Studio で走るプログラム)へのリンクを付けてあります: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。"
+         if lang == "ja" else
+         "> Exhibits are not explained in detail on purpose. Each one links to the **help catalogue** for the ops it uses (per-op notes with figures and runnable Studio programs): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html)."),
+        "",
         ("## 用語(先に読むと楽)" if lang == "ja" else "## Glossary (read this first)"), "", gl, "",
         ("## 展示館のテーゼ" if lang == "ja" else "## The museum's thesis"), "", ent["thesis_" + lang].strip(), "",
         ("## 最近の追加(新しい順)" if lang == "ja" else "## Recently added (newest first)"), "", lat, "",

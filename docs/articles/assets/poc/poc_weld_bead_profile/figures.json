@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_laser_images.png",
+  "name": "laser_images",
+  "caption": "row = r0 + K·h なので、**下にあるほど高い** ——ビードは画像では下に凸に見える。遮蔽 60 度では左つま先の輝線が消えている。",
+  "shape": [
+   295,
+   678,
+   3
+  ]
+ },
+ {
+  "file": "02_profile.png",
+  "name": "profile",
+  "caption": "0 で埋めた線は影の区間で h=0 に張り付き、左のアンダーカットが消えて偽のつま先ができる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_undercut_vs_angle.png",
+  "name": "undercut_vs_angle",
+  "caption": "真値 0.45 mm。0 埋めは 60 度で 0.0000 mm を返す。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_quantities.png",
+  "name": "quantities",
+  "caption": "遮蔽が無ければ全部 1 % 以内。壊れるのは 6 章から。",
+  "shape": [
+   224,
+   368,
+   3
+  ],
+  "csv": "04_quantities.csv",
+  "tsv": "04_quantities.tsv"
+ }
+]

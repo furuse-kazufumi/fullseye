@@ -14995,9 +14995,29 @@
    "status": "ok"
   },
   "tb_normals_to_egi": {
-   "in_sort": "points",
-   "reason": "ValueError: text '(a) b=0.1' does not fit in 36px even at font size 9 — shorten it, widen the box, or lower min_font_size (truncating it silently is not an option: a machin",
-   "status": "failed"
+   "color_ok": false,
+   "extra": {
+    "a": "tb_normals_to_egi.a.jpg",
+    "b": "tb_normals_to_egi.b.jpg",
+    "chain": "tb_normals_to_egi.chain.jpg",
+    "inputs": "tb_normals_to_egi.inputs.jpg"
+   },
+   "fig": "tb_normals_to_egi.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "img_to_points 0.50 0.50\ntb_normals_to_egi 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
   },
   "tb_num_points_funct_1d": {
    "extra": {
@@ -15146,9 +15166,30 @@
    "status": "ok"
   },
   "tb_plane_segmentation": {
-   "in_sort": "points",
-   "reason": "ValueError: text '(a) a=0.1' does not fit in 12px even at font size 9 — shorten it, widen the box, or lower min_font_size (truncating it silently is not an option: a machin",
-   "status": "failed"
+   "color_ok": false,
+   "extra": {
+    "a": "tb_plane_segmentation.a.jpg",
+    "b": "tb_plane_segmentation.b.jpg",
+    "chain": "tb_plane_segmentation.chain.jpg",
+    "gif": "tb_plane_segmentation.gif",
+    "inputs": "tb_plane_segmentation.inputs.jpg"
+   },
+   "fig": "tb_plane_segmentation.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "img_to_points 0.50 0.50\ntb_plane_segmentation 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
   },
   "tb_points_to_voxel": {
    "color_ok": false,
@@ -15658,9 +15699,30 @@
    "status": "ok"
   },
   "tb_region_growing": {
-   "in_sort": "points",
-   "reason": "ValueError: text '(a) a=0.1' does not fit in 12px even at font size 9 — shorten it, widen the box, or lower min_font_size (truncating it silently is not an option: a machin",
-   "status": "failed"
+   "color_ok": false,
+   "extra": {
+    "a": "tb_region_growing.a.jpg",
+    "b": "tb_region_growing.b.jpg",
+    "chain": "tb_region_growing.chain.jpg",
+    "gif": "tb_region_growing.gif",
+    "inputs": "tb_region_growing.inputs.jpg"
+   },
+   "fig": "tb_region_growing.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "img_to_points 0.50 0.50\ntb_region_growing 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
   },
   "tb_render_point_depth": {
    "color_ok": false,
@@ -16038,9 +16100,30 @@
    "status": "ok"
   },
   "tb_spectrogram": {
-   "in_sort": "signal",
-   "reason": "ValueError: max_width must be positive (got: -3)",
-   "status": "failed"
+   "color_ok": false,
+   "extra": {
+    "b": "tb_spectrogram.b.jpg",
+    "chain": "tb_spectrogram.chain.jpg",
+    "inputs": "tb_spectrogram.inputs.jpg"
+   },
+   "fig": "tb_spectrogram.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [
+    "a"
+   ],
+   "out_kind": "ndarray",
+   "program": "img_to_signal 0.50 0.50\ntb_spectrogram 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
   },
   "tb_specular_coefficient_map": {
    "color_ok": false,
@@ -16553,9 +16636,29 @@
    "status": "ok"
   },
   "tb_wetness": {
-   "in_sort": "rgbimage",
-   "reason": "ValueError: wetness: ior must be > 1: got 0.5652500000000001",
-   "status": "failed"
+   "color_ok": false,
+   "extra": {
+    "a": "tb_wetness.a.jpg",
+    "b": "tb_wetness.b.jpg",
+    "chain": "tb_wetness.chain.jpg",
+    "inputs": "tb_wetness.inputs.jpg"
+   },
+   "fig": "tb_wetness.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "img_to_rgb 0.50 0.50\ntb_wetness 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
   },
   "tb_zero_crossing_rate": {
    "extra": {
@@ -20889,11 +20992,11 @@
  "stats": {
   "domain": 4,
   "empty": 1,
-  "failed": 5,
-  "ok": 887,
+  "failed": 0,
+  "ok": 892,
   "unreachable": 0,
-  "with_chain": 356,
-  "with_gif": 34,
-  "with_sweep": 541
+  "with_chain": 361,
+  "with_gif": 36,
+  "with_sweep": 546
  }
 }

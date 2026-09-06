@@ -1,0 +1,42 @@
+[
+ {
+  "file": "01_upscale.png",
+  "name": "upscale",
+  "caption": "鮮鋭化だけがナイキスト(周期 8)より細かい列にも縞を作る。それは分解能ではなく**無い縞**。",
+  "shape": [
+   762,
+   284,
+   3
+  ]
+ },
+ {
+  "file": "02_modulation.png",
+  "name": "modulation",
+  "caption": "IBP は周期 12 以上の落ちた変調を戻すが、8 より細かい列は1 本も戻らない(順モデルの零空間)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_multiframe.png",
+  "name": "multiframe",
+  "caption": "単一画像で消えている右側の細かい列が、drizzle では立ち上がる。",
+  "shape": [
+   592,
+   284,
+   3
+  ]
+ },
+ {
+  "file": "04_multiframe_modulation.png",
+  "name": "multiframe_modulation",
+  "caption": "上限の線がレンズの許す限界。drizzle はその 8 割まで届く。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

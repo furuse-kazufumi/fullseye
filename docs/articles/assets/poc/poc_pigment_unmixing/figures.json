@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_per_field_auc.png",
+  "name": "per_field_auc",
+  "caption": "平均すると全部消える。近赤外の差分は剥落部で盲目、近赤外 1 枚は面ごとには完璧でも全体では 1 本引けない。",
+  "shape": [
+   296,
+   924,
+   3
+  ],
+  "csv": "01_per_field_auc.csv",
+  "tsv": "01_per_field_auc.tsv"
+ },
+ {
+  "file": "02_detector_maps.png",
+  "name": "detector_maps",
+  "caption": "近赤外の差分は剥落部(楕円)で消え、近赤外 1 枚は面ごとに水準が違う。塗り分けは 1–99 分位でクリップした表示のみ。",
+  "shape": [
+   615,
+   1120,
+   3
+  ]
+ },
+ {
+  "file": "03_thickness_cliff.png",
+  "name": "thickness_cliff",
+  "caption": "半分を割るのは tau 0.30–0.60 のあいだ。アズライトの面だけ見ると崖はもっと手前にある —— 同じ絵の中で位置が 4 倍違う。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_restoration_vs_null.png",
+  "name": "restoration_vs_null",
+  "caption": "ゼロ点の線より下に来た復元が 1 本も無い。f=1(褪色なし)ですら、分解して組み直すだけで ΔE00 が 2.7–3.3 乗る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

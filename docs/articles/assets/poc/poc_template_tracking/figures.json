@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_ncc_maps.png",
+  "name": "ncc_maps",
+  "caption": "2 位の相関は 一意 0.556 / 繰返 1.000 / 直線縁 1.000 / 片側 0.998。繰返 は同じ高さの峰が周期的に並び、直線縁 は縁に沿った尾根になる(その方向は位置が決まらない)。",
+  "shape": [
+   406,
+   350,
+   3
+  ]
+ },
+ {
+  "file": "02_occlusion_vs_twin.png",
+  "name": "occlusion_vs_twin",
+  "caption": "同じ遮蔽率でも、そっくりな別物体が視野に居るだけで崖がはるかに手前へ来る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_drift_curves.png",
+  "name": "drift_curves",
+  "caption": "更新なしは平らなまま。毎フレーム更新だけが数 px の台へ離れていく —— しかもその間、相関ピークは最も高い。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_confidence_auc.png",
+  "name": "confidence_auc",
+  "caption": "得意な崖が逆。0.5 を下回った欄はその量が嘘の側で高く出ている = 使うと逆効果。",
+  "shape": [
+   224,
+   724,
+   3
+  ],
+  "csv": "04_confidence_auc.csv",
+  "tsv": "04_confidence_auc.tsv"
+ }
+]

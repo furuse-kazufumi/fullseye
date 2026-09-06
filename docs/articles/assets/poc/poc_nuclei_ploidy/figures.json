@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_histograms.png",
+  "name": "histograms",
+  "caption": "累積分布。積分輝度の 4n は 2.1 付近に固まり、面積の 2 本は大きく重なる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_background.png",
+  "name": "background",
+  "caption": "誤分類率はほぼ 0 のままだが、DNA 指数は背景とともに 2.00 から落ちる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_mixture.png",
+  "name": "mixture",
+  "caption": "特徴量が分かれてさえいれば割り方は選ばない。分かれていなければ何をしても割れない。",
+  "shape": [
+   200,
+   309,
+   3
+  ],
+  "csv": "03_mixture.csv",
+  "tsv": "03_mixture.tsv"
+ },
+ {
+  "file": "04_scene.png",
+  "name": "scene",
+  "caption": "4 枚目は対数表示。裾がしきい値の外に出ているのが見える。",
+  "shape": [
+   903,
+   798,
+   3
+  ]
+ }
+]

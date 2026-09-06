@@ -1,0 +1,22 @@
+[
+ {
+  "file": "01_polariscope.png",
+  "name": "polariscope",
+  "caption": "偏光系は fullseye の mueller_element / mueller_apply で組んだ。",
+  "shape": [
+   649,
+   544,
+   3
+  ]
+ },
+ {
+  "file": "02_unwrap.png",
+  "name": "unwrap",
+  "caption": "左下 2 枚が「壊れる予報」。どちらもマスクで外せる。",
+  "shape": [
+   649,
+   544,
+   3
+  ]
+ }
+]

@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "",
+  "shape": [
+   1159,
+   1054,
+   3
+  ]
+ },
+ {
+  "file": "02_bias_vs_u.png",
+  "name": "bias_vs_u",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_seeing_cancel.png",
+  "name": "seeing_cancel",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_sunspot.png",
+  "name": "sunspot",
+  "caption": "縁に載った黒点だけが効く(内側の黒点は縁の点列に入らない)。",
+  "shape": [
+   272,
+   403,
+   3
+  ],
+  "csv": "04_sunspot.csv",
+  "tsv": "04_sunspot.tsv"
+ }
+]

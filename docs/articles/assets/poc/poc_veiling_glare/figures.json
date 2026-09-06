@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_verdict.png",
+  "name": "verdict",
+  "caption": "",
+  "shape": [
+   224,
+   403,
+   3
+  ],
+  "csv": "01_verdict.csv",
+  "tsv": "01_verdict.tsv"
+ },
+ {
+  "file": "02_window_dependence.png",
+  "name": "window_dependence",
+  "caption": "D を 16 倍にすると 19.6 % が 4.5 % になる。裾が重いので log でしか減らない = 収束しない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_mtf_curves.png",
+  "name": "mtf_curves",
+  "caption": "全 PSF の MTF と正弦チャートの絶対コントラストは 0.80 の台地を見る。窓つき SFR は 1.0 から始まって裾を見落とす(±16 px は 0.031 cyc/px より下を持たない)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_glare_scene.png",
+  "name": "glare_scene",
+  "caption": "2 画素に 1 つ間引いて表示。黒四角の中が 10.7 % 浮いている。",
+  "shape": [
+   775,
+   670,
+   3
+  ]
+ }
+]

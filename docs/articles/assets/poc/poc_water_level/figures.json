@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "",
+  "shape": [
+   1159,
+   1310,
+   3
+  ]
+ },
+ {
+  "file": "02_bias_vs_level.png",
+  "name": "bias_vs_level",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_anchors.png",
+  "name": "anchors",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_reflection.png",
+  "name": "reflection",
+  "caption": "負 = 低く読む。検出列はキャリパーが水面線を拾えた列数(全 149 列)。",
+  "shape": [
+   176,
+   301,
+   3
+  ],
+  "csv": "04_reflection.csv",
+  "tsv": "04_reflection.tsv"
+ }
+]

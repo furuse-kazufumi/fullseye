@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_casts.png",
+  "name": "casts",
+  "caption": "いちばん右下(真の光源で割る)でも基準光源とは一致しない —— 11 節の対角モデルの床。",
+  "shape": [
+   311,
+   436,
+   3
+  ]
+ },
+ {
+  "file": "02_bias_cliff.png",
+  "name": "bias_cliff",
+  "caption": "灰色世界はゼロ点(何もしない)の線を 0.1〜0.2 の間で上抜けする = そこから先は回すだけ損。白パッチ法には崖が無い。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_saturation.png",
+  "name": "saturation",
+  "caption": "露出 3 以上で白パッチ法の線が「何もしない」に重なる(max が (1,1,1) に張り付く)。灰色世界は動かない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_angle_to_de.png",
+  "name": "angle_to_de",
+  "caption": "最右列が推定誤差の実費。1 行目の床(真値で割った残差)は誰にも引けない。角度と ΔE00 は比例しない。",
+  "shape": [
+   320,
+   674,
+   3
+  ],
+  "csv": "04_angle_to_de.csv",
+  "tsv": "04_angle_to_de.tsv"
+ }
+]

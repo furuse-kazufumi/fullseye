@@ -1,0 +1,54 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "",
+  "shape": [
+   605,
+   1576,
+   3
+  ]
+ },
+ {
+  "file": "02_prune.png",
+  "name": "prune",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_radius_bias.png",
+  "name": "radius_bias",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_murray.png",
+  "name": "murray",
+  "caption": "分岐から 2 px の点は 1 つも解けなかったので図から外した",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_summary.png",
+  "name": "summary",
+  "caption": "",
+  "shape": [
+   344,
+   498,
+   3
+  ],
+  "csv": "05_summary.csv",
+  "tsv": "05_summary.tsv"
+ }
+]

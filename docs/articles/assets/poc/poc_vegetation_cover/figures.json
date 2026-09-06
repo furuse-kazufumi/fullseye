@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_mixed_pixel_response.png",
+  "name": "mixed_pixel_response",
+  "caption": "対角線に載っていれば分数で答えられている。二値手法は0 か 1 しか返せないので、途中で対角線を離れる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_shadow_sweep.png",
+  "name": "shadow_sweep",
+  "caption": "影ゼロならゼロ点も悪くない。影は『暗さ』を手掛かりにする手法に直接刺さる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_ppi_noise.png",
+  "name": "ppi_noise",
+  "caption": "純粋な葉が 67 % ある場面。壊れる原因は純画素の不足ではなく雑音のほう。",
+  "shape": [
+   200,
+   584,
+   3
+  ],
+  "csv": "03_ppi_noise.csv",
+  "tsv": "03_ppi_noise.tsv"
+ },
+ {
+  "file": "04_wet_soil_zero_hits.png",
+  "name": "wet_soil_zero_hits",
+  "caption": "白い画素の数だけが釣り合っている。当たった画素は 1 つも無い(適合率も再現率も 0.000)。",
+  "shape": [
+   381,
+   1202,
+   3
+  ]
+ }
+]

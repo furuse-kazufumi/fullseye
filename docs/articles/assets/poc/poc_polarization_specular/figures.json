@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_fresnel.png",
+  "name": "fresnel",
+  "caption": "R_p がブリュースター角で 0 を横切る。浅すぎても深すぎても偏光度は落ちる —— 使える窓は限られる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_angle_error.png",
+  "name": "angle_error",
+  "caption": "実測と閉形式が重なる。70 度の絶対誤差は 20 度より悪いのに、ゼロ点比では 70 度が最良 —— 最適角は評価軸で割れる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_separation.png",
+  "name": "separation",
+  "caption": "残差はローブと同じ形。鏡面は消えているが、拡散が R_p * E だけ持ち上がっている(所見 a)。",
+  "shape": [
+   358,
+   286,
+   3
+  ]
+ },
+ {
+  "file": "04_saturation.png",
+  "name": "saturation",
+  "caption": "画素率 1.8 倍で誤差 2.8 倍 —— 雑音(σ に比例)や較正誤差(δ に比例)と違い、飽和は超線形に効く。",
+  "shape": [
+   224,
+   649,
+   3
+  ],
+  "csv": "04_saturation.csv",
+  "tsv": "04_saturation.tsv"
+ }
+]

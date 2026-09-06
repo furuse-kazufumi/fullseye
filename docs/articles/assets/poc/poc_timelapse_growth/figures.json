@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_frames.png",
+  "name": "frames",
+  "caption": "拡散律速 r = k sqrt(t + 4)。左上の 2 個は t≈8 で、左下の 2 個は t≈30 で合体する。右の斜めに並んだ 2 個は最後まで接しない(隙間 0.92 長さ単位)——この隙間を 26 近傍が渡ってしまう(6 節)。",
+  "shape": [
+   535,
+   430,
+   3
+  ]
+ },
+ {
+  "file": "02_ystructure.png",
+  "name": "ystructure",
+  "caption": "縦が時間(下向き、4 倍に拡大)、横が列。2 本の管が合わさる高さがそのまま合体時刻。色は 3-D ラベル。",
+  "shape": [
+   550,
+   220,
+   3
+  ]
+ },
+ {
+  "file": "03_sampling.png",
+  "name": "sampling",
+  "caption": "横軸はどちらも『何倍粗くしたか』。時間は必ず正(次のコマまで気付けない)、空間は必ず負(画素が物を太らせる)。空間側は画素格子の位相5 通りの平均で、ばらつきは表を参照。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_sampling_table.png",
+  "name": "sampling_table",
+  "caption": "空間側は格子の位相でこれだけ動く(偏りより大きい)。",
+  "shape": [
+   464,
+   359,
+   3
+  ],
+  "csv": "04_sampling_table.csv",
+  "tsv": "04_sampling_table.tsv"
+ }
+]

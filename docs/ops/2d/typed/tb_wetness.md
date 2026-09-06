@@ -15,7 +15,25 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **データ種**: `rgbimage` → `rgbimage`
 - **呼び出し**: `fullseye.apply(img, "tb_wetness", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
-*図なし: 走らせたが落ちた —— ValueError: wetness: ior must be > 1: got 0.5652500000000001*
+![tb_wetness: input → output](../../_fig/tb_wetness.png)
+
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+**つまみ a を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![tb_wetness: knob a sweep](../../_fig/tb_wetness.a.jpg)
+
+**つまみ b を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![tb_wetness: knob b sweep](../../_fig/tb_wetness.b.jpg)
+
+**段階**(前置きの op → この op。左から順):
+
+![tb_wetness: stages](../../_fig/tb_wetness.chain.jpg)
+
+**別の画像でも**(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):
+
+![tb_wetness: other inputs](../../_fig/tb_wetness.inputs.jpg)
 
 ## 使い方
 
@@ -37,6 +55,15 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
 - [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
+
+## Studio で試す
+
+下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。
+
+```program
+img_to_rgb 0.50 0.50
+tb_wetness 0.50 0.50
+```
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 

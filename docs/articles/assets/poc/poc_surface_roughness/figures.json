@@ -1,0 +1,42 @@
+[
+ {
+  "file": "01_surface_components.png",
+  "name": "surface_components",
+  "caption": "左の面をそのまま rms すると真値の 20 倍になる。帯域を宣言しない粗さの数字は存在しない。",
+  "shape": [
+   605,
+   1576,
+   3
+  ]
+ },
+ {
+  "file": "02_sampling_cliff.png",
+  "name": "sampling_cliff",
+  "caption": "dx=8 µm では Sa が ±5 % 合格で Sz が不合格。同じデータでも見るパラメータで結論が反転する。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_sz_vs_window.png",
+  "name": "sz_vs_window",
+  "caption": "頭打ちにならないので『真の Sz』は存在しない。極値則は増え方を当てるが絶対値は一定倍率で外す。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_lambda_c_sweep.png",
+  "name": "lambda_c_sweep",
+  "caption": "左は加工目(λ=32µm)を落として過小、右はうねり(λ=256µm)が漏れて過大。0 を通るのは 64〜128 µm の間だけで、安全側の λc は無い。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_per_frame.png",
+  "name": "per_frame",
+  "caption": "上の水平線が答えるべき数(通過 10 台)。下の 2 本は「いま写っている数」で、しかも検出側は融合で下振れする。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_scene.png",
+  "name": "scene",
+  "caption": "",
+  "shape": [
+   939,
+   404,
+   3
+  ]
+ },
+ {
+  "file": "03_tall_vehicles.png",
+  "name": "tall_vehicles",
+  "caption": "トラックは画像の 50 行から 99 行を占めるので、遠い車線の計数行 63 を横切る。右端は対照群(遠い車線を空にして同じトラックだけを流した)。",
+  "shape": [
+   176,
+   401,
+   3
+  ],
+  "csv": "03_tall_vehicles.csv",
+  "tsv": "03_tall_vehicles.tsv"
+ },
+ {
+  "file": "04_framerate.png",
+  "name": "framerate",
+  "caption": "全部の帯を数えると千切れて過大に(実測は最大 67 だが、他の系列が潰れるので 20 で頭打ちにして描いている)、計数列と交わる帯だけなら見逃しだけ。予測は閉形式 Σmin(1, L/VΔt)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

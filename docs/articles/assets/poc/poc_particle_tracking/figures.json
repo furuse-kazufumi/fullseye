@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_spacetime.png",
+  "name": "spacetime",
+  "caption": "時間最大投影では粒子が尾を引く(= 軌跡)。kymograph は行 90-101 の帯を縦(時間)へ積んだもので、筋の傾きがそのまま列方向の速度。縦は 5 倍に拡大。",
+  "shape": [
+   535,
+   414,
+   3
+  ]
+ },
+ {
+  "file": "02_density_bias.png",
+  "name": "density_bias",
+  "caption": "縦軸は常用対数(0 が真値)。欠測は遠い他人を掴んで D を上げ、曖昧は近い相手を選んで D を下げる。上限距離のゲート 1 行で上向きの暴走が 1/2.6 に。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_msd.png",
+  "name": "msd",
+  "caption": "真値で割った比。欠測が主な系列(検出+NN)は上へ外れ、曖昧だけの系列(真値+NN)は 1 をわずかに下回りつつ τ とともに下がる。**外れる向きで形が違う。**",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_density_table.png",
+  "name": "density_table",
+  "caption": "曖昧と欠測を分けて数えると、D の外れる向きが説明できる。",
+  "shape": [
+   200,
+   698,
+   3
+  ],
+  "csv": "04_density_table.csv",
+  "tsv": "04_density_table.tsv"
+ }
+]

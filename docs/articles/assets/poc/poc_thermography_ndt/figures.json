@@ -1,0 +1,34 @@
+[
+ {
+  "file": "01_depth_table.png",
+  "name": "depth_table",
+  "caption": "右下三角(直径が深さの 4 倍以上)は数 %。左上は横拡散で壊れる。",
+  "shape": [
+   176,
+   470,
+   3
+  ],
+  "csv": "01_depth_table.csv",
+  "tsv": "01_depth_table.tsv"
+ },
+ {
+  "file": "02_depth_map.png",
+  "name": "depth_map",
+  "caption": "欠陥 16 個。直径 2 mm の列(いちばん左)が壊れているのが見える。",
+  "shape": [
+   253,
+   180,
+   3
+  ]
+ },
+ {
+  "file": "03_tsr_curves.png",
+  "name": "tsr_curves",
+  "caption": "早期の勾配は -1/2。膝の位置 t* が深さを決める。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

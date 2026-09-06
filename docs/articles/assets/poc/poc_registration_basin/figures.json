@@ -1,0 +1,46 @@
+[
+ {
+  "file": "01_basin.png",
+  "name": "basin",
+  "caption": "100 % から 0 % へ落ちる位置が収束域の縁。並進ずれを足すと縁が左へ動く(15 試行/点)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_pca_quadrant.png",
+  "name": "pca_quadrant",
+  "caption": "非対称性が消えると 4 候補が形として区別できず、選択が崩れる(選ばれた解が第 1 候補から離れる)。",
+  "shape": [
+   152,
+   649,
+   3
+  ],
+  "csv": "02_pca_quadrant.csv",
+  "tsv": "02_pca_quadrant.tsv"
+ },
+ {
+  "file": "03_width.png",
+  "name": "width",
+  "caption": "平らな線ほど「広い」。広さと最終精度は別の軸で、この図だけでは手法を選べない(12 試行/点)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_symmetry_lies.png",
+  "name": "symmetry_lies",
+  "caption": "球・円柱は残差が小さいまま姿勢が任意。素の直方体は局所なら嘘をつかず、大域に替えた瞬間に嘘をつく。",
+  "shape": [
+   272,
+   732,
+   3
+  ],
+  "csv": "04_symmetry_lies.csv",
+  "tsv": "04_symmetry_lies.tsv"
+ }
+]

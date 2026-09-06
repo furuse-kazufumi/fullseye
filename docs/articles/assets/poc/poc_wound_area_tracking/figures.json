@@ -1,0 +1,54 @@
+[
+ {
+  "file": "01_dist_square_law.png",
+  "name": "dist_square_law",
+  "caption": "ゼロ点の面積誤差。実測は閉形式の 2 乗則に乗り、線形近似からは外れる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_scenes.png",
+  "name": "scenes",
+  "caption": "4 枚目は正対化した二値と真の二値の差(赤 = 余分、青 = 足りない)。",
+  "shape": [
+   735,
+   830,
+   3
+  ]
+ },
+ {
+  "file": "03_healing_curve.png",
+  "name": "healing_curve",
+  "caption": "ゼロ点は毎回もっともらしい値を返しながら、傾きだけが系統的に急になる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_sensitivity.png",
+  "name": "sensitivity",
+  "caption": "較正は d に対して (1+d)²-1、しきい値はほぼ線形。傾きが 4〜6 倍違う。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_summary.png",
+  "name": "summary",
+  "caption": "ゼロ点は散らばりがいちばん小さく、偏りがいちばん大きい。",
+  "shape": [
+   176,
+   468,
+   3
+  ],
+  "csv": "05_summary.csv",
+  "tsv": "05_summary.tsv"
+ }
+]

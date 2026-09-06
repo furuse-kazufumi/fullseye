@@ -1,0 +1,42 @@
+[
+ {
+  "file": "01_dt_sweep.png",
+  "name": "dt_sweep",
+  "caption": "両対数。傾きがゼロ点 1.0 / 線形 2.3 / 放物線 2.7。放物線は傾きが急でも切片が悪く、Δt≧0.75 ms では線形に負ける。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_threshold_crossover.png",
+  "name": "threshold_crossover",
+  "caption": "変曲点 θ=0.6065 では線形が 3.8 倍勝ち、θ=0.2 では放物線が 3.6 倍勝つ。交点は θ≈0.35 と θ≈0.75。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_merge_line_speed.png",
+  "name": "merge_line_speed",
+  "caption": "各帯の中央値。最も内側の帯(0-2 px)では最大 1e12 px/msまで飛ぶので、図は中央値だけを描いている。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_arrival_surface.png",
+  "name": "arrival_surface",
+  "caption": "差は上下 99 % 分位(±0.0327 ms)で切った。同心円の縞は**フレーム格子に同期した系統誤差**(サブピクセルのpeak locking と同じ型)。",
+  "shape": [
+   237,
+   472,
+   3
+  ]
+ }
+]

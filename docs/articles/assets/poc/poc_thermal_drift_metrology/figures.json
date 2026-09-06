@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_separate_drifts.png",
+  "name": "separate_drifts",
+  "caption": "焦点距離ドリフトは R に依らない。主点ドリフトは R に比例(歪みを外す中心がずれるため)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_countermeasures.png",
+  "name": "countermeasures",
+  "caption": "",
+  "shape": [
+   272,
+   485,
+   3
+  ],
+  "csv": "02_countermeasures.csv",
+  "tsv": "02_countermeasures.tsv"
+ },
+ {
+  "file": "03_budget.png",
+  "name": "budget",
+  "caption": "周辺のワークのほうが感度が高い。再校正すれば雑音の床まで戻る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_error_maps.png",
+  "name": "error_maps",
+  "caption": "発散 LUT。**各パネルは自分の最大値で正規化される**ので色の濃さはパネル間で比べられない。(a)(b)(c) の実値は ±542 ppm、(d) は最大 0.15 ppm —— 3 桁小さい(重ね合わせが成り立っている)。(b) は主点の移動方向に直交して符号が変わる。",
+  "shape": [
+   615,
+   606,
+   3
+  ]
+ }
+]

@@ -8,5 +8,37 @@
    320,
    3
   ]
+ },
+ {
+  "file": "02_beam_profile.png",
+  "name": "beam_profile",
+  "caption": "剛体を仮定する位相相関が返す 0.150 px は 0.30 と 0.00 の面積平均で、どの列の真値とも違う。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_band_selectivity.png",
+  "name": "band_selectivity",
+  "caption": "3.7 Hz を含む帯だけが 0 dB。オンビンなら帯域外は -300 dB(丸め)、オフビンだと隣が -3.5 dB しか落ちない。",
+  "shape": [
+   224,
+   534,
+   3
+  ],
+  "csv": "03_band_selectivity.csv",
+  "tsv": "03_band_selectivity.tsv"
+ },
+ {
+  "file": "04_amplitude_cliff.png",
+  "name": "amplitude_cliff",
+  "caption": "3.05 px までは機械精度、3.10 px で崩壊。境界 2.4048/k = 3.0619 px は J0 の第 1 零点。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
  }
 ]

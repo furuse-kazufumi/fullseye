@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_snr_sweep.png",
+  "name": "snr_sweep",
+  "caption": "暗い端で素の重心が下限を割って見えるのは「動かない推定器」だから(感度 0.038)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_phase_systematic.png",
+  "name": "phase_systematic",
+  "caption": "素の重心だけ FWHM に依らない(空の希釈)。PSF 相関は FWHM 1.4 で4 手法中いちばん悪い —— 予想が外れた点。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_starfield.png",
+  "name": "starfield",
+  "caption": "一様 24 / 星団 10 / 二重星 6 / 飽和 2 個と宇宙線 25 発。乱数の一様分布だけでは出ない失敗を入れてある。",
+  "shape": [
+   647,
+   542,
+   3
+  ]
+ },
+ {
+  "file": "04_sky_error.png",
+  "name": "sky_error",
+  "caption": "混ぜた中央値は孤立星とも二重星とも違う「どこでもない値」。偏りは枚数で減らないので、散らばりと足してはいけない。",
+  "shape": [
+   368,
+   934,
+   3
+  ],
+  "csv": "04_sky_error.csv",
+  "tsv": "04_sky_error.tsv"
+ }
+]

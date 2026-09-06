@@ -1,0 +1,74 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "",
+  "shape": [
+   605,
+   1054,
+   3
+  ]
+ },
+ {
+  "file": "02_density_sweep.png",
+  "name": "density_sweep",
+  "caption": "薄いところで 0 なのは正確だから。濃いところで 0 をまたぐのは融合と縁切れが釣り合っただけ。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_failure_counts.png",
+  "name": "failure_counts",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_merge_separability.png",
+  "name": "merge_separability",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_merge_filter.png",
+  "name": "merge_filter",
+  "caption": "",
+  "shape": [
+   605,
+   1054,
+   3
+  ]
+ },
+ {
+  "file": "06_edge_rules.png",
+  "name": "edge_rules",
+  "caption": "",
+  "shape": [
+   152,
+   460,
+   3
+  ],
+  "csv": "06_edge_rules.csv",
+  "tsv": "06_edge_rules.tsv"
+ },
+ {
+  "file": "07_number_vs_area.png",
+  "name": "number_vs_area",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]
