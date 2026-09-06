@@ -115,10 +115,10 @@ def add_metrology_object_ellipse_measure(model, row, col, phi, ra, rb, n: int = 
     ``rb``)を ``model["objects"]`` に積む(dict をその場で更新)。
     ``apply_metrology_model`` はパラメータ角 ``t`` を ``n`` 等分した点を置き
     (弧長等分ではないので、扁平な楕円では長軸端が密になる)、各点で楕円の
-    外向き法線 ``∇F`` に沿ってエッジを測り、``fit_ellipse`` で出し直す。
+    外向き法線 ``∇F`` に沿ってエッジを測り、楕円フィットで出し直す。
 
-    - ``phi``: col 軸(x)から row 軸(画像下向き)へ測ったラジアン。
-      ``gen_ellipse_contour_xld`` と同じ規約。
+    - ``phi``: col 軸(x)から row 軸(画像下向き)へ測ったラジアン
+      (矩形の ``phi`` と同じ規約)。
     - ``ra``, ``rb``: 半径 [px]。0 を入れると法線計算で 0 除算になるので避ける
       (ここでは検証しない)。
     - ``n``: サンプル数(既定 40)。
