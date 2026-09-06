@@ -585,8 +585,6 @@ def main():
     det0 = detectors(scene, spec0, np.random.default_rng(SEED + 1))
     maps0 = score_maps(det0, pos, neg)
 
-    head = ["手法", "AUC", "再現率@FPR1%", "適合率@FPR1%", "再現率@FPR5%",
-            "群青", "アズ", "朱茜", "剥落部"]
     rows = []
     detect_summary = {}
     for key, name, _p in METHODS:
@@ -596,17 +594,32 @@ def main():
         a = auc(d[pos], d[neg])
         t1 = thresh_at_fpr(d[neg], 0.01)
         t5 = thresh_at_fpr(d[neg], 0.05)
-        r1, p1 = pr_at(d, pos, neg, t1)
-        r5, _ = pr_at(d, pos, neg, t5)
-        per = [pr_at(d, pos & (field == f), neg & (field == f), t1)[0] for f in range(3)]
-        rf = pr_at(d, pos_all & flake, neg_all & flake, t1)[0]
-        detect_summary[key] = (a, r1, p1, per, rf)
-        rows.append([name, "%.3f" % a, "%.3f" % r1, "%.3f" % p1, "%.3f" % r5,
-                     "%.3f" % per[0], "%.3f" % per[1], "%.3f" % per[2], "%.3f" % rf])
-    _table(head, rows)
-    print("   閾値は「下絵なしの画素の 1 %(5 %)が超える」ところに置いた(全体で 1 本)。")
-    print("   区画ごとの列はその同じ閾値での再現率。剥落部は上層が無いので別に出す。")
+        r1, p1, f1 = pr_at(d, pos, neg, t1)
+        r5, p5, f5 = pr_at(d, pos, neg, t5)
+        per = [recall_at(d, pos & (field == f), neg & (field == f), 0.01) for f in range(3)]
+        rf = recall_at(d, pos_all & flake, neg_all & flake, 0.01)
+        aper = [auc(d[pos & (field == f)], d[neg & (field == f)]) for f in range(3)]
+        detect_summary[key] = (a, r1, p1, per, rf, aper, f1)
+        rows.append([name, "%.3f" % a, "%.4f" % f1, "%.3f" % r1, "%.3f" % p1,
+                     "%.3f" % r5, "%.3f" % p5])
+    _table(["手法", "AUC", "実FPR", "再現率@FPR1%", "適合率@FPR1%",
+            "再現率@FPR5%", "適合率@FPR5%"], rows)
+    print("   閾値は「下絵なしの画素の 1 %(5 %)だけが超える」ところに全体で 1 本。")
+    print("   実FPR = その閾値で実際に超えた負例の割合。同値が多い検出器は 1 % に")
+    print("   届かない(存在量は負例の大半が厳密に 0 なので、動作点自体が飛び飛び)。")
     print("   PCA の 3 手法は **真値を見て**成分と符号を選んでいる(ゼロ点に下駄を履かせた)。")
+
+    rows = []
+    for key, name, _p in METHODS:
+        if key not in detect_summary:
+            continue
+        a, r1, p1, per, rf, aper, _f = detect_summary[key]
+        rows.append([name] + ["%.3f" % v for v in aper]
+                    + ["%.3f" % v for v in per] + ["%.3f" % rf])
+    _table(["手法(面ごとに閾値を引き直す)", "AUC群青", "AUCアズ", "AUC朱茜",
+            "再現群青", "再現アズ", "再現朱茜", "再現剥落"], rows)
+    print("   上の表と違い、ここは **面ごとに閾値を引き直した**。信号があるかどうかと、")
+    print("   全体で 1 本の閾値が引けるかどうかは別の問いだから分ける。")
 
     # ---------------------------------------------------------------- 4 -----
     print("\n4. 崖 (a) —— 上層の光学的厚み。下絵はどこで見えなくなるか")
