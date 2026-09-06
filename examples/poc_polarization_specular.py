@@ -318,7 +318,7 @@ def main():
     rng = np.random.default_rng(20260906)
     cvec = np.cos(np.radians(2 * np.asarray(ANGLES)))[:, None, None]
     svec = np.sin(np.radians(2 * np.asarray(ANGLES)))[:, None, None]
-    for sigma in (0.0, 1e-4, 1e-3, 2e-3, 3e-3, 5e-3, 1e-2, 3e-2, 1e-1):
+    for sigma in (0.0, 1e-4, 1e-3, 2e-3, 3e-3, 4e-3, 5e-3, 1e-2, 3e-2, 1e-1):
         fn = np.maximum(fb + sigma * rng.standard_normal(fb.shape), 0.0)
         try:
             separate(fn)
