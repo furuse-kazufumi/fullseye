@@ -392,8 +392,9 @@ def section_taper() -> dict:
                    title="幅の分布 w(s) を追う(2 値化は細い側で点が消える)",
                    caption="2 値化の系列は値が出た点だけを結んでいる —— "
                            "線が途切れているところは「ひび割れなし」と答えた点。")
-    return {"rms_int": rms_i, "rms_bin": rms_b, "n_got": int(got.sum()),
-            "n": int(xs.size)}
+    return {"rms_int": rms_i, "rms_smooth": rms_s, "rms_bin": rms_b,
+            "rms_bin_all": rms_ball, "n_got": int(got.sum()), "n": int(xs.size),
+            "n_below": int(below.sum()), "n_below_got": int((got & below).sum())}
 
 
 # --------------------------------------------------------------------------- #
