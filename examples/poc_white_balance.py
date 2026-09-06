@@ -690,6 +690,39 @@ def main():
           f"{floor_rows['黒体 8000 K'][0]:.2f})。山谷のある光源ほど対角では追えない。")
 
     # ------------------------------------------------------------------ #
+    print("\n=== 11-(b) 角度誤差 1 度は ΔE00 いくつに化けるか ===")
+    print("  黒体 3000 K のチャートを各手法の推定値で対角補正する(明るさは真値の")
+    print("  ノルムに合わせる —— 角度誤差は明るさを見ない指標なので、そこは揃える)。")
+    spd_b = planck(3000.0)
+    e_b = true_illuminant(spd_b)
+    obs_b = render(REFL, spd_b)
+    print(f"  {'手法':<20}{'角度誤差':>10}{'ΔE00 平均':>12}{'ΔE00 最大':>12}"
+          f"{'床を引いた分':>14}")
+    floor_b = None
+    bridge = {}
+    for label, est in ([("真値(= 床)", e_b)]
+                       + [(n, f(scene(spd_b))) for n, f in METHODS]):
+        v = np.asarray(est, float)
+        v = v / np.linalg.norm(v) * np.linalg.norm(e_b)
+        corr = von_kries(obs_b, v)
+        de = fs.ledger.delta_e_map(
+            fs.ledger.linear_to_srgb(np.clip(corr[None], 0.0, 1.0)),
+            can_srgb[None], kind="2000")[0]
+        if floor_b is None:
+            floor_b = float(de.mean())
+        bridge[label] = (angular_error(v, e_b), float(de.mean()), float(de.max()))
+        print(f"  {label:<20}{bridge[label][0]:>10.2f}{bridge[label][1]:>12.2f}"
+              f"{bridge[label][2]:>12.2f}{bridge[label][1] - floor_b:>14.2f}")
+    print(f"  → 床(真値で割った残差)が ΔE00 平均 {floor_b:.2f}。そこからの上積みが")
+    print("     推定誤差の実費。**1 度あたり ΔE00 が約 "
+          f"{(bridge['灰色世界 (p=1)'][1] - floor_b) / bridge['灰色世界 (p=1)'][0]:.2f}**"
+          " という換算がこの場面で成り立つ。")
+    print("     「何もしない」は 29.14 度で ΔE00 平均 "
+          f"{bridge['何もしない'][1]:.2f} —— 角度は 30 倍でも ΔE00 は "
+          f"{bridge['何もしない'][1] / bridge['灰色世界 (p=1)'][1]:.1f} 倍にしかならない。")
+    print("     **角度誤差と知覚色差は比例しない。** 角度誤差だけを詰める最適化は、")
+    print("     大きく外している領域では効くが、床の近くではほとんど買えていない。")
+
     print("\n=== 12. ★ カラー画像に 2-D op を渡す 2 通り、両方が壊れる(穴 c)===")
     print("  灰色エッジ法は微分が要る。fullseye には sobel_amp があるので使いたいが、")
     print("  **画像ごと渡す / ch ごとに回す のどちらも壊れる**。まず漏れの検査:")
