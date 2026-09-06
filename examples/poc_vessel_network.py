@@ -663,7 +663,7 @@ def _point_on(seg, frm, off: float):
 
 def section_murray(tree: dict, r: dict) -> dict:
     print("\n" + "=" * 78)
-    print("5) ★★Murray の指数 —— 径の 1 割の誤差が、指数の 1 になる")
+    print("5) ★★Murray の指数 —— 効くのは径の誤差の **大きさ** ではなく **形**")
     print("=" * 78)
 
     truth_tri = [[b["d0"], b["d1"], b["d2"]] for b in tree["bifs"]]
