@@ -617,25 +617,33 @@ def section_illumination() -> dict:
     print("   傾斜     規約        軸を実測    軸を真値に固定")
 
     gs, thr_meas, thr_true, grad_meas = [], [], [], []
+    bore_dx, outer_dx = [], []
     cen = (N_PIX - 1) / 2.0
     for g in (0.0, 0.10, 0.20, 0.30):
         sc = make_scene(ecc_mm=0.0, illum=g)
         b = bore_centre(sc["img"])
-        a_meas = harmonics(radial_profile(sc["img"], (b["cy"], b["cx"])))[1]
-        a_true = harmonics(radial_profile(sc["img"], (cen, cen)))[1]
+        p_meas = radial_profile(sc["img"], (b["cy"], b["cx"]))
+        p_true = radial_profile(sc["img"], (cen, cen))
+        a_meas = harmonics(p_meas)[1]
+        a_true = harmonics(p_true)[1]
         a_grad = harmonics(radial_profile(sc["img"], (b["cy"], b["cx"]),
                                           rule="gradient"))[1]
+        # 符号つきで見る: 外形の中心はどちらへ、軸穴の中心はどちらへ動いたか
+        th = np.arange(N_ANG) * (2.0 * np.pi / N_ANG)
+        out_dx = 2.0 * float(np.mean(p_true * np.cos(th)))     # +列 = 明るい側
         gs.append(g)
         thr_meas.append(float(a_meas))
         thr_true.append(float(a_true))
         grad_meas.append(float(a_grad))
+        bore_dx.append((b["cx"] - cen) * PX_MM)
+        outer_dx.append(out_dx)
         print("   %.2f    固定しきい値  %.4f mm    %.4f mm    | 勾配最大 %.4f mm"
               % (g, a_meas, a_true, a_grad))
-        if g == 0.30:
-            print("        (軸穴の中心のずれ %.4f px = %.4f mm)"
-                  % (np.hypot(b["cy"] - cen, b["cx"] - cen),
-                     np.hypot(b["cy"] - cen, b["cx"] - cen) * PX_MM))
 
+    print("\n  符号つきの内訳(+ = 明るい側 = +列 の向き):")
+    for g, bx, ox in zip(gs, bore_dx, outer_dx):
+        print("     傾斜 %.2f : 外形の中心 %+.4f mm / 軸穴の中心 %+.4f mm"
+              % (g, ox, bx))
     print("\n  ★偏心は本当にゼロなのに、傾斜 %.0f %% で %.4f mm の「偏心」が出る。"
           % (100 * gs[-1], thr_meas[-1]))
     print("    対照群(傾斜ゼロ)は %.4f mm なので、これは照明が作った値。"
@@ -643,8 +651,12 @@ def section_illumination() -> dict:
     print("  ★予想が外れた: 「軸穴の中心も同じ向きへ流れて打ち消す」と踏んでいたが、")
     print("    軸を実測 %.4f mm > 軸を真値に固定 %.4f mm —— **打ち消すどころか "
           "%.2f 倍**。" % (thr_meas[-1], thr_true[-1], thr_meas[-1] / thr_true[-1]))
-    print("    穴は暗い側で内へ動く = 穴の中心が明るい側へずれるので、外形のずれと"
-          "同符号になる。")
+    print("    符号を見ると理由が分かる: 外形は %+.4f mm(明るい側へ)、"
+          "軸穴は %+.4f mm(暗い側へ)—— **逆向き**。"
+          % (outer_dx[-1], bore_dx[-1]))
+    print("    どちらの縁も「明るい側では外へ、暗い側では内へ」動くが、"
+          "穴は内外が裏返っているので中心のずれが反転する。")
+    print("    基準がずれた分だけ差が広がるので、打ち消しではなく上乗せになる。")
     print("  ★勾配最大の縁に変えると %.4f mm まで下がる(それでもゼロではない)。"
           % grad_meas[-1])
 
