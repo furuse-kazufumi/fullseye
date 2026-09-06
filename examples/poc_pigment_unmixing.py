@@ -373,18 +373,39 @@ def auc(pos, neg):
 
 
 def thresh_at_fpr(neg, fpr):
-    """負例の上側 fpr 分位を閾値にする。"""
-    return float(np.quantile(neg, 1.0 - fpr))
+    """偽陽性率が fpr **以下**になる中でいちばん緩い閾値を返す(判定は ``> thr``)。
+
+    分位点をそのまま閾値にして ``>=`` で数えると、**同値が大量にある検出器**
+    (アンミキシングの存在量は負例のほとんどが厳密に 0)で偽陽性率が跳ね上がる。
+    実際この PoC の最初の版では線形アンミキシングが「再現率 1.000 / 適合率 0.095」
+    という、動作点が存在しないだけの数字を出した。到達できない動作点は
+    「到達できなかった」と書けるようにする。
+    """
+    s = np.sort(np.asarray(neg, float))[::-1]
+    k = int(np.floor(fpr * s.size))
+    if k <= 0:
+        return float(s[0])                     # 負例の最大値。これを超えた分だけ拾う
+    if k >= s.size:
+        return -np.inf
+    return float(s[k])
 
 
 def pr_at(det, pos_mask, neg_mask, thr):
-    """閾値 thr での再現率と適合率(適合率は pos/neg の 2 群だけで数える)。"""
-    tp = int(((det >= thr) & pos_mask).sum())
-    fp = int(((det >= thr) & neg_mask).sum())
-    npos = int(pos_mask.sum())
+    """閾値 thr での (再現率, 適合率, 実際の偽陽性率)。判定は厳密に ``> thr``。"""
+    hit = det > thr
+    tp = int((hit & pos_mask).sum())
+    fp = int((hit & neg_mask).sum())
+    npos, nneg = int(pos_mask.sum()), int(neg_mask.sum())
     rec = tp / npos if npos else float("nan")
     prec = tp / (tp + fp) if (tp + fp) else float("nan")
-    return rec, prec
+    return rec, prec, (fp / nneg if nneg else float("nan"))
+
+
+def recall_at(det, pos_mask, neg_mask, fpr):
+    """その領域だけで閾値を引き直したときの再現率(領域ごとの素の感度)。"""
+    if pos_mask.sum() == 0 or neg_mask.sum() == 0:
+        return float("nan")
+    return pr_at(det, pos_mask, neg_mask, thresh_at_fpr(det[neg_mask], fpr))[0]
 
 
 def bias_scatter(err):
