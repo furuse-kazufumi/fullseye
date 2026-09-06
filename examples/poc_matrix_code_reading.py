@@ -405,8 +405,8 @@ def sample_modules(dark, H, n):
     pts = np.stack([(u + 0.5).ravel(), (v + 0.5).ravel()], 1)
     # image_to_world_plane は「渡した H を点にそのまま適用する」op(穴 C)
     img_pts = calib.image_to_world_plane(pts, H)
-    c = np.rint(img_pts[:, 0]).astype(np.int64)
-    r = np.rint(img_pts[:, 1]).astype(np.int64)
+    c = np.floor(img_pts[:, 0]).astype(np.int64)     # 幾何座標 x の画素指標 = floor(x)
+    r = np.floor(img_pts[:, 1]).astype(np.int64)
     ok = (r >= 0) & (r < dark.shape[0]) & (c >= 0) & (c < dark.shape[1])
     out = np.zeros(n * n)
     out[ok] = dark[r[ok], c[ok]]
