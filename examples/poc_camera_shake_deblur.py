@@ -449,19 +449,21 @@ def main():
     print("     4 件とも当たり、既知の核との差は 1 dB 未満で済む。ただしこれは")
     print("     **直線ブレという形を仮定できているから**であって、折れ線の手ブレでは")
     print("     零線が単純な縞にならず同じ手は使えない。")
-    print(f"  {'SNR [dB]':>9}{'推定した核':>18}{'推定核で':>10}{'既知なら':>10}{'差':>8}")
+    print(f"  {'SNR [dB]':>9}{'推定した核':>18}{'ゼロ点':>9}{'推定核で':>10}"
+          f"{'既知なら':>10}{'差':>8}")
     est_noise = {}
     for snr in (40.0, 30.0, 20.0, 15.0):
         ob, _ = add_noise(blurred, snr, np.random.default_rng(SEED + 6))
         eL, ea = estimate_line_kernel(ob)
         p_e, _, _ = wiener_best(ob, psf_line(eL, ea), gt)
         p_t, _, _ = wiener_best(ob, k_ref, gt)
-        est_noise[snr] = (eL, ea, p_e, p_t)
-        print(f"  {snr:>9.0f}{f'{eL:.1f} px {ea:.1f} 度':>18}"
+        p_0 = psnr(gt, ob)
+        est_noise[snr] = (eL, ea, p_e, p_t, p_0)
+        print(f"  {snr:>9.0f}{f'{eL:.1f} px {ea:.1f} 度':>18}{p_0:>9.2f}"
               f"{p_e:>10.2f}{p_t:>10.2f}{p_t - p_e:>8.2f}")
-    print("  → 雑音が増えると零線が埋もれて推定が外れ、外れた瞬間に上の表の")
-    print("     許容範囲を突き抜ける。**核の推定と雑音は独立でなく、雑音が核推定を")
-    print("     壊すという二段構えで復元が死ぬ**。")
+    print("  → 雑音が増えると零線が埋もれて推定が外れ、外れた瞬間に 4 章の許容範囲を")
+    print("     突き抜けて **ゼロ点を割る**。核の推定と雑音は独立でなく、")
+    print("     **雑音が核推定を壊し、壊れた核が復元を殺す** 二段構えで死ぬ。")
 
     print("\n=== 5. リンギング —— 縁の悪化は境界条件で決まる ===")
     print("  (核は厳密に既知・SNR 40 dB。nsr を固定して条件をそろえる)")
